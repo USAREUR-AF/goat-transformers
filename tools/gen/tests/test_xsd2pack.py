@@ -1396,5 +1396,197 @@ class PublicSetOptionsTest(Workspace):
         self.assertEqual(self.run_master("--public-statement", PUBLIC, "--check")[0], 1)
 
 
+# --substitution-groups, --substitute, --decline-namespace and --skip. The
+# schema has the shape NeTEx has: an abstract head with members (one declared
+# without a type), a ref to the head that occurs once and one that repeats, a
+# repeated choice of elements, a choice of complex branches, and references
+# into a namespace whose files are not given.
+SG_HEAD = ('<xs:schema xmlns:t="urn:example:t" xmlns:o="urn:example:o" xmlns:xs="http://www.w3.org/2001/XMLSchema" '
+           'targetNamespace="urn:example:t" elementFormDefault="qualified">'
+           '<!-- Distribution Statement A. Approved for public release: distribution is unlimited. -->\n'
+           '<xs:import namespace="urn:example:o" schemaLocation="other.xsd"/>\n')
+SG_BODY = """<xs:element name="Root" type="t:R"/>
+<xs:element name="Thing" type="t:Thing" abstract="true"/>
+<xs:element name="Stop" type="t:Stop" substitutionGroup="t:Thing"/>
+<xs:element name="Line" substitutionGroup="t:Thing"/>
+<xs:element name="Note" type="xs:string"/>
+<xs:complexType name="Thing"><xs:sequence><xs:element name="Name" type="xs:string"/></xs:sequence>
+  <xs:attribute name="id" type="xs:string"/></xs:complexType>
+<xs:complexType name="Stop"><xs:complexContent><xs:extension base="t:Thing"><xs:sequence>
+  <xs:element name="Lon" type="xs:double"/></xs:sequence></xs:extension></xs:complexContent></xs:complexType>
+<xs:complexType name="Pick"><xs:choice>
+  <xs:element name="Empty" type="t:Nothing"/>
+  <xs:element name="Rows" type="t:Rows"/></xs:choice></xs:complexType>
+<xs:complexType name="Nothing"><xs:sequence><xs:any/></xs:sequence></xs:complexType>
+<xs:complexType name="Rows"><xs:sequence><xs:element name="Row" type="xs:int" maxOccurs="unbounded"/></xs:sequence></xs:complexType>
+<xs:complexType name="Ext"><xs:complexContent><xs:extension base="o:Base"><xs:sequence>
+  <xs:element name="Own" type="xs:string"/></xs:sequence></xs:extension></xs:complexContent></xs:complexType>
+<xs:complexType name="R"><xs:sequence>
+  <xs:element ref="t:Thing"/>
+  <xs:element name="things"><xs:complexType><xs:sequence>
+    <xs:element ref="t:Thing" maxOccurs="unbounded"/></xs:sequence></xs:complexType></xs:element>
+  <xs:element name="mixed"><xs:complexType><xs:choice maxOccurs="unbounded">
+    <xs:element ref="t:Note"/><xs:element ref="t:Stop"/></xs:choice></xs:complexType></xs:element>
+  <xs:element name="Pick" type="t:Pick"/>
+  <xs:element ref="o:Foreign" minOccurs="0"/>
+  <xs:element name="Typed" type="o:Simple" minOccurs="0"/>
+  <xs:element name="Ext" type="t:Ext"/>
+  <xs:element name="Gone"><xs:complexType><xs:sequence><xs:element name="X" type="xs:string"/></xs:sequence></xs:complexType></xs:element>
+</xs:sequence>
+  <xs:attribute ref="o:lang"/>
+  <xs:attributeGroup ref="o:Attrs"/>
+</xs:complexType>"""
+SG_DECLINE = ("--decline-namespace", "urn:example:o")
+
+
+def sg_schema(body=SG_BODY, declined=("urn:example:o",), substitution=True, only=None):
+    schema = x.Schema()
+    schema.declined, schema.substitution = frozenset(declined), substitution
+    schema.read_bytes((SG_HEAD + body + "\n</xs:schema>\n").encode("utf-8"), "t.xsd", {})
+    if substitution:
+        schema.resolve_member_types()
+    schema.only = only or {}
+    return schema
+
+
+def leaf_choices(items):
+    return {lf.locator: lf.choice for lf in x.all_leaves(items)}
+
+
+class SubstitutionWalkTest(unittest.TestCase):
+    def test_a_head_that_occurs_once_is_a_choice_of_its_members_the_first_in_vectors(self):
+        items, _ = walk_root(sg_schema())
+        ch = leaf_choices(items)
+        # the abstract head itself is no candidate; Line has the head's type
+        self.assertEqual({k: v[1] for k, v in ch.items() if k.split("/")[0] in ("Stop", "Line")},
+                         {"Stop/@id": 0, "Stop/Name/#text": 0, "Stop/Lon/#text": 0,
+                          "Line/@id": 1, "Line/Name/#text": 1})
+        self.assertEqual(len({v[0] for k, v in ch.items() if k.split("/")[0] in ("Stop", "Line")}), 1)
+
+    def test_a_head_that_repeats_is_one_group_per_member(self):
+        items, _ = walk_root(sg_schema())
+        self.assertIn(("things/Stop", ["@id", "Name/#text", "Lon/#text"]), outline(items))
+        self.assertIn(("things/Line", ["@id", "Name/#text"]), outline(items))
+
+    def test_a_repeated_choice_of_elements_is_one_group_per_element(self):
+        items, skipped = walk_root(sg_schema())
+        self.assertIn(("mixed/Note", ["#text"]), outline(items))
+        self.assertIn(("mixed/Stop", ["@id", "Name/#text", "Lon/#text"]), outline(items))
+        self.assertNotIn((x.R_REPEAT_GROUP, "mixed", "#mixed", "choice"), skipped)
+
+    def test_the_first_branch_with_a_line_is_the_one_a_vector_holds(self):
+        # Empty holds only a wildcard: Rows, the second branch, is on, its group with it
+        items, _ = walk_root(sg_schema())
+        rows = next(g for g in x.all_groups(items) if g.path == "Pick/Rows/Row")
+        self.assertEqual(rows.choice[1], 0)
+
+    def test_substitute_keeps_only_the_members_named(self):
+        items, _ = walk_root(sg_schema(only={"Thing": ["Line"]}))
+        tops = {lf.locator.split("/")[0] for lf in x.all_leaves(items)}
+        self.assertIn("Line", tops)
+        self.assertNotIn("Stop", tops)
+        # one candidate is walked in place, not as a choice
+        self.assertIsNone(leaf_choices(items)["Line/Name/#text"])
+
+    def test_without_the_option_the_walk_is_as_before(self):
+        items, skipped = walk_root(sg_schema(substitution=False))
+        # the head is walked as the element it names; members are not considered
+        self.assertIn("Thing/Name/#text", leaf_choices(items))
+        self.assertFalse({"Stop", "Line"} & {lf.locator.split("/")[0] for lf in x.all_leaves(items)})
+        reasons = {(r, p) for r, p, _, _ in skipped}
+        self.assertIn((x.R_REPEAT_GROUP, "mixed"), reasons)
+        self.assertIn((x.R_CHOICE, "Pick"), reasons)
+
+
+class DeclinedNamespaceWalkTest(unittest.TestCase):
+    def test_every_reference_into_a_declined_namespace_is_listed_not_mapped(self):
+        _, skipped = walk_root(sg_schema())
+        foreign = {(p, m) for r, p, o, m in skipped if r == x.R_FOREIGN}
+        self.assertEqual(foreign, {("Foreign", "Foreign"), ("Typed", "Typed"), ("Ext", "base Base"),
+                                   ("", "@lang"), ("", "@attributeGroup Attrs")})
+
+    def test_the_own_content_of_a_type_with_a_declined_base_is_mapped(self):
+        items, _ = walk_root(sg_schema())
+        self.assertIn("Ext/Own/#text", leaf_choices(items))
+
+    def test_without_the_option_a_reference_into_another_namespace_is_refused(self):
+        with self.assertRaises(x.GenError) as caught:
+            sg_schema(declined=())
+        self.assertIn("is in namespace 'urn:example:o', which no file given here defines", caught.exception.message)
+
+
+class SubstitutionRunTest(Workspace):
+    def run_sg(self, *extra):
+        with open(self.path("s.xsd"), "w", encoding="utf-8") as fh:
+            fh.write(SG_HEAD + SG_BODY + "\n</xs:schema>\n")
+        return support.run_main(x.main, [
+            "--xsd", self.path("s.xsd"), "--format", "demo", "--module", "demo", "--out", self.out,
+            "--model-dir", self.path("in", "model"), "--title", "Demo", "--message", "Root",
+            "--names-file", self.path("out", "names", "demo.json")] + list(extra))
+
+    def test_run_writes_a_pack_whose_vector_holds_first_branches_and_states_other_lists_absent(self):
+        status, _, err = self.run_sg(*SG_DECLINE, "--substitution-groups", "--skip", "Gone")
+        self.assertEqual((status, err), (0, ""))
+        vec = json.loads(self.read_out("packs", "demo", "vectors", "gen-1-root-roundtrip.json"))
+        self.assertIn("<Stop ", vec["input"])
+        self.assertNotIn("<Line", vec["input"].split("<things>")[0])
+        self.assertNotIn("<Gone>", vec["input"])
+        md = self.read_out("packs", "demo", "pack.md")
+        for heading in ("## Declined namespaces", "## Substitution groups", "## Left out of this pack"):
+            self.assertIn(heading, md)
+        self.assertIn("| %s |" % x.R_SKIP, md)
+        self.assertEqual(self.run_sg(*SG_DECLINE, "--substitution-groups", "--skip", "Gone", "--check")[0], 0)
+
+    def test_a_list_in_a_branch_the_vector_does_not_hold_is_stated_absent(self):
+        body = SG_BODY.replace('<xs:element name="Empty" type="t:Nothing"/>',
+                               '<xs:element name="First" type="xs:string"/>')
+        with open(self.path("s.xsd"), "w", encoding="utf-8") as fh:
+            fh.write(SG_HEAD + body + "\n</xs:schema>\n")
+        status, _, err = support.run_main(x.main, [
+            "--xsd", self.path("s.xsd"), "--format", "demo", "--module", "demo", "--out", self.out,
+            "--model-dir", self.path("in", "model"), "--title", "Demo", "--message", "Root",
+            "--names-file", self.path("out", "names", "demo.json"), *SG_DECLINE, "--substitution-groups"])
+        self.assertEqual((status, err), (0, ""))
+        vec = json.loads(self.read_out("packs", "demo", "vectors", "gen-1-root-roundtrip.json"))
+        self.assertEqual(vec["model"]["demo.pick_rows_row.#"], "absent")
+        self.assertNotIn("<Rows>", vec["input"])
+
+    def test_substitute_is_refused_without_the_option_and_for_a_non_member(self):
+        status, _, err = self.run_sg(*SG_DECLINE, "--substitute", "Thing=Stop")
+        self.assertEqual(status, 1)
+        self.assertIn("--substitute needs --substitution-groups", err)
+        status, _, err = self.run_sg(*SG_DECLINE, "--substitution-groups", "--substitute", "Thing=Note")
+        self.assertEqual(status, 1)
+        self.assertIn("--substitute Thing: Note is not a member of its substitution group", err)
+
+    def test_an_import_of_a_declined_namespace_needs_no_file(self):
+        status, _, err = self.run_sg("--substitution-groups")
+        self.assertEqual(status, 1)
+        self.assertIn("which no file given here defines", err)
+        self.assertEqual(self.run_sg(*SG_DECLINE)[0], 0)
+
+
+class DeepWalkTest(unittest.TestCase):
+    DEEP = ('<xs:element name="Root" type="t:L0"/>\n' + "".join(
+        '<xs:complexType name="L%d"><xs:sequence><xs:element name="E%d" type="t:L%d"/>'
+        '<xs:element name="V%d" type="xs:string"/></xs:sequence></xs:complexType>\n' % (i, i, i + 1, i)
+        for i in range(12)) + '<xs:complexType name="L12"><xs:sequence><xs:element name="V12" type="xs:string"/>'
+        '</xs:sequence></xs:complexType>')
+
+    def test_a_depth_above_the_default_walks_deeper_and_names_the_rest_the_cap(self):
+        schema = schema_of(self.DEEP)
+        _, skipped = walk_root(schema)
+        self.assertIn(x.R_DEPTH, {r for r, _, _, _ in skipped})
+        items, skipped = walk_root(schema, max_depth=10)
+        self.assertEqual(max(lf.depth for lf in x.all_leaves(items)), 10)
+        reasons = {r for r, _, _, _ in skipped}
+        self.assertNotIn(x.R_DEPTH, reasons)
+        self.assertIn(x.R_CAP, reasons)
+
+    def test_the_depth_asked_is_bounded_by_the_ceiling(self):
+        w = x.walk_messages(schema_of(self.DEEP), ["Root"], 99, x.MAX_DEPTH)
+        self.assertEqual(w.depth, x.DEPTH_CEILING)
+
+
 if __name__ == "__main__":
     unittest.main()

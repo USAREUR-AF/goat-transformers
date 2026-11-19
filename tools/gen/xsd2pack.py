@@ -53,6 +53,7 @@ import gtcheck    # noqa: E402
 NAME = "xsd2pack"
 XS = "http://www.w3.org/2001/XMLSchema"
 MAX_DEPTH = 8
+DEPTH_CEILING = 16          # --max-depth above MAX_DEPTH, for a set whose data lies deeper
 KEY_BUDGET = 60000          # keys and lists of the module
 VECTOR_BUDGET = 12 * 1000 * 1000    # bytes of generated vectors per pack
 MAX_KEY_LEN = 96
@@ -91,6 +92,9 @@ R_PROHIBITED = "element with maxOccurs 0"
 R_ANYATTR = "xs:anyAttribute wildcard"
 R_CAP = "below the depth cap set for this pack"
 R_ROOT_TEXT = "text of the root element (no locator addresses it)"
+R_FOREIGN = "declaration of a namespace declined for this set (--decline-namespace)"
+R_NO_MEMBER = "abstract element with no member in the set (--substitution-groups)"
+R_SKIP = "left out of this pack (--skip)"
 
 
 class GenError(Exception):
@@ -200,7 +204,7 @@ class AttrDecl:
 SchemaFile = collections.namedtuple("SchemaFile", "path base sha256 size")
 # One xs:include or xs:import: the file it stands in, `include` or `import`,
 # its schemaLocation, the location after --alias, and the line it stands on.
-Include = collections.namedtuple("Include", "base tag location resolved path line")
+Include = collections.namedtuple("Include", "base tag location resolved path line namespace")
 
 
 class FileContext:
@@ -273,6 +277,13 @@ class Schema:
         self.global_attrs = {}
         self.tns = None
         self.import_only = []       # (file base name, namespaces): files with no targetNamespace that import
+        self.declined = frozenset() # namespaces whose declarations are not read (--decline-namespace)
+        self.substitution = False   # read substitutionGroup and abstract on global elements
+        self.subst = collections.OrderedDict()  # head element -> member elements, in declaration order
+        self.abstract_elements = set()
+        self.untyped_members = []   # members declared without a type: they take their head's
+        self.only = {}              # --substitute: head -> the members it keeps
+        self.skip = frozenset()     # --skip: element paths from the root that are not walked
         self.files = []             # SchemaFile
         self.includes = []          # Include
         self.element_form = collections.OrderedDict()   # file base name -> elementFormDefault
@@ -305,11 +316,14 @@ class Schema:
             raise GenError("targetNamespace %r differs from %r" % (tns, self.tns), path, lines.get(root))
         self.files.append(SchemaFile(path, base, hashlib.sha256(raw).hexdigest(), len(raw)))
         self.element_form[base] = root.get("elementFormDefault") or "unqualified (absent)"
-        ctx = FileContext(path, prefixes, root.get("elementFormDefault") == "qualified", lines, imports)
+        # only a file with no targetNamespace refers to an imported namespace's names as the set's own
+        ctx = FileContext(path, prefixes, root.get("elementFormDefault") == "qualified", lines,
+                          imports if tns is None else frozenset())
         for c in root:
             if c.tag in (xs("include"), xs("import")):
                 loc = c.get("schemaLocation") or ""
-                self.includes.append(Include(base, local(c.tag), loc, aliases.get(loc, loc), path, ctx.line(c)))
+                self.includes.append(Include(base, local(c.tag), loc, aliases.get(loc, loc), path, ctx.line(c),
+                                             c.get("namespace")))
             elif c.tag == xs("simpleType"):
                 self._simple_type(c, c.get("name"), ctx)
             elif c.tag == xs("complexType"):
@@ -319,6 +333,8 @@ class Schema:
                 if p.name in self.elements:
                     raise ctx.error(c, "global element %s is declared twice" % p.name)
                 self.elements[p.name] = p
+                if self.substitution:
+                    self._substitution(c, p, ctx)
             elif c.tag == xs("group"):
                 self.groups[c.get("name")] = (c, ctx)
             elif c.tag == xs("attributeGroup"):
@@ -330,13 +346,75 @@ class Schema:
             else:
                 raise ctx.error(c, "unsupported schema child %s" % c.tag)
 
+    def _substitution(self, node, p, ctx):
+        """Record the substitution groups a global element joins and whether it
+        is abstract. A head of a declined namespace is not recorded."""
+        if node.get("abstract") == "true":
+            self.abstract_elements.add(p.name)
+        for text in (node.get("substitutionGroup") or "").split():
+            head = self.qref(text, ctx, node)
+            if head[0] == "t":
+                self.subst.setdefault(head[1], []).append(p.name)
+                if (node.get("type") is None and node.find(xs("complexType")) is None
+                        and node.find(xs("simpleType")) is None):
+                    self.untyped_members.append((p.name, head[1]))
+
+    def resolve_member_types(self):
+        """A member declared without a type has the type of its head (XSD 1.0,
+        3.3.2); applied after every file is read."""
+        changed = True
+        while changed:
+            changed = False
+            for name, head in self.untyped_members:
+                h = self.elements.get(head)
+                if h is not None and self.elements[name].type == ("xs", "anyType") and h.type != ("xs", "anyType"):
+                    self.elements[name].type = h.type
+                    changed = True
+
+    def members(self, name, only=None):
+        """The elements that may stand where global element `name` is referred
+        to: itself unless abstract, then every member of its substitution group
+        and of theirs, in declaration order. `only` maps a head to the members
+        it keeps (--substitute)."""
+        out, seen, todo = [], set(), [name]
+        def visit(n):
+            if n in seen:
+                return
+            seen.add(n)
+            if n not in self.abstract_elements:
+                out.append(n)
+            kept = self.subst.get(n, [])
+            if only and n in only:
+                kept = [m for m in kept if m in only[n]]
+            for m in kept:
+                visit(m)
+        visit(name)
+        return out
+
+    def foreign_base(self, name):
+        """The first base of a declined namespace on the derivation chain of
+        complex type `name`, or None."""
+        seen = set()
+        while name in self.complex and name not in seen:
+            seen.add(name)
+            b = self.complex[name].base
+            if b is None:
+                return None
+            if b[0] == "f":
+                return b
+            name = b[1]
+        return None
+
     def qref(self, text, ctx, node):
-        """A qualified name as ("xs", local) for a built-in or ("t", local) for
-        a name of the schema set's own namespace."""
+        """A qualified name as ("xs", local) for a built-in, ("t", local) for
+        a name of the schema set's own namespace, or ("f", "{uri}local") for a
+        name of a declined namespace."""
         pfx, _, name = text.rpartition(":")
         uri = ctx.prefixes.get(pfx)
         if uri == XS:
             return ("xs", name)
+        if uri in self.declined:
+            return ("f", "{%s}%s" % (uri, name))
         if uri == self.tns or uri in ctx.imports or (pfx == "" and uri in (None, "")):
             return ("t", name)
         raise ctx.error(node, "%r is in namespace %r, which no file given here defines" % (text, uri))
@@ -383,8 +461,11 @@ class Schema:
         a = ctx.place(AttrDecl(), node)
         a.doc = doc_of(node)
         if node.get("ref"):
-            ref = self.qref(node.get("ref"), ctx, node)[1]
-            a.name, a.type = ref, ("ref", ref)
+            r = self.qref(node.get("ref"), ctx, node)
+            if r[0] == "f":
+                a.name, a.type = r[1].split("}")[1], r
+            else:
+                a.name, a.type = r[1], ("ref", r[1])
         else:
             a.name = node.get("name")
             if node.get("type"):
@@ -401,7 +482,13 @@ class Schema:
             if c.tag == xs("attribute"):
                 ct.attrs.append(self._attribute(c, ctx))
             elif c.tag == xs("attributeGroup"):
-                ct.attrs.append(("group", self.qref(c.get("ref") or "", ctx, c)[1], ctx.path, ctx.line(c)))
+                r = self.qref(c.get("ref") or "", ctx, c)
+                if r[0] == "f":
+                    a = ctx.place(AttrDecl(), c)
+                    a.name, a.type = "attributeGroup " + r[1].split("}")[1], r
+                    ct.attrs.append(a)
+                else:
+                    ct.attrs.append(("group", r[1], ctx.path, ctx.line(c)))
             elif c.tag == xs("anyAttribute"):
                 ct.any_attr = True
 
@@ -461,9 +548,13 @@ class Schema:
         if not top:
             self._occurs(node, p, ctx)
         if node.get("ref"):
-            p.name = self.qref(node.get("ref"), ctx, node)[1]
-            p.type = ("ref", p.name)
+            r = self.qref(node.get("ref"), ctx, node)
             p.qualified = True
+            if r[0] == "f":
+                p.name, p.type = r[1].split("}")[1], r
+                return p
+            p.name = r[1]
+            p.type = ("ref", p.name)
             return p
         p.name = node.get("name")
         form = node.get("form")
@@ -506,7 +597,7 @@ class Schema:
                 raise GenError("simple type %s is not defined" % cur[1], at and at.file, at and at.line)
             chain.append(st)
             cur = st.base
-        self._simple[qref] = (cur[1], chain)
+        self._simple[qref] = ("anySimpleType" if cur[0] == "f" else cur[1], chain)
         return self._simple[qref]
 
     def facets(self, qref):
@@ -543,8 +634,8 @@ class Schema:
         if ct.base is not None:
             if self.is_simple(ct.base):
                 simple = ct.base
-            elif ct.base == ("xs", "anyType"):
-                pass
+            elif ct.base == ("xs", "anyType") or ct.base[0] == "f":
+                pass        # a declined base: Walker records it with R_FOREIGN
             else:
                 if ct.base[1] not in self.complex:
                     raise GenError("base type %s of type %s is not defined" % (ct.base[1], name), ct.file, ct.line)
@@ -618,13 +709,14 @@ def header_statement(head):
 PUBLIC_PREFIX = "(no statement in the file; publisher's statement) "
 
 
-def read_schema(paths, aliases, public_statement=None):
+def read_schema(paths, aliases, public_statement=None, declined=(), substitution=False):
     """Parse step: (Schema, [(file base name, header statement)]). A file whose
     head does not carry the statement is refused before it is parsed, unless
     `public_statement` (the publisher's statement that the set is public) is
     given, which is then recorded for that file. Every xs:include and xs:import
     must be satisfied by a file given."""
     schema, statements = Schema(), []
+    schema.declined, schema.substitution = frozenset(declined), substitution
     for path in paths:
         with open(path, "rb") as fh:
             raw = fh.read()
@@ -637,11 +729,15 @@ def read_schema(paths, aliases, public_statement=None):
         statements.append((os.path.basename(path), statement))
         schema.read_bytes(raw, path, aliases)
     for base, imports in schema.import_only:
-        if imports != {schema.tns}:
+        if imports - schema.declined != {schema.tns}:
             raise GenError("has no targetNamespace and imports %s; the set's namespace is %r"
                            % (sorted(imports), schema.tns), base)
+    if substitution:
+        schema.resolve_member_types()
     given = {f.base for f in schema.files}
     for inc in schema.includes:
+        if inc.tag == "import" and inc.namespace in schema.declined:
+            continue        # a declined namespace: its file is not read
         if os.path.basename(inc.resolved) not in given:
             raise GenError("xs:%s of %s is not among the files given (use --alias)" % (inc.tag, inc.location),
                            inc.path, inc.line)
@@ -668,7 +764,7 @@ class Leaf:
 class Group:
     """A repeated element: `path` from the enclosing scope (the root element or
     the enclosing item) to the item element, and the lines of one item."""
-    __slots__ = ("path", "items", "owner", "member", "depth", "nest", "list", "tname")
+    __slots__ = ("path", "items", "owner", "member", "depth", "nest", "list", "tname", "choice")
 
     def leaves(self):
         return [x for x in self.items if isinstance(x, Leaf)]
@@ -707,7 +803,8 @@ class Walker:
         self.s = schema
         self.max_depth = max_depth
         self.max_nest = max_nest    # groups inside groups: 1 = no group inside an item
-        self.hard_depth = MAX_DEPTH
+        # a run that asks for more than MAX_DEPTH walks to what it asks; past it is R_CAP
+        self.hard_depth = max(MAX_DEPTH, min(max_depth, DEPTH_CEILING))
         self.choice_id = 0
         self.zulu = {}
         self.unqualified = 0        # local elements the schema leaves out of its namespace
@@ -715,6 +812,11 @@ class Walker:
         self.derived = schema.derived_counts()
         self.leaves, self.skipped, self.seen = [], [], set()
         self.base, self.nest = (), 0
+        self.sg = schema.substitution   # --substitution-groups
+        self.only = schema.only         # --substitute: head -> members kept
+        self.cur_choice = None          # (choice id, branch) of the branch being walked
+        self.choice_parent = {}         # choice id -> the branch it stands in, or None
+        self.choice_first = {}          # choice id -> the first branch that has a line
 
     def transform_of(self, qref):
         """(transform, builtin, note, type name) for a simple type; a None
@@ -756,6 +858,8 @@ class Walker:
             self._element(root.name, qref, (), True, None, root, "(global element)", top=True)
         except GenError as e:
             raise located(e, root)
+        if self.sg:
+            self._settle_choices(self.leaves)
         return self.leaves, self.skipped
 
     def rel(self, path):
@@ -771,13 +875,15 @@ class Walker:
         g = Group()
         g.path, g.items, g.owner, g.member, g.depth, g.nest = self.rel(here), [], owner, p.name, len(here), self.nest + 1
         g.list = None
+        g.choice = self.cur_choice
         qref = self.s.element_type(p)
         g.tname = qref[1] if qref[0] == "t" else "xs:" + qref[1]
-        saved = (self.leaves, self.seen, self.base, self.nest)
+        saved = (self.leaves, self.seen, self.base, self.nest, self.cur_choice)
         mark = len(self.skipped)
         self.leaves, self.seen, self.base, self.nest = g.items, set(), here, self.nest + 1
+        self.cur_choice = None      # an item is a scope of its own
         self._element(p.name, qref, path, True, None, p, owner, chain=chain, item=True)
-        self.leaves, self.seen, self.base, self.nest = saved
+        self.leaves, self.seen, self.base, self.nest, self.cur_choice = saved
         if next(all_leaves(g.items), None) is None:
             # nothing of an item can be mapped: no group. The reason is the item's
             # own when the element itself was refused, one line otherwise.
@@ -796,6 +902,11 @@ class Walker:
         self.skipped.append((reason, "/".join(path), owner, member))
 
     def _leaf(self, path, attr, qref, mandatory, choice, owner, member, doc):
+        if choice is None:
+            choice = self.cur_choice
+        if qref[0] == "f":
+            self._skip(R_FOREIGN, path + (("@" + attr,) if attr else ()), owner, member)
+            return
         transform, builtin, note, tname = self.transform_of(qref)
         if transform is None:
             self._skip(R_EMPTY, path + (("@" + attr,) if attr else ()), owner, member)
@@ -819,11 +930,17 @@ class Walker:
         """An element named `name` of type `qref`, placed under `path`. `item`:
         the element is the item of a group, the root of the scope being walked."""
         here = path if top else path + (name,)
+        if self.s.skip and "/".join(here) in self.s.skip:
+            self._skip(R_SKIP, here, owner, name)
+            return
         if not top and not item and self.rel(here) in self.seen:
             self._skip(R_SIBLING, here, owner, name)
             return
         if qref == ("xs", "anyType"):
             self._skip(R_ANYTYPE, here, owner, name)
+            return
+        if qref[0] == "f":
+            self._skip(R_FOREIGN, here, owner, name)
             return
         if self.s.is_simple(qref):
             if top:
@@ -850,7 +967,13 @@ class Walker:
             self.seen.add(self.rel(here))
         if self.derived[tname]:
             self.poly += 1
+        fb = self.s.foreign_base(tname)
+        if fb is not None:
+            self._skip(R_FOREIGN, here, tname, "base " + fb[1].split("}")[1])
         for a in attrs:
+            if a.type[0] == "f":
+                self._skip(R_FOREIGN, here, tname, "@" + a.name)
+                continue
             aref = a.type if a.type[0] != "ref" else ("xs", "anySimpleType")
             try:
                 self._leaf(here, a.name, aref, mandatory and a.use == "required", choice, tname, "@" + a.name, a.doc)
@@ -885,19 +1008,34 @@ class Walker:
             self._skip(R_PROHIBITED, path + ((p.name,) if p.name else ()), owner, p.name or p.kind)
             return
         repeated = p.max is None or p.max > 1
-        if p.kind == "element":
+        if p.kind == "element" and self.sg and p.type[0] == "ref":
+            self._substituted(p, path, mandatory, owner, chain, repeated)
+        elif p.kind == "element":
             self._element_particle(p, path, mandatory, owner, chain, repeated)
         elif p.kind == "any":
             self._skip(R_ANY, path, owner, "xs:any")
+        elif p.kind == "group" and p.name.startswith("{"):
+            self._skip(R_FOREIGN, path, owner, "group " + p.name.split("}")[1])
         elif p.kind == "group":
             if repeated:
                 self._skip(R_REPEAT_GROUP, path, owner, "group " + p.name)
             else:
                 self._particle(self.s.group_particle(p), path, mandatory and p.min >= 1, owner, chain)
+        elif repeated and self.sg and p.kind == "choice" and self._elements_only(p):
+            # --substitution-groups: a repeated choice of elements is one group
+            # per element name; the order among different names is not kept
+            for c in p.children:
+                if c.type[0] == "ref":
+                    self._substituted(c, path, False, owner, chain, True)
+                else:
+                    self._element_particle(c, path, False, owner, chain, True)
         elif repeated:
             # the members of a repeated sequence or choice interleave; a group
             # reads all elements of one name together, so this is not a group
             self._skip(R_REPEAT_GROUP, path, owner, p.kind)
+        elif p.kind == "choice" and self.sg and not self._simple_choice(p) and self._elements_only(p):
+            self._branches(path, owner, chain,
+                           [(c, c.max is None or c.max > 1, c.type[0] == "ref") for c in p.children])
         elif p.kind == "choice":
             self._choice(p, path, owner)
         else:                       # sequence, all
@@ -908,7 +1046,7 @@ class Walker:
         """True, with the place skipped, when one more element step under
         `path` passes the limit of the specification or the cap of this run."""
         if len(path) + 1 > self.hard_depth:
-            self._skip(R_DEPTH, skip_path, owner, member)
+            self._skip(R_DEPTH if self.hard_depth == MAX_DEPTH else R_CAP, skip_path, owner, member)
             return True
         if len(path) + 1 > self.max_depth:
             self._skip(R_CAP, skip_path, owner, member)
@@ -927,6 +1065,79 @@ class Walker:
         else:
             self._group(p, path, owner, chain)
 
+    @staticmethod
+    def _elements_only(p):
+        return bool(p.children) and all(c.kind == "element" for c in p.children)
+
+    def _simple_choice(self, p):
+        return bool(p.children) and all(
+            c.kind == "element" and c.max == 1 and self.s.is_simple(self.s.element_type(c))
+            for c in p.children)
+
+    @staticmethod
+    def _proxy(p, name):
+        """The particle `p` (a ref to a substitution head) standing for member `name`."""
+        q = Particle("element")
+        q.min, q.max, q.name, q.type, q.doc, q.qualified = p.min, p.max, name, ("ref", name), p.doc, True
+        q.file, q.line = p.file, p.line
+        return q
+
+    def _substituted(self, p, path, mandatory, owner, chain, repeated):
+        """--substitution-groups: a ref to a global element stands for that element
+        and every member of its substitution group. One candidate is walked in
+        place; several are a choice when the ref occurs once, and one group per
+        member when it repeats."""
+        names = self.s.members(p.name, self.only)
+        if names == [p.name]:
+            self._element_particle(p, path, mandatory, owner, chain, repeated)
+        elif not names:
+            self._skip(R_NO_MEMBER, path + (p.name,), owner, p.name)
+        elif len(names) == 1:
+            self._element_particle(self._proxy(p, names[0]), path, mandatory, owner, chain, repeated)
+        elif repeated:
+            for n in names:
+                self._element_particle(self._proxy(p, n), path, False, owner, chain, True)
+        else:
+            self._branches(path, owner, chain, [(self._proxy(p, n), False, False) for n in names])
+
+    def _branches(self, path, owner, chain, branches):
+        """A choice whose branches are elements, some of complex type
+        (--substitution-groups): each branch is walked as an optional element,
+        its lines marked with the branch. A vector holds the first branch of
+        every choice, and of a branch other than the first nothing."""
+        if self._over_depth(path, path, owner, "choice"):
+            return
+        self.choice_id += 1
+        cid, outer = self.choice_id, self.cur_choice
+        self.choice_parent[cid] = outer
+        for i, (c, repeated, expand) in enumerate(branches):
+            self.cur_choice = (cid, i)
+            start = len(self.leaves)
+            try:
+                if expand:
+                    self._substituted(c, path, False, owner, chain, repeated)
+                else:
+                    self._element_particle(c, path, False, owner, chain, repeated)
+            finally:
+                self.cur_choice = outer
+            if len(self.leaves) > start:
+                self.choice_first.setdefault(cid, i)
+
+    def _settle_choices(self, items):
+        """--substitution-groups: mark every line of a choice branch (0, on) when
+        its branch is the first one with a line and every branch around it is
+        on, (1, off) otherwise. A vector holds the lines that are on."""
+        def on(c):
+            while c is not None:
+                cid, i = c
+                if i != self.choice_first.get(cid, -1):
+                    return False
+                c = self.choice_parent.get(cid)
+            return True
+        for x in list(all_leaves(items)) + list(all_groups(items)):
+            if x.choice is not None and x.choice[0] in self.choice_parent:
+                x.choice = (x.choice[0], 0 if on(x.choice) else 1)
+
     def _choice(self, p, path, owner):
         """A choice is mapped only when every branch is an element of simple
         type that occurs once: each branch is then a line, and a valid document
@@ -941,6 +1152,9 @@ class Walker:
         if self._over_depth(path, path, owner, "choice"):
             return
         self.choice_id += 1
+        if self.sg:
+            self.choice_parent[self.choice_id] = self.cur_choice
+            self.choice_first[self.choice_id] = 0
         self.unqualified += sum(1 for c in p.children if not c.qualified)
         for i, c in enumerate(p.children):
             try:
@@ -1748,13 +1962,17 @@ def count_items(ent):
     return sum(len(v) + sum(count_items(i) for i in v) for v in ent.values() if isinstance(v, list))
 
 
-def check_every_list_has_items(lines, ent, where):
+def check_every_list_has_items(lines, ent, where, absent=frozenset(), prefix=""):
+    """Every list of the kind has an item, unless the vector's model states it
+    `absent` (a list in a choice branch the vector does not hold)."""
     for ln in lines:
         if ln.d == "group":
+            if prefix + ln.key + ".#" in absent and ln.key not in ent:
+                continue
             if not ent.get(ln.key):
                 raise GenError("list %s has no item" % ln.key, where)
-            for item in ent[ln.key]:
-                check_every_list_has_items(ln.body, item, where)
+            for j, item in enumerate(ent[ln.key]):
+                check_every_list_has_items(ln.body, item, where, absent, "%s%s[%d]." % (prefix, ln.key, j))
 
 
 def replay_vector(pack, fmt, rel, text, seen_names):
@@ -1803,7 +2021,8 @@ def replay_vector(pack, fmt, rel, text, seen_names):
         fail("%d values in the document, %d carried" % (doc_values, places + len(residue)))
     if any(k not in ent for k in kind.requires):
         fail("the vector lacks a key its kind requires")
-    check_every_list_has_items(pack.common + kind.lines, ent, rel)
+    check_every_list_has_items(pack.common + kind.lines, ent, rel,
+                               frozenset(k for k, val in v.get("model", {}).items() if val == "absent"))
     return kind, ent, doc_values
 
 
@@ -1915,7 +2134,7 @@ def walk_messages(schema, msg_names, max_depth, max_nest, key_budget=KEY_BUDGET)
     keys and lists, lower the nesting of groups, then the depth, and walk
     again."""
     w = Walked()
-    w.depth_asked = depth = min(max_depth, MAX_DEPTH)
+    w.depth_asked = depth = min(max_depth, DEPTH_CEILING)
     nest = max(max_nest, 1)
     first = True
     while True:
@@ -2006,7 +2225,7 @@ def common_prefix(kinds):
     first = kinds[0].items
     while n < len(first):
         x = first[n]
-        if isinstance(x, Leaf) and x.choice is not None:
+        if x.choice is not None:
             break
         sig = signature(x)
         if not all(len(k.items) > n and type(k.items[n]) is type(x) and signature(k.items[n]) == sig for k in kinds):
@@ -2082,6 +2301,7 @@ class Plan:
     def __init__(self):
         self.format = self.module = self.title = self.version = None
         self.import_only = []       # base names of files with no targetNamespace that import the set's
+        self.declined, self.substitution, self.only, self.skip = [], False, {}, []
         self.notes = None           # text of --notes-file, placed in pack.md
         self.msg_names, self.rule = [], []
         self.walked = None          # Walked
@@ -2131,6 +2351,8 @@ def make_plan(schema, statements, shared, pinned, args, key_budget=KEY_BUDGET):
 
     plan.tns = schema.tns
     plan.import_only = [base for base, _ in schema.import_only]
+    plan.declined, plan.substitution, plan.only = sorted(schema.declined), schema.substitution, schema.only
+    plan.skip = sorted(schema.skip)
     plan.use_xmlns = (args.vector_xmlns == "auto" and bool(schema.tns) and w.unqualified == 0
                       and not plan.import_only)
     plan.src_lines = ["%s: %s" % (plan.title, ", ".join("%s sha256 %s" % (f.base, f.sha256) for f in schema.files))]
@@ -2337,6 +2559,9 @@ class VectorBuilder:
         `model`; `seq[0]` is the sample index of the next leaf inside a group."""
         placed, first = [], None
         for x in g.items:
+            if isinstance(x, Group) and x.choice is not None and x.choice[1] != 0:
+                model[prefix + x.list + ".#"] = "absent"
+                continue
             if isinstance(x, Group):
                 placed.append(("g", x.path, [self.item(x, "%s%s[0]." % (prefix, x.list), shown, model, seq)[0]]))
                 if shown:
@@ -2359,6 +2584,9 @@ class VectorBuilder:
         seq = [len(k.leaves)]
         placed, own_shown, i = [], 0, -1
         for pos, x in enumerate(k.items):
+            if isinstance(x, Group) and x.choice is not None and x.choice[1] != 0:
+                model[x.list + ".#"] = "absent"
+                continue
             if isinstance(x, Group):
                 built = [self.item(x, "%s[%d]." % (x.list, j), j == 0, model, seq) for j in range(per_group)]
                 placed.append(("g", x.path, [b[0] for b in built]))
@@ -2649,6 +2877,38 @@ def md_walk(s):
         "name together."]
 
 
+def md_options(plan):
+    """What --decline-namespace, --substitution-groups, --substitute and --skip
+    changed; nothing when none is given."""
+    L = []
+    if plan.declined:
+        L += ["\n## Declined namespaces\n",
+              "No file of these namespaces is read; an element, attribute, group, attribute group or base",
+              "type of them is not mapped (reason: %s):" % R_FOREIGN, ""]
+        L += ["- `%s`" % ns for ns in plan.declined]
+    if plan.substitution:
+        L += ["\n## Substitution groups\n",
+              "A reference to a global element stands for that element, unless it is abstract, and for",
+              "every member of its substitution group and of theirs, in declaration order. A member",
+              "declared without a type has its head's type. One candidate is walked in place. Several are",
+              "a choice when the reference occurs once: each candidate is an optional element whose lines",
+              "are marked with the branch, and a vector holds the first branch that has a line, its lists",
+              "stated `absent` in the vector's model otherwise. When the reference repeats, every",
+              "candidate is a `group` of its own; so is every element of a repeated `xs:choice` of",
+              "elements. Decode reads each name's items in order; encode writes all items of one name, then",
+              "the next name's, so a document that interleaves names comes back with its items grouped by",
+              "name. A choice of element branches of complex type is walked the same way."]
+        if plan.only:
+            L += ["", "Members kept for this pack (`--substitute`):", ""]
+            L += ["- `%s`: %s" % (h, ", ".join("`%s`" % m for m in ms)) for h, ms in sorted(plan.only.items())]
+    if plan.skip:
+        L += ["\n## Left out of this pack\n",
+              "These element paths below the root element are not walked (`--skip`); a document that holds",
+              "them decodes, and what lies under them is dropped:", ""]
+        L += ["- `%s`" % p for p in plan.skip]
+    return L
+
+
 def md_types(s):
     L = ["\n## Types\n", "| XSD built-in base | Transform | Leaves |\n|---|---|---|"]
     for (x, tr), n in sorted(s.by_xs.items(), key=lambda kv: (-kv[1], kv[0])):
@@ -2845,6 +3105,7 @@ def pack_md(schema, statements, plan, stats, vectors, cross, names_file):
     L += md_counts(schema, plan, stats, len(cross))
     L += md_messages(plan)
     L += md_walk(stats)
+    L += md_options(plan)
     L += md_types(stats)
     L += md_mapped(plan, stats)
     L += md_namespaces(plan)
@@ -3031,7 +3292,8 @@ def build_parser():
     ap.add_argument("--names-file", required=True,
                     help="the names pinned to keys and lists: read when it exists, then written")
     ap.add_argument("--max-depth", type=int, default=MAX_DEPTH,
-                    help="element steps below the root that are walked (at most %d)" % MAX_DEPTH)
+                    help="element steps below the root that are walked (default %d, at most %d)"
+                         % (MAX_DEPTH, DEPTH_CEILING))
     ap.add_argument("--max-nest", type=int, default=MAX_DEPTH,
                     help="groups inside groups: 1 maps a repeated element and nothing repeated inside its item "
                          "(lowered by the run itself when the module would pass %d keys and lists)" % KEY_BUDGET)
@@ -3046,6 +3308,16 @@ def build_parser():
     ap.add_argument("--vector-xmlns", choices=("auto", "never"), default="auto",
                     help="auto: the vectors declare the schema's namespace on the root when every element is "
                          "qualified; never: no namespace declaration")
+    ap.add_argument("--decline-namespace", action="append", default=[], metavar="URI",
+                    help="a namespace whose files are not read: its declarations are listed as not mapped")
+    ap.add_argument("--substitution-groups", action="store_true",
+                    help="expand substitution groups, and walk choices of complex element branches and repeated "
+                         "choices of elements (one group per element name)")
+    ap.add_argument("--substitute", action="append", default=[], metavar="HEAD=MEMBER[,MEMBER...]",
+                    type=lambda t: (lambda h, _, m: (h, [x for x in m.split(",") if x]))(*t.partition("=")),
+                    help="with --substitution-groups: the members of HEAD's group that this pack keeps")
+    ap.add_argument("--skip", action="append", default=[], metavar="PATH",
+                    help="an element path below the root element, as in a locator (names joined by /), that is not walked")
     ap.add_argument("--notes-file", default=None, metavar="FILE",
                     help="markdown placed in pack.md after the section on shared keys")
     ap.add_argument("--public-statement", default=None, metavar="TEXT",
@@ -3058,7 +3330,18 @@ def build_parser():
 def run(args):
     """parse -> plan -> emit -> self-check. Returns the exit status."""
     out = genio.Output(args.out, check=args.check)
-    schema, statements = read_schema(args.xsd, dict(args.alias), args.public_statement)
+    schema, statements = read_schema(args.xsd, dict(args.alias), args.public_statement,
+                                     args.decline_namespace, args.substitution_groups)
+    if args.substitute and not args.substitution_groups:
+        raise GenError("--substitute needs --substitution-groups")
+    for head, members in args.substitute:
+        if head not in schema.elements:
+            raise GenError("--substitute %s: no such global element" % head)
+        for m in members:
+            if m not in schema.members(head):
+                raise GenError("--substitute %s: %s is not a member of its substitution group" % (head, m))
+        schema.only.setdefault(head, []).extend(members)
+    schema.skip = frozenset(p.strip("/") for p in args.skip)
     shared = read_shared_modules(args.model_dir, out)
     plan = make_plan(schema, statements, shared, read_pinned(args.names_file), args)
     warning = over_budget_warning(plan.walked, plan.module)
