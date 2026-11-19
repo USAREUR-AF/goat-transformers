@@ -3,11 +3,12 @@
   "from": "mavlink2",
   "to": "geojson",
   "input": "fd1900000b030154010000401e18240a060090c14315d8f13c53409c000088130000037f3a",
-  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[139.6503,35.6762]},\"properties\":{}}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[139.6503,35.6762]},\"properties\":{\"time_ms\":1700000000000}}",
   "model": {
     "@kind": "utm_global_position",
     "lat": "35.6762",
     "lon": "139.6503",
+    "time_ms": "1700000000000",
     "mavlink.seq": "11",
     "mavlink.sysid": "3",
     "mavlink.compid": "1"

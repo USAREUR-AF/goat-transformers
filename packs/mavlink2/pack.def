@@ -56,8 +56,8 @@ field     mavlink.onboard_control_sensors_health_extended 0:392:32 uint
 kind      system_time
 when      0:56:24 2
 when      0:8:8 12
-requires  mavlink.time_unix_usec_us mavlink.time_boot_ms
-field     mavlink.time_unix_usec_us 0:80:64 uint
+requires  mavlink.time_boot_ms
+field     time_ms 0:80:64 uiscale:1/1000
 field     mavlink.time_boot_ms 0:144:32 uint
 
 kind      ping
@@ -4000,8 +4000,8 @@ field     mavlink.camera_device_id 0:256:8 uint
 kind      camera_image_captured
 when      0:56:24 263
 when      0:8:8 255
-requires  mavlink.time_utc_us mavlink.relative_alt_mm mavlink.image_index mavlink.camera_id mavlink.capture_result mavlink.file_url
-field     mavlink.time_utc_us 0:80:64 uint absent 0
+requires  mavlink.alt_mm mavlink.relative_alt_mm mavlink.image_index mavlink.camera_id mavlink.capture_result mavlink.file_url
+field     time_ms 0:80:64 uiscale:1/1000 absent 0
 field     mavlink.time_boot_ms 0:144:32 uint
 field     lat 0:176:32 sscale:1/10000000
 field     lon 0:208:32 sscale:1/10000000
@@ -5331,8 +5331,8 @@ field     mavlink.index 0:112:8 uint
 kind      utm_global_position
 when      0:56:24 340
 when      0:8:8 70
-requires  mavlink.time_us mavlink.next_lat_dege7 mavlink.next_lon_dege7 mavlink.next_alt_mm mavlink.vel_acc_cm_per_s mavlink.update_rate_cs
-field     mavlink.time_us 0:80:64 uint
+requires  mavlink.next_lat_dege7 mavlink.next_lon_dege7 mavlink.next_alt_mm mavlink.vel_acc_cm_per_s mavlink.update_rate_cs mavlink.flight_state
+field     time_ms 0:80:64 uiscale:1/1000
 field     lat 0:144:32 sscale:1/10000000
 field     lon 0:176:32 sscale:1/10000000
 field     mavlink.alt_mm 0:208:32 twos
@@ -6378,13 +6378,13 @@ field     mavlink.description 0:264:184 ascii
 kind      open_drone_id_system
 when      0:56:24 12904
 when      0:8:8 54
-requires  mavlink.area_ceiling_m mavlink.area_floor_m mavlink.open_drone_id_system_timestamp_s mavlink.area_count mavlink.area_radius_m mavlink.operator_location_type
+requires  mavlink.area_ceiling_m mavlink.area_floor_m mavlink.area_count mavlink.area_radius_m mavlink.operator_location_type mavlink.classification_type
 field     mavlink.operator_latitude_dege7 0:80:32 twos absent 0
 field     mavlink.operator_longitude_dege7 0:112:32 twos absent 0
 field     mavlink.area_ceiling_m 0:144:32 f32 absent 3296329728
 field     mavlink.area_floor_m 0:176:32 f32 absent 3296329728
 field     mavlink.operator_altitude_geo_m 0:208:32 f32 absent 3296329728
-field     mavlink.open_drone_id_system_timestamp_s 0:240:32 uint
+field     time_ms 0:240:32 uiscale:1000:1546300800000
 field     mavlink.area_count 0:272:16 uint
 field     mavlink.area_radius_m 0:288:16 uint
 field     mavlink.target_system 0:304:8 uint
@@ -6707,11 +6707,11 @@ field     mavlink.open_drone_id_arm_status_error 0:88:400 ascii
 kind      open_drone_id_system_update
 when      0:56:24 12919
 when      0:8:8 18
-requires  mavlink.operator_latitude_dege7 mavlink.operator_longitude_dege7 mavlink.operator_altitude_geo_m mavlink.open_drone_id_system_update_timestamp_s mavlink.target_system mavlink.target_component
+requires  mavlink.operator_latitude_dege7 mavlink.operator_longitude_dege7 mavlink.operator_altitude_geo_m mavlink.target_system mavlink.target_component
 field     mavlink.operator_latitude_dege7 0:80:32 twos absent 0
 field     mavlink.operator_longitude_dege7 0:112:32 twos absent 0
 field     mavlink.operator_altitude_geo_m 0:144:32 f32 absent 3296329728
-field     mavlink.open_drone_id_system_update_timestamp_s 0:176:32 uint
+field     time_ms 0:176:32 uiscale:1000:1546300800000
 field     mavlink.target_system 0:208:8 uint
 field     mavlink.target_component 0:216:8 uint
 

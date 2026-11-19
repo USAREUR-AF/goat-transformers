@@ -95,7 +95,7 @@ The position is the one the message reports:
 
 Not bound to a shared key, for the reasons `packs/mavlink2/pack.md` gives:
 altitude (MAVLink altitudes are above mean sea level or relative, core `hae` is
-above the ellipsoid), epoch times in microseconds, and speed, course and velocity
+above the ellipsoid), times that may be since boot, and speed, course and velocity
 (the frame is stated in description text, not in the units).
 
 ### `requires`
@@ -103,6 +103,11 @@ above the ellipsoid), epoch times in microseconds, and speed, course and velocit
 Each kind requires up to 6 of its own raw keys, the ones used by the fewest
 kinds of this pack. No kind requires a core key, so a GeoJSON or CoT entity, or an
 entity decoded by another MAVLink pack, selects no kind here (`no-kind`).
+
+## Times
+
+No field of this message set states a time since the Unix epoch on its own, so
+no key is bound to core `time_ms`.
 
 ## Values that mean unknown
 
