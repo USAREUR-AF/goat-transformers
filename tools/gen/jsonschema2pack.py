@@ -1449,6 +1449,12 @@ def run(argv=None):
     ap.add_argument("--when", action="append", default=[], metavar="PATH=VALUE", help="a common `when`")
     ap.add_argument("--map", action="append", default=[], metavar="KIND:PATH=KEY",
                     help="bind the leaf at PATH of KIND (or * for every kind) to a shared key")
+    ap.add_argument("--date-time", action="append", default=[], metavar="KIND:PATH",
+                    help="the string at PATH is a date-time though the schema states it another way "
+                         "(a pattern): a --map to an int key reads it with iso8601_ms")
+    ap.add_argument("--evidence", action="append", default=[], metavar="KIND:PATH=TEXT",
+                    help="pack.md states this text, in the project's words, as the evidence of the "
+                         "binding at PATH in place of the schema's description")
     ap.add_argument("--scale", action="append", default=[], metavar="KIND:PATH=iscale:FACTOR[:OFFSET]",
                     help="the line of a --map binding reads the number through this transform "
                          "(engine-spec 0.15), e.g. POSIX seconds to time_ms with iscale:1000")
@@ -1518,6 +1524,28 @@ def run(argv=None):
     for k in kinds:
         assign(k["lines"], names, a.module, "", a.wire)
 
+    # strings the schema states as date-times by a pattern, not by `format`
+    for spec in a.date_time:
+        kn, path = spec.split(":", 1) if ":" in spec else (spec, "")
+        targets = kinds if kn == "*" else [by[kn]] if kn in by else None
+        if targets is None:
+            raise GenError("--date-time names no --message %s" % kn)
+        for k in targets:
+            leaf = [ln for ln in k["lines"] if isinstance(ln, Leaf) and ".".join(ln.path) == path]
+            if not leaf:
+                raise GenError("--date-time %s: no mapped leaf at that path" % spec)
+            if leaf[0].jtype != "string":
+                raise GenError("--date-time %s: the leaf is %s, not a string" % (spec, leaf[0].jtype))
+            leaf[0].node.format = "date-time"
+    evidence = {}
+    for spec in a.evidence:
+        kn, rest = spec.split(":", 1) if ":" in spec else (spec, "")
+        path, text = parse_kv(rest, "--evidence")
+        if "|" in text or not text.strip():
+            raise GenError("--evidence %s: empty or contains |" % spec)
+        evidence[(kn, path)] = text.strip()
+    a.evidence_of = evidence
+
     # shared-key bindings
     maps = []
     for spec in a.map:
@@ -1549,6 +1577,9 @@ def run(argv=None):
         if st == "float" and leaf.jtype == "integer":
             leaf.shared_transform = "float"
         bound.append((k, path, key, leaf))
+    for (kn, path) in a.evidence_of:
+        if not any(p == path and leaf is not None and (kn == "*" or k["label"] == kn) for k, p, key, leaf in bound):
+            raise GenError("--evidence %s:%s: no --map binding at that path" % (kn, path))
     for spec in a.scale:
         kn, rest = spec.split(":", 1) if ":" in spec else (spec, "")
         path, tr = parse_kv(rest, "--scale")
@@ -1979,12 +2010,17 @@ def write_md(a, reg, kinds, bound, keys, lists, vectors, cross, use_kinds):
         w.append("carries back as it was (engine-spec 0.1, ruling 13 of 0.6).\n")
     w.append("## Mapped to shared keys\n")
     if bound:
-        w.append("| Kind | Path | Key | Schema type | Evidence (the schema's own text) |\n|---|---|---|---|---|")
+        w.append("| Kind | Path | Key | Schema type | Evidence (%s) |\n|---|---|---|---|---|" % (
+            "in this project's words; the notes name the source" if getattr(a, "evidence_of", None)
+            else "the schema's own text"))
         for k, path, key, leaf in bound:
             if leaf is None:
                 w.append("| `%s` | `%s` | `%s` | Point coordinate | see the notes below |" % (k["name"], path, key))
             else:
                 ev = " / ".join('"%s"' % d for d in leaf.node.descs[:2]) or "see the notes below"
+                own = getattr(a, "evidence_of", {})
+                if (k["label"], path) in own or ("*", path) in own:
+                    ev = own.get((k["label"], path)) or own[("*", path)]
                 w.append("| `%s` | `%s` | `%s` (%s, %s) | %s%s | %s |" % (
                     k["name"], path, key, KEYS_CACHE.get(key, ("?", "?"))[0], KEYS_CACHE.get(key, ("?", "?"))[1],
                     leaf.jtype, ((", " + leaf.node.format) if leaf.node.format else "") +
