@@ -35,6 +35,7 @@ import re
 import struct
 import sys
 from decimal import Decimal
+from fractions import Fraction
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import genio      # noqa: E402  (the script directory is not on the path under `python3 -I`)
@@ -93,6 +94,24 @@ CROSS = {
         '{"type":"Feature","geometry":{"type":"Point","coordinates":[180,-90]},"properties":{}}'),
 }
 DEGE7 = "1/10000000"
+
+# Fields bound to core `time_ms` (epoch milliseconds UTC): (data type, field) ->
+# (transform, evidence in this project's words). The transform is an integer
+# scale of engine-spec 0.15.
+TIME = {
+    ("dronecan.remoteid.System", "timestamp"):
+        ("uiscale:1000:1546300800000",
+         "uint32, seconds since 2019-01-01 00:00:00 UTC as the definition states, which is "
+         "1546300800 s after the Unix epoch"),
+}
+
+# One conversion to GeoJSON per pack that binds time_ms: the raw value and the
+# expected text, written by hand. 153699200 s after 2019-01-01 is
+# 2023-11-14T22:13:20Z, 1700000000000 ms.
+TIME_CROSS = {
+    "dronecan.remoteid.System": (153699200,
+        '{"type":"Feature","geometry":null,"properties":{"time_ms":1700000000000}}'),
+}
 
 
 # ------------------------------------------------------------------ DSDL ---
@@ -449,6 +468,11 @@ class Layout:
                        else "%d-bit integer: not a whole number of bytes, wider than 8 bits" % typ.bits)
                 self.unmapped.append(("_".join(path), repr(typ), why))
                 return [("pad", typ.bits, why)]
+            tm = TIME.get((self.top, "_".join(path[self.depth:]))) if self.top else None
+            if tm:
+                if typ.kind != "uint":
+                    raise GenError("TIME entry for a %r field" % typ)
+                return [("field", "time_ms", typ.bits, tm[0], pl[1], tuple(path))]
             core = CORE.get((self.top, "_".join(path[self.depth:]))) if self.top else None
             if core:
                 if typ.kind == "int" and typ.bits == 32:
@@ -677,6 +701,14 @@ def module_text(ns, packs, sha):
                 raise GenError("key %s twice in module %s" % (name, mod))
             seen.add(name)
             o.append('key   %s  %s  -  "%s of %s"' % (name, typ, field_words(name, p), p.t.full))
+        # a field now bound to core time_ms keeps the raw key it had before, so
+        # no key of the module is removed (AGENTS.md rule 7)
+        for (tfull, fname) in TIME:
+            name = "_".join(p.prefix + [fname])
+            if tfull == p.t.full and not p.role and name not in seen:
+                seen.add(name)
+                o.append('key   %s  int  -  "%s of %s; no longer mapped, the value is core time_ms"'
+                         % (name, field_words(name, p), p.t.full))
         for l in p.lists:
             name = l.split(".", 1)[1]
             if name in seen:
@@ -860,7 +892,18 @@ def from_raw(tr, n, v, swap):
         if v >> (n - 1):
             v -= 1 << n
         return v * float(num) / float(den)         # engine-spec 0.5 ruling 1
+    if tr.startswith("uiscale:"):
+        num, den, off = int_scale(tr)               # engine-spec 0.15: round(v * factor) + offset
+        q = Fraction(v * num, den)
+        return int(math.floor(abs(q) + Fraction(1, 2))) * (1 if q >= 0 else -1) + off
     raise GenError("transform " + tr)
+
+
+def int_scale(tr):
+    """(numerator, denominator, offset) of a `uiscale:<factor>[:<offset>]`."""
+    parts = tr.split(":")[1:]
+    f = Fraction(*map(int, parts[0].split("/"))) if "/" in parts[0] else Fraction(Decimal(parts[0]))
+    return f.numerator, f.denominator, int(parts[1]) if len(parts) > 1 else 0
 
 
 def to_raw(tr, n, x, swap):
@@ -873,6 +916,12 @@ def to_raw(tr, n, x, swap):
         v = r & ((1 << n) - 1)
     elif tr == "f32":
         v = int.from_bytes(struct.pack(">f", x), "big")
+    elif tr.startswith("uiscale:"):
+        num, den, off = int_scale(tr)               # round((x - offset) / factor)
+        q = Fraction((x - off) * den, num)
+        v = int(math.floor(abs(q) + Fraction(1, 2))) * (1 if q >= 0 else -1)
+        if not 0 <= v < 1 << n:
+            raise GenError("transform-encode")
     else:
         v = int.from_bytes(struct.pack(">d", x), "big")
     if swap:
@@ -1050,6 +1099,10 @@ def model_of(ps, val):
     def value(typ, v, path, out):
         key = "%s.%s" % (ps.module, "_".join(path))
         core = CORE.get((ps.t.full, "_".join(path[len(ps.prefix):])))
+        tm = TIME.get((ps.t.full, "_".join(path[len(ps.prefix):])))
+        if isinstance(typ, Prim) and tm:
+            out["time_ms"] = from_raw(tm[0], typ.bits, v, False)
+            return
         if isinstance(typ, Prim) and core:
             out[core[0]] = v / 10000000.0 if typ.kind == "int" else v
             return
@@ -1078,7 +1131,7 @@ def model_of(ps, val):
 
 def prune(ent, ps):
     """Keep only what the pack maps (keys and lists that appear in it)."""
-    names = set(ps.keys) | set(ps.lists) | {"lat", "lon"}
+    names = set(ps.keys) | set(ps.lists) | {"lat", "lon", "time_ms"}
     out = collections.OrderedDict()
     for k, v in ent.items():
         if k == "@kind" or k in names:
@@ -1187,6 +1240,20 @@ def vector_files(ps, types):
             ("name", "%s-to-geojson" % ps.format), ("from", ps.format), ("to", "geojson"),
             ("input", w.to_bytes().hex()), ("expect", CROSS[ps.t.full][2]), ("model", model)])
         vecs.append(("x-01-to-geojson.json", vector_text(vec)))
+    if ps.t.full in TIME_CROSS and not ps.t.service:
+        raw, expect = TIME_CROSS[ps.t.full]
+        val = values_for(ps, types)[0]
+        for (tfull, fname) in TIME:
+            if tfull == ps.t.full:
+                val[fname] = raw
+        w = BitWriter()
+        ser_body(w, ps.body, val, types, True)
+        ent = prune(model_of(ps, val), ps)
+        vec = collections.OrderedDict([
+            ("name", "%s-time-to-geojson" % ps.format), ("from", ps.format), ("to", "geojson"),
+            ("input", w.to_bytes().hex()), ("expect", expect),
+            ("model", collections.OrderedDict([("time_ms", str(ent["time_ms"]))]))])
+        vecs.append(("x-02-time-to-geojson.json", vector_text(vec)))
     return vecs
 
 
@@ -1205,7 +1272,8 @@ def geojson_of(ent):
         geom = '{"type":"Point","coordinates":[%s,%s]}' % (fmt_float(ent["lon"]), fmt_float(ent["lat"]))
     else:
         geom = "null"
-    return '{"type":"Feature","geometry":%s,"properties":{}}' % geom
+    props = '"time_ms":%d' % ent["time_ms"] if "time_ms" in ent else ""
+    return '{"type":"Feature","geometry":%s,"properties":{%s}}' % (geom, props)
 
 
 def check_vectors(pack_root, vectors, fmt, reader=None, decode=None, encode=None):
@@ -1377,6 +1445,18 @@ def pack_md(ps, sha, nvec):
         a("No key of this pack is bound to a `core` or `track` key: units and frames are")
         a("stated in the definition's comments, and the generator binds only the")
         a("latitude/longitude pairs it lists with their evidence.")
+    times = [(f, v) for (t, f), v in TIME.items() if t == ps.t.full and not ps.role]
+    if times:
+        a("")
+        a("Bound to core `time_ms` (epoch milliseconds UTC) by the generator's TIME table,")
+        a("with an integer scale of engine-spec 0.15:")
+        a("")
+        a("| Field | Core key | Transform | Evidence |")
+        a("|---|---|---|---|")
+        for f, (tr, why) in times:
+            a("| `%s` | `time_ms` | `%s` with `swap` | %s |" % (f, tr, why))
+        a("")
+        a("The raw key the field had before stays declared in the module, not mapped.")
     a("")
     a("## What is not mapped")
     a("")

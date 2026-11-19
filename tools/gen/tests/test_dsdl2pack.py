@@ -121,6 +121,19 @@ class DroneCAN(FamilyCase):
         self.assertFalse(os.path.exists(os.path.join(root, "packs", "dronecan-testns-point")),
                          "a type with no data type ID gets no pack")
 
+    def test_a_time_entry_binds_time_ms_and_keeps_the_raw_key(self):
+        from unittest import mock
+        with mock.patch.dict(gen.TIME, {("testns.Sample", "count"): ("uiscale:1000:1546300800000", "test")}):
+            root = self.make_root()
+            status, _, err = self.run_gen(root)
+        self.assertEqual((status, err), (0, ""))
+        self.assertIn("field  time_ms  32  uiscale:1000:1546300800000  swap",
+                      self.pack_text(root, "dronecan-testns-sample"))
+        with open(os.path.join(root, "model", "dctestns.def"), encoding="utf-8") as fh:
+            self.assertIn("key   sample_count  int", fh.read())
+        self.assertEqual(gen.from_raw("uiscale:1000:1546300800000", 32, 153699200, False), 1700000000000)
+        self.assertEqual(gen.to_raw("uiscale:1000:1546300800000", 32, 1700000000000, False), 153699200)
+
     def test_serializer_bit_order(self):
         """A 12-bit value: the low byte, then the top four bits in the high
         half of the next byte (DroneCAN's order)."""

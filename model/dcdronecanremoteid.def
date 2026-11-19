@@ -56,5 +56,5 @@ key   system_area_floor  float  -  "field area_floor of dronecan.remoteid.System
 key   system_category_eu  int  -  "field category_eu of dronecan.remoteid.System"
 key   system_class_eu  int  -  "field class_eu of dronecan.remoteid.System"
 key   system_operator_altitude_geo  float  -  "field operator_altitude_geo of dronecan.remoteid.System"
-key   system_timestamp  int  -  "field timestamp of dronecan.remoteid.System"
+key   system_timestamp  int  -  "field timestamp of dronecan.remoteid.System; no longer mapped, the value is core time_ms"
 list  system_id_or_mac  "the items of dynamic array id_or_mac of dronecan.remoteid.System"
