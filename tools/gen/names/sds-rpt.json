@@ -1,0 +1,23 @@
+{
+ "keys": {
+  "content_hash|.|int": "content_hash_value",
+  "signature|.|int": "signature_value",
+  "source_data_hash|.|int": "source_data_hash_value",
+  "|CONTENT_CID|string": "content_cid",
+  "|CONTENT_TYPE|string": "content_type",
+  "|CREATOR_EPM_CID|string": "creator_epm_cid",
+  "|GENERATED_AT|int": "generated_at",
+  "|GENERATOR_MODULE_ID|string": "generator_module_id",
+  "|GENERATOR_MODULE_VERSION|string": "generator_module_version",
+  "|REPORT_ID|string": "report_id",
+  "|SOURCE_QUERY|string": "source_query",
+  "|TEMPLATE_ID|string": "template_id",
+  "|TEMPLATE_VERSION|string": "template_version",
+  "|TITLE|string": "title"
+ },
+ "lists": {
+  "|CONTENT_HASH": "content_hash",
+  "|SIGNATURE": "signature",
+  "|SOURCE_DATA_HASH": "source_data_hash"
+ }
+}

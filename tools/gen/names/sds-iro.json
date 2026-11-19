@@ -1,0 +1,38 @@
+{
+ "keys": {
+  "spectral_values|.|float": "spectral_values_value",
+  "wavelengths|.|float": "wavelengths_value",
+  "|AZIMUTH|float": "azimuth",
+  "|BACKGROUND|float": "background",
+  "|BAND|string": "band",
+  "|DEC_UNC|float": "dec_unc",
+  "|DEC|float": "dec",
+  "|DESCRIPTION|string": "description",
+  "|DETECTION_TYPE|string": "detection_type",
+  "|ELEVATION|float": "elevation",
+  "|ENTITY|string": "entity",
+  "|EPOCH|string": "epoch",
+  "|ID_ENTITY|string": "id_entity",
+  "|ID|string": "id",
+  "|INTEGRATION_TIME|float": "integration_time",
+  "|IRRADIANCE_UNC|float": "irradiance_unc",
+  "|IRRADIANCE|float": "irradiance",
+  "|IR_MAG|float": "ir_mag",
+  "|MAG_UNC|float": "mag_unc",
+  "|NAME|string": "name",
+  "|NOTES|string": "notes",
+  "|OBJECT_DESIGNATOR|string": "object_designator",
+  "|QUALITY|int": "quality",
+  "|RANGE|float": "range",
+  "|RA_UNC|float": "ra_unc",
+  "|RA|float": "ra",
+  "|SAT_NO|int": "sat_no",
+  "|SENSOR_ID|string": "sensor_id",
+  "|SNR|float": "snr",
+  "|TEMPERATURE|float": "temperature"
+ },
+ "lists": {
+  "|SPECTRAL_VALUES": "spectral_values",
+  "|WAVELENGTHS": "wavelengths"
+ }
+}

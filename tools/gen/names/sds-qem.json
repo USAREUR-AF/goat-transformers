@@ -1,0 +1,24 @@
+{
+ "keys": {
+  "tokens_vector_float32|.|float": "tokens_vector_float32_value",
+  "tokens_vector_int8|.|int": "tokens_vector_int8_value",
+  "tokens|IDF|float": "tokens_idf",
+  "tokens|SCALE|float": "tokens_scale",
+  "tokens|TOKEN_ID|int": "tokens_token_id",
+  "tokens|TOKEN|string": "tokens_token",
+  "|DIMENSIONS|int": "dimensions",
+  "|ENCODING|string": "encoding",
+  "|MODEL_ID|string": "model_id",
+  "|MODEL_VERSION|string": "model_version",
+  "|MODEL_WEIGHTS_SHA256|string": "model_weights_sha256",
+  "|NORMALIZATION|string": "normalization",
+  "|POOLING_METHOD|string": "pooling_method",
+  "|TEMPLATE_VERSION|string": "template_version",
+  "|VOCAB_SIZE|int": "vocab_size"
+ },
+ "lists": {
+  "tokens|VECTOR_FLOAT32": "tokens_vector_float32",
+  "tokens|VECTOR_INT8": "tokens_vector_int8",
+  "|TOKENS": "tokens"
+ }
+}

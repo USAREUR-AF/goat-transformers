@@ -1,0 +1,17 @@
+{
+ "name": "gen-bov-roundtrip",
+ "from": "sds-bov",
+ "to": "sds-bov",
+ "input": "{\"E_COORDINATE\":7.0625,\"F_COORDINATE\":1.5,\"G_COORDINATE\":7.0625,\"E_DOT\":12.5,\"F_DOT\":101.125,\"G_DOT\":-0.5,\"EPOCH\":\"s65187\",\"TIME_FROM_LAUNCH\":-0.5}",
+ "expect": "{\"E_COORDINATE\":7.0625,\"F_COORDINATE\":1.5,\"G_COORDINATE\":7.0625,\"E_DOT\":12.5,\"F_DOT\":101.125,\"G_DOT\":-0.5,\"EPOCH\":\"s65187\",\"TIME_FROM_LAUNCH\":-0.5}",
+ "model": {
+  "sdsbov.e_coordinate": "7.0625",
+  "sdsbov.f_coordinate": "1.5",
+  "sdsbov.g_coordinate": "7.0625",
+  "sdsbov.e_dot": "12.5",
+  "sdsbov.f_dot": "101.125",
+  "sdsbov.g_dot": "-0.5",
+  "sdsbov.epoch": "s65187",
+  "sdsbov.time_from_launch": "-0.5"
+ }
+}

@@ -1,0 +1,21 @@
+{
+ "keys": {
+  "observations|.|string": "observations_value",
+  "|COMMAND|string": "command",
+  "|CONJUNCTION_PRIMARY|string": "conjunction_primary",
+  "|CONJUNCTION_SECONDARY|string": "conjunction_secondary",
+  "|EPOCH_MS|int": "epoch_ms",
+  "|FORMATION_CONFIG|string": "formation_config",
+  "|GROUND_STATION|string": "ground_station",
+  "|INITIAL_ELEMENTS|string": "initial_elements",
+  "|INITIAL_STATE|string": "initial_state",
+  "|MANEUVER_PLAN|string": "maneuver_plan",
+  "|OD_CONFIG|string": "od_config",
+  "|PROPAGATION_REQUEST|string": "propagation_request",
+  "|TARGET_ELEMENTS|string": "target_elements",
+  "|TLE|string": "tle"
+ },
+ "lists": {
+  "|OBSERVATIONS": "observations"
+ }
+}

@@ -1,0 +1,13 @@
+{
+ "keys": {
+  "|ACTIVE_CONFIG|string": "active_config",
+  "|COMMAND|string": "command",
+  "|ENVIRONMENT|string": "environment",
+  "|PASSIVE_CONFIG|string": "passive_config",
+  "|TARGET_SIGNATURE|string": "target_signature",
+  "|TL_REQUEST|string": "tl_request",
+  "|TMA_INPUT|string": "tma_input",
+  "|TORPEDO_SEEKER|string": "torpedo_seeker"
+ },
+ "lists": {}
+}

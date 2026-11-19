@@ -1,0 +1,16 @@
+{
+ "name": "gen-clt-roundtrip",
+ "from": "sds-clt",
+ "to": "sds-clt",
+ "input": "{\"PDU_TYPE\":\"START_INVOCATION\",\"INITIATOR_ID\":\"s40043\",\"RESPONDER_PORT_ID\":\"s68799\",\"SERVICE_TYPE\":35,\"VERSION\":43473,\"INVOKE_ID\":3601509553,\"DATA\":[205,125]}",
+ "expect": "{\"PDU_TYPE\":\"START_INVOCATION\",\"INITIATOR_ID\":\"s40043\",\"RESPONDER_PORT_ID\":\"s68799\",\"SERVICE_TYPE\":35,\"VERSION\":43473,\"INVOKE_ID\":3601509553,\"DATA\":[205,125]}",
+ "model": {
+  "sdsclt.pdu_type": "START_INVOCATION",
+  "sdsclt.initiator_id": "s40043",
+  "sdsclt.responder_port_id": "s68799",
+  "sdsclt.service_type": "35",
+  "sdsclt.version": "43473",
+  "sdsclt.invoke_id": "3601509553",
+  "sdsclt.data.#": "2"
+ }
+}

@@ -1,0 +1,11 @@
+{
+ "name": "gen-atm-roundtrip",
+ "from": "sds-atm",
+ "to": "sds-atm",
+ "input": "{\"MODEL\":\"TIECGM\",\"YEAR\":1956114731}",
+ "expect": "{\"MODEL\":\"TIECGM\",\"YEAR\":1956114731}",
+ "model": {
+  "sdsatm.model": "TIECGM",
+  "sdsatm.year": "1956114731"
+ }
+}

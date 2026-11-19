@@ -1,0 +1,17 @@
+{
+ "name": "gen-lks-roundtrip",
+ "from": "sds-lks",
+ "to": "sds-lks",
+ "input": "{\"ID\":\"s23575\",\"ID_ON_ORBIT1\":\"s48845\",\"SAT_NO1\":284959519,\"ID_ON_ORBIT2\":\"s45283\",\"SAT_NO2\":2574626395,\"CONSTELLATION\":\"s39861\",\"LINK_NAME\":\"s22524\",\"LINK_TYPE\":\"UPLINK\",\"LINK_STATE\":\"UNKNOWN\",\"BAND\":\"s29912\",\"LINK_START_TIME\":\"s65598\",\"LINK_STOP_TIME\":\"s22678\",\"ID_BEAM1\":\"s51278\",\"END_POINT1_NAME\":\"s63441\",\"END_POINT1_LAT\":-3.25,\"END_POINT1_LON\":1.5,\"ID_BEAM2\":\"s84030\",\"END_POINT2_NAME\":\"s38432\",\"END_POINT2_LAT\":7.0625,\"END_POINT2_LON\":12.5,\"DATA_RATE1_TO2\":-3.25,\"DATA_RATE2_TO1\":0.75,\"SYS_CAP\":\"s55594\",\"OPS_CAP\":\"s60439\"}",
+ "expect": "{\"ID\":\"s23575\",\"ID_ON_ORBIT1\":\"s48845\",\"SAT_NO1\":284959519,\"ID_ON_ORBIT2\":\"s45283\",\"SAT_NO2\":2574626395,\"CONSTELLATION\":\"s39861\",\"LINK_NAME\":\"s22524\",\"LINK_TYPE\":\"UPLINK\",\"LINK_STATE\":\"UNKNOWN\",\"BAND\":\"s29912\",\"LINK_START_TIME\":\"s65598\",\"LINK_STOP_TIME\":\"s22678\",\"ID_BEAM1\":\"s51278\",\"END_POINT1_NAME\":\"s63441\",\"END_POINT1_LAT\":-3.25,\"END_POINT1_LON\":1.5,\"ID_BEAM2\":\"s84030\",\"END_POINT2_NAME\":\"s38432\",\"END_POINT2_LAT\":7.0625,\"END_POINT2_LON\":12.5,\"DATA_RATE1_TO2\":-3.25,\"DATA_RATE2_TO1\":0.75,\"SYS_CAP\":\"s55594\",\"OPS_CAP\":\"s60439\"}",
+ "model": {
+  "uid": "s23575",
+  "sdslks.id": "s23575",
+  "sdslks.id_on_orbit1": "s48845",
+  "sdslks.sat_no1": "284959519",
+  "sdslks.id_on_orbit2": "s45283",
+  "sdslks.sat_no2": "2574626395",
+  "sdslks.constellation": "s39861",
+  "sdslks.link_name": "s22524"
+ }
+}

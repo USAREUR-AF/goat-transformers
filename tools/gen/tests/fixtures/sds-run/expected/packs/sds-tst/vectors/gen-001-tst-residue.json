@@ -1,0 +1,7 @@
+{
+ "name": "gen-tst-residue",
+ "from": "sds-tst",
+ "to": "sds-tst",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"ID\":\"s14610\",\"EPOCH\":\"s35809\",\"COUNT\":3662865920,\"KIND\":\"ALPHA\",\"VALUES\":[0.75,42.375],\"CHOICE_type\":\"BranchA\",\"CHOICE\":{\"A_VALUE\":42.375,\"B_NAME\":\"s41121\"}}",
+ "expect": "{\"ID\":\"s14610\",\"EPOCH\":\"s35809\",\"COUNT\":3662865920,\"KIND\":\"ALPHA\",\"VALUES\":[0.75,42.375],\"CHOICE_type\":\"BranchA\",\"CHOICE\":{\"A_VALUE\":42.375,\"B_NAME\":\"s41121\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

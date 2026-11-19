@@ -1,0 +1,17 @@
+{
+ "keys": {
+  "reserved|.|int": "reserved_value",
+  "|CASCADE_DELETE|int": "cascade_delete",
+  "|ENTITY_ID|string": "entity_id",
+  "|ENTITY_RECORD_KEY|string": "entity_record_key",
+  "|ENTITY_ROWID|float": "entity_rowid",
+  "|LINK_KEY|string": "link_key",
+  "|RECORD_KEY|string": "record_key",
+  "|RECORD_ROWID|float": "record_rowid",
+  "|SCHEMA_NAME|string": "schema_name",
+  "|UPDATED_AT_MS|float": "updated_at_ms"
+ },
+ "lists": {
+  "|RESERVED": "reserved"
+ }
+}

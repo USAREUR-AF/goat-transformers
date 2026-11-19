@@ -1,0 +1,7 @@
+{
+ "keys": {
+  "|MODEL|string": "model",
+  "|YEAR|int": "year"
+ },
+ "lists": {}
+}

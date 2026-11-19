@@ -1,0 +1,18 @@
+{
+ "keys": {
+  "|APID|string": "apid",
+  "|BEAM_NAME|string": "beam_name",
+  "|COMPRESSION|string": "compression",
+  "|ENCRYPTION|string": "encryption",
+  "|ID_RFBAND|string": "id_rfband",
+  "|ID|string": "id",
+  "|NAME|string": "name",
+  "|OWNER|string": "owner",
+  "|PKG|string": "pkg",
+  "|RES|string": "res",
+  "|SID|string": "sid",
+  "|TYPE|string": "type",
+  "|VPID|string": "vpid"
+ },
+ "lists": {}
+}

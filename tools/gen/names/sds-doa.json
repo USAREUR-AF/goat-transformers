@@ -1,0 +1,42 @@
+{
+ "keys": {
+  "tags|.|string": "tags_value",
+  "|BANDWIDTH|float": "bandwidth",
+  "|COLLECTION_MODE|string": "collection_mode",
+  "|DELTA_RANGE_RATE_UNC|float": "delta_range_rate_unc",
+  "|DELTA_RANGE_RATE|float": "delta_range_rate",
+  "|DELTA_RANGE_UNC|float": "delta_range_unc",
+  "|DELTA_RANGE|float": "delta_range",
+  "|DESCRIPTOR|string": "descriptor",
+  "|FDOA_UNC|float": "fdoa_unc",
+  "|FDOA|float": "fdoa",
+  "|FREQUENCY|float": "frequency",
+  "|ID_SENSOR1|string": "id_sensor1",
+  "|ID_SENSOR2|string": "id_sensor2",
+  "|ID|string": "id",
+  "|OB_TIME|string": "ob_time",
+  "|ON_ORBIT|string": "on_orbit",
+  "|ORIG_OBJECT_ID|string": "orig_object_id",
+  "|ORIG_SENSOR_ID1|string": "orig_sensor_id1",
+  "|ORIG_SENSOR_ID2|string": "orig_sensor_id2",
+  "|RAW_FILE_URI|string": "raw_file_uri",
+  "|SAT_NO|int": "sat_no",
+  "|SEN2ALT|float": "sen2_alt",
+  "|SEN2LAT|float": "sen2_lat",
+  "|SEN2LON|float": "sen2_lon",
+  "|SENALT|float": "senalt",
+  "|SENLAT|float": "senlat",
+  "|SENLON|float": "senlon",
+  "|SENSOR1_DELAY|float": "sensor1_delay",
+  "|SENSOR2_DELAY|float": "sensor2_delay",
+  "|SNR|float": "snr",
+  "|TASK_ID|string": "task_id",
+  "|TDOA_UNC|float": "tdoa_unc",
+  "|TDOA|float": "tdoa",
+  "|TRANSACTION_ID|string": "transaction_id",
+  "|UCT|int": "uct"
+ },
+ "lists": {
+  "|TAGS": "tags"
+ }
+}

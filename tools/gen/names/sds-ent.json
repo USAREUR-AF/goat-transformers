@@ -1,0 +1,20 @@
+{
+ "keys": {
+  "provider_signature|.|int": "provider_signature_value",
+  "|CREATED_AT|int": "created_at",
+  "|ENTITLEMENT_ID|string": "entitlement_id",
+  "|EXPIRES_AT|int": "expires_at",
+  "|PEER_ID|string": "peer_id",
+  "|PLAN|string": "plan",
+  "|PROVIDER_PEER_ID|string": "provider_peer_id",
+  "|STATUS_TEXT|string": "status_text",
+  "|STATUS|string": "status",
+  "|STRIPE_CUSTOMER_ID|string": "stripe_customer_id",
+  "|STRIPE_SUBSCRIPTION_ID|string": "stripe_subscription_id",
+  "|UPDATED_AT|int": "updated_at",
+  "|XPUB|string": "xpub"
+ },
+ "lists": {
+  "|PROVIDER_SIGNATURE": "provider_signature"
+ }
+}

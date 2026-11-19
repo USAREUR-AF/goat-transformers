@@ -1,0 +1,7 @@
+{
+ "name": "gen-spp-residue",
+ "from": "sds-spp",
+ "to": "sds-spp",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"VERSION\":244,\"PACKET_TYPE\":\"TM\",\"SEC_HDR_FLAG\":true,\"APID\":20030,\"SEQUENCE_FLAGS\":108,\"SEQUENCE_COUNT\":21672,\"DATA_LENGTH\":34759,\"DATA\":[91,177]}",
+ "expect": "{\"VERSION\":244,\"PACKET_TYPE\":\"TM\",\"SEC_HDR_FLAG\":true,\"APID\":20030,\"SEQUENCE_FLAGS\":108,\"SEQUENCE_COUNT\":21672,\"DATA_LENGTH\":34759,\"DATA\":[91,177],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

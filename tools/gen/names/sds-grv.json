@@ -1,0 +1,23 @@
+{
+ "keys": {
+  "|CENTRAL_BODY|string": "central_body",
+  "|EQUATORIAL_RADIUS|float": "equatorial_radius",
+  "|INCLUDE_MOON|int": "include_moon",
+  "|INCLUDE_PLANETS|int": "include_planets",
+  "|INCLUDE_SUN|int": "include_sun",
+  "|J2|float": "j2",
+  "|J3|float": "j3",
+  "|J4|float": "j4",
+  "|J5|float": "j5",
+  "|J6|float": "j6",
+  "|MAX_DEGREE|int": "max_degree",
+  "|MAX_ORDER|int": "max_order",
+  "|MODEL_NAME|string": "model_name",
+  "|MODEL_TYPE|string": "model_type",
+  "|MU|float": "mu",
+  "|OCEAN_TIDES|int": "ocean_tides",
+  "|POLE_TIDES|int": "pole_tides",
+  "|SOLID_TIDES|int": "solid_tides"
+ },
+ "lists": {}
+}

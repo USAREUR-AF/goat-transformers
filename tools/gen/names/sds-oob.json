@@ -1,0 +1,19 @@
+{
+ "keys": {
+  "|CAPACITY_AH|float": "capacity_ah",
+  "|CHEMISTRY|string": "chemistry",
+  "|CYCLE_LIFE|int": "cycle_life",
+  "|ENERGY_WH|float": "energy_wh",
+  "|ID_BATTERY|string": "id_battery",
+  "|ID_ON_ORBIT|string": "id_on_orbit",
+  "|ID|string": "id",
+  "|MASS|float": "mass",
+  "|MAX_DOD|float": "max_dod",
+  "|NAME|string": "name",
+  "|NOTES|string": "notes",
+  "|QUANTITY|int": "quantity",
+  "|STATE_OF_HEALTH|float": "state_of_health",
+  "|VOLTAGE|float": "voltage"
+ },
+ "lists": {}
+}

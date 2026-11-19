@@ -1,0 +1,14 @@
+{
+ "keys": {
+  "key_bytes|.|int": "key_bytes_value",
+  "|ALGORITHM|string": "algorithm",
+  "|ENCODING|string": "encoding",
+  "|EXPIRES_AT|int": "expires_at",
+  "|KEY_ID|string": "key_id",
+  "|ROLE|string": "role",
+  "|VERSION|int": "version"
+ },
+ "lists": {
+  "|KEY_BYTES": "key_bytes"
+ }
+}

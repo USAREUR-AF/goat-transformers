@@ -1,0 +1,37 @@
+{
+ "keys": {
+  "attestation_canonical_json_signature|.|int": "attestation_canonical_json_signature_value",
+  "attestation_signature|.|int": "attestation_signature_value",
+  "editing_ledger|ACTION|string": "editing_ledger_action",
+  "editing_ledger|ITERATION|int": "editing_ledger_iteration",
+  "editing_ledger|NORMALIZED_RESIDUAL|float": "editing_ledger_normalized_residual",
+  "editing_ledger|OBSERVATION_ID|string": "editing_ledger_observation_id",
+  "editing_ledger|PREFIT_RESIDUAL|float": "editing_ledger_prefit_residual",
+  "editing_ledger|REASON|string": "editing_ledger_reason",
+  "error_models|ACCEPT_START_EPOCH|string": "error_models_accept_start_epoch",
+  "error_models|ACCEPT_STOP_EPOCH|string": "error_models_accept_stop_epoch",
+  "error_models|APPLY_BODY_ROTATION|int": "error_models_apply_body_rotation",
+  "error_models|APPLY_LIGHT_TIME|int": "error_models_apply_light_time",
+  "error_models|BIAS_SIGMA|float": "error_models_bias_sigma",
+  "error_models|BIAS|float": "error_models_bias",
+  "error_models|CORRELATION_TIME_SECONDS|float": "error_models_correlation_time_seconds",
+  "error_models|IONOSPHERE_MODEL|string": "error_models_ionosphere_model",
+  "error_models|MAXIMUM_ACCEPTED_VALUE|float": "error_models_maximum_accepted_value",
+  "error_models|MEASUREMENT_TYPE|string": "error_models_measurement_type",
+  "error_models|MINIMUM_ACCEPTED_VALUE|float": "error_models_minimum_accepted_value",
+  "error_models|MODEL_ID|string": "error_models_model_id",
+  "error_models|NOISE_SIGMA|float": "error_models_noise_sigma",
+  "error_models|SIGMA_EDIT_THRESHOLD|float": "error_models_sigma_edit_threshold",
+  "error_models|TROPOSPHERE_MODEL|string": "error_models_troposphere_model",
+  "|ATTESTATION.SIGNED_AT|string": "attestation_signed_at",
+  "|ATTESTATION.SIGNING_PUBLIC_KEY|string": "attestation_signing_public_key",
+  "|RANDOM_SEED|int": "random_seed",
+  "|TRACE_ID|string": "trace_id"
+ },
+ "lists": {
+  "|ATTESTATION.CANONICAL_JSON_SIGNATURE": "attestation_canonical_json_signature",
+  "|ATTESTATION.SIGNATURE": "attestation_signature",
+  "|EDITING_LEDGER": "editing_ledger",
+  "|ERROR_MODELS": "error_models"
+ }
+}

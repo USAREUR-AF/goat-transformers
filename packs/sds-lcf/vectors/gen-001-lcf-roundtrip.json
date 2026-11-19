@@ -1,0 +1,17 @@
+{
+ "name": "gen-lcf-roundtrip",
+ "from": "sds-lcf",
+ "to": "sds-lcf",
+ "input": "{\"MESSAGE_TYPE\":\"Configure\",\"ROLE\":\"Requester\",\"PROVIDER_PEER_ID\":\"s9794\",\"PROVIDER_SIGNING_KEY\":{\"KEY_ID\":\"s68339\",\"SLOT_ID\":\"s46375\",\"ROLE\":\"PublicationContent\",\"ALGORITHM\":\"X25519Public\",\"PUBLIC_KEY\":[220,75],\"VERSION\":131352691,\"EXPIRES_AT\":187755371140205,\"HOST_MANAGED\":true},\"PROVIDER_WRAPPING_KEY\":{\"KEY_ID\":\"s40671\",\"SLOT_ID\":\"s34467\",\"ROLE\":\"RequesterSigning\",\"ALGORITHM\":\"Opaque\",\"PUBLIC_KEY\":[89,66],\"VERSION\":2355901729,\"EXPIRES_AT\":40111982625589,\"HOST_MANAGED\":true},\"REQUESTER_SIGNING_KEY\":{\"KEY_ID\":\"s12346\",\"SLOT_ID\":\"s62507\",\"ROLE\":\"DecryptKey\",\"ALGORITHM\":\"Aes256Gcm\",\"PUBLIC_KEY\":[115,105],\"VERSION\":320634471,\"EXPIRES_AT\":102466368262212,\"HOST_MANAGED\":true},\"ACTIVE_KEY_VERSION\":3026432832,\"EXPIRES_AT\":55947052287318,\"MAX_CLOCK_SKEW_MS\":174361143303745,\"CHALLENGE_TTL_MS\":204095326699751,\"CAPABILITY_TOKEN\":[85,186],\"INITIALIZED\":true,\"NEEDS_ROTATION\":true,\"STATUS_CODE\":\"s77356\",\"STATUS_MESSAGE\":\"s20282\"}",
+ "expect": "{\"MESSAGE_TYPE\":\"Configure\",\"ROLE\":\"Requester\",\"PROVIDER_PEER_ID\":\"s9794\",\"PROVIDER_SIGNING_KEY\":{\"KEY_ID\":\"s68339\",\"SLOT_ID\":\"s46375\",\"ROLE\":\"PublicationContent\",\"ALGORITHM\":\"X25519Public\",\"PUBLIC_KEY\":[220,75],\"VERSION\":131352691,\"EXPIRES_AT\":187755371140205,\"HOST_MANAGED\":true},\"PROVIDER_WRAPPING_KEY\":{\"KEY_ID\":\"s40671\",\"SLOT_ID\":\"s34467\",\"ROLE\":\"RequesterSigning\",\"ALGORITHM\":\"Opaque\",\"PUBLIC_KEY\":[89,66],\"VERSION\":2355901729,\"EXPIRES_AT\":40111982625589,\"HOST_MANAGED\":true},\"REQUESTER_SIGNING_KEY\":{\"KEY_ID\":\"s12346\",\"SLOT_ID\":\"s62507\",\"ROLE\":\"DecryptKey\",\"ALGORITHM\":\"Aes256Gcm\",\"PUBLIC_KEY\":[115,105],\"VERSION\":320634471,\"EXPIRES_AT\":102466368262212,\"HOST_MANAGED\":true},\"ACTIVE_KEY_VERSION\":3026432832,\"EXPIRES_AT\":55947052287318,\"MAX_CLOCK_SKEW_MS\":174361143303745,\"CHALLENGE_TTL_MS\":204095326699751,\"CAPABILITY_TOKEN\":[85,186],\"INITIALIZED\":true,\"NEEDS_ROTATION\":true,\"STATUS_CODE\":\"s77356\",\"STATUS_MESSAGE\":\"s20282\"}",
+ "model": {
+  "sdslcf.message_type": "Configure",
+  "sdslcf.role": "Requester",
+  "sdslcf.provider_peer_id": "s9794",
+  "sdslcf.provider_signing_key_key_id": "s68339",
+  "sdslcf.provider_signing_key_slot_id": "s46375",
+  "sdslcf.provider_signing_key_role": "PublicationContent",
+  "sdslcf.provider_signing_key_algorithm": "X25519Public",
+  "sdslcf.provider_signing_key_public_key.#": "2"
+ }
+}

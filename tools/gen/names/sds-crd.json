@@ -1,0 +1,16 @@
+{
+ "keys": {
+  "reserved|.|int": "reserved_value",
+  "|ELLIPSOID|int": "ellipsoid",
+  "|FRAME|int": "frame",
+  "|VX|float": "vx",
+  "|VY|float": "vy",
+  "|VZ|float": "vz",
+  "|X|float": "x",
+  "|Y|float": "y",
+  "|Z|float": "z"
+ },
+ "lists": {
+  "|RESERVED": "reserved"
+ }
+}

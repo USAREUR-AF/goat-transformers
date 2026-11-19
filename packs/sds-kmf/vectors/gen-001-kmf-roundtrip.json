@@ -1,0 +1,16 @@
+{
+ "name": "gen-kmf-roundtrip",
+ "from": "sds-kmf",
+ "to": "sds-kmf",
+ "input": "{\"KEY_ID\":\"s13938\",\"ROLE\":\"RequesterSigning\",\"ALGORITHM\":\"Ed25519Public\",\"ENCODING\":\"Seed32\",\"KEY_BYTES\":[56,105],\"VERSION\":3458573428,\"EXPIRES_AT\":190647886609465}",
+ "expect": "{\"KEY_ID\":\"s13938\",\"ROLE\":\"RequesterSigning\",\"ALGORITHM\":\"Ed25519Public\",\"ENCODING\":\"Seed32\",\"KEY_BYTES\":[56,105],\"VERSION\":3458573428,\"EXPIRES_AT\":190647886609465}",
+ "model": {
+  "sdskmf.key_id": "s13938",
+  "sdskmf.role": "RequesterSigning",
+  "sdskmf.algorithm": "Ed25519Public",
+  "sdskmf.encoding": "Seed32",
+  "sdskmf.key_bytes.#": "2",
+  "sdskmf.version": "3458573428",
+  "sdskmf.expires_at": "190647886609465"
+ }
+}

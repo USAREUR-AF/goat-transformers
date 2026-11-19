@@ -1,0 +1,28 @@
+{
+ "keys": {
+  "abs_fluxes|.|float": "abs_fluxes_value",
+  "flux_ratios|.|float": "flux_ratios_value",
+  "ratio_wavelengths|.|float": "ratio_wavelengths_value",
+  "wavelengths|.|float": "wavelengths_value",
+  "|BAD_WAVE|string": "bad_wave",
+  "|ID|string": "id",
+  "|INTEGRATION_TIME|float": "integration_time",
+  "|LAT|float": "lat",
+  "|LOCATION_NAME|string": "location_name",
+  "|LON|float": "lon",
+  "|ON_ORBIT|string": "on_orbit",
+  "|ORIG_OBJECT_ID|string": "orig_object_id",
+  "|QUALITY|int": "quality",
+  "|SAT_NO|int": "sat_no",
+  "|SIGNAL_NOISE_RATIO|float": "signal_noise_ratio",
+  "|SOLAR_PHASE_ANGLE|float": "solar_phase_angle",
+  "|TEMPERATURE|float": "temperature",
+  "|TS|string": "ts"
+ },
+ "lists": {
+  "|ABS_FLUXES": "abs_fluxes",
+  "|FLUX_RATIOS": "flux_ratios",
+  "|RATIO_WAVELENGTHS": "ratio_wavelengths",
+  "|WAVELENGTHS": "wavelengths"
+ }
+}

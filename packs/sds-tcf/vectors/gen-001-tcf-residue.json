@@ -1,0 +1,7 @@
+{
+ "name": "gen-tcf-residue",
+ "from": "sds-tcf",
+ "to": "sds-tcf",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"VERSION\":68,\"BYPASS_FLAG\":false,\"CONTROL_CMD_FLAG\":false,\"SPACECRAFT_ID\":8485,\"VIRTUAL_CHANNEL_ID\":224,\"FRAME_LENGTH\":39759,\"FRAME_SEQUENCE_NUM\":145,\"DATA\":[45,27],\"FECF\":6533}",
+ "expect": "{\"VERSION\":68,\"BYPASS_FLAG\":false,\"CONTROL_CMD_FLAG\":false,\"SPACECRAFT_ID\":8485,\"VIRTUAL_CHANNEL_ID\":224,\"FRAME_LENGTH\":39759,\"FRAME_SEQUENCE_NUM\":145,\"DATA\":[45,27],\"FECF\":6533,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

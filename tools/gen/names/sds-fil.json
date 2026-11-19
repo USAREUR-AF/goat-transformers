@@ -1,0 +1,25 @@
+{
+ "keys": {
+  "content|.|int": "content_value",
+  "digest|.|int": "digest_value",
+  "entries|KIND|string": "entries_kind",
+  "entries|MODIFIED_AT_MS|int": "entries_modified_at_ms",
+  "entries|NAME|string": "entries_name",
+  "entries|SIZE|int": "entries_size",
+  "|APPEND|int": "append",
+  "|CREATED_AT_MS|int": "created_at_ms",
+  "|DIGEST_ALGORITHM|string": "digest_algorithm",
+  "|KIND|string": "kind",
+  "|MEDIA_TYPE|string": "media_type",
+  "|MODIFIED_AT_MS|int": "modified_at_ms",
+  "|NAME|string": "name",
+  "|PATH|string": "path",
+  "|SIZE|int": "size",
+  "|WRITTEN_AT_MS|int": "written_at_ms"
+ },
+ "lists": {
+  "|CONTENT": "content",
+  "|DIGEST": "digest",
+  "|ENTRIES": "entries"
+ }
+}

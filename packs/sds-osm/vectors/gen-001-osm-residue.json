@@ -1,0 +1,7 @@
+{
+ "name": "gen-osm-residue",
+ "from": "sds-osm",
+ "to": "sds-osm",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"IS_STABLE\":true,\"NUM_OBS\":-908276356,\"OBJECT_ID\":\"s82561\",\"ID_SENSOR\":\"s47916\",\"PASS_START\":\"s68398\",\"PASS_DURATION\":313918234}",
+ "expect": "{\"IS_STABLE\":true,\"NUM_OBS\":-908276356,\"OBJECT_ID\":\"s82561\",\"ID_SENSOR\":\"s47916\",\"PASS_START\":\"s68398\",\"PASS_DURATION\":313918234,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

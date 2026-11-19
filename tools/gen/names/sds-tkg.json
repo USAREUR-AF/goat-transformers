@@ -1,0 +1,17 @@
+{
+ "keys": {
+  "tracks_to_correlate|.|string": "tracks_to_correlate_value",
+  "|COMMAND|string": "command",
+  "|FILTER_CONFIG|string": "filter_config",
+  "|FUSION_CONFIG|string": "fusion_config",
+  "|IMM_CONFIG|string": "imm_config",
+  "|INITIAL_STATE|string": "initial_state",
+  "|JPDA_CONFIG|string": "jpda_config",
+  "|MEASUREMENTS|string": "measurements",
+  "|MHT_CONFIG|string": "mht_config",
+  "|TRACK_TO_UPDATE|string": "track_to_update"
+ },
+ "lists": {
+  "|TRACKS_TO_CORRELATE": "tracks_to_correlate"
+ }
+}

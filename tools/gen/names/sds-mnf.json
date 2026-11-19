@@ -1,0 +1,42 @@
+{
+ "keys": {
+  "elements|APOGEE|float": "elements_apogee",
+  "elements|ARG_OF_PERICENTER|float": "elements_arg_of_pericenter",
+  "elements|DELTA_T|float": "elements_delta_t",
+  "elements|DELTA_V|float": "elements_delta_v",
+  "elements|DV_X|float": "elements_dv_x",
+  "elements|DV_Y|float": "elements_dv_y",
+  "elements|DV_Z|float": "elements_dv_z",
+  "elements|ECCENTRICITY|float": "elements_eccentricity",
+  "elements|EPOCH|string": "elements_epoch",
+  "elements|INCLINATION|float": "elements_inclination",
+  "elements|MEAN_ANOMALY|float": "elements_mean_anomaly",
+  "elements|PERIGEE|float": "elements_perigee",
+  "elements|PERIOD|float": "elements_period",
+  "elements|RA_OF_ASC_NODE|float": "elements_ra_of_asc_node",
+  "elements|SEMI_MAJOR_AXIS|float": "elements_semi_major_axis",
+  "elements|WEIGHT|float": "elements_weight",
+  "|CORRELATED_ID|string": "correlated_id",
+  "|DELTA_T_MAX|float": "delta_t_max",
+  "|DELTA_T_MIN|float": "delta_t_min",
+  "|DELTA_T_STEP|float": "delta_t_step",
+  "|DELTA_V_MAX|float": "delta_v_max",
+  "|DELTA_V_MIN|float": "delta_v_min",
+  "|DELTA_V_STEP|float": "delta_v_step",
+  "|EVENT_EPOCH|string": "event_epoch",
+  "|ID|string": "id",
+  "|NOTES|string": "notes",
+  "|NUM_ELEMENTS|int": "num_elements",
+  "|OBJECT_DESIGNATOR|string": "object_designator",
+  "|ORIG_ECCENTRICITY|float": "orig_eccentricity",
+  "|ORIG_INCLINATION|float": "orig_inclination",
+  "|ORIG_SEMI_MAJOR_AXIS|float": "orig_semi_major_axis",
+  "|REF_FRAME|string": "ref_frame",
+  "|SAT_NO|int": "sat_no",
+  "|SOURCE|string": "source",
+  "|STATUS|string": "status"
+ },
+ "lists": {
+  "|ELEMENTS": "elements"
+ }
+}

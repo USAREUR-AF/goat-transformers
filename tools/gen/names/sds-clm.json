@@ -1,0 +1,26 @@
+{
+ "keys": {
+  "countersignatures_signature|.|int": "countersignatures_signature_value",
+  "countersignatures|PEER_ID|string": "countersignatures_peer_id",
+  "countersignatures|PROFILE_CID|string": "countersignatures_profile_cid",
+  "countersignatures|SIGNED_AT|int": "countersignatures_signed_at",
+  "signature|.|int": "signature_value",
+  "|CLAIMANT_PEER_ID|string": "claimant_peer_id",
+  "|CLAIMANT_PROFILE_CID|string": "claimant_profile_cid",
+  "|CLAIM_ID|string": "claim_id",
+  "|CREATED_AT|int": "created_at",
+  "|DELETED|int": "deleted",
+  "|EVIDENCE_URL|string": "evidence_url",
+  "|OBJECT_ID|string": "object_id",
+  "|OBJECT_KIND|string": "object_kind",
+  "|OBJECT_NAME|string": "object_name",
+  "|ROLE|string": "role",
+  "|STATEMENT|string": "statement",
+  "|UPDATED_AT|int": "updated_at"
+ },
+ "lists": {
+  "countersignatures|SIGNATURE": "countersignatures_signature",
+  "|COUNTERSIGNATURES": "countersignatures",
+  "|SIGNATURE": "signature"
+ }
+}

@@ -1,0 +1,17 @@
+{
+ "name": "gen-snw-roundtrip",
+ "from": "sds-snw",
+ "to": "sds-snw",
+ "input": "{\"BATCH_REQUEST\":{\"SENSOR_ID\":3590797290,\"SENSOR_POS_X\":42.375,\"SENSOR_POS_Y\":12.5,\"SENSOR_POS_Z\":1.5,\"SENSOR_ORIENT_W\":-0.5,\"SENSOR_ORIENT_X\":7.0625,\"SENSOR_ORIENT_Y\":-0.5,\"SENSOR_ORIENT_Z\":12.5,\"INPUT_OFFSET\":1413337404,\"INPUT_ALIGNMENT\":2906765895,\"TARGET_COUNT\":473428054,\"OUTPUT_OFFSET\":212577870,\"OUTPUT_ALIGNMENT\":3011189919,\"EPOCH\":0.75},\"BATCH_RESPONSE\":{\"COUNT\":2053758512,\"DETECTED_COUNT\":1098201142,\"OUTPUT_OFFSET\":3106686042,\"ERROR_CODE\":\"NOT_INITIALIZED\",\"ERROR_MESSAGE\":\"s24697\"}}",
+ "expect": "{\"BATCH_REQUEST\":{\"SENSOR_ID\":3590797290,\"SENSOR_POS_X\":42.375,\"SENSOR_POS_Y\":12.5,\"SENSOR_POS_Z\":1.5,\"SENSOR_ORIENT_W\":-0.5,\"SENSOR_ORIENT_X\":7.0625,\"SENSOR_ORIENT_Y\":-0.5,\"SENSOR_ORIENT_Z\":12.5,\"INPUT_OFFSET\":1413337404,\"INPUT_ALIGNMENT\":2906765895,\"TARGET_COUNT\":473428054,\"OUTPUT_OFFSET\":212577870,\"OUTPUT_ALIGNMENT\":3011189919,\"EPOCH\":0.75},\"BATCH_RESPONSE\":{\"COUNT\":2053758512,\"DETECTED_COUNT\":1098201142,\"OUTPUT_OFFSET\":3106686042,\"ERROR_CODE\":\"NOT_INITIALIZED\",\"ERROR_MESSAGE\":\"s24697\"}}",
+ "model": {
+  "sdssnw.batch_request_sensor_id": "3590797290",
+  "sdssnw.batch_request_sensor_pos_x": "42.375",
+  "sdssnw.batch_request_sensor_pos_y": "12.5",
+  "sdssnw.batch_request_sensor_pos_z": "1.5",
+  "sdssnw.batch_request_sensor_orient_w": "-0.5",
+  "sdssnw.batch_request_sensor_orient_x": "7.0625",
+  "sdssnw.batch_request_sensor_orient_y": "-0.5",
+  "sdssnw.batch_request_sensor_orient_z": "12.5"
+ }
+}

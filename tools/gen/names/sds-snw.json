@@ -1,0 +1,24 @@
+{
+ "keys": {
+  "|BATCH_REQUEST.EPOCH|float": "batch_request_epoch",
+  "|BATCH_REQUEST.INPUT_ALIGNMENT|int": "batch_request_input_alignment",
+  "|BATCH_REQUEST.INPUT_OFFSET|int": "batch_request_input_offset",
+  "|BATCH_REQUEST.OUTPUT_ALIGNMENT|int": "batch_request_output_alignment",
+  "|BATCH_REQUEST.OUTPUT_OFFSET|int": "batch_request_output_offset",
+  "|BATCH_REQUEST.SENSOR_ID|int": "batch_request_sensor_id",
+  "|BATCH_REQUEST.SENSOR_ORIENT_W|float": "batch_request_sensor_orient_w",
+  "|BATCH_REQUEST.SENSOR_ORIENT_X|float": "batch_request_sensor_orient_x",
+  "|BATCH_REQUEST.SENSOR_ORIENT_Y|float": "batch_request_sensor_orient_y",
+  "|BATCH_REQUEST.SENSOR_ORIENT_Z|float": "batch_request_sensor_orient_z",
+  "|BATCH_REQUEST.SENSOR_POS_X|float": "batch_request_sensor_pos_x",
+  "|BATCH_REQUEST.SENSOR_POS_Y|float": "batch_request_sensor_pos_y",
+  "|BATCH_REQUEST.SENSOR_POS_Z|float": "batch_request_sensor_pos_z",
+  "|BATCH_REQUEST.TARGET_COUNT|int": "batch_request_target_count",
+  "|BATCH_RESPONSE.COUNT|int": "batch_response_count",
+  "|BATCH_RESPONSE.DETECTED_COUNT|int": "batch_response_detected_count",
+  "|BATCH_RESPONSE.ERROR_CODE|string": "batch_response_error_code",
+  "|BATCH_RESPONSE.ERROR_MESSAGE|string": "batch_response_error_message",
+  "|BATCH_RESPONSE.OUTPUT_OFFSET|int": "batch_response_output_offset"
+ },
+ "lists": {}
+}

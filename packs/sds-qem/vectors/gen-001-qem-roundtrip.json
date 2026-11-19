@@ -1,0 +1,17 @@
+{
+ "name": "gen-qem-roundtrip",
+ "from": "sds-qem",
+ "to": "sds-qem",
+ "input": "{\"MODEL_ID\":\"s12128\",\"MODEL_VERSION\":\"s8984\",\"MODEL_WEIGHTS_SHA256\":\"s35605\",\"POOLING_METHOD\":\"UNKNOWN\",\"TEMPLATE_VERSION\":\"s82265\",\"DIMENSIONS\":383960464,\"ENCODING\":\"FLOAT32\",\"NORMALIZATION\":\"NONE\",\"VOCAB_SIZE\":1033899838,\"TOKENS\":[{\"TOKEN\":\"s91379\",\"TOKEN_ID\":1023499406,\"VECTOR_INT8\":[-2],\"SCALE\":-0.5,\"VECTOR_FLOAT32\":[-3.25],\"IDF\":1.5},{\"TOKEN\":\"s47684\",\"TOKEN_ID\":1733589667,\"VECTOR_INT8\":[-44],\"SCALE\":42.375,\"VECTOR_FLOAT32\":[-0.5],\"IDF\":42.375}]}",
+ "expect": "{\"MODEL_ID\":\"s12128\",\"MODEL_VERSION\":\"s8984\",\"MODEL_WEIGHTS_SHA256\":\"s35605\",\"POOLING_METHOD\":\"UNKNOWN\",\"TEMPLATE_VERSION\":\"s82265\",\"DIMENSIONS\":383960464,\"ENCODING\":\"FLOAT32\",\"NORMALIZATION\":\"NONE\",\"VOCAB_SIZE\":1033899838,\"TOKENS\":[{\"TOKEN\":\"s91379\",\"TOKEN_ID\":1023499406,\"VECTOR_INT8\":[-2],\"SCALE\":-0.5,\"VECTOR_FLOAT32\":[-3.25],\"IDF\":1.5},{\"TOKEN\":\"s47684\",\"TOKEN_ID\":1733589667,\"VECTOR_INT8\":[-44],\"SCALE\":42.375,\"VECTOR_FLOAT32\":[-0.5],\"IDF\":42.375}]}",
+ "model": {
+  "sdsqem.model_id": "s12128",
+  "sdsqem.model_version": "s8984",
+  "sdsqem.model_weights_sha256": "s35605",
+  "sdsqem.pooling_method": "UNKNOWN",
+  "sdsqem.template_version": "s82265",
+  "sdsqem.dimensions": "383960464",
+  "sdsqem.encoding": "FLOAT32",
+  "sdsqem.normalization": "NONE"
+ }
+}

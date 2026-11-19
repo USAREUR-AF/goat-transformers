@@ -1,0 +1,22 @@
+{
+ "keys": {
+  "split_recipients|ADDRESS|string": "split_recipients_address",
+  "split_recipients|CHAIN|string": "split_recipients_chain",
+  "split_recipients|EPM_CID|string": "split_recipients_epm_cid",
+  "split_recipients|XPUB|string": "split_recipients_xpub",
+  "|CHAIN_ID|int": "chain_id",
+  "|CHAIN|string": "chain",
+  "|MEMO_SCHEME|string": "memo_scheme",
+  "|MIN_CONFIRMATIONS|int": "min_confirmations",
+  "|SETTLEMENT_KIND|string": "settlement_kind",
+  "|SPLITTER_ADDRESS|string": "splitter_address",
+  "|SPLITTER_STANDARD|string": "splitter_standard",
+  "|SPLIT_CONFIG_ID|string": "split_config_id",
+  "|TOKEN_ADDRESS|string": "token_address",
+  "|TOKEN_DECIMALS|int": "token_decimals",
+  "|TOKEN_SYMBOL|string": "token_symbol"
+ },
+ "lists": {
+  "|SPLIT_RECIPIENTS": "split_recipients"
+ }
+}

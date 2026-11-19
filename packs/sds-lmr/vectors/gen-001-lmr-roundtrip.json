@@ -1,0 +1,17 @@
+{
+ "name": "gen-lmr-roundtrip",
+ "from": "sds-lmr",
+ "to": "sds-lmr",
+ "input": "{\"ACTION\":\"Error\",\"REQUEST_ID\":\"s50592\",\"MODULE_ID\":\"s11233\",\"MODULE_VERSION\":\"s94098\",\"WASM_CID\":\"s68595\",\"MODULE_HASH\":[61,143],\"STATUS\":\"s57140\",\"ERROR_CODE\":\"s2093\",\"ERROR_MESSAGE\":\"s77691\"}",
+ "expect": "{\"ACTION\":\"Error\",\"REQUEST_ID\":\"s50592\",\"MODULE_ID\":\"s11233\",\"MODULE_VERSION\":\"s94098\",\"WASM_CID\":\"s68595\",\"MODULE_HASH\":[61,143],\"STATUS\":\"s57140\",\"ERROR_CODE\":\"s2093\",\"ERROR_MESSAGE\":\"s77691\"}",
+ "model": {
+  "sdslmr.action": "Error",
+  "sdslmr.request_id": "s50592",
+  "sdslmr.module_id": "s11233",
+  "sdslmr.module_version": "s94098",
+  "sdslmr.wasm_cid": "s68595",
+  "sdslmr.module_hash.#": "2",
+  "sdslmr.status": "s57140",
+  "sdslmr.error_code": "s2093"
+ }
+}

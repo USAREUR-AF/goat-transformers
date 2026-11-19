@@ -1,0 +1,22 @@
+{
+ "keys": {
+  "profile_bytes|.|int": "profile_bytes_value",
+  "profile_sha256|.|int": "profile_sha256_value",
+  "public_key|.|int": "public_key_value",
+  "signature|.|int": "signature_value",
+  "|CREATED_AT|int": "created_at",
+  "|DELETED|int": "deleted",
+  "|ENTRY_ID|string": "entry_id",
+  "|NODE_PEER_ID|string": "node_peer_id",
+  "|NOTE|string": "note",
+  "|SIGNATURE_ALGORITHM|string": "signature_algorithm",
+  "|UPDATED_AT|int": "updated_at",
+  "|VISIBILITY|string": "visibility"
+ },
+ "lists": {
+  "|PROFILE_BYTES": "profile_bytes",
+  "|PROFILE_SHA256": "profile_sha256",
+  "|PUBLIC_KEY": "public_key",
+  "|SIGNATURE": "signature"
+ }
+}

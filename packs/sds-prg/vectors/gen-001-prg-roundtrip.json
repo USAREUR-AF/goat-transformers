@@ -1,0 +1,13 @@
+{
+ "name": "gen-prg-roundtrip",
+ "from": "sds-prg",
+ "to": "sds-prg",
+ "input": "{\"NAME\":\"s26022\",\"HD_KEY_PATH\":\"s9360\",\"MESSAGE_TYPES\":[\"s6155\",\"s51566\"],\"USERS\":[{\"ID\":\"s12271\",\"MESSAGE_TYPES\":[\"s77300\"]},{\"ID\":\"s81807\",\"MESSAGE_TYPES\":[\"s41506\"]}]}",
+ "expect": "{\"NAME\":\"s26022\",\"HD_KEY_PATH\":\"s9360\",\"MESSAGE_TYPES\":[\"s6155\",\"s51566\"],\"USERS\":[{\"ID\":\"s12271\",\"MESSAGE_TYPES\":[\"s77300\"]},{\"ID\":\"s81807\",\"MESSAGE_TYPES\":[\"s41506\"]}]}",
+ "model": {
+  "sdsprg.name": "s26022",
+  "sdsprg.hd_key_path": "s9360",
+  "sdsprg.message_types.#": "2",
+  "sdsprg.users.#": "2"
+ }
+}

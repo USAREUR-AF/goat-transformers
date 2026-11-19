@@ -1,0 +1,40 @@
+{
+ "keys": {
+  "allowed_operations|.|string": "allowed_operations_value",
+  "audiences|AUDIENCE_TYPE|string": "audiences_audience_type",
+  "audiences|SUBJECT_EPM_CID|string": "audiences_subject_epm_cid",
+  "audiences|SUBJECT_ID|string": "audiences_subject_id",
+  "audiences|SUBJECT_KEY_ID|string": "audiences_subject_key_id",
+  "provider_signature|.|int": "provider_signature_value",
+  "rules_field_id_path|.|int": "rules_field_id_path_value",
+  "rules_required_attributes|.|string": "rules_required_attributes_value",
+  "rules_tags|.|string": "rules_tags_value",
+  "rules|DECISION|string": "rules_decision",
+  "rules|FIELD_PATH|string": "rules_field_path",
+  "rules|KEY_ID|string": "rules_key_id",
+  "schema_hash|.|int": "schema_hash_value",
+  "|EXPIRES_AT|int": "expires_at",
+  "|KEY_EPOCH|string": "key_epoch",
+  "|KEY_SCOPE|string": "key_scope",
+  "|LISTING_ID|string": "listing_id",
+  "|POLICY_ID|string": "policy_id",
+  "|POLICY_VERSION|int": "policy_version",
+  "|PROVIDER_PEER_ID|string": "provider_peer_id",
+  "|REVOCATION_REASON|string": "revocation_reason",
+  "|REVOCATION_STATUS|string": "revocation_status",
+  "|REVOKED_AT|int": "revoked_at",
+  "|SCHEMA_CODE|string": "schema_code",
+  "|STREAM_ID|string": "stream_id",
+  "|VALID_FROM|int": "valid_from"
+ },
+ "lists": {
+  "rules|FIELD_ID_PATH": "rules_field_id_path",
+  "rules|REQUIRED_ATTRIBUTES": "rules_required_attributes",
+  "rules|TAGS": "rules_tags",
+  "|ALLOWED_OPERATIONS": "allowed_operations",
+  "|AUDIENCES": "audiences",
+  "|PROVIDER_SIGNATURE": "provider_signature",
+  "|RULES": "rules",
+  "|SCHEMA_HASH": "schema_hash"
+ }
+}

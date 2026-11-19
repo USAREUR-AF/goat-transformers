@@ -1,0 +1,30 @@
+{
+ "keys": {
+  "|BATTERY_CAPACITY|float": "battery_capacity",
+  "|DATA_STORAGE|float": "data_storage",
+  "|DESIGN_LIFE|float": "design_life",
+  "|DIM_X|float": "dim_x",
+  "|DIM_Y|float": "dim_y",
+  "|DIM_Z|float": "dim_z",
+  "|DOWNLINK_RATE|float": "downlink_rate",
+  "|DRY_MASS|float": "dry_mass",
+  "|HERITAGE_COUNT|int": "heritage_count",
+  "|ID|string": "id",
+  "|MANUFACTURER|string": "manufacturer",
+  "|NAME|string": "name",
+  "|NOTES|string": "notes",
+  "|PAYLOAD_MASS|float": "payload_mass",
+  "|PAYLOAD_POWER|float": "payload_power",
+  "|PAYLOAD_SLOTS|int": "payload_slots",
+  "|POINTING_ACCURACY|float": "pointing_accuracy",
+  "|POINTING_KNOWLEDGE|float": "pointing_knowledge",
+  "|POWER_GENERATION|float": "power_generation",
+  "|SIZE|string": "size",
+  "|STABILIZATION|string": "stabilization",
+  "|STOWED_X|float": "stowed_x",
+  "|STOWED_Y|float": "stowed_y",
+  "|STOWED_Z|float": "stowed_z",
+  "|WET_MASS|float": "wet_mass"
+ },
+ "lists": {}
+}

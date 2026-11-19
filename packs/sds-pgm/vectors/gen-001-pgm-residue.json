@@ -1,0 +1,7 @@
+{
+ "name": "gen-pgm-residue",
+ "from": "sds-pgm",
+ "to": "sds-pgm",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"GROUP_NAME\":\"s87171\",\"DESCRIPTION\":\"s85147\",\"DEFAULT_TRUST_LEVEL\":\"Standard\",\"MEMBERS\":[\"s26104\",\"s45696\"],\"CREATED_AT\":231440925278437,\"UPDATED_AT\":97584488897965,\"METADATA\":[{\"KEY\":\"s45370\",\"VALUE\":\"s59188\"},{\"KEY\":\"s69139\",\"VALUE\":\"s57831\"}],\"DELETED\":true,\"PROVIDER_PEER_ID\":\"s33433\",\"PROVIDER_SIGNATURE\":[139,52]}",
+ "expect": "{\"GROUP_NAME\":\"s87171\",\"DESCRIPTION\":\"s85147\",\"DEFAULT_TRUST_LEVEL\":\"Standard\",\"MEMBERS\":[\"s26104\",\"s45696\"],\"CREATED_AT\":231440925278437,\"UPDATED_AT\":97584488897965,\"METADATA\":[{\"KEY\":\"s45370\",\"VALUE\":\"s59188\"},{\"KEY\":\"s69139\",\"VALUE\":\"s57831\"}],\"DELETED\":true,\"PROVIDER_PEER_ID\":\"s33433\",\"PROVIDER_SIGNATURE\":[139,52],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

@@ -1,0 +1,17 @@
+{
+ "name": "gen-sri-roundtrip",
+ "from": "sds-sri",
+ "to": "sds-sri",
+ "input": "{\"RECORD_KEY\":\"s70747\",\"SCHEMA_NAME\":\"s28720\",\"ROLE\":\"s4349\",\"ATTACHED_VIA\":\"s10404\",\"PAYLOAD_KIND\":\"s86451\",\"UPDATED_AT_MS\":42.375,\"RESERVED\":[20,172],\"CID\":\"s66200\",\"BYTE_OFFSET\":261377887672058,\"BYTE_LENGTH\":1498386921,\"EPOCH_MS\":37114332858890,\"ENTITY_KEY\":\"s35453\",\"PROVIDER_ID\":\"s44170\",\"SOURCE_NAME\":\"s41123\",\"BATCH_ID\":\"s26685\"}",
+ "expect": "{\"RECORD_KEY\":\"s70747\",\"SCHEMA_NAME\":\"s28720\",\"ROLE\":\"s4349\",\"ATTACHED_VIA\":\"s10404\",\"PAYLOAD_KIND\":\"s86451\",\"UPDATED_AT_MS\":42.375,\"RESERVED\":[20,172],\"CID\":\"s66200\",\"BYTE_OFFSET\":261377887672058,\"BYTE_LENGTH\":1498386921,\"EPOCH_MS\":37114332858890,\"ENTITY_KEY\":\"s35453\",\"PROVIDER_ID\":\"s44170\",\"SOURCE_NAME\":\"s41123\",\"BATCH_ID\":\"s26685\"}",
+ "model": {
+  "sdssri.record_key": "s70747",
+  "sdssri.schema_name": "s28720",
+  "sdssri.role": "s4349",
+  "sdssri.attached_via": "s10404",
+  "sdssri.payload_kind": "s86451",
+  "sdssri.updated_at_ms": "42.375",
+  "sdssri.reserved.#": "2",
+  "sdssri.cid": "s66200"
+ }
+}

@@ -1,0 +1,11 @@
+{
+ "keys": {
+  "onorbits|.|string": "onorbits_value",
+  "|DESCRIPTION|string": "description",
+  "|ID|string": "id",
+  "|NAME|string": "name"
+ },
+ "lists": {
+  "|ONORBITS": "onorbits"
+ }
+}

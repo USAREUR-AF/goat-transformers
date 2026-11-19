@@ -1,0 +1,38 @@
+{
+ "keys": {
+  "c_sigma|.|float": "c_sigma_value",
+  "c|.|float": "c_value",
+  "degrees|.|int": "degrees_value",
+  "orders|.|int": "orders_value",
+  "s_sigma|.|float": "s_sigma_value",
+  "s|.|float": "s_value",
+  "variable_terms|C_VALUE|float": "variable_terms_c_value",
+  "variable_terms|DEGREE|int": "variable_terms_degree",
+  "variable_terms|ORDER|int": "variable_terms_order",
+  "variable_terms|PERIOD_YEARS|float": "variable_terms_period_years",
+  "variable_terms|REFERENCE_EPOCH|string": "variable_terms_reference_epoch",
+  "variable_terms|S_VALUE|float": "variable_terms_s_value",
+  "variable_terms|TERM_TYPE|string": "variable_terms_term_type",
+  "|BODY_NAME|string": "body_name",
+  "|CENTRAL_BODY_NAIF_ID|int": "central_body_naif_id",
+  "|CITATION|string": "citation",
+  "|GM|float": "gm",
+  "|MAX_DEGREE|int": "max_degree",
+  "|MAX_ORDER|int": "max_order",
+  "|MODEL_NAME|string": "model_name",
+  "|NORMALIZATION|string": "normalization",
+  "|PERMANENT_TIDE_SYSTEM|string": "permanent_tide_system",
+  "|REFERENCE_EPOCH|string": "reference_epoch",
+  "|REFERENCE_RADIUS|float": "reference_radius",
+  "|SOURCE|string": "source"
+ },
+ "lists": {
+  "|C": "c",
+  "|C_SIGMA": "c_sigma",
+  "|DEGREES": "degrees",
+  "|ORDERS": "orders",
+  "|S": "s",
+  "|S_SIGMA": "s_sigma",
+  "|VARIABLE_TERMS": "variable_terms"
+ }
+}

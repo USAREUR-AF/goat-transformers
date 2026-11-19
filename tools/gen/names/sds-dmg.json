@@ -1,0 +1,23 @@
+{
+ "keys": {
+  "reserved|.|int": "reserved_value",
+  "|ACCURACY_MULTIPLIER|float": "accuracy_multiplier",
+  "|CREW_ALIVE|int": "crew_alive",
+  "|CREW_COUNT|int": "crew_count",
+  "|CREW_WOUNDED|int": "crew_wounded",
+  "|DESTRUCTION_CAUSE|int": "destruction_cause",
+  "|EXTINGUISHERS|int": "extinguishers",
+  "|FIREPOWER|float": "firepower",
+  "|FIRE_COUNT|int": "fire_count",
+  "|FLOOD_COUNT|int": "flood_count",
+  "|IS_DESTROYED|int": "is_destroyed",
+  "|MOBILITY|float": "mobility",
+  "|MODULE_COUNT|int": "module_count",
+  "|OVERALL_HEALTH|float": "overall_health",
+  "|RELOAD_MULTIPLIER|float": "reload_multiplier",
+  "|REPAIR_ACTIVE|int": "repair_active"
+ },
+ "lists": {
+  "|RESERVED": "reserved"
+ }
+}

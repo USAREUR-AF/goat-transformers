@@ -1,0 +1,20 @@
+{
+ "keys": {
+  "data|.|int": "data_value",
+  "insert_zone|.|int": "insert_zone_value",
+  "ocf|.|int": "ocf_value",
+  "|FECF|int": "fecf",
+  "|REPLAY_FLAG|int": "replay_flag",
+  "|SPACECRAFT_ID|int": "spacecraft_id",
+  "|VC_FRAME_COUNT_CYCLE|int": "vc_frame_count_cycle",
+  "|VC_FRAME_COUNT_USAGE|int": "vc_frame_count_usage",
+  "|VERSION|int": "version",
+  "|VIRTUAL_CHANNEL_ID|int": "virtual_channel_id",
+  "|VIRTUAL_FRAME_COUNT|int": "virtual_frame_count"
+ },
+ "lists": {
+  "|DATA": "data",
+  "|INSERT_ZONE": "insert_zone",
+  "|OCF": "ocf"
+ }
+}

@@ -1,0 +1,16 @@
+{
+ "keys": {
+  "iv|.|int": "iv_value",
+  "mac|.|int": "mac_value",
+  "payload|.|int": "payload_value",
+  "|IV_LENGTH|int": "iv_length",
+  "|MAC_LENGTH|int": "mac_length",
+  "|PAD_LENGTH|int": "pad_length",
+  "|SPI|int": "spi"
+ },
+ "lists": {
+  "|IV": "iv",
+  "|MAC": "mac",
+  "|PAYLOAD": "payload"
+ }
+}

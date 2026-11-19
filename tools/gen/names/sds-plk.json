@@ -1,0 +1,28 @@
+{
+ "keys": {
+  "allowed_domains|.|string": "allowed_domains_value",
+  "allowed_tlds|.|string": "allowed_tlds_value",
+  "issuer_pubkey|.|int": "issuer_pubkey_value",
+  "licensee_pubkey|.|int": "licensee_pubkey_value",
+  "signature|.|int": "signature_value",
+  "|EXPIRES_AT|int": "expires_at",
+  "|ISSUED_AT|int": "issued_at",
+  "|ISSUER_PEER_ID|string": "issuer_peer_id",
+  "|LICENSEE_EMAIL|string": "licensee_email",
+  "|LICENSEE_ORG|string": "licensee_org",
+  "|LICENSEE_PEER_ID|string": "licensee_peer_id",
+  "|LICENSE_ID|string": "license_id",
+  "|LICENSE_TYPE|string": "license_type",
+  "|MAX_ACTIVATIONS|int": "max_activations",
+  "|PLUGIN_ID|string": "plugin_id",
+  "|PLUGIN_VERSION|string": "plugin_version",
+  "|VALID_FROM|int": "valid_from"
+ },
+ "lists": {
+  "|ALLOWED_DOMAINS": "allowed_domains",
+  "|ALLOWED_TLDS": "allowed_tlds",
+  "|ISSUER_PUBKEY": "issuer_pubkey",
+  "|LICENSEE_PUBKEY": "licensee_pubkey",
+  "|SIGNATURE": "signature"
+ }
+}

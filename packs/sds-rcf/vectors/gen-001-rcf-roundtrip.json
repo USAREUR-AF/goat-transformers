@@ -1,0 +1,17 @@
+{
+ "name": "gen-rcf-roundtrip",
+ "from": "sds-rcf",
+ "to": "sds-rcf",
+ "input": "{\"PDU_TYPE\":\"STOP_INVOCATION\",\"INITIATOR_ID\":\"s46328\",\"RESPONDER_PORT_ID\":\"s80975\",\"SERVICE_TYPE\":239,\"VERSION\":62161,\"INVOKE_ID\":2520489469,\"SPACECRAFT_ID\":26047,\"VIRTUAL_CHANNEL_ID\":198,\"DATA\":[206,136]}",
+ "expect": "{\"PDU_TYPE\":\"STOP_INVOCATION\",\"INITIATOR_ID\":\"s46328\",\"RESPONDER_PORT_ID\":\"s80975\",\"SERVICE_TYPE\":239,\"VERSION\":62161,\"INVOKE_ID\":2520489469,\"SPACECRAFT_ID\":26047,\"VIRTUAL_CHANNEL_ID\":198,\"DATA\":[206,136]}",
+ "model": {
+  "sdsrcf.pdu_type": "STOP_INVOCATION",
+  "sdsrcf.initiator_id": "s46328",
+  "sdsrcf.responder_port_id": "s80975",
+  "sdsrcf.service_type": "239",
+  "sdsrcf.version": "62161",
+  "sdsrcf.invoke_id": "2520489469",
+  "sdsrcf.spacecraft_id": "26047",
+  "sdsrcf.virtual_channel_id": "198"
+ }
+}

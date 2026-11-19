@@ -1,0 +1,7 @@
+{
+ "name": "gen-tme-residue",
+ "from": "sds-tme",
+ "to": "sds-tme",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"COMMAND\":\"s67526\",\"CONVERSION_REQUEST\":\"s87984\",\"LEAP_SECOND_QUERY\":\"s77340\",\"EOP_QUERY\":\"s10132\",\"SIDEREAL_QUERY\":\"s85478\",\"INTERVAL_REQUEST\":\"s24624\",\"SOLAR_POSITION_QUERY\":\"s45814\",\"LUNAR_POSITION_QUERY\":\"s76243\",\"SUNRISE_SUNSET_QUERY\":[0.75,0.75],\"CLOCK_PROPAGATION\":\"s34832\"}",
+ "expect": "{\"COMMAND\":\"s67526\",\"CONVERSION_REQUEST\":\"s87984\",\"LEAP_SECOND_QUERY\":\"s77340\",\"EOP_QUERY\":\"s10132\",\"SIDEREAL_QUERY\":\"s85478\",\"INTERVAL_REQUEST\":\"s24624\",\"SOLAR_POSITION_QUERY\":\"s45814\",\"LUNAR_POSITION_QUERY\":\"s76243\",\"SUNRISE_SUNSET_QUERY\":[0.75,0.75],\"CLOCK_PROPAGATION\":\"s34832\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

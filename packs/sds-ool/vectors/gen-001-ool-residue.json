@@ -1,0 +1,7 @@
+{
+ "name": "gen-ool-residue",
+ "from": "sds-ool",
+ "to": "sds-ool",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"ID\":\"s55655\",\"NAME\":\"s41351\",\"DESCRIPTION\":\"s78253\",\"ONORBITS\":[\"s97849\",\"s92490\"]}",
+ "expect": "{\"ID\":\"s55655\",\"NAME\":\"s41351\",\"DESCRIPTION\":\"s78253\",\"ONORBITS\":[\"s97849\",\"s92490\"],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

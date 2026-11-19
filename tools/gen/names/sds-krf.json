@@ -1,0 +1,15 @@
+{
+ "keys": {
+  "public_key|.|int": "public_key_value",
+  "|ALGORITHM|string": "algorithm",
+  "|EXPIRES_AT|int": "expires_at",
+  "|HOST_MANAGED|int": "host_managed",
+  "|KEY_ID|string": "key_id",
+  "|ROLE|string": "role",
+  "|SLOT_ID|string": "slot_id",
+  "|VERSION|int": "version"
+ },
+ "lists": {
+  "|PUBLIC_KEY": "public_key"
+ }
+}

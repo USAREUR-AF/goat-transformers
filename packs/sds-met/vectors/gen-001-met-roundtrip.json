@@ -1,0 +1,10 @@
+{
+ "name": "gen-met-roundtrip",
+ "from": "sds-met",
+ "to": "sds-met",
+ "input": "{\"MEAN_ELEMENT_THEORY\":\"USM\"}",
+ "expect": "{\"MEAN_ELEMENT_THEORY\":\"USM\"}",
+ "model": {
+  "sdsmet.mean_element_theory": "USM"
+ }
+}

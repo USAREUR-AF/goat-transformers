@@ -1,0 +1,7 @@
+{
+ "name": "gen-ast-residue",
+ "from": "sds-ast",
+ "to": "sds-ast",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"COMMAND\":\"s32607\",\"PROPAGATION_REQUEST\":\"s4222\",\"TLE\":\"s4720\",\"INITIAL_ELEMENTS\":\"s61830\",\"INITIAL_STATE\":\"s15631\",\"EPOCH_MS\":-9223371515475434187,\"MANEUVER_PLAN\":\"s19255\",\"CONJUNCTION_PRIMARY\":\"s82453\",\"CONJUNCTION_SECONDARY\":\"s59882\",\"OBSERVATIONS\":[\"s84942\",\"s47264\"],\"OD_CONFIG\":\"s38278\",\"GROUND_STATION\":\"s22861\",\"FORMATION_CONFIG\":\"s83302\",\"TARGET_ELEMENTS\":\"s9705\"}",
+ "expect": "{\"COMMAND\":\"s32607\",\"PROPAGATION_REQUEST\":\"s4222\",\"TLE\":\"s4720\",\"INITIAL_ELEMENTS\":\"s61830\",\"INITIAL_STATE\":\"s15631\",\"EPOCH_MS\":-9223371515475434187,\"MANEUVER_PLAN\":\"s19255\",\"CONJUNCTION_PRIMARY\":\"s82453\",\"CONJUNCTION_SECONDARY\":\"s59882\",\"OBSERVATIONS\":[\"s84942\",\"s47264\"],\"OD_CONFIG\":\"s38278\",\"GROUND_STATION\":\"s22861\",\"FORMATION_CONFIG\":\"s83302\",\"TARGET_ELEMENTS\":\"s9705\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

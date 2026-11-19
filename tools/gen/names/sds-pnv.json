@@ -1,0 +1,31 @@
+{
+ "keys": {
+  "entries_pnm_bytes|.|int": "entries_pnm_bytes_value",
+  "entries_publisher_key|.|int": "entries_publisher_key_value",
+  "entries_signature|.|int": "entries_signature_value",
+  "entries|ATTRIBUTION|string": "entries_attribution",
+  "entries|CID|string": "entries_cid",
+  "entries|FILE_ID|string": "entries_file_id",
+  "entries|FILE_NAME|string": "entries_file_name",
+  "entries|KEY_SOURCE|string": "entries_key_source",
+  "entries|PNM_CID|string": "entries_pnm_cid",
+  "entries|PUBLISHED_AT_MS|int": "entries_published_at_ms",
+  "entries|PUBLISHER_PEER_ID|string": "entries_publisher_peer_id",
+  "entries|REASON|string": "entries_reason",
+  "entries|RECEIVED_AT_MS|int": "entries_received_at_ms",
+  "entries|RECEIVED_FROM_PEER_ID|string": "entries_received_from_peer_id",
+  "entries|SCHEMA_NAME|string": "entries_schema_name",
+  "entries|SIGNATURE_TYPE|string": "entries_signature_type",
+  "entries|SIGNATURE_VERIFIED|int": "entries_signature_verified",
+  "entries|STANDARD|string": "entries_standard",
+  "|ETAG|string": "etag",
+  "|GENERATED_AT_MS|int": "generated_at_ms",
+  "|VERIFIER_PEER_ID|string": "verifier_peer_id"
+ },
+ "lists": {
+  "entries|PNM_BYTES": "entries_pnm_bytes",
+  "entries|PUBLISHER_KEY": "entries_publisher_key",
+  "entries|SIGNATURE": "entries_signature",
+  "|ENTRIES": "entries"
+ }
+}

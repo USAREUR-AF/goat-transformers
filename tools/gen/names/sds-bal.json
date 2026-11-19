@@ -1,0 +1,13 @@
+{
+ "keys": {
+  "|COMMAND|string": "command",
+  "|FIRE_CONTROL|string": "fire_control",
+  "|IMPACT_ANGLE_DEG|float": "impact_angle_deg",
+  "|IMPACT_VELOCITY_MPS|float": "impact_velocity_mps",
+  "|PENETRATION_ARMOR|string": "penetration_armor",
+  "|PENETRATION_PROJECTILE|string": "penetration_projectile",
+  "|TABLE_REQUEST|string": "table_request",
+  "|TRAJECTORY_REQUEST|string": "trajectory_request"
+ },
+ "lists": {}
+}

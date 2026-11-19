@@ -1,0 +1,17 @@
+{
+ "name": "gen-raf-roundtrip",
+ "from": "sds-raf",
+ "to": "sds-raf",
+ "input": "{\"PDU_TYPE\":\"START_RETURN\",\"INITIATOR_ID\":\"s24467\",\"RESPONDER_PORT_ID\":\"s18102\",\"SERVICE_TYPE\":9,\"VERSION\":51638,\"INVOKE_ID\":368172386,\"FRAME_QUALITY\":241,\"DATA\":[210,72]}",
+ "expect": "{\"PDU_TYPE\":\"START_RETURN\",\"INITIATOR_ID\":\"s24467\",\"RESPONDER_PORT_ID\":\"s18102\",\"SERVICE_TYPE\":9,\"VERSION\":51638,\"INVOKE_ID\":368172386,\"FRAME_QUALITY\":241,\"DATA\":[210,72]}",
+ "model": {
+  "sdsraf.pdu_type": "START_RETURN",
+  "sdsraf.initiator_id": "s24467",
+  "sdsraf.responder_port_id": "s18102",
+  "sdsraf.service_type": "9",
+  "sdsraf.version": "51638",
+  "sdsraf.invoke_id": "368172386",
+  "sdsraf.frame_quality": "241",
+  "sdsraf.data.#": "2"
+ }
+}

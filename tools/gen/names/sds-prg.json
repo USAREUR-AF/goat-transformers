@@ -1,0 +1,14 @@
+{
+ "keys": {
+  "message_types|.|string": "message_types_value",
+  "users_message_types|.|string": "users_message_types_value",
+  "users|ID|string": "users_id",
+  "|HD_KEY_PATH|string": "hd_key_path",
+  "|NAME|string": "name"
+ },
+ "lists": {
+  "users|MESSAGE_TYPES": "users_message_types",
+  "|MESSAGE_TYPES": "message_types",
+  "|USERS": "users"
+ }
+}

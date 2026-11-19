@@ -1,0 +1,17 @@
+{
+ "name": "gen-clm-roundtrip",
+ "from": "sds-clm",
+ "to": "sds-clm",
+ "input": "{\"CLAIM_ID\":\"s73087\",\"CLAIMANT_PEER_ID\":\"s54680\",\"CLAIMANT_PROFILE_CID\":\"s80123\",\"OBJECT_KIND\":\"Site\",\"OBJECT_ID\":\"s56842\",\"OBJECT_NAME\":\"s52787\",\"ROLE\":\"Provider\",\"STATEMENT\":\"s30345\",\"EVIDENCE_URL\":\"s38193\",\"CREATED_AT\":108241720681217,\"UPDATED_AT\":74217780213611,\"DELETED\":false,\"SIGNATURE\":[0,102],\"COUNTERSIGNATURES\":[{\"PEER_ID\":\"s15925\",\"PROFILE_CID\":\"s42031\",\"SIGNED_AT\":25751752810769,\"SIGNATURE\":[4]},{\"PEER_ID\":\"s77897\",\"PROFILE_CID\":\"s23337\",\"SIGNED_AT\":55632506079979,\"SIGNATURE\":[129]}]}",
+ "expect": "{\"CLAIM_ID\":\"s73087\",\"CLAIMANT_PEER_ID\":\"s54680\",\"CLAIMANT_PROFILE_CID\":\"s80123\",\"OBJECT_KIND\":\"Site\",\"OBJECT_ID\":\"s56842\",\"OBJECT_NAME\":\"s52787\",\"ROLE\":\"Provider\",\"STATEMENT\":\"s30345\",\"EVIDENCE_URL\":\"s38193\",\"CREATED_AT\":108241720681217,\"UPDATED_AT\":74217780213611,\"DELETED\":false,\"SIGNATURE\":[0,102],\"COUNTERSIGNATURES\":[{\"PEER_ID\":\"s15925\",\"PROFILE_CID\":\"s42031\",\"SIGNED_AT\":25751752810769,\"SIGNATURE\":[4]},{\"PEER_ID\":\"s77897\",\"PROFILE_CID\":\"s23337\",\"SIGNED_AT\":55632506079979,\"SIGNATURE\":[129]}]}",
+ "model": {
+  "sdsclm.claim_id": "s73087",
+  "sdsclm.claimant_peer_id": "s54680",
+  "sdsclm.claimant_profile_cid": "s80123",
+  "sdsclm.object_kind": "Site",
+  "sdsclm.object_id": "s56842",
+  "sdsclm.object_name": "s52787",
+  "sdsclm.role": "Provider",
+  "sdsclm.statement": "s30345"
+ }
+}

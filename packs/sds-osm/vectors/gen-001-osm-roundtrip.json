@@ -1,0 +1,16 @@
+{
+ "name": "gen-osm-roundtrip",
+ "from": "sds-osm",
+ "to": "sds-osm",
+ "input": "{\"IS_STABLE\":true,\"NUM_OBS\":-908276356,\"OBJECT_ID\":\"s82561\",\"ID_SENSOR\":\"s47916\",\"PASS_START\":\"s68398\",\"PASS_DURATION\":313918234}",
+ "expect": "{\"IS_STABLE\":true,\"NUM_OBS\":-908276356,\"OBJECT_ID\":\"s82561\",\"ID_SENSOR\":\"s47916\",\"PASS_START\":\"s68398\",\"PASS_DURATION\":313918234}",
+ "model": {
+  "uid": "s82561",
+  "sdsosm.is_stable": "1",
+  "sdsosm.num_obs": "-908276356",
+  "sdsosm.object_id": "s82561",
+  "sdsosm.id_sensor": "s47916",
+  "sdsosm.pass_start": "s68398",
+  "sdsosm.pass_duration": "313918234"
+ }
+}

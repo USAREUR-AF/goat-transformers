@@ -1,0 +1,7 @@
+{
+ "name": "gen-krf-residue",
+ "from": "sds-krf",
+ "to": "sds-krf",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"KEY_ID\":\"s56582\",\"SLOT_ID\":\"s57183\",\"ROLE\":\"VerificationKey\",\"ALGORITHM\":\"Ed25519Public\",\"PUBLIC_KEY\":[53,0],\"VERSION\":3261430089,\"EXPIRES_AT\":126654160871862,\"HOST_MANAGED\":true}",
+ "expect": "{\"KEY_ID\":\"s56582\",\"SLOT_ID\":\"s57183\",\"ROLE\":\"VerificationKey\",\"ALGORITHM\":\"Ed25519Public\",\"PUBLIC_KEY\":[53,0],\"VERSION\":3261430089,\"EXPIRES_AT\":126654160871862,\"HOST_MANAGED\":true,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

@@ -1,0 +1,17 @@
+{
+ "name": "gen-cps-roundtrip",
+ "from": "sds-cps",
+ "to": "sds-cps",
+ "input": "{\"ALGORITHM\":\"POCKET_PLUS\",\"PACKET_LENGTH\":58924,\"PACKET_COUNT\":996546540,\"ROBUSTNESS\":34,\"MASK_UPDATE_PERIOD\":57917,\"MASK_SEND_PERIOD\":56800,\"REFERENCE_PERIOD\":33638,\"SELF_SYNCHRONIZING\":true,\"STREAM_ID\":\"s5092\",\"SEGMENT_INDEX\":1245957034,\"APID\":38918,\"SPACECRAFT_ID\":42703,\"START_EPOCH\":\"s85492\",\"STOP_EPOCH\":\"s28024\",\"COMPRESSED_DATA\":[76,69],\"UNCOMPRESSED_LENGTH\":2061089831,\"UNCOMPRESSED_CRC32\":655087523}",
+ "expect": "{\"ALGORITHM\":\"POCKET_PLUS\",\"PACKET_LENGTH\":58924,\"PACKET_COUNT\":996546540,\"ROBUSTNESS\":34,\"MASK_UPDATE_PERIOD\":57917,\"MASK_SEND_PERIOD\":56800,\"REFERENCE_PERIOD\":33638,\"SELF_SYNCHRONIZING\":true,\"STREAM_ID\":\"s5092\",\"SEGMENT_INDEX\":1245957034,\"APID\":38918,\"SPACECRAFT_ID\":42703,\"START_EPOCH\":\"s85492\",\"STOP_EPOCH\":\"s28024\",\"COMPRESSED_DATA\":[76,69],\"UNCOMPRESSED_LENGTH\":2061089831,\"UNCOMPRESSED_CRC32\":655087523}",
+ "model": {
+  "sdscps.algorithm": "POCKET_PLUS",
+  "sdscps.packet_length": "58924",
+  "sdscps.packet_count": "996546540",
+  "sdscps.robustness": "34",
+  "sdscps.mask_update_period": "57917",
+  "sdscps.mask_send_period": "56800",
+  "sdscps.reference_period": "33638",
+  "sdscps.self_synchronizing": "1"
+ }
+}

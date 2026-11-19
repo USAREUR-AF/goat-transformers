@@ -1,0 +1,7 @@
+{
+ "name": "gen-hel-residue",
+ "from": "sds-hel",
+ "to": "sds-hel",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"POSITION_X\":-3.25,\"POSITION_Y\":7.0625,\"POSITION_Z\":101.125,\"VELOCITY_X\":-0.5,\"VELOCITY_Y\":12.5,\"VELOCITY_Z\":7.0625,\"QUAT_W\":12.5,\"QUAT_X\":1.5,\"QUAT_Y\":-0.5,\"QUAT_Z\":-3.25,\"OMEGA_BODY_X\":12.5,\"OMEGA_BODY_Y\":12.5,\"OMEGA_BODY_Z\":-3.25,\"MAIN_ROTOR\":\"s17491\",\"TAIL_ROTOR\":\"s4886\",\"ENGINE_N1\":101.125,\"ENGINE_TORQUE\":-0.5,\"FLAGS\":3182623633,\"FUEL_REMAINING\":42.375}",
+ "expect": "{\"POSITION_X\":-3.25,\"POSITION_Y\":7.0625,\"POSITION_Z\":101.125,\"VELOCITY_X\":-0.5,\"VELOCITY_Y\":12.5,\"VELOCITY_Z\":7.0625,\"QUAT_W\":12.5,\"QUAT_X\":1.5,\"QUAT_Y\":-0.5,\"QUAT_Z\":-3.25,\"OMEGA_BODY_X\":12.5,\"OMEGA_BODY_Y\":12.5,\"OMEGA_BODY_Z\":-3.25,\"MAIN_ROTOR\":\"s17491\",\"TAIL_ROTOR\":\"s4886\",\"ENGINE_N1\":101.125,\"ENGINE_TORQUE\":-0.5,\"FLAGS\":3182623633,\"FUEL_REMAINING\":42.375,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

@@ -1,0 +1,29 @@
+{
+ "keys": {
+  "reviewer_signature|.|int": "reviewer_signature_value",
+  "|ACL_GRANT_ID|string": "acl_grant_id",
+  "|CONTENT|string": "content",
+  "|FLAGGED_COUNT|int": "flagged_count",
+  "|HELPFUL_COUNT|int": "helpful_count",
+  "|LISTING_ID|string": "listing_id",
+  "|MODERATION_NOTES|string": "moderation_notes",
+  "|NOT_HELPFUL_COUNT|int": "not_helpful_count",
+  "|PROVIDER_RESPONSE_AT|int": "provider_response_at",
+  "|PROVIDER_RESPONSE|string": "provider_response",
+  "|QUALITY_METRICS.COVERAGE_ACCURACY|int": "quality_metrics_coverage_accuracy",
+  "|QUALITY_METRICS.DATA_FRESHNESS|int": "quality_metrics_data_freshness",
+  "|QUALITY_METRICS.DELIVERY_RELIABILITY|int": "quality_metrics_delivery_reliability",
+  "|QUALITY_METRICS.SCHEMA_COMPLIANCE|int": "quality_metrics_schema_compliance",
+  "|RATING|int": "rating",
+  "|REVIEWER_PEER_ID|string": "reviewer_peer_id",
+  "|REVIEW_ID|string": "review_id",
+  "|STATUS|string": "status",
+  "|TIMESTAMP|int": "timestamp",
+  "|TITLE|string": "title",
+  "|UPDATED_AT|int": "updated_at",
+  "|VERIFIED_PURCHASE|int": "verified_purchase"
+ },
+ "lists": {
+  "|REVIEWER_SIGNATURE": "reviewer_signature"
+ }
+}

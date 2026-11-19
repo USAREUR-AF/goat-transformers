@@ -1,0 +1,16 @@
+{
+ "keys": {
+  "data|.|int": "data_value",
+  "|BYPASS_FLAG|int": "bypass_flag",
+  "|CONTROL_CMD_FLAG|int": "control_cmd_flag",
+  "|FECF|int": "fecf",
+  "|FRAME_LENGTH|int": "frame_length",
+  "|FRAME_SEQUENCE_NUM|int": "frame_sequence_num",
+  "|SPACECRAFT_ID|int": "spacecraft_id",
+  "|VERSION|int": "version",
+  "|VIRTUAL_CHANNEL_ID|int": "virtual_channel_id"
+ },
+ "lists": {
+  "|DATA": "data"
+ }
+}

@@ -1,0 +1,17 @@
+{
+ "name": "gen-tre-roundtrip",
+ "from": "sds-tre",
+ "to": "sds-tre",
+ "input": "{\"EDGE_ID\":\"s81289\",\"TRUSTER_ID\":\"s68390\",\"TRUSTEE_ID\":\"s81515\",\"WEIGHT\":-3.25,\"UPDATED_AT\":206429108620223,\"DELETED\":false,\"PROVIDER_PEER_ID\":\"s50107\",\"PROVIDER_SIGNATURE\":[13,174]}",
+ "expect": "{\"EDGE_ID\":\"s81289\",\"TRUSTER_ID\":\"s68390\",\"TRUSTEE_ID\":\"s81515\",\"WEIGHT\":-3.25,\"UPDATED_AT\":206429108620223,\"DELETED\":false,\"PROVIDER_PEER_ID\":\"s50107\",\"PROVIDER_SIGNATURE\":[13,174]}",
+ "model": {
+  "sdstre.edge_id": "s81289",
+  "sdstre.truster_id": "s68390",
+  "sdstre.trustee_id": "s81515",
+  "sdstre.weight": "-3.25",
+  "sdstre.updated_at": "206429108620223",
+  "sdstre.deleted": "0",
+  "sdstre.provider_peer_id": "s50107",
+  "sdstre.provider_signature.#": "2"
+ }
+}

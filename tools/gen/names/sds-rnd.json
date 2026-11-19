@@ -1,0 +1,15 @@
+{
+ "keys": {
+  "bytes|.|int": "bytes_value",
+  "seed|.|int": "seed_value",
+  "|GENERATED_AT_MS|int": "generated_at_ms",
+  "|GENERATOR_ID|string": "generator_id",
+  "|LENGTH|int": "length",
+  "|SEQUENCE|int": "sequence",
+  "|SOURCE|string": "source"
+ },
+ "lists": {
+  "|BYTES": "bytes",
+  "|SEED": "seed"
+ }
+}

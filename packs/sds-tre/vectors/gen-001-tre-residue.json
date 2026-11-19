@@ -1,0 +1,7 @@
+{
+ "name": "gen-tre-residue",
+ "from": "sds-tre",
+ "to": "sds-tre",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"EDGE_ID\":\"s81289\",\"TRUSTER_ID\":\"s68390\",\"TRUSTEE_ID\":\"s81515\",\"WEIGHT\":-3.25,\"UPDATED_AT\":206429108620223,\"DELETED\":false,\"PROVIDER_PEER_ID\":\"s50107\",\"PROVIDER_SIGNATURE\":[13,174]}",
+ "expect": "{\"EDGE_ID\":\"s81289\",\"TRUSTER_ID\":\"s68390\",\"TRUSTEE_ID\":\"s81515\",\"WEIGHT\":-3.25,\"UPDATED_AT\":206429108620223,\"DELETED\":false,\"PROVIDER_PEER_ID\":\"s50107\",\"PROVIDER_SIGNATURE\":[13,174],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

@@ -1,0 +1,24 @@
+{
+ "keys": {
+  "|APOGEE|float": "apogee",
+  "|ARG_OF_PERIGEE|float": "arg_of_perigee",
+  "|B_STAR|float": "b_star",
+  "|ECCENTRICITY|float": "eccentricity",
+  "|EPOCH|string": "epoch",
+  "|ID|string": "id",
+  "|INCLINATION|float": "inclination",
+  "|LINE1|string": "line1",
+  "|LINE2|string": "line2",
+  "|MEAN_ANOMALY|float": "mean_anomaly",
+  "|MEAN_MOTION_DDOT|float": "mean_motion_ddot",
+  "|MEAN_MOTION_DOT|float": "mean_motion_dot",
+  "|MEAN_MOTION|float": "mean_motion",
+  "|PERIGEE|float": "perigee",
+  "|PERIOD|float": "period",
+  "|RAAN|float": "raan",
+  "|REV_NO|int": "rev_no",
+  "|SEMI_MAJOR_AXIS|float": "semi_major_axis",
+  "|TMP_SAT_NO|int": "tmp_sat_no"
+ },
+ "lists": {}
+}

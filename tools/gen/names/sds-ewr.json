@@ -1,0 +1,20 @@
+{
+ "keys": {
+  "active_jamming|.|string": "active_jamming_value",
+  "esm_contacts|.|string": "esm_contacts_value",
+  "threat_warnings|.|string": "threat_warnings_value",
+  "|COUNTERMEASURES|string": "countermeasures",
+  "|ECM_ACTIVE|int": "ecm_active",
+  "|EMCON_LEVEL|int": "emcon_level",
+  "|ENTITY_ID|int": "entity_id",
+  "|ESM_ACTIVE|int": "esm_active",
+  "|LAST_UPDATE_MS|int": "last_update_ms",
+  "|RWR_ACTIVE|int": "rwr_active",
+  "|SYSTEM_ID|int": "system_id"
+ },
+ "lists": {
+  "|ACTIVE_JAMMING": "active_jamming",
+  "|ESM_CONTACTS": "esm_contacts",
+  "|THREAT_WARNINGS": "threat_warnings"
+ }
+}

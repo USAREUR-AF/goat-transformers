@@ -1,0 +1,17 @@
+{
+ "name": "gen-tcf-roundtrip",
+ "from": "sds-tcf",
+ "to": "sds-tcf",
+ "input": "{\"VERSION\":68,\"BYPASS_FLAG\":false,\"CONTROL_CMD_FLAG\":false,\"SPACECRAFT_ID\":8485,\"VIRTUAL_CHANNEL_ID\":224,\"FRAME_LENGTH\":39759,\"FRAME_SEQUENCE_NUM\":145,\"DATA\":[45,27],\"FECF\":6533}",
+ "expect": "{\"VERSION\":68,\"BYPASS_FLAG\":false,\"CONTROL_CMD_FLAG\":false,\"SPACECRAFT_ID\":8485,\"VIRTUAL_CHANNEL_ID\":224,\"FRAME_LENGTH\":39759,\"FRAME_SEQUENCE_NUM\":145,\"DATA\":[45,27],\"FECF\":6533}",
+ "model": {
+  "sdstcf.version": "68",
+  "sdstcf.bypass_flag": "0",
+  "sdstcf.control_cmd_flag": "0",
+  "sdstcf.spacecraft_id": "8485",
+  "sdstcf.virtual_channel_id": "224",
+  "sdstcf.frame_length": "39759",
+  "sdstcf.frame_sequence_num": "145",
+  "sdstcf.data.#": "2"
+ }
+}

@@ -1,0 +1,17 @@
+{
+ "keys": {
+  "reserved|.|int": "reserved_value",
+  "|EPOCH|float": "epoch",
+  "|FLAGS|int": "flags",
+  "|POS_X|float": "pos_x",
+  "|POS_Y|float": "pos_y",
+  "|POS_Z|float": "pos_z",
+  "|REF_FRAME|int": "ref_frame",
+  "|VEL_X|float": "vel_x",
+  "|VEL_Y|float": "vel_y",
+  "|VEL_Z|float": "vel_z"
+ },
+ "lists": {
+  "|RESERVED": "reserved"
+ }
+}

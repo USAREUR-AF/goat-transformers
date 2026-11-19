@@ -1,0 +1,42 @@
+{
+ "keys": {
+  "nodes_connected_peer_ids|.|string": "nodes_connected_peer_ids_value",
+  "nodes_multiformat_address|.|string": "nodes_multiformat_address_value",
+  "nodes_standards|.|string": "nodes_standards_value",
+  "nodes|AGENT_VERSION|string": "nodes_agent_version",
+  "nodes|DN|string": "nodes_dn",
+  "nodes|ENCRYPTION_PUBLIC_KEY|string": "nodes_encryption_public_key",
+  "nodes|EPM_CID|string": "nodes_epm_cid",
+  "nodes|GEO_CITY|string": "nodes_geo_city",
+  "nodes|GEO_COUNTRY|string": "nodes_geo_country",
+  "nodes|IS_ONLINE|int": "nodes_is_online",
+  "nodes|IS_SELF|int": "nodes_is_self",
+  "nodes|LAST_SEEN|int": "nodes_last_seen",
+  "nodes|LATENCY_MS|float": "nodes_latency_ms",
+  "nodes|LAT|float": "nodes_lat",
+  "nodes|LON|float": "nodes_lon",
+  "nodes|ONION_ADDRESS|string": "nodes_onion_address",
+  "nodes|ORGANIZATION|string": "nodes_organization",
+  "nodes|PEER_ID|string": "nodes_peer_id",
+  "nodes|PINNED|int": "nodes_pinned",
+  "nodes|PIN_NOTE|string": "nodes_pin_note",
+  "nodes|ROLE|string": "nodes_role",
+  "nodes|SIGNING_PUBLIC_KEY|string": "nodes_signing_public_key",
+  "nodes|SOURCE|string": "nodes_source",
+  "nodes|STANDARDS_VERSION|string": "nodes_standards_version",
+  "nodes|STORAGE_DAEMON_VERSION|string": "nodes_storage_daemon_version",
+  "nodes|SUITE_VERSION|string": "nodes_suite_version",
+  "nodes|TRUST_LEVEL|string": "nodes_trust_level",
+  "nodes|UPTIME_S|int": "nodes_uptime_s",
+  "nodes|VCARD|string": "nodes_vcard",
+  "|ETAG|string": "etag",
+  "|GENERATED_AT|int": "generated_at",
+  "|SOURCE_PEER_ID|string": "source_peer_id"
+ },
+ "lists": {
+  "nodes|CONNECTED_PEER_IDS": "nodes_connected_peer_ids",
+  "nodes|MULTIFORMAT_ADDRESS": "nodes_multiformat_address",
+  "nodes|STANDARDS": "nodes_standards",
+  "|NODES": "nodes"
+ }
+}

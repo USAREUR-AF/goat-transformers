@@ -1,0 +1,15 @@
+{
+ "keys": {
+  "data|.|int": "data_value",
+  "|FRAME_QUALITY|int": "frame_quality",
+  "|INITIATOR_ID|string": "initiator_id",
+  "|INVOKE_ID|int": "invoke_id",
+  "|PDU_TYPE|string": "pdu_type",
+  "|RESPONDER_PORT_ID|string": "responder_port_id",
+  "|SERVICE_TYPE|int": "service_type",
+  "|VERSION|int": "version"
+ },
+ "lists": {
+  "|DATA": "data"
+ }
+}

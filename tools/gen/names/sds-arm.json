@@ -1,0 +1,20 @@
+{
+ "keys": {
+  "reserved|.|int": "reserved_value",
+  "|ANGLE|float": "angle",
+  "|ERA_EFFECTIVENESS|float": "era_effectiveness",
+  "|ERA_TYPE|int": "era_type",
+  "|ERA_VS_KE|float": "era_vs_ke",
+  "|HARDNESS|int": "hardness",
+  "|MATERIAL|int": "material",
+  "|NORMAL_X|float": "normal_x",
+  "|NORMAL_Y|float": "normal_y",
+  "|NORMAL_Z|float": "normal_z",
+  "|QUALITY|int": "quality",
+  "|RHA_EQUIVALENT|float": "rha_equivalent",
+  "|THICKNESS|float": "thickness"
+ },
+ "lists": {
+  "|RESERVED": "reserved"
+ }
+}

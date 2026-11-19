@@ -1,0 +1,32 @@
+{
+ "keys": {
+  "key_slots|ALGORITHM|string": "key_slots_algorithm",
+  "key_slots|KEY_PATH|string": "key_slots_key_path",
+  "key_slots|NEXT_PATH|string": "key_slots_next_path",
+  "key_slots|ROTATABLE|int": "key_slots_rotatable",
+  "key_slots|SLOT|string": "key_slots_slot",
+  "signature|.|int": "signature_value",
+  "|ACCOUNT_ID|string": "account_id",
+  "|CHALLENGE_ID|string": "challenge_id",
+  "|CHALLENGE|string": "challenge",
+  "|CREATED_AT|int": "created_at",
+  "|EPM_CID|string": "epm_cid",
+  "|EXPIRES_AT|int": "expires_at",
+  "|EXTERNAL_ADDRESS|string": "external_address",
+  "|EXTERNAL_CHAIN|string": "external_chain",
+  "|KIND|string": "kind",
+  "|LAST_SEEN|int": "last_seen",
+  "|LINKED|int": "linked",
+  "|NAME|string": "name",
+  "|PEER_ID|string": "peer_id",
+  "|SIGNATURE_TYPE|string": "signature_type",
+  "|SIGNING_PUBLIC_KEY|string": "signing_public_key",
+  "|TRUST_LEVEL|string": "trust_level",
+  "|XPUB_FINGERPRINT|string": "xpub_fingerprint",
+  "|XPUB|string": "xpub"
+ },
+ "lists": {
+  "|KEY_SLOTS": "key_slots",
+  "|SIGNATURE": "signature"
+ }
+}

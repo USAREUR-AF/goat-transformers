@@ -1,0 +1,19 @@
+{
+ "keys": {
+  "|LICENSE_CLASS|string": "license_class",
+  "|LICENSE_ID|string": "license_id",
+  "|LINEAGE|string": "lineage",
+  "|ORIGINATOR|string": "originator",
+  "|PRODUCER_SHA256|string": "producer_sha256",
+  "|PRODUCER|string": "producer",
+  "|PROVIDER_ID|string": "provider_id",
+  "|RETRIEVED_AT|string": "retrieved_at",
+  "|SOURCE_BYTES|int": "source_bytes",
+  "|SOURCE_ID|string": "source_id",
+  "|SOURCE_KIND|string": "source_kind",
+  "|SOURCE_SHA256|string": "source_sha256",
+  "|SOURCE_URL|string": "source_url",
+  "|SOURCE_VERSION|string": "source_version"
+ },
+ "lists": {}
+}

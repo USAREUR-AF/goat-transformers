@@ -1,0 +1,31 @@
+{
+ "keys": {
+  "antennas|.|string": "antennas_value",
+  "batteries|.|string": "batteries_value",
+  "entity_collection|.|string": "entity_collection_value",
+  "onorbit_details|.|string": "onorbit_details_value",
+  "solar_arrays|.|string": "solar_arrays_value",
+  "thrusters|.|string": "thrusters_value",
+  "|ALT_NAME|string": "alt_name",
+  "|CATEGORY|string": "category",
+  "|COMMON_NAME|string": "common_name",
+  "|CONSTELLATION|string": "constellation",
+  "|COUNTRY_CODE|string": "country_code",
+  "|DECAY_DATE|string": "decay_date",
+  "|INTL_DES|string": "intl_des",
+  "|LAUNCH_DATE|string": "launch_date",
+  "|LAUNCH_SITE_ID|string": "launch_site_id",
+  "|LIFETIME_YEARS|int": "lifetime_years",
+  "|MISSION_NUMBER|string": "mission_number",
+  "|OBJECT_TYPE|string": "object_type",
+  "|SAT_NO|int": "sat_no"
+ },
+ "lists": {
+  "|ANTENNAS": "antennas",
+  "|BATTERIES": "batteries",
+  "|ENTITY_COLLECTION": "entity_collection",
+  "|ONORBIT_DETAILS": "onorbit_details",
+  "|SOLAR_ARRAYS": "solar_arrays",
+  "|THRUSTERS": "thrusters"
+ }
+}

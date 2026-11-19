@@ -1,0 +1,43 @@
+{
+ "keys": {
+  "data_points|CRITICAL_FREQ|float": "data_points_critical_freq",
+  "data_points|EPOCH|string": "data_points_epoch",
+  "data_points|LAYER|string": "data_points_layer",
+  "data_points|PEAK_DENSITY|float": "data_points_peak_density",
+  "data_points|TEC_UNCERTAINTY|float": "data_points_tec_uncertainty",
+  "data_points|TEC|float": "data_points_tec",
+  "data_points|TRUE_HEIGHT|float": "data_points_true_height",
+  "data_points|VIRTUAL_HEIGHT|float": "data_points_virtual_height",
+  "density_profiles_altitudes|.|float": "density_profiles_altitudes_value",
+  "density_profiles_densities|.|float": "density_profiles_densities_value",
+  "density_profiles|EPOCH|string": "density_profiles_epoch",
+  "|ALTITUDE|float": "altitude",
+  "|FOES|float": "foes",
+  "|FOE|float": "foe",
+  "|FOF1|float": "fof1",
+  "|FOF2|float": "fof2",
+  "|HME|float": "hme",
+  "|HMF1|float": "hmf1",
+  "|HMF2|float": "hmf2",
+  "|ID|string": "id",
+  "|LATITUDE|float": "latitude",
+  "|LONGITUDE|float": "longitude",
+  "|NMF2|float": "nmf2",
+  "|NOTES|string": "notes",
+  "|QUALITY|int": "quality",
+  "|S4|float": "s4",
+  "|SOURCE|string": "source",
+  "|START_TIME|string": "start_time",
+  "|STATION_ID|string": "station_id",
+  "|STATION_NAME|string": "station_name",
+  "|STEC|float": "stec",
+  "|STOP_TIME|string": "stop_time",
+  "|VTEC|float": "vtec"
+ },
+ "lists": {
+  "density_profiles|ALTITUDES": "density_profiles_altitudes",
+  "density_profiles|DENSITIES": "density_profiles_densities",
+  "|DATA_POINTS": "data_points",
+  "|DENSITY_PROFILES": "density_profiles"
+ }
+}

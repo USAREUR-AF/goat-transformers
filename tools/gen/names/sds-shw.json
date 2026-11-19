@@ -1,0 +1,28 @@
+{
+ "keys": {
+  "compile_request_shader_uniforms_uniform_default_value|.|int": "compile_request_shader_uniforms_uniform_default_value_value",
+  "compile_request_shader_uniforms|UNIFORM_DESCRIPTION|string": "compile_request_shader_uniforms_uniform_description",
+  "compile_request_shader_uniforms|UNIFORM_NAME|string": "compile_request_shader_uniforms_uniform_name",
+  "compile_request_shader_uniforms|UNIFORM_TYPE|string": "compile_request_shader_uniforms_uniform_type",
+  "compile_response_compiled_binary|.|int": "compile_response_compiled_binary_value",
+  "compile_response_linked_uniforms_uniform_default_value|.|int": "compile_response_linked_uniforms_uniform_default_value_value",
+  "compile_response_linked_uniforms|UNIFORM_DESCRIPTION|string": "compile_response_linked_uniforms_uniform_description",
+  "compile_response_linked_uniforms|UNIFORM_NAME|string": "compile_response_linked_uniforms_uniform_name",
+  "compile_response_linked_uniforms|UNIFORM_TYPE|string": "compile_response_linked_uniforms_uniform_type",
+  "|COMPILE_REQUEST.GLSL_VERSION|string": "compile_request_glsl_version",
+  "|COMPILE_REQUEST.SHADER_INJECTION_POINT|string": "compile_request_shader_injection_point",
+  "|COMPILE_REQUEST.SHADER_NAME|string": "compile_request_shader_name",
+  "|COMPILE_REQUEST.SHADER_SOURCE|string": "compile_request_shader_source",
+  "|COMPILE_REQUEST.SHADER_STAGE|string": "compile_request_shader_stage",
+  "|COMPILE_RESPONSE.COMPILE_SUCCESS|int": "compile_response_compile_success",
+  "|COMPILE_RESPONSE.INFO_LOG|string": "compile_response_info_log",
+  "|COMPILE_RESPONSE.SHADER_NAME|string": "compile_response_shader_name"
+ },
+ "lists": {
+  "compile_request_shader_uniforms|UNIFORM_DEFAULT_VALUE": "compile_request_shader_uniforms_uniform_default_value",
+  "compile_response_linked_uniforms|UNIFORM_DEFAULT_VALUE": "compile_response_linked_uniforms_uniform_default_value",
+  "|COMPILE_REQUEST.SHADER_UNIFORMS": "compile_request_shader_uniforms",
+  "|COMPILE_RESPONSE.COMPILED_BINARY": "compile_response_compiled_binary",
+  "|COMPILE_RESPONSE.LINKED_UNIFORMS": "compile_response_linked_uniforms"
+ }
+}

@@ -1,0 +1,17 @@
+{
+ "name": "gen-ooi-roundtrip",
+ "from": "sds-ooi",
+ "to": "sds-ooi",
+ "input": "{\"ID\":\"s7077\",\"SAT_NO\":2815000232,\"NAME\":\"s26818\",\"ON_ORBIT\":\"s45819\",\"STATUS\":\"ARCHIVED\",\"STATUS_DATE\":\"s74876\",\"PRIORITY\":\"CRITICAL\",\"DESCRIPTION\":\"s72644\",\"SENSOR_TASKING_START_TIME\":\"s66034\",\"SENSOR_TASKING_STOP_TIME\":\"s71144\",\"LAST_OB_TIME\":\"s77776\",\"MISSED_OB_TIME\":\"s1051\",\"SV_EPOCH\":\"s89129\",\"X\":-0.5,\"Y\":7.0625,\"Z\":12.5,\"XVEL\":0.75,\"YVEL\":12.5,\"ZVEL\":-3.25,\"ELSET_EPOCH\":\"s84063\",\"MEAN_MOTION\":1.5,\"ECCENTRICITY\":12.5,\"INCLINATION\":-0.5,\"RAAN\":7.0625,\"ARG_OF_PERIGEE\":-0.5,\"MEAN_ANOMALY\":12.5,\"REV_NO\":330591992,\"B_STAR\":-0.5,\"MEAN_MOTION_DOT\":1.5,\"MEAN_MOTION_DDOT\":101.125,\"SEMI_MAJOR_AXIS\":12.5,\"PERIOD\":42.375,\"APOGEE\":12.5,\"PERIGEE\":7.0625,\"DELTA_VS\":[0.75,12.5],\"DELTA_TS\":[0.75,-0.5],\"AFFECTED_OBJECTS\":[\"s66626\",\"s25485\"],\"MANIFOLDS\":[\"s76772\",\"s42049\"]}",
+ "expect": "{\"ID\":\"s7077\",\"SAT_NO\":2815000232,\"NAME\":\"s26818\",\"ON_ORBIT\":\"s45819\",\"STATUS\":\"ARCHIVED\",\"STATUS_DATE\":\"s74876\",\"PRIORITY\":\"CRITICAL\",\"DESCRIPTION\":\"s72644\",\"SENSOR_TASKING_START_TIME\":\"s66034\",\"SENSOR_TASKING_STOP_TIME\":\"s71144\",\"LAST_OB_TIME\":\"s77776\",\"MISSED_OB_TIME\":\"s1051\",\"SV_EPOCH\":\"s89129\",\"X\":-0.5,\"Y\":7.0625,\"Z\":12.5,\"XVEL\":0.75,\"YVEL\":12.5,\"ZVEL\":-3.25,\"ELSET_EPOCH\":\"s84063\",\"MEAN_MOTION\":1.5,\"ECCENTRICITY\":12.5,\"INCLINATION\":-0.5,\"RAAN\":7.0625,\"ARG_OF_PERIGEE\":-0.5,\"MEAN_ANOMALY\":12.5,\"REV_NO\":330591992,\"B_STAR\":-0.5,\"MEAN_MOTION_DOT\":1.5,\"MEAN_MOTION_DDOT\":101.125,\"SEMI_MAJOR_AXIS\":12.5,\"PERIOD\":42.375,\"APOGEE\":12.5,\"PERIGEE\":7.0625,\"DELTA_VS\":[0.75,12.5],\"DELTA_TS\":[0.75,-0.5],\"AFFECTED_OBJECTS\":[\"s66626\",\"s25485\"],\"MANIFOLDS\":[\"s76772\",\"s42049\"]}",
+ "model": {
+  "uid": "s7077",
+  "sdsooi.id": "s7077",
+  "sdsooi.sat_no": "2815000232",
+  "sdsooi.name": "s26818",
+  "sdsooi.on_orbit": "s45819",
+  "sdsooi.status": "ARCHIVED",
+  "sdsooi.status_date": "s74876",
+  "sdsooi.priority": "CRITICAL"
+ }
+}

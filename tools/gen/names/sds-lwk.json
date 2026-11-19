@@ -1,0 +1,25 @@
+{
+ "keys": {
+  "ciphertext|.|int": "ciphertext_value",
+  "hkdf_salt|.|int": "hkdf_salt_value",
+  "iv|.|int": "iv_value",
+  "provider_ephemeral_pubkey|.|int": "provider_ephemeral_pubkey_value",
+  "requester_ephemeral_pubkey|.|int": "requester_ephemeral_pubkey_value",
+  "tag|.|int": "tag_value",
+  "|ALGORITHM|string": "algorithm",
+  "|CONTENT_KEY_ID|string": "content_key_id",
+  "|EXPIRES_AT|int": "expires_at",
+  "|MODULE_ID|string": "module_id",
+  "|MODULE_VERSION|string": "module_version",
+  "|RECIPIENT_KEY_ID|string": "recipient_key_id",
+  "|REQUEST_ID|string": "request_id"
+ },
+ "lists": {
+  "|CIPHERTEXT": "ciphertext",
+  "|HKDF_SALT": "hkdf_salt",
+  "|IV": "iv",
+  "|PROVIDER_EPHEMERAL_PUBKEY": "provider_ephemeral_pubkey",
+  "|REQUESTER_EPHEMERAL_PUBKEY": "requester_ephemeral_pubkey",
+  "|TAG": "tag"
+ }
+}

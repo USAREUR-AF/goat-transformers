@@ -1,0 +1,17 @@
+{
+ "name": "gen-phy-roundtrip",
+ "from": "sds-phy",
+ "to": "sds-phy",
+ "input": "{\"COMMAND\":\"s29577\",\"SIMULATION_STEP\":\"s37824\",\"RIGID_BODY\":\"s74218\",\"INTEGRATION_CONFIG\":\"s37126\",\"COLLISION_QUERY_A\":\"s70198\",\"COLLISION_QUERY_B\":\"s77605\",\"TRANSFORM_A\":\"s29505\",\"TRANSFORM_B\":\"s4987\",\"POSITION_A\":\"s10095\",\"POSITION_B\":\"s65694\",\"FLUID\":\"s65093\",\"AERO_QUERY\":\"s6089\",\"DRAG_MODEL\":\"s37644\",\"THERMAL_STATE\":\"s88960\"}",
+ "expect": "{\"COMMAND\":\"s29577\",\"SIMULATION_STEP\":\"s37824\",\"RIGID_BODY\":\"s74218\",\"INTEGRATION_CONFIG\":\"s37126\",\"COLLISION_QUERY_A\":\"s70198\",\"COLLISION_QUERY_B\":\"s77605\",\"TRANSFORM_A\":\"s29505\",\"TRANSFORM_B\":\"s4987\",\"POSITION_A\":\"s10095\",\"POSITION_B\":\"s65694\",\"FLUID\":\"s65093\",\"AERO_QUERY\":\"s6089\",\"DRAG_MODEL\":\"s37644\",\"THERMAL_STATE\":\"s88960\"}",
+ "model": {
+  "sdsphy.command": "s29577",
+  "sdsphy.simulation_step": "s37824",
+  "sdsphy.rigid_body": "s74218",
+  "sdsphy.integration_config": "s37126",
+  "sdsphy.collision_query_a": "s70198",
+  "sdsphy.collision_query_b": "s77605",
+  "sdsphy.transform_a": "s29505",
+  "sdsphy.transform_b": "s4987"
+ }
+}

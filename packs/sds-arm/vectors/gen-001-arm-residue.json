@@ -1,0 +1,7 @@
+{
+ "name": "gen-arm-residue",
+ "from": "sds-arm",
+ "to": "sds-arm",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"THICKNESS\":-0.5,\"ANGLE\":0.75,\"MATERIAL\":73,\"HARDNESS\":71,\"QUALITY\":163,\"ERA_TYPE\":193,\"ERA_EFFECTIVENESS\":12.5,\"ERA_VS_KE\":-3.25,\"RHA_EQUIVALENT\":42.375,\"NORMAL_X\":-0.5,\"NORMAL_Y\":-0.5,\"NORMAL_Z\":101.125,\"RESERVED\":[32,114]}",
+ "expect": "{\"THICKNESS\":-0.5,\"ANGLE\":0.75,\"MATERIAL\":73,\"HARDNESS\":71,\"QUALITY\":163,\"ERA_TYPE\":193,\"ERA_EFFECTIVENESS\":12.5,\"ERA_VS_KE\":-3.25,\"RHA_EQUIVALENT\":42.375,\"NORMAL_X\":-0.5,\"NORMAL_Y\":-0.5,\"NORMAL_Z\":101.125,\"RESERVED\":[32,114],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

@@ -1,0 +1,42 @@
+{
+ "keys": {
+  "attestation_canonical_json_signature|.|int": "attestation_canonical_json_signature_value",
+  "attestation_signature|.|int": "attestation_signature_value",
+  "objective_ids|.|string": "objective_ids_value",
+  "solutions_constraints|CONSTRAINT_ID|string": "solutions_constraints_constraint_id",
+  "solutions_constraints|VALUE|float": "solutions_constraints_value",
+  "solutions_constraints|VIOLATION|float": "solutions_constraints_violation",
+  "solutions_objectives|OBJECTIVE_ID|string": "solutions_objectives_objective_id",
+  "solutions_objectives|VALUE|float": "solutions_objectives_value",
+  "solutions_variables|VALUE|float": "solutions_variables_value",
+  "solutions_variables|VARIABLE_ID|string": "solutions_variables_variable_id",
+  "solutions|CROWDING_DISTANCE|float": "solutions_crowding_distance",
+  "solutions|DOMINANCE_RANK|int": "solutions_dominance_rank",
+  "solutions|PROVENANCE.CREATED_AT|string": "solutions_provenance_created_at",
+  "solutions|PROVENANCE.PROPAGATOR_ARTIFACT_SHA256|string": "solutions_provenance_propagator_artifact_sha256",
+  "solutions|PROVENANCE.PROPAGATOR_MODULE_ID|string": "solutions_provenance_propagator_module_id",
+  "solutions|PROVENANCE.PROPAGATOR_MODULE_VERSION|string": "solutions_provenance_propagator_module_version",
+  "solutions|PROVENANCE.SOLVER_ARTIFACT_SHA256|string": "solutions_provenance_solver_artifact_sha256",
+  "solutions|PROVENANCE.SOLVER_MODULE_ID|string": "solutions_provenance_solver_module_id",
+  "solutions|PROVENANCE.SOLVER_MODULE_VERSION|string": "solutions_provenance_solver_module_version",
+  "solutions|PROVENANCE.SOURCE_RECORD_ID|string": "solutions_provenance_source_record_id",
+  "solutions|PROVENANCE.SOURCE_SDS_TYPE|string": "solutions_provenance_source_sds_type",
+  "solutions|SOLUTION_ID|string": "solutions_solution_id",
+  "solutions|STATUS|string": "solutions_status",
+  "solutions|VERIFY_BY_PROPAGATION_RESIDUAL|float": "solutions_verify_by_propagation_residual",
+  "|ATTESTATION.SIGNED_AT|string": "attestation_signed_at",
+  "|ATTESTATION.SIGNING_PUBLIC_KEY|string": "attestation_signing_public_key",
+  "|GENERATED_AT|string": "generated_at",
+  "|PROBLEM_ID|string": "problem_id",
+  "|SOLUTION_SET_ID|string": "solution_set_id"
+ },
+ "lists": {
+  "solutions|CONSTRAINTS": "solutions_constraints",
+  "solutions|OBJECTIVES": "solutions_objectives",
+  "solutions|VARIABLES": "solutions_variables",
+  "|ATTESTATION.CANONICAL_JSON_SIGNATURE": "attestation_canonical_json_signature",
+  "|ATTESTATION.SIGNATURE": "attestation_signature",
+  "|OBJECTIVE_IDS": "objective_ids",
+  "|SOLUTIONS": "solutions"
+ }
+}

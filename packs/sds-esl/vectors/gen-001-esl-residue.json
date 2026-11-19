@@ -1,0 +1,7 @@
+{
+ "name": "gen-esl-residue",
+ "from": "sds-esl",
+ "to": "sds-esl",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"LINK_KEY\":\"s39413\",\"ENTITY_ID\":\"s42979\",\"ENTITY_RECORD_KEY\":\"s35847\",\"ENTITY_ROWID\":-0.5,\"RECORD_KEY\":\"s35022\",\"SCHEMA_NAME\":\"s66562\",\"RECORD_ROWID\":1.5,\"CASCADE_DELETE\":true,\"UPDATED_AT_MS\":7.0625,\"RESERVED\":[175,230]}",
+ "expect": "{\"LINK_KEY\":\"s39413\",\"ENTITY_ID\":\"s42979\",\"ENTITY_RECORD_KEY\":\"s35847\",\"ENTITY_ROWID\":-0.5,\"RECORD_KEY\":\"s35022\",\"SCHEMA_NAME\":\"s66562\",\"RECORD_ROWID\":1.5,\"CASCADE_DELETE\":true,\"UPDATED_AT_MS\":7.0625,\"RESERVED\":[175,230],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

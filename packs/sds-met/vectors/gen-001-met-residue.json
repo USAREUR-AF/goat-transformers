@@ -1,0 +1,7 @@
+{
+ "name": "gen-met-residue",
+ "from": "sds-met",
+ "to": "sds-met",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"MEAN_ELEMENT_THEORY\":\"USM\"}",
+ "expect": "{\"MEAN_ELEMENT_THEORY\":\"USM\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

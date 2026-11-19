@@ -1,0 +1,29 @@
+{
+ "keys": {
+  "|BAND|string": "band",
+  "|CONSTELLATION|string": "constellation",
+  "|DATA_RATE1_TO2|float": "data_rate1_to2",
+  "|DATA_RATE2_TO1|float": "data_rate2_to1",
+  "|END_POINT1_LAT|float": "end_point1_lat",
+  "|END_POINT1_LON|float": "end_point1_lon",
+  "|END_POINT1_NAME|string": "end_point1_name",
+  "|END_POINT2_LAT|float": "end_point2_lat",
+  "|END_POINT2_LON|float": "end_point2_lon",
+  "|END_POINT2_NAME|string": "end_point2_name",
+  "|ID_BEAM1|string": "id_beam1",
+  "|ID_BEAM2|string": "id_beam2",
+  "|ID_ON_ORBIT1|string": "id_on_orbit1",
+  "|ID_ON_ORBIT2|string": "id_on_orbit2",
+  "|ID|string": "id",
+  "|LINK_NAME|string": "link_name",
+  "|LINK_START_TIME|string": "link_start_time",
+  "|LINK_STATE|string": "link_state",
+  "|LINK_STOP_TIME|string": "link_stop_time",
+  "|LINK_TYPE|string": "link_type",
+  "|OPS_CAP|string": "ops_cap",
+  "|SAT_NO1|int": "sat_no1",
+  "|SAT_NO2|int": "sat_no2",
+  "|SYS_CAP|string": "sys_cap"
+ },
+ "lists": {}
+}

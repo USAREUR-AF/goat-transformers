@@ -1,0 +1,17 @@
+{
+ "name": "gen-oot-roundtrip",
+ "from": "sds-oot",
+ "to": "sds-oot",
+ "input": "{\"ID\":\"s85995\",\"ID_ON_ORBIT\":\"s9461\",\"ID_THRUSTER\":\"s24416\",\"NAME\":\"s31691\",\"TYPE\":\"ELECTRIC_COLLOID\",\"QUANTITY\":1628989061,\"THRUST\":101.125,\"ISP\":0.75,\"PROPELLANT\":\"s69278\",\"PROPELLANT_MASS\":1.5,\"PROPELLANT_REMAINING\":101.125,\"DELTA_V_TOTAL\":-0.5,\"DELTA_V_REMAINING\":1.5,\"TOTAL_IMPULSE\":7.0625,\"MASS\":1.5,\"PURPOSE\":\"s16244\",\"NOTES\":\"s6715\"}",
+ "expect": "{\"ID\":\"s85995\",\"ID_ON_ORBIT\":\"s9461\",\"ID_THRUSTER\":\"s24416\",\"NAME\":\"s31691\",\"TYPE\":\"ELECTRIC_COLLOID\",\"QUANTITY\":1628989061,\"THRUST\":101.125,\"ISP\":0.75,\"PROPELLANT\":\"s69278\",\"PROPELLANT_MASS\":1.5,\"PROPELLANT_REMAINING\":101.125,\"DELTA_V_TOTAL\":-0.5,\"DELTA_V_REMAINING\":1.5,\"TOTAL_IMPULSE\":7.0625,\"MASS\":1.5,\"PURPOSE\":\"s16244\",\"NOTES\":\"s6715\"}",
+ "model": {
+  "uid": "s85995",
+  "sdsoot.id": "s85995",
+  "sdsoot.id_on_orbit": "s9461",
+  "sdsoot.id_thruster": "s24416",
+  "sdsoot.name": "s31691",
+  "sdsoot.type": "ELECTRIC_COLLOID",
+  "sdsoot.quantity": "1628989061",
+  "sdsoot.thrust": "101.125"
+ }
+}

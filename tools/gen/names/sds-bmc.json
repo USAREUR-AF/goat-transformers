@@ -1,0 +1,16 @@
+{
+ "keys": {
+  "|CONTOUR_IDX|int": "contour_idx",
+  "|GAIN|float": "gain",
+  "|GEOGRAPHY_JSON|string": "geography_json",
+  "|GEOGRAPHY_NDIMS|int": "geography_ndims",
+  "|GEOGRAPHY_SRID|int": "geography_srid",
+  "|GEOGRAPHY_TEXT|string": "geography_text",
+  "|GEOGRAPHY_TYPE|string": "geography_type",
+  "|GEOGRAPHY|string": "geography",
+  "|ID|string": "id",
+  "|REGION_NAME|string": "region_name",
+  "|TYPE|string": "type"
+ },
+ "lists": {}
+}

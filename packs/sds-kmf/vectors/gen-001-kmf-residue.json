@@ -1,0 +1,7 @@
+{
+ "name": "gen-kmf-residue",
+ "from": "sds-kmf",
+ "to": "sds-kmf",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"KEY_ID\":\"s13938\",\"ROLE\":\"RequesterSigning\",\"ALGORITHM\":\"Ed25519Public\",\"ENCODING\":\"Seed32\",\"KEY_BYTES\":[56,105],\"VERSION\":3458573428,\"EXPIRES_AT\":190647886609465}",
+ "expect": "{\"KEY_ID\":\"s13938\",\"ROLE\":\"RequesterSigning\",\"ALGORITHM\":\"Ed25519Public\",\"ENCODING\":\"Seed32\",\"KEY_BYTES\":[56,105],\"VERSION\":3458573428,\"EXPIRES_AT\":190647886609465,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-atd-residue",
+ "from": "sds-atd",
+ "to": "sds-atd",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"ID\":\"s82405\",\"AS_ID\":\"s26671\",\"SAT_NO\":2429956950,\"ORIG_OBJECT_ID\":\"s77827\",\"EPOCH\":\"s5624\",\"REPRESENTATION\":\"DIRECTION_COSINE\",\"MOTION_TYPE\":\"STABILIZED\",\"QC\":0.75,\"Q1\":42.375,\"Q2\":1.5,\"Q3\":42.375,\"QC_DOT\":12.5,\"Q1_DOT\":101.125,\"Q2_DOT\":1.5,\"Q3_DOT\":1.5,\"X_ANGLE\":1.5,\"Y_ANGLE\":0.75,\"Z_ANGLE\":0.75,\"X_RATE\":-3.25,\"Y_RATE\":101.125,\"Z_RATE\":42.375,\"RA\":7.0625,\"DECLINATION\":-3.25,\"CONING_ANGLE\":1.5,\"PREC_PERIOD\":7.0625,\"SPIN_PERIOD\":1.5,\"ATTITUDE_UNC\":42.375,\"RATE_UNC\":42.375,\"QUALITY\":46,\"REF_FRAME\":\"s29205\",\"SENSOR_ID\":\"s15023\"}",
+ "expect": "{\"ID\":\"s82405\",\"AS_ID\":\"s26671\",\"SAT_NO\":2429956950,\"ORIG_OBJECT_ID\":\"s77827\",\"EPOCH\":\"s5624\",\"REPRESENTATION\":\"DIRECTION_COSINE\",\"MOTION_TYPE\":\"STABILIZED\",\"QC\":0.75,\"Q1\":42.375,\"Q2\":1.5,\"Q3\":42.375,\"QC_DOT\":12.5,\"Q1_DOT\":101.125,\"Q2_DOT\":1.5,\"Q3_DOT\":1.5,\"X_ANGLE\":1.5,\"Y_ANGLE\":0.75,\"Z_ANGLE\":0.75,\"X_RATE\":-3.25,\"Y_RATE\":101.125,\"Z_RATE\":42.375,\"RA\":7.0625,\"DECLINATION\":-3.25,\"CONING_ANGLE\":1.5,\"PREC_PERIOD\":7.0625,\"SPIN_PERIOD\":1.5,\"ATTITUDE_UNC\":42.375,\"RATE_UNC\":42.375,\"QUALITY\":46,\"REF_FRAME\":\"s29205\",\"SENSOR_ID\":\"s15023\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

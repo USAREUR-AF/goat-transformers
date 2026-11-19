@@ -1,0 +1,18 @@
+{
+ "keys": {
+  "reserved|.|int": "reserved_value",
+  "|AMMO_SELECTED|int": "ammo_selected",
+  "|LAST_RANGE|float": "last_range",
+  "|LEAD_METHOD|int": "lead_method",
+  "|MODE|int": "mode",
+  "|RANGEFINDER_TYPE|int": "rangefinder_type",
+  "|RANGE_RATE|float": "range_rate",
+  "|ROUNDS_REMAINING|int": "rounds_remaining",
+  "|SOLUTION|string": "solution",
+  "|TARGET|string": "target",
+  "|TEMPERATURE|float": "temperature"
+ },
+ "lists": {
+  "|RESERVED": "reserved"
+ }
+}

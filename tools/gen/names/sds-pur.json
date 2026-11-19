@@ -1,0 +1,41 @@
+{
+ "keys": {
+  "buyer_encryption_pubkey|.|int": "buyer_encryption_pubkey_value",
+  "buyer_signature|.|int": "buyer_signature_value",
+  "provider_signature|.|int": "provider_signature_value",
+  "|BUYER_EMAIL|string": "buyer_email",
+  "|BUYER_PEER_ID|string": "buyer_peer_id",
+  "|CONFIRMATION_BLOCK|int": "confirmation_block",
+  "|CREATED_AT|int": "created_at",
+  "|CREDITS_TRANSACTION_ID|string": "credits_transaction_id",
+  "|GRANT_ID|string": "grant_id",
+  "|GRANT_ISSUED_AT|int": "grant_issued_at",
+  "|KEY_ALGORITHM|string": "key_algorithm",
+  "|LISTING_ID|string": "listing_id",
+  "|PAYMENT_AMOUNT|int": "payment_amount",
+  "|PAYMENT_CHAIN|string": "payment_chain",
+  "|PAYMENT_CONFIRMED_AT|int": "payment_confirmed_at",
+  "|PAYMENT_CURRENCY|string": "payment_currency",
+  "|PAYMENT_DEADLINE|int": "payment_deadline",
+  "|PAYMENT_INTENT_ID|string": "payment_intent_id",
+  "|PAYMENT_METHOD|string": "payment_method",
+  "|PAYMENT_REFERENCE|string": "payment_reference",
+  "|PAYMENT_TX_HASH|string": "payment_tx_hash",
+  "|PREFERRED_DELIVERY_METHOD|string": "preferred_delivery_method",
+  "|PROVIDER_ACKNOWLEDGED_AT|int": "provider_acknowledged_at",
+  "|PROVIDER_PEER_ID|string": "provider_peer_id",
+  "|REQUEST_ID|string": "request_id",
+  "|SENDER_ADDRESS|string": "sender_address",
+  "|STATUS_MESSAGE|string": "status_message",
+  "|STATUS|string": "status",
+  "|TIER_NAME|string": "tier_name",
+  "|TIMESTAMP|int": "timestamp",
+  "|UPDATED_AT|int": "updated_at",
+  "|WEBHOOK_URL|string": "webhook_url"
+ },
+ "lists": {
+  "|BUYER_ENCRYPTION_PUBKEY": "buyer_encryption_pubkey",
+  "|BUYER_SIGNATURE": "buyer_signature",
+  "|PROVIDER_SIGNATURE": "provider_signature"
+ }
+}

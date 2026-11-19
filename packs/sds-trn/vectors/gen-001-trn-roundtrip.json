@@ -1,0 +1,14 @@
+{
+ "name": "gen-trn-roundtrip",
+ "from": "sds-trn",
+ "to": "sds-trn",
+ "input": "{\"SOURCES\":[\"NED\",\"CUSTOM\"],\"INTERPOLATION\":\"NEAREST\",\"CACHE_ENABLED\":true,\"MAX_CACHE_TILES\":63181,\"VERTICAL_EXAGGERATION\":-3.25}",
+ "expect": "{\"SOURCES\":[\"NED\",\"CUSTOM\"],\"INTERPOLATION\":\"NEAREST\",\"CACHE_ENABLED\":true,\"MAX_CACHE_TILES\":63181,\"VERTICAL_EXAGGERATION\":-3.25}",
+ "model": {
+  "sdstrn.sources.#": "2",
+  "sdstrn.interpolation": "NEAREST",
+  "sdstrn.cache_enabled": "1",
+  "sdstrn.max_cache_tiles": "63181",
+  "sdstrn.vertical_exaggeration": "-3.25"
+ }
+}

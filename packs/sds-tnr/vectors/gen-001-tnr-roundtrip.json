@@ -1,0 +1,15 @@
+{
+ "name": "gen-tnr-roundtrip",
+ "from": "sds-tnr",
+ "to": "sds-tnr",
+ "input": "{\"NODE_ID\":\"s41325\",\"CREATED_AT\":267966837778753,\"UPDATED_AT\":107154013361354,\"DELETED\":true,\"PROVIDER_PEER_ID\":\"s82721\",\"PROVIDER_SIGNATURE\":[160,142]}",
+ "expect": "{\"NODE_ID\":\"s41325\",\"CREATED_AT\":267966837778753,\"UPDATED_AT\":107154013361354,\"DELETED\":true,\"PROVIDER_PEER_ID\":\"s82721\",\"PROVIDER_SIGNATURE\":[160,142]}",
+ "model": {
+  "sdstnr.node_id": "s41325",
+  "sdstnr.created_at": "267966837778753",
+  "sdstnr.updated_at": "107154013361354",
+  "sdstnr.deleted": "1",
+  "sdstnr.provider_peer_id": "s82721",
+  "sdstnr.provider_signature.#": "2"
+ }
+}

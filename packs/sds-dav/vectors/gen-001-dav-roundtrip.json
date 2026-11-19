@@ -1,0 +1,17 @@
+{
+ "name": "gen-dav-roundtrip",
+ "from": "sds-dav",
+ "to": "sds-dav",
+ "input": "{\"STANDARD\":\"s96359\",\"SCHEMA_NAME\":\"s68300\",\"PROVIDER_ID\":\"s11012\",\"SOURCE_NAME\":\"s50298\",\"KNOWN\":true,\"AVAILABLE\":false,\"UNAVAILABLE_REASON\":\"Unverified\",\"SELF_PUBLISHED\":true,\"PINNED\":false,\"FRESH\":true,\"BATCH_ID\":\"s1277\",\"RECORD_COUNT\":139278902863412,\"BYTE_COUNT\":246773233257559,\"PARTS\":3798680880,\"PUBLISHED_AT_MS\":-9223275442152126739,\"PNM_CID\":\"s34353\",\"PNM_FILE_ID\":\"s97094\",\"PNM_PUBLISHED_AT_MS\":-9223319681811615944,\"PNM_SIGNATURE_VERIFIED\":false,\"PUBLISHER_PEER_ID\":\"s14510\",\"ETAG\":\"s54717\",\"BODY_REF_TOKEN\":49002473960106,\"BODY_REF_SIZE\":59964993839530}",
+ "expect": "{\"STANDARD\":\"s96359\",\"SCHEMA_NAME\":\"s68300\",\"PROVIDER_ID\":\"s11012\",\"SOURCE_NAME\":\"s50298\",\"KNOWN\":true,\"AVAILABLE\":false,\"UNAVAILABLE_REASON\":\"Unverified\",\"SELF_PUBLISHED\":true,\"PINNED\":false,\"FRESH\":true,\"BATCH_ID\":\"s1277\",\"RECORD_COUNT\":139278902863412,\"BYTE_COUNT\":246773233257559,\"PARTS\":3798680880,\"PUBLISHED_AT_MS\":-9223275442152126739,\"PNM_CID\":\"s34353\",\"PNM_FILE_ID\":\"s97094\",\"PNM_PUBLISHED_AT_MS\":-9223319681811615944,\"PNM_SIGNATURE_VERIFIED\":false,\"PUBLISHER_PEER_ID\":\"s14510\",\"ETAG\":\"s54717\",\"BODY_REF_TOKEN\":49002473960106,\"BODY_REF_SIZE\":59964993839530}",
+ "model": {
+  "sdsdav.standard": "s96359",
+  "sdsdav.schema_name": "s68300",
+  "sdsdav.provider_id": "s11012",
+  "sdsdav.source_name": "s50298",
+  "sdsdav.known": "1",
+  "sdsdav.available": "0",
+  "sdsdav.unavailable_reason": "Unverified",
+  "sdsdav.self_published": "1"
+ }
+}

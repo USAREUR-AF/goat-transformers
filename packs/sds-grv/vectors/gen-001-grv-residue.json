@@ -1,0 +1,7 @@
+{
+ "name": "gen-grv-residue",
+ "from": "sds-grv",
+ "to": "sds-grv",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"MODEL_TYPE\":\"POINT_MASS\",\"MODEL_NAME\":\"LPE200\",\"CENTRAL_BODY\":\"MARS\",\"MAX_DEGREE\":12875,\"MAX_ORDER\":50390,\"INCLUDE_SUN\":true,\"INCLUDE_MOON\":false,\"INCLUDE_PLANETS\":true,\"SOLID_TIDES\":true,\"OCEAN_TIDES\":false,\"POLE_TIDES\":false,\"EQUATORIAL_RADIUS\":12.5,\"J2\":1.5,\"MU\":0.75,\"J3\":12.5,\"J4\":101.125,\"J5\":1.5,\"J6\":7.0625}",
+ "expect": "{\"MODEL_TYPE\":\"POINT_MASS\",\"MODEL_NAME\":\"LPE200\",\"CENTRAL_BODY\":\"MARS\",\"MAX_DEGREE\":12875,\"MAX_ORDER\":50390,\"INCLUDE_SUN\":true,\"INCLUDE_MOON\":false,\"INCLUDE_PLANETS\":true,\"SOLID_TIDES\":true,\"OCEAN_TIDES\":false,\"POLE_TIDES\":false,\"EQUATORIAL_RADIUS\":12.5,\"J2\":1.5,\"MU\":0.75,\"J3\":12.5,\"J4\":101.125,\"J5\":1.5,\"J6\":7.0625,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

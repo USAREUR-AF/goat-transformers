@@ -1,0 +1,7 @@
+{
+ "name": "gen-fsb-residue",
+ "from": "sds-fsb",
+ "to": "sds-fsb",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"REQUEST_ID\":81303421305893,\"KIND\":\"QUERY_RESULT\",\"CHUNK_SEQUENCE\":2803868491,\"FINAL\":false,\"TOTAL_BYTES\":276628291665765,\"RECORD_COUNT\":66994046979170,\"COLUMN_COUNT\":658519171,\"SCHEMA_NAME\":\"s50811\",\"FILE_IDENTIFIER\":\"s92957\",\"DATA\":[138,9],\"SHA256\":[28,56]}",
+ "expect": "{\"REQUEST_ID\":81303421305893,\"KIND\":\"QUERY_RESULT\",\"CHUNK_SEQUENCE\":2803868491,\"FINAL\":false,\"TOTAL_BYTES\":276628291665765,\"RECORD_COUNT\":66994046979170,\"COLUMN_COUNT\":658519171,\"SCHEMA_NAME\":\"s50811\",\"FILE_IDENTIFIER\":\"s92957\",\"DATA\":[138,9],\"SHA256\":[28,56],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

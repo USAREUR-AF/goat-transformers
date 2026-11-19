@@ -1,0 +1,27 @@
+{
+ "keys": {
+  "records|DRIFT_RATE|float": "records_drift_rate",
+  "records|ECCENTRICITY|float": "records_eccentricity",
+  "records|EPOCH|string": "records_epoch",
+  "records|INCLINATION|float": "records_inclination",
+  "records|LONGITUDE_AMPLITUDE|float": "records_longitude_amplitude",
+  "records|MEAN_LONGITUDE|float": "records_mean_longitude",
+  "|DRIFT_RATE|float": "drift_rate",
+  "|EFFECTIVE_UNTIL|string": "effective_until",
+  "|END_TIME|string": "end_time",
+  "|ID|string": "id",
+  "|MEAN_LONGITUDE|float": "mean_longitude",
+  "|NOTES|string": "notes",
+  "|NUM_RECORDS|int": "num_records",
+  "|OBJECT_DESIGNATOR|string": "object_designator",
+  "|OBJECT_NAME|string": "object_name",
+  "|SAT_NO|int": "sat_no",
+  "|SLOT_CENTER|float": "slot_center",
+  "|SLOT_HALF_WIDTH|float": "slot_half_width",
+  "|START_TIME|string": "start_time",
+  "|STATION_KEEPING|int": "station_keeping"
+ },
+ "lists": {
+  "|RECORDS": "records"
+ }
+}

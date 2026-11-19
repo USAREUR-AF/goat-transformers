@@ -1,0 +1,17 @@
+{
+ "name": "gen-ces-roundtrip",
+ "from": "sds-ces",
+ "to": "sds-ces",
+ "input": "{\"DATASET_ID\":\"s28771\",\"UPDATE_ID\":\"s43644\",\"DIMENSIONS\":379154907,\"ENCODING\":\"FLOAT32\",\"NORMALIZATION\":\"L2\",\"SIMILARITY\":\"DOT_PRODUCT\",\"MODEL_ID\":\"s57108\",\"MODEL_VERSION\":\"s83204\",\"MODEL_WEIGHTS_SHA256\":\"s83153\",\"POOLING_METHOD\":\"MEAN\",\"TEMPLATE_VERSION\":\"s64930\",\"ROWS\":[{\"NORAD_CAT_ID\":3110958520,\"OBJECT_ID\":\"s31518\",\"VECTOR_INT8\":[18],\"SCALE\":12.5,\"VECTOR_FLOAT32\":[-3.25]},{\"NORAD_CAT_ID\":3839672857,\"OBJECT_ID\":\"s94509\",\"VECTOR_INT8\":[-98],\"SCALE\":1.5,\"VECTOR_FLOAT32\":[7.0625]}]}",
+ "expect": "{\"DATASET_ID\":\"s28771\",\"UPDATE_ID\":\"s43644\",\"DIMENSIONS\":379154907,\"ENCODING\":\"FLOAT32\",\"NORMALIZATION\":\"L2\",\"SIMILARITY\":\"DOT_PRODUCT\",\"MODEL_ID\":\"s57108\",\"MODEL_VERSION\":\"s83204\",\"MODEL_WEIGHTS_SHA256\":\"s83153\",\"POOLING_METHOD\":\"MEAN\",\"TEMPLATE_VERSION\":\"s64930\",\"ROWS\":[{\"NORAD_CAT_ID\":3110958520,\"OBJECT_ID\":\"s31518\",\"VECTOR_INT8\":[18],\"SCALE\":12.5,\"VECTOR_FLOAT32\":[-3.25]},{\"NORAD_CAT_ID\":3839672857,\"OBJECT_ID\":\"s94509\",\"VECTOR_INT8\":[-98],\"SCALE\":1.5,\"VECTOR_FLOAT32\":[7.0625]}]}",
+ "model": {
+  "sdsces.dataset_id": "s28771",
+  "sdsces.update_id": "s43644",
+  "sdsces.dimensions": "379154907",
+  "sdsces.encoding": "FLOAT32",
+  "sdsces.normalization": "L2",
+  "sdsces.similarity": "DOT_PRODUCT",
+  "sdsces.model_id": "s57108",
+  "sdsces.model_version": "s83204"
+ }
+}

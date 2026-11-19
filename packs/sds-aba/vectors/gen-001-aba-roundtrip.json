@@ -1,0 +1,17 @@
+{
+ "name": "gen-aba-roundtrip",
+ "from": "sds-aba",
+ "to": "sds-aba",
+ "input": "{\"ENTRY_ID\":\"s33490\",\"NODE_PEER_ID\":\"s21030\",\"PUBLIC_KEY\":[111,215],\"SIGNATURE_ALGORITHM\":\"s46448\",\"PROFILE_BYTES\":[88,65],\"PROFILE_SHA256\":[218,4],\"VISIBILITY\":\"PRIVATE\",\"CREATED_AT\":230145551825445,\"UPDATED_AT\":81299626285118,\"DELETED\":false,\"NOTE\":\"s23129\",\"SIGNATURE\":[77,192]}",
+ "expect": "{\"ENTRY_ID\":\"s33490\",\"NODE_PEER_ID\":\"s21030\",\"PUBLIC_KEY\":[111,215],\"SIGNATURE_ALGORITHM\":\"s46448\",\"PROFILE_BYTES\":[88,65],\"PROFILE_SHA256\":[218,4],\"VISIBILITY\":\"PRIVATE\",\"CREATED_AT\":230145551825445,\"UPDATED_AT\":81299626285118,\"DELETED\":false,\"NOTE\":\"s23129\",\"SIGNATURE\":[77,192]}",
+ "model": {
+  "sdsaba.entry_id": "s33490",
+  "sdsaba.node_peer_id": "s21030",
+  "sdsaba.public_key.#": "2",
+  "sdsaba.signature_algorithm": "s46448",
+  "sdsaba.profile_bytes.#": "2",
+  "sdsaba.profile_sha256.#": "2",
+  "sdsaba.visibility": "PRIVATE",
+  "sdsaba.created_at": "230145551825445"
+ }
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-tpn-residue",
+ "from": "sds-tpn",
+ "to": "sds-tpn",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"ID\":\"s39219\",\"NAME\":\"s50808\",\"NID\":\"s345\",\"TID\":\"s44650\",\"TTF\":0.75,\"SYMBOL_RATE\":-0.5,\"FEC\":-360570158,\"MODULATION\":\"s80208\",\"FORMAT\":\"s82685\",\"SYSTEM\":\"s46857\",\"CHANNELS\":[\"s70877\",\"s42676\"]}",
+ "expect": "{\"ID\":\"s39219\",\"NAME\":\"s50808\",\"NID\":\"s345\",\"TID\":\"s44650\",\"TTF\":0.75,\"SYMBOL_RATE\":-0.5,\"FEC\":-360570158,\"MODULATION\":\"s80208\",\"FORMAT\":\"s82685\",\"SYSTEM\":\"s46857\",\"CHANNELS\":[\"s70877\",\"s42676\"],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

@@ -1,0 +1,22 @@
+{
+ "keys": {
+  "reserved|.|int": "reserved_value",
+  "|ATTACHED_VIA|string": "attached_via",
+  "|BATCH_ID|string": "batch_id",
+  "|BYTE_LENGTH|int": "byte_length",
+  "|BYTE_OFFSET|int": "byte_offset",
+  "|CID|string": "cid",
+  "|ENTITY_KEY|string": "entity_key",
+  "|EPOCH_MS|int": "epoch_ms",
+  "|PAYLOAD_KIND|string": "payload_kind",
+  "|PROVIDER_ID|string": "provider_id",
+  "|RECORD_KEY|string": "record_key",
+  "|ROLE|string": "role",
+  "|SCHEMA_NAME|string": "schema_name",
+  "|SOURCE_NAME|string": "source_name",
+  "|UPDATED_AT_MS|float": "updated_at_ms"
+ },
+ "lists": {
+  "|RESERVED": "reserved"
+ }
+}

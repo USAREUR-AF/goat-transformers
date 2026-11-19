@@ -1,0 +1,27 @@
+{
+ "keys": {
+  "|BE_NUMBER|string": "be_number",
+  "|DECLASSIFICATION_DATE|string": "declassification_date",
+  "|DECLASSIFICATION_STRING|string": "declassification_string",
+  "|DERIVED_FROM|string": "derived_from",
+  "|ID|string": "id",
+  "|LAUNCH_COUNTRY|string": "launch_country",
+  "|LAUNCH_DATE|string": "launch_date",
+  "|LAUNCH_FACILITY_CODE|string": "launch_facility_code",
+  "|LAUNCH_FACILITY_NAME|string": "launch_facility_name",
+  "|LAUNCH_FAILURE_CODE|string": "launch_failure_code",
+  "|LAUNCH_VEHICLE_CONFIG|string": "launch_vehicle_config",
+  "|LAUNCH_VEHICLE|string": "launch_vehicle",
+  "|MISSION_NAME|string": "mission_name",
+  "|MSG_CREATE_DATE|string": "msg_create_date",
+  "|OBJECTS_ON_ORBIT|int": "objects_on_orbit",
+  "|ON_ORBIT|string": "on_orbit",
+  "|ORIG_OBJECT_ID|string": "orig_object_id",
+  "|OUTCOME|string": "outcome",
+  "|O_SUFFIX|string": "o_suffix",
+  "|REMARKS|string": "remarks",
+  "|SAT_NO|int": "sat_no",
+  "|TARGET_ORBIT|string": "target_orbit"
+ },
+ "lists": {}
+}

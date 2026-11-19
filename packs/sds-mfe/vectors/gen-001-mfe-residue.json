@@ -1,0 +1,7 @@
+{
+ "name": "gen-mfe-residue",
+ "from": "sds-mfe",
+ "to": "sds-mfe",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"ID\":\"s51081\",\"TMP_SAT_NO\":2003023000,\"EPOCH\":\"s41211\",\"MEAN_MOTION\":0.75,\"ECCENTRICITY\":7.0625,\"INCLINATION\":0.75,\"RAAN\":-3.25,\"ARG_OF_PERIGEE\":7.0625,\"MEAN_ANOMALY\":101.125,\"REV_NO\":1326940151,\"B_STAR\":42.375,\"MEAN_MOTION_DOT\":12.5,\"MEAN_MOTION_DDOT\":0.75,\"SEMI_MAJOR_AXIS\":12.5,\"PERIOD\":0.75,\"APOGEE\":-0.5,\"PERIGEE\":7.0625,\"LINE1\":\"s62150\",\"LINE2\":\"s20505\"}",
+ "expect": "{\"ID\":\"s51081\",\"TMP_SAT_NO\":2003023000,\"EPOCH\":\"s41211\",\"MEAN_MOTION\":0.75,\"ECCENTRICITY\":7.0625,\"INCLINATION\":0.75,\"RAAN\":-3.25,\"ARG_OF_PERIGEE\":7.0625,\"MEAN_ANOMALY\":101.125,\"REV_NO\":1326940151,\"B_STAR\":42.375,\"MEAN_MOTION_DOT\":12.5,\"MEAN_MOTION_DDOT\":0.75,\"SEMI_MAJOR_AXIS\":12.5,\"PERIOD\":0.75,\"APOGEE\":-0.5,\"PERIGEE\":7.0625,\"LINE1\":\"s62150\",\"LINE2\":\"s20505\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

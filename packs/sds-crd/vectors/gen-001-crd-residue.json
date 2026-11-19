@@ -1,0 +1,7 @@
+{
+ "name": "gen-crd-residue",
+ "from": "sds-crd",
+ "to": "sds-crd",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"X\":7.0625,\"Y\":0.75,\"Z\":0.75,\"VX\":101.125,\"VY\":42.375,\"VZ\":7.0625,\"FRAME\":10,\"ELLIPSOID\":175,\"RESERVED\":[68,189]}",
+ "expect": "{\"X\":7.0625,\"Y\":0.75,\"Z\":0.75,\"VX\":101.125,\"VY\":42.375,\"VZ\":7.0625,\"FRAME\":10,\"ELLIPSOID\":175,\"RESERVED\":[68,189],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

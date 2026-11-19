@@ -1,0 +1,17 @@
+{
+ "name": "gen-gvh-roundtrip",
+ "from": "sds-gvh",
+ "to": "sds-gvh",
+ "input": "{\"POSITION_X\":-3.25,\"POSITION_Y\":42.375,\"POSITION_Z\":7.0625,\"VELOCITY_X\":42.375,\"VELOCITY_Y\":1.5,\"VELOCITY_Z\":1.5,\"ATTITUDE_X\":-3.25,\"ATTITUDE_Y\":0.75,\"ATTITUDE_Z\":-0.5,\"ATTITUDE_W\":0.75,\"OMEGA_X\":42.375,\"OMEGA_Y\":-3.25,\"OMEGA_Z\":7.0625,\"SPEED\":0.75,\"HEADING\":-3.25,\"LATERAL_G\":0.75,\"LONGITUDINAL_G\":-3.25,\"TURRET\":\"s90149\",\"DRIVETRAIN\":\"s36352\",\"SUSPENSION_LF\":\"s59522\",\"SUSPENSION_RF\":\"s30648\",\"SUSPENSION_LR\":\"s18744\",\"SUSPENSION_RR\":\"s58274\",\"VEHICLE_TYPE\":104,\"DRIVE_TYPE\":214,\"ENGINE_RUNNING\":1,\"LIGHTS\":165,\"FUEL_LEVEL\":101.125}",
+ "expect": "{\"POSITION_X\":-3.25,\"POSITION_Y\":42.375,\"POSITION_Z\":7.0625,\"VELOCITY_X\":42.375,\"VELOCITY_Y\":1.5,\"VELOCITY_Z\":1.5,\"ATTITUDE_X\":-3.25,\"ATTITUDE_Y\":0.75,\"ATTITUDE_Z\":-0.5,\"ATTITUDE_W\":0.75,\"OMEGA_X\":42.375,\"OMEGA_Y\":-3.25,\"OMEGA_Z\":7.0625,\"SPEED\":0.75,\"HEADING\":-3.25,\"LATERAL_G\":0.75,\"LONGITUDINAL_G\":-3.25,\"TURRET\":\"s90149\",\"DRIVETRAIN\":\"s36352\",\"SUSPENSION_LF\":\"s59522\",\"SUSPENSION_RF\":\"s30648\",\"SUSPENSION_LR\":\"s18744\",\"SUSPENSION_RR\":\"s58274\",\"VEHICLE_TYPE\":104,\"DRIVE_TYPE\":214,\"ENGINE_RUNNING\":1,\"LIGHTS\":165,\"FUEL_LEVEL\":101.125}",
+ "model": {
+  "sdsgvh.position_x": "-3.25",
+  "sdsgvh.position_y": "42.375",
+  "sdsgvh.position_z": "7.0625",
+  "sdsgvh.velocity_x": "42.375",
+  "sdsgvh.velocity_y": "1.5",
+  "sdsgvh.velocity_z": "1.5",
+  "sdsgvh.attitude_x": "-3.25",
+  "sdsgvh.attitude_y": "0.75"
+ }
+}

@@ -1,0 +1,17 @@
+{
+ "name": "gen-spp-roundtrip",
+ "from": "sds-spp",
+ "to": "sds-spp",
+ "input": "{\"VERSION\":244,\"PACKET_TYPE\":\"TM\",\"SEC_HDR_FLAG\":true,\"APID\":20030,\"SEQUENCE_FLAGS\":108,\"SEQUENCE_COUNT\":21672,\"DATA_LENGTH\":34759,\"DATA\":[91,177]}",
+ "expect": "{\"VERSION\":244,\"PACKET_TYPE\":\"TM\",\"SEC_HDR_FLAG\":true,\"APID\":20030,\"SEQUENCE_FLAGS\":108,\"SEQUENCE_COUNT\":21672,\"DATA_LENGTH\":34759,\"DATA\":[91,177]}",
+ "model": {
+  "sdsspp.version": "244",
+  "sdsspp.packet_type": "TM",
+  "sdsspp.sec_hdr_flag": "1",
+  "sdsspp.apid": "20030",
+  "sdsspp.sequence_flags": "108",
+  "sdsspp.sequence_count": "21672",
+  "sdsspp.data_length": "34759",
+  "sdsspp.data.#": "2"
+ }
+}

@@ -1,0 +1,17 @@
+{
+ "name": "gen-arm-roundtrip",
+ "from": "sds-arm",
+ "to": "sds-arm",
+ "input": "{\"THICKNESS\":-0.5,\"ANGLE\":0.75,\"MATERIAL\":73,\"HARDNESS\":71,\"QUALITY\":163,\"ERA_TYPE\":193,\"ERA_EFFECTIVENESS\":12.5,\"ERA_VS_KE\":-3.25,\"RHA_EQUIVALENT\":42.375,\"NORMAL_X\":-0.5,\"NORMAL_Y\":-0.5,\"NORMAL_Z\":101.125,\"RESERVED\":[32,114]}",
+ "expect": "{\"THICKNESS\":-0.5,\"ANGLE\":0.75,\"MATERIAL\":73,\"HARDNESS\":71,\"QUALITY\":163,\"ERA_TYPE\":193,\"ERA_EFFECTIVENESS\":12.5,\"ERA_VS_KE\":-3.25,\"RHA_EQUIVALENT\":42.375,\"NORMAL_X\":-0.5,\"NORMAL_Y\":-0.5,\"NORMAL_Z\":101.125,\"RESERVED\":[32,114]}",
+ "model": {
+  "sdsarm.thickness": "-0.5",
+  "sdsarm.angle": "0.75",
+  "sdsarm.material": "73",
+  "sdsarm.hardness": "71",
+  "sdsarm.quality": "163",
+  "sdsarm.era_type": "193",
+  "sdsarm.era_effectiveness": "12.5",
+  "sdsarm.era_vs_ke": "-3.25"
+ }
+}

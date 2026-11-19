@@ -1,0 +1,30 @@
+{
+ "keys": {
+  "|BANDWIDTH|float": "bandwidth",
+  "|BAND|string": "band",
+  "|BAUD|float": "baud",
+  "|BEAMWIDTH|float": "beamwidth",
+  "|CENTER_FREQ|float": "center_freq",
+  "|CITATION|string": "citation",
+  "|EDGE_GAIN|float": "edge_gain",
+  "|EIRP|float": "eirp",
+  "|ERP|float": "erp",
+  "|FREQ_MAX|float": "freq_max",
+  "|FREQ_MIN|float": "freq_min",
+  "|IARU_COORDINATION|string": "iaru_coordination",
+  "|ID_ENTITY|string": "id_entity",
+  "|ID_TRANSMITTER|string": "id_transmitter",
+  "|ID|string": "id",
+  "|INVERT|int": "invert",
+  "|LINK_DIRECTION|string": "link_direction",
+  "|MODE|string": "mode",
+  "|NAME|string": "name",
+  "|NORAD_CAT_ID|int": "norad_cat_id",
+  "|PEAK_GAIN|float": "peak_gain",
+  "|POLARIZATION|string": "polarization",
+  "|PURPOSE|string": "purpose",
+  "|SERVICE|string": "service",
+  "|XMT_STATUS|string": "xmt_status"
+ },
+ "lists": {}
+}

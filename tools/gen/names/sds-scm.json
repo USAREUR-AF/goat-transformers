@@ -1,0 +1,20 @@
+{
+ "keys": {
+  "records_files|.|string": "records_files_value",
+  "records|DESCRIPTION|string": "records_description",
+  "records|FILE_IDENTIFIER|string": "records_file_identifier",
+  "records|NAME|string": "records_name",
+  "records|RECORD_TYPE_ORDINAL|int": "records_record_type_ordinal",
+  "records|ROUTED|int": "records_routed",
+  "records|SCHEMA_HASH|string": "records_schema_hash",
+  "records|idl|string": "records_idl",
+  "records|key|string": "records_key",
+  "|GENERATED_AT_MS|int": "generated_at_ms",
+  "|STANDARDS_VERSION|string": "standards_version",
+  "|version|string": "version"
+ },
+ "lists": {
+  "records|files": "records_files",
+  "|RECORDS": "records"
+ }
+}

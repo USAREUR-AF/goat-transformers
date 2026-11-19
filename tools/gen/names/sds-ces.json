@@ -1,0 +1,25 @@
+{
+ "keys": {
+  "rows_vector_float32|.|float": "rows_vector_float32_value",
+  "rows_vector_int8|.|int": "rows_vector_int8_value",
+  "rows|NORAD_CAT_ID|int": "rows_norad_cat_id",
+  "rows|OBJECT_ID|string": "rows_object_id",
+  "rows|SCALE|float": "rows_scale",
+  "|DATASET_ID|string": "dataset_id",
+  "|DIMENSIONS|int": "dimensions",
+  "|ENCODING|string": "encoding",
+  "|MODEL_ID|string": "model_id",
+  "|MODEL_VERSION|string": "model_version",
+  "|MODEL_WEIGHTS_SHA256|string": "model_weights_sha256",
+  "|NORMALIZATION|string": "normalization",
+  "|POOLING_METHOD|string": "pooling_method",
+  "|SIMILARITY|string": "similarity",
+  "|TEMPLATE_VERSION|string": "template_version",
+  "|UPDATE_ID|string": "update_id"
+ },
+ "lists": {
+  "rows|VECTOR_FLOAT32": "rows_vector_float32",
+  "rows|VECTOR_INT8": "rows_vector_int8",
+  "|ROWS": "rows"
+ }
+}

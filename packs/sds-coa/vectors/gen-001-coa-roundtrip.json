@@ -1,0 +1,17 @@
+{
+ "name": "gen-coa-roundtrip",
+ "from": "sds-coa",
+ "to": "sds-coa",
+ "input": "{\"ID\":\"s51061\",\"NAME\":\"s29774\",\"KIND\":\"RIDE_OUT\",\"NORAD_CAT_ID\":1131366720,\"GROUP_ID\":\"s79701\",\"EVENT_STANDARD\":\"s70725\",\"EVENT_ID\":\"s41378\",\"EVENT_EPOCH\":\"s30338\",\"LEAD_SECONDS\":12.5,\"RETURN_WITHIN_SECONDS\":-0.5,\"PREPARATION_SECONDS\":101.125,\"CHECKOUT_SECONDS\":-0.5,\"DELTA_V_BUDGET_M_S_PER_YEAR\":1.5,\"STEPS\":[{\"NAME\":\"s96915\",\"DURATION_SECONDS\":-0.5},{\"NAME\":\"s57500\",\"DURATION_SECONDS\":1.5}],\"PLAN_ID\":\"s60097\"}",
+ "expect": "{\"ID\":\"s51061\",\"NAME\":\"s29774\",\"KIND\":\"RIDE_OUT\",\"NORAD_CAT_ID\":1131366720,\"GROUP_ID\":\"s79701\",\"EVENT_STANDARD\":\"s70725\",\"EVENT_ID\":\"s41378\",\"EVENT_EPOCH\":\"s30338\",\"LEAD_SECONDS\":12.5,\"RETURN_WITHIN_SECONDS\":-0.5,\"PREPARATION_SECONDS\":101.125,\"CHECKOUT_SECONDS\":-0.5,\"DELTA_V_BUDGET_M_S_PER_YEAR\":1.5,\"STEPS\":[{\"NAME\":\"s96915\",\"DURATION_SECONDS\":-0.5},{\"NAME\":\"s57500\",\"DURATION_SECONDS\":1.5}],\"PLAN_ID\":\"s60097\"}",
+ "model": {
+  "uid": "s51061",
+  "sdscoa.id": "s51061",
+  "sdscoa.name": "s29774",
+  "sdscoa.kind": "RIDE_OUT",
+  "sdscoa.norad_cat_id": "1131366720",
+  "sdscoa.group_id": "s79701",
+  "sdscoa.event_standard": "s70725",
+  "sdscoa.event_id": "s41378"
+ }
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-oob-residue",
+ "from": "sds-oob",
+ "to": "sds-oob",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"ID\":\"s91126\",\"ID_ON_ORBIT\":\"s21912\",\"ID_BATTERY\":\"s60732\",\"NAME\":\"s34517\",\"CHEMISTRY\":\"s81318\",\"QUANTITY\":273673090,\"VOLTAGE\":42.375,\"CAPACITY_AH\":101.125,\"ENERGY_WH\":1.5,\"MAX_DOD\":101.125,\"CYCLE_LIFE\":1092748562,\"MASS\":-3.25,\"STATE_OF_HEALTH\":1.5,\"NOTES\":\"s69697\"}",
+ "expect": "{\"ID\":\"s91126\",\"ID_ON_ORBIT\":\"s21912\",\"ID_BATTERY\":\"s60732\",\"NAME\":\"s34517\",\"CHEMISTRY\":\"s81318\",\"QUANTITY\":273673090,\"VOLTAGE\":42.375,\"CAPACITY_AH\":101.125,\"ENERGY_WH\":1.5,\"MAX_DOD\":101.125,\"CYCLE_LIFE\":1092748562,\"MASS\":-3.25,\"STATE_OF_HEALTH\":1.5,\"NOTES\":\"s69697\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

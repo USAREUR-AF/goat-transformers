@@ -1,0 +1,17 @@
+{
+ "name": "gen-acr-roundtrip",
+ "from": "sds-acr",
+ "to": "sds-acr",
+ "input": "{\"POSITION_X\":1.5,\"POSITION_Y\":-0.5,\"POSITION_Z\":42.375,\"VELOCITY_X\":-0.5,\"VELOCITY_Y\":0.75,\"VELOCITY_Z\":101.125,\"ATTITUDE_X\":1.5,\"ATTITUDE_Y\":12.5,\"ATTITUDE_Z\":0.75,\"ATTITUDE_W\":1.5,\"OMEGA_X\":42.375,\"OMEGA_Y\":101.125,\"OMEGA_Z\":12.5,\"MASS\":42.375,\"CG_X\":101.125,\"CG_Z\":42.375,\"AERO\":\"s82054\",\"CONTROLS\":\"s49664\",\"ENGINE\":\"s19371\",\"GEAR_STATE\":113,\"GEAR_POSITION\":173,\"FLAP_POSITION\":217,\"SPEEDBRAKE_POS\":224,\"FLIGHT_PHASE\":226,\"AUTOPILOT_MODE\":16,\"WEIGHT_ON_WHEELS\":53,\"RESERVED\":33}",
+ "expect": "{\"POSITION_X\":1.5,\"POSITION_Y\":-0.5,\"POSITION_Z\":42.375,\"VELOCITY_X\":-0.5,\"VELOCITY_Y\":0.75,\"VELOCITY_Z\":101.125,\"ATTITUDE_X\":1.5,\"ATTITUDE_Y\":12.5,\"ATTITUDE_Z\":0.75,\"ATTITUDE_W\":1.5,\"OMEGA_X\":42.375,\"OMEGA_Y\":101.125,\"OMEGA_Z\":12.5,\"MASS\":42.375,\"CG_X\":101.125,\"CG_Z\":42.375,\"AERO\":\"s82054\",\"CONTROLS\":\"s49664\",\"ENGINE\":\"s19371\",\"GEAR_STATE\":113,\"GEAR_POSITION\":173,\"FLAP_POSITION\":217,\"SPEEDBRAKE_POS\":224,\"FLIGHT_PHASE\":226,\"AUTOPILOT_MODE\":16,\"WEIGHT_ON_WHEELS\":53,\"RESERVED\":33}",
+ "model": {
+  "sdsacr.position_x": "1.5",
+  "sdsacr.position_y": "-0.5",
+  "sdsacr.position_z": "42.375",
+  "sdsacr.velocity_x": "-0.5",
+  "sdsacr.velocity_y": "0.75",
+  "sdsacr.velocity_z": "101.125",
+  "sdsacr.attitude_x": "1.5",
+  "sdsacr.attitude_y": "12.5"
+ }
+}

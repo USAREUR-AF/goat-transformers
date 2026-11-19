@@ -1,0 +1,16 @@
+{
+ "name": "gen-sdl-roundtrip",
+ "from": "sds-sdl",
+ "to": "sds-sdl",
+ "input": "{\"SPI\":6799,\"IV_LENGTH\":251,\"IV\":[164,151],\"MAC_LENGTH\":120,\"MAC\":[243,31],\"PAD_LENGTH\":246,\"PAYLOAD\":[20,124]}",
+ "expect": "{\"SPI\":6799,\"IV_LENGTH\":251,\"IV\":[164,151],\"MAC_LENGTH\":120,\"MAC\":[243,31],\"PAD_LENGTH\":246,\"PAYLOAD\":[20,124]}",
+ "model": {
+  "sdssdl.spi": "6799",
+  "sdssdl.iv_length": "251",
+  "sdssdl.iv.#": "2",
+  "sdssdl.mac_length": "120",
+  "sdssdl.mac.#": "2",
+  "sdssdl.pad_length": "246",
+  "sdssdl.payload.#": "2"
+ }
+}

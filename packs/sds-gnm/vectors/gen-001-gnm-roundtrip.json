@@ -1,0 +1,17 @@
+{
+ "name": "gen-gnm-roundtrip",
+ "from": "sds-gnm",
+ "to": "sds-gnm",
+ "input": "{\"SATELLITE_ID\":\"s15594\",\"CONSTELLATION\":\"IRNSS\",\"MESSAGE_TYPE\":\"FNAV\",\"TIME_SYSTEM\":\"s40155\",\"TOC\":\"s9153\",\"CLOCK_BIAS\":-0.5,\"CLOCK_DRIFT\":12.5,\"CLOCK_DRIFT_RATE\":42.375,\"TRANSMISSION_TIME\":42.375,\"HEALTH\":4009143760,\"HAS_HEALTH\":true,\"ACCURACY\":-3.25,\"ACCURACY_INDEX\":1906103369,\"HAS_ACCURACY_INDEX\":false,\"GROUP_DELAYS\":[-3.25,-0.5],\"GROUP_DELAY_NAMES\":[\"s13214\",\"s63770\"],\"KEPLERIAN\":{\"SQRT_A\":101.125,\"ECCENTRICITY\":-3.25,\"I0\":-0.5,\"OMEGA0\":0.75,\"OMEGA\":12.5,\"M0\":12.5,\"DELTA_N\":-0.5,\"OMEGA_DOT\":12.5,\"IDOT\":101.125,\"CUC\":1.5,\"CUS\":101.125,\"CRC\":-0.5,\"CRS\":42.375,\"CIC\":101.125,\"CIS\":-3.25,\"TOE\":-3.25,\"WEEK\":2608807537,\"IODE_OR_IODNAV\":1.5,\"FIT_INTERVAL_HOURS\":42.375},\"STATE\":{\"X\":-0.5,\"Y\":0.75,\"Z\":-0.5,\"VX\":7.0625,\"VY\":101.125,\"VZ\":42.375,\"AX\":12.5,\"AY\":0.75,\"AZ\":101.125,\"TOE\":42.375,\"FREQUENCY_NUMBER\":106,\"HAS_FREQUENCY_NUMBER\":false,\"MESSAGE_FRAME_TIME\":101.125},\"DATA_SOURCES\":3096423889}",
+ "expect": "{\"SATELLITE_ID\":\"s15594\",\"CONSTELLATION\":\"IRNSS\",\"MESSAGE_TYPE\":\"FNAV\",\"TIME_SYSTEM\":\"s40155\",\"TOC\":\"s9153\",\"CLOCK_BIAS\":-0.5,\"CLOCK_DRIFT\":12.5,\"CLOCK_DRIFT_RATE\":42.375,\"TRANSMISSION_TIME\":42.375,\"HEALTH\":4009143760,\"HAS_HEALTH\":true,\"ACCURACY\":-3.25,\"ACCURACY_INDEX\":1906103369,\"HAS_ACCURACY_INDEX\":false,\"GROUP_DELAYS\":[-3.25,-0.5],\"GROUP_DELAY_NAMES\":[\"s13214\",\"s63770\"],\"KEPLERIAN\":{\"SQRT_A\":101.125,\"ECCENTRICITY\":-3.25,\"I0\":-0.5,\"OMEGA0\":0.75,\"OMEGA\":12.5,\"M0\":12.5,\"DELTA_N\":-0.5,\"OMEGA_DOT\":12.5,\"IDOT\":101.125,\"CUC\":1.5,\"CUS\":101.125,\"CRC\":-0.5,\"CRS\":42.375,\"CIC\":101.125,\"CIS\":-3.25,\"TOE\":-3.25,\"WEEK\":2608807537,\"IODE_OR_IODNAV\":1.5,\"FIT_INTERVAL_HOURS\":42.375},\"STATE\":{\"X\":-0.5,\"Y\":0.75,\"Z\":-0.5,\"VX\":7.0625,\"VY\":101.125,\"VZ\":42.375,\"AX\":12.5,\"AY\":0.75,\"AZ\":101.125,\"TOE\":42.375,\"FREQUENCY_NUMBER\":106,\"HAS_FREQUENCY_NUMBER\":false,\"MESSAGE_FRAME_TIME\":101.125},\"DATA_SOURCES\":3096423889}",
+ "model": {
+  "sdsgnm.satellite_id": "s15594",
+  "sdsgnm.constellation": "IRNSS",
+  "sdsgnm.message_type": "FNAV",
+  "sdsgnm.time_system": "s40155",
+  "sdsgnm.toc": "s9153",
+  "sdsgnm.clock_bias": "-0.5",
+  "sdsgnm.clock_drift": "12.5",
+  "sdsgnm.clock_drift_rate": "42.375"
+ }
+}

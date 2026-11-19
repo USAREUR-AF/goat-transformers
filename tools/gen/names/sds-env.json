@@ -1,0 +1,19 @@
+{
+ "keys": {
+  "reserved|.|int": "reserved_value",
+  "|ATMOSPHERE|string": "atmosphere",
+  "|ILLUMINATION|float": "illumination",
+  "|LATITUDE|float": "latitude",
+  "|LONGITUDE|float": "longitude",
+  "|MAGNETIC_DECLINATION|float": "magnetic_declination",
+  "|MAGNETIC_INCLINATION|float": "magnetic_inclination",
+  "|MOON_PHASE|float": "moon_phase",
+  "|SUN_AZIMUTH|float": "sun_azimuth",
+  "|SUN_ELEVATION|float": "sun_elevation",
+  "|TIME_UTC|float": "time_utc",
+  "|WEATHER|string": "weather"
+ },
+ "lists": {
+  "|RESERVED": "reserved"
+ }
+}

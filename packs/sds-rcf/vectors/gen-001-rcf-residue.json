@@ -1,0 +1,7 @@
+{
+ "name": "gen-rcf-residue",
+ "from": "sds-rcf",
+ "to": "sds-rcf",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"PDU_TYPE\":\"STOP_INVOCATION\",\"INITIATOR_ID\":\"s46328\",\"RESPONDER_PORT_ID\":\"s80975\",\"SERVICE_TYPE\":239,\"VERSION\":62161,\"INVOKE_ID\":2520489469,\"SPACECRAFT_ID\":26047,\"VIRTUAL_CHANNEL_ID\":198,\"DATA\":[206,136]}",
+ "expect": "{\"PDU_TYPE\":\"STOP_INVOCATION\",\"INITIATOR_ID\":\"s46328\",\"RESPONDER_PORT_ID\":\"s80975\",\"SERVICE_TYPE\":239,\"VERSION\":62161,\"INVOKE_ID\":2520489469,\"SPACECRAFT_ID\":26047,\"VIRTUAL_CHANNEL_ID\":198,\"DATA\":[206,136],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

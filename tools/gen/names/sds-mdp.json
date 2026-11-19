@@ -1,0 +1,41 @@
+{
+ "keys": {
+  "encounter_stages_allowed_body_naif_ids|.|int": "encounter_stages_allowed_body_naif_ids_value",
+  "encounter_stages_allowed_body_names|.|string": "encounter_stages_allowed_body_names_value",
+  "encounter_stages|EPOCH_GRID_STEP_DAYS|float": "encounter_stages_epoch_grid_step_days",
+  "encounter_stages|EPOCH_WINDOW_END|string": "encounter_stages_epoch_window_end",
+  "encounter_stages|EPOCH_WINDOW_START|string": "encounter_stages_epoch_window_start",
+  "encounter_stages|MAX_POWERED_FLYBY_DELTA_V_KM_S|float": "encounter_stages_max_powered_flyby_delta_v_km_s",
+  "encounter_stages|MIN_FLYBY_ALTITUDE_KM|float": "encounter_stages_min_flyby_altitude_km",
+  "encounter_stages|STAGE_INDEX|int": "encounter_stages_stage_index",
+  "encounter_stages|V_INFINITY_MAX_KM_S|float": "encounter_stages_v_infinity_max_km_s",
+  "encounter_stages|V_INFINITY_MIN_KM_S|float": "encounter_stages_v_infinity_min_km_s",
+  "flight_time_bounds|FROM_STAGE_INDEX|int": "flight_time_bounds_from_stage_index",
+  "flight_time_bounds|MAX_DAYS|float": "flight_time_bounds_max_days",
+  "flight_time_bounds|MIN_DAYS|float": "flight_time_bounds_min_days",
+  "flight_time_bounds|TO_STAGE_INDEX|int": "flight_time_bounds_to_stage_index",
+  "|COMMENT|string": "comment",
+  "|DRY_MASS_KG|float": "dry_mass_kg",
+  "|DSM_GRID_STEP_KM_S|float": "dsm_grid_step_km_s",
+  "|DSM_MODE|string": "dsm_mode",
+  "|EPHEMERIS_SOURCE|string": "ephemeris_source",
+  "|INITIAL_MASS_KG|float": "initial_mass_kg",
+  "|MAX_DSM_DELTA_V_KM_S|float": "max_dsm_delta_v_km_s",
+  "|MAX_LAUNCH_C3_KM2_S2|float": "max_launch_c3_km2_s2",
+  "|MAX_REVOLUTIONS|int": "max_revolutions",
+  "|MAX_THRUST_N|float": "max_thrust_n",
+  "|MAX_TOTAL_DELTA_V_KM_S|float": "max_total_delta_v_km_s",
+  "|MAX_TOTAL_FLIGHT_TIME_DAYS|float": "max_total_flight_time_days",
+  "|NAME|string": "name",
+  "|OUTPUT_TIME_BIN_DAYS|float": "output_time_bin_days",
+  "|PROBLEM_ID|string": "problem_id",
+  "|SPECIFIC_IMPULSE_S|float": "specific_impulse_s",
+  "|TRANSFER_DIRECTION|string": "transfer_direction"
+ },
+ "lists": {
+  "encounter_stages|ALLOWED_BODY_NAIF_IDS": "encounter_stages_allowed_body_naif_ids",
+  "encounter_stages|ALLOWED_BODY_NAMES": "encounter_stages_allowed_body_names",
+  "|ENCOUNTER_STAGES": "encounter_stages",
+  "|FLIGHT_TIME_BOUNDS": "flight_time_bounds"
+ }
+}

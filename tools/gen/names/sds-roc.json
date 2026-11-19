@@ -1,0 +1,22 @@
+{
+ "keys": {
+  "stages_engines|ENGINE_NAME|string": "stages_engines_engine_name",
+  "stages_engines|THRUST|float": "stages_engines_thrust",
+  "stages_engines|TYPE|string": "stages_engines_type",
+  "stages|BURN_DURATION|float": "stages_burn_duration",
+  "stages|FUEL_TYPE|string": "stages_fuel_type",
+  "stages|STAGE_NUMBER|int": "stages_stage_number",
+  "stages|THRUST|float": "stages_thrust",
+  "sustainers|BURN_DURATION|float": "sustainers_burn_duration",
+  "sustainers|SUSTAINER_NAME|string": "sustainers_sustainer_name",
+  "sustainers|THRUST|float": "sustainers_thrust",
+  "|FAMILY|string": "family",
+  "|NAME|string": "name",
+  "|VARIANT|string": "variant"
+ },
+ "lists": {
+  "stages|ENGINES": "stages_engines",
+  "|STAGES": "stages",
+  "|SUSTAINERS": "sustainers"
+ }
+}

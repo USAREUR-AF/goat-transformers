@@ -1,0 +1,17 @@
+{
+ "keys": {
+  "events|COUNT|int": "events_count",
+  "events|DETAIL|string": "events_detail",
+  "events|KIND|string": "events_kind",
+  "events|PEER_ID|string": "events_peer_id",
+  "events|SUBJECT|string": "events_subject",
+  "events|TIME_MS|int": "events_time_ms",
+  "|GENERATED_AT_MS|int": "generated_at_ms",
+  "|NODE_ID|string": "node_id",
+  "|OLDEST_TIME_MS|int": "oldest_time_ms",
+  "|TOTAL_EVENTS|int": "total_events"
+ },
+ "lists": {
+  "|EVENTS": "events"
+ }
+}

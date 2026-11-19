@@ -1,0 +1,15 @@
+{
+ "keys": {
+  "values|.|float": "values_value",
+  "|CHOICE.A_VALUE|float": "choice_a_value",
+  "|CHOICE.B_NAME|string": "choice_b_name",
+  "|CHOICE_type|string": "choice_type",
+  "|COUNT|int": "count",
+  "|EPOCH|string": "epoch",
+  "|ID|string": "id",
+  "|KIND|string": "kind"
+ },
+ "lists": {
+  "|VALUES": "values"
+ }
+}

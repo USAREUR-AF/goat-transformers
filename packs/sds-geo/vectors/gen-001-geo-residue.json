@@ -1,0 +1,7 @@
+{
+ "name": "gen-geo-residue",
+ "from": "sds-geo",
+ "to": "sds-geo",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"ID\":\"s32333\",\"ORIG_OBJECT_ID\":\"s29315\",\"SAT_NO\":1311271190,\"ON_ORBIT\":\"s8906\",\"STATION_KEEPING\":\"REPOSITIONING\",\"SS\":1.5,\"SC\":0.75,\"RELATIVE_ENERGY\":1.5,\"LONGITUDE_RATE\":7.0625,\"LONGITUDE_MIN\":12.5,\"LONGITUDE_MAX\":-3.25,\"CONFIDENCE\":\"TENTATIVE\",\"TROUGH\":\"WEST\",\"PLANE_CHANGE_STATUS\":\"s96512\",\"LOST_FLAG\":true,\"SEMI_ANNUAL_CORR_FLAG\":true,\"OBJECT_STATUS\":\"s60693\",\"INCLINATION\":12.5,\"ECCENTRICITY\":1.5,\"EPOCH\":\"s81779\",\"RAW_FILE_URI\":\"s55324\"}",
+ "expect": "{\"ID\":\"s32333\",\"ORIG_OBJECT_ID\":\"s29315\",\"SAT_NO\":1311271190,\"ON_ORBIT\":\"s8906\",\"STATION_KEEPING\":\"REPOSITIONING\",\"SS\":1.5,\"SC\":0.75,\"RELATIVE_ENERGY\":1.5,\"LONGITUDE_RATE\":7.0625,\"LONGITUDE_MIN\":12.5,\"LONGITUDE_MAX\":-3.25,\"CONFIDENCE\":\"TENTATIVE\",\"TROUGH\":\"WEST\",\"PLANE_CHANGE_STATUS\":\"s96512\",\"LOST_FLAG\":true,\"SEMI_ANNUAL_CORR_FLAG\":true,\"OBJECT_STATUS\":\"s60693\",\"INCLINATION\":12.5,\"ECCENTRICITY\":1.5,\"EPOCH\":\"s81779\",\"RAW_FILE_URI\":\"s55324\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

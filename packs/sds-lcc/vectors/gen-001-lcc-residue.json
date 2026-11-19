@@ -1,0 +1,7 @@
+{
+ "name": "gen-lcc-residue",
+ "from": "sds-lcc",
+ "to": "sds-lcc",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"OWNER\":\"IT\",\"NAME\":\"s46854\",\"DESCRIPTION\":\"s81990\",\"ACTIVE\":true,\"SOURCE_URL\":\"s38649\",\"RETRIEVED_AT\":\"s27335\"}",
+ "expect": "{\"OWNER\":\"IT\",\"NAME\":\"s46854\",\"DESCRIPTION\":\"s81990\",\"ACTIVE\":true,\"SOURCE_URL\":\"s38649\",\"RETRIEVED_AT\":\"s27335\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

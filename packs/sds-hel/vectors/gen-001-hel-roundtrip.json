@@ -1,0 +1,17 @@
+{
+ "name": "gen-hel-roundtrip",
+ "from": "sds-hel",
+ "to": "sds-hel",
+ "input": "{\"POSITION_X\":-3.25,\"POSITION_Y\":7.0625,\"POSITION_Z\":101.125,\"VELOCITY_X\":-0.5,\"VELOCITY_Y\":12.5,\"VELOCITY_Z\":7.0625,\"QUAT_W\":12.5,\"QUAT_X\":1.5,\"QUAT_Y\":-0.5,\"QUAT_Z\":-3.25,\"OMEGA_BODY_X\":12.5,\"OMEGA_BODY_Y\":12.5,\"OMEGA_BODY_Z\":-3.25,\"MAIN_ROTOR\":\"s17491\",\"TAIL_ROTOR\":\"s4886\",\"ENGINE_N1\":101.125,\"ENGINE_TORQUE\":-0.5,\"FLAGS\":3182623633,\"FUEL_REMAINING\":42.375}",
+ "expect": "{\"POSITION_X\":-3.25,\"POSITION_Y\":7.0625,\"POSITION_Z\":101.125,\"VELOCITY_X\":-0.5,\"VELOCITY_Y\":12.5,\"VELOCITY_Z\":7.0625,\"QUAT_W\":12.5,\"QUAT_X\":1.5,\"QUAT_Y\":-0.5,\"QUAT_Z\":-3.25,\"OMEGA_BODY_X\":12.5,\"OMEGA_BODY_Y\":12.5,\"OMEGA_BODY_Z\":-3.25,\"MAIN_ROTOR\":\"s17491\",\"TAIL_ROTOR\":\"s4886\",\"ENGINE_N1\":101.125,\"ENGINE_TORQUE\":-0.5,\"FLAGS\":3182623633,\"FUEL_REMAINING\":42.375}",
+ "model": {
+  "sdshel.position_x": "-3.25",
+  "sdshel.position_y": "7.0625",
+  "sdshel.position_z": "101.125",
+  "sdshel.velocity_x": "-0.5",
+  "sdshel.velocity_y": "12.5",
+  "sdshel.velocity_z": "7.0625",
+  "sdshel.quat_w": "12.5",
+  "sdshel.quat_x": "1.5"
+ }
+}

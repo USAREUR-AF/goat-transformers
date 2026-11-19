@@ -1,0 +1,13 @@
+{
+ "name": "gen-ool-roundtrip",
+ "from": "sds-ool",
+ "to": "sds-ool",
+ "input": "{\"ID\":\"s55655\",\"NAME\":\"s41351\",\"DESCRIPTION\":\"s78253\",\"ONORBITS\":[\"s97849\",\"s92490\"]}",
+ "expect": "{\"ID\":\"s55655\",\"NAME\":\"s41351\",\"DESCRIPTION\":\"s78253\",\"ONORBITS\":[\"s97849\",\"s92490\"]}",
+ "model": {
+  "sdsool.id": "s55655",
+  "sdsool.name": "s41351",
+  "sdsool.description": "s78253",
+  "sdsool.onorbits.#": "2"
+ }
+}

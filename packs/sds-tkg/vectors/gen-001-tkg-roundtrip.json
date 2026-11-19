@@ -1,0 +1,17 @@
+{
+ "name": "gen-tkg-roundtrip",
+ "from": "sds-tkg",
+ "to": "sds-tkg",
+ "input": "{\"COMMAND\":\"s39876\",\"FILTER_CONFIG\":\"s35895\",\"IMM_CONFIG\":\"s84826\",\"MHT_CONFIG\":\"s92234\",\"JPDA_CONFIG\":\"s61331\",\"FUSION_CONFIG\":\"s68901\",\"MEASUREMENTS\":\"s9311\",\"INITIAL_STATE\":\"s15858\",\"TRACK_TO_UPDATE\":\"s55066\",\"TRACKS_TO_CORRELATE\":[\"s1255\",\"s63496\"]}",
+ "expect": "{\"COMMAND\":\"s39876\",\"FILTER_CONFIG\":\"s35895\",\"IMM_CONFIG\":\"s84826\",\"MHT_CONFIG\":\"s92234\",\"JPDA_CONFIG\":\"s61331\",\"FUSION_CONFIG\":\"s68901\",\"MEASUREMENTS\":\"s9311\",\"INITIAL_STATE\":\"s15858\",\"TRACK_TO_UPDATE\":\"s55066\",\"TRACKS_TO_CORRELATE\":[\"s1255\",\"s63496\"]}",
+ "model": {
+  "sdstkg.command": "s39876",
+  "sdstkg.filter_config": "s35895",
+  "sdstkg.imm_config": "s84826",
+  "sdstkg.mht_config": "s92234",
+  "sdstkg.jpda_config": "s61331",
+  "sdstkg.fusion_config": "s68901",
+  "sdstkg.measurements": "s9311",
+  "sdstkg.initial_state": "s15858"
+ }
+}

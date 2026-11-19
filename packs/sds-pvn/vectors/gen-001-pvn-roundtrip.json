@@ -1,0 +1,17 @@
+{
+ "name": "gen-pvn-roundtrip",
+ "from": "sds-pvn",
+ "to": "sds-pvn",
+ "input": "{\"SOURCE_ID\":\"s99654\",\"SOURCE_KIND\":\"ElementSet\",\"ORIGINATOR\":\"s69814\",\"PROVIDER_ID\":\"s35368\",\"PRODUCER\":\"s54367\",\"LICENSE_CLASS\":\"CiteOnly\",\"LICENSE_ID\":\"s49818\",\"LINEAGE\":\"s29969\",\"SOURCE_URL\":\"s63917\",\"SOURCE_VERSION\":\"s52607\",\"RETRIEVED_AT\":\"s29385\",\"SOURCE_SHA256\":\"s77249\",\"SOURCE_BYTES\":200076928767959,\"PRODUCER_SHA256\":\"s24203\"}",
+ "expect": "{\"SOURCE_ID\":\"s99654\",\"SOURCE_KIND\":\"ElementSet\",\"ORIGINATOR\":\"s69814\",\"PROVIDER_ID\":\"s35368\",\"PRODUCER\":\"s54367\",\"LICENSE_CLASS\":\"CiteOnly\",\"LICENSE_ID\":\"s49818\",\"LINEAGE\":\"s29969\",\"SOURCE_URL\":\"s63917\",\"SOURCE_VERSION\":\"s52607\",\"RETRIEVED_AT\":\"s29385\",\"SOURCE_SHA256\":\"s77249\",\"SOURCE_BYTES\":200076928767959,\"PRODUCER_SHA256\":\"s24203\"}",
+ "model": {
+  "sdspvn.source_id": "s99654",
+  "sdspvn.source_kind": "ElementSet",
+  "sdspvn.originator": "s69814",
+  "sdspvn.provider_id": "s35368",
+  "sdspvn.producer": "s54367",
+  "sdspvn.license_class": "CiteOnly",
+  "sdspvn.license_id": "s49818",
+  "sdspvn.lineage": "s29969"
+ }
+}

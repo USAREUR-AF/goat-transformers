@@ -1,0 +1,17 @@
+{
+ "name": "gen-rpc-roundtrip",
+ "from": "sds-rpc",
+ "to": "sds-rpc",
+ "input": "{\"VERSION\":42,\"DIRECTION\":\"Request\",\"ENCRYPTION\":{\"VERSION\":193,\"KEY_EXCHANGE\":\"P256\",\"SYMMETRIC\":\"AES_256_CTR\",\"KEY_DERIVATION\":\"HKDF_SHA256\",\"EPHEMERAL_PUBLIC_KEY\":[144,65],\"NONCE_START\":[252,186],\"RECIPIENT_KEY_ID\":[123,34],\"CONTEXT\":\"s45477\",\"SCHEMA_HASH\":[66,123],\"ROOT_TYPE\":\"s70594\",\"TIMESTAMP\":150702234806765},\"SESSION_ID\":\"s11569\",\"SENDER_KEY_ID\":[28,90],\"TIMESTAMP\":88398359300422,\"NONCE\":[9,213],\"CIPHERTEXT\":[20,154],\"SIGNER_PUBLIC_KEY\":[12,10],\"SIGNATURE_TYPE\":\"s42499\",\"SIGNATURE\":[227,64],\"CANONICAL_JSON_SIGNATURE\":[65,22]}",
+ "expect": "{\"VERSION\":42,\"DIRECTION\":\"Request\",\"ENCRYPTION\":{\"VERSION\":193,\"KEY_EXCHANGE\":\"P256\",\"SYMMETRIC\":\"AES_256_CTR\",\"KEY_DERIVATION\":\"HKDF_SHA256\",\"EPHEMERAL_PUBLIC_KEY\":[144,65],\"NONCE_START\":[252,186],\"RECIPIENT_KEY_ID\":[123,34],\"CONTEXT\":\"s45477\",\"SCHEMA_HASH\":[66,123],\"ROOT_TYPE\":\"s70594\",\"TIMESTAMP\":150702234806765},\"SESSION_ID\":\"s11569\",\"SENDER_KEY_ID\":[28,90],\"TIMESTAMP\":88398359300422,\"NONCE\":[9,213],\"CIPHERTEXT\":[20,154],\"SIGNER_PUBLIC_KEY\":[12,10],\"SIGNATURE_TYPE\":\"s42499\",\"SIGNATURE\":[227,64],\"CANONICAL_JSON_SIGNATURE\":[65,22]}",
+ "model": {
+  "sdsrpc.version": "42",
+  "sdsrpc.direction": "Request",
+  "sdsrpc.encryption_version": "193",
+  "sdsrpc.encryption_key_exchange": "P256",
+  "sdsrpc.encryption_symmetric": "AES_256_CTR",
+  "sdsrpc.encryption_key_derivation": "HKDF_SHA256",
+  "sdsrpc.encryption_ephemeral_public_key.#": "2",
+  "sdsrpc.encryption_nonce_start.#": "2"
+ }
+}

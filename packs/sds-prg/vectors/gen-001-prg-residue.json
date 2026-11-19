@@ -1,0 +1,7 @@
+{
+ "name": "gen-prg-residue",
+ "from": "sds-prg",
+ "to": "sds-prg",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"NAME\":\"s26022\",\"HD_KEY_PATH\":\"s9360\",\"MESSAGE_TYPES\":[\"s6155\",\"s51566\"],\"USERS\":[{\"ID\":\"s12271\",\"MESSAGE_TYPES\":[\"s77300\"]},{\"ID\":\"s81807\",\"MESSAGE_TYPES\":[\"s41506\"]}]}",
+ "expect": "{\"NAME\":\"s26022\",\"HD_KEY_PATH\":\"s9360\",\"MESSAGE_TYPES\":[\"s6155\",\"s51566\"],\"USERS\":[{\"ID\":\"s12271\",\"MESSAGE_TYPES\":[\"s77300\"]},{\"ID\":\"s81807\",\"MESSAGE_TYPES\":[\"s41506\"]}],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

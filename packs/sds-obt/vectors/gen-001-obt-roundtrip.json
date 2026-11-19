@@ -1,0 +1,17 @@
+{
+ "name": "gen-obt-roundtrip",
+ "from": "sds-obt",
+ "to": "sds-obt",
+ "input": "{\"ID\":\"s3585\",\"SAT_NO\":3460385109,\"ORIG_OBJECT_ID\":\"s16126\",\"ON_ORBIT\":\"s67223\",\"TS\":\"s61410\",\"LAT\":7.0625,\"LON\":7.0625,\"ALT\":-3.25,\"SPD\":-0.5,\"ANG_ELEV\":12.5,\"RDF_RF\":42.375,\"CALL_SIGN\":\"s25088\",\"RPT_NUM\":\"s33324\",\"TRK_ID\":\"s7681\",\"OBJ_IDENT\":\"s45716\",\"IDENT_AMP\":\"s1065\",\"SAT_STATUS\":\"s97658\",\"OBJ_TYPE\":\"UNKNOWN\",\"COUNTRY_CODE\":\"s50920\",\"DECAY\":0.75,\"CHARLIE_LINE\":\"s8039\",\"AOU_TYPE\":\"RECTANGULAR\",\"AOU_DATA\":[12.5,42.375],\"CNTNMNT\":12.5,\"XREF\":\"s89310\",\"CH_XREF\":\"s86725\",\"AMPLIFICATION\":\"s42032\",\"IFF\":\"s37810\",\"VEH_TYPE\":\"s13362\",\"REINFORCED\":false,\"REDUCED\":false,\"HQ\":true,\"DUMMY\":true,\"TASK_FORCE\":true,\"FEINT\":false,\"INSTALLATION\":true,\"TRACK_SENSORS\":[\"s17827\",\"s52087\"]}",
+ "expect": "{\"ID\":\"s3585\",\"SAT_NO\":3460385109,\"ORIG_OBJECT_ID\":\"s16126\",\"ON_ORBIT\":\"s67223\",\"TS\":\"s61410\",\"LAT\":7.0625,\"LON\":7.0625,\"ALT\":-3.25,\"SPD\":-0.5,\"ANG_ELEV\":12.5,\"RDF_RF\":42.375,\"CALL_SIGN\":\"s25088\",\"RPT_NUM\":\"s33324\",\"TRK_ID\":\"s7681\",\"OBJ_IDENT\":\"s45716\",\"IDENT_AMP\":\"s1065\",\"SAT_STATUS\":\"s97658\",\"OBJ_TYPE\":\"UNKNOWN\",\"COUNTRY_CODE\":\"s50920\",\"DECAY\":0.75,\"CHARLIE_LINE\":\"s8039\",\"AOU_TYPE\":\"RECTANGULAR\",\"AOU_DATA\":[12.5,42.375],\"CNTNMNT\":12.5,\"XREF\":\"s89310\",\"CH_XREF\":\"s86725\",\"AMPLIFICATION\":\"s42032\",\"IFF\":\"s37810\",\"VEH_TYPE\":\"s13362\",\"REINFORCED\":false,\"REDUCED\":false,\"HQ\":true,\"DUMMY\":true,\"TASK_FORCE\":true,\"FEINT\":false,\"INSTALLATION\":true,\"TRACK_SENSORS\":[\"s17827\",\"s52087\"]}",
+ "model": {
+  "uid": "s3585",
+  "sdsobt.id": "s3585",
+  "sdsobt.sat_no": "3460385109",
+  "sdsobt.orig_object_id": "s16126",
+  "sdsobt.on_orbit": "s67223",
+  "sdsobt.ts": "s61410",
+  "sdsobt.lat": "7.0625",
+  "sdsobt.lon": "7.0625"
+ }
+}

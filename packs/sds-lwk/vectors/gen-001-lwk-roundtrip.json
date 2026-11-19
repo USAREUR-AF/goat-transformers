@@ -1,0 +1,17 @@
+{
+ "name": "gen-lwk-roundtrip",
+ "from": "sds-lwk",
+ "to": "sds-lwk",
+ "input": "{\"REQUEST_ID\":\"s65497\",\"MODULE_ID\":\"s92178\",\"MODULE_VERSION\":\"s55937\",\"CONTENT_KEY_ID\":\"s82494\",\"RECIPIENT_KEY_ID\":\"s83345\",\"ALGORITHM\":\"X25519_HKDF_SHA256_AES_256_GCM\",\"REQUESTER_EPHEMERAL_PUBKEY\":[252,162],\"PROVIDER_EPHEMERAL_PUBKEY\":[189,252],\"HKDF_SALT\":[27,223],\"IV\":[225,208],\"CIPHERTEXT\":[140,43],\"TAG\":[42,132],\"EXPIRES_AT\":278329539983803}",
+ "expect": "{\"REQUEST_ID\":\"s65497\",\"MODULE_ID\":\"s92178\",\"MODULE_VERSION\":\"s55937\",\"CONTENT_KEY_ID\":\"s82494\",\"RECIPIENT_KEY_ID\":\"s83345\",\"ALGORITHM\":\"X25519_HKDF_SHA256_AES_256_GCM\",\"REQUESTER_EPHEMERAL_PUBKEY\":[252,162],\"PROVIDER_EPHEMERAL_PUBKEY\":[189,252],\"HKDF_SALT\":[27,223],\"IV\":[225,208],\"CIPHERTEXT\":[140,43],\"TAG\":[42,132],\"EXPIRES_AT\":278329539983803}",
+ "model": {
+  "sdslwk.request_id": "s65497",
+  "sdslwk.module_id": "s92178",
+  "sdslwk.module_version": "s55937",
+  "sdslwk.content_key_id": "s82494",
+  "sdslwk.recipient_key_id": "s83345",
+  "sdslwk.algorithm": "X25519_HKDF_SHA256_AES_256_GCM",
+  "sdslwk.requester_ephemeral_pubkey.#": "2",
+  "sdslwk.provider_ephemeral_pubkey.#": "2"
+ }
+}

@@ -1,0 +1,22 @@
+{
+ "keys": {
+  "data|.|int": "data_value",
+  "ocf|.|int": "ocf_value",
+  "|FECF|int": "fecf",
+  "|FIRST_HDR_POINTER|int": "first_hdr_pointer",
+  "|MASTER_FRAME_COUNT|int": "master_frame_count",
+  "|OCF_FLAG|int": "ocf_flag",
+  "|PACKET_ORDER_FLAG|int": "packet_order_flag",
+  "|SEC_HDR_FLAG|int": "sec_hdr_flag",
+  "|SEGMENT_LENGTH_ID|int": "segment_length_id",
+  "|SPACECRAFT_ID|int": "spacecraft_id",
+  "|SYNCH_FLAG|int": "synch_flag",
+  "|VERSION|int": "version",
+  "|VIRTUAL_CHANNEL_ID|int": "virtual_channel_id",
+  "|VIRTUAL_FRAME_COUNT|int": "virtual_frame_count"
+ },
+ "lists": {
+  "|DATA": "data",
+  "|OCF": "ocf"
+ }
+}

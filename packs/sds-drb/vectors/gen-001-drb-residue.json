@@ -1,0 +1,7 @@
+{
+ "name": "gen-drb-residue",
+ "from": "sds-drb",
+ "to": "sds-drb",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"RECEIVER_ARTIFACT_SHA256\":[129,64],\"START_UNIX_US\":-9223141742992226095,\"WINDOW_COUNT\":48,\"POSITION_ONLY\":true,\"WIDE_RECORDS\":true,\"OUTCOMES\":[{\"RECORD_INDEX\":3760716066,\"OUTCOME\":\"EXCLUDED\"},{\"RECORD_INDEX\":4028920589,\"OUTCOME\":\"SOURCE_REFUSED\"}]}",
+ "expect": "{\"RECEIVER_ARTIFACT_SHA256\":[129,64],\"START_UNIX_US\":-9223141742992226095,\"WINDOW_COUNT\":48,\"POSITION_ONLY\":true,\"WIDE_RECORDS\":true,\"OUTCOMES\":[{\"RECORD_INDEX\":3760716066,\"OUTCOME\":\"EXCLUDED\"},{\"RECORD_INDEX\":4028920589,\"OUTCOME\":\"SOURCE_REFUSED\"}],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

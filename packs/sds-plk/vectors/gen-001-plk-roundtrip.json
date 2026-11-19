@@ -1,0 +1,17 @@
+{
+ "name": "gen-plk-roundtrip",
+ "from": "sds-plk",
+ "to": "sds-plk",
+ "input": "{\"LICENSE_ID\":\"s83737\",\"PLUGIN_ID\":\"s52379\",\"PLUGIN_VERSION\":\"s51851\",\"LICENSEE_ORG\":\"s77496\",\"LICENSEE_EMAIL\":\"s49960\",\"LICENSEE_PEER_ID\":\"s59972\",\"LICENSEE_PUBKEY\":[3,10],\"ISSUER_PUBKEY\":[215,56],\"ALLOWED_DOMAINS\":[\"s56381\",\"s93469\"],\"ALLOWED_TLDS\":[\"s20427\",\"s96608\"],\"LICENSE_TYPE\":\"Educational\",\"MAX_ACTIVATIONS\":3792818905,\"ISSUED_AT\":241741490701100,\"VALID_FROM\":146914180548895,\"EXPIRES_AT\":48007684934147,\"ISSUER_PEER_ID\":\"s80256\",\"SIGNATURE\":[175,54]}",
+ "expect": "{\"LICENSE_ID\":\"s83737\",\"PLUGIN_ID\":\"s52379\",\"PLUGIN_VERSION\":\"s51851\",\"LICENSEE_ORG\":\"s77496\",\"LICENSEE_EMAIL\":\"s49960\",\"LICENSEE_PEER_ID\":\"s59972\",\"LICENSEE_PUBKEY\":[3,10],\"ISSUER_PUBKEY\":[215,56],\"ALLOWED_DOMAINS\":[\"s56381\",\"s93469\"],\"ALLOWED_TLDS\":[\"s20427\",\"s96608\"],\"LICENSE_TYPE\":\"Educational\",\"MAX_ACTIVATIONS\":3792818905,\"ISSUED_AT\":241741490701100,\"VALID_FROM\":146914180548895,\"EXPIRES_AT\":48007684934147,\"ISSUER_PEER_ID\":\"s80256\",\"SIGNATURE\":[175,54]}",
+ "model": {
+  "sdsplk.license_id": "s83737",
+  "sdsplk.plugin_id": "s52379",
+  "sdsplk.plugin_version": "s51851",
+  "sdsplk.licensee_org": "s77496",
+  "sdsplk.licensee_email": "s49960",
+  "sdsplk.licensee_peer_id": "s59972",
+  "sdsplk.licensee_pubkey.#": "2",
+  "sdsplk.issuer_pubkey.#": "2"
+ }
+}

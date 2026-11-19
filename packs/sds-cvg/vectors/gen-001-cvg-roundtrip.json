@@ -1,0 +1,17 @@
+{
+ "name": "gen-cvg-roundtrip",
+ "from": "sds-cvg",
+ "to": "sds-cvg",
+ "input": "{\"COVERAGE_ID\":\"s2743\",\"NAME\":\"s97145\",\"GRID_SCHEME\":\"s96798\",\"GRID_RESOLUTION\":3,\"CELL_INDEXES\":[207475411688120,114751896259658],\"WINDOW_START\":101.125,\"WINDOW_STOP\":1.5,\"STEP_SIZE\":101.125,\"SENSOR_IDS\":[\"s4215\",\"s7743\"],\"ASSET_IDS\":[\"s92467\",\"s67046\"],\"ACCESS_COUNTS\":[322553529,1462160092],\"ACCESS_TOTAL_S\":[101.125,7.0625],\"REVISIT_MEAN_S\":[7.0625,42.375],\"REVISIT_MAX_S\":[0.75,101.125],\"RESPONSE_MEAN_S\":[42.375,1.5],\"RESPONSE_MAX_S\":[-3.25,12.5],\"GAP_MAX_S\":[0.75,0.75],\"COVERAGE_FRACTION\":[101.125,1.5],\"COMPUTED_AT\":257718222494023,\"SIGNATURE\":[213,125]}",
+ "expect": "{\"COVERAGE_ID\":\"s2743\",\"NAME\":\"s97145\",\"GRID_SCHEME\":\"s96798\",\"GRID_RESOLUTION\":3,\"CELL_INDEXES\":[207475411688120,114751896259658],\"WINDOW_START\":101.125,\"WINDOW_STOP\":1.5,\"STEP_SIZE\":101.125,\"SENSOR_IDS\":[\"s4215\",\"s7743\"],\"ASSET_IDS\":[\"s92467\",\"s67046\"],\"ACCESS_COUNTS\":[322553529,1462160092],\"ACCESS_TOTAL_S\":[101.125,7.0625],\"REVISIT_MEAN_S\":[7.0625,42.375],\"REVISIT_MAX_S\":[0.75,101.125],\"RESPONSE_MEAN_S\":[42.375,1.5],\"RESPONSE_MAX_S\":[-3.25,12.5],\"GAP_MAX_S\":[0.75,0.75],\"COVERAGE_FRACTION\":[101.125,1.5],\"COMPUTED_AT\":257718222494023,\"SIGNATURE\":[213,125]}",
+ "model": {
+  "sdscvg.coverage_id": "s2743",
+  "sdscvg.name": "s97145",
+  "sdscvg.grid_scheme": "s96798",
+  "sdscvg.grid_resolution": "3",
+  "sdscvg.cell_indexes.#": "2",
+  "sdscvg.window_start": "101.125",
+  "sdscvg.window_stop": "1.5",
+  "sdscvg.step_size": "101.125"
+ }
+}

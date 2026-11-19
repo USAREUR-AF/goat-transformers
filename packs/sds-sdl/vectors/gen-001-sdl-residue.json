@@ -1,0 +1,7 @@
+{
+ "name": "gen-sdl-residue",
+ "from": "sds-sdl",
+ "to": "sds-sdl",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"SPI\":6799,\"IV_LENGTH\":251,\"IV\":[164,151],\"MAC_LENGTH\":120,\"MAC\":[243,31],\"PAD_LENGTH\":246,\"PAYLOAD\":[20,124]}",
+ "expect": "{\"SPI\":6799,\"IV_LENGTH\":251,\"IV\":[164,151],\"MAC_LENGTH\":120,\"MAC\":[243,31],\"PAD_LENGTH\":246,\"PAYLOAD\":[20,124],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

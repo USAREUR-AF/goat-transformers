@@ -1,0 +1,17 @@
+{
+ "name": "gen-swr-roundtrip",
+ "from": "sds-swr",
+ "to": "sds-swr",
+ "input": "{\"ID\":\"s97249\",\"ON_ORBIT\":\"s46383\",\"ORIG_OBJECT_ID\":\"s51949\",\"SAT_NO\":2224393712,\"TS\":\"s62722\",\"SOLAR_PHASE_ANGLE\":42.375,\"LAT\":7.0625,\"LON\":7.0625,\"LOCATION_NAME\":\"s48336\",\"BAD_WAVE\":\"s95290\",\"WAVELENGTHS\":[1.5,12.5],\"ABS_FLUXES\":[42.375,1.5],\"RATIO_WAVELENGTHS\":[-3.25,1.5],\"FLUX_RATIOS\":[12.5,-0.5],\"TEMPERATURE\":-0.5,\"SIGNAL_NOISE_RATIO\":101.125,\"INTEGRATION_TIME\":-3.25,\"QUALITY\":156}",
+ "expect": "{\"ID\":\"s97249\",\"ON_ORBIT\":\"s46383\",\"ORIG_OBJECT_ID\":\"s51949\",\"SAT_NO\":2224393712,\"TS\":\"s62722\",\"SOLAR_PHASE_ANGLE\":42.375,\"LAT\":7.0625,\"LON\":7.0625,\"LOCATION_NAME\":\"s48336\",\"BAD_WAVE\":\"s95290\",\"WAVELENGTHS\":[1.5,12.5],\"ABS_FLUXES\":[42.375,1.5],\"RATIO_WAVELENGTHS\":[-3.25,1.5],\"FLUX_RATIOS\":[12.5,-0.5],\"TEMPERATURE\":-0.5,\"SIGNAL_NOISE_RATIO\":101.125,\"INTEGRATION_TIME\":-3.25,\"QUALITY\":156}",
+ "model": {
+  "uid": "s97249",
+  "sdsswr.id": "s97249",
+  "sdsswr.on_orbit": "s46383",
+  "sdsswr.orig_object_id": "s51949",
+  "sdsswr.sat_no": "2224393712",
+  "sdsswr.ts": "s62722",
+  "sdsswr.solar_phase_angle": "42.375",
+  "sdsswr.lat": "7.0625"
+ }
+}

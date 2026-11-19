@@ -1,0 +1,17 @@
+{
+ "name": "gen-mpe-roundtrip",
+ "from": "sds-mpe",
+ "to": "sds-mpe",
+ "input": "{\"ENTITY_ID\":\"s5223\",\"EPOCH\":101.125,\"MEAN_MOTION\":-0.5,\"ECCENTRICITY\":-3.25,\"INCLINATION\":42.375,\"RA_OF_ASC_NODE\":7.0625,\"ARG_OF_PERICENTER\":101.125,\"MEAN_ANOMALY\":42.375,\"BSTAR\":101.125,\"MEAN_ELEMENT_THEORY\":\"USM\",\"TARGETER\":{\"SOLVER\":\"s47327\",\"DYNAMICS\":\"s95652\",\"CONVERGED\":true,\"ITERATIONS\":540082350,\"RESIDUAL_RMS\":-0.5,\"RESIDUALS\":[42.375,7.0625],\"CONSTRAINTS\":[{\"NAME\":\"s9126\",\"FRAME\":\"s73249\",\"EPOCH\":42.375,\"EVENT\":\"s10046\",\"TARGET_VALUE\":101.125,\"ACHIEVED_VALUE\":1.5,\"TOLERANCE\":7.0625,\"WEIGHT\":42.375},{\"NAME\":\"s28890\",\"FRAME\":\"s69216\",\"EPOCH\":-3.25,\"EVENT\":\"s80548\",\"TARGET_VALUE\":101.125,\"ACHIEVED_VALUE\":-3.25,\"TOLERANCE\":101.125,\"WEIGHT\":-3.25}],\"TOTAL_DELTA_V\":42.375,\"SOLVED_AT\":58530302317044},\"BTERM\":1.5,\"AGOM\":101.125}",
+ "expect": "{\"ENTITY_ID\":\"s5223\",\"EPOCH\":101.125,\"MEAN_MOTION\":-0.5,\"ECCENTRICITY\":-3.25,\"INCLINATION\":42.375,\"RA_OF_ASC_NODE\":7.0625,\"ARG_OF_PERICENTER\":101.125,\"MEAN_ANOMALY\":42.375,\"BSTAR\":101.125,\"MEAN_ELEMENT_THEORY\":\"USM\",\"TARGETER\":{\"SOLVER\":\"s47327\",\"DYNAMICS\":\"s95652\",\"CONVERGED\":true,\"ITERATIONS\":540082350,\"RESIDUAL_RMS\":-0.5,\"RESIDUALS\":[42.375,7.0625],\"CONSTRAINTS\":[{\"NAME\":\"s9126\",\"FRAME\":\"s73249\",\"EPOCH\":42.375,\"EVENT\":\"s10046\",\"TARGET_VALUE\":101.125,\"ACHIEVED_VALUE\":1.5,\"TOLERANCE\":7.0625,\"WEIGHT\":42.375},{\"NAME\":\"s28890\",\"FRAME\":\"s69216\",\"EPOCH\":-3.25,\"EVENT\":\"s80548\",\"TARGET_VALUE\":101.125,\"ACHIEVED_VALUE\":-3.25,\"TOLERANCE\":101.125,\"WEIGHT\":-3.25}],\"TOTAL_DELTA_V\":42.375,\"SOLVED_AT\":58530302317044},\"BTERM\":1.5,\"AGOM\":101.125}",
+ "model": {
+  "uid": "s5223",
+  "sdsmpe.entity_id": "s5223",
+  "sdsmpe.epoch": "101.125",
+  "sdsmpe.mean_motion": "-0.5",
+  "sdsmpe.eccentricity": "-3.25",
+  "sdsmpe.inclination": "42.375",
+  "sdsmpe.ra_of_asc_node": "7.0625",
+  "sdsmpe.arg_of_pericenter": "101.125"
+ }
+}

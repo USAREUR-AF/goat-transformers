@@ -1,0 +1,14 @@
+{
+ "name": "gen-roc-roundtrip",
+ "from": "sds-roc",
+ "to": "sds-roc",
+ "input": "{\"NAME\":\"s5716\",\"FAMILY\":\"s16272\",\"VARIANT\":\"s65674\",\"STAGES\":[{\"STAGE_NUMBER\":-435823555,\"ENGINES\":[{\"ENGINE_NAME\":\"s8391\",\"TYPE\":\"OTHER\",\"THRUST\":-0.5}],\"FUEL_TYPE\":\"s64118\",\"THRUST\":-0.5,\"BURN_DURATION\":1.5},{\"STAGE_NUMBER\":1792154911,\"ENGINES\":[{\"ENGINE_NAME\":\"s6335\",\"TYPE\":\"OTHER\",\"THRUST\":-3.25}],\"FUEL_TYPE\":\"s47811\",\"THRUST\":-3.25,\"BURN_DURATION\":-0.5}],\"SUSTAINERS\":[{\"SUSTAINER_NAME\":\"s37488\",\"THRUST\":-0.5,\"BURN_DURATION\":42.375},{\"SUSTAINER_NAME\":\"s12965\",\"THRUST\":7.0625,\"BURN_DURATION\":42.375}]}",
+ "expect": "{\"NAME\":\"s5716\",\"FAMILY\":\"s16272\",\"VARIANT\":\"s65674\",\"STAGES\":[{\"STAGE_NUMBER\":-435823555,\"ENGINES\":[{\"ENGINE_NAME\":\"s8391\",\"TYPE\":\"OTHER\",\"THRUST\":-0.5}],\"FUEL_TYPE\":\"s64118\",\"THRUST\":-0.5,\"BURN_DURATION\":1.5},{\"STAGE_NUMBER\":1792154911,\"ENGINES\":[{\"ENGINE_NAME\":\"s6335\",\"TYPE\":\"OTHER\",\"THRUST\":-3.25}],\"FUEL_TYPE\":\"s47811\",\"THRUST\":-3.25,\"BURN_DURATION\":-0.5}],\"SUSTAINERS\":[{\"SUSTAINER_NAME\":\"s37488\",\"THRUST\":-0.5,\"BURN_DURATION\":42.375},{\"SUSTAINER_NAME\":\"s12965\",\"THRUST\":7.0625,\"BURN_DURATION\":42.375}]}",
+ "model": {
+  "sdsroc.name": "s5716",
+  "sdsroc.family": "s16272",
+  "sdsroc.variant": "s65674",
+  "sdsroc.stages.#": "2",
+  "sdsroc.sustainers.#": "2"
+ }
+}

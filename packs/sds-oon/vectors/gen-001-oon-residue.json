@@ -1,0 +1,7 @@
+{
+ "name": "gen-oon-residue",
+ "from": "sds-oon",
+ "to": "sds-oon",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"SAT_NO\":-1398163367,\"COMMON_NAME\":\"s72238\",\"CONSTELLATION\":\"s65574\",\"INTL_DES\":\"s92095\",\"LAUNCH_DATE\":\"s93149\",\"DECAY_DATE\":\"s37378\",\"OBJECT_TYPE\":\"s42867\",\"MISSION_NUMBER\":\"s60777\",\"CATEGORY\":\"s219\",\"LIFETIME_YEARS\":-2052838974,\"ALT_NAME\":\"s37924\",\"LAUNCH_SITE_ID\":\"s85385\",\"ANTENNAS\":[\"s12509\",\"s56647\"],\"BATTERIES\":[\"s79430\",\"s47728\"],\"SOLAR_ARRAYS\":[\"s11444\",\"s70208\"],\"THRUSTERS\":[\"s17253\",\"s67893\"],\"ONORBIT_DETAILS\":[\"s24545\",\"s76771\"],\"COUNTRY_CODE\":\"s92033\",\"ENTITY_COLLECTION\":[\"s74334\",\"s97733\"]}",
+ "expect": "{\"SAT_NO\":-1398163367,\"COMMON_NAME\":\"s72238\",\"CONSTELLATION\":\"s65574\",\"INTL_DES\":\"s92095\",\"LAUNCH_DATE\":\"s93149\",\"DECAY_DATE\":\"s37378\",\"OBJECT_TYPE\":\"s42867\",\"MISSION_NUMBER\":\"s60777\",\"CATEGORY\":\"s219\",\"LIFETIME_YEARS\":-2052838974,\"ALT_NAME\":\"s37924\",\"LAUNCH_SITE_ID\":\"s85385\",\"ANTENNAS\":[\"s12509\",\"s56647\"],\"BATTERIES\":[\"s79430\",\"s47728\"],\"SOLAR_ARRAYS\":[\"s11444\",\"s70208\"],\"THRUSTERS\":[\"s17253\",\"s67893\"],\"ONORBIT_DETAILS\":[\"s24545\",\"s76771\"],\"COUNTRY_CODE\":\"s92033\",\"ENTITY_COLLECTION\":[\"s74334\",\"s97733\"],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

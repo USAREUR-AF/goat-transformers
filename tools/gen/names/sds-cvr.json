@@ -1,0 +1,30 @@
+{
+ "keys": {
+  "|AGE_DAYS|float": "age_days",
+  "|CALIBRATION|string": "calibration",
+  "|COVERAGE_1_SIGMA_AXIS1|float": "coverage_1_sigma_axis1",
+  "|COVERAGE_1_SIGMA_AXIS2|float": "coverage_1_sigma_axis2",
+  "|COVERAGE_1_SIGMA_AXIS3|float": "coverage_1_sigma_axis3",
+  "|COVERAGE_3_SIGMA_AXIS1|float": "coverage_3_sigma_axis1",
+  "|COVERAGE_3_SIGMA_AXIS2|float": "coverage_3_sigma_axis2",
+  "|COVERAGE_3_SIGMA_AXIS3|float": "coverage_3_sigma_axis3",
+  "|COVERAGE_95|float": "coverage_95",
+  "|EVIDENCE|string": "evidence",
+  "|HISTORY_SAMPLES|int": "history_samples",
+  "|HISTORY_SETS|int": "history_sets",
+  "|HISTORY_WINDOW|string": "history_window",
+  "|HORIZON_DAYS|float": "horizon_days",
+  "|MEAN_D2_OVER_3|float": "mean_d2_over_3",
+  "|MEASURED_LINEAGE|string": "measured_lineage",
+  "|MODEL_ID|string": "model_id",
+  "|OBJECTS|int": "objects",
+  "|REGIME|string": "regime",
+  "|RULE|string": "rule",
+  "|SAMPLES|int": "samples",
+  "|SCALE_FACTOR|float": "scale_factor",
+  "|SHRINKAGE_WEIGHT|float": "shrinkage_weight",
+  "|TEST_WINDOW|string": "test_window",
+  "|TRUTH_EPOCHS|int": "truth_epochs"
+ },
+ "lists": {}
+}
