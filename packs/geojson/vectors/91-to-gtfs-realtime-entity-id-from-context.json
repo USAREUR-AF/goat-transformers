@@ -1,0 +1,15 @@
+{
+  "name": "91-to-gtfs-realtime-entity-id-from-context",
+  "from": "geojson",
+  "to": "gtfs-realtime-entity",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[13.405,52.52]},\"properties\":{\"callsign\":\"42\",\"speed_ms\":8.5},\"id\":\"bus-7\"}",
+  "context": {
+    "gtfsrt.id": "e1"
+  },
+  "expect": "0a026531221e120f0d7b14524215e17a56412d00000841420b0a056275732d3712023432",
+  "model": {
+    "uid": "bus-7",
+    "lat": "52.52",
+    "lon": "13.405"
+  }
+}

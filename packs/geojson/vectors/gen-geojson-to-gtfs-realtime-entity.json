@@ -1,0 +1,14 @@
+{
+  "name": "gen-geojson-to-gtfs-realtime-entity",
+  "from": "geojson",
+  "to": "gtfs-realtime-entity",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[2.75,2.125]},\"properties\":{\"callsign\":\"label-13\",\"speed_ms\":4.625},\"id\":\"id-12\"}",
+  "expect": "2224120f0d0000084015000030402d0000944042110a0569642d313212086c6162656c2d3133",
+  "model": {
+    "uid": "id-12",
+    "lat": "2.125",
+    "lon": "2.75",
+    "callsign": "label-13",
+    "speed_ms": "4.625"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "01-envelope-negative-rssi-fixed32-dropped",
+  "from": "meshtastic",
+  "to": "meshtastic",
+  "input": "0a210dd4c3b2a12206080112026869450000c840480360a6ffffffffffffffff01780312084c6f6e67466173741a09216131623263336434",
+  "expect": "0a1822020801450000c840480360a6ffffffffffffffff01780312084c6f6e67466173741a09216131623263336434",
+  "model": {
+    "meshtastic.packet_rx_rssi": "-90",
+    "meshtastic.packet_rx_snr": "6.25",
+    "meshtastic.packet_decoded_portnum": "1",
+    "meshtastic.service_envelope_channel_id": "LongFast"
+  }
+}

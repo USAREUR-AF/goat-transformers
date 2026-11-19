@@ -1,0 +1,16 @@
+{
+  "name": "01-data-roundtrip-body-dropped",
+  "from": "sparkplug-b",
+  "to": "sparkplug-b",
+  "input": "0880d095ffbc31121d0a0b54656d706572617475726510011880d095ffbc312009650000ac41120d10021880d095ffbc31200b700118032a020102",
+  "expect": "0880d095ffbc31121d0a0b54656d706572617475726510011880d095ffbc312009650000ac41120d10021880d095ffbc31200b70011803",
+  "model": {
+    "sparkplug.payload_timestamp": "1700000000000",
+    "sparkplug.payload_seq": "3",
+    "sparkplug.payload_metrics.#": "2",
+    "sparkplug.payload_metrics[0].sparkplug.metric_name": "Temperature",
+    "sparkplug.payload_metrics[0].sparkplug.metric_float_value": "21.5",
+    "sparkplug.payload_metrics[1].sparkplug.metric_alias": "2",
+    "sparkplug.payload_metrics[1].sparkplug.metric_boolean_value": "1"
+  }
+}

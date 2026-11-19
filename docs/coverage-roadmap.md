@@ -25,6 +25,14 @@ on this page lists.
 | STANAG 4676 ISR tracking | `xml` | Not built | |
 | NFFI (STANAG 5527) | `xml` | Not built | |
 
+## Internet of things, transit and mesh radio
+
+| Format | Wire type | Status | Open-source codecs to compare with |
+|---|---|---|---|
+| MQTT Sparkplug B | `protobuf` | Built: pack `sparkplug-b`, 1 message kind, generated; metrics as a list; the format carries no position | eclipse-tahu/tahu |
+| GTFS Realtime | `protobuf` | Built: packs `gtfs-realtime` (a whole FeedMessage, raw keys) and `gtfs-realtime-entity` (one FeedEntity, 6 kinds); a vehicle position converts to and from GeoJSON on `lat`, `lon`, `speed_ms`, `uid`, `callsign` | google/transit bindings |
+| Meshtastic MQTT ServiceEnvelope | `protobuf` | Built: pack `meshtastic`, raw keys only. `fixed32` fields and the payload chosen by `portnum` cannot be stated | meshtastic/protobufs |
+
 ## Command and control message catalogs
 
 | Format | Wire type | Status |

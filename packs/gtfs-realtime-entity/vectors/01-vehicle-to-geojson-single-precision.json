@@ -1,0 +1,18 @@
+{
+  "name": "01-vehicle-to-geojson-single-precision",
+  "from": "gtfs-realtime-entity",
+  "to": "geojson",
+  "input": "0a026531222912140d7b14524215e17a56411d0000b4422d000008412880e2cfaa06420b0a056275732d3712023432",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[13.404999732971191,52.52000045776367]},\"properties\":{\"callsign\":\"42\",\"speed_ms\":8.5},\"id\":\"bus-7\"}",
+  "model": {
+    "@kind": "vehicle",
+    "uid": "bus-7",
+    "callsign": "42",
+    "lat": "52.52000045776367",
+    "lon": "13.404999732971191",
+    "speed_ms": "8.5",
+    "gtfsrt.id": "e1",
+    "gtfsrt.position_bearing": "90",
+    "gtfsrt.vehicle_timestamp": "1700000000"
+  }
+}

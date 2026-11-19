@@ -1,0 +1,32 @@
+{
+  "name": "gen-service_envelope-roundtrip",
+  "from": "meshtastic",
+  "to": "meshtastic",
+  "input": "0a3c186422070801180148d3014500002840489d0250015801608c036801700178fb038801019001c5049801ea04a0018f05a80101b00101b80101c00101120d6368616e6e656c5f69642d32301a0d676174657761795f69642d3231",
+  "expect": "0a3c186422070801180148d3014500002840489d0250015801608c036801700178fb038801019001c5049801ea04a0018f05a80101b00101b80101c00101120d6368616e6e656c5f69642d32301a0d676174657761795f69642d3231",
+  "model": {
+    "@kind": "service_envelope",
+    "meshtastic.packet_channel": "100",
+    "meshtastic.packet_decoded_portnum": "1",
+    "meshtastic.packet_decoded_want_response": "1",
+    "meshtastic.packet_decoded_bitfield": "211",
+    "meshtastic.packet_rx_snr": "2.625",
+    "meshtastic.packet_hop_limit": "285",
+    "meshtastic.packet_want_ack": "1",
+    "meshtastic.packet_priority": "1",
+    "meshtastic.packet_rx_rssi": "396",
+    "meshtastic.packet_delayed": "1",
+    "meshtastic.packet_via_mqtt": "1",
+    "meshtastic.packet_hop_start": "507",
+    "meshtastic.packet_pki_encrypted": "1",
+    "meshtastic.packet_next_hop": "581",
+    "meshtastic.packet_relay_node": "618",
+    "meshtastic.packet_tx_after": "655",
+    "meshtastic.packet_transport_mechanism": "1",
+    "meshtastic.packet_xeddsa_signed": "1",
+    "meshtastic.packet_ack_proof_status": "1",
+    "meshtastic.packet_slot_parity": "1",
+    "meshtastic.service_envelope_channel_id": "channel_id-20",
+    "meshtastic.service_envelope_gateway_id": "gateway_id-21"
+  }
+}

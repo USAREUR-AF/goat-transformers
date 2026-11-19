@@ -1,0 +1,14 @@
+{
+  "name": "gen-shape-roundtrip",
+  "from": "gtfs-realtime-entity",
+  "to": "gtfs-realtime-entity",
+  "input": "0a0469642d30100132200a0a73686170655f69642d321212656e636f6465645f706f6c796c696e652d33",
+  "expect": "0a0469642d30100132200a0a73686170655f69642d321212656e636f6465645f706f6c796c696e652d33",
+  "model": {
+    "@kind": "shape",
+    "gtfsrt.id": "id-0",
+    "gtfsrt.is_deleted": "1",
+    "gtfsrt.shape_shape_id": "shape_id-2",
+    "gtfsrt.shape_encoded_polyline": "encoded_polyline-3"
+  }
+}
