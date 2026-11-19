@@ -1,0 +1,17 @@
+{
+  "name": "foreflight-id-roundtrip",
+  "from": "gdl90",
+  "to": "gdl90",
+  "input": "650001ffffffffffffffff537472617475780076312e3672312d65753033320000000000000001",
+  "expect": "650001ffffffffffffffff537472617475780076312e3672312d65753033320000000000000001",
+  "model": {
+    "@kind": "foreflight-id",
+    "gdl90.ff_version": "1",
+    "gdl90.ff_serial": "-1",
+    "gdl90.ff_short_name": "Stratux",
+    "gdl90.ff_long_name": "v1.6r1-eu032",
+    "gdl90.ff_capabilities": "1"
+  },
+  "source": "constructed",
+  "reference": "Stratux commit 36b5045, makeFFIDMessage; bytes computed by tools/gen/gdl90-vectors.py. Serial all 0xFF (invalid; a 64-bit field with the top bit set reads as -1, engine-spec 0.5 ruling 2), short name Stratux, a long name, capability bit 0 (geometric altitude is MSL). Framed: 7e650001ffffffffffffffff537472617475780076312e3672312d657530333200000000000000011dc77e"
+}

@@ -41,6 +41,7 @@ on this page lists.
 | NMEA 2000 parameter groups | `bits` | Built: pack `nmea2000`, 473 of the 647 definitions in the CANboat database. `packs/nmea2000/pack.md` lists what the others need | CANboat |
 | MAVLink 2, common message set | `bits` | Built: pack `mavlink2`, 235 message kinds at full payload length. Trimmed payloads and the checksum need framing | pymavlink |
 | ASTM F3411 Remote ID | `bits` | Built: pack `remote-id`, 8 message kinds including the Message Pack | opendroneid-core-c |
+| GDL 90 and the ForeFlight extension | `bits` | Built: pack `gdl90`, 7 message payloads (heartbeat, uplink header, ownship, traffic, ownship geometric altitude, ForeFlight ID and AHRS), layouts from Stratux; framing, CRC and the uplink payload need layered framing and a bytes transform | Stratux |
 | AIS / AIVDM | six-bit armor | Not built. Needs the six-bit armor wire | pyais, libais, gpsd |
 | NMEA 0183 | text grammar | Not built. Needs the text-grammar wire | pynmea2 |
 | KLV / MISB ST 0601 | type-length-value | Not built. Needs the type-length-value wire | klvdata |

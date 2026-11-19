@@ -1,0 +1,23 @@
+{
+  "name": "heartbeat-unnamed-bits-carried",
+  "from": "gdl90",
+  "to": "gdl90",
+  "input": "00fb4301001234",
+  "expect": "00fb4301001234",
+  "model": {
+    "@kind": "heartbeat",
+    "gdl90.hb_gps_valid": "1",
+    "gdl90.hb_maint_required": "1",
+    "gdl90.hb_status1_bit5": "1",
+    "gdl90.hb_addr_talkback": "1",
+    "gdl90.hb_status1_bits3_1": "5",
+    "gdl90.hb_uat_initialized": "1",
+    "gdl90.hb_time_bit16": "0",
+    "gdl90.hb_status2_bits6_1": "33",
+    "gdl90.hb_utc_ok": "1",
+    "gdl90.hb_time_low16": "1",
+    "gdl90.hb_msg_counts_raw": "4660"
+  },
+  "source": "constructed",
+  "reference": "Stratux commit 36b5045, makeHeartbeat; bytes computed by tools/gen/gdl90-vectors.py. Bits and bytes Stratux does not write are set; the pack carries them as raw keys, so the message round-trips."
+}

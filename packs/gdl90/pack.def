@@ -1,0 +1,109 @@
+# GDL 90 message payloads, and the ForeFlight extension messages carried in the
+# same stream, as Stratux writes them. Public.
+# A message of this pack is one payload: the bytes between the flags, with the
+# 0x7D escapes undone and the two CRC bytes removed (pack.md, Message convention).
+# Byte 0 is the message ID; bit offsets count from the most significant bit of byte 0.
+format     gdl90
+version    0.1.0
+distribution public
+source     "Stratux (https://github.com/cyoung/stratux, BSD-3-Clause) at commit 36b504555408fb90dd5cf1171d4f91f99571e50c: main/gen_gdl90.go (makeHeartbeat, makeOwnshipReport, makeOwnshipGeometricAltitudeReport, relayMessage, makeFFIDMessage, makeLatLng, prepareMessage), main/traffic.go (makeTrafficReportMsg), main/gps.go (makeFFAHRSMessage); layouts restated, no code copied"
+source     "Not used: GDL 90 Data Interface Specification 560-1058-00 Rev A (Garmin, on faa.gov), all rights reserved, no license; ForeFlight GDL 90 Extended Specification (foreflight.com/connect/spec), no terms stated"
+uses       gdl90
+wire       bits
+word_bytes 1
+bit_order  msb
+
+kind     heartbeat                                    # ID 0, 7 bytes
+when     0:0:8  0
+requires gdl90.hb_time_low16
+field    gdl90.hb_gps_valid        0:8:1      uint
+field    gdl90.hb_maint_required   0:9:1      uint
+field    gdl90.hb_status1_bit5     0:10:1     uint
+field    gdl90.hb_addr_talkback    0:11:1     uint
+field    gdl90.hb_status1_bits3_1  0:12:3     uint
+field    gdl90.hb_uat_initialized  0:15:1     uint
+field    gdl90.hb_time_bit16       0:16:1     uint
+field    gdl90.hb_status2_bits6_1  0:17:6     uint
+field    gdl90.hb_utc_ok           0:23:1     uint
+field    gdl90.hb_time_low16       0:24:16    uint  swap
+field    gdl90.hb_msg_counts_raw   0:40:16    uint
+
+kind     uplink                                       # ID 7: 4 header bytes; the UAT uplink payload is not mapped
+when     0:0:8  7
+requires gdl90.uplink_tor_raw
+field    gdl90.uplink_tor_raw      0:8:24     uint
+
+kind     traffic                                      # ID 20, 28 bytes; the default for an entity from another format
+when     0:0:8  20
+requires lat lon
+field    gdl90.alert_status      0:8:4      uint
+field    gdl90.address_type      0:12:4     uint
+field    gdl90.address           0:16:24    uint
+field    lat                     0:40:24    sscale:180/8388608
+field    lon                     0:64:24    sscale:180/8388608
+field    gdl90.alt_raw           0:88:12    uint
+field    gdl90.airborne          0:100:1    uint
+field    gdl90.extrapolated      0:101:1    uint
+field    gdl90.track_type        0:102:2    uint
+field    gdl90.nic               0:104:4    uint
+field    gdl90.nacp              0:108:4    uint
+field    gdl90.speed_kt          0:112:12   uint
+field    gdl90.vvel_raw          0:124:12   twos
+field    gdl90.track_raw         0:136:8    uint
+field    gdl90.emitter_category  0:144:8    uint
+field    callsign                0:152:64   ascii  trim
+field    gdl90.priority_status   0:216:4    uint
+field    gdl90.report_spare      0:220:4    uint
+default  gdl90.alt_raw           4095
+default  gdl90.vvel_raw          -2048
+
+kind     ownship                                      # ID 10, 28 bytes, the traffic report layout
+when     0:0:8  10
+requires lat lon gdl90.address
+field    gdl90.alert_status      0:8:4      uint
+field    gdl90.address_type      0:12:4     uint
+field    gdl90.address           0:16:24    uint
+field    lat                     0:40:24    sscale:180/8388608
+field    lon                     0:64:24    sscale:180/8388608
+field    gdl90.alt_raw           0:88:12    uint
+field    gdl90.airborne          0:100:1    uint
+field    gdl90.extrapolated      0:101:1    uint
+field    gdl90.track_type        0:102:2    uint
+field    gdl90.nic               0:104:4    uint
+field    gdl90.nacp              0:108:4    uint
+field    gdl90.speed_kt          0:112:12   uint
+field    gdl90.vvel_raw          0:124:12   twos
+field    gdl90.track_raw         0:136:8    uint
+field    gdl90.emitter_category  0:144:8    uint
+field    callsign                0:152:64   ascii  trim
+field    gdl90.priority_status   0:216:4    uint
+field    gdl90.report_spare      0:220:4    uint
+default  gdl90.alt_raw           4095
+default  gdl90.vvel_raw          -2048
+
+kind     ownship-geometric-altitude                   # ID 11, 5 bytes
+when     0:0:8  11
+requires gdl90.geo_alt_ft
+field    gdl90.geo_alt_ft          0:8:16     sscale:5
+field    gdl90.geo_fom_raw         0:24:16    uint
+
+kind     foreflight-id                                # ID 0x65, sub-ID 0, 39 bytes
+when     0:0:8  101
+when     0:8:8  0
+requires gdl90.ff_short_name
+field    gdl90.ff_version          0:16:8     uint
+field    gdl90.ff_serial           0:24:64    uint
+field    gdl90.ff_short_name       0:88:64    ascii  trim
+field    gdl90.ff_long_name        0:152:128  ascii  trim
+field    gdl90.ff_reserved         0:280:24   uint
+field    gdl90.ff_capabilities     0:304:8    uint
+
+kind     foreflight-ahrs                              # ID 0x65, sub-ID 1, 12 bytes
+when     0:0:8  101
+when     0:8:8  1
+requires gdl90.ahrs_roll_tenths
+field    gdl90.ahrs_roll_tenths    0:16:16    twos
+field    gdl90.ahrs_pitch_tenths   0:32:16    twos
+field    gdl90.ahrs_heading_raw    0:48:16    uint
+field    gdl90.ahrs_ias_raw        0:64:16    uint
+field    gdl90.ahrs_tas_raw        0:80:16    uint

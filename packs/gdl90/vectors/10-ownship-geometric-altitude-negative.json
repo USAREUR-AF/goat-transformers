@@ -1,0 +1,14 @@
+{
+  "name": "ownship-geometric-altitude-negative",
+  "from": "gdl90",
+  "to": "gdl90",
+  "input": "0bff9c000a",
+  "expect": "0bff9c000a",
+  "model": {
+    "@kind": "ownship-geometric-altitude",
+    "gdl90.geo_alt_ft": "-500",
+    "gdl90.geo_fom_raw": "10"
+  },
+  "source": "constructed",
+  "reference": "Stratux commit 36b5045, makeOwnshipGeometricAltitudeReport; bytes computed by tools/gen/gdl90-vectors.py. -100 counts of 5 ft = -500 ft; figure of merit 10 as Stratux writes it."
+}

@@ -1,0 +1,9 @@
+{
+  "name": "foreflight-unknown-sub-id-is-no-kind",
+  "from": "gdl90",
+  "to": "gdl90",
+  "input": "650200000000000000000000",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "ForeFlight ID 0x65 with sub-ID 2: Stratux writes only 0 and 1"
+}

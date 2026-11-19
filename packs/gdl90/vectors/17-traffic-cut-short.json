@@ -1,0 +1,9 @@
+{
+  "name": "traffic-cut-short",
+  "from": "gdl90",
+  "to": "gdl90",
+  "input": "1410a1b2c3203039bf2bcf0dc98907bff8c8014e31323341420000",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "27 bytes of a 28-byte traffic report"
+}

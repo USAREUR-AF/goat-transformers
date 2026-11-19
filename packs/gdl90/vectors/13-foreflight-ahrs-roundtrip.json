@@ -1,0 +1,17 @@
+{
+  "name": "foreflight-ahrs-roundtrip",
+  "from": "gdl90",
+  "to": "gdl90",
+  "input": "6501ff67002affffffffffff",
+  "expect": "6501ff67002affffffffffff",
+  "model": {
+    "@kind": "foreflight-ahrs",
+    "gdl90.ahrs_roll_tenths": "-153",
+    "gdl90.ahrs_pitch_tenths": "42",
+    "gdl90.ahrs_heading_raw": "65535",
+    "gdl90.ahrs_ias_raw": "65535",
+    "gdl90.ahrs_tas_raw": "65535"
+  },
+  "source": "constructed",
+  "reference": "Stratux commit 36b5045, makeFFAHRSMessage; bytes computed by tools/gen/gdl90-vectors.py. Roll -15.3 and pitch 4.2 degrees in tenths, heading and airspeeds 0xFFFF as Stratux always sends them. Framed: 7e6501ff67002affffffffffff7f747e"
+}

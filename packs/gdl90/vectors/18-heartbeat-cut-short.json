@@ -1,0 +1,9 @@
+{
+  "name": "heartbeat-cut-short",
+  "from": "gdl90",
+  "to": "gdl90",
+  "input": "009181701100",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "6 bytes of a 7-byte heartbeat"
+}

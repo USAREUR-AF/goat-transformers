@@ -1,0 +1,30 @@
+{
+  "name": "traffic-roundtrip",
+  "from": "gdl90",
+  "to": "gdl90",
+  "input": "1410a1b2c3203039bf2bcf0dc98907bff8c8014e3132334142000000",
+  "expect": "1410a1b2c3203039bf2bcf0dc98907bff8c8014e3132334142000000",
+  "model": {
+    "@kind": "traffic",
+    "gdl90.alert_status": "1",
+    "gdl90.address_type": "0",
+    "gdl90.address": "10597059",
+    "gdl90.alt_raw": "220",
+    "gdl90.airborne": "1",
+    "gdl90.extrapolated": "0",
+    "gdl90.track_type": "1",
+    "gdl90.nic": "8",
+    "gdl90.nacp": "9",
+    "gdl90.speed_kt": "123",
+    "gdl90.vvel_raw": "-8",
+    "gdl90.track_raw": "200",
+    "gdl90.emitter_category": "1",
+    "callsign": "N123AB",
+    "gdl90.priority_status": "0",
+    "gdl90.report_spare": "0",
+    "lat": "45.26489496231079",
+    "lon": "-91.16560220718384"
+  },
+  "source": "constructed",
+  "reference": "Stratux commit 36b5045, makeTrafficReportMsg, makeLatLng; bytes computed by tools/gen/gdl90-vectors.py. Alert set, ICAO address A1B2C3, 4500 ft, airborne with true track, NIC 8, NACp 9, 123 kt, -512 ft/min, callsign N123AB. Position counts 2109497 and -4248625 of 180/2^23 degrees. Framed: 7e1410a1b2c3203039bf2bcf0dc98907bff8c8014e3132334142000000b1a47e"
+}
