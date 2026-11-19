@@ -1,0 +1,9 @@
+{
+  "name": "to-kml-without-coordinates-is-no-kind",
+  "from": "geojson",
+  "to": "kml",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[11.5,48.1]},\"properties\":{\"callsign\":\"ALPHA\"}}",
+  "expect_error": "no-kind",
+  "source": "derived by tools/gen/aviation-xml-vectors.py from the schema and spec/engine-spec.md; no engine run",
+  "reference": "OGC 07-147r2 (KML 2.2.0) 9.1 AbstractFeatureGroup, 10.3 Point, 16.9 coordinatesType; ogckml22.xsd; packs/kml/pack.def; both kml kinds require kml.coordinates, which no geojson line yields: a position cannot be written into KML until the pack language can join numbers into the coordinate text, so encode fails rather than write a Placemark without its Point"
+}

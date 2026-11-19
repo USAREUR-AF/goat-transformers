@@ -1,0 +1,15 @@
+# The kml module: the values of an OGC KML 2.2 Placemark with a Point that have
+# no shared-model key. packs/kml/pack.md says why the coordinates are carried
+# as text and not as lat, lon and hae.
+module        kml
+version       0.1.0
+distribution  public
+source        "OGC KML 2.2.0, OGC 07-147r2 (2008-04-14), https://docs.ogc.org/is/07-147r2/07-147r2.pdf, and schema https://schemas.opengis.net/kml/2.2.0/ogckml22.xsd; OGC Document License Agreement"
+key  coordinates     string  -  "the Point's coordinate tuple as written: longitude,latitude[,altitude], decimal degrees, altitude in metres above the EGM96 geoid"
+key  altitude_mode   string  -  "how the altitude is read: clampToGround (the default), relativeToGround or absolute"
+key  extrude         string  -  "whether the point is joined to the ground by a line, as written (0, 1, false or true)"
+key  placemark_id    string  -  "the id attribute of the Placemark, an XML identifier within the document"
+key  description     string  -  "the Placemark's description text"
+key  when            string  -  "the TimeStamp instant as written: a date-time, a date, a year and month, or a year"
+key  style_url       string  -  "reference to a style for the Placemark"
+key  document_name   string  -  "name of the Document that holds the Placemark"

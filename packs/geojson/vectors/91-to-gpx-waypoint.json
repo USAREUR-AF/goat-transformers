@@ -1,0 +1,9 @@
+{
+  "name": "to-gpx-waypoint",
+  "from": "geojson",
+  "to": "gpx",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[11.576124,48.137154,519.5]},\"properties\":{\"callsign\":\"POINT A\",\"time_ms\":1714566600000}}",
+  "expect": "<gpx xmlns=\"http://www.topografix.com/GPX/1/1\" version=\"1.1\" creator=\"goat-transformers\"><wpt lat=\"48.137154\" lon=\"11.576124\"><time>2024-05-01T12:30:00.000Z</time><name>POINT A</name></wpt></gpx>",
+  "source": "derived by tools/gen/aviation-xml-vectors.py from the schema and spec/engine-spec.md; no engine run",
+  "reference": "GPX 1.1 schema, https://www.topografix.com/GPX/1/1/gpx.xsd, wptType, rteType, trkType, trksegType, gpxType; packs/gpx/pack.def; encode picks the first kind whose requires hold (waypoint); the when values write the namespace and version, the default writes creator; the altitude is not carried (gpx binds no hae)"
+}

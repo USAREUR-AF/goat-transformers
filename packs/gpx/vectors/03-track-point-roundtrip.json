@@ -1,0 +1,17 @@
+{
+  "name": "track-point-roundtrip",
+  "from": "gpx",
+  "to": "gpx",
+  "input": "<gpx xmlns=\"http://www.topografix.com/GPX/1/1\" version=\"1.1\" creator=\"logger\"><trk><name>MORNING</name><trkseg><trkpt lat=\"47.0\" lon=\"9.0\"><ele>312.25</ele><time>2024-05-01T12:30:00.123456Z</time></trkpt><trkpt lat=\"47.0001\" lon=\"9.0001\"><ele>313</ele><time>2024-05-01T12:30:01Z</time></trkpt></trkseg></trk></gpx>",
+  "expect": "<gpx xmlns=\"http://www.topografix.com/GPX/1/1\" version=\"1.1\" creator=\"logger\"><trk><name>MORNING</name><trkseg><trkpt lat=\"47\" lon=\"9\"><ele>312.25</ele><time>2024-05-01T12:30:00.123Z</time></trkpt></trkseg></trk></gpx>",
+  "model": {
+    "lat": "47",
+    "lon": "9",
+    "gpx.ele": "312.25",
+    "time_ms": "1714566600123",
+    "@kind": "track-point",
+    "gpx.track_name": "MORNING"
+  },
+  "source": "derived by tools/gen/aviation-xml-vectors.py from the schema and spec/engine-spec.md; no engine run",
+  "reference": "GPX 1.1 schema, https://www.topografix.com/GPX/1/1/gpx.xsd, wptType, rteType, trkType, trksegType, gpxType; the first point of the first segment is read; the second trkpt is a later sibling of the same name and is not carried (ruling 7 of 0.1.1); fraction digits past milliseconds are truncated"
+}
