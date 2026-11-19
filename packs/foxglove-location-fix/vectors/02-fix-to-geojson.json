@@ -1,0 +1,14 @@
+{
+  "name": "02-fix-to-geojson",
+  "from": "foxglove-location-fix",
+  "to": "geojson",
+  "input": "090000000000404a40110000000000c02a4019000000000040414032090880e2cfaa0610f4033a04676e73735a1b09000000000000000011000000000000144019000000000000f03f",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[13.375,52.5]},\"properties\":{\"course\":0,\"speed_ms\":5}}",
+  "model": {
+    "@complete": true,
+    "lat": "52.5",
+    "lon": "13.375",
+    "course": "0",
+    "speed_ms": "5"
+  }
+}

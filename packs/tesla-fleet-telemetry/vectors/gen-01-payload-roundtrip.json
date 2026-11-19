@@ -1,0 +1,19 @@
+{
+  "name": "gen-payload-roundtrip",
+  "from": "tesla-fleet-telemetry",
+  "to": "tesla-fleet-telemetry",
+  "input": "0a14080112100a0e737472696e675f76616c75652d350a15080112110a0f737472696e675f76616c75652d3739120508641089011a0576696e2d322001",
+  "expect": "0a14080112100a0e737472696e675f76616c75652d350a15080112110a0f737472696e675f76616c75652d3739120508641089011a0576696e2d322001",
+  "model": {
+    "@kind": "payload",
+    "teslafleet.created_at_seconds": "100",
+    "teslafleet.created_at_nanos": "137",
+    "teslafleet.payload_vin": "vin-2",
+    "teslafleet.payload_is_resend": "1",
+    "teslafleet.payload_data.#": "2",
+    "teslafleet.payload_data[0].teslafleet.datum_key": "1",
+    "teslafleet.payload_data[0].teslafleet.datum_value_string_value": "string_value-5",
+    "teslafleet.payload_data[1].teslafleet.datum_key": "1",
+    "teslafleet.payload_data[1].teslafleet.datum_value_string_value": "string_value-79"
+  }
+}

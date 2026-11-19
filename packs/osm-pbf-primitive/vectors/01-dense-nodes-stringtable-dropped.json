@@ -1,0 +1,11 @@
+{
+  "name": "01-dense-nodes-stringtable-dropped",
+  "from": "osm-pbf-primitive",
+  "to": "osm-pbf-primitive",
+  "input": "0a0b0a000a0768696768776179121612140a03c80102420680f5d6f403144a05e0f3c67f27880164",
+  "expect": "121612140a03c80102420680f5d6f403144a05e0f3c67f27880164",
+  "model": {
+    "osmpbf.primitive_block_granularity": "100",
+    "osmpbf.primitive_block_primitivegroup.#": "1"
+  }
+}

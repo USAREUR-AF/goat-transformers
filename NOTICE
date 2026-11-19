@@ -77,6 +77,33 @@ Pack mavlink2; module mavlink
   names, types, array lengths, units and enumeration values only; no
   description text.
 
+Pack foxglove-location-fix; module foxglove
+  Foxglove schemas (LocationFix, Color, KeyValuePair, Vector3), protobuf, from
+  https://github.com/foxglove/foxglove-sdk. MIT License, Copyright (c) Foxglove
+  Technologies Inc. Field numbers, names and types only.
+
+Packs osm-pbf-blob-header, osm-pbf-header, osm-pbf-primitive; module osmpbf
+  OpenStreetMap PBF definitions fileformat.proto and osmformat.proto, from
+  https://github.com/openstreetmap/OSM-binary. MIT License (Copyright (c) 2010
+  Scott A. Crosby; Copyright (c) OpenStreetMap developers). Field numbers,
+  names and types only.
+
+Pack mvt; module mvt
+  Mapbox Vector Tile specification 2.1, vector_tile.proto, from
+  https://github.com/mapbox/vector-tile-spec. Creative Commons Attribution 3.0.
+  Field numbers, names and types only.
+
+Pack valhalla; module valhalla
+  Valhalla protobuf definitions (proto/), from
+  https://github.com/valhalla/valhalla. MIT License, Copyright (c) 2018 Valhalla
+  contributors, Copyright (c) 2015-2017 Mapillary AB, Mapzen. Field numbers,
+  names and types only.
+
+Pack tesla-fleet-telemetry; module teslafleet
+  Tesla Fleet Telemetry vehicle_data.proto, from
+  https://github.com/teslamotors/fleet-telemetry. Apache License, Version 2.0.
+  Field numbers, names and types only.
+
 Pack remote-id; module rid
   opendroneid-core-c, the reference implementation of ASTM F3411 message
   contents. https://github.com/opendroneid/opendroneid-core-c

@@ -1,0 +1,12 @@
+{
+  "name": "gen-blob_header-roundtrip",
+  "from": "osm-pbf-blob-header",
+  "to": "osm-pbf-blob-header",
+  "input": "0a06747970652d30188901",
+  "expect": "0a06747970652d30188901",
+  "model": {
+    "@kind": "blob_header",
+    "osmpbf.blob_header_type": "type-0",
+    "osmpbf.blob_header_datasize": "137"
+  }
+}

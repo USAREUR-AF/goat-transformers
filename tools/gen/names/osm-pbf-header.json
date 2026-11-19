@@ -1,0 +1,15 @@
+{
+ "1.1": "bbox_left",
+ "1.2": "bbox_right",
+ "1.3": "bbox_top",
+ "1.4": "bbox_bottom",
+ "16": "header_block_writingprogram",
+ "17": "header_block_source",
+ "32": "header_block_osmosis_replication_timestamp",
+ "33": "header_block_osmosis_replication_sequence_number",
+ "34": "header_block_osmosis_replication_base_url",
+ "4[]": "header_block_required_features",
+ "5[]": "header_block_optional_features",
+ "OSMPBF.HeaderBlock:4[]item": "header_block_required_features_item",
+ "OSMPBF.HeaderBlock:5[]item": "header_block_optional_features_item"
+}

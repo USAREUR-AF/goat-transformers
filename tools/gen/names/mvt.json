@@ -1,0 +1,23 @@
+{
+ "3[]": "tile_layers",
+ "vector_tile.Tile.Feature:1": "feature_id",
+ "vector_tile.Tile.Feature:2[]": "feature_tags",
+ "vector_tile.Tile.Feature:2[]item": "feature_tags_item",
+ "vector_tile.Tile.Feature:3": "feature_type",
+ "vector_tile.Tile.Feature:4[]": "feature_geometry",
+ "vector_tile.Tile.Feature:4[]item": "feature_geometry_item",
+ "vector_tile.Tile.Layer:1": "layer_name",
+ "vector_tile.Tile.Layer:15": "layer_version",
+ "vector_tile.Tile.Layer:2[]": "layer_features",
+ "vector_tile.Tile.Layer:3[]": "layer_keys",
+ "vector_tile.Tile.Layer:3[]item": "layer_keys_item",
+ "vector_tile.Tile.Layer:4[]": "layer_values",
+ "vector_tile.Tile.Layer:5": "layer_extent",
+ "vector_tile.Tile.Value:1": "value_string_value",
+ "vector_tile.Tile.Value:2": "value_float_value",
+ "vector_tile.Tile.Value:3": "value_double_value",
+ "vector_tile.Tile.Value:4": "value_int_value",
+ "vector_tile.Tile.Value:5": "value_uint_value",
+ "vector_tile.Tile.Value:6": "value_sint_value",
+ "vector_tile.Tile.Value:7": "value_bool_value"
+}

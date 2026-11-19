@@ -1,0 +1,25 @@
+{
+  "name": "gen-header_block-roundtrip",
+  "from": "osm-pbf-header",
+  "to": "osm-pbf-header",
+  "input": "0a080805100f18192023221372657175697265645f66656174757265732d39221472657175697265645f66656174757265732d31302a146f7074696f6e616c5f66656174757265732d31312a146f7074696f6e616c5f66656174757265732d313282011077726974696e6770726f6772616d2d348a0108736f757263652d358002c2028802e70292021e6f736d6f7369735f7265706c69636174696f6e5f626173655f75726c2d38",
+  "expect": "0a080805100f18192023221372657175697265645f66656174757265732d39221472657175697265645f66656174757265732d31302a146f7074696f6e616c5f66656174757265732d31312a146f7074696f6e616c5f66656174757265732d313282011077726974696e6770726f6772616d2d348a0108736f757263652d358002c2028802e70292021e6f736d6f7369735f7265706c69636174696f6e5f626173655f75726c2d38",
+  "model": {
+    "@kind": "header_block",
+    "osmpbf.bbox_left": "-3",
+    "osmpbf.bbox_right": "-8",
+    "osmpbf.bbox_top": "-13",
+    "osmpbf.bbox_bottom": "-18",
+    "osmpbf.header_block_writingprogram": "writingprogram-4",
+    "osmpbf.header_block_source": "source-5",
+    "osmpbf.header_block_osmosis_replication_timestamp": "322",
+    "osmpbf.header_block_osmosis_replication_sequence_number": "359",
+    "osmpbf.header_block_osmosis_replication_base_url": "osmosis_replication_base_url-8",
+    "osmpbf.header_block_required_features.#": "2",
+    "osmpbf.header_block_required_features[0].osmpbf.header_block_required_features_item": "required_features-9",
+    "osmpbf.header_block_required_features[1].osmpbf.header_block_required_features_item": "required_features-10",
+    "osmpbf.header_block_optional_features.#": "2",
+    "osmpbf.header_block_optional_features[0].osmpbf.header_block_optional_features_item": "optional_features-11",
+    "osmpbf.header_block_optional_features[1].osmpbf.header_block_optional_features_item": "optional_features-12"
+  }
+}

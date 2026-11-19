@@ -1,0 +1,14 @@
+{
+  "name": "01-location-and-name-roundtrip",
+  "from": "tesla-fleet-telemetry",
+  "to": "tesla-fleet-telemetry",
+  "input": "0a18081512143a12090000000000c04240110000000000905ec00a0e0840120a0a085465737420636172120b0880e2cfaa061080e59a771a115445535456494e30303030303030303031",
+  "expect": "0a18081512143a12090000000000c04240110000000000905ec00a0e0840120a0a085465737420636172120b0880e2cfaa061080e59a771a115445535456494e30303030303030303031",
+  "model": {
+    "teslafleet.payload_vin": "TESTVIN0000000001",
+    "teslafleet.payload_data.#": "2",
+    "teslafleet.payload_data[0].teslafleet.datum_key": "21",
+    "teslafleet.payload_data[0].teslafleet.datum_value_location_value_latitude": "37.5",
+    "teslafleet.payload_data[1].teslafleet.datum_value_string_value": "Test car"
+  }
+}

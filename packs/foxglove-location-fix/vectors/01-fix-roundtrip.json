@@ -1,0 +1,17 @@
+{
+  "name": "01-fix-roundtrip",
+  "from": "foxglove-location-fix",
+  "to": "foxglove-location-fix",
+  "input": "090000000000404a40110000000000c02a4019000000000040414032090880e2cfaa0610f4033a04676e73735a1b09000000000000000011000000000000144019000000000000f03f",
+  "expect": "090000000000404a40110000000000c02a4019000000000040414032090880e2cfaa0610f4033a04676e73735a1b09000000000000000011000000000000144019000000000000f03f",
+  "model": {
+    "lat": "52.5",
+    "lon": "13.375",
+    "track.vel_east_ms": "0",
+    "track.vel_north_ms": "5",
+    "track.vel_up_ms": "1",
+    "foxglove.location_fix_latitude": "52.5",
+    "foxglove.location_fix_altitude": "34.5",
+    "foxglove.location_fix_frame_id": "gnss"
+  }
+}
