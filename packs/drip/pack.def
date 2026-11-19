@@ -1,0 +1,917 @@
+# DRIP authentication formats (IETF RFC 9575 section 4) carried in an ASTM F3411
+# Authentication Message with Authentication Type 5 (Specific Authentication Method). Public.
+#
+# A message of this pack is the reassembled Authentication Payload: the 23 payload octets of
+# every page, page 0 first, without the message type octet and the page header octet of each
+# page. Octets 0-5 are the Authentication Headers: last page index, Length (the number of
+# octets of authentication data), timestamp (4 octets, least significant first). Octet 6 on
+# is the authentication data, starting with the SAM Type. What follows the authentication
+# data (the ADL octet, FEC, null padding) is read over and not written. Integers are least
+# significant octet first, as in F3411, so `bit_order lsb`. See pack.md.
+format        drip
+version       0.1.0
+distribution  public
+source        "IETF RFC 9575 sections 3.2 and 4 (DRIP Link, Wrapper, Manifest), June 2024, https://www.rfc-editor.org/rfc/rfc9575"
+source        "IETF RFC 9434 (DRIP architecture) and RFC 9374 (DRIP Entity Tag), for context"
+source        "Location message layout as in pack remote-id: opendroneid-core-c (Apache-2.0), https://github.com/opendroneid/opendroneid-core-c"
+uses          rid
+uses          drip
+wire          bits
+word_bytes    1
+bit_order     lsb
+
+field     rid.auth_last_page_index 0:0:8 uint
+field     rid.auth_timestamp 0:16:32 uint
+# DRIP Link (SAM Type 1): a Broadcast Endorsement, 137 octets of authentication data.
+
+kind      link
+when      0:8:8 137
+when      0:48:8 1
+requires  drip.parent_signature
+field     drip.vnb 0:56:32 uint
+field     drip.vna 0:88:32 uint
+group     drip.child_det 0:120 item 8 count 16
+  field   drip.octet 0:0:8 uint
+end
+group     drip.child_hi 0:248 item 8 count 32
+  field   drip.octet 0:0:8 uint
+end
+group     drip.parent_det 0:504 item 8 count 16
+  field   drip.octet 0:0:8 uint
+end
+group     drip.parent_signature 0:632 item 8 count 64
+  field   drip.octet 0:0:8 uint
+end
+
+# DRIP Wrapper (SAM Type 2): 0 to 4 whole F3411 messages of 25 octets, then the aircraft's DET and
+# signature; 89 + 25 n octets. A Location message among them is read as pack remote-id reads it.
+
+# Wrapper of 1 messages, the Location message (type 1) in place 1
+
+kind      wrapper-1-location-1
+when      0:8:8 114
+when      0:48:8 2
+requires  drip.ua_signature lat lon
+field     drip.vnb 0:56:32 uint
+field     drip.vna 0:88:32 uint
+when      0:124:4 1
+field     rid.proto_version 0:120:4 uint
+field     rid.speed_mult 0:128:1 uint
+field     rid.ew_direction 0:129:1 uint
+field     rid.height_type 0:130:1 uint
+field     rid.status 0:132:4 uint
+field     rid.direction_raw 0:136:8 uint
+field     rid.speed_h_raw 0:144:8 uint
+field     rid.speed_v 0:152:8 sscale:1/2
+field     lat 0:160:32 sscale:1/10000000
+field     lon 0:192:32 sscale:1/10000000
+field     rid.alt_baro 0:224:16 uscale:1/2:-1000
+field     hae 0:240:16 uscale:1/2:-1000
+field     rid.height 0:256:16 uscale:1/2:-1000
+field     rid.horiz_acc 0:272:4 uint
+field     rid.vert_acc 0:276:4 uint
+field     rid.speed_acc 0:280:4 uint
+field     rid.baro_acc 0:284:4 uint
+field     rid.timestamp_ds 0:288:16 uint
+field     rid.ts_acc 0:304:4 uint
+field     rid.reserved 0:312:8 uint
+group     drip.ua_det 0:320 item 8 count 16
+  field   drip.octet 0:0:8 uint
+end
+group     drip.ua_signature 0:448 item 8 count 64
+  field   drip.octet 0:0:8 uint
+end
+
+# Wrapper of 1 messages, none of them a Location message in a place above
+
+kind      wrapper-1
+when      0:8:8 114
+when      0:48:8 2
+requires  drip.ua_signature drip.wrapped
+field     drip.vnb 0:56:32 uint
+field     drip.vna 0:88:32 uint
+group     drip.wrapped 0:120 item 200 count 1
+  field   rid.proto_version 0:0:4 uint
+  field   rid.msg_type 0:4:4 uint
+  group   drip.message_data 0:8 item 8 count 24
+    field drip.octet 0:0:8 uint
+  end
+end
+group     drip.ua_det 0:320 item 8 count 16
+  field   drip.octet 0:0:8 uint
+end
+group     drip.ua_signature 0:448 item 8 count 64
+  field   drip.octet 0:0:8 uint
+end
+
+# Wrapper of 2 messages, the Location message (type 1) in place 1
+
+kind      wrapper-2-location-1
+when      0:8:8 139
+when      0:48:8 2
+requires  drip.ua_signature lat lon
+field     drip.vnb 0:56:32 uint
+field     drip.vna 0:88:32 uint
+when      0:124:4 1
+field     rid.proto_version 0:120:4 uint
+field     rid.speed_mult 0:128:1 uint
+field     rid.ew_direction 0:129:1 uint
+field     rid.height_type 0:130:1 uint
+field     rid.status 0:132:4 uint
+field     rid.direction_raw 0:136:8 uint
+field     rid.speed_h_raw 0:144:8 uint
+field     rid.speed_v 0:152:8 sscale:1/2
+field     lat 0:160:32 sscale:1/10000000
+field     lon 0:192:32 sscale:1/10000000
+field     rid.alt_baro 0:224:16 uscale:1/2:-1000
+field     hae 0:240:16 uscale:1/2:-1000
+field     rid.height 0:256:16 uscale:1/2:-1000
+field     rid.horiz_acc 0:272:4 uint
+field     rid.vert_acc 0:276:4 uint
+field     rid.speed_acc 0:280:4 uint
+field     rid.baro_acc 0:284:4 uint
+field     rid.timestamp_ds 0:288:16 uint
+field     rid.ts_acc 0:304:4 uint
+field     rid.reserved 0:312:8 uint
+group     drip.wrapped_after 0:320 item 200 count 1
+  field   rid.proto_version 0:0:4 uint
+  field   rid.msg_type 0:4:4 uint
+  group   drip.message_data 0:8 item 8 count 24
+    field drip.octet 0:0:8 uint
+  end
+end
+group     drip.ua_det 0:520 item 8 count 16
+  field   drip.octet 0:0:8 uint
+end
+group     drip.ua_signature 0:648 item 8 count 64
+  field   drip.octet 0:0:8 uint
+end
+
+# Wrapper of 2 messages, the Location message (type 1) in place 2
+
+kind      wrapper-2-location-2
+when      0:8:8 139
+when      0:48:8 2
+requires  drip.ua_signature lat lon
+field     drip.vnb 0:56:32 uint
+field     drip.vna 0:88:32 uint
+group     drip.wrapped 0:120 item 200 count 1
+  field   rid.proto_version 0:0:4 uint
+  field   rid.msg_type 0:4:4 uint
+  group   drip.message_data 0:8 item 8 count 24
+    field drip.octet 0:0:8 uint
+  end
+end
+when      0:324:4 1
+field     rid.proto_version 0:320:4 uint
+field     rid.speed_mult 0:328:1 uint
+field     rid.ew_direction 0:329:1 uint
+field     rid.height_type 0:330:1 uint
+field     rid.status 0:332:4 uint
+field     rid.direction_raw 0:336:8 uint
+field     rid.speed_h_raw 0:344:8 uint
+field     rid.speed_v 0:352:8 sscale:1/2
+field     lat 0:360:32 sscale:1/10000000
+field     lon 0:392:32 sscale:1/10000000
+field     rid.alt_baro 0:424:16 uscale:1/2:-1000
+field     hae 0:440:16 uscale:1/2:-1000
+field     rid.height 0:456:16 uscale:1/2:-1000
+field     rid.horiz_acc 0:472:4 uint
+field     rid.vert_acc 0:476:4 uint
+field     rid.speed_acc 0:480:4 uint
+field     rid.baro_acc 0:484:4 uint
+field     rid.timestamp_ds 0:488:16 uint
+field     rid.ts_acc 0:504:4 uint
+field     rid.reserved 0:512:8 uint
+group     drip.ua_det 0:520 item 8 count 16
+  field   drip.octet 0:0:8 uint
+end
+group     drip.ua_signature 0:648 item 8 count 64
+  field   drip.octet 0:0:8 uint
+end
+
+# Wrapper of 2 messages, none of them a Location message in a place above
+
+kind      wrapper-2
+when      0:8:8 139
+when      0:48:8 2
+requires  drip.ua_signature drip.wrapped
+field     drip.vnb 0:56:32 uint
+field     drip.vna 0:88:32 uint
+group     drip.wrapped 0:120 item 200 count 2
+  field   rid.proto_version 0:0:4 uint
+  field   rid.msg_type 0:4:4 uint
+  group   drip.message_data 0:8 item 8 count 24
+    field drip.octet 0:0:8 uint
+  end
+end
+group     drip.ua_det 0:520 item 8 count 16
+  field   drip.octet 0:0:8 uint
+end
+group     drip.ua_signature 0:648 item 8 count 64
+  field   drip.octet 0:0:8 uint
+end
+
+# Wrapper of 3 messages, the Location message (type 1) in place 1
+
+kind      wrapper-3-location-1
+when      0:8:8 164
+when      0:48:8 2
+requires  drip.ua_signature lat lon
+field     drip.vnb 0:56:32 uint
+field     drip.vna 0:88:32 uint
+when      0:124:4 1
+field     rid.proto_version 0:120:4 uint
+field     rid.speed_mult 0:128:1 uint
+field     rid.ew_direction 0:129:1 uint
+field     rid.height_type 0:130:1 uint
+field     rid.status 0:132:4 uint
+field     rid.direction_raw 0:136:8 uint
+field     rid.speed_h_raw 0:144:8 uint
+field     rid.speed_v 0:152:8 sscale:1/2
+field     lat 0:160:32 sscale:1/10000000
+field     lon 0:192:32 sscale:1/10000000
+field     rid.alt_baro 0:224:16 uscale:1/2:-1000
+field     hae 0:240:16 uscale:1/2:-1000
+field     rid.height 0:256:16 uscale:1/2:-1000
+field     rid.horiz_acc 0:272:4 uint
+field     rid.vert_acc 0:276:4 uint
+field     rid.speed_acc 0:280:4 uint
+field     rid.baro_acc 0:284:4 uint
+field     rid.timestamp_ds 0:288:16 uint
+field     rid.ts_acc 0:304:4 uint
+field     rid.reserved 0:312:8 uint
+group     drip.wrapped_after 0:320 item 200 count 2
+  field   rid.proto_version 0:0:4 uint
+  field   rid.msg_type 0:4:4 uint
+  group   drip.message_data 0:8 item 8 count 24
+    field drip.octet 0:0:8 uint
+  end
+end
+group     drip.ua_det 0:720 item 8 count 16
+  field   drip.octet 0:0:8 uint
+end
+group     drip.ua_signature 0:848 item 8 count 64
+  field   drip.octet 0:0:8 uint
+end
+
+# Wrapper of 3 messages, the Location message (type 1) in place 2
+
+kind      wrapper-3-location-2
+when      0:8:8 164
+when      0:48:8 2
+requires  drip.ua_signature lat lon
+field     drip.vnb 0:56:32 uint
+field     drip.vna 0:88:32 uint
+group     drip.wrapped 0:120 item 200 count 1
+  field   rid.proto_version 0:0:4 uint
+  field   rid.msg_type 0:4:4 uint
+  group   drip.message_data 0:8 item 8 count 24
+    field drip.octet 0:0:8 uint
+  end
+end
+when      0:324:4 1
+field     rid.proto_version 0:320:4 uint
+field     rid.speed_mult 0:328:1 uint
+field     rid.ew_direction 0:329:1 uint
+field     rid.height_type 0:330:1 uint
+field     rid.status 0:332:4 uint
+field     rid.direction_raw 0:336:8 uint
+field     rid.speed_h_raw 0:344:8 uint
+field     rid.speed_v 0:352:8 sscale:1/2
+field     lat 0:360:32 sscale:1/10000000
+field     lon 0:392:32 sscale:1/10000000
+field     rid.alt_baro 0:424:16 uscale:1/2:-1000
+field     hae 0:440:16 uscale:1/2:-1000
+field     rid.height 0:456:16 uscale:1/2:-1000
+field     rid.horiz_acc 0:472:4 uint
+field     rid.vert_acc 0:476:4 uint
+field     rid.speed_acc 0:480:4 uint
+field     rid.baro_acc 0:484:4 uint
+field     rid.timestamp_ds 0:488:16 uint
+field     rid.ts_acc 0:504:4 uint
+field     rid.reserved 0:512:8 uint
+group     drip.wrapped_after 0:520 item 200 count 1
+  field   rid.proto_version 0:0:4 uint
+  field   rid.msg_type 0:4:4 uint
+  group   drip.message_data 0:8 item 8 count 24
+    field drip.octet 0:0:8 uint
+  end
+end
+group     drip.ua_det 0:720 item 8 count 16
+  field   drip.octet 0:0:8 uint
+end
+group     drip.ua_signature 0:848 item 8 count 64
+  field   drip.octet 0:0:8 uint
+end
+
+# Wrapper of 3 messages, the Location message (type 1) in place 3
+
+kind      wrapper-3-location-3
+when      0:8:8 164
+when      0:48:8 2
+requires  drip.ua_signature lat lon
+field     drip.vnb 0:56:32 uint
+field     drip.vna 0:88:32 uint
+group     drip.wrapped 0:120 item 200 count 2
+  field   rid.proto_version 0:0:4 uint
+  field   rid.msg_type 0:4:4 uint
+  group   drip.message_data 0:8 item 8 count 24
+    field drip.octet 0:0:8 uint
+  end
+end
+when      0:524:4 1
+field     rid.proto_version 0:520:4 uint
+field     rid.speed_mult 0:528:1 uint
+field     rid.ew_direction 0:529:1 uint
+field     rid.height_type 0:530:1 uint
+field     rid.status 0:532:4 uint
+field     rid.direction_raw 0:536:8 uint
+field     rid.speed_h_raw 0:544:8 uint
+field     rid.speed_v 0:552:8 sscale:1/2
+field     lat 0:560:32 sscale:1/10000000
+field     lon 0:592:32 sscale:1/10000000
+field     rid.alt_baro 0:624:16 uscale:1/2:-1000
+field     hae 0:640:16 uscale:1/2:-1000
+field     rid.height 0:656:16 uscale:1/2:-1000
+field     rid.horiz_acc 0:672:4 uint
+field     rid.vert_acc 0:676:4 uint
+field     rid.speed_acc 0:680:4 uint
+field     rid.baro_acc 0:684:4 uint
+field     rid.timestamp_ds 0:688:16 uint
+field     rid.ts_acc 0:704:4 uint
+field     rid.reserved 0:712:8 uint
+group     drip.ua_det 0:720 item 8 count 16
+  field   drip.octet 0:0:8 uint
+end
+group     drip.ua_signature 0:848 item 8 count 64
+  field   drip.octet 0:0:8 uint
+end
+
+# Wrapper of 3 messages, none of them a Location message in a place above
+
+kind      wrapper-3
+when      0:8:8 164
+when      0:48:8 2
+requires  drip.ua_signature drip.wrapped
+field     drip.vnb 0:56:32 uint
+field     drip.vna 0:88:32 uint
+group     drip.wrapped 0:120 item 200 count 3
+  field   rid.proto_version 0:0:4 uint
+  field   rid.msg_type 0:4:4 uint
+  group   drip.message_data 0:8 item 8 count 24
+    field drip.octet 0:0:8 uint
+  end
+end
+group     drip.ua_det 0:720 item 8 count 16
+  field   drip.octet 0:0:8 uint
+end
+group     drip.ua_signature 0:848 item 8 count 64
+  field   drip.octet 0:0:8 uint
+end
+
+# Wrapper of 4 messages, the Location message (type 1) in place 1
+
+kind      wrapper-4-location-1
+when      0:8:8 189
+when      0:48:8 2
+requires  drip.ua_signature lat lon
+field     drip.vnb 0:56:32 uint
+field     drip.vna 0:88:32 uint
+when      0:124:4 1
+field     rid.proto_version 0:120:4 uint
+field     rid.speed_mult 0:128:1 uint
+field     rid.ew_direction 0:129:1 uint
+field     rid.height_type 0:130:1 uint
+field     rid.status 0:132:4 uint
+field     rid.direction_raw 0:136:8 uint
+field     rid.speed_h_raw 0:144:8 uint
+field     rid.speed_v 0:152:8 sscale:1/2
+field     lat 0:160:32 sscale:1/10000000
+field     lon 0:192:32 sscale:1/10000000
+field     rid.alt_baro 0:224:16 uscale:1/2:-1000
+field     hae 0:240:16 uscale:1/2:-1000
+field     rid.height 0:256:16 uscale:1/2:-1000
+field     rid.horiz_acc 0:272:4 uint
+field     rid.vert_acc 0:276:4 uint
+field     rid.speed_acc 0:280:4 uint
+field     rid.baro_acc 0:284:4 uint
+field     rid.timestamp_ds 0:288:16 uint
+field     rid.ts_acc 0:304:4 uint
+field     rid.reserved 0:312:8 uint
+group     drip.wrapped_after 0:320 item 200 count 3
+  field   rid.proto_version 0:0:4 uint
+  field   rid.msg_type 0:4:4 uint
+  group   drip.message_data 0:8 item 8 count 24
+    field drip.octet 0:0:8 uint
+  end
+end
+group     drip.ua_det 0:920 item 8 count 16
+  field   drip.octet 0:0:8 uint
+end
+group     drip.ua_signature 0:1048 item 8 count 64
+  field   drip.octet 0:0:8 uint
+end
+
+# Wrapper of 4 messages, the Location message (type 1) in place 2
+
+kind      wrapper-4-location-2
+when      0:8:8 189
+when      0:48:8 2
+requires  drip.ua_signature lat lon
+field     drip.vnb 0:56:32 uint
+field     drip.vna 0:88:32 uint
+group     drip.wrapped 0:120 item 200 count 1
+  field   rid.proto_version 0:0:4 uint
+  field   rid.msg_type 0:4:4 uint
+  group   drip.message_data 0:8 item 8 count 24
+    field drip.octet 0:0:8 uint
+  end
+end
+when      0:324:4 1
+field     rid.proto_version 0:320:4 uint
+field     rid.speed_mult 0:328:1 uint
+field     rid.ew_direction 0:329:1 uint
+field     rid.height_type 0:330:1 uint
+field     rid.status 0:332:4 uint
+field     rid.direction_raw 0:336:8 uint
+field     rid.speed_h_raw 0:344:8 uint
+field     rid.speed_v 0:352:8 sscale:1/2
+field     lat 0:360:32 sscale:1/10000000
+field     lon 0:392:32 sscale:1/10000000
+field     rid.alt_baro 0:424:16 uscale:1/2:-1000
+field     hae 0:440:16 uscale:1/2:-1000
+field     rid.height 0:456:16 uscale:1/2:-1000
+field     rid.horiz_acc 0:472:4 uint
+field     rid.vert_acc 0:476:4 uint
+field     rid.speed_acc 0:480:4 uint
+field     rid.baro_acc 0:484:4 uint
+field     rid.timestamp_ds 0:488:16 uint
+field     rid.ts_acc 0:504:4 uint
+field     rid.reserved 0:512:8 uint
+group     drip.wrapped_after 0:520 item 200 count 2
+  field   rid.proto_version 0:0:4 uint
+  field   rid.msg_type 0:4:4 uint
+  group   drip.message_data 0:8 item 8 count 24
+    field drip.octet 0:0:8 uint
+  end
+end
+group     drip.ua_det 0:920 item 8 count 16
+  field   drip.octet 0:0:8 uint
+end
+group     drip.ua_signature 0:1048 item 8 count 64
+  field   drip.octet 0:0:8 uint
+end
+
+# Wrapper of 4 messages, the Location message (type 1) in place 3
+
+kind      wrapper-4-location-3
+when      0:8:8 189
+when      0:48:8 2
+requires  drip.ua_signature lat lon
+field     drip.vnb 0:56:32 uint
+field     drip.vna 0:88:32 uint
+group     drip.wrapped 0:120 item 200 count 2
+  field   rid.proto_version 0:0:4 uint
+  field   rid.msg_type 0:4:4 uint
+  group   drip.message_data 0:8 item 8 count 24
+    field drip.octet 0:0:8 uint
+  end
+end
+when      0:524:4 1
+field     rid.proto_version 0:520:4 uint
+field     rid.speed_mult 0:528:1 uint
+field     rid.ew_direction 0:529:1 uint
+field     rid.height_type 0:530:1 uint
+field     rid.status 0:532:4 uint
+field     rid.direction_raw 0:536:8 uint
+field     rid.speed_h_raw 0:544:8 uint
+field     rid.speed_v 0:552:8 sscale:1/2
+field     lat 0:560:32 sscale:1/10000000
+field     lon 0:592:32 sscale:1/10000000
+field     rid.alt_baro 0:624:16 uscale:1/2:-1000
+field     hae 0:640:16 uscale:1/2:-1000
+field     rid.height 0:656:16 uscale:1/2:-1000
+field     rid.horiz_acc 0:672:4 uint
+field     rid.vert_acc 0:676:4 uint
+field     rid.speed_acc 0:680:4 uint
+field     rid.baro_acc 0:684:4 uint
+field     rid.timestamp_ds 0:688:16 uint
+field     rid.ts_acc 0:704:4 uint
+field     rid.reserved 0:712:8 uint
+group     drip.wrapped_after 0:720 item 200 count 1
+  field   rid.proto_version 0:0:4 uint
+  field   rid.msg_type 0:4:4 uint
+  group   drip.message_data 0:8 item 8 count 24
+    field drip.octet 0:0:8 uint
+  end
+end
+group     drip.ua_det 0:920 item 8 count 16
+  field   drip.octet 0:0:8 uint
+end
+group     drip.ua_signature 0:1048 item 8 count 64
+  field   drip.octet 0:0:8 uint
+end
+
+# Wrapper of 4 messages, the Location message (type 1) in place 4
+
+kind      wrapper-4-location-4
+when      0:8:8 189
+when      0:48:8 2
+requires  drip.ua_signature lat lon
+field     drip.vnb 0:56:32 uint
+field     drip.vna 0:88:32 uint
+group     drip.wrapped 0:120 item 200 count 3
+  field   rid.proto_version 0:0:4 uint
+  field   rid.msg_type 0:4:4 uint
+  group   drip.message_data 0:8 item 8 count 24
+    field drip.octet 0:0:8 uint
+  end
+end
+when      0:724:4 1
+field     rid.proto_version 0:720:4 uint
+field     rid.speed_mult 0:728:1 uint
+field     rid.ew_direction 0:729:1 uint
+field     rid.height_type 0:730:1 uint
+field     rid.status 0:732:4 uint
+field     rid.direction_raw 0:736:8 uint
+field     rid.speed_h_raw 0:744:8 uint
+field     rid.speed_v 0:752:8 sscale:1/2
+field     lat 0:760:32 sscale:1/10000000
+field     lon 0:792:32 sscale:1/10000000
+field     rid.alt_baro 0:824:16 uscale:1/2:-1000
+field     hae 0:840:16 uscale:1/2:-1000
+field     rid.height 0:856:16 uscale:1/2:-1000
+field     rid.horiz_acc 0:872:4 uint
+field     rid.vert_acc 0:876:4 uint
+field     rid.speed_acc 0:880:4 uint
+field     rid.baro_acc 0:884:4 uint
+field     rid.timestamp_ds 0:888:16 uint
+field     rid.ts_acc 0:904:4 uint
+field     rid.reserved 0:912:8 uint
+group     drip.ua_det 0:920 item 8 count 16
+  field   drip.octet 0:0:8 uint
+end
+group     drip.ua_signature 0:1048 item 8 count 64
+  field   drip.octet 0:0:8 uint
+end
+
+# Wrapper of 4 messages, none of them a Location message in a place above
+
+kind      wrapper-4
+when      0:8:8 189
+when      0:48:8 2
+requires  drip.ua_signature drip.wrapped
+field     drip.vnb 0:56:32 uint
+field     drip.vna 0:88:32 uint
+group     drip.wrapped 0:120 item 200 count 4
+  field   rid.proto_version 0:0:4 uint
+  field   rid.msg_type 0:4:4 uint
+  group   drip.message_data 0:8 item 8 count 24
+    field drip.octet 0:0:8 uint
+  end
+end
+group     drip.ua_det 0:920 item 8 count 16
+  field   drip.octet 0:0:8 uint
+end
+group     drip.ua_signature 0:1048 item 8 count 64
+  field   drip.octet 0:0:8 uint
+end
+
+# Wrapper with no message: the form for extended transports, which signs the messages of the
+# Message Pack it travels in
+
+kind      wrapper-0
+when      0:8:8 89
+when      0:48:8 2
+requires  drip.ua_signature
+field     drip.vnb 0:56:32 uint
+field     drip.vna 0:88:32 uint
+group     drip.ua_det 0:120 item 8 count 16
+  field   drip.octet 0:0:8 uint
+end
+group     drip.ua_signature 0:248 item 8 count 64
+  field   drip.octet 0:0:8 uint
+end
+
+# DRIP Manifest (SAM Type 3): three ledger hashes and 0 to 11 message hashes of 8 octets, then the
+# aircraft's DET and signature; 113 + 8 n octets
+
+kind      manifest-0
+when      0:8:8 113
+when      0:48:8 3
+requires  drip.ua_signature drip.link_hash
+field     drip.vnb 0:56:32 uint
+field     drip.vna 0:88:32 uint
+group     drip.previous_manifest_hash 0:120 item 8 count 8
+  field   drip.octet 0:0:8 uint
+end
+group     drip.current_manifest_hash 0:184 item 8 count 8
+  field   drip.octet 0:0:8 uint
+end
+group     drip.link_hash 0:248 item 8 count 8
+  field   drip.octet 0:0:8 uint
+end
+group     drip.ua_det 0:312 item 8 count 16
+  field   drip.octet 0:0:8 uint
+end
+group     drip.ua_signature 0:440 item 8 count 64
+  field   drip.octet 0:0:8 uint
+end
+
+kind      manifest-1
+when      0:8:8 121
+when      0:48:8 3
+requires  drip.ua_signature drip.link_hash
+field     drip.vnb 0:56:32 uint
+field     drip.vna 0:88:32 uint
+group     drip.previous_manifest_hash 0:120 item 8 count 8
+  field   drip.octet 0:0:8 uint
+end
+group     drip.current_manifest_hash 0:184 item 8 count 8
+  field   drip.octet 0:0:8 uint
+end
+group     drip.link_hash 0:248 item 8 count 8
+  field   drip.octet 0:0:8 uint
+end
+group     drip.message_hashes 0:312 item 64 count 1
+  group   drip.hash 0:0 item 8 count 8
+    field drip.octet 0:0:8 uint
+  end
+end
+group     drip.ua_det 0:376 item 8 count 16
+  field   drip.octet 0:0:8 uint
+end
+group     drip.ua_signature 0:504 item 8 count 64
+  field   drip.octet 0:0:8 uint
+end
+
+kind      manifest-2
+when      0:8:8 129
+when      0:48:8 3
+requires  drip.ua_signature drip.link_hash
+field     drip.vnb 0:56:32 uint
+field     drip.vna 0:88:32 uint
+group     drip.previous_manifest_hash 0:120 item 8 count 8
+  field   drip.octet 0:0:8 uint
+end
+group     drip.current_manifest_hash 0:184 item 8 count 8
+  field   drip.octet 0:0:8 uint
+end
+group     drip.link_hash 0:248 item 8 count 8
+  field   drip.octet 0:0:8 uint
+end
+group     drip.message_hashes 0:312 item 64 count 2
+  group   drip.hash 0:0 item 8 count 8
+    field drip.octet 0:0:8 uint
+  end
+end
+group     drip.ua_det 0:440 item 8 count 16
+  field   drip.octet 0:0:8 uint
+end
+group     drip.ua_signature 0:568 item 8 count 64
+  field   drip.octet 0:0:8 uint
+end
+
+kind      manifest-3
+when      0:8:8 137
+when      0:48:8 3
+requires  drip.ua_signature drip.link_hash
+field     drip.vnb 0:56:32 uint
+field     drip.vna 0:88:32 uint
+group     drip.previous_manifest_hash 0:120 item 8 count 8
+  field   drip.octet 0:0:8 uint
+end
+group     drip.current_manifest_hash 0:184 item 8 count 8
+  field   drip.octet 0:0:8 uint
+end
+group     drip.link_hash 0:248 item 8 count 8
+  field   drip.octet 0:0:8 uint
+end
+group     drip.message_hashes 0:312 item 64 count 3
+  group   drip.hash 0:0 item 8 count 8
+    field drip.octet 0:0:8 uint
+  end
+end
+group     drip.ua_det 0:504 item 8 count 16
+  field   drip.octet 0:0:8 uint
+end
+group     drip.ua_signature 0:632 item 8 count 64
+  field   drip.octet 0:0:8 uint
+end
+
+kind      manifest-4
+when      0:8:8 145
+when      0:48:8 3
+requires  drip.ua_signature drip.link_hash
+field     drip.vnb 0:56:32 uint
+field     drip.vna 0:88:32 uint
+group     drip.previous_manifest_hash 0:120 item 8 count 8
+  field   drip.octet 0:0:8 uint
+end
+group     drip.current_manifest_hash 0:184 item 8 count 8
+  field   drip.octet 0:0:8 uint
+end
+group     drip.link_hash 0:248 item 8 count 8
+  field   drip.octet 0:0:8 uint
+end
+group     drip.message_hashes 0:312 item 64 count 4
+  group   drip.hash 0:0 item 8 count 8
+    field drip.octet 0:0:8 uint
+  end
+end
+group     drip.ua_det 0:568 item 8 count 16
+  field   drip.octet 0:0:8 uint
+end
+group     drip.ua_signature 0:696 item 8 count 64
+  field   drip.octet 0:0:8 uint
+end
+
+kind      manifest-5
+when      0:8:8 153
+when      0:48:8 3
+requires  drip.ua_signature drip.link_hash
+field     drip.vnb 0:56:32 uint
+field     drip.vna 0:88:32 uint
+group     drip.previous_manifest_hash 0:120 item 8 count 8
+  field   drip.octet 0:0:8 uint
+end
+group     drip.current_manifest_hash 0:184 item 8 count 8
+  field   drip.octet 0:0:8 uint
+end
+group     drip.link_hash 0:248 item 8 count 8
+  field   drip.octet 0:0:8 uint
+end
+group     drip.message_hashes 0:312 item 64 count 5
+  group   drip.hash 0:0 item 8 count 8
+    field drip.octet 0:0:8 uint
+  end
+end
+group     drip.ua_det 0:632 item 8 count 16
+  field   drip.octet 0:0:8 uint
+end
+group     drip.ua_signature 0:760 item 8 count 64
+  field   drip.octet 0:0:8 uint
+end
+
+kind      manifest-6
+when      0:8:8 161
+when      0:48:8 3
+requires  drip.ua_signature drip.link_hash
+field     drip.vnb 0:56:32 uint
+field     drip.vna 0:88:32 uint
+group     drip.previous_manifest_hash 0:120 item 8 count 8
+  field   drip.octet 0:0:8 uint
+end
+group     drip.current_manifest_hash 0:184 item 8 count 8
+  field   drip.octet 0:0:8 uint
+end
+group     drip.link_hash 0:248 item 8 count 8
+  field   drip.octet 0:0:8 uint
+end
+group     drip.message_hashes 0:312 item 64 count 6
+  group   drip.hash 0:0 item 8 count 8
+    field drip.octet 0:0:8 uint
+  end
+end
+group     drip.ua_det 0:696 item 8 count 16
+  field   drip.octet 0:0:8 uint
+end
+group     drip.ua_signature 0:824 item 8 count 64
+  field   drip.octet 0:0:8 uint
+end
+
+kind      manifest-7
+when      0:8:8 169
+when      0:48:8 3
+requires  drip.ua_signature drip.link_hash
+field     drip.vnb 0:56:32 uint
+field     drip.vna 0:88:32 uint
+group     drip.previous_manifest_hash 0:120 item 8 count 8
+  field   drip.octet 0:0:8 uint
+end
+group     drip.current_manifest_hash 0:184 item 8 count 8
+  field   drip.octet 0:0:8 uint
+end
+group     drip.link_hash 0:248 item 8 count 8
+  field   drip.octet 0:0:8 uint
+end
+group     drip.message_hashes 0:312 item 64 count 7
+  group   drip.hash 0:0 item 8 count 8
+    field drip.octet 0:0:8 uint
+  end
+end
+group     drip.ua_det 0:760 item 8 count 16
+  field   drip.octet 0:0:8 uint
+end
+group     drip.ua_signature 0:888 item 8 count 64
+  field   drip.octet 0:0:8 uint
+end
+
+kind      manifest-8
+when      0:8:8 177
+when      0:48:8 3
+requires  drip.ua_signature drip.link_hash
+field     drip.vnb 0:56:32 uint
+field     drip.vna 0:88:32 uint
+group     drip.previous_manifest_hash 0:120 item 8 count 8
+  field   drip.octet 0:0:8 uint
+end
+group     drip.current_manifest_hash 0:184 item 8 count 8
+  field   drip.octet 0:0:8 uint
+end
+group     drip.link_hash 0:248 item 8 count 8
+  field   drip.octet 0:0:8 uint
+end
+group     drip.message_hashes 0:312 item 64 count 8
+  group   drip.hash 0:0 item 8 count 8
+    field drip.octet 0:0:8 uint
+  end
+end
+group     drip.ua_det 0:824 item 8 count 16
+  field   drip.octet 0:0:8 uint
+end
+group     drip.ua_signature 0:952 item 8 count 64
+  field   drip.octet 0:0:8 uint
+end
+
+kind      manifest-9
+when      0:8:8 185
+when      0:48:8 3
+requires  drip.ua_signature drip.link_hash
+field     drip.vnb 0:56:32 uint
+field     drip.vna 0:88:32 uint
+group     drip.previous_manifest_hash 0:120 item 8 count 8
+  field   drip.octet 0:0:8 uint
+end
+group     drip.current_manifest_hash 0:184 item 8 count 8
+  field   drip.octet 0:0:8 uint
+end
+group     drip.link_hash 0:248 item 8 count 8
+  field   drip.octet 0:0:8 uint
+end
+group     drip.message_hashes 0:312 item 64 count 9
+  group   drip.hash 0:0 item 8 count 8
+    field drip.octet 0:0:8 uint
+  end
+end
+group     drip.ua_det 0:888 item 8 count 16
+  field   drip.octet 0:0:8 uint
+end
+group     drip.ua_signature 0:1016 item 8 count 64
+  field   drip.octet 0:0:8 uint
+end
+
+kind      manifest-10
+when      0:8:8 193
+when      0:48:8 3
+requires  drip.ua_signature drip.link_hash
+field     drip.vnb 0:56:32 uint
+field     drip.vna 0:88:32 uint
+group     drip.previous_manifest_hash 0:120 item 8 count 8
+  field   drip.octet 0:0:8 uint
+end
+group     drip.current_manifest_hash 0:184 item 8 count 8
+  field   drip.octet 0:0:8 uint
+end
+group     drip.link_hash 0:248 item 8 count 8
+  field   drip.octet 0:0:8 uint
+end
+group     drip.message_hashes 0:312 item 64 count 10
+  group   drip.hash 0:0 item 8 count 8
+    field drip.octet 0:0:8 uint
+  end
+end
+group     drip.ua_det 0:952 item 8 count 16
+  field   drip.octet 0:0:8 uint
+end
+group     drip.ua_signature 0:1080 item 8 count 64
+  field   drip.octet 0:0:8 uint
+end
+
+kind      manifest-11
+when      0:8:8 201
+when      0:48:8 3
+requires  drip.ua_signature drip.link_hash
+field     drip.vnb 0:56:32 uint
+field     drip.vna 0:88:32 uint
+group     drip.previous_manifest_hash 0:120 item 8 count 8
+  field   drip.octet 0:0:8 uint
+end
+group     drip.current_manifest_hash 0:184 item 8 count 8
+  field   drip.octet 0:0:8 uint
+end
+group     drip.link_hash 0:248 item 8 count 8
+  field   drip.octet 0:0:8 uint
+end
+group     drip.message_hashes 0:312 item 64 count 11
+  group   drip.hash 0:0 item 8 count 8
+    field drip.octet 0:0:8 uint
+  end
+end
+group     drip.ua_det 0:1016 item 8 count 16
+  field   drip.octet 0:0:8 uint
+end
+group     drip.ua_signature 0:1144 item 8 count 64
+  field   drip.octet 0:0:8 uint
+end

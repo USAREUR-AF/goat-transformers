@@ -1,0 +1,14 @@
+{
+  "name": "wrapper-basic-id-and-location-to-geojson",
+  "from": "drip",
+  "to": "geojson",
+  "input": "068bb80b000002e8030000600400000212445249502d4558414d504c452d3030303100000000000012205a2800c0ec4f1c602122b7a00fb81334084a33393001002001003ffe0001050123456789abcdef0e1b2835424f5c697683909daab7c4d1deebf805121f2c394653606d7a8794a1aebbc8d5e2effc091623303d4a5764717e8b98a5b2bfccd9e6f3000d1a273441",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-122.25,47.5,1524]},\"properties\":{}}",
+  "model": {
+    "@kind": "wrapper-2-location-2",
+    "lat": "47.5",
+    "lon": "-122.25",
+    "hae": "1524"
+  },
+  "source": "the same Wrapper; lat = 475000000 / 10^7, lon = -1222500000 / 10^7, hae = 5048 / 2 - 1000, written by hand as GeoJSON"
+}
