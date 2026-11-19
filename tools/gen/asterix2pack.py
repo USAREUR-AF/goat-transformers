@@ -95,7 +95,8 @@ def edition_tag(ed):
 # generator needs to load its packs and to work out the cross-format vectors. --lib checks these
 # tables against a checkout, and so does the test that reads the repository.
 CORE_KEYS = OrderedDict([
-    ("uid", "string"), ("type", "string"), ("time_ms", "int"), ("lat", "float"),
+    ("uid", "string"), ("type", "string"), ("time_ms", "int"),
+    ("time_error_ms", "float"), ("time_state", "string"), ("lat", "float"),
     ("lon", "float"), ("hae", "float"), ("ce", "float"), ("le", "float"),
     ("callsign", "string"), ("course", "float"), ("speed_ms", "float"), ("how", "string"),
     ("stale_ms", "int"), ("time_text", "string"), ("stale_text", "string"),
@@ -616,7 +617,7 @@ class Builder:
         Raw bits, tables, BDS registers, 6-bit and octal strings and dependent contents are `uint`;
         an integer is `uint` or `twos`; a quantity is `uscale` or `sscale` with its LSB as an exact
         fraction; an ASCII string is `ascii`."""
-        r = dict(tr="uint", vt="int", unit="-", note="", frac=None, signed=False)
+        r = dict(tr="uint", vt="int", unit="-", note="", frac=None, signed=False, icao=False)
         if rule["tag"] == "Dependent":
             r["note"] = "raw value; its content depends on the value of " + dependency_text(rule["contents"]["path"])
             return r
@@ -635,6 +636,7 @@ class Builder:
                 r["note"] = "%d ASCII characters" % (bits // 8)
             elif st == "StringICAO":
                 r["note"] = "raw value: %d characters of 6 bits each in the ICAO character set (ICAO Annex 10)" % (bits // 6)
+                r["icao"] = True
             elif st == "StringOctal":
                 r["note"] = "raw value: %d octal digits of 3 bits each" % (bits // 3)
             else:
@@ -685,7 +687,7 @@ class Builder:
         quantity = rule["tag"] == "ContextFree" and rule["contents"]["tag"] == "ContentQuantity"
         return dict(t="field", ident=ident, sub=path[1:], key=key, also=[], bits=bits,
                     tr=c["tr"], kind=c["tr"].split(":")[0], frac=c["frac"], signed=c["signed"], vt=c["vt"],
-                    unit=c["unit"], meaning=self.meaning(path, titles, c["note"]), raw=key, declare=True,
+                    unit=c["unit"], meaning=self.meaning(path, titles, c["note"]), raw=key, declare=True, icao=c["icao"],
                     src_unit=rule["contents"]["contents"]["unit"] if quantity else None,
                     title=titles[-1] or "")
 
@@ -990,6 +992,24 @@ def bind_position(plan, pos):
                                   evidence=ev2, raws=[la2["raw"], lo2["raw"]]))
 
 
+def bind_callsign(plan, c):
+    """The identification of the reported aircraft as 6-bit ICAO characters -> `callsign`, read
+    with `chars:icao6` (engine-spec 0.15). Only the first such item of a category. The raw key
+    stays declared in the module; the field line holds `callsign`, as `also` cannot change the
+    transform."""
+    for n in c.fields:
+        if (n.get("icao") and n["bits"] % 6 == 0 and n["key"] == n["raw"]
+                and re.search(r"(target|aircraft) identification", c.title + " " + n["title"], re.I)
+                and not re.search(r"conflict", c.title + " " + c.definition, re.I)
+                and not any(b["key"] == "callsign" for b in plan.bindings)):
+            n["key"], n["tr"], n["kind"] = "callsign", "chars:icao6", "chars"
+            plan.bindings.append(dict(
+                key="callsign", ident=n["ident"], how="chars", tr=n["tr"], raw=None,
+                evidence='%s "%s", definition: "%s"%s; %d characters of 6 bits in the ICAO character set (StringICAO)'
+                % (c.label, c.title, c.definition,
+                   (', subitem %s "%s"' % ("/".join(n["sub"]), fold(n["title"]))) if n["sub"] else "", n["bits"] // 6)))
+
+
 def bind(plan):
     """Bind shared-model keys where the definition text and the unit leave no doubt. Only items
     that stand directly in the UAP and are fixed (an Element or a Group) are looked at. A time of
@@ -1003,6 +1023,7 @@ def bind(plan):
         bind_height(plan, c)
         bind_speed_and_course(plan, c)
         bind_velocity(plan, c)
+        bind_callsign(plan, c)
         tod += time_of_day_of(c)
     bind_position(plan, pos)
     if len(tod) == 1:
@@ -1201,10 +1222,12 @@ def raw_enc(nodes, rec):
     for n in nodes:
         t = n["t"]
         if t == "field":
-            v = rec.get(n["key"], "" if n["kind"] == "ascii" else 0)
+            v = rec.get(n["key"], "" if n["kind"] in ("ascii", "chars") else 0)
             if n["kind"] == "ascii":
                 b = v.encode("ascii").ljust(n["bits"] // 8, b"\0")
                 out += "".join(to_bits(x, 8) for x in b)
+            elif n["kind"] == "chars":
+                out += "".join(to_bits(ICAO6.index(ch), 6) for ch in v.ljust(n["bits"] // 6))
             else:
                 out += to_bits(v, n["bits"])
         elif t == "pad":
@@ -1258,6 +1281,8 @@ def raw_value(n, v):
     """Model value of a raw wire value, by the definition."""
     if n["kind"] == "ascii":
         return v
+    if n["kind"] == "chars":
+        return v.rstrip(" ")
     if n["frac"] is not None:
         return float(v) * float(n["frac"].numerator) / float(n["frac"].denominator) \
             if n["frac"].denominator != 1 else float(v) * float(n["frac"].numerator)
@@ -1299,6 +1324,9 @@ class Picker:
         if n["kind"] == "ascii":
             alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
             return "".join(alphabet[(self.i * 7 + j * 3) % len(alphabet)] for j in range(bits // 8))
+        if n["kind"] == "chars":
+            alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
+            return "".join(alphabet[(self.i * 5 + j * 3) % len(alphabet)] for j in range(bits // 6))
         h = (self.i * 2654435761 + 0x9E3779B9) & 0xFFFFFFFFFFFF
         h ^= h >> 7
         if n["signed"]:
@@ -1588,7 +1616,7 @@ class VectorSet:
         for e in in_frn_order:
             for n in e["nodes"]:
                 if n["t"] == "field":
-                    rec[n["key"]] = NICE[n["key"]](n) if n["key"] in NICE else 0
+                    rec[n["key"]] = NICE[n["key"]](n) if n["key"] in NICE else ("AFR2041" if n["kind"] == "chars" else 0)
         model = OrderedDict()
         for e in items:
             raw_model(e["nodes"], rec, "", model)
@@ -1711,8 +1739,12 @@ def load_pack(model, text, label):
 
 # The transforms and derive functions the generator writes. The codec below implements these and
 # no others, so `check_shape` refuses a pack or module that holds anything else.
-SHAPE_TRANSFORMS = ("uint", "twos", "uscale", "sscale", "ascii")
+SHAPE_TRANSFORMS = ("uint", "twos", "uscale", "sscale", "ascii", "chars")
 SHAPE_DERIVES = ("copy", "day_seconds")
+# `chars:icao6` (engine-spec 0.15): code 1-26 A-Z, 32 space, 48-57 0-9; any other code is an error.
+ICAO6 = "#ABCDEFGHIJKLMNOPQRSTUVWXYZ##### ###############0123456789######"
+ICAO6_CODES = set(range(1, 27)) | {32} | set(range(48, 58))
+ICAO6_SET = {ICAO6[c] for c in ICAO6_CODES}
 _SHAPE_SCALE = re.compile(r"\d+(/\d+)?\Z")
 
 
@@ -1844,6 +1876,14 @@ def t_decode(x, v):
         num_, den = scale_of(x)
         r = float(v if tr == "uscale" else signed) * num_
         return r / den if den is not None else r
+    if tr == "chars":
+        out = ""
+        for i in range(bits // 6):
+            code = (v >> (bits - 6 * (i + 1))) & 63
+            if code not in ICAO6_CODES:
+                raise WireError("transform-decode", "icao6 code %d" % code)
+            out += ICAO6[code]
+        return out.rstrip(" ")
     if tr == "ascii":
         b = v.to_bytes(bits // 8, "big").rstrip(b"\0")
         if any(c < 0x20 or c > 0x7E for c in b):
@@ -1855,6 +1895,13 @@ def t_decode(x, v):
 def t_encode(x, val):
     """Unsigned wire value of a model value; out of range is `transform-encode`."""
     tr, bits = x.tr, x.bits
+    if tr == "chars":
+        if len(val) > bits // 6 or any(ch not in ICAO6_SET for ch in val):
+            raise WireError("transform-encode", "icao6 text")
+        v = 0
+        for ch in val.ljust(bits // 6):
+            v = (v << 6) | ICAO6.index(ch)
+        return v
     if tr == "ascii":
         b = val.encode("utf-8")
         if len(b) > bits // 8 or any(c < 0x20 or c > 0x7E for c in b):
@@ -2361,6 +2408,9 @@ def md_shared_keys(a, plan):
             elif b["how"] == "derive":
                 a("| `lat`, `lon` | I%s/%s | not bound on the wire; `derive lat copy %s` and `derive lon copy %s` in the module fill the shared keys from the raw keys when the bound item is absent | %s |"
                   % (cat.nnn, b["ident"], b["raws"][0], b["raws"][1], b["evidence"]))
+            elif b["how"] == "chars":
+                a("| `callsign` | I%s/%s | `field callsign … chars:icao6` (engine-spec 0.15): the characters as text, trailing spaces removed on decode; a code outside the ICAO set is `transform-decode`. The field's raw integer key stays declared in the module and is not on the line, as `also` keeps the transform | %s |"
+                  % (cat.nnn, b["ident"], b["evidence"]))
             elif b["raw"]:
                 a("| `%s` | I%s/%s | `field %s … %s`, then `also %s`: same unit, both keys hold the value | %s |"
                   % (b["key"], cat.nnn, b["ident"], b["key"], b["tr"], b["raw"], b["evidence"]))

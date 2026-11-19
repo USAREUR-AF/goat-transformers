@@ -1,0 +1,11 @@
+{
+  "name": "gen-geo_json-roundtrip",
+  "from": "foxglove-proto-geojson",
+  "to": "foxglove-proto-geojson",
+  "input": "0a0967656f6a736f6e2d30",
+  "expect": "0a0967656f6a736f6e2d30",
+  "model": {
+    "@kind": "geo_json",
+    "foxgloveprotogeojson.geo_json_geojson": "geojson-0"
+  }
+}

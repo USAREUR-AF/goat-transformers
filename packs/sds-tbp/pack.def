@@ -10,6 +10,7 @@ uses          sdstbp
 wire          json
 field  uid  ID  string
 field  sdstbp.id  ID  string
+field  time_ms  CREATED_AT_MS  int
 field  sdstbp.created_at_ms  CREATED_AT_MS  int
 field  sdstbp.producer  PRODUCER  string
 field  sdstbp.problem  PROBLEM  string

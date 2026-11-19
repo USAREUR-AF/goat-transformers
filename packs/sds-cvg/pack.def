@@ -48,6 +48,7 @@ end
 group  sdscvg.coverage_fraction  COVERAGE_FRACTION
   field  sdscvg.coverage_fraction_value  .  float
 end
+field  time_ms  COMPUTED_AT  int
 field  sdscvg.computed_at  COMPUTED_AT  int
 group  sdscvg.signature  SIGNATURE
   field  sdscvg.signature_value  .  int

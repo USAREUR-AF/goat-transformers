@@ -367,7 +367,7 @@ kind      target_absolute
 when      0:56:24 510
 when      0:8:8 106
 requires  mavlinkdevelopment.vel_m_per_s_0 mavlinkdevelopment.vel_m_per_s_1 mavlinkdevelopment.vel_m_per_s_2 mavlinkdevelopment.acc_m_per_s_per_s_0 mavlinkdevelopment.acc_m_per_s_per_s_1 mavlinkdevelopment.acc_m_per_s_per_s_2
-field     mavlinkdevelopment.timestamp_us 0:80:64 uint
+field     time_ms 0:80:64 uiscale:1/1000
 field     lat 0:144:32 sscale:1/10000000
 field     lon 0:176:32 sscale:1/10000000
 field     mavlinkdevelopment.alt_m 0:208:32 f32
@@ -399,7 +399,7 @@ kind      target_relative
 when      0:56:24 511
 when      0:8:8 71
 requires  mavlinkdevelopment.x_m mavlinkdevelopment.y_m mavlinkdevelopment.z_m mavlinkdevelopment.pos_std_m_0 mavlinkdevelopment.pos_std_m_1 mavlinkdevelopment.pos_std_m_2
-field     mavlinkdevelopment.timestamp_us 0:80:64 uint
+field     time_ms 0:80:64 uiscale:1/1000
 field     mavlinkdevelopment.x_m 0:144:32 f32
 field     mavlinkdevelopment.y_m 0:176:32 f32
 field     mavlinkdevelopment.z_m 0:208:32 f32

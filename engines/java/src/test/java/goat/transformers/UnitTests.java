@@ -359,13 +359,191 @@ final class UnitTests {
         }
     }
 
+    /** The bounded sweep's total input budget; the sum over vectors stays near it whatever the number of packs. */
+    static final long SWEEP_BUDGET = 1_500_000;
+    /** The damaged copies of one vector's input decoded and converted by its own formats: at most, at least. */
+    static final int SWEEP_MAX_CASES = 50, SWEEP_MIN_CASES = 5;
+
+    /** One conversion vector of the sweep. */
+    private record SweepVector(String label, String pack, String from, String to, byte[] in) {}
+
     /**
-     * Version 0.8, "Malformed input": the input of every conversion vector, cut at prefixes and with single bytes
-     * changed, is decoded and converted by its own formats, and one changed copy is decoded by every loaded pack.
-     * Whatever is thrown is the engine's error with a named kind before a colon. The seed is fixed.
+     * Version 0.8, "Malformed input": damaged copies of the input of every conversion vector are decoded and
+     * converted by its own formats, and one damaged copy is decoded by other packs. Whatever is thrown is the
+     * engine's error with a named kind before a colon. The kinds of damage are those of the full sweep
+     * ({@link #malformedSweepFull}): cut at a prefix, the last byte cut, one byte replaced by any byte, one byte
+     * replaced by a byte of the input's own alphabet, one bit flipped. The sweep is bounded: about
+     * {@link #SWEEP_BUDGET} inputs in all, at most {@link #SWEEP_MAX_CASES} damaged copies per vector, each of the
+     * five kinds at least once. Each vector has its own seed, made from its file name, so a vector is damaged the
+     * same way in every run whatever packs are loaded beside it. Coverage: every vector's input is damaged and fed
+     * to its own formats, so every pack with a conversion vector decodes damaged input of its wire; the pack whose
+     * damaged decoding each vector also asks rotates over all loaded packs, so every loaded pack, a vector or not,
+     * decodes at least one damaged input of another vector; and each vector's damaged input is decoded by one pack
+     * of every wire, so every wire reads damaged input of every other wire. Should the vectors outgrow the budget
+     * at the least per-vector size, the first vector of every pack is kept and the others are sampled by seed.
+     * GOAT_SWEEP_FULL=1 runs the full sweep instead.
      */
     @SuppressWarnings("unchecked")
     static void malformedSweep(Engine engine, java.util.List<java.nio.file.Path> vectorFiles) {
+        if ("1".equals(System.getenv("GOAT_SWEEP_FULL"))) {
+            malformedSweepFull(engine, vectorFiles);
+            return;
+        }
+        long t0 = System.nanoTime();
+        java.util.Set<String> kinds = new java.util.HashSet<>();
+        for (GtException.Code c : GtException.Code.values()) kinds.add(c.kind());
+        java.util.List<String> formats = new java.util.ArrayList<>();
+        java.util.Map<Pack.Wire, java.util.List<String>> byWire = new java.util.TreeMap<>();
+        for (Pack p : engine.packs()) {
+            formats.add(p.format);
+            byWire.computeIfAbsent(p.wire, w -> new java.util.ArrayList<>()).add(p.format);
+        }
+        java.util.Collections.sort(formats);
+        for (java.util.List<String> l : byWire.values()) java.util.Collections.sort(l);
+        // The conversion vectors, in file order.
+        java.util.List<SweepVector> all = new java.util.ArrayList<>();
+        for (java.nio.file.Path f : vectorFiles) {
+            Object doc;
+            try {
+                doc = Json.parse(java.nio.file.Files.readString(f, java.nio.charset.StandardCharsets.UTF_8));
+            } catch (java.io.IOException | RuntimeException ex) {
+                continue;                  // reported by the vector run
+            }
+            if (!(doc instanceof java.util.Map)) continue;
+            java.util.Map<String, Object> v = (java.util.Map<String, Object>) doc;
+            if (!(v.get("from") instanceof String) || !(v.get("to") instanceof String) || !(v.get("input") instanceof String)) continue;
+            String pack = String.valueOf(f.getParent().getParent().getFileName());
+            all.add(new SweepVector(pack + "/" + f.getFileName(), pack, (String) v.get("from"), (String) v.get("to"),
+                    ((String) v.get("input")).getBytes(java.nio.charset.StandardCharsets.UTF_8)));
+        }
+        // Inputs of one vector: two per damaged copy, the decodes by other packs.
+        int crossPerVector = byWire.size() + Math.max(1, (formats.size() + Math.max(1, all.size()) - 1) / Math.max(1, all.size()));
+        long leastPerVector = 2L * SWEEP_MIN_CASES + crossPerVector;
+        java.util.List<SweepVector> vectors = all;
+        if ((long) all.size() * leastPerVector > SWEEP_BUDGET) {
+            long room = SWEEP_BUDGET / leastPerVector;
+            java.util.Set<String> seen = new java.util.HashSet<>();
+            java.util.List<SweepVector> keep = new java.util.ArrayList<>(), rest = new java.util.ArrayList<>();
+            for (SweepVector v : all) (seen.add(v.pack()) ? keep : rest).add(v);
+            rest.sort(java.util.Comparator.comparingLong(v -> seedOf(v.label())));
+            for (SweepVector v : rest) {
+                if (keep.size() >= room) break;
+                keep.add(v);
+            }
+            java.util.Set<SweepVector> kept = new java.util.HashSet<>(keep);
+            vectors = new java.util.ArrayList<>();
+            for (SweepVector v : all) if (kept.contains(v)) vectors.add(v);
+            crossPerVector = byWire.size() + Math.max(1, (formats.size() + vectors.size() - 1) / vectors.size());
+        }
+        int rotate = vectors.isEmpty() ? 0 : Math.max(1, (formats.size() + vectors.size() - 1) / vectors.size());
+        long share = vectors.isEmpty() ? 0 : SWEEP_BUDGET / vectors.size();
+        int casesPerVector = (int) Math.max(SWEEP_MIN_CASES, Math.min(SWEEP_MAX_CASES, (share - crossPerVector) / 2));
+        long[] n = new long[2];            // inputs fed, errors seen
+        java.util.List<String> bad = new java.util.ArrayList<>();
+        java.util.function.BiConsumer<String, Runnable> feed = (what, r) -> {
+            n[0]++;
+            try {
+                r.run();
+            } catch (GtException ex) {
+                n[1]++;
+                String m = ex.getMessage();
+                int colon = m.indexOf(':');
+                if (colon < 1 || !kinds.contains(m.substring(0, colon)) || !m.startsWith(ex.kind() + ": ")) {
+                    if (bad.size() < 8) bad.add(what + ": no named kind in \"" + m + "\"");
+                }
+            } catch (Throwable t) {
+                if (bad.size() < 8) bad.add(what + ": " + t);
+            }
+        };
+        java.util.Set<String> crossed = new java.util.HashSet<>(), damagedWires = new java.util.HashSet<>();
+        for (int i = 0; i < vectors.size(); i++) {
+            SweepVector v = vectors.get(i);
+            byte[] in = v.in();
+            java.util.SplittableRandom rnd = new java.util.SplittableRandom(seedOf(v.label()));
+            java.util.List<byte[]> cases = damaged(in, casesPerVector, rnd);
+            for (byte[] c : cases) {
+                String text = new String(c, java.nio.charset.StandardCharsets.UTF_8);
+                String what = v.label() + " " + v.from() + " <- \"" + (text.length() > 120 ? text.substring(0, 120) + "..." : text) + "\"";
+                feed.accept("decode " + what, () -> engine.decode(v.from(), c));
+                feed.accept("convert " + what, () -> engine.convert(v.from(), v.to(), text));
+            }
+            if (cases.isEmpty()) continue;
+            byte[] c = cases.get(rnd.nextInt(cases.size()));
+            java.util.Set<String> others = new java.util.LinkedHashSet<>();
+            for (int k = 0; k < rotate; k++) others.add(formats.get((int) (((long) i * rotate + k) % formats.size())));
+            for (java.util.List<String> l : byWire.values()) others.add(l.get(Math.floorMod(i + (int) seedOf(v.label()), l.size())));
+            others.remove(v.from());
+            for (String fmt : others) {
+                crossed.add(fmt);
+                feed.accept("decode " + v.label() + " by " + fmt, () -> engine.decode(fmt, c));
+            }
+            crossed.add(v.from());
+        }
+        for (Pack p : engine.packs()) if (crossed.contains(p.format)) damagedWires.add(p.wire.name());
+        long ms = (System.nanoTime() - t0) / 1_000_000;
+        check("malformed input sweep fed inputs", n[0] > 0 && n[1] > 0, n[0] + " inputs, " + n[1] + " errors");
+        java.util.List<String> unfed = new java.util.ArrayList<>(formats);
+        unfed.removeAll(crossed);
+        check("malformed input sweep: every loaded pack decodes damaged input", unfed.isEmpty(), unfed + " never fed");
+        check("malformed input sweep: every wire decodes damaged input", damagedWires.size() == byWire.size(),
+                damagedWires + " of " + byWire.keySet());
+        check("malformed input sweep: only the engine's error, with a named kind", bad.isEmpty(), String.join("\n  ", bad));
+        System.out.println("malformed input sweep: " + n[0] + " inputs over " + vectors.size() + " of " + all.size()
+                + " conversion vectors (" + casesPerVector + " damaged copies each) and " + formats.size() + " packs of "
+                + byWire.size() + " wires, " + n[1] + " named errors, " + bad.size() + " defects, " + ms
+                + " ms (GOAT_SWEEP_FULL=1 for the full sweep)");
+    }
+
+    /** A vector's own seed, from its label: the same in every run, whatever else is loaded. */
+    private static long seedOf(String label) {
+        long h = 0x60a7_0008L;
+        for (int k = 0; k < label.length(); k++) h = (h ^ label.charAt(k)) * 0x100_0000_01b3L;
+        return h;
+    }
+
+    /**
+     * About {@code count} damaged copies of {@code in}, each kind of damage of the full sweep at least once: cut at a
+     * prefix (from the full sweep's prefixes: every one of a short input, 24 spread over a long one), the last byte
+     * cut, one byte replaced by any byte, one byte replaced by one of the input's own alphabet, one bit flipped.
+     */
+    private static java.util.List<byte[]> damaged(byte[] in, int count, java.util.SplittableRandom rnd) {
+        java.util.List<byte[]> cases = new java.util.ArrayList<>();
+        if (in.length == 0) {
+            cases.add(new byte[0]);
+            return cases;
+        }
+        boolean hex = true;
+        for (byte c : in) hex &= Json.hexDigit((char) c) >= 0 || c == ' ' || c == '\n';
+        int each = Math.max(1, (count - 1) / 4);
+        java.util.List<Integer> lens = new java.util.ArrayList<>();
+        int step = Math.max(1, in.length / 24);
+        for (int len = 0; len < in.length; len += step) lens.add(len);
+        for (int k = 0; k < each && !lens.isEmpty(); k++) {
+            cases.add(java.util.Arrays.copyOf(in, lens.remove(rnd.nextInt(lens.size()))));
+        }
+        cases.add(java.util.Arrays.copyOf(in, in.length - 1));
+        for (int k = 0; k < 3 * each; k++) {
+            byte[] m = in.clone();
+            int at = rnd.nextInt(m.length);
+            switch (k % 3) {
+                case 0: m[at] = (byte) rnd.nextInt(256); break;
+                case 1: m[at] = hex ? (byte) "0123456789abcdef".charAt(rnd.nextInt(16)) : in[rnd.nextInt(in.length)]; break;
+                default: m[at] ^= (byte) (1 << rnd.nextInt(7));
+            }
+            cases.add(m);
+        }
+        return cases;
+    }
+
+    /**
+     * Version 0.8, "Malformed input": the input of every conversion vector, cut at prefixes and with single bytes
+     * changed, is decoded and converted by its own formats, and one changed copy is decoded by every loaded pack.
+     * Whatever is thrown is the engine's error with a named kind before a colon. The seed is fixed. This is the
+     * full sweep, run when GOAT_SWEEP_FULL=1; its size is about vectors times packs.
+     */
+    @SuppressWarnings("unchecked")
+    static void malformedSweepFull(Engine engine, java.util.List<java.nio.file.Path> vectorFiles) {
+        long t0 = System.nanoTime();
         java.util.SplittableRandom rnd = new java.util.SplittableRandom(0x60a7_0008L);
         java.util.Set<String> kinds = new java.util.HashSet<>();
         for (GtException.Code c : GtException.Code.values()) kinds.add(c.kind());
@@ -458,8 +636,9 @@ final class UnitTests {
         }
         check("malformed input sweep fed inputs", n[0] > 0 && n[1] > 0, n[0] + " inputs, " + n[1] + " errors");
         check("malformed input sweep: only the engine's error, with a named kind", bad.isEmpty(), String.join("\n  ", bad));
-        System.out.println("malformed input sweep: " + n[0] + " inputs over " + vectorFiles.size() + " vectors and "
-                + formats.size() + " packs, " + n[1] + " named errors, " + bad.size() + " defects");
+        System.out.println("malformed input sweep (full): " + n[0] + " inputs over " + vectorFiles.size() + " vectors and "
+                + formats.size() + " packs, " + n[1] + " named errors, " + bad.size() + " defects, "
+                + (System.nanoTime() - t0) / 1_000_000 + " ms");
     }
 
     private static final String PROBE = "module probe\nversion 0.1.0\ndistribution public\nsource t\n"
@@ -568,6 +747,9 @@ final class UnitTests {
         check("more group whose first indicator is at the end of the extent", m.list("probe.recs") == null && Long.valueOf(0xaa).equals(m.get("probe.x")), m.toString());
     }
 
+    /** The packs {@link #packsOnly} loads one by one unless GOAT_SWEEP_FULL=1. */
+    static final int PACKS_ONLY_SAMPLE = 48;
+
     /** Loading only named packs of a directory, with the modules they need: the API and the command line. */
     static void packsOnly(java.nio.file.Path packsDir) {
         Engine e = Engine.loadOnly(packsDir, java.util.List.of("cot-xml", "geojson", "cot-xml"));
@@ -578,7 +760,31 @@ final class UnitTests {
         for (ModelModule m : e.modules()) modules.add(m.name);
         eq("packs-only: only the modules they need", "[core, track]", modules.toString());
         Engine all = Engine.load(packsDir);
-        for (Pack p : all.packs()) {
+        // Each loadOnly reads the whole model directory, so one call per pack grows as packs times modules. Unless
+        // GOAT_SWEEP_FULL=1, the packs loaded one by one are a fixed sample of PACKS_ONLY_SAMPLE: the first pack of
+        // each wire by format name, the pack with the most uses lines, and the rest chosen by the seed of the format.
+        java.util.List<Pack> sample = new java.util.ArrayList<>(all.packs());
+        boolean full = "1".equals(System.getenv("GOAT_SWEEP_FULL"));
+        if (!full && sample.size() > PACKS_ONLY_SAMPLE) {
+            sample.sort(java.util.Comparator.comparing((Pack p) -> p.format));
+            java.util.LinkedHashMap<String, Pack> pick = new java.util.LinkedHashMap<>();
+            java.util.Set<Pack.Wire> wires = new java.util.HashSet<>();
+            Pack most = sample.get(0);
+            for (Pack p : sample) {
+                if (wires.add(p.wire)) pick.put(p.format, p);
+                if (p.uses.size() > most.uses.size()) most = p;
+            }
+            pick.put(most.format, most);
+            java.util.List<Pack> rest = new java.util.ArrayList<>(sample);
+            rest.sort(java.util.Comparator.comparingLong((Pack p) -> seedOf(p.format)));
+            for (Pack p : rest) {
+                if (pick.size() >= PACKS_ONLY_SAMPLE) break;
+                pick.putIfAbsent(p.format, p);
+            }
+            sample = new java.util.ArrayList<>(pick.values());
+        }
+        long t0 = System.nanoTime();
+        for (Pack p : sample) {
             Engine one = Engine.loadOnly(packsDir, java.util.List.of(p.format));
             java.util.Set<String> want = new java.util.TreeSet<>();
             want.add(ModelModule.CORE);
@@ -592,6 +798,8 @@ final class UnitTests {
             for (ModelModule m : one.modules()) got.add(m.name);
             check("packs-only " + p.format, one.packs().size() == 1 && got.equals(want), "modules " + got + ", want " + want);
         }
+        System.out.println("packs-only: loadOnly checked for " + sample.size() + " of " + all.packs().size() + " packs, "
+                + (System.nanoTime() - t0) / 1_000_000 + " ms" + (full ? "" : " (GOAT_SWEEP_FULL=1 for all)"));
         errorKind("packs-only: a name that is no pack", "unknown-format", () -> Engine.loadOnly(packsDir, java.util.List.of("no-such-pack")));
         errorKind("packs-only: a name that is a path", "unknown-format", () -> Engine.loadOnly(packsDir, java.util.List.of("../packs/geojson")));
         java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream(), err = new java.io.ByteArrayOutputStream();

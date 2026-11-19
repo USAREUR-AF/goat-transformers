@@ -91,7 +91,7 @@ so no kind maps a shared key and the pack converts to no other format.
 
 Not bound to a shared key, for the reasons `packs/mavlink2/pack.md` gives:
 altitude (MAVLink altitudes are above mean sea level or relative, core `hae` is
-above the ellipsoid), epoch times in microseconds, and speed, course and velocity
+above the ellipsoid), times that may be since boot, and speed, course and velocity
 (the frame is stated in description text, not in the units).
 
 ### `requires`
@@ -102,6 +102,11 @@ entity decoded by another MAVLink pack, selects no kind here (`no-kind`).
 For 1 kinds the required keys are all mapped by another kind too; an entity
 built from such a kind's keys with its kind cleared selects the first
 qualifying kind in id order: `script_request_list`.
+
+## Times
+
+No field of this message set states a time since the Unix epoch on its own, so
+no key is bound to core `time_ms`.
 
 ## Values that mean unknown
 

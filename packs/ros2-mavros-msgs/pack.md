@@ -48,16 +48,16 @@ that carries the optional `type` member in the full notation of section 4.1:
 | Item | Count |
 |---|---|
 | Message kinds (.msg files) | 83 |
-| `field` lines (the common `topic` included) | 932 |
+| `field` lines (the common `topic` included) | 937 |
 | `group` blocks | 32 |
 | Keys and lists of module `ros2mavros` | 961 |
-| Shared-model keys bound | 3 |
+| Shared-model keys bound | 8 |
 | Fields not mapped | 1 |
 
 ## Shared-model keys
 
-The position of `mavros_msgs/msg/HomePosition` is bound to `core` keys. The other
-position fields of the package are not, for the reasons below.
+The positions of `mavros_msgs/msg/HomePosition`, `GPSRAW` and `GPSINPUT` are bound to
+`core` keys. The other position fields of the package are not, for the reasons below.
 
 | Wire field | Model key | Evidence | Note |
 |---|---|---|---|
@@ -65,22 +65,29 @@ position fields of the package are not, for the reasons below.
 | `msg.geo.longitude` | `lon` (deg, WGS 84) | as above; GeoPoint.msg: "Longitude [degrees]" | same frame and unit |
 | `msg.geo.altitude` | `hae` (m above the WGS 84 ellipsoid) | GeoPoint.msg: "Altitude [m]. Positive is above the WGS 84 ellipsoid". mavros's `mavros/src/plugins/home_position.cpp` (listed in `PROVENANCE.md`) fills it from the MAVLink altitude in millimetres above mean sea level plus the geoid-to-ellipsoid height | ellipsoidal height |
 
-Kind `home_position` requires `lat lon`.
+| `GPSRAW` `msg.lat`, `msg.lon` (int32) | `lat`, `lon` with `scale:1/10000000` | GPSRAW.msg: "[degE7] Latitude (WGS84, EGM96 ellipsoid)", "[degE7] Longitude (WGS84, EGM96 ellipsoid)" | degrees times 10^7; `scale` (engine-spec 0.15) turns the integer into degrees |
+| `GPSRAW` `msg.alt_ellipsoid` (int32) | `hae` with `scale:1/1000` | GPSRAW.msg: "[mm] Altitude (above WGS84, EGM96 ellipsoid). Positive for up." | millimetres to metres |
+| `GPSINPUT` `msg.lat`, `msg.lon` (int32) | `lat`, `lon` with `scale:1/10000000` | GPSINPUT.msg: "[degE7] Latitude (WGS84, EGM96 ellipsoid)", "[degE7] Longitude (WGS84, EGM96 ellipsoid)" | as GPSRAW |
+
+Kind `home_position` requires `lat lon`. Kinds `gpsinput` and `gpsraw` also require
+their own `fix_type`, so an entity from another format with only a position is still
+encoded as `home_position`, as before these bindings.
+
+A value decoded through `scale` is the nearest double to the integer times 1e-7; it
+encodes back to the same integer for most values, and an encoder writes the quotient
+as a JSON number, which for a value that is not exact can carry a fraction (a reader
+that wants an integer rounds it).
 
 Not bound, and why:
 
-- `GPSRAW.lat`, `GPSRAW.lon`, `GPSRAW.alt_ellipsoid`, `GPSINPUT.lat` and `GPSINPUT.lon` are stated as
-  WGS 84, but as integers in 1e-7 degrees and in millimetres. The `json` wire has no
-  scale transform (`sscale` exists on `bits` only), so they cannot be bound to `lat`, `lon` and
-  `hae`, which are degrees and metres. They are raw `int` keys. A scale transform on
-  `json` would allow the binding.
 - `GPSRAW.alt` and `GPSINPUT.alt` are above mean sea level, not the ellipsoid.
 - `GlobalPositionTarget.latitude`/`longitude` and `ADSBVehicle.latitude`/`longitude`
   state no datum in the .msg, and their altitudes are "AMSL or above terrain" and
   "AMSL". Raw keys.
 - `Waypoint.x_lat`/`y_long`/`z_alt` depend on the `frame` field (global, relative
   or local); one binding cannot hold for every frame. Raw keys.
-- `OpenDroneIDSystem` operator position: integers in 1e-7 degrees, as for GPSRAW.
+- `OpenDroneIDSystem` operator position: integers in 1e-7 degrees with no datum stated
+  in the .msg. Raw keys.
 
 ## Kinds
 
@@ -105,8 +112,8 @@ Not bound, and why:
 | `estimator_status` | `mavros_msgs/msg/EstimatorStatus` | 15 | 0 | 0 |
 | `extended_state` | `mavros_msgs/msg/ExtendedState` | 5 | 0 | 10 |
 | `file_entry` | `mavros_msgs/msg/FileEntry` | 3 | 0 | 2 |
-| `gpsinput` | `mavros_msgs/msg/GPSINPUT` | 21 | 0 | 9 |
-| `gpsraw` | `mavros_msgs/msg/GPSRAW` | 20 | 0 | 9 |
+| `gpsinput` | `mavros_msgs/msg/GPSINPUT` | 23 | 0 | 9 |
+| `gpsraw` | `mavros_msgs/msg/GPSRAW` | 23 | 0 | 9 |
 | `gpsrtk` | `mavros_msgs/msg/GPSRTK` | 14 | 0 | 0 |
 | `gimbal_device_attitude_status` | `mavros_msgs/msg/GimbalDeviceAttitudeStatus` | 14 | 0 | 14 |
 | `gimbal_device_information` | `mavros_msgs/msg/GimbalDeviceInformation` | 17 | 0 | 12 |
@@ -194,7 +201,7 @@ of array items included.
 message present, two items in each unbounded array outside a group and one
 inside, the stated number in a fixed or bounded one, and an `id` member as
 residue. `gen-edge-*` and `gen-err-*` are edge and error cases, each naming the
-rule it rests on in `source`; `gen-x-*` convert to geojson. 84 vector files.
+rule it rests on in `source`; `gen-x-*` convert to geojson. 86 vector files.
 `packs/geojson/vectors/gen-geojson-to-ros2-mavros-msgs-*.json` convert from geojson.
 Expected text is written by the generator from the .msg field order and checked
 by its own json-wire codec; no engine produced it.

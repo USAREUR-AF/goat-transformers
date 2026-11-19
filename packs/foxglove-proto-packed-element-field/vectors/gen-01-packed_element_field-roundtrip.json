@@ -1,0 +1,12 @@
+{
+  "name": "gen-packed_element_field-roundtrip",
+  "from": "foxglove-proto-packed-element-field",
+  "to": "foxglove-proto-packed-element-field",
+  "input": "0a066e616d652d301801",
+  "expect": "0a066e616d652d301801",
+  "model": {
+    "@kind": "packed_element_field",
+    "foxgloveprotopackedelementfield.packed_element_field_name": "name-0",
+    "foxgloveprotopackedelementfield.packed_element_field_type": "1"
+  }
+}

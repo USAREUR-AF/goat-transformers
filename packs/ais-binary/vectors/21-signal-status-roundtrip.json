@@ -1,0 +1,24 @@
+{
+  "name": "signal-status-roundtrip",
+  "from": "ais-binary",
+  "to": "ais-binary",
+  "input": "83`l7@0j:0:C;P>mo13h:P00WBP0",
+  "expect": "83`l7@0j:0:C;P>mo13h:P00WBP0",
+  "model": {
+    "@kind": "signal-status",
+    "ais.msg_type": "8",
+    "ais.repeat": "0",
+    "ais.mmsi": "244123456",
+    "ais.spare": "0",
+    "aisbin.dac": "200",
+    "aisbin.fid": "40",
+    "lon": "4.5",
+    "lat": "51.875",
+    "aisbin.isig_form": "7",
+    "aisbin.isig_facing": "258",
+    "aisbin.isig_direction": "5",
+    "aisbin.isig_status": "5029",
+    "ais.spare2": "0"
+  },
+  "source": "built by tools/gen/ais-binary-vectors.py from values chosen there; a type 8 message, DAC 200, FI 40, every field set from a fixed pattern within its range, text fields from the field's name, spare bits 0"
+}

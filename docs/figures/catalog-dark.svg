@@ -1,0 +1,246 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 1671" width="100%" role="img" aria-labelledby="t d">
+<title id="t">Every public format, by family: 62 families, 1,959 formats</title>
+<desc id="d">62 families of public formats in 11 domains, 1,959 formats in all; each family is shown with its number of packs, counted from packs/. Air: ASTERIX 30, ADS-B 2, readsb JSON 2, GDL 90 1. Land vehicles: CAN DBC (opendbc) 91, Baidu Apollo 48, Tier IV (ROS 2) 13, Autoware (ROS 2) 11, Eclipse KUKSA.val 8, Tesla Fleet Telemetry 5, Waymo Open Dataset 2, OpenXC 1. Sea: NMEA 2000 2, AIS 1, NMEA 0183 1. Space: Space Data Standards 297, CCSDS frames and packets 5, CCSDS NDM/XML 1. Uncrewed systems and robots: ArduPilot DataFlash log 342, PX4 ULog 301, Cyphal (UAVCAN v1) 250, DroneCAN (UAVCAN v0) 133, ROS 2 interface packages 41, MAVLink 2 14, Open-RMF (ROS 2) 13, Foxglove 2, DRIP (RFC 9575) 1, Remote ID (ASTM F3411) 1. C2 and tactical: Cursor on Target 2, UCI 2, A-GRA 1, C2SIM 1, Canonical Track v2 1, GeoTrackV1 1, NVG 1. Sensors: NITF 2.1 32, ISA 4, SAPIENT 2, gpsd JSON 1, MISB ST 0601 1. Transport: GBFS 84, GTFS Schedule 31, WZDx 10, NeTEx 4, GTFS Realtime 2, MDS 1, Valhalla 1. IoT: FIWARE Smart Data Models 93, Meshtastic 12, Sparkplug B 1. Networks: OpenTelemetry OTLP 9, gNMI 8, IETF packet headers 7. Maps, weather and alerts: NWS weather.gov API 18, OpenStreetMap PBF 3, CAP alerts 1, Geobuf 1, GeoJSON 1, GPX 1, KML 1, Mapbox Vector Tile 1, STAC Item 1. Not shown: the 116 synthetic packs whose names start with conformance or demo-, which exercise the specification and stand for no real format.</desc>
+<style>
+  .cf-bg{fill:#0d1117} .cf-ink{fill:#e6edf3} .cf-quiet{fill:#9198a1} .cf-num{fill:#4493f8}
+  .cf-t{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,"Liberation Sans","DejaVu Sans",sans-serif}
+  .cf-tile{fill:#161b22;stroke:#3d444d;stroke-width:1}
+  .cf-rule{fill:#3d444d}
+</style>
+<rect x="0" y="0" width="760" height="1671" class="cf-bg"/>
+<text x="20" y="38" class="cf-t cf-ink" font-size="18" font-weight="700" data-role="title">Every public format, by family: 62 families, 1,959 formats</text>
+<text x="20" y="58" class="cf-t cf-quiet" font-size="13" data-role="note">Each tile is one family and the number of its packs in packs/, in 11 domains. The 116 synthetic</text>
+<text x="20" y="78" class="cf-t cf-quiet" font-size="13" data-role="note">conformance and demo packs are not shown.</text>
+<rect x="20" y="104" width="720" height="1" class="cf-rule"/>
+<text x="20" y="131" class="cf-t cf-ink" font-size="15" font-weight="700">Air</text>
+<text x="740" y="131" class="cf-t cf-quiet" font-size="13" text-anchor="end">4 families, 35 formats</text>
+<rect x="20.5" y="143.5" width="719" height="67" rx="6" class="cf-tile"/>
+<text x="32" y="165" class="cf-t cf-ink" font-size="14">ASTERIX</text>
+<text x="728" y="165" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">30</text>
+<text x="32" y="182" class="cf-t cf-quiet" font-size="13">27 categories: 001, 002, 004, 007, 008, 009, 010, 011, 015, 016, 017, 018, 019, 020, 021, 023, 025,</text>
+<text x="32" y="199" class="cf-t cf-quiet" font-size="13">032, 034, 048, 062, 063, 065, 150, 205, 240, 247</text>
+<rect x="20.5" y="219.5" width="223" height="50" rx="6" class="cf-tile"/>
+<text x="32" y="241" class="cf-t cf-ink" font-size="14">ADS-B</text>
+<text x="232" y="241" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">2</text>
+<text x="32" y="258" class="cf-t cf-quiet" font-size="13">DF17, DF18</text>
+<rect x="252.5" y="219.5" width="260" height="50" rx="6" class="cf-tile"/>
+<text x="264" y="249" class="cf-t cf-ink" font-size="14">readsb JSON</text>
+<text x="501" y="249" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">2</text>
+<rect x="521.5" y="219.5" width="218" height="50" rx="6" class="cf-tile"/>
+<text x="533" y="249" class="cf-t cf-ink" font-size="14">GDL 90</text>
+<text x="728" y="249" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">1</text>
+<rect x="20" y="282" width="720" height="1" class="cf-rule"/>
+<text x="20" y="309" class="cf-t cf-ink" font-size="15" font-weight="700">Land vehicles</text>
+<text x="740" y="309" class="cf-t cf-quiet" font-size="13" text-anchor="end">8 families, 179 formats</text>
+<rect x="20.5" y="321.5" width="363" height="33" rx="6" class="cf-tile"/>
+<text x="32" y="343" class="cf-t cf-ink" font-size="14">CAN DBC (opendbc)</text>
+<text x="372" y="343" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">91</text>
+<rect x="392.5" y="321.5" width="347" height="33" rx="6" class="cf-tile"/>
+<text x="404" y="343" class="cf-t cf-ink" font-size="14">Autoware (ROS 2)</text>
+<text x="728" y="343" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">11</text>
+<rect x="20.5" y="363.5" width="208" height="33" rx="6" class="cf-tile"/>
+<text x="32" y="385" class="cf-t cf-ink" font-size="14">Baidu Apollo</text>
+<text x="217" y="385" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">48</text>
+<rect x="237.5" y="363.5" width="225" height="33" rx="6" class="cf-tile"/>
+<text x="249" y="385" class="cf-t cf-ink" font-size="14">Tier IV (ROS 2)</text>
+<text x="451" y="385" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">13</text>
+<rect x="471.5" y="363.5" width="268" height="33" rx="6" class="cf-tile"/>
+<text x="483" y="385" class="cf-t cf-ink" font-size="14">Waymo Open Dataset</text>
+<text x="728" y="385" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">2</text>
+<rect x="20.5" y="405.5" width="249" height="33" rx="6" class="cf-tile"/>
+<text x="32" y="427" class="cf-t cf-ink" font-size="14">Eclipse KUKSA.val</text>
+<text x="258" y="427" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">8</text>
+<rect x="278.5" y="405.5" width="277" height="33" rx="6" class="cf-tile"/>
+<text x="290" y="427" class="cf-t cf-ink" font-size="14">Tesla Fleet Telemetry</text>
+<text x="544" y="427" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">5</text>
+<rect x="564.5" y="405.5" width="175" height="33" rx="6" class="cf-tile"/>
+<text x="576" y="427" class="cf-t cf-ink" font-size="14">OpenXC</text>
+<text x="728" y="427" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">1</text>
+<rect x="20" y="451" width="720" height="1" class="cf-rule"/>
+<text x="20" y="478" class="cf-t cf-ink" font-size="15" font-weight="700">Sea</text>
+<text x="740" y="478" class="cf-t cf-quiet" font-size="13" text-anchor="end">3 families, 4 formats</text>
+<rect x="20.5" y="490.5" width="246" height="33" rx="6" class="cf-tile"/>
+<text x="32" y="512" class="cf-t cf-ink" font-size="14">NMEA 2000</text>
+<text x="255" y="512" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">2</text>
+<rect x="275.5" y="490.5" width="209" height="33" rx="6" class="cf-tile"/>
+<text x="287" y="512" class="cf-t cf-ink" font-size="14">AIS</text>
+<text x="473" y="512" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">1</text>
+<rect x="493.5" y="490.5" width="246" height="33" rx="6" class="cf-tile"/>
+<text x="505" y="512" class="cf-t cf-ink" font-size="14">NMEA 0183</text>
+<text x="728" y="512" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">1</text>
+<rect x="20" y="536" width="720" height="1" class="cf-rule"/>
+<text x="20" y="563" class="cf-t cf-ink" font-size="15" font-weight="700">Space</text>
+<text x="740" y="563" class="cf-t cf-quiet" font-size="13" text-anchor="end">3 families, 303 formats</text>
+<rect x="20.5" y="575.5" width="244" height="50" rx="6" class="cf-tile"/>
+<text x="32" y="605" class="cf-t cf-ink" font-size="14">Space Data Standards</text>
+<text x="253" y="605" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">297</text>
+<rect x="273.5" y="575.5" width="272" height="50" rx="6" class="cf-tile"/>
+<text x="285" y="597" class="cf-t cf-ink" font-size="14">CCSDS frames and packets</text>
+<text x="534" y="597" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">5</text>
+<text x="285" y="614" class="cf-t cf-quiet" font-size="13">AOS, TC, TM, CLCW, Space Packet</text>
+<rect x="554.5" y="575.5" width="185" height="50" rx="6" class="cf-tile"/>
+<text x="566" y="605" class="cf-t cf-ink" font-size="14">CCSDS NDM/XML</text>
+<text x="728" y="605" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">1</text>
+<rect x="20" y="638" width="720" height="1" class="cf-rule"/>
+<text x="20" y="665" class="cf-t cf-ink" font-size="15" font-weight="700">Uncrewed systems and robots</text>
+<text x="740" y="665" class="cf-t cf-quiet" font-size="13" text-anchor="end">10 families, 1,098 formats</text>
+<rect x="20.5" y="677.5" width="279" height="33" rx="6" class="cf-tile"/>
+<text x="32" y="699" class="cf-t cf-ink" font-size="14">ArduPilot DataFlash log</text>
+<text x="288" y="699" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">342</text>
+<rect x="308.5" y="677.5" width="150" height="33" rx="6" class="cf-tile"/>
+<text x="320" y="699" class="cf-t cf-ink" font-size="14">Foxglove</text>
+<text x="447" y="699" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">2</text>
+<rect x="467.5" y="677.5" width="272" height="33" rx="6" class="cf-tile"/>
+<text x="479" y="699" class="cf-t cf-ink" font-size="14">Remote ID (ASTM F3411)</text>
+<text x="728" y="699" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">1</text>
+<rect x="20.5" y="719.5" width="170" height="33" rx="6" class="cf-tile"/>
+<text x="32" y="741" class="cf-t cf-ink" font-size="14">PX4 ULog</text>
+<text x="179" y="741" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">301</text>
+<rect x="199.5" y="719.5" width="253" height="33" rx="6" class="cf-tile"/>
+<text x="211" y="741" class="cf-t cf-ink" font-size="14">Cyphal (UAVCAN v1)</text>
+<text x="441" y="741" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">250</text>
+<rect x="461.5" y="719.5" width="278" height="33" rx="6" class="cf-tile"/>
+<text x="473" y="741" class="cf-t cf-ink" font-size="14">DroneCAN (UAVCAN v0)</text>
+<text x="728" y="741" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">133</text>
+<rect x="20.5" y="761.5" width="277" height="33" rx="6" class="cf-tile"/>
+<text x="32" y="783" class="cf-t cf-ink" font-size="14">ROS 2 interface packages</text>
+<text x="286" y="783" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">41</text>
+<rect x="306.5" y="761.5" width="224" height="33" rx="6" class="cf-tile"/>
+<text x="318" y="783" class="cf-t cf-ink" font-size="14">Open-RMF (ROS 2)</text>
+<text x="519" y="783" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">13</text>
+<rect x="539.5" y="761.5" width="200" height="33" rx="6" class="cf-tile"/>
+<text x="551" y="783" class="cf-t cf-ink" font-size="14">DRIP (RFC 9575)</text>
+<text x="728" y="783" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">1</text>
+<rect x="20.5" y="803.5" width="719" height="67" rx="6" class="cf-tile"/>
+<text x="32" y="825" class="cf-t cf-ink" font-size="14">MAVLink 2</text>
+<text x="728" y="825" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">14</text>
+<text x="32" y="842" class="cf-t cf-quiet" font-size="13">common and 13 dialects: ardupilotmega, asluav, avssuas, csairlink, cubepilot, development,</text>
+<text x="32" y="859" class="cf-t cf-quiet" font-size="13">icarous, loweheiser, marsh, paparazzi, stemstudios, storm32, uavionix</text>
+<rect x="20" y="883" width="720" height="1" class="cf-rule"/>
+<text x="20" y="910" class="cf-t cf-ink" font-size="15" font-weight="700">C2 and tactical</text>
+<text x="740" y="910" class="cf-t cf-quiet" font-size="13" text-anchor="end">7 families, 9 formats</text>
+<rect x="20.5" y="922.5" width="271" height="50" rx="6" class="cf-tile"/>
+<text x="32" y="944" class="cf-t cf-ink" font-size="14">Cursor on Target</text>
+<text x="280" y="944" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">2</text>
+<text x="32" y="961" class="cf-t cf-quiet" font-size="13">XML, protobuf</text>
+<rect x="300.5" y="922.5" width="195" height="50" rx="6" class="cf-tile"/>
+<text x="312" y="952" class="cf-t cf-ink" font-size="14">C2SIM</text>
+<text x="484" y="952" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">1</text>
+<rect x="504.5" y="922.5" width="235" height="50" rx="6" class="cf-tile"/>
+<text x="516" y="952" class="cf-t cf-ink" font-size="14">GeoTrackV1</text>
+<text x="728" y="952" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">1</text>
+<rect x="20.5" y="981.5" width="150" height="50" rx="6" class="cf-tile"/>
+<text x="32" y="1003" class="cf-t cf-ink" font-size="14">UCI</text>
+<text x="159" y="1003" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">2</text>
+<text x="32" y="1020" class="cf-t cf-quiet" font-size="13">2.5, 2.6</text>
+<rect x="179.5" y="981.5" width="150" height="50" rx="6" class="cf-tile"/>
+<text x="191" y="1011" class="cf-t cf-ink" font-size="14">A-GRA</text>
+<text x="318" y="1011" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">1</text>
+<rect x="338.5" y="981.5" width="242" height="50" rx="6" class="cf-tile"/>
+<text x="350" y="1011" class="cf-t cf-ink" font-size="14">Canonical Track v2</text>
+<text x="569" y="1011" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">1</text>
+<rect x="589.5" y="981.5" width="150" height="50" rx="6" class="cf-tile"/>
+<text x="601" y="1011" class="cf-t cf-ink" font-size="14">NVG</text>
+<text x="728" y="1011" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">1</text>
+<rect x="20" y="1044" width="720" height="1" class="cf-rule"/>
+<text x="20" y="1071" class="cf-t cf-ink" font-size="15" font-weight="700">Sensors</text>
+<text x="740" y="1071" class="cf-t cf-quiet" font-size="13" text-anchor="end">5 families, 40 formats</text>
+<rect x="20.5" y="1083.5" width="392" height="50" rx="6" class="cf-tile"/>
+<text x="32" y="1105" class="cf-t cf-ink" font-size="14">NITF 2.1</text>
+<text x="401" y="1105" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">32</text>
+<text x="32" y="1122" class="cf-t cf-quiet" font-size="13">two headers and 30 TREs</text>
+<rect x="421.5" y="1083.5" width="318" height="50" rx="6" class="cf-tile"/>
+<text x="433" y="1113" class="cf-t cf-ink" font-size="14">gpsd JSON</text>
+<text x="728" y="1113" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">1</text>
+<rect x="20.5" y="1142.5" width="235" height="50" rx="6" class="cf-tile"/>
+<text x="32" y="1164" class="cf-t cf-ink" font-size="14">ISA</text>
+<text x="244" y="1164" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">4</text>
+<text x="32" y="1181" class="cf-t cf-quiet" font-size="13">IPL 1.6, 3.7, 4.7</text>
+<rect x="264.5" y="1142.5" width="214" height="50" rx="6" class="cf-tile"/>
+<text x="276" y="1164" class="cf-t cf-ink" font-size="14">SAPIENT</text>
+<text x="467" y="1164" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">2</text>
+<text x="276" y="1181" class="cf-t cf-quiet" font-size="13">v1, v2</text>
+<rect x="487.5" y="1142.5" width="252" height="50" rx="6" class="cf-tile"/>
+<text x="499" y="1172" class="cf-t cf-ink" font-size="14">MISB ST 0601</text>
+<text x="728" y="1172" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">1</text>
+<rect x="20" y="1205" width="720" height="1" class="cf-rule"/>
+<text x="20" y="1232" class="cf-t cf-ink" font-size="15" font-weight="700">Transport</text>
+<text x="740" y="1232" class="cf-t cf-quiet" font-size="13" text-anchor="end">7 families, 133 formats</text>
+<rect x="20.5" y="1244.5" width="385" height="50" rx="6" class="cf-tile"/>
+<text x="32" y="1266" class="cf-t cf-ink" font-size="14">GBFS</text>
+<text x="394" y="1266" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">84</text>
+<text x="32" y="1283" class="cf-t cf-quiet" font-size="13">versions: 1.0, 1.1, 2.0, 2.1, 2.2, 2.3, 3.0, 3.1</text>
+<rect x="414.5" y="1244.5" width="153" height="50" rx="6" class="cf-tile"/>
+<text x="426" y="1274" class="cf-t cf-ink" font-size="14">NeTEx</text>
+<text x="556" y="1274" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">4</text>
+<rect x="576.5" y="1244.5" width="163" height="50" rx="6" class="cf-tile"/>
+<text x="588" y="1274" class="cf-t cf-ink" font-size="14">Valhalla</text>
+<text x="728" y="1274" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">1</text>
+<rect x="20.5" y="1303.5" width="211" height="33" rx="6" class="cf-tile"/>
+<text x="32" y="1325" class="cf-t cf-ink" font-size="14">GTFS Schedule</text>
+<text x="220" y="1325" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">31</text>
+<rect x="240.5" y="1303.5" width="144" height="33" rx="6" class="cf-tile"/>
+<text x="252" y="1325" class="cf-t cf-ink" font-size="14">WZDx</text>
+<text x="373" y="1325" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">10</text>
+<rect x="393.5" y="1303.5" width="199" height="33" rx="6" class="cf-tile"/>
+<text x="405" y="1325" class="cf-t cf-ink" font-size="14">GTFS Realtime</text>
+<text x="581" y="1325" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">2</text>
+<rect x="601.5" y="1303.5" width="138" height="33" rx="6" class="cf-tile"/>
+<text x="613" y="1325" class="cf-t cf-ink" font-size="14">MDS</text>
+<text x="728" y="1325" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">1</text>
+<rect x="20" y="1349" width="720" height="1" class="cf-rule"/>
+<text x="20" y="1376" class="cf-t cf-ink" font-size="15" font-weight="700">IoT</text>
+<text x="740" y="1376" class="cf-t cf-quiet" font-size="13" text-anchor="end">3 families, 106 formats</text>
+<rect x="20.5" y="1388.5" width="318" height="33" rx="6" class="cf-tile"/>
+<text x="32" y="1410" class="cf-t cf-ink" font-size="14">FIWARE Smart Data Models</text>
+<text x="327" y="1410" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">93</text>
+<rect x="347.5" y="1388.5" width="191" height="33" rx="6" class="cf-tile"/>
+<text x="359" y="1410" class="cf-t cf-ink" font-size="14">Meshtastic</text>
+<text x="527" y="1410" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">12</text>
+<rect x="547.5" y="1388.5" width="192" height="33" rx="6" class="cf-tile"/>
+<text x="559" y="1410" class="cf-t cf-ink" font-size="14">Sparkplug B</text>
+<text x="728" y="1410" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">1</text>
+<rect x="20" y="1434" width="720" height="1" class="cf-rule"/>
+<text x="20" y="1461" class="cf-t cf-ink" font-size="15" font-weight="700">Networks</text>
+<text x="740" y="1461" class="cf-t cf-quiet" font-size="13" text-anchor="end">3 families, 24 formats</text>
+<rect x="20.5" y="1473.5" width="243" height="50" rx="6" class="cf-tile"/>
+<text x="32" y="1503" class="cf-t cf-ink" font-size="14">OpenTelemetry OTLP</text>
+<text x="252" y="1503" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">9</text>
+<rect x="272.5" y="1473.5" width="133" height="50" rx="6" class="cf-tile"/>
+<text x="284" y="1503" class="cf-t cf-ink" font-size="14">gNMI</text>
+<text x="394" y="1503" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">8</text>
+<rect x="414.5" y="1473.5" width="325" height="50" rx="6" class="cf-tile"/>
+<text x="426" y="1495" class="cf-t cf-ink" font-size="14">IETF packet headers</text>
+<text x="728" y="1495" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">7</text>
+<text x="426" y="1512" class="cf-t cf-quiet" font-size="13">DNS, ICMP, IPv4, IPv6, NTP, TCP, UDP</text>
+<rect x="20" y="1536" width="720" height="1" class="cf-rule"/>
+<text x="20" y="1563" class="cf-t cf-ink" font-size="15" font-weight="700">Maps, weather and alerts</text>
+<text x="740" y="1563" class="cf-t cf-quiet" font-size="13" text-anchor="end">9 families, 28 formats</text>
+<rect x="20.5" y="1575.5" width="223" height="33" rx="6" class="cf-tile"/>
+<text x="32" y="1597" class="cf-t cf-ink" font-size="14">NWS weather.gov API</text>
+<text x="232" y="1597" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">18</text>
+<rect x="252.5" y="1575.5" width="128" height="33" rx="6" class="cf-tile"/>
+<text x="264" y="1597" class="cf-t cf-ink" font-size="14">CAP alerts</text>
+<text x="369" y="1597" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">1</text>
+<rect x="389.5" y="1575.5" width="104" height="33" rx="6" class="cf-tile"/>
+<text x="401" y="1597" class="cf-t cf-ink" font-size="14">Geobuf</text>
+<text x="482" y="1597" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">1</text>
+<rect x="502.5" y="1575.5" width="99" height="33" rx="6" class="cf-tile"/>
+<text x="514" y="1597" class="cf-t cf-ink" font-size="14">KML</text>
+<text x="590" y="1597" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">1</text>
+<rect x="610.5" y="1575.5" width="129" height="33" rx="6" class="cf-tile"/>
+<text x="622" y="1597" class="cf-t cf-ink" font-size="14">STAC Item</text>
+<text x="728" y="1597" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">1</text>
+<rect x="20.5" y="1617.5" width="220" height="33" rx="6" class="cf-tile"/>
+<text x="32" y="1639" class="cf-t cf-ink" font-size="14">OpenStreetMap PBF</text>
+<text x="229" y="1639" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">3</text>
+<rect x="249.5" y="1617.5" width="140" height="33" rx="6" class="cf-tile"/>
+<text x="261" y="1639" class="cf-t cf-ink" font-size="14">GeoJSON</text>
+<text x="378" y="1639" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">1</text>
+<rect x="398.5" y="1617.5" width="119" height="33" rx="6" class="cf-tile"/>
+<text x="410" y="1639" class="cf-t cf-ink" font-size="14">GPX</text>
+<text x="506" y="1639" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">1</text>
+<rect x="526.5" y="1617.5" width="213" height="33" rx="6" class="cf-tile"/>
+<text x="538" y="1639" class="cf-t cf-ink" font-size="14">Mapbox Vector Tile</text>
+<text x="728" y="1639" class="cf-t cf-num" font-size="14" font-weight="700" text-anchor="end">1</text>
+</svg>

@@ -831,6 +831,32 @@ class Codec(unittest.TestCase):
         self.assertEqual(a2p.iso8601_ms("2025-10-29T12:00:00.125Z"), 1761739200125)
 
 
+class Icao6(unittest.TestCase):
+    """`chars:icao6` (engine-spec 0.15) in the generator's own codec, for the callsign binding."""
+
+    class Field:
+        tr, bits = "chars", 48
+
+    def test_characters_decode_and_trailing_spaces_go(self):
+        # K L M 1 0 2 3 space: 11 12 13 49 48 50 51 32
+        v = 0
+        for c in (11, 12, 13, 49, 48, 50, 51, 32):
+            v = (v << 6) | c
+        self.assertEqual(a2p.t_decode(self.Field, v), "KLM1023")
+        self.assertEqual(a2p.t_encode(self.Field, "KLM1023"), v)
+
+    def test_a_code_outside_the_set_is_transform_decode(self):
+        with self.assertRaises(a2p.WireError) as c:
+            a2p.t_decode(self.Field, 27 << 42)
+        self.assertEqual(c.exception.kind, "transform-decode")
+
+    def test_text_the_set_cannot_hold_is_transform_encode(self):
+        for text in ("klm", "ABCDEFGHI", "A#"):
+            with self.assertRaises(a2p.WireError) as c:
+                a2p.t_encode(self.Field, text)
+            self.assertEqual(c.exception.kind, "transform-encode")
+
+
 class ShapeCheck(unittest.TestCase):
     """The output invariants that are narrower than the load rules of the specification."""
 

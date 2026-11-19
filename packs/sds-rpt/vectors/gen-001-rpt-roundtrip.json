@@ -2,16 +2,16 @@
  "name": "gen-rpt-roundtrip",
  "from": "sds-rpt",
  "to": "sds-rpt",
- "input": "{\"REPORT_ID\":\"s52488\",\"TEMPLATE_ID\":\"s15439\",\"TEMPLATE_VERSION\":\"s54465\",\"TITLE\":\"s13216\",\"SOURCE_QUERY\":\"s20352\",\"SOURCE_DATA_HASH\":[167,194],\"CONTENT_HASH\":[122,86],\"CONTENT_TYPE\":\"s42042\",\"CONTENT_CID\":\"s94624\",\"GENERATED_AT\":257818516891586,\"GENERATOR_MODULE_ID\":\"s84561\",\"GENERATOR_MODULE_VERSION\":\"s53708\",\"CREATOR_EPM_CID\":\"s97140\",\"SIGNATURE\":[26,164]}",
- "expect": "{\"REPORT_ID\":\"s52488\",\"TEMPLATE_ID\":\"s15439\",\"TEMPLATE_VERSION\":\"s54465\",\"TITLE\":\"s13216\",\"SOURCE_QUERY\":\"s20352\",\"SOURCE_DATA_HASH\":[167,194],\"CONTENT_HASH\":[122,86],\"CONTENT_TYPE\":\"s42042\",\"CONTENT_CID\":\"s94624\",\"GENERATED_AT\":257818516891586,\"GENERATOR_MODULE_ID\":\"s84561\",\"GENERATOR_MODULE_VERSION\":\"s53708\",\"CREATOR_EPM_CID\":\"s97140\",\"SIGNATURE\":[26,164]}",
+ "input": "{\"REPORT_ID\":\"s52488\",\"TEMPLATE_ID\":\"s15439\",\"TEMPLATE_VERSION\":\"s54465\",\"TITLE\":\"s13216\",\"SOURCE_QUERY\":\"s20352\",\"SOURCE_DATA_HASH\":[167,194],\"CONTENT_HASH\":[122,86],\"CONTENT_TYPE\":\"s42042\",\"CONTENT_CID\":\"s94624\",\"GENERATED_AT\":1718516891586,\"GENERATOR_MODULE_ID\":\"s84561\",\"GENERATOR_MODULE_VERSION\":\"s53708\",\"CREATOR_EPM_CID\":\"s97140\",\"SIGNATURE\":[26,164]}",
+ "expect": "{\"REPORT_ID\":\"s52488\",\"TEMPLATE_ID\":\"s15439\",\"TEMPLATE_VERSION\":\"s54465\",\"TITLE\":\"s13216\",\"SOURCE_QUERY\":\"s20352\",\"SOURCE_DATA_HASH\":[167,194],\"CONTENT_HASH\":[122,86],\"CONTENT_TYPE\":\"s42042\",\"CONTENT_CID\":\"s94624\",\"GENERATED_AT\":1718516891586,\"GENERATOR_MODULE_ID\":\"s84561\",\"GENERATOR_MODULE_VERSION\":\"s53708\",\"CREATOR_EPM_CID\":\"s97140\",\"SIGNATURE\":[26,164]}",
  "model": {
+  "time_ms": "1718516891586",
   "sdsrpt.report_id": "s52488",
   "sdsrpt.template_id": "s15439",
   "sdsrpt.template_version": "s54465",
   "sdsrpt.title": "s13216",
   "sdsrpt.source_query": "s20352",
   "sdsrpt.source_data_hash.#": "2",
-  "sdsrpt.content_hash.#": "2",
-  "sdsrpt.content_type": "s42042"
+  "sdsrpt.content_hash.#": "2"
  }
 }

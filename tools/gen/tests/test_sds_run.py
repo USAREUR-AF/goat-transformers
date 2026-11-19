@@ -22,7 +22,7 @@ import support
 
 S = support.load_script("sds-run.py")
 FIXTURE = os.path.join(support.FIXTURES, "sds-run")
-INPUTS = ("model/core.def", "model/track.def", "tools/gen/notes/sds.md")
+INPUTS = ("model/core.def", "model/track.def", "tools/gen/notes/sds.md", "tools/gen/notes/sds-time.md")
 FILES = ("LICENSE", "NOTICE", "lib/fbjson/TST/main.fb.schema.json")
 GIT_ENV = {"GIT_AUTHOR_NAME": "fixture", "GIT_AUTHOR_EMAIL": "fixture", "GIT_COMMITTER_NAME": "fixture",
            "GIT_COMMITTER_EMAIL": "fixture", "GIT_AUTHOR_DATE": "2026-01-01T00:00:00Z",
@@ -54,7 +54,7 @@ class Workspace(unittest.TestCase):
         self.commit = git(self.src, "rev-parse", "HEAD")
         self.manifest = os.path.join(self.work, "sds-sha256.txt")
         self.write_manifest()
-        saved = (S.COMMIT, S.UID, S.POSITION, S.CROSS, S.SKIPPED, S.DEPTH)
+        saved = (S.COMMIT, S.UID, S.POSITION, S.CROSS, S.SKIPPED, S.DEPTH, S.TIME)
         self.addCleanup(self.restore, saved)
         S.COMMIT = self.commit
         S.UID = {"TST": "ID"}
@@ -62,6 +62,7 @@ class Workspace(unittest.TestCase):
         S.CROSS = set()
         S.SKIPPED = {}
         S.DEPTH = {}
+        S.TIME = {}
 
     def write_manifest(self, override=None):
         with open(self.manifest, "w", encoding="utf-8") as fh:
@@ -71,7 +72,7 @@ class Workspace(unittest.TestCase):
 
     @staticmethod
     def restore(saved):
-        S.COMMIT, S.UID, S.POSITION, S.CROSS, S.SKIPPED, S.DEPTH = saved
+        S.COMMIT, S.UID, S.POSITION, S.CROSS, S.SKIPPED, S.DEPTH, S.TIME = saved
 
     def run_sds(self, *extra):
         return support.run_main(S.main, list(extra) + ["--manifest", self.manifest, self.src, self.gt])
@@ -145,6 +146,18 @@ class SdsRunTest(Workspace):
             md = fh.read()
         self.assertIn("objects nested deeper than 1 levels", md)
         self.assertIn("at the default depth 8 they come to 2.0 MB", md)
+
+    def test_a_time_member_is_bound_and_its_notes_are_added(self):
+        S.TIME = {"TST": "COUNT"}
+        status, _, err = self.run_sds()
+        self.assertEqual(status, 0, err)
+        with open(os.path.join(self.gt, "packs", "sds-tst", "pack.def"), encoding="utf-8") as fh:
+            self.assertIn("field  time_ms  COUNT  int\n", fh.read())
+        with open(os.path.join(self.gt, "packs", "sds-tst", "pack.md"), encoding="utf-8") as fh:
+            md = fh.read()
+        self.assertIn("Notes written for the sds-run tests.\n\n## Time\n\nTime notes written", md)
+        status, _, err = self.run_sds("--check")
+        self.assertEqual(status, 0, err)
 
     def test_a_file_whose_sha256_differs_is_refused_before_anything_is_written(self):
         self.write_manifest({"lib/fbjson/TST/main.fb.schema.json": "0" * 64})

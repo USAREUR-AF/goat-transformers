@@ -1,0 +1,13 @@
+{
+  "name": "met-hydro-imo289-to-geojson",
+  "from": "ais-binary",
+  "to": "geojson",
+  "input": "802M4T00Gh9W?1f5qQ8Qew85mSGJIBURbvj>masPRM0pPR?3RK7hr1f<=RP0",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[5.25,60.125]},\"properties\":{},\"id\":\"2573456\"}",
+  "model": {
+    "@kind": "met-hydro-imo289",
+    "lat": "60.125",
+    "lon": "5.25"
+  },
+  "source": "built by tools/gen/ais-binary-vectors.py from values chosen there; a meteorological station report at 60.125 N 5.25 E: 3607500 and 315000 thousandths of a minute over 60000; the MMSI 2573456 gives the id (model/ais.def derives uid from ais.mmsi)"
+}

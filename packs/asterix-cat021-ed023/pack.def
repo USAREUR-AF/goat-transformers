@@ -105,7 +105,7 @@ if f.17                                  # FRN 17, I021/165 Rate Of Turn
   end
 end
 if f.18                                  # FRN 18, I021/170 Target Identification
-  field  cat021ed023.i170  48  uint
+  field  callsign  48  chars:icao6
 end
 if f.19                                  # FRN 19, I021/095 Velocity Accuracy
   field  cat021ed023.i095  8  uint

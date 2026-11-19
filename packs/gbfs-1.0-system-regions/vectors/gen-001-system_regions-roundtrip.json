@@ -2,10 +2,11 @@
  "name": "gen-system_regions-roundtrip",
  "from": "gbfs-1.0-system-regions",
  "to": "gbfs-1.0-system-regions",
- "input": "{\"last_updated\":226982772,\"ttl\":22733,\"data\":{\"regions\":[{\"region_id\":\"s88053\",\"name\":\"s59536\"},{\"region_id\":\"s39353\",\"name\":\"s33376\"}]}}",
- "expect": "{\"last_updated\":226982772,\"ttl\":22733,\"data\":{\"regions\":[{\"region_id\":\"s88053\",\"name\":\"s59536\"},{\"region_id\":\"s39353\",\"name\":\"s33376\"}]}}",
+ "input": "{\"last_updated\":1712734098,\"ttl\":22733,\"data\":{\"regions\":[{\"region_id\":\"s88053\",\"name\":\"s59536\"},{\"region_id\":\"s39353\",\"name\":\"s33376\"}]}}",
+ "expect": "{\"last_updated\":1712734098,\"ttl\":22733,\"data\":{\"regions\":[{\"region_id\":\"s88053\",\"name\":\"s59536\"},{\"region_id\":\"s39353\",\"name\":\"s33376\"}]}}",
  "model": {
-  "gbfs10systemregions.last_updated": "226982772",
+  "time_ms": "1712734098000",
+  "gbfs10systemregions.last_updated": "1712734098",
   "gbfs10systemregions.ttl": "22733",
   "gbfs10systemregions.data_regions.#": "2"
  }

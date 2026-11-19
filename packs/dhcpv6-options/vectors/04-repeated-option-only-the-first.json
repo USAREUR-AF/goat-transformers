@@ -1,0 +1,14 @@
+{
+  "name": "repeated-option-only-the-first",
+  "from": "dhcpv6-options",
+  "to": "dhcpv6-options",
+  "input": "0001000e000100012f1e2d3c0011223344550003000c0000000a00000e10000015180003000c0000000b00000e10000015180019000c0000000c0000000000000000",
+  "expect": "0001000e000100012f1e2d3c0011223344550003000c0000000a00000e10000015180019000c0000000c0000000000000000",
+  "model": {
+    "dhcpv6.opt1_clientid": "000100012f1e2d3c001122334455",
+    "dhcpv6.opt3_ia_na": "0000000a00000e1000001518",
+    "dhcpv6.opt25_ia_pd": "0000000c0000000000000000"
+  },
+  "source": "constructed",
+  "reference": "RFC 9915 section 21 (option format and the sizes of the integer options); two IA_NA options: the first is read and written, the second is not carried (engine-spec 0.13, Locators); IA_PD as hex; written by tools/gen/ietf-options-vectors.py"
+}

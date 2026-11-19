@@ -536,7 +536,7 @@ kind      camera_status
 when      0:56:24 179
 when      0:8:8 29
 requires  mavlinkardupilotmega.p1 mavlinkardupilotmega.p2 mavlinkardupilotmega.p3 mavlinkardupilotmega.p4 mavlinkardupilotmega.img_idx mavlinkardupilotmega.event_id
-field     mavlinkardupilotmega.time_usec_us 0:80:64 uint
+field     time_ms 0:80:64 uiscale:1/1000
 field     mavlinkardupilotmega.p1 0:144:32 f32
 field     mavlinkardupilotmega.p2 0:176:32 f32
 field     mavlinkardupilotmega.p3 0:208:32 f32
@@ -550,7 +550,7 @@ kind      camera_feedback
 when      0:56:24 180
 when      0:8:8 47
 requires  mavlinkardupilotmega.alt_msl_m mavlinkardupilotmega.alt_rel_m mavlinkardupilotmega.roll_deg mavlinkardupilotmega.pitch_deg mavlinkardupilotmega.yaw_deg mavlinkardupilotmega.foc_len_mm
-field     mavlinkardupilotmega.time_usec_us 0:80:64 uint
+field     time_ms 0:80:64 uiscale:1/1000
 field     lat 0:144:32 sscale:1/10000000
 field     lon 0:176:32 sscale:1/10000000
 field     mavlinkardupilotmega.alt_msl_m 0:208:32 f32

@@ -78,9 +78,10 @@ SEQ_PACK_DEF = "packs/%s/pack.def" % SEQ_FORMAT
 SEQ_PACK_MD = "packs/%s/pack.md" % SEQ_FORMAT
 SEQ_VECTORS = "packs/%s/vectors" % SEQ_FORMAT
 
-# model/core.def of goat-transformers, version 0.1.0 (checked against --core-def when given)
+# model/core.def of goat-transformers, version 0.2.0 (checked against --core-def when given)
 CORE_KEYS = OrderedDict([
-    ("uid", "string"), ("type", "string"), ("time_ms", "int"), ("lat", "float"),
+    ("uid", "string"), ("type", "string"), ("time_ms", "int"),
+    ("time_error_ms", "float"), ("time_state", "string"), ("lat", "float"),
     ("lon", "float"), ("hae", "float"), ("ce", "float"), ("le", "float"),
     ("callsign", "string"), ("course", "float"), ("speed_ms", "float"), ("how", "string"),
     ("stale_ms", "int"), ("time_text", "string"), ("stale_text", "string"),

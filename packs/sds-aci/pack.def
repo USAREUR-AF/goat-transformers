@@ -88,6 +88,7 @@ field  sdsaci.provenance_retrieved_at  PROVENANCE.RETRIEVED_AT  int
 field  sdsaci.provenance_license  PROVENANCE.LICENSE  string
 field  sdsaci.provenance_non_commercial_only  PROVENANCE.NON_COMMERCIAL_ONLY  bool
 field  sdsaci.provenance_citation  PROVENANCE.CITATION  string
+field  time_ms  COMPUTED_AT  int
 field  sdsaci.computed_at  COMPUTED_AT  int
 field  sdsaci.producer_id  PRODUCER_ID  string
 group  sdsaci.signature  SIGNATURE

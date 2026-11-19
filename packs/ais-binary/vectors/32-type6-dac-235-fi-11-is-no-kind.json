@@ -1,0 +1,8 @@
+{
+  "name": "type6-dac-235-fi-11-is-no-kind",
+  "from": "ais-binary",
+  "to": "ais-binary",
+  "input": "6>jHC600S?o4>dd00000000",
+  "expect_error": "no-kind",
+  "source": "built by tools/gen/ais-binary-vectors.py from values chosen there; an AtoN monitoring layout sent with FI 11: DAC 235 has no kind for it"
+}

@@ -1,0 +1,8 @@
+{
+  "name": "type1-is-no-kind",
+  "from": "ais-binary",
+  "to": "ais-binary",
+  "input": "1000000000000000000000000000",
+  "expect_error": "no-kind",
+  "source": "built by tools/gen/ais-binary-vectors.py from values chosen there; a 168-bit message of type 1, which pack ais reads"
+}

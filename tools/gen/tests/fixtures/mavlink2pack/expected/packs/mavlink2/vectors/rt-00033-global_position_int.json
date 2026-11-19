@@ -2,8 +2,8 @@
   "name": "roundtrip-global_position_int",
   "from": "mavlink2",
   "to": "mavlink2",
-  "input": "fd1c00000422222100009be7551ad04d6b0830b294f7f81287c279668bc2fa397b8dfce05386",
-  "expect": "fd1c00000422222100009be7551ad04d6b0830b294f7f81287c279668bc2fa397b8dfce05386",
+  "input": "fd1c00000522222100009be7551ad04d6b0830b294f7f81287c279668bc2fa397b8dfce05386",
+  "expect": "fd1c00000522222100009be7551ad04d6b0830b294f7f81287c279668bc2fa397b8dfce05386",
   "model": {
     "@kind": "global_position_int"
   }

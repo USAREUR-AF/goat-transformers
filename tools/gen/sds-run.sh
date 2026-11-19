@@ -14,7 +14,7 @@
 # SCC, CQR, SCN, LAM and REM have a lower --max-depth (DEPTH there).
 #
 # Writes model/sds<name>.def, packs/sds-<name>/ (pack.def, pack.md, PROVENANCE.md,
-# vectors/gen-*), packs/geojson/vectors/gen-geojson-to-sds-{gnp,omm,sen,tms}.json and
+# vectors/gen-*), packs/geojson/vectors/gen-geojson-to-sds-{gnp,omm,sen,tms,wxf}.json and
 # tools/gen/names/sds-<name>.json, through tools/gen/sds-run.py, which runs
 # tools/gen/jsonschema2pack.py once per standard.
 #

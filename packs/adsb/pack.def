@@ -8,7 +8,7 @@
 # tables number message bits from 1: message bit n is offset n - 1, and bit n
 # of the 56-bit ME field is offset 31 + n.
 format        adsb
-version       0.2.0
+version       0.3.0
 distribution  public
 source        "Junzi Sun, The 1090 Megahertz Riddle, second edition, TU Delft OPEN Publishing, https://mode-s.org/1090mhz/ (CC BY-NC-SA 4.0): ADS-B chapters 1-6; the layouts documented there are from ICAO Annex 10 Volume IV, ICAO Doc 9871 and RTCA DO-260B"
 source        "pyModeS tests (https://github.com/junzis/pyModeS, GPL-3.0): published messages with decoded values, used as facts to check the type code 28 and 29 layouts; no code copied"
@@ -35,6 +35,7 @@ when      0:32:5     1
 requires  adsb.icao adsb.category adsb.cs_c1 adsb.cs_c8
 field  adsb.tc                        0:32:5     uint
 field  adsb.category                  0:37:3     uint
+field  callsign                       0:40:48    chars:icao6
 field  adsb.cs_c1                     0:40:6     uint
 field  adsb.cs_c2                     0:46:6     uint
 field  adsb.cs_c3                     0:52:6     uint
@@ -50,6 +51,7 @@ when      0:32:5     2
 requires  adsb.icao adsb.category adsb.cs_c1 adsb.cs_c8
 field  adsb.tc                        0:32:5     uint
 field  adsb.category                  0:37:3     uint
+field  callsign                       0:40:48    chars:icao6
 field  adsb.cs_c1                     0:40:6     uint
 field  adsb.cs_c2                     0:46:6     uint
 field  adsb.cs_c3                     0:52:6     uint
@@ -65,6 +67,7 @@ when      0:32:5     3
 requires  adsb.icao adsb.category adsb.cs_c1 adsb.cs_c8
 field  adsb.tc                        0:32:5     uint
 field  adsb.category                  0:37:3     uint
+field  callsign                       0:40:48    chars:icao6
 field  adsb.cs_c1                     0:40:6     uint
 field  adsb.cs_c2                     0:46:6     uint
 field  adsb.cs_c3                     0:52:6     uint
@@ -77,9 +80,10 @@ field  adsb.cs_c8                     0:82:6     uint
 # Aircraft identification, type code 4.
 kind      identification-tc4
 when      0:32:5     4
-requires  adsb.icao adsb.category adsb.cs_c1 adsb.cs_c8
+requires  adsb.icao callsign
 field  adsb.tc                        0:32:5     uint
 field  adsb.category                  0:37:3     uint
+field  callsign                       0:40:48    chars:icao6
 field  adsb.cs_c1                     0:40:6     uint
 field  adsb.cs_c2                     0:46:6     uint
 field  adsb.cs_c3                     0:52:6     uint

@@ -1,0 +1,13 @@
+{
+  "name": "identification-callsign-to-geojson",
+  "from": "adsb",
+  "to": "geojson",
+  "input": "8d4840d6202cc371c32ce0576098",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"callsign\":\"KLM1023\"}}",
+  "model": {
+    "@kind": "identification-tc4",
+    "callsign": "KLM1023"
+  },
+  "source": "specification",
+  "reference": "pyModeS _callsign.py (the 6-bit alphabet: 1-26 A-Z, 32 space, 48-57 0-9) and engine-spec 0.15 `chars:icao6`; published message 8D4840D6202CC371C32CE0576098 (1090 Megahertz Riddle, chapter 2, as vector 30): the eight characters as the callsign; no position, so geometry null"
+}

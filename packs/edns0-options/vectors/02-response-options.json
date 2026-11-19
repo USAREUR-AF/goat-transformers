@@ -1,0 +1,15 @@
+{
+  "name": "response-options",
+  "from": "edns0-options",
+  "to": "edns0-options",
+  "input": "0003000b6e73312e6578616d706c65000a001024a1c4d5e6f708090011223344556677000c0006000000000000000f00020012",
+  "expect": "0003000b6e73312e6578616d706c65000a001024a1c4d5e6f708090011223344556677000c0006000000000000000f00020012",
+  "model": {
+    "edns0.opt3_nsid": "6e73312e6578616d706c65",
+    "edns0.opt10_cookie": "24a1c4d5e6f708090011223344556677",
+    "edns0.opt12_padding": "000000000000",
+    "edns0.opt15_extended_dns_error": "0012"
+  },
+  "source": "constructed",
+  "reference": "RFC 6891 section 6.1.2 (option format); an NSID, a client and server cookie, six octets of padding and an extended DNS error with info-code 18 and no text, each as hex; written by tools/gen/ietf-options-vectors.py"
+}

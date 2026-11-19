@@ -1,0 +1,13 @@
+{
+  "name": "unregistered-code-kept-as-residue",
+  "from": "dhcpv6-options",
+  "to": "dhcpv6-options",
+  "input": "0001000e000100012f1e2d3c001122334455fde80002cafe0096000101",
+  "expect": "0001000e000100012f1e2d3c0011223344550096000101fde80002cafe",
+  "model": {
+    "dhcpv6.opt1_clientid": "000100012f1e2d3c001122334455",
+    "dhcpv6.opt150_ialocator": "01"
+  },
+  "source": "constructed",
+  "reference": "RFC 9915 section 21 (option format and the sizes of the integer options); code 65000 is not in the registry and has no line: it is residue and is written back after the mapped options; code 150 is mapped as hex; written by tools/gen/ietf-options-vectors.py"
+}

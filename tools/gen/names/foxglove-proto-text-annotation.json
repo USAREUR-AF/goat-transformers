@@ -1,0 +1,19 @@
+{
+ "1.1": "timestamp_seconds",
+ "1.2": "timestamp_nanos",
+ "2.1": "position_x",
+ "2.2": "position_y",
+ "3": "text_annotation_text",
+ "4": "text_annotation_font_size",
+ "5.1": "text_color_r",
+ "5.2": "text_color_g",
+ "5.3": "text_color_b",
+ "5.4": "text_color_a",
+ "6.1": "background_color_r",
+ "6.2": "background_color_g",
+ "6.3": "background_color_b",
+ "6.4": "background_color_a",
+ "7[]": "text_annotation_metadata",
+ "foxglove.KeyValuePair:1": "key_value_pair_key",
+ "foxglove.KeyValuePair:2": "key_value_pair_value"
+}

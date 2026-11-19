@@ -41,6 +41,7 @@ Usage: see --help. Run with `python3 -I`.
 import argparse
 import collections
 import decimal
+import fractions
 import hashlib
 import json
 import os
@@ -946,7 +947,45 @@ def dec_value(v, tr, where):
         return 1 if v else 0
     if tr == "iso8601_ms":
         return iso_to_ms(v)
+    if tr.startswith("iscale:"):
+        if isinstance(v, bool) or not isinstance(v, (int, float)):
+            raise GenError("self-check: %s is not a number" % where)
+        factor, offset = iscale_params(tr)
+        r = fractions.Fraction(v) if isinstance(v, int) else fractions.Fraction(decimal.Decimal(repr(v)))
+        x = r * factor
+        # round half away from zero (engine-spec 0.15, ruling 4)
+        n = (abs(x.numerator) * 2 + x.denominator) // (2 * x.denominator)
+        return (n if x >= 0 else -n) + offset
     raise GenError("self-check: transform %s" % tr)
+
+
+def iscale_params(tr):
+    """(factor, offset) of `iscale:<factor>[:<offset>]`: an integer or `num/den` factor,
+    an integer offset (engine-spec 0.15, Exact factors)."""
+    parts = tr.split(":")
+    if len(parts) not in (2, 3) or parts[0] != "iscale" or not re.fullmatch(r"-?\d+(/\d+)?", parts[1]) or \
+            (len(parts) == 3 and not re.fullmatch(r"-?\d+", parts[2])):
+        raise GenError("transform %r: not iscale:<factor>[:<offset>]" % tr)
+    factor = fractions.Fraction(parts[1])
+    if factor == 0:
+        raise GenError("transform %r: factor 0" % tr)
+    return factor, int(parts[2]) if len(parts) == 3 else 0
+
+
+def exact_decimal(q):
+    """The exact plain-decimal text of a Fraction, or None when it does not terminate
+    within 18 fraction digits (engine-spec 0.15, iscale encode)."""
+    sign = "-" if q < 0 else ""
+    q = abs(q)
+    whole, rest = divmod(q.numerator, q.denominator)
+    digits = ""
+    while rest and len(digits) < 18:
+        rest *= 10
+        d, rest = divmod(rest, q.denominator)
+        digits += str(d)
+    if rest:
+        return None
+    return sign + str(whole) + ("." + digits if digits else "")
 
 
 def iso_to_ms(s):
@@ -984,6 +1023,15 @@ def enc_value(v, tr):
         return v == 1
     if tr == "iso8601_ms":
         return ms_to_iso(int(v))
+    if tr.startswith("iscale:"):
+        factor, offset = iscale_params(tr)
+        q = fractions.Fraction(int(v) - offset) / factor
+        if q.denominator == 1:
+            return int(q)
+        text = exact_decimal(q)
+        if text is None:
+            raise GenError("self-check: %s does not encode %r exactly" % (tr, v))
+        return Raw(text)
     raise GenError(tr)
 
 
@@ -1291,6 +1339,11 @@ def sample(leaf, seed, shared=None):
             return v
     if shared in ("time_ms",):
         ms = 1700000000000 + r % 100000000000
+        st = getattr(leaf, "shared_transform", "") or ""
+        if st.startswith("iscale:"):
+            # a whole number on the wire, which the transform reads back exactly
+            factor, offset = iscale_params(st)
+            return int((fractions.Fraction(ms - offset) / factor).__floor__())
         return ms_to_iso(ms) if leaf.transform == "iso8601_ms" or (leaf.jtype == "string") else ms
     if shared == "lat":
         return [38.8977, -33.865, 51.4775, 21.3069][r % 4]
@@ -1396,6 +1449,9 @@ def run(argv=None):
     ap.add_argument("--when", action="append", default=[], metavar="PATH=VALUE", help="a common `when`")
     ap.add_argument("--map", action="append", default=[], metavar="KIND:PATH=KEY",
                     help="bind the leaf at PATH of KIND (or * for every kind) to a shared key")
+    ap.add_argument("--scale", action="append", default=[], metavar="KIND:PATH=iscale:FACTOR[:OFFSET]",
+                    help="the line of a --map binding reads the number through this transform "
+                         "(engine-spec 0.15), e.g. POSIX seconds to time_ms with iscale:1000")
     ap.add_argument("--wire", choices=("json", "geojson"), default="json")
     ap.add_argument("--top-level-members", metavar="NAME,...",
                     help="geojson: the only top-level members to map (others are residue)")
@@ -1493,6 +1549,20 @@ def run(argv=None):
         if st == "float" and leaf.jtype == "integer":
             leaf.shared_transform = "float"
         bound.append((k, path, key, leaf))
+    for spec in a.scale:
+        kn, rest = spec.split(":", 1) if ":" in spec else (spec, "")
+        path, tr = parse_kv(rest, "--scale")
+        iscale_params(tr)
+        hits = [(k, p, key, leaf) for k, p, key, leaf in bound
+                if leaf is not None and p == path and (kn == "*" or k["label"] == kn)]
+        if not hits:
+            raise GenError("--scale %s: no --map binding at that path" % spec)
+        for k, p, key, leaf in hits:
+            if leaf.jtype not in ("integer", "number"):
+                raise GenError("--scale %s: the leaf is %s, not a number" % (spec, leaf.jtype))
+            if shared_keys[key][0] != "int":
+                raise GenError("--scale %s: iscale yields int, the key %s is %s" % (spec, key, shared_keys[key][0]))
+            leaf.shared_transform = tr
 
     # model module
     module_keys = collections.OrderedDict()
@@ -1917,7 +1987,10 @@ def write_md(a, reg, kinds, bound, keys, lists, vectors, cross, use_kinds):
                 ev = " / ".join('"%s"' % d for d in leaf.node.descs[:2]) or "see the notes below"
                 w.append("| `%s` | `%s` | `%s` (%s, %s) | %s%s | %s |" % (
                     k["name"], path, key, KEYS_CACHE.get(key, ("?", "?"))[0], KEYS_CACHE.get(key, ("?", "?"))[1],
-                    leaf.jtype, (", " + leaf.node.format) if leaf.node.format else "", ev.replace("|", "\\|")))
+                    leaf.jtype, ((", " + leaf.node.format) if leaf.node.format else "") +
+                    ((", read with `%s`" % leaf.shared_transform)
+                     if str(getattr(leaf, "shared_transform", "")).startswith("iscale:") else ""),
+                    ev.replace("|", "\\|")))
         w.append("\nEach bound path also has its raw key on a second line (ruling 16 of 0.5): the shared")
         w.append("key first, so encode writes the shared value when the entity has it.\n")
     else:

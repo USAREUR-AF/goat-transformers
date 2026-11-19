@@ -1,0 +1,14 @@
+{
+  "name": "gen-compressed_video-roundtrip",
+  "from": "foxglove-proto-compressed-video",
+  "to": "foxglove-proto-compressed-video",
+  "input": "0a050864108901120a6672616d655f69642d322208666f726d61742d33",
+  "expect": "0a050864108901120a6672616d655f69642d322208666f726d61742d33",
+  "model": {
+    "@kind": "compressed_video",
+    "foxgloveprotocompressedvideo.timestamp_seconds": "100",
+    "foxgloveprotocompressedvideo.timestamp_nanos": "137",
+    "foxgloveprotocompressedvideo.compressed_video_frame_id": "frame_id-2",
+    "foxgloveprotocompressedvideo.compressed_video_format": "format-3"
+  }
+}

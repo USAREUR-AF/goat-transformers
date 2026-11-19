@@ -269,7 +269,7 @@ field  ros2mavros.file_entry_size  msg.size  int
 
 kind      gpsinput
 when      type  mavros_msgs/msg/GPSINPUT
-requires  ros2mavros.gpsinput_header_stamp_sec
+requires  lat lon ros2mavros.gpsinput_fix_type
 field  ros2mavros.gpsinput_header_stamp_sec  msg.header.stamp.sec  int
 field  ros2mavros.gpsinput_header_stamp_nanosec  msg.header.stamp.nanosec  int
 field  ros2mavros.gpsinput_header_frame_id  msg.header.frame_id  string
@@ -278,7 +278,9 @@ field  ros2mavros.gpsinput_gps_id  msg.gps_id  int
 field  ros2mavros.gpsinput_ignore_flags  msg.ignore_flags  int
 field  ros2mavros.gpsinput_time_week_ms  msg.time_week_ms  int
 field  ros2mavros.gpsinput_time_week  msg.time_week  int
+field  lat  msg.lat  scale:1/10000000
 field  ros2mavros.gpsinput_lat  msg.lat  int
+field  lon  msg.lon  scale:1/10000000
 field  ros2mavros.gpsinput_lon  msg.lon  int
 field  ros2mavros.gpsinput_alt  msg.alt  float
 field  ros2mavros.gpsinput_hdop  msg.hdop  float
@@ -294,12 +296,14 @@ field  ros2mavros.gpsinput_yaw  msg.yaw  int
 
 kind      gpsraw
 when      type  mavros_msgs/msg/GPSRAW
-requires  ros2mavros.gpsraw_header_stamp_sec
+requires  lat lon ros2mavros.gpsraw_fix_type
 field  ros2mavros.gpsraw_header_stamp_sec  msg.header.stamp.sec  int
 field  ros2mavros.gpsraw_header_stamp_nanosec  msg.header.stamp.nanosec  int
 field  ros2mavros.gpsraw_header_frame_id  msg.header.frame_id  string
 field  ros2mavros.gpsraw_fix_type  msg.fix_type  int
+field  lat  msg.lat  scale:1/10000000
 field  ros2mavros.gpsraw_lat  msg.lat  int
+field  lon  msg.lon  scale:1/10000000
 field  ros2mavros.gpsraw_lon  msg.lon  int
 field  ros2mavros.gpsraw_alt  msg.alt  int
 field  ros2mavros.gpsraw_eph  msg.eph  int
@@ -307,6 +311,7 @@ field  ros2mavros.gpsraw_epv  msg.epv  int
 field  ros2mavros.gpsraw_vel  msg.vel  int
 field  ros2mavros.gpsraw_cog  msg.cog  int
 field  ros2mavros.gpsraw_satellites_visible  msg.satellites_visible  int
+field  hae  msg.alt_ellipsoid  scale:1/1000
 field  ros2mavros.gpsraw_alt_ellipsoid  msg.alt_ellipsoid  int
 field  ros2mavros.gpsraw_h_acc  msg.h_acc  int
 field  ros2mavros.gpsraw_v_acc  msg.v_acc  int

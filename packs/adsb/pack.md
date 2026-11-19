@@ -4,18 +4,19 @@ ADS-B on Mode S Extended Squitter: the 112-bit downlink format 17 message.
 Public. Field layouts are from "The 1090 Megahertz Riddle" (Junzi Sun, second
 edition, https://mode-s.org/1090mhz/), which documents ICAO Annex 10 Volume IV,
 ICAO Doc 9871 and RTCA DO-260B. I/O is hex text (`spec/engine-spec.md`, bits
-wire). Needs engine version 0.9 (`absent`; kinds, `bit_order`, fields past their word).
+wire). Needs engine version 0.15 (`chars:icao6`; 0.9 `absent`; kinds, `bit_order`, fields past their word).
 
 Uses the modules `core` and `adsb` (`model/adsb.def`). `pack.def` is maintained
 by hand.
 
-## This pack maps no `core` key
+## The one `core` key: `callsign`
 
-Every field decodes to a raw unsigned integer in the `adsb` module. Position,
-identity, altitude, speed and course each need a decoding step the pack
-language does not have, listed under "Kept raw" below. A conversion from
-`adsb` to `geojson` therefore produces a feature with `null` geometry and no
-properties, and no other format can be encoded as `adsb`.
+Every field decodes to a raw unsigned integer in the `adsb` module, and the
+identification message's characters also give `callsign` (below). Position,
+altitude, speed and course each need a decoding step the pack language does
+not have, listed under "Kept raw" below. A conversion from `adsb` to
+`geojson` therefore produces a feature with `null` geometry and, for an
+identification message, the callsign.
 
 The 24-bit ICAO address is `adsb.icao`, an integer. It is not mapped to `uid`,
 which is a string.
@@ -104,7 +105,6 @@ messages with published decoded values (vectors 41-43).
 | Value | Keys | Why it is raw | Addition that would map it |
 |---|---|---|---|
 | Position | `adsb.cpr_lat`, `adsb.cpr_lon`, `adsb.cpr_odd` | Compact Position Reporting: 17-bit fractions of a latitude or longitude zone. A position needs an even and an odd message from the same aircraft within about ten seconds, or one message and a reference position within 180 NM (45 NM on the surface). One message alone has no position. | Not a pack-language feature: a stateful stage outside the pack that pairs messages by `adsb.icao` and emits `lat` / `lon`. The pack gives that stage its inputs. |
-| Callsign | `adsb.cs_c1` ... `adsb.cs_c8` | Eight 6-bit codes in the ICAO character set (1-26 = A-Z, 32 = space, 48-57 = 0-9). `ascii` reads 8-bit bytes. | A 6-bit character-set transform over the 48 bits, for example `chars6:icao`, yielding the string `callsign`, trailing spaces removed. |
 | Barometric altitude | `adsb.alt_baro_raw` | 12 bits with the Q bit in the middle. Q = 1: remove it, the 11 remaining bits x 25 ft - 1000 ft. Q = 0: a Gray code in 100 ft steps. Barometric altitude is also not `hae`. | A transform that removes a bit and scales (`bitdrop:<index>` then `uscale`), a Gray-code transform for Q = 0, and a `when` on the Q bit to choose. The result belongs in a pressure-altitude key, not `hae`. |
 | GNSS height | `adsb.gnss_height_m` | Whole meters, linear. The source says "the height of aircraft in meters" from GNSS and does not name the datum, so it is not mapped to `hae`. | None: `uscale:1` to `hae` once the datum is confirmed from DO-260B. Without `lat` / `lon` the GeoJSON geometry stays `null` either way. |
 | Ground velocity | `adsb.ew_sign`, `adsb.ew_raw`, `adsb.ns_sign`, `adsb.ns_raw` | Sign bit and magnitude, magnitude offset by one (speed = raw - 1 kt, raw 0 = no information), scale x 4 in subtype 2. | A sign-magnitude transform with factor and offset, for example `smscale:<factor>:<offset>` over the 11 bits, plus an "absent value" argument: gives `track.vel_east_ms` and `track.vel_north_ms` (factor 0.514444, x 4 in the subtype 2 kinds). `speed_ms` and `course` need a two-field polar conversion on top. |
@@ -149,10 +149,31 @@ first value, 0 (engine-spec 0.9 ruling 7); no vector of version 0.1 holds one.
 The keys stay raw: the sign-and-magnitude and piecewise values still need the
 transforms listed under "Kept raw".
 
+## `callsign` (engine-spec 0.15)
+
+In the four identification kinds (type codes 1-4) the eight 6-bit characters,
+ME bits 9-56 (`0:40:48`), are also read as the core key `callsign` with
+`chars:icao6`, on a line before the eight raw keys `adsb.cs_c1` ... `adsb.cs_c8`,
+which stay. Evidence: pyModeS `_callsign.py` builds the alphabet of the field:
+codes 1-26 are `A`-`Z`, 32 is space, 48-57 are `0`-`9`, and every other code is
+invalid; `callsign` is a human-readable name. Decode removes trailing spaces
+(the transform's rule for `icao6`); encode pads with spaces. A character code
+outside the set is `transform-decode`, so such a message no longer decodes at
+all (vector `identification-character-outside-the-set`).
+
+The callsign line comes first, so on encode it wins over the raw characters
+where both are present (ruling 5 of 0.5). `identification-tc4` now requires
+`adsb.icao` and `callsign`, so an entity from another format that has a
+callsign, with the 24-bit address supplied as context (`--set
+adsb.icao=<integer>`), is written as type code 4 with category 0. The pack
+does not compute the parity: such a message carries parity 0 and is not
+valid on the air; the caller computes it.
+
 ## Vectors
 
-50 vectors under `vectors/`. Vectors 01-45 are maintained by hand; 46-50 are
-written by `tools/gen/adsb-vectors.py` (`--check` compares them with the tree).
+53 vectors under `vectors/`, and one under `packs/geojson/vectors/to-adsb-*`.
+Vectors 01-04 and 46 on are written by `tools/gen/adsb-vectors.py` (`--check`
+compares them with the tree); 05-45 are maintained by hand.
 
 | Vectors | Content | Source |
 |---|---|---|
@@ -163,6 +184,12 @@ written by `tools/gen/adsb-vectors.py` (`--check` compares them with the tree).
 | 46-48 | one same-format round trip per `acas-ra-*` kind, parity computed as for 01-29 | constructed |
 | 49 | threat type indicator 3, `expect_error: no-kind` | constructed |
 | 50 | airborne velocity with east-west and vertical-rate magnitude 0 and GNSS-baro difference 127: no keys for them; 127 written back as 0 | constructed |
+| 51, 52 | the published KLM1023 identification to GeoJSON and to CoT: the callsign carried | book, chapter 2 |
+| 53 | the identification round trip of version 0.2, whose characters lie outside the ICAO set: `transform-decode` | constructed |
+| `geojson/vectors/to-adsb-callsign-to-identification-geojson` | a GeoJSON callsign with the address in the context, written as type code 4 | constructed |
+
+Vectors 01-04 were rewritten for version 0.3: their characters were any
+6-bit numbers and are now letters and digits, with the parity recomputed.
 
 Before writing vectors 30-43 the generator decodes each published message
 with the pack and checks the raw values against the published decoded values

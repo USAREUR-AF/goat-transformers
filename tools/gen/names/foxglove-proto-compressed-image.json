@@ -1,0 +1,6 @@
+{
+ "1.1": "timestamp_seconds",
+ "1.2": "timestamp_nanos",
+ "3": "compressed_image_format",
+ "4": "compressed_image_frame_id"
+}

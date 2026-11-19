@@ -44,6 +44,7 @@ field  sdsqrp.truncated  TRUNCATED  bool
 field  sdsqrp.as_of_ms  AS_OF_MS  int
 field  sdsqrp.stale  STALE  bool
 field  sdsqrp.elapsed_ms  ELAPSED_MS  int
+field  time_ms  GENERATED_AT_MS  int
 field  sdsqrp.generated_at_ms  GENERATED_AT_MS  int
 field  sdsqrp.etag  ETAG  string
 field  sdsqrp.cid  CID  string

@@ -1,0 +1,9 @@
+{
+  "name": "identification-callsign-to-cot-xml",
+  "from": "adsb-df18",
+  "to": "cot-xml",
+  "input": "90406b902015a678d4d220aa4bda",
+  "expect": "<event version=\"2.0\" type=\"a-u-X\"><point hae=\"9999999\" ce=\"9999999\" le=\"9999999\"/><detail><contact callsign=\"EZY85MH\"/></detail></event>",
+  "source": "specification",
+  "reference": "pyModeS _callsign.py (the 6-bit alphabet: 1-26 A-Z, 32 space, 48-57 0-9) and engine-spec 0.15 `chars:icao6`; the same message; cot-xml canonical form by hand from its pack, with its point defaults; the 24-bit address is an integer and is not uid"
+}

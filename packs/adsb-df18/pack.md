@@ -4,7 +4,7 @@ ADS-B on Mode S Extended Squitter downlink format 18: the 112-bit message that
 equipment other than a transponder sends, and that ground stations use for
 TIS-B and ADS-R. Public. Every layout is from pyModeS (GPL-3.0, commit
 `4bf083284c0d9878ca0c88f16b9b5f6514ca194a`), restated; no other source was
-read for this pack. I/O is hex text. Needs engine version 0.9 (`absent`).
+read for this pack. I/O is hex text. Needs engine version 0.15 (`chars:icao6`; 0.9 `absent`).
 
 Uses the modules `core` and `adsb` (`model/adsb.def`). `pack.def` is maintained
 by hand, kind for kind with the pack `adsb`. Its vectors are written by
@@ -38,9 +38,12 @@ with the same raw keys of the module `adsb`, and differs in three places:
 
 ## Shared keys
 
-None, as in `adsb`: each value needs a decoding step the pack language does
-not have (CPR position, Q-bit altitude, interleaved Mode A code, sign and
-magnitude velocity); `adsb/pack.md`, "Kept raw", lists them and the addition
+`callsign` from the identification kinds, as in `adsb` (`adsb/pack.md`,
+"`callsign`"): `chars:icao6` over ME bits 9-56, the raw characters kept,
+`identification-tc4` requiring `adsb.icao` and `callsign`. Nothing else: each
+other value needs a decoding step the pack language does not have (CPR
+position, Q-bit altitude, interleaved Mode A code, sign and magnitude
+velocity); `adsb/pack.md`, "Kept raw", lists them and the addition
 each needs. The keys are those of the module `adsb`, so a conversion between
 `adsb-df18` and `adsb` carries them, with two limits: the target writes its own
 downlink format, and the target kind is chosen by `requires`, so within a
@@ -93,7 +96,7 @@ transforms listed under "Kept raw".
 
 ## Vectors
 
-40 vectors under `vectors/`, written and replayed by
+43 vectors under `vectors/`, and one under `packs/cot-xml/vectors/to-adsb-df18-*`, written and replayed by
 `tools/gen/adsb-vectors.py`, which reads no pack and imports no engine
 (`--check` compares its output with the tree).
 
@@ -107,3 +110,10 @@ transforms listed under "Kept raw".
 | 38 | type code 0: `no-kind` | constructed |
 | 39 | ACAS threat type indicator 3: `no-kind` | constructed |
 | 40 | surface position with movement code 126: no movement key, written back as 0 | constructed |
+| 41, 42 | the published EZY85MH identification (vector 33) to GeoJSON and to CoT: the callsign carried | pyModeS |
+| 43 | the identification round trip of version 0.2, characters outside the ICAO set: `transform-decode` | constructed |
+| `cot-xml/vectors/to-adsb-df18-callsign-to-identification-cot-xml` | a CoT callsign with the address in the context, written as type code 4 | constructed |
+
+Vectors 01-04 were rewritten for version 0.3: letters and digits in place of
+any 6-bit numbers, parity recomputed.
+

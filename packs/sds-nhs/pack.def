@@ -9,6 +9,7 @@ source        "https://github.com/DigitalArsenal/spacedatastandards.org at commi
 uses          sdsnhs
 wire          json
 field  sdsnhs.node_id  NODE_ID  string
+field  time_ms  GENERATED_AT_MS  int
 field  sdsnhs.generated_at_ms  GENERATED_AT_MS  int
 field  sdsnhs.started_at_ms  STARTED_AT_MS  int
 field  sdsnhs.uptime_s  UPTIME_S  int

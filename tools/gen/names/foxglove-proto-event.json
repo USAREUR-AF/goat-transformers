@@ -1,0 +1,9 @@
+{
+ "1.1": "start_time_seconds",
+ "1.2": "start_time_nanos",
+ "2.1": "end_time_seconds",
+ "2.2": "end_time_nanos",
+ "3[]": "event_metadata",
+ "foxglove.KeyValuePair:1": "key_value_pair_key",
+ "foxglove.KeyValuePair:2": "key_value_pair_value"
+}

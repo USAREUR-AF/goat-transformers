@@ -2,8 +2,8 @@
   "name": "roundtrip-hil_gps",
   "from": "mavlink2",
   "to": "mavlink2",
-  "input": "fd1600000672727100004bcac05300000000a0061c0660f9e3f9c8c783c8a77e",
-  "expect": "fd1600000672727100004bcac05300000000a0061c0660f9e3f9c8c783c8a77e",
+  "input": "fd1600000772727100004bcac05300000000a0061c0660f9e3f9c8c783c8a77e",
+  "expect": "fd1600000772727100004bcac05300000000a0061c0660f9e3f9c8c783c8a77e",
   "model": {
     "@kind": "hil_gps"
   }

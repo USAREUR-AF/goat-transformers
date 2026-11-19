@@ -1,0 +1,35 @@
+# The edns0 module: one key per registered option of the edns0-options pack, named
+# opt<code>_<registry name>. A value is the option-data as hex unless the line
+# says otherwise.
+module        edns0
+version       0.1.0
+distribution  public
+source        "RFC 6891, Extension Mechanisms for DNS (EDNS(0)), section 6.1.2 (option format); IETF Trust, BCP 78; layout restated, no text copied"
+source        "IANA registry Domain Name System (DNS) Parameters, DNS EDNS0 Option Codes (OPT) (https://www.iana.org/assignments/dns-parameters), CC0 1.0 per the IANA and IETF joint statement of 10 November 2021: option codes and names"
+key  opt1_llq                                       string  -  "option 1, LLQ ([RFC 8764]): the option-data as lowercase hex"
+key  opt2_update_lease                              string  -  "option 2, Update Lease ([RFC 9664]): the option-data as lowercase hex"
+key  opt3_nsid                                      string  -  "option 3, NSID ([RFC 5001]): the option-data as lowercase hex"
+key  opt5_dau                                       string  -  "option 5, DAU ([RFC 6975]): the option-data as lowercase hex"
+key  opt6_dhu                                       string  -  "option 6, DHU ([RFC 6975]): the option-data as lowercase hex"
+key  opt7_n3u                                       string  -  "option 7, N3U ([RFC 6975]): the option-data as lowercase hex"
+key  opt8_edns_client_subnet                        string  -  "option 8, edns-client-subnet ([RFC 7871]): the option-data as lowercase hex"
+key  opt9_edns_expire                               string  -  "option 9, EDNS EXPIRE ([RFC 7314]): the option-data as lowercase hex"
+key  opt10_cookie                                   string  -  "option 10, COOKIE ([RFC 7873]): the option-data as lowercase hex"
+key  opt11_edns_tcp_keepalive                       string  -  "option 11, edns-tcp-keepalive ([RFC 7828]): the option-data as lowercase hex"
+key  opt12_padding                                  string  -  "option 12, Padding ([RFC 7830]): the option-data as lowercase hex"
+key  opt13_chain                                    string  -  "option 13, CHAIN ([RFC 7901]): the option-data as lowercase hex"
+key  opt14_edns_key_tag                             string  -  "option 14, edns-key-tag ([RFC 8145]): the option-data as lowercase hex"
+key  opt15_extended_dns_error                       string  -  "option 15, Extended DNS Error ([RFC 8914]): the option-data as lowercase hex"
+key  opt16_edns_client_tag                          string  -  "option 16, EDNS-Client-Tag ([draft-bellis-dnsop-edns-tags-01]): the option-data as lowercase hex"
+key  opt17_edns_server_tag                          string  -  "option 17, EDNS-Server-Tag ([draft-bellis-dnsop-edns-tags-01]): the option-data as lowercase hex"
+key  opt18_report_channel                           string  -  "option 18, Report-Channel ([RFC 9567]): the option-data as lowercase hex"
+key  opt19_zoneversion                              string  -  "option 19, ZONEVERSION ([RFC 9660]): the option-data as lowercase hex"
+key  opt20_mqtype_query                             string  -  "option 20, MQTYPE-Query ([RFC 10029]): the option-data as lowercase hex"
+key  opt21_mqtype_response                          string  -  "option 21, MQTYPE-Response ([RFC 10029]): the option-data as lowercase hex"
+key  opt22_ede_extra_text_language                  string  -  "option 22, EDE-EXTRA-TEXT-LANGUAGE ([draft-muks-dns-filtering-05]): the option-data as lowercase hex"
+key  opt23_filtering_contact                        string  -  "option 23, FILTERING-CONTACT ([draft-muks-dns-filtering-05]): the option-data as lowercase hex"
+key  opt24_filtering_organization                   string  -  "option 24, FILTERING-ORGANIZATION ([draft-muks-dns-filtering-05]): the option-data as lowercase hex"
+key  opt25_filtering_db                             string  -  "option 25, FILTERING-DB ([draft-muks-dns-filtering-05]): the option-data as lowercase hex"
+key  opt26_structured_dns_error                     string  -  "option 26, Structured DNS Error ([RFC-ietf-dnsop-structured-dns-error-27]): the option-data as lowercase hex"
+key  opt20292_umbrella_ident                        string  -  "option 20292, Umbrella Ident ([https://developer.cisco.com/docs/cloud-security/#!integrating-network-devices/rdata-description]; [Cisco_CIE_DNS_team]): the option-data as lowercase hex"
+key  opt26946_deviceid                              string  -  "option 26946, DeviceID ([https://developer.cisco.com/docs/cloud-security/#!network-devices-getting-started/response-codes]; [Cisco_CIE_DNS_team]): the option-data as lowercase hex"

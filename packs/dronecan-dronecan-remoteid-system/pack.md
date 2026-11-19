@@ -46,15 +46,24 @@ own bits.
 | | Count |
 |---|---|
 | `field` lines | 13 |
-| model keys | 13 |
+| model keys | 12 |
 | lists (dynamic arrays) | 1 |
 | kinds | 0 |
 | fields not mapped | 0 |
-| vectors | 1 |
+| vectors | 2 |
 
 No key of this pack is bound to a `core` or `track` key: units and frames are
 stated in the definition's comments, and the generator binds only the
 latitude/longitude pairs it lists with their evidence.
+
+Bound to core `time_ms` (epoch milliseconds UTC) by the generator's TIME table,
+with an integer scale of engine-spec 0.15:
+
+| Field | Core key | Transform | Evidence |
+|---|---|---|---|
+| `timestamp` | `time_ms` | `uiscale:1000:1546300800000` with `swap` | uint32, seconds since 2019-01-01 00:00:00 UTC as the definition states, which is 1546300800 s after the Unix epoch |
+
+The raw key the field had before stays declared in the module, not mapped.
 
 ## What is not mapped
 

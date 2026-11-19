@@ -1,0 +1,12 @@
+{
+  "name": "gen-key_value_pair-roundtrip",
+  "from": "foxglove-proto-key-value-pair",
+  "to": "foxglove-proto-key-value-pair",
+  "input": "0a056b65792d30120776616c75652d31",
+  "expect": "0a056b65792d30120776616c75652d31",
+  "model": {
+    "@kind": "key_value_pair",
+    "foxgloveprotokeyvaluepair.key_value_pair_key": "key-0",
+    "foxgloveprotokeyvaluepair.key_value_pair_value": "value-1"
+  }
+}

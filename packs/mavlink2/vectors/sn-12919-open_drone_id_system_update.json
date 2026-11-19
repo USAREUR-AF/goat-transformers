@@ -2,8 +2,8 @@
   "name": "sentinels-open_drone_id_system_update",
   "from": "mavlink2",
   "to": "mavlink2",
-  "input": "fd120001e9aa7b773200000000000000000000007ac46ade69254118",
-  "expect": "fd120001e9aa7b773200000000000000000000007ac46ade69254118",
+  "input": "fd120001e9aa7b773200000000000000000000007ac43bd5f0084118",
+  "expect": "fd120001e9aa7b773200000000000000000000007ac43bd5f0084118",
   "model": {
     "@kind": "open_drone_id_system_update",
     "@absent": [

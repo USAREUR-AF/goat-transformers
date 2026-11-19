@@ -9,6 +9,7 @@ source        "https://github.com/MobilityData/gbfs-json-schema at commit bae2d2
 source        "GBFS specification: https://github.com/MobilityData/gbfs (CC BY 3.0)"
 uses          gbfs10freebikestatus
 wire          json
+field  time_ms  last_updated  iscale:1000
 field  gbfs10freebikestatus.last_updated  last_updated  int
 field  gbfs10freebikestatus.ttl  ttl  int
 group  gbfs10freebikestatus.data_bikes  data.bikes

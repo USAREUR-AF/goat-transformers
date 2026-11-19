@@ -1,0 +1,92 @@
+{
+  "about": "The family and the domain of every public pack, for tools/catalog-figure.py. Families are tried in order; the first whose `exact` list names the pack, or one of whose `prefixes` begins the pack's name, holds it. A pack that no family holds, and a family that holds no pack, stop the tool. `members` lists, after the family's name, the distinct values its pattern captures from the names of its packs; `detail` is a fixed line. The domains `networks` and `maps` hold families that none of the other nine fit.",
+  "synthetic_prefixes": ["conformance", "demo-"],
+  "domains": [
+    {"id": "air", "name": "Air"},
+    {"id": "land", "name": "Land vehicles"},
+    {"id": "sea", "name": "Sea"},
+    {"id": "space", "name": "Space"},
+    {"id": "uncrewed", "name": "Uncrewed systems and robots"},
+    {"id": "c2", "name": "C2 and tactical"},
+    {"id": "sensors", "name": "Sensors"},
+    {"id": "transport", "name": "Transport"},
+    {"id": "iot", "name": "IoT"},
+    {"id": "networks", "name": "Networks"},
+    {"id": "maps", "name": "Maps, weather and alerts"}
+  ],
+  "families": [
+    {"name": "ASTERIX", "domain": "air", "prefixes": ["asterix-cat"], "members": {"pattern": "^asterix-cat([0-9]{3})", "label": "{n} categories"}},
+    {"name": "ADS-B", "domain": "air", "exact": ["adsb", "adsb-df18"], "detail": "DF17, DF18"},
+    {"name": "readsb JSON", "domain": "air", "prefixes": ["readsb-"]},
+    {"name": "GDL 90", "domain": "air", "exact": ["gdl90"]},
+
+    {"name": "CAN DBC (opendbc)", "domain": "land", "prefixes": ["dbc-"]},
+    {"name": "Baidu Apollo", "domain": "land", "prefixes": ["apollo-"]},
+    {"name": "Autoware (ROS 2)", "domain": "land", "prefixes": ["ros2-autoware-"]},
+    {"name": "Tier IV (ROS 2)", "domain": "land", "prefixes": ["ros2-tier4-"]},
+    {"name": "Eclipse KUKSA.val", "domain": "land", "prefixes": ["kuksa-"]},
+    {"name": "Tesla Fleet Telemetry", "domain": "land", "prefixes": ["tesla-fleet-"]},
+    {"name": "Waymo Open Dataset", "domain": "land", "prefixes": ["waymo-"]},
+    {"name": "OpenXC", "domain": "land", "exact": ["openxc-vehicle-message"]},
+
+    {"name": "NMEA 2000", "domain": "sea", "exact": ["nmea2000", "nmea2000-seq"]},
+    {"name": "NMEA 0183", "domain": "sea", "exact": ["nmea0183"]},
+    {"name": "AIS", "domain": "sea", "exact": ["ais", "ais-binary"]},
+
+    {"name": "Space Data Standards", "domain": "space", "prefixes": ["sds-"]},
+    {"name": "CCSDS NDM/XML", "domain": "space", "exact": ["ccsds-ndm-xml"]},
+    {"name": "CCSDS frames and packets", "domain": "space", "prefixes": ["ccsds-"], "detail": "AOS, TC, TM, CLCW, Space Packet"},
+
+    {"name": "ArduPilot DataFlash log", "domain": "uncrewed", "prefixes": ["ardupilot-log"]},
+    {"name": "PX4 ULog", "domain": "uncrewed", "prefixes": ["px4-ulog"]},
+    {"name": "Cyphal (UAVCAN v1)", "domain": "uncrewed", "prefixes": ["cyphal-"]},
+    {"name": "DroneCAN (UAVCAN v0)", "domain": "uncrewed", "prefixes": ["dronecan-"]},
+    {"name": "Open-RMF (ROS 2)", "domain": "uncrewed", "prefixes": ["ros2-rmf-"]},
+    {"name": "ROS 2 interface packages", "domain": "uncrewed", "prefixes": ["ros2-"]},
+    {"name": "MAVLink 2", "domain": "uncrewed", "exact": ["mavlink2"], "prefixes": ["mavlink2-"], "members": {"pattern": "^mavlink2-(.+)$", "label": "common and {n} dialects"}},
+    {"name": "Foxglove", "domain": "uncrewed", "prefixes": ["foxglove-"]},
+    {"name": "Remote ID (ASTM F3411)", "domain": "uncrewed", "exact": ["remote-id"]},
+    {"name": "DRIP (RFC 9575)", "domain": "uncrewed", "exact": ["drip"]},
+
+    {"name": "Cursor on Target", "domain": "c2", "prefixes": ["cot-"], "detail": "XML, protobuf"},
+    {"name": "UCI", "domain": "c2", "exact": ["uci", "uci-2.5"], "detail": "2.5, 2.6"},
+    {"name": "A-GRA", "domain": "c2", "exact": ["a-gra"]},
+    {"name": "C2SIM", "domain": "c2", "exact": ["c2sim"]},
+    {"name": "NVG", "domain": "c2", "exact": ["nvg"]},
+    {"name": "Canonical Track v2", "domain": "c2", "exact": ["canonical-track-v2"]},
+    {"name": "GeoTrackV1", "domain": "c2", "exact": ["geo-track-v1"]},
+
+    {"name": "NITF 2.1", "domain": "sensors", "prefixes": ["nitf-"], "members": {"pattern": "^nitf-tre-(.+)$", "label": "two headers and {n} TREs", "list": false}},
+    {"name": "ISA", "domain": "sensors", "exact": ["isa", "isa-message", "isa-ipl1", "isa-xml"], "detail": "IPL 1.6, 3.7, 4.7"},
+    {"name": "SAPIENT", "domain": "sensors", "exact": ["sapient", "sapient-v1"], "detail": "v1, v2"},
+    {"name": "MISB ST 0601", "domain": "sensors", "exact": ["misb-st0601"]},
+    {"name": "gpsd JSON", "domain": "sensors", "exact": ["gpsd-json"]},
+
+    {"name": "GBFS", "domain": "transport", "prefixes": ["gbfs-"], "members": {"pattern": "^gbfs-([0-9]+\\.[0-9]+)-", "label": "versions"}},
+    {"name": "GTFS Realtime", "domain": "transport", "prefixes": ["gtfs-realtime"]},
+    {"name": "GTFS Schedule", "domain": "transport", "prefixes": ["gtfs-"]},
+    {"name": "WZDx", "domain": "transport", "prefixes": ["wzdx-"]},
+    {"name": "NeTEx", "domain": "transport", "prefixes": ["netex-"]},
+    {"name": "MDS", "domain": "transport", "exact": ["mds"]},
+    {"name": "Valhalla", "domain": "transport", "exact": ["valhalla"]},
+
+    {"name": "FIWARE Smart Data Models", "domain": "iot", "prefixes": ["sdm-"]},
+    {"name": "Meshtastic", "domain": "iot", "prefixes": ["meshtastic"]},
+    {"name": "Sparkplug B", "domain": "iot", "exact": ["sparkplug-b"]},
+
+    {"name": "OpenTelemetry OTLP", "domain": "networks", "prefixes": ["otlp-"]},
+    {"name": "gNMI", "domain": "networks", "prefixes": ["gnmi-"]},
+    {"name": "IETF packet headers", "domain": "networks", "exact": ["dns-header", "icmp-header", "ipv4-header", "ipv6-header", "ntp-header", "tcp-header", "udp-header"], "members": {"pattern": "^(.+)-header$", "label": "", "upper": true, "rename": {"ipv4": "IPv4", "ipv6": "IPv6"}}},
+    {"name": "IETF option areas", "domain": "networks", "exact": ["dhcpv6-options", "edns0-options"], "members": {"pattern": "^(.+)-options$", "label": "", "upper": true, "rename": {"dhcpv6": "DHCPv6", "edns0": "EDNS(0)"}}},
+
+    {"name": "NWS weather.gov API", "domain": "maps", "prefixes": ["nws-"]},
+    {"name": "OpenStreetMap PBF", "domain": "maps", "prefixes": ["osm-pbf-"]},
+    {"name": "GeoJSON", "domain": "maps", "exact": ["geojson"]},
+    {"name": "Geobuf", "domain": "maps", "exact": ["geobuf"]},
+    {"name": "GPX", "domain": "maps", "exact": ["gpx"]},
+    {"name": "KML", "domain": "maps", "exact": ["kml"]},
+    {"name": "Mapbox Vector Tile", "domain": "maps", "exact": ["mvt"]},
+    {"name": "STAC Item", "domain": "maps", "exact": ["stac-item"]},
+    {"name": "CAP alerts", "domain": "maps", "exact": ["cap"]}
+  ]
+}

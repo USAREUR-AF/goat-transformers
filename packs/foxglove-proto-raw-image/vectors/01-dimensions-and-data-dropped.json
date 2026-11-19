@@ -1,0 +1,11 @@
+{
+  "name": "01-dimensions-and-data-dropped",
+  "from": "foxglove-proto-raw-image",
+  "to": "foxglove-proto-raw-image",
+  "input": "0a0b0880e2cfaa061080e59a7715020000001d0100000022056d6f6e6f382d02000000320210203a0663616d657261",
+  "expect": "0a0b0880e2cfaa061080e59a7722056d6f6e6f383a0663616d657261",
+  "model": {
+    "foxgloveprotorawimage.raw_image_encoding": "mono8",
+    "foxgloveprotorawimage.raw_image_frame_id": "camera"
+  }
+}

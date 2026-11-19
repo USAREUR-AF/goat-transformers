@@ -37,18 +37,18 @@ comparing six of them with the values the protocol fixes.
 
 | | Count |
 |---|---|
-| Messages in the source (common 13, standard 1, minimal 1) | 15 |
-| Kinds | 15 |
-| Payload fields in the source | 135 |
-| Payload fields mapped | 133 |
+| Messages in the source (common 14, standard 1, minimal 1) | 16 |
+| Kinds | 16 |
+| Payload fields in the source | 137 |
+| Payload fields mapped | 135 |
 | ... scalar to a raw `mavlink.` key | 108 |
 | ... `char[n]` to a string key (`ascii`) | 5 |
 | ... array of 2 to 8 elements, one key per element | 6 (25 element lines) |
 | ... `lat` / `lon` in degE7 to core `lat` / `lon` | 14 |
 | Payload fields not mapped (arrays of more than 8 elements) | 2 |
-| `field` lines in `pack.def` (3 common + per kind) | 155 |
-| Keys in module `mavlink` (3 frame-header + payload) | 131 |
-| Vectors (15 same-format round trips + 7 to geojson) | 22 |
+| `field` lines in `pack.def` (3 common + per kind) | 157 |
+| Keys in module `mavlink` (3 frame-header + payload) | 130 |
+| Vectors (16 same-format round trips + 9 to geojson) | 25 |
 
 ## What is mapped
 
@@ -98,9 +98,10 @@ Left raw on purpose:
   and `lat_int`). The `lat` / `lon` of `adsb_vehicle`, `ais_vessel` and
   `global_position_sensor` declare INT32_MAX for unknown; the pack states that as
   `absent` (Values that mean unknown, below), so they bind core `lat` / `lon`.
-- UTC epoch times in microseconds (`time_unix_usec`, `time_usec`, `time_utc`):
-  core `time_ms` is an integer and the only scaling transforms yield float; a
-  64-bit microsecond count scaled by 0.001 is not exact in a double.
+- Times the definition gives as "UNIX epoch time or time since system boot"
+  (most `time_usec` fields), times since boot, a date of manufacture and a count
+  of GPS seconds: only a time stated as since the Unix epoch is `time_ms`
+  (Times, below).
 - Altitude. MAVLink `alt` fields are above mean sea level; core `hae` is above
   the WGS84 ellipsoid.
 - Speed, course, heading and velocity components (`vel`, `cog`, `hdg`, `vx`…):
@@ -112,6 +113,25 @@ Each kind requires up to 6 of its own raw keys, the ones used by the fewest
 kinds, so encoding an entity that came from another format selects a kind only
 when the entity holds those `mavlink.` keys. No kind requires a core key, so a
 GeoJSON or CoT entity selects no kind (`no-kind`).
+For 1 kinds the required keys are all shared with at least one other kind
+that maps every one of them; an entity built from such a kind's keys with its
+kind cleared selects the first qualifying kind in id order: `system_time`.
+
+## Times
+
+A field is bound to core `time_ms` (epoch milliseconds UTC) when its definition
+states a time since the Unix epoch, or since a fixed UTC instant, and nothing
+else; the transform is an integer scale of engine-spec 0.15:
+
+| Kind | Field | Transform | The definition states |
+|---|---|---|---|
+| `system_time` | `time_unix_usec` | `uiscale:1/1000` | microseconds since the Unix epoch |
+| `utm_global_position` | `time` | `uiscale:1/1000` | microseconds since the Unix epoch at which the position applies |
+
+A microsecond count keeps whole milliseconds: decode rounds to the nearest
+millisecond (half away from zero) and encode writes that millisecond times 1000,
+so a frame whose count is not a whole number of milliseconds re-encodes rounded
+(`vectors/tm-*.json`). The raw keys these fields had stay declared in the module.
 
 ## Values that mean unknown
 
@@ -186,7 +206,7 @@ so input and expected output are identical. Values are inside each field's
 range; floats are multiples of 0.25 or 0.125; every other `uint64_t` sample has
 its top bit set.
 
-`vectors/x-NN-<kind>-to-geojson.json`: 7 full frames with a correct CRC,
+`vectors/x-NN-<kind>-to-geojson.json`: 9 full frames with a correct CRC,
 converted to GeoJSON. Expected output: `coordinates` = `[lon, lat]` in degrees
 (wire value / 10^7), `properties` empty because `geojson` carries no other key
 this pack maps.

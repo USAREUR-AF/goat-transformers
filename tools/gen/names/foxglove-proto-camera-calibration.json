@@ -1,0 +1,14 @@
+{
+ "1.1": "timestamp_seconds",
+ "1.2": "timestamp_nanos",
+ "4": "camera_calibration_distortion_model",
+ "5[]": "camera_calibration_d",
+ "6[]": "camera_calibration_k",
+ "7[]": "camera_calibration_r",
+ "8[]": "camera_calibration_p",
+ "9": "camera_calibration_frame_id",
+ "foxglove.CameraCalibration:5[]item": "camera_calibration_d_item",
+ "foxglove.CameraCalibration:6[]item": "camera_calibration_k_item",
+ "foxglove.CameraCalibration:7[]item": "camera_calibration_r_item",
+ "foxglove.CameraCalibration:8[]item": "camera_calibration_p_item"
+}

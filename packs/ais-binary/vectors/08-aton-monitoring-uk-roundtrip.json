@@ -1,0 +1,29 @@
+{
+  "name": "aton-monitoring-uk-roundtrip",
+  "from": "ais-binary",
+  "to": "ais-binary",
+  "input": "63`l7@0001i:>da9bH0``v0",
+  "expect": "63`l7@0001i:>da9bH0``v0",
+  "model": {
+    "@kind": "aton-monitoring-uk",
+    "ais.msg_type": "6",
+    "ais.repeat": "0",
+    "ais.mmsi": "244123456",
+    "aisbin.seqno": "0",
+    "ais.dest_mmsi": "1810",
+    "aisbin.retransmit": "1",
+    "ais.spare": "0",
+    "aisbin.dac": "235",
+    "aisbin.fid": "10",
+    "aisbin.aton_ana_int": "294",
+    "aisbin.aton_ana_ext1": "664",
+    "aisbin.aton_ana_ext2": "10",
+    "aisbin.aton_racon": "0",
+    "aisbin.aton_light": "2",
+    "aisbin.aton_health": "1",
+    "aisbin.aton_stat_ext": "31",
+    "aisbin.aton_off_pos": "0",
+    "ais.spare2": "0"
+  },
+  "source": "built by tools/gen/ais-binary-vectors.py from values chosen there; a type 6 message, DAC 235, FI 10, every field set from a fixed pattern within its range, text fields from the field's name, spare bits 0"
+}

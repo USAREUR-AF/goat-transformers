@@ -2,6 +2,6 @@
  "name": "gen-gbfs-residue",
  "from": "gbfs-2.1-gbfs",
  "to": "gbfs-2.1-gbfs",
- "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"last_updated\":1450163795,\"ttl\":18505,\"version\":\"2.1\"}",
- "expect": "{\"last_updated\":1450163795,\"ttl\":18505,\"version\":\"2.1\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"last_updated\":1790447896,\"ttl\":18505,\"version\":\"2.1\"}",
+ "expect": "{\"last_updated\":1790447896,\"ttl\":18505,\"version\":\"2.1\",\"x_residue\":\"r\",\"x_residue_n\":7}"
 }

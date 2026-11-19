@@ -1,0 +1,13 @@
+{
+  "name": "gen-raw_audio-roundtrip",
+  "from": "foxglove-proto-raw-audio",
+  "to": "foxglove-proto-raw-audio",
+  "input": "0a0508641089011a08666f726d61742d32",
+  "expect": "0a0508641089011a08666f726d61742d32",
+  "model": {
+    "@kind": "raw_audio",
+    "foxgloveprotorawaudio.timestamp_seconds": "100",
+    "foxgloveprotorawaudio.timestamp_nanos": "137",
+    "foxgloveprotorawaudio.raw_audio_format": "format-2"
+  }
+}

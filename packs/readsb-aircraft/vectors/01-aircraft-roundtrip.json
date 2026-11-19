@@ -12,7 +12,8 @@
     "course": "92.25",
     "readsb.alt_geom": "37950",
     "readsb.gs": "450",
-    "readsb.now": "1714566600.5"
+    "readsb.now": "1714566600.5",
+    "time_ms": "1714566600500"
   },
   "source": "derived by tools/gen/alerts-adsbjson-vectors.py from the format documentation and spec/engine-spec.md; no engine run",
   "reference": "readsb README-json.md (commit 88877b96), dump1090-fa README-json.md (commit 465e0633): aircraft.json keys; every documented member the pack maps; alt_baro, alert, spi, wd, ws, oat, tat and the scalars of lastPosition are residue and come back after the mapped members; the arrays mlat, tisb and nav_modes are not carried; 450.0 is written 450, 90.0 is written 90; the trailing spaces of flight are kept"
