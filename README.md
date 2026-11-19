@@ -1,13 +1,18 @@
 # goat-transformers
 
-[![conformance](https://github.com/USAREUR-AF/goat-transformers/actions/workflows/conformance.yml/badge.svg)](https://github.com/USAREUR-AF/goat-transformers/actions/workflows/conformance.yml)
-[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/figures/hub-dark.svg">
+  <img src="docs/figures/hub-light.svg" width="760" alt="Public formats, among them Cursor on Target, GeoJSON, SAPIENT, MAVLink 2, NMEA 2000, ADS-B, Remote ID and 27 ASTERIX categories, each connect to one shared model in the center. A dashed outer ring holds formats kept in a private overlay, which connect to the same shared model.">
+</picture>
 
 goat-transformers converts a message in any supported format to any other
 supported format, and each format is a data file that seven independently
 written engines read and must agree on, byte for byte. Below, the 25 bytes a
 drone broadcasts become a tactical-map event and a ship-instrument message, and
 no engine holds code for any of the three formats.
+
+[![conformance](https://github.com/USAREUR-AF/goat-transformers/actions/workflows/conformance.yml/badge.svg)](https://github.com/USAREUR-AF/goat-transformers/actions/workflows/conformance.yml)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 
 **1,958 formats · 11,884 message kinds · 14,789 conversion vectors · 7 engines**, counted
 by [`tools/repo-stats`](tools/repo-stats).
@@ -24,10 +29,6 @@ $ goat-xf convert --from canonical-track-v2 --to asterix-cat062 --set cat062.sac
 Commands 1 and 2: an ASTM F3411 Remote ID Location message becomes a Cursor on Target (CoT) event (`9999999` is CoT's "not known") and NMEA 2000 parameter group 129025.\
 Command 3: a track in JSON becomes 31 bytes of ASTERIX Category 062, equal byte for byte to the output of a hand-written encoder ([the table below](#conversions-and-what-carries)).
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/figures/hub-dark.svg">
-  <img src="docs/figures/hub-light.svg" width="760" alt="Public formats, among them Cursor on Target, GeoJSON, SAPIENT, MAVLink 2, NMEA 2000, ADS-B, Remote ID and 27 ASTERIX categories, each connect to one shared model in the center. A dashed outer ring holds formats kept in a private overlay, which connect to the same shared model.">
-</picture>
 
 ## The idea in five sentences
 
