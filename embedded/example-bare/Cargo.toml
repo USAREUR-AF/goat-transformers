@@ -1,0 +1,27 @@
+[package]
+name = "example-bare"
+version = "0.1.0"
+edition = "2021"
+description = "gt-core and one compiled plan as a static library for C firmware."
+license = "Apache-2.0"
+publish = false
+
+# A Rust library by default, so the host-side proof can run it. For C
+# firmware, build the static library for the target:
+#   cargo rustc -p example-bare --release --target thumbv7em-none-eabihf --crate-type staticlib
+[lib]
+path = "src/lib.rs"
+
+[dependencies]
+gt-core = { path = "../gt-core", default-features = false }
+
+[[bin]]
+name = "firmware"
+path = "src/bin/firmware.rs"
+test = false
+bench = false
+# an image for a bare-metal target only; see measure.sh
+required-features = ["firmware"]
+
+[features]
+firmware = []

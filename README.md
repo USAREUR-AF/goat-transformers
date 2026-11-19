@@ -263,6 +263,7 @@ beyond the standard library; `engines/<language>` holds it and
 | Rust, Go, Python, Java, C++, Erlang, Zig | the native engine in `engines/rust`, `go`, `python`, `java`, `cpp`, `erlang`, `zig` |
 | JavaScript or TypeScript, in Node or a browser | the WebAssembly module and its wrapper in [`bindings/wasm`](bindings/README.md) |
 | C, or any language that can call C (C#, Swift, and others) | the C library in [`bindings/c`](bindings/README.md) |
+| Firmware with no operating system and no heap, `bits` formats only | a plan compiled ahead of time and the `no_std` engine in [`embedded/`](docs/embedded.md) |
 
 In Python, for example:
 

@@ -31,6 +31,7 @@ vectors only, and all seven must produce the same bytes for every vector.
 | `engines/<language>/` | `rust` (the reference), `go`, `python`, `java`, `cpp`, `erlang`, `zig` |
 | `bindings/c`, `bindings/wasm` | the Rust engine as a C library and as a WebAssembly module |
 | `adapters/` | transports around the Rust engine (`goat-xf-pipe`); the engine does not depend on it |
+| `embedded/` | the embedded profile: `gt-core`, a `no_std` engine that runs plans `tools/gen/packc.py` compiles from `bits` packs ([docs/embedded.md](docs/embedded.md)) |
 | `tools/boundary-gate` | refuses content that is not public |
 | `tools/goat-pkg` | plans the smallest package for a set of constraints |
 | `tools/repo-stats` | prints the counts that `README.md` quotes |

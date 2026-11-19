@@ -1,0 +1,17 @@
+[package]
+name = "gt-proof"
+version = "0.1.0"
+edition = "2021"
+description = "Host-side proof that gt-core gives the reference engine's results: vectors, differential runs, fuzz."
+license = "Apache-2.0"
+publish = false
+
+[lib]
+path = "src/lib.rs"
+
+[dependencies]
+gt-core = { path = "../gt-core" }
+# the Rust reference engine, as the oracle. Standard library only.
+goat-transformers = { path = "../../engines/rust" }
+# the bare-metal example, run on the host against the reference engine
+example-bare = { path = "../example-bare" }

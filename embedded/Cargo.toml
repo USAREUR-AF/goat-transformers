@@ -1,0 +1,26 @@
+# The device profile: one workspace for the engine, its host-side proof and
+# the bare-metal example. Build output goes to embedded/target (ignored).
+[workspace]
+resolver = "2"
+members = ["gt-core", "gt-proof", "example-bare"]
+
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+panic = "abort"
+debug = false
+
+[profile.dev]
+panic = "abort"
+
+# The reference engine is the oracle of the host-side proof and loads every
+# pack of the repository; unoptimised it takes minutes. The dev profile keeps
+# overflow checks and debug assertions on, so a test run still stops on any
+# arithmetic overflow in gt-core.
+[profile.dev.package.goat-transformers]
+opt-level = 3
+[profile.dev.package.gt-proof]
+opt-level = 2
+[profile.dev.package.gt-core]
+opt-level = 2

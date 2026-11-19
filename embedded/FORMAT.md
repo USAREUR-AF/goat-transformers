@@ -1,0 +1,300 @@
+# Compiled pack format (`.gtp`)
+
+Status: Written and Built. Format version 1. Written by `tools/gen/packc.py`,
+read by `embedded/gt-core`.
+
+A `.gtp` blob holds one plan: a source format, a target format, or both,
+already cut down to the message kinds and model keys the conversion uses. The
+device engine reads the blob in place. It never parses pack text, never looks
+a key up by name and never allocates.
+
+A blob is build output. It is produced from `model/` and `packs/` each time
+and is not kept in the repository.
+
+## Layout
+
+All integers are little-endian. Every reference inside the blob is an index
+into a table or an offset inside a section, so the blob can sit at any
+address, in flash or in RAM, with no relocation and no alignment requirement.
+
+```
+offset  size  field
+0       4     magic "GTP1"
+4       2     format version (1)
+6       2     flags: bit 0 = the blob holds names (sections 12 and 13)
+8       4     total length in bytes
+12      2     number of sections
+14      2     reserved, 0
+16      12*n  section directory
+...           sections, each padded with zero bytes to a multiple of 4
+```
+
+One directory entry:
+
+```
+0   2   section id
+2   2   size of one entry in bytes
+4   4   offset of the section from the start of the blob
+8   4   number of entries
+```
+
+A reader skips a section id it does not know. A reader refuses a known
+section whose entry size is not the one listed below.
+
+| Id | Section | Entry | Holds |
+|---|---|---|---|
+| 1 | formats | 16 | one entry per compiled format |
+| 2 | ops | 16 | the operation table |
+| 3 | pool | 8 | 64-bit words: constants, scales, default values, table entries |
+| 4 | conds | 4 | the conditions of `if` lines |
+| 5 | tables | 8 | value tables (`map` lines, the typemap) |
+| 6 | keys | 4 | the key table |
+| 7 | derives | 8 | the derivations the plan uses |
+| 8 | args | 2 | key ids: the arguments of the derivations |
+| 9 | plan | 12 | one entry: which formats, and how they relate |
+| 10 | bytes | 1 | text of table entries and defaults |
+| 11 | carry | 12 | the conversion plan, one row per carried key |
+| 12 | name-index | 4 | optional: offset of each name in section 13 |
+| 13 | names | 1 | optional: key, kind and format names |
+
+## Keys
+
+Each model key the plan uses becomes its index in the key table. The device
+handles keys only as these ids. A key that neither side of the conversion can
+use has no id and does not appear in the blob.
+
+```
+0  1  type: 0 int, 1 float, 2 string, 3 list
+1  1  flags: bit 0 = the caller may supply it as context
+             bit 1 = the plan uses its value
+2  2  name id (section 12), or 0xFFFF
+```
+
+Names are kept only when the plan is compiled with `--names`. The generated
+Rust source carries the ids of the context keys as constants, so firmware
+needs no names.
+
+## Formats
+
+```
+0   1  flags: bit 0 = bit order msb, bit 1 = layout sequential
+1   1  reserved
+2   2  word_bytes (fixed layout)
+4   4  index of the format's BODY operation
+8   2  name id, or 0xFFFF
+10  2  number of presence fields the format declares
+12  4  reserved
+```
+
+## Operations
+
+A format is a tree of operations stored flat, parent before children. An
+operation that has children states how many operations follow it inside it,
+so a reader steps over a whole block with one addition.
+
+```
+0   1  op
+1   1  xf: transform, repeat form, count form or value type, by op
+2   1  flags, by op
+3   1  reserved
+4   2  key: a key id, a list id, a presence id or a kind number, by op
+6   2  len: a bit length or a count, by op
+8   4  a: a bit offset (fixed layout), or the number of nested operations
+12  2  b: an index into the pool or the conds
+14  2  c: a value table, or a name id; 0xFFFF = none
+```
+
+| Op | Name | Fields |
+|---|---|---|
+| 1 | BODY | `a` nested operations; fixed layout: `b` → pool (reach, decode need, encode need) in bits |
+| 2 | KIND | `a` nested operations; `key` = the kind's number: in the message body its position in the pack; in a group body one number per kind name across all groups of that list, from 0; flags bit 0 = not compiled in; `b` as BODY; `c` name |
+| 3 | WHEN | `len` bits equal pool[`b`]; fixed layout: at bit `a` |
+| 4 | REQ | a `requires` key in `key`; flags bit 0 = a list |
+| 5 | DEFAULT | key `key` defaults to pool[`b`], of type `xf` |
+| 6 | FIELD | key `key`, `len` bits, transform `xf`, scale at pool[`b`], table `c`; fixed layout: at bit `a`; flags 1 `swap`, 2 `trim`, 4 `optional` |
+| 7 | ALSO | another key on the bits of the FIELD before it, table `c` |
+| 8 | CONST | write pool[`b`] in `len` bits; fixed layout: at bit `a` |
+| 9 | PAD | `a` bits |
+| 10 | ALIGN | to a multiple of `a` bits |
+| 11 | PRESENCE | presence `key`; `len` bits, 0 = `fx` octets; pool[`b`] = mask of the bits some `if` names |
+| 12 | IF | `a` nested operations; `len` conditions from conds[`b`] |
+| 13 | OPT | `a` nested operations after one presence bit |
+| 14 | CHAIN | `a` nested operations: `len` PART blocks; flags bit 0 = the chain ends with an `fx` line |
+| 15 | PART | `a` nested operations: the lines between two `fx` lines |
+| 16 | LENGTH | `len`-bit length of the `a` nested operations; flags bit 0 = counted in bits; pool[`b`] = `plus` |
+| 17 | WHOLE | `len`-bit length of the whole message; pool[`b`] = `plus` |
+| 18 | GROUP_SEQ | list `key`; `xf` 0 `count` (`len` bits), 1 `while`, 2 `more`, 3 `fx`; the next operation is the item BODY; flags bit 0 = read and drop |
+| 19 | GROUP_FIX | list `key`, first item at bit `a`; pool[`b`] = item bits; `xf` 0: pool[`b`+1] items, `xf` 1: a `len`-bit count at bit pool[`b`+1]; then the item BODY |
+
+Transforms (`xf` of FIELD): 0 `uint`, 1 `twos`, 2 `linscale`, 3 `uscale`,
+4 `sscale`, 5 `f32`, 6 `f64`, 7 `ascii`.
+
+Order inside a block. A BODY holds its DEFAULT operations, then its common
+lines, then its KIND blocks. A KIND holds its WHEN, REQ and DEFAULT
+operations, then its lines. In a fixed-layout scope the FIELD operations come
+first and together, then WHEN, CONST and GROUP_FIX, because the engine passes
+over such a scope once per line type; in a sequential scope the lines keep
+their file order, because the order is the layout.
+
+### Scales are rationals
+
+A scale is three pool words, each the bits of a double: numerator,
+denominator, offset. Decode computes `v * num / den + offset`, encode
+`round((x - offset) * den / num)`, in doubles and in that order, rounding half
+away from zero. A scale written in the pack as a plain decimal factor has
+denominator 0 and is applied as `v * num + offset` and `(x - offset) / num`.
+`linscale:<maxpos>:<range>` stores `maxpos` and `range` in the first two
+words. These are rulings 1 of engine-spec 0.5 and the 0.2 text, unchanged.
+
+### Value tables
+
+```
+0  1  type of the wire side
+1  1  type of the model side
+2  2  number of entries
+4  4  pool index of the first entry
+```
+
+An entry is three pool words: flags, wire value, model value. Flags: 1 = the
+wire value is of the wire type, 2 = the model value is of the model type,
+4 = used on decode, 8 = used on encode. An integer is the word, a float is its
+bits, text is `offset | length << 32` into the bytes section. The compiler
+reads each `map` entry as the two types of the field that uses the table and
+writes one table per pair of types, so the device compares typed values and
+never text. The pack-wide `typemap` is compiled as a text-to-text table on the
+key `type`.
+
+### Kind selection
+
+Decode takes the KIND blocks in order and selects the first whose WHEN
+operations all hold. Encode selects the first whose REQ keys are all present.
+When a format is compiled for some of its kinds, each kind left out before the
+last one kept is still present as a KIND with the "not compiled in" flag and
+only its WHEN and REQ operations. Selecting it is `no-kind`. A message of a
+kind that was left out is therefore refused, never read as a later kind.
+
+## The conversion plan
+
+Section 9 holds one entry:
+
+```
+0   2  source format index, or 0xFFFF (an encode-only plan)
+2   2  target format index, or 0xFFFF (a decode-only plan)
+4   1  flags: bit 0 = source and target are one format
+5   1  deepest nesting of blocks in the plan
+6   2  number of keys
+8   4  reserved
+```
+
+The plan is decided when the blob is compiled:
+
+- A source field whose key the target does not read, directly or through a
+  derivation, is not in the blob. In a sequential layout it is a PAD of the
+  same length, because the bits still have to be stepped over.
+- A target field whose key the source, the context and the derivations can
+  never supply is not in the blob, or is a PAD.
+- A list the target does not map is read and dropped (GROUP flag bit 0): its
+  items take no room in the value store.
+- A derivation is in the blob only when its target is read by the target
+  format or by another kept derivation, and its arguments can be present.
+- A source field whose decode can fail (`ascii`, `f32`, `f64`, or a table
+  between two types) stays in the blob although the target does not read it.
+  The reference engine refuses a message whose field fails; the device does
+  the same.
+
+Section 11 states the result, one row per key that reaches the target:
+
+```
+0  2  key id
+2  2  how: bit 0 = read from the source, bit 1 = context, bit 2 = derived
+4  4  index of the first source operation that reads it, or 0xFFFFFFFF
+8  4  index of the first target operation that writes it
+```
+
+Derivations (section 7):
+
+```
+0  1  function
+1  1  number of arguments
+2  2  target key id
+4  2  index of the first argument in section 8
+6  2  pool index of the function's constant
+```
+
+| Function | Id | gt-core feature |
+|---|---|---|
+| `copy` | 0 | |
+| `hypot` | 1 | `sqrt` |
+| `bearing` | 2 | `trig` |
+| `east_of` | 3 | `trig` |
+| `north_of` | 4 | `trig` |
+| `neg` | 5 | |
+| `scale:<factor>` | 6 | |
+| `offset:<n>` on floats | 7 | |
+| `offset:<n>` on integers | 8 | |
+| `day_seconds` | 9 | |
+| `any` | 10 | |
+| `not` | 11 | |
+| `parse_int` | 12 | |
+
+The compiler prints which features a plan needs. An engine built without a
+feature refuses a plan that uses it (`bad-plan`).
+
+## What the compiled form supports
+
+| Pack-language feature | Status |
+|---|---|
+| `bits` wire, fixed layout: `word_bytes`, `bit_order`, fields past their word (0.2, 0.5) | Built |
+| `uint`, `twos`, `linscale`, `uscale`, `sscale` with a decimal or fraction factor, `f32`, `f64`, `ascii` | Built |
+| kinds: `kind`, `when`, `requires`, common lines; slicing to named kinds | Built |
+| `const`, `default`, `map` / `via`, `typemap`, `swap`, `trim`, `optional` (0.6) | Built |
+| several lines for one key; overlapping lines | Built |
+| groups: `group ... item ... count <n | locator>`, nested (0.7) | Built |
+| `layout sequential`: `field`, `also`, `const`, `pad`, `align`, `when` (0.8) | Built |
+| `presence <n>`, `presence fx`, `if`, `opt` | Built, up to 64 bits per presence |
+| `group ... count | while | more | fx`, items by kind | Built |
+| `chain` / `fx`, `length ... bytes | bits | plus`, `length ... whole` | Built |
+| context keys | Built; the keys are named when the plan is compiled |
+| `derive`: the functions in the table above | Built |
+
+## What the compiler refuses
+
+`packc.py` exits with status 2 and prints `packc: refused: <reason>: <detail>`.
+
+| Reason | Refused |
+|---|---|
+| `wire-not-bits` | a format on the `xml`, `geojson`, `json` or `protobuf` wire |
+| `derive-function` | a derivation the conversion needs that uses `join` or `text_of` (they build new text; the device has no text store), or has more than 8 arguments |
+| `target-unreachable` | a conversion in which no kind of the target can ever be selected, with the keys that are missing |
+| `via-with-typemap` | a field on the key `type` that has both `via` and a pack-wide `typemap` |
+| `presence-too-wide` | a presence field of more than 64 bits, or an `if` naming a bit beyond 64 |
+| `too-many-presences` | more than 16 presence fields in one format |
+| `too-many-wholes`, `whole-in-group` | more than 4 `length ... whole` lines, or one inside a group |
+| `nesting-too-deep` | blocks and groups nested more than 12 deep |
+| `length-plus-range` | a `plus` outside 32 bits |
+| `value-range`, `table-overflow` | an offset, count or table index beyond what an entry holds |
+| `unknown-format`, `unknown-kind`, `unknown-key`, `bad-arguments` | a name the inputs do not have |
+| `unsupported-feature` | a pack line of the specification that the device profile does not implement: the `absent` field option (absent-value sentinels, spec 0.9) |
+| `bad-pack`, `bad-model` | text the compiler cannot read; it compiles packs the reference engine loads and does not repeat that engine's load checks |
+
+The text wires are out of scope for the device profile. A text format needs a
+parser, a writer and number formatting on the device, which is what the
+profile removes.
+
+## Differences from the reference engine
+
+The device engine gives the reference engine's bytes and error kinds
+(`docs/embedded.md`, "How equivalence is checked"). It differs in these
+stated ways:
+
+- Residue is not carried. A `bits` format has none.
+- Three errors belong to the device: `output-full`, `scratch-full` and
+  `bad-plan`. A message with more values or list items than the caller's
+  scratch holds is `scratch-full` where the reference engine would allocate.
+- A context key the plan was not compiled with is `undeclared-key`, also when
+  a model module declares it.
+- `east_of` and `north_of` leave the target absent for a course beyond
+  ±94 million degrees. `sin`, `cos` and `atan2` are computed in the engine and
+  agree with a platform library to the last bit or the one before it; the
+  specification compares derived floats within 1e-9 relative.
+- Input longer than 512 MiB is `malformed-wire`.

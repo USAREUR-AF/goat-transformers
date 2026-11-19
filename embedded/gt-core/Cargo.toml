@@ -1,0 +1,19 @@
+[package]
+name = "gt-core"
+version = "0.1.0"
+edition = "2021"
+description = "goat-transformers device engine: runs compiled packs with no standard library and no allocator."
+license = "Apache-2.0"
+
+[lib]
+name = "gt_core"
+path = "src/lib.rs"
+
+[features]
+default = ["sqrt", "trig"]
+# derive function `hypot` (a square root in integer arithmetic)
+sqrt = []
+# derive functions `bearing`, `east_of`, `north_of` (sine, cosine, arc tangent)
+trig = []
+# conveniences that return a Vec; the engine itself never allocates
+alloc = []
