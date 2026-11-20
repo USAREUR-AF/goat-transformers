@@ -89,9 +89,9 @@ OTHER_EDITIONS = {21: ["0.23", "0.26"]}
 # written with all their UAPs: the items up to the selecting item as common lines, then a
 # `switch` on the selecting key (engine-spec 0.20) with one `case` per further UAP and the first
 # UAP under `else`, so a record without the selecting item reads the first UAP. Any other such
-# category keeps its first UAP only (CAT007 qualifies; it is not switched yet, so that its pack
-# stays as reviewed).
-SWITCHED_UAPS = (1,)
+# category keeps its first UAP only. CAT001 is chosen by I001/020/TYP (plot, track), CAT007 by
+# I007/410 (downlink, uplink).
+SWITCHED_UAPS = (1, 7)
 
 
 def edition_tag(ed):
@@ -968,7 +968,16 @@ def plan_arms(plan, builder):
         raise GenError("the selecting item %s is not a field of its own" % ident, file=cat.label)
     if any(not a["values"] for a in plan.arms[1:]):
         raise GenError("a UAP that no value of %s selects" % ident, file=cat.label)
-    plan.sel = dict(frn=frn, ident=ident, key=node["key"])
+    listed = sum(len(a["values"]) for a in plan.arms)
+    plan.sel = dict(frn=frn, ident=ident, key=node["key"], open=listed < 1 << node["bits"])
+
+
+def else_values(plan):
+    """What the `else` arm reads, as text: its values, any value no case lists, and the item absent."""
+    sel, cat = plan.sel, plan.cat
+    return "%s%s, or I%s/%s absent" % (",".join(str(v) for v in plan.arms[0]["values"]),
+                                       ", another value no `case` lists" if sel["open"] else "",
+                                       cat.nnn, sel["ident"].split("/")[0])
 
 
 def plan_category(cat, pinned=None):
@@ -1295,8 +1304,7 @@ def emit_pack(plan, sha):
     for arm in plan.arms[1:] + plan.arms[:1]:
         vals = ",".join(str(v) for v in arm["values"])
         if arm["default"]:
-            L.append(col("  else") + "# UAP `%s`: I%s/%s = %s, or I%s/%s absent" % (
-                arm["name"], cat.nnn, sel["ident"], vals, cat.nnn, sel["ident"].split("/")[0]))
+            L.append(col("  else") + "# UAP `%s`: I%s/%s = %s" % (arm["name"], cat.nnn, sel["ident"], else_values(plan)))
         else:
             L.append(col("  case " + vals) + "# UAP `%s`" % arm["name"])
         emit_entries(cat, [e for e in arm["entries"] if e["frn"] > sel["frn"]], 2, L)
@@ -1772,6 +1780,8 @@ class VectorSet:
                  input=hx, expect=hx, model=model_strings(model))
         for arm in plan.arms:
             chains = [e for e in arm["entries"] if e["nodes"] and e["kind"] == "extended"]
+            if not chains:
+                continue
             rec, model = filled(chains, part=0)
             put_uap("%s-extended-items-first-part-only-roundtrip" % arm["name"],
                     "each extended item of the UAP with its first part and the extension bit 0; the keys of later "
@@ -2664,12 +2674,15 @@ def md_uaps(a, plan):
     for arm in plan.arms:
         a("| `%s` | `%s` | %s%s | %d | %d |" % (
             arm["name"], "else" if arm["default"] else "case " + ",".join(str(v) for v in arm["values"]),
-            ", ".join(str(v) for v in arm["values"]), ", or the item absent" if arm["default"] else "",
+            ", ".join(str(v) for v in arm["values"]),
+            (", any value no `case` lists, or the item absent" if sel["open"] else ", or the item absent") if arm["default"] else "",
             len(arm["entries"]), sum(1 for e in arm["entries"] if e["nodes"])))
     a("")
-    a("- **Decode.** The value read from I%s/%s picks the case. A record without I%s/%s leaves the key absent," % (cat.nnn, sel["ident"], cat.nnn, item))
+    a("- **Decode.** The value read from I%s/%s picks the case%s. A record without I%s/%s leaves the key absent," % (
+        cat.nnn, sel["ident"], "; a value the definition gives no UAP for reads the `else` lines" if sel["open"] else "", cat.nnn, item))
     a("  and the `else` lines are read: UAP `%s`, which is also the layout the earlier one-UAP pack read." % plan.arms[0]["name"])
-    a("  The definition names no UAP for a record without the item; reading the first is this pack's choice.")
+    a("  The definition names no UAP for a record without the item%s; reading the first is this pack's choice."
+      % (" or with a value it does not list" if sel["open"] else ""))
     a("- **FSPEC bits.** Only the `if` lines of the case read name FSPEC bits, so a bit that only another UAP")
     a("  maps is `malformed-wire` in a record of this UAP.")
     a("- **Encode.** The case is the one decode would pick from what was written: the value of `%s`," % sel["key"])
