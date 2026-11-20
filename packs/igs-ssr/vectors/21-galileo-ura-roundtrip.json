@@ -1,0 +1,24 @@
+{
+  "name": "galileo-ura-roundtrip",
+  "from": "igs-ssr",
+  "to": "igs-ssr",
+  "input": "fec286a8c86c00169a0859c630",
+  "expect": "fec286a8c86c00169a0859c630",
+  "model": {
+    "@kind": "galileo-ura",
+    "igsssr.version": "1",
+    "igsssr.epoch_s": "345667",
+    "igsssr.update_interval": "6",
+    "igsssr.multiple_message": "0",
+    "igsssr.iod_ssr": "0",
+    "igsssr.provider_id": "361",
+    "igsssr.solution_id": "10",
+    "igsssr.ura_sats.#": "2",
+    "igsssr.ura_sats[0].igsssr.sat_id": "5",
+    "igsssr.ura_sats[0].igsssr.ura": "39",
+    "igsssr.ura_sats[1].igsssr.sat_id": "6",
+    "igsssr.ura_sats[1].igsssr.ura": "12"
+  },
+  "source": "derived by tools/gen/igsssr2pack.py; no engine run",
+  "reference": "IGS State Space Representation (SSR) Format, Version 1.00, International GNSS Service, 2020-10-05, section 8: header part, 2 satellites; values chosen here"
+}

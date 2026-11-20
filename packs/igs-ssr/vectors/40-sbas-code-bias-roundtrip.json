@@ -1,0 +1,30 @@
+{
+  "name": "sbas-code-bias-roundtrip",
+  "from": "igs-ssr",
+  "to": "igs-ssr",
+  "input": "fec2faa8cfac00169a0850f00bf1841fc70c0848",
+  "expect": "fec2faa8cfac00169a0850f00bf1841fc70c0848",
+  "model": {
+    "@kind": "sbas-code-bias",
+    "igsssr.version": "1",
+    "igsssr.epoch_s": "345725",
+    "igsssr.update_interval": "6",
+    "igsssr.multiple_message": "0",
+    "igsssr.iod_ssr": "0",
+    "igsssr.provider_id": "361",
+    "igsssr.solution_id": "10",
+    "igsssr.code_bias_sats.#": "2",
+    "igsssr.code_bias_sats[0].igsssr.sat_id": "5",
+    "igsssr.code_bias_sats[0].igsssr.biases.#": "1",
+    "igsssr.code_bias_sats[0].igsssr.biases[0].igsssr.signal_id": "28",
+    "igsssr.code_bias_sats[0].igsssr.biases[0].igsssr.code_bias_m": "1.91",
+    "igsssr.code_bias_sats[1].igsssr.sat_id": "6",
+    "igsssr.code_bias_sats[1].igsssr.biases.#": "2",
+    "igsssr.code_bias_sats[1].igsssr.biases[0].igsssr.signal_id": "1",
+    "igsssr.code_bias_sats[1].igsssr.biases[0].igsssr.code_bias_m": "-2.28",
+    "igsssr.code_bias_sats[1].igsssr.biases[1].igsssr.signal_id": "6",
+    "igsssr.code_bias_sats[1].igsssr.biases[1].igsssr.code_bias_m": "2.65"
+  },
+  "source": "derived by tools/gen/igsssr2pack.py; no engine run",
+  "reference": "IGS State Space Representation (SSR) Format, Version 1.00, International GNSS Service, 2020-10-05, section 8: header part, 2 satellites with 1 and 2 biases; values chosen here"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "type-10-is-no-kind",
+  "from": "sbas-l1",
+  "to": "sbas-l1",
+  "input": "5328000000000000000000000000000000000000000000000000000000000000",
+  "expect_error": "no-kind",
+  "source": "derived by tools/gen/sbas2pack.py; no engine run",
+  "reference": "message type 10 (degradation parameters) is not decoded by RTKLIB and has no kind here"
+}

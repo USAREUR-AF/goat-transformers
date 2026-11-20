@@ -1,0 +1,28 @@
+{
+  "name": "type-9-roundtrip",
+  "from": "sbas-l1",
+  "to": "sbas-l1",
+  "input": "5324a886be000034c800013fe000d42f8108473013c0648b48a84191969698c0",
+  "expect": "5324a886be000034c800013fe000d42f8108473013c0648b48a84191969698c0",
+  "model": {
+    "@kind": "type-9",
+    "sbas.preamble": "83",
+    "sbas.geo_reserved": "42",
+    "sbas.geo_t0_s": "17232",
+    "sbas.geo_ura": "15",
+    "sbas.geo_x_m": "135.12",
+    "sbas.geo_y_m": "204.72",
+    "sbas.geo_z_m": "1357.6",
+    "sbas.geo_vx_ms": "-2.539375",
+    "sbas.geo_vy_ms": "2.8475",
+    "sbas.geo_vz_ms": "20.224",
+    "sbas.geo_ax_mss": "0.005025",
+    "sbas.geo_ay_mss": "0.00225",
+    "sbas.geo_az_mss": "-0.029375",
+    "sbas.geo_af0_s": "1.2200325727462769e-07",
+    "sbas.geo_af1_ss": "6.366462912410498e-11",
+    "sbas.crc": "5921379"
+  },
+  "source": "derived by tools/gen/sbas2pack.py; no engine run",
+  "reference": "RTKLIB src/sbas.c (BSD-2-Clause) decode of message type 9 (GEO navigation message): field offsets as it reads them; values chosen here"
+}

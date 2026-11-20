@@ -1,0 +1,7 @@
+{
+  "name": "IGS SSR",
+  "domain": "sensors",
+  "exact": [
+    "igs-ssr"
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "name": "reserved-sub-type-is-no-kind",
+  "from": "igs-ssr",
+  "to": "igs-ssr",
+  "input": "fec238000000000000000000000000",
+  "expect_error": "no-kind",
+  "source": "derived by tools/gen/igsssr2pack.py; no engine run",
+  "reference": "IGS message numbers 28 to 40 are reserved for GPS"
+}

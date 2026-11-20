@@ -1,0 +1,9 @@
+{
+  "name": "other-message-number-is-no-kind",
+  "from": "igs-ssr",
+  "to": "igs-ssr",
+  "input": "feb22a",
+  "expect_error": "no-kind",
+  "source": "derived by tools/gen/igsssr2pack.py; no engine run",
+  "reference": "only RTCM message 4076 carries IGS SSR"
+}
