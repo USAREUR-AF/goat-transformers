@@ -77,6 +77,7 @@
     {"name": "RTCM 3", "domain": "sensors", "exact": ["rtcm3"], "detail": "10403.x message bodies"},
     {"name": "Livox SDK2", "domain": "sensors", "exact": ["livox-point"], "detail": "point cloud and IMU data packet"},
     {"name": "RoboSense lidar", "domain": "sensors", "prefixes": ["robosense-"], "detail": "MSOP and DIFOP packets of the rs_driver models"},
+    {"name": "Inertial Sense", "domain": "sensors", "prefixes": ["inertialsense-"], "members": {"pattern": "^inertialsense-(.+)$", "label": "{n} data set groups", "list": false}},
     {"name": "Unicore UNI", "domain": "sensors", "exact": ["unicore"], "detail": "binary messages"},
     {"name": "SBP (Swift Navigation)", "domain": "sensors", "prefixes": ["sbp-"], "members": {"pattern": "^sbp-(.+)$", "label": "{n} message packages", "list": false}},
     {"name": "u-blox UBX", "domain": "sensors", "prefixes": ["ubx-"], "members": {"pattern": "^ubx-(.+)$", "label": "{n} message classes", "list": false}},

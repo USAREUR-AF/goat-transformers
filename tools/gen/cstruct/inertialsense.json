@@ -242,5 +242,13 @@
     "  2014-2025 Inertial Sense, Inc.\"), and its file comment gives \"Copyright (c) 2014-2026",
     "  Inertial Sense, Inc.\". `src/ISConstants.h`, `src/rtk_defines.h` and `src/core/base_port.h`",
     "  are in the same repository under that licence."
+  ],
+  "license_quote": [
+    "LICENSE"
+  ],
+  "licence_note": [
+    "Licence of this pack: Apache-2.0, the repository's (REUSE.toml). It restates member names,",
+    "types, array sizes and identifiers, with descriptions of its own; the MIT notice above is",
+    "kept with it here and in NOTICE, as the MIT terms ask of a copy or substantial portion."
   ]
 }

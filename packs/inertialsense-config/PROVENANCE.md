@@ -30,5 +30,35 @@ Each file is `https://raw.githubusercontent.com/inertialsense/inertial-sense-sdk
   Inertial Sense, Inc.". `src/ISConstants.h`, `src/rtk_defines.h` and `src/core/base_port.h`
   are in the same repository under that licence.
 
+`LICENSE`, quoted whole:
+
+```
+MIT License
+
+Copyright (c) 2014-2025 Inertial Sense, Inc. - http://inertialsense.com
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files(the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+Licence of this pack: Apache-2.0, the repository's (REUSE.toml). It restates member names,
+types, array sizes and identifiers, with descriptions of its own; the MIT notice above is
+kept with it here and in NOTICE, as the MIT terms ask of a copy or substantial portion.
+
 No source carries a distribution statement, handling marking, export-control
 notice or proprietary notice.
