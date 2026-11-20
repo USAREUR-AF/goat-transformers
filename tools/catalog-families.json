@@ -81,6 +81,8 @@
     {"name": "OpenTelemetry OTLP", "domain": "networks", "prefixes": ["otlp-"]},
     {"name": "gNMI", "domain": "networks", "prefixes": ["gnmi-"]},
     {"name": "STIX 2.1", "domain": "networks", "prefixes": ["stix-"], "detail": "domain, relationship and cyber-observable objects"},
+    {"name": "OpenC2", "domain": "networks", "prefixes": ["openc2-"], "detail": "commands and responses: language 1.1, stateless packet filter profile 1.1"},
+    {"name": "CACAO playbooks", "domain": "networks", "exact": ["cacao-playbook"]},
     {"name": "CloudEvents", "domain": "networks", "exact": ["cloudevents"]},
     {"name": "IETF packet headers", "domain": "networks", "exact": ["arp-ipv4-ethernet", "bfd-control", "dns-header", "gre-header", "icmp-header", "igmpv2", "ipv4-header", "ipv6-header", "mpls-label-entry", "ntp-header", "rtcp-header", "rtp-header", "sctp-common-header", "tcp-header", "udp-header", "vxlan-header"], "members": {"pattern": "^(.+?)(?:-common-header|-label-entry|-control|-header)?$", "label": "", "upper": true, "rename": {"arp-ipv4-ethernet": "ARP", "igmpv2": "IGMPv2", "ipv4": "IPv4", "ipv6": "IPv6"}}},
     {"name": "IETF option areas", "domain": "networks", "exact": ["dhcpv6-options", "edns0-options"], "members": {"pattern": "^(.+)-options$", "label": "", "upper": true, "rename": {"dhcpv6": "DHCPv6", "edns0": "EDNS(0)"}}},

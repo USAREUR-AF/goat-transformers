@@ -1,0 +1,17 @@
+{
+ "name": "gen-response-roundtrip",
+ "from": "openc2-slpf",
+ "to": "openc2-slpf",
+ "input": "{\"status\":500,\"status_text\":\"s74286\",\"results\":{\"versions\":[\"s76420\",\"s39214\"],\"profiles\":[\"https://example.org/18\",\"https://example.org/728\"],\"pairs\":{\"query\":[\"features\",\"features\"],\"deny\":[\"ipv6_connection\",\"ipv4_net\"],\"allow\":[\"ipv4_net\",\"ipv6_connection\"],\"update\":[\"file\",\"file\"],\"delete\":[\"slpf/rule_number\",\"slpf/rule_number\"]},\"rate_limit\":-3.25,\"args\":[\"start_time\",\"stop_time\"],\"slpf\":{\"rule_number\":46610}}}",
+ "expect": "{\"status\":500,\"status_text\":\"s74286\",\"results\":{\"versions\":[\"s76420\",\"s39214\"],\"profiles\":[\"https://example.org/18\",\"https://example.org/728\"],\"pairs\":{\"query\":[\"features\",\"features\"],\"deny\":[\"ipv6_connection\",\"ipv4_net\"],\"allow\":[\"ipv4_net\",\"ipv6_connection\"],\"update\":[\"file\",\"file\"],\"delete\":[\"slpf/rule_number\",\"slpf/rule_number\"]},\"rate_limit\":-3.25,\"args\":[\"start_time\",\"stop_time\"],\"slpf\":{\"rule_number\":46610}}}",
+ "model": {
+  "@kind": "response",
+  "oc2slpf.status": "500",
+  "oc2slpf.status_text": "s74286",
+  "oc2slpf.results_versions.#": "2",
+  "oc2slpf.results_profiles.#": "2",
+  "oc2slpf.results_pairs_query.#": "2",
+  "oc2slpf.results_pairs_deny.#": "2",
+  "oc2slpf.results_pairs_allow.#": "2"
+ }
+}

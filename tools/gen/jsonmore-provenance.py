@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""jsonmore-provenance: write PROVENANCE.md of the STIX, CloudEvents and GOFS packs.
+"""jsonmore-provenance: write PROVENANCE.md of the STIX, CloudEvents, GOFS, OpenC2 and CACAO packs.
 
-Usage: python3 -I tools/gen/jsonmore-provenance.py <stix|cloudevents|gofs> [--check] <source checkout> <goat-transformers checkout>
+Usage: python3 -I tools/gen/jsonmore-provenance.py <stix|cloudevents|gofs|openc2|cacao> [--check] <source checkout> <goat-transformers checkout>
 
 <source checkout> is the checkout the family's run script reads (tools/gen/stix-run.sh,
 cloudevents-run.sh, gofs-run.sh call this script last, with the same checkout). For each
@@ -48,6 +48,37 @@ FAMILIES = {
         "license_intro": "The repository's `LICENSE` is the Apache License, Version 2.0; it opens:",
         "spec": ("The specification text (`cloudevents/spec.md`, `cloudevents/formats/json-format.md`) "
                  "is in the same repository under the same license. The pack takes no text of it."),
+    },
+    "openc2": {
+        "repo": "https://github.com/oasis-open/openc2-custom-aps",
+        "raw": "https://raw.githubusercontent.com/oasis-open/openc2-custom-aps",
+        "publisher": "OASIS Open Command and Control (OpenC2) Technical Committee, TC Open Repository",
+        "run": "tools/gen/openc2-cacao-run.sh",
+        "read_on": "2026-11-20",
+        "full_license": False,
+        "license_intro": ("The repository's `LICENSE.md` is the Apache License, Version 2.0. Its README states "
+                          "that the repository is an OASIS TC Open Repository whose contributions are under "
+                          "that license, and that its governance is separate from the OASIS TC Process. It "
+                          "opens:"),
+        "license_file": "LICENSE.md",
+        "spec": ("The schemas restate the data types of the OpenC2 Language Specification 1.1 and the "
+                 "Stateless Packet Filtering actuator profile 1.1, OASIS Committee Specifications whose "
+                 "text is under the OASIS IPR policy. The pack takes no text of them."),
+    },
+    "cacao": {
+        "repo": "https://github.com/oasis-open/cacao-json-schemas",
+        "raw": "https://raw.githubusercontent.com/oasis-open/cacao-json-schemas",
+        "publisher": "OASIS Collaborative Automated Course of Action Operations (CACAO) Technical Committee, TC Open Repository",
+        "run": "tools/gen/openc2-cacao-run.sh",
+        "read_on": "2026-11-20",
+        "full_license": False,
+        "license_intro": ("The repository's `LICENSE` is the Apache License, Version 2.0. Its README states "
+                          "that the repository is an OASIS TC Open Repository whose contributions are under "
+                          "that license, and that its governance is separate from the OASIS TC Process. It "
+                          "opens:"),
+        "spec": ("The schemas follow CACAO Security Playbooks Version 2.0, an OASIS Committee "
+                 "Specification (https://docs.oasis-open.org/cacao/security-playbooks/v2.0/security-playbooks-v2.0.html). "
+                 "The pack takes no text of it."),
     },
     "gofs": {
         "repo": "https://github.com/MobilityData/gofs",
@@ -102,6 +133,15 @@ def packs(family, src):
                     files = [os.path.relpath(p, src) for p in closure(main)]
                     out.append(("stix-" + t, "STIX 2.1 `%s` object, JSON Schema" % t, files,
                                 os.path.relpath(main, src)))
+    elif family == "openc2":
+        base = "Schema-Template/v1.1/JSON-Schema/"
+        for fmt, f, what in (("openc2-lang", "oc2ls-v1.1-lang.json", "OpenC2 Language Specification 1.1"),
+                             ("openc2-slpf", "oc2slpf-v1.1.json", "OpenC2 Stateless Packet Filtering profile 1.1")):
+            out.append((fmt, "%s, JSON Schema of the Command and the Response" % what, [base + f], base + f))
+    elif family == "cacao":
+        main = os.path.join(src, "schemas", "playbook.json")
+        out.append(("cacao-playbook", "CACAO Security Playbooks 2.0, JSON Schema of the playbook",
+                    [os.path.relpath(p, src) for p in closure(main)], "schemas/playbook.json"))
     elif family == "cloudevents":
         rel = "cloudevents/formats/cloudevents.json"
         out.append(("cloudevents", "CloudEvents 1.0.2, JSON Schema of the JSON event format", [rel], rel))
@@ -116,7 +156,7 @@ def packs(family, src):
 
 def text_for(family, fmt, title, files, main, src, commit):
     c = FAMILIES[family]
-    lic = os.path.join(src, "LICENSE")
+    lic = os.path.join(src, c.get("license_file", "LICENSE"))
     with open(lic, encoding="utf-8") as fh:
         lic_text = fh.read().strip("\n")
     if c["full_license"]:
@@ -125,7 +165,7 @@ def text_for(family, fmt, title, files, main, src, commit):
         quote = [l.strip() for l in lic_text.split("\n") if l.strip()][:3]
     w = ["# Provenance of the %s pack\n" % fmt,
          "`tools/gen/jsonschema2pack.py` (run script `%s`) reads the files below and nothing" % c["run"],
-         "else. They are not kept in this repository. Read on %s.\n" % READ_ON,
+         "else. They are not kept in this repository. Read on %s.\n" % c.get("read_on", READ_ON),
          "| | |\n|---|---|",
          "| Document | %s |" % title,
          "| Publisher | %s |" % c["publisher"],
@@ -135,7 +175,7 @@ def text_for(family, fmt, title, files, main, src, commit):
     for f in files:
         w.append("| `%s` | `%s` |" % (f, sha256(os.path.join(src, f))))
     w += ["", "## License\n",
-          "%s (SHA-256 of `LICENSE`: `%s`)\n" % (c["license_intro"], sha256(lic)),
+          "%s (SHA-256 of `%s`: `%s`)\n" % (c["license_intro"], os.path.basename(lic), sha256(lic)),
           "\n".join(("> " + l) if l.strip() else ">" for l in quote), "",
           c["spec"], "",
           "The pack restates the schema's structure (member names, types, nesting) with keys of this",

@@ -1,0 +1,17 @@
+{
+ "name": "gen-command-roundtrip",
+ "from": "openc2-slpf",
+ "to": "openc2-slpf",
+ "input": "{\"action\":\"query\",\"target\":{\"features\":[\"rate_limit\",\"pairs\"],\"file\":{\"name\":\"s71576\",\"path\":\"s72165\",\"hashes\":{\"md5\":\"s6133\",\"sha1\":\"s2290\",\"sha256\":\"s74317\"}},\"ipv4_net\":\"s87287\",\"ipv6_net\":\"s20440\",\"ipv4_connection\":{\"src_addr\":\"s47827\",\"src_port\":8639,\"dst_addr\":\"s89638\",\"dst_port\":41839,\"protocol\":\"icmp\"},\"ipv6_connection\":{\"src_addr\":\"s96208\",\"src_port\":44580,\"dst_addr\":\"s77327\",\"dst_port\":4199,\"protocol\":\"sctp\"},\"slpf\":{\"rule_number\":12563}},\"args\":{\"start_time\":34626,\"stop_time\":83396,\"duration\":97670,\"response_requested\":\"status\",\"slpf\":{\"drop_process\":\"none\",\"persistent\":false,\"direction\":\"ingress\",\"insert_rule\":8506}},\"actuator\":{\"slpf\":{\"hostname\":\"s20779\",\"named_group\":\"s33017\",\"asset_id\":\"s73997\",\"asset_tuple\":[\"s71564\",\"s8996\"]}},\"command_id\":\"s47875\"}",
+ "expect": "{\"action\":\"query\",\"target\":{\"features\":[\"rate_limit\",\"pairs\"],\"file\":{\"name\":\"s71576\",\"path\":\"s72165\",\"hashes\":{\"md5\":\"s6133\",\"sha1\":\"s2290\",\"sha256\":\"s74317\"}},\"ipv4_net\":\"s87287\",\"ipv6_net\":\"s20440\",\"ipv4_connection\":{\"src_addr\":\"s47827\",\"src_port\":8639,\"dst_addr\":\"s89638\",\"dst_port\":41839,\"protocol\":\"icmp\"},\"ipv6_connection\":{\"src_addr\":\"s96208\",\"src_port\":44580,\"dst_addr\":\"s77327\",\"dst_port\":4199,\"protocol\":\"sctp\"},\"slpf\":{\"rule_number\":12563}},\"args\":{\"start_time\":34626,\"stop_time\":83396,\"duration\":97670,\"response_requested\":\"status\",\"slpf\":{\"drop_process\":\"none\",\"persistent\":false,\"direction\":\"ingress\",\"insert_rule\":8506}},\"actuator\":{\"slpf\":{\"hostname\":\"s20779\",\"named_group\":\"s33017\",\"asset_id\":\"s73997\",\"asset_tuple\":[\"s71564\",\"s8996\"]}},\"command_id\":\"s47875\"}",
+ "model": {
+  "@kind": "command",
+  "uid": "s47875",
+  "oc2slpf.action": "query",
+  "oc2slpf.target_features.#": "2",
+  "oc2slpf.target_file_name": "s71576",
+  "oc2slpf.target_file_path": "s72165",
+  "oc2slpf.target_file_hashes_md5": "s6133",
+  "oc2slpf.target_file_hashes_sha1": "s2290"
+ }
+}

@@ -1,0 +1,17 @@
+{
+ "name": "gen-response-roundtrip",
+ "from": "openc2-lang",
+ "to": "openc2-lang",
+ "input": "{\"status\":500,\"status_text\":\"s74286\",\"results\":{\"versions\":[\"s76420\",\"s39214\"],\"profiles\":[\"https://example.org/18\",\"https://example.org/728\"],\"pairs\":{\"scan\":[\"features\",\"uri\"],\"locate\":[\"command\",\"command\"],\"query\":[\"ipv4_net\",\"ipv4_connection\"],\"deny\":[\"domain_name\",\"mac_addr\"],\"contain\":[\"command\",\"features\"],\"allow\":[\"device\",\"ipv4_net\"],\"start\":[\"ipv4_net\",\"features\"],\"stop\":[\"ipv4_connection\",\"command\"],\"restart\":[\"features\",\"process\"],\"cancel\":[\"email_addr\",\"file\"],\"set\":[\"uri\",\"idn_email_addr\"],\"update\":[\"ipv6_net\",\"domain_name\"],\"redirect\":[\"ipv4_net\",\"uri\"],\"create\":[\"ipv6_connection\",\"ipv4_net\"],\"delete\":[\"command\",\"features\"],\"detonate\":[\"idn_email_addr\",\"mac_addr\"],\"restore\":[\"artifact\",\"command\"],\"copy\":[\"email_addr\",\"artifact\"],\"investigate\":[\"properties\",\"artifact\"],\"remediate\":[\"artifact\",\"ipv6_net\"]},\"rate_limit\":-3.25,\"args\":[\"duration\",\"start_time\"]}}",
+ "expect": "{\"status\":500,\"status_text\":\"s74286\",\"results\":{\"versions\":[\"s76420\",\"s39214\"],\"profiles\":[\"https://example.org/18\",\"https://example.org/728\"],\"pairs\":{\"scan\":[\"features\",\"uri\"],\"locate\":[\"command\",\"command\"],\"query\":[\"ipv4_net\",\"ipv4_connection\"],\"deny\":[\"domain_name\",\"mac_addr\"],\"contain\":[\"command\",\"features\"],\"allow\":[\"device\",\"ipv4_net\"],\"start\":[\"ipv4_net\",\"features\"],\"stop\":[\"ipv4_connection\",\"command\"],\"restart\":[\"features\",\"process\"],\"cancel\":[\"email_addr\",\"file\"],\"set\":[\"uri\",\"idn_email_addr\"],\"update\":[\"ipv6_net\",\"domain_name\"],\"redirect\":[\"ipv4_net\",\"uri\"],\"create\":[\"ipv6_connection\",\"ipv4_net\"],\"delete\":[\"command\",\"features\"],\"detonate\":[\"idn_email_addr\",\"mac_addr\"],\"restore\":[\"artifact\",\"command\"],\"copy\":[\"email_addr\",\"artifact\"],\"investigate\":[\"properties\",\"artifact\"],\"remediate\":[\"artifact\",\"ipv6_net\"]},\"rate_limit\":-3.25,\"args\":[\"duration\",\"start_time\"]}}",
+ "model": {
+  "@kind": "response",
+  "oc2lang.status": "500",
+  "oc2lang.status_text": "s74286",
+  "oc2lang.results_versions.#": "2",
+  "oc2lang.results_profiles.#": "2",
+  "oc2lang.results_pairs_scan.#": "2",
+  "oc2lang.results_pairs_locate.#": "2",
+  "oc2lang.results_pairs_query.#": "2"
+ }
+}
