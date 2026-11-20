@@ -13,6 +13,7 @@ scripts, no analytics.
 | `assets/journey.svg`, `assets/model-bus.svg`, `assets/icon.svg` | the two figures and the tab icon |
 | `build.sh`, `bundle.py` | write `assets/engine/` from the tree and check the page against it |
 | `assets/engine/` | generated, not kept in git (`site/.gitignore`) |
+| `assets/figures/` | the README's hub figure, `docs/figures/hub-light.svg` and `hub-dark.svg`, copied by `bundle.py` on every build; not kept in git |
 
 ## The demo runs the library
 
@@ -60,6 +61,9 @@ it is done.
   against; the footnotes of the page give the command behind each number;
 - the two outputs shown near the top of the page must be what `goat-xf` prints
   for the same input;
+- the hub figure is copied from `docs/figures/` on every build, so it is the
+  README's drawing; the page must show both files, and its alt text must be the
+  README's;
 - the drawing in the first screen must be the tree's: its bytes are the input
   of `packs/remote-id/vectors/02-location-roundtrip.json`, each pack line it
   quotes is a line of `packs/remote-id/pack.def` or `packs/cot-xml/pack.def`,

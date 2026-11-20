@@ -96,6 +96,37 @@ def pack_wire(path):
     return ""
 
 
+# The README's figures the page shows, copied from docs/figures/ on every
+# build so the page and the README show the same drawing. Not kept in git.
+FIGURES = ["hub-light.svg", "hub-dark.svg"]
+FIG_OUT = os.path.join(HERE, "assets", "figures")
+
+
+def copy_readme_figures():
+    if os.path.isdir(FIG_OUT):
+        shutil.rmtree(FIG_OUT)
+    os.makedirs(FIG_OUT)
+    for name in FIGURES:
+        shutil.copyfile(os.path.join(REPO, "docs", "figures", name), os.path.join(FIG_OUT, name))
+
+
+def check_figures(html):
+    """index.html shows each copied figure, and its alt text is the README's."""
+    bad = 0
+    for name in FIGURES:
+        if "assets/figures/" + name not in html:
+            print("bundle.py: check: index.html does not show assets/figures/%s" % name)
+            bad += 1
+    with open(os.path.join(REPO, "README.md"), encoding="utf-8") as f:
+        readme = f.read()
+    m = re.search(r'<img src="docs/figures/hub-light.svg"[^>]*alt="([^"]*)"', readme)
+    page = re.search(r'<img src="assets/figures/hub-light.svg"[^>]*alt="([^"]*)"', html)
+    if not m or not page or m.group(1) != page.group(1):
+        print("bundle.py: check: the alt text of the hub figure differs from README.md")
+        bad += 1
+    return bad
+
+
 def count_stats():
     """The numbers the page quotes, from tools/repo-stats, the counter that
     README.md is tested against, so the page and the README count alike."""
@@ -150,6 +181,7 @@ def main():
     shutil.copyfile(a.wasm, os.path.join(OUT, "goat_transformers_wasm.wasm"))
     files["goat_transformers_wasm.wasm"] = "bindings/wasm, `cargo build --profile small --target wasm32-unknown-unknown`"
     put("bindings/wasm/goat_transformers.mjs", "goat_transformers.mjs")
+    copy_readme_figures()
 
     formats = []
     modules = ["core"]
@@ -281,6 +313,7 @@ def check_page(stats, pairs):
             print("bundle.py: check: index.html does not show the goat-xf output of %s to %s: %s" % (s, t, expect))
             bad += 1
     bad += check_hero(html, pairs)
+    bad += check_figures(html)
     if bad:
         print("bundle.py: FAIL, index.html differs from the tree in %d place(s)" % bad)
         return 1
