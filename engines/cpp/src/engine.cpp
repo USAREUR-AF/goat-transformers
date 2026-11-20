@@ -172,6 +172,68 @@ Engine Engine::load_packs(const std::string& packs_dir, const std::vector<std::s
     return eng;
 }
 
+Engine Engine::load_tool(const std::string& packs_dir, const std::string& models_dir,
+                         const std::vector<std::string>* names, Distribution max_distribution) {
+    Engine eng;
+    eng.set_max_distribution(max_distribution);
+    std::error_code ec;
+
+    // 1. Modules, before packs_dir is read at all, so a failing module is the
+    // error even when packs_dir cannot be read. A file named exactly `.def` ends in `.def` too, so the name is
+    // compared as text, not by its extension.
+    const fs::path mdir(models_dir);
+    if (fs::is_directory(mdir, ec)) {
+        std::vector<std::string> files;
+        for (fs::directory_iterator it(mdir, ec), end; !ec && it != end; it.increment(ec)) {
+            const std::string n = it->path().filename().string();
+            std::error_code fe;
+            if (n.size() >= 4 && n.compare(n.size() - 4, 4, ".def") == 0 && it->is_regular_file(fe)) files.push_back(n);
+        }
+        if (ec) throw Error(ErrorKind::Io, "", "", "cannot list " + mdir.string() + ": " + ec.message());
+        std::sort(files.begin(), files.end());
+        auto core = std::find(files.begin(), files.end(), "core.def");
+        if (core != files.end()) std::rotate(files.begin(), core, core + 1);
+        std::vector<Module> parsed;
+        parsed.reserve(files.size());
+        for (const auto& n : files)
+            parsed.push_back(detail::parse_model_unchecked(read_text(mdir / n), (mdir / n).string()));
+        load_modules(eng, parsed, nullptr);
+    }
+
+    // 2. Packs, each parsed and added in turn, so the first failure stops the load.
+    if (names) {
+        for (const auto& n : *names) {
+            const fs::path dir = fs::path(packs_dir) / n;
+            std::error_code pe;
+            if (n.empty() || n == "." || n == ".." || n.find('/') != std::string::npos ||
+                n.find('\\') != std::string::npos || !fs::is_directory(dir, pe) ||
+                !fs::is_regular_file(dir / "pack.def", pe))
+                throw Error(ErrorKind::UnknownFormat, "", "", "'" + n + "' is not a pack directory of " + packs_dir);
+            const fs::path def = dir / "pack.def";
+            eng.add_pack(parse_pack(read_text(def), def.string()));
+        }
+        return eng;
+    }
+    // Without names packs_dir is listed; with names each is looked up in it,
+    // so a packs_dir that does not exist makes the first name unknown-format.
+    if (!fs::is_directory(packs_dir, ec))
+        throw Error(ErrorKind::Io, "", "", "the packs directory " + packs_dir + " does not exist or is not a directory");
+    std::vector<std::string> dirs;
+    for (fs::directory_iterator it(packs_dir, ec), end; !ec && it != end; it.increment(ec)) {
+        const std::string n = it->path().filename().string();
+        std::error_code de;
+        if (n.empty() || n[0] == '.') continue;
+        if (it->is_directory(de) && fs::is_regular_file(it->path() / "pack.def", de)) dirs.push_back(n);
+    }
+    if (ec) throw Error(ErrorKind::Io, "", "", "cannot list " + packs_dir + ": " + ec.message());
+    std::sort(dirs.begin(), dirs.end());
+    for (const auto& n : dirs) {
+        const fs::path def = fs::path(packs_dir) / n / "pack.def";
+        eng.add_pack(parse_pack(read_text(def), def.string()));
+    }
+    return eng;
+}
+
 void Engine::load_model(const std::string& text, const std::string& origin) {
     add_model(detail::parse_model_unchecked(text, origin));
 }
@@ -586,7 +648,8 @@ std::string Engine::convert_text(const std::string& from, const std::string& to,
 
 // engine-spec.md 0.6, Order inside `convert`.
 std::string Engine::convert_impl(const std::string& from, const std::string& to, const std::string& bytes,
-                                 const Context* context, const std::map<std::string, std::string>* text) const {
+                                 const Context* context, const std::map<std::string, std::string>* text,
+                                 const TextContext* ordered) const {
     // unknown-format: `from`, then `to`, before the input is read (0.11 ruling 5).
     (void)pack(from);
     (void)pack(to);
@@ -594,8 +657,9 @@ std::string Engine::convert_impl(const std::string& from, const std::string& to,
     if (from != to) e.kind = {};  // a cross-format conversion chooses the target kind by `requires`
     // A same-format conversion with no context skips both steps, so it stays byte-exact.
     // An empty context counts as given.
-    if (from != to || context || text) {
+    if (from != to || context || text || ordered) {
         if (text) apply_context(e, context_from_text(*text));
+        if (ordered) apply_context(e, context_from_text_in_order(*ordered));
         if (context) apply_context(e, *context);
         complete(e);
     }
@@ -609,7 +673,16 @@ const ModelKey* Engine::find_key(const std::string& key) const {
     return it == modules_.end() ? nullptr : it->second.find(name);
 }
 
+std::string Engine::convert_text_in_order(const std::string& from, const std::string& to, const std::string& bytes,
+                                          const TextContext& context) const {
+    return convert_impl(from, to, bytes, nullptr, nullptr, &context);
+}
+
 Engine::Context Engine::context_from_text(const std::map<std::string, std::string>& text) const {
+    return context_from_text_in_order(TextContext(text.begin(), text.end()));
+}
+
+Engine::Context Engine::context_from_text_in_order(const TextContext& text) const {
     Context out;
     for (const auto& kv : text) {
         const ModelKey* k = find_key(kv.first);

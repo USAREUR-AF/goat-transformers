@@ -1,0 +1,12 @@
+{
+  "name": "a-failing-module-before-unreadable-packs",
+  "args": [
+    "list-formats",
+    "--packs",
+    "{packs}/conformance-no-such-directory",
+    "--models",
+    "{packs}/conformance/tool-fixtures/bad-model"
+  ],
+  "exit": 1,
+  "error_kind": "unknown-directive"
+}

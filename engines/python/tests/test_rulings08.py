@@ -224,12 +224,14 @@ class TestPacksOnly(unittest.TestCase):
     def test_cli(self):
         env = dict(os.environ, PYTHONPATH=SRC)
         cmd = [sys.executable, "-m", "goat_transformers", "list-formats", "--packs", self.packs]
-        r = subprocess.run(cmd + ["--packs-only", "y, w"], capture_output=True, env=env)
+        r = subprocess.run(cmd + ["--packs-only", "y,w"], capture_output=True, env=env)
         self.assertEqual(r.returncode, 0, r.stderr)
         self.assertEqual([ln.split(b"\t")[0] for ln in r.stdout.splitlines()], [b"w", b"y"])
-        r = subprocess.run(cmd + ["--packs-only", "nosuch"], capture_output=True, env=env)
-        self.assertEqual(r.returncode, 2)
-        self.assertIn(b"unknown-format:", r.stderr)
+        # spec 0.23: a name is used as given, so " w" is no pack directory; a call failure exits 1
+        for only in ("y, w", "nosuch"):
+            r = subprocess.run(cmd + ["--packs-only", only], capture_output=True, env=env)
+            self.assertEqual((r.returncode, r.stdout), (1, b""), only)
+            self.assertTrue(r.stderr.startswith(b"unknown-format:"), r.stderr)
         r = subprocess.run(
             [sys.executable, "-m", "goat_transformers", "convert", "--from", "w", "--to", "w", "--packs", self.packs,
              "--packs-only", "w"],

@@ -224,6 +224,13 @@ def build():
     add("models-that-do-not-exist", ["list-formats"] + P + ["--models", "{packs}/conformance-no-such-directory"] + only(cap_a),
         1, kind="unknown-module")
     add("packs-that-do-not-exist", ["matrix", "--packs", "{packs}/conformance-no-such-directory"], 1)
+    # modules load before --packs is read: a failing module is the error even when --packs cannot be read
+    add("a-failing-module-before-unreadable-packs",
+        ["list-formats", "--packs", "{packs}/conformance-no-such-directory",
+         "--models", "{packs}/conformance/tool-fixtures/bad-model"], 1, kind="unknown-directive")
+    # with --packs-only, --packs is not listed: each name is looked up in it
+    add("packs-only-in-packs-that-do-not-exist",
+        ["list-formats", "--packs", "{packs}/conformance-no-such-directory"] + only(cap_a), 1, kind="unknown-format")
 
     # --- usage errors: exit 2, before anything is loaded
     usage = [

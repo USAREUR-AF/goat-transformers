@@ -3484,7 +3484,7 @@ pub const Engine = struct {
     // text, module name and `uses` lines. null: there is no such directory.
     fn scanModelDir(self: *Engine, models_dir: []const u8) !?ModelFiles {
         var dir = std.fs.cwd().openDir(models_dir, .{ .iterate = true }) catch |err| switch (err) {
-            error.FileNotFound => return null,
+            error.FileNotFound, error.NotDir => return null, // ruling 4 of 0.4: no modules
             else => return err,
         };
         defer dir.close();

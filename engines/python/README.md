@@ -18,7 +18,7 @@ geojson = engine.convert("cot-xml", "geojson", cot_event)   # bytes in, bytes ou
 The package holds the engine. The packs are data: `tools/goat-pkg bundle` in
 the repository writes the ones you name, and the model modules they use, to a
 directory you vendor or ship as package data. `docs/using.md` in the repository
-shows the whole path. `goat-xf-py` is the command-line tool.
+shows the whole path. `goat-xf-py` is the command-line tool (Version 0.23, the command-line contract).
 
 ## The library API
 
@@ -94,31 +94,48 @@ Also exported: `Entity`, `Item`, `Pack`, `load_pack`, `parse_pack_text`, `Key`,
 
 ## The command-line tool `goat-xf-py`
 
-Status: Built. `python3 -m goat_transformers` is the same tool (its help names it so).
+Status: Built. The tool follows the command-line contract of the
+specification (`spec/engine-spec.md`, Version 0.23): the same arguments,
+output and exit status as the tool of every other engine. Nothing is built.
+From a checkout, start it from the repository root as
+
+```
+engines/python/goat-xf-py.py <subcommand> ...
+```
+
+(a launcher that puts `engines/python/src` on the import path). Installed with
+pip, the same tool is `goat-xf-py`, and `python3 -m goat_transformers` starts it too.
 
 | Subcommand | Does |
 |---|---|
-| `convert --from <format> --to <format>` | reads the message on standard input, writes the result on standard output |
-| `list-formats` | prints one line per loaded pack: name, version, wire, separated by tabs |
+| `convert --from <format> --to <format> [--set <key>=<value>]...` | reads standard input to its end, writes the result on standard output with nothing added (a hex wire's result as lower-case hex text, no line feed) |
+| `list-formats` | one line per loaded pack, in byte order of format name: format, version, wire, separated by tabs |
+| `capability --from <format> --to <format>` | the capability report of the pair as one line: from, to, grade, carried, dropped, separated by tabs, the entries of a list joined by a space |
+| `matrix` | the header `from	to	grade	carried	dropped`, then one such line per ordered pair of loaded formats, a format with itself included |
+| `help`, `-h`, `--help` | the usage, on standard output |
 
 | Option | Of | Means |
 |---|---|---|
-| `--packs <dir>` | both | the packs directory; required unless `GT_PACKS` is set |
-| `--models <dir>` | both | the model module directory (default `<packs>/../model`) |
-| `--packs-only <name>[,<name>…]` | both | load only these packs and the modules they need |
-| `--max-distribution public\|controlled` | both | refuse modules and packs above this distribution (default `controlled`) |
+| `--packs <dir>` | all four | the packs directory (default `$GT_PACKS`, else `packs`) |
+| `--models <dir>` | all four | the model module directory (default: the `--packs` text followed by `/../model`); every `*.def` in it is loaded |
+| `--packs-only <name>[,<name>...]` | all four | load only these subdirectories of `--packs`, in the order given |
+| `--max-items <n>` | all four | the limit on list items one decode holds (default 100000) |
+| `--max-distribution public\|controlled` | all four | refuse modules and packs above this distribution (default `controlled`) |
 | `--set <key>=<value>` | `convert` | a caller-supplied model key, read as the key's declared type; repeatable |
-| `--max-items <n>` | `convert` | the limit on list items one decode holds (default 100000) |
+| `--from`, `--to` | `convert`, `capability` | the source and target formats |
 
-An error prints `goat_transformers: <kind>: …` on standard error and exits 2.
-Run from `engines/python`, with `feature.json` holding the input of
-`packs/geojson/vectors/01-geojson-to-cot.json`:
+Every option takes its value as the next argument; `--opt=value`, an
+abbreviation or an option given twice is a usage error. Exit status: 0 on
+success; 1 on a load failure or a call failure, with standard output empty and
+standard error's first line the error's message, `<kind>: ...`; 2 on a usage
+error, checked before anything is loaded. Run from `engines/python`, with
+`feature.json` holding the input of `packs/geojson/vectors/01-geojson-to-cot.json`:
 
 ```
-$ goat-xf-py list-formats --packs ../../packs --packs-only cot-xml,geojson
-cot-xml	0.2.0	xml
+$ ./goat-xf-py.py list-formats --packs ../../packs --packs-only cot-xml,geojson
+cot-xml	0.6.0	xml
 geojson	0.1.0	geojson
-$ goat-xf-py convert --from geojson --to cot-xml --packs ../../packs --packs-only cot-xml,geojson --set stale_ms=1614456180000 < feature.json
+$ ./goat-xf-py.py convert --from geojson --to cot-xml --packs ../../packs --packs-only cot-xml,geojson --set stale_ms=1614456180000 < feature.json
 <event version="2.0" uid="J-01334" type="a-f-G-U-C" time="2021-02-27T20:00:00.000Z" start="2021-02-27T20:00:00.000Z" stale="2021-02-27T20:03:00.000Z" how="m-g"><point lat="30.0090027" lon="-85.9578182" hae="-42.6" ce="45.3" le="99.5"/><detail><contact callsign="GATOR"/></detail></event>
 ```
 
@@ -131,13 +148,18 @@ in `engines/python`:
 PYTHONPATH=src python -m unittest discover -s tests
 ```
 
-It loads every pack and model module. One run gave `Ran 196 tests … OK`:
+It loads every pack and model module. One run on 2026-11-20 gave
+`Ran 242 tests … FAILED (failures=1)`: the one failure is the conversion
+vector `usgs-earthquake/vectors/04-event-to-cot-xml.json` (the engine writes
+an empty `<detail/>` the vector does not hold), which fails in the library and
+not in the tool.
 
 | Test file | Covers |
 |---|---|
-| `test_vectors.py` | every conversion vector of every pack (7113 of 750 packs, all passed), with its `max_items` and its `model` values read by the grammar of their key's type; every load vector, with `pack` or `packs` (505, all passed); every capability vector (18, all passed) |
-| `test_malformed.py` | the input of every conversion vector cut and changed (41325 damaged inputs, none raised anything but a named error); rulings 35 to 39 |
-| `test_bits.py`, `test_kinds.py`, `test_rules.py`, `test_groups.py`, `test_seq.py`, `test_rulings08.py`, `test_engine.py` | the bits wire, kinds and the json wire, mapping rules, groups, sequential layouts, rulings 16 to 30 of 0.8, `packs_only`, grammar and residue |
+| `test_vectors.py` | every conversion vector of every pack (17628 of 2687 packs, 17627 passed), with its `max_items` and its `model` values read by the grammar of their key's type; every load vector, with `pack` or `packs` (862, all passed); every capability vector (18, all passed) |
+| `test_malformed.py` | the input of every conversion vector cut and changed (103161 damaged inputs, none raised anything but a named error); rulings 35 to 39 |
+| `test_bits.py`, `test_kinds.py`, `test_rules.py`, `test_groups.py`, `test_seq.py`, `test_rulings08.py`, `test_engine.py` | the bits wire, kinds and the json wire, mapping rules, groups, sequential layouts, rulings 16 to 30 of 0.8, `packs_only`, grammar and residue, the exit status of the tool |
+| `tools/tool-vectors.py`, run from the repository root as `python3 -I tools/tool-vectors.py -- engines/python/goat-xf-py.py` | every tool vector of `packs/conformance/tool-vectors` (97, all passed): the command-line contract of Version 0.23 |
 
 The same job then installs the package with pip, writes a bundle of `cot-xml`
 and `geojson` with `tools/goat-pkg bundle`, and checks that `Engine.from_dir`

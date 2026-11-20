@@ -1,0 +1,3 @@
+# A model module that fails on its first line (spec 0.23, Loading: modules
+# load before --packs is read). Used by a tool vector, never by a pack.
+bogus line

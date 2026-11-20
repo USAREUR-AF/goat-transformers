@@ -399,8 +399,8 @@ class TestCliSet(unittest.TestCase):
         self.assertIn(b'stale="2021-02-27T20:00:30.000Z" how="m-g"', r.stdout)
         r = subprocess.run(base + ["--set", "nosuchkey=1"], input=src, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                            env=env)
-        self.assertEqual(r.returncode, 2)
-        self.assertIn(b"undeclared-key:", r.stderr)
+        self.assertEqual((r.returncode, r.stdout), (1, b""))  # spec 0.23: a call failure exits 1
+        self.assertTrue(r.stderr.startswith(b"undeclared-key:"), r.stderr)
 
 
 if __name__ == "__main__":

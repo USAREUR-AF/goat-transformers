@@ -10,6 +10,14 @@ An independent, clean-room implementation of the gt engine, written from
 ./run_tests       # loads ../../model and ../../packs, runs every vector
 ```
 
+| Test | Command (repository root) | Measured (2026-11-20) |
+|---|---|---|
+| conversion vectors | `cd engines/erlang && ./run_tests` | 17627/17628 (the one failure is `usgs-earthquake/event-to-cot-xml`, a vector already corrected on `main`) |
+| load vectors | same run | 862/862 |
+| capability vectors | same run | 18/18 |
+| malformed inputs | same run | 87935/87935 |
+| tool vectors (Version 0.23) | `python3 -I tools/tool-vectors.py -- engines/erlang/goat-xf.sh` | 95/95 |
+
 `./run_tests` compiles on first use if `ebin/` is empty, prints every failure as
 `FAIL <pack>/<vector>: <why>`, then prints
 `vectors: N/N passed` (conversion vectors), `load vectors: N/N passed`
@@ -43,6 +51,41 @@ beginning with the kind and a colon. The cases are a fixed function of the
 vectors, so two runs make the same ones.
 `./run_tests <packs> [<model>]` runs against other directories; the model
 directory defaults to the one beside `<packs>`.
+
+## Command-line tool (engine-spec Version 0.23)
+
+`goat-xf.sh` is the tool of the command-line contract. Build once with
+`./build.sh`, then start it from anywhere; CI calls it from the repository root
+as `engines/erlang/goat-xf.sh`. It runs `erl -noshell -pa <its dir>/ebin -s gt_cli main
+-extra <arguments>`, so every argument reaches `src/gt_cli.erl` unread by `erl`.
+
+```
+engines/erlang/goat-xf.sh convert --from <format> --to <format> [--set <key>=<value>]... <options>
+engines/erlang/goat-xf.sh list-formats <options>
+engines/erlang/goat-xf.sh capability --from <format> --to <format> <options>
+engines/erlang/goat-xf.sh matrix <options>
+engines/erlang/goat-xf.sh help
+```
+
+`<options>`, in any order, each at most once: `--packs <dir>` (default
+`packs`, relative to the current directory), `--models <dir>` (default the
+`--packs` text followed by `/../model`), `--packs-only <name>[,<name>...]`,
+`--max-items <n>` (default 100000), `--max-distribution public|controlled`
+(default `controlled`). The tool has no options of its own (`--x-...`).
+
+Exit status 0 on success; 1 on a load or call failure, standard error's first
+line being the failure's message, which begins with the kind and a colon; 2 on
+a usage error, found before anything is loaded. An unreadable `--packs` (a kind
+the contract does not give) is reported as `packs-unreadable: ...`.
+`convert` reads standard input to its end (hex text for the `bits`, `protobuf`
+and `tlv` wires) and writes the result with nothing added; `--set` values form
+the context. `list-formats`, `capability` and `matrix` write the tab-separated
+lines of the contract. `help`, `-h` and `--help` print the usage.
+
+All modules of `--models` are loaded (core first, each after those it uses),
+then the packs: the `--packs-only` names in the order given, or every
+directory of `--packs` not beginning with `.` whose `pack.def` is a regular
+file, in byte order of name.
 
 ## As a dependency
 
@@ -186,3 +229,4 @@ implemented as the specification states them.
   encode / complete / convert on every wire, groups and lists, residue,
   typemap, value tables, transforms.
 - `src/gt_test.erl`  — conformance runner and the malformed-input check.
+- `src/gt_cli.erl`   — the command-line tool (Version 0.23), started by `goat-xf.sh`.

@@ -332,16 +332,36 @@ func moduleHeader(path string) (name string, uses []string) {
 	return name, uses
 }
 
+// defFiles lists the files directly in dir whose names end in .def, a
+// symbolic link to a file included, not recursing into subdirectories. A dir
+// that does not exist, is not a directory or cannot be read holds none
+// (ruling 4 of 0.4).
+func defFiles(dir string) []string {
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		return nil
+	}
+	var out []string
+	for _, ent := range entries {
+		if !strings.HasSuffix(ent.Name(), ".def") {
+			continue
+		}
+		path := filepath.Join(dir, ent.Name())
+		if st, err := os.Stat(path); err == nil && st.IsDir() {
+			continue
+		}
+		out = append(out, path)
+	}
+	return out
+}
+
 // moduleFiles lists every *.def under dir in loading order: core.def first
 // whatever its name sorts as (0.6 ruling 9), then each module after the
 // modules it uses (spec 0.8), ties in byte order of file name. A cycle of
 // `uses` lines is bad-directive. A used module no file declares is left to
 // the load, which reports unknown-module.
 func moduleFiles(dir string) ([]string, error) {
-	matches, err := filepath.Glob(filepath.Join(dir, "*.def"))
-	if err != nil {
-		return nil, err
-	}
+	matches := defFiles(dir)
 	isCore := func(path string) bool { return filepath.Base(path) == CoreModule+".def" }
 	sort.SliceStable(matches, func(i, j int) bool {
 		if ci, cj := isCore(matches[i]), isCore(matches[j]); ci != cj {

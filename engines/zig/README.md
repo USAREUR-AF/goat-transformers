@@ -48,6 +48,63 @@ file>: <why>` line per failing vector; non-zero exit on any failure. A
 vector's `max_items` sets the limit on list items for that vector; a `model`
 value its grammar refuses makes the vector fail as invalid. Stdlib only.
 
+## Tests
+
+| Command (from `engines/zig`) | What it runs | Result |
+|---|---|---|
+| `zig build test` | conversion, load and capability vectors, then the malformed-input run | `vectors`, `load vectors`, `capability vectors`, `malformed inputs` lines |
+| `zig build module-test` | the module another program imports | passes |
+| `zig build cli -Doptimize=ReleaseSafe`, then from the repository root `python3 -I tools/tool-vectors.py -- engines/zig/zig-out/bin/goat-xf` | the tool vectors of spec Version 0.23 | `tool vectors: 95/95 passed` |
+
+## Command-line tool (spec Version 0.23)
+
+`goat-xf` is the tool of the command-line contract, a separate executable
+from the conformance harness (`src/cli.zig`, built on the engine of
+`src/main.zig`). Build it and start it:
+
+```
+cd engines/zig && zig build cli -Doptimize=ReleaseSafe    # gives zig-out/bin/goat-xf
+engines/zig/zig-out/bin/goat-xf <subcommand> ...          # from the repository root
+```
+
+```
+goat-xf convert --from <format> --to <format> [--set <key>=<value>]... <options>
+goat-xf list-formats <options>
+goat-xf capability --from <format> --to <format> <options>
+goat-xf matrix <options>
+goat-xf help
+```
+
+`<options>`: `--packs <dir>` (default `packs`, relative to the current
+directory, so the repository root's packs when started there), `--models
+<dir>` (default the `--packs` text followed by `/../model`), `--packs-only
+<a>,<b>...`, `--max-items <n>` (default 100000) and `--max-distribution
+public|controlled` (default `controlled`). The tool has no `--x-` options of
+its own.
+
+Every argument is checked before anything is loaded; a usage error exits 2
+with a message and the usage on standard error. The tool then loads every
+module of `--models` (`core.def` first, then byte order of file name, each
+module after the modules it uses; a `--models` that does not exist or is not
+a directory loads none), then the packs: with `--packs-only` the named
+subdirectories in the order given (a name given twice is `duplicate-format`;
+a name that is not one path component, or not a subdirectory holding
+`pack.def`, is `unknown-format`), else every directory or symbolic link to
+one not beginning with `.` that holds `pack.def`, in byte order of name. A
+failure exits 1 with standard output empty and the engine's message
+`<kind>: <detail>` as the first line of standard error; an unreadable
+`--packs` prints `error: cannot read the packs directory <dir>: <reason>`.
+
+`convert` checks `--from`, then `--to`, reads standard input to its end,
+refuses input that is not UTF-8 as `malformed-wire`, and passes the bytes
+unchanged to `Engine.convert`; the result is written with nothing added.
+`--set` occurrences form the context, a repeated key taking its last value in
+the place of its first. `list-formats` writes `<format>\t<version>\t<wire>`
+per pack, `capability` one line `<from>\t<to>\t<grade>\t<carried>\t<dropped>`,
+and `matrix` the header `from\tto\tgrade\tcarried\tdropped` and one such line
+per ordered pair, formats in byte order of name; each line ends in a line
+feed.
+
 ## Malformed input (spec Version 0.8, rulings 35 to 40)
 
 An input that is not a well-formed message of its wire fails with

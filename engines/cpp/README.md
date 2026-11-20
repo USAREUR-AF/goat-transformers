@@ -64,6 +64,7 @@ cd build && ctest --output-on-failure
 | `unit` | `goat_transformers_unit` | number formatting, dates, pack grammar errors, residue, and the malformed-input rulings no vector reaches |
 | `malformed_input` | `goat_transformers_fuzz` | the malformed-input test, below |
 | `cli_list_formats`, `cli_packs_only` | `goat-xf` | the command-line tool loads the packs |
+| `tool_vectors` | `goat-xf`, through `tools/tool-vectors.py` | the tool vectors under `packs/conformance/tool-vectors` (the command-line contract, 0.23): 97/97 pass. The entry exists when CMake finds a Python 3 interpreter |
 
 Each program prints its counts on the last line and exits non-zero on any
 failure. A program can be run by itself: `./build/goat_transformers_vectors`.
@@ -105,12 +106,50 @@ nothing else.
 
 ## Command-line tool
 
+`goat-xf` is the command-line tool of the contract every engine shares
+(`spec/engine-spec.md`, Version 0.23): the same arguments, output and exit
+status as the tool of any other engine. It is built with the library (Build,
+above); from the repository's root:
+
 ```sh
-./build/goat-xf list-formats --packs ../../packs
-./build/goat-xf convert --packs ../../packs --from cot-xml --to geojson < message.xml
+nice -n 10 cmake -S engines/cpp -B engines/cpp/build -DCMAKE_BUILD_TYPE=Release
+nice -n 10 cmake --build engines/cpp/build -j
+engines/cpp/build/goat-xf list-formats --packs packs
 ```
 
-`convert` reads the message from standard input and writes the result to
-standard output. `--max-items <n>` sets the limit on list items one decode
-holds (`spec/engine-spec.md`, ruling 7 of 0.11; 100000 by default). On an error it prints the message, which begins with the
-error kind, to standard error and exits with status 1.
+```
+goat-xf convert --from <format> --to <format> [--set <key>=<value>]... <options>
+goat-xf list-formats <options>
+goat-xf capability --from <format> --to <format> <options>
+goat-xf matrix <options>
+goat-xf help
+```
+
+| Option | Means | Default |
+|---|---|---|
+| `--packs <dir>` | the directory whose subdirectories are packs | `packs`, in the current directory |
+| `--models <dir>` | the directory of model modules | the `--packs` text followed by `/../model` |
+| `--packs-only <name>[,<name>...]` | load only these subdirectories of `--packs`, in the order given | every subdirectory |
+| `--max-items <n>` | the limit on list items one decode holds (ruling 7 of 0.11) | 100000 |
+| `--max-distribution public\|controlled` | the engine's distribution limit | `controlled` |
+
+After the subcommand the arguments are pairs of an option name and its value;
+`--set` may be repeated, every other option is given at most once.
+
+- `convert` reads standard input to its end and writes the result with
+  nothing added (lower-case hex text for the `bits`, `protobuf` and `tlv`
+  wires, and no line feed after any result). The `--set` options are the
+  context, checked in the order given.
+- `list-formats` writes `format<TAB>version<TAB>wire`, one line per pack, in
+  byte order of format name.
+- `capability` writes the capability report of the pair as one line
+  `from<TAB>to<TAB>grade<TAB>carried<TAB>dropped`, the entries of a list
+  joined by a space.
+- `matrix` writes that header line, then one such line per ordered pair of
+  loaded formats.
+
+Exit status: 0 on success; 1 on a load or call failure, with standard output
+empty and the failure's message on standard error, its first line beginning
+with the kind and a colon (`unknown-format: ...`); 2 on a usage error, which
+is reported before anything is loaded or read. The tool has no option of its
+own (`--x-...`).

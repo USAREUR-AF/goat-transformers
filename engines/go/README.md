@@ -61,36 +61,51 @@ and 7).
 
 ## Command-line tool
 
+The tool `goat-xf` follows the command-line contract of
+`spec/engine-spec.md`, Version 0.23: the same subcommands, options, output
+bytes and exit status as the tool of every other engine. Build it from the
+repository root, then start it as `engines/go/goat-xf`:
+
 ```
 cd engines/go && go build -o goat-xf ./cmd/goat-xf
 ```
 
 | Subcommand | Does |
 |---|---|
-| `convert --from F --to F` | reads a message on stdin, writes the converted message on stdout |
-| `list-formats` | prints each loaded pack: format, version, wire, separated by tabs |
-| `help`, `-h`, `--help` | prints the usage |
+| `convert --from F --to F [--set KEY=VALUE]...` | reads standard input to its end, converts it, writes the result with nothing added (lower-case hex text for the `bits`, `protobuf` and `tlv` wires) |
+| `list-formats` | one line per loaded pack, in byte order of format: format, version, wire, separated by tabs |
+| `capability --from F --to F` | the capability report of the pair (spec 0.11, ruling 6) as one line: from, to, grade, carried, dropped |
+| `matrix` | the header `from to grade carried dropped`, then that line for every ordered pair of loaded formats |
+| `help`, `-h`, `--help` | the usage, on standard output |
 
-| Flag | Meaning |
+| Option | Meaning |
 |---|---|
-| `--packs DIR` | directory holding `<format>/pack.def` (default `packs`) |
-| `--models DIR` | directory holding `<module>.def` (default `<packs>/../model`) |
-| `--packs-only A,B` | load only the named packs of `--packs` and the modules they need |
+| `--packs DIR` | the directory whose subdirectories are packs (default `packs`) |
+| `--models DIR` | the directory of model modules (default the `--packs` text followed by `/../model`) |
+| `--packs-only A,B` | load only these subdirectories of `--packs`, in the order given; every module of `--models` still loads |
+| `--max-items N` | the limit on list items one decode holds (default 100000) |
 | `--max-distribution public\|controlled` | refuse modules and packs above this marking (default `controlled`) |
-| `--set KEY=VALUE` | `convert` only, repeatable: a model key the message does not carry |
-| `--max-items N` | `convert` only: the limit on list items one decode holds (default 100000) |
+| `--set KEY=VALUE` | `convert` only, repeatable: the context, its keys checked in the order given |
 
-The exit status is 0 on success, 1 for a load or conversion error (printed on
-stderr with its named kind) and 2 for a usage error. Run from `engines/go`,
-with the input of `packs/cot-xml/vectors/01-track-to-geojson.json` in `in.xml`:
+Arguments come in pairs after the subcommand, an option name then its value;
+each option but `--set` at most once. Exit status 0 on success; 1 for a load
+or call failure, with standard output empty and the failure's message on
+standard error, its first line beginning with the named kind and a colon;
+2 for a usage error, which is checked before anything is loaded. The tool has
+no option of its own (`--x-...`). From the repository root, with the input of
+`packs/cot-xml/vectors/01-track-to-geojson.json` in `in.xml`:
 
 ```
-$ ./goat-xf convert --from cot-xml --to geojson --packs ../../packs --packs-only cot-xml,geojson < in.xml
+$ engines/go/goat-xf convert --from cot-xml --to geojson --packs packs --packs-only cot-xml,geojson < in.xml
 {"type":"Feature","geometry":{"type":"Point","coordinates":[-85.9578182,30.0090027,-42.6]},"properties":{"type":"a-f-G-U-C","time_ms":1614456000000,"how":"m-g","ce":45.3,"le":99.5,"callsign":"GATOR"},"id":"J-01334"}
-$ ./goat-xf list-formats --packs ../../packs --packs-only cot-xml,geojson
-cot-xml	0.2.0	xml
+$ engines/go/goat-xf list-formats --packs packs --packs-only cot-xml,geojson
+cot-xml	0.6.0	xml
 geojson	0.1.0	geojson
 ```
+
+`Engine.ConvertOrdered(from, to, input, []KeyValue)` and
+`LoadTool(models, packs, maxDistribution, only)` are the library calls the
+tool makes.
 
 ## Test
 
@@ -109,6 +124,7 @@ x86_64, 36 top-level tests and examples, none failing:
 | `TestLoadVectors` | every load vector in `packs/conformance/load-vectors`: loads, or fails with the named error | 314 run, 314 passed |
 | `TestMalformedInputNeverPanics` | the input of every conversion vector cut at prefixes and with single bytes changed, with a fixed seed: no panic, every error begins with a named kind | 13180 inputs fed, 0 failed |
 | `TestMalformedRulings` | the malformed-input rulings of the specification, such as nesting depth and bytes that are not UTF-8 | pass |
+| tool vectors | `python3 -I tools/tool-vectors.py -- engines/go/goat-xf`, from the repository root after the build above: every vector in `packs/conformance/tool-vectors` | 95 run, 95 passed |
 | `TestHeapPerListItem` | the heap a decode takes per item of a long list; runs only with `GOAT_XF_HEAP=1` | skipped in CI |
 | the other tests and `ExampleLoadPacksOnly`, `ExampleEngine_LoadFS` | the tokenizer, float and time formatting, wire errors, kinds, groups, sequential wires, derive functions, the directory and `fs.FS` loaders | pass |
 

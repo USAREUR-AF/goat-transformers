@@ -4448,8 +4448,11 @@ failure:
    whose name ends in `.def`, in byte order of file name, compared case
    sensitively, not recursing into subdirectories (Version 0.4, Loading, and
    ruling 9 of 0.6; a module is still loaded after the modules it uses). A
-   `--models` that does not exist, or is not a directory, loads no modules
-   (ruling 4 of 0.4).
+   file is a regular file or a symbolic link to one; a directory whose name
+   ends in `.def` is not a module. A `--models` that does not exist, or is
+   not a directory, loads no modules (ruling 4 of 0.4). The modules are
+   loaded before `--packs` is read at all, so a failing module is the
+   error even when `--packs` cannot be read.
 2. **Packs.** With `--packs-only`, the named subdirectories of `--packs`, in
    the order given; a name given twice is loaded twice, so the second is
    `duplicate-format`. A name that is not one path component (it holds `/`
@@ -4459,9 +4462,11 @@ failure:
    is a directory, a symbolic link to one included, and holds `pack.def`,
    other than names that begin with `.`, in byte order of name.
 
-A `--packs` that does not exist, is not a directory or cannot be read exits
-1; the contract does not give this case a kind, so its first line of standard
-error is the engine's. The format names are the `format` lines of the loaded
+Without `--packs-only`, a `--packs` that does not exist, is not a directory
+or cannot be read exits 1; the contract does not give this case a kind, so
+its first line of standard error is the engine's. With `--packs-only`,
+`--packs` is not listed: each name is looked up in it, so when `--packs` does
+not exist the first name is `unknown-format`. The format names are the `format` lines of the loaded
 packs; a directory's name is never compared with them, so a pack in
 directory `d` whose `format` line says `f` is the format `f`, and `--from d`
 is `unknown-format`. `help` loads nothing.
