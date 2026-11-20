@@ -109,7 +109,74 @@ FAMILIES = {
                  "is used. Attribution: the pack is derived from the Overture Maps schema (CC BY 4.0), "
                  "restated with keys of this project's naming."),
     },
+    "cds": {
+        "repo": "https://github.com/openmobilityfoundation/cds-openapi",
+        "raw": "https://raw.githubusercontent.com/openmobilityfoundation/cds-openapi",
+        "publisher": "Open Mobility Foundation",
+        "run": "tools/gen/cds-run.sh",
+        "read_on": "2026-11-20",
+        "full_license": False,
+        "quote_lines": ["Creative Commons Attribution 4.0 International Public License"],
+        "license_intro": ("The repository's `LICENSE` is the Creative Commons Attribution 4.0 International "
+                          "Public License (CC BY 4.0); its title line:"),
+        "spec": ("The repository is the OpenAPI form of the Curb Data Specification 1.1.0 "
+                 "(https://github.com/openmobilityfoundation/curb-data-specification, tag 1.1.0, also CC BY "
+                 "4.0), as its CHANGELOG.MD states; it has no release tags. Attribution: the pack is derived "
+                 "from the CDS OpenAPI data models (CC BY 4.0), restated with keys of this project's naming."),
+    },
+    "tomp": {
+        "repo": "https://github.com/TOMP-WG/TOMP-API",
+        "raw": "https://raw.githubusercontent.com/TOMP-WG/TOMP-API",
+        "publisher": "TOMP Working Group (House of TOMP)",
+        "run": "tools/gen/tomp-run.sh",
+        "tag": "v2.0",
+        "read_on": "2026-11-20",
+        "full_license": False,
+        "license_intro": "The repository's `LICENSE` is the Apache License, Version 2.0; it opens:",
+        "spec": ("`openapi.json` is the merged OpenAPI 3.0 document of TOMP-API 2.0.0; its `info.license` "
+                 "also names Apache 2.0. The pack takes no description text of it."),
+    },
+    "osdm": {
+        "repo": "https://github.com/UnionInternationalCheminsdeFer/OSDM",
+        "raw": "https://raw.githubusercontent.com/UnionInternationalCheminsdeFer/OSDM",
+        "publisher": "UIC (International Union of Railways), OSDM",
+        "run": "tools/gen/osdm-run.sh",
+        "tag": "v3.11",
+        "read_on": "2026-11-20",
+        "full_license": False,
+        "license_intro": "The repository's `LICENSE` is the Apache License, Version 2.0; it opens:",
+        "spec": ("`specification/OSDM-online-api.yml` (its `info.version` reads 3.9.0 at this tag) and the "
+                 "schema files it refers to; its `info.license` also names Apache 2.0. Only message objects "
+                 "that carry a place or a time are packs. The pack takes no description text."),
+    },
+    "open311": {
+        "repo": "https://github.com/open311/open311.github.io",
+        "raw": "https://raw.githubusercontent.com/open311/open311.github.io",
+        "publisher": "Open311 community",
+        "run": "tools/gen/open311-run.sh",
+        "read_on": "2026-11-20",
+        "full_license": False,
+        "license_file": "data/georeport_v2-1.yaml",
+        "quote_lines": ["name: CC BY 3.0", "url: 'http://creativecommons.org/licenses/by/3.0/'"],
+        "license_intro": ("The repository has no LICENSE file; the GeoReport v2 OpenAPI document states its own "
+                          "license in `info.license`, Creative Commons Attribution 3.0 (CC BY 3.0)"),
+        "spec": ("The document is the Swagger 2.0 form of Open311 GeoReport v2 (http://wiki.open311.org/GeoReport_v2/). "
+                 "Attribution: the pack is derived from it (CC BY 3.0), restated with keys of this project's "
+                 "naming."),
+    },
 }
+
+CDS = [("cds-curb-zone", "curb_zone"), ("cds-curb-area", "curb_area"), ("cds-curb-space", "curb_space"),
+       ("cds-curb-object", "curb_object"), ("cds-curb-event", "curb_event"), ("cds-curb-status", "curb_status"),
+       ("cds-session", "session"), ("cds-aggregate", "aggregate")]
+TOMP = [("tomp-package", "package"), ("tomp-search-offer-request", "searchOfferRequest"),
+        ("tomp-offer-collection", "offerCollection"), ("tomp-asset-collection", "assetCollection"),
+        ("tomp-travel-documents", "travelDocuments"), ("tomp-support-ticket", "supportTicket"),
+        ("tomp-customer-account", "customerAccount")]
+OSDM = [("osdm-place", "Place"), ("osdm-stop-place", "StopPlace"), ("osdm-trip", "Trip"),
+        ("osdm-booking", "Booking"), ("osdm-offer", "Offer")]
+OPEN311 = [("open311-request", "Request"), ("open311-request-response", "RequestResponse"),
+           ("open311-service", "Service")]
 
 # Overture: (format, theme directory, feature file base name)
 OVERTURE = [("overture-address", "addresses", "address"), ("overture-bathymetry", "base", "bathymetry"),
@@ -171,6 +238,27 @@ def packs(family, src):
         main = os.path.join(src, "schemas", "playbook.json")
         out.append(("cacao-playbook", "CACAO Security Playbooks 2.0, JSON Schema of the playbook",
                     [os.path.relpath(p, src) for p in closure(main)], "schemas/playbook.json"))
+    elif family == "cds":
+        files = sorted("Shared Data Models/" + f for f in os.listdir(os.path.join(src, "Shared Data Models"))
+                       if f.endswith(".yaml"))
+        for fmt, base in CDS:
+            out.append((fmt, "Curb Data Specification (CDS) 1.1.0 data model `%s`, OpenAPI YAML" % base, files,
+                        "Shared Data Models/%s.yaml" % base))
+    elif family == "tomp":
+        for fmt, name in TOMP:
+            out.append((fmt, "TOMP-API 2.0.0 schema `%s`, OpenAPI 3.0" % name, ["openapi.json"], "openapi.json"))
+    elif family == "osdm":
+        spec = os.path.join(src, "specification")
+        files = ["specification/OSDM-online-api.yml"] + sorted(
+            os.path.relpath(os.path.join(d, f), src) for d, _, fs in os.walk(os.path.join(spec, "schemas"))
+            for f in fs if f.endswith(".yml"))
+        for fmt, name in OSDM:
+            out.append((fmt, "OSDM online API, schema `%s`, OpenAPI 3.0 YAML" % name, files,
+                        "specification/OSDM-online-api.yml"))
+    elif family == "open311":
+        for fmt, name in OPEN311:
+            out.append((fmt, "Open311 GeoReport v2, definition `%s`, Swagger 2.0 YAML" % name,
+                        ["data/georeport_v2-1.yaml"], "data/georeport_v2-1.yaml"))
     elif family == "overture":
         for fmt, theme, base in OVERTURE:
             rel = "schema/%s/%s.yaml" % (theme, base)
@@ -218,7 +306,7 @@ def text_for(family, fmt, title, files, main, src, commit):
     for f in files:
         w.append("| `%s` | `%s` |" % (f, sha256(os.path.join(src, f))))
     w += ["", "## License\n",
-          "%s (SHA-256 of `%s`: `%s`)\n" % (c["license_intro"], os.path.basename(lic), sha256(lic)),
+          "%s (SHA-256 of `%s`: `%s`)\n" % (c["license_intro"], c.get("license_file", "LICENSE"), sha256(lic)),
           "\n".join(("> " + l) if l.strip() else ">" for l in quote), "",
           c["spec"], "",
           "The pack restates the schema's structure (member names, types, nesting) with keys of this",

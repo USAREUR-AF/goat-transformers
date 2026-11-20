@@ -33,6 +33,10 @@ class YamlReader(unittest.TestCase):
         self.assertEqual(doc, {"m": {"description": "Physical surface. May be one value, or several.",
                                      "type": "array"}})
 
+    def test_yaml_escapes_in_a_double_quoted_scalar(self):
+        doc = J.yaml_load('d: "one\\ \\ two\\_x \\\\ y"\ne: "plain \\" quote"\n')
+        self.assertEqual(doc, {"d": "one  two\u00a0x \\ y", "e": 'plain " quote'})
+
     def test_quoted_scalar_over_several_lines(self):
         doc = J.yaml_load("m:\n  description: 'one line\n    and the next ''quoted''\n\n    after a blank'\n  type: string\n")
         self.assertEqual(doc, {"m": {"description": "one line and the next 'quoted'\nafter a blank",
