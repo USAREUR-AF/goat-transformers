@@ -1,0 +1,7 @@
+{
+ "name": "gen-data_transfer_request-residue",
+ "from": "ocpp201-data-transfer-request",
+ "to": "ocpp201-data-transfer-request",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s67785\"},\"messageId\":\"s36871\",\"vendorId\":\"s60933\"}",
+ "expect": "{\"customData\":{\"vendorId\":\"s67785\"},\"messageId\":\"s36871\",\"vendorId\":\"s60933\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

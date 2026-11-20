@@ -1,0 +1,7 @@
+{
+ "keys": {
+  "|data|string": "data",
+  "|status|string": "status"
+ },
+ "lists": {}
+}

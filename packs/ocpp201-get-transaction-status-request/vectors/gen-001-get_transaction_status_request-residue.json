@@ -1,0 +1,7 @@
+{
+ "name": "gen-get_transaction_status_request-residue",
+ "from": "ocpp201-get-transaction-status-request",
+ "to": "ocpp201-get-transaction-status-request",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s43618\"},\"transactionId\":\"s68644\"}",
+ "expect": "{\"customData\":{\"vendorId\":\"s43618\"},\"transactionId\":\"s68644\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

@@ -1,0 +1,28 @@
+{
+ "keys": {
+  "attributes|type|string": "attributes_type",
+  "payload_descriptors|accuracy|float": "payload_descriptors_accuracy",
+  "payload_descriptors|confidence|int": "payload_descriptors_confidence",
+  "payload_descriptors|currency|string": "payload_descriptors_currency",
+  "payload_descriptors|objectType|string": "payload_descriptors_object_type",
+  "payload_descriptors|payloadType|string": "payload_descriptors_payload_type",
+  "payload_descriptors|readingType|string": "payload_descriptors_reading_type",
+  "payload_descriptors|units|string": "payload_descriptors_units",
+  "program_descriptions|URL|string": "program_descriptions_url",
+  "targets|.|string": "targets_value",
+  "|createdDateTime|string": "created_date_time",
+  "|id|string": "id",
+  "|intervalPeriod.duration|string": "interval_period_duration",
+  "|intervalPeriod.randomizeStart|string": "interval_period_randomize_start",
+  "|intervalPeriod.start|string": "interval_period_start",
+  "|modificationDateTime|string": "modification_date_time",
+  "|objectType|string": "object_type",
+  "|programName|string": "program_name"
+ },
+ "lists": {
+  "|attributes": "attributes",
+  "|payloadDescriptors": "payload_descriptors",
+  "|programDescriptions": "program_descriptions",
+  "|targets": "targets"
+ }
+}

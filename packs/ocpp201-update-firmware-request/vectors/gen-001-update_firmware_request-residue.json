@@ -1,0 +1,7 @@
+{
+ "name": "gen-update_firmware_request-residue",
+ "from": "ocpp201-update-firmware-request",
+ "to": "ocpp201-update-firmware-request",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s49124\"},\"retries\":797,\"retryInterval\":23471,\"requestId\":16587,\"firmware\":{\"customData\":{\"vendorId\":\"s25463\"},\"location\":\"s62087\",\"retrieveDateTime\":\"2024-05-03T05:25:27.040Z\",\"installDateTime\":\"2023-12-29T17:02:54.756Z\",\"signingCertificate\":\"s81636\",\"signature\":\"s38755\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s49124\"},\"retries\":797,\"retryInterval\":23471,\"requestId\":16587,\"firmware\":{\"customData\":{\"vendorId\":\"s25463\"},\"location\":\"s62087\",\"retrieveDateTime\":\"2024-05-03T05:25:27.040Z\",\"installDateTime\":\"2023-12-29T17:02:54.756Z\",\"signingCertificate\":\"s81636\",\"signature\":\"s38755\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

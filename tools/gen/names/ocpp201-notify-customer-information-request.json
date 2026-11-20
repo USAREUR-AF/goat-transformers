@@ -1,0 +1,11 @@
+{
+ "keys": {
+  "|customData.vendorId|string": "custom_data_vendor_id",
+  "|data|string": "data",
+  "|generatedAt|string": "generated_at",
+  "|requestId|int": "request_id",
+  "|seqNo|int": "seq_no",
+  "|tbc|int": "tbc"
+ },
+ "lists": {}
+}

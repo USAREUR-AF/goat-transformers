@@ -1,0 +1,10 @@
+{
+ "keys": {
+  "|connectorId|int": "connector_id",
+  "|expiryDate|string": "expiry_date",
+  "|idTag|string": "id_tag",
+  "|parentIdTag|string": "parent_id_tag",
+  "|reservationId|int": "reservation_id"
+ },
+ "lists": {}
+}

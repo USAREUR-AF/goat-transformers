@@ -1,0 +1,7 @@
+{
+ "name": "gen-cancel_reservation_response-residue",
+ "from": "ocpp201-cancel-reservation-response",
+ "to": "ocpp201-cancel-reservation-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s69393\"},\"status\":\"Accepted\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s15530\"},\"reasonCode\":\"s38254\",\"additionalInfo\":\"s76969\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s69393\"},\"status\":\"Accepted\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s15530\"},\"reasonCode\":\"s38254\",\"additionalInfo\":\"s76969\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

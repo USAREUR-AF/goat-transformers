@@ -1,0 +1,7 @@
+{
+ "name": "gen-get_charging_profiles_request-residue",
+ "from": "ocpp201-get-charging-profiles-request",
+ "to": "ocpp201-get-charging-profiles-request",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s18744\"},\"requestId\":29409,\"evseId\":46699,\"chargingProfile\":{\"customData\":{\"vendorId\":\"s59582\"},\"chargingProfilePurpose\":\"ChargingStationMaxProfile\",\"stackLevel\":38670,\"chargingProfileId\":[61592,13961],\"chargingLimitSource\":[\"EMS\",\"EMS\"]}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s18744\"},\"requestId\":29409,\"evseId\":46699,\"chargingProfile\":{\"customData\":{\"vendorId\":\"s59582\"},\"chargingProfilePurpose\":\"ChargingStationMaxProfile\",\"stackLevel\":38670,\"chargingProfileId\":[61592,13961],\"chargingLimitSource\":[\"EMS\",\"EMS\"]},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

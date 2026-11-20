@@ -1,0 +1,7 @@
+{
+ "name": "gen-get_configuration-residue",
+ "from": "ocpp16-get-configuration",
+ "to": "ocpp16-get-configuration",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"key\":[\"s73256\",\"s90840\"]}",
+ "expect": "{\"key\":[\"s73256\",\"s90840\"],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

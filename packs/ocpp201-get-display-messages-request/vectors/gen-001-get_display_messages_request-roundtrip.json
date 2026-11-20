@@ -1,0 +1,14 @@
+{
+ "name": "gen-get_display_messages_request-roundtrip",
+ "from": "ocpp201-get-display-messages-request",
+ "to": "ocpp201-get-display-messages-request",
+ "input": "{\"customData\":{\"vendorId\":\"s90279\"},\"id\":[46335,30284],\"requestId\":14947,\"priority\":\"AlwaysFront\",\"state\":\"Charging\"}",
+ "expect": "{\"customData\":{\"vendorId\":\"s90279\"},\"id\":[46335,30284],\"requestId\":14947,\"priority\":\"AlwaysFront\",\"state\":\"Charging\"}",
+ "model": {
+  "ocpp201getdisplaymessagesrequest.custom_data_vendor_id": "s90279",
+  "ocpp201getdisplaymessagesrequest.id.#": "2",
+  "ocpp201getdisplaymessagesrequest.request_id": "14947",
+  "ocpp201getdisplaymessagesrequest.priority": "AlwaysFront",
+  "ocpp201getdisplaymessagesrequest.state": "Charging"
+ }
+}

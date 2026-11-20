@@ -1,0 +1,10 @@
+{
+ "name": "gen-clear_charging_profile_response-roundtrip",
+ "from": "ocpp16-clear-charging-profile-response",
+ "to": "ocpp16-clear-charging-profile-response",
+ "input": "{\"status\":\"Unknown\"}",
+ "expect": "{\"status\":\"Unknown\"}",
+ "model": {
+  "ocpp16clearchargingprofileresponse.status": "Unknown"
+ }
+}

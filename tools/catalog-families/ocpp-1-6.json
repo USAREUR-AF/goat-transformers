@@ -1,0 +1,12 @@
+{
+  "name": "OCPP 1.6",
+  "domain": "land",
+  "prefixes": [
+    "ocpp16-"
+  ],
+  "members": {
+    "pattern": "^ocpp16-(.+)$",
+    "label": "{n} message payloads",
+    "list": false
+  }
+}

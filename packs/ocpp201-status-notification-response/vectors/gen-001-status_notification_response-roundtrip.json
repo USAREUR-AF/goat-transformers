@@ -1,0 +1,10 @@
+{
+ "name": "gen-status_notification_response-roundtrip",
+ "from": "ocpp201-status-notification-response",
+ "to": "ocpp201-status-notification-response",
+ "input": "{\"customData\":{\"vendorId\":\"s13576\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s13576\"}}",
+ "model": {
+  "ocpp201statusnotificationresponse.custom_data_vendor_id": "s13576"
+ }
+}

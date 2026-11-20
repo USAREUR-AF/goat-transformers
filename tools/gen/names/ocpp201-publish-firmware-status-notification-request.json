@@ -1,0 +1,11 @@
+{
+ "keys": {
+  "location|.|string": "location_value",
+  "|customData.vendorId|string": "custom_data_vendor_id",
+  "|requestId|int": "request_id",
+  "|status|string": "status"
+ },
+ "lists": {
+  "|location": "location"
+ }
+}

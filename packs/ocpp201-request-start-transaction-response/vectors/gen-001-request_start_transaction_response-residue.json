@@ -1,0 +1,7 @@
+{
+ "name": "gen-request_start_transaction_response-residue",
+ "from": "ocpp201-request-start-transaction-response",
+ "to": "ocpp201-request-start-transaction-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s33473\"},\"status\":\"Rejected\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s60686\"},\"reasonCode\":\"s20779\",\"additionalInfo\":\"s16811\"},\"transactionId\":\"s4783\"}",
+ "expect": "{\"customData\":{\"vendorId\":\"s33473\"},\"status\":\"Rejected\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s60686\"},\"reasonCode\":\"s20779\",\"additionalInfo\":\"s16811\"},\"transactionId\":\"s4783\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

@@ -1,0 +1,15 @@
+{
+ "name": "gen-clear_charging_profile_request-roundtrip",
+ "from": "ocpp201-clear-charging-profile-request",
+ "to": "ocpp201-clear-charging-profile-request",
+ "input": "{\"customData\":{\"vendorId\":\"s58537\"},\"chargingProfileId\":96569,\"chargingProfileCriteria\":{\"customData\":{\"vendorId\":\"s25260\"},\"evseId\":91116,\"chargingProfilePurpose\":\"TxDefaultProfile\",\"stackLevel\":36972}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s58537\"},\"chargingProfileId\":96569,\"chargingProfileCriteria\":{\"customData\":{\"vendorId\":\"s25260\"},\"evseId\":91116,\"chargingProfilePurpose\":\"TxDefaultProfile\",\"stackLevel\":36972}}",
+ "model": {
+  "ocpp201clearchargingprofilerequest.custom_data_vendor_id": "s58537",
+  "ocpp201clearchargingprofilerequest.charging_profile_id": "96569",
+  "ocpp201clearchargingprofilerequest.charging_profile_criteria_custom_data_vendor_id": "s25260",
+  "ocpp201clearchargingprofilerequest.charging_profile_criteria_evse_id": "91116",
+  "ocpp201clearchargingprofilerequest.charging_profile_criteria_charging_profile_purpose": "TxDefaultProfile",
+  "ocpp201clearchargingprofilerequest.charging_profile_criteria_stack_level": "36972"
+ }
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-notify_customer_information_request-residue",
+ "from": "ocpp201-notify-customer-information-request",
+ "to": "ocpp201-notify-customer-information-request",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s94374\"},\"data\":\"s22146\",\"tbc\":false,\"seqNo\":4503,\"generatedAt\":\"2026-05-12T13:44:28.541Z\",\"requestId\":44246}",
+ "expect": "{\"customData\":{\"vendorId\":\"s94374\"},\"data\":\"s22146\",\"tbc\":false,\"seqNo\":4503,\"generatedAt\":\"2026-05-12T13:44:28.541Z\",\"requestId\":44246,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

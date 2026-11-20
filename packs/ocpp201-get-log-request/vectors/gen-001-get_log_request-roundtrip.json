@@ -1,0 +1,17 @@
+{
+ "name": "gen-get_log_request-roundtrip",
+ "from": "ocpp201-get-log-request",
+ "to": "ocpp201-get-log-request",
+ "input": "{\"customData\":{\"vendorId\":\"s43212\"},\"log\":{\"customData\":{\"vendorId\":\"s23319\"},\"remoteLocation\":\"s84734\",\"oldestTimestamp\":\"2024-03-16T12:54:57.568Z\",\"latestTimestamp\":\"2026-05-03T20:24:26.685Z\"},\"logType\":\"DiagnosticsLog\",\"requestId\":46962,\"retries\":37393,\"retryInterval\":50239}",
+ "expect": "{\"customData\":{\"vendorId\":\"s43212\"},\"log\":{\"customData\":{\"vendorId\":\"s23319\"},\"remoteLocation\":\"s84734\",\"oldestTimestamp\":\"2024-03-16T12:54:57.568Z\",\"latestTimestamp\":\"2026-05-03T20:24:26.685Z\"},\"logType\":\"DiagnosticsLog\",\"requestId\":46962,\"retries\":37393,\"retryInterval\":50239}",
+ "model": {
+  "ocpp201getlogrequest.custom_data_vendor_id": "s43212",
+  "ocpp201getlogrequest.log_custom_data_vendor_id": "s23319",
+  "ocpp201getlogrequest.log_remote_location": "s84734",
+  "ocpp201getlogrequest.log_oldest_timestamp": "2024-03-16T12:54:57.568Z",
+  "ocpp201getlogrequest.log_latest_timestamp": "2026-05-03T20:24:26.685Z",
+  "ocpp201getlogrequest.log_type": "DiagnosticsLog",
+  "ocpp201getlogrequest.request_id": "46962",
+  "ocpp201getlogrequest.retries": "37393"
+ }
+}

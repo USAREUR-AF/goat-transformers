@@ -1,0 +1,25 @@
+{
+ "keys": {
+  "group_id_token_additional_info|additionalIdToken|string": "group_id_token_additional_info_additional_id_token",
+  "group_id_token_additional_info|customData.vendorId|string": "group_id_token_additional_info_custom_data_vendor_id",
+  "group_id_token_additional_info|type|string": "group_id_token_additional_info_type",
+  "id_token_additional_info|additionalIdToken|string": "id_token_additional_info_additional_id_token",
+  "id_token_additional_info|customData.vendorId|string": "id_token_additional_info_custom_data_vendor_id",
+  "id_token_additional_info|type|string": "id_token_additional_info_type",
+  "|connectorType|string": "connector_type",
+  "|customData.vendorId|string": "custom_data_vendor_id",
+  "|evseId|int": "evse_id",
+  "|expiryDateTime|string": "expiry_date_time",
+  "|groupIdToken.customData.vendorId|string": "group_id_token_custom_data_vendor_id",
+  "|groupIdToken.idToken|string": "group_id_token_id_token",
+  "|groupIdToken.type|string": "group_id_token_type",
+  "|idToken.customData.vendorId|string": "id_token_custom_data_vendor_id",
+  "|idToken.idToken|string": "id_token_id_token",
+  "|idToken.type|string": "id_token_type",
+  "|id|int": "id"
+ },
+ "lists": {
+  "|groupIdToken.additionalInfo": "group_id_token_additional_info",
+  "|idToken.additionalInfo": "id_token_additional_info"
+ }
+}

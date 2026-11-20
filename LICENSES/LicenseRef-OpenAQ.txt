@@ -1,0 +1,28 @@
+LicenseRef-OpenAQ
+
+The OpenAQ API states no licence for its OpenAPI document. Its use is governed by
+the OpenAQ terms of use, https://docs.openaq.org/about/terms (read 2026-11-20).
+The parts that bear on a pack generated from the API's document follow, quoted.
+
+From "Using the OpenAQ Platform":
+
+  Users are permitted to run, modify, and self-host the open-source software
+  components of our tooling, including the API codebase, in accordance with the
+  applicable open-source license. However, utilizing our official, hosted API
+  implementation to develop products or services that substantially duplicate or
+  directly compete with OpenAQ's core offerings is prohibited. This restriction
+  applies specifically to the use of our hosted API service, not to self-hosted
+  instances or modified versions of the open-source code.
+
+From "Intellectual Property and Attribution":
+
+  We provide attribution to the source of data wherever required and whenever
+  possible via our web interface and APIs. Users of the OpenAQ platform are solely
+  responsible for their use of the data and for compliance with any applicable
+  laws and third-party terms. OpenAQ users must therefore review and comply with
+  any terms published by data providers.
+
+  Attribution to OpenAQ as the source data is also required when using OpenAQ
+  services for accessing the data.
+
+The packs hold no OpenAQ data: their vectors are values written for them.

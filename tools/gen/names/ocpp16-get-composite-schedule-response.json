@@ -1,0 +1,17 @@
+{
+ "keys": {
+  "charging_schedule_charging_schedule_period|limit|float": "charging_schedule_charging_schedule_period_limit",
+  "charging_schedule_charging_schedule_period|numberPhases|int": "charging_schedule_charging_schedule_period_number_phases",
+  "charging_schedule_charging_schedule_period|startPeriod|int": "charging_schedule_charging_schedule_period_start_period",
+  "|chargingSchedule.chargingRateUnit|string": "charging_schedule_charging_rate_unit",
+  "|chargingSchedule.duration|int": "charging_schedule_duration",
+  "|chargingSchedule.minChargingRate|float": "charging_schedule_min_charging_rate",
+  "|chargingSchedule.startSchedule|string": "charging_schedule_start_schedule",
+  "|connectorId|int": "connector_id",
+  "|scheduleStart|string": "schedule_start",
+  "|status|string": "status"
+ },
+ "lists": {
+  "|chargingSchedule.chargingSchedulePeriod": "charging_schedule_charging_schedule_period"
+ }
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-request_stop_transaction_request-residue",
+ "from": "ocpp201-request-stop-transaction-request",
+ "to": "ocpp201-request-stop-transaction-request",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s71861\"},\"transactionId\":\"s72336\"}",
+ "expect": "{\"customData\":{\"vendorId\":\"s71861\"},\"transactionId\":\"s72336\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

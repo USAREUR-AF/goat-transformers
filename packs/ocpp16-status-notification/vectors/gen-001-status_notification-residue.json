@@ -1,0 +1,7 @@
+{
+ "name": "gen-status_notification-residue",
+ "from": "ocpp16-status-notification",
+ "to": "ocpp16-status-notification",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"connectorId\":25671,\"errorCode\":\"GroundFailure\",\"info\":\"s29540\",\"status\":\"Unavailable\",\"timestamp\":\"2025-11-23T15:13:22.075Z\",\"vendorId\":\"s29517\",\"vendorErrorCode\":\"s35625\"}",
+ "expect": "{\"connectorId\":25671,\"errorCode\":\"GroundFailure\",\"info\":\"s29540\",\"status\":\"Unavailable\",\"timestamp\":\"2025-11-23T15:13:22.075Z\",\"vendorId\":\"s29517\",\"vendorErrorCode\":\"s35625\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

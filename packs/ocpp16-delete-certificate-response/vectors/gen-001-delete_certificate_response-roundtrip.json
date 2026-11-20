@@ -1,0 +1,10 @@
+{
+ "name": "gen-delete_certificate_response-roundtrip",
+ "from": "ocpp16-delete-certificate-response",
+ "to": "ocpp16-delete-certificate-response",
+ "input": "{\"status\":\"NotFound\"}",
+ "expect": "{\"status\":\"NotFound\"}",
+ "model": {
+  "ocpp16deletecertificateresponse.status": "NotFound"
+ }
+}

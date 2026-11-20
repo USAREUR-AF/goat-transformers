@@ -1,0 +1,7 @@
+{
+ "name": "gen-get_local_list_version-residue",
+ "from": "ocpp16-get-local-list-version",
+ "to": "ocpp16-get-local-list-version",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7}",
+ "expect": "{\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

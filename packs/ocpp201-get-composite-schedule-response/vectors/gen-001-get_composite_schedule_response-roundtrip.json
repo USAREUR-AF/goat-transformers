@@ -1,0 +1,17 @@
+{
+ "name": "gen-get_composite_schedule_response-roundtrip",
+ "from": "ocpp201-get-composite-schedule-response",
+ "to": "ocpp201-get-composite-schedule-response",
+ "input": "{\"customData\":{\"vendorId\":\"s26549\"},\"status\":\"Accepted\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s15549\"},\"reasonCode\":\"s8243\",\"additionalInfo\":\"s34954\"},\"schedule\":{\"customData\":{\"vendorId\":\"s17582\"},\"chargingSchedulePeriod\":[{\"customData\":{\"vendorId\":\"s95074\"},\"startPeriod\":58161,\"limit\":-3.25,\"numberPhases\":52648,\"phaseToUse\":21189},{\"customData\":{\"vendorId\":\"s96960\"},\"startPeriod\":90395,\"limit\":-3.25,\"numberPhases\":53117,\"phaseToUse\":27006}],\"evseId\":59984,\"duration\":20246,\"scheduleStart\":\"2024-10-07T10:28:59.472Z\",\"chargingRateUnit\":\"A\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s26549\"},\"status\":\"Accepted\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s15549\"},\"reasonCode\":\"s8243\",\"additionalInfo\":\"s34954\"},\"schedule\":{\"customData\":{\"vendorId\":\"s17582\"},\"chargingSchedulePeriod\":[{\"customData\":{\"vendorId\":\"s95074\"},\"startPeriod\":58161,\"limit\":-3.25,\"numberPhases\":52648,\"phaseToUse\":21189},{\"customData\":{\"vendorId\":\"s96960\"},\"startPeriod\":90395,\"limit\":-3.25,\"numberPhases\":53117,\"phaseToUse\":27006}],\"evseId\":59984,\"duration\":20246,\"scheduleStart\":\"2024-10-07T10:28:59.472Z\",\"chargingRateUnit\":\"A\"}}",
+ "model": {
+  "ocpp201getcompositescheduleresponse.custom_data_vendor_id": "s26549",
+  "ocpp201getcompositescheduleresponse.status": "Accepted",
+  "ocpp201getcompositescheduleresponse.status_info_custom_data_vendor_id": "s15549",
+  "ocpp201getcompositescheduleresponse.status_info_reason_code": "s8243",
+  "ocpp201getcompositescheduleresponse.status_info_additional_info": "s34954",
+  "ocpp201getcompositescheduleresponse.schedule_custom_data_vendor_id": "s17582",
+  "ocpp201getcompositescheduleresponse.schedule_charging_schedule_period.#": "2",
+  "ocpp201getcompositescheduleresponse.schedule_evse_id": "59984"
+ }
+}

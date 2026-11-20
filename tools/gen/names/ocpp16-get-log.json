@@ -1,0 +1,12 @@
+{
+ "keys": {
+  "|log.latestTimestamp|string": "log_latest_timestamp",
+  "|log.oldestTimestamp|string": "log_oldest_timestamp",
+  "|log.remoteLocation|string": "log_remote_location",
+  "|logType|string": "log_type",
+  "|requestId|int": "request_id",
+  "|retries|int": "retries",
+  "|retryInterval|int": "retry_interval"
+ },
+ "lists": {}
+}

@@ -1,0 +1,8 @@
+{
+ "keys": {
+  "|chargingLimitSource|string": "charging_limit_source",
+  "|customData.vendorId|string": "custom_data_vendor_id",
+  "|evseId|int": "evse_id"
+ },
+ "lists": {}
+}

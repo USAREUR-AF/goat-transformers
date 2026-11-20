@@ -1,0 +1,14 @@
+{
+ "name": "gen-request_stop_transaction_response-roundtrip",
+ "from": "ocpp201-request-stop-transaction-response",
+ "to": "ocpp201-request-stop-transaction-response",
+ "input": "{\"customData\":{\"vendorId\":\"s48511\"},\"status\":\"Rejected\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s71973\"},\"reasonCode\":\"s53441\",\"additionalInfo\":\"s78595\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s48511\"},\"status\":\"Rejected\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s71973\"},\"reasonCode\":\"s53441\",\"additionalInfo\":\"s78595\"}}",
+ "model": {
+  "ocpp201requeststoptransactionresponse.custom_data_vendor_id": "s48511",
+  "ocpp201requeststoptransactionresponse.status": "Rejected",
+  "ocpp201requeststoptransactionresponse.status_info_custom_data_vendor_id": "s71973",
+  "ocpp201requeststoptransactionresponse.status_info_reason_code": "s53441",
+  "ocpp201requeststoptransactionresponse.status_info_additional_info": "s78595"
+ }
+}

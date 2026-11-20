@@ -1,0 +1,10 @@
+{
+ "name": "gen-extended_trigger_message_response-roundtrip",
+ "from": "ocpp16-extended-trigger-message-response",
+ "to": "ocpp16-extended-trigger-message-response",
+ "input": "{\"status\":\"Accepted\"}",
+ "expect": "{\"status\":\"Accepted\"}",
+ "model": {
+  "ocpp16extendedtriggermessageresponse.status": "Accepted"
+ }
+}

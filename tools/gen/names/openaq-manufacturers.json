@@ -1,0 +1,16 @@
+{
+ "keys": {
+  "results_instruments|id|int": "results_instruments_id",
+  "results_instruments|name|string": "results_instruments_name",
+  "results|id|int": "results_id",
+  "results|name|string": "results_name",
+  "|meta.limit|int": "meta_limit",
+  "|meta.name|string": "meta_name",
+  "|meta.page|int": "meta_page",
+  "|meta.website|string": "meta_website"
+ },
+ "lists": {
+  "results|instruments": "results_instruments",
+  "|results": "results"
+ }
+}

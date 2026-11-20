@@ -1,0 +1,21 @@
+{
+ "keys": {
+  "transaction_data_sampled_value|context|string": "transaction_data_sampled_value_context",
+  "transaction_data_sampled_value|format|string": "transaction_data_sampled_value_format",
+  "transaction_data_sampled_value|location|string": "transaction_data_sampled_value_location",
+  "transaction_data_sampled_value|measurand|string": "transaction_data_sampled_value_measurand",
+  "transaction_data_sampled_value|phase|string": "transaction_data_sampled_value_phase",
+  "transaction_data_sampled_value|unit|string": "transaction_data_sampled_value_unit",
+  "transaction_data_sampled_value|value|string": "transaction_data_sampled_value_value",
+  "transaction_data|timestamp|string": "transaction_data_timestamp",
+  "|idTag|string": "id_tag",
+  "|meterStop|int": "meter_stop",
+  "|reason|string": "reason",
+  "|timestamp|string": "timestamp",
+  "|transactionId|int": "transaction_id"
+ },
+ "lists": {
+  "transaction_data|sampledValue": "transaction_data_sampled_value",
+  "|transactionData": "transaction_data"
+ }
+}

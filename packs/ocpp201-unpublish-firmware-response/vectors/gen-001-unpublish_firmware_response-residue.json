@@ -1,0 +1,7 @@
+{
+ "name": "gen-unpublish_firmware_response-residue",
+ "from": "ocpp201-unpublish-firmware-response",
+ "to": "ocpp201-unpublish-firmware-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s44717\"},\"status\":\"DownloadOngoing\"}",
+ "expect": "{\"customData\":{\"vendorId\":\"s44717\"},\"status\":\"DownloadOngoing\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

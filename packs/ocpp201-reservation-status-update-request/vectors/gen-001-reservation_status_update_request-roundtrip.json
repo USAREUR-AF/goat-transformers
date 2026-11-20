@@ -1,0 +1,12 @@
+{
+ "name": "gen-reservation_status_update_request-roundtrip",
+ "from": "ocpp201-reservation-status-update-request",
+ "to": "ocpp201-reservation-status-update-request",
+ "input": "{\"customData\":{\"vendorId\":\"s48007\"},\"reservationId\":4772,\"reservationUpdateStatus\":\"Removed\"}",
+ "expect": "{\"customData\":{\"vendorId\":\"s48007\"},\"reservationId\":4772,\"reservationUpdateStatus\":\"Removed\"}",
+ "model": {
+  "ocpp201reservationstatusupdaterequest.custom_data_vendor_id": "s48007",
+  "ocpp201reservationstatusupdaterequest.reservation_id": "4772",
+  "ocpp201reservationstatusupdaterequest.reservation_update_status": "Removed"
+ }
+}

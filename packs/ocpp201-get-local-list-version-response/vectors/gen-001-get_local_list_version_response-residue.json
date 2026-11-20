@@ -1,0 +1,7 @@
+{
+ "name": "gen-get_local_list_version_response-residue",
+ "from": "ocpp201-get-local-list-version-response",
+ "to": "ocpp201-get-local-list-version-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s98315\"},\"versionNumber\":86165}",
+ "expect": "{\"customData\":{\"vendorId\":\"s98315\"},\"versionNumber\":86165,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

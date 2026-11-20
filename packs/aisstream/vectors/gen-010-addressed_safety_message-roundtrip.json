@@ -1,0 +1,17 @@
+{
+ "name": "gen-addressed_safety_message-roundtrip",
+ "from": "aisstream",
+ "to": "aisstream",
+ "input": "{\"MessageType\":\"AddressedSafetyMessage\",\"Message\":{\"AddressedSafetyMessage\":{\"MessageID\":82765,\"RepeatIndicator\":2161,\"UserID\":24319,\"Valid\":false,\"Sequenceinteger\":7856,\"DestinationID\":11178,\"Retransmission\":false,\"Spare\":true,\"Text\":\"s31307\"}}}",
+ "expect": "{\"MessageType\":\"AddressedSafetyMessage\",\"Message\":{\"AddressedSafetyMessage\":{\"MessageID\":82765,\"RepeatIndicator\":2161,\"UserID\":24319,\"Valid\":false,\"Sequenceinteger\":7856,\"DestinationID\":11178,\"Retransmission\":false,\"Spare\":true,\"Text\":\"s31307\"}}}",
+ "model": {
+  "@kind": "addressed_safety_message",
+  "aisstream.message_addressed_safety_message_message_id": "82765",
+  "aisstream.message_addressed_safety_message_repeat_indicator": "2161",
+  "aisstream.message_addressed_safety_message_user_id": "24319",
+  "aisstream.message_addressed_safety_message_valid": "0",
+  "aisstream.message_addressed_safety_message_sequenceinteger": "7856",
+  "aisstream.message_addressed_safety_message_destination_id": "11178",
+  "aisstream.message_addressed_safety_message_retransmission": "0"
+ }
+}

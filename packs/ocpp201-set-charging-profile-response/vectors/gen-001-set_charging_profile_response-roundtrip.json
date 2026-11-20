@@ -1,0 +1,14 @@
+{
+ "name": "gen-set_charging_profile_response-roundtrip",
+ "from": "ocpp201-set-charging-profile-response",
+ "to": "ocpp201-set-charging-profile-response",
+ "input": "{\"customData\":{\"vendorId\":\"s46430\"},\"status\":\"Accepted\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s96585\"},\"reasonCode\":\"s97933\",\"additionalInfo\":\"s34397\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s46430\"},\"status\":\"Accepted\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s96585\"},\"reasonCode\":\"s97933\",\"additionalInfo\":\"s34397\"}}",
+ "model": {
+  "ocpp201setchargingprofileresponse.custom_data_vendor_id": "s46430",
+  "ocpp201setchargingprofileresponse.status": "Accepted",
+  "ocpp201setchargingprofileresponse.status_info_custom_data_vendor_id": "s96585",
+  "ocpp201setchargingprofileresponse.status_info_reason_code": "s97933",
+  "ocpp201setchargingprofileresponse.status_info_additional_info": "s34397"
+ }
+}

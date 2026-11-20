@@ -1,0 +1,25 @@
+{
+ "keys": {
+  "results_parameters|displayName|string": "results_parameters_display_name",
+  "results_parameters|id|int": "results_parameters_id",
+  "results_parameters|name|string": "results_parameters_name",
+  "results_parameters|units|string": "results_parameters_units",
+  "results|bbox.type|string": "results_bbox_type",
+  "results|datetimeAdded|string": "results_datetime_added",
+  "results|datetimeFirst|string": "results_datetime_first",
+  "results|datetimeLast|string": "results_datetime_last",
+  "results|entitiesId|int": "results_entities_id",
+  "results|exportPrefix|string": "results_export_prefix",
+  "results|id|int": "results_id",
+  "results|name|string": "results_name",
+  "results|sourceName|string": "results_source_name",
+  "|meta.limit|int": "meta_limit",
+  "|meta.name|string": "meta_name",
+  "|meta.page|int": "meta_page",
+  "|meta.website|string": "meta_website"
+ },
+ "lists": {
+  "results|parameters": "results_parameters",
+  "|results": "results"
+ }
+}

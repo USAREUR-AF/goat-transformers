@@ -1,0 +1,10 @@
+{
+ "name": "gen-signed_update_firmware_response-roundtrip",
+ "from": "ocpp16-signed-update-firmware-response",
+ "to": "ocpp16-signed-update-firmware-response",
+ "input": "{\"status\":\"RevokedCertificate\"}",
+ "expect": "{\"status\":\"RevokedCertificate\"}",
+ "model": {
+  "ocpp16signedupdatefirmwareresponse.status": "RevokedCertificate"
+ }
+}

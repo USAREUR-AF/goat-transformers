@@ -1,0 +1,9 @@
+{
+ "keys": {
+  "|customData.vendorId|string": "custom_data_vendor_id",
+  "|techInfo|string": "tech_info",
+  "|timestamp|string": "timestamp",
+  "|type|string": "type"
+ },
+ "lists": {}
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-position_report-residue",
+ "from": "aisstream",
+ "to": "aisstream",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"MessageType\":\"PositionReport\",\"Message\":{\"PositionReport\":{\"MessageID\":5053,\"RepeatIndicator\":80119,\"UserID\":45844,\"Valid\":false,\"NavigationalStatus\":26372,\"RateOfTurn\":61365,\"Sog\":7.0625,\"PositionAccuracy\":false,\"Longitude\":151.2094,\"Latitude\":21.3069,\"Cog\":0.75,\"TrueHeading\":39766,\"Timestamp\":24021,\"SpecialManoeuvreIndicator\":52295,\"Spare\":58095,\"Raim\":true,\"CommunicationState\":78557}}}",
+ "expect": "{\"MessageType\":\"PositionReport\",\"Message\":{\"PositionReport\":{\"MessageID\":5053,\"RepeatIndicator\":80119,\"UserID\":45844,\"Valid\":false,\"NavigationalStatus\":26372,\"RateOfTurn\":61365,\"Sog\":7.0625,\"PositionAccuracy\":false,\"Longitude\":151.2094,\"Latitude\":21.3069,\"Cog\":0.75,\"TrueHeading\":39766,\"Timestamp\":24021,\"SpecialManoeuvreIndicator\":52295,\"Spare\":58095,\"Raim\":true,\"CommunicationState\":78557}},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

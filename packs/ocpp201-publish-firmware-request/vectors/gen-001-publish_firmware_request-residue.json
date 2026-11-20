@@ -1,0 +1,7 @@
+{
+ "name": "gen-publish_firmware_request-residue",
+ "from": "ocpp201-publish-firmware-request",
+ "to": "ocpp201-publish-firmware-request",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s41908\"},\"location\":\"s53623\",\"retries\":26549,\"checksum\":\"s62029\",\"requestId\":30675,\"retryInterval\":4075}",
+ "expect": "{\"customData\":{\"vendorId\":\"s41908\"},\"location\":\"s53623\",\"retries\":26549,\"checksum\":\"s62029\",\"requestId\":30675,\"retryInterval\":4075,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

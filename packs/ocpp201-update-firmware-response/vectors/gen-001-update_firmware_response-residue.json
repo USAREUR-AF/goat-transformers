@@ -1,0 +1,7 @@
+{
+ "name": "gen-update_firmware_response-residue",
+ "from": "ocpp201-update-firmware-response",
+ "to": "ocpp201-update-firmware-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s36835\"},\"status\":\"InvalidCertificate\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s8103\"},\"reasonCode\":\"s77962\",\"additionalInfo\":\"s93944\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s36835\"},\"status\":\"InvalidCertificate\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s8103\"},\"reasonCode\":\"s77962\",\"additionalInfo\":\"s93944\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

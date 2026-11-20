@@ -1,0 +1,40 @@
+LicenseRef-OpenSky
+
+The OpenSky Network REST API documentation (github.com/openskynetwork/opensky-api,
+docs/free) describes the responses these packs read. The repository's LICENSE.txt
+is the GNU General Public License, version 3. The documentation's README and its
+"Citation and Terms of Use" section refer API users to the OpenSky terms of use,
+https://opensky-network.org/about/terms-of-use. That page refused an automated
+request on 2026-11-20; the text below is quoted from the Internet Archive's copy
+of 2026-11-10,
+https://web.archive.org/web/20261110125447/https://opensky-network.org/about/terms-of-use
+(read 2026-11-20), "General Terms of Use & Data License Agreement":
+
+  Tl;dr: License required in the following cases:
+  Commercial or for-profit entities: Any use by a for-profit or commercial
+  entity — including government and military contractors — requires a written
+  license from OpenSky Network, regardless of purpose.
+  Operational REST API use: Use of the REST API in any operational capacity —
+  including integration into a live product, service, or automated system (even
+  if only internal) — requires a previous written agreement, even for
+  non-profit or governmental entities.
+
+  1. LICENSE
+  OpenSky Network's authorization to access the data grants You a limited,
+  non-exclusive, non-transferable, non-assignable, and terminable license to
+  copy, modify, and use the data in accordance with this AGREEMENT solely for
+  the purpose of non-profit research and non-profit education. Government
+  entities may obtain an exemption at the discretion of the OpenSky Network. No
+  license is granted for any other purpose and there are no implied licenses in
+  this AGREEMENT.
+
+The documentation adds that a publication using data from the OpenSky Network
+data set should cite the original OpenSky paper (Schäfer, Strohmeier, Lenders,
+Martinovic and Wilhelm, "Bringing Up OpenSky: A Large-scale ADS-B Sensor Network
+for Research", IPSN 2014), and that live flight information for commercial
+purposes requires contacting OpenSky.
+
+The terms govern OpenSky data and the use of the API. The packs hold no OpenSky
+data: they state the layout of two responses, and their vectors are values
+written for them. Using a pack to read responses of the OpenSky API is use of the
+API and falls under these terms.

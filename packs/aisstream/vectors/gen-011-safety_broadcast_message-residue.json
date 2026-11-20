@@ -1,0 +1,7 @@
+{
+ "name": "gen-safety_broadcast_message-residue",
+ "from": "aisstream",
+ "to": "aisstream",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"MessageType\":\"SafetyBroadcastMessage\",\"Message\":{\"SafetyBroadcastMessage\":{\"MessageID\":22847,\"RepeatIndicator\":21893,\"UserID\":11388,\"Valid\":false,\"Spare\":37545,\"Text\":\"s13958\"}}}",
+ "expect": "{\"MessageType\":\"SafetyBroadcastMessage\",\"Message\":{\"SafetyBroadcastMessage\":{\"MessageID\":22847,\"RepeatIndicator\":21893,\"UserID\":11388,\"Valid\":false,\"Spare\":37545,\"Text\":\"s13958\"}},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

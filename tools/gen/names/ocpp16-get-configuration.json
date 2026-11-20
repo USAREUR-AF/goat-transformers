@@ -1,0 +1,8 @@
+{
+ "keys": {
+  "key|.|string": "key_value"
+ },
+ "lists": {
+  "|key": "key"
+ }
+}

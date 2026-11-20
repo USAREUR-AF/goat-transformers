@@ -1,0 +1,17 @@
+{
+ "name": "gen-base_station_report-roundtrip",
+ "from": "aisstream",
+ "to": "aisstream",
+ "input": "{\"MessageType\":\"BaseStationReport\",\"Message\":{\"BaseStationReport\":{\"MessageID\":20620,\"RepeatIndicator\":2393,\"UserID\":48640,\"Valid\":false,\"UtcYear\":59222,\"UtcMonth\":88886,\"UtcDay\":55362,\"UtcHour\":58098,\"UtcMinute\":82590,\"UtcSecond\":56871,\"PositionAccuracy\":true,\"Longitude\":42.375,\"Latitude\":12.5,\"FixType\":68744,\"LongRangeEnable\":false,\"Spare\":90587,\"Raim\":true,\"CommunicationState\":89537}}}",
+ "expect": "{\"MessageType\":\"BaseStationReport\",\"Message\":{\"BaseStationReport\":{\"MessageID\":20620,\"RepeatIndicator\":2393,\"UserID\":48640,\"Valid\":false,\"UtcYear\":59222,\"UtcMonth\":88886,\"UtcDay\":55362,\"UtcHour\":58098,\"UtcMinute\":82590,\"UtcSecond\":56871,\"PositionAccuracy\":true,\"Longitude\":42.375,\"Latitude\":12.5,\"FixType\":68744,\"LongRangeEnable\":false,\"Spare\":90587,\"Raim\":true,\"CommunicationState\":89537}}}",
+ "model": {
+  "@kind": "base_station_report",
+  "aisstream.message_base_station_report_message_id": "20620",
+  "aisstream.message_base_station_report_repeat_indicator": "2393",
+  "aisstream.message_base_station_report_user_id": "48640",
+  "aisstream.message_base_station_report_valid": "0",
+  "aisstream.message_base_station_report_utc_year": "59222",
+  "aisstream.message_base_station_report_utc_month": "88886",
+  "aisstream.message_base_station_report_utc_day": "55362"
+ }
+}

@@ -1,0 +1,17 @@
+{
+ "name": "gen-event-roundtrip",
+ "from": "openadr3-event",
+ "to": "openadr3-event",
+ "input": "{\"id\":\"s95637\",\"createdDateTime\":\"2024-06-24T15:47:16.958Z\",\"modificationDateTime\":\"2026-09-26T21:56:46.169Z\",\"objectType\":\"VEN\",\"programID\":\"s51554\",\"eventName\":\"s88722\",\"duration\":\"s39063\",\"priority\":573,\"targets\":[\"s97721\",\"s97334\"],\"reportDescriptors\":[{\"payloadType\":\"s81499\",\"readingType\":\"s79560\",\"units\":\"s61480\",\"targets\":[\"s89119\"],\"aggregate\":false,\"startInterval\":92771,\"numIntervals\":54724,\"historical\":false,\"frequency\":57543,\"repeat\":85225,\"reportIntervals\":\"INTERVALS\"},{\"payloadType\":\"s76941\",\"readingType\":\"s5535\",\"units\":\"s37289\",\"targets\":[\"s26065\"],\"aggregate\":false,\"startInterval\":2763,\"numIntervals\":73788,\"historical\":false,\"frequency\":69349,\"repeat\":6883,\"reportIntervals\":\"OPEN_INTERVALS\"}],\"payloadDescriptors\":[{\"objectType\":\"EVENT_PAYLOAD_DESCRIPTOR\",\"payloadType\":\"s10148\",\"units\":\"s13741\",\"currency\":\"s47877\"},{\"objectType\":\"EVENT_PAYLOAD_DESCRIPTOR\",\"payloadType\":\"s56256\",\"units\":\"s25121\",\"currency\":\"s42177\"}],\"intervalPeriod\":{\"start\":\"2025-01-01T08:29:27.973Z\",\"duration\":\"s24812\",\"randomizeStart\":\"s75382\"},\"intervals\":[{\"id\":39139,\"intervalPeriod\":{\"start\":\"2024-10-13T15:33:04.526Z\",\"duration\":\"s2764\",\"randomizeStart\":\"s54990\"},\"payloads\":[{\"type\":\"s16689\"}]},{\"id\":86317,\"intervalPeriod\":{\"start\":\"2025-12-08T10:24:30.941Z\",\"duration\":\"s84767\",\"randomizeStart\":\"s7862\"},\"payloads\":[{\"type\":\"s25629\"}]}]}",
+ "expect": "{\"id\":\"s95637\",\"createdDateTime\":\"2024-06-24T15:47:16.958Z\",\"modificationDateTime\":\"2026-09-26T21:56:46.169Z\",\"objectType\":\"VEN\",\"programID\":\"s51554\",\"eventName\":\"s88722\",\"duration\":\"s39063\",\"priority\":573,\"targets\":[\"s97721\",\"s97334\"],\"reportDescriptors\":[{\"payloadType\":\"s81499\",\"readingType\":\"s79560\",\"units\":\"s61480\",\"targets\":[\"s89119\"],\"aggregate\":false,\"startInterval\":92771,\"numIntervals\":54724,\"historical\":false,\"frequency\":57543,\"repeat\":85225,\"reportIntervals\":\"INTERVALS\"},{\"payloadType\":\"s76941\",\"readingType\":\"s5535\",\"units\":\"s37289\",\"targets\":[\"s26065\"],\"aggregate\":false,\"startInterval\":2763,\"numIntervals\":73788,\"historical\":false,\"frequency\":69349,\"repeat\":6883,\"reportIntervals\":\"OPEN_INTERVALS\"}],\"payloadDescriptors\":[{\"objectType\":\"EVENT_PAYLOAD_DESCRIPTOR\",\"payloadType\":\"s10148\",\"units\":\"s13741\",\"currency\":\"s47877\"},{\"objectType\":\"EVENT_PAYLOAD_DESCRIPTOR\",\"payloadType\":\"s56256\",\"units\":\"s25121\",\"currency\":\"s42177\"}],\"intervalPeriod\":{\"start\":\"2025-01-01T08:29:27.973Z\",\"duration\":\"s24812\",\"randomizeStart\":\"s75382\"},\"intervals\":[{\"id\":39139,\"intervalPeriod\":{\"start\":\"2024-10-13T15:33:04.526Z\",\"duration\":\"s2764\",\"randomizeStart\":\"s54990\"},\"payloads\":[{\"type\":\"s16689\"}]},{\"id\":86317,\"intervalPeriod\":{\"start\":\"2025-12-08T10:24:30.941Z\",\"duration\":\"s84767\",\"randomizeStart\":\"s7862\"},\"payloads\":[{\"type\":\"s25629\"}]}]}",
+ "model": {
+  "uid": "s95637",
+  "openadr3event.id": "s95637",
+  "openadr3event.created_date_time": "2024-06-24T15:47:16.958Z",
+  "openadr3event.modification_date_time": "2026-09-26T21:56:46.169Z",
+  "openadr3event.object_type": "VEN",
+  "openadr3event.program_id": "s51554",
+  "openadr3event.event_name": "s88722",
+  "openadr3event.duration": "s39063"
+ }
+}

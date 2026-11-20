@@ -1,0 +1,11 @@
+{
+ "name": "gen-install_certificate-roundtrip",
+ "from": "ocpp16-install-certificate",
+ "to": "ocpp16-install-certificate",
+ "input": "{\"certificateType\":\"ManufacturerRootCertificate\",\"certificate\":\"s77667\"}",
+ "expect": "{\"certificateType\":\"ManufacturerRootCertificate\",\"certificate\":\"s77667\"}",
+ "model": {
+  "ocpp16installcertificate.certificate_type": "ManufacturerRootCertificate",
+  "ocpp16installcertificate.certificate": "s77667"
+ }
+}

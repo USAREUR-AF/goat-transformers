@@ -1,0 +1,7 @@
+{
+ "name": "gen-reset_request-residue",
+ "from": "ocpp201-reset-request",
+ "to": "ocpp201-reset-request",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s19173\"},\"type\":\"Immediate\",\"evseId\":89926}",
+ "expect": "{\"customData\":{\"vendorId\":\"s19173\"},\"type\":\"Immediate\",\"evseId\":89926,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

@@ -1,0 +1,12 @@
+{
+ "name": "gen-unlock_connector_request-roundtrip",
+ "from": "ocpp201-unlock-connector-request",
+ "to": "ocpp201-unlock-connector-request",
+ "input": "{\"customData\":{\"vendorId\":\"s34569\"},\"evseId\":32891,\"connectorId\":663}",
+ "expect": "{\"customData\":{\"vendorId\":\"s34569\"},\"evseId\":32891,\"connectorId\":663}",
+ "model": {
+  "ocpp201unlockconnectorrequest.custom_data_vendor_id": "s34569",
+  "ocpp201unlockconnectorrequest.evse_id": "32891",
+  "ocpp201unlockconnectorrequest.connector_id": "663"
+ }
+}

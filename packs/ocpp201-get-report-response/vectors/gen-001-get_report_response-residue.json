@@ -1,0 +1,7 @@
+{
+ "name": "gen-get_report_response-residue",
+ "from": "ocpp201-get-report-response",
+ "to": "ocpp201-get-report-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s11959\"},\"status\":\"EmptyResultSet\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s16845\"},\"reasonCode\":\"s86629\",\"additionalInfo\":\"s14546\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s11959\"},\"status\":\"EmptyResultSet\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s16845\"},\"reasonCode\":\"s86629\",\"additionalInfo\":\"s14546\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

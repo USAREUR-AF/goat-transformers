@@ -1,0 +1,17 @@
+{
+ "name": "gen-frb-roundtrip",
+ "from": "gcn-chime-frb",
+ "to": "gcn-chime-frb",
+ "input": "{\"known_source\":\"s79003\",\"snr\":0.75,\"trigger_time_inf_freq\":\"s23474\",\"trigger_time_inf_freq_error\":101.125,\"sampling_time\":7.0625,\"importance\":42.375,\"association_probability\":42.375,\"npol\":12.5,\"tsys\":42.375,\"update_message\":\"s45530\",\"dm_gal_ne_2001_max\":12.5,\"alert_datetime\":\"s24473\",\"alert_tense\":\"injection\",\"alert_type\":\"subsequent\",\"mission\":\"s92417\",\"instrument\":\"s61787\",\"service\":\"s65977\",\"record_number\":-3.25,\"messenger\":\"Neutrino\",\"spectral_band\":[0.75,1.5],\"spectral_band_units\":\"keV\",\"data_archive_page\":\"s26954\",\"trigger_time\":\"s80527\",\"observation_start\":\"s26560\",\"observation_stop\":\"s64728\",\"observation_livetime\":12.5,\"ra\":-3.25,\"dec\":7.0625,\"containment_probability\":-3.25,\"systematic_included\":true,\"instrument_phi\":-0.5,\"instrument_theta\":-0.5,\"instrument_semimajor_angle\":-0.5,\"healpix_url\":\"s43734\",\"healpix_file\":\"s16317\",\"dm\":12.5}",
+ "expect": "{\"known_source\":\"s79003\",\"snr\":0.75,\"trigger_time_inf_freq\":\"s23474\",\"trigger_time_inf_freq_error\":101.125,\"sampling_time\":7.0625,\"importance\":42.375,\"association_probability\":42.375,\"npol\":12.5,\"tsys\":42.375,\"update_message\":\"s45530\",\"dm_gal_ne_2001_max\":12.5,\"alert_datetime\":\"s24473\",\"alert_tense\":\"injection\",\"alert_type\":\"subsequent\",\"mission\":\"s92417\",\"instrument\":\"s61787\",\"service\":\"s65977\",\"record_number\":-3.25,\"messenger\":\"Neutrino\",\"spectral_band\":[0.75,1.5],\"spectral_band_units\":\"keV\",\"data_archive_page\":\"s26954\",\"trigger_time\":\"s80527\",\"observation_start\":\"s26560\",\"observation_stop\":\"s64728\",\"observation_livetime\":12.5,\"ra\":-3.25,\"dec\":7.0625,\"containment_probability\":-3.25,\"systematic_included\":true,\"instrument_phi\":-0.5,\"instrument_theta\":-0.5,\"instrument_semimajor_angle\":-0.5,\"healpix_url\":\"s43734\",\"healpix_file\":\"s16317\",\"dm\":12.5}",
+ "model": {
+  "gcnchime.known_source": "s79003",
+  "gcnchime.snr": "0.75",
+  "gcnchime.trigger_time_inf_freq": "s23474",
+  "gcnchime.trigger_time_inf_freq_error": "101.125",
+  "gcnchime.sampling_time": "7.0625",
+  "gcnchime.importance": "42.375",
+  "gcnchime.association_probability": "42.375",
+  "gcnchime.npol": "12.5"
+ }
+}

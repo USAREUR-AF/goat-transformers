@@ -1,0 +1,7 @@
+{
+ "name": "gen-get_log_response-residue",
+ "from": "ocpp16-get-log-response",
+ "to": "ocpp16-get-log-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"status\":\"Rejected\",\"filename\":\"s16784\"}",
+ "expect": "{\"status\":\"Rejected\",\"filename\":\"s16784\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

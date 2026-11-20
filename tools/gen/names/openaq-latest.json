@@ -1,0 +1,18 @@
+{
+ "keys": {
+  "results|coordinates.latitude|float": "results_coordinates_latitude",
+  "results|coordinates.longitude|float": "results_coordinates_longitude",
+  "results|datetime.local|string": "results_datetime_local",
+  "results|datetime.utc|string": "results_datetime_utc",
+  "results|locationsId|int": "results_locations_id",
+  "results|sensorsId|int": "results_sensors_id",
+  "results|value|float": "results_value",
+  "|meta.limit|int": "meta_limit",
+  "|meta.name|string": "meta_name",
+  "|meta.page|int": "meta_page",
+  "|meta.website|string": "meta_website"
+ },
+ "lists": {
+  "|results": "results"
+ }
+}

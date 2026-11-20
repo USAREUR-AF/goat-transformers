@@ -1,0 +1,9 @@
+{
+ "keys": {
+  "|chargingRateUnit|string": "charging_rate_unit",
+  "|customData.vendorId|string": "custom_data_vendor_id",
+  "|duration|int": "duration",
+  "|evseId|int": "evse_id"
+ },
+ "lists": {}
+}

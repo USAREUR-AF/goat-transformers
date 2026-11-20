@@ -1,0 +1,7 @@
+{
+ "name": "gen-remote_stop_transaction-residue",
+ "from": "ocpp16-remote-stop-transaction",
+ "to": "ocpp16-remote-stop-transaction",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"transactionId\":76837}",
+ "expect": "{\"transactionId\":76837,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-circular-residue",
+ "from": "gcn-circular",
+ "to": "gcn-circular",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"eventId\":\"s57544\",\"eventType\":[\"s72415\",\"s52283\"],\"submitter\":\"s68828\",\"submittedHow\":\"web\",\"subject\":\"s28556\",\"circularId\":101.125,\"format\":\"text/plain\",\"body\":\"s98227\",\"createdOn\":101.125}",
+ "expect": "{\"eventId\":\"s57544\",\"eventType\":[\"s72415\",\"s52283\"],\"submitter\":\"s68828\",\"submittedHow\":\"web\",\"subject\":\"s28556\",\"circularId\":101.125,\"format\":\"text/plain\",\"body\":\"s98227\",\"createdOn\":101.125,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-notify_evcharging_needs_response-residue",
+ "from": "ocpp201-notify-ev-charging-needs-response",
+ "to": "ocpp201-notify-ev-charging-needs-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s15499\"},\"status\":\"Accepted\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s91427\"},\"reasonCode\":\"s83807\",\"additionalInfo\":\"s24527\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s15499\"},\"status\":\"Accepted\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s91427\"},\"reasonCode\":\"s83807\",\"additionalInfo\":\"s24527\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

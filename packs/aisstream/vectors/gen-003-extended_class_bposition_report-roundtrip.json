@@ -1,0 +1,17 @@
+{
+ "name": "gen-extended_class_bposition_report-roundtrip",
+ "from": "aisstream",
+ "to": "aisstream",
+ "input": "{\"MessageType\":\"ExtendedClassBPositionReport\",\"Message\":{\"ExtendedClassBPositionReport\":{\"MessageID\":50633,\"RepeatIndicator\":74018,\"UserID\":7932,\"Valid\":false,\"Spare1\":95346,\"Sog\":42.375,\"PositionAccuracy\":true,\"Longitude\":0.75,\"Latitude\":12.5,\"Cog\":12.5,\"TrueHeading\":81709,\"Timestamp\":18683,\"Spare2\":27056,\"Name\":\"s5982\",\"Type\":10285,\"Dimension\":{\"A\":68851,\"B\":11989,\"C\":55513,\"D\":12794},\"FixType\":61710,\"Raim\":false,\"Dte\":true,\"AssignedMode\":true,\"Spare3\":63964}}}",
+ "expect": "{\"MessageType\":\"ExtendedClassBPositionReport\",\"Message\":{\"ExtendedClassBPositionReport\":{\"MessageID\":50633,\"RepeatIndicator\":74018,\"UserID\":7932,\"Valid\":false,\"Spare1\":95346,\"Sog\":42.375,\"PositionAccuracy\":true,\"Longitude\":0.75,\"Latitude\":12.5,\"Cog\":12.5,\"TrueHeading\":81709,\"Timestamp\":18683,\"Spare2\":27056,\"Name\":\"s5982\",\"Type\":10285,\"Dimension\":{\"A\":68851,\"B\":11989,\"C\":55513,\"D\":12794},\"FixType\":61710,\"Raim\":false,\"Dte\":true,\"AssignedMode\":true,\"Spare3\":63964}}}",
+ "model": {
+  "@kind": "extended_class_bposition_report",
+  "aisstream.message_extended_class_bposition_report_message_id": "50633",
+  "aisstream.message_extended_class_bposition_report_repeat_indicator": "74018",
+  "aisstream.message_extended_class_bposition_report_user_id": "7932",
+  "aisstream.message_extended_class_bposition_report_valid": "0",
+  "aisstream.message_extended_class_bposition_report_spare1": "95346",
+  "aisstream.message_extended_class_bposition_report_sog": "42.375",
+  "aisstream.message_extended_class_bposition_report_position_accuracy": "1"
+ }
+}

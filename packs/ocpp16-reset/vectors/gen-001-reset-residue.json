@@ -1,0 +1,7 @@
+{
+ "name": "gen-reset-residue",
+ "from": "ocpp16-reset",
+ "to": "ocpp16-reset",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"type\":\"Hard\"}",
+ "expect": "{\"type\":\"Hard\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "icao24-as-number",
+  "from": "opensky-track",
+  "to": "opensky-track",
+  "input": "{\"icao24\":11259375,\"startTime\":1700000000,\"endTime\":1700000600}",
+  "expect_error": "transform-decode",
+  "source": "derived by tools/gen/opensky-vectors.py from the documentation's tables and spec/engine-spec.md; no engine run",
+  "reference": "OpenSky Network REST API documentation, github.com/openskynetwork/opensky-api commit 98fecf7438dfbd23c4a26c8a7286a25b805eb2d3, docs/free/track-response.rst; icao24 is a hex string; a JSON number under string is a transform failure (ruling 9 of 0.1.1)"
+}

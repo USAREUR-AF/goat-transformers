@@ -1,0 +1,10 @@
+{
+ "name": "gen-cost_updated_response-roundtrip",
+ "from": "ocpp201-cost-updated-response",
+ "to": "ocpp201-cost-updated-response",
+ "input": "{\"customData\":{\"vendorId\":\"s28644\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s28644\"}}",
+ "model": {
+  "ocpp201costupdatedresponse.custom_data_vendor_id": "s28644"
+ }
+}

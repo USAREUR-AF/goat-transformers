@@ -1,0 +1,17 @@
+{
+ "name": "gen-signed_update_firmware-roundtrip",
+ "from": "ocpp16-signed-update-firmware",
+ "to": "ocpp16-signed-update-firmware",
+ "input": "{\"retries\":61795,\"retryInterval\":65485,\"requestId\":41596,\"firmware\":{\"location\":\"s33978\",\"retrieveDateTime\":\"2026-08-07T21:30:49.278Z\",\"installDateTime\":\"2024-12-04T15:27:42.248Z\",\"signingCertificate\":\"s48916\",\"signature\":\"s72654\"}}",
+ "expect": "{\"retries\":61795,\"retryInterval\":65485,\"requestId\":41596,\"firmware\":{\"location\":\"s33978\",\"retrieveDateTime\":\"2026-08-07T21:30:49.278Z\",\"installDateTime\":\"2024-12-04T15:27:42.248Z\",\"signingCertificate\":\"s48916\",\"signature\":\"s72654\"}}",
+ "model": {
+  "ocpp16signedupdatefirmware.retries": "61795",
+  "ocpp16signedupdatefirmware.retry_interval": "65485",
+  "ocpp16signedupdatefirmware.request_id": "41596",
+  "ocpp16signedupdatefirmware.firmware_location": "s33978",
+  "ocpp16signedupdatefirmware.firmware_retrieve_date_time": "2026-08-07T21:30:49.278Z",
+  "ocpp16signedupdatefirmware.firmware_install_date_time": "2024-12-04T15:27:42.248Z",
+  "ocpp16signedupdatefirmware.firmware_signing_certificate": "s48916",
+  "ocpp16signedupdatefirmware.firmware_signature": "s72654"
+ }
+}

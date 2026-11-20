@@ -1,0 +1,7 @@
+{
+ "name": "gen-addressed_binary_message-residue",
+ "from": "aisstream",
+ "to": "aisstream",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"MessageType\":\"AddressedBinaryMessage\",\"Message\":{\"AddressedBinaryMessage\":{\"MessageID\":33449,\"RepeatIndicator\":41667,\"UserID\":64519,\"Valid\":true,\"Sequenceinteger\":24791,\"DestinationID\":59914,\"Retransmission\":false,\"Spare\":true,\"ApplicationID\":{\"Valid\":false,\"DesignatedAreaCode\":18284,\"FunctionIdentifier\":86541},\"BinaryData\":\"s14730\"}}}",
+ "expect": "{\"MessageType\":\"AddressedBinaryMessage\",\"Message\":{\"AddressedBinaryMessage\":{\"MessageID\":33449,\"RepeatIndicator\":41667,\"UserID\":64519,\"Valid\":true,\"Sequenceinteger\":24791,\"DestinationID\":59914,\"Retransmission\":false,\"Spare\":true,\"ApplicationID\":{\"Valid\":false,\"DesignatedAreaCode\":18284,\"FunctionIdentifier\":86541},\"BinaryData\":\"s14730\"}},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

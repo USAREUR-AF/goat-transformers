@@ -1,0 +1,13 @@
+{
+ "name": "gen-delete_certificate-roundtrip",
+ "from": "ocpp16-delete-certificate",
+ "to": "ocpp16-delete-certificate",
+ "input": "{\"certificateHashData\":{\"hashAlgorithm\":\"SHA512\",\"issuerNameHash\":\"s17809\",\"issuerKeyHash\":\"s81847\",\"serialNumber\":\"s54371\"}}",
+ "expect": "{\"certificateHashData\":{\"hashAlgorithm\":\"SHA512\",\"issuerNameHash\":\"s17809\",\"issuerKeyHash\":\"s81847\",\"serialNumber\":\"s54371\"}}",
+ "model": {
+  "ocpp16deletecertificate.certificate_hash_data_hash_algorithm": "SHA512",
+  "ocpp16deletecertificate.certificate_hash_data_issuer_name_hash": "s17809",
+  "ocpp16deletecertificate.certificate_hash_data_issuer_key_hash": "s81847",
+  "ocpp16deletecertificate.certificate_hash_data_serial_number": "s54371"
+ }
+}

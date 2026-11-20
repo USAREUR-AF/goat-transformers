@@ -1,0 +1,10 @@
+{
+ "name": "gen-get_installed_certificate_ids-roundtrip",
+ "from": "ocpp16-get-installed-certificate-ids",
+ "to": "ocpp16-get-installed-certificate-ids",
+ "input": "{\"certificateType\":\"CentralSystemRootCertificate\"}",
+ "expect": "{\"certificateType\":\"CentralSystemRootCertificate\"}",
+ "model": {
+  "ocpp16getinstalledcertificateids.certificate_type": "CentralSystemRootCertificate"
+ }
+}

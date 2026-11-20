@@ -1,0 +1,7 @@
+{
+ "name": "gen-ven-residue",
+ "from": "openadr3-ven",
+ "to": "openadr3-ven",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"id\":\"s88042\",\"createdDateTime\":\"2026-02-26T20:40:22.468Z\",\"modificationDateTime\":\"2024-03-08T12:52:57.378Z\",\"objectType\":\"BL_VEN_REQUEST\",\"clientID\":\"s85032\",\"targets\":[\"s85723\",\"s97408\"],\"venName\":\"s24707\",\"attributes\":[{\"type\":\"s96043\"},{\"type\":\"s26025\"}]}",
+ "expect": "{\"id\":\"s88042\",\"createdDateTime\":\"2026-02-26T20:40:22.468Z\",\"modificationDateTime\":\"2024-03-08T12:52:57.378Z\",\"objectType\":\"BL_VEN_REQUEST\",\"clientID\":\"s85032\",\"targets\":[\"s85723\",\"s97408\"],\"venName\":\"s24707\",\"attributes\":[{\"type\":\"s96043\"},{\"type\":\"s26025\"}],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

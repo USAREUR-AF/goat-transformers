@@ -1,0 +1,7 @@
+{
+ "name": "gen-set_monitoring_base_request-residue",
+ "from": "ocpp201-set-monitoring-base-request",
+ "to": "ocpp201-set-monitoring-base-request",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s57939\"},\"monitoringBase\":\"FactoryDefault\"}",
+ "expect": "{\"customData\":{\"vendorId\":\"s57939\"},\"monitoringBase\":\"FactoryDefault\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

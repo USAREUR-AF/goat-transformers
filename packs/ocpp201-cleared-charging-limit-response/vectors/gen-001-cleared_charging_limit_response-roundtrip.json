@@ -1,0 +1,10 @@
+{
+ "name": "gen-cleared_charging_limit_response-roundtrip",
+ "from": "ocpp201-cleared-charging-limit-response",
+ "to": "ocpp201-cleared-charging-limit-response",
+ "input": "{\"customData\":{\"vendorId\":\"s52124\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s52124\"}}",
+ "model": {
+  "ocpp201clearedcharginglimitresponse.custom_data_vendor_id": "s52124"
+ }
+}

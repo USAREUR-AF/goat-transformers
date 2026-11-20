@@ -1,0 +1,10 @@
+{
+ "name": "gen-firmware_status_notification-roundtrip",
+ "from": "ocpp16-firmware-status-notification",
+ "to": "ocpp16-firmware-status-notification",
+ "input": "{\"status\":\"Downloading\"}",
+ "expect": "{\"status\":\"Downloading\"}",
+ "model": {
+  "ocpp16firmwarestatusnotification.status": "Downloading"
+ }
+}

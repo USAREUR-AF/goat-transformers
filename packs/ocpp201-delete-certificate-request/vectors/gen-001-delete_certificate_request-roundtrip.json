@@ -1,0 +1,15 @@
+{
+ "name": "gen-delete_certificate_request-roundtrip",
+ "from": "ocpp201-delete-certificate-request",
+ "to": "ocpp201-delete-certificate-request",
+ "input": "{\"customData\":{\"vendorId\":\"s57912\"},\"certificateHashData\":{\"customData\":{\"vendorId\":\"s64571\"},\"hashAlgorithm\":\"SHA384\",\"issuerNameHash\":\"s97115\",\"issuerKeyHash\":\"s26707\",\"serialNumber\":\"s15470\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s57912\"},\"certificateHashData\":{\"customData\":{\"vendorId\":\"s64571\"},\"hashAlgorithm\":\"SHA384\",\"issuerNameHash\":\"s97115\",\"issuerKeyHash\":\"s26707\",\"serialNumber\":\"s15470\"}}",
+ "model": {
+  "ocpp201deletecertificaterequest.custom_data_vendor_id": "s57912",
+  "ocpp201deletecertificaterequest.certificate_hash_data_custom_data_vendor_id": "s64571",
+  "ocpp201deletecertificaterequest.certificate_hash_data_hash_algorithm": "SHA384",
+  "ocpp201deletecertificaterequest.certificate_hash_data_issuer_name_hash": "s97115",
+  "ocpp201deletecertificaterequest.certificate_hash_data_issuer_key_hash": "s26707",
+  "ocpp201deletecertificaterequest.certificate_hash_data_serial_number": "s15470"
+ }
+}

@@ -1,0 +1,15 @@
+{
+ "name": "gen-notify_customer_information_request-roundtrip",
+ "from": "ocpp201-notify-customer-information-request",
+ "to": "ocpp201-notify-customer-information-request",
+ "input": "{\"customData\":{\"vendorId\":\"s94374\"},\"data\":\"s22146\",\"tbc\":false,\"seqNo\":4503,\"generatedAt\":\"2026-05-12T13:44:28.541Z\",\"requestId\":44246}",
+ "expect": "{\"customData\":{\"vendorId\":\"s94374\"},\"data\":\"s22146\",\"tbc\":false,\"seqNo\":4503,\"generatedAt\":\"2026-05-12T13:44:28.541Z\",\"requestId\":44246}",
+ "model": {
+  "ocpp201notifycustomerinformationrequest.custom_data_vendor_id": "s94374",
+  "ocpp201notifycustomerinformationrequest.data": "s22146",
+  "ocpp201notifycustomerinformationrequest.tbc": "0",
+  "ocpp201notifycustomerinformationrequest.seq_no": "4503",
+  "ocpp201notifycustomerinformationrequest.generated_at": "2026-05-12T13:44:28.541Z",
+  "ocpp201notifycustomerinformationrequest.request_id": "44246"
+ }
+}

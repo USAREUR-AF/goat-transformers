@@ -1,0 +1,10 @@
+{
+ "name": "gen-remote_stop_transaction-roundtrip",
+ "from": "ocpp16-remote-stop-transaction",
+ "to": "ocpp16-remote-stop-transaction",
+ "input": "{\"transactionId\":76837}",
+ "expect": "{\"transactionId\":76837}",
+ "model": {
+  "ocpp16remotestoptransaction.transaction_id": "76837"
+ }
+}

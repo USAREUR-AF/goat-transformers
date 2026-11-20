@@ -1,0 +1,15 @@
+{
+ "name": "gen-stop_transaction-roundtrip",
+ "from": "ocpp16-stop-transaction",
+ "to": "ocpp16-stop-transaction",
+ "input": "{\"idTag\":\"s18162\",\"meterStop\":28530,\"timestamp\":\"2024-03-16T05:47:15.717Z\",\"transactionId\":41499,\"reason\":\"DeAuthorized\",\"transactionData\":[{\"timestamp\":\"2025-08-14T15:46:51.272Z\",\"sampledValue\":[{\"value\":\"s87762\",\"context\":\"Sample.Periodic\",\"format\":\"SignedData\",\"measurand\":\"Power.Reactive.Import\",\"phase\":\"L2-L3\",\"location\":\"Outlet\",\"unit\":\"var\"}]},{\"timestamp\":\"2025-03-24T21:42:58.604Z\",\"sampledValue\":[{\"value\":\"s94559\",\"context\":\"Other\",\"format\":\"Raw\",\"measurand\":\"Current.Import\",\"phase\":\"L1-L2\",\"location\":\"Cable\",\"unit\":\"A\"}]}]}",
+ "expect": "{\"idTag\":\"s18162\",\"meterStop\":28530,\"timestamp\":\"2024-03-16T05:47:15.717Z\",\"transactionId\":41499,\"reason\":\"DeAuthorized\",\"transactionData\":[{\"timestamp\":\"2025-08-14T15:46:51.272Z\",\"sampledValue\":[{\"value\":\"s87762\",\"context\":\"Sample.Periodic\",\"format\":\"SignedData\",\"measurand\":\"Power.Reactive.Import\",\"phase\":\"L2-L3\",\"location\":\"Outlet\",\"unit\":\"var\"}]},{\"timestamp\":\"2025-03-24T21:42:58.604Z\",\"sampledValue\":[{\"value\":\"s94559\",\"context\":\"Other\",\"format\":\"Raw\",\"measurand\":\"Current.Import\",\"phase\":\"L1-L2\",\"location\":\"Cable\",\"unit\":\"A\"}]}]}",
+ "model": {
+  "ocpp16stoptransaction.id_tag": "s18162",
+  "ocpp16stoptransaction.meter_stop": "28530",
+  "ocpp16stoptransaction.timestamp": "2024-03-16T05:47:15.717Z",
+  "ocpp16stoptransaction.transaction_id": "41499",
+  "ocpp16stoptransaction.reason": "DeAuthorized",
+  "ocpp16stoptransaction.transaction_data.#": "2"
+ }
+}

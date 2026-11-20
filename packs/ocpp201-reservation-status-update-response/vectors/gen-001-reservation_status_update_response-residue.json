@@ -1,0 +1,7 @@
+{
+ "name": "gen-reservation_status_update_response-residue",
+ "from": "ocpp201-reservation-status-update-response",
+ "to": "ocpp201-reservation-status-update-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s54663\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s54663\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

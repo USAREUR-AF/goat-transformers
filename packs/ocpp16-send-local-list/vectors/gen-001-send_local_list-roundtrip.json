@@ -1,0 +1,12 @@
+{
+ "name": "gen-send_local_list-roundtrip",
+ "from": "ocpp16-send-local-list",
+ "to": "ocpp16-send-local-list",
+ "input": "{\"listVersion\":80587,\"localAuthorizationList\":[{\"idTag\":\"s71861\",\"idTagInfo\":{\"expiryDate\":\"2024-08-05T17:17:23.119Z\",\"parentIdTag\":\"s76908\",\"status\":\"Invalid\"}},{\"idTag\":\"s46049\",\"idTagInfo\":{\"expiryDate\":\"2024-04-13T21:36:27.824Z\",\"parentIdTag\":\"s98844\",\"status\":\"Blocked\"}}],\"updateType\":\"Differential\"}",
+ "expect": "{\"listVersion\":80587,\"localAuthorizationList\":[{\"idTag\":\"s71861\",\"idTagInfo\":{\"expiryDate\":\"2024-08-05T17:17:23.119Z\",\"parentIdTag\":\"s76908\",\"status\":\"Invalid\"}},{\"idTag\":\"s46049\",\"idTagInfo\":{\"expiryDate\":\"2024-04-13T21:36:27.824Z\",\"parentIdTag\":\"s98844\",\"status\":\"Blocked\"}}],\"updateType\":\"Differential\"}",
+ "model": {
+  "ocpp16sendlocallist.list_version": "80587",
+  "ocpp16sendlocallist.local_authorization_list.#": "2",
+  "ocpp16sendlocallist.update_type": "Differential"
+ }
+}

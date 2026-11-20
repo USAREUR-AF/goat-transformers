@@ -1,0 +1,7 @@
+{
+ "name": "gen-clear_cache_response-residue",
+ "from": "ocpp16-clear-cache-response",
+ "to": "ocpp16-clear-cache-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"status\":\"Accepted\"}",
+ "expect": "{\"status\":\"Accepted\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

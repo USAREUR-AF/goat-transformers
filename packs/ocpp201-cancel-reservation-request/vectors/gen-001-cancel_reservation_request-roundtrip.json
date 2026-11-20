@@ -1,0 +1,11 @@
+{
+ "name": "gen-cancel_reservation_request-roundtrip",
+ "from": "ocpp201-cancel-reservation-request",
+ "to": "ocpp201-cancel-reservation-request",
+ "input": "{\"customData\":{\"vendorId\":\"s64817\"},\"reservationId\":49679}",
+ "expect": "{\"customData\":{\"vendorId\":\"s64817\"},\"reservationId\":49679}",
+ "model": {
+  "ocpp201cancelreservationrequest.custom_data_vendor_id": "s64817",
+  "ocpp201cancelreservationrequest.reservation_id": "49679"
+ }
+}

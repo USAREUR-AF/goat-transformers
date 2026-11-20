@@ -1,0 +1,7 @@
+{
+ "name": "gen-send_local_list_response-residue",
+ "from": "ocpp201-send-local-list-response",
+ "to": "ocpp201-send-local-list-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s5812\"},\"status\":\"Accepted\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s48323\"},\"reasonCode\":\"s40533\",\"additionalInfo\":\"s20538\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s5812\"},\"status\":\"Accepted\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s48323\"},\"reasonCode\":\"s40533\",\"additionalInfo\":\"s20538\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

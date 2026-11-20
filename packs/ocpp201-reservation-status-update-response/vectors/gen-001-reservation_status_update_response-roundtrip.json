@@ -1,0 +1,10 @@
+{
+ "name": "gen-reservation_status_update_response-roundtrip",
+ "from": "ocpp201-reservation-status-update-response",
+ "to": "ocpp201-reservation-status-update-response",
+ "input": "{\"customData\":{\"vendorId\":\"s54663\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s54663\"}}",
+ "model": {
+  "ocpp201reservationstatusupdateresponse.custom_data_vendor_id": "s54663"
+ }
+}

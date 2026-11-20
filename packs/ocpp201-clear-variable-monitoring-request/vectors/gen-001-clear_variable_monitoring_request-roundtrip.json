@@ -1,0 +1,11 @@
+{
+ "name": "gen-clear_variable_monitoring_request-roundtrip",
+ "from": "ocpp201-clear-variable-monitoring-request",
+ "to": "ocpp201-clear-variable-monitoring-request",
+ "input": "{\"customData\":{\"vendorId\":\"s57731\"},\"id\":[61515,51609]}",
+ "expect": "{\"customData\":{\"vendorId\":\"s57731\"},\"id\":[61515,51609]}",
+ "model": {
+  "ocpp201clearvariablemonitoringrequest.custom_data_vendor_id": "s57731",
+  "ocpp201clearvariablemonitoringrequest.id.#": "2"
+ }
+}

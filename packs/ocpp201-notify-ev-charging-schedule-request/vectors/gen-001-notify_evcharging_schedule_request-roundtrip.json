@@ -1,0 +1,17 @@
+{
+ "name": "gen-notify_evcharging_schedule_request-roundtrip",
+ "from": "ocpp201-notify-ev-charging-schedule-request",
+ "to": "ocpp201-notify-ev-charging-schedule-request",
+ "input": "{\"customData\":{\"vendorId\":\"s13693\"},\"timeBase\":\"2024-12-17T07:45:36.817Z\",\"chargingSchedule\":{\"customData\":{\"vendorId\":\"s29249\"},\"id\":30955,\"startSchedule\":\"2025-10-03T11:59:54.758Z\",\"duration\":92822,\"chargingRateUnit\":\"A\",\"chargingSchedulePeriod\":[{\"customData\":{\"vendorId\":\"s64487\"},\"startPeriod\":12475,\"limit\":101.125,\"numberPhases\":87702,\"phaseToUse\":6151},{\"customData\":{\"vendorId\":\"s63760\"},\"startPeriod\":95663,\"limit\":-0.5,\"numberPhases\":1984,\"phaseToUse\":7683}],\"minChargingRate\":101.125,\"salesTariff\":{\"customData\":{\"vendorId\":\"s84825\"},\"id\":74980,\"salesTariffDescription\":\"s93897\",\"numEPriceLevels\":87020,\"salesTariffEntry\":[{\"customData\":{\"vendorId\":\"s30272\"},\"relativeTimeInterval\":{\"customData\":{\"vendorId\":\"s99648\"},\"start\":90028,\"duration\":14261},\"ePriceLevel\":67878,\"consumptionCost\":[{\"customData\":{\"vendorId\":\"s10120\"},\"startValue\":42.375}]},{\"customData\":{\"vendorId\":\"s33704\"},\"relativeTimeInterval\":{\"customData\":{\"vendorId\":\"s67476\"},\"start\":66151,\"duration\":24426},\"ePriceLevel\":80866,\"consumptionCost\":[{\"customData\":{\"vendorId\":\"s34114\"},\"startValue\":0.75}]}]}},\"evseId\":7570}",
+ "expect": "{\"customData\":{\"vendorId\":\"s13693\"},\"timeBase\":\"2024-12-17T07:45:36.817Z\",\"chargingSchedule\":{\"customData\":{\"vendorId\":\"s29249\"},\"id\":30955,\"startSchedule\":\"2025-10-03T11:59:54.758Z\",\"duration\":92822,\"chargingRateUnit\":\"A\",\"chargingSchedulePeriod\":[{\"customData\":{\"vendorId\":\"s64487\"},\"startPeriod\":12475,\"limit\":101.125,\"numberPhases\":87702,\"phaseToUse\":6151},{\"customData\":{\"vendorId\":\"s63760\"},\"startPeriod\":95663,\"limit\":-0.5,\"numberPhases\":1984,\"phaseToUse\":7683}],\"minChargingRate\":101.125,\"salesTariff\":{\"customData\":{\"vendorId\":\"s84825\"},\"id\":74980,\"salesTariffDescription\":\"s93897\",\"numEPriceLevels\":87020,\"salesTariffEntry\":[{\"customData\":{\"vendorId\":\"s30272\"},\"relativeTimeInterval\":{\"customData\":{\"vendorId\":\"s99648\"},\"start\":90028,\"duration\":14261},\"ePriceLevel\":67878,\"consumptionCost\":[{\"customData\":{\"vendorId\":\"s10120\"},\"startValue\":42.375}]},{\"customData\":{\"vendorId\":\"s33704\"},\"relativeTimeInterval\":{\"customData\":{\"vendorId\":\"s67476\"},\"start\":66151,\"duration\":24426},\"ePriceLevel\":80866,\"consumptionCost\":[{\"customData\":{\"vendorId\":\"s34114\"},\"startValue\":0.75}]}]}},\"evseId\":7570}",
+ "model": {
+  "ocpp201notifyevchargingschedulerequest.custom_data_vendor_id": "s13693",
+  "ocpp201notifyevchargingschedulerequest.time_base": "2024-12-17T07:45:36.817Z",
+  "ocpp201notifyevchargingschedulerequest.charging_schedule_custom_data_vendor_id": "s29249",
+  "ocpp201notifyevchargingschedulerequest.charging_schedule_id": "30955",
+  "ocpp201notifyevchargingschedulerequest.charging_schedule_start_schedule": "2025-10-03T11:59:54.758Z",
+  "ocpp201notifyevchargingschedulerequest.charging_schedule_duration": "92822",
+  "ocpp201notifyevchargingschedulerequest.charging_schedule_charging_rate_unit": "A",
+  "ocpp201notifyevchargingschedulerequest.charging_schedule_charging_schedule_period.#": "2"
+ }
+}

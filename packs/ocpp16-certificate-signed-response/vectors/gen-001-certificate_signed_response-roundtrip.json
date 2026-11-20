@@ -1,0 +1,10 @@
+{
+ "name": "gen-certificate_signed_response-roundtrip",
+ "from": "ocpp16-certificate-signed-response",
+ "to": "ocpp16-certificate-signed-response",
+ "input": "{\"status\":\"Accepted\"}",
+ "expect": "{\"status\":\"Accepted\"}",
+ "model": {
+  "ocpp16certificatesignedresponse.status": "Accepted"
+ }
+}

@@ -1,0 +1,14 @@
+{
+ "keys": {
+  "|id|string": "id",
+  "|properties.data_id|string": "properties_data_id",
+  "|properties.datetime|string": "properties_datetime",
+  "|properties.end_datetime|string": "properties_end_datetime",
+  "|properties.global-cache|string": "properties_global_cache",
+  "|properties.metadata_id|string": "properties_metadata_id",
+  "|properties.producer|string": "properties_producer",
+  "|properties.pubtime|string": "properties_pubtime",
+  "|properties.start_datetime|string": "properties_start_datetime"
+ },
+ "lists": {}
+}

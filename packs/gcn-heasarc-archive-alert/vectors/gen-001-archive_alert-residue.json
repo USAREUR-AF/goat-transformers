@@ -1,0 +1,7 @@
+{
+ "name": "gen-archive_alert-residue",
+ "from": "gcn-heasarc-archive-alert",
+ "to": "gcn-heasarc-archive-alert",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"obs_id\":\"s29753\",\"target_name\":\"s36698\",\"mission_page\":\"s37348\",\"facility_name\":\"s48160\",\"alert_datetime\":\"s4065\",\"alert_tense\":\"archival\",\"alert_type\":\"retraction\",\"trigger_time\":\"s22103\",\"observation_start\":\"s76383\",\"observation_stop\":\"s6260\",\"observation_livetime\":0.75,\"data_archive_page\":\"s80448\",\"mission\":\"s84146\",\"instrument\":\"s86317\",\"service\":\"s80509\",\"record_number\":42.375,\"messenger\":\"GW\",\"spectral_band\":[0.75,42.375],\"spectral_band_units\":\"keV\"}",
+ "expect": "{\"obs_id\":\"s29753\",\"target_name\":\"s36698\",\"mission_page\":\"s37348\",\"facility_name\":\"s48160\",\"alert_datetime\":\"s4065\",\"alert_tense\":\"archival\",\"alert_type\":\"retraction\",\"trigger_time\":\"s22103\",\"observation_start\":\"s76383\",\"observation_stop\":\"s6260\",\"observation_livetime\":0.75,\"data_archive_page\":\"s80448\",\"mission\":\"s84146\",\"instrument\":\"s86317\",\"service\":\"s80509\",\"record_number\":42.375,\"messenger\":\"GW\",\"spectral_band\":[0.75,42.375],\"spectral_band_units\":\"keV\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

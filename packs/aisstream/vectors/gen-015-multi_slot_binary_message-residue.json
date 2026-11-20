@@ -1,0 +1,7 @@
+{
+ "name": "gen-multi_slot_binary_message-residue",
+ "from": "aisstream",
+ "to": "aisstream",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"MessageType\":\"MultiSlotBinaryMessage\",\"Message\":{\"MultiSlotBinaryMessage\":{\"MessageID\":74835,\"RepeatIndicator\":23850,\"UserID\":30293,\"Valid\":true,\"DestinationIDValid\":true,\"ApplicationIDValid\":true,\"DestinationID\":20228,\"Spare1\":47743,\"ApplicationID\":{\"Valid\":true,\"DesignatedAreaCode\":63327,\"FunctionIdentifier\":17522},\"Payload\":\"s94482\",\"Spare2\":67,\"CommunicationStateIsItdma\":false,\"CommunicationState\":64680}}}",
+ "expect": "{\"MessageType\":\"MultiSlotBinaryMessage\",\"Message\":{\"MultiSlotBinaryMessage\":{\"MessageID\":74835,\"RepeatIndicator\":23850,\"UserID\":30293,\"Valid\":true,\"DestinationIDValid\":true,\"ApplicationIDValid\":true,\"DestinationID\":20228,\"Spare1\":47743,\"ApplicationID\":{\"Valid\":true,\"DesignatedAreaCode\":63327,\"FunctionIdentifier\":17522},\"Payload\":\"s94482\",\"Spare2\":67,\"CommunicationStateIsItdma\":false,\"CommunicationState\":64680}},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

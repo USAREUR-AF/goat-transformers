@@ -1,0 +1,10 @@
+{
+ "name": "gen-sign_certificate_response-roundtrip",
+ "from": "ocpp16-sign-certificate-response",
+ "to": "ocpp16-sign-certificate-response",
+ "input": "{\"status\":\"Rejected\"}",
+ "expect": "{\"status\":\"Rejected\"}",
+ "model": {
+  "ocpp16signcertificateresponse.status": "Rejected"
+ }
+}

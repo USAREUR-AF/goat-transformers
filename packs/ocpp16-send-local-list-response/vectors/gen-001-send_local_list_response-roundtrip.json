@@ -1,0 +1,10 @@
+{
+ "name": "gen-send_local_list_response-roundtrip",
+ "from": "ocpp16-send-local-list-response",
+ "to": "ocpp16-send-local-list-response",
+ "input": "{\"status\":\"NotSupported\"}",
+ "expect": "{\"status\":\"NotSupported\"}",
+ "model": {
+  "ocpp16sendlocallistresponse.status": "NotSupported"
+ }
+}

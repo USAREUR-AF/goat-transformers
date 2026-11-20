@@ -1,0 +1,11 @@
+{
+ "name": "gen-clear_display_message_request-roundtrip",
+ "from": "ocpp201-clear-display-message-request",
+ "to": "ocpp201-clear-display-message-request",
+ "input": "{\"customData\":{\"vendorId\":\"s4754\"},\"id\":55035}",
+ "expect": "{\"customData\":{\"vendorId\":\"s4754\"},\"id\":55035}",
+ "model": {
+  "ocpp201cleardisplaymessagerequest.custom_data_vendor_id": "s4754",
+  "ocpp201cleardisplaymessagerequest.id": "55035"
+ }
+}

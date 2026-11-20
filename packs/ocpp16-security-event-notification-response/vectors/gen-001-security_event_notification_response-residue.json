@@ -1,0 +1,7 @@
+{
+ "name": "gen-security_event_notification_response-residue",
+ "from": "ocpp16-security-event-notification-response",
+ "to": "ocpp16-security-event-notification-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7}",
+ "expect": "{\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

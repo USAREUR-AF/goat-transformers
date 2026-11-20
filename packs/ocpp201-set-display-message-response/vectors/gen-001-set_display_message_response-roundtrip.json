@@ -1,0 +1,14 @@
+{
+ "name": "gen-set_display_message_response-roundtrip",
+ "from": "ocpp201-set-display-message-response",
+ "to": "ocpp201-set-display-message-response",
+ "input": "{\"customData\":{\"vendorId\":\"s77931\"},\"status\":\"NotSupportedPriority\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s38409\"},\"reasonCode\":\"s14840\",\"additionalInfo\":\"s35234\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s77931\"},\"status\":\"NotSupportedPriority\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s38409\"},\"reasonCode\":\"s14840\",\"additionalInfo\":\"s35234\"}}",
+ "model": {
+  "ocpp201setdisplaymessageresponse.custom_data_vendor_id": "s77931",
+  "ocpp201setdisplaymessageresponse.status": "NotSupportedPriority",
+  "ocpp201setdisplaymessageresponse.status_info_custom_data_vendor_id": "s38409",
+  "ocpp201setdisplaymessageresponse.status_info_reason_code": "s14840",
+  "ocpp201setdisplaymessageresponse.status_info_additional_info": "s35234"
+ }
+}

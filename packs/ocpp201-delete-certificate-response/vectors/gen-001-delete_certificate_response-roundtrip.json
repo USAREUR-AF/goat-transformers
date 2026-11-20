@@ -1,0 +1,14 @@
+{
+ "name": "gen-delete_certificate_response-roundtrip",
+ "from": "ocpp201-delete-certificate-response",
+ "to": "ocpp201-delete-certificate-response",
+ "input": "{\"customData\":{\"vendorId\":\"s97949\"},\"status\":\"NotFound\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s73913\"},\"reasonCode\":\"s47521\",\"additionalInfo\":\"s50789\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s97949\"},\"status\":\"NotFound\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s73913\"},\"reasonCode\":\"s47521\",\"additionalInfo\":\"s50789\"}}",
+ "model": {
+  "ocpp201deletecertificateresponse.custom_data_vendor_id": "s97949",
+  "ocpp201deletecertificateresponse.status": "NotFound",
+  "ocpp201deletecertificateresponse.status_info_custom_data_vendor_id": "s73913",
+  "ocpp201deletecertificateresponse.status_info_reason_code": "s47521",
+  "ocpp201deletecertificateresponse.status_info_additional_info": "s50789"
+ }
+}

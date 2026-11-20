@@ -1,0 +1,10 @@
+{
+ "name": "gen-install_certificate_response-roundtrip",
+ "from": "ocpp16-install-certificate-response",
+ "to": "ocpp16-install-certificate-response",
+ "input": "{\"status\":\"Rejected\"}",
+ "expect": "{\"status\":\"Rejected\"}",
+ "model": {
+  "ocpp16installcertificateresponse.status": "Rejected"
+ }
+}

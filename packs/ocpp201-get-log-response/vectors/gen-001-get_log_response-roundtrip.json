@@ -1,0 +1,15 @@
+{
+ "name": "gen-get_log_response-roundtrip",
+ "from": "ocpp201-get-log-response",
+ "to": "ocpp201-get-log-response",
+ "input": "{\"customData\":{\"vendorId\":\"s70909\"},\"status\":\"Rejected\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s54509\"},\"reasonCode\":\"s10572\",\"additionalInfo\":\"s31285\"},\"filename\":\"s16784\"}",
+ "expect": "{\"customData\":{\"vendorId\":\"s70909\"},\"status\":\"Rejected\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s54509\"},\"reasonCode\":\"s10572\",\"additionalInfo\":\"s31285\"},\"filename\":\"s16784\"}",
+ "model": {
+  "ocpp201getlogresponse.custom_data_vendor_id": "s70909",
+  "ocpp201getlogresponse.status": "Rejected",
+  "ocpp201getlogresponse.status_info_custom_data_vendor_id": "s54509",
+  "ocpp201getlogresponse.status_info_reason_code": "s10572",
+  "ocpp201getlogresponse.status_info_additional_info": "s31285",
+  "ocpp201getlogresponse.filename": "s16784"
+ }
+}

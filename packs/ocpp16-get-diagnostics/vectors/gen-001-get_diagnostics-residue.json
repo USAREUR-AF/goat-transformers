@@ -1,0 +1,7 @@
+{
+ "name": "gen-get_diagnostics-residue",
+ "from": "ocpp16-get-diagnostics",
+ "to": "ocpp16-get-diagnostics",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"location\":\"https://example.org/79\",\"retries\":22193,\"retryInterval\":10032,\"startTime\":\"2024-02-16T13:57:46.767Z\",\"stopTime\":\"2025-02-16T07:16:17.415Z\"}",
+ "expect": "{\"location\":\"https://example.org/79\",\"retries\":22193,\"retryInterval\":10032,\"startTime\":\"2024-02-16T13:57:46.767Z\",\"stopTime\":\"2025-02-16T07:16:17.415Z\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

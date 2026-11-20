@@ -1,0 +1,10 @@
+{
+ "name": "gen-reserve_now_response-roundtrip",
+ "from": "ocpp16-reserve-now-response",
+ "to": "ocpp16-reserve-now-response",
+ "input": "{\"status\":\"Rejected\"}",
+ "expect": "{\"status\":\"Rejected\"}",
+ "model": {
+  "ocpp16reservenowresponse.status": "Rejected"
+ }
+}

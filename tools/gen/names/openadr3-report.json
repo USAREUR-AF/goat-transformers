@@ -1,0 +1,33 @@
+{
+ "keys": {
+  "payload_descriptors|accuracy|float": "payload_descriptors_accuracy",
+  "payload_descriptors|confidence|int": "payload_descriptors_confidence",
+  "payload_descriptors|objectType|string": "payload_descriptors_object_type",
+  "payload_descriptors|payloadType|string": "payload_descriptors_payload_type",
+  "payload_descriptors|readingType|string": "payload_descriptors_reading_type",
+  "payload_descriptors|units|string": "payload_descriptors_units",
+  "resources_intervals_payloads|type|string": "resources_intervals_payloads_type",
+  "resources_intervals|id|int": "resources_intervals_id",
+  "resources_intervals|intervalPeriod.duration|string": "resources_intervals_interval_period_duration",
+  "resources_intervals|intervalPeriod.randomizeStart|string": "resources_intervals_interval_period_randomize_start",
+  "resources_intervals|intervalPeriod.start|string": "resources_intervals_interval_period_start",
+  "resources|intervalPeriod.duration|string": "resources_interval_period_duration",
+  "resources|intervalPeriod.randomizeStart|string": "resources_interval_period_randomize_start",
+  "resources|intervalPeriod.start|string": "resources_interval_period_start",
+  "resources|resourceName|string": "resources_resource_name",
+  "|clientID|string": "client_id",
+  "|clientName|string": "client_name",
+  "|createdDateTime|string": "created_date_time",
+  "|eventID|string": "event_id",
+  "|id|string": "id",
+  "|modificationDateTime|string": "modification_date_time",
+  "|objectType|string": "object_type",
+  "|reportName|string": "report_name"
+ },
+ "lists": {
+  "resources_intervals|payloads": "resources_intervals_payloads",
+  "resources|intervals": "resources_intervals",
+  "|payloadDescriptors": "payload_descriptors",
+  "|resources": "resources"
+ }
+}

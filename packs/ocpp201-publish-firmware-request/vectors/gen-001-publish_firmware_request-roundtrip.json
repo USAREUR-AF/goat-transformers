@@ -1,0 +1,15 @@
+{
+ "name": "gen-publish_firmware_request-roundtrip",
+ "from": "ocpp201-publish-firmware-request",
+ "to": "ocpp201-publish-firmware-request",
+ "input": "{\"customData\":{\"vendorId\":\"s41908\"},\"location\":\"s53623\",\"retries\":26549,\"checksum\":\"s62029\",\"requestId\":30675,\"retryInterval\":4075}",
+ "expect": "{\"customData\":{\"vendorId\":\"s41908\"},\"location\":\"s53623\",\"retries\":26549,\"checksum\":\"s62029\",\"requestId\":30675,\"retryInterval\":4075}",
+ "model": {
+  "ocpp201publishfirmwarerequest.custom_data_vendor_id": "s41908",
+  "ocpp201publishfirmwarerequest.location": "s53623",
+  "ocpp201publishfirmwarerequest.retries": "26549",
+  "ocpp201publishfirmwarerequest.checksum": "s62029",
+  "ocpp201publishfirmwarerequest.request_id": "30675",
+  "ocpp201publishfirmwarerequest.retry_interval": "4075"
+ }
+}

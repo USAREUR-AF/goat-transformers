@@ -1,0 +1,14 @@
+{
+ "keys": {
+  "|chargeBoxSerialNumber|string": "charge_box_serial_number",
+  "|chargePointModel|string": "charge_point_model",
+  "|chargePointSerialNumber|string": "charge_point_serial_number",
+  "|chargePointVendor|string": "charge_point_vendor",
+  "|firmwareVersion|string": "firmware_version",
+  "|iccid|string": "iccid",
+  "|imsi|string": "imsi",
+  "|meterSerialNumber|string": "meter_serial_number",
+  "|meterType|string": "meter_type"
+ },
+ "lists": {}
+}

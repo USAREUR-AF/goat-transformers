@@ -1,0 +1,14 @@
+{
+ "name": "gen-set_monitoring_base_response-roundtrip",
+ "from": "ocpp201-set-monitoring-base-response",
+ "to": "ocpp201-set-monitoring-base-response",
+ "input": "{\"customData\":{\"vendorId\":\"s12925\"},\"status\":\"Rejected\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s55503\"},\"reasonCode\":\"s99021\",\"additionalInfo\":\"s41191\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s12925\"},\"status\":\"Rejected\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s55503\"},\"reasonCode\":\"s99021\",\"additionalInfo\":\"s41191\"}}",
+ "model": {
+  "ocpp201setmonitoringbaseresponse.custom_data_vendor_id": "s12925",
+  "ocpp201setmonitoringbaseresponse.status": "Rejected",
+  "ocpp201setmonitoringbaseresponse.status_info_custom_data_vendor_id": "s55503",
+  "ocpp201setmonitoringbaseresponse.status_info_reason_code": "s99021",
+  "ocpp201setmonitoringbaseresponse.status_info_additional_info": "s41191"
+ }
+}

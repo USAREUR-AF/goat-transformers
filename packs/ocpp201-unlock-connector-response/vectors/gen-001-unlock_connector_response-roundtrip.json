@@ -1,0 +1,14 @@
+{
+ "name": "gen-unlock_connector_response-roundtrip",
+ "from": "ocpp201-unlock-connector-response",
+ "to": "ocpp201-unlock-connector-response",
+ "input": "{\"customData\":{\"vendorId\":\"s40204\"},\"status\":\"Unlocked\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s12582\"},\"reasonCode\":\"s75163\",\"additionalInfo\":\"s92716\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s40204\"},\"status\":\"Unlocked\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s12582\"},\"reasonCode\":\"s75163\",\"additionalInfo\":\"s92716\"}}",
+ "model": {
+  "ocpp201unlockconnectorresponse.custom_data_vendor_id": "s40204",
+  "ocpp201unlockconnectorresponse.status": "Unlocked",
+  "ocpp201unlockconnectorresponse.status_info_custom_data_vendor_id": "s12582",
+  "ocpp201unlockconnectorresponse.status_info_reason_code": "s75163",
+  "ocpp201unlockconnectorresponse.status_info_additional_info": "s92716"
+ }
+}

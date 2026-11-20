@@ -1,0 +1,7 @@
+{
+ "name": "gen-authorize_response-residue",
+ "from": "ocpp16-authorize-response",
+ "to": "ocpp16-authorize-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"idTagInfo\":{\"expiryDate\":\"2025-12-08T19:34:46.558Z\",\"parentIdTag\":\"s3235\",\"status\":\"Invalid\"}}",
+ "expect": "{\"idTagInfo\":{\"expiryDate\":\"2025-12-08T19:34:46.558Z\",\"parentIdTag\":\"s3235\",\"status\":\"Invalid\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

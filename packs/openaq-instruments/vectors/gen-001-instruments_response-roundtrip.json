@@ -1,0 +1,14 @@
+{
+ "name": "gen-instruments_response-roundtrip",
+ "from": "openaq-instruments",
+ "to": "openaq-instruments",
+ "input": "{\"meta\":{\"name\":\"s48195\",\"website\":\"s53939\",\"page\":373,\"limit\":86962},\"results\":[{\"id\":58388,\"name\":\"s71424\",\"isMonitor\":false,\"manufacturer\":{\"id\":70284,\"name\":\"s81834\"}},{\"id\":31952,\"name\":\"s25387\",\"isMonitor\":true,\"manufacturer\":{\"id\":49558,\"name\":\"s57804\"}}]}",
+ "expect": "{\"meta\":{\"name\":\"s48195\",\"website\":\"s53939\",\"page\":373,\"limit\":86962},\"results\":[{\"id\":58388,\"name\":\"s71424\",\"isMonitor\":false,\"manufacturer\":{\"id\":70284,\"name\":\"s81834\"}},{\"id\":31952,\"name\":\"s25387\",\"isMonitor\":true,\"manufacturer\":{\"id\":49558,\"name\":\"s57804\"}}]}",
+ "model": {
+  "openaqinstr.meta_name": "s48195",
+  "openaqinstr.meta_website": "s53939",
+  "openaqinstr.meta_page": "373",
+  "openaqinstr.meta_limit": "86962",
+  "openaqinstr.results.#": "2"
+ }
+}

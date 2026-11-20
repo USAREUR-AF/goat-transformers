@@ -1,0 +1,7 @@
+{
+  "name": "MassRobotics AMR interoperability",
+  "domain": "uncrewed",
+  "exact": [
+    "massrobotics-amr"
+  ]
+}

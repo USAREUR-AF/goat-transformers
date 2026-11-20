@@ -1,0 +1,22 @@
+{
+ "keys": {
+  "schedule_charging_schedule_period|customData.vendorId|string": "schedule_charging_schedule_period_custom_data_vendor_id",
+  "schedule_charging_schedule_period|limit|float": "schedule_charging_schedule_period_limit",
+  "schedule_charging_schedule_period|numberPhases|int": "schedule_charging_schedule_period_number_phases",
+  "schedule_charging_schedule_period|phaseToUse|int": "schedule_charging_schedule_period_phase_to_use",
+  "schedule_charging_schedule_period|startPeriod|int": "schedule_charging_schedule_period_start_period",
+  "|customData.vendorId|string": "custom_data_vendor_id",
+  "|schedule.chargingRateUnit|string": "schedule_charging_rate_unit",
+  "|schedule.customData.vendorId|string": "schedule_custom_data_vendor_id",
+  "|schedule.duration|int": "schedule_duration",
+  "|schedule.evseId|int": "schedule_evse_id",
+  "|schedule.scheduleStart|string": "schedule_schedule_start",
+  "|statusInfo.additionalInfo|string": "status_info_additional_info",
+  "|statusInfo.customData.vendorId|string": "status_info_custom_data_vendor_id",
+  "|statusInfo.reasonCode|string": "status_info_reason_code",
+  "|status|string": "status"
+ },
+ "lists": {
+  "|schedule.chargingSchedulePeriod": "schedule_charging_schedule_period"
+ }
+}

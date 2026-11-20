@@ -1,0 +1,14 @@
+{
+ "name": "gen-providers_response-roundtrip",
+ "from": "openaq-providers",
+ "to": "openaq-providers",
+ "input": "{\"meta\":{\"name\":\"s66353\",\"website\":\"s44011\",\"page\":5965,\"limit\":56890},\"results\":[{\"id\":37559,\"name\":\"s62257\",\"sourceName\":\"s33438\",\"exportPrefix\":\"s94068\",\"datetimeAdded\":\"2024-11-10T21:08:03.527Z\",\"datetimeFirst\":\"2024-06-11T20:29:49.361Z\",\"datetimeLast\":\"2025-05-24T03:39:15.168Z\",\"entitiesId\":40345,\"parameters\":[{\"id\":19460,\"name\":\"s88512\",\"units\":\"s12204\",\"displayName\":\"s67379\"}],\"bbox\":{\"type\":\"s26977\"}},{\"id\":17771,\"name\":\"s5322\",\"sourceName\":\"s23985\",\"exportPrefix\":\"s84134\",\"datetimeAdded\":\"2024-06-02T17:49:16.944Z\",\"datetimeFirst\":\"2025-05-31T15:33:23.990Z\",\"datetimeLast\":\"2026-05-13T19:11:44.856Z\",\"entitiesId\":46694,\"parameters\":[{\"id\":88693,\"name\":\"s10462\",\"units\":\"s24067\",\"displayName\":\"s93334\"}],\"bbox\":{\"type\":\"s75919\"}}]}",
+ "expect": "{\"meta\":{\"name\":\"s66353\",\"website\":\"s44011\",\"page\":5965,\"limit\":56890},\"results\":[{\"id\":37559,\"name\":\"s62257\",\"sourceName\":\"s33438\",\"exportPrefix\":\"s94068\",\"datetimeAdded\":\"2024-11-10T21:08:03.527Z\",\"datetimeFirst\":\"2024-06-11T20:29:49.361Z\",\"datetimeLast\":\"2025-05-24T03:39:15.168Z\",\"entitiesId\":40345,\"parameters\":[{\"id\":19460,\"name\":\"s88512\",\"units\":\"s12204\",\"displayName\":\"s67379\"}],\"bbox\":{\"type\":\"s26977\"}},{\"id\":17771,\"name\":\"s5322\",\"sourceName\":\"s23985\",\"exportPrefix\":\"s84134\",\"datetimeAdded\":\"2024-06-02T17:49:16.944Z\",\"datetimeFirst\":\"2025-05-31T15:33:23.990Z\",\"datetimeLast\":\"2026-05-13T19:11:44.856Z\",\"entitiesId\":46694,\"parameters\":[{\"id\":88693,\"name\":\"s10462\",\"units\":\"s24067\",\"displayName\":\"s93334\"}],\"bbox\":{\"type\":\"s75919\"}}]}",
+ "model": {
+  "openaqproviders.meta_name": "s66353",
+  "openaqproviders.meta_website": "s44011",
+  "openaqproviders.meta_page": "5965",
+  "openaqproviders.meta_limit": "56890",
+  "openaqproviders.results.#": "2"
+ }
+}

@@ -1,0 +1,7 @@
+{
+ "keys": {
+  "|requestId|int": "request_id",
+  "|status|string": "status"
+ },
+ "lists": {}
+}

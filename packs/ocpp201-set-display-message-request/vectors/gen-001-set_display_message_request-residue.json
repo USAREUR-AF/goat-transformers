@@ -1,0 +1,7 @@
+{
+ "name": "gen-set_display_message_request-residue",
+ "from": "ocpp201-set-display-message-request",
+ "to": "ocpp201-set-display-message-request",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s34105\"},\"message\":{\"customData\":{\"vendorId\":\"s51009\"},\"display\":{\"customData\":{\"vendorId\":\"s77545\"},\"evse\":{\"customData\":{\"vendorId\":\"s23244\"},\"id\":61603,\"connectorId\":62258},\"name\":\"s66639\",\"instance\":\"s17814\"},\"id\":47716,\"priority\":\"NormalCycle\",\"state\":\"Faulted\",\"startDateTime\":\"2025-08-07T18:23:33.834Z\",\"endDateTime\":\"2026-09-07T22:24:22.771Z\",\"transactionId\":\"s15191\",\"message\":{\"customData\":{\"vendorId\":\"s75848\"},\"format\":\"ASCII\",\"language\":\"s77850\",\"content\":\"s6495\"}}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s34105\"},\"message\":{\"customData\":{\"vendorId\":\"s51009\"},\"display\":{\"customData\":{\"vendorId\":\"s77545\"},\"evse\":{\"customData\":{\"vendorId\":\"s23244\"},\"id\":61603,\"connectorId\":62258},\"name\":\"s66639\",\"instance\":\"s17814\"},\"id\":47716,\"priority\":\"NormalCycle\",\"state\":\"Faulted\",\"startDateTime\":\"2025-08-07T18:23:33.834Z\",\"endDateTime\":\"2026-09-07T22:24:22.771Z\",\"transactionId\":\"s15191\",\"message\":{\"customData\":{\"vendorId\":\"s75848\"},\"format\":\"ASCII\",\"language\":\"s77850\",\"content\":\"s6495\"}},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

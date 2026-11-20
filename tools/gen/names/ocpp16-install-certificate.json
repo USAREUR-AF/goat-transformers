@@ -1,0 +1,7 @@
+{
+ "keys": {
+  "|certificateType|string": "certificate_type",
+  "|certificate|string": "certificate"
+ },
+ "lists": {}
+}

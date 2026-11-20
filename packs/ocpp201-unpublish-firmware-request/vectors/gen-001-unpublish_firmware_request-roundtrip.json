@@ -1,0 +1,11 @@
+{
+ "name": "gen-unpublish_firmware_request-roundtrip",
+ "from": "ocpp201-unpublish-firmware-request",
+ "to": "ocpp201-unpublish-firmware-request",
+ "input": "{\"customData\":{\"vendorId\":\"s45033\"},\"checksum\":\"s37853\"}",
+ "expect": "{\"customData\":{\"vendorId\":\"s45033\"},\"checksum\":\"s37853\"}",
+ "model": {
+  "ocpp201unpublishfirmwarerequest.custom_data_vendor_id": "s45033",
+  "ocpp201unpublishfirmwarerequest.checksum": "s37853"
+ }
+}

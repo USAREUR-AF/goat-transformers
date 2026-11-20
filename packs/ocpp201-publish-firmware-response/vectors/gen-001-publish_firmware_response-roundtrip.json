@@ -1,0 +1,14 @@
+{
+ "name": "gen-publish_firmware_response-roundtrip",
+ "from": "ocpp201-publish-firmware-response",
+ "to": "ocpp201-publish-firmware-response",
+ "input": "{\"customData\":{\"vendorId\":\"s12799\"},\"status\":\"Rejected\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s62449\"},\"reasonCode\":\"s71839\",\"additionalInfo\":\"s68307\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s12799\"},\"status\":\"Rejected\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s62449\"},\"reasonCode\":\"s71839\",\"additionalInfo\":\"s68307\"}}",
+ "model": {
+  "ocpp201publishfirmwareresponse.custom_data_vendor_id": "s12799",
+  "ocpp201publishfirmwareresponse.status": "Rejected",
+  "ocpp201publishfirmwareresponse.status_info_custom_data_vendor_id": "s62449",
+  "ocpp201publishfirmwareresponse.status_info_reason_code": "s71839",
+  "ocpp201publishfirmwareresponse.status_info_additional_info": "s68307"
+ }
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-get_certificate_status_response-residue",
+ "from": "ocpp201-get-certificate-status-response",
+ "to": "ocpp201-get-certificate-status-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s33489\"},\"status\":\"Accepted\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s2002\"},\"reasonCode\":\"s45841\",\"additionalInfo\":\"s53816\"},\"ocspResult\":\"s23219\"}",
+ "expect": "{\"customData\":{\"vendorId\":\"s33489\"},\"status\":\"Accepted\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s2002\"},\"reasonCode\":\"s45841\",\"additionalInfo\":\"s53816\"},\"ocspResult\":\"s23219\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

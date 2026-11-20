@@ -1,0 +1,8 @@
+{
+ "keys": {
+  "|certificateChain|string": "certificate_chain",
+  "|certificateType|string": "certificate_type",
+  "|customData.vendorId|string": "custom_data_vendor_id"
+ },
+ "lists": {}
+}

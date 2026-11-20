@@ -1,0 +1,7 @@
+{
+ "name": "gen-reset_response-residue",
+ "from": "ocpp16-reset-response",
+ "to": "ocpp16-reset-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"status\":\"Accepted\"}",
+ "expect": "{\"status\":\"Accepted\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

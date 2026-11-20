@@ -1,0 +1,10 @@
+{
+ "name": "gen-set_charging_profile_response-roundtrip",
+ "from": "ocpp16-set-charging-profile-response",
+ "to": "ocpp16-set-charging-profile-response",
+ "input": "{\"status\":\"Rejected\"}",
+ "expect": "{\"status\":\"Rejected\"}",
+ "model": {
+  "ocpp16setchargingprofileresponse.status": "Rejected"
+ }
+}

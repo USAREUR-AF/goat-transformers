@@ -1,0 +1,11 @@
+{
+ "name": "gen-get_installed_certificate_ids_response-roundtrip",
+ "from": "ocpp16-get-installed-certificate-ids-response",
+ "to": "ocpp16-get-installed-certificate-ids-response",
+ "input": "{\"certificateHashData\":[{\"hashAlgorithm\":\"SHA512\",\"issuerNameHash\":\"s59121\",\"issuerKeyHash\":\"s22600\",\"serialNumber\":\"s84235\"},{\"hashAlgorithm\":\"SHA256\",\"issuerNameHash\":\"s2077\",\"issuerKeyHash\":\"s15652\",\"serialNumber\":\"s55089\"}],\"status\":\"Accepted\"}",
+ "expect": "{\"certificateHashData\":[{\"hashAlgorithm\":\"SHA512\",\"issuerNameHash\":\"s59121\",\"issuerKeyHash\":\"s22600\",\"serialNumber\":\"s84235\"},{\"hashAlgorithm\":\"SHA256\",\"issuerNameHash\":\"s2077\",\"issuerKeyHash\":\"s15652\",\"serialNumber\":\"s55089\"}],\"status\":\"Accepted\"}",
+ "model": {
+  "ocpp16getinstalledcertificateidsresponse.certificate_hash_data.#": "2",
+  "ocpp16getinstalledcertificateidsresponse.status": "Accepted"
+ }
+}

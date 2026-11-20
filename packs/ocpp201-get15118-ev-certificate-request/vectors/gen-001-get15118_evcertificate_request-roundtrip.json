@@ -1,0 +1,13 @@
+{
+ "name": "gen-get15118_evcertificate_request-roundtrip",
+ "from": "ocpp201-get15118-ev-certificate-request",
+ "to": "ocpp201-get15118-ev-certificate-request",
+ "input": "{\"customData\":{\"vendorId\":\"s94692\"},\"iso15118SchemaVersion\":\"s42819\",\"action\":\"Install\",\"exiRequest\":\"s13245\"}",
+ "expect": "{\"customData\":{\"vendorId\":\"s94692\"},\"iso15118SchemaVersion\":\"s42819\",\"action\":\"Install\",\"exiRequest\":\"s13245\"}",
+ "model": {
+  "ocpp201get15118evcertificaterequest.custom_data_vendor_id": "s94692",
+  "ocpp201get15118evcertificaterequest.iso15118_schema_version": "s42819",
+  "ocpp201get15118evcertificaterequest.action": "Install",
+  "ocpp201get15118evcertificaterequest.exi_request": "s13245"
+ }
+}

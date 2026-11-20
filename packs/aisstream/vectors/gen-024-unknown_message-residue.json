@@ -1,0 +1,7 @@
+{
+ "name": "gen-unknown_message-residue",
+ "from": "aisstream",
+ "to": "aisstream",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"MessageType\":\"UnknownMessage\",\"Message\":{\"UnknownMessage\":{\"Error\":\"s32291\"}}}",
+ "expect": "{\"MessageType\":\"UnknownMessage\",\"Message\":{\"UnknownMessage\":{\"Error\":\"s32291\"}},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

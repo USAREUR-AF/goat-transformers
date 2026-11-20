@@ -1,0 +1,38 @@
+{
+ "keys": {
+  "spectral_band|.|float": "spectral_band_value",
+  "|$schema|string": "schema",
+  "|alert_datetime|string": "alert_datetime",
+  "|alert_tense|string": "alert_tense",
+  "|alert_type|string": "alert_type",
+  "|containment_probability|float": "containment_probability",
+  "|data_archive_page|string": "data_archive_page",
+  "|dec|float": "dec",
+  "|description|string": "description",
+  "|dm|float": "dm",
+  "|event_duration|float": "event_duration",
+  "|healpix_file|string": "healpix_file",
+  "|healpix_url|string": "healpix_url",
+  "|importance|float": "importance",
+  "|instrument_phi|float": "instrument_phi",
+  "|instrument_semimajor_angle|float": "instrument_semimajor_angle",
+  "|instrument_theta|float": "instrument_theta",
+  "|instrument|string": "instrument",
+  "|known_source|string": "known_source",
+  "|messenger|string": "messenger",
+  "|mission|string": "mission",
+  "|observation_livetime|float": "observation_livetime",
+  "|observation_start|string": "observation_start",
+  "|observation_stop|string": "observation_stop",
+  "|ra|float": "ra",
+  "|record_number|float": "record_number",
+  "|service|string": "service",
+  "|snr|float": "snr",
+  "|spectral_band_units|string": "spectral_band_units",
+  "|systematic_included|int": "systematic_included",
+  "|trigger_time|string": "trigger_time"
+ },
+ "lists": {
+  "|spectral_band": "spectral_band"
+ }
+}

@@ -1,0 +1,7 @@
+{
+ "keys": {
+  "|checksum|string": "checksum",
+  "|customData.vendorId|string": "custom_data_vendor_id"
+ },
+ "lists": {}
+}

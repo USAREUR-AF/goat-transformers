@@ -1,0 +1,7 @@
+{
+ "name": "gen-single_slot_binary_message-residue",
+ "from": "aisstream",
+ "to": "aisstream",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"MessageType\":\"SingleSlotBinaryMessage\",\"Message\":{\"SingleSlotBinaryMessage\":{\"MessageID\":70982,\"RepeatIndicator\":3890,\"UserID\":53473,\"Valid\":true,\"DestinationIDValid\":false,\"ApplicationIDValid\":false,\"DestinationID\":5535,\"Spare\":3823,\"ApplicationID\":{\"Valid\":true,\"DesignatedAreaCode\":28740,\"FunctionIdentifier\":39718},\"Payload\":\"s93527\"}}}",
+ "expect": "{\"MessageType\":\"SingleSlotBinaryMessage\",\"Message\":{\"SingleSlotBinaryMessage\":{\"MessageID\":70982,\"RepeatIndicator\":3890,\"UserID\":53473,\"Valid\":true,\"DestinationIDValid\":false,\"ApplicationIDValid\":false,\"DestinationID\":5535,\"Spare\":3823,\"ApplicationID\":{\"Valid\":true,\"DesignatedAreaCode\":28740,\"FunctionIdentifier\":39718},\"Payload\":\"s93527\"}},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

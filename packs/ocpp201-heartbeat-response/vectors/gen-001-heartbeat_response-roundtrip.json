@@ -1,0 +1,11 @@
+{
+ "name": "gen-heartbeat_response-roundtrip",
+ "from": "ocpp201-heartbeat-response",
+ "to": "ocpp201-heartbeat-response",
+ "input": "{\"customData\":{\"vendorId\":\"s53146\"},\"currentTime\":\"2024-10-02T10:32:39.469Z\"}",
+ "expect": "{\"customData\":{\"vendorId\":\"s53146\"},\"currentTime\":\"2024-10-02T10:32:39.469Z\"}",
+ "model": {
+  "ocpp201heartbeatresponse.custom_data_vendor_id": "s53146",
+  "ocpp201heartbeatresponse.current_time": "2024-10-02T10:32:39.469Z"
+ }
+}

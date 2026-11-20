@@ -1,0 +1,17 @@
+{
+ "name": "gen-set_display_message_request-roundtrip",
+ "from": "ocpp201-set-display-message-request",
+ "to": "ocpp201-set-display-message-request",
+ "input": "{\"customData\":{\"vendorId\":\"s34105\"},\"message\":{\"customData\":{\"vendorId\":\"s51009\"},\"display\":{\"customData\":{\"vendorId\":\"s77545\"},\"evse\":{\"customData\":{\"vendorId\":\"s23244\"},\"id\":61603,\"connectorId\":62258},\"name\":\"s66639\",\"instance\":\"s17814\"},\"id\":47716,\"priority\":\"NormalCycle\",\"state\":\"Faulted\",\"startDateTime\":\"2025-08-07T18:23:33.834Z\",\"endDateTime\":\"2026-09-07T22:24:22.771Z\",\"transactionId\":\"s15191\",\"message\":{\"customData\":{\"vendorId\":\"s75848\"},\"format\":\"ASCII\",\"language\":\"s77850\",\"content\":\"s6495\"}}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s34105\"},\"message\":{\"customData\":{\"vendorId\":\"s51009\"},\"display\":{\"customData\":{\"vendorId\":\"s77545\"},\"evse\":{\"customData\":{\"vendorId\":\"s23244\"},\"id\":61603,\"connectorId\":62258},\"name\":\"s66639\",\"instance\":\"s17814\"},\"id\":47716,\"priority\":\"NormalCycle\",\"state\":\"Faulted\",\"startDateTime\":\"2025-08-07T18:23:33.834Z\",\"endDateTime\":\"2026-09-07T22:24:22.771Z\",\"transactionId\":\"s15191\",\"message\":{\"customData\":{\"vendorId\":\"s75848\"},\"format\":\"ASCII\",\"language\":\"s77850\",\"content\":\"s6495\"}}}",
+ "model": {
+  "ocpp201setdisplaymessagerequest.custom_data_vendor_id": "s34105",
+  "ocpp201setdisplaymessagerequest.message_custom_data_vendor_id": "s51009",
+  "ocpp201setdisplaymessagerequest.message_display_custom_data_vendor_id": "s77545",
+  "ocpp201setdisplaymessagerequest.message_display_evse_custom_data_vendor_id": "s23244",
+  "ocpp201setdisplaymessagerequest.message_display_evse_id": "61603",
+  "ocpp201setdisplaymessagerequest.message_display_evse_connector_id": "62258",
+  "ocpp201setdisplaymessagerequest.message_display_name": "s66639",
+  "ocpp201setdisplaymessagerequest.message_display_instance": "s17814"
+ }
+}

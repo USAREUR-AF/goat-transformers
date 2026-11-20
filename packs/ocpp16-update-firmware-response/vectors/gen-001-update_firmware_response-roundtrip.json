@@ -1,0 +1,8 @@
+{
+ "name": "gen-update_firmware_response-roundtrip",
+ "from": "ocpp16-update-firmware-response",
+ "to": "ocpp16-update-firmware-response",
+ "input": "{}",
+ "expect": "{}",
+ "model": {}
+}

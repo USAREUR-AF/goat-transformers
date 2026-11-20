@@ -1,0 +1,12 @@
+{
+  "name": "NASA GCN notices",
+  "domain": "space",
+  "prefixes": [
+    "gcn-"
+  ],
+  "members": {
+    "pattern": "^gcn-(.+)$",
+    "label": "{n} notice and circular schemas",
+    "list": false
+  }
+}

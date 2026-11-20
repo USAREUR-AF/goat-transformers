@@ -1,0 +1,8 @@
+{
+ "name": "gen-clear_cache-roundtrip",
+ "from": "ocpp16-clear-cache",
+ "to": "ocpp16-clear-cache",
+ "input": "{}",
+ "expect": "{}",
+ "model": {}
+}

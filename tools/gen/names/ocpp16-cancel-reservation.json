@@ -1,0 +1,6 @@
+{
+ "keys": {
+  "|reservationId|int": "reservation_id"
+ },
+ "lists": {}
+}

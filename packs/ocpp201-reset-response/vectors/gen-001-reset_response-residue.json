@@ -1,0 +1,7 @@
+{
+ "name": "gen-reset_response-residue",
+ "from": "ocpp201-reset-response",
+ "to": "ocpp201-reset-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s42310\"},\"status\":\"Accepted\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s28687\"},\"reasonCode\":\"s97757\",\"additionalInfo\":\"s32058\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s42310\"},\"status\":\"Accepted\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s28687\"},\"reasonCode\":\"s97757\",\"additionalInfo\":\"s32058\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

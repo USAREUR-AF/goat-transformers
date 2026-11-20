@@ -1,0 +1,7 @@
+{
+ "name": "gen-clear_charging_profile_response-residue",
+ "from": "ocpp16-clear-charging-profile-response",
+ "to": "ocpp16-clear-charging-profile-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"status\":\"Unknown\"}",
+ "expect": "{\"status\":\"Unknown\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

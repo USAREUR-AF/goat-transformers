@@ -1,0 +1,8 @@
+{
+ "keys": {
+  "|currentTime|string": "current_time",
+  "|interval|int": "interval",
+  "|status|string": "status"
+ },
+ "lists": {}
+}

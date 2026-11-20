@@ -1,0 +1,17 @@
+{
+ "name": "gen-position_report-roundtrip",
+ "from": "aisstream",
+ "to": "aisstream",
+ "input": "{\"MessageType\":\"PositionReport\",\"Message\":{\"PositionReport\":{\"MessageID\":5053,\"RepeatIndicator\":80119,\"UserID\":45844,\"Valid\":false,\"NavigationalStatus\":26372,\"RateOfTurn\":61365,\"Sog\":7.0625,\"PositionAccuracy\":false,\"Longitude\":151.2094,\"Latitude\":21.3069,\"Cog\":0.75,\"TrueHeading\":39766,\"Timestamp\":24021,\"SpecialManoeuvreIndicator\":52295,\"Spare\":58095,\"Raim\":true,\"CommunicationState\":78557}}}",
+ "expect": "{\"MessageType\":\"PositionReport\",\"Message\":{\"PositionReport\":{\"MessageID\":5053,\"RepeatIndicator\":80119,\"UserID\":45844,\"Valid\":false,\"NavigationalStatus\":26372,\"RateOfTurn\":61365,\"Sog\":7.0625,\"PositionAccuracy\":false,\"Longitude\":151.2094,\"Latitude\":21.3069,\"Cog\":0.75,\"TrueHeading\":39766,\"Timestamp\":24021,\"SpecialManoeuvreIndicator\":52295,\"Spare\":58095,\"Raim\":true,\"CommunicationState\":78557}}}",
+ "model": {
+  "@kind": "position_report",
+  "lat": "21.3069",
+  "lon": "151.2094",
+  "aisstream.message_position_report_message_id": "5053",
+  "aisstream.message_position_report_repeat_indicator": "80119",
+  "aisstream.message_position_report_user_id": "45844",
+  "aisstream.message_position_report_valid": "0",
+  "aisstream.message_position_report_navigational_status": "26372"
+ }
+}

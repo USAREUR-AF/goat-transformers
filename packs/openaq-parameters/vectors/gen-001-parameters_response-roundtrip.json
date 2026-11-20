@@ -1,0 +1,14 @@
+{
+ "name": "gen-parameters_response-roundtrip",
+ "from": "openaq-parameters",
+ "to": "openaq-parameters",
+ "input": "{\"meta\":{\"name\":\"s9788\",\"website\":\"s92732\",\"page\":332,\"limit\":18533},\"results\":[{\"id\":671,\"name\":\"s4785\",\"units\":\"s95512\",\"displayName\":\"s5486\",\"description\":\"s56645\"},{\"id\":74564,\"name\":\"s47208\",\"units\":\"s65066\",\"displayName\":\"s56019\",\"description\":\"s4831\"}]}",
+ "expect": "{\"meta\":{\"name\":\"s9788\",\"website\":\"s92732\",\"page\":332,\"limit\":18533},\"results\":[{\"id\":671,\"name\":\"s4785\",\"units\":\"s95512\",\"displayName\":\"s5486\",\"description\":\"s56645\"},{\"id\":74564,\"name\":\"s47208\",\"units\":\"s65066\",\"displayName\":\"s56019\",\"description\":\"s4831\"}]}",
+ "model": {
+  "openaqparams.meta_name": "s9788",
+  "openaqparams.meta_website": "s92732",
+  "openaqparams.meta_page": "332",
+  "openaqparams.meta_limit": "18533",
+  "openaqparams.results.#": "2"
+ }
+}

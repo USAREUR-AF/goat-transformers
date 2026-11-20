@@ -1,0 +1,10 @@
+{
+ "keys": {
+  "|location|string": "location",
+  "|retries|int": "retries",
+  "|retryInterval|int": "retry_interval",
+  "|startTime|string": "start_time",
+  "|stopTime|string": "stop_time"
+ },
+ "lists": {}
+}

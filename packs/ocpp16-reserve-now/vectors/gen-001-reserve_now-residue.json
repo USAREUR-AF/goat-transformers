@@ -1,0 +1,7 @@
+{
+ "name": "gen-reserve_now-residue",
+ "from": "ocpp16-reserve-now",
+ "to": "ocpp16-reserve-now",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"connectorId\":13134,\"expiryDate\":\"2025-09-14T20:12:39.255Z\",\"idTag\":\"s38081\",\"parentIdTag\":\"s46003\",\"reservationId\":69290}",
+ "expect": "{\"connectorId\":13134,\"expiryDate\":\"2025-09-14T20:12:39.255Z\",\"idTag\":\"s38081\",\"parentIdTag\":\"s46003\",\"reservationId\":69290,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

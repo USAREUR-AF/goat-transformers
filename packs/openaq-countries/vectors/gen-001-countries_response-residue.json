@@ -1,0 +1,7 @@
+{
+ "name": "gen-countries_response-residue",
+ "from": "openaq-countries",
+ "to": "openaq-countries",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"meta\":{\"name\":\"s98376\",\"website\":\"s34535\",\"page\":35851,\"limit\":37698},\"results\":[{\"id\":55778,\"code\":\"s39752\",\"name\":\"s77394\",\"datetimeFirst\":\"2023-12-13T03:20:06.571Z\",\"datetimeLast\":\"2024-05-31T12:00:00.160Z\",\"parameters\":[{\"id\":10838,\"name\":\"s52910\",\"units\":\"s20261\",\"displayName\":\"s81904\"}]},{\"id\":43718,\"code\":\"s95061\",\"name\":\"s72232\",\"datetimeFirst\":\"2023-11-20T02:18:25.229Z\",\"datetimeLast\":\"2027-01-13T23:35:17.125Z\",\"parameters\":[{\"id\":30676,\"name\":\"s58238\",\"units\":\"s3946\",\"displayName\":\"s41831\"}]}]}",
+ "expect": "{\"meta\":{\"name\":\"s98376\",\"website\":\"s34535\",\"page\":35851,\"limit\":37698},\"results\":[{\"id\":55778,\"code\":\"s39752\",\"name\":\"s77394\",\"datetimeFirst\":\"2023-12-13T03:20:06.571Z\",\"datetimeLast\":\"2024-05-31T12:00:00.160Z\",\"parameters\":[{\"id\":10838,\"name\":\"s52910\",\"units\":\"s20261\",\"displayName\":\"s81904\"}]},{\"id\":43718,\"code\":\"s95061\",\"name\":\"s72232\",\"datetimeFirst\":\"2023-11-20T02:18:25.229Z\",\"datetimeLast\":\"2027-01-13T23:35:17.125Z\",\"parameters\":[{\"id\":30676,\"name\":\"s58238\",\"units\":\"s3946\",\"displayName\":\"s41831\"}]}],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

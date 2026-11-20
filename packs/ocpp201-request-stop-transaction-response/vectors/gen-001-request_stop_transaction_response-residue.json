@@ -1,0 +1,7 @@
+{
+ "name": "gen-request_stop_transaction_response-residue",
+ "from": "ocpp201-request-stop-transaction-response",
+ "to": "ocpp201-request-stop-transaction-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s48511\"},\"status\":\"Rejected\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s71973\"},\"reasonCode\":\"s53441\",\"additionalInfo\":\"s78595\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s48511\"},\"status\":\"Rejected\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s71973\"},\"reasonCode\":\"s53441\",\"additionalInfo\":\"s78595\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

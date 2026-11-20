@@ -1,0 +1,7 @@
+{
+ "name": "gen-resource-residue",
+ "from": "openadr3-resource",
+ "to": "openadr3-resource",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"id\":\"s42994\",\"createdDateTime\":\"2024-09-14T18:38:11.383Z\",\"modificationDateTime\":\"2024-07-10T22:36:11.106Z\",\"objectType\":\"RESOURCE\",\"clientID\":\"s61573\",\"targets\":[\"s72740\",\"s59534\"],\"resourceName\":\"s45667\",\"venID\":\"s89048\",\"attributes\":[{\"type\":\"s85007\"},{\"type\":\"s13329\"}]}",
+ "expect": "{\"id\":\"s42994\",\"createdDateTime\":\"2024-09-14T18:38:11.383Z\",\"modificationDateTime\":\"2024-07-10T22:36:11.106Z\",\"objectType\":\"RESOURCE\",\"clientID\":\"s61573\",\"targets\":[\"s72740\",\"s59534\"],\"resourceName\":\"s45667\",\"venID\":\"s89048\",\"attributes\":[{\"type\":\"s85007\"},{\"type\":\"s13329\"}],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

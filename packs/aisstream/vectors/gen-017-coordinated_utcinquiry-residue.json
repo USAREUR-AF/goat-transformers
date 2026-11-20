@@ -1,0 +1,7 @@
+{
+ "name": "gen-coordinated_utcinquiry-residue",
+ "from": "aisstream",
+ "to": "aisstream",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"MessageType\":\"CoordinatedUTCInquiry\",\"Message\":{\"CoordinatedUTCInquiry\":{\"MessageID\":25067,\"RepeatIndicator\":38700,\"UserID\":85032,\"Valid\":false,\"Spare1\":99556,\"DestinationID\":76575,\"Spare2\":46021}}}",
+ "expect": "{\"MessageType\":\"CoordinatedUTCInquiry\",\"Message\":{\"CoordinatedUTCInquiry\":{\"MessageID\":25067,\"RepeatIndicator\":38700,\"UserID\":85032,\"Valid\":false,\"Spare1\":99556,\"DestinationID\":76575,\"Spare2\":46021}},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

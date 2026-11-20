@@ -1,0 +1,12 @@
+{
+ "name": "gen-install_certificate_request-roundtrip",
+ "from": "ocpp201-install-certificate-request",
+ "to": "ocpp201-install-certificate-request",
+ "input": "{\"customData\":{\"vendorId\":\"s29598\"},\"certificateType\":\"CSMSRootCertificate\",\"certificate\":\"s51984\"}",
+ "expect": "{\"customData\":{\"vendorId\":\"s29598\"},\"certificateType\":\"CSMSRootCertificate\",\"certificate\":\"s51984\"}",
+ "model": {
+  "ocpp201installcertificaterequest.custom_data_vendor_id": "s29598",
+  "ocpp201installcertificaterequest.certificate_type": "CSMSRootCertificate",
+  "ocpp201installcertificaterequest.certificate": "s51984"
+ }
+}

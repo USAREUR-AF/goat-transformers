@@ -1,0 +1,14 @@
+{
+ "name": "gen-update_firmware_response-roundtrip",
+ "from": "ocpp201-update-firmware-response",
+ "to": "ocpp201-update-firmware-response",
+ "input": "{\"customData\":{\"vendorId\":\"s36835\"},\"status\":\"InvalidCertificate\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s8103\"},\"reasonCode\":\"s77962\",\"additionalInfo\":\"s93944\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s36835\"},\"status\":\"InvalidCertificate\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s8103\"},\"reasonCode\":\"s77962\",\"additionalInfo\":\"s93944\"}}",
+ "model": {
+  "ocpp201updatefirmwareresponse.custom_data_vendor_id": "s36835",
+  "ocpp201updatefirmwareresponse.status": "InvalidCertificate",
+  "ocpp201updatefirmwareresponse.status_info_custom_data_vendor_id": "s8103",
+  "ocpp201updatefirmwareresponse.status_info_reason_code": "s77962",
+  "ocpp201updatefirmwareresponse.status_info_additional_info": "s93944"
+ }
+}

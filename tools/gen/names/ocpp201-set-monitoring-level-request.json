@@ -1,0 +1,7 @@
+{
+ "keys": {
+  "|customData.vendorId|string": "custom_data_vendor_id",
+  "|severity|int": "severity"
+ },
+ "lists": {}
+}

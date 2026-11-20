@@ -1,0 +1,7 @@
+{
+ "name": "gen-addressed_safety_message-residue",
+ "from": "aisstream",
+ "to": "aisstream",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"MessageType\":\"AddressedSafetyMessage\",\"Message\":{\"AddressedSafetyMessage\":{\"MessageID\":82765,\"RepeatIndicator\":2161,\"UserID\":24319,\"Valid\":false,\"Sequenceinteger\":7856,\"DestinationID\":11178,\"Retransmission\":false,\"Spare\":true,\"Text\":\"s31307\"}}}",
+ "expect": "{\"MessageType\":\"AddressedSafetyMessage\",\"Message\":{\"AddressedSafetyMessage\":{\"MessageID\":82765,\"RepeatIndicator\":2161,\"UserID\":24319,\"Valid\":false,\"Sequenceinteger\":7856,\"DestinationID\":11178,\"Retransmission\":false,\"Spare\":true,\"Text\":\"s31307\"}},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

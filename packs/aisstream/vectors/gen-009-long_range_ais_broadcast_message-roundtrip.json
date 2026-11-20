@@ -1,0 +1,17 @@
+{
+ "name": "gen-long_range_ais_broadcast_message-roundtrip",
+ "from": "aisstream",
+ "to": "aisstream",
+ "input": "{\"MessageType\":\"LongRangeAisBroadcastMessage\",\"Message\":{\"LongRangeAisBroadcastMessage\":{\"MessageID\":50990,\"RepeatIndicator\":93547,\"UserID\":51886,\"Valid\":false,\"PositionAccuracy\":false,\"Raim\":true,\"NavigationalStatus\":14448,\"Longitude\":-3.25,\"Latitude\":0.75,\"Sog\":12.5,\"Cog\":101.125,\"PositionLatency\":true,\"Spare\":false}}}",
+ "expect": "{\"MessageType\":\"LongRangeAisBroadcastMessage\",\"Message\":{\"LongRangeAisBroadcastMessage\":{\"MessageID\":50990,\"RepeatIndicator\":93547,\"UserID\":51886,\"Valid\":false,\"PositionAccuracy\":false,\"Raim\":true,\"NavigationalStatus\":14448,\"Longitude\":-3.25,\"Latitude\":0.75,\"Sog\":12.5,\"Cog\":101.125,\"PositionLatency\":true,\"Spare\":false}}}",
+ "model": {
+  "@kind": "long_range_ais_broadcast_message",
+  "aisstream.message_long_range_ais_broadcast_message_message_id": "50990",
+  "aisstream.message_long_range_ais_broadcast_message_repeat_indicator": "93547",
+  "aisstream.message_long_range_ais_broadcast_message_user_id": "51886",
+  "aisstream.message_long_range_ais_broadcast_message_valid": "0",
+  "aisstream.message_long_range_ais_broadcast_message_position_accuracy": "0",
+  "aisstream.message_long_range_ais_broadcast_message_raim": "1",
+  "aisstream.message_long_range_ais_broadcast_message_navigational_status": "14448"
+ }
+}

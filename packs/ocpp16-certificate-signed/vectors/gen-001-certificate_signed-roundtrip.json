@@ -1,0 +1,10 @@
+{
+ "name": "gen-certificate_signed-roundtrip",
+ "from": "ocpp16-certificate-signed",
+ "to": "ocpp16-certificate-signed",
+ "input": "{\"certificateChain\":\"s15244\"}",
+ "expect": "{\"certificateChain\":\"s15244\"}",
+ "model": {
+  "ocpp16certificatesigned.certificate_chain": "s15244"
+ }
+}

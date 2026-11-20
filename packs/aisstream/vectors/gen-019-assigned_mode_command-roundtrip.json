@@ -1,0 +1,17 @@
+{
+ "name": "gen-assigned_mode_command-roundtrip",
+ "from": "aisstream",
+ "to": "aisstream",
+ "input": "{\"MessageType\":\"AssignedModeCommand\",\"Message\":{\"AssignedModeCommand\":{\"MessageID\":71968,\"RepeatIndicator\":89824,\"UserID\":93997,\"Valid\":false,\"Spare\":38774,\"Commands\":{\"0\":{\"Valid\":false,\"DestinationID\":29876,\"Offset\":5858,\"Increment\":52727},\"1\":{\"Valid\":false,\"DestinationID\":436,\"Offset\":97824,\"Increment\":25078}}}}}",
+ "expect": "{\"MessageType\":\"AssignedModeCommand\",\"Message\":{\"AssignedModeCommand\":{\"MessageID\":71968,\"RepeatIndicator\":89824,\"UserID\":93997,\"Valid\":false,\"Spare\":38774,\"Commands\":{\"0\":{\"Valid\":false,\"DestinationID\":29876,\"Offset\":5858,\"Increment\":52727},\"1\":{\"Valid\":false,\"DestinationID\":436,\"Offset\":97824,\"Increment\":25078}}}}}",
+ "model": {
+  "@kind": "assigned_mode_command",
+  "aisstream.message_assigned_mode_command_message_id": "71968",
+  "aisstream.message_assigned_mode_command_repeat_indicator": "89824",
+  "aisstream.message_assigned_mode_command_user_id": "93997",
+  "aisstream.message_assigned_mode_command_valid": "0",
+  "aisstream.message_assigned_mode_command_spare": "38774",
+  "aisstream.message_assigned_mode_command_commands_0_valid": "0",
+  "aisstream.message_assigned_mode_command_commands_0_destination_id": "29876"
+ }
+}

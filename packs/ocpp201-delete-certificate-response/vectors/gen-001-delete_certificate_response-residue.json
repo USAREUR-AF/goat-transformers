@@ -1,0 +1,7 @@
+{
+ "name": "gen-delete_certificate_response-residue",
+ "from": "ocpp201-delete-certificate-response",
+ "to": "ocpp201-delete-certificate-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s97949\"},\"status\":\"NotFound\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s73913\"},\"reasonCode\":\"s47521\",\"additionalInfo\":\"s50789\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s97949\"},\"status\":\"NotFound\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s73913\"},\"reasonCode\":\"s47521\",\"additionalInfo\":\"s50789\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

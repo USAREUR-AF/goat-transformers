@@ -1,0 +1,8 @@
+{
+ "name": "gen-get_local_list_version-roundtrip",
+ "from": "ocpp16-get-local-list-version",
+ "to": "ocpp16-get-local-list-version",
+ "input": "{}",
+ "expect": "{}",
+ "model": {}
+}

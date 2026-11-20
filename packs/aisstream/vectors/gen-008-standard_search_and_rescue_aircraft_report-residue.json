@@ -1,0 +1,7 @@
+{
+ "name": "gen-standard_search_and_rescue_aircraft_report-residue",
+ "from": "aisstream",
+ "to": "aisstream",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"MessageType\":\"StandardSearchAndRescueAircraftReport\",\"Message\":{\"StandardSearchAndRescueAircraftReport\":{\"MessageID\":84356,\"RepeatIndicator\":75317,\"UserID\":30384,\"Valid\":true,\"Altitude\":80593,\"Sog\":0.75,\"PositionAccuracy\":false,\"Longitude\":0.75,\"Latitude\":0.75,\"Cog\":-0.5,\"Timestamp\":31869,\"AltFromBaro\":true,\"Spare1\":49526,\"Dte\":false,\"Spare2\":84082,\"AssignedMode\":true,\"Raim\":true,\"CommunicationStateIsItdma\":true,\"CommunicationState\":48512}}}",
+ "expect": "{\"MessageType\":\"StandardSearchAndRescueAircraftReport\",\"Message\":{\"StandardSearchAndRescueAircraftReport\":{\"MessageID\":84356,\"RepeatIndicator\":75317,\"UserID\":30384,\"Valid\":true,\"Altitude\":80593,\"Sog\":0.75,\"PositionAccuracy\":false,\"Longitude\":0.75,\"Latitude\":0.75,\"Cog\":-0.5,\"Timestamp\":31869,\"AltFromBaro\":true,\"Spare1\":49526,\"Dte\":false,\"Spare2\":84082,\"AssignedMode\":true,\"Raim\":true,\"CommunicationStateIsItdma\":true,\"CommunicationState\":48512}},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

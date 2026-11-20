@@ -1,0 +1,10 @@
+{
+ "name": "gen-change_configuration_response-roundtrip",
+ "from": "ocpp16-change-configuration-response",
+ "to": "ocpp16-change-configuration-response",
+ "input": "{\"status\":\"RebootRequired\"}",
+ "expect": "{\"status\":\"RebootRequired\"}",
+ "model": {
+  "ocpp16changeconfigurationresponse.status": "RebootRequired"
+ }
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-reserve_now_response-residue",
+ "from": "ocpp201-reserve-now-response",
+ "to": "ocpp201-reserve-now-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s41203\"},\"status\":\"Rejected\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s21398\"},\"reasonCode\":\"s71258\",\"additionalInfo\":\"s38790\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s41203\"},\"status\":\"Rejected\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s21398\"},\"reasonCode\":\"s71258\",\"additionalInfo\":\"s38790\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

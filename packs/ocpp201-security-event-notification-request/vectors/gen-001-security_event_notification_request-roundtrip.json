@@ -1,0 +1,13 @@
+{
+ "name": "gen-security_event_notification_request-roundtrip",
+ "from": "ocpp201-security-event-notification-request",
+ "to": "ocpp201-security-event-notification-request",
+ "input": "{\"customData\":{\"vendorId\":\"s26987\"},\"type\":\"s6806\",\"timestamp\":\"2024-02-11T14:33:23.612Z\",\"techInfo\":\"s13194\"}",
+ "expect": "{\"customData\":{\"vendorId\":\"s26987\"},\"type\":\"s6806\",\"timestamp\":\"2024-02-11T14:33:23.612Z\",\"techInfo\":\"s13194\"}",
+ "model": {
+  "ocpp201securityeventnotificationrequest.custom_data_vendor_id": "s26987",
+  "ocpp201securityeventnotificationrequest.type": "s6806",
+  "ocpp201securityeventnotificationrequest.timestamp": "2024-02-11T14:33:23.612Z",
+  "ocpp201securityeventnotificationrequest.tech_info": "s13194"
+ }
+}

@@ -1,0 +1,12 @@
+{
+ "name": "gen-log_status_notification_request-roundtrip",
+ "from": "ocpp201-log-status-notification-request",
+ "to": "ocpp201-log-status-notification-request",
+ "input": "{\"customData\":{\"vendorId\":\"s34113\"},\"status\":\"Uploaded\",\"requestId\":18212}",
+ "expect": "{\"customData\":{\"vendorId\":\"s34113\"},\"status\":\"Uploaded\",\"requestId\":18212}",
+ "model": {
+  "ocpp201logstatusnotificationrequest.custom_data_vendor_id": "s34113",
+  "ocpp201logstatusnotificationrequest.status": "Uploaded",
+  "ocpp201logstatusnotificationrequest.request_id": "18212"
+ }
+}

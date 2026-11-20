@@ -1,0 +1,9 @@
+{
+ "keys": {
+  "certificate_type|.|string": "certificate_type_value",
+  "|customData.vendorId|string": "custom_data_vendor_id"
+ },
+ "lists": {
+  "|certificateType": "certificate_type"
+ }
+}

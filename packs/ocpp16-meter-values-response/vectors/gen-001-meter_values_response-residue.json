@@ -1,0 +1,7 @@
+{
+ "name": "gen-meter_values_response-residue",
+ "from": "ocpp16-meter-values-response",
+ "to": "ocpp16-meter-values-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7}",
+ "expect": "{\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

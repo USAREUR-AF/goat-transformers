@@ -1,0 +1,7 @@
+{
+ "name": "gen-set_monitoring_base_response-residue",
+ "from": "ocpp201-set-monitoring-base-response",
+ "to": "ocpp201-set-monitoring-base-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s12925\"},\"status\":\"Rejected\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s55503\"},\"reasonCode\":\"s99021\",\"additionalInfo\":\"s41191\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s12925\"},\"status\":\"Rejected\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s55503\"},\"reasonCode\":\"s99021\",\"additionalInfo\":\"s41191\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

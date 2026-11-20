@@ -1,0 +1,7 @@
+{
+ "name": "gen-data_transfer_response-residue",
+ "from": "ocpp16-data-transfer-response",
+ "to": "ocpp16-data-transfer-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"status\":\"UnknownMessageId\",\"data\":\"s34112\"}",
+ "expect": "{\"status\":\"UnknownMessageId\",\"data\":\"s34112\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

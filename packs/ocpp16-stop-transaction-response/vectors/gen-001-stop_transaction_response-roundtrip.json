@@ -1,0 +1,12 @@
+{
+ "name": "gen-stop_transaction_response-roundtrip",
+ "from": "ocpp16-stop-transaction-response",
+ "to": "ocpp16-stop-transaction-response",
+ "input": "{\"idTagInfo\":{\"expiryDate\":\"2026-09-19T20:41:11.548Z\",\"parentIdTag\":\"s43454\",\"status\":\"Accepted\"}}",
+ "expect": "{\"idTagInfo\":{\"expiryDate\":\"2026-09-19T20:41:11.548Z\",\"parentIdTag\":\"s43454\",\"status\":\"Accepted\"}}",
+ "model": {
+  "ocpp16stoptransactionresponse.id_tag_info_expiry_date": "2026-09-19T20:41:11.548Z",
+  "ocpp16stoptransactionresponse.id_tag_info_parent_id_tag": "s43454",
+  "ocpp16stoptransactionresponse.id_tag_info_status": "Accepted"
+ }
+}

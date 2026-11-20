@@ -1,0 +1,7 @@
+{
+ "name": "gen-get15118_evcertificate_request-residue",
+ "from": "ocpp201-get15118-ev-certificate-request",
+ "to": "ocpp201-get15118-ev-certificate-request",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s94692\"},\"iso15118SchemaVersion\":\"s42819\",\"action\":\"Install\",\"exiRequest\":\"s13245\"}",
+ "expect": "{\"customData\":{\"vendorId\":\"s94692\"},\"iso15118SchemaVersion\":\"s42819\",\"action\":\"Install\",\"exiRequest\":\"s13245\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

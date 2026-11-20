@@ -1,0 +1,7 @@
+{
+ "name": "gen-static_data_report-residue",
+ "from": "aisstream",
+ "to": "aisstream",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"MessageType\":\"StaticDataReport\",\"Message\":{\"StaticDataReport\":{\"MessageID\":71656,\"RepeatIndicator\":91398,\"UserID\":63054,\"Valid\":true,\"Reserved\":64071,\"PartNumber\":false,\"ReportA\":{\"Valid\":true,\"Name\":\"s48548\"},\"ReportB\":{\"Valid\":true,\"ShipType\":13256,\"VendorIDName\":\"s12632\",\"VenderIDModel\":93897,\"VenderIDSerial\":14045,\"CallSign\":\"s79391\",\"Dimension\":{\"A\":50362,\"B\":2277,\"C\":15566,\"D\":79505},\"FixType\":60547,\"Spare\":35542}}}}",
+ "expect": "{\"MessageType\":\"StaticDataReport\",\"Message\":{\"StaticDataReport\":{\"MessageID\":71656,\"RepeatIndicator\":91398,\"UserID\":63054,\"Valid\":true,\"Reserved\":64071,\"PartNumber\":false,\"ReportA\":{\"Valid\":true,\"Name\":\"s48548\"},\"ReportB\":{\"Valid\":true,\"ShipType\":13256,\"VendorIDName\":\"s12632\",\"VenderIDModel\":93897,\"VenderIDSerial\":14045,\"CallSign\":\"s79391\",\"Dimension\":{\"A\":50362,\"B\":2277,\"C\":15566,\"D\":79505},\"FixType\":60547,\"Spare\":35542}}},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

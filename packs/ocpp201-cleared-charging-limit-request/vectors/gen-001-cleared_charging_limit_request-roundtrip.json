@@ -1,0 +1,12 @@
+{
+ "name": "gen-cleared_charging_limit_request-roundtrip",
+ "from": "ocpp201-cleared-charging-limit-request",
+ "to": "ocpp201-cleared-charging-limit-request",
+ "input": "{\"customData\":{\"vendorId\":\"s14605\"},\"chargingLimitSource\":\"CSO\",\"evseId\":44931}",
+ "expect": "{\"customData\":{\"vendorId\":\"s14605\"},\"chargingLimitSource\":\"CSO\",\"evseId\":44931}",
+ "model": {
+  "ocpp201clearedcharginglimitrequest.custom_data_vendor_id": "s14605",
+  "ocpp201clearedcharginglimitrequest.charging_limit_source": "CSO",
+  "ocpp201clearedcharginglimitrequest.evse_id": "44931"
+ }
+}

@@ -1,0 +1,17 @@
+{
+ "name": "gen-update_firmware_request-roundtrip",
+ "from": "ocpp201-update-firmware-request",
+ "to": "ocpp201-update-firmware-request",
+ "input": "{\"customData\":{\"vendorId\":\"s49124\"},\"retries\":797,\"retryInterval\":23471,\"requestId\":16587,\"firmware\":{\"customData\":{\"vendorId\":\"s25463\"},\"location\":\"s62087\",\"retrieveDateTime\":\"2024-05-03T05:25:27.040Z\",\"installDateTime\":\"2023-12-29T17:02:54.756Z\",\"signingCertificate\":\"s81636\",\"signature\":\"s38755\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s49124\"},\"retries\":797,\"retryInterval\":23471,\"requestId\":16587,\"firmware\":{\"customData\":{\"vendorId\":\"s25463\"},\"location\":\"s62087\",\"retrieveDateTime\":\"2024-05-03T05:25:27.040Z\",\"installDateTime\":\"2023-12-29T17:02:54.756Z\",\"signingCertificate\":\"s81636\",\"signature\":\"s38755\"}}",
+ "model": {
+  "ocpp201updatefirmwarerequest.custom_data_vendor_id": "s49124",
+  "ocpp201updatefirmwarerequest.retries": "797",
+  "ocpp201updatefirmwarerequest.retry_interval": "23471",
+  "ocpp201updatefirmwarerequest.request_id": "16587",
+  "ocpp201updatefirmwarerequest.firmware_custom_data_vendor_id": "s25463",
+  "ocpp201updatefirmwarerequest.firmware_location": "s62087",
+  "ocpp201updatefirmwarerequest.firmware_retrieve_date_time": "2024-05-03T05:25:27.040Z",
+  "ocpp201updatefirmwarerequest.firmware_install_date_time": "2023-12-29T17:02:54.756Z"
+ }
+}

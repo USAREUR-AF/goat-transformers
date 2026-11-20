@@ -1,0 +1,14 @@
+{
+ "name": "gen-notify_evcharging_schedule_response-roundtrip",
+ "from": "ocpp201-notify-ev-charging-schedule-response",
+ "to": "ocpp201-notify-ev-charging-schedule-response",
+ "input": "{\"customData\":{\"vendorId\":\"s15479\"},\"status\":\"Accepted\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s49002\"},\"reasonCode\":\"s12035\",\"additionalInfo\":\"s34246\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s15479\"},\"status\":\"Accepted\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s49002\"},\"reasonCode\":\"s12035\",\"additionalInfo\":\"s34246\"}}",
+ "model": {
+  "ocpp201notifyevchargingscheduleresponse.custom_data_vendor_id": "s15479",
+  "ocpp201notifyevchargingscheduleresponse.status": "Accepted",
+  "ocpp201notifyevchargingscheduleresponse.status_info_custom_data_vendor_id": "s49002",
+  "ocpp201notifyevchargingscheduleresponse.status_info_reason_code": "s12035",
+  "ocpp201notifyevchargingscheduleresponse.status_info_additional_info": "s34246"
+ }
+}

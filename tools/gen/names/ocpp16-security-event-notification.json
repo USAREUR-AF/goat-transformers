@@ -1,0 +1,8 @@
+{
+ "keys": {
+  "|techInfo|string": "tech_info",
+  "|timestamp|string": "timestamp",
+  "|type|string": "type"
+ },
+ "lists": {}
+}

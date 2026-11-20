@@ -1,0 +1,8 @@
+{
+ "keys": {
+  "|customData.vendorId|string": "custom_data_vendor_id",
+  "|evseId|int": "evse_id",
+  "|type|string": "type"
+ },
+ "lists": {}
+}

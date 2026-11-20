@@ -1,0 +1,9 @@
+# The opensky module: the members of OpenSky Network REST API responses that have no
+# shared-model key, in the units the documentation states. packs/opensky-states/pack.md
+# and packs/opensky-track/pack.md say why each member is or is not bound.
+module        opensky
+version       0.1.0
+distribution  public
+source  "OpenSky Network REST API documentation: github.com/openskynetwork/opensky-api commit 98fecf7438dfbd23c4a26c8a7286a25b805eb2d3, docs/free/states-response.rst (sha256 cc37bfd2dab4c0d6390c2b4b584551902b9948bfd16852e96eb5d629b5313660) and docs/free/track-response.rst (sha256 31ebefef70f0d51d06eb4c7b1e26823b43acd2eefc46ca93ba2ba6fe4bb0d243); LicenseRef-OpenSky"
+key   start_time   int   s   "time of the first waypoint of a track, seconds since the Unix epoch"
+key   end_time     int   s   "time of the last waypoint of a track, seconds since the Unix epoch"

@@ -1,0 +1,9 @@
+{
+  "name": "geojson-to-opensky-track",
+  "from": "geojson",
+  "to": "opensky-track",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.25,47.5]},\"properties\":{\"callsign\":\"TEST123\"},\"id\":\"a1b2c3\"}",
+  "expect": "{\"icao24\":\"a1b2c3\",\"callsign\":\"TEST123\"}",
+  "source": "derived by tools/gen/opensky-vectors.py from the documentation's tables and spec/engine-spec.md; no engine run",
+  "reference": "OpenSky Network REST API documentation, github.com/openskynetwork/opensky-api commit 98fecf7438dfbd23c4a26c8a7286a25b805eb2d3, docs/free/track-response.rst; geojson id is uid, written as icao24; properties.callsign is callsign; the position has no place in the pack"
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-get_monitoring_report_response-residue",
+ "from": "ocpp201-get-monitoring-report-response",
+ "to": "ocpp201-get-monitoring-report-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s47172\"},\"status\":\"NotSupported\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s66636\"},\"reasonCode\":\"s30706\",\"additionalInfo\":\"s18844\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s47172\"},\"status\":\"NotSupported\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s66636\"},\"reasonCode\":\"s30706\",\"additionalInfo\":\"s18844\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

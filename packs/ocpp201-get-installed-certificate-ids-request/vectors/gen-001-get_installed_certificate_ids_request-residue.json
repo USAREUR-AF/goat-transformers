@@ -1,0 +1,7 @@
+{
+ "name": "gen-get_installed_certificate_ids_request-residue",
+ "from": "ocpp201-get-installed-certificate-ids-request",
+ "to": "ocpp201-get-installed-certificate-ids-request",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s99956\"},\"certificateType\":[\"V2GCertificateChain\",\"MORootCertificate\"]}",
+ "expect": "{\"customData\":{\"vendorId\":\"s99956\"},\"certificateType\":[\"V2GCertificateChain\",\"MORootCertificate\"],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

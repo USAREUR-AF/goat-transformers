@@ -1,0 +1,7 @@
+{
+ "name": "gen-notification-residue",
+ "from": "wis2-notification",
+ "to": "wis2-notification",
+ "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"pubtime\":\"2026-11-01T19:51:06.686Z\",\"data_id\":\"s47131\",\"metadata_id\":\"s84476\",\"producer\":\"s32706\",\"global-cache\":\"s26302\",\"datetime\":\"2024-08-17T23:37:59.023Z\",\"start_datetime\":\"2025-09-13T15:01:23.717Z\",\"end_datetime\":\"2025-02-07T07:04:21.995Z\",\"integrity\":{\"r\":\"1\"},\"content\":{\"r\":\"1\"}},\"id\":\"8e568926-3d9a-48e3-86ad-595173a2ba59\"}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"pubtime\":\"2026-11-01T19:51:06.686Z\",\"data_id\":\"s47131\",\"metadata_id\":\"s84476\",\"producer\":\"s32706\",\"global-cache\":\"s26302\",\"datetime\":\"2024-08-17T23:37:59.023Z\",\"start_datetime\":\"2025-09-13T15:01:23.717Z\",\"end_datetime\":\"2025-02-07T07:04:21.995Z\",\"integrity\":{\"r\":\"1\"},\"content\":{\"r\":\"1\"}},\"id\":\"8e568926-3d9a-48e3-86ad-595173a2ba59\"}"
+}

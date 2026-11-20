@@ -1,0 +1,7 @@
+{
+ "name": "gen-clear_charging_profile-residue",
+ "from": "ocpp16-clear-charging-profile",
+ "to": "ocpp16-clear-charging-profile",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"id\":4003,\"connectorId\":54277,\"chargingProfilePurpose\":\"TxDefaultProfile\",\"stackLevel\":41750}",
+ "expect": "{\"id\":4003,\"connectorId\":54277,\"chargingProfilePurpose\":\"TxDefaultProfile\",\"stackLevel\":41750,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

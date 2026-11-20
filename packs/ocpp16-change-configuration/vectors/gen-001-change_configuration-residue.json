@@ -1,0 +1,7 @@
+{
+ "name": "gen-change_configuration-residue",
+ "from": "ocpp16-change-configuration",
+ "to": "ocpp16-change-configuration",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"key\":\"s18689\",\"value\":\"s60478\"}",
+ "expect": "{\"key\":\"s18689\",\"value\":\"s60478\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

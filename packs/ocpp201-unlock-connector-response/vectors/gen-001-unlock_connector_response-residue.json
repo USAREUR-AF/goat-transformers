@@ -1,0 +1,7 @@
+{
+ "name": "gen-unlock_connector_response-residue",
+ "from": "ocpp201-unlock-connector-response",
+ "to": "ocpp201-unlock-connector-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s40204\"},\"status\":\"Unlocked\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s12582\"},\"reasonCode\":\"s75163\",\"additionalInfo\":\"s92716\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s40204\"},\"status\":\"Unlocked\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s12582\"},\"reasonCode\":\"s75163\",\"additionalInfo\":\"s92716\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

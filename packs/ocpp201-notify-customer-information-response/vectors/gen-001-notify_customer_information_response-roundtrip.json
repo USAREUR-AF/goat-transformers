@@ -1,0 +1,10 @@
+{
+ "name": "gen-notify_customer_information_response-roundtrip",
+ "from": "ocpp201-notify-customer-information-response",
+ "to": "ocpp201-notify-customer-information-response",
+ "input": "{\"customData\":{\"vendorId\":\"s61367\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s61367\"}}",
+ "model": {
+  "ocpp201notifycustomerinformationresponse.custom_data_vendor_id": "s61367"
+ }
+}

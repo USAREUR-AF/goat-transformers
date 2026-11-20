@@ -1,0 +1,7 @@
+{
+ "name": "gen-change_availability-residue",
+ "from": "ocpp16-change-availability",
+ "to": "ocpp16-change-availability",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"connectorId\":85069,\"type\":\"Inoperative\"}",
+ "expect": "{\"connectorId\":85069,\"type\":\"Inoperative\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

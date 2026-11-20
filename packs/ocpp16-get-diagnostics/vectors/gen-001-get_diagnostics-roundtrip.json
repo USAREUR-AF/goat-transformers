@@ -1,0 +1,14 @@
+{
+ "name": "gen-get_diagnostics-roundtrip",
+ "from": "ocpp16-get-diagnostics",
+ "to": "ocpp16-get-diagnostics",
+ "input": "{\"location\":\"https://example.org/79\",\"retries\":22193,\"retryInterval\":10032,\"startTime\":\"2024-02-16T13:57:46.767Z\",\"stopTime\":\"2025-02-16T07:16:17.415Z\"}",
+ "expect": "{\"location\":\"https://example.org/79\",\"retries\":22193,\"retryInterval\":10032,\"startTime\":\"2024-02-16T13:57:46.767Z\",\"stopTime\":\"2025-02-16T07:16:17.415Z\"}",
+ "model": {
+  "ocpp16getdiagnostics.location": "https://example.org/79",
+  "ocpp16getdiagnostics.retries": "22193",
+  "ocpp16getdiagnostics.retry_interval": "10032",
+  "ocpp16getdiagnostics.start_time": "2024-02-16T13:57:46.767Z",
+  "ocpp16getdiagnostics.stop_time": "2025-02-16T07:16:17.415Z"
+ }
+}

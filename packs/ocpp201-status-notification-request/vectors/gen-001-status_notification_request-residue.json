@@ -1,0 +1,7 @@
+{
+ "name": "gen-status_notification_request-residue",
+ "from": "ocpp201-status-notification-request",
+ "to": "ocpp201-status-notification-request",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s3558\"},\"timestamp\":\"2025-08-14T22:12:30.184Z\",\"connectorStatus\":\"Reserved\",\"evseId\":2312,\"connectorId\":94522}",
+ "expect": "{\"customData\":{\"vendorId\":\"s3558\"},\"timestamp\":\"2025-08-14T22:12:30.184Z\",\"connectorStatus\":\"Reserved\",\"evseId\":2312,\"connectorId\":94522,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

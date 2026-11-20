@@ -1,0 +1,7 @@
+{
+ "name": "gen-get_charging_profiles_response-residue",
+ "from": "ocpp201-get-charging-profiles-response",
+ "to": "ocpp201-get-charging-profiles-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s87357\"},\"status\":\"NoProfiles\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s79358\"},\"reasonCode\":\"s52520\",\"additionalInfo\":\"s27238\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s87357\"},\"status\":\"NoProfiles\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s79358\"},\"reasonCode\":\"s52520\",\"additionalInfo\":\"s27238\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

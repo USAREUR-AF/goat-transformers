@@ -1,0 +1,13 @@
+{
+ "name": "gen-start_transaction_response-roundtrip",
+ "from": "ocpp16-start-transaction-response",
+ "to": "ocpp16-start-transaction-response",
+ "input": "{\"idTagInfo\":{\"expiryDate\":\"2025-12-29T22:35:36.541Z\",\"parentIdTag\":\"s25179\",\"status\":\"Accepted\"},\"transactionId\":44134}",
+ "expect": "{\"idTagInfo\":{\"expiryDate\":\"2025-12-29T22:35:36.541Z\",\"parentIdTag\":\"s25179\",\"status\":\"Accepted\"},\"transactionId\":44134}",
+ "model": {
+  "ocpp16starttransactionresponse.id_tag_info_expiry_date": "2025-12-29T22:35:36.541Z",
+  "ocpp16starttransactionresponse.id_tag_info_parent_id_tag": "s25179",
+  "ocpp16starttransactionresponse.id_tag_info_status": "Accepted",
+  "ocpp16starttransactionresponse.transaction_id": "44134"
+ }
+}

@@ -1,0 +1,14 @@
+{
+ "name": "gen-set_network_profile_response-roundtrip",
+ "from": "ocpp201-set-network-profile-response",
+ "to": "ocpp201-set-network-profile-response",
+ "input": "{\"customData\":{\"vendorId\":\"s20781\"},\"status\":\"Rejected\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s18444\"},\"reasonCode\":\"s68155\",\"additionalInfo\":\"s44159\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s20781\"},\"status\":\"Rejected\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s18444\"},\"reasonCode\":\"s68155\",\"additionalInfo\":\"s44159\"}}",
+ "model": {
+  "ocpp201setnetworkprofileresponse.custom_data_vendor_id": "s20781",
+  "ocpp201setnetworkprofileresponse.status": "Rejected",
+  "ocpp201setnetworkprofileresponse.status_info_custom_data_vendor_id": "s18444",
+  "ocpp201setnetworkprofileresponse.status_info_reason_code": "s68155",
+  "ocpp201setnetworkprofileresponse.status_info_additional_info": "s44159"
+ }
+}

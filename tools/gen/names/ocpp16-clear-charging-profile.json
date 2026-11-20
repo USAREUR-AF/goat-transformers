@@ -1,0 +1,9 @@
+{
+ "keys": {
+  "|chargingProfilePurpose|string": "charging_profile_purpose",
+  "|connectorId|int": "connector_id",
+  "|id|int": "id",
+  "|stackLevel|int": "stack_level"
+ },
+ "lists": {}
+}

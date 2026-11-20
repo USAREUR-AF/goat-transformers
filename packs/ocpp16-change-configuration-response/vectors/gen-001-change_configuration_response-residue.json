@@ -1,0 +1,7 @@
+{
+ "name": "gen-change_configuration_response-residue",
+ "from": "ocpp16-change-configuration-response",
+ "to": "ocpp16-change-configuration-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"status\":\"RebootRequired\"}",
+ "expect": "{\"status\":\"RebootRequired\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

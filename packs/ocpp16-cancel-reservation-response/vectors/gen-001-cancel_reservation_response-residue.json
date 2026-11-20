@@ -1,0 +1,7 @@
+{
+ "name": "gen-cancel_reservation_response-residue",
+ "from": "ocpp16-cancel-reservation-response",
+ "to": "ocpp16-cancel-reservation-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"status\":\"Accepted\"}",
+ "expect": "{\"status\":\"Accepted\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

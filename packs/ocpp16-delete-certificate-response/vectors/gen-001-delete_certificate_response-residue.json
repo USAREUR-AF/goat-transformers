@@ -1,0 +1,7 @@
+{
+ "name": "gen-delete_certificate_response-residue",
+ "from": "ocpp16-delete-certificate-response",
+ "to": "ocpp16-delete-certificate-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"status\":\"NotFound\"}",
+ "expect": "{\"status\":\"NotFound\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-notify_charging_limit_response-residue",
+ "from": "ocpp201-notify-charging-limit-response",
+ "to": "ocpp201-notify-charging-limit-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s73682\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s73682\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

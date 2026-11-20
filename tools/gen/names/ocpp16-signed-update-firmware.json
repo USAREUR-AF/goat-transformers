@@ -1,0 +1,13 @@
+{
+ "keys": {
+  "|firmware.installDateTime|string": "firmware_install_date_time",
+  "|firmware.location|string": "firmware_location",
+  "|firmware.retrieveDateTime|string": "firmware_retrieve_date_time",
+  "|firmware.signature|string": "firmware_signature",
+  "|firmware.signingCertificate|string": "firmware_signing_certificate",
+  "|requestId|int": "request_id",
+  "|retries|int": "retries",
+  "|retryInterval|int": "retry_interval"
+ },
+ "lists": {}
+}

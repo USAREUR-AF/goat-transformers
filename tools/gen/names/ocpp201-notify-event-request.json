@@ -1,0 +1,32 @@
+{
+ "keys": {
+  "event_data|actualValue|string": "event_data_actual_value",
+  "event_data|cause|int": "event_data_cause",
+  "event_data|cleared|int": "event_data_cleared",
+  "event_data|component.customData.vendorId|string": "event_data_component_custom_data_vendor_id",
+  "event_data|component.evse.connectorId|int": "event_data_component_evse_connector_id",
+  "event_data|component.evse.customData.vendorId|string": "event_data_component_evse_custom_data_vendor_id",
+  "event_data|component.evse.id|int": "event_data_component_evse_id",
+  "event_data|component.instance|string": "event_data_component_instance",
+  "event_data|component.name|string": "event_data_component_name",
+  "event_data|customData.vendorId|string": "event_data_custom_data_vendor_id",
+  "event_data|eventId|int": "event_data_event_id",
+  "event_data|eventNotificationType|string": "event_data_event_notification_type",
+  "event_data|techCode|string": "event_data_tech_code",
+  "event_data|techInfo|string": "event_data_tech_info",
+  "event_data|timestamp|string": "event_data_timestamp",
+  "event_data|transactionId|string": "event_data_transaction_id",
+  "event_data|trigger|string": "event_data_trigger",
+  "event_data|variable.customData.vendorId|string": "event_data_variable_custom_data_vendor_id",
+  "event_data|variable.instance|string": "event_data_variable_instance",
+  "event_data|variable.name|string": "event_data_variable_name",
+  "event_data|variableMonitoringId|int": "event_data_variable_monitoring_id",
+  "|customData.vendorId|string": "custom_data_vendor_id",
+  "|generatedAt|string": "generated_at",
+  "|seqNo|int": "seq_no",
+  "|tbc|int": "tbc"
+ },
+ "lists": {
+  "|eventData": "event_data"
+ }
+}

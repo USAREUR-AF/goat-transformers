@@ -1,0 +1,7 @@
+{
+ "name": "gen-owners_response-residue",
+ "from": "openaq-owners",
+ "to": "openaq-owners",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"meta\":{\"name\":\"s54313\",\"website\":\"s27650\",\"page\":9290,\"limit\":56185},\"results\":[{\"id\":43882,\"name\":\"s81980\"},{\"id\":91610,\"name\":\"s58735\"}]}",
+ "expect": "{\"meta\":{\"name\":\"s54313\",\"website\":\"s27650\",\"page\":9290,\"limit\":56185},\"results\":[{\"id\":43882,\"name\":\"s81980\"},{\"id\":91610,\"name\":\"s58735\"}],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

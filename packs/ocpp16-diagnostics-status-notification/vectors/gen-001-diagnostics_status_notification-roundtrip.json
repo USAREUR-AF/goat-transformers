@@ -1,0 +1,10 @@
+{
+ "name": "gen-diagnostics_status_notification-roundtrip",
+ "from": "ocpp16-diagnostics-status-notification",
+ "to": "ocpp16-diagnostics-status-notification",
+ "input": "{\"status\":\"Idle\"}",
+ "expect": "{\"status\":\"Idle\"}",
+ "model": {
+  "ocpp16diagnosticsstatusnotification.status": "Idle"
+ }
+}

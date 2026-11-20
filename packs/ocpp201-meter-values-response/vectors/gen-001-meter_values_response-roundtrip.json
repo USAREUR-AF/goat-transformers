@@ -1,0 +1,10 @@
+{
+ "name": "gen-meter_values_response-roundtrip",
+ "from": "ocpp201-meter-values-response",
+ "to": "ocpp201-meter-values-response",
+ "input": "{\"customData\":{\"vendorId\":\"s6947\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s6947\"}}",
+ "model": {
+  "ocpp201metervaluesresponse.custom_data_vendor_id": "s6947"
+ }
+}

@@ -1,0 +1,6 @@
+{
+ "keys": {
+  "|transactionId|int": "transaction_id"
+ },
+ "lists": {}
+}

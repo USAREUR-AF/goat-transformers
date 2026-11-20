@@ -1,0 +1,7 @@
+{
+ "name": "gen-signed_update_firmware_response-residue",
+ "from": "ocpp16-signed-update-firmware-response",
+ "to": "ocpp16-signed-update-firmware-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"status\":\"RevokedCertificate\"}",
+ "expect": "{\"status\":\"RevokedCertificate\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

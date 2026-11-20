@@ -1,0 +1,8 @@
+{
+  "name": "OpenSky Network REST API",
+  "domain": "air",
+  "prefixes": [
+    "opensky-"
+  ],
+  "detail": "states, track"
+}

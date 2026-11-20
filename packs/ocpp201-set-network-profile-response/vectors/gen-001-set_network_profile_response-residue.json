@@ -1,0 +1,7 @@
+{
+ "name": "gen-set_network_profile_response-residue",
+ "from": "ocpp201-set-network-profile-response",
+ "to": "ocpp201-set-network-profile-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s20781\"},\"status\":\"Rejected\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s18444\"},\"reasonCode\":\"s68155\",\"additionalInfo\":\"s44159\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s20781\"},\"status\":\"Rejected\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s18444\"},\"reasonCode\":\"s68155\",\"additionalInfo\":\"s44159\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

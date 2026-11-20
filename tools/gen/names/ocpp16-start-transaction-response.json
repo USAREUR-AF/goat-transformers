@@ -1,0 +1,9 @@
+{
+ "keys": {
+  "|idTagInfo.expiryDate|string": "id_tag_info_expiry_date",
+  "|idTagInfo.parentIdTag|string": "id_tag_info_parent_id_tag",
+  "|idTagInfo.status|string": "id_tag_info_status",
+  "|transactionId|int": "transaction_id"
+ },
+ "lists": {}
+}

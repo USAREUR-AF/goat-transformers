@@ -1,0 +1,11 @@
+{
+ "name": "gen-data_transfer_response-roundtrip",
+ "from": "ocpp16-data-transfer-response",
+ "to": "ocpp16-data-transfer-response",
+ "input": "{\"status\":\"UnknownMessageId\",\"data\":\"s34112\"}",
+ "expect": "{\"status\":\"UnknownMessageId\",\"data\":\"s34112\"}",
+ "model": {
+  "ocpp16datatransferresponse.status": "UnknownMessageId",
+  "ocpp16datatransferresponse.data": "s34112"
+ }
+}

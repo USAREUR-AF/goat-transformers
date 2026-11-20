@@ -1,0 +1,22 @@
+{
+ "keys": {
+  "id_token_additional_info|additionalIdToken|string": "id_token_additional_info_additional_id_token",
+  "id_token_additional_info|customData.vendorId|string": "id_token_additional_info_custom_data_vendor_id",
+  "id_token_additional_info|type|string": "id_token_additional_info_type",
+  "iso15118_certificate_hash_data|customData.vendorId|string": "iso15118_certificate_hash_data_custom_data_vendor_id",
+  "iso15118_certificate_hash_data|hashAlgorithm|string": "iso15118_certificate_hash_data_hash_algorithm",
+  "iso15118_certificate_hash_data|issuerKeyHash|string": "iso15118_certificate_hash_data_issuer_key_hash",
+  "iso15118_certificate_hash_data|issuerNameHash|string": "iso15118_certificate_hash_data_issuer_name_hash",
+  "iso15118_certificate_hash_data|responderURL|string": "iso15118_certificate_hash_data_responder_url",
+  "iso15118_certificate_hash_data|serialNumber|string": "iso15118_certificate_hash_data_serial_number",
+  "|certificate|string": "certificate",
+  "|customData.vendorId|string": "custom_data_vendor_id",
+  "|idToken.customData.vendorId|string": "id_token_custom_data_vendor_id",
+  "|idToken.idToken|string": "id_token_id_token",
+  "|idToken.type|string": "id_token_type"
+ },
+ "lists": {
+  "|idToken.additionalInfo": "id_token_additional_info",
+  "|iso15118CertificateHashData": "iso15118_certificate_hash_data"
+ }
+}

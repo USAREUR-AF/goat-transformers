@@ -1,0 +1,11 @@
+{
+ "name": "gen-set_variable_monitoring_request-roundtrip",
+ "from": "ocpp201-set-variable-monitoring-request",
+ "to": "ocpp201-set-variable-monitoring-request",
+ "input": "{\"customData\":{\"vendorId\":\"s49181\"},\"setMonitoringData\":[{\"customData\":{\"vendorId\":\"s63398\"},\"id\":88215,\"transaction\":true,\"value\":-3.25,\"type\":\"UpperThreshold\",\"severity\":16026,\"component\":{\"customData\":{\"vendorId\":\"s77074\"},\"evse\":{\"customData\":{\"vendorId\":\"s34600\"},\"id\":21180,\"connectorId\":85481},\"name\":\"s74935\",\"instance\":\"s32738\"},\"variable\":{\"customData\":{\"vendorId\":\"s56544\"},\"name\":\"s2913\",\"instance\":\"s88965\"}},{\"customData\":{\"vendorId\":\"s77229\"},\"id\":92244,\"transaction\":false,\"value\":12.5,\"type\":\"PeriodicClockAligned\",\"severity\":56319,\"component\":{\"customData\":{\"vendorId\":\"s74085\"},\"evse\":{\"customData\":{\"vendorId\":\"s63922\"},\"id\":9660,\"connectorId\":43401},\"name\":\"s15613\",\"instance\":\"s2593\"},\"variable\":{\"customData\":{\"vendorId\":\"s34795\"},\"name\":\"s94535\",\"instance\":\"s55365\"}}]}",
+ "expect": "{\"customData\":{\"vendorId\":\"s49181\"},\"setMonitoringData\":[{\"customData\":{\"vendorId\":\"s63398\"},\"id\":88215,\"transaction\":true,\"value\":-3.25,\"type\":\"UpperThreshold\",\"severity\":16026,\"component\":{\"customData\":{\"vendorId\":\"s77074\"},\"evse\":{\"customData\":{\"vendorId\":\"s34600\"},\"id\":21180,\"connectorId\":85481},\"name\":\"s74935\",\"instance\":\"s32738\"},\"variable\":{\"customData\":{\"vendorId\":\"s56544\"},\"name\":\"s2913\",\"instance\":\"s88965\"}},{\"customData\":{\"vendorId\":\"s77229\"},\"id\":92244,\"transaction\":false,\"value\":12.5,\"type\":\"PeriodicClockAligned\",\"severity\":56319,\"component\":{\"customData\":{\"vendorId\":\"s74085\"},\"evse\":{\"customData\":{\"vendorId\":\"s63922\"},\"id\":9660,\"connectorId\":43401},\"name\":\"s15613\",\"instance\":\"s2593\"},\"variable\":{\"customData\":{\"vendorId\":\"s34795\"},\"name\":\"s94535\",\"instance\":\"s55365\"}}]}",
+ "model": {
+  "ocpp201setvariablemonitoringrequest.custom_data_vendor_id": "s49181",
+  "ocpp201setvariablemonitoringrequest.set_monitoring_data.#": "2"
+ }
+}

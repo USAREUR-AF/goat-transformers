@@ -1,0 +1,7 @@
+{
+ "name": "gen-get_composite_schedule-residue",
+ "from": "ocpp16-get-composite-schedule",
+ "to": "ocpp16-get-composite-schedule",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"connectorId\":35760,\"duration\":45506,\"chargingRateUnit\":\"A\"}",
+ "expect": "{\"connectorId\":35760,\"duration\":45506,\"chargingRateUnit\":\"A\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

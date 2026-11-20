@@ -1,0 +1,15 @@
+{
+ "name": "gen-notify_monitoring_report_request-roundtrip",
+ "from": "ocpp201-notify-monitoring-report-request",
+ "to": "ocpp201-notify-monitoring-report-request",
+ "input": "{\"customData\":{\"vendorId\":\"s59704\"},\"monitor\":[{\"customData\":{\"vendorId\":\"s34685\"},\"component\":{\"customData\":{\"vendorId\":\"s4347\"},\"evse\":{\"customData\":{\"vendorId\":\"s33850\"},\"id\":87498,\"connectorId\":62048},\"name\":\"s19508\",\"instance\":\"s82111\"},\"variable\":{\"customData\":{\"vendorId\":\"s17155\"},\"name\":\"s86129\",\"instance\":\"s32249\"},\"variableMonitoring\":[{\"customData\":{\"vendorId\":\"s98941\"},\"id\":62114,\"transaction\":true,\"value\":1.5,\"type\":\"LowerThreshold\",\"severity\":56558}]},{\"customData\":{\"vendorId\":\"s49309\"},\"component\":{\"customData\":{\"vendorId\":\"s29671\"},\"evse\":{\"customData\":{\"vendorId\":\"s91127\"},\"id\":91042,\"connectorId\":37260},\"name\":\"s82694\",\"instance\":\"s16015\"},\"variable\":{\"customData\":{\"vendorId\":\"s42115\"},\"name\":\"s21746\",\"instance\":\"s2629\"},\"variableMonitoring\":[{\"customData\":{\"vendorId\":\"s65627\"},\"id\":56539,\"transaction\":false,\"value\":42.375,\"type\":\"Delta\",\"severity\":14490}]}],\"requestId\":23789,\"tbc\":true,\"seqNo\":65796,\"generatedAt\":\"2026-12-13T04:53:12.202Z\"}",
+ "expect": "{\"customData\":{\"vendorId\":\"s59704\"},\"monitor\":[{\"customData\":{\"vendorId\":\"s34685\"},\"component\":{\"customData\":{\"vendorId\":\"s4347\"},\"evse\":{\"customData\":{\"vendorId\":\"s33850\"},\"id\":87498,\"connectorId\":62048},\"name\":\"s19508\",\"instance\":\"s82111\"},\"variable\":{\"customData\":{\"vendorId\":\"s17155\"},\"name\":\"s86129\",\"instance\":\"s32249\"},\"variableMonitoring\":[{\"customData\":{\"vendorId\":\"s98941\"},\"id\":62114,\"transaction\":true,\"value\":1.5,\"type\":\"LowerThreshold\",\"severity\":56558}]},{\"customData\":{\"vendorId\":\"s49309\"},\"component\":{\"customData\":{\"vendorId\":\"s29671\"},\"evse\":{\"customData\":{\"vendorId\":\"s91127\"},\"id\":91042,\"connectorId\":37260},\"name\":\"s82694\",\"instance\":\"s16015\"},\"variable\":{\"customData\":{\"vendorId\":\"s42115\"},\"name\":\"s21746\",\"instance\":\"s2629\"},\"variableMonitoring\":[{\"customData\":{\"vendorId\":\"s65627\"},\"id\":56539,\"transaction\":false,\"value\":42.375,\"type\":\"Delta\",\"severity\":14490}]}],\"requestId\":23789,\"tbc\":true,\"seqNo\":65796,\"generatedAt\":\"2026-12-13T04:53:12.202Z\"}",
+ "model": {
+  "ocpp201notifymonitoringreportrequest.custom_data_vendor_id": "s59704",
+  "ocpp201notifymonitoringreportrequest.monitor.#": "2",
+  "ocpp201notifymonitoringreportrequest.request_id": "23789",
+  "ocpp201notifymonitoringreportrequest.tbc": "1",
+  "ocpp201notifymonitoringreportrequest.seq_no": "65796",
+  "ocpp201notifymonitoringreportrequest.generated_at": "2026-12-13T04:53:12.202Z"
+ }
+}

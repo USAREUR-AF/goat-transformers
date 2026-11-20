@@ -1,0 +1,7 @@
+{
+ "name": "gen-unlock_connector-residue",
+ "from": "ocpp16-unlock-connector",
+ "to": "ocpp16-unlock-connector",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"connectorId\":11468}",
+ "expect": "{\"connectorId\":11468,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

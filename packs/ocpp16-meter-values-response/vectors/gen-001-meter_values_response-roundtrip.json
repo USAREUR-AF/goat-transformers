@@ -1,0 +1,8 @@
+{
+ "name": "gen-meter_values_response-roundtrip",
+ "from": "ocpp16-meter-values-response",
+ "to": "ocpp16-meter-values-response",
+ "input": "{}",
+ "expect": "{}",
+ "model": {}
+}

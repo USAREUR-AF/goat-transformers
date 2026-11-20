@@ -1,0 +1,7 @@
+{
+ "name": "gen-data_link_management_message-residue",
+ "from": "aisstream",
+ "to": "aisstream",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"MessageType\":\"DataLinkManagementMessage\",\"Message\":{\"DataLinkManagementMessage\":{\"MessageID\":88215,\"RepeatIndicator\":69504,\"UserID\":96846,\"Valid\":true,\"Spare\":97873,\"Data\":{\"0\":{\"Valid\":true,\"Offset\":50500,\"integerOfSlots\":78631,\"TimeOut\":26146,\"Increment\":91749},\"1\":{\"Valid\":true,\"Offset\":37951,\"integerOfSlots\":7037,\"TimeOut\":28105,\"Increment\":42471},\"2\":{\"Valid\":false,\"Offset\":43348,\"integerOfSlots\":16984,\"TimeOut\":29141,\"Increment\":53354},\"3\":{\"Valid\":true,\"Offset\":84993,\"integerOfSlots\":54053,\"TimeOut\":36138,\"Increment\":90341}}}}}",
+ "expect": "{\"MessageType\":\"DataLinkManagementMessage\",\"Message\":{\"DataLinkManagementMessage\":{\"MessageID\":88215,\"RepeatIndicator\":69504,\"UserID\":96846,\"Valid\":true,\"Spare\":97873,\"Data\":{\"0\":{\"Valid\":true,\"Offset\":50500,\"integerOfSlots\":78631,\"TimeOut\":26146,\"Increment\":91749},\"1\":{\"Valid\":true,\"Offset\":37951,\"integerOfSlots\":7037,\"TimeOut\":28105,\"Increment\":42471},\"2\":{\"Valid\":false,\"Offset\":43348,\"integerOfSlots\":16984,\"TimeOut\":29141,\"Increment\":53354},\"3\":{\"Valid\":true,\"Offset\":84993,\"integerOfSlots\":54053,\"TimeOut\":36138,\"Increment\":90341}}}},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

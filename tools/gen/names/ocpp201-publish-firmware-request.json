@@ -1,0 +1,11 @@
+{
+ "keys": {
+  "|checksum|string": "checksum",
+  "|customData.vendorId|string": "custom_data_vendor_id",
+  "|location|string": "location",
+  "|requestId|int": "request_id",
+  "|retries|int": "retries",
+  "|retryInterval|int": "retry_interval"
+ },
+ "lists": {}
+}

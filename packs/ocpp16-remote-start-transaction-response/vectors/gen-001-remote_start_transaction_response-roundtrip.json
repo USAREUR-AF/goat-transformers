@@ -1,0 +1,10 @@
+{
+ "name": "gen-remote_start_transaction_response-roundtrip",
+ "from": "ocpp16-remote-start-transaction-response",
+ "to": "ocpp16-remote-start-transaction-response",
+ "input": "{\"status\":\"Rejected\"}",
+ "expect": "{\"status\":\"Rejected\"}",
+ "model": {
+  "ocpp16remotestarttransactionresponse.status": "Rejected"
+ }
+}

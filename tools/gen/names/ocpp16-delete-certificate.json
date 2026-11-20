@@ -1,0 +1,9 @@
+{
+ "keys": {
+  "|certificateHashData.hashAlgorithm|string": "certificate_hash_data_hash_algorithm",
+  "|certificateHashData.issuerKeyHash|string": "certificate_hash_data_issuer_key_hash",
+  "|certificateHashData.issuerNameHash|string": "certificate_hash_data_issuer_name_hash",
+  "|certificateHashData.serialNumber|string": "certificate_hash_data_serial_number"
+ },
+ "lists": {}
+}

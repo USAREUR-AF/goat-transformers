@@ -1,0 +1,7 @@
+{
+ "name": "gen-get_log_request-residue",
+ "from": "ocpp201-get-log-request",
+ "to": "ocpp201-get-log-request",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s43212\"},\"log\":{\"customData\":{\"vendorId\":\"s23319\"},\"remoteLocation\":\"s84734\",\"oldestTimestamp\":\"2024-03-16T12:54:57.568Z\",\"latestTimestamp\":\"2026-05-03T20:24:26.685Z\"},\"logType\":\"DiagnosticsLog\",\"requestId\":46962,\"retries\":37393,\"retryInterval\":50239}",
+ "expect": "{\"customData\":{\"vendorId\":\"s43212\"},\"log\":{\"customData\":{\"vendorId\":\"s23319\"},\"remoteLocation\":\"s84734\",\"oldestTimestamp\":\"2024-03-16T12:54:57.568Z\",\"latestTimestamp\":\"2026-05-03T20:24:26.685Z\"},\"logType\":\"DiagnosticsLog\",\"requestId\":46962,\"retries\":37393,\"retryInterval\":50239,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

@@ -1,0 +1,8 @@
+{
+ "name": "gen-firmware_status_notification_response-roundtrip",
+ "from": "ocpp16-firmware-status-notification-response",
+ "to": "ocpp16-firmware-status-notification-response",
+ "input": "{}",
+ "expect": "{}",
+ "model": {}
+}

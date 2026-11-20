@@ -1,0 +1,7 @@
+{
+ "name": "gen-cancel_reservation_request-residue",
+ "from": "ocpp201-cancel-reservation-request",
+ "to": "ocpp201-cancel-reservation-request",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s64817\"},\"reservationId\":49679}",
+ "expect": "{\"customData\":{\"vendorId\":\"s64817\"},\"reservationId\":49679,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

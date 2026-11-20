@@ -1,0 +1,13 @@
+{
+ "keys": {
+  "results|id|int": "results_id",
+  "results|name|string": "results_name",
+  "|meta.limit|int": "meta_limit",
+  "|meta.name|string": "meta_name",
+  "|meta.page|int": "meta_page",
+  "|meta.website|string": "meta_website"
+ },
+ "lists": {
+  "|results": "results"
+ }
+}

@@ -1,0 +1,13 @@
+{
+ "name": "gen-clear_charging_profile-roundtrip",
+ "from": "ocpp16-clear-charging-profile",
+ "to": "ocpp16-clear-charging-profile",
+ "input": "{\"id\":4003,\"connectorId\":54277,\"chargingProfilePurpose\":\"TxDefaultProfile\",\"stackLevel\":41750}",
+ "expect": "{\"id\":4003,\"connectorId\":54277,\"chargingProfilePurpose\":\"TxDefaultProfile\",\"stackLevel\":41750}",
+ "model": {
+  "ocpp16clearchargingprofile.id": "4003",
+  "ocpp16clearchargingprofile.connector_id": "54277",
+  "ocpp16clearchargingprofile.charging_profile_purpose": "TxDefaultProfile",
+  "ocpp16clearchargingprofile.stack_level": "41750"
+ }
+}

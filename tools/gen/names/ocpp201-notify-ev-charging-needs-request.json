@@ -1,0 +1,25 @@
+{
+ "keys": {
+  "|chargingNeeds.acChargingParameters.customData.vendorId|string": "charging_needs_ac_charging_parameters_custom_data_vendor_id",
+  "|chargingNeeds.acChargingParameters.energyAmount|int": "charging_needs_ac_charging_parameters_energy_amount",
+  "|chargingNeeds.acChargingParameters.evMaxCurrent|int": "charging_needs_ac_charging_parameters_ev_max_current",
+  "|chargingNeeds.acChargingParameters.evMaxVoltage|int": "charging_needs_ac_charging_parameters_ev_max_voltage",
+  "|chargingNeeds.acChargingParameters.evMinCurrent|int": "charging_needs_ac_charging_parameters_ev_min_current",
+  "|chargingNeeds.customData.vendorId|string": "charging_needs_custom_data_vendor_id",
+  "|chargingNeeds.dcChargingParameters.bulkSoC|int": "charging_needs_dc_charging_parameters_bulk_so_c",
+  "|chargingNeeds.dcChargingParameters.customData.vendorId|string": "charging_needs_dc_charging_parameters_custom_data_vendor_id",
+  "|chargingNeeds.dcChargingParameters.energyAmount|int": "charging_needs_dc_charging_parameters_energy_amount",
+  "|chargingNeeds.dcChargingParameters.evEnergyCapacity|int": "charging_needs_dc_charging_parameters_ev_energy_capacity",
+  "|chargingNeeds.dcChargingParameters.evMaxCurrent|int": "charging_needs_dc_charging_parameters_ev_max_current",
+  "|chargingNeeds.dcChargingParameters.evMaxPower|int": "charging_needs_dc_charging_parameters_ev_max_power",
+  "|chargingNeeds.dcChargingParameters.evMaxVoltage|int": "charging_needs_dc_charging_parameters_ev_max_voltage",
+  "|chargingNeeds.dcChargingParameters.fullSoC|int": "charging_needs_dc_charging_parameters_full_so_c",
+  "|chargingNeeds.dcChargingParameters.stateOfCharge|int": "charging_needs_dc_charging_parameters_state_of_charge",
+  "|chargingNeeds.departureTime|string": "charging_needs_departure_time",
+  "|chargingNeeds.requestedEnergyTransfer|string": "charging_needs_requested_energy_transfer",
+  "|customData.vendorId|string": "custom_data_vendor_id",
+  "|evseId|int": "evse_id",
+  "|maxScheduleTuples|int": "max_schedule_tuples"
+ },
+ "lists": {}
+}

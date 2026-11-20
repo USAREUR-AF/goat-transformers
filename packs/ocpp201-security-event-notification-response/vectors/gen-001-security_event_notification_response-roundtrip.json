@@ -1,0 +1,10 @@
+{
+ "name": "gen-security_event_notification_response-roundtrip",
+ "from": "ocpp201-security-event-notification-response",
+ "to": "ocpp201-security-event-notification-response",
+ "input": "{\"customData\":{\"vendorId\":\"s36986\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s36986\"}}",
+ "model": {
+  "ocpp201securityeventnotificationresponse.custom_data_vendor_id": "s36986"
+ }
+}

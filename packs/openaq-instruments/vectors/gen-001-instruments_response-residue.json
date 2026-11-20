@@ -1,0 +1,7 @@
+{
+ "name": "gen-instruments_response-residue",
+ "from": "openaq-instruments",
+ "to": "openaq-instruments",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"meta\":{\"name\":\"s48195\",\"website\":\"s53939\",\"page\":373,\"limit\":86962},\"results\":[{\"id\":58388,\"name\":\"s71424\",\"isMonitor\":false,\"manufacturer\":{\"id\":70284,\"name\":\"s81834\"}},{\"id\":31952,\"name\":\"s25387\",\"isMonitor\":true,\"manufacturer\":{\"id\":49558,\"name\":\"s57804\"}}]}",
+ "expect": "{\"meta\":{\"name\":\"s48195\",\"website\":\"s53939\",\"page\":373,\"limit\":86962},\"results\":[{\"id\":58388,\"name\":\"s71424\",\"isMonitor\":false,\"manufacturer\":{\"id\":70284,\"name\":\"s81834\"}},{\"id\":31952,\"name\":\"s25387\",\"isMonitor\":true,\"manufacturer\":{\"id\":49558,\"name\":\"s57804\"}}],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

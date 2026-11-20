@@ -1,0 +1,27 @@
+{
+ "keys": {
+  "id_token_info_evse_id|.|int": "id_token_info_evse_id_value",
+  "id_token_info_group_id_token_additional_info|additionalIdToken|string": "id_token_info_group_id_token_additional_info_additional_id_token",
+  "id_token_info_group_id_token_additional_info|customData.vendorId|string": "id_token_info_group_id_token_additional_info_custom_data_vendor_id",
+  "id_token_info_group_id_token_additional_info|type|string": "id_token_info_group_id_token_additional_info_type",
+  "|certificateStatus|string": "certificate_status",
+  "|customData.vendorId|string": "custom_data_vendor_id",
+  "|idTokenInfo.cacheExpiryDateTime|string": "id_token_info_cache_expiry_date_time",
+  "|idTokenInfo.chargingPriority|int": "id_token_info_charging_priority",
+  "|idTokenInfo.customData.vendorId|string": "id_token_info_custom_data_vendor_id",
+  "|idTokenInfo.groupIdToken.customData.vendorId|string": "id_token_info_group_id_token_custom_data_vendor_id",
+  "|idTokenInfo.groupIdToken.idToken|string": "id_token_info_group_id_token_id_token",
+  "|idTokenInfo.groupIdToken.type|string": "id_token_info_group_id_token_type",
+  "|idTokenInfo.language1|string": "id_token_info_language1",
+  "|idTokenInfo.language2|string": "id_token_info_language2",
+  "|idTokenInfo.personalMessage.content|string": "id_token_info_personal_message_content",
+  "|idTokenInfo.personalMessage.customData.vendorId|string": "id_token_info_personal_message_custom_data_vendor_id",
+  "|idTokenInfo.personalMessage.format|string": "id_token_info_personal_message_format",
+  "|idTokenInfo.personalMessage.language|string": "id_token_info_personal_message_language",
+  "|idTokenInfo.status|string": "id_token_info_status"
+ },
+ "lists": {
+  "|idTokenInfo.evseId": "id_token_info_evse_id",
+  "|idTokenInfo.groupIdToken.additionalInfo": "id_token_info_group_id_token_additional_info"
+ }
+}

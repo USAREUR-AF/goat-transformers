@@ -1,0 +1,14 @@
+{
+ "name": "gen-send_local_list_response-roundtrip",
+ "from": "ocpp201-send-local-list-response",
+ "to": "ocpp201-send-local-list-response",
+ "input": "{\"customData\":{\"vendorId\":\"s5812\"},\"status\":\"Accepted\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s48323\"},\"reasonCode\":\"s40533\",\"additionalInfo\":\"s20538\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s5812\"},\"status\":\"Accepted\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s48323\"},\"reasonCode\":\"s40533\",\"additionalInfo\":\"s20538\"}}",
+ "model": {
+  "ocpp201sendlocallistresponse.custom_data_vendor_id": "s5812",
+  "ocpp201sendlocallistresponse.status": "Accepted",
+  "ocpp201sendlocallistresponse.status_info_custom_data_vendor_id": "s48323",
+  "ocpp201sendlocallistresponse.status_info_reason_code": "s40533",
+  "ocpp201sendlocallistresponse.status_info_additional_info": "s20538"
+ }
+}

@@ -1,0 +1,10 @@
+{
+ "name": "gen-trigger_message_response-roundtrip",
+ "from": "ocpp16-trigger-message-response",
+ "to": "ocpp16-trigger-message-response",
+ "input": "{\"status\":\"NotImplemented\"}",
+ "expect": "{\"status\":\"NotImplemented\"}",
+ "model": {
+  "ocpp16triggermessageresponse.status": "NotImplemented"
+ }
+}

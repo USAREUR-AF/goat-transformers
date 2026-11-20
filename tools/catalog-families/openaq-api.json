@@ -1,0 +1,12 @@
+{
+  "name": "OpenAQ API",
+  "domain": "maps",
+  "prefixes": [
+    "openaq-"
+  ],
+  "members": {
+    "pattern": "^openaq-(.+)$",
+    "label": "{n} responses",
+    "list": false
+  }
+}

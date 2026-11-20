@@ -1,0 +1,16 @@
+{
+ "keys": {
+  "charging_profile_charging_limit_source|.|string": "charging_profile_charging_limit_source_value",
+  "charging_profile_charging_profile_id|.|int": "charging_profile_charging_profile_id_value",
+  "|chargingProfile.chargingProfilePurpose|string": "charging_profile_charging_profile_purpose",
+  "|chargingProfile.customData.vendorId|string": "charging_profile_custom_data_vendor_id",
+  "|chargingProfile.stackLevel|int": "charging_profile_stack_level",
+  "|customData.vendorId|string": "custom_data_vendor_id",
+  "|evseId|int": "evse_id",
+  "|requestId|int": "request_id"
+ },
+ "lists": {
+  "|chargingProfile.chargingLimitSource": "charging_profile_charging_limit_source",
+  "|chargingProfile.chargingProfileId": "charging_profile_charging_profile_id"
+ }
+}

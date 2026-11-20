@@ -1,0 +1,7 @@
+{
+ "name": "gen-full-residue",
+ "from": "signalk-full",
+ "to": "signalk-full",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"self\":\"s38122\",\"version\":\"s69181\"}",
+ "expect": "{\"self\":\"s38122\",\"version\":\"s69181\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

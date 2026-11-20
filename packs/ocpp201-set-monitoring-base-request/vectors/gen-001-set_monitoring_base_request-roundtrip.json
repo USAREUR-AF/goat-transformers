@@ -1,0 +1,11 @@
+{
+ "name": "gen-set_monitoring_base_request-roundtrip",
+ "from": "ocpp201-set-monitoring-base-request",
+ "to": "ocpp201-set-monitoring-base-request",
+ "input": "{\"customData\":{\"vendorId\":\"s57939\"},\"monitoringBase\":\"FactoryDefault\"}",
+ "expect": "{\"customData\":{\"vendorId\":\"s57939\"},\"monitoringBase\":\"FactoryDefault\"}",
+ "model": {
+  "ocpp201setmonitoringbaserequest.custom_data_vendor_id": "s57939",
+  "ocpp201setmonitoringbaserequest.monitoring_base": "FactoryDefault"
+ }
+}

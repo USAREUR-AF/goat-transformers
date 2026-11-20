@@ -1,0 +1,7 @@
+{
+ "name": "gen-extended_class_bposition_report-residue",
+ "from": "aisstream",
+ "to": "aisstream",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"MessageType\":\"ExtendedClassBPositionReport\",\"Message\":{\"ExtendedClassBPositionReport\":{\"MessageID\":50633,\"RepeatIndicator\":74018,\"UserID\":7932,\"Valid\":false,\"Spare1\":95346,\"Sog\":42.375,\"PositionAccuracy\":true,\"Longitude\":0.75,\"Latitude\":12.5,\"Cog\":12.5,\"TrueHeading\":81709,\"Timestamp\":18683,\"Spare2\":27056,\"Name\":\"s5982\",\"Type\":10285,\"Dimension\":{\"A\":68851,\"B\":11989,\"C\":55513,\"D\":12794},\"FixType\":61710,\"Raim\":false,\"Dte\":true,\"AssignedMode\":true,\"Spare3\":63964}}}",
+ "expect": "{\"MessageType\":\"ExtendedClassBPositionReport\",\"Message\":{\"ExtendedClassBPositionReport\":{\"MessageID\":50633,\"RepeatIndicator\":74018,\"UserID\":7932,\"Valid\":false,\"Spare1\":95346,\"Sog\":42.375,\"PositionAccuracy\":true,\"Longitude\":0.75,\"Latitude\":12.5,\"Cog\":12.5,\"TrueHeading\":81709,\"Timestamp\":18683,\"Spare2\":27056,\"Name\":\"s5982\",\"Type\":10285,\"Dimension\":{\"A\":68851,\"B\":11989,\"C\":55513,\"D\":12794},\"FixType\":61710,\"Raim\":false,\"Dte\":true,\"AssignedMode\":true,\"Spare3\":63964}},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

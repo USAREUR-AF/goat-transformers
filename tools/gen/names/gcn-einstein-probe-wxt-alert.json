@@ -1,0 +1,42 @@
+{
+ "keys": {
+  "image_energy_range|.|float": "image_energy_range_value",
+  "rate_energy_range|.|float": "rate_energy_range_value",
+  "spectral_band|.|float": "spectral_band_value",
+  "|additional_info|string": "additional_info",
+  "|background_count_rate|float": "background_count_rate",
+  "|containment_probability|float": "containment_probability",
+  "|data_archive_page|string": "data_archive_page",
+  "|dec|float": "dec",
+  "|far|float": "far",
+  "|healpix_file|string": "healpix_file",
+  "|healpix_url|string": "healpix_url",
+  "|image_duration|float": "image_duration",
+  "|image_snr|float": "image_snr",
+  "|instrument_phi|float": "instrument_phi",
+  "|instrument_semimajor_angle|float": "instrument_semimajor_angle",
+  "|instrument_theta|float": "instrument_theta",
+  "|instrument|string": "instrument",
+  "|messenger|string": "messenger",
+  "|mission|string": "mission",
+  "|net_count_rate|float": "net_count_rate",
+  "|observation_livetime|float": "observation_livetime",
+  "|observation_start|string": "observation_start",
+  "|observation_stop|string": "observation_stop",
+  "|p_astro|float": "p_astro",
+  "|rate_duration|float": "rate_duration",
+  "|rate_snr|float": "rate_snr",
+  "|ra|float": "ra",
+  "|record_number|float": "record_number",
+  "|service|string": "service",
+  "|spectral_band_units|string": "spectral_band_units",
+  "|systematic_included|int": "systematic_included",
+  "|trigger_time|string": "trigger_time",
+  "|trigger_type|string": "trigger_type"
+ },
+ "lists": {
+  "|image_energy_range": "image_energy_range",
+  "|rate_energy_range": "rate_energy_range",
+  "|spectral_band": "spectral_band"
+ }
+}

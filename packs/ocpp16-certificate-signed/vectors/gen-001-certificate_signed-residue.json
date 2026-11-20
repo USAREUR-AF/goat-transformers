@@ -1,0 +1,7 @@
+{
+ "name": "gen-certificate_signed-residue",
+ "from": "ocpp16-certificate-signed",
+ "to": "ocpp16-certificate-signed",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"certificateChain\":\"s15244\"}",
+ "expect": "{\"certificateChain\":\"s15244\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

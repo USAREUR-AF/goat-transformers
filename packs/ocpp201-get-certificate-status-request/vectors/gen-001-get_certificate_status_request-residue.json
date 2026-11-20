@@ -1,0 +1,7 @@
+{
+ "name": "gen-get_certificate_status_request-residue",
+ "from": "ocpp201-get-certificate-status-request",
+ "to": "ocpp201-get-certificate-status-request",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s88823\"},\"ocspRequestData\":{\"customData\":{\"vendorId\":\"s32239\"},\"hashAlgorithm\":\"SHA512\",\"issuerNameHash\":\"s93871\",\"issuerKeyHash\":\"s80901\",\"serialNumber\":\"s27184\",\"responderURL\":\"s82210\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s88823\"},\"ocspRequestData\":{\"customData\":{\"vendorId\":\"s32239\"},\"hashAlgorithm\":\"SHA512\",\"issuerNameHash\":\"s93871\",\"issuerKeyHash\":\"s80901\",\"serialNumber\":\"s27184\",\"responderURL\":\"s82210\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

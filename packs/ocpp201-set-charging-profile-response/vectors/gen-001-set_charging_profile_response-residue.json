@@ -1,0 +1,7 @@
+{
+ "name": "gen-set_charging_profile_response-residue",
+ "from": "ocpp201-set-charging-profile-response",
+ "to": "ocpp201-set-charging-profile-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s46430\"},\"status\":\"Accepted\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s96585\"},\"reasonCode\":\"s97933\",\"additionalInfo\":\"s34397\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s46430\"},\"status\":\"Accepted\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s96585\"},\"reasonCode\":\"s97933\",\"additionalInfo\":\"s34397\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

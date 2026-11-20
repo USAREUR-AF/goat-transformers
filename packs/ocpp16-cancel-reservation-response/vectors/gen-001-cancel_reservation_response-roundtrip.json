@@ -1,0 +1,10 @@
+{
+ "name": "gen-cancel_reservation_response-roundtrip",
+ "from": "ocpp16-cancel-reservation-response",
+ "to": "ocpp16-cancel-reservation-response",
+ "input": "{\"status\":\"Accepted\"}",
+ "expect": "{\"status\":\"Accepted\"}",
+ "model": {
+  "ocpp16cancelreservationresponse.status": "Accepted"
+ }
+}

@@ -1,0 +1,12 @@
+{
+ "name": "gen-data_transfer-roundtrip",
+ "from": "ocpp16-data-transfer",
+ "to": "ocpp16-data-transfer",
+ "input": "{\"vendorId\":\"s21428\",\"messageId\":\"s99204\",\"data\":\"s97635\"}",
+ "expect": "{\"vendorId\":\"s21428\",\"messageId\":\"s99204\",\"data\":\"s97635\"}",
+ "model": {
+  "ocpp16datatransfer.vendor_id": "s21428",
+  "ocpp16datatransfer.message_id": "s99204",
+  "ocpp16datatransfer.data": "s97635"
+ }
+}

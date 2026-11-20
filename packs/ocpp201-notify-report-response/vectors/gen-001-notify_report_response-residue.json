@@ -1,0 +1,7 @@
+{
+ "name": "gen-notify_report_response-residue",
+ "from": "ocpp201-notify-report-response",
+ "to": "ocpp201-notify-report-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s35991\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s35991\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

@@ -1,0 +1,11 @@
+{
+ "name": "gen-change_configuration-roundtrip",
+ "from": "ocpp16-change-configuration",
+ "to": "ocpp16-change-configuration",
+ "input": "{\"key\":\"s18689\",\"value\":\"s60478\"}",
+ "expect": "{\"key\":\"s18689\",\"value\":\"s60478\"}",
+ "model": {
+  "ocpp16changeconfiguration.key": "s18689",
+  "ocpp16changeconfiguration.value": "s60478"
+ }
+}

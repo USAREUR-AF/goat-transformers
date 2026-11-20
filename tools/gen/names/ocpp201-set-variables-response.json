@@ -1,0 +1,23 @@
+{
+ "keys": {
+  "set_variable_result|attributeStatusInfo.additionalInfo|string": "set_variable_result_attribute_status_info_additional_info",
+  "set_variable_result|attributeStatusInfo.customData.vendorId|string": "set_variable_result_attribute_status_info_custom_data_vendor_id",
+  "set_variable_result|attributeStatusInfo.reasonCode|string": "set_variable_result_attribute_status_info_reason_code",
+  "set_variable_result|attributeStatus|string": "set_variable_result_attribute_status",
+  "set_variable_result|attributeType|string": "set_variable_result_attribute_type",
+  "set_variable_result|component.customData.vendorId|string": "set_variable_result_component_custom_data_vendor_id",
+  "set_variable_result|component.evse.connectorId|int": "set_variable_result_component_evse_connector_id",
+  "set_variable_result|component.evse.customData.vendorId|string": "set_variable_result_component_evse_custom_data_vendor_id",
+  "set_variable_result|component.evse.id|int": "set_variable_result_component_evse_id",
+  "set_variable_result|component.instance|string": "set_variable_result_component_instance",
+  "set_variable_result|component.name|string": "set_variable_result_component_name",
+  "set_variable_result|customData.vendorId|string": "set_variable_result_custom_data_vendor_id",
+  "set_variable_result|variable.customData.vendorId|string": "set_variable_result_variable_custom_data_vendor_id",
+  "set_variable_result|variable.instance|string": "set_variable_result_variable_instance",
+  "set_variable_result|variable.name|string": "set_variable_result_variable_name",
+  "|customData.vendorId|string": "custom_data_vendor_id"
+ },
+ "lists": {
+  "|setVariableResult": "set_variable_result"
+ }
+}

@@ -1,0 +1,10 @@
+{
+ "name": "gen-unlock_connector-roundtrip",
+ "from": "ocpp16-unlock-connector",
+ "to": "ocpp16-unlock-connector",
+ "input": "{\"connectorId\":11468}",
+ "expect": "{\"connectorId\":11468}",
+ "model": {
+  "ocpp16unlockconnector.connector_id": "11468"
+ }
+}

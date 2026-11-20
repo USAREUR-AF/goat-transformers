@@ -1,0 +1,10 @@
+{
+ "name": "gen-notify_charging_limit_response-roundtrip",
+ "from": "ocpp201-notify-charging-limit-response",
+ "to": "ocpp201-notify-charging-limit-response",
+ "input": "{\"customData\":{\"vendorId\":\"s73682\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s73682\"}}",
+ "model": {
+  "ocpp201notifycharginglimitresponse.custom_data_vendor_id": "s73682"
+ }
+}

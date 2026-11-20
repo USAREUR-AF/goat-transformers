@@ -1,0 +1,17 @@
+{
+ "name": "gen-standard_class_bposition_report-roundtrip",
+ "from": "aisstream",
+ "to": "aisstream",
+ "input": "{\"MessageType\":\"StandardClassBPositionReport\",\"Message\":{\"StandardClassBPositionReport\":{\"MessageID\":61707,\"RepeatIndicator\":48651,\"UserID\":70897,\"Valid\":true,\"Spare1\":28886,\"Sog\":0.75,\"PositionAccuracy\":false,\"Longitude\":-3.25,\"Latitude\":0.75,\"Cog\":-0.5,\"TrueHeading\":57912,\"Timestamp\":6836,\"Spare2\":22419,\"ClassBUnit\":false,\"ClassBDisplay\":false,\"ClassBDsc\":true,\"ClassBBand\":true,\"ClassBMsg22\":false,\"AssignedMode\":true,\"Raim\":true,\"CommunicationStateIsItdma\":false,\"CommunicationState\":66842}}}",
+ "expect": "{\"MessageType\":\"StandardClassBPositionReport\",\"Message\":{\"StandardClassBPositionReport\":{\"MessageID\":61707,\"RepeatIndicator\":48651,\"UserID\":70897,\"Valid\":true,\"Spare1\":28886,\"Sog\":0.75,\"PositionAccuracy\":false,\"Longitude\":-3.25,\"Latitude\":0.75,\"Cog\":-0.5,\"TrueHeading\":57912,\"Timestamp\":6836,\"Spare2\":22419,\"ClassBUnit\":false,\"ClassBDisplay\":false,\"ClassBDsc\":true,\"ClassBBand\":true,\"ClassBMsg22\":false,\"AssignedMode\":true,\"Raim\":true,\"CommunicationStateIsItdma\":false,\"CommunicationState\":66842}}}",
+ "model": {
+  "@kind": "standard_class_bposition_report",
+  "aisstream.message_standard_class_bposition_report_message_id": "61707",
+  "aisstream.message_standard_class_bposition_report_repeat_indicator": "48651",
+  "aisstream.message_standard_class_bposition_report_user_id": "70897",
+  "aisstream.message_standard_class_bposition_report_valid": "1",
+  "aisstream.message_standard_class_bposition_report_spare1": "28886",
+  "aisstream.message_standard_class_bposition_report_sog": "0.75",
+  "aisstream.message_standard_class_bposition_report_position_accuracy": "0"
+ }
+}

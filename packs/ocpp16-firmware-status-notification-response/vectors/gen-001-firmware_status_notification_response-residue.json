@@ -1,0 +1,7 @@
+{
+ "name": "gen-firmware_status_notification_response-residue",
+ "from": "ocpp16-firmware-status-notification-response",
+ "to": "ocpp16-firmware-status-notification-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7}",
+ "expect": "{\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

@@ -1,0 +1,12 @@
+{
+ "name": "gen-unknown_message-roundtrip",
+ "from": "aisstream",
+ "to": "aisstream",
+ "input": "{\"MessageType\":\"UnknownMessage\",\"Message\":{\"UnknownMessage\":{\"Error\":\"s32291\"}}}",
+ "expect": "{\"MessageType\":\"UnknownMessage\",\"Message\":{\"UnknownMessage\":{\"Error\":\"s32291\"}}}",
+ "model": {
+  "@kind": "unknown_message",
+  "aisstream.message_unknown_message_error": "s32291",
+  "aisstream.message_type": "UnknownMessage"
+ }
+}

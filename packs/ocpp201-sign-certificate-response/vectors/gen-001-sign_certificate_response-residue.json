@@ -1,0 +1,7 @@
+{
+ "name": "gen-sign_certificate_response-residue",
+ "from": "ocpp201-sign-certificate-response",
+ "to": "ocpp201-sign-certificate-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s52285\"},\"status\":\"Rejected\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s46939\"},\"reasonCode\":\"s57721\",\"additionalInfo\":\"s46788\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s52285\"},\"status\":\"Rejected\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s46939\"},\"reasonCode\":\"s57721\",\"additionalInfo\":\"s46788\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

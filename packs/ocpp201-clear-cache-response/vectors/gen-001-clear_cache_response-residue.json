@@ -1,0 +1,7 @@
+{
+ "name": "gen-clear_cache_response-residue",
+ "from": "ocpp201-clear-cache-response",
+ "to": "ocpp201-clear-cache-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s23729\"},\"status\":\"Accepted\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s87077\"},\"reasonCode\":\"s3280\",\"additionalInfo\":\"s25722\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s23729\"},\"status\":\"Accepted\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s87077\"},\"reasonCode\":\"s3280\",\"additionalInfo\":\"s25722\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

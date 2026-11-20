@@ -1,0 +1,7 @@
+{
+ "name": "gen-get_composite_schedule_response-residue",
+ "from": "ocpp16-get-composite-schedule-response",
+ "to": "ocpp16-get-composite-schedule-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"status\":\"Accepted\",\"connectorId\":4279,\"scheduleStart\":\"2025-02-07T08:32:03.264Z\",\"chargingSchedule\":{\"duration\":81577,\"startSchedule\":\"2024-11-04T12:21:04.270Z\",\"chargingRateUnit\":\"A\",\"chargingSchedulePeriod\":[{\"startPeriod\":23213,\"limit\":42.375,\"numberPhases\":8004},{\"startPeriod\":33798,\"limit\":1.5,\"numberPhases\":42651}],\"minChargingRate\":-3.25}}",
+ "expect": "{\"status\":\"Accepted\",\"connectorId\":4279,\"scheduleStart\":\"2025-02-07T08:32:03.264Z\",\"chargingSchedule\":{\"duration\":81577,\"startSchedule\":\"2024-11-04T12:21:04.270Z\",\"chargingRateUnit\":\"A\",\"chargingSchedulePeriod\":[{\"startPeriod\":23213,\"limit\":42.375,\"numberPhases\":8004},{\"startPeriod\":33798,\"limit\":1.5,\"numberPhases\":42651}],\"minChargingRate\":-3.25},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

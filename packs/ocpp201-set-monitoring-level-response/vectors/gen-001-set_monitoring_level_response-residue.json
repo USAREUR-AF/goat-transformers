@@ -1,0 +1,7 @@
+{
+ "name": "gen-set_monitoring_level_response-residue",
+ "from": "ocpp201-set-monitoring-level-response",
+ "to": "ocpp201-set-monitoring-level-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s26755\"},\"status\":\"Rejected\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s66826\"},\"reasonCode\":\"s92004\",\"additionalInfo\":\"s14411\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s26755\"},\"status\":\"Rejected\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s66826\"},\"reasonCode\":\"s92004\",\"additionalInfo\":\"s14411\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

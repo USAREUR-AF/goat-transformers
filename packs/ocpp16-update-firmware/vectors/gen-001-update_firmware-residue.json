@@ -1,0 +1,7 @@
+{
+ "name": "gen-update_firmware-residue",
+ "from": "ocpp16-update-firmware",
+ "to": "ocpp16-update-firmware",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"location\":\"https://example.org/367\",\"retries\":16023,\"retrieveDate\":\"2023-12-01T23:31:08.740Z\",\"retryInterval\":2364}",
+ "expect": "{\"location\":\"https://example.org/367\",\"retries\":16023,\"retrieveDate\":\"2023-12-01T23:31:08.740Z\",\"retryInterval\":2364,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

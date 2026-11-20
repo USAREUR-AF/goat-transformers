@@ -1,0 +1,7 @@
+{
+ "name": "gen-install_certificate_response-residue",
+ "from": "ocpp201-install-certificate-response",
+ "to": "ocpp201-install-certificate-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s14007\"},\"status\":\"Failed\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s29949\"},\"reasonCode\":\"s78469\",\"additionalInfo\":\"s46127\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s14007\"},\"status\":\"Failed\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s29949\"},\"reasonCode\":\"s78469\",\"additionalInfo\":\"s46127\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

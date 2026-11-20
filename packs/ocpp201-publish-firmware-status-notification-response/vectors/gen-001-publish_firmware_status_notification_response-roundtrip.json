@@ -1,0 +1,10 @@
+{
+ "name": "gen-publish_firmware_status_notification_response-roundtrip",
+ "from": "ocpp201-publish-firmware-status-notification-response",
+ "to": "ocpp201-publish-firmware-status-notification-response",
+ "input": "{\"customData\":{\"vendorId\":\"s41149\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s41149\"}}",
+ "model": {
+  "ocpp201publishfirmwarestatusnotificationresponse.custom_data_vendor_id": "s41149"
+ }
+}

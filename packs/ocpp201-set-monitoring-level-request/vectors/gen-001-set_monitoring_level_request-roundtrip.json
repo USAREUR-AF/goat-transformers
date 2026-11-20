@@ -1,0 +1,11 @@
+{
+ "name": "gen-set_monitoring_level_request-roundtrip",
+ "from": "ocpp201-set-monitoring-level-request",
+ "to": "ocpp201-set-monitoring-level-request",
+ "input": "{\"customData\":{\"vendorId\":\"s40116\"},\"severity\":13684}",
+ "expect": "{\"customData\":{\"vendorId\":\"s40116\"},\"severity\":13684}",
+ "model": {
+  "ocpp201setmonitoringlevelrequest.custom_data_vendor_id": "s40116",
+  "ocpp201setmonitoringlevelrequest.severity": "13684"
+ }
+}
