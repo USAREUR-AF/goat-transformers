@@ -1,0 +1,15 @@
+{
+  "name": "gen-get_last_messages_request-roundtrip",
+  "from": "uprotocol-utwin-v2-get-last-messages-request",
+  "to": "uprotocol-utwin-v2-get-last-messages-request",
+  "input": "0a3a0a1b0a10617574686f726974795f6e616d652d3010890118ae0120d3010a1b0a10617574686f726974795f6e616d652d34109d0218c20220e702",
+  "expect": "0a3a0a1b0a10617574686f726974795f6e616d652d3010890118ae0120d3010a1b0a10617574686f726974795f6e616d652d34109d0218c20220e702",
+  "model": {
+    "@kind": "get_last_messages_request",
+    "uprotocolutwinv2getlastmessagesrequest.topics_uris.#": "2",
+    "uprotocolutwinv2getlastmessagesrequest.topics_uris[0].uprotocolutwinv2getlastmessagesrequest.uuri_authority_name": "authority_name-0",
+    "uprotocolutwinv2getlastmessagesrequest.topics_uris[0].uprotocolutwinv2getlastmessagesrequest.uuri_ue_id": "137",
+    "uprotocolutwinv2getlastmessagesrequest.topics_uris[1].uprotocolutwinv2getlastmessagesrequest.uuri_authority_name": "authority_name-4",
+    "uprotocolutwinv2getlastmessagesrequest.topics_uris[1].uprotocolutwinv2getlastmessagesrequest.uuri_ue_id": "285"
+  }
+}

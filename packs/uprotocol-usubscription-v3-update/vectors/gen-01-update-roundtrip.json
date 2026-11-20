@@ -1,0 +1,26 @@
+{
+  "name": "gen-update-roundtrip",
+  "from": "uprotocol-usubscription-v3-update",
+  "to": "uprotocol-usubscription-v3-update",
+  "input": "0a1b0a10617574686f726974795f6e616d652d3010890118ae0120d301121d0a1b0a10617574686f726974795f6e616d652d34109d0218c20220e7021a0d08011a096d6573736167652d3922290a0608d60310fb03120d0a0b747970655f75726c2d3133120d0a0b747970655f75726c2d313418a004",
+  "expect": "0a1b0a10617574686f726974795f6e616d652d3010890118ae0120d301121d0a1b0a10617574686f726974795f6e616d652d34109d0218c20220e7021a0d08011a096d6573736167652d3922290a0608d60310fb03120d0a0b747970655f75726c2d3133120d0a0b747970655f75726c2d313418a004",
+  "model": {
+    "@kind": "update",
+    "uprotocolusubscriptionv3update.topic_authority_name": "authority_name-0",
+    "uprotocolusubscriptionv3update.topic_ue_id": "137",
+    "uprotocolusubscriptionv3update.topic_ue_version_major": "174",
+    "uprotocolusubscriptionv3update.topic_resource_id": "211",
+    "uprotocolusubscriptionv3update.subscriber_uri_authority_name": "authority_name-4",
+    "uprotocolusubscriptionv3update.subscriber_uri_ue_id": "285",
+    "uprotocolusubscriptionv3update.subscriber_uri_ue_version_major": "322",
+    "uprotocolusubscriptionv3update.subscriber_uri_resource_id": "359",
+    "uprotocolusubscriptionv3update.status_state": "1",
+    "uprotocolusubscriptionv3update.status_message": "message-9",
+    "uprotocolusubscriptionv3update.attributes_expire_seconds": "470",
+    "uprotocolusubscriptionv3update.attributes_expire_nanos": "507",
+    "uprotocolusubscriptionv3update.attributes_sample_period_ms": "544",
+    "uprotocolusubscriptionv3update.attributes_details.#": "2",
+    "uprotocolusubscriptionv3update.attributes_details[0].uprotocolusubscriptionv3update.any_type_url": "type_url-13",
+    "uprotocolusubscriptionv3update.attributes_details[1].uprotocolusubscriptionv3update.any_type_url": "type_url-14"
+  }
+}

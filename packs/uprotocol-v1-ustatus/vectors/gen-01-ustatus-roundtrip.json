@@ -1,0 +1,15 @@
+{
+  "name": "gen-ustatus-roundtrip",
+  "from": "uprotocol-v1-ustatus",
+  "to": "uprotocol-v1-ustatus",
+  "input": "080112096d6573736167652d311a0c0a0a747970655f75726c2d321a0c0a0a747970655f75726c2d33",
+  "expect": "080112096d6573736167652d311a0c0a0a747970655f75726c2d321a0c0a0a747970655f75726c2d33",
+  "model": {
+    "@kind": "ustatus",
+    "uprotocolv1ustatus.ustatus_code": "1",
+    "uprotocolv1ustatus.ustatus_message": "message-1",
+    "uprotocolv1ustatus.ustatus_details.#": "2",
+    "uprotocolv1ustatus.ustatus_details[0].uprotocolv1ustatus.any_type_url": "type_url-2",
+    "uprotocolv1ustatus.ustatus_details[1].uprotocolv1ustatus.any_type_url": "type_url-3"
+  }
+}

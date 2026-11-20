@@ -1,0 +1,26 @@
+{
+  "name": "gen-uattributes-roundtrip",
+  "from": "uprotocol-v1-uattributes",
+  "to": "uprotocol-v1-uattributes",
+  "input": "10011a1b0a10617574686f726974795f6e616d652d3110ae0118d30120f801221b0a10617574686f726974795f6e616d652d3510c20218e702208c03280130d60338fb0340015208746f6b656e2d31335a0e7472616365706172656e742d31346001",
+  "expect": "10011a1b0a10617574686f726974795f6e616d652d3110ae0118d30120f801221b0a10617574686f726974795f6e616d652d3510c20218e702208c03280130d60338fb0340015208746f6b656e2d31335a0e7472616365706172656e742d31346001",
+  "model": {
+    "@kind": "uattributes",
+    "uprotocolv1uattributes.uattributes_type": "1",
+    "uprotocolv1uattributes.source_authority_name": "authority_name-1",
+    "uprotocolv1uattributes.source_ue_id": "174",
+    "uprotocolv1uattributes.source_ue_version_major": "211",
+    "uprotocolv1uattributes.source_resource_id": "248",
+    "uprotocolv1uattributes.sink_authority_name": "authority_name-5",
+    "uprotocolv1uattributes.sink_ue_id": "322",
+    "uprotocolv1uattributes.sink_ue_version_major": "359",
+    "uprotocolv1uattributes.sink_resource_id": "396",
+    "uprotocolv1uattributes.uattributes_priority": "1",
+    "uprotocolv1uattributes.uattributes_ttl": "470",
+    "uprotocolv1uattributes.uattributes_permission_level": "507",
+    "uprotocolv1uattributes.uattributes_commstatus": "1",
+    "uprotocolv1uattributes.uattributes_token": "token-13",
+    "uprotocolv1uattributes.uattributes_traceparent": "traceparent-14",
+    "uprotocolv1uattributes.uattributes_payload_format": "1"
+  }
+}

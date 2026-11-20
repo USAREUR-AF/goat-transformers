@@ -1,0 +1,14 @@
+{
+  "name": "gen-subscriber-roundtrip",
+  "from": "uprotocol-usubscription-v3-fetch-subscriptions-request",
+  "to": "uprotocol-usubscription-v3-fetch-subscriptions-request",
+  "input": "121d0a1b0a10617574686f726974795f6e616d652d3010890118ae0120d301",
+  "expect": "121d0a1b0a10617574686f726974795f6e616d652d3010890118ae0120d301",
+  "model": {
+    "@kind": "subscriber",
+    "uprotocolusubscriptionv3fetchsubscriptionsrequest.uri_authority_name": "authority_name-0",
+    "uprotocolusubscriptionv3fetchsubscriptionsrequest.uri_ue_id": "137",
+    "uprotocolusubscriptionv3fetchsubscriptionsrequest.uri_ue_version_major": "174",
+    "uprotocolusubscriptionv3fetchsubscriptionsrequest.uri_resource_id": "211"
+  }
+}

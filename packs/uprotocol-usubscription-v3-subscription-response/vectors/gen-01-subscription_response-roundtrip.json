@@ -1,0 +1,18 @@
+{
+  "name": "gen-subscription_response-roundtrip",
+  "from": "uprotocol-usubscription-v3-subscription-response",
+  "to": "uprotocol-usubscription-v3-subscription-response",
+  "input": "0a0d08011a096d6573736167652d31120e0a0469642d321206747970652d331a1b0a10617574686f726974795f6e616d652d34109d0218c20220e702",
+  "expect": "0a0d08011a096d6573736167652d31120e0a0469642d321206747970652d331a1b0a10617574686f726974795f6e616d652d34109d0218c20220e702",
+  "model": {
+    "@kind": "subscription_response",
+    "uprotocolusubscriptionv3subscriptionresponse.status_state": "1",
+    "uprotocolusubscriptionv3subscriptionresponse.status_message": "message-1",
+    "uprotocolusubscriptionv3subscriptionresponse.config_id": "id-2",
+    "uprotocolusubscriptionv3subscriptionresponse.config_type": "type-3",
+    "uprotocolusubscriptionv3subscriptionresponse.topic_authority_name": "authority_name-4",
+    "uprotocolusubscriptionv3subscriptionresponse.topic_ue_id": "285",
+    "uprotocolusubscriptionv3subscriptionresponse.topic_ue_version_major": "322",
+    "uprotocolusubscriptionv3subscriptionresponse.topic_resource_id": "359"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "gen-event_delivery_config-roundtrip",
+  "from": "uprotocol-usubscription-v3-event-delivery-config",
+  "to": "uprotocol-usubscription-v3-event-delivery-config",
+  "input": "0a0469642d301206747970652d31",
+  "expect": "0a0469642d301206747970652d31",
+  "model": {
+    "@kind": "event_delivery_config",
+    "uprotocolusubscriptionv3eventdeliveryconfig.event_delivery_config_id": "id-0",
+    "uprotocolusubscriptionv3eventdeliveryconfig.event_delivery_config_type": "type-1"
+  }
+}

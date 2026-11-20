@@ -1,0 +1,20 @@
+{
+  "name": "gen-set_service_topics_request-roundtrip",
+  "from": "uprotocol-udiscovery-v3-set-service-topics-request",
+  "to": "uprotocol-udiscovery-v3-set-service-topics-request",
+  "input": "0a490a1b0a10617574686f726974795f6e616d652d3110ae0118d30120f8011227089d0212066e616d652d361a096d6573736167652d37220c7265736f75726365732d3130288c0318b1030a4c0a1c0a11617574686f726974795f6e616d652d313110a00418c50420ea041229088f0512076e616d652d31361a0a6d6573736167652d3137220c7265736f75726365732d323028fe0518a3061064",
+  "expect": "0a490a1b0a10617574686f726974795f6e616d652d3110ae0118d30120f8011227089d0212066e616d652d361a096d6573736167652d37220c7265736f75726365732d3130288c0318b1030a4c0a1c0a11617574686f726974795f6e616d652d313110a00418c50420ea041229088f0512076e616d652d31361a0a6d6573736167652d3137220c7265736f75726365732d323028fe0518a3061064",
+  "model": {
+    "@kind": "set_service_topics_request",
+    "uprotocoludiscoveryv3setservicetopicsrequest.set_service_topics_request_ttl": "100",
+    "uprotocoludiscoveryv3setservicetopicsrequest.set_service_topics_request_topics.#": "2",
+    "uprotocoludiscoveryv3setservicetopicsrequest.set_service_topics_request_topics[0].uprotocoludiscoveryv3setservicetopicsrequest.service_topic_info_topic_authority_name": "authority_name-1",
+    "uprotocoludiscoveryv3setservicetopicsrequest.set_service_topics_request_topics[0].uprotocoludiscoveryv3setservicetopicsrequest.service_topic_info_topic_ue_id": "174",
+    "uprotocoludiscoveryv3setservicetopicsrequest.set_service_topics_request_topics[0].uprotocoludiscoveryv3setservicetopicsrequest.service_topic_info_info_resources.#": "1",
+    "uprotocoludiscoveryv3setservicetopicsrequest.set_service_topics_request_topics[0].uprotocoludiscoveryv3setservicetopicsrequest.service_topic_info_info_resources[0].uprotocoludiscoveryv3setservicetopicsrequest.uservice_topic_resources_item": "resources-10",
+    "uprotocoludiscoveryv3setservicetopicsrequest.set_service_topics_request_topics[1].uprotocoludiscoveryv3setservicetopicsrequest.service_topic_info_topic_authority_name": "authority_name-11",
+    "uprotocoludiscoveryv3setservicetopicsrequest.set_service_topics_request_topics[1].uprotocoludiscoveryv3setservicetopicsrequest.service_topic_info_topic_ue_id": "544",
+    "uprotocoludiscoveryv3setservicetopicsrequest.set_service_topics_request_topics[1].uprotocoludiscoveryv3setservicetopicsrequest.service_topic_info_info_resources.#": "1",
+    "uprotocoludiscoveryv3setservicetopicsrequest.set_service_topics_request_topics[1].uprotocoludiscoveryv3setservicetopicsrequest.service_topic_info_info_resources[0].uprotocoludiscoveryv3setservicetopicsrequest.uservice_topic_resources_item": "resources-20"
+  }
+}

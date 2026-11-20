@@ -1,0 +1,14 @@
+{
+  "name": "gen-uuri-roundtrip",
+  "from": "uprotocol-v1-uuri",
+  "to": "uprotocol-v1-uuri",
+  "input": "0a10617574686f726974795f6e616d652d3010890118ae0120d301",
+  "expect": "0a10617574686f726974795f6e616d652d3010890118ae0120d301",
+  "model": {
+    "@kind": "uuri",
+    "uprotocolv1uuri.uuri_authority_name": "authority_name-0",
+    "uprotocolv1uuri.uuri_ue_id": "137",
+    "uprotocolv1uuri.uuri_ue_version_major": "174",
+    "uprotocolv1uuri.uuri_resource_id": "211"
+  }
+}

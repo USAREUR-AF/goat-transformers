@@ -1,0 +1,15 @@
+{
+  "name": "gen-find_services_request-roundtrip",
+  "from": "uprotocol-udiscovery-v3-find-services-request",
+  "to": "uprotocol-udiscovery-v3-find-services-request",
+  "input": "0a1b0a10617574686f726974795f6e616d652d3010890118ae0120d3011001",
+  "expect": "0a1b0a10617574686f726974795f6e616d652d3010890118ae0120d3011001",
+  "model": {
+    "@kind": "find_services_request",
+    "uprotocoludiscoveryv3findservicesrequest.uri_authority_name": "authority_name-0",
+    "uprotocoludiscoveryv3findservicesrequest.uri_ue_id": "137",
+    "uprotocoludiscoveryv3findservicesrequest.uri_ue_version_major": "174",
+    "uprotocoludiscoveryv3findservicesrequest.uri_resource_id": "211",
+    "uprotocoludiscoveryv3findservicesrequest.find_services_request_recursive": "1"
+  }
+}

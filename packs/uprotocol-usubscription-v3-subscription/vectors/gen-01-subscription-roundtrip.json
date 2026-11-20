@@ -1,0 +1,28 @@
+{
+  "name": "gen-subscription-roundtrip",
+  "from": "uprotocol-usubscription-v3-subscription",
+  "to": "uprotocol-usubscription-v3-subscription",
+  "input": "0a1b0a10617574686f726974795f6e616d652d3010890118ae0120d301121d0a1b0a10617574686f726974795f6e616d652d34109d0218c20220e7021a0d08011a096d6573736167652d3922290a0608d60310fb03120d0a0b747970655f75726c2d3135120d0a0b747970655f75726c2d313618a0042a100a0569642d31331207747970652d3134",
+  "expect": "0a1b0a10617574686f726974795f6e616d652d3010890118ae0120d301121d0a1b0a10617574686f726974795f6e616d652d34109d0218c20220e7021a0d08011a096d6573736167652d3922290a0608d60310fb03120d0a0b747970655f75726c2d3135120d0a0b747970655f75726c2d313618a0042a100a0569642d31331207747970652d3134",
+  "model": {
+    "@kind": "subscription",
+    "uprotocolusubscriptionv3subscription.topic_authority_name": "authority_name-0",
+    "uprotocolusubscriptionv3subscription.topic_ue_id": "137",
+    "uprotocolusubscriptionv3subscription.topic_ue_version_major": "174",
+    "uprotocolusubscriptionv3subscription.topic_resource_id": "211",
+    "uprotocolusubscriptionv3subscription.subscriber_uri_authority_name": "authority_name-4",
+    "uprotocolusubscriptionv3subscription.subscriber_uri_ue_id": "285",
+    "uprotocolusubscriptionv3subscription.subscriber_uri_ue_version_major": "322",
+    "uprotocolusubscriptionv3subscription.subscriber_uri_resource_id": "359",
+    "uprotocolusubscriptionv3subscription.status_state": "1",
+    "uprotocolusubscriptionv3subscription.status_message": "message-9",
+    "uprotocolusubscriptionv3subscription.attributes_expire_seconds": "470",
+    "uprotocolusubscriptionv3subscription.attributes_expire_nanos": "507",
+    "uprotocolusubscriptionv3subscription.attributes_sample_period_ms": "544",
+    "uprotocolusubscriptionv3subscription.config_id": "id-13",
+    "uprotocolusubscriptionv3subscription.config_type": "type-14",
+    "uprotocolusubscriptionv3subscription.attributes_details.#": "2",
+    "uprotocolusubscriptionv3subscription.attributes_details[0].uprotocolusubscriptionv3subscription.any_type_url": "type_url-15",
+    "uprotocolusubscriptionv3subscription.attributes_details[1].uprotocolusubscriptionv3subscription.any_type_url": "type_url-16"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "gen-fetch_subscribers_response-roundtrip",
+  "from": "uprotocol-usubscription-v3-fetch-subscribers-response",
+  "to": "uprotocol-usubscription-v3-fetch-subscribers-response",
+  "input": "0a1d0a1b0a10617574686f726974795f6e616d652d3010890118ae0120d3010a1d0a1b0a10617574686f726974795f6e616d652d34109d0218c20220e702",
+  "expect": "0a1d0a1b0a10617574686f726974795f6e616d652d3010890118ae0120d3010a1d0a1b0a10617574686f726974795f6e616d652d34109d0218c20220e702",
+  "model": {
+    "@kind": "fetch_subscribers_response",
+    "uprotocolusubscriptionv3fetchsubscribersresponse.fetch_subscribers_response_subscribers.#": "2",
+    "uprotocolusubscriptionv3fetchsubscribersresponse.fetch_subscribers_response_subscribers[0].uprotocolusubscriptionv3fetchsubscribersresponse.subscriber_info_uri_authority_name": "authority_name-0",
+    "uprotocolusubscriptionv3fetchsubscribersresponse.fetch_subscribers_response_subscribers[0].uprotocolusubscriptionv3fetchsubscribersresponse.subscriber_info_uri_ue_id": "137",
+    "uprotocolusubscriptionv3fetchsubscribersresponse.fetch_subscribers_response_subscribers[1].uprotocolusubscriptionv3fetchsubscribersresponse.subscriber_info_uri_authority_name": "authority_name-4",
+    "uprotocolusubscriptionv3fetchsubscribersresponse.fetch_subscribers_response_subscribers[1].uprotocolusubscriptionv3fetchsubscribersresponse.subscriber_info_uri_ue_id": "285"
+  }
+}

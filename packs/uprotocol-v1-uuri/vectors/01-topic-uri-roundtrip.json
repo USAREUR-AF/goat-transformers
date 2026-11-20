@@ -1,0 +1,12 @@
+{
+  "name": "01-topic-uri-roundtrip",
+  "from": "uprotocol-v1-uuri",
+  "to": "uprotocol-v1-uuri",
+  "input": "0a0976656869636c652d3110ab21180120818002",
+  "expect": "0a0976656869636c652d3110ab21180120818002",
+  "model": {
+    "uprotocolv1uuri.uuri_authority_name": "vehicle-1",
+    "uprotocolv1uuri.uuri_ue_id": "4267",
+    "uprotocolv1uuri.uuri_resource_id": "32769"
+  }
+}

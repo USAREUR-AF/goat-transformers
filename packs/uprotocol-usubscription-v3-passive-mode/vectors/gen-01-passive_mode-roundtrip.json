@@ -1,0 +1,11 @@
+{
+  "name": "gen-passive_mode-roundtrip",
+  "from": "uprotocol-usubscription-v3-passive-mode",
+  "to": "uprotocol-usubscription-v3-passive-mode",
+  "input": "0801",
+  "expect": "0801",
+  "model": {
+    "@kind": "passive_mode",
+    "uprotocolusubscriptionv3passivemode.passive_mode_enable": "1"
+  }
+}
