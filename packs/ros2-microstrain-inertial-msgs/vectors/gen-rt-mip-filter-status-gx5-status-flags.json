@@ -1,0 +1,17 @@
+{
+  "name": "rt-mip_filter_status_gx5_status_flags",
+  "from": "ros2-microstrain-inertial-msgs",
+  "to": "ros2-microstrain-inertial-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/mip_filter_status_gx5_status_flags\",\"type\":\"microstrain_inertial_msgs/msg/MipFilterStatusGx5StatusFlags\",\"msg\":{\"init_no_attitude\":true,\"init_no_position_velocity\":false,\"run_imu_unavailable\":true,\"run_gps_unavailable\":false,\"run_matrix_singularity\":true,\"run_position_covariance_warning\":false,\"run_velocity_covariance_warning\":true,\"run_attitude_covariance_warning\":false,\"run_nan_in_solution_warning\":true,\"run_gyro_bias_est_high_warning\":false,\"run_accel_bias_est_high_warning\":true,\"run_gyro_scale_factor_est_high_warning\":false,\"run_accel_scale_factor_est_high_warning\":true,\"run_mag_bias_est_high_warning\":false,\"run_ant_offset_correction_est_high_warning\":true,\"run_mag_hard_iron_est_high_warning\":false,\"run_mag_soft_iron_est_high_warning\":true},\"id\":\"gen-mip_filter_status_gx5_status_flags\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/mip_filter_status_gx5_status_flags\",\"type\":\"microstrain_inertial_msgs/msg/MipFilterStatusGx5StatusFlags\",\"msg\":{\"init_no_attitude\":true,\"init_no_position_velocity\":false,\"run_imu_unavailable\":true,\"run_gps_unavailable\":false,\"run_matrix_singularity\":true,\"run_position_covariance_warning\":false,\"run_velocity_covariance_warning\":true,\"run_attitude_covariance_warning\":false,\"run_nan_in_solution_warning\":true,\"run_gyro_bias_est_high_warning\":false,\"run_accel_bias_est_high_warning\":true,\"run_gyro_scale_factor_est_high_warning\":false,\"run_accel_scale_factor_est_high_warning\":true,\"run_mag_bias_est_high_warning\":false,\"run_ant_offset_correction_est_high_warning\":true,\"run_mag_hard_iron_est_high_warning\":false,\"run_mag_soft_iron_est_high_warning\":true},\"id\":\"gen-mip_filter_status_gx5_status_flags\"}",
+  "model": {
+    "@kind": "mip_filter_status_gx5_status_flags",
+    "ros2microstrain.mip_filter_status_gx5_status_flags_init_no_attitude_2": "1",
+    "ros2microstrain.mip_filter_status_gx5_status_flags_init_no_position_velocity_2": "0",
+    "ros2microstrain.mip_filter_status_gx5_status_flags_run_imu_unavailable_2": "1",
+    "ros2microstrain.mip_filter_status_gx5_status_flags_run_gps_unavailable_2": "0",
+    "ros2microstrain.mip_filter_status_gx5_status_flags_run_matrix_singularity_2": "1",
+    "ros2microstrain.topic": "/gen/mip_filter_status_gx5_status_flags"
+  }
+}

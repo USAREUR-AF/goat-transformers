@@ -1,0 +1,17 @@
+{
+  "name": "rt-lynx_multi_feedback",
+  "from": "ros2-clearpath-motor-msgs",
+  "to": "ros2-clearpath-motor-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/lynx_multi_feedback\",\"type\":\"clearpath_motor_msgs/msg/LynxMultiFeedback\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"drivers\":[{\"can_id\":99,\"joint_name\":\"s5\",\"current\":-3.625,\"voltage\":-3.375,\"velocity\":-3.125,\"travel\":-2.875},{\"can_id\":173,\"joint_name\":\"s11\",\"current\":-2.125,\"voltage\":-1.875,\"velocity\":-1.625,\"travel\":-1.375}]},\"id\":\"gen-lynx_multi_feedback\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/lynx_multi_feedback\",\"type\":\"clearpath_motor_msgs/msg/LynxMultiFeedback\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"drivers\":[{\"can_id\":99,\"joint_name\":\"s5\",\"current\":-3.625,\"voltage\":-3.375,\"velocity\":-3.125,\"travel\":-2.875},{\"can_id\":173,\"joint_name\":\"s11\",\"current\":-2.125,\"voltage\":-1.875,\"velocity\":-1.625,\"travel\":-1.375}]},\"id\":\"gen-lynx_multi_feedback\"}",
+  "model": {
+    "@kind": "lynx_multi_feedback",
+    "ros2clearpathmotor.lynx_multi_feedback_header_stamp_sec": "40510",
+    "ros2clearpathmotor.lynx_multi_feedback_header_stamp_nanosec": "2147564661",
+    "ros2clearpathmotor.lynx_multi_feedback_header_frame_id": "s3",
+    "ros2clearpathmotor.lynx_multi_feedback_drivers.#": "2",
+    "ros2clearpathmotor.lynx_multi_feedback_drivers[0].ros2clearpathmotor.lynx_multi_feedback_drivers_can_id": "99",
+    "ros2clearpathmotor.topic": "/gen/lynx_multi_feedback"
+  }
+}

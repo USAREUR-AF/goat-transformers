@@ -1,0 +1,17 @@
+{
+  "name": "rt-imu_setup",
+  "from": "ros2-septentrio-gnss-driver",
+  "to": "ros2-septentrio-gnss-driver",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/imu_setup\",\"type\":\"septentrio_gnss_driver/msg/IMUSetup\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"block_header\":{\"sync_1\":99,\"sync_2\":154,\"crc\":13649,\"id\":54152,\"revision\":63,\"length\":4086,\"tow\":2147888685,\"wnc\":19556},\"serial_port\":27,\"ant_lever_arm_x\":-1.875,\"ant_lever_arm_y\":-1.625,\"ant_lever_arm_z\":-1.375,\"theta_x\":-1.125,\"theta_y\":-0.875,\"theta_z\":-0.625},\"id\":\"gen-imu_setup\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/imu_setup\",\"type\":\"septentrio_gnss_driver/msg/IMUSetup\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"block_header\":{\"sync_1\":99,\"sync_2\":154,\"crc\":13649,\"id\":54152,\"revision\":63,\"length\":4086,\"tow\":2147888685,\"wnc\":19556},\"serial_port\":27,\"ant_lever_arm_x\":-1.875,\"ant_lever_arm_y\":-1.625,\"ant_lever_arm_z\":-1.375,\"theta_x\":-1.125,\"theta_y\":-0.875,\"theta_z\":-0.625},\"id\":\"gen-imu_setup\"}",
+  "model": {
+    "@kind": "imu_setup",
+    "ros2septentrio.imu_setup_header_stamp_sec": "40510",
+    "ros2septentrio.imu_setup_header_stamp_nanosec": "2147564661",
+    "ros2septentrio.imu_setup_header_frame_id": "s3",
+    "ros2septentrio.imu_setup_block_header_sync_1": "99",
+    "ros2septentrio.imu_setup_block_header_sync_2": "154",
+    "ros2septentrio.topic": "/gen/imu_setup"
+  }
+}

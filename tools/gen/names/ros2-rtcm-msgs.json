@@ -1,0 +1,7 @@
+{
+ "Message:header.frame_id": "message_header_frame_id",
+ "Message:header.stamp.nanosec": "message_header_stamp_nanosec",
+ "Message:header.stamp.sec": "message_header_stamp_sec",
+ "Message:message": "message_message",
+ "topic": "topic"
+}

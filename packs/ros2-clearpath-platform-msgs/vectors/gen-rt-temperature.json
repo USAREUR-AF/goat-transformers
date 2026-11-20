@@ -1,0 +1,17 @@
+{
+  "name": "rt-temperature",
+  "from": "ros2-clearpath-platform-msgs",
+  "to": "ros2-clearpath-platform-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/temperature\",\"type\":\"clearpath_platform_msgs/msg/Temperature\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"temperatures\":[-4.125,-3.875]},\"id\":\"gen-temperature\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/temperature\",\"type\":\"clearpath_platform_msgs/msg/Temperature\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"temperatures\":[-4.125,-3.875]},\"id\":\"gen-temperature\"}",
+  "model": {
+    "@kind": "temperature",
+    "ros2clearpathplatform.temperature_header_stamp_sec": "40510",
+    "ros2clearpathplatform.temperature_header_stamp_nanosec": "2147564661",
+    "ros2clearpathplatform.temperature_header_frame_id": "s3",
+    "ros2clearpathplatform.temperature_temperatures.#": "2",
+    "ros2clearpathplatform.temperature_temperatures[0].ros2clearpathplatform.temperature_temperatures_value": "-4.125",
+    "ros2clearpathplatform.topic": "/gen/temperature"
+  }
+}

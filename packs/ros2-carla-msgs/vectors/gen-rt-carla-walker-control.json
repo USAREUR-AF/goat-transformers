@@ -1,0 +1,17 @@
+{
+  "name": "rt-carla_walker_control",
+  "from": "ros2-carla-msgs",
+  "to": "ros2-carla-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/carla_walker_control\",\"type\":\"carla_msgs/msg/CarlaWalkerControl\",\"msg\":{\"direction\":{\"x\":1.007,\"y\":2.014,\"z\":-3.021},\"speed\":-4.125,\"jump\":true},\"id\":\"gen-carla_walker_control\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/carla_walker_control\",\"type\":\"carla_msgs/msg/CarlaWalkerControl\",\"msg\":{\"direction\":{\"x\":1.007,\"y\":2.014,\"z\":-3.021},\"speed\":-4.125,\"jump\":true},\"id\":\"gen-carla_walker_control\"}",
+  "model": {
+    "@kind": "carla_walker_control",
+    "ros2carla.carla_walker_control_direction_x": "1.007",
+    "ros2carla.carla_walker_control_direction_y": "2.014",
+    "ros2carla.carla_walker_control_direction_z": "-3.021",
+    "ros2carla.carla_walker_control_speed": "-4.125",
+    "ros2carla.carla_walker_control_jump": "1",
+    "ros2carla.topic": "/gen/carla_walker_control"
+  }
+}

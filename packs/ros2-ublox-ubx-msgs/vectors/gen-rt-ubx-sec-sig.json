@@ -1,0 +1,19 @@
+{
+  "name": "rt-ubx_sec_sig",
+  "from": "ros2-ublox-ubx-msgs",
+  "to": "ros2-ublox-ubx-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/ubx_sec_sig\",\"type\":\"ublox_ubx_msgs/msg/UBXSecSig\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"version\":99,\"jam_det_enabled\":154,\"jamming_state\":209,\"spf_det_enabled\":8,\"spoofing_state\":63,\"jam_num_cent_freqs\":118,\"jam_state_cent_freqs\":[{\"cent_freq\":2147888685,\"jammed\":true},{\"cent_freq\":2147969691,\"jammed\":true}]},\"id\":\"gen-ubx_sec_sig\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/ubx_sec_sig\",\"type\":\"ublox_ubx_msgs/msg/UBXSecSig\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"version\":99,\"jam_det_enabled\":154,\"jamming_state\":209,\"spf_det_enabled\":8,\"spoofing_state\":63,\"jam_num_cent_freqs\":118,\"jam_state_cent_freqs\":[{\"cent_freq\":2147888685,\"jammed\":true},{\"cent_freq\":2147969691,\"jammed\":true}]},\"id\":\"gen-ubx_sec_sig\"}",
+  "model": {
+    "@kind": "ubx_sec_sig",
+    "ros2ubloxubx.ubx_sec_sig_header_stamp_sec": "40510",
+    "ros2ubloxubx.ubx_sec_sig_header_stamp_nanosec": "2147564661",
+    "ros2ubloxubx.ubx_sec_sig_header_frame_id": "s3",
+    "ros2ubloxubx.ubx_sec_sig_version": "99",
+    "ros2ubloxubx.ubx_sec_sig_jam_det_enabled": "154",
+    "ros2ubloxubx.ubx_sec_sig_jam_state_cent_freqs.#": "2",
+    "ros2ubloxubx.ubx_sec_sig_jam_state_cent_freqs[0].ros2ubloxubx.ubx_sec_sig_jam_state_cent_freqs_cent_freq": "2147888685",
+    "ros2ubloxubx.topic": "/gen/ubx_sec_sig"
+  }
+}

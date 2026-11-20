@@ -1,0 +1,15 @@
+{
+  "name": "rt-drive",
+  "from": "ros2-clearpath-platform-msgs",
+  "to": "ros2-clearpath-platform-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/drive\",\"type\":\"clearpath_platform_msgs/msg/Drive\",\"msg\":{\"mode\":62,\"drivers\":[-4.625,-4.375]},\"id\":\"gen-drive\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/drive\",\"type\":\"clearpath_platform_msgs/msg/Drive\",\"msg\":{\"mode\":62,\"drivers\":[-4.625,-4.375]},\"id\":\"gen-drive\"}",
+  "model": {
+    "@kind": "drive",
+    "ros2clearpathplatform.drive_mode": "62",
+    "ros2clearpathplatform.drive_drivers.#": "2",
+    "ros2clearpathplatform.drive_drivers[0].ros2clearpathplatform.drive_drivers_value": "-4.625",
+    "ros2clearpathplatform.topic": "/gen/drive"
+  }
+}

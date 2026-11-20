@@ -1,0 +1,14 @@
+{
+  "name": "x-wgs84_sample-to-geojson",
+  "from": "ros2-marti-nav-msgs",
+  "to": "geojson",
+  "source": "tools/gen/ros2msg2pack.py: a full sample message with the bound fields set to a point; latitude, longitude and altitude are core lat, lon, hae (pack.md); geojson writes [lon, lat, alt] (RFC 7946, engine-spec 0.1.1 ruling 4)",
+  "input": "{\"op\":\"publish\",\"topic\":\"/geo\",\"type\":\"marti_nav_msgs/msg/Wgs84Sample\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"odom\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"wgs84\":{\"x\":8.53125,\"y\":47.0625,\"z\":431.5},\"wgs84_covariance\":[10.07,11.077,-12.084,13.091,14.098,-15.105,16.112,17.119,-18.126]}}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.53125,47.0625,431.5]},\"properties\":{}}",
+  "model": {
+    "@kind": "wgs84_sample",
+    "lon": "8.53125",
+    "lat": "47.0625",
+    "hae": "431.5"
+  }
+}

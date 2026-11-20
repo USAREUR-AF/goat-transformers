@@ -1,0 +1,17 @@
+{
+  "name": "rt-sbg_ekf_status",
+  "from": "ros2-sbg-driver",
+  "to": "ros2-sbg-driver",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/sbg_ekf_status\",\"type\":\"sbg_driver/msg/SbgEkfStatus\",\"msg\":{\"solution_mode\":190,\"attitude_valid\":false,\"heading_valid\":true,\"velocity_valid\":false,\"position_valid\":true,\"vert_ref_used\":false,\"mag_ref_used\":true,\"gps1_vel_used\":false,\"gps1_pos_used\":true,\"gps1_hdt_used\":false,\"gps2_vel_used\":true,\"gps2_pos_used\":false,\"gps2_hdt_used\":true,\"odo_used\":false,\"dvl_bt_used\":true,\"dvl_wt_used\":false,\"vel1_used\":true,\"usbl_used\":false,\"air_data_used\":true,\"zupt_used\":false,\"align_valid\":true,\"depth_used\":false,\"zaru_used\":true},\"id\":\"gen-sbg_ekf_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/sbg_ekf_status\",\"type\":\"sbg_driver/msg/SbgEkfStatus\",\"msg\":{\"solution_mode\":190,\"attitude_valid\":false,\"heading_valid\":true,\"velocity_valid\":false,\"position_valid\":true,\"vert_ref_used\":false,\"mag_ref_used\":true,\"gps1_vel_used\":false,\"gps1_pos_used\":true,\"gps1_hdt_used\":false,\"gps2_vel_used\":true,\"gps2_pos_used\":false,\"gps2_hdt_used\":true,\"odo_used\":false,\"dvl_bt_used\":true,\"dvl_wt_used\":false,\"vel1_used\":true,\"usbl_used\":false,\"air_data_used\":true,\"zupt_used\":false,\"align_valid\":true,\"depth_used\":false,\"zaru_used\":true},\"id\":\"gen-sbg_ekf_status\"}",
+  "model": {
+    "@kind": "sbg_ekf_status",
+    "ros2sbg.sbg_ekf_status_solution_mode": "190",
+    "ros2sbg.sbg_ekf_status_attitude_valid": "0",
+    "ros2sbg.sbg_ekf_status_heading_valid": "1",
+    "ros2sbg.sbg_ekf_status_velocity_valid": "0",
+    "ros2sbg.sbg_ekf_status_position_valid": "1",
+    "ros2sbg.topic": "/gen/sbg_ekf_status"
+  }
+}

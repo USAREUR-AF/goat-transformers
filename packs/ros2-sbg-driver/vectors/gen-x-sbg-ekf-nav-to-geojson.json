@@ -1,0 +1,13 @@
+{
+  "name": "x-sbg_ekf_nav-to-geojson",
+  "from": "ros2-sbg-driver",
+  "to": "geojson",
+  "source": "tools/gen/ros2msg2pack.py: a full sample message with the bound fields set to a point; latitude, longitude and altitude are core lat, lon, hae (pack.md); geojson writes [lon, lat, alt] (RFC 7946, engine-spec 0.1.1 ruling 4)",
+  "input": "{\"op\":\"publish\",\"topic\":\"/geo\",\"type\":\"sbg_driver/msg/SbgEkfNav\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"time_stamp\":2147645667,\"velocity\":{\"x\":5.035,\"y\":-6.042,\"z\":7.049},\"velocity_accuracy\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07},\"latitude\":47.0625,\"longitude\":8.53125,\"altitude\":13.091,\"undulation\":-1.625,\"position_accuracy\":{\"x\":-15.105,\"y\":16.112,\"z\":17.119},\"status\":{\"solution_mode\":101,\"attitude_valid\":true,\"heading_valid\":false,\"velocity_valid\":true,\"position_valid\":false,\"vert_ref_used\":true,\"mag_ref_used\":false,\"gps1_vel_used\":true,\"gps1_pos_used\":false,\"gps1_hdt_used\":true,\"gps2_vel_used\":false,\"gps2_pos_used\":true,\"gps2_hdt_used\":false,\"odo_used\":true,\"dvl_bt_used\":false,\"dvl_wt_used\":true,\"vel1_used\":false,\"usbl_used\":true,\"air_data_used\":false,\"zupt_used\":true,\"align_valid\":false,\"depth_used\":true,\"zaru_used\":false}}}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.53125,47.0625]},\"properties\":{}}",
+  "model": {
+    "@kind": "sbg_ekf_nav",
+    "lat": "47.0625",
+    "lon": "8.53125"
+  }
+}

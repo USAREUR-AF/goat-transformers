@@ -1,0 +1,17 @@
+{
+  "name": "rt-path_planning",
+  "from": "ros2-marti-nav-msgs",
+  "to": "ros2-marti-nav-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/path_planning\",\"type\":\"marti_nav_msgs/msg/PathPlanning\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"segment_type\":162019,\"length\":-3.875,\"start_speed\":-3.625,\"end_speed\":-3.375,\"startx\":-3.125,\"starty\":-2.875,\"endx\":-2.625,\"endy\":-2.375,\"theta0\":-2.125,\"a1\":-1.875,\"a2\":-1.625,\"k0\":-1.375,\"c1\":-1.125,\"c2\":-0.875,\"behavior\":729061,\"creep\":769564,\"acc\":810067,\"reverse\":850570,\"vehicle_track\":891073,\"transmitted\":true,\"aux_transmitted\":false,\"theta_end\":1.125,\"k_end\":1.375,\"seg_len\":1093588,\"speed_limit\":1.875,\"max_error\":2.125,\"max_smooth\":2.375,\"max_curv\":2.625,\"possible_points\":1296103,\"exit_segment\":true},\"id\":\"gen-path_planning\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/path_planning\",\"type\":\"marti_nav_msgs/msg/PathPlanning\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"segment_type\":162019,\"length\":-3.875,\"start_speed\":-3.625,\"end_speed\":-3.375,\"startx\":-3.125,\"starty\":-2.875,\"endx\":-2.625,\"endy\":-2.375,\"theta0\":-2.125,\"a1\":-1.875,\"a2\":-1.625,\"k0\":-1.375,\"c1\":-1.125,\"c2\":-0.875,\"behavior\":729061,\"creep\":769564,\"acc\":810067,\"reverse\":850570,\"vehicle_track\":891073,\"transmitted\":true,\"aux_transmitted\":false,\"theta_end\":1.125,\"k_end\":1.375,\"seg_len\":1093588,\"speed_limit\":1.875,\"max_error\":2.125,\"max_smooth\":2.375,\"max_curv\":2.625,\"possible_points\":1296103,\"exit_segment\":true},\"id\":\"gen-path_planning\"}",
+  "model": {
+    "@kind": "path_planning",
+    "ros2martinav.path_planning_header_stamp_sec": "40510",
+    "ros2martinav.path_planning_header_stamp_nanosec": "2147564661",
+    "ros2martinav.path_planning_header_frame_id": "s3",
+    "ros2martinav.path_planning_segment_type": "162019",
+    "ros2martinav.path_planning_length": "-3.875",
+    "ros2martinav.topic": "/gen/path_planning"
+  }
+}

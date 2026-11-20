@@ -1,0 +1,17 @@
+{
+  "name": "rt-puma_feedback",
+  "from": "ros2-clearpath-motor-msgs",
+  "to": "ros2-clearpath-motor-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/puma_feedback\",\"type\":\"clearpath_motor_msgs/msg/PumaFeedback\",\"msg\":{\"device_number\":190,\"device_name\":\"s2\",\"duty_cycle\":-4.375,\"current\":-4.125,\"travel\":5.035,\"speed\":-6.042,\"setpoint\":7.049},\"id\":\"gen-puma_feedback\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/puma_feedback\",\"type\":\"clearpath_motor_msgs/msg/PumaFeedback\",\"msg\":{\"device_number\":190,\"device_name\":\"s2\",\"duty_cycle\":-4.375,\"current\":-4.125,\"travel\":5.035,\"speed\":-6.042,\"setpoint\":7.049},\"id\":\"gen-puma_feedback\"}",
+  "model": {
+    "@kind": "puma_feedback",
+    "ros2clearpathmotor.puma_feedback_device_number": "190",
+    "ros2clearpathmotor.puma_feedback_device_name": "s2",
+    "ros2clearpathmotor.puma_feedback_duty_cycle": "-4.375",
+    "ros2clearpathmotor.puma_feedback_current": "-4.125",
+    "ros2clearpathmotor.puma_feedback_travel": "5.035",
+    "ros2clearpathmotor.topic": "/gen/puma_feedback"
+  }
+}

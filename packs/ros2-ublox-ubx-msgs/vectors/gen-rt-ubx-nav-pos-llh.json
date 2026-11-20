@@ -1,0 +1,17 @@
+{
+  "name": "rt-ubx_nav_pos_llh",
+  "from": "ros2-ublox-ubx-msgs",
+  "to": "ros2-ublox-ubx-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/ubx_nav_pos_llh\",\"type\":\"ublox_ubx_msgs/msg/UBXNavPosLLH\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"itow\":2147645667,\"lon\":202522,\"lat\":243025,\"height\":283528,\"hmsl\":324031,\"h_acc\":2147848182,\"v_acc\":2147888685},\"id\":\"gen-ubx_nav_pos_llh\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/ubx_nav_pos_llh\",\"type\":\"ublox_ubx_msgs/msg/UBXNavPosLLH\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"itow\":2147645667,\"lon\":202522,\"lat\":243025,\"height\":283528,\"hmsl\":324031,\"h_acc\":2147848182,\"v_acc\":2147888685},\"id\":\"gen-ubx_nav_pos_llh\"}",
+  "model": {
+    "@kind": "ubx_nav_pos_llh",
+    "ros2ubloxubx.ubx_nav_pos_llh_header_stamp_sec": "40510",
+    "ros2ubloxubx.ubx_nav_pos_llh_header_stamp_nanosec": "2147564661",
+    "ros2ubloxubx.ubx_nav_pos_llh_header_frame_id": "s3",
+    "ros2ubloxubx.ubx_nav_pos_llh_itow": "2147645667",
+    "lon": "0.0202522",
+    "ros2ubloxubx.topic": "/gen/ubx_nav_pos_llh"
+  }
+}

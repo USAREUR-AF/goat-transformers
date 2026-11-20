@@ -1,0 +1,19 @@
+{
+  "name": "rt-route",
+  "from": "ros2-marti-nav-msgs",
+  "to": "ros2-marti-nav-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/route\",\"type\":\"marti_nav_msgs/msg/Route\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"route_points\":[{\"pose\":{\"position\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"orientation\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063,\"w\":10.07}},\"id\":\"s11\",\"properties\":[{\"key\":\"s12\",\"value\":\"s13\"}]},{\"pose\":{\"position\":{\"x\":14.098,\"y\":-15.105,\"z\":16.112},\"orientation\":{\"x\":17.119,\"y\":-18.126,\"z\":19.133,\"w\":20.14}},\"id\":\"s21\",\"properties\":[{\"key\":\"s22\",\"value\":\"s23\"}]}],\"properties\":[{\"key\":\"s24\",\"value\":\"s25\"},{\"key\":\"s26\",\"value\":\"s27\"}]},\"id\":\"gen-route\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/route\",\"type\":\"marti_nav_msgs/msg/Route\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"route_points\":[{\"pose\":{\"position\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"orientation\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063,\"w\":10.07}},\"id\":\"s11\",\"properties\":[{\"key\":\"s12\",\"value\":\"s13\"}]},{\"pose\":{\"position\":{\"x\":14.098,\"y\":-15.105,\"z\":16.112},\"orientation\":{\"x\":17.119,\"y\":-18.126,\"z\":19.133,\"w\":20.14}},\"id\":\"s21\",\"properties\":[{\"key\":\"s22\",\"value\":\"s23\"}]}],\"properties\":[{\"key\":\"s24\",\"value\":\"s25\"},{\"key\":\"s26\",\"value\":\"s27\"}]},\"id\":\"gen-route\"}",
+  "model": {
+    "@kind": "route",
+    "ros2martinav.route_header_stamp_sec": "40510",
+    "ros2martinav.route_header_stamp_nanosec": "2147564661",
+    "ros2martinav.route_header_frame_id": "s3",
+    "ros2martinav.route_route_points.#": "2",
+    "ros2martinav.route_route_points[0].ros2martinav.route_route_points_pose_position_x": "4.028",
+    "ros2martinav.route_properties.#": "2",
+    "ros2martinav.route_properties[0].ros2martinav.route_properties_key": "s24",
+    "ros2martinav.topic": "/gen/route"
+  }
+}

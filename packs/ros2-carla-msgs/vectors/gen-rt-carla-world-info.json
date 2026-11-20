@@ -1,0 +1,14 @@
+{
+  "name": "rt-carla_world_info",
+  "from": "ros2-carla-msgs",
+  "to": "ros2-carla-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/carla_world_info\",\"type\":\"carla_msgs/msg/CarlaWorldInfo\",\"msg\":{\"map_name\":\"s1\",\"opendrive\":\"s2\"},\"id\":\"gen-carla_world_info\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/carla_world_info\",\"type\":\"carla_msgs/msg/CarlaWorldInfo\",\"msg\":{\"map_name\":\"s1\",\"opendrive\":\"s2\"},\"id\":\"gen-carla_world_info\"}",
+  "model": {
+    "@kind": "carla_world_info",
+    "ros2carla.carla_world_info_map_name": "s1",
+    "ros2carla.carla_world_info_opendrive": "s2",
+    "ros2carla.topic": "/gen/carla_world_info"
+  }
+}

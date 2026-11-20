@@ -1,0 +1,16 @@
+{
+  "name": "rt-carla_actor_info",
+  "from": "ros2-carla-msgs",
+  "to": "ros2-carla-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/carla_actor_info\",\"type\":\"carla_msgs/msg/CarlaActorInfo\",\"msg\":{\"id\":2147524158,\"parent_id\":2147564661,\"type\":\"s3\",\"rolename\":\"s4\"},\"id\":\"gen-carla_actor_info\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/carla_actor_info\",\"type\":\"carla_msgs/msg/CarlaActorInfo\",\"msg\":{\"id\":2147524158,\"parent_id\":2147564661,\"type\":\"s3\",\"rolename\":\"s4\"},\"id\":\"gen-carla_actor_info\"}",
+  "model": {
+    "@kind": "carla_actor_info",
+    "ros2carla.carla_actor_info_id": "2147524158",
+    "ros2carla.carla_actor_info_parent_id": "2147564661",
+    "ros2carla.carla_actor_info_type": "s3",
+    "ros2carla.carla_actor_info_rolename": "s4",
+    "ros2carla.topic": "/gen/carla_actor_info"
+  }
+}

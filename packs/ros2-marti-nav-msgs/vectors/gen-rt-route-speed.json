@@ -1,0 +1,17 @@
+{
+  "name": "rt-route_speed",
+  "from": "ros2-marti-nav-msgs",
+  "to": "ros2-marti-nav-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/route_speed\",\"type\":\"marti_nav_msgs/msg/RouteSpeed\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"id\":\"s4\",\"distance\":-3.875,\"speed\":-3.625},\"id\":\"gen-route_speed\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/route_speed\",\"type\":\"marti_nav_msgs/msg/RouteSpeed\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"id\":\"s4\",\"distance\":-3.875,\"speed\":-3.625},\"id\":\"gen-route_speed\"}",
+  "model": {
+    "@kind": "route_speed",
+    "ros2martinav.route_speed_header_stamp_sec": "40510",
+    "ros2martinav.route_speed_header_stamp_nanosec": "2147564661",
+    "ros2martinav.route_speed_header_frame_id": "s3",
+    "ros2martinav.route_speed_id": "s4",
+    "ros2martinav.route_speed_distance": "-3.875",
+    "ros2martinav.topic": "/gen/route_speed"
+  }
+}

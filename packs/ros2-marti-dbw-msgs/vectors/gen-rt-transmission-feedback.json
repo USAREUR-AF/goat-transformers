@@ -1,0 +1,17 @@
+{
+  "name": "rt-transmission_feedback",
+  "from": "ros2-marti-dbw-msgs",
+  "to": "ros2-marti-dbw-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/transmission_feedback\",\"type\":\"marti_dbw_msgs/msg/TransmissionFeedback\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"current_range\":\"s4\",\"stable\":true,\"reverse\":false,\"forward\":true},\"id\":\"gen-transmission_feedback\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/transmission_feedback\",\"type\":\"marti_dbw_msgs/msg/TransmissionFeedback\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"current_range\":\"s4\",\"stable\":true,\"reverse\":false,\"forward\":true},\"id\":\"gen-transmission_feedback\"}",
+  "model": {
+    "@kind": "transmission_feedback",
+    "ros2martidbw.transmission_feedback_header_stamp_sec": "40510",
+    "ros2martidbw.transmission_feedback_header_stamp_nanosec": "2147564661",
+    "ros2martidbw.transmission_feedback_header_frame_id": "s3",
+    "ros2martidbw.transmission_feedback_current_range": "s4",
+    "ros2martidbw.transmission_feedback_stable": "1",
+    "ros2martidbw.topic": "/gen/transmission_feedback"
+  }
+}

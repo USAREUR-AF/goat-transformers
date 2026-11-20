@@ -1,0 +1,17 @@
+{
+  "name": "rt-sbg_imu_status",
+  "from": "ros2-sbg-driver",
+  "to": "ros2-sbg-driver",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/sbg_imu_status\",\"type\":\"sbg_driver/msg/SbgImuStatus\",\"msg\":{\"imu_com\":true,\"imu_status\":false,\"imu_accel_x\":true,\"imu_accel_y\":false,\"imu_accel_z\":true,\"imu_gyro_x\":false,\"imu_gyro_y\":true,\"imu_gyro_z\":false,\"imu_accels_in_range\":true,\"imu_gyros_in_range\":false,\"imu_gyros_use_high_scale\":true},\"id\":\"gen-sbg_imu_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/sbg_imu_status\",\"type\":\"sbg_driver/msg/SbgImuStatus\",\"msg\":{\"imu_com\":true,\"imu_status\":false,\"imu_accel_x\":true,\"imu_accel_y\":false,\"imu_accel_z\":true,\"imu_gyro_x\":false,\"imu_gyro_y\":true,\"imu_gyro_z\":false,\"imu_accels_in_range\":true,\"imu_gyros_in_range\":false,\"imu_gyros_use_high_scale\":true},\"id\":\"gen-sbg_imu_status\"}",
+  "model": {
+    "@kind": "sbg_imu_status",
+    "ros2sbg.sbg_imu_status_imu_com": "1",
+    "ros2sbg.sbg_imu_status_imu_status": "0",
+    "ros2sbg.sbg_imu_status_imu_accel_x": "1",
+    "ros2sbg.sbg_imu_status_imu_accel_y": "0",
+    "ros2sbg.sbg_imu_status_imu_accel_z": "1",
+    "ros2sbg.topic": "/gen/sbg_imu_status"
+  }
+}

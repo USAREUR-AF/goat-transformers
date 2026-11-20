@@ -1,0 +1,19 @@
+{
+  "name": "rt-ubx_nav_sbas",
+  "from": "ros2-ublox-ubx-msgs",
+  "to": "ros2-ublox-ubx-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/ubx_nav_sbas\",\"type\":\"ublox_ubx_msgs/msg/UBXNavSBAS\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"itow\":2147645667,\"geo\":154,\"mode\":209,\"sys\":-120,\"service\":{\"ranging\":false,\"corrections\":true,\"integrity\":false,\"test_mode\":true,\"bad\":false},\"cnt\":82,\"status_flags\":{\"integrity_used\":137},\"reserved_0\":\"Dy3/AIA=\",\"sv_data\":[{\"svid\":247,\"reserved_1\":46,\"udre\":101,\"sv_sys\":156,\"sv_service\":211,\"reserved_2\":10,\"prc\":-26431,\"reserved_3\":\"F0X/AIA=\",\"ic\":-10961},{\"svid\":230,\"reserved_1\":29,\"udre\":84,\"sv_sys\":139,\"sv_service\":194,\"reserved_2\":249,\"prc\":10416,\"reserved_3\":\"IGD/AIA=\",\"ic\":25886}]},\"id\":\"gen-ubx_nav_sbas\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/ubx_nav_sbas\",\"type\":\"ublox_ubx_msgs/msg/UBXNavSBAS\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"itow\":2147645667,\"geo\":154,\"mode\":209,\"sys\":-120,\"service\":{\"ranging\":false,\"corrections\":true,\"integrity\":false,\"test_mode\":true,\"bad\":false},\"cnt\":82,\"status_flags\":{\"integrity_used\":137},\"reserved_0\":\"Dy3/AIA=\",\"sv_data\":[{\"svid\":247,\"reserved_1\":46,\"udre\":101,\"sv_sys\":156,\"sv_service\":211,\"reserved_2\":10,\"prc\":-26431,\"reserved_3\":\"F0X/AIA=\",\"ic\":-10961},{\"svid\":230,\"reserved_1\":29,\"udre\":84,\"sv_sys\":139,\"sv_service\":194,\"reserved_2\":249,\"prc\":10416,\"reserved_3\":\"IGD/AIA=\",\"ic\":25886}]},\"id\":\"gen-ubx_nav_sbas\"}",
+  "model": {
+    "@kind": "ubx_nav_sbas",
+    "ros2ubloxubx.ubx_nav_sbas_header_stamp_sec": "40510",
+    "ros2ubloxubx.ubx_nav_sbas_header_stamp_nanosec": "2147564661",
+    "ros2ubloxubx.ubx_nav_sbas_header_frame_id": "s3",
+    "ros2ubloxubx.ubx_nav_sbas_itow": "2147645667",
+    "ros2ubloxubx.ubx_nav_sbas_geo": "154",
+    "ros2ubloxubx.ubx_nav_sbas_sv_data.#": "2",
+    "ros2ubloxubx.ubx_nav_sbas_sv_data[0].ros2ubloxubx.ubx_nav_sbas_sv_data_svid": "247",
+    "ros2ubloxubx.topic": "/gen/ubx_nav_sbas"
+  }
+}

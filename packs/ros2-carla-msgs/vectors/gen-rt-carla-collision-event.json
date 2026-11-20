@@ -1,0 +1,17 @@
+{
+  "name": "rt-carla_collision_event",
+  "from": "ros2-carla-msgs",
+  "to": "ros2-carla-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/carla_collision_event\",\"type\":\"carla_msgs/msg/CarlaCollisionEvent\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"other_actor_id\":2147645667,\"normal_impulse\":{\"x\":5.035,\"y\":-6.042,\"z\":7.049}},\"id\":\"gen-carla_collision_event\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/carla_collision_event\",\"type\":\"carla_msgs/msg/CarlaCollisionEvent\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"other_actor_id\":2147645667,\"normal_impulse\":{\"x\":5.035,\"y\":-6.042,\"z\":7.049}},\"id\":\"gen-carla_collision_event\"}",
+  "model": {
+    "@kind": "carla_collision_event",
+    "ros2carla.carla_collision_event_header_stamp_sec": "40510",
+    "ros2carla.carla_collision_event_header_stamp_nanosec": "2147564661",
+    "ros2carla.carla_collision_event_header_frame_id": "s3",
+    "ros2carla.carla_collision_event_other_actor_id": "2147645667",
+    "ros2carla.carla_collision_event_normal_impulse_x": "5.035",
+    "ros2carla.topic": "/gen/carla_collision_event"
+  }
+}

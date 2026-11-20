@@ -1,0 +1,17 @@
+{
+  "name": "rt-param_info",
+  "from": "ros2-marti-introspection-msgs",
+  "to": "ros2-marti-introspection-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/param_info\",\"type\":\"marti_introspection_msgs/msg/ParamInfo\",\"msg\":{\"name\":\"s1\",\"resolved_name\":\"s2\",\"description\":\"s3\",\"group\":\"s4\",\"type\":154,\"dynamic\":false,\"default_int\":283528,\"default_float\":-3.125,\"default_double\":-9.063,\"default_string\":\"s10\",\"default_bool\":true,\"max_value\":-12.084,\"min_value\":13.091},\"id\":\"gen-param_info\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/param_info\",\"type\":\"marti_introspection_msgs/msg/ParamInfo\",\"msg\":{\"name\":\"s1\",\"resolved_name\":\"s2\",\"description\":\"s3\",\"group\":\"s4\",\"type\":154,\"dynamic\":false,\"default_int\":283528,\"default_float\":-3.125,\"default_double\":-9.063,\"default_string\":\"s10\",\"default_bool\":true,\"max_value\":-12.084,\"min_value\":13.091},\"id\":\"gen-param_info\"}",
+  "model": {
+    "@kind": "param_info",
+    "ros2martiintrospection.param_info_name": "s1",
+    "ros2martiintrospection.param_info_resolved_name": "s2",
+    "ros2martiintrospection.param_info_description": "s3",
+    "ros2martiintrospection.param_info_group": "s4",
+    "ros2martiintrospection.param_info_type": "154",
+    "ros2martiintrospection.topic": "/gen/param_info"
+  }
+}

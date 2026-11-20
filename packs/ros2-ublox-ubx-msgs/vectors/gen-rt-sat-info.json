@@ -1,0 +1,17 @@
+{
+  "name": "rt-sat_info",
+  "from": "ros2-ublox-ubx-msgs",
+  "to": "ros2-ublox-ubx-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/sat_info\",\"type\":\"ublox_ubx_msgs/msg/SatInfo\",\"msg\":{\"gnss_id\":190,\"sv_id\":245,\"cno\":44,\"elev\":-29,\"azim\":5914,\"pr_res\":-19119,\"flags\":{\"quality_ind\":8,\"sv_used\":false,\"health\":118,\"diff_corr\":false,\"smoothed\":true,\"orbit_source\":27,\"eph_avail\":true,\"alm_avail\":false,\"ano_avail\":true,\"aop_avail\":false,\"sbas_corr_used\":true,\"rtcm_corr_used\":false,\"slas_corr_used\":true,\"spartn_corr_used\":false,\"pr_corr_used\":true,\"cr_corr_used\":false,\"do_corr_used\":true,\"clas_corr_used\":false,\"lpp_corr_used\":true,\"has_corr_used\":false}},\"id\":\"gen-sat_info\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/sat_info\",\"type\":\"ublox_ubx_msgs/msg/SatInfo\",\"msg\":{\"gnss_id\":190,\"sv_id\":245,\"cno\":44,\"elev\":-29,\"azim\":5914,\"pr_res\":-19119,\"flags\":{\"quality_ind\":8,\"sv_used\":false,\"health\":118,\"diff_corr\":false,\"smoothed\":true,\"orbit_source\":27,\"eph_avail\":true,\"alm_avail\":false,\"ano_avail\":true,\"aop_avail\":false,\"sbas_corr_used\":true,\"rtcm_corr_used\":false,\"slas_corr_used\":true,\"spartn_corr_used\":false,\"pr_corr_used\":true,\"cr_corr_used\":false,\"do_corr_used\":true,\"clas_corr_used\":false,\"lpp_corr_used\":true,\"has_corr_used\":false}},\"id\":\"gen-sat_info\"}",
+  "model": {
+    "@kind": "sat_info",
+    "ros2ubloxubx.sat_info_gnss_id": "190",
+    "ros2ubloxubx.sat_info_sv_id": "245",
+    "ros2ubloxubx.sat_info_cno": "44",
+    "ros2ubloxubx.sat_info_elev": "-29",
+    "ros2ubloxubx.sat_info_azim": "5914",
+    "ros2ubloxubx.topic": "/gen/sat_info"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "rt-wheel_status",
+  "from": "ros2-irobot-create-msgs",
+  "to": "ros2-irobot-create-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/wheel_status\",\"type\":\"irobot_create_msgs/msg/WheelStatus\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"current_ma_left\":30947,\"current_ma_right\":5914,\"pwm_left\":-19119,\"pwm_right\":21384,\"wheels_enabled\":false},\"id\":\"gen-wheel_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/wheel_status\",\"type\":\"irobot_create_msgs/msg/WheelStatus\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"current_ma_left\":30947,\"current_ma_right\":5914,\"pwm_left\":-19119,\"pwm_right\":21384,\"wheels_enabled\":false},\"id\":\"gen-wheel_status\"}",
+  "model": {
+    "@kind": "wheel_status",
+    "ros2irobotcreate.wheel_status_header_stamp_sec": "40510",
+    "ros2irobotcreate.wheel_status_header_stamp_nanosec": "2147564661",
+    "ros2irobotcreate.wheel_status_header_frame_id": "s3",
+    "ros2irobotcreate.wheel_status_current_ma_left": "30947",
+    "ros2irobotcreate.wheel_status_current_ma_right": "5914",
+    "ros2irobotcreate.topic": "/gen/wheel_status"
+  }
+}

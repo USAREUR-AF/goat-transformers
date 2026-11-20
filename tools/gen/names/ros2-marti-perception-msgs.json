@@ -1,0 +1,10 @@
+{
+ "PedestrianImageID:header.frame_id": "pedestrian_image_id_header_frame_id",
+ "PedestrianImageID:header.stamp.nanosec": "pedestrian_image_id_header_stamp_nanosec",
+ "PedestrianImageID:header.stamp.sec": "pedestrian_image_id_header_stamp_sec",
+ "PedestrianImageID:image_height": "pedestrian_image_id_image_height",
+ "PedestrianImageID:image_width": "pedestrian_image_id_image_width",
+ "PedestrianImageID:pixel_x": "pedestrian_image_id_pixel_x",
+ "PedestrianImageID:pixel_y": "pedestrian_image_id_pixel_y",
+ "topic": "topic"
+}

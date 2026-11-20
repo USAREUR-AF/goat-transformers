@@ -1,0 +1,17 @@
+{
+  "name": "rt-meas_epoch_channel_type2",
+  "from": "ros2-septentrio-gnss-driver",
+  "to": "ros2-septentrio-gnss-driver",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/meas_epoch_channel_type2\",\"type\":\"septentrio_gnss_driver/msg/MeasEpochChannelType2\",\"msg\":{\"type\":190,\"lock_time\":245,\"cn0\":44,\"offsets_msb\":99,\"carrier_msb\":26,\"obs_info\":209,\"code_offset_lsb\":54152,\"carrier_lsb\":29119,\"doppler_offset_lsb\":4086},\"id\":\"gen-meas_epoch_channel_type2\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/meas_epoch_channel_type2\",\"type\":\"septentrio_gnss_driver/msg/MeasEpochChannelType2\",\"msg\":{\"type\":190,\"lock_time\":245,\"cn0\":44,\"offsets_msb\":99,\"carrier_msb\":26,\"obs_info\":209,\"code_offset_lsb\":54152,\"carrier_lsb\":29119,\"doppler_offset_lsb\":4086},\"id\":\"gen-meas_epoch_channel_type2\"}",
+  "model": {
+    "@kind": "meas_epoch_channel_type2",
+    "ros2septentrio.meas_epoch_channel_type2_type": "190",
+    "ros2septentrio.meas_epoch_channel_type2_lock_time": "245",
+    "ros2septentrio.meas_epoch_channel_type2_cn0": "44",
+    "ros2septentrio.meas_epoch_channel_type2_offsets_msb": "99",
+    "ros2septentrio.meas_epoch_channel_type2_carrier_msb": "26",
+    "ros2septentrio.topic": "/gen/meas_epoch_channel_type2"
+  }
+}

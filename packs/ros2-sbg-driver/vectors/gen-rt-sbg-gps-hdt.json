@@ -1,0 +1,17 @@
+{
+  "name": "rt-sbg_gps_hdt",
+  "from": "ros2-sbg-driver",
+  "to": "ros2-sbg-driver",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/sbg_gps_hdt\",\"type\":\"sbg_driver/msg/SbgGpsHdt\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"time_stamp\":2147645667,\"status\":38682,\"tow\":2147726673,\"true_heading\":-3.375,\"true_heading_acc\":-3.125,\"pitch\":-2.875,\"pitch_acc\":-2.625,\"baseline\":-2.375,\"num_sv_tracked\":27,\"num_sv_used\":82},\"id\":\"gen-sbg_gps_hdt\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/sbg_gps_hdt\",\"type\":\"sbg_driver/msg/SbgGpsHdt\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"time_stamp\":2147645667,\"status\":38682,\"tow\":2147726673,\"true_heading\":-3.375,\"true_heading_acc\":-3.125,\"pitch\":-2.875,\"pitch_acc\":-2.625,\"baseline\":-2.375,\"num_sv_tracked\":27,\"num_sv_used\":82},\"id\":\"gen-sbg_gps_hdt\"}",
+  "model": {
+    "@kind": "sbg_gps_hdt",
+    "ros2sbg.sbg_gps_hdt_header_stamp_sec": "40510",
+    "ros2sbg.sbg_gps_hdt_header_stamp_nanosec": "2147564661",
+    "ros2sbg.sbg_gps_hdt_header_frame_id": "s3",
+    "ros2sbg.sbg_gps_hdt_time_stamp": "2147645667",
+    "ros2sbg.sbg_gps_hdt_status": "38682",
+    "ros2sbg.topic": "/gen/sbg_gps_hdt"
+  }
+}

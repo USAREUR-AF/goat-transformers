@@ -1,0 +1,19 @@
+{
+  "name": "rt-ubx_mon_comms",
+  "from": "ros2-ublox-ubx-msgs",
+  "to": "ros2-ublox-ubx-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/ubx_mon_comms\",\"type\":\"ublox_ubx_msgs/msg/UBXMonComms\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"version\":99,\"n_ports\":154,\"tx_errors\":209,\"reserved0\":8,\"prot_ids\":\"CBj/AIA=\",\"ports\":[{\"port_id\":4086,\"tx_pending\":44589,\"tx_bytes\":2147929188,\"tx_usage\":27,\"tx_peak_usage\":82,\"rx_pending\":9993,\"rx_bytes\":2148091200,\"rx_usage\":247,\"rx_peak_usage\":46,\"overrun_errs\":40933,\"msgs\":[15900,56403,31370,6337],\"skipped\":2148415224},{\"port_id\":21807,\"tx_pending\":62310,\"tx_bytes\":2148536733,\"tx_usage\":84,\"tx_peak_usage\":139,\"rx_pending\":27714,\"rx_bytes\":2148698745,\"rx_usage\":48,\"rx_peak_usage\":103,\"overrun_errs\":58654,\"msgs\":[33621,8588,49091,24058],\"skipped\":2149022769}]},\"id\":\"gen-ubx_mon_comms\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/ubx_mon_comms\",\"type\":\"ublox_ubx_msgs/msg/UBXMonComms\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"version\":99,\"n_ports\":154,\"tx_errors\":209,\"reserved0\":8,\"prot_ids\":\"CBj/AIA=\",\"ports\":[{\"port_id\":4086,\"tx_pending\":44589,\"tx_bytes\":2147929188,\"tx_usage\":27,\"tx_peak_usage\":82,\"rx_pending\":9993,\"rx_bytes\":2148091200,\"rx_usage\":247,\"rx_peak_usage\":46,\"overrun_errs\":40933,\"msgs\":[15900,56403,31370,6337],\"skipped\":2148415224},{\"port_id\":21807,\"tx_pending\":62310,\"tx_bytes\":2148536733,\"tx_usage\":84,\"tx_peak_usage\":139,\"rx_pending\":27714,\"rx_bytes\":2148698745,\"rx_usage\":48,\"rx_peak_usage\":103,\"overrun_errs\":58654,\"msgs\":[33621,8588,49091,24058],\"skipped\":2149022769}]},\"id\":\"gen-ubx_mon_comms\"}",
+  "model": {
+    "@kind": "ubx_mon_comms",
+    "ros2ubloxubx.ubx_mon_comms_header_stamp_sec": "40510",
+    "ros2ubloxubx.ubx_mon_comms_header_stamp_nanosec": "2147564661",
+    "ros2ubloxubx.ubx_mon_comms_header_frame_id": "s3",
+    "ros2ubloxubx.ubx_mon_comms_version": "99",
+    "ros2ubloxubx.ubx_mon_comms_n_ports": "154",
+    "ros2ubloxubx.ubx_mon_comms_ports.#": "2",
+    "ros2ubloxubx.ubx_mon_comms_ports[0].ros2ubloxubx.ubx_mon_comms_ports_port_id": "4086",
+    "ros2ubloxubx.topic": "/gen/ubx_mon_comms"
+  }
+}

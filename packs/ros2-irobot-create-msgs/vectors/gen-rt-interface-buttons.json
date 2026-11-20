@@ -1,0 +1,17 @@
+{
+  "name": "rt-interface_buttons",
+  "from": "ros2-irobot-create-msgs",
+  "to": "ros2-irobot-create-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/interface_buttons\",\"type\":\"irobot_create_msgs/msg/InterfaceButtons\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"button_1\":{\"header\":{\"stamp\":{\"sec\":162019,\"nanosec\":2147686170},\"frame_id\":\"s6\"},\"is_pressed\":true,\"last_start_pressed_time\":{\"sec\":324031,\"nanosec\":2147848182},\"last_pressed_duration\":{\"sec\":405037,\"nanosec\":2147929188}},\"button_power\":{\"header\":{\"stamp\":{\"sec\":486043,\"nanosec\":2148010194},\"frame_id\":\"s14\"},\"is_pressed\":true,\"last_start_pressed_time\":{\"sec\":648055,\"nanosec\":2148172206},\"last_pressed_duration\":{\"sec\":729061,\"nanosec\":2148253212}},\"button_2\":{\"header\":{\"stamp\":{\"sec\":810067,\"nanosec\":2148334218},\"frame_id\":\"s22\"},\"is_pressed\":true,\"last_start_pressed_time\":{\"sec\":972079,\"nanosec\":2148496230},\"last_pressed_duration\":{\"sec\":1053085,\"nanosec\":2148577236}}},\"id\":\"gen-interface_buttons\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/interface_buttons\",\"type\":\"irobot_create_msgs/msg/InterfaceButtons\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"button_1\":{\"header\":{\"stamp\":{\"sec\":162019,\"nanosec\":2147686170},\"frame_id\":\"s6\"},\"is_pressed\":true,\"last_start_pressed_time\":{\"sec\":324031,\"nanosec\":2147848182},\"last_pressed_duration\":{\"sec\":405037,\"nanosec\":2147929188}},\"button_power\":{\"header\":{\"stamp\":{\"sec\":486043,\"nanosec\":2148010194},\"frame_id\":\"s14\"},\"is_pressed\":true,\"last_start_pressed_time\":{\"sec\":648055,\"nanosec\":2148172206},\"last_pressed_duration\":{\"sec\":729061,\"nanosec\":2148253212}},\"button_2\":{\"header\":{\"stamp\":{\"sec\":810067,\"nanosec\":2148334218},\"frame_id\":\"s22\"},\"is_pressed\":true,\"last_start_pressed_time\":{\"sec\":972079,\"nanosec\":2148496230},\"last_pressed_duration\":{\"sec\":1053085,\"nanosec\":2148577236}}},\"id\":\"gen-interface_buttons\"}",
+  "model": {
+    "@kind": "interface_buttons",
+    "ros2irobotcreate.interface_buttons_header_stamp_sec": "40510",
+    "ros2irobotcreate.interface_buttons_header_stamp_nanosec": "2147564661",
+    "ros2irobotcreate.interface_buttons_header_frame_id": "s3",
+    "ros2irobotcreate.interface_buttons_button_1_header_stamp_sec": "162019",
+    "ros2irobotcreate.interface_buttons_button_1_header_stamp_nanosec": "2147686170",
+    "ros2irobotcreate.topic": "/gen/interface_buttons"
+  }
+}

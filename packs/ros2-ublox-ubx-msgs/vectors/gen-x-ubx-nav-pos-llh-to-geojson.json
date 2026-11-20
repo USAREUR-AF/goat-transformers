@@ -1,0 +1,14 @@
+{
+  "name": "x-ubx_nav_pos_llh-to-geojson",
+  "from": "ros2-ublox-ubx-msgs",
+  "to": "geojson",
+  "source": "tools/gen/ros2msg2pack.py: a full sample message with the bound fields set to a point; latitude, longitude and altitude are core lat, lon, hae (pack.md); geojson writes [lon, lat, alt] (RFC 7946, engine-spec 0.1.1 ruling 4)",
+  "input": "{\"op\":\"publish\",\"topic\":\"/geo\",\"type\":\"ublox_ubx_msgs/msg/UBXNavPosLLH\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"itow\":2147645667,\"lon\":85312500,\"lat\":470625000,\"height\":431500,\"hmsl\":324031,\"h_acc\":2147848182,\"v_acc\":2147888685}}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.53125,47.0625,431.5]},\"properties\":{}}",
+  "model": {
+    "@kind": "ubx_nav_pos_llh",
+    "lon": "8.53125",
+    "lat": "47.0625",
+    "hae": "431.5"
+  }
+}

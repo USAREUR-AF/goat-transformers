@@ -1,0 +1,17 @@
+{
+  "name": "rt-hazard_detection_vector",
+  "from": "ros2-irobot-create-msgs",
+  "to": "ros2-irobot-create-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/hazard_detection_vector\",\"type\":\"irobot_create_msgs/msg/HazardDetectionVector\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"detections\":[{\"header\":{\"stamp\":{\"sec\":162019,\"nanosec\":2147686170},\"frame_id\":\"s6\"},\"type\":8},{\"header\":{\"stamp\":{\"sec\":324031,\"nanosec\":2147848182},\"frame_id\":\"s10\"},\"type\":228}]},\"id\":\"gen-hazard_detection_vector\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/hazard_detection_vector\",\"type\":\"irobot_create_msgs/msg/HazardDetectionVector\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"detections\":[{\"header\":{\"stamp\":{\"sec\":162019,\"nanosec\":2147686170},\"frame_id\":\"s6\"},\"type\":8},{\"header\":{\"stamp\":{\"sec\":324031,\"nanosec\":2147848182},\"frame_id\":\"s10\"},\"type\":228}]},\"id\":\"gen-hazard_detection_vector\"}",
+  "model": {
+    "@kind": "hazard_detection_vector",
+    "ros2irobotcreate.hazard_detection_vector_header_stamp_sec": "40510",
+    "ros2irobotcreate.hazard_detection_vector_header_stamp_nanosec": "2147564661",
+    "ros2irobotcreate.hazard_detection_vector_header_frame_id": "s3",
+    "ros2irobotcreate.hazard_detection_vector_detections.#": "2",
+    "ros2irobotcreate.hazard_detection_vector_detections[0].ros2irobotcreate.hazard_detection_vector_detections_header_stamp_sec": "162019",
+    "ros2irobotcreate.topic": "/gen/hazard_detection_vector"
+  }
+}

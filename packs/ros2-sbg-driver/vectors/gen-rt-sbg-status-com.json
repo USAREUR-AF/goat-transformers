@@ -1,0 +1,17 @@
+{
+  "name": "rt-sbg_status_com",
+  "from": "ros2-sbg-driver",
+  "to": "ros2-sbg-driver",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/sbg_status_com\",\"type\":\"sbg_driver/msg/SbgStatusCom\",\"msg\":{\"port_a\":true,\"port_b\":false,\"port_c\":true,\"port_d\":false,\"port_e\":true,\"port_a_rx\":false,\"port_a_tx\":true,\"port_b_rx\":false,\"port_b_tx\":true,\"port_c_rx\":false,\"port_c_tx\":true,\"port_d_rx\":false,\"port_d_tx\":true,\"port_e_rx\":false,\"port_e_tx\":true,\"eth_0\":false,\"eth_1\":true,\"eth_2\":false,\"eth_3\":true,\"eth_4\":false,\"eth_0_rx\":true,\"eth_0_tx\":false,\"eth_1_rx\":true,\"eth_1_tx\":false,\"eth_2_rx\":true,\"eth_2_tx\":false,\"eth_3_rx\":true,\"eth_3_tx\":false,\"eth_4_rx\":true,\"eth_4_tx\":false,\"can_rx\":true,\"can_tx\":false,\"can_status\":158},\"id\":\"gen-sbg_status_com\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/sbg_status_com\",\"type\":\"sbg_driver/msg/SbgStatusCom\",\"msg\":{\"port_a\":true,\"port_b\":false,\"port_c\":true,\"port_d\":false,\"port_e\":true,\"port_a_rx\":false,\"port_a_tx\":true,\"port_b_rx\":false,\"port_b_tx\":true,\"port_c_rx\":false,\"port_c_tx\":true,\"port_d_rx\":false,\"port_d_tx\":true,\"port_e_rx\":false,\"port_e_tx\":true,\"eth_0\":false,\"eth_1\":true,\"eth_2\":false,\"eth_3\":true,\"eth_4\":false,\"eth_0_rx\":true,\"eth_0_tx\":false,\"eth_1_rx\":true,\"eth_1_tx\":false,\"eth_2_rx\":true,\"eth_2_tx\":false,\"eth_3_rx\":true,\"eth_3_tx\":false,\"eth_4_rx\":true,\"eth_4_tx\":false,\"can_rx\":true,\"can_tx\":false,\"can_status\":158},\"id\":\"gen-sbg_status_com\"}",
+  "model": {
+    "@kind": "sbg_status_com",
+    "ros2sbg.sbg_status_com_port_a": "1",
+    "ros2sbg.sbg_status_com_port_b": "0",
+    "ros2sbg.sbg_status_com_port_c": "1",
+    "ros2sbg.sbg_status_com_port_d": "0",
+    "ros2sbg.sbg_status_com_port_e": "1",
+    "ros2sbg.topic": "/gen/sbg_status_com"
+  }
+}

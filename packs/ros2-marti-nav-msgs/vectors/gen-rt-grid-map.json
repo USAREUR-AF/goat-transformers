@@ -1,0 +1,21 @@
+{
+  "name": "rt-grid_map",
+  "from": "ros2-marti-nav-msgs",
+  "to": "ros2-marti-nav-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/grid_map\",\"type\":\"marti_nav_msgs/msg/GridMap\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"top_left\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"top_right\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063},\"bottom_right\":{\"x\":10.07,\"y\":11.077,\"z\":-12.084},\"bottom_left\":{\"x\":13.091,\"y\":14.098,\"z\":-15.105},\"map_names\":[\"s16\",\"s17\"],\"map_data\":[{\"header\":{\"stamp\":{\"sec\":729061,\"nanosec\":2148253212},\"frame_id\":\"s20\"},\"height\":2148334218,\"width\":2148374721,\"encoding\":\"s23\",\"is_bigendian\":175,\"step\":2148496230,\"data\":\"Gk7/AIA=\"},{\"header\":{\"stamp\":{\"sec\":1093588,\"nanosec\":2148617739},\"frame_id\":\"s29\"},\"height\":2148698745,\"width\":2148739248,\"encoding\":\"s32\",\"is_bigendian\":158,\"step\":2148860757,\"data\":\"I2n/AIA=\"}]},\"id\":\"gen-grid_map\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/grid_map\",\"type\":\"marti_nav_msgs/msg/GridMap\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"top_left\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"top_right\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063},\"bottom_right\":{\"x\":10.07,\"y\":11.077,\"z\":-12.084},\"bottom_left\":{\"x\":13.091,\"y\":14.098,\"z\":-15.105},\"map_names\":[\"s16\",\"s17\"],\"map_data\":[{\"header\":{\"stamp\":{\"sec\":729061,\"nanosec\":2148253212},\"frame_id\":\"s20\"},\"height\":2148334218,\"width\":2148374721,\"encoding\":\"s23\",\"is_bigendian\":175,\"step\":2148496230,\"data\":\"Gk7/AIA=\"},{\"header\":{\"stamp\":{\"sec\":1093588,\"nanosec\":2148617739},\"frame_id\":\"s29\"},\"height\":2148698745,\"width\":2148739248,\"encoding\":\"s32\",\"is_bigendian\":158,\"step\":2148860757,\"data\":\"I2n/AIA=\"}]},\"id\":\"gen-grid_map\"}",
+  "model": {
+    "@kind": "grid_map",
+    "ros2martinav.grid_map_header_stamp_sec": "40510",
+    "ros2martinav.grid_map_header_stamp_nanosec": "2147564661",
+    "ros2martinav.grid_map_header_frame_id": "s3",
+    "ros2martinav.grid_map_top_left_x": "4.028",
+    "ros2martinav.grid_map_top_left_y": "5.035",
+    "ros2martinav.grid_map_map_names.#": "2",
+    "ros2martinav.grid_map_map_names[0].ros2martinav.grid_map_map_names_value": "s16",
+    "ros2martinav.grid_map_map_data.#": "2",
+    "ros2martinav.grid_map_map_data[0].ros2martinav.grid_map_map_data_header_stamp_sec": "729061",
+    "ros2martinav.topic": "/gen/grid_map"
+  }
+}

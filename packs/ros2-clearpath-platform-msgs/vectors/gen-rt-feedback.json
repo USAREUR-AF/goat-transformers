@@ -1,0 +1,19 @@
+{
+  "name": "rt-feedback",
+  "from": "ros2-clearpath-platform-msgs",
+  "to": "ros2-clearpath-platform-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/feedback\",\"type\":\"clearpath_platform_msgs/msg/Feedback\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"drivers\":[{\"current\":-4.125,\"duty_cycle\":-3.875,\"bridge_temperature\":-3.625,\"motor_temperature\":-3.375,\"measured_velocity\":-3.125,\"measured_travel\":-2.875,\"driver_fault\":false},{\"current\":-2.375,\"duty_cycle\":-2.125,\"bridge_temperature\":-1.875,\"motor_temperature\":-1.625,\"measured_velocity\":-1.375,\"measured_travel\":-1.125,\"driver_fault\":true}],\"commanded_mode\":-27,\"actual_mode\":28},\"id\":\"gen-feedback\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/feedback\",\"type\":\"clearpath_platform_msgs/msg/Feedback\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"drivers\":[{\"current\":-4.125,\"duty_cycle\":-3.875,\"bridge_temperature\":-3.625,\"motor_temperature\":-3.375,\"measured_velocity\":-3.125,\"measured_travel\":-2.875,\"driver_fault\":false},{\"current\":-2.375,\"duty_cycle\":-2.125,\"bridge_temperature\":-1.875,\"motor_temperature\":-1.625,\"measured_velocity\":-1.375,\"measured_travel\":-1.125,\"driver_fault\":true}],\"commanded_mode\":-27,\"actual_mode\":28},\"id\":\"gen-feedback\"}",
+  "model": {
+    "@kind": "feedback",
+    "ros2clearpathplatform.feedback_header_stamp_sec": "40510",
+    "ros2clearpathplatform.feedback_header_stamp_nanosec": "2147564661",
+    "ros2clearpathplatform.feedback_header_frame_id": "s3",
+    "ros2clearpathplatform.feedback_drivers.#": "2",
+    "ros2clearpathplatform.feedback_drivers[0].ros2clearpathplatform.feedback_drivers_current": "-4.125",
+    "ros2clearpathplatform.feedback_commanded_mode": "-27",
+    "ros2clearpathplatform.feedback_actual_mode": "28",
+    "ros2clearpathplatform.topic": "/gen/feedback"
+  }
+}

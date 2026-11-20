@@ -1,0 +1,16 @@
+{
+  "name": "rt-string_stamped",
+  "from": "ros2-marti-common-msgs",
+  "to": "ros2-marti-common-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/string_stamped\",\"type\":\"marti_common_msgs/msg/StringStamped\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"value\":\"s4\"},\"id\":\"gen-string_stamped\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/string_stamped\",\"type\":\"marti_common_msgs/msg/StringStamped\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"value\":\"s4\"},\"id\":\"gen-string_stamped\"}",
+  "model": {
+    "@kind": "string_stamped",
+    "ros2marticommon.string_stamped_header_stamp_sec": "40510",
+    "ros2marticommon.string_stamped_header_stamp_nanosec": "2147564661",
+    "ros2marticommon.string_stamped_header_frame_id": "s3",
+    "ros2marticommon.string_stamped_value": "s4",
+    "ros2marticommon.topic": "/gen/string_stamped"
+  }
+}

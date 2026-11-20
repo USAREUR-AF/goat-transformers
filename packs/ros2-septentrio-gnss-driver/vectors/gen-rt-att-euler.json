@@ -1,0 +1,17 @@
+{
+  "name": "rt-att_euler",
+  "from": "ros2-septentrio-gnss-driver",
+  "to": "ros2-septentrio-gnss-driver",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/att_euler\",\"type\":\"septentrio_gnss_driver/msg/AttEuler\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"block_header\":{\"sync_1\":99,\"sync_2\":154,\"crc\":13649,\"id\":54152,\"revision\":63,\"length\":4086,\"tow\":2147888685,\"wnc\":19556},\"nr_sv\":27,\"error\":82,\"mode\":9993,\"heading\":-1.375,\"pitch\":-1.125,\"roll\":-0.875,\"pitch_dot\":-0.625,\"roll_dot\":-0.375,\"heading_dot\":-0.125},\"id\":\"gen-att_euler\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/att_euler\",\"type\":\"septentrio_gnss_driver/msg/AttEuler\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"block_header\":{\"sync_1\":99,\"sync_2\":154,\"crc\":13649,\"id\":54152,\"revision\":63,\"length\":4086,\"tow\":2147888685,\"wnc\":19556},\"nr_sv\":27,\"error\":82,\"mode\":9993,\"heading\":-1.375,\"pitch\":-1.125,\"roll\":-0.875,\"pitch_dot\":-0.625,\"roll_dot\":-0.375,\"heading_dot\":-0.125},\"id\":\"gen-att_euler\"}",
+  "model": {
+    "@kind": "att_euler",
+    "ros2septentrio.att_euler_header_stamp_sec": "40510",
+    "ros2septentrio.att_euler_header_stamp_nanosec": "2147564661",
+    "ros2septentrio.att_euler_header_frame_id": "s3",
+    "ros2septentrio.att_euler_block_header_sync_1": "99",
+    "ros2septentrio.att_euler_block_header_sync_2": "154",
+    "ros2septentrio.topic": "/gen/att_euler"
+  }
+}

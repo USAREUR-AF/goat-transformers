@@ -1,0 +1,17 @@
+{
+  "name": "rt-sig_flags",
+  "from": "ros2-ublox-ubx-msgs",
+  "to": "ros2-ublox-ubx-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/sig_flags\",\"type\":\"ublox_ubx_msgs/msg/SigFlags\",\"msg\":{\"health\":190,\"pr_smoothed\":false,\"pr_used\":true,\"cr_used\":false,\"do_used\":true,\"pr_corr_used\":false,\"cr_corr_used\":true,\"do_corr_used\":false},\"id\":\"gen-sig_flags\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/sig_flags\",\"type\":\"ublox_ubx_msgs/msg/SigFlags\",\"msg\":{\"health\":190,\"pr_smoothed\":false,\"pr_used\":true,\"cr_used\":false,\"do_used\":true,\"pr_corr_used\":false,\"cr_corr_used\":true,\"do_corr_used\":false},\"id\":\"gen-sig_flags\"}",
+  "model": {
+    "@kind": "sig_flags",
+    "ros2ubloxubx.sig_flags_health": "190",
+    "ros2ubloxubx.sig_flags_pr_smoothed": "0",
+    "ros2ubloxubx.sig_flags_pr_used": "1",
+    "ros2ubloxubx.sig_flags_cr_used": "0",
+    "ros2ubloxubx.sig_flags_do_used": "1",
+    "ros2ubloxubx.topic": "/gen/sig_flags"
+  }
+}

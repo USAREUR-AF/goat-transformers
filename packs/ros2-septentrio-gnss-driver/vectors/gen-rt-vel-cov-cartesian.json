@@ -1,0 +1,17 @@
+{
+  "name": "rt-vel_cov_cartesian",
+  "from": "ros2-septentrio-gnss-driver",
+  "to": "ros2-septentrio-gnss-driver",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/vel_cov_cartesian\",\"type\":\"septentrio_gnss_driver/msg/VelCovCartesian\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"block_header\":{\"sync_1\":99,\"sync_2\":154,\"crc\":13649,\"id\":54152,\"revision\":63,\"length\":4086,\"tow\":2147888685,\"wnc\":19556},\"mode\":27,\"error\":82,\"cov_vxvx\":-1.625,\"cov_vyvy\":-1.375,\"cov_vzvz\":-1.125,\"cov_dtdt\":-0.875,\"cov_vxvy\":-0.625,\"cov_vxvz\":-0.375,\"cov_vxdt\":-0.125,\"cov_vyvz\":0.125,\"cov_vydt\":0.375,\"cov_vzdt\":0.625},\"id\":\"gen-vel_cov_cartesian\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/vel_cov_cartesian\",\"type\":\"septentrio_gnss_driver/msg/VelCovCartesian\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"block_header\":{\"sync_1\":99,\"sync_2\":154,\"crc\":13649,\"id\":54152,\"revision\":63,\"length\":4086,\"tow\":2147888685,\"wnc\":19556},\"mode\":27,\"error\":82,\"cov_vxvx\":-1.625,\"cov_vyvy\":-1.375,\"cov_vzvz\":-1.125,\"cov_dtdt\":-0.875,\"cov_vxvy\":-0.625,\"cov_vxvz\":-0.375,\"cov_vxdt\":-0.125,\"cov_vyvz\":0.125,\"cov_vydt\":0.375,\"cov_vzdt\":0.625},\"id\":\"gen-vel_cov_cartesian\"}",
+  "model": {
+    "@kind": "vel_cov_cartesian",
+    "ros2septentrio.vel_cov_cartesian_header_stamp_sec": "40510",
+    "ros2septentrio.vel_cov_cartesian_header_stamp_nanosec": "2147564661",
+    "ros2septentrio.vel_cov_cartesian_header_frame_id": "s3",
+    "ros2septentrio.vel_cov_cartesian_block_header_sync_1": "99",
+    "ros2septentrio.vel_cov_cartesian_block_header_sync_2": "154",
+    "ros2septentrio.topic": "/gen/vel_cov_cartesian"
+  }
+}

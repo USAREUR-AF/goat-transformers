@@ -1,0 +1,19 @@
+{
+  "name": "rt-ubx_esf_status",
+  "from": "ros2-ublox-ubx-msgs",
+  "to": "ros2-ublox-ubx-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/ubx_esf_status\",\"type\":\"ublox_ubx_msgs/msg/UBXEsfStatus\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"itow\":2147645667,\"version\":154,\"wt_init_status\":209,\"mnt_alg_status\":8,\"ins_init_status\":63,\"imu_init_status\":118,\"fusion_mode\":173,\"num_sens\":228,\"sensor_statuses\":[{\"sensor_data_type\":27,\"used\":true,\"ready\":false,\"calib_status\":192,\"time_status\":247,\"freq\":46,\"fault_bad_meas\":false,\"fault_bad_ttag\":true,\"fault_missing_meas\":false,\"fault_noisy_meas\":true},{\"sensor_data_type\":65,\"used\":true,\"ready\":false,\"calib_status\":230,\"time_status\":29,\"freq\":84,\"fault_bad_meas\":false,\"fault_bad_ttag\":true,\"fault_missing_meas\":false,\"fault_noisy_meas\":true}]},\"id\":\"gen-ubx_esf_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/ubx_esf_status\",\"type\":\"ublox_ubx_msgs/msg/UBXEsfStatus\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"itow\":2147645667,\"version\":154,\"wt_init_status\":209,\"mnt_alg_status\":8,\"ins_init_status\":63,\"imu_init_status\":118,\"fusion_mode\":173,\"num_sens\":228,\"sensor_statuses\":[{\"sensor_data_type\":27,\"used\":true,\"ready\":false,\"calib_status\":192,\"time_status\":247,\"freq\":46,\"fault_bad_meas\":false,\"fault_bad_ttag\":true,\"fault_missing_meas\":false,\"fault_noisy_meas\":true},{\"sensor_data_type\":65,\"used\":true,\"ready\":false,\"calib_status\":230,\"time_status\":29,\"freq\":84,\"fault_bad_meas\":false,\"fault_bad_ttag\":true,\"fault_missing_meas\":false,\"fault_noisy_meas\":true}]},\"id\":\"gen-ubx_esf_status\"}",
+  "model": {
+    "@kind": "ubx_esf_status",
+    "ros2ubloxubx.ubx_esf_status_header_stamp_sec": "40510",
+    "ros2ubloxubx.ubx_esf_status_header_stamp_nanosec": "2147564661",
+    "ros2ubloxubx.ubx_esf_status_header_frame_id": "s3",
+    "ros2ubloxubx.ubx_esf_status_itow": "2147645667",
+    "ros2ubloxubx.ubx_esf_status_version": "154",
+    "ros2ubloxubx.ubx_esf_status_sensor_statuses.#": "2",
+    "ros2ubloxubx.ubx_esf_status_sensor_statuses[0].ros2ubloxubx.ubx_esf_status_sensor_statuses_sensor_data_type": "27",
+    "ros2ubloxubx.topic": "/gen/ubx_esf_status"
+  }
+}

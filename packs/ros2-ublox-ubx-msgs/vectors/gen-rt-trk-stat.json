@@ -1,0 +1,16 @@
+{
+  "name": "rt-trk_stat",
+  "from": "ros2-ublox-ubx-msgs",
+  "to": "ros2-ublox-ubx-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/trk_stat\",\"type\":\"ublox_ubx_msgs/msg/TrkStat\",\"msg\":{\"pr_valid\":true,\"cp_valid\":false,\"half_cyc\":true,\"sub_half_cyc\":false},\"id\":\"gen-trk_stat\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/trk_stat\",\"type\":\"ublox_ubx_msgs/msg/TrkStat\",\"msg\":{\"pr_valid\":true,\"cp_valid\":false,\"half_cyc\":true,\"sub_half_cyc\":false},\"id\":\"gen-trk_stat\"}",
+  "model": {
+    "@kind": "trk_stat",
+    "ros2ubloxubx.trk_stat_pr_valid": "1",
+    "ros2ubloxubx.trk_stat_cp_valid": "0",
+    "ros2ubloxubx.trk_stat_half_cyc": "1",
+    "ros2ubloxubx.trk_stat_sub_half_cyc": "0",
+    "ros2ubloxubx.topic": "/gen/trk_stat"
+  }
+}

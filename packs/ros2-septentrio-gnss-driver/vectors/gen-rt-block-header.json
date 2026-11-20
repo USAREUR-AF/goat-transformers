@@ -1,0 +1,17 @@
+{
+  "name": "rt-block_header",
+  "from": "ros2-septentrio-gnss-driver",
+  "to": "ros2-septentrio-gnss-driver",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/block_header\",\"type\":\"septentrio_gnss_driver/msg/BlockHeader\",\"msg\":{\"sync_1\":190,\"sync_2\":245,\"crc\":23212,\"id\":63715,\"revision\":154,\"length\":13649,\"tow\":2147767176,\"wnc\":29119},\"id\":\"gen-block_header\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/block_header\",\"type\":\"septentrio_gnss_driver/msg/BlockHeader\",\"msg\":{\"sync_1\":190,\"sync_2\":245,\"crc\":23212,\"id\":63715,\"revision\":154,\"length\":13649,\"tow\":2147767176,\"wnc\":29119},\"id\":\"gen-block_header\"}",
+  "model": {
+    "@kind": "block_header",
+    "ros2septentrio.block_header_sync_1": "190",
+    "ros2septentrio.block_header_sync_2": "245",
+    "ros2septentrio.block_header_crc": "23212",
+    "ros2septentrio.block_header_id": "63715",
+    "ros2septentrio.block_header_revision": "154",
+    "ros2septentrio.topic": "/gen/block_header"
+  }
+}

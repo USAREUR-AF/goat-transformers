@@ -1,0 +1,14 @@
+{
+  "name": "rt-sbg_gps_vel_status",
+  "from": "ros2-sbg-driver",
+  "to": "ros2-sbg-driver",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/sbg_gps_vel_status\",\"type\":\"sbg_driver/msg/SbgGpsVelStatus\",\"msg\":{\"vel_status\":190,\"vel_type\":245},\"id\":\"gen-sbg_gps_vel_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/sbg_gps_vel_status\",\"type\":\"sbg_driver/msg/SbgGpsVelStatus\",\"msg\":{\"vel_status\":190,\"vel_type\":245},\"id\":\"gen-sbg_gps_vel_status\"}",
+  "model": {
+    "@kind": "sbg_gps_vel_status",
+    "ros2sbg.sbg_gps_vel_status_vel_status_2": "190",
+    "ros2sbg.sbg_gps_vel_status_vel_type_2": "245",
+    "ros2sbg.topic": "/gen/sbg_gps_vel_status"
+  }
+}

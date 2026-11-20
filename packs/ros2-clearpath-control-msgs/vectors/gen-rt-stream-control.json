@@ -1,0 +1,14 @@
+{
+  "name": "rt-stream_control",
+  "from": "ros2-clearpath-control-msgs",
+  "to": "ros2-clearpath-control-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/stream_control\",\"type\":\"clearpath_control_msgs/msg/StreamControl\",\"msg\":{\"stream\":\"s1\",\"enabled\":false},\"id\":\"gen-stream_control\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/stream_control\",\"type\":\"clearpath_control_msgs/msg/StreamControl\",\"msg\":{\"stream\":\"s1\",\"enabled\":false},\"id\":\"gen-stream_control\"}",
+  "model": {
+    "@kind": "stream_control",
+    "ros2clearpathcontrol.stream_control_stream": "s1",
+    "ros2clearpathcontrol.stream_control_enabled": "0",
+    "ros2clearpathcontrol.topic": "/gen/stream_control"
+  }
+}

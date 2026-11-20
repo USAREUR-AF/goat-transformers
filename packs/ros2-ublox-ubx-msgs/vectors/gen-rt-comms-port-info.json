@@ -1,0 +1,19 @@
+{
+  "name": "rt-comms_port_info",
+  "from": "ros2-ublox-ubx-msgs",
+  "to": "ros2-ublox-ubx-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/comms_port_info\",\"type\":\"ublox_ubx_msgs/msg/CommsPortInfo\",\"msg\":{\"port_id\":7742,\"tx_pending\":48245,\"tx_bytes\":2147605164,\"tx_usage\":99,\"tx_peak_usage\":154,\"rx_pending\":13649,\"rx_bytes\":2147767176,\"rx_usage\":63,\"rx_peak_usage\":118,\"overrun_errs\":44589,\"msgs\":[19556,60059,35026,9993],\"skipped\":2148091200},\"id\":\"gen-comms_port_info\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/comms_port_info\",\"type\":\"ublox_ubx_msgs/msg/CommsPortInfo\",\"msg\":{\"port_id\":7742,\"tx_pending\":48245,\"tx_bytes\":2147605164,\"tx_usage\":99,\"tx_peak_usage\":154,\"rx_pending\":13649,\"rx_bytes\":2147767176,\"rx_usage\":63,\"rx_peak_usage\":118,\"overrun_errs\":44589,\"msgs\":[19556,60059,35026,9993],\"skipped\":2148091200},\"id\":\"gen-comms_port_info\"}",
+  "model": {
+    "@kind": "comms_port_info",
+    "ros2ubloxubx.comms_port_info_port_id": "7742",
+    "ros2ubloxubx.comms_port_info_tx_pending": "48245",
+    "ros2ubloxubx.comms_port_info_tx_bytes": "2147605164",
+    "ros2ubloxubx.comms_port_info_tx_usage": "99",
+    "ros2ubloxubx.comms_port_info_tx_peak_usage": "154",
+    "ros2ubloxubx.comms_port_info_msgs.#": "4",
+    "ros2ubloxubx.comms_port_info_msgs[0].ros2ubloxubx.comms_port_info_msgs_value": "19556",
+    "ros2ubloxubx.topic": "/gen/comms_port_info"
+  }
+}

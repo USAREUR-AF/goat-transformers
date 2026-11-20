@@ -1,0 +1,19 @@
+{
+  "name": "rt-base_vector_cart",
+  "from": "ros2-septentrio-gnss-driver",
+  "to": "ros2-septentrio-gnss-driver",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/base_vector_cart\",\"type\":\"septentrio_gnss_driver/msg/BaseVectorCart\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"block_header\":{\"sync_1\":99,\"sync_2\":154,\"crc\":13649,\"id\":54152,\"revision\":63,\"length\":4086,\"tow\":2147888685,\"wnc\":19556},\"n\":27,\"sb_length\":82,\"vector_info_cart\":[{\"nr_sv\":137,\"error\":192,\"mode\":247,\"misc\":46,\"delta_x\":-18.126,\"delta_y\":19.133,\"delta_z\":20.14,\"delta_vx\":0.125,\"delta_vy\":0.375,\"delta_vz\":0.625,\"azimuth\":21807,\"elevation\":29542,\"reference_id\":37277,\"corr_age\":12244,\"signal_info\":2148617739},{\"nr_sv\":194,\"error\":249,\"mode\":48,\"misc\":103,\"delta_x\":-33.231,\"delta_y\":34.238,\"delta_z\":35.245,\"delta_vx\":3.875,\"delta_vy\":4.125,\"delta_vz\":4.375,\"azimuth\":39528,\"elevation\":-18273,\"reference_id\":54998,\"corr_age\":29965,\"signal_info\":2149225284}]},\"id\":\"gen-base_vector_cart\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/base_vector_cart\",\"type\":\"septentrio_gnss_driver/msg/BaseVectorCart\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"block_header\":{\"sync_1\":99,\"sync_2\":154,\"crc\":13649,\"id\":54152,\"revision\":63,\"length\":4086,\"tow\":2147888685,\"wnc\":19556},\"n\":27,\"sb_length\":82,\"vector_info_cart\":[{\"nr_sv\":137,\"error\":192,\"mode\":247,\"misc\":46,\"delta_x\":-18.126,\"delta_y\":19.133,\"delta_z\":20.14,\"delta_vx\":0.125,\"delta_vy\":0.375,\"delta_vz\":0.625,\"azimuth\":21807,\"elevation\":29542,\"reference_id\":37277,\"corr_age\":12244,\"signal_info\":2148617739},{\"nr_sv\":194,\"error\":249,\"mode\":48,\"misc\":103,\"delta_x\":-33.231,\"delta_y\":34.238,\"delta_z\":35.245,\"delta_vx\":3.875,\"delta_vy\":4.125,\"delta_vz\":4.375,\"azimuth\":39528,\"elevation\":-18273,\"reference_id\":54998,\"corr_age\":29965,\"signal_info\":2149225284}]},\"id\":\"gen-base_vector_cart\"}",
+  "model": {
+    "@kind": "base_vector_cart",
+    "ros2septentrio.base_vector_cart_header_stamp_sec": "40510",
+    "ros2septentrio.base_vector_cart_header_stamp_nanosec": "2147564661",
+    "ros2septentrio.base_vector_cart_header_frame_id": "s3",
+    "ros2septentrio.base_vector_cart_block_header_sync_1": "99",
+    "ros2septentrio.base_vector_cart_block_header_sync_2": "154",
+    "ros2septentrio.base_vector_cart_vector_info_cart.#": "2",
+    "ros2septentrio.base_vector_cart_vector_info_cart[0].ros2septentrio.base_vector_cart_vector_info_cart_nr_sv": "137",
+    "ros2septentrio.topic": "/gen/base_vector_cart"
+  }
+}

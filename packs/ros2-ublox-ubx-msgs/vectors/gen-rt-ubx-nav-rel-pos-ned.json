@@ -1,0 +1,17 @@
+{
+  "name": "rt-ubx_nav_rel_pos_ned",
+  "from": "ros2-ublox-ubx-msgs",
+  "to": "ros2-ublox-ubx-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/ubx_nav_rel_pos_ned\",\"type\":\"ublox_ubx_msgs/msg/UBXNavRelPosNED\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"version\":99,\"ref_station_id\":38682,\"itow\":2147726673,\"rel_pos_n\":283528,\"rel_pos_e\":324031,\"rel_pos_d\":364534,\"rel_pos_length\":405037,\"rel_pos_heading\":445540,\"rel_pos_hp_n\":-101,\"rel_pos_hp_e\":-46,\"rel_pos_hp_d\":9,\"rel_pos_hp_length\":64,\"acc_n\":2148131703,\"acc_e\":2148172206,\"acc_d\":2148212709,\"acc_length\":2148253212,\"acc_heading\":2148293715,\"gnss_fix_ok\":true,\"diff_soln\":false,\"rel_pos_valid\":true,\"carr_soln\":{\"status\":175},\"is_moving\":true,\"ref_pos_miss\":false,\"ref_obs_miss\":true,\"rel_pos_heading_valid\":false,\"rel_pos_normalized\":true},\"id\":\"gen-ubx_nav_rel_pos_ned\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/ubx_nav_rel_pos_ned\",\"type\":\"ublox_ubx_msgs/msg/UBXNavRelPosNED\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"version\":99,\"ref_station_id\":38682,\"itow\":2147726673,\"rel_pos_n\":283528,\"rel_pos_e\":324031,\"rel_pos_d\":364534,\"rel_pos_length\":405037,\"rel_pos_heading\":445540,\"rel_pos_hp_n\":-101,\"rel_pos_hp_e\":-46,\"rel_pos_hp_d\":9,\"rel_pos_hp_length\":64,\"acc_n\":2148131703,\"acc_e\":2148172206,\"acc_d\":2148212709,\"acc_length\":2148253212,\"acc_heading\":2148293715,\"gnss_fix_ok\":true,\"diff_soln\":false,\"rel_pos_valid\":true,\"carr_soln\":{\"status\":175},\"is_moving\":true,\"ref_pos_miss\":false,\"ref_obs_miss\":true,\"rel_pos_heading_valid\":false,\"rel_pos_normalized\":true},\"id\":\"gen-ubx_nav_rel_pos_ned\"}",
+  "model": {
+    "@kind": "ubx_nav_rel_pos_ned",
+    "ros2ubloxubx.ubx_nav_rel_pos_ned_header_stamp_sec": "40510",
+    "ros2ubloxubx.ubx_nav_rel_pos_ned_header_stamp_nanosec": "2147564661",
+    "ros2ubloxubx.ubx_nav_rel_pos_ned_header_frame_id": "s3",
+    "ros2ubloxubx.ubx_nav_rel_pos_ned_version": "99",
+    "ros2ubloxubx.ubx_nav_rel_pos_ned_ref_station_id": "38682",
+    "ros2ubloxubx.topic": "/gen/ubx_nav_rel_pos_ned"
+  }
+}

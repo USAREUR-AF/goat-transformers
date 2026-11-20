@@ -1,0 +1,13 @@
+{
+  "name": "rt-fans",
+  "from": "ros2-clearpath-platform-msgs",
+  "to": "ros2-clearpath-platform-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/fans\",\"type\":\"clearpath_platform_msgs/msg/Fans\",\"msg\":{\"fans\":\"AQP/AIA=\"},\"id\":\"gen-fans\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/fans\",\"type\":\"clearpath_platform_msgs/msg/Fans\",\"msg\":{\"fans\":\"AQP/AIA=\"},\"id\":\"gen-fans\"}",
+  "model": {
+    "@kind": "fans",
+    "ros2clearpathplatform.fans_fans": "AQP/AIA=",
+    "ros2clearpathplatform.topic": "/gen/fans"
+  }
+}

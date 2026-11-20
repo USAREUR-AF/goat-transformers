@@ -1,0 +1,18 @@
+{
+  "name": "rt-lynx_system_protection",
+  "from": "ros2-clearpath-motor-msgs",
+  "to": "ros2-clearpath-motor-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/lynx_system_protection\",\"type\":\"clearpath_motor_msgs/msg/LynxSystemProtection\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"system_state\":99,\"motor_states\":[{\"can_id\":154,\"joint_name\":\"s6\",\"state\":8},{\"can_id\":63,\"joint_name\":\"s9\",\"state\":173}]},\"id\":\"gen-lynx_system_protection\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/lynx_system_protection\",\"type\":\"clearpath_motor_msgs/msg/LynxSystemProtection\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"system_state\":99,\"motor_states\":[{\"can_id\":154,\"joint_name\":\"s6\",\"state\":8},{\"can_id\":63,\"joint_name\":\"s9\",\"state\":173}]},\"id\":\"gen-lynx_system_protection\"}",
+  "model": {
+    "@kind": "lynx_system_protection",
+    "ros2clearpathmotor.lynx_system_protection_header_stamp_sec": "40510",
+    "ros2clearpathmotor.lynx_system_protection_header_stamp_nanosec": "2147564661",
+    "ros2clearpathmotor.lynx_system_protection_header_frame_id": "s3",
+    "ros2clearpathmotor.lynx_system_protection_system_state": "99",
+    "ros2clearpathmotor.lynx_system_protection_motor_states.#": "2",
+    "ros2clearpathmotor.lynx_system_protection_motor_states[0].ros2clearpathmotor.lynx_system_protection_motor_states_can_id": "154",
+    "ros2clearpathmotor.topic": "/gen/lynx_system_protection"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "rt-route_array",
+  "from": "ros2-marti-nav-msgs",
+  "to": "ros2-marti-nav-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/route_array\",\"type\":\"marti_nav_msgs/msg/RouteArray\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"routes\":[{\"header\":{\"stamp\":{\"sec\":162019,\"nanosec\":2147686170},\"frame_id\":\"s6\"},\"route_points\":[{\"pose\":{\"position\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063},\"orientation\":{\"x\":10.07,\"y\":11.077,\"z\":-12.084,\"w\":13.091}},\"id\":\"s14\",\"properties\":[{\"key\":\"s15\",\"value\":\"s16\"}]}],\"properties\":[{\"key\":\"s17\",\"value\":\"s18\"}]},{\"header\":{\"stamp\":{\"sec\":769564,\"nanosec\":2148293715},\"frame_id\":\"s21\"},\"route_points\":[{\"pose\":{\"position\":{\"x\":22.154,\"y\":23.161,\"z\":-24.168},\"orientation\":{\"x\":25.175,\"y\":26.182,\"z\":-27.189,\"w\":28.196}},\"id\":\"s29\",\"properties\":[{\"key\":\"s30\",\"value\":\"s31\"}]}],\"properties\":[{\"key\":\"s32\",\"value\":\"s33\"}]}],\"properties\":[{\"key\":\"s34\",\"value\":\"s35\"},{\"key\":\"s36\",\"value\":\"s37\"}]},\"id\":\"gen-route_array\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/route_array\",\"type\":\"marti_nav_msgs/msg/RouteArray\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"routes\":[{\"header\":{\"stamp\":{\"sec\":162019,\"nanosec\":2147686170},\"frame_id\":\"s6\"},\"route_points\":[{\"pose\":{\"position\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063},\"orientation\":{\"x\":10.07,\"y\":11.077,\"z\":-12.084,\"w\":13.091}},\"id\":\"s14\",\"properties\":[{\"key\":\"s15\",\"value\":\"s16\"}]}],\"properties\":[{\"key\":\"s17\",\"value\":\"s18\"}]},{\"header\":{\"stamp\":{\"sec\":769564,\"nanosec\":2148293715},\"frame_id\":\"s21\"},\"route_points\":[{\"pose\":{\"position\":{\"x\":22.154,\"y\":23.161,\"z\":-24.168},\"orientation\":{\"x\":25.175,\"y\":26.182,\"z\":-27.189,\"w\":28.196}},\"id\":\"s29\",\"properties\":[{\"key\":\"s30\",\"value\":\"s31\"}]}],\"properties\":[{\"key\":\"s32\",\"value\":\"s33\"}]}],\"properties\":[{\"key\":\"s34\",\"value\":\"s35\"},{\"key\":\"s36\",\"value\":\"s37\"}]},\"id\":\"gen-route_array\"}",
+  "model": {
+    "@kind": "route_array",
+    "ros2martinav.route_array_header_stamp_sec": "40510",
+    "ros2martinav.route_array_header_stamp_nanosec": "2147564661",
+    "ros2martinav.route_array_header_frame_id": "s3",
+    "ros2martinav.route_array_routes.#": "2",
+    "ros2martinav.route_array_routes[0].ros2martinav.route_array_routes_header_stamp_sec": "162019",
+    "ros2martinav.route_array_properties.#": "2",
+    "ros2martinav.route_array_properties[0].ros2martinav.route_array_properties_key": "s34",
+    "ros2martinav.topic": "/gen/route_array"
+  }
+}

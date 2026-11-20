@@ -1,0 +1,17 @@
+{
+  "name": "rt-sig_data",
+  "from": "ros2-ublox-ubx-msgs",
+  "to": "ros2-ublox-ubx-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/sig_data\",\"type\":\"ublox_ubx_msgs/msg/SigData\",\"msg\":{\"gnss_id\":190,\"sv_id\":245,\"sig_id\":44,\"freq_id\":99,\"pr_res\":5914,\"cno\":209,\"quality_ind\":8,\"corr_source\":63,\"iono_model\":118,\"sig_flags\":{\"health\":173,\"pr_smoothed\":true,\"pr_used\":false,\"cr_used\":true,\"do_used\":false,\"pr_corr_used\":true,\"cr_corr_used\":false,\"do_corr_used\":true}},\"id\":\"gen-sig_data\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/sig_data\",\"type\":\"ublox_ubx_msgs/msg/SigData\",\"msg\":{\"gnss_id\":190,\"sv_id\":245,\"sig_id\":44,\"freq_id\":99,\"pr_res\":5914,\"cno\":209,\"quality_ind\":8,\"corr_source\":63,\"iono_model\":118,\"sig_flags\":{\"health\":173,\"pr_smoothed\":true,\"pr_used\":false,\"cr_used\":true,\"do_used\":false,\"pr_corr_used\":true,\"cr_corr_used\":false,\"do_corr_used\":true}},\"id\":\"gen-sig_data\"}",
+  "model": {
+    "@kind": "sig_data",
+    "ros2ubloxubx.sig_data_gnss_id": "190",
+    "ros2ubloxubx.sig_data_sv_id": "245",
+    "ros2ubloxubx.sig_data_sig_id": "44",
+    "ros2ubloxubx.sig_data_freq_id": "99",
+    "ros2ubloxubx.sig_data_pr_res": "5914",
+    "ros2ubloxubx.topic": "/gen/sig_data"
+  }
+}

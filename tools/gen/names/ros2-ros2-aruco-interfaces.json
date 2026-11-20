@@ -1,0 +1,16 @@
+{
+ "ArucoMarkers:header.frame_id": "aruco_markers_header_frame_id",
+ "ArucoMarkers:header.stamp.nanosec": "aruco_markers_header_stamp_nanosec",
+ "ArucoMarkers:header.stamp.sec": "aruco_markers_header_stamp_sec",
+ "ArucoMarkers:marker_ids[]": "aruco_markers_marker_ids",
+ "ArucoMarkers:marker_ids[].": "aruco_markers_marker_ids_value",
+ "ArucoMarkers:poses[]": "aruco_markers_poses",
+ "ArucoMarkers:poses[].orientation.w": "aruco_markers_poses_orientation_w",
+ "ArucoMarkers:poses[].orientation.x": "aruco_markers_poses_orientation_x",
+ "ArucoMarkers:poses[].orientation.y": "aruco_markers_poses_orientation_y",
+ "ArucoMarkers:poses[].orientation.z": "aruco_markers_poses_orientation_z",
+ "ArucoMarkers:poses[].position.x": "aruco_markers_poses_position_x",
+ "ArucoMarkers:poses[].position.y": "aruco_markers_poses_position_y",
+ "ArucoMarkers:poses[].position.z": "aruco_markers_poses_position_z",
+ "topic": "topic"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "x-sbg_gps_pos-to-geojson",
+  "from": "ros2-sbg-driver",
+  "to": "geojson",
+  "source": "tools/gen/ros2msg2pack.py: a full sample message with the bound fields set to a point; latitude, longitude and altitude are core lat, lon, hae (pack.md); geojson writes [lon, lat, alt] (RFC 7946, engine-spec 0.1.1 ruling 4)",
+  "input": "{\"op\":\"publish\",\"topic\":\"/geo\",\"type\":\"sbg_driver/msg/SbgGpsPos\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"time_stamp\":2147645667,\"status\":{\"status\":154,\"type\":209,\"ifm\":8,\"spoofing\":63,\"osnma\":118,\"gps_l1_used\":false,\"gps_l2_used\":true,\"gps_l5_used\":false,\"glo_l1_used\":true,\"glo_l2_used\":false,\"glo_l3_used\":true,\"gal_e1_used\":false,\"gal_e5a_used\":true,\"gal_e5b_used\":false,\"gal_e5alt_used\":true,\"gal_e6_used\":false,\"bds_b1_used\":true,\"bds_b2_used\":false,\"bds_b3_used\":true,\"qzss_l1_used\":false,\"qzss_l2_used\":true,\"qzss_l5_used\":false},\"gps_tow\":2148577236,\"latitude\":47.0625,\"longitude\":8.53125,\"altitude\":-30.21,\"undulation\":2.625,\"position_accuracy\":{\"x\":32.224,\"y\":-33.231,\"z\":34.238},\"num_sv_tracked\":12,\"num_sv_used\":67,\"base_station_id\":24058,\"diff_age\":64561}}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.53125,47.0625]},\"properties\":{}}",
+  "model": {
+    "@kind": "sbg_gps_pos",
+    "lat": "47.0625",
+    "lon": "8.53125"
+  }
+}

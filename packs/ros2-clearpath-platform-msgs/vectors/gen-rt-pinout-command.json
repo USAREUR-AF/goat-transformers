@@ -1,0 +1,16 @@
+{
+  "name": "rt-pinout_command",
+  "from": "ros2-clearpath-platform-msgs",
+  "to": "ros2-clearpath-platform-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/pinout_command\",\"type\":\"clearpath_platform_msgs/msg/PinoutCommand\",\"msg\":{\"rails\":[true,false],\"outputs\":[2147605164,2147645667]},\"id\":\"gen-pinout_command\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/pinout_command\",\"type\":\"clearpath_platform_msgs/msg/PinoutCommand\",\"msg\":{\"rails\":[true,false],\"outputs\":[2147605164,2147645667]},\"id\":\"gen-pinout_command\"}",
+  "model": {
+    "@kind": "pinout_command",
+    "ros2clearpathplatform.pinout_command_rails.#": "2",
+    "ros2clearpathplatform.pinout_command_rails[0].ros2clearpathplatform.pinout_command_rails_value": "1",
+    "ros2clearpathplatform.pinout_command_outputs.#": "2",
+    "ros2clearpathplatform.pinout_command_outputs[0].ros2clearpathplatform.pinout_command_outputs_value": "2147605164",
+    "ros2clearpathplatform.topic": "/gen/pinout_command"
+  }
+}

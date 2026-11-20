@@ -1,0 +1,18 @@
+{
+ "ChronyTrackingStatus:frequency_offset": "chrony_tracking_status_frequency_offset",
+ "ChronyTrackingStatus:header.frame_id": "chrony_tracking_status_header_frame_id",
+ "ChronyTrackingStatus:header.stamp.nanosec": "chrony_tracking_status_header_stamp_nanosec",
+ "ChronyTrackingStatus:header.stamp.sec": "chrony_tracking_status_header_stamp_sec",
+ "ChronyTrackingStatus:last_offset": "chrony_tracking_status_last_offset",
+ "ChronyTrackingStatus:leap_status": "chrony_tracking_status_leap_status",
+ "ChronyTrackingStatus:reference": "chrony_tracking_status_reference",
+ "ChronyTrackingStatus:residual_frequency": "chrony_tracking_status_residual_frequency",
+ "ChronyTrackingStatus:rms_offset": "chrony_tracking_status_rms_offset",
+ "ChronyTrackingStatus:root_delay": "chrony_tracking_status_root_delay",
+ "ChronyTrackingStatus:root_dispersion": "chrony_tracking_status_root_dispersion",
+ "ChronyTrackingStatus:skew": "chrony_tracking_status_skew",
+ "ChronyTrackingStatus:stratum": "chrony_tracking_status_stratum",
+ "ChronyTrackingStatus:system_time_offset": "chrony_tracking_status_system_time_offset",
+ "ChronyTrackingStatus:update_interval": "chrony_tracking_status_update_interval",
+ "topic": "topic"
+}

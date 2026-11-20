@@ -1,0 +1,17 @@
+{
+  "name": "rt-att_cov_euler",
+  "from": "ros2-septentrio-gnss-driver",
+  "to": "ros2-septentrio-gnss-driver",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/att_cov_euler\",\"type\":\"septentrio_gnss_driver/msg/AttCovEuler\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"block_header\":{\"sync_1\":99,\"sync_2\":154,\"crc\":13649,\"id\":54152,\"revision\":63,\"length\":4086,\"tow\":2147888685,\"wnc\":19556},\"error\":27,\"cov_headhead\":-1.875,\"cov_pitchpitch\":-1.625,\"cov_rollroll\":-1.375,\"cov_headpitch\":-1.125,\"cov_headroll\":-0.875,\"cov_pitchroll\":-0.625},\"id\":\"gen-att_cov_euler\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/att_cov_euler\",\"type\":\"septentrio_gnss_driver/msg/AttCovEuler\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"block_header\":{\"sync_1\":99,\"sync_2\":154,\"crc\":13649,\"id\":54152,\"revision\":63,\"length\":4086,\"tow\":2147888685,\"wnc\":19556},\"error\":27,\"cov_headhead\":-1.875,\"cov_pitchpitch\":-1.625,\"cov_rollroll\":-1.375,\"cov_headpitch\":-1.125,\"cov_headroll\":-0.875,\"cov_pitchroll\":-0.625},\"id\":\"gen-att_cov_euler\"}",
+  "model": {
+    "@kind": "att_cov_euler",
+    "ros2septentrio.att_cov_euler_header_stamp_sec": "40510",
+    "ros2septentrio.att_cov_euler_header_stamp_nanosec": "2147564661",
+    "ros2septentrio.att_cov_euler_header_frame_id": "s3",
+    "ros2septentrio.att_cov_euler_block_header_sync_1": "99",
+    "ros2septentrio.att_cov_euler_block_header_sync_2": "154",
+    "ros2septentrio.topic": "/gen/att_cov_euler"
+  }
+}

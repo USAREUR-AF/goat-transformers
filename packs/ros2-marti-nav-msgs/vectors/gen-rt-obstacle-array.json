@@ -1,0 +1,17 @@
+{
+  "name": "rt-obstacle_array",
+  "from": "ros2-marti-nav-msgs",
+  "to": "ros2-marti-nav-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/obstacle_array\",\"type\":\"marti_nav_msgs/msg/ObstacleArray\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"obstacles\":[{\"id\":\"s4\",\"pose\":{\"position\":{\"x\":5.035,\"y\":-6.042,\"z\":7.049},\"orientation\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07,\"w\":11.077}},\"polygon\":[{\"x\":-12.084,\"y\":13.091,\"z\":14.098}]},{\"id\":\"s15\",\"pose\":{\"position\":{\"x\":16.112,\"y\":17.119,\"z\":-18.126},\"orientation\":{\"x\":19.133,\"y\":20.14,\"z\":-21.147,\"w\":22.154}},\"polygon\":[{\"x\":23.161,\"y\":-24.168,\"z\":25.175}]}]},\"id\":\"gen-obstacle_array\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/obstacle_array\",\"type\":\"marti_nav_msgs/msg/ObstacleArray\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"obstacles\":[{\"id\":\"s4\",\"pose\":{\"position\":{\"x\":5.035,\"y\":-6.042,\"z\":7.049},\"orientation\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07,\"w\":11.077}},\"polygon\":[{\"x\":-12.084,\"y\":13.091,\"z\":14.098}]},{\"id\":\"s15\",\"pose\":{\"position\":{\"x\":16.112,\"y\":17.119,\"z\":-18.126},\"orientation\":{\"x\":19.133,\"y\":20.14,\"z\":-21.147,\"w\":22.154}},\"polygon\":[{\"x\":23.161,\"y\":-24.168,\"z\":25.175}]}]},\"id\":\"gen-obstacle_array\"}",
+  "model": {
+    "@kind": "obstacle_array",
+    "ros2martinav.obstacle_array_header_stamp_sec": "40510",
+    "ros2martinav.obstacle_array_header_stamp_nanosec": "2147564661",
+    "ros2martinav.obstacle_array_header_frame_id": "s3",
+    "ros2martinav.obstacle_array_obstacles.#": "2",
+    "ros2martinav.obstacle_array_obstacles[0].ros2martinav.obstacle_array_obstacles_id": "s4",
+    "ros2martinav.topic": "/gen/obstacle_array"
+  }
+}

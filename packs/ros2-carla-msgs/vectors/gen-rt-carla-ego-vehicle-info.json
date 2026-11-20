@@ -1,0 +1,19 @@
+{
+  "name": "rt-carla_ego_vehicle_info",
+  "from": "ros2-carla-msgs",
+  "to": "ros2-carla-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/carla_ego_vehicle_info\",\"type\":\"carla_msgs/msg/CarlaEgoVehicleInfo\",\"msg\":{\"id\":2147524158,\"type\":\"s2\",\"rolename\":\"s3\",\"wheels\":[{\"tire_friction\":-4.125,\"damping_rate\":-3.875,\"max_steer_angle\":-3.625,\"radius\":-3.375,\"max_brake_torque\":-3.125,\"max_handbrake_torque\":-2.875,\"position\":{\"x\":10.07,\"y\":11.077,\"z\":-12.084}},{\"tire_friction\":-1.875,\"damping_rate\":-1.625,\"max_steer_angle\":-1.375,\"radius\":-1.125,\"max_brake_torque\":-0.875,\"max_handbrake_torque\":-0.625,\"position\":{\"x\":19.133,\"y\":20.14,\"z\":-21.147}}],\"max_rpm\":0.375,\"moi\":0.625,\"damping_rate_full_throttle\":0.875,\"damping_rate_zero_throttle_clutch_engaged\":1.125,\"damping_rate_zero_throttle_clutch_disengaged\":1.375,\"use_gear_autobox\":true,\"gear_switch_time\":1.875,\"clutch_strength\":2.125,\"mass\":2.375,\"drag_coefficient\":2.625,\"center_of_mass\":{\"x\":32.224,\"y\":-33.231,\"z\":34.238}},\"id\":\"gen-carla_ego_vehicle_info\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/carla_ego_vehicle_info\",\"type\":\"carla_msgs/msg/CarlaEgoVehicleInfo\",\"msg\":{\"id\":2147524158,\"type\":\"s2\",\"rolename\":\"s3\",\"wheels\":[{\"tire_friction\":-4.125,\"damping_rate\":-3.875,\"max_steer_angle\":-3.625,\"radius\":-3.375,\"max_brake_torque\":-3.125,\"max_handbrake_torque\":-2.875,\"position\":{\"x\":10.07,\"y\":11.077,\"z\":-12.084}},{\"tire_friction\":-1.875,\"damping_rate\":-1.625,\"max_steer_angle\":-1.375,\"radius\":-1.125,\"max_brake_torque\":-0.875,\"max_handbrake_torque\":-0.625,\"position\":{\"x\":19.133,\"y\":20.14,\"z\":-21.147}}],\"max_rpm\":0.375,\"moi\":0.625,\"damping_rate_full_throttle\":0.875,\"damping_rate_zero_throttle_clutch_engaged\":1.125,\"damping_rate_zero_throttle_clutch_disengaged\":1.375,\"use_gear_autobox\":true,\"gear_switch_time\":1.875,\"clutch_strength\":2.125,\"mass\":2.375,\"drag_coefficient\":2.625,\"center_of_mass\":{\"x\":32.224,\"y\":-33.231,\"z\":34.238}},\"id\":\"gen-carla_ego_vehicle_info\"}",
+  "model": {
+    "@kind": "carla_ego_vehicle_info",
+    "ros2carla.carla_ego_vehicle_info_id": "2147524158",
+    "ros2carla.carla_ego_vehicle_info_type": "s2",
+    "ros2carla.carla_ego_vehicle_info_rolename": "s3",
+    "ros2carla.carla_ego_vehicle_info_wheels.#": "2",
+    "ros2carla.carla_ego_vehicle_info_wheels[0].ros2carla.carla_ego_vehicle_info_wheels_tire_friction": "-4.125",
+    "ros2carla.carla_ego_vehicle_info_max_rpm": "0.375",
+    "ros2carla.carla_ego_vehicle_info_moi": "0.625",
+    "ros2carla.topic": "/gen/carla_ego_vehicle_info"
+  }
+}

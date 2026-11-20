@@ -1,0 +1,17 @@
+{
+  "name": "rt-textured_marker",
+  "from": "ros2-marti-visualization-msgs",
+  "to": "ros2-marti-visualization-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/textured_marker\",\"type\":\"marti_visualization_msgs/msg/TexturedMarker\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"ns\":\"s4\",\"id\":202522,\"action\":243025,\"lifetime\":{\"sec\":283528,\"nanosec\":2147807679},\"image\":{\"header\":{\"stamp\":{\"sec\":364534,\"nanosec\":2147888685},\"frame_id\":\"s11\"},\"height\":2147969691,\"width\":2148010194,\"encoding\":\"s14\",\"is_bigendian\":192,\"step\":2148131703,\"data\":\"ETP/AIA=\"},\"pose\":{\"position\":{\"x\":-18.126,\"y\":19.133,\"z\":20.14},\"orientation\":{\"x\":-21.147,\"y\":22.154,\"z\":23.161,\"w\":-24.168}},\"resolution\":25.175,\"alpha\":1.375},\"id\":\"gen-textured_marker\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/textured_marker\",\"type\":\"marti_visualization_msgs/msg/TexturedMarker\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"ns\":\"s4\",\"id\":202522,\"action\":243025,\"lifetime\":{\"sec\":283528,\"nanosec\":2147807679},\"image\":{\"header\":{\"stamp\":{\"sec\":364534,\"nanosec\":2147888685},\"frame_id\":\"s11\"},\"height\":2147969691,\"width\":2148010194,\"encoding\":\"s14\",\"is_bigendian\":192,\"step\":2148131703,\"data\":\"ETP/AIA=\"},\"pose\":{\"position\":{\"x\":-18.126,\"y\":19.133,\"z\":20.14},\"orientation\":{\"x\":-21.147,\"y\":22.154,\"z\":23.161,\"w\":-24.168}},\"resolution\":25.175,\"alpha\":1.375},\"id\":\"gen-textured_marker\"}",
+  "model": {
+    "@kind": "textured_marker",
+    "ros2martivisualization.textured_marker_header_stamp_sec": "40510",
+    "ros2martivisualization.textured_marker_header_stamp_nanosec": "2147564661",
+    "ros2martivisualization.textured_marker_header_frame_id": "s3",
+    "ros2martivisualization.textured_marker_ns": "s4",
+    "ros2martivisualization.textured_marker_id": "202522",
+    "ros2martivisualization.topic": "/gen/textured_marker"
+  }
+}

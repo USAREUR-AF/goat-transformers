@@ -1,0 +1,17 @@
+{
+  "name": "rt-carla_ego_vehicle_info_wheel",
+  "from": "ros2-carla-msgs",
+  "to": "ros2-carla-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/carla_ego_vehicle_info_wheel\",\"type\":\"carla_msgs/msg/CarlaEgoVehicleInfoWheel\",\"msg\":{\"tire_friction\":-4.875,\"damping_rate\":-4.625,\"max_steer_angle\":-4.375,\"radius\":-4.125,\"max_brake_torque\":-3.875,\"max_handbrake_torque\":-3.625,\"position\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063}},\"id\":\"gen-carla_ego_vehicle_info_wheel\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/carla_ego_vehicle_info_wheel\",\"type\":\"carla_msgs/msg/CarlaEgoVehicleInfoWheel\",\"msg\":{\"tire_friction\":-4.875,\"damping_rate\":-4.625,\"max_steer_angle\":-4.375,\"radius\":-4.125,\"max_brake_torque\":-3.875,\"max_handbrake_torque\":-3.625,\"position\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063}},\"id\":\"gen-carla_ego_vehicle_info_wheel\"}",
+  "model": {
+    "@kind": "carla_ego_vehicle_info_wheel",
+    "ros2carla.carla_ego_vehicle_info_wheel_tire_friction": "-4.875",
+    "ros2carla.carla_ego_vehicle_info_wheel_damping_rate": "-4.625",
+    "ros2carla.carla_ego_vehicle_info_wheel_max_steer_angle": "-4.375",
+    "ros2carla.carla_ego_vehicle_info_wheel_radius": "-4.125",
+    "ros2carla.carla_ego_vehicle_info_wheel_max_brake_torque": "-3.875",
+    "ros2carla.topic": "/gen/carla_ego_vehicle_info_wheel"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "rt-node_info",
+  "from": "ros2-marti-introspection-msgs",
+  "to": "ros2-marti-introspection-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/node_info\",\"type\":\"marti_introspection_msgs/msg/NodeInfo\",\"msg\":{\"name\":\"s1\",\"location\":\"s2\",\"nodelet_manager\":\"s3\",\"description\":\"s4\",\"topics\":[{\"name\":\"s5\",\"resolved_name\":\"s6\",\"description\":\"s7\",\"group\":\"s8\",\"message_type\":\"s9\",\"advertised\":false},{\"name\":\"s11\",\"resolved_name\":\"s12\",\"description\":\"s13\",\"group\":\"s14\",\"message_type\":\"s15\",\"advertised\":false}],\"parameters\":[{\"name\":\"s17\",\"resolved_name\":\"s18\",\"description\":\"s19\",\"group\":\"s20\",\"type\":10,\"dynamic\":false,\"default_int\":931576,\"default_float\":0.875,\"default_double\":25.175,\"default_string\":\"s26\",\"default_bool\":true,\"max_value\":28.196,\"min_value\":29.203},{\"name\":\"s30\",\"resolved_name\":\"s31\",\"description\":\"s32\",\"group\":\"s33\",\"type\":213,\"dynamic\":true,\"default_int\":1458115,\"default_float\":4.125,\"default_double\":38.266,\"default_string\":\"s39\",\"default_bool\":false,\"max_value\":41.287,\"min_value\":-42.294}],\"services\":[{\"name\":\"s43\",\"resolved_name\":\"s44\",\"description\":\"s45\",\"group\":\"s46\",\"message_type\":\"s47\",\"server\":false,\"topic_service\":true},{\"name\":\"s50\",\"resolved_name\":\"s51\",\"description\":\"s52\",\"group\":\"s53\",\"message_type\":\"s54\",\"server\":true,\"topic_service\":false}]},\"id\":\"gen-node_info\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/node_info\",\"type\":\"marti_introspection_msgs/msg/NodeInfo\",\"msg\":{\"name\":\"s1\",\"location\":\"s2\",\"nodelet_manager\":\"s3\",\"description\":\"s4\",\"topics\":[{\"name\":\"s5\",\"resolved_name\":\"s6\",\"description\":\"s7\",\"group\":\"s8\",\"message_type\":\"s9\",\"advertised\":false},{\"name\":\"s11\",\"resolved_name\":\"s12\",\"description\":\"s13\",\"group\":\"s14\",\"message_type\":\"s15\",\"advertised\":false}],\"parameters\":[{\"name\":\"s17\",\"resolved_name\":\"s18\",\"description\":\"s19\",\"group\":\"s20\",\"type\":10,\"dynamic\":false,\"default_int\":931576,\"default_float\":0.875,\"default_double\":25.175,\"default_string\":\"s26\",\"default_bool\":true,\"max_value\":28.196,\"min_value\":29.203},{\"name\":\"s30\",\"resolved_name\":\"s31\",\"description\":\"s32\",\"group\":\"s33\",\"type\":213,\"dynamic\":true,\"default_int\":1458115,\"default_float\":4.125,\"default_double\":38.266,\"default_string\":\"s39\",\"default_bool\":false,\"max_value\":41.287,\"min_value\":-42.294}],\"services\":[{\"name\":\"s43\",\"resolved_name\":\"s44\",\"description\":\"s45\",\"group\":\"s46\",\"message_type\":\"s47\",\"server\":false,\"topic_service\":true},{\"name\":\"s50\",\"resolved_name\":\"s51\",\"description\":\"s52\",\"group\":\"s53\",\"message_type\":\"s54\",\"server\":true,\"topic_service\":false}]},\"id\":\"gen-node_info\"}",
+  "model": {
+    "@kind": "node_info",
+    "ros2martiintrospection.node_info_name": "s1",
+    "ros2martiintrospection.node_info_location": "s2",
+    "ros2martiintrospection.node_info_nodelet_manager": "s3",
+    "ros2martiintrospection.node_info_description": "s4",
+    "ros2martiintrospection.node_info_topics.#": "2",
+    "ros2martiintrospection.node_info_topics[0].ros2martiintrospection.node_info_topics_name": "s5",
+    "ros2martiintrospection.node_info_parameters.#": "2",
+    "ros2martiintrospection.node_info_parameters[0].ros2martiintrospection.node_info_parameters_name": "s17",
+    "ros2martiintrospection.node_info_services.#": "2",
+    "ros2martiintrospection.node_info_services[0].ros2martiintrospection.node_info_services_name": "s43",
+    "ros2martiintrospection.topic": "/gen/node_info"
+  }
+}

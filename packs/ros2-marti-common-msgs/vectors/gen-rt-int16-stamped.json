@@ -1,0 +1,16 @@
+{
+  "name": "rt-int16_stamped",
+  "from": "ros2-marti-common-msgs",
+  "to": "ros2-marti-common-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/int16_stamped\",\"type\":\"marti_common_msgs/msg/Int16Stamped\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"value\":30947},\"id\":\"gen-int16_stamped\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/int16_stamped\",\"type\":\"marti_common_msgs/msg/Int16Stamped\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"value\":30947},\"id\":\"gen-int16_stamped\"}",
+  "model": {
+    "@kind": "int16_stamped",
+    "ros2marticommon.int16_stamped_header_stamp_sec": "40510",
+    "ros2marticommon.int16_stamped_header_stamp_nanosec": "2147564661",
+    "ros2marticommon.int16_stamped_header_frame_id": "s3",
+    "ros2marticommon.int16_stamped_value": "30947",
+    "ros2marticommon.topic": "/gen/int16_stamped"
+  }
+}

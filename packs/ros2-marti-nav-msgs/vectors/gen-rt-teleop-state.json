@@ -1,0 +1,17 @@
+{
+  "name": "rt-teleop_state",
+  "from": "ros2-marti-nav-msgs",
+  "to": "ros2-marti-nav-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/teleop_state\",\"type\":\"marti_nav_msgs/msg/TeleopState\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"teleop_signals\":[162019,202522]},\"id\":\"gen-teleop_state\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/teleop_state\",\"type\":\"marti_nav_msgs/msg/TeleopState\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"teleop_signals\":[162019,202522]},\"id\":\"gen-teleop_state\"}",
+  "model": {
+    "@kind": "teleop_state",
+    "ros2martinav.teleop_state_header_stamp_sec": "40510",
+    "ros2martinav.teleop_state_header_stamp_nanosec": "2147564661",
+    "ros2martinav.teleop_state_header_frame_id": "s3",
+    "ros2martinav.teleop_state_teleop_signals.#": "2",
+    "ros2martinav.teleop_state_teleop_signals[0].ros2martinav.teleop_state_teleop_signals_value": "162019",
+    "ros2martinav.topic": "/gen/teleop_state"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "rt-primary_feedback",
+  "from": "ros2-marti-dbw-msgs",
+  "to": "ros2-marti-dbw-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/primary_feedback\",\"type\":\"marti_dbw_msgs/msg/PrimaryFeedback\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"present\":false,\"robotic_mode\":true,\"steering_command\":-3.625,\"steering_measure\":-3.375,\"throttle_command\":-3.125,\"throttle_measure\":-2.875,\"brake_command\":-2.625,\"brake_measure\":-2.375,\"estop_command\":false,\"estop_measure\":true,\"error_steering\":false,\"error_throttle\":true,\"error_brake\":false,\"error_other\":true},\"id\":\"gen-primary_feedback\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/primary_feedback\",\"type\":\"marti_dbw_msgs/msg/PrimaryFeedback\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"present\":false,\"robotic_mode\":true,\"steering_command\":-3.625,\"steering_measure\":-3.375,\"throttle_command\":-3.125,\"throttle_measure\":-2.875,\"brake_command\":-2.625,\"brake_measure\":-2.375,\"estop_command\":false,\"estop_measure\":true,\"error_steering\":false,\"error_throttle\":true,\"error_brake\":false,\"error_other\":true},\"id\":\"gen-primary_feedback\"}",
+  "model": {
+    "@kind": "primary_feedback",
+    "ros2martidbw.primary_feedback_header_stamp_sec": "40510",
+    "ros2martidbw.primary_feedback_header_stamp_nanosec": "2147564661",
+    "ros2martidbw.primary_feedback_header_frame_id": "s3",
+    "ros2martidbw.primary_feedback_present": "0",
+    "ros2martidbw.primary_feedback_robotic_mode": "1",
+    "ros2martidbw.topic": "/gen/primary_feedback"
+  }
+}

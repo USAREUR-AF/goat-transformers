@@ -1,0 +1,17 @@
+{
+  "name": "rt-gprmc",
+  "from": "ros2-nmea-msgs",
+  "to": "ros2-nmea-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/gprmc\",\"type\":\"nmea_msgs/msg/Gprmc\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"message_id\":\"s4\",\"utc_seconds\":5.035,\"position_status\":\"s6\",\"lat\":7.049,\"lon\":8.056,\"lat_dir\":\"s9\",\"lon_dir\":\"s10\",\"speed\":-2.375,\"track\":-2.125,\"date\":\"s13\",\"mag_var\":-1.625,\"mag_var_direction\":\"s15\",\"mode_indicator\":\"s16\"},\"id\":\"gen-gprmc\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/gprmc\",\"type\":\"nmea_msgs/msg/Gprmc\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"message_id\":\"s4\",\"utc_seconds\":5.035,\"position_status\":\"s6\",\"lat\":7.049,\"lon\":8.056,\"lat_dir\":\"s9\",\"lon_dir\":\"s10\",\"speed\":-2.375,\"track\":-2.125,\"date\":\"s13\",\"mag_var\":-1.625,\"mag_var_direction\":\"s15\",\"mode_indicator\":\"s16\"},\"id\":\"gen-gprmc\"}",
+  "model": {
+    "@kind": "gprmc",
+    "ros2nmea.gprmc_header_stamp_sec": "40510",
+    "ros2nmea.gprmc_header_stamp_nanosec": "2147564661",
+    "ros2nmea.gprmc_header_frame_id": "s3",
+    "ros2nmea.gprmc_message_id": "s4",
+    "ros2nmea.gprmc_utc_seconds": "5.035",
+    "ros2nmea.topic": "/gen/gprmc"
+  }
+}

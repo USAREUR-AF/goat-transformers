@@ -1,0 +1,14 @@
+{
+  "name": "rt-carla_traffic_light_info_list",
+  "from": "ros2-carla-msgs",
+  "to": "ros2-carla-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/carla_traffic_light_info_list\",\"type\":\"carla_msgs/msg/CarlaTrafficLightInfoList\",\"msg\":{\"traffic_lights\":[{\"id\":2147524158,\"transform\":{\"position\":{\"x\":2.014,\"y\":-3.021,\"z\":4.028},\"orientation\":{\"x\":5.035,\"y\":-6.042,\"z\":7.049,\"w\":8.056}},\"trigger_volume\":{\"center\":{\"x\":-9.063,\"y\":10.07,\"z\":11.077},\"size\":{\"x\":-12.084,\"y\":13.091,\"z\":14.098}}},{\"id\":2148091200,\"transform\":{\"position\":{\"x\":16.112,\"y\":17.119,\"z\":-18.126},\"orientation\":{\"x\":19.133,\"y\":20.14,\"z\":-21.147,\"w\":22.154}},\"trigger_volume\":{\"center\":{\"x\":23.161,\"y\":-24.168,\"z\":25.175},\"size\":{\"x\":26.182,\"y\":-27.189,\"z\":28.196}}}]},\"id\":\"gen-carla_traffic_light_info_list\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/carla_traffic_light_info_list\",\"type\":\"carla_msgs/msg/CarlaTrafficLightInfoList\",\"msg\":{\"traffic_lights\":[{\"id\":2147524158,\"transform\":{\"position\":{\"x\":2.014,\"y\":-3.021,\"z\":4.028},\"orientation\":{\"x\":5.035,\"y\":-6.042,\"z\":7.049,\"w\":8.056}},\"trigger_volume\":{\"center\":{\"x\":-9.063,\"y\":10.07,\"z\":11.077},\"size\":{\"x\":-12.084,\"y\":13.091,\"z\":14.098}}},{\"id\":2148091200,\"transform\":{\"position\":{\"x\":16.112,\"y\":17.119,\"z\":-18.126},\"orientation\":{\"x\":19.133,\"y\":20.14,\"z\":-21.147,\"w\":22.154}},\"trigger_volume\":{\"center\":{\"x\":23.161,\"y\":-24.168,\"z\":25.175},\"size\":{\"x\":26.182,\"y\":-27.189,\"z\":28.196}}}]},\"id\":\"gen-carla_traffic_light_info_list\"}",
+  "model": {
+    "@kind": "carla_traffic_light_info_list",
+    "ros2carla.carla_traffic_light_info_list_traffic_lights.#": "2",
+    "ros2carla.carla_traffic_light_info_list_traffic_lights[0].ros2carla.carla_traffic_light_info_list_traffic_lights_id": "2147524158",
+    "ros2carla.topic": "/gen/carla_traffic_light_info_list"
+  }
+}

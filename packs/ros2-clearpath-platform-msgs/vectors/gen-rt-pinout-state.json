@@ -1,0 +1,23 @@
+{
+  "name": "rt-pinout_state",
+  "from": "ros2-clearpath-platform-msgs",
+  "to": "ros2-clearpath-platform-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/pinout_state\",\"type\":\"clearpath_platform_msgs/msg/PinoutState\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"rails\":[false,true],\"inputs\":[false,true],\"outputs\":[false,true],\"output_periods\":[2147888685,2147929188]},\"id\":\"gen-pinout_state\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/pinout_state\",\"type\":\"clearpath_platform_msgs/msg/PinoutState\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"rails\":[false,true],\"inputs\":[false,true],\"outputs\":[false,true],\"output_periods\":[2147888685,2147929188]},\"id\":\"gen-pinout_state\"}",
+  "model": {
+    "@kind": "pinout_state",
+    "ros2clearpathplatform.pinout_state_header_stamp_sec": "40510",
+    "ros2clearpathplatform.pinout_state_header_stamp_nanosec": "2147564661",
+    "ros2clearpathplatform.pinout_state_header_frame_id": "s3",
+    "ros2clearpathplatform.pinout_state_rails.#": "2",
+    "ros2clearpathplatform.pinout_state_rails[0].ros2clearpathplatform.pinout_state_rails_value": "0",
+    "ros2clearpathplatform.pinout_state_inputs.#": "2",
+    "ros2clearpathplatform.pinout_state_inputs[0].ros2clearpathplatform.pinout_state_inputs_value": "0",
+    "ros2clearpathplatform.pinout_state_outputs.#": "2",
+    "ros2clearpathplatform.pinout_state_outputs[0].ros2clearpathplatform.pinout_state_outputs_value": "0",
+    "ros2clearpathplatform.pinout_state_output_periods.#": "2",
+    "ros2clearpathplatform.pinout_state_output_periods[0].ros2clearpathplatform.pinout_state_output_periods_value": "2147888685",
+    "ros2clearpathplatform.topic": "/gen/pinout_state"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "rt-sbg_status",
+  "from": "ros2-sbg-driver",
+  "to": "ros2-sbg-driver",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/sbg_status\",\"type\":\"sbg_driver/msg/SbgStatus\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"time_stamp\":2147645667,\"status_general\":{\"main_power\":true,\"imu_power\":false,\"gps_power\":true,\"settings\":false,\"temperature\":true,\"datalogger\":false,\"cpu\":true},\"status_com\":{\"port_a\":false,\"port_b\":true,\"port_c\":false,\"port_d\":true,\"port_e\":false,\"port_a_rx\":true,\"port_a_tx\":false,\"port_b_rx\":true,\"port_b_tx\":false,\"port_c_rx\":true,\"port_c_tx\":false,\"port_d_rx\":true,\"port_d_tx\":false,\"port_e_rx\":true,\"port_e_tx\":false,\"eth_0\":true,\"eth_1\":false,\"eth_2\":true,\"eth_3\":false,\"eth_4\":true,\"eth_0_rx\":false,\"eth_0_tx\":true,\"eth_1_rx\":false,\"eth_1_tx\":true,\"eth_2_rx\":false,\"eth_2_tx\":true,\"eth_3_rx\":false,\"eth_3_tx\":true,\"eth_4_rx\":false,\"eth_4_tx\":true,\"can_rx\":false,\"can_tx\":true,\"can_status\":251},\"status_aiding\":{\"gps1_pos_recv\":true,\"gps1_vel_recv\":false,\"gps1_hdt_recv\":true,\"gps1_utc_recv\":false,\"gps2_pos_recv\":true,\"gps2_vel_recv\":false,\"gps2_hdt_recv\":true,\"gps2_utc_recv\":false,\"mag_recv\":true,\"odo_recv\":false,\"dvl_recv\":true,\"usbl_recv\":false,\"depth_recv\":true,\"air_data_recv\":false,\"vel1_recv\":true}},\"id\":\"gen-sbg_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/sbg_status\",\"type\":\"sbg_driver/msg/SbgStatus\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"time_stamp\":2147645667,\"status_general\":{\"main_power\":true,\"imu_power\":false,\"gps_power\":true,\"settings\":false,\"temperature\":true,\"datalogger\":false,\"cpu\":true},\"status_com\":{\"port_a\":false,\"port_b\":true,\"port_c\":false,\"port_d\":true,\"port_e\":false,\"port_a_rx\":true,\"port_a_tx\":false,\"port_b_rx\":true,\"port_b_tx\":false,\"port_c_rx\":true,\"port_c_tx\":false,\"port_d_rx\":true,\"port_d_tx\":false,\"port_e_rx\":true,\"port_e_tx\":false,\"eth_0\":true,\"eth_1\":false,\"eth_2\":true,\"eth_3\":false,\"eth_4\":true,\"eth_0_rx\":false,\"eth_0_tx\":true,\"eth_1_rx\":false,\"eth_1_tx\":true,\"eth_2_rx\":false,\"eth_2_tx\":true,\"eth_3_rx\":false,\"eth_3_tx\":true,\"eth_4_rx\":false,\"eth_4_tx\":true,\"can_rx\":false,\"can_tx\":true,\"can_status\":251},\"status_aiding\":{\"gps1_pos_recv\":true,\"gps1_vel_recv\":false,\"gps1_hdt_recv\":true,\"gps1_utc_recv\":false,\"gps2_pos_recv\":true,\"gps2_vel_recv\":false,\"gps2_hdt_recv\":true,\"gps2_utc_recv\":false,\"mag_recv\":true,\"odo_recv\":false,\"dvl_recv\":true,\"usbl_recv\":false,\"depth_recv\":true,\"air_data_recv\":false,\"vel1_recv\":true}},\"id\":\"gen-sbg_status\"}",
+  "model": {
+    "@kind": "sbg_status",
+    "ros2sbg.sbg_status_header_stamp_sec": "40510",
+    "ros2sbg.sbg_status_header_stamp_nanosec": "2147564661",
+    "ros2sbg.sbg_status_header_frame_id": "s3",
+    "ros2sbg.sbg_status_time_stamp": "2147645667",
+    "ros2sbg.sbg_status_status_general_main_power": "1",
+    "ros2sbg.topic": "/gen/sbg_status"
+  }
+}

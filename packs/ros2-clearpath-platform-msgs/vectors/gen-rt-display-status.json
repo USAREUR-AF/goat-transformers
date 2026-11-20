@@ -1,0 +1,14 @@
+{
+  "name": "rt-display_status",
+  "from": "ros2-clearpath-platform-msgs",
+  "to": "ros2-clearpath-platform-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/display_status\",\"type\":\"clearpath_platform_msgs/msg/DisplayStatus\",\"msg\":{\"string1\":\"s1\",\"string2\":\"s2\"},\"id\":\"gen-display_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/display_status\",\"type\":\"clearpath_platform_msgs/msg/DisplayStatus\",\"msg\":{\"string1\":\"s1\",\"string2\":\"s2\"},\"id\":\"gen-display_status\"}",
+  "model": {
+    "@kind": "display_status",
+    "ros2clearpathplatform.display_status_string1": "s1",
+    "ros2clearpathplatform.display_status_string2": "s2",
+    "ros2clearpathplatform.topic": "/gen/display_status"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "rt-ubx_rxm_spartn_key",
+  "from": "ros2-ublox-ubx-msgs",
+  "to": "ros2-ublox-ubx-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/ubx_rxm_spartn_key\",\"type\":\"ublox_ubx_msgs/msg/UBXRxmSpartnKey\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"version\":99,\"num_keys\":154,\"reserved0\":\"BhL/AIA=\",\"key_info\":[{\"reserved1\":8,\"key_length_bytes\":63,\"valid_from_wno\":4086,\"valid_from_tow\":2147888685},{\"reserved1\":228,\"key_length_bytes\":27,\"valid_from_wno\":35026,\"valid_from_tow\":2148050697}],\"key_payload\":\"Dy3/AIA=\"},\"id\":\"gen-ubx_rxm_spartn_key\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/ubx_rxm_spartn_key\",\"type\":\"ublox_ubx_msgs/msg/UBXRxmSpartnKey\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"version\":99,\"num_keys\":154,\"reserved0\":\"BhL/AIA=\",\"key_info\":[{\"reserved1\":8,\"key_length_bytes\":63,\"valid_from_wno\":4086,\"valid_from_tow\":2147888685},{\"reserved1\":228,\"key_length_bytes\":27,\"valid_from_wno\":35026,\"valid_from_tow\":2148050697}],\"key_payload\":\"Dy3/AIA=\"},\"id\":\"gen-ubx_rxm_spartn_key\"}",
+  "model": {
+    "@kind": "ubx_rxm_spartn_key",
+    "ros2ubloxubx.ubx_rxm_spartn_key_header_stamp_sec": "40510",
+    "ros2ubloxubx.ubx_rxm_spartn_key_header_stamp_nanosec": "2147564661",
+    "ros2ubloxubx.ubx_rxm_spartn_key_header_frame_id": "s3",
+    "ros2ubloxubx.ubx_rxm_spartn_key_version": "99",
+    "ros2ubloxubx.ubx_rxm_spartn_key_num_keys": "154",
+    "ros2ubloxubx.ubx_rxm_spartn_key_key_info.#": "2",
+    "ros2ubloxubx.ubx_rxm_spartn_key_key_info[0].ros2ubloxubx.ubx_rxm_spartn_key_key_info_reserved1": "8",
+    "ros2ubloxubx.topic": "/gen/ubx_rxm_spartn_key"
+  }
+}

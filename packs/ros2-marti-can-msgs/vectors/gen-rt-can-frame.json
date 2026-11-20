@@ -1,0 +1,17 @@
+{
+  "name": "rt-can_frame",
+  "from": "ros2-marti-can-msgs",
+  "to": "ros2-marti-can-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/can_frame\",\"type\":\"marti_can_msgs/msg/CanFrame\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"id\":2147645667,\"msg_type\":154,\"data_length\":209,\"data\":\"BxX/AIA=\"},\"id\":\"gen-can_frame\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/can_frame\",\"type\":\"marti_can_msgs/msg/CanFrame\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"id\":2147645667,\"msg_type\":154,\"data_length\":209,\"data\":\"BxX/AIA=\"},\"id\":\"gen-can_frame\"}",
+  "model": {
+    "@kind": "can_frame",
+    "ros2martican.can_frame_header_stamp_sec": "40510",
+    "ros2martican.can_frame_header_stamp_nanosec": "2147564661",
+    "ros2martican.can_frame_header_frame_id": "s3",
+    "ros2martican.can_frame_id": "2147645667",
+    "ros2martican.can_frame_msg_type": "154",
+    "ros2martican.topic": "/gen/can_frame"
+  }
+}

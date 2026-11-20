@@ -1,0 +1,12 @@
+{
+  "name": "gen-geojson-to-ros2-ublox-ubx-msgs-ubx_nav_pvt",
+  "from": "geojson",
+  "to": "ros2-ublox-ubx-msgs",
+  "source": "tools/gen/ros2msg2pack.py: the kind is the first in pack order whose requires the entity holds (lat lon); op and type are its when values; uid and callsign have no line in the pack; no topic is known",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.53125,47.0625,431.5]},\"properties\":{\"callsign\":\"ROVER\"},\"id\":\"r-1\"}",
+  "expect": "{\"op\":\"publish\",\"type\":\"ublox_ubx_msgs/msg/UBXNavPVT\",\"msg\":{\"lon\":85312500,\"lat\":470625000,\"height\":431500}}",
+  "model": {
+    "lat": "47.0625",
+    "uid": "r-1"
+  }
+}

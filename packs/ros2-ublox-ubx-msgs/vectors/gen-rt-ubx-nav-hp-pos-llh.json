@@ -1,0 +1,17 @@
+{
+  "name": "rt-ubx_nav_hp_pos_llh",
+  "from": "ros2-ublox-ubx-msgs",
+  "to": "ros2-ublox-ubx-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/ubx_nav_hp_pos_llh\",\"type\":\"ublox_ubx_msgs/msg/UBXNavHPPosLLH\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"version\":99,\"invalid_lon\":true,\"invalid_lat\":false,\"invalid_height\":true,\"invalid_hmsl\":false,\"invalid_lon_hp\":true,\"invalid_lat_hp\":false,\"invalid_height_hp\":true,\"invalid_hmsl_hp\":false,\"itow\":2148010194,\"lon\":567049,\"lat\":607552,\"height\":648055,\"hmsl\":688558,\"lon_hp\":-27,\"lat_hp\":28,\"height_hp\":83,\"hmsl_hp\":-118,\"h_acc\":2148374721,\"v_acc\":2148415224},\"id\":\"gen-ubx_nav_hp_pos_llh\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/ubx_nav_hp_pos_llh\",\"type\":\"ublox_ubx_msgs/msg/UBXNavHPPosLLH\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"version\":99,\"invalid_lon\":true,\"invalid_lat\":false,\"invalid_height\":true,\"invalid_hmsl\":false,\"invalid_lon_hp\":true,\"invalid_lat_hp\":false,\"invalid_height_hp\":true,\"invalid_hmsl_hp\":false,\"itow\":2148010194,\"lon\":567049,\"lat\":607552,\"height\":648055,\"hmsl\":688558,\"lon_hp\":-27,\"lat_hp\":28,\"height_hp\":83,\"hmsl_hp\":-118,\"h_acc\":2148374721,\"v_acc\":2148415224},\"id\":\"gen-ubx_nav_hp_pos_llh\"}",
+  "model": {
+    "@kind": "ubx_nav_hp_pos_llh",
+    "ros2ubloxubx.ubx_nav_hp_pos_llh_header_stamp_sec": "40510",
+    "ros2ubloxubx.ubx_nav_hp_pos_llh_header_stamp_nanosec": "2147564661",
+    "ros2ubloxubx.ubx_nav_hp_pos_llh_header_frame_id": "s3",
+    "ros2ubloxubx.ubx_nav_hp_pos_llh_version": "99",
+    "ros2ubloxubx.ubx_nav_hp_pos_llh_invalid_lon": "1",
+    "ros2ubloxubx.topic": "/gen/ubx_nav_hp_pos_llh"
+  }
+}

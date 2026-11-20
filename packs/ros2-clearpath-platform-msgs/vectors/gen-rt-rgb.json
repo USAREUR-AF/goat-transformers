@@ -1,0 +1,15 @@
+{
+  "name": "rt-rgb",
+  "from": "ros2-clearpath-platform-msgs",
+  "to": "ros2-clearpath-platform-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/rgb\",\"type\":\"clearpath_platform_msgs/msg/RGB\",\"msg\":{\"red\":190,\"green\":245,\"blue\":44},\"id\":\"gen-rgb\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/rgb\",\"type\":\"clearpath_platform_msgs/msg/RGB\",\"msg\":{\"red\":190,\"green\":245,\"blue\":44},\"id\":\"gen-rgb\"}",
+  "model": {
+    "@kind": "rgb",
+    "ros2clearpathplatform.rgb_red": "190",
+    "ros2clearpathplatform.rgb_green": "245",
+    "ros2clearpathplatform.rgb_blue": "44",
+    "ros2clearpathplatform.topic": "/gen/rgb"
+  }
+}

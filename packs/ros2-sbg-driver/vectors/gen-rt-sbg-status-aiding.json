@@ -1,0 +1,17 @@
+{
+  "name": "rt-sbg_status_aiding",
+  "from": "ros2-sbg-driver",
+  "to": "ros2-sbg-driver",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/sbg_status_aiding\",\"type\":\"sbg_driver/msg/SbgStatusAiding\",\"msg\":{\"gps1_pos_recv\":true,\"gps1_vel_recv\":false,\"gps1_hdt_recv\":true,\"gps1_utc_recv\":false,\"gps2_pos_recv\":true,\"gps2_vel_recv\":false,\"gps2_hdt_recv\":true,\"gps2_utc_recv\":false,\"mag_recv\":true,\"odo_recv\":false,\"dvl_recv\":true,\"usbl_recv\":false,\"depth_recv\":true,\"air_data_recv\":false,\"vel1_recv\":true},\"id\":\"gen-sbg_status_aiding\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/sbg_status_aiding\",\"type\":\"sbg_driver/msg/SbgStatusAiding\",\"msg\":{\"gps1_pos_recv\":true,\"gps1_vel_recv\":false,\"gps1_hdt_recv\":true,\"gps1_utc_recv\":false,\"gps2_pos_recv\":true,\"gps2_vel_recv\":false,\"gps2_hdt_recv\":true,\"gps2_utc_recv\":false,\"mag_recv\":true,\"odo_recv\":false,\"dvl_recv\":true,\"usbl_recv\":false,\"depth_recv\":true,\"air_data_recv\":false,\"vel1_recv\":true},\"id\":\"gen-sbg_status_aiding\"}",
+  "model": {
+    "@kind": "sbg_status_aiding",
+    "ros2sbg.sbg_status_aiding_gps1_pos_recv": "1",
+    "ros2sbg.sbg_status_aiding_gps1_vel_recv": "0",
+    "ros2sbg.sbg_status_aiding_gps1_hdt_recv": "1",
+    "ros2sbg.sbg_status_aiding_gps1_utc_recv": "0",
+    "ros2sbg.sbg_status_aiding_gps2_pos_recv": "1",
+    "ros2sbg.topic": "/gen/sbg_status_aiding"
+  }
+}

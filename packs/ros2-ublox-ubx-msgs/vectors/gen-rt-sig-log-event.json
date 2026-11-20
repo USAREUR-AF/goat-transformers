@@ -1,0 +1,15 @@
+{
+  "name": "rt-sig_log_event",
+  "from": "ros2-ublox-ubx-msgs",
+  "to": "ros2-ublox-ubx-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/sig_log_event\",\"type\":\"ublox_ubx_msgs/msg/SigLogEvent\",\"msg\":{\"time_elapsed\":2147524158,\"detection_type\":245,\"event_type\":44},\"id\":\"gen-sig_log_event\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/sig_log_event\",\"type\":\"ublox_ubx_msgs/msg/SigLogEvent\",\"msg\":{\"time_elapsed\":2147524158,\"detection_type\":245,\"event_type\":44},\"id\":\"gen-sig_log_event\"}",
+  "model": {
+    "@kind": "sig_log_event",
+    "ros2ubloxubx.sig_log_event_time_elapsed": "2147524158",
+    "ros2ubloxubx.sig_log_event_detection_type": "245",
+    "ros2ubloxubx.sig_log_event_event_type": "44",
+    "ros2ubloxubx.topic": "/gen/sig_log_event"
+  }
+}
