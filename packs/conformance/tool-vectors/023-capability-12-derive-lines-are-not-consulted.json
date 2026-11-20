@@ -1,0 +1,16 @@
+{
+  "name": "capability-12-derive-lines-are-not-consulted",
+  "args": [
+    "capability",
+    "--from",
+    "conformance-cap-src",
+    "--to",
+    "conformance-cap-derived",
+    "--packs",
+    "{packs}",
+    "--packs-only",
+    "conformance-cap-src,conformance-cap-derived"
+  ],
+  "exit": 0,
+  "stdout_text": "conformance-cap-src\tconformance-cap-derived\tnone\t\tprobe.a probe.n\n"
+}

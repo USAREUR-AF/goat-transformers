@@ -1,0 +1,17 @@
+{
+  "name": "convert-malformed-wire",
+  "args": [
+    "convert",
+    "--from",
+    "conformance-malformed-json",
+    "--to",
+    "conformance-malformed-json",
+    "--packs",
+    "{packs}",
+    "--packs-only",
+    "conformance-malformed-json"
+  ],
+  "stdin_hex": "7b",
+  "exit": 1,
+  "error_kind": "malformed-wire"
+}

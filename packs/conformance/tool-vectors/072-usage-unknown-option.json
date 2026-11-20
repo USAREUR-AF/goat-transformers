@@ -1,0 +1,11 @@
+{
+  "name": "usage-unknown-option",
+  "args": [
+    "list-formats",
+    "--packs",
+    "{packs}",
+    "--x-no-such-option",
+    "1"
+  ],
+  "exit": 2
+}

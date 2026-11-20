@@ -1,0 +1,12 @@
+{
+  "name": "list-formats-byte-order",
+  "args": [
+    "list-formats",
+    "--packs",
+    "{packs}",
+    "--packs-only",
+    "conformance-cap-c,conformance-json,conformance-cap-a,conformance-absent-bits-lsb"
+  ],
+  "exit": 0,
+  "stdout_text": "conformance-absent-bits-lsb\t0.9.0\tbits\nconformance-cap-a\t0.11.0\tjson\nconformance-cap-c\t0.11.0\txml\nconformance-json\t0.5.0\tjson\n"
+}

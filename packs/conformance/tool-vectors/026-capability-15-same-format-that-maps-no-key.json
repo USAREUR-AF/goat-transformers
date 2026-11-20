@@ -1,0 +1,16 @@
+{
+  "name": "capability-15-same-format-that-maps-no-key",
+  "args": [
+    "capability",
+    "--from",
+    "conformance-cap-empty",
+    "--to",
+    "conformance-cap-empty",
+    "--packs",
+    "{packs}",
+    "--packs-only",
+    "conformance-cap-empty"
+  ],
+  "exit": 0,
+  "stdout_text": "conformance-cap-empty\tconformance-cap-empty\tnone\t\t\n"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "capability-18-same-format-with-lists",
+  "args": [
+    "capability",
+    "--from",
+    "conformance-cap-lists",
+    "--to",
+    "conformance-cap-lists",
+    "--packs",
+    "{packs}",
+    "--packs-only",
+    "conformance-cap-lists"
+  ],
+  "exit": 0,
+  "stdout_text": "conformance-cap-lists\tconformance-cap-lists\tfull\tuid probe.items[] probe.items[].probe.label probe.items[].probe.qty probe.items[].probe.subs[] probe.items[].probe.subs[].probe.tag probe.items[].probe.subs[].probe.val probe.nums[] probe.nums[].probe.val\t\n"
+}

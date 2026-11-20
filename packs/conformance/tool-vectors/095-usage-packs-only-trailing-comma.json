@@ -1,0 +1,11 @@
+{
+  "name": "usage-packs-only-trailing-comma",
+  "args": [
+    "list-formats",
+    "--packs",
+    "{packs}",
+    "--packs-only",
+    "conformance-cap-a,"
+  ],
+  "exit": 2
+}

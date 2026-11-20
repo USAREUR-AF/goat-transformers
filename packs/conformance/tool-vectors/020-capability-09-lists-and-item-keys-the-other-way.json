@@ -1,0 +1,16 @@
+{
+  "name": "capability-09-lists-and-item-keys-the-other-way",
+  "args": [
+    "capability",
+    "--from",
+    "conformance-cap-lists-b",
+    "--to",
+    "conformance-cap-lists",
+    "--packs",
+    "{packs}",
+    "--packs-only",
+    "conformance-cap-lists-b,conformance-cap-lists"
+  ],
+  "exit": 0,
+  "stdout_text": "conformance-cap-lists-b\tconformance-cap-lists\tpartial\tprobe.items[] probe.items[].probe.label probe.items[].probe.subs[] probe.items[].probe.subs[].probe.tag uid\tprobe.items[].probe.ratio probe.val\n"
+}

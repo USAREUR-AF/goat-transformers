@@ -86,7 +86,7 @@ height reference (ellipsoid or mean sea level), the unit, the time base.
 cd engines/rust && cargo build --release && cd ../..
 P="--packs packs --packs-only <format>,geojson,cot-xml"
 engines/rust/target/release/goat-xf list-formats $P
-engines/rust/target/release/goat-xf matrix --detail $P
+engines/rust/target/release/goat-xf matrix $P
 ```
 
 A load failure names its cause: `undeclared-key` (the key is in no module the

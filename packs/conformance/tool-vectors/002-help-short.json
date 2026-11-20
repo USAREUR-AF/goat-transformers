@@ -1,0 +1,8 @@
+{
+  "name": "help-short",
+  "args": [
+    "-h"
+  ],
+  "exit": 0,
+  "stdout_any": true
+}

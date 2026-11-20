@@ -1,0 +1,16 @@
+{
+  "name": "capability-07-target-with-kinds",
+  "args": [
+    "capability",
+    "--from",
+    "conformance-cap-a",
+    "--to",
+    "conformance-cap-kinds",
+    "--packs",
+    "{packs}",
+    "--packs-only",
+    "conformance-cap-a,conformance-cap-kinds"
+  ],
+  "exit": 0,
+  "stdout_text": "conformance-cap-a\tconformance-cap-kinds\tpartial\tuid callsign lat lon\tprobe.n\n"
+}

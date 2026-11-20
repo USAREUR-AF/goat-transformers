@@ -1,0 +1,14 @@
+{
+  "name": "max-distribution-public-loads-a-public-pack",
+  "args": [
+    "list-formats",
+    "--packs",
+    "{packs}",
+    "--packs-only",
+    "conformance-cap-a",
+    "--max-distribution",
+    "public"
+  ],
+  "exit": 0,
+  "stdout_text": "conformance-cap-a\t0.11.0\tjson\n"
+}

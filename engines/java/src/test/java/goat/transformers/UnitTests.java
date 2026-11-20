@@ -914,7 +914,7 @@ final class UnitTests {
             int code = Cli.run(new String[]{"list-formats", "--packs", packsDir.toString(), "--packs-only", "geojson,cot-xml"},
                     new java.io.PrintStream(out, true, "UTF-8"), new java.io.PrintStream(err, true, "UTF-8"));
             String[] lines = out.toString("UTF-8").trim().split("\\R");
-            check("cli --packs-only", code == 0 && lines.length == 2 && lines[0].startsWith("cot-xml ") && lines[1].startsWith("geojson "),
+            check("cli --packs-only", code == 0 && lines.length == 2 && lines[0].startsWith("cot-xml\t") && lines[1].startsWith("geojson\t"),
                     "exit " + code + ": " + out.toString("UTF-8") + err.toString("UTF-8"));
             eq("cli --packs-only with an unknown name", 1, Cli.run(new String[]{"list-formats", "--packs", packsDir.toString(),
                     "--packs-only", "no-such-pack"}, new java.io.PrintStream(out, true, "UTF-8"), new java.io.PrintStream(err, true, "UTF-8")));

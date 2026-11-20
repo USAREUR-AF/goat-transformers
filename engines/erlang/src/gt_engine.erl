@@ -490,7 +490,9 @@ model_files(ModelsDir) ->
 %% The module name and the `uses` names of a module file.
 module_head(Path) ->
     {ok, Bin} = file:read_file(Path),
-    Toks = [gt_pack:tokens_lax(L) || L <- binary:split(Bin, <<"\n">>, [global])],
+    %% only a line that holds `module` or `uses` can tokenise to either
+    Toks = [gt_pack:tokens_lax(L) || L <- binary:split(Bin, <<"\n">>, [global]),
+                                     binary:match(L, [<<"module">>, <<"uses">>]) =/= nomatch],
     {case [N || [<<"module">>, N] <- Toks] of
          [N | _] -> N;
          [] -> undefined

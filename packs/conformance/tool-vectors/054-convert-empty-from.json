@@ -1,0 +1,17 @@
+{
+  "name": "convert-empty-from",
+  "args": [
+    "convert",
+    "--from",
+    "",
+    "--to",
+    "conformance-cap-a",
+    "--packs",
+    "{packs}",
+    "--packs-only",
+    "conformance-cap-a"
+  ],
+  "stdin_hex": "7b226964223a2278227d",
+  "exit": 1,
+  "error_kind": "unknown-format"
+}

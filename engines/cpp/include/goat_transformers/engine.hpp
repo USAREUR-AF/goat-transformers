@@ -615,6 +615,21 @@ public:
     static Engine load_packs(const std::string& packs_dir, const std::vector<std::string>& names,
                              const std::string& models_dir = "",
                              Distribution max_distribution = Distribution::Controlled);
+    // The loading of the command-line tool (engine-spec.md 0.23, Loading).
+    // Modules: `<models_dir>/core.def`, then every other file of models_dir
+    // whose name ends in `.def`, in byte order of file name, not recursing,
+    // each after the modules it uses; a models_dir that does not exist or is
+    // not a directory loads no modules. Packs: with `names`, each
+    // `<packs_dir>/<name>/pack.def` in the order given, a name given twice
+    // loaded twice (duplicate-format); a name that is not one path component
+    // or not a pack directory fails with unknown-format when it is reached.
+    // Without `names`, every entry of packs_dir that is a directory (a
+    // symbolic link to one included), holds `pack.def` and does not begin
+    // with `.`, in byte order of name; a packs_dir that cannot be read then
+    // fails with Io. The modules are loaded before packs_dir is read.
+    static Engine load_tool(const std::string& packs_dir, const std::string& models_dir,
+                            const std::vector<std::string>* names,
+                            Distribution max_distribution = Distribution::Controlled);
 
     // The distribution limit, Controlled by default. It applies to later loads.
     void set_max_distribution(Distribution limit) { max_distribution_ = limit; }
@@ -683,6 +698,15 @@ public:
     // each value is read as its key's declared type. Throws undeclared-key for a key
     // no loaded module declares and key-type-mismatch for a value that cannot be read.
     Context context_from_text(const std::map<std::string, std::string>& text) const;
+    // A context in string form whose keys are read and checked in the order
+    // given (engine-spec.md 0.23, `convert`: the `--set` options). A key given
+    // twice takes its last value; the caller removes the repetition, which
+    // keeps the place of the first.
+    using TextContext = std::vector<std::pair<std::string, std::string>>;
+    Context context_from_text_in_order(const TextContext& text) const;
+    // convert_text with a context whose keys are checked in the order given.
+    std::string convert_text_in_order(const std::string& from, const std::string& to, const std::string& bytes,
+                                      const TextContext& context) const;
     // Check every context key (undeclared-key, key-type-mismatch), then set each
     // one the entity lacks.
     void apply_context(Entity& entity, const Context& context) const;
@@ -700,7 +724,8 @@ private:
     std::map<std::string, Pack> packs_;
     std::map<std::string, Module> modules_;  // ordered by name, bytewise: the order derivations run in
     std::string convert_impl(const std::string& from, const std::string& to, const std::string& bytes,
-                             const Context* context, const std::map<std::string, std::string>* text) const;
+                             const Context* context, const std::map<std::string, std::string>* text,
+                             const TextContext* ordered = nullptr) const;
     Distribution max_distribution_ = Distribution::Controlled;
     std::uint64_t max_items_ = kDefaultMaxItems;
 };

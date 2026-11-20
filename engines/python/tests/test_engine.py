@@ -244,8 +244,9 @@ class TestCli(unittest.TestCase):
         self.assertEqual(r.returncode, 0, r.stderr)
         self.assertEqual(r.stdout, b'{"type":"Feature","geometry":null,"properties":{},"id":"a"}')
         r = self.run_cli("convert", "--from", "cot-xml", "--to", "geojson", "--packs", PACKS, stdin=b"<x/>")
-        self.assertEqual(r.returncode, 2)
-        self.assertIn(b"missing-root", r.stderr)
+        self.assertEqual(r.returncode, 1)  # spec 0.23: a call failure exits 1, its kind first
+        self.assertTrue(r.stderr.startswith(b"missing-root:"), r.stderr)
+        self.assertEqual(r.stdout, b"")
 
     def test_models_and_max_distribution(self):
         models = os.path.normpath(os.path.join(PACKS, "..", "model"))
@@ -253,8 +254,8 @@ class TestCli(unittest.TestCase):
         self.assertEqual(r.returncode, 0, r.stderr)
         self.assertIn(b"cot-xml\t", r.stdout)
         r = self.run_cli("list-formats", "--packs", PACKS, "--models", os.path.join(HERE, "no-such-dir"))
-        self.assertEqual(r.returncode, 2)
-        self.assertIn(b"unknown-module:", r.stderr)
+        self.assertEqual(r.returncode, 1)
+        self.assertTrue(r.stderr.startswith(b"unknown-module:"), r.stderr)
 
 
 class TestModel(unittest.TestCase):

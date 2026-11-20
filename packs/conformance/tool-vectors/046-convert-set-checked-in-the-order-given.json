@@ -1,0 +1,21 @@
+{
+  "name": "convert-set-checked-in-the-order-given",
+  "args": [
+    "convert",
+    "--from",
+    "conformance-cap-a",
+    "--to",
+    "conformance-cap-a",
+    "--packs",
+    "{packs}",
+    "--packs-only",
+    "conformance-cap-a",
+    "--set",
+    "probe.nosuch=1",
+    "--set",
+    "lat=abc"
+  ],
+  "stdin_hex": "7b226964223a2278227d",
+  "exit": 1,
+  "error_kind": "undeclared-key"
+}

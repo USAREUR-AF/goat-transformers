@@ -1,0 +1,9 @@
+{
+  "name": "packs-that-do-not-exist",
+  "args": [
+    "matrix",
+    "--packs",
+    "{packs}/conformance-no-such-directory"
+  ],
+  "exit": 1
+}

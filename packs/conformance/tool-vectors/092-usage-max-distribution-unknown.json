@@ -1,0 +1,11 @@
+{
+  "name": "usage-max-distribution-unknown",
+  "args": [
+    "list-formats",
+    "--packs",
+    "{packs}",
+    "--max-distribution",
+    "restricted"
+  ],
+  "exit": 2
+}

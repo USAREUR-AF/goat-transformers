@@ -51,7 +51,19 @@ pub fn build(b: *std.Build) void {
     fuzz_cmd.step.dependOn(&run_cmd.step);
     test_step.dependOn(&fuzz_cmd.step);
 
-    // `zig build module-test`: the module another program imports loads packs and converts.
+    // `zig build cli`: the command-line tool of spec Version 0.23,
+    // zig-out/bin/goat-xf. Not part of the default install step, so the
+    // harness builds as before.
+    const cli_exe = b.addExecutable(.{
+        .name = "goat-xf",
+        .root_source_file = b.path("src/cli.zig"),
+        .target = target,
+        .optimize = optimize,
+    });
+    const cli_step = b.step("cli", "Build the command-line tool zig-out/bin/goat-xf (spec Version 0.23)");
+    cli_step.dependOn(&b.addInstallArtifact(cli_exe, .{}).step);
+
+    // `zig build module-test`:the module another program imports loads packs and converts.
     const module_tests = b.addTest(.{
         .root_source_file = b.path("src/root.zig"),
         .target = target,

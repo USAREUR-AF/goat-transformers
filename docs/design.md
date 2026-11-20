@@ -40,7 +40,7 @@ mapped key is declared and correctly typed, in all seven engines.
 
 For every ordered pair of loaded formats the engine reports which keys carry and
 which the target cannot represent, graded Full, Partial or None
-(`Engine::capability`, `goat-xf matrix --detail`). A pair that must lose nothing
+(`Engine::capability`, `goat-xf matrix`). A pair that must lose nothing
 and cannot get there through the modules gets a direct pair rule, which names
 its evidence (`docs/adr/0002`). Built: the matrix. Designed: pair rules.
 

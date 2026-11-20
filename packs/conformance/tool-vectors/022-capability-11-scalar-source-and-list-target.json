@@ -1,0 +1,16 @@
+{
+  "name": "capability-11-scalar-source-and-list-target",
+  "args": [
+    "capability",
+    "--from",
+    "conformance-cap-a",
+    "--to",
+    "conformance-cap-lists",
+    "--packs",
+    "{packs}",
+    "--packs-only",
+    "conformance-cap-a,conformance-cap-lists"
+  ],
+  "exit": 0,
+  "stdout_text": "conformance-cap-a\tconformance-cap-lists\tpartial\tuid\tcallsign lat lon probe.n\n"
+}

@@ -1,0 +1,11 @@
+{
+  "name": "usage-from-on-list-formats",
+  "args": [
+    "list-formats",
+    "--packs",
+    "{packs}",
+    "--from",
+    "conformance-cap-a"
+  ],
+  "exit": 2
+}

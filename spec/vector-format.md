@@ -273,3 +273,47 @@ The engine loads the model modules and the two packs, calls
 `capability(from, to)`, and passes when the grade and both arrays are equal to
 the vector's, entry for entry and in order. The packs `conformance-cap-*` are
 the formats these vectors name; they have no conversion vectors.
+
+## Tool vectors
+
+Status: Written. Version 0.23. A tool vector pins one run of an engine's
+command-line tool (`spec/engine-spec.md`, Version 0.23). One JSON object per
+file under `packs/conformance/tool-vectors/*.json`:
+
+| Key | Required | Meaning |
+|---|---|---|
+| `name` | yes | unique within the directory |
+| `args` | yes | array of strings: the arguments after the program, the subcommand first; may be empty |
+| `stdin_hex` | no | the bytes on standard input, as lower-case hex; absent means no bytes |
+| `exit` | yes | `0`, `1` or `2` |
+| `stdout_text` | with `exit` 0, unless `stdout_any` | the UTF-8 text standard output must hold, byte for byte |
+| `stdout_any` | with `exit` 0, in place of `stdout_text` | `true`: standard output must not be empty, and is not compared (the text of `help`) |
+| `error_kind` | with `exit` 1, optional | the kind the first line of standard error begins with, followed by `:`. Absent: the failure has no kind in the contract (an unreadable `--packs`), and standard error must not be empty |
+
+Every vector that loads packs passes `--packs {packs}`: the default of
+`--packs` is each engine's own. In `args`, the text `{packs}` stands for the
+absolute path of the repository's `packs/` directory and `{models}` for that
+of its `model/` directory; the runner replaces each occurrence before it
+starts the tool. Nothing else in a string is replaced. The runner starts the
+tool in the repository's root directory.
+
+The runner starts the tool with the arguments, writes the input and closes
+standard input (a write the tool refuses because it exited without reading is
+not a failure), waits, and checks:
+
+- the exit status equals `exit`;
+- with `exit` 0: standard output equals `stdout_text` byte for byte, or with
+  `stdout_any` is not empty; standard error is empty;
+- with `exit` 1: standard output is empty; standard error is not; and with
+  `error_kind`, the first line of standard error begins with `error_kind`
+  followed by `:`;
+- with `exit` 2: standard output is empty and standard error is not.
+
+A vector with a key the table does not list, with output keys that do not fit
+its `exit`, or with both `stdout_text` and `stdout_any`, is invalid, and an
+invalid vector fails the run.
+
+`python3 -I tools/tool-vectors.py -- <command> [<arg>...]` runs every tool
+vector with `<command> <arg>...` as the program and prints one
+`FAIL <file>: <why>` line per failing vector and `tool vectors: N/N passed`
+last; it exits 1 on any failure.

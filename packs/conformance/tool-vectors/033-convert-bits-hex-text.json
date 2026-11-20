@@ -1,0 +1,17 @@
+{
+  "name": "convert-bits-hex-text",
+  "args": [
+    "convert",
+    "--from",
+    "conformance-absent-bits-lsb",
+    "--to",
+    "conformance-absent-bits-lsb",
+    "--packs",
+    "{packs}",
+    "--packs-only",
+    "conformance-absent-bits-lsb"
+  ],
+  "stdin_hex": "313233346666616630303030633037666666633030303030",
+  "exit": 0,
+  "stdout_text": "1234ffaf0000c07fffc00000"
+}

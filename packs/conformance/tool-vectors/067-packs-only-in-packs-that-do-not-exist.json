@@ -1,0 +1,12 @@
+{
+  "name": "packs-only-in-packs-that-do-not-exist",
+  "args": [
+    "list-formats",
+    "--packs",
+    "{packs}/conformance-no-such-directory",
+    "--packs-only",
+    "conformance-cap-a"
+  ],
+  "exit": 1,
+  "error_kind": "unknown-format"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "models-given",
+  "args": [
+    "list-formats",
+    "--packs",
+    "{packs}",
+    "--models",
+    "{models}",
+    "--packs-only",
+    "conformance-cap-a"
+  ],
+  "exit": 0,
+  "stdout_text": "conformance-cap-a\t0.11.0\tjson\n"
+}

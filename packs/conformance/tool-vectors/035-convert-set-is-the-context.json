@@ -1,0 +1,19 @@
+{
+  "name": "convert-set-is-the-context",
+  "args": [
+    "convert",
+    "--from",
+    "conformance-absent-json",
+    "--to",
+    "conformance-absent-json",
+    "--set",
+    "callsign=CTX",
+    "--packs",
+    "{packs}",
+    "--packs-only",
+    "conformance-absent-json"
+  ],
+  "stdin_hex": "7b226964223a227531222c22616c74223a31302c226c6174223a312c226c6162656c223a224c222c2272223a322c22636f6465223a2263222c226f6e223a747275652c226373223a224e4f4e45222c2261223a322c226e61223a302c2273223a2278222c2271223a337d",
+  "exit": 0,
+  "stdout_text": "{\"id\":\"u1\",\"alt\":10,\"lat\":1,\"label\":\"L\",\"r\":2,\"code\":\"c\",\"on\":true,\"cs\":\"CTX\",\"a\":2,\"na\":-2,\"s\":\"x\",\"q\":3}"
+}

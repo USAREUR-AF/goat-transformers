@@ -1,0 +1,8 @@
+{
+  "name": "usage-option-with-equals",
+  "args": [
+    "list-formats",
+    "--packs={packs}"
+  ],
+  "exit": 2
+}

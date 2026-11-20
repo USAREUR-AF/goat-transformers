@@ -1,0 +1,9 @@
+{
+  "name": "usage-subcommand-not-first",
+  "args": [
+    "--packs",
+    "{packs}",
+    "list-formats"
+  ],
+  "exit": 2
+}

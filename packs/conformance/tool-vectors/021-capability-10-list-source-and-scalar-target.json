@@ -1,0 +1,16 @@
+{
+  "name": "capability-10-list-source-and-scalar-target",
+  "args": [
+    "capability",
+    "--from",
+    "conformance-cap-lists",
+    "--to",
+    "conformance-cap-a",
+    "--packs",
+    "{packs}",
+    "--packs-only",
+    "conformance-cap-lists,conformance-cap-a"
+  ],
+  "exit": 0,
+  "stdout_text": "conformance-cap-lists\tconformance-cap-a\tpartial\tuid\tprobe.items[] probe.items[].probe.label probe.items[].probe.qty probe.items[].probe.subs[] probe.items[].probe.subs[].probe.tag probe.items[].probe.subs[].probe.val probe.nums[] probe.nums[].probe.val\n"
+}

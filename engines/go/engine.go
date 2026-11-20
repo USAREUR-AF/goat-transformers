@@ -538,6 +538,43 @@ func (e *Engine) Convert(from, to string, b []byte) ([]byte, error) {
 // skipped, so a same-format round trip stays byte-exact. A decode that leaves
 // any key without a value fails the conversion.
 func (e *Engine) ConvertWith(from, to string, b []byte, context map[string]string) ([]byte, error) {
+	if context == nil {
+		return e.ConvertOrdered(from, to, b, nil)
+	}
+	keys := make([]string, 0, len(context))
+	for k := range context {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	ctx := make([]KeyValue, len(keys))
+	for i, k := range keys {
+		ctx[i] = KeyValue{k, context[k]}
+	}
+	return e.ConvertOrdered(from, to, b, ctx)
+}
+
+// KeyValue is one entry of an ordered context: a model key and its value in
+// string form.
+type KeyValue struct {
+	Key, Value string
+}
+
+// ConvertOrdered is ConvertWith with a context whose keys are checked in the
+// order given (ruling 10 of 0.6), so the first failing key names the kind. A
+// key given twice takes its last value and keeps the place of its first. nil
+// means no context is given; an empty non-nil slice is an empty context.
+func (e *Engine) ConvertOrdered(from, to string, b []byte, ctx []KeyValue) ([]byte, error) {
+	var keys []string
+	var context map[string]string
+	if ctx != nil {
+		context = map[string]string{}
+		for _, kv := range ctx {
+			if _, seen := context[kv.Key]; !seen {
+				keys = append(keys, kv.Key)
+			}
+			context[kv.Key] = kv.Value
+		}
+	}
 	// from, then to, before the input is read (ruling 5 of 0.11).
 	if _, err := e.Pack(from); err != nil {
 		return nil, err
@@ -553,7 +590,7 @@ func (e *Engine) ConvertWith(from, to string, b []byte, context map[string]strin
 		ent.Kind = EntityKind{}
 	}
 	if from != to || context != nil {
-		if err := e.Fill(ent, context); err != nil {
+		if err := e.fillInOrder(ent, keys, context); err != nil {
 			return nil, err
 		}
 		e.Complete(ent)

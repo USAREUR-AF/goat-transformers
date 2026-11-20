@@ -623,6 +623,12 @@ func (e *Engine) Fill(ent *Entity, context map[string]string) error {
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)
+	return e.fillInOrder(ent, keys, context)
+}
+
+// fillInOrder is Fill with the context keys checked in the order of keys, so
+// the first failing key names the kind.
+func (e *Engine) fillInOrder(ent *Entity, keys []string, context map[string]string) error {
 	vals := make([]Value, len(keys))
 	for i, k := range keys {
 		kind, err := e.keyType(k)

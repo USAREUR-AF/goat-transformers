@@ -1,0 +1,16 @@
+{
+  "name": "capability-17-item-key-and-entity-key-of-one-name-are-two-entries",
+  "args": [
+    "capability",
+    "--from",
+    "conformance-cap-seq-b",
+    "--to",
+    "conformance-cap-seq",
+    "--packs",
+    "{packs}",
+    "--packs-only",
+    "conformance-cap-seq-b,conformance-cap-seq"
+  ],
+  "exit": 0,
+  "stdout_text": "conformance-cap-seq-b\tconformance-cap-seq\tpartial\tprobe.z probe.y probe.recs[] probe.recs[].probe.x\tprobe.recs[].probe.y\n"
+}

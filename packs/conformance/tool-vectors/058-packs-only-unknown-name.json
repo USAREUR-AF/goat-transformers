@@ -1,0 +1,12 @@
+{
+  "name": "packs-only-unknown-name",
+  "args": [
+    "list-formats",
+    "--packs",
+    "{packs}",
+    "--packs-only",
+    "conformance-cap-a,conformance-no-such-pack"
+  ],
+  "exit": 1,
+  "error_kind": "unknown-format"
+}

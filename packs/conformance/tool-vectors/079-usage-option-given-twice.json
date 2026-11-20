@@ -1,0 +1,11 @@
+{
+  "name": "usage-option-given-twice",
+  "args": [
+    "list-formats",
+    "--packs",
+    "{packs}",
+    "--packs",
+    "{packs}"
+  ],
+  "exit": 2
+}

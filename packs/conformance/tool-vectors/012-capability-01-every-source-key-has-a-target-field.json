@@ -1,0 +1,16 @@
+{
+  "name": "capability-01-every-source-key-has-a-target-field",
+  "args": [
+    "capability",
+    "--from",
+    "conformance-cap-a",
+    "--to",
+    "conformance-cap-b",
+    "--packs",
+    "{packs}",
+    "--packs-only",
+    "conformance-cap-a,conformance-cap-b"
+  ],
+  "exit": 0,
+  "stdout_text": "conformance-cap-a\tconformance-cap-b\tfull\tuid callsign lat lon probe.n\t\n"
+}

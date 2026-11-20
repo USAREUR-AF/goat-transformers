@@ -1,0 +1,8 @@
+{
+  "name": "usage-option-without-value",
+  "args": [
+    "list-formats",
+    "--packs"
+  ],
+  "exit": 2
+}

@@ -117,5 +117,13 @@ if(GT_BUILD_TESTS)
   if(GT_BUILD_CLI)
     add_test(NAME cli_list_formats COMMAND goat-xf list-formats --packs ${GT_PACKS_DIR})
     add_test(NAME cli_packs_only COMMAND goat-xf list-formats --packs ${GT_PACKS_DIR} --packs-only cot-xml,geojson)
+    # The tool vectors of the command-line contract (engine-spec.md 0.23), run
+    # by the repository's runner from the repository's root.
+    find_package(Python3 COMPONENTS Interpreter QUIET)
+    if(Python3_Interpreter_FOUND AND EXISTS "${GT_REPO_ROOT}/tools/tool-vectors.py")
+      add_test(NAME tool_vectors
+        COMMAND ${Python3_EXECUTABLE} -I "${GT_REPO_ROOT}/tools/tool-vectors.py" -- $<TARGET_FILE:goat-xf>
+        WORKING_DIRECTORY "${GT_REPO_ROOT}")
+    endif()
   endif()
 endif()

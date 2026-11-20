@@ -1,0 +1,10 @@
+{
+  "name": "usage-double-dash-alone",
+  "args": [
+    "list-formats",
+    "--",
+    "--packs",
+    "{packs}"
+  ],
+  "exit": 2
+}

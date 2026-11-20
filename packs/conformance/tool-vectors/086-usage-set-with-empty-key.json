@@ -1,0 +1,15 @@
+{
+  "name": "usage-set-with-empty-key",
+  "args": [
+    "convert",
+    "--from",
+    "conformance-cap-a",
+    "--to",
+    "conformance-cap-a",
+    "--set",
+    "=1",
+    "--packs",
+    "{packs}"
+  ],
+  "exit": 2
+}

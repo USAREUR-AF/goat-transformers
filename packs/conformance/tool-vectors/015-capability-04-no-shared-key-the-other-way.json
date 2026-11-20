@@ -1,0 +1,16 @@
+{
+  "name": "capability-04-no-shared-key-the-other-way",
+  "args": [
+    "capability",
+    "--from",
+    "conformance-cap-c",
+    "--to",
+    "conformance-cap-a",
+    "--packs",
+    "{packs}",
+    "--packs-only",
+    "conformance-cap-c,conformance-cap-a"
+  ],
+  "exit": 0,
+  "stdout_text": "conformance-cap-c\tconformance-cap-a\tnone\t\tprobe.s1\n"
+}

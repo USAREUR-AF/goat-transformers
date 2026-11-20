@@ -1,0 +1,16 @@
+{
+  "name": "capability-03-no-shared-key",
+  "args": [
+    "capability",
+    "--from",
+    "conformance-cap-a",
+    "--to",
+    "conformance-cap-c",
+    "--packs",
+    "{packs}",
+    "--packs-only",
+    "conformance-cap-a,conformance-cap-c"
+  ],
+  "exit": 0,
+  "stdout_text": "conformance-cap-a\tconformance-cap-c\tnone\t\tuid callsign lat lon probe.n\n"
+}

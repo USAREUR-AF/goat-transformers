@@ -1,0 +1,16 @@
+{
+  "name": "capability-unknown-from",
+  "args": [
+    "capability",
+    "--from",
+    "conformance-not-loaded",
+    "--to",
+    "conformance-cap-a",
+    "--packs",
+    "{packs}",
+    "--packs-only",
+    "conformance-cap-a"
+  ],
+  "exit": 1,
+  "error_kind": "unknown-format"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "packs-only-a-path",
+  "args": [
+    "list-formats",
+    "--packs",
+    "{packs}",
+    "--packs-only",
+    "conformance/../conformance-cap-a"
+  ],
+  "exit": 1,
+  "error_kind": "unknown-format"
+}

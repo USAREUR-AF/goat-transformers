@@ -1,0 +1,17 @@
+{
+  "name": "convert-unknown-format-before-the-input-is-read",
+  "args": [
+    "convert",
+    "--from",
+    "conformance-not-loaded",
+    "--to",
+    "conformance-cap-a",
+    "--packs",
+    "{packs}",
+    "--packs-only",
+    "conformance-cap-a"
+  ],
+  "stdin_hex": "6e6f742061206d657373616765",
+  "exit": 1,
+  "error_kind": "unknown-format"
+}

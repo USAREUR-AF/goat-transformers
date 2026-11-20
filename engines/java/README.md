@@ -63,31 +63,50 @@ $ java -cp lib/goat-transformers-0.8.0.jar:. Convert
 
 ## Command-line tool
 
-`java -jar build/goat-transformers-0.8.0.jar` runs `goat.transformers.Cli`.
+The tool follows the command-line contract of
+[spec/engine-spec.md](../../spec/engine-spec.md), Version 0.23: the same
+arguments, output and exit status as the tool of every other engine. Build it
+with `./build.sh` (it writes the jar only when every test passes), then start
+it from the repository root with
+
+```
+engines/java/goat-xf-java.sh <subcommand> [<option> <value>]...
+```
+
+which runs `java -jar engines/java/build/goat-transformers-0.8.0.jar`, the
+class `goat.transformers.Cli`. The launcher sets `LC_ALL=C.UTF-8` when the
+locale is not a UTF-8 one, because the JVM decodes its arguments with the
+locale's character set and the contract's command line is UTF-8.
 
 | Subcommand | Does |
 |---|---|
-| `convert --from FORMAT --to FORMAT` | reads a message on stdin, writes the converted message on stdout |
-| `list-formats` | prints one `<format> <version> <wire>` line per loaded pack |
+| `convert --from F --to T [--set KEY=VALUE]...` | reads standard input to its end, writes the converted message with nothing added (hex text for the `bits`, `protobuf` and `tlv` wires) |
+| `list-formats` | one `<format> TAB <version> TAB <wire>` line per loaded pack, in byte order of format |
+| `capability --from F --to T` | the capability report of the pair as one matrix line |
+| `matrix` | the header `from TAB to TAB grade TAB carried TAB dropped`, then one line per ordered pair of loaded formats |
+| `help`, `-h`, `--help` | the usage on standard output |
 
-| Option | Meaning |
-|---|---|
-| `--packs DIR` | the packs directory; required (this tool has no default) |
-| `--models DIR` | the model modules; default `<packs>/../model` |
-| `--packs-only NAME[,NAME...]` | load only the named packs, with the model modules they need |
-| `--max-distribution public\|controlled` | refuse modules and packs marked above the limit; default `controlled` |
-| `--max-items N` | the limit on list items of one decode; default 100,000 |
-| `--set KEY=VALUE` | `convert` only, repeatable: supply a model key the source does not carry |
+| Option | Meaning | Default |
+|---|---|---|
+| `--packs DIR` | the directory whose subdirectories are packs | `packs`, in the working directory |
+| `--models DIR` | the model modules; every `.def` file is loaded | the `--packs` text followed by `/../model` |
+| `--packs-only NAME[,NAME...]` | load only these subdirectories of `--packs`, in this order | every pack directory |
+| `--max-items N` | the limit on list items of one decode | 100000 |
+| `--max-distribution public\|controlled` | refuse modules and packs marked above the limit | `controlled` |
 
-Exit codes: 0 success, 1 engine error (printed as `error: <kind>: ...`),
-2 usage (the usage text is printed on stderr). Measured from this directory:
+Each option is given at most once, except `--set`. Exit status 0 is success;
+1 is a load or call failure, and the first line of standard error begins with
+the error kind and a colon (an unreadable `--packs` without `--packs-only` begins with `io:`; with it, the first name is `unknown-format`); 2 is a
+usage error, checked before anything is loaded. With `--packs-only` the tool
+reads the model directory once and each named pack once. This tool has no
+`--x-` options. Measured from the repository root:
 
 ```
-$ java -jar build/goat-transformers-0.8.0.jar list-formats --packs ../../packs --packs-only geojson,cot-xml
-cot-xml 0.2.0 xml
-geojson 0.1.0 geojson
-$ echo '{}' | java -jar build/goat-transformers-0.8.0.jar convert --from geojson --to nope --packs ../../packs --packs-only geojson
-error: unknown-format: no pack loaded for format nope [format=nope locator=-]
+$ engines/java/goat-xf-java.sh list-formats --packs packs --packs-only geojson,cot-xml
+cot-xml	0.6.0	xml
+geojson	0.1.0	geojson
+$ echo '{}' | engines/java/goat-xf-java.sh convert --from geojson --to nope --packs packs --packs-only geojson
+unknown-format: no pack loaded for format nope [format=nope locator=-]
 ```
 
 ## Test
@@ -126,6 +145,19 @@ OK
 ```
 
 `./build.sh` takes 52 s in all.
+
+The tool vectors (`packs/conformance/tool-vectors/`, spec Version 0.23) run
+against the tool, after `./build.sh` has written the jar, from the repository
+root:
+
+```
+$ python3 -I tools/tool-vectors.py -- engines/java/goat-xf-java.sh
+tool vectors: 97/97 passed
+```
+
+| Test | Command | Measured |
+|---|---|---|
+| tool vectors | `python3 -I tools/tool-vectors.py -- engines/java/goat-xf-java.sh` | 97/97 passed, 5 min 31 s for 95 vectors on an idle machine (each run starts a JVM and loads every model module) |
 
 ### The bounded sweep and `GOAT_SWEEP_FULL=1`
 

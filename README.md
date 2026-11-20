@@ -191,7 +191,7 @@ that have no pack and what each one needs.
 ## Conversions, and what carries
 
 Two formats convert to each other exactly the keys that both map. The engine
-reports this for every pair of loaded formats (`goat-xf matrix --detail`): which
+reports this for every pair of loaded formats (`goat-xf matrix`, or `goat-xf capability` for one pair): which
 keys carry, and which the target has no field for. Every row below was run with
 the command-line tool on a message from the pack's own vectors.
 

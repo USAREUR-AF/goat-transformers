@@ -1,0 +1,15 @@
+{
+  "name": "usage-set-on-capability",
+  "args": [
+    "capability",
+    "--from",
+    "conformance-cap-a",
+    "--to",
+    "conformance-cap-a",
+    "--set",
+    "lat=1",
+    "--packs",
+    "{packs}"
+  ],
+  "exit": 2
+}

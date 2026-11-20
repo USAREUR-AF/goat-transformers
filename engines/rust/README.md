@@ -80,41 +80,42 @@ Both examples in this file compile against this crate as a path dependency.
 
 ## The command-line tool `goat-xf`
 
+The tool follows the command-line contract of spec 0.23
+(`spec/engine-spec.md`, Version 0.23), the same in all seven engines.
+
 ```
-goat-xf convert --from <format> --to <format> [--set <key>=<value>]... < input
-goat-xf list-formats
-goat-xf matrix [--detail]
+goat-xf convert --from <format> --to <format> [--set <key>=<value>]... <options> < input
+goat-xf list-formats <options>
+goat-xf capability --from <format> --to <format> <options>
+goat-xf matrix <options>
+goat-xf help
 ```
 
 | Option | For every subcommand |
 |---|---|
 | `--packs <dir>` | the pack directory; default `../../packs` |
 | `--models <dir>` | the model modules; default `<packs>/../model` |
-| `--packs-only <name>[,<name>...]` | load only these packs of `--packs` |
-| `--max-distribution public` | refuse controlled modules and packs (`public` or `controlled`) |
+| `--packs-only <name>[,<name>...]` | load only these packs of `--packs`, in this order |
 | `--max-items <n>` | the limit on list items one decode holds; default 100000, 0 refuses any item |
+| `--max-distribution <public\|controlled>` | `public` refuses controlled modules and packs |
 
 `convert` reads the message on standard input and writes the result to
-standard output; `--set` is repeatable and supplies a model key the input does
-not carry. `list-formats` prints the loaded formats, sorted. `matrix` prints
-the grade of every ordered pair (`F` all mapped fields carry, `P` some carry,
-`.` none); `--detail` adds the keys carried and dropped for each pair. With no
-subcommand the tool prints its usage and exits with 2; an error exits with 1.
-Run in `engines/rust` after `cargo build --release`:
+standard output, with no line feed added; a binary format reads and writes
+hex text. `--set` is repeatable and supplies a model key the input does not
+carry. `list-formats` prints one line per loaded format: name, version and
+wire, separated by tabs. `capability` prints the capability report of one
+pair as a tab-separated line: source, target, grade (`full`, `partial` or
+`none`), the keys that carry and the keys dropped, each list joined by
+spaces. `matrix` prints a header line and that line for every ordered pair
+of loaded formats. The exit status is 0 on success, 1 for a load or
+conversion error (standard error begins with its kind, then a colon) and 2
+for a usage error. Run in `engines/rust` after `cargo build --release`:
 
 ```
 $ target/release/goat-xf convert --from cot-xml --to geojson --packs ../../packs --packs-only cot-xml,geojson < event.xml
 {"type":"Feature","geometry":{"type":"Point","coordinates":[-85.9578182,30.0090027,-42.6]},"properties":{"type":"a-f-G-U-C","time_ms":1614456000000,"how":"m-g","ce":45.3,"le":99.5,"callsign":"GATOR"},"id":"J-01334"}
-$ target/release/goat-xf matrix --detail --packs ../../packs --packs-only cot-xml,geojson
-from\to cot-xm geojso 
-cot-xml      -      P 
-geojson      F      - 
-
-F = all mapped fields carry   P = some carry, some dropped   . = no shared fields   - = same format
-
-Per-pair detail (carried | dropped and why):
-         cot-xml -> geojson        PARTIAL  carries: [uid, type, time_ms, how, lat, lon, hae, ce, le, callsign, course, speed_ms]  dropped: track.scoped_id, stale_ms (target `geojson` has no field for them)
-         geojson -> cot-xml        FULL     carries: [uid, type, time_ms, how, lat, lon, hae, ce, le, callsign, course, speed_ms]
+$ target/release/goat-xf capability --from cot-xml --to geojson --packs ../../packs --packs-only cot-xml,geojson
+cot-xml	geojson	partial	uid type time_ms how lat lon hae ce le callsign course speed_ms	track.scoped_id stale_ms access time_text stale_text display_name
 ```
 
 `event.xml` is the Cursor on Target event of `tests/embed.rs`.
@@ -130,6 +131,7 @@ Per-pair detail (carried | dropped and why):
 | `tests/api.rs` | what a vector cannot reach: `fill` and `complete` on their own, lists, item kinds, `model_keys`, `capability`, the directory loaders, `load_pack_dir_only` | 12 tests |
 | `tests/fuzz.rs` | random, cut and mutated input and hostile shapes for every pack: never a panic, only a named error | 170558 inputs over 96 packs |
 | `tests/embed.rs` | packs compiled into the binary with `include_str!` | 1 test |
+| `python3 -I tools/tool-vectors.py -- engines/rust/target/release/goat-xf` (from the repository root; CI runs it on the debug build) | the command-line contract of spec 0.23: every tool vector under `packs/conformance/tool-vectors/` | 97 tool vectors, 0 failed |
 
 `GOAT_FUZZ_ITERS=<n>` multiplies the fuzz inputs; `GOAT_FUZZ_SEED=<n>`
 changes the seed.

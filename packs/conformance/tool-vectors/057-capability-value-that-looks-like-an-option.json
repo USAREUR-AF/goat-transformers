@@ -1,0 +1,16 @@
+{
+  "name": "capability-value-that-looks-like-an-option",
+  "args": [
+    "capability",
+    "--packs",
+    "{packs}",
+    "--from",
+    "--to",
+    "--to",
+    "conformance-cap-a",
+    "--packs-only",
+    "conformance-cap-a"
+  ],
+  "exit": 1,
+  "error_kind": "unknown-format"
+}

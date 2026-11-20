@@ -1,0 +1,12 @@
+{
+  "name": "matrix-three-formats",
+  "args": [
+    "matrix",
+    "--packs",
+    "{packs}",
+    "--packs-only",
+    "conformance-cap-c,conformance-cap-b,conformance-cap-a"
+  ],
+  "exit": 0,
+  "stdout_text": "from\tto\tgrade\tcarried\tdropped\nconformance-cap-a\tconformance-cap-a\tfull\tuid callsign lat lon probe.n\t\nconformance-cap-a\tconformance-cap-b\tfull\tuid callsign lat lon probe.n\t\nconformance-cap-a\tconformance-cap-c\tnone\t\tuid callsign lat lon probe.n\nconformance-cap-b\tconformance-cap-a\tpartial\tlat uid lon probe.n callsign\thae\nconformance-cap-b\tconformance-cap-b\tfull\tlat uid hae lon probe.n callsign\t\nconformance-cap-b\tconformance-cap-c\tnone\t\tlat uid hae lon probe.n callsign\nconformance-cap-c\tconformance-cap-a\tnone\t\tprobe.s1\nconformance-cap-c\tconformance-cap-b\tnone\t\tprobe.s1\nconformance-cap-c\tconformance-cap-c\tfull\tprobe.s1\t\n"
+}

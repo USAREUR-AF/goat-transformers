@@ -1,0 +1,12 @@
+{
+  "name": "matrix-one-format",
+  "args": [
+    "matrix",
+    "--packs",
+    "{packs}",
+    "--packs-only",
+    "conformance-cap-a"
+  ],
+  "exit": 0,
+  "stdout_text": "from\tto\tgrade\tcarried\tdropped\nconformance-cap-a\tconformance-cap-a\tfull\tuid callsign lat lon probe.n\t\n"
+}
