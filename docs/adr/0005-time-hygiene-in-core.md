@@ -69,9 +69,27 @@ writes one; `tools/gen/gtcheck.py` refuses each in CI, for these five keys and f
 with a growing `time_utc_error_ms` and `time_anchor_age_ms` until the source calls
 it `unknown`; there is no third state, because goatcore has none.
 
-If goatcore fixes an enum for these fields before this merges, its spelling
-replaces the one above; otherwise goatcore adopts these spellings when its engine
-builds the two-axis split.
+Where goatcore's names and the operator's brief differ, goatcore wins: the brief
+itself says to "Name and shape the keys to match the goatcore time-hygiene
+vocabulary and EnvHealthV1 time domain exactly" (leads/shared-model-hardening.md,
+item 5). Two places differ:
+
+- The brief lists the UTC states as anchored, decaying and unknown. goatcore
+  labels the axis "🟢 UTC-confident" and "🟡 UTC-unknown" (time-hygiene-trusted-
+  time.md lines 242-243) and has no label for a decaying state, only the prose
+  "UTC-confidence decays honestly" (line 158). `time_utc_state` therefore takes
+  `confident` and `unknown`; a decaying confidence is `confident` with a growing
+  `time_utc_error_ms` and `time_anchor_age_ms`.
+- The brief lists the anchor kinds as gnss, nts, peer-nts and none. goatcore's
+  code names them `SourceGNSS    SelectedSource = "gnss"`,
+  `SourcePeerNTS SelectedSource = "peer_nts"`, `SourceWanNTS  SelectedSource =
+  "wan_nts"`, `SourceOrphan  SelectedSource = "orphan"`, `SourceNone
+  SelectedSource = "none"` (`ops/time-hygiene/internal/state/state.go` lines
+  36-40). `time_anchor` takes those values exactly.
+
+If goatcore later fixes an enum for these fields, a new key carries its spelling
+(a key is never renamed); otherwise goatcore adopts these spellings when its
+engine builds the two-axis split.
 
 ## Consumers re-measured
 
