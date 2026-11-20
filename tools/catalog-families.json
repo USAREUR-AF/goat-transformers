@@ -53,6 +53,7 @@
     {"name": "Cursor on Target", "domain": "c2", "prefixes": ["cot-"], "detail": "XML, protobuf"},
     {"name": "UCI", "domain": "c2", "exact": ["uci", "uci-2.5"], "detail": "2.5, 2.6"},
     {"name": "A-GRA", "domain": "c2", "exact": ["a-gra"]},
+    {"name": "DIS (IEEE 1278.1)", "domain": "c2", "exact": ["dis7"], "detail": "version 7"},
     {"name": "C2SIM", "domain": "c2", "exact": ["c2sim"]},
     {"name": "NVG", "domain": "c2", "exact": ["nvg"]},
     {"name": "Canonical Track v2", "domain": "c2", "exact": ["canonical-track-v2"]},

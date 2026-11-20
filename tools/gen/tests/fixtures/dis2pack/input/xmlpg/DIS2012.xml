@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- A PDU description for the dis2pack tests, in the shape of the open-dis xmlpg file. -->
+<classes>
+<class name="Ident" inheritsFrom="root">
+  <attribute name="site"><primitive type="unsigned short"/></attribute>
+  <attribute name="app"><primitive type="unsigned short"/></attribute>
+  <attribute name="num"><primitive type="unsigned short"/></attribute>
+</class>
+<class name="Vec3" inheritsFrom="root">
+  <attribute name="x"><primitive type="double"/></attribute>
+  <attribute name="y"><primitive type="double"/></attribute>
+  <attribute name="z"><primitive type="double"/></attribute>
+</class>
+<class name="Part" inheritsFrom="root">
+  <attribute name="kind"><primitive type="unsigned byte"/></attribute>
+  <attribute name="value"><primitive type="float"/></attribute>
+  <attribute name="extra"><primitive type="short"/></attribute>
+  <attribute name="pad"><primitive type="unsigned byte"/></attribute>
+</class>
+<class name="PduSuperclass" inheritsFrom="root">
+  <attribute name="protocolVersion"><primitive type="unsigned byte" defaultValue="7"/></attribute>
+  <attribute name="exerciseID"><primitive type="unsigned byte"/></attribute>
+  <attribute name="pduType"><primitive type="unsigned byte"/></attribute>
+  <attribute name="protocolFamily"><primitive type="unsigned byte"/></attribute>
+  <attribute name="timestamp"><primitive type="unsigned int"/></attribute>
+  <attribute name="length"><primitive type="unsigned short"/></attribute>
+</class>
+<class name="Pdu" inheritsFrom="PduSuperclass">
+  <attribute name="pduStatus"><primitive type="unsigned byte"/></attribute>
+  <attribute name="padding"><primitive type="unsigned byte"/></attribute>
+</class>
+<class name="FamilyPdu" inheritsFrom="Pdu"/>
+<class name="TrackStatePdu" inheritsFrom="FamilyPdu">
+  <attribute name="ident"><classref name="Ident"/></attribute>
+  <attribute name="numberOfParts"><primitive type="unsigned byte"/></attribute>
+  <attribute name="mark"><list type="fixed" length="6" couldBeString="true"><primitive type="unsigned byte"/></list></attribute>
+  <attribute name="place"><classref name="Vec3"/></attribute>
+  <attribute name="spin"><list type="fixed" length="2"><primitive type="int"/></list></attribute>
+  <attribute name="parts"><list type="variable" countFieldName="numberOfParts"><classref name="Part"/></list></attribute>
+</class>
+<class name="PingPdu" inheritsFrom="FamilyPdu">
+  <attribute name="from"><classref name="Ident"/></attribute>
+  <attribute name="token"><primitive type="unsigned long"/></attribute>
+  <attribute name="level"><primitive type="float"/></attribute>
+  <attribute name="delta"><primitive type="byte"/></attribute>
+  <attribute name="pad"><list type="fixed" length="3"><primitive type="unsigned byte"/></list></attribute>
+</class>
+<class name="TwoListsPdu" inheritsFrom="FamilyPdu">
+  <attribute name="na"><primitive type="unsigned byte"/></attribute>
+  <attribute name="nb"><primitive type="unsigned byte"/></attribute>
+  <attribute name="as"><list type="variable" countFieldName="na"><primitive type="unsigned int"/></list></attribute>
+  <attribute name="bs"><list type="variable" countFieldName="nb"><primitive type="unsigned int"/></list></attribute>
+</class>
+<class name="FastTrackStatePdu" inheritsFrom="FamilyPdu">
+  <attribute name="ident"><classref name="Ident"/></attribute>
+</class>
+<class name="SkippedPdu" inheritsFrom="FamilyPdu">
+  <attribute name="value"><primitive type="unsigned int"/></attribute>
+</class>
+<class name="UnnumberedPdu" inheritsFrom="FamilyPdu">
+  <attribute name="value"><primitive type="unsigned int"/></attribute>
+</class>
+</classes>

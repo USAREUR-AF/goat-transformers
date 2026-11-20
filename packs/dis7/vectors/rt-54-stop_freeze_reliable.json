@@ -1,0 +1,10 @@
+{
+  "name": "dis7-roundtrip-stop_freeze_reliable",
+  "from": "dis7",
+  "to": "dis7",
+  "input": "07b636672dd750180028c97a9751eb283eff92d6e6ad3a8432e48e5b0668e23209e0b78e27fe8565",
+  "expect": "07b636672dd750180028c97a9751eb283eff92d6e6ad3a8432e48e5b0668e23209e0b78e27fe8565",
+  "model": {
+    "@kind": "stop_freeze_reliable"
+  }
+}

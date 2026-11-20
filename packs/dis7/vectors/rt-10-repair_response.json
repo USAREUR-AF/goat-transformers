@@ -1,0 +1,10 @@
+{
+  "name": "dis7-roundtrip-repair_response",
+  "from": "dis7",
+  "to": "dis7",
+  "input": "07a20a532e42ed04001cb566343d8814dbeb2fc28399d77047ff1e75",
+  "expect": "07a20a532e42ed04001cb566343d8814dbeb2fc28399d77047ff1e75",
+  "model": {
+    "@kind": "repair_response"
+  }
+}

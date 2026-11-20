@@ -1,0 +1,10 @@
+{
+  "name": "dis7-roundtrip-receiver",
+  "from": "dis7",
+  "to": "dis7",
+  "input": "07011bb262767063001c14c5b79c0b73c0800000b32106f85acfaea6",
+  "expect": "07011bb262767063001c14c5b79c0b73c0800000b32106f85acfaea6",
+  "model": {
+    "@kind": "receiver"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "dis7-roundtrip-entity_state_update-no-items",
+  "from": "dis7",
+  "to": "dis7",
+  "input": "0759430a3f2be1bb00486c1d7ccbd0a22479d00040700000c0980000c0400000bff40000000000003fe0000000000000400200000000000040800000c0900000c0300000605bbeb6",
+  "expect": "0759430a3f2be1bb00486c1d7ccbd0a22479d00040700000c0980000c0400000bff40000000000003fe0000000000000400200000000000040800000c0900000c0300000605bbeb6",
+  "model": {
+    "@kind": "entity_state_update",
+    "dis7.entity_state_update_variable_parameters.#": "0"
+  }
+}
