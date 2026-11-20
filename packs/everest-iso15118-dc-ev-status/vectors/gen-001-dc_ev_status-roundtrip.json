@@ -1,0 +1,14 @@
+{
+ "name": "gen-dc_ev_status-roundtrip",
+ "from": "everest-iso15118-dc-ev-status",
+ "to": "everest-iso15118-dc-ev-status",
+ "input": "{\"dc_ev_ready\":false,\"dc_ev_error_code\":\"FAILED_ChargingVoltageOutOfRange\",\"dc_ev_ress_soc\":7.0625,\"dc_ev_cabin_conditioning\":true,\"dc_ev_ress_conditioning\":true}",
+ "expect": "{\"dc_ev_ready\":false,\"dc_ev_error_code\":\"FAILED_ChargingVoltageOutOfRange\",\"dc_ev_ress_soc\":7.0625,\"dc_ev_cabin_conditioning\":true,\"dc_ev_ress_conditioning\":true}",
+ "model": {
+  "everestiso15118dcevstatus.dc_ev_ready": "0",
+  "everestiso15118dcevstatus.dc_ev_error_code": "FAILED_ChargingVoltageOutOfRange",
+  "everestiso15118dcevstatus.dc_ev_ress_soc": "7.0625",
+  "everestiso15118dcevstatus.dc_ev_cabin_conditioning": "1",
+  "everestiso15118dcevstatus.dc_ev_ress_conditioning": "1"
+ }
+}

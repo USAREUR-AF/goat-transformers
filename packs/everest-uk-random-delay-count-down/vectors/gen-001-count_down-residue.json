@@ -1,0 +1,7 @@
+{
+ "name": "gen-count_down-residue",
+ "from": "everest-uk-random-delay-count-down",
+ "to": "everest-uk-random-delay-count-down",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"countdown_s\":59231,\"current_limit_after_delay_A\":0.75,\"current_limit_during_delay_A\":101.125,\"start_time\":\"2024-04-08T02:09:52.546Z\"}",
+ "expect": "{\"countdown_s\":59231,\"current_limit_after_delay_A\":0.75,\"current_limit_during_delay_A\":101.125,\"start_time\":\"2024-04-08T02:09:52.546Z\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

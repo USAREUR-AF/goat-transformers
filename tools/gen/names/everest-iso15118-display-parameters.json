@@ -1,0 +1,15 @@
+{
+ "keys": {
+  "|battery_energy_capacity|float": "battery_energy_capacity",
+  "|charging_complete|int": "charging_complete",
+  "|inlet_hot|int": "inlet_hot",
+  "|maximum_soc|float": "maximum_soc",
+  "|minimum_soc|float": "minimum_soc",
+  "|present_soc|float": "present_soc",
+  "|remaining_time_to_maximum_soc|float": "remaining_time_to_maximum_soc",
+  "|remaining_time_to_minimum_soc|float": "remaining_time_to_minimum_soc",
+  "|remaining_time_to_target_soc|float": "remaining_time_to_target_soc",
+  "|target_soc|float": "target_soc"
+ },
+ "lists": {}
+}

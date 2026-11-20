@@ -1,0 +1,7 @@
+{
+ "keys": {
+  "|reason|string": "reason",
+  "|uuid|string": "uuid"
+ },
+ "lists": {}
+}

@@ -1,0 +1,12 @@
+{
+ "name": "gen-certificate_store_update-roundtrip",
+ "from": "everest-evse-security-certificate-store-update",
+ "to": "everest-evse-security-certificate-store-update",
+ "input": "{\"operation\":\"Deleted\",\"leaf_certificate_type\":\"V2G\",\"ca_certificate_type\":\"MO\"}",
+ "expect": "{\"operation\":\"Deleted\",\"leaf_certificate_type\":\"V2G\",\"ca_certificate_type\":\"MO\"}",
+ "model": {
+  "everestevsesecuritycertificatestoreupdate.operation": "Deleted",
+  "everestevsesecuritycertificatestoreupdate.leaf_certificate_type": "V2G",
+  "everestevsesecuritycertificatestoreupdate.ca_certificate_type": "MO"
+ }
+}

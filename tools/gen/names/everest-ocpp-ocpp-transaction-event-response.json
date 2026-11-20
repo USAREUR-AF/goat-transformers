@@ -1,0 +1,15 @@
+{
+ "keys": {
+  "|charging_priority|int": "charging_priority",
+  "|original_transaction_event.evse.connector_id|int": "original_transaction_event_evse_connector_id",
+  "|original_transaction_event.evse.id|int": "original_transaction_event_evse_id",
+  "|original_transaction_event.session_id|string": "original_transaction_event_session_id",
+  "|original_transaction_event.transaction_event|string": "original_transaction_event_transaction_event",
+  "|original_transaction_event.transaction_id|string": "original_transaction_event_transaction_id",
+  "|personal_message.content|string": "personal_message_content",
+  "|personal_message.format|string": "personal_message_format",
+  "|personal_message.language|string": "personal_message_language",
+  "|total_cost|float": "total_cost"
+ },
+ "lists": {}
+}

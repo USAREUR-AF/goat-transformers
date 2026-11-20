@@ -1,0 +1,7 @@
+{
+ "keys": {
+  "|current_A|float": "current_a",
+  "|voltage_V|float": "voltage_v"
+ },
+ "lists": {}
+}

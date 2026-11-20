@@ -1,0 +1,13 @@
+{
+ "name": "gen-isolation_measurement-roundtrip",
+ "from": "everest-isolation-monitor-isolation-measurement",
+ "to": "everest-isolation-monitor-isolation-measurement",
+ "input": "{\"resistance_F_Ohm\":1.5,\"voltage_V\":101.125,\"voltage_to_earth_l1e_V\":1.5,\"voltage_to_earth_l2e_V\":101.125}",
+ "expect": "{\"resistance_F_Ohm\":1.5,\"voltage_V\":101.125,\"voltage_to_earth_l1e_V\":1.5,\"voltage_to_earth_l2e_V\":101.125}",
+ "model": {
+  "everestisolationmonitorisolationmeasurement.resistance_f_ohm": "1.5",
+  "everestisolationmonitorisolationmeasurement.voltage_v": "101.125",
+  "everestisolationmonitorisolationmeasurement.voltage_to_earth_l1e_v": "1.5",
+  "everestisolationmonitorisolationmeasurement.voltage_to_earth_l2e_v": "101.125"
+ }
+}

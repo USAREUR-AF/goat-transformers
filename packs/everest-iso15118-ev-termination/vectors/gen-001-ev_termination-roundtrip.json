@@ -1,0 +1,11 @@
+{
+ "name": "gen-ev_termination-roundtrip",
+ "from": "everest-iso15118-ev-termination",
+ "to": "everest-iso15118-ev-termination",
+ "input": "{\"ev_termination_code\":\"s53830\",\"ev_termination_explanation\":\"s75775\"}",
+ "expect": "{\"ev_termination_code\":\"s53830\",\"ev_termination_explanation\":\"s75775\"}",
+ "model": {
+  "everestiso15118evtermination.ev_termination_code": "s53830",
+  "everestiso15118evtermination.ev_termination_explanation": "s75775"
+ }
+}

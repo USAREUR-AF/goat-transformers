@@ -1,0 +1,10 @@
+{
+ "name": "gen-bsp_event-roundtrip",
+ "from": "everest-board-support-common-bsp-event",
+ "to": "everest-board-support-common-bsp-event",
+ "input": "{\"event\":\"E\"}",
+ "expect": "{\"event\":\"E\"}",
+ "model": {
+  "everestboardsupportcommonbspevent.event": "E"
+ }
+}

@@ -1,0 +1,7 @@
+{
+ "keys": {
+  "|firmware_update_status|string": "firmware_update_status",
+  "|request_id|int": "request_id"
+ },
+ "lists": {}
+}

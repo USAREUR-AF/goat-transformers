@@ -1,0 +1,10 @@
+{
+ "keys": {
+  "|evse.connector_id|int": "evse_connector_id",
+  "|evse.id|int": "evse_id",
+  "|session_id|string": "session_id",
+  "|transaction_event|string": "transaction_event",
+  "|transaction_id|string": "transaction_id"
+ },
+ "lists": {}
+}

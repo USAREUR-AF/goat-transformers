@@ -1,0 +1,14 @@
+{
+ "name": "gen-security_event-roundtrip",
+ "from": "everest-ocpp-security-event",
+ "to": "everest-ocpp-security-event",
+ "input": "{\"type\":\"s99520\",\"info\":\"s88422\",\"critical\":false,\"timestamp\":\"2026-03-03T06:40:56.655Z\"}",
+ "expect": "{\"type\":\"s99520\",\"info\":\"s88422\",\"critical\":false,\"timestamp\":\"2026-03-03T06:40:56.655Z\"}",
+ "model": {
+  "time_ms": "1772520056655",
+  "everestocppsecurityevent.type": "s99520",
+  "everestocppsecurityevent.info": "s88422",
+  "everestocppsecurityevent.critical": "0",
+  "everestocppsecurityevent.timestamp": "2026-03-03T06:40:56.655Z"
+ }
+}

@@ -1,0 +1,15 @@
+{
+ "name": "gen-ac_target_power-roundtrip",
+ "from": "everest-iso15118-ac-target-power",
+ "to": "everest-iso15118-ac-target-power",
+ "input": "{\"target_active_power\":101.125,\"target_active_power_L2\":-3.25,\"target_active_power_L3\":-0.5,\"target_reactive_power\":-0.5,\"target_reactive_power_L2\":12.5,\"target_reactive_power_L3\":42.375}",
+ "expect": "{\"target_active_power\":101.125,\"target_active_power_L2\":-3.25,\"target_active_power_L3\":-0.5,\"target_reactive_power\":-0.5,\"target_reactive_power_L2\":12.5,\"target_reactive_power_L3\":42.375}",
+ "model": {
+  "everestiso15118actargetpower.target_active_power": "101.125",
+  "everestiso15118actargetpower.target_active_power_l2": "-3.25",
+  "everestiso15118actargetpower.target_active_power_l3": "-0.5",
+  "everestiso15118actargetpower.target_reactive_power": "-0.5",
+  "everestiso15118actargetpower.target_reactive_power_l2": "12.5",
+  "everestiso15118actargetpower.target_reactive_power_l3": "42.375"
+ }
+}

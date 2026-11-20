@@ -1,0 +1,12 @@
+{
+ "name": "gen-bsp_measurement-roundtrip",
+ "from": "everest-board-support-common-bsp-measurement",
+ "to": "everest-board-support-common-bsp-measurement",
+ "input": "{\"proximity_pilot\":{\"ampacity\":\"A_63_3ph_70_1ph\"},\"rcd_current_mA\":-3.25,\"cp_pwm_duty_cycle\":-3.25}",
+ "expect": "{\"proximity_pilot\":{\"ampacity\":\"A_63_3ph_70_1ph\"},\"rcd_current_mA\":-3.25,\"cp_pwm_duty_cycle\":-3.25}",
+ "model": {
+  "everestboardsupportcommonbspmeasurement.proximity_pilot_ampacity": "A_63_3ph_70_1ph",
+  "everestboardsupportcommonbspmeasurement.rcd_current_m_a": "-3.25",
+  "everestboardsupportcommonbspmeasurement.cp_pwm_duty_cycle": "-3.25"
+ }
+}

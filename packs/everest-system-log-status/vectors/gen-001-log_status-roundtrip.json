@@ -1,0 +1,11 @@
+{
+ "name": "gen-log_status-roundtrip",
+ "from": "everest-system-log-status",
+ "to": "everest-system-log-status",
+ "input": "{\"log_status\":\"UploadFailure\",\"request_id\":77575}",
+ "expect": "{\"log_status\":\"UploadFailure\",\"request_id\":77575}",
+ "model": {
+  "everestsystemlogstatus.log_status": "UploadFailure",
+  "everestsystemlogstatus.request_id": "77575"
+ }
+}

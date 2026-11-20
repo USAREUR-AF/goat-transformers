@@ -1,0 +1,7 @@
+{
+ "keys": {
+  "|ev_remaining_time_to_full_bulk_soc|string": "ev_remaining_time_to_full_bulk_soc",
+  "|ev_remaining_time_to_full_soc|string": "ev_remaining_time_to_full_soc"
+ },
+ "lists": {}
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-hlc_session_failed_event-residue",
+ "from": "everest-evse-manager-hlc-session-failed-event",
+ "to": "everest-evse-manager-hlc-session-failed-event",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"uuid\":\"s36656\",\"reason\":\"UnexpectedSessionEnd\"}",
+ "expect": "{\"uuid\":\"s36656\",\"reason\":\"UnexpectedSessionEnd\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

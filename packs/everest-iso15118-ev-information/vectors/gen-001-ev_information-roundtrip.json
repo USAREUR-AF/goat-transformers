@@ -1,0 +1,17 @@
+{
+ "name": "gen-ev_information-roundtrip",
+ "from": "everest-iso15118-ev-information",
+ "to": "everest-iso15118-ev-information",
+ "input": "{\"supported_protocols\":{\"Protocols\":[{\"protocol_namespace\":\"s92546\",\"version_number_major\":10891,\"version_number_minor\":42902,\"schema_id\":52,\"priority\":13},{\"protocol_namespace\":\"s76643\",\"version_number_major\":12704,\"version_number_minor\":14055,\"schema_id\":144,\"priority\":9}]},\"selected_protocol\":{\"protocol_namespace\":\"s96408\",\"version_number_major\":57007,\"version_number_minor\":57534,\"schema_id\":97,\"priority\":10},\"evcc_id\":\"s21640\",\"tls_leaf_certificate\":\"s34132\",\"tls_sub_ca_1_certificate\":\"s22343\",\"tls_sub_ca_2_certificate\":\"s27171\",\"tls_root_certificate\":\"s22891\"}",
+ "expect": "{\"supported_protocols\":{\"Protocols\":[{\"protocol_namespace\":\"s92546\",\"version_number_major\":10891,\"version_number_minor\":42902,\"schema_id\":52,\"priority\":13},{\"protocol_namespace\":\"s76643\",\"version_number_major\":12704,\"version_number_minor\":14055,\"schema_id\":144,\"priority\":9}]},\"selected_protocol\":{\"protocol_namespace\":\"s96408\",\"version_number_major\":57007,\"version_number_minor\":57534,\"schema_id\":97,\"priority\":10},\"evcc_id\":\"s21640\",\"tls_leaf_certificate\":\"s34132\",\"tls_sub_ca_1_certificate\":\"s22343\",\"tls_sub_ca_2_certificate\":\"s27171\",\"tls_root_certificate\":\"s22891\"}",
+ "model": {
+  "everestiso15118evinformation.supported_protocols_protocols.#": "2",
+  "everestiso15118evinformation.selected_protocol_protocol_namespace": "s96408",
+  "everestiso15118evinformation.selected_protocol_version_number_major": "57007",
+  "everestiso15118evinformation.selected_protocol_version_number_minor": "57534",
+  "everestiso15118evinformation.selected_protocol_schema_id": "97",
+  "everestiso15118evinformation.selected_protocol_priority": "10",
+  "everestiso15118evinformation.evcc_id": "s21640",
+  "everestiso15118evinformation.tls_leaf_certificate": "s34132"
+ }
+}

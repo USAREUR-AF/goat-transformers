@@ -1,0 +1,17 @@
+{
+ "name": "gen-ac_ev_power_limits-roundtrip",
+ "from": "everest-iso15118-ac-ev-power-limits",
+ "to": "everest-iso15118-ac-ev-power-limits",
+ "input": "{\"max_charge_power\":{\"total\":-3.25,\"L1\":-3.25,\"L2\":1.5,\"L3\":-3.25},\"min_charge_power\":{\"total\":-3.25,\"L1\":0.75,\"L2\":1.5,\"L3\":-3.25},\"max_discharge_power\":{\"total\":101.125,\"L1\":-3.25,\"L2\":-0.5,\"L3\":-3.25},\"min_discharge_power\":{\"total\":42.375,\"L1\":101.125,\"L2\":0.75,\"L3\":1.5}}",
+ "expect": "{\"max_charge_power\":{\"total\":-3.25,\"L1\":-3.25,\"L2\":1.5,\"L3\":-3.25},\"min_charge_power\":{\"total\":-3.25,\"L1\":0.75,\"L2\":1.5,\"L3\":-3.25},\"max_discharge_power\":{\"total\":101.125,\"L1\":-3.25,\"L2\":-0.5,\"L3\":-3.25},\"min_discharge_power\":{\"total\":42.375,\"L1\":101.125,\"L2\":0.75,\"L3\":1.5}}",
+ "model": {
+  "everestiso15118acevpowerlimits.max_charge_power_total": "-3.25",
+  "everestiso15118acevpowerlimits.max_charge_power_l1": "-3.25",
+  "everestiso15118acevpowerlimits.max_charge_power_l2": "1.5",
+  "everestiso15118acevpowerlimits.max_charge_power_l3": "-3.25",
+  "everestiso15118acevpowerlimits.min_charge_power_total": "-3.25",
+  "everestiso15118acevpowerlimits.min_charge_power_l1": "0.75",
+  "everestiso15118acevpowerlimits.min_charge_power_l2": "1.5",
+  "everestiso15118acevpowerlimits.min_charge_power_l3": "-3.25"
+ }
+}

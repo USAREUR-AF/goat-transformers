@@ -1,0 +1,7 @@
+{
+ "name": "gen-request_exi_stream_schema-residue",
+ "from": "everest-iso15118-request-exi-stream-schema",
+ "to": "everest-iso15118-request-exi-stream-schema",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"exi_request\":\"s69654\",\"iso15118_schema_version\":\"s41824\",\"certificate_action\":\"Update\"}",
+ "expect": "{\"exi_request\":\"s69654\",\"iso15118_schema_version\":\"s41824\",\"certificate_action\":\"Update\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

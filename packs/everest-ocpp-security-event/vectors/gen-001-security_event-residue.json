@@ -1,0 +1,7 @@
+{
+ "name": "gen-security_event-residue",
+ "from": "everest-ocpp-security-event",
+ "to": "everest-ocpp-security-event",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"type\":\"s99520\",\"info\":\"s88422\",\"critical\":false,\"timestamp\":\"2026-03-03T06:40:56.655Z\"}",
+ "expect": "{\"type\":\"s99520\",\"info\":\"s88422\",\"critical\":false,\"timestamp\":\"2026-03-03T06:40:56.655Z\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

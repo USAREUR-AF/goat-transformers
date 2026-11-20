@@ -1,0 +1,10 @@
+{
+ "keys": {
+  "|current_time|string": "current_time",
+  "|interval|int": "interval",
+  "|status_info.additional_info|string": "status_info_additional_info",
+  "|status_info.reason_code|string": "status_info_reason_code",
+  "|status|string": "status"
+ },
+ "lists": {}
+}

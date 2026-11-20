@@ -1,0 +1,7 @@
+{
+ "keys": {
+  "|ev_termination_code|string": "ev_termination_code",
+  "|ev_termination_explanation|string": "ev_termination_explanation"
+ },
+ "lists": {}
+}

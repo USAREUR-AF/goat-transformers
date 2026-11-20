@@ -1,0 +1,7 @@
+{
+ "keys": {
+  "|log_status|string": "log_status",
+  "|request_id|int": "request_id"
+ },
+ "lists": {}
+}

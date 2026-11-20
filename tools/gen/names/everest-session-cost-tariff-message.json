@@ -1,0 +1,13 @@
+{
+ "keys": {
+  "messages|content|string": "messages_content",
+  "messages|format|string": "messages_format",
+  "messages|language|string": "messages_language",
+  "|identifier_id|string": "identifier_id",
+  "|identifier_type|string": "identifier_type",
+  "|ocpp_transaction_id|string": "ocpp_transaction_id"
+ },
+ "lists": {
+  "|messages": "messages"
+ }
+}

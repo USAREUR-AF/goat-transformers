@@ -1,0 +1,7 @@
+{
+ "name": "gen-limits-residue",
+ "from": "everest-evse-manager-limits",
+ "to": "everest-evse-manager-limits",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"uuid\":\"s32312\",\"max_current\":1.5,\"nr_of_phases_available\":1}",
+ "expect": "{\"uuid\":\"s32312\",\"max_current\":1.5,\"nr_of_phases_available\":1,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

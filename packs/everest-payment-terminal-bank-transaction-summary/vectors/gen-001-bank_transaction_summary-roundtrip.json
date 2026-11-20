@@ -1,0 +1,11 @@
+{
+ "name": "gen-bank_transaction_summary-roundtrip",
+ "from": "everest-payment-terminal-bank-transaction-summary",
+ "to": "everest-payment-terminal-bank-transaction-summary",
+ "input": "{\"session_token\":{\"token\":\"s5477\"},\"transaction_data\":\"s94146\"}",
+ "expect": "{\"session_token\":{\"token\":\"s5477\"},\"transaction_data\":\"s94146\"}",
+ "model": {
+  "everestpaymentterminalbanktransactionsummary.session_token_token": "s5477",
+  "everestpaymentterminalbanktransactionsummary.transaction_data": "s94146"
+ }
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-certificate_store_update-residue",
+ "from": "everest-evse-security-certificate-store-update",
+ "to": "everest-evse-security-certificate-store-update",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"operation\":\"Deleted\",\"leaf_certificate_type\":\"V2G\",\"ca_certificate_type\":\"MO\"}",
+ "expect": "{\"operation\":\"Deleted\",\"leaf_certificate_type\":\"V2G\",\"ca_certificate_type\":\"MO\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-ev_termination-residue",
+ "from": "everest-iso15118-ev-termination",
+ "to": "everest-iso15118-ev-termination",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"ev_termination_code\":\"s53830\",\"ev_termination_explanation\":\"s75775\"}",
+ "expect": "{\"ev_termination_code\":\"s53830\",\"ev_termination_explanation\":\"s75775\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

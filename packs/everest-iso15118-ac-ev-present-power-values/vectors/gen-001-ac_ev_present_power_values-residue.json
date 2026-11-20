@@ -1,0 +1,7 @@
+{
+ "name": "gen-ac_ev_present_power_values-residue",
+ "from": "everest-iso15118-ac-ev-present-power-values",
+ "to": "everest-iso15118-ac-ev-present-power-values",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"present_active_power\":{\"total\":1.5,\"L1\":-3.25,\"L2\":42.375,\"L3\":-0.5},\"present_reactive_power\":{\"total\":42.375,\"L1\":7.0625,\"L2\":12.5,\"L3\":-3.25}}",
+ "expect": "{\"present_active_power\":{\"total\":1.5,\"L1\":-3.25,\"L2\":42.375,\"L3\":-0.5},\"present_reactive_power\":{\"total\":42.375,\"L1\":7.0625,\"L2\":12.5,\"L3\":-3.25},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

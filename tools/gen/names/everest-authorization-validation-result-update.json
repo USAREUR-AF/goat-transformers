@@ -1,0 +1,24 @@
+{
+ "keys": {
+  "validation_result_allowed_energy_transfer_modes|.|string": "validation_result_allowed_energy_transfer_modes_value",
+  "validation_result_evse_ids|.|int": "validation_result_evse_ids_value",
+  "validation_result_parent_id_token_additional_info|type|string": "validation_result_parent_id_token_additional_info_type",
+  "validation_result_parent_id_token_additional_info|value|string": "validation_result_parent_id_token_additional_info_value",
+  "validation_result_tariff_messages|content|string": "validation_result_tariff_messages_content",
+  "validation_result_tariff_messages|format|string": "validation_result_tariff_messages_format",
+  "validation_result_tariff_messages|language|string": "validation_result_tariff_messages_language",
+  "|connector_id|int": "connector_id",
+  "|validation_result.authorization_status|string": "validation_result_authorization_status",
+  "|validation_result.certificate_status|string": "validation_result_certificate_status",
+  "|validation_result.expiry_time|string": "validation_result_expiry_time",
+  "|validation_result.parent_id_token.type|string": "validation_result_parent_id_token_type",
+  "|validation_result.parent_id_token.value|string": "validation_result_parent_id_token_value",
+  "|validation_result.reservation_id|int": "validation_result_reservation_id"
+ },
+ "lists": {
+  "|validation_result.allowed_energy_transfer_modes": "validation_result_allowed_energy_transfer_modes",
+  "|validation_result.evse_ids": "validation_result_evse_ids",
+  "|validation_result.parent_id_token.additional_info": "validation_result_parent_id_token_additional_info",
+  "|validation_result.tariff_messages": "validation_result_tariff_messages"
+ }
+}

@@ -1,0 +1,12 @@
+{
+ "keys": {
+  "|bpt_channel|string": "bpt_channel",
+  "|connector|string": "connector",
+  "|control_mode|string": "control_mode",
+  "|energy_transfer|string": "energy_transfer",
+  "|generator_mode|string": "generator_mode",
+  "|mobility_needs_mode|string": "mobility_needs_mode",
+  "|pricing|string": "pricing"
+ },
+ "lists": {}
+}

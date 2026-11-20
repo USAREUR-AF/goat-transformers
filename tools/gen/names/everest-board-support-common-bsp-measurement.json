@@ -1,0 +1,8 @@
+{
+ "keys": {
+  "|cp_pwm_duty_cycle|float": "cp_pwm_duty_cycle",
+  "|proximity_pilot.ampacity|string": "proximity_pilot_ampacity",
+  "|rcd_current_mA|float": "rcd_current_m_a"
+ },
+ "lists": {}
+}

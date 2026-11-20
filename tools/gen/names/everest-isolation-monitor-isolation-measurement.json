@@ -1,0 +1,9 @@
+{
+ "keys": {
+  "|resistance_F_Ohm|float": "resistance_f_ohm",
+  "|voltage_V|float": "voltage_v",
+  "|voltage_to_earth_l1e_V|float": "voltage_to_earth_l1e_v",
+  "|voltage_to_earth_l2e_V|float": "voltage_to_earth_l2e_v"
+ },
+ "lists": {}
+}

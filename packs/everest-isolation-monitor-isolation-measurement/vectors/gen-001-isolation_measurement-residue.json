@@ -1,0 +1,7 @@
+{
+ "name": "gen-isolation_measurement-residue",
+ "from": "everest-isolation-monitor-isolation-measurement",
+ "to": "everest-isolation-monitor-isolation-measurement",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"resistance_F_Ohm\":1.5,\"voltage_V\":101.125,\"voltage_to_earth_l1e_V\":1.5,\"voltage_to_earth_l2e_V\":101.125}",
+ "expect": "{\"resistance_F_Ohm\":1.5,\"voltage_V\":101.125,\"voltage_to_earth_l1e_V\":1.5,\"voltage_to_earth_l2e_V\":101.125,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

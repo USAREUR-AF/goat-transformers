@@ -1,0 +1,13 @@
+{
+ "name": "gen-tariff_message-roundtrip",
+ "from": "everest-session-cost-tariff-message",
+ "to": "everest-session-cost-tariff-message",
+ "input": "{\"ocpp_transaction_id\":\"s5875\",\"identifier_id\":\"s39279\",\"identifier_type\":\"IdToken\",\"messages\":[{\"format\":\"QRCODE\",\"language\":\"s22142\",\"content\":\"s25598\"},{\"format\":\"ASCII\",\"language\":\"s82561\",\"content\":\"s28633\"}]}",
+ "expect": "{\"ocpp_transaction_id\":\"s5875\",\"identifier_id\":\"s39279\",\"identifier_type\":\"IdToken\",\"messages\":[{\"format\":\"QRCODE\",\"language\":\"s22142\",\"content\":\"s25598\"},{\"format\":\"ASCII\",\"language\":\"s82561\",\"content\":\"s28633\"}]}",
+ "model": {
+  "everestsessioncosttariffmessage.ocpp_transaction_id": "s5875",
+  "everestsessioncosttariffmessage.identifier_id": "s39279",
+  "everestsessioncosttariffmessage.identifier_type": "IdToken",
+  "everestsessioncosttariffmessage.messages.#": "2"
+ }
+}

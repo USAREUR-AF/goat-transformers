@@ -1,0 +1,17 @@
+{
+ "name": "gen-event_data-roundtrip",
+ "from": "everest-ocpp-event-data",
+ "to": "everest-ocpp-event-data",
+ "input": "{\"component_variable\":{\"component\":{\"name\":\"s99747\",\"instance\":\"s35306\",\"evse\":{\"id\":77021,\"connector_id\":90831}},\"variable\":{\"name\":\"s36113\",\"instance\":\"s26403\"}},\"event_id\":62739,\"timestamp\":\"2024-10-04T04:29:17.711Z\",\"trigger\":\"Alerting\",\"actual_value\":\"s30250\",\"event_notification_type\":\"PreconfiguredMonitor\",\"cause\":27889,\"tech_code\":\"s34843\",\"tech_info\":\"s81525\",\"cleared\":true,\"transaction_id\":\"s82035\",\"variable_monitoring_id\":25251}",
+ "expect": "{\"component_variable\":{\"component\":{\"name\":\"s99747\",\"instance\":\"s35306\",\"evse\":{\"id\":77021,\"connector_id\":90831}},\"variable\":{\"name\":\"s36113\",\"instance\":\"s26403\"}},\"event_id\":62739,\"timestamp\":\"2024-10-04T04:29:17.711Z\",\"trigger\":\"Alerting\",\"actual_value\":\"s30250\",\"event_notification_type\":\"PreconfiguredMonitor\",\"cause\":27889,\"tech_code\":\"s34843\",\"tech_info\":\"s81525\",\"cleared\":true,\"transaction_id\":\"s82035\",\"variable_monitoring_id\":25251}",
+ "model": {
+  "time_ms": "1728016157711",
+  "everestocppeventdata.component_variable_component_name": "s99747",
+  "everestocppeventdata.component_variable_component_instance": "s35306",
+  "everestocppeventdata.component_variable_component_evse_id": "77021",
+  "everestocppeventdata.component_variable_component_evse_connector_id": "90831",
+  "everestocppeventdata.component_variable_variable_name": "s36113",
+  "everestocppeventdata.component_variable_variable_instance": "s26403",
+  "everestocppeventdata.event_id": "62739"
+ }
+}

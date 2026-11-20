@@ -1,0 +1,7 @@
+{
+ "name": "gen-dc_ev_status-residue",
+ "from": "everest-iso15118-dc-ev-status",
+ "to": "everest-iso15118-dc-ev-status",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"dc_ev_ready\":false,\"dc_ev_error_code\":\"FAILED_ChargingVoltageOutOfRange\",\"dc_ev_ress_soc\":7.0625,\"dc_ev_cabin_conditioning\":true,\"dc_ev_ress_conditioning\":true}",
+ "expect": "{\"dc_ev_ready\":false,\"dc_ev_error_code\":\"FAILED_ChargingVoltageOutOfRange\",\"dc_ev_ress_soc\":7.0625,\"dc_ev_cabin_conditioning\":true,\"dc_ev_ress_conditioning\":true,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

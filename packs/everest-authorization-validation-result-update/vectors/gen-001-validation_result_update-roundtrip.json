@@ -1,0 +1,17 @@
+{
+ "name": "gen-validation_result_update-roundtrip",
+ "from": "everest-authorization-validation-result-update",
+ "to": "everest-authorization-validation-result-update",
+ "input": "{\"validation_result\":{\"authorization_status\":\"Unknown\",\"certificate_status\":\"CertificateExpired\",\"tariff_messages\":[{\"format\":\"QRCODE\",\"language\":\"s86369\",\"content\":\"s52701\"},{\"format\":\"HTML\",\"language\":\"s52248\",\"content\":\"s82182\"}],\"expiry_time\":\"2026-03-29T20:11:47.229Z\",\"parent_id_token\":{\"value\":\"s58267\",\"type\":\"Central\",\"additional_info\":[{\"value\":\"s12341\",\"type\":\"s14572\"},{\"value\":\"s22462\",\"type\":\"s42506\"}]},\"evse_ids\":[91649,91533],\"reservation_id\":39807,\"allowed_energy_transfer_modes\":[\"MCS\",\"AC_three_phase_core\"]},\"connector_id\":57891}",
+ "expect": "{\"validation_result\":{\"authorization_status\":\"Unknown\",\"certificate_status\":\"CertificateExpired\",\"tariff_messages\":[{\"format\":\"QRCODE\",\"language\":\"s86369\",\"content\":\"s52701\"},{\"format\":\"HTML\",\"language\":\"s52248\",\"content\":\"s82182\"}],\"expiry_time\":\"2026-03-29T20:11:47.229Z\",\"parent_id_token\":{\"value\":\"s58267\",\"type\":\"Central\",\"additional_info\":[{\"value\":\"s12341\",\"type\":\"s14572\"},{\"value\":\"s22462\",\"type\":\"s42506\"}]},\"evse_ids\":[91649,91533],\"reservation_id\":39807,\"allowed_energy_transfer_modes\":[\"MCS\",\"AC_three_phase_core\"]},\"connector_id\":57891}",
+ "model": {
+  "everestauthorizationvalidationresultupdate.validation_result_authorization_status": "Unknown",
+  "everestauthorizationvalidationresultupdate.validation_result_certificate_status": "CertificateExpired",
+  "everestauthorizationvalidationresultupdate.validation_result_tariff_messages.#": "2",
+  "everestauthorizationvalidationresultupdate.validation_result_expiry_time": "2026-03-29T20:11:47.229Z",
+  "everestauthorizationvalidationresultupdate.validation_result_parent_id_token_value": "s58267",
+  "everestauthorizationvalidationresultupdate.validation_result_parent_id_token_type": "Central",
+  "everestauthorizationvalidationresultupdate.validation_result_parent_id_token_additional_info.#": "2",
+  "everestauthorizationvalidationresultupdate.validation_result_evse_ids.#": "2"
+ }
+}

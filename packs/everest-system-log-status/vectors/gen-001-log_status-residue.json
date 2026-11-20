@@ -1,0 +1,7 @@
+{
+ "name": "gen-log_status-residue",
+ "from": "everest-system-log-status",
+ "to": "everest-system-log-status",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"log_status\":\"UploadFailure\",\"request_id\":77575}",
+ "expect": "{\"log_status\":\"UploadFailure\",\"request_id\":77575,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

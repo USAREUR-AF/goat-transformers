@@ -1,0 +1,12 @@
+{
+ "name": "gen-key_value-roundtrip",
+ "from": "everest-ocpp-key-value",
+ "to": "everest-ocpp-key-value",
+ "input": "{\"key\":\"s79525\",\"read_only\":false,\"value\":\"s23220\"}",
+ "expect": "{\"key\":\"s79525\",\"read_only\":false,\"value\":\"s23220\"}",
+ "model": {
+  "everestocppkeyvalue.key": "s79525",
+  "everestocppkeyvalue.read_only": "0",
+  "everestocppkeyvalue.value": "s23220"
+ }
+}

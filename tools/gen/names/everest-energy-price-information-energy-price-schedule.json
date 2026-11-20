@@ -1,0 +1,14 @@
+{
+ "keys": {
+  "schedule_export|currency|string": "schedule_export_currency",
+  "schedule_export|timestamp|string": "schedule_export_timestamp",
+  "schedule_export|value|float": "schedule_export_value",
+  "schedule_import|currency|string": "schedule_import_currency",
+  "schedule_import|timestamp|string": "schedule_import_timestamp",
+  "schedule_import|value|float": "schedule_import_value"
+ },
+ "lists": {
+  "|schedule_export": "schedule_export",
+  "|schedule_import": "schedule_import"
+ }
+}

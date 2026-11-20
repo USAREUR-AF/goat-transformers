@@ -1,0 +1,17 @@
+{
+ "name": "gen-stop_transaction_request-roundtrip",
+ "from": "everest-evse-manager-stop-transaction-request",
+ "to": "everest-evse-manager-stop-transaction-request",
+ "input": "{\"reason\":\"Timeout\",\"id_tag\":{\"request_id\":71773,\"id_token\":{\"value\":\"s47901\",\"type\":\"MacAddress\",\"additional_info\":[{\"value\":\"s20160\",\"type\":\"s70789\"},{\"value\":\"s70139\",\"type\":\"s61668\"}]},\"parent_id_token\":{\"value\":\"s24869\",\"type\":\"eMAID\",\"additional_info\":[{\"value\":\"s91160\",\"type\":\"s4628\"},{\"value\":\"s28243\",\"type\":\"s71832\"}]},\"authorization_type\":\"Autocharge\",\"connectors\":[19990,6542],\"prevalidated\":false,\"certificate\":\"s91096\",\"iso15118CertificateHashData\":[{\"hashAlgorithm\":\"SHA384\",\"issuerNameHash\":\"s71829\",\"issuerKeyHash\":\"s94299\",\"serialNumber\":\"s65763\",\"responderURL\":\"s81471\"},{\"hashAlgorithm\":\"SHA512\",\"issuerNameHash\":\"s29010\",\"issuerKeyHash\":\"s71904\",\"serialNumber\":\"s33812\",\"responderURL\":\"s24379\"}]}}",
+ "expect": "{\"reason\":\"Timeout\",\"id_tag\":{\"request_id\":71773,\"id_token\":{\"value\":\"s47901\",\"type\":\"MacAddress\",\"additional_info\":[{\"value\":\"s20160\",\"type\":\"s70789\"},{\"value\":\"s70139\",\"type\":\"s61668\"}]},\"parent_id_token\":{\"value\":\"s24869\",\"type\":\"eMAID\",\"additional_info\":[{\"value\":\"s91160\",\"type\":\"s4628\"},{\"value\":\"s28243\",\"type\":\"s71832\"}]},\"authorization_type\":\"Autocharge\",\"connectors\":[19990,6542],\"prevalidated\":false,\"certificate\":\"s91096\",\"iso15118CertificateHashData\":[{\"hashAlgorithm\":\"SHA384\",\"issuerNameHash\":\"s71829\",\"issuerKeyHash\":\"s94299\",\"serialNumber\":\"s65763\",\"responderURL\":\"s81471\"},{\"hashAlgorithm\":\"SHA512\",\"issuerNameHash\":\"s29010\",\"issuerKeyHash\":\"s71904\",\"serialNumber\":\"s33812\",\"responderURL\":\"s24379\"}]}}",
+ "model": {
+  "everestevsemanagerstoptransactionrequest.reason": "Timeout",
+  "everestevsemanagerstoptransactionrequest.id_tag_request_id": "71773",
+  "everestevsemanagerstoptransactionrequest.id_tag_id_token_value": "s47901",
+  "everestevsemanagerstoptransactionrequest.id_tag_id_token_type": "MacAddress",
+  "everestevsemanagerstoptransactionrequest.id_tag_id_token_additional_info.#": "2",
+  "everestevsemanagerstoptransactionrequest.id_tag_parent_id_token_value": "s24869",
+  "everestevsemanagerstoptransactionrequest.id_tag_parent_id_token_type": "eMAID",
+  "everestevsemanagerstoptransactionrequest.id_tag_parent_id_token_additional_info.#": "2"
+ }
+}

@@ -1,0 +1,11 @@
+{
+ "name": "gen-hlc_session_failed_event-roundtrip",
+ "from": "everest-evse-manager-hlc-session-failed-event",
+ "to": "everest-evse-manager-hlc-session-failed-event",
+ "input": "{\"uuid\":\"s36656\",\"reason\":\"UnexpectedSessionEnd\"}",
+ "expect": "{\"uuid\":\"s36656\",\"reason\":\"UnexpectedSessionEnd\"}",
+ "model": {
+  "everestevsemanagerhlcsessionfailedevent.uuid": "s36656",
+  "everestevsemanagerhlcsessionfailedevent.reason": "UnexpectedSessionEnd"
+ }
+}

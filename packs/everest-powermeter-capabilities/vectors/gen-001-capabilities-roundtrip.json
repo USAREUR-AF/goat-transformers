@@ -1,0 +1,11 @@
+{
+ "name": "gen-capabilities-roundtrip",
+ "from": "everest-powermeter-capabilities",
+ "to": "everest-powermeter-capabilities",
+ "input": "{\"min_import_current_A\":1.5,\"min_export_current_A\":12.5}",
+ "expect": "{\"min_import_current_A\":1.5,\"min_export_current_A\":12.5}",
+ "model": {
+  "everestpowermetercapabilities.min_import_current_a": "1.5",
+  "everestpowermetercapabilities.min_export_current_a": "12.5"
+ }
+}

@@ -1,0 +1,13 @@
+{
+ "name": "gen-limits-roundtrip",
+ "from": "everest-evse-manager-limits",
+ "to": "everest-evse-manager-limits",
+ "input": "{\"uuid\":\"s32312\",\"max_current\":1.5,\"nr_of_phases_available\":1}",
+ "expect": "{\"uuid\":\"s32312\",\"max_current\":1.5,\"nr_of_phases_available\":1}",
+ "model": {
+  "uid": "s32312",
+  "everestevsemanagerlimits.uuid": "s32312",
+  "everestevsemanagerlimits.max_current": "1.5",
+  "everestevsemanagerlimits.nr_of_phases_available": "1"
+ }
+}

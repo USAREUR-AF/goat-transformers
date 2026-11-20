@@ -1,0 +1,7 @@
+{
+ "name": "gen-reservation_update_status-residue",
+ "from": "everest-reservation-reservation-update-status",
+ "to": "everest-reservation-reservation-update-status",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"reservation_id\":85470,\"reservation_status\":\"Removed\"}",
+ "expect": "{\"reservation_id\":85470,\"reservation_status\":\"Removed\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

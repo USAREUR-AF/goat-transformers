@@ -93,6 +93,7 @@
     {"name": "FIWARE Smart Data Models", "domain": "iot", "prefixes": ["sdm-"]},
     {"name": "Meshtastic", "domain": "iot", "prefixes": ["meshtastic"]},
     {"name": "Sparkplug B", "domain": "iot", "exact": ["sparkplug-b"]},
+    {"name": "EVerest charging stack", "domain": "iot", "prefixes": ["everest-"]},
 
     {"name": "OpenTelemetry OTLP", "domain": "networks", "prefixes": ["otlp-"]},
     {"name": "gNMI", "domain": "networks", "prefixes": ["gnmi-"]},

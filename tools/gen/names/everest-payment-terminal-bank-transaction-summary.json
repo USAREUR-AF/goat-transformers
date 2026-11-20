@@ -1,0 +1,7 @@
+{
+ "keys": {
+  "|session_token.token|string": "session_token_token",
+  "|transaction_data|string": "transaction_data"
+ },
+ "lists": {}
+}

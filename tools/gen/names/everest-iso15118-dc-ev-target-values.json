@@ -1,0 +1,7 @@
+{
+ "keys": {
+  "|dc_ev_target_current|float": "dc_ev_target_current",
+  "|dc_ev_target_voltage|float": "dc_ev_target_voltage"
+ },
+ "lists": {}
+}

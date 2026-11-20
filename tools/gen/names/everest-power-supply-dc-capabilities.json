@@ -1,0 +1,30 @@
+{
+ "keys": {
+  "|bidirectional|int": "bidirectional",
+  "|conversion_efficiency_export|float": "conversion_efficiency_export",
+  "|conversion_efficiency_import|float": "conversion_efficiency_import",
+  "|current_regulation_tolerance_A|float": "current_regulation_tolerance_a",
+  "|max_export_current_A|float": "max_export_current_a",
+  "|max_export_power_W|float": "max_export_power_w",
+  "|max_export_voltage_V|float": "max_export_voltage_v",
+  "|max_import_current_A|float": "max_import_current_a",
+  "|max_import_power_W|float": "max_import_power_w",
+  "|max_import_voltage_V|float": "max_import_voltage_v",
+  "|min_export_current_A|float": "min_export_current_a",
+  "|min_export_voltage_V|float": "min_export_voltage_v",
+  "|min_import_current_A|float": "min_import_current_a",
+  "|min_import_voltage_V|float": "min_import_voltage_v",
+  "|nominal_max_export_current_A|float": "nominal_max_export_current_a",
+  "|nominal_max_export_power_W|float": "nominal_max_export_power_w",
+  "|nominal_max_export_voltage_V|float": "nominal_max_export_voltage_v",
+  "|nominal_max_import_current_A|float": "nominal_max_import_current_a",
+  "|nominal_max_import_power_W|float": "nominal_max_import_power_w",
+  "|nominal_max_import_voltage_V|float": "nominal_max_import_voltage_v",
+  "|nominal_min_export_current_A|float": "nominal_min_export_current_a",
+  "|nominal_min_export_voltage_V|float": "nominal_min_export_voltage_v",
+  "|nominal_min_import_current_A|float": "nominal_min_import_current_a",
+  "|nominal_min_import_voltage_V|float": "nominal_min_import_voltage_v",
+  "|peak_current_ripple_A|float": "peak_current_ripple_a"
+ },
+ "lists": {}
+}

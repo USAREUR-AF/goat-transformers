@@ -1,0 +1,7 @@
+{
+ "name": "gen-dc_ev_maximum_limits-residue",
+ "from": "everest-iso15118-dc-ev-maximum-limits",
+ "to": "everest-iso15118-dc-ev-maximum-limits",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"dc_ev_maximum_current_limit\":0.75,\"dc_ev_maximum_power_limit\":0.75,\"dc_ev_maximum_voltage_limit\":7.0625}",
+ "expect": "{\"dc_ev_maximum_current_limit\":0.75,\"dc_ev_maximum_power_limit\":0.75,\"dc_ev_maximum_voltage_limit\":7.0625,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

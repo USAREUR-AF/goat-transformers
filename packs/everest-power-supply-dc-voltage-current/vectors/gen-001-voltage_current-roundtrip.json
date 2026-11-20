@@ -1,0 +1,11 @@
+{
+ "name": "gen-voltage_current-roundtrip",
+ "from": "everest-power-supply-dc-voltage-current",
+ "to": "everest-power-supply-dc-voltage-current",
+ "input": "{\"voltage_V\":-3.25,\"current_A\":1.5}",
+ "expect": "{\"voltage_V\":-3.25,\"current_A\":1.5}",
+ "model": {
+  "everestpowersupplydcvoltagecurrent.voltage_v": "-3.25",
+  "everestpowersupplydcvoltagecurrent.current_a": "1.5"
+ }
+}

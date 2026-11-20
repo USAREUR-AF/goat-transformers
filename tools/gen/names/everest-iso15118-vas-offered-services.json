@@ -1,0 +1,11 @@
+{
+ "keys": {
+  "services|free_service|int": "services_free_service",
+  "services|service_id|int": "services_service_id",
+  "services|service_name|string": "services_service_name",
+  "services|service_scope|string": "services_service_scope"
+ },
+ "lists": {
+  "|services": "services"
+ }
+}

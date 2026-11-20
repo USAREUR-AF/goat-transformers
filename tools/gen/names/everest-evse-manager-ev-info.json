@@ -1,0 +1,31 @@
+{
+ "keys": {
+  "|ac_max_charge_power|float": "ac_max_charge_power",
+  "|ac_max_discharge_power|float": "ac_max_discharge_power",
+  "|ac_min_charge_power|float": "ac_min_charge_power",
+  "|ac_min_discharge_power|float": "ac_min_discharge_power",
+  "|ac_present_active_power|float": "ac_present_active_power",
+  "|ac_present_reactive_power|float": "ac_present_reactive_power",
+  "|battery_bulk_soc|float": "battery_bulk_soc",
+  "|battery_capacity|float": "battery_capacity",
+  "|battery_full_soc|float": "battery_full_soc",
+  "|departure_time|string": "departure_time",
+  "|estimated_time_bulk|string": "estimated_time_bulk",
+  "|estimated_time_full|string": "estimated_time_full",
+  "|evcc_id|string": "evcc_id",
+  "|max_energy_request|float": "max_energy_request",
+  "|maximum_current_limit|float": "maximum_current_limit",
+  "|maximum_power_limit|float": "maximum_power_limit",
+  "|maximum_voltage_limit|float": "maximum_voltage_limit",
+  "|min_energy_request|float": "min_energy_request",
+  "|minimum_current_limit|float": "minimum_current_limit",
+  "|present_current|float": "present_current",
+  "|present_voltage|float": "present_voltage",
+  "|remaining_energy_needed|float": "remaining_energy_needed",
+  "|soc|float": "soc",
+  "|target_current|float": "target_current",
+  "|target_energy_request|float": "target_energy_request",
+  "|target_voltage|float": "target_voltage"
+ },
+ "lists": {}
+}

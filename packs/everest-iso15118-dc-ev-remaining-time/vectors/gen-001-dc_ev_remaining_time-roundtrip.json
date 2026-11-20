@@ -1,0 +1,11 @@
+{
+ "name": "gen-dc_ev_remaining_time-roundtrip",
+ "from": "everest-iso15118-dc-ev-remaining-time",
+ "to": "everest-iso15118-dc-ev-remaining-time",
+ "input": "{\"ev_remaining_time_to_full_soc\":\"2023-12-07T12:28:37.544Z\",\"ev_remaining_time_to_full_bulk_soc\":\"2024-10-02T23:43:42.688Z\"}",
+ "expect": "{\"ev_remaining_time_to_full_soc\":\"2023-12-07T12:28:37.544Z\",\"ev_remaining_time_to_full_bulk_soc\":\"2024-10-02T23:43:42.688Z\"}",
+ "model": {
+  "everestiso15118dcevremainingtime.ev_remaining_time_to_full_soc": "2023-12-07T12:28:37.544Z",
+  "everestiso15118dcevremainingtime.ev_remaining_time_to_full_bulk_soc": "2024-10-02T23:43:42.688Z"
+ }
+}

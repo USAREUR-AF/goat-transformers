@@ -1,0 +1,8 @@
+{
+ "keys": {
+  "|ca_certificate_type|string": "ca_certificate_type",
+  "|leaf_certificate_type|string": "leaf_certificate_type",
+  "|operation|string": "operation"
+ },
+ "lists": {}
+}

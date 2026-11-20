@@ -1,0 +1,19 @@
+{
+ "keys": {
+  "|departure_time|float": "departure_time",
+  "|max_charge_current|float": "max_charge_current",
+  "|max_charge_power|float": "max_charge_power",
+  "|max_discharge_current|float": "max_discharge_current",
+  "|max_discharge_power|float": "max_discharge_power",
+  "|max_energy_request|float": "max_energy_request",
+  "|max_v2x_energy_request|float": "max_v2x_energy_request",
+  "|max_voltage|float": "max_voltage",
+  "|min_charge_power|float": "min_charge_power",
+  "|min_discharge_power|float": "min_discharge_power",
+  "|min_energy_request|float": "min_energy_request",
+  "|min_v2x_energy_request|float": "min_v2x_energy_request",
+  "|min_voltage|float": "min_voltage",
+  "|target_energy_request|float": "target_energy_request"
+ },
+ "lists": {}
+}
