@@ -1,0 +1,41 @@
+# OGC Moving Features JSON (MF-JSON) 1.0: one moving feature, a GeoJSON Feature with the
+# foreign members of the Prism encoding (temporalGeometry of type MovingPoint) or, failing
+# that, a Trajectory encoding (a LineString with properties.datetimes). Written by hand from
+# the text of OGC 19-045r3; the MF-JSON schema files are not used. Public, OGC license
+# agreement. The positions are arrays of arrays, which the json wire cannot carry; pack.md
+# states what is mapped and what is not.
+format  mf-json
+version 0.1.0
+distribution public
+source  "OGC Moving Features Encoding Extension - JSON (MF-JSON) 1.0, OGC 19-045r3, https://docs.ogc.org/is/19-045r3/19-045r3.html (sha256 80200e8c642d0084b3884bca0d25a972fec331147de2016fe9a8f4be2f46e871); OGC license agreement; this pack is a change OGC has not approved"
+uses    mfjson
+wire    json
+when    type  Feature
+
+kind    MovingPoint
+requires  mfjson.datetimes
+when    temporalGeometry.type  MovingPoint
+group   mfjson.datetimes  temporalGeometry.datetimes
+  field  mfjson.datetime_ms  .  iso8601_short
+  field  mfjson.datetime_ms  .  int
+end
+field   mfjson.interpolation  temporalGeometry.interpolation  string
+group   mfjson.life_span  time
+  field  mfjson.instant  .  string
+end
+group   mfjson.bbox  bbox
+  field  mfjson.bound  .  float
+end
+field   uid  id  string
+
+kind    Trajectory
+requires  mfjson.trajectory_datetimes
+when    geometry.type  LineString
+group   mfjson.trajectory_datetimes  properties.datetimes
+  field  mfjson.datetime_ms  .  iso8601_short
+  field  mfjson.datetime_ms  .  int
+end
+group   mfjson.bbox  bbox
+  field  mfjson.bound  .  float
+end
+field   uid  id  string

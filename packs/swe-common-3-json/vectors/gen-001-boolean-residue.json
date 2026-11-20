@@ -1,0 +1,7 @@
+{
+ "name": "gen-boolean-residue",
+ "from": "swe-common-3-json",
+ "to": "swe-common-3-json",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"type\":\"Boolean\",\"id\":\"s3239\",\"label\":\"s50004\",\"description\":\"s34193\",\"updatable\":false,\"optional\":false,\"definition\":\"https://example.org/828\",\"referenceFrame\":\"https://example.org/393\",\"axisID\":\"s8475\",\"value\":false}",
+ "expect": "{\"type\":\"Boolean\",\"id\":\"s3239\",\"label\":\"s50004\",\"description\":\"s34193\",\"updatable\":false,\"optional\":false,\"definition\":\"https://example.org/828\",\"referenceFrame\":\"https://example.org/393\",\"axisID\":\"s8475\",\"value\":false,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

@@ -1,0 +1,18 @@
+{
+  "name": "location-feature-point-roundtrip",
+  "from": "sensorthings-1.1",
+  "to": "sensorthings-1.1",
+  "input": "{\"name\":\"Roof\",\"description\":\"Roof of building B\",\"encodingType\":\"application/geo+json\",\"location\":{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-0.1276,51.5072]},\"properties\":{\"floor\":4}}}",
+  "expect": "{\"name\":\"Roof\",\"description\":\"Roof of building B\",\"encodingType\":\"application/geo+json\",\"location\":{\"geometry\":{\"type\":\"Point\",\"coordinates\":[-0.1276,51.5072]},\"type\":\"Feature\",\"properties\":{\"floor\":4}}}",
+  "model": {
+    "@kind": "LocationFeaturePoint",
+    "sensorthings.name": "Roof",
+    "sensorthings.description": "Roof of building B",
+    "sensorthings.encoding_type": "application/geo+json",
+    "sensorthings.location_feature_coordinates.#": "2",
+    "sensorthings.location_feature_coordinates[0].sensorthings.coordinate": "-0.1276",
+    "sensorthings.location_feature_coordinates[1].sensorthings.coordinate": "51.5072"
+  },
+  "source": "derived by tools/gen/sensorthings-vectors.py from the entity tables of the standard and spec/engine-spec.md; no engine run",
+  "reference": "OGC SensorThings API Part 1: Sensing 1.1 (OGC 18-088), clause 8.2; location is a GeoJSON Feature whose geometry is a Point; the Feature's type and properties are residue"
+}

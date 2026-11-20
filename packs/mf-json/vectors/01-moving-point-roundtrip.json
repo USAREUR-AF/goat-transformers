@@ -1,0 +1,26 @@
+{
+  "name": "moving-point-roundtrip",
+  "from": "mf-json",
+  "to": "mf-json",
+  "input": "{\"type\":\"Feature\",\"id\":\"bus-17\",\"temporalGeometry\":{\"type\":\"MovingPoint\",\"datetimes\":[\"2026-05-01T08:00:00Z\",\"2026-05-01T08:00:30Z\",\"2026-05-01T08:01:00.5Z\"],\"coordinates\":[[13.4049,52.52],[13.4061,52.5207],[13.4075,52.5213]],\"interpolation\":\"Linear\",\"crs\":{\"type\":\"Name\",\"properties\":{\"name\":\"urn:ogc:def:crs:OGC:1.3:CRS84\"}},\"trs\":{\"type\":\"Link\",\"properties\":{\"type\":\"OGCDEF\",\"href\":\"http://www.opengis.net/def/uom/ISO-8601/0/Gregorian\"}}},\"time\":[\"2026-05-01T08:00:00Z\",\"2026-05-01T08:01:00.5Z\"],\"bbox\":[13.4049,52.52,13.4075,52.5213],\"properties\":{\"line\":\"M10\",\"operator\":\"Transit authority\",\"doors\":3}}",
+  "expect": "{\"type\":\"Feature\",\"temporalGeometry\":{\"type\":\"MovingPoint\",\"datetimes\":[\"2026-05-01T08:00:00Z\",\"2026-05-01T08:00:30Z\",\"2026-05-01T08:01:00.5Z\"],\"interpolation\":\"Linear\",\"crs\":{\"type\":\"Name\",\"properties\":{\"name\":\"urn:ogc:def:crs:OGC:1.3:CRS84\"}},\"trs\":{\"type\":\"Link\",\"properties\":{\"type\":\"OGCDEF\",\"href\":\"http://www.opengis.net/def/uom/ISO-8601/0/Gregorian\"}}},\"time\":[\"2026-05-01T08:00:00Z\",\"2026-05-01T08:01:00.5Z\"],\"bbox\":[13.4049,52.52,13.4075,52.5213],\"id\":\"bus-17\",\"properties\":{\"line\":\"M10\",\"operator\":\"Transit authority\",\"doors\":3}}",
+  "model": {
+    "@kind": "MovingPoint",
+    "mfjson.datetimes.#": "3",
+    "mfjson.datetimes[0].mfjson.datetime_ms": "1777622400000",
+    "mfjson.datetimes[1].mfjson.datetime_ms": "1777622430000",
+    "mfjson.datetimes[2].mfjson.datetime_ms": "1777622460500",
+    "mfjson.interpolation": "Linear",
+    "mfjson.life_span.#": "2",
+    "mfjson.life_span[0].mfjson.instant": "2026-05-01T08:00:00Z",
+    "mfjson.life_span[1].mfjson.instant": "2026-05-01T08:01:00.5Z",
+    "mfjson.bbox.#": "4",
+    "mfjson.bbox[0].mfjson.bound": "13.4049",
+    "mfjson.bbox[1].mfjson.bound": "52.52",
+    "mfjson.bbox[2].mfjson.bound": "13.4075",
+    "mfjson.bbox[3].mfjson.bound": "52.5213",
+    "uid": "bus-17"
+  },
+  "source": "derived by tools/gen/mf-json-vectors.py from the text of OGC 19-045r3 and spec/engine-spec.md; no engine run",
+  "reference": "OGC Moving Features Encoding Extension - JSON (MF-JSON) 1.0, OGC 19-045r3; type, then the temporal geometry (its type, datetimes, interpolation, then its crs and trs as residue), time, bbox, id, then properties as residue; the coordinates are an array of arrays and are not carried (pack.md, not mapped)"
+}

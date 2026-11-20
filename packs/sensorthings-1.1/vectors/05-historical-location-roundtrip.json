@@ -1,0 +1,13 @@
+{
+  "name": "historical-location-roundtrip",
+  "from": "sensorthings-1.1",
+  "to": "sensorthings-1.1",
+  "input": "{\"@iot.id\":9,\"@iot.selfLink\":\"https://sta.example.org/v1.1/HistoricalLocations(9)\",\"time\":\"2026-04-05T06:07:08Z\"}",
+  "expect": "{\"time\":\"2026-04-05T06:07:08Z\"}",
+  "model": {
+    "@kind": "HistoricalLocation",
+    "time_ms": "1775369228000"
+  },
+  "source": "derived by tools/gen/sensorthings-vectors.py from the entity tables of the standard and spec/engine-spec.md; no engine run",
+  "reference": "OGC SensorThings API Part 1: Sensing 1.1 (OGC 18-088), clause 8.2; time is time_ms; a time with no milliseconds is written without a fraction"
+}

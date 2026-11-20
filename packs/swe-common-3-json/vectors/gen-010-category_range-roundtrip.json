@@ -1,0 +1,17 @@
+{
+ "name": "gen-category_range-roundtrip",
+ "from": "swe-common-3-json",
+ "to": "swe-common-3-json",
+ "input": "{\"type\":\"CategoryRange\",\"id\":\"s28832\",\"label\":\"s73128\",\"description\":\"s70698\",\"updatable\":true,\"optional\":false,\"definition\":\"https://example.org/98\",\"referenceFrame\":\"https://example.org/661\",\"axisID\":\"s41795\",\"nilValues\":[{\"reason\":\"https://example.org/827\",\"value\":\"s79338\"},{\"reason\":\"https://example.org/259\",\"value\":\"s28282\"}],\"constraint\":{\"type\":\"AllowedTokens\",\"values\":[\"s32745\",\"s13094\"],\"pattern\":\"s95114\"},\"value\":[\"s72802\",\"s90891\"],\"codeSpace\":\"https://example.org/191\"}",
+ "expect": "{\"type\":\"CategoryRange\",\"id\":\"s28832\",\"label\":\"s73128\",\"description\":\"s70698\",\"updatable\":true,\"optional\":false,\"definition\":\"https://example.org/98\",\"referenceFrame\":\"https://example.org/661\",\"axisID\":\"s41795\",\"nilValues\":[{\"reason\":\"https://example.org/827\",\"value\":\"s79338\"},{\"reason\":\"https://example.org/259\",\"value\":\"s28282\"}],\"constraint\":{\"type\":\"AllowedTokens\",\"values\":[\"s32745\",\"s13094\"],\"pattern\":\"s95114\"},\"value\":[\"s72802\",\"s90891\"],\"codeSpace\":\"https://example.org/191\"}",
+ "model": {
+  "@kind": "category_range",
+  "swecommon3.id": "s28832",
+  "swecommon3.label": "s73128",
+  "swecommon3.description": "s70698",
+  "swecommon3.type": "CategoryRange",
+  "swecommon3.updatable": "1",
+  "swecommon3.optional": "0",
+  "swecommon3.definition": "https://example.org/98"
+ }
+}

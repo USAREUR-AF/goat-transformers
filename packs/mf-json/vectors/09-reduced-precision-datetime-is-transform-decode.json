@@ -1,0 +1,9 @@
+{
+  "name": "reduced-precision-datetime-is-transform-decode",
+  "from": "mf-json",
+  "to": "mf-json",
+  "input": "{\"type\":\"Feature\",\"temporalGeometry\":{\"type\":\"MovingPoint\",\"datetimes\":[\"2026-05-01T08:00Z\"],\"coordinates\":[[0,0]]}}",
+  "expect_error": "transform-decode",
+  "source": "derived by tools/gen/mf-json-vectors.py from the text of OGC 19-045r3 and spec/engine-spec.md; no engine run",
+  "reference": "OGC Moving Features Encoding Extension - JSON (MF-JSON) 1.0, OGC 19-045r3; an instant without seconds, which the standard lists among ISO 8601 forms, is refused by iso8601_short and is not a number for the int line"
+}

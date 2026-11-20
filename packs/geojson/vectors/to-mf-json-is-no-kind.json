@@ -1,0 +1,9 @@
+{
+  "name": "to-mf-json-is-no-kind",
+  "from": "geojson",
+  "to": "mf-json",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[13.4049,52.52]},\"properties\":{\"time_ms\":1777622400000,\"callsign\":\"bus\"},\"id\":\"bus-17\"}",
+  "expect_error": "no-kind",
+  "source": "derived by tools/gen/mf-json-vectors.py from the text of OGC 19-045r3 and spec/engine-spec.md; no engine run",
+  "reference": "OGC Moving Features Encoding Extension - JSON (MF-JSON) 1.0, OGC 19-045r3; each kind requires its list of instants, which a GeoJSON point does not have"
+}

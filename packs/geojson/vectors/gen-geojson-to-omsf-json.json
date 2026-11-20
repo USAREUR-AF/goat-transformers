@@ -1,0 +1,13 @@
+{
+ "name": "gen-geojson-to-omsf-json",
+ "from": "geojson",
+ "to": "omsf-json",
+ "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-85.9578182,30.0090027,-42.6]},\"properties\":{\"type\":\"a-f-G-U-C\",\"time_ms\":1614456000000,\"how\":\"m-g\",\"ce\":45.3,\"le\":99.5,\"callsign\":\"GATOR\"},\"id\":\"J-01334\"}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-85.9578182,30.0090027,-42.6]},\"properties\":{\"featureType\":\"GenericObservation\",\"phenomenonTime\":\"2021-02-27T20:00:00.000Z\"}}",
+ "model": {
+  "time_ms": "1614456000000",
+  "lat": "30.0090027",
+  "lon": "-85.9578182",
+  "hae": "-42.6"
+ }
+}

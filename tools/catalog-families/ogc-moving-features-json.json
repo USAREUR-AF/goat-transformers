@@ -1,0 +1,7 @@
+{
+  "name": "OGC Moving Features JSON",
+  "domain": "sensors",
+  "exact": [
+    "mf-json"
+  ]
+}

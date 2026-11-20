@@ -1,0 +1,28 @@
+# The sensorthings module: members of the OGC SensorThings API Part 1: Sensing entities
+# (1.0 and 1.1) that have no shared-model key, as the standards' entity tables state them.
+# packs/sensorthings-1.1/pack.md says why each member that looks like a shared key is or
+# is not bound.
+module        sensorthings
+version       0.1.0
+distribution  public
+source        "OGC SensorThings API Part 1: Sensing, version 1.0 (OGC 15-078r6) and version 1.1 (OGC 18-088), docs.ogc.org; OGC license agreement"
+key   name                string  -  "label of an entity other than a Thing (a Thing's name is callsign)"
+key   description         string  -  "short description of the entity"
+key   encoding_type       string  -  "media type or code naming how the location, feature or metadata member is encoded"
+key   definition          string  -  "URI that defines an ObservedProperty"
+key   observation_type    string  -  "observation type code (an O&M type URI) that fixes the type of the results"
+key   unit_name           string  -  "full name of the unit of measurement"
+key   unit_symbol         string  -  "symbol of the unit of measurement"
+key   unit_definition     string  -  "URI that defines the unit of measurement"
+key   phenomenon_time     string  -  "when the phenomenon was observed, an ISO 8601 instant or interval as written"
+key   result_time_period  string  -  "interval of the result times of a Datastream, ISO 8601 interval as written"
+key   valid_time          string  -  "interval in which an Observation's result may be used, ISO 8601 interval as written"
+key   location_type       string  -  "GeoJSON type member of a Location's location object"
+key   feature_type        string  -  "GeoJSON type member of a FeatureOfInterest's feature object"
+key   coordinate          float   -  "one number of a GeoJSON Point position, in position order (longitude, latitude, then height)"
+list  location_coordinates          "position of a Location whose location is a GeoJSON Point geometry"
+list  location_feature_coordinates  "position of a Location whose location is a GeoJSON Feature with a Point geometry"
+list  feature_coordinates           "position of a FeatureOfInterest whose feature is a GeoJSON Point geometry"
+list  feature_feature_coordinates   "position of a FeatureOfInterest whose feature is a GeoJSON Feature with a Point geometry"
+list  multi_observation_data_types  "observation type of each element of a MultiDatastream's results (version 1.0)"
+list  units                         "unit of measurement of each element of a MultiDatastream's results (version 1.0)"

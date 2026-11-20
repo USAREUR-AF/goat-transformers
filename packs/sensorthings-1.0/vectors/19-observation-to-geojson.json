@@ -1,0 +1,14 @@
+{
+  "name": "observation-to-geojson",
+  "from": "sensorthings-1.0",
+  "to": "geojson",
+  "input": "{\"phenomenonTime\":\"2026-04-05T06:07:00Z\",\"result\":14.25,\"resultTime\":\"2026-04-05T06:07:01Z\"}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"time_ms\":1775369221000}}",
+  "model": {
+    "@kind": "Observation",
+    "time_ms": "1775369221000",
+    "sensorthings.phenomenon_time": "2026-04-05T06:07:00Z"
+  },
+  "source": "derived by tools/gen/sensorthings-vectors.py from the entity tables of the standard and spec/engine-spec.md; no engine run",
+  "reference": "OGC SensorThings API Part 1: Sensing 1.0 (OGC 15-078r6), clauses 8.2 and 12; resultTime is time_ms; the result and phenomenonTime have no geojson line"
+}

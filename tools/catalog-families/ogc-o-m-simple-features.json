@@ -1,0 +1,8 @@
+{
+  "name": "OGC O&M Simple Features",
+  "domain": "sensors",
+  "exact": [
+    "omsf-json"
+  ],
+  "detail": "GeoJSON observations"
+}

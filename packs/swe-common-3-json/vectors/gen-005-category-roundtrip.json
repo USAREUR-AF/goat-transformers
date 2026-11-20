@@ -1,0 +1,17 @@
+{
+ "name": "gen-category-roundtrip",
+ "from": "swe-common-3-json",
+ "to": "swe-common-3-json",
+ "input": "{\"type\":\"Category\",\"id\":\"s22423\",\"label\":\"s23893\",\"description\":\"s98221\",\"updatable\":false,\"optional\":true,\"definition\":\"https://example.org/809\",\"referenceFrame\":\"https://example.org/379\",\"axisID\":\"s64474\",\"nilValues\":[{\"reason\":\"https://example.org/147\",\"value\":\"s99748\"},{\"reason\":\"https://example.org/672\",\"value\":\"s80860\"}],\"constraint\":{\"type\":\"AllowedTokens\",\"values\":[\"s41612\",\"s95093\"],\"pattern\":\"s64868\"},\"value\":\"s44074\",\"codeSpace\":\"https://example.org/382\"}",
+ "expect": "{\"type\":\"Category\",\"id\":\"s22423\",\"label\":\"s23893\",\"description\":\"s98221\",\"updatable\":false,\"optional\":true,\"definition\":\"https://example.org/809\",\"referenceFrame\":\"https://example.org/379\",\"axisID\":\"s64474\",\"nilValues\":[{\"reason\":\"https://example.org/147\",\"value\":\"s99748\"},{\"reason\":\"https://example.org/672\",\"value\":\"s80860\"}],\"constraint\":{\"type\":\"AllowedTokens\",\"values\":[\"s41612\",\"s95093\"],\"pattern\":\"s64868\"},\"value\":\"s44074\",\"codeSpace\":\"https://example.org/382\"}",
+ "model": {
+  "@kind": "category",
+  "swecommon3.id": "s22423",
+  "swecommon3.label": "s23893",
+  "swecommon3.description": "s98221",
+  "swecommon3.type": "Category",
+  "swecommon3.updatable": "0",
+  "swecommon3.optional": "1",
+  "swecommon3.definition": "https://example.org/809"
+ }
+}

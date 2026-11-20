@@ -1,0 +1,17 @@
+{
+ "name": "gen-count_observation-roundtrip",
+ "from": "omsf-json",
+ "to": "omsf-json",
+ "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977,12.5]},\"properties\":{\"featureType\":\"CountObservation\",\"resultReference\":\"https://example.org/401\",\"metadataReference\":\"https://example.org/644\",\"resultTime\":\"2024-01-25T14:55:10.975Z\",\"stimulusTime\":\"2026-09-07T07:41:19.131Z\",\"phenomenonTime\":\"2024-06-04T10:53:36.427Z\",\"phenomenonTimeStart\":\"2024-07-11T01:25:34.508Z\",\"phenomenonTimeEnd\":\"2025-02-25T02:28:41.454Z\",\"validTimeStart\":\"2026-07-17T10:41:52.677Z\",\"validTimeEnd\":\"2025-09-03T07:54:17.301Z\",\"observerName\":\"s91822\",\"observerReference\":\"https://example.org/553\",\"platformName\":\"s96268\",\"platformReference\":\"https://example.org/808\",\"procedureName\":\"s61362\",\"procedureReference\":\"https://example.org/861\",\"observedPropertyTitle\":\"s29736\",\"observedProperty\":\"https://example.org/657\",\"ultimateFeatureOfInterestName\":\"s35397\",\"ultimateFeatureOfInterestReference\":\"https://example.org/617\",\"proximateFeatureOfInterestName\":\"s19540\",\"proximateFeatureOfInterestReference\":\"https://example.org/255\",\"unitOfMeasuretitle\":\"s93372\",\"unitOfMeasure\":\"https://example.org/516\",\"unitOfMeasureTitle\":\"s54404\"}}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977,12.5]},\"properties\":{\"featureType\":\"CountObservation\",\"resultReference\":\"https://example.org/401\",\"metadataReference\":\"https://example.org/644\",\"resultTime\":\"2024-01-25T14:55:10.975Z\",\"stimulusTime\":\"2026-09-07T07:41:19.131Z\",\"phenomenonTime\":\"2024-06-04T10:53:36.427Z\",\"phenomenonTimeStart\":\"2024-07-11T01:25:34.508Z\",\"phenomenonTimeEnd\":\"2025-02-25T02:28:41.454Z\",\"validTimeStart\":\"2026-07-17T10:41:52.677Z\",\"validTimeEnd\":\"2025-09-03T07:54:17.301Z\",\"observerName\":\"s91822\",\"observerReference\":\"https://example.org/553\",\"platformName\":\"s96268\",\"platformReference\":\"https://example.org/808\",\"procedureName\":\"s61362\",\"procedureReference\":\"https://example.org/861\",\"observedPropertyTitle\":\"s29736\",\"observedProperty\":\"https://example.org/657\",\"ultimateFeatureOfInterestName\":\"s35397\",\"ultimateFeatureOfInterestReference\":\"https://example.org/617\",\"proximateFeatureOfInterestName\":\"s19540\",\"proximateFeatureOfInterestReference\":\"https://example.org/255\",\"unitOfMeasuretitle\":\"s93372\",\"unitOfMeasure\":\"https://example.org/516\",\"unitOfMeasureTitle\":\"s54404\"}}",
+ "model": {
+  "@kind": "count_observation",
+  "lon": "-77.0365",
+  "lat": "38.8977",
+  "hae": "12.5",
+  "time_ms": "1717498416427",
+  "omsf.properties_feature_type": "CountObservation",
+  "omsf.properties_result_reference": "https://example.org/401",
+  "omsf.properties_metadata_reference": "https://example.org/644"
+ }
+}

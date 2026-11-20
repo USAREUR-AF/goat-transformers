@@ -1,0 +1,16 @@
+{
+  "name": "trajectory-roundtrip",
+  "from": "mf-json",
+  "to": "mf-json",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"LineString\",\"coordinates\":[[-3.7038,40.4168],[-3.7,40.42]]},\"properties\":{\"datetimes\":[\"2026-05-02T10:00:00Z\",\"2026-05-02T10:05:00Z\"],\"name\":\"ferry\"},\"id\":\"ferry-4\"}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"LineString\"},\"properties\":{\"datetimes\":[\"2026-05-02T10:00:00Z\",\"2026-05-02T10:05:00Z\"],\"name\":\"ferry\"},\"id\":\"ferry-4\"}",
+  "model": {
+    "@kind": "Trajectory",
+    "mfjson.trajectory_datetimes.#": "2",
+    "mfjson.trajectory_datetimes[0].mfjson.datetime_ms": "1777716000000",
+    "mfjson.trajectory_datetimes[1].mfjson.datetime_ms": "1777716300000",
+    "uid": "ferry-4"
+  },
+  "source": "derived by tools/gen/mf-json-vectors.py from the text of OGC 19-045r3 and spec/engine-spec.md; no engine run",
+  "reference": "OGC Moving Features Encoding Extension - JSON (MF-JSON) 1.0, OGC 19-045r3; clause 7.1: a LineString geometry with properties.datetimes; the geometry's type is the kind's when, its coordinates are not carried"
+}

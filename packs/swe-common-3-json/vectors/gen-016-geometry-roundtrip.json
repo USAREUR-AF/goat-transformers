@@ -1,0 +1,17 @@
+{
+ "name": "gen-geometry-roundtrip",
+ "from": "swe-common-3-json",
+ "to": "swe-common-3-json",
+ "input": "{\"type\":\"Geometry\",\"id\":\"s54720\",\"label\":\"s87854\",\"description\":\"s68001\",\"updatable\":true,\"optional\":true,\"definition\":\"https://example.org/43\",\"constraint\":{\"geomTypes\":[\"Polygon\",\"Polygon\"]},\"nilValues\":[{\"reason\":\"https://example.org/931\",\"value\":\"s10240\"},{\"reason\":\"https://example.org/993\",\"value\":\"s20291\"}],\"srs\":\"https://example.org/784\"}",
+ "expect": "{\"type\":\"Geometry\",\"id\":\"s54720\",\"label\":\"s87854\",\"description\":\"s68001\",\"updatable\":true,\"optional\":true,\"definition\":\"https://example.org/43\",\"constraint\":{\"geomTypes\":[\"Polygon\",\"Polygon\"]},\"nilValues\":[{\"reason\":\"https://example.org/931\",\"value\":\"s10240\"},{\"reason\":\"https://example.org/993\",\"value\":\"s20291\"}],\"srs\":\"https://example.org/784\"}",
+ "model": {
+  "@kind": "geometry",
+  "swecommon3.id": "s54720",
+  "swecommon3.label": "s87854",
+  "swecommon3.description": "s68001",
+  "swecommon3.type": "Geometry",
+  "swecommon3.updatable": "1",
+  "swecommon3.optional": "1",
+  "swecommon3.definition": "https://example.org/43"
+ }
+}

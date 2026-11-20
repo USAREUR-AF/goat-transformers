@@ -1,0 +1,17 @@
+{
+ "name": "gen-text-roundtrip",
+ "from": "swe-common-3-json",
+ "to": "swe-common-3-json",
+ "input": "{\"type\":\"Text\",\"id\":\"s96266\",\"label\":\"s8091\",\"description\":\"s453\",\"updatable\":false,\"optional\":false,\"definition\":\"https://example.org/94\",\"referenceFrame\":\"https://example.org/102\",\"axisID\":\"s75128\",\"nilValues\":[{\"reason\":\"https://example.org/146\",\"value\":\"s19669\"},{\"reason\":\"https://example.org/737\",\"value\":\"s73429\"}],\"constraint\":{\"type\":\"AllowedTokens\",\"values\":[\"s12660\",\"s4463\"],\"pattern\":\"s74086\"},\"value\":\"s28684\"}",
+ "expect": "{\"type\":\"Text\",\"id\":\"s96266\",\"label\":\"s8091\",\"description\":\"s453\",\"updatable\":false,\"optional\":false,\"definition\":\"https://example.org/94\",\"referenceFrame\":\"https://example.org/102\",\"axisID\":\"s75128\",\"nilValues\":[{\"reason\":\"https://example.org/146\",\"value\":\"s19669\"},{\"reason\":\"https://example.org/737\",\"value\":\"s73429\"}],\"constraint\":{\"type\":\"AllowedTokens\",\"values\":[\"s12660\",\"s4463\"],\"pattern\":\"s74086\"},\"value\":\"s28684\"}",
+ "model": {
+  "@kind": "text",
+  "swecommon3.id": "s96266",
+  "swecommon3.label": "s8091",
+  "swecommon3.description": "s453",
+  "swecommon3.type": "Text",
+  "swecommon3.updatable": "0",
+  "swecommon3.optional": "0",
+  "swecommon3.definition": "https://example.org/94"
+ }
+}

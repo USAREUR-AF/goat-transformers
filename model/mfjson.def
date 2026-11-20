@@ -1,0 +1,16 @@
+# The mfjson module: members of an OGC Moving Features JSON (MF-JSON, OGC 19-045r3) moving
+# feature that have no shared-model key, as the standard's text states them. Written by
+# hand from the standard; the MF-JSON schema files are not used (their notice reserves all
+# rights). packs/mf-json/pack.md says what is not mapped and why.
+module        mfjson
+version       0.1.0
+distribution  public
+source        "OGC Moving Features Encoding Extension - JSON (MF-JSON) 1.0, OGC 19-045r3, https://docs.ogc.org/is/19-045r3/19-045r3.html; OGC license agreement"
+key   datetime_ms     int     ms  "one instant of the temporal geometry or the trajectory, epoch milliseconds UTC"
+key   interpolation   string  -   "motion curve between the positions: Discrete, Step, Linear, Quadratic, Cubic, or the URL of a user-defined curve"
+key   instant         string  -   "one end of the feature's life span, an RFC 3339 instant as written"
+key   bound           float   -   "one number of the bounding box: the lower corner then the upper corner, axes in position order"
+list  datetimes             "instants of a MovingPoint temporal geometry, one per position, increasing"
+list  trajectory_datetimes  "instants of an MF-JSON Trajectory (properties.datetimes), one per LineString position"
+list  life_span             "the two instants that bound the feature's life (member time)"
+list  bbox                  "spatial bounding box of the feature's movement (member bbox)"

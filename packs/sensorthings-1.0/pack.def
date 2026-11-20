@@ -1,0 +1,129 @@
+# OGC SensorThings API Part 1: Sensing 1.0: one entity as its JSON object (a response
+# body, a create or update body, or the body of an MQTT message, which is the same JSON),
+# with the MultiDatastream extension of clause 12. Written by hand from the entity tables
+# of OGC 15-078r6. Public, OGC license agreement. The kind is chosen by a member only that
+# entity has; pack.md (of sensorthings-1.1, which this pack shares) states the evidence for
+# every shared-model key and what is not mapped.
+format  sensorthings-1.0
+version 0.1.0
+distribution public
+source  "OGC SensorThings API Part 1: Sensing Version 1.0, OGC 15-078r6, https://docs.ogc.org/is/15-078r6/15-078r6.html (sha256 68f77561735446f2f6bfc57af1fa70f04ed27e64c4363f253817901202c023a2); OGC license agreement; this pack is a change OGC has not approved"
+uses    sensorthings
+wire    json
+
+kind    MultiDatastream
+requires  sensorthings.multi_observation_data_types
+field   sensorthings.name                name                 string
+field   sensorthings.description         description          string
+group   sensorthings.units               unitOfMeasurements
+  field  sensorthings.unit_name        name        string
+  field  sensorthings.unit_symbol      symbol      string
+  field  sensorthings.unit_definition  definition  string
+end
+field   sensorthings.observation_type    observationType      string
+group   sensorthings.multi_observation_data_types  multiObservationDataTypes
+  field  sensorthings.observation_type  .  string
+end
+field   sensorthings.phenomenon_time     phenomenonTime       string
+field   sensorthings.result_time_period  resultTime           string
+when    multiObservationDataTypes  present
+
+kind    Datastream
+requires  sensorthings.observation_type
+field   sensorthings.name                name                         string
+field   sensorthings.description         description                  string
+field   sensorthings.unit_name           unitOfMeasurement.name       string
+field   sensorthings.unit_symbol         unitOfMeasurement.symbol     string
+field   sensorthings.unit_definition     unitOfMeasurement.definition string
+field   sensorthings.observation_type    observationType              string
+field   sensorthings.phenomenon_time     phenomenonTime               string
+field   sensorthings.result_time_period  resultTime                   string
+when    unitOfMeasurement  present
+
+kind    Observation
+requires  sensorthings.phenomenon_time
+field   sensorthings.phenomenon_time  phenomenonTime  string
+field   time_ms                       resultTime      iso8601_short
+field   sensorthings.valid_time       validTime       string
+when    result  present
+
+kind    LocationPoint
+requires  sensorthings.location_coordinates
+field   sensorthings.name           name          string
+field   sensorthings.description    description   string
+field   sensorthings.encoding_type  encodingType  string
+when    location.type  Point
+group   sensorthings.location_coordinates  location.coordinates
+  field  sensorthings.coordinate  .  float
+end
+
+kind    LocationFeaturePoint
+requires  sensorthings.location_feature_coordinates
+field   sensorthings.name           name          string
+field   sensorthings.description    description   string
+field   sensorthings.encoding_type  encodingType  string
+when    location.geometry.type  Point
+group   sensorthings.location_feature_coordinates  location.geometry.coordinates
+  field  sensorthings.coordinate  .  float
+end
+
+kind    Location
+requires  sensorthings.location_type
+field   sensorthings.name           name           string
+field   sensorthings.description    description    string
+field   sensorthings.encoding_type  encodingType   string
+field   sensorthings.location_type  location.type  string
+when    location  present
+
+kind    FeatureOfInterestPoint
+requires  sensorthings.feature_coordinates
+field   sensorthings.name           name          string
+field   sensorthings.description    description   string
+field   sensorthings.encoding_type  encodingType  string
+when    feature.type  Point
+group   sensorthings.feature_coordinates  feature.coordinates
+  field  sensorthings.coordinate  .  float
+end
+
+kind    FeatureOfInterestFeaturePoint
+requires  sensorthings.feature_feature_coordinates
+field   sensorthings.name           name          string
+field   sensorthings.description    description   string
+field   sensorthings.encoding_type  encodingType  string
+when    feature.geometry.type  Point
+group   sensorthings.feature_feature_coordinates  feature.geometry.coordinates
+  field  sensorthings.coordinate  .  float
+end
+
+kind    FeatureOfInterest
+requires  sensorthings.feature_type
+field   sensorthings.name           name          string
+field   sensorthings.description    description   string
+field   sensorthings.encoding_type  encodingType  string
+field   sensorthings.feature_type   feature.type  string
+when    feature  present
+
+kind    Sensor
+requires  sensorthings.encoding_type
+field   sensorthings.name           name          string
+field   sensorthings.description    description   string
+field   sensorthings.encoding_type  encodingType  string
+when    metadata  present
+
+kind    HistoricalLocation
+requires  time_ms
+field   time_ms  time  iso8601_short
+when    time  present
+
+kind    ObservedProperty
+requires  sensorthings.definition
+field   sensorthings.name         name         string
+field   sensorthings.definition   definition   string
+field   sensorthings.description  description  string
+when    definition  present
+
+kind    Thing
+requires  callsign
+field   callsign                  name         string
+field   sensorthings.description  description  string
+when    name  present

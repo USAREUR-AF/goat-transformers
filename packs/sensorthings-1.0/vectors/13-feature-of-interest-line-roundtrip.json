@@ -1,0 +1,16 @@
+{
+  "name": "feature-of-interest-line-roundtrip",
+  "from": "sensorthings-1.0",
+  "to": "sensorthings-1.0",
+  "input": "{\"name\":\"River reach\",\"description\":\"Reach between two gauges\",\"encodingType\":\"application/geo+json\",\"feature\":{\"type\":\"LineString\",\"coordinates\":[[9.1,47.6],[9.2,47.7]]}}",
+  "expect": "{\"name\":\"River reach\",\"description\":\"Reach between two gauges\",\"encodingType\":\"application/geo+json\",\"feature\":{\"type\":\"LineString\"}}",
+  "model": {
+    "@kind": "FeatureOfInterest",
+    "sensorthings.name": "River reach",
+    "sensorthings.description": "Reach between two gauges",
+    "sensorthings.encoding_type": "application/geo+json",
+    "sensorthings.feature_type": "LineString"
+  },
+  "source": "derived by tools/gen/sensorthings-vectors.py from the entity tables of the standard and spec/engine-spec.md; no engine run",
+  "reference": "OGC SensorThings API Part 1: Sensing 1.0 (OGC 15-078r6), clauses 8.2 and 12; a geometry other than a Point: its type is kept, its coordinates are not carried"
+}

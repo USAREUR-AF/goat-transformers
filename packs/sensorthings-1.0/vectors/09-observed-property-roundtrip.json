@@ -1,0 +1,15 @@
+{
+  "name": "observed-property-roundtrip",
+  "from": "sensorthings-1.0",
+  "to": "sensorthings-1.0",
+  "input": "{\"@iot.id\":6,\"@iot.selfLink\":\"https://sta.example.org/v1.0/ObservedProperties(6)\",\"name\":\"Air temperature\",\"definition\":\"https://vocab.example.org/air-temperature\",\"description\":\"Temperature of the air two metres above ground\"}",
+  "expect": "{\"name\":\"Air temperature\",\"definition\":\"https://vocab.example.org/air-temperature\",\"description\":\"Temperature of the air two metres above ground\"}",
+  "model": {
+    "@kind": "ObservedProperty",
+    "sensorthings.name": "Air temperature",
+    "sensorthings.definition": "https://vocab.example.org/air-temperature",
+    "sensorthings.description": "Temperature of the air two metres above ground"
+  },
+  "source": "derived by tools/gen/sensorthings-vectors.py from the entity tables of the standard and spec/engine-spec.md; no engine run",
+  "reference": "OGC SensorThings API Part 1: Sensing 1.0 (OGC 15-078r6), clauses 8.2 and 12"
+}

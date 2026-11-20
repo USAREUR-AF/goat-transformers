@@ -1,0 +1,7 @@
+{
+ "name": "gen-quantity_range-residue",
+ "from": "swe-common-3-json",
+ "to": "swe-common-3-json",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"type\":\"QuantityRange\",\"id\":\"s95011\",\"label\":\"s43149\",\"description\":\"s36067\",\"updatable\":false,\"optional\":false,\"definition\":\"https://example.org/324\",\"referenceFrame\":\"https://example.org/197\",\"axisID\":\"s34379\",\"nilValues\":[{\"reason\":\"https://example.org/637\"},{\"reason\":\"https://example.org/887\"}],\"constraint\":{\"type\":\"AllowedValues\",\"significantFigures\":10},\"uom\":{\"label\":\"s93177\",\"symbol\":\"s94604\",\"code\":\"s35153\",\"href\":\"https://example.org/842\"}}",
+ "expect": "{\"type\":\"QuantityRange\",\"id\":\"s95011\",\"label\":\"s43149\",\"description\":\"s36067\",\"updatable\":false,\"optional\":false,\"definition\":\"https://example.org/324\",\"referenceFrame\":\"https://example.org/197\",\"axisID\":\"s34379\",\"nilValues\":[{\"reason\":\"https://example.org/637\"},{\"reason\":\"https://example.org/887\"}],\"constraint\":{\"type\":\"AllowedValues\",\"significantFigures\":10},\"uom\":{\"label\":\"s93177\",\"symbol\":\"s94604\",\"code\":\"s35153\",\"href\":\"https://example.org/842\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}
