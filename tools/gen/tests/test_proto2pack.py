@@ -1584,3 +1584,16 @@ class DeriveTest(unittest.TestCase):
         self.assertEqual(ent["depot.s"], 2)
         self.assertNotIn("depot.e", ent)
         self.assertEqual(skipped, {"depot.e"})
+
+
+class WithTest(unittest.TestCase):
+    """--with: the bound line carries `with KEY`, and the codec writes it only
+    when the entity holds KEY (engine-spec 0.18)."""
+
+    def test_encode_scope_skips_a_line_whose_with_key_is_absent(self):
+        pack = type("P", (), {"all_withs": {("b", (2,)): "a"}, "tables": {}})()
+        fields = [("a", (1,), "pstring", None), ("b", (2,), "pstring", None)]
+        both = p2p.encode_scope(pack, {"a": "x", "b": "y"}, fields, [], [])
+        self.assertEqual(sorted(both), [1, 2])
+        only_b = p2p.encode_scope(pack, {"b": "y"}, fields, [], [])
+        self.assertEqual(sorted(only_b), [])

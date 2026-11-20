@@ -979,10 +979,11 @@ class Scope:
     (key, path, transform, table), `whens` and `consts` (path, value), `groups`
     GroupScope objects. A path is a tuple of field numbers; inside a group it
     is relative to the item, `()` for the `.` locator."""
-    __slots__ = ("fields", "whens", "consts", "groups")
+    __slots__ = ("fields", "whens", "consts", "groups", "withs")
 
     def __init__(self):
         self.fields, self.whens, self.consts, self.groups = [], [], [], []
+        self.withs = {}         # (key, path) -> the key a `with` option names (0.18)
 
 
 class GroupScope(Scope):
@@ -1007,6 +1008,12 @@ class WirePack:
             scope = _fill_scope(KindScope(), kind.lines)
             scope.name, scope.requires = kind.name, list(kind.requires)
             self.kinds.append(scope)
+        self.all_withs = {}
+        stack = [self.common] + self.kinds
+        while stack:
+            sc = stack.pop()
+            self.all_withs.update(sc.withs)
+            stack += sc.groups
 
     def kind(self, name):
         return next((k for k in self.kinds if k.name == name), None)
@@ -1030,6 +1037,8 @@ def _fill_scope(scope, lines):
     for node in lines:
         if node.d == "field":
             scope.fields.append((node.key, node.path, node.tr, node.via))
+            if getattr(node, "with_", None):
+                scope.withs[(node.key, node.path)] = node.with_
         elif node.d == "when":
             scope.whens.append((node.path, node.value))
         elif node.d == "const":
@@ -1209,7 +1218,13 @@ def engine_decode(pack, b):
 def encode_scope(pack, ent, fields, consts, groups):
     """-> the tree enc_tree writes, for the entity or for one item (0.7, Encode)."""
     tree = {}
+    withs = getattr(pack, "all_withs", {})
     for key, path, tr, via in fields:
+        other = withs.get((key, path))
+        # 0.18 `with`: the line writes only when the entity (or the item) holds the other key;
+        # a list holds when it has an item (ruling 2)
+        if other is not None and (other not in ent or ent[other] == []):
+            continue
         if key in ent:
             node = tree
             for n in path[:-1]:
@@ -1713,7 +1728,7 @@ class Plan:
         self.n_names = 0            # keys and lists the module holds after this run
         self.nest = self.item_depth = self.nest_asked = self.depth_asked = None
         self.core_map = {}          # field-number path -> shared keys, in --map order
-        self.binds, self.consts, self.tables = {}, {}, {}
+        self.binds, self.consts, self.tables, self.withs = {}, {}, {}, {}
         self.names = {}             # the content of the names file
         self.inherited = 0          # names taken from --names-from files
         self.base = BaseModule()
@@ -1962,6 +1977,12 @@ def parse_hand_lines(plan):
         if m.group(2) in walked:
             raise GenError("--bind %s: the walk maps that path; use --map" % spec)
         plan.binds.setdefault(m.group(1), []).append((m.group(3), m.group(2), m.group(4), m.group(5)))
+    plan.withs = {}
+    for spec in opts.with_:
+        m = re.fullmatch(r"([^:]+):([0-9.]+)=([^:=\s]+)", spec)
+        if not m or not any(p == m.group(2) for _, p, _, _ in plan.binds.get(m.group(1), [])):
+            raise GenError("--with %s: want KIND:PATH=KEY for a path a --bind of that kind binds" % spec)
+        plan.withs[(m.group(1), m.group(2))] = m.group(3)
     for spec in opts.const:
         m = re.fullmatch(r"([^:]+):([0-9.]+)=([0-9]+)", spec)
         if not m or m.group(1) not in kind_names:
@@ -2224,7 +2245,9 @@ def emit_pack(plan):
         if kind.requires:
             out += ["requires  %s" % " ".join(kind.requires)]
         out += [field_line(l) for l in kind.leaves]
-        out += ["field  %-*s  %-*s  %s%s" % (kw, key, pw, p, tr, "  via %s" % table if table else "")
+        out += ["field  %-*s  %-*s  %s%s%s" % (kw, key, pw, p, tr, "  via %s" % table if table else "",
+                                              "  with %s" % plan.withs[(kind.name, p)]
+                                              if (kind.name, p) in plan.withs else "")
                 for key, p, tr, table in plan.binds.get(kind.name, [])]
         out += ["const  %-*s  %s" % (pw, p, v) for p, v in plan.consts.get(kind.name, [])]
         out += [ln for g in kind.groups for ln in group_lines(g)]
@@ -3076,6 +3099,9 @@ def argument_parser():
     ap.add_argument("--notes-file", default=None, help="markdown placed in pack.md after the shared-key table")
     ap.add_argument("--pack-version", default="0.2.0")
     ap.add_argument("--module-version", default="0.1.0")
+    ap.add_argument("--with", dest="with_", action="append", default=[], metavar="KIND:PATH=KEY",
+                    help="the --bind line of that kind and path is written only when the entity holds KEY "
+                         "(engine-spec 0.18 field option `with`); repeatable")
     ap.add_argument("--derive", action="append", default=[], metavar="'TARGET FUNCTION ARG...'",
                     help="a derive line (engine-spec 0.6) written at the end of the module; the target is "
                          "a key of --module; an argument of another module adds its `uses` line; repeatable")
