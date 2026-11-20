@@ -1,0 +1,1 @@
+Test license written for the generator tests.

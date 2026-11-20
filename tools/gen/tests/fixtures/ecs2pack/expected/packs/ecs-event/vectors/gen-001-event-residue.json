@@ -1,0 +1,7 @@
+{
+ "name": "gen-event-residue",
+ "from": "ecs-event",
+ "to": "ecs-event",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"@timestamp\":\"2026-05-15T09:27:23.424Z\",\"event\":{\"id\":\"s67013\",\"sequence\":22806},\"host\":{\"geo\":{\"location\":{\"lat\":-33.865,\"lon\":-0.0014}},\"ip\":[\"s39923\",\"s47410\"],\"uptime_ratio\":101.125},\"threat\":{\"enrichments\":[{\"indicator\":{\"name\":\"s37424\"},\"matched\":{\"occurred\":\"s34210\"}},{\"indicator\":{\"name\":\"s51909\"},\"matched\":{\"occurred\":\"s59377\"}}]},\"user\":{\"changes\":{\"active\":true}}}",
+ "expect": "{\"@timestamp\":\"2026-05-15T09:27:23.424Z\",\"event\":{\"id\":\"s67013\",\"sequence\":22806},\"host\":{\"geo\":{\"location\":{\"lat\":-33.865,\"lon\":-0.0014}},\"ip\":[\"s39923\",\"s47410\"],\"uptime_ratio\":101.125},\"threat\":{\"enrichments\":[{\"indicator\":{\"name\":\"s37424\"},\"matched\":{\"occurred\":\"s34210\"}},{\"indicator\":{\"name\":\"s51909\"},\"matched\":{\"occurred\":\"s59377\"}}]},\"user\":{\"changes\":{\"active\":true}},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}
