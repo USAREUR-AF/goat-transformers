@@ -1,0 +1,15 @@
+{
+  "name": "rt-gps2_dop",
+  "from": "sbgecom",
+  "to": "sbgecom",
+  "source": "tools/gen/sbgecom2pack.py: id 65, class 0, then the fields sbgEComLogGnssDopReadFromStream reads, with values chosen by the generator, little-endian at their offsets",
+  "input": "4100c2968af1008054c20000a6c100003a4100003042",
+  "expect": "4100c2968af1008054c20000a6c100003a4100003042",
+  "model": {
+    "@kind": "gps2_dop",
+    "sbgecom.gnss_dop_time_stamp": "4052391618",
+    "sbgecom.gnss_dop_h_dop": "-53.125",
+    "sbgecom.gnss_dop_p_dop": "-20.75",
+    "sbgecom.gnss_dop_v_dop": "11.625"
+  }
+}

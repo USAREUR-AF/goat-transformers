@@ -1,0 +1,14 @@
+{
+  "name": "rt-odo_vel",
+  "from": "sbgecom",
+  "to": "sbgecom",
+  "source": "tools/gen/sbgecom2pack.py: id 19, class 0, then the fields sbgEComLogOdometerReadFromStream reads, with values chosen by the generator, little-endian at their offsets",
+  "input": "13006a606d2941b40040b9c2",
+  "expect": "13006a606d2941b40040b9c2",
+  "model": {
+    "@kind": "odo_vel",
+    "sbgecom.odometer_time_stamp": "695033962",
+    "sbgecom.odometer_status": "46145",
+    "sbgecom.odometer_velocity": "-92.625"
+  }
+}

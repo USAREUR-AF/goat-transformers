@@ -1,0 +1,15 @@
+{
+  "name": "rt-gps1_vel",
+  "from": "sbgecom",
+  "to": "sbgecom",
+  "source": "tools/gen/sbgecom2pack.py: id 13, class 0, then the fields sbgEComLogGnssVelReadFromStream reads, with values chosen by the generator, little-endian at their offsets",
+  "input": "0d00fa3b39f5d18fbd48a8e3419c008039c2000060c10000934100004b420040a6420000e7420080ccc200c08bc2",
+  "expect": "0d00fa3b39f5d18fbd48a8e3419c008039c2000060c10000934100004b420040a6420000e7420080ccc200c08bc2",
+  "model": {
+    "@kind": "gps1_vel",
+    "sbgecom.gnss_vel_time_stamp": "4114168826",
+    "sbgecom.gnss_vel_status": "1220382673",
+    "sbgecom.gnss_vel_time_of_week": "2621563816",
+    "track.vel_north_ms": "-46.375"
+  }
+}

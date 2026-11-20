@@ -1,0 +1,11 @@
+{
+  "name": "rt-utc_time-before-optional",
+  "from": "sbgecom",
+  "to": "sbgecom",
+  "source": "a message of an earlier firmware that ends before the optional fields: they decode as absent, and encode writes zero bits for them (engine-spec 0.6, `optional`; encode is unchanged)",
+  "input": "0200ba609eaf91b46808f172f374f5f647f7844953459f",
+  "expect": "0200ba609eaf91b46808f172f374f5f647f7844953459f000000000000000000000000",
+  "model": {
+    "@kind": "utc_time"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "rt-air_data-before-optional",
+  "from": "sbgecom",
+  "to": "sbgecom",
+  "source": "a message of an earlier firmware that ends before the optional fields: they decode as absent, and encode writes zero bits for them (engine-spec 0.6, `optional`; encode is unchanged)",
+  "input": "24001297bb77e9ea00003a4100003042",
+  "expect": "24001297bb77e9ea00003a4100003042000000000000000000000000",
+  "model": {
+    "@kind": "air_data"
+  }
+}

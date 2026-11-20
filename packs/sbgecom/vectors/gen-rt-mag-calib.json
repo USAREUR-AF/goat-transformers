@@ -1,0 +1,15 @@
+{
+  "name": "rt-mag_calib",
+  "from": "sbgecom",
+  "to": "sbgecom",
+  "source": "tools/gen/sbgecom2pack.py: id 5, class 0, then the fields sbgEComLogMagCalibReadFromStream reads, with values chosen by the generator, little-endian at their offsets",
+  "input": "0500f272b8c9c9c6a0774e25fcd3aa81582f06ddb48b6239",
+  "expect": "0500f272b8c9c9c6a0774e25fcd3aa81582f06ddb48b6239",
+  "model": {
+    "@kind": "mag_calib",
+    "sbgecom.mag_calib_time_stamp": "3384308466",
+    "sbgecom.mag_calib_reserved": "50889",
+    "sbgecom.mag_calib_mag_data_0": "160",
+    "sbgecom.mag_calib_mag_data_1": "119"
+  }
+}

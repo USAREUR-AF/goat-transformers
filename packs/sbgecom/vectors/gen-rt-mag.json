@@ -1,0 +1,15 @@
+{
+  "name": "rt-mag",
+  "from": "sbgecom",
+  "to": "sbgecom",
+  "source": "tools/gen/sbgecom2pack.py: id 4, class 0, then the fields sbgEComLogMagReadFromStream reads, with values chosen by the generator, little-endian at their offsets",
+  "input": "04008a1705c1616b00c081c2000002c2000000be00000142004081420000c242",
+  "expect": "04008a1705c1616b00c081c2000002c2000000be00000142004081420000c242",
+  "model": {
+    "@kind": "mag",
+    "sbgecom.mag_time_stamp": "3238336394",
+    "sbgecom.mag_status": "27489",
+    "sbgecom.mag_magnetometers_0": "-64.875",
+    "sbgecom.mag_magnetometers_1": "-32.5"
+  }
+}

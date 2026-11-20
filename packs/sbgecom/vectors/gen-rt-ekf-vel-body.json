@@ -1,0 +1,15 @@
+{
+  "name": "rt-ekf_vel_body",
+  "from": "sbgecom",
+  "to": "sbgecom",
+  "source": "tools/gen/sbgecom2pack.py: id 54, class 0, then the fields sbgEComLogEkfVelBodyReadFromStream reads, with values chosen by the generator, little-endian at their offsets",
+  "input": "3600527256bd29c6da100000dcc00000cc41008067420080b4420040f5420040bec2",
+  "expect": "3600527256bd29c6da100000dcc00000cc41008067420080b4420040f5420040bec2",
+  "model": {
+    "@kind": "ekf_vel_body",
+    "sbgecom.ekf_vel_body_time_stamp": "3176559186",
+    "sbgecom.ekf_vel_body_status": "282773033",
+    "sbgecom.ekf_vel_body_velocity_0": "-6.875",
+    "sbgecom.ekf_vel_body_velocity_1": "25.5"
+  }
+}

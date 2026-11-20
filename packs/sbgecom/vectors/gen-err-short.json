@@ -1,0 +1,8 @@
+{
+  "name": "err-short",
+  "from": "sbgecom",
+  "to": "sbgecom",
+  "source": "one byte short of the fields of status that are not optional",
+  "input": "0100c1fdbbf198516fa546f948ec1d4dcd3ff4a05193cb",
+  "expect_error": "malformed-wire"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "rt-ship_motion",
+  "from": "sbgecom",
+  "to": "sbgecom",
+  "source": "tools/gen/sbgecom2pack.py: id 9, class 0, then the fields sbgEComLogShipMotionReadFromStream reads, with values chosen by the generator, little-endian at their offsets",
+  "input": "090092e085ec00008241008042420000a24200c0e24200c0d0c2000090c200801ec20000e8c00000c94100006642cf7a",
+  "expect": "090092e085ec00008241008042420000a24200c0e24200c0d0c2000090c200801ec20000e8c00000c94100006642cf7a",
+  "model": {
+    "@kind": "ship_motion",
+    "sbgecom.ship_motion_time_stamp": "3968196754",
+    "sbgecom.ship_motion_main_heave_period": "16.25",
+    "sbgecom.ship_motion_ship_motion_0": "48.625",
+    "sbgecom.ship_motion_ship_motion_1": "81"
+  }
+}

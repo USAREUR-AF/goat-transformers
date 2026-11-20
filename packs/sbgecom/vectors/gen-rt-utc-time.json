@@ -1,0 +1,15 @@
+{
+  "name": "rt-utc_time",
+  "from": "sbgecom",
+  "to": "sbgecom",
+  "source": "tools/gen/sbgecom2pack.py: id 2, class 0, then the fields sbgEComLogUtcReadFromStream reads, with values chosen by the generator, little-endian at their offsets",
+  "input": "0200ba609eaf91b46808f172f374f5f647f7844953459f00804dc2000098c100005641",
+  "expect": "0200ba609eaf91b46808f172f374f5f647f7844953459f00804dc2000098c100005641",
+  "model": {
+    "@kind": "utc_time",
+    "sbgecom.utc_time_stamp": "2946392250",
+    "sbgecom.utc_status": "46225",
+    "sbgecom.utc_year": "2152",
+    "sbgecom.utc_month": "-15"
+  }
+}

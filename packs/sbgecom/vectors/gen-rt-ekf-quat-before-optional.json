@@ -1,0 +1,11 @@
+{
+  "name": "rt-ekf_quat-before-optional",
+  "from": "sbgecom",
+  "to": "sbgecom",
+  "source": "a message of an earlier firmware that ends before the optional fields: they decode as absent, and encode writes zero bits for them (engine-spec 0.6, `optional`; encode is unchanged)",
+  "input": "0700c2291fdb0000a741000055420040ab420000ec420080c7c200c086c200000cc27ac84177",
+  "expect": "0700c2291fdb0000a741000055420040ab420000ec420080c7c200c086c200000cc27ac841770000000000000000",
+  "model": {
+    "@kind": "ekf_quat"
+  }
+}

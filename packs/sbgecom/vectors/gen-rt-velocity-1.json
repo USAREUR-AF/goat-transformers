@@ -1,0 +1,15 @@
+{
+  "name": "rt-velocity_1",
+  "from": "sbgecom",
+  "to": "sbgecom",
+  "source": "tools/gen/sbgecom2pack.py: id 58, class 0, then the fields sbgEComLogVelocityReadFromStream reads, with values chosen by the generator, little-endian at their offsets",
+  "input": "3a00bacd09c6912100c0e74200c0cbc200008bc2008014c2000098c00000dd41",
+  "expect": "3a00bacd09c6912100c0e74200c0cbc200008bc2008014c2000098c00000dd41",
+  "model": {
+    "@kind": "velocity_1",
+    "sbgecom.velocity_time_stamp": "3322531258",
+    "sbgecom.velocity_status": "8593",
+    "sbgecom.velocity_velocity_0": "115.875",
+    "sbgecom.velocity_velocity_1": "-101.875"
+  }
+}

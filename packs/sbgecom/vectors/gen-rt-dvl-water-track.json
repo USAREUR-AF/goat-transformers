@@ -1,0 +1,15 @@
+{
+  "name": "rt-dvl_water_track",
+  "from": "sbgecom",
+  "to": "sbgecom",
+  "source": "tools/gen/sbgecom2pack.py: id 30, class 0, then the fields sbgEComLogDvlReadFromStream reads, with values chosen by the generator, little-endian at their offsets",
+  "input": "1e0042e05466193400008241008042420000a24200c0e24200c0d0c2000090c2",
+  "expect": "1e0042e05466193400008241008042420000a24200c0e24200c0d0c2000090c2",
+  "model": {
+    "@kind": "dvl_water_track",
+    "sbgecom.dvl_time_stamp": "1716838466",
+    "sbgecom.dvl_status": "13337",
+    "sbgecom.dvl_velocity_0": "16.25",
+    "sbgecom.dvl_velocity_1": "48.625"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "rt-event_c",
+  "from": "sbgecom",
+  "to": "sbgecom",
+  "source": "tools/gen/sbgecom2pack.py: id 26, class 0, then the fields sbgEComLogEventReadFromStream reads, with values chosen by the generator, little-endian at their offsets",
+  "input": "1a00a272874379c6501a276efec1d515",
+  "expect": "1a00a272874379c6501a276efec1d515",
+  "model": {
+    "@kind": "event_c",
+    "sbgecom.event_time_stamp": "1132950178",
+    "sbgecom.event_status": "50809",
+    "sbgecom.event_time_offset0": "6736",
+    "sbgecom.event_time_offset1": "28199"
+  }
+}

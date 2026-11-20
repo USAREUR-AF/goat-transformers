@@ -1,0 +1,13 @@
+{
+  "name": "rt-fast",
+  "from": "sbgecom",
+  "to": "sbgecom",
+  "source": "tools/gen/sbgecom2pack.py: id 0, class 1, then the fields sbgEComLogDemoFastReadFromStream reads, with values chosen by the generator, little-endian at their offsets",
+  "input": "000122bc51b84706",
+  "expect": "000122bc51b84706",
+  "model": {
+    "@kind": "fast",
+    "sbgecom.demo_fast_time_stamp": "3092364322",
+    "sbgecom.demo_fast_accel": "16.07"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "rt-ekf_rot_accel_body",
+  "from": "sbgecom",
+  "to": "sbgecom",
+  "source": "tools/gen/sbgecom2pack.py: id 52, class 0, then the fields sbgEComLogEkfRotAccelReadFromStream reads, with values chosen by the generator, little-endian at their offsets",
+  "input": "340082bbefab590f74ff000010c00000f14100007a4200c0bd4200c0f5c20000b5c2",
+  "expect": "340082bbefab590f74ff000010c00000f14100007a4200c0bd4200c0f5c20000b5c2",
+  "model": {
+    "@kind": "ekf_rot_accel_body",
+    "sbgecom.ekf_rot_accel_time_stamp": "2884615042",
+    "sbgecom.ekf_rot_accel_status": "4285796185",
+    "sbgecom.ekf_rot_accel_rate_0": "-2.25",
+    "sbgecom.ekf_rot_accel_rate_1": "30.125"
+  }
+}

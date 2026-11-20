@@ -1,0 +1,11 @@
+{
+  "name": "rt-status-before-optional",
+  "from": "sbgecom",
+  "to": "sbgecom",
+  "source": "a message of an earlier firmware that ends before the optional fields: they decode as absent, and encode writes zero bits for them (engine-spec 0.6, `optional`; encode is unchanged)",
+  "input": "01005205eba6295900add70078a1ae54fcf485a880485cfc",
+  "expect": "01005205eba6295900add70078a1ae54fcf485a880485cfc0000000000",
+  "model": {
+    "@kind": "status"
+  }
+}

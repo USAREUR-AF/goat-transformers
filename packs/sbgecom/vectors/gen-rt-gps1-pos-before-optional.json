@@ -1,0 +1,11 @@
+{
+  "name": "rt-gps1_pos-before-optional",
+  "from": "sbgecom",
+  "to": "sbgecom",
+  "source": "a message of an earlier firmware that ends before the optional fields: they decode as absent, and encode writes zero bits for them (engine-spec 0.6, `optional`; encode is unchanged)",
+  "input": "0e006297ecfd39eb7051103ff5a40000000080d070c000000000e0a882400000000000dd9640004099c2000031c200003ec10000a441",
+  "expect": "0e006297ecfd39eb7051103ff5a40000000080d070c000000000e0a882400000000000dd9640004099c2000031c200003ec10000a441000000000000000000000000000000",
+  "model": {
+    "@kind": "gps1_pos"
+  }
+}

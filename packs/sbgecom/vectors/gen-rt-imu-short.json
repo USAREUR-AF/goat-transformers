@@ -1,0 +1,15 @@
+{
+  "name": "rt-imu_short",
+  "from": "sbgecom",
+  "to": "sbgecom",
+  "source": "tools/gen/sbgecom2pack.py: id 44, class 0, then the fields sbgEComLogImuShortReadFromStream reads, with values chosen by the generator, little-endian at their offsets",
+  "input": "2c00e24d2289b9a108fe37c189513cc10aa540c18bf844c10c4c49c18d9f4dc10e73",
+  "expect": "2c00e24d2289b9a108fe37c189513cc10aa540c18bf844c10c4c49c18d9f4dc10e73",
+  "model": {
+    "@kind": "imu_short",
+    "sbgecom.imu_short_time_stamp": "2300726754",
+    "sbgecom.imu_short_status": "41401",
+    "sbgecom.imu_short_delta_velocity_0": "-1053295096",
+    "sbgecom.imu_short_delta_velocity_1": "-1053011575"
+  }
+}

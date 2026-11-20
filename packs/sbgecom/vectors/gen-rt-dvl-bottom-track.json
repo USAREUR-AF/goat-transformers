@@ -1,0 +1,15 @@
+{
+  "name": "rt-dvl_bottom_track",
+  "from": "sbgecom",
+  "to": "sbgecom",
+  "source": "tools/gen/sbgecom2pack.py: id 29, class 0, then the fields sbgEComLogDvlReadFromStream reads, with values chosen by the generator, little-endian at their offsets",
+  "input": "1d00da84a15db1d80000d5c2004094c2000027c2000016c10000b84100805d42",
+  "expect": "1d00da84a15db1d80000d5c2004094c2000027c2000016c10000b84100805d42",
+  "model": {
+    "@kind": "dvl_bottom_track",
+    "sbgecom.dvl_time_stamp": "1570866394",
+    "sbgecom.dvl_status": "55473",
+    "sbgecom.dvl_velocity_0": "-106.5",
+    "sbgecom.dvl_velocity_1": "-74.125"
+  }
+}

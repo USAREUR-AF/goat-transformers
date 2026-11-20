@@ -1,0 +1,15 @@
+{
+  "name": "rt-ekf_quat",
+  "from": "sbgecom",
+  "to": "sbgecom",
+  "source": "tools/gen/sbgecom2pack.py: id 7, class 0, then the fields sbgEComLogEkfQuatReadFromStream reads, with values chosen by the generator, little-endian at their offsets",
+  "input": "0700c2291fdb0000a741000055420040ab420000ec420080c7c200c086c200000cc27ac841770000ee4100807842",
+  "expect": "0700c2291fdb0000a741000055420040ab420000ec420080c7c200c086c200000cc27ac841770000ee4100807842",
+  "model": {
+    "@kind": "ekf_quat",
+    "sbgecom.ekf_quat_time_stamp": "3676252610",
+    "sbgecom.ekf_quat_quaternion_0": "20.875",
+    "sbgecom.ekf_quat_quaternion_1": "53.25",
+    "sbgecom.ekf_quat_quaternion_2": "85.625"
+  }
+}

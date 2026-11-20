@@ -1,0 +1,15 @@
+{
+  "name": "rt-fast_imu_data",
+  "from": "sbgecom",
+  "to": "sbgecom",
+  "source": "tools/gen/sbgecom2pack.py: id 0, class 1, then the fields sbgEComLogImuFastLegacyReadFromStream reads, with values chosen by the generator, little-endian at their offsets",
+  "input": "00012af23dfa01460057812a027e835104258578",
+  "expect": "00012af23dfa01460057812a027e835104258578",
+  "model": {
+    "@kind": "fast_imu_data",
+    "sbgecom.imu_fast_legacy_time_stamp": "4198363690",
+    "sbgecom.imu_fast_legacy_status": "17921",
+    "sbgecom.imu_fast_legacy_accelerometers_0": "222.72",
+    "sbgecom.imu_fast_legacy_accelerometers_1": "108.81"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "rt-nav",
+  "from": "sbgecom",
+  "to": "sbgecom",
+  "source": "tools/gen/sbgecom2pack.py: id 8, class 0, then the fields sbgEComLogEkfNavReadFromStream reads, with values chosen by the generator, little-endian at their offsets",
+  "input": "08005205eba600000b42004086420000c7420000000060bc874000000000506d97c05cfc1d",
+  "expect": "08005205eba600000b42004086420000c7420000000060bc874000000000506d97c05cfc1d",
+  "model": {
+    "@kind": "nav",
+    "sbgecom.ekf_nav_time_stamp": "2800420178",
+    "track.vel_north_ms": "34.75",
+    "track.vel_east_ms": "67.125",
+    "sbgecom.ekf_nav_velocity_2": "99.5"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "rt-imu_data",
+  "from": "sbgecom",
+  "to": "sbgecom",
+  "source": "tools/gen/sbgecom2pack.py: id 3, class 0, then the fields sbgEComLogImuLegacyReadFromStream reads, with values chosen by the generator, little-endian at their offsets",
+  "input": "030022bc51b8f90f00007a4200c0bd4200c0f5c20000b5c2008068c20000cec10000d44000001c4200c08e420080cf420000e4c20040a3c2000045c2",
+  "expect": "030022bc51b8f90f00007a4200c0bd4200c0f5c20000b5c2008068c20000cec10000d44000001c4200c08e420080cf420000e4c20040a3c2000045c2",
+  "model": {
+    "@kind": "imu_data",
+    "sbgecom.imu_legacy_time_stamp": "3092364322",
+    "sbgecom.imu_legacy_status": "4089",
+    "sbgecom.imu_legacy_accelerometers_0": "62.5",
+    "sbgecom.imu_legacy_accelerometers_1": "94.875"
+  }
+}

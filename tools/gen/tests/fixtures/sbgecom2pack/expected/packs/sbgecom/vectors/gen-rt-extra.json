@@ -1,0 +1,15 @@
+{
+  "name": "rt-extra",
+  "from": "sbgecom",
+  "to": "sbgecom",
+  "source": "tools/gen/sbgecom2pack.py: id 9, class 0, then the fields sbgEComLogDemoExtraReadFromStream reads, with values chosen by the generator, little-endian at their offsets",
+  "input": "0900ba609eaf91683f16",
+  "expect": "0900ba609eaf91683f16",
+  "model": {
+    "@kind": "extra",
+    "sbgecom.demo_extra_time_stamp": "2946392250",
+    "sbgecom.demo_extra_blob_0": "145",
+    "sbgecom.demo_extra_blob_1": "104",
+    "sbgecom.demo_extra_blob_2": "63"
+  }
+}

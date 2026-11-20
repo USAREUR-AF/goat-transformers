@@ -1,0 +1,11 @@
+{
+  "name": "rt-ekf_euler-before-optional",
+  "from": "sbgecom",
+  "to": "sbgecom",
+  "source": "a message of an earlier firmware that ends before the optional fields: they decode as absent, and encode writes zero bits for them (engine-spec 0.6, `optional`; encode is unchanged)",
+  "input": "06005ace6bd200c0cbc200008bc2008014c2000098c00000dd41000070423b190a1b",
+  "expect": "06005ace6bd200c0cbc200008bc2008014c2000098c00000dd41000070423b190a1b0000000000000000",
+  "model": {
+    "@kind": "ekf_euler"
+  }
+}

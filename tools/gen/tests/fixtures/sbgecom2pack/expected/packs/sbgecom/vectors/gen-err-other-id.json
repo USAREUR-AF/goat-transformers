@@ -1,0 +1,8 @@
+{
+  "name": "err-other-id",
+  "from": "sbgecom",
+  "to": "sbgecom",
+  "source": "id 0 of class 0 is not a kind of this pack",
+  "input": "00000000",
+  "expect_error": "no-kind"
+}

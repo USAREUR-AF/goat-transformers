@@ -1,0 +1,15 @@
+{
+  "name": "rt-position_1",
+  "from": "sbgecom",
+  "to": "sbgecom",
+  "source": "tools/gen/sbgecom2pack.py: id 62, class 0, then the fields sbgEComLogPositionReadFromStream reads, with values chosen by the generator, little-endian at their offsets",
+  "input": "3e008a8470d761d800000000101598c000000000001985c00000000080e06740000027c2000016c10000b84100805d420080af420040f042",
+  "expect": "3e008a8470d761d800000000101598c000000000001985c00000000080e06740000027c2000016c10000b84100805d420080af420040f042",
+  "model": {
+    "@kind": "position_1",
+    "sbgecom.position_time_stamp": "3614475402",
+    "sbgecom.position_status": "55393",
+    "sbgecom.position_position_0": "-1541.265625",
+    "sbgecom.position_position_1": "-675.125"
+  }
+}

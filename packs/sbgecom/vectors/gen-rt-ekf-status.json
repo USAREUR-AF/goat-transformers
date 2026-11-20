@@ -1,0 +1,15 @@
+{
+  "name": "rt-ekf_status",
+  "from": "sbgecom",
+  "to": "sbgecom",
+  "source": "tools/gen/sbgecom2pack.py: id 63, class 0, then the fields sbgEComLogEkfStatusReadFromStream reads, with values chosen by the generator, little-endian at their offsets",
+  "input": "3f00f2df23e0c933a833a0774e2f2583fcd63dd5",
+  "expect": "3f00f2df23e0c933a833a0774e2f2583fcd63dd5",
+  "model": {
+    "@kind": "ekf_status",
+    "sbgecom.ekf_status_time_stamp": "3760447474",
+    "sbgecom.ekf_status_ekf_status": "866661321",
+    "sbgecom.ekf_status_solution_type": "160",
+    "sbgecom.ekf_status_alignment_progress": "119"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "rt-gps2_pos",
+  "from": "sbgecom",
+  "to": "sbgecom",
+  "source": "tools/gen/sbgecom2pack.py: id 17, class 0, then the fields sbgEComLogGnssPosReadFromStream reads, with values chosen by the generator, little-endian at their offsets",
+  "input": "11009aa9061871fd8a6b48510fbf0000000020768dc000000000002853c00000000020ac88400000264200c093420080d4420000dfc200d743ae97855c3f43a9330ae74b50",
+  "expect": "11009aa9061871fd8a6b48510fbf0000000020768dc000000000002853c00000000020ac88400000264200c093420080d4420000dfc200d743ae97855c3f43a9330ae74b50",
+  "model": {
+    "@kind": "gps2_pos",
+    "sbgecom.gnss_pos_time_stamp": "403089818",
+    "sbgecom.gnss_pos_status": "1804270961",
+    "sbgecom.gnss_pos_time_of_week": "3205452104",
+    "sbgecom.gnss_pos_latitude": "-942.765625"
+  }
+}

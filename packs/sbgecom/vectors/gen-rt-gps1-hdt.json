@@ -1,0 +1,15 @@
+{
+  "name": "rt-gps1_hdt",
+  "from": "sbgecom",
+  "to": "sbgecom",
+  "source": "tools/gen/sbgecom2pack.py: id 15, class 0, then the fields sbgEComLogGnssHdtReadFromStream reads, with values chosen by the generator, little-endian at their offsets",
+  "input": "0f00caf29f06a146789aa8ad00004cc2000095c100005c410080384200009d428259",
+  "expect": "0f00caf29f06a146789aa8ad00004cc2000095c100005c410080384200009d428259",
+  "model": {
+    "@kind": "gps1_hdt",
+    "sbgecom.gnss_hdt_time_stamp": "111145674",
+    "sbgecom.gnss_hdt_status": "18081",
+    "sbgecom.gnss_hdt_time_of_week": "2913507960",
+    "sbgecom.gnss_hdt_heading": "-51"
+  }
+}

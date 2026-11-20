@@ -1,0 +1,15 @@
+{
+  "name": "rt-ekf_euler",
+  "from": "sbgecom",
+  "to": "sbgecom",
+  "source": "tools/gen/sbgecom2pack.py: id 6, class 0, then the fields sbgEComLogEkfEulerReadFromStream reads, with values chosen by the generator, little-endian at their offsets",
+  "input": "06005ace6bd200c0cbc200008bc2008014c2000098c00000dd41000070423b190a1b0080f9420000bac2",
+  "expect": "06005ace6bd200c0cbc200008bc2008014c2000098c00000dd41000070423b190a1b0080f9420000bac2",
+  "model": {
+    "@kind": "ekf_euler",
+    "sbgecom.ekf_euler_time_stamp": "3530280538",
+    "sbgecom.ekf_euler_euler_0": "-101.875",
+    "sbgecom.ekf_euler_euler_1": "-69.5",
+    "sbgecom.ekf_euler_euler_2": "-37.125"
+  }
+}

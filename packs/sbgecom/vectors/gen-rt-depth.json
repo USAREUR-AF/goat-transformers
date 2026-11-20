@@ -1,0 +1,15 @@
+{
+  "name": "rt-depth",
+  "from": "sbgecom",
+  "to": "sbgecom",
+  "source": "tools/gen/sbgecom2pack.py: id 47, class 0, then the fields sbgEComLogDepthReadFromStream reads, with values chosen by the generator, little-endian at their offsets",
+  "input": "2f001a603ca3f1b30000fac20040b9c2",
+  "expect": "2f001a603ca3f1b30000fac20040b9c2",
+  "model": {
+    "@kind": "depth",
+    "sbgecom.depth_time_stamp": "2738642970",
+    "sbgecom.depth_status": "46065",
+    "sbgecom.depth_pressure": "-125",
+    "sbgecom.depth_depth": "-92.625"
+  }
+}

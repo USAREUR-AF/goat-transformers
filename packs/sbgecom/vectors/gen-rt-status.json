@@ -1,0 +1,15 @@
+{
+  "name": "rt-status",
+  "from": "sbgecom",
+  "to": "sbgecom",
+  "source": "tools/gen/sbgecom2pack.py: id 1, class 0, then the fields sbgEComLogStatusReadFromStream reads, with values chosen by the generator, little-endian at their offsets",
+  "input": "01005205eba6295900add70078a1ae54fcf485a880485cfc335089ef0a",
+  "expect": "01005205eba6295900add70078a1ae54fcf485a880485cfc335089ef0a",
+  "model": {
+    "@kind": "status",
+    "sbgecom.status_time_stamp": "2800420178",
+    "sbgecom.status_general_status": "22825",
+    "sbgecom.status_com_status2": "44288",
+    "sbgecom.status_com_status": "2708996311"
+  }
+}

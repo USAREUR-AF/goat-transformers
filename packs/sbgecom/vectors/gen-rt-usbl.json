@@ -1,0 +1,15 @@
+{
+  "name": "rt-usbl",
+  "from": "sbgecom",
+  "to": "sbgecom",
+  "source": "tools/gen/sbgecom2pack.py: id 37, class 0, then the fields sbgEComLogUsblReadFromStream reads, with values chosen by the generator, little-endian at their offsets",
+  "input": "25007af26e80514600000000508b95c000000000800580c000004cc2000095c100005c41008038423291911c",
+  "expect": "25007af26e80514600000000508b95c000000000800580c000004cc2000095c100005c41008038423291911c",
+  "model": {
+    "@kind": "usbl",
+    "sbgecom.usbl_time_stamp": "2154754682",
+    "sbgecom.usbl_status": "18001",
+    "sbgecom.usbl_latitude": "-1378.828125",
+    "sbgecom.usbl_longitude": "-512.6875"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "rt-ekf_air_data",
+  "from": "sbgecom",
+  "to": "sbgecom",
+  "source": "tools/gen/sbgecom2pack.py: id 61, class 0, then the fields sbgEComLogEkfAirDataReadFromStream reads, with values chosen by the generator, little-endian at their offsets",
+  "input": "3d002229bdcef97c000038c10000a741000055420040ab420000ec420080c7c2",
+  "expect": "3d002229bdcef97c000038c10000a741000055420040ab420000ec420080c7c2",
+  "model": {
+    "@kind": "ekf_air_data",
+    "sbgecom.ekf_air_data_time_stamp": "3468503330",
+    "sbgecom.ekf_air_data_status": "31993",
+    "sbgecom.ekf_air_data_wind_0": "-11.5",
+    "sbgecom.ekf_air_data_wind_1": "20.875"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "rt-air_data",
+  "from": "sbgecom",
+  "to": "sbgecom",
+  "source": "tools/gen/sbgecom2pack.py: id 36, class 0, then the fields sbgEComLogAirDataReadFromStream reads, with values chosen by the generator, little-endian at their offsets",
+  "input": "24001297bb77e9ea00003a410000304200c098420080d9420000dac2",
+  "expect": "24001297bb77e9ea00003a410000304200c098420080d9420000dac2",
+  "model": {
+    "@kind": "air_data",
+    "sbgecom.air_data_time_stamp": "2008782610",
+    "sbgecom.air_data_status": "60137",
+    "sbgecom.air_data_pressure_abs": "11.625",
+    "sbgecom.air_data_altitude": "44"
+  }
+}
