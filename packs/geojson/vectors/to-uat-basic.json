@@ -1,0 +1,9 @@
+{
+  "name": "geojson-to-uat-basic",
+  "from": "geojson",
+  "to": "uat",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-122.75683164596558,45.500006675720215]},\"properties\":{}}",
+  "expect": "0000000040b60d51699a0000000000000000",
+  "source": "constructed",
+  "reference": "dump978 f40aa9a0 uat_message.cc; bytes by tools/gen/uat-vectors.py; the basic kind requires lat and lon; every other bit 0"
+}
