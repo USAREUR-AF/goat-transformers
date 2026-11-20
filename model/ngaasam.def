@@ -6,8 +6,6 @@ distribution  public
 source        "NGA Maritime Safety Information API, /api/publications/asam, record member `asam`, from responses archived by the Internet Archive (20230927174507); member names and JSON types"
 key  reference    string  -  "the record's reference member as the response gives it (JSON string)"
 key  date         string  -  "the record's date member as the response gives it (JSON string)"
-key  latitude     float   -  "the record's latitude member as the response gives it (JSON number)"
-key  longitude    float   -  "the record's longitude member as the response gives it (JSON number)"
 key  position     string  -  "the record's position member as the response gives it (JSON string)"
 key  nav_area     string  -  "the record's navArea member as the response gives it (JSON string)"
 key  subreg       string  -  "the record's subreg member as the response gives it (JSON string)"

@@ -16,8 +16,6 @@ None bound. The responses name their members and show their JSON types but state
 
 - positions are inside the free text of `text`; `issueDate` and `cancelDate` are written as day, hour, minute, `Z`, month and year in one text (`DDHHMMZ MON YYYY`), which no transform reads; they are strings.
 
-Binding `lat`/`lon` from numeric members needs a statement of their datum, which no archived response or page read gives.
-
 ## Members
 
 | Member | Key | Transform | Non-null in archived records |

@@ -10,8 +10,8 @@ uses          ngaasam
 wire          json
 field  ngaasam.reference    reference    string
 field  ngaasam.date         date         string
-field  ngaasam.latitude     latitude     float
-field  ngaasam.longitude    longitude    float
+field  lat                  latitude     float
+field  lon                  longitude    float
 field  ngaasam.position     position     string
 field  ngaasam.nav_area     navArea      string
 field  ngaasam.subreg       subreg       string

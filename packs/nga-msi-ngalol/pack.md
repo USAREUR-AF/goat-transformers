@@ -16,8 +16,6 @@ None bound. The responses name their members and show their JSON types but state
 
 - `position` is degrees-minutes-seconds text of two lines; `heightFeetMeters` holds two numbers in one text; they are strings.
 
-Binding `lat`/`lon` from numeric members needs a statement of their datum, which no archived response or page read gives.
-
 ## Members
 
 | Member | Key | Transform | Non-null in archived records |

@@ -21,8 +21,9 @@ absent on the json wire, so it is not carried; a non-null value is carried as
 residue text). Field lines follow the members' order in the responses, so a
 record in that order converts to itself unchanged.
 
-No shared-model key is bound: the responses state no meaning, unit or datum
-(pack.md of each pack). Every key is a raw key of the pack's own module.
+Shared keys: `lat` and `lon` from the numeric position members of ASAM and WPI
+records (MAP below; the evidence is in each pack.md). Every other key is a raw key
+of the pack's own module.
 
 The vectors use records written for this repository with the archived member
 order and types; no archived record is copied. Expected bytes follow from the
@@ -89,6 +90,47 @@ SPDX_NOTE = ("US Government work: NGA states it claims no copyright in the nauti
              "(LICENSES/LicenseRef-NGA-MSI.txt)")
 
 
+# Members bound to shared-model keys, per pack. Evidence (stated in pack.md): NGA is the
+# custodian of WGS 84 and publishes its maritime safety and charting products on it, and
+# in every archived record these numbers agree with the record's own degrees-minutes
+# text to within one minute of arc.
+MAP = {"asam": {"latitude": "lat", "longitude": "lon"},
+       "wpi": {"ycoord": "lat", "xcoord": "lon"}}
+# The degrees-minutes text each bound pair is checked against: (member of latitude text,
+# member of longitude text); the same member holds both for ASAM.
+DMS_TEXT = {"asam": ("position", "position"), "wpi": ("latitude", "longitude")}
+POS_SAMPLE = {"lat": [6.5, -12.25, 48.125, 0.5], "lon": [3.25, -77.5, 11.75, -0.5]}
+
+
+def dms_values(text):
+    """Signed degrees of every d°m's"H group in a text, in order."""
+    out = []
+    for g in re.finditer(r"(\d+)\u00b0(\d+)'([\d.]+)\"([NSEW])", text or ""):
+        v = int(g[1]) + int(g[2]) / 60 + float(g[3]) / 3600
+        out.append(-v if g[4] in "SW" else v)
+    return out
+
+
+def check_agreement(suffix, recs):
+    """Stop unless every record's bound numbers agree with its text within 1 arc-minute."""
+    bound = MAP.get(suffix)
+    if not bound:
+        return
+    inv = {v: k for k, v in bound.items()}
+    tlat, tlon = DMS_TEXT[suffix]
+    for r in recs:
+        if tlat == tlon:
+            vals = dms_values(r.get(tlat))
+            want = vals if len(vals) == 2 else None
+        else:
+            a, b = dms_values(r.get(tlat)), dms_values(r.get(tlon))
+            want = [a[0], b[0]] if len(a) == 1 and len(b) == 1 else None
+        got = [r.get(inv["lat"]), r.get(inv["lon"])]
+        if want is None or None in got or max(abs(got[0] - want[0]), abs(got[1] - want[1])) > 1 / 60:
+            raise SystemExit("nga-msi2pack: %s: a record's position numbers do not agree with its text: %r"
+                             % (suffix, got))
+
+
 def snake(name):
     s = re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", name.replace("-", "_"))
     return re.sub(r"_+", "_", s).lower()
@@ -151,8 +193,11 @@ def build_pack(suffix, module, title, endpoint, member, files, recs, out):
     members = survey(recs)
     mapped = [(m, tr) for m, tr, n, t in members if tr]
     unmapped = [m for m, tr, n, t in members if not tr]
+    bound = MAP.get(suffix, {})
     keys = {}
     for m, tr in mapped:
+        if m in bound:
+            continue
         k = snake(m)
         if k in keys.values():
             raise SystemExit("nga-msi2pack: two members give key %s" % k)
@@ -166,6 +211,8 @@ def build_pack(suffix, module, title, endpoint, member, files, recs, out):
            "source        \"%s\"" % src_line]
     w = max(len(k) for k in keys.values())
     for m, tr in mapped:
+        if m in bound:
+            continue
         mod.append("key  %-*s  %-6s  -  \"the record's %s member as the response gives it (JSON %s)\""
                    % (w, keys[m], ktype[tr], m, "number" if tr in ("int", "float") else "string"))
     out.write("model/%s.def" % module, "\n".join(mod) + "\n")
@@ -178,8 +225,11 @@ def build_pack(suffix, module, title, endpoint, member, files, recs, out):
           "source        \"License: %s (%s)\"" % (LICENCE, SPDX_NOTE),
           "uses          %s" % module, "wire          json"]
     w2 = max(len(m) for m, _ in mapped)
+
+    def key_of(m):
+        return bound[m] if m in bound else "%s.%s" % (module, keys[m])
     for m, tr in mapped:
-        pk.append("field  %s.%-*s  %-*s  %s" % (module, w, keys[m], w2, m, tr))
+        pk.append("field  %-*s  %-*s  %s" % (len(module) + 1 + w, key_of(m), w2, m, tr))
     out.write("packs/%s/pack.def" % fmt, "\n".join(pk) + "\n")
 
     # vectors
@@ -188,6 +238,8 @@ def build_pack(suffix, module, title, endpoint, member, files, recs, out):
         for m, tr, n, t in members:
             if m in nulls or tr is None:
                 r[m] = None
+            elif m in bound:
+                r[m] = POS_SAMPLE[bound[m]][i % 4]
             else:
                 r[m] = sample(m, tr, i)
         if extra:
@@ -202,7 +254,7 @@ def build_pack(suffix, module, title, endpoint, member, files, recs, out):
             if r.get(m) is not None:
                 e[m] = r[m]
         for m, v in r.items():
-            if m not in keys and v is not None and not isinstance(v, (list, dict)):
+            if m not in keys and m not in bound and v is not None and not isinstance(v, (list, dict)):
                 e[m] = v
         return e
 
@@ -212,7 +264,7 @@ def build_pack(suffix, module, title, endpoint, member, files, recs, out):
             v = r.get(m)
             if v is None:
                 continue
-            mo["%s.%s" % (module, keys[m])] = v if isinstance(v, str) else canon(v)
+            mo[key_of(m)] = v if isinstance(v, str) else canon(v)
         return mo
 
     src = "derived by tools/gen/nga-msi2pack.py from the json wire's canonical output (spec/engine-spec.md 0.5); no engine run"
@@ -225,14 +277,23 @@ def build_pack(suffix, module, title, endpoint, member, files, recs, out):
     first_str = next(m for m, tr in mapped if tr == "string")
     r = rec(1, nulls=(first_str,), extra={"extraMember": "kept", "extraFlag": True})
     m2 = model_of(r)
-    m2["@absent"] = ["%s.%s" % (module, keys[first_str])]
+    m2["@absent"] = [key_of(first_str)]
     vecs.append({"name": "null-and-unknown-members", "from": fmt, "to": fmt, "input": canon(r),
                  "expect": canon(expect_of(r)), "model": m2, "source": src,
                  "reference": ref + "; a null member is absent and not written; members the pack does not map (two added here) are residue and are written back after the mapped ones"})
     r = rec(2)
+    inv = {v: k for k, v in bound.items()}
+    if bound:
+        geo = {"type": "Point", "coordinates": [r[inv["lon"]], r[inv["lat"]]]}
+        note = "; the numeric position members are lat and lon (pack.md) and carry as the Point; no other key has a geojson line"
+    else:
+        geo, note = None, "; no shared key is bound (pack.md), so nothing carries to geojson and geometry is null"
     vecs.append({"name": "record-to-geojson", "from": fmt, "to": "geojson", "input": canon(r),
-                 "expect": canon({"type": "Feature", "geometry": None, "properties": {}}), "source": src,
-                 "reference": ref + "; no shared key is bound (pack.md), so nothing carries to geojson and geometry is null"})
+                 "expect": canon({"type": "Feature", "geometry": geo, "properties": {}}), "source": src,
+                 "model": {"lat": canon(r[inv["lat"]]), "lon": canon(r[inv["lon"]])} if bound else None,
+                 "reference": ref + note})
+    if vecs[-1]["model"] is None:
+        del vecs[-1]["model"]
     num = next(((m, tr) for m, tr in mapped if tr in ("int", "float")), None)
     if num:
         r = rec(3)
@@ -249,6 +310,21 @@ def build_pack(suffix, module, title, endpoint, member, files, recs, out):
     for old in out.listdir(vdir):
         if old not in names:
             out.remove(vdir + "/" + old)
+    # a vector lives in the pack that owns its input (spec/vector-format.md)
+    cross = "packs/geojson/vectors/to-%s-geojson-to-record.json" % fmt
+    if bound:
+        lat, lon = 48.125, -0.5
+        out.write(cross, json.dumps({
+            "name": "geojson-to-record", "from": "geojson", "to": fmt,
+            "input": canon({"type": "Feature", "geometry": {"type": "Point", "coordinates": [lon, lat]},
+                            "properties": {"callsign": "NOT CARRIED"}, "id": "x-1"}),
+            "expect": canon({inv["lat"]: lat, inv["lon"]: lon}),
+            "source": src.replace("json wire's canonical output", "json wire's canonical output and packs/geojson/pack.def"),
+            "reference": ref.replace("; the record is written for this repository", "") +
+            "; lat and lon are written to %s and %s, the only lines whose keys a GeoJSON Feature carries; id and callsign have no line in this pack" % (inv["lat"], inv["lon"])},
+            indent=2, ensure_ascii=False) + "\n")
+    elif out.exists(cross):
+        out.remove(cross)
 
     # pack.md
     md = ["# %s" % fmt, "",
@@ -257,19 +333,26 @@ def build_pack(suffix, module, title, endpoint, member, files, recs, out):
           "The endpoint answers one JSON object whose member `%s` is an array of records. A message of this pack is one element of that array: one JSON object, wire `json`. The caller takes the records out of the array; the envelope is not a message." % member, "",
           "## Source", "",
           "No API description was available: `https://msi.nga.mil/api` answered 503 on %s and no OpenAPI document of it is archived. The pack is built from %d archived response(s) of the endpoint, %d record(s) in all (PROVENANCE.md lists them with their SHA-256). A member's type is the JSON type its non-null values have in those records." % (READ_ON, len(files), len(recs)), "",
-          "## Shared-model keys", "",
-          "None bound. The responses name their members and show their JSON types but state no meaning, unit, datum or time base, and AGENTS.md binds a shared key only on a statement of the same meaning and unit. In particular:", ""]
+          "## Shared-model keys", ""]
+    if bound:
+        inv0 = {v: k for k, v in bound.items()}
+        md += ["| Member | Key | Evidence |", "|---|---|---|",
+               "| `%s` | `lat` | degrees of latitude, WGS 84 (below) |" % inv0["lat"],
+               "| `%s` | `lon` | degrees of longitude, WGS 84 (below) |" % inv0["lon"], "",
+               "Evidence. The archived responses give the members as JSON numbers with no unit or datum, so the binding rests on two things: NGA is the custodian of WGS 84 and publishes its maritime safety and charting products on it (the basis the maintainers accepted for this binding); and in every archived record (%d) the two numbers agree with the record's own degrees-minutes text to within one minute of arc, so the unit is decimal degrees, north and east positive." % len(recs), "",
+               "Other members:", ""]
+    else:
+        md += ["None bound. The responses name their members and show their JSON types but state no meaning, unit, datum or time base, and AGENTS.md binds a shared key only on a statement of the same meaning and unit. In particular:", ""]
     notes = {
-        "asam": "`latitude` and `longitude` are numbers that agree, in every archived record, with the degrees-minutes text of `position` (to within one minute of arc), but no datum is stated; `date` is a calendar date with no time or zone; `reference` names a report, not a moving entity. They are raw keys (`ngaasam.latitude`, `ngaasam.longitude`).",
+        "asam": "`position` is the same position as degrees-minutes text, kept as a string; `date` is a calendar date with no time or zone, not bound to `time_ms`; `reference` names a report, not a moving entity, and is not bound to `uid`.",
         "broadcast-warn": "positions are inside the free text of `text`; `issueDate` and `cancelDate` are written as day, hour, minute, `Z`, month and year in one text (`DDHHMMZ MON YYYY`), which no transform reads; they are strings.",
         "ngalol": "`position` is degrees-minutes-seconds text of two lines; `heightFeetMeters` holds two numbers in one text; they are strings.",
-        "wpi": "`latitude` and `longitude` are degrees-minutes text; `ycoord` and `xcoord` are numbers that agree with them in every archived record (to within one minute of arc), but no datum is stated, so they are raw keys (`ngawpi.ycoord`, `ngawpi.xcoord`).",
+        "wpi": "`latitude` and `longitude` are the same position as degrees-minutes text, kept as strings; `portNumber` identifies a port, not a moving entity, and is not bound to `uid`.",
     }
     md += ["- " + notes[suffix], "",
-           "Binding `lat`/`lon` from numeric members needs a statement of their datum, which no archived response or page read gives.", "",
            "## Members", "", "| Member | Key | Transform | Non-null in archived records |", "|---|---|---|---|"]
     for m, tr, n, t in members:
-        md.append("| `%s` | %s | %s | %d of %d |" % (m, "`%s.%s`" % (module, keys[m]) if tr else "not mapped", tr or "-", n, t))
+        md.append("| `%s` | %s | %s | %d of %d |" % (m, "`%s`" % key_of(m) if tr else "not mapped", tr or "-", n, t))
     md += ["", "## Not mapped", ""]
     if unmapped:
         md.append("- Members null in every archived record show no type: %s. A non-null value of one is residue: carried back into this format, not to another." % ", ".join("`%s`" % m for m in unmapped))
@@ -316,6 +399,7 @@ def main(argv=None):
                 print("nga-msi2pack: %s: SHA-256 is not %s" % (f, h), file=sys.stderr)
                 return 1
             recs += json.loads(b.decode("utf-8"))[member]
+        check_agreement(suffix, recs)
         r = build_pack(suffix, module, title, endpoint, member, files, recs, out)
         if not args.check:
             print("%s: %d members mapped, %d not, %d vectors" % r)

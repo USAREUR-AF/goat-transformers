@@ -103,5 +103,3 @@ key  s121_water_body      string  -  "the record's s121WaterBody member as the r
 key  s101_enc             string  -  "the record's s101Enc member as the response gives it (JSON string)"
 key  dod_water_body       string  -  "the record's dodWaterBody member as the response gives it (JSON string)"
 key  alternate_name       string  -  "the record's alternateName member as the response gives it (JSON string)"
-key  ycoord               float   -  "the record's ycoord member as the response gives it (JSON number)"
-key  xcoord               float   -  "the record's xcoord member as the response gives it (JSON number)"

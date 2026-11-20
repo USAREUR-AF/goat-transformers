@@ -107,5 +107,5 @@ field  ngawpi.s121_water_body      s121WaterBody      string
 field  ngawpi.s101_enc             s101Enc            string
 field  ngawpi.dod_water_body       dodWaterBody       string
 field  ngawpi.alternate_name       alternateName      string
-field  ngawpi.ycoord               ycoord             float
-field  ngawpi.xcoord               xcoord             float
+field  lat                         ycoord             float
+field  lon                         xcoord             float

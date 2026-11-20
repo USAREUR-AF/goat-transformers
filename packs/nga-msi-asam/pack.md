@@ -12,11 +12,16 @@ No API description was available: `https://msi.nga.mil/api` answered 503 on 2026
 
 ## Shared-model keys
 
-None bound. The responses name their members and show their JSON types but state no meaning, unit, datum or time base, and AGENTS.md binds a shared key only on a statement of the same meaning and unit. In particular:
+| Member | Key | Evidence |
+|---|---|---|
+| `latitude` | `lat` | degrees of latitude, WGS 84 (below) |
+| `longitude` | `lon` | degrees of longitude, WGS 84 (below) |
 
-- `latitude` and `longitude` are numbers that agree, in every archived record, with the degrees-minutes text of `position` (to within one minute of arc), but no datum is stated; `date` is a calendar date with no time or zone; `reference` names a report, not a moving entity. They are raw keys (`ngaasam.latitude`, `ngaasam.longitude`).
+Evidence. The archived responses give the members as JSON numbers with no unit or datum, so the binding rests on two things: NGA is the custodian of WGS 84 and publishes its maritime safety and charting products on it (the basis the maintainers accepted for this binding); and in every archived record (8897) the two numbers agree with the record's own degrees-minutes text to within one minute of arc, so the unit is decimal degrees, north and east positive.
 
-Binding `lat`/`lon` from numeric members needs a statement of their datum, which no archived response or page read gives.
+Other members:
+
+- `position` is the same position as degrees-minutes text, kept as a string; `date` is a calendar date with no time or zone, not bound to `time_ms`; `reference` names a report, not a moving entity, and is not bound to `uid`.
 
 ## Members
 
@@ -24,8 +29,8 @@ Binding `lat`/`lon` from numeric members needs a statement of their datum, which
 |---|---|---|---|
 | `reference` | `ngaasam.reference` | string | 8897 of 8897 |
 | `date` | `ngaasam.date` | string | 8897 of 8897 |
-| `latitude` | `ngaasam.latitude` | float | 8897 of 8897 |
-| `longitude` | `ngaasam.longitude` | float | 8897 of 8897 |
+| `latitude` | `lat` | float | 8897 of 8897 |
+| `longitude` | `lon` | float | 8897 of 8897 |
 | `position` | `ngaasam.position` | string | 8897 of 8897 |
 | `navArea` | `ngaasam.nav_area` | string | 8894 of 8897 |
 | `subreg` | `ngaasam.subreg` | string | 8897 of 8897 |
@@ -45,5 +50,5 @@ Binding `lat`/`lon` from numeric members needs a statement of their datum, which
 |---|---|
 | `gen-01-record-roundtrip` | the record is written for this repository; every member in the archived order; members null in every archived record are null here and are not carried |
 | `gen-02-null-and-unknown-members` | the record is written for this repository; a null member is absent and not written; members the pack does not map (two added here) are residue and are written back after the mapped ones |
-| `gen-03-record-to-geojson` | the record is written for this repository; no shared key is bound (pack.md), so nothing carries to geojson and geometry is null |
+| `gen-03-record-to-geojson` | the record is written for this repository; the numeric position members are lat and lon (pack.md) and carry as the Point; no other key has a geojson line |
 | `gen-04-wrong-type-is-transform-decode` | the record is written for this repository; latitude is a JSON number in every archived record; a string there fails its float transform |

@@ -1,0 +1,9 @@
+{
+  "name": "geojson-to-record",
+  "from": "geojson",
+  "to": "nga-msi-asam",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-0.5,48.125]},\"properties\":{\"callsign\":\"NOT CARRIED\"},\"id\":\"x-1\"}",
+  "expect": "{\"latitude\":48.125,\"longitude\":-0.5}",
+  "source": "derived by tools/gen/nga-msi2pack.py from the json wire's canonical output and packs/geojson/pack.def (spec/engine-spec.md 0.5); no engine run",
+  "reference": "NGA MSI /api/publications/asam records as archived (asam); lat and lon are written to latitude and longitude, the only lines whose keys a GeoJSON Feature carries; id and callsign have no line in this pack"
+}
