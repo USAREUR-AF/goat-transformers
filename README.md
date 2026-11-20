@@ -12,6 +12,7 @@ drone broadcasts become a tactical-map event and a ship-instrument message, and
 no engine holds code for any of the three formats.
 
 [![conformance](https://github.com/USAREUR-AF/goat-transformers/actions/workflows/conformance.yml/badge.svg)](https://github.com/USAREUR-AF/goat-transformers/actions/workflows/conformance.yml)
+[![REUSE](https://img.shields.io/badge/REUSE-compliant-green.svg)](LICENSING.md)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 
 **2,531 formats · 13,663 message kinds · 17,628 conversion vectors · 7 engines**, counted
@@ -432,3 +433,25 @@ Apache License 2.0 ([LICENSE](LICENSE)). Portions written by U.S. Federal
 government employees within the scope of their employment are not subject to
 copyright in the United States ([INTENT.md](INTENT.md)). [NOTICE](NOTICE) lists
 the third-party sources the packs were written from.
+
+### Licences of the packs, and build profiles
+
+The code and the restatements of message formats are Apache-2.0. A format whose
+source allows less is still included, labelled with its real licence, so that a
+build can leave it out. Each pack has one SPDX licence, given in
+[REUSE.toml](REUSE.toml) ([REUSE](https://reuse.software): `reuse lint`, SBOM
+and licence scanners read it); [licences.toml](licences.toml) gives each
+licence its flags (commercial use, share-alike, attribution, field of use); a
+pack's profile follows from those and from the modules it uses.
+
+| Profile | Holds |
+|---|---|
+| `open` (the default) | commercial use permitted, no share-alike, no field-of-use restriction |
+| `open+copyleft` | `open`, and share-alike packs |
+| `everything` | every public pack, also non-commercial, unknown and field-of-use |
+
+[LICENSING.md](LICENSING.md) lists every pack outside `open` and why;
+[licences.json](licences.json) is the same for machines.
+`tools/goat-pkg plan|bundle|archive --profile <profile>` builds from one
+profile; `python3 -I tools/licences.py --list --profile <profile>` lists its
+packs.

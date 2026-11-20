@@ -21,7 +21,7 @@ jobs:
         run: python3 -I tools/release-version.py
   tools:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - run: python3 -I -m unittest discover -s tools/tests
@@ -29,6 +29,14 @@ jobs:
       # The figure's counts are compared (--check) only in the counts PR.
       - name: Every pack has a family in the catalog figure
         run: python3 -I tools/catalog-figure.py --check-families
+      # Every pack has one known licence; licences.json and LICENSING.md are
+      # current; the open profile holds nothing restricted (LICENSING.md).
+      - name: Licences and profiles
+        run: python3 -I tools/licences.py --check
+      - name: REUSE lint
+        run: |
+          python3 -m pip install --quiet --disable-pip-version-check reuse==6.3.0
+          reuse lint
   generators:
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -44,11 +52,27 @@ jobs:
           done
   rust:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - run: cargo test
         working-directory: engines/rust
+      # Conformance of each profile narrower than everything: the archive of
+      # that profile (its packs, modules and vectors only) passes every vector
+      # it holds. Skipped while a profile holds every pack.
+      - name: Every vector of the open and open+copyleft archives
+        run: |
+          all=$(python3 -I tools/licences.py --totals | awk '$1 == "everything" {print $2}')
+          for profile in open open+copyleft; do
+            n=$(python3 -I tools/licences.py --totals | awk -v p="$profile" '$1 == p {print $2}')
+            if [ "$n" = "$all" ]; then echo "profile $profile holds every pack ($n): the full run covers it"; continue; fi
+            dir="$RUNNER_TEMP/profile-$profile"
+            mkdir -p "$dir/engines"
+            python3 -I tools/goat-pkg archive --profile "$profile" --vectors --out "$dir.tar.gz"
+            tar xzf "$dir.tar.gz" -C "$dir"
+            cp -r engines/rust "$dir/engines/rust"
+            (cd "$dir/engines/rust" && CARGO_TARGET_DIR="$GITHUB_WORKSPACE/engines/rust/target" cargo test --test vectors)
+          done
   go:
     runs-on: ubuntu-latest
     timeout-minutes: 10

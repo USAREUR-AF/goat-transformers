@@ -11,9 +11,12 @@ A pack is data: `packs/<format>/pack.def` plus `pack.md`, `PROVENANCE.md` and
 
 ## 0. Before writing anything
 
-1. Find the specification and confirm it is public. Read its license. If the
-   license restricts reuse, or the document carries a handling marking, stop
-   and ask the person (AGENTS.md, "Ask a human").
+1. Find the specification and confirm it is public. If the document carries a
+   handling marking, stop and ask the person (AGENTS.md, "Ask a human"). Read
+   its license: a license that restricts use (non-commercial, share-alike, a
+   field-of-use restriction, none stated) does not stop the pack. Build it and
+   label it with that licence (AGENTS.md, "How to add a pack", step 6;
+   LICENSING.md), so that a build of the `open` profile leaves it out.
 2. Record now, for `PROVENANCE.md`: the address of each source, its version or
    commit, its SHA-256, the license statement, the date read.
 3. Check that the format is not already covered: `ls packs/` and

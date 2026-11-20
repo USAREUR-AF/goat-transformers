@@ -1,0 +1,88 @@
+# The flags of every licence a pack or a model module may carry (REUSE.toml
+# gives each pack its one licence). No pack states flags itself; everything
+# a tool decides about use is derived from this table.
+#
+#   commercial    "yes" | "no" | "unknown": may be used in a commercial product
+#   share_alike   an adaptation must carry the same licence
+#   attribution   a notice must ship with it (its text is in NOTICE)
+#   field_of_use  uses the licence prohibits; empty when none
+#   distribution  "public", or "controlled" (private overlay only)
+#
+# The profiles (tools/licences.py, spec/engine-spec.md Version 0.29):
+#   open           commercial "yes", no share-alike, no field of use (the default)
+#   open+copyleft  open, and share-alike packs
+#   everything     every public pack: also non-commercial, unknown and field-of-use
+# A pack's profile is the narrowest profile that holds its own licence and the
+# licence of every model module it uses.
+
+[licences."Apache-2.0"]
+name = "Apache License 2.0"
+url = "https://www.apache.org/licenses/LICENSE-2.0"
+commercial = "yes"
+share_alike = false
+attribution = true
+field_of_use = []
+distribution = "public"
+
+[licences."CC-BY-NC-SA-4.0"]
+name = "Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International"
+url = "https://creativecommons.org/licenses/by-nc-sa/4.0/"
+commercial = "no"
+share_alike = true
+attribution = true
+field_of_use = []
+distribution = "public"
+
+[licences."CC-BY-SA-4.0"]
+name = "Creative Commons Attribution-ShareAlike 4.0 International"
+url = "https://creativecommons.org/licenses/by-sa/4.0/"
+commercial = "yes"
+share_alike = true
+attribution = true
+field_of_use = []
+distribution = "public"
+
+[licences."CC-BY-SA-2.0"]
+name = "Creative Commons Attribution-ShareAlike 2.0 Generic"
+url = "https://creativecommons.org/licenses/by-sa/2.0/"
+commercial = "yes"
+share_alike = true
+attribution = true
+field_of_use = []
+distribution = "public"
+
+[licences."CC-BY-4.0"]
+name = "Creative Commons Attribution 4.0 International"
+url = "https://creativecommons.org/licenses/by/4.0/"
+commercial = "yes"
+share_alike = false
+attribution = true
+field_of_use = []
+distribution = "public"
+
+[licences."MIT"]
+name = "MIT License"
+url = "https://opensource.org/license/mit"
+commercial = "yes"
+share_alike = false
+attribution = true
+field_of_use = []
+distribution = "public"
+
+[licences."BSD-3-Clause"]
+name = "BSD 3-Clause License"
+url = "https://opensource.org/license/bsd-3-clause"
+commercial = "yes"
+share_alike = false
+attribution = true
+field_of_use = []
+distribution = "public"
+
+# A source that states no licence: kept out of `open` until it is resolved.
+[licences."LicenseRef-unstated"]
+name = "No licence stated by the source"
+commercial = "unknown"
+share_alike = false
+attribution = true
+field_of_use = []
+distribution = "public"

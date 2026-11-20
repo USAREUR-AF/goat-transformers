@@ -17,6 +17,11 @@ linkage. This tool answers with the smallest package that meets them.
             file; --embed adds a source file that compiles them into a program
   archive   writes every model module and every pack as one .tar.gz, the same
             bytes for the same tree
+  --profile open | open+copyleft | everything (plan, bundle, archive; default
+            open) builds only from the packs whose licence the profile holds
+            (LICENSING.md; tools/licences.py). plan and bundle refuse a pack
+            outside it; archive leaves such packs out, with every model module
+            outside it and every vector that converts from or to one of them
   serve     answers plan requests over HTTP: GET /formats, GET /plan with the
             fields of `plan` as a query (the JSON of `plan --json`; 400 for a
             wrong field, 422 for a request that cannot be met), and a form at
@@ -42,8 +47,8 @@ Usage:
   tools/goat-pkg plan --formats cot-xml,sapient --language rust \
       --runtime native --linkage static --os linux --arch x86_64 [--json]
   tools/goat-pkg formats
-  tools/goat-pkg bundle --formats cot-xml,geojson --out vendor/goat [--embed rust|go|python]
-  tools/goat-pkg archive --out packs.tar.gz [--vectors] [--prefix NAME]
+  tools/goat-pkg bundle --formats cot-xml,geojson --out vendor/goat [--embed rust|go|python] [--profile P]
+  tools/goat-pkg archive --out packs.tar.gz [--vectors] [--prefix NAME] [--profile P]
   tools/goat-pkg serve [--host 127.0.0.1] [--port 8765]
 
 Exit status: 0 done, 1 the request cannot be met, 2 a wrong command line.
@@ -119,6 +124,45 @@ TARGETS = {
 
 class Unmet(Exception):
     """The request cannot be met; the text says why and what can be."""
+
+
+# --------------------------------------------------------------------------
+# Licence profiles (tools/licences.py, LICENSING.md)
+# --------------------------------------------------------------------------
+
+PROFILES = ["open", "open+copyleft", "everything"]
+LICENCE_FILES = ("LICENSING.md", "licences.json", "licences.toml", "REUSE.toml")
+
+
+def licences_api():
+    """tools/licences.py: the licence, flags and profile of every pack."""
+    import importlib.machinery
+    import importlib.util
+    loader = importlib.machinery.SourceFileLoader("goat_licences", os.path.join(HERE, "licences.py"))
+    spec = importlib.util.spec_from_loader("goat_licences", loader)
+    module = importlib.util.module_from_spec(spec)
+    loader.exec_module(module)
+    return module
+
+
+def outside(root, profile):
+    """What a build of `profile` leaves out: {"packs": {dir: why}, "modules":
+    {file: why}, "formats": {format names}}."""
+    api = licences_api()
+    try:
+        return api.excluded(root, profile)
+    except (api.LicenceError, OSError, ValueError) as e:
+        raise Unmet("licences: %s" % e) from e
+
+
+def refuse_outside(root, dirs, profile):
+    """Raise Unmet when a named pack is not in `profile`."""
+    left = outside(root, profile)["packs"]
+    bad = [d for d in dirs if d in left]
+    if bad:
+        raise Unmet("not in profile %s (LICENSING.md): %s; leave them out of --formats, or build with "
+                    "--profile everything for a use their licence permits"
+                    % (profile, "; ".join("packs/%s, %s" % (d, left[d]) for d in bad)))
 
 
 # --------------------------------------------------------------------------
@@ -239,6 +283,8 @@ def plan(root, args, packs=None):
     """The manifest of the smallest package for the constraints in `args`.
     `packs` is the result of `read_packs` when the caller has read the tree."""
     want, packs = select(root, args.formats, packs)
+    profile = getattr(args, "profile", "open")
+    refuse_outside(root, [pack_dir(p) for p in packs], profile)
     linkage, command = build_command(args.language, args.runtime, args.linkage, args.os, args.arch)
     engine = load_engine(root, packs)
     return {
@@ -255,6 +301,7 @@ def plan(root, args, packs=None):
             "packs": [f"packs/{pack_dir(p)}" for p in packs],
             "wires_used": sorted({p.wire for p in packs}),
             "build_command": command,
+            "profile": profile,
         },
         # what carries between each ordered pair of the named formats
         "convertibility": [engine.capability(a, b) for a in want for b in want if a != b],
@@ -268,7 +315,8 @@ def print_plan(manifest):
     print(f"engine:      {package['engine']}")
     print(f"packs:       {', '.join(p.split('/', 1)[1] for p in package['packs'])}   (only these)")
     print(f"wires used:  {', '.join(package['wires_used'])}   (a minimal engine build can exclude the rest)")
-    print(f"build:       {package['build_command']}\n")
+    print(f"build:       {package['build_command']}")
+    print(f"profile:     {package.get('profile', 'open')}   (LICENSING.md)\n")
     print("convertibility among the requested formats:")
     for p in manifest["convertibility"]:
         why = "" if not p["dropped"] else f"  (drops {', '.join(p['dropped'])}: {p['to']} has no field for them)"
@@ -393,8 +441,9 @@ def sha256(path):
 
 def cmd_bundle(args, root):
     want, packs = select(root, args.formats)
-    engine = load_engine(root, packs)
     dirs = [pack_dir(p) for p in packs]
+    refuse_outside(root, dirs, args.profile)
+    engine = load_engine(root, packs)
     # The modules the engine loaded for these packs, in the order it loaded them.
     modules = [(m.name, os.path.basename(m.path)) for m in engine.models.values()]
     out = args.out
@@ -413,7 +462,7 @@ def cmd_bundle(args, root):
         shutil.copyfile(os.path.join(root, "model", fname), place(f"model/{fname}"))
     for d in dirs:
         shutil.copyfile(os.path.join(root, "packs", d, "pack.def"), place(f"packs/{d}/pack.def"))
-    for name in ("LICENSE", "NOTICE"):
+    for name in ("LICENSE", "NOTICE") + LICENCE_FILES:
         if os.path.isfile(os.path.join(root, name)):
             shutil.copyfile(os.path.join(root, name), place(name))
     for language in dict.fromkeys(args.embed or []):
@@ -431,6 +480,7 @@ def cmd_bundle(args, root):
         "formats": want,
         "packs": dirs,
         "modules": [m for m, _ in modules],
+        "profile": args.profile,
         "sha256": {rel: sha256(os.path.join(out, *rel.split("/"))) for rel in files},
     }
     with open(os.path.join(out, "manifest.json"), "w", encoding="utf-8") as fh:
@@ -448,23 +498,59 @@ def cmd_bundle(args, root):
 # archive
 # --------------------------------------------------------------------------
 
-def archive_members(root, vectors):
-    """The files of the archive, relative to `root`, sorted: LICENSE, NOTICE
-    and everything under model/ and packs/, without the vectors unless asked."""
-    members = [top for top in ("LICENSE", "NOTICE") if os.path.isfile(os.path.join(root, top))]
+def archive_members(root, vectors, profile="everything"):
+    """The files of the archive, relative to `root`, sorted: LICENSE, NOTICE,
+    the licence files and everything under model/ and packs/, without the
+    vectors unless asked. A profile narrower than `everything` leaves out the
+    packs and model modules outside it, and every vector of another pack that
+    converts from or to one of their formats."""
+    members = [top for top in ("LICENSE", "NOTICE") + LICENCE_FILES if os.path.isfile(os.path.join(root, top))]
+    packs_dir, model_dir = os.path.join(root, "packs"), os.path.join(root, "model")
+    left = outside(root, profile)
+    left_modules = set(left["modules"])
     for top in ("model", "packs"):
         for folder, dirs, names in os.walk(os.path.join(root, top)):
+            if os.path.abspath(folder) == os.path.abspath(packs_dir):
+                dirs[:] = [d for d in dirs if d not in left["packs"]]
             if not vectors:
                 dirs[:] = [d for d in dirs if d not in ("vectors", "load-vectors")]
             for name in names:
-                members.append(os.path.relpath(os.path.join(folder, name), root).replace(os.sep, "/"))
+                path = os.path.join(folder, name)
+                if os.path.abspath(folder) == os.path.abspath(model_dir) and name in left_modules:
+                    continue
+                if left["formats"] and names_format(path, left["formats"]):
+                    continue
+                members.append(os.path.relpath(path, root).replace(os.sep, "/"))
+    if os.path.isdir(os.path.join(root, "LICENSES")):
+        members += ["LICENSES/" + n for n in sorted(os.listdir(os.path.join(root, "LICENSES")))]
     return sorted(members)
+
+
+def names_format(path, formats):
+    """True when `path` is a JSON vector whose `from` or `to`, or one of whose
+    arguments, names one of `formats`."""
+    parts = path.replace(os.sep, "/").split("/")
+    if not path.endswith(".json") or not any(p.endswith("vectors") for p in parts[:-1]):
+        return False
+    try:
+        with open(path, encoding="utf-8") as fh:
+            v = json.load(fh)
+    except (OSError, ValueError):
+        return False
+    if not isinstance(v, dict):
+        return False
+    named = {v.get("from"), v.get("to")}
+    args = v.get("args")
+    for a in args if isinstance(args, list) else []:
+        if isinstance(a, str):
+            named.update(a.split(","))
+    return bool(named & formats)
 
 
 def cmd_archive(args, root):
     """One .tar.gz, the same bytes for the same tree: sorted members, one
     mode, no owner, no times."""
-    members = archive_members(root, args.vectors)
+    members = archive_members(root, args.vectors, args.profile)
     prefix = args.prefix.strip("/")
     os.makedirs(os.path.dirname(os.path.abspath(args.out)), exist_ok=True)
     with open(args.out, "wb") as raw:
@@ -492,7 +578,7 @@ def cmd_archive(args, root):
 # The fields of a plan request, with the default of each. The same names and
 # defaults as the options of `plan`.
 PLAN_FIELDS = {"formats": None, "language": "rust", "runtime": "native", "linkage": "static",
-               "os": "linux", "arch": "x86_64"}
+               "os": "linux", "arch": "x86_64", "profile": "open"}
 MAX_QUERY = 8192  # bytes of a request line's query; a longer one is refused
 
 PAGE = """<!doctype html>
@@ -561,6 +647,8 @@ def plan_request(query):
         raise ValueError("language %s is not one of %s" % (values["language"], ", ".join(LANGUAGES)))
     if values["linkage"] not in ("static", "dynamic"):
         raise ValueError("linkage %s is not static or dynamic" % values["linkage"])
+    if values["profile"] not in PROFILES:
+        raise ValueError("profile %s is not one of %s" % (values["profile"], ", ".join(PROFILES)))
     return argparse.Namespace(**values)
 
 
@@ -674,6 +762,7 @@ def parser():
     p.add_argument("--os", default="linux", help="linux | darwin | windows (default linux)")
     p.add_argument("--arch", default="x86_64", help="x86_64 | aarch64 (default x86_64)")
     p.add_argument("--json", action="store_true", help="print the plan as JSON")
+    p.add_argument("--profile", default="open", choices=PROFILES, help="the licence profile to build from: open (default), open+copyleft or everything (LICENSING.md)")
     b = sub.add_parser(
         "bundle",
         help="write the packs for the named formats and the model modules they use to a directory, with a manifest",
@@ -687,10 +776,12 @@ def parser():
         help="also write a source file that compiles the bundle into a program of that language; repeatable",
     )
     b.add_argument("--package", default="goatpacks", help="with --embed go: the Go package name (default goatpacks)")
+    b.add_argument("--profile", default="open", choices=PROFILES, help="the licence profile to build from: open (default), open+copyleft or everything (LICENSING.md)")
     a = sub.add_parser("archive", help="write every model module and every pack to one .tar.gz")
     a.add_argument("--out", required=True, help="the .tar.gz to write")
     a.add_argument("--vectors", action="store_true", help="include the conformance vectors (left out by default)")
     a.add_argument("--prefix", default="", help="a directory name every member is placed under")
+    a.add_argument("--profile", default="open", choices=PROFILES, help="the licence profile to build from: open (default), open+copyleft or everything (LICENSING.md)")
     s = sub.add_parser(
         "serve",
         help="answer plan requests over HTTP: GET /formats, GET /plan?formats=a,b&language=... (the fields and "
