@@ -7,8 +7,8 @@ module        sunspec715
 version       0.1.0
 distribution  public
 source        "https://github.com/sunspec/models json/model_*.json at v2026-04-20 (commit a0b3e732ca9c163889a9c33f41c9315668a2488c); unimplemented values from https://github.com/sunspec/pysunspec2 sunspec2/mb.py at v1.3.7 (commit bbe9e044c2ae06af54b49e5ef042493eddb7e2b8)"
-key   der_ctl_loc_rem_ctl  int  -  "model 715, point LocRemCtl"
-key   der_ctl_der_hb  int  -  "model 715, point DERHb"
-key   der_ctl_controller_hb  int  -  "model 715, point ControllerHb"
-key   der_ctl_alarm_reset  int  -  "model 715, point AlarmReset"
-key   der_ctl_op_ctl  int  -  "model 715, point OpCtl"
+key   der_ctl_loc_rem_ctl  int  -  "model 715, point: LocRemCtl"
+key   der_ctl_der_hb  int  -  "model 715, point: DERHb"
+key   der_ctl_controller_hb  int  -  "model 715, point: ControllerHb"
+key   der_ctl_alarm_reset  int  -  "model 715, point: AlarmReset"
+key   der_ctl_op_ctl  int  -  "model 715, point: OpCtl"

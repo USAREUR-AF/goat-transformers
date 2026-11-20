@@ -306,7 +306,7 @@ class ModelPlan:
             core = "lat" if leaf.path == ["Lat"] else "lon"
             self.core.append((leaf.name, core, tr))
             return Line(core, leaf.bitpos, leaf.bits, tr, leaf, absent)
-        what = "model %d, point %s" % (self.id, ".".join(leaf.path))
+        what = "model %d, point: %s" % (self.id, ".".join(leaf.path))
         if isinstance(leaf.sf, str):
             what += ", unscaled (scale factor point %s)" % leaf.sf
         self.keys[name] = (typ, unit, what)
