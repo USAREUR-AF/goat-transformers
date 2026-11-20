@@ -1,0 +1,8 @@
+{
+  "name": "version-2-report-is-no-kind",
+  "from": "igmpv3",
+  "to": "igmpv3",
+  "input": "16000000e9fc0001",
+  "expect_error": "no-kind",
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; a version 2 membership report (type 0x16), which the igmpv2 pack maps"
+}

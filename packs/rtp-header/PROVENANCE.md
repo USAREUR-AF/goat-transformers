@@ -9,7 +9,7 @@ from values chosen there; no example message of an RFC is used.
 
 | Document | Where | SHA-256 of the text file | Used for |
 |---|---|---|---|
-| RFC 3550, RTP: A Transport Protocol for Real-Time Applications, July 2003, STD 64 | https://www.rfc-editor.org/rfc/rfc3550.txt | `4c210e9434b5b4c029e8536ad8991f3709bc3cbfa0999e951bcb4c2143c539e8` | the RTP fixed header, section 5.1 |
+| RFC 3550, RTP: A Transport Protocol for Real-Time Applications, July 2003, STD 64 | https://www.rfc-editor.org/rfc/rfc3550.txt | `4c210e9434b5b4c029e8536ad8991f3709bc3cbfa0999e951bcb4c2143c539e8` | the RTP fixed header and the CSRC list, section 5.1 |
 
 The pack follows the text of the RFCs; their errata are listed at
 https://www.rfc-editor.org/errata/rfc3550.

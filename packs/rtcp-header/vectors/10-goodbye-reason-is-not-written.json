@@ -1,0 +1,18 @@
+{
+  "name": "goodbye-reason-is-not-written",
+  "from": "rtcp-header",
+  "to": "rtcp-header",
+  "input": "82cb00045eed12341111111104646f6e65000000",
+  "expect": "82cb00045eed123411111111",
+  "model": {
+    "@kind": "goodbye",
+    "inet.rtcp_version": "2",
+    "inet.rtcp_padding": "0",
+    "inet.rtcp_length": "4",
+    "inet.rtcp_source_count": "2",
+    "inet.rtcp_bye_sources.#": "2",
+    "inet.rtcp_bye_sources[0].inet.rtcp_bye_ssrc": "1592594996",
+    "inet.rtcp_bye_sources[1].inet.rtcp_bye_ssrc": "286331153"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; the goodbye with a 4-octet reason, its length octet and padding (length 4): the sources come back, the reason is read over"
+}

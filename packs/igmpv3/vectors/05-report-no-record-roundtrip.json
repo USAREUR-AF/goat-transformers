@@ -1,0 +1,16 @@
+{
+  "name": "report-no-record-roundtrip",
+  "from": "igmpv3",
+  "to": "igmpv3",
+  "input": "2200ddff00000000",
+  "expect": "2200ddff00000000",
+  "model": {
+    "@kind": "v3-membership-report",
+    "inet.igmp3_report_reserved1": "0",
+    "inet.igmp_checksum": "56831",
+    "inet.igmp3_report_reserved2": "0",
+    "inet.igmp3_num_records": "0",
+    "inet.igmp3_group_records.#": "0"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; a report with no group record: 8 octets; checksum computed here"
+}

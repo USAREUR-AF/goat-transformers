@@ -1,0 +1,8 @@
+{
+  "name": "router-advertisement-cut-short-is-malformed",
+  "from": "icmpv6-header",
+  "to": "icmpv6-header",
+  "input": "8600090a4080070800007530000003",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; the router advertisement cut to 15 octets"
+}

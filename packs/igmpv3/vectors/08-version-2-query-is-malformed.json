@@ -1,0 +1,8 @@
+{
+  "name": "version-2-query-is-malformed",
+  "from": "igmpv3",
+  "to": "igmpv3",
+  "input": "1164ec1e00000000",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; the general query cut to its first 8 octets, the size of a version 2 query: the version 3 fields do not fit"
+}

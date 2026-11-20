@@ -1,13 +1,14 @@
 # The inet module: the fixed header fields of IETF protocols (IPv4, IPv6, UDP,
 # TCP, ICMP, NTP, the DNS message header; RTP and RTCP, ARP, GRE, VXLAN, the
-# MPLS label stack entry, IGMPv2, the SCTP common header, BFD), as the wire
+# MPLS label stack entry, IGMPv2 and IGMPv3, ICMPv6, the SCTP common header,
+# BFD), as the wire
 # integer unless the description says otherwise. A flag is 0 or 1. Keys of one protocol carry its
 # name; the three keys without a protocol name hold the same quantity in more than
 # one header (pack.md of each pack gives the evidence).
 module        inet
-version       0.2.0
+version       0.3.0
 distribution  public
-source        "IETF RFC 791, RFC 8200, RFC 768, RFC 9293, RFC 792, RFC 5905, RFC 1035, RFC 3550, RFC 826, RFC 894, RFC 2784, RFC 2890, RFC 7348, RFC 3032, RFC 5462, RFC 2236, RFC 9260 and RFC 5880, https://www.rfc-editor.org/, IETF Trust (BCP 78); layouts restated"
+source        "IETF RFC 791, RFC 8200, RFC 768, RFC 9293, RFC 792, RFC 5905, RFC 1035, RFC 3550, RFC 826, RFC 894, RFC 2784, RFC 2890, RFC 7348, RFC 3032, RFC 5462, RFC 2236, RFC 9260, RFC 5880, RFC 3376, RFC 4443 and RFC 4861, https://www.rfc-editor.org/, IETF Trust (BCP 78); layouts restated"
 
 # Shared between headers
 key  src_port                  int     -     "transport port of the sending process, 0-65535 (UDP, TCP and SCTP)"
@@ -201,3 +202,59 @@ key  bfd_your_disc             int     -     "your discriminator: the peer's my 
 key  bfd_desired_min_tx        int     us    "desired minimum transmit interval, microseconds"
 key  bfd_required_min_rx       int     us    "required minimum receive interval, microseconds"
 key  bfd_required_min_echo_rx  int     us    "required minimum echo receive interval, microseconds (0: no echo)"
+
+# RTP contributing sources, RFC 3550 section 5.1
+list rtp_csrcs                         "the CSRC list after the fixed header, counted by the CSRC count; each item holds inet.rtp_csrc"
+key  rtp_csrc                  int     -     "one contributing source identifier, 32 bits"
+
+# RTCP report blocks and the SDES, BYE and APP packets, RFC 3550 sections 6.4.1, 6.5, 6.6 and 6.7
+list rtcp_report_blocks                "the reception report blocks of a sender or receiver report, counted by the report count; each item holds the inet.rtcp_rb_* keys"
+key  rtcp_rb_ssrc              int     -     "report block: the source the block reports on"
+key  rtcp_rb_fraction_lost     int     -     "report block: packets lost since the last report, as a fraction of those expected, in units of 1/256"
+key  rtcp_rb_cumulative_lost   int     -     "report block: packets lost since reception began, 24-bit signed (negative when duplicates arrive)"
+key  rtcp_rb_ext_highest_seq   int     -     "report block: highest sequence number received, with the count of its wraps in the high 16 bits"
+key  rtcp_rb_jitter            int     -     "report block: interarrival jitter estimate, in RTP timestamp units"
+key  rtcp_rb_lsr               int     -     "report block: middle 32 bits of the NTP timestamp of the last sender report received from the source, 0 if none"
+key  rtcp_rb_dlsr              int     -     "report block: delay since that sender report was received, in units of 1/65536 s, 0 if none"
+key  rtcp_source_count         int     -     "source description and goodbye: the number of chunks or of SSRC/CSRC identifiers, 0-31"
+list rtcp_bye_sources                  "goodbye: the SSRC/CSRC identifiers leaving, counted by the source count; each item holds inet.rtcp_bye_ssrc"
+key  rtcp_bye_ssrc             int     -     "goodbye: one SSRC or CSRC identifier"
+key  rtcp_app_subtype          int     -     "application-defined packet: the 5-bit subtype"
+key  rtcp_app_name             string  -     "application-defined packet: the four ASCII characters naming the application"
+
+# IGMPv3, RFC 3376 sections 4.1 and 4.2
+key  igmp3_max_resp_code       int     -     "query: max response code; below 128 the time in tenths of a second, from 128 a floating-point code"
+key  igmp3_reserved            int     -     "query: the 4 reserved bits before the S flag, 0"
+key  igmp3_suppress            int     -     "query: S flag, 1 = routers suppress their timer updates"
+key  igmp3_qrv                 int     -     "query: querier's robustness variable, 0-7"
+key  igmp3_qqic                int     -     "query: querier's query interval code; below 128 seconds, from 128 a floating-point code"
+key  igmp3_num_sources         int     -     "number of source addresses that follow (query, or one group record)"
+list igmp3_query_sources               "query: the source addresses, counted by the number of sources; each item holds inet.igmp3_source_addr"
+key  igmp3_source_addr         int     -     "one source address, the 32-bit integer"
+key  igmp3_report_reserved1    int     -     "report: the octet after the type, 0"
+key  igmp3_report_reserved2    int     -     "report: the 16 bits after the checksum, 0"
+key  igmp3_num_records         int     -     "report: number of group records"
+list igmp3_group_records               "report: the group records, counted by the number of records; each item holds the igmp3 record keys and inet.igmp3_record_sources"
+key  igmp3_record_type         int     -     "group record type (1 mode is include, 2 mode is exclude, 3 change to include, 4 change to exclude, 5 allow new sources, 6 block old sources)"
+key  igmp3_aux_data_len        int     -     "group record: length of the auxiliary data in 32-bit words, 0 in IGMPv3"
+key  igmp3_multicast_addr      int     -     "group record: the multicast address, the 32-bit integer"
+list igmp3_record_sources              "group record: the source addresses, counted by its number of sources; each item holds inet.igmp3_source_addr"
+
+# ICMPv6, RFC 4443 sections 2.1, 3 and 4, and the router messages of RFC 4861 sections 4.1 and 4.2
+key  icmpv6_type               int     -     "message type (1-127 errors, 128-255 informational)"
+key  icmpv6_code               int     -     "code, its meaning set by the type"
+key  icmpv6_checksum           int     -     "ones' complement checksum over the message and an IPv6 pseudo header"
+key  icmpv6_unused             int     -     "destination unreachable and time exceeded: the 32 bits after the checksum, 0"
+key  icmpv6_mtu                int     -     "packet too big: the MTU of the next-hop link, octets"
+key  icmpv6_pointer            int     -     "parameter problem: offset in the invoking packet of the octet in error"
+key  icmpv6_identifier         int     -     "echo request and reply: identifier to match replies with requests"
+key  icmpv6_sequence           int     -     "echo request and reply: sequence number to match replies with requests"
+key  icmpv6_reserved           int     -     "router solicitation: the 32 bits after the checksum, 0"
+key  icmpv6_rest               int     -     "any other type: the 32 bits after the checksum"
+key  icmpv6_ra_cur_hop_limit   int     -     "router advertisement: hop limit hosts should use, 0 = not set by this router"
+key  icmpv6_ra_managed         int     -     "router advertisement: M flag, addresses are available by DHCPv6"
+key  icmpv6_ra_other           int     -     "router advertisement: O flag, other configuration is available by DHCPv6"
+key  icmpv6_ra_reserved        int     -     "router advertisement: the 6 bits after the flags, 0 in RFC 4861"
+key  icmpv6_ra_router_lifetime int     s     "router advertisement: lifetime as a default router, seconds; 0 = not a default router"
+key  icmpv6_ra_reachable_time  int     ms    "router advertisement: time a neighbor is taken as reachable after a confirmation, milliseconds; 0 = not set"
+key  icmpv6_ra_retrans_timer   int     ms    "router advertisement: time between retransmitted neighbor solicitations, milliseconds; 0 = not set"

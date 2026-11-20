@@ -1,0 +1,8 @@
+{
+  "name": "packet-type-205-is-no-kind",
+  "from": "rtcp-header",
+  "to": "rtcp-header",
+  "input": "85cd000300000000",
+  "expect_error": "no-kind",
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; packet type 205 (a feedback message of a later RFC), which the pack does not map"
+}

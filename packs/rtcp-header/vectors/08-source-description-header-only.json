@@ -1,0 +1,15 @@
+{
+  "name": "source-description-header-only",
+  "from": "rtcp-header",
+  "to": "rtcp-header",
+  "input": "81ca00035eed12340103614062000000",
+  "expect": "81ca0003",
+  "model": {
+    "@kind": "source-description",
+    "inet.rtcp_version": "2",
+    "inet.rtcp_padding": "0",
+    "inet.rtcp_length": "3",
+    "inet.rtcp_source_count": "1"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; a source description with one chunk (SSRC and a CNAME item of 3 octets, ended and padded): the header comes back, the chunk is read over"
+}

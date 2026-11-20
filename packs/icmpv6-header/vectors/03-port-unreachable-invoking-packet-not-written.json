@@ -1,0 +1,15 @@
+{
+  "name": "port-unreachable-invoking-packet-not-written",
+  "from": "icmpv6-header",
+  "to": "icmpv6-header",
+  "input": "0104a0b000000000600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "expect": "0104a0b000000000",
+  "model": {
+    "@kind": "destination-unreachable",
+    "inet.icmpv6_type": "1",
+    "inet.icmpv6_code": "4",
+    "inet.icmpv6_checksum": "41136",
+    "inet.icmpv6_unused": "0"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; a port unreachable (code 4) followed by 48 octets standing for the invoking packet, read over; checksum a chosen value"
+}

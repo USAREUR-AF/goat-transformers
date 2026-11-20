@@ -1,0 +1,21 @@
+{
+  "name": "query-edge-values-roundtrip",
+  "from": "igmpv3",
+  "to": "igmpv3",
+  "input": "11ffedffffffffffffff0001ffffffff",
+  "expect": "11ffedffffffffffffff0001ffffffff",
+  "model": {
+    "@kind": "membership-query",
+    "inet.igmp3_max_resp_code": "255",
+    "inet.igmp_checksum": "60927",
+    "inet.igmp_group_addr": "4294967295",
+    "inet.igmp3_reserved": "15",
+    "inet.igmp3_suppress": "1",
+    "inet.igmp3_qrv": "7",
+    "inet.igmp3_qqic": "255",
+    "inet.igmp3_num_sources": "1",
+    "inet.igmp3_query_sources.#": "1",
+    "inet.igmp3_query_sources[0].inet.igmp3_source_addr": "4294967295"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; a query with every field at its largest value (floating-point codes 255, the reserved bits set) and one source; checksum computed here"
+}

@@ -8,9 +8,10 @@
     "@kind": "receiver-report",
     "inet.rtcp_version": "2",
     "inet.rtcp_padding": "0",
-    "inet.rtcp_report_count": "0",
     "inet.rtcp_length": "1",
-    "inet.rtcp_ssrc": "195939070"
+    "inet.rtcp_report_count": "0",
+    "inet.rtcp_ssrc": "195939070",
+    "inet.rtcp_report_blocks.#": "0"
   },
   "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; an empty receiver report: count 0, length 1, the header alone"
 }

@@ -1,0 +1,74 @@
+# ICMPv6 message header (RFC 4443) with the router solicitation and router
+# advertisement of RFC 4861: type, code, checksum and the type's fixed fields,
+# 8 octets (16 for a router advertisement). Public. The invoking packet that
+# error messages carry, echo data and Neighbor Discovery options are not
+# mapped (pack.md).
+#
+# Addressing: word_bytes 1 and bit_order msb; multi-octet fields are big-endian.
+# The type is a common field and a `when` of each kind over the same bits; on
+# encode the kind's `when` value is written last and so decides the type.
+format        icmpv6-header
+version       0.1.0
+distribution  public
+source        "IETF RFC 4443, the ICMPv6 specification for IPv6, March 2006, sections 2.1, 3 and 4, https://www.rfc-editor.org/rfc/rfc4443.txt; IETF RFC 4861, Neighbor Discovery for IP version 6 (IPv6), September 2007, sections 4.1 and 4.2, https://www.rfc-editor.org/rfc/rfc4861.txt; layout restated"
+uses          inet
+wire          bits
+word_bytes    1
+bit_order     msb
+
+field  inet.icmpv6_type             0:0:8      uint
+field  inet.icmpv6_code             0:8:8      uint
+field  inet.icmpv6_checksum         0:16:16    uint
+
+kind      destination-unreachable
+when      0:0:8  1
+requires  inet.icmpv6_unused
+field  inet.icmpv6_unused           0:32:32    uint
+
+kind      packet-too-big
+when      0:0:8  2
+requires  inet.icmpv6_mtu
+field  inet.icmpv6_mtu              0:32:32    uint
+
+kind      time-exceeded
+when      0:0:8  3
+requires  inet.icmpv6_unused
+field  inet.icmpv6_unused           0:32:32    uint
+
+kind      parameter-problem
+when      0:0:8  4
+requires  inet.icmpv6_pointer
+field  inet.icmpv6_pointer          0:32:32    uint
+
+kind      echo-request
+when      0:0:8  128
+requires  inet.icmpv6_identifier inet.icmpv6_sequence
+field  inet.icmpv6_identifier       0:32:16    uint
+field  inet.icmpv6_sequence         0:48:16    uint
+
+kind      echo-reply
+when      0:0:8  129
+requires  inet.icmpv6_identifier inet.icmpv6_sequence
+field  inet.icmpv6_identifier       0:32:16    uint
+field  inet.icmpv6_sequence         0:48:16    uint
+
+kind      router-solicitation
+when      0:0:8  133
+requires  inet.icmpv6_reserved
+field  inet.icmpv6_reserved         0:32:32    uint
+
+kind      router-advertisement
+when      0:0:8  134
+requires  inet.icmpv6_ra_router_lifetime
+field  inet.icmpv6_ra_cur_hop_limit 0:32:8     uint
+field  inet.icmpv6_ra_managed       0:40:1     uint
+field  inet.icmpv6_ra_other         0:41:1     uint
+field  inet.icmpv6_ra_reserved      0:42:6     uint
+field  inet.icmpv6_ra_router_lifetime 0:48:16  uint
+field  inet.icmpv6_ra_reachable_time 0:64:32   uint
+field  inet.icmpv6_ra_retrans_timer 0:96:32    uint
+
+# Any other type: the 32 bits after the checksum as one integer.
+kind      other
+requires  inet.icmpv6_rest
+field  inet.icmpv6_rest             0:32:32    uint

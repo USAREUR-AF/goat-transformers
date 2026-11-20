@@ -1,0 +1,15 @@
+{
+  "name": "packet-too-big-roundtrip",
+  "from": "icmpv6-header",
+  "to": "icmpv6-header",
+  "input": "0200010200000500",
+  "expect": "0200010200000500",
+  "model": {
+    "@kind": "packet-too-big",
+    "inet.icmpv6_type": "2",
+    "inet.icmpv6_code": "0",
+    "inet.icmpv6_checksum": "258",
+    "inet.icmpv6_mtu": "1280"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; a packet too big naming an MTU of 1280; checksum a chosen value"
+}

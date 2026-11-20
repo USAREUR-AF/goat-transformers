@@ -1,0 +1,8 @@
+{
+  "name": "record-source-cut-short-is-malformed",
+  "from": "igmpv3",
+  "to": "igmpv3",
+  "input": "2200b06a0000000304000000e9fc000101000003e9fc0002c000020ac633",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; the three-record report cut to 30 octets, inside the second record's sources"
+}

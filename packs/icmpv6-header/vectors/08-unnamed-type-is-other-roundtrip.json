@@ -1,0 +1,15 @@
+{
+  "name": "unnamed-type-is-other-roundtrip",
+  "from": "icmpv6-header",
+  "to": "icmpv6-header",
+  "input": "c807ffffdeadbeef",
+  "expect": "c807ffffdeadbeef",
+  "model": {
+    "@kind": "other",
+    "inet.icmpv6_type": "200",
+    "inet.icmpv6_code": "7",
+    "inet.icmpv6_checksum": "65535",
+    "inet.icmpv6_rest": "3735928559"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; type 200 (private experimentation in RFC 4443): the 32 bits after the checksum as one integer; checksum a chosen value"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "parameter-problem-roundtrip",
+  "from": "icmpv6-header",
+  "to": "icmpv6-header",
+  "input": "0401050600000028",
+  "expect": "0401050600000028",
+  "model": {
+    "@kind": "parameter-problem",
+    "inet.icmpv6_type": "4",
+    "inet.icmpv6_code": "1",
+    "inet.icmpv6_checksum": "1286",
+    "inet.icmpv6_pointer": "40"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; a parameter problem (unrecognized next header) pointing at octet 40; checksum a chosen value"
+}
