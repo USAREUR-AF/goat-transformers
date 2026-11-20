@@ -1,0 +1,11 @@
+{
+  "name": "rtcm3-roundtrip-m1038-no-items",
+  "from": "rtcm3",
+  "to": "rtcm3",
+  "input": "40e70d3de6ad32430800",
+  "expect": "40e70d3de6ad32430800",
+  "model": {
+    "@kind": "m1038",
+    "rtcm3.m1038_group.#": "0"
+  }
+}

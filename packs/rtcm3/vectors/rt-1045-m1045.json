@@ -1,0 +1,10 @@
+{
+  "name": "rtcm3-roundtrip-m1045",
+  "from": "rtcm3",
+  "to": "rtcm3",
+  "input": "41546d394b481517342ff01e792324f4e5acda64cd8cf31cc3d4b5d37c8ca9449c1a05fc92d21db1e20f5091b37183297651593124439c10f0aef0c42680",
+  "expect": "41546d394b481517342ff01e792324f4e5acda64cd8cf31cc3d4b5d37c8ca9449c1a05fc92d21db1e20f5091b37183297651593124439c10f0aef0c42680",
+  "model": {
+    "@kind": "m1045"
+  }
+}

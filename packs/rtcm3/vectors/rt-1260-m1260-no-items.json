@@ -1,0 +1,11 @@
+{
+  "name": "rtcm3-roundtrip-m1260-no-items",
+  "from": "rtcm3",
+  "to": "rtcm3",
+  "input": "4ec236e2f4f76b1800",
+  "expect": "4ec236e2f4f76b1800",
+  "model": {
+    "@kind": "m1260",
+    "rtcm3.m1260_groupsat.#": "0"
+  }
+}

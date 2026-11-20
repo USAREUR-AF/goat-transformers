@@ -1,0 +1,12 @@
+{
+  "name": "rtcm3-roundtrip-m2002",
+  "from": "rtcm3",
+  "to": "rtcm3",
+  "input": "7d20252526090265f1c02874b72ef029b9",
+  "expect": "7d20252526090265f1c02874b72ef029b9",
+  "model": {
+    "@kind": "m2002",
+    "rtcm3.m2002_chars.#": "2",
+    "rtcm3.m2002_sats.#": "2"
+  }
+}

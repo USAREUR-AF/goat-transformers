@@ -1,0 +1,10 @@
+{
+  "name": "rtcm3-roundtrip-m1032",
+  "from": "rtcm3",
+  "to": "rtcm3",
+  "input": "408b669638005efb155d019f310d680709d71570",
+  "expect": "408b669638005efb155d019f310d680709d71570",
+  "model": {
+    "@kind": "m1032"
+  }
+}

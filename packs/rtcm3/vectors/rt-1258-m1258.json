@@ -1,0 +1,11 @@
+{
+  "name": "rtcm3-roundtrip-m1258",
+  "from": "rtcm3",
+  "to": "rtcm3",
+  "input": "4ea98f34161d494822cc8c5e6530ab0afefc2f1a3d73932dbbd59bc4dcc5d512bfad242091e2328c6c11323a18",
+  "expect": "4ea98f34161d494822cc8c5e6530ab0afefc2f1a3d73932dbbd59bc4dcc5d512bfad242091e2328c6c11323a18",
+  "model": {
+    "@kind": "m1258",
+    "rtcm3.m1258_group.#": "2"
+  }
+}

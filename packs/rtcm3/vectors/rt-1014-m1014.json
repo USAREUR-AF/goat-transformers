@@ -1,0 +1,10 @@
+{
+  "name": "rtcm3-roundtrip-m1014",
+  "from": "rtcm3",
+  "to": "rtcm3",
+  "input": "3f6485101ff1e7c61c82e8db8f4198",
+  "expect": "3f6485101ff1e7c61c82e8db8f4198",
+  "model": {
+    "@kind": "m1014"
+  }
+}

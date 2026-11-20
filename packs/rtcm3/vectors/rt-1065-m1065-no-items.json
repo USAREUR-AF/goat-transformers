@@ -1,0 +1,11 @@
+{
+  "name": "rtcm3-roundtrip-m1065-no-items",
+  "from": "rtcm3",
+  "to": "rtcm3",
+  "input": "4292d0ed50484780",
+  "expect": "4292d0ed50484780",
+  "model": {
+    "@kind": "m1065",
+    "rtcm3.m1065_groupsat.#": "0"
+  }
+}
