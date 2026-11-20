@@ -1,0 +1,10 @@
+{
+  "name": "unicore-roundtrip-tropinfo",
+  "from": "unicore",
+  "to": "unicore",
+  "input": "bd0e09180014314e766b76000088760000a5c2df765ed252ca00008040000090c0000030c0000080bf0000403f",
+  "expect": "bd0e09180014314e766b76000088760000a5c2df765ed252ca00008040000090c0000030c0000080bf0000403f",
+  "model": {
+    "@kind": "tropinfo"
+  }
+}

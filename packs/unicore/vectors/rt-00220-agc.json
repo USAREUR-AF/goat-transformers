@@ -1,0 +1,10 @@
+{
+  "name": "unicore-roundtrip-agc",
+  "from": "unicore",
+  "to": "unicore",
+  "input": "33dc0014008aa7c40be10b0000fe0b00001b38550cb00c87605eb435080c5ce3afba03915768ab3fff",
+  "expect": "33dc0014008aa7c40be10b0000fe0b00001b38550cb00c87605eb435080c5ce3afba03915768ab3fff",
+  "model": {
+    "@kind": "agc"
+  }
+}

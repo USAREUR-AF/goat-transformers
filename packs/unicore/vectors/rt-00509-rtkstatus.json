@@ -1,0 +1,10 @@
+{
+  "name": "unicore-roundtrip-rtkstatus",
+  "from": "unicore",
+  "to": "unicore",
+  "input": "e0fd0138003754711a8e1a0000ab1a0000c8e5021bff45f84fd6997c23aded00778441854a5b95091e32e98d71093d1245e0909618b7e41a6c8e389f3f658c23133ce0a76613342c3aeac1986f",
+  "expect": "e0fd0138003754711a8e1a0000ab1a0000c8e5021bff45f84fd6997c23aded00778441854a5b95091e32e98d71093d1245e0909618b7e41a6c8e389f3f658c23133ce0a76613342c3aeac1986f",
+  "model": {
+    "@kind": "rtkstatus"
+  }
+}

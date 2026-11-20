@@ -1,0 +1,10 @@
+{
+  "name": "unicore-roundtrip-jamstatus",
+  "from": "unicore",
+  "to": "unicore",
+  "input": "faff010800516e8b1aa81a0000c51a0000e2ff1c1bddbe6721b48b6239",
+  "expect": "faff010800516e8b1aa81a0000c51a0000e2ff1c1bddbe6721b48b6239",
+  "model": {
+    "@kind": "jamstatus"
+  }
+}
