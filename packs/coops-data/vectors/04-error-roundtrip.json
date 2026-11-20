@@ -1,0 +1,13 @@
+{
+  "name": "error-roundtrip",
+  "from": "coops-data",
+  "to": "coops-data",
+  "input": "{\"error\":{\"message\":\"No data was found.\"}}",
+  "expect": "{\"error\":{\"message\":\"No data was found.\"}}",
+  "model": {
+    "@kind": "error",
+    "coops.error_message": "No data was found."
+  },
+  "source": "derived by tools/gen/usgov2-vectors.py from the documented members and spec/engine-spec.md; no engine run",
+  "reference": "NOAA CO-OPS Data Retrieval API and Response Help, api.tidesandcurrents.noaa.gov/api/prod/ (read 2026-11-20)"
+}

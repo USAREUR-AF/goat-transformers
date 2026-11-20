@@ -1,0 +1,13 @@
+{
+  "name": "predictions-roundtrip",
+  "from": "coops-data",
+  "to": "coops-data",
+  "input": "{\"predictions\":[{\"t\":\"2026-11-20 03:12\",\"v\":\"1.507\"},{\"t\":\"2026-11-20 09:30\",\"v\":\"-0.112\"}]}",
+  "expect": "{\"predictions\":[{\"t\":\"2026-11-20 03:12\",\"v\":\"1.507\"},{\"t\":\"2026-11-20 09:30\",\"v\":\"-0.112\"}]}",
+  "model": {
+    "@kind": "predictions",
+    "coops.predictions.#": "2"
+  },
+  "source": "derived by tools/gen/usgov2-vectors.py from the documented members and spec/engine-spec.md; no engine run",
+  "reference": "NOAA CO-OPS Data Retrieval API and Response Help, api.tidesandcurrents.noaa.gov/api/prod/ (read 2026-11-20)"
+}

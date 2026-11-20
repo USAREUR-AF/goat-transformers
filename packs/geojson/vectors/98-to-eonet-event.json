@@ -1,0 +1,9 @@
+{
+  "name": "to-eonet-event",
+  "from": "geojson",
+  "to": "eonet-event",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-120.4375,38.8125,350]},\"properties\":{\"time_ms\":1762905600000,\"callsign\":\"Wildfire - Example\"},\"id\":\"EONET_90001\"}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-120.4375,38.8125]},\"properties\":{\"id\":\"EONET_90001\",\"title\":\"Wildfire - Example\",\"date\":\"2025-11-12T00:00:00.000Z\"}}",
+  "source": "derived by tools/gen/usgov2-vectors.py from the documented members and spec/engine-spec.md; no engine run",
+  "reference": "NASA EONET API v3 documentation, Events (GeoJSON), eonet.gsfc.nasa.gov/docs/v3 (read 2026-11-20); hae has no eonet line; uid, callsign and time_ms become id, title and date"
+}

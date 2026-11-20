@@ -1,0 +1,22 @@
+# The coops module: the members of a NOAA CO-OPS Data API response (format json) as text,
+# as the API sends them. packs/coops-data/pack.md says why nothing is bound to a shared key.
+module        coops
+version       0.1.0
+distribution  public
+source        "NOAA CO-OPS Data Retrieval API and its Response Help page, https://api.tidesandcurrents.noaa.gov/api/prod/ (US Government work)"
+key   station_id    string  -  "station identifier (metadata.id)"
+key   station_name  string  -  "station name (metadata.name)"
+key   station_lat   string  -  "station latitude as text (metadata.lat); the documentation states no unit or datum"
+key   station_lon   string  -  "station longitude as text (metadata.lon); the documentation states no unit or datum"
+list  data                     "observations of the response, in order"
+list  predictions              "tide predictions of the response, in order"
+key   t             string  -  "date and time of the observation or prediction, as text, in the time zone the request named (gmt, lst or lst_ldt)"
+key   v             string  -  "measured or predicted value (water level, temperature, pressure, ...) as text, in the units and datum the request named"
+key   s             string  -  "sigma of the 1-second samples (water level, air gap) or measured wind speed, as text"
+key   f             string  -  "data flags, comma-separated, as text; their meaning depends on the product"
+key   q             string  -  "quality level: p preliminary, v verified"
+key   ty            string  -  "kind of high or low water: HH, H, L or LL"
+key   d             string  -  "wind direction in degrees, as text"
+key   dr            string  -  "wind direction as compass text"
+key   g             string  -  "wind gust speed, as text"
+key   error_message string  -  "error text of a refused request"
