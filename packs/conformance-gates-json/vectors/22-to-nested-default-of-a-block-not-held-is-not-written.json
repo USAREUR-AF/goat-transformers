@@ -1,0 +1,7 @@
+{
+  "name": "to-nested-default-of-a-block-not-held-is-not-written",
+  "from": "conformance-gates-json",
+  "to": "conformance-gates-nested",
+  "input": "{\"c1\":1,\"x\":10}",
+  "expect": "010a0013"
+}

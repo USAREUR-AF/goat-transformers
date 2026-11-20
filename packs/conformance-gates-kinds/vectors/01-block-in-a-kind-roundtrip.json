@@ -1,0 +1,12 @@
+{
+  "name": "block-in-a-kind-roundtrip",
+  "from": "conformance-gates-kinds",
+  "to": "conformance-gates-kinds",
+  "input": "011107",
+  "expect": "011107",
+  "model": {
+    "@kind": "a",
+    "probe.w": "1",
+    "probe.x": "7"
+  }
+}

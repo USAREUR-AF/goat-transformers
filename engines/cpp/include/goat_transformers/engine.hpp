@@ -262,6 +262,8 @@ struct FieldLine {
     std::string absent_json;                // json and geojson: the JSON text the first sentinel is written as
     // The key's declared type. Engine::add_pack fills it from the loaded modules.
     KeyType key_type = KeyType::String;
+    // v0.17: the innermost gate block holding the line (index in Pack::gates); -1 outside any.
+    int gate = -1;
 };
 
 // `when <locator> <value>` (v0.5), and `const <locator> <value>` (v0.6), which is
@@ -277,6 +279,7 @@ struct WhenLine {
     std::vector<std::uint32_t> tlv_path;  // tlv wire: the path of tags, outermost first
     std::uint32_t tlv_size = 0;           // tlv wire: `:<n>`, 0 when none
     std::size_t line = 0;         // line number in pack.def
+    int gate = -1;                // v0.17, a `const` only: the innermost gate block holding it
 };
 
 // `default <model-key> <value>` (v0.6): the value encode uses for every `field`
@@ -286,6 +289,25 @@ struct DefaultLine {
     std::string text;   // as written in the pack
     Value value;        // `text` read as the key's declared type; Engine::add_pack fills it
     std::size_t line = 0;
+    int gate = -1;      // v0.17: the innermost gate block holding it; -1 outside any
+};
+
+// `if [!]<word>:<pos>:<len> <value>[,<value>...]` ... `end` on a fixed layout
+// (v0.17): the lines of the block exist only when the bits equal one of the
+// values (with `!`, none of them).
+struct GateBlock {
+    std::string locator;                // as written, without the `!`
+    bool negated = false;
+    std::vector<std::uint64_t> values;  // line order
+    int parent = -1;                    // the enclosing gate block; -1 when none
+    std::uint64_t start = 0;            // bit offset in the scope (item-relative inside a group)
+    std::uint32_t len = 0;
+    std::size_t line = 0;               // line number in pack.def
+    bool matches(std::uint64_t raw) const {
+        bool listed = false;
+        for (auto v : values) listed = listed || v == raw;
+        return listed != negated;
+    }
 };
 
 // The `map <table> <native> <model>` lines of one table, in pack order (v0.6).
@@ -323,6 +345,7 @@ struct GroupLine {
     std::vector<WhenLine> consts;
     std::vector<DefaultLine> defaults;
     std::vector<GroupLine> groups;   // nested
+    std::vector<int> gates;          // v0.17: the body's gate blocks, line order (indices in Pack::gates)
 };
 
 // ---- sequential layouts (v0.8): a `bits` pack with `layout sequential` is a
@@ -397,6 +420,7 @@ struct Kind {
     std::vector<DefaultLine> defaults;    // `default` lines, line order
     std::vector<GroupLine> groups;        // `group` blocks, line order (v0.7)
     std::vector<std::string> requires_keys;  // every `requires` key or list of the kind
+    std::vector<int> gates;               // v0.17: the kind's gate blocks, line order (indices in Pack::gates)
 };
 
 struct Pack {
@@ -415,6 +439,8 @@ struct Pack {
     std::vector<MapTable> tables;                             // value tables, first appearance order
     std::vector<Kind> kinds;                                  // pack order; empty when the pack has no `kind` line
     std::vector<std::pair<std::string, std::string>> typemap; // native code -> CoT type
+    std::vector<GateBlock> gates;                             // v0.17: every gate block, line order
+    std::vector<int> common_gates;                            // v0.17: the common lines' gate blocks
     Distribution distribution = Distribution::Controlled;     // `distribution` line (required)
     std::vector<std::string> sources;                         // `source` lines (at least one)
     std::vector<std::string> uses;                            // `uses` lines; `core` is always used

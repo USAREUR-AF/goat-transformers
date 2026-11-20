@@ -1,0 +1,7 @@
+{
+  "name": "to-partial-gate-gets-its-value",
+  "from": "conformance-gates-json",
+  "to": "conformance-gates-partial",
+  "input": "{\"qty\":7}",
+  "expect": "0307"
+}

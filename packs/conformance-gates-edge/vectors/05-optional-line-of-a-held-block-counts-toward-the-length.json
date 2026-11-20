@@ -1,0 +1,15 @@
+{
+  "name": "optional-line-of-a-held-block-counts-toward-the-length",
+  "from": "conformance-gates-edge",
+  "to": "conformance-gates-edge",
+  "input": "050007",
+  "expect": "05000700",
+  "model": {
+    "probe.x": "5",
+    "probe.y": "7",
+    "@absent": [
+      "probe.z",
+      "probe.w"
+    ]
+  }
+}

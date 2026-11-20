@@ -1,0 +1,11 @@
+{
+  "name": "mode-two-holds-both-blocks-reencode-fails",
+  "from": "conformance-gates-bits",
+  "to": "conformance-gates-bits",
+  "input": "030400090a",
+  "expect_error": "transform-encode",
+  "model": {
+    "probe.z": "9",
+    "probe.c1": "10"
+  }
+}

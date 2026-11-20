@@ -1,0 +1,13 @@
+{
+  "name": "to-default-gate-present-line-keeps-the-default-over-the-gate-value",
+  "from": "conformance-gates-json",
+  "to": "conformance-gates-default-gate",
+  "input": "{\"y\":160}",
+  "expect": "a3",
+  "model": {
+    "probe.y": "160",
+    "@absent": [
+      "probe.x"
+    ]
+  }
+}

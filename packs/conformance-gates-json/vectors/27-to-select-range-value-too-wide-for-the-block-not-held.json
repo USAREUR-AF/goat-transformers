@@ -1,0 +1,7 @@
+{
+  "name": "to-select-range-value-too-wide-for-the-block-not-held",
+  "from": "conformance-gates-json",
+  "to": "conformance-gates-select-range",
+  "input": "{\"alt\":10000}",
+  "expect": "0064"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "nested-gate-of-an-outer-block-that-does-not-hold-is-not-written",
+  "from": "conformance-gates-nested",
+  "to": "conformance-gates-nested",
+  "input": "00000070",
+  "expect": "00000070",
+  "model": {
+    "probe.c1": "0",
+    "probe.y": "7",
+    "@absent": [
+      "probe.x",
+      "probe.z"
+    ]
+  }
+}

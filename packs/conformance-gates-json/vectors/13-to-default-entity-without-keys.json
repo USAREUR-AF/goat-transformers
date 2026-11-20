@@ -1,0 +1,7 @@
+{
+  "name": "to-default-entity-without-keys",
+  "from": "conformance-gates-json",
+  "to": "conformance-gates-default",
+  "input": "{}",
+  "expect": "00"
+}

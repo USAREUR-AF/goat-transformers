@@ -1,0 +1,19 @@
+# Conformance probe pack for a field that covers its own gate (spec 0.17,
+# rulings 3 and 7). Fixed `bits` layout, least significant bit first. Public.
+# No kinds. One byte per word. Exercises: a present field wins over the gate
+# value on the bits they share, so the output holds the block only when the
+# field's own low bits equal the gate value (step 6).
+#
+#   byte 0       x, when its low two bits are 1
+#   byte 1       y, outside any block
+format     conformance-gates-overlap
+version    0.17.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+word_bytes 1
+if      0:0:2  1
+  field probe.x  0:0:8   uint
+end
+field   probe.y  0:8:8   uint

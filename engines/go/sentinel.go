@@ -225,15 +225,15 @@ func (f *Field) sentinelJSON(v *jval) bool {
 
 // writesSentinel reports whether an encode writes the field's first sentinel:
 // the line has `absent`, and the record has no value for the key and no
-// default applies.
-func (f *Field) writesSentinel(rec *Item, defaults map[string]*Default) bool {
+// default (d) applies.
+func (f *Field) writesSentinel(rec *Item, d *Default) bool {
 	if f.absent == nil {
 		return false
 	}
 	if _, has := rec.Fields[f.Key]; has {
 		return false
 	}
-	return defaults[f.Key] == nil
+	return d == nil
 }
 
 // sentinelBits is the raw integer the first sentinel writes into a bits

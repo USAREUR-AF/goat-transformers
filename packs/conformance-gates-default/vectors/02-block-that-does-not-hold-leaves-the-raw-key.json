@@ -1,0 +1,13 @@
+{
+  "name": "block-that-does-not-hold-leaves-the-raw-key",
+  "from": "conformance-gates-default",
+  "to": "conformance-gates-default",
+  "input": "0005",
+  "expect": "00",
+  "model": {
+    "probe.c2": "0",
+    "@absent": [
+      "probe.val"
+    ]
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "to-default-on-the-default-holds-a-block",
+  "from": "conformance-gates-json",
+  "to": "conformance-gates-default-on",
+  "input": "{}",
+  "expect": "01ff"
+}

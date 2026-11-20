@@ -1,0 +1,7 @@
+{
+  "name": "to-nested-key-opens-the-outer-and-nested-blocks",
+  "from": "conformance-gates-json",
+  "to": "conformance-gates-nested",
+  "input": "{\"y\":7}",
+  "expect": "03007077"
+}

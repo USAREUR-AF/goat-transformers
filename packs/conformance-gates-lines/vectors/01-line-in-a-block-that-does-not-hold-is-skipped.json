@@ -1,0 +1,10 @@
+{
+  "name": "line-in-a-block-that-does-not-hold-is-skipped",
+  "from": "conformance-gates-lines",
+  "to": "conformance-gates-lines",
+  "input": "000509",
+  "expect": "010909",
+  "model": {
+    "probe.x": "9"
+  }
+}

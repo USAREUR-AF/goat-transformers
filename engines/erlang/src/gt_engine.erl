@@ -256,6 +256,9 @@ type_groups(Lines, TypeDefaults) ->
                 kinds => [K#{lines := type_groups(maps:get(lines, K), TypeDefaults),
                              defaults := maps:merge(Common, TypeDefaults(maps:get(defaults, K)))}
                           || K <- Ks]}};
+         {gate, Loc, Neg, Vals, #{lines := Ls, defaults := Ds}, LocT} ->
+             {gate, Loc, Neg, Vals,
+              #{lines => type_groups(Ls, TypeDefaults), defaults => TypeDefaults(Ds)}, LocT};
          {ifb, Conds, Body} -> {ifb, Conds, type_groups(Body, TypeDefaults)};
          {opt, Body} -> {opt, type_groups(Body, TypeDefaults)};
          {len, Len, Unit, Plus, Body} -> {len, Len, Unit, Plus, type_groups(Body, TypeDefaults)};
@@ -669,7 +672,8 @@ decode_wire(#{wire := bits, layout := sequential} = Pack, Bytes) -> gt_seq:decod
 decode_wire(#{wire := tlv} = Pack, Bytes) -> gt_tlv:decode(Pack, Bytes);
 decode_wire(#{wire := Wire} = Pack, Bytes) ->
     Ctx = open(Wire, Pack, Bytes),
-    {Kind, Lines} = select_decode(Pack, Wire, Ctx),
+    {Kind, Lines0} = select_decode(Pack, Wire, Ctx),
+    Lines = held_lines(Wire, Ctx, Lines0),
     fit(Wire, Pack, Ctx, static_end(Wire, Lines)),
     {Model, Lists, End} = decode_scope(Wire, Ctx, Lines, Pack),
     fit(Wire, Pack, Ctx, End),             % the items extend the message
@@ -840,9 +844,29 @@ bits_items(N, Pos, Msg, ItemBits, Lines, Pack, Acc) ->
         true -> ok;
         false -> conv_error('malformed-wire', Pack, "the input ends before the counted items", [])
     end,
-    {Model, Lists, End} = decode_scope(bits, {Msg, Pos}, Lines, Pack),
+    {Model, Lists, End} = decode_scope(bits, {Msg, Pos}, held_lines(bits, {Msg, Pos}, Lines), Pack),
     bits_items(N - 1, max(Pos + ItemBits, End), Msg, ItemBits, Lines, Pack,
                [#{model => Model, lists => Lists} | Acc]).
+
+%% Gate blocks (0.17): the lines of a scope with each block that holds
+%% replaced by its lines and each block that does not hold dropped, so that
+%% a line of a block that does not hold is a line whose locator is absent.
+%% A gate is read like a `when`: a gate any of whose bits lies beyond the
+%% input does not hold, and neither does its `!` form.
+held_lines(bits, {Msg, Base} = Ctx, Lines) ->
+    lists:append(
+      [case L of
+           {gate, {Off, Len}, Neg, Vals, #{lines := Ls}, _} ->
+               case gate_holds(gt_bits:read(Msg, Base + Off, Len), Neg, Vals) of
+                   true -> held_lines(bits, Ctx, Ls);
+                   false -> []
+               end;
+           _ -> [L]
+       end || L <- Lines]);
+held_lines(_Wire, _Ctx, Lines) -> Lines.
+
+gate_holds(beyond, _Neg, _Vals) -> false;
+gate_holds(V, Neg, Vals) -> lists:member(V, Vals) =/= Neg.
 
 %% Inside a geojson item the json locators and `null` rule apply, with the
 %% geojson value types.
@@ -1227,6 +1251,9 @@ encode(Engine, Format, Entity) -> encode(pack(Engine, Format), Entity).
 encode(#{wire := bits, layout := sequential} = Pack, Entity) ->
     {Lines, Defaults, _Root} = select_encode(Pack, Entity),
     gt_seq:encode(Pack, Lines, Defaults, Entity);
+encode(#{wire := bits} = Pack, Entity) ->
+    {Lines, Defaults, _Root} = select_encode(Pack, Entity),
+    encode_bits(Pack, Lines, {maps:get(model, Entity), maps:get(lists, Entity, #{}), Defaults});
 encode(#{wire := Wire} = Pack, Entity) ->
     {Lines, Defaults, Root} = select_encode(Pack, Entity),
     Residue = case maps:get(src, Entity, undefined) =:= maps:get(name, Pack) of
@@ -1301,29 +1328,6 @@ encode_wire(json, Pack, Lines, Src, Residue) ->
     jt_write(T2);
 encode_wire(text, Pack, Lines, Src, Residue) -> gt_text:encode(Pack, Lines, Src, Residue);
 encode_wire(tlv, Pack, Lines, Src, Residue) -> gt_tlv:encode(Pack, Lines, Src, Residue);
-encode_wire(bits, #{word_bytes := WB} = Pack, Lines, Src, _Residue) ->
-    {Writes, Overs, End} = bits_plan(Pack, Lines, Src, 0, {[], [], 0}),
-    Armor = maps:get(armor, Pack),
-    M0 = case Armor of
-             sixbit -> gt_bits:new_bits(End, maps:get(bit_order, Pack));
-             hex -> gt_bits:new(whole_words(End, WB), maps:get(bit_order, Pack))
-         end,
-    %% fields in line order: where two present fields cover the same bits,
-    %% the bits hold the earlier line's value
-    %% the sentinels of absent keys after them, in the bits no present
-    %% field wrote (ruling 16 of 0.9)
-    {Values, Sentinels} = lists:partition(fun(W) -> tuple_size(W) =:= 3 end,
-                                          lists:reverse(Writes)),
-    M1 = lists:foldl(fun({Off, Len, U}, M) -> gt_bits:write(M, Off, Len, U) end,
-                     M0, Values ++ [{Off, Len, U} || {sentinel, Off, Len, U} <- Sentinels]),
-    %% `const` values, then `when` values, then the counts of groups are
-    %% written last, over any field
-    M2 = lists:foldl(fun({_, Off, Len, U}, M) -> gt_bits:overwrite(M, Off, Len, U) end,
-                     M1, lists:keysort(1, lists:reverse(Overs))),
-    case Armor of
-        sixbit -> armor_out(gt_bits:to_bytes(M2), End, Pack);
-        hex -> gt_bits:bytes_to_hex(gt_bits:to_bytes(M2))
-    end;
 encode_wire(protobuf, Pack, Lines, Src, _Residue) ->
     gt_bits:bytes_to_hex(gt_protobuf:serialize(pb_tree(Pack, Lines, Src))).
 
@@ -1376,27 +1380,280 @@ json_item(Item, #{lines := Ls} = Body, Pack) ->
             end
     end.
 
-%% ---- bits: what the lines of a scope write, from the scope's first bit ----
-%% -> {Writes, Overwrites, End}: Writes [{Offset, Len, Value}] latest first,
-%% the sentinel of an absent key as {sentinel, Offset, Len, Value};
-%% Overwrites [{Rank, Offset, Len, Value}] latest first, Rank 1 for `const`,
-%% 2 for `when`, 3 for the count of a group; End the furthest bit reached.
-bits_plan(Pack, Lines, {Value, Lists}, Base, Acc0) ->
+%% ---- bits (fixed layout): what the lines of a scope write ----
+%% Src = {Model, Lists, Defaults}: the scope's keys (the entity's, or the
+%% item's), its lists, and the defaults that reach its lines.
+%%
+%% Writes [{Tier, Offset, Len, Value}] in line order: 1 a field with a
+%% present key, 2 a gate value, 3 a field written from a default, 4 a
+%% sentinel. See compose/3 for the precedence on one bit.
+%% Overs [{Rank, Offset, Len, Value}] in line order, written over any field:
+%% Rank 1 for `const`, 2 for `when`, 3 for the count of a group.
+%% Checks [{Offset, Len, Negated, Values, Held}]: every gate decode
+%% evaluates and whether the encode holds its block (Encode step 6).
+encode_bits(#{word_bytes := WB} = Pack, Lines, Src) ->
+    {Writes, Overs, End, Checks} = bits_scope(Pack, Lines, Src, 0),
+    %% under `armor sixbit` the message is the first L bits (0.14), laid out
+    %% here up to the next multiple of 6 with zeros, as the output is read
+    %% back for step 6 (ruling 14 of 0.17)
+    Armor = maps:get(armor, Pack),
+    M0 = case Armor of
+             sixbit -> gt_bits:new_bits(((End + 5) div 6) * 6, maps:get(bit_order, Pack));
+             hex -> gt_bits:new(whole_words(End, WB), maps:get(bit_order, Pack))
+         end,
+    M2 = compose(M0, Writes, Overs),
+    %% the output decodes to the same choice of blocks
+    lists:foreach(
+      fun({Off, Len, Neg, Vals, Held}) ->
+              case gate_holds(gt_bits:peek(M2, Off, Len), Neg, Vals) of
+                  Held -> ok;
+                  _ -> conv_error('transform-encode', Pack,
+                                  "the gate at bit ~p ~s on the output, where the encode ~s its block",
+                                  [Off, case Held of true -> "does not hold"; false -> "holds" end,
+                                   case Held of true -> "holds"; false -> "does not hold" end])
+              end
+      end, Checks),
+    case Armor of
+        sixbit -> armor_out(gt_bits:to_bytes(M2), End, Pack);
+        hex -> gt_bits:bytes_to_hex(gt_bits:to_bytes(M2))
+    end.
+
+%% The bits of Writes and Overs (ruling 7 of 0.17), highest first: `const`,
+%% `when` and group counts; field lines, the earlier line winning (ruling 5
+%% of 0.5), a line written from a default included; a gate value, which is
+%% written over a bit that only a default or a sentinel wrote; a sentinel,
+%% where no field line writes (ruling 16 of 0.9). Without gate values this
+%% is the 0.5 order: field lines in line order, then sentinels.
+compose(M0, Writes, Overs) ->
+    Present = lists:foldl(fun({1, Off, Len, U}, M) -> gt_bits:write(M, Off, Len, U);
+                             (_, M) -> M
+                          end, M0, Writes),
+    %% field lines in line order, a default only on the bits a present key
+    %% also covers
+    M1 = lists:foldl(fun({1, Off, Len, U}, M) -> gt_bits:write(M, Off, Len, U);
+                        ({3, Off, Len, U}, M) -> gt_bits:write_within(M, Off, Len, U, Present);
+                        (_, M) -> M
+                     end, M0, Writes),
+    M2 = lists:foldl(fun({T, Off, Len, U}, M) when T >= 2 -> gt_bits:write(M, Off, Len, U);
+                        (_, M) -> M
+                     end, M1, lists:keysort(1, Writes)),
+    lists:foldl(fun({_, Off, Len, U}, M) -> gt_bits:overwrite(M, Off, Len, U) end,
+                M2, lists:keysort(1, Overs)).
+
+%% One scope -> {Writes, Overs, End, Checks}, offsets from the message's
+%% first bit.
+bits_scope(Pack, Lines, {Model, _, Defaults} = Src, Base) ->
+    case lists:any(fun(L) -> element(1, L) =:= gate end, Lines) of
+        false -> bits_lines(Pack, Lines, Src, Defaults, Base, true);
+        true -> bits_gated(Pack, Lines, Src, Model, Defaults, Base)
+    end.
+
+%% A scope with gate blocks (Version 0.17, Encode steps 1 to 6).
+bits_gated(Pack, Lines, Src, Model, Defaults, Base) ->
+    Order = maps:get(bit_order, Pack),
+    Outside = [L || L <- Lines, element(1, L) =/= gate],
+    Gates = [L || L <- Lines, element(1, L) =:= gate],
+    %% steps 2 to 4 on the scope's own bits, item-relative; the bits of the
+    %% items of its groups are not written for its gates (ruling 9)
+    {OwnWs, OwnOs, _, _} = bits_lines(Pack, Outside, Src, Defaults, Base, false),
+    Rel = fun(Ws) -> [{T, Off - Base, Len, U} || {T, Off, Len, U} <- Ws] end,
+    Ext = scope_extent(Lines),
+    V0 = gt_bits:new(max(1, (Ext + 7) div 8), Order),
+    %% step 2: the union of the ranges of `const`, `when`, group counts and
+    %% present keys is written (ruling 11)
+    W1 = lists:foldl(fun({_, Off, Len, U}, M) -> gt_bits:overwrite(M, Off, Len, U) end,
+                     V0, Rel(OwnOs)),
+    W2 = lists:foldl(fun({1, Off, Len, U}, M) -> gt_bits:write(M, Off, Len, U);
+                        (_, M) -> M
+                     end, W1, Rel(OwnWs)),
+    %% step 3: gate values, in line order, depth first
+    {_, GateVals} = assign_gates(Gates, [], Model, W2, #{}),
+    %% step 4: the outside lines with every gate value of step 3, composed
+    %% as the output is; bits nothing wrote read as 0
+    GateWs = gate_writes(Gates, [], GateVals),
+    V4 = compose(V0, Rel(OwnWs) ++ GateWs, Rel(OwnOs)),
+    {Held, Checks0} = held_gates(Gates, [], V4, Base, #{}, []),
+    %% step 5: the outside lines and the held blocks, in line order
+    {Ws, Os, End, Checks} =
+        bits_emit(Pack, Lines, [], Src, Defaults, Base, Held, GateVals,
+                  {[], [], 0, lists:reverse(Checks0)}),
+    %% step 6: a key the scope holds is mapped by a line that is written
+    Mapped = maps:from_list([{K, true} || K <- written_keys(Lines, [], Held)]),
+    lists:foreach(
+      fun(K) ->
+              case maps:is_key(K, Model) andalso not maps:is_key(K, Mapped) of
+                  true -> conv_error('transform-encode', Pack,
+                                     "~s is mapped only by gate blocks that do not hold", [K]);
+                  false -> ok
+              end
+      end, gated_keys(Gates)),
+    {Ws, Os, End, Checks}.
+
+%% Is a block open: does one of its fields, or a nested open block, map a
+%% key the scope holds? A default or a sentinel does not open it.
+gate_open({gate, _, _, _, #{lines := Ls}, _}, Model) ->
+    lists:any(fun({field, K, _, _, _, _}) -> maps:is_key(K, Model);
+                 ({gate, _, _, _, _, _} = G) -> gate_open(G, Model);
+                 (_) -> false
+              end, Ls).
+
+%% Step 3 over the blocks of one level and the blocks nested in them, in
+%% line order -> {Bits, #{BlockId => Value}}. A block's id is the list of
+%% its indexes among the blocks of each level.
+assign_gates(Gates, Prefix, Model, V, Acc) ->
+    {_, V9, Acc9} =
+        lists:foldl(
+          fun({gate, {Off, Len}, Neg, Vals, #{lines := Ls}, _} = G, {I, V0, A0}) ->
+                  Id = [I | Prefix],
+                  {V1, A1} =
+                      case gate_open(G, Model) andalso not gt_bits:written_any(V0, Off, Len) of
+                          true ->
+                              case gate_value(Neg, Vals, Len) of
+                                  none -> {V0, A0};
+                                  U -> {gt_bits:write(V0, Off, Len, U), A0#{Id => U}}
+                              end;
+                          false -> {V0, A0}
+                      end,
+                  {V2, A2} = assign_gates(nested(Ls), Id, Model, V1, A1),
+                  {I + 1, V2, A2}
+          end, {1, V, Acc}, Gates),
+    {V9, Acc9}.
+
+nested(Lines) -> [L || L <- Lines, element(1, L) =:= gate].
+
+%% The gate values of step 3 as writes, item-relative.
+gate_writes(Gates, Prefix, GateVals) ->
+    {_, Ws} =
+        lists:foldl(
+          fun({gate, {Off, Len}, _, _, #{lines := Ls}, _}, {I, Acc}) ->
+                  Id = [I | Prefix],
+                  Own = case maps:find(Id, GateVals) of
+                            {ok, U} -> [{2, Off, Len, U}];
+                            error -> []
+                        end,
+                  {I + 1, Acc ++ Own ++ gate_writes(nested(Ls), Id, GateVals)}
+          end, {1, []}, Gates),
+    Ws.
+
+%% The first listed value; for `!` the smallest value not listed, none when
+%% the list names every value.
+gate_value(false, [V | _], _Len) -> V;
+gate_value(true, Vals, Len) ->
+    Set = maps:from_list([{V, true} || V <- Vals]),
+    case length(Vals) >= (1 bsl Len) of
+        true -> none;
+        false -> smallest_free(0, Set)
+    end.
+
+smallest_free(N, Set) ->
+    case maps:is_key(N, Set) of
+        true -> smallest_free(N + 1, Set);
+        false -> N
+    end.
+
+%% Step 4: the blocks that hold, a nested block evaluated only when its
+%% enclosing block holds -> {#{BlockId => true}, Checks latest first}.
+held_gates(Gates, Prefix, V, Base, Held, Checks) ->
+    {_, H9, C9} =
+        lists:foldl(
+          fun({gate, {Off, Len}, Neg, Vals, #{lines := Ls}, _}, {I, H0, C0}) ->
+                  Id = [I | Prefix],
+                  Holds = gate_holds(gt_bits:peek(V, Off, Len), Neg, Vals),
+                  C1 = [{Base + Off, Len, Neg, Vals, Holds} | C0],
+                  case Holds of
+                      true ->
+                          {H1, C2} = held_gates(nested(Ls), Id, V, Base, H0#{Id => true}, C1),
+                          {I + 1, H1, C2};
+                      false -> {I + 1, H0, C1}
+                  end
+          end, {1, Held, Checks}, Gates),
+    {H9, C9}.
+
+%% Step 5 over one level: each line outside a block, and each held block
+%% with its gate value and its lines under the block's defaults.
+bits_emit(Pack, Lines, Prefix, Src, Defaults, Base, Held, GateVals, Acc0) ->
+    {_, Acc9} =
+        lists:foldl(
+          fun({gate, {Off, Len}, _, _, #{lines := Ls, defaults := Ds}, _}, {I, Acc}) ->
+                  Id = [I | Prefix],
+                  case maps:is_key(Id, Held) of
+                      false -> {I + 1, Acc};
+                      true ->
+                          {Ws, Os, End, Cs} = Acc,
+                          Ws1 = case maps:find(Id, GateVals) of
+                                    {ok, U} -> Ws ++ [{2, Base + Off, Len, U}];
+                                    error -> Ws
+                                end,
+                          Acc1 = {Ws1, Os, max(End, Base + Off + Len), Cs},
+                          {I + 1, bits_emit(Pack, Ls, Id, Src, maps:merge(Defaults, Ds), Base,
+                                            Held, GateVals, Acc1)}
+                  end;
+             (L, {I, {Ws, Os, End, Cs}}) ->
+                  {Ws1, Os1, End1, Cs1} = bits_lines(Pack, [L], Src, Defaults, Base, true),
+                  {I, {Ws ++ Ws1, Os ++ Os1, max(End, End1), Cs ++ Cs1}}
+          end, {1, Acc0}, Lines),
+    Acc9.
+
+%% The keys of the lines outside any block and of the held blocks.
+written_keys(Lines, Prefix, Held) ->
+    {_, Keys} =
+        lists:foldl(
+          fun({gate, _, _, _, #{lines := Ls}, _}, {I, Acc}) ->
+                  Id = [I | Prefix],
+                  case maps:is_key(Id, Held) of
+                      true -> {I + 1, Acc ++ written_keys(Ls, Id, Held)};
+                      false -> {I + 1, Acc}
+                  end;
+             ({field, K, _, _, _, _}, {I, Acc}) -> {I, [K | Acc]};
+             (_, {I, Acc}) -> {I, Acc}
+          end, {1, []}, Lines),
+    Keys.
+
+%% The keys of the fields inside blocks, at any depth.
+gated_keys(Gates) ->
+    lists:usort(lists:append(
+                  [[K || {field, K, _, _, _, _} <- Ls] ++ gated_keys(nested(Ls))
+                   || {gate, _, _, _, #{lines := Ls}, _} <- Gates])).
+
+%% The furthest bit, from the scope's first bit, that a line, a gate or a
+%% count locator of the scope covers.
+scope_extent(Lines) ->
+    lists:foldl(fun({field, _, {Off, Len}, _, _, _}, M) -> max(M, Off + Len);
+                   ({wh, {Off, Len}, _, _}, M) -> max(M, Off + Len);
+                   ({const, {Off, Len}, _, _}, M) -> max(M, Off + Len);
+                   ({group, _, _, {_, {loc, {Off, Len}}}, _, _}, M) -> max(M, Off + Len);
+                   ({gate, {Off, Len}, _, _, #{lines := Ls}, _}, M) ->
+                        max(M, max(Off + Len, scope_extent(Ls)));
+                   (_, M) -> M
+                end, 0, Lines).
+
+%% The lines of a scope that are not gate blocks -> {Writes, Overs, End,
+%% Checks}. A field takes the scope's value of its key, else the default
+%% that reaches it. WithItems false leaves out the items of groups.
+bits_lines(Pack, Lines, {Model, Lists, _}, Defaults, Base, WithItems) ->
     Order = maps:get(bit_order, Pack),
     Armor = maps:get(armor, Pack, hex),
-    lists:foldl(
-      fun({field, Key, {Off, Len}, Tr, LocT, {_, Swap, _, Optional, Absent} = Opts}, {Ws, Os, End}) ->
+    {Ws9, Os9, End9, Cs9} = lists:foldl(
+      fun({field, Key, {Off, Len}, Tr, LocT, {_, Swap, _, Optional, Absent} = Opts}, {Ws, Os, End, Cs}) ->
               End1 = max(End, Base + Off + Len),
-              case Value(Key) of
+              Found = case maps:find(Key, Model) of
+                          {ok, V} -> {1, V};
+                          error ->
+                              case maps:find(Key, Defaults) of
+                                  {ok, V} -> {3, V};
+                                  error -> error
+                              end
+                      end,
+              case Found of
                   %% under armor an optional field whose key is absent, with
                   %% no default and no `absent`, does not count toward the
                   %% length L (0.14); one with `absent` writes its first
                   %% sentinel and counts, optional or not (ruling 12 of 0.14)
-                  error when Absent =:= none, Optional, Armor =:= sixbit -> {Ws, Os, End};
-                  error when Absent =:= none -> {Ws, Os, End1};
+                  error when Absent =:= none, Optional, Armor =:= sixbit -> {Ws, Os, End, Cs};
+                  error when Absent =:= none -> {Ws, Os, End1, Cs};
                   error ->
-                      {[{sentinel, Base + Off, Len, bits_sentinel(Absent, Len, Swap)} | Ws], Os, End1};
-                  {ok, Val} ->
+                      {[{4, Base + Off, Len, bits_sentinel(Absent, Len, Swap)} | Ws], Os, End1, Cs};
+                  {Tier, Val} ->
                       U = guard_encode(
                             Pack, Key, LocT,
                             fun() ->
@@ -1407,13 +1664,14 @@ bits_plan(Pack, Lines, {Value, Lists}, Base, Acc0) ->
                                         false -> U0
                                     end
                             end),
-                      {[{Base + Off, Len, U} | Ws], Os, End1}
+                      {[{Tier, Base + Off, Len, U} | Ws], Os, End1, Cs}
               end;
-         ({const, {Off, Len}, Val, _}, {Ws, Os, End}) ->
-              {Ws, [{1, Base + Off, Len, Val} | Os], max(End, Base + Off + Len)};
-         ({wh, {Off, Len}, Val, _}, {Ws, Os, End}) ->
-              {Ws, [{2, Base + Off, Len, Val} | Os], max(End, Base + Off + Len)};
-         ({group, List, Start, {ItemBits, Count}, #{lines := Ls} = Body, LocT}, {Ws, Os, End}) ->
+         ({const, {Off, Len}, Val, _}, {Ws, Os, End, Cs}) ->
+              {Ws, [{1, Base + Off, Len, Val} | Os], max(End, Base + Off + Len), Cs};
+         ({wh, {Off, Len}, Val, _}, {Ws, Os, End, Cs}) ->
+              {Ws, [{2, Base + Off, Len, Val} | Os], max(End, Base + Off + Len), Cs};
+         ({group, List, Start, {ItemBits, Count}, #{lines := Ls, defaults := IDs}, LocT},
+          {Ws, Os, End, Cs}) ->
               %% a count locator is written with the number of items, 0 for
               %% an absent list; a fixed count needs that many items
               {Items, Os1, End1} =
@@ -1442,16 +1700,25 @@ bits_plan(Pack, Lines, {Value, Lists}, Base, Acc0) ->
                                      "list ~s is absent and the group at ~s holds ~p items",
                                      [List, LocT, N])
                   end,
-              %% the items back to back; an item that a nested group makes
-              %% longer than `item <bits>` ends where that group ends
-              {Ws2, Os2, Pos} =
-                  lists:foldl(
-                    fun(Item, {W, O, P}) ->
-                            {W1, O1, E} = bits_plan(Pack, Ls, item_source(Item, Body), P, {W, O, 0}),
-                            {W1, O1, max(P + ItemBits, E)}
-                    end, {Ws, Os1, Base + Start}, Items),
-              {Ws2, Os2, max(End1, Pos)}
-      end, Acc0, Lines).
+              case WithItems of
+                  false -> {Ws, Os1, End1, Cs};
+                  true ->
+                      %% the items back to back; an item that a nested group
+                      %% makes longer than `item <bits>` ends where that group
+                      %% ends
+                      {Ws2, Os2, Pos, Cs2} =
+                          lists:foldl(
+                            fun(Item, {W, O, P, C}) ->
+                                    ISrc = {maps:get(model, Item), maps:get(lists, Item, #{}), IDs},
+                                    {W1, O1, E, C1} = bits_scope(Pack, Ls, ISrc, P),
+                                    {lists:reverse(W1, W), lists:reverse(O1, O),
+                                     max(P + ItemBits, E), lists:reverse(C1, C)}
+                            end, {Ws, Os1, Base + Start, Cs}, Items),
+                      {Ws2, Os2, max(End1, Pos), Cs2}
+              end;
+         (_, Acc) -> Acc
+      end, {[], [], 0, []}, Lines),
+    {lists:reverse(Ws9), lists:reverse(Os9), End9, lists:reverse(Cs9)}.
 
 %% ---- protobuf: the lines of a scope as a writer tree ----
 pb_tree(Pack, Lines, {Value, Lists}) ->

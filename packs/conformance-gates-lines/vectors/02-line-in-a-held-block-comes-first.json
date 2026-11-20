@@ -1,0 +1,10 @@
+{
+  "name": "line-in-a-held-block-comes-first",
+  "from": "conformance-gates-lines",
+  "to": "conformance-gates-lines",
+  "input": "010509",
+  "expect": "010505",
+  "model": {
+    "probe.x": "5"
+  }
+}

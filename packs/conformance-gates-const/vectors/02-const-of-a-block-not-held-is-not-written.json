@@ -1,0 +1,13 @@
+{
+  "name": "const-of-a-block-not-held-is-not-written",
+  "from": "conformance-gates-const",
+  "to": "conformance-gates-const",
+  "input": "0200",
+  "expect": "02",
+  "model": {
+    "probe.x": "2",
+    "@absent": [
+      "probe.y"
+    ]
+  }
+}

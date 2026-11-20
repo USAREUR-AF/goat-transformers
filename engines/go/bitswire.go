@@ -278,8 +278,19 @@ func (d *decodeState) bitsScope(lay *layout, data []byte, base int) (int, error)
 	p := d.pack
 	bits := d.nbits
 	end := 0
+	// A line of a gate block that does not hold sets no key: decode goes on
+	// to the key's next line (0.17, Decode).
+	holds := gateEval(data, bits, base, p.msb)
 	for _, ln := range lay.lines {
+		if ln.in != nil && !holds(ln.in) {
+			continue
+		}
 		switch {
+		case ln.w != nil && ln.in != nil:
+			// A held block's const counts toward the length.
+			if w := ln.w; base+w.loc.bit+w.loc.blen > bits {
+				return 0, &Error{Kind: ErrMalformedWire, Format: p.Format, Locator: w.Locator, Detail: fmt.Sprintf("message is %d byte(s) and does not reach the const of a held gate block (line %d)", len(data), w.Line)}
+			}
 		case ln.f != nil:
 			f := ln.f
 			at := base + f.loc.bit
@@ -425,7 +436,10 @@ func putBitsField(p *Pack, f *Field, v Value, data []byte, at int) error {
 
 // bitBuf is the message an encode writes: it grows as the items of counted
 // groups are written. New bits are zero.
-type bitBuf struct{ data []byte }
+type bitBuf struct {
+	data   []byte
+	checks []func([]byte, int) error // the step 6 checks of the scopes with gate blocks (0.17), on the output and its length in bits
+}
 
 // need makes the buffer hold at least bits bits.
 func (b *bitBuf) need(bits int) {
@@ -442,7 +456,7 @@ func (b *bitBuf) need(bits int) {
 // furthest bit written.
 func encodeBits(p *Pack, lay *layout, rec *Item) ([]byte, error) {
 	buf := &bitBuf{}
-	end, err := encodeBitsScope(p, lay, rec, buf, 0)
+	end, check, err := encodeBitsScope(p, lay, rec, buf, 0)
 	if err != nil {
 		return nil, err
 	}
@@ -455,6 +469,25 @@ func encodeBits(p *Pack, lay *layout, rec *Item) ([]byte, error) {
 			return nil, err
 		}
 		buf.need(l)
+		// Step 6 of 0.17 decodes the output as it will be read: L rounded
+		// up to a multiple of 6 bits, padded with zeros (0.17 ruling 14).
+		if check != nil {
+			buf.checks = append(buf.checks, check)
+		}
+		if len(buf.checks) > 0 {
+			nb := (l + 5) / 6 * 6
+			out := make([]byte, (nb+7)/8)
+			for i := 0; i < l; i++ {
+				if bitAt(buf.data, i, true) != 0 {
+					out[i/8] |= 0x80 >> uint(i%8)
+				}
+			}
+			for _, c := range buf.checks {
+				if err := c(out, nb); err != nil {
+					return nil, err
+				}
+			}
+		}
 		return sixbitArmorText(buf.data, l), nil
 	}
 	if lay.maxBit > end {
@@ -462,6 +495,16 @@ func encodeBits(p *Pack, lay *layout, rec *Item) ([]byte, error) {
 	}
 	n := p.wholeWords(end)
 	buf.need(n * 8)
+	// Step 6 of 0.17 is checked once, on the final output, for the message
+	// and every item (ruling 9), the items first as they were written.
+	if check != nil {
+		buf.checks = append(buf.checks, check)
+	}
+	for _, c := range buf.checks {
+		if err := c(buf.data[:n], n*8); err != nil {
+			return nil, err
+		}
+	}
 	return []byte(hex.EncodeToString(buf.data[:n])), nil
 }
 
@@ -473,17 +516,20 @@ func encodeBits(p *Pack, lay *layout, rec *Item) ([]byte, error) {
 func armorLength(p *Pack, lay *layout, rec *Item, end int) (int, error) {
 	l := end
 	for _, ln := range lay.lines {
+		// A gate and the lines of a gate block count only when the block is
+		// held; end already holds them (0.17 ruling 14).
+		if ln.gt != nil || ln.in != nil {
+			continue
+		}
 		var loc locator
 		switch {
 		case ln.f != nil:
-			if ln.f.Optional && ln.f.absent == nil {
-				_, ok, err := fieldValue(p, lay, ln.f, rec)
-				if err != nil {
-					return 0, err
-				}
-				if !ok {
-					continue
-				}
+			w, err := armorWrites(p, lay, ln.f, rec)
+			if err != nil {
+				return 0, err
+			}
+			if !w {
+				continue
 			}
 			loc = ln.f.loc
 		case ln.w != nil:
@@ -508,8 +554,11 @@ func armorLength(p *Pack, lay *layout, rec *Item, end int) (int, error) {
 
 // encodeBitsScope writes the lines of one scope whose first bit is message
 // bit base, and returns the furthest bit the items of its groups reach.
-func encodeBitsScope(p *Pack, lay *layout, rec *Item, buf *bitBuf, base int) (int, error) {
-	buf.need(base + lay.maxBit)
+//
+// A scope with gate blocks is written by encodeGatedScope; the check it
+// returns is run on the final output (0.17 ruling 9).
+func encodeBitsScope(p *Pack, lay *layout, rec *Item, buf *bitBuf, base int) (int, func([]byte, int) error, error) {
+	buf.need(base + lay.allBit)
 	end := 0
 	for _, g := range lay.groups {
 		items, present := rec.Lists[g.List]
@@ -520,20 +569,23 @@ func encodeBitsScope(p *Pack, lay *layout, rec *Item, buf *bitBuf, base int) (in
 			// A fixed count needs the list, with exactly that many items
 			// (0.7 ruling 5: an absent list is an error too).
 			if !present {
-				return 0, gerr("the list is absent and the group has the fixed count %d", g.countN)
+				return 0, nil, gerr("the list is absent and the group has the fixed count %d", g.countN)
 			}
 			if len(items) != g.countN {
-				return 0, gerr("the list has %d item(s) and the group has the fixed count %d", len(items), g.countN)
+				return 0, nil, gerr("the list has %d item(s) and the group has the fixed count %d", len(items), g.countN)
 			}
 		} else if c.blen < 64 && uint64(len(items))>>uint(c.blen) != 0 {
-			return 0, gerr("%d item(s) do not fit the %d-bit count", len(items), c.blen)
+			return 0, nil, gerr("%d item(s) do not fit the %d-bit count", len(items), c.blen)
 		}
 		pos := base + g.start
 		for _, it := range items {
 			buf.need(pos + g.itemBits)
-			itemEnd, err := encodeBitsScope(p, g.body, it, buf, pos)
+			itemEnd, check, err := encodeBitsScope(p, g.body, it, buf, pos)
 			if err != nil {
-				return 0, err
+				return 0, nil, err
+			}
+			if check != nil {
+				buf.checks = append(buf.checks, check)
 			}
 			pos += g.itemBits
 			if itemEnd > pos {
@@ -544,50 +596,21 @@ func encodeBitsScope(p *Pack, lay *layout, rec *Item, buf *bitBuf, base int) (in
 			end = pos
 		}
 	}
-	data := buf.data
-	// A sentinel is a field write that any line whose key is present, or has
-	// a default, writes over whatever their order (0.9 ruling 16).
-	for i := len(lay.lines) - 1; i >= 0; i-- {
-		if f := lay.lines[i].f; f != nil && f.writesSentinel(rec, lay.defaults) {
-			putBits(data, base+f.loc.bit, f.loc.blen, f.sentinelBits(), p.msb)
-		}
-	}
-	for i := len(lay.lines) - 1; i >= 0; i-- {
-		f := lay.lines[i].f
-		if f == nil {
-			continue
-		}
-		v, ok, err := fieldValue(p, lay, f, rec)
+	if len(lay.gates) > 0 {
+		heldEnd, check, err := encodeGatedScope(p, lay, rec, buf, base)
 		if err != nil {
-			return 0, err
+			return 0, nil, err
 		}
-		if !ok {
-			continue
+		if heldEnd > end {
+			end = heldEnd
 		}
-		if err := putBitsField(p, f, v, data, base+f.loc.bit); err != nil {
-			return 0, err
-		}
+		return end, check, nil
 	}
-	// Over the same bits the order of writes is fields, then const, then
-	// when, then counts (0.7 ruling 15).
-	for _, ln := range lay.lines {
-		if w := ln.w; w != nil && w.Const {
-			putBits(data, base+w.loc.bit, w.loc.blen, w.num, p.msb)
-		}
+	all := func(line) bool { return true }
+	if err := writeBitsLines(p, lay, rec, buf.data, base, all, nil, nil); err != nil {
+		return 0, nil, err
 	}
-	for _, ln := range lay.lines {
-		if w := ln.w; w != nil && !w.Const {
-			putBits(data, base+w.loc.bit, w.loc.blen, w.num, p.msb)
-		}
-	}
-	// The count of a group counted by a locator is the number of items,
-	// written over any field on its bits (0.7 ruling 2).
-	for _, g := range lay.groups {
-		if c := g.countLoc; c != nil {
-			putBits(data, base+c.bit, c.blen, uint64(len(rec.Lists[g.List])), p.msb)
-		}
-	}
-	return end, nil
+	return end, nil, nil
 }
 
 // bitsSentinel reports whether the field at message bit at holds one of its
@@ -602,4 +625,15 @@ func (f *Field) bitsSentinel(data []byte, at int, msb bool) bool {
 		raw = swapBytes(raw, f.loc.blen/8)
 	}
 	return f.sentinelNum(raw)
+}
+
+// armorWrites reports whether a field counts toward the armored length L: a
+// field that is not optional always does; an optional one when it has a
+// value or a default to write, or a sentinel (0.14 ruling 12).
+func armorWrites(p *Pack, lay *layout, f *Field, rec *Item) (bool, error) {
+	if !f.Optional || f.absent != nil {
+		return true, nil
+	}
+	_, ok, err := fieldValue(p, lay, f, rec)
+	return ok, err
 }

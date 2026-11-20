@@ -1,0 +1,7 @@
+{
+  "name": "to-select-raw-key-chooses-the-second-meaning",
+  "from": "conformance-gates-json",
+  "to": "conformance-gates-select",
+  "input": "{\"alt\":400,\"c1\":1}",
+  "expect": "0104"
+}

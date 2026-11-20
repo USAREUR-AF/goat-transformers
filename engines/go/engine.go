@@ -806,7 +806,7 @@ func (f *Field) viaEncode(v Value) (Value, error) {
 func fieldValue(p *Pack, lay *layout, f *Field, rec *Item) (Value, bool, error) {
 	v, ok := rec.Fields[f.Key]
 	if !ok {
-		d := lay.defaults[f.Key]
+		d := fieldDefault(lay, f)
 		if d == nil {
 			return Value{}, false, nil
 		}

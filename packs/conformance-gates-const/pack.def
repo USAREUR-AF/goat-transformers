@@ -1,0 +1,21 @@
+# Conformance probe pack for a `const` inside a gate block (spec 0.17, Encode
+# step 5). Fixed `bits` layout, least significant bit first. Public. No kinds.
+# One byte per word. Exercises: a held block's `const` is written and counts
+# toward the length; a block that is not held writes no `const`.
+#
+#   byte 0       x, outside any block
+#   byte 1       bit 8: y is valid
+#   byte 2       y
+#   byte 3       the constant 0xaa, when bit 8 is 1
+format     conformance-gates-const
+version    0.17.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+word_bytes 1
+field   probe.x   0:0:8    uint
+if      0:8:1  1
+  field probe.y   0:16:8   uint
+  const 0:24:8   170
+end

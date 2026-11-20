@@ -1,7 +1,10 @@
 package goat.transformers;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * The {@code bits} wire: a message is a sequence of fixed-size binary words whose fields are bit ranges, carried in
@@ -33,7 +36,16 @@ final class BitsCodec extends Codec<Codec.BitMsg> {
     private static final class Info {
         final long need;
         final long end;
-        Info(long need, long end) { this.need = need; this.end = end; }
+        /** The furthest bit of any line, the lines and locators of gate blocks included (the buffer encode needs). */
+        final long all;
+        /** True when the scope has a gate block (engine-spec 0.17). */
+        final boolean gated;
+        Info(long need, long end, long all, boolean gated) {
+            this.need = need;
+            this.end = end;
+            this.all = all;
+            this.gated = gated;
+        }
     }
 
     BitsCodec(Pack pack) {
@@ -59,7 +71,8 @@ final class BitsCodec extends Codec<Codec.BitMsg> {
      * ({@code 0} for the message), nothing but such a group reaches beyond the item.
      */
     static void prepare(Pack.Scope scope, int wordBytes, int itemBits, String format, String source) {
-        long need = 0, end = 0;
+        long need = 0, end = 0, all = 0;
+        boolean gated = false;
         Pack.Group counted = null;
         for (Pack.Line l : scope.lines) {
             if (l instanceof Pack.Group) {
@@ -92,12 +105,43 @@ final class BitsCodec extends Codec<Codec.BitMsg> {
                 }
                 continue;
             }
+            if (l instanceof Pack.Gate) {
+                // A gate and its lines count toward no fixed extent: decode and encode measure the blocks that hold.
+                gated = true;
+                for (Pack.Line b : gateLines((Pack.Gate) l, new ArrayList<>())) {
+                    if (b.loc == null) b.loc = loc(b.locator, wordBytes);
+                    long e = ((Loc) b.loc).end();
+                    all = Math.max(all, e);
+                    if (itemBits > 0 && e > itemBits) {
+                        throw layout(format, b, source, (b instanceof Pack.Gate ? "the gate" : "a line of an if block")
+                                + " reaches beyond item " + itemBits);
+                    }
+                }
+                continue;
+            }
             if (l.loc == null) l.loc = loc(l.locator, wordBytes);
             long e = ((Loc) l.loc).end();
             end = Math.max(end, e);
             // Decode needs every mapped bit but those of `optional` fields.
             if (!(l instanceof Pack.Field && ((Pack.Field) l).optional)) need = Math.max(need, e);
             if (itemBits > 0 && e > itemBits) throw layout(format, l, source, "the line reaches beyond item " + itemBits);
+        }
+        if (gated) {
+            // A gate any of whose bits lies within the items of a fixed-count group of its scope (ruling 9 of 0.17).
+            for (Pack.Group g : scope.groups) {
+                if (g.countLocator != null) continue;
+                long gs = ((Loc) g.loc).start, ge = gs + g.countFixed * g.itemBits;
+                for (Pack.Line l : scope.lines) {
+                    if (!(l instanceof Pack.Gate)) continue;
+                    for (Pack.Line b : gateLines((Pack.Gate) l, new ArrayList<>())) {
+                        if (!(b instanceof Pack.Gate)) continue;
+                        Loc c = (Loc) b.loc;
+                        if (c.start < ge && c.end() > gs) {
+                            throw layout(format, b, source, "the gate lies within the items of group " + g.list);
+                        }
+                    }
+                }
+            }
         }
         if (counted != null) {
             long start = ((Loc) counted.loc).start;
@@ -115,12 +159,29 @@ final class BitsCodec extends Codec<Codec.BitMsg> {
                     if (g.countLocator == null && ((Loc) l.loc).start + g.countFixed * g.itemBits > start) {
                         throw layout(format, l, source, "the items of a fixed-count group reach the start of a group counted by a locator");
                     }
+                } else if (l instanceof Pack.Gate) {
+                    for (Pack.Line b : gateLines((Pack.Gate) l, new ArrayList<>())) {
+                        if (((Loc) b.loc).end() > start) {
+                            throw layout(format, b, source, (b instanceof Pack.Gate ? "a gate" : "a line of an if block")
+                                    + " at or beyond the start of a group counted by a locator");
+                        }
+                    }
                 } else if (((Loc) l.loc).end() > start) {
                     throw layout(format, l, source, "bits at or beyond the start of a group counted by a locator");
                 }
             }
         }
-        scope.info = new Info(need, end);
+        scope.info = new Info(need, end, Math.max(all, end), gated);
+    }
+
+    /** The gate itself and every line of its block, nested blocks included, in line order, added to {@code out}. */
+    private static List<Pack.Line> gateLines(Pack.Gate g, List<Pack.Line> out) {
+        out.add(g);
+        for (Pack.Line b : g.body.lines) {
+            if (b instanceof Pack.Gate) gateLines((Pack.Gate) b, out);
+            else out.add(b);
+        }
+        return out;
     }
 
     /** Null when {@code locator} is a well-formed bits group locator {@code <word>:<pos>}, else the reason. */
@@ -243,8 +304,36 @@ final class BitsCodec extends Codec<Codec.BitMsg> {
      * item of its groups, or 0 when it has none.
      */
     private long decodeScope(byte[] msg, long bits, Pack.Scope scope, long base, Entity e, Failures fails) {
+        return decodeLines(msg, bits, scope.lines, base, false, e, fails);
+    }
+
+    /**
+     * True when gate {@code g} of a scope at bit {@code base} holds on {@code msg}, of which {@code bits} bits are
+     * input: a gate any of whose bits lies beyond them does not hold, nor does its {@code !} form.
+     */
+    private boolean gateHolds(byte[] msg, long bits, long base, Pack.Gate g) {
+        Loc loc = (Loc) g.loc;
+        if (base + loc.end() > bits) return false;
+        return g.holds(readBits(msg, base + loc.start, loc.len));
+    }
+
+    /**
+     * Decode {@code lines} of a scope at bit {@code base}; {@code held}: they are the lines of a gate block that
+     * holds. Returns the furthest bit the decode requires beyond the scope's fixed extent: the end of the items of
+     * its groups, and the lines of the blocks that hold (their {@code optional} fields excepted), or 0.
+     */
+    private long decodeLines(byte[] msg, long bits, List<Pack.Line> lines, long base, boolean held, Entity e, Failures fails) {
         long far = 0;
-        for (Pack.Line l : scope.lines) {
+        for (Pack.Line l : lines) {
+            if (l instanceof Pack.Gate) {
+                Pack.Gate g = (Pack.Gate) l;
+                // A block that does not hold sets no key; its lines count as lines whose locator is absent.
+                if (gateHolds(msg, bits, base, g)) far = Math.max(far, decodeLines(msg, bits, g.body.lines, base, true, e, fails));
+                continue;
+            }
+            if (held && !(l instanceof Pack.Field && ((Pack.Field) l).optional)) {
+                far = Math.max(far, base + ((Loc) l.loc).end());   // a held block's fields and consts count
+            }
             if (l instanceof Pack.Group) {
                 Pack.Group g = (Pack.Group) l;
                 long n = g.countFixed;
@@ -329,16 +418,41 @@ final class BitsCodec extends Codec<Codec.BitMsg> {
     @Override
     String encodeKind(Entity e, Pack.Kind kind) {
         Info info = (Info) kind.scope.info;
-        Buf buf = new Buf(wholeWords(info.end, GtException.Code.TRANSFORM_ENCODE));
-        long far = encodeScope(buf, kind.scope, 0, e);
-        if (pack.armorSixbit) return toArmor(buf.b, armorLength(kind.scope, e, far));
-        return toHex(java.util.Arrays.copyOf(buf.b, wholeWords(Math.max(info.end, far), GtException.Code.TRANSFORM_ENCODE)));
+        Buf buf = new Buf(wholeWords(info.all, GtException.Code.TRANSFORM_ENCODE));
+        List<Choice> choices = new ArrayList<>();
+        long far = encodeScope(buf, kind.scope, 0, e, choices);
+        byte[] out;
+        long outBits;
+        long armorBits = 0;
+        if (pack.armorSixbit) {
+            // the first L bits (0.14); the decoder sees them padded to whole six-bit characters
+            armorBits = armorLength(kind.scope, e, far);
+            outBits = (armorBits + 5) / 6 * 6;
+            out = java.util.Arrays.copyOf(buf.b, (int) ((outBits + 7) >>> 3));
+            for (long i = armorBits; i < outBits; i++) writeBits(out, i, 1, 0);   // the zero fill bits
+        } else {
+            out = java.util.Arrays.copyOf(buf.b, wholeWords(Math.max(info.end, far), GtException.Code.TRANSFORM_ENCODE));
+            outBits = (long) out.length * 8;
+        }
+        // Step 6 of 0.17, once on the final output for every scope and item: it decodes to the same choice.
+        for (Choice c : choices) {
+            Set<Pack.Gate> got = newGateSet();
+            evaluate(out, outBits, c.base, c.lines, got);
+            for (Pack.Gate g : c.all) {
+                if (got.contains(g) != c.held.contains(g)) {
+                    throw new GtException(GtException.Code.TRANSFORM_ENCODE, pack.format, g.locator, "the if block at "
+                            + g.locator + (c.held.contains(g) ? " does not hold" : " holds") + " on the output, unlike the choice encode made");
+                }
+            }
+        }
+        return pack.armorSixbit ? toArmor(buf.b, armorBits) : toHex(out);
     }
 
     /**
      * {@code L} of 0.14 in the fixed layout: one more than the highest bit of any field, when or const line of the
      * scope, or of a group's items (a count locator counts, whatever the list), except an {@code optional} field
-     * whose key is absent with no default and no {@code absent} sentinel. {@code far} is the bit after the last item written.
+     * whose key is absent with no default and no {@code absent} sentinel. {@code far} is the bit after the last item
+     * written, or after the last line or gate locator of a held gate block (0.17).
      */
     private static long armorLength(Pack.Scope scope, Entity e, long far) {
         long l = far;
@@ -349,6 +463,8 @@ final class BitsCodec extends Codec<Codec.BitMsg> {
                 else if (g.countFixed > 0) l = Math.max(l, ((Loc) g.loc).start + g.countFixed * (long) g.itemBits);
                 continue;
             }
+            // a gate block counts through {@code far}: its locator and lines when it is held (0.17, Encode)
+            if (line instanceof Pack.Gate) continue;
             if (line instanceof Pack.Field) {
                 Pack.Field f = (Pack.Field) line;
                 // A field with absent writes its first sentinel, so it counts, optional or not (ruling 12 of 0.14).
@@ -359,22 +475,122 @@ final class BitsCodec extends Codec<Codec.BitMsg> {
         return l;
     }
 
+    /** The gate blocks of one scope (or item) at bit {@code base}, and those encode chose to hold. */
+    private static final class Choice {
+        final long base;
+        final List<Pack.Line> lines;
+        final List<Pack.Gate> all;
+        final Set<Pack.Gate> held;
+        Choice(long base, List<Pack.Line> lines, List<Pack.Gate> all, Set<Pack.Gate> held) {
+            this.base = base;
+            this.lines = lines;
+            this.all = all;
+            this.held = held;
+        }
+    }
+
+    private static Set<Pack.Gate> newGateSet() { return java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>()); }
+
+    /** Add to {@code held} the blocks of {@code lines} that hold on {@code msg}; a nested block only when its block holds. */
+    private void evaluate(byte[] msg, long bits, long base, List<Pack.Line> lines, Set<Pack.Gate> held) {
+        for (Pack.Line l : lines) {
+            if (!(l instanceof Pack.Gate)) continue;
+            Pack.Gate g = (Pack.Gate) l;
+            if (gateHolds(msg, bits, base, g)) {
+                held.add(g);
+                evaluate(msg, bits, base, g.body.lines, held);
+            }
+        }
+    }
+
+    /** Every gate of {@code lines}, nested ones included, in line order, depth first. */
+    private static void gates(List<Pack.Line> lines, List<Pack.Gate> out) {
+        for (Pack.Line l : lines) {
+            if (!(l instanceof Pack.Gate)) continue;
+            out.add((Pack.Gate) l);
+            gates(((Pack.Gate) l).body.lines, out);
+        }
+    }
+
+    /**
+     * A block is open when one of its field lines, or a line of a nested open block, maps a key the entity (or the
+     * item) holds; a default or a sentinel does not open it. Adds the open blocks of {@code lines} to {@code open}.
+     */
+    private static boolean open(List<Pack.Line> lines, Entity e, Set<Pack.Gate> open) {
+        boolean any = false;
+        for (Pack.Line l : lines) {
+            if (l instanceof Pack.Field) {
+                if (e.get(((Pack.Field) l).key) != null) any = true;
+            } else if (l instanceof Pack.Gate) {
+                Pack.Gate g = (Pack.Gate) l;
+                if (open(g.body.lines, e, open)) {
+                    open.add(g);
+                    any = true;
+                }
+            }
+        }
+        return any;
+    }
+
+    /**
+     * The lines written for a scope: those outside any block and those of the held blocks, in line order, each field
+     * with the defaults in force for it (a block's own defaults over those of the blocks around it and the scope's).
+     */
+    private static void participating(List<Pack.Line> lines, Set<Pack.Gate> held, Map<String, Object> defaults,
+                                      List<Pack.Line> out, List<Map<String, Object>> outDefaults, List<Pack.Gate> heldOut) {
+        for (Pack.Line l : lines) {
+            if (l instanceof Pack.Gate) {
+                Pack.Gate g = (Pack.Gate) l;
+                if (!held.contains(g)) continue;
+                heldOut.add(g);
+                Map<String, Object> d = defaults;
+                if (!g.body.defaultValues.isEmpty()) {
+                    d = new java.util.HashMap<>(defaults);
+                    d.putAll(g.body.defaultValues);
+                }
+                participating(g.body.lines, held, d, out, outDefaults, heldOut);
+            } else if (!(l instanceof Pack.Group)) {
+                out.add(l);
+                outDefaults.add(defaults);
+            }
+        }
+    }
+
     private GtException groupFailure(Pack.Group g, String why) {
         return new GtException(GtException.Code.TRANSFORM_ENCODE, pack.format, g.locator, g.list + ": " + why);
     }
 
-    /**
-     * Write the lines of one scope that starts at bit {@code base}. Returns the bit after the last item of its
-     * groups, or 0 when it has none.
-     */
-    private long encodeScope(Buf buf, Pack.Scope scope, long base, Entity e) {
-        buf.ensure(base + ((Info) scope.info).end);
-        // Fields last line first, so that where two present fields cover the same bits the earlier line's value stays.
-        List<Pack.Line> lines = scope.lines;
-        Object[] values = new Object[lines.size()];
-        for (int i = 0; i < lines.size(); i++) {
-            if (lines.get(i) instanceof Pack.Field) values[i] = valueToEncode((Pack.Field) lines.get(i), e, scope);
+    /** Write one field's value at bit {@code start}, by its transform, {@code swap} included. */
+    private void writeValue(byte[] b, long start, Pack.Field f, Object v) {
+        Loc loc = (Loc) f.loc;
+        try {
+            if (f.bits.isChars()) {
+                int w = f.bits.charWidth();
+                int[] codes = f.bits.encodeChars(v, loc.len / w);
+                for (int c = 0; c < codes.length; c++) writeBits(b, start + (long) w * c, w, codes[c]);
+            } else if (f.bits.isAscii()) {
+                byte[] bytes = f.bits.encodeAscii(v, loc.len / 8);
+                if (f.swap) reverse(bytes);
+                for (int i = 0; i < bytes.length; i++) writeBits(b, start + 8L * i, 8, bytes[i] & 0xffL);
+            } else if (f.bits.isSixbit()) {
+                writeSixbit(b, start, BitsTransform.encodeSixbit(v, loc.len / 6), msb);
+            } else {
+                long raw = f.bits.encode(v, loc.len);
+                writeBits(b, start, loc.len, f.swap ? swapBytes(raw, loc.len) : raw);
+            }
+        } catch (IllegalArgumentException ex) {
+            throw encodeFailure(f, ex);
         }
+    }
+
+    /**
+     * The 0.5 encode of {@code lines} (fields, const and when lines, in line order) into a scope at bit {@code base}:
+     * the sentinels of absent keys, then the fields last line first so that the earlier line's value stays, then the
+     * {@code gateValues} ({@code {start, len, value}}, scope-relative) on every bit no line with a present key
+     * covers ({@code present}), then const values, then when values (ruling 15 of 0.7, ruling 7 of 0.17).
+     */
+    private void writeLines(byte[] b, long base, List<Pack.Line> lines, Object[] values, List<long[]> gateValues,
+                            java.util.BitSet present) {
         // The sentinels of absent keys first: a line that writes a value wins over them whatever the order (ruling 16 of 0.9).
         for (int i = lines.size() - 1; i >= 0; i--) {
             if (!(lines.get(i) instanceof Pack.Field) || values[i] != null) continue;
@@ -382,32 +598,22 @@ final class BitsCodec extends Codec<Codec.BitMsg> {
             if (f.absent == null) continue; // absent key and no default: its bits stay zero
             Loc loc = (Loc) f.loc;
             long raw = f.absent.firstNum();
-            writeBits(buf.b, base + loc.start, loc.len, f.swap ? swapBytes(raw, loc.len) : raw);
+            writeBits(b, base + loc.start, loc.len, f.swap ? swapBytes(raw, loc.len) : raw);
         }
         for (int i = lines.size() - 1; i >= 0; i--) {
-            if (!(lines.get(i) instanceof Pack.Field)) continue;
+            if (!(lines.get(i) instanceof Pack.Field) || values[i] == null) continue;
             Pack.Field f = (Pack.Field) lines.get(i);
-            Object v = values[i];
-            if (v == null) continue;
-            Loc loc = (Loc) f.loc;
-            long start = base + loc.start;
-            try {
-                if (f.bits.isChars()) {
-                    int w = f.bits.charWidth();
-                    int[] codes = f.bits.encodeChars(v, loc.len / w);
-                    for (int c = 0; c < codes.length; c++) writeBits(buf.b, start + (long) w * c, w, codes[c]);
-                } else if (f.bits.isAscii()) {
-                    byte[] bytes = f.bits.encodeAscii(v, loc.len / 8);
-                    if (f.swap) reverse(bytes);
-                    for (int b = 0; b < bytes.length; b++) writeBits(buf.b, start + 8L * b, 8, bytes[b] & 0xffL);
-                } else if (f.bits.isSixbit()) {
-                    writeSixbit(buf.b, start, BitsTransform.encodeSixbit(v, loc.len / 6), msb);
-                } else {
-                    long raw = f.bits.encode(v, loc.len);
-                    writeBits(buf.b, start, loc.len, f.swap ? swapBytes(raw, loc.len) : raw);
+            writeValue(b, base + ((Loc) f.loc).start, f, values[i]);
+        }
+        if (gateValues != null) {
+            for (long[] gv : gateValues) {
+                int len = (int) gv[1];
+                for (int k = 0; k < len; k++) {
+                    long rel = gv[0] + k;
+                    if (present.get((int) rel)) continue;
+                    long bit = msb ? (gv[2] >>> (len - 1 - k)) & 1L : (gv[2] >>> k) & 1L;
+                    writeBits(b, base + rel, 1, bit);
                 }
-            } catch (IllegalArgumentException ex) {
-                throw encodeFailure(f, ex);
             }
         }
         // const values are written over any field, then when values (ruling 15 of 0.7)
@@ -415,11 +621,35 @@ final class BitsCodec extends Codec<Codec.BitMsg> {
             for (Pack.Line l : lines) {
                 if (!(l instanceof Pack.When) || ((Pack.When) l).isConst != (pass == 0)) continue;
                 Loc loc = (Loc) l.loc;
-                writeBits(buf.b, base + loc.start, loc.len, ((Pack.When) l).number);
+                writeBits(b, base + loc.start, loc.len, ((Pack.When) l).number);
             }
         }
-        // groups: the items back to back; a count locator holds their number, written over any field there
+    }
+
+    /** Set in {@code mask} the bits of {@code loc}. */
+    private static void mark(java.util.BitSet mask, Loc loc) { mask.set((int) loc.start, (int) loc.end()); }
+
+    /**
+     * Write the lines of one scope that starts at bit {@code base}. Returns the furthest bit written beyond the
+     * scope's fixed extent: the end of the items of its groups and the lines and gates of its held blocks, or 0.
+     */
+    private long encodeScope(Buf buf, Pack.Scope scope, long base, Entity e, List<Choice> choices) {
+        Info info = (Info) scope.info;
+        buf.ensure(base + info.all);
+        List<Pack.Line> lines = scope.lines;
+        List<Pack.Line> outside = new ArrayList<>(lines.size());
+        for (Pack.Line l : lines) if (!(l instanceof Pack.Gate) && !(l instanceof Pack.Group)) outside.add(l);
+        Object[] outValues = new Object[outside.size()];
+        for (int i = 0; i < outside.size(); i++) {
+            if (outside.get(i) instanceof Pack.Field) outValues[i] = valueToEncode((Pack.Field) outside.get(i), e, scope);
+        }
         long far = 0;
+        if (!info.gated) {
+            writeLines(buf.b, base, outside, outValues, null, null);
+        } else {
+            far = encodeGated(buf, scope, base, e, outside, outValues, choices);
+        }
+        // groups: the items back to back; a count locator holds their number, written over any field there
         for (Pack.Group g : scope.groups) {
             List<Entity> items = e.list(g.list);
             int n = items == null ? 0 : items.size();
@@ -436,12 +666,108 @@ final class BitsCodec extends Codec<Codec.BitMsg> {
             long pos = base + ((Loc) g.loc).start;
             for (int i = 0; i < n; i++) {
                 buf.ensure(pos + g.itemBits);
-                long nested = encodeScope(buf, g.body, pos, items.get(i));
+                long nested = encodeScope(buf, g.body, pos, items.get(i), choices);
                 pos = Math.max(pos + g.itemBits, nested);
             }
             buf.ensure(pos);
             far = Math.max(far, pos);
         }
+        return far;
+    }
+
+    /** Steps 1 to 5 of the 0.17 encode for one scope with gate blocks; returns the furthest bit of its held blocks. */
+    private long encodeGated(Buf buf, Pack.Scope scope, long base, Entity e, List<Pack.Line> outside,
+                             Object[] outValues, List<Choice> choices) {
+        Info info = (Info) scope.info;
+        List<Pack.Line> lines = scope.lines;
+        int span = (int) info.all;
+        // 1. The open blocks.
+        Set<Pack.Gate> open = newGateSet();
+        open(lines, e, open);
+        // 2. The lines outside any block, on a scratch copy of the scope; the bits a present key, a const, a when
+        //    or a group count wrote are written (the union of their ranges, whatever line wrote last).
+        byte[] ev = new byte[((span + 7) >>> 3) + 1];
+        writeLines(ev, 0, outside, outValues, null, null);
+        java.util.BitSet written = new java.util.BitSet(span);
+        for (int i = 0; i < outside.size(); i++) {
+            Pack.Line l = outside.get(i);
+            if (l instanceof Pack.When || e.get(((Pack.Field) l).key) != null) mark(written, (Loc) l.loc);
+        }
+        for (Pack.Group g : scope.groups) {
+            if (g.countLocator == null) continue;
+            Loc c = (Loc) g.countLoc;
+            List<Entity> items = e.list(g.list);
+            writeBits(ev, c.start, c.len, items == null ? 0 : items.size());
+            mark(written, c);
+        }
+        // 3. In line order, depth first, each open block none of whose gate bits is written gets its gate value.
+        List<Pack.Gate> all = new ArrayList<>();
+        gates(lines, all);
+        Map<Pack.Gate, Long> values = new java.util.IdentityHashMap<>();
+        for (Pack.Gate g : all) {
+            if (!open.contains(g)) continue;
+            Loc loc = (Loc) g.loc;
+            if (written.get((int) loc.start, (int) loc.end()).cardinality() > 0) continue;
+            Long v = g.gateValue();
+            if (v == null) continue;   // a `!` list that names every value
+            values.put(g, v);
+            writeBits(ev, loc.start, loc.len, v);
+            mark(written, loc);
+        }
+        // 4. The held blocks, evaluated as decode evaluates them; bits nothing wrote read as 0.
+        Set<Pack.Gate> held = newGateSet();
+        evaluate(ev, (long) ev.length * 8, 0, lines, held);
+        // 5. The lines outside any block and those of the held blocks; a held block's gate value goes over the
+        //    bits of a default or a sentinel and under those of a line with a present key, a const or a when.
+        List<Pack.Line> part = new ArrayList<>();
+        List<Map<String, Object>> partDefaults = new ArrayList<>();
+        List<Pack.Gate> heldInOrder = new ArrayList<>();
+        participating(lines, held, scope.defaultValues, part, partDefaults, heldInOrder);
+        Object[] partValues = new Object[part.size()];
+        java.util.BitSet present = new java.util.BitSet(span);
+        Set<String> mapped = new HashSet<>();
+        long far = 0;
+        int o = 0;
+        for (int i = 0; i < part.size(); i++) {
+            Pack.Line l = part.get(i);
+            boolean isOutside = o < outside.size() && outside.get(o) == l;
+            if (isOutside) o++;
+            if (!(l instanceof Pack.Field)) {
+                if (!isOutside) far = Math.max(far, base + ((Loc) l.loc).end());   // a held block's const counts
+                continue;
+            }
+            Pack.Field f = (Pack.Field) l;
+            // Lines of blocks that are not held are never valued: they raise no encode error (ruling 10 of 0.17).
+            partValues[i] = isOutside ? outValues[o - 1] : valueToEncode(f, e, partDefaults.get(i));
+            // a held block's field counts toward the length; under armor sixbit an optional one only when it is
+            // written, by a value, a default or a sentinel (ruling 14 of 0.17)
+            if (!isOutside && !(pack.armorSixbit && f.optional && partValues[i] == null && f.absent == null)) {
+                far = Math.max(far, base + ((Loc) f.loc).end());
+            }
+            if (e.get(f.key) != null) mark(present, (Loc) f.loc);
+            mapped.add(f.key);
+        }
+        List<long[]> gateValues = new ArrayList<>();
+        for (Pack.Gate g : heldInOrder) {
+            Loc loc = (Loc) g.loc;
+            far = Math.max(far, base + loc.end());   // the gate locators of held blocks count toward the length
+            Long v = values.get(g);
+            if (v != null) gateValues.add(new long[]{loc.start, loc.len, v});
+        }
+        // 6 (in part). A key the entity holds that only lines of blocks not held map cannot be written.
+        for (Pack.Gate g : all) {
+            if (held.contains(g)) continue;
+            for (Pack.Line l : g.body.lines) {
+                if (!(l instanceof Pack.Field)) continue;
+                String key = ((Pack.Field) l).key;
+                if (e.get(key) != null && !mapped.contains(key)) {
+                    throw new GtException(GtException.Code.TRANSFORM_ENCODE, pack.format, l.locator, key
+                            + " is mapped only by lines of if blocks that do not hold");
+                }
+            }
+        }
+        writeLines(buf.b, base, part, partValues, gateValues, present);
+        choices.add(new Choice(base, lines, all, held));
         return far;
     }
 

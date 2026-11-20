@@ -1,0 +1,13 @@
+{
+  "name": "nested-blocks-earliest-held-line-gives-the-key",
+  "from": "conformance-gates-nested",
+  "to": "conformance-gates-nested",
+  "input": "030a4532",
+  "expect": "030a4544",
+  "model": {
+    "probe.c1": "1",
+    "probe.x": "10",
+    "probe.z": "5",
+    "probe.y": "4"
+  }
+}

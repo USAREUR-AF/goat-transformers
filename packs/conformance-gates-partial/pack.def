@@ -1,0 +1,20 @@
+# Conformance probe pack for gate blocks (spec 0.17, Encode step 3): a gate
+# one of whose bits a raw key writes. Fixed `bits` layout, least significant
+# bit first. Public. No kinds. One byte per word. Exercises: a gate any of
+# whose bits is written gets no value and is evaluated on the bits as they
+# are, so a present c1 leaves the gate at 0 or 1 and qty cannot be encoded;
+# without c1 the gate gets its value 3.
+#
+#   byte 0       bits 0-1: qty is valid when both are 1; bit 0 is also c1
+#   byte 1       qty
+format     conformance-gates-partial
+version    0.17.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+word_bytes 1
+field   probe.c1   0:0:1   uint
+if      0:0:2  3
+  field probe.qty  0:8:8   uint
+end

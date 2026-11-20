@@ -1,0 +1,24 @@
+# Conformance probe pack for gate blocks (spec 0.17) on the `json` wire: the
+# source of entities for the `conformance-gates-*` packs that a same-format
+# round trip cannot give, such as an entity without the raw key of a gate.
+# Public. No kinds. One member per key.
+format  conformance-gates-json
+version 0.17.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses    probe
+wire    json
+field   probe.w    w    int
+field   probe.x    x    int
+field   probe.y    y    int
+field   probe.z    z    int
+field   probe.c1   c1   int
+field   probe.c2   c2   int
+field   probe.n    n    int
+field   probe.val  val  int
+field   probe.qty  qty  int
+field   hae        alt  float
+group   probe.items  items
+  field probe.val  v    int
+  field probe.qty  q    int
+end

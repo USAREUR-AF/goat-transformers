@@ -1,0 +1,13 @@
+{
+  "name": "not-gate-holds-and-gets-the-smallest-value-not-listed",
+  "from": "conformance-gates-edge",
+  "to": "conformance-gates-edge",
+  "input": "050007000306",
+  "expect": "050007000106",
+  "model": {
+    "probe.x": "5",
+    "probe.y": "7",
+    "probe.z": "0",
+    "probe.w": "6"
+  }
+}

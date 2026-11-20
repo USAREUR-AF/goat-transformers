@@ -1,0 +1,7 @@
+{
+  "name": "to-const-held-block-writes-its-const",
+  "from": "conformance-gates-json",
+  "to": "conformance-gates-const",
+  "input": "{\"y\":7}",
+  "expect": "000107aa"
+}

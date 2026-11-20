@@ -1,0 +1,16 @@
+{
+  "name": "sentinel-keeps-its-gate-with-a-raw-key-and-loses-it-without",
+  "from": "conformance-gates-absent",
+  "to": "conformance-gates-absent",
+  "input": "000501ff01ff",
+  "expect": "000501ff",
+  "model": {
+    "probe.x": "0",
+    "probe.y": "5",
+    "probe.c1": "1",
+    "@absent": [
+      "probe.z",
+      "probe.w"
+    ]
+  }
+}

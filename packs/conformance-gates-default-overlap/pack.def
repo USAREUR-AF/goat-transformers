@@ -1,0 +1,18 @@
+# Conformance probe pack for two overlapping lines on a fixed layout with no
+# gates (ruling 5 of 0.5, ruling 7 of 0.17): an earlier line written from its
+# `default` wins over a later line with a present key on the bits they share.
+# Fixed `bits` layout, least significant bit first. Public. No kinds. One byte
+# per word.
+#
+#   bits 0-7     x (default 15)
+#   bits 4-11    y, sharing bits 4-7 with x
+format     conformance-gates-default-overlap
+version    0.17.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+word_bytes 1
+field   probe.x   0:0:8    uint
+default probe.x   15
+field   probe.y   0:4:8    uint

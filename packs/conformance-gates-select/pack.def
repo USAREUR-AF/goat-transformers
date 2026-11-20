@@ -1,0 +1,24 @@
+# Conformance probe pack for gate blocks (spec 0.17): one bit chooses between
+# two meanings of the same bits, with a raw key on that bit. Fixed `bits`
+# layout, most significant bit first. Public. No kinds. One byte per word.
+# Exercises: one key (hae) mapped in two blocks of opposite gates; the raw key
+# c1 writes the selector in step 2, so a round trip keeps the meaning; an
+# entity without c1 gets the earlier block's gate.
+#
+#   byte 0       bit 7 (the last bit of the byte): the selector, also c1
+#   byte 1       hae in units of 25 m when the selector is 0, of 100 m when 1
+format     conformance-gates-select
+version    0.17.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+word_bytes 1
+bit_order  msb
+field   probe.c1  0:7:1   uint
+if      0:7:1  0
+  field hae       0:8:8   uscale:25
+end
+if      0:7:1  1
+  field hae       0:8:8   uscale:100
+end

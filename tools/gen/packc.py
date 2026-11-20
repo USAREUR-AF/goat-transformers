@@ -513,6 +513,9 @@ class Pack:
                     scope_kind["lines"].append(g)
                 else:
                     body["common"].append(g)
+            elif d == "if":
+                refuse("unsupported-feature", "%s: gate blocks on a fixed layout (`if`, spec 0.17) are not in the "
+                       "device profile" % self.format)
             else:
                 refuse("bad-pack", "%s: directive `%s` is not a line of a fixed-layout bits pack" % (self.format, d))
 

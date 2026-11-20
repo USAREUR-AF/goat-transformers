@@ -355,6 +355,42 @@ const Default = struct {
     value: MV = .{ .int = 0 }, // `text` read as the key's declared type, at load
 };
 
+// Version 0.17: a gate block `if [!]<locator> <value>[,<value>…]` … `end` on a
+// fixed layout. Its lines stay in the lines of the scope it is in, each
+// pointing at its innermost block.
+const Gate = struct {
+    lineno: usize,
+    locator: []const u8, // without the `!`
+    vals_txt: []const u8,
+    neg: bool,
+    parent: ?*Gate = null, // the block this one is nested in
+    values: []const u64 = &.{},
+    bstart: usize = 0,
+    blen: usize = 0,
+    // the position in the scope's gates (line order, depth first)
+    idx: usize = 0,
+    defaults: std.ArrayListUnmanaged(Default) = .{},
+    dmap: std.StringHashMapUnmanaged(MV) = .{},
+
+    // Does the value of the gate's bits hold the block?
+    fn holds(self: *const Gate, v: u64) bool {
+        const listed = std.mem.indexOfScalar(u64, self.values, v) != null;
+        return listed != self.neg;
+    }
+
+    // The value step 3 of encode writes: the first listed value, or for `!`
+    // the smallest value not listed (none when every value is listed).
+    fn encodeValue(self: *const Gate) ?u64 {
+        if (!self.neg) return self.values[0];
+        var v: u64 = 0;
+        while (true) : (v += 1) {
+            if (self.blen < 64 and (v >> @as(u6, @intCast(self.blen))) != 0) return null;
+            if (std.mem.indexOfScalar(u64, self.values, v) == null) return v;
+            if (v == std.math.maxInt(u64)) return null;
+        }
+    }
+};
+
 // A `group <list> <locator> … end` block. Its body is a scope of its own: the
 // locators of its lines are read relative to one item.
 const Group = struct {
@@ -385,6 +421,8 @@ const Group = struct {
     // text: the index of the first item's first field, and the fields of an item
     tstart: usize = 0,
     titem: usize = 0,
+    // Version 0.17: the gate blocks of the body, in line order
+    gates: std.ArrayListUnmanaged(*Gate) = .{},
 };
 
 // The lines that apply together: common lines plus one kind's, or one group
@@ -402,10 +440,25 @@ const Scope = struct {
     // and whether a line addresses into the item
     dot: ?*const Line = null,
     needs_sub: bool = false,
+    // Version 0.17: the gate blocks of the scope, in line order, depth
+    // first; a gate's `idx` is its position here
+    gates: []const *const Gate = &.{},
 
     fn defaultFor(self: *const Scope, key: []const u8) ?MV {
         if (self.defaults.count() == 0) return null;
         return self.defaults.get(key);
+    }
+
+    // The default of a line's key: that of its innermost gate block that
+    // has one, else the scope's (ruling 5 of 0.17).
+    fn lineDefault(self: *const Scope, ln: *const Line) ?MV {
+        var g = ln.gate;
+        while (g) |gt| : (g = gt.parent) {
+            if (gt.dmap.count() > 0) {
+                if (gt.dmap.get(ln.key)) |v| return v;
+            }
+        }
+        return self.defaultFor(ln.key);
     }
 };
 
@@ -413,6 +466,7 @@ const Scope = struct {
 const Line = struct {
     tag: LineTag = .field,
     grp: ?*Group = null, // group
+    gate: ?*const Gate = null, // the innermost gate block the line is in (0.17)
     dot: bool = false, // the locator `.`: the item itself
     // field options
     via_name: []const u8 = "",
@@ -488,6 +542,7 @@ const Kind = struct {
     root: ?[]const u8 = null,
     // common lines then this kind's lines
     scope: Scope = .{},
+    gates: std.ArrayListUnmanaged(*Gate) = .{},
 };
 
 // A key named by a `field` (with its transform) or a `requires` line, in file
@@ -557,6 +612,10 @@ const Pack = struct {
     armor: bool = false,
     armor_raw: ?[]const u8 = null,
     armor_bad: usize = 0,
+    // Version 0.17: the gate blocks of the common lines, and the line of the
+    // first gate of the pack (0: none)
+    common_gates: std.ArrayListUnmanaged(*Gate) = .{},
+    gate_line: usize = 0,
 
     fn usesModule(self: *const Pack, name: []const u8) bool {
         if (std.mem.eql(u8, name, "core")) return true; // `core` is always used
@@ -1748,6 +1807,33 @@ fn parseColons(text: []const u8, comptime n: usize) ?[n]usize {
     return out;
 }
 
+// Version 0.17: each gate's locator and values against the fixed layout.
+fn finalizeGates(alloc: std.mem.Allocator, p: *Pack, gates: []const *Gate, diag: *Diag) anyerror!void {
+    const bd = E.@"bad-directive";
+    for (gates) |gt| {
+        if (p.wire != .bits) return bad(diag, alloc, bd, "line {d}: a gate block on wire {s}", .{ gt.lineno, @tagName(p.wire) });
+        const c = parseColons(gt.locator, 3) orelse
+            return bad(diag, alloc, bd, "line {d}: gate locator {s} is not <word>:<pos>:<len>", .{ gt.lineno, gt.locator });
+        if (c[2] < 1 or c[2] > 64) return bad(diag, alloc, bd, "line {d}: gate locator {s}: the bit length is not 1..64", .{ gt.lineno, gt.locator });
+        gt.bstart = c[0] * p.word_bytes * 8 + c[1];
+        gt.blen = c[2];
+        var vals = std.ArrayListUnmanaged(u64){};
+        var it = std.mem.splitScalar(u8, gt.vals_txt, ',');
+        while (it.next()) |vt| {
+            const v = parseUnsigned(vt) orelse
+                return bad(diag, alloc, bd, "line {d}: gate value {s} is not an unsigned decimal integer", .{ gt.lineno, vt });
+            if (gt.blen < 64 and (v >> @as(u6, @intCast(gt.blen))) != 0) {
+                return bad(diag, alloc, bd, "line {d}: gate value {d} does not fit {d} bits", .{ gt.lineno, v, gt.blen });
+            }
+            if (std.mem.indexOfScalar(u64, vals.items, v) != null) {
+                return bad(diag, alloc, bd, "line {d}: gate value {d} is listed twice", .{ gt.lineno, v });
+            }
+            try vals.append(alloc, v);
+        }
+        gt.values = vals.items;
+    }
+}
+
 fn finalizeLines(alloc: std.mem.Allocator, p: *Pack, lines: []Line, in_group: bool, diag: *Diag) anyerror!void {
     for (lines) |*ln| {
         if (ln.tag == .group) {
@@ -1826,6 +1912,7 @@ fn finalizeGroup(alloc: std.mem.Allocator, p: *Pack, g: *Group, nested: bool, di
         .text, .tlv => unreachable,
     }
     try finalizeLines(alloc, p, g.lines, true, diag);
+    try finalizeGates(alloc, p, g.gates.items, diag);
     if (p.wire == .protobuf) {
         // a body is scalar only when every line is `.`
         var has_dot = false;
@@ -1878,9 +1965,10 @@ fn passesThrough(p: *const Pack, f: *const Line, g: *const Group, in_item: bool)
 // group body). A list is mapped by at most one group. On `bits`: a group
 // counted by a locator is the last thing in its scope, and inside an item
 // nothing of fixed size reaches beyond `item <bits>`.
-fn checkScope(alloc: std.mem.Allocator, p: *const Pack, a: []const Line, b: []const Line, item_bits: ?usize, item_scope: bool, diag: *Diag) anyerror!void {
+fn checkScope(alloc: std.mem.Allocator, p: *const Pack, a: []const Line, b: []const Line, ga: []const *Gate, gb: []const *Gate, item_bits: ?usize, item_scope: bool, diag: *Diag) anyerror!void {
     const bd = E.@"bad-directive";
     const both = [2][]const Line{ a, b };
+    const gboth = [2][]const *Gate{ ga, gb };
     var seen = std.StringHashMap(void).init(alloc);
     defer seen.deinit();
     var n_var: usize = 0;
@@ -1925,6 +2013,32 @@ fn checkScope(alloc: std.mem.Allocator, p: *const Pack, a: []const Line, b: []co
                     return bad(diag, alloc, bd, "line {d}: bits at or beyond the start of the group counted by a locator on line {d}", .{ ln.lineno, g.lineno });
                 }
             };
+            // a gate at or beyond the start of the group (ruling 2 of 0.17)
+            for (gboth) |gates| for (gates) |gt| {
+                if (gt.bstart + gt.blen > g.gstart) {
+                    return bad(diag, alloc, bd, "line {d}: a gate at or beyond the start of the group counted by a locator on line {d}", .{ gt.lineno, g.lineno });
+                }
+            };
+        };
+    }
+    // a gate any of whose bits lies within the items of a fixed-count group
+    // of the scope (ruling 9 of 0.17)
+    for (both) |glines| for (glines) |*gl| {
+        if (gl.tag != .group) continue;
+        const g = gl.grp.?;
+        const n = g.count_fixed orelse continue;
+        const gend = g.gstart + n * g.item_bits;
+        for (gboth) |gates| for (gates) |gt| {
+            if (gt.bstart < gend and gt.bstart + gt.blen > g.gstart) {
+                return bad(diag, alloc, bd, "line {d}: the gate lies within the items of the group on line {d}", .{ gt.lineno, g.lineno });
+            }
+        };
+    };
+    if (item_bits) |ib| {
+        for (gboth) |gates| for (gates) |gt| {
+            if (gt.bstart + gt.blen > ib) {
+                return bad(diag, alloc, bd, "line {d}: a gate of an item reaches beyond item {d}", .{ gt.lineno, ib });
+            }
         };
     }
     if (item_bits) |ib| {
@@ -1952,7 +2066,7 @@ fn checkGroupBodies(alloc: std.mem.Allocator, p: *const Pack, lines: []const Lin
     for (lines) |*ln| {
         if (ln.tag != .group) continue;
         const g = ln.grp.?;
-        try checkScope(alloc, p, g.lines, &.{}, if (p.wire == .bits) g.item_bits else null, true, diag);
+        try checkScope(alloc, p, g.lines, &.{}, g.gates.items, &.{}, if (p.wire == .bits) g.item_bits else null, true, diag);
         try checkGroupBodies(alloc, p, g.lines, diag);
     }
 }
@@ -2208,6 +2322,9 @@ const FState = struct {
     gtmp: std.ArrayList(Line),
     gfrom: std.ArrayList(usize),
     gline: std.ArrayList(Line),
+    // the open gate blocks (0.17), innermost last; a group cannot open
+    // inside one, so they are all of the innermost container
+    gtstack: std.ArrayList(*Gate),
     lineno: usize = 0,
 };
 
@@ -2228,11 +2345,36 @@ fn fixedLine(st: *FState, toks: []const []const u8) anyerror!void {
         }
     }.f;
     const in_group = gstack.items.len > 0;
-    // inside a group: `field`, `const`, `default`, `group` and `end` only
-    if (in_group and !(is(kw, "field") or is(kw, "const") or is(kw, "default") or is(kw, "group") or is(kw, "end"))) {
+    const gtstack = &st.gtstack;
+    const cur_gate: ?*Gate = if (gtstack.items.len > 0) gtstack.items[gtstack.items.len - 1] else null;
+    // inside a gate block: `field`, `const`, `default`, a nested `if` and `end` only
+    if (cur_gate != null and !(is(kw, "field") or is(kw, "const") or is(kw, "default") or is(kw, "if") or is(kw, "end"))) {
+        return bad(diag, alloc, E.@"bad-directive", "line {d}: {s} inside a gate block", .{ lineno, kw });
+    }
+    // inside a group: `field`, `const`, `default`, `group`, `if` and `end` only
+    if (in_group and !(is(kw, "field") or is(kw, "const") or is(kw, "default") or is(kw, "group") or is(kw, "if") or is(kw, "end"))) {
         return bad(diag, alloc, E.@"bad-directive", "line {d}: {s} inside a group", .{ lineno, kw });
     }
-    if (is(kw, "group")) {
+    if (is(kw, "if")) {
+        // if [!]<word>:<pos>:<len> <value>[,<value>…]: exactly one locator
+        // and one value list (ruling 12 of 0.17)
+        if (toks.len != 3) return bad(diag, alloc, E.@"bad-directive", "line {d}: if takes one locator and one value list", .{lineno});
+        const neg = toks[1].len > 0 and toks[1][0] == '!';
+        const gt = try alloc.create(Gate);
+        gt.* = .{ .lineno = lineno, .locator = if (neg) toks[1][1..] else toks[1], .vals_txt = toks[2], .neg = neg, .parent = cur_gate };
+        if (in_group) {
+            try gstack.items[gstack.items.len - 1].gates.append(alloc, gt);
+        } else if (p.kinds.items.len == 0) {
+            try p.common_gates.append(alloc, gt);
+        } else {
+            try p.kinds.items[p.kinds.items.len - 1].gates.append(alloc, gt);
+        }
+        if (p.gate_line == 0) p.gate_line = lineno;
+        try gtstack.append(gt);
+    } else if (is(kw, "end") and cur_gate != null) {
+        if (toks.len != 1) return bad(diag, alloc, E.@"bad-directive", "line {d}: end takes no argument", .{lineno});
+        _ = gtstack.pop();
+    } else if (is(kw, "group")) {
         // group <list> <locator> [item <bits>] [count <count-locator | n>]
         if (toks.len < 3) return bad(diag, alloc, E.@"bad-directive", "line {d}: group takes a list and a locator", .{lineno});
         if (!groupLocatorFormOk(p.wire, toks[2])) {
@@ -2330,7 +2472,7 @@ fn fixedLine(st: *FState, toks: []const []const u8) anyerror!void {
         const slot = if (is(kw, "tag")) &p.tag_raw else &p.key_raw;
         if ((slot.* != null or p.kinds.items.len > 0) and p.tdir_bad == 0) p.tdir_bad = lineno;
         slot.* = toks[1];
-    } else if (is(kw, "pad") or is(kw, "align") or is(kw, "presence") or is(kw, "if") or is(kw, "opt") or is(kw, "chain") or is(kw, "fx") or is(kw, "length") or is(kw, "also")) {
+    } else if (is(kw, "pad") or is(kw, "align") or is(kw, "presence") or is(kw, "opt") or is(kw, "chain") or is(kw, "fx") or is(kw, "length") or is(kw, "also")) {
         return bad(diag, alloc, E.@"bad-directive", "line {d}: {s} is a line of a sequential pack (`layout sequential` on the bits wire)", .{ lineno, kw });
     } else if (is(kw, "typemap")) {
         if (toks.len != 3) return bad(diag, alloc, E.@"bad-directive", "line {d}: typemap takes two arguments", .{lineno});
@@ -2374,12 +2516,16 @@ fn fixedLine(st: *FState, toks: []const []const u8) anyerror!void {
         if (!locatorFormOk(p.wire, false, toks[1], in_group)) {
             return lineBad(diag, alloc, E.@"bad-locator", "line {d}: locator {s} does not have the form of a {s} on the {s} wire", .{ lineno, toks[1], kw, @tagName(p.wire) });
         }
-        const ln = Line{ .tag = if (is_when) .when else .constant, .locator = toks[1], .wraw = toks[2], .lineno = lineno };
+        const ln = Line{ .tag = if (is_when) .when else .constant, .locator = toks[1], .wraw = toks[2], .lineno = lineno, .gate = cur_gate };
         try curLines(p, in_group, gtmp).append(ln);
     } else if (is(kw, "default")) {
         if (toks.len != 3) return bad(diag, alloc, E.@"bad-directive", "line {d}: default takes a key and a value", .{lineno});
         const d = Default{ .key = toks[1], .text = toks[2] };
-        if (in_group) {
+        if (cur_gate) |gt| {
+            // a `default` inside a gate block applies to its fields and
+            // those of the blocks nested in it (ruling 5 of 0.17)
+            try gt.defaults.append(alloc, d);
+        } else if (in_group) {
             // a `default` inside a group applies to items
             try gstack.items[gstack.items.len - 1].defaults.append(d);
         } else if (p.kinds.items.len == 0) {
@@ -2417,7 +2563,7 @@ fn fixedLine(st: *FState, toks: []const []const u8) anyerror!void {
         if (!locatorFormOk(p.wire, false, toks[2], in_group)) {
             return lineBad(diag, alloc, E.@"bad-locator", "line {d}: locator {s} does not have the form of a field on the {s} wire", .{ lineno, toks[2], @tagName(p.wire) });
         }
-        var ln = Line{ .key = toks[1], .locator = toks[2], .transform = t, .lineno = lineno, .t_err = t_err };
+        var ln = Line{ .key = toks[1], .locator = toks[2], .transform = t, .lineno = lineno, .t_err = t_err, .gate = cur_gate };
         // options, in any order
         var oi: usize = 4;
         while (oi < toks.len) : (oi += 1) {
@@ -2478,6 +2624,7 @@ fn parsePack(alloc: std.mem.Allocator, def_text: []const u8, diag: *Diag) anyerr
         .gtmp = std.ArrayList(Line).init(alloc),
         .gfrom = std.ArrayList(usize).init(alloc),
         .gline = std.ArrayList(Line).init(alloc),
+        .gtstack = std.ArrayList(*Gate).init(alloc),
     };
     const gstack = &st.gstack;
     var deferred: ?Deferred = null;
@@ -2507,8 +2654,14 @@ fn parsePack(alloc: std.mem.Allocator, def_text: []const u8, diag: *Diag) anyerr
         diag.msg = d.msg;
         return d.err;
     }
+    if (st.gtstack.items.len > 0) {
+        return bad(diag, alloc, E.@"bad-directive", "line {d}: an `if` with no `end`", .{st.gtstack.items[st.gtstack.items.len - 1].lineno});
+    }
     if (gstack.items.len > 0) {
         return bad(diag, alloc, E.@"bad-directive", "line {d}: a `group` with no `end`", .{gstack.items[gstack.items.len - 1].lineno});
+    }
+    if (p.gate_line != 0 and p.wire != .bits) {
+        return bad(diag, alloc, E.@"bad-directive", "line {d}: a gate block on wire {s}; it is for the fixed layout of the bits wire", .{ p.gate_line, @tagName(p.wire) });
     }
     // Checks that need the whole file: the wire may be named after the lines
     // it governs.
@@ -2539,9 +2692,11 @@ fn parsePack(alloc: std.mem.Allocator, def_text: []const u8, diag: *Diag) anyerr
     setTableTypes(p);
     try finalizeLines(alloc, p, p.common.items, false, diag);
     for (p.kinds.items) |*k| try finalizeLines(alloc, p, k.lines.items, false, diag);
+    try finalizeGates(alloc, p, p.common_gates.items, diag);
+    for (p.kinds.items) |*k| try finalizeGates(alloc, p, k.gates.items, diag);
     // the group checks, scope by scope
-    if (p.kinds.items.len == 0) try checkScope(alloc, p, p.common.items, &.{}, null, false, diag);
-    for (p.kinds.items) |*k| try checkScope(alloc, p, p.common.items, k.lines.items, null, false, diag);
+    if (p.kinds.items.len == 0) try checkScope(alloc, p, p.common.items, &.{}, p.common_gates.items, &.{}, null, false, diag);
+    for (p.kinds.items) |*k| try checkScope(alloc, p, p.common.items, k.lines.items, p.common_gates.items, k.gates.items, null, false, diag);
     try checkGroupBodies(alloc, p, p.common.items, diag);
     for (p.kinds.items) |*k| try checkGroupBodies(alloc, p, k.lines.items, diag);
     if (p.wire == .text) {
@@ -2568,8 +2723,22 @@ pub const KV = struct { key: []const u8, value: []const u8 };
 
 // One scope from its lines and its `default` lines; `d1` takes precedence
 // over `d2` (a kind's default over the common one).
-fn buildScope(alloc: std.mem.Allocator, lines: []const Line, d1: []const Default, d2: []const Default, body: bool) !Scope {
+fn buildScope(alloc: std.mem.Allocator, lines: []const Line, d1: []const Default, d2: []const Default, body: bool, ga: []const *Gate, gb: []const *Gate) !Scope {
     var sc = Scope{ .lines = lines };
+    if (ga.len + gb.len > 0) {
+        // the gates of the scope; a common gate has the same position in
+        // every kind's scope, since the common lines come first
+        const gs = try alloc.alloc(*const Gate, ga.len + gb.len);
+        for (ga, 0..) |gt, i| {
+            gt.idx = i;
+            gs[i] = gt;
+        }
+        for (gb, 0..) |gt, i| {
+            gt.idx = ga.len + i;
+            gs[ga.len + i] = gt;
+        }
+        sc.gates = gs;
+    }
     const both = [2][]const Default{ d1, d2 };
     for (both) |ds| for (ds) |d| {
         const gop = try sc.defaults.getOrPut(alloc, d.key);
@@ -2583,6 +2752,12 @@ fn buildScope(alloc: std.mem.Allocator, lines: []const Line, d1: []const Default
                 sc.nbits = @max(sc.nbits, g.cstart + g.clen);
                 sc.nbits_req = @max(sc.nbits_req, g.cstart + g.clen);
             }
+            if (body) sc.needs_sub = true;
+            continue;
+        }
+        // a line of a gate block (bits only) counts toward the length only
+        // when its block holds (0.17)
+        if (ln.gate != null) {
             if (body) sc.needs_sub = true;
             continue;
         }
@@ -2601,7 +2776,7 @@ fn buildGroupBodies(alloc: std.mem.Allocator, lines: []const Line) anyerror!void
         if (ln.tag != .group) continue;
         const g = ln.grp.?;
         try buildGroupBodies(alloc, g.lines);
-        g.body = try buildScope(alloc, g.lines, g.defaults.items, &.{}, true);
+        g.body = try buildScope(alloc, g.lines, g.defaults.items, &.{}, true, g.gates.items, &.{});
     }
 }
 
@@ -2626,12 +2801,12 @@ fn armorCheck(alloc: std.mem.Allocator, p: *Pack, diag: *Diag) anyerror!void {
 fn finishPack(alloc: std.mem.Allocator, p: *Pack) !void {
     try buildGroupBodies(alloc, p.common.items);
     for (p.kinds.items) |*k| try buildGroupBodies(alloc, k.lines.items);
-    p.common_scope = try buildScope(alloc, p.common.items, p.common_defaults.items, &.{}, false);
+    p.common_scope = try buildScope(alloc, p.common.items, p.common_defaults.items, &.{}, false, p.common_gates.items, &.{});
     for (p.kinds.items, 0..) |*k, i| {
         const act = try alloc.alloc(Line, p.common.items.len + k.lines.items.len);
         @memcpy(act[0..p.common.items.len], p.common.items);
         @memcpy(act[p.common.items.len..], k.lines.items);
-        k.scope = try buildScope(alloc, act, k.defaults.items, p.common_defaults.items, false);
+        k.scope = try buildScope(alloc, act, k.defaults.items, p.common_defaults.items, false, p.common_gates.items, k.gates.items);
         if (p.wire == .xml) {
             const gop = try p.root_index.getOrPut(k.root orelse p.root);
             if (!gop.found_existing) gop.value_ptr.* = std.ArrayList(usize).init(alloc);
@@ -2846,8 +3021,10 @@ pub const Engine = struct {
         }
         // every key is known now: each line's key type, each default's value
         try self.resolveLines(p, p.common.items);
+        try self.resolveGates(p, p.common_gates.items);
         for (p.kinds.items) |*k| {
             try self.resolveLines(p, k.lines.items);
+            try self.resolveGates(p, k.gates.items);
             for (k.defaults.items) |*d| try self.readDefault(p, d);
         }
         for (p.common_defaults.items) |*d| try self.readDefault(p, d);
@@ -3026,9 +3203,21 @@ pub const Engine = struct {
                 .group => {
                     const g = ln.grp.?;
                     try self.resolveLines(p, g.lines);
+                    try self.resolveGates(p, g.gates.items);
                     for (g.defaults.items) |*d| try self.readDefault(p, d);
                 },
                 else => {},
+            }
+        }
+    }
+
+    // The defaults of each gate block (0.17), by key; the first line of a key wins.
+    fn resolveGates(self: *Engine, p: *const Pack, gates: []const *Gate) anyerror!void {
+        for (gates) |gt| {
+            for (gt.defaults.items) |*d| {
+                try self.readDefault(p, d);
+                const gop = try gt.dmap.getOrPut(self.alloc, d.key);
+                if (!gop.found_existing) gop.value_ptr.* = d.value;
             }
         }
     }
@@ -4902,6 +5091,8 @@ fn bitsWriteField(alloc: std.mem.Allocator, p: *const Pack, out: []u8, base: usi
 // The message being written: it grows as items are added, zero-filled.
 const BitsOut = struct {
     buf: std.ArrayList(u8),
+    // one past the furthest bit the items of any group reach (0: no item)
+    items_end: usize = 0,
 
     fn ensure(self: *BitsOut, nbits: usize) !void {
         const nb = (nbits + 7) / 8;
@@ -5682,6 +5873,26 @@ fn jsonResidue(alloc: std.mem.Allocator, p: *const Pack, lines: []const Line, ob
 fn decodeScope(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, doc: Doc, e: *Entity, diag: *Diag) anyerror!usize {
     var failed = std.StringArrayHashMap([]const u8).init(alloc);
     var end: usize = 0;
+    // Version 0.17: the gate blocks that hold; a held block's fields and
+    // `const` lines that are not `optional` must be in the input
+    var held: []bool = &.{};
+    if (sc.gates.len > 0 and doc == .bits) {
+        const bd = doc.bits;
+        held = try alloc.alloc(bool, sc.gates.len);
+        evalGates(p, sc.gates, bd.buf, bd.nbits, bd.base, held);
+        var hreq: usize = 0;
+        for (sc.lines) |*ln| {
+            const gt = ln.gate orelse continue;
+            if (!held[gt.idx] or ln.optional) continue;
+            if (ln.tag == .field or ln.tag == .constant) hreq = @max(hreq, ln.bstart + ln.blen);
+        }
+        if (hreq > 0) {
+            if (bd.base + hreq > bd.nbits) {
+                return bad(diag, alloc, E.@"malformed-wire", "a field of a block that holds lies beyond the input", .{});
+            }
+            end = bd.base + hreq;
+        }
+    }
     for (sc.lines) |*ln| {
         if (ln.tag == .group) {
             end = @max(end, try decodeGroup(alloc, p, ln.grp.?, doc, e, diag));
@@ -5690,6 +5901,9 @@ fn decodeScope(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, doc: 
         if (ln.tag != .field) continue;
         if (diag.count_only) continue;
         if (e.fields.contains(ln.key)) continue;
+        // a line of a block that does not hold counts as a line whose
+        // locator is absent: decode goes on to the key's next line
+        if (ln.gate) |gt| if (!held[gt.idx]) continue;
         var ok = true;
         const got: ?MV = readField(alloc, p, doc, ln) catch |err| switch (err) {
             error.OutOfMemory => return err,
@@ -5735,6 +5949,20 @@ fn decodeScope(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, doc: 
         if (msg.items.len > 0) return bad(diag, alloc, E.@"transform-decode", "failed fields: {s}", .{msg.items});
     }
     return end;
+}
+
+// Version 0.17: which of a scope's gate blocks hold on `buf`, read from bit
+// `base`, in line order. A gate any of whose bits lies beyond the input's
+// `nbits` bits (a whole number of bytes in hex, of six-bit characters under
+// `armor sixbit`) does not hold, nor does its `!` form; a nested gate is
+// evaluated only when the block enclosing it holds.
+fn evalGates(p: *const Pack, gates: []const *const Gate, buf: []const u8, nbits: usize, base: usize, held: []bool) void {
+    for (gates) |gt| {
+        held[gt.idx] = false;
+        if (gt.parent) |par| if (!held[par.idx]) continue;
+        if (base + gt.bstart + gt.blen > @min(nbits, buf.len * 8)) continue;
+        held[gt.idx] = gt.holds(getBits(buf, p.msb, base + gt.bstart, gt.blen));
+    }
 }
 
 // The items of a list whose number is not known before they are read. They
@@ -6108,7 +6336,7 @@ fn selectKindEncode(alloc: std.mem.Allocator, p: *const Pack, e: *const Entity, 
 // `default` in scope; the CoT type token mapped back to the format's native
 // code; then through the line's `via` table. null: nothing to write.
 fn fieldValue(p: *const Pack, sc: *const Scope, e: *const Entity, ln: *const Line) !?MV {
-    var mv = e.get(ln.key) orelse sc.defaultFor(ln.key) orelse return null;
+    var mv = e.get(ln.key) orelse sc.lineDefault(ln) orelse return null;
     if (mv == .str and std.mem.eql(u8, ln.key, "type")) {
         if (p.tm_cot2nat.get(mv.str)) |nat| mv = MV{ .str = nat };
     }
@@ -6543,14 +6771,18 @@ fn pbEncodeScope(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, roo
 
 // bits: write one scope's lines at bit `base` of the message. The result is
 // one past the furthest bit the scope's items reach (0 when it has none).
-fn bitsEncodeScope(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, out: *BitsOut, base: usize, e: *const Entity, diag: *Diag) anyerror!usize {
-    const te = E.@"transform-encode";
+// Version 0.17: is a line written, given the blocks that are held? A line
+// outside any block always is; `held` empty: only those.
+fn lineOn(ln: *const Line, held: []const bool) bool {
+    const gt = ln.gate orelse return true;
+    return held.len > 0 and held[gt.idx];
+}
+
+// The sentinels of absent keys, then the fields over them, of the lines of
+// one scope that `lineOn` keeps. The caller then writes the gate values, the
+// items, and `bitsWriteFixed`.
+fn bitsWriteLines(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, buf: []u8, base: usize, e: *const Entity, held: []const bool, diag: *Diag) anyerror!void {
     const lines = sc.lines;
-    try out.ensure(base + sc.nbits);
-    // The earlier line takes precedence where two present fields cover the
-    // same bits: write in reverse line order, each over the last.
-    var has_groups = false;
-    var has_fixed = false;
     // Version 0.9: first the sentinels of the absent keys, so that a line
     // whose key is present, or has a default, wins over a sentinel whatever
     // their order (ruling 16); of two sentinels on one bit, the earlier line's
@@ -6558,82 +6790,205 @@ fn bitsEncodeScope(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, o
     while (si > 0) {
         si -= 1;
         const ln = &lines[si];
-        if (ln.tag != .field or !ln.abs_set) continue;
-        if (e.get(ln.key) != null or sc.defaultFor(ln.key) != null) continue;
-        bitsWriteRaw(p, out.buf.items, base, ln, ln.abs_ints[0]);
+        if (ln.tag != .field or !ln.abs_set or !lineOn(ln, held)) continue;
+        if (e.get(ln.key) != null or sc.lineDefault(ln) != null) continue;
+        bitsWriteRaw(p, buf, base, ln, ln.abs_ints[0]);
     }
+    // The earlier line takes precedence where two fields cover the same
+    // bits: write in reverse line order, each over the last.
     var i: usize = lines.len;
     while (i > 0) {
         i -= 1;
         const ln = &lines[i];
-        switch (ln.tag) {
-            .group => has_groups = true,
-            .when, .constant => has_fixed = true,
-            .field => {
-                const mv = (fieldValue(p, sc, e, ln) catch |err|
-                    return bad(diag, alloc, err, "field {s} at {s}", .{ ln.key, ln.locator })) orelse continue;
-                bitsWriteField(alloc, p, out.buf.items, base, ln, mv) catch |err|
-                    return bad(diag, alloc, err, "field {s} at {s}: the value does not encode", .{ ln.key, ln.locator });
-            },
+        if (ln.tag != .field or !lineOn(ln, held)) continue;
+        const mv = (fieldValue(p, sc, e, ln) catch |err|
+            return bad(diag, alloc, err, "field {s} at {s}", .{ ln.key, ln.locator })) orelse continue;
+        bitsWriteField(alloc, p, buf, base, ln, mv) catch |err|
+            return bad(diag, alloc, err, "field {s} at {s}: the value does not encode", .{ ln.key, ln.locator });
+    }
+}
+
+// `when` and `const` values over any field, then each count locator with
+// the number of items.
+fn bitsWriteFixed(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, buf: []u8, base: usize, e: *const Entity, held: []const bool, diag: *Diag) anyerror!void {
+    for (sc.lines) |*ln| {
+        if (ln.isFixed() and lineOn(ln, held)) setBits(buf, p.msb, base + ln.bstart, ln.blen, ln.wint);
+    }
+    for (sc.lines) |*ln| {
+        if (ln.tag != .group) continue;
+        const g = ln.grp.?;
+        if (g.count_fixed != null) continue;
+        const n: u64 = if (e.lists.get(g.list)) |items| items.len else 0;
+        if (g.clen < 64 and (n >> @as(u6, @intCast(g.clen))) != 0) {
+            return bad(diag, alloc, E.@"transform-encode", "group {s}: {d} items do not fit the {d} bits of the count", .{ g.list, n, g.clen });
+        }
+        setBits(buf, p.msb, base + g.cstart, g.clen, n);
+    }
+}
+
+// One gated scope or item, for the check of step 6 once the whole message
+// is written.
+const GateCheck = struct { sc: *const Scope, base: usize, held: []const bool };
+
+fn markRange(m: []bool, start: usize, len: usize) void {
+    @memset(m[start .. start + len], true);
+}
+
+fn anyMarked(m: []const bool, start: usize, len: usize) bool {
+    return std.mem.indexOfScalar(bool, m[start .. start + len], true) != null;
+}
+
+// Encode one scope at bit `base`; the result is one past the furthest bit it
+// and its items reach.
+fn bitsEncodeScope(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, out: *BitsOut, base: usize, e: *const Entity, checks: *std.ArrayList(GateCheck), diag: *Diag) anyerror!usize {
+    const te = E.@"transform-encode";
+    const lines = sc.lines;
+    const ng = sc.gates.len;
+    var held: []bool = &.{};
+    var gval: []?u64 = &.{};
+    var nbits = sc.nbits;
+    if (ng > 0) {
+        // Version 0.17, Encode. The scratch message is read relative to
+        // the scope's first bit, and covers every gate.
+        var tbits = sc.nbits;
+        for (sc.gates) |gt| tbits = @max(tbits, gt.bstart + gt.blen);
+        for (lines) |*ln| {
+            if (ln.tag != .group) tbits = @max(tbits, ln.bstart + ln.blen);
+        }
+        held = try alloc.alloc(bool, ng);
+        gval = try alloc.alloc(?u64, ng);
+        @memset(gval, null);
+        // 1. the open blocks: a field line of the block, or of a block
+        // nested in it, maps a key the entity holds
+        const open = try alloc.alloc(bool, ng);
+        @memset(open, false);
+        for (lines) |*ln| {
+            if (ln.tag != .field or e.get(ln.key) == null) continue;
+            var g = ln.gate;
+            while (g) |gt| : (g = gt.parent) open[gt.idx] = true;
+        }
+        // 2. the lines outside any block, and the bits they wrote: a present
+        // key's, a `const`'s, a `when`'s and a count's (ruling 11)
+        const tbuf = try alloc.alloc(u8, (tbits + 7) / 8);
+        @memset(tbuf, 0);
+        try bitsWriteLines(alloc, p, sc, tbuf, 0, e, &.{}, diag);
+        try bitsWriteFixed(alloc, p, sc, tbuf, 0, e, &.{}, diag);
+        const written = try alloc.alloc(bool, tbits);
+        @memset(written, false);
+        for (lines) |*ln| {
+            if (ln.gate != null) continue;
+            switch (ln.tag) {
+                .field => if (e.get(ln.key) != null) markRange(written, ln.bstart, ln.blen),
+                .when, .constant => markRange(written, ln.bstart, ln.blen),
+                .group => {
+                    const g = ln.grp.?;
+                    if (g.count_fixed == null) markRange(written, g.cstart, g.clen);
+                },
+            }
+        }
+        // 3. each open block none of whose gate bits is written gets its gate
+        // value, in line order; those bits are then written
+        for (sc.gates) |gt| {
+            if (!open[gt.idx] or anyMarked(written, gt.bstart, gt.blen)) continue;
+            const v = gt.encodeValue() orelse continue;
+            setBits(tbuf, p.msb, gt.bstart, gt.blen, v);
+            markRange(written, gt.bstart, gt.blen);
+            gval[gt.idx] = v;
+        }
+        // 4. the held blocks, evaluated on those bits; bits nothing wrote
+        // read as 0
+        evalGates(p, sc.gates, tbuf, tbuf.len * 8, 0, held);
+        // 6, second half: a key the entity holds mapped only by lines of
+        // blocks that are not held
+        for (lines) |*ln| {
+            if (ln.tag != .field or ln.gate == null or lineOn(ln, held) or e.get(ln.key) == null) continue;
+            var mapped = false;
+            for (lines) |*l2| {
+                if (l2.tag == .field and lineOn(l2, held) and std.mem.eql(u8, l2.key, ln.key)) {
+                    mapped = true;
+                    break;
+                }
+            }
+            if (!mapped) return bad(diag, alloc, te, "field {s}: every line of the key is in a gate block that does not hold", .{ln.key});
+        }
+        // the length: the held blocks' lines and their gate locators
+        for (lines) |*ln| {
+            if (ln.tag != .group and ln.gate != null and lineOn(ln, held)) nbits = @max(nbits, ln.bstart + ln.blen);
+        }
+        for (sc.gates) |gt| {
+            if (held[gt.idx]) nbits = @max(nbits, gt.bstart + gt.blen);
+        }
+    }
+    try out.ensure(base + nbits);
+    // 5. the lines outside any block and those of the held blocks
+    try bitsWriteLines(alloc, p, sc, out.buf.items, base, e, held, diag);
+    if (ng > 0) {
+        // each held block's gate value over the bits that only a default or
+        // a sentinel wrote (ruling 7)
+        const strong = try alloc.alloc(bool, nbits);
+        @memset(strong, false);
+        for (lines) |*ln| {
+            if (ln.tag == .field and lineOn(ln, held) and e.get(ln.key) != null) markRange(strong, ln.bstart, ln.blen);
+        }
+        for (sc.gates) |gt| {
+            if (!held[gt.idx]) continue;
+            const v = gval[gt.idx] orelse continue;
+            for (0..gt.blen) |k| {
+                if (strong[gt.bstart + k]) continue;
+                const bit = if (p.msb) (v >> @as(u6, @intCast(gt.blen - 1 - k))) & 1 else (v >> @as(u6, @intCast(k))) & 1;
+                setBits(out.buf.items, p.msb, base + gt.bstart + k, 1, bit);
+            }
         }
     }
     // the items of each group, back to back
-    var end: usize = 0;
-    if (has_groups) {
-        for (lines) |*ln| {
-            if (ln.tag != .group) continue;
-            const g = ln.grp.?;
-            const got = e.lists.get(g.list);
-            if (g.count_fixed) |n| {
-                // an absent list, or another number of items, under a fixed count
-                const have = got orelse return bad(diag, alloc, te, "group {s}: the list is absent and the count is fixed at {d}", .{ g.list, n });
-                if (have.len != n) return bad(diag, alloc, te, "group {s}: {d} items, the count is fixed at {d}", .{ g.list, have.len, n });
-            }
-            const items: []const Entity = got orelse &.{};
-            const size = @max(g.item_bits, g.body.nbits);
-            var pos = base + g.gstart;
-            for (items) |*it| {
-                try out.ensure(pos + size);
-                const iend = try bitsEncodeScope(alloc, p, &g.body, out, pos, it, diag);
-                pos = @max(pos + size, iend);
-            }
-            if (items.len > 0) end = @max(end, pos);
+    var end: usize = base + nbits;
+    for (lines) |*ln| {
+        if (ln.tag != .group) continue;
+        const g = ln.grp.?;
+        const got = e.lists.get(g.list);
+        if (g.count_fixed) |n| {
+            // an absent list, or another number of items, under a fixed count
+            const have = got orelse return bad(diag, alloc, te, "group {s}: the list is absent and the count is fixed at {d}", .{ g.list, n });
+            if (have.len != n) return bad(diag, alloc, te, "group {s}: {d} items, the count is fixed at {d}", .{ g.list, have.len, n });
+        }
+        const items: []const Entity = got orelse &.{};
+        const size = @max(g.item_bits, g.body.nbits);
+        var pos = base + g.gstart;
+        for (items) |*it| {
+            try out.ensure(pos + size);
+            const iend = try bitsEncodeScope(alloc, p, &g.body, out, pos, it, checks, diag);
+            pos = @max(pos + size, iend);
+        }
+        if (items.len > 0) {
+            end = @max(end, pos);
+            out.items_end = @max(out.items_end, pos);
         }
     }
-    // `when` and `const` values are written over any field
-    if (has_fixed) {
-        for (lines) |*ln| {
-            if (ln.isFixed()) setBits(out.buf.items, p.msb, base + ln.bstart, ln.blen, ln.wint);
-        }
-    }
-    // a count locator is written with the number of items, over any field
-    if (has_groups) {
-        for (lines) |*ln| {
-            if (ln.tag != .group) continue;
-            const g = ln.grp.?;
-            if (g.count_fixed != null) continue;
-            const n: u64 = if (e.lists.get(g.list)) |items| items.len else 0;
-            if (g.clen < 64 and (n >> @as(u6, @intCast(g.clen))) != 0) {
-                return bad(diag, alloc, te, "group {s}: {d} items do not fit the {d} bits of the count", .{ g.list, n, g.clen });
-            }
-            setBits(out.buf.items, p.msb, base + g.cstart, g.clen, n);
-        }
-    }
+    // `when` and `const` values are written over any field, and a count
+    // locator with the number of items
+    try bitsWriteFixed(alloc, p, sc, out.buf.items, base, e, held, diag);
+    if (ng > 0) try checks.append(.{ .sc = sc, .base = base, .held = held });
     return end;
 }
 
 // The length `L` of an armored fixed-layout message (Version 0.14): one past
 // the highest bit of any `field`, `when` or `const` line of the scope, of a
 // count locator, or of the items (`end`), except an `optional` field with no
-// value and no default, unless it has `absent`.
-fn armorLength(p: *const Pack, sc: *const Scope, e: *const Entity, end: usize) !usize {
+// value and no default, unless it has `absent`. With gate blocks (0.17) the
+// lines of a block count only when it is held (`held`, by gate index; empty:
+// the scope has no gate), and so does a held block's gate locator.
+fn armorLength(p: *const Pack, sc: *const Scope, e: *const Entity, end: usize, held: []const bool) !usize {
     var l: usize = end;
+    for (sc.gates) |gt| {
+        if (held.len > 0 and held[gt.idx]) l = @max(l, gt.bstart + gt.blen);
+    }
     for (sc.lines) |*ln| {
         if (ln.tag == .group) {
             const g = ln.grp.?;
             if (g.count_fixed == null) l = @max(l, g.cstart + g.clen);
             continue;
         }
+        if (!lineOn(ln, held)) continue;
         // a field with `absent` writes its first sentinel (ruling 12 of 0.14)
         if (ln.isField() and ln.optional and !ln.abs_set and (try fieldValue(p, sc, e, ln)) == null) continue;
         l = @max(l, ln.bstart + ln.blen);
@@ -6753,9 +7108,29 @@ fn encodePack(alloc: std.mem.Allocator, p: *const Pack, e: *const Entity, diag: 
             // padded with zero bits to whole words
             var out = BitsOut{ .buf = std.ArrayList(u8).init(alloc) };
             try out.ensure(p.wordBytes(sc.nbits) * 8);
-            const end = try bitsEncodeScope(alloc, p, sc, &out, 0, e, diag);
-            if (p.armor) return armorEncode(alloc, out.buf.items, try armorLength(p, sc, e, end));
+            var checks = std.ArrayList(GateCheck).init(alloc);
+            const end = try bitsEncodeScope(alloc, p, sc, &out, 0, e, &checks, diag);
+            // armored (Version 0.14): the first `L` bits, padded to a whole
+            // character; the held blocks of the selected scope give `L`
+            var top_held: []const bool = &.{};
+            for (checks.items) |ck| {
+                if (ck.sc == sc and ck.base == 0) top_held = ck.held;
+            }
+            const l_armor = if (p.armor) try armorLength(p, sc, e, out.items_end, top_held) else 0;
             try out.ensure(p.wordBytes(@max(sc.nbits, end)) * 8);
+            // the bits the output holds, as decode will see them
+            const out_bits = if (p.armor) (l_armor + 5) / 6 * 6 else out.buf.items.len * 8;
+            if (p.armor) try out.ensure(out_bits);
+            // Version 0.17, step 6: on the final output, every held block
+            // holds and every other block does not, for every scope and item
+            for (checks.items) |ck| {
+                const now = try alloc.alloc(bool, ck.held.len);
+                evalGates(p, ck.sc.gates, out.buf.items, out_bits, ck.base, now);
+                if (!std.mem.eql(bool, now, ck.held)) {
+                    return bad(diag, alloc, E.@"transform-encode", "the output does not decode to the gate blocks chosen", .{});
+                }
+            }
+            if (p.armor) return armorEncode(alloc, out.buf.items, l_armor);
             return hexEncode(alloc, out.buf.items);
         },
         .protobuf => {

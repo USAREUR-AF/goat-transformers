@@ -1,0 +1,31 @@
+# Conformance probe pack for gate blocks (spec 0.17) at the end of the input
+# and the encoded length. Fixed `bits` layout, least significant bit first.
+# Public. No kinds. One byte per word. Exercises: a gate beyond the input does
+# not hold, and neither does its `!` form; a field of a held block beyond the
+# input is `malformed-wire` unless it is `optional`; a gate that holds on
+# zero bits holds on encode wherever it lies (step 4: bits nothing wrote
+# read 0), so a block that is not open is held, writes its sentinel and
+# extends the output; an `optional` line of a held block counts toward the
+# encoded length.
+#
+#   byte 0       x, outside any block
+#   byte 1       the gate of y and z: they are there when the byte is 0
+#   byte 2       y, absent 255
+#   byte 3       z, optional
+#   byte 4       the gate of w: w is there when the byte is not 0
+#   byte 5       w
+format     conformance-gates-edge
+version    0.17.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+word_bytes 1
+field   probe.x   0:0:8    uint
+if      0:8:8  0
+  field probe.y   0:16:8   uint  absent 255
+  field probe.z   0:24:8   uint  optional
+end
+if      !0:32:8 0
+  field probe.w   0:40:8   uint
+end

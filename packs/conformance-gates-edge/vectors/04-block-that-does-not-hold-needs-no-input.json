@@ -1,0 +1,14 @@
+{
+  "name": "block-that-does-not-hold-needs-no-input",
+  "from": "conformance-gates-edge",
+  "to": "conformance-gates-edge",
+  "input": "0501",
+  "expect": "0500ff00",
+  "model": {
+    "probe.x": "5",
+    "@absent": [
+      "probe.y",
+      "probe.z"
+    ]
+  }
+}

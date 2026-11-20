@@ -1,0 +1,15 @@
+{
+  "name": "when-on-the-gate-bits-of-a-block-roundtrip",
+  "from": "conformance-gates-kinds",
+  "to": "conformance-gates-kinds",
+  "input": "02120009",
+  "expect": "02120009",
+  "model": {
+    "@kind": "b",
+    "probe.w": "2",
+    "probe.z": "9",
+    "@absent": [
+      "probe.y"
+    ]
+  }
+}

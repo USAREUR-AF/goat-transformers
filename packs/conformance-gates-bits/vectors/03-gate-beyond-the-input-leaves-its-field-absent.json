@@ -1,0 +1,14 @@
+{
+  "name": "gate-beyond-the-input-leaves-its-field-absent",
+  "from": "conformance-gates-bits",
+  "to": "conformance-gates-bits",
+  "input": "02000000000005",
+  "expect": "0200",
+  "model": {
+    "probe.w": "2",
+    "probe.n": "0",
+    "@absent": [
+      "probe.y"
+    ]
+  }
+}

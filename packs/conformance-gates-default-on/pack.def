@@ -1,0 +1,25 @@
+# Conformance probe pack for gate blocks under a non-zero `default` (spec
+# 0.17, Encode step 4 and ruling 7). Fixed `bits` layout, least significant
+# bit first. Public. No kinds. One byte per word. Exercises: the bit of an
+# outside default that no gate value replaced is read by step 4, so with no
+# key the default 1 holds the block of gate 1 and not that of gate 0; a gate
+# value is written over the default.
+#
+#   byte 0       bit 0: the selector, also the raw key c2 (default 1)
+#   byte 1       val, absent 255, when bit 0 is 1
+#   byte 2       qty, absent 255, when bit 0 is 0
+format     conformance-gates-default-on
+version    0.17.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+word_bytes 1
+field   probe.c2   0:0:1   uint
+default probe.c2   1
+if      0:0:1  1
+  field probe.val  0:8:8   uint  absent 255
+end
+if      0:0:1  0
+  field probe.qty  0:16:8  uint  absent 255
+end

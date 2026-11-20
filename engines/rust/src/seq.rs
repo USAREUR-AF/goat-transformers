@@ -470,7 +470,7 @@ impl<'a> Parser<'a> {
                 if toks.len() != 3 {
                     return bad(ln, "default needs <model-key> <value>");
                 }
-                self.defaults.push(DefaultDef { model_key: toks[1].clone(), text: toks[2].clone(), line: ln, value: None });
+                self.defaults.push(DefaultDef { model_key: toks[1].clone(), text: toks[2].clone(), line: ln, value: None, gate: None });
                 return Ok(None);
             }
             "field" => {
@@ -490,6 +490,7 @@ impl<'a> Parser<'a> {
                     key_type: None,
                     absent_arg: None,
                     absent: Vec::new(),
+                    gate: None,
                 };
                 for table in field_options(&mut f, toks, ln, false)? {
                     self.vias.push((table, ln));
@@ -870,6 +871,7 @@ pub fn parse(text: &str) -> Result<Pack, Error> {
         text: crate::text::TextConf::default(),
         tlv: crate::tlv::TlvConf::default(),
         armor,
+        gates: Vec::new(),
     })
 }
 

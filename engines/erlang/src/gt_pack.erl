@@ -12,6 +12,9 @@
 %%      | {wh, Loc, Value, LocText}          % `when`
 %%      | {const, Loc, Value, LocText}
 %%      | {group, List, GroupLoc, Spec, Body, LocText}
+%%      | {gate, {BitOffset, Len}, Negated, [Value], Body, LocText}   (bits, 0.17)
+%%   a gate block's Body = #{lines => [Line], defaults => [{Key, ValueText}]}:
+%%          its `field`, `const` and nested gate lines, and its defaults
 %%   Body = #{lines => [Line], defaults => [{Key, ValueText}]}; the locators
 %%          of its lines are relative to one item
 %%   Spec = none | {ItemBits, {loc, {BitOffset, Len}} | {fixed, N}}   (bits)
@@ -86,7 +89,7 @@ parse(Bin) ->
              delimiter => <<",">>, start => <<>>, checksum => none, text_seen => #{},
              tag_enc => ber_oid, len_enc => ber, key => none, sum16 => none, tlv_seen => #{},
              armor => hex, armor_seen => false,
-             cur => common, late => [], gstack => [], sstack => [],
+             cur => common, late => [], gstack => [], sstack => [], bstack => [],
              headers => #{}, listed_seen => false},
     P0 = lists:foldl(fun(L, P) ->
                              case tokens(L) of
@@ -150,6 +153,11 @@ parse(Bin) ->
         [#{list := Open} | _] ->
             load_error('bad-directive', "group ~s has no end line", [Open])
     end,
+    case maps:get(bstack, P0) of
+        [] -> ok;
+        [#{loct := GateLoc} | _] ->
+            load_error('bad-directive', "the gate block if ~s has no end line", [GateLoc])
+    end,
     case maps:get(sstack, P0) of
         [] -> ok;
         [#{type := Type} | _] ->
@@ -177,7 +185,7 @@ parse(Bin) ->
              fixed -> check_scopes(P2), P2
          end,
     P = maps:without([cur, late, kind_names, table_names, gstack, sstack, text_seen, tlv_seen,
-                      headers, listed_seen, armor_seen, body_kind_seen],
+                      headers, listed_seen, armor_seen, body_kind_seen, bstack],
                      P3#{defaults := lists:reverse(maps:get(defaults, P1)),
                          typemap := lists:reverse(maps:get(typemap, P1)),
                          sources := lists:reverse(maps:get(sources, P1)),
@@ -291,6 +299,7 @@ named_scope(Lines, Defaults) ->
            {field, K, _, Tr, _, Opts} -> [{K, {field, Tr, element(1, Opts)}}];
            {group, List, _, _, #{lines := Ls, defaults := Ds}, _} ->
                [{List, list} | named_scope(Ls, Ds)];
+           {gate, _, _, _, #{lines := Ls, defaults := Ds}, _} -> named_scope(Ls, Ds);
            {sfield, Keys, _, Tr, _, _, _, _} -> [{K, {field, Tr, Via}} || {K, Via} <- Keys];
            {sgroup, List, _, #{lines := Ls, defaults := Ds, kinds := Ks}} ->
                [{List, list} | named_scope(Ls, Ds)] ++
@@ -332,6 +341,7 @@ key_names(Lines, Prefix) ->
            {group, List, _, _, #{lines := Ls}, _} ->
                Name = <<Prefix/binary, List/binary, "[]">>,
                [Name | key_names(Ls, <<Name/binary, ".">>)];
+           {gate, _, _, _, #{lines := Ls}, _} -> key_names(Ls, Prefix);
            {sfield, Keys, _, _, _, _, _, _} -> [<<Prefix/binary, K/binary>> || {K, _} <- Keys];
            {sgroup, List, _, #{lines := Ls, kinds := Ks}} ->
                Name = <<Prefix/binary, List/binary, "[]">>,
@@ -481,12 +491,18 @@ pre_line([Dir | Args], P0) ->
     end.
 
 dispatch(Tokens, #{layout := sequential, wire := bits} = P) -> seq_line(Tokens, P);
-dispatch([Dir | _] = Tokens, #{gstack := Stack} = P) ->
-    %% inside a group only these are lines of the body (ruling 18 of 0.7);
-    %% a name that is no directive at all stays unknown-directive
-    Allowed = [<<"field">>, <<"const">>, <<"default">>, <<"group">>, <<"end">>],
-    case Stack =/= [] andalso not lists:member(Dir, Allowed)
-        andalso lists:member(Dir, known_directives()) of
+dispatch([Dir | _] = Tokens, #{gstack := Stack, bstack := BStack} = P) ->
+    %% inside a group only these are lines of the body (ruling 18 of 0.7),
+    %% inside a gate block fewer (0.17); a name that is no directive at all
+    %% stays unknown-directive
+    Known = lists:member(Dir, known_directives()),
+    InBlock = [<<"field">>, <<"const">>, <<"default">>, <<"if">>, <<"end">>],
+    Allowed = [<<"field">>, <<"const">>, <<"default">>, <<"group">>, <<"if">>, <<"end">>],
+    case BStack =/= [] andalso not lists:member(Dir, InBlock) andalso Known of
+        true -> load_error('bad-directive', "~s is not allowed inside a gate block", [Dir]);
+        false -> ok
+    end,
+    case Stack =/= [] andalso not lists:member(Dir, Allowed) andalso Known of
         true -> load_error('bad-directive', "~s is not allowed inside a group", [Dir]);
         false -> apply_line(Tokens, P)
     end.
@@ -587,6 +603,8 @@ apply_line([<<"const">>, LocS, ValS], P0) ->
     no_pair(Loc, "const", LocS),
     {Val, P1} = fixed_value(const, Wire, Loc, LocS, ValS, P0),
     add_line({const, Loc, Val, LocS}, P1);
+apply_line([<<"default">>, Key, Val], #{bstack := [#{defaults := D} = B | Rest]} = P) ->
+    P#{bstack := [B#{defaults := [{Key, Val} | D]} | Rest]};
 apply_line([<<"default">>, Key, Val], #{gstack := [#{defaults := D} = G | Rest]} = P) ->
     P#{gstack := [G#{defaults := [{Key, Val} | D]} | Rest]};
 apply_line([<<"default">>, Key, Val], #{cur := Cur} = P) ->
@@ -606,6 +624,51 @@ apply_line([<<"group">>, List, LocS | Rest], #{gstack := Stack} = P) ->
     G = #{list => List, loc => Loc, spec => Spec, loct => LocS,
           lines => [], defaults => []},
     P1#{gstack := [G | Stack]};
+%% a gate block on a fixed layout (0.17): `if [!]<locator> <value>[,<value>...]`
+apply_line([<<"if">> | Args], P) ->
+    case need_wire(P) of
+        bits -> ok;
+        W -> load_error('bad-directive', "a gate block is valid only on a bits wire, not ~s", [W])
+    end,
+    {Neg, LocS} = case Args of
+                      [<<"!", L/binary>> | _] -> {true, L};
+                      [L | _] -> {false, L};
+                      [] -> load_error('bad-directive', "if names no locator", [])
+                  end,
+    %% a malformed gate locator is bad-directive (ruling 12 of 0.17), not the
+    %% bad-locator of a field, when or const line (ruling 5a of 0.11)
+    {Off, Len} = try top_loc(bits, LocS, P)
+                 catch error:{line_error, _, _} ->
+                         load_error('bad-directive', "if ~s: the gate locator is not <word>:<pos>:<len>",
+                                    [LocS])
+                 end,
+    case Len =< 64 of
+        true -> ok;
+        false -> load_error('bad-directive', "gate locator ~s is longer than 64 bits", [LocS])
+    end,
+    ValS = case Args of
+               [_, V] -> V;
+               [_] -> load_error('bad-directive', "if ~s lists no value", [LocS]);
+               _ -> load_error('bad-directive', "if ~s: the values are one comma-separated list", [LocS])
+           end,
+    Vals = [case uint(V) of
+                N when is_integer(N), N < (1 bsl Len) -> N;
+                N when is_integer(N) ->
+                    load_error('bad-directive', "if ~s: value ~s does not fit ~p bits", [LocS, V, Len]);
+                error ->
+                    load_error('bad-directive', "if ~s: value ~s is not an unsigned decimal integer",
+                               [LocS, V])
+            end || V <- binary:split(ValS, <<",">>, [global])],
+    case length(lists:usort(Vals)) =:= length(Vals) of
+        true -> ok;
+        false -> load_error('bad-directive', "if ~s lists a value twice", [LocS])
+    end,
+    B = #{loc => {Off, Len}, neg => Neg, vals => Vals, loct => LocS, lines => [], defaults => []},
+    P#{bstack := [B | maps:get(bstack, P)]};
+apply_line([<<"end">>], #{bstack := [B | Rest]} = P) ->
+    #{loc := Loc, neg := Neg, vals := Vals, loct := LocS, lines := Ls, defaults := Ds} = B,
+    Body = #{lines => lists:reverse(Ls), defaults => lists:reverse(Ds)},
+    add_line({gate, Loc, Neg, Vals, Body, LocS}, P#{bstack := Rest});
 apply_line([<<"end">>], #{gstack := Stack} = P) ->
     case Stack of
         [] -> load_error('bad-directive', "end with no open group", []);
@@ -682,6 +745,8 @@ need_wire(#{wire := undefined}) ->
     load_error('bad-directive', "the pack has no wire line", []);
 need_wire(#{wire := W}) -> W.
 
+add_line(Line, #{bstack := [#{lines := Ls} = B | Rest]} = P) ->
+    P#{bstack := [B#{lines := [Line | Ls]} | Rest]};
 add_line(Line, #{gstack := [#{lines := Ls} = G | Rest]} = P) ->
     P#{gstack := [G#{lines := [Line | Ls]} | Rest]};
 add_line(Line, #{cur := common, common := C} = P) -> P#{common := [Line | C]};
@@ -1088,7 +1153,10 @@ prefixes(Path) -> prefixes(lists:droplast(Path), []).
 prefixes([], Acc) -> Acc;
 prefixes(Path, Acc) -> prefixes(lists:droplast(Path), [Path | Acc]).
 
-check_scope(Lines, ItemBits, Wire) ->
+check_scope(Lines0, ItemBits, Wire) ->
+    %% a gate locator and the lines of a gate block are checked as lines of
+    %% the scope (ruling 2 of 0.17)
+    Lines = expand_gates(Lines0),
     Groups = [G || G <- Lines, element(1, G) =:= group],
     %% a field's locator does not pass through a group's path (ruling 21 of
     %% 0.7): on xml the field's element path, on json and protobuf a proper
@@ -1103,6 +1171,19 @@ check_scope(Lines, ItemBits, Wire) ->
                                      [Key, LocT]);
                   false -> ok
               end;
+         (_) -> ok
+      end, Lines),
+    %% a gate does not lie within the items of a fixed-count group of its
+    %% scope (ruling 9 of 0.17)
+    lists:foreach(
+      fun({gloc, {Off, Len}, LocT}) ->
+              lists:foreach(
+                fun({group, List, Start, {Bits, {fixed, N}}, _, _})
+                      when Off < Start + Bits * N, Off + Len > Start ->
+                        load_error('bad-directive', "gate ~s lies within the items of group ~s",
+                                   [LocT, List]);
+                   (_) -> ok
+                end, Groups);
          (_) -> ok
       end, Lines),
     Lists = [element(2, G) || G <- Groups],
@@ -1165,10 +1246,20 @@ check_scope(Lines, ItemBits, Wire) ->
               end, Lines)
     end.
 
+%% The lines of a scope with each gate block replaced by its locator
+%% ({gloc, Loc, LocText}, for the checks only) and its lines.
+expand_gates(Lines) ->
+    lists:append([case L of
+                      {gate, Loc, _, _, #{lines := Ls}, LocT} ->
+                          [{gloc, Loc, LocT} | expand_gates(Ls)];
+                      _ -> [L]
+                  end || L <- Lines]).
+
 %% position of the locator, and of the locator text from the end, in a line
 line_loc_pos({field, _, _, _, _, _}) -> 3;
 line_loc_pos({wh, _, _, _}) -> 2;
-line_loc_pos({const, _, _, _}) -> 2.
+line_loc_pos({const, _, _, _}) -> 2;
+line_loc_pos({gloc, _, _}) -> 2.
 
 line_text_back({field, _, _, _, _, _}) -> 1;
 line_text_back(_) -> 0.

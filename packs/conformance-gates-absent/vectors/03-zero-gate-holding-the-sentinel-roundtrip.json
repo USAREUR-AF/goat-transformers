@@ -1,0 +1,16 @@
+{
+  "name": "zero-gate-holding-the-sentinel-roundtrip",
+  "from": "conformance-gates-absent",
+  "to": "conformance-gates-absent",
+  "input": "00ff00",
+  "expect": "00ff00",
+  "model": {
+    "probe.x": "0",
+    "probe.c1": "0",
+    "@absent": [
+      "probe.y",
+      "probe.z",
+      "probe.w"
+    ]
+  }
+}

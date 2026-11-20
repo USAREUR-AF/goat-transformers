@@ -1,0 +1,10 @@
+{
+  "name": "second-meaning-reencodes-in-the-first",
+  "from": "conformance-gates-select-range",
+  "to": "conformance-gates-select-range",
+  "input": "0128",
+  "expect": "000a",
+  "model": {
+    "hae": "1000"
+  }
+}

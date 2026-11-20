@@ -1,0 +1,7 @@
+{
+  "name": "to-bits-not-list-naming-every-value",
+  "from": "conformance-gates-json",
+  "to": "conformance-gates-bits",
+  "input": "{\"w\":1,\"c2\":5}",
+  "expect_error": "transform-encode"
+}

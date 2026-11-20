@@ -3153,3 +3153,165 @@ tiny but not 0 in doubles.
 
 As for every derive function: a wrong number of arguments, an undeclared key,
 or a type that does not fit (ruling 4) is `bad-directive`.
+
+---
+
+# Version 0.17: gated fields on a fixed layout
+
+Status: Written. In many fixed-layout binary messages a field exists only
+when other bits of the message hold a value: a validity bit, a two-bit mode,
+a bit that chooses between two meanings of the same bits. The gating bits may
+come after the field they gate. Version 0.8's `presence` reads its bits at a
+cursor and cannot express this. A gate block on a fixed layout can.
+
+```
+if  <locator> <value>[,<value>…]      # the block holds when the bits equal one of the values
+if  !<locator> <value>[,<value>…]     # the block holds when they equal none
+  field …                             # field, const, default and nested gate blocks
+end
+```
+
+A gate block is valid in a `bits` pack with the fixed layout, in common
+lines, in a kind and inside a group's item. `<locator>` is a fixed-layout
+locator (`<word>:<pos>:<len>`, item-relative inside a group, `len` 1 to 64)
+and may lie before, inside or after the fields it gates, and may overlap
+them. Each `<value>` is an unsigned decimal integer below `2^len`. In a
+`layout sequential` pack `if` keeps its 0.8 meaning (presence names); a gate
+locator there is `bad-directive`.
+
+## Decode
+
+The gate's bits are read as unsigned, as a `when` reads them. The block holds
+when the value equals one of the listed values (with `!`, when it equals
+none of them). A gate any of whose bits lies beyond the input does not hold,
+and neither does its `!` form. When a block holds, its lines are decoded by
+the existing rules; when it does not, those lines set no
+key. Gates nested in a block are evaluated only when the outer
+block holds.
+
+A gate locator does not itself count toward the length decode requires; it is
+read like a `when` (ruling 21 of 0.5). A block's fields and `const` lines count only
+when it holds (ruling 3 of 0.6 for `const`). A field of a held block beyond the input is `malformed-wire` unless it
+is `optional`.
+A line in a block that does not hold counts as a line whose locator is absent
+(Version 0.6, One key at several locators): decode goes on to the key's next
+line.
+
+## Encode
+
+Encode chooses the blocks that hold, writes them, and checks that the output
+decodes the same way.
+
+1. A block is **open** when one of its `field` lines, or a line of
+   a nested open block, maps a key the entity holds (inside a group, the
+   item holds). A `default` or a
+   sentinel (0.9) does not open a block.
+2. The bits are first written by the lines outside any block, by the 0.5
+   and 0.6 rules (`const` and `when` included). Bits that a line with a
+   present key, a `const`, a `when` or a group count wrote are **written**.
+   The zero bits an absent key leaves are not written, and neither are the
+   bits of a `default` or a sentinel: a gate value of step 3 replaces them.
+3. In line order, depth first (a block, then the blocks nested in it,
+   then the next block), each open
+   block none of whose gate bits is written gets its gate value: the first
+   listed value, or for `!` the smallest value not listed (none when the
+   list names every value). Those bits are then written. A gate any of
+   whose bits is already written gets no value; the block is evaluated on
+   the bits as they are.
+4. Each block is evaluated on the bits as written, as decode evaluates it
+   (a nested block only when the block enclosing it holds), on the bits of
+   step 3 together with the bits an outside `default` or sentinel wrote
+   where no gate value replaced them; bits nothing wrote read as 0,
+   wherever they lie. The blocks that hold are the **held** blocks.
+5. The output is the 0.5 encode of the lines outside any block and the
+   lines of the held blocks, in line order (ruling 5 of 0.5 for overlaps;
+   `const` and `when` written last), with the gate value of step 3 of each
+   held block written over the bits of a `default` or a sentinel and under
+   the bits of a line with a present key, a `const` or a `when`. A block
+   that is not held writes nothing, its `const` lines and its gate value
+   included; a held block's `const` lines are written and count toward the
+   length.
+6. The output must decode to the same choice: every held block holds on the
+   output and every other block does not. Otherwise, and when a key the
+   entity holds is mapped only by lines of blocks that are not held, the
+   encode is `transform-encode`.
+
+The encoded length is the furthest bit over the lines outside any block, the
+held blocks' lines and their gate locators. A block that is not open can be
+held by the zero bits of its gate (a validity bit whose value 0 means valid);
+it is then written, with its sentinels and defaults, and its bits count toward
+the length.
+
+A key mapped in two blocks of opposite gates (one bit choosing between two
+meanings) opens both; step 3 gives the earlier block its gate, step 4 holds
+that block only, and the round trip keeps the value when a raw key outside the
+blocks maps the gate bits, because then those bits are written in step 2.
+
+## Load errors
+
+`bad-directive`: a gate on a wire other than `bits`, a gate locator in a
+sequential layout, a presence name (`if p.1`) in a fixed layout, a value that
+is not an unsigned decimal integer or does not fit `len`, an empty value list
+or a value listed twice, `if` without `end`, or a line in a block other than
+`field`, `const`, `default` or a nested gate block (`when`, `group`, `kind`,
+`requires`, `typemap` and `also`, which is for sequential layouts, are not
+allowed inside). A list that can
+never hold (`if !0:0:1 0,1`) loads.
+
+## Rulings for 0.17
+
+1. **Kinds.** A block inside a kind is evaluated after the kind is
+   selected; a kind's `requires` sees the entity only.
+2. **Groups.** Inside a group's item the gate locator is item-relative and
+   the block is evaluated per item. A gate or a gated field that lies
+   outside its item (`item <bits>`), or at or beyond the start of a
+   locator-counted group in the same scope, is `bad-directive`, as for a
+   field (0.7). A bit outside the item cannot gate a field of every item.
+3. **Overlap** between fields is always allowed (ruling 5 of 0.5).
+4. **Capability.** `model_keys(format)` lists the keys inside blocks as it
+   lists every other mapped key.
+5. **Defaults inside a block** apply to the fields of that block and of
+   the blocks nested in it; the innermost default wins, and a block's
+   default wins over a kind or common default. They are written only when
+   the block is held. This differs on purpose from ruling 2 of 0.8, where a default is
+   content for a presence bit.
+6. **Sentinels.** A block whose fields all decode absent through a sentinel
+   loses its gate on re-encode (it is not open) unless a raw key outside the
+   blocks maps the gate bits; this extends ruling 7 of 0.9.
+7. **Precedence on one bit** in the output of step 5, highest first:
+   `const`, `when` and group counts; field lines, between which ruling 5 of
+   0.5 holds as before (the earlier line wins, a line written from a
+   `default` included); a gate value; a sentinel. A gate value is written
+   over a bit that only a `default` or a sentinel wrote; a bit that a line
+   with a present key covers keeps the field lines' value, even when an
+   earlier `default` line won that bit.
+8. **Gate values of blocks that end up not held** (their enclosing block
+   does not hold) still count as written for the later gates of step 3 and
+   for step 4, and are not part of the output.
+9. **Group items.** A gate of a scope any of whose bits lies within the items of a
+   group of that scope (a fixed `count <n>` group whose item bits are
+   known) is `bad-directive`; a gate inside an item sees the item's bits.
+   Step 6 is checked once, on the final output, for every scope and item.
+10. **Errors of blocks that are not held.** A line of a block that is not
+    held raises no encode error (a value that does not fit that block's
+    transform is not an error when another block of the key is held).
+11. **Written bits** in step 2 are the union of the ranges of the lines
+    that count as writing, whatever line wrote last.
+12. **Malformed gate lines.** Any `if` line that is not one locator and one
+    value list (a space after a comma, a third token, a malformed locator,
+    `len` 0 or above 64) is `bad-directive`.
+13. **When these errors are found.** Every load error of this version is a
+    check after the file is read (ruling 5b of 0.11), except an `if` line with
+    no argument at all, which the line check refuses as the line is read
+    (5b, step 3). So `if 0:0:2 4` (a value that does not fit) followed by a
+    line `bogus` is `unknown-directive`, and so is a gate on the `json` wire
+    followed by `bogus`.
+14. **Gates under six-bit armor** (Version 0.14). The `L` of 0.14 is the
+    encoded length of this version: the furthest bit over the lines outside
+    any block, the held blocks' lines and their gate locators, an `optional`
+    field counted only when it is written; lines of a block that does not
+    hold do not count. On decode, "beyond the input" is measured in the bits
+    the armored text carries. Step 6 decodes the output as it will be read:
+    `L` rounded up to a multiple of 6 bits, padded with zeros. Without armor
+    the encoded length is unchanged: every line of a held block counts, an
+    `optional` one included (`conformance-gates-edge` vector 05).

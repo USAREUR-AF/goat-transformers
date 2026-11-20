@@ -1,0 +1,16 @@
+{
+  "name": "validity-bit-after-its-field-extends-the-output",
+  "from": "conformance-gates-bits",
+  "to": "conformance-gates-bits",
+  "input": "0200000000000501",
+  "expect": "0200000000000501",
+  "model": {
+    "probe.w": "2",
+    "probe.y": "5",
+    "@absent": [
+      "probe.x",
+      "probe.z",
+      "probe.c1"
+    ]
+  }
+}

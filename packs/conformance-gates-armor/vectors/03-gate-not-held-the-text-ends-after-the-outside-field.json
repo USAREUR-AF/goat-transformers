@@ -1,0 +1,16 @@
+{
+  "name": "gate-not-held-the-text-ends-after-the-outside-field",
+  "from": "conformance-gates-armor",
+  "to": "conformance-gates-armor",
+  "input": "15?`",
+  "expect": "1",
+  "model": {
+    "probe.n": "1",
+    "@absent": [
+      "probe.x",
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor: reading, writing, L) and Version 0.17 (Decode; Encode steps 1-6; ruling 14, gates under six-bit armor). Gate bit 12 = 0: x and y absent; re-encode L = 6 (n only), 1 character."
+}

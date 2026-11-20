@@ -1,0 +1,7 @@
+{
+  "name": "to-select-bare-two-keys-on-one-gate",
+  "from": "conformance-gates-json",
+  "to": "conformance-gates-select-bare",
+  "input": "{\"x\":1,\"y\":2}",
+  "expect_error": "transform-encode"
+}

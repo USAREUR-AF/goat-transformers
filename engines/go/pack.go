@@ -89,6 +89,7 @@ type Field struct {
 	absent  *sentinels // the sentinels read for the pack's wire; nil when the line has no `absent`
 	loc     locator
 	group   *Group   // the innermost group the line is in, nil outside a group
+	gate    *Gate    // the innermost gate block the line is in, nil outside a block (0.17)
 	dot     bool     // the locator is `.`: the item itself, as a scalar
 	also    []*Field // sequential layouts: the keys `also` lines bind to the same bits, in line order
 	tf      *transform
@@ -114,6 +115,7 @@ type When struct {
 	Const   bool
 	loc     locator
 	group   *Group // the innermost group the line is in, nil outside a group
+	gate    *Gate  // the innermost gate block the line is in, nil outside a block (0.17)
 	present bool   // the value is the word `present`
 	text    string // text wires: the value, a leading `=` stripped
 	forced  bool   // text wires: the value was written with a leading `=`
@@ -142,12 +144,16 @@ type valueTable struct {
 	modelType Kind // int when every model value is an integer, else float when every one is a number, else string
 }
 
-// line is one `field`, `when` or `const` line, or one `group` block, in file
-// order.
+// line is one `field`, `when` or `const` line, or one `group` block, or the
+// `if` line of a gate block (0.17), in file order. The lines of a gate block
+// follow its `if` line in the same scope, each with in set to its innermost
+// block.
 type line struct {
-	f *Field
-	w *When
-	g *Group
+	f  *Field
+	w  *When
+	g  *Group
+	gt *Gate // the line opens this gate block
+	in *Gate // the innermost gate block the line is in, nil outside a block
 }
 
 // Group is one `group` block (spec/engine-spec.md, "Version 0.7: groups"): a
@@ -207,7 +213,9 @@ type layout struct {
 	groups   []*Group            // the scope's group blocks, in line order
 	groupAt  map[string]*Group   // locator -> the group mapped there
 	root     string              // xml: the root element of this layout
-	maxBit   int                 // bits: the furthest bit a line with a fixed place reaches, from the scope's first bit
+	maxBit   int                 // bits: the furthest bit a line outside any gate block with a fixed place reaches, from the scope's first bit
+	allBit   int                 // bits: the same over every line, gate blocks and their gates included
+	gates    []*Gate             // bits: the scope's gate blocks, in line order (0.17)
 	needBit  int                 // bits: the same, over the lines that are not optional
 	bytes    int                 // bits: the length an encode writes before any counted items, in bytes
 	decBytes int                 // bits: the shortest input a decode accepts, in bytes
@@ -261,6 +269,7 @@ type Pack struct {
 	modelKeys      []string
 	msb            bool
 	seq            bool     // bits: `layout sequential` (spec 0.8)
+	gates          []*Gate  // every gate block, in file order (0.17)
 	sbody          *seqBody // sequential layouts: the lines of a message
 
 	// text wire (spec 0.10)
@@ -427,6 +436,13 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 	var firstWhen *When
 	var cur *KindDef
 	var open []*Group // the group blocks not yet closed, outermost first
+	var gates []*Gate // the gate blocks not yet closed, outermost first (inside the innermost open group)
+	topGate := func() *Gate {
+		if len(gates) == 0 {
+			return nil
+		}
+		return gates[len(gates)-1]
+	}
 	kindNames := map[string]int{}
 	seen := map[string]int{}
 	firstNeedsWire := 0 // the first line that must follow the wire line
@@ -448,6 +464,7 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 	// addLine puts a line in the innermost open group, else in the kind being
 	// read, else among the common lines.
 	addLine := func(ln line) {
+		ln.in = topGate()
 		switch {
 		case len(open) > 0:
 			g := open[len(open)-1]
@@ -523,15 +540,30 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 			if len(sp.stack) > 1 {
 				return nil, perr(ErrBadDirective, n, "", "%s is not allowed inside a block (opened on line %d)", kw, sp.top().line)
 			}
-		} else if seqOnly[kw] && !(kw == "length" && len(args) == 1) {
+		} else if seqOnly[kw] && kw != "if" && !(kw == "length" && len(args) == 1) {
+			// `if` outside a sequential layout opens a gate block (0.17);
+			// `length` with one argument is a tlv directive (0.13).
 			return nil, perr(ErrBadDirective, n, "", "%s is valid only in a pack with `layout sequential`", kw)
+		}
+		if g := topGate(); g != nil {
+			// Inside a gate block only these lines are allowed (0.17, Load
+			// errors). The refusal is a check after the file (0.17 ruling
+			// 13); the line is not read further.
+			switch kw {
+			case "field", "const", "default", "if", "end":
+			default:
+				if late == nil {
+					late = perr(ErrBadDirective, n, "", "%s is not allowed inside a gate block (line %d)", kw, g.Line)
+				}
+				continue
+			}
 		}
 		if len(open) > 0 {
 			// Inside a group only these lines are allowed: `when`, `requires`,
 			// `root` and `kind` are not, and tables are pack-wide and written
 			// outside groups (0.7 ruling 9).
 			switch kw {
-			case "field", "const", "default", "group", "end":
+			case "field", "const", "default", "group", "end", "if":
 			default:
 				return nil, perr(ErrBadDirective, n, "", "%s is not allowed inside a group (group %s, line %d)", kw, inner().List, inner().Line)
 			}
@@ -565,6 +597,23 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 			if err := p.textDirective(kw, args[0], n); err != nil {
 				return nil, perr(ErrBadDirective, n, "", "%v", err)
 			}
+		case "if":
+			// if [!]<word>:<pos>:<len> <value>[,<value>…] (0.17)
+			// An `if` with no argument was refused by the argument count
+			// (5b step 3); every other gate error is a check after the file
+			// (0.17 ruling 13). A gate that does not parse still opens a
+			// block, so that its `end` closes it.
+			g, err := parseGate(args, n)
+			if err != nil {
+				if late == nil {
+					late = perr(ErrBadDirective, n, "", "%v", err)
+				}
+				g = &Gate{Line: n, Locator: args[0]}
+			}
+			g.parent, g.group = topGate(), inner()
+			p.gates = append(p.gates, g)
+			addLine(line{gt: g})
+			gates = append(gates, g)
 		case "group":
 			// group <list> <locator> [item <bits>] [count <count-locator> | count <n>]
 			g := &Group{List: args[0], Locator: args[1], Line: n, parent: inner()}
@@ -589,6 +638,10 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 			addLine(line{g: g})
 			open = append(open, g)
 		case "end":
+			if len(gates) > 0 {
+				gates = gates[:len(gates)-1]
+				continue
+			}
 			if len(open) == 0 {
 				if late == nil {
 					late = perr(ErrBadDirective, n, "", "end with no open group")
@@ -674,7 +727,7 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 				p.keyRefs = append(p.keyRefs, keyRef{key: k, line: n, req: true})
 			}
 		case "field":
-			f := &Field{Key: args[0], Locator: args[1], Transform: args[2], Line: n, group: inner()}
+			f := &Field{Key: args[0], Locator: args[1], Transform: args[2], Line: n, group: inner(), gate: topGate()}
 			if kind, err := p.checkFieldLine(f, args[3:], f.group != nil); err != nil {
 				return nil, perr(kind, n, f.Locator, "%v", err)
 			}
@@ -682,7 +735,7 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 			p.keyRefs = append(p.keyRefs, keyRef{key: f.Key, locator: f.Locator, line: n, field: f})
 			addLine(line{f: f})
 		case "when", "const":
-			w := &When{Locator: args[0], Value: args[1], Line: n, Const: kw == "const", group: inner()}
+			w := &When{Locator: args[0], Value: args[1], Line: n, Const: kw == "const", group: inner(), gate: topGate()}
 			if kind, err := p.checkWhenLine(w.Locator, w.group != nil); err != nil {
 				return nil, perr(kind, n, w.Locator, "%v", err)
 			}
@@ -702,6 +755,13 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 			d := &Default{Key: args[0], Value: args[1], Line: n}
 			p.keyRefs = append(p.keyRefs, keyRef{key: d.Key, line: n, def: d})
 			switch {
+			case topGate() != nil:
+				g := topGate()
+				g.defaults = append(g.defaults, d)
+				if g.defs == nil {
+					g.defs = map[string]*Default{}
+				}
+				g.defs[d.Key] = d
 			case len(open) > 0:
 				g := inner()
 				g.defaults = append(g.defaults, d)
@@ -741,6 +801,9 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 	}
 	if late != nil {
 		return nil, late
+	}
+	if g := topGate(); g != nil {
+		return nil, perr(ErrBadDirective, g.Line, g.Locator, "the gate block has no end")
 	}
 	if g := inner(); g != nil {
 		return nil, perr(ErrBadDirective, g.Line, g.Locator, "group %s has no end", g.List)
@@ -800,6 +863,9 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 	// The tlv directives, on another wire and with their values (0.13).
 	if ln, err := p.checkTLVDirectives(); err != nil {
 		return nil, perr(ErrBadDirective, ln, "", "%v", err)
+	}
+	if len(p.gates) > 0 && p.Wire != "" && p.Wire != WireBits {
+		return nil, perr(ErrBadDirective, p.gates[0].Line, p.gates[0].Locator, "a gate block is valid only on wire bits")
 	}
 	if firstWhen != nil && !p.HasKinds() {
 		return nil, perr(ErrBadDirective, firstWhen.Line, firstWhen.Locator, "a when line needs a pack with a kind line")
@@ -967,9 +1033,15 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 					return nil, perr(ErrBadDirective, w.Line, w.Locator, "%v", err)
 				}
 			}
+			for _, g := range p.gates {
+				g.loc.bit = g.loc.word*p.WordBytes*8 + g.loc.pos
+			}
 			for _, g := range p.Groups {
 				for _, ln := range g.lines {
 					switch {
+					case ln.gt != nil:
+						// A gate block's `if` line is neither a `.` line nor a
+						// line of a message (0.17).
 					case ln.f != nil && ln.f.dot:
 						g.dots = append(g.dots, ln.f)
 					default:
@@ -1326,6 +1398,18 @@ func (p *Pack) checkBitsGroups() (int, string, error) {
 				// A const of an item is bounded by `item <bits>` as a field is
 				// (0.7 ruling 15).
 				end, at, what, loc = ln.w.loc.bit+ln.w.loc.blen, ln.w.Line, "when or const", ln.w.Locator
+			case ln.gt != nil:
+				// A gate is bounded as a field is (0.17 ruling 2).
+				end, at, what, loc = ln.gt.loc.bit+ln.gt.loc.blen, ln.gt.Line, "gate", ln.gt.Locator
+				// A gate may not lie within the items of a fixed-count group
+				// of its scope (0.17 ruling 9).
+				for _, l2 := range lines {
+					if g := l2.g; g != nil && g.countLoc == nil && g.countN > 0 {
+						if ln.gt.loc.bit < g.start+g.countN*g.itemBits && end > g.start {
+							return at, loc, fmt.Errorf("the gate lies within the items of the fixed-count group on line %d", g.Line)
+						}
+					}
+				}
 			default:
 				g := ln.g
 				at, what, loc = g.Line, "group", g.Locator
@@ -1387,10 +1471,17 @@ func (p *Pack) checkBitsGroups() (int, string, error) {
 func (p *Pack) newLayout(k *KindDef, lines []line, defaults ...[]*Default) *layout {
 	l := &layout{kind: k, lines: lines, fieldsAt: map[string][]*Field{}, whenAt: map[string]bool{}, root: p.Root}
 	textWire := p.Wire == WireXML || p.Wire == WireGeoJSON || p.Wire == WireJSON
-	maxBit, needBit := 0, 0
+	maxBit, needBit, allBit := 0, 0, 0
 	for _, ln := range lines {
 		var loc locator
 		optional := false
+		if g := ln.gt; g != nil {
+			l.gates = append(l.gates, g)
+			if end := g.loc.bit + g.loc.blen; end > allBit {
+				allBit = end
+			}
+			continue
+		}
 		if g := ln.g; g != nil {
 			l.groups = append(l.groups, g)
 			if l.groupAt == nil {
@@ -1430,6 +1521,14 @@ func (p *Pack) newLayout(k *KindDef, lines []line, defaults ...[]*Default) *layo
 			}
 		}
 		end := loc.bit + loc.blen
+		if end > allBit {
+			allBit = end
+		}
+		// The lines of a gate block count toward a length only when the
+		// block holds (0.17).
+		if ln.in != nil {
+			continue
+		}
 		if end > maxBit {
 			maxBit = end
 		}
@@ -1437,7 +1536,10 @@ func (p *Pack) newLayout(k *KindDef, lines []line, defaults ...[]*Default) *layo
 			needBit = end
 		}
 	}
-	l.maxBit, l.needBit = maxBit, needBit
+	if maxBit > allBit {
+		allBit = maxBit
+	}
+	l.maxBit, l.needBit, l.allBit = maxBit, needBit, allBit
 	if p.Wire == WireBits && p.WordBytes > 0 {
 		l.bytes = p.wholeWords(maxBit)
 		l.decBytes = p.wholeWords(needBit)

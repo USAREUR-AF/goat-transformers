@@ -1,0 +1,11 @@
+{
+  "name": "field-over-its-own-gate-roundtrip",
+  "from": "conformance-gates-overlap",
+  "to": "conformance-gates-overlap",
+  "input": "0507",
+  "expect": "0507",
+  "model": {
+    "probe.x": "5",
+    "probe.y": "7"
+  }
+}

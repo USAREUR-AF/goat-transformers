@@ -1,0 +1,11 @@
+{
+  "name": "const-of-a-held-block-is-written",
+  "from": "conformance-gates-const",
+  "to": "conformance-gates-const",
+  "input": "010107ff",
+  "expect": "010107aa",
+  "model": {
+    "probe.x": "1",
+    "probe.y": "7"
+  }
+}
