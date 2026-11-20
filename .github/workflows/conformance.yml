@@ -50,6 +50,9 @@ jobs:
         run: python3 -I tools/catalog-figure.py --check-families
       # Every pack has one known licence; licences.json and LICENSING.md are
       # current; the open profile holds nothing restricted (LICENSING.md).
+      # README.md and site/index.html hold sections written from one source.
+      - name: Sections shared by the README and the site are current
+        run: python3 -I tools/doc-sections.py --check
       - name: Licences and profiles
         run: python3 -I tools/licences.py --check
       - name: REUSE lint

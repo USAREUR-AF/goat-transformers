@@ -105,6 +105,7 @@ Run from the repository root unless a directory is named.
 | Rust engine and CLI | `cd engines/rust && cargo build --release` gives `target/release/goat-xf` |
 | Rust, every vector | `cd engines/rust && cargo test --release` |
 | A core or track change carries an ADR | `python3 -I tools/model-governance.py --base origin/main` (CI on every pull request) |
+| Sections shared by README.md and the site (`docs/<name>-section.md`) | `python3 -I tools/doc-sections.py` writes them into both; `--check` (CI) fails when either is stale. Edit the source, never the copies |
 | Licences and profiles (`LICENSING.md`, `licences.json`) | `python3 -I tools/licences.py` writes them; `--check` (CI) fails on a pack with no known licence or a stale file; `--list --profile open`; `reuse lint` (pip `reuse`) |
 | Go | `cd engines/go && go vet ./... && go test ./...` |
 | Python | `cd engines/python && PYTHONPATH=src python3 -m unittest discover -s tests` |
