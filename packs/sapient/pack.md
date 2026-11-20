@@ -20,14 +20,14 @@ of version 0.6 where the generator was given them, and a `group` block of versio
 | messages reachable from `SapientMessage` (through repeated fields too) | 63 |
 | message types on the walked paths | 52 |
 | kinds | 9 |
-| `field` lines | 433 |
+| `field` lines | 435 |
 | of those, inside a `group` | 256 |
 | `group` blocks | 51 |
 | of those, inside another group | 23 |
 | of those, a repeated scalar (one `.` field) | 7 |
 | keys in module `sapient` | 291 |
 | lists in module `sapient` | 49 |
-| `field` lines bound to `core` or `track` keys | 9 |
+| `field` lines bound to `core` or `track` keys | 11 |
 | `const` lines | 2 |
 | value tables (`map` lines) | 1 (9) |
 | vectors (existing and generated) | 17 |
@@ -77,6 +77,7 @@ inside a block start at the item.
 
 | Key | Path | Schema field | Schema comment |
 |---|---|---|---|
+| `track.status_text` | `7.4` | `DetectionReport.state` (string) | Whether a special case is in effect (e.g. object lost) |
 | `lon` | `7.6.1` | `Location.x` (double) | X-coordinate (normally longitude) |
 | `lat` | `7.6.2` | `Location.y` (double) | Y-coordinate (normally latitude) |
 | `hae` | `7.6.3` | `Location.z` (double) | Z-coordinate (normally altitude) |
@@ -99,6 +100,7 @@ is carried, the last on decode):
 | Key | Path | Transform | Table |
 |---|---|---|---|
 | `track.class` | `7.11.1` | `pstring` | `sapient-class` |
+| `track.confidence` | `7.11.2` | `pfloat` | none |
 
 Constants, written on every encode of the kind over any field (engine-spec 0.6):
 

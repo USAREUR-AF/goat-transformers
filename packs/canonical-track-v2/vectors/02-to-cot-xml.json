@@ -3,5 +3,5 @@
   "from": "canonical-track-v2",
   "to": "cot-xml",
   "input": "{\"apiVersion\":\"billie.dev/track-v2\",\"kind\":\"Track\",\"trackId\":\"trk-0042\",\"sourceId\":\"radar-north\",\"trackGeneration\":\"gen-7\",\"testData\":false,\"headerSimulated\":true,\"simulated\":false,\"confirmed\":true,\"coasting\":false,\"finalUpdate\":false,\"observedAt\":\"2021-02-27T20:00:00.250Z\",\"position\":{\"latitudeDeg\":30.0090027,\"longitudeDeg\":-85.9578182,\"altitudeM\":1250.5},\"velocity\":{\"eastMps\":-40.25,\"northMps\":0,\"upMps\":0.5},\"classification\":\"uas\",\"confidence\":0.875,\"positionUncertainty\":{\"sigmaEastM\":9,\"sigmaNorthM\":12,\"sigmaUpM\":30}}",
-  "expect": "<event version=\"2.0\" uid=\"trk-0042\" type=\"a-u-A-M-F-Q\" time=\"2021-02-27T20:00:00.250Z\" start=\"2021-02-27T20:00:00.250Z\"><point lat=\"30.0090027\" lon=\"-85.9578182\" hae=\"1250.5\" ce=\"15\" le=\"30\"/><detail><track course=\"270\" speed=\"40.25\"/></detail></event>"
+  "expect": "<event version=\"2.0\" uid=\"trk-0042\" type=\"a-u-A-M-F-Q\" time=\"2021-02-27T20:00:00.250Z\" start=\"2021-02-27T20:00:00.250Z\" opex=\"s\"><point lat=\"30.0090027\" lon=\"-85.9578182\" hae=\"1250.5\" ce=\"15\" le=\"30\"/><detail><track course=\"270\" speed=\"40.25\"/><remarks>simulated</remarks></detail></event>"
 }

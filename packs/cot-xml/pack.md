@@ -13,6 +13,8 @@ Cursor on Target event XML, the `<event>` document with a `<point>` and
 | `point/@lat`, `@lon`, `@hae`, `@ce`, `@le` | `lat`, `lon`, `hae`, `ce`, `le` | |
 | `detail/contact/@callsign` | `callsign` | |
 | `detail/track/@course`, `@speed` | `course`, `speed_ms` | degrees true, metres per second |
+| `@opex` | `track.opex` | `s` for a simulated track: derived from the track flags (`model/track.def`, `text_if`, spec 0.18) when the entity has none; `e` and `o` decode as written |
+| `detail/remarks` text | `track.status_text` | the track's status flags as comma-separated tokens (`test-data`, `simulated`, `tentative`, `coasting`, `final-update`), derived when the entity has none (`tokens`, spec 0.18), as the open-billie translator writes it; a sender's free-text remarks decode as they are |
 | `@time`, `@stale` as written | `time_text`, `stale_text` | the sender's text, unparsed, for a target that keeps it (`geo-track-v1`). Encode writes `time_ms` and `stale_ms` first, so the text is written only when the instant is absent |
 | `detail/uid/@Droid` | `display_name` | the name the sender shows for the entity |
 

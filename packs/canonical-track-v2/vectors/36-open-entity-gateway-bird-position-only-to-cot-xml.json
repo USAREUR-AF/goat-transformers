@@ -7,7 +7,7 @@
     "stale_ms": "1750000124000",
     "how": "m-g"
   },
-  "expect": "<event version=\"2.0\" uid=\"T-0008\" type=\"a-u-A\" time=\"2025-06-15T15:06:44.000Z\" start=\"2025-06-15T15:06:44.000Z\" stale=\"2025-06-15T15:08:44.000Z\" how=\"m-g\"><point lat=\"64.8401\" lon=\"-147.7012\" hae=\"9999999\" ce=\"9999999\" le=\"9999999\"/></event>",
+  "expect": "<event version=\"2.0\" uid=\"T-0008\" type=\"a-u-A\" time=\"2025-06-15T15:06:44.000Z\" start=\"2025-06-15T15:06:44.000Z\" stale=\"2025-06-15T15:08:44.000Z\" how=\"m-g\" opex=\"s\"><point lat=\"64.8401\" lon=\"-147.7012\" hae=\"9999999\" ce=\"9999999\" le=\"9999999\"/><detail><remarks>test-data,simulated</remarks></detail></event>",
   "source": "USAREUR-AF/open-entity-gateway examples/tracks/example.tracks.jsonl (Apache-2.0)",
   "reference": "the gateway's mapping gives stale 2 minutes after observedAt and how m-g; the CAT062 destination has SAC 25, SIC 4 and numbers tracks in order seen"
 }

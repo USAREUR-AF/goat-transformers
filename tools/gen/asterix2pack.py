@@ -108,6 +108,7 @@ TRACK_KEYS = OrderedDict([
     ("confidence", "float"), ("sigma_east_m", "float"), ("sigma_north_m", "float"),
     ("sigma_up_m", "float"), ("confirmed", "int"), ("coasting", "int"), ("simulated", "int"),
     ("header_simulated", "int"), ("test_data", "int"), ("final_update", "int"),
+    ("simulated_any", "int"), ("tentative", "int"), ("status_text", "string"), ("opex", "string"),
     ("id_scheme", "string"), ("id_value", "string"),
 ])
 TRACK_LISTS = ("identifiers",)
@@ -118,6 +119,11 @@ TRACK_DERIVES = [
     ("le", "copy", ["track.sigma_up_m"]),
     ("track.vel_east_ms", "east_of", ["speed_ms", "course"]),
     ("track.vel_north_ms", "north_of", ["speed_ms", "course"]),
+    ("track.simulated_any", "any", ["track.simulated", "track.header_simulated", "track.test_data"]),
+    ("track.tentative", "not", ["track.confirmed"]),
+    ("track.status_text", "tokens:comma:test-data,simulated,tentative,coasting,final-update",
+     ["track.test_data", "track.simulated_any", "track.tentative", "track.coasting", "track.final_update"]),
+    ("track.opex", "text_if:s", ["track.simulated_any"]),
 ]
 # packs/geojson/pack.def: (key, locator) in line order
 GEOJSON_FIELDS = [
@@ -1396,11 +1402,24 @@ def apply_derives(ent, derives):
     for _ in range(8):
         changed = False
         for target, fn, args in derives:
-            if target in ent or any(a not in ent for a in args):
+            partial = fn == "any" or fn.startswith("tokens:")    # 0.8 and ruling 7 of 0.18
+            if target in ent or (any(a not in ent for a in args) if not partial else
+                                 not any(a in ent for a in args)):
                 continue
-            a = [ent[x] for x in args]
+            a = [ent.get(x) for x in args]
             r = None
-            if fn == "copy":
+            if fn == "any":
+                r = 1 if any(v not in (None, 0) for v in a) else 0
+            elif fn == "not":
+                r = 1 if a[0] == 0 else 0
+            elif fn.startswith("tokens:"):
+                sep, toks = fn.split(":", 2)[1:]
+                sep = {"space": " ", "comma": ",", "colon": ":"}.get(sep, sep)
+                on = [t for t, v in zip(toks.split(","), a) if v not in (None, 0)]
+                r = sep.join(on) if on else None
+            elif fn.startswith("text_if:"):
+                r = fn.split(":", 1)[1] if a[0] not in (None, 0) else None
+            elif fn == "copy":
                 r = a[0]
             elif fn == "hypot":
                 r = math.sqrt(a[0] * a[0] + a[1] * a[1])
@@ -1432,7 +1451,8 @@ def all_derives(model):
     modules in byte order of name."""
     out = []
     for name in sorted(model.modules):
-        out += [(d.target, d.function, d.arguments) for d in model.modules[name].derives]
+        out += [(d.target, d.function + (":" + d.parameter if d.parameter is not None else ""), d.arguments)
+                for d in model.modules[name].derives]
     return out
 
 
@@ -2704,7 +2724,8 @@ def check_lib(lib):
     track = module("model/track.def")
     if track.keys != dict(TRACK_KEYS) or tuple(track.lists) != TRACK_LISTS:
         raise GenError(differs % "TRACK_KEYS", file="model/track.def")
-    if [(d.target, d.function, d.arguments) for d in track.derives] != TRACK_DERIVES:
+    if [(d.target, d.function + (":" + d.parameter if d.parameter is not None else ""), d.arguments)
+            for d in track.derives] != TRACK_DERIVES:
         raise GenError(differs % "TRACK_DERIVES", file="model/track.def")
     if [(a[1], a[2]) for a in fields("packs/geojson/pack.def")] != GEOJSON_FIELDS:
         raise GenError(differs % "GEOJSON_FIELDS", file="packs/geojson/pack.def")

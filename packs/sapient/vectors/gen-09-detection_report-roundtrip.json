@@ -15,6 +15,7 @@
     "sapient.detection_report_object_id": "object_id-6",
     "sapient.detection_report_task_id": "task_id-7",
     "sapient.detection_report_state": "state-8",
+    "track.status_text": "state-8",
     "sapient.location_x": "30",
     "lon": "30",
     "sapient.location_y": "31.75",
