@@ -1,0 +1,20 @@
+{
+  "name": "gen-version_range-roundtrip",
+  "from": "gz-msgs-version-range",
+  "to": "gz-msgs-version-range",
+  "input": "0a1f086410890118ae01220c70726572656c656173652d332a076275696c642d341220089d0210c20218e702220c70726572656c656173652d382a076275696c642d39",
+  "expect": "0a1f086410890118ae01220c70726572656c656173652d332a076275696c642d341220089d0210c20218e702220c70726572656c656173652d382a076275696c642d39",
+  "model": {
+    "@kind": "version_range",
+    "gzmsgsversionrange.min_major": "100",
+    "gzmsgsversionrange.min_minor": "137",
+    "gzmsgsversionrange.min_patch": "174",
+    "gzmsgsversionrange.min_prerelease": "prerelease-3",
+    "gzmsgsversionrange.min_build": "build-4",
+    "gzmsgsversionrange.max_major": "285",
+    "gzmsgsversionrange.max_minor": "322",
+    "gzmsgsversionrange.max_patch": "359",
+    "gzmsgsversionrange.max_prerelease": "prerelease-8",
+    "gzmsgsversionrange.max_build": "build-9"
+  }
+}

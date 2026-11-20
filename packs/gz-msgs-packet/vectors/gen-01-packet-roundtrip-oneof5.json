@@ -1,0 +1,15 @@
+{
+  "name": "gen-packet-roundtrip-oneof5",
+  "from": "gz-msgs-packet",
+  "to": "gz-msgs-packet",
+  "input": "0a07746f7069632d301206747970652d3142120a10000000000000f03f0000000000000640",
+  "expect": "0a07746f7069632d301206747970652d3142120a10000000000000f03f0000000000000640",
+  "model": {
+    "@kind": "packet",
+    "gzmsgspacket.packet_topic": "topic-0",
+    "gzmsgspacket.packet_type": "type-1",
+    "gzmsgspacket.doublev_data.#": "2",
+    "gzmsgspacket.doublev_data[0].gzmsgspacket.double_v_data_item": "1",
+    "gzmsgspacket.doublev_data[1].gzmsgspacket.double_v_data_item": "2.75"
+  }
+}

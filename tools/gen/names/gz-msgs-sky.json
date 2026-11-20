@@ -1,0 +1,23 @@
+{
+ "1.1.1": "header_stamp_sec",
+ "1.1.2": "header_stamp_nsec",
+ "1.2[]": "header_data",
+ "10": "sky_cubemap_uri",
+ "2": "sky_time",
+ "3": "sky_sunrise",
+ "4": "sky_sunset",
+ "5": "sky_wind_speed",
+ "6": "sky_wind_direction",
+ "7.1.1.1": "cloud_ambient_stamp_sec",
+ "7.1.1.2": "cloud_ambient_stamp_nsec",
+ "7.1.2[]": "cloud_ambient_header_data",
+ "7.2": "cloud_ambient_r",
+ "7.3": "cloud_ambient_g",
+ "7.4": "cloud_ambient_b",
+ "7.5": "cloud_ambient_a",
+ "8": "sky_humidity",
+ "9": "sky_mean_cloud_size",
+ "gz.msgs.Header.Map:1": "map_key",
+ "gz.msgs.Header.Map:2[]": "map_value",
+ "gz.msgs.Header.Map:2[]item": "map_value_item"
+}

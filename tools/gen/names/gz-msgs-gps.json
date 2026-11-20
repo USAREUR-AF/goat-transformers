@@ -1,0 +1,15 @@
+{
+ "1.1.1": "header_stamp_sec",
+ "1.1.2": "header_stamp_nsec",
+ "1.2[]": "header_data",
+ "2": "gps_link_name",
+ "3": "gps_latitude_deg",
+ "4": "gps_longitude_deg",
+ "5": "gps_altitude",
+ "6": "gps_velocity_east",
+ "7": "gps_velocity_north",
+ "8": "gps_velocity_up",
+ "gz.msgs.Header.Map:1": "map_key",
+ "gz.msgs.Header.Map:2[]": "map_value",
+ "gz.msgs.Header.Map:2[]item": "map_value_item"
+}

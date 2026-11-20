@@ -1,0 +1,16 @@
+{
+ "1": "lens_type",
+ "10": "lens_intrinsics_fx",
+ "11": "lens_intrinsics_fy",
+ "12": "lens_intrinsics_cx",
+ "13": "lens_intrinsics_cy",
+ "14": "lens_intrinsics_skew",
+ "2": "lens_scale_to_hfov",
+ "3": "lens_c1",
+ "4": "lens_c2",
+ "5": "lens_c3",
+ "6": "lens_focal_length",
+ "7": "lens_function_type",
+ "8": "lens_cutoff_angle",
+ "9": "lens_environment_texture_size"
+}

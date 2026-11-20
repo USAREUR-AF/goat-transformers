@@ -1,0 +1,19 @@
+{
+ "1.1.1": "header_stamp_sec",
+ "1.1.2": "header_stamp_nsec",
+ "1.2[]": "header_data",
+ "2[]": "diagnostics_time",
+ "3.1": "real_time_sec",
+ "3.2": "real_time_nsec",
+ "4.1": "sim_time_sec",
+ "4.2": "sim_time_nsec",
+ "5": "diagnostics_real_time_factor",
+ "gz.msgs.Diagnostics.DiagTime:1": "diag_time_name",
+ "gz.msgs.Diagnostics.DiagTime:2.1": "diag_time_elapsed_sec",
+ "gz.msgs.Diagnostics.DiagTime:2.2": "diag_time_elapsed_nsec",
+ "gz.msgs.Diagnostics.DiagTime:3.1": "diag_time_wall_sec",
+ "gz.msgs.Diagnostics.DiagTime:3.2": "diag_time_wall_nsec",
+ "gz.msgs.Header.Map:1": "map_key",
+ "gz.msgs.Header.Map:2[]": "map_value",
+ "gz.msgs.Header.Map:2[]item": "map_value_item"
+}

@@ -1,0 +1,26 @@
+{
+  "name": "gen-gps-roundtrip",
+  "from": "gz-msgs-gps",
+  "to": "gz-msgs-gps",
+  "input": "0a2e0a05086410890112110a056b65792d39120876616c75652d313012120a066b65792d3131120876616c75652d3132120b6c696e6b5f6e616d652d32190000000000001640210000000000001d40290000000000002240310000000000802540390000000000002940410000000000802c40",
+  "expect": "0a2e0a05086410890112110a056b65792d39120876616c75652d313012120a066b65792d3131120876616c75652d3132120b6c696e6b5f6e616d652d32190000000000001640210000000000001d40290000000000002240310000000000802540390000000000002940410000000000802c40",
+  "model": {
+    "@kind": "gps",
+    "gzmsgsgps.header_stamp_sec": "100",
+    "gzmsgsgps.header_stamp_nsec": "137",
+    "gzmsgsgps.gps_link_name": "link_name-2",
+    "gzmsgsgps.gps_latitude_deg": "5.5",
+    "gzmsgsgps.gps_longitude_deg": "7.25",
+    "gzmsgsgps.gps_altitude": "9",
+    "gzmsgsgps.gps_velocity_east": "10.75",
+    "gzmsgsgps.gps_velocity_north": "12.5",
+    "gzmsgsgps.gps_velocity_up": "14.25",
+    "gzmsgsgps.header_data.#": "2",
+    "gzmsgsgps.header_data[0].gzmsgsgps.map_key": "key-9",
+    "gzmsgsgps.header_data[0].gzmsgsgps.map_value.#": "1",
+    "gzmsgsgps.header_data[0].gzmsgsgps.map_value[0].gzmsgsgps.map_value_item": "value-10",
+    "gzmsgsgps.header_data[1].gzmsgsgps.map_key": "key-11",
+    "gzmsgsgps.header_data[1].gzmsgsgps.map_value.#": "1",
+    "gzmsgsgps.header_data[1].gzmsgsgps.map_value[0].gzmsgsgps.map_value_item": "value-12"
+  }
+}

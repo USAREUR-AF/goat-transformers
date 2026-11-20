@@ -1,0 +1,23 @@
+{
+  "name": "gen-response-roundtrip",
+  "from": "gz-msgs-response",
+  "to": "gz-msgs-response",
+  "input": "0a2b0a05086410890112100a056b65792d36120776616c75652d3712100a056b65792d38120776616c75652d3910ae011a09726571756573742d33220a726573706f6e73652d342a06747970652d35",
+  "expect": "0a2b0a05086410890112100a056b65792d36120776616c75652d3712100a056b65792d38120776616c75652d3910ae011a09726571756573742d33220a726573706f6e73652d342a06747970652d35",
+  "model": {
+    "@kind": "response",
+    "gzmsgsresponse.header_stamp_sec": "100",
+    "gzmsgsresponse.header_stamp_nsec": "137",
+    "gzmsgsresponse.response_id": "174",
+    "gzmsgsresponse.response_request": "request-3",
+    "gzmsgsresponse.response_response": "response-4",
+    "gzmsgsresponse.response_type": "type-5",
+    "gzmsgsresponse.header_data.#": "2",
+    "gzmsgsresponse.header_data[0].gzmsgsresponse.map_key": "key-6",
+    "gzmsgsresponse.header_data[0].gzmsgsresponse.map_value.#": "1",
+    "gzmsgsresponse.header_data[0].gzmsgsresponse.map_value[0].gzmsgsresponse.map_value_item": "value-7",
+    "gzmsgsresponse.header_data[1].gzmsgsresponse.map_key": "key-8",
+    "gzmsgsresponse.header_data[1].gzmsgsresponse.map_value.#": "1",
+    "gzmsgsresponse.header_data[1].gzmsgsresponse.map_value[0].gzmsgsresponse.map_value_item": "value-9"
+  }
+}

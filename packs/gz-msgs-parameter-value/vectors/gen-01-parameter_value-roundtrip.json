@@ -1,0 +1,11 @@
+{
+  "name": "gen-parameter_value-roundtrip",
+  "from": "gz-msgs-parameter-value",
+  "to": "gz-msgs-parameter-value",
+  "input": "0a0c0a0a747970655f75726c2d30",
+  "expect": "0a0c0a0a747970655f75726c2d30",
+  "model": {
+    "@kind": "parameter_value",
+    "gzmsgsparametervalue.data_type_url": "type_url-0"
+  }
+}

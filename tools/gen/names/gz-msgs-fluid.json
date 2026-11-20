@@ -1,0 +1,16 @@
+{
+ "1.1.1": "header_stamp_sec",
+ "1.1.2": "header_stamp_nsec",
+ "1.2[]": "header_data",
+ "2": "fluid_name",
+ "3[]": "fluid_position",
+ "gz.msgs.Header.Map:1": "map_key",
+ "gz.msgs.Header.Map:2[]": "map_value",
+ "gz.msgs.Header.Map:2[]item": "map_value_item",
+ "gz.msgs.Vector3d:1.1.1": "vector3d_header_stamp_sec",
+ "gz.msgs.Vector3d:1.1.2": "vector3d_header_stamp_nsec",
+ "gz.msgs.Vector3d:1.2[]": "vector3d_header_data",
+ "gz.msgs.Vector3d:2": "vector3d_x",
+ "gz.msgs.Vector3d:3": "vector3d_y",
+ "gz.msgs.Vector3d:4": "vector3d_z"
+}

@@ -1,0 +1,33 @@
+{
+  "name": "gen-polyline-roundtrip",
+  "from": "gz-msgs-polyline",
+  "to": "gz-msgs-polyline",
+  "input": "0a2b0a05086410890112100a056b65792d33120776616c75652d3412100a056b65792d35120776616c75652d36110000000000000e401a300a1c0a0608e702108c0312120a066b65792d3131120876616c75652d3132110000000000003040190000000000c031401a300a1c0a0608c50410ea0412120a066b65792d3137120876616c75652d3138110000000000803a40190000000000403c40",
+  "expect": "0a2b0a05086410890112100a056b65792d33120776616c75652d3412100a056b65792d35120776616c75652d36110000000000000e401a300a1c0a0608e702108c0312120a066b65792d3131120876616c75652d3132110000000000003040190000000000c031401a300a1c0a0608c50410ea0412120a066b65792d3137120876616c75652d3138110000000000803a40190000000000403c40",
+  "model": {
+    "@kind": "polyline",
+    "gzmsgspolyline.header_stamp_sec": "100",
+    "gzmsgspolyline.header_stamp_nsec": "137",
+    "gzmsgspolyline.polyline_height": "3.75",
+    "gzmsgspolyline.header_data.#": "2",
+    "gzmsgspolyline.header_data[0].gzmsgspolyline.map_key": "key-3",
+    "gzmsgspolyline.header_data[0].gzmsgspolyline.map_value.#": "1",
+    "gzmsgspolyline.header_data[0].gzmsgspolyline.map_value[0].gzmsgspolyline.map_value_item": "value-4",
+    "gzmsgspolyline.header_data[1].gzmsgspolyline.map_key": "key-5",
+    "gzmsgspolyline.header_data[1].gzmsgspolyline.map_value.#": "1",
+    "gzmsgspolyline.header_data[1].gzmsgspolyline.map_value[0].gzmsgspolyline.map_value_item": "value-6",
+    "gzmsgspolyline.polyline_point.#": "2",
+    "gzmsgspolyline.polyline_point[0].gzmsgspolyline.vector2d_header_stamp_sec": "359",
+    "gzmsgspolyline.polyline_point[0].gzmsgspolyline.vector2d_header_stamp_nsec": "396",
+    "gzmsgspolyline.polyline_point[0].gzmsgspolyline.vector2d_header_data.#": "1",
+    "gzmsgspolyline.polyline_point[0].gzmsgspolyline.vector2d_header_data[0].gzmsgspolyline.map_key": "key-11",
+    "gzmsgspolyline.polyline_point[0].gzmsgspolyline.vector2d_header_data[0].gzmsgspolyline.map_value.#": "1",
+    "gzmsgspolyline.polyline_point[0].gzmsgspolyline.vector2d_header_data[0].gzmsgspolyline.map_value[0].gzmsgspolyline.map_value_item": "value-12",
+    "gzmsgspolyline.polyline_point[1].gzmsgspolyline.vector2d_header_stamp_sec": "581",
+    "gzmsgspolyline.polyline_point[1].gzmsgspolyline.vector2d_header_stamp_nsec": "618",
+    "gzmsgspolyline.polyline_point[1].gzmsgspolyline.vector2d_header_data.#": "1",
+    "gzmsgspolyline.polyline_point[1].gzmsgspolyline.vector2d_header_data[0].gzmsgspolyline.map_key": "key-17",
+    "gzmsgspolyline.polyline_point[1].gzmsgspolyline.vector2d_header_data[0].gzmsgspolyline.map_value.#": "1",
+    "gzmsgspolyline.polyline_point[1].gzmsgspolyline.vector2d_header_data[0].gzmsgspolyline.map_value[0].gzmsgspolyline.map_value_item": "value-18"
+  }
+}

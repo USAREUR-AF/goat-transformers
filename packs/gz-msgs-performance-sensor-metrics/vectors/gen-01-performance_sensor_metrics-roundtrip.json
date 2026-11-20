@@ -1,0 +1,24 @@
+{
+  "name": "gen-performance_sensor_metrics-roundtrip",
+  "from": "gz-msgs-performance-sensor-metrics",
+  "to": "gz-msgs-performance-sensor-metrics",
+  "input": "0a066e616d652d30110000000000000040190000000000000e402100000000000016402a380a2d0a0608f801109d0212100a056b65792d37120776616c75652d3812110a056b65792d39120876616c75652d3130110000000000802540",
+  "expect": "0a066e616d652d30110000000000000040190000000000000e402100000000000016402a380a2d0a0608f801109d0212100a056b65792d37120776616c75652d3812110a056b65792d39120876616c75652d3130110000000000802540",
+  "model": {
+    "@kind": "performance_sensor_metrics",
+    "gzmsgsperformancesensormetrics.performance_sensor_metrics_name": "name-0",
+    "gzmsgsperformancesensormetrics.performance_sensor_metrics_real_update_rate": "2",
+    "gzmsgsperformancesensormetrics.performance_sensor_metrics_sim_update_rate": "3.75",
+    "gzmsgsperformancesensormetrics.performance_sensor_metrics_nominal_update_rate": "5.5",
+    "gzmsgsperformancesensormetrics.fps_optional_stamp_sec": "248",
+    "gzmsgsperformancesensormetrics.fps_optional_stamp_nsec": "285",
+    "gzmsgsperformancesensormetrics.fps_optional_data": "10.75",
+    "gzmsgsperformancesensormetrics.fps_optional_header_data.#": "2",
+    "gzmsgsperformancesensormetrics.fps_optional_header_data[0].gzmsgsperformancesensormetrics.map_key": "key-7",
+    "gzmsgsperformancesensormetrics.fps_optional_header_data[0].gzmsgsperformancesensormetrics.map_value.#": "1",
+    "gzmsgsperformancesensormetrics.fps_optional_header_data[0].gzmsgsperformancesensormetrics.map_value[0].gzmsgsperformancesensormetrics.map_value_item": "value-8",
+    "gzmsgsperformancesensormetrics.fps_optional_header_data[1].gzmsgsperformancesensormetrics.map_key": "key-9",
+    "gzmsgsperformancesensormetrics.fps_optional_header_data[1].gzmsgsperformancesensormetrics.map_value.#": "1",
+    "gzmsgsperformancesensormetrics.fps_optional_header_data[1].gzmsgsperformancesensormetrics.map_value[0].gzmsgsperformancesensormetrics.map_value_item": "value-10"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "gen-propagation_particle-roundtrip",
+  "from": "gz-msgs-propagation-particle",
+  "to": "gz-msgs-propagation-particle",
+  "input": "0a2b0a05086410890112100a056b65792d35120776616c75652d3612100a056b65792d37120776616c75652d38110000000000000e40190000000000001640210000000000001d40",
+  "expect": "0a2b0a05086410890112100a056b65792d35120776616c75652d3612100a056b65792d37120776616c75652d38110000000000000e40190000000000001640210000000000001d40",
+  "model": {
+    "@kind": "propagation_particle",
+    "gzmsgspropagationparticle.header_stamp_sec": "100",
+    "gzmsgspropagationparticle.header_stamp_nsec": "137",
+    "gzmsgspropagationparticle.propagation_particle_x": "3.75",
+    "gzmsgspropagationparticle.propagation_particle_y": "5.5",
+    "gzmsgspropagationparticle.propagation_particle_signal_level": "7.25",
+    "gzmsgspropagationparticle.header_data.#": "2",
+    "gzmsgspropagationparticle.header_data[0].gzmsgspropagationparticle.map_key": "key-5",
+    "gzmsgspropagationparticle.header_data[0].gzmsgspropagationparticle.map_value.#": "1",
+    "gzmsgspropagationparticle.header_data[0].gzmsgspropagationparticle.map_value[0].gzmsgspropagationparticle.map_value_item": "value-6",
+    "gzmsgspropagationparticle.header_data[1].gzmsgspropagationparticle.map_key": "key-7",
+    "gzmsgspropagationparticle.header_data[1].gzmsgspropagationparticle.map_value.#": "1",
+    "gzmsgspropagationparticle.header_data[1].gzmsgspropagationparticle.map_value[0].gzmsgspropagationparticle.map_value_item": "value-8"
+  }
+}

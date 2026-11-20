@@ -1,0 +1,22 @@
+{
+  "name": "gen-world_reset-roundtrip",
+  "from": "gz-msgs-world-reset",
+  "to": "gz-msgs-world-reset",
+  "input": "0a2b0a05086410890112100a056b65792d35120776616c75652d3612100a056b65792d37120776616c75652d38100118012001",
+  "expect": "0a2b0a05086410890112100a056b65792d35120776616c75652d3612100a056b65792d37120776616c75652d38100118012001",
+  "model": {
+    "@kind": "world_reset",
+    "gzmsgsworldreset.header_stamp_sec": "100",
+    "gzmsgsworldreset.header_stamp_nsec": "137",
+    "gzmsgsworldreset.world_reset_all": "1",
+    "gzmsgsworldreset.world_reset_time_only": "1",
+    "gzmsgsworldreset.world_reset_model_only": "1",
+    "gzmsgsworldreset.header_data.#": "2",
+    "gzmsgsworldreset.header_data[0].gzmsgsworldreset.map_key": "key-5",
+    "gzmsgsworldreset.header_data[0].gzmsgsworldreset.map_value.#": "1",
+    "gzmsgsworldreset.header_data[0].gzmsgsworldreset.map_value[0].gzmsgsworldreset.map_value_item": "value-6",
+    "gzmsgsworldreset.header_data[1].gzmsgsworldreset.map_key": "key-7",
+    "gzmsgsworldreset.header_data[1].gzmsgsworldreset.map_value.#": "1",
+    "gzmsgsworldreset.header_data[1].gzmsgsworldreset.map_value[0].gzmsgsworldreset.map_value_item": "value-8"
+  }
+}

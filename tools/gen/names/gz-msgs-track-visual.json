@@ -1,0 +1,22 @@
+{
+ "1.1.1": "header_stamp_sec",
+ "1.1.2": "header_stamp_nsec",
+ "1.2[]": "header_data",
+ "10": "track_visual_inherit_yaw",
+ "2": "track_visual_name",
+ "3": "track_visual_id",
+ "4": "track_visual_inherit_orientation",
+ "5": "track_visual_min_dist",
+ "6": "track_visual_max_dist",
+ "7": "track_visual_static",
+ "8": "track_visual_use_model_frame",
+ "9.1.1.1": "xyz_stamp_sec",
+ "9.1.1.2": "xyz_stamp_nsec",
+ "9.1.2[]": "xyz_header_data",
+ "9.2": "xyz_x",
+ "9.3": "xyz_y",
+ "9.4": "xyz_z",
+ "gz.msgs.Header.Map:1": "map_key",
+ "gz.msgs.Header.Map:2[]": "map_value",
+ "gz.msgs.Header.Map:2[]item": "map_value_item"
+}

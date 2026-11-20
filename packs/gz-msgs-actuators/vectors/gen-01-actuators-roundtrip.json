@@ -1,0 +1,28 @@
+{
+  "name": "gen-actuators-roundtrip",
+  "from": "gz-msgs-actuators",
+  "to": "gz-msgs-actuators",
+  "input": "0a2b0a05086410890112100a056b65792d32120776616c75652d3312100a056b65792d34120776616c75652d351210000000000080254000000000000029401a100000000000802c40000000000000304022100000000000c031400000000000803340",
+  "expect": "0a2b0a05086410890112100a056b65792d32120776616c75652d3312100a056b65792d34120776616c75652d351210000000000080254000000000000029401a100000000000802c40000000000000304022100000000000c031400000000000803340",
+  "model": {
+    "@kind": "actuators",
+    "gzmsgsactuators.header_stamp_sec": "100",
+    "gzmsgsactuators.header_stamp_nsec": "137",
+    "gzmsgsactuators.header_data.#": "2",
+    "gzmsgsactuators.header_data[0].gzmsgsactuators.map_key": "key-2",
+    "gzmsgsactuators.header_data[0].gzmsgsactuators.map_value.#": "1",
+    "gzmsgsactuators.header_data[0].gzmsgsactuators.map_value[0].gzmsgsactuators.map_value_item": "value-3",
+    "gzmsgsactuators.header_data[1].gzmsgsactuators.map_key": "key-4",
+    "gzmsgsactuators.header_data[1].gzmsgsactuators.map_value.#": "1",
+    "gzmsgsactuators.header_data[1].gzmsgsactuators.map_value[0].gzmsgsactuators.map_value_item": "value-5",
+    "gzmsgsactuators.actuators_position.#": "2",
+    "gzmsgsactuators.actuators_position[0].gzmsgsactuators.actuators_position_item": "10.75",
+    "gzmsgsactuators.actuators_position[1].gzmsgsactuators.actuators_position_item": "12.5",
+    "gzmsgsactuators.actuators_velocity.#": "2",
+    "gzmsgsactuators.actuators_velocity[0].gzmsgsactuators.actuators_velocity_item": "14.25",
+    "gzmsgsactuators.actuators_velocity[1].gzmsgsactuators.actuators_velocity_item": "16",
+    "gzmsgsactuators.actuators_normalized.#": "2",
+    "gzmsgsactuators.actuators_normalized[0].gzmsgsactuators.actuators_normalized_item": "17.75",
+    "gzmsgsactuators.actuators_normalized[1].gzmsgsactuators.actuators_normalized_item": "19.5"
+  }
+}

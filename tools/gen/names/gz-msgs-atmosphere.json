@@ -1,0 +1,13 @@
+{
+ "1.1.1": "header_stamp_sec",
+ "1.1.2": "header_stamp_nsec",
+ "1.2[]": "header_data",
+ "2": "atmosphere_type",
+ "3": "atmosphere_temperature",
+ "4": "atmosphere_pressure",
+ "5": "atmosphere_mass_density",
+ "6": "atmosphere_enable_atmosphere",
+ "gz.msgs.Header.Map:1": "map_key",
+ "gz.msgs.Header.Map:2[]": "map_value",
+ "gz.msgs.Header.Map:2[]item": "map_value_item"
+}

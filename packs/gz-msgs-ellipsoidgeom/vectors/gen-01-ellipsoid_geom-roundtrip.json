@@ -1,0 +1,31 @@
+{
+  "name": "gen-ellipsoid_geom-roundtrip",
+  "from": "gz-msgs-ellipsoidgeom",
+  "to": "gz-msgs-ellipsoidgeom",
+  "input": "0a2c0a05086410890112100a056b65792d37120776616c75652d3812110a056b65792d39120876616c75652d3130124d0a300a0608ae0110d30112120a066b65792d3131120876616c75652d313212120a066b65792d3133120876616c75652d3134110000000000001d40190000000000002240210000000000802540",
+  "expect": "0a2c0a05086410890112100a056b65792d37120776616c75652d3812110a056b65792d39120876616c75652d3130124d0a300a0608ae0110d30112120a066b65792d3131120876616c75652d313212120a066b65792d3133120876616c75652d3134110000000000001d40190000000000002240210000000000802540",
+  "model": {
+    "@kind": "ellipsoid_geom",
+    "gzmsgsellipsoidgeom.header_stamp_sec": "100",
+    "gzmsgsellipsoidgeom.header_stamp_nsec": "137",
+    "gzmsgsellipsoidgeom.radii_stamp_sec": "174",
+    "gzmsgsellipsoidgeom.radii_stamp_nsec": "211",
+    "gzmsgsellipsoidgeom.radii_x": "7.25",
+    "gzmsgsellipsoidgeom.radii_y": "9",
+    "gzmsgsellipsoidgeom.radii_z": "10.75",
+    "gzmsgsellipsoidgeom.header_data.#": "2",
+    "gzmsgsellipsoidgeom.header_data[0].gzmsgsellipsoidgeom.map_key": "key-7",
+    "gzmsgsellipsoidgeom.header_data[0].gzmsgsellipsoidgeom.map_value.#": "1",
+    "gzmsgsellipsoidgeom.header_data[0].gzmsgsellipsoidgeom.map_value[0].gzmsgsellipsoidgeom.map_value_item": "value-8",
+    "gzmsgsellipsoidgeom.header_data[1].gzmsgsellipsoidgeom.map_key": "key-9",
+    "gzmsgsellipsoidgeom.header_data[1].gzmsgsellipsoidgeom.map_value.#": "1",
+    "gzmsgsellipsoidgeom.header_data[1].gzmsgsellipsoidgeom.map_value[0].gzmsgsellipsoidgeom.map_value_item": "value-10",
+    "gzmsgsellipsoidgeom.radii_header_data.#": "2",
+    "gzmsgsellipsoidgeom.radii_header_data[0].gzmsgsellipsoidgeom.map_key": "key-11",
+    "gzmsgsellipsoidgeom.radii_header_data[0].gzmsgsellipsoidgeom.map_value.#": "1",
+    "gzmsgsellipsoidgeom.radii_header_data[0].gzmsgsellipsoidgeom.map_value[0].gzmsgsellipsoidgeom.map_value_item": "value-12",
+    "gzmsgsellipsoidgeom.radii_header_data[1].gzmsgsellipsoidgeom.map_key": "key-13",
+    "gzmsgsellipsoidgeom.radii_header_data[1].gzmsgsellipsoidgeom.map_value.#": "1",
+    "gzmsgsellipsoidgeom.radii_header_data[1].gzmsgsellipsoidgeom.map_value[0].gzmsgsellipsoidgeom.map_value_item": "value-14"
+  }
+}

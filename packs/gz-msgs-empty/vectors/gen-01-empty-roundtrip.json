@@ -1,0 +1,11 @@
+{
+  "name": "gen-empty-roundtrip",
+  "from": "gz-msgs-empty",
+  "to": "gz-msgs-empty",
+  "input": "0801",
+  "expect": "0801",
+  "model": {
+    "@kind": "empty",
+    "gzmsgsempty.empty_unused": "1"
+  }
+}

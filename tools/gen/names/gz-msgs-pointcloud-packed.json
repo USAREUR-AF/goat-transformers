@@ -1,0 +1,19 @@
+{
+ "1.1.1": "header_stamp_sec",
+ "1.1.2": "header_stamp_nsec",
+ "1.2[]": "header_data",
+ "2[]": "point_cloud_packed_field",
+ "3": "point_cloud_packed_height",
+ "4": "point_cloud_packed_width",
+ "5": "point_cloud_packed_is_bigendian",
+ "6": "point_cloud_packed_point_step",
+ "7": "point_cloud_packed_row_step",
+ "9": "point_cloud_packed_is_dense",
+ "gz.msgs.Header.Map:1": "map_key",
+ "gz.msgs.Header.Map:2[]": "map_value",
+ "gz.msgs.Header.Map:2[]item": "map_value_item",
+ "gz.msgs.PointCloudPacked.Field:1": "field_name",
+ "gz.msgs.PointCloudPacked.Field:2": "field_offset",
+ "gz.msgs.PointCloudPacked.Field:3": "field_datatype",
+ "gz.msgs.PointCloudPacked.Field:4": "field_count"
+}

@@ -1,0 +1,21 @@
+{
+  "name": "gen-any-roundtrip",
+  "from": "gz-msgs-any",
+  "to": "gz-msgs-any",
+  "input": "0a2f0a05086410890112120a066b65792d3431120876616c75652d343212120a066b65792d3433120876616c75652d34341001190000000000001640",
+  "expect": "0a2f0a05086410890112120a066b65792d3431120876616c75652d343212120a066b65792d3433120876616c75652d34341001190000000000001640",
+  "model": {
+    "@kind": "any",
+    "gzmsgsany.header_stamp_sec": "100",
+    "gzmsgsany.header_stamp_nsec": "137",
+    "gzmsgsany.any_type": "1",
+    "gzmsgsany.any_double_value": "5.5",
+    "gzmsgsany.header_data.#": "2",
+    "gzmsgsany.header_data[0].gzmsgsany.map_key": "key-41",
+    "gzmsgsany.header_data[0].gzmsgsany.map_value.#": "1",
+    "gzmsgsany.header_data[0].gzmsgsany.map_value[0].gzmsgsany.map_value_item": "value-42",
+    "gzmsgsany.header_data[1].gzmsgsany.map_key": "key-43",
+    "gzmsgsany.header_data[1].gzmsgsany.map_value.#": "1",
+    "gzmsgsany.header_data[1].gzmsgsany.map_value[0].gzmsgsany.map_value_item": "value-44"
+  }
+}

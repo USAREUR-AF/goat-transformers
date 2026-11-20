@@ -1,0 +1,19 @@
+{
+ "1.1.1": "header_stamp_sec",
+ "1.1.2": "header_stamp_nsec",
+ "1.2[]": "header_data",
+ "2": "fog_type",
+ "3.1.1.1": "color_stamp_sec",
+ "3.1.1.2": "color_stamp_nsec",
+ "3.1.2[]": "color_header_data",
+ "3.2": "color_r",
+ "3.3": "color_g",
+ "3.4": "color_b",
+ "3.5": "color_a",
+ "4": "fog_density",
+ "5": "fog_start",
+ "6": "fog_end",
+ "gz.msgs.Header.Map:1": "map_key",
+ "gz.msgs.Header.Map:2[]": "map_value",
+ "gz.msgs.Header.Map:2[]item": "map_value_item"
+}

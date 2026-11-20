@@ -1,0 +1,20 @@
+{
+  "name": "gen-serialized_state_map-roundtrip",
+  "from": "gz-msgs-serialized-state-map",
+  "to": "gz-msgs-serialized-state-map",
+  "input": "0a2b0a05086410890112100a056b65792d33120776616c75652d3412100a056b65792d35120776616c75652d361801",
+  "expect": "0a2b0a05086410890112100a056b65792d33120776616c75652d3412100a056b65792d35120776616c75652d361801",
+  "model": {
+    "@kind": "serialized_state_map",
+    "gzmsgsserializedstatemap.header_stamp_sec": "100",
+    "gzmsgsserializedstatemap.header_stamp_nsec": "137",
+    "gzmsgsserializedstatemap.serialized_state_map_has_one_time_component_changes": "1",
+    "gzmsgsserializedstatemap.header_data.#": "2",
+    "gzmsgsserializedstatemap.header_data[0].gzmsgsserializedstatemap.map_key": "key-3",
+    "gzmsgsserializedstatemap.header_data[0].gzmsgsserializedstatemap.map_value.#": "1",
+    "gzmsgsserializedstatemap.header_data[0].gzmsgsserializedstatemap.map_value[0].gzmsgsserializedstatemap.map_value_item": "value-4",
+    "gzmsgsserializedstatemap.header_data[1].gzmsgsserializedstatemap.map_key": "key-5",
+    "gzmsgsserializedstatemap.header_data[1].gzmsgsserializedstatemap.map_value.#": "1",
+    "gzmsgsserializedstatemap.header_data[1].gzmsgsserializedstatemap.map_value[0].gzmsgsserializedstatemap.map_value_item": "value-6"
+  }
+}

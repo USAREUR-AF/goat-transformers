@@ -1,0 +1,15 @@
+{
+ "1.1.1": "header_stamp_sec",
+ "1.1.2": "header_stamp_nsec",
+ "1.2[]": "header_data",
+ "2": "nav_sat_latitude_deg",
+ "3": "nav_sat_longitude_deg",
+ "4": "nav_sat_altitude",
+ "5": "nav_sat_velocity_east",
+ "6": "nav_sat_velocity_north",
+ "7": "nav_sat_velocity_up",
+ "8": "nav_sat_frame_id",
+ "gz.msgs.Header.Map:1": "map_key",
+ "gz.msgs.Header.Map:2[]": "map_value",
+ "gz.msgs.Header.Map:2[]item": "map_value_item"
+}

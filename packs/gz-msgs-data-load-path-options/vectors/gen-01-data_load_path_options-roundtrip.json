@@ -1,0 +1,18 @@
+{
+  "name": "gen-data_load_path_options-roundtrip",
+  "from": "gz-msgs-data-load-path-options",
+  "to": "gz-msgs-data-load-path-options",
+  "input": "0a06706174682d30120674696d652d3118012203782d332a03792d3432037a2d3538014001",
+  "expect": "0a06706174682d30120674696d652d3118012203782d332a03792d3432037a2d3538014001",
+  "model": {
+    "@kind": "data_load_path_options",
+    "gzmsgsdataloadpathoptions.data_load_path_options_path": "path-0",
+    "gzmsgsdataloadpathoptions.data_load_path_options_time": "time-1",
+    "gzmsgsdataloadpathoptions.data_load_path_options_static_time": "1",
+    "gzmsgsdataloadpathoptions.data_load_path_options_x": "x-3",
+    "gzmsgsdataloadpathoptions.data_load_path_options_y": "y-4",
+    "gzmsgsdataloadpathoptions.data_load_path_options_z": "z-5",
+    "gzmsgsdataloadpathoptions.data_load_path_options_units": "1",
+    "gzmsgsdataloadpathoptions.data_load_path_options_coordinate_type": "1"
+  }
+}

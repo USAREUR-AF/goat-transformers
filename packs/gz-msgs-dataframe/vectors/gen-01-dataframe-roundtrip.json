@@ -1,0 +1,21 @@
+{
+  "name": "gen-dataframe-roundtrip",
+  "from": "gz-msgs-dataframe",
+  "to": "gz-msgs-dataframe",
+  "input": "0a2b0a05086410890112100a056b65792d34120776616c75652d3512100a056b65792d36120776616c75652d37120d7372635f616464726573732d321a0d6473745f616464726573732d33",
+  "expect": "0a2b0a05086410890112100a056b65792d34120776616c75652d3512100a056b65792d36120776616c75652d37120d7372635f616464726573732d321a0d6473745f616464726573732d33",
+  "model": {
+    "@kind": "dataframe",
+    "gzmsgsdataframe.header_stamp_sec": "100",
+    "gzmsgsdataframe.header_stamp_nsec": "137",
+    "gzmsgsdataframe.dataframe_src_address": "src_address-2",
+    "gzmsgsdataframe.dataframe_dst_address": "dst_address-3",
+    "gzmsgsdataframe.header_data.#": "2",
+    "gzmsgsdataframe.header_data[0].gzmsgsdataframe.map_key": "key-4",
+    "gzmsgsdataframe.header_data[0].gzmsgsdataframe.map_value.#": "1",
+    "gzmsgsdataframe.header_data[0].gzmsgsdataframe.map_value[0].gzmsgsdataframe.map_value_item": "value-5",
+    "gzmsgsdataframe.header_data[1].gzmsgsdataframe.map_key": "key-6",
+    "gzmsgsdataframe.header_data[1].gzmsgsdataframe.map_value.#": "1",
+    "gzmsgsdataframe.header_data[1].gzmsgsdataframe.map_value[0].gzmsgsdataframe.map_value_item": "value-7"
+  }
+}

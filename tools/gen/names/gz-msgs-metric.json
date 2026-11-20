@@ -1,0 +1,22 @@
+{
+ "1.1.1": "header_stamp_sec",
+ "1.1.2": "header_stamp_nsec",
+ "1.2[]": "header_data",
+ "2": "metric_unit",
+ "3[]": "metric_statistics_groups",
+ "4[]": "metric_statistics",
+ "gz.msgs.Header.Map:1": "map_key",
+ "gz.msgs.Header.Map:2[]": "map_value",
+ "gz.msgs.Header.Map:2[]item": "map_value_item",
+ "gz.msgs.Statistic:1.1.1": "statistic_header_stamp_sec",
+ "gz.msgs.Statistic:1.1.2": "statistic_header_stamp_nsec",
+ "gz.msgs.Statistic:1.2[]": "statistic_header_data",
+ "gz.msgs.Statistic:2": "statistic_type",
+ "gz.msgs.Statistic:3": "statistic_name",
+ "gz.msgs.Statistic:4": "statistic_value",
+ "gz.msgs.StatisticsGroup:1.1.1": "statistics_group_header_stamp_sec",
+ "gz.msgs.StatisticsGroup:1.1.2": "statistics_group_header_stamp_nsec",
+ "gz.msgs.StatisticsGroup:1.2[]": "statistics_group_header_data",
+ "gz.msgs.StatisticsGroup:2": "statistics_group_name",
+ "gz.msgs.StatisticsGroup:3[]": "statistics_group_statistics"
+}

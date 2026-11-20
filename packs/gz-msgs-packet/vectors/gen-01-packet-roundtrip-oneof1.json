@@ -1,0 +1,25 @@
+{
+  "name": "gen-packet-roundtrip-oneof1",
+  "from": "gz-msgs-packet",
+  "to": "gz-msgs-packet",
+  "input": "0a07746f7069632d301206747970652d31223d0a300a0608c20210e70212120a066b65792d3639120876616c75652d373012120a066b65792d3731120876616c75652d3732108c0318b10320d6033001",
+  "expect": "0a07746f7069632d301206747970652d31223d0a300a0608c20210e70212120a066b65792d3639120876616c75652d373012120a066b65792d3731120876616c75652d3732108c0318b10320d6033001",
+  "model": {
+    "@kind": "packet",
+    "gzmsgspacket.packet_topic": "topic-0",
+    "gzmsgspacket.packet_type": "type-1",
+    "gzmsgspacket.image_stamp_sec": "322",
+    "gzmsgspacket.image_stamp_nsec": "359",
+    "gzmsgspacket.image_width": "396",
+    "gzmsgspacket.image_height": "433",
+    "gzmsgspacket.image_step": "470",
+    "gzmsgspacket.image_pixel_format_type": "1",
+    "gzmsgspacket.image_header_data.#": "2",
+    "gzmsgspacket.image_header_data[0].gzmsgspacket.map_key": "key-69",
+    "gzmsgspacket.image_header_data[0].gzmsgspacket.map_value.#": "1",
+    "gzmsgspacket.image_header_data[0].gzmsgspacket.map_value[0].gzmsgspacket.map_value_item": "value-70",
+    "gzmsgspacket.image_header_data[1].gzmsgspacket.map_key": "key-71",
+    "gzmsgspacket.image_header_data[1].gzmsgspacket.map_value.#": "1",
+    "gzmsgspacket.image_header_data[1].gzmsgspacket.map_value[0].gzmsgspacket.map_value_item": "value-72"
+  }
+}

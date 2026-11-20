@@ -1,0 +1,23 @@
+{
+ "1.1.1": "header_stamp_sec",
+ "1.1.2": "header_stamp_nsec",
+ "1.2[]": "header_data",
+ "2": "friction_mu",
+ "3": "friction_mu2",
+ "4.1.1.1": "fdir1_stamp_sec",
+ "4.1.1.2": "fdir1_stamp_nsec",
+ "4.1.2[]": "fdir1_header_data",
+ "4.2": "fdir1_x",
+ "4.3": "fdir1_y",
+ "4.4": "fdir1_z",
+ "5": "friction_slip1",
+ "6": "friction_slip2",
+ "7.1": "torsional_coefficient",
+ "7.2": "torsional_use_patch_radius",
+ "7.3": "torsional_patch_radius",
+ "7.4": "torsional_surface_radius",
+ "7.5.1": "torsional_ode_slip",
+ "gz.msgs.Header.Map:1": "map_key",
+ "gz.msgs.Header.Map:2[]": "map_value",
+ "gz.msgs.Header.Map:2[]item": "map_value_item"
+}

@@ -1,0 +1,20 @@
+{
+  "name": "gen-sphere_geom-roundtrip",
+  "from": "gz-msgs-spheregeom",
+  "to": "gz-msgs-spheregeom",
+  "input": "0a2b0a05086410890112100a056b65792d33120776616c75652d3412100a056b65792d35120776616c75652d36110000000000000e40",
+  "expect": "0a2b0a05086410890112100a056b65792d33120776616c75652d3412100a056b65792d35120776616c75652d36110000000000000e40",
+  "model": {
+    "@kind": "sphere_geom",
+    "gzmsgsspheregeom.header_stamp_sec": "100",
+    "gzmsgsspheregeom.header_stamp_nsec": "137",
+    "gzmsgsspheregeom.sphere_geom_radius": "3.75",
+    "gzmsgsspheregeom.header_data.#": "2",
+    "gzmsgsspheregeom.header_data[0].gzmsgsspheregeom.map_key": "key-3",
+    "gzmsgsspheregeom.header_data[0].gzmsgsspheregeom.map_value.#": "1",
+    "gzmsgsspheregeom.header_data[0].gzmsgsspheregeom.map_value[0].gzmsgsspheregeom.map_value_item": "value-4",
+    "gzmsgsspheregeom.header_data[1].gzmsgsspheregeom.map_key": "key-5",
+    "gzmsgsspheregeom.header_data[1].gzmsgsspheregeom.map_value.#": "1",
+    "gzmsgsspheregeom.header_data[1].gzmsgsspheregeom.map_value[0].gzmsgsspheregeom.map_value_item": "value-6"
+  }
+}

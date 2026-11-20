@@ -1,0 +1,30 @@
+{
+  "name": "gen-point_cloud_packed-roundtrip",
+  "from": "gz-msgs-pointcloud-packed",
+  "to": "gz-msgs-pointcloud-packed",
+  "input": "0a2d0a05086410890112100a056b65792d38120776616c75652d3912120a066b65792d3130120876616c75652d313112110a076e616d652d313210c5041801208f0512110a076e616d652d313610d905180120a30618ae0120d3012801309d0238c2024801",
+  "expect": "0a2d0a05086410890112100a056b65792d38120776616c75652d3912120a066b65792d3130120876616c75652d313112110a076e616d652d313210c5041801208f0512110a076e616d652d313610d905180120a30618ae0120d3012801309d0238c2024801",
+  "model": {
+    "@kind": "point_cloud_packed",
+    "gzmsgspointcloudpacked.header_stamp_sec": "100",
+    "gzmsgspointcloudpacked.header_stamp_nsec": "137",
+    "gzmsgspointcloudpacked.point_cloud_packed_height": "174",
+    "gzmsgspointcloudpacked.point_cloud_packed_width": "211",
+    "gzmsgspointcloudpacked.point_cloud_packed_is_bigendian": "1",
+    "gzmsgspointcloudpacked.point_cloud_packed_point_step": "285",
+    "gzmsgspointcloudpacked.point_cloud_packed_row_step": "322",
+    "gzmsgspointcloudpacked.point_cloud_packed_is_dense": "1",
+    "gzmsgspointcloudpacked.header_data.#": "2",
+    "gzmsgspointcloudpacked.header_data[0].gzmsgspointcloudpacked.map_key": "key-8",
+    "gzmsgspointcloudpacked.header_data[0].gzmsgspointcloudpacked.map_value.#": "1",
+    "gzmsgspointcloudpacked.header_data[0].gzmsgspointcloudpacked.map_value[0].gzmsgspointcloudpacked.map_value_item": "value-9",
+    "gzmsgspointcloudpacked.header_data[1].gzmsgspointcloudpacked.map_key": "key-10",
+    "gzmsgspointcloudpacked.header_data[1].gzmsgspointcloudpacked.map_value.#": "1",
+    "gzmsgspointcloudpacked.header_data[1].gzmsgspointcloudpacked.map_value[0].gzmsgspointcloudpacked.map_value_item": "value-11",
+    "gzmsgspointcloudpacked.point_cloud_packed_field.#": "2",
+    "gzmsgspointcloudpacked.point_cloud_packed_field[0].gzmsgspointcloudpacked.field_name": "name-12",
+    "gzmsgspointcloudpacked.point_cloud_packed_field[0].gzmsgspointcloudpacked.field_offset": "581",
+    "gzmsgspointcloudpacked.point_cloud_packed_field[1].gzmsgspointcloudpacked.field_name": "name-16",
+    "gzmsgspointcloudpacked.point_cloud_packed_field[1].gzmsgspointcloudpacked.field_offset": "729"
+  }
+}

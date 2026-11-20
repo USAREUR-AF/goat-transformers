@@ -1,0 +1,7 @@
+{
+ "1": "serialized_entity_id",
+ "2[]": "serialized_entity_components",
+ "3": "serialized_entity_remove",
+ "gz.msgs.SerializedComponent:1": "serialized_component_type",
+ "gz.msgs.SerializedComponent:3": "serialized_component_remove"
+}

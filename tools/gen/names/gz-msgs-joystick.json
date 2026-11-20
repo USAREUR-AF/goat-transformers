@@ -1,0 +1,22 @@
+{
+ "1.1.1": "header_stamp_sec",
+ "1.1.2": "header_stamp_nsec",
+ "1.2[]": "header_data",
+ "2.1.1.1": "translation_stamp_sec",
+ "2.1.1.2": "translation_stamp_nsec",
+ "2.1.2[]": "translation_header_data",
+ "2.2": "translation_x",
+ "2.3": "translation_y",
+ "2.4": "translation_z",
+ "3.1.1.1": "rotation_stamp_sec",
+ "3.1.1.2": "rotation_stamp_nsec",
+ "3.1.2[]": "rotation_header_data",
+ "3.2": "rotation_x",
+ "3.3": "rotation_y",
+ "3.4": "rotation_z",
+ "4[]": "joystick_buttons",
+ "gz.msgs.Header.Map:1": "map_key",
+ "gz.msgs.Header.Map:2[]": "map_value",
+ "gz.msgs.Header.Map:2[]item": "map_value_item",
+ "gz.msgs.Joystick:4[]item": "joystick_buttons_item"
+}

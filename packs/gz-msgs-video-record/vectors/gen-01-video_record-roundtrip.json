@@ -1,0 +1,23 @@
+{
+  "name": "gen-video_record-roundtrip",
+  "from": "gz-msgs-video-record",
+  "to": "gz-msgs-video-record",
+  "input": "0a2b0a05086410890112100a056b65792d36120776616c75652d3712100a056b65792d38120776616c75652d39100118012208666f726d61742d342a0f736176655f66696c656e616d652d35",
+  "expect": "0a2b0a05086410890112100a056b65792d36120776616c75652d3712100a056b65792d38120776616c75652d39100118012208666f726d61742d342a0f736176655f66696c656e616d652d35",
+  "model": {
+    "@kind": "video_record",
+    "gzmsgsvideorecord.header_stamp_sec": "100",
+    "gzmsgsvideorecord.header_stamp_nsec": "137",
+    "gzmsgsvideorecord.video_record_start": "1",
+    "gzmsgsvideorecord.video_record_stop": "1",
+    "gzmsgsvideorecord.video_record_format": "format-4",
+    "gzmsgsvideorecord.video_record_save_filename": "save_filename-5",
+    "gzmsgsvideorecord.header_data.#": "2",
+    "gzmsgsvideorecord.header_data[0].gzmsgsvideorecord.map_key": "key-6",
+    "gzmsgsvideorecord.header_data[0].gzmsgsvideorecord.map_value.#": "1",
+    "gzmsgsvideorecord.header_data[0].gzmsgsvideorecord.map_value[0].gzmsgsvideorecord.map_value_item": "value-7",
+    "gzmsgsvideorecord.header_data[1].gzmsgsvideorecord.map_key": "key-8",
+    "gzmsgsvideorecord.header_data[1].gzmsgsvideorecord.map_value.#": "1",
+    "gzmsgsvideorecord.header_data[1].gzmsgsvideorecord.map_value[0].gzmsgsvideorecord.map_value_item": "value-9"
+  }
+}

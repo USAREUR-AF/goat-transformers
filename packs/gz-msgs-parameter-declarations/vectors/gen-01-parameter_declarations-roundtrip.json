@@ -1,0 +1,15 @@
+{
+  "name": "gen-parameter_declarations-roundtrip",
+  "from": "gz-msgs-parameter-declarations",
+  "to": "gz-msgs-parameter-declarations",
+  "input": "0a100a066e616d652d301206747970652d310a100a066e616d652d321206747970652d33",
+  "expect": "0a100a066e616d652d301206747970652d310a100a066e616d652d321206747970652d33",
+  "model": {
+    "@kind": "parameter_declarations",
+    "gzmsgsparameterdeclarations.parameter_declarations_parameter_declarations.#": "2",
+    "gzmsgsparameterdeclarations.parameter_declarations_parameter_declarations[0].gzmsgsparameterdeclarations.parameter_declaration_name": "name-0",
+    "gzmsgsparameterdeclarations.parameter_declarations_parameter_declarations[0].gzmsgsparameterdeclarations.parameter_declaration_type": "type-1",
+    "gzmsgsparameterdeclarations.parameter_declarations_parameter_declarations[1].gzmsgsparameterdeclarations.parameter_declaration_name": "name-2",
+    "gzmsgsparameterdeclarations.parameter_declarations_parameter_declarations[1].gzmsgsparameterdeclarations.parameter_declaration_type": "type-3"
+  }
+}

@@ -1,0 +1,14 @@
+{
+ "1.1.1": "header_stamp_sec",
+ "1.1.2": "header_stamp_nsec",
+ "1.2[]": "header_data",
+ "2[]": "tactile_collision_name",
+ "3[]": "tactile_collision_id",
+ "4[]": "tactile_pressure",
+ "gz.msgs.Header.Map:1": "map_key",
+ "gz.msgs.Header.Map:2[]": "map_value",
+ "gz.msgs.Header.Map:2[]item": "map_value_item",
+ "gz.msgs.Tactile:2[]item": "tactile_collision_name_item",
+ "gz.msgs.Tactile:3[]item": "tactile_collision_id_item",
+ "gz.msgs.Tactile:4[]item": "tactile_pressure_item"
+}

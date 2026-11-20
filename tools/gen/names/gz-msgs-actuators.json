@@ -1,0 +1,14 @@
+{
+ "1.1.1": "header_stamp_sec",
+ "1.1.2": "header_stamp_nsec",
+ "1.2[]": "header_data",
+ "2[]": "actuators_position",
+ "3[]": "actuators_velocity",
+ "4[]": "actuators_normalized",
+ "gz.msgs.Actuators:2[]item": "actuators_position_item",
+ "gz.msgs.Actuators:3[]item": "actuators_velocity_item",
+ "gz.msgs.Actuators:4[]item": "actuators_normalized_item",
+ "gz.msgs.Header.Map:1": "map_key",
+ "gz.msgs.Header.Map:2[]": "map_value",
+ "gz.msgs.Header.Map:2[]item": "map_value_item"
+}

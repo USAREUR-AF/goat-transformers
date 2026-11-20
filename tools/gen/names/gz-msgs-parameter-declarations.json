@@ -1,0 +1,5 @@
+{
+ "1[]": "parameter_declarations_parameter_declarations",
+ "gz.msgs.ParameterDeclaration:1": "parameter_declaration_name",
+ "gz.msgs.ParameterDeclaration:2": "parameter_declaration_type"
+}

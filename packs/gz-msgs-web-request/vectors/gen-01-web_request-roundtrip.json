@@ -1,0 +1,24 @@
+{
+  "name": "gen-web_request-roundtrip",
+  "from": "gz-msgs-web-request",
+  "to": "gz-msgs-web-request",
+  "input": "0a2c0a05086410890112100a056b65792d37120776616c75652d3812110a056b65792d39120876616c75652d3130120b6f7065726174696f6e2d321a07746f7069632d33220a6d73675f747970652d342a0d636f6d7072657373696f6e2d35310000000000802540",
+  "expect": "0a2c0a05086410890112100a056b65792d37120776616c75652d3812110a056b65792d39120876616c75652d3130120b6f7065726174696f6e2d321a07746f7069632d33220a6d73675f747970652d342a0d636f6d7072657373696f6e2d35310000000000802540",
+  "model": {
+    "@kind": "web_request",
+    "gzmsgswebrequest.header_stamp_sec": "100",
+    "gzmsgswebrequest.header_stamp_nsec": "137",
+    "gzmsgswebrequest.web_request_operation": "operation-2",
+    "gzmsgswebrequest.web_request_topic": "topic-3",
+    "gzmsgswebrequest.web_request_msg_type": "msg_type-4",
+    "gzmsgswebrequest.web_request_compression": "compression-5",
+    "gzmsgswebrequest.web_request_hz": "10.75",
+    "gzmsgswebrequest.header_data.#": "2",
+    "gzmsgswebrequest.header_data[0].gzmsgswebrequest.map_key": "key-7",
+    "gzmsgswebrequest.header_data[0].gzmsgswebrequest.map_value.#": "1",
+    "gzmsgswebrequest.header_data[0].gzmsgswebrequest.map_value[0].gzmsgswebrequest.map_value_item": "value-8",
+    "gzmsgswebrequest.header_data[1].gzmsgswebrequest.map_key": "key-9",
+    "gzmsgswebrequest.header_data[1].gzmsgswebrequest.map_value.#": "1",
+    "gzmsgswebrequest.header_data[1].gzmsgswebrequest.map_value[0].gzmsgswebrequest.map_value_item": "value-10"
+  }
+}

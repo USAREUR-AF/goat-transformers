@@ -1,0 +1,33 @@
+{
+  "name": "gen-statistics_group-roundtrip",
+  "from": "gz-msgs-statistics-group",
+  "to": "gz-msgs-statistics-group",
+  "input": "0a2b0a05086410890112100a056b65792d33120776616c75652d3412100a056b65792d35120776616c75652d3612066e616d652d321a320a1c0a0608e702108c0312120a066b65792d3132120876616c75652d313310011a076e616d652d31302100000000008033401a320a1c0a0608ea04108f0512120a066b65792d3139120876616c75652d323010011a076e616d652d3137210000000000c03f40",
+  "expect": "0a2b0a05086410890112100a056b65792d33120776616c75652d3412100a056b65792d35120776616c75652d3612066e616d652d321a320a1c0a0608e702108c0312120a066b65792d3132120876616c75652d313310011a076e616d652d31302100000000008033401a320a1c0a0608ea04108f0512120a066b65792d3139120876616c75652d323010011a076e616d652d3137210000000000c03f40",
+  "model": {
+    "@kind": "statistics_group",
+    "gzmsgsstatisticsgroup.header_stamp_sec": "100",
+    "gzmsgsstatisticsgroup.header_stamp_nsec": "137",
+    "gzmsgsstatisticsgroup.statistics_group_name": "name-2",
+    "gzmsgsstatisticsgroup.header_data.#": "2",
+    "gzmsgsstatisticsgroup.header_data[0].gzmsgsstatisticsgroup.map_key": "key-3",
+    "gzmsgsstatisticsgroup.header_data[0].gzmsgsstatisticsgroup.map_value.#": "1",
+    "gzmsgsstatisticsgroup.header_data[0].gzmsgsstatisticsgroup.map_value[0].gzmsgsstatisticsgroup.map_value_item": "value-4",
+    "gzmsgsstatisticsgroup.header_data[1].gzmsgsstatisticsgroup.map_key": "key-5",
+    "gzmsgsstatisticsgroup.header_data[1].gzmsgsstatisticsgroup.map_value.#": "1",
+    "gzmsgsstatisticsgroup.header_data[1].gzmsgsstatisticsgroup.map_value[0].gzmsgsstatisticsgroup.map_value_item": "value-6",
+    "gzmsgsstatisticsgroup.statistics_group_statistics.#": "2",
+    "gzmsgsstatisticsgroup.statistics_group_statistics[0].gzmsgsstatisticsgroup.statistic_header_stamp_sec": "359",
+    "gzmsgsstatisticsgroup.statistics_group_statistics[0].gzmsgsstatisticsgroup.statistic_header_stamp_nsec": "396",
+    "gzmsgsstatisticsgroup.statistics_group_statistics[0].gzmsgsstatisticsgroup.statistic_header_data.#": "1",
+    "gzmsgsstatisticsgroup.statistics_group_statistics[0].gzmsgsstatisticsgroup.statistic_header_data[0].gzmsgsstatisticsgroup.map_key": "key-12",
+    "gzmsgsstatisticsgroup.statistics_group_statistics[0].gzmsgsstatisticsgroup.statistic_header_data[0].gzmsgsstatisticsgroup.map_value.#": "1",
+    "gzmsgsstatisticsgroup.statistics_group_statistics[0].gzmsgsstatisticsgroup.statistic_header_data[0].gzmsgsstatisticsgroup.map_value[0].gzmsgsstatisticsgroup.map_value_item": "value-13",
+    "gzmsgsstatisticsgroup.statistics_group_statistics[1].gzmsgsstatisticsgroup.statistic_header_stamp_sec": "618",
+    "gzmsgsstatisticsgroup.statistics_group_statistics[1].gzmsgsstatisticsgroup.statistic_header_stamp_nsec": "655",
+    "gzmsgsstatisticsgroup.statistics_group_statistics[1].gzmsgsstatisticsgroup.statistic_header_data.#": "1",
+    "gzmsgsstatisticsgroup.statistics_group_statistics[1].gzmsgsstatisticsgroup.statistic_header_data[0].gzmsgsstatisticsgroup.map_key": "key-19",
+    "gzmsgsstatisticsgroup.statistics_group_statistics[1].gzmsgsstatisticsgroup.statistic_header_data[0].gzmsgsstatisticsgroup.map_value.#": "1",
+    "gzmsgsstatisticsgroup.statistics_group_statistics[1].gzmsgsstatisticsgroup.statistic_header_data[0].gzmsgsstatisticsgroup.map_value[0].gzmsgsstatisticsgroup.map_value_item": "value-20"
+  }
+}

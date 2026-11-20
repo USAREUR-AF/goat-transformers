@@ -1,0 +1,12 @@
+{
+  "name": "gen-serialized_component-roundtrip",
+  "from": "gz-msgs-serialized-component",
+  "to": "gz-msgs-serialized-component",
+  "input": "08641801",
+  "expect": "08641801",
+  "model": {
+    "@kind": "serialized_component",
+    "gzmsgsserializedcomponent.serialized_component_type": "100",
+    "gzmsgsserializedcomponent.serialized_component_remove": "1"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "name": "gen-sensor_noise-roundtrip",
+  "from": "gz-msgs-sensor-noise",
+  "to": "gz-msgs-sensor-noise",
+  "input": "0a2f0a05086410890112120a066b65792d3130120876616c75652d313112120a066b65792d3132120876616c75652d31331002190000000000001640210000000000001d40290000000000002240310000000000802540390000000000002940410000000000802c40490000000000003040",
+  "expect": "0a2f0a05086410890112120a066b65792d3130120876616c75652d313112120a066b65792d3132120876616c75652d31331002190000000000001640210000000000001d40290000000000002240310000000000802540390000000000002940410000000000802c40490000000000003040",
+  "model": {
+    "@kind": "sensor_noise",
+    "gzmsgssensornoise.header_stamp_sec": "100",
+    "gzmsgssensornoise.header_stamp_nsec": "137",
+    "gzmsgssensornoise.sensor_noise_type": "2",
+    "gzmsgssensornoise.sensor_noise_mean": "5.5",
+    "gzmsgssensornoise.sensor_noise_stddev": "7.25",
+    "gzmsgssensornoise.sensor_noise_bias_mean": "9",
+    "gzmsgssensornoise.sensor_noise_bias_stddev": "10.75",
+    "gzmsgssensornoise.sensor_noise_precision": "12.5",
+    "gzmsgssensornoise.sensor_noise_dynamic_bias_stddev": "14.25",
+    "gzmsgssensornoise.sensor_noise_dynamic_bias_correlation_time": "16",
+    "gzmsgssensornoise.header_data.#": "2",
+    "gzmsgssensornoise.header_data[0].gzmsgssensornoise.map_key": "key-10",
+    "gzmsgssensornoise.header_data[0].gzmsgssensornoise.map_value.#": "1",
+    "gzmsgssensornoise.header_data[0].gzmsgssensornoise.map_value[0].gzmsgssensornoise.map_value_item": "value-11",
+    "gzmsgssensornoise.header_data[1].gzmsgssensornoise.map_key": "key-12",
+    "gzmsgssensornoise.header_data[1].gzmsgssensornoise.map_value.#": "1",
+    "gzmsgssensornoise.header_data[1].gzmsgssensornoise.map_value[0].gzmsgssensornoise.map_value_item": "value-13"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "gen-double_v-roundtrip",
+  "from": "gz-msgs-double-v",
+  "to": "gz-msgs-double-v",
+  "input": "0a10000000000000d03f0000000000000040",
+  "expect": "0a10000000000000d03f0000000000000040",
+  "model": {
+    "@kind": "double_v",
+    "gzmsgsdoublev.double_v_data.#": "2",
+    "gzmsgsdoublev.double_v_data[0].gzmsgsdoublev.double_v_data_item": "0.25",
+    "gzmsgsdoublev.double_v_data[1].gzmsgsdoublev.double_v_data_item": "2"
+  }
+}

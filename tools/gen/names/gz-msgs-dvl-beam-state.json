@@ -1,0 +1,20 @@
+{
+ "1": "dvlbeam_state_id",
+ "2.1": "velocity_reference",
+ "2.2.1.1.1": "velocity_stamp_sec",
+ "2.2.1.1.2": "velocity_stamp_nsec",
+ "2.2.1.2[]": "velocity_header_data",
+ "2.2.2": "velocity_mean_x",
+ "2.2.3": "velocity_mean_y",
+ "2.2.4": "velocity_mean_z",
+ "2.3[]": "velocity_covariance",
+ "3.1": "range_mean",
+ "3.2": "range_variance",
+ "4": "dvlbeam_state_rssi",
+ "5": "dvlbeam_state_nsd",
+ "6": "dvlbeam_state_locked",
+ "gz.msgs.DVLKinematicEstimate:3[]item": "dvlkinematic_estimate_covariance_item",
+ "gz.msgs.Header.Map:1": "map_key",
+ "gz.msgs.Header.Map:2[]": "map_value",
+ "gz.msgs.Header.Map:2[]item": "map_value_item"
+}

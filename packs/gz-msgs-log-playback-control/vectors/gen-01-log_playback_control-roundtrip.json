@@ -1,0 +1,25 @@
+{
+  "name": "gen-log_playback_control-roundtrip",
+  "from": "gz-msgs-log-playback-control",
+  "to": "gz-msgs-log-playback-control",
+  "input": "0a2d0a05086410890112100a056b65792d38120776616c75652d3912120a066b65792d3130120876616c75652d31311001182320012801320608c20210e702",
+  "expect": "0a2d0a05086410890112100a056b65792d38120776616c75652d3912120a066b65792d3130120876616c75652d31311001182320012801320608c20210e702",
+  "model": {
+    "@kind": "log_playback_control",
+    "gzmsgslogplaybackcontrol.header_stamp_sec": "100",
+    "gzmsgslogplaybackcontrol.header_stamp_nsec": "137",
+    "gzmsgslogplaybackcontrol.log_playback_control_pause": "1",
+    "gzmsgslogplaybackcontrol.log_playback_control_multi_step": "-18",
+    "gzmsgslogplaybackcontrol.log_playback_control_rewind": "1",
+    "gzmsgslogplaybackcontrol.log_playback_control_forward": "1",
+    "gzmsgslogplaybackcontrol.seek_sec": "322",
+    "gzmsgslogplaybackcontrol.seek_nsec": "359",
+    "gzmsgslogplaybackcontrol.header_data.#": "2",
+    "gzmsgslogplaybackcontrol.header_data[0].gzmsgslogplaybackcontrol.map_key": "key-8",
+    "gzmsgslogplaybackcontrol.header_data[0].gzmsgslogplaybackcontrol.map_value.#": "1",
+    "gzmsgslogplaybackcontrol.header_data[0].gzmsgslogplaybackcontrol.map_value[0].gzmsgslogplaybackcontrol.map_value_item": "value-9",
+    "gzmsgslogplaybackcontrol.header_data[1].gzmsgslogplaybackcontrol.map_key": "key-10",
+    "gzmsgslogplaybackcontrol.header_data[1].gzmsgslogplaybackcontrol.map_value.#": "1",
+    "gzmsgslogplaybackcontrol.header_data[1].gzmsgslogplaybackcontrol.map_value[0].gzmsgslogplaybackcontrol.map_value_item": "value-11"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "name": "gen-magnetometer-roundtrip",
+  "from": "gz-msgs-magnetometer",
+  "to": "gz-msgs-magnetometer",
+  "input": "0a2c0a05086410890112100a056b65792d37120776616c75652d3812110a056b65792d39120876616c75652d3130124d0a300a0608ae0110d30112120a066b65792d3131120876616c75652d313212120a066b65792d3133120876616c75652d3134110000000000001d40190000000000002240210000000000802540",
+  "expect": "0a2c0a05086410890112100a056b65792d37120776616c75652d3812110a056b65792d39120876616c75652d3130124d0a300a0608ae0110d30112120a066b65792d3131120876616c75652d313212120a066b65792d3133120876616c75652d3134110000000000001d40190000000000002240210000000000802540",
+  "model": {
+    "@kind": "magnetometer",
+    "gzmsgsmagnetometer.header_stamp_sec": "100",
+    "gzmsgsmagnetometer.header_stamp_nsec": "137",
+    "gzmsgsmagnetometer.field_tesla_stamp_sec": "174",
+    "gzmsgsmagnetometer.field_tesla_stamp_nsec": "211",
+    "gzmsgsmagnetometer.field_tesla_x": "7.25",
+    "gzmsgsmagnetometer.field_tesla_y": "9",
+    "gzmsgsmagnetometer.field_tesla_z": "10.75",
+    "gzmsgsmagnetometer.header_data.#": "2",
+    "gzmsgsmagnetometer.header_data[0].gzmsgsmagnetometer.map_key": "key-7",
+    "gzmsgsmagnetometer.header_data[0].gzmsgsmagnetometer.map_value.#": "1",
+    "gzmsgsmagnetometer.header_data[0].gzmsgsmagnetometer.map_value[0].gzmsgsmagnetometer.map_value_item": "value-8",
+    "gzmsgsmagnetometer.header_data[1].gzmsgsmagnetometer.map_key": "key-9",
+    "gzmsgsmagnetometer.header_data[1].gzmsgsmagnetometer.map_value.#": "1",
+    "gzmsgsmagnetometer.header_data[1].gzmsgsmagnetometer.map_value[0].gzmsgsmagnetometer.map_value_item": "value-10",
+    "gzmsgsmagnetometer.field_tesla_header_data.#": "2",
+    "gzmsgsmagnetometer.field_tesla_header_data[0].gzmsgsmagnetometer.map_key": "key-11",
+    "gzmsgsmagnetometer.field_tesla_header_data[0].gzmsgsmagnetometer.map_value.#": "1",
+    "gzmsgsmagnetometer.field_tesla_header_data[0].gzmsgsmagnetometer.map_value[0].gzmsgsmagnetometer.map_value_item": "value-12",
+    "gzmsgsmagnetometer.field_tesla_header_data[1].gzmsgsmagnetometer.map_key": "key-13",
+    "gzmsgsmagnetometer.field_tesla_header_data[1].gzmsgsmagnetometer.map_value.#": "1",
+    "gzmsgsmagnetometer.field_tesla_header_data[1].gzmsgsmagnetometer.map_value[0].gzmsgsmagnetometer.map_value_item": "value-14"
+  }
+}

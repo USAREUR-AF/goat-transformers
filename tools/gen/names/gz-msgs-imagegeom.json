@@ -1,0 +1,13 @@
+{
+ "1.1.1": "header_stamp_sec",
+ "1.1.2": "header_stamp_nsec",
+ "1.2[]": "header_data",
+ "2": "image_geom_uri",
+ "3": "image_geom_scale",
+ "4": "image_geom_threshold",
+ "5": "image_geom_height",
+ "6": "image_geom_granularity",
+ "gz.msgs.Header.Map:1": "map_key",
+ "gz.msgs.Header.Map:2[]": "map_value",
+ "gz.msgs.Header.Map:2[]item": "map_value_item"
+}

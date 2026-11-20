@@ -1,0 +1,32 @@
+{
+  "name": "gen-plugin_v-roundtrip",
+  "from": "gz-msgs-plugin-v",
+  "to": "gz-msgs-plugin-v",
+  "input": "0a2b0a05086410890112100a056b65792d32120776616c75652d3312100a056b65792d34120776616c75652d35123f0a1c0a0608c20210e70212120a066b65792d3131120876616c75652d313212066e616d652d381a0a66696c656e616d652d39220b696e6e6572786d6c2d313012410a1c0a0608c50410ea0412120a066b65792d3138120876616c75652d313912076e616d652d31351a0b66696c656e616d652d3136220b696e6e6572786d6c2d3137",
+  "expect": "0a2b0a05086410890112100a056b65792d32120776616c75652d3312100a056b65792d34120776616c75652d35123f0a1c0a0608c20210e70212120a066b65792d3131120876616c75652d313212066e616d652d381a0a66696c656e616d652d39220b696e6e6572786d6c2d313012410a1c0a0608c50410ea0412120a066b65792d3138120876616c75652d313912076e616d652d31351a0b66696c656e616d652d3136220b696e6e6572786d6c2d3137",
+  "model": {
+    "@kind": "plugin_v",
+    "gzmsgspluginv.header_stamp_sec": "100",
+    "gzmsgspluginv.header_stamp_nsec": "137",
+    "gzmsgspluginv.header_data.#": "2",
+    "gzmsgspluginv.header_data[0].gzmsgspluginv.map_key": "key-2",
+    "gzmsgspluginv.header_data[0].gzmsgspluginv.map_value.#": "1",
+    "gzmsgspluginv.header_data[0].gzmsgspluginv.map_value[0].gzmsgspluginv.map_value_item": "value-3",
+    "gzmsgspluginv.header_data[1].gzmsgspluginv.map_key": "key-4",
+    "gzmsgspluginv.header_data[1].gzmsgspluginv.map_value.#": "1",
+    "gzmsgspluginv.header_data[1].gzmsgspluginv.map_value[0].gzmsgspluginv.map_value_item": "value-5",
+    "gzmsgspluginv.plugin_v_plugins.#": "2",
+    "gzmsgspluginv.plugin_v_plugins[0].gzmsgspluginv.plugin_header_stamp_sec": "322",
+    "gzmsgspluginv.plugin_v_plugins[0].gzmsgspluginv.plugin_header_stamp_nsec": "359",
+    "gzmsgspluginv.plugin_v_plugins[0].gzmsgspluginv.plugin_header_data.#": "1",
+    "gzmsgspluginv.plugin_v_plugins[0].gzmsgspluginv.plugin_header_data[0].gzmsgspluginv.map_key": "key-11",
+    "gzmsgspluginv.plugin_v_plugins[0].gzmsgspluginv.plugin_header_data[0].gzmsgspluginv.map_value.#": "1",
+    "gzmsgspluginv.plugin_v_plugins[0].gzmsgspluginv.plugin_header_data[0].gzmsgspluginv.map_value[0].gzmsgspluginv.map_value_item": "value-12",
+    "gzmsgspluginv.plugin_v_plugins[1].gzmsgspluginv.plugin_header_stamp_sec": "581",
+    "gzmsgspluginv.plugin_v_plugins[1].gzmsgspluginv.plugin_header_stamp_nsec": "618",
+    "gzmsgspluginv.plugin_v_plugins[1].gzmsgspluginv.plugin_header_data.#": "1",
+    "gzmsgspluginv.plugin_v_plugins[1].gzmsgspluginv.plugin_header_data[0].gzmsgspluginv.map_key": "key-18",
+    "gzmsgspluginv.plugin_v_plugins[1].gzmsgspluginv.plugin_header_data[0].gzmsgspluginv.map_value.#": "1",
+    "gzmsgspluginv.plugin_v_plugins[1].gzmsgspluginv.plugin_header_data[0].gzmsgspluginv.map_value[0].gzmsgspluginv.map_value_item": "value-19"
+  }
+}

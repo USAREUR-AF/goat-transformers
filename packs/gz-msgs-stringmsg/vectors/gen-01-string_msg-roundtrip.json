@@ -1,0 +1,20 @@
+{
+  "name": "gen-string_msg-roundtrip",
+  "from": "gz-msgs-stringmsg",
+  "to": "gz-msgs-stringmsg",
+  "input": "0a2b0a05086410890112100a056b65792d33120776616c75652d3412100a056b65792d35120776616c75652d361206646174612d32",
+  "expect": "0a2b0a05086410890112100a056b65792d33120776616c75652d3412100a056b65792d35120776616c75652d361206646174612d32",
+  "model": {
+    "@kind": "string_msg",
+    "gzmsgsstringmsg.header_stamp_sec": "100",
+    "gzmsgsstringmsg.header_stamp_nsec": "137",
+    "gzmsgsstringmsg.string_msg_data": "data-2",
+    "gzmsgsstringmsg.header_data.#": "2",
+    "gzmsgsstringmsg.header_data[0].gzmsgsstringmsg.map_key": "key-3",
+    "gzmsgsstringmsg.header_data[0].gzmsgsstringmsg.map_value.#": "1",
+    "gzmsgsstringmsg.header_data[0].gzmsgsstringmsg.map_value[0].gzmsgsstringmsg.map_value_item": "value-4",
+    "gzmsgsstringmsg.header_data[1].gzmsgsstringmsg.map_key": "key-5",
+    "gzmsgsstringmsg.header_data[1].gzmsgsstringmsg.map_value.#": "1",
+    "gzmsgsstringmsg.header_data[1].gzmsgsstringmsg.map_value[0].gzmsgsstringmsg.map_value_item": "value-6"
+  }
+}

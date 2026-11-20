@@ -1,0 +1,27 @@
+{
+  "name": "gen-log_status-roundtrip",
+  "from": "gz-msgs-log-status",
+  "to": "gz-msgs-log-status",
+  "input": "0a2f0a05086410890112120a066b65792d3130120876616c75652d313112120a066b65792d3132120876616c75652d3133120608ae0110d3011a2a0a057572692d34120b626173655f706174682d351a0b66756c6c5f706174682d36250000904028013001",
+  "expect": "0a2f0a05086410890112120a066b65792d3130120876616c75652d313112120a066b65792d3132120876616c75652d3133120608ae0110d3011a2a0a057572692d34120b626173655f706174682d351a0b66756c6c5f706174682d36250000904028013001",
+  "model": {
+    "@kind": "log_status",
+    "gzmsgslogstatus.header_stamp_sec": "100",
+    "gzmsgslogstatus.header_stamp_nsec": "137",
+    "gzmsgslogstatus.sim_time_sec": "174",
+    "gzmsgslogstatus.sim_time_nsec": "211",
+    "gzmsgslogstatus.log_file_uri": "uri-4",
+    "gzmsgslogstatus.log_file_base_path": "base_path-5",
+    "gzmsgslogstatus.log_file_full_path": "full_path-6",
+    "gzmsgslogstatus.log_file_size": "4.5",
+    "gzmsgslogstatus.log_file_size_units": "1",
+    "gzmsgslogstatus.log_file_record_resources": "1",
+    "gzmsgslogstatus.header_data.#": "2",
+    "gzmsgslogstatus.header_data[0].gzmsgslogstatus.map_key": "key-10",
+    "gzmsgslogstatus.header_data[0].gzmsgslogstatus.map_value.#": "1",
+    "gzmsgslogstatus.header_data[0].gzmsgslogstatus.map_value[0].gzmsgslogstatus.map_value_item": "value-11",
+    "gzmsgslogstatus.header_data[1].gzmsgslogstatus.map_key": "key-12",
+    "gzmsgslogstatus.header_data[1].gzmsgslogstatus.map_value.#": "1",
+    "gzmsgslogstatus.header_data[1].gzmsgslogstatus.map_value[0].gzmsgslogstatus.map_value_item": "value-13"
+  }
+}

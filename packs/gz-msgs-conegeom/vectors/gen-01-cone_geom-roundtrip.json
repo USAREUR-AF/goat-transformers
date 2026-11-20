@@ -1,0 +1,21 @@
+{
+  "name": "gen-cone_geom-roundtrip",
+  "from": "gz-msgs-conegeom",
+  "to": "gz-msgs-conegeom",
+  "input": "0a2b0a05086410890112100a056b65792d34120776616c75652d3512100a056b65792d36120776616c75652d37110000000000000e40190000000000001640",
+  "expect": "0a2b0a05086410890112100a056b65792d34120776616c75652d3512100a056b65792d36120776616c75652d37110000000000000e40190000000000001640",
+  "model": {
+    "@kind": "cone_geom",
+    "gzmsgsconegeom.header_stamp_sec": "100",
+    "gzmsgsconegeom.header_stamp_nsec": "137",
+    "gzmsgsconegeom.cone_geom_radius": "3.75",
+    "gzmsgsconegeom.cone_geom_length": "5.5",
+    "gzmsgsconegeom.header_data.#": "2",
+    "gzmsgsconegeom.header_data[0].gzmsgsconegeom.map_key": "key-4",
+    "gzmsgsconegeom.header_data[0].gzmsgsconegeom.map_value.#": "1",
+    "gzmsgsconegeom.header_data[0].gzmsgsconegeom.map_value[0].gzmsgsconegeom.map_value_item": "value-5",
+    "gzmsgsconegeom.header_data[1].gzmsgsconegeom.map_key": "key-6",
+    "gzmsgsconegeom.header_data[1].gzmsgsconegeom.map_value.#": "1",
+    "gzmsgsconegeom.header_data[1].gzmsgsconegeom.map_value[0].gzmsgsconegeom.map_value_item": "value-7"
+  }
+}

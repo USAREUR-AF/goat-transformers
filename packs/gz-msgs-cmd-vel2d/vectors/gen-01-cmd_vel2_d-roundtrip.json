@@ -1,0 +1,21 @@
+{
+  "name": "gen-cmd_vel2_d-roundtrip",
+  "from": "gz-msgs-cmd-vel2d",
+  "to": "gz-msgs-cmd-vel2d",
+  "input": "0a2b0a05086410890112100a056b65792d34120776616c75652d3512100a056b65792d36120776616c75652d37110000000000000e40190000000000001640",
+  "expect": "0a2b0a05086410890112100a056b65792d34120776616c75652d3512100a056b65792d36120776616c75652d37110000000000000e40190000000000001640",
+  "model": {
+    "@kind": "cmd_vel2_d",
+    "gzmsgscmdvel2d.header_stamp_sec": "100",
+    "gzmsgscmdvel2d.header_stamp_nsec": "137",
+    "gzmsgscmdvel2d.cmd_vel2_d_velocity": "3.75",
+    "gzmsgscmdvel2d.cmd_vel2_d_theta": "5.5",
+    "gzmsgscmdvel2d.header_data.#": "2",
+    "gzmsgscmdvel2d.header_data[0].gzmsgscmdvel2d.map_key": "key-4",
+    "gzmsgscmdvel2d.header_data[0].gzmsgscmdvel2d.map_value.#": "1",
+    "gzmsgscmdvel2d.header_data[0].gzmsgscmdvel2d.map_value[0].gzmsgscmdvel2d.map_value_item": "value-5",
+    "gzmsgscmdvel2d.header_data[1].gzmsgscmdvel2d.map_key": "key-6",
+    "gzmsgscmdvel2d.header_data[1].gzmsgscmdvel2d.map_value.#": "1",
+    "gzmsgscmdvel2d.header_data[1].gzmsgscmdvel2d.map_value[0].gzmsgscmdvel2d.map_value_item": "value-7"
+  }
+}

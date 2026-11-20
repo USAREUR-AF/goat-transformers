@@ -1,0 +1,24 @@
+{
+  "name": "gen-lens-roundtrip",
+  "from": "gz-msgs-lens",
+  "to": "gz-msgs-lens",
+  "input": "08011001190000000000000e40210000000000001640290000000000001d403100000000000022403801410000000000002940488c03510000000000003040590000000000c03140610000000000803340690000000000403540710000000000003740",
+  "expect": "08011001190000000000000e40210000000000001640290000000000001d403100000000000022403801410000000000002940488c03510000000000003040590000000000c03140610000000000803340690000000000403540710000000000003740",
+  "model": {
+    "@kind": "lens",
+    "gzmsgslens.lens_type": "1",
+    "gzmsgslens.lens_scale_to_hfov": "1",
+    "gzmsgslens.lens_c1": "3.75",
+    "gzmsgslens.lens_c2": "5.5",
+    "gzmsgslens.lens_c3": "7.25",
+    "gzmsgslens.lens_focal_length": "9",
+    "gzmsgslens.lens_function_type": "1",
+    "gzmsgslens.lens_cutoff_angle": "12.5",
+    "gzmsgslens.lens_environment_texture_size": "396",
+    "gzmsgslens.lens_intrinsics_fx": "16",
+    "gzmsgslens.lens_intrinsics_fy": "17.75",
+    "gzmsgslens.lens_intrinsics_cx": "19.5",
+    "gzmsgslens.lens_intrinsics_cy": "21.25",
+    "gzmsgslens.lens_intrinsics_skew": "23"
+  }
+}

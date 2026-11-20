@@ -1,0 +1,32 @@
+{
+  "name": "gen-publishers-roundtrip",
+  "from": "gz-msgs-publishers",
+  "to": "gz-msgs-publishers",
+  "input": "0a2b0a05086410890112100a056b65792d32120776616c75652d3312100a056b65792d34120776616c75652d35123f0a1c0a0608c20210e70212120a066b65792d3132120876616c75652d31331207746f7069632d381a0a6d73675f747970652d392207686f73742d313028fb0312410a1c0a0608ea04108f0512120a066b65792d3230120876616c75652d32311208746f7069632d31361a0b6d73675f747970652d31372207686f73742d313828a306",
+  "expect": "0a2b0a05086410890112100a056b65792d32120776616c75652d3312100a056b65792d34120776616c75652d35123f0a1c0a0608c20210e70212120a066b65792d3132120876616c75652d31331207746f7069632d381a0a6d73675f747970652d392207686f73742d313028fb0312410a1c0a0608ea04108f0512120a066b65792d3230120876616c75652d32311208746f7069632d31361a0b6d73675f747970652d31372207686f73742d313828a306",
+  "model": {
+    "@kind": "publishers",
+    "gzmsgspublishers.header_stamp_sec": "100",
+    "gzmsgspublishers.header_stamp_nsec": "137",
+    "gzmsgspublishers.header_data.#": "2",
+    "gzmsgspublishers.header_data[0].gzmsgspublishers.map_key": "key-2",
+    "gzmsgspublishers.header_data[0].gzmsgspublishers.map_value.#": "1",
+    "gzmsgspublishers.header_data[0].gzmsgspublishers.map_value[0].gzmsgspublishers.map_value_item": "value-3",
+    "gzmsgspublishers.header_data[1].gzmsgspublishers.map_key": "key-4",
+    "gzmsgspublishers.header_data[1].gzmsgspublishers.map_value.#": "1",
+    "gzmsgspublishers.header_data[1].gzmsgspublishers.map_value[0].gzmsgspublishers.map_value_item": "value-5",
+    "gzmsgspublishers.publishers_publisher.#": "2",
+    "gzmsgspublishers.publishers_publisher[0].gzmsgspublishers.publish_header_stamp_sec": "322",
+    "gzmsgspublishers.publishers_publisher[0].gzmsgspublishers.publish_header_stamp_nsec": "359",
+    "gzmsgspublishers.publishers_publisher[0].gzmsgspublishers.publish_header_data.#": "1",
+    "gzmsgspublishers.publishers_publisher[0].gzmsgspublishers.publish_header_data[0].gzmsgspublishers.map_key": "key-12",
+    "gzmsgspublishers.publishers_publisher[0].gzmsgspublishers.publish_header_data[0].gzmsgspublishers.map_value.#": "1",
+    "gzmsgspublishers.publishers_publisher[0].gzmsgspublishers.publish_header_data[0].gzmsgspublishers.map_value[0].gzmsgspublishers.map_value_item": "value-13",
+    "gzmsgspublishers.publishers_publisher[1].gzmsgspublishers.publish_header_stamp_sec": "618",
+    "gzmsgspublishers.publishers_publisher[1].gzmsgspublishers.publish_header_stamp_nsec": "655",
+    "gzmsgspublishers.publishers_publisher[1].gzmsgspublishers.publish_header_data.#": "1",
+    "gzmsgspublishers.publishers_publisher[1].gzmsgspublishers.publish_header_data[0].gzmsgspublishers.map_key": "key-20",
+    "gzmsgspublishers.publishers_publisher[1].gzmsgspublishers.publish_header_data[0].gzmsgspublishers.map_value.#": "1",
+    "gzmsgspublishers.publishers_publisher[1].gzmsgspublishers.publish_header_data[0].gzmsgspublishers.map_value[0].gzmsgspublishers.map_value_item": "value-21"
+  }
+}

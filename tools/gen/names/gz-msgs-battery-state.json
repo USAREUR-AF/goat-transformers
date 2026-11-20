@@ -1,0 +1,14 @@
+{
+ "1.1.1": "header_stamp_sec",
+ "1.1.2": "header_stamp_nsec",
+ "1.2[]": "header_data",
+ "2": "battery_state_voltage",
+ "3": "battery_state_current",
+ "4": "battery_state_charge",
+ "5": "battery_state_capacity",
+ "6": "battery_state_percentage",
+ "7": "battery_state_power_supply_status",
+ "gz.msgs.Header.Map:1": "map_key",
+ "gz.msgs.Header.Map:2[]": "map_value",
+ "gz.msgs.Header.Map:2[]item": "map_value_item"
+}

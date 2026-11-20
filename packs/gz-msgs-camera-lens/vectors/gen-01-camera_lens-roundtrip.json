@@ -1,0 +1,29 @@
+{
+  "name": "gen-camera_lens-roundtrip",
+  "from": "gz-msgs-camera-lens",
+  "to": "gz-msgs-camera-lens",
+  "input": "0a2f0a05086410890112120a066b65792d3132120876616c75652d313312120a066b65792d3134120876616c75652d31351206747970652d32190000000000001640210000000000001d402900000000000022403100000000008025403a0566756e2d374001490000000000003040510000000000c0314058fb03",
+  "expect": "0a2f0a05086410890112120a066b65792d3132120876616c75652d313312120a066b65792d3134120876616c75652d31351206747970652d32190000000000001640210000000000001d402900000000000022403100000000008025403a0566756e2d374001490000000000003040510000000000c0314058fb03",
+  "model": {
+    "@kind": "camera_lens",
+    "gzmsgscameralens.header_stamp_sec": "100",
+    "gzmsgscameralens.header_stamp_nsec": "137",
+    "gzmsgscameralens.camera_lens_type": "type-2",
+    "gzmsgscameralens.camera_lens_c1": "5.5",
+    "gzmsgscameralens.camera_lens_c2": "7.25",
+    "gzmsgscameralens.camera_lens_c3": "9",
+    "gzmsgscameralens.camera_lens_f": "10.75",
+    "gzmsgscameralens.camera_lens_fun": "fun-7",
+    "gzmsgscameralens.camera_lens_scale_to_hfov": "1",
+    "gzmsgscameralens.camera_lens_cutoff_angle": "16",
+    "gzmsgscameralens.camera_lens_hfov": "17.75",
+    "gzmsgscameralens.camera_lens_env_texture_size": "507",
+    "gzmsgscameralens.header_data.#": "2",
+    "gzmsgscameralens.header_data[0].gzmsgscameralens.map_key": "key-12",
+    "gzmsgscameralens.header_data[0].gzmsgscameralens.map_value.#": "1",
+    "gzmsgscameralens.header_data[0].gzmsgscameralens.map_value[0].gzmsgscameralens.map_value_item": "value-13",
+    "gzmsgscameralens.header_data[1].gzmsgscameralens.map_key": "key-14",
+    "gzmsgscameralens.header_data[1].gzmsgscameralens.map_value.#": "1",
+    "gzmsgscameralens.header_data[1].gzmsgscameralens.map_value[0].gzmsgscameralens.map_value_item": "value-15"
+  }
+}

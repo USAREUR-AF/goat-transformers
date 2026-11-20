@@ -1,0 +1,21 @@
+{
+  "name": "gen-duration-roundtrip",
+  "from": "gz-msgs-duration",
+  "to": "gz-msgs-duration",
+  "input": "0a2b0a05086410890112100a056b65792d34120776616c75652d3512100a056b65792d36120776616c75652d3710ae0118d301",
+  "expect": "0a2b0a05086410890112100a056b65792d34120776616c75652d3512100a056b65792d36120776616c75652d3710ae0118d301",
+  "model": {
+    "@kind": "duration",
+    "gzmsgsduration.header_stamp_sec": "100",
+    "gzmsgsduration.header_stamp_nsec": "137",
+    "gzmsgsduration.duration_sec": "174",
+    "gzmsgsduration.duration_nsec": "211",
+    "gzmsgsduration.header_data.#": "2",
+    "gzmsgsduration.header_data[0].gzmsgsduration.map_key": "key-4",
+    "gzmsgsduration.header_data[0].gzmsgsduration.map_value.#": "1",
+    "gzmsgsduration.header_data[0].gzmsgsduration.map_value[0].gzmsgsduration.map_value_item": "value-5",
+    "gzmsgsduration.header_data[1].gzmsgsduration.map_key": "key-6",
+    "gzmsgsduration.header_data[1].gzmsgsduration.map_value.#": "1",
+    "gzmsgsduration.header_data[1].gzmsgsduration.map_value[0].gzmsgsduration.map_value_item": "value-7"
+  }
+}

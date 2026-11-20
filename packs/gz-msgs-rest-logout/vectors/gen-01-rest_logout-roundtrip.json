@@ -1,0 +1,21 @@
+{
+  "name": "gen-rest_logout-roundtrip",
+  "from": "gz-msgs-rest-logout",
+  "to": "gz-msgs-rest-logout",
+  "input": "0a2b0a05086410890112100a056b65792d34120776616c75652d3512100a056b65792d36120776616c75652d3710ae011a0575726c2d33",
+  "expect": "0a2b0a05086410890112100a056b65792d34120776616c75652d3512100a056b65792d36120776616c75652d3710ae011a0575726c2d33",
+  "model": {
+    "@kind": "rest_logout",
+    "gzmsgsrestlogout.header_stamp_sec": "100",
+    "gzmsgsrestlogout.header_stamp_nsec": "137",
+    "gzmsgsrestlogout.rest_logout_id": "174",
+    "gzmsgsrestlogout.rest_logout_url": "url-3",
+    "gzmsgsrestlogout.header_data.#": "2",
+    "gzmsgsrestlogout.header_data[0].gzmsgsrestlogout.map_key": "key-4",
+    "gzmsgsrestlogout.header_data[0].gzmsgsrestlogout.map_value.#": "1",
+    "gzmsgsrestlogout.header_data[0].gzmsgsrestlogout.map_value[0].gzmsgsrestlogout.map_value_item": "value-5",
+    "gzmsgsrestlogout.header_data[1].gzmsgsrestlogout.map_key": "key-6",
+    "gzmsgsrestlogout.header_data[1].gzmsgsrestlogout.map_value.#": "1",
+    "gzmsgsrestlogout.header_data[1].gzmsgsrestlogout.map_value[0].gzmsgsrestlogout.map_value_item": "value-7"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "name": "gen-battery_state-roundtrip",
+  "from": "gz-msgs-battery-state",
+  "to": "gz-msgs-battery-state",
+  "input": "0a2d0a05086410890112100a056b65792d38120776616c75652d3912120a066b65792d3130120876616c75652d3131110000000000000e40190000000000001640210000000000001d402900000000000022403100000000008025403801",
+  "expect": "0a2d0a05086410890112100a056b65792d38120776616c75652d3912120a066b65792d3130120876616c75652d3131110000000000000e40190000000000001640210000000000001d402900000000000022403100000000008025403801",
+  "model": {
+    "@kind": "battery_state",
+    "gzmsgsbatterystate.header_stamp_sec": "100",
+    "gzmsgsbatterystate.header_stamp_nsec": "137",
+    "gzmsgsbatterystate.battery_state_voltage": "3.75",
+    "gzmsgsbatterystate.battery_state_current": "5.5",
+    "gzmsgsbatterystate.battery_state_charge": "7.25",
+    "gzmsgsbatterystate.battery_state_capacity": "9",
+    "gzmsgsbatterystate.battery_state_percentage": "10.75",
+    "gzmsgsbatterystate.battery_state_power_supply_status": "1",
+    "gzmsgsbatterystate.header_data.#": "2",
+    "gzmsgsbatterystate.header_data[0].gzmsgsbatterystate.map_key": "key-8",
+    "gzmsgsbatterystate.header_data[0].gzmsgsbatterystate.map_value.#": "1",
+    "gzmsgsbatterystate.header_data[0].gzmsgsbatterystate.map_value[0].gzmsgsbatterystate.map_value_item": "value-9",
+    "gzmsgsbatterystate.header_data[1].gzmsgsbatterystate.map_key": "key-10",
+    "gzmsgsbatterystate.header_data[1].gzmsgsbatterystate.map_value.#": "1",
+    "gzmsgsbatterystate.header_data[1].gzmsgsbatterystate.map_value[0].gzmsgsbatterystate.map_value_item": "value-11"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "gen-header-roundtrip",
+  "from": "gz-msgs-header",
+  "to": "gz-msgs-header",
+  "input": "0a05086410890112100a056b65792d32120776616c75652d3312100a056b65792d34120776616c75652d35",
+  "expect": "0a05086410890112100a056b65792d32120776616c75652d3312100a056b65792d34120776616c75652d35",
+  "model": {
+    "@kind": "header",
+    "gzmsgsheader.stamp_sec": "100",
+    "gzmsgsheader.stamp_nsec": "137",
+    "gzmsgsheader.header_data.#": "2",
+    "gzmsgsheader.header_data[0].gzmsgsheader.map_key": "key-2",
+    "gzmsgsheader.header_data[0].gzmsgsheader.map_value.#": "1",
+    "gzmsgsheader.header_data[0].gzmsgsheader.map_value[0].gzmsgsheader.map_value_item": "value-3",
+    "gzmsgsheader.header_data[1].gzmsgsheader.map_key": "key-4",
+    "gzmsgsheader.header_data[1].gzmsgsheader.map_value.#": "1",
+    "gzmsgsheader.header_data[1].gzmsgsheader.map_value[0].gzmsgsheader.map_value_item": "value-5"
+  }
+}

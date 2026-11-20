@@ -1,0 +1,28 @@
+{
+  "name": "gen-tactile-roundtrip",
+  "from": "gz-msgs-tactile",
+  "to": "gz-msgs-tactile",
+  "input": "0a2b0a05086410890112100a056b65792d32120776616c75652d3312100a056b65792d34120776616c75652d351210636f6c6c6973696f6e5f6e616d652d361210636f6c6c6973696f6e5f6e616d652d371a048c03b10322100000000000c031400000000000803340",
+  "expect": "0a2b0a05086410890112100a056b65792d32120776616c75652d3312100a056b65792d34120776616c75652d351210636f6c6c6973696f6e5f6e616d652d361210636f6c6c6973696f6e5f6e616d652d371a048c03b10322100000000000c031400000000000803340",
+  "model": {
+    "@kind": "tactile",
+    "gzmsgstactile.header_stamp_sec": "100",
+    "gzmsgstactile.header_stamp_nsec": "137",
+    "gzmsgstactile.header_data.#": "2",
+    "gzmsgstactile.header_data[0].gzmsgstactile.map_key": "key-2",
+    "gzmsgstactile.header_data[0].gzmsgstactile.map_value.#": "1",
+    "gzmsgstactile.header_data[0].gzmsgstactile.map_value[0].gzmsgstactile.map_value_item": "value-3",
+    "gzmsgstactile.header_data[1].gzmsgstactile.map_key": "key-4",
+    "gzmsgstactile.header_data[1].gzmsgstactile.map_value.#": "1",
+    "gzmsgstactile.header_data[1].gzmsgstactile.map_value[0].gzmsgstactile.map_value_item": "value-5",
+    "gzmsgstactile.tactile_collision_name.#": "2",
+    "gzmsgstactile.tactile_collision_name[0].gzmsgstactile.tactile_collision_name_item": "collision_name-6",
+    "gzmsgstactile.tactile_collision_name[1].gzmsgstactile.tactile_collision_name_item": "collision_name-7",
+    "gzmsgstactile.tactile_collision_id.#": "2",
+    "gzmsgstactile.tactile_collision_id[0].gzmsgstactile.tactile_collision_id_item": "396",
+    "gzmsgstactile.tactile_collision_id[1].gzmsgstactile.tactile_collision_id_item": "433",
+    "gzmsgstactile.tactile_pressure.#": "2",
+    "gzmsgstactile.tactile_pressure[0].gzmsgstactile.tactile_pressure_item": "17.75",
+    "gzmsgstactile.tactile_pressure[1].gzmsgstactile.tactile_pressure_item": "19.5"
+  }
+}

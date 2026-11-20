@@ -1,0 +1,23 @@
+{
+  "name": "gen-rest_login-roundtrip",
+  "from": "gz-msgs-rest-login",
+  "to": "gz-msgs-rest-login",
+  "input": "0a2b0a05086410890112100a056b65792d36120776616c75652d3712100a056b65792d38120776616c75652d3910ae011a0575726c2d33220a757365726e616d652d342a0a70617373776f72642d35",
+  "expect": "0a2b0a05086410890112100a056b65792d36120776616c75652d3712100a056b65792d38120776616c75652d3910ae011a0575726c2d33220a757365726e616d652d342a0a70617373776f72642d35",
+  "model": {
+    "@kind": "rest_login",
+    "gzmsgsrestlogin.header_stamp_sec": "100",
+    "gzmsgsrestlogin.header_stamp_nsec": "137",
+    "gzmsgsrestlogin.rest_login_id": "174",
+    "gzmsgsrestlogin.rest_login_url": "url-3",
+    "gzmsgsrestlogin.rest_login_username": "username-4",
+    "gzmsgsrestlogin.rest_login_password": "password-5",
+    "gzmsgsrestlogin.header_data.#": "2",
+    "gzmsgsrestlogin.header_data[0].gzmsgsrestlogin.map_key": "key-6",
+    "gzmsgsrestlogin.header_data[0].gzmsgsrestlogin.map_value.#": "1",
+    "gzmsgsrestlogin.header_data[0].gzmsgsrestlogin.map_value[0].gzmsgsrestlogin.map_value_item": "value-7",
+    "gzmsgsrestlogin.header_data[1].gzmsgsrestlogin.map_key": "key-8",
+    "gzmsgsrestlogin.header_data[1].gzmsgsrestlogin.map_value.#": "1",
+    "gzmsgsrestlogin.header_data[1].gzmsgsrestlogin.map_value[0].gzmsgsrestlogin.map_value_item": "value-9"
+  }
+}

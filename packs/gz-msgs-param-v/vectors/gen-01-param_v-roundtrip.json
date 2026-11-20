@@ -1,0 +1,32 @@
+{
+  "name": "gen-param_v-roundtrip",
+  "from": "gz-msgs-param-v",
+  "to": "gz-msgs-param-v",
+  "input": "0a2b0a05086410890112100a056b65792d32120776616c75652d3312100a056b65792d34120776616c75652d35121c0a1a0a0608c20210e70212100a056b65792d38120776616c75652d39121e0a1c0a0608d60310fb0312120a066b65792d3132120876616c75652d3133",
+  "expect": "0a2b0a05086410890112100a056b65792d32120776616c75652d3312100a056b65792d34120776616c75652d35121c0a1a0a0608c20210e70212100a056b65792d38120776616c75652d39121e0a1c0a0608d60310fb0312120a066b65792d3132120876616c75652d3133",
+  "model": {
+    "@kind": "param_v",
+    "gzmsgsparamv.header_stamp_sec": "100",
+    "gzmsgsparamv.header_stamp_nsec": "137",
+    "gzmsgsparamv.header_data.#": "2",
+    "gzmsgsparamv.header_data[0].gzmsgsparamv.map_key": "key-2",
+    "gzmsgsparamv.header_data[0].gzmsgsparamv.map_value.#": "1",
+    "gzmsgsparamv.header_data[0].gzmsgsparamv.map_value[0].gzmsgsparamv.map_value_item": "value-3",
+    "gzmsgsparamv.header_data[1].gzmsgsparamv.map_key": "key-4",
+    "gzmsgsparamv.header_data[1].gzmsgsparamv.map_value.#": "1",
+    "gzmsgsparamv.header_data[1].gzmsgsparamv.map_value[0].gzmsgsparamv.map_value_item": "value-5",
+    "gzmsgsparamv.param_v_param.#": "2",
+    "gzmsgsparamv.param_v_param[0].gzmsgsparamv.param_header_stamp_sec": "322",
+    "gzmsgsparamv.param_v_param[0].gzmsgsparamv.param_header_stamp_nsec": "359",
+    "gzmsgsparamv.param_v_param[0].gzmsgsparamv.param_header_data.#": "1",
+    "gzmsgsparamv.param_v_param[0].gzmsgsparamv.param_header_data[0].gzmsgsparamv.map_key": "key-8",
+    "gzmsgsparamv.param_v_param[0].gzmsgsparamv.param_header_data[0].gzmsgsparamv.map_value.#": "1",
+    "gzmsgsparamv.param_v_param[0].gzmsgsparamv.param_header_data[0].gzmsgsparamv.map_value[0].gzmsgsparamv.map_value_item": "value-9",
+    "gzmsgsparamv.param_v_param[1].gzmsgsparamv.param_header_stamp_sec": "470",
+    "gzmsgsparamv.param_v_param[1].gzmsgsparamv.param_header_stamp_nsec": "507",
+    "gzmsgsparamv.param_v_param[1].gzmsgsparamv.param_header_data.#": "1",
+    "gzmsgsparamv.param_v_param[1].gzmsgsparamv.param_header_data[0].gzmsgsparamv.map_key": "key-12",
+    "gzmsgsparamv.param_v_param[1].gzmsgsparamv.param_header_data[0].gzmsgsparamv.map_value.#": "1",
+    "gzmsgsparamv.param_v_param[1].gzmsgsparamv.param_header_data[0].gzmsgsparamv.map_value[0].gzmsgsparamv.map_value_item": "value-13"
+  }
+}

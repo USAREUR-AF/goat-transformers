@@ -1,0 +1,23 @@
+{
+  "name": "gen-log_playback_statistics-roundtrip",
+  "from": "gz-msgs-log-playback-statistics",
+  "to": "gz-msgs-log-playback-statistics",
+  "input": "0a2b0a05086410890112100a056b65792d36120776616c75652d3712100a056b65792d38120776616c75652d39120608ae0110d3011a0608f801109d02",
+  "expect": "0a2b0a05086410890112100a056b65792d36120776616c75652d3712100a056b65792d38120776616c75652d39120608ae0110d3011a0608f801109d02",
+  "model": {
+    "@kind": "log_playback_statistics",
+    "gzmsgslogplaybackstatistics.header_stamp_sec": "100",
+    "gzmsgslogplaybackstatistics.header_stamp_nsec": "137",
+    "gzmsgslogplaybackstatistics.start_time_sec": "174",
+    "gzmsgslogplaybackstatistics.start_time_nsec": "211",
+    "gzmsgslogplaybackstatistics.end_time_sec": "248",
+    "gzmsgslogplaybackstatistics.end_time_nsec": "285",
+    "gzmsgslogplaybackstatistics.header_data.#": "2",
+    "gzmsgslogplaybackstatistics.header_data[0].gzmsgslogplaybackstatistics.map_key": "key-6",
+    "gzmsgslogplaybackstatistics.header_data[0].gzmsgslogplaybackstatistics.map_value.#": "1",
+    "gzmsgslogplaybackstatistics.header_data[0].gzmsgslogplaybackstatistics.map_value[0].gzmsgslogplaybackstatistics.map_value_item": "value-7",
+    "gzmsgslogplaybackstatistics.header_data[1].gzmsgslogplaybackstatistics.map_key": "key-8",
+    "gzmsgslogplaybackstatistics.header_data[1].gzmsgslogplaybackstatistics.map_value.#": "1",
+    "gzmsgslogplaybackstatistics.header_data[1].gzmsgslogplaybackstatistics.map_value[0].gzmsgslogplaybackstatistics.map_value_item": "value-9"
+  }
+}

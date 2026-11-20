@@ -1,0 +1,20 @@
+{
+ "1.1.1": "header_stamp_sec",
+ "1.1.2": "header_stamp_nsec",
+ "1.2[]": "header_data",
+ "2.1.1.1": "linear_stamp_sec",
+ "2.1.1.2": "linear_stamp_nsec",
+ "2.1.2[]": "linear_header_data",
+ "2.2": "linear_x",
+ "2.3": "linear_y",
+ "2.4": "linear_z",
+ "3.1.1.1": "angular_stamp_sec",
+ "3.1.1.2": "angular_stamp_nsec",
+ "3.1.2[]": "angular_header_data",
+ "3.2": "angular_x",
+ "3.3": "angular_y",
+ "3.4": "angular_z",
+ "gz.msgs.Header.Map:1": "map_key",
+ "gz.msgs.Header.Map:2[]": "map_value",
+ "gz.msgs.Header.Map:2[]item": "map_value_item"
+}

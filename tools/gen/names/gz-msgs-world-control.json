@@ -1,0 +1,20 @@
+{
+ "1.1.1": "header_stamp_sec",
+ "1.1.2": "header_stamp_nsec",
+ "1.2[]": "header_data",
+ "2": "world_control_pause",
+ "3": "world_control_step",
+ "4": "world_control_multi_step",
+ "5.1.1.1": "reset_stamp_sec",
+ "5.1.1.2": "reset_stamp_nsec",
+ "5.1.2[]": "reset_header_data",
+ "5.2": "reset_all",
+ "5.3": "reset_time_only",
+ "5.4": "reset_model_only",
+ "6": "world_control_seed",
+ "7.1": "run_to_sim_time_sec",
+ "7.2": "run_to_sim_time_nsec",
+ "gz.msgs.Header.Map:1": "map_key",
+ "gz.msgs.Header.Map:2[]": "map_value",
+ "gz.msgs.Header.Map:2[]item": "map_value_item"
+}

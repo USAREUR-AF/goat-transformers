@@ -1,0 +1,26 @@
+{
+  "name": "gen-dvlkinematic_estimate-roundtrip",
+  "from": "gz-msgs-dvl-kinematic-estimate",
+  "to": "gz-msgs-dvl-kinematic-estimate",
+  "input": "080112490a2c0a0608890110ae0112100a056b65792d36120776616c75652d3712100a056b65792d38120776616c75652d39110000000000001640190000000000001d402100000000000022401a100000000000c031400000000000803340",
+  "expect": "080112490a2c0a0608890110ae0112100a056b65792d36120776616c75652d3712100a056b65792d38120776616c75652d39110000000000001640190000000000001d402100000000000022401a100000000000c031400000000000803340",
+  "model": {
+    "@kind": "dvlkinematic_estimate",
+    "gzmsgsdvlkinematicestimate.dvlkinematic_estimate_reference": "1",
+    "gzmsgsdvlkinematicestimate.mean_stamp_sec": "137",
+    "gzmsgsdvlkinematicestimate.mean_stamp_nsec": "174",
+    "gzmsgsdvlkinematicestimate.mean_x": "5.5",
+    "gzmsgsdvlkinematicestimate.mean_y": "7.25",
+    "gzmsgsdvlkinematicestimate.mean_z": "9",
+    "gzmsgsdvlkinematicestimate.mean_header_data.#": "2",
+    "gzmsgsdvlkinematicestimate.mean_header_data[0].gzmsgsdvlkinematicestimate.map_key": "key-6",
+    "gzmsgsdvlkinematicestimate.mean_header_data[0].gzmsgsdvlkinematicestimate.map_value.#": "1",
+    "gzmsgsdvlkinematicestimate.mean_header_data[0].gzmsgsdvlkinematicestimate.map_value[0].gzmsgsdvlkinematicestimate.map_value_item": "value-7",
+    "gzmsgsdvlkinematicestimate.mean_header_data[1].gzmsgsdvlkinematicestimate.map_key": "key-8",
+    "gzmsgsdvlkinematicestimate.mean_header_data[1].gzmsgsdvlkinematicestimate.map_value.#": "1",
+    "gzmsgsdvlkinematicestimate.mean_header_data[1].gzmsgsdvlkinematicestimate.map_value[0].gzmsgsdvlkinematicestimate.map_value_item": "value-9",
+    "gzmsgsdvlkinematicestimate.dvlkinematic_estimate_covariance.#": "2",
+    "gzmsgsdvlkinematicestimate.dvlkinematic_estimate_covariance[0].gzmsgsdvlkinematicestimate.dvlkinematic_estimate_covariance_item": "17.75",
+    "gzmsgsdvlkinematicestimate.dvlkinematic_estimate_covariance[1].gzmsgsdvlkinematicestimate.dvlkinematic_estimate_covariance_item": "19.5"
+  }
+}

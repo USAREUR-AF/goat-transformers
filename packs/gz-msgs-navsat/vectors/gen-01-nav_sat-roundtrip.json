@@ -1,0 +1,31 @@
+{
+  "name": "gen-nav_sat-roundtrip",
+  "from": "gz-msgs-navsat",
+  "to": "gz-msgs-navsat",
+  "input": "0a2e0a05086410890112110a056b65792d39120876616c75652d313012120a066b65792d3131120876616c75652d3132110000000000000e40190000000000001640210000000000001d40290000000000002240310000000000802540390000000000002940420a6672616d655f69642d38",
+  "expect": "0a2e0a05086410890112110a056b65792d39120876616c75652d313012120a066b65792d3131120876616c75652d3132110000000000000e40190000000000001640210000000000001d40290000000000002240310000000000802540390000000000002940420a6672616d655f69642d38",
+  "model": {
+    "@kind": "nav_sat",
+    "gzmsgsnavsat.header_stamp_sec": "100",
+    "gzmsgsnavsat.header_stamp_nsec": "137",
+    "gzmsgsnavsat.nav_sat_latitude_deg": "3.75",
+    "lat": "3.75",
+    "gzmsgsnavsat.nav_sat_longitude_deg": "5.5",
+    "lon": "5.5",
+    "gzmsgsnavsat.nav_sat_altitude": "7.25",
+    "gzmsgsnavsat.nav_sat_velocity_east": "9",
+    "track.vel_east_ms": "9",
+    "gzmsgsnavsat.nav_sat_velocity_north": "10.75",
+    "track.vel_north_ms": "10.75",
+    "gzmsgsnavsat.nav_sat_velocity_up": "12.5",
+    "track.vel_up_ms": "12.5",
+    "gzmsgsnavsat.nav_sat_frame_id": "frame_id-8",
+    "gzmsgsnavsat.header_data.#": "2",
+    "gzmsgsnavsat.header_data[0].gzmsgsnavsat.map_key": "key-9",
+    "gzmsgsnavsat.header_data[0].gzmsgsnavsat.map_value.#": "1",
+    "gzmsgsnavsat.header_data[0].gzmsgsnavsat.map_value[0].gzmsgsnavsat.map_value_item": "value-10",
+    "gzmsgsnavsat.header_data[1].gzmsgsnavsat.map_key": "key-11",
+    "gzmsgsnavsat.header_data[1].gzmsgsnavsat.map_value.#": "1",
+    "gzmsgsnavsat.header_data[1].gzmsgsnavsat.map_value[0].gzmsgsnavsat.map_value_item": "value-12"
+  }
+}

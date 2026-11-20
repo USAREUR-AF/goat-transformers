@@ -1,0 +1,14 @@
+{
+ "1.1.1": "header_stamp_sec",
+ "1.1.2": "header_stamp_nsec",
+ "1.2[]": "header_data",
+ "2": "log_control_start",
+ "3": "log_control_stop",
+ "4": "log_control_paused",
+ "5": "log_control_base_path",
+ "6": "log_control_encoding",
+ "7": "log_control_record_resources",
+ "gz.msgs.Header.Map:1": "map_key",
+ "gz.msgs.Header.Map:2[]": "map_value",
+ "gz.msgs.Header.Map:2[]item": "map_value_item"
+}

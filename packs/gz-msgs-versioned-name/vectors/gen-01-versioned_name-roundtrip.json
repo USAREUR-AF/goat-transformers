@@ -1,0 +1,16 @@
+{
+  "name": "gen-versioned_name-roundtrip",
+  "from": "gz-msgs-versioned-name",
+  "to": "gz-msgs-versioned-name",
+  "input": "0a1f086410890118ae01220c70726572656c656173652d332a076275696c642d3412066e616d652d35",
+  "expect": "0a1f086410890118ae01220c70726572656c656173652d332a076275696c642d3412066e616d652d35",
+  "model": {
+    "@kind": "versioned_name",
+    "gzmsgsversionedname.version_major": "100",
+    "gzmsgsversionedname.version_minor": "137",
+    "gzmsgsversionedname.version_patch": "174",
+    "gzmsgsversionedname.version_prerelease": "prerelease-3",
+    "gzmsgsversionedname.version_build": "build-4",
+    "gzmsgsversionedname.versioned_name_name": "name-5"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "name": "gen-diagnostics-roundtrip",
+  "from": "gz-msgs-diagnostics",
+  "to": "gz-msgs-diagnostics",
+  "input": "0a2c0a05086410890112100a056b65792d37120776616c75652d3812110a056b65792d39120876616c75652d313012190a076e616d652d3131120608a00410c5041a0608ea04108f0512190a076e616d652d3136120608d90510fe051a0608a30610c8061a0608ae0110d301220608f801109d02290000000000802540",
+  "expect": "0a2c0a05086410890112100a056b65792d37120776616c75652d3812110a056b65792d39120876616c75652d313012190a076e616d652d3131120608a00410c5041a0608ea04108f0512190a076e616d652d3136120608d90510fe051a0608a30610c8061a0608ae0110d301220608f801109d02290000000000802540",
+  "model": {
+    "@kind": "diagnostics",
+    "gzmsgsdiagnostics.header_stamp_sec": "100",
+    "gzmsgsdiagnostics.header_stamp_nsec": "137",
+    "gzmsgsdiagnostics.real_time_sec": "174",
+    "gzmsgsdiagnostics.real_time_nsec": "211",
+    "gzmsgsdiagnostics.sim_time_sec": "248",
+    "gzmsgsdiagnostics.sim_time_nsec": "285",
+    "gzmsgsdiagnostics.diagnostics_real_time_factor": "10.75",
+    "gzmsgsdiagnostics.header_data.#": "2",
+    "gzmsgsdiagnostics.header_data[0].gzmsgsdiagnostics.map_key": "key-7",
+    "gzmsgsdiagnostics.header_data[0].gzmsgsdiagnostics.map_value.#": "1",
+    "gzmsgsdiagnostics.header_data[0].gzmsgsdiagnostics.map_value[0].gzmsgsdiagnostics.map_value_item": "value-8",
+    "gzmsgsdiagnostics.header_data[1].gzmsgsdiagnostics.map_key": "key-9",
+    "gzmsgsdiagnostics.header_data[1].gzmsgsdiagnostics.map_value.#": "1",
+    "gzmsgsdiagnostics.header_data[1].gzmsgsdiagnostics.map_value[0].gzmsgsdiagnostics.map_value_item": "value-10",
+    "gzmsgsdiagnostics.diagnostics_time.#": "2",
+    "gzmsgsdiagnostics.diagnostics_time[0].gzmsgsdiagnostics.diag_time_name": "name-11",
+    "gzmsgsdiagnostics.diagnostics_time[0].gzmsgsdiagnostics.diag_time_elapsed_sec": "544",
+    "gzmsgsdiagnostics.diagnostics_time[1].gzmsgsdiagnostics.diag_time_name": "name-16",
+    "gzmsgsdiagnostics.diagnostics_time[1].gzmsgsdiagnostics.diag_time_elapsed_sec": "729"
+  }
+}

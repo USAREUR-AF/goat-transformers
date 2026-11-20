@@ -1,0 +1,22 @@
+{
+  "name": "gen-vector3d-roundtrip",
+  "from": "gz-msgs-vector3d",
+  "to": "gz-msgs-vector3d",
+  "input": "0a2b0a05086410890112100a056b65792d35120776616c75652d3612100a056b65792d37120776616c75652d38110000000000000e40190000000000001640210000000000001d40",
+  "expect": "0a2b0a05086410890112100a056b65792d35120776616c75652d3612100a056b65792d37120776616c75652d38110000000000000e40190000000000001640210000000000001d40",
+  "model": {
+    "@kind": "vector3d",
+    "gzmsgsvector3d.header_stamp_sec": "100",
+    "gzmsgsvector3d.header_stamp_nsec": "137",
+    "gzmsgsvector3d.vector3d_x": "3.75",
+    "gzmsgsvector3d.vector3d_y": "5.5",
+    "gzmsgsvector3d.vector3d_z": "7.25",
+    "gzmsgsvector3d.header_data.#": "2",
+    "gzmsgsvector3d.header_data[0].gzmsgsvector3d.map_key": "key-5",
+    "gzmsgsvector3d.header_data[0].gzmsgsvector3d.map_value.#": "1",
+    "gzmsgsvector3d.header_data[0].gzmsgsvector3d.map_value[0].gzmsgsvector3d.map_value_item": "value-6",
+    "gzmsgsvector3d.header_data[1].gzmsgsvector3d.map_key": "key-7",
+    "gzmsgsvector3d.header_data[1].gzmsgsvector3d.map_value.#": "1",
+    "gzmsgsvector3d.header_data[1].gzmsgsvector3d.map_value[0].gzmsgsvector3d.map_value_item": "value-8"
+  }
+}

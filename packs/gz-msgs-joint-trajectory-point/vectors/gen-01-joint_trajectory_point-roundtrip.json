@@ -1,0 +1,33 @@
+{
+  "name": "gen-joint_trajectory_point-roundtrip",
+  "from": "gz-msgs-joint-trajectory-point",
+  "to": "gz-msgs-joint-trajectory-point",
+  "input": "0a100000000000001d4000000000000022401210000000000080254000000000000029401a100000000000802c40000000000000304022100000000000c0314000000000008033402a370a2f0a05086410890112120a066b65792d3132120876616c75652d313312120a066b65792d3134120876616c75652d313510ae0118d301",
+  "expect": "0a100000000000001d4000000000000022401210000000000080254000000000000029401a100000000000802c40000000000000304022100000000000c0314000000000008033402a370a2f0a05086410890112120a066b65792d3132120876616c75652d313312120a066b65792d3134120876616c75652d313510ae0118d301",
+  "model": {
+    "@kind": "joint_trajectory_point",
+    "gzmsgsjointtrajectorypoint.time_from_start_stamp_sec": "100",
+    "gzmsgsjointtrajectorypoint.time_from_start_stamp_nsec": "137",
+    "gzmsgsjointtrajectorypoint.time_from_start_sec": "174",
+    "gzmsgsjointtrajectorypoint.time_from_start_nsec": "211",
+    "gzmsgsjointtrajectorypoint.joint_trajectory_point_positions.#": "2",
+    "gzmsgsjointtrajectorypoint.joint_trajectory_point_positions[0].gzmsgsjointtrajectorypoint.joint_trajectory_point_positions_item": "7.25",
+    "gzmsgsjointtrajectorypoint.joint_trajectory_point_positions[1].gzmsgsjointtrajectorypoint.joint_trajectory_point_positions_item": "9",
+    "gzmsgsjointtrajectorypoint.joint_trajectory_point_velocities.#": "2",
+    "gzmsgsjointtrajectorypoint.joint_trajectory_point_velocities[0].gzmsgsjointtrajectorypoint.joint_trajectory_point_velocities_item": "10.75",
+    "gzmsgsjointtrajectorypoint.joint_trajectory_point_velocities[1].gzmsgsjointtrajectorypoint.joint_trajectory_point_velocities_item": "12.5",
+    "gzmsgsjointtrajectorypoint.joint_trajectory_point_accelerations.#": "2",
+    "gzmsgsjointtrajectorypoint.joint_trajectory_point_accelerations[0].gzmsgsjointtrajectorypoint.joint_trajectory_point_accelerations_item": "14.25",
+    "gzmsgsjointtrajectorypoint.joint_trajectory_point_accelerations[1].gzmsgsjointtrajectorypoint.joint_trajectory_point_accelerations_item": "16",
+    "gzmsgsjointtrajectorypoint.joint_trajectory_point_effort.#": "2",
+    "gzmsgsjointtrajectorypoint.joint_trajectory_point_effort[0].gzmsgsjointtrajectorypoint.joint_trajectory_point_effort_item": "17.75",
+    "gzmsgsjointtrajectorypoint.joint_trajectory_point_effort[1].gzmsgsjointtrajectorypoint.joint_trajectory_point_effort_item": "19.5",
+    "gzmsgsjointtrajectorypoint.time_from_start_header_data.#": "2",
+    "gzmsgsjointtrajectorypoint.time_from_start_header_data[0].gzmsgsjointtrajectorypoint.map_key": "key-12",
+    "gzmsgsjointtrajectorypoint.time_from_start_header_data[0].gzmsgsjointtrajectorypoint.map_value.#": "1",
+    "gzmsgsjointtrajectorypoint.time_from_start_header_data[0].gzmsgsjointtrajectorypoint.map_value[0].gzmsgsjointtrajectorypoint.map_value_item": "value-13",
+    "gzmsgsjointtrajectorypoint.time_from_start_header_data[1].gzmsgsjointtrajectorypoint.map_key": "key-14",
+    "gzmsgsjointtrajectorypoint.time_from_start_header_data[1].gzmsgsjointtrajectorypoint.map_value.#": "1",
+    "gzmsgsjointtrajectorypoint.time_from_start_header_data[1].gzmsgsjointtrajectorypoint.map_value[0].gzmsgsjointtrajectorypoint.map_value_item": "value-15"
+  }
+}

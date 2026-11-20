@@ -1,0 +1,19 @@
+{
+  "name": "gen-param-roundtrip",
+  "from": "gz-msgs-param",
+  "to": "gz-msgs-param",
+  "input": "0a2b0a05086410890112100a056b65792d32120776616c75652d3312100a056b65792d34120776616c75652d35",
+  "expect": "0a2b0a05086410890112100a056b65792d32120776616c75652d3312100a056b65792d34120776616c75652d35",
+  "model": {
+    "@kind": "param",
+    "gzmsgsparam.header_stamp_sec": "100",
+    "gzmsgsparam.header_stamp_nsec": "137",
+    "gzmsgsparam.header_data.#": "2",
+    "gzmsgsparam.header_data[0].gzmsgsparam.map_key": "key-2",
+    "gzmsgsparam.header_data[0].gzmsgsparam.map_value.#": "1",
+    "gzmsgsparam.header_data[0].gzmsgsparam.map_value[0].gzmsgsparam.map_value_item": "value-3",
+    "gzmsgsparam.header_data[1].gzmsgsparam.map_key": "key-4",
+    "gzmsgsparam.header_data[1].gzmsgsparam.map_value.#": "1",
+    "gzmsgsparam.header_data[1].gzmsgsparam.map_value[0].gzmsgsparam.map_value_item": "value-5"
+  }
+}

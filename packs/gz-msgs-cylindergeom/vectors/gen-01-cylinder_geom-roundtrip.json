@@ -1,0 +1,21 @@
+{
+  "name": "gen-cylinder_geom-roundtrip",
+  "from": "gz-msgs-cylindergeom",
+  "to": "gz-msgs-cylindergeom",
+  "input": "0a2b0a05086410890112100a056b65792d34120776616c75652d3512100a056b65792d36120776616c75652d37110000000000000e40190000000000001640",
+  "expect": "0a2b0a05086410890112100a056b65792d34120776616c75652d3512100a056b65792d36120776616c75652d37110000000000000e40190000000000001640",
+  "model": {
+    "@kind": "cylinder_geom",
+    "gzmsgscylindergeom.header_stamp_sec": "100",
+    "gzmsgscylindergeom.header_stamp_nsec": "137",
+    "gzmsgscylindergeom.cylinder_geom_radius": "3.75",
+    "gzmsgscylindergeom.cylinder_geom_length": "5.5",
+    "gzmsgscylindergeom.header_data.#": "2",
+    "gzmsgscylindergeom.header_data[0].gzmsgscylindergeom.map_key": "key-4",
+    "gzmsgscylindergeom.header_data[0].gzmsgscylindergeom.map_value.#": "1",
+    "gzmsgscylindergeom.header_data[0].gzmsgscylindergeom.map_value[0].gzmsgscylindergeom.map_value_item": "value-5",
+    "gzmsgscylindergeom.header_data[1].gzmsgscylindergeom.map_key": "key-6",
+    "gzmsgscylindergeom.header_data[1].gzmsgscylindergeom.map_value.#": "1",
+    "gzmsgscylindergeom.header_data[1].gzmsgscylindergeom.map_value[0].gzmsgscylindergeom.map_value_item": "value-7"
+  }
+}

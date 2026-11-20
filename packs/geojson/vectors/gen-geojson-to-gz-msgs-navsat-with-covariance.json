@@ -1,0 +1,11 @@
+{
+  "name": "gen-geojson-to-gz-msgs-navsat-with-covariance",
+  "from": "geojson",
+  "to": "gz-msgs-navsat-with-covariance",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[5.5,3.75]},\"properties\":{}}",
+  "expect": "110000000000000e40190000000000001640",
+  "model": {
+    "lat": "3.75",
+    "lon": "5.5"
+  }
+}

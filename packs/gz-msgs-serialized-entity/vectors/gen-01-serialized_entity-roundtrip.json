@@ -1,0 +1,17 @@
+{
+  "name": "gen-serialized_entity-roundtrip",
+  "from": "gz-msgs-serialized-entity",
+  "to": "gz-msgs-serialized-entity",
+  "input": "0864120508ae011801120508f80118011801",
+  "expect": "0864120508ae011801120508f80118011801",
+  "model": {
+    "@kind": "serialized_entity",
+    "gzmsgsserializedentity.serialized_entity_id": "100",
+    "gzmsgsserializedentity.serialized_entity_remove": "1",
+    "gzmsgsserializedentity.serialized_entity_components.#": "2",
+    "gzmsgsserializedentity.serialized_entity_components[0].gzmsgsserializedentity.serialized_component_type": "174",
+    "gzmsgsserializedentity.serialized_entity_components[0].gzmsgsserializedentity.serialized_component_remove": "1",
+    "gzmsgsserializedentity.serialized_entity_components[1].gzmsgsserializedentity.serialized_component_type": "248",
+    "gzmsgsserializedentity.serialized_entity_components[1].gzmsgsserializedentity.serialized_component_remove": "1"
+  }
+}

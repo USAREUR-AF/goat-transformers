@@ -1,0 +1,20 @@
+{
+ "1.1.1": "header_stamp_sec",
+ "1.1.2": "header_stamp_nsec",
+ "1.2[]": "header_data",
+ "2.1.1.1": "min_corner_stamp_sec",
+ "2.1.1.2": "min_corner_stamp_nsec",
+ "2.1.2[]": "min_corner_header_data",
+ "2.2": "min_corner_x",
+ "2.3": "min_corner_y",
+ "2.4": "min_corner_z",
+ "3.1.1.1": "max_corner_stamp_sec",
+ "3.1.1.2": "max_corner_stamp_nsec",
+ "3.1.2[]": "max_corner_header_data",
+ "3.2": "max_corner_x",
+ "3.3": "max_corner_y",
+ "3.4": "max_corner_z",
+ "gz.msgs.Header.Map:1": "map_key",
+ "gz.msgs.Header.Map:2[]": "map_value",
+ "gz.msgs.Header.Map:2[]item": "map_value_item"
+}

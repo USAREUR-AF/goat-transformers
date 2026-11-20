@@ -1,0 +1,24 @@
+{
+  "name": "gen-subscribe-roundtrip",
+  "from": "gz-msgs-subscribe",
+  "to": "gz-msgs-subscribe",
+  "input": "0a2c0a05086410890112100a056b65792d37120776616c75652d3812110a056b65792d39120876616c75652d31301207746f7069632d321a06686f73742d3320f8012a0a6d73675f747970652d353001",
+  "expect": "0a2c0a05086410890112100a056b65792d37120776616c75652d3812110a056b65792d39120876616c75652d31301207746f7069632d321a06686f73742d3320f8012a0a6d73675f747970652d353001",
+  "model": {
+    "@kind": "subscribe",
+    "gzmsgssubscribe.header_stamp_sec": "100",
+    "gzmsgssubscribe.header_stamp_nsec": "137",
+    "gzmsgssubscribe.subscribe_topic": "topic-2",
+    "gzmsgssubscribe.subscribe_host": "host-3",
+    "gzmsgssubscribe.subscribe_port": "248",
+    "gzmsgssubscribe.subscribe_msg_type": "msg_type-5",
+    "gzmsgssubscribe.subscribe_latching": "1",
+    "gzmsgssubscribe.header_data.#": "2",
+    "gzmsgssubscribe.header_data[0].gzmsgssubscribe.map_key": "key-7",
+    "gzmsgssubscribe.header_data[0].gzmsgssubscribe.map_value.#": "1",
+    "gzmsgssubscribe.header_data[0].gzmsgssubscribe.map_value[0].gzmsgssubscribe.map_value_item": "value-8",
+    "gzmsgssubscribe.header_data[1].gzmsgssubscribe.map_key": "key-9",
+    "gzmsgssubscribe.header_data[1].gzmsgssubscribe.map_value.#": "1",
+    "gzmsgssubscribe.header_data[1].gzmsgssubscribe.map_value[0].gzmsgssubscribe.map_value_item": "value-10"
+  }
+}

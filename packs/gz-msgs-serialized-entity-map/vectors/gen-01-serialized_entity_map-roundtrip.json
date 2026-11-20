@@ -1,0 +1,12 @@
+{
+  "name": "gen-serialized_entity_map-roundtrip",
+  "from": "gz-msgs-serialized-entity-map",
+  "to": "gz-msgs-serialized-entity-map",
+  "input": "08641801",
+  "expect": "08641801",
+  "model": {
+    "@kind": "serialized_entity_map",
+    "gzmsgsserializedentitymap.serialized_entity_map_id": "100",
+    "gzmsgsserializedentitymap.serialized_entity_map_remove": "1"
+  }
+}

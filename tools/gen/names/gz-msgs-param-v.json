@@ -1,0 +1,12 @@
+{
+ "1.1.1": "header_stamp_sec",
+ "1.1.2": "header_stamp_nsec",
+ "1.2[]": "header_data",
+ "2[]": "param_v_param",
+ "gz.msgs.Header.Map:1": "map_key",
+ "gz.msgs.Header.Map:2[]": "map_value",
+ "gz.msgs.Header.Map:2[]item": "map_value_item",
+ "gz.msgs.Param:1.1.1": "param_header_stamp_sec",
+ "gz.msgs.Param:1.1.2": "param_header_stamp_nsec",
+ "gz.msgs.Param:1.2[]": "param_header_data"
+}

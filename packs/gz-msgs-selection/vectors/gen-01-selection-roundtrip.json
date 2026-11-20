@@ -1,0 +1,22 @@
+{
+  "name": "gen-selection-roundtrip",
+  "from": "gz-msgs-selection",
+  "to": "gz-msgs-selection",
+  "input": "0a2b0a05086410890112100a056b65792d35120776616c75652d3612100a056b65792d37120776616c75652d3810ae011a066e616d652d332001",
+  "expect": "0a2b0a05086410890112100a056b65792d35120776616c75652d3612100a056b65792d37120776616c75652d3810ae011a066e616d652d332001",
+  "model": {
+    "@kind": "selection",
+    "gzmsgsselection.header_stamp_sec": "100",
+    "gzmsgsselection.header_stamp_nsec": "137",
+    "gzmsgsselection.selection_id": "174",
+    "gzmsgsselection.selection_name": "name-3",
+    "gzmsgsselection.selection_selected": "1",
+    "gzmsgsselection.header_data.#": "2",
+    "gzmsgsselection.header_data[0].gzmsgsselection.map_key": "key-5",
+    "gzmsgsselection.header_data[0].gzmsgsselection.map_value.#": "1",
+    "gzmsgsselection.header_data[0].gzmsgsselection.map_value[0].gzmsgsselection.map_value_item": "value-6",
+    "gzmsgsselection.header_data[1].gzmsgsselection.map_key": "key-7",
+    "gzmsgsselection.header_data[1].gzmsgsselection.map_value.#": "1",
+    "gzmsgsselection.header_data[1].gzmsgsselection.map_value[0].gzmsgsselection.map_value_item": "value-8"
+  }
+}

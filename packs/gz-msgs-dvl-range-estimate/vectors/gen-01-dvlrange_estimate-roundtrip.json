@@ -1,0 +1,12 @@
+{
+  "name": "gen-dvlrange_estimate-roundtrip",
+  "from": "gz-msgs-dvl-range-estimate",
+  "to": "gz-msgs-dvl-range-estimate",
+  "input": "09000000000000d03f110000000000000040",
+  "expect": "09000000000000d03f110000000000000040",
+  "model": {
+    "@kind": "dvlrange_estimate",
+    "gzmsgsdvlrangeestimate.dvlrange_estimate_mean": "0.25",
+    "gzmsgsdvlrangeestimate.dvlrange_estimate_variance": "2"
+  }
+}

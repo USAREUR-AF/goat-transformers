@@ -1,0 +1,18 @@
+{
+ "1.1.1": "header_stamp_sec",
+ "1.1.2": "header_stamp_nsec",
+ "1.2[]": "header_data",
+ "2.1.1.1": "entity_stamp_sec",
+ "2.1.1.2": "entity_stamp_nsec",
+ "2.1.2[]": "entity_header_data",
+ "2.2": "entity_id",
+ "2.3": "entity_name",
+ "2.4": "entity_type",
+ "4": "wheel_slip_parameters_cmd_slip_compliance_lateral",
+ "5": "wheel_slip_parameters_cmd_slip_compliance_longitudinal",
+ "6": "wheel_slip_parameters_cmd_friction_lateral",
+ "7": "wheel_slip_parameters_cmd_friction_longitudinal",
+ "gz.msgs.Header.Map:1": "map_key",
+ "gz.msgs.Header.Map:2[]": "map_value",
+ "gz.msgs.Header.Map:2[]item": "map_value_item"
+}

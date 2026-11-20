@@ -1,0 +1,22 @@
+{
+  "name": "gen-uint64_v-roundtrip",
+  "from": "gz-msgs-uint64-v",
+  "to": "gz-msgs-uint64-v",
+  "input": "0a2b0a05086410890112100a056b65792d32120776616c75652d3312100a056b65792d34120776616c75652d351204c202e702",
+  "expect": "0a2b0a05086410890112100a056b65792d32120776616c75652d3312100a056b65792d34120776616c75652d351204c202e702",
+  "model": {
+    "@kind": "uint64_v",
+    "gzmsgsuint64v.header_stamp_sec": "100",
+    "gzmsgsuint64v.header_stamp_nsec": "137",
+    "gzmsgsuint64v.header_data.#": "2",
+    "gzmsgsuint64v.header_data[0].gzmsgsuint64v.map_key": "key-2",
+    "gzmsgsuint64v.header_data[0].gzmsgsuint64v.map_value.#": "1",
+    "gzmsgsuint64v.header_data[0].gzmsgsuint64v.map_value[0].gzmsgsuint64v.map_value_item": "value-3",
+    "gzmsgsuint64v.header_data[1].gzmsgsuint64v.map_key": "key-4",
+    "gzmsgsuint64v.header_data[1].gzmsgsuint64v.map_value.#": "1",
+    "gzmsgsuint64v.header_data[1].gzmsgsuint64v.map_value[0].gzmsgsuint64v.map_value_item": "value-5",
+    "gzmsgsuint64v.uint64_v_data.#": "2",
+    "gzmsgsuint64v.uint64_v_data[0].gzmsgsuint64v.uint64_v_data_item": "322",
+    "gzmsgsuint64v.uint64_v_data[1].gzmsgsuint64v.uint64_v_data_item": "359"
+  }
+}
