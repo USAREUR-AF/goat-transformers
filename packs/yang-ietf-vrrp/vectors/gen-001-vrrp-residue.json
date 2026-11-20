@@ -1,0 +1,7 @@
+{
+ "name": "gen-vrrp-residue",
+ "from": "yang-ietf-vrrp",
+ "to": "yang-ietf-vrrp",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"ietf-vrrp:vrrp\":{\"virtual-routers\":3734213132,\"interfaces\":2124319487,\"statistics\":{\"discontinuity-datetime\":\"2025-12-16T23:33:38.318Z\",\"checksum-errors\":\"s92874\",\"version-errors\":\"s16025\",\"vrid-errors\":\"s86098\",\"ip-ttl-errors\":\"s95999\"}}}",
+ "expect": "{\"ietf-vrrp:vrrp\":{\"virtual-routers\":3734213132,\"interfaces\":2124319487,\"statistics\":{\"discontinuity-datetime\":\"2025-12-16T23:33:38.318Z\",\"checksum-errors\":\"s92874\",\"version-errors\":\"s16025\",\"vrid-errors\":\"s86098\",\"ip-ttl-errors\":\"s95999\"}},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

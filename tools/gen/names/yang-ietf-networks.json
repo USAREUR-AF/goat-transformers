@@ -1,0 +1,30 @@
+{
+ "keys": {
+  "ietf_network_networks_network_ietf_network_topology_link_supporting_link|link-ref|string": "ietf_network_networks_network_ietf_network_topology_link_supporting_link_link_ref",
+  "ietf_network_networks_network_ietf_network_topology_link_supporting_link|network-ref|string": "ietf_network_networks_network_ietf_network_topology_link_supporting_link_network_ref",
+  "ietf_network_networks_network_ietf_network_topology_link|destination.dest-node|string": "ietf_network_networks_network_ietf_network_topology_link_destination_dest_node",
+  "ietf_network_networks_network_ietf_network_topology_link|destination.dest-tp|string": "ietf_network_networks_network_ietf_network_topology_link_destination_dest_tp",
+  "ietf_network_networks_network_ietf_network_topology_link|link-id|string": "ietf_network_networks_network_ietf_network_topology_link_link_id",
+  "ietf_network_networks_network_ietf_network_topology_link|source.source-node|string": "ietf_network_networks_network_ietf_network_topology_link_source_source_node",
+  "ietf_network_networks_network_ietf_network_topology_link|source.source-tp|string": "ietf_network_networks_network_ietf_network_topology_link_source_source_tp",
+  "ietf_network_networks_network_node_ietf_network_topology_termination_point_supporting_t_d04923b5|network-ref|string": "ietf_network_networks_network_node_ietf_network_topology_termination_point_supporting_t_a3562dd2",
+  "ietf_network_networks_network_node_ietf_network_topology_termination_point_supporting_t_d04923b5|node-ref|string": "ietf_network_networks_network_node_ietf_network_topology_termination_point_supporting_t_85665b44",
+  "ietf_network_networks_network_node_ietf_network_topology_termination_point_supporting_t_d04923b5|tp-ref|string": "ietf_network_networks_network_node_ietf_network_topology_termination_point_supporting_t_86758b15",
+  "ietf_network_networks_network_node_ietf_network_topology_termination_point|tp-id|string": "ietf_network_networks_network_node_ietf_network_topology_termination_point_tp_id",
+  "ietf_network_networks_network_node_supporting_node|network-ref|string": "ietf_network_networks_network_node_supporting_node_network_ref",
+  "ietf_network_networks_network_node_supporting_node|node-ref|string": "ietf_network_networks_network_node_supporting_node_node_ref",
+  "ietf_network_networks_network_node|node-id|string": "ietf_network_networks_network_node_node_id",
+  "ietf_network_networks_network_supporting_network|network-ref|string": "ietf_network_networks_network_supporting_network_network_ref",
+  "ietf_network_networks_network|network-id|string": "ietf_network_networks_network_network_id"
+ },
+ "lists": {
+  "ietf_network_networks_network_ietf_network_topology_link|supporting-link": "ietf_network_networks_network_ietf_network_topology_link_supporting_link",
+  "ietf_network_networks_network_node_ietf_network_topology_termination_point|supporting-termination-point": "ietf_network_networks_network_node_ietf_network_topology_termination_point_supporting_t_d04923b5",
+  "ietf_network_networks_network_node|ietf-network-topology:termination-point": "ietf_network_networks_network_node_ietf_network_topology_termination_point",
+  "ietf_network_networks_network_node|supporting-node": "ietf_network_networks_network_node_supporting_node",
+  "ietf_network_networks_network|ietf-network-topology:link": "ietf_network_networks_network_ietf_network_topology_link",
+  "ietf_network_networks_network|node": "ietf_network_networks_network_node",
+  "ietf_network_networks_network|supporting-network": "ietf_network_networks_network_supporting_network",
+  "|ietf-network:networks.network": "ietf_network_networks_network"
+ }
+}

@@ -1,0 +1,42 @@
+{
+ "keys": {
+  "ietf_yang_library_yang_library_datastore|name|string": "ietf_yang_library_yang_library_datastore_name",
+  "ietf_yang_library_yang_library_datastore|schema|string": "ietf_yang_library_yang_library_datastore_schema",
+  "ietf_yang_library_yang_library_module_set_import_only_module_location|.|string": "ietf_yang_library_yang_library_module_set_import_only_module_location_value",
+  "ietf_yang_library_yang_library_module_set_import_only_module_submodule_location|.|string": "ietf_yang_library_yang_library_module_set_import_only_module_submodule_location_value",
+  "ietf_yang_library_yang_library_module_set_import_only_module_submodule|name|string": "ietf_yang_library_yang_library_module_set_import_only_module_submodule_name",
+  "ietf_yang_library_yang_library_module_set_import_only_module_submodule|revision|string": "ietf_yang_library_yang_library_module_set_import_only_module_submodule_revision",
+  "ietf_yang_library_yang_library_module_set_import_only_module|namespace|string": "ietf_yang_library_yang_library_module_set_import_only_module_namespace",
+  "ietf_yang_library_yang_library_module_set_import_only_module|name|string": "ietf_yang_library_yang_library_module_set_import_only_module_name",
+  "ietf_yang_library_yang_library_module_set_import_only_module|revision|string": "ietf_yang_library_yang_library_module_set_import_only_module_revision",
+  "ietf_yang_library_yang_library_module_set_module_deviation|.|string": "ietf_yang_library_yang_library_module_set_module_deviation_value",
+  "ietf_yang_library_yang_library_module_set_module_feature|.|string": "ietf_yang_library_yang_library_module_set_module_feature_value",
+  "ietf_yang_library_yang_library_module_set_module_location|.|string": "ietf_yang_library_yang_library_module_set_module_location_value",
+  "ietf_yang_library_yang_library_module_set_module_submodule_location|.|string": "ietf_yang_library_yang_library_module_set_module_submodule_location_value",
+  "ietf_yang_library_yang_library_module_set_module_submodule|name|string": "ietf_yang_library_yang_library_module_set_module_submodule_name",
+  "ietf_yang_library_yang_library_module_set_module_submodule|revision|string": "ietf_yang_library_yang_library_module_set_module_submodule_revision",
+  "ietf_yang_library_yang_library_module_set_module|namespace|string": "ietf_yang_library_yang_library_module_set_module_namespace",
+  "ietf_yang_library_yang_library_module_set_module|name|string": "ietf_yang_library_yang_library_module_set_module_name",
+  "ietf_yang_library_yang_library_module_set_module|revision|string": "ietf_yang_library_yang_library_module_set_module_revision",
+  "ietf_yang_library_yang_library_module_set|name|string": "ietf_yang_library_yang_library_module_set_name",
+  "ietf_yang_library_yang_library_schema_module_set|.|string": "ietf_yang_library_yang_library_schema_module_set_value",
+  "ietf_yang_library_yang_library_schema|name|string": "ietf_yang_library_yang_library_schema_name",
+  "|ietf-yang-library:yang-library.content-id|string": "ietf_yang_library_yang_library_content_id"
+ },
+ "lists": {
+  "ietf_yang_library_yang_library_module_set_import_only_module_submodule|location": "ietf_yang_library_yang_library_module_set_import_only_module_submodule_location",
+  "ietf_yang_library_yang_library_module_set_import_only_module|location": "ietf_yang_library_yang_library_module_set_import_only_module_location",
+  "ietf_yang_library_yang_library_module_set_import_only_module|submodule": "ietf_yang_library_yang_library_module_set_import_only_module_submodule",
+  "ietf_yang_library_yang_library_module_set_module_submodule|location": "ietf_yang_library_yang_library_module_set_module_submodule_location",
+  "ietf_yang_library_yang_library_module_set_module|deviation": "ietf_yang_library_yang_library_module_set_module_deviation",
+  "ietf_yang_library_yang_library_module_set_module|feature": "ietf_yang_library_yang_library_module_set_module_feature",
+  "ietf_yang_library_yang_library_module_set_module|location": "ietf_yang_library_yang_library_module_set_module_location",
+  "ietf_yang_library_yang_library_module_set_module|submodule": "ietf_yang_library_yang_library_module_set_module_submodule",
+  "ietf_yang_library_yang_library_module_set|import-only-module": "ietf_yang_library_yang_library_module_set_import_only_module",
+  "ietf_yang_library_yang_library_module_set|module": "ietf_yang_library_yang_library_module_set_module",
+  "ietf_yang_library_yang_library_schema|module-set": "ietf_yang_library_yang_library_schema_module_set",
+  "|ietf-yang-library:yang-library.datastore": "ietf_yang_library_yang_library_datastore",
+  "|ietf-yang-library:yang-library.module-set": "ietf_yang_library_yang_library_module_set",
+  "|ietf-yang-library:yang-library.schema": "ietf_yang_library_yang_library_schema"
+ }
+}
