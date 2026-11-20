@@ -18,6 +18,8 @@ Cursor on Target event XML, the `<event>` document with a `<point>` and
 | `@time`, `@stale` as written | `time_text`, `stale_text` | the sender's text, unparsed, for a target that keeps it (`geo-track-v1`). Encode writes `time_ms` and `stale_ms` first, so the text is written only when the instant is absent |
 | `detail/uid/@Droid` | `display_name` | the name the sender shows for the entity |
 
+`<detail>` is written on every encode, empty when nothing inside it is (`element detail`, spec 0.18).
+
 Written when the entity has no value: `type` `a-u-X`, and `hae`, `ce`, `le`
 `9999999`. On decode, `9999999` and `9999999.0` in `hae`, `ce` or `le` mean "not known" and leave the key absent (`absent`, spec 0.9), so a target format gets no value rather than the number; a round trip writes `9999999` again. `how` and `stale` are written only when the entity has them.
 

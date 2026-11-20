@@ -29,6 +29,9 @@ field   lon       point/@lon                  float
 field   hae       point/@hae                  float  absent 9999999,9999999.0
 field   ce        point/@ce                   float  absent 9999999,9999999.0
 field   le        point/@le                   float  absent 9999999,9999999.0
+# detail is written even when nothing inside it is (spec 0.18), as CoT
+# senders write <detail/>.
+element detail
 field   callsign  detail/contact/@callsign    string
 field   course    detail/track/@course        float
 field   speed_ms  detail/track/@speed         float

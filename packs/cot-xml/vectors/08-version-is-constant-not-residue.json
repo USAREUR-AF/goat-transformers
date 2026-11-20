@@ -3,5 +3,5 @@
   "from": "cot-xml",
   "to": "cot-xml",
   "input": "<event uid=\"J-3\" version=\"1.0\" type=\"a-f-G\" access=\"open\"><point lat=\"1\" lon=\"2\"/></event>",
-  "expect": "<event version=\"2.0\" uid=\"J-3\" type=\"a-f-G\" access=\"open\"><point lat=\"1\" lon=\"2\" hae=\"9999999\" ce=\"9999999\" le=\"9999999\"/></event>"
+  "expect": "<event version=\"2.0\" uid=\"J-3\" type=\"a-f-G\" access=\"open\"><point lat=\"1\" lon=\"2\" hae=\"9999999\" ce=\"9999999\" le=\"9999999\"/><detail/></event>"
 }
