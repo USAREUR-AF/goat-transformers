@@ -1,0 +1,16 @@
+{
+ "@center string": "center",
+ "@color string": "color",
+ "@edges string": "edges",
+ "@fill string": "fill",
+ "@id string": "id",
+ "@key string": "key",
+ "@name string": "name",
+ "@shape string": "shape",
+ "@value string": "value",
+ "@weight string": "weight",
+ "param/[] list": "param",
+ "taz/[] list": "taz",
+ "tazSink/[] list": "taz_sink",
+ "tazSource/[] list": "taz_source"
+}

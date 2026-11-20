@@ -1,0 +1,15 @@
+{
+  "name": "gen-demand-roundtrip",
+  "from": "sumo-amitran-od",
+  "to": "sumo-amitran-od",
+  "input": "<demand><actorConfig id=\"1\"><timeSlice startTime=\"2\" duration=\"3\"><odPair origin=\"4\" destination=\"5\" amount=\"3.5\"><routeCost routeId=\"7\" amount=\"0.5\" averageTraveltime=\"9\" stdDevTraveltime=\"1\" fixedCost=\"2\"/></odPair></timeSlice></actorConfig><actorConfig id=\"3\"><timeSlice startTime=\"4\" duration=\"5\"><odPair origin=\"6\" destination=\"7\" amount=\"0.25\"><routeCost routeId=\"9\" amount=\"0.125\" averageTraveltime=\"2\" stdDevTraveltime=\"3\" fixedCost=\"4\"/></odPair></timeSlice></actorConfig></demand>",
+  "expect": "<demand><actorConfig id=\"1\"><timeSlice startTime=\"2\" duration=\"3\"><odPair origin=\"4\" destination=\"5\" amount=\"3.5\"><routeCost routeId=\"7\" amount=\"0.5\" averageTraveltime=\"9\" stdDevTraveltime=\"1\" fixedCost=\"2\"/></odPair></timeSlice></actorConfig><actorConfig id=\"3\"><timeSlice startTime=\"4\" duration=\"5\"><odPair origin=\"6\" destination=\"7\" amount=\"0.25\"><routeCost routeId=\"9\" amount=\"0.125\" averageTraveltime=\"2\" stdDevTraveltime=\"3\" fixedCost=\"4\"/></odPair></timeSlice></actorConfig></demand>",
+  "model": {
+    "@kind": "demand",
+    "sumoamitranod.actor_config[0].sumoamitranod.time_slice[0].sumoamitranod.od_pair[0].sumoamitranod.route_cost.#": "1",
+    "sumoamitranod.actor_config[0].sumoamitranod.time_slice[0].sumoamitranod.od_pair.#": "1",
+    "sumoamitranod.actor_config[0].sumoamitranod.time_slice.#": "1",
+    "sumoamitranod.actor_config.#": "2",
+    "sumoamitranod.actor_config[1].sumoamitranod.id": "3"
+  }
+}

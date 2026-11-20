@@ -1,0 +1,15 @@
+{
+  "name": "gen-data-roundtrip",
+  "from": "sumo-datamode",
+  "to": "sumo-datamode",
+  "input": "<data><interval begin=\"s0\" end=\"s1\" id=\"s2\"><edge id=\"s3\" count=\"001.0\"/><edgeRelation from=\"s5\" to=\"s6\" count=\"001.0\" probability=\"001.0\"/><tazRelation from=\"s9\" to=\"s10\" count=\"001.0\"/></interval><interval begin=\"s12\" end=\"s13\" id=\"s14\"><edge id=\"s15\" count=\"001.0\"/><edgeRelation from=\"s17\" to=\"s18\" count=\"001.0\" probability=\"001.0\"/><tazRelation from=\"s21\" to=\"s22\" count=\"001.0\"/></interval></data>",
+  "expect": "<data><interval begin=\"s0\" end=\"s1\" id=\"s2\"><edge id=\"s3\" count=\"001.0\"/><edgeRelation from=\"s5\" to=\"s6\" count=\"001.0\" probability=\"001.0\"/><tazRelation from=\"s9\" to=\"s10\" count=\"001.0\"/></interval><interval begin=\"s12\" end=\"s13\" id=\"s14\"><edge id=\"s15\" count=\"001.0\"/><edgeRelation from=\"s17\" to=\"s18\" count=\"001.0\" probability=\"001.0\"/><tazRelation from=\"s21\" to=\"s22\" count=\"001.0\"/></interval></data>",
+  "model": {
+    "@kind": "data",
+    "sumodatamode.interval[0].sumodatamode.edge.#": "1",
+    "sumodatamode.interval[0].sumodatamode.edge_relation.#": "1",
+    "sumodatamode.interval[0].sumodatamode.taz_relation.#": "1",
+    "sumodatamode.interval.#": "2",
+    "sumodatamode.interval[1].sumodatamode.begin": "s12"
+  }
+}

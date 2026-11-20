@@ -1,0 +1,13 @@
+{
+  "name": "gen-vehicle_type_probes-roundtrip",
+  "from": "sumo-vtypeprobe",
+  "to": "sumo-vtypeprobe",
+  "input": "<vehicle-type-probes><timestep time=\"0.5\" id=\"s1\" vType=\"s2\"><vehicle id=\"s3\" x=\"001.0\" y=\"001.0\" z=\"001.0\" lon=\"001.0\" lat=\"001.0\" speed=\"0.25\" pos=\"2.5\" lane=\"s11\"/></timestep><timestep time=\"3.5\" id=\"s13\" vType=\"s14\"><vehicle id=\"s15\" x=\"001.0\" y=\"001.0\" z=\"001.0\" lon=\"001.0\" lat=\"001.0\" speed=\"0.5\" pos=\"1.5\" lane=\"s23\"/></timestep></vehicle-type-probes>",
+  "expect": "<vehicle-type-probes><timestep time=\"0.5\" id=\"s1\" vType=\"s2\"><vehicle id=\"s3\" x=\"001.0\" y=\"001.0\" z=\"001.0\" lon=\"001.0\" lat=\"001.0\" speed=\"0.25\" pos=\"2.5\" lane=\"s11\"/></timestep><timestep time=\"3.5\" id=\"s13\" vType=\"s14\"><vehicle id=\"s15\" x=\"001.0\" y=\"001.0\" z=\"001.0\" lon=\"001.0\" lat=\"001.0\" speed=\"0.5\" pos=\"1.5\" lane=\"s23\"/></timestep></vehicle-type-probes>",
+  "model": {
+    "@kind": "vehicle_type_probes",
+    "sumovtypeprobe.timestep[0].sumovtypeprobe.vehicle.#": "1",
+    "sumovtypeprobe.timestep.#": "2",
+    "sumovtypeprobe.timestep[1].sumovtypeprobe.time": "3.5"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "gen-link_data-roundtrip",
+  "from": "sumo-amitran-linkdata",
+  "to": "sumo-amitran-linkdata",
+  "input": "<linkData><timeSlice startTime=\"1\" duration=\"2\"><link id=\"3\" amount=\"2.5\" averageSpeed=\"5\"><actorConfig id=\"6\" amount=\"0.75\" averageSpeed=\"8\"/></link></timeSlice><timeSlice startTime=\"9\" duration=\"1\"><link id=\"2\" amount=\"0.125\" averageSpeed=\"4\"><actorConfig id=\"5\" amount=\"0.5\" averageSpeed=\"7\"/></link></timeSlice></linkData>",
+  "expect": "<linkData><timeSlice startTime=\"1\" duration=\"2\"><link id=\"3\" amount=\"2.5\" averageSpeed=\"5\"><actorConfig id=\"6\" amount=\"0.75\" averageSpeed=\"8\"/></link></timeSlice><timeSlice startTime=\"9\" duration=\"1\"><link id=\"2\" amount=\"0.125\" averageSpeed=\"4\"><actorConfig id=\"5\" amount=\"0.5\" averageSpeed=\"7\"/></link></timeSlice></linkData>",
+  "model": {
+    "@kind": "link_data",
+    "sumoamitranlinkdata.time_slice[0].sumoamitranlinkdata.link[0].sumoamitranlinkdata.actor_config.#": "1",
+    "sumoamitranlinkdata.time_slice[0].sumoamitranlinkdata.link.#": "1",
+    "sumoamitranlinkdata.time_slice.#": "2",
+    "sumoamitranlinkdata.time_slice[1].sumoamitranlinkdata.start_time": "9"
+  }
+}

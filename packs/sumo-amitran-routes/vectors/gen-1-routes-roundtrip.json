@@ -1,0 +1,13 @@
+{
+  "name": "gen-routes-roundtrip",
+  "from": "sumo-amitran-routes",
+  "to": "sumo-amitran-routes",
+  "input": "<routes><route id=\"1\"><link id=\"2\"/></route><route id=\"3\"><link id=\"4\"/></route></routes>",
+  "expect": "<routes><route id=\"1\"><link id=\"2\"/></route><route id=\"3\"><link id=\"4\"/></route></routes>",
+  "model": {
+    "@kind": "routes",
+    "sumoamitranroutes.route[0].sumoamitranroutes.link.#": "1",
+    "sumoamitranroutes.route.#": "2",
+    "sumoamitranroutes.route[1].sumoamitranroutes.id": "3"
+  }
+}

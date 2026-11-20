@@ -1,0 +1,21 @@
+{
+ "@arrived int": "arrived",
+ "@begin float": "begin",
+ "@density float": "density",
+ "@departed int": "departed",
+ "@distance string": "distance",
+ "@end float": "end",
+ "@entered float": "entered",
+ "@flow string": "flow",
+ "@id string": "id",
+ "@laneDensity float": "lane_density",
+ "@left int": "left",
+ "@occupancy float": "occupancy",
+ "@sampledSeconds float": "sampled_seconds",
+ "@speed float": "speed",
+ "@speedRelative float": "speed_relative",
+ "@timeLoss string": "time_loss",
+ "@vaporized int": "vaporized",
+ "@waitingTime float": "waiting_time",
+ "interval/[] list": "interval"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "gen-detectors-roundtrip",
+  "from": "sumo-detectors",
+  "to": "sumo-detectors",
+  "input": "<detectors><detectorDefinition id=\"s0\" lane=\"s1\" pos=\"001.0\" type=\"discarded\"/><detectorDefinition id=\"s4\" lane=\"s5\" pos=\"001.0\" type=\"discarded\"/></detectors>",
+  "expect": "<detectors><detectorDefinition id=\"s0\" lane=\"s1\" pos=\"001.0\" type=\"discarded\"/><detectorDefinition id=\"s4\" lane=\"s5\" pos=\"001.0\" type=\"discarded\"/></detectors>",
+  "model": {
+    "@kind": "detectors",
+    "sumodetectors.detector_definition.#": "2",
+    "sumodetectors.detector_definition[1].sumodetectors.id": "s4"
+  }
+}

@@ -1,0 +1,13 @@
+{
+ "@begin float": "begin",
+ "@end float": "end",
+ "@flow float": "flow",
+ "@harmonicMeanSpeed float": "harmonic_mean_speed",
+ "@id string": "id",
+ "@length float": "length",
+ "@nVehContrib int": "n_veh_contrib",
+ "@nVehEntered int": "n_veh_entered",
+ "@occupancy float": "occupancy",
+ "@speed float": "speed",
+ "interval/[] list": "interval"
+}

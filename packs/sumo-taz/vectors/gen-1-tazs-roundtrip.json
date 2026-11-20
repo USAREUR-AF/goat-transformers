@@ -1,0 +1,15 @@
+{
+  "name": "gen-tazs-roundtrip",
+  "from": "sumo-taz",
+  "to": "sumo-taz",
+  "input": "<tazs><taz id=\"s0\" edges=\"s1\" shape=\"v2\" center=\"v3\" fill=\"yes\" color=\"s5\" name=\"s6\"><tazSource id=\"s7\" weight=\"001.0\"/><tazSink id=\"s9\" weight=\"001.0\"/><param key=\"s11\" value=\"s12\"/></taz><taz id=\"s13\" edges=\"s14\" shape=\"v15\" center=\"v16\" fill=\"no\" color=\"s18\" name=\"s19\"><tazSource id=\"s20\" weight=\"001.0\"/><tazSink id=\"s22\" weight=\"001.0\"/><param key=\"s24\" value=\"s25\"/></taz></tazs>",
+  "expect": "<tazs><taz id=\"s0\" edges=\"s1\" shape=\"v2\" center=\"v3\" fill=\"yes\" color=\"s5\" name=\"s6\"><tazSource id=\"s7\" weight=\"001.0\"/><tazSink id=\"s9\" weight=\"001.0\"/><param key=\"s11\" value=\"s12\"/></taz><taz id=\"s13\" edges=\"s14\" shape=\"v15\" center=\"v16\" fill=\"no\" color=\"s18\" name=\"s19\"><tazSource id=\"s20\" weight=\"001.0\"/><tazSink id=\"s22\" weight=\"001.0\"/><param key=\"s24\" value=\"s25\"/></taz></tazs>",
+  "model": {
+    "@kind": "tazs",
+    "sumotaz.taz[0].sumotaz.taz_source.#": "1",
+    "sumotaz.taz[0].sumotaz.taz_sink.#": "1",
+    "sumotaz.taz[0].sumotaz.param.#": "1",
+    "sumotaz.taz.#": "2",
+    "sumotaz.taz[1].sumotaz.id": "s13"
+  }
+}

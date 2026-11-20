@@ -1,0 +1,12 @@
+{
+ "@begin float": "begin",
+ "@edges string": "edges",
+ "@end float": "end",
+ "@id string": "id",
+ "@probability float": "probability",
+ "fromEdge/[] list": "from_edge",
+ "interval/[] list": "interval",
+ "sink/[] list": "sink",
+ "source/[] list": "source",
+ "toEdge/[] list": "to_edge"
+}

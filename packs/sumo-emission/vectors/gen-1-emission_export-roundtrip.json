@@ -1,0 +1,13 @@
+{
+  "name": "gen-emission_export-roundtrip",
+  "from": "sumo-emission",
+  "to": "sumo-emission",
+  "input": "<emission-export><timestep time=\"0.5\"><vehicle id=\"s1\" eclass=\"s2\" CO=\"2.5\" CO2=\"0.125\" HC=\"3.5\" PMx=\"0.75\" NOx=\"0.5\" fuel=\"1.5\" electricity=\"001.0\" noise=\"2.5\" route=\"s11\" type=\"s12\" waiting=\"0.75\" lane=\"s14\" edge=\"s15\" pos=\"0.25\" speed=\"2.5\" angle=\"001.0\" x=\"001.0\" y=\"001.0\" z=\"001.0\"/></timestep><timestep time=\"1.5\"><vehicle id=\"s23\" eclass=\"s24\" CO=\"0.125\" CO2=\"3.5\" HC=\"0.75\" PMx=\"0.5\" NOx=\"1.5\" fuel=\"0.25\" electricity=\"001.0\" noise=\"0.125\" route=\"s33\" type=\"s34\" waiting=\"0.5\" lane=\"s36\" edge=\"s37\" pos=\"2.5\" speed=\"0.125\" angle=\"001.0\" x=\"001.0\" y=\"001.0\" z=\"001.0\"/></timestep></emission-export>",
+  "expect": "<emission-export><timestep time=\"0.5\"><vehicle id=\"s1\" eclass=\"s2\" CO=\"2.5\" CO2=\"0.125\" HC=\"3.5\" PMx=\"0.75\" NOx=\"0.5\" fuel=\"1.5\" electricity=\"001.0\" noise=\"2.5\" route=\"s11\" type=\"s12\" waiting=\"0.75\" lane=\"s14\" edge=\"s15\" pos=\"0.25\" speed=\"2.5\" angle=\"001.0\" x=\"001.0\" y=\"001.0\" z=\"001.0\"/></timestep><timestep time=\"1.5\"><vehicle id=\"s23\" eclass=\"s24\" CO=\"0.125\" CO2=\"3.5\" HC=\"0.75\" PMx=\"0.5\" NOx=\"1.5\" fuel=\"0.25\" electricity=\"001.0\" noise=\"0.125\" route=\"s33\" type=\"s34\" waiting=\"0.5\" lane=\"s36\" edge=\"s37\" pos=\"2.5\" speed=\"0.125\" angle=\"001.0\" x=\"001.0\" y=\"001.0\" z=\"001.0\"/></timestep></emission-export>",
+  "model": {
+    "@kind": "emission_export",
+    "sumoemission.timestep[0].sumoemission.vehicle.#": "1",
+    "sumoemission.timestep.#": "2",
+    "sumoemission.timestep[1].sumoemission.time": "1.5"
+  }
+}

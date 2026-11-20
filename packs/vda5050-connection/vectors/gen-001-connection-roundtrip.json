@@ -1,0 +1,17 @@
+{
+ "name": "gen-connection-roundtrip",
+ "from": "vda5050-connection",
+ "to": "vda5050-connection",
+ "input": "{\"headerId\":69007,\"timestamp\":\"2024-06-01T02:48:13.892Z\",\"version\":\"s18919\",\"manufacturer\":\"s29433\",\"serialNumber\":\"s99926\",\"connectionState\":\"HIBERNATING\"}",
+ "expect": "{\"headerId\":69007,\"timestamp\":\"2024-06-01T02:48:13.892Z\",\"version\":\"s18919\",\"manufacturer\":\"s29433\",\"serialNumber\":\"s99926\",\"connectionState\":\"HIBERNATING\"}",
+ "model": {
+  "time_ms": "1717210093892",
+  "uid": "s99926",
+  "vda5050connection.header_id": "69007",
+  "vda5050connection.timestamp": "2024-06-01T02:48:13.892Z",
+  "vda5050connection.version": "s18919",
+  "vda5050connection.manufacturer": "s29433",
+  "vda5050connection.serial_number": "s99926",
+  "vda5050connection.connection_state": "HIBERNATING"
+ }
+}

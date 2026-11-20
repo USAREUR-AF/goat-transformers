@@ -1,0 +1,7 @@
+{
+ "name": "gen-connection-residue",
+ "from": "vda5050-connection",
+ "to": "vda5050-connection",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"headerId\":69007,\"timestamp\":\"2024-06-01T02:48:13.892Z\",\"version\":\"s18919\",\"manufacturer\":\"s29433\",\"serialNumber\":\"s99926\",\"connectionState\":\"HIBERNATING\"}",
+ "expect": "{\"headerId\":69007,\"timestamp\":\"2024-06-01T02:48:13.892Z\",\"version\":\"s18919\",\"manufacturer\":\"s29433\",\"serialNumber\":\"s99926\",\"connectionState\":\"HIBERNATING\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

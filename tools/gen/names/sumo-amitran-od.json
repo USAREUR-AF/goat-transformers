@@ -1,0 +1,16 @@
+{
+ "@amount float": "amount",
+ "@averageTraveltime int": "average_traveltime",
+ "@destination int": "destination",
+ "@duration int": "duration",
+ "@fixedCost int": "fixed_cost",
+ "@id int": "id",
+ "@origin int": "origin",
+ "@routeId int": "route_id",
+ "@startTime int": "start_time",
+ "@stdDevTraveltime int": "std_dev_traveltime",
+ "actorConfig/[] list": "actor_config",
+ "odPair/[] list": "od_pair",
+ "routeCost/[] list": "route_cost",
+ "timeSlice/[] list": "time_slice"
+}

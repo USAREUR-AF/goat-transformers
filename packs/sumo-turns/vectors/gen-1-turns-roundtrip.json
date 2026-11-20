@@ -1,0 +1,18 @@
+{
+  "name": "gen-turns-roundtrip",
+  "from": "sumo-turns",
+  "to": "sumo-turns",
+  "input": "<turns><source id=\"s0\" edges=\"s1\"/><source id=\"s2\" edges=\"s3\"/><sink id=\"s4\" edges=\"s5\"/><sink id=\"s6\" edges=\"s7\"/><interval begin=\"1.5\" end=\"0.25\" id=\"s10\"><fromEdge id=\"s11\"><toEdge id=\"s12\" probability=\"0.75\"/></fromEdge></interval><interval begin=\"0.5\" end=\"1.5\" id=\"s16\"><fromEdge id=\"s17\"><toEdge id=\"s18\" probability=\"3.5\"/></fromEdge></interval></turns>",
+  "expect": "<turns><source id=\"s0\" edges=\"s1\"/><source id=\"s2\" edges=\"s3\"/><sink id=\"s4\" edges=\"s5\"/><sink id=\"s6\" edges=\"s7\"/><interval begin=\"1.5\" end=\"0.25\" id=\"s10\"><fromEdge id=\"s11\"><toEdge id=\"s12\" probability=\"0.75\"/></fromEdge></interval><interval begin=\"0.5\" end=\"1.5\" id=\"s16\"><fromEdge id=\"s17\"><toEdge id=\"s18\" probability=\"3.5\"/></fromEdge></interval></turns>",
+  "model": {
+    "@kind": "turns",
+    "sumoturns.source.#": "2",
+    "sumoturns.source[1].sumoturns.id": "s2",
+    "sumoturns.sink.#": "2",
+    "sumoturns.sink[1].sumoturns.id": "s6",
+    "sumoturns.interval[0].sumoturns.from_edge[0].sumoturns.to_edge.#": "1",
+    "sumoturns.interval[0].sumoturns.from_edge.#": "1",
+    "sumoturns.interval.#": "2",
+    "sumoturns.interval[1].sumoturns.begin": "0.5"
+  }
+}

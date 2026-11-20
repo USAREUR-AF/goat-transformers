@@ -1,0 +1,12 @@
+{
+  "name": "gen-generic_parameter-roundtrip",
+  "from": "sumo-genericparameter",
+  "to": "sumo-genericparameter",
+  "input": "<genericParameter><param key=\"s0\" value=\"s1\"/><param key=\"s2\" value=\"s3\"/></genericParameter>",
+  "expect": "<genericParameter><param key=\"s0\" value=\"s1\"/><param key=\"s2\" value=\"s3\"/></genericParameter>",
+  "model": {
+    "@kind": "generic_parameter",
+    "sumogenericparameter.param.#": "2",
+    "sumogenericparameter.param[1].sumogenericparameter.key": "s2"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "gen-detector-roundtrip",
+  "from": "sumo-det-e1",
+  "to": "sumo-det-e1",
+  "input": "<detector><interval begin=\"0.5\" end=\"1.5\" id=\"s2\" nVehContrib=\"4\" flow=\"0.125\" occupancy=\"3.5\" speed=\"0.75\" harmonicMeanSpeed=\"0.5\" length=\"1.5\" nVehEntered=\"1\"/><interval begin=\"2.5\" end=\"0.125\" id=\"s12\" nVehContrib=\"5\" flow=\"0.5\" occupancy=\"1.5\" speed=\"0.25\" harmonicMeanSpeed=\"2.5\" length=\"0.125\" nVehEntered=\"2\"/></detector>",
+  "expect": "<detector><interval begin=\"0.5\" end=\"1.5\" id=\"s2\" nVehContrib=\"4\" flow=\"0.125\" occupancy=\"3.5\" speed=\"0.75\" harmonicMeanSpeed=\"0.5\" length=\"1.5\" nVehEntered=\"1\"/><interval begin=\"2.5\" end=\"0.125\" id=\"s12\" nVehContrib=\"5\" flow=\"0.5\" occupancy=\"1.5\" speed=\"0.25\" harmonicMeanSpeed=\"2.5\" length=\"0.125\" nVehEntered=\"2\"/></detector>",
+  "model": {
+    "@kind": "detector",
+    "sumodete1.interval.#": "2",
+    "sumodete1.interval[1].sumodete1.begin": "2.5"
+  }
+}

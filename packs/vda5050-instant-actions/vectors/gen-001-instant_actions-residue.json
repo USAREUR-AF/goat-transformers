@@ -1,0 +1,7 @@
+{
+ "name": "gen-instant_actions-residue",
+ "from": "vda5050-instant-actions",
+ "to": "vda5050-instant-actions",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"headerId\":85315,\"timestamp\":\"2026-06-25T04:36:04.658Z\",\"version\":\"s34617\",\"manufacturer\":\"s95080\",\"serialNumber\":\"s84767\",\"actions\":[{\"actionType\":\"s74031\",\"actionId\":\"s33787\",\"actionDescriptor\":\"s7884\",\"blockingType\":\"NONE\",\"actionParameters\":[{\"key\":\"s54097\"}]},{\"actionType\":\"s29489\",\"actionId\":\"s15706\",\"actionDescriptor\":\"s86958\",\"blockingType\":\"NONE\",\"actionParameters\":[{\"key\":\"s30335\"}]}]}",
+ "expect": "{\"headerId\":85315,\"timestamp\":\"2026-06-25T04:36:04.658Z\",\"version\":\"s34617\",\"manufacturer\":\"s95080\",\"serialNumber\":\"s84767\",\"actions\":[{\"actionType\":\"s74031\",\"actionId\":\"s33787\",\"actionDescriptor\":\"s7884\",\"blockingType\":\"NONE\",\"actionParameters\":[{\"key\":\"s54097\"}]},{\"actionType\":\"s29489\",\"actionId\":\"s15706\",\"actionDescriptor\":\"s86958\",\"blockingType\":\"NONE\",\"actionParameters\":[{\"key\":\"s30335\"}]}],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

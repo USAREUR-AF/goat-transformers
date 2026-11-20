@@ -1,0 +1,5 @@
+{
+ "@key string": "key",
+ "@value string": "value",
+ "param/[] list": "param"
+}

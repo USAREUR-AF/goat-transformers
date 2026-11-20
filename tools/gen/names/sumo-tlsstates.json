@@ -1,0 +1,11 @@
+{
+ "@conditions string": "conditions",
+ "@detectors string": "detectors",
+ "@id string": "id",
+ "@name string": "name",
+ "@phase int": "phase",
+ "@programID string": "program_id",
+ "@state string": "state",
+ "@time string": "time",
+ "tlsState/[] list": "tls_state"
+}

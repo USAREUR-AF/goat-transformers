@@ -1,0 +1,15 @@
+{
+ "keys": {
+  "responses|grantType|string": "responses_grant_type",
+  "responses|leaseExpiry|string": "responses_lease_expiry",
+  "responses|requestId|string": "responses_request_id",
+  "|headerId|int": "header_id",
+  "|manufacturer|string": "manufacturer",
+  "|serialNumber|string": "serial_number",
+  "|timestamp|string": "timestamp",
+  "|version|string": "version"
+ },
+ "lists": {
+  "|responses": "responses"
+ }
+}

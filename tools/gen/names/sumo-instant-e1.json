@@ -1,0 +1,12 @@
+{
+ "@gap float": "gap",
+ "@id string": "id",
+ "@length float": "length",
+ "@occupancy float": "occupancy",
+ "@speed float": "speed",
+ "@state string": "state",
+ "@time float": "time",
+ "@type string": "type",
+ "@vehID string": "veh_id",
+ "instantOut/[] list": "instant_out"
+}

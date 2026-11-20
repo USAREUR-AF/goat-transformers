@@ -1,0 +1,22 @@
+{
+  "name": "gen-netstate-roundtrip",
+  "from": "sumo-netstate",
+  "to": "sumo-netstate",
+  "input": "<netstate><timestep time=\"0.5\"><edge id=\"s1\"><lane id=\"s2\"><vehicle id=\"s3\" pos=\"0.125\" speed=\"3.5\" posLat=\"001.0\" speedLat=\"001.0\" personNumber=\"9\" containerNumber=\"1\"><person id=\"s10\" pos=\"0.125\" angle=\"001.0\" stage=\"s13\"/><container id=\"s14\" pos=\"1.5\" angle=\"001.0\" stage=\"s17\"/></vehicle></lane><vehicle id=\"s18\" pos=\"3.5\" speed=\"0.75\" posLat=\"001.0\" speedLat=\"001.0\" personNumber=\"6\" containerNumber=\"7\"><person id=\"s25\" pos=\"3.5\" angle=\"001.0\" stage=\"s28\"/><container id=\"s29\" pos=\"0.25\" angle=\"001.0\" stage=\"s32\"/></vehicle><person id=\"s33\" pos=\"0.75\" angle=\"001.0\" stage=\"s36\"/><container id=\"s37\" pos=\"2.5\" angle=\"001.0\" stage=\"s40\"/></edge></timestep><timestep time=\"0.75\"><edge id=\"s42\"><lane id=\"s43\"><vehicle id=\"s44\" pos=\"2.5\" speed=\"0.125\" posLat=\"001.0\" speedLat=\"001.0\" personNumber=\"5\" containerNumber=\"6\"><person id=\"s51\" pos=\"2.5\" angle=\"001.0\" stage=\"s54\"/><container id=\"s55\" pos=\"0.5\" angle=\"001.0\" stage=\"s58\"/></vehicle></lane><vehicle id=\"s59\" pos=\"0.125\" speed=\"3.5\" posLat=\"001.0\" speedLat=\"001.0\" personNumber=\"2\" containerNumber=\"3\"><person id=\"s66\" pos=\"0.125\" angle=\"001.0\" stage=\"s69\"/><container id=\"s70\" pos=\"1.5\" angle=\"001.0\" stage=\"s73\"/></vehicle><person id=\"s74\" pos=\"3.5\" angle=\"001.0\" stage=\"s77\"/><container id=\"s78\" pos=\"0.25\" angle=\"001.0\" stage=\"s81\"/></edge></timestep></netstate>",
+  "expect": "<netstate><timestep time=\"0.5\"><edge id=\"s1\"><lane id=\"s2\"><vehicle id=\"s3\" pos=\"0.125\" speed=\"3.5\" posLat=\"001.0\" speedLat=\"001.0\" personNumber=\"9\" containerNumber=\"1\"><person id=\"s10\" pos=\"0.125\" angle=\"001.0\" stage=\"s13\"/><container id=\"s14\" pos=\"1.5\" angle=\"001.0\" stage=\"s17\"/></vehicle></lane><vehicle id=\"s18\" pos=\"3.5\" speed=\"0.75\" posLat=\"001.0\" speedLat=\"001.0\" personNumber=\"6\" containerNumber=\"7\"><person id=\"s25\" pos=\"3.5\" angle=\"001.0\" stage=\"s28\"/><container id=\"s29\" pos=\"0.25\" angle=\"001.0\" stage=\"s32\"/></vehicle><person id=\"s33\" pos=\"0.75\" angle=\"001.0\" stage=\"s36\"/><container id=\"s37\" pos=\"2.5\" angle=\"001.0\" stage=\"s40\"/></edge></timestep><timestep time=\"0.75\"><edge id=\"s42\"><lane id=\"s43\"><vehicle id=\"s44\" pos=\"2.5\" speed=\"0.125\" posLat=\"001.0\" speedLat=\"001.0\" personNumber=\"5\" containerNumber=\"6\"><person id=\"s51\" pos=\"2.5\" angle=\"001.0\" stage=\"s54\"/><container id=\"s55\" pos=\"0.5\" angle=\"001.0\" stage=\"s58\"/></vehicle></lane><vehicle id=\"s59\" pos=\"0.125\" speed=\"3.5\" posLat=\"001.0\" speedLat=\"001.0\" personNumber=\"2\" containerNumber=\"3\"><person id=\"s66\" pos=\"0.125\" angle=\"001.0\" stage=\"s69\"/><container id=\"s70\" pos=\"1.5\" angle=\"001.0\" stage=\"s73\"/></vehicle><person id=\"s74\" pos=\"3.5\" angle=\"001.0\" stage=\"s77\"/><container id=\"s78\" pos=\"0.25\" angle=\"001.0\" stage=\"s81\"/></edge></timestep></netstate>",
+  "model": {
+    "@kind": "netstate",
+    "sumonetstate.timestep[0].sumonetstate.edge[0].sumonetstate.lane[0].sumonetstate.vehicle[0].sumonetstate.person.#": "1",
+    "sumonetstate.timestep[0].sumonetstate.edge[0].sumonetstate.lane[0].sumonetstate.vehicle[0].sumonetstate.container.#": "1",
+    "sumonetstate.timestep[0].sumonetstate.edge[0].sumonetstate.lane[0].sumonetstate.vehicle.#": "1",
+    "sumonetstate.timestep[0].sumonetstate.edge[0].sumonetstate.lane.#": "1",
+    "sumonetstate.timestep[0].sumonetstate.edge[0].sumonetstate.vehicle[0].sumonetstate.person.#": "1",
+    "sumonetstate.timestep[0].sumonetstate.edge[0].sumonetstate.vehicle[0].sumonetstate.container.#": "1",
+    "sumonetstate.timestep[0].sumonetstate.edge[0].sumonetstate.vehicle.#": "1",
+    "sumonetstate.timestep[0].sumonetstate.edge[0].sumonetstate.person.#": "1",
+    "sumonetstate.timestep[0].sumonetstate.edge[0].sumonetstate.container.#": "1",
+    "sumonetstate.timestep[0].sumonetstate.edge.#": "1",
+    "sumonetstate.timestep.#": "2",
+    "sumonetstate.timestep[1].sumonetstate.time": "0.75"
+  }
+}

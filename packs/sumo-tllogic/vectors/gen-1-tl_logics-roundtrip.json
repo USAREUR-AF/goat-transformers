@@ -1,0 +1,23 @@
+{
+  "name": "gen-tl_logics-roundtrip",
+  "from": "sumo-tllogic",
+  "to": "sumo-tllogic",
+  "input": "<tlLogics version=\"001.0\"><tlLogic id=\"s1\" type=\"static\" programID=\"s3\" offset=\"s4\" nodes=\"s5\" pos=\"s6\"><phase duration=\"0.5\" state=\"v8\" minDur=\"s9\" maxDur=\"s10\" earliestEnd=\"s11\" latestEnd=\"s12\" earlyTarget=\"s13\" finalTarget=\"s14\" yellow=\"1.5\" red=\"0.25\" vehext=\"2.5\" next=\"18\" name=\"s19\"/><param key=\"s20\" value=\"s21\"/><condition id=\"s22\" value=\"s23\"/><assignment id=\"s24\" check=\"s25\" value=\"s26\"/><function id=\"s27\" nArgs=\"2\"><assignment id=\"s29\" check=\"s30\" value=\"s31\"/></function></tlLogic><tlLogic id=\"s32\" type=\"delay_based\" programID=\"s34\" offset=\"s35\" nodes=\"s36\" pos=\"s37\"><phase duration=\"2.5\" state=\"v39\" minDur=\"s40\" maxDur=\"s41\" earliestEnd=\"s42\" latestEnd=\"s43\" earlyTarget=\"s44\" finalTarget=\"s45\" yellow=\"0.125\" red=\"3.5\" vehext=\"0.75\" next=\"49\" name=\"s50\"/><param key=\"s51\" value=\"s52\"/><condition id=\"s53\" value=\"s54\"/><assignment id=\"s55\" check=\"s56\" value=\"s57\"/><function id=\"s58\" nArgs=\"6\"><assignment id=\"s60\" check=\"s61\" value=\"s62\"/></function></tlLogic><connection from=\"s63\" to=\"s64\" fromLane=\"3\" toLane=\"4\" tl=\"s67\" linkIndex=\"6\" linkIndex2=\"7\"/><connection from=\"s70\" to=\"s71\" fromLane=\"1\" toLane=\"2\" tl=\"s74\" linkIndex=\"4\" linkIndex2=\"5\"/><delete from=\"s77\" to=\"s78\" fromLane=\"8\" toLane=\"9\" tl=\"s81\" linkIndex=\"2\" linkIndex2=\"3\"/><delete from=\"s84\" to=\"s85\" fromLane=\"6\" toLane=\"7\" tl=\"s88\" linkIndex=\"9\" linkIndex2=\"1\"/></tlLogics>",
+  "expect": "<tlLogics version=\"001.0\"><tlLogic id=\"s1\" type=\"static\" programID=\"s3\" offset=\"s4\" nodes=\"s5\" pos=\"s6\"><phase duration=\"0.5\" state=\"v8\" minDur=\"s9\" maxDur=\"s10\" earliestEnd=\"s11\" latestEnd=\"s12\" earlyTarget=\"s13\" finalTarget=\"s14\" yellow=\"1.5\" red=\"0.25\" vehext=\"2.5\" next=\"18\" name=\"s19\"/><param key=\"s20\" value=\"s21\"/><condition id=\"s22\" value=\"s23\"/><assignment id=\"s24\" check=\"s25\" value=\"s26\"/><function id=\"s27\" nArgs=\"2\"><assignment id=\"s29\" check=\"s30\" value=\"s31\"/></function></tlLogic><tlLogic id=\"s32\" type=\"delay_based\" programID=\"s34\" offset=\"s35\" nodes=\"s36\" pos=\"s37\"><phase duration=\"2.5\" state=\"v39\" minDur=\"s40\" maxDur=\"s41\" earliestEnd=\"s42\" latestEnd=\"s43\" earlyTarget=\"s44\" finalTarget=\"s45\" yellow=\"0.125\" red=\"3.5\" vehext=\"0.75\" next=\"49\" name=\"s50\"/><param key=\"s51\" value=\"s52\"/><condition id=\"s53\" value=\"s54\"/><assignment id=\"s55\" check=\"s56\" value=\"s57\"/><function id=\"s58\" nArgs=\"6\"><assignment id=\"s60\" check=\"s61\" value=\"s62\"/></function></tlLogic><connection from=\"s63\" to=\"s64\" fromLane=\"3\" toLane=\"4\" tl=\"s67\" linkIndex=\"6\" linkIndex2=\"7\"/><connection from=\"s70\" to=\"s71\" fromLane=\"1\" toLane=\"2\" tl=\"s74\" linkIndex=\"4\" linkIndex2=\"5\"/><delete from=\"s77\" to=\"s78\" fromLane=\"8\" toLane=\"9\" tl=\"s81\" linkIndex=\"2\" linkIndex2=\"3\"/><delete from=\"s84\" to=\"s85\" fromLane=\"6\" toLane=\"7\" tl=\"s88\" linkIndex=\"9\" linkIndex2=\"1\"/></tlLogics>",
+  "model": {
+    "@kind": "tl_logics",
+    "sumotllogic.version": "001.0",
+    "sumotllogic.tl_logic[0].sumotllogic.phase.#": "1",
+    "sumotllogic.tl_logic[0].sumotllogic.param.#": "1",
+    "sumotllogic.tl_logic[0].sumotllogic.condition.#": "1",
+    "sumotllogic.tl_logic[0].sumotllogic.assignment.#": "1",
+    "sumotllogic.tl_logic[0].sumotllogic.function[0].sumotllogic.assignment.#": "1",
+    "sumotllogic.tl_logic[0].sumotllogic.function.#": "1",
+    "sumotllogic.tl_logic.#": "2",
+    "sumotllogic.tl_logic[1].sumotllogic.id": "s32",
+    "sumotllogic.connection.#": "2",
+    "sumotllogic.connection[1].sumotllogic.from": "s70",
+    "sumotllogic.delete.#": "2",
+    "sumotllogic.delete[1].sumotllogic.from": "s84"
+  }
+}

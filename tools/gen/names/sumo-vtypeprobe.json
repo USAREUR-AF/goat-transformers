@@ -1,0 +1,15 @@
+{
+ "@id string": "id",
+ "@lane string": "lane",
+ "@lat string": "lat",
+ "@lon string": "lon",
+ "@pos float": "pos",
+ "@speed float": "speed",
+ "@time float": "time",
+ "@vType string": "v_type",
+ "@x string": "x",
+ "@y string": "y",
+ "@z string": "z",
+ "timestep/[] list": "timestep",
+ "vehicle/[] list": "vehicle"
+}

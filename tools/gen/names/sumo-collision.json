@@ -1,0 +1,17 @@
+{
+ "@collider string": "collider",
+ "@colliderBack string": "collider_back",
+ "@colliderFront string": "collider_front",
+ "@colliderSpeed string": "collider_speed",
+ "@colliderType string": "collider_type",
+ "@lane string": "lane",
+ "@pos string": "pos",
+ "@time string": "time",
+ "@type string": "type",
+ "@victim string": "victim",
+ "@victimBack string": "victim_back",
+ "@victimFront string": "victim_front",
+ "@victimSpeed string": "victim_speed",
+ "@victimType string": "victim_type",
+ "collision/[] list": "collision"
+}

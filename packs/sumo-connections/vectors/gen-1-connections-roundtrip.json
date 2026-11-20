@@ -1,0 +1,26 @@
+{
+  "name": "gen-connections-roundtrip",
+  "from": "sumo-connections",
+  "to": "sumo-connections",
+  "input": "<connections version=\"001.0\"><location netOffset=\"v1\" convBoundary=\"v2\" origBoundary=\"v3\" projParameter=\"s4\"/><connection from=\"s5\" to=\"s6\" fromLane=\"8\" toLane=\"9\" pass=\"0\" uncontrolled=\"x\" keepClear=\"-\" contPos=\"001.0\" visibility=\"001.0\" allow=\"s14\" disallow=\"s15\" speed=\"001.0\" length=\"001.0\" shape=\"v18\" changeRight=\"s19\" changeLeft=\"s20\" indirect=\"0\" type=\"s22\" reset=\"-\" node=\"s24\" vehicleTypeCode=\"s25\"><param key=\"s26\" value=\"s27\"/><conflict from=\"s28\" to=\"s29\" fromLane=\"4\" toLane=\"5\" startPos=\"001.0\" endPos=\"001.0\"/></connection><connection from=\"s34\" to=\"s35\" fromLane=\"1\" toLane=\"2\" pass=\"True\" uncontrolled=\"False\" keepClear=\"yes\" contPos=\"001.0\" visibility=\"001.0\" allow=\"s43\" disallow=\"s44\" speed=\"001.0\" length=\"001.0\" shape=\"v47\" changeRight=\"s48\" changeLeft=\"s49\" indirect=\"True\" type=\"s51\" reset=\"yes\" node=\"s53\" vehicleTypeCode=\"s54\"><param key=\"s55\" value=\"s56\"/><conflict from=\"s57\" to=\"s58\" fromLane=\"6\" toLane=\"7\" startPos=\"001.0\" endPos=\"001.0\"/></connection><prohibition prohibitor=\"v63\" prohibited=\"v64\"/><prohibition prohibitor=\"v65\" prohibited=\"v66\"/><delete from=\"s67\" to=\"s68\" fromLane=\"7\" toLane=\"8\"/><delete from=\"s71\" to=\"s72\" fromLane=\"2\" toLane=\"3\"/><crossing node=\"s75\" edges=\"s76\" priority=\"6\" width=\"1.5\" linkIndex=\"8\" linkIndex2=\"9\" discard=\"0\" shape=\"v82\" outlineShape=\"v83\"><param key=\"s84\" value=\"s85\"/></crossing><crossing node=\"s86\" edges=\"s87\" priority=\"8\" width=\"3.5\" linkIndex=\"1\" linkIndex2=\"2\" discard=\"1\" shape=\"v93\" outlineShape=\"v94\"><param key=\"s95\" value=\"s96\"/></crossing><walkingArea node=\"s97\" edges=\"s98\" shape=\"v99\" width=\"0.25\"><param key=\"s1\" value=\"s2\"/></walkingArea><walkingArea node=\"s3\" edges=\"s4\" shape=\"v105\" width=\"1.5\"><param key=\"s7\" value=\"s8\"/></walkingArea></connections>",
+  "expect": "<connections version=\"001.0\"><location netOffset=\"v1\" convBoundary=\"v2\" origBoundary=\"v3\" projParameter=\"s4\"/><connection from=\"s5\" to=\"s6\" fromLane=\"8\" toLane=\"9\" pass=\"0\" uncontrolled=\"x\" keepClear=\"-\" contPos=\"001.0\" visibility=\"001.0\" allow=\"s14\" disallow=\"s15\" speed=\"001.0\" length=\"001.0\" shape=\"v18\" changeRight=\"s19\" changeLeft=\"s20\" indirect=\"0\" type=\"s22\" reset=\"-\" node=\"s24\" vehicleTypeCode=\"s25\"><param key=\"s26\" value=\"s27\"/><conflict from=\"s28\" to=\"s29\" fromLane=\"4\" toLane=\"5\" startPos=\"001.0\" endPos=\"001.0\"/></connection><connection from=\"s34\" to=\"s35\" fromLane=\"1\" toLane=\"2\" pass=\"True\" uncontrolled=\"False\" keepClear=\"yes\" contPos=\"001.0\" visibility=\"001.0\" allow=\"s43\" disallow=\"s44\" speed=\"001.0\" length=\"001.0\" shape=\"v47\" changeRight=\"s48\" changeLeft=\"s49\" indirect=\"True\" type=\"s51\" reset=\"yes\" node=\"s53\" vehicleTypeCode=\"s54\"><param key=\"s55\" value=\"s56\"/><conflict from=\"s57\" to=\"s58\" fromLane=\"6\" toLane=\"7\" startPos=\"001.0\" endPos=\"001.0\"/></connection><prohibition prohibitor=\"v63\" prohibited=\"v64\"/><prohibition prohibitor=\"v65\" prohibited=\"v66\"/><delete from=\"s67\" to=\"s68\" fromLane=\"7\" toLane=\"8\"/><delete from=\"s71\" to=\"s72\" fromLane=\"2\" toLane=\"3\"/><crossing node=\"s75\" edges=\"s76\" priority=\"6\" width=\"1.5\" linkIndex=\"8\" linkIndex2=\"9\" discard=\"0\" shape=\"v82\" outlineShape=\"v83\"><param key=\"s84\" value=\"s85\"/></crossing><crossing node=\"s86\" edges=\"s87\" priority=\"8\" width=\"3.5\" linkIndex=\"1\" linkIndex2=\"2\" discard=\"1\" shape=\"v93\" outlineShape=\"v94\"><param key=\"s95\" value=\"s96\"/></crossing><walkingArea node=\"s97\" edges=\"s98\" shape=\"v99\" width=\"0.25\"><param key=\"s1\" value=\"s2\"/></walkingArea><walkingArea node=\"s3\" edges=\"s4\" shape=\"v105\" width=\"1.5\"><param key=\"s7\" value=\"s8\"/></walkingArea></connections>",
+  "model": {
+    "@kind": "connections",
+    "sumoconnections.version": "001.0",
+    "sumoconnections.location_net_offset": "v1",
+    "sumoconnections.connection[0].sumoconnections.param.#": "1",
+    "sumoconnections.connection[0].sumoconnections.conflict.#": "1",
+    "sumoconnections.connection.#": "2",
+    "sumoconnections.connection[1].sumoconnections.from": "s34",
+    "sumoconnections.prohibition.#": "2",
+    "sumoconnections.prohibition[1].sumoconnections.prohibitor": "v65",
+    "sumoconnections.delete.#": "2",
+    "sumoconnections.delete[1].sumoconnections.from": "s71",
+    "sumoconnections.crossing[0].sumoconnections.param.#": "1",
+    "sumoconnections.crossing.#": "2",
+    "sumoconnections.crossing[1].sumoconnections.node": "s86",
+    "sumoconnections.walking_area[0].sumoconnections.param.#": "1",
+    "sumoconnections.walking_area.#": "2",
+    "sumoconnections.walking_area[1].sumoconnections.node": "s3"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "gen-tls_switches-roundtrip",
+  "from": "sumo-tlsswitches",
+  "to": "sumo-tlsswitches",
+  "input": "<tlsSwitches><tlsSwitch id=\"s0\" programID=\"s1\" fromLane=\"s2\" toLane=\"s3\" begin=\"0.125\" end=\"3.5\" duration=\"0.75\"/><tlsSwitch id=\"s7\" programID=\"s8\" fromLane=\"s9\" toLane=\"s10\" begin=\"0.125\" end=\"3.5\" duration=\"0.75\"/></tlsSwitches>",
+  "expect": "<tlsSwitches><tlsSwitch id=\"s0\" programID=\"s1\" fromLane=\"s2\" toLane=\"s3\" begin=\"0.125\" end=\"3.5\" duration=\"0.75\"/><tlsSwitch id=\"s7\" programID=\"s8\" fromLane=\"s9\" toLane=\"s10\" begin=\"0.125\" end=\"3.5\" duration=\"0.75\"/></tlsSwitches>",
+  "model": {
+    "@kind": "tls_switches",
+    "sumotlsswitches.tls_switch.#": "2",
+    "sumotlsswitches.tls_switch[1].sumotlsswitches.id": "s7"
+  }
+}

@@ -1,0 +1,7 @@
+{
+ "@id string": "id",
+ "@lane string": "lane",
+ "@pos string": "pos",
+ "@type string": "type",
+ "detectorDefinition/[] list": "detector_definition"
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-responses-residue",
+ "from": "vda5050-responses",
+ "to": "vda5050-responses",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"headerId\":19106,\"timestamp\":\"2025-07-25T10:17:51.904Z\",\"version\":\"s17358\",\"manufacturer\":\"s1254\",\"serialNumber\":\"s37295\",\"responses\":[{\"requestId\":\"s19869\",\"grantType\":\"REJECTED\",\"leaseExpiry\":\"s7499\"},{\"requestId\":\"s69767\",\"grantType\":\"QUEUED\",\"leaseExpiry\":\"s61458\"}]}",
+ "expect": "{\"headerId\":19106,\"timestamp\":\"2025-07-25T10:17:51.904Z\",\"version\":\"s17358\",\"manufacturer\":\"s1254\",\"serialNumber\":\"s37295\",\"responses\":[{\"requestId\":\"s19869\",\"grantType\":\"REJECTED\",\"leaseExpiry\":\"s7499\"},{\"requestId\":\"s69767\",\"grantType\":\"QUEUED\",\"leaseExpiry\":\"s61458\"}],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}
