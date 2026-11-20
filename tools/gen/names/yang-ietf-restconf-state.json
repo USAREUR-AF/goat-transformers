@@ -1,0 +1,16 @@
+{
+ "keys": {
+  "ietf_restconf_monitoring_restconf_state_capabilities_capability|.|string": "ietf_restconf_monitoring_restconf_state_capabilities_capability_value",
+  "ietf_restconf_monitoring_restconf_state_streams_stream_access|encoding|string": "ietf_restconf_monitoring_restconf_state_streams_stream_access_encoding",
+  "ietf_restconf_monitoring_restconf_state_streams_stream_access|location|string": "ietf_restconf_monitoring_restconf_state_streams_stream_access_location",
+  "ietf_restconf_monitoring_restconf_state_streams_stream|description|string": "ietf_restconf_monitoring_restconf_state_streams_stream_description",
+  "ietf_restconf_monitoring_restconf_state_streams_stream|name|string": "ietf_restconf_monitoring_restconf_state_streams_stream_name",
+  "ietf_restconf_monitoring_restconf_state_streams_stream|replay-log-creation-time|string": "ietf_restconf_monitoring_restconf_state_streams_stream_replay_log_creation_time",
+  "ietf_restconf_monitoring_restconf_state_streams_stream|replay-support|int": "ietf_restconf_monitoring_restconf_state_streams_stream_replay_support"
+ },
+ "lists": {
+  "ietf_restconf_monitoring_restconf_state_streams_stream|access": "ietf_restconf_monitoring_restconf_state_streams_stream_access",
+  "|ietf-restconf-monitoring:restconf-state.capabilities.capability": "ietf_restconf_monitoring_restconf_state_capabilities_capability",
+  "|ietf-restconf-monitoring:restconf-state.streams.stream": "ietf_restconf_monitoring_restconf_state_streams_stream"
+ }
+}

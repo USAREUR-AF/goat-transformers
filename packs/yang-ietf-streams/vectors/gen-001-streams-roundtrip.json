@@ -1,0 +1,10 @@
+{
+ "name": "gen-streams-roundtrip",
+ "from": "yang-ietf-streams",
+ "to": "yang-ietf-streams",
+ "input": "{\"ietf-subscribed-notifications:streams\":{\"stream\":[{\"name\":\"s56472\",\"description\":\"s50431\",\"replay-log-creation-time\":\"2024-09-15T13:06:21.039Z\",\"replay-log-aged-time\":\"2024-06-20T10:36:44.154Z\"},{\"name\":\"s33168\",\"description\":\"s60637\",\"replay-log-creation-time\":\"2025-10-07T08:00:30.764Z\",\"replay-log-aged-time\":\"2025-08-02T20:47:24.838Z\"}]}}",
+ "expect": "{\"ietf-subscribed-notifications:streams\":{\"stream\":[{\"name\":\"s56472\",\"description\":\"s50431\",\"replay-log-creation-time\":\"2024-09-15T13:06:21.039Z\",\"replay-log-aged-time\":\"2024-06-20T10:36:44.154Z\"},{\"name\":\"s33168\",\"description\":\"s60637\",\"replay-log-creation-time\":\"2025-10-07T08:00:30.764Z\",\"replay-log-aged-time\":\"2025-08-02T20:47:24.838Z\"}]}}",
+ "model": {
+  "yangietfstreams.ietf_subscribed_notifications_streams_stream.#": "2"
+ }
+}

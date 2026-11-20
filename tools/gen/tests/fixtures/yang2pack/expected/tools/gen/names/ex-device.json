@@ -1,0 +1,31 @@
+{
+ "keys": {
+  "ex_device_device_port|config.enabled|int": "ex_device_device_port_config_enabled",
+  "ex_device_device_port|config.mtu|int": "ex_device_device_port_config_mtu",
+  "ex_device_device_port|config.name|string": "ex_device_device_port_config_name",
+  "ex_device_device_port|name|string": "ex_device_device_port_name",
+  "ex_device_device_port|state.counters.drops|int": "ex_device_device_port_state_counters_drops",
+  "ex_device_device_port|state.counters.in-octets|string": "ex_device_device_port_state_counters_in_octets",
+  "ex_device_device_port|state.enabled|int": "ex_device_device_port_state_enabled",
+  "ex_device_device_port|state.ex-ext:optics.lanes|int": "ex_device_device_port_state_ex_ext_optics_lanes",
+  "ex_device_device_port|state.ex-ext:optics.power|string": "ex_device_device_port_state_ex_ext_optics_power",
+  "ex_device_device_port|state.mtu|int": "ex_device_device_port_state_mtu",
+  "ex_device_device_port|state.name|string": "ex_device_device_port_state_name",
+  "ex_device_device_tags|.|string": "ex_device_device_tags_value",
+  "|ex-device:device.battery-pct|int": "ex_device_device_battery_pct",
+  "|ex-device:device.clock.now|string": "ex_device_device_clock_now",
+  "|ex-device:device.ex-ext:hertz|int": "ex_device_device_ex_ext_hertz",
+  "|ex-device:device.frames|int": "ex_device_device_frames",
+  "|ex-device:device.kind|string": "ex_device_device_kind",
+  "|ex-device:device.load|int": "ex_device_device_load",
+  "|ex-device:device.mode|string": "ex_device_device_mode",
+  "|ex-device:device.peer-serial|string": "ex_device_device_peer_serial",
+  "|ex-device:device.ratio|string": "ex_device_device_ratio",
+  "|ex-device:device.serial|string": "ex_device_device_serial",
+  "|ex-device:device.volts|int": "ex_device_device_volts"
+ },
+ "lists": {
+  "|ex-device:device.port": "ex_device_device_port",
+  "|ex-device:device.tags": "ex_device_device_tags"
+ }
+}

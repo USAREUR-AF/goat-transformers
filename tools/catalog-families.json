@@ -102,6 +102,8 @@
 
     {"name": "OpenTelemetry OTLP", "domain": "networks", "prefixes": ["otlp-"]},
     {"name": "gNMI", "domain": "networks", "prefixes": ["gnmi-"]},
+    {"name": "IETF YANG data (RFC 7951 JSON)", "domain": "networks", "prefixes": ["yang-ietf-"], "detail": "top-level containers of IETF modules"},
+    {"name": "OpenConfig (RFC 7951 JSON)", "domain": "networks", "prefixes": ["openconfig-"], "detail": "top-level containers of OpenConfig modules"},
     {"name": "OCSF", "domain": "networks", "prefixes": ["ocsf-"], "detail": "event classes"},
     {"name": "Elastic Common Schema", "domain": "networks", "exact": ["ecs-event"]},
     {"name": "STIX 2.1", "domain": "networks", "prefixes": ["stix-"], "detail": "domain, relationship and cyber-observable objects"},

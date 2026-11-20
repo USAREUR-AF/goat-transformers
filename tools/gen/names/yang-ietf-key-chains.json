@@ -1,0 +1,28 @@
+{
+ "keys": {
+  "ietf_key_chain_key_chains_key_chain_key|accept-lifetime-active|int": "ietf_key_chain_key_chains_key_chain_key_accept_lifetime_active",
+  "ietf_key_chain_key_chains_key_chain_key|crypto-algorithm|string": "ietf_key_chain_key_chains_key_chain_key_crypto_algorithm",
+  "ietf_key_chain_key_chains_key_chain_key|key-id|string": "ietf_key_chain_key_chains_key_chain_key_key_id",
+  "ietf_key_chain_key_chains_key_chain_key|key-string.hexadecimal-string|string": "ietf_key_chain_key_chains_key_chain_key_key_string_hexadecimal_string",
+  "ietf_key_chain_key_chains_key_chain_key|key-string.keystring|string": "ietf_key_chain_key_chains_key_chain_key_key_string_keystring",
+  "ietf_key_chain_key_chains_key_chain_key|lifetime.accept-lifetime.duration|int": "ietf_key_chain_key_chains_key_chain_key_lifetime_accept_lifetime_duration",
+  "ietf_key_chain_key_chains_key_chain_key|lifetime.accept-lifetime.end-date-time|string": "ietf_key_chain_key_chains_key_chain_key_lifetime_accept_lifetime_end_date_time",
+  "ietf_key_chain_key_chains_key_chain_key|lifetime.accept-lifetime.start-date-time|string": "ietf_key_chain_key_chains_key_chain_key_lifetime_accept_lifetime_start_date_time",
+  "ietf_key_chain_key_chains_key_chain_key|lifetime.send-accept-lifetime.duration|int": "ietf_key_chain_key_chains_key_chain_key_lifetime_send_accept_lifetime_duration",
+  "ietf_key_chain_key_chains_key_chain_key|lifetime.send-accept-lifetime.end-date-time|string": "ietf_key_chain_key_chains_key_chain_key_lifetime_send_accept_lifetime_end_date_time",
+  "ietf_key_chain_key_chains_key_chain_key|lifetime.send-accept-lifetime.start-date-time|string": "ietf_key_chain_key_chains_key_chain_key_lifetime_send_accept_lifetime_start_date_time",
+  "ietf_key_chain_key_chains_key_chain_key|lifetime.send-lifetime.duration|int": "ietf_key_chain_key_chains_key_chain_key_lifetime_send_lifetime_duration",
+  "ietf_key_chain_key_chains_key_chain_key|lifetime.send-lifetime.end-date-time|string": "ietf_key_chain_key_chains_key_chain_key_lifetime_send_lifetime_end_date_time",
+  "ietf_key_chain_key_chains_key_chain_key|lifetime.send-lifetime.start-date-time|string": "ietf_key_chain_key_chains_key_chain_key_lifetime_send_lifetime_start_date_time",
+  "ietf_key_chain_key_chains_key_chain_key|send-lifetime-active|int": "ietf_key_chain_key_chains_key_chain_key_send_lifetime_active",
+  "ietf_key_chain_key_chains_key_chain|accept-tolerance.duration|int": "ietf_key_chain_key_chains_key_chain_accept_tolerance_duration",
+  "ietf_key_chain_key_chains_key_chain|description|string": "ietf_key_chain_key_chains_key_chain_description",
+  "ietf_key_chain_key_chains_key_chain|last-modified-timestamp|string": "ietf_key_chain_key_chains_key_chain_last_modified_timestamp",
+  "ietf_key_chain_key_chains_key_chain|name|string": "ietf_key_chain_key_chains_key_chain_name",
+  "|ietf-key-chain:key-chains.aes-key-wrap.enable|int": "ietf_key_chain_key_chains_aes_key_wrap_enable"
+ },
+ "lists": {
+  "ietf_key_chain_key_chains_key_chain|key": "ietf_key_chain_key_chains_key_chain_key",
+  "|ietf-key-chain:key-chains.key-chain": "ietf_key_chain_key_chains_key_chain"
+ }
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-restconf_state-residue",
+ "from": "yang-ietf-restconf-state",
+ "to": "yang-ietf-restconf-state",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"ietf-restconf-monitoring:restconf-state\":{\"capabilities\":{\"capability\":[\"s86451\",\"s87590\"]},\"streams\":{\"stream\":[{\"name\":\"s29788\",\"description\":\"s28200\",\"replay-support\":true,\"replay-log-creation-time\":\"2026-05-09T02:59:05.336Z\",\"access\":[{\"encoding\":\"s58064\",\"location\":\"s73938\"}]},{\"name\":\"s48253\",\"description\":\"s83757\",\"replay-support\":false,\"replay-log-creation-time\":\"2026-06-21T18:07:26.111Z\",\"access\":[{\"encoding\":\"s96840\",\"location\":\"s32424\"}]}]}}}",
+ "expect": "{\"ietf-restconf-monitoring:restconf-state\":{\"capabilities\":{\"capability\":[\"s86451\",\"s87590\"]},\"streams\":{\"stream\":[{\"name\":\"s29788\",\"description\":\"s28200\",\"replay-support\":true,\"replay-log-creation-time\":\"2026-05-09T02:59:05.336Z\",\"access\":[{\"encoding\":\"s58064\",\"location\":\"s73938\"}]},{\"name\":\"s48253\",\"description\":\"s83757\",\"replay-support\":false,\"replay-log-creation-time\":\"2026-06-21T18:07:26.111Z\",\"access\":[{\"encoding\":\"s96840\",\"location\":\"s32424\"}]}]}},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

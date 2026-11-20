@@ -1,0 +1,11 @@
+{
+ "keys": {
+  "|ietf-system:system-state.clock.boot-datetime|string": "ietf_system_system_state_clock_boot_datetime",
+  "|ietf-system:system-state.clock.current-datetime|string": "ietf_system_system_state_clock_current_datetime",
+  "|ietf-system:system-state.platform.machine|string": "ietf_system_system_state_platform_machine",
+  "|ietf-system:system-state.platform.os-name|string": "ietf_system_system_state_platform_os_name",
+  "|ietf-system:system-state.platform.os-release|string": "ietf_system_system_state_platform_os_release",
+  "|ietf-system:system-state.platform.os-version|string": "ietf_system_system_state_platform_os_version"
+ },
+ "lists": {}
+}

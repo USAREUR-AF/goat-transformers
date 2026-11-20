@@ -1,0 +1,32 @@
+{
+ "keys": {
+  "ietf_tcp_tcp_connections_connection|keepalives.idle-time|int": "ietf_tcp_tcp_connections_connection_keepalives_idle_time",
+  "ietf_tcp_tcp_connections_connection|keepalives.max-probes|int": "ietf_tcp_tcp_connections_connection_keepalives_max_probes",
+  "ietf_tcp_tcp_connections_connection|keepalives.probe-interval|int": "ietf_tcp_tcp_connections_connection_keepalives_probe_interval",
+  "ietf_tcp_tcp_connections_connection|local-address|string": "ietf_tcp_tcp_connections_connection_local_address",
+  "ietf_tcp_tcp_connections_connection|local-port|int": "ietf_tcp_tcp_connections_connection_local_port",
+  "ietf_tcp_tcp_connections_connection|mss|int": "ietf_tcp_tcp_connections_connection_mss",
+  "ietf_tcp_tcp_connections_connection|pmtud|int": "ietf_tcp_tcp_connections_connection_pmtud",
+  "ietf_tcp_tcp_connections_connection|remote-address|string": "ietf_tcp_tcp_connections_connection_remote_address",
+  "ietf_tcp_tcp_connections_connection|remote-port|int": "ietf_tcp_tcp_connections_connection_remote_port",
+  "ietf_tcp_tcp_connections_connection|state|string": "ietf_tcp_tcp_connections_connection_state",
+  "ietf_tcp_tcp_tcp_listeners|address|string": "ietf_tcp_tcp_tcp_listeners_address",
+  "ietf_tcp_tcp_tcp_listeners|port|int": "ietf_tcp_tcp_tcp_listeners_port",
+  "ietf_tcp_tcp_tcp_listeners|type|string": "ietf_tcp_tcp_tcp_listeners_type",
+  "|ietf-tcp:tcp.statistics.active-opens|string": "ietf_tcp_tcp_statistics_active_opens",
+  "|ietf-tcp:tcp.statistics.attempt-fails|string": "ietf_tcp_tcp_statistics_attempt_fails",
+  "|ietf-tcp:tcp.statistics.auth-failures|string": "ietf_tcp_tcp_statistics_auth_failures",
+  "|ietf-tcp:tcp.statistics.currently-established|int": "ietf_tcp_tcp_statistics_currently_established",
+  "|ietf-tcp:tcp.statistics.establish-resets|string": "ietf_tcp_tcp_statistics_establish_resets",
+  "|ietf-tcp:tcp.statistics.in-errors|string": "ietf_tcp_tcp_statistics_in_errors",
+  "|ietf-tcp:tcp.statistics.in-segments|string": "ietf_tcp_tcp_statistics_in_segments",
+  "|ietf-tcp:tcp.statistics.out-resets|string": "ietf_tcp_tcp_statistics_out_resets",
+  "|ietf-tcp:tcp.statistics.out-segments|string": "ietf_tcp_tcp_statistics_out_segments",
+  "|ietf-tcp:tcp.statistics.passive-opens|string": "ietf_tcp_tcp_statistics_passive_opens",
+  "|ietf-tcp:tcp.statistics.retransmitted-segments|string": "ietf_tcp_tcp_statistics_retransmitted_segments"
+ },
+ "lists": {
+  "|ietf-tcp:tcp.connections.connection": "ietf_tcp_tcp_connections_connection",
+  "|ietf-tcp:tcp.tcp-listeners": "ietf_tcp_tcp_tcp_listeners"
+ }
+}

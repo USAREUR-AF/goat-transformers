@@ -1,0 +1,12 @@
+{
+ "keys": {
+  "|ietf-vrrp:vrrp.interfaces|int": "ietf_vrrp_vrrp_interfaces",
+  "|ietf-vrrp:vrrp.statistics.checksum-errors|string": "ietf_vrrp_vrrp_statistics_checksum_errors",
+  "|ietf-vrrp:vrrp.statistics.discontinuity-datetime|string": "ietf_vrrp_vrrp_statistics_discontinuity_datetime",
+  "|ietf-vrrp:vrrp.statistics.ip-ttl-errors|string": "ietf_vrrp_vrrp_statistics_ip_ttl_errors",
+  "|ietf-vrrp:vrrp.statistics.version-errors|string": "ietf_vrrp_vrrp_statistics_version_errors",
+  "|ietf-vrrp:vrrp.statistics.vrid-errors|string": "ietf_vrrp_vrrp_statistics_vrid_errors",
+  "|ietf-vrrp:vrrp.virtual-routers|int": "ietf_vrrp_vrrp_virtual_routers"
+ },
+ "lists": {}
+}

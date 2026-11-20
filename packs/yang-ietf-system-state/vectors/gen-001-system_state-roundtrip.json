@@ -1,0 +1,16 @@
+{
+ "name": "gen-system_state-roundtrip",
+ "from": "yang-ietf-system-state",
+ "to": "yang-ietf-system-state",
+ "input": "{\"ietf-system:system-state\":{\"platform\":{\"os-name\":\"s13206\",\"os-release\":\"s91928\",\"os-version\":\"s92398\",\"machine\":\"s96218\"},\"clock\":{\"current-datetime\":\"2026-06-13T01:07:22.548Z\",\"boot-datetime\":\"2025-06-16T06:34:32.523Z\"}}}",
+ "expect": "{\"ietf-system:system-state\":{\"platform\":{\"os-name\":\"s13206\",\"os-release\":\"s91928\",\"os-version\":\"s92398\",\"machine\":\"s96218\"},\"clock\":{\"current-datetime\":\"2026-06-13T01:07:22.548Z\",\"boot-datetime\":\"2025-06-16T06:34:32.523Z\"}}}",
+ "model": {
+  "time_ms": "1781312842548",
+  "yangietfsystemstate.ietf_system_system_state_platform_os_name": "s13206",
+  "yangietfsystemstate.ietf_system_system_state_platform_os_release": "s91928",
+  "yangietfsystemstate.ietf_system_system_state_platform_os_version": "s92398",
+  "yangietfsystemstate.ietf_system_system_state_platform_machine": "s96218",
+  "yangietfsystemstate.ietf_system_system_state_clock_current_datetime": "2026-06-13T01:07:22.548Z",
+  "yangietfsystemstate.ietf_system_system_state_clock_boot_datetime": "2025-06-16T06:34:32.523Z"
+ }
+}

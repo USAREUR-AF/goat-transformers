@@ -413,6 +413,25 @@ Packs gnmi-*; modules gnmi*
   License, Version 2.0, Copyright Google Inc. Field numbers, names and types
   only.
 
+Packs yang-ietf-*; modules yangietf*
+  IETF YANG modules as published in RFCs, read from
+  https://github.com/YangModels/yang (standard/ietf/RFC and standard/iana,
+  commit e13b05c4ddcbfab9170e60dddbbe9eaf6a831964). Copyright (c) the IETF
+  Trust and the persons identified as authors of the code. All rights
+  reserved. Each module is licensed under the Simplified BSD License or the
+  Revised BSD License set forth in Section 4.c of the IETF Trust's Legal
+  Provisions Relating to IETF Documents (https://trustee.ietf.org/license-info),
+  as the module states; RFC 8575 states it for ietf-ptp. Node names, types and
+  value ranges only, restated under the Apache License 2.0; each pack's
+  PROVENANCE.md quotes the statement of every module read.
+
+Packs openconfig-*; modules openconfig*
+  OpenConfig data models, https://github.com/openconfig/public tag v5.11.0
+  (commit 160da73440205de252066233b1ee0f3085d51d2d), release/models and
+  third_party/ietf. Apache License, Version 2.0; the IETF modules under
+  third_party/ietf carry the IETF Trust copyright and the Simplified or Revised
+  BSD License as above. Node names, types and value ranges only.
+
 Pack openxc-vehicle-message; module openxc
   OpenXC message format openxc.proto, https://github.com/openxc/openxc-message-format.
   BSD 3-Clause License, Copyright (c) 2012 Ford Motor Company. Field numbers,

@@ -1,0 +1,28 @@
+{
+ "keys": {
+  "openconfig_keychain_keychains_keychain_keys_key|config.crypto-algorithm|string": "openconfig_keychain_keychains_keychain_keys_key_config_crypto_algorithm",
+  "openconfig_keychain_keychains_keychain_keys_key|config.key-id|string": "openconfig_keychain_keychains_keychain_keys_key_config_key_id",
+  "openconfig_keychain_keychains_keychain_keys_key|config.secret-key|string": "openconfig_keychain_keychains_keychain_keys_key_config_secret_key",
+  "openconfig_keychain_keychains_keychain_keys_key|key-id|string": "openconfig_keychain_keychains_keychain_keys_key_key_id",
+  "openconfig_keychain_keychains_keychain_keys_key|receive-lifetime.config.end-time|string": "openconfig_keychain_keychains_keychain_keys_key_receive_lifetime_config_end_time",
+  "openconfig_keychain_keychains_keychain_keys_key|receive-lifetime.config.start-time|string": "openconfig_keychain_keychains_keychain_keys_key_receive_lifetime_config_start_time",
+  "openconfig_keychain_keychains_keychain_keys_key|receive-lifetime.state.end-time|string": "openconfig_keychain_keychains_keychain_keys_key_receive_lifetime_state_end_time",
+  "openconfig_keychain_keychains_keychain_keys_key|receive-lifetime.state.start-time|string": "openconfig_keychain_keychains_keychain_keys_key_receive_lifetime_state_start_time",
+  "openconfig_keychain_keychains_keychain_keys_key|send-lifetime.config.end-time|string": "openconfig_keychain_keychains_keychain_keys_key_send_lifetime_config_end_time",
+  "openconfig_keychain_keychains_keychain_keys_key|send-lifetime.config.send-and-receive|int": "openconfig_keychain_keychains_keychain_keys_key_send_lifetime_config_send_and_receive",
+  "openconfig_keychain_keychains_keychain_keys_key|send-lifetime.config.start-time|string": "openconfig_keychain_keychains_keychain_keys_key_send_lifetime_config_start_time",
+  "openconfig_keychain_keychains_keychain_keys_key|send-lifetime.state.end-time|string": "openconfig_keychain_keychains_keychain_keys_key_send_lifetime_state_end_time",
+  "openconfig_keychain_keychains_keychain_keys_key|send-lifetime.state.send-and-receive|int": "openconfig_keychain_keychains_keychain_keys_key_send_lifetime_state_send_and_receive",
+  "openconfig_keychain_keychains_keychain_keys_key|send-lifetime.state.start-time|string": "openconfig_keychain_keychains_keychain_keys_key_send_lifetime_state_start_time",
+  "openconfig_keychain_keychains_keychain_keys_key|state.crypto-algorithm|string": "openconfig_keychain_keychains_keychain_keys_key_state_crypto_algorithm",
+  "openconfig_keychain_keychains_keychain_keys_key|state.key-id|string": "openconfig_keychain_keychains_keychain_keys_key_state_key_id",
+  "openconfig_keychain_keychains_keychain_keys_key|state.secret-key|string": "openconfig_keychain_keychains_keychain_keys_key_state_secret_key",
+  "openconfig_keychain_keychains_keychain|config.name|string": "openconfig_keychain_keychains_keychain_config_name",
+  "openconfig_keychain_keychains_keychain|name|string": "openconfig_keychain_keychains_keychain_name",
+  "openconfig_keychain_keychains_keychain|state.name|string": "openconfig_keychain_keychains_keychain_state_name"
+ },
+ "lists": {
+  "openconfig_keychain_keychains_keychain|keys.key": "openconfig_keychain_keychains_keychain_keys_key",
+  "|openconfig-keychain:keychains.keychain": "openconfig_keychain_keychains_keychain"
+ }
+}

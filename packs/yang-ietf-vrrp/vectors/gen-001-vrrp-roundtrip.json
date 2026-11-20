@@ -1,0 +1,16 @@
+{
+ "name": "gen-vrrp-roundtrip",
+ "from": "yang-ietf-vrrp",
+ "to": "yang-ietf-vrrp",
+ "input": "{\"ietf-vrrp:vrrp\":{\"virtual-routers\":3734213132,\"interfaces\":2124319487,\"statistics\":{\"discontinuity-datetime\":\"2025-12-16T23:33:38.318Z\",\"checksum-errors\":\"s92874\",\"version-errors\":\"s16025\",\"vrid-errors\":\"s86098\",\"ip-ttl-errors\":\"s95999\"}}}",
+ "expect": "{\"ietf-vrrp:vrrp\":{\"virtual-routers\":3734213132,\"interfaces\":2124319487,\"statistics\":{\"discontinuity-datetime\":\"2025-12-16T23:33:38.318Z\",\"checksum-errors\":\"s92874\",\"version-errors\":\"s16025\",\"vrid-errors\":\"s86098\",\"ip-ttl-errors\":\"s95999\"}}}",
+ "model": {
+  "yangietfvrrp.ietf_vrrp_vrrp_virtual_routers": "3734213132",
+  "yangietfvrrp.ietf_vrrp_vrrp_interfaces": "2124319487",
+  "yangietfvrrp.ietf_vrrp_vrrp_statistics_discontinuity_datetime": "2025-12-16T23:33:38.318Z",
+  "yangietfvrrp.ietf_vrrp_vrrp_statistics_checksum_errors": "s92874",
+  "yangietfvrrp.ietf_vrrp_vrrp_statistics_version_errors": "s16025",
+  "yangietfvrrp.ietf_vrrp_vrrp_statistics_vrid_errors": "s86098",
+  "yangietfvrrp.ietf_vrrp_vrrp_statistics_ip_ttl_errors": "s95999"
+ }
+}

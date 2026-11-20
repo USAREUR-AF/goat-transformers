@@ -1,0 +1,14 @@
+// A stand-in written for the yang2pack tests: two typedefs under the name of the IETF
+// module, so that a date-and-time and a 64-bit counter resolve as in the real one.
+module ietf-yang-types {
+  namespace "urn:example:stand-in:yang-types";
+  prefix yang;
+  typedef date-and-time {
+    type string {
+      pattern '\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[\+\-]\d{2}:\d{2})';
+    }
+  }
+  typedef counter64 {
+    type uint64;
+  }
+}

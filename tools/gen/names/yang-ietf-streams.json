@@ -1,0 +1,11 @@
+{
+ "keys": {
+  "ietf_subscribed_notifications_streams_stream|description|string": "ietf_subscribed_notifications_streams_stream_description",
+  "ietf_subscribed_notifications_streams_stream|name|string": "ietf_subscribed_notifications_streams_stream_name",
+  "ietf_subscribed_notifications_streams_stream|replay-log-aged-time|string": "ietf_subscribed_notifications_streams_stream_replay_log_aged_time",
+  "ietf_subscribed_notifications_streams_stream|replay-log-creation-time|string": "ietf_subscribed_notifications_streams_stream_replay_log_creation_time"
+ },
+ "lists": {
+  "|ietf-subscribed-notifications:streams.stream": "ietf_subscribed_notifications_streams_stream"
+ }
+}

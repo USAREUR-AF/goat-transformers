@@ -1,0 +1,86 @@
+module ex-device {
+  yang-version 1.1;
+  namespace "urn:example:ex-device";
+  prefix exd;
+  import ex-types { prefix ext; }
+  import ietf-yang-types { prefix yang; }
+  include ex-device-sub;
+  description
+    "A device for the yang2pack tests, written for them.
+
+     Copyright (c) 2026 the test authors.  All rights reserved.
+     Redistribution is permitted under the Simplified BSD License
+     (an example statement).";
+
+  grouping port-config {
+    leaf name { type string; }
+    leaf mtu {
+      type uint16 { range "68..9216"; }
+    }
+    leaf enabled { type boolean; }
+  }
+
+  grouping port-state {
+    container counters {
+      leaf in-octets { type yang:counter64; }
+    }
+  }
+
+  container device {
+    container clock {
+      leaf now { type yang:date-and-time; }
+    }
+    leaf serial { type string; }
+    leaf load { type ext:percent; }
+    leaf ratio {
+      type decimal64 { fraction-digits 2; }
+    }
+    leaf mode {
+      type enumeration {
+        enum "auto";
+        enum 'manual';
+      }
+    }
+    leaf kind {
+      type identityref { base ext:kind; }
+    }
+    leaf maintenance { type empty; }
+    leaf vlan {
+      type union {
+        type uint16;
+        type string;
+      }
+    }
+    leaf peer-serial {
+      type leafref { path "/exd:device/exd:serial"; }
+    }
+    leaf-list tags { type string; }
+    choice power {
+      case mains {
+        leaf volts { type int32; }
+      }
+      leaf battery-pct { type ext:percent; }
+    }
+    anydata extra;
+    uses sub-stats;
+    list port {
+      key "name";
+      leaf name {
+        type leafref { path "../config/name"; }
+      }
+      container config { uses port-config; }
+      container state {
+        uses port-config;
+        uses port-state {
+          augment "counters" {
+            leaf drops { type uint32; }
+          }
+        }
+      }
+    }
+  }
+
+  rpc reboot {
+    input { leaf delay { type uint32; } }
+  }
+}

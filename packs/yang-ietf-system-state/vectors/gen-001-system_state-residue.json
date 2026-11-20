@@ -1,0 +1,7 @@
+{
+ "name": "gen-system_state-residue",
+ "from": "yang-ietf-system-state",
+ "to": "yang-ietf-system-state",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"ietf-system:system-state\":{\"platform\":{\"os-name\":\"s13206\",\"os-release\":\"s91928\",\"os-version\":\"s92398\",\"machine\":\"s96218\"},\"clock\":{\"current-datetime\":\"2026-06-13T01:07:22.548Z\",\"boot-datetime\":\"2025-06-16T06:34:32.523Z\"}}}",
+ "expect": "{\"ietf-system:system-state\":{\"platform\":{\"os-name\":\"s13206\",\"os-release\":\"s91928\",\"os-version\":\"s92398\",\"machine\":\"s96218\"},\"clock\":{\"current-datetime\":\"2026-06-13T01:07:22.548Z\",\"boot-datetime\":\"2025-06-16T06:34:32.523Z\"}},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

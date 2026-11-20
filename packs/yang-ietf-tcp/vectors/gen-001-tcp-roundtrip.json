@@ -1,0 +1,17 @@
+{
+ "name": "gen-tcp-roundtrip",
+ "from": "yang-ietf-tcp",
+ "to": "yang-ietf-tcp",
+ "input": "{\"ietf-tcp:tcp\":{\"connections\":{\"connection\":[{\"local-address\":\"s35257\",\"remote-address\":\"s55136\",\"local-port\":19656,\"remote-port\":55296,\"mss\":55810,\"pmtud\":true,\"keepalives\":{\"idle-time\":43702,\"max-probes\":30981,\"probe-interval\":58774},\"state\":\"fin-wait-2\"},{\"local-address\":\"s9515\",\"remote-address\":\"s29280\",\"local-port\":50313,\"remote-port\":22784,\"mss\":2922,\"pmtud\":true,\"keepalives\":{\"idle-time\":17586,\"max-probes\":7943,\"probe-interval\":25041},\"state\":\"closed\"}]},\"tcp-listeners\":[{\"type\":\"unknown\",\"address\":\"s6944\",\"port\":34838},{\"type\":\"ipv4\",\"address\":\"s44580\",\"port\":59246}],\"statistics\":{\"active-opens\":\"s22176\",\"passive-opens\":\"s96305\",\"attempt-fails\":\"s97508\",\"establish-resets\":\"s60398\",\"currently-established\":3606944917,\"in-segments\":\"s53016\",\"out-segments\":\"s10468\",\"retransmitted-segments\":\"s14607\",\"in-errors\":\"s29601\",\"out-resets\":\"s25932\",\"auth-failures\":\"s14844\"}}}",
+ "expect": "{\"ietf-tcp:tcp\":{\"connections\":{\"connection\":[{\"local-address\":\"s35257\",\"remote-address\":\"s55136\",\"local-port\":19656,\"remote-port\":55296,\"mss\":55810,\"pmtud\":true,\"keepalives\":{\"idle-time\":43702,\"max-probes\":30981,\"probe-interval\":58774},\"state\":\"fin-wait-2\"},{\"local-address\":\"s9515\",\"remote-address\":\"s29280\",\"local-port\":50313,\"remote-port\":22784,\"mss\":2922,\"pmtud\":true,\"keepalives\":{\"idle-time\":17586,\"max-probes\":7943,\"probe-interval\":25041},\"state\":\"closed\"}]},\"tcp-listeners\":[{\"type\":\"unknown\",\"address\":\"s6944\",\"port\":34838},{\"type\":\"ipv4\",\"address\":\"s44580\",\"port\":59246}],\"statistics\":{\"active-opens\":\"s22176\",\"passive-opens\":\"s96305\",\"attempt-fails\":\"s97508\",\"establish-resets\":\"s60398\",\"currently-established\":3606944917,\"in-segments\":\"s53016\",\"out-segments\":\"s10468\",\"retransmitted-segments\":\"s14607\",\"in-errors\":\"s29601\",\"out-resets\":\"s25932\",\"auth-failures\":\"s14844\"}}}",
+ "model": {
+  "yangietftcp.ietf_tcp_tcp_connections_connection.#": "2",
+  "yangietftcp.ietf_tcp_tcp_tcp_listeners.#": "2",
+  "yangietftcp.ietf_tcp_tcp_statistics_active_opens": "s22176",
+  "yangietftcp.ietf_tcp_tcp_statistics_passive_opens": "s96305",
+  "yangietftcp.ietf_tcp_tcp_statistics_attempt_fails": "s97508",
+  "yangietftcp.ietf_tcp_tcp_statistics_establish_resets": "s60398",
+  "yangietftcp.ietf_tcp_tcp_statistics_currently_established": "3606944917",
+  "yangietftcp.ietf_tcp_tcp_statistics_in_segments": "s53016"
+ }
+}

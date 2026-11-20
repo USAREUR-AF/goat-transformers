@@ -1,0 +1,10 @@
+module ex-other {
+  yang-version 1.1;
+  namespace "urn:example:ex-other";
+  prefix exo;
+  import ex-device { prefix exd; }
+  description "Adds a node that ex-ext augments; not applied in the tests.";
+  augment "/exd:device" {
+    container added { leaf note { type string; } }
+  }
+}

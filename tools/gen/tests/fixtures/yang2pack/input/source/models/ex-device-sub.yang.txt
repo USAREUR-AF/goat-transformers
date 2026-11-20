@@ -1,0 +1,8 @@
+submodule ex-device-sub {
+  yang-version 1.1;
+  belongs-to ex-device { prefix exd; }
+  description "Part of ex-device, " + 'written for the yang2pack tests.';
+  grouping sub-stats {
+    leaf frames { type uint32; }
+  }
+}

@@ -1,0 +1,43 @@
+{
+ "keys": {
+  "ietf_hardware_hardware_component_contains_child|.|string": "ietf_hardware_hardware_component_contains_child_value",
+  "ietf_hardware_hardware_component_uri|.|string": "ietf_hardware_hardware_component_uri_value",
+  "ietf_hardware_hardware_component|alias|string": "ietf_hardware_hardware_component_alias",
+  "ietf_hardware_hardware_component|asset-id|string": "ietf_hardware_hardware_component_asset_id",
+  "ietf_hardware_hardware_component|class|string": "ietf_hardware_hardware_component_class",
+  "ietf_hardware_hardware_component|description|string": "ietf_hardware_hardware_component_description",
+  "ietf_hardware_hardware_component|firmware-rev|string": "ietf_hardware_hardware_component_firmware_rev",
+  "ietf_hardware_hardware_component|hardware-rev|string": "ietf_hardware_hardware_component_hardware_rev",
+  "ietf_hardware_hardware_component|is-fru|int": "ietf_hardware_hardware_component_is_fru",
+  "ietf_hardware_hardware_component|mfg-date|string": "ietf_hardware_hardware_component_mfg_date",
+  "ietf_hardware_hardware_component|mfg-name|string": "ietf_hardware_hardware_component_mfg_name",
+  "ietf_hardware_hardware_component|model-name|string": "ietf_hardware_hardware_component_model_name",
+  "ietf_hardware_hardware_component|name|string": "ietf_hardware_hardware_component_name",
+  "ietf_hardware_hardware_component|parent-rel-pos|int": "ietf_hardware_hardware_component_parent_rel_pos",
+  "ietf_hardware_hardware_component|parent|string": "ietf_hardware_hardware_component_parent",
+  "ietf_hardware_hardware_component|physical-index|int": "ietf_hardware_hardware_component_physical_index",
+  "ietf_hardware_hardware_component|sensor-data.oper-status|string": "ietf_hardware_hardware_component_sensor_data_oper_status",
+  "ietf_hardware_hardware_component|sensor-data.units-display|string": "ietf_hardware_hardware_component_sensor_data_units_display",
+  "ietf_hardware_hardware_component|sensor-data.value-precision|int": "ietf_hardware_hardware_component_sensor_data_value_precision",
+  "ietf_hardware_hardware_component|sensor-data.value-scale|string": "ietf_hardware_hardware_component_sensor_data_value_scale",
+  "ietf_hardware_hardware_component|sensor-data.value-timestamp|string": "ietf_hardware_hardware_component_sensor_data_value_timestamp",
+  "ietf_hardware_hardware_component|sensor-data.value-type|string": "ietf_hardware_hardware_component_sensor_data_value_type",
+  "ietf_hardware_hardware_component|sensor-data.value-update-rate|int": "ietf_hardware_hardware_component_sensor_data_value_update_rate",
+  "ietf_hardware_hardware_component|sensor-data.value|int": "ietf_hardware_hardware_component_sensor_data_value",
+  "ietf_hardware_hardware_component|serial-num|string": "ietf_hardware_hardware_component_serial_num",
+  "ietf_hardware_hardware_component|software-rev|string": "ietf_hardware_hardware_component_software_rev",
+  "ietf_hardware_hardware_component|state.admin-state|string": "ietf_hardware_hardware_component_state_admin_state",
+  "ietf_hardware_hardware_component|state.alarm-state|string": "ietf_hardware_hardware_component_state_alarm_state",
+  "ietf_hardware_hardware_component|state.oper-state|string": "ietf_hardware_hardware_component_state_oper_state",
+  "ietf_hardware_hardware_component|state.standby-state|string": "ietf_hardware_hardware_component_state_standby_state",
+  "ietf_hardware_hardware_component|state.state-last-changed|string": "ietf_hardware_hardware_component_state_state_last_changed",
+  "ietf_hardware_hardware_component|state.usage-state|string": "ietf_hardware_hardware_component_state_usage_state",
+  "ietf_hardware_hardware_component|uuid|string": "ietf_hardware_hardware_component_uuid",
+  "|ietf-hardware:hardware.last-change|string": "ietf_hardware_hardware_last_change"
+ },
+ "lists": {
+  "ietf_hardware_hardware_component|contains-child": "ietf_hardware_hardware_component_contains_child",
+  "ietf_hardware_hardware_component|uri": "ietf_hardware_hardware_component_uri",
+  "|ietf-hardware:hardware.component": "ietf_hardware_hardware_component"
+ }
+}
