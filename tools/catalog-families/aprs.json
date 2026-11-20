@@ -1,0 +1,8 @@
+{
+  "name": "APRS",
+  "domain": "c2",
+  "exact": [
+    "aprs"
+  ],
+  "detail": "TNC2 monitor line (non-commercial reference)"
+}

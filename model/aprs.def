@@ -1,0 +1,24 @@
+# The aprs module: raw keys of the aprs format (APRS packets on the TNC2
+# monitor line). Hand-written; pack.md states the layout and its source.
+module        aprs
+version       0.1.0
+distribution  public
+source        "APRS Protocol Reference, Protocol Version 1.0, document version 1.0.1 (APRS101.PDF, 29 August 2000), APRS Working Group; may be copied for non-commercial purposes only"
+key  header          string  -  "the address part of the monitor line, before the first colon: source, destination and path as sent"
+key  info            string  -  "the information field after the first colon, up to any later colon, as sent"
+key  timestamp       string  -  "the 7-character time of a report: day, hour and minute or hour, minute and second, then a zone letter"
+key  lat_text        string  -  "latitude as sent: degrees and minutes, ddmm.mm, spaces where position ambiguity hides digits"
+key  lat_hemisphere  string  -  "N or S"
+key  lon_text        string  -  "longitude as sent: dddmm.mm"
+key  lon_hemisphere  string  -  "E or W"
+key  symbol_table    string  -  "the symbol table identifier, or the overlay character"
+key  symbol_code     string  -  "the symbol code within its table"
+key  lat_base91      string  -  "compressed latitude: four base-91 characters"
+key  lon_base91      string  -  "compressed longitude: four base-91 characters"
+key  compressed_cs   string  -  "compressed course and speed, radio range or altitude: two characters"
+key  compression_type string -  "compressed form: the compression type character"
+key  object_name     string  -  "object name: nine characters, trailing spaces removed"
+key  object_state    string  -  "* for a live object, _ for a killed one"
+key  addressee_field string  -  "a message's addressee as sent: nine characters, padded with spaces"
+key  addressee       string  -  "a message's addressee, trailing spaces removed"
+key  message_text    string  -  "a message's text, up to any later colon, with any message number"

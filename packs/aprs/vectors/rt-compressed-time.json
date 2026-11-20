@@ -1,0 +1,18 @@
+{
+  "name": "aprs-rt-compressed-time",
+  "from": "aprs",
+  "to": "aprs",
+  "source": "tools/gen/aprs-vectors.py: compressed, with a time stamp",
+  "input": "N0CALL-7>APZ001,WIDE1-1,WIDE2-1:/181530z/4Jq9Rs(T>C1G",
+  "expect": "N0CALL-7>APZ001,WIDE1-1,WIDE2-1:/181530z/4Jq9Rs(T>C1G",
+  "model": {
+    "@kind": "compressed-time",
+    "aprs.timestamp": "181530z",
+    "aprs.symbol_table": "/",
+    "aprs.lat_base91": "4Jq9",
+    "aprs.lon_base91": "Rs(T",
+    "aprs.symbol_code": ">",
+    "aprs.compressed_cs": "C1",
+    "aprs.compression_type": "G"
+  }
+}
