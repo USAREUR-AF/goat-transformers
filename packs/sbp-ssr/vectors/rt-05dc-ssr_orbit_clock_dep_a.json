@@ -1,0 +1,10 @@
+{
+  "name": "sbp-ssr-roundtrip-ssr_orbit_clock_dep_a",
+  "from": "sbp-ssr",
+  "to": "sbp-ssr",
+  "input": "55dc0504012fb0b73a6f870b5e350ce3ba6f616230f0b4663071086b30f25b6f3073af7330f402783075567c30f6a9803077fd8430",
+  "expect": "55dc0504012fb0b73a6f870b5e350ce3ba6f616230f0b4663071086b30f25b6f3073af7330f402783075567c30f6a9803077fd8430",
+  "model": {
+    "@kind": "ssr_orbit_clock_dep_a"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "sbp-piksi-roundtrip-device_monitor",
+  "from": "sbp-piksi",
+  "to": "sbp-piksi",
+  "input": "55b50008010a291aaa6d2bc1ac142d68",
+  "expect": "55b50008010a291aaa6d2bc1ac142d68",
+  "model": {
+    "@kind": "device_monitor"
+  }
+}

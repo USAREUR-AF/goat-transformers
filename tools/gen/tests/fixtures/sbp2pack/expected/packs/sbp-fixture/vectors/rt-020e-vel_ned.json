@@ -1,0 +1,10 @@
+{
+  "name": "sbp-fixture-roundtrip-vel_ned",
+  "from": "sbp-fixture",
+  "to": "sbp-fixture",
+  "input": "550e020101105ec92b046bb963e7ec0c68e76d606ce7",
+  "expect": "550e020101105ec92b046bb963e7ec0c68e76d606ce7",
+  "model": {
+    "@kind": "vel_ned"
+  }
+}

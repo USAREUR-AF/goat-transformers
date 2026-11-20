@@ -1,0 +1,10 @@
+{
+  "name": "sbp-sbas-roundtrip-sbas_raw",
+  "from": "sbp-sbas",
+  "to": "sbp-sbas",
+  "input": "557777000122e5bc9375af576a4118efc69d744b22f9d0a77e552c03dab1885f360de4bb92694017",
+  "expect": "557777000122e5bc9375af576a4118efc69d744b22f9d0a77e552c03dab1885f360de4bb92694017",
+  "model": {
+    "@kind": "sbas_raw"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "sbp-flash-roundtrip-m25_flash_write_status",
+  "from": "sbp-flash",
+  "to": "sbp-flash",
+  "input": "55f300070101a9",
+  "expect": "55f300070101a9",
+  "model": {
+    "@kind": "m25_flash_write_status"
+  }
+}

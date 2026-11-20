@@ -1,0 +1,10 @@
+{
+  "name": "sbp-system-roundtrip-pps_time",
+  "from": "sbp-system",
+  "to": "sbp-system",
+  "input": "5508ff050109c4111725000000809b",
+  "expect": "5508ff050109c4111725000000809b",
+  "model": {
+    "@kind": "pps_time"
+  }
+}

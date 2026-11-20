@@ -1,0 +1,10 @@
+{
+  "name": "sbp-flash-roundtrip-stm_flash_unlock_sector",
+  "from": "sbp-flash",
+  "to": "sbp-flash",
+  "input": "55e40005010428704a1e",
+  "expect": "55e40005010428704a1e",
+  "model": {
+    "@kind": "stm_flash_unlock_sector"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "sbp-navigation-roundtrip-baseline_ned_dep_a",
+  "from": "sbp-navigation",
+  "to": "sbp-navigation",
+  "input": "55030220011699b0464428fa90e6a94d95e62aa199e6f5ffcc53a37a",
+  "expect": "55030220011699b0464428fa90e6a94d95e62aa199e6f5ffcc53a37a",
+  "model": {
+    "@kind": "baseline_ned_dep_a"
+  }
+}

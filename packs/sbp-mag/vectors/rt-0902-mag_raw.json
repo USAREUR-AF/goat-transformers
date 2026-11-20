@@ -1,0 +1,10 @@
+{
+  "name": "sbp-mag-roundtrip-mag_raw",
+  "from": "sbp-mag",
+  "to": "sbp-mag",
+  "input": "55020900010b2afdb521010044819702eb",
+  "expect": "55020900010b2afdb521010044819702eb",
+  "model": {
+    "@kind": "mag_raw"
+  }
+}

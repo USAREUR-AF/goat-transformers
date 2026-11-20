@@ -1,0 +1,10 @@
+{
+  "name": "sbp-piksi-roundtrip-reset_filters",
+  "from": "sbp-piksi",
+  "to": "sbp-piksi",
+  "input": "5522000101010a",
+  "expect": "5522000101010a",
+  "model": {
+    "@kind": "reset_filters"
+  }
+}

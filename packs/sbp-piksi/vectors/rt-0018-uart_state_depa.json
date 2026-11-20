@@ -1,0 +1,10 @@
+{
+  "name": "sbp-piksi-roundtrip-uart_state_depa",
+  "from": "sbp-piksi",
+  "to": "sbp-piksi",
+  "input": "55180004013a000030c0000080bf62ef394310e7000020c0000040bf6ce6433a1af1000010c0000000bf76dd4d3124fb96891bc217dd1fc2983024c2198428c2",
+  "expect": "55180004013a000030c0000080bf62ef394310e7000020c0000040bf6ce6433a1af1000010c0000000bf76dd4d3124fb96891bc217dd1fc2983024c2198428c2",
+  "model": {
+    "@kind": "uart_state_depa"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "sbp-navigation-roundtrip-dops",
+  "from": "sbp-navigation",
+  "to": "sbp-navigation",
+  "input": "55080204010fc45edd0f9bb27206495a20aef701ce",
+  "expect": "55080204010fc45edd0f9bb27206495a20aef701ce",
+  "model": {
+    "@kind": "dops"
+  }
+}

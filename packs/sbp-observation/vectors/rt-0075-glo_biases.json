@@ -1,0 +1,10 @@
+{
+  "name": "sbp-observation-roundtrip-glo_biases",
+  "from": "sbp-observation",
+  "to": "sbp-observation",
+  "input": "5575001f0109076a43eb966ceaed3d",
+  "expect": "5575001f0109076a43eb966ceaed3d",
+  "model": {
+    "@kind": "glo_biases"
+  }
+}

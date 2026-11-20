@@ -1,0 +1,10 @@
+{
+  "name": "sbp-system-roundtrip-startup",
+  "from": "sbp-system",
+  "to": "sbp-system",
+  "input": "5500ff0001044c23fad5",
+  "expect": "5500ff0001044c23fad5",
+  "model": {
+    "@kind": "startup"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "sbp-linux-roundtrip-linux_sys_state_dep_a",
+  "from": "sbp-linux",
+  "to": "sbp-linux",
+  "input": "55027f00010a2a2701d8af2286765dca",
+  "expect": "55027f00010a2a2701d8af2286765dca",
+  "model": {
+    "@kind": "linux_sys_state_dep_a"
+  }
+}

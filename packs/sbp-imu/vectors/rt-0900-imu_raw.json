@@ -1,0 +1,10 @@
+{
+  "name": "sbp-imu-roundtrip-imu_raw",
+  "from": "sbp-imu",
+  "to": "sbp-imu",
+  "input": "5500090001114c84465023aef22f46b09931edb2403394",
+  "expect": "5500090001114c84465023aef22f46b09931edb2403394",
+  "model": {
+    "@kind": "imu_raw"
+  }
+}

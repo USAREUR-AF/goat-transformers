@@ -1,0 +1,10 @@
+{
+  "name": "sbp-orientation-roundtrip-orient_quat_cov",
+  "from": "sbp-orientation",
+  "to": "sbp-orientation",
+  "input": "55230204012d793e3e5b480ff6e8c962fae84ab6fee8cb0903e90000803e0000004000007040000098c0000040c00000a0bfb6",
+  "expect": "55230204012d793e3e5b480ff6e8c962fae84ab6fee8cb0903e90000803e0000004000007040000098c0000040c00000a0bfb6",
+  "model": {
+    "@kind": "orient_quat_cov"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "sbp-tracking-roundtrip-tracking_state_detailed_dep_a",
+  "from": "sbp-tracking",
+  "to": "sbp-tracking",
+  "input": "5521000001399be7551a00000000723bda6d77bf82c220e3f7366768ce8a7b0d94c27c532ada01d88102aec286295d7d922b047d85d0e2780790673e15ecc3",
+  "expect": "5521000001399be7551a00000000723bda6d77bf82c220e3f7366768ce8a7b0d94c27c532ada01d88102aec286295d7d922b047d85d0e2780790673e15ecc3",
+  "model": {
+    "@kind": "tracking_state_detailed_dep_a"
+  }
+}

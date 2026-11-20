@@ -1,0 +1,10 @@
+{
+  "name": "sbp-bootload-roundtrip-nap_device_dna_resp",
+  "from": "sbp-bootload",
+  "to": "sbp-bootload",
+  "input": "55dd000101081ff6cda47b522900",
+  "expect": "55dd000101081ff6cda47b522900",
+  "model": {
+    "@kind": "nap_device_dna_resp"
+  }
+}

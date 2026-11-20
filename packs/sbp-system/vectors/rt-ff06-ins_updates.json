@@ -1,0 +1,10 @@
+{
+  "name": "sbp-system-roundtrip-ins_updates",
+  "from": "sbp-system",
+  "to": "sbp-system",
+  "input": "5506ff03010ae698a753bd946b4219f0",
+  "expect": "5506ff03010ae698a753bd946b4219f0",
+  "model": {
+    "@kind": "ins_updates"
+  }
+}

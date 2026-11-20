@@ -1,0 +1,10 @@
+{
+  "name": "sbp-profiling-roundtrip-profiling_system_info",
+  "from": "sbp-profiling",
+  "to": "sbp-profiling",
+  "input": "5501cf000115bb1abc1400000000926e406800000080694016490f",
+  "expect": "5501cf000115bb1abc1400000000926e406800000080694016490f",
+  "model": {
+    "@kind": "profiling_system_info"
+  }
+}

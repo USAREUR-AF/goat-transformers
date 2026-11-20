@@ -1,0 +1,10 @@
+{
+  "name": "sbp-navigation-roundtrip-protection_level",
+  "from": "sbp-navigation",
+  "to": "sbp-navigation",
+  "input": "55170225014c4569a1725ca7f310ca64a1b8780c4f6026b4fd07d45babaf0000000080b3474000000000001d21c00000000000000a40e96448e86ab84ce8eb0b51e86c5f55e8edb259e86e065ee811f6f778",
+  "expect": "55170225014c4569a1725ca7f310ca64a1b8780c4f6026b4fd07d45babaf0000000080b3474000000000001d21c00000000000000a40e96448e86ab84ce8eb0b51e86c5f55e8edb259e86e065ee811f6f778",
+  "model": {
+    "@kind": "protection_level"
+  }
+}

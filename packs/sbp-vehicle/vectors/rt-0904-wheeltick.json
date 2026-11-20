@@ -1,0 +1,10 @@
+{
+  "name": "sbp-vehicle-roundtrip-wheeltick",
+  "from": "sbp-vehicle",
+  "to": "sbp-vehicle",
+  "input": "55040901010e0876257300000080dfb6d368c9ec",
+  "expect": "55040901010e0876257300000080dfb6d368c9ec",
+  "model": {
+    "@kind": "wheeltick"
+  }
+}

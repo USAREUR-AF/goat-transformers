@@ -1,0 +1,10 @@
+{
+  "name": "sbp-flash-roundtrip-flash_done",
+  "from": "sbp-flash",
+  "to": "sbp-flash",
+  "input": "55e0000001016c",
+  "expect": "55e0000001016c",
+  "model": {
+    "@kind": "flash_done"
+  }
+}

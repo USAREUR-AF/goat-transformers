@@ -1,0 +1,10 @@
+{
+  "name": "sbp-navigation-roundtrip-vel_ned",
+  "from": "sbp-navigation",
+  "to": "sbp-navigation",
+  "input": "550e020e01165ec92b046bb963e7ec0c68e76d606ce7ba18916c683f",
+  "expect": "550e020e01165ec92b046bb963e7ec0c68e76d606ce7ba18916c683f",
+  "model": {
+    "@kind": "vel_ned"
+  }
+}

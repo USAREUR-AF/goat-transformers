@@ -1,0 +1,10 @@
+{
+  "name": "sbp-observation-roundtrip-base_pos_ecef",
+  "from": "sbp-observation",
+  "to": "sbp-observation",
+  "input": "554800010118000000000000d03f00000000000000400000000000000e40",
+  "expect": "554800010118000000000000d03f00000000000000400000000000000e40",
+  "model": {
+    "@kind": "base_pos_ecef"
+  }
+}

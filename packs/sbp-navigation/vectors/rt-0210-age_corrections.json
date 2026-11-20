@@ -1,0 +1,10 @@
+{
+  "name": "sbp-navigation-roundtrip-age_corrections",
+  "from": "sbp-navigation",
+  "to": "sbp-navigation",
+  "input": "5510021a01063c429b551396",
+  "expect": "5510021a01063c429b551396",
+  "model": {
+    "@kind": "age_corrections"
+  }
+}

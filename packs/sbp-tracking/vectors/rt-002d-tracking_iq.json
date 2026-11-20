@@ -1,0 +1,10 @@
+{
+  "name": "sbp-tracking-roundtrip-tracking_iq",
+  "from": "sbp-tracking",
+  "to": "sbp-tracking",
+  "input": "552d0002010fcfa67de47a65cee6216775e8c8691c",
+  "expect": "552d0002010fcfa67de47a65cee6216775e8c8691c",
+  "model": {
+    "@kind": "tracking_iq"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "sbp-navigation-roundtrip-utc_time_gnss",
+  "from": "sbp-navigation",
+  "to": "sbp-navigation",
+  "input": "550501030110774e0e7e312562fcd3aa81582f591c7a",
+  "expect": "550501030110774e0e7e312562fcd3aa81582f591c7a",
+  "model": {
+    "@kind": "utc_time_gnss"
+  }
+}

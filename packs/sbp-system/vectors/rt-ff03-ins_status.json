@@ -1,0 +1,10 @@
+{
+  "name": "sbp-system-roundtrip-ins_status",
+  "from": "sbp-system",
+  "to": "sbp-system",
+  "input": "5503ff02010499638059",
+  "expect": "5503ff02010499638059",
+  "model": {
+    "@kind": "ins_status"
+  }
+}

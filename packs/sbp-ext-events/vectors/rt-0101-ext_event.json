@@ -1,0 +1,10 @@
+{
+  "name": "sbp-ext-events-roundtrip-ext_event",
+  "from": "sbp-ext-events",
+  "to": "sbp-ext-events",
+  "input": "55010100010cbbc8921c9f0e575346d34017",
+  "expect": "55010100010cbbc8921c9f0e575346d34017",
+  "model": {
+    "@kind": "ext_event"
+  }
+}

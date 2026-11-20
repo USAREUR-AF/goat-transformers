@@ -1,0 +1,10 @@
+{
+  "name": "sbp-fixture-roundtrip-vel_cog",
+  "from": "sbp-fixture",
+  "to": "sbp-fixture",
+  "input": "551c020201107017383e476bbc111ebf4065ab9978e8",
+  "expect": "551c020201107017383e476bbc111ebf4065ab9978e8",
+  "model": {
+    "@kind": "vel_cog"
+  }
+}

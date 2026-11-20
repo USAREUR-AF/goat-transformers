@@ -1,0 +1,10 @@
+{
+  "name": "sbp-acquisition-roundtrip-acq_result",
+  "from": "sbp-acquisition",
+  "to": "sbp-acquisition",
+  "input": "552f0000010e0000a03f00004040000098403209",
+  "expect": "552f0000010e0000a03f00004040000098403209",
+  "model": {
+    "@kind": "acq_result"
+  }
+}

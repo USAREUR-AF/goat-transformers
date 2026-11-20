@@ -1,0 +1,10 @@
+{
+  "name": "sbp-settings-roundtrip-settings_read_by_index_req",
+  "from": "sbp-settings",
+  "to": "sbp-settings",
+  "input": "55a2000001028adb",
+  "expect": "55a2000001028adb",
+  "model": {
+    "@kind": "settings_read_by_index_req"
+  }
+}

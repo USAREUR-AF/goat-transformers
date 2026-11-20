@@ -1,0 +1,10 @@
+{
+  "name": "sbp-flash-roundtrip-flash_read_req",
+  "from": "sbp-flash",
+  "to": "sbp-flash",
+  "input": "55e700010105754c23fad1",
+  "expect": "55e700010105754c23fad1",
+  "model": {
+    "@kind": "flash_read_req"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "sbp-system-roundtrip-sensor_aid_event",
+  "from": "sbp-system",
+  "to": "sbp-system",
+  "input": "5509ff06010f33cece4d0ae175b88f663d14196d16",
+  "expect": "5509ff06010f33cece4d0ae175b88f663d14196d16",
+  "model": {
+    "@kind": "sensor_aid_event"
+  }
+}
