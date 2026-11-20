@@ -1,0 +1,81 @@
+# The landing page
+
+`site/` is one static page for GitHub Pages. It has no build step for the page
+itself, no framework, and it loads nothing from another site: no fonts, no
+scripts, no analytics.
+
+| File | What it is |
+|---|---|
+| `index.html` | the page |
+| `assets/site.css` | the styles, light and dark by `prefers-color-scheme` |
+| `assets/demo.mjs` | the copy buttons and the demo |
+| `assets/journey.svg`, `assets/model-bus.svg`, `assets/icon.svg` | the two figures and the tab icon |
+| `build.sh`, `bundle.py` | write `assets/engine/` from the tree and check the page against it |
+| `assets/engine/` | generated, not kept in git (`site/.gitignore`) |
+
+## The demo runs the library
+
+The demo is the library's own WebAssembly module (`bindings/wasm`) on nine
+packs. `site/build.sh` writes everything it needs into `assets/engine/`:
+
+| File | From |
+|---|---|
+| `goat_transformers_wasm.wasm` | `bindings/wasm`, `cargo build --profile small --target wasm32-unknown-unknown` |
+| `goat_transformers.mjs` | `bindings/wasm/goat_transformers.mjs`, copied |
+| `packs/<format>.def` | `packs/<format>/pack.def`, copied |
+| `model/<module>.def` | `model/<module>.def`, copied, for the modules those packs use |
+| `bundle.json` | the sample of each format (the `input` of a named vector), what carries between each pair (`goat-xf matrix --detail`), and what `goat-xf convert` prints for each sample |
+| `manifest.json` | the library commit, and the size and SHA-256 of every file above |
+
+The module is a binary, so it is not committed: the workflow builds it. To
+change the demo's formats or samples, edit the `DEMO` list at the top of
+`bundle.py`.
+
+## Preview
+
+```
+site/build.sh
+python3 -m http.server 8000 --directory site
+```
+
+Open `http://localhost:8000/`. The page must be served over HTTP: a browser
+does not load a WebAssembly module or a script module from a `file:` address.
+Without `assets/engine/` the page still shows one conversion as static text,
+which is also what a reader with JavaScript off sees.
+
+`build.sh` needs a Rust toolchain with the `wasm32-unknown-unknown` target
+(`rustup target add wasm32-unknown-unknown`), `python3` and `git`.
+`site/build.sh --clean` also deletes the two cargo `target` directories when
+it is done.
+
+## The page cannot drift from the tree
+
+`build.sh` ends with a check and exits non-zero when it fails:
+
+- every element of `index.html` marked `data-stat="<name>"` must state the
+  number counted from the tree (`formats`, `message_kinds`,
+  `conversion_vectors`, `pair_converters`). The counts come from
+  `tools/repo-stats`, the same counter the top-level README is tested
+  against; the footnotes of the page give the command behind each number;
+- the two outputs shown at the top of the page must be what `goat-xf` prints
+  for the same input.
+
+The size of the WebAssembly module depends on the compiler version, so a
+different size is reported and not refused; the page reads the size of the
+module it loaded from `bundle.json`.
+
+When a number changes, edit `index.html` to the new value and run `build.sh`
+again. The two figures are images and are not checked: `model-bus.svg` states
+the packs and message kinds of thirteen families (as
+`tools/catalog-families.json` groups them), and `journey.svg` quotes three
+`field` lines of `packs/remote-id/pack.def` and `packs/cot-xml/pack.def`;
+compare them with the tree when those packs change.
+
+## Publishing
+
+`.github/workflows/pages.yml` runs `build.sh` on every pull request that
+touches `site/`, and on a push to main also deploys `site/` with
+`actions/deploy-pages`. The deploy job runs only when the repository's Pages
+source is set to "GitHub Actions" (Settings, Pages); until a repository owner
+sets it, the page is built and checked and the deploy job is skipped.
+`tools/boundary-gate` allows `.html` and `.css` files under `site/` only.

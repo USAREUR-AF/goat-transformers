@@ -1,0 +1,86 @@
+# The landing page: builds site/ from the tree and publishes it to GitHub Pages.
+#
+# site/build.sh builds the WebAssembly module and goat-xf, writes
+# site/assets/engine/ (the module is a build product and never committed), and
+# fails when site/index.html states a number or an output the tree does not
+# give. A pull request that touches the page runs the build and the check; a
+# push to main also deploys, once the repository's Pages source is set to
+# "GitHub Actions". Until then the deploy job is skipped, not failed.
+name: pages
+
+on:
+  pull_request:
+    paths:
+      - 'site/**'
+      - 'tools/repo-stats'
+      - '.github/workflows/pages.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'site/**'
+      - 'packs/**'
+      - 'model/**'
+      - 'engines/rust/**'
+      - 'bindings/wasm/**'
+      - 'tools/repo-stats'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      pages: read
+    outputs:
+      pages: ${{ steps.pages.outputs.enabled }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Rust toolchain with the WebAssembly target
+        run: rustup target add wasm32-unknown-unknown
+      - name: Engine files for the demo, and the page check
+        run: site/build.sh
+      - name: Leave out what is not part of the page
+        run: rm -rf site/.preview site/build.sh site/bundle.py site/README.md site/.gitignore
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: site
+      # Pages is set up by a repository owner. Until it is, there is nothing
+      # to deploy to, so the deploy job does not run.
+      - name: Is Pages set up to deploy from GitHub Actions
+        id: pages
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          build_type="$(gh api "repos/${GITHUB_REPOSITORY}/pages" -q .build_type 2>/dev/null || true)"
+          if [ "$build_type" = "workflow" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::GitHub Pages is not set to deploy from GitHub Actions; the page was built and checked, not deployed."
+          fi
+
+  deploy:
+    needs: build
+    if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && needs.build.outputs.pages == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
