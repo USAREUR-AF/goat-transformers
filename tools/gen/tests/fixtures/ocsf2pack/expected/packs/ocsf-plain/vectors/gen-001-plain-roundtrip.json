@@ -1,0 +1,16 @@
+{
+ "name": "gen-plain-roundtrip",
+ "from": "ocsf-plain",
+ "to": "ocsf-plain",
+ "input": "{\"class_uid\":7001,\"time\":1796759837002,\"metadata\":{\"uid\":\"s92104\"},\"tags\":[\"s9238\",\"s86026\"]}",
+ "expect": "{\"class_uid\":7001,\"time\":1796759837002,\"metadata\":{\"uid\":\"s92104\"},\"tags\":[\"s9238\",\"s86026\"]}",
+ "model": {
+  "@kind": "plain",
+  "time_ms": "1796759837002",
+  "uid": "s92104",
+  "ocsfplain.class_uid": "7001",
+  "ocsfplain.time": "1796759837002",
+  "ocsfplain.metadata_uid": "s92104",
+  "ocsfplain.tags.#": "2"
+ }
+}

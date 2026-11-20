@@ -1,0 +1,8 @@
+{"name": "dictionary", "attributes": {
+  "time": {"type": "timestamp_t"}, "uid": {"type": "string_t"}, "name": {"type": "string_t"},
+  "lat": {"type": "float_t"}, "long": {"type": "float_t"}, "location": {"type": "location"},
+  "device": {"type": "device"}, "metadata": {"type": "metadata"}, "class_uid": {"type": "integer_t"},
+  "tags": {"type": "string_t", "is_array": true}, "unmapped": {"type": "json_t"},
+  "actor": {"type": "string_t"}, "labels": {"type": "string_t", "is_array": true}},
+ "types": {"attributes": {"string_t": {}, "integer_t": {}, "long_t": {}, "float_t": {}, "json_t": {},
+  "boolean_t": {}, "timestamp_t": {"type": "long_t"}}}}

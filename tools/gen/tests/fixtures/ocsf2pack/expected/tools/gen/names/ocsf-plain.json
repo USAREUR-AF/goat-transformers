@@ -1,0 +1,11 @@
+{
+ "keys": {
+  "tags|.|string": "tags_value",
+  "|class_uid|int": "class_uid",
+  "|metadata.uid|string": "metadata_uid",
+  "|time|int": "time"
+ },
+ "lists": {
+  "|tags": "tags"
+ }
+}

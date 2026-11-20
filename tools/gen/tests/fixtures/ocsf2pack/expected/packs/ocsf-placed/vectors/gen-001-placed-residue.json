@@ -1,0 +1,7 @@
+{
+ "name": "gen-placed-residue",
+ "from": "ocsf-placed",
+ "to": "ocsf-placed",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"class_uid\":7002,\"device\":{\"uid\":\"s45602\",\"name\":\"s43519\",\"location\":{\"lat\":-33.865,\"long\":-157.8583}},\"time\":1718789316579,\"metadata\":{\"uid\":\"s83011\"},\"tags\":[\"s36161\",\"s44414\"]}",
+ "expect": "{\"class_uid\":7002,\"device\":{\"uid\":\"s45602\",\"name\":\"s43519\",\"location\":{\"lat\":-33.865,\"long\":-157.8583}},\"time\":1718789316579,\"metadata\":{\"uid\":\"s83011\"},\"tags\":[\"s36161\",\"s44414\"],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

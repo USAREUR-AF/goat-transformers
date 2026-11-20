@@ -1,0 +1,1 @@
+{"name": "cat", "extends": "base_event", "category": "cat", "attributes": {"tags": {}}}

@@ -1,0 +1,7 @@
+# A second module for the jsonschema2pack tests, with one derive line.
+module        track
+version       0.1.0
+distribution  public
+source        "synthetic module written for the jsonschema2pack tests"
+key  vel_north_ms  float  m/s  "velocity toward north"
+derive  track.vel_north_ms  copy  speed_ms

@@ -1,0 +1,7 @@
+{
+ "name": "gen-plain-residue",
+ "from": "ocsf-plain",
+ "to": "ocsf-plain",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"class_uid\":7001,\"time\":1796759837002,\"metadata\":{\"uid\":\"s92104\"},\"tags\":[\"s9238\",\"s86026\"]}",
+ "expect": "{\"class_uid\":7001,\"time\":1796759837002,\"metadata\":{\"uid\":\"s92104\"},\"tags\":[\"s9238\",\"s86026\"],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}
