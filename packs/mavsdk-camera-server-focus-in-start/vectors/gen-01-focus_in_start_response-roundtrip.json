@@ -1,0 +1,11 @@
+{
+  "name": "gen-focus_in_start_response-roundtrip",
+  "from": "mavsdk-camera-server-focus-in-start",
+  "to": "mavsdk-camera-server-focus-in-start",
+  "input": "0864",
+  "expect": "0864",
+  "model": {
+    "@kind": "focus_in_start_response",
+    "mavsdkcameraserverfocusinstart.focus_in_start_response_reserved": "100"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "gen-ground_truth_response-roundtrip",
+  "from": "mavsdk-telemetry-ground-truth",
+  "to": "mavsdk-telemetry-ground-truth",
+  "input": "0a1a09000000000000d03f1100000000000000401d0000b03f20d301",
+  "expect": "0a1a09000000000000d03f1100000000000000401d0000b03f20d301",
+  "model": {
+    "@kind": "ground_truth_response",
+    "mavsdktelemetrygroundtruth.ground_truth_latitude_deg": "0.25",
+    "lat": "0.25",
+    "mavsdktelemetrygroundtruth.ground_truth_longitude_deg": "2",
+    "lon": "2",
+    "mavsdktelemetrygroundtruth.ground_truth_absolute_altitude_m": "1.375",
+    "mavsdktelemetrygroundtruth.ground_truth_timestamp_us": "211"
+  }
+}

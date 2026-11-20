@@ -1,0 +1,12 @@
+{
+  "name": "gen-mavsdk-telemetry-home-to-geojson",
+  "from": "mavsdk-telemetry-home",
+  "to": "geojson",
+  "input": "0a550864110000000000000040190000000000000e4025000000402d0000284035000050403d0000784045000090404a170d0000a440150000b8401d0000cc40250000e04028a004550000803e5d0000603f650000c03f",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[3.75,2]},\"properties\":{}}",
+  "model": {
+    "@kind": "home_response",
+    "lat": "2",
+    "lon": "3.75"
+  }
+}

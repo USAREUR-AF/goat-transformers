@@ -1,0 +1,11 @@
+{
+  "name": "gen-focus_stop_response-roundtrip",
+  "from": "mavsdk-camera-server-focus-stop",
+  "to": "mavsdk-camera-server-focus-stop",
+  "input": "0864",
+  "expect": "0864",
+  "model": {
+    "@kind": "focus_stop_response",
+    "mavsdkcameraserverfocusstop.focus_stop_response_reserved": "100"
+  }
+}

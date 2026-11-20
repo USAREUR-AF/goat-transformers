@@ -1,0 +1,11 @@
+{
+  "name": "gen-log_streaming_raw_response-roundtrip",
+  "from": "mavsdk-log-streaming-log-streaming-raw",
+  "to": "mavsdk-log-streaming-log-streaming-raw",
+  "input": "0a0f0a0d646174615f6261736536342d30",
+  "expect": "0a0f0a0d646174615f6261736536342d30",
+  "model": {
+    "@kind": "log_streaming_raw_response",
+    "mavsdklogstreaminglogstreamingraw.logging_raw_data_base64": "data_base64-0"
+  }
+}

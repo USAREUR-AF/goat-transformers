@@ -1,0 +1,13 @@
+{
+  "name": "gen-reboot_response-roundtrip",
+  "from": "mavsdk-action-server-reboot",
+  "to": "mavsdk-action-server-reboot",
+  "input": "0a100801120c726573756c745f7374722d311001",
+  "expect": "0a100801120c726573756c745f7374722d311001",
+  "model": {
+    "@kind": "reboot_response",
+    "mavsdkactionserverreboot.action_server_result_result": "1",
+    "mavsdkactionserverreboot.action_server_result_result_str": "result_str-1",
+    "mavsdkactionserverreboot.reboot_response_reboot": "1"
+  }
+}

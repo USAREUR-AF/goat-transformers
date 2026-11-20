@@ -1,0 +1,18 @@
+{
+  "name": "gen-battery_response-roundtrip",
+  "from": "mavsdk-telemetry-battery",
+  "to": "mavsdk-telemetry-battery",
+  "input": "0a220864150000403f1d0000b03f25000000402d0000284035000050403d000078404001",
+  "expect": "0a220864150000403f1d0000b03f25000000402d0000284035000050403d000078404001",
+  "model": {
+    "@kind": "battery_response",
+    "mavsdktelemetrybattery.battery_id": "100",
+    "mavsdktelemetrybattery.battery_temperature_degc": "0.75",
+    "mavsdktelemetrybattery.battery_voltage_v": "1.375",
+    "mavsdktelemetrybattery.battery_current_battery_a": "2",
+    "mavsdktelemetrybattery.battery_capacity_consumed_ah": "2.625",
+    "mavsdktelemetrybattery.battery_remaining_percent": "3.25",
+    "mavsdktelemetrybattery.battery_time_remaining_s": "3.875",
+    "mavsdktelemetrybattery.battery_battery_function": "1"
+  }
+}

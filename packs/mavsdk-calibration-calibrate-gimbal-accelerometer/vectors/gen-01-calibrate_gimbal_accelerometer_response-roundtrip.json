@@ -1,0 +1,16 @@
+{
+  "name": "gen-calibrate_gimbal_accelerometer_response-roundtrip",
+  "from": "mavsdk-calibration-calibrate-gimbal-accelerometer",
+  "to": "mavsdk-calibration-calibrate-gimbal-accelerometer",
+  "input": "0a100801120c726573756c745f7374722d311218080115000000401801220d7374617475735f746578742d35",
+  "expect": "0a100801120c726573756c745f7374722d311218080115000000401801220d7374617475735f746578742d35",
+  "model": {
+    "@kind": "calibrate_gimbal_accelerometer_response",
+    "mavsdkcalibrationcalibrategimbalaccelerometer.calibration_result_result": "1",
+    "mavsdkcalibrationcalibrategimbalaccelerometer.calibration_result_result_str": "result_str-1",
+    "mavsdkcalibrationcalibrategimbalaccelerometer.progress_data_has_progress": "1",
+    "mavsdkcalibrationcalibrategimbalaccelerometer.progress_data_progress": "2",
+    "mavsdkcalibrationcalibrategimbalaccelerometer.progress_data_has_status_text": "1",
+    "mavsdkcalibrationcalibrategimbalaccelerometer.progress_data_status_text": "status_text-5"
+  }
+}

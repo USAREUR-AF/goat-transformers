@@ -1,0 +1,14 @@
+{
+  "name": "gen-flight_information_response-roundtrip",
+  "from": "mavsdk-info-flight-information",
+  "to": "mavsdk-info-flight-information",
+  "input": "0a0b086410890118ae0120d301",
+  "expect": "0a0b086410890118ae0120d301",
+  "model": {
+    "@kind": "flight_information_response",
+    "mavsdkinfoflightinformation.flight_info_time_boot_ms": "100",
+    "mavsdkinfoflightinformation.flight_info_flight_uid": "137",
+    "mavsdkinfoflightinformation.flight_info_duration_since_arming_ms": "174",
+    "mavsdkinfoflightinformation.flight_info_duration_since_takeoff_ms": "211"
+  }
+}

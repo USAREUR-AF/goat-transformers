@@ -1,0 +1,16 @@
+{
+  "name": "gen-control_status_response-roundtrip",
+  "from": "mavsdk-gimbal-control-status",
+  "to": "mavsdk-gimbal-control-status",
+  "input": "0a100864100118ae0120d30128f801309d02",
+  "expect": "0a100864100118ae0120d30128f801309d02",
+  "model": {
+    "@kind": "control_status_response",
+    "mavsdkgimbalcontrolstatus.control_status_gimbal_id": "100",
+    "mavsdkgimbalcontrolstatus.control_status_control_mode": "1",
+    "mavsdkgimbalcontrolstatus.control_status_sysid_primary_control": "174",
+    "mavsdkgimbalcontrolstatus.control_status_compid_primary_control": "211",
+    "mavsdkgimbalcontrolstatus.control_status_sysid_secondary_control": "248",
+    "mavsdkgimbalcontrolstatus.control_status_compid_secondary_control": "285"
+  }
+}

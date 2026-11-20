@@ -1,0 +1,12 @@
+{
+  "name": "gen-receive_response-roundtrip",
+  "from": "mavsdk-shell-receive",
+  "to": "mavsdk-shell-receive",
+  "input": "0a0a0a06646174612d301001",
+  "expect": "0a0a0a06646174612d301001",
+  "model": {
+    "@kind": "receive_response",
+    "mavsdkshellreceive.receive_data": "data-0",
+    "mavsdkshellreceive.receive_device": "1"
+  }
+}

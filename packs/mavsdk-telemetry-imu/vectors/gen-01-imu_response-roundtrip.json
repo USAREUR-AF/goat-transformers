@@ -1,0 +1,21 @@
+{
+  "name": "gen-imu_response-roundtrip",
+  "from": "mavsdk-telemetry-imu",
+  "to": "mavsdk-telemetry-imu",
+  "input": "0a3b0a0f0d0000003e150000403f1d0000b03f120f0d0000004015000028401d000050401a0f0d0000784015000090401d0000a440250000b84028d603",
+  "expect": "0a3b0a0f0d0000003e150000403f1d0000b03f120f0d0000004015000028401d000050401a0f0d0000784015000090401d0000a440250000b84028d603",
+  "model": {
+    "@kind": "imu_response",
+    "mavsdktelemetryimu.imu_acceleration_frd_forward_m_s2": "0.125",
+    "mavsdktelemetryimu.imu_acceleration_frd_right_m_s2": "0.75",
+    "mavsdktelemetryimu.imu_acceleration_frd_down_m_s2": "1.375",
+    "mavsdktelemetryimu.imu_angular_velocity_frd_forward_rad_s": "2",
+    "mavsdktelemetryimu.imu_angular_velocity_frd_right_rad_s": "2.625",
+    "mavsdktelemetryimu.imu_angular_velocity_frd_down_rad_s": "3.25",
+    "mavsdktelemetryimu.imu_magnetic_field_frd_forward_gauss": "3.875",
+    "mavsdktelemetryimu.imu_magnetic_field_frd_right_gauss": "4.5",
+    "mavsdktelemetryimu.imu_magnetic_field_frd_down_gauss": "5.125",
+    "mavsdktelemetryimu.imu_temperature_degc": "5.75",
+    "mavsdktelemetryimu.imu_timestamp_us": "470"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "gen-mission_progress_response-roundtrip",
+  "from": "mavsdk-mission-mission-progress",
+  "to": "mavsdk-mission-mission-progress",
+  "input": "0a050864108901",
+  "expect": "0a050864108901",
+  "model": {
+    "@kind": "mission_progress_response",
+    "mavsdkmissionmissionprogress.mission_progress_current": "100",
+    "mavsdkmissionmissionprogress.mission_progress_total": "137"
+  }
+}

@@ -1,0 +1,9 @@
+{
+ "1.1": "update_component_id",
+ "1.2[]": "update_current_settings",
+ "mavsdk.rpc.camera.Setting:1": "setting_setting_id",
+ "mavsdk.rpc.camera.Setting:2": "setting_setting_description",
+ "mavsdk.rpc.camera.Setting:3.1": "setting_option_option_id",
+ "mavsdk.rpc.camera.Setting:3.2": "setting_option_option_description",
+ "mavsdk.rpc.camera.Setting:4": "setting_is_range"
+}

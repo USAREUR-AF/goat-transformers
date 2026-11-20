@@ -1,0 +1,13 @@
+{
+  "name": "gen-land_response-roundtrip",
+  "from": "mavsdk-action-server-land",
+  "to": "mavsdk-action-server-land",
+  "input": "0a100801120c726573756c745f7374722d311001",
+  "expect": "0a100801120c726573756c745f7374722d311001",
+  "model": {
+    "@kind": "land_response",
+    "mavsdkactionserverland.action_server_result_result": "1",
+    "mavsdkactionserverland.action_server_result_result_str": "result_str-1",
+    "mavsdkactionserverland.land_response_land": "1"
+  }
+}

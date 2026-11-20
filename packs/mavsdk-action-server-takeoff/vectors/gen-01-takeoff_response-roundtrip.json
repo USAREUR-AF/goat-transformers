@@ -1,0 +1,13 @@
+{
+  "name": "gen-takeoff_response-roundtrip",
+  "from": "mavsdk-action-server-takeoff",
+  "to": "mavsdk-action-server-takeoff",
+  "input": "0a100801120c726573756c745f7374722d311001",
+  "expect": "0a100801120c726573756c745f7374722d311001",
+  "model": {
+    "@kind": "takeoff_response",
+    "mavsdkactionservertakeoff.action_server_result_result": "1",
+    "mavsdkactionservertakeoff.action_server_result_result_str": "result_str-1",
+    "mavsdkactionservertakeoff.takeoff_response_takeoff": "1"
+  }
+}

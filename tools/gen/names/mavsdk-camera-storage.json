@@ -1,0 +1,14 @@
+{
+ "1.1": "update_component_id",
+ "1.2.1": "update_storage_component_id",
+ "1.2.10": "update_storage_storage_id",
+ "1.2.11": "update_storage_storage_type",
+ "1.2.2": "update_storage_video_on",
+ "1.2.3": "update_storage_photo_interval_on",
+ "1.2.4": "update_storage_used_storage_mib",
+ "1.2.5": "update_storage_available_storage_mib",
+ "1.2.6": "update_storage_total_storage_mib",
+ "1.2.7": "update_storage_recording_time_s",
+ "1.2.8": "update_storage_media_folder_name",
+ "1.2.9": "update_storage_storage_status"
+}

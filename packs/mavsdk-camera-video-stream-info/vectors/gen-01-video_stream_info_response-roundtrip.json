@@ -1,0 +1,21 @@
+{
+  "name": "gen-video_stream_info_response-roundtrip",
+  "from": "mavsdk-camera-video-stream-info",
+  "to": "mavsdk-camera-video-stream-info",
+  "input": "0a2a08641226088901121d0d0000b03f10d30118f801209d0228c20232057572692d373d0000a44018012001",
+  "expect": "0a2a08641226088901121d0d0000b03f10d30118f801209d0228c20232057572692d373d0000a44018012001",
+  "model": {
+    "@kind": "video_stream_info_response",
+    "mavsdkcameravideostreaminfo.update_component_id": "100",
+    "mavsdkcameravideostreaminfo.update_video_stream_info_stream_id": "137",
+    "mavsdkcameravideostreaminfo.update_settings_frame_rate_hz": "1.375",
+    "mavsdkcameravideostreaminfo.update_settings_horizontal_resolution_pix": "211",
+    "mavsdkcameravideostreaminfo.update_settings_vertical_resolution_pix": "248",
+    "mavsdkcameravideostreaminfo.update_settings_bit_rate_b_s": "285",
+    "mavsdkcameravideostreaminfo.update_settings_rotation_deg": "322",
+    "mavsdkcameravideostreaminfo.update_settings_uri": "uri-7",
+    "mavsdkcameravideostreaminfo.update_settings_horizontal_fov_deg": "5.125",
+    "mavsdkcameravideostreaminfo.update_video_stream_info_status": "1",
+    "mavsdkcameravideostreaminfo.update_video_stream_info_spectrum": "1"
+  }
+}

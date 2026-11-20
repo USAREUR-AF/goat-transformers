@@ -1,0 +1,8 @@
+{
+ "1.1": "event_compid",
+ "1.2": "event_message",
+ "1.3": "event_description",
+ "1.4": "event_log_level",
+ "1.5": "event_event_namespace",
+ "1.6": "event_event_name"
+}

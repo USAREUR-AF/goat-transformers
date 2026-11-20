@@ -1,0 +1,14 @@
+{
+  "name": "gen-attitude_euler_response-roundtrip",
+  "from": "mavsdk-telemetry-attitude-euler",
+  "to": "mavsdk-telemetry-attitude-euler",
+  "input": "0a120d0000003e150000403f1d0000b03f20d301",
+  "expect": "0a120d0000003e150000403f1d0000b03f20d301",
+  "model": {
+    "@kind": "attitude_euler_response",
+    "mavsdktelemetryattitudeeuler.attitude_euler_roll_deg": "0.125",
+    "mavsdktelemetryattitudeeuler.attitude_euler_pitch_deg": "0.75",
+    "mavsdktelemetryattitudeeuler.attitude_euler_yaw_deg": "1.375",
+    "mavsdktelemetryattitudeeuler.attitude_euler_timestamp_us": "211"
+  }
+}

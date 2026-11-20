@@ -1,0 +1,17 @@
+{
+  "name": "gen-incoming_mission_response-roundtrip",
+  "from": "mavsdk-mission-raw-server-incoming-mission",
+  "to": "mavsdk-mission-raw-server-incoming-mission",
+  "input": "0a100801120c726573756c745f7374722d3112660a3108ae0110d30118f801209d0228c20235000090403d0000a440450000b8404d0000cc4050fb0358a004650000803e68ea040a31088f0510b40518d90520fe0528a30635000094403d0000a840450000bc404d0000d04050dc07588108650000c03e68cb08",
+  "expect": "0a100801120c726573756c745f7374722d3112660a3108ae0110d30118f801209d0228c20235000090403d0000a440450000b8404d0000cc4050fb0358a004650000803e68ea040a31088f0510b40518d90520fe0528a30635000094403d0000a840450000bc404d0000d04050dc07588108650000c03e68cb08",
+  "model": {
+    "@kind": "incoming_mission_response",
+    "mavsdkmissionrawserverincomingmission.mission_raw_server_result_result": "1",
+    "mavsdkmissionrawserverincomingmission.mission_raw_server_result_result_str": "result_str-1",
+    "mavsdkmissionrawserverincomingmission.mission_plan_mission_items.#": "2",
+    "mavsdkmissionrawserverincomingmission.mission_plan_mission_items[0].mavsdkmissionrawserverincomingmission.mission_item_seq": "174",
+    "mavsdkmissionrawserverincomingmission.mission_plan_mission_items[0].mavsdkmissionrawserverincomingmission.mission_item_frame": "211",
+    "mavsdkmissionrawserverincomingmission.mission_plan_mission_items[1].mavsdkmissionrawserverincomingmission.mission_item_seq": "655",
+    "mavsdkmissionrawserverincomingmission.mission_plan_mission_items[1].mavsdkmissionrawserverincomingmission.mission_item_frame": "692"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "gen-geojson-to-mavsdk-telemetry-raw-gps",
+  "from": "geojson",
+  "to": "mavsdk-telemetry-raw-gps",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[3.75,2]},\"properties\":{}}",
+  "expect": "0a12110000000000000040190000000000000e40",
+  "model": {
+    "lat": "2",
+    "lon": "3.75"
+  }
+}

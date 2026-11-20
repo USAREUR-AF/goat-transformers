@@ -1,0 +1,5 @@
+{
+ "1.1": "attitude_angular_velocity_body_roll_rad_s",
+ "1.2": "attitude_angular_velocity_body_pitch_rad_s",
+ "1.3": "attitude_angular_velocity_body_yaw_rad_s"
+}

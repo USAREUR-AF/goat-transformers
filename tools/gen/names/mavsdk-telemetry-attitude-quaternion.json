@@ -1,0 +1,7 @@
+{
+ "1.1": "attitude_quaternion_w",
+ "1.2": "attitude_quaternion_x",
+ "1.3": "attitude_quaternion_y",
+ "1.4": "attitude_quaternion_z",
+ "1.5": "attitude_quaternion_timestamp_us"
+}

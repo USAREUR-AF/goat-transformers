@@ -1,0 +1,16 @@
+{
+  "name": "gen-calibrate_level_horizon_response-roundtrip",
+  "from": "mavsdk-calibration-calibrate-level-horizon",
+  "to": "mavsdk-calibration-calibrate-level-horizon",
+  "input": "0a100801120c726573756c745f7374722d311218080115000000401801220d7374617475735f746578742d35",
+  "expect": "0a100801120c726573756c745f7374722d311218080115000000401801220d7374617475735f746578742d35",
+  "model": {
+    "@kind": "calibrate_level_horizon_response",
+    "mavsdkcalibrationcalibratelevelhorizon.calibration_result_result": "1",
+    "mavsdkcalibrationcalibratelevelhorizon.calibration_result_result_str": "result_str-1",
+    "mavsdkcalibrationcalibratelevelhorizon.progress_data_has_progress": "1",
+    "mavsdkcalibrationcalibratelevelhorizon.progress_data_progress": "2",
+    "mavsdkcalibrationcalibratelevelhorizon.progress_data_has_status_text": "1",
+    "mavsdkcalibrationcalibratelevelhorizon.progress_data_status_text": "status_text-5"
+  }
+}

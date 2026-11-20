@@ -1,0 +1,15 @@
+{
+  "name": "gen-velocity_ned_response-roundtrip",
+  "from": "mavsdk-telemetry-velocity-ned",
+  "to": "mavsdk-telemetry-velocity-ned",
+  "input": "0a0f0d0000003e150000403f1d0000b03f",
+  "expect": "0a0f0d0000003e150000403f1d0000b03f",
+  "model": {
+    "@kind": "velocity_ned_response",
+    "mavsdktelemetryvelocityned.velocity_ned_north_m_s": "0.125",
+    "track.vel_north_ms": "0.125",
+    "mavsdktelemetryvelocityned.velocity_ned_east_m_s": "0.75",
+    "track.vel_east_ms": "0.75",
+    "mavsdktelemetryvelocityned.velocity_ned_down_m_s": "1.375"
+  }
+}

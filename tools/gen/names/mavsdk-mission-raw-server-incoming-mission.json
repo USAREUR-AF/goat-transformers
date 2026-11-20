@@ -1,0 +1,18 @@
+{
+ "1.1": "mission_raw_server_result_result",
+ "1.2": "mission_raw_server_result_result_str",
+ "2.1[]": "mission_plan_mission_items",
+ "mavsdk.rpc.mission_raw_server.MissionItem:1": "mission_item_seq",
+ "mavsdk.rpc.mission_raw_server.MissionItem:10": "mission_item_x",
+ "mavsdk.rpc.mission_raw_server.MissionItem:11": "mission_item_y",
+ "mavsdk.rpc.mission_raw_server.MissionItem:12": "mission_item_z",
+ "mavsdk.rpc.mission_raw_server.MissionItem:13": "mission_item_mission_type",
+ "mavsdk.rpc.mission_raw_server.MissionItem:2": "mission_item_frame",
+ "mavsdk.rpc.mission_raw_server.MissionItem:3": "mission_item_command",
+ "mavsdk.rpc.mission_raw_server.MissionItem:4": "mission_item_current",
+ "mavsdk.rpc.mission_raw_server.MissionItem:5": "mission_item_autocontinue",
+ "mavsdk.rpc.mission_raw_server.MissionItem:6": "mission_item_param1",
+ "mavsdk.rpc.mission_raw_server.MissionItem:7": "mission_item_param2",
+ "mavsdk.rpc.mission_raw_server.MissionItem:8": "mission_item_param3",
+ "mavsdk.rpc.mission_raw_server.MissionItem:9": "mission_item_param4"
+}

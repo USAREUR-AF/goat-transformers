@@ -1,0 +1,33 @@
+{
+  "name": "gen-odometry_response-roundtrip",
+  "from": "mavsdk-telemetry-odometry",
+  "to": "mavsdk-telemetry-odometry",
+  "input": "0a6a086410081808220f0d0000004015000028401d000050402a170d0000784015000090401d0000a440250000b84028d603320f0d0000e040150000f4401d0000803e3a0f0d0000603f150000c03f1d00000840420a0a0800003040000058404a0a0a080000804000009440",
+  "expect": "0a6a086410081808220f0d0000004015000028401d000050402a170d0000784015000090401d0000a440250000b84028d603320f0d0000e040150000f4401d0000803e3a0f0d0000603f150000c03f1d00000840420a0a0800003040000058404a0a0a080000804000009440",
+  "model": {
+    "@kind": "odometry_response",
+    "mavsdktelemetryodometry.odometry_time_usec": "100",
+    "mavsdktelemetryodometry.odometry_frame_id": "8",
+    "mavsdktelemetryodometry.odometry_child_frame_id": "8",
+    "mavsdktelemetryodometry.odometry_position_body_x_m": "2",
+    "mavsdktelemetryodometry.odometry_position_body_y_m": "2.625",
+    "mavsdktelemetryodometry.odometry_position_body_z_m": "3.25",
+    "mavsdktelemetryodometry.odometry_q_w": "3.875",
+    "mavsdktelemetryodometry.odometry_q_x": "4.5",
+    "mavsdktelemetryodometry.odometry_q_y": "5.125",
+    "mavsdktelemetryodometry.odometry_q_z": "5.75",
+    "mavsdktelemetryodometry.odometry_q_timestamp_us": "470",
+    "mavsdktelemetryodometry.odometry_velocity_body_x_m_s": "7",
+    "mavsdktelemetryodometry.odometry_velocity_body_y_m_s": "7.625",
+    "mavsdktelemetryodometry.odometry_velocity_body_z_m_s": "0.25",
+    "mavsdktelemetryodometry.odometry_angular_velocity_body_roll_rad_s": "0.875",
+    "mavsdktelemetryodometry.odometry_angular_velocity_body_pitch_rad_s": "1.5",
+    "mavsdktelemetryodometry.odometry_angular_velocity_body_yaw_rad_s": "2.125",
+    "mavsdktelemetryodometry.odometry_pose_covariance_covariance_matrix.#": "2",
+    "mavsdktelemetryodometry.odometry_pose_covariance_covariance_matrix[0].mavsdktelemetryodometry.covariance_covariance_matrix_item": "2.75",
+    "mavsdktelemetryodometry.odometry_pose_covariance_covariance_matrix[1].mavsdktelemetryodometry.covariance_covariance_matrix_item": "3.375",
+    "mavsdktelemetryodometry.odometry_velocity_covariance_covariance_matrix.#": "2",
+    "mavsdktelemetryodometry.odometry_velocity_covariance_covariance_matrix[0].mavsdktelemetryodometry.covariance_covariance_matrix_item": "4",
+    "mavsdktelemetryodometry.odometry_velocity_covariance_covariance_matrix[1].mavsdktelemetryodometry.covariance_covariance_matrix_item": "4.625"
+  }
+}

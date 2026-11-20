@@ -1,0 +1,11 @@
+{
+  "name": "gen-zoom_out_start_response-roundtrip",
+  "from": "mavsdk-camera-server-zoom-out-start",
+  "to": "mavsdk-camera-server-zoom-out-start",
+  "input": "0864",
+  "expect": "0864",
+  "model": {
+    "@kind": "zoom_out_start_response",
+    "mavsdkcameraserverzoomoutstart.zoom_out_start_response_reserved": "100"
+  }
+}

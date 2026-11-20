@@ -1,0 +1,13 @@
+{
+  "name": "gen-rc_status_response-roundtrip",
+  "from": "mavsdk-telemetry-rc-status",
+  "to": "mavsdk-telemetry-rc-status",
+  "input": "0a09080110011d0000b03f",
+  "expect": "0a09080110011d0000b03f",
+  "model": {
+    "@kind": "rc_status_response",
+    "mavsdktelemetryrcstatus.rc_status_was_available_once": "1",
+    "mavsdktelemetryrcstatus.rc_status_is_available": "1",
+    "mavsdktelemetryrcstatus.rc_status_signal_strength_percent": "1.375"
+  }
+}

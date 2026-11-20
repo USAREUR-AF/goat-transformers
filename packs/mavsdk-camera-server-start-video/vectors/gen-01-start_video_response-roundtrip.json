@@ -1,0 +1,11 @@
+{
+  "name": "gen-start_video_response-roundtrip",
+  "from": "mavsdk-camera-server-start-video",
+  "to": "mavsdk-camera-server-start-video",
+  "input": "0864",
+  "expect": "0864",
+  "model": {
+    "@kind": "start_video_response",
+    "mavsdkcameraserverstartvideo.start_video_response_stream_id": "100"
+  }
+}

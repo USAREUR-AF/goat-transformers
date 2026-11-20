@@ -1,0 +1,11 @@
+{
+  "name": "gen-focus_in_step_response-roundtrip",
+  "from": "mavsdk-camera-server-focus-in-step",
+  "to": "mavsdk-camera-server-focus-in-step",
+  "input": "0864",
+  "expect": "0864",
+  "model": {
+    "@kind": "focus_in_step_response",
+    "mavsdkcameraserverfocusinstep.focus_in_step_response_reserved": "100"
+  }
+}

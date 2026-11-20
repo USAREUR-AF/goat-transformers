@@ -1,0 +1,17 @@
+{
+  "name": "gen-distance_sensor_response-roundtrip",
+  "from": "mavsdk-telemetry-distance-sensor",
+  "to": "mavsdk-telemetry-distance-sensor",
+  "input": "0a230d0000003e150000403f1d0000b03f22120d0000004015000028401d0000504020c202",
+  "expect": "0a230d0000003e150000403f1d0000b03f22120d0000004015000028401d0000504020c202",
+  "model": {
+    "@kind": "distance_sensor_response",
+    "mavsdktelemetrydistancesensor.distance_sensor_minimum_distance_m": "0.125",
+    "mavsdktelemetrydistancesensor.distance_sensor_maximum_distance_m": "0.75",
+    "mavsdktelemetrydistancesensor.distance_sensor_current_distance_m": "1.375",
+    "mavsdktelemetrydistancesensor.distance_sensor_orientation_roll_deg": "2",
+    "mavsdktelemetrydistancesensor.distance_sensor_orientation_pitch_deg": "2.625",
+    "mavsdktelemetrydistancesensor.distance_sensor_orientation_yaw_deg": "3.25",
+    "mavsdktelemetrydistancesensor.distance_sensor_orientation_timestamp_us": "322"
+  }
+}

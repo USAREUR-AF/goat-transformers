@@ -1,0 +1,13 @@
+{
+  "name": "gen-attitude_angular_velocity_body_response-roundtrip",
+  "from": "mavsdk-telemetry-attitude-angular-velocity-body",
+  "to": "mavsdk-telemetry-attitude-angular-velocity-body",
+  "input": "0a0f0d0000003e150000403f1d0000b03f",
+  "expect": "0a0f0d0000003e150000403f1d0000b03f",
+  "model": {
+    "@kind": "attitude_angular_velocity_body_response",
+    "mavsdktelemetryattitudeangularvelocitybody.attitude_angular_velocity_body_roll_rad_s": "0.125",
+    "mavsdktelemetryattitudeangularvelocitybody.attitude_angular_velocity_body_pitch_rad_s": "0.75",
+    "mavsdktelemetryattitudeangularvelocitybody.attitude_angular_velocity_body_yaw_rad_s": "1.375"
+  }
+}

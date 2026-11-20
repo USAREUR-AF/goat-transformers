@@ -1,0 +1,12 @@
+{
+  "name": "gen-mavsdk-telemetry-ground-truth-to-geojson",
+  "from": "mavsdk-telemetry-ground-truth",
+  "to": "geojson",
+  "input": "0a1a09000000000000d03f1100000000000000401d0000b03f20d301",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[2,0.25]},\"properties\":{}}",
+  "model": {
+    "@kind": "ground_truth_response",
+    "lat": "0.25",
+    "lon": "2"
+  }
+}

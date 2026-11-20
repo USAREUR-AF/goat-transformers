@@ -1,0 +1,13 @@
+{
+  "name": "gen-metadata_available_response-roundtrip",
+  "from": "mavsdk-component-metadata-metadata-available",
+  "to": "mavsdk-component-metadata-metadata-available",
+  "input": "0a15086410011a0f6a736f6e5f6d657461646174612d32",
+  "expect": "0a15086410011a0f6a736f6e5f6d657461646174612d32",
+  "model": {
+    "@kind": "metadata_available_response",
+    "mavsdkcomponentmetadatametadataavailable.data_compid": "100",
+    "mavsdkcomponentmetadatametadataavailable.data_type": "1",
+    "mavsdkcomponentmetadatametadataavailable.data_json_metadata": "json_metadata-2"
+  }
+}

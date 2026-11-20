@@ -1,0 +1,11 @@
+{
+ "1.1[]": "camera_list_cameras",
+ "mavsdk.rpc.camera.Information:1": "information_component_id",
+ "mavsdk.rpc.camera.Information:2": "information_vendor_name",
+ "mavsdk.rpc.camera.Information:3": "information_model_name",
+ "mavsdk.rpc.camera.Information:4": "information_focal_length_mm",
+ "mavsdk.rpc.camera.Information:5": "information_horizontal_sensor_size_mm",
+ "mavsdk.rpc.camera.Information:6": "information_vertical_sensor_size_mm",
+ "mavsdk.rpc.camera.Information:7": "information_horizontal_resolution_px",
+ "mavsdk.rpc.camera.Information:8": "information_vertical_resolution_px"
+}

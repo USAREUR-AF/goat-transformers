@@ -1,0 +1,11 @@
+{
+  "name": "gen-focus_auto_response-roundtrip",
+  "from": "mavsdk-camera-server-focus-auto",
+  "to": "mavsdk-camera-server-focus-auto",
+  "input": "0864",
+  "expect": "0864",
+  "model": {
+    "@kind": "focus_auto_response",
+    "mavsdkcameraserverfocusauto.focus_auto_response_reserved": "100"
+  }
+}

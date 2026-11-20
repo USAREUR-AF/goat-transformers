@@ -1,0 +1,17 @@
+{
+  "name": "gen-altitude_response-roundtrip",
+  "from": "mavsdk-telemetry-altitude",
+  "to": "mavsdk-telemetry-altitude",
+  "input": "0a210d0000003e150000403f1d0000b03f25000000402d00002840350000504038c202",
+  "expect": "0a210d0000003e150000403f1d0000b03f25000000402d00002840350000504038c202",
+  "model": {
+    "@kind": "altitude_response",
+    "mavsdktelemetryaltitude.altitude_altitude_monotonic_m": "0.125",
+    "mavsdktelemetryaltitude.altitude_altitude_amsl_m": "0.75",
+    "mavsdktelemetryaltitude.altitude_altitude_local_m": "1.375",
+    "mavsdktelemetryaltitude.altitude_altitude_relative_m": "2",
+    "mavsdktelemetryaltitude.altitude_altitude_terrain_m": "2.625",
+    "mavsdktelemetryaltitude.altitude_bottom_clearance_m": "3.25",
+    "mavsdktelemetryaltitude.altitude_timestamp_us": "322"
+  }
+}

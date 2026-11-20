@@ -1,0 +1,8 @@
+{
+ "1.1": "calibration_result_result",
+ "1.2": "calibration_result_result_str",
+ "2.1": "progress_data_has_progress",
+ "2.2": "progress_data_progress",
+ "2.3": "progress_data_has_status_text",
+ "2.4": "progress_data_status_text"
+}

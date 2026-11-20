@@ -1,0 +1,16 @@
+{
+  "name": "gen-position_velocity_ned_response-roundtrip",
+  "from": "mavsdk-telemetry-position-velocity-ned",
+  "to": "mavsdk-telemetry-position-velocity-ned",
+  "input": "0a220a0f0d0000003e150000403f1d0000b03f120f0d0000004015000028401d00005040",
+  "expect": "0a220a0f0d0000003e150000403f1d0000b03f120f0d0000004015000028401d00005040",
+  "model": {
+    "@kind": "position_velocity_ned_response",
+    "mavsdktelemetrypositionvelocityned.position_velocity_ned_position_north_m": "0.125",
+    "mavsdktelemetrypositionvelocityned.position_velocity_ned_position_east_m": "0.75",
+    "mavsdktelemetrypositionvelocityned.position_velocity_ned_position_down_m": "1.375",
+    "mavsdktelemetrypositionvelocityned.position_velocity_ned_velocity_north_m_s": "2",
+    "mavsdktelemetrypositionvelocityned.position_velocity_ned_velocity_east_m_s": "2.625",
+    "mavsdktelemetrypositionvelocityned.position_velocity_ned_velocity_down_m_s": "3.25"
+  }
+}

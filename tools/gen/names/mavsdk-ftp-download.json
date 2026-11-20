@@ -1,0 +1,6 @@
+{
+ "1.1": "ftp_result_result",
+ "1.2": "ftp_result_result_str",
+ "2.1": "progress_data_bytes_transferred",
+ "2.2": "progress_data_total_bytes"
+}

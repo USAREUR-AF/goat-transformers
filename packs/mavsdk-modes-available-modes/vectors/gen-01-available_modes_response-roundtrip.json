@@ -1,0 +1,15 @@
+{
+  "name": "gen-available_modes_response-roundtrip",
+  "from": "mavsdk-modes-available-modes",
+  "to": "mavsdk-modes-available-modes",
+  "input": "0a130a066e616d652d3010890118012001280130010a130a066e616d652d3610e7021801200128013001",
+  "expect": "0a130a066e616d652d3010890118012001280130010a130a066e616d652d3610e7021801200128013001",
+  "model": {
+    "@kind": "available_modes_response",
+    "mavsdkmodesavailablemodes.available_modes_response_modes.#": "2",
+    "mavsdkmodesavailablemodes.available_modes_response_modes[0].mavsdkmodesavailablemodes.mode_name": "name-0",
+    "mavsdkmodesavailablemodes.available_modes_response_modes[0].mavsdkmodesavailablemodes.mode_custom_mode": "137",
+    "mavsdkmodesavailablemodes.available_modes_response_modes[1].mavsdkmodesavailablemodes.mode_name": "name-6",
+    "mavsdkmodesavailablemodes.available_modes_response_modes[1].mavsdkmodesavailablemodes.mode_custom_mode": "359"
+  }
+}

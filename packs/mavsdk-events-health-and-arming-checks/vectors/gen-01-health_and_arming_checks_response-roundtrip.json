@@ -1,0 +1,27 @@
+{
+  "name": "gen-health_and_arming_checks_response-roundtrip",
+  "from": "mavsdk-events-health-and-arming-checks",
+  "to": "mavsdk-events-health-and-arming-checks",
+  "input": "0a95020a730a0b6d6f64655f6e616d652d3010011a300a096d6573736167652d32120d6465736372697074696f6e2d33180122126865616c74685f636f6d706f6e656e742d351a300a096d6573736167652d36120d6465736372697074696f6e2d37180122126865616c74685f636f6d706f6e656e742d3912190a076e616d652d313012086c6162656c2d313118012001280112190a076e616d652d313512086c6162656c2d31361801200128011a330a0a6d6573736167652d3230120e6465736372697074696f6e2d3231180122136865616c74685f636f6d706f6e656e742d32331a330a0a6d6573736167652d3234120e6465736372697074696f6e2d3235180122136865616c74685f636f6d706f6e656e742d3237",
+  "expect": "0a95020a730a0b6d6f64655f6e616d652d3010011a300a096d6573736167652d32120d6465736372697074696f6e2d33180122126865616c74685f636f6d706f6e656e742d351a300a096d6573736167652d36120d6465736372697074696f6e2d37180122126865616c74685f636f6d706f6e656e742d3912190a076e616d652d313012086c6162656c2d313118012001280112190a076e616d652d313512086c6162656c2d31361801200128011a330a0a6d6573736167652d3230120e6465736372697074696f6e2d3231180122136865616c74685f636f6d706f6e656e742d32331a330a0a6d6573736167652d3234120e6465736372697074696f6e2d3235180122136865616c74685f636f6d706f6e656e742d3237",
+  "model": {
+    "@kind": "health_and_arming_checks_response",
+    "mavsdkeventshealthandarmingchecks.report_current_mode_intention_mode_name": "mode_name-0",
+    "mavsdkeventshealthandarmingchecks.report_current_mode_intention_can_arm_or_run": "1",
+    "mavsdkeventshealthandarmingchecks.report_current_mode_intention_problems.#": "2",
+    "mavsdkeventshealthandarmingchecks.report_current_mode_intention_problems[0].mavsdkeventshealthandarmingchecks.health_and_arming_check_problem_message": "message-2",
+    "mavsdkeventshealthandarmingchecks.report_current_mode_intention_problems[0].mavsdkeventshealthandarmingchecks.health_and_arming_check_problem_description": "description-3",
+    "mavsdkeventshealthandarmingchecks.report_current_mode_intention_problems[1].mavsdkeventshealthandarmingchecks.health_and_arming_check_problem_message": "message-6",
+    "mavsdkeventshealthandarmingchecks.report_current_mode_intention_problems[1].mavsdkeventshealthandarmingchecks.health_and_arming_check_problem_description": "description-7",
+    "mavsdkeventshealthandarmingchecks.report_health_components.#": "2",
+    "mavsdkeventshealthandarmingchecks.report_health_components[0].mavsdkeventshealthandarmingchecks.health_component_report_name": "name-10",
+    "mavsdkeventshealthandarmingchecks.report_health_components[0].mavsdkeventshealthandarmingchecks.health_component_report_label": "label-11",
+    "mavsdkeventshealthandarmingchecks.report_health_components[1].mavsdkeventshealthandarmingchecks.health_component_report_name": "name-15",
+    "mavsdkeventshealthandarmingchecks.report_health_components[1].mavsdkeventshealthandarmingchecks.health_component_report_label": "label-16",
+    "mavsdkeventshealthandarmingchecks.report_all_problems.#": "2",
+    "mavsdkeventshealthandarmingchecks.report_all_problems[0].mavsdkeventshealthandarmingchecks.health_and_arming_check_problem_message": "message-20",
+    "mavsdkeventshealthandarmingchecks.report_all_problems[0].mavsdkeventshealthandarmingchecks.health_and_arming_check_problem_description": "description-21",
+    "mavsdkeventshealthandarmingchecks.report_all_problems[1].mavsdkeventshealthandarmingchecks.health_and_arming_check_problem_message": "message-24",
+    "mavsdkeventshealthandarmingchecks.report_all_problems[1].mavsdkeventshealthandarmingchecks.health_and_arming_check_problem_description": "description-25"
+  }
+}

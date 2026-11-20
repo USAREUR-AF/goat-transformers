@@ -1,0 +1,12 @@
+{
+  "name": "gen-changed_param_float_response-roundtrip",
+  "from": "mavsdk-param-server-changed-param-float",
+  "to": "mavsdk-param-server-changed-param-float",
+  "input": "0a0d0a066e616d652d30150000403f",
+  "expect": "0a0d0a066e616d652d30150000403f",
+  "model": {
+    "@kind": "changed_param_float_response",
+    "mavsdkparamserverchangedparamfloat.param_name": "name-0",
+    "mavsdkparamserverchangedparamfloat.param_value": "0.75"
+  }
+}

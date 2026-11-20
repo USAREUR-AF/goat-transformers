@@ -1,0 +1,12 @@
+{
+  "name": "gen-mode_response-roundtrip",
+  "from": "mavsdk-camera-mode",
+  "to": "mavsdk-camera-mode",
+  "input": "0a0408641001",
+  "expect": "0a0408641001",
+  "model": {
+    "@kind": "mode_response",
+    "mavsdkcameramode.update_component_id": "100",
+    "mavsdkcameramode.update_mode": "1"
+  }
+}

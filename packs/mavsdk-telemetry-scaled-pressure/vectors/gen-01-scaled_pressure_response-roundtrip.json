@@ -1,0 +1,15 @@
+{
+  "name": "gen-scaled_pressure_response-roundtrip",
+  "from": "mavsdk-telemetry-scaled-pressure",
+  "to": "mavsdk-telemetry-scaled-pressure",
+  "input": "0a160864150000403f1d0000b03f25000000402d00002840",
+  "expect": "0a160864150000403f1d0000b03f25000000402d00002840",
+  "model": {
+    "@kind": "scaled_pressure_response",
+    "mavsdktelemetryscaledpressure.scaled_pressure_timestamp_us": "100",
+    "mavsdktelemetryscaledpressure.scaled_pressure_absolute_pressure_hpa": "0.75",
+    "mavsdktelemetryscaledpressure.scaled_pressure_differential_pressure_hpa": "1.375",
+    "mavsdktelemetryscaledpressure.scaled_pressure_temperature_deg": "2",
+    "mavsdktelemetryscaledpressure.scaled_pressure_differential_pressure_temperature_deg": "2.625"
+  }
+}

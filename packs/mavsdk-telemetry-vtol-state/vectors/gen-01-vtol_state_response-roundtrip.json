@@ -1,0 +1,11 @@
+{
+  "name": "gen-vtol_state_response-roundtrip",
+  "from": "mavsdk-telemetry-vtol-state",
+  "to": "mavsdk-telemetry-vtol-state",
+  "input": "0801",
+  "expect": "0801",
+  "model": {
+    "@kind": "vtol_state_response",
+    "mavsdktelemetryvtolstate.vtol_state_response_vtol_state": "1"
+  }
+}

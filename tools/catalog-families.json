@@ -49,6 +49,7 @@
     {"name": "MAVLink 2", "domain": "uncrewed", "exact": ["mavlink2"], "prefixes": ["mavlink2-"], "members": {"pattern": "^mavlink2-(.+)$", "label": "common and {n} dialects"}},
     {"name": "Foxglove", "domain": "uncrewed", "prefixes": ["foxglove-"]},
     {"name": "Gazebo messages (gz-msgs)", "domain": "uncrewed", "prefixes": ["gz-msgs-"]},
+    {"name": "MAVSDK (gRPC protobuf)", "domain": "uncrewed", "prefixes": ["mavsdk-"]},
     {"name": "Parrot ARSDK protobuf", "domain": "uncrewed", "prefixes": ["arsdk-proto-"]},
     {"name": "Parrot ARSDK", "domain": "uncrewed", "prefixes": ["arsdk-"]},
     {"name": "Remote ID (ASTM F3411)", "domain": "uncrewed", "exact": ["remote-id"]},

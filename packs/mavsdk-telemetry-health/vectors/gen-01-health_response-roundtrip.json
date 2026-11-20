@@ -1,0 +1,17 @@
+{
+  "name": "gen-health_response-roundtrip",
+  "from": "mavsdk-telemetry-health",
+  "to": "mavsdk-telemetry-health",
+  "input": "0a0e0801100118012801300138014001",
+  "expect": "0a0e0801100118012801300138014001",
+  "model": {
+    "@kind": "health_response",
+    "mavsdktelemetryhealth.health_is_gyrometer_calibration_ok": "1",
+    "mavsdktelemetryhealth.health_is_accelerometer_calibration_ok": "1",
+    "mavsdktelemetryhealth.health_is_magnetometer_calibration_ok": "1",
+    "mavsdktelemetryhealth.health_is_local_position_ok": "1",
+    "mavsdktelemetryhealth.health_is_global_position_ok": "1",
+    "mavsdktelemetryhealth.health_is_home_position_ok": "1",
+    "mavsdktelemetryhealth.health_is_armable": "1"
+  }
+}

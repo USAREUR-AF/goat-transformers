@@ -1,0 +1,18 @@
+{
+ "1.1": "home_timestamp_us",
+ "1.10": "home_approach_north_m",
+ "1.11": "home_approach_east_m",
+ "1.12": "home_approach_down_m",
+ "1.2": "home_latitude_deg",
+ "1.3": "home_longitude_deg",
+ "1.4": "home_absolute_altitude_m",
+ "1.5": "home_relative_altitude_m",
+ "1.6": "home_local_north_m",
+ "1.7": "home_local_east_m",
+ "1.8": "home_local_down_m",
+ "1.9.1": "home_q_w",
+ "1.9.2": "home_q_x",
+ "1.9.3": "home_q_y",
+ "1.9.4": "home_q_z",
+ "1.9.5": "home_q_timestamp_us"
+}

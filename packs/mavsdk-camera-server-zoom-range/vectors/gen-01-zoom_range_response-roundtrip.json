@@ -1,0 +1,11 @@
+{
+  "name": "gen-zoom_range_response-roundtrip",
+  "from": "mavsdk-camera-server-zoom-range",
+  "to": "mavsdk-camera-server-zoom-range",
+  "input": "0d0000003e",
+  "expect": "0d0000003e",
+  "model": {
+    "@kind": "zoom_range_response",
+    "mavsdkcameraserverzoomrange.zoom_range_response_factor": "0.125"
+  }
+}

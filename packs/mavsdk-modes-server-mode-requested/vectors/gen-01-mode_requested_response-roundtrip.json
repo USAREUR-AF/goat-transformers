@@ -1,0 +1,16 @@
+{
+  "name": "gen-mode_requested_response-roundtrip",
+  "from": "mavsdk-modes-server-mode-requested",
+  "to": "mavsdk-modes-server-mode-requested",
+  "input": "0a130a066e616d652d301089011801200128013001",
+  "expect": "0a130a066e616d652d301089011801200128013001",
+  "model": {
+    "@kind": "mode_requested_response",
+    "mavsdkmodesservermoderequested.mode_name": "name-0",
+    "mavsdkmodesservermoderequested.mode_custom_mode": "137",
+    "mavsdkmodesservermoderequested.mode_is_standard": "1",
+    "mavsdkmodesservermoderequested.mode_is_user_selectable": "1",
+    "mavsdkmodesservermoderequested.mode_is_advanced": "1",
+    "mavsdkmodesservermoderequested.mode_is_auto_mode": "1"
+  }
+}

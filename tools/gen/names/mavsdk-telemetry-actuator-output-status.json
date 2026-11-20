@@ -1,0 +1,5 @@
+{
+ "1.1": "actuator_output_status_active",
+ "1.2[]": "actuator_output_status_actuator",
+ "mavsdk.rpc.telemetry.ActuatorOutputStatus:2[]item": "actuator_output_status_actuator_item"
+}

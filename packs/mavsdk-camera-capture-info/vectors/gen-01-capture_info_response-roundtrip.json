@@ -1,0 +1,26 @@
+{
+  "name": "gen-capture_info_response-roundtrip",
+  "from": "mavsdk-camera-capture-info",
+  "to": "mavsdk-camera-capture-info",
+  "input": "0a5c0864121c090000000000000040110000000000000e401d0000004025000028401a140d0000504015000078401d00009040250000a440220f0d0000b840150000cc401d0000e04028a004300138ea04420b66696c655f75726c2d3135",
+  "expect": "0a5c0864121c090000000000000040110000000000000e401d0000004025000028401a140d0000504015000078401d00009040250000a440220f0d0000b840150000cc401d0000e04028a004300138ea04420b66696c655f75726c2d3135",
+  "model": {
+    "@kind": "capture_info_response",
+    "mavsdkcameracaptureinfo.capture_info_component_id": "100",
+    "mavsdkcameracaptureinfo.capture_info_position_latitude_deg": "2",
+    "mavsdkcameracaptureinfo.capture_info_position_longitude_deg": "3.75",
+    "mavsdkcameracaptureinfo.capture_info_position_absolute_altitude_m": "2",
+    "mavsdkcameracaptureinfo.capture_info_position_relative_altitude_m": "2.625",
+    "mavsdkcameracaptureinfo.capture_info_attitude_quaternion_w": "3.25",
+    "mavsdkcameracaptureinfo.capture_info_attitude_quaternion_x": "3.875",
+    "mavsdkcameracaptureinfo.capture_info_attitude_quaternion_y": "4.5",
+    "mavsdkcameracaptureinfo.capture_info_attitude_quaternion_z": "5.125",
+    "mavsdkcameracaptureinfo.capture_info_attitude_euler_angle_roll_deg": "5.75",
+    "mavsdkcameracaptureinfo.capture_info_attitude_euler_angle_pitch_deg": "6.375",
+    "mavsdkcameracaptureinfo.capture_info_attitude_euler_angle_yaw_deg": "7",
+    "mavsdkcameracaptureinfo.capture_info_time_utc_us": "544",
+    "mavsdkcameracaptureinfo.capture_info_is_success": "1",
+    "mavsdkcameracaptureinfo.capture_info_index": "618",
+    "mavsdkcameracaptureinfo.capture_info_file_url": "file_url-15"
+  }
+}

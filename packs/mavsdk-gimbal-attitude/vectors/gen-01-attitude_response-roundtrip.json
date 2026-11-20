@@ -1,0 +1,29 @@
+{
+  "name": "gen-attitude_response-roundtrip",
+  "from": "mavsdk-gimbal-attitude",
+  "to": "mavsdk-gimbal-attitude",
+  "input": "0a640864120f0d0000403f150000b03f1d000000401a140d0000284015000050401d000078402500009040220f0d0000a440150000b8401d0000cc402a140d0000e040150000f4401d0000803e250000603f320f0d0000c03f15000008401d0000304038fe05",
+  "expect": "0a640864120f0d0000403f150000b03f1d000000401a140d0000284015000050401d000078402500009040220f0d0000a440150000b8401d0000cc402a140d0000e040150000f4401d0000803e250000603f320f0d0000c03f15000008401d0000304038fe05",
+  "model": {
+    "@kind": "attitude_response",
+    "mavsdkgimbalattitude.attitude_gimbal_id": "100",
+    "mavsdkgimbalattitude.attitude_euler_angle_forward_roll_deg": "0.75",
+    "mavsdkgimbalattitude.attitude_euler_angle_forward_pitch_deg": "1.375",
+    "mavsdkgimbalattitude.attitude_euler_angle_forward_yaw_deg": "2",
+    "mavsdkgimbalattitude.attitude_quaternion_forward_w": "2.625",
+    "mavsdkgimbalattitude.attitude_quaternion_forward_x": "3.25",
+    "mavsdkgimbalattitude.attitude_quaternion_forward_y": "3.875",
+    "mavsdkgimbalattitude.attitude_quaternion_forward_z": "4.5",
+    "mavsdkgimbalattitude.attitude_euler_angle_north_roll_deg": "5.125",
+    "mavsdkgimbalattitude.attitude_euler_angle_north_pitch_deg": "5.75",
+    "mavsdkgimbalattitude.attitude_euler_angle_north_yaw_deg": "6.375",
+    "mavsdkgimbalattitude.attitude_quaternion_north_w": "7",
+    "mavsdkgimbalattitude.attitude_quaternion_north_x": "7.625",
+    "mavsdkgimbalattitude.attitude_quaternion_north_y": "0.25",
+    "mavsdkgimbalattitude.attitude_quaternion_north_z": "0.875",
+    "mavsdkgimbalattitude.attitude_angular_velocity_roll_rad_s": "1.5",
+    "mavsdkgimbalattitude.attitude_angular_velocity_pitch_rad_s": "2.125",
+    "mavsdkgimbalattitude.attitude_angular_velocity_yaw_rad_s": "2.75",
+    "mavsdkgimbalattitude.attitude_timestamp_us": "766"
+  }
+}

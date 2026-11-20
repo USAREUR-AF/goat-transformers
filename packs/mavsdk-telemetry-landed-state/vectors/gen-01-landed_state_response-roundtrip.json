@@ -1,0 +1,11 @@
+{
+  "name": "gen-landed_state_response-roundtrip",
+  "from": "mavsdk-telemetry-landed-state",
+  "to": "mavsdk-telemetry-landed-state",
+  "input": "0801",
+  "expect": "0801",
+  "model": {
+    "@kind": "landed_state_response",
+    "mavsdktelemetrylandedstate.landed_state_response_landed_state": "1"
+  }
+}
