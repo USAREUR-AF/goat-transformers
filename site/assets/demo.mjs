@@ -9,7 +9,9 @@ document.documentElement.classList.replace("no-js", "js");
 for (const button of document.querySelectorAll("[data-copy]")) {
   button.addEventListener("click", async () => {
     const source = $(button.dataset.copy);
-    const text = source.textContent;
+    let text = source.textContent;
+    const strip = button.dataset.copyStrip;
+    if (strip && text.startsWith(strip)) text = text.slice(strip.length);
     try {
       await navigator.clipboard.writeText(text);
       button.textContent = "Copied";

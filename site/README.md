@@ -9,6 +9,7 @@ scripts, no analytics.
 | `index.html` | the page |
 | `assets/site.css` | the styles, light and dark by `prefers-color-scheme` |
 | `assets/demo.mjs` | the copy buttons and the demo |
+| `assets/hero.mjs` | plays the conversion drawn in the first screen, one pack line at a time (a still frame with reduced motion or JavaScript off) |
 | `assets/journey.svg`, `assets/model-bus.svg`, `assets/icon.svg` | the two figures and the tab icon |
 | `build.sh`, `bundle.py` | write `assets/engine/` from the tree and check the page against it |
 | `assets/engine/` | generated, not kept in git (`site/.gitignore`) |
@@ -57,8 +58,14 @@ it is done.
   `conversion_vectors`, `pair_converters`). The counts come from
   `tools/repo-stats`, the same counter the top-level README is tested
   against; the footnotes of the page give the command behind each number;
-- the two outputs shown at the top of the page must be what `goat-xf` prints
-  for the same input.
+- the two outputs shown near the top of the page must be what `goat-xf` prints
+  for the same input;
+- the drawing in the first screen must be the tree's: its bytes are the input
+  of `packs/remote-id/vectors/02-location-roundtrip.json`, each pack line it
+  quotes is a line of `packs/remote-id/pack.def` or `packs/cot-xml/pack.def`,
+  the integer of each step is what its locator reads from those bytes, the
+  value is the vector's `model` value, the faint text behind it is lines of
+  those two packs, and its output is what `goat-xf` prints.
 
 The size of the WebAssembly module depends on the compiler version, so a
 different size is reported and not refused; the page reads the size of the

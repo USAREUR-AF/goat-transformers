@@ -280,11 +280,76 @@ def check_page(stats, pairs):
         if expect not in plain:
             print("bundle.py: check: index.html does not show the goat-xf output of %s to %s: %s" % (s, t, expect))
             bad += 1
+    bad += check_hero(html, pairs)
     if bad:
         print("bundle.py: FAIL, index.html differs from the tree in %d place(s)" % bad)
         return 1
     print("bundle.py: index.html agrees with the tree (%d numbers, %d conversions)" % (len(found), len(STATIC)))
     return 0
+
+
+def check_hero(html, pairs):
+    """The drawing in the first screen must be the tree's: the bytes of the
+    vector, the pack lines it quotes, the integer each line reads, the model
+    value the vector states, the faint pack text behind it, and the output."""
+    bad = 0
+
+    def fail(msg):
+        nonlocal bad
+        print("bundle.py: check: hero: " + msg)
+        bad += 1
+
+    def unescape(t):
+        return re.sub(r"<[^>]+>", "", t).replace("&lt;", "<").replace("&gt;", ">").replace("&quot;", '"').replace("&amp;", "&")
+
+    with open(os.path.join(REPO, "packs/remote-id/vectors/02-location-roundtrip.json"), encoding="utf-8") as f:
+        vec = json.load(f)
+    data = bytes.fromhex(vec["input"])
+    lines = {}
+    for name in ("remote-id", "cot-xml"):
+        with open(os.path.join(REPO, "packs/%s/pack.def" % name), encoding="utf-8") as f:
+            lines[name] = [l.rstrip("\n") for l in f]
+
+    shown = re.findall(r'<span class="hb" data-i="(\d+)">([0-9a-f]{2})</span>', html)
+    if [int(i) for i, _ in shown] != list(range(len(data))) or bytes.fromhex("".join(h for _, h in shown)) != data:
+        fail("the bytes drawn are not the input of 02-location-roundtrip.json")
+
+    steps = re.findall(r"<li (data-step=[^>]*)>", html)
+    if len(steps) < 2:
+        fail("no steps found")
+    for attrs in steps:
+        a = dict(re.findall(r'data-([a-z]+)="([^"]*)"', attrs))
+        if a["line"] not in lines[a["pack"]]:
+            fail("the line `%s` is not in packs/%s/pack.def" % (a["line"], a["pack"]))
+        if "loc" not in a:
+            continue
+        _, first, length = (int(x) for x in a["loc"].split(":"))
+        if a["loc"] not in a["line"]:
+            fail("step %s: locator %s is not the one of its line" % (a["step"], a["loc"]))
+        lo, hi = first // 8, (first + length - 1) // 8
+        raw = (int.from_bytes(data[lo:hi + 1], "little") >> (first % 8)) & ((1 << length) - 1)
+        if "sscale" in a["line"] and raw >= 1 << (length - 1):
+            raw -= 1 << length
+        if str(raw) != a["raw"]:
+            fail("step %s: bytes %d-%d hold %d, the page states %s" % (a["step"], lo, hi, raw, a["raw"]))
+        if vec["model"].get(a["key"]) != a["value"]:
+            fail("step %s: the vector's model has %s = %s, the page states %s" % (
+                a["step"], a["key"], vec["model"].get(a["key"]), a["value"]))
+
+    m = re.search(r'<pre class="hero-code"[^>]*>(.*?)</pre>', html, re.S)
+    if not m:
+        fail("no hero-code block")
+    else:
+        every = set(lines["remote-id"]) | set(lines["cot-xml"])
+        for line in unescape(m.group(1)).split("\n"):
+            if line.strip() and line not in every:
+                fail("the background line `%s` is not in the remote-id or cot-xml pack" % line)
+
+    m = re.search(r'<pre class="sig-xml">(.*?)</pre>', html, re.S)
+    out = re.sub(r"\n\s+", " ", unescape(m.group(1))) if m else ""
+    if out != pairs["remote-id>cot-xml"]["expect"]:
+        fail("the output drawn is not what goat-xf prints: %s" % out)
+    return bad
 
 
 if __name__ == "__main__":
