@@ -86,3 +86,30 @@ share_alike = false
 attribution = true
 field_of_use = []
 distribution = "public"
+
+[licences."CC-BY-3.0"]
+name = "Creative Commons Attribution 3.0 Unported"
+url = "https://creativecommons.org/licenses/by/3.0/"
+commercial = "yes"
+share_alike = false
+attribution = true
+field_of_use = []
+distribution = "public"
+
+[licences."LicenseRef-OGC-Document"]
+name = "OGC Document License Agreement (keep the copyright notice; state that modifications are not approved by OGC)"
+url = "https://www.ogc.org/about/policies/document-license-agreement/"
+commercial = "yes"
+share_alike = false
+attribution = true
+field_of_use = []
+distribution = "public"
+
+[licences."LicenseRef-OASIS-Notice"]
+name = "OASIS copyright notice (implementation works allowed with the notice included)"
+url = "https://www.oasis-open.org/policies-guidelines/ipr/"
+commercial = "yes"
+share_alike = false
+attribution = true
+field_of_use = []
+distribution = "public"

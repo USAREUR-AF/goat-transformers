@@ -27,3 +27,138 @@ SPDX-License-Identifier = "Apache-2.0"
 #   precedence = "override"
 #   SPDX-FileCopyrightText = "<year> <holder>"
 #   SPDX-License-Identifier = "<SPDX id, or LicenseRef-<name> with LICENSES/LicenseRef-<name>.txt>"
+
+# Packs and modules whose source allows less than Apache-2.0 (gt-packs licence sweep,
+# from the pack-to-licence audit of 20 Nov; evidence in each PROVENANCE.md).
+
+[[annotations]]
+path = "packs/adsb/**"
+precedence = "override"
+SPDX-FileCopyrightText = "2021 Junzi Sun (The 1090 Megahertz Riddle)"
+SPDX-License-Identifier = "CC-BY-NC-SA-4.0"
+
+[[annotations]]
+path = "model/adsb.def"
+precedence = "override"
+SPDX-FileCopyrightText = "2021 Junzi Sun (The 1090 Megahertz Riddle)"
+SPDX-License-Identifier = "CC-BY-NC-SA-4.0"
+
+[[annotations]]
+path = "packs/cap/**"
+precedence = "override"
+SPDX-FileCopyrightText = "2010 OASIS"
+SPDX-License-Identifier = "LicenseRef-OASIS-Notice"
+
+[[annotations]]
+path = "model/cap.def"
+precedence = "override"
+SPDX-FileCopyrightText = "2010 OASIS"
+SPDX-License-Identifier = "LicenseRef-OASIS-Notice"
+
+[[annotations]]
+path = "packs/kml/**"
+precedence = "override"
+SPDX-FileCopyrightText = "2007-2008 Open Geospatial Consortium"
+SPDX-License-Identifier = "LicenseRef-OGC-Document"
+
+[[annotations]]
+path = "model/kml.def"
+precedence = "override"
+SPDX-FileCopyrightText = "2007-2008 Open Geospatial Consortium"
+SPDX-License-Identifier = "LicenseRef-OGC-Document"
+
+[[annotations]]
+path = "packs/gbfs-*/**"
+precedence = "override"
+SPDX-FileCopyrightText = "MobilityData (GBFS)"
+SPDX-License-Identifier = "CC-BY-3.0"
+
+[[annotations]]
+path = "model/gbfs*.def"
+precedence = "override"
+SPDX-FileCopyrightText = "MobilityData (GBFS)"
+SPDX-License-Identifier = "CC-BY-3.0"
+
+[[annotations]]
+path = "packs/mvt/**"
+precedence = "override"
+SPDX-FileCopyrightText = "Mapbox (vector-tile-spec)"
+SPDX-License-Identifier = "CC-BY-3.0"
+
+[[annotations]]
+path = "model/mvt.def"
+precedence = "override"
+SPDX-FileCopyrightText = "Mapbox (vector-tile-spec)"
+SPDX-License-Identifier = "CC-BY-3.0"
+
+[[annotations]]
+path = "packs/mds/**"
+precedence = "override"
+SPDX-FileCopyrightText = "Open Mobility Foundation"
+SPDX-License-Identifier = "CC-BY-4.0"
+
+[[annotations]]
+path = "model/mds.def"
+precedence = "override"
+SPDX-FileCopyrightText = "Open Mobility Foundation"
+SPDX-License-Identifier = "CC-BY-4.0"
+
+[[annotations]]
+path = "packs/overture-*/**"
+precedence = "override"
+SPDX-FileCopyrightText = "Overture Maps Foundation"
+SPDX-License-Identifier = "CC-BY-4.0"
+
+[[annotations]]
+path = "model/overture*.def"
+precedence = "override"
+SPDX-FileCopyrightText = "Overture Maps Foundation"
+SPDX-License-Identifier = "CC-BY-4.0"
+
+[[annotations]]
+path = "packs/px4-ulog-*/**"
+precedence = "override"
+SPDX-FileCopyrightText = "PX4 Development Team (ULog file format document)"
+SPDX-License-Identifier = "CC-BY-4.0"
+
+[[annotations]]
+path = "model/px4ulog*.def"
+precedence = "override"
+SPDX-FileCopyrightText = "PX4 Development Team (ULog file format document)"
+SPDX-License-Identifier = "CC-BY-4.0"
+
+[[annotations]]
+path = "packs/sdm-*/**"
+precedence = "override"
+SPDX-FileCopyrightText = "FIWARE Foundation (Smart Data Models)"
+SPDX-License-Identifier = "CC-BY-4.0"
+
+[[annotations]]
+path = "model/sdm*.def"
+precedence = "override"
+SPDX-FileCopyrightText = "FIWARE Foundation (Smart Data Models)"
+SPDX-License-Identifier = "CC-BY-4.0"
+
+[[annotations]]
+path = "packs/sdm-transportation-apds-observation/**"
+precedence = "override"
+SPDX-FileCopyrightText = "2025-2026 U.S. Federal Government (in countries where recognized)"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = "model/sdmapdsobservation.def"
+precedence = "override"
+SPDX-FileCopyrightText = "2025-2026 U.S. Federal Government (in countries where recognized)"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = "packs/gpx/**"
+precedence = "override"
+SPDX-FileCopyrightText = "TopoGrafix (GPX 1.1 schema)"
+SPDX-License-Identifier = "LicenseRef-unstated"
+
+[[annotations]]
+path = "model/gpx.def"
+precedence = "override"
+SPDX-FileCopyrightText = "TopoGrafix (GPX 1.1 schema)"
+SPDX-License-Identifier = "LicenseRef-unstated"

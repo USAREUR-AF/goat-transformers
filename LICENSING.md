@@ -29,14 +29,719 @@ below, and every vector of another pack that converts from or to one of them.
 | Licence | Commercial use | Share-alike | Attribution | Field of use | Profile |
 |---|---|---|---|---|---|
 | [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0) | yes | no | yes | none | `open` |
+| [CC-BY-3.0](https://creativecommons.org/licenses/by/3.0/) | yes | no | yes | none | `open` |
+| [CC-BY-4.0](https://creativecommons.org/licenses/by/4.0/) | yes | no | yes | none | `open` |
+| [CC-BY-NC-SA-4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) | no | yes | yes | none | `everything` |
+| [LicenseRef-OASIS-Notice](https://www.oasis-open.org/policies-guidelines/ipr/) | yes | no | yes | none | `open` |
+| [LicenseRef-OGC-Document](https://www.ogc.org/about/policies/document-license-agreement/) | yes | no | yes | none | `open` |
+| LicenseRef-unstated | unknown | no | yes | none | `everything` |
 
 ## Packs outside `open`, or not under Apache-2.0
 
-None: every pack is Apache-2.0, profile `open`.
+| Pack | Format | Licence | Profile | Why |
+|---|---|---|---|---|
+| `packs/adsb` | `adsb` | CC-BY-NC-SA-4.0 | `everything` | its own licence |
+| `packs/adsb-df18` | `adsb-df18` | Apache-2.0 | `everything` | uses module adsb (CC-BY-NC-SA-4.0) |
+| `packs/cap` | `cap` | LicenseRef-OASIS-Notice | `open` | its own licence |
+| `packs/gbfs-1.0-free-bike-status` | `gbfs-1.0-free-bike-status` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-1.0-gbfs` | `gbfs-1.0-gbfs` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-1.0-station-information` | `gbfs-1.0-station-information` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-1.0-station-status` | `gbfs-1.0-station-status` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-1.0-system-alerts` | `gbfs-1.0-system-alerts` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-1.0-system-calendar` | `gbfs-1.0-system-calendar` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-1.0-system-hours` | `gbfs-1.0-system-hours` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-1.0-system-information` | `gbfs-1.0-system-information` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-1.0-system-pricing-plans` | `gbfs-1.0-system-pricing-plans` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-1.0-system-regions` | `gbfs-1.0-system-regions` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-1.1-free-bike-status` | `gbfs-1.1-free-bike-status` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-1.1-gbfs` | `gbfs-1.1-gbfs` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-1.1-gbfs-versions` | `gbfs-1.1-gbfs-versions` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-1.1-station-information` | `gbfs-1.1-station-information` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-1.1-station-status` | `gbfs-1.1-station-status` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-1.1-system-alerts` | `gbfs-1.1-system-alerts` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-1.1-system-calendar` | `gbfs-1.1-system-calendar` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-1.1-system-hours` | `gbfs-1.1-system-hours` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-1.1-system-information` | `gbfs-1.1-system-information` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-1.1-system-pricing-plans` | `gbfs-1.1-system-pricing-plans` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-1.1-system-regions` | `gbfs-1.1-system-regions` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.0-free-bike-status` | `gbfs-2.0-free-bike-status` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.0-gbfs` | `gbfs-2.0-gbfs` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.0-gbfs-versions` | `gbfs-2.0-gbfs-versions` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.0-station-information` | `gbfs-2.0-station-information` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.0-station-status` | `gbfs-2.0-station-status` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.0-system-alerts` | `gbfs-2.0-system-alerts` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.0-system-calendar` | `gbfs-2.0-system-calendar` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.0-system-hours` | `gbfs-2.0-system-hours` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.0-system-information` | `gbfs-2.0-system-information` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.0-system-pricing-plans` | `gbfs-2.0-system-pricing-plans` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.0-system-regions` | `gbfs-2.0-system-regions` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.1-free-bike-status` | `gbfs-2.1-free-bike-status` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.1-gbfs` | `gbfs-2.1-gbfs` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.1-gbfs-versions` | `gbfs-2.1-gbfs-versions` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.1-geofencing-zones` | `gbfs-2.1-geofencing-zones` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.1-station-information` | `gbfs-2.1-station-information` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.1-station-status` | `gbfs-2.1-station-status` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.1-system-alerts` | `gbfs-2.1-system-alerts` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.1-system-calendar` | `gbfs-2.1-system-calendar` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.1-system-hours` | `gbfs-2.1-system-hours` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.1-system-information` | `gbfs-2.1-system-information` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.1-system-pricing-plans` | `gbfs-2.1-system-pricing-plans` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.1-system-regions` | `gbfs-2.1-system-regions` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.1-vehicle-types` | `gbfs-2.1-vehicle-types` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.2-free-bike-status` | `gbfs-2.2-free-bike-status` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.2-gbfs` | `gbfs-2.2-gbfs` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.2-gbfs-versions` | `gbfs-2.2-gbfs-versions` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.2-geofencing-zones` | `gbfs-2.2-geofencing-zones` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.2-station-information` | `gbfs-2.2-station-information` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.2-station-status` | `gbfs-2.2-station-status` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.2-system-alerts` | `gbfs-2.2-system-alerts` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.2-system-calendar` | `gbfs-2.2-system-calendar` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.2-system-hours` | `gbfs-2.2-system-hours` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.2-system-information` | `gbfs-2.2-system-information` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.2-system-pricing-plans` | `gbfs-2.2-system-pricing-plans` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.2-system-regions` | `gbfs-2.2-system-regions` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.2-vehicle-types` | `gbfs-2.2-vehicle-types` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.3-free-bike-status` | `gbfs-2.3-free-bike-status` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.3-gbfs` | `gbfs-2.3-gbfs` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.3-gbfs-versions` | `gbfs-2.3-gbfs-versions` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.3-geofencing-zones` | `gbfs-2.3-geofencing-zones` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.3-station-information` | `gbfs-2.3-station-information` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.3-station-status` | `gbfs-2.3-station-status` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.3-system-alerts` | `gbfs-2.3-system-alerts` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.3-system-calendar` | `gbfs-2.3-system-calendar` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.3-system-hours` | `gbfs-2.3-system-hours` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.3-system-information` | `gbfs-2.3-system-information` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.3-system-pricing-plans` | `gbfs-2.3-system-pricing-plans` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.3-system-regions` | `gbfs-2.3-system-regions` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-2.3-vehicle-types` | `gbfs-2.3-vehicle-types` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-3.0-gbfs` | `gbfs-3.0-gbfs` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-3.0-gbfs-versions` | `gbfs-3.0-gbfs-versions` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-3.0-geofencing-zones` | `gbfs-3.0-geofencing-zones` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-3.0-manifest` | `gbfs-3.0-manifest` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-3.0-station-information` | `gbfs-3.0-station-information` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-3.0-station-status` | `gbfs-3.0-station-status` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-3.0-system-alerts` | `gbfs-3.0-system-alerts` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-3.0-system-information` | `gbfs-3.0-system-information` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-3.0-system-pricing-plans` | `gbfs-3.0-system-pricing-plans` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-3.0-system-regions` | `gbfs-3.0-system-regions` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-3.0-vehicle-status` | `gbfs-3.0-vehicle-status` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-3.0-vehicle-types` | `gbfs-3.0-vehicle-types` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gbfs-3.1-rc3-vehicle-availability` | `gbfs-3.1-rc3-vehicle-availability` | CC-BY-3.0 | `open` | its own licence |
+| `packs/gpx` | `gpx` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/kml` | `kml` | LicenseRef-OGC-Document | `open` | its own licence |
+| `packs/mds` | `mds` | CC-BY-4.0 | `open` | its own licence |
+| `packs/mvt` | `mvt` | CC-BY-3.0 | `open` | its own licence |
+| `packs/overture-address` | `overture-address` | CC-BY-4.0 | `open` | its own licence |
+| `packs/overture-bathymetry` | `overture-bathymetry` | CC-BY-4.0 | `open` | its own licence |
+| `packs/overture-building` | `overture-building` | CC-BY-4.0 | `open` | its own licence |
+| `packs/overture-building-part` | `overture-building-part` | CC-BY-4.0 | `open` | its own licence |
+| `packs/overture-connector` | `overture-connector` | CC-BY-4.0 | `open` | its own licence |
+| `packs/overture-division` | `overture-division` | CC-BY-4.0 | `open` | its own licence |
+| `packs/overture-division-area` | `overture-division-area` | CC-BY-4.0 | `open` | its own licence |
+| `packs/overture-division-boundary` | `overture-division-boundary` | CC-BY-4.0 | `open` | its own licence |
+| `packs/overture-infrastructure` | `overture-infrastructure` | CC-BY-4.0 | `open` | its own licence |
+| `packs/overture-land` | `overture-land` | CC-BY-4.0 | `open` | its own licence |
+| `packs/overture-land-cover` | `overture-land-cover` | CC-BY-4.0 | `open` | its own licence |
+| `packs/overture-land-use` | `overture-land-use` | CC-BY-4.0 | `open` | its own licence |
+| `packs/overture-place` | `overture-place` | CC-BY-4.0 | `open` | its own licence |
+| `packs/overture-segment` | `overture-segment` | CC-BY-4.0 | `open` | its own licence |
+| `packs/overture-water` | `overture-water` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-action-request` | `px4-ulog-action-request` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-actuator-armed` | `px4-ulog-actuator-armed` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-actuator-controls-status-0` | `px4-ulog-actuator-controls-status-0` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-actuator-controls-status-1` | `px4-ulog-actuator-controls-status-1` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-actuator-motors` | `px4-ulog-actuator-motors` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-actuator-outputs` | `px4-ulog-actuator-outputs` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-actuator-outputs-debug` | `px4-ulog-actuator-outputs-debug` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-actuator-outputs-sim` | `px4-ulog-actuator-outputs-sim` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-actuator-servos` | `px4-ulog-actuator-servos` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-actuator-servos-trim` | `px4-ulog-actuator-servos-trim` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-actuator-test` | `px4-ulog-actuator-test` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-adc-report` | `px4-ulog-adc-report` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-airspeed` | `px4-ulog-airspeed` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-airspeed-validated` | `px4-ulog-airspeed-validated` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-airspeed-wind` | `px4-ulog-airspeed-wind` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-arming-check-reply` | `px4-ulog-arming-check-reply` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-arming-check-request` | `px4-ulog-arming-check-request` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-autotune-attitude-control-status` | `px4-ulog-autotune-attitude-control-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-aux-global-position` | `px4-ulog-aux-global-position` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-battery-info` | `px4-ulog-battery-info` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-battery-status` | `px4-ulog-battery-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-button-event` | `px4-ulog-button-event` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-camera-capture` | `px4-ulog-camera-capture` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-camera-status` | `px4-ulog-camera-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-camera-trigger` | `px4-ulog-camera-trigger` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-can-interface-status` | `px4-ulog-can-interface-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-cellular-status` | `px4-ulog-cellular-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-collision-constraints` | `px4-ulog-collision-constraints` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-config-control-setpoints` | `px4-ulog-config-control-setpoints` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-config-overrides` | `px4-ulog-config-overrides` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-config-overrides-request` | `px4-ulog-config-overrides-request` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-control-allocator-status` | `px4-ulog-control-allocator-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-cpuload` | `px4-ulog-cpuload` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-dataman-request` | `px4-ulog-dataman-request` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-dataman-response` | `px4-ulog-dataman-response` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-debug-array` | `px4-ulog-debug-array` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-debug-key-value` | `px4-ulog-debug-key-value` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-debug-value` | `px4-ulog-debug-value` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-debug-vect` | `px4-ulog-debug-vect` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-differential-pressure` | `px4-ulog-differential-pressure` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-distance-sensor` | `px4-ulog-distance-sensor` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-distance-sensor-mode-change-request` | `px4-ulog-distance-sensor-mode-change-request` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-dronecan-node-status` | `px4-ulog-dronecan-node-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-ekf2-timestamps` | `px4-ulog-ekf2-timestamps` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-esc-report` | `px4-ulog-esc-report` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-esc-serial-passthru` | `px4-ulog-esc-serial-passthru` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-esc-status` | `px4-ulog-esc-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-estimator-aid-src-airspeed` | `px4-ulog-estimator-aid-src-airspeed` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-estimator-aid-src-aux-global-position` | `px4-ulog-estimator-aid-src-aux-global-position` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-estimator-aid-src-aux-vel` | `px4-ulog-estimator-aid-src-aux-vel` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-estimator-aid-src-baro-hgt` | `px4-ulog-estimator-aid-src-baro-hgt` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-estimator-aid-src-drag` | `px4-ulog-estimator-aid-src-drag` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-estimator-aid-src-ev-hgt` | `px4-ulog-estimator-aid-src-ev-hgt` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-estimator-aid-src-ev-pos` | `px4-ulog-estimator-aid-src-ev-pos` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-estimator-aid-src-ev-vel` | `px4-ulog-estimator-aid-src-ev-vel` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-estimator-aid-src-ev-yaw` | `px4-ulog-estimator-aid-src-ev-yaw` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-estimator-aid-src-fake-hgt` | `px4-ulog-estimator-aid-src-fake-hgt` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-estimator-aid-src-fake-pos` | `px4-ulog-estimator-aid-src-fake-pos` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-estimator-aid-src-gnss-hgt` | `px4-ulog-estimator-aid-src-gnss-hgt` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-estimator-aid-src-gnss-pos` | `px4-ulog-estimator-aid-src-gnss-pos` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-estimator-aid-src-gnss-vel` | `px4-ulog-estimator-aid-src-gnss-vel` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-estimator-aid-src-gnss-yaw` | `px4-ulog-estimator-aid-src-gnss-yaw` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-estimator-aid-src-gravity` | `px4-ulog-estimator-aid-src-gravity` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-estimator-aid-src-mag` | `px4-ulog-estimator-aid-src-mag` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-estimator-aid-src-optical-flow` | `px4-ulog-estimator-aid-src-optical-flow` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-estimator-aid-src-rng-hgt` | `px4-ulog-estimator-aid-src-rng-hgt` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-estimator-aid-src-sideslip` | `px4-ulog-estimator-aid-src-sideslip` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-estimator-attitude` | `px4-ulog-estimator-attitude` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-estimator-baro-bias` | `px4-ulog-estimator-baro-bias` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-estimator-bias3d` | `px4-ulog-estimator-bias3d` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-estimator-ev-pos-bias` | `px4-ulog-estimator-ev-pos-bias` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-estimator-event-flags` | `px4-ulog-estimator-event-flags` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-estimator-global-position` | `px4-ulog-estimator-global-position` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-estimator-gnss-hgt-bias` | `px4-ulog-estimator-gnss-hgt-bias` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-estimator-gps-status` | `px4-ulog-estimator-gps-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-estimator-innovation-test-ratios` | `px4-ulog-estimator-innovation-test-ratios` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-estimator-innovation-variances` | `px4-ulog-estimator-innovation-variances` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-estimator-innovations` | `px4-ulog-estimator-innovations` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-estimator-local-position` | `px4-ulog-estimator-local-position` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-estimator-odometry` | `px4-ulog-estimator-odometry` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-estimator-optical-flow-vel` | `px4-ulog-estimator-optical-flow-vel` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-estimator-selector-status` | `px4-ulog-estimator-selector-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-estimator-sensor-bias` | `px4-ulog-estimator-sensor-bias` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-estimator-states` | `px4-ulog-estimator-states` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-estimator-status` | `px4-ulog-estimator-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-estimator-status-flags` | `px4-ulog-estimator-status-flags` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-estimator-wind` | `px4-ulog-estimator-wind` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-event` | `px4-ulog-event` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-external-ins-attitude` | `px4-ulog-external-ins-attitude` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-external-ins-global-position` | `px4-ulog-external-ins-global-position` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-external-ins-local-position` | `px4-ulog-external-ins-local-position` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-failsafe-flags` | `px4-ulog-failsafe-flags` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-failure-detector-status` | `px4-ulog-failure-detector-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-figure-eight-status` | `px4-ulog-figure-eight-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-fixed-wing-lateral-guidance-status` | `px4-ulog-fixed-wing-lateral-guidance-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-fixed-wing-lateral-setpoint` | `px4-ulog-fixed-wing-lateral-setpoint` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-fixed-wing-lateral-status` | `px4-ulog-fixed-wing-lateral-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-fixed-wing-longitudinal-setpoint` | `px4-ulog-fixed-wing-longitudinal-setpoint` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-fixed-wing-runway-control` | `px4-ulog-fixed-wing-runway-control` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-flaps-setpoint` | `px4-ulog-flaps-setpoint` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-flight-phase-estimation` | `px4-ulog-flight-phase-estimation` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-follow-target` | `px4-ulog-follow-target` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-follow-target-estimator` | `px4-ulog-follow-target-estimator` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-follow-target-status` | `px4-ulog-follow-target-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-fuel-tank-status` | `px4-ulog-fuel-tank-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-fw-virtual-attitude-setpoint` | `px4-ulog-fw-virtual-attitude-setpoint` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-generator-status` | `px4-ulog-generator-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-geofence-result` | `px4-ulog-geofence-result` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-geofence-status` | `px4-ulog-geofence-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-gimbal-controls` | `px4-ulog-gimbal-controls` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-gimbal-device-attitude-status` | `px4-ulog-gimbal-device-attitude-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-gimbal-device-information` | `px4-ulog-gimbal-device-information` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-gimbal-device-set-attitude` | `px4-ulog-gimbal-device-set-attitude` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-gimbal-manager-information` | `px4-ulog-gimbal-manager-information` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-gimbal-manager-set-attitude` | `px4-ulog-gimbal-manager-set-attitude` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-gimbal-manager-set-manual-control` | `px4-ulog-gimbal-manager-set-manual-control` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-gimbal-manager-status` | `px4-ulog-gimbal-manager-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-gimbal-v1-command` | `px4-ulog-gimbal-v1-command` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-goto-setpoint` | `px4-ulog-goto-setpoint` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-gpio-config` | `px4-ulog-gpio-config` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-gpio-in` | `px4-ulog-gpio-in` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-gpio-out` | `px4-ulog-gpio-out` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-gpio-request` | `px4-ulog-gpio-request` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-gps-dump` | `px4-ulog-gps-dump` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-gps-inject-data` | `px4-ulog-gps-inject-data` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-gripper` | `px4-ulog-gripper` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-health-report` | `px4-ulog-health-report` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-heater-status` | `px4-ulog-heater-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-home-position` | `px4-ulog-home-position` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-hover-thrust-estimate` | `px4-ulog-hover-thrust-estimate` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-input-rc` | `px4-ulog-input-rc` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-internal-combustion-engine-control` | `px4-ulog-internal-combustion-engine-control` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-internal-combustion-engine-status` | `px4-ulog-internal-combustion-engine-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-iridiumsbd-status` | `px4-ulog-iridiumsbd-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-irlock-report` | `px4-ulog-irlock-report` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-landing-gear` | `px4-ulog-landing-gear` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-landing-gear-wheel` | `px4-ulog-landing-gear-wheel` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-landing-target-innovations` | `px4-ulog-landing-target-innovations` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-landing-target-pose` | `px4-ulog-landing-target-pose` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-lateral-control-configuration` | `px4-ulog-lateral-control-configuration` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-launch-detection-status` | `px4-ulog-launch-detection-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-led-control` | `px4-ulog-led-control` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-log-message` | `px4-ulog-log-message` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-logger-status` | `px4-ulog-logger-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-longitudinal-control-configuration` | `px4-ulog-longitudinal-control-configuration` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-mag-worker-data` | `px4-ulog-mag-worker-data` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-magnetometer-bias-estimate` | `px4-ulog-magnetometer-bias-estimate` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-manual-control-input` | `px4-ulog-manual-control-input` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-manual-control-setpoint` | `px4-ulog-manual-control-setpoint` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-manual-control-switches` | `px4-ulog-manual-control-switches` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-mavlink-log` | `px4-ulog-mavlink-log` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-mavlink-tunnel` | `px4-ulog-mavlink-tunnel` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-mc-virtual-attitude-setpoint` | `px4-ulog-mc-virtual-attitude-setpoint` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-message-format-request` | `px4-ulog-message-format-request` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-message-format-response` | `px4-ulog-message-format-response` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-mission` | `px4-ulog-mission` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-mission-result` | `px4-ulog-mission-result` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-mode-completed` | `px4-ulog-mode-completed` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-mount-orientation` | `px4-ulog-mount-orientation` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-navigator-mission-item` | `px4-ulog-navigator-mission-item` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-navigator-status` | `px4-ulog-navigator-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-neural-control` | `px4-ulog-neural-control` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-obstacle-distance` | `px4-ulog-obstacle-distance` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-obstacle-distance-fused` | `px4-ulog-obstacle-distance-fused` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-offboard-control-mode` | `px4-ulog-offboard-control-mode` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-onboard-computer-status` | `px4-ulog-onboard-computer-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-open-drone-id-arm-status` | `px4-ulog-open-drone-id-arm-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-open-drone-id-operator-id` | `px4-ulog-open-drone-id-operator-id` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-open-drone-id-self-id` | `px4-ulog-open-drone-id-self-id` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-open-drone-id-system` | `px4-ulog-open-drone-id-system` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-orb-multitest` | `px4-ulog-orb-multitest` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-orb-test` | `px4-ulog-orb-test` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-orb-test-large` | `px4-ulog-orb-test-large` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-orb-test-medium` | `px4-ulog-orb-test-medium` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-orb-test-medium-multi` | `px4-ulog-orb-test-medium-multi` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-orb-test-medium-queue` | `px4-ulog-orb-test-medium-queue` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-orb-test-medium-queue-poll` | `px4-ulog-orb-test-medium-queue-poll` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-orb-test-medium-wrap-around` | `px4-ulog-orb-test-medium-wrap-around` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-orbit-status` | `px4-ulog-orbit-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-parameter-primary-set-value-request` | `px4-ulog-parameter-primary-set-value-request` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-parameter-primary-set-value-response` | `px4-ulog-parameter-primary-set-value-response` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-parameter-remote-set-value-request` | `px4-ulog-parameter-remote-set-value-request` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-parameter-remote-set-value-response` | `px4-ulog-parameter-remote-set-value-response` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-parameter-reset-request` | `px4-ulog-parameter-reset-request` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-parameter-set-used-request` | `px4-ulog-parameter-set-used-request` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-parameter-set-value-request` | `px4-ulog-parameter-set-value-request` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-parameter-set-value-response` | `px4-ulog-parameter-set-value-response` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-parameter-update` | `px4-ulog-parameter-update` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-ping` | `px4-ulog-ping` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-position-controller-landing-status` | `px4-ulog-position-controller-landing-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-position-controller-status` | `px4-ulog-position-controller-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-position-setpoint` | `px4-ulog-position-setpoint` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-position-setpoint-triplet` | `px4-ulog-position-setpoint-triplet` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-power-button-state` | `px4-ulog-power-button-state` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-power-monitor` | `px4-ulog-power-monitor` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-pps-capture` | `px4-ulog-pps-capture` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-pure-pursuit-status` | `px4-ulog-pure-pursuit-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-pwm-input` | `px4-ulog-pwm-input` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-px4io-status` | `px4-ulog-px4io-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-qshell-req` | `px4-ulog-qshell-req` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-qshell-retval` | `px4-ulog-qshell-retval` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-radio-status` | `px4-ulog-radio-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-rate-ctrl-status` | `px4-ulog-rate-ctrl-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-rc-channels` | `px4-ulog-rc-channels` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-rc-parameter-map` | `px4-ulog-rc-parameter-map` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-register-ext-component-reply` | `px4-ulog-register-ext-component-reply` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-register-ext-component-request` | `px4-ulog-register-ext-component-request` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-rover-attitude-setpoint` | `px4-ulog-rover-attitude-setpoint` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-rover-attitude-status` | `px4-ulog-rover-attitude-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-rover-position-setpoint` | `px4-ulog-rover-position-setpoint` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-rover-rate-setpoint` | `px4-ulog-rover-rate-setpoint` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-rover-rate-status` | `px4-ulog-rover-rate-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-rover-speed-setpoint` | `px4-ulog-rover-speed-setpoint` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-rover-speed-status` | `px4-ulog-rover-speed-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-rover-steering-setpoint` | `px4-ulog-rover-steering-setpoint` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-rover-throttle-setpoint` | `px4-ulog-rover-throttle-setpoint` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-rpm` | `px4-ulog-rpm` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-rtl-status` | `px4-ulog-rtl-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-rtl-time-estimate` | `px4-ulog-rtl-time-estimate` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-safety-button` | `px4-ulog-safety-button` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-satellite-info` | `px4-ulog-satellite-info` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-sensor-accel` | `px4-ulog-sensor-accel` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-sensor-accel-fifo` | `px4-ulog-sensor-accel-fifo` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-sensor-airflow` | `px4-ulog-sensor-airflow` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-sensor-baro` | `px4-ulog-sensor-baro` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-sensor-combined` | `px4-ulog-sensor-combined` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-sensor-correction` | `px4-ulog-sensor-correction` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-sensor-gnss-relative` | `px4-ulog-sensor-gnss-relative` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-sensor-gnss-status` | `px4-ulog-sensor-gnss-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-sensor-gps` | `px4-ulog-sensor-gps` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-sensor-gyro` | `px4-ulog-sensor-gyro` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-sensor-gyro-fft` | `px4-ulog-sensor-gyro-fft` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-sensor-gyro-fifo` | `px4-ulog-sensor-gyro-fifo` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-sensor-hygrometer` | `px4-ulog-sensor-hygrometer` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-sensor-mag` | `px4-ulog-sensor-mag` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-sensor-optical-flow` | `px4-ulog-sensor-optical-flow` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-sensor-preflight-mag` | `px4-ulog-sensor-preflight-mag` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-sensor-selection` | `px4-ulog-sensor-selection` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-sensor-uwb` | `px4-ulog-sensor-uwb` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-sensors-status-baro` | `px4-ulog-sensors-status-baro` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-sensors-status-imu` | `px4-ulog-sensors-status-imu` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-sensors-status-mag` | `px4-ulog-sensors-status-mag` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-spoilers-setpoint` | `px4-ulog-spoilers-setpoint` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-system-power` | `px4-ulog-system-power` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-takeoff-status` | `px4-ulog-takeoff-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-task-stack-info` | `px4-ulog-task-stack-info` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-tecs-status` | `px4-ulog-tecs-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-telemetry-status` | `px4-ulog-telemetry-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-tiltrotor-extra-controls` | `px4-ulog-tiltrotor-extra-controls` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-timesync-status` | `px4-ulog-timesync-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-trajectory-setpoint` | `px4-ulog-trajectory-setpoint` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-trajectory-setpoint6dof` | `px4-ulog-trajectory-setpoint6dof` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-transponder-report` | `px4-ulog-transponder-report` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-tune-control` | `px4-ulog-tune-control` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-uavcan-parameter-request` | `px4-ulog-uavcan-parameter-request` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-uavcan-parameter-value` | `px4-ulog-uavcan-parameter-value` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-ulog-stream` | `px4-ulog-ulog-stream` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-ulog-stream-ack` | `px4-ulog-ulog-stream-ack` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-unregister-ext-component` | `px4-ulog-unregister-ext-component` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-vehicle-acceleration` | `px4-ulog-vehicle-acceleration` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-vehicle-air-data` | `px4-ulog-vehicle-air-data` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-vehicle-angular-acceleration-setpoint` | `px4-ulog-vehicle-angular-acceleration-setpoint` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-vehicle-angular-velocity` | `px4-ulog-vehicle-angular-velocity` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-vehicle-angular-velocity-groundtruth` | `px4-ulog-vehicle-angular-velocity-groundtruth` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-vehicle-attitude` | `px4-ulog-vehicle-attitude` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-vehicle-attitude-groundtruth` | `px4-ulog-vehicle-attitude-groundtruth` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-vehicle-attitude-setpoint` | `px4-ulog-vehicle-attitude-setpoint` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-vehicle-command` | `px4-ulog-vehicle-command` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-vehicle-command-ack` | `px4-ulog-vehicle-command-ack` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-vehicle-command-mode-executor` | `px4-ulog-vehicle-command-mode-executor` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-vehicle-constraints` | `px4-ulog-vehicle-constraints` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-vehicle-control-mode` | `px4-ulog-vehicle-control-mode` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-vehicle-global-position` | `px4-ulog-vehicle-global-position` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-vehicle-global-position-groundtruth` | `px4-ulog-vehicle-global-position-groundtruth` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-vehicle-gps-position` | `px4-ulog-vehicle-gps-position` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-vehicle-imu` | `px4-ulog-vehicle-imu` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-vehicle-imu-status` | `px4-ulog-vehicle-imu-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-vehicle-land-detected` | `px4-ulog-vehicle-land-detected` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-vehicle-local-position` | `px4-ulog-vehicle-local-position` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-vehicle-local-position-groundtruth` | `px4-ulog-vehicle-local-position-groundtruth` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-vehicle-local-position-setpoint` | `px4-ulog-vehicle-local-position-setpoint` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-vehicle-magnetometer` | `px4-ulog-vehicle-magnetometer` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-vehicle-mocap-odometry` | `px4-ulog-vehicle-mocap-odometry` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-vehicle-odometry` | `px4-ulog-vehicle-odometry` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-vehicle-optical-flow` | `px4-ulog-vehicle-optical-flow` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-vehicle-optical-flow-vel` | `px4-ulog-vehicle-optical-flow-vel` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-vehicle-rates-setpoint` | `px4-ulog-vehicle-rates-setpoint` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-vehicle-roi` | `px4-ulog-vehicle-roi` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-vehicle-status` | `px4-ulog-vehicle-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-vehicle-thrust-setpoint` | `px4-ulog-vehicle-thrust-setpoint` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-vehicle-thrust-setpoint-virtual-fw` | `px4-ulog-vehicle-thrust-setpoint-virtual-fw` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-vehicle-thrust-setpoint-virtual-mc` | `px4-ulog-vehicle-thrust-setpoint-virtual-mc` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-vehicle-torque-setpoint` | `px4-ulog-vehicle-torque-setpoint` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-vehicle-torque-setpoint-virtual-fw` | `px4-ulog-vehicle-torque-setpoint-virtual-fw` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-vehicle-torque-setpoint-virtual-mc` | `px4-ulog-vehicle-torque-setpoint-virtual-mc` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-vehicle-visual-odometry` | `px4-ulog-vehicle-visual-odometry` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-velocity-limits` | `px4-ulog-velocity-limits` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-vtol-vehicle-status` | `px4-ulog-vtol-vehicle-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-wheel-encoders` | `px4-ulog-wheel-encoders` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-wind` | `px4-ulog-wind` | CC-BY-4.0 | `open` | its own licence |
+| `packs/px4-ulog-yaw-estimator-status` | `px4-ulog-yaw-estimator-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-aeronautics-aircraft` | `sdm-aeronautics-aircraft` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-aeronautics-aircraft-model` | `sdm-aeronautics-aircraft-model` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-aeronautics-airline` | `sdm-aeronautics-airline` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-aeronautics-airport` | `sdm-aeronautics-airport` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-aeronautics-flight` | `sdm-aeronautics-flight` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-aeronautics-flight-notification` | `sdm-aeronautics-flight-notification` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-device-camera` | `sdm-device-camera` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-device-device` | `sdm-device-device` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-device-device-measurement` | `sdm-device-device-measurement` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-device-device-model` | `sdm-device-device-model` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-device-device-operation` | `sdm-device-device-operation` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-device-modbus` | `sdm-device-modbus` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-device-polar-h10` | `sdm-device-polar-h10` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-device-privacy-object` | `sdm-device-privacy-object` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-device-sense-hat` | `sdm-device-sense-hat` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-device-smart-metering-observation` | `sdm-device-smart-metering-observation` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-device-uwb-anchor` | `sdm-device-uwb-anchor` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-environment-aero-allergen-observed` | `sdm-environment-aero-allergen-observed` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-environment-air-quality-forecast` | `sdm-environment-air-quality-forecast` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-environment-air-quality-monitoring` | `sdm-environment-air-quality-monitoring` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-environment-air-quality-observed` | `sdm-environment-air-quality-observed` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-environment-carbon-footprint` | `sdm-environment-carbon-footprint` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-environment-electro-magnetic-observed` | `sdm-environment-electro-magnetic-observed` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-environment-environment-observed` | `sdm-environment-environment-observed` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-environment-flood-monitoring` | `sdm-environment-flood-monitoring` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-environment-indoor-environment-observed` | `sdm-environment-indoor-environment-observed` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-environment-mosquito-density` | `sdm-environment-mosquito-density` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-environment-night-sky-quality` | `sdm-environment-night-sky-quality` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-environment-noise-level-observed` | `sdm-environment-noise-level-observed` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-environment-noise-pollution` | `sdm-environment-noise-pollution` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-environment-noise-pollution-forecast` | `sdm-environment-noise-pollution-forecast` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-environment-phreatic-observed` | `sdm-environment-phreatic-observed` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-environment-rain-fall-radar-observed` | `sdm-environment-rain-fall-radar-observed` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-environment-traffic-environment-impact` | `sdm-environment-traffic-environment-impact` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-environment-traffic-environment-impact-forecast` | `sdm-environment-traffic-environment-impact-forecast` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-environment-water-observed` | `sdm-environment-water-observed` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-marinetransport-berth` | `sdm-marinetransport-berth` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-marinetransport-booking` | `sdm-marinetransport-booking` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-marinetransport-edi-codeco` | `sdm-marinetransport-edi-codeco` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-marinetransport-port` | `sdm-marinetransport-port` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-marinetransport-port-authority` | `sdm-marinetransport-port-authority` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-marinetransport-port-call` | `sdm-marinetransport-port-call` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-marinetransport-vessel` | `sdm-marinetransport-vessel` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-pointofinterest-beach` | `sdm-pointofinterest-beach` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-pointofinterest-museum` | `sdm-pointofinterest-museum` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-pointofinterest-point-of-interest` | `sdm-pointofinterest-point-of-interest` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-pointofinterest-store` | `sdm-pointofinterest-store` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-transportation-anonymous-commuter-id` | `sdm-transportation-anonymous-commuter-id` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-transportation-anpr-flow-observed` | `sdm-transportation-anpr-flow-observed` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-transportation-bike-hire-docking-station` | `sdm-transportation-bike-hire-docking-station` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-transportation-bike-lane` | `sdm-transportation-bike-lane` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-transportation-city-work` | `sdm-transportation-city-work` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-transportation-crowd-flow-observed` | `sdm-transportation-crowd-flow-observed` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-transportation-ev-charging-station` | `sdm-transportation-ev-charging-station` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-transportation-fare-collection-system` | `sdm-transportation-fare-collection-system` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-transportation-fleet-vehicle` | `sdm-transportation-fleet-vehicle` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-transportation-fleet-vehicle-operation` | `sdm-transportation-fleet-vehicle-operation` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-transportation-fleet-vehicle-status` | `sdm-transportation-fleet-vehicle-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-transportation-item-flow-observed` | `sdm-transportation-item-flow-observed` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-transportation-restricted-traffic-area` | `sdm-transportation-restricted-traffic-area` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-transportation-restriction-exception` | `sdm-transportation-restriction-exception` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-transportation-road` | `sdm-transportation-road` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-transportation-road-accident` | `sdm-transportation-road-accident` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-transportation-road-segment` | `sdm-transportation-road-segment` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-transportation-special-restriction` | `sdm-transportation-special-restriction` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-transportation-traffic-flow-observed` | `sdm-transportation-traffic-flow-observed` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-transportation-traffic-violation` | `sdm-transportation-traffic-violation` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-transportation-transport-station` | `sdm-transportation-transport-station` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-transportation-vehicle` | `sdm-transportation-vehicle` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-transportation-vehicle-fault` | `sdm-transportation-vehicle-fault` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-transportation-vehicle-model` | `sdm-transportation-vehicle-model` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-urbanmobility-arrival-estimation` | `sdm-urbanmobility-arrival-estimation` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-urbanmobility-gtfs-access-point` | `sdm-urbanmobility-gtfs-access-point` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-urbanmobility-gtfs-agency` | `sdm-urbanmobility-gtfs-agency` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-urbanmobility-gtfs-calendar-date-rule` | `sdm-urbanmobility-gtfs-calendar-date-rule` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-urbanmobility-gtfs-calendar-rule` | `sdm-urbanmobility-gtfs-calendar-rule` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-urbanmobility-gtfs-frequency` | `sdm-urbanmobility-gtfs-frequency` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-urbanmobility-gtfs-route` | `sdm-urbanmobility-gtfs-route` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-urbanmobility-gtfs-service` | `sdm-urbanmobility-gtfs-service` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-urbanmobility-gtfs-shape` | `sdm-urbanmobility-gtfs-shape` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-urbanmobility-gtfs-station` | `sdm-urbanmobility-gtfs-station` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-urbanmobility-gtfs-stop` | `sdm-urbanmobility-gtfs-stop` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-urbanmobility-gtfs-stop-time` | `sdm-urbanmobility-gtfs-stop-time` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-urbanmobility-gtfs-transfer-rule` | `sdm-urbanmobility-gtfs-transfer-rule` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-urbanmobility-gtfs-trip` | `sdm-urbanmobility-gtfs-trip` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-urbanmobility-public-transport-route` | `sdm-urbanmobility-public-transport-route` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-urbanmobility-public-transport-stop` | `sdm-urbanmobility-public-transport-stop` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-urbanmobility-transit-management` | `sdm-urbanmobility-transit-management` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-weather-sea-conditions` | `sdm-weather-sea-conditions` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-weather-weather-alert` | `sdm-weather-weather-alert` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-weather-weather-forecast` | `sdm-weather-weather-forecast` | CC-BY-4.0 | `open` | its own licence |
+| `packs/sdm-weather-weather-observed` | `sdm-weather-weather-observed` | CC-BY-4.0 | `open` | its own licence |
 
 ## Model modules outside `open`, or not under Apache-2.0
 
-None.
+| Module | Licence | Profile | Why |
+|---|---|---|---|
+| `model/adsb.def` | CC-BY-NC-SA-4.0 | `everything` | its own licence |
+| `model/cap.def` | LicenseRef-OASIS-Notice | `open` | its own licence |
+| `model/gbfs10freebikestatus.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs10gbfs.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs10stationinformation.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs10stationstatus.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs10systemalerts.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs10systemcalendar.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs10systemhours.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs10systeminformation.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs10systempricingplans.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs10systemregions.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs11freebikestatus.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs11gbfs.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs11gbfsversions.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs11stationinformation.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs11stationstatus.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs11systemalerts.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs11systemcalendar.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs11systemhours.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs11systeminformation.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs11systempricingplans.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs11systemregions.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs20freebikestatus.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs20gbfs.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs20gbfsversions.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs20stationinformation.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs20stationstatus.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs20systemalerts.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs20systemcalendar.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs20systemhours.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs20systeminformation.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs20systempricingplans.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs20systemregions.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs21freebikestatus.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs21gbfs.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs21gbfsversions.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs21geofencingzones.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs21stationinformation.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs21stationstatus.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs21systemalerts.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs21systemcalendar.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs21systemhours.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs21systeminformation.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs21systempricingplans.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs21systemregions.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs21vehicletypes.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs22freebikestatus.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs22gbfs.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs22gbfsversions.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs22geofencingzones.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs22stationinformation.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs22stationstatus.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs22systemalerts.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs22systemcalendar.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs22systemhours.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs22systeminformation.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs22systempricingplans.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs22systemregions.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs22vehicletypes.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs23freebikestatus.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs23gbfs.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs23gbfsversions.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs23geofencingzones.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs23stationinformation.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs23stationstatus.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs23systemalerts.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs23systemcalendar.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs23systemhours.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs23systeminformation.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs23systempricingplans.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs23systemregions.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs23vehicletypes.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs30gbfs.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs30gbfsversions.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs30geofencingzones.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs30manifest.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs30stationinformation.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs30stationstatus.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs30systemalerts.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs30systeminformation.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs30systempricingplans.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs30systemregions.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs30vehiclestatus.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs30vehicletypes.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gbfs31rc3vehicleavailability.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/gpx.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/kml.def` | LicenseRef-OGC-Document | `open` | its own licence |
+| `model/mds.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/mvt.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/overtureaddress.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/overturebathymetry.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/overturebuilding.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/overturebuildingpart.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/overtureconnector.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/overturedivision.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/overturedivisionarea.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/overturedivisionboundary.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/overtureinfrastructure.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/overtureland.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/overturelandcover.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/overturelanduse.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/overtureplace.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/overturesegment.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/overturewater.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/px4ulog.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmaeroallergenobserved.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmaircraft.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmaircraftmodel.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmairline.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmairport.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmairqualityforecast.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmairqualitymonitoring.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmairqualityobserved.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmanonymouscommuterid.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmanprflowobserved.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmarrivalestimation.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmbeach.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmberth.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmbikehiredockingstation.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmbikelane.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmbooking.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmcamera.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmcarbonfootprint.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmcitywork.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmcrowdflowobserved.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmdevice.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmdevicemeasurement.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmdevicemodel.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmdeviceoperation.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmedicodeco.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmelectromagneticobserved.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmenvironmentobserved.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmevchargingstation.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmfarecollectionsystem.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmfleetvehicle.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmfleetvehicleoperation.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmfleetvehiclestatus.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmflight.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmflightnotification.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmfloodmonitoring.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmgtfsaccesspoint.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmgtfsagency.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmgtfscalendardaterule.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmgtfscalendarrule.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmgtfsfrequency.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmgtfsroute.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmgtfsservice.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmgtfsshape.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmgtfsstation.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmgtfsstop.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmgtfsstoptime.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmgtfstransferrule.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmgtfstrip.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmindoorenvironmentobserved.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmitemflowobserved.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmmodbus.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmmosquitodensity.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmmuseum.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmnightskyquality.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmnoiselevelobserved.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmnoisepollution.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmnoisepollutionforecast.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmphreaticobserved.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmpointofinterest.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmpolarh10.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmport.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmportauthority.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmportcall.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmprivacyobject.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmpublictransportroute.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmpublictransportstop.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmrainfallradarobserved.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmrestrictedtrafficarea.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmrestrictionexception.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmroad.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmroadaccident.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmroadsegment.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmseaconditions.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmsensehat.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmsmartmeteringobservation.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmspecialrestriction.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmstore.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmtrafficenvironmentimpact.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmtrafficenvironmentimpactforecast.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmtrafficflowobserved.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmtrafficviolation.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmtransitmanagement.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmtransportstation.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmuwbanchor.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmvehicle.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmvehiclefault.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmvehiclemodel.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmvessel.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmwaterobserved.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmweatheralert.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmweatherforecast.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/sdmweatherobserved.def` | CC-BY-4.0 | `open` | its own licence |
 
 Every pack and module not listed here is Apache-2.0, profile `open`.
 [NOTICE](NOTICE) carries the attribution each licence asks for.

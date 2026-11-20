@@ -1,0 +1,13 @@
+LicenseRef-unstated
+
+The source from which this pack's layout was taken states no licence: it has
+no licence file, its files carry no licence or copyright notice that grants
+terms, and the hosting service's metadata names none. Each pack's
+PROVENANCE.md states where this was checked.
+
+No licence is granted or implied for the source by this repository. This
+repository's own text in the pack (its restatement of field names, numbers
+and types, its notes and its vectors) is offered under the repository's
+licence; whether a use of the format's layout needs the permission of the
+source's owner is not settled. Treat the commercial use of a pack with this
+label as unknown until the owner states terms.
