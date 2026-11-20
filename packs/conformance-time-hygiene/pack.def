@@ -1,0 +1,17 @@
+# Conformance probe pack for the time-quality keys of core (engine-spec 0.32):
+# both axes of goat's time hygiene and the attestation. Public. Synthetic. No
+# line writes a value the entity does not hold: no default, no sentinel
+# (tools/time-quality-guard.py).
+format  conformance-time-hygiene
+version 0.32.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+wire    json
+field   time_error_ms       time_error_ms       float
+field   time_state          time_state          string
+field   time_utc_state      time_utc_state      string
+field   time_utc_error_ms   time_utc_error_ms   float
+field   time_anchor         time_anchor         string
+field   time_anchor_age_ms  time_anchor_age_ms  int
+field   time_attested       time_attested       int
+field   time_attestation    time_attestation    string

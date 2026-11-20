@@ -1,0 +1,22 @@
+{
+  "name": "only-the-coherence-axis",
+  "from": "conformance-time-hygiene",
+  "to": "conformance-time-hygiene",
+  "input": "{\"time_error_ms\":12.25,\"time_state\":\"drifting\"}",
+  "context": {},
+  "expect": "{\"time_error_ms\":12.25,\"time_state\":\"drifting\"}",
+  "model": {
+    "@complete": true,
+    "time_error_ms": "12.25",
+    "time_state": "drifting",
+    "@absent": [
+      "time_utc_state",
+      "time_utc_error_ms",
+      "time_anchor",
+      "time_anchor_age_ms",
+      "time_attested",
+      "time_attestation"
+    ]
+  },
+  "reference": "spec 0.32: a source that states only the coherence axis (core 0.2.0) keeps it, and the UTC axis stays absent"
+}

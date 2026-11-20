@@ -4363,3 +4363,124 @@ fixed and sequential layouts.
     `absent` only). So `field … uint stop 0` followed by a line `bogus` is
     `unknown-directive`, and `field … chars:ascii8 stop` followed by `bogus`
     is `bad-directive`.
+
+---
+
+# Version 0.32: time hygiene in core
+
+A change to `core`: it took the merge slot, carries ADR 0005 ("Time hygiene in
+core, on two axes, never invented"), and every consumer was re-measured on its
+branch before merge (AGENTS.md rule 9).
+
+Status: Written. `core` 0.3.0 gains five keys for the second axis of goat's time
+hygiene and for attestation, beside `time_error_ms` and `time_state` (core
+0.2.0). No engine changes: the keys are ordinary model keys, and the one rule
+below is checked in CI by `tools/time-quality-guard.py`, not by the engines.
+
+## The two axes
+
+goatcore ADR 1037 (`docs/adr/1037-fabric-internal-time-synchronization-first.md`):
+
+- line 34: "**Internal coherence** — is this node locked to the fabric ensemble
+  within a bounded synchronization error?" Core 0.2.0 carries it:
+  `time_error_ms` (the coherence error bound) and `time_state` (`coherent`,
+  `drifting`, `free-running`).
+- line 35: "**UTC confidence** — how well is the ensemble anchored to true UTC,
+  and how fresh is the last anchor?" This version adds it.
+- line 37: "A node can be **internally-coherent but UTC-unknown** — the correct
+  and common state for denied-edge operation — and that must read as *fully
+  healthy for fabric ordering*, degraded only for UTC-bound operations."
+
+In the model that state is `time_state = coherent` with `time_utc_state =
+unknown`, and it is a normal state: no key of one axis constrains a key of the
+other.
+
+## The keys
+
+`core` 0.3.0 adds, after `time_state`:
+
+| Key | Type | Unit | Values / meaning |
+|---|---|---|---|
+| `time_utc_state` | string | - | `confident` or `unknown` |
+| `time_utc_error_ms` | float | ms | one-sigma uncertainty of the offset from UTC, 0 or more |
+| `time_anchor` | string | - | `gnss`, `peer_nts`, `wan_nts`, `orphan` or `none` |
+| `time_anchor_age_ms` | int | ms | time from the last external anchor to the report's `time_ms`, 0 or more |
+| `time_attested` | int | - | 1: a signed attestation backs the time quality; 0: the source states it is not attested |
+| `time_attestation` | string | - | `ntp-attest-v1:<valid_until_ms>:<host_id>` |
+
+Where the names come from (goatcore, verbatim):
+
+| Key | Source |
+|---|---|
+| `time_utc_state` | `docs/design/time-hygiene-trusted-time.md` line 242 `UT -->|fresh anchor| G2["🟢 UTC-confident"]` and line 243 `UT -->|anchor stale| A2["🟡 UTC-unknown<br/>(still 🟢 for ordering)"]`: the two labels, lowercased, the axis name dropped. goatcore states no enum. A UTC confidence that is decaying ("UTC-confidence decays honestly", line 158) is `confident` with a growing `time_utc_error_ms` and `time_anchor_age_ms`, until the source calls it unknown. |
+| `time_utc_error_ms` | `docs/design/time-quality-attestation.md` line 55: "`sigma_us` \| uint64 \| Best-case 1σ uncertainty in microseconds at this emission's timestamp" (the design document of goatcore ADR 0514), here in milliseconds |
+| `time_anchor` | `ops/time-hygiene/internal/state/state.go` lines 36-40: `SourceGNSS    SelectedSource = "gnss"`, `SourcePeerNTS SelectedSource = "peer_nts"`, `SourceWanNTS  SelectedSource = "wan_nts"`, `SourceOrphan  SelectedSource = "orphan"`, `SourceNone    SelectedSource = "none"`; JSON tag `selected_source`, line 62 |
+| `time_anchor_age_ms` | `docs/design/time-quality-attestation.md` line 57: "`seconds_since_external_lock` \| uint64 \| Convenience: monotonic seconds since `last_external_lock_at`", here in milliseconds |
+| `time_attested` | `crates/goat-cli/src/health_wire.rs` line 202: `pub attested: bool,`; lines 177-178: "color is the 5-state honesty signal, attested=false reads idle (never a false green)." |
+| `time_attestation` | `ops/time-hygiene/internal/attest/attest.go` line 29: `const Alg = "ntp-attest-v1"`; signed fields `host_id` (line 37) and `valid_until` (line 44) |
+
+### Meanings settled
+
+1. **`time_anchor` and the per-emission envelope.** A source that states the
+   envelope's `source` (time-quality-attestation.md line 54: `gnss_locked` /
+   `nts_verified` / `chrony_steered` / `peer_attested` / `self_clocking`) maps it:
+   `gnss_locked` → `gnss`, `nts_verified` → `wan_nts`, `peer_attested` →
+   `peer_nts`, `self_clocking` → `orphan`; `chrony_steered` names no anchor and
+   leaves `time_anchor` absent.
+2. **External anchors** are `gnss`, `wan_nts` and `peer_nts`. `time_anchor_age_ms`
+   is the age of the last of those, measured to the report's `time_ms`; with
+   `time_anchor` `orphan` or `none` it is absent unless the source states it.
+3. **`time_attested` = 0** only when the source states "not attested"; a source
+   that says nothing leaves it absent (shared-model.md, flags). 1 without a
+   `time_attestation`, and an attestation whose `valid_until_ms` is before the
+   report's `time_ms`, are both carried as stated; judging them is the consumer's.
+4. **`time_attestation`** is the text `ntp-attest-v1:`, then `valid_until` as
+   decimal epoch milliseconds, then `:`, then the `host_id` as it is (the rest of
+   the text, which may hold `:`). An engine never parses it.
+5. **Units.** A pack converts with the exact-factor transforms of Version 0.15
+   (`uiscale:1/1000` for microseconds to milliseconds on an `int`, `scale` on a
+   text wire) and their rounding; a value outside the key's range is
+   `transform-decode`, as 0.15 states.
+6. **Context** is stated time quality: a caller that passes these keys as
+   context (Version 0.6) states them.
+
+## The rule: a pack never invents time quality
+
+`tools/time-quality-guard.py` (run in CI on every pack and module) refuses, for the eight
+time-quality keys `time_error_ms`, `time_state`, `time_utc_state`,
+`time_utc_error_ms`, `time_anchor`, `time_anchor_age_ms`, `time_attested`,
+`time_attestation`, written bare or with `core.`:
+
+- a `default` line on one of them, in any pack;
+- a `derive` line whose target is one of them, in any model module, `core`
+  included;
+- a `const` line, or an `absent` option, on a field of one of them;
+- on a `bits` wire, a field of one of them that is neither `optional` nor inside
+  a presence-gated block (`if`, `opt`, `chain` part, or an FSPEC/presence bit),
+  so an absent key is never written as zero bits.
+
+Engines are unchanged: they load such a pack as before; the check keeps it out of
+the repository. A pack in another repository that does these things is outside
+the guarantee; its `pack.md` says so.
+
+## Loss
+
+A conversion into a format that cannot carry a key the entity holds loses it. The
+capability report (ruling 6 of 0.11) lists the key as one the target does not
+map; once Version 0.30's loss report merges, it names the key per conversion.
+
+## Vectors
+
+`packs/conformance-time-hygiene` (`json`, the eight keys, no default and no
+sentinel):
+
+- `01`: every key round-trips, and the attestation's `host_id` `fd00::1`, which
+  holds `:`, comes back byte-exact;
+- `02`: coherent but UTC-unknown, nothing else stated;
+- `03`: only the coherence axis;
+- `04`: nothing stated, nothing written;
+- `05`: stated not attested (`time_attested` 0) with `time_anchor` `none`.
+
+`tools/tests/test_time_quality_guard.py` covers each refused form, bare and
+`core.`-prefixed, an `optional` and a gated `bits` field that pass, and the whole
+repository.
