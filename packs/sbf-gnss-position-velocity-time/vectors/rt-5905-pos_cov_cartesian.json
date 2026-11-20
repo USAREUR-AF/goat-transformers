@@ -1,0 +1,10 @@
+{
+  "name": "sbf-gnss-position-velocity-time-roundtrip-pos_cov_cartesian",
+  "from": "sbf-gnss-position-velocity-time",
+  "to": "sbf-gnss-position-velocity-time",
+  "input": "11573800ab19c810826d49b5000098c0000040c00000a0bf0000003f0000104000008040000090c0000030c0000080bf0000403f",
+  "expect": "11573800ab19c810826d49b5000098c0000040c00000a0bf0000003f0000104000008040000090c0000030c0000080bf0000403f",
+  "model": {
+    "@kind": "pos_cov_cartesian"
+  }
+}

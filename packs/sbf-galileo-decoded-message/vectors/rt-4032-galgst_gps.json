@@ -1,0 +1,10 @@
+{
+  "name": "sbf-galileo-decoded-message-roundtrip-galgst_gps",
+  "from": "sbf-galileo-decoded-message",
+  "to": "sbf-galileo-decoded-message",
+  "input": "c08f20008c717e2863c53a110000c0bf0000803e9668981d6d000000",
+  "expect": "c08f20008c717e2863c53a110000c0bf0000803e9668981d6d000000",
+  "model": {
+    "@kind": "galgst_gps"
+  }
+}

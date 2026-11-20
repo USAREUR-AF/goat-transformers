@@ -1,0 +1,10 @@
+{
+  "name": "sbf-gps-decoded-message-roundtrip-gpsalm",
+  "from": "sbf-gps-decoded-message",
+  "to": "sbf-gps-decoded-message",
+  "input": "04373c000888737fdfdbb68d000000403b2b0921000098c0000040c00000a0bf0000003f0000104000008040000090c0000030c0caa1784f",
+  "expect": "04373c000888737fdfdbb68d000000403b2b0921000098c0000040c00000a0bf0000003f0000104000008040000090c0000030c0caa1784f",
+  "model": {
+    "@kind": "gpsalm"
+  }
+}

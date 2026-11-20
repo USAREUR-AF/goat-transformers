@@ -1,0 +1,10 @@
+{
+  "name": "sbf-gnss-attitude-roundtrip-att_cov_euler",
+  "from": "sbf-gnss-attitude",
+  "to": "sbf-gnss-attitude",
+  "input": "3337280069202f79407417ee000030c0000080bf0000403f0000204000008840000088c0",
+  "expect": "3337280069202f79407417ee000030c0000080bf0000403f0000204000008840000088c0",
+  "model": {
+    "@kind": "att_cov_euler"
+  }
+}

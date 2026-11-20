@@ -1,0 +1,10 @@
+{
+  "name": "sbf-glonass-decoded-message-roundtrip-glotime",
+  "from": "sbf-glonass-decoded-message",
+  "to": "sbf-glonass-decoded-message",
+  "input": "c44f280048635d4b1fb7f6cda47b525a0000804000000000000012c0000030c0000080bf",
+  "expect": "c44f280048635d4b1fb7f6cda47b525a0000804000000000000012c0000030c0000080bf",
+  "model": {
+    "@kind": "glotime"
+  }
+}

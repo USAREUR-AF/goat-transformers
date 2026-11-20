@@ -1,0 +1,10 @@
+{
+  "name": "sbf-gnss-attitude-roundtrip-att_euler",
+  "from": "sbf-gnss-attitude",
+  "to": "sbf-gnss-attitude",
+  "input": "32172c00fa637750d1b7a87f56b32d040000a040000060c00000e0bf000000000000e03f00006040",
+  "expect": "32172c00fa637750d1b7a87f56b32d040000a040000060c00000e0bf000000000000e03f00006040",
+  "model": {
+    "@kind": "att_euler"
+  }
+}

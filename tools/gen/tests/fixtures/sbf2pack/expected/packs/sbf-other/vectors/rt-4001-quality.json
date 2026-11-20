@@ -1,0 +1,10 @@
+{
+  "name": "sbf-other-roundtrip-quality",
+  "from": "sbf-other",
+  "to": "sbf-other",
+  "input": "a10f10001ba03e3af2f30000",
+  "expect": "a10f10001ba03e3af2f30000",
+  "model": {
+    "@kind": "quality"
+  }
+}

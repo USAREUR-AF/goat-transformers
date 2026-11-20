@@ -1,0 +1,10 @@
+{
+  "name": "sbf-glonass-decoded-message-roundtrip-gloalm",
+  "from": "sbf-glonass-decoded-message",
+  "to": "sbf-glonass-decoded-message",
+  "input": "a52f3c00d7911d5daee5855c000090400a35b37e000010c0000000bf0000a03f0000404000009840000070c0000000c0c299707b471e0000",
+  "expect": "a52f3c00d7911d5daee5855c000090400a35b37e000010c0000000bf0000a03f0000404000009840000070c0000000c0c299707b471e0000",
+  "model": {
+    "@kind": "gloalm"
+  }
+}

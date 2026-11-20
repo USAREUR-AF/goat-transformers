@@ -1,0 +1,10 @@
+{
+  "name": "sbf-navigation-page-roundtrip-qzsraw_l5_s",
+  "from": "sbf-navigation-page",
+  "to": "sbf-navigation-page",
+  "input": "9670340056f615322d4a04dbb28960370e95384e00000080e5e8bc2100000000bc3c4175000000809390c54800000000",
+  "expect": "9670340056f615322d4a04dbb28960370e95384e00000080e5e8bc2100000000bc3c4175000000809390c54800000000",
+  "model": {
+    "@kind": "qzsraw_l5_s"
+  }
+}

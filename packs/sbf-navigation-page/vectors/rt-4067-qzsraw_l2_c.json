@@ -1,0 +1,10 @@
+{
+  "name": "sbf-navigation-page-roundtrip-qzsraw_l2_c",
+  "from": "sbf-navigation-page",
+  "to": "sbf-navigation-page",
+  "input": "e32f3c00b9349d399088673e156c9a7148274429000000801f7bc87c00000000f6ce4c5000000080cd22d12300000000a476557700000080",
+  "expect": "e32f3c00b9349d399088673e156c9a7148274429000000801f7bc87c00000000f6ce4c5000000080cd22d12300000000a476557700000080",
+  "model": {
+    "@kind": "qzsraw_l2_c"
+  }
+}

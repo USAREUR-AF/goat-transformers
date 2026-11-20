@@ -64,6 +64,7 @@
     {"name": "SAPIENT", "domain": "sensors", "exact": ["sapient", "sapient-v1"], "detail": "v1, v2"},
     {"name": "MISB local sets", "domain": "sensors", "prefixes": ["misb-st"]},
     {"name": "gpsd JSON", "domain": "sensors", "exact": ["gpsd-json"]},
+    {"name": "Septentrio SBF", "domain": "sensors", "prefixes": ["sbf-"], "members": {"pattern": "^sbf-(.+)$", "label": "{n} block groups", "list": false}},
     {"name": "SBP (Swift Navigation)", "domain": "sensors", "prefixes": ["sbp-"], "members": {"pattern": "^sbp-(.+)$", "label": "{n} message packages", "list": false}},
     {"name": "u-blox UBX", "domain": "sensors", "prefixes": ["ubx-"], "members": {"pattern": "^ubx-(.+)$", "label": "{n} message classes", "list": false}},
 

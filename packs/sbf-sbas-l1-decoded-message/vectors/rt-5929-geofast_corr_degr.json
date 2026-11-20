@@ -1,0 +1,10 @@
+{
+  "name": "sbf-sbas-l1-decoded-message-roundtrip-geofast_corr_degr",
+  "from": "sbf-sbas-l1-decoded-message",
+  "to": "sbf-sbas-l1-decoded-message",
+  "input": "2957440013c40162ea17c1986f461df4cba2795027fed5ac835a3108dfb68d643b12e9c0976e451cf3caa1784f26fdd4ab82593007deb58c633a11e8bf966d44",
+  "expect": "2957440013c40162ea17c1986f461df4cba2795027fed5ac835a3108dfb68d643b12e9c0976e451cf3caa1784f26fdd4ab82593007deb58c633a11e8bf966d44",
+  "model": {
+    "@kind": "geofast_corr_degr"
+  }
+}

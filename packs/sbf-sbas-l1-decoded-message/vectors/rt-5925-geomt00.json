@@ -1,0 +1,10 @@
+{
+  "name": "sbf-sbas-l1-decoded-message-roundtrip-geomt00",
+  "from": "sbf-sbas-l1-decoded-message",
+  "to": "sbf-sbas-l1-decoded-message",
+  "input": "2517100057d2223f2e260500",
+  "expect": "2517100057d2223f2e260500",
+  "model": {
+    "@kind": "geomt00"
+  }
+}

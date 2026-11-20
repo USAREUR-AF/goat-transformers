@@ -1,0 +1,10 @@
+{
+  "name": "sbf-measurement-roundtrip-end_of_meas",
+  "from": "sbf-measurement",
+  "to": "sbf-measurement",
+  "input": "221710000a9dfb44e1f00000",
+  "expect": "221710000a9dfb44e1f00000",
+  "model": {
+    "@kind": "end_of_meas"
+  }
+}

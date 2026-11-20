@@ -1,0 +1,10 @@
+{
+  "name": "sbf-galileo-decoded-message-roundtrip-galutc",
+  "from": "sbf-galileo-decoded-message",
+  "to": "sbf-galileo-decoded-message",
+  "input": "bf6f28001db5c67ff408cba20000803f000000000000064027ace074fe55ac83da000000",
+  "expect": "bf6f28001db5c67ff408cba20000803f000000000000064027ace074fe55ac83da000000",
+  "model": {
+    "@kind": "galutc"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "sbf-navigation-page-roundtrip-gloraw_ca",
+  "from": "sbf-navigation-page",
+  "to": "sbf-navigation-page",
+  "input": "ba8f2000f2063034c95aa0774e85d3aa81f9d62300000000584d5b77",
+  "expect": "ba8f2000f2063034c95aa0774e85d3aa81f9d62300000000584d5b77",
+  "model": {
+    "@kind": "gloraw_ca"
+  }
+}

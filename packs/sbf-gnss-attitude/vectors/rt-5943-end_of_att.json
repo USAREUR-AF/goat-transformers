@@ -1,0 +1,10 @@
+{
+  "name": "sbf-gnss-attitude-roundtrip-end_of_att",
+  "from": "sbf-gnss-attitude",
+  "to": "sbf-gnss-attitude",
+  "input": "3757100025120e1cfc650000",
+  "expect": "3757100025120e1cfc650000",
+  "model": {
+    "@kind": "end_of_att"
+  }
+}

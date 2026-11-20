@@ -1,0 +1,10 @@
+{
+  "name": "sbf-beidou-decoded-message-roundtrip-bdsutc",
+  "from": "sbf-beidou-decoded-message",
+  "to": "sbf-beidou-decoded-message",
+  "input": "19d0200023f45e50fa47d1a80000c03f0000000000000a40ad04db32",
+  "expect": "19d0200023f45e50fa47d1a80000c03f0000000000000a40ad04db32",
+  "model": {
+    "@kind": "bdsutc"
+  }
+}

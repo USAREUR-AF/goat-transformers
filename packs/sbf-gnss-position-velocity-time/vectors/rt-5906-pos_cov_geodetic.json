@@ -1,0 +1,10 @@
+{
+  "name": "sbf-gnss-position-velocity-time-roundtrip-pos_cov_geodetic",
+  "from": "sbf-gnss-position-velocity-time",
+  "to": "sbf-gnss-position-velocity-time",
+  "input": "127738001ad67f39f129b8240000404000009840000070c0000000c0000080be0000c03f000050400000a040000060c00000e0bf",
+  "expect": "127738001ad67f39f129b8240000404000009840000070c0000000c0000080be0000c03f000050400000a040000060c00000e0bf",
+  "model": {
+    "@kind": "pos_cov_geodetic"
+  }
+}

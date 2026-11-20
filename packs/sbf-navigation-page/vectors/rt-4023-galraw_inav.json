@@ -1,0 +1,10 @@
+{
+  "name": "sbf-navigation-page-roundtrip-galraw_inav",
+  "from": "sbf-navigation-page",
+  "to": "sbf-navigation-page",
+  "input": "b7cf3400a5d1083a7c25532a01b85d340b18347d00000000e26bb85000000080b9bf3c24000000009013c17700000080",
+  "expect": "b7cf3400a5d1083a7c25532a01b85d340b18347d00000000e26bb85000000080b9bf3c24000000009013c17700000080",
+  "model": {
+    "@kind": "galraw_inav"
+  }
+}
