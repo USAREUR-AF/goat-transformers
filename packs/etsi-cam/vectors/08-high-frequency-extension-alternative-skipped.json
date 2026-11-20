@@ -1,0 +1,30 @@
+{
+  "name": "high-frequency-extension-alternative-skipped",
+  "from": "etsi-cam",
+  "to": "etsi-cam",
+  "input": "020200003039a028405a4bf4b00e44929803e82587084a3e4d0005579a62006ff05c0576c67000c6",
+  "expect": "020200003039a028405a4bf4b00e44929803e82587084a3e4c00e11fdffffebfe9ed0737feebfff60c400dfe0b80aed8ce0018c0",
+  "model": {
+    "@kind": "cam",
+    "etsicam.protocol_version": "2",
+    "etsicam.station_id": "12345",
+    "etsicam.generation_delta_time": "41000",
+    "etsicam.station_type": "5",
+    "lat": "48.2",
+    "lon": "11.5",
+    "etsicam.semi_major_confidence": "500",
+    "etsicam.semi_minor_confidence": "300",
+    "etsicam.semi_major_orientation": "900",
+    "etsicam.altitude_value": "52050",
+    "etsicam.altitude_confidence": "6",
+    "etsicam.vehicle_role": "6",
+    "etsicam.exterior_lights": "32",
+    "etsicam.path_history.#": "1",
+    "etsicam.path_history[0].etsicam.delta_latitude": "-500",
+    "etsicam.path_history[0].etsicam.delta_longitude": "700",
+    "etsicam.path_history[0].etsicam.delta_altitude": "0",
+    "etsicam.path_history[0].etsicam.path_delta_time": "100"
+  },
+  "source": "constructed",
+  "reference": "Values chosen; encoded as the PDU type CAM of the ASN.1 module CAM-PDU-Descriptions (ETSI EN 302 637-2 v1.4.1, forge.etsi.org cam_en302637_2 commit fed28cfe5c930dd9d3109ff1162c28008697754a) with ITS-Container (TS 102 894-2 v1.3.1, commit 2d2450e79aab4c7032ef615b72ddefaf2e5ba8a9) by two independent UPER codecs that agree byte for byte: asn1tools 0.169.0 (MIT, PyPI), codec uper, and pycrate 0.8.1 (LGPL, PyPI), to_uper. Input built by hand: HighFrequencyContainer with its extension bit 1, the normally small non-negative whole number 0 (0 000000, the index of an extension alternative), and an open type of 2 octets (length 0 0000010, then abcd); then lowFrequencyContainer (vehicleRole emergency 6, exteriorLights 00100000, one path point with pathDeltaTime 100). 319 bits. They are the bytes both codecs write for a copy of CAM-PDU-Descriptions whose HighFrequencyContainer has one extension alternative extAlt OCTET STRING (SIZE(2)). Decode skips the alternative (0.19, CHOICE): no key of either alternative. Encode finds no alt with content and writes alt 0, basicVehicleContainerHighFrequency, every component from the pack's defaults (the ASN.1 unavailable values: heading 3601/127, speed 16383/127, driveDirection unavailable, length 1023/unavailable, width 62, acceleration 161/102, curvature 1023/unavailable, curvatureCalculationMode unavailable, yaw rate 32767/unavailable), presence bits 0000000. Expect encoded by both codecs, 52 octets. Checked against the pack's lines by a standalone reader and writer of them (Python standard library); derived without an engine."
+}

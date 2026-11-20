@@ -1,0 +1,72 @@
+# The etsicam module: values of the ETSI ITS Cooperative Awareness Message
+# (CAM, CAM-PDU-Descriptions of EN 302 637-2 v1.4.1, with the types it imports
+# from ITS-Container of TS 102 894-2 v1.3.1) that the core module has no key
+# for. Used by the pack `etsi-cam`. Every key holds the integer value of its
+# ASN.1 type unchanged; the unit is the step that the type's named numbers
+# give (oneCentimeter, tenCentimeters, ...). A value the ASN.1 names
+# `unavailable` or `outOfRange` is kept as that integer. ENUMERATED keys hold
+# the value of the ASN.1 item; a BIT STRING key holds the bits as an unsigned
+# number, the first named bit (bit 0) most significant.
+#
+# The derive lines carry the station identifier to and from `uid` as decimal
+# text: a uid that is not a decimal number leaves station_id absent.
+module        etsicam
+version       0.1.0
+distribution  public
+source        "ETSI CAM-PDU-Descriptions (EN 302 637-2 v1.4.1), https://forge.etsi.org/rep/ITS/asn1/cam_en302637_2 commit fed28cfe5c930dd9d3109ff1162c28008697754a, and ETSI ITS-Container (TS 102 894-2 v1.3.1), https://forge.etsi.org/rep/ITS/asn1/cdd_ts102894_2 commit 2d2450e79aab4c7032ef615b72ddefaf2e5ba8a9; ASN.1 modules under BSD-3-Clause, Copyright 2019 ETSI"
+# ItsPduHeader and CoopAwareness
+key  protocol_version                      int  -        "ItsPduHeader protocolVersion, 0 to 255"
+key  station_id                            int  -        "ItsPduHeader stationID, StationID 0 to 4294967295"
+key  generation_delta_time                 int  ms       "GenerationDeltaTime, 0 to 65535, in steps of one millisecond (oneMilliSec(1))"
+# BasicContainer
+key  station_type                          int  -        "StationType 0 to 255: 0 unknown, 1 pedestrian, 2 cyclist, 3 moped, 4 motorcycle, 5 passengerCar, 6 bus, 7 lightTruck, 8 heavyTruck, 9 trailer, 10 specialVehicles, 11 tram, 15 roadSideUnit"
+key  semi_major_confidence                 int  cm       "PosConfidenceEllipse semiMajorConfidence, SemiAxisLength 0 to 4095 in cm; 4094 outOfRange, 4095 unavailable"
+key  semi_minor_confidence                 int  cm       "PosConfidenceEllipse semiMinorConfidence, SemiAxisLength 0 to 4095 in cm; 4094 outOfRange, 4095 unavailable"
+key  semi_major_orientation                int  0.1deg   "PosConfidenceEllipse semiMajorOrientation, HeadingValue 0 to 3601 in 0.1 degree from wgs84North; 3601 unavailable"
+key  altitude_value                        int  cm       "Altitude altitudeValue, AltitudeValue -100000 to 800001 in cm, 0 = referenceEllipsoidSurface; 800001 unavailable"
+key  altitude_confidence                   int  -        "Altitude altitudeConfidence, AltitudeConfidence 0 to 15 (0 alt-000-01 ... 13 alt-200-00, 14 outOfRange, 15 unavailable)"
+# BasicVehicleContainerHighFrequency, mandatory components
+key  heading_confidence                    int  0.1deg   "Heading headingConfidence, HeadingConfidence 1 to 127 in 0.1 degree; 126 outOfRange, 127 unavailable"
+key  speed_confidence                      int  cm/s     "Speed speedConfidence, SpeedConfidence 1 to 127 in cm/s; 126 outOfRange, 127 unavailable"
+key  drive_direction                       int  -        "DriveDirection: 0 forward, 1 backward, 2 unavailable"
+key  vehicle_length_value                  int  10cm     "VehicleLength vehicleLengthValue, VehicleLengthValue 1 to 1023 in 10 cm; 1022 outOfRange, 1023 unavailable"
+key  vehicle_length_confidence_indication  int  -        "VehicleLength vehicleLengthConfidenceIndication: 0 noTrailerPresent, 1 trailerPresentWithKnownLength, 2 trailerPresentWithUnknownLength, 3 trailerPresenceIsUnknown, 4 unavailable"
+key  vehicle_width                         int  10cm     "VehicleWidth 1 to 62 in 10 cm; 61 outOfRange, 62 unavailable"
+key  longitudinal_acceleration_value       int  0.1m/s2  "LongitudinalAccelerationValue -160 to 161 in 0.1 m/s2, positive forward; 161 unavailable"
+key  longitudinal_acceleration_confidence  int  0.1m/s2  "AccelerationConfidence 0 to 102 in 0.1 m/s2; 101 outOfRange, 102 unavailable"
+key  curvature_value                       int  -        "Curvature curvatureValue, CurvatureValue -1023 to 1023, 0 straight; 1023 unavailable"
+key  curvature_confidence                  int  -        "Curvature curvatureConfidence, CurvatureConfidence 0 to 7 (0 onePerMeter-0-00002 ... 5 onePerMeter-0-1, 6 outOfRange, 7 unavailable)"
+key  curvature_calculation_mode            int  -        "CurvatureCalculationMode: 0 yawRateUsed, 1 yawRateNotUsed, 2 unavailable; 3 and above are extension values"
+key  yaw_rate_value                        int  0.01deg/s "YawRate yawRateValue, YawRateValue -32766 to 32767 in 0.01 degree per second, positive to the left; 32767 unavailable"
+key  yaw_rate_confidence                   int  -        "YawRate yawRateConfidence, YawRateConfidence 0 to 8 (0 degSec-000-01 ... 6 degSec-100-00, 7 outOfRange, 8 unavailable)"
+# BasicVehicleContainerHighFrequency, OPTIONAL components
+key  acceleration_control                  int  -        "AccelerationControl, BIT STRING (SIZE(7)) as 0 to 127: 64 brakePedalEngaged, 32 gasPedalEngaged, 16 emergencyBrakeEngaged, 8 collisionWarningEngaged, 4 accEngaged, 2 cruiseControlEngaged, 1 speedLimiterEngaged"
+key  lane_position                         int  -        "LanePosition -1 to 14: -1 offTheRoad, 0 hardShoulder, 1 outermostDrivingLane, 2 secondLaneFromOutside, ..."
+key  steering_wheel_angle_value            int  1.5deg   "SteeringWheelAngleValue -511 to 512 in 1.5 degree, positive to the left; 512 unavailable"
+key  steering_wheel_angle_confidence       int  1.5deg   "SteeringWheelAngleConfidence 1 to 127 in 1.5 degree; 126 outOfRange, 127 unavailable"
+key  lateral_acceleration_value            int  0.1m/s2  "LateralAccelerationValue -160 to 161 in 0.1 m/s2, positive to the left; 161 unavailable"
+key  lateral_acceleration_confidence       int  0.1m/s2  "AccelerationConfidence of lateralAcceleration, 0 to 102; 101 outOfRange, 102 unavailable"
+key  vertical_acceleration_value           int  0.1m/s2  "VerticalAccelerationValue -160 to 161 in 0.1 m/s2, positive up; 161 unavailable"
+key  vertical_acceleration_confidence      int  0.1m/s2  "AccelerationConfidence of verticalAcceleration, 0 to 102; 101 outOfRange, 102 unavailable"
+key  performance_class                     int  -        "PerformanceClass 0 to 7: 0 unavailable, 1 performanceClassA, 2 performanceClassB"
+key  tolling_zone_latitude                 int  1e-7deg  "CenDsrcTollingZone protectedZoneLatitude, Latitude -900000000 to 900000001 in 0.1 microdegree, positive north; 900000001 unavailable"
+key  tolling_zone_longitude                int  1e-7deg  "CenDsrcTollingZone protectedZoneLongitude, Longitude -1800000000 to 1800000001 in 0.1 microdegree, positive east; 1800000001 unavailable"
+key  tolling_zone_id                       int  -        "CenDsrcTollingZone cenDsrcTollingZoneID, ProtectedZoneID 0 to 134217727"
+# RSUContainerHighFrequency: ProtectedCommunicationZonesRSU, one item per zone
+list protected_zones                                     "ProtectedCommunicationZonesRSU: 1 to 16 items, each holding zone_type, zone_latitude, zone_longitude and, when sent, zone_expiry_time, zone_radius, zone_id"
+key  zone_type                             int  -        "ProtectedZoneType: 0 permanentCenDsrcTolling, 1 temporaryCenDsrcTolling (an extension value); 2 and above are later extension values"
+key  zone_expiry_time                      int  ms       "ProtectedCommunicationZone expiryTime, TimestampIts 0 to 4398046511103 in ms, 0 = utcStartOf2004"
+key  zone_latitude                         int  1e-7deg  "ProtectedCommunicationZone protectedZoneLatitude, Latitude in 0.1 microdegree; 900000001 unavailable"
+key  zone_longitude                        int  1e-7deg  "ProtectedCommunicationZone protectedZoneLongitude, Longitude in 0.1 microdegree; 1800000001 unavailable"
+key  zone_radius                           int  m        "ProtectedCommunicationZone protectedZoneRadius, ProtectedZoneRadius 1 to 255 in m (extensible; a value above 255 is an extension value)"
+key  zone_id                               int  -        "ProtectedCommunicationZone protectedZoneID, ProtectedZoneID 0 to 134217727"
+# BasicVehicleContainerLowFrequency
+key  vehicle_role                          int  -        "VehicleRole 0 to 15: 0 default, 1 publicTransport, 2 specialTransport, 3 dangerousGoods, 4 roadWork, 5 rescue, 6 emergency, 7 safetyCar, 8 agriculture, 9 commercial, 10 military, 11 roadOperator, 12 taxi, 13-15 reserved"
+key  exterior_lights                       int  -        "ExteriorLights, BIT STRING (SIZE(8)) as 0 to 255: 128 lowBeamHeadlightsOn, 64 highBeamHeadlightsOn, 32 leftTurnSignalOn, 16 rightTurnSignalOn, 8 daytimeRunningLightsOn, 4 reverseLightOn, 2 fogLightOn, 1 parkingLightsOn"
+list path_history                                        "PathHistory: 0 to 40 PathPoint items, each holding delta_latitude, delta_longitude, delta_altitude and, when sent, path_delta_time"
+key  delta_latitude                        int  1e-7deg  "DeltaReferencePosition deltaLatitude, DeltaLatitude -131071 to 131072 in 0.1 microdegree; 131072 unavailable"
+key  delta_longitude                       int  1e-7deg  "DeltaReferencePosition deltaLongitude, DeltaLongitude -131071 to 131072 in 0.1 microdegree; 131072 unavailable"
+key  delta_altitude                        int  cm       "DeltaReferencePosition deltaAltitude, DeltaAltitude -12700 to 12800 in cm; 12800 unavailable"
+key  path_delta_time                       int  10ms     "PathPoint pathDeltaTime, PathDeltaTime 1 to 65535 in 10 ms (extensible)"
+derive  uid                 text_of    etsicam.station_id
+derive  etsicam.station_id  parse_int  uid

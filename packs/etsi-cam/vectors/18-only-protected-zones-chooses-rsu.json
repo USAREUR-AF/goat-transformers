@@ -1,0 +1,27 @@
+{
+  "name": "only-protected-zones-chooses-rsu",
+  "from": "etsi-cam",
+  "to": "etsi-cam",
+  "input": "020200003039a02800fa4bf4b00e44929803e82587084a3e4ca00a4b008c0e439e7400",
+  "expect": "020200003039a02800fa4bf4b00e44929803e82587084a3e4ca00a4b008c0e439e7400",
+  "model": {
+    "@kind": "cam",
+    "etsicam.protocol_version": "2",
+    "etsicam.station_id": "12345",
+    "etsicam.generation_delta_time": "41000",
+    "etsicam.station_type": "15",
+    "lat": "48.2",
+    "lon": "11.5",
+    "etsicam.semi_major_confidence": "500",
+    "etsicam.semi_minor_confidence": "300",
+    "etsicam.semi_major_orientation": "900",
+    "etsicam.altitude_value": "52050",
+    "etsicam.altitude_confidence": "6",
+    "etsicam.protected_zones.#": "1",
+    "etsicam.protected_zones[0].etsicam.zone_type": "0",
+    "etsicam.protected_zones[0].etsicam.zone_latitude": "481500000",
+    "etsicam.protected_zones[0].etsicam.zone_longitude": "114500000"
+  },
+  "source": "constructed",
+  "reference": "Values chosen; encoded as the PDU type CAM of the ASN.1 module CAM-PDU-Descriptions (ETSI EN 302 637-2 v1.4.1, forge.etsi.org cam_en302637_2 commit fed28cfe5c930dd9d3109ff1162c28008697754a) with ITS-Container (TS 102 894-2 v1.3.1, commit 2d2450e79aab4c7032ef615b72ddefaf2e5ba8a9) by two independent UPER codecs that agree byte for byte: asn1tools 0.169.0 (MIT, PyPI), codec uper, and pycrate 0.8.1 (LGPL, PyPI), to_uper. A roadside-unit CAM whose entity holds, of the two HighFrequencyContainer alternatives, only etsicam.protected_zones (one zone, type permanentCenDsrcTolling, no OPTIONAL component: presence 000). Encode writes alt 1: the defaults of alt 0 are not content (0.19, CHOICE; rulings 3 and 19 of 0.19). Were they content, alt 0 would be written and the bytes would differ from bit 199. 275 bits, padded to 35 octets. Checked against the pack's lines by a standalone reader and writer of them (Python standard library); derived without an engine."
+}
