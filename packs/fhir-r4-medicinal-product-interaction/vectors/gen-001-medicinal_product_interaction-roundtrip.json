@@ -1,0 +1,17 @@
+{
+ "name": "gen-medicinal_product_interaction-roundtrip",
+ "from": "fhir-r4-medicinal-product-interaction",
+ "to": "fhir-r4-medicinal-product-interaction",
+ "input": "{\"resourceType\":\"MedicinalProductInteraction\",\"id\":\"s3526\",\"meta\":{\"id\":\"s49957\",\"versionId\":\"s10215\",\"lastUpdated\":\"2025-11-15T01:10:00.994Z\",\"source\":\"s65952\",\"profile\":[\"s35587\",\"s68358\"]},\"implicitRules\":\"s97098\",\"language\":\"s76476\",\"text\":{\"id\":\"s90321\",\"status\":\"generated\"},\"subject\":[{\"id\":\"s79433\",\"reference\":\"s61651\",\"type\":\"s75241\",\"display\":\"s60748\"},{\"id\":\"s78908\",\"reference\":\"s23100\",\"type\":\"s9040\",\"display\":\"s43004\"}],\"description\":\"s75035\",\"interactant\":[{\"id\":\"s41907\"},{\"id\":\"s77924\"}],\"type\":{\"id\":\"s81467\",\"text\":\"s77415\"},\"effect\":{\"id\":\"s24380\",\"text\":\"s72969\"},\"incidence\":{\"id\":\"s953\",\"text\":\"s28544\"},\"management\":{\"id\":\"s17827\",\"text\":\"s62639\"}}",
+ "expect": "{\"resourceType\":\"MedicinalProductInteraction\",\"id\":\"s3526\",\"meta\":{\"id\":\"s49957\",\"versionId\":\"s10215\",\"lastUpdated\":\"2025-11-15T01:10:00.994Z\",\"source\":\"s65952\",\"profile\":[\"s35587\",\"s68358\"]},\"implicitRules\":\"s97098\",\"language\":\"s76476\",\"text\":{\"id\":\"s90321\",\"status\":\"generated\"},\"subject\":[{\"id\":\"s79433\",\"reference\":\"s61651\",\"type\":\"s75241\",\"display\":\"s60748\"},{\"id\":\"s78908\",\"reference\":\"s23100\",\"type\":\"s9040\",\"display\":\"s43004\"}],\"description\":\"s75035\",\"interactant\":[{\"id\":\"s41907\"},{\"id\":\"s77924\"}],\"type\":{\"id\":\"s81467\",\"text\":\"s77415\"},\"effect\":{\"id\":\"s24380\",\"text\":\"s72969\"},\"incidence\":{\"id\":\"s953\",\"text\":\"s28544\"},\"management\":{\"id\":\"s17827\",\"text\":\"s62639\"}}",
+ "model": {
+  "@kind": "medicinal_product_interaction",
+  "uid": "s3526",
+  "time_ms": "1763169000994",
+  "fhirr4medicinalproductinteraction.resource_type": "MedicinalProductInteraction",
+  "fhirr4medicinalproductinteraction.id": "s3526",
+  "fhirr4medicinalproductinteraction.meta_id": "s49957",
+  "fhirr4medicinalproductinteraction.meta_version_id": "s10215",
+  "fhirr4medicinalproductinteraction.meta_last_updated": "2025-11-15T01:10:00.994Z"
+ }
+}

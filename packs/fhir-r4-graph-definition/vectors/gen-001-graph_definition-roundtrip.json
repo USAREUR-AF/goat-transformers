@@ -1,0 +1,17 @@
+{
+ "name": "gen-graph_definition-roundtrip",
+ "from": "fhir-r4-graph-definition",
+ "to": "fhir-r4-graph-definition",
+ "input": "{\"resourceType\":\"GraphDefinition\",\"id\":\"s37170\",\"meta\":{\"id\":\"s26771\",\"versionId\":\"s1815\",\"lastUpdated\":\"2024-06-26T00:26:49.933Z\",\"source\":\"s32319\",\"profile\":[\"s21157\",\"s28664\"]},\"implicitRules\":\"s64216\",\"language\":\"s58365\",\"text\":{\"id\":\"s57060\",\"status\":\"generated\"},\"url\":\"s69049\",\"version\":\"s77977\",\"name\":\"s81722\",\"status\":\"draft\",\"experimental\":false,\"date\":\"s68147\",\"publisher\":\"s2601\",\"contact\":[{\"id\":\"s31620\",\"name\":\"s23121\"},{\"id\":\"s41842\",\"name\":\"s19093\"}],\"description\":\"s48688\",\"useContext\":[{\"id\":\"s11280\"},{\"id\":\"s95818\"}],\"jurisdiction\":[{\"id\":\"s66925\",\"text\":\"s2757\"},{\"id\":\"s59371\",\"text\":\"s39608\"}],\"purpose\":\"s72555\",\"start\":\"s51775\",\"profile\":\"s74697\",\"link\":[{\"id\":\"s47399\",\"path\":\"s22732\",\"sliceName\":\"s46178\",\"min\":101.125,\"max\":\"s66743\",\"description\":\"s91050\"},{\"id\":\"s72902\",\"path\":\"s53560\",\"sliceName\":\"s34434\",\"min\":1.5,\"max\":\"s73211\",\"description\":\"s20979\"}]}",
+ "expect": "{\"resourceType\":\"GraphDefinition\",\"id\":\"s37170\",\"meta\":{\"id\":\"s26771\",\"versionId\":\"s1815\",\"lastUpdated\":\"2024-06-26T00:26:49.933Z\",\"source\":\"s32319\",\"profile\":[\"s21157\",\"s28664\"]},\"implicitRules\":\"s64216\",\"language\":\"s58365\",\"text\":{\"id\":\"s57060\",\"status\":\"generated\"},\"url\":\"s69049\",\"version\":\"s77977\",\"name\":\"s81722\",\"status\":\"draft\",\"experimental\":false,\"date\":\"s68147\",\"publisher\":\"s2601\",\"contact\":[{\"id\":\"s31620\",\"name\":\"s23121\"},{\"id\":\"s41842\",\"name\":\"s19093\"}],\"description\":\"s48688\",\"useContext\":[{\"id\":\"s11280\"},{\"id\":\"s95818\"}],\"jurisdiction\":[{\"id\":\"s66925\",\"text\":\"s2757\"},{\"id\":\"s59371\",\"text\":\"s39608\"}],\"purpose\":\"s72555\",\"start\":\"s51775\",\"profile\":\"s74697\",\"link\":[{\"id\":\"s47399\",\"path\":\"s22732\",\"sliceName\":\"s46178\",\"min\":101.125,\"max\":\"s66743\",\"description\":\"s91050\"},{\"id\":\"s72902\",\"path\":\"s53560\",\"sliceName\":\"s34434\",\"min\":1.5,\"max\":\"s73211\",\"description\":\"s20979\"}]}",
+ "model": {
+  "@kind": "graph_definition",
+  "uid": "s37170",
+  "time_ms": "1719361609933",
+  "fhirr4graphdefinition.resource_type": "GraphDefinition",
+  "fhirr4graphdefinition.id": "s37170",
+  "fhirr4graphdefinition.meta_id": "s26771",
+  "fhirr4graphdefinition.meta_version_id": "s1815",
+  "fhirr4graphdefinition.meta_last_updated": "2024-06-26T00:26:49.933Z"
+ }
+}

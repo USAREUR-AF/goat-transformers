@@ -1,0 +1,17 @@
+{
+ "name": "gen-substance_nucleic_acid-roundtrip",
+ "from": "fhir-r4-substance-nucleic-acid",
+ "to": "fhir-r4-substance-nucleic-acid",
+ "input": "{\"resourceType\":\"SubstanceNucleicAcid\",\"id\":\"s9329\",\"meta\":{\"id\":\"s96995\",\"versionId\":\"s62018\",\"lastUpdated\":\"2026-12-14T05:26:34.675Z\",\"source\":\"s25922\",\"profile\":[\"s11737\",\"s18810\"]},\"implicitRules\":\"s32862\",\"language\":\"s38919\",\"text\":{\"id\":\"s31691\",\"status\":\"generated\"},\"sequenceType\":{\"id\":\"s58325\",\"text\":\"s43901\"},\"numberOfSubunits\":0.75,\"areaOfHybridisation\":\"s91995\",\"oligoNucleotideType\":{\"id\":\"s82416\",\"text\":\"s71378\"},\"subunit\":[{\"id\":\"s71491\",\"subunit\":1.5,\"sequence\":\"s38561\",\"length\":42.375},{\"id\":\"s35585\",\"subunit\":12.5,\"sequence\":\"s92609\",\"length\":0.75}]}",
+ "expect": "{\"resourceType\":\"SubstanceNucleicAcid\",\"id\":\"s9329\",\"meta\":{\"id\":\"s96995\",\"versionId\":\"s62018\",\"lastUpdated\":\"2026-12-14T05:26:34.675Z\",\"source\":\"s25922\",\"profile\":[\"s11737\",\"s18810\"]},\"implicitRules\":\"s32862\",\"language\":\"s38919\",\"text\":{\"id\":\"s31691\",\"status\":\"generated\"},\"sequenceType\":{\"id\":\"s58325\",\"text\":\"s43901\"},\"numberOfSubunits\":0.75,\"areaOfHybridisation\":\"s91995\",\"oligoNucleotideType\":{\"id\":\"s82416\",\"text\":\"s71378\"},\"subunit\":[{\"id\":\"s71491\",\"subunit\":1.5,\"sequence\":\"s38561\",\"length\":42.375},{\"id\":\"s35585\",\"subunit\":12.5,\"sequence\":\"s92609\",\"length\":0.75}]}",
+ "model": {
+  "@kind": "substance_nucleic_acid",
+  "uid": "s9329",
+  "time_ms": "1797225994675",
+  "fhirr4substancenucleicacid.resource_type": "SubstanceNucleicAcid",
+  "fhirr4substancenucleicacid.id": "s9329",
+  "fhirr4substancenucleicacid.meta_id": "s96995",
+  "fhirr4substancenucleicacid.meta_version_id": "s62018",
+  "fhirr4substancenucleicacid.meta_last_updated": "2026-12-14T05:26:34.675Z"
+ }
+}

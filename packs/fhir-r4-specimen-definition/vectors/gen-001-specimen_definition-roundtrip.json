@@ -1,0 +1,17 @@
+{
+ "name": "gen-specimen_definition-roundtrip",
+ "from": "fhir-r4-specimen-definition",
+ "to": "fhir-r4-specimen-definition",
+ "input": "{\"resourceType\":\"SpecimenDefinition\",\"id\":\"s81884\",\"meta\":{\"id\":\"s49570\",\"versionId\":\"s40128\",\"lastUpdated\":\"2025-01-19T08:35:57.639Z\",\"source\":\"s27834\",\"profile\":[\"s33606\",\"s20550\"]},\"implicitRules\":\"s78040\",\"language\":\"s7454\",\"text\":{\"id\":\"s76444\",\"status\":\"extensions\"},\"identifier\":{\"id\":\"s86668\",\"use\":\"temp\",\"type\":{\"id\":\"s87124\",\"text\":\"s41761\"},\"system\":\"s57777\",\"value\":\"s45426\",\"period\":{\"id\":\"s63816\",\"start\":\"s45530\",\"end\":\"s47106\"},\"assigner\":{\"id\":\"s86945\",\"reference\":\"s35292\",\"type\":\"s29378\",\"display\":\"s55619\"}},\"typeCollected\":{\"id\":\"s95968\",\"text\":\"s63929\"},\"patientPreparation\":[{\"id\":\"s41594\",\"text\":\"s50134\"},{\"id\":\"s29895\",\"text\":\"s68784\"}],\"timeAspect\":\"s63797\",\"collection\":[{\"id\":\"s99462\",\"text\":\"s20100\"},{\"id\":\"s18546\",\"text\":\"s21011\"}],\"typeTested\":[{\"id\":\"s45638\",\"isDerived\":true,\"preference\":\"alternate\",\"requirement\":\"s87168\"},{\"id\":\"s6054\",\"isDerived\":false,\"preference\":\"alternate\",\"requirement\":\"s89142\"}]}",
+ "expect": "{\"resourceType\":\"SpecimenDefinition\",\"id\":\"s81884\",\"meta\":{\"id\":\"s49570\",\"versionId\":\"s40128\",\"lastUpdated\":\"2025-01-19T08:35:57.639Z\",\"source\":\"s27834\",\"profile\":[\"s33606\",\"s20550\"]},\"implicitRules\":\"s78040\",\"language\":\"s7454\",\"text\":{\"id\":\"s76444\",\"status\":\"extensions\"},\"identifier\":{\"id\":\"s86668\",\"use\":\"temp\",\"type\":{\"id\":\"s87124\",\"text\":\"s41761\"},\"system\":\"s57777\",\"value\":\"s45426\",\"period\":{\"id\":\"s63816\",\"start\":\"s45530\",\"end\":\"s47106\"},\"assigner\":{\"id\":\"s86945\",\"reference\":\"s35292\",\"type\":\"s29378\",\"display\":\"s55619\"}},\"typeCollected\":{\"id\":\"s95968\",\"text\":\"s63929\"},\"patientPreparation\":[{\"id\":\"s41594\",\"text\":\"s50134\"},{\"id\":\"s29895\",\"text\":\"s68784\"}],\"timeAspect\":\"s63797\",\"collection\":[{\"id\":\"s99462\",\"text\":\"s20100\"},{\"id\":\"s18546\",\"text\":\"s21011\"}],\"typeTested\":[{\"id\":\"s45638\",\"isDerived\":true,\"preference\":\"alternate\",\"requirement\":\"s87168\"},{\"id\":\"s6054\",\"isDerived\":false,\"preference\":\"alternate\",\"requirement\":\"s89142\"}]}",
+ "model": {
+  "@kind": "specimen_definition",
+  "uid": "s81884",
+  "time_ms": "1737275757639",
+  "fhirr4specimendefinition.resource_type": "SpecimenDefinition",
+  "fhirr4specimendefinition.id": "s81884",
+  "fhirr4specimendefinition.meta_id": "s49570",
+  "fhirr4specimendefinition.meta_version_id": "s40128",
+  "fhirr4specimendefinition.meta_last_updated": "2025-01-19T08:35:57.639Z"
+ }
+}

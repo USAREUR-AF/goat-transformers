@@ -1,0 +1,7 @@
+{
+ "name": "gen-substance_reference_information-residue",
+ "from": "fhir-r4-substance-reference-information",
+ "to": "fhir-r4-substance-reference-information",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"resourceType\":\"SubstanceReferenceInformation\",\"id\":\"s87040\",\"meta\":{\"id\":\"s92110\",\"versionId\":\"s85873\",\"lastUpdated\":\"2024-07-15T10:24:33.858Z\",\"source\":\"s57586\",\"profile\":[\"s35455\",\"s57910\"]},\"implicitRules\":\"s68449\",\"language\":\"s45076\",\"text\":{\"id\":\"s10271\",\"status\":\"extensions\"},\"comment\":\"s88178\",\"gene\":[{\"id\":\"s49478\"},{\"id\":\"s12986\"}],\"geneElement\":[{\"id\":\"s44808\"},{\"id\":\"s5679\"}],\"classification\":[{\"id\":\"s33870\"},{\"id\":\"s7571\"}],\"target\":[{\"id\":\"s78379\",\"amountString\":\"s94376\"},{\"id\":\"s60883\",\"amountString\":\"s98763\"}]}",
+ "expect": "{\"resourceType\":\"SubstanceReferenceInformation\",\"id\":\"s87040\",\"meta\":{\"id\":\"s92110\",\"versionId\":\"s85873\",\"lastUpdated\":\"2024-07-15T10:24:33.858Z\",\"source\":\"s57586\",\"profile\":[\"s35455\",\"s57910\"]},\"implicitRules\":\"s68449\",\"language\":\"s45076\",\"text\":{\"id\":\"s10271\",\"status\":\"extensions\"},\"comment\":\"s88178\",\"gene\":[{\"id\":\"s49478\"},{\"id\":\"s12986\"}],\"geneElement\":[{\"id\":\"s44808\"},{\"id\":\"s5679\"}],\"classification\":[{\"id\":\"s33870\"},{\"id\":\"s7571\"}],\"target\":[{\"id\":\"s78379\",\"amountString\":\"s94376\"},{\"id\":\"s60883\",\"amountString\":\"s98763\"}],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

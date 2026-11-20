@@ -1,0 +1,12 @@
+{
+  "name": "HL7 FHIR R4",
+  "domain": "networks",
+  "prefixes": [
+    "fhir-r4-"
+  ],
+  "members": {
+    "pattern": "^fhir-r4-(.+)$",
+    "label": "{n} resource types",
+    "list": false
+  }
+}

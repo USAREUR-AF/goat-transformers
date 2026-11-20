@@ -1,0 +1,17 @@
+{
+ "name": "gen-terminology_capabilities-roundtrip",
+ "from": "fhir-r4-terminology-capabilities",
+ "to": "fhir-r4-terminology-capabilities",
+ "input": "{\"resourceType\":\"TerminologyCapabilities\",\"id\":\"s64533\",\"meta\":{\"id\":\"s21673\",\"versionId\":\"s81192\",\"lastUpdated\":\"2025-02-05T13:39:57.781Z\",\"source\":\"s91420\",\"profile\":[\"s18004\",\"s69868\"]},\"implicitRules\":\"s15330\",\"language\":\"s99754\",\"text\":{\"id\":\"s76298\",\"status\":\"additional\"},\"url\":\"s32762\",\"version\":\"s10819\",\"name\":\"s1312\",\"title\":\"s72209\",\"status\":\"draft\",\"experimental\":false,\"date\":\"s4383\",\"publisher\":\"s69966\",\"contact\":[{\"id\":\"s673\",\"name\":\"s60442\"},{\"id\":\"s32863\",\"name\":\"s66255\"}],\"description\":\"s50898\",\"useContext\":[{\"id\":\"s88726\"},{\"id\":\"s99305\"}],\"jurisdiction\":[{\"id\":\"s36154\",\"text\":\"s50509\"},{\"id\":\"s1556\",\"text\":\"s77294\"}],\"purpose\":\"s24950\",\"copyright\":\"s95269\",\"kind\":\"s56520\",\"software\":{\"id\":\"s32349\",\"name\":\"s27791\",\"version\":\"s58866\"},\"implementation\":{\"id\":\"s61140\",\"description\":\"s78770\",\"url\":\"s60277\"},\"lockedDate\":false,\"codeSystem\":[{\"id\":\"s72677\",\"uri\":\"s89834\",\"subsumption\":true},{\"id\":\"s5007\",\"uri\":\"s6519\",\"subsumption\":true}],\"expansion\":{\"id\":\"s38437\",\"hierarchical\":true,\"paging\":true,\"incomplete\":true,\"textFilter\":\"s9526\"},\"codeSearch\":\"all\",\"validateCode\":{\"id\":\"s77745\",\"translations\":true},\"translation\":{\"id\":\"s86756\",\"needsMap\":true},\"closure\":{\"id\":\"s86282\",\"translation\":false}}",
+ "expect": "{\"resourceType\":\"TerminologyCapabilities\",\"id\":\"s64533\",\"meta\":{\"id\":\"s21673\",\"versionId\":\"s81192\",\"lastUpdated\":\"2025-02-05T13:39:57.781Z\",\"source\":\"s91420\",\"profile\":[\"s18004\",\"s69868\"]},\"implicitRules\":\"s15330\",\"language\":\"s99754\",\"text\":{\"id\":\"s76298\",\"status\":\"additional\"},\"url\":\"s32762\",\"version\":\"s10819\",\"name\":\"s1312\",\"title\":\"s72209\",\"status\":\"draft\",\"experimental\":false,\"date\":\"s4383\",\"publisher\":\"s69966\",\"contact\":[{\"id\":\"s673\",\"name\":\"s60442\"},{\"id\":\"s32863\",\"name\":\"s66255\"}],\"description\":\"s50898\",\"useContext\":[{\"id\":\"s88726\"},{\"id\":\"s99305\"}],\"jurisdiction\":[{\"id\":\"s36154\",\"text\":\"s50509\"},{\"id\":\"s1556\",\"text\":\"s77294\"}],\"purpose\":\"s24950\",\"copyright\":\"s95269\",\"kind\":\"s56520\",\"software\":{\"id\":\"s32349\",\"name\":\"s27791\",\"version\":\"s58866\"},\"implementation\":{\"id\":\"s61140\",\"description\":\"s78770\",\"url\":\"s60277\"},\"lockedDate\":false,\"codeSystem\":[{\"id\":\"s72677\",\"uri\":\"s89834\",\"subsumption\":true},{\"id\":\"s5007\",\"uri\":\"s6519\",\"subsumption\":true}],\"expansion\":{\"id\":\"s38437\",\"hierarchical\":true,\"paging\":true,\"incomplete\":true,\"textFilter\":\"s9526\"},\"codeSearch\":\"all\",\"validateCode\":{\"id\":\"s77745\",\"translations\":true},\"translation\":{\"id\":\"s86756\",\"needsMap\":true},\"closure\":{\"id\":\"s86282\",\"translation\":false}}",
+ "model": {
+  "@kind": "terminology_capabilities",
+  "uid": "s64533",
+  "time_ms": "1738762797781",
+  "fhirr4terminologycapabilities.resource_type": "TerminologyCapabilities",
+  "fhirr4terminologycapabilities.id": "s64533",
+  "fhirr4terminologycapabilities.meta_id": "s21673",
+  "fhirr4terminologycapabilities.meta_version_id": "s81192",
+  "fhirr4terminologycapabilities.meta_last_updated": "2025-02-05T13:39:57.781Z"
+ }
+}

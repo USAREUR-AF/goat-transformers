@@ -1,0 +1,40 @@
+{
+ "keys": {
+  "contact|id|string": "contact_id",
+  "contact|name|string": "contact_name",
+  "meta_profile|.|string": "meta_profile_value",
+  "resource_param|.|string": "resource_param_value",
+  "resource|code|string": "resource_code",
+  "resource|documentation|string": "resource_documentation",
+  "resource|id|string": "resource_id",
+  "use_context|id|string": "use_context_id",
+  "|code|string": "code",
+  "|date|string": "date",
+  "|description|string": "description",
+  "|experimental|int": "experimental",
+  "|id|string": "id",
+  "|implicitRules|string": "implicit_rules",
+  "|language|string": "language",
+  "|meta.id|string": "meta_id",
+  "|meta.lastUpdated|string": "meta_last_updated",
+  "|meta.source|string": "meta_source",
+  "|meta.versionId|string": "meta_version_id",
+  "|name|string": "name",
+  "|publisher|string": "publisher",
+  "|purpose|string": "purpose",
+  "|resourceType|string": "resource_type",
+  "|search|int": "search",
+  "|status|string": "status",
+  "|text.id|string": "text_id",
+  "|text.status|string": "text_status",
+  "|url|string": "url",
+  "|version|string": "version"
+ },
+ "lists": {
+  "resource|param": "resource_param",
+  "|contact": "contact",
+  "|meta.profile": "meta_profile",
+  "|resource": "resource",
+  "|useContext": "use_context"
+ }
+}

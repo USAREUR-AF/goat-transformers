@@ -1,0 +1,42 @@
+{
+ "keys": {
+  "actor|display|string": "actor_display",
+  "actor|id|string": "actor_id",
+  "actor|reference|string": "actor_reference",
+  "actor|type|string": "actor_type",
+  "identifier|id|string": "identifier_id",
+  "identifier|system|string": "identifier_system",
+  "identifier|use|string": "identifier_use",
+  "identifier|value|string": "identifier_value",
+  "meta_profile|.|string": "meta_profile_value",
+  "service_category|id|string": "service_category_id",
+  "service_category|text|string": "service_category_text",
+  "service_type|id|string": "service_type_id",
+  "service_type|text|string": "service_type_text",
+  "specialty|id|string": "specialty_id",
+  "specialty|text|string": "specialty_text",
+  "|active|int": "active",
+  "|comment|string": "comment",
+  "|id|string": "id",
+  "|implicitRules|string": "implicit_rules",
+  "|language|string": "language",
+  "|meta.id|string": "meta_id",
+  "|meta.lastUpdated|string": "meta_last_updated",
+  "|meta.source|string": "meta_source",
+  "|meta.versionId|string": "meta_version_id",
+  "|planningHorizon.end|string": "planning_horizon_end",
+  "|planningHorizon.id|string": "planning_horizon_id",
+  "|planningHorizon.start|string": "planning_horizon_start",
+  "|resourceType|string": "resource_type",
+  "|text.id|string": "text_id",
+  "|text.status|string": "text_status"
+ },
+ "lists": {
+  "|actor": "actor",
+  "|identifier": "identifier",
+  "|meta.profile": "meta_profile",
+  "|serviceCategory": "service_category",
+  "|serviceType": "service_type",
+  "|specialty": "specialty"
+ }
+}

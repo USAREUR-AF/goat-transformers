@@ -1,0 +1,31 @@
+{
+ "keys": {
+  "meta_profile|.|string": "meta_profile_value",
+  "population|id|string": "population_id",
+  "subject|display|string": "subject_display",
+  "subject|id|string": "subject_id",
+  "subject|reference|string": "subject_reference",
+  "subject|type|string": "subject_type",
+  "|classification.id|string": "classification_id",
+  "|classification.text|string": "classification_text",
+  "|frequencyOfOccurrence.id|string": "frequency_of_occurrence_id",
+  "|frequencyOfOccurrence.text|string": "frequency_of_occurrence_text",
+  "|id|string": "id",
+  "|implicitRules|string": "implicit_rules",
+  "|language|string": "language",
+  "|meta.id|string": "meta_id",
+  "|meta.lastUpdated|string": "meta_last_updated",
+  "|meta.source|string": "meta_source",
+  "|meta.versionId|string": "meta_version_id",
+  "|resourceType|string": "resource_type",
+  "|symptomConditionEffect.id|string": "symptom_condition_effect_id",
+  "|symptomConditionEffect.text|string": "symptom_condition_effect_text",
+  "|text.id|string": "text_id",
+  "|text.status|string": "text_status"
+ },
+ "lists": {
+  "|meta.profile": "meta_profile",
+  "|population": "population",
+  "|subject": "subject"
+ }
+}

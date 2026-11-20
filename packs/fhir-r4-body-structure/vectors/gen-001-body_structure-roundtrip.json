@@ -1,0 +1,17 @@
+{
+ "name": "gen-body_structure-roundtrip",
+ "from": "fhir-r4-body-structure",
+ "to": "fhir-r4-body-structure",
+ "input": "{\"resourceType\":\"BodyStructure\",\"id\":\"s12870\",\"meta\":{\"id\":\"s80861\",\"versionId\":\"s85559\",\"lastUpdated\":\"2025-07-09T02:53:51.178Z\",\"source\":\"s51825\",\"profile\":[\"s88340\",\"s81937\"]},\"implicitRules\":\"s13710\",\"language\":\"s73922\",\"text\":{\"id\":\"s16509\",\"status\":\"additional\"},\"identifier\":[{\"id\":\"s1735\",\"use\":\"usual\",\"system\":\"s98362\",\"value\":\"s96063\"},{\"id\":\"s144\",\"use\":\"temp\",\"system\":\"s1478\",\"value\":\"s82304\"}],\"active\":false,\"morphology\":{\"id\":\"s33322\",\"text\":\"s80231\"},\"location\":{\"id\":\"s27493\",\"text\":\"s48441\"},\"locationQualifier\":[{\"id\":\"s93138\",\"text\":\"s5499\"},{\"id\":\"s83163\",\"text\":\"s83650\"}],\"description\":\"s78701\",\"image\":[{\"id\":\"s34119\",\"contentType\":\"s40838\",\"language\":\"s58308\",\"data\":\"s21448\",\"url\":\"s53554\",\"size\":1.5,\"hash\":\"s29553\",\"title\":\"s93020\",\"creation\":\"s86437\"},{\"id\":\"s31597\",\"contentType\":\"s51668\",\"language\":\"s9767\",\"data\":\"s71883\",\"url\":\"s44237\",\"size\":-3.25,\"hash\":\"s17172\",\"title\":\"s90820\",\"creation\":\"s94754\"}],\"patient\":{\"id\":\"s61554\",\"reference\":\"s3678\",\"type\":\"s90444\",\"identifier\":{\"id\":\"s22048\",\"use\":\"secondary\",\"system\":\"s45668\",\"value\":\"s40602\"},\"display\":\"s24746\"}}",
+ "expect": "{\"resourceType\":\"BodyStructure\",\"id\":\"s12870\",\"meta\":{\"id\":\"s80861\",\"versionId\":\"s85559\",\"lastUpdated\":\"2025-07-09T02:53:51.178Z\",\"source\":\"s51825\",\"profile\":[\"s88340\",\"s81937\"]},\"implicitRules\":\"s13710\",\"language\":\"s73922\",\"text\":{\"id\":\"s16509\",\"status\":\"additional\"},\"identifier\":[{\"id\":\"s1735\",\"use\":\"usual\",\"system\":\"s98362\",\"value\":\"s96063\"},{\"id\":\"s144\",\"use\":\"temp\",\"system\":\"s1478\",\"value\":\"s82304\"}],\"active\":false,\"morphology\":{\"id\":\"s33322\",\"text\":\"s80231\"},\"location\":{\"id\":\"s27493\",\"text\":\"s48441\"},\"locationQualifier\":[{\"id\":\"s93138\",\"text\":\"s5499\"},{\"id\":\"s83163\",\"text\":\"s83650\"}],\"description\":\"s78701\",\"image\":[{\"id\":\"s34119\",\"contentType\":\"s40838\",\"language\":\"s58308\",\"data\":\"s21448\",\"url\":\"s53554\",\"size\":1.5,\"hash\":\"s29553\",\"title\":\"s93020\",\"creation\":\"s86437\"},{\"id\":\"s31597\",\"contentType\":\"s51668\",\"language\":\"s9767\",\"data\":\"s71883\",\"url\":\"s44237\",\"size\":-3.25,\"hash\":\"s17172\",\"title\":\"s90820\",\"creation\":\"s94754\"}],\"patient\":{\"id\":\"s61554\",\"reference\":\"s3678\",\"type\":\"s90444\",\"identifier\":{\"id\":\"s22048\",\"use\":\"secondary\",\"system\":\"s45668\",\"value\":\"s40602\"},\"display\":\"s24746\"}}",
+ "model": {
+  "@kind": "body_structure",
+  "uid": "s12870",
+  "time_ms": "1752029631178",
+  "fhirr4bodystructure.resource_type": "BodyStructure",
+  "fhirr4bodystructure.id": "s12870",
+  "fhirr4bodystructure.meta_id": "s80861",
+  "fhirr4bodystructure.meta_version_id": "s85559",
+  "fhirr4bodystructure.meta_last_updated": "2025-07-09T02:53:51.178Z"
+ }
+}

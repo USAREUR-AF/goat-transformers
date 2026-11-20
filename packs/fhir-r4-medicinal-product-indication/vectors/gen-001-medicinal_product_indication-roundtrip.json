@@ -1,0 +1,17 @@
+{
+ "name": "gen-medicinal_product_indication-roundtrip",
+ "from": "fhir-r4-medicinal-product-indication",
+ "to": "fhir-r4-medicinal-product-indication",
+ "input": "{\"resourceType\":\"MedicinalProductIndication\",\"id\":\"s93466\",\"meta\":{\"id\":\"s60423\",\"versionId\":\"s54114\",\"lastUpdated\":\"2024-03-15T20:32:43.136Z\",\"source\":\"s54438\",\"profile\":[\"s56482\",\"s2356\"]},\"implicitRules\":\"s86305\",\"language\":\"s76178\",\"text\":{\"id\":\"s55347\",\"status\":\"generated\"},\"subject\":[{\"id\":\"s65830\",\"reference\":\"s82637\",\"type\":\"s37867\",\"display\":\"s34757\"},{\"id\":\"s51040\",\"reference\":\"s87268\",\"type\":\"s22131\",\"display\":\"s91351\"}],\"diseaseSymptomProcedure\":{\"id\":\"s45331\",\"text\":\"s39989\"},\"diseaseStatus\":{\"id\":\"s76655\",\"text\":\"s16204\"},\"comorbidity\":[{\"id\":\"s32044\",\"text\":\"s86485\"},{\"id\":\"s45632\",\"text\":\"s95837\"}],\"intendedEffect\":{\"id\":\"s94909\",\"text\":\"s73570\"},\"duration\":{\"id\":\"s39620\",\"value\":101.125,\"comparator\":\">\",\"unit\":\"s17328\",\"system\":\"s56886\",\"code\":\"s64709\"},\"otherTherapy\":[{\"id\":\"s77717\"},{\"id\":\"s22501\"}],\"undesirableEffect\":[{\"id\":\"s13988\",\"reference\":\"s35885\",\"type\":\"s27634\",\"display\":\"s60510\"},{\"id\":\"s48645\",\"reference\":\"s78798\",\"type\":\"s99170\",\"display\":\"s82885\"}],\"population\":[{\"id\":\"s16573\"},{\"id\":\"s63265\"}]}",
+ "expect": "{\"resourceType\":\"MedicinalProductIndication\",\"id\":\"s93466\",\"meta\":{\"id\":\"s60423\",\"versionId\":\"s54114\",\"lastUpdated\":\"2024-03-15T20:32:43.136Z\",\"source\":\"s54438\",\"profile\":[\"s56482\",\"s2356\"]},\"implicitRules\":\"s86305\",\"language\":\"s76178\",\"text\":{\"id\":\"s55347\",\"status\":\"generated\"},\"subject\":[{\"id\":\"s65830\",\"reference\":\"s82637\",\"type\":\"s37867\",\"display\":\"s34757\"},{\"id\":\"s51040\",\"reference\":\"s87268\",\"type\":\"s22131\",\"display\":\"s91351\"}],\"diseaseSymptomProcedure\":{\"id\":\"s45331\",\"text\":\"s39989\"},\"diseaseStatus\":{\"id\":\"s76655\",\"text\":\"s16204\"},\"comorbidity\":[{\"id\":\"s32044\",\"text\":\"s86485\"},{\"id\":\"s45632\",\"text\":\"s95837\"}],\"intendedEffect\":{\"id\":\"s94909\",\"text\":\"s73570\"},\"duration\":{\"id\":\"s39620\",\"value\":101.125,\"comparator\":\">\",\"unit\":\"s17328\",\"system\":\"s56886\",\"code\":\"s64709\"},\"otherTherapy\":[{\"id\":\"s77717\"},{\"id\":\"s22501\"}],\"undesirableEffect\":[{\"id\":\"s13988\",\"reference\":\"s35885\",\"type\":\"s27634\",\"display\":\"s60510\"},{\"id\":\"s48645\",\"reference\":\"s78798\",\"type\":\"s99170\",\"display\":\"s82885\"}],\"population\":[{\"id\":\"s16573\"},{\"id\":\"s63265\"}]}",
+ "model": {
+  "@kind": "medicinal_product_indication",
+  "uid": "s93466",
+  "time_ms": "1710534763136",
+  "fhirr4medicinalproductindication.resource_type": "MedicinalProductIndication",
+  "fhirr4medicinalproductindication.id": "s93466",
+  "fhirr4medicinalproductindication.meta_id": "s60423",
+  "fhirr4medicinalproductindication.meta_version_id": "s54114",
+  "fhirr4medicinalproductindication.meta_last_updated": "2024-03-15T20:32:43.136Z"
+ }
+}

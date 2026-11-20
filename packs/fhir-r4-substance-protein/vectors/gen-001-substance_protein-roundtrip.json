@@ -1,0 +1,17 @@
+{
+ "name": "gen-substance_protein-roundtrip",
+ "from": "fhir-r4-substance-protein",
+ "to": "fhir-r4-substance-protein",
+ "input": "{\"resourceType\":\"SubstanceProtein\",\"id\":\"s38264\",\"meta\":{\"id\":\"s39269\",\"versionId\":\"s14558\",\"lastUpdated\":\"2025-07-27T10:41:06.703Z\",\"source\":\"s55303\",\"profile\":[\"s51381\",\"s41282\"]},\"implicitRules\":\"s94031\",\"language\":\"s25746\",\"text\":{\"id\":\"s70345\",\"status\":\"generated\"},\"sequenceType\":{\"id\":\"s40306\",\"text\":\"s91013\"},\"numberOfSubunits\":-3.25,\"disulfideLinkage\":[\"s78652\",\"s98497\"],\"subunit\":[{\"id\":\"s5513\",\"subunit\":12.5,\"sequence\":\"s78397\",\"length\":-0.5,\"nTerminalModification\":\"s31437\",\"cTerminalModification\":\"s29222\"},{\"id\":\"s93012\",\"subunit\":7.0625,\"sequence\":\"s20868\",\"length\":42.375,\"nTerminalModification\":\"s37064\",\"cTerminalModification\":\"s42722\"}]}",
+ "expect": "{\"resourceType\":\"SubstanceProtein\",\"id\":\"s38264\",\"meta\":{\"id\":\"s39269\",\"versionId\":\"s14558\",\"lastUpdated\":\"2025-07-27T10:41:06.703Z\",\"source\":\"s55303\",\"profile\":[\"s51381\",\"s41282\"]},\"implicitRules\":\"s94031\",\"language\":\"s25746\",\"text\":{\"id\":\"s70345\",\"status\":\"generated\"},\"sequenceType\":{\"id\":\"s40306\",\"text\":\"s91013\"},\"numberOfSubunits\":-3.25,\"disulfideLinkage\":[\"s78652\",\"s98497\"],\"subunit\":[{\"id\":\"s5513\",\"subunit\":12.5,\"sequence\":\"s78397\",\"length\":-0.5,\"nTerminalModification\":\"s31437\",\"cTerminalModification\":\"s29222\"},{\"id\":\"s93012\",\"subunit\":7.0625,\"sequence\":\"s20868\",\"length\":42.375,\"nTerminalModification\":\"s37064\",\"cTerminalModification\":\"s42722\"}]}",
+ "model": {
+  "@kind": "substance_protein",
+  "uid": "s38264",
+  "time_ms": "1753612866703",
+  "fhirr4substanceprotein.resource_type": "SubstanceProtein",
+  "fhirr4substanceprotein.id": "s38264",
+  "fhirr4substanceprotein.meta_id": "s39269",
+  "fhirr4substanceprotein.meta_version_id": "s14558",
+  "fhirr4substanceprotein.meta_last_updated": "2025-07-27T10:41:06.703Z"
+ }
+}

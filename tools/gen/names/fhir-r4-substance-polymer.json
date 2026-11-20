@@ -1,0 +1,33 @@
+{
+ "keys": {
+  "copolymer_connectivity|id|string": "copolymer_connectivity_id",
+  "copolymer_connectivity|text|string": "copolymer_connectivity_text",
+  "meta_profile|.|string": "meta_profile_value",
+  "modification|.|string": "modification_value",
+  "monomer_set|id|string": "monomer_set_id",
+  "repeat|averageMolecularFormula|string": "repeat_average_molecular_formula",
+  "repeat|id|string": "repeat_id",
+  "repeat|numberOfUnits|float": "repeat_number_of_units",
+  "|class.id|string": "class_id",
+  "|class.text|string": "class_text",
+  "|geometry.id|string": "geometry_id",
+  "|geometry.text|string": "geometry_text",
+  "|id|string": "id",
+  "|implicitRules|string": "implicit_rules",
+  "|language|string": "language",
+  "|meta.id|string": "meta_id",
+  "|meta.lastUpdated|string": "meta_last_updated",
+  "|meta.source|string": "meta_source",
+  "|meta.versionId|string": "meta_version_id",
+  "|resourceType|string": "resource_type",
+  "|text.id|string": "text_id",
+  "|text.status|string": "text_status"
+ },
+ "lists": {
+  "|copolymerConnectivity": "copolymer_connectivity",
+  "|meta.profile": "meta_profile",
+  "|modification": "modification",
+  "|monomerSet": "monomer_set",
+  "|repeat": "repeat"
+ }
+}

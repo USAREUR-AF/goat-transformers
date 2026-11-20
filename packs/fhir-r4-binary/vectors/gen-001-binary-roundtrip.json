@@ -1,0 +1,17 @@
+{
+ "name": "gen-binary-roundtrip",
+ "from": "fhir-r4-binary",
+ "to": "fhir-r4-binary",
+ "input": "{\"resourceType\":\"Binary\",\"id\":\"s6242\",\"meta\":{\"id\":\"s87228\",\"versionId\":\"s2916\",\"lastUpdated\":\"2025-07-11T20:26:38.609Z\",\"source\":\"s14897\",\"profile\":[\"s28488\",\"s28368\"]},\"implicitRules\":\"s71628\",\"language\":\"s1977\",\"contentType\":\"s21902\",\"securityContext\":{\"id\":\"s88914\",\"reference\":\"s51754\",\"type\":\"s15756\",\"identifier\":{\"id\":\"s79173\",\"use\":\"secondary\",\"system\":\"s92228\",\"value\":\"s92515\"},\"display\":\"s78648\"},\"data\":\"s10636\"}",
+ "expect": "{\"resourceType\":\"Binary\",\"id\":\"s6242\",\"meta\":{\"id\":\"s87228\",\"versionId\":\"s2916\",\"lastUpdated\":\"2025-07-11T20:26:38.609Z\",\"source\":\"s14897\",\"profile\":[\"s28488\",\"s28368\"]},\"implicitRules\":\"s71628\",\"language\":\"s1977\",\"contentType\":\"s21902\",\"securityContext\":{\"id\":\"s88914\",\"reference\":\"s51754\",\"type\":\"s15756\",\"identifier\":{\"id\":\"s79173\",\"use\":\"secondary\",\"system\":\"s92228\",\"value\":\"s92515\"},\"display\":\"s78648\"},\"data\":\"s10636\"}",
+ "model": {
+  "@kind": "binary",
+  "uid": "s6242",
+  "time_ms": "1752265598609",
+  "fhirr4binary.resource_type": "Binary",
+  "fhirr4binary.id": "s6242",
+  "fhirr4binary.meta_id": "s87228",
+  "fhirr4binary.meta_version_id": "s2916",
+  "fhirr4binary.meta_last_updated": "2025-07-11T20:26:38.609Z"
+ }
+}

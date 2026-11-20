@@ -1,0 +1,17 @@
+{
+ "name": "gen-medicinal_product_pharmaceutical-roundtrip",
+ "from": "fhir-r4-medicinal-product-pharmaceutical",
+ "to": "fhir-r4-medicinal-product-pharmaceutical",
+ "input": "{\"resourceType\":\"MedicinalProductPharmaceutical\",\"id\":\"s35529\",\"meta\":{\"id\":\"s18193\",\"versionId\":\"s32625\",\"lastUpdated\":\"2026-01-15T17:53:37.074Z\",\"source\":\"s91853\",\"profile\":[\"s62681\",\"s216\"]},\"implicitRules\":\"s70532\",\"language\":\"s29012\",\"text\":{\"id\":\"s76401\",\"status\":\"additional\"},\"identifier\":[{\"id\":\"s64295\",\"use\":\"secondary\",\"system\":\"s3568\",\"value\":\"s63189\"},{\"id\":\"s77493\",\"use\":\"official\",\"system\":\"s12403\",\"value\":\"s20478\"}],\"administrableDoseForm\":{\"id\":\"s78835\",\"text\":\"s82459\"},\"unitOfPresentation\":{\"id\":\"s230\",\"text\":\"s44294\"},\"ingredient\":[{\"id\":\"s91342\",\"reference\":\"s54213\",\"type\":\"s25119\",\"display\":\"s96752\"},{\"id\":\"s35351\",\"reference\":\"s74265\",\"type\":\"s4109\",\"display\":\"s97782\"}],\"device\":[{\"id\":\"s88879\",\"reference\":\"s3808\",\"type\":\"s69997\",\"display\":\"s30629\"},{\"id\":\"s84747\",\"reference\":\"s41856\",\"type\":\"s98770\",\"display\":\"s7033\"}],\"characteristics\":[{\"id\":\"s12093\"},{\"id\":\"s29988\"}],\"routeOfAdministration\":[{\"id\":\"s68876\"},{\"id\":\"s44156\"}]}",
+ "expect": "{\"resourceType\":\"MedicinalProductPharmaceutical\",\"id\":\"s35529\",\"meta\":{\"id\":\"s18193\",\"versionId\":\"s32625\",\"lastUpdated\":\"2026-01-15T17:53:37.074Z\",\"source\":\"s91853\",\"profile\":[\"s62681\",\"s216\"]},\"implicitRules\":\"s70532\",\"language\":\"s29012\",\"text\":{\"id\":\"s76401\",\"status\":\"additional\"},\"identifier\":[{\"id\":\"s64295\",\"use\":\"secondary\",\"system\":\"s3568\",\"value\":\"s63189\"},{\"id\":\"s77493\",\"use\":\"official\",\"system\":\"s12403\",\"value\":\"s20478\"}],\"administrableDoseForm\":{\"id\":\"s78835\",\"text\":\"s82459\"},\"unitOfPresentation\":{\"id\":\"s230\",\"text\":\"s44294\"},\"ingredient\":[{\"id\":\"s91342\",\"reference\":\"s54213\",\"type\":\"s25119\",\"display\":\"s96752\"},{\"id\":\"s35351\",\"reference\":\"s74265\",\"type\":\"s4109\",\"display\":\"s97782\"}],\"device\":[{\"id\":\"s88879\",\"reference\":\"s3808\",\"type\":\"s69997\",\"display\":\"s30629\"},{\"id\":\"s84747\",\"reference\":\"s41856\",\"type\":\"s98770\",\"display\":\"s7033\"}],\"characteristics\":[{\"id\":\"s12093\"},{\"id\":\"s29988\"}],\"routeOfAdministration\":[{\"id\":\"s68876\"},{\"id\":\"s44156\"}]}",
+ "model": {
+  "@kind": "medicinal_product_pharmaceutical",
+  "uid": "s35529",
+  "time_ms": "1768499617074",
+  "fhirr4medicinalproductpharmaceutical.resource_type": "MedicinalProductPharmaceutical",
+  "fhirr4medicinalproductpharmaceutical.id": "s35529",
+  "fhirr4medicinalproductpharmaceutical.meta_id": "s18193",
+  "fhirr4medicinalproductpharmaceutical.meta_version_id": "s32625",
+  "fhirr4medicinalproductpharmaceutical.meta_last_updated": "2026-01-15T17:53:37.074Z"
+ }
+}

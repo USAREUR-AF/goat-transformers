@@ -1,0 +1,35 @@
+{
+ "keys": {
+  "channel_header|.|string": "channel_header_value",
+  "contact|id|string": "contact_id",
+  "contact|rank|float": "contact_rank",
+  "contact|system|string": "contact_system",
+  "contact|use|string": "contact_use",
+  "contact|value|string": "contact_value",
+  "meta_profile|.|string": "meta_profile_value",
+  "|channel.endpoint|string": "channel_endpoint",
+  "|channel.id|string": "channel_id",
+  "|channel.payload|string": "channel_payload",
+  "|channel.type|string": "channel_type",
+  "|criteria|string": "criteria",
+  "|end|string": "end",
+  "|error|string": "error",
+  "|id|string": "id",
+  "|implicitRules|string": "implicit_rules",
+  "|language|string": "language",
+  "|meta.id|string": "meta_id",
+  "|meta.lastUpdated|string": "meta_last_updated",
+  "|meta.source|string": "meta_source",
+  "|meta.versionId|string": "meta_version_id",
+  "|reason|string": "reason",
+  "|resourceType|string": "resource_type",
+  "|status|string": "status",
+  "|text.id|string": "text_id",
+  "|text.status|string": "text_status"
+ },
+ "lists": {
+  "|channel.header": "channel_header",
+  "|contact": "contact",
+  "|meta.profile": "meta_profile"
+ }
+}

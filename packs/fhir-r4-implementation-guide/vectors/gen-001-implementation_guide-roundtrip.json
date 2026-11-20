@@ -1,0 +1,17 @@
+{
+ "name": "gen-implementation_guide-roundtrip",
+ "from": "fhir-r4-implementation-guide",
+ "to": "fhir-r4-implementation-guide",
+ "input": "{\"resourceType\":\"ImplementationGuide\",\"id\":\"s27049\",\"meta\":{\"id\":\"s74398\",\"versionId\":\"s77798\",\"lastUpdated\":\"2024-03-14T03:08:54.093Z\",\"source\":\"s80142\",\"profile\":[\"s28836\",\"s57571\"]},\"implicitRules\":\"s16970\",\"language\":\"s42354\",\"text\":{\"id\":\"s96495\",\"status\":\"generated\"},\"url\":\"s34304\",\"version\":\"s64147\",\"name\":\"s26835\",\"title\":\"s77493\",\"status\":\"unknown\",\"experimental\":false,\"date\":\"s27262\",\"publisher\":\"s7857\",\"contact\":[{\"id\":\"s37947\",\"name\":\"s69443\"},{\"id\":\"s71755\",\"name\":\"s44468\"}],\"description\":\"s26670\",\"useContext\":[{\"id\":\"s24998\"},{\"id\":\"s59733\"}],\"jurisdiction\":[{\"id\":\"s77089\",\"text\":\"s60711\"},{\"id\":\"s38011\",\"text\":\"s61054\"}],\"copyright\":\"s77786\",\"packageId\":\"s43089\",\"license\":\"GFDL-1.2-only\",\"fhirVersion\":[\"0.06\",\"4.0.0\"],\"dependsOn\":[{\"id\":\"s69718\",\"uri\":\"s61775\",\"packageId\":\"s68205\",\"version\":\"s80623\"},{\"id\":\"s33875\",\"uri\":\"s10186\",\"packageId\":\"s79793\",\"version\":\"s38632\"}],\"global\":[{\"id\":\"s59765\",\"type\":\"s37274\",\"profile\":\"s68951\"},{\"id\":\"s48943\",\"type\":\"s43045\",\"profile\":\"s77657\"}],\"definition\":{\"id\":\"s75999\",\"page\":{\"id\":\"s63894\",\"nameUrl\":\"s39159\",\"title\":\"s57187\",\"generation\":\"html\"}},\"manifest\":{\"id\":\"s14591\",\"rendering\":\"s7281\",\"image\":[\"s52003\",\"s11528\"],\"other\":[\"s19382\",\"s12740\"]}}",
+ "expect": "{\"resourceType\":\"ImplementationGuide\",\"id\":\"s27049\",\"meta\":{\"id\":\"s74398\",\"versionId\":\"s77798\",\"lastUpdated\":\"2024-03-14T03:08:54.093Z\",\"source\":\"s80142\",\"profile\":[\"s28836\",\"s57571\"]},\"implicitRules\":\"s16970\",\"language\":\"s42354\",\"text\":{\"id\":\"s96495\",\"status\":\"generated\"},\"url\":\"s34304\",\"version\":\"s64147\",\"name\":\"s26835\",\"title\":\"s77493\",\"status\":\"unknown\",\"experimental\":false,\"date\":\"s27262\",\"publisher\":\"s7857\",\"contact\":[{\"id\":\"s37947\",\"name\":\"s69443\"},{\"id\":\"s71755\",\"name\":\"s44468\"}],\"description\":\"s26670\",\"useContext\":[{\"id\":\"s24998\"},{\"id\":\"s59733\"}],\"jurisdiction\":[{\"id\":\"s77089\",\"text\":\"s60711\"},{\"id\":\"s38011\",\"text\":\"s61054\"}],\"copyright\":\"s77786\",\"packageId\":\"s43089\",\"license\":\"GFDL-1.2-only\",\"fhirVersion\":[\"0.06\",\"4.0.0\"],\"dependsOn\":[{\"id\":\"s69718\",\"uri\":\"s61775\",\"packageId\":\"s68205\",\"version\":\"s80623\"},{\"id\":\"s33875\",\"uri\":\"s10186\",\"packageId\":\"s79793\",\"version\":\"s38632\"}],\"global\":[{\"id\":\"s59765\",\"type\":\"s37274\",\"profile\":\"s68951\"},{\"id\":\"s48943\",\"type\":\"s43045\",\"profile\":\"s77657\"}],\"definition\":{\"id\":\"s75999\",\"page\":{\"id\":\"s63894\",\"nameUrl\":\"s39159\",\"title\":\"s57187\",\"generation\":\"html\"}},\"manifest\":{\"id\":\"s14591\",\"rendering\":\"s7281\",\"image\":[\"s52003\",\"s11528\"],\"other\":[\"s19382\",\"s12740\"]}}",
+ "model": {
+  "@kind": "implementation_guide",
+  "uid": "s27049",
+  "time_ms": "1710385734093",
+  "fhirr4implementationguide.resource_type": "ImplementationGuide",
+  "fhirr4implementationguide.id": "s27049",
+  "fhirr4implementationguide.meta_id": "s74398",
+  "fhirr4implementationguide.meta_version_id": "s77798",
+  "fhirr4implementationguide.meta_last_updated": "2024-03-14T03:08:54.093Z"
+ }
+}

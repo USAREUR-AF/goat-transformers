@@ -1,0 +1,17 @@
+{
+ "name": "gen-linkage-roundtrip",
+ "from": "fhir-r4-linkage",
+ "to": "fhir-r4-linkage",
+ "input": "{\"resourceType\":\"Linkage\",\"id\":\"s49251\",\"meta\":{\"id\":\"s59426\",\"versionId\":\"s84709\",\"lastUpdated\":\"2026-06-12T19:48:32.166Z\",\"source\":\"s86457\",\"profile\":[\"s46206\",\"s97862\"]},\"implicitRules\":\"s52994\",\"language\":\"s15187\",\"text\":{\"id\":\"s44620\",\"status\":\"additional\"},\"active\":false,\"author\":{\"id\":\"s43252\",\"reference\":\"s40498\",\"type\":\"s93781\",\"identifier\":{\"id\":\"s16667\",\"use\":\"temp\",\"system\":\"s34432\",\"value\":\"s4558\"},\"display\":\"s91782\"},\"item\":[{\"id\":\"s89181\",\"type\":\"alternate\"},{\"id\":\"s30915\",\"type\":\"alternate\"}]}",
+ "expect": "{\"resourceType\":\"Linkage\",\"id\":\"s49251\",\"meta\":{\"id\":\"s59426\",\"versionId\":\"s84709\",\"lastUpdated\":\"2026-06-12T19:48:32.166Z\",\"source\":\"s86457\",\"profile\":[\"s46206\",\"s97862\"]},\"implicitRules\":\"s52994\",\"language\":\"s15187\",\"text\":{\"id\":\"s44620\",\"status\":\"additional\"},\"active\":false,\"author\":{\"id\":\"s43252\",\"reference\":\"s40498\",\"type\":\"s93781\",\"identifier\":{\"id\":\"s16667\",\"use\":\"temp\",\"system\":\"s34432\",\"value\":\"s4558\"},\"display\":\"s91782\"},\"item\":[{\"id\":\"s89181\",\"type\":\"alternate\"},{\"id\":\"s30915\",\"type\":\"alternate\"}]}",
+ "model": {
+  "@kind": "linkage",
+  "uid": "s49251",
+  "time_ms": "1781293712166",
+  "fhirr4linkage.resource_type": "Linkage",
+  "fhirr4linkage.id": "s49251",
+  "fhirr4linkage.meta_id": "s59426",
+  "fhirr4linkage.meta_version_id": "s84709",
+  "fhirr4linkage.meta_last_updated": "2026-06-12T19:48:32.166Z"
+ }
+}

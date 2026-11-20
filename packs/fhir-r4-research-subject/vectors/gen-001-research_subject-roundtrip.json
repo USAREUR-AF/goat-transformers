@@ -1,0 +1,17 @@
+{
+ "name": "gen-research_subject-roundtrip",
+ "from": "fhir-r4-research-subject",
+ "to": "fhir-r4-research-subject",
+ "input": "{\"resourceType\":\"ResearchSubject\",\"id\":\"s47050\",\"meta\":{\"id\":\"s98864\",\"versionId\":\"s58717\",\"lastUpdated\":\"2026-12-29T00:51:11.331Z\",\"source\":\"s3218\",\"profile\":[\"s96219\",\"s57485\"]},\"implicitRules\":\"s78752\",\"language\":\"s77770\",\"text\":{\"id\":\"s8432\",\"status\":\"extensions\"},\"identifier\":[{\"id\":\"s76312\",\"use\":\"secondary\",\"system\":\"s82514\",\"value\":\"s80398\"},{\"id\":\"s32896\",\"use\":\"secondary\",\"system\":\"s27236\",\"value\":\"s13854\"}],\"status\":\"potential-candidate\",\"period\":{\"id\":\"s46763\",\"start\":\"s14880\",\"end\":\"s33169\"},\"study\":{\"id\":\"s86307\",\"reference\":\"s57128\",\"type\":\"s8823\",\"identifier\":{\"id\":\"s85300\",\"use\":\"secondary\",\"system\":\"s44618\",\"value\":\"s86026\"},\"display\":\"s7989\"},\"individual\":{\"id\":\"s75237\",\"reference\":\"s55243\",\"type\":\"s13170\",\"identifier\":{\"id\":\"s27957\",\"use\":\"secondary\",\"system\":\"s16905\",\"value\":\"s86180\"},\"display\":\"s2846\"},\"assignedArm\":\"s75451\",\"actualArm\":\"s42414\",\"consent\":{\"id\":\"s91612\",\"reference\":\"s14954\",\"type\":\"s99495\",\"identifier\":{\"id\":\"s23101\",\"use\":\"old\",\"system\":\"s14698\",\"value\":\"s10653\"},\"display\":\"s35137\"}}",
+ "expect": "{\"resourceType\":\"ResearchSubject\",\"id\":\"s47050\",\"meta\":{\"id\":\"s98864\",\"versionId\":\"s58717\",\"lastUpdated\":\"2026-12-29T00:51:11.331Z\",\"source\":\"s3218\",\"profile\":[\"s96219\",\"s57485\"]},\"implicitRules\":\"s78752\",\"language\":\"s77770\",\"text\":{\"id\":\"s8432\",\"status\":\"extensions\"},\"identifier\":[{\"id\":\"s76312\",\"use\":\"secondary\",\"system\":\"s82514\",\"value\":\"s80398\"},{\"id\":\"s32896\",\"use\":\"secondary\",\"system\":\"s27236\",\"value\":\"s13854\"}],\"status\":\"potential-candidate\",\"period\":{\"id\":\"s46763\",\"start\":\"s14880\",\"end\":\"s33169\"},\"study\":{\"id\":\"s86307\",\"reference\":\"s57128\",\"type\":\"s8823\",\"identifier\":{\"id\":\"s85300\",\"use\":\"secondary\",\"system\":\"s44618\",\"value\":\"s86026\"},\"display\":\"s7989\"},\"individual\":{\"id\":\"s75237\",\"reference\":\"s55243\",\"type\":\"s13170\",\"identifier\":{\"id\":\"s27957\",\"use\":\"secondary\",\"system\":\"s16905\",\"value\":\"s86180\"},\"display\":\"s2846\"},\"assignedArm\":\"s75451\",\"actualArm\":\"s42414\",\"consent\":{\"id\":\"s91612\",\"reference\":\"s14954\",\"type\":\"s99495\",\"identifier\":{\"id\":\"s23101\",\"use\":\"old\",\"system\":\"s14698\",\"value\":\"s10653\"},\"display\":\"s35137\"}}",
+ "model": {
+  "@kind": "research_subject",
+  "uid": "s47050",
+  "time_ms": "1798505471331",
+  "fhirr4researchsubject.resource_type": "ResearchSubject",
+  "fhirr4researchsubject.id": "s47050",
+  "fhirr4researchsubject.meta_id": "s98864",
+  "fhirr4researchsubject.meta_version_id": "s58717",
+  "fhirr4researchsubject.meta_last_updated": "2026-12-29T00:51:11.331Z"
+ }
+}

@@ -1,0 +1,39 @@
+{
+ "keys": {
+  "comorbidity|id|string": "comorbidity_id",
+  "comorbidity|text|string": "comorbidity_text",
+  "meta_profile|.|string": "meta_profile_value",
+  "other_therapy|id|string": "other_therapy_id",
+  "population|id|string": "population_id",
+  "subject|display|string": "subject_display",
+  "subject|id|string": "subject_id",
+  "subject|reference|string": "subject_reference",
+  "subject|type|string": "subject_type",
+  "therapeutic_indication|display|string": "therapeutic_indication_display",
+  "therapeutic_indication|id|string": "therapeutic_indication_id",
+  "therapeutic_indication|reference|string": "therapeutic_indication_reference",
+  "therapeutic_indication|type|string": "therapeutic_indication_type",
+  "|disease.id|string": "disease_id",
+  "|disease.text|string": "disease_text",
+  "|diseaseStatus.id|string": "disease_status_id",
+  "|diseaseStatus.text|string": "disease_status_text",
+  "|id|string": "id",
+  "|implicitRules|string": "implicit_rules",
+  "|language|string": "language",
+  "|meta.id|string": "meta_id",
+  "|meta.lastUpdated|string": "meta_last_updated",
+  "|meta.source|string": "meta_source",
+  "|meta.versionId|string": "meta_version_id",
+  "|resourceType|string": "resource_type",
+  "|text.id|string": "text_id",
+  "|text.status|string": "text_status"
+ },
+ "lists": {
+  "|comorbidity": "comorbidity",
+  "|meta.profile": "meta_profile",
+  "|otherTherapy": "other_therapy",
+  "|population": "population",
+  "|subject": "subject",
+  "|therapeuticIndication": "therapeutic_indication"
+ }
+}
