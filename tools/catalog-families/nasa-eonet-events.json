@@ -1,0 +1,7 @@
+{
+  "name": "NASA EONET events",
+  "domain": "maps",
+  "exact": [
+    "eonet-event"
+  ]
+}

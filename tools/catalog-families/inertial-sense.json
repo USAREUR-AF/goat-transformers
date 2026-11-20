@@ -1,0 +1,12 @@
+{
+  "name": "Inertial Sense",
+  "domain": "sensors",
+  "prefixes": [
+    "inertialsense-"
+  ],
+  "members": {
+    "pattern": "^inertialsense-(.+)$",
+    "label": "{n} data set groups",
+    "list": false
+  }
+}

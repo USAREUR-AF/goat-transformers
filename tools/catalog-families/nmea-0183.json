@@ -1,0 +1,7 @@
+{
+  "name": "NMEA 0183",
+  "domain": "sea",
+  "exact": [
+    "nmea0183"
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "u-blox UBX",
+  "domain": "sensors",
+  "prefixes": [
+    "ubx-"
+  ],
+  "members": {
+    "pattern": "^ubx-(.+)$",
+    "label": "{n} message classes",
+    "list": false
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "VDA 5050 mobile robot interface",
+  "domain": "uncrewed",
+  "prefixes": [
+    "vda5050-"
+  ]
+}

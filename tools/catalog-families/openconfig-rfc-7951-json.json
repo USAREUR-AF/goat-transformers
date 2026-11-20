@@ -1,0 +1,8 @@
+{
+  "name": "OpenConfig (RFC 7951 JSON)",
+  "domain": "networks",
+  "prefixes": [
+    "openconfig-"
+  ],
+  "detail": "top-level containers of OpenConfig modules"
+}

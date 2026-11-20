@@ -1,0 +1,7 @@
+{
+  "name": "ROS 2 interface packages",
+  "domain": "uncrewed",
+  "prefixes": [
+    "ros2-"
+  ]
+}

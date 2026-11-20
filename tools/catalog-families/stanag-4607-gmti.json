@@ -1,0 +1,11 @@
+{
+  "name": "STANAG 4607 GMTI",
+  "domain": "sensors",
+  "exact": [
+    "gmti",
+    "gmti-records",
+    "gmti-segment",
+    "gmti-segment-records"
+  ],
+  "detail": "packets, segments, record profiles"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "EVerest charging stack",
+  "domain": "iot",
+  "prefixes": [
+    "everest-"
+  ]
+}

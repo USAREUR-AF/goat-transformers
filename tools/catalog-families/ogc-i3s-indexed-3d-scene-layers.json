@@ -1,0 +1,8 @@
+{
+  "name": "OGC I3S (Indexed 3D Scene Layers)",
+  "domain": "maps",
+  "prefixes": [
+    "i3s-"
+  ],
+  "detail": "scene layer, node page and statistics resources; building and point cloud layers"
+}

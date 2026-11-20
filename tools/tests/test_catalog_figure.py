@@ -56,12 +56,20 @@ class CatalogCase(unittest.TestCase):
         self.write_table(TABLE)
 
     def write_table(self, table):
-        self.tree.write("tools/catalog-families.json", json.dumps(table))
+        """The table as tools/catalog-families/: _domains.json and one file per family."""
+        folder = os.path.join(self.tree.root, "tools", "catalog-families")
+        if os.path.isdir(folder):
+            for name in os.listdir(folder):
+                os.remove(os.path.join(folder, name))
+        head = {k: v for k, v in table.items() if k != "families"}
+        self.tree.write("tools/catalog-families/_domains.json", json.dumps(head))
+        for i, fam in enumerate(table["families"]):
+            self.tree.write("tools/catalog-families/%02d-family.json" % i, json.dumps(fam))
 
     def run_fig(self, *argv):
         return run_main(fig.main, *argv,
                         "--packs", os.path.join(self.tree.root, "packs"),
-                        "--families", os.path.join(self.tree.root, "tools", "catalog-families.json"),
+                        "--families", os.path.join(self.tree.root, "tools", "catalog-families"),
                         "--out", os.path.join(self.tree.root, "out"))
 
     def svg(self, name="catalog-light.svg"):
@@ -92,8 +100,8 @@ class Families(CatalogCase):
         self.assertIn("3 families in 2 domains", out)
         self.assertFalse(os.path.exists(os.path.join(self.tree.root, "out")))
 
-    def test_the_first_matching_family_holds_a_pack(self):
-        table = fig.load_table(os.path.join(self.tree.root, "tools", "catalog-families.json"))
+    def test_an_exact_name_or_else_the_longest_prefix_holds_a_pack(self):
+        table = fig.load_table(os.path.join(self.tree.root, "tools", "catalog-families"))
         domains, synthetic = fig.classify(table, fig.pack_names(os.path.join(self.tree.root, "packs")))
         got = {f["name"]: (f["packs"], f["detail"]) for d in domains for f in d["families"]}
         self.assertEqual(got, {
@@ -101,6 +109,35 @@ class Families(CatalogCase):
             "Beacon": (2, "v1, v2"),
             "Ship log": (3, ""),
         })
+
+
+class Matching(CatalogCase):
+    def classify(self):
+        table = fig.load_table(os.path.join(self.tree.root, "tools", "catalog-families"))
+        domains, _ = fig.classify(table, fig.pack_names(os.path.join(self.tree.root, "packs")))
+        return {f["name"]: f["packs"] for d in domains for f in d["families"]}
+
+    def test_the_longest_prefix_wins_whatever_the_file_order(self):
+        for first in (True, False):
+            fams = [{"name": "Radar categories", "domain": "air", "prefixes": ["radar-cat"]},
+                    {"name": "Radar full", "domain": "air", "prefixes": ["radar-cat048-"]}]
+            table = dict(TABLE, families=(fams if first else fams[::-1]) + TABLE["families"][1:])
+            self.write_table(table)
+            with self.subTest(first=first):
+                self.assertEqual(self.classify(), {"Radar categories": 2, "Radar full": 1, "Beacon": 2, "Ship log": 3})
+
+    def test_an_exact_name_wins_over_a_prefix(self):
+        table = dict(TABLE, families=TABLE["families"] + [{"name": "Beta ship", "domain": "sea", "exact": ["shiplog-b"]}])
+        self.write_table(table)
+        got = self.classify()
+        self.assertEqual((got["Ship log"], got["Beta ship"]), (2, 1))
+
+    def test_two_families_that_hold_a_pack_equally_stop_the_tool(self):
+        table = dict(TABLE, families=TABLE["families"] + [{"name": "Other log", "domain": "sea", "prefixes": ["shiplog-"]}])
+        self.write_table(table)
+        code, _, err = self.run_fig("--check-families")
+        self.assertEqual(code, 1)
+        self.assertIn("two families hold the packs shiplog-a", err)
 
 
 class Figure(CatalogCase):

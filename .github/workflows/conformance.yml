@@ -44,14 +44,15 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - run: python3 -I -m unittest discover -s tools/tests
-      # Fails only when a pack has no family in tools/catalog-families.json.
+      # Fails only when a pack has no family in tools/catalog-families/.
       # The figure's counts are compared (--check) only in the counts PR.
       - name: Every pack has a family in the catalog figure
         run: python3 -I tools/catalog-figure.py --check-families
       - name: No pack or module invents time quality (spec 0.32)
         run: python3 -I tools/time-quality-guard.py
-      # Every pack has one known licence; licences.json and LICENSING.md are
-      # current; the open profile holds nothing restricted (LICENSING.md).
+      # Every pack and module has one known licence, in its own place; the
+      # open profile holds nothing restricted. licences.json and LICENSING.md
+      # are written by the counts pull request (--check-current), not here.
       # README.md and site/index.html hold sections written from one source.
       - name: Sections shared by the README and the site are current
         run: python3 -I tools/doc-sections.py --check

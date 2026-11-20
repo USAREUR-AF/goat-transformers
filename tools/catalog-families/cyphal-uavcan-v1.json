@@ -1,0 +1,7 @@
+{
+  "name": "Cyphal (UAVCAN v1)",
+  "domain": "uncrewed",
+  "prefixes": [
+    "cyphal-"
+  ]
+}

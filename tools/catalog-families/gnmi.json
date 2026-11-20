@@ -1,0 +1,7 @@
+{
+  "name": "gNMI",
+  "domain": "networks",
+  "prefixes": [
+    "gnmi-"
+  ]
+}

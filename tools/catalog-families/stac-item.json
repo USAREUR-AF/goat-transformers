@@ -1,0 +1,7 @@
+{
+  "name": "STAC Item",
+  "domain": "maps",
+  "exact": [
+    "stac-item"
+  ]
+}

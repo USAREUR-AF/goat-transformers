@@ -1,0 +1,7 @@
+{
+  "name": "NWS weather.gov API",
+  "domain": "maps",
+  "prefixes": [
+    "nws-"
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "name": "OpenXC",
+  "domain": "land",
+  "exact": [
+    "openxc-vehicle-message"
+  ]
+}

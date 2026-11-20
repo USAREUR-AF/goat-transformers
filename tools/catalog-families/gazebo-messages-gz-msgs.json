@@ -1,0 +1,7 @@
+{
+  "name": "Gazebo messages (gz-msgs)",
+  "domain": "uncrewed",
+  "prefixes": [
+    "gz-msgs-"
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "name": "GOFS",
+  "domain": "transport",
+  "prefixes": [
+    "gofs-"
+  ]
+}

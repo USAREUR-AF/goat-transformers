@@ -24,14 +24,18 @@ TABLE = {
 }
 
 
-def reuse(*labels):
-    out = ['version = 1\n\n[[annotations]]\npath = "**"\nprecedence = "override"\n'
-           'SPDX-FileCopyrightText = "2026 test"\nSPDX-License-Identifier = "Apache-2.0"\n']
-    for path, lid in labels:
-        out.append('\n[[annotations]]\npath = %s\nprecedence = "override"\n'
-                   'SPDX-FileCopyrightText = "2026 test"\nSPDX-License-Identifier = "%s"\n'
-                   % (json.dumps(path), lid))
-    return "".join(out)
+ROOT_REUSE = ('version = 1\n\n[[annotations]]\npath = "**"\nprecedence = "closest"\n'
+              'SPDX-FileCopyrightText = "2026 test"\nSPDX-License-Identifier = "Apache-2.0"\n')
+PACK_REUSE = ('version = 1\n\n[[annotations]]\npath = "**"\nprecedence = "override"\n'
+              'SPDX-FileCopyrightText = "2026 test"\nSPDX-License-Identifier = "%s"\n')
+
+
+def label(tree, target, lid):
+    """Label a pack (`packs/<name>`) or a module (`model/<file>.def`) in its own place."""
+    if target.startswith("packs/"):
+        tree.write(target + "/REUSE.toml", PACK_REUSE % lid)
+    else:
+        tree.write(target + ".license", "SPDX-FileCopyrightText: 2026 test\nSPDX-License-Identifier: %s\n" % lid)
 
 
 class Tree(unittest.TestCase):
@@ -49,10 +53,11 @@ class Tree(unittest.TestCase):
         self.tree.write("packs/uses-book/pack.def", "format f-uses-book\n" + HEAD + "uses book\nwire json\n")
         self.tree.write("packs/uses-derived/pack.def", "format f-uses-derived\n" + HEAD + "uses derived\nwire json\n")
         self.tree.write("LICENSES/Apache-2.0.txt", "text\n")
-        self.labels = [("packs/copyleft/**", "CC-BY-SA-4.0"), ("packs/nc/**", "CC-BY-NC-SA-4.0"),
-                       ("packs/fou/**", "LicenseRef-fou"), ("packs/unstated/**", "LicenseRef-unstated"),
-                       ("model/book.def", "CC-BY-NC-SA-4.0")]
-        self.tree.write("REUSE.toml", reuse(*self.labels))
+        self.tree.write("REUSE.toml", ROOT_REUSE)
+        for target, lid in (("packs/copyleft", "CC-BY-SA-4.0"), ("packs/nc", "CC-BY-NC-SA-4.0"),
+                            ("packs/fou", "LicenseRef-fou"), ("packs/unstated", "LicenseRef-unstated"),
+                            ("model/book.def", "CC-BY-NC-SA-4.0")):
+            label(self.tree, target, lid)
         for lid in ("CC-BY-SA-4.0", "CC-BY-NC-SA-4.0", "LicenseRef-fou", "LicenseRef-unstated"):
             self.tree.write("LICENSES/%s.txt" % lid, "text\n")
 
@@ -78,7 +83,7 @@ class Tree(unittest.TestCase):
 
     def test_generated_files_and_check(self):
         self.assertEqual(run_main(lic.main, root=self.root)[0], 0)
-        self.assertEqual(lic.check(self.root), [])
+        self.assertEqual(lic.check(self.root, current=True), ([], []))
         with open(os.path.join(self.root, "licences.json"), encoding="utf-8") as fh:
             doc = json.load(fh)
         self.assertNotIn("plain", doc["packs"])
@@ -87,29 +92,41 @@ class Tree(unittest.TestCase):
         with open(os.path.join(self.root, "LICENSING.md"), encoding="utf-8") as fh:
             md = fh.read()
         self.assertIn("| `packs/uses-book` | `f-uses-book` | Apache-2.0 | `everything` | uses module book", md)
-        # a change of label makes both files stale
-        self.tree.write("REUSE.toml", reuse(*self.labels[:-1]))
-        self.assertTrue(any("stale" in p for p in lic.check(self.root)))
+        # a new label makes both files behind: a note in a pull request, a failure in the counts PR
+        label(self.tree, "packs/plain", "CC-BY-SA-4.0")
+        problems, notes = lic.check(self.root)
+        self.assertEqual(problems, [])
+        self.assertEqual(len(notes), 2)
+        self.assertEqual(len(lic.check(self.root, current=True)[0]), 2)
+        self.assertEqual(run_main(lic.main, "--check", root=self.root)[0], 0)
+        self.assertEqual(run_main(lic.main, "--check-current", root=self.root)[0], 1)
 
-    def test_one_licence_per_pack(self):
-        self.tree.write("REUSE.toml", reuse(*self.labels, ("packs/plain/vectors/*.json", "CC-BY-SA-4.0")))
+    def test_a_pack_label_covers_its_whole_directory_once(self):
+        self.tree.write("packs/plain/REUSE.toml", PACK_REUSE.replace('path = "**"', 'path = "vectors/*.json"') % "CC-BY-SA-4.0")
+        self.assertTrue(any("a pack has one licence" in p for p in lic.survey(self.root)["problems"]))
+        self.tree.write("packs/plain/REUSE.toml", (PACK_REUSE % "CC-BY-SA-4.0").replace("override", "closest"))
         self.assertTrue(any("a pack has one licence" in p for p in lic.survey(self.root)["problems"]))
 
+    def test_a_label_in_the_root_reuse_toml_is_refused(self):
+        self.tree.write("REUSE.toml", ROOT_REUSE + '\n[[annotations]]\npath = "packs/plain/**"\nprecedence = "override"\n'
+                        'SPDX-FileCopyrightText = "2026 test"\nSPDX-License-Identifier = "CC-BY-SA-4.0"\n')
+        problems, _ = lic.check(self.root)
+        self.assertTrue(any("root REUSE.toml: an annotation for" in p and "packs/<name>/REUSE.toml" in p for p in problems))
+
     def test_unknown_licence_and_missing_text(self):
-        self.tree.write("REUSE.toml", reuse(*self.labels, ("packs/plain/**", "LicenseRef-nowhere")))
-        problems = lic.check(self.root)
+        label(self.tree, "packs/plain", "LicenseRef-nowhere")
+        problems, _ = lic.check(self.root)
         self.assertTrue(any("LicenseRef-nowhere is not in licences.toml" in p for p in problems))
         self.assertTrue(any("LICENSES/LicenseRef-nowhere.txt is missing" in p for p in problems))
 
     def test_controlled_is_refused(self):
-        self.tree.write("REUSE.toml", reuse(*self.labels, ("packs/plain/**", "LicenseRef-secret")))
+        label(self.tree, "packs/plain", "LicenseRef-secret")
         self.tree.write("LICENSES/LicenseRef-secret.txt", "text\n")
-        self.assertTrue(any("controlled" in p for p in lic.check(self.root)))
+        self.assertTrue(any("controlled" in p for p in lic.check(self.root)[0]))
 
-    def test_every_annotation_overrides(self):
-        self.tree.write("REUSE.toml", reuse(*self.labels).replace('precedence = "override"\n', "", 1))
-        with self.assertRaises(lic.LicenceError):
-            lic.survey(self.root)
+    def test_a_malformed_module_companion(self):
+        self.tree.write("model/book.def.license", "SPDX-FileCopyrightText: 2026 test\n")
+        self.assertTrue(any("model/book.def.license" in p for p in lic.survey(self.root)["problems"]))
 
     def test_a_pack_with_no_source_line(self):
         self.tree.write("packs/plain/pack.def", "format f-plain\nversion 1\ndistribution public\nwire json\n")
@@ -122,8 +139,9 @@ class Tree(unittest.TestCase):
         self.assertEqual(out, "plain\tf-plain\tApache-2.0\topen\n")
 
     def test_a_tree_without_licence_files_is_all_apache(self):
-        for name in ("REUSE.toml", "licences.toml"):
-            os.remove(os.path.join(self.root, name))
+        for name in ("REUSE.toml", "licences.toml", "packs/copyleft/REUSE.toml", "packs/nc/REUSE.toml",
+                     "packs/fou/REUSE.toml", "packs/unstated/REUSE.toml", "model/book.def.license"):
+            os.remove(os.path.join(self.root, *name.split("/")))
         self.assertEqual(set(self.profiles().values()), {"open"})
         self.assertEqual(lic.excluded(self.root, "open")["packs"], {})
 
@@ -141,7 +159,7 @@ class Globs(unittest.TestCase):
 
 class Repository(unittest.TestCase):
     def test_this_repository_is_consistent(self):
-        self.assertEqual(lic.check(REPO), [])
+        self.assertEqual(lic.check(REPO)[0], [])
 
 
 if __name__ == "__main__":

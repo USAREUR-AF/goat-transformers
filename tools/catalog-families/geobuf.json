@@ -1,0 +1,7 @@
+{
+  "name": "Geobuf",
+  "domain": "maps",
+  "exact": [
+    "geobuf"
+  ]
+}

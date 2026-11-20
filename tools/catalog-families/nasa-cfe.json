@@ -1,0 +1,12 @@
+{
+  "name": "NASA cFE",
+  "domain": "space",
+  "prefixes": [
+    "cfe-"
+  ],
+  "members": {
+    "pattern": "^cfe-([a-z]+)(?:-be)?$",
+    "label": "{n} core modules, little- and big-endian",
+    "list": true
+  }
+}

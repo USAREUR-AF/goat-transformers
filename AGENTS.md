@@ -101,12 +101,12 @@ Run from the repository root unless a directory is named.
 |---|---|
 | Boundary gate | `python3 -I tools/boundary-gate` |
 | Counts for `README.md` | `python3 -I tools/repo-stats` |
-| Catalog figure (`docs/figures/catalog-*.svg`) | `python3 -I tools/catalog-figure.py` writes it; `--check-families` (CI) fails when a pack has no family in `tools/catalog-families.json`; `--check` (the counts PR) fails when the figure is stale |
+| Catalog figure (`docs/figures/catalog-*.svg`) | `python3 -I tools/catalog-figure.py` writes it; `--check-families` (CI) fails when a pack has no family in `tools/catalog-families/` (one file per family); `--check` (the counts PR) fails when the figure is stale |
 | Rust engine and CLI | `cd engines/rust && cargo build --release` gives `target/release/goat-xf` |
 | Rust, every vector | `cd engines/rust && cargo test --release` |
 | A core or track change carries an ADR | `python3 -I tools/model-governance.py --base origin/main` (CI on every pull request) |
 | Sections shared by README.md and the site (`docs/<name>-section.md`) | `python3 -I tools/doc-sections.py` writes them into both; `--check` (CI) fails when either is stale. Edit the source, never the copies |
-| Licences and profiles (`LICENSING.md`, `licences.json`) | `python3 -I tools/licences.py` writes them; `--check` (CI) fails on a pack with no known licence or a stale file; `--list --profile open`; `reuse lint` (pip `reuse`) |
+| Licences and profiles (`LICENSING.md`, `licences.json`) | `python3 -I tools/licences.py` writes them (the counts pull request); `--check` (CI) fails on a pack with no known licence (stale files are a note); `--check-current` (counts PR) also fails on stale files; `--list --profile open`; `reuse lint` (pip `reuse`) |
 | Tool vectors of an engine's command-line tool (spec 0.23) | `python3 -I tools/tool-vectors.py -- <the tool's command>`, e.g. `-- engines/rust/target/release/goat-xf` |
 | Go | `cd engines/go && go vet ./... && go test ./...` |
 | Python | `cd engines/python && PYTHONPATH=src python3 -m unittest discover -s tests` |
@@ -149,11 +149,15 @@ The `add-a-format` skill has the full steps. In short:
 5. Write `pack.md` and `PROVENANCE.md`; add the source to `NOTICE`.
 6. If the source's licence is not Apache-2.0-compatible for commercial use
    (non-commercial, share-alike, a field-of-use restriction, or no licence
-   stated), still add the pack, and label it: an annotation in `REUSE.toml`
-   (`path = "packs/<format>/**"`, `precedence = "override"`, its SPDX id or a
-   `LicenseRef-<name>` with its text in `LICENSES/`), the id in
-   `licences.toml` if it is new, then `python3 -I tools/licences.py`
-   (LICENSING.md).
+   stated), still add the pack, and label it in its own place:
+   `packs/<format>/REUSE.toml` (one annotation: `path = "**"`,
+   `precedence = "override"`, the copyright and the SPDX id or a
+   `LicenseRef-<name>` with its text in `LICENSES/`), and for a module of the
+   same source `model/<module>.def.license` (a REUSE companion file: the
+   copyright line and the licence line, as REUSE writes them); add the id to `licences.toml` if it is new.
+   Do not edit the root `REUSE.toml`, `LICENSING.md` or `licences.json`: the
+   counts pull request regenerates the last two. Put the pack in its family's
+   file in `tools/catalog-families/`, or add a file for a new family.
 7. Run all seven engines and the gate.
 
 ## How to add a wire type

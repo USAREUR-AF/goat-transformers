@@ -1,0 +1,7 @@
+{
+  "name": "GTFS Schedule",
+  "domain": "transport",
+  "prefixes": [
+    "gtfs-"
+  ]
+}

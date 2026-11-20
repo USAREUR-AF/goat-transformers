@@ -1,0 +1,7 @@
+{
+  "name": "ETSI ITS",
+  "domain": "transport",
+  "prefixes": [
+    "etsi-"
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "name": "DroneCAN (UAVCAN v0)",
+  "domain": "uncrewed",
+  "prefixes": [
+    "dronecan-"
+  ]
+}

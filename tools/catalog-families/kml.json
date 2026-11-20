@@ -1,0 +1,7 @@
+{
+  "name": "KML",
+  "domain": "maps",
+  "exact": [
+    "kml"
+  ]
+}

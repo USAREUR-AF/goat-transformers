@@ -1,0 +1,11 @@
+{
+  "name": "ISA",
+  "domain": "sensors",
+  "exact": [
+    "isa",
+    "isa-message",
+    "isa-ipl1",
+    "isa-xml"
+  ],
+  "detail": "IPL 1.6, 3.7, 4.7"
+}

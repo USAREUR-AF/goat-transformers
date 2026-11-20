@@ -1,0 +1,12 @@
+{
+  "name": "Septentrio SBF",
+  "domain": "sensors",
+  "prefixes": [
+    "sbf-"
+  ],
+  "members": {
+    "pattern": "^sbf-(.+)$",
+    "label": "{n} block groups",
+    "list": false
+  }
+}

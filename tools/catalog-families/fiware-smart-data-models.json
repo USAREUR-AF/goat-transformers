@@ -1,0 +1,7 @@
+{
+  "name": "FIWARE Smart Data Models",
+  "domain": "iot",
+  "prefixes": [
+    "sdm-"
+  ]
+}

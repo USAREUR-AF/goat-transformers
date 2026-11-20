@@ -1,0 +1,7 @@
+{
+  "name": "Parrot ARSDK protobuf",
+  "domain": "uncrewed",
+  "prefixes": [
+    "arsdk-proto-"
+  ]
+}

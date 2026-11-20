@@ -1,0 +1,7 @@
+{
+  "name": "Mapbox Vector Tile",
+  "domain": "maps",
+  "exact": [
+    "mvt"
+  ]
+}

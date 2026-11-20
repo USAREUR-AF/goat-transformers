@@ -1,0 +1,53 @@
+{
+  "about": "The domains, and the packs the figure does not show, for tools/catalog-figure.py. Each family is its own file in this directory: a display name, a domain, and the pack names (`exact`) or name beginnings (`prefixes`) it holds; `members` lists the distinct values its pattern captures from the names of its packs, `detail` is a fixed line. A pack belongs to the family that names it exactly, else to the family with the longest prefix that begins its name. A pack that no family holds, a pack two families hold equally, and a family that holds no pack stop the tool.",
+  "synthetic_prefixes": [
+    "conformance",
+    "demo-"
+  ],
+  "domains": [
+    {
+      "id": "air",
+      "name": "Air"
+    },
+    {
+      "id": "land",
+      "name": "Land vehicles"
+    },
+    {
+      "id": "sea",
+      "name": "Sea"
+    },
+    {
+      "id": "space",
+      "name": "Space"
+    },
+    {
+      "id": "uncrewed",
+      "name": "Uncrewed systems and robots"
+    },
+    {
+      "id": "c2",
+      "name": "C2 and tactical"
+    },
+    {
+      "id": "sensors",
+      "name": "Sensors"
+    },
+    {
+      "id": "transport",
+      "name": "Transport"
+    },
+    {
+      "id": "iot",
+      "name": "IoT"
+    },
+    {
+      "id": "networks",
+      "name": "Networks"
+    },
+    {
+      "id": "maps",
+      "name": "Maps, weather and alerts"
+    }
+  ]
+}

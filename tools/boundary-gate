@@ -114,7 +114,7 @@ import sys
 import unicodedata
 
 ALLOWED_EXT = {
-    "md", "def", "json", "txt", "rs", "toml", "lock", "go", "mod", "sum", "py",
+    "md", "def", "json", "txt", "license", "rs", "toml", "lock", "go", "mod", "sum", "py",
     "java", "cpp", "hpp", "h", "c", "cc", "erl", "hrl", "zig", "zon", "sh",
     "yml", "yaml", "mjs", "ts", "ref", "gitignore", "gitattributes", "cmake", "cfg", "ini", "src", "svg", "config",
     "rec", "site",

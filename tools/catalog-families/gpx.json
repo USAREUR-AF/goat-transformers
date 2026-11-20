@@ -1,0 +1,7 @@
+{
+  "name": "GPX",
+  "domain": "maps",
+  "exact": [
+    "gpx"
+  ]
+}

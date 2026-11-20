@@ -1,0 +1,8 @@
+{
+  "name": "OCSF",
+  "domain": "networks",
+  "prefixes": [
+    "ocsf-"
+  ],
+  "detail": "event classes"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "GTFS Realtime",
+  "domain": "transport",
+  "prefixes": [
+    "gtfs-realtime"
+  ]
+}

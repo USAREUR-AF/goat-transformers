@@ -1,0 +1,7 @@
+{
+  "name": "Space Data Standards",
+  "domain": "space",
+  "prefixes": [
+    "sds-"
+  ]
+}

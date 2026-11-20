@@ -1,0 +1,7 @@
+{
+  "name": "Elastic Common Schema",
+  "domain": "networks",
+  "exact": [
+    "ecs-event"
+  ]
+}

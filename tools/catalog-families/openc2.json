@@ -1,0 +1,8 @@
+{
+  "name": "OpenC2",
+  "domain": "networks",
+  "prefixes": [
+    "openc2-"
+  ],
+  "detail": "commands and responses: language 1.1, stateless packet filter profile 1.1"
+}

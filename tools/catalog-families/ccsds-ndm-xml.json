@@ -1,0 +1,7 @@
+{
+  "name": "CCSDS NDM/XML",
+  "domain": "space",
+  "exact": [
+    "ccsds-ndm-xml"
+  ]
+}

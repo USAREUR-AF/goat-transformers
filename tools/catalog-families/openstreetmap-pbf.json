@@ -1,0 +1,7 @@
+{
+  "name": "OpenStreetMap PBF",
+  "domain": "maps",
+  "prefixes": [
+    "osm-pbf-"
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "name": "OpenTelemetry OTLP",
+  "domain": "networks",
+  "prefixes": [
+    "otlp-"
+  ]
+}

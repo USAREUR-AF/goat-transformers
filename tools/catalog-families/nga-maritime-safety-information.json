@@ -1,0 +1,7 @@
+{
+  "name": "NGA Maritime Safety Information",
+  "domain": "sea",
+  "prefixes": [
+    "nga-msi-"
+  ]
+}

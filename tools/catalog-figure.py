@@ -29,10 +29,14 @@ The modes and who runs them:
                      counts pull request, so this mode is not a CI step.
   (no option)        writes the figures; the counts pull request runs it.
 
-Where the families come from: tools/catalog-families.json lists the domains
-and, in order, the families: a display name, a domain, and the pack names
-(`exact`) or name beginnings (`prefixes`) that belong to the family. The first
-family that matches a pack holds it. A pack whose name starts with one of
+Where the families come from: tools/catalog-families/ holds one file per
+family (a display name, a domain, and the pack names (`exact`) or name
+beginnings (`prefixes`) that belong to it) and _domains.json (the domains and
+the synthetic prefixes). A pack belongs to the family that names it in
+`exact`, else to the family with the longest prefix that begins its name; two
+families that hold a pack equally stop the tool. One file per family means a
+pull request that adds a pack never edits a line another pull request edits.
+A pack whose name starts with one of
 `synthetic_prefixes` (`conformance`, `demo-`: the formats that exercise the
 specification, as tools/repo-stats counts them) is not drawn. Every other
 directory of packs/ that holds a pack.def must belong to a family, or this
@@ -55,7 +59,7 @@ from xml.sax.saxutils import escape
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(HERE)
-FAMILIES = os.path.join(HERE, "catalog-families.json")
+FAMILIES = os.path.join(HERE, "catalog-families")
 OUT_NAMES = ("catalog-light.svg", "catalog-dark.svg")
 
 # Advance widths in 1/1000 em of the characters 32 to 126, the maximum over the
@@ -134,8 +138,17 @@ def is_synthetic(name, prefixes):
 
 
 def load_table(path=FAMILIES):
-    with open(path, encoding="utf-8") as fh:
+    """The table: _domains.json, and every other *.json of the directory as one
+    family, in file-name order."""
+    with open(os.path.join(path, "_domains.json"), encoding="utf-8") as fh:
         table = json.load(fh)
+    table["families"] = []
+    for name in sorted(os.listdir(path)):
+        if name.endswith(".json") and name != "_domains.json":
+            with open(os.path.join(path, name), encoding="utf-8") as fh:
+                fam = json.load(fh)
+            fam["file"] = name
+            table["families"].append(fam)
     ids = [d["id"] for d in table["domains"]]
     for fam in table["families"]:
         if fam["domain"] not in ids:
@@ -157,25 +170,42 @@ def classify(table, names):
     CatalogError naming every pack that no family holds, and every family
     that holds no pack."""
     held = {i: [] for i in range(len(table["families"]))}
-    unplaced, synthetic = [], 0
+    unplaced, ambiguous, synthetic = [], [], 0
     for name in names:
         if is_synthetic(name, table["synthetic_prefixes"]):
             synthetic += 1
             continue
-        for i, fam in enumerate(table["families"]):
-            if name in fam.get("exact", ()) or any(name.startswith(p) for p in fam.get("prefixes", ())):
-                held[i].append(name)
-                break
+        exact = [i for i, fam in enumerate(table["families"]) if name in fam.get("exact", ())]
+        if exact:
+            best = exact
+        else:
+            longest = 0
+            best = []
+            for i, fam in enumerate(table["families"]):
+                for p in fam.get("prefixes", ()):
+                    if name.startswith(p):
+                        if len(p) > longest:
+                            longest, best = len(p), [i]
+                        elif len(p) == longest and i not in best:
+                            best.append(i)
+        if len(best) == 1:
+            held[best[0]].append(name)
+        elif best:
+            ambiguous.append("%s (%s)" % (name, ", ".join(table["families"][i]["file"] for i in best)))
         else:
             unplaced.append(name)
     empty = [fam["name"] for i, fam in enumerate(table["families"]) if not held[i]]
     problems = []
     if unplaced:
         problems.append(
-            "no family in tools/catalog-families.json holds the pack%s %s. In the same pull request, add %s to "
-            "the \"exact\" list of its family in tools/catalog-families.json (or add a family with a name, a "
-            "domain and an \"exact\" list), then run `python3 -I tools/catalog-figure.py --check-families`"
+            "no family in tools/catalog-families/ holds the pack%s %s. In the same pull request, add %s to "
+            "the \"exact\" list of its family's file in tools/catalog-families/ (or add a file for a new family "
+            "with a name, a domain and an \"exact\" list), then run "
+            "`python3 -I tools/catalog-figure.py --check-families`"
             % ("s" if len(unplaced) > 1 else "", ", ".join(unplaced), "each" if len(unplaced) > 1 else "it"))
+    if ambiguous:
+        problems.append("two families hold the pack%s %s equally: name it in the \"exact\" list of one"
+                        % ("s" if len(ambiguous) > 1 else "", "; ".join(ambiguous)))
     if empty:
         problems.append("no pack belongs to the famil%s %s" % ("ies" if len(empty) > 1 else "y", ", ".join(empty)))
     if problems:

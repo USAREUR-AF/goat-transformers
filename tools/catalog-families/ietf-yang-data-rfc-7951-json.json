@@ -1,0 +1,8 @@
+{
+  "name": "IETF YANG data (RFC 7951 JSON)",
+  "domain": "networks",
+  "prefixes": [
+    "yang-ietf-"
+  ],
+  "detail": "top-level containers of IETF modules"
+}

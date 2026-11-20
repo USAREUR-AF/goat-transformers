@@ -1,0 +1,12 @@
+{
+  "name": "SunSpec Modbus",
+  "domain": "iot",
+  "prefixes": [
+    "sunspec-"
+  ],
+  "members": {
+    "pattern": "^sunspec-([0-9]+)$",
+    "label": "{n} information models",
+    "list": false
+  }
+}

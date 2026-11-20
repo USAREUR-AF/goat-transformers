@@ -1,0 +1,8 @@
+{
+  "name": "AIS",
+  "domain": "sea",
+  "exact": [
+    "ais",
+    "ais-binary"
+  ]
+}

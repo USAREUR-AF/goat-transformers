@@ -1,0 +1,7 @@
+{
+  "name": "gpsd JSON",
+  "domain": "sensors",
+  "exact": [
+    "gpsd-json"
+  ]
+}

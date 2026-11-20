@@ -2,8 +2,12 @@
 """The licence of every pack and model module, its flags, and the build
 profile it belongs to: one fact per pack, everything else derived.
 
-  REUSE.toml     gives each file its SPDX licence (https://reuse.software). A
-                 pack has exactly one: the licence of its directory.
+  REUSE.toml     the root one gives every file Apache-2.0 (https://reuse.software).
+                 A pack whose source allows less has packs/<name>/REUSE.toml
+                 (one annotation, path "**", precedence "override"); a model
+                 module has model/<module>.def.license (the REUSE companion
+                 file). So a pull request that labels a pack touches only that
+                 pack's directory and its own module files, never a shared line.
   licences.toml  gives each licence id its flags: commercial, share_alike,
                  attribution, field_of_use, distribution.
   profiles       open           commercial "yes", no share-alike, no field of use
@@ -22,10 +26,15 @@ From these this tool writes, at the repository root:
 Usage (run with -I; standard library only):
 
   python3 -I tools/licences.py              write licences.json and LICENSING.md
-  python3 -I tools/licences.py --check      exit 1 when a label is missing or
-                                            unknown, a pack has two licences, a
-                                            licence text is missing from LICENSES/,
-                                            or the two files are stale
+                                            (the counts pull request runs it)
+  python3 -I tools/licences.py --check      exit 1 when a label is malformed or
+                                            unknown, a licence text is missing from
+                                            LICENSES/, or the root REUSE.toml holds a
+                                            label (CI); stale generated files are a
+                                            note, as counts are
+  python3 -I tools/licences.py --check-current
+                                            --check, and exit 1 when licences.json or
+                                            LICENSING.md is stale (the counts PR)
   python3 -I tools/licences.py --list [--profile P]
                                             every pack (or every pack of profile
                                             P): directory, format, licence, profile
@@ -46,6 +55,8 @@ PROFILE_TEXT = {
     "everything": "every public pack, also non-commercial, unknown and field-of-use licences",
 }
 DEFAULT = "Apache-2.0"
+# The REUSE licence tag, built so that REUSE does not read this file's text as its own licence.
+LICENCE_TAG = "SPDX-License-" + "Identifier"
 FLAGS = ("commercial", "share_alike", "attribution", "field_of_use", "distribution")
 
 
@@ -79,8 +90,9 @@ def glob_regex(pattern):
 
 
 def annotations(root):
-    """[(compiled globs, licence id)] of REUSE.toml, in order. A tree with no
-    REUSE.toml (a test tree, an assembled overlay without one) is all Apache-2.0."""
+    """[(compiled globs, licence id)] of the root REUSE.toml, in order. A tree
+    with no REUSE.toml (a test tree, an assembled overlay without one) is all
+    Apache-2.0."""
     path = os.path.join(root, "REUSE.toml")
     if not os.path.isfile(path):
         return [([glob_regex("**")], DEFAULT)]
@@ -88,8 +100,6 @@ def annotations(root):
         data = tomllib.load(fh)
     out = []
     for a in data.get("annotations", []):
-        if a.get("precedence") != "override":
-            raise LicenceError('REUSE.toml: every annotation takes precedence = "override" (%s)' % a.get("path"))
         paths = a.get("path")
         paths = [paths] if isinstance(paths, str) else list(paths or [])
         lic = a.get("SPDX-License-Identifier")
@@ -97,6 +107,44 @@ def annotations(root):
             raise LicenceError("REUSE.toml: an annotation without path or SPDX-License-Identifier")
         out.append(([glob_regex(p) for p in paths], lic.strip()))
     return out
+
+
+def pack_label(root, name):
+    """The licence packs/<name>/REUSE.toml gives the whole pack, or None when it
+    has none. Raises LicenceError when the file is not one annotation of the
+    whole directory with precedence "override"."""
+    path = os.path.join(root, "packs", name, "REUSE.toml")
+    if not os.path.isfile(path):
+        return None
+    with open(path, "rb") as fh:
+        data = tomllib.load(fh)
+    anns = data.get("annotations", [])
+    if (len(anns) != 1 or anns[0].get("path") != "**" or anns[0].get("precedence") != "override"
+            or not isinstance(anns[0].get("SPDX-License-Identifier"), str)):
+        raise LicenceError('packs/%s/REUSE.toml: a pack has one licence: one [[annotations]] with path = "**", '
+                           'precedence = "override" and an SPDX-License-Identifier' % name)
+    return anns[0]["SPDX-License-Identifier"].strip()
+
+
+def module_label(root, fname):
+    """The licence model/<fname>.license gives the module, or None."""
+    path = os.path.join(root, "model", fname + ".license")
+    if not os.path.isfile(path):
+        return None
+    with open(path, encoding="utf-8") as fh:
+        ids = re.findall(r"^%s:\s*(\S+)\s*$" % LICENCE_TAG, fh.read(), re.M)
+    if len(ids) != 1:
+        raise LicenceError("model/%s.license: one %s line naming the module's licence" % (fname, LICENCE_TAG))
+    return ids[0]
+
+
+def root_labels(root):
+    """Annotations of the root REUSE.toml beyond its one default: labels that
+    belong in a pack's REUSE.toml or a module's companion file."""
+    rules = annotations(root)
+    return ["root REUSE.toml: an annotation for %s; a pack's licence goes in packs/<name>/REUSE.toml and a "
+            "module's in model/<module>.def.license, so no pull request edits a shared line"
+            % ", ".join(g.pattern for g in globs) for globs, _ in rules[1:]]
 
 
 def licence_of(rules, path):
@@ -184,7 +232,11 @@ def survey(root, every_file=True):
             continue
         path = os.path.join(model_dir, fname)
         names = _first_args(path, "module")
-        lid = licence_of(rules, "model/" + fname)
+        try:
+            lid = module_label(root, fname) or licence_of(rules, "model/" + fname)
+        except LicenceError as e:
+            problems.append(str(e))
+            lid = None
         modules[fname] = {"module": names[0] if names else None, "licence": lid,
                           "uses": _first_args(path, "uses")}
         if names:
@@ -196,7 +248,12 @@ def survey(root, every_file=True):
         if not os.path.isfile(path):
             continue
         fmt = _first_args(path, "format")
-        packs[d] = {"format": fmt[0] if fmt else None, "licence": licence_of(rules, "packs/%s/pack.def" % d),
+        try:
+            lid = pack_label(root, d) or licence_of(rules, "packs/%s/pack.def" % d)
+        except LicenceError as e:
+            problems.append(str(e))
+            lid = None
+        packs[d] = {"format": fmt[0] if fmt else None, "licence": lid,
                     "uses": _first_args(path, "uses"), "sources": len(_first_args(path, "source"))}
 
     def own_profile(kind, key, lid):
@@ -235,14 +292,8 @@ def survey(root, every_file=True):
                 row["because"] = "uses module %s (%s)" % (u, dep["licence"])
         if row["sources"] == 0:
             problems.append("pack %s has no source line" % d)
-    # one licence per pack: every file of its directory carries the pack's licence
-    for rel in tracked(root) if every_file else []:
-        parts = rel.split("/")
-        if parts[0] == "packs" and len(parts) > 2 and parts[1] in packs:
-            lid = licence_of(rules, rel)
-            if lid != packs[parts[1]]["licence"]:
-                problems.append("%s is %s but its pack %s is %s; a pack has one licence"
-                                % (rel, lid, parts[1], packs[parts[1]]["licence"]))
+    if every_file:
+        problems += root_labels(root)
     return {"licences": flags, "packs": packs, "modules": modules, "problems": problems}
 
 
@@ -265,7 +316,12 @@ def excluded(root, profile):
         raise LicenceError("profile %s is not one of %s" % (profile, ", ".join(PROFILES)))
     flags = table(root)
     named = {lid for _, lid in annotations(root)}
-    if all(lid in flags and in_profile(licence_profile(flags[lid]) or "everything", profile) for lid in named):
+    packs_dir, model_dir = os.path.join(root, "packs"), os.path.join(root, "model")
+    labelled = (any(os.path.isfile(os.path.join(packs_dir, d, "REUSE.toml")) for d in os.listdir(packs_dir))
+                if os.path.isdir(packs_dir) else False) or (
+        any(n.endswith(".def.license") for n in os.listdir(model_dir)) if os.path.isdir(model_dir) else False)
+    if not labelled and all(lid in flags and in_profile(licence_profile(flags[lid]) or "everything", profile)
+                            for lid in named):
         return {"packs": {}, "modules": {}, "formats": set()}  # no file of the tree is outside the profile
     s = survey(root, every_file=False)
     packs, modules, formats = {}, {}, set()
@@ -319,9 +375,10 @@ def licensing_md(s):
            "The library's code, and its restatements of message formats, are under the",
            "Apache License 2.0. A format whose source allows less is still included, with",
            "its real licence on the pack, so that a build can leave it out. Each pack has",
-           "one SPDX licence, given in [REUSE.toml](REUSE.toml) (the",
-           "[REUSE](https://reuse.software) specification, read by `reuse lint` and SBOM",
-           "tools); [licences.toml](licences.toml) gives each licence its flags; the",
+           "one SPDX licence: Apache-2.0 from the root [REUSE.toml](REUSE.toml), or the",
+           "pack's own `packs/<name>/REUSE.toml`, or for a model module its",
+           "`model/<module>.def.license` (the [REUSE](https://reuse.software) specification,",
+           "read by `reuse lint` and SBOM tools); [licences.toml](licences.toml) gives each licence its flags; the",
            "profile of a pack follows from those. [licences.json](licences.json) holds the",
            "same as this page, for machines.", "",
            "## Profiles", "",
@@ -372,8 +429,11 @@ def outputs(root):
     return s, {"licences.json": licences_json(s), "LICENSING.md": licensing_md(s)}
 
 
-def check(root):
+def check(root, current=False):
+    """-> (problems, notes). Stale generated files are a note, or with
+    `current` a problem (the counts pull request)."""
     s, files = outputs(root)
+    notes = []
     problems = list(s["problems"])
     used = {r["licence"] for r in list(s["packs"].values()) + list(s["modules"].values()) if r["licence"]}
     for lid in sorted(used):
@@ -387,23 +447,26 @@ def check(root):
     for name, text in files.items():
         try:
             with open(os.path.join(root, name), encoding="utf-8") as fh:
-                current = fh.read() == text
+                up_to_date = fh.read() == text
         except OSError:
-            current = False
-        if not current:
-            problems.append("%s is stale: run python3 -I tools/licences.py" % name)
-    return problems
+            up_to_date = False
+        if not up_to_date:
+            (problems if current else notes).append(
+                "%s is behind the labels; the counts pull request writes it: python3 -I tools/licences.py" % name)
+    return problems, notes
 
 
 def main(argv, root=ROOT):
     try:
-        if argv == ["--check"]:
-            problems = check(root)
+        if argv in (["--check"], ["--check-current"]):
+            problems, notes = check(root, current=argv == ["--check-current"])
+            for n in notes:
+                print("licences: note:", n)
             for p in problems:
                 print("licences:", p, file=sys.stderr)
             if problems:
                 return 1
-            print("licences: every pack has one known licence; licences.json and LICENSING.md are current")
+            print("licences: every pack and module has one known licence")
             return 0
         if argv == ["--totals"]:
             s = survey(root)

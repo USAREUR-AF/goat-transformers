@@ -1,0 +1,9 @@
+{
+  "name": "ADS-B",
+  "domain": "air",
+  "exact": [
+    "adsb",
+    "adsb-df18"
+  ],
+  "detail": "DF17, DF18"
+}

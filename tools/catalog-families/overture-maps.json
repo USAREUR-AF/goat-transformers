@@ -1,0 +1,7 @@
+{
+  "name": "Overture Maps",
+  "domain": "maps",
+  "prefixes": [
+    "overture-"
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "name": "Curb Data Specification",
+  "domain": "transport",
+  "prefixes": [
+    "cds-"
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "name": "RoboSense lidar",
+  "domain": "sensors",
+  "prefixes": [
+    "robosense-"
+  ],
+  "detail": "MSOP and DIFOP packets of the rs_driver models"
+}

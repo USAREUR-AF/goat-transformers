@@ -1,0 +1,8 @@
+{
+  "name": "NMEA 2000",
+  "domain": "sea",
+  "exact": [
+    "nmea2000",
+    "nmea2000-seq"
+  ]
+}
