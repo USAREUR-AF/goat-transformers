@@ -1,0 +1,109 @@
+# Failures of tools/model-checks.py known today, one per line:
+#   <pack>/<vector> <key> <reason>      a decoded value outside its rule
+#   <pack>/pack.md datum <reason>       a height whose datum pack.md does not name
+# The reason begins with one of:
+#   defect(pack):   the pack decodes a value wrongly; fix the pack (and the
+#                   vector that pins it), then remove the line
+#   defect(vector): the vector's input is not a plausible message; give it
+#                   one, then remove the line
+#   datum:          pack.md does not name the vertical datum of a height it maps
+#   intended:       the vector tests a refusal or an overflow with that value on
+#                   purpose; the line stays while the vector does
+# `--check` fails on a failure not listed here and on a line that no longer
+# fails. Do not add a line without a reason; the list is burned down.
+adsb-df18/pack.md datum datum: maps adsb.gnss_height_m and states no datum for it (adsb's pack.md says the source names none)
+ais/06-type4-date-time-and-position-not-available lat defect(pack): the source's not-available codes (lat 91, lon 181) decode as values; the pack has no `absent` sentinel for them (pack.md, Not-available codes)
+ais/06-type4-date-time-and-position-not-available lon defect(pack): the source's not-available codes (lat 91, lon 181) decode as values; the pack has no `absent` sentinel for them (pack.md, Not-available codes)
+ais/33-type1-all-not-available lat defect(pack): the source's not-available codes (lat 91, lon 181) decode as values; the pack has no `absent` sentinel for them (pack.md, Not-available codes)
+ais/33-type1-all-not-available lon defect(pack): the source's not-available codes (lat 91, lon 181) decode as values; the pack has no `absent` sentinel for them (pack.md, Not-available codes)
+ais/51-type1-not-available-to-geojson lat defect(pack): the source's not-available codes (lat 91, lon 181) decode as values; the pack has no `absent` sentinel for them (pack.md, Not-available codes)
+ais/51-type1-not-available-to-geojson lon defect(pack): the source's not-available codes (lat 91, lon 181) decode as values; the pack has no `absent` sentinel for them (pack.md, Not-available codes)
+arsdk-ardrone3/gen-038-piloting-state-gps-location-changed-roundtrip track.sigma_north_m defect(vector): a generated message holds a negative accuracy; the source gives -1 for not available, which the pack's sentinel covers, and no other negative value
+arsdk-ardrone3/gen-038-piloting-state-gps-location-changed-roundtrip track.sigma_up_m defect(vector): a generated message holds a negative accuracy; the source gives -1 for not available, which the pack's sentinel covers, and no other negative value
+awc-taf/gen-001-report-residue stale_ms defect(vector): validTimeTo is epoch seconds and the generated message holds 50074, a counter, not a time
+awc-taf/gen-001-report-roundtrip stale_ms defect(vector): validTimeTo is epoch seconds and the generated message holds 50074, a counter, not a time
+canonical-track-v2/16-derived-not-finite-leaves-key-absent track.sigma_east_m intended: a sigma of 1e200 shows that a derived value that is not finite leaves ce absent
+canonical-track-v2/16-derived-not-finite-leaves-key-absent track.sigma_north_m intended: a sigma of 1e200 shows that a derived value that is not finite leaves ce absent
+canonical-track-v2/pack.md datum datum: maps position.altitudeM to hae and does not say what it is measured from
+cot-protobuf/gen-02-cot_event-roundtrip stale_ms defect(vector): the generated message holds a counter (396, 470) where CoT holds epoch milliseconds
+cot-protobuf/gen-02-cot_event-roundtrip time_ms defect(vector): the generated message holds a counter (396, 470) where CoT holds epoch milliseconds
+cot-protobuf/gen-cot-protobuf-to-cot-xml stale_ms defect(vector): the generated message holds a counter (396, 470) where CoT holds epoch milliseconds
+cot-protobuf/gen-cot-protobuf-to-cot-xml time_ms defect(vector): the generated message holds a counter (396, 470) where CoT holds epoch milliseconds
+cot-protobuf/gen-cot-protobuf-to-geojson stale_ms defect(vector): the generated message holds a counter (396, 470) where CoT holds epoch milliseconds
+cot-protobuf/gen-cot-protobuf-to-geojson time_ms defect(vector): the generated message holds a counter (396, 470) where CoT holds epoch milliseconds
+cot-protobuf/pack.md datum datum: maps hae and does not say it is above the ellipsoid (CoT defines hae so)
+cot-xml/pack.md datum datum: maps point/@hae to hae and does not say it is above the ellipsoid (CoT defines hae so)
+dbc-tesla-can/pack.md datum datum: maps an MCU elevation signal and does not say what it is measured from
+dbc-tesla-model3/rt-0252-id04fgpslatlong lat defect(vector): the round trip encodes random signal bits, which give a latitude beyond 90
+geo-track-v1/pack.md datum datum: maps alt_m to hae and does not say what it is measured from
+geojson/125-to-nmea0183-year-1979 time_ms intended: a time before 1980 shows that nmea0183's two-digit year refuses it (transform-encode)
+geojson/gen-geojson-to-cot-protobuf time_ms defect(vector): the generated message holds a counter (396) where an epoch time belongs
+geojson/misb-03-to-misb-st0601-lat-91 lat intended: latitude 91 shows that misb-st0601 refuses it (transform-encode)
+geojson/ntp-header-04-time-ntp-epoch time_ms intended: the NTP epoch itself, the smallest time ntp-header writes
+geojson/ntp-header-06-time-before-1900-is-transform-encode time_ms intended: a time before 1900 shows that ntp-header refuses it (transform-encode)
+geojson/pack.md datum datum: maps the third coordinate to hae and does not say it is above the ellipsoid (RFC 7946 4 defines it so)
+isa-message/pack.md datum datum: maps GeographicPosition.altitude to hae though the source does not say what it is measured from
+isa/pack.md datum datum: maps GeographicPosition.altitude to hae though the source does not say what it is measured from
+mds/gen-001-vehicle_status-residue speed_ms defect(vector): the generated message holds a negative speed; a GPS speed is not negative
+mds/gen-001-vehicle_status-roundtrip speed_ms defect(vector): the generated message holds a negative speed; a GPS speed is not negative
+mds/gen-003-event-residue speed_ms defect(vector): the generated message holds a negative speed; a GPS speed is not negative
+mds/gen-003-event-roundtrip speed_ms defect(vector): the generated message holds a negative speed; a GPS speed is not negative
+misb-st0601/08-lat-reserved-value-decodes-past-range lat defect(pack): the source reserves the most negative latitude as an error indicator; the pack decodes it past -90 instead of declaring it `absent`, and the vector pins that
+ntp-header/04-kiss-of-death-roundtrip time_ms defect(pack): a transmit timestamp of 0 means unknown (RFC 5905); it decodes as 1900-01-01 because the pack declares no `absent 0`
+nws-alert/gen-001-alert_geo_json-residue stale_ms defect(vector): the generated alert expires before it is sent
+nws-alert/gen-001-alert_geo_json-roundtrip stale_ms defect(vector): the generated alert expires before it is sent
+readsb-aircraft-json/pack.md datum datum: maps alt_geom and does not say it is above the ellipsoid (readsb-aircraft's pack.md does)
+sapient-v1/gen-09-detection_report-roundtrip track.confidence defect(vector): the generated message holds a confidence of 7.75; SAPIENT confidence is in [0,1]
+sapient-v1/gen-sapient-v1-to-geojson track.confidence defect(vector): the generated message holds a confidence of 7.75; SAPIENT confidence is in [0,1]
+sbp-navigation/rt-0205-vel_ned_dep_a track.vel_east_ms defect(vector): the round trip encodes random bits, which give a velocity of hundreds of km/s
+sbp-navigation/rt-0205-vel_ned_dep_a track.vel_north_ms defect(vector): the round trip encodes random bits, which give a velocity of hundreds of km/s
+sbp-navigation/rt-0205-vel_ned_dep_a track.vel_up_ms defect(vector): the round trip encodes random bits, which give a velocity of hundreds of km/s
+sbp-navigation/rt-020e-vel_ned track.vel_east_ms defect(vector): the round trip encodes random bits, which give a velocity of hundreds of km/s
+sbp-navigation/rt-020e-vel_ned track.vel_north_ms defect(vector): the round trip encodes random bits, which give a velocity of hundreds of km/s
+sbp-navigation/rt-020e-vel_ned track.vel_up_ms defect(vector): the round trip encodes random bits, which give a velocity of hundreds of km/s
+sbp-navigation/rt-0212-vel_ned_cov track.vel_east_ms defect(vector): the round trip encodes random bits, which give a velocity of hundreds of km/s
+sbp-navigation/rt-0212-vel_ned_cov track.vel_north_ms defect(vector): the round trip encodes random bits, which give a velocity of hundreds of km/s
+sbp-navigation/rt-0212-vel_ned_cov track.vel_up_ms defect(vector): the round trip encodes random bits, which give a velocity of hundreds of km/s
+sbp-navigation/rt-021c-vel_cog speed_ms defect(vector): the round trip encodes random bits, which give a velocity of hundreds of km/s
+sbp-navigation/rt-021c-vel_cog track.vel_up_ms defect(vector): the round trip encodes random bits, which give a velocity of hundreds of km/s
+sbp-navigation/rt-022e-vel_ned_gnss track.vel_east_ms defect(vector): the round trip encodes random bits, which give a velocity of hundreds of km/s
+sbp-navigation/rt-022e-vel_ned_gnss track.vel_north_ms defect(vector): the round trip encodes random bits, which give a velocity of hundreds of km/s
+sbp-navigation/rt-022e-vel_ned_gnss track.vel_up_ms defect(vector): the round trip encodes random bits, which give a velocity of hundreds of km/s
+sbp-navigation/rt-0232-vel_ned_cov_gnss track.vel_east_ms defect(vector): the round trip encodes random bits, which give a velocity of hundreds of km/s
+sbp-navigation/rt-0232-vel_ned_cov_gnss track.vel_north_ms defect(vector): the round trip encodes random bits, which give a velocity of hundreds of km/s
+sbp-navigation/rt-0232-vel_ned_cov_gnss track.vel_up_ms defect(vector): the round trip encodes random bits, which give a velocity of hundreds of km/s
+sdm-transportation-vehicle/gen-001-vehicle-residue course defect(pack): the source writes heading -1 for a stationary vehicle; the pack maps it to course without `absent -1`
+sdm-transportation-vehicle/gen-001-vehicle-roundtrip course defect(pack): the source writes heading -1 for a stationary vehicle; the pack maps it to course without `absent -1`
+ubx-hnr/rt-2800-hnr_pvt course defect(vector): the round trip encodes random bits, which give a height or a velocity no receiver reports
+ubx-hnr/rt-2800-hnr_pvt hae defect(vector): the round trip encodes random bits, which give a height or a velocity no receiver reports
+ubx-hnr/rt-2800-hnr_pvt speed_ms defect(vector): the round trip encodes random bits, which give a height or a velocity no receiver reports
+ubx-nav/rt-0102-nav_posllh hae defect(vector): the round trip encodes random bits, which give a height or a velocity no receiver reports
+ubx-nav/rt-0107-nav_pvt course defect(vector): the round trip encodes random bits, which give a height or a velocity no receiver reports
+ubx-nav/rt-0107-nav_pvt hae defect(vector): the round trip encodes random bits, which give a height or a velocity no receiver reports
+ubx-nav/rt-0107-nav_pvt speed_ms defect(vector): the round trip encodes random bits, which give a height or a velocity no receiver reports
+ubx-nav/rt-0107-nav_pvt track.vel_east_ms defect(vector): the round trip encodes random bits, which give a height or a velocity no receiver reports
+ubx-nav/rt-0107-nav_pvt track.vel_north_ms defect(vector): the round trip encodes random bits, which give a height or a velocity no receiver reports
+ubx-nav/rt-0107-nav_pvt track.vel_up_ms defect(vector): the round trip encodes random bits, which give a height or a velocity no receiver reports
+ubx-nav/rt-0112-nav_velned course defect(vector): the round trip encodes random bits, which give a height or a velocity no receiver reports
+ubx-nav/rt-0112-nav_velned speed_ms defect(vector): the round trip encodes random bits, which give a height or a velocity no receiver reports
+ubx-nav/rt-0112-nav_velned track.vel_east_ms defect(vector): the round trip encodes random bits, which give a height or a velocity no receiver reports
+ubx-nav/rt-0112-nav_velned track.vel_north_ms defect(vector): the round trip encodes random bits, which give a height or a velocity no receiver reports
+ubx-nav/rt-0112-nav_velned track.vel_up_ms defect(vector): the round trip encodes random bits, which give a height or a velocity no receiver reports
+ubx-nav/rt-0114-nav_hpposllh hae defect(vector): the round trip encodes random bits, which give a height or a velocity no receiver reports
+ubx-nav2/rt-2902-nav2_posllh hae defect(vector): the round trip encodes random bits, which give a height or a velocity no receiver reports
+ubx-nav2/rt-2907-nav2_pvt course defect(vector): the round trip encodes random bits, which give a height or a velocity no receiver reports
+ubx-nav2/rt-2907-nav2_pvt hae defect(vector): the round trip encodes random bits, which give a height or a velocity no receiver reports
+ubx-nav2/rt-2907-nav2_pvt speed_ms defect(vector): the round trip encodes random bits, which give a height or a velocity no receiver reports
+ubx-nav2/rt-2907-nav2_pvt track.vel_north_ms defect(vector): the round trip encodes random bits, which give a height or a velocity no receiver reports
+ubx-nav2/rt-2907-nav2_pvt track.vel_up_ms defect(vector): the round trip encodes random bits, which give a height or a velocity no receiver reports
+ubx-nav2/rt-2912-nav2_velned course defect(vector): the round trip encodes random bits, which give a height or a velocity no receiver reports
+ubx-nav2/rt-2912-nav2_velned speed_ms defect(vector): the round trip encodes random bits, which give a height or a velocity no receiver reports
+ubx-nav2/rt-2912-nav2_velned track.vel_east_ms defect(vector): the round trip encodes random bits, which give a height or a velocity no receiver reports
+ubx-nav2/rt-2912-nav2_velned track.vel_north_ms defect(vector): the round trip encodes random bits, which give a height or a velocity no receiver reports
+ubx-nav2/rt-2912-nav2_velned track.vel_up_ms defect(vector): the round trip encodes random bits, which give a height or a velocity no receiver reports
+etsi-cam/15-edges-lower-position-speed-and-heading-unavailable course defect(pack): the heading value 3601 means unavailable in ETSI CAM and decodes as 360.1; the field needs an `absent` sentinel
+etsi-cam/16-position-unavailable lat defect(pack): the latitude value 900000001 means unavailable in ETSI CAM and decodes as 90.0000001; the field needs an `absent` sentinel
+etsi-cam/16-position-unavailable lon defect(pack): the longitude value 1800000001 means unavailable in ETSI CAM and decodes as 180.0000001; the field needs an `absent` sentinel
+gmti-records/pack.md datum datum: maps hae and detection.sensor_hae and names no vertical datum (STANAG 4607 is expected to give heights above the WGS 84 ellipsoid; the owner confirms and says so in pack.md)
+gmti-segment/pack.md datum datum: maps hae and detection.sensor_hae and names no vertical datum (STANAG 4607 is expected to give heights above the WGS 84 ellipsoid; the owner confirms and says so in pack.md)
+gmti-segment-records/pack.md datum datum: maps hae and detection.sensor_hae and names no vertical datum (STANAG 4607 is expected to give heights above the WGS 84 ellipsoid; the owner confirms and says so in pack.md)

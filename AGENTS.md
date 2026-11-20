@@ -104,6 +104,7 @@ Run from the repository root unless a directory is named.
 | Catalog figure (`docs/figures/catalog-*.svg`) | `python3 -I tools/catalog-figure.py` writes it; `--check-families` (CI) fails when a pack has no family in `tools/catalog-families/` (one file per family); `--check` (the counts PR) fails when the figure is stale |
 | Rust engine and CLI | `cd engines/rust && cargo build --release` gives `target/release/goat-xf` |
 | Rust, every vector | `cd engines/rust && cargo test --release` |
+| Decoded values are plausible; heights name a datum | `python3 -I tools/model-checks.py --check` (CI); without `--check` it lists every failure, allowed or not. Rules: `tools/model-ranges.json`; today's failures: `tools/model-checks-allow.txt`, burned down, never grown without a reason |
 | A core or track change carries an ADR | `python3 -I tools/model-governance.py --base origin/main` (CI on every pull request) |
 | Sections shared by README.md and the site (`docs/<name>-section.md`) | `python3 -I tools/doc-sections.py` writes them into both; `--check` (CI) fails when either is stale. Edit the source, never the copies |
 | Licences and profiles (`LICENSING.md`, `licences.json`) | `python3 -I tools/licences.py` writes them (the counts pull request); `--check` (CI) fails on a pack with no known licence (stale files are a note); `--check-current` (counts PR) also fails on stale files; `--list --profile open`; `reuse lint` (pip `reuse`) |
@@ -146,7 +147,12 @@ The `add-a-format` skill has the full steps. In short:
    catalog, add a module `model/<module>.def` of raw keys and `uses <module>`.
 4. Add vectors under `packs/<format>/vectors/`: a round trip, and a conversion
    to and from one or more other formats, with independently derived `expect`.
-5. Write `pack.md` and `PROVENANCE.md`; add the source to `NOTICE`.
+5. Write `pack.md` and `PROVENANCE.md`; add the source to `NOTICE`. If the
+   pack maps `hae` or another height, `pack.md` names its vertical datum in
+   the passage about it (the WGS 84 ellipsoid, mean sea level or the geoid,
+   barometric, above ground or take-off, or that the source states none).
+   `hae` is above the ellipsoid: a height above mean sea level is converted,
+   and `pack.md` says how, or it goes to a raw key.
 6. If the source's licence is not Apache-2.0-compatible for commercial use
    (non-commercial, share-alike, a field-of-use restriction, or no licence
    stated), still add the pack, and label it in its own place:
@@ -158,7 +164,12 @@ The `add-a-format` skill has the full steps. In short:
    Do not edit the root `REUSE.toml`, `LICENSING.md` or `licences.json`: the
    counts pull request regenerates the last two. Put the pack in its family's
    file in `tools/catalog-families/`, or add a file for a new family.
-7. Run all seven engines and the gate.
+7. Run all seven engines and the gate, and `python3 -I tools/model-checks.py
+   --check`: every value the pack's vectors decode must be plausible for its
+   key (`tools/model-ranges.json`; a sentinel the pack declares with `absent`
+   is not a value), and the datum of every height must be named. Fix the
+   pack or the vector; do not add a line to `tools/model-checks-allow.txt`
+   for a new pack.
 
 ## How to add a wire type
 

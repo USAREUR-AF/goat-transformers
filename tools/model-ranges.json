@@ -1,0 +1,62 @@
+{
+  "about": "Plausibility rules for decoded shared-model values, read by tools/model-checks.py. `keys` holds one rule per model key, written as a pack writes it (`lat`, `track.confidence`); a rule applies to the key at the top of an entity and in every list item. `min` and `max` are inclusive and a value that is not finite fails them; `one_of` lists the values allowed; `one_of_meaning` takes the allowed values from the key's meaning in model/*.def (the comma-separated words after the last colon). `meaning_rules` apply to every key of a type whose meaning begins with a prefix. `order` states that one key of an entity is not earlier than another. `synthetic` names the packs that exercise rules of the specification with edge values on purpose. `datum` is the vertical-datum check of pack.md. Add a rule here, with its reason; no code changes.",
+  "keys": {
+    "lat": {"min": -90, "max": 90, "reason": "latitude in degrees, WGS 84: the poles bound it"},
+    "lon": {"min": -180, "max": 180, "reason": "longitude in degrees, WGS 84: -180 and 180 are the same meridian, both admitted"},
+    "hae": {"min": -12000, "max": 2000000000, "reason": "the deepest ocean floor is about 11 km below the geoid, which lies within 110 m of the ellipsoid; the top admits geostationary orbit (3.6e7 m), lunar distance (3.8e8 m) and the Sun-Earth L1 and L2 points (1.5e9 m), the farthest places a ground system still reports as a geodetic height"},
+    "ce": {"min": 0, "max": 21000000, "reason": "an error radius is not negative; one larger than half the Earth's circumference (2.0e7 m) says nothing a smaller one does not. CoT's 9999999 for 'unknown' is inside"},
+    "le": {"min": 0, "max": 2000000000, "reason": "an error bound is not negative; the top is the top of hae"},
+    "course": {"min": 0, "max": 360, "reason": "degrees true; 360 is admitted as the same direction as 0"},
+    "speed_ms": {"min": 0, "max": 100000, "reason": "a ground speed is not negative; 100 km/s is above the fastest meteor entering the atmosphere (72 km/s) and every spacecraft relative to the Earth"},
+    "time_ms": {"min": 315532800000, "max": 4102444800000, "reason": "epoch milliseconds UTC from 1980-01-01 to 2100-01-01: GNSS time begins 1980-01-06 and a two-digit year 80 reads as 1980, so no report a pack carries is older; a format's own epoch (NTP 1900, Unix 1970) is that format's zero, not a report time. Below the window is a relative time (since boot, of the day, of the week) or a counter decoded as an epoch time, or a format's epoch not added; above it, a sentinel or a unit error"},
+    "stale_ms": {"min": 315532800000, "max": 4102444800000, "reason": "as time_ms"},
+    "time_error_ms": {"min": 0, "reason": "a bound, not an offset: 0 or more (model/core.def)"},
+    "time_state": {"one_of": ["coherent", "drifting", "free-running"], "reason": "the three states model/core.def names"},
+    "track.confidence": {"min": 0, "max": 1, "reason": "confidence in [0,1] (model/track.def)"},
+    "track.sigma_east_m": {"min": 0, "max": 21000000, "reason": "a standard deviation is not negative; top as ce"},
+    "track.sigma_north_m": {"min": 0, "max": 21000000, "reason": "a standard deviation is not negative; top as ce"},
+    "track.sigma_up_m": {"min": 0, "max": 2000000000, "reason": "a standard deviation is not negative; top as le"},
+    "track.vel_east_ms": {"min": -100000, "max": 100000, "reason": "a component of a velocity is not faster than the speed bound of speed_ms"},
+    "track.vel_north_ms": {"min": -100000, "max": 100000, "reason": "as track.vel_east_ms"},
+    "track.vel_up_ms": {"min": -100000, "max": 100000, "reason": "as track.vel_east_ms"},
+    "track.class": {"one_of_meaning": true, "reason": "the classes model/track.def lists in the key's meaning"},
+    "detection.time_ms": {"min": 315532800000, "max": 4102444800000, "reason": "as time_ms"},
+    "detection.time_error_ms": {"min": 0, "reason": "as time_error_ms"},
+    "detection.time_state": {"one_of": ["coherent", "drifting", "free-running"], "reason": "as time_state"},
+    "detection.sensor_lat": {"min": -90, "max": 90, "reason": "as lat"},
+    "detection.sensor_lon": {"min": -180, "max": 180, "reason": "as lon"},
+    "detection.sensor_hae": {"min": -12000, "max": 2000000000, "reason": "as hae"},
+    "detection.revisit_ms": {"min": 0, "reason": "a duration is not negative"},
+    "detection.range_error_m": {"min": 0, "reason": "a standard deviation is not negative"},
+    "detection.cross_range_error_m": {"min": 0, "reason": "a standard deviation is not negative"},
+    "detection.radial_velocity_error_ms": {"min": 0, "reason": "a standard deviation is not negative"},
+    "detection.classification_probability": {"min": 0, "max": 1, "reason": "a probability in [0,1] (model/detection.def)"}
+  },
+  "meaning_rules": [
+    {"type": "int", "meaning_prefix": "flag:", "one_of": [0, 1], "reason": "a flag is 1 when the source states it and 0 when it denies it (spec/shared-model.md, Types and units)"}
+  ],
+  "order": [
+    {"earlier": "time_ms", "later": "stale_ms", "reason": "a report does not go stale before the time it is valid"}
+  ],
+  "synthetic": {"prefixes": ["conformance", "demo-"], "reason": "these synthetic formats exist to exercise the rules of the specification with edge values on purpose (the largest integer, a value a transform refuses, a non-finite derivation); a vector is skipped when its pack, its source or its target is one of them"},
+  "datum": {
+    "about": "A pack that maps a height key names the vertical datum of that height in its pack.md. A height key has a unit of height_units (m or ft; FL is barometric by its unit, and raw keys of no unit are not read), and its name has a token hae, height, altitude, alt, elevation, ele, elev, amsl, msl, agl or hgt, or its meaning has the word height, altitude or elevation; unless its name or meaning is about an error, a resolution, a size or a depth (not_height). A key whose meaning says it is above the WGS 84 ellipsoid (and is not the geoid, and not 'not above') is an ellipsoid key: a passage of its pack.md about a height must name the ellipsoid, since a height above mean sea level mapped to it unconverted is wrong by up to 110 m.",
+    "height_units": ["m", "ft"],
+    "height_name": "(^|_)(hae|height|altitude|alt|elevation|ele|elev|amsl|msl|agl|hgt)(_|$)",
+    "height_meaning": "\\b(height|altitude|elevation)\\b",
+    "not_height": "\\b(error|errors|accuracy|deviation|uncertainty|sigma|precision|variance|covariance|resolution|tolerance|threshold|rate|velocity|speed|clearance|depth|integrity|limit|separation|undulation|offset|difference|delta|std|angle|protection|size)\\b",
+    "not_height_keys": {
+      "n2k.ship_sheight": "a vessel's dimension, not the height of a position"
+    },
+    "ellipsoid_meaning": "^(?!.*\\bnot above\\b)(?!.*\\bgeoid\\b).*\\babove the WGS ?84 ellipsoid",
+    "terms": {
+      "ellipsoid": "(?i:ellipsoid)|\\bHAE\\b",
+      "mean sea level": "(?i:mean sea level|geoid|orthometric)|\\bA?MSL\\b|\\bEGM ?(96|2008)\\b",
+      "barometric": "(?i:barometric|pressure altitude|flight level)|\\bQN[EH]\\b",
+      "above ground or a local origin": "(?i:above (the )?(ground|terrain|take-?off|home|launch|origin)|relative altitude|local (frame|origin|altitude|height))|\\bAGL\\b",
+      "not stated by the source": "(?i:(no|not|does not|do not|never) (state|states|stated|give|gives|name|names|say|says)[^.]{0,60}(reference|datum|measured from)|(reference|datum)[^.]{0,40}(is |are )?not stated|no stated (reference|datum))"
+    },
+    "reason": "seven engines that agree on a height do not show which height it is; core hae is above the WGS 84 ellipsoid, and a pack that does not say what its source measures from cannot be checked",
+    "terms_about": "Each term is a regular expression matched against each passage of pack.md (a paragraph, a table row, a list item) that has a height word or the name of a mapped height key, case-sensitive except inside (?i:...). The vocabulary: the ellipsoid, mean sea level (the geoid), barometric (pressure altitude, a flight level), above the ground or a local origin (take-off, home), and an explicit statement that the source names no datum, which is a statement too."
+  }
+}

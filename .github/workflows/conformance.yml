@@ -44,6 +44,12 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - run: python3 -I -m unittest discover -s tools/tests
+      # Every decoded value of every conversion vector is plausible for its key
+      # and every pack that maps a height names its datum; a failure not in
+      # tools/model-checks-allow.txt, or a line there that no longer fails,
+      # fails the job.
+      - name: Decoded values are plausible and heights name a datum
+        run: python3 -I tools/model-checks.py --check
       # Fails only when a pack has no family in tools/catalog-families/.
       # The figure's counts are compared (--check) only in the counts PR.
       - name: Every pack has a family in the catalog figure
