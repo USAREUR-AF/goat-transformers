@@ -1,0 +1,26 @@
+{
+  "name": "gen-demo-json-roundtrip",
+  "from": "demo-json",
+  "to": "demo-json",
+  "source": "tools/gen/protojson2pack.py: a message built from the schema, in canonical json text",
+  "input": "{\"name\":\"s1\",\"traceId\":\"02030405\",\"payload\":\"AwQFBg==\",\"colour\":0,\"points\":[{\"timeUnixNano\":\"1700000000000000005\",\"reading\":6.5,\"valid\":true},{\"timeUnixNano\":\"1700000000000000008\",\"reading\":9.5,\"valid\":false}],\"tags\":[\"s11\",\"s12\"],\"value\":{\"text\":\"s13\"},\"version\":15}",
+  "expect": "{\"name\":\"s1\",\"traceId\":\"02030405\",\"payload\":\"AwQFBg==\",\"colour\":0,\"points\":[{\"timeUnixNano\":\"1700000000000000005\",\"reading\":6.5,\"valid\":true},{\"timeUnixNano\":\"1700000000000000008\",\"reading\":9.5,\"valid\":false}],\"tags\":[\"s11\",\"s12\"],\"value\":{\"text\":\"s13\"},\"version\":15}",
+  "model": {
+    "demojson.name": "s1",
+    "demojson.trace_id": "02030405",
+    "demojson.payload": "AwQFBg==",
+    "demojson.colour": "0",
+    "demojson.value_text": "s13",
+    "demojson.version": "15",
+    "demojson.points.#": "2",
+    "demojson.points[0].demojson.points_time_unix_nano": "1700000000000000005",
+    "demojson.points[0].demojson.points_reading": "6.5",
+    "demojson.points[0].demojson.points_valid": "1",
+    "demojson.points[1].demojson.points_time_unix_nano": "1700000000000000008",
+    "demojson.points[1].demojson.points_reading": "9.5",
+    "demojson.points[1].demojson.points_valid": "0",
+    "demojson.tags.#": "2",
+    "demojson.tags[0].demojson.tags_item": "s11",
+    "demojson.tags[1].demojson.tags_item": "s12"
+  }
+}

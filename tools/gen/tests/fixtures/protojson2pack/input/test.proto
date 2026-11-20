@@ -1,0 +1,33 @@
+// Written for the tests of tools/gen/protojson2pack.py.
+syntax = "proto3";
+package demo.v1;
+
+enum Colour { COLOUR_UNSPECIFIED = 0; COLOUR_RED = 1; }
+
+message Value {
+  oneof value {
+    string text = 1;
+    int64 count = 2;
+    List list = 3;
+  }
+}
+
+message List { repeated Value values = 1; }
+
+message Point {
+  fixed64 time_unix_nano = 1;
+  double reading = 2;
+  bool valid = 3;
+}
+
+message Report {
+  string name = 1;
+  bytes trace_id = 2;
+  bytes payload = 3;
+  Colour colour = 4;
+  repeated Point points = 5;
+  repeated string tags = 6;
+  map<string, string> labels = 7;
+  Value value = 8;
+  uint32 version = 9;
+}
