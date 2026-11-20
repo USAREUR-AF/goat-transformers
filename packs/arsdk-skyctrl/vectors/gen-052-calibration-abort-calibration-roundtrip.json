@@ -1,0 +1,12 @@
+{
+  "name": "calibration-abort-calibration-roundtrip",
+  "from": "arsdk-skyctrl",
+  "to": "arsdk-skyctrl",
+  "input": "04160200",
+  "expect": "04160200",
+  "model": {
+    "@kind": "calibration_abort_calibration",
+    "arsdkskyctrl.feature_id": "4"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "state-roundtrip",
+  "from": "arsdk-follow-me",
+  "to": "arsdk-follow-me",
+  "input": "860003000000000001000000020000009700",
+  "expect": "860003000000000001000000020000009700",
+  "model": {
+    "@kind": "state",
+    "arsdkfollowme.feature_id": "134",
+    "arsdkfollowme.state_mode": "0",
+    "arsdkfollowme.state_behavior": "1",
+    "arsdkfollowme.state_animation": "2",
+    "arsdkfollowme.state_animation_available": "151"
+  },
+  "source": "constructed"
+}

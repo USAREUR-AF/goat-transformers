@@ -1,0 +1,19 @@
+{
+  "name": "extended-move-by-roundtrip",
+  "from": "arsdk-move",
+  "to": "arsdk-move",
+  "input": "aa0002000000104000006040000098400000c0400000e8400000084100001c41",
+  "expect": "aa0002000000104000006040000098400000c0400000e8400000084100001c41",
+  "model": {
+    "@kind": "extended_move_by",
+    "arsdkmove.feature_id": "170",
+    "arsdkmove.extended_move_by_d_x": "2.25",
+    "arsdkmove.extended_move_by_d_y": "3.5",
+    "arsdkmove.extended_move_by_d_z": "4.75",
+    "arsdkmove.extended_move_by_d_psi": "6",
+    "arsdkmove.extended_move_by_max_horizontal_speed": "7.25",
+    "arsdkmove.extended_move_by_max_vertical_speed": "8.5",
+    "arsdkmove.extended_move_by_max_yaw_rotation_speed": "9.75"
+  },
+  "source": "constructed"
+}

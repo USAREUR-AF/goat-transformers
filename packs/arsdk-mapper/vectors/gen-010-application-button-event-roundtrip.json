@@ -1,0 +1,13 @@
+{
+  "name": "application-button-event-roundtrip",
+  "from": "arsdk-mapper",
+  "to": "arsdk-mapper",
+  "input": "8a000a0000000000",
+  "expect": "8a000a0000000000",
+  "model": {
+    "@kind": "application_button_event",
+    "arsdkmapper.feature_id": "138",
+    "arsdkmapper.application_button_event_action": "0"
+  },
+  "source": "constructed"
+}

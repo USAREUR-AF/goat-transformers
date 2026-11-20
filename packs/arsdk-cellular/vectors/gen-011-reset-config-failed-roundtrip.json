@@ -1,0 +1,12 @@
+{
+  "name": "reset-config-failed-roundtrip",
+  "from": "arsdk-cellular",
+  "to": "arsdk-cellular",
+  "input": "ab001100",
+  "expect": "ab001100",
+  "model": {
+    "@kind": "reset_config_failed",
+    "arsdkcellular.feature_id": "171"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "waypoint-skipped-roundtrip",
+  "from": "arsdk-flight-plan",
+  "to": "arsdk-flight-plan",
+  "input": "a700020027000000",
+  "expect": "a700020027000000",
+  "model": {
+    "@kind": "waypoint_skipped",
+    "arsdkflightplan.feature_id": "167",
+    "arsdkflightplan.waypoint_skipped_item": "39"
+  },
+  "source": "constructed"
+}

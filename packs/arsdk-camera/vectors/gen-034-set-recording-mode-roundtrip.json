@@ -1,0 +1,17 @@
+{
+  "name": "set-recording-mode-roundtrip",
+  "from": "arsdk-camera",
+  "to": "arsdk-camera",
+  "input": "8f0021004601000000020000000000000001000000",
+  "expect": "8f0021004601000000020000000000000001000000",
+  "model": {
+    "@kind": "set_recording_mode",
+    "arsdkcamera.feature_id": "143",
+    "arsdkcamera.set_recording_mode_cam_id": "70",
+    "arsdkcamera.set_recording_mode_mode": "1",
+    "arsdkcamera.set_recording_mode_resolution": "2",
+    "arsdkcamera.set_recording_mode_framerate": "0",
+    "arsdkcamera.set_recording_mode_hyperlapse": "1"
+  },
+  "source": "constructed"
+}

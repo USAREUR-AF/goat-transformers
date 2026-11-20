@@ -1,0 +1,22 @@
+{
+  "name": "attitude-roundtrip",
+  "from": "arsdk-gimbal",
+  "to": "arsdk-gimbal",
+  "input": "940006002b010000000200000000000000000014410000284100003c41000050410000644100007841",
+  "expect": "940006002b010000000200000000000000000014410000284100003c41000050410000644100007841",
+  "model": {
+    "@kind": "attitude",
+    "arsdkgimbal.feature_id": "148",
+    "arsdkgimbal.attitude_gimbal_id": "43",
+    "arsdkgimbal.attitude_yaw_frame_of_reference": "1",
+    "arsdkgimbal.attitude_pitch_frame_of_reference": "2",
+    "arsdkgimbal.attitude_roll_frame_of_reference": "0",
+    "arsdkgimbal.attitude_yaw_relative": "9.25",
+    "arsdkgimbal.attitude_pitch_relative": "10.5",
+    "arsdkgimbal.attitude_roll_relative": "11.75",
+    "arsdkgimbal.attitude_yaw_absolute": "13",
+    "arsdkgimbal.attitude_pitch_absolute": "14.25",
+    "arsdkgimbal.attitude_roll_absolute": "15.5"
+  },
+  "source": "constructed"
+}

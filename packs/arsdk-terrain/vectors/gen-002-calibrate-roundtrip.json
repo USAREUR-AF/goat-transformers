@@ -1,0 +1,12 @@
+{
+  "name": "calibrate-roundtrip",
+  "from": "arsdk-terrain",
+  "to": "arsdk-terrain",
+  "input": "b0000200",
+  "expect": "b0000200",
+  "model": {
+    "@kind": "calibrate",
+    "arsdkterrain.feature_id": "176"
+  },
+  "source": "constructed"
+}

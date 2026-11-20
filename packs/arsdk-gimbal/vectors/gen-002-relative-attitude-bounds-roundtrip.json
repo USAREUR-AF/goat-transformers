@@ -1,0 +1,19 @@
+{
+  "name": "relative-attitude-bounds-roundtrip",
+  "from": "arsdk-gimbal",
+  "to": "arsdk-gimbal",
+  "input": "940002002700006040000098400000c0400000e8400000084100001c41",
+  "expect": "940002002700006040000098400000c0400000e8400000084100001c41",
+  "model": {
+    "@kind": "relative_attitude_bounds",
+    "arsdkgimbal.feature_id": "148",
+    "arsdkgimbal.relative_attitude_bounds_gimbal_id": "39",
+    "arsdkgimbal.relative_attitude_bounds_min_yaw": "3.5",
+    "arsdkgimbal.relative_attitude_bounds_max_yaw": "4.75",
+    "arsdkgimbal.relative_attitude_bounds_min_pitch": "6",
+    "arsdkgimbal.relative_attitude_bounds_max_pitch": "7.25",
+    "arsdkgimbal.relative_attitude_bounds_min_roll": "8.5",
+    "arsdkgimbal.relative_attitude_bounds_max_roll": "9.75"
+  },
+  "source": "constructed"
+}

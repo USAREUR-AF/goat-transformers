@@ -1,0 +1,14 @@
+{
+  "name": "piloting-state-hovering-warning-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "01041100365b",
+  "expect": "01041100365b",
+  "model": {
+    "@kind": "piloting_state_hovering_warning",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.piloting_state_hovering_warning_no_gps_too_dark": "54",
+    "arsdkardrone3.piloting_state_hovering_warning_no_gps_too_high": "91"
+  },
+  "source": "constructed"
+}

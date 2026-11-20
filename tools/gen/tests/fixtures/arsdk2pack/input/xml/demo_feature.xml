@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2026 goat-transformers contributors (a fixture written for the arsdk2pack tests)
+	Redistribution and use in source and binary forms, with or without
+	modification, are permitted provided that the conditions of the
+	BSD-3-Clause license are met. Neither the name of the copyright holder
+	nor the names of its contributors may be used to endorse products.
+-->
+<feature id="200" name="demo_feature">
+	A test feature without classes.
+	<enums>
+		<enum name="state">x
+			<value name="off">x</value>
+			<value name="on">x</value>
+		</enum>
+	</enums>
+	<msgs>
+		<cmd name="set_state" id="1">
+			<comment title="t" desc="d"/>
+			<arg name="state" type="enum:state">x</arg>
+			<arg name="mask" type="bitfield:u16:state">x</arg>
+			<arg name="offset" type="i32">x</arg>
+		</cmd>
+		<evt name="state_item" id="2" type="LIST_ITEM">
+			<comment title="t" desc="d"/>
+			<arg name="state" type="enum:state">x</arg>
+			<arg name="value" type="double">x</arg>
+			<arg name="small" type="i16">x</arg>
+		</evt>
+		<evt name="blob" id="3">
+			<comment title="t" desc="d"/>
+			<arg name="data" type="binary">x</arg>
+		</evt>
+	</msgs>
+</feature>

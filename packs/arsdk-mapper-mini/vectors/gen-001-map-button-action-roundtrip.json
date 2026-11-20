@@ -1,0 +1,15 @@
+{
+  "name": "map-button-action-roundtrip",
+  "from": "arsdk-mapper-mini",
+  "to": "arsdk-mapper-mini",
+  "input": "8d000100260100000070000000",
+  "expect": "8d000100260100000070000000",
+  "model": {
+    "@kind": "map_button_action",
+    "arsdkmappermini.feature_id": "141",
+    "arsdkmappermini.map_button_action_modes": "38",
+    "arsdkmappermini.map_button_action_action": "1",
+    "arsdkmappermini.map_button_action_buttons": "112"
+  },
+  "source": "constructed"
+}

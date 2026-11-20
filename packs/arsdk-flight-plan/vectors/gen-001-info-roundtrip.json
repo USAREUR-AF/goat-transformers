@@ -1,0 +1,13 @@
+{
+  "name": "info-roundtrip",
+  "from": "arsdk-flight-plan",
+  "to": "arsdk-flight-plan",
+  "input": "a700010026000000",
+  "expect": "a700010026000000",
+  "model": {
+    "@kind": "info",
+    "arsdkflightplan.feature_id": "167",
+    "arsdkflightplan.info_missing_inputs": "38"
+  },
+  "source": "constructed"
+}

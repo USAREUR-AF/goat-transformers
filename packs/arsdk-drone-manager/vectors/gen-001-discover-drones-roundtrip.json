@@ -1,0 +1,12 @@
+{
+  "name": "discover-drones-roundtrip",
+  "from": "arsdk-drone-manager",
+  "to": "arsdk-drone-manager",
+  "input": "89000100",
+  "expect": "89000100",
+  "model": {
+    "@kind": "discover_drones",
+    "arsdkdronemanager.feature_id": "137"
+  },
+  "source": "constructed"
+}

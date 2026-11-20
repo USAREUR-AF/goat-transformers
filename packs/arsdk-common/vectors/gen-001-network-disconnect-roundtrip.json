@@ -1,0 +1,12 @@
+{
+  "name": "network-disconnect-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "00000000",
+  "expect": "00000000",
+  "model": {
+    "@kind": "network_disconnect",
+    "arsdkcommon.feature_id": "0"
+  },
+  "source": "constructed"
+}

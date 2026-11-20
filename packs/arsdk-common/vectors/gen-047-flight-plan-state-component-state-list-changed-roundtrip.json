@@ -1,0 +1,14 @@
+{
+  "name": "flight-plan-state-component-state-list-changed-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "00110100000000004b",
+  "expect": "00110100000000004b",
+  "model": {
+    "@kind": "flight_plan_state_component_state_list_changed",
+    "arsdkcommon.feature_id": "0",
+    "arsdkcommon.flight_plan_state_component_state_list_changed_component": "0",
+    "arsdkcommon.flight_plan_state_component_state_list_changed_state": "75"
+  },
+  "source": "constructed"
+}

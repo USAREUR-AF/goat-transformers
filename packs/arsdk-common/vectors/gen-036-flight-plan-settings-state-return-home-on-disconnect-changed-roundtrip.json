@@ -1,0 +1,14 @@
+{
+  "name": "flight-plan-settings-state-return-home-on-disconnect-changed-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "00210000254a",
+  "expect": "00210000254a",
+  "model": {
+    "@kind": "flight_plan_settings_state_return_home_on_disconnect_changed",
+    "arsdkcommon.feature_id": "0",
+    "arsdkcommon.flight_plan_settings_state_return_home_on_disconnect_changed_state": "37",
+    "arsdkcommon.flight_plan_settings_state_return_home_on_disconnect_changed_is_read_only": "74"
+  },
+  "source": "constructed"
+}

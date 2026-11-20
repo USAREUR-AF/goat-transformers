@@ -1,0 +1,14 @@
+{
+  "name": "grab-roundtrip",
+  "from": "arsdk-mapper",
+  "to": "arsdk-mapper",
+  "input": "8a000100260000004b000000",
+  "expect": "8a000100260000004b000000",
+  "model": {
+    "@kind": "grab",
+    "arsdkmapper.feature_id": "138",
+    "arsdkmapper.grab_buttons": "38",
+    "arsdkmapper.grab_axes": "75"
+  },
+  "source": "constructed"
+}

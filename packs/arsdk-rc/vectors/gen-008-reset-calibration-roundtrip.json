@@ -1,0 +1,12 @@
+{
+  "name": "reset-calibration-roundtrip",
+  "from": "arsdk-rc",
+  "to": "arsdk-rc",
+  "input": "88000a00",
+  "expect": "88000a00",
+  "model": {
+    "@kind": "reset_calibration",
+    "arsdkrc.feature_id": "136"
+  },
+  "source": "constructed"
+}

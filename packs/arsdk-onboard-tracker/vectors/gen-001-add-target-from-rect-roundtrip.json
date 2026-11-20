@@ -1,0 +1,18 @@
+{
+  "name": "add-target-from-rect-roundtrip",
+  "from": "arsdk-onboard-tracker",
+  "to": "arsdk-onboard-tracker",
+  "input": "9d000100260000000000000000004040000088400000b0400000d840df000000",
+  "expect": "9d000100260000000000000000004040000088400000b0400000d840df000000",
+  "model": {
+    "@kind": "add_target_from_rect",
+    "arsdkonboardtracker.feature_id": "157",
+    "arsdkonboardtracker.add_target_from_rect_timestamp": "38",
+    "arsdkonboardtracker.add_target_from_rect_horizontal_position": "3",
+    "arsdkonboardtracker.add_target_from_rect_vertical_position": "4.25",
+    "arsdkonboardtracker.add_target_from_rect_height": "5.5",
+    "arsdkonboardtracker.add_target_from_rect_width": "6.75",
+    "arsdkonboardtracker.add_target_from_rect_cookie": "223"
+  },
+  "source": "constructed"
+}

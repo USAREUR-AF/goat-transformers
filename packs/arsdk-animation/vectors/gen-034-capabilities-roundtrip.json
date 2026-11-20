@@ -1,0 +1,15 @@
+{
+  "name": "capabilities-roundtrip",
+  "from": "arsdk-animation",
+  "to": "arsdk-animation",
+  "input": "90002200000000006c00000011",
+  "expect": "90002200000000006c00000011",
+  "model": {
+    "@kind": "capabilities",
+    "arsdkanimation.feature_id": "144",
+    "arsdkanimation.capabilities_mode": "0",
+    "arsdkanimation.capabilities_type": "108",
+    "arsdkanimation.capabilities_list_flags": "17"
+  },
+  "source": "constructed"
+}

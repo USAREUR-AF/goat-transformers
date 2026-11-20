@@ -1,0 +1,15 @@
+{
+  "name": "piloting-state-attitude-changed-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "01040600000088400000b0400000d840",
+  "expect": "01040600000088400000b0400000d840",
+  "model": {
+    "@kind": "piloting_state_attitude_changed",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.piloting_state_attitude_changed_roll": "4.25",
+    "arsdkardrone3.piloting_state_attitude_changed_pitch": "5.5",
+    "arsdkardrone3.piloting_state_attitude_changed_yaw": "6.75"
+  },
+  "source": "constructed"
+}

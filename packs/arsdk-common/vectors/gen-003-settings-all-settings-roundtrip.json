@@ -1,0 +1,12 @@
+{
+  "name": "settings-all-settings-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "00020000",
+  "expect": "00020000",
+  "model": {
+    "@kind": "settings_all_settings",
+    "arsdkcommon.feature_id": "0"
+  },
+  "source": "constructed"
+}

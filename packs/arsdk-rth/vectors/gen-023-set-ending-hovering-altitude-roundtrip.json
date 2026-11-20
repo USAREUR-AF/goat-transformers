@@ -1,0 +1,13 @@
+{
+  "name": "set-ending-hovering-altitude-roundtrip",
+  "from": "arsdk-rth",
+  "to": "arsdk-rth",
+  "input": "9200170000001040",
+  "expect": "9200170000001040",
+  "model": {
+    "@kind": "set_ending_hovering_altitude",
+    "arsdkrth.feature_id": "146",
+    "arsdkrth.set_ending_hovering_altitude_altitude": "2.25"
+  },
+  "source": "constructed"
+}

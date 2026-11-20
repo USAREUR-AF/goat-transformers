@@ -1,0 +1,23 @@
+{
+  "name": "offsets-roundtrip",
+  "from": "arsdk-gimbal",
+  "to": "arsdk-gimbal",
+  "input": "940008002d01000000000088400000b0400000d84000000041000014410000284100003c410000504100006441",
+  "expect": "940008002d01000000000088400000b0400000d84000000041000014410000284100003c410000504100006441",
+  "model": {
+    "@kind": "offsets",
+    "arsdkgimbal.feature_id": "148",
+    "arsdkgimbal.offsets_gimbal_id": "45",
+    "arsdkgimbal.offsets_update_state": "1",
+    "arsdkgimbal.offsets_min_bound_yaw": "4.25",
+    "arsdkgimbal.offsets_max_bound_yaw": "5.5",
+    "arsdkgimbal.offsets_current_yaw": "6.75",
+    "arsdkgimbal.offsets_min_bound_pitch": "8",
+    "arsdkgimbal.offsets_max_bound_pitch": "9.25",
+    "arsdkgimbal.offsets_current_pitch": "10.5",
+    "arsdkgimbal.offsets_min_bound_roll": "11.75",
+    "arsdkgimbal.offsets_max_bound_roll": "13",
+    "arsdkgimbal.offsets_current_roll": "14.25"
+  },
+  "source": "constructed"
+}

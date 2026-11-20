@@ -1,0 +1,15 @@
+{
+  "name": "home-location-roundtrip",
+  "from": "arsdk-rth",
+  "to": "arsdk-rth",
+  "input": "92001b00000000000000114000000000000016400000d840",
+  "expect": "92001b00000000000000114000000000000016400000d840",
+  "model": {
+    "@kind": "home_location",
+    "arsdkrth.feature_id": "146",
+    "arsdkrth.home_location_latitude": "4.25",
+    "arsdkrth.home_location_longitude": "5.5",
+    "arsdkrth.home_location_altitude": "6.75"
+  },
+  "source": "constructed"
+}

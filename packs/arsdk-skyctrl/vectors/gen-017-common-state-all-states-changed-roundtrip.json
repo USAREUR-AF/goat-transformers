@@ -1,0 +1,12 @@
+{
+  "name": "common-state-all-states-changed-roundtrip",
+  "from": "arsdk-skyctrl",
+  "to": "arsdk-skyctrl",
+  "input": "04070000",
+  "expect": "04070000",
+  "model": {
+    "@kind": "common_state_all_states_changed",
+    "arsdkskyctrl.feature_id": "4"
+  },
+  "source": "constructed"
+}

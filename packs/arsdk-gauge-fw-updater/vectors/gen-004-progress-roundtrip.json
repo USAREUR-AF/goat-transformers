@@ -1,0 +1,14 @@
+{
+  "name": "progress-roundtrip",
+  "from": "arsdk-gauge-fw-updater",
+  "to": "arsdk-gauge-fw-updater",
+  "input": "a0000400000000004e",
+  "expect": "a0000400000000004e",
+  "model": {
+    "@kind": "progress",
+    "arsdkgaugefwupdater.feature_id": "160",
+    "arsdkgaugefwupdater.progress_result": "0",
+    "arsdkgaugefwupdater.progress_percent": "78"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "capabilities-roundtrip",
+  "from": "arsdk-controller-info",
+  "to": "arsdk-controller-info",
+  "input": "8c00040029",
+  "expect": "8c00040029",
+  "model": {
+    "@kind": "capabilities",
+    "arsdkcontrollerinfo.feature_id": "140",
+    "arsdkcontrollerinfo.capabilities_supported_command": "41"
+  },
+  "source": "constructed"
+}

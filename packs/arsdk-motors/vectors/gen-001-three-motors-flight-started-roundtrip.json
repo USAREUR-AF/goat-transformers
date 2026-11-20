@@ -1,0 +1,14 @@
+{
+  "name": "three-motors-flight-started-roundtrip",
+  "from": "arsdk-motors",
+  "to": "arsdk-motors",
+  "input": "ad0001000000000001000000",
+  "expect": "ad0001000000000001000000",
+  "model": {
+    "@kind": "three_motors_flight_started",
+    "arsdkmotors.feature_id": "173",
+    "arsdkmotors.three_motors_flight_started_id": "0",
+    "arsdkmotors.three_motors_flight_started_reason": "1"
+  },
+  "source": "constructed"
+}

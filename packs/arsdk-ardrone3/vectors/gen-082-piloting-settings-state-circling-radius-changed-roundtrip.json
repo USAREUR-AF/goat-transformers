@@ -1,0 +1,15 @@
+{
+  "name": "piloting-settings-state-circling-radius-changed-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "01060d00320057007c00",
+  "expect": "01060d00320057007c00",
+  "model": {
+    "@kind": "piloting_settings_state_circling_radius_changed",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.piloting_settings_state_circling_radius_changed_current": "50",
+    "arsdkardrone3.piloting_settings_state_circling_radius_changed_min": "87",
+    "arsdkardrone3.piloting_settings_state_circling_radius_changed_max": "124"
+  },
+  "source": "constructed"
+}

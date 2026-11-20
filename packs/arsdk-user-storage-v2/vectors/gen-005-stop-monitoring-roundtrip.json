@@ -1,0 +1,13 @@
+{
+  "name": "stop-monitoring-roundtrip",
+  "from": "arsdk-user-storage-v2",
+  "to": "arsdk-user-storage-v2",
+  "input": "a60006002b",
+  "expect": "a60006002b",
+  "model": {
+    "@kind": "stop_monitoring",
+    "arsdkuserstoragev2.feature_id": "166",
+    "arsdkuserstoragev2.stop_monitoring_storage_id": "43"
+  },
+  "source": "constructed"
+}

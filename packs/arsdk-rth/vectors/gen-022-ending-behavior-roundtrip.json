@@ -1,0 +1,13 @@
+{
+  "name": "ending-behavior-roundtrip",
+  "from": "arsdk-rth",
+  "to": "arsdk-rth",
+  "input": "9200160000000000",
+  "expect": "9200160000000000",
+  "model": {
+    "@kind": "ending_behavior",
+    "arsdkrth.feature_id": "146",
+    "arsdkrth.ending_behavior_ending_behavior": "0"
+  },
+  "source": "constructed"
+}

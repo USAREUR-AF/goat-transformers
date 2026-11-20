@@ -1,0 +1,14 @@
+{
+  "name": "piloting-state-forced-landing-auto-trigger-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "01041200000000005c000000",
+  "expect": "01041200000000005c000000",
+  "model": {
+    "@kind": "piloting_state_forced_landing_auto_trigger",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.piloting_state_forced_landing_auto_trigger_reason": "0",
+    "arsdkardrone3.piloting_state_forced_landing_auto_trigger_delay": "92"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "info-roundtrip",
+  "from": "arsdk-animation",
+  "to": "arsdk-animation",
+  "input": "90002300000000006d00000012",
+  "expect": "90002300000000006d00000012",
+  "model": {
+    "@kind": "info",
+    "arsdkanimation.feature_id": "144",
+    "arsdkanimation.info_type": "0",
+    "arsdkanimation.info_missing_inputs": "109",
+    "arsdkanimation.info_list_flags": "18"
+  },
+  "source": "constructed"
+}

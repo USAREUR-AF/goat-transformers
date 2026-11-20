@@ -1,0 +1,14 @@
+{
+  "name": "camera-state-default-camera-orientation-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "0119010026b5",
+  "expect": "0119010026b5",
+  "model": {
+    "@kind": "camera_state_default_camera_orientation",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.camera_state_default_camera_orientation_tilt": "38",
+    "arsdkardrone3.camera_state_default_camera_orientation_pan": "-75"
+  },
+  "source": "constructed"
+}

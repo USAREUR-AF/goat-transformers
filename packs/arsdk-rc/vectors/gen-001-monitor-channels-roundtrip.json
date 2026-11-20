@@ -1,0 +1,13 @@
+{
+  "name": "monitor-channels-roundtrip",
+  "from": "arsdk-rc",
+  "to": "arsdk-rc",
+  "input": "8800020027",
+  "expect": "8800020027",
+  "model": {
+    "@kind": "monitor_channels",
+    "arsdkrc.feature_id": "136",
+    "arsdkrc.monitor_channels_enable": "39"
+  },
+  "source": "constructed"
+}

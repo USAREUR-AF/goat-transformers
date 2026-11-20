@@ -1,0 +1,18 @@
+{
+  "name": "common-state-mass-storage-content-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "00050c003156007b00a000c500ea00",
+  "expect": "00050c003156007b00a000c500ea00",
+  "model": {
+    "@kind": "common_state_mass_storage_content",
+    "arsdkcommon.feature_id": "0",
+    "arsdkcommon.common_state_mass_storage_content_mass_storage_id": "49",
+    "arsdkcommon.common_state_mass_storage_content_nb_photos": "86",
+    "arsdkcommon.common_state_mass_storage_content_nb_videos": "123",
+    "arsdkcommon.common_state_mass_storage_content_nb_puds": "160",
+    "arsdkcommon.common_state_mass_storage_content_nb_crash_logs": "197",
+    "arsdkcommon.common_state_mass_storage_content_nb_raw_photos": "234"
+  },
+  "source": "constructed"
+}

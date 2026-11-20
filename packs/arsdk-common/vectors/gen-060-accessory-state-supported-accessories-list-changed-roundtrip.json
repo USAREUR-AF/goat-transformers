@@ -1,0 +1,13 @@
+{
+  "name": "accessory-state-supported-accessories-list-changed-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "001b000000000000",
+  "expect": "001b000000000000",
+  "model": {
+    "@kind": "accessory_state_supported_accessories_list_changed",
+    "arsdkcommon.feature_id": "0",
+    "arsdkcommon.accessory_state_supported_accessories_list_changed_accessory": "0"
+  },
+  "source": "constructed"
+}

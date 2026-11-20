@@ -1,0 +1,20 @@
+{
+  "name": "exposure-roundtrip",
+  "from": "arsdk-camera",
+  "to": "arsdk-camera",
+  "input": "8f000a002f0100000002000000000000000000f840000010410000244100003841",
+  "expect": "8f000a002f0100000002000000000000000000f840000010410000244100003841",
+  "model": {
+    "@kind": "exposure",
+    "arsdkcamera.feature_id": "143",
+    "arsdkcamera.exposure_cam_id": "47",
+    "arsdkcamera.exposure_shutter_speed": "1",
+    "arsdkcamera.exposure_iso_sensitivity": "2",
+    "arsdkcamera.exposure_lock": "0",
+    "arsdkcamera.exposure_lock_roi_x": "7.75",
+    "arsdkcamera.exposure_lock_roi_y": "9",
+    "arsdkcamera.exposure_lock_roi_width": "10.25",
+    "arsdkcamera.exposure_lock_roi_height": "11.5"
+  },
+  "source": "constructed"
+}

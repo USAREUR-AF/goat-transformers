@@ -1,0 +1,13 @@
+{
+  "name": "home-reachability-roundtrip",
+  "from": "arsdk-rth",
+  "to": "arsdk-rth",
+  "input": "92000e0000000000",
+  "expect": "92000e0000000000",
+  "model": {
+    "@kind": "home_reachability",
+    "arsdkrth.feature_id": "146",
+    "arsdkrth.home_reachability_status": "0"
+  },
+  "source": "constructed"
+}

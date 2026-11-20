@@ -1,0 +1,16 @@
+{
+  "name": "piloting-move-by-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "010007000000a03f00002040000070400000a040",
+  "expect": "010007000000a03f00002040000070400000a040",
+  "model": {
+    "@kind": "piloting_move_by",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.piloting_move_by_d_x": "1.25",
+    "arsdkardrone3.piloting_move_by_d_y": "2.5",
+    "arsdkardrone3.piloting_move_by_d_z": "3.75",
+    "arsdkardrone3.piloting_move_by_d_psi": "5"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "target-image-detection-state-roundtrip",
+  "from": "arsdk-follow-me",
+  "to": "arsdk-follow-me",
+  "input": "8600190000000000",
+  "expect": "8600190000000000",
+  "model": {
+    "@kind": "target_image_detection_state",
+    "arsdkfollowme.feature_id": "134",
+    "arsdkfollowme.target_image_detection_state_state": "0"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "gps-settings-state-return-home-min-altitude-changed-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "011807000000a03f0000204000007040",
+  "expect": "011807000000a03f0000204000007040",
+  "model": {
+    "@kind": "gps_settings_state_return_home_min_altitude_changed",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.gps_settings_state_return_home_min_altitude_changed_value": "1.25",
+    "arsdkardrone3.gps_settings_state_return_home_min_altitude_changed_min": "2.5",
+    "arsdkardrone3.gps_settings_state_return_home_min_altitude_changed_max": "3.75"
+  },
+  "source": "constructed"
+}

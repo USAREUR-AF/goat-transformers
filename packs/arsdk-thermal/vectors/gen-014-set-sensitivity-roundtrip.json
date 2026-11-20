@@ -1,0 +1,13 @@
+{
+  "name": "set-sensitivity-roundtrip",
+  "from": "arsdk-thermal",
+  "to": "arsdk-thermal",
+  "input": "98000e0000000000",
+  "expect": "98000e0000000000",
+  "model": {
+    "@kind": "set_sensitivity",
+    "arsdkthermal.feature_id": "152",
+    "arsdkthermal.set_sensitivity_range": "0"
+  },
+  "source": "constructed"
+}

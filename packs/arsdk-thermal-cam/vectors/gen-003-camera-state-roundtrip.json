@@ -1,0 +1,15 @@
+{
+  "name": "camera-state-roundtrip",
+  "from": "arsdk-thermal-cam",
+  "to": "arsdk-thermal-cam",
+  "input": "8e000300280100000072",
+  "expect": "8e000300280100000072",
+  "model": {
+    "@kind": "camera_state",
+    "arsdkthermalcam.feature_id": "142",
+    "arsdkthermalcam.camera_state_cam_id": "40",
+    "arsdkthermalcam.camera_state_state": "1",
+    "arsdkthermalcam.camera_state_list_flags": "114"
+  },
+  "source": "constructed"
+}

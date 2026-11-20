@@ -1,0 +1,12 @@
+{
+  "name": "abort-calibration-roundtrip",
+  "from": "arsdk-rc",
+  "to": "arsdk-rc",
+  "input": "88000900",
+  "expect": "88000900",
+  "model": {
+    "@kind": "abort_calibration",
+    "arsdkrc.feature_id": "136"
+  },
+  "source": "constructed"
+}

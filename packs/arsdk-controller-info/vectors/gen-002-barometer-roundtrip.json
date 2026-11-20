@@ -1,0 +1,14 @@
+{
+  "name": "barometer-roundtrip",
+  "from": "arsdk-controller-info",
+  "to": "arsdk-controller-info",
+  "input": "8c000200000010400000000000000c40",
+  "expect": "8c000200000010400000000000000c40",
+  "model": {
+    "@kind": "barometer",
+    "arsdkcontrollerinfo.feature_id": "140",
+    "arsdkcontrollerinfo.barometer_pressure": "2.25",
+    "arsdkcontrollerinfo.barometer_timestamp": "3.5"
+  },
+  "source": "constructed"
+}

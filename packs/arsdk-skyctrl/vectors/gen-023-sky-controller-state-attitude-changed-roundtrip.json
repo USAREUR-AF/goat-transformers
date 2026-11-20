@@ -1,0 +1,16 @@
+{
+  "name": "sky-controller-state-attitude-changed-roundtrip",
+  "from": "arsdk-skyctrl",
+  "to": "arsdk-skyctrl",
+  "input": "0408040000005040000090400000b8400000e040",
+  "expect": "0408040000005040000090400000b8400000e040",
+  "model": {
+    "@kind": "sky_controller_state_attitude_changed",
+    "arsdkskyctrl.feature_id": "4",
+    "arsdkskyctrl.sky_controller_state_attitude_changed_q0": "3.25",
+    "arsdkskyctrl.sky_controller_state_attitude_changed_q1": "4.5",
+    "arsdkskyctrl.sky_controller_state_attitude_changed_q2": "5.75",
+    "arsdkskyctrl.sky_controller_state_attitude_changed_q3": "7"
+  },
+  "source": "constructed"
+}

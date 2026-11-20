@@ -1,0 +1,16 @@
+{
+  "name": "channel-value-roundtrip",
+  "from": "arsdk-rc",
+  "to": "arsdk-rc",
+  "input": "880004002901000000730018",
+  "expect": "880004002901000000730018",
+  "model": {
+    "@kind": "channel_value",
+    "arsdkrc.feature_id": "136",
+    "arsdkrc.channel_value_id": "41",
+    "arsdkrc.channel_value_action": "1",
+    "arsdkrc.channel_value_value": "115",
+    "arsdkrc.channel_value_list_flags": "24"
+  },
+  "source": "constructed"
+}

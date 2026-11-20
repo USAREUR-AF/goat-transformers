@@ -1,0 +1,13 @@
+{
+  "name": "antiflickering-electric-frequency-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "011d000000000000",
+  "expect": "011d000000000000",
+  "model": {
+    "@kind": "antiflickering_electric_frequency",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.antiflickering_electric_frequency_frequency": "0"
+  },
+  "source": "constructed"
+}

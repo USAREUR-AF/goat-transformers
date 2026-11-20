@@ -1,0 +1,13 @@
+{
+  "name": "accessory-state-accessory-config-modification-enabled-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "001b020027",
+  "expect": "001b020027",
+  "model": {
+    "@kind": "accessory_state_accessory_config_modification_enabled",
+    "arsdkcommon.feature_id": "0",
+    "arsdkcommon.accessory_state_accessory_config_modification_enabled_enabled": "39"
+  },
+  "source": "constructed"
+}

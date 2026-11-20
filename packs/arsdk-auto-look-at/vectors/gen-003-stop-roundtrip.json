@@ -1,0 +1,12 @@
+{
+  "name": "stop-roundtrip",
+  "from": "arsdk-auto-look-at",
+  "to": "arsdk-auto-look-at",
+  "input": "a3000300",
+  "expect": "a3000300",
+  "model": {
+    "@kind": "stop",
+    "arsdkautolookat.feature_id": "163"
+  },
+  "source": "constructed"
+}

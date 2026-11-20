@@ -1,0 +1,16 @@
+{
+  "name": "horizontal-reveal-state-roundtrip",
+  "from": "arsdk-animation",
+  "to": "arsdk-animation",
+  "input": "90000b0000000000000090400000b84000000000",
+  "expect": "90000b0000000000000090400000b84000000000",
+  "model": {
+    "@kind": "horizontal_reveal_state",
+    "arsdkanimation.feature_id": "144",
+    "arsdkanimation.horizontal_reveal_state_state": "0",
+    "arsdkanimation.horizontal_reveal_state_speed": "4.5",
+    "arsdkanimation.horizontal_reveal_state_distance": "5.75",
+    "arsdkanimation.horizontal_reveal_state_play_mode": "0"
+  },
+  "source": "constructed"
+}

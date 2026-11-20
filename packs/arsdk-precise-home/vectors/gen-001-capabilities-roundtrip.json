@@ -1,0 +1,13 @@
+{
+  "name": "capabilities-roundtrip",
+  "from": "arsdk-precise-home",
+  "to": "arsdk-precise-home",
+  "input": "9700010026",
+  "expect": "9700010026",
+  "model": {
+    "@kind": "capabilities",
+    "arsdkprecisehome.feature_id": "151",
+    "arsdkprecisehome.capabilities_modes": "38"
+  },
+  "source": "constructed"
+}

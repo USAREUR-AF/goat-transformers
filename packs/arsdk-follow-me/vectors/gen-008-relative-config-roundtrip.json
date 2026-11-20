@@ -1,0 +1,16 @@
+{
+  "name": "relative-config-roundtrip",
+  "from": "arsdk-follow-me",
+  "to": "arsdk-follow-me",
+  "input": "860009002e00006040000098400000c040",
+  "expect": "860009002e00006040000098400000c040",
+  "model": {
+    "@kind": "relative_config",
+    "arsdkfollowme.feature_id": "134",
+    "arsdkfollowme.relative_config_use_default": "46",
+    "arsdkfollowme.relative_config_distance": "3.5",
+    "arsdkfollowme.relative_config_elevation": "4.75",
+    "arsdkfollowme.relative_config_azimuth": "6"
+  },
+  "source": "constructed"
+}

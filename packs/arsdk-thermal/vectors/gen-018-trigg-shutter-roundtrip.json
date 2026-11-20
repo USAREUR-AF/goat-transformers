@@ -1,0 +1,12 @@
+{
+  "name": "trigg-shutter-roundtrip",
+  "from": "arsdk-thermal",
+  "to": "arsdk-thermal",
+  "input": "98001200",
+  "expect": "98001200",
+  "model": {
+    "@kind": "trigg_shutter",
+    "arsdkthermal.feature_id": "152"
+  },
+  "source": "constructed"
+}

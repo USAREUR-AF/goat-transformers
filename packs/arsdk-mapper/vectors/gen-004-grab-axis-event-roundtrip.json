@@ -1,0 +1,14 @@
+{
+  "name": "grab-axis-event-roundtrip",
+  "from": "arsdk-mapper",
+  "to": "arsdk-mapper",
+  "input": "8a00040029000000b2",
+  "expect": "8a00040029000000b2",
+  "model": {
+    "@kind": "grab_axis_event",
+    "arsdkmapper.feature_id": "138",
+    "arsdkmapper.grab_axis_event_axis": "41",
+    "arsdkmapper.grab_axis_event_value": "-78"
+  },
+  "source": "constructed"
+}

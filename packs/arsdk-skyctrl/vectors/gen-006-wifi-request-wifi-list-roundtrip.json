@@ -1,0 +1,12 @@
+{
+  "name": "wifi-request-wifi-list-roundtrip",
+  "from": "arsdk-skyctrl",
+  "to": "arsdk-skyctrl",
+  "input": "04010000",
+  "expect": "04010000",
+  "model": {
+    "@kind": "wifi_request_wifi_list",
+    "arsdkskyctrl.feature_id": "4"
+  },
+  "source": "constructed"
+}

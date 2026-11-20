@@ -1,0 +1,15 @@
+{
+  "name": "state-item-roundtrip",
+  "from": "arsdk-demo-feature",
+  "to": "arsdk-demo-feature",
+  "input": "c8000200000000000000000000000c407100",
+  "expect": "c8000200000000000000000000000c407100",
+  "model": {
+    "@kind": "state_item",
+    "arsdkdemofeature.feature_id": "200",
+    "arsdkdemofeature.state_item_state": "0",
+    "arsdkdemofeature.state_item_value": "3.5",
+    "arsdkdemofeature.state_item_small": "113"
+  },
+  "source": "constructed"
+}

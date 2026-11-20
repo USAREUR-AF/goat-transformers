@@ -1,0 +1,14 @@
+{
+  "name": "rth-auto-trigger-roundtrip",
+  "from": "arsdk-rth",
+  "to": "arsdk-rth",
+  "input": "92000f000000000059000000",
+  "expect": "92000f000000000059000000",
+  "model": {
+    "@kind": "rth_auto_trigger",
+    "arsdkrth.feature_id": "146",
+    "arsdkrth.rth_auto_trigger_reason": "0",
+    "arsdkrth.rth_auto_trigger_delay": "89"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "start-vertical-180-photo-panorama-roundtrip",
+  "from": "arsdk-animation",
+  "to": "arsdk-animation",
+  "input": "90001e00",
+  "expect": "90001e00",
+  "model": {
+    "@kind": "start_vertical_180_photo_panorama",
+    "arsdkanimation.feature_id": "144"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "picture-settings-timelapse-selection-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "011304002900009040",
+  "expect": "011304002900009040",
+  "model": {
+    "@kind": "picture_settings_timelapse_selection",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.picture_settings_timelapse_selection_enabled": "41",
+    "arsdkardrone3.picture_settings_timelapse_selection_interval": "4.5"
+  },
+  "source": "constructed"
+}

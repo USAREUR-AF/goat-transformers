@@ -1,0 +1,15 @@
+{
+  "name": "speed-settings-state-max-pitch-roll-rotation-speed-changed-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "010c040000005040000090400000b840",
+  "expect": "010c040000005040000090400000b840",
+  "model": {
+    "@kind": "speed_settings_state_max_pitch_roll_rotation_speed_changed",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.speed_settings_state_max_pitch_roll_rotation_speed_changed_current": "3.25",
+    "arsdkardrone3.speed_settings_state_max_pitch_roll_rotation_speed_changed_min": "4.5",
+    "arsdkardrone3.speed_settings_state_max_pitch_roll_rotation_speed_changed_max": "5.75"
+  },
+  "source": "constructed"
+}

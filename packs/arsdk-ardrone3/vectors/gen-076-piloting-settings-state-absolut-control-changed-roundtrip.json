@@ -1,0 +1,13 @@
+{
+  "name": "piloting-settings-state-absolut-control-changed-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "0106020027",
+  "expect": "0106020027",
+  "model": {
+    "@kind": "piloting_settings_state_absolut_control_changed",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.piloting_settings_state_absolut_control_changed_on": "39"
+  },
+  "source": "constructed"
+}

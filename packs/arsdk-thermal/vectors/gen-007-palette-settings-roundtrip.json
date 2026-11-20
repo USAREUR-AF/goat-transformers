@@ -1,0 +1,19 @@
+{
+  "name": "palette-settings-roundtrip",
+  "from": "arsdk-thermal",
+  "to": "arsdk-thermal",
+  "input": "9800070000000000000020400000704000000000010000000200000000000c41",
+  "expect": "9800070000000000000020400000704000000000010000000200000000000c41",
+  "model": {
+    "@kind": "palette_settings",
+    "arsdkthermal.feature_id": "152",
+    "arsdkthermal.palette_settings_mode": "0",
+    "arsdkthermal.palette_settings_lowest_temp": "2.5",
+    "arsdkthermal.palette_settings_highest_temp": "3.75",
+    "arsdkthermal.palette_settings_outside_colorization": "0",
+    "arsdkthermal.palette_settings_relative_range": "1",
+    "arsdkthermal.palette_settings_spot_type": "2",
+    "arsdkthermal.palette_settings_spot_threshold": "8.75"
+  },
+  "source": "constructed"
+}

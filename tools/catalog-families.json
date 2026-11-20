@@ -45,6 +45,7 @@
     {"name": "ROS 2 interface packages", "domain": "uncrewed", "prefixes": ["ros2-"]},
     {"name": "MAVLink 2", "domain": "uncrewed", "exact": ["mavlink2"], "prefixes": ["mavlink2-"], "members": {"pattern": "^mavlink2-(.+)$", "label": "common and {n} dialects"}},
     {"name": "Foxglove", "domain": "uncrewed", "prefixes": ["foxglove-"]},
+    {"name": "Parrot ARSDK", "domain": "uncrewed", "prefixes": ["arsdk-"]},
     {"name": "Remote ID (ASTM F3411)", "domain": "uncrewed", "exact": ["remote-id"]},
     {"name": "DRIP (RFC 9575)", "domain": "uncrewed", "exact": ["drip"]},
 

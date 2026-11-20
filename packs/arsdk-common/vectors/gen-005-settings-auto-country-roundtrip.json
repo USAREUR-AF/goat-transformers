@@ -1,0 +1,13 @@
+{
+  "name": "settings-auto-country-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "0002040029",
+  "expect": "0002040029",
+  "model": {
+    "@kind": "settings_auto_country",
+    "arsdkcommon.feature_id": "0",
+    "arsdkcommon.settings_auto_country_automatic": "41"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "grab-button-event-roundtrip",
+  "from": "arsdk-mapper",
+  "to": "arsdk-mapper",
+  "input": "8a0003002800000001000000",
+  "expect": "8a0003002800000001000000",
+  "model": {
+    "@kind": "grab_button_event",
+    "arsdkmapper.feature_id": "138",
+    "arsdkmapper.grab_button_event_button": "40",
+    "arsdkmapper.grab_button_event_event": "1"
+  },
+  "source": "constructed"
+}

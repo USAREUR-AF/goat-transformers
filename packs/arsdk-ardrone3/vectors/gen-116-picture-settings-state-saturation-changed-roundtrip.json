@@ -1,0 +1,15 @@
+{
+  "name": "picture-settings-state-saturation-changed-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "0114030000003040000080400000a840",
+  "expect": "0114030000003040000080400000a840",
+  "model": {
+    "@kind": "picture_settings_state_saturation_changed",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.picture_settings_state_saturation_changed_value": "2.75",
+    "arsdkardrone3.picture_settings_state_saturation_changed_min": "4",
+    "arsdkardrone3.picture_settings_state_saturation_changed_max": "5.25"
+  },
+  "source": "constructed"
+}

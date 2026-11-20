@@ -1,0 +1,14 @@
+{
+  "name": "barometer-v2-available-data-roundtrip",
+  "from": "arsdk-controller-info",
+  "to": "arsdk-controller-info",
+  "input": "8c000800000000005200",
+  "expect": "8c000800000000005200",
+  "model": {
+    "@kind": "barometer_v2_available_data",
+    "arsdkcontrollerinfo.feature_id": "140",
+    "arsdkcontrollerinfo.barometer_v2_available_data_source": "0",
+    "arsdkcontrollerinfo.barometer_v2_available_data_available_data": "82"
+  },
+  "source": "constructed"
+}

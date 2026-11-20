@@ -1,0 +1,14 @@
+{
+  "name": "set-mode-roundtrip",
+  "from": "arsdk-cellular",
+  "to": "arsdk-cellular",
+  "input": "ab0003002801000000",
+  "expect": "ab0003002801000000",
+  "model": {
+    "@kind": "set_mode",
+    "arsdkcellular.feature_id": "171",
+    "arsdkcellular.set_mode_modem_id": "40",
+    "arsdkcellular.set_mode_mode": "1"
+  },
+  "source": "constructed"
+}

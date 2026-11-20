@@ -1,0 +1,13 @@
+{
+  "name": "mavlink-state-mission-item-executed-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "000c020027000000",
+  "expect": "000c020027000000",
+  "model": {
+    "@kind": "mavlink_state_mission_item_executed",
+    "arsdkcommon.feature_id": "0",
+    "arsdkcommon.mavlink_state_mission_item_executed_idx": "39"
+  },
+  "source": "constructed"
+}

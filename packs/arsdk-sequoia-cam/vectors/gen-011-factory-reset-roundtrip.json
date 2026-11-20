@@ -1,0 +1,13 @@
+{
+  "name": "factory-reset-roundtrip",
+  "from": "arsdk-sequoia-cam",
+  "to": "arsdk-sequoia-cam",
+  "input": "93000d0032",
+  "expect": "93000d0032",
+  "model": {
+    "@kind": "factory_reset",
+    "arsdksequoiacam.feature_id": "147",
+    "arsdksequoiacam.factory_reset_id": "50"
+  },
+  "source": "constructed"
+}

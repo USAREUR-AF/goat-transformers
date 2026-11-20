@@ -1,0 +1,12 @@
+{
+  "name": "axis-mappings-default-axis-mapping-roundtrip",
+  "from": "arsdk-skyctrl",
+  "to": "arsdk-skyctrl",
+  "input": "040e0300",
+  "expect": "040e0300",
+  "model": {
+    "@kind": "axis_mappings_default_axis_mapping",
+    "arsdkskyctrl.feature_id": "4"
+  },
+  "source": "constructed"
+}

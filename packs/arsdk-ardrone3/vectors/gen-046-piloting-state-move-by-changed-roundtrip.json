@@ -1,0 +1,21 @@
+{
+  "name": "piloting-state-move-by-changed-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "010410000000104000006040000098400000c0400000e8400000084100001c410000304102000000",
+  "expect": "010410000000104000006040000098400000c0400000e8400000084100001c410000304102000000",
+  "model": {
+    "@kind": "piloting_state_move_by_changed",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.piloting_state_move_by_changed_d_x_asked": "2.25",
+    "arsdkardrone3.piloting_state_move_by_changed_d_y_asked": "3.5",
+    "arsdkardrone3.piloting_state_move_by_changed_d_z_asked": "4.75",
+    "arsdkardrone3.piloting_state_move_by_changed_d_psi_asked": "6",
+    "arsdkardrone3.piloting_state_move_by_changed_d_x": "7.25",
+    "arsdkardrone3.piloting_state_move_by_changed_d_y": "8.5",
+    "arsdkardrone3.piloting_state_move_by_changed_d_z": "9.75",
+    "arsdkardrone3.piloting_state_move_by_changed_d_psi": "11",
+    "arsdkardrone3.piloting_state_move_by_changed_status": "2"
+  },
+  "source": "constructed"
+}

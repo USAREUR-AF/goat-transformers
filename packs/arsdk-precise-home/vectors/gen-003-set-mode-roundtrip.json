@@ -1,0 +1,13 @@
+{
+  "name": "set-mode-roundtrip",
+  "from": "arsdk-precise-home",
+  "to": "arsdk-precise-home",
+  "input": "9700030000000000",
+  "expect": "9700030000000000",
+  "model": {
+    "@kind": "set_mode",
+    "arsdkprecisehome.feature_id": "151",
+    "arsdkprecisehome.set_mode_mode": "0"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "format-result-roundtrip",
+  "from": "arsdk-user-storage",
+  "to": "arsdk-user-storage",
+  "input": "9100070000000000",
+  "expect": "9100070000000000",
+  "model": {
+    "@kind": "format_result",
+    "arsdkuserstorage.feature_id": "145",
+    "arsdkuserstorage.format_result_result": "0"
+  },
+  "source": "constructed"
+}

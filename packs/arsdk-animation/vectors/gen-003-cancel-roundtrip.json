@@ -1,0 +1,12 @@
+{
+  "name": "cancel-roundtrip",
+  "from": "arsdk-animation",
+  "to": "arsdk-animation",
+  "input": "90000300",
+  "expect": "90000300",
+  "model": {
+    "@kind": "cancel",
+    "arsdkanimation.feature_id": "144"
+  },
+  "source": "constructed"
+}

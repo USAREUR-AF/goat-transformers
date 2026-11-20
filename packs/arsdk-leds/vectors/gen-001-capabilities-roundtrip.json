@@ -1,0 +1,13 @@
+{
+  "name": "capabilities-roundtrip",
+  "from": "arsdk-leds",
+  "to": "arsdk-leds",
+  "input": "9a0001002600",
+  "expect": "9a0001002600",
+  "model": {
+    "@kind": "capabilities",
+    "arsdkleds.feature_id": "154",
+    "arsdkleds.capabilities_supported_capabilities": "38"
+  },
+  "source": "constructed"
+}

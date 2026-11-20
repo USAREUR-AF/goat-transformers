@@ -1,0 +1,15 @@
+{
+  "name": "network-state-wifi-auth-channel-list-changed-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "010e0200000000004c71",
+  "expect": "010e0200000000004c71",
+  "model": {
+    "@kind": "network_state_wifi_auth_channel_list_changed",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.network_state_wifi_auth_channel_list_changed_band": "0",
+    "arsdkardrone3.network_state_wifi_auth_channel_list_changed_channel": "76",
+    "arsdkardrone3.network_state_wifi_auth_channel_list_changed_in_or_out": "113"
+  },
+  "source": "constructed"
+}

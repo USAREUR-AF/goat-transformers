@@ -1,0 +1,18 @@
+{
+  "name": "start-vertical-reveal-roundtrip",
+  "from": "arsdk-animation",
+  "to": "arsdk-animation",
+  "input": "90000c00310000a0400000c8400000f04000000c4102000000",
+  "expect": "90000c00310000a0400000c8400000f04000000c4102000000",
+  "model": {
+    "@kind": "start_vertical_reveal",
+    "arsdkanimation.feature_id": "144",
+    "arsdkanimation.start_vertical_reveal_provided_params": "49",
+    "arsdkanimation.start_vertical_reveal_speed": "5",
+    "arsdkanimation.start_vertical_reveal_vertical_distance": "6.25",
+    "arsdkanimation.start_vertical_reveal_rotation_angle": "7.5",
+    "arsdkanimation.start_vertical_reveal_rotation_speed": "8.75",
+    "arsdkanimation.start_vertical_reveal_play_mode": "2"
+  },
+  "source": "constructed"
+}

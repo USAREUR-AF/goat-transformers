@@ -1,0 +1,23 @@
+{
+  "name": "style-roundtrip",
+  "from": "arsdk-camera",
+  "to": "arsdk-camera",
+  "input": "8f001400390100000003d84d8e17c461fa2b",
+  "expect": "8f001400390100000003d84d8e17c461fa2b",
+  "model": {
+    "@kind": "style",
+    "arsdkcamera.feature_id": "143",
+    "arsdkcamera.style_cam_id": "57",
+    "arsdkcamera.style_style": "1",
+    "arsdkcamera.style_saturation": "3",
+    "arsdkcamera.style_saturation_min": "-40",
+    "arsdkcamera.style_saturation_max": "77",
+    "arsdkcamera.style_contrast": "-114",
+    "arsdkcamera.style_contrast_min": "23",
+    "arsdkcamera.style_contrast_max": "-60",
+    "arsdkcamera.style_sharpness": "97",
+    "arsdkcamera.style_sharpness_min": "-6",
+    "arsdkcamera.style_sharpness_max": "43"
+  },
+  "source": "constructed"
+}

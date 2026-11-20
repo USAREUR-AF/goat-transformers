@@ -1,0 +1,13 @@
+{
+  "name": "audio-state-audio-streaming-running-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "0015000025",
+  "expect": "0015000025",
+  "model": {
+    "@kind": "audio_state_audio_streaming_running",
+    "arsdkcommon.feature_id": "0",
+    "arsdkcommon.audio_state_audio_streaming_running_running": "37"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "cell-voltage-roundtrip",
+  "from": "arsdk-battery",
+  "to": "arsdk-battery",
+  "input": "950009002e005300",
+  "expect": "950009002e005300",
+  "model": {
+    "@kind": "cell_voltage",
+    "arsdkbattery.feature_id": "149",
+    "arsdkbattery.cell_voltage_index": "46",
+    "arsdkbattery.cell_voltage_cell_voltage": "83"
+  },
+  "source": "constructed"
+}

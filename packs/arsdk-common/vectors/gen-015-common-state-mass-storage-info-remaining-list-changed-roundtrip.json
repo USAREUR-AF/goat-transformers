@@ -1,0 +1,15 @@
+{
+  "name": "common-state-mass-storage-info-remaining-list-changed-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "000506002b000000500075000000",
+  "expect": "000506002b000000500075000000",
+  "model": {
+    "@kind": "common_state_mass_storage_info_remaining_list_changed",
+    "arsdkcommon.feature_id": "0",
+    "arsdkcommon.common_state_mass_storage_info_remaining_list_changed_free_space": "43",
+    "arsdkcommon.common_state_mass_storage_info_remaining_list_changed_rec_time": "80",
+    "arsdkcommon.common_state_mass_storage_info_remaining_list_changed_photo_remaining": "117"
+  },
+  "source": "constructed"
+}

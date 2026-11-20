@@ -1,0 +1,16 @@
+{
+  "name": "calibration-state-magneto-calibration-state-changed-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "000e0000254a6f14",
+  "expect": "000e0000254a6f14",
+  "model": {
+    "@kind": "calibration_state_magneto_calibration_state_changed",
+    "arsdkcommon.feature_id": "0",
+    "arsdkcommon.calibration_state_magneto_calibration_state_changed_x_axis_calibration": "37",
+    "arsdkcommon.calibration_state_magneto_calibration_state_changed_y_axis_calibration": "74",
+    "arsdkcommon.calibration_state_magneto_calibration_state_changed_z_axis_calibration": "111",
+    "arsdkcommon.calibration_state_magneto_calibration_state_changed_calibration_failed": "20"
+  },
+  "source": "constructed"
+}

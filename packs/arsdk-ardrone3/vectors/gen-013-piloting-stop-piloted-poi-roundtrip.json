@@ -1,0 +1,12 @@
+{
+  "name": "piloting-stop-piloted-poi-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "01000d00",
+  "expect": "01000d00",
+  "model": {
+    "@kind": "piloting_stop_piloted_poi",
+    "arsdkardrone3.feature_id": "1"
+  },
+  "source": "constructed"
+}

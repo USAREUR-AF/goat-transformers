@@ -1,0 +1,13 @@
+{
+  "name": "log-storage-state-roundtrip",
+  "from": "arsdk-security-edition",
+  "to": "arsdk-security-edition",
+  "input": "a900030000000000",
+  "expect": "a900030000000000",
+  "model": {
+    "@kind": "log_storage_state",
+    "arsdksecurityedition.feature_id": "169",
+    "arsdksecurityedition.log_storage_state_log_storage_state": "0"
+  },
+  "source": "constructed"
+}

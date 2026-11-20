@@ -1,0 +1,13 @@
+{
+  "name": "picture-settings-saturation-selection-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "0113030000003040",
+  "expect": "0113030000003040",
+  "model": {
+    "@kind": "picture_settings_saturation_selection",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.picture_settings_saturation_selection_value": "2.75"
+  },
+  "source": "constructed"
+}

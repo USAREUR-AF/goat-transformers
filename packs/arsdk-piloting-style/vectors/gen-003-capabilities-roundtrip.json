@@ -1,0 +1,13 @@
+{
+  "name": "capabilities-roundtrip",
+  "from": "arsdk-piloting-style",
+  "to": "arsdk-piloting-style",
+  "input": "9b00030028",
+  "expect": "9b00030028",
+  "model": {
+    "@kind": "capabilities",
+    "arsdkpilotingstyle.feature_id": "155",
+    "arsdkpilotingstyle.capabilities_styles": "40"
+  },
+  "source": "constructed"
+}

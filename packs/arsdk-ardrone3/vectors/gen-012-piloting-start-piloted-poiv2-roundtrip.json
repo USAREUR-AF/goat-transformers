@@ -1,0 +1,16 @@
+{
+  "name": "piloting-start-piloted-poiv2-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "01000f00000000000000fc3f0000000000000840000000000000114000000000",
+  "expect": "01000f00000000000000fc3f0000000000000840000000000000114000000000",
+  "model": {
+    "@kind": "piloting_start_piloted_poiv2",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.piloting_start_piloted_poiv2_latitude": "1.75",
+    "arsdkardrone3.piloting_start_piloted_poiv2_longitude": "3",
+    "arsdkardrone3.piloting_start_piloted_poiv2_altitude": "4.25",
+    "arsdkardrone3.piloting_start_piloted_poiv2_mode": "0"
+  },
+  "source": "constructed"
+}

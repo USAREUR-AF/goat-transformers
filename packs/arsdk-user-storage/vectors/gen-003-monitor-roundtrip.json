@@ -1,0 +1,13 @@
+{
+  "name": "monitor-roundtrip",
+  "from": "arsdk-user-storage",
+  "to": "arsdk-user-storage",
+  "input": "910002002700000000000000",
+  "expect": "910002002700000000000000",
+  "model": {
+    "@kind": "monitor",
+    "arsdkuserstorage.feature_id": "145",
+    "arsdkuserstorage.monitor_available_bytes": "39"
+  },
+  "source": "constructed"
+}

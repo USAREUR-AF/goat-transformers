@@ -1,0 +1,13 @@
+{
+  "name": "capabilities-roundtrip",
+  "from": "arsdk-security-edition",
+  "to": "arsdk-security-edition",
+  "input": "a90001002600",
+  "expect": "a90001002600",
+  "model": {
+    "@kind": "capabilities",
+    "arsdksecurityedition.feature_id": "169",
+    "arsdksecurityedition.capabilities_supported_capabilities": "38"
+  },
+  "source": "constructed"
+}

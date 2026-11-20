@@ -1,0 +1,13 @@
+{
+  "name": "sky-controller-state-gps-fix-changed-roundtrip",
+  "from": "arsdk-skyctrl",
+  "to": "arsdk-skyctrl",
+  "input": "0408010026",
+  "expect": "0408010026",
+  "model": {
+    "@kind": "sky_controller_state_gps_fix_changed",
+    "arsdkskyctrl.feature_id": "4",
+    "arsdkskyctrl.sky_controller_state_gps_fix_changed_fixed": "38"
+  },
+  "source": "constructed"
+}

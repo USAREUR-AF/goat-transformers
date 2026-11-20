@@ -1,0 +1,12 @@
+{
+  "name": "stop-animation-roundtrip",
+  "from": "arsdk-follow-me",
+  "to": "arsdk-follow-me",
+  "input": "86000b00",
+  "expect": "86000b00",
+  "model": {
+    "@kind": "stop_animation",
+    "arsdkfollowme.feature_id": "134"
+  },
+  "source": "constructed"
+}

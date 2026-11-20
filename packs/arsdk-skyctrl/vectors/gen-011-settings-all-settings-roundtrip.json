@@ -1,0 +1,12 @@
+{
+  "name": "settings-all-settings-roundtrip",
+  "from": "arsdk-skyctrl",
+  "to": "arsdk-skyctrl",
+  "input": "04040000",
+  "expect": "04040000",
+  "model": {
+    "@kind": "settings_all_settings",
+    "arsdkskyctrl.feature_id": "4"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "helicoid-anim-config-roundtrip",
+  "from": "arsdk-follow-me",
+  "to": "arsdk-follow-me",
+  "input": "86000d00320000b0400000d84000000041",
+  "expect": "86000d00320000b0400000d84000000041",
+  "model": {
+    "@kind": "helicoid_anim_config",
+    "arsdkfollowme.feature_id": "134",
+    "arsdkfollowme.helicoid_anim_config_use_default": "50",
+    "arsdkfollowme.helicoid_anim_config_speed": "5.5",
+    "arsdkfollowme.helicoid_anim_config_revolution_nb": "6.75",
+    "arsdkfollowme.helicoid_anim_config_vertical_distance": "8"
+  },
+  "source": "constructed"
+}

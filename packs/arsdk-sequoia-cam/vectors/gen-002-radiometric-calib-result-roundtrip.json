@@ -1,0 +1,15 @@
+{
+  "name": "radiometric-calib-result-roundtrip",
+  "from": "arsdk-sequoia-cam",
+  "to": "arsdk-sequoia-cam",
+  "input": "93000200270100000071",
+  "expect": "93000200270100000071",
+  "model": {
+    "@kind": "radiometric_calib_result",
+    "arsdksequoiacam.feature_id": "147",
+    "arsdksequoiacam.radiometric_calib_result_cam_id": "39",
+    "arsdksequoiacam.radiometric_calib_result_value": "1",
+    "arsdksequoiacam.radiometric_calib_result_list_flags": "113"
+  },
+  "source": "constructed"
+}

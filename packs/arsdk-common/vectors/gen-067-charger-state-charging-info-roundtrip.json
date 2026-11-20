@@ -1,0 +1,16 @@
+{
+  "name": "charger-state-charging-info-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "001d030000000000010000007217",
+  "expect": "001d030000000000010000007217",
+  "model": {
+    "@kind": "charger_state_charging_info",
+    "arsdkcommon.feature_id": "0",
+    "arsdkcommon.charger_state_charging_info_phase": "0",
+    "arsdkcommon.charger_state_charging_info_rate": "1",
+    "arsdkcommon.charger_state_charging_info_intensity": "114",
+    "arsdkcommon.charger_state_charging_info_full_charging_time": "23"
+  },
+  "source": "constructed"
+}

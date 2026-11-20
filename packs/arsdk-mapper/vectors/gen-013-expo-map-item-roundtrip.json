@@ -1,0 +1,17 @@
+{
+  "name": "expo-map-item-roundtrip",
+  "from": "arsdk-mapper",
+  "to": "arsdk-mapper",
+  "input": "8a000d003200000057007c0000000000000046",
+  "expect": "8a000d003200000057007c0000000000000046",
+  "model": {
+    "@kind": "expo_map_item",
+    "arsdkmapper.feature_id": "138",
+    "arsdkmapper.expo_map_item_uid": "50",
+    "arsdkmapper.expo_map_item_product": "87",
+    "arsdkmapper.expo_map_item_axis": "124",
+    "arsdkmapper.expo_map_item_expo": "0",
+    "arsdkmapper.expo_map_item_list_flags": "70"
+  },
+  "source": "constructed"
+}

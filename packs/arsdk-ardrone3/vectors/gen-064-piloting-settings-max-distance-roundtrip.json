@@ -1,0 +1,13 @@
+{
+  "name": "piloting-settings-max-distance-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "0102030000003040",
+  "expect": "0102030000003040",
+  "model": {
+    "@kind": "piloting_settings_max_distance",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.piloting_settings_max_distance_value": "2.75"
+  },
+  "source": "constructed"
+}

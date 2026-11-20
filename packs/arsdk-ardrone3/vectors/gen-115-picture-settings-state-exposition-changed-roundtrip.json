@@ -1,0 +1,15 @@
+{
+  "name": "picture-settings-state-exposition-changed-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "01140200000010400000604000009840",
+  "expect": "01140200000010400000604000009840",
+  "model": {
+    "@kind": "picture_settings_state_exposition_changed",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.picture_settings_state_exposition_changed_value": "2.25",
+    "arsdkardrone3.picture_settings_state_exposition_changed_min": "3.5",
+    "arsdkardrone3.picture_settings_state_exposition_changed_max": "4.75"
+  },
+  "source": "constructed"
+}

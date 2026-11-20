@@ -1,0 +1,13 @@
+{
+  "name": "stop-offsets-update-roundtrip",
+  "from": "arsdk-gimbal",
+  "to": "arsdk-gimbal",
+  "input": "94000d0032",
+  "expect": "94000d0032",
+  "model": {
+    "@kind": "stop_offsets_update",
+    "arsdkgimbal.feature_id": "148",
+    "arsdkgimbal.stop_offsets_update_gimbal_id": "50"
+  },
+  "source": "constructed"
+}

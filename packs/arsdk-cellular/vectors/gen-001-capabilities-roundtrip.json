@@ -1,0 +1,14 @@
+{
+  "name": "capabilities-roundtrip",
+  "from": "arsdk-cellular",
+  "to": "arsdk-cellular",
+  "input": "ab000100264b00",
+  "expect": "ab000100264b00",
+  "model": {
+    "@kind": "capabilities",
+    "arsdkcellular.feature_id": "171",
+    "arsdkcellular.capabilities_modem_id": "38",
+    "arsdkcellular.capabilities_supported_capabilities": "75"
+  },
+  "source": "constructed"
+}

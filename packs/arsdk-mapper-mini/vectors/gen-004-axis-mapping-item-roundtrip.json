@@ -1,0 +1,18 @@
+{
+  "name": "axis-mapping-item-roundtrip",
+  "from": "arsdk-mapper-mini",
+  "to": "arsdk-mapper-mini",
+  "input": "8d00040029004e02000000e8bd00000062",
+  "expect": "8d00040029004e02000000e8bd00000062",
+  "model": {
+    "@kind": "axis_mapping_item",
+    "arsdkmappermini.feature_id": "141",
+    "arsdkmappermini.axis_mapping_item_uid": "41",
+    "arsdkmappermini.axis_mapping_item_modes": "78",
+    "arsdkmappermini.axis_mapping_item_action": "2",
+    "arsdkmappermini.axis_mapping_item_axis": "-24",
+    "arsdkmappermini.axis_mapping_item_buttons": "189",
+    "arsdkmappermini.axis_mapping_item_list_flags": "98"
+  },
+  "source": "constructed"
+}

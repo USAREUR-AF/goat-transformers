@@ -1,0 +1,13 @@
+{
+  "name": "camera-states-roundtrip",
+  "from": "arsdk-camera",
+  "to": "arsdk-camera",
+  "input": "8f00310056000000",
+  "expect": "8f00310056000000",
+  "model": {
+    "@kind": "camera_states",
+    "arsdkcamera.feature_id": "143",
+    "arsdkcamera.camera_states_active_cameras": "86"
+  },
+  "source": "constructed"
+}

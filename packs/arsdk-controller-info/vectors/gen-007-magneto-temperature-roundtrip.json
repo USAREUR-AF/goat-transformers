@@ -1,0 +1,13 @@
+{
+  "name": "magneto-temperature-roundtrip",
+  "from": "arsdk-controller-info",
+  "to": "arsdk-controller-info",
+  "input": "8c0007000000a03f",
+  "expect": "8c0007000000a03f",
+  "model": {
+    "@kind": "magneto_temperature",
+    "arsdkcontrollerinfo.feature_id": "140",
+    "arsdkcontrollerinfo.magneto_temperature_temp": "1.25"
+  },
+  "source": "constructed"
+}

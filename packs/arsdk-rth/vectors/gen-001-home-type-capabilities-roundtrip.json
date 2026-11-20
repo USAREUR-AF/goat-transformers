@@ -1,0 +1,13 @@
+{
+  "name": "home-type-capabilities-roundtrip",
+  "from": "arsdk-rth",
+  "to": "arsdk-rth",
+  "input": "9200010026000000",
+  "expect": "9200010026000000",
+  "model": {
+    "@kind": "home_type_capabilities",
+    "arsdkrth.feature_id": "146",
+    "arsdkrth.home_type_capabilities_values": "38"
+  },
+  "source": "constructed"
+}

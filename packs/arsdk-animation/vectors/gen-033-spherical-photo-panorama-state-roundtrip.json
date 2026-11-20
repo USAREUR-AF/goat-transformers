@@ -1,0 +1,13 @@
+{
+  "name": "spherical-photo-panorama-state-roundtrip",
+  "from": "arsdk-animation",
+  "to": "arsdk-animation",
+  "input": "9000210000000000",
+  "expect": "9000210000000000",
+  "model": {
+    "@kind": "spherical_photo_panorama_state",
+    "arsdkanimation.feature_id": "144",
+    "arsdkanimation.spherical_photo_panorama_state_state": "0"
+  },
+  "source": "constructed"
+}

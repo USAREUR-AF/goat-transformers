@@ -1,0 +1,13 @@
+{
+  "name": "supported-formatting-types-roundtrip",
+  "from": "arsdk-user-storage",
+  "to": "arsdk-user-storage",
+  "input": "910009002e",
+  "expect": "910009002e",
+  "model": {
+    "@kind": "supported_formatting_types",
+    "arsdkuserstorage.feature_id": "145",
+    "arsdkuserstorage.supported_formatting_types_supported_types": "46"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "piloting-state-motion-state-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "01040d0000000000",
+  "expect": "01040d0000000000",
+  "model": {
+    "@kind": "piloting_state_motion_state",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.piloting_state_motion_state_state": "0"
+  },
+  "source": "constructed"
+}

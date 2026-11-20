@@ -1,0 +1,14 @@
+{
+  "name": "camera-mode-roundtrip",
+  "from": "arsdk-camera",
+  "to": "arsdk-camera",
+  "input": "8f0020004501000000",
+  "expect": "8f0020004501000000",
+  "model": {
+    "@kind": "camera_mode",
+    "arsdkcamera.feature_id": "143",
+    "arsdkcamera.camera_mode_cam_id": "69",
+    "arsdkcamera.camera_mode_mode": "1"
+  },
+  "source": "constructed"
+}

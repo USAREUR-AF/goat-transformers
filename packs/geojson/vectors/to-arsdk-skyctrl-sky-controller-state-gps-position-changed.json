@@ -1,0 +1,9 @@
+{
+  "name": "to-arsdk-skyctrl-sky-controller-state-gps-position-changed",
+  "from": "geojson",
+  "to": "arsdk-skyctrl",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[2.3125,48.875]},\"properties\":{}}",
+  "expect": "0408020000000000007048400000000000800240000000000000000000000000",
+  "reference": "the default kind sky_controller_state_gps_position_changed; the arguments with no shared key are absent and written as zero bits (engine-spec 0.5)",
+  "source": "constructed"
+}

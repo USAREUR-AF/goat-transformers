@@ -1,0 +1,15 @@
+{
+  "name": "piloting-settings-state-circling-altitude-changed-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "01060e00330058007d00",
+  "expect": "01060e00330058007d00",
+  "model": {
+    "@kind": "piloting_settings_state_circling_altitude_changed",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.piloting_settings_state_circling_altitude_changed_current": "51",
+    "arsdkardrone3.piloting_settings_state_circling_altitude_changed_min": "88",
+    "arsdkardrone3.piloting_settings_state_circling_altitude_changed_max": "125"
+  },
+  "source": "constructed"
+}

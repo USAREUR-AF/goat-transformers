@@ -1,0 +1,13 @@
+{
+  "name": "set-ir-state-roundtrip",
+  "from": "arsdk-leds",
+  "to": "arsdk-leds",
+  "input": "9a00050000000000",
+  "expect": "9a00050000000000",
+  "model": {
+    "@kind": "set_ir_state",
+    "arsdkleds.feature_id": "154",
+    "arsdkleds.set_ir_state_led_state": "0"
+  },
+  "source": "constructed"
+}

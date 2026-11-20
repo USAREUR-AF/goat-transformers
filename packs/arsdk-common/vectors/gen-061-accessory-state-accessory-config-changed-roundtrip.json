@@ -1,0 +1,14 @@
+{
+  "name": "accessory-state-accessory-config-changed-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "001b01000000000001000000",
+  "expect": "001b01000000000001000000",
+  "model": {
+    "@kind": "accessory_state_accessory_config_changed",
+    "arsdkcommon.feature_id": "0",
+    "arsdkcommon.accessory_state_accessory_config_changed_new_accessory": "0",
+    "arsdkcommon.accessory_state_accessory_config_changed_error": "1"
+  },
+  "source": "constructed"
+}

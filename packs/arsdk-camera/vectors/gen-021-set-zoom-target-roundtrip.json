@@ -1,0 +1,15 @@
+{
+  "name": "set-zoom-target-roundtrip",
+  "from": "arsdk-camera",
+  "to": "arsdk-camera",
+  "input": "8f0015003a0100000000007040",
+  "expect": "8f0015003a0100000000007040",
+  "model": {
+    "@kind": "set_zoom_target",
+    "arsdkcamera.feature_id": "143",
+    "arsdkcamera.set_zoom_target_cam_id": "58",
+    "arsdkcamera.set_zoom_target_control_mode": "1",
+    "arsdkcamera.set_zoom_target_target": "3.75"
+  },
+  "source": "constructed"
+}

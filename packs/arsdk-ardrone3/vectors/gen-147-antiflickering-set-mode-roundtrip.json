@@ -1,0 +1,13 @@
+{
+  "name": "antiflickering-set-mode-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "011d010000000000",
+  "expect": "011d010000000000",
+  "model": {
+    "@kind": "antiflickering_set_mode",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.antiflickering_set_mode_mode": "0"
+  },
+  "source": "constructed"
+}

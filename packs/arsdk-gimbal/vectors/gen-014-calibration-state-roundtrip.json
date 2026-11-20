@@ -1,0 +1,14 @@
+{
+  "name": "calibration-state-roundtrip",
+  "from": "arsdk-gimbal",
+  "to": "arsdk-gimbal",
+  "input": "94000e000000000058",
+  "expect": "94000e000000000058",
+  "model": {
+    "@kind": "calibration_state",
+    "arsdkgimbal.feature_id": "148",
+    "arsdkgimbal.calibration_state_state": "0",
+    "arsdkgimbal.calibration_state_gimbal_id": "88"
+  },
+  "source": "constructed"
+}

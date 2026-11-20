@@ -1,0 +1,13 @@
+{
+  "name": "accessory-config-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "001a000000000000",
+  "expect": "001a000000000000",
+  "model": {
+    "@kind": "accessory_config",
+    "arsdkcommon.feature_id": "0",
+    "arsdkcommon.accessory_config_accessory": "0"
+  },
+  "source": "constructed"
+}

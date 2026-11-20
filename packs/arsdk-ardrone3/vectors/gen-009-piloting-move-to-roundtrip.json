@@ -1,0 +1,17 @@
+{
+  "name": "piloting-move-to-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "01000a00000000000000064000000000000010400000000000001540000000000000f840",
+  "expect": "01000a00000000000000064000000000000010400000000000001540000000000000f840",
+  "model": {
+    "@kind": "piloting_move_to",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.piloting_move_to_latitude": "2.75",
+    "arsdkardrone3.piloting_move_to_longitude": "4",
+    "arsdkardrone3.piloting_move_to_altitude": "5.25",
+    "arsdkardrone3.piloting_move_to_orientation_mode": "0",
+    "arsdkardrone3.piloting_move_to_heading": "7.75"
+  },
+  "source": "constructed"
+}

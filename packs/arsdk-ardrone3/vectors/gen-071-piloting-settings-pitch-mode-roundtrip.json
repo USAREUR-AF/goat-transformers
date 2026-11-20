@@ -1,0 +1,13 @@
+{
+  "name": "piloting-settings-pitch-mode-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "01020f0000000000",
+  "expect": "01020f0000000000",
+  "model": {
+    "@kind": "piloting_settings_pitch_mode",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.piloting_settings_pitch_mode_value": "0"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "gamepad-infos-state-all-gamepad-controls-sent-roundtrip",
+  "from": "arsdk-skyctrl",
+  "to": "arsdk-skyctrl",
+  "input": "04130100",
+  "expect": "04130100",
+  "model": {
+    "@kind": "gamepad_infos_state_all_gamepad_controls_sent",
+    "arsdkskyctrl.feature_id": "4"
+  },
+  "source": "constructed"
+}

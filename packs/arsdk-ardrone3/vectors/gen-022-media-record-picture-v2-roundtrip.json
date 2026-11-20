@@ -1,0 +1,12 @@
+{
+  "name": "media-record-picture-v2-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "01070200",
+  "expect": "01070200",
+  "model": {
+    "@kind": "media_record_picture_v2",
+    "arsdkardrone3.feature_id": "1"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "set-max-zoom-speed-roundtrip",
+  "from": "arsdk-camera",
+  "to": "arsdk-camera",
+  "input": "8f0019003e00009040",
+  "expect": "8f0019003e00009040",
+  "model": {
+    "@kind": "set_max_zoom_speed",
+    "arsdkcamera.feature_id": "143",
+    "arsdkcamera.set_max_zoom_speed_cam_id": "62",
+    "arsdkcamera.set_max_zoom_speed_max": "4.5"
+  },
+  "source": "constructed"
+}

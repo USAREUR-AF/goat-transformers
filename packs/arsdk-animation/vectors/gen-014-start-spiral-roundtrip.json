@@ -1,0 +1,18 @@
+{
+  "name": "start-spiral-roundtrip",
+  "from": "arsdk-animation",
+  "to": "arsdk-animation",
+  "input": "90000e003300002040000070400000a0400000c84002000000",
+  "expect": "90000e003300002040000070400000a0400000c84002000000",
+  "model": {
+    "@kind": "start_spiral",
+    "arsdkanimation.feature_id": "144",
+    "arsdkanimation.start_spiral_provided_params": "51",
+    "arsdkanimation.start_spiral_speed": "2.5",
+    "arsdkanimation.start_spiral_radius_variation": "3.75",
+    "arsdkanimation.start_spiral_vertical_distance": "5",
+    "arsdkanimation.start_spiral_revolution_nb": "6.25",
+    "arsdkanimation.start_spiral_play_mode": "2"
+  },
+  "source": "constructed"
+}

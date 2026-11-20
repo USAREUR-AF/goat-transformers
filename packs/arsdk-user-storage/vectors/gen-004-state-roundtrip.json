@@ -1,0 +1,17 @@
+{
+  "name": "state-roundtrip",
+  "from": "arsdk-user-storage",
+  "to": "arsdk-user-storage",
+  "input": "91000300000000000100000072173c",
+  "expect": "91000300000000000100000072173c",
+  "model": {
+    "@kind": "state",
+    "arsdkuserstorage.feature_id": "145",
+    "arsdkuserstorage.state_physical_state": "0",
+    "arsdkuserstorage.state_file_system_state": "1",
+    "arsdkuserstorage.state_attribute": "114",
+    "arsdkuserstorage.state_monitor_enabled": "23",
+    "arsdkuserstorage.state_monitor_period": "60"
+  },
+  "source": "constructed"
+}

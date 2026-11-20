@@ -1,0 +1,13 @@
+{
+  "name": "picture-settings-video-stabilization-mode-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "0113060000000000",
+  "expect": "0113060000000000",
+  "model": {
+    "@kind": "picture_settings_video_stabilization_mode",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.picture_settings_video_stabilization_mode_mode": "0"
+  },
+  "source": "constructed"
+}

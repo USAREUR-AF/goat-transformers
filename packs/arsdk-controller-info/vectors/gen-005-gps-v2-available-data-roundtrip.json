@@ -1,0 +1,14 @@
+{
+  "name": "gps-v2-available-data-roundtrip",
+  "from": "arsdk-controller-info",
+  "to": "arsdk-controller-info",
+  "input": "8c000500000000004f00",
+  "expect": "8c000500000000004f00",
+  "model": {
+    "@kind": "gps_v2_available_data",
+    "arsdkcontrollerinfo.feature_id": "140",
+    "arsdkcontrollerinfo.gps_v2_available_data_source": "0",
+    "arsdkcontrollerinfo.gps_v2_available_data_available_data": "79"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "start-super-wide-photo-panorama-roundtrip",
+  "from": "arsdk-animation",
+  "to": "arsdk-animation",
+  "input": "90002500",
+  "expect": "90002500",
+  "model": {
+    "@kind": "start_super_wide_photo_panorama",
+    "arsdkanimation.feature_id": "144"
+  },
+  "source": "constructed"
+}

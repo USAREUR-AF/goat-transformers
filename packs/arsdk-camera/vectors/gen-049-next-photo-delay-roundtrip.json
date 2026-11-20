@@ -1,0 +1,14 @@
+{
+  "name": "next-photo-delay-roundtrip",
+  "from": "arsdk-camera",
+  "to": "arsdk-camera",
+  "input": "8f0033000000000000006040",
+  "expect": "8f0033000000000000006040",
+  "model": {
+    "@kind": "next_photo_delay",
+    "arsdkcamera.feature_id": "143",
+    "arsdkcamera.next_photo_delay_mode": "0",
+    "arsdkcamera.next_photo_delay_remaining": "3.5"
+  },
+  "source": "constructed"
+}

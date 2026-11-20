@@ -1,0 +1,13 @@
+{
+  "name": "state-roundtrip",
+  "from": "arsdk-mediastore",
+  "to": "arsdk-mediastore",
+  "input": "9600010000000000",
+  "expect": "9600010000000000",
+  "model": {
+    "@kind": "state",
+    "arsdkmediastore.feature_id": "150",
+    "arsdkmediastore.state_state": "0"
+  },
+  "source": "constructed"
+}

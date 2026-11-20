@@ -1,0 +1,15 @@
+{
+  "name": "system-status-roundtrip",
+  "from": "arsdk-sequoia-cam",
+  "to": "arsdk-sequoia-cam",
+  "input": "93000b003055007a",
+  "expect": "93000b003055007a",
+  "model": {
+    "@kind": "system_status",
+    "arsdksequoiacam.feature_id": "147",
+    "arsdksequoiacam.system_status_cam_id": "48",
+    "arsdksequoiacam.system_status_errors": "85",
+    "arsdksequoiacam.system_status_list_flags": "122"
+  },
+  "source": "constructed"
+}

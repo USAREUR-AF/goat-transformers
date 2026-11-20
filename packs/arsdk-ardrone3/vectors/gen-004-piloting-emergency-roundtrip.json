@@ -1,0 +1,12 @@
+{
+  "name": "piloting-emergency-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "01000400",
+  "expect": "01000400",
+  "model": {
+    "@kind": "piloting_emergency",
+    "arsdkardrone3.feature_id": "1"
+  },
+  "source": "constructed"
+}

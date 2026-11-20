@@ -1,0 +1,12 @@
+{
+  "name": "piloting-landing-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "01000300",
+  "expect": "01000300",
+  "model": {
+    "@kind": "piloting_landing",
+    "arsdkardrone3.feature_id": "1"
+  },
+  "source": "constructed"
+}

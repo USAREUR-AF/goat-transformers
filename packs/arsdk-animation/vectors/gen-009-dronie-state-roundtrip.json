@@ -1,0 +1,16 @@
+{
+  "name": "dronie-state-roundtrip",
+  "from": "arsdk-animation",
+  "to": "arsdk-animation",
+  "input": "9000090000000000000060400000984000000000",
+  "expect": "9000090000000000000060400000984000000000",
+  "model": {
+    "@kind": "dronie_state",
+    "arsdkanimation.feature_id": "144",
+    "arsdkanimation.dronie_state_state": "0",
+    "arsdkanimation.dronie_state_speed": "3.5",
+    "arsdkanimation.dronie_state_distance": "4.75",
+    "arsdkanimation.dronie_state_play_mode": "0"
+  },
+  "source": "constructed"
+}

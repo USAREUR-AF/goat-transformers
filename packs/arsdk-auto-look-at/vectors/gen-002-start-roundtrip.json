@@ -1,0 +1,13 @@
+{
+  "name": "start-roundtrip",
+  "from": "arsdk-auto-look-at",
+  "to": "arsdk-auto-look-at",
+  "input": "a300020000000000",
+  "expect": "a300020000000000",
+  "model": {
+    "@kind": "start",
+    "arsdkautolookat.feature_id": "163",
+    "arsdkautolookat.start_mode": "0"
+  },
+  "source": "constructed"
+}

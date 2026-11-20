@@ -1,0 +1,14 @@
+{
+  "name": "state-roundtrip",
+  "from": "arsdk-rth",
+  "to": "arsdk-rth",
+  "input": "92000d000000000001000000",
+  "expect": "92000d000000000001000000",
+  "model": {
+    "@kind": "state",
+    "arsdkrth.feature_id": "146",
+    "arsdkrth.state_state": "0",
+    "arsdkrth.state_reason": "1"
+  },
+  "source": "constructed"
+}

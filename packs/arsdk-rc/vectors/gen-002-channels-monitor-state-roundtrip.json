@@ -1,0 +1,13 @@
+{
+  "name": "channels-monitor-state-roundtrip",
+  "from": "arsdk-rc",
+  "to": "arsdk-rc",
+  "input": "8800030028",
+  "expect": "8800030028",
+  "model": {
+    "@kind": "channels_monitor_state",
+    "arsdkrc.feature_id": "136",
+    "arsdkrc.channels_monitor_state_state": "40"
+  },
+  "source": "constructed"
+}

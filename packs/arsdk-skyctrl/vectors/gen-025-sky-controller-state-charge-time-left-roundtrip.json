@@ -1,0 +1,13 @@
+{
+  "name": "sky-controller-state-charge-time-left-roundtrip",
+  "from": "arsdk-skyctrl",
+  "to": "arsdk-skyctrl",
+  "input": "040806002b00",
+  "expect": "040806002b00",
+  "model": {
+    "@kind": "sky_controller_state_charge_time_left",
+    "arsdkskyctrl.feature_id": "4",
+    "arsdkskyctrl.sky_controller_state_charge_time_left_time": "43"
+  },
+  "source": "constructed"
+}

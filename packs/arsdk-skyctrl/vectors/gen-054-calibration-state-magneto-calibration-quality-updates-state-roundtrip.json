@@ -1,0 +1,13 @@
+{
+  "name": "calibration-state-magneto-calibration-quality-updates-state-roundtrip",
+  "from": "arsdk-skyctrl",
+  "to": "arsdk-skyctrl",
+  "input": "0417010026",
+  "expect": "0417010026",
+  "model": {
+    "@kind": "calibration_state_magneto_calibration_quality_updates_state",
+    "arsdkskyctrl.feature_id": "4",
+    "arsdkskyctrl.calibration_state_magneto_calibration_quality_updates_state_enabled": "38"
+  },
+  "source": "constructed"
+}

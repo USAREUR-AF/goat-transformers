@@ -1,0 +1,13 @@
+{
+  "name": "set-style-roundtrip",
+  "from": "arsdk-piloting-style",
+  "to": "arsdk-piloting-style",
+  "input": "9b00020000000000",
+  "expect": "9b00020000000000",
+  "model": {
+    "@kind": "set_style",
+    "arsdkpilotingstyle.feature_id": "155",
+    "arsdkpilotingstyle.set_style_style": "0"
+  },
+  "source": "constructed"
+}

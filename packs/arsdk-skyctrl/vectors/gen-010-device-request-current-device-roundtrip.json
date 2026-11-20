@@ -1,0 +1,12 @@
+{
+  "name": "device-request-current-device-roundtrip",
+  "from": "arsdk-skyctrl",
+  "to": "arsdk-skyctrl",
+  "input": "04020100",
+  "expect": "04020100",
+  "model": {
+    "@kind": "device_request_current_device",
+    "arsdkskyctrl.feature_id": "4"
+  },
+  "source": "constructed"
+}

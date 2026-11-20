@@ -1,0 +1,13 @@
+{
+  "name": "flight-plan-state-lock-state-changed-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "0011020027",
+  "expect": "0011020027",
+  "model": {
+    "@kind": "flight_plan_state_lock_state_changed",
+    "arsdkcommon.feature_id": "0",
+    "arsdkcommon.flight_plan_state_lock_state_changed_lock_state": "39"
+  },
+  "source": "constructed"
+}

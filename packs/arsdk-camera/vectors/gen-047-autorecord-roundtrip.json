@@ -1,0 +1,14 @@
+{
+  "name": "autorecord-roundtrip",
+  "from": "arsdk-camera",
+  "to": "arsdk-camera",
+  "input": "8f002f005401000000",
+  "expect": "8f002f005401000000",
+  "model": {
+    "@kind": "autorecord",
+    "arsdkcamera.feature_id": "143",
+    "arsdkcamera.autorecord_cam_id": "84",
+    "arsdkcamera.autorecord_state": "1"
+  },
+  "source": "constructed"
+}

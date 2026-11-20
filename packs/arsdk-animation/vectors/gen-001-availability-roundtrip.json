@@ -1,0 +1,13 @@
+{
+  "name": "availability-roundtrip",
+  "from": "arsdk-animation",
+  "to": "arsdk-animation",
+  "input": "9000010026000000",
+  "expect": "9000010026000000",
+  "model": {
+    "@kind": "availability",
+    "arsdkanimation.feature_id": "144",
+    "arsdkanimation.availability_values": "38"
+  },
+  "source": "constructed"
+}

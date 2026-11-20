@@ -1,0 +1,13 @@
+{
+  "name": "sky-controller-state-battery-state-roundtrip",
+  "from": "arsdk-skyctrl",
+  "to": "arsdk-skyctrl",
+  "input": "0408030000000000",
+  "expect": "0408030000000000",
+  "model": {
+    "@kind": "sky_controller_state_battery_state",
+    "arsdkskyctrl.feature_id": "4",
+    "arsdkskyctrl.sky_controller_state_battery_state_state": "0"
+  },
+  "source": "constructed"
+}

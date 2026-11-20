@@ -1,0 +1,13 @@
+{
+  "name": "reliability-roundtrip",
+  "from": "arsdk-battery",
+  "to": "arsdk-battery",
+  "input": "95000b0030",
+  "expect": "95000b0030",
+  "model": {
+    "@kind": "reliability",
+    "arsdkbattery.feature_id": "149",
+    "arsdkbattery.reliability_is_charge_level_reliable": "48"
+  },
+  "source": "constructed"
+}

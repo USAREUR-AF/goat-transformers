@@ -1,0 +1,13 @@
+{
+  "name": "common-event-state-shutdown-roundtrip",
+  "from": "arsdk-skyctrl",
+  "to": "arsdk-skyctrl",
+  "input": "041a000000000000",
+  "expect": "041a000000000000",
+  "model": {
+    "@kind": "common_event_state_shutdown",
+    "arsdkskyctrl.feature_id": "4",
+    "arsdkskyctrl.common_event_state_shutdown_reason": "0"
+  },
+  "source": "constructed"
+}

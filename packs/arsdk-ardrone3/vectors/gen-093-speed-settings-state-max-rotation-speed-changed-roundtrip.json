@@ -1,0 +1,15 @@
+{
+  "name": "speed-settings-state-max-rotation-speed-changed-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "010c01000000e03f0000404000008840",
+  "expect": "010c01000000e03f0000404000008840",
+  "model": {
+    "@kind": "speed_settings_state_max_rotation_speed_changed",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.speed_settings_state_max_rotation_speed_changed_current": "1.75",
+    "arsdkardrone3.speed_settings_state_max_rotation_speed_changed_min": "3",
+    "arsdkardrone3.speed_settings_state_max_rotation_speed_changed_max": "4.25"
+  },
+  "source": "constructed"
+}

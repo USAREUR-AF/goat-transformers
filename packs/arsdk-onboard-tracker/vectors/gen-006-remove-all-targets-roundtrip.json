@@ -1,0 +1,12 @@
+{
+  "name": "remove-all-targets-roundtrip",
+  "from": "arsdk-onboard-tracker",
+  "to": "arsdk-onboard-tracker",
+  "input": "9d000600",
+  "expect": "9d000600",
+  "model": {
+    "@kind": "remove_all_targets",
+    "arsdkonboardtracker.feature_id": "157"
+  },
+  "source": "constructed"
+}

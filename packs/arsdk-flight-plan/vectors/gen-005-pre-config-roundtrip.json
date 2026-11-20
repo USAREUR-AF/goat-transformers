@@ -1,0 +1,12 @@
+{
+  "name": "pre-config-roundtrip",
+  "from": "arsdk-flight-plan",
+  "to": "arsdk-flight-plan",
+  "input": "a7000900",
+  "expect": "a7000900",
+  "model": {
+    "@kind": "pre_config",
+    "arsdkflightplan.feature_id": "167"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "reset-orientation-roundtrip",
+  "from": "arsdk-gimbal",
+  "to": "arsdk-gimbal",
+  "input": "94000b0030",
+  "expect": "94000b0030",
+  "model": {
+    "@kind": "reset_orientation",
+    "arsdkgimbal.feature_id": "148",
+    "arsdkgimbal.reset_orientation_gimbal_id": "48"
+  },
+  "source": "constructed"
+}

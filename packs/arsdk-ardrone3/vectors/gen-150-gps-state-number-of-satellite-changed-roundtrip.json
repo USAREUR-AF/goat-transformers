@@ -1,0 +1,13 @@
+{
+  "name": "gps-state-number-of-satellite-changed-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "011f000025",
+  "expect": "011f000025",
+  "model": {
+    "@kind": "gps_state_number_of_satellite_changed",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.gps_state_number_of_satellite_changed_number_of_satellite": "37"
+  },
+  "source": "constructed"
+}

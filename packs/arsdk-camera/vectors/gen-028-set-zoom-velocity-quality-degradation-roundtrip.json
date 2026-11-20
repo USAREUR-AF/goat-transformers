@@ -1,0 +1,14 @@
+{
+  "name": "set-zoom-velocity-quality-degradation-roundtrip",
+  "from": "arsdk-camera",
+  "to": "arsdk-camera",
+  "input": "8f001b004065",
+  "expect": "8f001b004065",
+  "model": {
+    "@kind": "set_zoom_velocity_quality_degradation",
+    "arsdkcamera.feature_id": "143",
+    "arsdkcamera.set_zoom_velocity_quality_degradation_cam_id": "64",
+    "arsdkcamera.set_zoom_velocity_quality_degradation_allow": "101"
+  },
+  "source": "constructed"
+}

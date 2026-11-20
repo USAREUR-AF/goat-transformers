@@ -1,0 +1,13 @@
+{
+  "name": "calibration-state-magneto-calibration-required-state-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "000e010026",
+  "expect": "000e010026",
+  "model": {
+    "@kind": "calibration_state_magneto_calibration_required_state",
+    "arsdkcommon.feature_id": "0",
+    "arsdkcommon.calibration_state_magneto_calibration_required_state_required": "38"
+  },
+  "source": "constructed"
+}

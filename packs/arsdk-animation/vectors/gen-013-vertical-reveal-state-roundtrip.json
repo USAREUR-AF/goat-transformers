@@ -1,0 +1,18 @@
+{
+  "name": "vertical-reveal-state-roundtrip",
+  "from": "arsdk-animation",
+  "to": "arsdk-animation",
+  "input": "90000d00000000000000b0400000d840000000410000144102000000",
+  "expect": "90000d00000000000000b0400000d840000000410000144102000000",
+  "model": {
+    "@kind": "vertical_reveal_state",
+    "arsdkanimation.feature_id": "144",
+    "arsdkanimation.vertical_reveal_state_state": "0",
+    "arsdkanimation.vertical_reveal_state_speed": "5.5",
+    "arsdkanimation.vertical_reveal_state_vertical_distance": "6.75",
+    "arsdkanimation.vertical_reveal_state_rotation_angle": "8",
+    "arsdkanimation.vertical_reveal_state_rotation_speed": "9.25",
+    "arsdkanimation.vertical_reveal_state_play_mode": "2"
+  },
+  "source": "constructed"
+}

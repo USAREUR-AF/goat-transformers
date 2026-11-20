@@ -1,0 +1,15 @@
+{
+  "name": "altitude-above-terrain-roundtrip",
+  "from": "arsdk-terrain",
+  "to": "arsdk-terrain",
+  "input": "b0000100260000000100000000008840",
+  "expect": "b0000100260000000100000000008840",
+  "model": {
+    "@kind": "altitude_above_terrain",
+    "arsdkterrain.feature_id": "176",
+    "arsdkterrain.altitude_above_terrain_altitude": "38",
+    "arsdkterrain.altitude_above_terrain_type": "1",
+    "arsdkterrain.altitude_above_terrain_grid_precision": "4.25"
+  },
+  "source": "constructed"
+}

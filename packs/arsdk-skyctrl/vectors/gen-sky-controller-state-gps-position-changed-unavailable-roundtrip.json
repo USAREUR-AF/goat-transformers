@@ -1,0 +1,9 @@
+{
+  "name": "sky-controller-state-gps-position-changed-unavailable-roundtrip",
+  "from": "arsdk-skyctrl",
+  "to": "arsdk-skyctrl",
+  "input": "040802000000000000407f400000000000407f40000000000000000000000000",
+  "expect": "040802000000000000407f400000000000407f40000000000000000000000000",
+  "reference": "the raw keys keep 500 on a same-format round trip",
+  "source": "constructed"
+}

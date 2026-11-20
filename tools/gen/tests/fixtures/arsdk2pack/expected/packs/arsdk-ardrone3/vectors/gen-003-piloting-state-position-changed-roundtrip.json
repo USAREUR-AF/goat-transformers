@@ -1,0 +1,17 @@
+{
+  "name": "piloting-state-position-changed-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "01040400000000000070484000000000008002400000000000001740",
+  "expect": "01040400000000000070484000000000008002400000000000001740",
+  "model": {
+    "@kind": "piloting_state_position_changed",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.piloting_state_position_changed_latitude": "48.875",
+    "lat": "48.875",
+    "arsdkardrone3.piloting_state_position_changed_longitude": "2.3125",
+    "lon": "2.3125",
+    "arsdkardrone3.piloting_state_position_changed_altitude": "5.75"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "common-state-mass-storage-content-for-current-run-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "00050d003257007c00a100",
+  "expect": "00050d003257007c00a100",
+  "model": {
+    "@kind": "common_state_mass_storage_content_for_current_run",
+    "arsdkcommon.feature_id": "0",
+    "arsdkcommon.common_state_mass_storage_content_for_current_run_mass_storage_id": "50",
+    "arsdkcommon.common_state_mass_storage_content_for_current_run_nb_photos": "87",
+    "arsdkcommon.common_state_mass_storage_content_for_current_run_nb_videos": "124",
+    "arsdkcommon.common_state_mass_storage_content_for_current_run_nb_raw_photos": "161"
+  },
+  "source": "constructed"
+}

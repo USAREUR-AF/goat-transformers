@@ -1,0 +1,13 @@
+{
+  "name": "active-product-roundtrip",
+  "from": "arsdk-mapper",
+  "to": "arsdk-mapper",
+  "input": "8a0010003500",
+  "expect": "8a0010003500",
+  "model": {
+    "@kind": "active_product",
+    "arsdkmapper.feature_id": "138",
+    "arsdkmapper.active_product_product": "53"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "calibration-state-roundtrip",
+  "from": "arsdk-terrain",
+  "to": "arsdk-terrain",
+  "input": "b0000400000000004e",
+  "expect": "b0000400000000004e",
+  "model": {
+    "@kind": "calibration_state",
+    "arsdkterrain.feature_id": "176",
+    "arsdkterrain.calibration_state_state": "0",
+    "arsdkterrain.calibration_state_issue": "78"
+  },
+  "source": "constructed"
+}

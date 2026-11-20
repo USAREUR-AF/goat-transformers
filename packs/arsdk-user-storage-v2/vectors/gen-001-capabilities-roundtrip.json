@@ -1,0 +1,16 @@
+{
+  "name": "capabilities-roundtrip",
+  "from": "arsdk-user-storage-v2",
+  "to": "arsdk-user-storage-v2",
+  "input": "a60008002d5200020000001c",
+  "expect": "a60008002d5200020000001c",
+  "model": {
+    "@kind": "capabilities",
+    "arsdkuserstoragev2.feature_id": "166",
+    "arsdkuserstoragev2.capabilities_storage_id": "45",
+    "arsdkuserstoragev2.capabilities_supported_features": "82",
+    "arsdkuserstoragev2.capabilities_storage_type": "2",
+    "arsdkuserstoragev2.capabilities_list_flags": "28"
+  },
+  "source": "constructed"
+}

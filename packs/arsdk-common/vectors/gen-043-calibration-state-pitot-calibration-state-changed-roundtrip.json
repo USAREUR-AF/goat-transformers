@@ -1,0 +1,14 @@
+{
+  "name": "calibration-state-pitot-calibration-state-changed-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "000e0400000000004e",
+  "expect": "000e0400000000004e",
+  "model": {
+    "@kind": "calibration_state_pitot_calibration_state_changed",
+    "arsdkcommon.feature_id": "0",
+    "arsdkcommon.calibration_state_pitot_calibration_state_changed_state": "0",
+    "arsdkcommon.calibration_state_pitot_calibration_state_changed_last_error": "78"
+  },
+  "source": "constructed"
+}

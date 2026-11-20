@@ -1,0 +1,17 @@
+{
+  "name": "common-state-deprecated-mass-storage-content-changed-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "00050b003055007a009f00c400",
+  "expect": "00050b003055007a009f00c400",
+  "model": {
+    "@kind": "common_state_deprecated_mass_storage_content_changed",
+    "arsdkcommon.feature_id": "0",
+    "arsdkcommon.common_state_deprecated_mass_storage_content_changed_mass_storage_id": "48",
+    "arsdkcommon.common_state_deprecated_mass_storage_content_changed_nb_photos": "85",
+    "arsdkcommon.common_state_deprecated_mass_storage_content_changed_nb_videos": "122",
+    "arsdkcommon.common_state_deprecated_mass_storage_content_changed_nb_puds": "159",
+    "arsdkcommon.common_state_deprecated_mass_storage_content_changed_nb_crash_logs": "196"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "authorized-channel-roundtrip",
+  "from": "arsdk-wifi",
+  "to": "arsdk-wifi",
+  "input": "87000400000000004e7318",
+  "expect": "87000400000000004e7318",
+  "model": {
+    "@kind": "authorized_channel",
+    "arsdkwifi.feature_id": "135",
+    "arsdkwifi.authorized_channel_band": "0",
+    "arsdkwifi.authorized_channel_channel": "78",
+    "arsdkwifi.authorized_channel_environment": "115",
+    "arsdkwifi.authorized_channel_list_flags": "24"
+  },
+  "source": "constructed"
+}

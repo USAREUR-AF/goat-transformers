@@ -1,0 +1,13 @@
+{
+  "name": "flight-plan-state-availability-state-changed-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "0011000025",
+  "expect": "0011000025",
+  "model": {
+    "@kind": "flight_plan_state_availability_state_changed",
+    "arsdkcommon.feature_id": "0",
+    "arsdkcommon.flight_plan_state_availability_state_changed_availability_state": "37"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "cancel-auto-trigger-roundtrip",
+  "from": "arsdk-rth",
+  "to": "arsdk-rth",
+  "input": "92001000",
+  "expect": "92001000",
+  "model": {
+    "@kind": "cancel_auto_trigger",
+    "arsdkrth.feature_id": "146"
+  },
+  "source": "constructed"
+}

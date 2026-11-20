@@ -1,0 +1,13 @@
+{
+  "name": "dri-state-roundtrip",
+  "from": "arsdk-dri",
+  "to": "arsdk-dri",
+  "input": "a400030000000000",
+  "expect": "a400030000000000",
+  "model": {
+    "@kind": "dri_state",
+    "arsdkdri.feature_id": "164",
+    "arsdkdri.dri_state_mode": "0"
+  },
+  "source": "constructed"
+}

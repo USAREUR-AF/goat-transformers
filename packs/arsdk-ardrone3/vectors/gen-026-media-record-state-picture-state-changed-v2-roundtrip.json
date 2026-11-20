@@ -1,0 +1,14 @@
+{
+  "name": "media-record-state-picture-state-changed-v2-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "010802000000000001000000",
+  "expect": "010802000000000001000000",
+  "model": {
+    "@kind": "media_record_state_picture_state_changed_v2",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.media_record_state_picture_state_changed_v2_state": "0",
+    "arsdkardrone3.media_record_state_picture_state_changed_v2_error": "1"
+  },
+  "source": "constructed"
+}

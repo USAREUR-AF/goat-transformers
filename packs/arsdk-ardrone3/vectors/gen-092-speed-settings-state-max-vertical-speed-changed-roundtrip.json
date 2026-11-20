@@ -1,0 +1,15 @@
+{
+  "name": "speed-settings-state-max-vertical-speed-changed-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "010c00000000a03f0000204000007040",
+  "expect": "010c00000000a03f0000204000007040",
+  "model": {
+    "@kind": "speed_settings_state_max_vertical_speed_changed",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.speed_settings_state_max_vertical_speed_changed_current": "1.25",
+    "arsdkardrone3.speed_settings_state_max_vertical_speed_changed_min": "2.5",
+    "arsdkardrone3.speed_settings_state_max_vertical_speed_changed_max": "3.75"
+  },
+  "source": "constructed"
+}

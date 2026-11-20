@@ -1,0 +1,15 @@
+{
+  "name": "set-expo-roundtrip",
+  "from": "arsdk-mapper",
+  "to": "arsdk-mapper",
+  "input": "8a000c003100aaffffff02000000",
+  "expect": "8a000c003100aaffffff02000000",
+  "model": {
+    "@kind": "set_expo",
+    "arsdkmapper.feature_id": "138",
+    "arsdkmapper.set_expo_product": "49",
+    "arsdkmapper.set_expo_axis": "-86",
+    "arsdkmapper.set_expo_expo": "2"
+  },
+  "source": "constructed"
+}

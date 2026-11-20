@@ -1,0 +1,15 @@
+{
+  "name": "alert-roundtrip",
+  "from": "arsdk-battery",
+  "to": "arsdk-battery",
+  "input": "95000100000000000100000070",
+  "expect": "95000100000000000100000070",
+  "model": {
+    "@kind": "alert",
+    "arsdkbattery.feature_id": "149",
+    "arsdkbattery.alert_alert": "0",
+    "arsdkbattery.alert_level": "1",
+    "arsdkbattery.alert_list_flags": "112"
+  },
+  "source": "constructed"
+}

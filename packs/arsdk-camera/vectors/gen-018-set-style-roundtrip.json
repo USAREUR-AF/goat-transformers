@@ -1,0 +1,14 @@
+{
+  "name": "set-style-roundtrip",
+  "from": "arsdk-camera",
+  "to": "arsdk-camera",
+  "input": "8f0012003701000000",
+  "expect": "8f0012003701000000",
+  "model": {
+    "@kind": "set_style",
+    "arsdkcamera.feature_id": "143",
+    "arsdkcamera.set_style_cam_id": "55",
+    "arsdkcamera.set_style_style": "1"
+  },
+  "source": "constructed"
+}

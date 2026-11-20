@@ -1,0 +1,15 @@
+{
+  "name": "decryption-roundtrip",
+  "from": "arsdk-user-storage-v2",
+  "to": "arsdk-user-storage-v2",
+  "input": "a6000e0033010000007d",
+  "expect": "a6000e0033010000007d",
+  "model": {
+    "@kind": "decryption",
+    "arsdkuserstoragev2.feature_id": "166",
+    "arsdkuserstoragev2.decryption_storage_id": "51",
+    "arsdkuserstoragev2.decryption_result": "1",
+    "arsdkuserstoragev2.decryption_list_flags": "125"
+  },
+  "source": "constructed"
+}

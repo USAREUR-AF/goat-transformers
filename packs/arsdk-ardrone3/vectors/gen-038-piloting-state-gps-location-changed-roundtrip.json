@@ -1,0 +1,23 @@
+{
+  "name": "piloting-state-gps-location-changed-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "01040900000000000070484000000000008002400000000000001340e34299",
+  "expect": "01040900000000000070484000000000008002400000000000001340e34299",
+  "model": {
+    "@kind": "piloting_state_gps_location_changed",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.piloting_state_gps_location_changed_latitude": "48.875",
+    "lat": "48.875",
+    "arsdkardrone3.piloting_state_gps_location_changed_longitude": "2.3125",
+    "lon": "2.3125",
+    "arsdkardrone3.piloting_state_gps_location_changed_altitude": "4.75",
+    "arsdkardrone3.piloting_state_gps_location_changed_latitude_accuracy": "-29",
+    "track.sigma_north_m": "-29",
+    "arsdkardrone3.piloting_state_gps_location_changed_longitude_accuracy": "66",
+    "track.sigma_east_m": "66",
+    "arsdkardrone3.piloting_state_gps_location_changed_altitude_accuracy": "-103",
+    "track.sigma_up_m": "-103"
+  },
+  "source": "constructed"
+}

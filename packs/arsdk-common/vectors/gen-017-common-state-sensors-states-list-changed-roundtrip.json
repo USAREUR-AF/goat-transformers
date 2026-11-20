@@ -1,0 +1,14 @@
+{
+  "name": "common-state-sensors-states-list-changed-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "000508000000000052",
+  "expect": "000508000000000052",
+  "model": {
+    "@kind": "common_state_sensors_states_list_changed",
+    "arsdkcommon.feature_id": "0",
+    "arsdkcommon.common_state_sensors_states_list_changed_sensor_name": "0",
+    "arsdkcommon.common_state_sensors_states_list_changed_sensor_state": "82"
+  },
+  "source": "constructed"
+}

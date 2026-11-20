@@ -1,0 +1,12 @@
+{
+  "name": "clear-recovery-info-roundtrip",
+  "from": "arsdk-flight-plan",
+  "to": "arsdk-flight-plan",
+  "input": "a7000600",
+  "expect": "a7000600",
+  "model": {
+    "@kind": "clear_recovery_info",
+    "arsdkflightplan.feature_id": "167"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "voltage-roundtrip",
+  "from": "arsdk-battery",
+  "to": "arsdk-battery",
+  "input": "950003002800",
+  "expect": "950003002800",
+  "model": {
+    "@kind": "voltage",
+    "arsdkbattery.feature_id": "149",
+    "arsdkbattery.voltage_voltage": "40"
+  },
+  "source": "constructed"
+}

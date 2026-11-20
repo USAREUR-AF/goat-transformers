@@ -1,0 +1,14 @@
+{
+  "name": "set-roaming-allowed-roundtrip",
+  "from": "arsdk-cellular",
+  "to": "arsdk-cellular",
+  "input": "ab000a002f54",
+  "expect": "ab000a002f54",
+  "model": {
+    "@kind": "set_roaming_allowed",
+    "arsdkcellular.feature_id": "171",
+    "arsdkcellular.set_roaming_allowed_modem_id": "47",
+    "arsdkcellular.set_roaming_allowed_allowed": "84"
+  },
+  "source": "constructed"
+}

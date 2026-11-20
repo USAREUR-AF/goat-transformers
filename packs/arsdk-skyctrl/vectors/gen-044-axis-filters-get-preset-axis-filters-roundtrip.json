@@ -1,0 +1,12 @@
+{
+  "name": "axis-filters-get-preset-axis-filters-roundtrip",
+  "from": "arsdk-skyctrl",
+  "to": "arsdk-skyctrl",
+  "input": "04100100",
+  "expect": "04100100",
+  "model": {
+    "@kind": "axis_filters_get_preset_axis_filters",
+    "arsdkskyctrl.feature_id": "4"
+  },
+  "source": "constructed"
+}

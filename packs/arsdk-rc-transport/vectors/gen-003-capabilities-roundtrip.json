@@ -1,0 +1,13 @@
+{
+  "name": "capabilities-roundtrip",
+  "from": "arsdk-rc-transport",
+  "to": "arsdk-rc-transport",
+  "input": "9c00030028",
+  "expect": "9c00030028",
+  "model": {
+    "@kind": "capabilities",
+    "arsdkrctransport.feature_id": "156",
+    "arsdkrctransport.capabilities_transports": "40"
+  },
+  "source": "constructed"
+}

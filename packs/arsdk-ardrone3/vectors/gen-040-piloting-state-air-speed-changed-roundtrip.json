@@ -1,0 +1,13 @@
+{
+  "name": "piloting-state-air-speed-changed-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "01040b0000005040",
+  "expect": "01040b0000005040",
+  "model": {
+    "@kind": "piloting_state_air_speed_changed",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.piloting_state_air_speed_changed_air_speed": "3.25"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "gps-settings-return-home-min-altitude-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "0117050000007040",
+  "expect": "0117050000007040",
+  "model": {
+    "@kind": "gps_settings_return_home_min_altitude",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.gps_settings_return_home_min_altitude_value": "3.75"
+  },
+  "source": "constructed"
+}

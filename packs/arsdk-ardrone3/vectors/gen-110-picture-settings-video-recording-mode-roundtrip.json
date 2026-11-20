@@ -1,0 +1,13 @@
+{
+  "name": "picture-settings-video-recording-mode-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "0113070000000000",
+  "expect": "0113070000000000",
+  "model": {
+    "@kind": "picture_settings_video_recording_mode",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.picture_settings_video_recording_mode_mode": "0"
+  },
+  "source": "constructed"
+}

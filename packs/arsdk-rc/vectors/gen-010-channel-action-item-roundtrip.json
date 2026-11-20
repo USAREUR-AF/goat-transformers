@@ -1,0 +1,16 @@
+{
+  "name": "channel-action-item-roundtrip",
+  "from": "arsdk-rc",
+  "to": "arsdk-rc",
+  "input": "88000c0000000000560000000200000020",
+  "expect": "88000c0000000000560000000200000020",
+  "model": {
+    "@kind": "channel_action_item",
+    "arsdkrc.feature_id": "136",
+    "arsdkrc.channel_action_item_action": "0",
+    "arsdkrc.channel_action_item_supported_type": "86",
+    "arsdkrc.channel_action_item_calibrated_type": "2",
+    "arsdkrc.channel_action_item_inverted": "32"
+  },
+  "source": "constructed"
+}

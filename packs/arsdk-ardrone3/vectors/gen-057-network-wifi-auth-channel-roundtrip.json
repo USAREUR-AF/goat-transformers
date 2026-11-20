@@ -1,0 +1,12 @@
+{
+  "name": "network-wifi-auth-channel-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "010d0100",
+  "expect": "010d0100",
+  "model": {
+    "@kind": "network_wifi_auth_channel",
+    "arsdkardrone3.feature_id": "1"
+  },
+  "source": "constructed"
+}

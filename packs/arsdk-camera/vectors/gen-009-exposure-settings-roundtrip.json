@@ -1,0 +1,21 @@
+{
+  "name": "exposure-settings-roundtrip",
+  "from": "arsdk-camera",
+  "to": "arsdk-camera",
+  "input": "8f0009002e01000000020000009d0000000000000001000000e70000000000000000000000310100000000000002000000",
+  "expect": "8f0009002e01000000020000009d0000000000000001000000e70000000000000000000000310100000000000002000000",
+  "model": {
+    "@kind": "exposure_settings",
+    "arsdkcamera.feature_id": "143",
+    "arsdkcamera.exposure_settings_cam_id": "46",
+    "arsdkcamera.exposure_settings_mode": "1",
+    "arsdkcamera.exposure_settings_manual_shutter_speed": "2",
+    "arsdkcamera.exposure_settings_manual_shutter_speed_capabilities": "157",
+    "arsdkcamera.exposure_settings_manual_iso_sensitivity": "1",
+    "arsdkcamera.exposure_settings_manual_iso_sensitivity_capabilities": "231",
+    "arsdkcamera.exposure_settings_max_iso_sensitivity": "0",
+    "arsdkcamera.exposure_settings_max_iso_sensitivities_capabilities": "305",
+    "arsdkcamera.exposure_settings_metering_mode": "2"
+  },
+  "source": "constructed"
+}

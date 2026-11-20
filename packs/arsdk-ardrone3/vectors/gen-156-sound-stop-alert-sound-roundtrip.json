@@ -1,0 +1,12 @@
+{
+  "name": "sound-stop-alert-sound-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "01230100",
+  "expect": "01230100",
+  "model": {
+    "@kind": "sound_stop_alert_sound",
+    "arsdkardrone3.feature_id": "1"
+  },
+  "source": "constructed"
+}

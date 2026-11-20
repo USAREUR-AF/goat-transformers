@@ -1,0 +1,13 @@
+{
+  "name": "mode-roundtrip",
+  "from": "arsdk-thermal",
+  "to": "arsdk-thermal",
+  "input": "9800020000000000",
+  "expect": "9800020000000000",
+  "model": {
+    "@kind": "mode",
+    "arsdkthermal.feature_id": "152",
+    "arsdkthermal.mode_mode": "0"
+  },
+  "source": "constructed"
+}

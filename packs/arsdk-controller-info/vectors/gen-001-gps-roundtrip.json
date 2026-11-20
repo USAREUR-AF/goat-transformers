@@ -1,0 +1,26 @@
+{
+  "name": "gps-roundtrip",
+  "from": "arsdk-controller-info",
+  "to": "arsdk-controller-info",
+  "input": "8c00010000000000007048400000000000800240000088400000b0400000d8400000004100001441000028410000000000802740",
+  "expect": "8c00010000000000007048400000000000800240000088400000b0400000d8400000004100001441000028410000000000802740",
+  "model": {
+    "@kind": "gps",
+    "arsdkcontrollerinfo.feature_id": "140",
+    "arsdkcontrollerinfo.gps_latitude": "48.875",
+    "lat": "48.875",
+    "arsdkcontrollerinfo.gps_longitude": "2.3125",
+    "lon": "2.3125",
+    "arsdkcontrollerinfo.gps_altitude": "4.25",
+    "arsdkcontrollerinfo.gps_horizontal_accuracy": "5.5",
+    "arsdkcontrollerinfo.gps_vertical_accuracy": "6.75",
+    "arsdkcontrollerinfo.gps_north_speed": "8",
+    "track.vel_north_ms": "8",
+    "arsdkcontrollerinfo.gps_east_speed": "9.25",
+    "track.vel_east_ms": "9.25",
+    "arsdkcontrollerinfo.gps_down_speed": "10.5",
+    "track.vel_up_ms": "-10.5",
+    "arsdkcontrollerinfo.gps_timestamp": "11.75"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "start-calibration-roundtrip",
+  "from": "arsdk-rc",
+  "to": "arsdk-rc",
+  "input": "88000600000000000100000002000000",
+  "expect": "88000600000000000100000002000000",
+  "model": {
+    "@kind": "start_calibration",
+    "arsdkrc.feature_id": "136",
+    "arsdkrc.start_calibration_calibration_type": "0",
+    "arsdkrc.start_calibration_channel_action": "1",
+    "arsdkrc.start_calibration_channel_type": "2"
+  },
+  "source": "constructed"
+}

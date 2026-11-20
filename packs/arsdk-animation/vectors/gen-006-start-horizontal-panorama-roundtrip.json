@@ -1,0 +1,15 @@
+{
+  "name": "start-horizontal-panorama-roundtrip",
+  "from": "arsdk-animation",
+  "to": "arsdk-animation",
+  "input": "900006002b0000b0400000d840",
+  "expect": "900006002b0000b0400000d840",
+  "model": {
+    "@kind": "start_horizontal_panorama",
+    "arsdkanimation.feature_id": "144",
+    "arsdkanimation.start_horizontal_panorama_provided_params": "43",
+    "arsdkanimation.start_horizontal_panorama_rotation_angle": "5.5",
+    "arsdkanimation.start_horizontal_panorama_rotation_speed": "6.75"
+  },
+  "source": "constructed"
+}

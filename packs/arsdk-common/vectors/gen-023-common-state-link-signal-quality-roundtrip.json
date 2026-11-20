@@ -1,0 +1,13 @@
+{
+  "name": "common-state-link-signal-quality-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "0005100035",
+  "expect": "0005100035",
+  "model": {
+    "@kind": "common_state_link_signal_quality",
+    "arsdkcommon.feature_id": "0",
+    "arsdkcommon.common_state_link_signal_quality_value": "53"
+  },
+  "source": "constructed"
+}

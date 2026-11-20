@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2026 goat-transformers contributors (a fixture written for the arsdk2pack tests)
+	Redistribution and use in source and binary forms, with or without
+	modification, are permitted provided that the conditions of the
+	BSD-3-Clause license are met. Neither the name of the copyright holder
+	nor the names of its contributors may be used to endorse products.
+-->
+<project name="ardrone3" id="1">
+	A test project with classes.
+	<class name="Piloting" id="0">
+		Commands.
+		<cmd name="TakeOff" id="1">
+			<comment title="t" desc="d"/>
+		</cmd>
+		<cmd name="SetName" id="2">
+			<comment title="t" desc="d"/>
+			<arg name="name" type="string">a text</arg>
+		</cmd>
+		<cmd name="Move" id="3">
+			<comment title="t" desc="d"/>
+			<arg name="roll" type="i8">x</arg>
+			<arg name="flag" type="u8">x</arg>
+			<arg name="speed" type="float">x</arg>
+			<arg name="mode" type="enum">x
+				<enum name="slow">x</enum>
+				<enum name="fast">x</enum>
+			</arg>
+			<arg name="count" type="u64">x</arg>
+		</cmd>
+	</class>
+	<class name="PilotingState" id="4">
+		Events.
+		<cmd name="PositionChanged" id="4">
+			<comment title="t" desc="d"/>
+			<arg name="latitude" type="double">x</arg>
+			<arg name="longitude" type="double">x</arg>
+			<arg name="altitude" type="double">x</arg>
+		</cmd>
+		<cmd name="GpsLocationChanged" id="9">
+			<comment title="t" desc="d"/>
+			<arg name="latitude" type="double">x</arg>
+			<arg name="longitude" type="double">x</arg>
+			<arg name="altitude" type="double">x</arg>
+			<arg name="latitude_accuracy" type="i8">x</arg>
+			<arg name="longitude_accuracy" type="i8">x</arg>
+			<arg name="altitude_accuracy" type="i8">x</arg>
+		</cmd>
+	</class>
+</project>

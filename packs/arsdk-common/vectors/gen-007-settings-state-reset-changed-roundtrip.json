@@ -1,0 +1,12 @@
+{
+  "name": "settings-state-reset-changed-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "00030100",
+  "expect": "00030100",
+  "model": {
+    "@kind": "settings_state_reset_changed",
+    "arsdkcommon.feature_id": "0"
+  },
+  "source": "constructed"
+}

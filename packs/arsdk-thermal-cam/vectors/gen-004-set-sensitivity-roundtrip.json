@@ -1,0 +1,14 @@
+{
+  "name": "set-sensitivity-roundtrip",
+  "from": "arsdk-thermal-cam",
+  "to": "arsdk-thermal-cam",
+  "input": "8e0004002901000000",
+  "expect": "8e0004002901000000",
+  "model": {
+    "@kind": "set_sensitivity",
+    "arsdkthermalcam.feature_id": "142",
+    "arsdkthermalcam.set_sensitivity_cam_id": "41",
+    "arsdkthermalcam.set_sensitivity_range": "1"
+  },
+  "source": "constructed"
+}

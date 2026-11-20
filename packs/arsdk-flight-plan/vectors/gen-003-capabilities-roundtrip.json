@@ -1,0 +1,13 @@
+{
+  "name": "capabilities-roundtrip",
+  "from": "arsdk-flight-plan",
+  "to": "arsdk-flight-plan",
+  "input": "a70004002900",
+  "expect": "a70004002900",
+  "model": {
+    "@kind": "capabilities",
+    "arsdkflightplan.feature_id": "167",
+    "arsdkflightplan.capabilities_supported_capabilities": "41"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "picture-settings-state-auto-white-balance-changed-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "0114010000000000",
+  "expect": "0114010000000000",
+  "model": {
+    "@kind": "picture_settings_state_auto_white_balance_changed",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.picture_settings_state_auto_white_balance_changed_type": "0"
+  },
+  "source": "constructed"
+}

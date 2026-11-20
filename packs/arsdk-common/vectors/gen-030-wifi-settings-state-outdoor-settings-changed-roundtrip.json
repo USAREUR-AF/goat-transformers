@@ -1,0 +1,13 @@
+{
+  "name": "wifi-settings-state-outdoor-settings-changed-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "000a000025",
+  "expect": "000a000025",
+  "model": {
+    "@kind": "wifi_settings_state_outdoor_settings_changed",
+    "arsdkcommon.feature_id": "0",
+    "arsdkcommon.wifi_settings_state_outdoor_settings_changed_outdoor": "37"
+  },
+  "source": "constructed"
+}

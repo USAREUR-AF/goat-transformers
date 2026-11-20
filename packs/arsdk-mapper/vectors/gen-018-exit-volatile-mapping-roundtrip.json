@@ -1,0 +1,12 @@
+{
+  "name": "exit-volatile-mapping-roundtrip",
+  "from": "arsdk-mapper",
+  "to": "arsdk-mapper",
+  "input": "8a001200",
+  "expect": "8a001200",
+  "model": {
+    "@kind": "exit_volatile_mapping",
+    "arsdkmapper.feature_id": "138"
+  },
+  "source": "constructed"
+}

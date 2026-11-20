@@ -1,0 +1,13 @@
+{
+  "name": "animations-start-animation-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "0018000000000000",
+  "expect": "0018000000000000",
+  "model": {
+    "@kind": "animations_start_animation",
+    "arsdkcommon.feature_id": "0",
+    "arsdkcommon.animations_start_animation_anim": "0"
+  },
+  "source": "constructed"
+}

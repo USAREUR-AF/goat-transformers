@@ -1,0 +1,17 @@
+{
+  "name": "calibration-state-roundtrip",
+  "from": "arsdk-rc",
+  "to": "arsdk-rc",
+  "input": "88000500000000000100000074000000990000003e",
+  "expect": "88000500000000000100000074000000990000003e",
+  "model": {
+    "@kind": "calibration_state",
+    "arsdkrc.feature_id": "136",
+    "arsdkrc.calibration_state_calibration_type": "0",
+    "arsdkrc.calibration_state_channel_action": "1",
+    "arsdkrc.calibration_state_required": "116",
+    "arsdkrc.calibration_state_calibrated": "153",
+    "arsdkrc.calibration_state_neutral_calibrated": "62"
+  },
+  "source": "constructed"
+}

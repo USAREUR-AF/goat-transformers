@@ -1,0 +1,16 @@
+{
+  "name": "picture-settings-state-timelapse-changed-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "0114040029000090400000b8400000e040",
+  "expect": "0114040029000090400000b8400000e040",
+  "model": {
+    "@kind": "picture_settings_state_timelapse_changed",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.picture_settings_state_timelapse_changed_enabled": "41",
+    "arsdkardrone3.picture_settings_state_timelapse_changed_interval": "4.5",
+    "arsdkardrone3.picture_settings_state_timelapse_changed_min_interval": "5.75",
+    "arsdkardrone3.picture_settings_state_timelapse_changed_max_interval": "7"
+  },
+  "source": "constructed"
+}

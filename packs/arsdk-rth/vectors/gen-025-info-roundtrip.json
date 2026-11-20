@@ -1,0 +1,13 @@
+{
+  "name": "info-roundtrip",
+  "from": "arsdk-rth",
+  "to": "arsdk-rth",
+  "input": "920019003e000000",
+  "expect": "920019003e000000",
+  "model": {
+    "@kind": "info",
+    "arsdkrth.feature_id": "146",
+    "arsdkrth.info_missing_inputs": "62"
+  },
+  "source": "constructed"
+}

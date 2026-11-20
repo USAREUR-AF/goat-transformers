@@ -1,0 +1,13 @@
+{
+  "name": "picture-settings-auto-white-balance-selection-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "0113010000000000",
+  "expect": "0113010000000000",
+  "model": {
+    "@kind": "picture_settings_auto_white_balance_selection",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.picture_settings_auto_white_balance_selection_type": "0"
+  },
+  "source": "constructed"
+}

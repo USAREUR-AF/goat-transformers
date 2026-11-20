@@ -1,0 +1,13 @@
+{
+  "name": "supported-security-types-roundtrip",
+  "from": "arsdk-wifi",
+  "to": "arsdk-wifi",
+  "input": "87000f0034",
+  "expect": "87000f0034",
+  "model": {
+    "@kind": "supported_security_types",
+    "arsdkwifi.feature_id": "135",
+    "arsdkwifi.supported_security_types_types": "52"
+  },
+  "source": "constructed"
+}

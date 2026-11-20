@@ -1,0 +1,18 @@
+{
+  "name": "common-state-mass-storage-info-state-list-changed-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "00050300284d00000072000000173c61",
+  "expect": "00050300284d00000072000000173c61",
+  "model": {
+    "@kind": "common_state_mass_storage_info_state_list_changed",
+    "arsdkcommon.feature_id": "0",
+    "arsdkcommon.common_state_mass_storage_info_state_list_changed_mass_storage_id": "40",
+    "arsdkcommon.common_state_mass_storage_info_state_list_changed_size": "77",
+    "arsdkcommon.common_state_mass_storage_info_state_list_changed_used_size": "114",
+    "arsdkcommon.common_state_mass_storage_info_state_list_changed_plugged": "23",
+    "arsdkcommon.common_state_mass_storage_info_state_list_changed_full": "60",
+    "arsdkcommon.common_state_mass_storage_info_state_list_changed_internal": "97"
+  },
+  "source": "constructed"
+}

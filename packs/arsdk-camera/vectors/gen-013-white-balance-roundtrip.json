@@ -1,0 +1,16 @@
+{
+  "name": "white-balance-roundtrip",
+  "from": "arsdk-camera",
+  "to": "arsdk-camera",
+  "input": "8f000d0032010000000200000000000000",
+  "expect": "8f000d0032010000000200000000000000",
+  "model": {
+    "@kind": "white_balance",
+    "arsdkcamera.feature_id": "143",
+    "arsdkcamera.white_balance_cam_id": "50",
+    "arsdkcamera.white_balance_mode": "1",
+    "arsdkcamera.white_balance_temperature": "2",
+    "arsdkcamera.white_balance_lock": "0"
+  },
+  "source": "constructed"
+}

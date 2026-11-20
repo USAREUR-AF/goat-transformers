@@ -1,0 +1,12 @@
+{
+  "name": "stop-roundtrip",
+  "from": "arsdk-follow-me",
+  "to": "arsdk-follow-me",
+  "input": "86000200",
+  "expect": "86000200",
+  "model": {
+    "@kind": "stop",
+    "arsdkfollowme.feature_id": "134"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "enable-receiver-roundtrip",
+  "from": "arsdk-rc",
+  "to": "arsdk-rc",
+  "input": "88000b0030",
+  "expect": "88000b0030",
+  "model": {
+    "@kind": "enable_receiver",
+    "arsdkrc.feature_id": "136",
+    "arsdkrc.enable_receiver_enable": "48"
+  },
+  "source": "constructed"
+}

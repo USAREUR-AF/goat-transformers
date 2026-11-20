@@ -1,0 +1,13 @@
+{
+  "name": "get-storage-infos-roundtrip",
+  "from": "arsdk-sequoia-cam",
+  "to": "arsdk-sequoia-cam",
+  "input": "93000c0031",
+  "expect": "93000c0031",
+  "model": {
+    "@kind": "get_storage_infos",
+    "arsdksequoiacam.feature_id": "147",
+    "arsdksequoiacam.get_storage_infos_id": "49"
+  },
+  "source": "constructed"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "capabilities-roundtrip",
+  "from": "arsdk-dri",
+  "to": "arsdk-dri",
+  "input": "a40001002600",
+  "expect": "a40001002600",
+  "model": {
+    "@kind": "capabilities",
+    "arsdkdri.feature_id": "164",
+    "arsdkdri.capabilities_supported_capabilities": "38"
+  },
+  "source": "constructed"
+}

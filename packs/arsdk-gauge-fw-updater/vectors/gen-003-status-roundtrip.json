@@ -1,0 +1,15 @@
+{
+  "name": "status-roundtrip",
+  "from": "arsdk-gauge-fw-updater",
+  "to": "arsdk-gauge-fw-updater",
+  "input": "a0000300000000004d00000002000000",
+  "expect": "a0000300000000004d00000002000000",
+  "model": {
+    "@kind": "status",
+    "arsdkgaugefwupdater.feature_id": "160",
+    "arsdkgaugefwupdater.status_diag": "0",
+    "arsdkgaugefwupdater.status_missing_requirements": "77",
+    "arsdkgaugefwupdater.status_state": "2"
+  },
+  "source": "constructed"
+}

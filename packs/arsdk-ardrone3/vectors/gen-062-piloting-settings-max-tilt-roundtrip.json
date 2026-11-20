@@ -1,0 +1,13 @@
+{
+  "name": "piloting-settings-max-tilt-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "010201000000e03f",
+  "expect": "010201000000e03f",
+  "model": {
+    "@kind": "piloting_settings_max_tilt",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.piloting_settings_max_tilt_current": "1.75"
+  },
+  "source": "constructed"
+}

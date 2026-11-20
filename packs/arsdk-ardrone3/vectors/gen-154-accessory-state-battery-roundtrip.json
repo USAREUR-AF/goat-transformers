@@ -1,0 +1,15 @@
+{
+  "name": "accessory-state-battery-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "01210100264b70",
+  "expect": "01210100264b70",
+  "model": {
+    "@kind": "accessory_state_battery",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.accessory_state_battery_id": "38",
+    "arsdkardrone3.accessory_state_battery_battery_level": "75",
+    "arsdkardrone3.accessory_state_battery_list_flags": "112"
+  },
+  "source": "constructed"
+}

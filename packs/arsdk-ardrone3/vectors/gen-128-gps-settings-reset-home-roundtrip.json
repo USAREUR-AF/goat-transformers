@@ -1,0 +1,12 @@
+{
+  "name": "gps-settings-reset-home-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "01170100",
+  "expect": "01170100",
+  "model": {
+    "@kind": "gps_settings_reset_home",
+    "arsdkardrone3.feature_id": "1"
+  },
+  "source": "constructed"
+}

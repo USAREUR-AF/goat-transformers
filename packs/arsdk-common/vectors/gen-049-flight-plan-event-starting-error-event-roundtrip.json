@@ -1,0 +1,12 @@
+{
+  "name": "flight-plan-event-starting-error-event-roundtrip",
+  "from": "arsdk-common",
+  "to": "arsdk-common",
+  "input": "00130000",
+  "expect": "00130000",
+  "model": {
+    "@kind": "flight_plan_event_starting_error_event",
+    "arsdkcommon.feature_id": "0"
+  },
+  "source": "constructed"
+}

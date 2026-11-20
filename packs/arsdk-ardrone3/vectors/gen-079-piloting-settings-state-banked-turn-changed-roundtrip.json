@@ -1,0 +1,13 @@
+{
+  "name": "piloting-settings-state-banked-turn-changed-roundtrip",
+  "from": "arsdk-ardrone3",
+  "to": "arsdk-ardrone3",
+  "input": "01060a002f",
+  "expect": "01060a002f",
+  "model": {
+    "@kind": "piloting_settings_state_banked_turn_changed",
+    "arsdkardrone3.feature_id": "1",
+    "arsdkardrone3.piloting_settings_state_banked_turn_changed_state": "47"
+  },
+  "source": "constructed"
+}

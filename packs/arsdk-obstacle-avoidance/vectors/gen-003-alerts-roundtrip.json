@@ -1,0 +1,13 @@
+{
+  "name": "alerts-roundtrip",
+  "from": "arsdk-obstacle-avoidance",
+  "to": "arsdk-obstacle-avoidance",
+  "input": "ac0003002800",
+  "expect": "ac0003002800",
+  "model": {
+    "@kind": "alerts",
+    "arsdkobstacleavoidance.feature_id": "172",
+    "arsdkobstacleavoidance.alerts_alerts": "40"
+  },
+  "source": "constructed"
+}

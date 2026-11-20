@@ -1,0 +1,13 @@
+{
+  "name": "reset-mapping-roundtrip",
+  "from": "arsdk-mapper",
+  "to": "arsdk-mapper",
+  "input": "8a000b003000",
+  "expect": "8a000b003000",
+  "model": {
+    "@kind": "reset_mapping",
+    "arsdkmapper.feature_id": "138",
+    "arsdkmapper.reset_mapping_product": "48"
+  },
+  "source": "constructed"
+}

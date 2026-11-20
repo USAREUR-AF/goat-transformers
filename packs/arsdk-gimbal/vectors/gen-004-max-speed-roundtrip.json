@@ -1,0 +1,22 @@
+{
+  "name": "max-speed-roundtrip",
+  "from": "arsdk-gimbal",
+  "to": "arsdk-gimbal",
+  "input": "9400030028000080400000a8400000d0400000f84000001041000024410000384100004c4100006041",
+  "expect": "9400030028000080400000a8400000d0400000f84000001041000024410000384100004c4100006041",
+  "model": {
+    "@kind": "max_speed",
+    "arsdkgimbal.feature_id": "148",
+    "arsdkgimbal.max_speed_gimbal_id": "40",
+    "arsdkgimbal.max_speed_min_bound_yaw": "4",
+    "arsdkgimbal.max_speed_max_bound_yaw": "5.25",
+    "arsdkgimbal.max_speed_current_yaw": "6.5",
+    "arsdkgimbal.max_speed_min_bound_pitch": "7.75",
+    "arsdkgimbal.max_speed_max_bound_pitch": "9",
+    "arsdkgimbal.max_speed_current_pitch": "10.25",
+    "arsdkgimbal.max_speed_min_bound_roll": "11.5",
+    "arsdkgimbal.max_speed_max_bound_roll": "12.75",
+    "arsdkgimbal.max_speed_current_roll": "14"
+  },
+  "source": "constructed"
+}
