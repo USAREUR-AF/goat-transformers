@@ -1,0 +1,13 @@
+{
+  "name": "ruling-02-repeated-value-loads",
+  "from": "conformance-kinds-bits",
+  "to": "conformance-kinds-bits",
+  "input": "1e02",
+  "expect": "1e02",
+  "model": {
+    "@kind": "dup",
+    "probe.w": "2"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, Lists and ranges in `when`; ruling 2: a value repeated in one `when` list loads; 30 selects dup"
+}

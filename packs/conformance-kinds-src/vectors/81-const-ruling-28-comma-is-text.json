@@ -1,0 +1,9 @@
+{
+  "name": "const-ruling-28-comma-is-text",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-const",
+  "input": "{\"x\":1}",
+  "expect": "{\"x\":1,\"c\":\"a,b\",\"d\":\"1..3\"}",
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 28: a `const` value is one literal value; a comma in it is text; written as a string, as a `when` value is (ruling 11 of 0.5)"
+}

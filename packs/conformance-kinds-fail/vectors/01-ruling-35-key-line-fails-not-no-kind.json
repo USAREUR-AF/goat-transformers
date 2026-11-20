@@ -1,0 +1,9 @@
+{
+  "name": "ruling-35-key-line-fails-not-no-kind",
+  "from": "conformance-kinds-fail",
+  "to": "conformance-kinds-fail",
+  "input": "0207",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 35: a switch key whose line fails its transform fails the decode with transform-decode; 2 has no entry in tbl and uint yields int, the key a string (ruling 4 of 0.6): the decode fails, whatever the switch (which has no else) would read"
+}

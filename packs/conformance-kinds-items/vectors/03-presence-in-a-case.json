@@ -1,0 +1,13 @@
+{
+  "name": "presence-in-a-case",
+  "from": "conformance-kinds-items",
+  "to": "conformance-kinds-items",
+  "input": "036007080000",
+  "expect": "036007080000",
+  "model": {
+    "probe.c1": "7",
+    "probe.c2": "8"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; groups, presence and defaults in cases; x = 3: q = 0110 0000: q.2 c1, q.3 c2"
+}

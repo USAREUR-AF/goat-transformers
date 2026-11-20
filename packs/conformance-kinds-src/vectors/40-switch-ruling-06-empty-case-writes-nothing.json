@@ -1,0 +1,9 @@
+{
+  "name": "switch-ruling-06-empty-case-writes-nothing",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-switch",
+  "input": "{\"x\":4,\"y\":5,\"z\":6,\"w\":7}",
+  "expect": "0400",
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; ruling 6: case 4 writes nothing; y, z and w belong to other cases"
+}

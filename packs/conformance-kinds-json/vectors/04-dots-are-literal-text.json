@@ -1,0 +1,13 @@
+{
+  "name": "dots-are-literal-text",
+  "from": "conformance-kinds-json",
+  "to": "conformance-kinds-json",
+  "input": "{\"t\":\"1..3\",\"y\":2}",
+  "expect": "{\"t\":\"1..3\",\"y\":2}",
+  "model": {
+    "@kind": "dots",
+    "probe.y": "2"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, Lists and ranges in `when`, on text wires; on text wires `..` has no meaning and the text is literal"
+}

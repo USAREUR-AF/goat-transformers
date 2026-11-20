@@ -1,0 +1,9 @@
+{
+  "name": "typed-absent-keys-zero-bits",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-typed",
+  "input": "{\"label\":\"alpha\",\"x\":1}",
+  "expect": "010100000000",
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; Encode: a absent writes 0, case 0, w zero bits; s1 absent writes NUL bytes, read back the empty text: else"
+}

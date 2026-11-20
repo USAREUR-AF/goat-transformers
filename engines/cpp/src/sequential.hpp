@@ -29,6 +29,8 @@ struct SeqVisitor {
     std::function<void(DefaultLine&)> default_line;
     std::function<void(SeqNode&)> group;
     std::function<void(std::string&)> requires_key;
+    std::function<void(SeqKind&)> kind;          // v0.20: every kind, message and item kinds
+    std::function<void(SeqNode&)> switch_node;   // v0.20: every `switch`
 };
 void seq_visit(SeqBody& body, const SeqVisitor& v);
 

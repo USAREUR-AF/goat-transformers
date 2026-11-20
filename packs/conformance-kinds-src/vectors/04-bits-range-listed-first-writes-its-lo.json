@@ -1,0 +1,9 @@
+{
+  "name": "bits-range-listed-first-writes-its-lo",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-bits",
+  "input": "{\"z\":7}",
+  "expect": "0407",
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 3, Encode of a `when` with a list or a range; requires z: hi; x absent: hi's first listed is the range 4..9, so its lo, 4. (4 is also in lo's list; decode would select lo, the first kind, ruling 2)"
+}

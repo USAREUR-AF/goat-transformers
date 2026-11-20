@@ -1,0 +1,9 @@
+{
+  "name": "env-ruling-24-integer-value-on-a-float-key",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-env",
+  "input": "{\"a\":2}",
+  "expect": "{\"a\":2,\"k\":\"f2\"}",
+  "source": "constructed",
+  "reference": "spec 0.20, Encode kind by value; ruling 24: on a float key the integer value 2 compares as the float 2.0"
+}

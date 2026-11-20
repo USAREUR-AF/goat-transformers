@@ -1,0 +1,9 @@
+{
+  "name": "pres-bits-of-the-selected-case-and-outside",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-pres",
+  "input": "{\"x\":2,\"z\":5,\"y\":3,\"w\":4}",
+  "expect": "600282c100",
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 21: an `if` naming a presence counts only when the innermost case it sits in is read; case 2: p.2 from z, p.3 from w; y is case 1's: p.1 is 0. Then 1 00000101 1 00000100: 82 c1 00"
+}

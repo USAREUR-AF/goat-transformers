@@ -1,0 +1,9 @@
+{
+  "name": "xml-list-first-text",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-xml",
+  "input": "{\"y\":2}",
+  "expect": "<msg t=\"c\" y=\"2\"/>",
+  "source": "constructed",
+  "reference": "spec 0.20, Lists and ranges in `when`, on text wires; requires y: l"
+}

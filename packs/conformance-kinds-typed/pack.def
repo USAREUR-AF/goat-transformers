@@ -1,0 +1,43 @@
+# Conformance probe pack for `switch` on keys of each type (spec 0.20), most
+# significant bit first. Public. A case value is compared with the key's
+# decoded value, after the transform and `via`, as canonical text.
+#
+#   label : 8 via tbl (1 alpha, 2 beta)   switch: alpha x : 8, beta,gamma y : 8
+#   a : 8 uscale:1/2                      switch: 2.50 z : 8, 0 w : 8
+#                                         (2.50 is the float 2.5, ruling 1)
+#   s1 : 16 ascii                         switch: AB c1 : 8
+#
+# On encode the value is read back through the transform: a = 2.4 writes 5,
+# which reads back as 2.5 and selects case 2.50.
+format     conformance-kinds-typed
+version    0.20.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+map    tbl  1  alpha
+map    tbl  2  beta
+field  probe.label  8  uint  via tbl
+switch probe.label
+  case alpha
+    field  probe.x  8  uint
+  case beta,gamma
+    field  probe.y  8  uint
+  else
+end
+field  probe.a  8  uscale:1/2
+switch probe.a
+  case 2.50
+    field  probe.z  8  uint
+  case 0
+    field  probe.w  8  uint
+  else
+end
+field  probe.s1  16  ascii
+switch probe.s1
+  case AB
+    field  probe.c1  8  uint
+  else
+end

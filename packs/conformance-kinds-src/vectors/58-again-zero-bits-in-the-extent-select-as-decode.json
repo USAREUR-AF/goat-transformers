@@ -1,0 +1,9 @@
+{
+  "name": "again-zero-bits-in-the-extent-select-as-decode",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-again",
+  "input": "{\"z\":5,\"c1\":3,\"v1\":4}",
+  "expect": "010005030304",
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; rulings 9 and 14; x absent: zero bits inside the extent, length 1, read back 0: else, z; c1 = 3: else, c1 again and v1"
+}

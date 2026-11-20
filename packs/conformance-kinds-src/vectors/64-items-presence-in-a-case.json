@@ -1,0 +1,9 @@
+{
+  "name": "items-presence-in-a-case",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-items",
+  "input": "{\"x\":3,\"c1\":1}",
+  "expect": "0340010000",
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; groups, presence and defaults in cases; q.2 from c1: q = 40"
+}

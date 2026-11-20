@@ -1,0 +1,9 @@
+{
+  "name": "nest-encode-nested-no-case-no-else",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-nest",
+  "input": "{\"x\":5,\"y\":1,\"z\":4}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; switch blocks inside other blocks; Encode: z's line writes 4; decode would find no case and no else: no-kind"
+}

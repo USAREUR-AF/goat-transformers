@@ -1,0 +1,9 @@
+{
+  "name": "enc-default-sentinel-and-suppressed-select-as-decode",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-enc",
+  "input": "{}",
+  "expect": "0100ff00000000",
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; Encode: the case is the one decode would select from the bits the key's line wrote; x: its default 1, case 1, c1 zero bits; y: the sentinel 255 reads back absent, else, v2 zero; z: suppressed (n not held), zero bits, case 0, v3 zero; w: zero bits, 0, else (empty)"
+}

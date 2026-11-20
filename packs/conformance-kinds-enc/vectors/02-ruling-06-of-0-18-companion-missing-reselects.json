@@ -1,0 +1,24 @@
+{
+  "name": "ruling-06-of-0-18-companion-missing-reselects",
+  "from": "conformance-kinds-enc",
+  "to": "conformance-kinds-enc",
+  "input": "0305ff00040709",
+  "expect": "0305ff0000000709",
+  "model": {
+    "probe.x": "3",
+    "probe.c2": "5",
+    "probe.v2": "0",
+    "probe.z": "4",
+    "probe.w": "7",
+    "probe.qty": "7",
+    "probe.v4": "9",
+    "@absent": [
+      "probe.y",
+      "probe.c1",
+      "probe.v1",
+      "probe.v3"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; Encode: the case is the one decode would select from the bits the key's line wrote; decode: z = 4, else (empty). Re-encode: n is not held, so z's line writes zero bits and selects case 0, which writes v3 (absent: zero bits); the message gains a byte"
+}

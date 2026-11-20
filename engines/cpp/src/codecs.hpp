@@ -105,6 +105,31 @@ const Kind* select_decode_kind(const Pack& p, Holds holds, const std::vector<std
 // `requires` keys are all present. Null for a pack with no kinds; throws no-kind.
 const Kind* select_encode_kind(const Pack& p, const Entity& e);
 
+// ---- kind selection (Version 0.20)
+
+// A comma-separated list of values; false when an item is empty (`a,,b`,
+// `a,`, ruling 16). A text with no comma, `""` included, is one item.
+bool split_value_list(const std::string& text, std::vector<std::string>& out);
+// The values of a `when` on `bits` or an integer `protobuf` `when`: unsigned
+// decimal integers and ranges `<lo>..<hi>`, each within `len` bits (64 for
+// protobuf). False with `why` set otherwise (bad-directive).
+bool parse_when_numbers(const std::string& text, std::uint32_t len,
+                        std::vector<std::pair<std::uint64_t, std::uint64_t>>& out, std::string& why);
+// A `requires =` or `case` value read as `type`, as canonical text (ruling 1):
+// an integer is an optional `-` then digits (ruling 17). False when it cannot be
+// read (key-type-mismatch).
+bool canonical_value_text(const std::string& text, KeyType type, std::string& out);
+// One `requires` term: split at the first `=` (ruling 4). False with `why`
+// for `k=`, `=v` or an empty item in the value list (bad-directive).
+bool parse_requires_term(const std::string& token, std::size_t line, RequiresTerm& out, std::string& why);
+// Canonical text of a model value: an integer as decimal digits, a float as in
+// ruling 3 of 0.1.1, a string as itself. Throws std::invalid_argument.
+std::string value_canonical_text(const Value& v);
+// Does the item hold every `requires` term of a kind? A plain key: present, or a
+// list with at least one item. `<key>=<values>`: present and its canonical text
+// listed.
+bool requires_hold(const std::vector<RequiresTerm>& terms, const std::vector<std::string>& keys, const Item& e);
+
 // ---- value tables (Version 0.6)
 
 // `text` read as a model type. Throws std::invalid_argument.

@@ -1,0 +1,9 @@
+{
+  "name": "bits-ruling-15-default-does-not-count-first-value",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-bits",
+  "input": "{\"y\":2}",
+  "expect": "0102",
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 3, Encode of a `when` with a list or a range; lo; the entity does not hold x. Its default 4 is in lo's list, but a default does not count (ruling 15): the first value 1 is written over the field"
+}

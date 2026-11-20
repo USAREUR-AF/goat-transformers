@@ -1,0 +1,9 @@
+{
+  "name": "ruling-30-bit-named-only-in-another-nested-case",
+  "from": "conformance-kinds-presnest",
+  "to": "conformance-kinds-presnest",
+  "input": "014001",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 30: an `if` counts when the innermost case that holds the `if` and not the presence is read; q.2 is 1; its `if` is in the nested case 2, and y = 1 reads case 1"
+}

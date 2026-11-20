@@ -1,0 +1,9 @@
+{
+  "name": "json-empty-text",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-json",
+  "input": "{\"z\":5}",
+  "expect": "{\"t\":\"\",\"z\":5}",
+  "source": "constructed",
+  "reference": "spec 0.20, Lists and ranges in `when`, on text wires; requires z: empty; `\"\"` writes \"\""
+}

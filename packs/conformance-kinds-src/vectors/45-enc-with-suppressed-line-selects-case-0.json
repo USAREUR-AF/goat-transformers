@@ -1,0 +1,9 @@
+{
+  "name": "enc-with-suppressed-line-selects-case-0",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-enc",
+  "input": "{\"z\":4,\"v3\":2}",
+  "expect": "0100ff00000200",
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; Encode: the case is the one decode would select from the bits the key's line wrote; z = 4 but n is not held: the line writes zero bits (0.18), so case 0 and v3 = 2"
+}

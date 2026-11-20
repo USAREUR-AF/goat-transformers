@@ -1,0 +1,19 @@
+{
+  "name": "case-0",
+  "from": "conformance-kinds-switch",
+  "to": "conformance-kinds-switch",
+  "input": "000907",
+  "expect": "000907",
+  "model": {
+    "probe.x": "0",
+    "probe.c2": "9",
+    "probe.c1": "7",
+    "@absent": [
+      "probe.y",
+      "probe.z",
+      "probe.w"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; x = 0 selects case 0: c2; the cursor goes on after `end`: c1"
+}

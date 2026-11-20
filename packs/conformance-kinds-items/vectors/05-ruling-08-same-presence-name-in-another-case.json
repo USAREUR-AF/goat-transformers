@@ -1,0 +1,15 @@
+{
+  "name": "ruling-08-same-presence-name-in-another-case",
+  "from": "conformance-kinds-items",
+  "to": "conformance-kinds-items",
+  "input": "0440080000",
+  "expect": "0440080000",
+  "model": {
+    "probe.c2": "8",
+    "@absent": [
+      "probe.c1"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; groups, presence and defaults in cases; ruling 8: case 4 declares q again: q.2 is c2 there"
+}

@@ -189,20 +189,171 @@ const Kind* select_encode_kind(const Pack& p, const Entity& e) {
         throw Error(ErrorKind::NoKind, p.format, "", "the entity names kind '" + e.kind.second +
                                                          "', which the format does not define");
     }
-    for (const auto& k : p.kinds) {
-        bool all = true;
-        for (const auto& key : k.requires_keys) {
-            if (e.fields.count(key)) continue;
-            // `requires <list>` holds when the list is present and has at least one item (0.7).
-            auto list = e.lists.find(key);
-            if (list == e.lists.end() || list->second.empty()) {
-                all = false;
-                break;
-            }
-        }
-        if (all) return &k;
-    }
+    for (const auto& k : p.kinds)
+        if (requires_hold(k.requires_terms, k.requires_keys, e)) return &k;
     throw Error(ErrorKind::NoKind, p.format, "", "the entity has the 'requires' keys of no kind");
+}
+
+// ---- kind selection (Version 0.20)
+
+bool split_value_list(const std::string& text, std::vector<std::string>& out) {
+    out.clear();
+    std::size_t from = 0;
+    for (;;) {
+        const std::size_t comma = text.find(',', from);
+        std::string item = text.substr(from, comma == std::string::npos ? std::string::npos : comma - from);
+        if (item.empty() && comma != std::string::npos) return false;
+        if (item.empty() && !out.empty()) return false;  // `a,`
+        out.push_back(std::move(item));
+        if (comma == std::string::npos) return true;
+        from = comma + 1;
+    }
+}
+
+namespace {
+bool digits_u64(const std::string& s, std::uint64_t& out) {
+    if (s.empty()) return false;
+    std::uint64_t v = 0;
+    for (char c : s) {
+        if (c < '0' || c > '9') return false;
+        const std::uint64_t d = static_cast<std::uint64_t>(c - '0');
+        if (v > (~std::uint64_t{0} - d) / 10) return false;
+        v = v * 10 + d;
+    }
+    out = v;
+    return true;
+}
+}  // namespace
+
+bool parse_when_numbers(const std::string& text, std::uint32_t len,
+                        std::vector<std::pair<std::uint64_t, std::uint64_t>>& out, std::string& why) {
+    out.clear();
+    std::vector<std::string> items;
+    if (!split_value_list(text, items) || (items.size() == 1 && items[0].empty())) {
+        why = "the value list '" + text + "' has an empty value";
+        return false;
+    }
+    auto fits = [&](std::uint64_t v) { return len >= 64 || (v >> len) == 0; };
+    for (const auto& item : items) {
+        std::uint64_t lo = 0, hi = 0;
+        const std::size_t dots = item.find("..");
+        bool ok;
+        if (dots == std::string::npos) {
+            ok = digits_u64(item, lo);
+            hi = lo;
+        } else {
+            ok = digits_u64(item.substr(0, dots), lo) && digits_u64(item.substr(dots + 2), hi);
+        }
+        if (!ok) {
+            why = "'" + item + "' is not an unsigned decimal integer or a range <lo>..<hi>";
+            return false;
+        }
+        if (lo > hi) {
+            why = "the range '" + item + "' has its low end above its high end";
+            return false;
+        }
+        if (!fits(lo) || !fits(hi)) {
+            why = "the value '" + item + "' does not fit " + std::to_string(len) + " bits";
+            return false;
+        }
+        out.emplace_back(lo, hi);
+    }
+    return true;
+}
+
+bool canonical_value_text(const std::string& text, KeyType type, std::string& out) {
+    switch (type) {
+        case KeyType::String: out = text; return true;
+        case KeyType::Int: {
+            const std::size_t from = !text.empty() && text[0] == '-' ? 1 : 0;
+            if (from >= text.size()) return false;
+            for (std::size_t i = from; i < text.size(); ++i)
+                if (text[i] < '0' || text[i] > '9') return false;
+            std::int64_t n;
+            if (!parse_int(text, n)) return false;
+            out = std::to_string(n);
+            return true;
+        }
+        case KeyType::Float: {
+            // As a JSON number: -?digits[.digits][e[+-]digits] (ruling 24).
+            std::size_t i = !text.empty() && text[0] == '-' ? 1 : 0;
+            auto digits = [&]() {
+                const std::size_t from = i;
+                while (i < text.size() && text[i] >= '0' && text[i] <= '9') ++i;
+                return i > from;
+            };
+            if (!digits()) return false;
+            if (i < text.size() && text[i] == '.') {
+                ++i;
+                if (!digits()) return false;
+            }
+            if (i < text.size() && (text[i] == 'e' || text[i] == 'E')) {
+                ++i;
+                if (i < text.size() && (text[i] == '+' || text[i] == '-')) ++i;
+                if (!digits()) return false;
+            }
+            if (i != text.size()) return false;
+            try {
+                out = value_canonical_text(read_as(text, type, true));
+            } catch (const std::invalid_argument&) {
+                return false;
+            }
+            return true;
+        }
+    }
+    return false;
+}
+
+bool parse_requires_term(const std::string& token, std::size_t line, RequiresTerm& out, std::string& why) {
+    out = RequiresTerm();
+    out.line = line;
+    const std::size_t eq = token.find('=');
+    if (eq == std::string::npos) {
+        out.key = token;
+        return true;
+    }
+    out.key = token.substr(0, eq);
+    out.has_values = true;
+    const std::string rest = token.substr(eq + 1);
+    if (out.key.empty() || rest.empty()) {
+        why = "the 'requires' term '" + token + "' needs a key before '=' and a value after it";
+        return false;
+    }
+    if (!split_value_list(rest, out.values)) {
+        why = "the 'requires' term '" + token + "' has an empty value in its list";
+        return false;
+    }
+    return true;
+}
+
+bool requires_hold(const std::vector<RequiresTerm>& terms, const std::vector<std::string>& keys, const Item& e) {
+    auto plain = [&](const std::string& key) {
+        if (e.fields.count(key)) return true;
+        // `requires <list>` holds when the list is present and has at least one item (0.7).
+        auto list = e.lists.find(key);
+        return list != e.lists.end() && !list->second.empty();
+    };
+    if (terms.empty()) {
+        for (const auto& key : keys)
+            if (!plain(key)) return false;
+        return true;
+    }
+    for (const auto& t : terms) {
+        if (!t.has_values) {
+            if (!plain(t.key)) return false;
+            continue;
+        }
+        auto it = e.fields.find(t.key);
+        if (it == e.fields.end()) return false;
+        std::string text;
+        try {
+            text = value_canonical_text(it->second);
+        } catch (const std::invalid_argument&) {
+            return false;
+        }
+        if (std::find(t.canon.begin(), t.canon.end(), text) == t.canon.end()) return false;
+    }
+    return true;
 }
 
 // ---- value tables
@@ -215,9 +366,11 @@ bool integer_text(const std::string& s) {
     return parse_int_text(s, n);
 }
 
-// Canonical text of a model value: an integer as decimal digits, a float as in
-// ruling 3 of 0.1.1.
-std::string canonical_text(const Value& v) {
+std::string canonical_text(const Value& v) { return value_canonical_text(v); }
+
+}  // namespace
+
+std::string value_canonical_text(const Value& v) {
     switch (v.kind) {
         case Value::Kind::String: return v.s;
         case Value::Kind::Int: return std::to_string(v.i);
@@ -230,6 +383,8 @@ std::string canonical_text(const Value& v) {
     }
     return std::string();
 }
+
+namespace {
 
 // A table entry in the canonical text of the type it is compared as; text that
 // is not of that type is compared as written.
@@ -657,9 +812,9 @@ bool json_raw_text(const json::Value& v, std::string& out) {
 
 bool json_when_matches(const WhenLine& w, const json::Value& v) {
     switch (v.kind) {
-        case json::Value::Kind::String: return v.text == w.text;
-        case json::Value::Kind::Number: return json::canonical_number(v.text) == w.text;
-        case json::Value::Kind::Bool: return w.text == (v.b ? "true" : "false");
+        case json::Value::Kind::String: return w.holds_text(v.text);
+        case json::Value::Kind::Number: return w.holds_text(json::canonical_number(v.text));
+        case json::Value::Kind::Bool: return w.holds_text(v.b ? "true" : "false");
         default: return false;
     }
 }
@@ -962,7 +1117,7 @@ Entity decode_xml(const Pack& p, const std::string& bytes) {
             parse_xml_locator(w.locator, loc);  // validated at pack load
             if (w.present) return xml_exists(root, loc);
             std::string text;
-            return xml_value(root, loc, text) && text == w.text;
+            return xml_value(root, loc, text) && w.holds_text(text);
         },
         candidates);
 
@@ -1686,13 +1841,35 @@ void write_field_lines(const Pack& p, std::string& data, bool msb, const std::ve
 
 // `when` and `const` values are written over any field, so the output decodes
 // as the same kind. `written`, when given, receives their ranges.
+// v0.20 ruling 3: a `when` keeps the value of a field line with a present key
+// that covers exactly its bits when that value matches it; otherwise its first
+// value is written.
 void write_fixed_lines(const Pack& p, std::string& data, bool msb, const std::vector<LineRef>& lines,
-                       std::uint64_t base, const std::vector<char>* held, std::vector<BitRange>* written) {
+                       std::uint64_t base, const std::vector<char>* held, std::vector<BitRange>* written,
+                       const EncodeSource& src) {
     for (const auto& line : lines) {
         const WhenLine* w = line.fixed();
         if (!w || !gate_on(line_gate(line), held)) continue;
         BitRange r = bit_range(p, w->locator);
         r.start += base;
+        if (line.when) {
+            bool keep = false;
+            for (const auto& other : lines) {
+                if (!other.field || !gate_on(other.field->gate, held) || !src.e.fields.count(other.field->key) ||
+                    src.suppressed(*other.field))
+                    continue;
+                BitRange fr = bit_range(p, other.field->locator);
+                fr.start += base;
+                if (fr.start == r.start && fr.len == r.len) {
+                    keep = w->holds_number(read_bits(data, r.start, r.len, msb));
+                    break;
+                }
+            }
+            if (keep) {
+                if (written) written->push_back(r);
+                continue;
+            }
+        }
         write_bits(data, r.start, r.len, w->number, msb);
         if (written) written->push_back(r);
     }
@@ -1777,7 +1954,7 @@ std::uint64_t bits_encode_scope(BitsOut& out, const std::vector<LineRef>& lines,
         const std::size_t need = static_cast<std::size_t>((base + fixed_extent(p, lines, false, &outside) + 7) / 8);
         if (bits.size() < need) bits.resize(need, '\0');
         write_field_lines(p, bits, out.msb, lines, base, src, &outside, &written);
-        write_fixed_lines(p, bits, out.msb, lines, base, &outside, &written);
+        write_fixed_lines(p, bits, out.msb, lines, base, &outside, &written, src);
         for (const auto& line : lines)
             if (line.group && !line.group->count_fixed)
                 written.push_back({base + line.group->count_start, line.group->count_len});
@@ -1843,7 +2020,7 @@ std::uint64_t bits_encode_scope(BitsOut& out, const std::vector<LineRef>& lines,
             }
         }
     }
-    write_fixed_lines(p, out.data, out.msb, lines, base, held, nullptr);
+    write_fixed_lines(p, out.data, out.msb, lines, base, held, nullptr, src);
 
     // The groups, in line order: the count over any field on its bits, then the
     // items back to back.
@@ -1904,7 +2081,7 @@ Entity decode_bits(const Pack& p, const std::string& bytes) {
     // A `when` any of whose bits lies beyond the input does not hold.
     const Kind* kind = select_decode_kind(p, [&](const WhenLine& w) {
         const BitRange r = bit_range(p, w.locator);
-        return r.end() <= in.have && read_bits(data, r.start, r.len, in.msb) == w.number;
+        return r.end() <= in.have && w.holds_number(read_bits(data, r.start, r.len, in.msb));
     });
 
     // The message is as many whole words as the furthest required bit reaches,

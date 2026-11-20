@@ -66,12 +66,13 @@ func decodeXML(d *decodeState, b []byte) error {
 		}
 		if w.loc.kind == locAttr {
 			v, ok := n.attr(w.loc.name)
-			return ok && (w.present || v == w.text)
+			return ok && (w.present || w.matchText(v))
 		}
 		// An element with no character data has no text: a when with a
 		// value, the empty text included, does not hold (ruling 1m of 0.11).
+		// A when with a list holds on any of its texts (0.20).
 		t := n.text.String()
-		return w.present || (t != "" && t == w.text)
+		return w.present || (t != "" && w.matchText(t))
 	})
 	if err != nil {
 		return err

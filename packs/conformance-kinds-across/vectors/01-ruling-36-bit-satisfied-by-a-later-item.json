@@ -1,0 +1,16 @@
+{
+  "name": "ruling-36-bit-satisfied-by-a-later-item",
+  "from": "conformance-kinds-across",
+  "to": "conformance-kinds-across",
+  "input": "c00201050207",
+  "expect": "c00201050207",
+  "model": {
+    "probe.recs.#": "2",
+    "probe.recs[0].probe.x": "1",
+    "probe.recs[0].probe.y": "5",
+    "probe.recs[1].probe.x": "2",
+    "probe.recs[1].probe.z": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 36: a bit named only inside cases is satisfied by such a case read anywhere later in the decode, a later item included; p = c0: p.1 and p.2. Item 0 reads case 1 (y); p.2 is named only in case 2, which item 1 reads (z)"
+}

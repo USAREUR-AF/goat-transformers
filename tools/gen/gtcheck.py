@@ -4,8 +4,9 @@
 Every generator in this directory reads its own output back through this
 module before it reports success. The module is written from
 spec/engine-spec.md (Versions 0.1 to 0.10, 0.13, 0.14, the gate blocks of 0.17, the
-`with` option, `element`, `iso8601_short` and derive functions of 0.18, and 0.19) and
-imports no engine, so a generator
+`with` option, `element`, `iso8601_short` and derive functions of 0.18, 0.19, and
+the kind selection of 0.20: `when` lists and ranges, `requires <key>=<value>`
+and `switch` blocks) and imports no engine, so a generator
 stays independent of the engines it writes packs for.
 
 What it checks is what an engine checks when it loads a file: the line grammar,
@@ -100,7 +101,9 @@ GATE_BODY = ("field", "const", "default", "if")
 DIRECTIVES = HEADER + TABLES + BLOCKS + SEQUENTIAL_ONLY + (
     "root", "kind", "when", "requires", "field", "const", "default", "end", "tag", "key",
     # spec 0.18: an xml element written when empty
-    "element", "alt")
+    "element", "alt",
+    # spec 0.20: a switch on a decoded value
+    "switch", "case", "else")
 
 _INT = re.compile(r"-?[0-9]+\Z")
 _UINT = re.compile(r"[0-9]+\Z")
@@ -120,6 +123,11 @@ _GATE = re.compile(r"(!?)([0-9]+:[0-9]+:[0-9]+)\Z")
 _UPER_NUMBER = re.compile(r"(?:0|-?[1-9][0-9]*)\Z")
 _UPER_LOCATOR = re.compile(r"(int|enum|chars|octets):(.*)\Z")
 INT64 = (-(1 << 63), (1 << 63) - 1)
+# spec 0.20: a value of a `when` list on bits and protobuf: digits, or a range
+_WHEN_RANGE = re.compile(r"([0-9]+)\.\.([0-9]+)\Z")
+# spec 0.20: the lines a `case` or `else` body may hold
+CASE_BODY = ("field", "also", "const", "pad", "align", "default", "presence", "if", "opt", "chain",
+             "length", "group", "switch")
 
 
 def printable(text, low=0x20):
@@ -239,6 +247,18 @@ def exact_factor_ok(text):
 
 def exact_offset_ok(text):
     return bool(_EXACT_OFFSET.match(text)) and abs(int(text)) < 2 ** 63
+
+
+_VALUE_FLOAT = re.compile(r"-?[0-9]+(?:\.[0-9]+)?(?:[eE][-+]?[0-9]+)?\Z")
+
+
+def reads_as_value(value, key_type):
+    """True when `value` reads as `key_type` in a `requires =` list or a `case`
+    (spec 0.20 rulings 17 and 24): an int is `-` and digits; a float is
+    `-?digits[.digits]` with an optional exponent; no leading `+`."""
+    if key_type == "float":
+        return bool(_VALUE_FLOAT.match(value))
+    return reads_as(value, key_type)
 
 
 def reads_as(value, key_type):
@@ -584,6 +604,11 @@ class Node:
       length   bits, unit (`bytes` or `bits`), plus, whole, body (None when `whole`)
       presence name, bits (a count, or the text `fx`)
       pad, align          bits
+      switch   key, body (its `case` and `else` nodes, in file order)
+      case     values (the texts of the list), body; `else`: body
+
+    `when` also has `values`: the texts of its list (0.20), and on bits and
+    protobuf `ranges`, the (lo, hi) pairs of the list, a value being (v, v).
 
     On the bits wire a locator is also given as numbers: `start` is the first
     bit (from the message start on a fixed layout, from the item start inside a
@@ -602,7 +627,8 @@ class Node:
     index and its own body."""
     __slots__ = ("d", "line", "args", "body", "kinds", "key", "loc", "tr", "targs", "via",
                  "opts", "also", "value", "mode", "count", "item", "conds", "name", "bits",
-                 "unit", "plus", "whole", "start", "path", "absent", "fields", "col", "size", "gate", "with_", "uper")
+                 "unit", "plus", "whole", "start", "path", "absent", "fields", "col", "size", "gate", "with_", "uper",
+                 "values", "ranges")
 
     def __init__(self, d, line, args):
         self.d, self.line, self.args = d, line, args
@@ -610,6 +636,7 @@ class Node:
         self.opts = self.also = self.value = self.mode = self.count = self.item = None
         self.conds = self.name = self.bits = self.unit = self.plus = self.whole = None
         self.start = self.path = self.absent = self.fields = self.col = self.size = self.gate = self.with_ = self.uper = None
+        self.values = self.ranges = None
 
     def __repr__(self):
         return "<%s line %d: %s>" % (self.d, self.line, " ".join(self.args))
@@ -617,8 +644,9 @@ class Node:
 
 class Kind:
     """A message kind, or an item kind of a sequential group: its name, its
-    `root` (xml), the keys of its `requires` lines and its lines in file order
-    (`when`, `field`, `const`, `default` and blocks; not `requires` or `root`)."""
+    `root` (xml), the terms of its `requires` lines as written (`<key>` or,
+    0.20, `<key>=<value>[,<value>...]`) and its lines in file order (`when`,
+    `field`, `const`, `default` and blocks; not `requires` or `root`)."""
 
     def __init__(self, name, line):
         self.name, self.line = name, line
@@ -698,6 +726,7 @@ class _Loader:
         self.armor_line = None      # (line number, value, after a `kind`), 0.14
         self.encoding_line = None   # (line number, value, after a `kind`), 0.19
         self._header_lines = {}
+        self.switches = []          # spec 0.20: `switch` nodes, for the checks of their values
 
     def fail(self, kind, message, line=None):
         raise CheckError(kind, message, line, self.pack.label)
@@ -788,13 +817,21 @@ class _Loader:
                 self._kind_line(node, owner, kinds)
                 last = None
                 continue
+            if d in ("case", "else"):
+                self._arm(node, owner)
+                last = None
+                continue
             if kinds:
                 kinds[-1].lines.append(node)
+            elif owner is not None and owner.d == "switch":
+                if not owner.body:
+                    self.bad(node, "`%s` between `switch` and its first `case`" % d)
+                owner.body[-1].body.append(node)
             elif owner is not None:
                 owner.body.append(node)
             else:
                 pack.common.append(node)
-            if d in BLOCKS and not (d == "length" and "whole" in a):
+            if (d in BLOCKS and not (d == "length" and "whole" in a)) or d == "switch":
                 node.body = []
                 open_blocks.append(node)
             if d != "also":
@@ -802,6 +839,33 @@ class _Loader:
         if open_blocks:
             self.bad(open_blocks[-1], "this `%s` has no `end`" % open_blocks[-1].d)
         return self
+
+    def _arm(self, node, owner):
+        """A `case` or `else` line (spec 0.20): an arm of the innermost open
+        block, which must be a `switch`. `else` is the last arm and comes once,
+        after at least one `case`."""
+        if owner is None or owner.d != "switch":
+            self.bad(node, "`%s` outside a `switch`" % node.d)
+        arms = owner.body
+        if node.d == "else":
+            if node.args:
+                self.bad(node, "`else` takes no argument")
+            if any(arm.d == "else" for arm in arms):
+                self.bad(node, "a second `else` in one `switch`")
+            if not arms:
+                self.bad(node, "`else` before a `case`")
+        else:
+            if len(node.args) != 1:
+                self.bad(node, "`case` takes one list of values")
+            if any(arm.d == "else" for arm in arms):
+                self.bad(node, "a `case` after the `else` of its `switch`")
+            node.values = node.args[0].split(",")
+            if any(v == "" for v in node.values) and node.args[0] != "":
+                # ruling 16: an empty item is refused; only a lone `""` is the empty text
+                self.bad(node, "an empty value in the list of a `case`")
+            # duplicates are a model check (rulings 18 and 19)
+        node.body = []
+        arms.append(node)
 
     def _header(self, no, d, value):
         pack = self.pack
@@ -865,9 +929,18 @@ class _Loader:
         if not kinds:
             self.bad(node, "`requires` before the first `kind`" if owner is None
                      else "`requires` inside a `%s` block with no `kind`" % owner.d)
-        for key in node.args:
-            kinds[-1].requires.append(key)
-            self.key_uses.append((node.line, key, "requires"))
+        for term in node.args:
+            kinds[-1].requires.append(term)
+            key, eq, values = term.partition("=")
+            if not eq:
+                self.key_uses.append((node.line, key, "requires"))
+                continue
+            # spec 0.20 ruling 4: split at the first `=`; `k=` is refused
+            if not key or not values:
+                self.bad(node, "`requires %s`: a key and a value list around `=`" % term)
+            if "" in values.split(","):
+                self.bad(node, "`requires %s`: an empty value in the list (ruling 16)" % term)
+            self.key_uses.append((node.line, key, ("requires=", values.split(","))))
 
     # -- lines, by wire --------------------------------------------------------
 
@@ -993,9 +1066,16 @@ class _Loader:
         node the body belongs to, None for the message."""
         sequential = self.pack.sequential
         frame, declared = dict(visible[-1]), set()
+        # spec 0.20: the keys mapped so far in reading order, for `switch`;
+        # a group body is a scope of its own
+        outer = getattr(self, "_mapped", None)
+        self._mapped = set()
         self._block(common, group, visible[:-1] + [frame], declared, in_kind=False, top=top)
+        after_common = set(self._mapped)
         for kind in kinds or ():       # a kind continues the block its common lines began
+            self._mapped = set(after_common)
             self._block(kind.lines, group, visible[:-1] + [dict(frame)], set(declared), in_kind=True, top=top)
+        self._mapped = outer
         for lines in ([common + kind.lines for kind in kinds] if kinds else [common]):
             if sequential:
                 self._sequential_lists(lines)
@@ -1030,8 +1110,12 @@ class _Loader:
                 self._when(node, group)
             elif d == "field":
                 self._field(node, group)
+                self._mapped.add(node.key)
             elif d == "also":
                 self._also(node)
+                self._mapped.add(node.key)
+            elif d == "switch":
+                self._switch(node, group, visible, in_kind)
             elif d == "const":
                 self._const(node, group)
             elif d == "default":
@@ -1454,18 +1538,42 @@ class _Loader:
             self.bad(node, "the `%s` value `%s` does not fit %d bits" % (what, text, node.bits))
 
     def _when(self, node, group):
+        """`when <locator> <value>[,<value>...]` (0.5, lists and ranges 0.20)."""
         if len(node.args) != 2:
             self.bad(node, "`when` takes a locator and a value")
         self._locator(node, node.args[0], group, "when")
         node.value = node.args[1]
-        if self.pack.wire == "bits":
-            self._unsigned(node, node.value, "when")
-        elif self.pack.wire == "protobuf" and node.value != "present" and not _UINT.match(node.value):
-            self.bad(node, "a protobuf `when` value is `present` or an unsigned integer")
-        elif self.pack.wire == "text":
+        if self.pack.wire == "text":
             self._text_value(node, "when")
         elif self.pack.wire == "tlv":
             self._tlv_value(node, "when")
+        wire = self.pack.wire
+        node.values = [""] if node.value == "" else node.value.split(",")
+        if any(v == "" for v in node.values) and node.value != "":
+            self.bad(node, "an empty value in the list of a `when`")
+        if "present" in node.values and len(node.values) > 1:
+            self.bad(node, "`present` combined with other values")
+        if wire == "bits" and not 1 <= node.bits <= 64:
+            self.bad(node, "a `when` is 1 to 64 bits")
+        if wire not in ("bits", "protobuf") or node.values == ["present"]:
+            if wire == "bits":
+                self.bad(node, "a bits `when` value is an unsigned integer or a range")
+            return
+        limit = 1 << (node.bits if wire == "bits" else 64)
+        node.ranges = []
+        for v in node.values:
+            m = _WHEN_RANGE.match(v)
+            if m:
+                lo, hi = int(m.group(1)), int(m.group(2))
+            elif _UINT.match(v):
+                lo = hi = int(v)
+            else:
+                self.bad(node, "the `when` value `%s` is not an unsigned integer or a range `<lo>..<hi>`" % v)
+            if lo > hi:
+                self.bad(node, "the `when` range `%s` has lo above hi" % v)
+            if hi >= limit:
+                self.bad(node, "the `when` value `%s` does not fit the field" % v)
+            node.ranges.append((lo, hi))
 
     def _const(self, node, group):
         if len(node.args) != 2:
@@ -1507,6 +1615,26 @@ class _Loader:
             if bit < 1 or (size != "fx" and bit > size):
                 self.bad(node, "presence `%s` has no bit %d" % (name, bit))
             node.conds.append((m.group(1) == "!", name, bit))
+
+    def _switch(self, node, group, visible, in_kind):
+        """`switch <key>` (spec 0.20): a sequential layout; the key mapped by a
+        `field` or `also` line earlier in reading order in the same scope; at
+        least one `case`; each arm a block of its own (rulings 8 and 10)."""
+        if not self.pack.sequential:
+            self.bad(node, "`switch` in a pack that is not `layout sequential`")
+        if len(node.args) != 1:
+            self.bad(node, "`switch` takes one model key")
+        node.key = node.args[0]
+        if node.key not in self._mapped:
+            self.bad(node, "`switch %s`: the key is not mapped by an earlier line of the scope" % node.key)
+        if not any(arm.d == "case" for arm in node.body):
+            self.bad(node, "a `switch` with no `case`")
+        for arm in node.body:
+            for line in arm.body:
+                if line.d not in CASE_BODY:
+                    self.bad(line, "`%s` directly inside a `%s`" % (line.d, arm.d))
+            self._block(arm.body, group, visible + [{}], set(), in_kind, top=False)
+        self.switches.append(node)
 
     def _gate(self, node, group):
         """A gate block of a fixed layout (spec 0.17): `if [!]<word>:<pos>:<len>
@@ -1707,7 +1835,8 @@ class _Loader:
                                            "`if`, `opt` or `alt` blocks" % node.key)
                     found.setdefault(node.key, []).append((node, blocks))
                 elif node.body is not None:
-                    visit(node.body, blocks + [node] if node.d in ("if", "opt", "alt") else blocks)
+                    # spec 0.20 ruling 10: each `case` and `else` is a block
+                    visit(node.body, blocks + [node] if node.d in ("if", "opt", "alt", "case", "else") else blocks)
         visit(lines, [])
 
     def _paths_through_groups(self, lines):
@@ -1800,9 +1929,39 @@ class _Loader:
                 if found is None:
                     module, name = split_key(key)
                     self._key_fail("undeclared-key", at, "`%s`: module `%s` does not declare `%s`" % (key, module, name))
+        # spec 0.20 ruling 4: a `requires` term with `=` on a list key, after
+        # the key is found declared and before its values are typed
         for at, key, role in self.key_uses:
-            self._type_check(at, key, role, types[key])
+            if isinstance(role, tuple) and role[0] == "requires=" and types[key] == "list":
+                self._key_fail("bad-directive", at, "`requires %s=`: a list key takes no value" % key)
+        value_checks = []           # ruling 19: (line, check), run last in line order
+        for at, key, role in self.key_uses:
+            if isinstance(role, tuple) and role[0] == "requires=":
+                value_checks.append((at, lambda at=at, key=key, role=role: self._type_check(at, key, role, types[key])))
+            else:
+                self._type_check(at, key, role, types[key])
+        for node in self.switches:
+            key_type, seen = model.type_of(node.key), set()
+            for arm in node.body:
+                if arm.d == "case":
+                    value_checks.append((arm.line, lambda node=node, arm=arm, key_type=key_type, seen=seen:
+                                         self._case_values(node, arm, key_type, seen)))
+        for _, check in sorted(value_checks, key=lambda c: c[0]):
+            check()
         return pack
+
+    def _case_values(self, node, arm, key_type, seen):
+        """Spec 0.20: each value of a `case` reads as the key's type (an `int`
+        is an optional `-` and digits, ruling 17), then no value is listed
+        twice in the switch once read (ruling 18: `01` and `1` are one value)."""
+        for v in arm.values:
+            if not reads_as_value(v, key_type):
+                self._key_fail("key-type-mismatch", arm, "`case %s`: `%s` is declared %s" % (v, node.key, key_type))
+        for v in arm.values:
+            canonical = int(v) if key_type == "int" else float(v) if key_type == "float" else v
+            if canonical in seen:
+                self._key_fail("bad-directive", arm, "`case %s` lists a value of the switch again" % v)
+            seen.add(canonical)
 
     def _key_fail(self, kind, at, message):
         self.fail(kind, message, at if isinstance(at, int) else at.line)
@@ -1820,6 +1979,11 @@ class _Loader:
                 key, "a list" if found == "list" else "declared " + found, message))
 
         if role == "requires":
+            return
+        if isinstance(role, tuple) and role[0] == "requires=":
+            for v in role[1]:
+                if not reads_as_value(v, found):
+                    mismatch("the `requires` value `%s` cannot be read as that type" % v)
             return
         if role == "group":
             if found != "list":

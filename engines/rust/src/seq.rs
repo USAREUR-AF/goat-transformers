@@ -49,11 +49,14 @@ pub enum SeqLine {
     Const { len: u32, value: u64 },
     Pad { len: u64 },
     Align { n: u64 },
-    /// a `when` among common lines: it must hold for any message
-    When { len: u32, value: u64 },
+    /// a `when` among common lines: it must hold for any message. `values`:
+    /// every listed value and range (engine-spec v0.20); `value` is written
+    When { len: u32, value: u64, values: Vec<(u64, u64)> },
     /// `bits`: the number of presence bits; None: `fx` octets
-    /// `named`: the bits some `if` block names; any other bit set on the wire is `malformed-wire`
-    Presence { id: usize, bits: Option<u32>, named: Vec<u32> },
+    /// `named`: the bits some `if` block outside every `case` names; any other
+    /// bit set on the wire is `malformed-wire`, unless an `if` of a case that
+    /// is read names it (`in_cases`: the bits `if` lines inside cases name)
+    Presence { id: usize, bits: Option<u32>, named: Vec<u32>, in_cases: Vec<u32> },
     If { conds: Vec<Cond>, body: Vec<SeqLine> },
     Opt { body: Vec<SeqLine> },
     Group(SeqGroup),
@@ -66,16 +69,72 @@ pub enum SeqLine {
     Ext { body: Vec<SeqLine> },
     /// `choice <n> [ext]`: (index, lines) of each `alt`, in line order
     Choice { n: u32, ext: bool, alts: Vec<(u32, Vec<SeqLine>)> },
+    /// `switch <key>` … `end` (engine-spec v0.20)
+    Switch(Switch),
+}
+
+/// One `case` or `else` body of a `switch`.
+#[derive(Clone, Debug)]
+pub struct Case {
+    /// the values as written (empty for `else`)
+    pub values: Vec<String>,
+    /// the values as canonical text of the key's type, set when the pack is loaded
+    pub canon: Vec<String>,
+    pub lines: Vec<SeqLine>,
+    /// the `default` lines of the case (ruling 7 of 0.20)
+    pub defaults: Vec<DefaultDef>,
+    pub line: usize,
+    /// (presence id, bit) named by the `if` lines of the case, those of
+    /// nested switches' cases excepted
+    pub names: Vec<(usize, u32)>,
+}
+
+/// A `switch` block: the lines read next chosen by a decoded value.
+#[derive(Clone, Debug)]
+pub struct Switch {
+    pub key: String,
+    pub line: usize,
+    /// the first line of the scope that maps the key: (field, bit length,
+    /// `also` keys, UPER locator); the first prediction of encode (ruling 37
+    /// of 0.20)
+    pub first: (FieldDef, u32, Vec<FieldDef>, Option<crate::uper::Loc>),
+    pub cases: Vec<Case>,
+    pub other: Option<Case>,
+}
+
+/// The case a switch selects: an index into `cases`, `cases.len()` for
+/// `else`; None when none is selected (`no-kind`).
+type Pick = Option<usize>;
+
+impl Switch {
+    /// The case for the key's value as canonical text (None: the key is absent).
+    fn pick(&self, value: Option<&str>) -> Pick {
+        if let Some(v) = value {
+            let listed = |c: &Case| if c.canon.is_empty() { c.values.iter().any(|x| x == v) } else { c.canon.iter().any(|x| x == v) };
+            if let Some(i) = self.cases.iter().position(listed) {
+                return Some(i);
+            }
+        }
+        self.other.as_ref().map(|_| self.cases.len())
+    }
+    fn case(&self, pick: usize) -> &Case {
+        self.cases.get(pick).unwrap_or_else(|| self.other.as_ref().expect("an else"))
+    }
+    fn bodies(&self) -> impl Iterator<Item = &Case> {
+        self.cases.iter().chain(self.other.iter())
+    }
+    fn bodies_mut(&mut self) -> impl Iterator<Item = &mut Case> {
+        self.cases.iter_mut().chain(self.other.iter_mut())
+    }
 }
 
 /// One kind of a message or of an item.
 #[derive(Clone, Debug)]
 pub struct SeqKind {
     pub name: String,
-    /// (bit length, value): the first lines of the kind
-    pub whens: Vec<(u32, u64)>,
-    /// (model key, line)
-    pub requires: Vec<(String, usize)>,
+    /// (bit length, value written, every value and range): the first lines of the kind
+    pub whens: Vec<(u32, u64, Vec<(u64, u64)>)>,
+    pub requires: Vec<ReqDef>,
     pub lines: Vec<SeqLine>,
     pub defaults: Vec<DefaultDef>,
 }
@@ -94,8 +153,9 @@ pub enum Visit<'a> {
     Default(&'a DefaultDef),
     /// (line, list name)
     Group(usize, &'a str),
-    /// (line, model key)
-    Requires(usize, &'a str),
+    Requires(&'a ReqDef),
+    /// a `switch` block (engine-spec v0.20)
+    Switch(&'a Switch),
 }
 
 fn visit_lines<'a>(lines: &'a [SeqLine], f: &mut dyn FnMut(Visit<'a>)) {
@@ -113,6 +173,13 @@ fn visit_lines<'a>(lines: &'a [SeqLine], f: &mut dyn FnMut(Visit<'a>)) {
             SeqLine::Group(g) => {
                 f(Visit::Group(g.line, &g.list));
                 g.body.visit(f);
+            }
+            SeqLine::Switch(sw) => {
+                f(Visit::Switch(sw));
+                for c in sw.bodies() {
+                    visit_lines(&c.lines, f);
+                    c.defaults.iter().for_each(|d| f(Visit::Default(d)));
+                }
             }
             _ => {}
         }
@@ -132,6 +199,36 @@ fn visit_lines_mut(lines: &mut [SeqLine], ff: &mut dyn FnMut(&mut FieldDef), fd:
             SeqLine::Chain { parts, .. } => parts.iter_mut().for_each(|p| visit_lines_mut(p, ff, fd)),
             SeqLine::Choice { alts, .. } => alts.iter_mut().for_each(|(_, p)| visit_lines_mut(p, ff, fd)),
             SeqLine::Group(g) => g.body.visit_mut(ff, fd),
+            SeqLine::Switch(sw) => {
+                ff(&mut sw.first.0);
+                sw.first.2.iter_mut().for_each(|a| ff(a));
+                for c in sw.bodies_mut() {
+                    visit_lines_mut(&mut c.lines, ff, fd);
+                    c.defaults.iter_mut().for_each(|d| fd(d));
+                }
+            }
+            _ => {}
+        }
+    }
+}
+
+/// Fill the canonical values of every `requires =` term and `case` line
+/// (ruling 1 of 0.20): `ty` gives a key's declared type.
+fn resolve_lines(lines: &mut [SeqLine], ty: &dyn Fn(&str) -> Option<KeyType>) {
+    for l in lines {
+        match l {
+            SeqLine::If { body, .. } | SeqLine::Opt { body } | SeqLine::Length { body, .. } => resolve_lines(body, ty),
+            SeqLine::Chain { parts, .. } => parts.iter_mut().for_each(|p| resolve_lines(p, ty)),
+            SeqLine::Group(g) => g.body.resolve(ty),
+            SeqLine::Switch(sw) => {
+                let t = ty(&sw.key);
+                for c in sw.bodies_mut() {
+                    if let Some(t) = t {
+                        c.canon = c.values.iter().filter_map(|v| canon_value(t, v)).collect();
+                    }
+                    resolve_lines(&mut c.lines, ty);
+                }
+            }
             _ => {}
         }
     }
@@ -143,9 +240,22 @@ impl SeqBody {
         visit_lines(&self.common, f);
         self.defaults.iter().for_each(|d| f(Visit::Default(d)));
         for k in &self.kinds {
-            k.requires.iter().for_each(|(key, line)| f(Visit::Requires(*line, key)));
+            k.requires.iter().for_each(|r| f(Visit::Requires(r)));
             visit_lines(&k.lines, f);
             k.defaults.iter().for_each(|d| f(Visit::Default(d)));
+        }
+    }
+
+    /// Fill the canonical values of `requires =` terms and `case` lines.
+    pub fn resolve(&mut self, ty: &dyn Fn(&str) -> Option<KeyType>) {
+        resolve_lines(&mut self.common, ty);
+        for k in &mut self.kinds {
+            for r in &mut k.requires {
+                if let (Some(vs), Some(t)) = (&r.values, ty(&r.key)) {
+                    r.canon = vs.iter().filter_map(|v| canon_value(t, v)).collect();
+                }
+            }
+            resolve_lines(&mut k.lines, ty);
         }
     }
 
@@ -184,6 +294,8 @@ impl SeqBody {
                         }
                         g.body.model_keys(&format!("{}.", name), out);
                     }
+                    // keys mapped only inside a case are listed too (ruling 13 of 0.20)
+                    SeqLine::Switch(sw) => sw.bodies().for_each(|c| lines(prefix, &c.lines, out)),
                     _ => {}
                 }
             }
@@ -208,8 +320,17 @@ struct Parser<'a> {
     /// kind names of the whole pack
     /// where the names of the block being read start in `names`
     block_start: usize,
-    /// per presence id: the bits `if` lines name
+    /// per presence id: the bits `if` lines outside every `case` name
     named: Vec<Vec<u32>>,
+    /// per presence id: the bits `if` lines inside a `case` name (engine-spec v0.20)
+    case_named: Vec<Vec<u32>>,
+    /// the cases being read, innermost last: the (id, bit) their `if` lines name
+    case_ifs: Vec<Vec<(usize, u32)>>,
+    /// per presence id: how many cases were open where it was declared
+    case_depth: Vec<usize>,
+    /// the keys mapped so far in the scope being read (common lines and the
+    /// current kind, or one group body): a `switch` names one of them
+    mapped: Vec<(String, (FieldDef, u32, Vec<FieldDef>, Option<crate::uper::Loc>))>,
     /// the `default` lines of the scope being read
     defaults: Vec<DefaultDef>,
     /// every `via` table a field names: (table, line)
@@ -334,9 +455,12 @@ impl<'a> Parser<'a> {
         // kind names are unique within one body (ruling 11 of 0.8)
         let mut kind_names: Vec<String> = Vec::new();
         let outer_defaults = std::mem::take(&mut self.defaults);
+        // a group body is a scope of its own for `switch` keys (engine-spec v0.20)
+        let outer_mapped = std::mem::take(&mut self.mapped);
         // the presences visible when the first `kind` starts: those of a
         // kind's own lines end with the kind
         let mut common_names: Option<usize> = None;
+        let mut common_mapped: Option<usize> = None;
         // a kind's `when` lines are its first lines
         let mut kind_has_lines = false;
         let mut when_line: Option<usize> = None;
@@ -385,6 +509,10 @@ impl<'a> Parser<'a> {
                         Some(n) => self.names.truncate(n),
                         None => common_names = Some(self.names.len()),
                     }
+                    match common_mapped {
+                        Some(n) => self.mapped.truncate(n),
+                        None => common_mapped = Some(self.mapped.len()),
+                    }
                     out.kinds.push(SeqKind {
                         name: toks[1].clone(),
                         whens: Vec::new(),
@@ -400,14 +528,19 @@ impl<'a> Parser<'a> {
                         return bad(ln, "when needs <len> <value>");
                     }
                     let len = value_len(&toks[1], ln)?;
-                    let value = value_of(&toks[2], len, ln)?;
+                    // a list of values and ranges (engine-spec v0.20)
+                    if toks[2].split(',').any(|v| v == "present") {
+                        return bad(ln, "`present` is not a value of a bits `when`");
+                    }
+                    let values = num_list(&toks[2], Some(len), ln)?;
+                    let value = values[0].0;
                     when_line.get_or_insert(ln);
                     match out.kinds.last_mut() {
                         Some(_) if kind_has_lines => {
                             return bad(ln, "the `when` lines of a kind are its first lines");
                         }
-                        Some(k) => k.whens.push((len, value)),
-                        None => out.common.push(SeqLine::When { len, value }),
+                        Some(k) => k.whens.push((len, value, values)),
+                        None => out.common.push(SeqLine::When { len, value, values }),
                     }
                     self.i += 1;
                 }
@@ -419,9 +552,7 @@ impl<'a> Parser<'a> {
                     if toks.len() < 2 {
                         return bad(ln, "requires needs at least one <model-key>");
                     }
-                    for key in &toks[1..] {
-                        k.requires.push((key.clone(), ln));
-                    }
+                    k.requires.extend(ReqDef::parse(&toks[1..], ln)?);
                     self.i += 1;
                 }
                 _ => {
@@ -445,6 +576,7 @@ impl<'a> Parser<'a> {
         // a name is visible to the end of the enclosing block
         self.names.truncate(visible);
         self.block_start = outer_block;
+        self.mapped = outer_mapped;
         // ruling 8 of 0.5: a `when` needs kinds
         if let (true, Some(ln)) = (out.kinds.is_empty(), when_line) {
             return bad(ln, "`when` with no `kind`");
@@ -495,6 +627,99 @@ impl<'a> Parser<'a> {
         self.names.truncate(visible);
         self.block_start = outer_block;
         Ok(out)
+    }
+
+    /// A `switch <key>` line and its `case` and `else` bodies, up to its `end`
+    /// (engine-spec v0.20).
+    fn switch(&mut self, ln: usize, toks: &[String]) -> Result<Switch, Error> {
+        if toks.len() != 2 {
+            return bad(ln, "switch needs <model-key>");
+        }
+        let key = toks[1].clone();
+        let first = match self.mapped.iter().find(|(k, _)| *k == key) {
+            Some((_, line)) => line.clone(),
+            None => return bad(ln, format!("`switch {}`: the key is not mapped by a line before it in its scope", key)),
+        };
+        let mut cases: Vec<Case> = Vec::new();
+        let mut other: Option<Case> = None;
+        loop {
+            let (l, t) = match self.peek() {
+                Some((l, t)) => (*l, t),
+                None => return bad(ln, "the `switch` block has no `end`"),
+            };
+            match t[0].as_str() {
+                "end" => {
+                    if t.len() != 1 {
+                        return bad(l, "`end` takes no argument");
+                    }
+                    self.i += 1;
+                    break;
+                }
+                "case" => {
+                    if other.is_some() {
+                        return bad(l, "`else` before a `case`");
+                    }
+                    if t.len() != 2 {
+                        return bad(l, "case needs <value>[,<value>…]");
+                    }
+                    let values: Vec<String> = t[1].split(',').map(|v| v.to_string()).collect();
+                    if values.iter().any(|v| v.is_empty()) {
+                        return bad(l, format!("`case {}` has an empty value", t[1]));
+                    }
+                    // a value listed twice is checked at load, after the key and
+                    // type checks (ruling 19 of 0.20)
+                    self.i += 1;
+                    let c = self.case_body(ln, l, values)?;
+                    cases.push(c);
+                }
+                "else" => {
+                    if t.len() != 1 {
+                        return bad(l, "`else` takes no argument");
+                    }
+                    if other.is_some() {
+                        return bad(l, "two `else` in one switch");
+                    }
+                    if cases.is_empty() {
+                        return bad(l, "`else` before a `case`");
+                    }
+                    self.i += 1;
+                    other = Some(self.case_body(ln, l, Vec::new())?);
+                }
+                _ => return bad(l, "a line of a `switch` before its first `case`"),
+            }
+        }
+        if cases.is_empty() {
+            return bad(ln, "a `switch` with no `case`");
+        }
+        Ok(Switch { key, line: ln, first, cases, other })
+    }
+
+    /// The lines of one `case` or `else`, up to the next `case`, `else` or
+    /// `end` of its switch. Each body is a block for presence names (ruling 8
+    /// of 0.20) and has its own defaults (ruling 7).
+    fn case_body(&mut self, switch_line: usize, ln: usize, values: Vec<String>) -> Result<Case, Error> {
+        let visible = self.names.len();
+        let outer_block = std::mem::replace(&mut self.block_start, visible);
+        let outer_defaults = std::mem::take(&mut self.defaults);
+        self.case_ifs.push(Vec::new());
+        let mut lines = Vec::new();
+        loop {
+            let t = match self.peek() {
+                Some((_, t)) => t,
+                None => return bad(switch_line, "the `switch` block has no `end`"),
+            };
+            if matches!(t[0].as_str(), "case" | "else" | "end") {
+                break;
+            }
+            if let Some(line) = self.line()? {
+                lines.push(line);
+            }
+        }
+        self.names.truncate(visible);
+        self.block_start = outer_block;
+        let defaults = std::mem::replace(&mut self.defaults, outer_defaults);
+        let names = self.case_ifs.pop().expect("a case");
+        Ok(Case { values, canon: Vec::new(), lines, defaults, line: ln, names })
     }
 
     /// One line at the cursor, with the block it opens. None: a `default`
@@ -586,6 +811,9 @@ impl<'a> Parser<'a> {
                     also.push(FieldDef { model_key: t[1].clone(), via, line: *l, key_type: None, with: None, ..f.clone() });
                     self.i += 1;
                 }
+                let line = (f.clone(), len as u32, also.clone(), uper.clone());
+                self.mapped.push((f.model_key.clone(), line.clone()));
+                self.mapped.extend(also.iter().map(|a| (a.model_key.clone(), line.clone())));
                 SeqLine::Field { f, len: len as u32, also, uper }
             }
             "const" => {
@@ -627,7 +855,9 @@ impl<'a> Parser<'a> {
                 self.next_id += 1;
                 self.named.push(Vec::new());
                 self.names.push((name.clone(), id, bits));
-                SeqLine::Presence { id, bits, named: Vec::new() }
+                self.case_named.push(Vec::new());
+                self.case_depth.push(self.case_ifs.len());
+                SeqLine::Presence { id, bits, named: Vec::new(), in_cases: Vec::new() }
             }
             "if" => {
                 if toks.len() < 2 {
@@ -654,8 +884,25 @@ impl<'a> Parser<'a> {
                     if size.map_or(false, |n| bit > n) {
                         return bad(ln, format!("`{}` names a bit beyond the {} bits of the presence", t, size.unwrap_or(0)));
                     }
-                    if !self.named[id].contains(&bit) {
-                        self.named[id].push(bit);
+                    // an `if` of a case the presence is not in names the bit only
+                    // when the case is read (engine-spec v0.20): the innermost
+                    // case, read only when the cases around it are
+                    let depth = self.case_depth[id];
+                    let deeper = self.case_ifs.len() > depth;
+                    match self.case_ifs.last_mut().filter(|_| deeper) {
+                        Some(names) => {
+                            if !self.case_named[id].contains(&bit) {
+                                self.case_named[id].push(bit);
+                            }
+                            if !names.contains(&(id, bit)) {
+                                names.push((id, bit));
+                            }
+                        }
+                        None => {
+                            if !self.named[id].contains(&bit) {
+                                self.named[id].push(bit);
+                            }
+                        }
                     }
                     conds.push(Cond { id, bit, neg });
                 }
@@ -825,11 +1072,13 @@ impl<'a> Parser<'a> {
                 SeqLine::Choice { n, ext, alts }
             }
             "alt" => return bad(ln, "`alt` outside a `choice`"),
+            "switch" => SeqLine::Switch(self.switch(ln, toks)?),
+            "case" | "else" => return bad(ln, format!("`{}` outside a `switch`", toks[0])),
             "fx" => return bad(ln, "`fx` outside a `chain`"),
             "also" => return bad(ln, "`also` stands directly after a `field` line"),
             "end" => return bad(ln, "`end` with no open block"),
             d @ ("kind" | "when" | "requires") => {
-                return bad(ln, format!("`{}` is not allowed inside an `if`, `opt`, `chain` or `length` block", d));
+                return bad(ln, format!("`{}` is not allowed inside an `if`, `opt`, `chain`, `length` or `switch` block", d));
             }
             d if HEADER.contains(&d) => return bad(ln, format!("`{}` is not allowed inside a block", d)),
             // engine-spec v0.18: `element` is a line of an `xml` pack
@@ -873,6 +1122,15 @@ fn check_lists(body: &SeqBody) -> Result<(), Error> {
                 SeqLine::Group(g) => {
                     out.push((&g.list, g.line, blocks.clone()));
                     check_lists(&g.body)?;
+                }
+                // two cases are different blocks (ruling 10 of 0.20)
+                SeqLine::Switch(sw) => {
+                    for c in sw.bodies() {
+                        *next += 1;
+                        blocks.push(*next);
+                        walk(&c.lines, blocks, next, out)?;
+                        blocks.pop();
+                    }
                 }
                 _ => {}
             }
@@ -921,6 +1179,10 @@ pub fn parse(text: &str) -> Result<Pack, Error> {
         names: Vec::new(),
         block_start: 0,
         named: Vec::new(),
+        case_named: Vec::new(),
+        case_ifs: Vec::new(),
+        case_depth: Vec::new(),
+        mapped: Vec::new(),
         defaults: Vec::new(),
         vias: Vec::new(),
         format: None,
@@ -938,25 +1200,28 @@ pub fn parse(text: &str) -> Result<Pack, Error> {
         from_cot: BTreeMap::new(),
     };
     let mut body = p.body(true, 0)?;
-    fn fill(lines: &mut [SeqLine], named: &[Vec<u32>]) {
+    type Named<'n> = (&'n [Vec<u32>], &'n [Vec<u32>]);
+    fn fill(lines: &mut [SeqLine], named: Named) {
         for l in lines {
             match l {
-                SeqLine::Presence { id, named: n, .. } => *n = named[*id].clone(),
-                SeqLine::If { body, .. } | SeqLine::Opt { body } | SeqLine::Length { body, .. } | SeqLine::Ext { body } => {
-                    fill(body, named)
+                SeqLine::Presence { id, named: n, in_cases, .. } => {
+                    *n = named.0[*id].clone();
+                    *in_cases = named.1[*id].clone();
                 }
+                SeqLine::If { body, .. } | SeqLine::Opt { body } | SeqLine::Length { body, .. } | SeqLine::Ext { body } => fill(body, named),
                 SeqLine::Chain { parts, .. } => parts.iter_mut().for_each(|p| fill(p, named)),
                 SeqLine::Choice { alts, .. } => alts.iter_mut().for_each(|(_, p)| fill(p, named)),
                 SeqLine::Group(g) => fill_body(&mut g.body, named),
+                SeqLine::Switch(sw) => sw.bodies_mut().for_each(|c| fill(&mut c.lines, named)),
                 _ => {}
             }
         }
     }
-    fn fill_body(b: &mut SeqBody, named: &[Vec<u32>]) {
+    fn fill_body(b: &mut SeqBody, named: Named) {
         fill(&mut b.common, named);
         b.kinds.iter_mut().for_each(|k| fill(&mut k.lines, named));
     }
-    fill_body(&mut body, &p.named);
+    fill_body(&mut body, (&p.named, &p.case_named));
     check_lists(&body)?;
     // after the file is read (ruling 5b of 0.11): the missing header lines first
     if p.format.is_none() {
@@ -1036,6 +1301,15 @@ pub(crate) struct Reader<'a> {
     depth: usize,
     /// the bits of each presence read so far, by id; a bit not held is 0
     presence: BTreeMap<usize, Vec<bool>>,
+    /// presence bits that are 1 and that only `if` lines of cases name:
+    /// checked when the body that read them ends (engine-spec v0.20)
+    /// (id, bit, when it was read)
+    pending: Vec<(usize, u32, u64)>,
+    /// per presence id: the bits named by the `if` lines of the cases read
+    /// (id, bit, when the case was read)
+    case_named: Vec<(usize, u32, u64)>,
+    /// counts the presence lines read: orders the two lists above
+    clock: u64,
 }
 
 impl<'a> Reader<'a> {
@@ -1075,6 +1349,10 @@ impl<'a> Reader<'a> {
 /// The kind of a body the wire selects, after its common lines: the first
 /// whose `when` lines all hold, read from the cursor.
 fn decode_body<'a>(body: &'a SeqBody, r: &mut Reader, d: &mut Decoded) -> Result<Option<&'a SeqKind>, Error> {
+    decode_kind(body, r, d)
+}
+
+fn decode_kind<'a>(body: &'a SeqBody, r: &mut Reader, d: &mut Decoded) -> Result<Option<&'a SeqKind>, Error> {
     decode_lines(&body.common, r, d)?;
     if body.kinds.is_empty() {
         return Ok(None);
@@ -1082,9 +1360,10 @@ fn decode_body<'a>(body: &'a SeqBody, r: &mut Reader, d: &mut Decoded) -> Result
     let start = r.pos;
     for k in &body.kinds {
         let mut at = start;
-        let holds = k.whens.iter().all(|(len, value)| {
+        let holds = k.whens.iter().all(|(len, _, values)| {
             // a `when` any of whose bits lies beyond the input does not hold
-            let ok = r.end.saturating_sub(at) >= *len as u64 && get_bits(r.raw, at, *len, r.p.msb) == Some(*value);
+            let ok = r.end.saturating_sub(at) >= *len as u64
+                && get_bits(r.raw, at, *len, r.p.msb).map_or(false, |v| in_list(values, v));
             at += *len as u64;
             ok
         });
@@ -1097,10 +1376,16 @@ fn decode_body<'a>(body: &'a SeqBody, r: &mut Reader, d: &mut Decoded) -> Result
     err(format!("no-kind: format `{}`: the bits at {} match no kind", r.p.format, start))
 }
 
+/// Does a value lie in a list of values and ranges?
+fn in_list(values: &[(u64, u64)], v: u64) -> bool {
+    values.iter().any(|(lo, hi)| *lo <= v && v <= *hi)
+}
+
 fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<(), Error> {
     for line in lines {
-        // inside a `length` block, lines beyond its extent read as absent
-        if r.depth > 0 && r.pos >= r.end {
+        // inside a `length` block, lines beyond its extent read as absent; a
+        // switch there still selects, and its lines read as absent (ruling 14 of 0.20)
+        if r.depth > 0 && r.pos >= r.end && !matches!(line, SeqLine::Switch(_)) {
             if let SeqLine::Presence { id, .. } = line {
                 r.presence.insert(*id, Vec::new());
             }
@@ -1141,12 +1426,12 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
                 let skip = (n - r.pos % n) % n;
                 r.pos = (r.pos + skip).min(r.end.max(r.pos));
             }
-            SeqLine::When { len, value } => {
-                if r.end.saturating_sub(r.pos) < *len as u64 || r.read(*len, "a `when`")? != *value {
+            SeqLine::When { len, value, values } => {
+                if r.end.saturating_sub(r.pos) < *len as u64 || !in_list(values, r.read(*len, "a `when`")?) {
                     return err(format!("no-kind: format `{}`: common `when {} {}` does not hold", r.p.format, len, value));
                 }
             }
-            SeqLine::Presence { id, bits, named } => {
+            SeqLine::Presence { id, bits, named, in_cases } => {
                 let mut set = Vec::new();
                 match bits {
                     Some(n) => {
@@ -1165,9 +1450,18 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
                         }
                     },
                 }
-                // ruling 1 of 0.8: a bit that is 1 and that no `if` block names
-                if let Some(i) = set.iter().enumerate().position(|(i, b)| *b && !named.contains(&(i as u32 + 1))) {
-                    return Err(r.short(format!("presence bit {} is 1 and no `if` block names it", i + 1)));
+                // ruling 1 of 0.8: a bit that is 1 and that no `if` block names;
+                // one only `if` lines of cases name waits for the cases read
+                r.clock += 1;
+                for (i, b) in set.iter().enumerate() {
+                    let bit = i as u32 + 1;
+                    if !*b || named.contains(&bit) {
+                        continue;
+                    }
+                    if !in_cases.contains(&bit) {
+                        return Err(r.short(format!("presence bit {} is 1 and no `if` block names it", bit)));
+                    }
+                    r.pending.push((*id, bit, r.clock));
                 }
                 r.presence.insert(*id, set);
             }
@@ -1297,6 +1591,31 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
                 }
                 d.put_list(&g.list, items);
             }
+            SeqLine::Switch(sw) => {
+                // the key's value so far, as canonical text (engine-spec v0.20)
+                // a key whose line failed its transform fails the decode (ruling 35 of 0.20)
+                let value = match key_state(d, &sw.key) {
+                    Ok(v) => v,
+                    Err(m) => return err(format!("transform-decode: format `{}`: {}", r.p.format, m)),
+                };
+                let pick = match sw.pick(value.as_deref()) {
+                    Some(i) => i,
+                    None => {
+                        return err(format!(
+                            "no-kind: format `{}`: `switch {}` of line {}: {} selects no case and there is no `else`",
+                            r.p.format,
+                            sw.key,
+                            sw.line,
+                            value.map_or("the absent key".to_string(), |v| format!("`{}`", v))
+                        ))
+                    }
+                };
+                let case = sw.case(pick);
+                for (id, bit) in &case.names {
+                    r.case_named.push((*id, *bit, r.clock));
+                }
+                decode_lines(&case.lines, r, d)?;
+            }
         }
     }
     Ok(())
@@ -1304,9 +1623,27 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
 
 /// `total`: the bits of the input (8 a byte of hex, 6 a character of armor).
 pub fn decode(p: &Pack, body: &SeqBody, raw: &[u8], total: u64) -> Result<Entity, Error> {
-    let mut r = Reader { p, raw, pos: 0, end: total, whole: total, depth: 0, presence: BTreeMap::new() };
+    let mut r = Reader {
+        p,
+        raw,
+        pos: 0,
+        end: total,
+        whole: total,
+        depth: 0,
+        presence: BTreeMap::new(),
+        pending: Vec::new(),
+        case_named: Vec::new(),
+        clock: 0,
+    };
     let mut d = Decoded::new();
     let kind = decode_body(body, &mut r, &mut d)?;
+    // a bit only `if` lines of cases name: such a case read after the
+    // presence, anywhere in the decode, names it (ruling 36 of 0.20)
+    for (id, bit, at) in &r.pending {
+        if !r.case_named.iter().any(|(i, b, t)| i == id && b == bit && t >= at) {
+            return Err(r.short(format!("presence bit {} is 1 and no `if` block of the lines read names it", bit)));
+        }
+    }
     let (mut ent, failed) = d.close();
     if !failed.is_empty() {
         return err(format!("transform-decode: format `{}`: {}", p.format, failed.join("; ")));
@@ -1320,7 +1657,7 @@ pub fn decode(p: &Pack, body: &SeqBody, raw: &[u8], total: u64) -> Result<Entity
 // ---------------------------------------------------------------------------
 
 /// The kind an entity, or an item, is written as: its own kind when it names
-/// this format, else the first kind whose `requires` keys are all present.
+/// this format, else the first kind whose `requires` terms all hold.
 /// An item (`item`) whose kind names this format and a kind its group does
 /// not have is selected by `requires` too (ruling 26 of 0.8); for a message
 /// that is `no-kind` (ruling 24 of 0.5).
@@ -1337,28 +1674,46 @@ fn select<'a>(p: &Pack, body: &'a SeqBody, ent: &Entity, item: bool) -> Result<O
             }
         }
     }
-    let has = |key: &String| ent.fields.contains_key(key) || ent.lists.get(key).map_or(false, |l| !l.is_empty());
-    match body.kinds.iter().find(|k| k.requires.iter().all(|(key, _)| has(key))) {
+    match body.kinds.iter().find(|k| k.requires.iter().all(|r| r.holds(ent))) {
         Some(k) => Ok(Some(k)),
         None => err(format!("no-kind: format `{}`: the entity has the required keys of no kind", p.format)),
     }
 }
 
-/// The defaults in force: the selected kind's first, then the common ones.
+/// The defaults in force: those of the cases the lines are in, innermost
+/// first (ruling 7 of 0.20), then the selected kind's, then the common ones.
 #[derive(Clone, Copy)]
 struct Defaults<'a> {
     kind: &'a [DefaultDef],
     common: &'a [DefaultDef],
     /// a UPER pack: a `default` is not content (ruling 2 of 0.19)
     uper: bool,
+    case: &'a [DefaultDef],
+    up: Option<&'a Defaults<'a>>,
 }
 
 impl<'a> Defaults<'a> {
     fn of(p: &Pack, body: &'a SeqBody, kind: Option<&'a SeqKind>) -> Defaults<'a> {
-        Defaults { kind: kind.map_or(&[], |k| k.defaults.as_slice()), common: &body.defaults, uper: p.uper }
+        Defaults {
+            kind: kind.map_or(&[], |k| k.defaults.as_slice()),
+            common: &body.defaults,
+            uper: p.uper,
+            case: &[],
+            up: None,
+        }
+    }
+    /// The defaults inside one case of a switch.
+    fn inside<'b>(&'b self, c: &'b Case) -> Defaults<'b> {
+        Defaults { kind: &[], common: &[], uper: self.uper, case: &c.defaults, up: Some(self) }
     }
     /// The `default` of a key, if it has one.
     fn default(&self, key: &str) -> Option<&'a Value> {
+        if let Some(d) = self.case.iter().find(|d| d.model_key == key) {
+            return d.value.as_ref();
+        }
+        if let Some(up) = self.up {
+            return up.default(key);
+        }
         self.kind.iter().chain(self.common.iter()).find(|d| d.model_key == key).and_then(|d| d.value.as_ref())
     }
     /// The value encode uses for a key: the entity's, else the `default`.
@@ -1367,10 +1722,75 @@ impl<'a> Defaults<'a> {
     }
 }
 
+/// The case each switch selects on encode (engine-spec v0.20). Presence,
+/// `opt` and `fx` bits are computed before the lines they cover are written,
+/// so the case of a switch they cover is looked up here: the case the last
+/// pass selected, else a first estimate from the entity. A pass that selects
+/// another case than the one looked up is run again.
+struct Look<'p> {
+    p: &'p Pack,
+    /// (entity, switch line) -> case
+    picks: std::cell::RefCell<HashMap<(usize, usize), Pick>>,
+    changed: std::cell::Cell<bool>,
+}
+
+impl<'p> Look<'p> {
+    fn at(ent: &Entity, sw: &Switch) -> (usize, usize) {
+        (ent as *const Entity as usize, sw.line)
+    }
+    /// The case taken as selected before the switch is written.
+    fn get(&self, sw: &Switch, ent: &Entity, defs: Defaults) -> Pick {
+        let at = Look::at(ent, sw);
+        if let Some(pick) = self.picks.borrow().get(&at) {
+            return *pick;
+        }
+        // the first prediction: what the first line mapping the key would
+        // write, read back (ruling 37 of 0.20)
+        let (f, len, also, uper) = &sw.first;
+        let mut back = Decoded::new();
+        match uper {
+            // a UPER locator (engine-spec v0.19): its bits follow from the value
+            Some(loc) => {
+                let mut w = Writer {
+                    p: self.p,
+                    buf: Vec::new(),
+                    pos: 0,
+                    presence: BTreeMap::new(),
+                    wholes: Vec::new(),
+                    back: Vec::new(),
+                    look: self,
+                };
+                if write_uper_line(&mut w, f, loc, also, ent, defs).is_ok() {
+                    read_back_uper(self.p, f, loc, also, &w.buf, 0, &mut back);
+                }
+            }
+            None => {
+                let mut buf = vec![0u8; ((*len as usize) + 7) / 8];
+                if write_line(self.p, f, *len, also, ent, defs, 0, &mut buf).is_ok() {
+                    read_back(self.p, f, *len, also, &buf, 0, &mut back);
+                }
+            }
+        }
+        let v = key_state(&back, &sw.key).ok().flatten();
+        let pick = sw.pick(v.as_deref());
+        self.picks.borrow_mut().insert(at, pick);
+        pick
+    }
+    /// The case the switch selected as it was written.
+    fn set(&self, sw: &Switch, ent: &Entity, pick: Pick) {
+        if let Some(old) = self.picks.borrow_mut().insert(Look::at(ent, sw), pick) {
+            if old != pick {
+                self.changed.set(true);
+            }
+        }
+    }
+}
+
 /// Would these lines write a present key or a non-empty list? A key with a
 /// `default` in scope counts as present (ruling 2 of 0.8), except in a UPER
-/// pack (ruling 2 of 0.19).
-fn content(lines: &[SeqLine], ent: &Entity, defs: Defaults) -> bool {
+/// pack (ruling 2 of 0.19). Of a switch, only the selected case counts
+/// (engine-spec v0.20).
+fn content(lines: &[SeqLine], ent: &Entity, defs: Defaults, look: &Look) -> bool {
     let present = |key: &str| if defs.uper { ent.fields.contains_key(key) } else { defs.value(ent, key).is_some() };
     lines.iter().any(|l| match l {
         // a line suppressed by `with` is not content, nor is its default
@@ -1381,22 +1801,29 @@ fn content(lines: &[SeqLine], ent: &Entity, defs: Defaults) -> bool {
         }
         SeqLine::Group(g) => ent.lists.get(&g.list).map_or(false, |l| !l.is_empty()),
         SeqLine::If { body, .. } | SeqLine::Opt { body } | SeqLine::Length { body, .. } | SeqLine::Ext { body } => {
-            content(body, ent, defs)
+            content(body, ent, defs, look)
         }
-        SeqLine::Chain { parts, .. } => parts.iter().any(|p| content(p, ent, defs)),
+        SeqLine::Chain { parts, .. } => parts.iter().any(|p| content(p, ent, defs, look)),
         // ruling 3 of 0.19
-        SeqLine::Choice { alts, .. } => alts.iter().any(|(_, p)| content(p, ent, defs)),
+        SeqLine::Choice { alts, .. } => alts.iter().any(|(_, p)| content(p, ent, defs, look)),
+        SeqLine::Switch(sw) => match look.get(sw, ent, defs) {
+            Some(i) => {
+                let c = sw.case(i);
+                content(&c.lines, ent, defs.inside(c), look)
+            }
+            None => false,
+        },
         _ => false,
     })
 }
 
 /// The bits of presence `id`: bit i is 1 when some `if` block naming it
 /// without `!` would write a present key or a non-empty list.
-fn presence_bits(p: &Pack, lines: &[SeqLine], ent: &Entity, defs: Defaults, id: usize, bits: &mut Vec<bool>) {
+fn presence_bits(p: &Pack, lines: &[SeqLine], ent: &Entity, defs: Defaults, look: &Look, id: usize, bits: &mut Vec<bool>) {
     for l in lines {
         match l {
             SeqLine::If { conds, body } => {
-                if content(body, ent, defs) {
+                if content(body, ent, defs, look) {
                     for c in conds.iter().filter(|c| c.id == id && !c.neg) {
                         let i = c.bit as usize;
                         if bits.len() < i {
@@ -1405,26 +1832,136 @@ fn presence_bits(p: &Pack, lines: &[SeqLine], ent: &Entity, defs: Defaults, id: 
                         bits[i - 1] = true;
                     }
                 }
-                presence_bits(p, body, ent, defs, id, bits);
+                presence_bits(p, body, ent, defs, look, id, bits);
             }
             SeqLine::Opt { body } | SeqLine::Length { body, .. } | SeqLine::Ext { body } => {
-                presence_bits(p, body, ent, defs, id, bits)
+                presence_bits(p, body, ent, defs, look, id, bits)
             }
-            SeqLine::Chain { parts, .. } => parts.iter().for_each(|part| presence_bits(p, part, ent, defs, id, bits)),
-            SeqLine::Choice { alts, .. } => alts.iter().for_each(|(_, part)| presence_bits(p, part, ent, defs, id, bits)),
+            SeqLine::Chain { parts, .. } => parts.iter().for_each(|part| presence_bits(p, part, ent, defs, look, id, bits)),
+            SeqLine::Choice { alts, .. } => {
+                alts.iter().for_each(|(_, part)| presence_bits(p, part, ent, defs, look, id, bits))
+            }
             SeqLine::Group(g) => {
                 for item in ent.lists.get(&g.list).into_iter().flatten() {
                     let kind = select(p, &g.body, item, true).ok().flatten();
                     let item_defs = Defaults::of(p, &g.body, kind);
-                    presence_bits(p, &g.body.common, item, item_defs, id, bits);
+                    presence_bits(p, &g.body.common, item, item_defs, look, id, bits);
                     if let Some(k) = kind {
-                        presence_bits(p, &k.lines, item, item_defs, id, bits);
+                        presence_bits(p, &k.lines, item, item_defs, look, id, bits);
                     }
+                }
+            }
+            // only the selected case sets a bit (engine-spec v0.20)
+            SeqLine::Switch(sw) => {
+                if let Some(i) = look.get(sw, ent, defs) {
+                    let c = sw.case(i);
+                    presence_bits(p, &c.lines, ent, defs.inside(c), look, id, bits);
                 }
             }
             _ => {}
         }
     }
+}
+
+/// Write one `field` line, with its `also` keys, at bit `at` of `buf`, whose
+/// bits there are zero: the earliest of the line's keys that the entity
+/// holds; when it holds none, the default of the earliest key that has one
+/// (rulings 13 and 16 of 0.8); else the first sentinel, else zero bits. A
+/// line suppressed by `with` is none of them (engine-spec v0.18).
+#[allow(clippy::too_many_arguments)]
+fn write_line(p: &Pack, f: &FieldDef, len: u32, also: &[FieldDef], ent: &Entity, defs: Defaults, at: u64, buf: &mut [u8]) -> Result<(), Error> {
+    let keys = || std::iter::once(f).chain(also.iter()).filter(|k| live(ent, k));
+    let value = keys()
+        .find_map(|k| ent.fields.get(&k.model_key).map(|v| (k, v)))
+        .or_else(|| keys().find_map(|k| defs.default(&k.model_key).map(|v| (k, v))));
+    match value {
+        Some((k, v)) => {
+            let v = p.to_wire(k, v).map_err(|e| transform_encode_err(p, k, e))?;
+            write_field(p, k, &v, at, len, buf)?;
+        }
+        // with `absent`, the first sentinel in place of the zero bits (engine-spec v0.9)
+        None if live(ent, f) => {
+            write_sentinel(p, f, at, len, buf);
+        }
+        None => {}
+    }
+    Ok(())
+}
+
+/// What decode reads from the bits of one `field` line: a sentinel gives no
+/// key a value; otherwise every key of the line takes the value.
+fn read_back(p: &Pack, f: &FieldDef, len: u32, also: &[FieldDef], buf: &[u8], at: u64, back: &mut Decoded) {
+    if !is_sentinel(p, f, buf, at, len) {
+        let v = read_field(p, f, buf, at, len);
+        for a in also {
+            back.put(p, a, v.clone());
+        }
+        back.put(p, f, v);
+    }
+}
+
+/// Write one `field` line with a UPER locator (engine-spec v0.19) at the
+/// cursor: the earliest of its keys that the entity holds, else the default
+/// of the earliest key that has one (rulings 13 and 16 of 0.8; a line
+/// suppressed by `with` is none of them, engine-spec v0.18); an absent key
+/// writes the values of ruling 1 of 0.19.
+fn write_uper_line(
+    w: &mut Writer,
+    f: &FieldDef,
+    loc: &crate::uper::Loc,
+    also: &[FieldDef],
+    ent: &Entity,
+    defs: Defaults,
+) -> Result<(), Error> {
+    let p = w.p;
+    let keys = || std::iter::once(f).chain(also.iter()).filter(|k| live(ent, k));
+    let value = keys()
+        .find_map(|k| ent.fields.get(&k.model_key).map(|v| (k, v)))
+        .or_else(|| keys().find_map(|k| defs.default(&k.model_key).map(|v| (k, v))));
+    let v = match value {
+        Some((k, v)) => Some((k, p.to_wire(k, v).map_err(|e| transform_encode_err(p, k, e))?)),
+        None => None,
+    };
+    crate::uper::write_field(w, f, loc, v.as_ref().map(|(k, v)| (*k, v)))
+}
+
+/// What decode reads from a field with a UPER locator written from bit `at`
+/// of `buf`: every key of the line takes the value (engine-spec v0.19, v0.20).
+fn read_back_uper(p: &Pack, f: &FieldDef, loc: &crate::uper::Loc, also: &[FieldDef], buf: &[u8], at: u64, back: &mut Decoded) {
+    let end = buf.len() as u64 * 8;
+    let mut r = Reader {
+        p,
+        raw: buf,
+        pos: at,
+        end,
+        whole: end,
+        depth: 0,
+        presence: BTreeMap::new(),
+        pending: Vec::new(),
+        case_named: Vec::new(),
+        clock: 0,
+    };
+    if let Ok(v) = crate::uper::read_field(&mut r, f, loc) {
+        for a in also {
+            back.put(p, a, v.clone());
+        }
+        back.put(p, f, v);
+    }
+}
+
+/// The key of a switch as decode holds it so far: its canonical text, None
+/// when absent, or the failure of its line's transform or table.
+fn key_state(d: &Decoded, key: &str) -> Result<Option<String>, String> {
+    if let Some(v) = d.ent.fields.get(key) {
+        return Ok(Some(v.as_display()));
+    }
+    if d.hard_keys.iter().any(|k| k == key) {
+        return Err(d.hard.last().cloned().unwrap_or_default());
+    }
+    if let Some((_, m)) = d.soft.iter().find(|(k, _)| k == key) {
+        return Err(m.clone());
+    }
+    Ok(None)
 }
 
 pub(crate) struct Writer<'a> {
@@ -1434,6 +1971,10 @@ pub(crate) struct Writer<'a> {
     presence: BTreeMap<usize, Vec<bool>>,
     /// `length ... whole` fields to fill once the message is laid out: (bit, len, plus)
     wholes: Vec<(u64, u32, i64)>,
+    /// what decode would read back from the lines written so far, one per
+    /// scope being written, innermost last: a switch selects from it
+    back: Vec<Decoded>,
+    look: &'a Look<'a>,
 }
 
 impl<'a> Writer<'a> {
@@ -1463,14 +2004,16 @@ fn encode_body(body: &SeqBody, ent: &Entity, item: bool, w: &mut Writer) -> Resu
     let kind = select(w.p, body, ent, item)?;
     let defs = Defaults::of(w.p, body, kind);
     let kind_lines: &[SeqLine] = kind.map_or(&[], |k| k.lines.as_slice());
+    w.back.push(Decoded::new());
     // a presence among the common lines is visible in the kind's lines
     encode_lines(&body.common, kind_lines, ent, defs, w)?;
     if let Some(k) = kind {
-        for (len, value) in &k.whens {
+        for (len, value, _) in &k.whens {
             w.put(*len, *value);
         }
         encode_lines(kind_lines, &[], ent, defs, w)?;
     }
+    w.back.pop();
     Ok(())
 }
 
@@ -1485,42 +2028,28 @@ fn encode_lines(lines: &[SeqLine], tail: &[SeqLine], ent: &Entity, defs: Default
                 // it holds none, the default of the earliest key that has one
                 // (rulings 13 and 16 of 0.8)
                 // (a line suppressed by `with` is none of them: engine-spec v0.18)
-                let keys = || std::iter::once(f).chain(also.iter()).filter(|k| live(ent, k));
-                let value = keys()
-                    .find_map(|k| ent.fields.get(&k.model_key).map(|v| (k, v)))
-                    .or_else(|| keys().find_map(|k| defs.default(&k.model_key).map(|v| (k, v))));
                 if let Some(loc) = uper {
-                    // engine-spec v0.19: an absent key writes the values of ruling 1
-                    let v = match value {
-                        Some((k, v)) => Some((k, p.to_wire(k, v).map_err(|e| transform_encode_err(p, k, e))?)),
-                        None => None,
-                    };
-                    crate::uper::write_field(w, f, loc, v.as_ref().map(|(k, v)| (*k, v)))?;
+                    let at = w.pos;
+                    write_uper_line(w, f, loc, also, ent, defs)?;
+                    // what decode reads back from these bits (engine-spec v0.20)
+                    read_back_uper(p, f, loc, also, &w.buf, at, w.back.last_mut().expect("a scope"));
                     continue;
                 }
                 let at = w.pos;
                 // an absent key writes zero bits
                 w.zeros(*len as u64);
-                match value {
-                    Some((k, v)) => {
-                        let v = p.to_wire(k, v).map_err(|e| transform_encode_err(p, k, e))?;
-                        write_field(p, k, &v, at, *len, &mut w.buf)?;
-                    }
-                    // with `absent`, the first sentinel in place of the zero bits (engine-spec v0.9)
-                    None if live(ent, f) => {
-                        write_sentinel(p, f, at, *len, &mut w.buf);
-                    }
-                    None => {}
-                }
+                write_line(p, f, *len, also, ent, defs, at, &mut w.buf)?;
+                // what decode reads back from these bits (engine-spec v0.20)
+                read_back(p, f, *len, also, &w.buf, at, w.back.last_mut().expect("a scope"));
             }
-            SeqLine::Const { len, value } | SeqLine::When { len, value } => w.put(*len, *value),
+            SeqLine::Const { len, value } | SeqLine::When { len, value, .. } => w.put(*len, *value),
             SeqLine::Pad { len } => w.zeros(*len),
             SeqLine::Align { n } => w.zeros((n - w.pos % n) % n),
             SeqLine::Presence { id, bits, .. } => {
                 // presence is computed before it is written: the first of the two passes
                 let mut set = vec![false; bits.unwrap_or(0) as usize];
-                presence_bits(p, &lines[i + 1..], ent, defs, *id, &mut set);
-                presence_bits(p, tail, ent, defs, *id, &mut set);
+                presence_bits(p, &lines[i + 1..], ent, defs, w.look, *id, &mut set);
+                presence_bits(p, tail, ent, defs, w.look, *id, &mut set);
                 match bits {
                     Some(_) => set.iter().for_each(|b| w.put(1, *b as u64)),
                     None => {
@@ -1543,7 +2072,7 @@ fn encode_lines(lines: &[SeqLine], tail: &[SeqLine], ent: &Entity, defs: Default
                 }
             }
             SeqLine::Opt { body } => {
-                let present = content(body, ent, defs);
+                let present = content(body, ent, defs, w.look);
                 w.put(1, present as u64);
                 if present {
                     encode_lines(body, &[], ent, defs, w)?;
@@ -1554,7 +2083,7 @@ fn encode_lines(lines: &[SeqLine], tail: &[SeqLine], ent: &Entity, defs: Default
                 for (k, part) in parts.iter().enumerate() {
                     if k > 0 {
                         // 1 when any line after it in the chain would write a present key
-                        let more = parts[k..].iter().any(|later| content(later, ent, defs));
+                        let more = parts[k..].iter().any(|later| content(later, ent, defs, w.look));
                         w.put(1, more as u64);
                         if !more {
                             whole = false;
@@ -1594,7 +2123,7 @@ fn encode_lines(lines: &[SeqLine], tail: &[SeqLine], ent: &Entity, defs: Default
             }
             // the first `alt` with content, else the first `alt`
             SeqLine::Choice { n, ext, alts } => {
-                let (i, lines) = match alts.iter().find(|(_, ls)| content(ls, ent, defs)).or(alts.first()) {
+                let (i, lines) = match alts.iter().find(|(_, ls)| content(ls, ent, defs, w.look)).or(alts.first()) {
                     Some(a) => a,
                     None => continue,
                 };
@@ -1658,6 +2187,33 @@ fn encode_lines(lines: &[SeqLine], tail: &[SeqLine], ent: &Entity, defs: Default
                     }
                 }
             }
+            SeqLine::Switch(sw) => {
+                // the case decode would select from the bits the key's line
+                // wrote; a key whose line wrote nothing is absent (engine-spec v0.20)
+                // a key that does not read back: the output would not decode (ruling 31 of 0.20)
+                let value = match key_state(w.back.last().expect("a scope"), &sw.key) {
+                    Ok(v) => v,
+                    Err(m) => {
+                        w.look.set(sw, ent, None);
+                        return Err(w.fail(format!("`switch {}` of line {}: the key does not read back: {}", sw.key, sw.line, m)));
+                    }
+                };
+                let pick = sw.pick(value.as_deref());
+                w.look.set(sw, ent, pick);
+                let c = match pick {
+                    Some(i) => sw.case(i),
+                    None => {
+                        return err(format!(
+                            "no-kind: format `{}`: `switch {}` of line {}: {} selects no case and there is no `else`",
+                            p.format,
+                            sw.key,
+                            sw.line,
+                            value.map_or("the absent key".to_string(), |v| format!("`{}`", v))
+                        ))
+                    }
+                };
+                encode_lines(&c.lines, &[], ent, defs.inside(c), w)?;
+            }
         }
     }
     Ok(())
@@ -1669,8 +2225,25 @@ pub fn encode(p: &Pack, body: &SeqBody, ent: &Entity) -> Result<Vec<u8>, Error> 
 
 /// The message as whole bytes, and the cursor after the last line.
 pub fn encode_bits(p: &Pack, body: &SeqBody, ent: &Entity) -> Result<(Vec<u8>, u64), Error> {
-    let mut w = Writer { p, buf: Vec::new(), pos: 0, presence: BTreeMap::new(), wholes: Vec::new() };
-    encode_body(body, ent, false, &mut w)?;
+    let look = Look { p, picks: Default::default(), changed: Default::default() };
+    // a pass whose switches select other cases than were looked up runs again
+    let mut pass = 0;
+    let mut w = loop {
+        pass += 1;
+        look.changed.set(false);
+        let mut w = Writer { p, buf: Vec::new(), pos: 0, presence: BTreeMap::new(), wholes: Vec::new(), back: Vec::new(), look: &look };
+        let res = encode_body(body, ent, false, &mut w);
+        if !look.changed.get() {
+            res?;
+            break w;
+        }
+        if pass >= 16 {
+            return err(format!(
+                "transform-encode: format `{}`: the cases the switches select do not settle",
+                p.format
+            ));
+        }
+    };
     // an encoding of no bits is one octet `00` (engine-spec v0.19, X.691 10.1.3)
     if p.uper && w.buf.is_empty() {
         w.buf.push(0);

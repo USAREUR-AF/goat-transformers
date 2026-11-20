@@ -143,7 +143,7 @@ final class XmlCodec extends Codec<Xml.Element> {
         if (when.present && loc.text) return find(root, loc.path) != null;
         String raw = raw(root, loc);
         if (raw == null) return false;
-        return when.present || raw.equals(when.text);
+        return when.present || when.matchesText(raw);
     }
 
     @Override

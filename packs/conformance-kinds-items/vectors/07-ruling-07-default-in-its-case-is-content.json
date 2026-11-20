@@ -1,0 +1,15 @@
+{
+  "name": "ruling-07-default-in-its-case-is-content",
+  "from": "conformance-kinds-items",
+  "to": "conformance-kinds-items",
+  "input": "05000000",
+  "expect": "0580090000",
+  "model": {
+    "probe.x": "5",
+    "@absent": [
+      "probe.c1"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; groups, presence and defaults in cases; ruling 7: decode: d is 0, c1 absent. Re-encode: case 5's default 9 is content for d.1 and is written"
+}

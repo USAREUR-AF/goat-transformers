@@ -1,0 +1,9 @@
+{
+  "name": "env-ruling-01-float-value-canonical",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-env",
+  "input": "{\"a\":2.5}",
+  "expect": "{\"a\":2.5,\"k\":\"fl\"}",
+  "source": "constructed",
+  "reference": "spec 0.20, Encode kind by value; ruling 1: 2.50 and 2.5 are one float value"
+}

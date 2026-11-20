@@ -1,0 +1,20 @@
+# Conformance probe pack for `when` lists on a text wire (spec 0.20), `xml`.
+# Public. `a..b` is the literal text a..b; `c,d` is a list of two texts.
+#
+#   r   when @t a..b   x
+#   l   when @t c,d    y
+format     conformance-kinds-xml
+version    0.20.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       xml
+root       msg
+kind   r
+when   @t  a..b
+requires probe.x
+field  probe.x  @x  int
+kind   l
+when   @t  c,d
+requires probe.y
+field  probe.y  @y  int

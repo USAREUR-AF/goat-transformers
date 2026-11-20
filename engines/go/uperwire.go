@@ -777,13 +777,7 @@ func (w *seqWriter) uperField(f *Field, sc seqScope) error {
 // choice writes a `choice` block: the first `alt`, in line order, that has
 // content, else the first `alt`; under `ext` the bit 0 first.
 func (w *seqWriter) choice(n *seqNode, sc seqScope) error {
-	alt := n.body[0]
-	for _, a := range n.body {
-		if seqPresent(a.body, sc) {
-			alt = a
-			break
-		}
-	}
+	alt := w.choiceAlt(n, sc)
 	if n.ext {
 		w.putU(1, 0)
 	}
@@ -810,4 +804,48 @@ func (w *seqWriter) sizeItems(g *Group, sc seqScope) ([]*Item, error) {
 	}
 	w.putU(constrainedBits(uint64(g.sizeUB-g.sizeLB)), count-uint64(g.sizeLB))
 	return items, nil
+}
+
+// choiceAlt is the alt an encode of a choice writes: the first, in line
+// order, that has content (spec 0.19), else the first.
+func (w *seqWriter) choiceAlt(n *seqNode, sc seqScope) *seqNode {
+	for _, a := range n.body {
+		if w.content(a.body, sc) {
+			return a
+		}
+	}
+	return n.body[0]
+}
+
+// uperReadBack records in the scope's decoded values what a decode of the
+// bits a UPER field line writes would hold, for a switch on its key (0.20,
+// Encode): the line is written to a scratch buffer and read back. A value
+// that does not write or does not read back marks the keys of the line, and
+// of its `also` lines, as not reading back (0.20 ruling 31).
+func uperReadBack(w *seqWriter, f *Field, sc seqScope) {
+	keys := append([]*Field{f}, f.also...)
+	bad := func() {
+		for _, k := range keys {
+			sc.bad[k.Key] = true
+		}
+	}
+	tmp := &seqWriter{p: w.p, buf: &bitBuf{}, pres: map[*seqPresenceDef][]bool{}}
+	if err := tmp.uperField(f, sc); err != nil {
+		bad()
+		return
+	}
+	tmp.buf.need(tmp.pos + 8)
+	d := &decodeState{pack: w.p, ent: NewEntity(), rec: NewItem(), nbits: tmp.pos}
+	r := &seqReader{d: d, p: w.p, data: tmp.buf.data, limit: tmp.pos, pres: map[*seqPresenceDef][]bool{}, read: map[*seqCase]bool{}}
+	if err := r.uperField(f); err != nil || len(d.failed) > 0 {
+		bad()
+		return
+	}
+	for _, k := range keys {
+		if v, ok := d.rec.Fields[k.Key]; ok {
+			if _, done := sc.vals[k.Key]; !done {
+				sc.vals[k.Key] = v
+			}
+		}
+	}
 }

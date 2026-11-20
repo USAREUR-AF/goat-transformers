@@ -1,0 +1,9 @@
+{
+  "name": "enc-plain-value",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-enc",
+  "input": "{\"y\":2,\"v2\":3,\"v1\":4}",
+  "expect": "01000203000000",
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; Encode: the case is the one decode would select from the bits the key's line wrote; y = 2: else, v2 = 3; v1 belongs to case 255"
+}

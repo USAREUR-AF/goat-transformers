@@ -39,7 +39,8 @@
          bits_sentinel/3, items_reserve/2, items_release/1, items_held/1, record_failure/3,
          record_failure_msg/1,
          via_decode/6, typemap_decode/3, wire_value/5, guard_encode/4, unhex/2,
-         unwire/2, trim/2, armor_out/3, holds/3, line_value/3]).
+         unwire/2, trim/2, armor_out/3, holds/3, line_value/3,
+         req_holds/3]).
 
 -define(M64, 16#FFFFFFFFFFFFFFFF).
 
@@ -183,8 +184,16 @@ load_pack(#{modules := Modules, packs := Packs} = Engine, Text) ->
     Mismatch = fun(Fmt, Args) ->
                        gt_pack:load_error('key-type-mismatch', "pack ~s " ++ Fmt, [Name | Args])
                end,
+    %% a list key with `=` in a `requires` term (0.20, ruling 19)
+    lists:foreach(
+      fun({Key, list, requires_eq}) ->
+              gt_pack:load_error('bad-directive', "pack ~s requires ~s with = and it is a list",
+                                 [Name, Key]);
+         (_) -> ok
+      end, Typed),
     lists:foreach(
       fun({_Key, _Type, requires}) -> ok;
+         ({_Key, _Type, requires_eq}) -> ok;
          ({_Key, list, list}) -> ok;
          ({Key, Type, list}) ->
               Mismatch("maps the group ~s, which is a key of type ~s, not a list", [Key, Type]);
@@ -225,15 +234,21 @@ load_pack(#{modules := Modules, packs := Packs} = Engine, Text) ->
     CommonDefaults = TypeDefaults(maps:get(defaults, P)),
     %% a kind's default is used for common and kind fields alike; a default
     %% of a group body applies to its items only
+    Ctx = {TypeDefaults, KeyTypes},
     Kinds = [K#{defaults := maps:merge(CommonDefaults, TypeDefaults(maps:get(defaults, K))),
-                lines := type_groups(maps:get(lines, K), TypeDefaults)}
+                requires := [canon_term(T, KeyTypes) || T <- maps:get(requires, K)],
+                lines := type_groups(maps:get(lines, K), Ctx)}
              || K <- maps:get(kinds, P)],
+    Common = type_groups(maps:get(common, P), Ctx),
+    %% the `requires =` and `case` values, in line order: each line's types,
+    %% then its duplicates (0.20, ruling 19)
+    value_checks(maps:get(vchecks, P, []), KeyTypes, Mismatch),
     %% the typemap by either side; of two entries with one value the first is used
     Typemap = maps:get(typemap, P),
     P1 = gt_pack:index(P#{defaults := CommonDefaults, kinds := Kinds, key_types => KeyTypes,
                           typemap_dec => maps:from_list(lists:reverse(Typemap)),
                           typemap_enc => maps:from_list([{C, N} || {N, C} <- lists:reverse(Typemap)]),
-                          common := type_groups(maps:get(common, P), TypeDefaults)}),
+                          common := Common}),
     %% last: a format name already loaded, compared byte for byte; the first
     %% pack stays loaded (ruling 5 of 0.11)
     case maps:is_key(Name, Packs) of
@@ -242,32 +257,117 @@ load_pack(#{modules := Modules, packs := Packs} = Engine, Text) ->
     end,
     Engine#{packs := maps:put(Name, P1, Packs)}.
 
-%% The defaults of every group body, read as their keys' types.
-type_groups(Lines, TypeDefaults) ->
+%% A value of a `requires =` term or a `case` read as the key's type
+%% -> its canonical text (ruling 1 of 0.20); raises when it cannot be read.
+canon_value(float, Text) ->
+    %% `-?digits[.digits]` and an optional exponent, as a JSON number (ruling 24)
+    true = float_value_text(Text),
+    gt_num:canon(gt_num:read_as(float, Text));
+canon_value(Type, Text) -> gt_num:canon(gt_num:read_as(Type, Text)).
+
+float_value_text(<<$-, R/binary>>) -> json_int_part(R);
+float_value_text(R) -> json_int_part(R).
+
+json_int_part(B) ->
+    case take_ds(B) of
+        {<<>>, _} -> false;
+        {_, <<$., R/binary>>} ->
+            case take_ds(R) of
+                {<<>>, _} -> false;
+                {_, R2} -> json_exp_part(R2)
+            end;
+        {_, R} -> json_exp_part(R)
+    end.
+
+json_exp_part(<<>>) -> true;
+json_exp_part(<<E, R/binary>>) when E =:= $e; E =:= $E ->
+    R1 = case R of
+             <<S, T/binary>> when S =:= $+; S =:= $- -> T;
+             _ -> R
+         end,
+    case take_ds(R1) of
+        {D, <<>>} when D =/= <<>> -> true;
+        _ -> false
+    end;
+json_exp_part(_) -> false.
+
+take_ds(B) -> take_ds(B, 0).
+take_ds(B, N) ->
+    case B of
+        <<_:N/binary, C, _/binary>> when C >= $0, C =< $9 -> take_ds(B, N + 1);
+        <<D:N/binary, R/binary>> -> {D, R}
+    end.
+
+%% A `requires` term with its values as canonical text; a value that cannot
+%% be read keeps its text (value_checks/3 has refused it).
+canon_term({K, Vals}, KeyTypes) ->
+    Type = maps:get(K, KeyTypes, string),
+    {K, [try canon_value(Type, V) catch _:_ -> V end || V <- Vals]};
+canon_term(K, _KeyTypes) -> K.
+
+value_checks(Checks, KeyTypes, Mismatch) ->
+    Read = fun(Key, V) ->
+                   Type = maps:get(Key, KeyTypes),
+                   try canon_value(Type, V)
+                   catch _:_ ->
+                       Mismatch("lists the value ~s for ~s, which is not of type ~s", [V, Key, Type])
+                   end
+           end,
+    lists:foldl(
+      fun({req, Key, Vals}, Seen) -> [Read(Key, V) || V <- Vals], Seen;
+         ({'case', Ref, Key, Vals}, Seen) ->
+              Canon = [Read(Key, V) || V <- Vals],
+              Before = maps:get(Ref, Seen, []),
+              case length(lists:usort(Canon)) =:= length(Canon) andalso
+                  not lists:any(fun(C) -> lists:member(C, Before) end, Canon) of
+                  true -> ok;
+                  false -> gt_pack:load_error('bad-directive',
+                                              "switch ~s lists a case value twice", [Key])
+              end,
+              Seen#{Ref => Canon ++ Before}
+      end, #{}, Checks),
+    ok.
+
+%% The defaults of every group body, read as their keys' types; the values
+%% of every switch case as canonical text, and the requires of item kinds.
+type_groups(Lines, {TypeDefaults, KeyTypes} = Ctx) ->
     [case L of
          {group, List, Loc, Spec, #{lines := Ls, defaults := Ds}, LocT} ->
              {group, List, Loc, Spec,
-              #{lines => type_groups(Ls, TypeDefaults), defaults => TypeDefaults(Ds)}, LocT};
+              #{lines => type_groups(Ls, Ctx), defaults => TypeDefaults(Ds)}, LocT};
          %% sequential: a kind of a group body has the body's defaults and its own
          {sgroup, List, Mode, #{lines := Ls, defaults := Ds, kinds := Ks}} ->
              Common = TypeDefaults(Ds),
              {sgroup, List, Mode,
-              #{lines => type_groups(Ls, TypeDefaults), defaults => Common,
-                kinds => [K#{lines := type_groups(maps:get(lines, K), TypeDefaults),
+              #{lines => type_groups(Ls, Ctx), defaults => Common,
+                kinds => [K#{lines := type_groups(maps:get(lines, K), Ctx),
+                             requires := [canon_term(T, KeyTypes) || T <- maps:get(requires, K)],
                              defaults := maps:merge(Common, TypeDefaults(maps:get(defaults, K)))}
                           || K <- Ks]}};
          {gate, Loc, Neg, Vals, #{lines := Ls, defaults := Ds}, LocT} ->
              {gate, Loc, Neg, Vals,
-              #{lines => type_groups(Ls, TypeDefaults), defaults => TypeDefaults(Ds)}, LocT};
-         {ifb, Conds, Body} -> {ifb, Conds, type_groups(Body, TypeDefaults)};
-         {opt, Body} -> {opt, type_groups(Body, TypeDefaults)};
-         {uext, Body} -> {uext, type_groups(Body, TypeDefaults)};
+              #{lines => type_groups(Ls, Ctx), defaults => TypeDefaults(Ds)}, LocT};
+         {ifb, Conds, Body} -> {ifb, Conds, type_groups(Body, Ctx)};
+         {opt, Body} -> {opt, type_groups(Body, Ctx)};
+         {uext, Body} -> {uext, type_groups(Body, Ctx)};
          {uchoice, N, Ext, Alts} ->
-             {uchoice, N, Ext, [{I, type_groups(B, TypeDefaults)} || {I, B} <- Alts]};
-         {len, Len, Unit, Plus, Body} -> {len, Len, Unit, Plus, type_groups(Body, TypeDefaults)};
+             {uchoice, N, Ext, [{I, type_groups(B, Ctx)} || {I, B} <- Alts]};
+         {len, Len, Unit, Plus, Body} -> {len, Len, Unit, Plus, type_groups(Body, Ctx)};
          {chain, First, Parts, EndsFx} ->
-             {chain, type_groups(First, TypeDefaults),
-              [type_groups(Part, TypeDefaults) || Part <- Parts], EndsFx};
+             {chain, type_groups(First, Ctx),
+              [type_groups(Part, Ctx) || Part <- Parts], EndsFx};
+         {switch, Key, Ref, Cases, Else} ->
+             Type = maps:get(Key, KeyTypes, string),
+             Case = fun(#{vals := Vals, lines := Ls, defaults := Ds} = C) ->
+                            C#{vals := [try canon_value(Type, V) catch _:_ -> V end || V <- Vals],
+                               lines := type_groups(Ls, Ctx),
+                               defaults := TypeDefaults(Ds)}
+                    end,
+             {switch, Key, Ref, [Case(C) || C <- Cases],
+              case Else of
+                  none -> none;
+                  _ -> Case(Else)
+              end};
          _ -> L
      end || L <- Lines].
 
@@ -541,15 +641,7 @@ select_encode(#{name := Name, common := Common, kinds := Kinds, root := PackRoot
               Entity) ->
     Model = maps:get(model, Entity),
     Lists = maps:get(lists, Entity, #{}),
-    %% a required key is present in the entity; a required list is present
-    %% and has at least one item
-    Has = fun(K) ->
-                  maps:is_key(K, Model) orelse
-                      case maps:find(K, Lists) of
-                          {ok, [_ | _]} -> true;
-                          _ -> false
-                      end
-          end,
+    Has = fun(T) -> req_holds(T, Model, Lists) end,
     Chosen =
         case maps:get(kind, Entity, undefined) of
             {Name, KindName} ->
@@ -562,6 +654,21 @@ select_encode(#{name := Name, common := Common, kinds := Kinds, root := PackRoot
         #{lines := Ls, defaults := Defaults, root := Root} ->
             {Common ++ Ls, Defaults, case Root of undefined -> PackRoot; _ -> Root end}
     end.
+
+%% Does a scope hold a `requires` term? A plain key: the key is present, or
+%% the list is present with at least one item. `<key>=<values>` (0.20): the
+%% key is present and its canonical text is one of the values.
+req_holds({K, Canon}, Model, _Lists) ->
+    case maps:find(K, Model) of
+        {ok, V} -> lists:member(gt_num:canon(V), Canon);
+        error -> false
+    end;
+req_holds(K, Model, Lists) ->
+    maps:is_key(K, Model) orelse
+        case maps:find(K, Lists) of
+            {ok, [_ | _]} -> true;
+            _ -> false
+        end.
 
 first_kind([], _Pred) -> none;
 first_kind([K | Rest], Pred) ->
@@ -951,6 +1058,8 @@ unhex(Pack, Bytes) ->
     end.
 
 %% ---- does a `when` hold? the value is compared with the raw wire value ----
+when_holds(Wire, Ctx, Loc, {anyof, Items}) when Wire =/= bits, Wire =/= protobuf ->
+    lists:any(fun(V) -> when_holds(Wire, Ctx, Loc, V) end, Items);
 %% `when <locator> present` on `#text` holds when the element exists
 when_holds(xml, Tree, {Path, text}, present) -> navigate(Tree, Path) =/= absent;
 when_holds(xml, Tree, Loc, present) -> xml_when(Tree, Loc) =/= absent;
@@ -969,7 +1078,8 @@ when_holds(Wire, Json, Loc, Val) when Wire =:= geojson; Wire =:= json ->
     end;
 when_holds(text, Ctx, Loc, Val) -> gt_text:when_holds(Ctx, Loc, Val);
 %% a `when` any of whose bits lies beyond the input does not hold
-when_holds(bits, {Msg, Base}, {Off, Len}, Val) -> gt_bits:read(Msg, Base + Off, Len) =:= Val;
+when_holds(bits, {Msg, Base}, {Off, Len}, Val) ->
+    gt_pack:when_match(gt_bits:read(Msg, Base + Off, Len), Val);
 %% A `when` path never fails a decode: a prefix whose bytes do not parse as
 %% a message makes it not hold (ruling 9b of 0.11).
 when_holds(protobuf, Top, Path, Val) ->
@@ -979,7 +1089,7 @@ when_holds(protobuf, Top, Path, Val) ->
     case {Found, Val} of
         {absent, _} -> false;
         {{ok, _}, present} -> true;
-        {{ok, {0, V}}, _} -> V =:= Val;
+        {{ok, {0, V}}, _} -> gt_pack:when_match(V, Val);
         _ -> false
     end.
 
@@ -1826,7 +1936,22 @@ bits_lines(Pack, Lines, {Model, Lists, _}, Defaults, Base, WithItems) ->
               end;
          (_, Acc) -> Acc
       end, {[], [], 0, []}, Lines),
-    {lists:reverse(Ws9), lists:reverse(Os9), End9, lists:reverse(Cs9)}.
+    Ws = lists:reverse(Ws9),
+    %% a `when` with a list or a range (ruling 3 of 0.20): the value of a
+    %% field line with a present key on exactly its bits when it matches,
+    %% else the first value
+    Os = [case O of
+              {2, Pos, Len, {anyof, _} = Val} ->
+                  case [U || {1, P, L, U} <- Ws, P =:= Pos, L =:= Len] of
+                      [U | _] -> case gt_pack:when_match(U, Val) of
+                                     true -> {2, Pos, Len, U};
+                                     false -> {2, Pos, Len, gt_pack:when_first(Val)}
+                                 end;
+                      [] -> {2, Pos, Len, gt_pack:when_first(Val)}
+                  end;
+              _ -> O
+          end || O <- lists:reverse(Os9)],
+    {Ws, Os, End9, lists:reverse(Cs9)}.
 
 %% ---- protobuf: the lines of a scope as a writer tree ----
 pb_tree(Pack, Lines0, {Value, Lists, Held}) ->
@@ -1875,6 +2000,9 @@ pb_tree(Pack, Lines0, {Value, Lists, Held}) ->
     T3 = lists:foldl(
            fun({wh, Path, Val, _}, T) when is_integer(Val) ->
                    pb_put(T, Path, {leaf, 0, gt_protobuf:varint(Val)}, force);
+              ({wh, Path, {anyof, _} = Val, _}, T) ->
+                   pb_put(T, Path, {leaf, 0, gt_protobuf:varint(pb_when_value(Pack, Lines, Path, Val, Value, Held))},
+                          force);
               (_, T) -> T
            end, T2, Lines),
     %% `when <path> present` with nothing written under the path: an empty
@@ -1883,6 +2011,33 @@ pb_tree(Pack, Lines0, {Value, Lists, Held}) ->
       fun({wh, Path, present, _}, T) -> pb_put(T, Path, {leaf, 2, <<>>}, keep);
          (_, T) -> T
       end, T3, Lines).
+
+%% A protobuf `when` with a list or a range (rulings 3 and 15 of 0.20): the
+%% varint the earliest field line with a value writes on the same path,
+%% when the entity holds its key and the value matches; else the first.
+pb_when_value(Pack, Lines, Path, Val, Value, Held) ->
+    First = gt_pack:when_first(Val),
+    case [L || {field, K, P, _, _, _} = L <- Lines, P =:= Path, Value(K) =/= error] of
+        [{field, Key, _, Tr, LocT, Opts} | _] ->
+            case Held(Key) of
+                false -> First;
+                true ->
+                    {ok, V} = Value(Key),
+                    case guard_encode(Pack, Key, LocT,
+                                      fun() -> pb_encode(Tr, wire_value(Pack, Key, Tr, Opts, V)) end) of
+                        {leaf, 0, Bin} ->
+                            case gt_protobuf:varints(Bin) of
+                                [U] -> case gt_pack:when_match(U, Val) of
+                                           true -> U;
+                                           false -> First
+                                       end;
+                                _ -> First
+                            end;
+                        _ -> First
+                    end
+            end;
+        [] -> First
+    end.
 
 %% The occurrences of a list that has at least one item. A body of `.`
 %% lines writes scalars: with a numeric transform the packed form, else one
@@ -1945,8 +2100,10 @@ guard_encode(Pack, Key, LocT, Fun) ->
 text_plan(Lines0, {Value, Lists, Held}, Pack, RenderField, RenderFixed, RenderGroup) ->
     Lines = suppress(Lines0, Held),
     Consts = maps:from_list([{Loc, V} || {const, Loc, V, _} <- Lines]),
+    %% a `when` with a list writes its first value (ruling 15 of 0.20)
     Fixed = maps:merge(Consts,
-                       maps:from_list([{Loc, V} || {wh, Loc, {text, _, _} = V, _} <- Lines])),
+                       maps:from_list([{Loc, V} || {wh, Loc, {text, _, _} = V, _} <- Lines] ++
+                                      [{Loc, V} || {wh, Loc, {anyof, [{text, _, _} = V | _]}, _} <- Lines])),
     %% a sentinel is written only at a locator no line with a value writes
     %% (ruling 16 of 0.9)
     Valued = maps:from_list([{Loc, true} || {field, K, Loc, _, _, _} <- Lines,
@@ -2011,6 +2168,7 @@ text_plan(Lines0, {Value, Lists, Held}, Pack, RenderField, RenderFixed, RenderGr
                ({sup, _, _}) -> true;
                ({const, _, _, _}) -> true;
                ({wh, _, {text, _, _}, _}) -> true;
+               ({wh, _, {anyof, _}, _}) -> true;
                (_) -> false
             end,
     Written = maps:from_list([{Loc, V} || {Line, {Loc, {value, _} = V}} <- lists:zip(Lines, InOrder),

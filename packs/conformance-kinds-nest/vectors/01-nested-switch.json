@@ -1,0 +1,17 @@
+{
+  "name": "nested-switch",
+  "from": "conformance-kinds-nest",
+  "to": "conformance-kinds-nest",
+  "input": "0b010209000000",
+  "expect": "0b010209000000",
+  "model": {
+    "probe.x": "5",
+    "probe.y": "1",
+    "probe.z": "2",
+    "probe.w": "9",
+    "probe.c1": "0",
+    "probe.v2": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; switch blocks inside other blocks; ruling 5: each switch is read where the cursor is; 0b = x 0000101, opt 1"
+}

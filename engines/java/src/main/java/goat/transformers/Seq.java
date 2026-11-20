@@ -17,7 +17,7 @@ import java.util.Set;
 final class Seq {
     private Seq() {}
 
-    enum Op { FIELD, CONST, WHEN, PAD, ALIGN, PRESENCE, IF, OPT, CHAIN, LENGTH, WHOLE, GROUP, EXT, CHOICE }
+    enum Op { FIELD, CONST, WHEN, PAD, ALIGN, PRESENCE, IF, OPT, CHAIN, LENGTH, WHOLE, GROUP, EXT, CHOICE, SWITCH }
 
     enum Repeat { COUNT, WHILE, MORE, FX, SIZE }
 
@@ -54,16 +54,25 @@ final class Seq {
         final int line;
         /** Bit length: of a field, {@code const}, {@code when}, {@code pad}, n-bit presence, count or length field; the multiple of {@code align}. */
         int len;
-        /** {@code const}, {@code when}: the unsigned value. */
+        /** {@code const}, {@code when}: the unsigned value (of a {@code when} with a list, the first value written). */
         long value;
+        /** {@code when} with a list or a range (engine-spec 0.20): the {@code lo, hi} pairs; null for one value. */
+        long[] ranges;
         /** {@code field}: the field line and the {@code also} lines after it, all on the same bits. */
         List<Pack.Field> keys;
         /** {@code presence}: its name, whether it is {@code fx}, its slot in the state of one decode or encode. */
         String name;
         boolean fx;
         int id;
-        /** {@code presence}: the bits some {@code if} block names, with or without {@code !}. */
+        /** {@code presence}: the bits some {@code if} block outside every case of a switch names, with or without {@code !}. */
         final BitSet named = new BitSet();
+        /** {@code presence}: every bit some {@code if} names, inside a case or not. */
+        final BitSet anyNamed = new BitSet();
+        /**
+         * {@code presence}: the bits named only by {@code if} lines inside a case (declared after the presence), with
+         * the innermost case of each such line: they count only when that case is read (ruling 21 of 0.20).
+         */
+        final Map<Integer, List<Case>> caseNamed = new HashMap<>();
         /** {@code if}: the presence, bit and negation of each name. */
         Node[] refPresence;
         int[] refBit;
@@ -94,6 +103,12 @@ final class Seq {
         final List<List<Node>> altLines = new ArrayList<>();
         /** {@code choice}: alt index to its position in {@link #altLines}. */
         final Map<Integer, Integer> altAt = new HashMap<>();
+        /** {@code switch}: the key, its cases in line order, and its {@code else} (or null). */
+        String switchKey;
+        /** {@code switch}: the first field line mapping its key in its scope (ruling 37 of 0.20). */
+        Node keyLine;
+        List<Case> cases;
+        Case elseCase;
 
         Node(Op op, int line) {
             this.op = op;
@@ -101,11 +116,35 @@ final class Seq {
         }
     }
 
+    /** One {@code case} (or the {@code else}) of a {@code switch}: its values, its lines and its own defaults. */
+    static final class Case {
+        final int line;
+        /** The listed values; null for the {@code else}. */
+        final Pack.ValueList values;
+        final List<Node> body = new ArrayList<>();
+        final LinkedHashMap<String, String> defaults = new LinkedHashMap<>();
+        /** The defaults read as the keys' types (with the pack's other scopes). */
+        final Pack.Scope scope = new Pack.Scope(new ArrayList<>(), defaults);
+
+        Case(int line, Pack.ValueList values) {
+            this.line = line;
+            this.values = values;
+        }
+    }
+
+    /** The case a value of the switch key selects: the first that lists it, else the {@code else}; null for {@code no-kind}. */
+    static Case select(Node sw, Object v) {
+        if (v != null) {
+            for (Case c : sw.cases) if (c.values.holds(v)) return c;
+        }
+        return sw.elseCase;
+    }
+
     /** One kind of a message or of a group's items; a body with no {@code kind} line has one, with a null name. */
     static final class Kind {
         final String name;
         final List<Node> whens = new ArrayList<>();
-        final List<String> requires = new ArrayList<>();
+        final List<Pack.Require> requires = new ArrayList<>();
         /** The kind's lines after its {@code when} lines. */
         final List<Node> lines = new ArrayList<>();
         final LinkedHashMap<String, String> defaults = new LinkedHashMap<>();
@@ -133,7 +172,8 @@ final class Seq {
 
     /** Directives that are lines of the layout: in a sequential pack the parser below reads them. */
     static final Set<String> LINES = Set.of("field", "also", "const", "when", "pad", "align", "presence", "if", "opt",
-            "chain", "fx", "length", "group", "end", "kind", "requires", "default", "ext", "choice", "alt");
+            "chain", "fx", "length", "group", "end", "kind", "requires", "default", "ext", "choice", "alt",
+            "switch", "case", "else");
 
     /** The lines that exist only in a UPER pack (engine-spec 0.19, ruling 9). */
     static final Set<String> UPER_ONLY = Set.of("ext", "choice", "alt");
@@ -215,7 +255,8 @@ final class Seq {
     }
 
     /** Directives that exist only in a sequential pack. */
-    static final Set<String> SEQUENTIAL_ONLY = Set.of("also", "pad", "align", "presence", "if", "opt", "chain", "fx", "length");
+    static final Set<String> SEQUENTIAL_ONLY = Set.of("also", "pad", "align", "presence", "if", "opt", "chain", "fx", "length",
+            "switch", "case", "else");
 
     /** The largest presence bit an {@code if} may name in an {@code fx} presence. */
     private static final int MAX_FX_BIT = 7 * 4096;
@@ -224,6 +265,7 @@ final class Seq {
     static final class Parser {
         private final String source;
         private final List<String[]> keyRefs;
+        private final List<Pack.ValueList> valueLists;
         final List<Pack.Field> fields = new ArrayList<>();
         final List<Pack.Line> typed = new ArrayList<>();
         final List<Pack.Scope> scopes = new ArrayList<>();
@@ -235,7 +277,7 @@ final class Seq {
 
         /** An open block: the message, a group body, or an {@code if}, {@code opt}, {@code chain} or {@code length}. */
         private static final class Frame {
-            final char type;   // M message, G group, I if, O opt, C chain, L length, E ext, H choice
+            final char type;   // M message, G group, I if, O opt, C chain, L length, E ext, H choice, S switch before its first case, K case or else
             final String what;
             final int line;
             final Node node;
@@ -254,6 +296,11 @@ final class Seq {
             /** The field line directly before the line being read, in this block. */
             Node lastField;
             boolean lastWasFx;
+            /** A message or group body: the keys mapped so far by field and also lines, of the common lines and of the current kind. */
+            final Map<String, Node> mapped = new HashMap<>();
+            Map<String, Node> kindMapped;
+            /** A case frame: its case. */
+            Case kase;
 
             Frame(char type, String what, int line, Node node, List<Node> lines) {
                 this.type = type;
@@ -272,12 +319,11 @@ final class Seq {
         int uperLine;
         String uperWhy;
 
-        Parser(String source, List<String[]> keyRefs) { this(source, keyRefs, false); }
-
-        Parser(String source, List<String[]> keyRefs, boolean uperHint) {
+        Parser(String source, List<String[]> keyRefs, boolean uperHint, List<Pack.ValueList> valueLists) {
             this.source = source;
             this.keyRefs = keyRefs;
             this.uperHint = uperHint;
+            this.valueLists = valueLists;
             Frame f = new Frame('M', "pack", 0, null, root.common);
             f.body = root;
             stack.push(f);
@@ -331,12 +377,23 @@ final class Seq {
             throw new IllegalStateException();
         }
 
+        /** The innermost case frame passed before the presence {@link #lookup} last found was reached, or null. */
+        private Case lookupCase;
+
         private Node lookup(String name) {
+            lookupCase = null;
             for (Frame f : stack) {
                 if (f.kindNames != null && f.kindNames.containsKey(name)) return f.kindNames.get(name);
                 if (f.names.containsKey(name)) return f.names.get(name);
+                if (f.type == 'K' && lookupCase == null) lookupCase = f.kase;
             }
             return null;
+        }
+
+        /** Record a key mapped by a field or also line in the scope of the innermost body. */
+        private void mapped(String key, Node line) {
+            Frame b = bodyFrame();
+            (b.kindMapped != null ? b.kindMapped : b.mapped).putIfAbsent(key, line);
         }
 
         private void push(char type, String what, int ln, Node node, List<Node> lines) {
@@ -367,6 +424,21 @@ final class Seq {
         /** One layout line of the file. */
         void line(String kw, List<String> args, int ln, String where, String format) {
             Frame f = stack.peek();
+            if (f.type == 'S' && !kw.equals("case") && !kw.equals("else")) {
+                // ruling 20 of 0.20: nothing stands between switch and its first case
+                throw bad(format, null, where + ": " + (kw.equals("end") ? "a switch with no case" : kw + " between switch and its first case"));
+            }
+            if (kw.equals("case") || kw.equals("else")) {
+                switchArm(kw, args, ln, where, format);
+                return;
+            }
+            if (kw.equals("end") && f.type == 'K') {
+                arity(kw, args, 0, where, format);
+                stack.pop();   // the last case
+                stack.pop();   // the switch
+                stack.peek().lastField = null;
+                return;
+            }
             if (kw.equals("end")) {
                 arity(kw, args, 0, where, format);
                 if (stack.size() == 1) throw bad(format, null, where + ": end with no open block");
@@ -447,6 +519,7 @@ final class Seq {
                     keyRefs.add(new String[]{key, locator});
                     if (with != null) keyRefs.add(new String[]{with, locator});
                     Node n = new Node(Op.FIELD, ln);
+                    mapped(key, n);
                     n.len = len;
                     n.keys = new ArrayList<>();
                     n.keys.add(fl);
@@ -468,19 +541,30 @@ final class Seq {
                     fields.add(fl);
                     typed.add(fl);
                     keyRefs.add(new String[]{args.get(0), first.locator});
+                    mapped(args.get(0), before);
                     before.keys.add(fl);
                     f.lastField = before;
                     break;
                 }
                 case "const":
                 case "when": {
+                    if (kw.equals("when") && args.size() > 2) {
+                        throw bad(format, null, where + ": a when value list has no spaces: a third token after the length");
+                    }
                     arity(kw, args, 2, where, format);
                     int len = bitLength(args.get(0), 1, 64, kw, where, format);
                     boolean isWhen = kw.equals("when");
                     if (isWhen && !f.isBody()) throw bad(format, null, where + ": when inside a block");
                     Node n = new Node(isWhen ? Op.WHEN : Op.CONST, ln);
                     n.len = len;
-                    n.value = unsignedValue(args.get(1), len, kw, where, format);
+                    if (isWhen) {
+                        // engine-spec 0.20: a list of values and ranges; the first value is written
+                        long[] ranges = Pack.numericList(args.get(1), len, format, null, where);
+                        n.value = ranges[0];
+                        if (ranges.length > 2 || ranges[0] != ranges[1]) n.ranges = ranges;
+                    } else {
+                        n.value = unsignedValue(args.get(1), len, kw, where, format);
+                    }
                     if (!isWhen) {
                         f.lines.add(n);
                     } else if (f.kind == null) {
@@ -543,7 +627,9 @@ final class Seq {
                         if (bit < 1 || bit > (p.fx ? MAX_FX_BIT : p.len)) {
                             throw bad(format, null, where + ": presence " + p.name + " has no bit " + bit);
                         }
-                        p.named.set(bit);
+                        if (lookupCase == null) p.named.set(bit);
+                        else p.caseNamed.computeIfAbsent(bit, k -> new ArrayList<>()).add(lookupCase);
+                        p.anyNamed.set(bit);
                         n.refPresence[i] = p;
                         n.refBit[i] = bit;
                         n.refNot[i] = not;
@@ -644,7 +730,7 @@ final class Seq {
                     List<Frame> blocks = new ArrayList<>();
                     for (Frame x : stack) {
                         if (x.isBody()) break;
-                        if (x.type == 'I' || x.type == 'O') blocks.add(x);
+                        if (x.type == 'I' || x.type == 'O' || x.type == 'K') blocks.add(x);   // a case is a block (ruling 10 of 0.20)
                         // each alt of a choice is a block of its own here (ruling 20 of 0.19)
                         if (x.type == 'H' && x.alt != null) blocks.add(x.alt);
                     }
@@ -724,6 +810,7 @@ final class Seq {
                     f.lines = k.lines;
                     f.kindNames = new HashMap<>();
                     f.kindLists = new HashMap<>();
+                    f.kindMapped = new HashMap<>(f.mapped);
                     for (Map.Entry<String, List<List<Frame>>> l : f.lists.entrySet()) {
                         f.kindLists.put(l.getKey(), new ArrayList<>(l.getValue()));
                     }
@@ -736,17 +823,36 @@ final class Seq {
                     }
                     if (!f.isBody()) throw bad(format, null, where + ": requires inside a block");
                     if (f.kind == null) throw bad(format, null, where + ": requires before the first kind line");
-                    for (String k : args) {
-                        if (!f.kind.requires.contains(k)) f.kind.requires.add(k);
-                        keyRefs.add(new String[]{k, null});
-                    }
+                    for (String k : args) f.kind.requires.add(Pack.requireTerm(k, ln, where, format, keyRefs, valueLists));
                     break;
                 }
                 case "default": {
                     arity(kw, args, 2, where, format);
+                    Frame c = null;   // the innermost case, when nearer than the body (rulings 7 and 22 of 0.20)
+                    for (Frame x : stack) {
+                        if (x.isBody()) break;
+                        if (x.type == 'K') { c = x; break; }
+                    }
                     Frame b = bodyFrame();
-                    (b.kind != null ? b.kind.defaults : b.body.defaults).put(args.get(0), args.get(1));
+                    if (c != null) c.kase.defaults.put(args.get(0), args.get(1));
+                    else (b.kind != null ? b.kind.defaults : b.body.defaults).put(args.get(0), args.get(1));
                     keyRefs.add(new String[]{args.get(0), null});
+                    break;
+                }
+                case "switch": {
+                    if (args.size() != 1) throw bad(format, null, where + ": switch takes one model key, got " + args.size());
+                    String key = args.get(0);
+                    Frame b = bodyFrame();
+                    Map<String, Node> seen = b.kindMapped != null ? b.kindMapped : b.mapped;
+                    if (!seen.containsKey(key)) {
+                        throw bad(format, null, where + ": switch key " + key + " is not mapped by a field or also line before it in its scope");
+                    }
+                    Node n = new Node(Op.SWITCH, ln);
+                    n.switchKey = key;
+                    n.keyLine = seen.get(key);
+                    n.cases = new ArrayList<>();
+                    f.lines.add(n);
+                    push('S', "switch " + key, ln, n, null);
                     break;
                 }
                 default:
@@ -804,6 +910,37 @@ final class Seq {
             n.keys.add(fl);
             f.lines.add(n);
             f.lastField = n;
+        }
+
+        /** A {@code case} or {@code else} line: it ends the case before it and opens its own. */
+        private void switchArm(String kw, List<String> args, int ln, String where, String format) {
+            Frame f = stack.peek();
+            if (f.type == 'K') {
+                stack.pop();
+                f = stack.peek();
+            }
+            if (f.type != 'S') throw bad(format, null, where + ": " + kw + " outside a switch");
+            Node sw = f.node;
+            if (sw.elseCase != null) throw bad(format, null, where + ": " + (kw.equals("else") ? "two else lines" : "case after the else") + " in one switch");
+            Case c;
+            if (kw.equals("else")) {
+                if (!args.isEmpty()) throw bad(format, null, where + ": else takes no value");
+                if (sw.cases.isEmpty()) throw bad(format, null, where + ": else before a case");
+                c = new Case(ln, null);
+                sw.elseCase = c;
+            } else {
+                if (args.size() != 1) throw bad(format, null, where + ": case takes one value list, got " + args.size() + " tokens");
+                List<Pack.ValueList> earlier = new ArrayList<>();
+                for (Case o : sw.cases) earlier.add(o.values);
+                Pack.ValueList vl = new Pack.ValueList(sw.switchKey, Pack.valueItems(args.get(0), where, format), ln, where, earlier);
+                valueLists.add(vl);
+                c = new Case(ln, vl);
+                sw.cases.add(c);
+            }
+            scopes.add(c.scope);
+            Frame k = new Frame('K', kw, ln, sw, c.body);
+            k.kase = c;
+            stack.push(k);
         }
 
         private void finishBody(Body body, String format, String where) {
@@ -891,6 +1028,11 @@ final class Seq {
                 case GROUP:
                     out.add(prefix + n.list + "[]");
                     modelKeys(n.items, prefix + n.list + "[].", out);
+                    break;
+                case SWITCH:
+                    // keys mapped only inside a case are listed as every other mapped key (ruling 13 of 0.20)
+                    for (Case c : n.cases) modelKeys(c.body, prefix, out, seen);
+                    if (n.elseCase != null) modelKeys(n.elseCase.body, prefix, out, seen);
                     break;
                 default:
                     break;

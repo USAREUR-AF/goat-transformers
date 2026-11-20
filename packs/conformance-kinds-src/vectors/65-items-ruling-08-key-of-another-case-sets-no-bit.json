@@ -1,0 +1,9 @@
+{
+  "name": "items-ruling-08-key-of-another-case-sets-no-bit",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-items",
+  "input": "{\"x\":4,\"c1\":1,\"c2\":2}",
+  "expect": "0440020000",
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; groups, presence and defaults in cases; case 4 maps c2 at q.2; c1 is mapped by cases 3, 5 and 6 only and is not written"
+}

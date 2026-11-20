@@ -1,0 +1,9 @@
+{
+  "name": "json-list-first-text",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-json",
+  "input": "{\"x\":5}",
+  "expect": "{\"t\":\"a\",\"x\":5}",
+  "source": "constructed",
+  "reference": "spec 0.20, Lists and ranges in `when`, on text wires; requires x: ab"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "ruling-30-other-nested-case",
+  "from": "conformance-kinds-presnest",
+  "to": "conformance-kinds-presnest",
+  "input": "01400208",
+  "expect": "01400208",
+  "model": {
+    "probe.y": "2",
+    "probe.c2": "8"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 30: an `if` counts when the innermost case that holds the `if` and not the presence is read; y = 2: q.2, c2"
+}

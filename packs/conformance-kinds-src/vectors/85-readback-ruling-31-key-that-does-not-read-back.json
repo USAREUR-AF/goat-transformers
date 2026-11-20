@@ -1,0 +1,9 @@
+{
+  "name": "readback-ruling-31-key-that-does-not-read-back",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-readback",
+  "input": "{\"label\":\"big\",\"x\":1,\"z\":3}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 31: a switch key that does not read back on encode is transform-encode: the output would not decode; big is 256 via tbl; uint writes its low 8 bits, 0 (0.2); 0 has no table entry and the types differ, so reading it back fails (ruling 4 of 0.6)"
+}

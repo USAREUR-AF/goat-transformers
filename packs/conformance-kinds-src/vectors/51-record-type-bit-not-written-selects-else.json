@@ -1,0 +1,9 @@
+{
+  "name": "record-type-bit-not-written-selects-else",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-record",
+  "input": "{\"val\":51,\"z\":17}",
+  "expect": "4033",
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; a switch key read inside an earlier `if` and chain block; y, x and c1 absent: p.1 is 0 and y's line writes nothing: the key is absent, else; z is case 0's"
+}

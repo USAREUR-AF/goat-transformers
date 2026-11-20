@@ -1,0 +1,13 @@
+{
+  "name": "extent-content-not-read-is-skipped",
+  "from": "conformance-kinds-again",
+  "to": "conformance-kinds-again",
+  "input": "0201aa050107",
+  "expect": "0101050107",
+  "model": {
+    "probe.x": "1",
+    "probe.y": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; rulings 9 and 14; length 2: x = 1 and a byte no line reads, skipped (0.8 Lengths)"
+}

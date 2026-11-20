@@ -1,0 +1,9 @@
+{
+  "name": "switch-absent-key-zero-bits-select-case-0",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-switch",
+  "input": "{\"c2\":9,\"c1\":7}",
+  "expect": "000907",
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; Encode: the zero bits of an absent key select as decode would: case 0"
+}

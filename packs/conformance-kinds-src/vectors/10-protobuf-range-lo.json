@@ -1,0 +1,9 @@
+{
+  "name": "protobuf-range-lo",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-protobuf",
+  "input": "{\"z\":7}",
+  "expect": "08c8011007",
+  "source": "constructed",
+  "reference": "spec 0.20, Lists and ranges in `when`, on an integer protobuf `when`; requires z: b; writes 200"
+}

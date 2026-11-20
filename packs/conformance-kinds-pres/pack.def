@@ -1,0 +1,41 @@
+# Conformance probe pack for presence bits named inside cases (spec 0.20,
+# ruling 21), most significant bit first. Public.
+#
+#   presence p 8
+#   x : 8, then by x
+#     1     if p.1: y : 8
+#     2     opt [ if p.2: z : 8 ]
+#     else  nothing
+#   opt [ if p.3: w : 8 ]
+#
+# An `if` naming p counts for ruling 1 of 0.8 only when the innermost case
+# it sits in is the one read; an `if` in no case counts as before (ruling 17
+# of 0.8), also inside a block that is not read.
+format     conformance-kinds-pres
+version    0.20.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+presence p 8
+field  probe.x  8  uint
+switch probe.x
+  case 1
+    if p.1
+      field  probe.y  8  uint
+    end
+  case 2
+    opt
+      if p.2
+        field  probe.z  8  uint
+      end
+    end
+  else
+end
+opt
+  if p.3
+    field  probe.w  8  uint
+  end
+end

@@ -1,0 +1,9 @@
+{
+  "name": "xml-dots-text",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-xml",
+  "input": "{\"x\":1}",
+  "expect": "<msg t=\"a..b\" x=\"1\"/>",
+  "source": "constructed",
+  "reference": "spec 0.20, Lists and ranges in `when`, on text wires; requires x: r"
+}

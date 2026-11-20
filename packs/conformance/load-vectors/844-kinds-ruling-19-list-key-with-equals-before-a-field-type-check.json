@@ -1,0 +1,9 @@
+{
+  "name": "844-kinds-ruling-19-list-key-with-equals-before-a-field-type-check",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey x int -\nkey y int -\nkey z int -\nkey a float -\nkey s string -\nkey label string -\nlist items \"a list\"\n"
+  ],
+  "pack": "format probe\nversion 0.20.0\ndistribution public\nsource \"probe\"\nuses probe\nwire json\nfield probe.s s int\nkind a\nrequires probe.items=1\n",
+  "expect_error": "bad-directive"
+}

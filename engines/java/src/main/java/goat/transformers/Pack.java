@@ -181,6 +181,10 @@ public final class Pack {
         public final long number;
         /** True for a {@code const} line: written on encode like a {@code when} value, never checked on decode. */
         public final boolean isConst;
+        /** Text wires (engine-spec 0.20): every listed text, each with a leading {@code =} stripped; null for one value. */
+        String[] texts;
+        /** bits and protobuf (engine-spec 0.20): the listed values as {@code lo, hi} pairs; null for one value. */
+        long[] ranges;
 
         When(String locator, String value, boolean present, String text, boolean forced, long number, boolean isConst, int line) {
             super(locator, line);
@@ -191,6 +195,71 @@ public final class Pack {
             this.forced = forced;
             this.number = number;
         }
+
+        /** True when the line lists more than one value or a range (ruling 3 of 0.20). */
+        boolean isList() { return texts != null || ranges != null; }
+
+        /** bits and protobuf: true when the unsigned wire value is listed or lies in a listed range. */
+        boolean matches(long v) {
+            if (ranges == null) return v == number;
+            return inRanges(ranges, v);
+        }
+
+        /** Text wires: true when the text equals one of the listed texts. */
+        boolean matchesText(String s) {
+            if (texts == null) return s.equals(text);
+            for (String t : texts) if (s.equals(t)) return true;
+            return false;
+        }
+    }
+
+    /** True when {@code v} (unsigned) lies in one of the {@code lo, hi} pairs of {@code ranges}, both ends included. */
+    static boolean inRanges(long[] ranges, long v) {
+        for (int i = 0; i < ranges.length; i += 2) {
+            if (Long.compareUnsigned(v, ranges[i]) >= 0 && Long.compareUnsigned(v, ranges[i + 1]) <= 0) return true;
+        }
+        return false;
+    }
+
+    /**
+     * Read the value list of a {@code when} on {@code bits} or {@code protobuf} (engine-spec 0.20): each item is
+     * digits or digits{@code ..}digits, {@code lo ≤ hi}, each end within {@code len} bits. Returns {@code lo, hi}
+     * pairs; anything else, or an empty item, is {@code bad-directive}.
+     */
+    static long[] numericList(String arg, int len, String format, String locator, String where) {
+        String[] items = arg.split(",", -1);
+        long[] out = new long[items.length * 2];
+        for (int i = 0; i < items.length; i++) {
+            String it = items[i];
+            if (it.isEmpty()) throw badDirective(format, locator, where + ": an empty value in the list \"" + arg + "\"");
+            int dots = it.indexOf("..");
+            String lo = dots < 0 ? it : it.substring(0, dots);
+            String hi = dots < 0 ? it : it.substring(dots + 2);
+            long a = listNumber(lo, it, len, format, locator, where);
+            long b = listNumber(hi, it, len, format, locator, where);
+            if (Long.compareUnsigned(a, b) > 0) {
+                throw badDirective(format, locator, where + ": the range " + it + " has its low end above its high end");
+            }
+            out[2 * i] = a;
+            out[2 * i + 1] = b;
+        }
+        return out;
+    }
+
+    private static long listNumber(String v, String item, int len, String format, String locator, String where) {
+        if (!v.matches("\\d+")) {
+            throw badDirective(format, locator, where + ": a when value is digits or digits..digits, got \"" + item + "\"");
+        }
+        long n;
+        try {
+            n = Long.parseUnsignedLong(v);
+        } catch (NumberFormatException ex) {
+            throw badDirective(format, locator, where + ": when value " + v + " does not fit 64 bits");
+        }
+        if (len < 64 && Long.compareUnsigned(n, BitsTransform.mask(len)) > 0) {
+            throw badDirective(format, locator, where + ": when value " + v + " does not fit " + len + " bits");
+        }
+        return n;
     }
 
     /**
@@ -298,11 +367,96 @@ public final class Pack {
         }
     }
 
+    /**
+     * A value list written in a pack and read as a key's declared type at load (engine-spec 0.20): the values of a
+     * {@code requires <key>=…} term or of a {@code case} line. {@code canon} holds their canonical texts once the
+     * pack is checked against the modules.
+     */
+    static final class ValueList {
+        final String key;
+        final String[] values;
+        final int line;
+        final String where;
+        /** A {@code case} line: the earlier cases of its switch, whose values it may not repeat; null for a {@code requires} term. */
+        final List<ValueList> earlierCases;
+        Set<String> canon;
+
+        ValueList(String key, String[] values, int line, String where, List<ValueList> earlierCases) {
+            this.key = key;
+            this.values = values;
+            this.line = line;
+            this.where = where;
+            this.earlierCases = earlierCases;
+        }
+
+        boolean isCase() { return earlierCases != null; }
+
+        /** True when the model value's canonical text is one of the listed values. */
+        boolean holds(Object v) { return v != null && canon != null && canon.contains(canonText(v)); }
+    }
+
+    /** One {@code requires} term: a key that must be present, or with {@code =}, present with one of the listed values. */
+    public static final class Require {
+        public final String key;
+        /** The values after {@code =}, or null for a plain key. */
+        final ValueList values;
+
+        Require(String key, ValueList values) {
+            this.key = key;
+            this.values = values;
+        }
+
+        /** True when the entity (or the item) satisfies the term. A plain list key needs at least one item. */
+        boolean holds(Entity e) {
+            if (values != null) return values.holds(e.get(key));
+            if (e.get(key) != null) return true;
+            List<Entity> items = e.list(key);
+            return items != null && !items.isEmpty();
+        }
+    }
+
+    /**
+     * Read one {@code requires} term: {@code <key>} or {@code <key>=<value>[,<value>…]}, split at the first
+     * {@code =} (ruling 4 of 0.20). Records the key in {@code keyRefs} and a value list in {@code lists}.
+     */
+    static Require requireTerm(String term, int line, String where, String format, List<String[]> keyRefs, List<ValueList> lists) {
+        int eq = term.indexOf('=');
+        if (eq < 0) {
+            keyRefs.add(new String[]{term, null});
+            return new Require(term, null);
+        }
+        String key = term.substring(0, eq), rest = term.substring(eq + 1);
+        if (key.isEmpty() || rest.isEmpty()) {
+            throw badDirective(format, null, where + ": a requires term is <key> or <key>=<value>[,<value>...], got \"" + term + "\"");
+        }
+        String[] values = valueItems(rest, where, format);
+        keyRefs.add(new String[]{key, null});
+        ValueList vl = new ValueList(key, values, line, where, null);
+        lists.add(vl);
+        return new Require(key, vl);
+    }
+
+    /** The items of a comma-separated value list; an empty item is {@code bad-directive} (ruling 16 of 0.20). */
+    static String[] valueItems(String text, String where, String format) {
+        if (text.isEmpty()) return new String[]{""};   // a lone "" is the empty text
+        String[] items = text.split(",", -1);
+        for (String it : items) {
+            if (it.isEmpty()) throw badDirective(format, null, where + ": an empty value in the list \"" + text + "\"");
+        }
+        return items;
+    }
+
+    /** True when every term holds. */
+    static boolean allHold(List<Require> terms, Entity e) {
+        for (Require r : terms) if (!r.holds(e)) return false;
+        return true;
+    }
+
     /** One message kind: its name, its {@code requires} keys, and its lines after the common lines. */
     public static final class Kind {
         /** The kind's name; null for the single implicit kind of a pack with no {@code kind} line. */
         public final String name;
-        public final List<String> requires;
+        public final List<Require> requires;
         /** The common lines and this kind's own, with the defaults in force for them. */
         public final Scope scope;
         /** Common lines, then this kind's own lines, in line order ({@code scope.lines}). */
@@ -316,7 +470,7 @@ public final class Pack {
         /** {@code scope.fixed}: the {@code when} and {@code const} values written on a text wire, by locator. */
         final Map<String, When> fixed;
 
-        Kind(String name, List<String> requires, List<Line> lines, List<When> whens, String root, Map<String, String> defaults) {
+        Kind(String name, List<Require> requires, List<Line> lines, List<When> whens, String root, Map<String, String> defaults) {
             this.name = name;
             this.root = root;
             this.scope = new Scope(lines, defaults);
@@ -365,7 +519,7 @@ public final class Pack {
     private static final class KindSpec extends BodySpec {
         final String name;
         final int line;
-        final List<String> requires = new ArrayList<>();
+        final List<Require> requires = new ArrayList<>();
         String root;
         int rootLine;
 
@@ -430,6 +584,8 @@ public final class Pack {
     /** tlv wire: {@code checksum sum16 <tag>}. */
     boolean tlvChecksum;
     long tlvChecksumTag = -1;
+    /** The {@code requires =} and {@code case} value lists, in line order: read as their keys' types at load. */
+    List<ValueList> valueLists = new ArrayList<>();
     /** native code to CoT type token, in file order (first wins). */
     public final Map<String, String> nativeToCot;
     /** CoT type token to native code (first line wins). */
@@ -554,7 +710,8 @@ public final class Pack {
             "bit_order", "layout", "also", "pad", "align", "presence", "if", "opt", "chain", "fx", "length",
             "delimiter", "start", "checksum", "tag", "key", "armor",
             "element",    // engine-spec 0.18
-            "encoding", "ext", "choice", "alt");   // 0.19: directives on every wire (ruling 21)
+            "encoding", "ext", "choice", "alt",   // 0.19: directives on every wire (ruling 21)
+            "switch", "case", "else");   // engine-spec 0.20
 
     /** The directives that take exactly one argument (ruling 5e of 0.11). */
     private static final Set<String> ONE_ARGUMENT = Set.of("format", "version", "distribution", "source", "uses", "wire",
@@ -591,6 +748,10 @@ public final class Pack {
             case "end":
             case "ext": ok = n == 0; break;   // ext: ruling 23 of 0.19
             case "choice": ok = n == 1 || n == 2; break;   // ruling 23 of 0.19: its values after the file
+            // ruling 39 of 0.20: switch and case take one argument, else none (a line check)
+            case "switch":
+            case "case": ok = n == 1; break;
+            case "else": ok = n == 0; break;
             // 0.13 adds `checksum sum16 <tag>`, the tlv form, beside the one-argument form of 5e
             case "checksum": ok = n == 1 || (n == 2 && args.get(0).equals("sum16")); break;
             default: ok = !ONE_ARGUMENT.contains(kw) || n == 1;
@@ -828,6 +989,7 @@ public final class Pack {
         KindSpec cur = common;
         java.util.ArrayDeque<LineSpec> open = new java.util.ArrayDeque<>();   // the group blocks not yet ended
         List<String[]> keyRefs = new ArrayList<>();
+        List<ValueList> valueLists = new ArrayList<>();
         LinkedHashMap<String, String> n2c = new LinkedHashMap<>();
         LinkedHashMap<String, String> c2n = new LinkedHashMap<>();
         LinkedHashMap<String, List<String[]>> tables = new LinkedHashMap<>();
@@ -874,7 +1036,7 @@ public final class Pack {
                 // reported with its line number when the file is read
             }
         }
-        Seq.Parser seq = sequential ? new Seq.Parser(source, keyRefs, uperHint) : null;
+        Seq.Parser seq = sequential ? new Seq.Parser(source, keyRefs, uperHint, valueLists) : null;
         String layout = null;
         boolean listedSeen = false;   // a line that must follow the wire line, other than layout, has been read
         Set<String> headers = new HashSet<>();   // the header lines read so far, for check 5
@@ -1118,10 +1280,7 @@ public final class Pack {
                     if (cur == common) {
                         throw badDirective(format, null, where + ": requires before the first kind line");
                     }
-                    for (String k : args) {
-                        if (!cur.requires.contains(k)) cur.requires.add(k);
-                        keyRefs.add(new String[]{k, null});
-                    }
+                    for (String k : args) cur.requires.add(requireTerm(k, ln, where, format, keyRefs, valueLists));
                     break;
                 case "element": {
                     // engine-spec 0.18: one path of element names under the root (ruling 13)
@@ -1140,10 +1299,15 @@ public final class Pack {
                     if (firstElement == 0) firstElement = ln;
                     break;
                 }
-                case "when":
+                case "when": {
+                    // a third token (`1, 2`) is bad-directive on every wire (ruling 23 of 0.20)
+                    if (args.size() > 2) {
+                        throw badDirective(format, null, where + ": a when value list has no spaces: a third token after the locator");
+                    }
                     arity(kw, args, 2, where, format);
                     body.lines.add(new LineSpec(null, args.get(0), args.get(1), null, false, ln));
                     break;
+                }
                 case "field": {
                     if (args.size() < 3) throw bad(format, null, where + ": field takes at least 3 arguments, got " + args.size());
                     String key = args.get(0);
@@ -1380,11 +1544,13 @@ public final class Pack {
         // Report in file order, as the 0.4 checks do.
         ctx.fields.sort((a, b) -> Integer.compare(a.line, b.line));
         ctx.typed.sort((a, b) -> Integer.compare(a.line, b.line));
+        valueLists.sort((a, b) -> Integer.compare(a.line, b.line));
         Pack pack = new Pack(format, version, distribution, sources, uses, wire, root, wb, "msb".equals(bitOrder), hasKinds,
                 commonWhens, kinds, ctx.fields, ctx.typed, ctx.bodies, keyRefs, tables, kindRoots, n2c, c2n,
                 seqRoot, seq == null ? 0 : seq.presences);
         pack.armorSixbit = armorSixbit;
         pack.uper = uper;
+        pack.valueLists = valueLists;
         if (wire == Wire.TEXT) {
             String d = delimiterDir == null ? "," : delimiterDir[0];
             pack.textNoDelimiter = d.equals("none");
@@ -1972,6 +2138,7 @@ public final class Pack {
             if (why != null) throw badLocator(format, s.locator, where + ": " + why);
             int len = BitsCodec.parseLoc(s.locator)[2];
             if (len > 64) throw badDirective(format, s.locator, where + ": a when line reads at most 64 bits");
+            if (!s.isConst) return numericWhen(s, v, len, format, where);
             long n = unsigned(v, format, s.locator, where);
             if (len < 64 && (n < 0 || n > BitsTransform.mask(len))) {
                 throw badDirective(format, s.locator, where + ": when value " + v + " does not fit " + len + " bits");
@@ -1982,6 +2149,7 @@ public final class Pack {
             String why = ProtobufCodec.checkFieldLocator(s.locator);
             if (why != null) throw badLocator(format, s.locator, where + ": " + why);
             if (v.equals("present")) return new When(s.locator, v, true, v, false, 0, s.isConst, s.line);
+            if (!s.isConst) return numericWhen(s, v, 64, format, where);
             return new When(s.locator, v, false, v, false, unsigned(v, format, s.locator, where), s.isConst, s.line);
         }
         String why;
@@ -1990,8 +2158,37 @@ public final class Pack {
         else why = JsonCodec.checkLocator(s.locator);
         if (why != null) throw badLocator(format, s.locator, where + ": " + why);
         if (v.equals("present")) return new When(s.locator, v, true, v, false, 0, s.isConst, s.line);
-        boolean forced = v.startsWith("=");
-        return new When(s.locator, v, false, forced ? v.substring(1) : v, forced, 0, s.isConst, s.line);
+        if (s.isConst || v.isEmpty()) {
+            // a lone "" is the empty text (ruling 11 of 0.9)
+            boolean forced = v.startsWith("=");
+            return new When(s.locator, v, false, forced ? v.substring(1) : v, forced, 0, s.isConst, s.line);
+        }
+        // engine-spec 0.20: a comma separates texts; `..` is literal; every item is a value as in 0.5
+        String[] items = v.split(",", -1);
+        String[] texts = new String[items.length];
+        for (int i = 0; i < items.length; i++) {
+            String it = items[i];
+            if (it.isEmpty()) throw badDirective(format, s.locator, where + ": an empty value in the list \"" + v + "\"");
+            if (it.equals("present") && items.length > 1) {
+                throw badDirective(format, s.locator, where + ": present may not be combined with other values");
+            }
+            texts[i] = it.startsWith("=") ? it.substring(1) : it;
+        }
+        boolean forced = items[0].startsWith("=");
+        When w = new When(s.locator, v, false, texts[0], forced, 0, s.isConst, s.line);
+        if (items.length > 1) w.texts = texts;
+        return w;
+    }
+
+    /** A {@code when} on {@code bits} or {@code protobuf}: one value, or a list of values and ranges (engine-spec 0.20). */
+    private static When numericWhen(LineSpec s, String v, int len, String format, String where) {
+        if (v.equals("present") || v.startsWith("present,") || v.endsWith(",present") || v.contains(",present,")) {
+            throw badDirective(format, s.locator, where + ": present may not be combined with other values");
+        }
+        long[] ranges = numericList(v, len, format, s.locator, where);
+        When w = new When(s.locator, v, false, v, false, ranges[0], false, s.line);
+        if (ranges.length > 2 || ranges[0] != ranges[1]) w.ranges = ranges;
+        return w;
     }
 
     private static long unsigned(String v, String format, String locator, String where) {

@@ -1,0 +1,9 @@
+{
+  "name": "presnest-ruling-30-bit-from-the-nested-case-selected",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-presnest",
+  "input": "{\"x\":1,\"y\":2,\"c1\":5,\"c2\":8}",
+  "expect": "01400208",
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 30: an `if` counts when the innermost case that holds the `if` and not the presence is read; y = 2: only q.2 is set; c1 is case 1's"
+}

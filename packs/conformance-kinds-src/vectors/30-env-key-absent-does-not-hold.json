@@ -1,0 +1,9 @@
+{
+  "name": "env-key-absent-does-not-hold",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-env",
+  "input": "{\"x\":0}",
+  "expect": "{\"x\":0,\"k\":\"other\"}",
+  "source": "constructed",
+  "reference": "spec 0.20, Encode kind by value; the kind qualifies only when the entity holds the key"
+}

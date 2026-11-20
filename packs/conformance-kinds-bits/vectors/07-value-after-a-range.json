@@ -1,0 +1,13 @@
+{
+  "name": "value-after-a-range",
+  "from": "conformance-kinds-bits",
+  "to": "conformance-kinds-bits",
+  "input": "1402",
+  "expect": "1402",
+  "model": {
+    "@kind": "hi",
+    "probe.x": "20"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, Lists and ranges in `when`; 20 is the value listed after hi's range"
+}

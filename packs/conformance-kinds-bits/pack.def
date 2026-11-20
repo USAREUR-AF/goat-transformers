@@ -1,0 +1,34 @@
+# Conformance probe pack for `when` lists and ranges (spec 0.20) on a fixed
+# `bits` layout, least significant bit first. Public.
+#
+#   byte 0   x, common; it is also the bits of every kind's `when`
+#   byte 1   by kind
+#     lo    when 1,3..5    y
+#     hi    when 4..9,20   z       4 and 5 are lo's too: lo is first (ruling 2)
+#     dup   when 30,30     w       a value repeated in one list loads
+#
+# x covers exactly the bits of the `when`: on encode x is written when the
+# entity holds x and its value matches the kind's list, else the first value
+# is (rulings 3 and 15). x has the default 4, which is in lo's list: a default
+# does not count (ruling 15), so lo without x writes 1.
+format     conformance-kinds-bits
+version    0.20.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+word_bytes 1
+default probe.x  4
+field  probe.x  0:0:8  uint
+kind   lo
+when   0:0:8  1,3..5
+requires probe.y
+field  probe.y  0:8:8  uint
+kind   hi
+when   0:0:8  4..9,20
+requires probe.z
+field  probe.z  0:8:8  uint
+kind   dup
+when   0:0:8  30,30
+requires probe.w
+field  probe.w  0:8:8  uint

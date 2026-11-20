@@ -1,0 +1,9 @@
+{
+  "name": "value-in-no-list",
+  "from": "conformance-kinds-bits",
+  "to": "conformance-kinds-bits",
+  "input": "0202",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.20, Lists and ranges in `when`; 2 is in no kind's list: no-kind (0.5 Decode step 2)"
+}

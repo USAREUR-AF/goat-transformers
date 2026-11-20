@@ -1,0 +1,8 @@
+{
+  "name": "796-kinds-ruling-10-one-list-grouped-in-two-cases-loads",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey x int -\nkey y int -\nkey z int -\nkey a float -\nkey s string -\nkey label string -\nlist items \"a list\"\n"
+  ],
+  "pack": "format probe\nversion 0.20.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nlayout sequential\nfield probe.x 8 uint\nswitch probe.x\n  case 1\n    group probe.items count 8\n      field probe.y 8 uint\n    end\n  case 2\n    group probe.items count 8\n      field probe.y 16 uint\n    end\n  else\n    group probe.items while\n      field probe.y 4 uint\n    end\nend\n"
+}

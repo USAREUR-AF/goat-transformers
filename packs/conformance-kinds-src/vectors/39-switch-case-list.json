@@ -1,0 +1,9 @@
+{
+  "name": "switch-case-list",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-switch",
+  "input": "{\"x\":3,\"z\":258}",
+  "expect": "03010200",
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; Encode: case 2,3; c1 absent: zero bits"
+}

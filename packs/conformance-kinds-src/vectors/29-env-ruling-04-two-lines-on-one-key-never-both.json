@@ -1,0 +1,9 @@
+{
+  "name": "env-ruling-04-two-lines-on-one-key-never-both",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-env",
+  "input": "{\"n\":4}",
+  "expect": "{\"n\":4,\"k\":\"other\"}",
+  "source": "constructed",
+  "reference": "spec 0.20, Encode kind by value; ruling 4: `requires probe.n=4` and `requires probe.n=5` never both hold"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "json-ruling-32-first-item-forces-a-string",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-json",
+  "input": "{\"c1\":2}",
+  "expect": "{\"v\":\"5\",\"c\":2}",
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 32: a leading `=` is stripped from each item of a text-wire `when` list; requires c1: eqv; the first item's `=` decides that json writes a string"
+}

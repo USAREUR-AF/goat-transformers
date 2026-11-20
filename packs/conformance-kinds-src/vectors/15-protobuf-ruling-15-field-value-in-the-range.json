@@ -1,0 +1,9 @@
+{
+  "name": "protobuf-ruling-15-field-value-in-the-range",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-protobuf",
+  "input": "{\"w\":9}",
+  "expect": "1809",
+  "source": "constructed",
+  "reference": "spec 0.20 rulings 3 and 15, a field on the `when`'s protobuf path; w = 9 matches 7..9 and is written"
+}

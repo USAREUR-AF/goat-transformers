@@ -1,0 +1,16 @@
+{
+  "name": "ruling-36-first-item-without-its-case",
+  "from": "conformance-kinds-across",
+  "to": "conformance-kinds-across",
+  "input": "4002010207",
+  "expect": "4002010207",
+  "model": {
+    "probe.recs[0].probe.x": "1",
+    "probe.recs[1].probe.z": "7",
+    "@absent": [
+      "probe.recs[0].probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 36: a bit named only inside cases is satisfied by such a case read anywhere later in the decode, a later item included; p = 40: p.2 only. Item 0 reads case 1 and p.1 is 0; item 1 reads case 2, which names p.2"
+}

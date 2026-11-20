@@ -1,0 +1,19 @@
+{
+  "name": "type-1-layout-same-presence-bits",
+  "from": "conformance-kinds-record",
+  "to": "conformance-kinds-record",
+  "input": "e08a112233",
+  "expect": "e08a112233",
+  "model": {
+    "probe.y": "1",
+    "probe.x": "5",
+    "probe.c2": "4386",
+    "probe.n": "51",
+    "@absent": [
+      "probe.z",
+      "probe.w"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; a switch key read inside an earlier `if` and chain block; 8a = y 1, x 5: the same p.2 and p.3 read c2 = 0x1122 and n = 0x33"
+}

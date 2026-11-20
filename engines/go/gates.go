@@ -376,7 +376,7 @@ func writeBitsLines(p *Pack, lay *layout, rec *Item, data []byte, base int, acti
 	}
 	for _, ln := range lay.lines {
 		if w := ln.w; w != nil && !w.Const && active(ln) {
-			putBits(data, base+w.loc.bit, w.loc.blen, w.num, p.msb)
+			putBits(data, base+w.loc.bit, w.loc.blen, whenBitsValue(p, lay, rec, w, active), p.msb)
 		}
 	}
 	// The count of a group counted by a locator is the number of items,
@@ -387,4 +387,32 @@ func writeBitsLines(p *Pack, lay *layout, rec *Item, data []byte, base int, acti
 		}
 	}
 	return nil
+}
+
+// whenBitsValue is the value an encode writes for a `when` on the bits wire:
+// the value of the first active field line with a present key that covers
+// exactly the when's bits and whose value matches the when, else the when's
+// first value (0.20 rulings 3 and 15; a default does not count).
+func whenBitsValue(p *Pack, lay *layout, rec *Item, w *When, active func(line) bool) uint64 {
+	if len(w.ranges) <= 1 && (len(w.ranges) == 0 || w.ranges[0].lo == w.ranges[0].hi) {
+		return w.num
+	}
+	for _, ln := range lay.lines {
+		f := ln.f
+		if f == nil || !active(ln) || f.loc.bit != w.loc.bit || f.loc.blen != w.loc.blen || !f.has(rec) {
+			continue
+		}
+		v, ok, err := fieldValue(p, lay, f, rec)
+		if err != nil || !ok {
+			continue
+		}
+		scratch := make([]byte, (f.loc.blen+7)/8+1)
+		if putBitsField(p, f, v, scratch, 0) != nil {
+			continue
+		}
+		if raw := getBits(scratch, 0, f.loc.blen, p.msb); w.matchNum(raw) {
+			return raw
+		}
+	}
+	return w.num
 }

@@ -128,7 +128,7 @@ final class ProtobufCodec extends Codec<Map<Integer, ProtobufCodec.Val>> {
         }
         if (v == null) return false;
         if (when.present) return true;
-        return v.wt == 0 && v.num == when.number;
+        return v.wt == 0 && when.matches(v.num);
     }
 
     @Override
@@ -408,6 +408,25 @@ final class ProtobufCodec extends Codec<Map<Integer, ProtobufCodec.Val>> {
         }
     }
 
+    /**
+     * Ruling 3 of 0.20: a field line on the {@code when}'s path whose key the entity holds (a default does not
+     * count) wrote a varint that matches the {@code when}'s list or ranges: that value stays.
+     */
+    private static boolean keptByField(Pack.Scope scope, Pack.When w, Node have, Entity e) {
+        if (have == null || have.sub != null || have.wt == null || have.wt != 0) return false;
+        boolean held = false;
+        for (Pack.Line l : scope.lines) {
+            if (!(l instanceof Pack.Field) || !l.locator.equals(w.locator)) continue;
+            Pack.Field f = (Pack.Field) l;
+            if (e.get(f.key) != null && !f.suppressed(e)) { held = true; break; }
+        }
+        if (!held) return false;
+        long v = 0;
+        byte[] p = have.payload;
+        for (int i = 0; i < p.length && i < 10; i++) v |= (long) (p[i] & 0x7f) << (7 * i);
+        return w.matches(v);
+    }
+
     /** The groups, then the when and const values, of one scope. */
     private void encodeRest(TreeMap<Integer, Node> root, Pack.Scope scope, Entity e) {
         // groups: one occurrence per item; an absent or empty list writes nothing.
@@ -435,6 +454,7 @@ final class ProtobufCodec extends Codec<Map<Integer, ProtobufCodec.Val>> {
                     cur.put(last, empty);
                 }
             } else {
+                if (w.isList() && keptByField(scope, w, cur.get(last), e)) continue;
                 Node leaf = new Node();
                 leaf.wt = 0;
                 leaf.payload = PbTransform.varint(w.number);

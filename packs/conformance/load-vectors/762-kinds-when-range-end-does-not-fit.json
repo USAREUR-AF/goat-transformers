@@ -1,0 +1,9 @@
+{
+  "name": "762-kinds-when-range-end-does-not-fit",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey x int -\nkey y int -\nkey z int -\nkey a float -\nkey s string -\nkey label string -\nlist items \"a list\"\n"
+  ],
+  "pack": "format probe\nversion 0.20.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nword_bytes 1\nfield probe.x 0:0:8 uint\nkind a\nwhen 0:0:8 0..256\n",
+  "expect_error": "bad-directive"
+}

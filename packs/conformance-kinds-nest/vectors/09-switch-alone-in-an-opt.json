@@ -1,0 +1,13 @@
+{
+  "name": "switch-alone-in-an-opt",
+  "from": "conformance-kinds-nest",
+  "to": "conformance-kinds-nest",
+  "input": "0a00018280",
+  "expect": "0a00018280",
+  "model": {
+    "probe.v2": "1",
+    "probe.v3": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; switch blocks inside other blocks; v2 = 1, opt 1, v3 = 5: bits 1 00000101 then zero bits: 82 80"
+}

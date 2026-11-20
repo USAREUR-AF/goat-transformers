@@ -1,0 +1,23 @@
+# Conformance probe pack for a switch key whose line fails its transform on
+# decode (spec 0.20, ruling 35), most significant bit first. Public.
+#
+#   label : 8 uint via tbl (1 alpha), then by label
+#     alpha  x : 8
+#     (no else)
+#
+# A wire value with no table entry fails the decode with transform-decode
+# (ruling 4 of 0.6, ruling 9 of 0.1.1), not no-kind.
+format     conformance-kinds-fail
+version    0.20.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+map    tbl  1  alpha
+field  probe.label  8  uint  via tbl
+switch probe.label
+  case alpha
+    field  probe.x  8  uint
+end

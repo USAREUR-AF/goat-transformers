@@ -1,0 +1,13 @@
+{
+  "name": "switch-in-a-chain-part-else",
+  "from": "conformance-kinds-nest",
+  "to": "conformance-kinds-nest",
+  "input": "0a05070000",
+  "expect": "0a05070000",
+  "model": {
+    "probe.c1": "2",
+    "probe.v1": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; switch blocks inside other blocks; 05 = c1 2, fx 1: else, v1"
+}

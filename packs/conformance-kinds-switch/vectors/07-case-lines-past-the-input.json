@@ -1,0 +1,9 @@
+{
+  "name": "case-lines-past-the-input",
+  "from": "conformance-kinds-switch",
+  "to": "conformance-kinds-switch",
+  "input": "0105",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; case 01 reads y = 5; c1 is past the input (0.8 Errors)"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "bits-ruling-03-value-after-the-range-written",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-bits",
+  "input": "{\"x\":20,\"z\":7}",
+  "expect": "1407",
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 3, Encode of a `when` with a list or a range; hi; x = 20 matches the value listed after the range"
+}

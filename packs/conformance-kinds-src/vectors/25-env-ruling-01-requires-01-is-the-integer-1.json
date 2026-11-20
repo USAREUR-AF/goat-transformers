@@ -1,0 +1,9 @@
+{
+  "name": "env-ruling-01-requires-01-is-the-integer-1",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-env",
+  "input": "{\"n\":1,\"x\":0}",
+  "expect": "{\"n\":1,\"x\":0,\"k\":\"one\"}",
+  "source": "constructed",
+  "reference": "spec 0.20, Encode kind by value; ruling 1: `requires probe.n=01` holds for n = 1; x is held (0 holds): one"
+}

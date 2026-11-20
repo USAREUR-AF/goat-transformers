@@ -1,0 +1,9 @@
+{
+  "name": "record-chain-written-for-another-key-selects-case-0",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-record",
+  "input": "{\"val\":51,\"x\":1}",
+  "expect": "8002",
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; a switch key read inside an earlier `if` and chain block; x is content: the chain is written, y writes a zero bit and selects case 0, so val (else) is not written and p.2 is 0. FSPEC 80; 02 = y 0, x 000001, fx 0"
+}

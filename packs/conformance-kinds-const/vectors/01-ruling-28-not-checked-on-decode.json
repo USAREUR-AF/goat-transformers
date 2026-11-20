@@ -1,0 +1,12 @@
+{
+  "name": "ruling-28-not-checked-on-decode",
+  "from": "conformance-kinds-const",
+  "to": "conformance-kinds-const",
+  "input": "{\"x\":1,\"c\":\"zz\"}",
+  "expect": "{\"x\":1,\"c\":\"a,b\",\"d\":\"1..3\"}",
+  "model": {
+    "probe.x": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 28: a `const` value is one literal value; a comma in it is text; on decode a `const` is not checked (0.6)"
+}

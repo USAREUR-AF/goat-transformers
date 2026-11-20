@@ -1,0 +1,13 @@
+{
+  "name": "ruling-10-same-list-grouped-in-another-case",
+  "from": "conformance-kinds-items",
+  "to": "conformance-kinds-items",
+  "input": "020100050000",
+  "expect": "020100050000",
+  "model": {
+    "probe.nums.#": "1",
+    "probe.nums[0].probe.val": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; groups, presence and defaults in cases; ruling 10: x = 2: the same list with 16-bit items, grouped in another case"
+}

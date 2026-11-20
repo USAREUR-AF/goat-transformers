@@ -1,0 +1,13 @@
+{
+  "name": "list-second-text-writes-the-first",
+  "from": "conformance-kinds-json",
+  "to": "conformance-kinds-json",
+  "input": "{\"s\":\"q\",\"t\":\"b\",\"x\":1}",
+  "expect": "{\"s\":\"q\",\"t\":\"a\",\"x\":1}",
+  "model": {
+    "@kind": "ab",
+    "probe.s1": "q"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, Lists and ranges in `when`, on text wires; b is listed: ab; on encode the first listed value, a, is written"
+}

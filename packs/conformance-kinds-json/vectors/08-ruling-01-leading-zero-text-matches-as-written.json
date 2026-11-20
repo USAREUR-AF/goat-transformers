@@ -1,0 +1,13 @@
+{
+  "name": "ruling-01-leading-zero-text-matches-as-written",
+  "from": "conformance-kinds-json",
+  "to": "conformance-kinds-json",
+  "input": "{\"t\":\"01\",\"w\":4}",
+  "expect": "{\"t\":\"01\",\"w\":4}",
+  "model": {
+    "@kind": "lead",
+    "probe.w": "4"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, Lists and ranges in `when`, on text wires; ruling 1: `when` values compare as 0.5 states, text as written on text wires; 01 is not canonical number text, so it is written as a string (ruling 11 of 0.5)"
+}

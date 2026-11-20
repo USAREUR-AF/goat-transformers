@@ -1,0 +1,9 @@
+{
+  "name": "switch-case-01",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-switch",
+  "input": "{\"x\":1,\"y\":5,\"c1\":7}",
+  "expect": "010507",
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; Encode: x = 1: case 01"
+}

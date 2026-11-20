@@ -1,0 +1,9 @@
+{
+  "name": "field-absent-no-kind",
+  "from": "conformance-kinds-protobuf",
+  "to": "conformance-kinds-protobuf",
+  "input": "1002",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.20, Lists and ranges in `when`, on an integer protobuf `when`; an integer `when` holds only when the field is a varint equal to a value (0.5)"
+}

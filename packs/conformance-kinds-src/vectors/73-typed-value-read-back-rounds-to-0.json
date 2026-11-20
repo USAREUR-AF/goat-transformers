@@ -1,0 +1,9 @@
+{
+  "name": "typed-value-read-back-rounds-to-0",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-typed",
+  "input": "{\"label\":\"alpha\",\"x\":1,\"a\":0.2,\"w\":6,\"s1\":\"B\"}",
+  "expect": "010100064200",
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; Encode: a = 0.2 writes round(0.4) = 0, read back 0: case 0, w; B is not AB"
+}

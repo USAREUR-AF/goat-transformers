@@ -347,6 +347,12 @@ class Pack:
         if self.wire != "bits":
             refuse("wire-not-bits", "format `%s` is on the `%s` wire; the device profile compiles the `bits` wire only"
                    % (self.format, self.wire))
+        for t in rows:      # spec 0.20: kind selection beyond one value is not in the device profile
+            if (t[0] in ("switch", "case", "else")
+                    or (t[0] == "when" and len(t) > 2 and ("," in t[2] or ".." in t[2]))
+                    or (t[0] == "requires" and any("=" in a for a in t[1:]))):
+                refuse("unsupported-feature", "%s: `%s` with a list, a range, a `key=value` term or a `switch` "
+                       "(kind selection, spec 0.20) is not in the device profile" % (self.format, t[0]))
         if self.seq:
             self.rows, self.i = rows, 0
             self.names = []          # visible presences: (name, id, bits)

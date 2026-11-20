@@ -1,0 +1,13 @@
+{
+  "name": "ruling-02-item-kind-overlap-first-wins",
+  "from": "conformance-kinds-items",
+  "to": "conformance-kinds-items",
+  "input": "0001020700",
+  "expect": "0001010700",
+  "model": {
+    "probe.recs[0].@kind": "small",
+    "probe.recs[0].probe.y": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 2: 2 is in small's 1..3 and big's list; small is first. Re-encode writes small's 1"
+}

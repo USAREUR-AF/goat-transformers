@@ -1,0 +1,16 @@
+{
+  "name": "chain-part-not-read",
+  "from": "conformance-kinds-nest",
+  "to": "conformance-kinds-nest",
+  "input": "0a020000",
+  "expect": "0a020000",
+  "model": {
+    "probe.c1": "1",
+    "@absent": [
+      "probe.c2",
+      "probe.v1"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; switch blocks inside other blocks; fx 0: the part with the switch is not read; re-encode: case 1's c2 is absent, so the fx bit is 0"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "switch-key-of-another-case-dropped",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-switch",
+  "input": "{\"y\":5}",
+  "expect": "000000",
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; Encode: x absent writes zero bits: case 0; y belongs to case 01 and is not written"
+}

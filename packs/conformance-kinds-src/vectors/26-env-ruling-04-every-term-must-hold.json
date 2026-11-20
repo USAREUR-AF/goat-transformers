@@ -1,0 +1,9 @@
+{
+  "name": "env-ruling-04-every-term-must-hold",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-env",
+  "input": "{\"n\":1}",
+  "expect": "{\"n\":1,\"k\":\"other\"}",
+  "source": "constructed",
+  "reference": "spec 0.20, Encode kind by value; ruling 4: one's second line `requires probe.x` fails; n = 1 is not 2 or 3, 4, ...: other"
+}

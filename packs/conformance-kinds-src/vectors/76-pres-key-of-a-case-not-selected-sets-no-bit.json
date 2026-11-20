@@ -1,0 +1,9 @@
+{
+  "name": "pres-key-of-a-case-not-selected-sets-no-bit",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-pres",
+  "input": "{\"x\":1,\"z\":5}",
+  "expect": "000100",
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 21: an `if` naming a presence counts only when the innermost case it sits in is read; x = 1: z is case 2's: p.2 is 0 and the last opt is 0"
+}

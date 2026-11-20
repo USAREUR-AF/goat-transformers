@@ -1,0 +1,13 @@
+{
+  "name": "list-first-text",
+  "from": "conformance-kinds-json",
+  "to": "conformance-kinds-json",
+  "input": "{\"t\":\"a\",\"x\":1}",
+  "expect": "{\"t\":\"a\",\"x\":1}",
+  "model": {
+    "@kind": "ab",
+    "probe.x": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, Lists and ranges in `when`, on text wires; a is listed"
+}

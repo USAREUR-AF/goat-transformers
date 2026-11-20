@@ -1,0 +1,9 @@
+{
+  "name": "env-value-list-first",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-env",
+  "input": "{\"n\":2,\"x\":0}",
+  "expect": "{\"n\":2,\"x\":0,\"k\":\"two\"}",
+  "source": "constructed",
+  "reference": "spec 0.20, Encode kind by value; one needs n = 1; two lists 2"
+}

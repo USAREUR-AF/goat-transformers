@@ -1,0 +1,9 @@
+{
+  "name": "bits-ruling-03-field-value-in-the-list-written",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-bits",
+  "input": "{\"x\":4,\"y\":2}",
+  "expect": "0402",
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 3, Encode of a `when` with a list or a range; requires y: lo; x = 4 covers exactly the when's bits and matches lo's list, so 4 is written"
+}

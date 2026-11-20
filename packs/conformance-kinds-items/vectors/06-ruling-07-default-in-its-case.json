@@ -1,0 +1,12 @@
+{
+  "name": "ruling-07-default-in-its-case",
+  "from": "conformance-kinds-items",
+  "to": "conformance-kinds-items",
+  "input": "0580030000",
+  "expect": "0580030000",
+  "model": {
+    "probe.c1": "3"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; groups, presence and defaults in cases; x = 5: d.1, c1 = 3"
+}

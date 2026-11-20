@@ -1,0 +1,9 @@
+{
+  "name": "past-every-range",
+  "from": "conformance-kinds-bits",
+  "to": "conformance-kinds-bits",
+  "input": "1502",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.20, Lists and ranges in `when`; 21"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "ruling-11-no-kind-item-fails-the-decode",
+  "from": "conformance-kinds-items",
+  "to": "conformance-kinds-items",
+  "input": "000002010503",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; groups, presence and defaults in cases; ruling 11: item 1 has qty = 3, no case and no else: the item is no-kind and the whole decode fails"
+}

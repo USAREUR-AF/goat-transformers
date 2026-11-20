@@ -1,0 +1,9 @@
+{
+  "name": "typed-value-read-back-through-the-transform",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-typed",
+  "input": "{\"label\":\"beta\",\"y\":4,\"a\":2.4,\"z\":9,\"s1\":\"AB\",\"c1\":3}",
+  "expect": "02040509414203",
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; Encode: a = 2.4 writes round(4.8) = 5, which reads back as 2.5: case 2.50, z"
+}

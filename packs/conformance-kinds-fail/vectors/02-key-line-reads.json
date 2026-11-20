@@ -1,0 +1,13 @@
+{
+  "name": "key-line-reads",
+  "from": "conformance-kinds-fail",
+  "to": "conformance-kinds-fail",
+  "input": "0107",
+  "expect": "0107",
+  "model": {
+    "probe.label": "alpha",
+    "probe.x": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 35: a switch key whose line fails its transform fails the decode with transform-decode; 1 is alpha"
+}

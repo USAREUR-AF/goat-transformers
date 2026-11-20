@@ -1,0 +1,9 @@
+{
+  "name": "enc-present-key-not-its-default",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-enc",
+  "input": "{\"x\":0,\"c2\":5}",
+  "expect": "0005ff00000000",
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; Encode: the case is the one decode would select from the bits the key's line wrote; x = 0 is present: written, not the default 1: else, c2"
+}

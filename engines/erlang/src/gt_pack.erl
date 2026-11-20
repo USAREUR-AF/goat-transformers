@@ -63,7 +63,7 @@
                       binary_part(S, 0, min(7, byte_size(S))) =:= <<"octets:">>)).
 -export([parse/1, tokens/1, tokens_lax/1, load_error/3, distribution_atom/1,
          require_marking/2, yields/1, model_keys/1, named/1,
-         index/1, factor/1, number/1]).
+         index/1, factor/1, number/1, when_match/2, when_first/1, req_key/1]).
 
 %% Parse a pack.def text (binary or string) -> pack map. Line errors are
 %% raised as the file is read; then the checks that need the whole file; then
@@ -97,6 +97,7 @@ parse(Bin) ->
              armor => hex, armor_seen => false,
              encoding => none, encoding_seen => false,
              cur => common, late => [], gstack => [], sstack => [], bstack => [],
+             vchecks => [], has_switch => false, switch_n => 0,
              headers => #{}, listed_seen => false},
     P0 = lists:foldl(fun(L, P) ->
                              case tokens(L) of
@@ -210,7 +211,8 @@ parse(Bin) ->
     P = maps:without([cur, late, kind_names, table_names, gstack, sstack, text_seen, tlv_seen,
                       headers, listed_seen, armor_seen, body_kind_seen, bstack,
                       encoding_seen],
-                     P3#{defaults := lists:reverse(maps:get(defaults, P1)),
+                     P3#{vchecks := lists:reverse(maps:get(vchecks, P1)),
+                         defaults := lists:reverse(maps:get(defaults, P1)),
                          typemap := lists:reverse(maps:get(typemap, P1)),
                          sources := lists:reverse(maps:get(sources, P1)),
                          uses := lists:reverse(maps:get(uses, P1)),
@@ -316,7 +318,10 @@ yields({hms_dmy, _})  -> int.
 named(#{common := Common, defaults := Ds, kinds := Kinds}) ->
     Scopes = [{Common, Ds} | [{maps:get(lines, K), maps:get(defaults, K)} || K <- Kinds]],
     lists:append([named_scope(Ls, D) || {Ls, D} <- Scopes])
-        ++ [{K, requires} || Kd <- Kinds, K <- maps:get(requires, Kd)].
+        ++ [req_named(K) || Kd <- Kinds, K <- maps:get(requires, Kd)].
+
+req_named({K, _}) -> {K, requires_eq};
+req_named(K) -> {K, requires}.
 
 named_scope(Lines, Defaults) ->
     lists:append(
@@ -332,7 +337,10 @@ named_scope(Lines, Defaults) ->
                [{List, list} | named_scope(Ls, Ds)] ++
                    lists:append([named_scope(maps:get(lines, K), maps:get(defaults, K))
                                  || K <- Ks]) ++
-                   [{R, requires} || K <- Ks, R <- maps:get(requires, K)];
+                   [req_named(R) || K <- Ks, R <- maps:get(requires, K)];
+           {switch, _, _, Cases, Else} ->
+               lists:append([named_scope(maps:get(lines, C), maps:get(defaults, C))
+                             || C <- switch_bodies(Cases, Else)]);
            _ ->
                case seq_bodies(L) of
                    [] -> [];
@@ -352,7 +360,12 @@ seq_bodies({len, _, _, _, Body}) -> [Body];
 seq_bodies({chain, First, Rest, _}) -> [First | Rest];
 seq_bodies({uext, Body}) -> [Body];
 seq_bodies({uchoice, _, _, Alts}) -> [Body || {_, Body} <- Alts];
+seq_bodies({switch, _, _, Cases, Else}) -> [maps:get(lines, C) || C <- switch_bodies(Cases, Else)];
 seq_bodies(_) -> [].
+
+%% The cases of a switch line, then its else when it has one.
+switch_bodies(Cases, none) -> Cases;
+switch_bodies(Cases, Else) -> Cases ++ [Else].
 
 %% Union of mapped keys over common and all kinds, in first appearance order.
 %% A list is named `<list>[]` and an item key `<list>[].<key>`, nested lists
@@ -436,7 +449,9 @@ pack_directives() ->
      %% an xml element written when empty (Version 0.18)
      <<"element">>,
      %% ASN.1 unaligned PER (Version 0.19): directives on every wire (ruling 21)
-     <<"encoding">>, <<"ext">>, <<"choice">>, <<"alt">>].
+     <<"encoding">>, <<"ext">>, <<"choice">>, <<"alt">>,
+     %% a switch on a decoded value (Version 0.20)
+     <<"switch">>, <<"case">>, <<"else">>].
 
 %% The lines that stand after the `wire` line (ruling 5b of 0.11).
 after_wire() ->
@@ -475,6 +490,10 @@ arg_count_ok(Dir, N) ->
                 %% `ext` and `choice <n> [ext]` (0.19)
                 <<"ext">> -> N =:= 0;
                 <<"choice">> -> N =:= 1 orelse N =:= 2;
+                %% a switch block (ruling 39 of 0.20)
+                <<"switch">> -> N =:= 1;
+                <<"case">> -> N =:= 1;
+                <<"else">> -> N =:= 0;
                 _ -> N >= 1                       % requires, also, if, length
             end
     end.
@@ -560,7 +579,8 @@ known_directives() ->
      <<"chain">>, <<"fx">>, <<"length">>, <<"also">>,
      <<"delimiter">>, <<"start">>, <<"checksum">>, <<"tag">>, <<"key">>, <<"armor">>,
      <<"element">>,
-     <<"encoding">>, <<"ext">>, <<"choice">>, <<"alt">>].
+     <<"encoding">>, <<"ext">>, <<"choice">>, <<"alt">>,
+     <<"switch">>, <<"case">>, <<"else">>].
 
 in_group(#{gstack := Stack}) -> Stack =/= [].
 
@@ -630,7 +650,8 @@ apply_line([<<"requires">> | Keys], #{cur := Cur} = P) when Keys =/= [] ->
         common ->
             load_error('bad-directive', "requires before the first kind line", []);
         #{requires := R} ->
-            P#{cur := Cur#{requires := R ++ Keys}}
+            {Terms, P1} = req_terms(Keys, P),
+            P1#{cur := Cur#{requires := R ++ Terms}}
     end;
 apply_line([<<"when">>, LocS, ValS], #{has_kinds := HasKinds} = P0) ->
     P1 = case HasKinds of
@@ -640,7 +661,7 @@ apply_line([<<"when">>, LocS, ValS], #{has_kinds := HasKinds} = P0) ->
     Wire = need_wire(P1),
     Loc = parse_loc(Wire, LocS, P1),
     no_pair(Loc, "when", LocS),
-    {Val, P2} = fixed_value(wh, Wire, Loc, LocS, ValS, P1),
+    {Val, P2} = when_value(Wire, Loc, LocS, ValS, P1),
     add_line({wh, Loc, Val, LocS}, P2);
 apply_line([<<"const">>, LocS, ValS], P0) ->
     Wire = need_wire(P0),
@@ -791,6 +812,29 @@ apply_line([Dir | Args], _P) ->
     end.
 
 late(Check, #{late := L} = P) -> P#{late := [Check | L]}.
+
+%% The terms of a `requires` line (0.20): a key, or `<key>=<value>[,...]`
+%% -> Key | {Key, [ValueText]}, split at the first `=`. Each `=` term is a
+%% value check of the load, in line order (ruling 19).
+req_terms(Toks, P) ->
+    Terms = [req_term(T) || T <- Toks],
+    {Terms, lists:foldl(fun({K, Vals}, Acc) -> vcheck({req, K, Vals}, Acc);
+                           (_, Acc) -> Acc
+                        end, P, Terms)}.
+
+req_term(T) ->
+    case binary:split(T, <<"=">>) of
+        [K] -> K;
+        [<<>>, _] -> load_error('bad-directive', "requires ~s names no key before the =", [T]);
+        [_, <<>>] -> load_error('bad-directive', "requires ~s lists no value after the =", [T]);
+        [K, Rest] -> {K, value_items(Rest, ["requires ", T])}
+    end.
+
+%% The key of a `requires` term.
+req_key({K, _}) -> K;
+req_key(K) -> K.
+
+vcheck(C, #{vchecks := V} = P) -> P#{vchecks := [C | V]}.
 
 %% Field options after the transform, in any order.
 %% An unknown or repeated option is bad-directive.
@@ -1438,6 +1482,115 @@ fixed_value(const, _Text, _Loc, LocS, <<"present">>, _P) ->
 fixed_value(_Which, _Text, _Loc, _LocS, <<"=", V/binary>>, P) -> {{text, V, true}, P};
 fixed_value(_Which, _Text, _Loc, _LocS, V, P) -> {{text, V, false}, P}.
 
+%% ---- `when` value lists and ranges (0.20) ----
+%% A `when` value is a list of values separated by commas; on `bits` and
+%% `protobuf` an item may be a range `<lo>..<hi>`. One plain value keeps its
+%% 0.5 form (an integer, `present`, or {text, T, Forced}); a list, or a
+%% range, is {anyof, [Item]}: Item = integer() | {Lo, Hi} on bits and
+%% protobuf, {text, T, Forced} on the text wires. The first item is the one
+%% written.
+%% The `text` wire keeps one literal value, a comma included, and `tlv`
+%% takes no list or range (ruling 38 of 0.20).
+when_value(text, Loc, LocS, ValS, P) -> fixed_value(wh, text, Loc, LocS, ValS, P);
+when_value(tlv, Loc, LocS, ValS, P) ->
+    {Val, P1} = fixed_value(wh, tlv, Loc, LocS, ValS, P),
+    case binary:match(ValS, <<",">>) of
+        nomatch -> {Val, P1};
+        _ -> {Val, late({bad, "when ~s ~s: a tlv when takes one value, not a list", [LocS, ValS]}, P1)}
+    end;
+when_value(Wire, Loc, LocS, ValS, P) ->
+    Items = value_items(ValS, ["when ", LocS]),
+    Numeric = Wire =:= bits orelse Wire =:= protobuf,
+    case Items of
+        [<<"present">>] -> fixed_value(wh, Wire, Loc, LocS, ValS, P);
+        _ ->
+            case lists:member(<<"present">>, Items) of
+                true -> load_error('bad-directive', "when ~s: present may not be combined with other values",
+                                   [LocS]);
+                false -> ok
+            end,
+            case {Numeric, Items} of
+                {false, [_]} -> fixed_value(wh, Wire, Loc, LocS, ValS, P);
+                {false, _} -> {{anyof, [text_item(I) || I <- Items]}, P};
+                {true, _} ->
+                    Parsed = [num_item(I, LocS) || I <- Items],
+                    Bits = case Wire of
+                               bits -> element(2, Loc);
+                               protobuf -> 64
+                           end,
+                    case Parsed of
+                        [N] when is_integer(N) -> fixed_value(wh, Wire, Loc, LocS, ValS, P);
+                        _ ->
+                            P1 = case lists:all(fun(I) -> item_fits(I, Bits) end, Parsed) of
+                                     true -> P;
+                                     false -> late({bad, "when ~s: a value of ~s does not fit the field",
+                                                    [LocS, ValS]}, P)
+                                 end,
+                            {{anyof, Parsed}, P1}
+                    end
+            end
+    end.
+
+%% The value of a sequential `when` of Len bits.
+seq_when_value(ValS, Len) ->
+    Items = value_items(ValS, ["when ", integer_to_list(Len)]),
+    Parsed = [num_item(I, ValS) || I <- Items],
+    case lists:all(fun(I) -> item_fits(I, Len) end, Parsed) of
+        true -> ok;
+        false -> load_error('bad-directive', "when value ~s does not fit ~p bits", [ValS, Len])
+    end,
+    case Parsed of
+        [N] when is_integer(N) -> N;
+        _ -> {anyof, Parsed}
+    end.
+
+text_item(<<"=", V/binary>>) -> {text, V, true};
+text_item(V) -> {text, V, false}.
+
+%% The items of a comma-separated value list; `""` alone is the one empty
+%% text, and an empty item is bad-directive (ruling 16 of 0.20).
+value_items(<<>>, _What) -> [<<>>];
+value_items(ValS, What) ->
+    Items = binary:split(ValS, <<",">>, [global]),
+    case lists:member(<<>>, Items) of
+        true -> load_error('bad-directive', "~s: an empty item in the list ~s", [What, ValS]);
+        false -> Items
+    end.
+
+%% An unsigned decimal value or a range lo..hi with lo =< hi.
+num_item(I, What) ->
+    case binary:split(I, <<"..">>, [global]) of
+        [D] ->
+            case uint(D) of
+                N when is_integer(N) -> N;
+                error -> load_error('bad-directive', "~s: ~s is not an unsigned decimal integer", [What, I])
+            end;
+        [A, B] ->
+            case {uint(A), uint(B)} of
+                {Lo, Hi} when is_integer(Lo), is_integer(Hi), Lo =< Hi -> {Lo, Hi};
+                {Lo, Hi} when is_integer(Lo), is_integer(Hi) ->
+                    load_error('bad-directive', "~s: the range ~s has its low end above its high end", [What, I]);
+                _ -> load_error('bad-directive', "~s: ~s is not a range of unsigned decimal integers", [What, I])
+            end;
+        _ -> load_error('bad-directive', "~s: ~s is not a value or a range", [What, I])
+    end.
+
+item_fits({_Lo, Hi}, Bits) -> Hi < (1 bsl Bits);
+item_fits(N, Bits) -> N < (1 bsl Bits).
+
+%% Does a wire value match a `when` value (an integer or an anyof list)?
+when_match(V, Val) when is_integer(Val) -> V =:= Val;
+when_match(V, {anyof, Items}) when is_integer(V) ->
+    lists:any(fun({Lo, Hi}) -> V >= Lo andalso V =< Hi;
+                 (N) -> V =:= N
+              end, Items);
+when_match(_V, _Val) -> false.
+
+%% The value a `when` writes: its value, or the first listed (a range's lo).
+when_first({anyof, [{Lo, _} | _]}) -> Lo;
+when_first({anyof, [First | _]}) -> First;
+when_first(V) -> V.
+
 %% ===================================================================
 %% transforms: each is valid on one kind of wire
 %% ===================================================================
@@ -1782,6 +1935,11 @@ scan_bare(Bin, 0) ->
 %%   {len, Len, bytes | bits, Plus, Body} | {lenwhole, Len, Plus}
 %%   {sgroup, List, {count, Len} | while | more | fx,
 %%            #{lines, defaults, kinds => [Kind]}}
+%%   {switch, Key, Ref, [Case], none | Case}   (0.20) Case = #{vals, lines,
+%%        defaults, named}: vals the case values (canonical text once the
+%%        pack is loaded, [] for the else), named the {PresenceId, Bit}
+%%        that the case's own `if` lines name (ruling 21)
+%% A kind's `requires` holds terms: Key | {Key, [ValueText]} (0.20).
 %% The `when` lines of a kind are the first lines of its `lines`.
 %% While the file is read a presence is {presence, Name, Size} and an `if`
 %% names {Name, Bit, Negated}; seq_resolve/1 gives every presence line an id,
@@ -1793,6 +1951,11 @@ seq_line([Dir | _] = Tokens, #{sstack := Stack} = P) ->
                  <<"delimiter">>, <<"start">>, <<"checksum">>, <<"tag">>, <<"key">>,
                  <<"distribution">>, <<"source">>, <<"uses">>, <<"typemap">>, <<"map">>,
                  <<"root">>, <<"word_bytes">>],
+    case Stack of
+        [#{type := switch, phase := none} | _] when Dir =/= <<"case">>, Dir =/= <<"else">> ->
+            load_error('bad-directive', "~s stands between a switch and its first case", [Dir]);
+        _ -> ok
+    end,
     case lists:member(Dir, PackLevel) of
         true when Stack =/= [] ->
             load_error('bad-directive', "~s is not allowed inside a block", [Dir]);
@@ -1858,7 +2021,7 @@ seq_apply([<<"when">>, LenS, ValS], #{sstack := Stack} = P) ->
              _ -> false
          end,
     case Ok of
-        true -> seq_add({swhen, Len, seq_value(ValS, Len)}, P);
+        true -> seq_add({swhen, Len, seq_when_value(ValS, Len)}, P);
         false -> load_error('bad-directive',
                             "when ~s ~s stands after another line of its kind or inside a block",
                             [LenS, ValS])
@@ -1940,6 +2103,48 @@ seq_apply([<<"alt">>, IS], #{sstack := Stack} = P) ->
             P#{sstack := [F1#{alt := I, lines := []} | Rest]};
         _ -> load_error('bad-directive', "alt ~s outside a choice", [IS])
     end;
+%% `switch <key>` / `case <value>[,...]` / `else` / `end` (0.20)
+seq_apply([<<"switch">> | Args], #{switch_n := N} = P) ->
+    Key = case Args of
+              [K] -> K;
+              [] -> load_error('bad-directive', "switch names no key", []);
+              _ -> load_error('bad-directive', "switch names one key, not ~p", [length(Args)])
+          end,
+    case lists:member(Key, scope_keys(P)) of
+        true -> ok;
+        false -> load_error('bad-directive',
+                            "switch ~s: the key is not mapped by a field or also line before it in its scope",
+                            [Key])
+    end,
+    seq_push(#{type => switch, hdr => {Key, N}, cases => [], phase => none, else_body => none},
+             P#{switch_n := N + 1, has_switch := true});
+seq_apply([<<"case">> | Args], #{sstack := Stack} = P) ->
+    case Stack of
+        [#{type := switch, phase := Phase, hdr := {Key, Ref}} = F | Rest] ->
+            case Phase of
+                in_else -> load_error('bad-directive', "switch ~s: a case after the else", [Key]);
+                _ -> ok
+            end,
+            ValS = case Args of
+                       [V] -> V;
+                       [] -> load_error('bad-directive', "case lists no value", []);
+                       _ -> load_error('bad-directive', "case: the values are one comma-separated list", [])
+                   end,
+            Vals = value_items(ValS, ["case ", ValS]),
+            F1 = (switch_flush(F))#{phase := {'case', Vals}},
+            vcheck({'case', Ref, Key, Vals}, P#{sstack := [F1 | Rest]});
+        _ -> load_error('bad-directive', "case outside a switch", [])
+    end;
+seq_apply([<<"else">>], #{sstack := Stack} = P) ->
+    case Stack of
+        [#{type := switch, phase := none, hdr := {Key, _}} | _] ->
+            load_error('bad-directive', "switch ~s: else before any case", [Key]);
+        [#{type := switch, phase := in_else, hdr := {Key, _}} | _] ->
+            load_error('bad-directive', "switch ~s has two else lines", [Key]);
+        [#{type := switch} = F | Rest] ->
+            P#{sstack := [(switch_flush(F))#{phase := in_else} | Rest]};
+        _ -> load_error('bad-directive', "else outside a switch", [])
+    end;
 seq_apply([<<"end">>], #{sstack := Stack} = P) ->
     case Stack of
         [] -> load_error('bad-directive', "end with no open block", []);
@@ -1965,13 +2170,15 @@ seq_apply([<<"requires">> | Keys] = Tokens, #{sstack := Stack} = P) when Keys =/
     case Stack of
         [] -> apply_line(Tokens, P);
         [#{type := group, cur := #{requires := R} = K} = F | Rest] ->
-            P#{sstack := [F#{cur := K#{requires := R ++ Keys}} | Rest]};
+            {Terms, P1} = req_terms(Keys, P),
+            P1#{sstack := [F#{cur := K#{requires := R ++ Terms}} | Rest]};
         _ -> load_error('bad-directive', "requires outside a kind", [])
     end;
 seq_apply([<<"default">>, Key, Val] = Tokens, #{sstack := Stack} = P) ->
     %% a default belongs to the scope its block stands in: the nearest group
     %% body (its open kind), else the message
-    {Inner, Outer} = lists:splitwith(fun(#{type := T}) -> T =/= group end, Stack),
+    %% (0.20) a default in a case or else belongs to that case
+    {Inner, Outer} = lists:splitwith(fun(#{type := T}) -> T =/= group andalso T =/= switch end, Stack),
     case Outer of
         [] -> apply_line(Tokens, P);
         [#{cur := none, defaults := D} = F | Rest] ->
@@ -2113,6 +2320,11 @@ seq_close(#{type := chain, lines := Ls}) ->
     [First | Rest] = seq_parts(lists:reverse(Ls), [], []),
     %% the part after a closing fx line is empty and is not a part
     {chain, First, case EndsFx of true -> lists:droplast(Rest); false -> Rest end, EndsFx};
+seq_close(#{type := switch, phase := none, hdr := {Key, _}}) ->
+    load_error('bad-directive', "switch ~s has no case", [Key]);
+seq_close(#{type := switch, hdr := {Key, Ref}} = F0) ->
+    #{cases := Cs, else_body := Else} = switch_flush(F0),
+    {switch, Key, Ref, lists:reverse(Cs), Else};
 seq_close(#{type := group, hdr := {List, Mode}} = F0) ->
     #{lines := Ls, defaults := Ds, kinds := Ks} = seq_close_kind(F0),
     Common = lists:reverse(Ls),
@@ -2125,6 +2337,55 @@ seq_close(#{type := group, hdr := {List, Mode}} = F0) ->
 
 tl_or_empty([]) -> [];
 tl_or_empty([_ | T]) -> T.
+
+%% The lines and defaults read for the open case or else, put in its place.
+switch_flush(#{phase := none} = F) -> F;
+switch_flush(#{phase := Phase, lines := Ls, defaults := Ds, cases := Cs} = F) ->
+    Body = #{lines => lists:reverse(Ls), defaults => lists:reverse(Ds)},
+    F1 = F#{lines := [], defaults := []},
+    case Phase of
+        {'case', Vals} -> F1#{cases := [Body#{vals => Vals} | Cs]};
+        in_else -> F1#{else_body := Body#{vals => []}}
+    end.
+
+%% The keys mapped so far in the scope of the line being read (a `switch`
+%% key must be one): the message's common lines and the open kind's, or,
+%% inside a group body, the body's common lines and its open item kind's; at
+%% any block depth, the cases of earlier switches and the earlier cases of
+%% an open switch included. A group body is another scope.
+scope_keys(#{sstack := Stack} = P) ->
+    {Inner, Outer} = lists:splitwith(fun(#{type := T}) -> T =/= group end, Stack),
+    Base = case Outer of
+               [] ->
+                   maps:get(common, P) ++ case maps:get(cur, P) of
+                                              common -> [];
+                                              #{lines := KLs} -> KLs
+                                          end;
+               [#{lines := GLs, cur := GCur} | _] ->
+                   GLs ++ case GCur of
+                              none -> [];
+                              #{lines := KLs} -> KLs
+                          end
+           end,
+    deep_keys(Base) ++
+        lists:append([deep_keys(Ls) ++
+                          case F of
+                              #{type := switch, cases := Cs} ->
+                                  deep_keys(lists:append([maps:get(lines, C) || C <- Cs]));
+                              %% the earlier alts of an open choice (0.19), as
+                              %% the earlier cases of an open switch
+                              #{type := choice, alts := Alts} ->
+                                  deep_keys(lists:append([B || {_, B} <- Alts]));
+                              _ -> []
+                          end || #{lines := Ls} = F <- Inner]).
+
+deep_keys(Lines) ->
+    lists:append([case L of
+                      {sfield, Keys, _, _, _, _, _, _, _} -> [K || {K, _} <- Keys];
+                      {sgroup, _, _, _} -> [];
+                      _ when is_tuple(L) -> deep_keys(lists:append(seq_bodies(L)));
+                      _ -> []
+                  end || L <- Lines]).
 
 seq_parts([], Cur, Acc) -> lists:reverse([lists:reverse(Cur) | Acc]);
 seq_parts([fx | Rest], Cur, Acc) -> seq_parts(Rest, [], [lists:reverse(Cur) | Acc]);
@@ -2139,9 +2400,10 @@ seq_resolve(#{common := Common, kinds := Kinds, has_kinds := HasKinds} = P) ->
         true -> load_error('bad-directive', "when in a pack with no kind line", []);
         false -> ok
     end,
-    {Common1, Kinds1, St} = seq_res_scope(Common, Kinds, #{}, {0, #{}}),
+    {Common1, Kinds1, St} = seq_res_scope(Common, Kinds, #{}, {0, #{}, #{}, {[], #{}}}),
     seq_check_lists(Common1, Kinds1),
-    P#{common := Common1, kinds := Kinds1, presence_named => element(2, St)}.
+    P#{common := Common1, kinds := Kinds1, presence_named => element(2, St),
+       presence_static => element(3, St)}.
 
 %% ---- a list in two groups (rulings 23 and 33 of 0.8) ----
 %% Within one scope (the common lines with one kind's, of the message or of
@@ -2189,6 +2451,10 @@ seq_groups(Lines, Block) ->
            %% each alt of a choice is a block of its own (ruling 20 of 0.19)
            {uchoice, _, _, Alts} ->
                lists:append([seq_groups(B, Block ++ [make_ref()]) || {_, B} <- Alts]);
+           %% two cases are different blocks (ruling 10 of 0.20)
+           {switch, _, _, Cases, Else} ->
+               lists:append([seq_groups(maps:get(lines, C), Block ++ [make_ref()])
+                             || C <- switch_bodies(Cases, Else)]);
            _ -> seq_groups(lists:append(seq_bodies(L)), Block)
        end || L <- Lines, is_tuple(L)]).
 
@@ -2213,28 +2479,51 @@ seq_res_scope(Common, Kinds, Env, St0) ->
 
 %% seq_res(Lines, Visible, DeclaredInThisBlock, {NextId, Named}, Acc)
 seq_res([], Env, Decl, St, Acc) -> {lists:reverse(Acc), Env, Decl, St};
-seq_res([{presence, Name, Size} | Rest], Env, Decl, {Next, Named}, Acc) ->
+%% St = {NextId, Named, Static, CaseAcc}: Named the bits every `if` names,
+%% Static those named by an `if` in no case; inside a case CaseAcc collects
+%% the {Id, Bit} its own `if` lines name (ruling 21 of 0.20), else `top`.
+seq_res([{presence, Name, Size} | Rest], Env, Decl, {Next, Named, Static, {CStack, _} = CA}, Acc) ->
     case maps:is_key(Name, Decl) of
         true -> load_error('bad-directive', "presence ~s is declared twice in one block", [Name]);
         false -> ok
     end,
-    seq_res(Rest, Env#{Name => {Next, Size}}, Decl#{Name => true},
-            {Next + 1, Named#{Next => []}}, [{presence, Next, Size} | Acc]);
-seq_res([{ifb, Conds, Body} | Rest], Env, Decl, {Next, Named0}, Acc) ->
+    seq_res(Rest, Env#{Name => {Next, Size, CStack}}, Decl#{Name => true},
+            {Next + 1, Named#{Next => []}, Static#{Next => []}, CA}, [{presence, Next, Size} | Acc]);
+seq_res([{switch, Key, Ref, Cases, Else} | Rest], Env, Decl, St, Acc) ->
+    {Cases1, St1} = lists:mapfoldl(fun(C, S) -> case_res(C, Env, S) end, St, Cases),
+    {Else1, St2} = case Else of
+                       none -> {none, St1};
+                       _ -> case_res(Else, Env, St1)
+                   end,
+    seq_res(Rest, Env, Decl, St2, [{switch, Key, Ref, Cases1, Else1} | Acc]);
+seq_res([{ifb, Conds, Body} | Rest], Env, Decl, {Next, Named0, Static0, CA0}, Acc) ->
     {Conds1, Named1} =
         lists:mapfoldl(
           fun({Name, Bit, Neg}, Named) ->
                   case maps:find(Name, Env) of
                       error ->
                           load_error('bad-directive', "if names presence ~s, which is not visible here", [Name]);
-                      {ok, {_, Size}} when is_integer(Size), Bit > Size ->
+                      {ok, {_, Size, _}} when is_integer(Size), Bit > Size ->
                           load_error('bad-directive', "if names bit ~p of presence ~s, which has ~p bits",
                                      [Bit, Name, Size]);
-                      {ok, {Id, _}} ->
+                      {ok, {Id, _, _}} ->
                           {{Id, Bit, Neg}, maps:update_with(Id, fun(Bs) -> ordsets:add_element(Bit, Bs) end, Named)}
                   end
           end, Named0, Conds),
-    {Body1, St1} = seq_res_block(Body, Env, {Next, Named1}),
+    %% the `if` counts when the innermost case that holds it and not the
+    %% presence is read; with no such case it always counts (ruling 30)
+    {CStack, CNamed0} = CA0,
+    {Static1, CNamed1} =
+        lists:foldl(
+          fun({{Name, _, _}, {Id, Bit, _}}, {S, CN}) ->
+                  {ok, {_, _, PStack}} = maps:find(Name, Env),
+                  case [C || C <- CStack, not lists:member(C, PStack)] of
+                      [] -> {maps:update_with(Id, fun(Bs) -> ordsets:add_element(Bit, Bs) end, S), CN};
+                      [C | _] -> {S, maps:update_with(C, fun(L) -> [{Id, Bit} | L] end, [{Id, Bit}], CN)}
+                  end
+          end, {Static0, CNamed0}, lists:zip(Conds, Conds1)),
+    CA1 = {CStack, CNamed1},
+    {Body1, St1} = seq_res_block(Body, Env, {Next, Named1, Static1, CA1}),
     seq_res(Rest, Env, Decl, St1, [{ifb, Conds1, Body1} | Acc]);
 seq_res([{opt, Body} | Rest], Env, Decl, St, Acc) ->
     {Body1, St1} = seq_res_block(Body, Env, St),
@@ -2264,6 +2553,15 @@ seq_res([{sgroup, List, Mode, #{lines := Ls, kinds := Ks} = Body} | Rest], Env, 
     {Ls1, Ks1, St1} = seq_res_scope(Ls, Ks, Env, St),
     seq_res(Rest, Env, Decl, St1, [{sgroup, List, Mode, Body#{lines := Ls1, kinds := Ks1}} | Acc]);
 seq_res([L | Rest], Env, Decl, St, Acc) -> seq_res(Rest, Env, Decl, St, [L | Acc]).
+
+%% Each case and else body is a block (ruling 8 of 0.20) and collects the
+%% presence bits its own `if` lines name.
+case_res(#{lines := Body} = C, Env, {N, Nm, Stt, {CStack, CNamed}}) ->
+    Me = make_ref(),
+    {Body1, _, _, {N1, Nm1, Stt1, {_, CNamed1}}} =
+        seq_res(Body, Env, #{}, {N, Nm, Stt, {[Me | CStack], CNamed}}, []),
+    {C#{lines := Body1, named => lists:usort(maps:get(Me, CNamed1, []))},
+     {N1, Nm1, Stt1, {CStack, maps:remove(Me, CNamed1)}}}.
 
 seq_res_block(Body, Env, St) ->
     {Body1, _, _, St1} = seq_res(Body, Env, #{}, St, []),

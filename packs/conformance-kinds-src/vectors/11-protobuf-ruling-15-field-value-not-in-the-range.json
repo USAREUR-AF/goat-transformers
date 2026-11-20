@@ -1,0 +1,9 @@
+{
+  "name": "protobuf-ruling-15-field-value-not-in-the-range",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-protobuf",
+  "input": "{\"w\":5}",
+  "expect": "1807",
+  "source": "constructed",
+  "reference": "spec 0.20 rulings 3 and 15, a field on the `when`'s protobuf path; requires w: c; w = 5 does not match: the first value 7 is written"
+}

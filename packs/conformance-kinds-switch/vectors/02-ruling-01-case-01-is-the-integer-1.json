@@ -1,0 +1,19 @@
+{
+  "name": "ruling-01-case-01-is-the-integer-1",
+  "from": "conformance-kinds-switch",
+  "to": "conformance-kinds-switch",
+  "input": "010507",
+  "expect": "010507",
+  "model": {
+    "probe.x": "1",
+    "probe.y": "5",
+    "probe.c1": "7",
+    "@absent": [
+      "probe.c2",
+      "probe.z",
+      "probe.w"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; ruling 1: `case 01` holds the integer 1"
+}

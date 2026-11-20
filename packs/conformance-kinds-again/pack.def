@@ -1,0 +1,34 @@
+# Conformance probe pack for `switch` (spec 0.20): a key past a length extent
+# and a key read again inside a case. Most significant bit first. Public.
+#
+#   length 8 (bytes): x : 8                 an extent of 0 leaves x absent
+#   switch x: 1 y : 8, else z : 8           x absent reads else (ruling 14)
+#   c1 : 8, absent 255
+#   switch c1: 1 c2 : 8, else c1 : 8 again and v1 : 8
+#                                           the second c1 does not reselect
+#                                           (ruling 9)
+format     conformance-kinds-again
+version    0.20.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+length 8
+  field  probe.x  8  uint
+end
+switch probe.x
+  case 1
+    field  probe.y  8  uint
+  else
+    field  probe.z  8  uint
+end
+field  probe.c1  8  uint  absent 255
+switch probe.c1
+  case 1
+    field  probe.c2  8  uint
+  else
+    field  probe.c1  8  uint
+    field  probe.v1  8  uint
+end

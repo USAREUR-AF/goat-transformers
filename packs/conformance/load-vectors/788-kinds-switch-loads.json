@@ -1,0 +1,8 @@
+{
+  "name": "788-kinds-switch-loads",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey x int -\nkey y int -\nkey z int -\nkey a float -\nkey s string -\nkey label string -\nlist items \"a list\"\n"
+  ],
+  "pack": "format probe\nversion 0.20.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nlayout sequential\nfield probe.x 8 uint\npresence p 2\nswitch probe.x\n  case 1,2\n    if p.1\n      field probe.y 8 uint\n    end\n  case 3\n  case 4\n    switch probe.x\n      case 4\n        field probe.z 8 uint\n    end\n  else\n    field probe.y 4 uint\nend\nfield probe.z 8 uint\n"
+}

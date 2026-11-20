@@ -1,0 +1,13 @@
+{
+  "name": "ruling-15-field-on-the-path-roundtrip",
+  "from": "conformance-kinds-protobuf",
+  "to": "conformance-kinds-protobuf",
+  "input": "1808",
+  "expect": "1808",
+  "model": {
+    "@kind": "c",
+    "probe.w": "8"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20 rulings 3 and 15, a field on the `when`'s protobuf path; 8 is in 7..9: c; w = 8 matches and is written"
+}

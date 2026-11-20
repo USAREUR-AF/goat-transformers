@@ -519,6 +519,20 @@ void build_scope(const Pack& p, const std::vector<LineRef>& lines, const EncodeS
             n = &n->children[loc.path[k]];
         }
         if (blocked || w->present || n->is_raw) continue;
+        // v0.20 ruling 3: a field line with a present key on the same path whose
+        // varint matches the `when` keeps its value.
+        if (line.when && n->is_leaf && !n->is_const && !n->is_sentinel && n->field &&
+            src.e.fields.count(n->field->key) && protobuf_wire_type(n->transform) == 0) {
+            std::uint64_t scalar = 0;
+            std::string bytes;
+            bool ok = true;
+            try {
+                encode_protobuf_value(n->transform, n->value, scalar, bytes);
+            } catch (const std::invalid_argument&) {
+                ok = false;
+            }
+            if (ok && w->holds_number(scalar)) continue;
+        }
         n->children.clear();
         n->is_leaf = true;
         n->is_const = true;
@@ -536,7 +550,7 @@ Entity decode_protobuf(const Pack& p, const std::string& bytes) {
         parse_protobuf_locator(w.locator, loc);  // validated at pack load
         const WireField* wf = find_leaf(p, msg, loc.path, true);
         if (!wf) return false;
-        return w.present || (wf->wt == 0 && wf->scalar == w.number);
+        return w.present || (wf->wt == 0 && w.holds_number(wf->scalar));
     });
 
     Entity e;

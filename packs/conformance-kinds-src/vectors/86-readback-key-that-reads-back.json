@@ -1,0 +1,9 @@
+{
+  "name": "readback-key-that-reads-back",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-readback",
+  "input": "{\"label\":\"alpha\",\"y\":2}",
+  "expect": "0102",
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 31: a switch key that does not read back on encode is transform-encode: the output would not decode; alpha: 1"
+}

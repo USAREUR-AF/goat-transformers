@@ -1,0 +1,9 @@
+{
+  "name": "presence-bit-of-a-case-named-by-no-if",
+  "from": "conformance-kinds-items",
+  "to": "conformance-kinds-items",
+  "input": "03e007080000",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; groups, presence and defaults in cases; q.1 is 1 and no `if` names it (ruling 1 of 0.8)"
+}

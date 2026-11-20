@@ -1,0 +1,9 @@
+{
+  "name": "record-type-0-with-a-bit-only-it-names",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-record",
+  "input": "{\"y\":0,\"qty\":68}",
+  "expect": "900044",
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; a switch key read inside an earlier `if` and chain block; y = 0 is content for p.1 (x absent: zero bits); case 0: p.4 from qty. FSPEC 90"
+}

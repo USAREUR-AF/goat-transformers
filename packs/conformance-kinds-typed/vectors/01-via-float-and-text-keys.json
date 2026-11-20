@@ -1,0 +1,17 @@
+{
+  "name": "via-float-and-text-keys",
+  "from": "conformance-kinds-typed",
+  "to": "conformance-kinds-typed",
+  "input": "01070509414203",
+  "expect": "01070509414203",
+  "model": {
+    "probe.label": "alpha",
+    "probe.x": "7",
+    "probe.a": "2.5",
+    "probe.z": "9",
+    "probe.s1": "AB",
+    "probe.c1": "3"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; the key's decoded value (after `via` and `typemap`), as canonical text; 1 via tbl is alpha; 5 * 1/2 = 2.5 is case 2.50 (ruling 1); AB"
+}

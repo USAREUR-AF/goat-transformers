@@ -1,0 +1,9 @@
+{
+  "name": "ruling-21-if-in-a-case-not-read",
+  "from": "conformance-kinds-pres",
+  "to": "conformance-kinds-pres",
+  "input": "800200",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 21: an `if` naming a presence counts only when the innermost case it sits in is read; p.1 is named only inside case 1; x = 2 reads case 2"
+}

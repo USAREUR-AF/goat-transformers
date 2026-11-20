@@ -1,0 +1,9 @@
+{
+  "name": "832-kinds-case-float-value-not-a-number",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey x int -\nkey y int -\nkey z int -\nkey a float -\nkey s string -\nkey label string -\nlist items \"a list\"\n"
+  ],
+  "pack": "format probe\nversion 0.20.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nlayout sequential\nfield probe.a 8 uscale:1/2\nswitch probe.a\n  case x\nend\n",
+  "expect_error": "key-type-mismatch"
+}

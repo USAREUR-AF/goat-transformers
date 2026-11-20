@@ -219,3 +219,9 @@ derive  probe.wj       join:space             probe.w1  probe.w2
 derive  probe.wsp      has_token:space:b      probe.wtxt
 derive  probe.wcol     has_token:colon:b      probe.wtxt
 derive  probe.tif      text_if:a:b            probe.tif_in
+# Keys of the kind-selection probe packs (engine-spec 0.20): integers that
+# only one `case` of a `switch` maps. No `derive` line reads or sets them.
+key  v1  int  -  "an integer mapped inside one case of a switch (spec 0.20)"
+key  v2  int  -  "an integer mapped inside one case of a switch (spec 0.20)"
+key  v3  int  -  "an integer mapped inside one case of a switch (spec 0.20)"
+key  v4  int  -  "an integer mapped inside one case of a switch (spec 0.20)"

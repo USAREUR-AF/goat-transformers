@@ -1,0 +1,16 @@
+{
+  "name": "group-in-case-1",
+  "from": "conformance-kinds-items",
+  "to": "conformance-kinds-items",
+  "input": "010205060000",
+  "expect": "010205060000",
+  "model": {
+    "probe.nums.#": "2",
+    "probe.nums[0].probe.val": "5",
+    "probe.nums[1].probe.val": "6",
+    "probe.recs.#": "0",
+    "probe.items.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; groups, presence and defaults in cases; x = 1: nums with 8-bit items"
+}

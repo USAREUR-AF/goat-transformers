@@ -1,0 +1,15 @@
+{
+  "name": "nested-roundtrip",
+  "from": "conformance-kinds-deflt",
+  "to": "conformance-kinds-deflt",
+  "input": "01000102",
+  "expect": "01000102",
+  "model": {
+    "probe.n": "1",
+    "probe.c1": "0",
+    "probe.v1": "1",
+    "probe.v2": "2"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 22: defaults in nested cases apply inside the cases nested in their case; the innermost wins; values on the wire"
+}

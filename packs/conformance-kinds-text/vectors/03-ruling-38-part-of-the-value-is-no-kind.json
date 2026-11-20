@@ -1,0 +1,9 @@
+{
+  "name": "ruling-38-part-of-the-value-is-no-kind",
+  "from": "conformance-kinds-text",
+  "to": "conformance-kinds-text",
+  "input": "A;z",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 38: on the 0.10 `text` wire a `when` value stays one literal value, a comma included; A is neither A,B nor B: no kind holds (0.5 Decode step 2)"
+}

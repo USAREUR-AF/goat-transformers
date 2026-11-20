@@ -1,0 +1,9 @@
+{
+  "name": "protobuf-ruling-29-default-only-first-value",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-protobuf",
+  "input": "{\"n\":5}",
+  "expect": "18022005",
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 29: on protobuf the raw varint the field wrote is compared, with no zig-zag; a default never counts; c2 has only its default -1, whose raw 1 is listed; a default does not count: the first value 2"
+}

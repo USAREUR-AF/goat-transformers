@@ -1,0 +1,9 @@
+{
+  "name": "record-key-of-an-unselected-case-sets-no-bit",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-record",
+  "input": "{\"x\":5,\"y\":1,\"c2\":4386,\"w\":8755,\"qty\":68}",
+  "expect": "c08a1122",
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; a switch key read inside an earlier `if` and chain block; y = 1: case 1; p.2 from c2; w and qty are keys of case 0: they set no bit (p.3 has no content in case 1, p.4 is named by no `if` of case 1) and are not written. FSPEC c0"
+}

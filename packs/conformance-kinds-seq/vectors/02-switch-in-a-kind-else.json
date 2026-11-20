@@ -1,0 +1,17 @@
+{
+  "name": "switch-in-a-kind-else",
+  "from": "conformance-kinds-seq",
+  "to": "conformance-kinds-seq",
+  "input": "020907",
+  "expect": "020007",
+  "model": {
+    "@kind": "a",
+    "probe.x": "2",
+    "probe.y": "7",
+    "@absent": [
+      "probe.z"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, Lists and ranges in `when` on a sequential layout; x = 2: the empty else"
+}

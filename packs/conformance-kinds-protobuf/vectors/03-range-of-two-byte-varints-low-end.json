@@ -1,0 +1,13 @@
+{
+  "name": "range-of-two-byte-varints-low-end",
+  "from": "conformance-kinds-protobuf",
+  "to": "conformance-kinds-protobuf",
+  "input": "08c8011005",
+  "expect": "08c8011005",
+  "model": {
+    "@kind": "b",
+    "probe.z": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, Lists and ranges in `when`, on an integer protobuf `when`; 200 = c8 01: b"
+}

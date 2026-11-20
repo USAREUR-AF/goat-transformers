@@ -1,0 +1,9 @@
+{
+  "name": "fail-encode",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-fail",
+  "input": "{\"label\":\"alpha\",\"x\":7}",
+  "expect": "0107",
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 35: a switch key whose line fails its transform fails the decode with transform-decode; alpha writes 1"
+}

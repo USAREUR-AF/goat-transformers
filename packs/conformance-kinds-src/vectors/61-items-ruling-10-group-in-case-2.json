@@ -1,0 +1,9 @@
+{
+  "name": "items-ruling-10-group-in-case-2",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-items",
+  "input": "{\"x\":2,\"nums\":[{\"val\":5}]}",
+  "expect": "020100050000",
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; groups, presence and defaults in cases; case 2's group of the same list"
+}

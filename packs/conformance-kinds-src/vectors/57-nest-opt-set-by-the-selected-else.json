@@ -1,0 +1,9 @@
+{
+  "name": "nest-opt-set-by-the-selected-else",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-nest",
+  "input": "{\"v2\":2,\"v4\":5}",
+  "expect": "0000028280",
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; switch blocks inside other blocks; v2 = 2: else holds v4: opt 1, then v4 = 5"
+}

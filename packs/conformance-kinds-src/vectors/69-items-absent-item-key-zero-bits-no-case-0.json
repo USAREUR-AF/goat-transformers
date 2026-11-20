@@ -1,0 +1,9 @@
+{
+  "name": "items-absent-item-key-zero-bits-no-case-0",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-items",
+  "input": "{\"items\":[{\"val\":5}]}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; groups, presence and defaults in cases; the item lacks qty: zero bits, read back 0; no case 0 and no else: no-kind"
+}

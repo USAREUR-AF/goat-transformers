@@ -1,0 +1,13 @@
+{
+  "name": "second-kind-range",
+  "from": "conformance-kinds-bits",
+  "to": "conformance-kinds-bits",
+  "input": "0602",
+  "expect": "0602",
+  "model": {
+    "@kind": "hi",
+    "probe.z": "2"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, Lists and ranges in `when`; 6 lies only in hi's 4..9"
+}

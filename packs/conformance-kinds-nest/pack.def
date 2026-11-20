@@ -1,0 +1,57 @@
+# Conformance probe pack for `switch` blocks inside other blocks (spec 0.20),
+# most significant bit first. Public.
+#
+#   x : 7, then opt: y : 8 and a switch on y inside the opt block
+#     1     z : 8 and a nested switch on z: 2 w : 8, 3 nothing, no else
+#     else  nothing (an empty else)
+#   chain: c1 : 7, fx, then a switch on c1 in the second part
+#     1     c2 : 8
+#     else  v1 : 8
+#   v2 : 8, then opt holding only a switch on v2
+#     1     v3 : 8
+#     else  v4 : 8
+#
+# A nested switch with no case for its value and no else is no-kind. The fx
+# bit of the chain and the opt bit count only the lines of the case that the
+# value before them selects.
+format     conformance-kinds-nest
+version    0.20.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field  probe.x  7  uint
+opt
+  field  probe.y  8  uint
+  switch probe.y
+    case 1
+      field  probe.z  8  uint
+      switch probe.z
+        case 2
+          field  probe.w  8  uint
+        case 3
+      end
+    else
+  end
+end
+chain
+  field  probe.c1  7  uint
+  fx
+  switch probe.c1
+    case 1
+      field  probe.c2  8  uint
+    else
+      field  probe.v1  8  uint
+  end
+end
+field  probe.v2  8  uint
+opt
+  switch probe.v2
+    case 1
+      field  probe.v3  8  uint
+    else
+      field  probe.v4  8  uint
+  end
+end

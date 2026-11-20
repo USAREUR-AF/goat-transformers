@@ -1,0 +1,9 @@
+{
+  "name": "record-absent-type-bit-written-zero-selects-case-0",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-record",
+  "input": "{\"x\":5,\"z\":17,\"w\":8755}",
+  "expect": "e00a112233",
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; a switch key read inside an earlier `if` and chain block; x is content for p.1, so the chain is written and y's line writes a zero bit; decode would read y = 0: case 0, whose p.2 and p.3 hold z and w"
+}

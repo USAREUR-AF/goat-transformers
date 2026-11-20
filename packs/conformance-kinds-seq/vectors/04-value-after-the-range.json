@@ -1,0 +1,12 @@
+{
+  "name": "value-after-the-range",
+  "from": "conformance-kinds-seq",
+  "to": "conformance-kinds-seq",
+  "input": "010a07",
+  "expect": "010c07",
+  "model": {
+    "@kind": "b"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, Lists and ranges in `when` on a sequential layout; 10: b"
+}

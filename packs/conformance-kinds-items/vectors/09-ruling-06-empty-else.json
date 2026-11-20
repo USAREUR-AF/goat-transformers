@@ -1,0 +1,17 @@
+{
+  "name": "ruling-06-empty-else",
+  "from": "conformance-kinds-items",
+  "to": "conformance-kinds-items",
+  "input": "000000",
+  "expect": "000000",
+  "model": {
+    "probe.x": "0",
+    "probe.recs.#": "0",
+    "probe.items.#": "0",
+    "@absent": [
+      "probe.nums"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; groups, presence and defaults in cases; x = 0: the empty else; nums absent"
+}

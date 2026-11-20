@@ -1,0 +1,9 @@
+{
+  "name": "nested-switch-no-case-no-else",
+  "from": "conformance-kinds-nest",
+  "to": "conformance-kinds-nest",
+  "input": "0b0104000000",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; switch blocks inside other blocks; z = 4: no case holds it and there is no else: the message is no-kind"
+}
