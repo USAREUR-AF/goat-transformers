@@ -1,0 +1,15 @@
+{
+  "name": "peer-down-loc-rib-roundtrip",
+  "from": "bgp-bmp",
+  "to": "bgp-bmp",
+  "input": "03000000390203800000000000000000000000000000000000000000000000000000fbf0c000020269b529dd0003d0910600030004626c7565",
+  "expect": "03000000390203800000000000000000000000000000000000000000000000000000fbf0c000020269b529dd0003d0910600030004626c7565",
+  "model": {
+    "bmp.down_reason": "6",
+    "bmp.down_tlvs.#": "1",
+    "bmp.down_tlvs[0].bmp.info_type": "3",
+    "bmp.down_tlvs[0].bmp.info_value.#": "4",
+    "bmp.down_tlvs[0].bmp.info_value[0].bmp.octet": "98"
+  },
+  "source": "built by tools/gen/routing-vectors.py from values chosen there; layout restated from RFC 7854 sections 4.1 to 4.10 (with RFC 8671 and RFC 9069) and RFC 4271 section 4; Peer Down reason 6 of a Loc-RIB instance with a VRF/Table name TLV (RFC 9069); expect derived there, no engine run"
+}

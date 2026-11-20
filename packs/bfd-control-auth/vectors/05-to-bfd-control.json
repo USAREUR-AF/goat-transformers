@@ -1,0 +1,8 @@
+{
+  "name": "bfd-control-auth-to-bfd-control",
+  "from": "bfd-control-auth",
+  "to": "bfd-control",
+  "input": "20c403341a2b3c4d00c0ffee000493e0000493e000000000041c0100000004d26465666768696a6b6c6d6e6f7071727374757677",
+  "expect": "20c403341a2b3c4d00c0ffee000493e0000493e000000000",
+  "source": "built by tools/gen/routing-vectors.py from values chosen there; layout restated from RFC 5880 sections 4.1 to 4.4; the keyed SHA1 packet to bfd-control: the mandatory section carries; expect derived there, no engine run"
+}

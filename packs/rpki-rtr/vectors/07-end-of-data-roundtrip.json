@@ -1,0 +1,15 @@
+{
+  "name": "end-of-data-roundtrip",
+  "from": "rpki-rtr",
+  "to": "rpki-rtr",
+  "input": "01076a3f000000180000126700000e100000025800001c20",
+  "expect": "01076a3f000000180000126700000e100000025800001c20",
+  "model": {
+    "@kind": "end_of_data",
+    "rtr.serial": "4711",
+    "rtr.refresh_interval": "3600",
+    "rtr.retry_interval": "600",
+    "rtr.expire_interval": "7200"
+  },
+  "source": "built by tools/gen/routing-vectors.py from values chosen there; layout restated from RFC 8210 section 5; a end of data PDU; expect derived there, no engine run"
+}

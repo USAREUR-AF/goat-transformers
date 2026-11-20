@@ -1,0 +1,14 @@
+{
+  "name": "route-mirroring-roundtrip",
+  "from": "bgp-bmp",
+  "to": "bgp-bmp",
+  "input": "030000004d0600000000000000000000000000000000000000000000c00002020000fbf0c000020269b529dd0003d09100000013ffffffffffffffffffffffffffffffff001304000100020001",
+  "expect": "030000004d0600000000000000000000000000000000000000000000c00002020000fbf0c000020269b529dd0003d09100000013ffffffffffffffffffffffffffffffff001304000100020001",
+  "model": {
+    "bmp.msg_type": "6",
+    "bmp.mirror_tlvs.#": "2",
+    "bmp.mirror_tlvs[0].bmp.bgp_type": "4",
+    "bmp.mirror_tlvs[1].bmp.mirror_code": "1"
+  },
+  "source": "built by tools/gen/routing-vectors.py from values chosen there; layout restated from RFC 7854 sections 4.1 to 4.10 (with RFC 8671 and RFC 9069) and RFC 4271 section 4; Route Mirroring with a mirrored KEEPALIVE and the code for lost messages; expect derived there, no engine run"
+}

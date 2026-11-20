@@ -1,0 +1,15 @@
+{
+  "name": "error-report-roundtrip",
+  "from": "rpki-rtr",
+  "to": "rpki-rtr",
+  "input": "010a0002000000260000000c01016a3f0000000c000012660000000a6e6f2064617461207965",
+  "expect": "010a0002000000260000000c01016a3f0000000c000012660000000a6e6f2064617461207965",
+  "model": {
+    "@kind": "error_report",
+    "rtr.error_code": "2",
+    "rtr.erroneous_pdu.#": "12",
+    "rtr.erroneous_pdu[1].rtr.octet": "1",
+    "rtr.error_text.#": "10"
+  },
+  "source": "built by tools/gen/routing-vectors.py from values chosen there; layout restated from RFC 8210 section 5; a error report PDU; expect derived there, no engine run"
+}

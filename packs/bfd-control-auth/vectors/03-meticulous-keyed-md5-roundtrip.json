@@ -1,0 +1,15 @@
+{
+  "name": "meticulous-keyed-md5-roundtrip",
+  "from": "bfd-control-auth",
+  "to": "bfd-control-auth",
+  "input": "20c403301a2b3c4d00c0ffee000493e0000493e00000000003180200000003e9000102030405060708090a0b0c0d0e0f",
+  "expect": "20c403301a2b3c4d00c0ffee000493e0000493e00000000003180200000003e9000102030405060708090a0b0c0d0e0f",
+  "model": {
+    "inet.bfd_length": "48",
+    "bfdauth.auth_type": "3",
+    "bfdauth.auth_key_id": "2",
+    "bfdauth.auth_sequence": "1001",
+    "bfdauth.auth_value.#": "16"
+  },
+  "source": "built by tools/gen/routing-vectors.py from values chosen there; layout restated from RFC 5880 sections 4.1 to 4.4; meticulous keyed MD5: key ID 2, sequence 1001, a digest of 16 octets chosen here; expect derived there, no engine run"
+}

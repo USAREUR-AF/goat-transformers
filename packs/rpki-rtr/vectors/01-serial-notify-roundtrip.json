@@ -1,0 +1,13 @@
+{
+  "name": "serial-notify-roundtrip",
+  "from": "rpki-rtr",
+  "to": "rpki-rtr",
+  "input": "01006a3f0000000c00001267",
+  "expect": "01006a3f0000000c00001267",
+  "model": {
+    "@kind": "serial_notify",
+    "rtr.session_id": "27199",
+    "rtr.serial": "4711"
+  },
+  "source": "built by tools/gen/routing-vectors.py from values chosen there; layout restated from RFC 8210 section 5; a serial notify PDU; expect derived there, no engine run"
+}

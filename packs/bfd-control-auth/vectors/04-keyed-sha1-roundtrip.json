@@ -1,0 +1,15 @@
+{
+  "name": "keyed-sha1-roundtrip",
+  "from": "bfd-control-auth",
+  "to": "bfd-control-auth",
+  "input": "20c403341a2b3c4d00c0ffee000493e0000493e000000000041c0100000004d26465666768696a6b6c6d6e6f7071727374757677",
+  "expect": "20c403341a2b3c4d00c0ffee000493e0000493e000000000041c0100000004d26465666768696a6b6c6d6e6f7071727374757677",
+  "model": {
+    "inet.bfd_length": "52",
+    "bfdauth.auth_type": "4",
+    "bfdauth.auth_sequence": "1234",
+    "bfdauth.auth_value.#": "20",
+    "bfdauth.auth_value[19].bfdauth.octet": "119"
+  },
+  "source": "built by tools/gen/routing-vectors.py from values chosen there; layout restated from RFC 5880 sections 4.1 to 4.4; keyed SHA1: key ID 1, sequence 1234, a hash of 20 octets chosen here; expect derived there, no engine run"
+}

@@ -1,0 +1,8 @@
+{
+  "name": "missing-auth-section-is-malformed",
+  "from": "bfd-control-auth",
+  "to": "bfd-control-auth",
+  "input": "20c403181a2b3c4d00c0ffee000493e0000493e000000000",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/routing-vectors.py from values chosen there; layout restated from RFC 5880 sections 4.1 to 4.4; the A bit set and no authentication section after the 24 octets; expect derived there, no engine run"
+}

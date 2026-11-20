@@ -1,0 +1,13 @@
+{
+  "name": "loc-rib-roundtrip",
+  "from": "bgp-bmp",
+  "to": "bgp-bmp",
+  "input": "03000000630003800000fde800000001000000000000000000000000000000000000fbf0c000020169b529dd0003d091ffffffffffffffffffffffffffffffff003302000000184001010040020a02020000fbf00001000f400304c000020218cb0071",
+  "expect": "03000000630003800000fde800000001000000000000000000000000000000000000fbf0c000020169b529dd0003d091ffffffffffffffffffffffffffffffff003302000000184001010040020a02020000fbf00001000f400304c000020218cb0071",
+  "model": {
+    "bmp.peer_type": "3",
+    "bmp.peer_flag_v": "1",
+    "bmp.peer_distinguisher": "279172874240001"
+  },
+  "source": "built by tools/gen/routing-vectors.py from values chosen there; layout restated from RFC 7854 sections 4.1 to 4.10 (with RFC 8671 and RFC 9069) and RFC 4271 section 4; a Loc-RIB instance peer (peer type 3, RFC 9069) with the F flag set and a zero-filled address; expect derived there, no engine run"
+}

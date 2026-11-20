@@ -1,0 +1,53 @@
+# BFD control packet (RFC 5880 section 4): the mandatory section and, when the A bit is set,
+# the authentication section. Public. Layout restated; see pack.md.
+format        bfd-control-auth
+version       0.1.0
+distribution  public
+source        "IETF RFC 5880, Bidirectional Forwarding Detection (BFD), June 2010, sections 4.1 to 4.4, https://www.rfc-editor.org/rfc/rfc5880.txt (sha256 45a7f8fcc04991c22d9efb1419aee4d9870cf1b7aa4b16a930e66a248146c61d); layout restated"
+uses          inet
+uses          bfdauth
+wire          bits
+layout        sequential
+bit_order     msb
+
+field  inet.bfd_version              3  uint
+field  inet.bfd_diag                 5  uint
+field  inet.bfd_state                2  uint
+field  inet.bfd_poll                 1  uint
+field  inet.bfd_final                1  uint
+field  inet.bfd_cpi                  1  uint
+field  inet.bfd_auth_present         1  uint
+field  inet.bfd_demand               1  uint
+field  inet.bfd_multipoint           1  uint
+field  inet.bfd_detect_mult          8  uint
+field  inet.bfd_length               8  uint
+field  inet.bfd_my_disc             32  uint
+field  inet.bfd_your_disc           32  uint
+field  inet.bfd_desired_min_tx      32  uint
+field  inet.bfd_required_min_rx     32  uint
+field  inet.bfd_required_min_echo_rx 32  uint
+switch  inet.bfd_auth_present
+  case  0
+  case  1
+    field  bfdauth.auth_type  8  uint
+    length  8  bytes  plus  2
+      switch  bfdauth.auth_type
+        case  1
+          field  bfdauth.auth_key_id  8  uint
+          group  bfdauth.password  rest
+            field  bfdauth.octet  8  uint
+          end
+        case  2,3,4,5
+          field  bfdauth.auth_key_id    8  uint
+          field  bfdauth.auth_reserved  8  uint
+          field  bfdauth.auth_sequence 32  uint
+          group  bfdauth.auth_value  rest
+            field  bfdauth.octet  8  uint
+          end
+        else
+          group  bfdauth.auth_value  rest
+            field  bfdauth.octet  8  uint
+          end
+      end
+    end
+end

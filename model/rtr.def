@@ -1,0 +1,27 @@
+# The rtr module: the fields of the PDUs of the RPKI to Router protocol, version 1 (RFC 8210).
+module        rtr
+version       0.1.0
+distribution  public
+source        "IETF RFC 8210, The Resource Public Key Infrastructure (RPKI) to Router Protocol, Version 1, September 2017, https://www.rfc-editor.org/rfc/rfc8210.txt, IETF Trust (BCP 78); layouts restated"
+
+key   session_id        int  -  "session ID the cache chose; it changes when the cache restarts or its serial numbers are reset"
+key   serial            int  -  "serial number of the cache's data, incremented with each change (modulo 2^32)"
+key   flags_high        int  -  "the seven high bits of the flags octet, 0"
+key   announce          int  -  "lowest bit of the flags: 1 announcement, 0 withdrawal"
+key   prefix_length     int  -  "length of the prefix in bits"
+key   max_length        int  -  "longest prefix length the ROA allows for the prefix"
+key   ipv4_prefix       int  -  "IPv4 prefix, as an unsigned 32-bit integer"
+key   ipv6_prefix_high  int  -  "first 64 bits of the IPv6 prefix (as uint reads 64 bits: negative when the top bit is set)"
+key   ipv6_prefix_low   int  -  "last 64 bits of the IPv6 prefix"
+key   asn               int  -  "autonomous system number"
+key   refresh_interval  int  s  "End of Data: seconds before the router asks the cache for new data"
+key   retry_interval    int  s  "End of Data: seconds before the router retries after a failed query"
+key   expire_interval   int  s  "End of Data: seconds the router may keep the data while it cannot reach the cache"
+key   ski_0             int  -  "Router Key: octets 1-8 of the subject key identifier (20 octets)"
+key   ski_1             int  -  "Router Key: octets 9-16 of the subject key identifier"
+key   ski_2             int  -  "Router Key: octets 17-20 of the subject key identifier"
+list  spki                    "Router Key: the subject public key info, as its octets"
+key   error_code        int  -  "Error Report: error code (RFC 8210 section 12)"
+list  erroneous_pdu           "Error Report: the PDU the error is about, as its octets; empty for a generic error"
+list  error_text              "Error Report: diagnostic text in UTF-8, as its octets; empty when none"
+key   octet             int  -  "one octet"

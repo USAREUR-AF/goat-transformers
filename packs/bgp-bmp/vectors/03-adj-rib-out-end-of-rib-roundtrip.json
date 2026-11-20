@@ -1,0 +1,14 @@
+{
+  "name": "adj-rib-out-end-of-rib-roundtrip",
+  "from": "bgp-bmp",
+  "to": "bgp-bmp",
+  "input": "03000000470000500000000000000000000000000000000000000000c00002020000fbf0c000020269b529dd0003d091ffffffffffffffffffffffffffffffff00170200000000",
+  "expect": "03000000470000500000000000000000000000000000000000000000c00002020000fbf0c000020269b529dd0003d091ffffffffffffffffffffffffffffffff00170200000000",
+  "model": {
+    "bmp.peer_flag_o": "1",
+    "bmp.withdrawn_routes.#": "0",
+    "bmp.attributes.#": "0",
+    "bmp.nlri.#": "0"
+  },
+  "source": "built by tools/gen/routing-vectors.py from values chosen there; layout restated from RFC 7854 sections 4.1 to 4.10 (with RFC 8671 and RFC 9069) and RFC 4271 section 4; post-policy Adj-RIB-Out (O flag, RFC 8671) and an empty UPDATE; expect derived there, no engine run"
+}

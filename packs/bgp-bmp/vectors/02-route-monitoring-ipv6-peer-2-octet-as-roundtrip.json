@@ -1,0 +1,17 @@
+{
+  "name": "route-monitoring-ipv6-peer-2-octet-as-roundtrip",
+  "from": "bgp-bmp",
+  "to": "bgp-bmp",
+  "input": "03000000620000e0000000000000000020010db80000000000000000000000020000fbf1c000020969b529dd0003d091ffffffffffffffffffffffffffffffff00320200000016400101024002080203fbf1fbf2fbf3400304c00002091ac6336440",
+  "expect": "03000000620000e0000000000000000020010db80000000000000000000000020000fbf1c000020969b529dd0003d091ffffffffffffffffffffffffffffffff00320200000016400101024002080203fbf1fbf2fbf3400304c00002091ac6336440",
+  "model": {
+    "bmp.peer_flag_v": "1",
+    "bmp.peer_flag_l": "1",
+    "bmp.peer_flag_a": "1",
+    "bmp.peer_ipv6_high": "2306139568115548160",
+    "bmp.peer_ipv6_low": "2",
+    "bmp.attributes[1].bmp.as_path_segments[0].bmp.segment_asns.#": "3",
+    "bmp.attributes[1].bmp.as_path_segments[0].bmp.segment_asns[2].bmp.asn": "64499"
+  },
+  "source": "built by tools/gen/routing-vectors.py from values chosen there; layout restated from RFC 7854 sections 4.1 to 4.10 (with RFC 8671 and RFC 9069) and RFC 4271 section 4; an IPv6 peer (V), post-policy (L), legacy 2-octet AS_PATH (A); expect derived there, no engine run"
+}

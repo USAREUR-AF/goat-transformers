@@ -1,0 +1,11 @@
+{
+  "name": "cache-reset-roundtrip",
+  "from": "rpki-rtr",
+  "to": "rpki-rtr",
+  "input": "0108000000000008",
+  "expect": "0108000000000008",
+  "model": {
+    "@kind": "cache_reset"
+  },
+  "source": "built by tools/gen/routing-vectors.py from values chosen there; layout restated from RFC 8210 section 5; a cache reset PDU; expect derived there, no engine run"
+}
