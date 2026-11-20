@@ -4847,3 +4847,8 @@ does not equal the bytes the collection takes is `malformed-wire`.
 26. **The third token.** When the third token of a field line is a field
     option name (`via`, `with`, `absent`, `optional`, `swap`, `trim`,
     `stop`), the transform is the default and the token begins the options.
+27. **`const` types.** `const` takes an integer type, or `bool` with 0 or
+    1; `const string` and `const` of a float type are `bad-directive` after
+    the file.
+28. **A common and a kind `when` on one line.** On encode the kind's value
+    is written; for a list or a range, its first value.
