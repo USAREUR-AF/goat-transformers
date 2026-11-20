@@ -1,0 +1,8 @@
+{
+  "name": "x-sensor_gps-no-time-to-geojson",
+  "from": "px4-ulog-sensor-gps",
+  "to": "geojson",
+  "source": "time_utc_usec 0 is the receiver's 'not yet known' (pack.md); `absent 0` gives no time_ms, so properties has none (engine-spec 0.9)",
+  "input": "43822d18240a0600e9263108ac1c00405eba490c022b08c0e9263108ac1c104000000000000000000000c4c010",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-3.021,2.014,4.028]},\"properties\":{}}"
+}

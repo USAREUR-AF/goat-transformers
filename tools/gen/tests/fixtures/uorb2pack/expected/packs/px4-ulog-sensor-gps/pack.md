@@ -7,7 +7,7 @@ edit by hand.
 ## Message convention
 
 A message of this format is the `data` of one ULog 'D' message: the bytes after
-its two-byte `msg_id`, 29 bytes. ULog gives a topic its `msg_id` in an 'A'
+its two-byte `msg_id`, 45 bytes. ULog gives a topic its `msg_id` in an 'A'
 (subscription) message of the same log, so the id has no meaning outside that log
 and the data holds nothing that names the topic. There is no value on the wire a
 `when` line could select by, so each topic is a format of its own and the caller
@@ -31,8 +31,10 @@ the ROS 2 copy of the same messages.
 | 0 | 64 | `timestamp` | uint64 | `px4ulog.sensor_gps_timestamp` uint |
 | 8 | 64 | `latitude_deg` | float64 | `lat` f64 |
 | 16 | 64 | `longitude_deg` | float64 | `lon` f64 |
-| 24 | 32 | `altitude_msl_m` | float32 | `px4ulog.sensor_gps_altitude_msl_m` f32 |
-| 28 | 8 | `fix_type` | uint8 | `px4ulog.sensor_gps_fix_type` uint |
+| 24 | 64 | `altitude_ellipsoid_m` | float64 | `hae` f64 |
+| 32 | 64 | `time_utc_usec` | uint64 | `time_ms` uiscale:1/1000 |
+| 40 | 32 | `altitude_msl_m` | float32 | `px4ulog.sensor_gps_altitude_msl_m` f32 |
+| 44 | 8 | `fix_type` | uint8 | `px4ulog.sensor_gps_fix_type` uint |
 
 Padding bytes are not in the table: no line maps them. A numeric array of up
 to 64 elements is one key per element (`_0`, `_1`, ...); a longer one is a `group`
@@ -44,9 +46,14 @@ with a fixed count. A `char` array is `ascii` text.
 |---|---|---|
 | `latitude_deg` | `lat` | file header: GPS position in WGS84 coordinates; field: latitude in degrees, float64 |
 | `longitude_deg` | `lon` | as latitude_deg; longitude in degrees |
+| `altitude_ellipsoid_m` | `hae` | file header: GPS position in WGS84 coordinates; field: the ellipsoidal altitude in metres, float64. The altitude over mean sea level is a separate field |
+| `time_utc_usec` | `time_ms` | field: a UTC timestamp in microseconds from the receiver, 0 while it is not yet known; uint64. `uiscale:1/1000` keeps whole milliseconds, `absent 0` makes 0 no value |
 
-Altitude, velocity and time are not bound: this pack binds latitude and
-longitude only, and `timestamp` is microseconds since the system started, not UTC.
+`timestamp` is microseconds since the system started, not UTC, and stays a raw
+key. A bound field's earlier raw key stays declared in `model/px4ulog.def`; the
+packs map the field to the shared key only. A UTC time in microseconds that is
+not a whole millisecond decodes to the nearest millisecond (half away from zero)
+and re-encodes as that millisecond times 1000.
 
 ## Not mapped, and why
 
@@ -64,7 +71,7 @@ longitude only, and `timestamp` is microseconds since the system started, not UT
 `vectors/gen-rt.json` is a round trip with every field set: values chosen by the
 generator, serialized by its own code from the layout, zero padding. `gen-*` files
 beside it, where there are any, are edge and error cases and conversions to
-geojson; each states its rule in `source`. 2 vector file(s).
+geojson; each states its rule in `source`. 5 vector file(s).
 `packs/geojson/vectors/gen-geojson-to-px4-ulog-sensor-gps.json` converts from geojson.
 
 ## Sources

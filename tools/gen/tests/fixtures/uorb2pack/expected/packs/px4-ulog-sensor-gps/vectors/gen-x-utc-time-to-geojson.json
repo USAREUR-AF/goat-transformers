@@ -1,0 +1,11 @@
+{
+  "name": "x-sensor_gps-utc-time-to-geojson",
+  "from": "px4-ulog-sensor-gps",
+  "to": "geojson",
+  "source": "time_utc_usec holds 2026-11-19T06:30:15.250Z in microseconds since the Unix epoch, 1795069815250000, counted from the calendar date in tools/gen/uorb2pack.py (no engine); uiscale:1/1000 gives 1795069815250 ms",
+  "input": "43822d18240a0600e9263108ac1c00405eba490c022b08c0e9263108ac1c1040505caf429b6006000000c4c010",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-3.021,2.014,4.028]},\"properties\":{\"time_ms\":1795069815250}}",
+  "model": {
+    "time_ms": "1795069815250"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "x-sensor_gnss_relative-utc-time-to-geojson",
+  "from": "px4-ulog-sensor-gnss-relative",
+  "to": "geojson",
+  "source": "time_utc_usec holds 2026-11-19T06:30:15.250Z in microseconds since the Unix epoch, 1795069815250000, counted from the calendar date in tools/gen/uorb2pack.py (no engine); uiscale:1/1000 gives 1795069815250 ms",
+  "input": "43822d18240a060086c43c18240a0600505caf429b600600fd16de780000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0000094c000008cc0000084c0985100010001000100010001",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"time_ms\":1795069815250}}",
+  "model": {
+    "time_ms": "1795069815250"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "tm-sensor_gnss_relative-rounding",
+  "from": "px4-ulog-sensor-gnss-relative",
+  "to": "px4-ulog-sensor-gnss-relative",
+  "source": "1795069815250500 us is 1795069815250.5 ms; uiscale rounds half away from zero to 1795069815251 ms (engine-spec 0.15) and writes 1795069815251000 us back",
+  "input": "43822d18240a0600445eaf429b6006000000dcc00000d4c00000ccc0",
+  "expect": "43822d18240a06003860af429b6006000000dcc00000d4c00000ccc0",
+  "model": {
+    "time_ms": "1795069815251"
+  }
+}

@@ -1,0 +1,4 @@
+# Relative GNSS solution (test copy).
+uint64 timestamp
+uint64 time_utc_usec		# test field: UTC microseconds, 0 when not known
+float32[3] position

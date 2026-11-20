@@ -33,8 +33,8 @@ the ROS 2 copy of the same messages.
 | 16 | 64 | `latitude_deg` | float64 | `lat` f64 |
 | 24 | 64 | `longitude_deg` | float64 | `lon` f64 |
 | 32 | 64 | `altitude_msl_m` | float64 | `px4ulog.sensor_gps_altitude_msl_m` f64 |
-| 40 | 64 | `altitude_ellipsoid_m` | float64 | `px4ulog.sensor_gps_altitude_ellipsoid_m` f64 |
-| 48 | 64 | `time_utc_usec` | uint64 | `px4ulog.sensor_gps_time_utc_usec` uint |
+| 40 | 64 | `altitude_ellipsoid_m` | float64 | `hae` f64 |
+| 48 | 64 | `time_utc_usec` | uint64 | `time_ms` uiscale:1/1000 |
 | 56 | 32 | `device_id` | uint32 | `px4ulog.sensor_gps_device_id` uint |
 | 60 | 32 | `s_variance_m_s` | float32 | `px4ulog.sensor_gps_s_variance_m_s` f32 |
 | 64 | 32 | `c_variance_rad` | float32 | `px4ulog.sensor_gps_c_variance_rad` f32 |
@@ -76,9 +76,14 @@ with a fixed count. A `char` array is `ascii` text.
 |---|---|---|
 | `latitude_deg` | `lat` | file header: GPS position in WGS84 coordinates; field: latitude in degrees, float64 |
 | `longitude_deg` | `lon` | as latitude_deg; longitude in degrees |
+| `altitude_ellipsoid_m` | `hae` | file header: GPS position in WGS84 coordinates; field: the ellipsoidal altitude in metres, float64. The altitude over mean sea level is a separate field |
+| `time_utc_usec` | `time_ms` | field: a UTC timestamp in microseconds from the receiver, 0 while it is not yet known; uint64. `uiscale:1/1000` keeps whole milliseconds, `absent 0` makes 0 no value |
 
-Altitude, velocity and time are not bound: this pack binds latitude and
-longitude only, and `timestamp` is microseconds since the system started, not UTC.
+`timestamp` is microseconds since the system started, not UTC, and stays a raw
+key. A bound field's earlier raw key stays declared in `model/px4ulog.def`; the
+packs map the field to the shared key only. A UTC time in microseconds that is
+not a whole millisecond decodes to the nearest millisecond (half away from zero)
+and re-encodes as that millisecond times 1000.
 
 ## Not mapped, and why
 
@@ -96,7 +101,7 @@ longitude only, and `timestamp` is microseconds since the system started, not UT
 `vectors/gen-rt.json` is a round trip with every field set: values chosen by the
 generator, serialized by its own code from the layout, zero padding. `gen-*` files
 beside it, where there are any, are edge and error cases and conversions to
-geojson; each states its rule in `source`. 2 vector file(s).
+geojson; each states its rule in `source`. 5 vector file(s).
 
 ## Sources
 
