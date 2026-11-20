@@ -1,0 +1,17 @@
+{
+ "name": "gen-report-roundtrip",
+ "from": "awc-taf-geojson",
+ "to": "awc-taf-geojson",
+ "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"icaoId\":\"s77459\",\"dbPopTime\":\"s10522\",\"bulletinTime\":\"s99668\",\"issueTime\":\"s563\",\"validTimeFrom\":25742,\"validTimeTo\":21613,\"rawTAF\":\"s93662\",\"mostRecent\":45582,\"remarks\":\"s30026\",\"lat\":12.5,\"lon\":12.5,\"elev\":28143,\"prior\":32426,\"name\":\"s55593\"},\"id\":-0.5}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"icaoId\":\"s77459\",\"dbPopTime\":\"s10522\",\"bulletinTime\":\"s99668\",\"issueTime\":\"s563\",\"validTimeFrom\":25742,\"validTimeTo\":21613,\"rawTAF\":\"s93662\",\"mostRecent\":45582,\"remarks\":\"s30026\",\"lat\":12.5,\"lon\":12.5,\"elev\":28143,\"prior\":32426,\"name\":\"s55593\"},\"id\":-0.5}",
+ "model": {
+  "lon": "-77.0365",
+  "lat": "38.8977",
+  "uid": "s77459",
+  "awctafgeo.id": "-0.5",
+  "awctafgeo.properties_icao_id": "s77459",
+  "awctafgeo.properties_db_pop_time": "s10522",
+  "awctafgeo.properties_bulletin_time": "s99668",
+  "awctafgeo.properties_issue_time": "s563"
+ }
+}

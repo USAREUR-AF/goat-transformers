@@ -1,0 +1,16 @@
+{
+ "keys": {
+  "|due_to|string": "due_to",
+  "|expireTime|int": "expire_time",
+  "|forecastHour|int": "forecast_hour",
+  "|geometryType|string": "geometry_type",
+  "|hazard|string": "hazard",
+  "|issueTime|int": "issue_time",
+  "|latlonpairs|int": "latlonpairs",
+  "|product|string": "product",
+  "|receiptTime|int": "receipt_time",
+  "|tag|string": "tag",
+  "|validTime|string": "valid_time"
+ },
+ "lists": {}
+}

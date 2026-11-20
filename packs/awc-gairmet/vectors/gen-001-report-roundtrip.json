@@ -1,0 +1,17 @@
+{
+ "name": "gen-report-roundtrip",
+ "from": "awc-gairmet",
+ "to": "awc-gairmet",
+ "input": "{\"tag\":\"s98830\",\"forecastHour\":7425,\"validTime\":\"s89716\",\"hazard\":\"s33910\",\"geometryType\":\"AREA\",\"latlonpairs\":85260,\"due_to\":\"s72014\",\"receiptTime\":23195,\"issueTime\":43409,\"expireTime\":22858,\"product\":\"SIERRA\"}",
+ "expect": "{\"tag\":\"s98830\",\"forecastHour\":7425,\"validTime\":\"s89716\",\"hazard\":\"s33910\",\"geometryType\":\"AREA\",\"latlonpairs\":85260,\"due_to\":\"s72014\",\"receiptTime\":23195,\"issueTime\":43409,\"expireTime\":22858,\"product\":\"SIERRA\"}",
+ "model": {
+  "awcgairmet.tag": "s98830",
+  "awcgairmet.forecast_hour": "7425",
+  "awcgairmet.valid_time": "s89716",
+  "awcgairmet.hazard": "s33910",
+  "awcgairmet.geometry_type": "AREA",
+  "awcgairmet.latlonpairs": "85260",
+  "awcgairmet.due_to": "s72014",
+  "awcgairmet.receipt_time": "23195"
+ }
+}

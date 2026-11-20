@@ -1,0 +1,17 @@
+{
+ "keys": {
+  "|base|int": "base",
+  "|cwsu|string": "cwsu",
+  "|geom|string": "geom",
+  "|hazard|string": "hazard",
+  "|name|string": "name",
+  "|qualifier|string": "qualifier",
+  "|rawText|string": "raw_text",
+  "|receiptTime|string": "receipt_time",
+  "|seriesId|int": "series_id",
+  "|top|int": "top",
+  "|validTimeFrom|int": "valid_time_from",
+  "|validTimeTo|int": "valid_time_to"
+ },
+ "lists": {}
+}

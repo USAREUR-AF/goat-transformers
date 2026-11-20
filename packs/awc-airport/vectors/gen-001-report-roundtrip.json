@@ -1,0 +1,17 @@
+{
+ "name": "gen-report-roundtrip",
+ "from": "awc-airport",
+ "to": "awc-airport",
+ "input": "{\"icaoId\":\"s16815\",\"iataId\":\"s64334\",\"faaId\":\"s60016\",\"name\":\"s60252\",\"state\":\"s46165\",\"country\":\"s43551\",\"source\":\"s17706\",\"type\":\"s67152\",\"lat\":\"s12468\",\"lon\":\"s62244\",\"elev\":\"s86710\",\"magdec\":\"s35532\",\"owner\":\"s54139\"}",
+ "expect": "{\"icaoId\":\"s16815\",\"iataId\":\"s64334\",\"faaId\":\"s60016\",\"name\":\"s60252\",\"state\":\"s46165\",\"country\":\"s43551\",\"source\":\"s17706\",\"type\":\"s67152\",\"lat\":\"s12468\",\"lon\":\"s62244\",\"elev\":\"s86710\",\"magdec\":\"s35532\",\"owner\":\"s54139\"}",
+ "model": {
+  "awcairport.icao_id": "s16815",
+  "awcairport.iata_id": "s64334",
+  "awcairport.faa_id": "s60016",
+  "awcairport.name": "s60252",
+  "awcairport.state": "s46165",
+  "awcairport.country": "s43551",
+  "awcairport.source": "s17706",
+  "awcairport.type": "s67152"
+ }
+}

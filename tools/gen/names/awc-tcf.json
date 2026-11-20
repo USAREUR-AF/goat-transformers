@@ -1,0 +1,18 @@
+{
+ "keys": {
+  "geometry_coordinates|.|float": "geometry_coordinates_value",
+  "properties_labelpos|.|float": "properties_labelpos_value",
+  "|geometry.type|string": "geometry_type",
+  "|id|float": "id",
+  "|properties.confidence|string": "properties_confidence",
+  "|properties.coverage|string": "properties_coverage",
+  "|properties.issueTime|string": "properties_issue_time",
+  "|properties.tops|float": "properties_tops",
+  "|properties.validTime|string": "properties_valid_time",
+  "|type|string": "type"
+ },
+ "lists": {
+  "|geometry.coordinates": "geometry_coordinates",
+  "|properties.labelpos": "properties_labelpos"
+ }
+}

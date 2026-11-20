@@ -1,0 +1,17 @@
+{
+ "name": "gen-report-roundtrip",
+ "from": "awc-cwa",
+ "to": "awc-cwa",
+ "input": "{\"cwsu\":\"s4159\",\"name\":\"s60252\",\"receiptTime\":\"s85935\",\"validTimeFrom\":51892,\"validTimeTo\":50074,\"hazard\":\"s33910\",\"seriesId\":6412,\"qualifier\":\"s92630\",\"base\":36161,\"top\":71188,\"geom\":\"AREA\",\"rawText\":\"s42723\"}",
+ "expect": "{\"cwsu\":\"s4159\",\"name\":\"s60252\",\"receiptTime\":\"s85935\",\"validTimeFrom\":51892,\"validTimeTo\":50074,\"hazard\":\"s33910\",\"seriesId\":6412,\"qualifier\":\"s92630\",\"base\":36161,\"top\":71188,\"geom\":\"AREA\",\"rawText\":\"s42723\"}",
+ "model": {
+  "awccwa.cwsu": "s4159",
+  "awccwa.name": "s60252",
+  "awccwa.receipt_time": "s85935",
+  "awccwa.valid_time_from": "51892",
+  "awccwa.valid_time_to": "50074",
+  "awccwa.hazard": "s33910",
+  "awccwa.series_id": "6412",
+  "awccwa.qualifier": "s92630"
+ }
+}

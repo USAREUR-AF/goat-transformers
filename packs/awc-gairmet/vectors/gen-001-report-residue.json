@@ -1,0 +1,7 @@
+{
+ "name": "gen-report-residue",
+ "from": "awc-gairmet",
+ "to": "awc-gairmet",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"tag\":\"s98830\",\"forecastHour\":7425,\"validTime\":\"s89716\",\"hazard\":\"s33910\",\"geometryType\":\"AREA\",\"latlonpairs\":85260,\"due_to\":\"s72014\",\"receiptTime\":23195,\"issueTime\":43409,\"expireTime\":22858,\"product\":\"SIERRA\"}",
+ "expect": "{\"tag\":\"s98830\",\"forecastHour\":7425,\"validTime\":\"s89716\",\"hazard\":\"s33910\",\"geometryType\":\"AREA\",\"latlonpairs\":85260,\"due_to\":\"s72014\",\"receiptTime\":23195,\"issueTime\":43409,\"expireTime\":22858,\"product\":\"SIERRA\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

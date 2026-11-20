@@ -1,0 +1,15 @@
+{
+  "name": "event-to-geojson",
+  "from": "usgs-earthquake",
+  "to": "geojson",
+  "input": "{\"type\":\"Feature\",\"properties\":{\"mag\":4.25,\"place\":\"12 km SSW of Example Town, Region\",\"time\":1772600767250,\"updated\":1772601888125,\"tz\":null,\"url\":\"https://earthquake.usgs.gov/earthquakes/eventpage/zz00000001\",\"detail\":\"https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/zz00000001.geojson\",\"felt\":37,\"cdi\":3.8,\"mmi\":4.125,\"alert\":\"green\",\"status\":\"reviewed\",\"tsunami\":0,\"sig\":301,\"net\":\"zz\",\"code\":\"00000001\",\"ids\":\",zz00000001,yy00000042,\",\"sources\":\",zz,yy,\",\"types\":\",dyfi,origin,phase-data,shakemap,\",\"nst\":42,\"dmin\":0.0675,\"rms\":0.21,\"gap\":37.5,\"magType\":\"ml\",\"type\":\"earthquake\"},\"geometry\":{\"type\":\"Point\",\"coordinates\":[-121.6125,36.7875,8.25]},\"id\":\"zz00000001\"}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-121.6125,36.7875]},\"properties\":{\"time_ms\":1772600767250},\"id\":\"zz00000001\"}",
+  "model": {
+    "lat": "36.7875",
+    "lon": "-121.6125",
+    "time_ms": "1772600767250",
+    "uid": "zz00000001"
+  },
+  "source": "derived by tools/gen/usgs-earthquake-vectors.py from the documented member list and spec/engine-spec.md; no engine run",
+  "reference": "USGS GeoJSON Summary Format (earthquake.usgs.gov/earthquakes/feed/v1.0/geojson.php, read 2026-11-20); ComCat event terms (data/comcat/index.php, archived 2026-04-14); the depth is not hae: the shared GeoJSON Point has two coordinates"
+}

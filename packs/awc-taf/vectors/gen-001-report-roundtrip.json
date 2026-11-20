@@ -1,0 +1,17 @@
+{
+ "name": "gen-report-roundtrip",
+ "from": "awc-taf",
+ "to": "awc-taf",
+ "input": "{\"icaoId\":\"s16815\",\"dbPopTime\":\"s62251\",\"bulletinTime\":\"s72310\",\"issueTime\":\"s99901\",\"validTimeFrom\":51892,\"validTimeTo\":50074,\"rawTAF\":\"s74423\",\"mostRecent\":98417,\"remarks\":\"s18991\",\"lat\":38.8977,\"lon\":-77.0365,\"elev\":88882,\"prior\":36288,\"name\":\"s60252\",\"fcsts\":[{\"timeFrom\":13580,\"timeTo\":83965,\"timeBec\":62607,\"fcstChange\":\"PROB\",\"probability\":90423,\"wspd\":62642,\"wgst\":49924,\"wshearHgt\":19408,\"wshearDir\":86415,\"wshearSpd\":9752,\"altim\":-0.5,\"vertVis\":75313,\"wxString\":\"s68421\",\"notDecoded\":\"s67093\",\"clouds\":[{\"cover\":\"CAVOK\",\"base\":30051,\"top\":74653}],\"icgTurb\":[{\"var\":\"ICE\",\"intensity\":64129,\"minAlt\":11966,\"maxAlt\":40807}],\"temp\":[{\"validTime\":94201,\"sfcTemp\":53868,\"maxOrMin\":\"MAX\"}]},{\"timeFrom\":37329,\"timeTo\":81537,\"timeBec\":69345,\"fcstChange\":\"PROB\",\"probability\":30950,\"wspd\":5187,\"wgst\":43482,\"wshearHgt\":74092,\"wshearDir\":81731,\"wshearSpd\":60451,\"altim\":7.0625,\"vertVis\":87907,\"wxString\":\"s7868\",\"notDecoded\":\"s28273\",\"clouds\":[{\"cover\":\"CAVOK\",\"base\":17943,\"top\":68606}],\"icgTurb\":[{\"var\":\"ICE\",\"intensity\":15274,\"minAlt\":50497,\"maxAlt\":6837}],\"temp\":[{\"validTime\":96345,\"sfcTemp\":81012,\"maxOrMin\":\"MAX\"}]}]}",
+ "expect": "{\"icaoId\":\"s16815\",\"dbPopTime\":\"s62251\",\"bulletinTime\":\"s72310\",\"issueTime\":\"s99901\",\"validTimeFrom\":51892,\"validTimeTo\":50074,\"rawTAF\":\"s74423\",\"mostRecent\":98417,\"remarks\":\"s18991\",\"lat\":38.8977,\"lon\":-77.0365,\"elev\":88882,\"prior\":36288,\"name\":\"s60252\",\"fcsts\":[{\"timeFrom\":13580,\"timeTo\":83965,\"timeBec\":62607,\"fcstChange\":\"PROB\",\"probability\":90423,\"wspd\":62642,\"wgst\":49924,\"wshearHgt\":19408,\"wshearDir\":86415,\"wshearSpd\":9752,\"altim\":-0.5,\"vertVis\":75313,\"wxString\":\"s68421\",\"notDecoded\":\"s67093\",\"clouds\":[{\"cover\":\"CAVOK\",\"base\":30051,\"top\":74653}],\"icgTurb\":[{\"var\":\"ICE\",\"intensity\":64129,\"minAlt\":11966,\"maxAlt\":40807}],\"temp\":[{\"validTime\":94201,\"sfcTemp\":53868,\"maxOrMin\":\"MAX\"}]},{\"timeFrom\":37329,\"timeTo\":81537,\"timeBec\":69345,\"fcstChange\":\"PROB\",\"probability\":30950,\"wspd\":5187,\"wgst\":43482,\"wshearHgt\":74092,\"wshearDir\":81731,\"wshearSpd\":60451,\"altim\":7.0625,\"vertVis\":87907,\"wxString\":\"s7868\",\"notDecoded\":\"s28273\",\"clouds\":[{\"cover\":\"CAVOK\",\"base\":17943,\"top\":68606}],\"icgTurb\":[{\"var\":\"ICE\",\"intensity\":15274,\"minAlt\":50497,\"maxAlt\":6837}],\"temp\":[{\"validTime\":96345,\"sfcTemp\":81012,\"maxOrMin\":\"MAX\"}]}]}",
+ "model": {
+  "uid": "s16815",
+  "callsign": "s60252",
+  "lat": "38.8977",
+  "lon": "-77.0365",
+  "stale_ms": "50074000",
+  "awctaf.icao_id": "s16815",
+  "awctaf.db_pop_time": "s62251",
+  "awctaf.bulletin_time": "s72310"
+ }
+}

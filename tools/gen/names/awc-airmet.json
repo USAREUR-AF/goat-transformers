@@ -1,0 +1,10 @@
+{
+ "keys": {
+  "|hazard|string": "hazard",
+  "|receiptTime|string": "receipt_time",
+  "|region|string": "region",
+  "|validTimeFrom|int": "valid_time_from",
+  "|validTimeTo|int": "valid_time_to"
+ },
+ "lists": {}
+}

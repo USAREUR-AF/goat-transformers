@@ -1,0 +1,9 @@
+{
+ "keys": {
+  "|id|string": "id",
+  "|lat|float": "lat",
+  "|lon|float": "lon",
+  "|type|string": "type"
+ },
+ "lists": {}
+}

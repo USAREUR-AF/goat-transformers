@@ -1,0 +1,54 @@
+# USGS Earthquake Hazards Program GeoJSON summary feed: the whole feed, a GeoJSON
+# FeatureCollection, read as a JSON object with its metadata and the list of events.
+# Public domain (US Government work). Written by hand from the documented member list.
+# pack.md states the evidence and what is not mapped.
+format  usgs-earthquake-feed
+version 0.1.0
+distribution public
+source  "USGS Earthquake Hazards Program, GeoJSON Summary Format: https://earthquake.usgs.gov/earthquakes/feed/v1.0/geojson.php (page sha256 35ed455a1de0b9178ed59db2c73b59b98e59d03ff0c957e2de7894c9c26a2322, read 2026-11-20)"
+source  "ANSS ComCat event terms documentation, https://earthquake.usgs.gov/data/comcat/index.php as archived 2026-04-14 (web.archive.org/web/20260414120315); the live address now redirects to the feed page"
+uses    usgsquake
+wire    json
+const   type                     FeatureCollection
+field   time_ms                  metadata.generated  int
+field   usgsquake.feed_url       metadata.url        string
+field   usgsquake.feed_title     metadata.title      string
+field   usgsquake.feed_api       metadata.api        string
+field   usgsquake.feed_count     metadata.count      int
+field   usgsquake.feed_status    metadata.status     int
+group   usgsquake.bbox  bbox
+  field  usgsquake.bbox_value  .  float
+end
+group   usgsquake.events  features
+  const  type  Feature
+  field  usgsquake.mag        properties.mag      float
+  field  usgsquake.place      properties.place    string
+  field  time_ms              properties.time     int
+  field  usgsquake.updated    properties.updated  int
+  field  usgsquake.tz         properties.tz       int
+  field  usgsquake.url        properties.url      string
+  field  usgsquake.detail     properties.detail   string
+  field  usgsquake.felt       properties.felt     int
+  field  usgsquake.cdi        properties.cdi      float
+  field  usgsquake.mmi        properties.mmi      float
+  field  usgsquake.alert      properties.alert    string
+  field  usgsquake.status     properties.status   string
+  field  usgsquake.tsunami    properties.tsunami  int
+  field  usgsquake.sig        properties.sig      int
+  field  usgsquake.net        properties.net      string
+  field  usgsquake.code       properties.code     string
+  field  usgsquake.ids        properties.ids      string
+  field  usgsquake.sources    properties.sources  string
+  field  usgsquake.types      properties.types    string
+  field  usgsquake.nst        properties.nst      int
+  field  usgsquake.dmin       properties.dmin     float
+  field  usgsquake.rms        properties.rms      float
+  field  usgsquake.gap        properties.gap      float
+  field  usgsquake.mag_type   properties.magType  string
+  field  usgsquake.event_type properties.type     string
+  const  geometry.type  Point
+  group  usgsquake.coordinates  geometry.coordinates
+    field  usgsquake.coordinate  .  float
+  end
+  field  uid                  id                  string
+end

@@ -1,0 +1,13 @@
+{
+ "name": "gen-report-roundtrip",
+ "from": "awc-fix",
+ "to": "awc-fix",
+ "input": "{\"id\":\"s89149\",\"type\":\"s67152\",\"lat\":7.0625,\"lon\":7.0625}",
+ "expect": "{\"id\":\"s89149\",\"type\":\"s67152\",\"lat\":7.0625,\"lon\":7.0625}",
+ "model": {
+  "awcfix.id": "s89149",
+  "awcfix.type": "s67152",
+  "awcfix.lat": "7.0625",
+  "awcfix.lon": "7.0625"
+ }
+}

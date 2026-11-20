@@ -1,0 +1,15 @@
+{
+ "keys": {
+  "|country|string": "country",
+  "|elev|float": "elev",
+  "|freq|float": "freq",
+  "|id|string": "id",
+  "|lat|float": "lat",
+  "|lon|float": "lon",
+  "|mag_dec|string": "mag_dec",
+  "|name|string": "name",
+  "|state|string": "state",
+  "|type|string": "type"
+ },
+ "lists": {}
+}

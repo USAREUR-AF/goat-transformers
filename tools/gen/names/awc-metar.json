@@ -1,0 +1,39 @@
+{
+ "keys": {
+  "clouds|base|int": "clouds_base",
+  "clouds|cover|string": "clouds_cover",
+  "clouds|top|int": "clouds_top",
+  "|altim|float": "altim",
+  "|dewp|float": "dewp",
+  "|elev|int": "elev",
+  "|fltCat|string": "flt_cat",
+  "|icaoId|string": "icao_id",
+  "|lat|float": "lat",
+  "|lon|float": "lon",
+  "|maxT24|float": "max_t24",
+  "|maxT|float": "max_t",
+  "|metarType|string": "metar_type",
+  "|minT24|float": "min_t24",
+  "|minT|float": "min_t",
+  "|name|string": "name",
+  "|obsTime|int": "obs_time",
+  "|pcp24hr|float": "pcp24hr",
+  "|pcp3hr|float": "pcp3hr",
+  "|pcp6hr|float": "pcp6hr",
+  "|precip|float": "precip",
+  "|presTend|float": "pres_tend",
+  "|rawOb|string": "raw_ob",
+  "|receiptTime|string": "receipt_time",
+  "|reportTime|string": "report_time",
+  "|slp|float": "slp",
+  "|snow|float": "snow",
+  "|temp|float": "temp",
+  "|vertVis|int": "vert_vis",
+  "|wgst|int": "wgst",
+  "|wspd|int": "wspd",
+  "|wxString|string": "wx_string"
+ },
+ "lists": {
+  "|clouds": "clouds"
+ }
+}

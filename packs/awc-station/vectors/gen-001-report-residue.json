@@ -1,0 +1,7 @@
+{
+ "name": "gen-report-residue",
+ "from": "awc-station",
+ "to": "awc-station",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"icaoId\":\"s16815\",\"iataId\":\"s64334\",\"faaId\":\"s60016\",\"site\":\"s30989\",\"lat\":38.8977,\"lon\":-77.0365,\"elev\":42.375,\"state\":\"s46165\",\"country\":\"s43551\",\"priority\":101.125,\"siteType\":[\"s79571\",\"s98664\"]}",
+ "expect": "{\"icaoId\":\"s16815\",\"iataId\":\"s64334\",\"faaId\":\"s60016\",\"site\":\"s30989\",\"lat\":38.8977,\"lon\":-77.0365,\"elev\":42.375,\"state\":\"s46165\",\"country\":\"s43551\",\"priority\":101.125,\"siteType\":[\"s79571\",\"s98664\"],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

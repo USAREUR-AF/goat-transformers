@@ -1,0 +1,7 @@
+{
+ "name": "gen-report-residue",
+ "from": "awc-tcf",
+ "to": "awc-tcf",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"type\":\"Feature\",\"id\":-0.5,\"properties\":{\"validTime\":\"s93206\",\"issueTime\":\"s563\",\"coverage\":\"sparse\",\"confidence\":\"high\",\"tops\":340,\"labelpos\":[7.0625,0.75]},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[7.0625,-0.5]}}",
+ "expect": "{\"type\":\"Feature\",\"id\":-0.5,\"properties\":{\"validTime\":\"s93206\",\"issueTime\":\"s563\",\"coverage\":\"sparse\",\"confidence\":\"high\",\"tops\":340,\"labelpos\":[7.0625,0.75]},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[7.0625,-0.5]},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

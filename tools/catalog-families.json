@@ -95,6 +95,8 @@
     {"name": "IETF option areas", "domain": "networks", "exact": ["dhcpv6-options", "edns0-options"], "members": {"pattern": "^(.+)-options$", "label": "", "upper": true, "rename": {"dhcpv6": "DHCPv6", "edns0": "EDNS(0)"}}},
 
     {"name": "NWS weather.gov API", "domain": "maps", "prefixes": ["nws-"]},
+    {"name": "aviationweather.gov Data API", "domain": "maps", "prefixes": ["awc-"], "detail": "METAR, TAF, PIREP, SIGMET/AIRMET, CWA, TCF, stations and navigational data"},
+    {"name": "USGS earthquake feed", "domain": "maps", "prefixes": ["usgs-earthquake"], "detail": "GeoJSON summary feed: one event, the whole feed"},
     {"name": "OpenStreetMap PBF", "domain": "maps", "prefixes": ["osm-pbf-"]},
     {"name": "GeoJSON", "domain": "maps", "exact": ["geojson"]},
     {"name": "Geobuf", "domain": "maps", "exact": ["geobuf"]},

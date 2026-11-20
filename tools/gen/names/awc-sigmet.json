@@ -1,0 +1,20 @@
+{
+ "keys": {
+  "|base|int": "base",
+  "|chng|string": "chng",
+  "|dir|string": "dir",
+  "|firId|string": "fir_id",
+  "|firName|string": "fir_name",
+  "|geom|string": "geom",
+  "|hazard|string": "hazard",
+  "|icaoId|string": "icao_id",
+  "|qualifier|string": "qualifier",
+  "|receiptTime|string": "receipt_time",
+  "|seriesId|string": "series_id",
+  "|spd|float": "spd",
+  "|top|int": "top",
+  "|validTimeFrom|int": "valid_time_from",
+  "|validTimeTo|int": "valid_time_to"
+ },
+ "lists": {}
+}

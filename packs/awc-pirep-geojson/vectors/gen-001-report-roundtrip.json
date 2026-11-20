@@ -1,0 +1,17 @@
+{
+ "name": "gen-report-roundtrip",
+ "from": "awc-pirep-geojson",
+ "to": "awc-pirep-geojson",
+ "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"receiptTime\":\"s6827\",\"obsTime\":1750422960,\"qcField\":-0.5,\"icaoId\":\"s77459\",\"acType\":\"s26528\",\"lat\":12.5,\"lon\":12.5,\"fltLvl\":\"s78607\",\"fltLvlType\":\"s86628\",\"visib\":\"s88908\",\"wxString\":\"s11041\",\"temp\":-0.5,\"wdir\":7.0625,\"wspd\":-3.25,\"icgBas1\":1.5,\"icgTop1\":-3.25,\"icgInt1\":\"s99085\",\"icgType1\":\"s97437\",\"icgBas2\":0.75,\"icgTop2\":0.75,\"icgInt2\":\"s75773\",\"icgType2\":\"s74860\",\"tbBas1\":0.75,\"tbTop1\":101.125,\"tbInt1\":\"s23774\",\"tbType1\":\"s6708\",\"tbFreq1\":\"s48487\",\"tbBas2\":12.5,\"tbTop2\":7.0625,\"tbInt2\":\"s59411\",\"tbType2\":\"s35769\",\"tbFreq2\":\"s55694\",\"vertGust\":101.125,\"brkAction\":\"s25332\",\"pirepType\":\"s87943\",\"rawOb\":\"s84592\"},\"id\":-0.5}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"receiptTime\":\"s6827\",\"obsTime\":1750422960,\"qcField\":-0.5,\"icaoId\":\"s77459\",\"acType\":\"s26528\",\"lat\":12.5,\"lon\":12.5,\"fltLvl\":\"s78607\",\"fltLvlType\":\"s86628\",\"visib\":\"s88908\",\"wxString\":\"s11041\",\"temp\":-0.5,\"wdir\":7.0625,\"wspd\":-3.25,\"icgBas1\":1.5,\"icgTop1\":-3.25,\"icgInt1\":\"s99085\",\"icgType1\":\"s97437\",\"icgBas2\":0.75,\"icgTop2\":0.75,\"icgInt2\":\"s75773\",\"icgType2\":\"s74860\",\"tbBas1\":0.75,\"tbTop1\":101.125,\"tbInt1\":\"s23774\",\"tbType1\":\"s6708\",\"tbFreq1\":\"s48487\",\"tbBas2\":12.5,\"tbTop2\":7.0625,\"tbInt2\":\"s59411\",\"tbType2\":\"s35769\",\"tbFreq2\":\"s55694\",\"vertGust\":101.125,\"brkAction\":\"s25332\",\"pirepType\":\"s87943\",\"rawOb\":\"s84592\"},\"id\":-0.5}",
+ "model": {
+  "lon": "-77.0365",
+  "lat": "38.8977",
+  "time_ms": "1750422960000",
+  "awcpirepgeo.id": "-0.5",
+  "awcpirepgeo.properties_receipt_time": "s6827",
+  "awcpirepgeo.properties_obs_time": "1750422960",
+  "awcpirepgeo.properties_qc_field": "-0.5",
+  "awcpirepgeo.properties_icao_id": "s77459"
+ }
+}

@@ -1,0 +1,20 @@
+{
+ "keys": {
+  "|id|float": "id",
+  "|properties.bulletinTime|string": "properties_bulletin_time",
+  "|properties.dbPopTime|string": "properties_db_pop_time",
+  "|properties.elev|int": "properties_elev",
+  "|properties.icaoId|string": "properties_icao_id",
+  "|properties.issueTime|string": "properties_issue_time",
+  "|properties.lat|float": "properties_lat",
+  "|properties.lon|float": "properties_lon",
+  "|properties.mostRecent|int": "properties_most_recent",
+  "|properties.name|string": "properties_name",
+  "|properties.prior|int": "properties_prior",
+  "|properties.rawTAF|string": "properties_raw_taf",
+  "|properties.remarks|string": "properties_remarks",
+  "|properties.validTimeFrom|int": "properties_valid_time_from",
+  "|properties.validTimeTo|int": "properties_valid_time_to"
+ },
+ "lists": {}
+}

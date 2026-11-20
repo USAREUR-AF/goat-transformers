@@ -1356,6 +1356,13 @@ def sample(leaf, seed, shared=None):
         if leaf.jtype == "string":
             # an enum value a YAML reader typed as a number (`08`) is no sample for a string
             vals = [v for v in vals if isinstance(v, str)]
+        elif leaf.jtype in ("number", "integer"):
+            # an enum that does not fit the declared type (a source error: strings listed for
+            # a number) gives no sample; the declared type does
+            vals = [v for v in vals if isinstance(v, (int, float)) and not isinstance(v, bool)
+                    and (leaf.jtype == "number" or isinstance(v, int))]
+        elif leaf.jtype == "boolean":
+            vals = [v for v in vals if isinstance(v, bool)]
         if vals:
             v = vals[r % len(vals)]
             if leaf.jtype == "number" and isinstance(v, int):

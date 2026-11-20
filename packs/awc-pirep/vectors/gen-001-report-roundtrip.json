@@ -1,0 +1,17 @@
+{
+ "name": "gen-report-roundtrip",
+ "from": "awc-pirep",
+ "to": "awc-pirep",
+ "input": "{\"receiptTime\":\"s85935\",\"obsTime\":1725408754,\"qcField\":7.0625,\"icaoId\":\"s16815\",\"acType\":\"s5769\",\"lat\":38.8977,\"lon\":-77.0365,\"fltLvl\":\"s82172\",\"fltLvlType\":\"GRND\",\"clouds\":[{\"cover\":\"CLR\",\"base\":25160,\"top\":8986},{\"cover\":\"CLR\",\"base\":11687,\"top\":97524}],\"visib\":\"s56622\",\"wxString\":\"s15242\",\"temp\":7.0625,\"wdir\":7.0625,\"wspd\":-3.25,\"icgBas1\":101.125,\"icgTop1\":-3.25,\"icgInt1\":\"MOD-SEV\",\"icgType1\":\"s57176\",\"icgBas2\":7.0625,\"icgTop2\":42.375,\"icgInt2\":\"TRC-LGT\",\"icgType2\":\"CLEAR\",\"tbBas1\":-3.25,\"tbTop1\":12.5,\"tbInt1\":\"SEV-EXTM\",\"tbType1\":\"MWAVE\",\"tbFreq1\":\"ISOL\",\"tbBas2\":0.75,\"tbTop2\":1.5,\"tbInt2\":\"LGT\",\"tbType2\":\"CHOP\",\"tbFreq2\":\"ISOL\",\"vertGust\":0.75,\"brkAction\":\"POOR\",\"pirepType\":\"Urgent PIREP\",\"rawOb\":\"s75343\"}",
+ "expect": "{\"receiptTime\":\"s85935\",\"obsTime\":1725408754,\"qcField\":7.0625,\"icaoId\":\"s16815\",\"acType\":\"s5769\",\"lat\":38.8977,\"lon\":-77.0365,\"fltLvl\":\"s82172\",\"fltLvlType\":\"GRND\",\"clouds\":[{\"cover\":\"CLR\",\"base\":25160,\"top\":8986},{\"cover\":\"CLR\",\"base\":11687,\"top\":97524}],\"visib\":\"s56622\",\"wxString\":\"s15242\",\"temp\":7.0625,\"wdir\":7.0625,\"wspd\":-3.25,\"icgBas1\":101.125,\"icgTop1\":-3.25,\"icgInt1\":\"MOD-SEV\",\"icgType1\":\"s57176\",\"icgBas2\":7.0625,\"icgTop2\":42.375,\"icgInt2\":\"TRC-LGT\",\"icgType2\":\"CLEAR\",\"tbBas1\":-3.25,\"tbTop1\":12.5,\"tbInt1\":\"SEV-EXTM\",\"tbType1\":\"MWAVE\",\"tbFreq1\":\"ISOL\",\"tbBas2\":0.75,\"tbTop2\":1.5,\"tbInt2\":\"LGT\",\"tbType2\":\"CHOP\",\"tbFreq2\":\"ISOL\",\"vertGust\":0.75,\"brkAction\":\"POOR\",\"pirepType\":\"Urgent PIREP\",\"rawOb\":\"s75343\"}",
+ "model": {
+  "lat": "38.8977",
+  "lon": "-77.0365",
+  "time_ms": "1725408754000",
+  "awcpirep.receipt_time": "s85935",
+  "awcpirep.obs_time": "1725408754",
+  "awcpirep.qc_field": "7.0625",
+  "awcpirep.icao_id": "s16815",
+  "awcpirep.ac_type": "s5769"
+ }
+}

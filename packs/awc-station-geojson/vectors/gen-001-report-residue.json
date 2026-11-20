@@ -1,0 +1,7 @@
+{
+ "name": "gen-report-residue",
+ "from": "awc-station-geojson",
+ "to": "awc-station-geojson",
+ "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"icaoId\":\"s77459\",\"iataId\":\"s81409\",\"faaId\":\"s38537\",\"site\":\"s89760\",\"elev\":7.0625,\"state\":\"s26603\",\"country\":\"s64068\",\"priority\":42.375,\"siteType\":[\"r1\",\"r2\"]},\"id\":-0.5}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"icaoId\":\"s77459\",\"iataId\":\"s81409\",\"faaId\":\"s38537\",\"site\":\"s89760\",\"elev\":7.0625,\"state\":\"s26603\",\"country\":\"s64068\",\"priority\":42.375,\"siteType\":[\"r1\",\"r2\"]},\"id\":-0.5}"
+}
