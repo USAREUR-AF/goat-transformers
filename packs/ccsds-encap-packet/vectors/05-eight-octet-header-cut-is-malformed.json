@@ -1,0 +1,9 @@
+{
+  "name": "eight-octet-header-cut-is-malformed",
+  "from": "ccsds-encap-packet",
+  "to": "ccsds-encap-packet",
+  "input": "ffffffffffff",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "the 8-octet header cut to 6 octets"
+}

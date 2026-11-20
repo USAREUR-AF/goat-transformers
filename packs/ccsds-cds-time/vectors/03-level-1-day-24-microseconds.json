@@ -1,0 +1,18 @@
+{
+  "name": "level-1-day-24-microseconds",
+  "from": "ccsds-cds-time",
+  "to": "ccsds-cds-time",
+  "input": "4500624705265bff03e7",
+  "expect": "4500624705265bff03e7",
+  "model": {
+    "@kind": "level-1",
+    "ccsdstime.cds_day_segment_24": "1",
+    "ccsdstime.cds_submillisecond_length": "1",
+    "ccsdstime.cds_day": "25159",
+    "ccsdstime.cds_ms_of_day": "86399999",
+    "ccsdstime.cds_submillisecond": "999",
+    "ccsdstime.cds_day_unix_ms": "1795046400000"
+  },
+  "source": "constructed",
+  "reference": "level 1, 24-bit day segment, the last millisecond of the day and 999 microseconds: 10 octets"
+}

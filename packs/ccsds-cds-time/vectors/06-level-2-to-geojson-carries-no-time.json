@@ -1,0 +1,16 @@
+{
+  "name": "level-2-to-geojson-carries-no-time",
+  "from": "ccsds-cds-time",
+  "to": "geojson",
+  "input": "480005000003e8",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{}}",
+  "model": {
+    "@kind": "level-2",
+    "ccsdstime.cds_day_segment_24": "0",
+    "ccsdstime.cds_submillisecond_length": "0",
+    "ccsdstime.cds_day": "5",
+    "ccsdstime.cds_ms_of_day": "1000"
+  },
+  "source": "constructed",
+  "reference": "a level 2 code to GeoJSON: the epoch is the agency's, so no time_ms"
+}

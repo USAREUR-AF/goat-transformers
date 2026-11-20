@@ -1,0 +1,9 @@
+{
+  "name": "space-packet-version-is-no-kind",
+  "from": "ccsds-encap-packet",
+  "to": "ccsds-encap-packet",
+  "input": "0801c0000003",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "a header whose version bits are 000, a Space Packet's"
+}

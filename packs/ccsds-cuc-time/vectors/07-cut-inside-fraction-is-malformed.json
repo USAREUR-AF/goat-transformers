@@ -1,0 +1,9 @@
+{
+  "name": "cut-inside-fraction-is-malformed",
+  "from": "ccsds-cuc-time",
+  "to": "ccsds-cuc-time",
+  "input": "1e807e628080",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "the first code cut to 6 octets, inside its fraction"
+}

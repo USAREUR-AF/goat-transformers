@@ -1,0 +1,25 @@
+{
+  "name": "largest-picoseconds",
+  "from": "ccsds-ccs-time",
+  "to": "ccsds-ccs-time",
+  "input": "5e9999036623595999999999999900000000",
+  "expect": "5e99990366235959999999999999",
+  "model": {
+    "@kind": "day-of-year",
+    "ccsdstime.ccs_resolution": "6",
+    "ccsdstime.ccs_year": "39321",
+    "ccsdstime.ccs_hour": "35",
+    "ccsdstime.ccs_minute": "89",
+    "ccsdstime.ccs_second": "89",
+    "ccsdstime.ccs_day_of_year": "870",
+    "ccsdstime.ccs_subseconds.#": "6",
+    "ccsdstime.ccs_subseconds[0].ccsdstime.ccs_subsecond_digits": "153",
+    "ccsdstime.ccs_subseconds[1].ccsdstime.ccs_subsecond_digits": "153",
+    "ccsdstime.ccs_subseconds[2].ccsdstime.ccs_subsecond_digits": "153",
+    "ccsdstime.ccs_subseconds[3].ccsdstime.ccs_subsecond_digits": "153",
+    "ccsdstime.ccs_subseconds[4].ccsdstime.ccs_subsecond_digits": "153",
+    "ccsdstime.ccs_subseconds[5].ccsdstime.ccs_subsecond_digits": "153"
+  },
+  "source": "constructed",
+  "reference": "day-of-year variation at its largest digits, resolution 6 (10^-12 s): 14 octets; 4 octets after it read over"
+}

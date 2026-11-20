@@ -1,0 +1,12 @@
+# The ccsdsep module: the fields of the CCSDS Encapsulation Packet header, each as
+# the wire integer. The pack ccsds-encap-packet maps them. Bit numbers count from 0
+# at the first transmitted bit.
+module        ccsdsep
+version       0.1.0
+distribution  public
+source        "CCSDS 133.1-B-3 Encapsulation Packet Protocol, Blue Book, May 2020 (Editorial Change 1), https://ccsds.org/Pubs/133x1b3e1.pdf, section 4.1.2; reuse with attribution under the CCSDS reproduction permission statement"
+key  protocol_id                 int  -  "bits 3-5: encapsulation protocol ID (0 idle, 6 = see the extension, 7 mission-specific), registered with SANA"
+key  user_defined                int  -  "4- and 8-octet headers: 4 bits of mission-specific header data"
+key  protocol_id_extension       int  -  "4- and 8-octet headers: 4-bit extended protocol ID when the protocol ID is 6, else 0"
+key  ccsds_defined               int  -  "8-octet header: 2 octets reserved by CCSDS, 0"
+key  packet_length               int  -  "2-, 4- and 8-octet headers: total octets of the packet, header included (1, 2 or 4 octets)"

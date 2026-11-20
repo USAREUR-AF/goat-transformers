@@ -1,0 +1,13 @@
+{
+  "name": "idle-one-octet",
+  "from": "ccsds-encap-packet",
+  "to": "ccsds-encap-packet",
+  "input": "e0",
+  "expect": "e0",
+  "model": {
+    "@kind": "idle",
+    "ccsdsep.protocol_id": "0"
+  },
+  "source": "constructed",
+  "reference": "the 1-octet idle packet: protocol ID 0, length of length 0"
+}

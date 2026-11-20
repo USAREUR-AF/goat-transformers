@@ -37,7 +37,7 @@
 
     {"name": "Space Data Standards", "domain": "space", "prefixes": ["sds-"]},
     {"name": "CCSDS NDM/XML", "domain": "space", "exact": ["ccsds-ndm-xml"]},
-    {"name": "CCSDS frames and packets", "domain": "space", "prefixes": ["ccsds-"], "detail": "AOS, TC, TM, USLP, Proximity-1, CLCW, Space Packet, CFDP"},
+    {"name": "CCSDS frames and packets", "domain": "space", "prefixes": ["ccsds-"], "detail": "AOS, TC, TM, USLP, Proximity-1, CLCW, Space Packet, Encapsulation Packet, CFDP, CUC, CDS, CCS time codes"},
 
     {"name": "ArduPilot DataFlash log", "domain": "uncrewed", "prefixes": ["ardupilot-log"]},
     {"name": "PX4 ULog", "domain": "uncrewed", "prefixes": ["px4-ulog"]},

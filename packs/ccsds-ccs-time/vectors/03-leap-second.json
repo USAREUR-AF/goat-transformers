@@ -1,0 +1,21 @@
+{
+  "name": "leap-second",
+  "from": "ccsds-ccs-time",
+  "to": "ccsds-ccs-time",
+  "input": "512016123123596050",
+  "expect": "512016123123596050",
+  "model": {
+    "@kind": "month-day",
+    "ccsdstime.ccs_resolution": "1",
+    "ccsdstime.ccs_year": "8214",
+    "ccsdstime.ccs_hour": "35",
+    "ccsdstime.ccs_minute": "89",
+    "ccsdstime.ccs_second": "96",
+    "ccsdstime.ccs_month": "18",
+    "ccsdstime.ccs_day_of_month": "49",
+    "ccsdstime.ccs_subseconds.#": "1",
+    "ccsdstime.ccs_subseconds[0].ccsdstime.ccs_subsecond_digits": "80"
+  },
+  "source": "constructed",
+  "reference": "2016-12-31 23:59:60.50, the positive leap second at the end of 2016, with one subsecond octet: second 0x60 is carried"
+}
