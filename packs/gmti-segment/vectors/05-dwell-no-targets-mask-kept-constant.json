@@ -7,7 +7,8 @@
   "model": {
     "@kind": "dwell",
     "gmti.dwell_target_count": "0",
-    "gmti.dwell_index": "13"
+    "gmti.dwell_index": "13",
+    "detection.items.#": "0"
   },
   "source": "synthetic",
   "reference": "a producer may leave the target bits of the mask set when the count is 0; decode reads no target and encode writes those bits 0"

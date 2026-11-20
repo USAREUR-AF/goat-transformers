@@ -1,10 +1,11 @@
 #!/bin/bash
 # Regenerate the STANAG 4607 (GMTI) and STANAG 4676 (ISR tracking) packs of this repository.
 #
-# Usage: tools/run-gmti.sh
+# Usage: tools/run-gmti.sh [--check]   (--check: compare with the tree, write nothing, exit 1 on a difference)
 #
 # Inputs, all in this repository (layouts and the data model restated in its own words):
 #   tools/gmti/segments.tsv.txt kinds.tsv.txt tables.tsv.txt profiles.tsv.txt   AEDP-4607 Ed A V1 and AEDP-4607.1
+#   tools/gmti/detection.tsv.txt   the fields bound to model/detection.def (dwell and target reports)
 #   tools/isr-tracking/model.tsv.txt kinds.tsv.txt                       AEDP-12 Ed B V2
 # model.tsv.txt was listed from the document's class tables by tools/isr-tracking/uml2tsv.py;
 # rerun that only when the document changes (it needs pdftotext and a copy of the document; neither is in this repository).
@@ -15,7 +16,7 @@
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$HERE"
-python3 -I tools/gmti/gmti2pack.py
-python3 -I tools/gmti/vectors.py
-python3 -I tools/isr-tracking/isr2pack.py
-python3 -I tools/isr-tracking/vectors.py
+python3 -I tools/gmti/gmti2pack.py "$@"
+python3 -I tools/gmti/vectors.py "$@"
+python3 -I tools/isr-tracking/isr2pack.py "$@"
+python3 -I tools/isr-tracking/vectors.py "$@"

@@ -14,6 +14,7 @@
     "gmti.platform_id": "N12345    ",
     "gmti.mission_id": "1001",
     "gmti.job_id": "0",
+    "detection.sensor_id": "N12345    ",
     "@kind": "mission",
     "gmti.mission_plan": "ATO-4471    ",
     "gmti.flight_plan": "FP-22       ",

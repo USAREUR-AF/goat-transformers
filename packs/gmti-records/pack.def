@@ -9,6 +9,7 @@ source        "NATO AEDP-4607.1 Edition A Version 1, GMTIF implementation guide;
 source        "layouts restated in tools/gmti/segments.tsv.txt, kinds.tsv.txt and tables.tsv.txt of this repository"
 uses          gmti
 uses          track
+uses          detection
 wire          bits
 word_bytes    1
 bit_order     msb
@@ -535,10 +536,11 @@ field  gmti.class_system  0:72:16  ascii
 field  gmti.security_code  0:88:16  uint
 field  gmti.exercise  0:104:8  uint
 field  gmti.platform_id  0:112:80  ascii
+field  detection.sensor_id  0:112:80  ascii
 field  gmti.mission_id  0:192:32  uint
 field  gmti.job_id  0:224:32  uint
 kind  dwell-situation
-requires  gmti.targets
+requires  detection.items
 when  0:256:8  2
 when  0:296:32  4291239874
 when  0:328:32  1610612736
@@ -549,8 +551,11 @@ field  gmti.dwell_last_of_revisit  0:392:8  uint
 field  gmti.dwell_target_count  0:400:16  uint
 field  gmti.dwell_time_ms  0:416:32  uint
 field  gmti.sensor_lat  0:448:32  sscale:180/4294967296
+field  detection.sensor_lat  0:448:32  sscale:180/4294967296
 field  gmti.sensor_lon  0:480:32  uscale:360/4294967296
+field  detection.sensor_lon  0:480:32  sscale:360/4294967296
 field  gmti.sensor_alt_cm  0:512:32  twos
+field  detection.sensor_hae  0:512:32  sscale:1/100
 field  gmti.lat_scale  0:544:32  sscale:180/4294967296
 field  gmti.lon_scale  0:576:32  uscale:360/4294967296
 field  gmti.sensor_track  0:608:16  uscale:360/65536
@@ -563,13 +568,13 @@ field  gmti.dwell_center_lat  0:712:32  sscale:180/4294967296
 field  gmti.dwell_center_lon  0:744:32  uscale:360/4294967296
 field  gmti.dwell_range_half_km  0:776:16  uscale:1/128
 field  gmti.dwell_angle_half  0:792:16  uscale:360/65536
-group  gmti.targets  0:808  item 48  count 0:400:16
+group  detection.items  0:808  item 48  count 0:400:16
   field  gmti.mti_report_index  0:0:16  uint
   field  gmti.target_delta_lat  0:16:16  twos
   field  gmti.target_delta_lon  0:32:16  twos
 end
 kind  dwell-targeting
-requires  gmti.targets
+requires  detection.items
 when  0:256:8  2
 when  0:296:32  4278657019
 when  0:328:32  2675965952
@@ -580,8 +585,11 @@ field  gmti.dwell_last_of_revisit  0:392:8  uint
 field  gmti.dwell_target_count  0:400:16  uint
 field  gmti.dwell_time_ms  0:416:32  uint
 field  gmti.sensor_lat  0:448:32  sscale:180/4294967296
+field  detection.sensor_lat  0:448:32  sscale:180/4294967296
 field  gmti.sensor_lon  0:480:32  uscale:360/4294967296
+field  detection.sensor_lon  0:480:32  sscale:360/4294967296
 field  gmti.sensor_alt_cm  0:512:32  twos
+field  detection.sensor_hae  0:512:32  sscale:1/100
 field  gmti.sensor_track  0:544:16  uscale:360/65536
 field  gmti.sensor_speed_mms  0:560:32  uint
 field  gmti.sensor_vvel_dms  0:592:8  twos
@@ -595,21 +603,25 @@ field  gmti.dwell_angle_half  0:728:16  uscale:360/65536
 field  gmti.sensor_heading  0:744:16  uscale:360/65536
 field  gmti.sensor_pitch  0:760:16  sscale:180/65536
 field  gmti.sensor_roll  0:776:16  sscale:180/65536
-group  gmti.targets  0:792  item 152  count 0:400:16
+group  detection.items  0:792  item 152  count 0:400:16
   field  gmti.mti_report_index  0:0:16  uint
   field  lat  0:16:32  sscale:180/4294967296
   field  lon  0:48:32  sscale:360/4294967296
   field  hae  0:80:16  sscale:1
   field  gmti.target_los_vel_cms  0:96:16  twos
+  field  detection.radial_velocity_ms  0:96:16  sscale:1/100
   field  gmti.target_wrap_vel_cms  0:112:16  uint
   field  gmti.target_snr_db  0:128:8  twos
+  field  detection.snr_db  0:128:8  sscale:1
   field  gmti.target_class  0:136:8  uint
   field  track.class  0:136:8  uint via target_class
   field  track.simulated  0:136:8  uint via target_simulated
+  field  detection.classification  0:136:8  uint via target_class
   field  gmti.target_class_prob  0:144:8  uint
+  field  detection.classification_probability  0:144:8  uscale:1/100
 end
 kind  dwell-targeting-as-masked
-requires  gmti.targets
+requires  detection.items
 when  0:256:8  2
 when  0:296:32  4291239930
 when  0:328:32  2139095040
@@ -620,8 +632,11 @@ field  gmti.dwell_last_of_revisit  0:392:8  uint
 field  gmti.dwell_target_count  0:400:16  uint
 field  gmti.dwell_time_ms  0:416:32  uint
 field  gmti.sensor_lat  0:448:32  sscale:180/4294967296
+field  detection.sensor_lat  0:448:32  sscale:180/4294967296
 field  gmti.sensor_lon  0:480:32  uscale:360/4294967296
+field  detection.sensor_lon  0:480:32  sscale:360/4294967296
 field  gmti.sensor_alt_cm  0:512:32  twos
+field  detection.sensor_hae  0:512:32  sscale:1/100
 field  gmti.lat_scale  0:544:32  sscale:180/4294967296
 field  gmti.lon_scale  0:576:32  uscale:360/4294967296
 field  gmti.sensor_track  0:608:16  uscale:360/65536
@@ -637,18 +652,22 @@ field  gmti.dwell_angle_half  0:792:16  uscale:360/65536
 field  gmti.sensor_heading  0:808:16  uscale:360/65536
 field  gmti.sensor_pitch  0:824:16  sscale:180/65536
 field  gmti.sensor_roll  0:840:16  sscale:180/65536
-group  gmti.targets  0:856  item 120  count 0:400:16
+group  detection.items  0:856  item 120  count 0:400:16
   field  gmti.mti_report_index  0:0:16  uint
   field  gmti.target_delta_lat  0:16:16  twos
   field  gmti.target_delta_lon  0:32:16  twos
   field  hae  0:48:16  sscale:1
   field  gmti.target_los_vel_cms  0:64:16  twos
+  field  detection.radial_velocity_ms  0:64:16  sscale:1/100
   field  gmti.target_wrap_vel_cms  0:80:16  uint
   field  gmti.target_snr_db  0:96:8  twos
+  field  detection.snr_db  0:96:8  sscale:1
   field  gmti.target_class  0:104:8  uint
   field  track.class  0:104:8  uint via target_class
   field  track.simulated  0:104:8  uint via target_simulated
+  field  detection.classification  0:104:8  uint via target_class
   field  gmti.target_class_prob  0:112:8  uint
+  field  detection.classification_probability  0:112:8  uscale:1/100
 end
 kind  hrr-m1p0
 requires  gmti.scatterers

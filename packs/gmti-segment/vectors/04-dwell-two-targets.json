@@ -1,0 +1,20 @@
+{
+  "name": "gmti-segment-dwell-two-targets",
+  "from": "gmti-segment",
+  "to": "gmti-segment",
+  "input": "0200000051ffc71fc2600000000003000d01000202b0b88044400000f800000000104730000010000000200040000002bf200040000000000045000000f90000000a00016c0000febf028e00010064ff38",
+  "expect": "0200000051ffc71fc2600000000003000d01000202b0b88044400000f800000000104730000010000000200040000002bf200040000000000045000000f90000000a00016c0000febf028e00010064ff38",
+  "model": {
+    "@kind": "dwell",
+    "gmti.dwell_target_count": "2",
+    "detection.items.#": "2",
+    "detection.items[0].gmti.mti_report_index": "0",
+    "detection.items[0].gmti.target_delta_lat": "-321",
+    "detection.items[0].gmti.target_delta_lon": "654",
+    "detection.items[1].gmti.mti_report_index": "1",
+    "detection.items[1].gmti.target_delta_lat": "100",
+    "detection.items[1].gmti.target_delta_lon": "-200"
+  },
+  "source": "synthetic",
+  "reference": "situation class (mask ff c7 1f c2 60 00 00 00): the two target reports fill the rest of the dwell and are two detection items; reduced-size positions stay raw"
+}

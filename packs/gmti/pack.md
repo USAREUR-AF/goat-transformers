@@ -27,19 +27,33 @@ with its space padding).
 | `jobreq` | 101 | 26 | 0 | - |
 | `joback` | 102 | 25 | 0 | - |
 
-166 raw keys; 201 `field` and `also` lines.
+166 raw keys; 204 `field` and `also` lines.
 
 ## Shared keys
 
 | key | kind | field | evidence |
 |---|---|---|---|
-| `lat`, `lon` | `dwell` | first target report, high-resolution latitude and longitude | position of the reported detection, degrees north and east; signed and unsigned binary angles of 32 bits |
-| `hae` | `dwell` | first target report, geodetic height | height of the detection above the WGS 84 ellipsoid, metres |
-| `track.class`, `track.simulated` | `dwell` | first target report, classification | through the tables `target_class` and `target_simulated` (`also` lines after the raw key, so a same-format round trip writes the raw code) |
+| `detection.items` | `dwell` | the target reports | each target report is one detection of the dwell (`model/detection.def`); the reports fill the rest of the dwell segment, read with `group … rest` (engine-spec 0.21) |
+| `lat`, `lon` (in an item) | `dwell` | target report, high-resolution latitude and longitude | position of the reported detection, degrees north and east; signed and unsigned binary angles of 32 bits |
+| `hae` (in an item) | `dwell` | target report, geodetic height | height of the detection above the WGS 84 ellipsoid, metres |
+| `le` (in an item) | `dwell` | target report, height error | one-sigma error of that height, metres; model/track.def derives `le` from the one-sigma upward error, the same measure |
+| `detection.radial_velocity_ms`, `detection.radial_velocity_error_ms` (in an item) | `dwell` | target report, line-of-sight speed and its one-sigma error | cm/s to m/s; the format counts a speed away from the sensor positive, as the key does |
+| `detection.range_error_m`, `detection.cross_range_error_m` (in an item) | `dwell` | target report, one-sigma slant range and cross range errors | cm and dm to m; the format states these instead of a circular error |
+| `detection.snr_db`, `detection.classification_probability` (in an item) | `dwell` | target report, signal-to-noise ratio and classification probability | dB; percent to [0,1] |
+| `track.class`, `track.simulated`, `detection.classification` (in an item) | `dwell` | target report, classification | through the tables `target_class` and `target_simulated` (`also` lines after the raw key, so a same-format round trip writes the raw code); the classification takes the `track.class` vocabulary |
+| `detection.sensor_lat`, `detection.sensor_lon`, `detection.sensor_hae` | `dwell` | sensor position | WGS 84; the longitude read from -180 to 180 as `lon` is; height above the ellipsoid, cm to m |
+| `detection.sensor_id` | every kind | packet header, platform identifier | the platform that carries the sensor, space padded as sent |
 | `lat`, `lon`, `hae` | `location` | platform position | latitude, longitude, height above the WGS 84 ellipsoid in centimetres |
 | `course`, `speed_ms` | `location` | platform track and speed | ground track clockwise from true north; ground speed in mm/s |
 | `track.vel_up_ms` | `location` | platform vertical velocity | decimetres per second, up positive |
-| `uid` | every kind | derived | a dwell: `<platform id>/<mission>/<job>/<revisit>/<dwell>[/<first target index>]`; every other kind: the platform id of the packet header |
+| `uid` | every kind | derived | a dwell: `<platform id>/<mission>/<job>/<revisit>/<dwell>`; every other kind: the platform id of the packet header |
+
+In this pack and `gmti-segment` a field is read once. Where a detection key needs another unit
+than the raw key (`tools/gmti/detection.tsv.txt`), the field is read as the detection key, and the raw
+keys `gmti.sensor_lon`, `gmti.sensor_alt_cm`, `gmti.target_los_vel_cms`, `gmti.target_snr_db`,
+`gmti.target_class_prob`, `gmti.target_unc_slant_cm`, `gmti.target_unc_cross_dm`, `gmti.target_unc_height_m`
+and `gmti.target_unc_los_vel_cms` are left unread here (the values are the same, in other units).
+`gmti-records` and `gmti-segment-records` read both at the same bits.
 
 A longitude is a 32-bit binary angle from 0 to 360 east. The bound longitude reads the same
 bits as two's complement (`sscale`), which gives the same angle from -180 to 180; encode writes
@@ -60,12 +74,17 @@ classification: the sender supplies it (`--set gmti.classification=<code>`).
 | What | Count | Why (construct the pack language lacks) |
 |---|---|---|
 | segments after the first in a packet | every packet of more than one segment | the segments run to the end of the packet with no count and no indicator. A `while` group would read them if its indicator could have the opposite sense: the top bit of every defined segment type is 0, and an indicator read at the end of a length extent reads 0. Closed by `gmti-segment`: a caller splits the packet at the segment sizes and decodes each segment |
-| target reports after the first in a dwell | every dwell of more than one target | the count of target reports is the fifth field of the dwell, not directly before the reports (a count that is not directly before its items). A same-format round trip of such a dwell writes the stated count and one report. Closed for the exploitation-class masks by `gmti-records` and `gmti-segment-records` (fixed layout, counted group) |
+| the target report count as a count | 1 field | the reports are read to the end of the segment (`rest`); the count (`gmti.dwell_target_count`) is a raw key in its own mask block, which a 0.21 `count` line cannot name from outside the block. Encode writes the count from the key, not from the number of items |
+| `detection.time_ms`, `time_ms` of an item | every dwell | the dwell time is milliseconds after midnight of the mission reference day, which the mission segment (another message) states; a target report has no time of its own. The absolute time is the sum of two keys of two messages: not stated |
+| `detection.dwell_id` | every dwell | the dwell is named by its revisit and dwell indexes, two integers; no `bits` transform writes an integer as text, and a derive line may target only core or its own module (`gmti`), not `detection`. The indexes stay raw, and the derived `uid` holds them |
+| `detection.item_id` | every report | the report index (`gmti.mti_report_index`) is an integer and the key is text; kept raw |
+| `detection.coverage_wkt` | every dwell | the dwell area is a centre, a range half-extent and an angular half-extent around the sensor's line of sight (a sector of an annulus), not a polygon of stated corners |
+| `detection.revisit_ms` | every dwell | the revisit interval is in the job definition segment (another message), in tenths of a second |
 | processing records after the first | every segment of more than one record | the record count is not directly before the records (as above). Closed by `gmti-records` and `gmti-segment-records`: the segment has no mask, so its layout is fixed |
 | HRR scatterer records | 4 mask bits; every record | the size of the magnitude and phase fields is the value of two earlier fields (a field length taken from a value); the mask bits are read and written 0. Closed for the HRR field set of the implementation guide by six kinds of `gmti-records`, one per size of magnitude and phase |
 | free text | 1 field | text of variable length that runs to the end of the segment: a `length` block skips bytes no line reads but gives no line that reads them, `ascii` needs a fixed length (at most 255 bytes), and a byte list needs a count or an indicator. Unrolling one-byte fields fails on encode, which writes every line of the block |
 | target position in reduced form | 2 fields | latitude and longitude are a product of two fields plus a third (the dwell centre and a scale factor of the dwell); kept raw |
-| times as `time_ms` | 3 times of day; 3 dates (3, 6 and 6 fields) | a time of day is milliseconds after midnight of the reference day of the mission segment, another message (a sum of two keys); the mission reference day and the request and acknowledge start times are spread over several fields |
+| other times as `time_ms` | 3 times of day; 3 dates (3, 6 and 6 fields) | a time of day is milliseconds after midnight of the reference day of the mission segment, another message (a sum of two keys); the mission reference day and the request and acknowledge start times are spread over several fields |
 | segment types 4, 7, 8, 9, 11 and 14 to 100, 103 to 127 | 5 named, reserved ranges | reserved; no layout in the standard (range-doppler maps are carried by the HRR segment) |
 | controlled extension segments 128 to 132 | 5 | listed in the implementation guide's registry with no layout ("to be provided") |
 | text bytes above 0x7E | every text field | `ascii` reads 0x20 to 0x7E; a byte of the extended character set is `transform-decode` |

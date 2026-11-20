@@ -3,7 +3,7 @@
 # gmti-records
 
 One STANAG 4607 packet of one segment whose repeated records are read as a list: the target
-reports of a dwell (`gmti.targets`), the scatterer records of an HRR segment (`gmti.scatterers`)
+reports of a dwell (`detection.items`, the detections of the dwell), the scatterer records of an HRR segment (`gmti.scatterers`)
 and the processing records of a processing history segment (`gmti.records`).
 `distribution public`.
 
@@ -19,9 +19,9 @@ by the segment type and the mask (and, for HRR, the sizes of magnitude and phase
 
 | kind | mask | body bytes before the records | record bytes | list | basis |
 |---|---|---|---|---|---|
-| `dwell-situation` | `ffc71fc260000000` | 64 | 6 | `gmti.targets` | situation class field table; its stated mask agrees |
-| `dwell-targeting` | `ff071ffb9f800000` | 62 | 19 | `gmti.targets` | targeting class field table (62-byte body, 19-byte report); the guide's stated mask disagrees, see the next kind |
-| `dwell-targeting-as-masked` | `ffc71ffa7f800000` | 70 | 15 | `gmti.targets` | the targeting class mask as the guide states it (ff c7 1f fa 7f 80 00 00): scale factors and reduced-size positions |
+| `dwell-situation` | `ffc71fc260000000` | 64 | 6 | `detection.items` | situation class field table; its stated mask agrees |
+| `dwell-targeting` | `ff071ffb9f800000` | 62 | 19 | `detection.items` | targeting class field table (62-byte body, 19-byte report); the guide's stated mask disagrees, see the next kind |
+| `dwell-targeting-as-masked` | `ffc71ffa7f800000` | 70 | 15 | `detection.items` | the targeting class mask as the guide states it (ff c7 1f fa 7f 80 00 00): scale factors and reduced-size positions |
 | `hrr-m1p0` | `fbffc78200` | 43 | 1 | `gmti.scatterers` | HRR field table of the targeting-with-HRR class; one-byte magnitude, no phase |
 | `hrr-m1p1` | `fbffc78300` | 43 | 2 | `gmti.scatterers` | as above; one-byte magnitude and phase |
 | `hrr-m1p2` | `fbffc78300` | 43 | 3 | `gmti.scatterers` | as above; one-byte magnitude, two-byte phase |
@@ -30,8 +30,13 @@ by the segment type and the mask (and, for HRR, the sizes of magnitude and phase
 | `hrr-m2p2` | `fbffc78300` | 43 | 4 | `gmti.scatterers` | as above; two-byte magnitude and phase |
 | `prochist` | none | 21 | 23 | `gmti.records` | processing history has no mask: every field is mandatory |
 
-256 `field` lines. Keys are those of `model/gmti.def`; in a target report `lat`, `lon`, `hae`,
-`track.class` and `track.simulated` are bound as in `gmti` (inside each item).
+274 `field` lines. Keys are those of `model/gmti.def` and the detection keys of
+`tools/gmti/detection.tsv.txt`; the fixed layout reads each field as its raw key and, at the same bits,
+as its detection key, so both are present. A target report is one item of `detection.items`, holding
+`lat`, `lon`, `hae`, `le`, `track.class`, `track.simulated` and the detection item keys as `gmti` reads
+them. The list was `gmti.targets` before the detection module: that list key stays declared in
+`model/gmti.def` and is no longer read. What `gmti` leaves unstated (the dwell time as `time_ms`,
+`detection.dwell_id`, the dwell area as WKT) is unstated here too: see `gmti/pack.md`.
 
 ## Mask disagreement in the implementation guide
 

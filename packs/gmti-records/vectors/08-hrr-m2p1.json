@@ -14,6 +14,7 @@
     "gmti.platform_id": "N12345    ",
     "gmti.mission_id": "1001",
     "gmti.job_id": "7",
+    "detection.sensor_id": "N12345    ",
     "@kind": "hrr-m2p1",
     "gmti.scatterers.#": "3",
     "gmti.hrr_target_scatterers": "3",

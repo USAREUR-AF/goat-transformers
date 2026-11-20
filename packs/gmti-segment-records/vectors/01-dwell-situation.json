@@ -7,14 +7,19 @@
   "model": {
     "@kind": "dwell-situation",
     "gmti.dwell_target_count": "3",
-    "gmti.targets.#": "3",
+    "detection.items.#": "3",
     "gmti.dwell_index": "12",
-    "gmti.targets[0].gmti.mti_report_index": "0",
-    "gmti.targets[0].gmti.target_delta_lat": "-321",
-    "gmti.targets[1].gmti.mti_report_index": "1",
-    "gmti.targets[1].gmti.target_delta_lat": "-300",
-    "gmti.targets[2].gmti.mti_report_index": "2",
-    "gmti.targets[2].gmti.target_delta_lat": "10"
+    "gmti.sensor_lon": "348.75",
+    "gmti.sensor_alt_cm": "1066800",
+    "detection.sensor_lat": "47.98828125",
+    "detection.sensor_lon": "-11.25",
+    "detection.sensor_hae": "10668.0",
+    "detection.items[0].gmti.mti_report_index": "0",
+    "detection.items[0].gmti.target_delta_lat": "-321",
+    "detection.items[1].gmti.mti_report_index": "1",
+    "detection.items[1].gmti.target_delta_lat": "-300",
+    "detection.items[2].gmti.mti_report_index": "2",
+    "detection.items[2].gmti.target_delta_lat": "10"
   },
   "source": "synthetic",
   "reference": "dwell-situation: a dwell of three target reports, mask ffc71fc260000000"

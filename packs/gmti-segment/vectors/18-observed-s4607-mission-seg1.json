@@ -1,0 +1,19 @@
+{
+  "name": "gmti-segment-observed-s4607-mission-seg1",
+  "from": "gmti-segment",
+  "to": "gmti-segment",
+  "input": "010000002c476c6f62616c20446f6d696e466c7920427920202020202024536b796e65742076313207df0c1f",
+  "expect": "010000002c476c6f62616c20446f6d696e466c7920427920202020202024536b796e65742076313207df0c1f",
+  "model": {
+    "@kind": "mission",
+    "gmti.mission_plan": "Global Domin",
+    "gmti.flight_plan": "Fly By      ",
+    "gmti.platform_type": "36",
+    "gmti.platform_config": "Skynet v12",
+    "gmti.reference_year": "2015",
+    "gmti.reference_month": "12",
+    "gmti.reference_day": "31"
+  },
+  "source": "observed",
+  "reference": "pentlandedge/s4607 (Apache-2.0) commit be131209068384529116950ae902fbf90bcb7edd test/mission_tests.erl sample_mission_seg1: the segment body as the test holds it, behind a 5-byte segment header (type 1, size 44)"
+}

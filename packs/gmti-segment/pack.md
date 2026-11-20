@@ -32,7 +32,7 @@ gmti.job_id=...`). Without them a dwell has no `uid`.
 | `jobreq` | 101 | 26 | 0 |
 | `joback` | 102 | 25 | 0 |
 
-192 `field` and `also` lines. What the segment kinds do not read is listed in `gmti/pack.md`;
+194 `field` and `also` lines. What the segment kinds do not read is listed in `gmti/pack.md`;
 the repeated records of a dwell, an HRR segment and a processing history segment are read by
 `gmti-segment-records`.
 

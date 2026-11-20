@@ -1,0 +1,18 @@
+{
+  "name": "gmti-segment-observed-s4607-teststatus-seg2",
+  "from": "gmti-segment",
+  "to": "gmti-segment",
+  "input": "0a00000013000000050100010500010000a850",
+  "expect": "0a00000013000000050100010500010000a850",
+  "model": {
+    "@kind": "teststatus",
+    "gmti.ts_job_id": "5",
+    "gmti.ts_revisit_index": "256",
+    "gmti.ts_dwell_index": "261",
+    "gmti.ts_dwell_time_ms": "65536",
+    "gmti.hardware_status": "168",
+    "gmti.mode_status": "80"
+  },
+  "source": "observed",
+  "reference": "pentlandedge/s4607 (Apache-2.0) commit be131209068384529116950ae902fbf90bcb7edd test/test_status_tests.erl sample_test_and_status_seg2: the segment body as the test holds it, behind a 5-byte segment header (type 10, size 19)"
+}

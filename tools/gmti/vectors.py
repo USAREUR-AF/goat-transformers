@@ -61,7 +61,8 @@ def packet(segments, job=7, platform="N12345"):
 
 HDR_MODEL = {"gmti.version_id": "41", "gmti.nationality": "XN", "gmti.classification": "5",
              "gmti.class_system": "XN", "gmti.security_code": "0", "gmti.exercise": "128",
-             "gmti.platform_id": "N12345    ", "gmti.mission_id": "1001", "gmti.job_id": "7"}
+             "gmti.platform_id": "N12345    ", "gmti.mission_id": "1001", "gmti.job_id": "7",
+             "detection.sensor_id": "N12345    "}
 
 
 def segment(stype, body):
@@ -145,23 +146,103 @@ def model_of(fields):
     return m
 
 
+def s32(v):     # the 32 bits of v read as two's complement
+    v &= 0xFFFFFFFF
+    return v - (1 << 32) if v >> 31 else v
+
+
+# Detection keys (model/detection.def) of the dwell, from the raw values: in the sequential packs a field
+# whose unit differs is read as the detection key only; the fixed-layout packs read both.
+def dwell_detection(vals):
+    """vals: mask bit -> raw value of the dwell-level fields; returns the detection keys."""
+    m = {}
+    if 6 in vals:
+        m["detection.sensor_lat"] = repr(sa(vals[6], 32))
+    if 7 in vals:
+        m["detection.sensor_lon"] = repr(s32(vals[7]) * 360 / P32)
+    if 8 in vals:
+        m["detection.sensor_hae"] = repr(vals[8] / 100)
+    return m
+
+
+CLASS = {2: "vehicle", 130: "vehicle", 4: "fixed-wing-aircraft", 1: "vehicle"}   # rows of the target_class table used here
+
+
+def item_detection(t):
+    """t: mask bit -> raw value of one target report; returns the item's core and detection keys."""
+    m = {}
+    if 32 in t:
+        m["lat"] = repr(sa(t[32], 32))
+    if 33 in t:
+        m["lon"] = repr(s32(t[33]) * 360 / P32)
+    if 36 in t:
+        m["hae"] = repr(float(t[36]))
+    if 37 in t:
+        m["detection.radial_velocity_ms"] = repr(t[37] / 100)
+    if 39 in t:
+        m["detection.snr_db"] = repr(float(t[39]))
+    if 40 in t:
+        m["detection.classification"] = CLASS[t[40]]
+        m["track.class"] = CLASS[t[40]]
+        m["track.simulated"] = "1" if t[40] >= 128 else "0"
+    if 41 in t:
+        m["detection.classification_probability"] = repr(t[41] / 100)
+    if 42 in t:
+        m["detection.range_error_m"] = repr(t[42] / 100)
+    if 43 in t:
+        m["detection.cross_range_error_m"] = repr(t[43] / 10)
+    if 44 in t:
+        m["le"] = repr(float(t[44]))
+    if 45 in t:
+        m["detection.radial_velocity_error_ms"] = repr(t[45] / 100)
+    return m
+
+
+SEQ_REPLACED = {7: "gmti.sensor_lon", 8: "gmti.sensor_alt_cm", 37: "gmti.target_los_vel_cms", 39: "gmti.target_snr_db",
+                41: "gmti.target_class_prob", 42: "gmti.target_unc_slant_cm", 43: "gmti.target_unc_cross_dm",
+                44: "gmti.target_unc_height_m", 45: "gmti.target_unc_los_vel_cms"}
+
+
+def seq_dwell_model(fields):
+    """Model of a dwell read by gmti: the dwell keys at the top, the target report as item 0."""
+    m, vals, tgt = {}, {}, {}
+    for bit, _, k, v in fields:
+        if bit >= 31:
+            tgt[bit] = v
+            if k.startswith("gmti.") and bit not in SEQ_REPLACED:
+                m["detection.items[0]." + k] = str(v)
+            continue
+        vals[bit] = v
+        if bit not in SEQ_REPLACED:
+            m[k] = repr(float(SCALE[k](v))) if k in SCALE else str(v)
+    m.update(dwell_detection(vals))
+    for k, v in item_detection(tgt).items():
+        m["detection.items[0]." + k] = v
+    m["detection.items.#"] = "1"
+    return m
+
+
 def dwell_body(fields):
     return masked(8, [(b, c, v) for b, c, _, v in fields])
 
 
 def dwell():
     p = packet([segment(2, dwell_body(DWELL_TT))])
-    m = dict(HDR_MODEL, **model_of(DWELL_TT))
-    m.update({"@kind": "dwell", "track.class": "vehicle", "track.simulated": "0"})
+    m = dict(HDR_MODEL, **seq_dwell_model(DWELL_TT))
+    m.update({"@kind": "dwell", "@absent": ["lat", "lon", "detection.time_ms", "gmti.sensor_lon"]})
     vec("dwell-targeting-roundtrip", "gmti", "gmti", p, p, m,
-        "dwell with the fields of the targeting class of the implementation guide and one target report; "
-        "classification 2 (wheeled, live) reads as track.class vehicle, track.simulated 0")
+        "dwell with the fields of the targeting class of the implementation guide and one target report, "
+        "read as one detection item; classification 2 (wheeled, live) reads as track.class and "
+        "detection.classification vehicle, track.simulated 0; sensor longitude and height in degrees -180 to 180 "
+        "and metres; the dwell time is relative to the mission day, so detection.time_ms is absent")
 
     allf = sorted(DWELL_TT + DWELL_REST)
     p = packet([segment(2, dwell_body(allf))])
-    m = dict(HDR_MODEL, **model_of(allf))
+    m = dict(HDR_MODEL, **seq_dwell_model(allf))
     m["@kind"] = "dwell"
-    vec("dwell-every-field-roundtrip", "gmti", "gmti", p, p, m, "every field of the dwell and of its target report")
+    vec("dwell-every-field-roundtrip", "gmti", "gmti", p, p, m,
+        "every field of the dwell and of its target report; the errors of the report in metres (le from the "
+        "one-sigma height error) and the radial velocity error in metres per second")
 
     # situation class: reduced-size target positions, two targets. Only the first is read; the
     # count stays 2 and the second report is not written.
@@ -173,12 +254,13 @@ def dwell():
     head = masked(8, sa_hdr + t1)
     second = struct.pack(">Hhh", 1, 100, -200)
     p_in = packet([segment(2, head + second)])
-    p_out = packet([segment(2, head)])
-    vec("dwell-two-targets-reads-first", "gmti", "gmti", p_in, p_out,
-        {"@kind": "dwell", "gmti.dwell_target_count": "2", "gmti.mti_report_index": "0",
-         "gmti.target_delta_lat": "-321", "gmti.target_delta_lon": "654"},
-        "situation class (mask ff c7 1f c2 60 00 00 00): the second target report is skipped by the segment "
-        "length and not written; the stated count is kept")
+    vec("dwell-two-targets", "gmti", "gmti", p_in, p_in,
+        {"@kind": "dwell", "gmti.dwell_target_count": "2", "detection.items.#": "2",
+         "detection.items[0].gmti.mti_report_index": "0", "detection.items[0].gmti.target_delta_lat": "-321",
+         "detection.items[0].gmti.target_delta_lon": "654", "detection.items[1].gmti.mti_report_index": "1",
+         "detection.items[1].gmti.target_delta_lat": "100", "detection.items[1].gmti.target_delta_lon": "-200"},
+        "situation class (mask ff c7 1f c2 60 00 00 00): the two target reports fill the rest of the dwell and "
+        "are two detection items; reduced-size positions stay raw")
 
     # no target reports, target bits set: the target fields start at the end of the segment and read absent
     nohdr = [(b, c, v) for b, c, v in sa_hdr if b != 4] + [(4, "H", 0)]
@@ -187,7 +269,7 @@ def dwell():
     p_in = packet([segment(2, mask_in + body_fields)])
     p_out = packet([segment(2, masked(8, nohdr))])
     vec("dwell-no-targets-mask-kept-constant", "gmti", "gmti", p_in, p_out,
-        {"@kind": "dwell", "gmti.dwell_target_count": "0", "gmti.dwell_index": "13"},
+        {"@kind": "dwell", "gmti.dwell_target_count": "0", "gmti.dwell_index": "13", "detection.items.#": "0"},
         "a producer may leave the target bits of the mask set when the count is 0; decode reads no target "
         "and encode writes those bits 0")
 
@@ -326,12 +408,11 @@ def from_geojson():
 
 def dwell_to_geojson():
     p = packet([segment(2, dwell_body(DWELL_TT))])
-    lat, lon = sa(LAT1, 32), LON1 * 360 / P32
-    exp = ('{"type":"Feature","geometry":{"type":"Point","coordinates":[%s,%s,152]},"properties":{},'
-           '"id":"N12345    /1001/7/3/12/0"}' % (num(lon), num(lat)))
+    exp = '{"type":"Feature","geometry":null,"properties":{},"id":"N12345    /1001/7/3/12"}'
     vec("dwell-to-geojson", "gmti", "geojson", p, exp,
-        {"uid": "N12345    /1001/7/3/12/0", "lat": repr(lat), "lon": repr(lon), "hae": "152.0", "@complete": True},
-        "the first target report of a dwell as a Feature; uid is platform/mission/job/revisit/dwell/target index")
+        {"uid": "N12345    /1001/7/3/12", "@absent": ["lat", "lon", "hae"], "@complete": True},
+        "a dwell is not one position: its target reports are detection items, which a GeoJSON Feature does not "
+        "carry; uid is platform/mission/job/revisit/dwell")
 
 
 def jobreq():
@@ -387,7 +468,7 @@ def segment_vectors():
                 "reference": "a packet of a mission, a dwell and a location segment: gmti reads the header and the first segment"})
     off = 32
     for n, (seg, kind, m) in enumerate(((mis, "mission", {"gmti.reference_year": "2026"}),
-                                        (dw, "dwell", {"gmti.dwell_index": "12", "lat": repr(sa(LAT1, 32))}),
+                                        (dw, "dwell", {"gmti.dwell_index": "12", "detection.items[0].lat": repr(sa(LAT1, 32))}),
                                         (loc, "location", {"lat": LOC_MODEL["lat"]})), 1):
         size = struct.unpack(">I", pk[off + 1:off + 5])[0]
         part = pk[off:off + size]
@@ -398,12 +479,116 @@ def segment_vectors():
              "reference": "segment %d of the packet of split-0, cut at its stated size" % n}
         if kind == "dwell":
             v["context"] = {"gmti.platform_id": "N12345    ", "gmti.mission_id": "1001", "gmti.job_id": "7"}
-            v["model"] = dict(v["model"], **{"uid": "N12345    /1001/7/3/12/0", "@complete": True})
+            v["model"] = dict(v["model"], **{"uid": "N12345    /1001/7/3/12", "@complete": True})
             v["reference"] += "; the packet header's platform, mission and job given as context give the dwell its uid"
         out.append(v)
     assert off == len(pk)
     return out
 
+
+
+# Observed segments: the sample segment bodies of pentlandedge/s4607 (Apache License 2.0, Copyright Pentland Edge Ltd.
+# 2016-2018), https://github.com/pentlandedge/s4607 at commit be131209068384529116950ae902fbf90bcb7edd,
+# test/*_tests.erl. Each body is put behind its 5-byte segment header (type, size) and read by gmti-segment.
+# The expected model values are decoded here with struct; where s4607's own tests assert a decoded value,
+# that value is checked against ours below (assert), within the tolerance its test uses.
+S4607 = "be131209068384529116950ae902fbf90bcb7edd"
+OBS = [
+    ("mission-seg1", 1, "mission_tests.erl sample_mission_seg1",
+     b"Global Domin" + b"Fly By      " + bytes([36]) + b"Skynet v12" + bytes([0x07, 0xDF, 12, 31])),
+    ("mission-seg2", 1, "mission_tests.erl sample_mission_seg2",
+     b"Short       " + b"Full length1" + bytes([36]) + b"Skynet    " + bytes([0x07, 0xCD, 8, 29])),
+    ("location-seg1", 13, "platform_loc_tests.erl sample_platform_location_seg1",
+     bytes([7, 91, 205, 21, 227, 69, 103, 138, 182, 138, 207, 19, 0, 1, 212, 192, 64, 91, 0, 0, 203, 132, 127])),
+    ("location-seg2", 13, "platform_loc_tests.erl sample_platform_location_seg2",
+     bytes([58, 222, 104, 177, 28, 186, 152, 118, 27, 187, 187, 188, 255, 255, 177, 224, 209, 53, 0, 0, 0, 100, 210])),
+    ("teststatus-seg1", 10, "test_status_tests.erl sample_test_and_status_seg",
+     bytes([0, 0, 0, 5, 1, 0, 1, 5, 0, 1, 0, 0, 0xF8, 0xF0])),
+    ("teststatus-seg2", 10, "test_status_tests.erl sample_test_and_status_seg2",
+     bytes([0, 0, 0, 5, 1, 0, 1, 5, 0, 1, 0, 0, 0xA8, 0x50])),
+    ("jobreq-seg1", 101, "job_req_tests.erl sample_job_request",
+     b"Job Req ID" + b"JReqTaskID" + bytes([0]) + bytes([64, 0, 0, 0, 245, 85, 85, 85]) * 4 +
+     struct.pack(">BHHHBBBBBHHHB6sB", 24, 0x12C, 0, 2018, 5, 23, 10, 11, 50, 65000, 0, 0, 255, b"None  ", 0)),
+    ("jobreq-seg2", 101, "job_req_tests.erl sample_job_request2",
+     b"Job Req ID" + b"JReqTaskID" + bytes([0]) + bytes([64, 0, 0, 0, 245, 85, 85, 85]) * 4 +
+     struct.pack(">BHHHBBBBBHHHB6sB", 24, 0x12C, 0, 2018, 5, 23, 10, 11, 50, 65000, 54321, 21314, 5, b"HawkV1", 1)),
+    ("joback-seg", 102, "job_ack_tests.erl sample_job_ack",
+     struct.pack(">I", 0x12345678) + b"Job Ack ID" + b"JAckTaskID" + bytes([27]) + b"Darth " + bytes([99]) +
+     bytes([64, 0, 0, 0, 245, 85, 85, 85]) * 4 +
+     struct.pack(">BHHBHBBBBB2s", 21, 0x123, 0x1234, 2, 2018, 5, 23, 10, 11, 50, b"XN")),
+    ("freetext-seg", 6, "free_text_tests.erl sample_free_text", b"ABCDEFGHIJ" + b"1234567890" + b"Some free text"),
+]
+
+
+def obs_model(stype, b):
+    if stype == 1:
+        a, f, pt, cfg, y, mo, d = struct.unpack(">12s12sB10sHBB", b)
+        return {"@kind": "mission", "gmti.mission_plan": a.decode(), "gmti.flight_plan": f.decode(),
+                "gmti.platform_type": str(pt), "gmti.platform_config": cfg.decode(), "gmti.reference_year": str(y),
+                "gmti.reference_month": str(mo), "gmti.reference_day": str(d)}
+    if stype == 13:
+        tm, la, lo, alt, trk, spd, vv = struct.unpack(">IiIiHIb", b)
+        return {"@kind": "location", "gmti.location_time_ms": str(tm), "lat": repr(sa(la, 32)),
+                "lon": repr(s32(lo) * 360 / P32), "hae": repr(alt / 100), "course": repr(ba(trk, 16)),
+                "speed_ms": repr(spd / 1000), "track.vel_up_ms": repr(vv / 10)}
+    if stype == 10:
+        j, r, d, tm, hw, md = struct.unpack(">IHHIBB", b)
+        return {"@kind": "teststatus", "gmti.ts_job_id": str(j), "gmti.ts_revisit_index": str(r),
+                "gmti.ts_dwell_index": str(d), "gmti.ts_dwell_time_ms": str(tm), "gmti.hardware_status": str(hw),
+                "gmti.mode_status": str(md)}
+    if stype == 101:
+        rid, tid, pr = struct.unpack(">10s10sB", b[:21])
+        rest = struct.unpack(">BHHHBBBBBHHHB6sB", b[53:])
+        return {"@kind": "jobreq", "gmti.requestor_id": rid.decode(), "gmti.requestor_task_id": tid.decode(),
+                "gmti.requestor_priority": str(pr), "gmti.area_a_lat": repr(sa(struct.unpack(">i", b[21:25])[0], 32)),
+                "gmti.area_a_lon": repr(ba(struct.unpack(">I", b[25:29])[0], 32)), "gmti.radar_mode": str(rest[0]),
+                "gmti.range_resolution_cm": str(rest[1]), "gmti.start_year": str(rest[3]),
+                "gmti.duration_s": str(rest[10]), "gmti.sensor_model": rest[13].decode(), "gmti.request_type": str(rest[14])}
+    if stype == 102:
+        jid, rid, tid, st, model, pr = struct.unpack(">I10s10sB6sB", b[:32])
+        rest = struct.unpack(">BHHBHBBBBB2s", b[64:])
+        return {"@kind": "joback", "gmti.ack_job_id": str(jid), "gmti.requestor_id": rid.decode(),
+                "gmti.requestor_task_id": tid.decode(), "gmti.sensor_type": str(st), "gmti.sensor_model": model.decode(),
+                "gmti.radar_priority": str(pr), "gmti.radar_mode": str(rest[0]), "gmti.duration_s": str(rest[1]),
+                "gmti.revisit_interval_ds": str(rest[2]), "gmti.request_status": str(rest[3]),
+                "gmti.job_start_year": str(rest[4]), "gmti.requestor_nationality": rest[10].decode()}
+    if stype == 6:
+        o, r = struct.unpack(">10s10s", b[:20])
+        return {"@kind": "freetext", "gmti.originator_id": o.decode(), "gmti.recipient_id": r.decode()}
+    raise ValueError(stype)
+
+
+def check_against_s4607(name, m):
+    """Decoded values that the s4607 tests assert for the same bytes."""
+    near = lambda a, b, tol: abs(float(a) - b) <= tol
+    if name == "location-seg1":
+        assert m["gmti.location_time_ms"] == "123456789" and near(m["lat"], -20.2, 1e-6)
+        assert near(m["lon"], 256.7 - 360, 1e-6) and near(m["hae"], 1200.0, 1e-9) and near(m["course"], 90.5, 0.01)
+        assert near(m["speed_ms"], 52.1, 1e-9)
+    if name == "location-seg2":
+        assert m["gmti.location_time_ms"] == "987654321" and near(m["lat"], 20.2, 1e-6) and near(m["lon"], 39.0, 1e-6)
+        assert near(m["hae"], -200.0, 1e-9) and near(m["course"], 294.2, 0.01)
+    if name == "teststatus-seg1":
+        assert (m["gmti.ts_job_id"], m["gmti.ts_revisit_index"], m["gmti.ts_dwell_index"], m["gmti.ts_dwell_time_ms"]) == \
+            ("5", "256", "261", "65536")
+    if name == "mission-seg1":
+        assert (m["gmti.reference_year"], m["gmti.reference_month"], m["gmti.reference_day"]) == ("2015", "12", "31")
+
+
+def observed_vectors():
+    out = []
+    for name, stype, where, body in OBS:
+        seg = segment(stype, body)
+        m = obs_model(stype, body)
+        check_against_s4607(name, m)
+        exp = segment(6, body[:20]) if stype == 6 else seg
+        out.append({"name": "gmti-segment-observed-s4607-" + name, "from": "gmti-segment", "to": "gmti-segment",
+                    "input": seg.hex(), "expect": exp.hex(), "model": m, "source": "observed",
+                    "reference": "pentlandedge/s4607 (Apache-2.0) commit %s test/%s: the segment body as the test "
+                                 "holds it, behind a 5-byte segment header (type %d, size %d)%s" %
+                                 (S4607, where, stype, len(seg),
+                                  "; the free text runs to the end of the segment and is not written" if stype == 6 else "")})
+    return out
 
 # Value of every dwell field by mask bit: struct code, key, value (the two lists above).
 DW = {b: (c, k, v) for b, c, k, v in DWELL_TT + DWELL_REST}
@@ -450,17 +635,17 @@ def records_vectors(hdr):
         seg_body = mask.to_bytes(8, "big") + b"".join(struct.pack(">" + DW[b][0], vals[b]) for b in sorted(bb))
         for t in targets:
             seg_body += b"".join(struct.pack(">" + DW[b][0], t[b]) for b in sorted(tb))
-        m = {"@kind": kind, "gmti.dwell_target_count": "3", "gmti.targets.#": "3", "gmti.dwell_index": "12"}
+        m = {"@kind": kind, "gmti.dwell_target_count": "3", "detection.items.#": "3", "gmti.dwell_index": "12",
+             "gmti.sensor_lon": repr(ba(vals[7], 32)), "gmti.sensor_alt_cm": str(vals[8])}
+        m.update(dwell_detection(vals))
         for i, t in enumerate(targets):
-            m["gmti.targets[%d].gmti.mti_report_index" % i] = str(t[31])
-            if 32 in t:
-                m["gmti.targets[%d].lat" % i] = repr(sa(t[32], 32))
-                m["gmti.targets[%d].lon" % i] = repr(t[33] * 360 / P32)
+            m["detection.items[%d].gmti.mti_report_index" % i] = str(t[31])
+            for k, v in item_detection(t).items():
+                m["detection.items[%d].%s" % (i, k)] = v
             if 34 in t:
-                m["gmti.targets[%d].gmti.target_delta_lat" % i] = str(t[34])
-            if 40 in t:
-                m["gmti.targets[%d].track.simulated" % i] = "1" if t[40] >= 128 else "0"
-        m.setdefault("gmti.targets[0].track.class", "vehicle") if 40 in tb else None
+                m["detection.items[%d].gmti.target_delta_lat" % i] = str(t[34])
+            if 37 in t:
+                m["detection.items[%d].gmti.target_los_vel_cms" % i] = str(t[37])
         add(kind, segment(2, seg_body), m, "%s: a dwell of three target reports, mask %016x" % (kind, mask))
 
     hb = [1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 22, 23, 24, 25]
@@ -496,12 +681,25 @@ def records_vectors(hdr):
     return out
 
 
+CHECK = []     # with --check: the files that differ; nothing is written
+
+
+def put(path, text):
+    if CHECK_MODE:
+        try:
+            cur = open(path, encoding="utf-8").read()
+        except OSError:
+            cur = None
+        if cur != text:
+            CHECK.append(os.path.relpath(path, os.path.join(os.path.dirname(OUT), "..", "..")))
+    else:
+        with open(path, "w", encoding="utf-8") as fh:
+            fh.write(text)
+
+
 def write(pack, vectors):
     d = os.path.join(os.path.dirname(OUT), "..", pack, "vectors")
     os.makedirs(d, exist_ok=True)
-    for old in os.listdir(d):
-        if old.endswith(".json"):
-            os.remove(os.path.join(d, old))
     pfx = len(pack) + 1
     # A vector lives under the pack that owns its input (its "from"); one whose
     # input is another pack's goes to that pack's vectors/ as to-<pack>-<name>,
@@ -512,25 +710,42 @@ def write(pack, vectors):
         cd = os.path.join(os.path.dirname(OUT), "..", v["from"], "vectors")
         os.makedirs(cd, exist_ok=True)
         name = v["name"][pfx:] if v["name"].startswith(pack + "-") else v["name"][5:]
-        with open(os.path.join(cd, "to-%s-%s.json" % (pack, name)), "w", encoding="utf-8") as fh:
-            json.dump(v, fh, indent=2)
-            fh.write("\n")
+        put(os.path.join(cd, "to-%s-%s.json" % (pack, name)), json.dumps(v, indent=2) + "\n")
+    keep = set()
     for i, v in enumerate(vectors, 1):
-        with open(os.path.join(d, "%02d-%s.json" % (i, v["name"][pfx:] if v["name"].startswith(pack + "-") else v["name"][5:])),
-                  "w", encoding="utf-8") as fh:
-            json.dump(v, fh, indent=2)
-            fh.write("\n")
+        fn = "%02d-%s.json" % (i, v["name"][pfx:] if v["name"].startswith(pack + "-") else v["name"][5:])
+        keep.add(fn)
+        put(os.path.join(d, fn), json.dumps(v, indent=2) + "\n")
+    for old in os.listdir(d):          # every file of the pack's own vectors/ is this script's
+        if old.endswith(".json") and old not in keep:
+            if CHECK_MODE:
+                if old.startswith("to-"):      # written by this script for another of its packs
+                    continue
+                CHECK.append(os.path.join("packs", pack, "vectors", old) + " (not written by this script)")
+            else:
+                os.remove(os.path.join(d, old))
     print("%s: %d vectors" % (pack, len(vectors)))
 
 
+CHECK_MODE = False
+
+
 def main():
+    global CHECK_MODE
+    import sys
+    CHECK_MODE = "--check" in sys.argv[1:]
     for f in (mission, dwell, hrr, jobdef, freetext, teststatus, prochist, location, from_geojson,
               dwell_to_geojson, jobreq, joback):
         f()
     write("gmti", VECTORS)
-    write("gmti-segment", segment_vectors())
+    write("gmti-segment", segment_vectors() + observed_vectors())
     write("gmti-records", records_vectors(True))
     write("gmti-segment-records", records_vectors(False))
+    if CHECK_MODE:
+        for c in CHECK:
+            print("differs: " + c)
+        print("gmti vectors: %s" % ("ok" if not CHECK else "%d differ" % len(CHECK)))
+        sys.exit(1 if CHECK else 0)
 
 
 if __name__ == "__main__":
