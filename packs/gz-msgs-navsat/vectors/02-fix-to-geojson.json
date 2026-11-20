@@ -1,0 +1,12 @@
+{
+  "name": "02-fix-to-geojson",
+  "from": "gz-msgs-navsat",
+  "to": "geojson",
+  "input": "0a0d0a0b0880e2cfaa061080e59a77110000000000b0474019000000000020214021000000000088794029000000000000000031000000000000144039000000000000d0bf42086770735f6c696e6b",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.5625,47.375]},\"properties\":{\"course\":0,\"speed_ms\":5}}",
+  "model": {
+    "@complete": true,
+    "course": "0",
+    "speed_ms": "5"
+  }
+}

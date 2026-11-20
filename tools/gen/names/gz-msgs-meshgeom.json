@@ -1,0 +1,17 @@
+{
+ "1.1.1": "header_stamp_sec",
+ "1.1.2": "header_stamp_nsec",
+ "1.2[]": "header_data",
+ "2": "mesh_geom_filename",
+ "3.1.1.1": "scale_stamp_sec",
+ "3.1.1.2": "scale_stamp_nsec",
+ "3.1.2[]": "scale_header_data",
+ "3.2": "scale_x",
+ "3.3": "scale_y",
+ "3.4": "scale_z",
+ "4": "mesh_geom_submesh",
+ "5": "mesh_geom_center_submesh",
+ "gz.msgs.Header.Map:1": "map_key",
+ "gz.msgs.Header.Map:2[]": "map_value",
+ "gz.msgs.Header.Map:2[]item": "map_value_item"
+}

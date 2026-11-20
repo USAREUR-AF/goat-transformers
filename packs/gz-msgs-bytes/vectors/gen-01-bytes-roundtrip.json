@@ -1,0 +1,19 @@
+{
+  "name": "gen-bytes-roundtrip",
+  "from": "gz-msgs-bytes",
+  "to": "gz-msgs-bytes",
+  "input": "0a2b0a05086410890112100a056b65792d32120776616c75652d3312100a056b65792d34120776616c75652d35",
+  "expect": "0a2b0a05086410890112100a056b65792d32120776616c75652d3312100a056b65792d34120776616c75652d35",
+  "model": {
+    "@kind": "bytes",
+    "gzmsgsbytes.header_stamp_sec": "100",
+    "gzmsgsbytes.header_stamp_nsec": "137",
+    "gzmsgsbytes.header_data.#": "2",
+    "gzmsgsbytes.header_data[0].gzmsgsbytes.map_key": "key-2",
+    "gzmsgsbytes.header_data[0].gzmsgsbytes.map_value.#": "1",
+    "gzmsgsbytes.header_data[0].gzmsgsbytes.map_value[0].gzmsgsbytes.map_value_item": "value-3",
+    "gzmsgsbytes.header_data[1].gzmsgsbytes.map_key": "key-4",
+    "gzmsgsbytes.header_data[1].gzmsgsbytes.map_value.#": "1",
+    "gzmsgsbytes.header_data[1].gzmsgsbytes.map_value[0].gzmsgsbytes.map_value_item": "value-5"
+  }
+}

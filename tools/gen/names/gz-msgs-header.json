@@ -1,0 +1,8 @@
+{
+ "1.1": "stamp_sec",
+ "1.2": "stamp_nsec",
+ "2[]": "header_data",
+ "gz.msgs.Header.Map:1": "map_key",
+ "gz.msgs.Header.Map:2[]": "map_value",
+ "gz.msgs.Header.Map:2[]item": "map_value_item"
+}

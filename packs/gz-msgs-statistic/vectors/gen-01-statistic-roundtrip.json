@@ -1,0 +1,22 @@
+{
+  "name": "gen-statistic-roundtrip",
+  "from": "gz-msgs-statistic",
+  "to": "gz-msgs-statistic",
+  "input": "0a2b0a05086410890112100a056b65792d35120776616c75652d3612100a056b65792d37120776616c75652d3810011a066e616d652d33210000000000001d40",
+  "expect": "0a2b0a05086410890112100a056b65792d35120776616c75652d3612100a056b65792d37120776616c75652d3810011a066e616d652d33210000000000001d40",
+  "model": {
+    "@kind": "statistic",
+    "gzmsgsstatistic.header_stamp_sec": "100",
+    "gzmsgsstatistic.header_stamp_nsec": "137",
+    "gzmsgsstatistic.statistic_type": "1",
+    "gzmsgsstatistic.statistic_name": "name-3",
+    "gzmsgsstatistic.statistic_value": "7.25",
+    "gzmsgsstatistic.header_data.#": "2",
+    "gzmsgsstatistic.header_data[0].gzmsgsstatistic.map_key": "key-5",
+    "gzmsgsstatistic.header_data[0].gzmsgsstatistic.map_value.#": "1",
+    "gzmsgsstatistic.header_data[0].gzmsgsstatistic.map_value[0].gzmsgsstatistic.map_value_item": "value-6",
+    "gzmsgsstatistic.header_data[1].gzmsgsstatistic.map_key": "key-7",
+    "gzmsgsstatistic.header_data[1].gzmsgsstatistic.map_value.#": "1",
+    "gzmsgsstatistic.header_data[1].gzmsgsstatistic.map_value[0].gzmsgsstatistic.map_value_item": "value-8"
+  }
+}

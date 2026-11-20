@@ -1,0 +1,18 @@
+{
+ "1.1.1": "header_stamp_sec",
+ "1.1.2": "header_stamp_nsec",
+ "1.2[]": "header_data",
+ "10": "camera_lens_hfov",
+ "11": "camera_lens_env_texture_size",
+ "2": "camera_lens_type",
+ "3": "camera_lens_c1",
+ "4": "camera_lens_c2",
+ "5": "camera_lens_c3",
+ "6": "camera_lens_f",
+ "7": "camera_lens_fun",
+ "8": "camera_lens_scale_to_hfov",
+ "9": "camera_lens_cutoff_angle",
+ "gz.msgs.Header.Map:1": "map_key",
+ "gz.msgs.Header.Map:2[]": "map_value",
+ "gz.msgs.Header.Map:2[]item": "map_value_item"
+}

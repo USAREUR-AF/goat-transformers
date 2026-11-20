@@ -1,0 +1,17 @@
+{
+ "1": "dvltracking_target_type",
+ "2.1": "range_mean",
+ "2.2": "range_variance",
+ "3.1": "position_reference",
+ "3.2.1.1.1": "position_stamp_sec",
+ "3.2.1.1.2": "position_stamp_nsec",
+ "3.2.1.2[]": "position_header_data",
+ "3.2.2": "position_mean_x",
+ "3.2.3": "position_mean_y",
+ "3.2.4": "position_mean_z",
+ "3.3[]": "position_covariance",
+ "gz.msgs.DVLKinematicEstimate:3[]item": "dvlkinematic_estimate_covariance_item",
+ "gz.msgs.Header.Map:1": "map_key",
+ "gz.msgs.Header.Map:2[]": "map_value",
+ "gz.msgs.Header.Map:2[]item": "map_value_item"
+}

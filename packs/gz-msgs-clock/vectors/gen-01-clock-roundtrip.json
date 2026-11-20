@@ -1,0 +1,25 @@
+{
+  "name": "gen-clock-roundtrip",
+  "from": "gz-msgs-clock",
+  "to": "gz-msgs-clock",
+  "input": "0a2d0a05086410890112100a056b65792d38120776616c75652d3912120a066b65792d3130120876616c75652d3131120608ae0110d3011a0608f801109d02220608c20210e702",
+  "expect": "0a2d0a05086410890112100a056b65792d38120776616c75652d3912120a066b65792d3130120876616c75652d3131120608ae0110d3011a0608f801109d02220608c20210e702",
+  "model": {
+    "@kind": "clock",
+    "gzmsgsclock.header_stamp_sec": "100",
+    "gzmsgsclock.header_stamp_nsec": "137",
+    "gzmsgsclock.system_sec": "174",
+    "gzmsgsclock.system_nsec": "211",
+    "gzmsgsclock.real_sec": "248",
+    "gzmsgsclock.real_nsec": "285",
+    "gzmsgsclock.sim_sec": "322",
+    "gzmsgsclock.sim_nsec": "359",
+    "gzmsgsclock.header_data.#": "2",
+    "gzmsgsclock.header_data[0].gzmsgsclock.map_key": "key-8",
+    "gzmsgsclock.header_data[0].gzmsgsclock.map_value.#": "1",
+    "gzmsgsclock.header_data[0].gzmsgsclock.map_value[0].gzmsgsclock.map_value_item": "value-9",
+    "gzmsgsclock.header_data[1].gzmsgsclock.map_key": "key-10",
+    "gzmsgsclock.header_data[1].gzmsgsclock.map_value.#": "1",
+    "gzmsgsclock.header_data[1].gzmsgsclock.map_value[0].gzmsgsclock.map_value_item": "value-11"
+  }
+}

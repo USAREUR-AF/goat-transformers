@@ -1,0 +1,33 @@
+{
+  "name": "gen-pub-roundtrip",
+  "from": "gz-msgs-discovery",
+  "to": "gz-msgs-discovery",
+  "input": "0a2f0a05086410890112120a066b65792d3139120876616c75652d323012120a066b65792d3231120876616c75652d323210ae011a0e70726f636573735f757569642d3320012a04080110013a510a07746f7069632d371209616464726573732d381a0e70726f636573735f757569642d39220c6e6f64655f757569642d31302801321b0a076374726c2d3132120b6d73675f747970652d31331801208f05",
+  "expect": "0a2f0a05086410890112120a066b65792d3139120876616c75652d323012120a066b65792d3231120876616c75652d323210ae011a0e70726f636573735f757569642d3320012a04080110013a510a07746f7069632d371209616464726573732d381a0e70726f636573735f757569642d39220c6e6f64655f757569642d31302801321b0a076374726c2d3132120b6d73675f747970652d31331801208f05",
+  "model": {
+    "@kind": "pub",
+    "gzmsgsdiscovery.header_stamp_sec": "100",
+    "gzmsgsdiscovery.header_stamp_nsec": "137",
+    "gzmsgsdiscovery.version": "174",
+    "gzmsgsdiscovery.process_uuid": "process_uuid-3",
+    "gzmsgsdiscovery.type": "1",
+    "gzmsgsdiscovery.flags_relay": "1",
+    "gzmsgsdiscovery.flags_no_relay": "1",
+    "gzmsgsdiscovery.pub_topic": "topic-7",
+    "gzmsgsdiscovery.pub_address": "address-8",
+    "gzmsgsdiscovery.pub_process_uuid": "process_uuid-9",
+    "gzmsgsdiscovery.pub_node_uuid": "node_uuid-10",
+    "gzmsgsdiscovery.pub_scope": "1",
+    "gzmsgsdiscovery.msg_pub_ctrl": "ctrl-12",
+    "gzmsgsdiscovery.msg_pub_msg_type": "msg_type-13",
+    "gzmsgsdiscovery.msg_pub_throttled": "1",
+    "gzmsgsdiscovery.msg_pub_msgs_per_sec": "655",
+    "gzmsgsdiscovery.header_data.#": "2",
+    "gzmsgsdiscovery.header_data[0].gzmsgsdiscovery.map_key": "key-19",
+    "gzmsgsdiscovery.header_data[0].gzmsgsdiscovery.map_value.#": "1",
+    "gzmsgsdiscovery.header_data[0].gzmsgsdiscovery.map_value[0].gzmsgsdiscovery.map_value_item": "value-20",
+    "gzmsgsdiscovery.header_data[1].gzmsgsdiscovery.map_key": "key-21",
+    "gzmsgsdiscovery.header_data[1].gzmsgsdiscovery.map_value.#": "1",
+    "gzmsgsdiscovery.header_data[1].gzmsgsdiscovery.map_value[0].gzmsgsdiscovery.map_value_item": "value-22"
+  }
+}

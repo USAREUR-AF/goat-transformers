@@ -1,0 +1,32 @@
+{
+  "name": "gen-propagation_grid-roundtrip",
+  "from": "gz-msgs-propagation-grid",
+  "to": "gz-msgs-propagation-grid",
+  "input": "0a2b0a05086410890112100a056b65792d32120776616c75652d3312100a056b65792d34120776616c75652d3512390a1c0a0608c20210e70212120a066b65792d3131120876616c75652d3132110000000000802c40190000000000003040210000000000c0314012390a1c0a0608c50410ea0412120a066b65792d3138120876616c75652d3139110000000000803a40190000000000403c40210000000000003e40",
+  "expect": "0a2b0a05086410890112100a056b65792d32120776616c75652d3312100a056b65792d34120776616c75652d3512390a1c0a0608c20210e70212120a066b65792d3131120876616c75652d3132110000000000802c40190000000000003040210000000000c0314012390a1c0a0608c50410ea0412120a066b65792d3138120876616c75652d3139110000000000803a40190000000000403c40210000000000003e40",
+  "model": {
+    "@kind": "propagation_grid",
+    "gzmsgspropagationgrid.header_stamp_sec": "100",
+    "gzmsgspropagationgrid.header_stamp_nsec": "137",
+    "gzmsgspropagationgrid.header_data.#": "2",
+    "gzmsgspropagationgrid.header_data[0].gzmsgspropagationgrid.map_key": "key-2",
+    "gzmsgspropagationgrid.header_data[0].gzmsgspropagationgrid.map_value.#": "1",
+    "gzmsgspropagationgrid.header_data[0].gzmsgspropagationgrid.map_value[0].gzmsgspropagationgrid.map_value_item": "value-3",
+    "gzmsgspropagationgrid.header_data[1].gzmsgspropagationgrid.map_key": "key-4",
+    "gzmsgspropagationgrid.header_data[1].gzmsgspropagationgrid.map_value.#": "1",
+    "gzmsgspropagationgrid.header_data[1].gzmsgspropagationgrid.map_value[0].gzmsgspropagationgrid.map_value_item": "value-5",
+    "gzmsgspropagationgrid.propagation_grid_particle.#": "2",
+    "gzmsgspropagationgrid.propagation_grid_particle[0].gzmsgspropagationgrid.propagation_particle_header_stamp_sec": "322",
+    "gzmsgspropagationgrid.propagation_grid_particle[0].gzmsgspropagationgrid.propagation_particle_header_stamp_nsec": "359",
+    "gzmsgspropagationgrid.propagation_grid_particle[0].gzmsgspropagationgrid.propagation_particle_header_data.#": "1",
+    "gzmsgspropagationgrid.propagation_grid_particle[0].gzmsgspropagationgrid.propagation_particle_header_data[0].gzmsgspropagationgrid.map_key": "key-11",
+    "gzmsgspropagationgrid.propagation_grid_particle[0].gzmsgspropagationgrid.propagation_particle_header_data[0].gzmsgspropagationgrid.map_value.#": "1",
+    "gzmsgspropagationgrid.propagation_grid_particle[0].gzmsgspropagationgrid.propagation_particle_header_data[0].gzmsgspropagationgrid.map_value[0].gzmsgspropagationgrid.map_value_item": "value-12",
+    "gzmsgspropagationgrid.propagation_grid_particle[1].gzmsgspropagationgrid.propagation_particle_header_stamp_sec": "581",
+    "gzmsgspropagationgrid.propagation_grid_particle[1].gzmsgspropagationgrid.propagation_particle_header_stamp_nsec": "618",
+    "gzmsgspropagationgrid.propagation_grid_particle[1].gzmsgspropagationgrid.propagation_particle_header_data.#": "1",
+    "gzmsgspropagationgrid.propagation_grid_particle[1].gzmsgspropagationgrid.propagation_particle_header_data[0].gzmsgspropagationgrid.map_key": "key-18",
+    "gzmsgspropagationgrid.propagation_grid_particle[1].gzmsgspropagationgrid.propagation_particle_header_data[0].gzmsgspropagationgrid.map_value.#": "1",
+    "gzmsgspropagationgrid.propagation_grid_particle[1].gzmsgspropagationgrid.propagation_particle_header_data[0].gzmsgspropagationgrid.map_value[0].gzmsgspropagationgrid.map_value_item": "value-19"
+  }
+}

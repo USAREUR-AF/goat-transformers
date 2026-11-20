@@ -1,0 +1,12 @@
+{
+  "name": "gen-parameter_declaration-roundtrip",
+  "from": "gz-msgs-parameter-declaration",
+  "to": "gz-msgs-parameter-declaration",
+  "input": "0a066e616d652d301206747970652d31",
+  "expect": "0a066e616d652d301206747970652d31",
+  "model": {
+    "@kind": "parameter_declaration",
+    "gzmsgsparameterdeclaration.parameter_declaration_name": "name-0",
+    "gzmsgsparameterdeclaration.parameter_declaration_type": "type-1"
+  }
+}

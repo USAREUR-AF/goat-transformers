@@ -1,0 +1,17 @@
+{
+ "1.1.1": "header_stamp_sec",
+ "1.1.2": "header_stamp_nsec",
+ "1.2[]": "header_data",
+ "2": "joint_animation_model_name",
+ "3[]": "joint_animation_joint",
+ "4[]": "joint_animation_time",
+ "gz.msgs.Header.Map:1": "map_key",
+ "gz.msgs.Header.Map:2[]": "map_value",
+ "gz.msgs.Header.Map:2[]item": "map_value_item",
+ "gz.msgs.JointAnimation.Joint:1[]": "joint_name",
+ "gz.msgs.JointAnimation.Joint:1[]item": "joint_name_item",
+ "gz.msgs.JointAnimation.Joint:2[]": "joint_angle",
+ "gz.msgs.JointAnimation.Joint:2[]item": "joint_angle_item",
+ "gz.msgs.Time:1": "time_sec",
+ "gz.msgs.Time:2": "time_nsec"
+}

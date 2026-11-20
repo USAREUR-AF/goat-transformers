@@ -1,0 +1,13 @@
+{
+ "1": "performance_sensor_metrics_name",
+ "2": "performance_sensor_metrics_real_update_rate",
+ "3": "performance_sensor_metrics_sim_update_rate",
+ "4": "performance_sensor_metrics_nominal_update_rate",
+ "5.1.1.1": "fps_optional_stamp_sec",
+ "5.1.1.2": "fps_optional_stamp_nsec",
+ "5.1.2[]": "fps_optional_header_data",
+ "5.2": "fps_optional_data",
+ "gz.msgs.Header.Map:1": "map_key",
+ "gz.msgs.Header.Map:2[]": "map_value",
+ "gz.msgs.Header.Map:2[]item": "map_value_item"
+}

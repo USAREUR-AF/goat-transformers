@@ -1,0 +1,33 @@
+{
+  "name": "gen-shadows-roundtrip",
+  "from": "gz-msgs-shadows",
+  "to": "gz-msgs-shadows",
+  "input": "0a2e0a05086410890112110a056b65792d39120876616c75652d313012120a066b65792d3131120876616c75652d313210011a460a300a0608d30110f80112120a066b65792d3133120876616c75652d313412120a066b65792d3135120876616c75652d313615000050401d0000784025000090402d0000a440",
+  "expect": "0a2e0a05086410890112110a056b65792d39120876616c75652d313012120a066b65792d3131120876616c75652d313210011a460a300a0608d30110f80112120a066b65792d3133120876616c75652d313412120a066b65792d3135120876616c75652d313615000050401d0000784025000090402d0000a440",
+  "model": {
+    "@kind": "shadows",
+    "gzmsgsshadows.header_stamp_sec": "100",
+    "gzmsgsshadows.header_stamp_nsec": "137",
+    "gzmsgsshadows.shadows_type": "1",
+    "gzmsgsshadows.color_stamp_sec": "211",
+    "gzmsgsshadows.color_stamp_nsec": "248",
+    "gzmsgsshadows.color_r": "3.25",
+    "gzmsgsshadows.color_g": "3.875",
+    "gzmsgsshadows.color_b": "4.5",
+    "gzmsgsshadows.color_a": "5.125",
+    "gzmsgsshadows.header_data.#": "2",
+    "gzmsgsshadows.header_data[0].gzmsgsshadows.map_key": "key-9",
+    "gzmsgsshadows.header_data[0].gzmsgsshadows.map_value.#": "1",
+    "gzmsgsshadows.header_data[0].gzmsgsshadows.map_value[0].gzmsgsshadows.map_value_item": "value-10",
+    "gzmsgsshadows.header_data[1].gzmsgsshadows.map_key": "key-11",
+    "gzmsgsshadows.header_data[1].gzmsgsshadows.map_value.#": "1",
+    "gzmsgsshadows.header_data[1].gzmsgsshadows.map_value[0].gzmsgsshadows.map_value_item": "value-12",
+    "gzmsgsshadows.color_header_data.#": "2",
+    "gzmsgsshadows.color_header_data[0].gzmsgsshadows.map_key": "key-13",
+    "gzmsgsshadows.color_header_data[0].gzmsgsshadows.map_value.#": "1",
+    "gzmsgsshadows.color_header_data[0].gzmsgsshadows.map_value[0].gzmsgsshadows.map_value_item": "value-14",
+    "gzmsgsshadows.color_header_data[1].gzmsgsshadows.map_key": "key-15",
+    "gzmsgsshadows.color_header_data[1].gzmsgsshadows.map_value.#": "1",
+    "gzmsgsshadows.color_header_data[1].gzmsgsshadows.map_value[0].gzmsgsshadows.map_value_item": "value-16"
+  }
+}

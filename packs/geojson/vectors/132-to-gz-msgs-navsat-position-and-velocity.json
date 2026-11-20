@@ -1,0 +1,12 @@
+{
+  "name": "132-to-gz-msgs-navsat-position-and-velocity",
+  "from": "geojson",
+  "to": "gz-msgs-navsat",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.5625,47.375,410]},\"properties\":{\"course\":0,\"speed_ms\":5}}",
+  "expect": "110000000000b04740190000000000202140290000000000000000310000000000001440",
+  "model": {
+    "@complete": true,
+    "track.vel_east_ms": "0",
+    "track.vel_north_ms": "5"
+  }
+}

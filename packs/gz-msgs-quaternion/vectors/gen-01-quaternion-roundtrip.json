@@ -1,0 +1,23 @@
+{
+  "name": "gen-quaternion-roundtrip",
+  "from": "gz-msgs-quaternion",
+  "to": "gz-msgs-quaternion",
+  "input": "0a2b0a05086410890112100a056b65792d36120776616c75652d3712100a056b65792d38120776616c75652d39110000000000000e40190000000000001640210000000000001d40290000000000002240",
+  "expect": "0a2b0a05086410890112100a056b65792d36120776616c75652d3712100a056b65792d38120776616c75652d39110000000000000e40190000000000001640210000000000001d40290000000000002240",
+  "model": {
+    "@kind": "quaternion",
+    "gzmsgsquaternion.header_stamp_sec": "100",
+    "gzmsgsquaternion.header_stamp_nsec": "137",
+    "gzmsgsquaternion.quaternion_x": "3.75",
+    "gzmsgsquaternion.quaternion_y": "5.5",
+    "gzmsgsquaternion.quaternion_z": "7.25",
+    "gzmsgsquaternion.quaternion_w": "9",
+    "gzmsgsquaternion.header_data.#": "2",
+    "gzmsgsquaternion.header_data[0].gzmsgsquaternion.map_key": "key-6",
+    "gzmsgsquaternion.header_data[0].gzmsgsquaternion.map_value.#": "1",
+    "gzmsgsquaternion.header_data[0].gzmsgsquaternion.map_value[0].gzmsgsquaternion.map_value_item": "value-7",
+    "gzmsgsquaternion.header_data[1].gzmsgsquaternion.map_key": "key-8",
+    "gzmsgsquaternion.header_data[1].gzmsgsquaternion.map_value.#": "1",
+    "gzmsgsquaternion.header_data[1].gzmsgsquaternion.map_value[0].gzmsgsquaternion.map_value_item": "value-9"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "name": "gen-dvlbeam_state-roundtrip",
+  "from": "gz-msgs-dvl-beam-state",
+  "to": "gz-msgs-dvl-beam-state",
+  "input": "086412630801124d0a300a0608ae0110d30112120a066b65792d3132120876616c75652d313312120a066b65792d3134120876616c75652d3135110000000000001d401900000000000022402100000000008025401a100000000000403c400000000000003e401a12090000000000002940110000000000802c40210000000000003040290000000000c031403001",
+  "expect": "086412630801124d0a300a0608ae0110d30112120a066b65792d3132120876616c75652d313312120a066b65792d3134120876616c75652d3135110000000000001d401900000000000022402100000000008025401a100000000000403c400000000000003e401a12090000000000002940110000000000802c40210000000000003040290000000000c031403001",
+  "model": {
+    "@kind": "dvlbeam_state",
+    "gzmsgsdvlbeamstate.dvlbeam_state_id": "100",
+    "gzmsgsdvlbeamstate.velocity_reference": "1",
+    "gzmsgsdvlbeamstate.velocity_stamp_sec": "174",
+    "gzmsgsdvlbeamstate.velocity_stamp_nsec": "211",
+    "gzmsgsdvlbeamstate.velocity_mean_x": "7.25",
+    "gzmsgsdvlbeamstate.velocity_mean_y": "9",
+    "gzmsgsdvlbeamstate.velocity_mean_z": "10.75",
+    "gzmsgsdvlbeamstate.range_mean": "12.5",
+    "gzmsgsdvlbeamstate.range_variance": "14.25",
+    "gzmsgsdvlbeamstate.dvlbeam_state_rssi": "16",
+    "gzmsgsdvlbeamstate.dvlbeam_state_nsd": "17.75",
+    "gzmsgsdvlbeamstate.dvlbeam_state_locked": "1",
+    "gzmsgsdvlbeamstate.velocity_header_data.#": "2",
+    "gzmsgsdvlbeamstate.velocity_header_data[0].gzmsgsdvlbeamstate.map_key": "key-12",
+    "gzmsgsdvlbeamstate.velocity_header_data[0].gzmsgsdvlbeamstate.map_value.#": "1",
+    "gzmsgsdvlbeamstate.velocity_header_data[0].gzmsgsdvlbeamstate.map_value[0].gzmsgsdvlbeamstate.map_value_item": "value-13",
+    "gzmsgsdvlbeamstate.velocity_header_data[1].gzmsgsdvlbeamstate.map_key": "key-14",
+    "gzmsgsdvlbeamstate.velocity_header_data[1].gzmsgsdvlbeamstate.map_value.#": "1",
+    "gzmsgsdvlbeamstate.velocity_header_data[1].gzmsgsdvlbeamstate.map_value[0].gzmsgsdvlbeamstate.map_value_item": "value-15",
+    "gzmsgsdvlbeamstate.velocity_covariance.#": "2",
+    "gzmsgsdvlbeamstate.velocity_covariance[0].gzmsgsdvlbeamstate.dvlkinematic_estimate_covariance_item": "28.25",
+    "gzmsgsdvlbeamstate.velocity_covariance[1].gzmsgsdvlbeamstate.dvlkinematic_estimate_covariance_item": "30"
+  }
+}

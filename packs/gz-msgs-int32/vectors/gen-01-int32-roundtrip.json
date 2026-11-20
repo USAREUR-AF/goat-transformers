@@ -1,0 +1,20 @@
+{
+  "name": "gen-int32-roundtrip",
+  "from": "gz-msgs-int32",
+  "to": "gz-msgs-int32",
+  "input": "0a2b0a05086410890112100a056b65792d33120776616c75652d3412100a056b65792d35120776616c75652d3610ae01",
+  "expect": "0a2b0a05086410890112100a056b65792d33120776616c75652d3412100a056b65792d35120776616c75652d3610ae01",
+  "model": {
+    "@kind": "int32",
+    "gzmsgsint32.header_stamp_sec": "100",
+    "gzmsgsint32.header_stamp_nsec": "137",
+    "gzmsgsint32.int32_data": "174",
+    "gzmsgsint32.header_data.#": "2",
+    "gzmsgsint32.header_data[0].gzmsgsint32.map_key": "key-3",
+    "gzmsgsint32.header_data[0].gzmsgsint32.map_value.#": "1",
+    "gzmsgsint32.header_data[0].gzmsgsint32.map_value[0].gzmsgsint32.map_value_item": "value-4",
+    "gzmsgsint32.header_data[1].gzmsgsint32.map_key": "key-5",
+    "gzmsgsint32.header_data[1].gzmsgsint32.map_value.#": "1",
+    "gzmsgsint32.header_data[1].gzmsgsint32.map_value[0].gzmsgsint32.map_value_item": "value-6"
+  }
+}

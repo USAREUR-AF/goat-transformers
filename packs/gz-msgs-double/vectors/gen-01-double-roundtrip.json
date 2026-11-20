@@ -1,0 +1,20 @@
+{
+  "name": "gen-double-roundtrip",
+  "from": "gz-msgs-double",
+  "to": "gz-msgs-double",
+  "input": "0a2b0a05086410890112100a056b65792d33120776616c75652d3412100a056b65792d35120776616c75652d36110000000000000e40",
+  "expect": "0a2b0a05086410890112100a056b65792d33120776616c75652d3412100a056b65792d35120776616c75652d36110000000000000e40",
+  "model": {
+    "@kind": "double",
+    "gzmsgsdouble.header_stamp_sec": "100",
+    "gzmsgsdouble.header_stamp_nsec": "137",
+    "gzmsgsdouble.double_data": "3.75",
+    "gzmsgsdouble.header_data.#": "2",
+    "gzmsgsdouble.header_data[0].gzmsgsdouble.map_key": "key-3",
+    "gzmsgsdouble.header_data[0].gzmsgsdouble.map_value.#": "1",
+    "gzmsgsdouble.header_data[0].gzmsgsdouble.map_value[0].gzmsgsdouble.map_value_item": "value-4",
+    "gzmsgsdouble.header_data[1].gzmsgsdouble.map_key": "key-5",
+    "gzmsgsdouble.header_data[1].gzmsgsdouble.map_value.#": "1",
+    "gzmsgsdouble.header_data[1].gzmsgsdouble.map_value[0].gzmsgsdouble.map_value_item": "value-6"
+  }
+}

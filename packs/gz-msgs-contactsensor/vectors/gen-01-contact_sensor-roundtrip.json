@@ -1,0 +1,20 @@
+{
+  "name": "gen-contact_sensor-roundtrip",
+  "from": "gz-msgs-contactsensor",
+  "to": "gz-msgs-contactsensor",
+  "input": "0a2b0a05086410890112100a056b65792d33120776616c75652d3412100a056b65792d35120776616c75652d361210636f6c6c6973696f6e5f6e616d652d32",
+  "expect": "0a2b0a05086410890112100a056b65792d33120776616c75652d3412100a056b65792d35120776616c75652d361210636f6c6c6973696f6e5f6e616d652d32",
+  "model": {
+    "@kind": "contact_sensor",
+    "gzmsgscontactsensor.header_stamp_sec": "100",
+    "gzmsgscontactsensor.header_stamp_nsec": "137",
+    "gzmsgscontactsensor.contact_sensor_collision_name": "collision_name-2",
+    "gzmsgscontactsensor.header_data.#": "2",
+    "gzmsgscontactsensor.header_data[0].gzmsgscontactsensor.map_key": "key-3",
+    "gzmsgscontactsensor.header_data[0].gzmsgscontactsensor.map_value.#": "1",
+    "gzmsgscontactsensor.header_data[0].gzmsgscontactsensor.map_value[0].gzmsgscontactsensor.map_value_item": "value-4",
+    "gzmsgscontactsensor.header_data[1].gzmsgscontactsensor.map_key": "key-5",
+    "gzmsgscontactsensor.header_data[1].gzmsgscontactsensor.map_value.#": "1",
+    "gzmsgscontactsensor.header_data[1].gzmsgscontactsensor.map_value[0].gzmsgscontactsensor.map_value_item": "value-6"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "gen-entity-roundtrip",
+  "from": "gz-msgs-entity",
+  "to": "gz-msgs-entity",
+  "input": "0a2b0a05086410890112100a056b65792d35120776616c75652d3612100a056b65792d37120776616c75652d3810ae011a066e616d652d332001",
+  "expect": "0a2b0a05086410890112100a056b65792d35120776616c75652d3612100a056b65792d37120776616c75652d3810ae011a066e616d652d332001",
+  "model": {
+    "@kind": "entity",
+    "gzmsgsentity.header_stamp_sec": "100",
+    "gzmsgsentity.header_stamp_nsec": "137",
+    "gzmsgsentity.entity_id": "174",
+    "gzmsgsentity.entity_name": "name-3",
+    "gzmsgsentity.entity_type": "1",
+    "gzmsgsentity.header_data.#": "2",
+    "gzmsgsentity.header_data[0].gzmsgsentity.map_key": "key-5",
+    "gzmsgsentity.header_data[0].gzmsgsentity.map_value.#": "1",
+    "gzmsgsentity.header_data[0].gzmsgsentity.map_value[0].gzmsgsentity.map_value_item": "value-6",
+    "gzmsgsentity.header_data[1].gzmsgsentity.map_key": "key-7",
+    "gzmsgsentity.header_data[1].gzmsgsentity.map_value.#": "1",
+    "gzmsgsentity.header_data[1].gzmsgsentity.map_value[0].gzmsgsentity.map_value_item": "value-8"
+  }
+}

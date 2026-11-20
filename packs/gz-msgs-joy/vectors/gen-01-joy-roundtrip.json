@@ -1,0 +1,25 @@
+{
+  "name": "gen-joy-roundtrip",
+  "from": "gz-msgs-joy",
+  "to": "gz-msgs-joy",
+  "input": "0a2b0a05086410890112100a056b65792d32120776616c75652d3312100a056b65792d34120776616c75652d35120800007840000090401a048c03b103",
+  "expect": "0a2b0a05086410890112100a056b65792d32120776616c75652d3312100a056b65792d34120776616c75652d35120800007840000090401a048c03b103",
+  "model": {
+    "@kind": "joy",
+    "gzmsgsjoy.header_stamp_sec": "100",
+    "gzmsgsjoy.header_stamp_nsec": "137",
+    "gzmsgsjoy.header_data.#": "2",
+    "gzmsgsjoy.header_data[0].gzmsgsjoy.map_key": "key-2",
+    "gzmsgsjoy.header_data[0].gzmsgsjoy.map_value.#": "1",
+    "gzmsgsjoy.header_data[0].gzmsgsjoy.map_value[0].gzmsgsjoy.map_value_item": "value-3",
+    "gzmsgsjoy.header_data[1].gzmsgsjoy.map_key": "key-4",
+    "gzmsgsjoy.header_data[1].gzmsgsjoy.map_value.#": "1",
+    "gzmsgsjoy.header_data[1].gzmsgsjoy.map_value[0].gzmsgsjoy.map_value_item": "value-5",
+    "gzmsgsjoy.joy_axes.#": "2",
+    "gzmsgsjoy.joy_axes[0].gzmsgsjoy.joy_axes_item": "3.875",
+    "gzmsgsjoy.joy_axes[1].gzmsgsjoy.joy_axes_item": "4.5",
+    "gzmsgsjoy.joy_buttons.#": "2",
+    "gzmsgsjoy.joy_buttons[0].gzmsgsjoy.joy_buttons_item": "396",
+    "gzmsgsjoy.joy_buttons[1].gzmsgsjoy.joy_buttons_item": "433"
+  }
+}

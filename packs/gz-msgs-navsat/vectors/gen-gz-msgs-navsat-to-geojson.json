@@ -1,0 +1,12 @@
+{
+  "name": "gen-gz-msgs-navsat-to-geojson",
+  "from": "gz-msgs-navsat",
+  "to": "geojson",
+  "input": "0a2e0a05086410890112110a056b65792d39120876616c75652d313012120a066b65792d3131120876616c75652d3132110000000000000e40190000000000001640210000000000001d40390000000000002940420a6672616d655f69642d38",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[5.5,3.75]},\"properties\":{}}",
+  "model": {
+    "@kind": "nav_sat",
+    "lat": "3.75",
+    "lon": "5.5"
+  }
+}

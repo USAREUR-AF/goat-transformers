@@ -1,0 +1,31 @@
+{
+  "name": "gen-box_geom-roundtrip",
+  "from": "gz-msgs-boxgeom",
+  "to": "gz-msgs-boxgeom",
+  "input": "0a2c0a05086410890112100a056b65792d37120776616c75652d3812110a056b65792d39120876616c75652d3130124d0a300a0608ae0110d30112120a066b65792d3131120876616c75652d313212120a066b65792d3133120876616c75652d3134110000000000001d40190000000000002240210000000000802540",
+  "expect": "0a2c0a05086410890112100a056b65792d37120776616c75652d3812110a056b65792d39120876616c75652d3130124d0a300a0608ae0110d30112120a066b65792d3131120876616c75652d313212120a066b65792d3133120876616c75652d3134110000000000001d40190000000000002240210000000000802540",
+  "model": {
+    "@kind": "box_geom",
+    "gzmsgsboxgeom.header_stamp_sec": "100",
+    "gzmsgsboxgeom.header_stamp_nsec": "137",
+    "gzmsgsboxgeom.size_stamp_sec": "174",
+    "gzmsgsboxgeom.size_stamp_nsec": "211",
+    "gzmsgsboxgeom.size_x": "7.25",
+    "gzmsgsboxgeom.size_y": "9",
+    "gzmsgsboxgeom.size_z": "10.75",
+    "gzmsgsboxgeom.header_data.#": "2",
+    "gzmsgsboxgeom.header_data[0].gzmsgsboxgeom.map_key": "key-7",
+    "gzmsgsboxgeom.header_data[0].gzmsgsboxgeom.map_value.#": "1",
+    "gzmsgsboxgeom.header_data[0].gzmsgsboxgeom.map_value[0].gzmsgsboxgeom.map_value_item": "value-8",
+    "gzmsgsboxgeom.header_data[1].gzmsgsboxgeom.map_key": "key-9",
+    "gzmsgsboxgeom.header_data[1].gzmsgsboxgeom.map_value.#": "1",
+    "gzmsgsboxgeom.header_data[1].gzmsgsboxgeom.map_value[0].gzmsgsboxgeom.map_value_item": "value-10",
+    "gzmsgsboxgeom.size_header_data.#": "2",
+    "gzmsgsboxgeom.size_header_data[0].gzmsgsboxgeom.map_key": "key-11",
+    "gzmsgsboxgeom.size_header_data[0].gzmsgsboxgeom.map_value.#": "1",
+    "gzmsgsboxgeom.size_header_data[0].gzmsgsboxgeom.map_value[0].gzmsgsboxgeom.map_value_item": "value-12",
+    "gzmsgsboxgeom.size_header_data[1].gzmsgsboxgeom.map_key": "key-13",
+    "gzmsgsboxgeom.size_header_data[1].gzmsgsboxgeom.map_value.#": "1",
+    "gzmsgsboxgeom.size_header_data[1].gzmsgsboxgeom.map_value[0].gzmsgsboxgeom.map_value_item": "value-14"
+  }
+}

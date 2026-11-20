@@ -1,0 +1,20 @@
+{
+  "name": "gen-float-roundtrip",
+  "from": "gz-msgs-float",
+  "to": "gz-msgs-float",
+  "input": "0a2b0a05086410890112100a056b65792d33120776616c75652d3412100a056b65792d35120776616c75652d36150000b03f",
+  "expect": "0a2b0a05086410890112100a056b65792d33120776616c75652d3412100a056b65792d35120776616c75652d36150000b03f",
+  "model": {
+    "@kind": "float",
+    "gzmsgsfloat.header_stamp_sec": "100",
+    "gzmsgsfloat.header_stamp_nsec": "137",
+    "gzmsgsfloat.float_data": "1.375",
+    "gzmsgsfloat.header_data.#": "2",
+    "gzmsgsfloat.header_data[0].gzmsgsfloat.map_key": "key-3",
+    "gzmsgsfloat.header_data[0].gzmsgsfloat.map_value.#": "1",
+    "gzmsgsfloat.header_data[0].gzmsgsfloat.map_value[0].gzmsgsfloat.map_value_item": "value-4",
+    "gzmsgsfloat.header_data[1].gzmsgsfloat.map_key": "key-5",
+    "gzmsgsfloat.header_data[1].gzmsgsfloat.map_value.#": "1",
+    "gzmsgsfloat.header_data[1].gzmsgsfloat.map_value[0].gzmsgsfloat.map_value_item": "value-6"
+  }
+}

@@ -1,0 +1,15 @@
+{
+ "1.1.1": "header_stamp_sec",
+ "1.1.2": "header_stamp_nsec",
+ "1.2[]": "header_data",
+ "2[]": "propagation_grid_particle",
+ "gz.msgs.Header.Map:1": "map_key",
+ "gz.msgs.Header.Map:2[]": "map_value",
+ "gz.msgs.Header.Map:2[]item": "map_value_item",
+ "gz.msgs.PropagationParticle:1.1.1": "propagation_particle_header_stamp_sec",
+ "gz.msgs.PropagationParticle:1.1.2": "propagation_particle_header_stamp_nsec",
+ "gz.msgs.PropagationParticle:1.2[]": "propagation_particle_header_data",
+ "gz.msgs.PropagationParticle:2": "propagation_particle_x",
+ "gz.msgs.PropagationParticle:3": "propagation_particle_y",
+ "gz.msgs.PropagationParticle:4": "propagation_particle_signal_level"
+}

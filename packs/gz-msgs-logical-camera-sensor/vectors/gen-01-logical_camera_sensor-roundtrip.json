@@ -1,0 +1,23 @@
+{
+  "name": "gen-logical_camera_sensor-roundtrip",
+  "from": "gz-msgs-logical-camera-sensor",
+  "to": "gz-msgs-logical-camera-sensor",
+  "input": "0a2b0a05086410890112100a056b65792d36120776616c75652d3712100a056b65792d38120776616c75652d39110000000000000e40190000000000001640210000000000001d40290000000000002240",
+  "expect": "0a2b0a05086410890112100a056b65792d36120776616c75652d3712100a056b65792d38120776616c75652d39110000000000000e40190000000000001640210000000000001d40290000000000002240",
+  "model": {
+    "@kind": "logical_camera_sensor",
+    "gzmsgslogicalcamerasensor.header_stamp_sec": "100",
+    "gzmsgslogicalcamerasensor.header_stamp_nsec": "137",
+    "gzmsgslogicalcamerasensor.logical_camera_sensor_near_clip": "3.75",
+    "gzmsgslogicalcamerasensor.logical_camera_sensor_far_clip": "5.5",
+    "gzmsgslogicalcamerasensor.logical_camera_sensor_horizontal_fov": "7.25",
+    "gzmsgslogicalcamerasensor.logical_camera_sensor_aspect_ratio": "9",
+    "gzmsgslogicalcamerasensor.header_data.#": "2",
+    "gzmsgslogicalcamerasensor.header_data[0].gzmsgslogicalcamerasensor.map_key": "key-6",
+    "gzmsgslogicalcamerasensor.header_data[0].gzmsgslogicalcamerasensor.map_value.#": "1",
+    "gzmsgslogicalcamerasensor.header_data[0].gzmsgslogicalcamerasensor.map_value[0].gzmsgslogicalcamerasensor.map_value_item": "value-7",
+    "gzmsgslogicalcamerasensor.header_data[1].gzmsgslogicalcamerasensor.map_key": "key-8",
+    "gzmsgslogicalcamerasensor.header_data[1].gzmsgslogicalcamerasensor.map_value.#": "1",
+    "gzmsgslogicalcamerasensor.header_data[1].gzmsgslogicalcamerasensor.map_value[0].gzmsgslogicalcamerasensor.map_value_item": "value-9"
+  }
+}

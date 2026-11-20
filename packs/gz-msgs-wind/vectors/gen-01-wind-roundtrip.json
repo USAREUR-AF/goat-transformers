@@ -1,0 +1,32 @@
+{
+  "name": "gen-wind-roundtrip",
+  "from": "gz-msgs-wind",
+  "to": "gz-msgs-wind",
+  "input": "0a2d0a05086410890112100a056b65792d38120776616c75652d3912120a066b65792d3130120876616c75652d3131124d0a300a0608ae0110d30112120a066b65792d3132120876616c75652d313312120a066b65792d3134120876616c75652d3135110000000000001d401900000000000022402100000000008025401801",
+  "expect": "0a2d0a05086410890112100a056b65792d38120776616c75652d3912120a066b65792d3130120876616c75652d3131124d0a300a0608ae0110d30112120a066b65792d3132120876616c75652d313312120a066b65792d3134120876616c75652d3135110000000000001d401900000000000022402100000000008025401801",
+  "model": {
+    "@kind": "wind",
+    "gzmsgswind.header_stamp_sec": "100",
+    "gzmsgswind.header_stamp_nsec": "137",
+    "gzmsgswind.linear_velocity_stamp_sec": "174",
+    "gzmsgswind.linear_velocity_stamp_nsec": "211",
+    "gzmsgswind.linear_velocity_x": "7.25",
+    "gzmsgswind.linear_velocity_y": "9",
+    "gzmsgswind.linear_velocity_z": "10.75",
+    "gzmsgswind.wind_enable_wind": "1",
+    "gzmsgswind.header_data.#": "2",
+    "gzmsgswind.header_data[0].gzmsgswind.map_key": "key-8",
+    "gzmsgswind.header_data[0].gzmsgswind.map_value.#": "1",
+    "gzmsgswind.header_data[0].gzmsgswind.map_value[0].gzmsgswind.map_value_item": "value-9",
+    "gzmsgswind.header_data[1].gzmsgswind.map_key": "key-10",
+    "gzmsgswind.header_data[1].gzmsgswind.map_value.#": "1",
+    "gzmsgswind.header_data[1].gzmsgswind.map_value[0].gzmsgswind.map_value_item": "value-11",
+    "gzmsgswind.linear_velocity_header_data.#": "2",
+    "gzmsgswind.linear_velocity_header_data[0].gzmsgswind.map_key": "key-12",
+    "gzmsgswind.linear_velocity_header_data[0].gzmsgswind.map_value.#": "1",
+    "gzmsgswind.linear_velocity_header_data[0].gzmsgswind.map_value[0].gzmsgswind.map_value_item": "value-13",
+    "gzmsgswind.linear_velocity_header_data[1].gzmsgswind.map_key": "key-14",
+    "gzmsgswind.linear_velocity_header_data[1].gzmsgswind.map_value.#": "1",
+    "gzmsgswind.linear_velocity_header_data[1].gzmsgswind.map_value[0].gzmsgswind.map_value_item": "value-15"
+  }
+}

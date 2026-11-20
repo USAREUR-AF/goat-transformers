@@ -1,0 +1,24 @@
+{
+  "name": "gen-image_geom-roundtrip",
+  "from": "gz-msgs-imagegeom",
+  "to": "gz-msgs-imagegeom",
+  "input": "0a2c0a05086410890112100a056b65792d37120776616c75652d3812110a056b65792d39120876616c75652d313012057572692d3219000000000000164020f80129000000000000224030c202",
+  "expect": "0a2c0a05086410890112100a056b65792d37120776616c75652d3812110a056b65792d39120876616c75652d313012057572692d3219000000000000164020f80129000000000000224030c202",
+  "model": {
+    "@kind": "image_geom",
+    "gzmsgsimagegeom.header_stamp_sec": "100",
+    "gzmsgsimagegeom.header_stamp_nsec": "137",
+    "gzmsgsimagegeom.image_geom_uri": "uri-2",
+    "gzmsgsimagegeom.image_geom_scale": "5.5",
+    "gzmsgsimagegeom.image_geom_threshold": "248",
+    "gzmsgsimagegeom.image_geom_height": "9",
+    "gzmsgsimagegeom.image_geom_granularity": "322",
+    "gzmsgsimagegeom.header_data.#": "2",
+    "gzmsgsimagegeom.header_data[0].gzmsgsimagegeom.map_key": "key-7",
+    "gzmsgsimagegeom.header_data[0].gzmsgsimagegeom.map_value.#": "1",
+    "gzmsgsimagegeom.header_data[0].gzmsgsimagegeom.map_value[0].gzmsgsimagegeom.map_value_item": "value-8",
+    "gzmsgsimagegeom.header_data[1].gzmsgsimagegeom.map_key": "key-9",
+    "gzmsgsimagegeom.header_data[1].gzmsgsimagegeom.map_value.#": "1",
+    "gzmsgsimagegeom.header_data[1].gzmsgsimagegeom.map_value[0].gzmsgsimagegeom.map_value_item": "value-10"
+  }
+}

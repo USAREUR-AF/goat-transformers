@@ -1,0 +1,11 @@
+{
+  "name": "gen-parameter_error-roundtrip",
+  "from": "gz-msgs-parameter-error",
+  "to": "gz-msgs-parameter-error",
+  "input": "0801",
+  "expect": "0801",
+  "model": {
+    "@kind": "parameter_error",
+    "gzmsgsparametererror.parameter_error_data": "1"
+  }
+}

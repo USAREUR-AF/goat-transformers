@@ -1,0 +1,21 @@
+{
+ "1.1.1": "header_stamp_sec",
+ "1.1.2": "header_stamp_nsec",
+ "1.2[]": "header_data",
+ "2": "spherical_coordinates_surface_model",
+ "3": "spherical_coordinates_latitude_deg",
+ "4": "spherical_coordinates_longitude_deg",
+ "5": "spherical_coordinates_elevation",
+ "6": "spherical_coordinates_heading_deg",
+ "7.1.1.1": "entity_stamp_sec",
+ "7.1.1.2": "entity_stamp_nsec",
+ "7.1.2[]": "entity_header_data",
+ "7.2": "entity_id",
+ "7.3": "entity_name",
+ "7.4": "entity_type",
+ "8": "spherical_coordinates_surface_axis_equatorial",
+ "9": "spherical_coordinates_surface_axis_polar",
+ "gz.msgs.Header.Map:1": "map_key",
+ "gz.msgs.Header.Map:2[]": "map_value",
+ "gz.msgs.Header.Map:2[]item": "map_value_item"
+}

@@ -1,0 +1,25 @@
+{
+  "name": "gen-sub-roundtrip",
+  "from": "gz-msgs-discovery",
+  "to": "gz-msgs-discovery",
+  "input": "0a2d0a05086410890112100a056b65792d38120776616c75652d3912120a066b65792d3130120876616c75652d313110ae011a0e70726f636573735f757569642d3320012a040801100132090a07746f7069632d37",
+  "expect": "0a2d0a05086410890112100a056b65792d38120776616c75652d3912120a066b65792d3130120876616c75652d313110ae011a0e70726f636573735f757569642d3320012a040801100132090a07746f7069632d37",
+  "model": {
+    "@kind": "sub",
+    "gzmsgsdiscovery.header_stamp_sec": "100",
+    "gzmsgsdiscovery.header_stamp_nsec": "137",
+    "gzmsgsdiscovery.version": "174",
+    "gzmsgsdiscovery.process_uuid": "process_uuid-3",
+    "gzmsgsdiscovery.type": "1",
+    "gzmsgsdiscovery.flags_relay": "1",
+    "gzmsgsdiscovery.flags_no_relay": "1",
+    "gzmsgsdiscovery.sub_topic": "topic-7",
+    "gzmsgsdiscovery.header_data.#": "2",
+    "gzmsgsdiscovery.header_data[0].gzmsgsdiscovery.map_key": "key-8",
+    "gzmsgsdiscovery.header_data[0].gzmsgsdiscovery.map_value.#": "1",
+    "gzmsgsdiscovery.header_data[0].gzmsgsdiscovery.map_value[0].gzmsgsdiscovery.map_value_item": "value-9",
+    "gzmsgsdiscovery.header_data[1].gzmsgsdiscovery.map_key": "key-10",
+    "gzmsgsdiscovery.header_data[1].gzmsgsdiscovery.map_value.#": "1",
+    "gzmsgsdiscovery.header_data[1].gzmsgsdiscovery.map_value[0].gzmsgsdiscovery.map_value_item": "value-11"
+  }
+}

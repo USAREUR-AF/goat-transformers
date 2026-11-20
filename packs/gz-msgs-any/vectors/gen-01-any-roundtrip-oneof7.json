@@ -1,0 +1,33 @@
+{
+  "name": "gen-any-roundtrip-oneof7",
+  "from": "gz-msgs-any",
+  "to": "gz-msgs-any",
+  "input": "0a2f0a05086410890112120a066b65792d3431120876616c75652d343212120a066b65792d3433120876616c75652d3434100152560a300a0608a90a10ce0a12120a066b65792d3435120876616c75652d343612120a066b65792d3437120876616c75652d3438110000000000803540190000000000403740210000000000003940290000000000c03a40",
+  "expect": "0a2f0a05086410890112120a066b65792d3431120876616c75652d343212120a066b65792d3433120876616c75652d3434100152560a300a0608a90a10ce0a12120a066b65792d3435120876616c75652d343612120a066b65792d3437120876616c75652d3438110000000000803540190000000000403740210000000000003940290000000000c03a40",
+  "model": {
+    "@kind": "any",
+    "gzmsgsany.header_stamp_sec": "100",
+    "gzmsgsany.header_stamp_nsec": "137",
+    "gzmsgsany.any_type": "1",
+    "gzmsgsany.quaternion_value_stamp_sec": "1321",
+    "gzmsgsany.quaternion_value_stamp_nsec": "1358",
+    "gzmsgsany.quaternion_value_x": "21.5",
+    "gzmsgsany.quaternion_value_y": "23.25",
+    "gzmsgsany.quaternion_value_z": "25",
+    "gzmsgsany.quaternion_value_w": "26.75",
+    "gzmsgsany.header_data.#": "2",
+    "gzmsgsany.header_data[0].gzmsgsany.map_key": "key-41",
+    "gzmsgsany.header_data[0].gzmsgsany.map_value.#": "1",
+    "gzmsgsany.header_data[0].gzmsgsany.map_value[0].gzmsgsany.map_value_item": "value-42",
+    "gzmsgsany.header_data[1].gzmsgsany.map_key": "key-43",
+    "gzmsgsany.header_data[1].gzmsgsany.map_value.#": "1",
+    "gzmsgsany.header_data[1].gzmsgsany.map_value[0].gzmsgsany.map_value_item": "value-44",
+    "gzmsgsany.quaternion_value_header_data.#": "2",
+    "gzmsgsany.quaternion_value_header_data[0].gzmsgsany.map_key": "key-45",
+    "gzmsgsany.quaternion_value_header_data[0].gzmsgsany.map_value.#": "1",
+    "gzmsgsany.quaternion_value_header_data[0].gzmsgsany.map_value[0].gzmsgsany.map_value_item": "value-46",
+    "gzmsgsany.quaternion_value_header_data[1].gzmsgsany.map_key": "key-47",
+    "gzmsgsany.quaternion_value_header_data[1].gzmsgsany.map_value.#": "1",
+    "gzmsgsany.quaternion_value_header_data[1].gzmsgsany.map_value[0].gzmsgsany.map_value_item": "value-48"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "gen-uint64-roundtrip",
+  "from": "gz-msgs-uint64",
+  "to": "gz-msgs-uint64",
+  "input": "0a2b0a05086410890112100a056b65792d33120776616c75652d3412100a056b65792d35120776616c75652d3610ae01",
+  "expect": "0a2b0a05086410890112100a056b65792d33120776616c75652d3412100a056b65792d35120776616c75652d3610ae01",
+  "model": {
+    "@kind": "uint64",
+    "gzmsgsuint64.header_stamp_sec": "100",
+    "gzmsgsuint64.header_stamp_nsec": "137",
+    "gzmsgsuint64.uint64_data": "174",
+    "gzmsgsuint64.header_data.#": "2",
+    "gzmsgsuint64.header_data[0].gzmsgsuint64.map_key": "key-3",
+    "gzmsgsuint64.header_data[0].gzmsgsuint64.map_value.#": "1",
+    "gzmsgsuint64.header_data[0].gzmsgsuint64.map_value[0].gzmsgsuint64.map_value_item": "value-4",
+    "gzmsgsuint64.header_data[1].gzmsgsuint64.map_key": "key-5",
+    "gzmsgsuint64.header_data[1].gzmsgsuint64.map_value.#": "1",
+    "gzmsgsuint64.header_data[1].gzmsgsuint64.map_value[0].gzmsgsuint64.map_value_item": "value-6"
+  }
+}

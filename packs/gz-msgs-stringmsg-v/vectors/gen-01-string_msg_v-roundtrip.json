@@ -1,0 +1,22 @@
+{
+  "name": "gen-string_msg_v-roundtrip",
+  "from": "gz-msgs-stringmsg-v",
+  "to": "gz-msgs-stringmsg-v",
+  "input": "0a2b0a05086410890112100a056b65792d32120776616c75652d3312100a056b65792d34120776616c75652d351206646174612d361206646174612d37",
+  "expect": "0a2b0a05086410890112100a056b65792d32120776616c75652d3312100a056b65792d34120776616c75652d351206646174612d361206646174612d37",
+  "model": {
+    "@kind": "string_msg_v",
+    "gzmsgsstringmsgv.header_stamp_sec": "100",
+    "gzmsgsstringmsgv.header_stamp_nsec": "137",
+    "gzmsgsstringmsgv.header_data.#": "2",
+    "gzmsgsstringmsgv.header_data[0].gzmsgsstringmsgv.map_key": "key-2",
+    "gzmsgsstringmsgv.header_data[0].gzmsgsstringmsgv.map_value.#": "1",
+    "gzmsgsstringmsgv.header_data[0].gzmsgsstringmsgv.map_value[0].gzmsgsstringmsgv.map_value_item": "value-3",
+    "gzmsgsstringmsgv.header_data[1].gzmsgsstringmsgv.map_key": "key-4",
+    "gzmsgsstringmsgv.header_data[1].gzmsgsstringmsgv.map_value.#": "1",
+    "gzmsgsstringmsgv.header_data[1].gzmsgsstringmsgv.map_value[0].gzmsgsstringmsgv.map_value_item": "value-5",
+    "gzmsgsstringmsgv.string_msg_v_data.#": "2",
+    "gzmsgsstringmsgv.string_msg_v_data[0].gzmsgsstringmsgv.string_msg_v_data_item": "data-6",
+    "gzmsgsstringmsgv.string_msg_v_data[1].gzmsgsstringmsgv.string_msg_v_data_item": "data-7"
+  }
+}

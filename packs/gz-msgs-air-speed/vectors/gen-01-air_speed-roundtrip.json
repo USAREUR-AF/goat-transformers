@@ -1,0 +1,21 @@
+{
+  "name": "gen-air_speed-roundtrip",
+  "from": "gz-msgs-air-speed",
+  "to": "gz-msgs-air-speed",
+  "input": "0a2b0a05086410890112100a056b65792d34120776616c75652d3512100a056b65792d36120776616c75652d37110000000000000e40190000000000001640",
+  "expect": "0a2b0a05086410890112100a056b65792d34120776616c75652d3512100a056b65792d36120776616c75652d37110000000000000e40190000000000001640",
+  "model": {
+    "@kind": "air_speed",
+    "gzmsgsairspeed.header_stamp_sec": "100",
+    "gzmsgsairspeed.header_stamp_nsec": "137",
+    "gzmsgsairspeed.air_speed_diff_pressure": "3.75",
+    "gzmsgsairspeed.air_speed_temperature": "5.5",
+    "gzmsgsairspeed.header_data.#": "2",
+    "gzmsgsairspeed.header_data[0].gzmsgsairspeed.map_key": "key-4",
+    "gzmsgsairspeed.header_data[0].gzmsgsairspeed.map_value.#": "1",
+    "gzmsgsairspeed.header_data[0].gzmsgsairspeed.map_value[0].gzmsgsairspeed.map_value_item": "value-5",
+    "gzmsgsairspeed.header_data[1].gzmsgsairspeed.map_key": "key-6",
+    "gzmsgsairspeed.header_data[1].gzmsgsairspeed.map_value.#": "1",
+    "gzmsgsairspeed.header_data[1].gzmsgsairspeed.map_value[0].gzmsgsairspeed.map_value_item": "value-7"
+  }
+}

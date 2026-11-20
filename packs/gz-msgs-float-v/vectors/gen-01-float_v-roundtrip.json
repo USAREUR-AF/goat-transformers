@@ -1,0 +1,22 @@
+{
+  "name": "gen-float_v-roundtrip",
+  "from": "gz-msgs-float-v",
+  "to": "gz-msgs-float-v",
+  "input": "0a2b0a05086410890112100a056b65792d32120776616c75652d3312100a056b65792d34120776616c75652d3512080000784000009040",
+  "expect": "0a2b0a05086410890112100a056b65792d32120776616c75652d3312100a056b65792d34120776616c75652d3512080000784000009040",
+  "model": {
+    "@kind": "float_v",
+    "gzmsgsfloatv.header_stamp_sec": "100",
+    "gzmsgsfloatv.header_stamp_nsec": "137",
+    "gzmsgsfloatv.header_data.#": "2",
+    "gzmsgsfloatv.header_data[0].gzmsgsfloatv.map_key": "key-2",
+    "gzmsgsfloatv.header_data[0].gzmsgsfloatv.map_value.#": "1",
+    "gzmsgsfloatv.header_data[0].gzmsgsfloatv.map_value[0].gzmsgsfloatv.map_value_item": "value-3",
+    "gzmsgsfloatv.header_data[1].gzmsgsfloatv.map_key": "key-4",
+    "gzmsgsfloatv.header_data[1].gzmsgsfloatv.map_value.#": "1",
+    "gzmsgsfloatv.header_data[1].gzmsgsfloatv.map_value[0].gzmsgsfloatv.map_value_item": "value-5",
+    "gzmsgsfloatv.float_v_data.#": "2",
+    "gzmsgsfloatv.float_v_data[0].gzmsgsfloatv.float_v_data_item": "3.875",
+    "gzmsgsfloatv.float_v_data[1].gzmsgsfloatv.float_v_data_item": "4.5"
+  }
+}

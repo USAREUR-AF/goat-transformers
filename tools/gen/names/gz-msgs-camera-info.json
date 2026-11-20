@@ -1,0 +1,19 @@
+{
+ "1.1.1": "header_stamp_sec",
+ "1.1.2": "header_stamp_nsec",
+ "1.2[]": "header_data",
+ "2": "camera_info_width",
+ "3": "camera_info_height",
+ "4.1": "distortion_model",
+ "4.2[]": "distortion_k",
+ "5.1[]": "intrinsics_k",
+ "6.1[]": "projection_p",
+ "7[]": "camera_info_rectification_matrix",
+ "gz.msgs.CameraInfo.Distortion:2[]item": "distortion_k_item",
+ "gz.msgs.CameraInfo.Intrinsics:1[]item": "intrinsics_k_item",
+ "gz.msgs.CameraInfo.Projection:1[]item": "projection_p_item",
+ "gz.msgs.CameraInfo:7[]item": "camera_info_rectification_matrix_item",
+ "gz.msgs.Header.Map:1": "map_key",
+ "gz.msgs.Header.Map:2[]": "map_value",
+ "gz.msgs.Header.Map:2[]item": "map_value_item"
+}

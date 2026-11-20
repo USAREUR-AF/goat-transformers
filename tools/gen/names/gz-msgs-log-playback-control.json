@@ -1,0 +1,14 @@
+{
+ "1.1.1": "header_stamp_sec",
+ "1.1.2": "header_stamp_nsec",
+ "1.2[]": "header_data",
+ "2": "log_playback_control_pause",
+ "3": "log_playback_control_multi_step",
+ "4": "log_playback_control_rewind",
+ "5": "log_playback_control_forward",
+ "6.1": "seek_sec",
+ "6.2": "seek_nsec",
+ "gz.msgs.Header.Map:1": "map_key",
+ "gz.msgs.Header.Map:2[]": "map_value",
+ "gz.msgs.Header.Map:2[]item": "map_value_item"
+}

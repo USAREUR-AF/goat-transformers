@@ -1,0 +1,31 @@
+{
+  "name": "gen-ray_sensor-roundtrip",
+  "from": "gz-msgs-raysensor",
+  "to": "gz-msgs-raysensor",
+  "input": "0a2f0a05086410890112120a066b65792d3134120876616c75652d313512120a066b65792d3136120876616c75652d3137100118d301210000000000001d4029000000000000224031000000000080254038e702410000000000802c40490000000000003040510000000000c03140590000000000803340610000000000403540690000000000003740",
+  "expect": "0a2f0a05086410890112120a066b65792d3134120876616c75652d313512120a066b65792d3136120876616c75652d3137100118d301210000000000001d4029000000000000224031000000000080254038e702410000000000802c40490000000000003040510000000000c03140590000000000803340610000000000403540690000000000003740",
+  "model": {
+    "@kind": "ray_sensor",
+    "gzmsgsraysensor.header_stamp_sec": "100",
+    "gzmsgsraysensor.header_stamp_nsec": "137",
+    "gzmsgsraysensor.ray_sensor_display_scan": "1",
+    "gzmsgsraysensor.ray_sensor_horizontal_samples": "211",
+    "gzmsgsraysensor.ray_sensor_horizontal_resolution": "7.25",
+    "gzmsgsraysensor.ray_sensor_horizontal_min_angle": "9",
+    "gzmsgsraysensor.ray_sensor_horizontal_max_angle": "10.75",
+    "gzmsgsraysensor.ray_sensor_vertical_samples": "359",
+    "gzmsgsraysensor.ray_sensor_vertical_resolution": "14.25",
+    "gzmsgsraysensor.ray_sensor_vertical_min_angle": "16",
+    "gzmsgsraysensor.ray_sensor_vertical_max_angle": "17.75",
+    "gzmsgsraysensor.ray_sensor_range_min": "19.5",
+    "gzmsgsraysensor.ray_sensor_range_max": "21.25",
+    "gzmsgsraysensor.ray_sensor_range_resolution": "23",
+    "gzmsgsraysensor.header_data.#": "2",
+    "gzmsgsraysensor.header_data[0].gzmsgsraysensor.map_key": "key-14",
+    "gzmsgsraysensor.header_data[0].gzmsgsraysensor.map_value.#": "1",
+    "gzmsgsraysensor.header_data[0].gzmsgsraysensor.map_value[0].gzmsgsraysensor.map_value_item": "value-15",
+    "gzmsgsraysensor.header_data[1].gzmsgsraysensor.map_key": "key-16",
+    "gzmsgsraysensor.header_data[1].gzmsgsraysensor.map_value.#": "1",
+    "gzmsgsraysensor.header_data[1].gzmsgsraysensor.map_value[0].gzmsgsraysensor.map_value_item": "value-17"
+  }
+}

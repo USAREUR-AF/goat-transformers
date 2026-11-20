@@ -1,0 +1,32 @@
+{
+  "name": "gen-wireless_nodes-roundtrip",
+  "from": "gz-msgs-wireless-nodes",
+  "to": "gz-msgs-wireless-nodes",
+  "input": "0a2b0a05086410890112100a056b65792d32120776616c75652d3312100a056b65792d34120776616c75652d3512390a1c0a0608c20210e70212120a066b65792d3131120876616c75652d3132120765737369642d38190000000000003040210000000000c03140123a0a1c0a0608c50410ea0412120a066b65792d3138120876616c75652d3139120865737369642d3135190000000000403c40210000000000003e40",
+  "expect": "0a2b0a05086410890112100a056b65792d32120776616c75652d3312100a056b65792d34120776616c75652d3512390a1c0a0608c20210e70212120a066b65792d3131120876616c75652d3132120765737369642d38190000000000003040210000000000c03140123a0a1c0a0608c50410ea0412120a066b65792d3138120876616c75652d3139120865737369642d3135190000000000403c40210000000000003e40",
+  "model": {
+    "@kind": "wireless_nodes",
+    "gzmsgswirelessnodes.header_stamp_sec": "100",
+    "gzmsgswirelessnodes.header_stamp_nsec": "137",
+    "gzmsgswirelessnodes.header_data.#": "2",
+    "gzmsgswirelessnodes.header_data[0].gzmsgswirelessnodes.map_key": "key-2",
+    "gzmsgswirelessnodes.header_data[0].gzmsgswirelessnodes.map_value.#": "1",
+    "gzmsgswirelessnodes.header_data[0].gzmsgswirelessnodes.map_value[0].gzmsgswirelessnodes.map_value_item": "value-3",
+    "gzmsgswirelessnodes.header_data[1].gzmsgswirelessnodes.map_key": "key-4",
+    "gzmsgswirelessnodes.header_data[1].gzmsgswirelessnodes.map_value.#": "1",
+    "gzmsgswirelessnodes.header_data[1].gzmsgswirelessnodes.map_value[0].gzmsgswirelessnodes.map_value_item": "value-5",
+    "gzmsgswirelessnodes.wireless_nodes_node.#": "2",
+    "gzmsgswirelessnodes.wireless_nodes_node[0].gzmsgswirelessnodes.wireless_node_header_stamp_sec": "322",
+    "gzmsgswirelessnodes.wireless_nodes_node[0].gzmsgswirelessnodes.wireless_node_header_stamp_nsec": "359",
+    "gzmsgswirelessnodes.wireless_nodes_node[0].gzmsgswirelessnodes.wireless_node_header_data.#": "1",
+    "gzmsgswirelessnodes.wireless_nodes_node[0].gzmsgswirelessnodes.wireless_node_header_data[0].gzmsgswirelessnodes.map_key": "key-11",
+    "gzmsgswirelessnodes.wireless_nodes_node[0].gzmsgswirelessnodes.wireless_node_header_data[0].gzmsgswirelessnodes.map_value.#": "1",
+    "gzmsgswirelessnodes.wireless_nodes_node[0].gzmsgswirelessnodes.wireless_node_header_data[0].gzmsgswirelessnodes.map_value[0].gzmsgswirelessnodes.map_value_item": "value-12",
+    "gzmsgswirelessnodes.wireless_nodes_node[1].gzmsgswirelessnodes.wireless_node_header_stamp_sec": "581",
+    "gzmsgswirelessnodes.wireless_nodes_node[1].gzmsgswirelessnodes.wireless_node_header_stamp_nsec": "618",
+    "gzmsgswirelessnodes.wireless_nodes_node[1].gzmsgswirelessnodes.wireless_node_header_data.#": "1",
+    "gzmsgswirelessnodes.wireless_nodes_node[1].gzmsgswirelessnodes.wireless_node_header_data[0].gzmsgswirelessnodes.map_key": "key-18",
+    "gzmsgswirelessnodes.wireless_nodes_node[1].gzmsgswirelessnodes.wireless_node_header_data[0].gzmsgswirelessnodes.map_value.#": "1",
+    "gzmsgswirelessnodes.wireless_nodes_node[1].gzmsgswirelessnodes.wireless_node_header_data[0].gzmsgswirelessnodes.map_value[0].gzmsgswirelessnodes.map_value_item": "value-19"
+  }
+}

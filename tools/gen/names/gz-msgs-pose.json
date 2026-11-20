@@ -1,0 +1,23 @@
+{
+ "1.1.1": "header_stamp_sec",
+ "1.1.2": "header_stamp_nsec",
+ "1.2[]": "header_data",
+ "2": "pose_name",
+ "3": "pose_id",
+ "4.1.1.1": "position_stamp_sec",
+ "4.1.1.2": "position_stamp_nsec",
+ "4.1.2[]": "position_header_data",
+ "4.2": "position_x",
+ "4.3": "position_y",
+ "4.4": "position_z",
+ "5.1.1.1": "orientation_stamp_sec",
+ "5.1.1.2": "orientation_stamp_nsec",
+ "5.1.2[]": "orientation_header_data",
+ "5.2": "orientation_x",
+ "5.3": "orientation_y",
+ "5.4": "orientation_z",
+ "5.5": "orientation_w",
+ "gz.msgs.Header.Map:1": "map_key",
+ "gz.msgs.Header.Map:2[]": "map_value",
+ "gz.msgs.Header.Map:2[]item": "map_value_item"
+}

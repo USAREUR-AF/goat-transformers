@@ -1,0 +1,25 @@
+{
+  "name": "gen-log_control-roundtrip",
+  "from": "gz-msgs-log-control",
+  "to": "gz-msgs-log-control",
+  "input": "0a2d0a05086410890112100a056b65792d38120776616c75652d3912120a066b65792d3130120876616c75652d31311001180120012a0b626173655f706174682d35320a656e636f64696e672d363a127265636f72645f7265736f75726365732d37",
+  "expect": "0a2d0a05086410890112100a056b65792d38120776616c75652d3912120a066b65792d3130120876616c75652d31311001180120012a0b626173655f706174682d35320a656e636f64696e672d363a127265636f72645f7265736f75726365732d37",
+  "model": {
+    "@kind": "log_control",
+    "gzmsgslogcontrol.header_stamp_sec": "100",
+    "gzmsgslogcontrol.header_stamp_nsec": "137",
+    "gzmsgslogcontrol.log_control_start": "1",
+    "gzmsgslogcontrol.log_control_stop": "1",
+    "gzmsgslogcontrol.log_control_paused": "1",
+    "gzmsgslogcontrol.log_control_base_path": "base_path-5",
+    "gzmsgslogcontrol.log_control_encoding": "encoding-6",
+    "gzmsgslogcontrol.log_control_record_resources": "record_resources-7",
+    "gzmsgslogcontrol.header_data.#": "2",
+    "gzmsgslogcontrol.header_data[0].gzmsgslogcontrol.map_key": "key-8",
+    "gzmsgslogcontrol.header_data[0].gzmsgslogcontrol.map_value.#": "1",
+    "gzmsgslogcontrol.header_data[0].gzmsgslogcontrol.map_value[0].gzmsgslogcontrol.map_value_item": "value-9",
+    "gzmsgslogcontrol.header_data[1].gzmsgslogcontrol.map_key": "key-10",
+    "gzmsgslogcontrol.header_data[1].gzmsgslogcontrol.map_value.#": "1",
+    "gzmsgslogcontrol.header_data[1].gzmsgslogcontrol.map_value[0].gzmsgslogcontrol.map_value_item": "value-11"
+  }
+}

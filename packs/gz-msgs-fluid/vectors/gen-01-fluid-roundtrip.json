@@ -1,0 +1,33 @@
+{
+  "name": "gen-fluid-roundtrip",
+  "from": "gz-msgs-fluid",
+  "to": "gz-msgs-fluid",
+  "input": "0a2b0a05086410890112100a056b65792d33120776616c75652d3412100a056b65792d35120776616c75652d3612066e616d652d321a390a1c0a0608e702108c0312120a066b65792d3132120876616c75652d3133110000000000003040190000000000c031402100000000008033401a390a1c0a0608ea04108f0512120a066b65792d3139120876616c75652d3230110000000000403c40190000000000003e40210000000000c03f40",
+  "expect": "0a2b0a05086410890112100a056b65792d33120776616c75652d3412100a056b65792d35120776616c75652d3612066e616d652d321a390a1c0a0608e702108c0312120a066b65792d3132120876616c75652d3133110000000000003040190000000000c031402100000000008033401a390a1c0a0608ea04108f0512120a066b65792d3139120876616c75652d3230110000000000403c40190000000000003e40210000000000c03f40",
+  "model": {
+    "@kind": "fluid",
+    "gzmsgsfluid.header_stamp_sec": "100",
+    "gzmsgsfluid.header_stamp_nsec": "137",
+    "gzmsgsfluid.fluid_name": "name-2",
+    "gzmsgsfluid.header_data.#": "2",
+    "gzmsgsfluid.header_data[0].gzmsgsfluid.map_key": "key-3",
+    "gzmsgsfluid.header_data[0].gzmsgsfluid.map_value.#": "1",
+    "gzmsgsfluid.header_data[0].gzmsgsfluid.map_value[0].gzmsgsfluid.map_value_item": "value-4",
+    "gzmsgsfluid.header_data[1].gzmsgsfluid.map_key": "key-5",
+    "gzmsgsfluid.header_data[1].gzmsgsfluid.map_value.#": "1",
+    "gzmsgsfluid.header_data[1].gzmsgsfluid.map_value[0].gzmsgsfluid.map_value_item": "value-6",
+    "gzmsgsfluid.fluid_position.#": "2",
+    "gzmsgsfluid.fluid_position[0].gzmsgsfluid.vector3d_header_stamp_sec": "359",
+    "gzmsgsfluid.fluid_position[0].gzmsgsfluid.vector3d_header_stamp_nsec": "396",
+    "gzmsgsfluid.fluid_position[0].gzmsgsfluid.vector3d_header_data.#": "1",
+    "gzmsgsfluid.fluid_position[0].gzmsgsfluid.vector3d_header_data[0].gzmsgsfluid.map_key": "key-12",
+    "gzmsgsfluid.fluid_position[0].gzmsgsfluid.vector3d_header_data[0].gzmsgsfluid.map_value.#": "1",
+    "gzmsgsfluid.fluid_position[0].gzmsgsfluid.vector3d_header_data[0].gzmsgsfluid.map_value[0].gzmsgsfluid.map_value_item": "value-13",
+    "gzmsgsfluid.fluid_position[1].gzmsgsfluid.vector3d_header_stamp_sec": "618",
+    "gzmsgsfluid.fluid_position[1].gzmsgsfluid.vector3d_header_stamp_nsec": "655",
+    "gzmsgsfluid.fluid_position[1].gzmsgsfluid.vector3d_header_data.#": "1",
+    "gzmsgsfluid.fluid_position[1].gzmsgsfluid.vector3d_header_data[0].gzmsgsfluid.map_key": "key-19",
+    "gzmsgsfluid.fluid_position[1].gzmsgsfluid.vector3d_header_data[0].gzmsgsfluid.map_value.#": "1",
+    "gzmsgsfluid.fluid_position[1].gzmsgsfluid.vector3d_header_data[0].gzmsgsfluid.map_value[0].gzmsgsfluid.map_value_item": "value-20"
+  }
+}

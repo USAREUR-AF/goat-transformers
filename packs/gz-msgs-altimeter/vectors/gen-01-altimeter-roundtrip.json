@@ -1,0 +1,22 @@
+{
+  "name": "gen-altimeter-roundtrip",
+  "from": "gz-msgs-altimeter",
+  "to": "gz-msgs-altimeter",
+  "input": "0a2b0a05086410890112100a056b65792d35120776616c75652d3612100a056b65792d37120776616c75652d38110000000000000e40190000000000001640210000000000001d40",
+  "expect": "0a2b0a05086410890112100a056b65792d35120776616c75652d3612100a056b65792d37120776616c75652d38110000000000000e40190000000000001640210000000000001d40",
+  "model": {
+    "@kind": "altimeter",
+    "gzmsgsaltimeter.header_stamp_sec": "100",
+    "gzmsgsaltimeter.header_stamp_nsec": "137",
+    "gzmsgsaltimeter.altimeter_vertical_position": "3.75",
+    "gzmsgsaltimeter.altimeter_vertical_velocity": "5.5",
+    "gzmsgsaltimeter.altimeter_vertical_reference": "7.25",
+    "gzmsgsaltimeter.header_data.#": "2",
+    "gzmsgsaltimeter.header_data[0].gzmsgsaltimeter.map_key": "key-5",
+    "gzmsgsaltimeter.header_data[0].gzmsgsaltimeter.map_value.#": "1",
+    "gzmsgsaltimeter.header_data[0].gzmsgsaltimeter.map_value[0].gzmsgsaltimeter.map_value_item": "value-6",
+    "gzmsgsaltimeter.header_data[1].gzmsgsaltimeter.map_key": "key-7",
+    "gzmsgsaltimeter.header_data[1].gzmsgsaltimeter.map_value.#": "1",
+    "gzmsgsaltimeter.header_data[1].gzmsgsaltimeter.map_value[0].gzmsgsaltimeter.map_value_item": "value-8"
+  }
+}

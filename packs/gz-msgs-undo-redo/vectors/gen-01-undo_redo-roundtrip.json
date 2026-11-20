@@ -1,0 +1,21 @@
+{
+  "name": "gen-undo_redo-roundtrip",
+  "from": "gz-msgs-undo-redo",
+  "to": "gz-msgs-undo-redo",
+  "input": "0a2b0a05086410890112100a056b65792d34120776616c75652d3512100a056b65792d36120776616c75652d37100118d301",
+  "expect": "0a2b0a05086410890112100a056b65792d34120776616c75652d3512100a056b65792d36120776616c75652d37100118d301",
+  "model": {
+    "@kind": "undo_redo",
+    "gzmsgsundoredo.header_stamp_sec": "100",
+    "gzmsgsundoredo.header_stamp_nsec": "137",
+    "gzmsgsundoredo.undo_redo_undo": "1",
+    "gzmsgsundoredo.undo_redo_id": "211",
+    "gzmsgsundoredo.header_data.#": "2",
+    "gzmsgsundoredo.header_data[0].gzmsgsundoredo.map_key": "key-4",
+    "gzmsgsundoredo.header_data[0].gzmsgsundoredo.map_value.#": "1",
+    "gzmsgsundoredo.header_data[0].gzmsgsundoredo.map_value[0].gzmsgsundoredo.map_value_item": "value-5",
+    "gzmsgsundoredo.header_data[1].gzmsgsundoredo.map_key": "key-6",
+    "gzmsgsundoredo.header_data[1].gzmsgsundoredo.map_value.#": "1",
+    "gzmsgsundoredo.header_data[1].gzmsgsundoredo.map_value[0].gzmsgsundoredo.map_value_item": "value-7"
+  }
+}

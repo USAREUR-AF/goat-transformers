@@ -1,0 +1,33 @@
+{
+  "name": "gen-cessna-roundtrip",
+  "from": "gz-msgs-cessna",
+  "to": "gz-msgs-cessna",
+  "input": "0a2f0a05086410890112120a066b65792d3136120876616c75652d313712120a066b65792d3138120876616c75652d3139150000b03f1d0000004025000028402d0000504035000078403d00009040450000a4404d0000b840550000cc405d0000e040650000f4406d0000803e750000603f7d0000c03f",
+  "expect": "0a2f0a05086410890112120a066b65792d3136120876616c75652d313712120a066b65792d3138120876616c75652d3139150000b03f1d0000004025000028402d0000504035000078403d00009040450000a4404d0000b840550000cc405d0000e040650000f4406d0000803e750000603f7d0000c03f",
+  "model": {
+    "@kind": "cessna",
+    "gzmsgscessna.header_stamp_sec": "100",
+    "gzmsgscessna.header_stamp_nsec": "137",
+    "gzmsgscessna.cessna_propeller_speed": "1.375",
+    "gzmsgscessna.cessna_left_aileron": "2",
+    "gzmsgscessna.cessna_left_flap": "2.625",
+    "gzmsgscessna.cessna_right_aileron": "3.25",
+    "gzmsgscessna.cessna_right_flap": "3.875",
+    "gzmsgscessna.cessna_elevators": "4.5",
+    "gzmsgscessna.cessna_rudder": "5.125",
+    "gzmsgscessna.cessna_cmd_propeller_speed": "5.75",
+    "gzmsgscessna.cessna_cmd_left_aileron": "6.375",
+    "gzmsgscessna.cessna_cmd_left_flap": "7",
+    "gzmsgscessna.cessna_cmd_right_aileron": "7.625",
+    "gzmsgscessna.cessna_cmd_right_flap": "0.25",
+    "gzmsgscessna.cessna_cmd_elevators": "0.875",
+    "gzmsgscessna.cessna_cmd_rudder": "1.5",
+    "gzmsgscessna.header_data.#": "2",
+    "gzmsgscessna.header_data[0].gzmsgscessna.map_key": "key-16",
+    "gzmsgscessna.header_data[0].gzmsgscessna.map_value.#": "1",
+    "gzmsgscessna.header_data[0].gzmsgscessna.map_value[0].gzmsgscessna.map_value_item": "value-17",
+    "gzmsgscessna.header_data[1].gzmsgscessna.map_key": "key-18",
+    "gzmsgscessna.header_data[1].gzmsgscessna.map_value.#": "1",
+    "gzmsgscessna.header_data[1].gzmsgscessna.map_value[0].gzmsgscessna.map_value_item": "value-19"
+  }
+}

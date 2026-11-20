@@ -1,0 +1,21 @@
+{
+  "name": "gen-capsule_geom-roundtrip",
+  "from": "gz-msgs-capsulegeom",
+  "to": "gz-msgs-capsulegeom",
+  "input": "0a2b0a05086410890112100a056b65792d34120776616c75652d3512100a056b65792d36120776616c75652d37110000000000000e40190000000000001640",
+  "expect": "0a2b0a05086410890112100a056b65792d34120776616c75652d3512100a056b65792d36120776616c75652d37110000000000000e40190000000000001640",
+  "model": {
+    "@kind": "capsule_geom",
+    "gzmsgscapsulegeom.header_stamp_sec": "100",
+    "gzmsgscapsulegeom.header_stamp_nsec": "137",
+    "gzmsgscapsulegeom.capsule_geom_radius": "3.75",
+    "gzmsgscapsulegeom.capsule_geom_length": "5.5",
+    "gzmsgscapsulegeom.header_data.#": "2",
+    "gzmsgscapsulegeom.header_data[0].gzmsgscapsulegeom.map_key": "key-4",
+    "gzmsgscapsulegeom.header_data[0].gzmsgscapsulegeom.map_value.#": "1",
+    "gzmsgscapsulegeom.header_data[0].gzmsgscapsulegeom.map_value[0].gzmsgscapsulegeom.map_value_item": "value-5",
+    "gzmsgscapsulegeom.header_data[1].gzmsgscapsulegeom.map_key": "key-6",
+    "gzmsgscapsulegeom.header_data[1].gzmsgscapsulegeom.map_value.#": "1",
+    "gzmsgscapsulegeom.header_data[1].gzmsgscapsulegeom.map_value[0].gzmsgscapsulegeom.map_value_item": "value-7"
+  }
+}

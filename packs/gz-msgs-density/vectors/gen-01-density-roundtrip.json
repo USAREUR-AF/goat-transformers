@@ -1,0 +1,20 @@
+{
+  "name": "gen-density-roundtrip",
+  "from": "gz-msgs-density",
+  "to": "gz-msgs-density",
+  "input": "0a2b0a05086410890112100a056b65792d33120776616c75652d3412100a056b65792d35120776616c75652d36110000000000000e40",
+  "expect": "0a2b0a05086410890112100a056b65792d33120776616c75652d3412100a056b65792d35120776616c75652d36110000000000000e40",
+  "model": {
+    "@kind": "density",
+    "gzmsgsdensity.header_stamp_sec": "100",
+    "gzmsgsdensity.header_stamp_nsec": "137",
+    "gzmsgsdensity.density_density": "3.75",
+    "gzmsgsdensity.header_data.#": "2",
+    "gzmsgsdensity.header_data[0].gzmsgsdensity.map_key": "key-3",
+    "gzmsgsdensity.header_data[0].gzmsgsdensity.map_value.#": "1",
+    "gzmsgsdensity.header_data[0].gzmsgsdensity.map_value[0].gzmsgsdensity.map_value_item": "value-4",
+    "gzmsgsdensity.header_data[1].gzmsgsdensity.map_key": "key-5",
+    "gzmsgsdensity.header_data[1].gzmsgsdensity.map_value.#": "1",
+    "gzmsgsdensity.header_data[1].gzmsgsdensity.map_value[0].gzmsgsdensity.map_value_item": "value-6"
+  }
+}

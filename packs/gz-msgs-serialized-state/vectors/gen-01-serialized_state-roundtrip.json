@@ -1,0 +1,30 @@
+{
+  "name": "gen-serialized_state-roundtrip",
+  "from": "gz-msgs-serialized-state",
+  "to": "gz-msgs-serialized-state",
+  "input": "0a2b0a05086410890112100a056b65792d32120776616c75652d3312100a056b65792d34120776616c75652d35120c08c2021205088c0318011801120c08d603120508a00418011801",
+  "expect": "0a2b0a05086410890112100a056b65792d32120776616c75652d3312100a056b65792d34120776616c75652d35120c08c2021205088c0318011801120c08d603120508a00418011801",
+  "model": {
+    "@kind": "serialized_state",
+    "gzmsgsserializedstate.header_stamp_sec": "100",
+    "gzmsgsserializedstate.header_stamp_nsec": "137",
+    "gzmsgsserializedstate.header_data.#": "2",
+    "gzmsgsserializedstate.header_data[0].gzmsgsserializedstate.map_key": "key-2",
+    "gzmsgsserializedstate.header_data[0].gzmsgsserializedstate.map_value.#": "1",
+    "gzmsgsserializedstate.header_data[0].gzmsgsserializedstate.map_value[0].gzmsgsserializedstate.map_value_item": "value-3",
+    "gzmsgsserializedstate.header_data[1].gzmsgsserializedstate.map_key": "key-4",
+    "gzmsgsserializedstate.header_data[1].gzmsgsserializedstate.map_value.#": "1",
+    "gzmsgsserializedstate.header_data[1].gzmsgsserializedstate.map_value[0].gzmsgsserializedstate.map_value_item": "value-5",
+    "gzmsgsserializedstate.serialized_state_entities.#": "2",
+    "gzmsgsserializedstate.serialized_state_entities[0].gzmsgsserializedstate.serialized_entity_id": "322",
+    "gzmsgsserializedstate.serialized_state_entities[0].gzmsgsserializedstate.serialized_entity_remove": "1",
+    "gzmsgsserializedstate.serialized_state_entities[0].gzmsgsserializedstate.serialized_entity_components.#": "1",
+    "gzmsgsserializedstate.serialized_state_entities[0].gzmsgsserializedstate.serialized_entity_components[0].gzmsgsserializedstate.serialized_component_type": "396",
+    "gzmsgsserializedstate.serialized_state_entities[0].gzmsgsserializedstate.serialized_entity_components[0].gzmsgsserializedstate.serialized_component_remove": "1",
+    "gzmsgsserializedstate.serialized_state_entities[1].gzmsgsserializedstate.serialized_entity_id": "470",
+    "gzmsgsserializedstate.serialized_state_entities[1].gzmsgsserializedstate.serialized_entity_remove": "1",
+    "gzmsgsserializedstate.serialized_state_entities[1].gzmsgsserializedstate.serialized_entity_components.#": "1",
+    "gzmsgsserializedstate.serialized_state_entities[1].gzmsgsserializedstate.serialized_entity_components[0].gzmsgsserializedstate.serialized_component_type": "544",
+    "gzmsgsserializedstate.serialized_state_entities[1].gzmsgsserializedstate.serialized_entity_components[0].gzmsgsserializedstate.serialized_component_remove": "1"
+  }
+}

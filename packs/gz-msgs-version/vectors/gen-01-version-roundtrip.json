@@ -1,0 +1,15 @@
+{
+  "name": "gen-version-roundtrip",
+  "from": "gz-msgs-version",
+  "to": "gz-msgs-version",
+  "input": "086410890118ae01220c70726572656c656173652d332a076275696c642d34",
+  "expect": "086410890118ae01220c70726572656c656173652d332a076275696c642d34",
+  "model": {
+    "@kind": "version",
+    "gzmsgsversion.version_major": "100",
+    "gzmsgsversion.version_minor": "137",
+    "gzmsgsversion.version_patch": "174",
+    "gzmsgsversion.version_prerelease": "prerelease-3",
+    "gzmsgsversion.version_build": "build-4"
+  }
+}

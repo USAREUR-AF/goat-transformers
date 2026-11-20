@@ -1,0 +1,20 @@
+{
+  "name": "gen-camera_cmd-roundtrip",
+  "from": "gz-msgs-camera-cmd",
+  "to": "gz-msgs-camera-cmd",
+  "input": "0a2b0a05086410890112100a056b65792d33120776616c75652d3412100a056b65792d35120776616c75652d36120e666f6c6c6f775f6d6f64656c2d32",
+  "expect": "0a2b0a05086410890112100a056b65792d33120776616c75652d3412100a056b65792d35120776616c75652d36120e666f6c6c6f775f6d6f64656c2d32",
+  "model": {
+    "@kind": "camera_cmd",
+    "gzmsgscameracmd.header_stamp_sec": "100",
+    "gzmsgscameracmd.header_stamp_nsec": "137",
+    "gzmsgscameracmd.camera_cmd_follow_model": "follow_model-2",
+    "gzmsgscameracmd.header_data.#": "2",
+    "gzmsgscameracmd.header_data[0].gzmsgscameracmd.map_key": "key-3",
+    "gzmsgscameracmd.header_data[0].gzmsgscameracmd.map_value.#": "1",
+    "gzmsgscameracmd.header_data[0].gzmsgscameracmd.map_value[0].gzmsgscameracmd.map_value_item": "value-4",
+    "gzmsgscameracmd.header_data[1].gzmsgscameracmd.map_key": "key-5",
+    "gzmsgscameracmd.header_data[1].gzmsgscameracmd.map_value.#": "1",
+    "gzmsgscameracmd.header_data[1].gzmsgscameracmd.map_value[0].gzmsgscameracmd.map_value_item": "value-6"
+  }
+}

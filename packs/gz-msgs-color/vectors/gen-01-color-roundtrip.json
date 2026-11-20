@@ -1,0 +1,23 @@
+{
+  "name": "gen-color-roundtrip",
+  "from": "gz-msgs-color",
+  "to": "gz-msgs-color",
+  "input": "0a2b0a05086410890112100a056b65792d36120776616c75652d3712100a056b65792d38120776616c75652d39150000b03f1d0000004025000028402d00005040",
+  "expect": "0a2b0a05086410890112100a056b65792d36120776616c75652d3712100a056b65792d38120776616c75652d39150000b03f1d0000004025000028402d00005040",
+  "model": {
+    "@kind": "color",
+    "gzmsgscolor.header_stamp_sec": "100",
+    "gzmsgscolor.header_stamp_nsec": "137",
+    "gzmsgscolor.color_r": "1.375",
+    "gzmsgscolor.color_g": "2",
+    "gzmsgscolor.color_b": "2.625",
+    "gzmsgscolor.color_a": "3.25",
+    "gzmsgscolor.header_data.#": "2",
+    "gzmsgscolor.header_data[0].gzmsgscolor.map_key": "key-6",
+    "gzmsgscolor.header_data[0].gzmsgscolor.map_value.#": "1",
+    "gzmsgscolor.header_data[0].gzmsgscolor.map_value[0].gzmsgscolor.map_value_item": "value-7",
+    "gzmsgscolor.header_data[1].gzmsgscolor.map_key": "key-8",
+    "gzmsgscolor.header_data[1].gzmsgscolor.map_value.#": "1",
+    "gzmsgscolor.header_data[1].gzmsgscolor.map_value[0].gzmsgscolor.map_value_item": "value-9"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "gen-boolean-roundtrip",
+  "from": "gz-msgs-boolean",
+  "to": "gz-msgs-boolean",
+  "input": "0a2b0a05086410890112100a056b65792d33120776616c75652d3412100a056b65792d35120776616c75652d361001",
+  "expect": "0a2b0a05086410890112100a056b65792d33120776616c75652d3412100a056b65792d35120776616c75652d361001",
+  "model": {
+    "@kind": "boolean",
+    "gzmsgsboolean.header_stamp_sec": "100",
+    "gzmsgsboolean.header_stamp_nsec": "137",
+    "gzmsgsboolean.boolean_data": "1",
+    "gzmsgsboolean.header_data.#": "2",
+    "gzmsgsboolean.header_data[0].gzmsgsboolean.map_key": "key-3",
+    "gzmsgsboolean.header_data[0].gzmsgsboolean.map_value.#": "1",
+    "gzmsgsboolean.header_data[0].gzmsgsboolean.map_value[0].gzmsgsboolean.map_value_item": "value-4",
+    "gzmsgsboolean.header_data[1].gzmsgsboolean.map_key": "key-5",
+    "gzmsgsboolean.header_data[1].gzmsgsboolean.map_value.#": "1",
+    "gzmsgsboolean.header_data[1].gzmsgsboolean.map_value[0].gzmsgsboolean.map_value_item": "value-6"
+  }
+}

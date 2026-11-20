@@ -1,0 +1,21 @@
+{
+  "name": "gen-battery-roundtrip",
+  "from": "gz-msgs-battery",
+  "to": "gz-msgs-battery",
+  "input": "0a2b0a05086410890112100a056b65792d34120776616c75652d3512100a056b65792d36120776616c75652d3712066e616d652d32190000000000001640",
+  "expect": "0a2b0a05086410890112100a056b65792d34120776616c75652d3512100a056b65792d36120776616c75652d3712066e616d652d32190000000000001640",
+  "model": {
+    "@kind": "battery",
+    "gzmsgsbattery.header_stamp_sec": "100",
+    "gzmsgsbattery.header_stamp_nsec": "137",
+    "gzmsgsbattery.battery_name": "name-2",
+    "gzmsgsbattery.battery_voltage": "5.5",
+    "gzmsgsbattery.header_data.#": "2",
+    "gzmsgsbattery.header_data[0].gzmsgsbattery.map_key": "key-4",
+    "gzmsgsbattery.header_data[0].gzmsgsbattery.map_value.#": "1",
+    "gzmsgsbattery.header_data[0].gzmsgsbattery.map_value[0].gzmsgsbattery.map_value_item": "value-5",
+    "gzmsgsbattery.header_data[1].gzmsgsbattery.map_key": "key-6",
+    "gzmsgsbattery.header_data[1].gzmsgsbattery.map_value.#": "1",
+    "gzmsgsbattery.header_data[1].gzmsgsbattery.map_value[0].gzmsgsbattery.map_value_item": "value-7"
+  }
+}

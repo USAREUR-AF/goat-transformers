@@ -1,0 +1,15 @@
+{
+ "1.1.1": "header_stamp_sec",
+ "1.1.2": "header_stamp_nsec",
+ "1.2[]": "header_data",
+ "2.1.1.1": "linear_velocity_stamp_sec",
+ "2.1.1.2": "linear_velocity_stamp_nsec",
+ "2.1.2[]": "linear_velocity_header_data",
+ "2.2": "linear_velocity_x",
+ "2.3": "linear_velocity_y",
+ "2.4": "linear_velocity_z",
+ "3": "wind_enable_wind",
+ "gz.msgs.Header.Map:1": "map_key",
+ "gz.msgs.Header.Map:2[]": "map_value",
+ "gz.msgs.Header.Map:2[]item": "map_value_item"
+}

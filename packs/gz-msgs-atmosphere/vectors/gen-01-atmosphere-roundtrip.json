@@ -1,0 +1,24 @@
+{
+  "name": "gen-atmosphere-roundtrip",
+  "from": "gz-msgs-atmosphere",
+  "to": "gz-msgs-atmosphere",
+  "input": "0a2c0a05086410890112100a056b65792d37120776616c75652d3812110a056b65792d39120876616c75652d31301000190000000000001640210000000000001d402900000000000022403001",
+  "expect": "0a2c0a05086410890112100a056b65792d37120776616c75652d3812110a056b65792d39120876616c75652d31301000190000000000001640210000000000001d402900000000000022403001",
+  "model": {
+    "@kind": "atmosphere",
+    "gzmsgsatmosphere.header_stamp_sec": "100",
+    "gzmsgsatmosphere.header_stamp_nsec": "137",
+    "gzmsgsatmosphere.atmosphere_type": "0",
+    "gzmsgsatmosphere.atmosphere_temperature": "5.5",
+    "gzmsgsatmosphere.atmosphere_pressure": "7.25",
+    "gzmsgsatmosphere.atmosphere_mass_density": "9",
+    "gzmsgsatmosphere.atmosphere_enable_atmosphere": "1",
+    "gzmsgsatmosphere.header_data.#": "2",
+    "gzmsgsatmosphere.header_data[0].gzmsgsatmosphere.map_key": "key-7",
+    "gzmsgsatmosphere.header_data[0].gzmsgsatmosphere.map_value.#": "1",
+    "gzmsgsatmosphere.header_data[0].gzmsgsatmosphere.map_value[0].gzmsgsatmosphere.map_value_item": "value-8",
+    "gzmsgsatmosphere.header_data[1].gzmsgsatmosphere.map_key": "key-9",
+    "gzmsgsatmosphere.header_data[1].gzmsgsatmosphere.map_value.#": "1",
+    "gzmsgsatmosphere.header_data[1].gzmsgsatmosphere.map_value[0].gzmsgsatmosphere.map_value_item": "value-10"
+  }
+}

@@ -1,0 +1,22 @@
+{
+ "1.1.1": "header_stamp_sec",
+ "1.1.2": "header_stamp_nsec",
+ "1.2[]": "header_data",
+ "10": "cessna_cmd_left_aileron",
+ "11": "cessna_cmd_left_flap",
+ "12": "cessna_cmd_right_aileron",
+ "13": "cessna_cmd_right_flap",
+ "14": "cessna_cmd_elevators",
+ "15": "cessna_cmd_rudder",
+ "2": "cessna_propeller_speed",
+ "3": "cessna_left_aileron",
+ "4": "cessna_left_flap",
+ "5": "cessna_right_aileron",
+ "6": "cessna_right_flap",
+ "7": "cessna_elevators",
+ "8": "cessna_rudder",
+ "9": "cessna_cmd_propeller_speed",
+ "gz.msgs.Header.Map:1": "map_key",
+ "gz.msgs.Header.Map:2[]": "map_value",
+ "gz.msgs.Header.Map:2[]item": "map_value_item"
+}

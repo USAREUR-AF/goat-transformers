@@ -593,6 +593,26 @@ message Note {
         self.assertEqual(custom.ref.full, "google.protobuf.Any")
         self.assertEqual([(f.name, f.type) for f in custom.ref.fields], [("type_url", "string"), ("value", "bytes")])
 
+    def test_a_given_file_named_like_a_well_known_type_does_not_hide_it(self):
+        # gz-msgs has gz/msgs/any.proto (its own gz.msgs.Any) and also imports google/protobuf/any.proto
+        own = self.write("gz/msgs/any.proto", 'syntax = "proto3";\npackage gz.msgs;\nmessage Any { string s = 1; }\n')
+        user = self.write("gz/msgs/param.proto", 'syntax = "proto3";\npackage gz.msgs;\n'
+                          'import "google/protobuf/any.proto";\nimport "gz/msgs/any.proto";\n'
+                          'message Param { google.protobuf.Any value = 1; Any own = 2; }\n')
+        s = p2p.load_schema([own, user])
+        value, mine = s.messages["gz.msgs.Param"].fields
+        self.assertEqual(value.ref.full, "google.protobuf.Any")
+        self.assertEqual([f.name for f in value.ref.fields], ["type_url", "value"])
+        self.assertEqual(mine.ref.full, "gz.msgs.Any")
+
+    def test_a_given_file_at_the_well_known_path_stands_for_it(self):
+        given = self.write("google/protobuf/any.proto", 'syntax = "proto3";\npackage google.protobuf;\n'
+                           'message Any { string type_url = 1; bytes value = 2; string extra = 3; }\n')
+        user = self.write("u.proto", 'syntax = "proto3";\nimport "google/protobuf/any.proto";\n'
+                          'message U { google.protobuf.Any a = 1; }\n')
+        s = p2p.load_schema([given, user])
+        self.assertEqual([f.name for f in s.messages["U"].fields[0].ref.fields], ["type_url", "value", "extra"])
+
     def test_an_import_is_resolved_among_the_given_files_by_file_name(self):
         a = self.write("dir/a.proto", 'syntax = "proto3";\npackage p;\nimport "some/where/b.proto";\nmessage A { B b = 1; }\n')
         b = self.write("b.proto", 'syntax = "proto3";\npackage p;\nmessage B { string x = 1; }\n')

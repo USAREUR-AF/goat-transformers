@@ -1,0 +1,21 @@
+{
+  "name": "gen-fluid_pressure-roundtrip",
+  "from": "gz-msgs-fluid-pressure",
+  "to": "gz-msgs-fluid-pressure",
+  "input": "0a2b0a05086410890112100a056b65792d34120776616c75652d3512100a056b65792d36120776616c75652d37110000000000000e40190000000000001640",
+  "expect": "0a2b0a05086410890112100a056b65792d34120776616c75652d3512100a056b65792d36120776616c75652d37110000000000000e40190000000000001640",
+  "model": {
+    "@kind": "fluid_pressure",
+    "gzmsgsfluidpressure.header_stamp_sec": "100",
+    "gzmsgsfluidpressure.header_stamp_nsec": "137",
+    "gzmsgsfluidpressure.fluid_pressure_pressure": "3.75",
+    "gzmsgsfluidpressure.fluid_pressure_variance": "5.5",
+    "gzmsgsfluidpressure.header_data.#": "2",
+    "gzmsgsfluidpressure.header_data[0].gzmsgsfluidpressure.map_key": "key-4",
+    "gzmsgsfluidpressure.header_data[0].gzmsgsfluidpressure.map_value.#": "1",
+    "gzmsgsfluidpressure.header_data[0].gzmsgsfluidpressure.map_value[0].gzmsgsfluidpressure.map_value_item": "value-5",
+    "gzmsgsfluidpressure.header_data[1].gzmsgsfluidpressure.map_key": "key-6",
+    "gzmsgsfluidpressure.header_data[1].gzmsgsfluidpressure.map_value.#": "1",
+    "gzmsgsfluidpressure.header_data[1].gzmsgsfluidpressure.map_value[0].gzmsgsfluidpressure.map_value_item": "value-7"
+  }
+}

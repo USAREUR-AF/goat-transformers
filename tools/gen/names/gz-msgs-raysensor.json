@@ -1,0 +1,20 @@
+{
+ "1.1.1": "header_stamp_sec",
+ "1.1.2": "header_stamp_nsec",
+ "1.2[]": "header_data",
+ "10": "ray_sensor_vertical_max_angle",
+ "11": "ray_sensor_range_min",
+ "12": "ray_sensor_range_max",
+ "13": "ray_sensor_range_resolution",
+ "2": "ray_sensor_display_scan",
+ "3": "ray_sensor_horizontal_samples",
+ "4": "ray_sensor_horizontal_resolution",
+ "5": "ray_sensor_horizontal_min_angle",
+ "6": "ray_sensor_horizontal_max_angle",
+ "7": "ray_sensor_vertical_samples",
+ "8": "ray_sensor_vertical_resolution",
+ "9": "ray_sensor_vertical_min_angle",
+ "gz.msgs.Header.Map:1": "map_key",
+ "gz.msgs.Header.Map:2[]": "map_value",
+ "gz.msgs.Header.Map:2[]item": "map_value_item"
+}

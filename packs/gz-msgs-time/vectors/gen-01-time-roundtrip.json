@@ -1,0 +1,12 @@
+{
+  "name": "gen-time-roundtrip",
+  "from": "gz-msgs-time",
+  "to": "gz-msgs-time",
+  "input": "0864108901",
+  "expect": "0864108901",
+  "model": {
+    "@kind": "time",
+    "gzmsgstime.time_sec": "100",
+    "gzmsgstime.time_nsec": "137"
+  }
+}

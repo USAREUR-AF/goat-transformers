@@ -1,0 +1,12 @@
+{
+ "1.1.1": "header_stamp_sec",
+ "1.1.2": "header_stamp_nsec",
+ "1.2[]": "header_data",
+ "2[]": "joy_axes",
+ "3[]": "joy_buttons",
+ "gz.msgs.Header.Map:1": "map_key",
+ "gz.msgs.Header.Map:2[]": "map_value",
+ "gz.msgs.Header.Map:2[]item": "map_value_item",
+ "gz.msgs.Joy:2[]item": "joy_axes_item",
+ "gz.msgs.Joy:3[]item": "joy_buttons_item"
+}

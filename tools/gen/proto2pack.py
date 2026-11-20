@@ -435,7 +435,11 @@ def load_schema(paths, mandatory_option=None, comments=True):
         imports += [(p, i) for i in ps.imports]
     builtin_done = set()
     for src, imp in imports:
-        if os.path.basename(imp) in given:
+        # a given file of the same name stands for the import, unless the import is a
+        # well-known type and the given file is not at that path (gz-msgs has its own
+        # gz/msgs/any.proto beside an import of google/protobuf/any.proto)
+        if os.path.basename(imp) in given and not (
+                imp in BUILTIN_PROTOS and not given[os.path.basename(imp)].replace(os.sep, "/").endswith("/" + imp)):
             continue
         if imp in BUILTIN_PROTOS:
             if imp not in builtin_done:
