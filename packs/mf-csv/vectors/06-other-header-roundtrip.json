@@ -1,0 +1,13 @@
+{
+  "name": "other-header-roundtrip",
+  "from": "mf-csv",
+  "to": "mf-csv",
+  "input": "@note,first,second",
+  "expect": "@note,first,second",
+  "model": {
+    "@kind": "header",
+    "mfcsv.header_name": "@note"
+  },
+  "source": "derived by tools/gen/ogc-mf-kml-vectors.py from the standard and spec/engine-spec.md; no engine run",
+  "reference": "OGC 14-084r2 (Moving Features Simple CSV 1.0) 8.1 header line structure; a header line other than the three the standard defines selects kind header by its first character; its value columns are residue and are written back"
+}

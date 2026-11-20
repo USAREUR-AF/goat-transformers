@@ -1,0 +1,9 @@
+{
+  "name": "non-ascii-is-malformed-wire",
+  "from": "mf-csv",
+  "to": "mf-csv",
+  "input": "bus-é,0,60,11.5 48.1 11.52 48.11",
+  "expect_error": "malformed-wire",
+  "source": "derived by tools/gen/ogc-mf-kml-vectors.py from the standard and spec/engine-spec.md; no engine run",
+  "reference": "OGC 14-084r2 (Moving Features Simple CSV 1.0) 7.1 (UTF-8); spec/engine-spec.md 0.10 Reading a record step 2; the standard allows UTF-8 text; the text wire accepts 0x20 to 0x7E only"
+}

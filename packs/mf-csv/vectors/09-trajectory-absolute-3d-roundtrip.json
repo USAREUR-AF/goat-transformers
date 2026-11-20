@@ -1,0 +1,17 @@
+{
+  "name": "trajectory-absolute-3d-roundtrip",
+  "from": "mf-csv",
+  "to": "mf-csv",
+  "input": "p1,2024-05-01T08:00:00Z,2024-05-01T08:01:00Z,11.5 48.1 0 11.6 48.2 5",
+  "expect": "p1,2024-05-01T08:00:00Z,2024-05-01T08:01:00Z,11.5 48.1 0 11.6 48.2 5",
+  "model": {
+    "@kind": "trajectory",
+    "uid": "p1",
+    "mfcsv.start_time": "2024-05-01T08:00:00Z",
+    "mfcsv.end_time": "2024-05-01T08:01:00Z",
+    "mfcsv.points": "11.5 48.1 0 11.6 48.2 5",
+    "mfcsv.attributes.#": "absent"
+  },
+  "source": "derived by tools/gen/ogc-mf-kml-vectors.py from the standard and spec/engine-spec.md; no engine run",
+  "reference": "OGC 14-084r2 (Moving Features Simple CSV 1.0) 8.2.1 time encode absolute, 9.2; times are carried as text whatever the time encode of the header; no attribute columns, so the list is absent"
+}

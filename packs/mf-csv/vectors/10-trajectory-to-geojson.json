@@ -1,0 +1,13 @@
+{
+  "name": "trajectory-to-geojson",
+  "from": "mf-csv",
+  "to": "geojson",
+  "input": "veh-7,0,60,11.5 48.1 11.52 48.11,moving",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{},\"id\":\"veh-7\"}",
+  "model": {
+    "uid": "veh-7",
+    "mfcsv.points": "11.5 48.1 11.52 48.11"
+  },
+  "source": "derived by tools/gen/ogc-mf-kml-vectors.py from the standard and spec/engine-spec.md; no engine run",
+  "reference": "OGC 14-084r2 (Moving Features Simple CSV 1.0) 9.2 mfidref; packs/geojson/pack.def; mfidref carries as the Feature id; the points are one text value that no transform splits, so geometry is null"
+}

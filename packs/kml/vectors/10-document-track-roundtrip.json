@@ -1,0 +1,16 @@
+{
+  "name": "document-track-roundtrip",
+  "from": "kml",
+  "to": "kml",
+  "input": "<kml xmlns=\"http://www.opengis.net/kml/2.2\"><Document><name>RUNS</name><Placemark><name>ROVER</name><Track><altitudeMode>clampToGround</altitudeMode><when>2024-05-01T08:00:00Z</when><when>2024-05-01T08:00:10Z</when><coord>11.5 48.1 520</coord><coord>11.5001 48.1002 521.5</coord></Track></Placemark></Document></kml>",
+  "expect": "<kml xmlns=\"http://www.opengis.net/kml/2.2\"><Document><name>RUNS</name><Placemark><name>ROVER</name><Track><altitudeMode>clampToGround</altitudeMode><when>2024-05-01T08:00:00Z</when><when>2024-05-01T08:00:10Z</when><coord>11.5 48.1 520</coord><coord>11.5001 48.1002 521.5</coord></Track></Placemark></Document></kml>",
+  "model": {
+    "@kind": "document-track",
+    "kml.document_name": "RUNS",
+    "callsign": "ROVER",
+    "kml.altitude_mode": "clampToGround",
+    "kml.track_whens.#": "2"
+  },
+  "source": "derived by tools/gen/ogc-mf-kml-vectors.py from the standard and spec/engine-spec.md; no engine run",
+  "reference": "OGC 12-007r2 (KML 2.3) 10.15 kml:Track, 10.16 kml:MultiTrack; ogckml23.xsd TrackType, MultiTrackType; a Track Placemark inside a Document"
+}

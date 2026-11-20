@@ -1,0 +1,14 @@
+{
+  "name": "trajectory-omitted-attribute-roundtrip",
+  "from": "mf-csv",
+  "to": "mf-csv",
+  "input": "veh-7,60,120,11.52 48.11 11.53 48.12,,13",
+  "expect": "veh-7,60,120,11.52 48.11 11.53 48.12,,13",
+  "model": {
+    "@kind": "trajectory",
+    "mfcsv.attributes.#": "2",
+    "mfcsv.attributes[1].mfcsv.value": "13"
+  },
+  "source": "derived by tools/gen/ogc-mf-kml-vectors.py from the standard and spec/engine-spec.md; no engine run",
+  "reference": "OGC 14-084r2 (Moving Features Simple CSV 1.0) 9.2 attr; an empty attribute column is an item with no value and is written back as an empty field"
+}

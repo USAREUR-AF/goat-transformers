@@ -1,0 +1,19 @@
+{
+  "name": "trajectory-roundtrip",
+  "from": "mf-csv",
+  "to": "mf-csv",
+  "input": "veh-7,0,60,11.5 48.1 11.52 48.11,moving,12.5",
+  "expect": "veh-7,0,60,11.5 48.1 11.52 48.11,moving,12.5",
+  "model": {
+    "@kind": "trajectory",
+    "uid": "veh-7",
+    "mfcsv.start_time": "0",
+    "mfcsv.end_time": "60",
+    "mfcsv.points": "11.5 48.1 11.52 48.11",
+    "mfcsv.attributes.#": "2",
+    "mfcsv.attributes[0].mfcsv.value": "moving",
+    "mfcsv.attributes[1].mfcsv.value": "12.5"
+  },
+  "source": "derived by tools/gen/ogc-mf-kml-vectors.py from the standard and spec/engine-spec.md; no engine run",
+  "reference": "OGC 14-084r2 (Moving Features Simple CSV 1.0) 9 trajectory lines; mfidref is uid; times are offsets in the unit of the header and are carried as text; the points are one column"
+}

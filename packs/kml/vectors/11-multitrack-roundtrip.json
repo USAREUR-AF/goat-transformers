@@ -1,0 +1,22 @@
+{
+  "name": "multitrack-roundtrip",
+  "from": "kml",
+  "to": "kml",
+  "input": "<kml xmlns=\"http://www.opengis.net/kml/2.2\"><Placemark id=\"m1\"><name>ROVER</name><MultiTrack><altitudeMode>absolute</altitudeMode><interpolate>1</interpolate><Track><altitudeMode>absolute</altitudeMode><when>2024-05-01T08:00:00Z</when><when>2024-05-01T08:00:10Z</when><coord>11.5 48.1 520</coord><coord>11.5001 48.1002 521.5</coord></Track><Track><when>2024-05-01T09:00:00Z</when><coord>11.6 48.2 530</coord></Track></MultiTrack></Placemark></kml>",
+  "expect": "<kml xmlns=\"http://www.opengis.net/kml/2.2\"><Placemark id=\"m1\"><name>ROVER</name><MultiTrack><altitudeMode>absolute</altitudeMode><interpolate>1</interpolate><Track><altitudeMode>absolute</altitudeMode><when>2024-05-01T08:00:00Z</when><when>2024-05-01T08:00:10Z</when><coord>11.5 48.1 520</coord><coord>11.5001 48.1002 521.5</coord></Track><Track><when>2024-05-01T09:00:00Z</when><coord>11.6 48.2 530</coord></Track></MultiTrack></Placemark></kml>",
+  "model": {
+    "@kind": "multitrack",
+    "kml.placemark_id": "m1",
+    "callsign": "ROVER",
+    "kml.altitude_mode": "absolute",
+    "kml.interpolate": "1",
+    "kml.tracks.#": "2",
+    "kml.tracks[0].kml.altitude_mode": "absolute",
+    "kml.tracks[0].kml.track_whens.#": "2",
+    "kml.tracks[0].kml.track_coords[1].kml.coord": "11.5001 48.1002 521.5",
+    "kml.tracks[1].kml.track_whens[0].kml.track_when": "2024-05-01T09:00:00Z",
+    "kml.tracks[1].kml.track_coords.#": "1"
+  },
+  "source": "derived by tools/gen/ogc-mf-kml-vectors.py from the standard and spec/engine-spec.md; no engine run",
+  "reference": "OGC 12-007r2 (KML 2.3) 10.15 kml:Track, 10.16 kml:MultiTrack; ogckml23.xsd TrackType, MultiTrackType; each Track of a MultiTrack is an item holding its own when and coord lists"
+}
