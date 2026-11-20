@@ -19,6 +19,25 @@ jobs:
       - run: python3 -I tools/boundary-gate
       - name: Every package carries one version
         run: python3 -I tools/release-version.py
+  # A change to model/core.def or model/track.def carries an ADR (AGENTS.md,
+  # the shared model is governed like the specification).
+  model-governance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+      - name: A change to core or track carries a complete ADR
+        env:
+          EVENT: ${{ github.event_name }}
+          BASE: ${{ github.base_ref }}
+        run: |
+          if [ "$EVENT" = "pull_request" ]; then
+            python3 -I tools/model-governance.py --base "origin/$BASE"
+          else
+            python3 -I tools/model-governance.py
+          fi
   tools:
     runs-on: ubuntu-latest
     timeout-minutes: 10
