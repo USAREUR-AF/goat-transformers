@@ -427,11 +427,15 @@ Pack dbc-tesla-model3; module dbcteslamodel3
 Packs ipv4-header, ipv6-header, udp-header, tcp-header, icmp-header,
 ntp-header, dns-header, rtp-header, rtcp-header, arp-ipv4-ethernet,
 gre-header, vxlan-header, mpls-label-entry, igmpv2, sctp-common-header,
-bfd-control; module inet
-  IETF RFC 791, 768, 792, 826, 894, 1035, 2236, 2784, 2890, 3032, 3550, 5462,
-  5880, 5905, 7348, 8200, 9260 and 9293, https://www.rfc-editor.org/ (IETF
-  Trust, BCP 78, where the document states it; Internet Society copyright for
-  RFC 2236, 2784, 2890, 3032 and 3550). Field layouts restated.
+bfd-control, igmpv3, icmpv6-header, coap-header, tls-record-header,
+dtls-record-header, bgp-header, ospfv2-header, vrrpv3-ipv4, vrrpv3-ipv6,
+ripv2-header, geneve-header; module inet
+  IETF RFC 791, 768, 792, 826, 894, 1035, 2236, 2328, 2453, 2784, 2890, 3032,
+  3376, 3550, 4271, 4443, 4861, 5462, 5880, 5905, 7252, 7348, 8200, 8446,
+  8926, 9147, 9260, 9293 and 9568, https://www.rfc-editor.org/ (IETF Trust,
+  BCP 78, where the document states it; Internet Society copyright for RFC
+  2236, 2328, 2453, 2784, 2890, 3032, 3376, 3550, 4271 and 4443, the last two
+  with BCP 78). Field layouts restated.
 
 Packs dhcpv6-options, edns0-options; modules dhcpv6, edns0
   IETF RFC 9915 (DHCPv6, section 21) and RFC 6891 (EDNS(0), section 6.1.2),
@@ -571,3 +575,53 @@ Packs gofs-*; modules gofs*
   General On-demand Feed Specification (GOFS) JSON Schemas,
   https://github.com/MobilityData/gofs, commit ab9151ed. Apache License,
   Version 2.0.
+
+Packs openc2-lang, openc2-slpf; modules oc2lang, oc2slpf
+  OpenC2 Language Specification 1.1 and Stateless Packet Filtering profile 1.1
+  JSON Schemas, OASIS TC Open Repository
+  https://github.com/oasis-open/openc2-custom-aps commit f6ef6b37. Apache
+  License, Version 2.0.
+
+Pack cacao-playbook; module cacao
+  CACAO Security Playbooks 2.0 JSON Schemas, OASIS TC Open Repository
+  https://github.com/oasis-open/cacao-json-schemas commit 72853294. Apache
+  License, Version 2.0.
+
+Packs osi-*; modules osi*
+  ASAM Open Simulation Interface (OSI) v3.8.0 protobuf definitions,
+  https://github.com/OpenSimulationInterface/open-simulation-interface.
+  Mozilla Public License, v. 2.0, Copyright (C) 2016 BMW AG. Field numbers,
+  names and types only; no source file is copied.
+
+Pack dis7; module dis7
+  DIS 7 (IEEE 1278.1-2012) PDU layouts of the open-dis project:
+  https://github.com/open-dis/xmlpg (DIS2012.xml; BSD 2-Clause, Copyright (c)
+  2015, mcgredonps) and PDU type numbers from
+  https://github.com/open-dis/open-dis-python (opendis/dis7.py; BSD 2-Clause,
+  Copyright (c) 2023, Open DIS). Names, types, lengths and type numbers only;
+  no IEEE document read.
+
+Packs ocsf-*; modules ocsf*
+  Open Cybersecurity Schema Framework (OCSF) 1.9.0,
+  https://github.com/ocsf/ocsf-schema tag 1.9.0. Copyright OCSF a Series of LF
+  Projects, LLC; includes the ICD Schema developed by Symantec, a division of
+  Broadcom. Apache License, Version 2.0. The packs restate each event class's
+  structure and are not endorsed by the OCSF project.
+
+Pack ecs-event; module ecsevent
+  Elastic Common Schema v9.5.0, https://github.com/elastic/ecs tag v9.5.0.
+  Copyright 2018-2021 Elasticsearch B.V. Apache License, Version 2.0. Field
+  names and types only.
+
+Pack rtcm3; module rtcm3
+  RTCM 3 message definitions of pyrtcm, https://github.com/semuconsulting/pyrtcm
+  v1.2.1. BSD 3-Clause License, Copyright (c) 2020 semuadmin (Steve Smith).
+  Message and data field numbers, types, bit sizes and resolutions only; read
+  from the definition files, which are not run.
+
+Packs sbf-*; modules sbf, sbf<group>
+  Septentrio SBF block definitions of pysbf2,
+  https://github.com/semuconsulting/pysbf2 v1.0.7. BSD 3-Clause License,
+  Copyright (c) 2020 semuadmin (Steve Smith). Block names and numbers, field
+  names, types, scales and bit widths only; read from the definition files,
+  which are not run.
