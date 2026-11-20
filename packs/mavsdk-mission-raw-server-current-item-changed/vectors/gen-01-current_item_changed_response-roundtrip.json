@@ -1,0 +1,23 @@
+{
+  "name": "gen-current_item_changed_response-roundtrip",
+  "from": "mavsdk-mission-raw-server-current-item-changed",
+  "to": "mavsdk-mission-raw-server-current-item-changed",
+  "input": "0a30086410890118ae0120d30128f80135000050403d0000784045000090404d0000a44050b10358d603650000e04068a004",
+  "expect": "0a30086410890118ae0120d30128f80135000050403d0000784045000090404d0000a44050b10358d603650000e04068a004",
+  "model": {
+    "@kind": "current_item_changed_response",
+    "mavsdkmissionrawservercurrentitemchanged.mission_item_seq": "100",
+    "mavsdkmissionrawservercurrentitemchanged.mission_item_frame": "137",
+    "mavsdkmissionrawservercurrentitemchanged.mission_item_command": "174",
+    "mavsdkmissionrawservercurrentitemchanged.mission_item_current": "211",
+    "mavsdkmissionrawservercurrentitemchanged.mission_item_autocontinue": "248",
+    "mavsdkmissionrawservercurrentitemchanged.mission_item_param1": "3.25",
+    "mavsdkmissionrawservercurrentitemchanged.mission_item_param2": "3.875",
+    "mavsdkmissionrawservercurrentitemchanged.mission_item_param3": "4.5",
+    "mavsdkmissionrawservercurrentitemchanged.mission_item_param4": "5.125",
+    "mavsdkmissionrawservercurrentitemchanged.mission_item_x": "433",
+    "mavsdkmissionrawservercurrentitemchanged.mission_item_y": "470",
+    "mavsdkmissionrawservercurrentitemchanged.mission_item_z": "7",
+    "mavsdkmissionrawservercurrentitemchanged.mission_item_mission_type": "544"
+  }
+}

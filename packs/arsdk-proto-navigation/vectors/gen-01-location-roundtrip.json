@@ -1,0 +1,24 @@
+{
+  "name": "gen-location-roundtrip",
+  "from": "arsdk-proto-navigation",
+  "to": "arsdk-proto-navigation",
+  "input": "0a7b0a0909000000000000d03f12090900000000000000401a09090000000000000e4022090900000000000016402a09090000000000001d4032090900000000000022403a0909000000000080254042090900000000000029404a07088c03120208015001580162090900000000004035406a09090000000000003740",
+  "expect": "0a7b0a0909000000000000d03f12090900000000000000401a09090000000000000e4022090900000000000016402a09090000000000001d4032090900000000000022403a0909000000000080254042090900000000000029404a07088c03120208015001580162090900000000004035406a09090000000000003740",
+  "model": {
+    "@kind": "location",
+    "arsdkprotonavigation.latitude_value": "0.25",
+    "arsdkprotonavigation.longitude_value": "2",
+    "arsdkprotonavigation.altitude_wgs84_value": "3.75",
+    "arsdkprotonavigation.altitude_amsl_value": "5.5",
+    "arsdkprotonavigation.heading_value": "7.25",
+    "arsdkprotonavigation.horizontal_accuracy_value": "9",
+    "arsdkprotonavigation.vertical_accuracy_value": "10.75",
+    "arsdkprotonavigation.heading_accuracy_value": "12.5",
+    "arsdkprotonavigation.gnss_number_of_satellites": "396",
+    "arsdkprotonavigation.gnss_is_fixed_value": "1",
+    "arsdkprotonavigation.location_reliability": "1",
+    "arsdkprotonavigation.location_location_uses_magnetometer": "1",
+    "arsdkprotonavigation.altitude_ato_value": "21.25",
+    "arsdkprotonavigation.altitude_agl_value": "23"
+  }
+}

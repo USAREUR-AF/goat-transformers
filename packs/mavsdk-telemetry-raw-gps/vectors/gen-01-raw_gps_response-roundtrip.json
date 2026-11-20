@@ -1,0 +1,26 @@
+{
+  "name": "gen-raw_gps_response-roundtrip",
+  "from": "mavsdk-telemetry-raw-gps",
+  "to": "mavsdk-telemetry-raw-gps",
+  "input": "0a4b0864110000000000000040190000000000000e4025000000402d0000284035000050403d0000784045000090404d0000a440550000b8405d0000cc40650000e0406d0000f440750000803e",
+  "expect": "0a4b0864110000000000000040190000000000000e4025000000402d0000284035000050403d0000784045000090404d0000a440550000b8405d0000cc40650000e0406d0000f440750000803e",
+  "model": {
+    "@kind": "raw_gps_response",
+    "mavsdktelemetryrawgps.raw_gps_timestamp_us": "100",
+    "mavsdktelemetryrawgps.raw_gps_latitude_deg": "2",
+    "lat": "2",
+    "mavsdktelemetryrawgps.raw_gps_longitude_deg": "3.75",
+    "lon": "3.75",
+    "mavsdktelemetryrawgps.raw_gps_absolute_altitude_m": "2",
+    "mavsdktelemetryrawgps.raw_gps_hdop": "2.625",
+    "mavsdktelemetryrawgps.raw_gps_vdop": "3.25",
+    "mavsdktelemetryrawgps.raw_gps_velocity_m_s": "3.875",
+    "mavsdktelemetryrawgps.raw_gps_cog_deg": "4.5",
+    "mavsdktelemetryrawgps.raw_gps_altitude_ellipsoid_m": "5.125",
+    "mavsdktelemetryrawgps.raw_gps_horizontal_uncertainty_m": "5.75",
+    "mavsdktelemetryrawgps.raw_gps_vertical_uncertainty_m": "6.375",
+    "mavsdktelemetryrawgps.raw_gps_velocity_uncertainty_m_s": "7",
+    "mavsdktelemetryrawgps.raw_gps_heading_uncertainty_deg": "7.625",
+    "mavsdktelemetryrawgps.raw_gps_yaw_deg": "0.25"
+  }
+}

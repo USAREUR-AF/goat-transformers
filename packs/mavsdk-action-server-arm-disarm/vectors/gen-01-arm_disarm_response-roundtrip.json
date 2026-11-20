@@ -1,0 +1,14 @@
+{
+  "name": "gen-arm_disarm_response-roundtrip",
+  "from": "mavsdk-action-server-arm-disarm",
+  "to": "mavsdk-action-server-arm-disarm",
+  "input": "0a100801120c726573756c745f7374722d31120408011001",
+  "expect": "0a100801120c726573756c745f7374722d31120408011001",
+  "model": {
+    "@kind": "arm_disarm_response",
+    "mavsdkactionserverarmdisarm.action_server_result_result": "1",
+    "mavsdkactionserverarmdisarm.action_server_result_result_str": "result_str-1",
+    "mavsdkactionserverarmdisarm.arm_arm": "1",
+    "mavsdkactionserverarmdisarm.arm_force": "1"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "gen-state-roundtrip",
+  "from": "arsdk-proto-antiflicker",
+  "to": "arsdk-proto-antiflicker",
+  "input": "8201080a040a0201011801",
+  "expect": "8201080a040a0201011801",
+  "model": {
+    "@kind": "state",
+    "arsdkprotoantiflicker.state_fixed": "1",
+    "arsdkprotoantiflicker.default_capabilities_supported_modes.#": "2",
+    "arsdkprotoantiflicker.default_capabilities_supported_modes[0].arsdkprotoantiflicker.capabilities_supported_modes_item": "1",
+    "arsdkprotoantiflicker.default_capabilities_supported_modes[1].arsdkprotoantiflicker.capabilities_supported_modes_item": "1"
+  }
+}

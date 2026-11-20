@@ -1,0 +1,13 @@
+{
+  "name": "gen-upload_mission_with_progress_response-roundtrip",
+  "from": "mavsdk-mission-upload-mission-with-progress",
+  "to": "mavsdk-mission-upload-mission-with-progress",
+  "input": "0a100801120c726573756c745f7374722d3112050d0000b03f",
+  "expect": "0a100801120c726573756c745f7374722d3112050d0000b03f",
+  "model": {
+    "@kind": "upload_mission_with_progress_response",
+    "mavsdkmissionuploadmissionwithprogress.mission_result_result": "1",
+    "mavsdkmissionuploadmissionwithprogress.mission_result_result_str": "result_str-1",
+    "mavsdkmissionuploadmissionwithprogress.progress_data_progress": "1.375"
+  }
+}

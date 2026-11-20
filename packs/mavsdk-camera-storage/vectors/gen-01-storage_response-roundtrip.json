@@ -1,0 +1,22 @@
+{
+  "name": "gen-storage_response-roundtrip",
+  "from": "mavsdk-camera-storage",
+  "to": "mavsdk-camera-storage",
+  "input": "0a3b086412370889011001180125000028402d0000504035000078403d0000904042136d656469615f666f6c6465725f6e616d652d38480150d6035801",
+  "expect": "0a3b086412370889011001180125000028402d0000504035000078403d0000904042136d656469615f666f6c6465725f6e616d652d38480150d6035801",
+  "model": {
+    "@kind": "storage_response",
+    "mavsdkcamerastorage.update_component_id": "100",
+    "mavsdkcamerastorage.update_storage_component_id": "137",
+    "mavsdkcamerastorage.update_storage_video_on": "1",
+    "mavsdkcamerastorage.update_storage_photo_interval_on": "1",
+    "mavsdkcamerastorage.update_storage_used_storage_mib": "2.625",
+    "mavsdkcamerastorage.update_storage_available_storage_mib": "3.25",
+    "mavsdkcamerastorage.update_storage_total_storage_mib": "3.875",
+    "mavsdkcamerastorage.update_storage_recording_time_s": "4.5",
+    "mavsdkcamerastorage.update_storage_media_folder_name": "media_folder_name-8",
+    "mavsdkcamerastorage.update_storage_storage_status": "1",
+    "mavsdkcamerastorage.update_storage_storage_id": "470",
+    "mavsdkcamerastorage.update_storage_storage_type": "1"
+  }
+}

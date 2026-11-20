@@ -1,0 +1,8 @@
+{
+ "16.1": "luminosity_value",
+ "17.1.1[]": "default_capabilities_supported_led_types",
+ "17.2[]": "state_activation_state",
+ "arsdk.led.ActivationState:1": "activation_state_led_type",
+ "arsdk.led.ActivationState:2": "activation_state_enabled",
+ "arsdk.led.Capabilities:1[]item": "capabilities_supported_led_types_item"
+}

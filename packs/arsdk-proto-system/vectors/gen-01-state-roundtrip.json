@@ -1,0 +1,11 @@
+{
+  "name": "gen-state-roundtrip",
+  "from": "arsdk-proto-system",
+  "to": "arsdk-proto-system",
+  "input": "82010b12090a0776616c75652d30",
+  "expect": "82010b12090a0776616c75652d30",
+  "model": {
+    "@kind": "state",
+    "arsdkprotosystem.product_name_value": "value-0"
+  }
+}

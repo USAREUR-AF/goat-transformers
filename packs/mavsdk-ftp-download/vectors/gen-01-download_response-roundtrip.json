@@ -1,0 +1,14 @@
+{
+  "name": "gen-download_response-roundtrip",
+  "from": "mavsdk-ftp-download",
+  "to": "mavsdk-ftp-download",
+  "input": "0a100801120c726573756c745f7374722d31120608ae0110d301",
+  "expect": "0a100801120c726573756c745f7374722d31120608ae0110d301",
+  "model": {
+    "@kind": "download_response",
+    "mavsdkftpdownload.ftp_result_result": "1",
+    "mavsdkftpdownload.ftp_result_result_str": "result_str-1",
+    "mavsdkftpdownload.progress_data_bytes_transferred": "174",
+    "mavsdkftpdownload.progress_data_total_bytes": "211"
+  }
+}

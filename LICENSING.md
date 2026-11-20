@@ -42,6 +42,45 @@ below, and every vector of another pack that converts from or to one of them.
 |---|---|---|---|---|
 | `packs/adsb` | `adsb` | CC-BY-NC-SA-4.0 | `everything` | its own licence |
 | `packs/adsb-df18` | `adsb-df18` | Apache-2.0 | `everything` | uses module adsb (CC-BY-NC-SA-4.0) |
+| `packs/arsdk-proto-antiflicker` | `arsdk-proto-antiflicker` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/arsdk-proto-backuplink` | `arsdk-proto-backuplink` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/arsdk-proto-calibration` | `arsdk-proto-calibration` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/arsdk-proto-camera2` | `arsdk-proto-camera2` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/arsdk-proto-connectivity` | `arsdk-proto-connectivity` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/arsdk-proto-controller-backuplink` | `arsdk-proto-controller-backuplink` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/arsdk-proto-controller-network` | `arsdk-proto-controller-network` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/arsdk-proto-controller-privacy` | `arsdk-proto-controller-privacy` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/arsdk-proto-developer` | `arsdk-proto-developer` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/arsdk-proto-device-manager` | `arsdk-proto-device-manager` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/arsdk-proto-dri` | `arsdk-proto-dri` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/arsdk-proto-esim` | `arsdk-proto-esim` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/arsdk-proto-external-autopilot` | `arsdk-proto-external-autopilot` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/arsdk-proto-flight-data` | `arsdk-proto-flight-data` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/arsdk-proto-geofence` | `arsdk-proto-geofence` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/arsdk-proto-internal-lora` | `arsdk-proto-internal-lora` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/arsdk-proto-killswitch` | `arsdk-proto-killswitch` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/arsdk-proto-led` | `arsdk-proto-led` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/arsdk-proto-logsync` | `arsdk-proto-logsync` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/arsdk-proto-loiter` | `arsdk-proto-loiter` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/arsdk-proto-microhard` | `arsdk-proto-microhard` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/arsdk-proto-mobile-device` | `arsdk-proto-mobile-device` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/arsdk-proto-navigation` | `arsdk-proto-navigation` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/arsdk-proto-netdebuglog` | `arsdk-proto-netdebuglog` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/arsdk-proto-network` | `arsdk-proto-network` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/arsdk-proto-night-vision` | `arsdk-proto-night-vision` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/arsdk-proto-piloting` | `arsdk-proto-piloting` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/arsdk-proto-pointnfly` | `arsdk-proto-pointnfly` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/arsdk-proto-privacy` | `arsdk-proto-privacy` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/arsdk-proto-remote-antenna` | `arsdk-proto-remote-antenna` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/arsdk-proto-sleepmode` | `arsdk-proto-sleepmode` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/arsdk-proto-sms` | `arsdk-proto-sms` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/arsdk-proto-storage` | `arsdk-proto-storage` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/arsdk-proto-system` | `arsdk-proto-system` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/arsdk-proto-thermal-control` | `arsdk-proto-thermal-control` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/arsdk-proto-tracking` | `arsdk-proto-tracking` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/arsdk-proto-unguarded-flight` | `arsdk-proto-unguarded-flight` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/arsdk-proto-usb-power` | `arsdk-proto-usb-power` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/arsdk-proto-vehicle` | `arsdk-proto-vehicle` | LicenseRef-unstated | `everything` | its own licence |
 | `packs/cap` | `cap` | LicenseRef-OASIS-Notice | `open` | its own licence |
 | `packs/cds-aggregate` | `cds-aggregate` | CC-BY-4.0 | `open` | its own licence |
 | `packs/cds-curb-area` | `cds-curb-area` | CC-BY-4.0 | `open` | its own licence |
@@ -137,6 +176,119 @@ below, and every vector of another pack that converts from or to one of them.
 | `packs/gbfs-3.1-rc3-vehicle-availability` | `gbfs-3.1-rc3-vehicle-availability` | CC-BY-3.0 | `open` | its own licence |
 | `packs/gpx` | `gpx` | LicenseRef-unstated | `everything` | its own licence |
 | `packs/kml` | `kml` | LicenseRef-OGC-Document | `open` | its own licence |
+| `packs/mavsdk-action-server-arm-disarm` | `mavsdk-action-server-arm-disarm` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-action-server-flight-mode-change` | `mavsdk-action-server-flight-mode-change` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-action-server-land` | `mavsdk-action-server-land` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-action-server-reboot` | `mavsdk-action-server-reboot` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-action-server-shutdown` | `mavsdk-action-server-shutdown` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-action-server-takeoff` | `mavsdk-action-server-takeoff` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-action-server-terminate` | `mavsdk-action-server-terminate` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-arm-authorizer-server-arm-authorization` | `mavsdk-arm-authorizer-server-arm-authorization` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-calibration-calibrate-accelerometer` | `mavsdk-calibration-calibrate-accelerometer` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-calibration-calibrate-gimbal-accelerometer` | `mavsdk-calibration-calibrate-gimbal-accelerometer` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-calibration-calibrate-gyro` | `mavsdk-calibration-calibrate-gyro` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-calibration-calibrate-level-horizon` | `mavsdk-calibration-calibrate-level-horizon` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-calibration-calibrate-magnetometer` | `mavsdk-calibration-calibrate-magnetometer` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-camera-camera-list` | `mavsdk-camera-camera-list` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-camera-capture-info` | `mavsdk-camera-capture-info` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-camera-current-settings` | `mavsdk-camera-current-settings` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-camera-mode` | `mavsdk-camera-mode` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-camera-possible-setting-options` | `mavsdk-camera-possible-setting-options` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-camera-server-capture-status` | `mavsdk-camera-server-capture-status` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-camera-server-focus-auto` | `mavsdk-camera-server-focus-auto` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-camera-server-focus-auto-continuous` | `mavsdk-camera-server-focus-auto-continuous` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-camera-server-focus-auto-single` | `mavsdk-camera-server-focus-auto-single` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-camera-server-focus-in-start` | `mavsdk-camera-server-focus-in-start` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-camera-server-focus-in-step` | `mavsdk-camera-server-focus-in-step` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-camera-server-focus-meters` | `mavsdk-camera-server-focus-meters` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-camera-server-focus-out-start` | `mavsdk-camera-server-focus-out-start` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-camera-server-focus-out-step` | `mavsdk-camera-server-focus-out-step` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-camera-server-focus-range` | `mavsdk-camera-server-focus-range` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-camera-server-focus-stop` | `mavsdk-camera-server-focus-stop` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-camera-server-format-storage` | `mavsdk-camera-server-format-storage` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-camera-server-reset-settings` | `mavsdk-camera-server-reset-settings` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-camera-server-set-mode` | `mavsdk-camera-server-set-mode` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-camera-server-start-video` | `mavsdk-camera-server-start-video` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-camera-server-start-video-streaming` | `mavsdk-camera-server-start-video-streaming` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-camera-server-stop-video` | `mavsdk-camera-server-stop-video` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-camera-server-stop-video-streaming` | `mavsdk-camera-server-stop-video-streaming` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-camera-server-storage-information` | `mavsdk-camera-server-storage-information` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-camera-server-take-photo` | `mavsdk-camera-server-take-photo` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-camera-server-tracking-off-command` | `mavsdk-camera-server-tracking-off-command` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-camera-server-tracking-point-command` | `mavsdk-camera-server-tracking-point-command` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-camera-server-tracking-rectangle-command` | `mavsdk-camera-server-tracking-rectangle-command` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-camera-server-zoom-in-start` | `mavsdk-camera-server-zoom-in-start` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-camera-server-zoom-out-start` | `mavsdk-camera-server-zoom-out-start` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-camera-server-zoom-range` | `mavsdk-camera-server-zoom-range` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-camera-server-zoom-stop` | `mavsdk-camera-server-zoom-stop` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-camera-storage` | `mavsdk-camera-storage` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-camera-video-stream-info` | `mavsdk-camera-video-stream-info` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-component-metadata-metadata-available` | `mavsdk-component-metadata-metadata-available` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-core-connection-state` | `mavsdk-core-connection-state` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-events-events` | `mavsdk-events-events` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-events-health-and-arming-checks` | `mavsdk-events-health-and-arming-checks` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-ftp-download` | `mavsdk-ftp-download` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-ftp-upload` | `mavsdk-ftp-upload` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-gimbal-attitude` | `mavsdk-gimbal-attitude` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-gimbal-control-status` | `mavsdk-gimbal-control-status` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-gimbal-gimbal-list` | `mavsdk-gimbal-gimbal-list` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-info-flight-information` | `mavsdk-info-flight-information` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-log-files-download-log-file` | `mavsdk-log-files-download-log-file` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-log-streaming-log-streaming-raw` | `mavsdk-log-streaming-log-streaming-raw` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-mavlink-direct-message` | `mavsdk-mavlink-direct-message` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-mavlink-direct-server-command` | `mavsdk-mavlink-direct-server-command` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-mavlink-direct-server-message` | `mavsdk-mavlink-direct-server-message` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-mission-download-mission-with-progress` | `mavsdk-mission-download-mission-with-progress` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-mission-mission-progress` | `mavsdk-mission-mission-progress` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-mission-raw-mission-changed` | `mavsdk-mission-raw-mission-changed` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-mission-raw-mission-progress` | `mavsdk-mission-raw-mission-progress` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-mission-raw-server-clear-all` | `mavsdk-mission-raw-server-clear-all` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-mission-raw-server-current-item-changed` | `mavsdk-mission-raw-server-current-item-changed` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-mission-raw-server-incoming-mission` | `mavsdk-mission-raw-server-incoming-mission` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-mission-raw-upload-mission-with-progress` | `mavsdk-mission-raw-upload-mission-with-progress` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-mission-upload-mission-with-progress` | `mavsdk-mission-upload-mission-with-progress` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-modes-available-modes` | `mavsdk-modes-available-modes` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-modes-current-mode` | `mavsdk-modes-current-mode` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-modes-server-mode-requested` | `mavsdk-modes-server-mode-requested` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-param-server-changed-param-custom` | `mavsdk-param-server-changed-param-custom` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-param-server-changed-param-float` | `mavsdk-param-server-changed-param-float` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-param-server-changed-param-int` | `mavsdk-param-server-changed-param-int` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-shell-receive` | `mavsdk-shell-receive` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-telemetry-actuator-control-target` | `mavsdk-telemetry-actuator-control-target` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-telemetry-actuator-output-status` | `mavsdk-telemetry-actuator-output-status` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-telemetry-altitude` | `mavsdk-telemetry-altitude` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-telemetry-armed` | `mavsdk-telemetry-armed` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-telemetry-attitude-angular-velocity-body` | `mavsdk-telemetry-attitude-angular-velocity-body` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-telemetry-attitude-euler` | `mavsdk-telemetry-attitude-euler` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-telemetry-attitude-quaternion` | `mavsdk-telemetry-attitude-quaternion` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-telemetry-battery` | `mavsdk-telemetry-battery` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-telemetry-distance-sensor` | `mavsdk-telemetry-distance-sensor` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-telemetry-fixedwing-metrics` | `mavsdk-telemetry-fixedwing-metrics` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-telemetry-flight-mode` | `mavsdk-telemetry-flight-mode` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-telemetry-gps-info` | `mavsdk-telemetry-gps-info` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-telemetry-ground-truth` | `mavsdk-telemetry-ground-truth` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-telemetry-heading` | `mavsdk-telemetry-heading` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-telemetry-health` | `mavsdk-telemetry-health` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-telemetry-health-all-ok` | `mavsdk-telemetry-health-all-ok` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-telemetry-home` | `mavsdk-telemetry-home` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-telemetry-imu` | `mavsdk-telemetry-imu` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-telemetry-in-air` | `mavsdk-telemetry-in-air` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-telemetry-landed-state` | `mavsdk-telemetry-landed-state` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-telemetry-odometry` | `mavsdk-telemetry-odometry` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-telemetry-position` | `mavsdk-telemetry-position` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-telemetry-position-velocity-ned` | `mavsdk-telemetry-position-velocity-ned` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-telemetry-raw-gps` | `mavsdk-telemetry-raw-gps` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-telemetry-raw-imu` | `mavsdk-telemetry-raw-imu` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-telemetry-rc-status` | `mavsdk-telemetry-rc-status` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-telemetry-scaled-imu` | `mavsdk-telemetry-scaled-imu` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-telemetry-scaled-pressure` | `mavsdk-telemetry-scaled-pressure` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-telemetry-status-text` | `mavsdk-telemetry-status-text` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-telemetry-unix-epoch-time` | `mavsdk-telemetry-unix-epoch-time` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-telemetry-velocity-ned` | `mavsdk-telemetry-velocity-ned` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-telemetry-vtol-state` | `mavsdk-telemetry-vtol-state` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-telemetry-wind` | `mavsdk-telemetry-wind` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-transponder-transponder` | `mavsdk-transponder-transponder` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/mavsdk-winch-status` | `mavsdk-winch-status` | LicenseRef-unstated | `everything` | its own licence |
 | `packs/mds` | `mds` | CC-BY-4.0 | `open` | its own licence |
 | `packs/mvt` | `mvt` | CC-BY-3.0 | `open` | its own licence |
 | `packs/open311-request` | `open311-request` | CC-BY-3.0 | `open` | its own licence |
@@ -556,6 +708,45 @@ below, and every vector of another pack that converts from or to one of them.
 | Module | Licence | Profile | Why |
 |---|---|---|---|
 | `model/adsb.def` | CC-BY-NC-SA-4.0 | `everything` | its own licence |
+| `model/arsdkprotoantiflicker.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/arsdkprotobackuplink.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/arsdkprotocalibration.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/arsdkprotocamera2.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/arsdkprotoconnectivity.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/arsdkprotocontrollerbackuplink.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/arsdkprotocontrollernetwork.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/arsdkprotocontrollerprivacy.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/arsdkprotodeveloper.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/arsdkprotodevicemanager.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/arsdkprotodri.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/arsdkprotoesim.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/arsdkprotoexternalautopilot.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/arsdkprotoflightdata.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/arsdkprotogeofence.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/arsdkprotointernallora.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/arsdkprotokillswitch.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/arsdkprotoled.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/arsdkprotologsync.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/arsdkprotoloiter.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/arsdkprotomicrohard.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/arsdkprotomobiledevice.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/arsdkprotonavigation.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/arsdkprotonetdebuglog.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/arsdkprotonetwork.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/arsdkprotonightvision.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/arsdkprotopiloting.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/arsdkprotopointnfly.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/arsdkprotoprivacy.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/arsdkprotoremoteantenna.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/arsdkprotosleepmode.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/arsdkprotosms.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/arsdkprotostorage.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/arsdkprotosystem.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/arsdkprotothermalcontrol.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/arsdkprototracking.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/arsdkprotounguardedflight.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/arsdkprotousbpower.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/arsdkprotovehicle.def` | LicenseRef-unstated | `everything` | its own licence |
 | `model/cap.def` | LicenseRef-OASIS-Notice | `open` | its own licence |
 | `model/cdsaggregate.def` | CC-BY-4.0 | `open` | its own licence |
 | `model/cdscurbarea.def` | CC-BY-4.0 | `open` | its own licence |
@@ -651,6 +842,119 @@ below, and every vector of another pack that converts from or to one of them.
 | `model/gbfs31rc3vehicleavailability.def` | CC-BY-3.0 | `open` | its own licence |
 | `model/gpx.def` | LicenseRef-unstated | `everything` | its own licence |
 | `model/kml.def` | LicenseRef-OGC-Document | `open` | its own licence |
+| `model/mavsdkactionserverarmdisarm.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkactionserverflightmodechange.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkactionserverland.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkactionserverreboot.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkactionservershutdown.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkactionservertakeoff.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkactionserverterminate.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkarmauthorizerserverarmauthorization.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkcalibrationcalibrateaccelerometer.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkcalibrationcalibrategimbalaccelerometer.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkcalibrationcalibrategyro.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkcalibrationcalibratelevelhorizon.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkcalibrationcalibratemagnetometer.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkcameracameralist.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkcameracaptureinfo.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkcameracurrentsettings.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkcameramode.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkcamerapossiblesettingoptions.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkcameraservercapturestatus.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkcameraserverfocusauto.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkcameraserverfocusautocontinuous.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkcameraserverfocusautosingle.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkcameraserverfocusinstart.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkcameraserverfocusinstep.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkcameraserverfocusmeters.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkcameraserverfocusoutstart.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkcameraserverfocusoutstep.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkcameraserverfocusrange.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkcameraserverfocusstop.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkcameraserverformatstorage.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkcameraserverresetsettings.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkcameraserversetmode.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkcameraserverstartvideo.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkcameraserverstartvideostreaming.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkcameraserverstopvideo.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkcameraserverstopvideostreaming.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkcameraserverstorageinformation.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkcameraservertakephoto.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkcameraservertrackingoffcommand.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkcameraservertrackingpointcommand.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkcameraservertrackingrectanglecommand.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkcameraserverzoominstart.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkcameraserverzoomoutstart.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkcameraserverzoomrange.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkcameraserverzoomstop.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkcamerastorage.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkcameravideostreaminfo.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkcomponentmetadatametadataavailable.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkcoreconnectionstate.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkeventsevents.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkeventshealthandarmingchecks.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkftpdownload.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkftpupload.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkgimbalattitude.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkgimbalcontrolstatus.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkgimbalgimballist.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkinfoflightinformation.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdklogfilesdownloadlogfile.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdklogstreaminglogstreamingraw.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkmavlinkdirectmessage.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkmavlinkdirectservercommand.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkmavlinkdirectservermessage.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkmissiondownloadmissionwithprogress.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkmissionmissionprogress.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkmissionrawmissionchanged.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkmissionrawmissionprogress.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkmissionrawserverclearall.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkmissionrawservercurrentitemchanged.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkmissionrawserverincomingmission.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkmissionrawuploadmissionwithprogress.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkmissionuploadmissionwithprogress.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkmodesavailablemodes.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkmodescurrentmode.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkmodesservermoderequested.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkparamserverchangedparamcustom.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkparamserverchangedparamfloat.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkparamserverchangedparamint.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkshellreceive.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdktelemetryactuatorcontroltarget.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdktelemetryactuatoroutputstatus.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdktelemetryaltitude.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdktelemetryarmed.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdktelemetryattitudeangularvelocitybody.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdktelemetryattitudeeuler.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdktelemetryattitudequaternion.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdktelemetrybattery.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdktelemetrydistancesensor.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdktelemetryfixedwingmetrics.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdktelemetryflightmode.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdktelemetrygpsinfo.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdktelemetrygroundtruth.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdktelemetryheading.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdktelemetryhealth.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdktelemetryhealthallok.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdktelemetryhome.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdktelemetryimu.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdktelemetryinair.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdktelemetrylandedstate.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdktelemetryodometry.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdktelemetryposition.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdktelemetrypositionvelocityned.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdktelemetryrawgps.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdktelemetryrawimu.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdktelemetryrcstatus.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdktelemetryscaledimu.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdktelemetryscaledpressure.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdktelemetrystatustext.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdktelemetryunixepochtime.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdktelemetryvelocityned.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdktelemetryvtolstate.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdktelemetrywind.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdktranspondertransponder.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/mavsdkwinchstatus.def` | LicenseRef-unstated | `everything` | its own licence |
 | `model/mds.def` | CC-BY-4.0 | `open` | its own licence |
 | `model/mvt.def` | CC-BY-3.0 | `open` | its own licence |
 | `model/open311request.def` | CC-BY-3.0 | `open` | its own licence |

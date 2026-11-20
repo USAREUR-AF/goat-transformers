@@ -1,0 +1,13 @@
+{
+  "name": "gen-state-roundtrip",
+  "from": "arsdk-proto-night-vision",
+  "to": "arsdk-proto-night-vision",
+  "input": "820121121f0a190a0c70726f647563745f69642d30120976657273696f6e2d3112020801",
+  "expect": "820121121f0a190a0c70726f647563745f69642d30120976657273696f6e2d3112020801",
+  "model": {
+    "@kind": "state",
+    "arsdkprotonightvision.module_info_product_id": "product_id-0",
+    "arsdkprotonightvision.module_info_version": "version-1",
+    "arsdkprotonightvision.module_is_activated_value": "1"
+  }
+}

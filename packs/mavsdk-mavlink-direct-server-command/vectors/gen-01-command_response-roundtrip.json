@@ -1,0 +1,16 @@
+{
+  "name": "gen-command_response-roundtrip",
+  "from": "mavsdk-mavlink-direct-server-command",
+  "to": "mavsdk-mavlink-direct-server-command",
+  "input": "0a2b0a0e6d6573736167655f6e616d652d3010890118ae0120d30128f801320d6669656c64735f6a736f6e2d35",
+  "expect": "0a2b0a0e6d6573736167655f6e616d652d3010890118ae0120d30128f801320d6669656c64735f6a736f6e2d35",
+  "model": {
+    "@kind": "command_response",
+    "mavsdkmavlinkdirectservercommand.command_message_name": "message_name-0",
+    "mavsdkmavlinkdirectservercommand.command_system_id": "137",
+    "mavsdkmavlinkdirectservercommand.command_component_id": "174",
+    "mavsdkmavlinkdirectservercommand.command_target_system_id": "211",
+    "mavsdkmavlinkdirectservercommand.command_target_component_id": "248",
+    "mavsdkmavlinkdirectservercommand.command_fields_json": "fields_json-5"
+  }
+}

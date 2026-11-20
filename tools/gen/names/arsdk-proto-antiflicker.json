@@ -1,0 +1,6 @@
+{
+ "16.1.1[]": "default_capabilities_supported_modes",
+ "16.3": "state_fixed",
+ "16.4": "state_automatic",
+ "arsdk.antiflicker.Capabilities:1[]item": "capabilities_supported_modes_item"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "gen-passphrase_result-roundtrip",
+  "from": "arsdk-proto-storage",
+  "to": "arsdk-proto-storage",
+  "input": "aa010408641001",
+  "expect": "aa010408641001",
+  "model": {
+    "@kind": "passphrase_result",
+    "arsdkprotostorage.passphrase_result_id": "100",
+    "arsdkprotostorage.passphrase_result_error": "1"
+  }
+}

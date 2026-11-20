@@ -1,0 +1,12 @@
+{
+  "name": "gen-monitor-roundtrip",
+  "from": "arsdk-proto-storage",
+  "to": "arsdk-proto-storage",
+  "input": "0a050864188901",
+  "expect": "0a050864188901",
+  "model": {
+    "@kind": "monitor",
+    "arsdkprotostorage.monitor_id": "100",
+    "arsdkprotostorage.monitor_available_space": "137"
+  }
+}

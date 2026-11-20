@@ -1,0 +1,25 @@
+{
+  "name": "gen-state-roundtrip",
+  "from": "arsdk-proto-network",
+  "to": "arsdk-proto-network",
+  "input": "9a01390a0908641089011a0201011204080110011a0308f801221a0a0b0801100118fb03200128010a0b0801100118b405200128012a03089d023001",
+  "expect": "9a01390a0908641089011a0201011204080110011a0308f801221a0a0b0801100118fb03200128010a0b0801100118b405200128012a03089d023001",
+  "model": {
+    "@kind": "state",
+    "arsdkprotonetwork.default_capabilities_cellular_min_bitrate": "100",
+    "arsdkprotonetwork.default_capabilities_cellular_max_bitrate": "137",
+    "arsdkprotonetwork.routing_info_policy": "1",
+    "arsdkprotonetwork.routing_info_current_link": "1",
+    "arsdkprotonetwork.global_link_quality_quality": "248",
+    "arsdkprotonetwork.cellular_max_bitrate_max_bitrate": "285",
+    "arsdkprotonetwork.state_direct_connection_mode": "1",
+    "arsdkprotonetwork.default_capabilities_supported_direct_connection_modes.#": "2",
+    "arsdkprotonetwork.default_capabilities_supported_direct_connection_modes[0].arsdkprotonetwork.capabilities_supported_direct_connection_modes_item": "1",
+    "arsdkprotonetwork.default_capabilities_supported_direct_connection_modes[1].arsdkprotonetwork.capabilities_supported_direct_connection_modes_item": "1",
+    "arsdkprotonetwork.links_status_links.#": "2",
+    "arsdkprotonetwork.links_status_links[0].arsdkprotonetwork.link_info_type": "1",
+    "arsdkprotonetwork.links_status_links[0].arsdkprotonetwork.link_info_status": "1",
+    "arsdkprotonetwork.links_status_links[1].arsdkprotonetwork.link_info_type": "1",
+    "arsdkprotonetwork.links_status_links[1].arsdkprotonetwork.link_info_status": "1"
+  }
+}

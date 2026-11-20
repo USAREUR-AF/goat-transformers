@@ -1,0 +1,15 @@
+{
+  "name": "gen-camera_list_response-roundtrip",
+  "from": "mavsdk-camera-camera-list",
+  "to": "mavsdk-camera-camera-list",
+  "input": "0a6e0a340864120d76656e646f725f6e616d652d311a0c6d6f64656c5f6e616d652d3225000000402d00002840350000504038c20240e7020a36088c03120d76656e646f725f6e616d652d391a0d6d6f64656c5f6e616d652d3130250000e0402d0000f440350000803e38ea04408f05",
+  "expect": "0a6e0a340864120d76656e646f725f6e616d652d311a0c6d6f64656c5f6e616d652d3225000000402d00002840350000504038c20240e7020a36088c03120d76656e646f725f6e616d652d391a0d6d6f64656c5f6e616d652d3130250000e0402d0000f440350000803e38ea04408f05",
+  "model": {
+    "@kind": "camera_list_response",
+    "mavsdkcameracameralist.camera_list_cameras.#": "2",
+    "mavsdkcameracameralist.camera_list_cameras[0].mavsdkcameracameralist.information_component_id": "100",
+    "mavsdkcameracameralist.camera_list_cameras[0].mavsdkcameracameralist.information_vendor_name": "vendor_name-1",
+    "mavsdkcameracameralist.camera_list_cameras[1].mavsdkcameracameralist.information_component_id": "396",
+    "mavsdkcameracameralist.camera_list_cameras[1].mavsdkcameracameralist.information_vendor_name": "vendor_name-9"
+  }
+}

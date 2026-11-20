@@ -92,6 +92,201 @@
       "profile": "everything",
       "because": "uses module adsb (CC-BY-NC-SA-4.0)"
     },
+    "arsdk-proto-antiflicker": {
+      "format": "arsdk-proto-antiflicker",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdk-proto-backuplink": {
+      "format": "arsdk-proto-backuplink",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdk-proto-calibration": {
+      "format": "arsdk-proto-calibration",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdk-proto-camera2": {
+      "format": "arsdk-proto-camera2",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdk-proto-connectivity": {
+      "format": "arsdk-proto-connectivity",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdk-proto-controller-backuplink": {
+      "format": "arsdk-proto-controller-backuplink",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdk-proto-controller-network": {
+      "format": "arsdk-proto-controller-network",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdk-proto-controller-privacy": {
+      "format": "arsdk-proto-controller-privacy",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdk-proto-developer": {
+      "format": "arsdk-proto-developer",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdk-proto-device-manager": {
+      "format": "arsdk-proto-device-manager",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdk-proto-dri": {
+      "format": "arsdk-proto-dri",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdk-proto-esim": {
+      "format": "arsdk-proto-esim",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdk-proto-external-autopilot": {
+      "format": "arsdk-proto-external-autopilot",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdk-proto-flight-data": {
+      "format": "arsdk-proto-flight-data",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdk-proto-geofence": {
+      "format": "arsdk-proto-geofence",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdk-proto-internal-lora": {
+      "format": "arsdk-proto-internal-lora",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdk-proto-killswitch": {
+      "format": "arsdk-proto-killswitch",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdk-proto-led": {
+      "format": "arsdk-proto-led",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdk-proto-logsync": {
+      "format": "arsdk-proto-logsync",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdk-proto-loiter": {
+      "format": "arsdk-proto-loiter",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdk-proto-microhard": {
+      "format": "arsdk-proto-microhard",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdk-proto-mobile-device": {
+      "format": "arsdk-proto-mobile-device",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdk-proto-navigation": {
+      "format": "arsdk-proto-navigation",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdk-proto-netdebuglog": {
+      "format": "arsdk-proto-netdebuglog",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdk-proto-network": {
+      "format": "arsdk-proto-network",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdk-proto-night-vision": {
+      "format": "arsdk-proto-night-vision",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdk-proto-piloting": {
+      "format": "arsdk-proto-piloting",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdk-proto-pointnfly": {
+      "format": "arsdk-proto-pointnfly",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdk-proto-privacy": {
+      "format": "arsdk-proto-privacy",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdk-proto-remote-antenna": {
+      "format": "arsdk-proto-remote-antenna",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdk-proto-sleepmode": {
+      "format": "arsdk-proto-sleepmode",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdk-proto-sms": {
+      "format": "arsdk-proto-sms",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdk-proto-storage": {
+      "format": "arsdk-proto-storage",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdk-proto-system": {
+      "format": "arsdk-proto-system",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdk-proto-thermal-control": {
+      "format": "arsdk-proto-thermal-control",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdk-proto-tracking": {
+      "format": "arsdk-proto-tracking",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdk-proto-unguarded-flight": {
+      "format": "arsdk-proto-unguarded-flight",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdk-proto-usb-power": {
+      "format": "arsdk-proto-usb-power",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdk-proto-vehicle": {
+      "format": "arsdk-proto-vehicle",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
     "cap": {
       "format": "cap",
       "licence": "LicenseRef-OASIS-Notice",
@@ -566,6 +761,571 @@
       "format": "kml",
       "licence": "LicenseRef-OGC-Document",
       "profile": "open"
+    },
+    "mavsdk-action-server-arm-disarm": {
+      "format": "mavsdk-action-server-arm-disarm",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-action-server-flight-mode-change": {
+      "format": "mavsdk-action-server-flight-mode-change",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-action-server-land": {
+      "format": "mavsdk-action-server-land",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-action-server-reboot": {
+      "format": "mavsdk-action-server-reboot",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-action-server-shutdown": {
+      "format": "mavsdk-action-server-shutdown",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-action-server-takeoff": {
+      "format": "mavsdk-action-server-takeoff",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-action-server-terminate": {
+      "format": "mavsdk-action-server-terminate",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-arm-authorizer-server-arm-authorization": {
+      "format": "mavsdk-arm-authorizer-server-arm-authorization",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-calibration-calibrate-accelerometer": {
+      "format": "mavsdk-calibration-calibrate-accelerometer",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-calibration-calibrate-gimbal-accelerometer": {
+      "format": "mavsdk-calibration-calibrate-gimbal-accelerometer",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-calibration-calibrate-gyro": {
+      "format": "mavsdk-calibration-calibrate-gyro",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-calibration-calibrate-level-horizon": {
+      "format": "mavsdk-calibration-calibrate-level-horizon",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-calibration-calibrate-magnetometer": {
+      "format": "mavsdk-calibration-calibrate-magnetometer",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-camera-camera-list": {
+      "format": "mavsdk-camera-camera-list",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-camera-capture-info": {
+      "format": "mavsdk-camera-capture-info",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-camera-current-settings": {
+      "format": "mavsdk-camera-current-settings",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-camera-mode": {
+      "format": "mavsdk-camera-mode",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-camera-possible-setting-options": {
+      "format": "mavsdk-camera-possible-setting-options",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-camera-server-capture-status": {
+      "format": "mavsdk-camera-server-capture-status",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-camera-server-focus-auto": {
+      "format": "mavsdk-camera-server-focus-auto",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-camera-server-focus-auto-continuous": {
+      "format": "mavsdk-camera-server-focus-auto-continuous",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-camera-server-focus-auto-single": {
+      "format": "mavsdk-camera-server-focus-auto-single",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-camera-server-focus-in-start": {
+      "format": "mavsdk-camera-server-focus-in-start",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-camera-server-focus-in-step": {
+      "format": "mavsdk-camera-server-focus-in-step",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-camera-server-focus-meters": {
+      "format": "mavsdk-camera-server-focus-meters",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-camera-server-focus-out-start": {
+      "format": "mavsdk-camera-server-focus-out-start",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-camera-server-focus-out-step": {
+      "format": "mavsdk-camera-server-focus-out-step",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-camera-server-focus-range": {
+      "format": "mavsdk-camera-server-focus-range",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-camera-server-focus-stop": {
+      "format": "mavsdk-camera-server-focus-stop",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-camera-server-format-storage": {
+      "format": "mavsdk-camera-server-format-storage",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-camera-server-reset-settings": {
+      "format": "mavsdk-camera-server-reset-settings",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-camera-server-set-mode": {
+      "format": "mavsdk-camera-server-set-mode",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-camera-server-start-video": {
+      "format": "mavsdk-camera-server-start-video",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-camera-server-start-video-streaming": {
+      "format": "mavsdk-camera-server-start-video-streaming",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-camera-server-stop-video": {
+      "format": "mavsdk-camera-server-stop-video",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-camera-server-stop-video-streaming": {
+      "format": "mavsdk-camera-server-stop-video-streaming",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-camera-server-storage-information": {
+      "format": "mavsdk-camera-server-storage-information",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-camera-server-take-photo": {
+      "format": "mavsdk-camera-server-take-photo",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-camera-server-tracking-off-command": {
+      "format": "mavsdk-camera-server-tracking-off-command",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-camera-server-tracking-point-command": {
+      "format": "mavsdk-camera-server-tracking-point-command",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-camera-server-tracking-rectangle-command": {
+      "format": "mavsdk-camera-server-tracking-rectangle-command",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-camera-server-zoom-in-start": {
+      "format": "mavsdk-camera-server-zoom-in-start",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-camera-server-zoom-out-start": {
+      "format": "mavsdk-camera-server-zoom-out-start",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-camera-server-zoom-range": {
+      "format": "mavsdk-camera-server-zoom-range",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-camera-server-zoom-stop": {
+      "format": "mavsdk-camera-server-zoom-stop",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-camera-storage": {
+      "format": "mavsdk-camera-storage",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-camera-video-stream-info": {
+      "format": "mavsdk-camera-video-stream-info",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-component-metadata-metadata-available": {
+      "format": "mavsdk-component-metadata-metadata-available",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-core-connection-state": {
+      "format": "mavsdk-core-connection-state",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-events-events": {
+      "format": "mavsdk-events-events",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-events-health-and-arming-checks": {
+      "format": "mavsdk-events-health-and-arming-checks",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-ftp-download": {
+      "format": "mavsdk-ftp-download",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-ftp-upload": {
+      "format": "mavsdk-ftp-upload",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-gimbal-attitude": {
+      "format": "mavsdk-gimbal-attitude",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-gimbal-control-status": {
+      "format": "mavsdk-gimbal-control-status",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-gimbal-gimbal-list": {
+      "format": "mavsdk-gimbal-gimbal-list",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-info-flight-information": {
+      "format": "mavsdk-info-flight-information",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-log-files-download-log-file": {
+      "format": "mavsdk-log-files-download-log-file",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-log-streaming-log-streaming-raw": {
+      "format": "mavsdk-log-streaming-log-streaming-raw",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-mavlink-direct-message": {
+      "format": "mavsdk-mavlink-direct-message",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-mavlink-direct-server-command": {
+      "format": "mavsdk-mavlink-direct-server-command",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-mavlink-direct-server-message": {
+      "format": "mavsdk-mavlink-direct-server-message",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-mission-download-mission-with-progress": {
+      "format": "mavsdk-mission-download-mission-with-progress",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-mission-mission-progress": {
+      "format": "mavsdk-mission-mission-progress",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-mission-raw-mission-changed": {
+      "format": "mavsdk-mission-raw-mission-changed",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-mission-raw-mission-progress": {
+      "format": "mavsdk-mission-raw-mission-progress",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-mission-raw-server-clear-all": {
+      "format": "mavsdk-mission-raw-server-clear-all",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-mission-raw-server-current-item-changed": {
+      "format": "mavsdk-mission-raw-server-current-item-changed",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-mission-raw-server-incoming-mission": {
+      "format": "mavsdk-mission-raw-server-incoming-mission",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-mission-raw-upload-mission-with-progress": {
+      "format": "mavsdk-mission-raw-upload-mission-with-progress",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-mission-upload-mission-with-progress": {
+      "format": "mavsdk-mission-upload-mission-with-progress",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-modes-available-modes": {
+      "format": "mavsdk-modes-available-modes",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-modes-current-mode": {
+      "format": "mavsdk-modes-current-mode",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-modes-server-mode-requested": {
+      "format": "mavsdk-modes-server-mode-requested",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-param-server-changed-param-custom": {
+      "format": "mavsdk-param-server-changed-param-custom",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-param-server-changed-param-float": {
+      "format": "mavsdk-param-server-changed-param-float",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-param-server-changed-param-int": {
+      "format": "mavsdk-param-server-changed-param-int",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-shell-receive": {
+      "format": "mavsdk-shell-receive",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-telemetry-actuator-control-target": {
+      "format": "mavsdk-telemetry-actuator-control-target",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-telemetry-actuator-output-status": {
+      "format": "mavsdk-telemetry-actuator-output-status",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-telemetry-altitude": {
+      "format": "mavsdk-telemetry-altitude",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-telemetry-armed": {
+      "format": "mavsdk-telemetry-armed",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-telemetry-attitude-angular-velocity-body": {
+      "format": "mavsdk-telemetry-attitude-angular-velocity-body",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-telemetry-attitude-euler": {
+      "format": "mavsdk-telemetry-attitude-euler",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-telemetry-attitude-quaternion": {
+      "format": "mavsdk-telemetry-attitude-quaternion",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-telemetry-battery": {
+      "format": "mavsdk-telemetry-battery",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-telemetry-distance-sensor": {
+      "format": "mavsdk-telemetry-distance-sensor",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-telemetry-fixedwing-metrics": {
+      "format": "mavsdk-telemetry-fixedwing-metrics",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-telemetry-flight-mode": {
+      "format": "mavsdk-telemetry-flight-mode",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-telemetry-gps-info": {
+      "format": "mavsdk-telemetry-gps-info",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-telemetry-ground-truth": {
+      "format": "mavsdk-telemetry-ground-truth",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-telemetry-heading": {
+      "format": "mavsdk-telemetry-heading",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-telemetry-health": {
+      "format": "mavsdk-telemetry-health",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-telemetry-health-all-ok": {
+      "format": "mavsdk-telemetry-health-all-ok",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-telemetry-home": {
+      "format": "mavsdk-telemetry-home",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-telemetry-imu": {
+      "format": "mavsdk-telemetry-imu",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-telemetry-in-air": {
+      "format": "mavsdk-telemetry-in-air",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-telemetry-landed-state": {
+      "format": "mavsdk-telemetry-landed-state",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-telemetry-odometry": {
+      "format": "mavsdk-telemetry-odometry",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-telemetry-position": {
+      "format": "mavsdk-telemetry-position",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-telemetry-position-velocity-ned": {
+      "format": "mavsdk-telemetry-position-velocity-ned",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-telemetry-raw-gps": {
+      "format": "mavsdk-telemetry-raw-gps",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-telemetry-raw-imu": {
+      "format": "mavsdk-telemetry-raw-imu",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-telemetry-rc-status": {
+      "format": "mavsdk-telemetry-rc-status",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-telemetry-scaled-imu": {
+      "format": "mavsdk-telemetry-scaled-imu",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-telemetry-scaled-pressure": {
+      "format": "mavsdk-telemetry-scaled-pressure",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-telemetry-status-text": {
+      "format": "mavsdk-telemetry-status-text",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-telemetry-unix-epoch-time": {
+      "format": "mavsdk-telemetry-unix-epoch-time",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-telemetry-velocity-ned": {
+      "format": "mavsdk-telemetry-velocity-ned",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-telemetry-vtol-state": {
+      "format": "mavsdk-telemetry-vtol-state",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-telemetry-wind": {
+      "format": "mavsdk-telemetry-wind",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-transponder-transponder": {
+      "format": "mavsdk-transponder-transponder",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdk-winch-status": {
+      "format": "mavsdk-winch-status",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
     },
     "mds": {
       "format": "mds",
@@ -2639,6 +3399,201 @@
       "licence": "CC-BY-NC-SA-4.0",
       "profile": "everything"
     },
+    "arsdkprotoantiflicker.def": {
+      "module": "arsdkprotoantiflicker",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdkprotobackuplink.def": {
+      "module": "arsdkprotobackuplink",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdkprotocalibration.def": {
+      "module": "arsdkprotocalibration",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdkprotocamera2.def": {
+      "module": "arsdkprotocamera2",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdkprotoconnectivity.def": {
+      "module": "arsdkprotoconnectivity",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdkprotocontrollerbackuplink.def": {
+      "module": "arsdkprotocontrollerbackuplink",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdkprotocontrollernetwork.def": {
+      "module": "arsdkprotocontrollernetwork",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdkprotocontrollerprivacy.def": {
+      "module": "arsdkprotocontrollerprivacy",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdkprotodeveloper.def": {
+      "module": "arsdkprotodeveloper",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdkprotodevicemanager.def": {
+      "module": "arsdkprotodevicemanager",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdkprotodri.def": {
+      "module": "arsdkprotodri",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdkprotoesim.def": {
+      "module": "arsdkprotoesim",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdkprotoexternalautopilot.def": {
+      "module": "arsdkprotoexternalautopilot",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdkprotoflightdata.def": {
+      "module": "arsdkprotoflightdata",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdkprotogeofence.def": {
+      "module": "arsdkprotogeofence",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdkprotointernallora.def": {
+      "module": "arsdkprotointernallora",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdkprotokillswitch.def": {
+      "module": "arsdkprotokillswitch",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdkprotoled.def": {
+      "module": "arsdkprotoled",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdkprotologsync.def": {
+      "module": "arsdkprotologsync",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdkprotoloiter.def": {
+      "module": "arsdkprotoloiter",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdkprotomicrohard.def": {
+      "module": "arsdkprotomicrohard",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdkprotomobiledevice.def": {
+      "module": "arsdkprotomobiledevice",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdkprotonavigation.def": {
+      "module": "arsdkprotonavigation",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdkprotonetdebuglog.def": {
+      "module": "arsdkprotonetdebuglog",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdkprotonetwork.def": {
+      "module": "arsdkprotonetwork",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdkprotonightvision.def": {
+      "module": "arsdkprotonightvision",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdkprotopiloting.def": {
+      "module": "arsdkprotopiloting",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdkprotopointnfly.def": {
+      "module": "arsdkprotopointnfly",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdkprotoprivacy.def": {
+      "module": "arsdkprotoprivacy",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdkprotoremoteantenna.def": {
+      "module": "arsdkprotoremoteantenna",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdkprotosleepmode.def": {
+      "module": "arsdkprotosleepmode",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdkprotosms.def": {
+      "module": "arsdkprotosms",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdkprotostorage.def": {
+      "module": "arsdkprotostorage",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdkprotosystem.def": {
+      "module": "arsdkprotosystem",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdkprotothermalcontrol.def": {
+      "module": "arsdkprotothermalcontrol",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdkprototracking.def": {
+      "module": "arsdkprototracking",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdkprotounguardedflight.def": {
+      "module": "arsdkprotounguardedflight",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdkprotousbpower.def": {
+      "module": "arsdkprotousbpower",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "arsdkprotovehicle.def": {
+      "module": "arsdkprotovehicle",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
     "cap.def": {
       "module": "cap",
       "licence": "LicenseRef-OASIS-Notice",
@@ -3113,6 +4068,571 @@
       "module": "kml",
       "licence": "LicenseRef-OGC-Document",
       "profile": "open"
+    },
+    "mavsdkactionserverarmdisarm.def": {
+      "module": "mavsdkactionserverarmdisarm",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkactionserverflightmodechange.def": {
+      "module": "mavsdkactionserverflightmodechange",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkactionserverland.def": {
+      "module": "mavsdkactionserverland",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkactionserverreboot.def": {
+      "module": "mavsdkactionserverreboot",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkactionservershutdown.def": {
+      "module": "mavsdkactionservershutdown",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkactionservertakeoff.def": {
+      "module": "mavsdkactionservertakeoff",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkactionserverterminate.def": {
+      "module": "mavsdkactionserverterminate",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkarmauthorizerserverarmauthorization.def": {
+      "module": "mavsdkarmauthorizerserverarmauthorization",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkcalibrationcalibrateaccelerometer.def": {
+      "module": "mavsdkcalibrationcalibrateaccelerometer",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkcalibrationcalibrategimbalaccelerometer.def": {
+      "module": "mavsdkcalibrationcalibrategimbalaccelerometer",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkcalibrationcalibrategyro.def": {
+      "module": "mavsdkcalibrationcalibrategyro",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkcalibrationcalibratelevelhorizon.def": {
+      "module": "mavsdkcalibrationcalibratelevelhorizon",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkcalibrationcalibratemagnetometer.def": {
+      "module": "mavsdkcalibrationcalibratemagnetometer",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkcameracameralist.def": {
+      "module": "mavsdkcameracameralist",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkcameracaptureinfo.def": {
+      "module": "mavsdkcameracaptureinfo",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkcameracurrentsettings.def": {
+      "module": "mavsdkcameracurrentsettings",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkcameramode.def": {
+      "module": "mavsdkcameramode",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkcamerapossiblesettingoptions.def": {
+      "module": "mavsdkcamerapossiblesettingoptions",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkcameraservercapturestatus.def": {
+      "module": "mavsdkcameraservercapturestatus",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkcameraserverfocusauto.def": {
+      "module": "mavsdkcameraserverfocusauto",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkcameraserverfocusautocontinuous.def": {
+      "module": "mavsdkcameraserverfocusautocontinuous",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkcameraserverfocusautosingle.def": {
+      "module": "mavsdkcameraserverfocusautosingle",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkcameraserverfocusinstart.def": {
+      "module": "mavsdkcameraserverfocusinstart",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkcameraserverfocusinstep.def": {
+      "module": "mavsdkcameraserverfocusinstep",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkcameraserverfocusmeters.def": {
+      "module": "mavsdkcameraserverfocusmeters",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkcameraserverfocusoutstart.def": {
+      "module": "mavsdkcameraserverfocusoutstart",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkcameraserverfocusoutstep.def": {
+      "module": "mavsdkcameraserverfocusoutstep",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkcameraserverfocusrange.def": {
+      "module": "mavsdkcameraserverfocusrange",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkcameraserverfocusstop.def": {
+      "module": "mavsdkcameraserverfocusstop",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkcameraserverformatstorage.def": {
+      "module": "mavsdkcameraserverformatstorage",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkcameraserverresetsettings.def": {
+      "module": "mavsdkcameraserverresetsettings",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkcameraserversetmode.def": {
+      "module": "mavsdkcameraserversetmode",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkcameraserverstartvideo.def": {
+      "module": "mavsdkcameraserverstartvideo",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkcameraserverstartvideostreaming.def": {
+      "module": "mavsdkcameraserverstartvideostreaming",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkcameraserverstopvideo.def": {
+      "module": "mavsdkcameraserverstopvideo",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkcameraserverstopvideostreaming.def": {
+      "module": "mavsdkcameraserverstopvideostreaming",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkcameraserverstorageinformation.def": {
+      "module": "mavsdkcameraserverstorageinformation",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkcameraservertakephoto.def": {
+      "module": "mavsdkcameraservertakephoto",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkcameraservertrackingoffcommand.def": {
+      "module": "mavsdkcameraservertrackingoffcommand",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkcameraservertrackingpointcommand.def": {
+      "module": "mavsdkcameraservertrackingpointcommand",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkcameraservertrackingrectanglecommand.def": {
+      "module": "mavsdkcameraservertrackingrectanglecommand",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkcameraserverzoominstart.def": {
+      "module": "mavsdkcameraserverzoominstart",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkcameraserverzoomoutstart.def": {
+      "module": "mavsdkcameraserverzoomoutstart",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkcameraserverzoomrange.def": {
+      "module": "mavsdkcameraserverzoomrange",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkcameraserverzoomstop.def": {
+      "module": "mavsdkcameraserverzoomstop",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkcamerastorage.def": {
+      "module": "mavsdkcamerastorage",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkcameravideostreaminfo.def": {
+      "module": "mavsdkcameravideostreaminfo",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkcomponentmetadatametadataavailable.def": {
+      "module": "mavsdkcomponentmetadatametadataavailable",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkcoreconnectionstate.def": {
+      "module": "mavsdkcoreconnectionstate",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkeventsevents.def": {
+      "module": "mavsdkeventsevents",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkeventshealthandarmingchecks.def": {
+      "module": "mavsdkeventshealthandarmingchecks",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkftpdownload.def": {
+      "module": "mavsdkftpdownload",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkftpupload.def": {
+      "module": "mavsdkftpupload",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkgimbalattitude.def": {
+      "module": "mavsdkgimbalattitude",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkgimbalcontrolstatus.def": {
+      "module": "mavsdkgimbalcontrolstatus",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkgimbalgimballist.def": {
+      "module": "mavsdkgimbalgimballist",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkinfoflightinformation.def": {
+      "module": "mavsdkinfoflightinformation",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdklogfilesdownloadlogfile.def": {
+      "module": "mavsdklogfilesdownloadlogfile",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdklogstreaminglogstreamingraw.def": {
+      "module": "mavsdklogstreaminglogstreamingraw",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkmavlinkdirectmessage.def": {
+      "module": "mavsdkmavlinkdirectmessage",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkmavlinkdirectservercommand.def": {
+      "module": "mavsdkmavlinkdirectservercommand",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkmavlinkdirectservermessage.def": {
+      "module": "mavsdkmavlinkdirectservermessage",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkmissiondownloadmissionwithprogress.def": {
+      "module": "mavsdkmissiondownloadmissionwithprogress",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkmissionmissionprogress.def": {
+      "module": "mavsdkmissionmissionprogress",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkmissionrawmissionchanged.def": {
+      "module": "mavsdkmissionrawmissionchanged",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkmissionrawmissionprogress.def": {
+      "module": "mavsdkmissionrawmissionprogress",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkmissionrawserverclearall.def": {
+      "module": "mavsdkmissionrawserverclearall",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkmissionrawservercurrentitemchanged.def": {
+      "module": "mavsdkmissionrawservercurrentitemchanged",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkmissionrawserverincomingmission.def": {
+      "module": "mavsdkmissionrawserverincomingmission",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkmissionrawuploadmissionwithprogress.def": {
+      "module": "mavsdkmissionrawuploadmissionwithprogress",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkmissionuploadmissionwithprogress.def": {
+      "module": "mavsdkmissionuploadmissionwithprogress",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkmodesavailablemodes.def": {
+      "module": "mavsdkmodesavailablemodes",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkmodescurrentmode.def": {
+      "module": "mavsdkmodescurrentmode",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkmodesservermoderequested.def": {
+      "module": "mavsdkmodesservermoderequested",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkparamserverchangedparamcustom.def": {
+      "module": "mavsdkparamserverchangedparamcustom",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkparamserverchangedparamfloat.def": {
+      "module": "mavsdkparamserverchangedparamfloat",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkparamserverchangedparamint.def": {
+      "module": "mavsdkparamserverchangedparamint",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkshellreceive.def": {
+      "module": "mavsdkshellreceive",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdktelemetryactuatorcontroltarget.def": {
+      "module": "mavsdktelemetryactuatorcontroltarget",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdktelemetryactuatoroutputstatus.def": {
+      "module": "mavsdktelemetryactuatoroutputstatus",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdktelemetryaltitude.def": {
+      "module": "mavsdktelemetryaltitude",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdktelemetryarmed.def": {
+      "module": "mavsdktelemetryarmed",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdktelemetryattitudeangularvelocitybody.def": {
+      "module": "mavsdktelemetryattitudeangularvelocitybody",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdktelemetryattitudeeuler.def": {
+      "module": "mavsdktelemetryattitudeeuler",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdktelemetryattitudequaternion.def": {
+      "module": "mavsdktelemetryattitudequaternion",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdktelemetrybattery.def": {
+      "module": "mavsdktelemetrybattery",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdktelemetrydistancesensor.def": {
+      "module": "mavsdktelemetrydistancesensor",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdktelemetryfixedwingmetrics.def": {
+      "module": "mavsdktelemetryfixedwingmetrics",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdktelemetryflightmode.def": {
+      "module": "mavsdktelemetryflightmode",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdktelemetrygpsinfo.def": {
+      "module": "mavsdktelemetrygpsinfo",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdktelemetrygroundtruth.def": {
+      "module": "mavsdktelemetrygroundtruth",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdktelemetryheading.def": {
+      "module": "mavsdktelemetryheading",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdktelemetryhealth.def": {
+      "module": "mavsdktelemetryhealth",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdktelemetryhealthallok.def": {
+      "module": "mavsdktelemetryhealthallok",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdktelemetryhome.def": {
+      "module": "mavsdktelemetryhome",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdktelemetryimu.def": {
+      "module": "mavsdktelemetryimu",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdktelemetryinair.def": {
+      "module": "mavsdktelemetryinair",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdktelemetrylandedstate.def": {
+      "module": "mavsdktelemetrylandedstate",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdktelemetryodometry.def": {
+      "module": "mavsdktelemetryodometry",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdktelemetryposition.def": {
+      "module": "mavsdktelemetryposition",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdktelemetrypositionvelocityned.def": {
+      "module": "mavsdktelemetrypositionvelocityned",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdktelemetryrawgps.def": {
+      "module": "mavsdktelemetryrawgps",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdktelemetryrawimu.def": {
+      "module": "mavsdktelemetryrawimu",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdktelemetryrcstatus.def": {
+      "module": "mavsdktelemetryrcstatus",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdktelemetryscaledimu.def": {
+      "module": "mavsdktelemetryscaledimu",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdktelemetryscaledpressure.def": {
+      "module": "mavsdktelemetryscaledpressure",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdktelemetrystatustext.def": {
+      "module": "mavsdktelemetrystatustext",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdktelemetryunixepochtime.def": {
+      "module": "mavsdktelemetryunixepochtime",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdktelemetryvelocityned.def": {
+      "module": "mavsdktelemetryvelocityned",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdktelemetryvtolstate.def": {
+      "module": "mavsdktelemetryvtolstate",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdktelemetrywind.def": {
+      "module": "mavsdktelemetrywind",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdktranspondertransponder.def": {
+      "module": "mavsdktranspondertransponder",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mavsdkwinchstatus.def": {
+      "module": "mavsdkwinchstatus",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
     },
     "mds.def": {
       "module": "mds",

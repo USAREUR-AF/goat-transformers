@@ -1,0 +1,13 @@
+{
+  "name": "gen-download_log_file_response-roundtrip",
+  "from": "mavsdk-log-files-download-log-file",
+  "to": "mavsdk-log-files-download-log-file",
+  "input": "0a100801120c726573756c745f7374722d3112050d0000b03f",
+  "expect": "0a100801120c726573756c745f7374722d3112050d0000b03f",
+  "model": {
+    "@kind": "download_log_file_response",
+    "mavsdklogfilesdownloadlogfile.log_files_result_result": "1",
+    "mavsdklogfilesdownloadlogfile.log_files_result_result_str": "result_str-1",
+    "mavsdklogfilesdownloadlogfile.progress_progress": "1.375"
+  }
+}

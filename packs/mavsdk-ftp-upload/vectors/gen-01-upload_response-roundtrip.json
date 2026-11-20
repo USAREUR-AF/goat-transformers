@@ -1,0 +1,14 @@
+{
+  "name": "gen-upload_response-roundtrip",
+  "from": "mavsdk-ftp-upload",
+  "to": "mavsdk-ftp-upload",
+  "input": "0a100801120c726573756c745f7374722d31120608ae0110d301",
+  "expect": "0a100801120c726573756c745f7374722d31120608ae0110d301",
+  "model": {
+    "@kind": "upload_response",
+    "mavsdkftpupload.ftp_result_result": "1",
+    "mavsdkftpupload.ftp_result_result_str": "result_str-1",
+    "mavsdkftpupload.progress_data_bytes_transferred": "174",
+    "mavsdkftpupload.progress_data_total_bytes": "211"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "name": "gen-state-roundtrip",
+  "from": "arsdk-proto-remote-antenna",
+  "to": "arsdk-proto-remote-antenna",
+  "input": "82017d0a08080112040a020000120208011a020801220308d3012a020801320208013a0308c202422508e70212126669726d776172655f76657273696f6e2d381a0873657269616c2d39200128014801521d090000000000003740110000000000c038401a09090000000000803a40620f0a0973657269616c2d313612020101",
+  "expect": "82017d0a08080112040a020000120208011a020801220308d3012a020801320208013a0308c202422508e70212126669726d776172655f76657273696f6e2d381a0873657269616c2d39200128014801521d090000000000003740110000000000c038401a09090000000000803a40620f0a0973657269616c2d313612020101",
+  "model": {
+    "@kind": "state",
+    "arsdkprotoremoteantenna.default_capabilities_cloud_antenna": "1",
+    "arsdkprotoremoteantenna.enabled_value": "1",
+    "arsdkprotoremoteantenna.antenna_status_value": "1",
+    "arsdkprotoremoteantenna.antenna_battery_level_value": "211",
+    "arsdkprotoremoteantenna.charging_state_value": "1",
+    "arsdkprotoremoteantenna.charger_plugged_value": "1",
+    "arsdkprotoremoteantenna.available_bandwidth_value": "322",
+    "arsdkprotoremoteantenna.device_info_model": "359",
+    "arsdkprotoremoteantenna.device_info_firmware_version": "firmware_version-8",
+    "arsdkprotoremoteantenna.device_info_serial": "serial-9",
+    "arsdkprotoremoteantenna.device_info_needs_gps_coordinates": "1",
+    "arsdkprotoremoteantenna.device_info_product_variant": "1",
+    "arsdkprotoremoteantenna.state_use_cloud_antenna": "1",
+    "arsdkprotoremoteantenna.antenna_coordinates_latitude": "23",
+    "arsdkprotoremoteantenna.antenna_coordinates_longitude": "24.75",
+    "arsdkprotoremoteantenna.antenna_coordinates_altitude_value": "26.5",
+    "arsdkprotoremoteantenna.connected_serial": "serial-16",
+    "arsdkprotoremoteantenna.default_capabilities_supported_features_features.#": "2",
+    "arsdkprotoremoteantenna.default_capabilities_supported_features_features[0].arsdkprotoremoteantenna.supported_features_features_item": "0",
+    "arsdkprotoremoteantenna.default_capabilities_supported_features_features[1].arsdkprotoremoteantenna.supported_features_features_item": "0",
+    "arsdkprotoremoteantenna.connected_alarms.#": "2",
+    "arsdkprotoremoteantenna.connected_alarms[0].arsdkprotoremoteantenna.motorized_support_connected_alarms_item": "1",
+    "arsdkprotoremoteantenna.connected_alarms[1].arsdkprotoremoteantenna.motorized_support_connected_alarms_item": "1"
+  }
+}

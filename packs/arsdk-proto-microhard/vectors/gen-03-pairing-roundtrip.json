@@ -1,0 +1,12 @@
+{
+  "name": "gen-pairing-roundtrip",
+  "from": "arsdk-proto-microhard",
+  "to": "arsdk-proto-microhard",
+  "input": "9a01120a0208011a0c6e6574776f726b5f69642d32",
+  "expect": "9a01120a0208011a0c6e6574776f726b5f69642d32",
+  "model": {
+    "@kind": "pairing",
+    "arsdkprotomicrohard.failure_reason": "1",
+    "arsdkprotomicrohard.pairing_network_id": "network_id-2"
+  }
+}

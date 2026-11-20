@@ -1,0 +1,11 @@
+{
+  "name": "gen-pairing_failed-roundtrip",
+  "from": "arsdk-proto-device-manager",
+  "to": "arsdk-proto-device-manager",
+  "input": "a201020801",
+  "expect": "a201020801",
+  "model": {
+    "@kind": "pairing_failed",
+    "arsdkprotodevicemanager.pairing_failed_reason": "1"
+  }
+}

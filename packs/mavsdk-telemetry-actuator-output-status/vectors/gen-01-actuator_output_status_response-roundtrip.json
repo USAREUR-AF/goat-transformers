@@ -1,0 +1,14 @@
+{
+  "name": "gen-actuator_output_status_response-roundtrip",
+  "from": "mavsdk-telemetry-actuator-output-status",
+  "to": "mavsdk-telemetry-actuator-output-status",
+  "input": "0a0c086412080000403f0000b03f",
+  "expect": "0a0c086412080000403f0000b03f",
+  "model": {
+    "@kind": "actuator_output_status_response",
+    "mavsdktelemetryactuatoroutputstatus.actuator_output_status_active": "100",
+    "mavsdktelemetryactuatoroutputstatus.actuator_output_status_actuator.#": "2",
+    "mavsdktelemetryactuatoroutputstatus.actuator_output_status_actuator[0].mavsdktelemetryactuatoroutputstatus.actuator_output_status_actuator_item": "0.75",
+    "mavsdktelemetryactuatoroutputstatus.actuator_output_status_actuator[1].mavsdktelemetryactuatoroutputstatus.actuator_output_status_actuator_item": "1.375"
+  }
+}

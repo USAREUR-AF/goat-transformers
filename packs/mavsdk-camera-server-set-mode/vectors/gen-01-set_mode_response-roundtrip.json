@@ -1,0 +1,11 @@
+{
+  "name": "gen-set_mode_response-roundtrip",
+  "from": "mavsdk-camera-server-set-mode",
+  "to": "mavsdk-camera-server-set-mode",
+  "input": "0801",
+  "expect": "0801",
+  "model": {
+    "@kind": "set_mode_response",
+    "mavsdkcameraserversetmode.set_mode_response_mode": "1"
+  }
+}

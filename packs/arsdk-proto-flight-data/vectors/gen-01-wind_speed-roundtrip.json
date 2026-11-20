@@ -1,0 +1,12 @@
+{
+  "name": "gen-wind_speed-roundtrip",
+  "from": "arsdk-proto-flight-data",
+  "to": "arsdk-proto-flight-data",
+  "input": "0a0a0d0000003e150000403f",
+  "expect": "0a0a0d0000003e150000403f",
+  "model": {
+    "@kind": "wind_speed",
+    "arsdkprotoflightdata.wind_speed_north": "0.125",
+    "arsdkprotoflightdata.wind_speed_east": "0.75"
+  }
+}

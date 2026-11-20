@@ -1,0 +1,11 @@
+{
+  "name": "gen-clear_all_response-roundtrip",
+  "from": "mavsdk-mission-raw-server-clear-all",
+  "to": "mavsdk-mission-raw-server-clear-all",
+  "input": "0864",
+  "expect": "0864",
+  "model": {
+    "@kind": "clear_all_response",
+    "mavsdkmissionrawserverclearall.clear_all_response_clear_type": "100"
+  }
+}

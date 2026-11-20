@@ -1,0 +1,21 @@
+{
+  "name": "gen-state-roundtrip",
+  "from": "arsdk-proto-loiter",
+  "to": "arsdk-proto-loiter",
+  "input": "8201310a1c0a1209000000000000d03f110000000000000040120201011a0201011209090000000000000e401a02080122020801",
+  "expect": "8201310a1c0a1209000000000000d03f110000000000000040120201011a0201011209090000000000000e401a02080122020801",
+  "model": {
+    "@kind": "state",
+    "arsdkprotoloiter.default_capabilities_radius_range_min": "0.25",
+    "arsdkprotoloiter.default_capabilities_radius_range_max": "2",
+    "arsdkprotoloiter.radius_value": "3.75",
+    "arsdkprotoloiter.shape_value": "1",
+    "arsdkprotoloiter.direction_value": "1",
+    "arsdkprotoloiter.default_capabilities_shapes.#": "2",
+    "arsdkprotoloiter.default_capabilities_shapes[0].arsdkprotoloiter.capabilities_shapes_item": "1",
+    "arsdkprotoloiter.default_capabilities_shapes[1].arsdkprotoloiter.capabilities_shapes_item": "1",
+    "arsdkprotoloiter.default_capabilities_directions.#": "2",
+    "arsdkprotoloiter.default_capabilities_directions[0].arsdkprotoloiter.capabilities_directions_item": "1",
+    "arsdkprotoloiter.default_capabilities_directions[1].arsdkprotoloiter.capabilities_directions_item": "1"
+  }
+}

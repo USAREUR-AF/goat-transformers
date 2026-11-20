@@ -1,0 +1,22 @@
+{
+ "16.1.1": "speed_mode_value",
+ "16.2.1": "takeoff_hovering_altitude_value",
+ "16.3.1": "preferred_atti_mode_enabled",
+ "16.4.1": "current_atti_mode_enabled",
+ "16.5.1": "assistance_mode_value",
+ "16.6.1": "takeoff_state_value",
+ "16.7.1": "vehicle_type_value",
+ "16.8.1": "vehicle_mode_value",
+ "17.1[]": "capabilities_speed_modes",
+ "17.2[]": "capabilities_supported_features",
+ "17.3.1": "takeoff_hovering_altitude_range_min",
+ "17.3.2": "takeoff_hovering_altitude_range_max",
+ "17.4[]": "capabilities_flight_modes",
+ "17.5[]": "capabilities_assistance_modes",
+ "17.6[]": "capabilities_supported_vehicle_modes",
+ "arsdk.piloting.Event.Capabilities:1[]item": "capabilities_speed_modes_item",
+ "arsdk.piloting.Event.Capabilities:2[]item": "capabilities_supported_features_item",
+ "arsdk.piloting.Event.Capabilities:4[]item": "capabilities_flight_modes_item",
+ "arsdk.piloting.Event.Capabilities:5[]item": "capabilities_assistance_modes_item",
+ "arsdk.piloting.Event.Capabilities:6[]item": "capabilities_supported_vehicle_modes_item"
+}

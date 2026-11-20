@@ -1,0 +1,6 @@
+{
+ "1.1": "flight_info_time_boot_ms",
+ "1.2": "flight_info_flight_uid",
+ "1.3": "flight_info_duration_since_arming_ms",
+ "1.4": "flight_info_duration_since_takeoff_ms"
+}

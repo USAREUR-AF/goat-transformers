@@ -1,0 +1,11 @@
+{
+  "name": "gen-mission_changed_response-roundtrip",
+  "from": "mavsdk-mission-raw-mission-changed",
+  "to": "mavsdk-mission-raw-mission-changed",
+  "input": "0801",
+  "expect": "0801",
+  "model": {
+    "@kind": "mission_changed_response",
+    "mavsdkmissionrawmissionchanged.mission_changed_response_mission_changed": "1"
+  }
+}

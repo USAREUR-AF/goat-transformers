@@ -1,0 +1,14 @@
+{
+  "name": "gen-event-roundtrip",
+  "from": "arsdk-proto-thermal-control",
+  "to": "arsdk-proto-thermal-control",
+  "input": "8201060a0201011001",
+  "expect": "8201060a0201011001",
+  "model": {
+    "@kind": "event",
+    "arsdkprotothermalcontrol.default_capabilities_calibration_method": "1",
+    "arsdkprotothermalcontrol.default_capabilities_powersaving_modes.#": "2",
+    "arsdkprotothermalcontrol.default_capabilities_powersaving_modes[0].arsdkprotothermalcontrol.capabilities_powersaving_modes_item": "1",
+    "arsdkprotothermalcontrol.default_capabilities_powersaving_modes[1].arsdkprotothermalcontrol.capabilities_powersaving_modes_item": "1"
+  }
+}

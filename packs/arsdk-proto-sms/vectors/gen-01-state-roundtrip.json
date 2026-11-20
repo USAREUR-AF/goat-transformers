@@ -1,0 +1,11 @@
+{
+  "name": "gen-state-roundtrip",
+  "from": "arsdk-proto-sms",
+  "to": "arsdk-proto-sms",
+  "input": "82010412020801",
+  "expect": "82010412020801",
+  "model": {
+    "@kind": "state",
+    "arsdkprotosms.available_value": "1"
+  }
+}

@@ -1,0 +1,21 @@
+{
+ "1.1": "attitude_gimbal_id",
+ "1.2.1": "attitude_euler_angle_forward_roll_deg",
+ "1.2.2": "attitude_euler_angle_forward_pitch_deg",
+ "1.2.3": "attitude_euler_angle_forward_yaw_deg",
+ "1.3.1": "attitude_quaternion_forward_w",
+ "1.3.2": "attitude_quaternion_forward_x",
+ "1.3.3": "attitude_quaternion_forward_y",
+ "1.3.4": "attitude_quaternion_forward_z",
+ "1.4.1": "attitude_euler_angle_north_roll_deg",
+ "1.4.2": "attitude_euler_angle_north_pitch_deg",
+ "1.4.3": "attitude_euler_angle_north_yaw_deg",
+ "1.5.1": "attitude_quaternion_north_w",
+ "1.5.2": "attitude_quaternion_north_x",
+ "1.5.3": "attitude_quaternion_north_y",
+ "1.5.4": "attitude_quaternion_north_z",
+ "1.6.1": "attitude_angular_velocity_roll_rad_s",
+ "1.6.2": "attitude_angular_velocity_pitch_rad_s",
+ "1.6.3": "attitude_angular_velocity_yaw_rad_s",
+ "1.7": "attitude_timestamp_us"
+}

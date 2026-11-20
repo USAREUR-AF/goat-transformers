@@ -1,0 +1,6 @@
+{
+ "1.1": "ground_truth_latitude_deg",
+ "1.2": "ground_truth_longitude_deg",
+ "1.3": "ground_truth_absolute_altitude_m",
+ "1.4": "ground_truth_timestamp_us"
+}

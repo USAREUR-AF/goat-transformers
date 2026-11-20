@@ -1,0 +1,11 @@
+{
+  "name": "gen-health_all_ok_response-roundtrip",
+  "from": "mavsdk-telemetry-health-all-ok",
+  "to": "mavsdk-telemetry-health-all-ok",
+  "input": "0801",
+  "expect": "0801",
+  "model": {
+    "@kind": "health_all_ok_response",
+    "mavsdktelemetryhealthallok.health_all_ok_response_is_health_all_ok": "1"
+  }
+}

@@ -1,0 +1,8 @@
+{
+ "16.1.1[]": "default_capabilities_supported_sensors",
+ "16.2.1[]": "calibration_state_list_calibration_state",
+ "arsdk.calibration.CalibrationState:1": "calibration_state_sensor",
+ "arsdk.calibration.CalibrationState:2": "calibration_state_status",
+ "arsdk.calibration.CalibrationState:3": "calibration_state_is_required",
+ "arsdk.calibration.Event.Capabilities:1[]item": "capabilities_supported_sensors_item"
+}

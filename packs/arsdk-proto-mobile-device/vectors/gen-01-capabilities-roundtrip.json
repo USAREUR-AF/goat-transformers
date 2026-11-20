@@ -1,0 +1,13 @@
+{
+  "name": "gen-capabilities-roundtrip",
+  "from": "arsdk-proto-mobile-device",
+  "to": "arsdk-proto-mobile-device",
+  "input": "8201040a020000",
+  "expect": "8201040a020000",
+  "model": {
+    "@kind": "capabilities",
+    "arsdkprotomobiledevice.capabilities_supported_features.#": "2",
+    "arsdkprotomobiledevice.capabilities_supported_features[0].arsdkprotomobiledevice.capabilities_supported_features_item": "0",
+    "arsdkprotomobiledevice.capabilities_supported_features[1].arsdkprotomobiledevice.capabilities_supported_features_item": "0"
+  }
+}

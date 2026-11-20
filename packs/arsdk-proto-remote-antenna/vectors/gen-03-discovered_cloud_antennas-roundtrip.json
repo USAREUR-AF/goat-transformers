@@ -1,0 +1,15 @@
+{
+  "name": "gen-discovered_cloud_antennas-roundtrip",
+  "from": "arsdk-proto-remote-antenna",
+  "to": "arsdk-proto-remote-antenna",
+  "input": "8a01510a260a24086412126669726d776172655f76657273696f6e2d311a0873657269616c2d32200128010a270a25089d0212126669726d776172655f76657273696f6e2d361a0873657269616c2d3720012801",
+  "expect": "8a01510a260a24086412126669726d776172655f76657273696f6e2d311a0873657269616c2d32200128010a270a25089d0212126669726d776172655f76657273696f6e2d361a0873657269616c2d3720012801",
+  "model": {
+    "@kind": "discovered_cloud_antennas",
+    "arsdkprotoremoteantenna.discovered_cloud_antennas_antennas.#": "2",
+    "arsdkprotoremoteantenna.discovered_cloud_antennas_antennas[0].arsdkprotoremoteantenna.cloud_antenna_info_model": "100",
+    "arsdkprotoremoteantenna.discovered_cloud_antennas_antennas[0].arsdkprotoremoteantenna.cloud_antenna_info_firmware_version": "firmware_version-1",
+    "arsdkprotoremoteantenna.discovered_cloud_antennas_antennas[1].arsdkprotoremoteantenna.cloud_antenna_info_model": "285",
+    "arsdkprotoremoteantenna.discovered_cloud_antennas_antennas[1].arsdkprotoremoteantenna.cloud_antenna_info_firmware_version": "firmware_version-6"
+  }
+}

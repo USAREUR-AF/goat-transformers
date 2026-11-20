@@ -1,0 +1,31 @@
+{
+  "name": "gen-status_response-roundtrip",
+  "from": "mavsdk-winch-status",
+  "to": "mavsdk-winch-status",
+  "input": "0a3c0864150000403f1d0000b03f25000000402d00002840350000504038c202421c08011001180120012801300138014001480150015801600168017001",
+  "expect": "0a3c0864150000403f1d0000b03f25000000402d00002840350000504038c202421c08011001180120012801300138014001480150015801600168017001",
+  "model": {
+    "@kind": "status_response",
+    "mavsdkwinchstatus.status_time_usec": "100",
+    "mavsdkwinchstatus.status_line_length_m": "0.75",
+    "mavsdkwinchstatus.status_speed_m_s": "1.375",
+    "mavsdkwinchstatus.status_tension_kg": "2",
+    "mavsdkwinchstatus.status_voltage_v": "2.625",
+    "mavsdkwinchstatus.status_current_a": "3.25",
+    "mavsdkwinchstatus.status_temperature_c": "322",
+    "mavsdkwinchstatus.status_status_flags_healthy": "1",
+    "mavsdkwinchstatus.status_status_flags_fully_retracted": "1",
+    "mavsdkwinchstatus.status_status_flags_moving": "1",
+    "mavsdkwinchstatus.status_status_flags_clutch_engaged": "1",
+    "mavsdkwinchstatus.status_status_flags_locked": "1",
+    "mavsdkwinchstatus.status_status_flags_dropping": "1",
+    "mavsdkwinchstatus.status_status_flags_arresting": "1",
+    "mavsdkwinchstatus.status_status_flags_ground_sense": "1",
+    "mavsdkwinchstatus.status_status_flags_retracting": "1",
+    "mavsdkwinchstatus.status_status_flags_redeliver": "1",
+    "mavsdkwinchstatus.status_status_flags_abandon_line": "1",
+    "mavsdkwinchstatus.status_status_flags_locking": "1",
+    "mavsdkwinchstatus.status_status_flags_load_line": "1",
+    "mavsdkwinchstatus.status_status_flags_load_payload": "1"
+  }
+}

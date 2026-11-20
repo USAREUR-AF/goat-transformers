@@ -1,0 +1,12 @@
+{
+  "name": "gen-changed_param_int_response-roundtrip",
+  "from": "mavsdk-param-server-changed-param-int",
+  "to": "mavsdk-param-server-changed-param-int",
+  "input": "0a0b0a066e616d652d30108901",
+  "expect": "0a0b0a066e616d652d30108901",
+  "model": {
+    "@kind": "changed_param_int_response",
+    "mavsdkparamserverchangedparamint.param_name": "name-0",
+    "mavsdkparamserverchangedparamint.param_value": "137"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "gen-activation-roundtrip",
+  "from": "arsdk-proto-sleepmode",
+  "to": "arsdk-proto-sleepmode",
+  "input": "8a01020801",
+  "expect": "8a01020801",
+  "model": {
+    "@kind": "activation",
+    "arsdkprotosleepmode.activation_status": "1"
+  }
+}

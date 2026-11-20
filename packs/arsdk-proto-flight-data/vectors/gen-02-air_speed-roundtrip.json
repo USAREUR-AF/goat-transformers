@@ -1,0 +1,11 @@
+{
+  "name": "gen-air_speed-roundtrip",
+  "from": "arsdk-proto-flight-data",
+  "to": "arsdk-proto-flight-data",
+  "input": "12050d0000003e",
+  "expect": "12050d0000003e",
+  "model": {
+    "@kind": "air_speed",
+    "arsdkprotoflightdata.air_speed_value": "0.125"
+  }
+}

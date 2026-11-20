@@ -1,0 +1,9 @@
+{
+ "1.1[]": "gimbal_list_gimbals",
+ "mavsdk.rpc.gimbal.GimbalItem:1": "gimbal_item_gimbal_id",
+ "mavsdk.rpc.gimbal.GimbalItem:2": "gimbal_item_vendor_name",
+ "mavsdk.rpc.gimbal.GimbalItem:3": "gimbal_item_model_name",
+ "mavsdk.rpc.gimbal.GimbalItem:4": "gimbal_item_custom_name",
+ "mavsdk.rpc.gimbal.GimbalItem:5": "gimbal_item_gimbal_manager_component_id",
+ "mavsdk.rpc.gimbal.GimbalItem:6": "gimbal_item_gimbal_device_id"
+}

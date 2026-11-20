@@ -1,0 +1,16 @@
+{
+  "name": "gen-current_settings_response-roundtrip",
+  "from": "mavsdk-camera-current-settings",
+  "to": "mavsdk-camera-current-settings",
+  "input": "0a9e010864124c0a0c73657474696e675f69642d31121573657474696e675f6465736372697074696f6e2d321a230a0b6f7074696f6e5f69642d3312146f7074696f6e5f6465736372697074696f6e2d342001124c0a0c73657474696e675f69642d36121573657474696e675f6465736372697074696f6e2d371a230a0b6f7074696f6e5f69642d3812146f7074696f6e5f6465736372697074696f6e2d392001",
+  "expect": "0a9e010864124c0a0c73657474696e675f69642d31121573657474696e675f6465736372697074696f6e2d321a230a0b6f7074696f6e5f69642d3312146f7074696f6e5f6465736372697074696f6e2d342001124c0a0c73657474696e675f69642d36121573657474696e675f6465736372697074696f6e2d371a230a0b6f7074696f6e5f69642d3812146f7074696f6e5f6465736372697074696f6e2d392001",
+  "model": {
+    "@kind": "current_settings_response",
+    "mavsdkcameracurrentsettings.update_component_id": "100",
+    "mavsdkcameracurrentsettings.update_current_settings.#": "2",
+    "mavsdkcameracurrentsettings.update_current_settings[0].mavsdkcameracurrentsettings.setting_setting_id": "setting_id-1",
+    "mavsdkcameracurrentsettings.update_current_settings[0].mavsdkcameracurrentsettings.setting_setting_description": "setting_description-2",
+    "mavsdkcameracurrentsettings.update_current_settings[1].mavsdkcameracurrentsettings.setting_setting_id": "setting_id-6",
+    "mavsdkcameracurrentsettings.update_current_settings[1].mavsdkcameracurrentsettings.setting_setting_description": "setting_description-7"
+  }
+}

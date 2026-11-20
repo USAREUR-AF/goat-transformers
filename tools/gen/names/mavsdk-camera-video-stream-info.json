@@ -1,0 +1,13 @@
+{
+ "1.1": "update_component_id",
+ "1.2.1": "update_video_stream_info_stream_id",
+ "1.2.2.1": "update_settings_frame_rate_hz",
+ "1.2.2.2": "update_settings_horizontal_resolution_pix",
+ "1.2.2.3": "update_settings_vertical_resolution_pix",
+ "1.2.2.4": "update_settings_bit_rate_b_s",
+ "1.2.2.5": "update_settings_rotation_deg",
+ "1.2.2.6": "update_settings_uri",
+ "1.2.2.7": "update_settings_horizontal_fov_deg",
+ "1.2.3": "update_video_stream_info_status",
+ "1.2.4": "update_video_stream_info_spectrum"
+}

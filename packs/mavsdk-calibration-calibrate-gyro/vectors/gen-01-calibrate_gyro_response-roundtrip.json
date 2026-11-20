@@ -1,0 +1,16 @@
+{
+  "name": "gen-calibrate_gyro_response-roundtrip",
+  "from": "mavsdk-calibration-calibrate-gyro",
+  "to": "mavsdk-calibration-calibrate-gyro",
+  "input": "0a100801120c726573756c745f7374722d311218080115000000401801220d7374617475735f746578742d35",
+  "expect": "0a100801120c726573756c745f7374722d311218080115000000401801220d7374617475735f746578742d35",
+  "model": {
+    "@kind": "calibrate_gyro_response",
+    "mavsdkcalibrationcalibrategyro.calibration_result_result": "1",
+    "mavsdkcalibrationcalibrategyro.calibration_result_result_str": "result_str-1",
+    "mavsdkcalibrationcalibrategyro.progress_data_has_progress": "1",
+    "mavsdkcalibrationcalibrategyro.progress_data_progress": "2",
+    "mavsdkcalibrationcalibrategyro.progress_data_has_status_text": "1",
+    "mavsdkcalibrationcalibrategyro.progress_data_status_text": "status_text-5"
+  }
+}

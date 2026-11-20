@@ -1,0 +1,5 @@
+{
+ "1.1": "actuator_control_target_group",
+ "1.2[]": "actuator_control_target_controls",
+ "mavsdk.rpc.telemetry.ActuatorControlTarget:2[]item": "actuator_control_target_controls_item"
+}

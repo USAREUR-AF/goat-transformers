@@ -1,0 +1,29 @@
+{
+  "name": "gen-state-roundtrip",
+  "from": "arsdk-proto-vehicle",
+  "to": "arsdk-proto-vehicle",
+  "input": "8201370a0d09000000000000d03f12020101120208011a02080122040a0201012a040a02010132040a0201013a0408011001420208014a020801",
+  "expect": "8201370a0d09000000000000d03f12020101120208011a02080122040a0201012a040a02010132040a0201013a0408011001420208014a020801",
+  "model": {
+    "@kind": "state",
+    "arsdkprotovehicle.default_capabilities_max_horizontal_distance": "0.25",
+    "arsdkprotovehicle.is_enabled_value": "1",
+    "arsdkprotovehicle.ready_state_value": "1",
+    "arsdkprotovehicle.relative_guidance_is_enabled": "1",
+    "arsdkprotovehicle.relative_guidance_is_modifiable": "1",
+    "arsdkprotovehicle.is_precise_calibration_enabled_value": "1",
+    "arsdkprotovehicle.platform_type_value": "1",
+    "arsdkprotovehicle.default_capabilities_supported_platform_types.#": "2",
+    "arsdkprotovehicle.default_capabilities_supported_platform_types[0].arsdkprotovehicle.capabilities_supported_platform_types_item": "1",
+    "arsdkprotovehicle.default_capabilities_supported_platform_types[1].arsdkprotovehicle.capabilities_supported_platform_types_item": "1",
+    "arsdkprotovehicle.missing_requirements_requirements.#": "2",
+    "arsdkprotovehicle.missing_requirements_requirements[0].arsdkprotovehicle.missing_requirements_requirements_item": "1",
+    "arsdkprotovehicle.missing_requirements_requirements[1].arsdkprotovehicle.missing_requirements_requirements_item": "1",
+    "arsdkprotovehicle.improvements_improvements.#": "2",
+    "arsdkprotovehicle.improvements_improvements[0].arsdkprotovehicle.improvements_improvements_item": "1",
+    "arsdkprotovehicle.improvements_improvements[1].arsdkprotovehicle.improvements_improvements_item": "1",
+    "arsdkprotovehicle.notifications_notifications.#": "2",
+    "arsdkprotovehicle.notifications_notifications[0].arsdkprotovehicle.notifications_notifications_item": "1",
+    "arsdkprotovehicle.notifications_notifications[1].arsdkprotovehicle.notifications_notifications_item": "1"
+  }
+}

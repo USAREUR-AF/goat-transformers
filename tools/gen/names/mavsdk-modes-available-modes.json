@@ -1,0 +1,9 @@
+{
+ "1[]": "available_modes_response_modes",
+ "mavsdk.rpc.modes.Mode:1": "mode_name",
+ "mavsdk.rpc.modes.Mode:2": "mode_custom_mode",
+ "mavsdk.rpc.modes.Mode:3": "mode_is_standard",
+ "mavsdk.rpc.modes.Mode:4": "mode_is_user_selectable",
+ "mavsdk.rpc.modes.Mode:5": "mode_is_advanced",
+ "mavsdk.rpc.modes.Mode:6": "mode_is_auto_mode"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "gen-state-roundtrip",
+  "from": "arsdk-proto-controller-network",
+  "to": "arsdk-proto-controller-network",
+  "input": "82011c221a0a0b0801100118ae01200128010a0b0801100118e70220012801",
+  "expect": "82011c221a0a0b0801100118ae01200128010a0b0801100118e70220012801",
+  "model": {
+    "@kind": "state",
+    "arsdkprotocontrollernetwork.links_status_links.#": "2",
+    "arsdkprotocontrollernetwork.links_status_links[0].arsdkprotocontrollernetwork.link_info_type": "1",
+    "arsdkprotocontrollernetwork.links_status_links[0].arsdkprotocontrollernetwork.link_info_status": "1",
+    "arsdkprotocontrollernetwork.links_status_links[1].arsdkprotocontrollernetwork.link_info_type": "1",
+    "arsdkprotocontrollernetwork.links_status_links[1].arsdkprotocontrollernetwork.link_info_status": "1"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "gen-events_response-roundtrip",
+  "from": "mavsdk-events-events",
+  "to": "mavsdk-events-events",
+  "input": "0a3f086412096d6573736167652d311a0d6465736372697074696f6e2d3220012a116576656e745f6e616d6573706163652d34320c6576656e745f6e616d652d35",
+  "expect": "0a3f086412096d6573736167652d311a0d6465736372697074696f6e2d3220012a116576656e745f6e616d6573706163652d34320c6576656e745f6e616d652d35",
+  "model": {
+    "@kind": "events_response",
+    "mavsdkeventsevents.event_compid": "100",
+    "mavsdkeventsevents.event_message": "message-1",
+    "mavsdkeventsevents.event_description": "description-2",
+    "mavsdkeventsevents.event_log_level": "1",
+    "mavsdkeventsevents.event_event_namespace": "event_namespace-4",
+    "mavsdkeventsevents.event_event_name": "event_name-5"
+  }
+}

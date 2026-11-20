@@ -1,0 +1,11 @@
+{
+  "name": "gen-connection_state_response-roundtrip",
+  "from": "mavsdk-core-connection-state",
+  "to": "mavsdk-core-connection-state",
+  "input": "0a021001",
+  "expect": "0a021001",
+  "model": {
+    "@kind": "connection_state_response",
+    "mavsdkcoreconnectionstate.connection_state_is_connected": "1"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "gen-possible_setting_options_response-roundtrip",
+  "from": "mavsdk-camera-possible-setting-options",
+  "to": "mavsdk-camera-possible-setting-options",
+  "input": "0aa6010864124f088901120c73657474696e675f69642d321a1573657474696e675f6465736372697074696f6e2d3322230a0b6f7074696f6e5f69642d3512146f7074696f6e5f6465736372697074696f6e2d362801125108e702120c73657474696e675f69642d381a1573657474696e675f6465736372697074696f6e2d3922250a0c6f7074696f6e5f69642d313112156f7074696f6e5f6465736372697074696f6e2d31322801",
+  "expect": "0aa6010864124f088901120c73657474696e675f69642d321a1573657474696e675f6465736372697074696f6e2d3322230a0b6f7074696f6e5f69642d3512146f7074696f6e5f6465736372697074696f6e2d362801125108e702120c73657474696e675f69642d381a1573657474696e675f6465736372697074696f6e2d3922250a0c6f7074696f6e5f69642d313112156f7074696f6e5f6465736372697074696f6e2d31322801",
+  "model": {
+    "@kind": "possible_setting_options_response",
+    "mavsdkcamerapossiblesettingoptions.update_component_id": "100",
+    "mavsdkcamerapossiblesettingoptions.update_setting_options.#": "2",
+    "mavsdkcamerapossiblesettingoptions.update_setting_options[0].mavsdkcamerapossiblesettingoptions.setting_options_component_id": "137",
+    "mavsdkcamerapossiblesettingoptions.update_setting_options[0].mavsdkcamerapossiblesettingoptions.setting_options_setting_id": "setting_id-2",
+    "mavsdkcamerapossiblesettingoptions.update_setting_options[0].mavsdkcamerapossiblesettingoptions.setting_options_options.#": "1",
+    "mavsdkcamerapossiblesettingoptions.update_setting_options[0].mavsdkcamerapossiblesettingoptions.setting_options_options[0].mavsdkcamerapossiblesettingoptions.option_option_id": "option_id-5",
+    "mavsdkcamerapossiblesettingoptions.update_setting_options[0].mavsdkcamerapossiblesettingoptions.setting_options_options[0].mavsdkcamerapossiblesettingoptions.option_option_description": "option_description-6",
+    "mavsdkcamerapossiblesettingoptions.update_setting_options[1].mavsdkcamerapossiblesettingoptions.setting_options_component_id": "359",
+    "mavsdkcamerapossiblesettingoptions.update_setting_options[1].mavsdkcamerapossiblesettingoptions.setting_options_setting_id": "setting_id-8",
+    "mavsdkcamerapossiblesettingoptions.update_setting_options[1].mavsdkcamerapossiblesettingoptions.setting_options_options.#": "1",
+    "mavsdkcamerapossiblesettingoptions.update_setting_options[1].mavsdkcamerapossiblesettingoptions.setting_options_options[0].mavsdkcamerapossiblesettingoptions.option_option_id": "option_id-11",
+    "mavsdkcamerapossiblesettingoptions.update_setting_options[1].mavsdkcamerapossiblesettingoptions.setting_options_options[0].mavsdkcamerapossiblesettingoptions.option_option_description": "option_description-12"
+  }
+}

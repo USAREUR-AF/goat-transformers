@@ -1,0 +1,16 @@
+{
+  "name": "gen-state-roundtrip",
+  "from": "arsdk-proto-killswitch",
+  "to": "arsdk-proto-killswitch",
+  "input": "8201170a040a020101120208011a090a0776616c75652d312801",
+  "expect": "8201170a040a020101120208011a090a0776616c75652d312801",
+  "model": {
+    "@kind": "state",
+    "arsdkprotokillswitch.behavior_mode": "1",
+    "arsdkprotokillswitch.secure_message_value": "value-1",
+    "arsdkprotokillswitch.state_activated_by": "1",
+    "arsdkprotokillswitch.default_capabilities_supported_modes.#": "2",
+    "arsdkprotokillswitch.default_capabilities_supported_modes[0].arsdkprotokillswitch.capabilities_supported_modes_item": "1",
+    "arsdkprotokillswitch.default_capabilities_supported_modes[1].arsdkprotokillswitch.capabilities_supported_modes_item": "1"
+  }
+}

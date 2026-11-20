@@ -1,0 +1,12 @@
+{
+  "name": "gen-gps_info_response-roundtrip",
+  "from": "mavsdk-telemetry-gps-info",
+  "to": "mavsdk-telemetry-gps-info",
+  "input": "0a0408641001",
+  "expect": "0a0408641001",
+  "model": {
+    "@kind": "gps_info_response",
+    "mavsdktelemetrygpsinfo.gps_info_num_satellites": "100",
+    "mavsdktelemetrygpsinfo.gps_info_fix_type": "1"
+  }
+}

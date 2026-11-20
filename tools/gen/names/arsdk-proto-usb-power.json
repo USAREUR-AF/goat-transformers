@@ -1,0 +1,7 @@
+{
+ "16.1.1[]": "default_capabilities_supported_types",
+ "16.2.1[]": "usb_powers_powers",
+ "arsdk.usbpower.Capabilities:1[]item": "capabilities_supported_types_item",
+ "arsdk.usbpower.Power:1": "power_connector_type",
+ "arsdk.usbpower.Power:2": "power_enabled"
+}

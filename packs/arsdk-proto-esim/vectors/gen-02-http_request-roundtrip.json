@@ -1,0 +1,15 @@
+{
+  "name": "gen-http_request-roundtrip",
+  "from": "arsdk-proto-esim",
+  "to": "arsdk-proto-esim",
+  "input": "a2011f0864120575726c2d311a09686561646572732d321a09686561646572732d33",
+  "expect": "a2011f0864120575726c2d311a09686561646572732d321a09686561646572732d33",
+  "model": {
+    "@kind": "http_request",
+    "arsdkprotoesim.http_request_id": "100",
+    "arsdkprotoesim.http_request_url": "url-1",
+    "arsdkprotoesim.http_request_headers.#": "2",
+    "arsdkprotoesim.http_request_headers[0].arsdkprotoesim.http_request_headers_item": "headers-2",
+    "arsdkprotoesim.http_request_headers[1].arsdkprotoesim.http_request_headers_item": "headers-3"
+  }
+}

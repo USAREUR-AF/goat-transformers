@@ -1,0 +1,13 @@
+{
+  "name": "gen-identifier-roundtrip",
+  "from": "arsdk-proto-logsync",
+  "to": "arsdk-proto-logsync",
+  "input": "8201100a09626f6f745f69642d301089011801",
+  "expect": "8201100a09626f6f745f69642d301089011801",
+  "model": {
+    "@kind": "identifier",
+    "arsdkprotologsync.identifier_boot_id": "boot_id-0",
+    "arsdkprotologsync.identifier_model": "137",
+    "arsdkprotologsync.identifier_role": "1"
+  }
+}

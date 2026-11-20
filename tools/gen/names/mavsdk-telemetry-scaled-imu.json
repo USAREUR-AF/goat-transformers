@@ -1,0 +1,13 @@
+{
+ "1.1.1": "imu_acceleration_frd_forward_m_s2",
+ "1.1.2": "imu_acceleration_frd_right_m_s2",
+ "1.1.3": "imu_acceleration_frd_down_m_s2",
+ "1.2.1": "imu_angular_velocity_frd_forward_rad_s",
+ "1.2.2": "imu_angular_velocity_frd_right_rad_s",
+ "1.2.3": "imu_angular_velocity_frd_down_rad_s",
+ "1.3.1": "imu_magnetic_field_frd_forward_gauss",
+ "1.3.2": "imu_magnetic_field_frd_right_gauss",
+ "1.3.3": "imu_magnetic_field_frd_down_gauss",
+ "1.4": "imu_temperature_degc",
+ "1.5": "imu_timestamp_us"
+}

@@ -1,0 +1,11 @@
+{
+  "name": "gen-flight_mode_response-roundtrip",
+  "from": "mavsdk-telemetry-flight-mode",
+  "to": "mavsdk-telemetry-flight-mode",
+  "input": "0801",
+  "expect": "0801",
+  "model": {
+    "@kind": "flight_mode_response",
+    "mavsdktelemetryflightmode.flight_mode_response_flight_mode": "1"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "gen-terminate_response-roundtrip",
+  "from": "mavsdk-action-server-terminate",
+  "to": "mavsdk-action-server-terminate",
+  "input": "0a100801120c726573756c745f7374722d311001",
+  "expect": "0a100801120c726573756c745f7374722d311001",
+  "model": {
+    "@kind": "terminate_response",
+    "mavsdkactionserverterminate.action_server_result_result": "1",
+    "mavsdkactionserverterminate.action_server_result_result_str": "result_str-1",
+    "mavsdkactionserverterminate.terminate_response_terminate": "1"
+  }
+}

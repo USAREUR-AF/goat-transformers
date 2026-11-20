@@ -1,0 +1,11 @@
+{
+  "name": "gen-format_storage_response-roundtrip",
+  "from": "mavsdk-camera-server-format-storage",
+  "to": "mavsdk-camera-server-format-storage",
+  "input": "0864",
+  "expect": "0864",
+  "model": {
+    "@kind": "format_storage_response",
+    "mavsdkcameraserverformatstorage.format_storage_response_storage_id": "100"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "gen-arm_authorization_response-roundtrip",
+  "from": "mavsdk-arm-authorizer-server-arm-authorization",
+  "to": "mavsdk-arm-authorizer-server-arm-authorization",
+  "input": "0864",
+  "expect": "0864",
+  "model": {
+    "@kind": "arm_authorization_response",
+    "mavsdkarmauthorizerserverarmauthorization.arm_authorization_response_system_id": "100"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "gen-gimbal_list_response-roundtrip",
+  "from": "mavsdk-gimbal-gimbal-list",
+  "to": "mavsdk-gimbal-gimbal-list",
+  "input": "0a6d0a340864120d76656e646f725f6e616d652d311a0c6d6f64656c5f6e616d652d32220d637573746f6d5f6e616d652d3328f801309d020a3508c202120d76656e646f725f6e616d652d371a0c6d6f64656c5f6e616d652d38220d637573746f6d5f6e616d652d3928d60330fb03",
+  "expect": "0a6d0a340864120d76656e646f725f6e616d652d311a0c6d6f64656c5f6e616d652d32220d637573746f6d5f6e616d652d3328f801309d020a3508c202120d76656e646f725f6e616d652d371a0c6d6f64656c5f6e616d652d38220d637573746f6d5f6e616d652d3928d60330fb03",
+  "model": {
+    "@kind": "gimbal_list_response",
+    "mavsdkgimbalgimballist.gimbal_list_gimbals.#": "2",
+    "mavsdkgimbalgimballist.gimbal_list_gimbals[0].mavsdkgimbalgimballist.gimbal_item_gimbal_id": "100",
+    "mavsdkgimbalgimballist.gimbal_list_gimbals[0].mavsdkgimbalgimballist.gimbal_item_vendor_name": "vendor_name-1",
+    "mavsdkgimbalgimballist.gimbal_list_gimbals[1].mavsdkgimbalgimballist.gimbal_item_gimbal_id": "322",
+    "mavsdkgimbalgimballist.gimbal_list_gimbals[1].mavsdkgimbalgimballist.gimbal_item_vendor_name": "vendor_name-7"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "gen-actuator_control_target_response-roundtrip",
+  "from": "mavsdk-telemetry-actuator-control-target",
+  "to": "mavsdk-telemetry-actuator-control-target",
+  "input": "0a0c086412080000403f0000b03f",
+  "expect": "0a0c086412080000403f0000b03f",
+  "model": {
+    "@kind": "actuator_control_target_response",
+    "mavsdktelemetryactuatorcontroltarget.actuator_control_target_group": "100",
+    "mavsdktelemetryactuatorcontroltarget.actuator_control_target_controls.#": "2",
+    "mavsdktelemetryactuatorcontroltarget.actuator_control_target_controls[0].mavsdktelemetryactuatorcontroltarget.actuator_control_target_controls_item": "0.75",
+    "mavsdktelemetryactuatorcontroltarget.actuator_control_target_controls[1].mavsdktelemetryactuatorcontroltarget.actuator_control_target_controls_item": "1.375"
+  }
+}

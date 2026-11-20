@@ -1,0 +1,6 @@
+{
+ "1.1": "attitude_euler_roll_deg",
+ "1.2": "attitude_euler_pitch_deg",
+ "1.3": "attitude_euler_yaw_deg",
+ "1.4": "attitude_euler_timestamp_us"
+}

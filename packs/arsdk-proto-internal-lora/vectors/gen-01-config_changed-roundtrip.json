@@ -1,0 +1,13 @@
+{
+  "name": "gen-config_changed-roundtrip",
+  "from": "arsdk-proto-internal-lora",
+  "to": "arsdk-proto-internal-lora",
+  "input": "8201071864200128ae01",
+  "expect": "8201071864200128ae01",
+  "model": {
+    "@kind": "config_changed",
+    "arsdkprotointernallora.config_changed_frequency": "100",
+    "arsdkprotointernallora.config_changed_silent": "1",
+    "arsdkprotointernallora.config_changed_protocol_version": "174"
+  }
+}

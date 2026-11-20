@@ -1,0 +1,11 @@
+{
+  "name": "gen-zoom_stop_response-roundtrip",
+  "from": "mavsdk-camera-server-zoom-stop",
+  "to": "mavsdk-camera-server-zoom-stop",
+  "input": "0864",
+  "expect": "0864",
+  "model": {
+    "@kind": "zoom_stop_response",
+    "mavsdkcameraserverzoomstop.zoom_stop_response_reserved": "100"
+  }
+}

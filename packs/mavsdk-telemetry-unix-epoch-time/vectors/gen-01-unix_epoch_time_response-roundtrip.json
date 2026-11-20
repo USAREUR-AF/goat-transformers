@@ -1,0 +1,11 @@
+{
+  "name": "gen-unix_epoch_time_response-roundtrip",
+  "from": "mavsdk-telemetry-unix-epoch-time",
+  "to": "mavsdk-telemetry-unix-epoch-time",
+  "input": "0864",
+  "expect": "0864",
+  "model": {
+    "@kind": "unix_epoch_time_response",
+    "mavsdktelemetryunixepochtime.unix_epoch_time_response_time_us": "100"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "gen-state-roundtrip",
+  "from": "arsdk-proto-tracking",
+  "to": "arsdk-proto-tracking",
+  "input": "82011612140d0000003e150000403f1d0000b03f2500000040",
+  "expect": "82011612140d0000003e150000403f1d0000b03f2500000040",
+  "model": {
+    "@kind": "state",
+    "arsdkprototracking.margins_left": "0.125",
+    "arsdkprototracking.margins_right": "0.75",
+    "arsdkprototracking.margins_top": "1.375",
+    "arsdkprototracking.margins_bottom": "2"
+  }
+}

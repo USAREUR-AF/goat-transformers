@@ -1,0 +1,19 @@
+{
+  "name": "gen-pairing_done-roundtrip",
+  "from": "arsdk-proto-device-manager",
+  "to": "arsdk-proto-device-manager",
+  "input": "9a012e0a2c0a180a057569642d301089011a0c6e6574776f726b5f69642d32120408011001220a089d0210c20218012001",
+  "expect": "9a012e0a2c0a180a057569642d301089011a0c6e6574776f726b5f69642d32120408011001220a089d0210c20218012001",
+  "model": {
+    "@kind": "pairing_done",
+    "arsdkprotodevicemanager.paired_device_info_uid": "uid-0",
+    "arsdkprotodevicemanager.paired_device_info_model": "137",
+    "arsdkprotodevicemanager.paired_device_info_network_id": "network_id-2",
+    "arsdkprotodevicemanager.paired_device_wifi_security": "1",
+    "arsdkprotodevicemanager.paired_device_wifi_saved_key": "1",
+    "arsdkprotodevicemanager.paired_device_microhard_power": "285",
+    "arsdkprotodevicemanager.paired_device_microhard_channel": "322",
+    "arsdkprotodevicemanager.paired_device_microhard_bandwidth": "1",
+    "arsdkprotodevicemanager.paired_device_microhard_encryption_algorithm": "1"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "gen-in_air_response-roundtrip",
+  "from": "mavsdk-telemetry-in-air",
+  "to": "mavsdk-telemetry-in-air",
+  "input": "0801",
+  "expect": "0801",
+  "model": {
+    "@kind": "in_air_response",
+    "mavsdktelemetryinair.in_air_response_is_in_air": "1"
+  }
+}

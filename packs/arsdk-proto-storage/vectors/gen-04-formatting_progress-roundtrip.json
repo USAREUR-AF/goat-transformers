@@ -1,0 +1,13 @@
+{
+  "name": "gen-formatting_progress-roundtrip",
+  "from": "arsdk-proto-storage",
+  "to": "arsdk-proto-storage",
+  "input": "9201070864100118ae01",
+  "expect": "9201070864100118ae01",
+  "model": {
+    "@kind": "formatting_progress",
+    "arsdkprotostorage.formatting_progress_id": "100",
+    "arsdkprotostorage.formatting_progress_step": "1",
+    "arsdkprotostorage.formatting_progress_percentage": "174"
+  }
+}

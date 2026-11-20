@@ -1,0 +1,20 @@
+{
+  "name": "gen-state-roundtrip-oneof1",
+  "from": "arsdk-proto-controller-backuplink",
+  "to": "arsdk-proto-controller-backuplink",
+  "input": "8201270a1212100a06089d0210c2020a0608e702108c0312060801100118011a090a0308d30112020801",
+  "expect": "8201270a1212100a06089d0210c2020a0608e702108c0312060801100118011a090a0308d30112020801",
+  "model": {
+    "@kind": "state",
+    "arsdkprotocontrollerbackuplink.link_info_state": "1",
+    "arsdkprotocontrollerbackuplink.link_info_rx_active": "1",
+    "arsdkprotocontrollerbackuplink.link_info_tx_active": "1",
+    "arsdkprotocontrollerbackuplink.config_frequency_value": "211",
+    "arsdkprotocontrollerbackuplink.config_enabled_links_value": "1",
+    "arsdkprotocontrollerbackuplink.default_capabilities_supported_bands_bands.#": "2",
+    "arsdkprotocontrollerbackuplink.default_capabilities_supported_bands_bands[0].arsdkprotocontrollerbackuplink.band_min_frequency": "285",
+    "arsdkprotocontrollerbackuplink.default_capabilities_supported_bands_bands[0].arsdkprotocontrollerbackuplink.band_max_frequency": "322",
+    "arsdkprotocontrollerbackuplink.default_capabilities_supported_bands_bands[1].arsdkprotocontrollerbackuplink.band_min_frequency": "359",
+    "arsdkprotocontrollerbackuplink.default_capabilities_supported_bands_bands[1].arsdkprotocontrollerbackuplink.band_max_frequency": "396"
+  }
+}

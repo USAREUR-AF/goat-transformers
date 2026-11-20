@@ -1,0 +1,17 @@
+{
+  "name": "gen-event-roundtrip",
+  "from": "arsdk-proto-camera2",
+  "to": "arsdk-proto-camera2",
+  "input": "0a2e08641001180122260a12090000000000001640110000000000001d40110000000000002240190000000000802540",
+  "expect": "0a2e08641001180122260a12090000000000001640110000000000001d40110000000000002240190000000000802540",
+  "model": {
+    "@kind": "event",
+    "arsdkprotocamera2.camera_exposure_camera_id": "100",
+    "arsdkprotocamera2.camera_exposure_shutter_speed": "1",
+    "arsdkprotocamera2.camera_exposure_iso_sensitivity": "1",
+    "arsdkprotocamera2.camera_exposure_center_x": "5.5",
+    "arsdkprotocamera2.camera_exposure_center_y": "7.25",
+    "arsdkprotocamera2.camera_exposure_exposure_lock_region_width": "9",
+    "arsdkprotocamera2.camera_exposure_exposure_lock_region_height": "10.75"
+  }
+}

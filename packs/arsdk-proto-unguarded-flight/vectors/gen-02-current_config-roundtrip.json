@@ -1,0 +1,13 @@
+{
+  "name": "gen-current_config-roundtrip",
+  "from": "arsdk-proto-unguarded-flight",
+  "to": "arsdk-proto-unguarded-flight",
+  "input": "8a01040a020101",
+  "expect": "8a01040a020101",
+  "model": {
+    "@kind": "current_config",
+    "arsdkprotounguardedflight.current_config_unguarded_flight_elements.#": "2",
+    "arsdkprotounguardedflight.current_config_unguarded_flight_elements[0].arsdkprotounguardedflight.config_unguarded_flight_elements_item": "1",
+    "arsdkprotounguardedflight.current_config_unguarded_flight_elements[1].arsdkprotounguardedflight.config_unguarded_flight_elements_item": "1"
+  }
+}

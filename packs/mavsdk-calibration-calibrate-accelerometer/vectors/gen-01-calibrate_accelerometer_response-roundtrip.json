@@ -1,0 +1,16 @@
+{
+  "name": "gen-calibrate_accelerometer_response-roundtrip",
+  "from": "mavsdk-calibration-calibrate-accelerometer",
+  "to": "mavsdk-calibration-calibrate-accelerometer",
+  "input": "0a100801120c726573756c745f7374722d311218080115000000401801220d7374617475735f746578742d35",
+  "expect": "0a100801120c726573756c745f7374722d311218080115000000401801220d7374617475735f746578742d35",
+  "model": {
+    "@kind": "calibrate_accelerometer_response",
+    "mavsdkcalibrationcalibrateaccelerometer.calibration_result_result": "1",
+    "mavsdkcalibrationcalibrateaccelerometer.calibration_result_result_str": "result_str-1",
+    "mavsdkcalibrationcalibrateaccelerometer.progress_data_has_progress": "1",
+    "mavsdkcalibrationcalibrateaccelerometer.progress_data_progress": "2",
+    "mavsdkcalibrationcalibrateaccelerometer.progress_data_has_status_text": "1",
+    "mavsdkcalibrationcalibrateaccelerometer.progress_data_status_text": "status_text-5"
+  }
+}

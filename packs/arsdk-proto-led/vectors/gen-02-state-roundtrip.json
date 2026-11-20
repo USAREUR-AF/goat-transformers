@@ -1,0 +1,18 @@
+{
+  "name": "gen-state-roundtrip",
+  "from": "arsdk-proto-led",
+  "to": "arsdk-proto-led",
+  "input": "8a01120a040a020101120408011001120408011001",
+  "expect": "8a01120a040a020101120408011001120408011001",
+  "model": {
+    "@kind": "state",
+    "arsdkprotoled.default_capabilities_supported_led_types.#": "2",
+    "arsdkprotoled.default_capabilities_supported_led_types[0].arsdkprotoled.capabilities_supported_led_types_item": "1",
+    "arsdkprotoled.default_capabilities_supported_led_types[1].arsdkprotoled.capabilities_supported_led_types_item": "1",
+    "arsdkprotoled.state_activation_state.#": "2",
+    "arsdkprotoled.state_activation_state[0].arsdkprotoled.activation_state_led_type": "1",
+    "arsdkprotoled.state_activation_state[0].arsdkprotoled.activation_state_enabled": "1",
+    "arsdkprotoled.state_activation_state[1].arsdkprotoled.activation_state_led_type": "1",
+    "arsdkprotoled.state_activation_state[1].arsdkprotoled.activation_state_enabled": "1"
+  }
+}

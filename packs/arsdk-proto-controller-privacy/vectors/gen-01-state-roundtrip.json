@@ -1,0 +1,23 @@
+{
+  "name": "gen-state-roundtrip",
+  "from": "arsdk-proto-controller-privacy",
+  "to": "arsdk-proto-controller-privacy",
+  "input": "82011a0a0c0a020101120201011a02010110011801220208012a020801",
+  "expect": "82011a0a0c0a020101120201011a02010110011801220208012a020801",
+  "model": {
+    "@kind": "state",
+    "arsdkprotocontrollerprivacy.state_log_storage": "1",
+    "arsdkprotocontrollerprivacy.state_log_config_persistence": "1",
+    "arsdkprotocontrollerprivacy.log_encryption_enabled": "1",
+    "arsdkprotocontrollerprivacy.pairing_authorization_value": "1",
+    "arsdkprotocontrollerprivacy.default_capabilities_supported_log_storage.#": "2",
+    "arsdkprotocontrollerprivacy.default_capabilities_supported_log_storage[0].arsdkprotocontrollerprivacy.capabilities_supported_log_storage_item": "1",
+    "arsdkprotocontrollerprivacy.default_capabilities_supported_log_storage[1].arsdkprotocontrollerprivacy.capabilities_supported_log_storage_item": "1",
+    "arsdkprotocontrollerprivacy.default_capabilities_supported_log_config_persistence.#": "2",
+    "arsdkprotocontrollerprivacy.default_capabilities_supported_log_config_persistence[0].arsdkprotocontrollerprivacy.capabilities_supported_log_config_persistence_item": "1",
+    "arsdkprotocontrollerprivacy.default_capabilities_supported_log_config_persistence[1].arsdkprotocontrollerprivacy.capabilities_supported_log_config_persistence_item": "1",
+    "arsdkprotocontrollerprivacy.default_capabilities_supported_authorizations.#": "2",
+    "arsdkprotocontrollerprivacy.default_capabilities_supported_authorizations[0].arsdkprotocontrollerprivacy.capabilities_supported_authorizations_item": "1",
+    "arsdkprotocontrollerprivacy.default_capabilities_supported_authorizations[1].arsdkprotocontrollerprivacy.capabilities_supported_authorizations_item": "1"
+  }
+}

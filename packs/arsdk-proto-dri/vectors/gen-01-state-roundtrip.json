@@ -1,0 +1,23 @@
+{
+  "name": "gen-state-roundtrip",
+  "from": "arsdk-proto-dri",
+  "to": "arsdk-proto-dri",
+  "input": "8201340a080a02010112020101120208011a0b0801120776616c75652d3222130801120d6f70657261746f725f69642d3418012a020801",
+  "expect": "8201340a080a02010112020101120208011a0b0801120776616c75652d3222130801120d6f70657261746f725f69642d3418012a020801",
+  "model": {
+    "@kind": "state",
+    "arsdkprotodri.enabled_value": "1",
+    "arsdkprotodri.drone_id_type": "1",
+    "arsdkprotodri.drone_id_value": "value-2",
+    "arsdkprotodri.config_type": "1",
+    "arsdkprotodri.config_operator_id": "operator_id-4",
+    "arsdkprotodri.config_status": "1",
+    "arsdkprotodri.disconnected_has_been_connected": "1",
+    "arsdkprotodri.default_capabilities_supported_features.#": "2",
+    "arsdkprotodri.default_capabilities_supported_features[0].arsdkprotodri.capabilities_supported_features_item": "1",
+    "arsdkprotodri.default_capabilities_supported_features[1].arsdkprotodri.capabilities_supported_features_item": "1",
+    "arsdkprotodri.default_capabilities_supported_types.#": "2",
+    "arsdkprotodri.default_capabilities_supported_types[0].arsdkprotodri.capabilities_supported_types_item": "1",
+    "arsdkprotodri.default_capabilities_supported_types[1].arsdkprotodri.capabilities_supported_types_item": "1"
+  }
+}

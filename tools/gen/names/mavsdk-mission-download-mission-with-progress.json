@@ -1,0 +1,22 @@
+{
+ "1.1": "mission_result_result",
+ "1.2": "mission_result_result_str",
+ "2.1": "progress_data_has_progress",
+ "2.2": "progress_data_progress",
+ "2.3": "progress_data_has_mission",
+ "2.4.1[]": "progress_data_mission_plan_mission_items",
+ "mavsdk.rpc.mission.MissionItem:1": "mission_item_latitude_deg",
+ "mavsdk.rpc.mission.MissionItem:10": "mission_item_camera_photo_interval_s",
+ "mavsdk.rpc.mission.MissionItem:11": "mission_item_acceptance_radius_m",
+ "mavsdk.rpc.mission.MissionItem:12": "mission_item_yaw_deg",
+ "mavsdk.rpc.mission.MissionItem:13": "mission_item_camera_photo_distance_m",
+ "mavsdk.rpc.mission.MissionItem:14": "mission_item_vehicle_action",
+ "mavsdk.rpc.mission.MissionItem:2": "mission_item_longitude_deg",
+ "mavsdk.rpc.mission.MissionItem:3": "mission_item_relative_altitude_m",
+ "mavsdk.rpc.mission.MissionItem:4": "mission_item_speed_m_s",
+ "mavsdk.rpc.mission.MissionItem:5": "mission_item_is_fly_through",
+ "mavsdk.rpc.mission.MissionItem:6": "mission_item_gimbal_pitch_deg",
+ "mavsdk.rpc.mission.MissionItem:7": "mission_item_gimbal_yaw_deg",
+ "mavsdk.rpc.mission.MissionItem:8": "mission_item_camera_action",
+ "mavsdk.rpc.mission.MissionItem:9": "mission_item_loiter_time_s"
+}

@@ -1,0 +1,27 @@
+{
+  "name": "gen-capabilities-roundtrip",
+  "from": "arsdk-proto-piloting",
+  "to": "arsdk-proto-piloting",
+  "input": "8a01200a020101120201011a0a0d0000003e150000403f220201012a02010132020101",
+  "expect": "8a01200a020101120201011a0a0d0000003e150000403f220201012a02010132020101",
+  "model": {
+    "@kind": "capabilities",
+    "arsdkprotopiloting.takeoff_hovering_altitude_range_min": "0.125",
+    "arsdkprotopiloting.takeoff_hovering_altitude_range_max": "0.75",
+    "arsdkprotopiloting.capabilities_speed_modes.#": "2",
+    "arsdkprotopiloting.capabilities_speed_modes[0].arsdkprotopiloting.capabilities_speed_modes_item": "1",
+    "arsdkprotopiloting.capabilities_speed_modes[1].arsdkprotopiloting.capabilities_speed_modes_item": "1",
+    "arsdkprotopiloting.capabilities_supported_features.#": "2",
+    "arsdkprotopiloting.capabilities_supported_features[0].arsdkprotopiloting.capabilities_supported_features_item": "1",
+    "arsdkprotopiloting.capabilities_supported_features[1].arsdkprotopiloting.capabilities_supported_features_item": "1",
+    "arsdkprotopiloting.capabilities_flight_modes.#": "2",
+    "arsdkprotopiloting.capabilities_flight_modes[0].arsdkprotopiloting.capabilities_flight_modes_item": "1",
+    "arsdkprotopiloting.capabilities_flight_modes[1].arsdkprotopiloting.capabilities_flight_modes_item": "1",
+    "arsdkprotopiloting.capabilities_assistance_modes.#": "2",
+    "arsdkprotopiloting.capabilities_assistance_modes[0].arsdkprotopiloting.capabilities_assistance_modes_item": "1",
+    "arsdkprotopiloting.capabilities_assistance_modes[1].arsdkprotopiloting.capabilities_assistance_modes_item": "1",
+    "arsdkprotopiloting.capabilities_supported_vehicle_modes.#": "2",
+    "arsdkprotopiloting.capabilities_supported_vehicle_modes[0].arsdkprotopiloting.capabilities_supported_vehicle_modes_item": "1",
+    "arsdkprotopiloting.capabilities_supported_vehicle_modes[1].arsdkprotopiloting.capabilities_supported_vehicle_modes_item": "1"
+  }
+}

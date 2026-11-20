@@ -1,0 +1,7 @@
+{
+ "16.1.1[]": "default_capabilities_supported_modes",
+ "16.2.1": "behavior_mode",
+ "16.3.1": "secure_message_value",
+ "16.5": "state_activated_by",
+ "arsdk.killswitch.Capabilities:1[]item": "capabilities_supported_modes_item"
+}

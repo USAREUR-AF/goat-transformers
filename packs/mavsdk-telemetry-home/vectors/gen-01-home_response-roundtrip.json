@@ -1,0 +1,28 @@
+{
+  "name": "gen-home_response-roundtrip",
+  "from": "mavsdk-telemetry-home",
+  "to": "mavsdk-telemetry-home",
+  "input": "0a550864110000000000000040190000000000000e4025000000402d0000284035000050403d0000784045000090404a170d0000a440150000b8401d0000cc40250000e04028a004550000803e5d0000603f650000c03f",
+  "expect": "0a550864110000000000000040190000000000000e4025000000402d0000284035000050403d0000784045000090404a170d0000a440150000b8401d0000cc40250000e04028a004550000803e5d0000603f650000c03f",
+  "model": {
+    "@kind": "home_response",
+    "mavsdktelemetryhome.home_timestamp_us": "100",
+    "mavsdktelemetryhome.home_latitude_deg": "2",
+    "lat": "2",
+    "mavsdktelemetryhome.home_longitude_deg": "3.75",
+    "lon": "3.75",
+    "mavsdktelemetryhome.home_absolute_altitude_m": "2",
+    "mavsdktelemetryhome.home_relative_altitude_m": "2.625",
+    "mavsdktelemetryhome.home_local_north_m": "3.25",
+    "mavsdktelemetryhome.home_local_east_m": "3.875",
+    "mavsdktelemetryhome.home_local_down_m": "4.5",
+    "mavsdktelemetryhome.home_q_w": "5.125",
+    "mavsdktelemetryhome.home_q_x": "5.75",
+    "mavsdktelemetryhome.home_q_y": "6.375",
+    "mavsdktelemetryhome.home_q_z": "7",
+    "mavsdktelemetryhome.home_q_timestamp_us": "544",
+    "mavsdktelemetryhome.home_approach_north_m": "0.25",
+    "mavsdktelemetryhome.home_approach_east_m": "0.875",
+    "mavsdktelemetryhome.home_approach_down_m": "1.5"
+  }
+}

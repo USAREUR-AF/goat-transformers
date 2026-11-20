@@ -1,0 +1,13 @@
+{
+  "name": "gen-tracking_point_command_response-roundtrip",
+  "from": "mavsdk-camera-server-tracking-point-command",
+  "to": "mavsdk-camera-server-tracking-point-command",
+  "input": "0a0f0d0000003e150000403f1d0000b03f",
+  "expect": "0a0f0d0000003e150000403f1d0000b03f",
+  "model": {
+    "@kind": "tracking_point_command_response",
+    "mavsdkcameraservertrackingpointcommand.track_point_point_x": "0.125",
+    "mavsdkcameraservertrackingpointcommand.track_point_point_y": "0.75",
+    "mavsdkcameraservertrackingpointcommand.track_point_radius": "1.375"
+  }
+}

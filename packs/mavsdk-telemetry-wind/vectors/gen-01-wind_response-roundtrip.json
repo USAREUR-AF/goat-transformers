@@ -1,0 +1,18 @@
+{
+  "name": "gen-wind_response-roundtrip",
+  "from": "mavsdk-telemetry-wind",
+  "to": "mavsdk-telemetry-wind",
+  "input": "0a280d0000003e150000403f1d0000b03f25000000402d0000284035000050403d000078404500009040",
+  "expect": "0a280d0000003e150000403f1d0000b03f25000000402d0000284035000050403d000078404500009040",
+  "model": {
+    "@kind": "wind_response",
+    "mavsdktelemetrywind.wind_wind_x_ned_m_s": "0.125",
+    "mavsdktelemetrywind.wind_wind_y_ned_m_s": "0.75",
+    "mavsdktelemetrywind.wind_wind_z_ned_m_s": "1.375",
+    "mavsdktelemetrywind.wind_horizontal_variability_stddev_m_s": "2",
+    "mavsdktelemetrywind.wind_vertical_variability_stddev_m_s": "2.625",
+    "mavsdktelemetrywind.wind_wind_altitude_msl_m": "3.25",
+    "mavsdktelemetrywind.wind_horizontal_wind_speed_accuracy_m_s": "3.875",
+    "mavsdktelemetrywind.wind_vertical_wind_speed_accuracy_m_s": "4.5"
+  }
+}

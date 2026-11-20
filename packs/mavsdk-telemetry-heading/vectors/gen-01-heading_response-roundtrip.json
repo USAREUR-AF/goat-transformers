@@ -1,0 +1,11 @@
+{
+  "name": "gen-heading_response-roundtrip",
+  "from": "mavsdk-telemetry-heading",
+  "to": "mavsdk-telemetry-heading",
+  "input": "0a0909000000000000d03f",
+  "expect": "0a0909000000000000d03f",
+  "model": {
+    "@kind": "heading_response",
+    "mavsdktelemetryheading.heading_deg_heading_deg": "0.25"
+  }
+}

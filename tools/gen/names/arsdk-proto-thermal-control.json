@@ -1,0 +1,8 @@
+{
+ "16.1[]": "default_capabilities_powersaving_modes",
+ "16.2": "default_capabilities_calibration_method",
+ "17.1": "calibration_state_step",
+ "17.2": "calibration_state_require_user_action",
+ "18": "event_power_saving",
+ "arsdk.thermalcontrol.Event.Capabilities:1[]item": "capabilities_powersaving_modes_item"
+}

@@ -1,0 +1,18 @@
+{
+  "name": "gen-state-roundtrip",
+  "from": "arsdk-proto-usb-power",
+  "to": "arsdk-proto-usb-power",
+  "input": "8201140a040a020101120c0a04080110010a0408011001",
+  "expect": "8201140a040a020101120c0a04080110010a0408011001",
+  "model": {
+    "@kind": "state",
+    "arsdkprotousbpower.default_capabilities_supported_types.#": "2",
+    "arsdkprotousbpower.default_capabilities_supported_types[0].arsdkprotousbpower.capabilities_supported_types_item": "1",
+    "arsdkprotousbpower.default_capabilities_supported_types[1].arsdkprotousbpower.capabilities_supported_types_item": "1",
+    "arsdkprotousbpower.usb_powers_powers.#": "2",
+    "arsdkprotousbpower.usb_powers_powers[0].arsdkprotousbpower.power_connector_type": "1",
+    "arsdkprotousbpower.usb_powers_powers[0].arsdkprotousbpower.power_enabled": "1",
+    "arsdkprotousbpower.usb_powers_powers[1].arsdkprotousbpower.power_connector_type": "1",
+    "arsdkprotousbpower.usb_powers_powers[1].arsdkprotousbpower.power_enabled": "1"
+  }
+}

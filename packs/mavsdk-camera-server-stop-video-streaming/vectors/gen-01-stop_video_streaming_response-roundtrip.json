@@ -1,0 +1,11 @@
+{
+  "name": "gen-stop_video_streaming_response-roundtrip",
+  "from": "mavsdk-camera-server-stop-video-streaming",
+  "to": "mavsdk-camera-server-stop-video-streaming",
+  "input": "0864",
+  "expect": "0864",
+  "model": {
+    "@kind": "stop_video_streaming_response",
+    "mavsdkcameraserverstopvideostreaming.stop_video_streaming_response_stream_id": "100"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "gen-tracking_rectangle_command_response-roundtrip",
+  "from": "mavsdk-camera-server-tracking-rectangle-command",
+  "to": "mavsdk-camera-server-tracking-rectangle-command",
+  "input": "0a140d0000003e150000403f1d0000b03f2500000040",
+  "expect": "0a140d0000003e150000403f1d0000b03f2500000040",
+  "model": {
+    "@kind": "tracking_rectangle_command_response",
+    "mavsdkcameraservertrackingrectanglecommand.track_rectangle_top_left_corner_x": "0.125",
+    "mavsdkcameraservertrackingrectanglecommand.track_rectangle_top_left_corner_y": "0.75",
+    "mavsdkcameraservertrackingrectanglecommand.track_rectangle_bottom_right_corner_x": "1.375",
+    "mavsdkcameraservertrackingrectanglecommand.track_rectangle_bottom_right_corner_y": "2"
+  }
+}

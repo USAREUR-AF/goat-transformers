@@ -1,0 +1,8 @@
+{
+ "16.4.1[]": "links_status_links",
+ "arsdk.network.LinksStatus.LinkInfo:1": "link_info_type",
+ "arsdk.network.LinksStatus.LinkInfo:2": "link_info_status",
+ "arsdk.network.LinksStatus.LinkInfo:3": "link_info_quality",
+ "arsdk.network.LinksStatus.LinkInfo:4": "link_info_error",
+ "arsdk.network.LinksStatus.LinkInfo:5": "link_info_cellular_status"
+}

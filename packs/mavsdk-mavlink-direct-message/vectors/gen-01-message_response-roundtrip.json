@@ -1,0 +1,16 @@
+{
+  "name": "gen-message_response-roundtrip",
+  "from": "mavsdk-mavlink-direct-message",
+  "to": "mavsdk-mavlink-direct-message",
+  "input": "0a2b0a0e6d6573736167655f6e616d652d3010890118ae0120d30128f801320d6669656c64735f6a736f6e2d35",
+  "expect": "0a2b0a0e6d6573736167655f6e616d652d3010890118ae0120d30128f801320d6669656c64735f6a736f6e2d35",
+  "model": {
+    "@kind": "message_response",
+    "mavsdkmavlinkdirectmessage.message_message_name": "message_name-0",
+    "mavsdkmavlinkdirectmessage.message_system_id": "137",
+    "mavsdkmavlinkdirectmessage.message_component_id": "174",
+    "mavsdkmavlinkdirectmessage.message_target_system_id": "211",
+    "mavsdkmavlinkdirectmessage.message_target_component_id": "248",
+    "mavsdkmavlinkdirectmessage.message_fields_json": "fields_json-5"
+  }
+}

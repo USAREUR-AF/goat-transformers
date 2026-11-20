@@ -1,0 +1,13 @@
+{
+  "name": "gen-raw_gnss_location-roundtrip",
+  "from": "arsdk-proto-navigation",
+  "to": "arsdk-proto-navigation",
+  "input": "121709000000000000d03f1100000000000000401d0000b03f",
+  "expect": "121709000000000000d03f1100000000000000401d0000b03f",
+  "model": {
+    "@kind": "raw_gnss_location",
+    "arsdkprotonavigation.raw_gnss_location_latitude": "0.25",
+    "arsdkprotonavigation.raw_gnss_location_longitude": "2",
+    "arsdkprotonavigation.raw_gnss_location_altitude_amsl": "1.375"
+  }
+}

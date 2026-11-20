@@ -1,0 +1,11 @@
+{
+  "name": "gen-focus_range_response-roundtrip",
+  "from": "mavsdk-camera-server-focus-range",
+  "to": "mavsdk-camera-server-focus-range",
+  "input": "0d0000003e",
+  "expect": "0d0000003e",
+  "model": {
+    "@kind": "focus_range_response",
+    "mavsdkcameraserverfocusrange.focus_range_response_focus_distance_m": "0.125"
+  }
+}

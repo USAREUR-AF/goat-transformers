@@ -1,0 +1,20 @@
+{
+  "name": "gen-download_mission_with_progress_response-roundtrip",
+  "from": "mavsdk-mission-download-mission-with-progress",
+  "to": "mavsdk-mission-download-mission-with-progress",
+  "input": "0a100801120c726573756c745f7374722d3112a2010801150000004018012296010a490900000000000022401100000000008025401d00009040250000a4402801350000cc403d0000e04040014d0000803e510000000000c038405d0000c03f65000008406d0000304070010a49090000000000c04040110000000000a041401d0000a840250000bc402801350000e4403d0000f84040014d0000803f5100000000008022405d0000104065000038406d000060407001",
+  "expect": "0a100801120c726573756c745f7374722d3112a2010801150000004018012296010a490900000000000022401100000000008025401d00009040250000a4402801350000cc403d0000e04040014d0000803e510000000000c038405d0000c03f65000008406d0000304070010a49090000000000c04040110000000000a041401d0000a840250000bc402801350000e4403d0000f84040014d0000803f5100000000008022405d0000104065000038406d000060407001",
+  "model": {
+    "@kind": "download_mission_with_progress_response",
+    "mavsdkmissiondownloadmissionwithprogress.mission_result_result": "1",
+    "mavsdkmissiondownloadmissionwithprogress.mission_result_result_str": "result_str-1",
+    "mavsdkmissiondownloadmissionwithprogress.progress_data_has_progress": "1",
+    "mavsdkmissiondownloadmissionwithprogress.progress_data_progress": "2",
+    "mavsdkmissiondownloadmissionwithprogress.progress_data_has_mission": "1",
+    "mavsdkmissiondownloadmissionwithprogress.progress_data_mission_plan_mission_items.#": "2",
+    "mavsdkmissiondownloadmissionwithprogress.progress_data_mission_plan_mission_items[0].mavsdkmissiondownloadmissionwithprogress.mission_item_latitude_deg": "9",
+    "mavsdkmissiondownloadmissionwithprogress.progress_data_mission_plan_mission_items[0].mavsdkmissiondownloadmissionwithprogress.mission_item_longitude_deg": "10.75",
+    "mavsdkmissiondownloadmissionwithprogress.progress_data_mission_plan_mission_items[1].mavsdkmissiondownloadmissionwithprogress.mission_item_latitude_deg": "33.5",
+    "mavsdkmissiondownloadmissionwithprogress.progress_data_mission_plan_mission_items[1].mavsdkmissiondownloadmissionwithprogress.mission_item_longitude_deg": "35.25"
+  }
+}

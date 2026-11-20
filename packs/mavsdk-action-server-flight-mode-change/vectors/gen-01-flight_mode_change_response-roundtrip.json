@@ -1,0 +1,13 @@
+{
+  "name": "gen-flight_mode_change_response-roundtrip",
+  "from": "mavsdk-action-server-flight-mode-change",
+  "to": "mavsdk-action-server-flight-mode-change",
+  "input": "0a100801120c726573756c745f7374722d311001",
+  "expect": "0a100801120c726573756c745f7374722d311001",
+  "model": {
+    "@kind": "flight_mode_change_response",
+    "mavsdkactionserverflightmodechange.action_server_result_result": "1",
+    "mavsdkactionserverflightmodechange.action_server_result_result_str": "result_str-1",
+    "mavsdkactionserverflightmodechange.flight_mode_change_response_flight_mode": "1"
+  }
+}

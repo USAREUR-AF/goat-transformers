@@ -1,0 +1,22 @@
+{
+  "name": "gen-transponder_response-roundtrip",
+  "from": "mavsdk-transponder-transponder",
+  "to": "mavsdk-transponder-transponder",
+  "input": "0a3e0864110000000000000040190000000000000e4020012d0000284035000050403d0000784045000090404a0a63616c6c7369676e2d38500168d60370fb03",
+  "expect": "0a3e0864110000000000000040190000000000000e4020012d0000284035000050403d0000784045000090404a0a63616c6c7369676e2d38500168d60370fb03",
+  "model": {
+    "@kind": "transponder_response",
+    "mavsdktranspondertransponder.transponder_icao_address": "100",
+    "mavsdktranspondertransponder.transponder_latitude_deg": "2",
+    "mavsdktranspondertransponder.transponder_longitude_deg": "3.75",
+    "mavsdktranspondertransponder.transponder_altitude_type": "1",
+    "mavsdktranspondertransponder.transponder_absolute_altitude_m": "2.625",
+    "mavsdktranspondertransponder.transponder_heading_deg": "3.25",
+    "mavsdktranspondertransponder.transponder_horizontal_velocity_m_s": "3.875",
+    "mavsdktranspondertransponder.transponder_vertical_velocity_m_s": "4.5",
+    "mavsdktranspondertransponder.transponder_callsign": "callsign-8",
+    "mavsdktranspondertransponder.transponder_emitter_type": "1",
+    "mavsdktranspondertransponder.transponder_squawk": "470",
+    "mavsdktranspondertransponder.transponder_tslc_s": "507"
+  }
+}

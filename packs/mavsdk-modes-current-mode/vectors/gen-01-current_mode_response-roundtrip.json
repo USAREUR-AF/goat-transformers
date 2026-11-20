@@ -1,0 +1,16 @@
+{
+  "name": "gen-current_mode_response-roundtrip",
+  "from": "mavsdk-modes-current-mode",
+  "to": "mavsdk-modes-current-mode",
+  "input": "0a130a066e616d652d301089011801200128013001",
+  "expect": "0a130a066e616d652d301089011801200128013001",
+  "model": {
+    "@kind": "current_mode_response",
+    "mavsdkmodescurrentmode.mode_name": "name-0",
+    "mavsdkmodescurrentmode.mode_custom_mode": "137",
+    "mavsdkmodescurrentmode.mode_is_standard": "1",
+    "mavsdkmodescurrentmode.mode_is_user_selectable": "1",
+    "mavsdkmodescurrentmode.mode_is_advanced": "1",
+    "mavsdkmodescurrentmode.mode_is_auto_mode": "1"
+  }
+}

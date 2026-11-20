@@ -1,0 +1,14 @@
+{
+ "16.1.1[]": "default_capabilities_supported_features",
+ "16.1.2[]": "default_capabilities_supported_types",
+ "16.2.1": "enabled_value",
+ "16.3.1": "drone_id_type",
+ "16.3.2": "drone_id_value",
+ "16.4.1": "config_type",
+ "16.4.2": "config_operator_id",
+ "16.4.3": "config_status",
+ "16.5.1": "disconnected_has_been_connected",
+ "16.6.1": "connected_serial",
+ "arsdk.dri.Capabilities:1[]item": "capabilities_supported_features_item",
+ "arsdk.dri.Capabilities:2[]item": "capabilities_supported_types_item"
+}

@@ -1,0 +1,11 @@
+{
+  "name": "gen-armed_response-roundtrip",
+  "from": "mavsdk-telemetry-armed",
+  "to": "mavsdk-telemetry-armed",
+  "input": "0801",
+  "expect": "0801",
+  "model": {
+    "@kind": "armed_response",
+    "mavsdktelemetryarmed.armed_response_is_armed": "1"
+  }
+}

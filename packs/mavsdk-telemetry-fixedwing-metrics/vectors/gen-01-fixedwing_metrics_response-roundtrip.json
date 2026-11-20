@@ -1,0 +1,16 @@
+{
+  "name": "gen-fixedwing_metrics_response-roundtrip",
+  "from": "mavsdk-telemetry-fixedwing-metrics",
+  "to": "mavsdk-telemetry-fixedwing-metrics",
+  "input": "0a1e0d0000003e150000403f1d0000b03f25000000402d000028403500005040",
+  "expect": "0a1e0d0000003e150000403f1d0000b03f25000000402d000028403500005040",
+  "model": {
+    "@kind": "fixedwing_metrics_response",
+    "mavsdktelemetryfixedwingmetrics.fixedwing_metrics_airspeed_m_s": "0.125",
+    "mavsdktelemetryfixedwingmetrics.fixedwing_metrics_throttle_percentage": "0.75",
+    "mavsdktelemetryfixedwingmetrics.fixedwing_metrics_climb_rate_m_s": "1.375",
+    "mavsdktelemetryfixedwingmetrics.fixedwing_metrics_groundspeed_m_s": "2",
+    "mavsdktelemetryfixedwingmetrics.fixedwing_metrics_heading_deg": "2.625",
+    "mavsdktelemetryfixedwingmetrics.fixedwing_metrics_absolute_altitude_m": "3.25"
+  }
+}

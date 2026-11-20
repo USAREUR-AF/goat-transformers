@@ -1,0 +1,12 @@
+{
+  "name": "gen-status_text_response-roundtrip",
+  "from": "mavsdk-telemetry-status-text",
+  "to": "mavsdk-telemetry-status-text",
+  "input": "0a0a08011206746578742d31",
+  "expect": "0a0a08011206746578742d31",
+  "model": {
+    "@kind": "status_text_response",
+    "mavsdktelemetrystatustext.status_text_type": "1",
+    "mavsdktelemetrystatustext.status_text_text": "text-1"
+  }
+}

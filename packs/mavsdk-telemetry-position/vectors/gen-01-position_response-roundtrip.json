@@ -1,0 +1,16 @@
+{
+  "name": "gen-position_response-roundtrip",
+  "from": "mavsdk-telemetry-position",
+  "to": "mavsdk-telemetry-position",
+  "input": "0a1c09000000000000d03f1100000000000000401d0000b03f2500000040",
+  "expect": "0a1c09000000000000d03f1100000000000000401d0000b03f2500000040",
+  "model": {
+    "@kind": "position_response",
+    "mavsdktelemetryposition.position_latitude_deg": "0.25",
+    "lat": "0.25",
+    "mavsdktelemetryposition.position_longitude_deg": "2",
+    "lon": "2",
+    "mavsdktelemetryposition.position_absolute_altitude_m": "1.375",
+    "mavsdktelemetryposition.position_relative_altitude_m": "2"
+  }
+}
