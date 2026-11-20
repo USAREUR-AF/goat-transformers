@@ -107,6 +107,26 @@ ccsds-clcw; modules ccsdssp, ccsdstm, ccsdstc, ccsdsaos, ccsdsclcw
   Reproduction Permission Statement for Publications. Field positions, widths
   and values only; no text, table or figure.
 
+Packs ccsds-uslp-frame, ccsds-cfdp-pdu, ccsds-prox1-frame; modules ccsdsuslp,
+ccsdscfdp, ccsdsprox1
+  CCSDS 732.1-B-3 Unified Space Data Link Protocol (June 2024, EC 1),
+  https://ccsds.org/Pubs/732x1b3e1.pdf; CCSDS 727.0-B-5 CCSDS File Delivery
+  Protocol (July 2020, EC 1), https://ccsds.org/Pubs/727x0b5e1.pdf; CCSDS
+  211.0-B-6 Proximity-1 Space Link Protocol, Data Link Layer (July 2020, EC 1),
+  https://ccsds.org/Pubs/211x0b6e1.pdf. Consultative Committee for Space Data
+  Systems. Reused with attribution under the CCSDS Reproduction Permission
+  Statement for Publications. Field positions, widths and values only; no
+  text, table or figure.
+
+Packs ccsds-cuc-time, ccsds-cds-time, ccsds-ccs-time, ccsds-encap-packet;
+modules ccsdstime, ccsdsep
+  CCSDS 301.0-B-4 Time Code Formats (November 2010, EC 1),
+  https://ccsds.org/Pubs/301x0b4e1.pdf; CCSDS 133.1-B-3 Encapsulation Packet
+  Protocol (May 2020, EC 1), https://ccsds.org/Pubs/133x1b3e1.pdf.
+  Consultative Committee for Space Data Systems. Reused with attribution under
+  the CCSDS Reproduction Permission Statement for Publications. Field
+  positions, widths and values only; no text, table or figure.
+
 Pack ccsds-ndm-xml; module ccsdsndm
   CCSDS Navigation Data Messages XML schema set 4.0.0 (CCSDS 505.0-B-3),
   https://sanaregistry.org/r/ndmxml_unqualified; keyword meanings from CCSDS
@@ -625,3 +645,40 @@ Packs sbf-*; modules sbf, sbf<group>
   Copyright (c) 2020 semuadmin (Steve Smith). Block names and numbers, field
   names, types, scales and bit widths only; read from the definition files,
   which are not run.
+
+Pack unicore; module unicore
+  Unicore UNI binary message definitions of pyunigps,
+  https://github.com/semuconsulting/pyunigps v1.0.1. BSD 3-Clause License,
+  Copyright (c) 2020 semuadin (Steve Smith) (the upstream spelling). Message
+  names and IDs, field names, types, scales and bit widths only; read from the
+  definition files, which are not run.
+
+Packs overture-*; modules overture*
+  Overture Maps schema, https://github.com/OvertureMaps/schema tag v2.0.0
+  (schema/). Overture Maps Foundation. Creative Commons Attribution 4.0
+  International (CC BY 4.0). The packs are derived from the schema, restating
+  its structure, and are not endorsed by the Overture Maps Foundation.
+
+Packs gz-msgs-*; modules gzmsgs*
+  Gazebo messages (gz-msgs), release gz-msgs12_12.0.0, protobuf definitions,
+  https://github.com/gazebosim/gz-msgs. Apache License, Version 2.0, Copyright
+  Open Source Robotics Foundation and others. Field numbers, names and types
+  only.
+
+Packs awc-*; modules awc*
+  AviationWeather.gov Data API OpenAPI document,
+  https://aviationweather.gov/data/schema/openapi.yaml, version v4.0, copy of
+  2026-11-20. A work of the United States Government (NOAA/NWS Aviation
+  Weather Center) in the public domain; no endorsement by NOAA or the NWS is
+  implied.
+
+Packs usgs-earthquake, usgs-earthquake-feed; module usgsquake
+  USGS Earthquake Hazards Program GeoJSON summary feed documentation and ComCat
+  event terms (earthquake.usgs.gov). Works of the U.S. Geological Survey in the
+  U.S. public domain.
+
+Pack vss-vehicle; module vssvehicle
+  COVESA Vehicle Signal Specification v6.1,
+  https://github.com/COVESA/vehicle_signal_specification tag v6.1. Copyright
+  (c) 2016 Contributors to COVESA. Mozilla Public License 2.0. The pack
+  restates the signal tree's structure.
