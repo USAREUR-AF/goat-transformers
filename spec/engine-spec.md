@@ -4558,12 +4558,12 @@ converts only `xml` formats does not carry the `bits` or `protobuf` codec.
 ### Ruling 1: the wires of a build
 
 - **1a.** An engine is built with a set of wires, a subset of `xml`,
-  `geojson`, `json`, `bits`, `protobuf` and `text`. A build that names no set
-  has all six. The way a build names its set belongs to the engine's language
+  `geojson`, `json`, `bits`, `protobuf`, `text` and `tlv`. A build that names
+  no set has all seven. The way a build names its set belongs to the engine's language
   and is stated in the engine's README (a Cargo feature, a build tag, a
   compile definition, a build option).
 - **1b.** A build with a set of wires behaves, for every pack on a wire in
-  the set, exactly as a build with all six: the same bytes, the same model
+  the set, exactly as a build with all seven: the same bytes, the same model
   values and the same named errors.
 - **1c.** A pack whose `wire` value is a wire of this specification that the
   build does not have is `unknown-wire`, raised where 5b of 0.11 raises
@@ -4572,20 +4572,20 @@ converts only `xml` formats does not carry the `bits` or `protobuf` codec.
   value that is not a wire at all. A pack whose `wire` value is no wire of
   this specification is `unknown-wire` as before.
 - **1d.** A build never has a wire without the codecs it needs to read and
-  write it: `geojson` needs nothing of `json`, and the sequential layout is
-  part of `bits`.
+  write it: `geojson` needs nothing of `json`; the sequential layout, six-bit
+  armor (0.14) and `encoding uper` (0.19) are part of `bits`.
 - **1e.** The capability report and `model_keys` of a format that loaded are
   unchanged. A format that did not load is `unknown-format` (ruling 5 of
   0.11).
 
 ### What pins it
 
-A conversion vector runs on a build with all six wires. Ruling 1 is pinned by
+A conversion vector runs on a build with all seven wires. Ruling 1 is pinned by
 each engine's reduced-build check, which the `conformance` workflow runs: the
 engine is built with the set `xml`, `json` and `geojson`; every vector whose
 `from` and `to` packs, and the packs those vectors load, are on those three
 wires passes; and loading a pack on `bits`, on `protobuf` and on `text` is
-`unknown-wire` with a message that names the wire. The check also records the
+`unknown-wire` with a message that names the wire (a pack on `tlv` too). The check also records the
 size of the reduced build beside the full one.
 
 `tools/goat-pkg plan` names, for each language, the switch that builds the
