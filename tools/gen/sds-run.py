@@ -77,14 +77,29 @@ POSITION = {
 }
 
 # Not generated, though listed in the manifest. Listed so the skip is a decision.
-#   XTC  restates XTCE 1.2 (OMG and CCSDS 660.0-B-2), a telemetry and command database,
-#        not a message. This project does not build XTCE: the OMG document notice
-#        restricts reuse (docs/coverage-roadmap.md). A person decides whether the
-#        Apache-2.0 restatement changes that.
 #   REC  a collection whose records are a union of every other standard: its keys
 #        repeat the other packs (19,000 keys, 12.7 MB at depth 8).
-SKIPPED = {"XTC": "restates XTCE; not built, see docs/coverage-roadmap.md",
-           "REC": "a union of every other standard; repeats their packs"}
+SKIPPED = {"REC": "a union of every other standard; repeats their packs"}
+
+# Built and labelled (the licensing model: build and label, never skip for a licence
+# alone). XTC restates XTCE 1.2 (OMG formal/18-10-04 and CCSDS 660.0-B-2), a telemetry
+# and command database. The SDS schema is Apache-2.0 like every other SDS schema, so
+# the pack is Apache-2.0; its PROVENANCE.md states the SPDX licence, the date it was
+# read and the notice of the OMG document it restates (LABELLED below). Every other
+# standard's PROVENANCE.md is written as before.
+OMG_XTCE_NOTE = (
+    "The schema restates the structure of XTCE, the XML Telemetric and Command Exchange "
+    "standard: OMG XTCE 1.2 (OMG document formal/18-10-04, https://www.omg.org/spec/XTCE/1.2/, "
+    "PDF SHA-256 `f31d140f3493b417aa542bbcc3465b58a7cb089e8ca9b794978f4d3aa994fa49`, read on "
+    "2026-11-20), also published as CCSDS 660.0-B-2. Neither document, nor the XTCE XML schema, "
+    "is read by the generator or copied here. The OMG document's notice (Copyright 2014-2018 "
+    "Object Management Group, Inc., and the companies it lists) grants, in its section Licenses, "
+    "a license \"to use this specification to create and distribute software and special purpose "
+    "specifications that are based upon this specification\"; its other conditions (no copies "
+    "posted on a network, no resale, no modification) apply to copies of the document, and this "
+    "repository holds none. The pack is labelled Apache-2.0, the licence of the SDS schema it is "
+    "generated from; it is not endorsed by the OMG or the CCSDS.")
+LABELLED = {"XTC": ("Apache-2.0", "2026-11-20", OMG_XTCE_NOTE)}
 
 # Size limits. A standard whose pack, module and names file come to more than 1 MB at
 # the generator's default depth (8) gets the deepest --max-depth at which they stay
@@ -159,10 +174,13 @@ def title_of(src, name, rel):
 
 def provenance(name, rel, h, fmt, rows):
     lic = dict(rows)
-    out = ["# Provenance of the %s pack\n" % fmt,
-           "`tools/gen/sds-run.sh` runs `tools/gen/jsonschema2pack.py` on the standard's",
+    spdx, read_on, note = LABELLED.get(name, (None, "2026-11-19", None))
+    out = ["# Provenance of the %s pack\n" % fmt]
+    if spdx:
+        out.append("SPDX licence: %s\n" % spdx)
+    out += ["`tools/gen/sds-run.sh` runs `tools/gen/jsonschema2pack.py` on the standard's",
            "`main.fb.schema.json` and nothing else. The file is not kept in this repository.",
-           "Read on 2026-11-19.\n",
+           "Read on %s.\n" % read_on,
            "| | |\n|---|---|",
            "| Document | Space Data Standards, standard `%s`, JSON Schema (draft 2019-09) |" % name,
            "| Publisher | Edgesource Corporation (spacedatastandards.org) |",
@@ -177,6 +195,8 @@ def provenance(name, rel, h, fmt, rows):
            "Attribution: the pack is derived from the Space Data Standards schema `%s`; it restates the "
            "schema's structure with keys of this project's naming and is not endorsed by the publisher." % name,
            ""]
+    if note:
+        out += ["## The standard it restates\n", note, ""]
     return "\n".join(out)
 
 
