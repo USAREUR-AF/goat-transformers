@@ -1,0 +1,13 @@
+{
+  "name": "to-geojson",
+  "from": "cose-sign1",
+  "to": "geojson",
+  "input": "d28444a1013822a104446b2d303145706f73203750a0a1a2a3a4a5a6a7a8a9aaabacadaeaf",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{}}",
+  "model": {
+    "cose.kid": "6b2d3031",
+    "cose.signature": "a0a1a2a3a4a5a6a7a8a9aaabacadaeaf"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): packs/cose-sign1/pack.def and pack.md; No line of cose-sign1 binds a core key; geojson writes geometry null, no id and empty properties; residue is written only into its own format. Derived without an engine by a standalone RFC 8949 codec."
+}

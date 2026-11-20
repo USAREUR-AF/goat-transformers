@@ -1,0 +1,21 @@
+{
+  "name": "several-headers-and-empty-strings",
+  "from": "cose-sign1",
+  "to": "cose-sign1",
+  "input": "d28440a4012703183c04400641014050a0a1a2a3a4a5a6a7a8a9aaabacadaeaf",
+  "expect": "d28440a4012703183c04400641014050a0a1a2a3a4a5a6a7a8a9aaabacadaeaf",
+  "model": {
+    "cose.protected": "",
+    "cose.alg": "-8",
+    "cose.content_format": "60",
+    "cose.kid": "",
+    "cose.partial_iv": "01",
+    "cose.payload": "",
+    "cose.signature": "a0a1a2a3a4a5a6a7a8a9aaabacadaeaf",
+    "@absent": [
+      "cose.iv"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): packs/cose-sign1/pack.def and pack.md; [0] 40 (empty protected bucket) and [2] 40 (empty payload) and kid 40 are present empty strings (bytes decode of an empty byte string); alg -8 is 27, content format 60 is 183c, partial IV 4101; members in key order 01 < 03 < 04 < 06: a4 01 27 03 183c 04 40 06 4101. Derived without an engine by a standalone RFC 8949 codec."
+}

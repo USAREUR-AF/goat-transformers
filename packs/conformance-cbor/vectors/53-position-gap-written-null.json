@@ -8,5 +8,5 @@
     "probe.tag": "T"
   },
   "source": "constructed",
-  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Writing step 3: the array at 8 is written up to its highest present position, 1; position 0 has nothing to write and is f6: 0882f66154. Derived without an engine by a standalone RFC 8949 codec."
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Writing step 3 and ruling 23: the array at 8 is written up to its highest present position, 1; position 0 has nothing to write and no line walks into it, so it is f6: 0882f66154. Derived without an engine by a standalone RFC 8949 codec."
 }

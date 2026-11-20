@@ -1,0 +1,9 @@
+{
+  "name": "ipn-node-2-63-transform-decode",
+  "from": "dtn-bpv7",
+  "to": "dtn-bpv7",
+  "input": "9f890704018202821b8000000000000000018202820c078202820c00821b000000b6c5a56a7b182a1a05265c004277f386010100024974656d702032312e35448f53ba2bff",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): packs/dtn-bpv7/pack.def and pack.md; RFC 9171 4.1 (bundle), 4.3.1 (primary block), 4.3.2 (canonical block), 4.2.1 (CRC); Kind ipn; the destination node is 2^63 (1b8000000000000000): uint decode above 2^63-1 is transform-decode (pack.md, Limitations). Derived without an engine by a standalone RFC 8949 codec."
+}

@@ -1,0 +1,16 @@
+{
+  "name": "list-only-trailing-position-not-written",
+  "from": "conformance-cbor-group",
+  "to": "conformance-cbor-group",
+  "input": "818105",
+  "expect": "818105",
+  "model": {
+    "probe.nums.#": "1",
+    "probe.nums[0].probe.val": "5",
+    "@absent": [
+      "probe.s2"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): packs/conformance-cbor-group/pack.def (group probe.nums [0], field probe.val . int; field probe.s2 [1] bytes); probe.s2 is absent, so the highest present position is [0] (Writing step 3); [1] is not written. Output 81 81 05. Derived without an engine by a standalone RFC 8949 codec."
+}

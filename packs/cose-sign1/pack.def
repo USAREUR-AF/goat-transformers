@@ -1,0 +1,22 @@
+# COSE_Sign1 (RFC 9052, section 4.2): CBOR tag 18 enclosing an array of the
+# protected bucket (a byte string), the unprotected bucket (a map with
+# integer labels), the payload (a byte string, or nil when detached) and the
+# signature (a byte string). Public. No shared-model key is bound
+# (pack.md). Labels and types restated from RFC 9052, no text copied.
+format        cose-sign1
+version       0.1.0
+distribution  public
+source        "RFC 9052, CBOR Object Signing and Encryption (COSE): Structures and Process, STD 96, August 2022, https://www.rfc-editor.org/rfc/rfc9052.txt; sections 2, 3, 3.1, 4.2"
+source        "IETF Trust Legal Provisions Relating to IETF Documents (BCP 78, https://trustee.ietf.org/license-info); facts of structure, labels and types restated, no text or example copied"
+uses          cose
+wire          cbor
+tag           18
+
+field    cose.protected       [0]      bytes
+field    cose.alg             [1].1    int
+field    cose.content_format  [1].3    uint
+field    cose.kid             [1].4    bytes
+field    cose.iv              [1].5    bytes
+field    cose.partial_iv      [1].6    bytes
+field    cose.payload         [2]      bytes
+field    cose.signature       [3]      bytes

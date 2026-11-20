@@ -5186,7 +5186,7 @@ length.
    value over a `field`.
 2. A map or an array is written when a line writes into it or residue lies
    in it; one with nothing in it is not written, except the top item, which
-   is written empty, and except as step 4 states.
+   is written empty, and except as step 4 and ruling 23 state.
 3. An array addressed by positions is written up to its highest present
    position; a position below it with nothing to write is `null` (`f6`).
 4. A present list writes its array, `80` when the list is empty, one element
@@ -5291,3 +5291,15 @@ that path.
     one; elsewhere (`const .`, `when .`, a `group … .` in a body) it is
     `bad-locator`. `const <path> present` is `bad-directive`, as on every
     wire.
+23. **A container gap in a positional array.** In Writing step 3, a position
+    below the highest present one with nothing to write is written as an
+    empty map (`a0`) when the pack's lines walk into it as a map, as an empty
+    array (`80`) when they walk into it as an array, and as `null` (`f6`)
+    otherwise. A `group`'s own path is not walked into: an absent list at a
+    gap position is `f6` (a present list, even empty, is written by step 4).
+    So COSE_Sign1 with an empty unprotected header map round-trips as `a0`
+    at `[1]`.
+24. **A `group` line maps its own path.** The item at a group's path is not
+    residue: `null` or `undefined` there is an absent list and is not written
+    back, so `81f6` through `conformance-cbor-group` is `80`. (A gap at that
+    position below a present one is still `f6`, by ruling 23.)

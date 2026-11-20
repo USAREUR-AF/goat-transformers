@@ -1,0 +1,15 @@
+{
+  "name": "null-at-group-path-not-written-back",
+  "from": "conformance-cbor-group",
+  "to": "conformance-cbor-group",
+  "input": "81f6",
+  "expect": "80",
+  "model": {
+    "probe.nums.#": "absent",
+    "@absent": [
+      "probe.s2"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): packs/conformance-cbor-group/pack.def (group probe.nums [0], field probe.val . int; field probe.s2 [1] bytes); Ruling 24: a group line maps its own path, so the null at [0] is an absent list (Reading step 8), not residue, and is not written back. Nothing else is present, so the array has no highest present position and the top item is written empty (Writing steps 2 and 3): 81 f6 -> 80. Derived without an engine by a standalone RFC 8949 codec."
+}

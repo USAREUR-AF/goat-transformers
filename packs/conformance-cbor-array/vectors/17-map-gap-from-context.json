@@ -1,0 +1,12 @@
+{
+  "name": "map-gap-from-context",
+  "from": "conformance-cbor-array",
+  "to": "conformance-cbor-array",
+  "input": "d280",
+  "expect": "d284f6a0f641ff",
+  "context": {
+    "probe.tag": "ff"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Ruling 23: probe.tag from the context writes [3]; [0] and [2] are scalar lines with nothing to write: f6; [1] is walked into as a map by [1].1 and [1].4: a0. Output d2 84 f6 a0 f6 41ff. Derived without an engine by a standalone RFC 8949 codec."
+}

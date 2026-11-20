@@ -1,0 +1,21 @@
+{
+  "name": "empty-unprotected-map-and-detached-payload",
+  "from": "cose-sign1",
+  "to": "cose-sign1",
+  "input": "d28444a1013822a0f650a0a1a2a3a4a5a6a7a8a9aaabacadaeaf",
+  "expect": "d28444a1013822a0f650a0a1a2a3a4a5a6a7a8a9aaabacadaeaf",
+  "model": {
+    "cose.protected": "a1013822",
+    "cose.signature": "a0a1a2a3a4a5a6a7a8a9aaabacadaeaf",
+    "@absent": [
+      "cose.alg",
+      "cose.content_format",
+      "cose.kid",
+      "cose.iv",
+      "cose.partial_iv",
+      "cose.payload"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): packs/cose-sign1/pack.def and pack.md; Ruling 23: two gaps below [3]: [1], walked into as a map, is a0; [2], a scalar line, is f6: d2 84 44a1013822 a0 f6 50a0..af. Derived without an engine by a standalone RFC 8949 codec."
+}

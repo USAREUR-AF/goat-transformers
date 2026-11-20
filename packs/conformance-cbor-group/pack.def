@@ -1,0 +1,14 @@
+# Conformance probe pack for the `cbor` wire (spec 0.28, ruling 23): an array
+# at the top with a group at a position and a scalar after it, so a gap at the
+# group's position shows whether a group's own path is walked into.
+format        conformance-cbor-group
+version       0.28.0
+distribution  public
+source        "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses          probe
+wire          cbor
+
+group    probe.nums   [0]
+  field  probe.val    .          int
+end
+field    probe.s2     [1]        bytes

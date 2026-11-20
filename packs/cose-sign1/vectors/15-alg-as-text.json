@@ -1,0 +1,9 @@
+{
+  "name": "alg-as-text",
+  "from": "cose-sign1",
+  "to": "cose-sign1",
+  "input": "d28444a1013822a20165455333383404446b2d303145706f73203750a0a1a2a3a4a5a6a7a8a9aaabacadaeaf",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): packs/cose-sign1/pack.def and pack.md; Transforms for cbor: an item of another type than its transform takes is transform-decode: alg [1].1 is read by int; it holds the text ES384 (654553333834), major type 3. Derived without an engine by a standalone RFC 8949 codec."
+}

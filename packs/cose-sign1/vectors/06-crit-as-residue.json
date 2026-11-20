@@ -1,0 +1,18 @@
+{
+  "name": "crit-as-residue",
+  "from": "cose-sign1",
+  "to": "cose-sign1",
+  "input": "d28444a1013822a202820565782d61707004446b2d303145706f73203750a0a1a2a3a4a5a6a7a8a9aaabacadaeaf",
+  "expect": "d28444a1013822a202820565782d61707004446b2d303145706f73203750a0a1a2a3a4a5a6a7a8a9aaabacadaeaf",
+  "model": {
+    "cose.kid": "6b2d3031",
+    "@absent": [
+      "cose.alg",
+      "cose.content_format",
+      "cose.iv",
+      "cose.partial_iv"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): packs/cose-sign1/pack.def and pack.md; crit (label 2) is mapped by no line: residue [1].2, its item 820565782d617070, written back in the map at [1] in key order 02 < 04. Derived without an engine by a standalone RFC 8949 codec."
+}

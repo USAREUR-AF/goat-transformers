@@ -1147,6 +1147,21 @@ fn put(cur: &mut Out, path: &[Place], val: Vec<u8>) -> Result<bool, ()> {
     put(slot, rest, val)
 }
 
+/// The containers on the way to the last step of `path`, created empty
+/// where they are missing. A place already taken otherwise is left alone.
+fn skeleton(cur: &mut Out, path: &[Place]) {
+    if path.len() < 2 {
+        return;
+    }
+    let next = &path[1];
+    let slot = match (cur, &path[0]) {
+        (Out::Map(m), Place::Key(k)) => m.entry(k.clone()).or_insert_with(|| Out::container(next)),
+        (Out::Arr(a), Place::Pos(i)) => a.entry(*i).or_insert_with(|| Out::container(next)),
+        _ => return,
+    };
+    skeleton(slot, &path[1..]);
+}
+
 /// The bytes of an item; None for a map or array with nothing in it.
 fn emit(o: &Out) -> Option<Vec<u8>> {
     match o {
@@ -1171,9 +1186,13 @@ fn emit(o: &Out) -> Option<Vec<u8>> {
             let mut out = Vec::new();
             head(4, hi as u64 + 1, &mut out);
             for i in 0..=hi {
-                match items.get(&i) {
-                    Some(b) => out.extend_from_slice(b),
-                    None => out.push(0xf6),
+                match (items.get(&i), a.get(&i)) {
+                    (Some(b), _) => out.extend_from_slice(b),
+                    // ruling 23 of 0.28: a gap the lines walk into as a map
+                    // or an array is that container, empty; else `null`
+                    (None, Some(Out::Map(_))) => out.push(0xa0),
+                    (None, Some(Out::Arr(_))) => out.push(0x80),
+                    (None, _) => out.push(0xf6),
                 }
             }
             Some(out)
@@ -1244,6 +1263,20 @@ fn conflict(p: &Pack, locator: &str) -> Error {
 /// fields on one path the earliest present one is written (ruling 16 of 0.5).
 fn build(p: &Pack, sel: &Sel, ent: &Entity, array: bool) -> Result<Out, Error> {
     let mut root = if array { Out::Arr(BTreeMap::new()) } else { Out::Map(BTreeMap::new()) };
+    // every map and array the lines walk into, empty until a value lands in
+    // it: an empty one is not written, except as a gap (ruling 23 of 0.28)
+    let walked = sel
+        .fields
+        .iter()
+        .map(|f| f.locator.as_str())
+        .chain(sel.whens.iter().chain(sel.consts.iter()).map(|w| w.locator.as_str()))
+        .chain(sel.groups.iter().map(|g| g.locator.as_str()));
+    for loc in walked {
+        let path = places(&path(loc));
+        if path.len() > 1 {
+            skeleton(&mut root, &path);
+        }
+    }
     let mut fixed: Vec<&WhenDef> = sel.fixed().collect();
     fixed.sort_by_key(|w| w.line);
     for w in fixed {

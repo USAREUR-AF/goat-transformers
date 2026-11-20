@@ -1,0 +1,70 @@
+# Bundle Protocol version 7 bundle (RFC 9171): a CBOR array of blocks, the
+# primary block at [0]. Public. Maps the primary block by position; the
+# canonical blocks and the payload after it are residue (pack.md).
+format        dtn-bpv7
+version       0.1.0
+distribution  public
+source        "IETF RFC 9171, Bundle Protocol Version 7 (January 2022), sections 4.1 to 4.3.1 and 9.6, https://www.rfc-editor.org/rfc/rfc9171.txt"
+source        "IETF Trust, BCP 78 and the Trust Legal Provisions (https://trustee.ietf.org/license-info); structure, positions, code numbers and types restated, no text or examples copied"
+uses          bpv7
+wire          cbor
+
+# Common: every bundle of this pack is version 7.
+when     [0].[0]                     7
+
+field    bpv7.version                [0].[0]          uint
+field    bpv7.bundle_flags           [0].[1]          uint
+field    bpv7.primary_crc_type       [0].[2]          uint
+field    bpv7.dst_scheme             [0].[3].[0]      uint
+field    bpv7.src_scheme             [0].[4].[0]      uint
+field    bpv7.rpt_scheme             [0].[5].[0]      uint
+field    bpv7.creation_time_dtn_ms   [0].[6].[0]      uint
+field    bpv7.creation_seq           [0].[6].[1]      uint
+field    bpv7.lifetime_ms            [0].[7]          uint
+
+# A fragment, all three endpoint IDs of the ipn scheme. The primary block has
+# 10 elements, or 11 with a CRC, so element 9 exists only in a fragment.
+kind     fragment-ipn
+when     [0].[9]                     present
+when     [0].[3].[0]                 2
+when     [0].[4].[0]                 2
+when     [0].[5].[0]                 2
+requires bpv7.total_adu_length bpv7.dst_ipn_node bpv7.dst_ipn_service bpv7.src_ipn_node bpv7.src_ipn_service bpv7.rpt_ipn_node bpv7.rpt_ipn_service
+field    bpv7.dst_ipn_node           [0].[3].[1].[0]  uint
+field    bpv7.dst_ipn_service        [0].[3].[1].[1]  uint
+field    bpv7.src_ipn_node           [0].[4].[1].[0]  uint
+field    bpv7.src_ipn_service        [0].[4].[1].[1]  uint
+field    bpv7.rpt_ipn_node           [0].[5].[1].[0]  uint
+field    bpv7.rpt_ipn_service        [0].[5].[1].[1]  uint
+field    bpv7.fragment_offset        [0].[8]          uint
+field    bpv7.total_adu_length       [0].[9]          uint
+field    bpv7.primary_crc            [0].[10]         bytes
+
+# A fragment with any other endpoint IDs: their scheme-specific parts are
+# residue.
+kind     fragment
+when     [0].[9]                     present
+requires bpv7.total_adu_length
+field    bpv7.fragment_offset        [0].[8]          uint
+field    bpv7.total_adu_length       [0].[9]          uint
+field    bpv7.primary_crc            [0].[10]         bytes
+
+# Not a fragment, all three endpoint IDs of the ipn scheme. The primary block
+# has 8 elements, or 9 with a CRC.
+kind     ipn
+when     [0].[3].[0]                 2
+when     [0].[4].[0]                 2
+when     [0].[5].[0]                 2
+requires bpv7.dst_ipn_node bpv7.dst_ipn_service bpv7.src_ipn_node bpv7.src_ipn_service bpv7.rpt_ipn_node bpv7.rpt_ipn_service
+field    bpv7.dst_ipn_node           [0].[3].[1].[0]  uint
+field    bpv7.dst_ipn_service        [0].[3].[1].[1]  uint
+field    bpv7.src_ipn_node           [0].[4].[1].[0]  uint
+field    bpv7.src_ipn_service        [0].[4].[1].[1]  uint
+field    bpv7.rpt_ipn_node           [0].[5].[1].[0]  uint
+field    bpv7.rpt_ipn_service        [0].[5].[1].[1]  uint
+field    bpv7.primary_crc            [0].[8]          bytes
+
+# Not a fragment, any other endpoint IDs: their scheme-specific parts are
+# residue.
+kind     whole
+field    bpv7.primary_crc            [0].[8]          bytes

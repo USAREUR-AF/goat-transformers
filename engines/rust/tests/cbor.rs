@@ -244,6 +244,17 @@ fn positions_and_groups() {
     // a position below the highest written one is null
     let ent = entity(&[("uid", Value::Str("x".into()))]);
     assert_eq!(e.encode("t", &ent).unwrap(), "a10883f6f66178");
+    // ruling 23: a gap the lines walk into as a map is `a0`, as an array `80`, else `null`
+    let g = engine("field probe.n [1].1 int\nfield probe.val [3].[0] uint\nfield probe.s1 [4] bytes\n");
+    let ent = entity(&[("probe.s1", Value::Str("01".into()))]);
+    assert_eq!(g.encode("t", &ent).unwrap(), "85f6a0f6804101");
+    // an empty container that is not a gap is still not written
+    assert_eq!(g.encode("t", &entity(&[("probe.n", Value::I64(2))])).unwrap(), "82f6a10102");
+    assert_eq!(g.encode("t", &Entity::default()).unwrap(), "80");
+    // COSE_Sign1 with an empty unprotected header map round-trips as `a0` at [1]
+    let c = engine("tag 18\nfield probe.s1 [0] bytes\nfield probe.n [1].1 int\nfield uid [1].4 bytes\nfield probe.s2 [2] bytes\nfield probe.j1 [3] bytes\n");
+    let ent = c.decode("t", "d2844100a0f64101").unwrap();
+    assert_eq!(c.encode("t", &ent).unwrap(), "d2844100a0f64101");
     // items: one with members, one with nothing written, an empty list
     let mut ent = Entity::default();
     let mut item = Entity::default();

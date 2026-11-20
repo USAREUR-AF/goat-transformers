@@ -1,0 +1,9 @@
+{
+  "name": "primary-block-a-map-no-kind",
+  "from": "dtn-bpv7",
+  "to": "dtn-bpv7",
+  "input": "9fa8000701040200038202821903d101048202820c07058202820c0006821b000000b6c5a56a7b182a071a05265c0086010100024974656d702032312e35448f53ba2bff",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): packs/dtn-bpv7/pack.def and pack.md; RFC 9171 4.1 (bundle), 4.3.1 (primary block), 4.3.2 (canonical block), 4.2.1 (CRC); The primary block is a map (a8, keys 0 to 7) where the paths take [0].[i] steps. Reading step 7 comes before step 8: the common when [0].[0] 7 passes through a map where its next step is a position, so it does not hold, and a common when that fails is no-kind (0.5 Decode step 1), before step 8 would report malformed-wire. Derived without an engine by a standalone RFC 8949 codec."
+}

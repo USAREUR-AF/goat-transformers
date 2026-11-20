@@ -1,0 +1,17 @@
+# The cose module: the parts of a COSE_Sign1 message (RFC 9052, section 4.2)
+# and the common header parameters of the unprotected bucket (section 3.1)
+# that the core and track modules have no key for. A byte string is held as
+# lowercase hex (the `bytes` transform of the cbor wire). Labels, types and
+# structure are restated from RFC 9052; no text of the RFC is copied.
+module        cose
+version       0.1.0
+distribution  public
+source        "RFC 9052, CBOR Object Signing and Encryption (COSE): Structures and Process, STD 96, sections 3, 3.1 and 4.2; IETF Trust, BCP 78; structure and labels restated, no text copied"
+key  protected       string  -  "array element 0: the protected bucket, the encoded header map wrapped in a byte string, as hex of the wrapped bytes; empty when the bucket is empty"
+key  payload         string  -  "array element 2: the content, as hex of the byte string; absent when the content is detached (nil)"
+key  signature       string  -  "array element 3: the signature value, as hex of the byte string"
+key  alg             int     -  "unprotected label 1, alg: the algorithm, as an integer of the COSE Algorithms registry (the text form is not read)"
+key  content_format  int     -  "unprotected label 3, content type, in its unsigned integer form: a CoAP Content-Format number (the text media-type form is not read)"
+key  kid             string  -  "unprotected label 4, kid: a key identifier, a hint for finding the key, not unique, as hex of the byte string"
+key  iv              string  -  "unprotected label 5, IV: the full initialization vector, as hex of the byte string"
+key  partial_iv      string  -  "unprotected label 6, Partial IV: part of the initialization vector, as hex of the byte string"

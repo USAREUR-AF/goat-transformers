@@ -1,0 +1,5 @@
+Pack cose-sign1; module cose
+  IETF RFC 9052, CBOR Object Signing and Encryption (COSE): Structures and
+  Process (STD 96), and RFC 9053 for algorithm identifiers. Subject to BCP 78
+  and the IETF Trust Legal Provisions. Structure, labels and types only; no
+  text, CDDL, table or example.

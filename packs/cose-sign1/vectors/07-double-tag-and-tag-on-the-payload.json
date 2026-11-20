@@ -1,0 +1,13 @@
+{
+  "name": "double-tag-and-tag-on-the-payload",
+  "from": "cose-sign1",
+  "to": "cose-sign1",
+  "input": "d2d28444a1013822a104446b2d3031d81845706f73203750a0a1a2a3a4a5a6a7a8a9aaabacadaeaf",
+  "expect": "d28444a1013822a104446b2d303145706f73203750a0a1a2a3a4a5a6a7a8a9aaabacadaeaf",
+  "model": {
+    "cose.payload": "706f732037",
+    "cose.kid": "6b2d3031"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): packs/cose-sign1/pack.def and pack.md; Tags: the outermost tag is 18; the second d2 inside it is passed over; tag 24 (d818) on the payload is passed over and not written (ruling 2 of 0.28). Output is vector 01's message. Derived without an engine by a standalone RFC 8949 codec."
+}

@@ -1,0 +1,21 @@
+{
+  "name": "detached-payload",
+  "from": "cose-sign1",
+  "to": "cose-sign1",
+  "input": "d28444a1013822a104446b2d3031f650a0a1a2a3a4a5a6a7a8a9aaabacadaeaf",
+  "expect": "d28444a1013822a104446b2d3031f650a0a1a2a3a4a5a6a7a8a9aaabacadaeaf",
+  "model": {
+    "cose.protected": "a1013822",
+    "cose.kid": "6b2d3031",
+    "cose.signature": "a0a1a2a3a4a5a6a7a8a9aaabacadaeaf",
+    "@absent": [
+      "cose.alg",
+      "cose.content_format",
+      "cose.iv",
+      "cose.partial_iv",
+      "cose.payload"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): packs/cose-sign1/pack.def and pack.md; [2] nil (f6) is absent (ruling 6 of 0.28); on write [2] is below the highest present position [3] and is a scalar line: f6 (Writing step 3, ruling 23 'otherwise'). Derived without an engine by a standalone RFC 8949 codec."
+}

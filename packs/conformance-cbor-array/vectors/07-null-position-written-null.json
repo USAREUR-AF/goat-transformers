@@ -14,5 +14,5 @@
     ]
   },
   "source": "constructed",
-  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): null at [0] is absent; Writing step 3: the array is written up to [1], the highest present position, and [0] is f6. Derived without an engine by a standalone RFC 8949 codec."
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): null at [0] is absent; Writing step 3: the array is written up to [1], the highest present position, and [0], which no line walks into as a container, is f6 (ruling 23). Derived without an engine by a standalone RFC 8949 codec."
 }

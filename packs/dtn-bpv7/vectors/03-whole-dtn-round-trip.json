@@ -1,0 +1,32 @@
+{
+  "name": "whole-dtn-round-trip",
+  "from": "dtn-bpv7",
+  "to": "dtn-bpv7",
+  "input": "9f890700018201742f2f67732d6e6f7274682f74656c656d6574727982016a2f2f70726f62652d372f8201008200111a000927c042c56f8507020000451a0001d4c08601010001440102030442b1dcff",
+  "expect": "83890700018201742f2f67732d6e6f7274682f74656c656d6574727982016a2f2f70726f62652d372f8201008200111a000927c042c56f8507020000451a0001d4c08601010001440102030442b1dc",
+  "model": {
+    "@kind": "whole",
+    "bpv7.version": "7",
+    "bpv7.bundle_flags": "0",
+    "bpv7.primary_crc_type": "1",
+    "bpv7.dst_scheme": "1",
+    "bpv7.src_scheme": "1",
+    "bpv7.rpt_scheme": "1",
+    "bpv7.creation_time_dtn_ms": "0",
+    "bpv7.creation_seq": "17",
+    "bpv7.lifetime_ms": "600000",
+    "bpv7.primary_crc": "c56f",
+    "@absent": [
+      "bpv7.dst_ipn_node",
+      "bpv7.dst_ipn_service",
+      "bpv7.src_ipn_node",
+      "bpv7.src_ipn_service",
+      "bpv7.rpt_ipn_node",
+      "bpv7.rpt_ipn_service",
+      "bpv7.fragment_offset",
+      "bpv7.total_adu_length"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): packs/dtn-bpv7/pack.def and pack.md; RFC 9171 4.1 (bundle), 4.3.1 (primary block), 4.3.2 (canonical block), 4.2.1 (CRC); Endpoint IDs of the dtn scheme (code 1): dtn://gs-north/telemetry, dtn://probe-7/ and dtn:none (SSP the integer 0). Creation time 0 (unknown), so a bundle age block (type 7, data 1a0001d4c0 = 120000 ms) is present. Kind whole: no [0].[9], scheme codes not 2. The SSPs [0].[3].[1], [0].[4].[1], [0].[5].[1] are residue and come back as they stood; primary_crc at [0].[8] is CRC-16 c56f. Derived without an engine by a standalone RFC 8949 codec."
+}

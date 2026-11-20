@@ -278,8 +278,8 @@ vec(DC, "52-bytes-encode-odd-digits.json", "bytes-encode-odd-digits", C, C, H({0
     context={"probe.s2": "abc"},
     ref="bytes encode: an odd number of hex digits is transform-encode.")
 vec(DC, "53-position-gap-written-null.json", "position-gap-written-null", C, C, H({0: 1}),
-    H({0: 1, 8: [None, "T"]}), context={"probe.tag": "T"},
-    ref="Writing step 3: the array at 8 is written up to its highest present position, 1; position 0 has nothing to write and is f6: 0882f66154.")
+    H({0: 1, 8: positional({1: "T"})}), context={"probe.tag": "T"},
+    ref="Writing step 3 and ruling 23: the array at 8 is written up to its highest present position, 1; position 0 has nothing to write and no line walks into it, so it is f6: 0882f66154.")
 vec(DC, "54-to-geojson.json", "to-geojson", C, G, B,
     '{"type":"Feature","geometry":{"type":"Point","coordinates":[-90.25,45.5]},"properties":{"time_ms":1614456000000},"id":"U-1"}',
     model={"uid": "U-1", "lat": "45.5", "lon": "-90.25", "time_ms": "1614456000000"},
@@ -312,9 +312,12 @@ vec(DCA, "05-inner-tags-passed-over-long-tag-head.json", "inner-tags-passed-over
     ref="Tags: tag 18 read from a one-byte head (d812); the tags inside it (55799 on the array, 2 on [0], 100 on [1], 24 on uid) are passed over and not written; output d2 and the canonical item.")
 vec(DCA, "06-top-item-is-a-map.json", "top-item-is-a-map", CA, CA, "d2a0", error="malformed-wire",
     ref="Reading step 6: the paths of conformance-cbor-array decide an array ([0]); the top item, tag passed over, is a map.")
-vec(DCA, "07-null-position-written-null.json", "null-position-written-null", CA, CA, "d282f6a10105", "d282f6a10105",
+# ruling 23: the lines of conformance-cbor-array walk into [1] as a map ([1].1, [1].4); [0], [2], [3] are scalars
+CAW = {1: "map"}
+vec(DCA, "07-null-position-written-null.json", "null-position-written-null", CA, CA, "d282f6a10105",
+    H(Tag(18, positional({1: {1: 5}}, CAW))),
     model={"probe.n": "5", "@absent": ["probe.s1", "uid", "probe.s2", "probe.tag"]},
-    ref="null at [0] is absent; Writing step 3: the array is written up to [1], the highest present position, and [0] is f6.")
+    ref="null at [0] is absent; Writing step 3: the array is written up to [1], the highest present position, and [0], which no line walks into as a container, is f6 (ruling 23).")
 vec(DCA, "08-empty-top-array.json", "empty-top-array", CA, CA, "d280", "d280",
     model={"@absent": ["probe.s1", "probe.n", "uid", "probe.s2", "probe.tag"]},
     ref="Writing step 2: the top item is written empty; Writing step 5: d2 then 80.")
@@ -380,7 +383,7 @@ vec(DC, "63-hex-with-whitespace.json", "hex-with-whitespace", C, C, "a1 00\t0\n1
 vec(DC, "64-hex-with-a-form-feed.json", "hex-with-a-form-feed", C, C, "a100\f01", error="malformed-wire",
     ref="Ruling 11: a form feed is not whitespace of hex text: malformed-wire.")
 vec(DCA, "14-trailing-null-positions-not-written.json", "trailing-null-positions-not-written", CA, CA,
-    H(Tag(18, [b"\x01", {1: 5}, None, None])), H(Tag(18, [b"\x01", {1: 5}])),
+    H(Tag(18, [b"\x01", {1: 5}, None, None])), H(Tag(18, positional({0: b"\x01", 1: {1: 5}}, CAW))),
     model={"probe.s1": "01", "probe.n": "5", "@absent": ["probe.s2", "probe.tag"]},
     ref="Ruling 6 and Writing step 3: null at the mapped positions [2] and [3] is absent and not written back; the array is written up to [1].")
 
@@ -522,6 +525,10 @@ vec(DC, "73-null-walked-into-is-not-written-back.json", "null-walked-into-is-not
     H({0: 1, 7: None}), H({0: 1}),
     model={"@kind": "plain", "@absent": ["lat", "lon"]},
     ref="Ruling 12: lat (7.1) and lon (7.2) pass through null at 7: they are absent, and the null is walked into, not residue, so 07f6 is not written back.")
+
+exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "ruling23_cose.py")).read())
+exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "ruling23_group.py")).read())
+exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "bpv7.py")).read())
 
 for p, o in OUT:
     os.makedirs(os.path.dirname(p), exist_ok=True)

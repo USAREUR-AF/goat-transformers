@@ -1,0 +1,32 @@
+{
+  "name": "mixed-eids-whole",
+  "from": "dtn-bpv7",
+  "to": "dtn-bpv7",
+  "input": "9f890704028202821903d10182016a2f2f70726f62652d372f8202820c00821b000000b6c5ad0b20011a05265c00440bbda7d18501010000456d69786564ff",
+  "expect": "82890704028202821903d10182016a2f2f70726f62652d372f8202820c00821b000000b6c5ad0b20011a05265c00440bbda7d18501010000456d69786564",
+  "model": {
+    "@kind": "whole",
+    "bpv7.version": "7",
+    "bpv7.bundle_flags": "4",
+    "bpv7.primary_crc_type": "2",
+    "bpv7.dst_scheme": "2",
+    "bpv7.src_scheme": "1",
+    "bpv7.rpt_scheme": "2",
+    "bpv7.creation_time_dtn_ms": "785000500000",
+    "bpv7.creation_seq": "1",
+    "bpv7.lifetime_ms": "86400000",
+    "bpv7.primary_crc": "0bbda7d1",
+    "@absent": [
+      "bpv7.dst_ipn_node",
+      "bpv7.dst_ipn_service",
+      "bpv7.src_ipn_node",
+      "bpv7.src_ipn_service",
+      "bpv7.rpt_ipn_node",
+      "bpv7.rpt_ipn_service",
+      "bpv7.fragment_offset",
+      "bpv7.total_adu_length"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): packs/dtn-bpv7/pack.def and pack.md; RFC 9171 4.1 (bundle), 4.3.1 (primary block), 4.3.2 (canonical block), 4.2.1 (CRC); Destination and report-to ipn, source dtn: the when [0].[4].[0] 2 of kind ipn fails, so kind whole. The ipn SSPs 821903d101 and 820c00 and the dtn SSP are residue, written back unchanged. Primary CRC-32C 0bbda7d1. Derived without an engine by a standalone RFC 8949 codec."
+}

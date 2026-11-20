@@ -1,0 +1,21 @@
+{
+  "name": "non-deterministic-input-written-deterministic",
+  "from": "cose-sign1",
+  "to": "cose-sign1",
+  "input": "d8129f5805bf013822ffbf045f426b2d423031ff01390022ff5a00000005706f7320375f48a0a1a2a3a4a5a6a748a8a9aaabacadaeafffff",
+  "expect": "d28445bf013822ffa201382204446b2d303145706f73203750a0a1a2a3a4a5a6a7a8a9aaabacadaeaf",
+  "model": {
+    "cose.protected": "bf013822ff",
+    "cose.alg": "-35",
+    "cose.kid": "6b2d3031",
+    "cose.payload": "706f732037",
+    "cose.signature": "a0a1a2a3a4a5a6a7a8a9aaabacadaeaf",
+    "@absent": [
+      "cose.content_format",
+      "cose.iv",
+      "cose.partial_iv"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): packs/cose-sign1/pack.def and pack.md; Reading step 2 and Writing step 1: tag 18 in a one-byte head (d812), an indefinite array (9f..ff), an indefinite unprotected map with keys out of order and alg -35 in a two-byte head (390022), kid in two chunks, the payload with a four-byte length head, the signature in two chunks; written d2 84, a2 01 3822 04 446b2d3031, 45706f732037, 50a0..af. The protected bucket's content bf013822ff (itself an indefinite map) is an opaque byte string and is written back byte for byte: 45bf013822ff. Derived without an engine by a standalone RFC 8949 codec."
+}

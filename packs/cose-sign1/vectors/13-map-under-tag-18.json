@@ -1,0 +1,9 @@
+{
+  "name": "map-under-tag-18",
+  "from": "cose-sign1",
+  "to": "cose-sign1",
+  "input": "d2a40044a101382201a00245706f7320370350a0a1a2a3a4a5a6a7a8a9aaabacadaeaf",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): packs/cose-sign1/pack.def and pack.md; Reading step 6: the paths of cose-sign1 begin with positions, so the top item is an array; under tag 18 stands a map (a4, keys 0 to 3). Derived without an engine by a standalone RFC 8949 codec."
+}

@@ -1,0 +1,21 @@
+{
+  "name": "empty-unprotected-map",
+  "from": "cose-sign1",
+  "to": "cose-sign1",
+  "input": "d28444a1013822a045706f73203750a0a1a2a3a4a5a6a7a8a9aaabacadaeaf",
+  "expect": "d28444a1013822a045706f73203750a0a1a2a3a4a5a6a7a8a9aaabacadaeaf",
+  "model": {
+    "cose.protected": "a1013822",
+    "cose.payload": "706f732037",
+    "cose.signature": "a0a1a2a3a4a5a6a7a8a9aaabacadaeaf",
+    "@absent": [
+      "cose.alg",
+      "cose.content_format",
+      "cose.kid",
+      "cose.iv",
+      "cose.partial_iv"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): packs/cose-sign1/pack.def and pack.md; Ruling 23: [1] holds nothing to write and is below the highest present position [3]; the lines walk into it as a map, so it is written a0, not f6: d2 84 44a1013822 a0 45706f732037 50a0..af. Derived without an engine by a standalone RFC 8949 codec."
+}

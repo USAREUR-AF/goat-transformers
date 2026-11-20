@@ -78,6 +78,25 @@ def enc(item, canonical=True):
 
 def H(item, canonical=True): return enc(item, canonical).hex()
 
+def positional(present, walks=None):
+    """An array addressed by positions, as Writing step 3 and ruling 23 of
+    0.28 write it: up to the highest present position; a position below it
+    with nothing to write is an empty map when the pack's lines walk into it
+    as a map, an empty array when they walk into it as an array, else null.
+    present: {position: item to write}; walks: {position: "map" | "array" |
+    "group"}, stated by hand from the pack's lines. A position that is a
+    group's own path is not walked into (ruling 23): an absent list there is
+    null; a present list, even empty, is an item of `present` (step 4)."""
+    walks = walks or {}
+    if not present: return []
+    out = []
+    for i in range(max(present) + 1):
+        if i in present: out.append(present[i])
+        elif walks.get(i) == "map": out.append({})
+        elif walks.get(i) == "array": out.append([])
+        else: out.append(None)          # a scalar line, a group's own path, or no line
+    return out
+
 # ---------------------------------------------------------------- decoding
 class Malformed(Exception): pass
 

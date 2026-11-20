@@ -1,0 +1,32 @@
+{
+  "name": "ipn-round-trip",
+  "from": "dtn-bpv7",
+  "to": "dtn-bpv7",
+  "input": "9f890704018202821903d1018202820c078202820c00821b000000b6c5a56a7b182a1a05265c00429b19860a0200014482181e034218b586010100024974656d702032312e35448f53ba2bff",
+  "expect": "83890704018202821903d1018202820c078202820c00821b000000b6c5a56a7b182a1a05265c00429b19860a0200014482181e034218b586010100024974656d702032312e35448f53ba2b",
+  "model": {
+    "@kind": "ipn",
+    "bpv7.version": "7",
+    "bpv7.bundle_flags": "4",
+    "bpv7.primary_crc_type": "1",
+    "bpv7.dst_scheme": "2",
+    "bpv7.src_scheme": "2",
+    "bpv7.rpt_scheme": "2",
+    "bpv7.creation_time_dtn_ms": "785000000123",
+    "bpv7.creation_seq": "42",
+    "bpv7.lifetime_ms": "86400000",
+    "bpv7.dst_ipn_node": "977",
+    "bpv7.dst_ipn_service": "1",
+    "bpv7.src_ipn_node": "12",
+    "bpv7.src_ipn_service": "7",
+    "bpv7.rpt_ipn_node": "12",
+    "bpv7.rpt_ipn_service": "0",
+    "bpv7.primary_crc": "9b19",
+    "@absent": [
+      "bpv7.fragment_offset",
+      "bpv7.total_adu_length"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): packs/dtn-bpv7/pack.def and pack.md; RFC 9171 4.1 (bundle), 4.3.1 (primary block), 4.3.2 (canonical block), 4.2.1 (CRC); 9f, a primary block of 9 elements (version 7, flags 4, CRC type 1, ipn:977.1, ipn:12.7, ipn:12.0, creation [785000000123, 42], lifetime 86400000, CRC-16 9b19), a hop count block (type 10, number 2, CRC type 1, data 82181e03, CRC-16 18b5), a payload block (type 1, number 1, CRC type 2, data 'temp 21.5', CRC-32C 8f53ba2b), ff. Kind ipn: [0].[9] absent, all three scheme codes 2. The canonical blocks are residue [1] and [2]. Writing step 1 writes the outer array definite (83, no break); every block is canonical in the input and comes back byte for byte, so its CRC still holds. Derived without an engine by a standalone RFC 8949 codec."
+}
