@@ -454,7 +454,9 @@ class Checks(GateCase):
         made_up_needle = "zorblat quuxfrob"
         self.tree.write("docs/notes.md", "the Zorblat_Quuxfrob value, twice: zorblat quuxfrob\n")
         _, _, lines = self.run_gate(*self.needles(made_up_needle, "zq", "zorblat quuxfrob extra"))
-        printed = "\n".join(lines).lower()
+        # The temporary directory's random name may hold any short piece: it is
+        # not output of the gate's own, so it is removed before the check.
+        printed = "\n".join(lines).replace(self.tree.base, "<tmp>").lower()
         for piece in ("zorblat", "quuxfrob", "zor", "zq"):
             self.assertNotIn(piece, printed)
 
@@ -733,7 +735,7 @@ class Waiver(GateCase):
         for sources in (self.sources, os.path.join(self.tree.beside, "nowhere")):
             os.environ[gate.GEN_SOURCES_ENV] = sources
             _, _, lines = self.run_gate(*self.needles("zorblat", "zorblat quuxfrob"))
-            printed = "\n".join(lines).lower()
+            printed = "\n".join(lines).replace(self.tree.base, "<tmp>").lower()
             for piece in ("zorblat", "quuxfrob", "zor"):
                 self.assertNotIn(piece, printed)
 
