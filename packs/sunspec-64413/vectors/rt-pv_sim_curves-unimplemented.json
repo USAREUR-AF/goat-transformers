@@ -1,0 +1,11 @@
+{
+  "name": "sunspec-64413-roundtrip-pv_sim_curves-unimplemented",
+  "from": "sunspec-64413",
+  "to": "sunspec-64413",
+  "input": "fb9d00030000ffff8000",
+  "expect": "fb9d00030000ffff8000",
+  "model": {
+    "@kind": "pv_sim_curves",
+    "sunspec64413.pv_sim_curves_iv.#": "0"
+  }
+}

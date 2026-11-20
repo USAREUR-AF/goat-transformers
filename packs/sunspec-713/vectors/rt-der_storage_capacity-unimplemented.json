@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-713-roundtrip-der_storage_capacity-unimplemented",
+  "from": "sunspec-713",
+  "to": "sunspec-713",
+  "input": "02c90007ffffffffffffffffffff80008000",
+  "expect": "02c90007ffffffffffffffffffff80008000",
+  "model": {
+    "@kind": "der_storage_capacity"
+  }
+}

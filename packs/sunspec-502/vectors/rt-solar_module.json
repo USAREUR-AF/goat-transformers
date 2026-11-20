@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-502-roundtrip-solar_module",
+  "from": "sunspec-502",
+  "to": "sunspec-502",
+  "input": "01f6001c04032630c85fea8c4cb96ee60000111500003342556f0000779cffffd9cb00003bf81e25c0540000228104ae26dbc90aeb3700004d642f91",
+  "expect": "01f6001c04032630c85fea8c4cb96ee60000111500003342556f0000779cffffd9cb00003bf81e25c0540000228104ae26dbc90aeb3700004d642f91",
+  "model": {
+    "@kind": "solar_module"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-113-roundtrip-inverter_three_phase_float-unimplemented",
+  "from": "sunspec-113",
+  "to": "sunspec-113",
+  "input": "0071003c7fc000007fc000007fc000007fc000007fc000007fc000007fc000007fc000007fc000007fc000007fc000007fc000007fc000007fc000007fc000007fc000007fc000007fc000007fc000007fc000007fc000007fc000007fc00000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "expect": "0071003c7fc000007fc000007fc000007fc000007fc000007fc000007fc000007fc000007fc000007fc000007fc000007fc000007fc000007fc000007fc000007fc000007fc000007fc000007fc000007fc000007fc000007fc000007fc00000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "model": {
+    "@kind": "inverter_three_phase_float"
+  }
+}

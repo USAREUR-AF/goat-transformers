@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-705-roundtrip-der_volt_var-unimplemented",
+  "from": "sunspec-705",
+  "to": "sunspec-705",
+  "input": "02c1000dffffffffffffffffffffffffffffffffffffffff800080008000",
+  "expect": "02c1000dffffffffffffffffffffffffffffffffffffffff800080008000",
+  "model": {
+    "@kind": "der_volt_var"
+  }
+}

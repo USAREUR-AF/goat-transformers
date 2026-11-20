@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-707-roundtrip-der_trip_lv-unimplemented",
+  "from": "sunspec-707",
+  "to": "sunspec-707",
+  "input": "02c30007ffffffffffffffffffff80008000",
+  "expect": "02c30007ffffffffffffffffffff80008000",
+  "model": {
+    "@kind": "der_trip_lv"
+  }
+}

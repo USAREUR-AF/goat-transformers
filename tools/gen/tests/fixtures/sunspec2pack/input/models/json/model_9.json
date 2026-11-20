@@ -1,0 +1,53 @@
+{
+  "group": {
+    "groups": [
+      {
+        "count": "N",
+        "groups": [
+          {
+            "count": "M",
+            "name": "pt",
+            "points": [
+              {
+                "name": "V",
+                "size": 1,
+                "type": "int16"
+              }
+            ],
+            "type": "group"
+          }
+        ],
+        "name": "item",
+        "points": [
+          {
+            "name": "M",
+            "size": 1,
+            "type": "count"
+          }
+        ],
+        "type": "group"
+      }
+    ],
+    "name": "nested",
+    "points": [
+      {
+        "name": "ID",
+        "size": 1,
+        "type": "uint16",
+        "value": 9
+      },
+      {
+        "name": "L",
+        "size": 1,
+        "type": "uint16"
+      },
+      {
+        "name": "N",
+        "size": 1,
+        "type": "count"
+      }
+    ],
+    "type": "group"
+  },
+  "id": 9
+}

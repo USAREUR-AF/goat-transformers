@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-3-roundtrip-model_3-unimplemented",
+  "from": "sunspec-3",
+  "to": "sunspec-3",
+  "input": "0003003affffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "expect": "0003003affffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "model": {
+    "@kind": "model_3"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-103-roundtrip-inverter_three_phase-unimplemented",
+  "from": "sunspec-103",
+  "to": "sunspec-103",
+  "input": "00670032ffffffffffffffff8000ffffffffffffffffffffffff800080008000ffff8000800080008000800080008000000000008000ffff8000ffff80008000800080008000800080008000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "expect": "00670032ffffffffffffffff8000ffffffffffffffffffffffff800080008000ffff8000800080008000800080008000000000008000ffff8000ffff80008000800080008000800080008000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "model": {
+    "@kind": "inverter_three_phase"
+  }
+}

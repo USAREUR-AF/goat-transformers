@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-125-roundtrip-pricing",
+  "from": "sunspec-125",
+  "to": "sunspec-125",
+  "input": "007d000826c448f12b1e0d4d2f7a51a733d40000",
+  "expect": "007d000826c448f12b1e0d4d2f7a51a733d40000",
+  "model": {
+    "@kind": "pricing"
+  }
+}

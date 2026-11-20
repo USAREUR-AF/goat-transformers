@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-501-roundtrip-solar_module_float-unimplemented",
+  "from": "sunspec-501",
+  "to": "sunspec-501",
+  "input": "01f5001fffffffffffffffffffffffffffffffffffff80000000ffffffff7fc000007fc000007fc000007fc000007fc000007fc000007fc000007fc000007fc00000",
+  "expect": "01f5001fffffffffffffffffffffffffffffffffffff80000000ffffffff7fc000007fc000007fc000007fc000007fc000007fc000007fc000007fc000007fc00000",
+  "model": {
+    "@kind": "solar_module_float"
+  }
+}

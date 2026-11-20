@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-712-roundtrip-der_watt_var-unimplemented",
+  "from": "sunspec-712",
+  "to": "sunspec-712",
+  "input": "02c8000cffffffffffffffffffffffffffffffffffffffff80008000",
+  "expect": "02c8000cffffffffffffffffffffffffffffffffffffffff80008000",
+  "model": {
+    "@kind": "der_watt_var"
+  }
+}

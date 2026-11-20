@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-708-roundtrip-der_trip_hv",
+  "from": "sunspec-708",
+  "to": "sunspec-708",
+  "input": "02c400070d9a2fc751f474211650f87d1aaa",
+  "expect": "02c400070d9a2fc751f474211650f87d1aaa",
+  "model": {
+    "@kind": "der_trip_hv"
+  }
+}

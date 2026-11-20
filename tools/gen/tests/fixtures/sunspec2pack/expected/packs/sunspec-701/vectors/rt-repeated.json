@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-701-roundtrip-repeated",
+  "from": "sunspec-701",
+  "to": "sunspec-701",
+  "input": "02bd00016a15",
+  "expect": "02bd00016a15",
+  "model": {
+    "@kind": "repeated"
+  }
+}

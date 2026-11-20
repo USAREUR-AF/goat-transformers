@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-133-roundtrip-schedule-unimplemented",
+  "from": "sunspec-133",
+  "to": "sunspec-133",
+  "input": "00850006ffffffffffffffffffff0000",
+  "expect": "00850006ffffffffffffffffffff0000",
+  "model": {
+    "@kind": "schedule"
+  }
+}

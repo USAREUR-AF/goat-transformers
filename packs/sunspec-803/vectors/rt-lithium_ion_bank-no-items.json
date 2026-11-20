@@ -1,0 +1,11 @@
+{
+  "name": "sunspec-803-roundtrip-lithium_ion_bank-no-items",
+  "from": "sunspec-803",
+  "to": "sunspec-803",
+  "input": "0323001a00005d493f7621a543d225ff082e2a5b0c886eb510e43311553e776bd99a3bc71df40023e250447d26aac8d9eb060d332f60d18f",
+  "expect": "0323001a00005d493f7621a543d225ff082e2a5b0c886eb510e43311553e776bd99a3bc71df40023e250447d26aac8d9eb060d332f60d18f",
+  "model": {
+    "@kind": "lithium_ion_bank",
+    "sunspec803.lithium_ion_bank_string.#": "0"
+  }
+}

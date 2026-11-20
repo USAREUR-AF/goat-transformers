@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-135-roundtrip-lfrt-unimplemented",
+  "from": "sunspec-135",
+  "to": "sunspec-135",
+  "input": "0087000affffffffffffffffffffffffffff800080000000",
+  "expect": "0087000affffffffffffffffffffffffffff800080000000",
+  "model": {
+    "@kind": "lfrt"
+  }
+}

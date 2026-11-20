@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-8-roundtrip-model_8-unimplemented",
+  "from": "sunspec-8",
+  "to": "sunspec-8",
+  "input": "00080002ffffffff",
+  "expect": "00080002ffffffff",
+  "model": {
+    "@kind": "model_8"
+  }
+}

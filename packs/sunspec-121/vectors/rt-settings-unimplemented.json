@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-121-roundtrip-settings-unimplemented",
+  "from": "sunspec-121",
+  "to": "sunspec-121",
+  "input": "0079001effffffff8000ffffffffffff8000800080008000ffff8000800080008000ffffffffffffffffffff8000800080008000800080008000800080008000",
+  "expect": "0079001effffffff8000ffffffffffff8000800080008000ffff8000800080008000ffffffffffffffffffff8000800080008000800080008000800080008000",
+  "model": {
+    "@kind": "settings"
+  }
+}

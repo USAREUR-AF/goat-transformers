@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-2-roundtrip-aggregator",
+  "from": "sunspec-2",
+  "to": "sunspec-2",
+  "input": "0002000e49056b320d612f8e51bb000073e800001617384400005a7100007c9e",
+  "expect": "0002000e49056b320d612f8e51bb000073e800001617384400005a7100007c9e",
+  "model": {
+    "@kind": "aggregator"
+  }
+}

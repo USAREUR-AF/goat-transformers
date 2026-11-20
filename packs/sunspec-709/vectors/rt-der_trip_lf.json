@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-709-roundtrip-der_trip_lf",
+  "from": "sunspec-709",
+  "to": "sunspec-709",
+  "input": "02c500076e191048327554a276cfd8fefb2b",
+  "expect": "02c500076e191048327554a276cfd8fefb2b",
+  "model": {
+    "@kind": "der_trip_lf"
+  }
+}

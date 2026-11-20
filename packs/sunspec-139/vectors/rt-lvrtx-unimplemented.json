@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-139-roundtrip-lvrtx-unimplemented",
+  "from": "sunspec-139",
+  "to": "sunspec-139",
+  "input": "008b000affffffffffffffffffffffffffff80008000ffff",
+  "expect": "008b000affffffffffffffffffffffffffff80008000ffff",
+  "model": {
+    "@kind": "lvrtx"
+  }
+}

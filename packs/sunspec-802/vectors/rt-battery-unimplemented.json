@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-802-roundtrip-battery-unimplemented",
+  "from": "sunspec-802",
+  "to": "sunspec-802",
+  "input": "0322003effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff8000ffffffff8000ffff8000ffffffff800080008000800080008000800080008000800080008000",
+  "expect": "0322003effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff8000ffffffff8000ffff8000ffffffff800080008000800080008000800080008000800080008000",
+  "model": {
+    "@kind": "battery"
+  }
+}

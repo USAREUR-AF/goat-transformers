@@ -1,0 +1,11 @@
+{
+  "name": "sunspec-711-roundtrip-der_freq_droop-no-items",
+  "from": "sunspec-711",
+  "to": "sunspec-711",
+  "input": "02c7000c2f1b514873750000000015a4000037d159fe3c2bde5a0087",
+  "expect": "02c7000c2f1b514873750000000015a4000037d159fe3c2bde5a0087",
+  "model": {
+    "@kind": "der_freq_droop",
+    "sunspec711.der_freq_droop_ctl.#": "0"
+  }
+}

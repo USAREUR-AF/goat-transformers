@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-145-roundtrip-ext_settings",
+  "from": "sunspec-145",
+  "to": "sunspec-145",
+  "input": "0091000830ce52fb7528175739845bb17ddee00d",
+  "expect": "0091000830ce52fb7528175739845bb17ddee00d",
+  "model": {
+    "@kind": "ext_settings"
+  }
+}

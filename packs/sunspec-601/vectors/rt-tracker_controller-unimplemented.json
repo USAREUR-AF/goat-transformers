@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-601-roundtrip-tracker_controller-unimplemented",
+  "from": "sunspec-601",
+  "to": "sunspec-601",
+  "input": "0259001a53313700000000000000000000000000ffff53333100000000000000533338000000ffff8000000080000000ffffffff8000ffff",
+  "expect": "0259001a53313700000000000000000000000000ffff53333100000000000000533338000000ffff8000000080000000ffffffff8000ffff",
+  "model": {
+    "@kind": "tracker_controller"
+  }
+}

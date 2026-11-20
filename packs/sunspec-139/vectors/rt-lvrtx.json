@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-139-roundtrip-lvrtx",
+  "from": "sunspec-139",
+  "to": "sunspec-139",
+  "input": "008b000a0ff932265453768018af3adc5d093f36e1654392",
+  "expect": "008b000a0ff932265453768018af3adc5d093f36e1654392",
+  "model": {
+    "@kind": "lvrtx"
+  }
+}

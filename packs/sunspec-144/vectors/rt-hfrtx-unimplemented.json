@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-144-roundtrip-hfrtx-unimplemented",
+  "from": "sunspec-144",
+  "to": "sunspec-144",
+  "input": "0090000affffffffffffffffffffffffffff80008000ffff",
+  "expect": "0090000affffffffffffffffffffffffffff80008000ffff",
+  "model": {
+    "@kind": "hfrtx"
+  }
+}

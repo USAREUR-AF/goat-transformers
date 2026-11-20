@@ -1,0 +1,12 @@
+{
+  "name": "sunspec-305-location-to-geojson",
+  "from": "sunspec-305",
+  "to": "geojson",
+  "input": "013100245334390000000000000000005335360000000000533633000000000000000000000000000000000000000000000000000000000000000000000000001c40524c0517f444ffffec03",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.545594,47.397742]},\"properties\":{}}",
+  "model": {
+    "@kind": "location",
+    "lat": "47.397742",
+    "lon": "8.545594"
+  }
+}

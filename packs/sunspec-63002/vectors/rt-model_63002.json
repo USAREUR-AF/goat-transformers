@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-63002-roundtrip-model_63002",
+  "from": "sunspec-63002",
+  "to": "sunspec-63002",
+  "input": "f61a0000",
+  "expect": "f61a0000",
+  "model": {
+    "@kind": "model_63002"
+  }
+}

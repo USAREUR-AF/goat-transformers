@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-128-roundtrip-reactive_current",
+  "from": "sunspec-128",
+  "to": "sunspec-128",
+  "input": "0080000e48456a720ca12ece50fb73281557378459b17bde1e0d003a22670000",
+  "expect": "0080000e48456a720ca12ece50fb73281557378459b17bde1e0d003a22670000",
+  "model": {
+    "@kind": "reactive_current"
+  }
+}

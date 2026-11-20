@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-64112-roundtrip-model_64112-unimplemented",
+  "from": "sunspec-64112",
+  "to": "sunspec-64112",
+  "input": "fa700040ffff800080008000800080008000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "expect": "fa700040ffff800080008000800080008000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "model": {
+    "@kind": "model_64112"
+  }
+}

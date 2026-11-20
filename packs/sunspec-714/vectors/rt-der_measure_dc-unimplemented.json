@@ -1,0 +1,11 @@
+{
+  "name": "sunspec-714-roundtrip-der_measure_dc-unimplemented",
+  "from": "sunspec-714",
+  "to": "sunspec-714",
+  "input": "02ca0012ffffffff000080008000ffffffffffffffffffffffffffffffff80008000800080008000",
+  "expect": "02ca0012ffffffff000080008000ffffffffffffffffffffffffffffffff80008000800080008000",
+  "model": {
+    "@kind": "der_measure_dc",
+    "sunspec714.der_measure_dc_prt.#": "0"
+  }
+}

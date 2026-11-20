@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-705-roundtrip-der_volt_var",
+  "from": "sunspec-705",
+  "to": "sunspec-705",
+  "input": "02c1000d6c170e46307352a074cd000016fc000039295b563d83dfb201df",
+  "expect": "02c1000d6c170e46307352a074cd000016fc000039295b563d83dfb201df",
+  "model": {
+    "@kind": "der_volt_var"
+  }
+}

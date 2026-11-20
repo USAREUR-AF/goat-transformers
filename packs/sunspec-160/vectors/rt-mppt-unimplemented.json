@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-160-roundtrip-mppt-unimplemented",
+  "from": "sunspec-160",
+  "to": "sunspec-160",
+  "input": "00a000088000800080008000ffffffffffffffff",
+  "expect": "00a000088000800080008000ffffffffffffffff",
+  "model": {
+    "@kind": "mppt"
+  }
+}

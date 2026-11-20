@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-124-roundtrip-storage_basic",
+  "from": "sunspec-124",
+  "to": "sunspec-124",
+  "input": "007c0018464368700a9f2ccc4ef971261355358257af79dcdc0bfe386065029424c146ee291bcb4aed770fa431d1d400f62d185a",
+  "expect": "007c0018464368700a9f2ccc4ef971261355358257af79dcdc0bfe386065029424c146ee291bcb4aed770fa431d1d400f62d185a",
+  "model": {
+    "@kind": "storage_basic"
+  }
+}

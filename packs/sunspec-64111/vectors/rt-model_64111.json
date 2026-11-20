@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-64111-roundtrip-model_64111",
+  "from": "sunspec-64111",
+  "to": "sunspec-64111",
+  "input": "fa6f00175eb2c0e1e30e053b2768c9972bc44df1701e124d347a56a778d41b033d305f5d018c23b945e668130a422c6f4e9c",
+  "expect": "fa6f00175eb2c0e1e30e053b2768c9972bc44df1701e124d347a56a778d41b033d305f5d018c23b945e668130a422c6f4e9c",
+  "model": {
+    "@kind": "model_64111"
+  }
+}

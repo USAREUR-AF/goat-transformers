@@ -98,6 +98,7 @@
     {"name": "Meshtastic", "domain": "iot", "prefixes": ["meshtastic"]},
     {"name": "Sparkplug B", "domain": "iot", "exact": ["sparkplug-b"]},
     {"name": "EVerest charging stack", "domain": "iot", "prefixes": ["everest-"]},
+    {"name": "SunSpec Modbus", "domain": "iot", "prefixes": ["sunspec-"], "members": {"pattern": "^sunspec-([0-9]+)$", "label": "{n} information models", "list": false}},
 
     {"name": "OpenTelemetry OTLP", "domain": "networks", "prefixes": ["otlp-"]},
     {"name": "gNMI", "domain": "networks", "prefixes": ["gnmi-"]},

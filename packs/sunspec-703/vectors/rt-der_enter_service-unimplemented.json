@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-703-roundtrip-der_enter_service-unimplemented",
+  "from": "sunspec-703",
+  "to": "sunspec-703",
+  "input": "02bf0011ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff80008000",
+  "expect": "02bf0011ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff80008000",
+  "model": {
+    "@kind": "der_enter_service"
+  }
+}
