@@ -1,0 +1,20 @@
+{
+  "name": "negative-values-roundtrip",
+  "from": "grib2",
+  "to": "grib2",
+  "input": "47524942ffff0a0200000000000000b800000015010062000021000107ea0102121e000001000000480300000000030000000006ffffffffffffffffffffffffffffff000000030000000100000000ffffffff81ff2b6084378f303081ff2b60842fee100003d090000000004000000022040000000001030200940000000180000003a08100000019ff00000000000000001505000000030000bfc00000800280030c000000000606ff0000000a07000000000037373737",
+  "expect": "47524942ffff0a0200000000000000b800000015010062000021000107ea0102121e000001000000480300000000030000000006ffffffffffffffffffffffffffffff000000030000000100000000ffffffff81ff2b6084378f303081ff2b60842fee100003d090000000004000000022040000000001030200940000000180000003a08100000019ff00000000000000001505000000030000bfc00000800280030c000000000606ff0000000a07000000000037373737",
+  "model": {
+    "grib2.discipline": "10",
+    "grib2.sections[1].grib2.la1": "-33500000",
+    "grib2.sections[1].grib2.lo1": "-70750000",
+    "grib2.sections[1].grib2.scanning_mode": "64",
+    "grib2.sections[2].grib2.forecast_time": "-3",
+    "grib2.sections[2].grib2.scale_factor_of_first_surface": "-1",
+    "grib2.sections[3].grib2.reference_value": "-1.5",
+    "grib2.sections[3].grib2.binary_scale_factor": "-2",
+    "grib2.sections[3].grib2.decimal_scale_factor": "-3"
+  },
+  "source": "derived by tools/gen/wmo-vectors.py from messages written for it and spec/engine-spec.md; no engine run",
+  "reference": "WMO GRIB2 templates 3.0, 4.0, 5.0 (wmo-im/GRIB2) and the ecCodes GRIB2 section layouts; a southern and western grid and negative forecast time, scale factors and reference value: the signed fields are sign and magnitude (the most significant bit is the sign)"
+}

@@ -1,0 +1,72 @@
+# BUFR edition 4 message (WMO FM 94 BUFR): section 0, 1, the optional section 2, 3 and 4, and
+# section 5. Section 1 is read field by field, section 3's descriptors as F, X, Y triples; the
+# data of section 4 is kept as octets, as reading it needs the descriptors expanded through
+# Tables B and D (pack.md). Public. Written by hand from the ecCodes BUFR section definitions
+# (Apache-2.0); Tables A and C from wmo-im/BUFR4 (MIT) for the codes named in pack.md. I/O is hex.
+format     bufr4
+version    0.1.0
+distribution public
+source     "ECMWF ecCodes definitions, https://github.com/ecmwf/eccodes commit f03b3c35e2914e607b226b8c167b78758c9e7385, definitions/bufr/section.0.def, section.1.4.def, section.2.def, section.3.def, section.4.def, section.5.def (Apache-2.0)"
+source     "WMO BUFR edition 4 tables, https://github.com/wmo-im/BUFR4 commit 6a993796bf2661deb9cfe4da25435d5870566b20 (MIT)"
+uses       bufr4
+wire       bits
+layout     sequential
+bit_order  msb
+
+# Section 0, as common lines (ruling 10 of 0.8).
+when    32  1112884818                     # "BUFR"
+length  24 whole                           # total length of the message
+when    8  4                               # edition number
+
+kind    bufr4
+length 24 bytes plus 3                     # section 1; its length counts itself
+  field  bufr4.master_table                  8  uint
+  field  bufr4.centre                       16  uint
+  field  bufr4.sub_centre                   16  uint
+  field  bufr4.update_sequence_number        8  uint
+  field  bufr4.optional_section              1  uint
+  field  bufr4.section1_flags_low            7  uint
+  field  bufr4.data_category                 8  uint
+  field  bufr4.international_sub_category    8  uint
+  field  bufr4.local_sub_category            8  uint
+  field  bufr4.master_table_version          8  uint
+  field  bufr4.local_table_version           8  uint
+  field  bufr4.year                         16  uint
+  field  bufr4.month                         8  uint
+  field  bufr4.day                           8  uint
+  field  bufr4.hour                          8  uint
+  field  bufr4.minute                        8  uint
+  field  bufr4.second                        8  uint
+  group  bufr4.section1_local  rest
+    field  bufr4.section1_local_octet  8  uint
+  end
+end
+switch bufr4.optional_section
+  case 1
+    length 24 bytes plus 3                 # section 2
+      field  bufr4.section2_reserved  8  uint
+      group  bufr4.section2_data  rest
+        field  bufr4.section2_octet  8  uint
+      end
+    end
+  else
+end
+length 24 bytes plus 3                     # section 3
+  field  bufr4.section3_reserved      8  uint
+  field  bufr4.number_of_subsets     16  uint
+  field  bufr4.observed_data          1  uint
+  field  bufr4.compressed_data        1  uint
+  field  bufr4.section3_flags_low     6  uint
+  group  bufr4.descriptors  rest
+    field  bufr4.descriptor_f  2  uint
+    field  bufr4.descriptor_x  6  uint
+    field  bufr4.descriptor_y  8  uint
+  end
+end
+length 24 bytes plus 3                     # section 4
+  field  bufr4.section4_reserved  8  uint
+  group  bufr4.data  rest
+    field  bufr4.data_octet  8  uint
+  end
+end
+const   32  926365495                      # section 5: "7777", written on encode and not checked on decode

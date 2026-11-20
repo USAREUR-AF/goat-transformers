@@ -1,0 +1,141 @@
+# GRIB edition 2 message (WMO FM 92 GRIB): section 0, then the sections 1 to 7 as a list, then
+# section 8. Section 3 with grid template 3.0 (latitude/longitude), section 4 with product
+# template 4.0, section 5 with data representation template 5.0 are read field by field; other
+# templates, the bitmap and the data are kept as octets. Public. Written by hand from the WMO
+# GRIB2 templates (wmo-im/GRIB2, MIT) and the ecCodes section definitions (Apache-2.0). I/O is
+# hex text. pack.md states what is mapped and why nothing is bound to a shared key.
+format     grib2
+version    0.1.0
+distribution public
+source     "WMO GRIB2 templates and notes, https://github.com/wmo-im/GRIB2 commit 83abc9f3858260734191f55ffb68f6ad37d2b722 (MIT): templates 3.0, 4.0, 5.0, 7.0 and the template notes"
+source     "ECMWF ecCodes definitions, https://github.com/ecmwf/eccodes commit f03b3c35e2914e607b226b8c167b78758c9e7385, definitions/grib2/section.0.def to section.8.def and templates (Apache-2.0): the section layouts"
+uses       grib2
+wire       bits
+layout     sequential
+bit_order  msb
+
+# Section 0, as common lines: a common `when` may follow other common lines (ruling 10 of 0.8).
+when    32  1196575042                    # "GRIB"
+field   grib2.reserved     16  uint
+field   grib2.discipline    8  uint
+when    8  2                              # edition number
+length  64 whole                          # total length of the message
+
+kind    grib2
+group  grib2.sections  rest
+  kind    end
+  when    32  926365495                   # section 8: "7777"
+  kind    section
+  length 32 bytes plus 4                  # the section length counts itself
+    field  grib2.section_number  8  uint
+    switch grib2.section_number
+      case 1                              # identification
+        field  grib2.centre                     16  uint
+        field  grib2.sub_centre                 16  uint
+        field  grib2.tables_version              8  uint
+        field  grib2.local_tables_version        8  uint
+        field  grib2.significance_of_reference_time  8  uint
+        field  grib2.year                       16  uint
+        field  grib2.month                       8  uint
+        field  grib2.day                         8  uint
+        field  grib2.hour                        8  uint
+        field  grib2.minute                      8  uint
+        field  grib2.second                      8  uint
+        field  grib2.production_status           8  uint
+        field  grib2.type_of_data                8  uint
+        group  grib2.section_octets  rest
+          field  grib2.octet  8  uint
+        end
+      case 3                              # grid definition
+        field  grib2.source_of_grid_definition   8  uint
+        field  grib2.number_of_data_points      32  uint
+        field  grib2.octets_for_number_of_points  8  uint
+        field  grib2.interpretation_of_number_of_points  8  uint
+        field  grib2.grid_template               16  uint
+        switch grib2.grid_template
+          case 0                          # latitude/longitude
+            field  grib2.shape_of_earth                  8  uint
+            field  grib2.scale_factor_of_radius          8  uint
+            field  grib2.scaled_value_of_radius         32  uint
+            field  grib2.scale_factor_of_major_axis      8  uint
+            field  grib2.scaled_value_of_major_axis     32  uint
+            field  grib2.scale_factor_of_minor_axis      8  uint
+            field  grib2.scaled_value_of_minor_axis     32  uint
+            field  grib2.ni                             32  uint
+            field  grib2.nj                             32  uint
+            field  grib2.basic_angle                    32  uint
+            field  grib2.subdivisions_of_basic_angle    32  uint
+            field  grib2.la1                            32  smag
+            field  grib2.lo1                            32  smag
+            field  grib2.resolution_flags                8  uint
+            field  grib2.la2                            32  smag
+            field  grib2.lo2                            32  smag
+            field  grib2.di                             32  uint
+            field  grib2.dj                             32  uint
+            field  grib2.scanning_mode                   8  uint
+            group  grib2.section_octets  rest
+              field  grib2.octet  8  uint
+            end
+          else
+            group  grib2.section_octets  rest
+              field  grib2.octet  8  uint
+            end
+        end
+      case 4                              # product definition
+        field  grib2.number_of_coordinate_values  16  uint
+        field  grib2.product_template            16  uint
+        switch grib2.product_template
+          case 0                          # analysis or forecast at a horizontal level at a point in time
+            field  grib2.parameter_category              8  uint
+            field  grib2.parameter_number                8  uint
+            field  grib2.type_of_generating_process      8  uint
+            field  grib2.background_process              8  uint
+            field  grib2.generating_process_identifier   8  uint
+            field  grib2.hours_after_cutoff             16  uint
+            field  grib2.minutes_after_cutoff            8  uint
+            field  grib2.unit_of_time_range              8  uint
+            field  grib2.forecast_time                  32  smag
+            field  grib2.type_of_first_surface           8  uint
+            field  grib2.scale_factor_of_first_surface   8  smag
+            field  grib2.scaled_value_of_first_surface  32  uint
+            field  grib2.type_of_second_surface          8  uint
+            field  grib2.scale_factor_of_second_surface  8  smag
+            field  grib2.scaled_value_of_second_surface 32  uint
+            group  grib2.section_octets  rest
+              field  grib2.octet  8  uint
+            end
+          else
+            group  grib2.section_octets  rest
+              field  grib2.octet  8  uint
+            end
+        end
+      case 5                              # data representation
+        field  grib2.number_of_values            32  uint
+        field  grib2.data_template               16  uint
+        switch grib2.data_template
+          case 0                          # grid point data, simple packing
+            field  grib2.reference_value                32  f32
+            field  grib2.binary_scale_factor            16  smag
+            field  grib2.decimal_scale_factor           16  smag
+            field  grib2.bits_per_value                  8  uint
+            field  grib2.type_of_original_values         8  uint
+            group  grib2.section_octets  rest
+              field  grib2.octet  8  uint
+            end
+          else
+            group  grib2.section_octets  rest
+              field  grib2.octet  8  uint
+            end
+        end
+      case 6                              # bitmap
+        field  grib2.bitmap_indicator   8  uint
+        group  grib2.section_octets  rest
+          field  grib2.octet  8  uint
+        end
+      else                                # 2 local use, 7 data, any other
+        group  grib2.section_octets  rest
+          field  grib2.octet  8  uint
+        end
+    end
+  end
+end

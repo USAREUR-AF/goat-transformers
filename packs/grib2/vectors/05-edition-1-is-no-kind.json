@@ -1,0 +1,9 @@
+{
+  "name": "edition-1-is-no-kind",
+  "from": "grib2",
+  "to": "grib2",
+  "input": "47524942ffff0001000000000000002900000015010062000021000107ea0b14060000000137373737",
+  "expect_error": "no-kind",
+  "source": "derived by tools/gen/wmo-vectors.py from messages written for it and spec/engine-spec.md; no engine run",
+  "reference": "WMO GRIB2 templates 3.0, 4.0, 5.0 (wmo-im/GRIB2) and the ecCodes GRIB2 section layouts; octet 8 states edition 1: the common when does not hold"
+}

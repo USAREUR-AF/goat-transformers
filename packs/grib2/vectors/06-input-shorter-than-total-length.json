@@ -1,0 +1,9 @@
+{
+  "name": "input-shorter-than-total-length",
+  "from": "grib2",
+  "to": "grib2",
+  "input": "47524942ffff0002000000000000002900000015010062000021000107ea0b140600000001",
+  "expect_error": "malformed-wire",
+  "source": "derived by tools/gen/wmo-vectors.py from messages written for it and spec/engine-spec.md; no engine run",
+  "reference": "WMO GRIB2 templates 3.0, 4.0, 5.0 (wmo-im/GRIB2) and the ecCodes GRIB2 section layouts; the total length states four octets more than the input holds"
+}
