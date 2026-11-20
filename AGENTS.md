@@ -68,6 +68,13 @@ vectors only, and all seven must produce the same bytes for every vector.
    new keys and new modules.
 8. **No local absolute path, private organization name or email address** in
    any file. The gate refuses them.
+9. **The shared model's core is governed like the specification.** A change
+   to `model/core.def` or `model/track.def` takes the specification's merge
+   slot, carries an ADR (`docs/adr/TEMPLATE.md`: what changes, why, and a
+   table of every consumer's comparison re-run at the change,
+   `docs/consumer-proofs.md`), and is listed in `docs/adr/INDEX.md`.
+   `tools/model-governance.py --base <target branch>` checks it on every pull
+   request. A new module of its own needs none of this.
 
 ## Ask a human before you do any of these
 
@@ -97,6 +104,7 @@ Run from the repository root unless a directory is named.
 | Catalog figure (`docs/figures/catalog-*.svg`) | `python3 -I tools/catalog-figure.py` writes it; `--check-families` (CI) fails when a pack has no family in `tools/catalog-families.json`; `--check` (the counts PR) fails when the figure is stale |
 | Rust engine and CLI | `cd engines/rust && cargo build --release` gives `target/release/goat-xf` |
 | Rust, every vector | `cd engines/rust && cargo test --release` |
+| A core or track change carries an ADR | `python3 -I tools/model-governance.py --base origin/main` (CI on every pull request) |
 | Licences and profiles (`LICENSING.md`, `licences.json`) | `python3 -I tools/licences.py` writes them; `--check` (CI) fails on a pack with no known licence or a stale file; `--list --profile open`; `reuse lint` (pip `reuse`) |
 | Go | `cd engines/go && go vet ./... && go test ./...` |
 | Python | `cd engines/python && PYTHONPATH=src python3 -m unittest discover -s tests` |
