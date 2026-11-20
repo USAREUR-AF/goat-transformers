@@ -1,0 +1,9 @@
+{
+  "name": "to-rest-one-item",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-rest",
+  "input": "{\"z\":9,\"recs\":[{\"x\":1,\"y\":2}]}",
+  "expect": "090102",
+  "source": "constructed",
+  "reference": "spec 0.21, A list to the end of its extent; encode: the items back to back"
+}

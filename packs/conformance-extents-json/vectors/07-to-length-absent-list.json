@@ -1,0 +1,9 @@
+{
+  "name": "to-length-absent-list",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-length",
+  "input": "{\"z\":9}",
+  "expect": "0009",
+  "source": "constructed",
+  "reference": "spec 0.21 rulings 3 and 5; an absent list writes nothing; the length counts 0 bytes"
+}

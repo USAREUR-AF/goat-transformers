@@ -6,7 +6,9 @@ module before it reports success. The module is written from
 spec/engine-spec.md (Versions 0.1 to 0.10, 0.13, 0.14, the gate blocks of 0.17, the
 `with` option, `element`, `iso8601_short` and derive functions of 0.18, 0.19, and
 the kind selection of 0.20: `when` lists and ranges, `requires <key>=<value>`
-and `switch` blocks) and imports no engine, so a generator
+and `switch` blocks, and the sequential extents and counts of 0.21: `group
+<list> rest`, `group <list> last`, `count <name> <len> [plus <n>]` with
+`group <list> count @<name>`) and imports no engine, so a generator
 stays independent of the engines it writes packs for.
 
 What it checks is what an engine checks when it loads a file: the line grammar,
@@ -95,7 +97,9 @@ HEADER = ("format", "version", "distribution", "source", "uses", "wire", "layout
 TABLES = ("map", "typemap")
 BLOCKS = ("group", "if", "opt", "chain", "length", "ext", "choice")
 UPER_ONLY = ("ext", "choice", "alt")          # 0.19 ruling 9; `alt` closes at the next `alt` or `end`
-SEQUENTIAL_ONLY = ("pad", "align", "presence", "opt", "chain", "fx", "length", "also")
+SEQUENTIAL_ONLY = ("pad", "align", "presence", "opt", "chain", "fx", "length", "also",
+                   # spec 0.21: a count before other fields
+                   "count")
 # spec 0.17: the lines a gate block of a fixed layout may hold
 GATE_BODY = ("field", "const", "default", "if")
 DIRECTIVES = HEADER + TABLES + BLOCKS + SEQUENTIAL_ONLY + (
@@ -125,9 +129,12 @@ _UPER_LOCATOR = re.compile(r"(int|enum|chars|octets):(.*)\Z")
 INT64 = (-(1 << 63), (1 << 63) - 1)
 # spec 0.20: a value of a `when` list on bits and protobuf: digits, or a range
 _WHEN_RANGE = re.compile(r"([0-9]+)\.\.([0-9]+)\Z")
+# spec 0.21 ruling 16: a `plus` value of a count line, within signed 64 bits
+_PLUS = re.compile(r"-?[0-9]+\Z")
+_COUNT_NAME = re.compile(r"[^.!@]+\Z")
 # spec 0.20: the lines a `case` or `else` body may hold
 CASE_BODY = ("field", "also", "const", "pad", "align", "default", "presence", "if", "opt", "chain",
-             "length", "group", "switch")
+             "length", "group", "switch", "count")
 
 
 def printable(text, low=0x20):
@@ -594,9 +601,12 @@ class Node:
       when     loc, value
       const    loc, value
       default  key, value
-      group    key (the list), loc, mode (`count`, `while`, `more`, `fx` or
-               None), count (an int, or a locator on a fixed layout), item
-               (item bits), body, kinds (item kinds of a sequential group)
+      group    key (the list), loc, mode (`count`, `while`, `more`, `fx`,
+               and from 0.21 `rest`, `last` and `ref`, or None), count (an
+               int, or a locator on a fixed layout), name (the count a `ref`
+               group names), item (item bits), body, kinds (item kinds of a
+               sequential group)
+      count    name, bits, plus (0.21: a count line)
       if       conds ([(negated, presence name, bit number)]), body; on a
                fixed layout (a gate, 0.17) instead gate ((negated, values)),
                start, bits, body
@@ -727,6 +737,7 @@ class _Loader:
         self.encoding_line = None   # (line number, value, after a `kind`), 0.19
         self._header_lines = {}
         self.switches = []          # spec 0.20: `switch` nodes, for the checks of their values
+        self.counts = []            # spec 0.21: count lines
 
     def fail(self, kind, message, line=None):
         raise CheckError(kind, message, line, self.pack.label)
@@ -980,6 +991,9 @@ class _Loader:
                 if node.d == "when":
                     self.bad(node, "`when` in a pack with no `kind`")
         self._scope(pack.common, pack.kinds, group=None, visible=[{}], top=True)
+        if pack.wire == "bits" and pack.sequential:
+            self._count_paths(pack.common, pack.kinds)
+            self._rest_extents(pack.common, pack.kinds, None)
         if pack.wire == "bits" and not pack.sequential:
             for _, lines in pack.scopes():
                 self._fixed_extents(lines, item=None)
@@ -1070,12 +1084,16 @@ class _Loader:
         # a group body is a scope of its own
         outer = getattr(self, "_mapped", None)
         self._mapped = set()
+        # spec 0.21 ruling 9: a `count @` reference sees the counts of its own
+        # group body only; this body's frames start here
+        outer_base, self._body_base = getattr(self, "_body_base", 0), len(visible) - 1
         self._block(common, group, visible[:-1] + [frame], declared, in_kind=False, top=top)
         after_common = set(self._mapped)
         for kind in kinds or ():       # a kind continues the block its common lines began
             self._mapped = set(after_common)
             self._block(kind.lines, group, visible[:-1] + [dict(frame)], set(declared), in_kind=True, top=top)
         self._mapped = outer
+        self._body_base = outer_base
         for lines in ([common + kind.lines for kind in kinds] if kinds else [common]):
             if sequential:
                 self._sequential_lists(lines)
@@ -1129,6 +1147,8 @@ class _Loader:
                 node.bits = int(node.args[0])
             elif d == "presence":
                 self._presence(node, visible, declared)
+            elif d == "count":
+                self._count(node, visible, declared)
             elif d == "fx":
                 if node.args or not chain:
                     self.bad(node, "`fx` outside a chain, or with an argument")
@@ -1136,6 +1156,8 @@ class _Loader:
                 self._element(node, group)
             elif d == "group":
                 self._group(node, group)
+                if node.mode == "ref":
+                    self._count_ref(node, visible)
                 inner = visible + [{}]
                 if node.kinds:
                     if not sequential:
@@ -1595,10 +1617,43 @@ class _Loader:
         if len(a) != 2 or not (a[1] == "fx" or (_UINT.match(a[1]) and 1 <= int(a[1]) <= 64)):
             self.bad(node, "`presence <name> <n>` with n from 1 to 64, or `presence <name> fx`")
         if a[0] in declared:
-            self.bad(node, "presence `%s` is declared twice in one block" % a[0])
+            self.bad(node, "`%s` is declared twice in one block (a presence or a count, 0.21 ruling 15)" % a[0])
         declared.add(a[0])
         node.name, node.bits = a[0], a[1] if a[1] == "fx" else int(a[1])
         visible[-1][a[0]] = node.bits
+
+    def _count(self, node, visible, declared):
+        """`count <name> <len> [plus <n>]` (spec 0.21): len 1 to 64; `plus` at
+        most once with an optional `-` then digits within signed 64 bits
+        (ruling 16); no other option. The name shares the namespace of the
+        presence names of its block (ruling 15)."""
+        a = node.args
+        if len(a) < 2 or not _COUNT_NAME.match(a[0]) or not _UINT.match(a[1]) or not 1 <= int(a[1]) <= 64:
+            self.bad(node, "`count <name> <len>` with len from 1 to 64")
+        node.name, node.bits, node.plus = a[0], int(a[1]), 0
+        opts = a[2:]
+        if opts:
+            if len(opts) != 2 or opts[0] != "plus" or not _PLUS.match(opts[1]) \
+                    or not -(1 << 63) <= int(opts[1]) < (1 << 63):
+                self.bad(node, "a count line takes only `plus <n>`, once, n an optional `-` then digits "
+                               "within signed 64 bits")
+            node.plus = int(opts[1])
+        if node.name in declared:
+            self.bad(node, "`%s` is declared twice in one block (a presence or a count, 0.21 ruling 15)" % node.name)
+        declared.add(node.name)
+        visible[-1][node.name] = "count"
+        self.counts.append(node)
+
+    def _count_ref(self, node, visible):
+        """`group <list> count @<name>` (spec 0.21): the name is a count
+        visible here, declared in the same group body (ruling 9), not a
+        presence (ruling 15)."""
+        frames = visible[self._body_base:]
+        size = next((frame[node.name] for frame in reversed(frames) if node.name in frame), None)
+        if size is None:
+            self.bad(node, "`count @%s`: no count of that name is visible in this group body" % node.name)
+        if size != "count":
+            self.bad(node, "`count @%s` names a presence (0.21 ruling 15)" % node.name)
 
     def _if(self, node, visible):
         if not node.args:
@@ -1612,6 +1667,8 @@ class _Loader:
             size = next((frame[name] for frame in reversed(visible) if name in frame), None)
             if size is None:
                 self.bad(node, "`if` names presence `%s`, which is not visible here" % name)
+            if size == "count":
+                self.bad(node, "`if %s`: `%s` is a count, not a presence (0.21 ruling 15)" % (text, name))
             if bit < 1 or (size != "fx" and bit > size):
                 self.bad(node, "presence `%s` has no bit %d" % (name, bit))
             node.conds.append((m.group(1) == "!", name, bit))
@@ -1707,7 +1764,7 @@ class _Loader:
         self.key_uses.append((node, node.key, "group"))
         rest = a[1:]
         if pack.wire == "bits" and pack.sequential:
-            if rest in (["while"], ["more"], ["fx"]):
+            if rest in (["while"], ["more"], ["fx"], ["rest"], ["last"]):
                 node.mode = rest[0]
             elif len(rest) == 2 and rest[0] == "count" and _UINT.match(rest[1]) and 1 <= int(rest[1]) <= 64:
                 node.mode, node.count = "count", int(rest[1])
@@ -1720,9 +1777,13 @@ class _Loader:
                             or int(rest[1]) > int(rest[2]):
                         self.bad(node, "`size <lb> <ub>` needs 0 <= lb <= ub < 65536")
                     node.count = (int(rest[1]), int(rest[2]))
+            elif len(rest) == 2 and rest[0] == "count" and rest[1].startswith("@") \
+                    and _COUNT_NAME.match(rest[1][1:]):
+                # spec 0.21: the items a count line of the same body names
+                node.mode, node.name = "ref", rest[1][1:]
             else:
-                self.bad(node, "a sequential group is `count <len>` (1 to 64 bits), `while`, `more`, `fx`"
-                               "%s" % (" or `size [<lb> <ub>]`" if pack.uper else ""))
+                self.bad(node, "a sequential group is `count <len>` (1 to 64 bits), `count @<name>`, `while`, "
+                               "`more`, `fx`, `rest` or `last`, one of them%s" % (" or `size [<lb> <ub>]`" if pack.uper else ""))
             return
         node.loc = rest[0]
         if pack.wire == "text":
@@ -1756,6 +1817,10 @@ class _Loader:
                             self.bad(x, "`with` on a `.` field of a packed protobuf group (0.18 ruling 4)")
             elif not node.loc or node.loc == ".":
                 self.bad(node, "`%s` is not a group locator" % node.loc)
+            elif pack.wire == "xml" and (any(not step for step in node.loc.split("/"))
+                                         or "@" in node.loc or "#" in node.loc):
+                # 0.7: a path of element names; spec 0.21 ruling 37
+                self.bad(node, "`%s` is not a path of element names" % node.loc)
             return
         m = _BITS_START.match(node.loc)
         if not m or len(rest) != 5 or rest[1] != "item" or rest[3] != "count" or not _UINT.match(rest[2]):
@@ -1776,6 +1841,100 @@ class _Loader:
             self.bad(node, "`item` takes a positive bit count")
 
     # -- rules over one scope --------------------------------------------------
+
+    def _count_paths(self, common, kinds):
+        """Spec 0.21 rulings 2 and 12: a count name reaches from its line to
+        the end of its block, and from common lines into each kind. In each
+        reading path it reaches (one kind, one arm of each switch) exactly one
+        group references it."""
+        def visit(nodes, alternatives):
+            for i, node in enumerate(nodes):
+                if node.d == "count":
+                    tail = nodes[i + 1:]
+                    for path in ([tail + alt for alt in alternatives] if alternatives else [tail]):
+                        found = self._refs(path, node.name)
+                        if found != {1}:
+                            self.bad(node, "count `%s` is referenced by %s group in a reading path "
+                                           "(0.21 ruling 2)" % (node.name, "no" if 0 in found else "more than one"))
+                if node.d == "group":
+                    visit(node.body, [k.lines for k in node.kinds or ()])
+                    for k in node.kinds or ():
+                        visit(k.lines, [])
+                elif node.d == "switch":
+                    for arm in node.body:
+                        visit(arm.body, [])
+                elif node.body:
+                    visit(node.body, [])
+        visit(common, [k.lines for k in kinds])
+        for k in kinds:
+            visit(k.lines, [])
+
+    def _refs(self, lines, name):
+        """The numbers of `count @<name>` groups over the reading paths of
+        `lines` (2 standing for two or more); a group body is not entered and a
+        nested block that declares the name again hides it to its end."""
+        got = {0}
+        for node in lines:
+            if node.d in ("count", "presence") and node.name == name:
+                break
+            if node.d == "group":
+                add = {1} if node.mode == "ref" and node.name == name else {0}
+            elif node.d == "switch":
+                add = set().union(*(self._refs(arm.body, name) for arm in node.body))
+            elif node.body:
+                add = self._refs(node.body, name)
+            else:
+                continue
+            got = {min(a + b, 2) for a in got for b in add}
+        return got
+
+    def _rest_extents(self, common, kinds, group):
+        """Spec 0.21 rulings 10 and 11: a `rest` group is the last wire line of
+        its extent (the innermost `length` block, or the message) in reading
+        order, whatever arm of a switch is read; `default` is not a wire line.
+        Inside an item it stands within a `length` block of the item's body,
+        or in the body of an item of an outer `rest` group."""
+        def wire(node):
+            if node.d == "default":
+                return False
+            if node.d in ("if", "chain"):
+                return any(wire(x) for x in node.body)
+            if node.d == "switch":
+                return any(wire(x) for arm in node.body for x in arm.body)
+            return True
+
+        def visit(nodes, tails, item):
+            # tails: the lines that follow `nodes` in this path up to the end
+            # of the extent; item: the group whose item body holds `nodes` with
+            # no `length` block between (None at message level or in a length)
+            for i, node in enumerate(nodes):
+                following = [nodes[i + 1:]] + tails
+                if node.d == "group":
+                    if node.mode == "rest":
+                        later = next((x for seq in following for x in seq if wire(x)), None)
+                        if later is not None:
+                            self.bad(later, "`%s` after the `rest` group of `%s` in its extent (0.21 ruling 11)"
+                                     % (later.d, node.key))
+                        if item is not None and item.mode != "rest":
+                            self.bad(node, "`rest` inside an item and not within a `length` block of the item "
+                                           "(0.21 ruling 10)")
+                    bodies(node.body, node.kinds, node)
+                elif node.d == "length":
+                    if node.body is not None:
+                        visit(node.body, [], None)
+                elif node.d == "switch":
+                    for arm in node.body:
+                        visit(arm.body, following, item)
+                elif node.body:
+                    visit(node.body, following, item)
+
+        def bodies(lines, item_kinds, item):
+            for k in item_kinds or ():
+                visit(lines, [k.lines], item)
+                visit(k.lines, [], item)
+            if not item_kinds:
+                visit(lines, [], item)
+        bodies(common, kinds, group)
 
     def _one_group_per_list(self, lines):
         """0.7: within one scope a list is mapped by at most one `group`."""

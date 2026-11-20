@@ -1,0 +1,14 @@
+{
+  "name": "two-items-in-16-bits",
+  "from": "conformance-extents-bits",
+  "to": "conformance-extents-bits",
+  "input": "101234",
+  "expect": "101234",
+  "model": {
+    "probe.recs.#": "2",
+    "probe.recs[0].probe.x": "1",
+    "probe.recs[1].probe.y": "4"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 5 and A list to the end of its extent (an extent counted in bits); 16 bits: two items of 8"
+}

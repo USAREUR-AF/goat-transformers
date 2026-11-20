@@ -1,0 +1,12 @@
+{
+  "name": "value-equal-to-plus-empty",
+  "from": "conformance-extents-plus1",
+  "to": "conformance-extents-plus1",
+  "input": "0107",
+  "expect": "0107",
+  "model": {
+    "probe.nums.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21, A count before other fields; 1 - 1 = 0 items: present and empty"
+}

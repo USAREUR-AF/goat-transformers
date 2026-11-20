@@ -1,0 +1,20 @@
+# Conformance probe pack for `last` inside a `length` block (spec 0.21
+# ruling 13), most significant bit first. Public. No kinds.
+#
+#   block       an 8-bit length in bytes: nums with a last-item bit before each
+#               item, val in 7 bits
+#   x           8 bits, after the block
+format     conformance-extents-last-length
+version    0.21.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+length 8
+  group  probe.nums last
+    field  probe.val  7  uint
+  end
+end
+field   probe.x  8  uint

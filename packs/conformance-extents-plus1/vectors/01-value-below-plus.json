@@ -1,0 +1,9 @@
+{
+  "name": "value-below-plus",
+  "from": "conformance-extents-plus1",
+  "to": "conformance-extents-plus1",
+  "input": "0007",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.21, A count before other fields; a value below n is malformed-wire, checked at the count line"
+}

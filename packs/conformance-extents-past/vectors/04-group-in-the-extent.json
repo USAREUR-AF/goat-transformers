@@ -1,0 +1,13 @@
+{
+  "name": "group-in-the-extent",
+  "from": "conformance-extents-past",
+  "to": "conformance-extents-past",
+  "input": "0301070509",
+  "expect": "0301070509",
+  "model": {
+    "probe.nums.#": "1",
+    "probe.y": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 6 and A count before other fields (Decode); n = 1 within the block"
+}

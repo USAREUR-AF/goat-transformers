@@ -1,0 +1,13 @@
+{
+  "name": "three-bits-left-no-item",
+  "from": "conformance-extents-sub",
+  "to": "conformance-extents-sub",
+  "input": "f8",
+  "expect": "f8",
+  "model": {
+    "probe.x": "31",
+    "probe.nums.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 4 and A list to the end of its extent; 3 bits after x are fewer than 8: present and empty"
+}

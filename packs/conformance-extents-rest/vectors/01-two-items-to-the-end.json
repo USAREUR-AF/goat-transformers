@@ -1,0 +1,17 @@
+{
+  "name": "two-items-to-the-end",
+  "from": "conformance-extents-rest",
+  "to": "conformance-extents-rest",
+  "input": "0901020304",
+  "expect": "0901020304",
+  "model": {
+    "probe.z": "9",
+    "probe.recs.#": "2",
+    "probe.recs[0].probe.x": "1",
+    "probe.recs[0].probe.y": "2",
+    "probe.recs[1].probe.x": "3",
+    "probe.recs[1].probe.y": "4"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21, A list to the end of its extent; items are read one after another while at least 8 bits remain in the message"
+}

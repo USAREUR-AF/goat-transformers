@@ -1,0 +1,12 @@
+{
+  "name": "one-item",
+  "from": "conformance-extents-optcount",
+  "to": "conformance-extents-optcount",
+  "input": "808280",
+  "expect": "808280",
+  "model": {
+    "probe.nums.#": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 18; opt 1, n = 1, val 5"
+}

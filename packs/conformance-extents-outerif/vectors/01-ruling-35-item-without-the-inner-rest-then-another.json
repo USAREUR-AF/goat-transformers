@@ -1,0 +1,15 @@
+{
+  "name": "ruling-35-item-without-the-inner-rest-then-another",
+  "from": "conformance-extents-outerif",
+  "to": "conformance-extents-outerif",
+  "input": "00800506",
+  "expect": "00800506",
+  "model": {
+    "probe.items.#": "2",
+    "probe.items[0].probe.subs.#": "absent",
+    "probe.items[1].probe.subs.#": "2",
+    "probe.items[1].probe.subs[0].probe.val": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 rulings 35 and 39; item 0 does not write the inner rest (its if is not written), so it may precede another item"
+}

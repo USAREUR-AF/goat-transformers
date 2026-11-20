@@ -1,0 +1,9 @@
+{
+  "name": "to-plus1-two-items",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-plus1",
+  "input": "{\"x\":7,\"nums\":[5,6]}",
+  "expect": "03070506",
+  "source": "constructed",
+  "reference": "spec 0.21, A count before other fields; 2 + 1 = 3"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "one-item",
+  "from": "conformance-extents-last-length",
+  "to": "conformance-extents-last-length",
+  "input": "018509",
+  "expect": "018509",
+  "model": {
+    "probe.nums.#": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 13; one item, last bit 1"
+}

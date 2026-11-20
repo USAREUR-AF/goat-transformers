@@ -1,0 +1,19 @@
+# Conformance probe pack for a count stored as items - 1 (`plus -1`, spec 0.21
+# ruling 7), most significant bit first. Public. No kinds.
+#
+#   n           an 8-bit count: the number of nums minus 1
+#   x           8 bits
+#   nums        n + 1 items, val in 8 bits each
+format     conformance-extents-plus
+version    0.21.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+count n 8 plus -1
+field   probe.x  8  uint
+group   probe.nums count @n
+  field  probe.val  8  uint
+end

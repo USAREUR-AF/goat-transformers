@@ -1,0 +1,9 @@
+{
+  "name": "to-zero-ruling-04-item-with-no-bits",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-zero",
+  "input": "{\"nums\":[null]}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 4: the item would start with 0 bits left before the byte-padded end; the output would decode as an empty list"
+}

@@ -17,6 +17,7 @@ SCRIPTS = (
     "conformance-cat062-vectors.py",
     "conformance-cond-vectors.py",
     "conformance-derive16-vectors.py",
+    "conformance-extents-vectors.py",
     "conformance-gates-vectors.py",
     "conformance-groups-vectors.py",
     "conformance-kinds-vectors.py",

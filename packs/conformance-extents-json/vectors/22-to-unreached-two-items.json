@@ -1,0 +1,9 @@
+{
+  "name": "to-unreached-two-items",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-unreached",
+  "input": "{\"nums\":[5,6]}",
+  "expect": "03800506",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 6; the list sets the opt bit"
+}

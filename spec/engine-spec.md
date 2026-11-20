@@ -3988,3 +3988,220 @@ an `int` value is an optional `-` then digits (`1.0` and `+1` are
 41. **Presence bits inside a `choice`** keep the rules of Version 0.19: this
     version's "only the selected case of each switch" is about `switch`
     alone. Stated, not yet pinned by a vector (40 and 41).
+
+---
+
+# Version 0.21: sequential extents and counts
+
+Status: Written. Three list forms that sequential binary messages use and 0.8
+cannot state: a list that fills the rest of the message or of a stated
+length, with no count or indicator; a count that sits earlier in the message
+than the list it counts, with other fields between; and an indicator bit of
+the opposite sense to `more`, set on the last item.
+
+```
+group <list> rest              # items until the end of the enclosing extent
+  …
+end
+count <name> <len> [plus <n>]  # a count field of `len` bits at the cursor, named
+…
+group <list> count @<name>     # that many items, here
+  …
+end
+group <list> last              # each item is preceded by one bit: 1 = this is the last item
+  …
+end
+```
+
+All three are lines of a `layout sequential` pack (Version 0.8). On a wire
+other than `bits`, `rest` and `last` after a list name are the group locator,
+as before 0.21; a `count` line, `count @` and all three forms on a fixed
+`bits` layout are `bad-directive`.
+
+## A list to the end of its extent
+
+The **enclosing extent** of a `rest` group is the innermost `length` block
+around it, or else the message. A `rest` group must be the last line of its
+extent: any line after it in the same extent is `bad-directive`.
+
+Decode: items are read one after another while bits remain in the extent:
+at least 8 bits when the extent is counted in bytes (the message, `length …
+bytes`, `length … whole`), at least 1 bit when it is counted in bits. Fewer
+bits that remain are padding and are skipped, whatever their value. An item
+that reads no bits is `malformed-wire`. A list of no items is present and
+empty.
+
+Encode: the items are written back to back; an empty or absent list writes
+nothing. The extent's length, where one is written, counts them.
+
+## A count before other fields
+
+`count <name> <len> [plus <n>]` reads `len` bits (1 to 64) at the cursor as
+an unsigned integer and names it; the number of items is that value minus
+`n` (default 0). The name is visible from its line to the end of the
+enclosing block, as a presence name is (Version 0.8), and must be referenced
+by exactly one `group <list> count @<name>` line in that range; a count
+named twice in one block, a reference to a name not visible, or a count with
+no reference is `bad-directive`.
+
+Decode: when the group is reached, that many items are read. A value below
+`n` is `malformed-wire`, checked at the count line. If the `count` line lay
+at or past the end of a `length` extent, the group is absent.
+
+Encode: the field holds the number of items plus `n`: the engine writes the
+count after the group is laid out, at the count's own place. An absent list
+writes `n`. A value outside `0 … 2^len − 1`, absent and empty lists
+included, is `transform-encode`. A count is fixed-width, so filling it in
+never changes the layout before the group.
+
+## The last-item flag
+
+With `last`, every item is preceded by one bit that is 1 for the last item
+and 0 for the others. A list has at least one item on the wire; an absent or
+empty list is `transform-encode` unless the group sits in an `if` or `opt`
+block, which is then not written, as for `more` (Version 0.8).
+
+## Load errors
+
+`bad-directive`: the forms on a layout that does not allow them (above); a
+`rest` group that is not the last line of its extent (ruling 11); a `count`
+whose `len` is outside 1 to 64; a malformed `plus` (ruling 16); a count line
+with any option other than `plus`, or `plus` twice; the name errors of
+rulings 2, 9, 12 and 15; two modes on one group (`rest last`).
+
+## Rulings for 0.21
+
+1. **An item that reads no bits** in a `rest` group is `malformed-wire`.
+2. **One reference per reading path.** In each reading path (common lines
+   plus one kind, one case of each switch) exactly one group references a
+   count name; a path with none or with two is `bad-directive`. So a header
+   count in common lines may be referenced by the list in every kind.
+3. **An empty `rest` at the end of a `length` extent** is present and empty:
+   this amends ruling 7 of 0.8 for `rest`. A `rest` group whose block is not
+   read stays absent.
+4. **Sub-byte items.** Decode keeps "at least 8 bits" in a byte-counted
+   extent; encode is `transform-encode` when it would write an item that
+   starts with fewer than 8 bits left before the byte-padded end of the
+   extent.
+5. **Lines at the end of a `length` extent.** Inside a `length` extent
+   rulings 7 and 21 of 0.8 apply to the lines of an item: a line starting at
+   the extent's end reads as absent (an indicator as 0), and only a line
+   that straddles the end is `malformed-wire`. At message level, reading past
+   the input stays `malformed-wire`.
+6. **A count read whose group is not reached** (in a block or case not read,
+   or past an extent's end): the list is absent and the count's value is
+   ignored, after the below-`n` check. Encode writes `n`.
+7. **`plus` arithmetic.** The field is items + `n`; `n` is a signed 64-bit
+   integer (a negative `n` is a count stored as items − 1, for example).
+   `value − n` is computed without overflow.
+8. **Other wires** keep `rest` and `last` as locators (see above).
+9. **Count references stay in their group body.** A `count @` reference
+   must be in the same group body as its count line (nested `if`, `opt`,
+   `length` and `case` blocks of that body included); across a group-body
+   boundary it is `bad-directive`.
+10. **`rest` inside an item** is allowed only within a `length` block of the
+    item's body, or as the last line of an outer `rest` item; in the second
+    case encoding is `transform-encode` when an item before the last holds
+    the inner `rest` (with item kinds, only the kinds that end in it count).
+11. **"Last line"** is in reading order within one path: every wire line
+    after the block holding the `rest`, up to the end of the extent, is
+    `bad-directive`, whatever case is selected. `default` and `requires` are
+    not wire lines; `align`, `pad` and `const` are. A `rest` at the end of
+    one kind followed by another kind's lines loads.
+12. **Visibility.** A count name is visible from its line to the end of the
+    enclosing block only; a group after the end of an `if` holding the
+    count cannot see it (`bad-directive`).
+13. **`last` at the end of an extent.** An indicator after the first that
+    starts at the extent end is `malformed-wire`; ruling 34 of 0.8 applies
+    to the first (an absent list).
+14. **`length … whole`.** When a whole length is read, the message extent
+    ends at the stated length.
+15. **Names.** Counts and presences share one namespace under ruling 12 of
+    0.8: the same name twice in one block, `@x` naming a presence, or
+    `if x.1` naming a count is `bad-directive`.
+16. **The `plus` value** is an optional `-` then digits (leading zeros
+    allowed) within signed 64 bits; `+2` or a value out of range is
+    `bad-directive`.
+17. **Padding** after the last item is ignored whatever its value; encode
+    writes 0.
+18. **Within `if` or `opt`.** "Sits in an `if` or `opt` block" means any
+    enclosing `if` or `opt` at any depth within the same group body; ruling
+    5 of 0.8 extends to `rest`, `count @` and `last`, and ruling 6 to
+    `last`. A count line is never content.
+19. **Capability.** Count names are not model keys; `model_keys` lists
+    `<list>[]` as in Version 0.7.
+20. **Bits left.** For `count @`, ruling 14 of 0.8 counts the bits left at
+    the group, not at the count line.
+21. **Ruling 4 on encode** is checked after the extent is laid out, against
+    the end of the padded block or message; an item that writes no bits at
+    that end starts with 0 bits left (`transform-encode`).
+22. **A count and its group past an extent's end** are written on encode as
+    every line is (ruling 7 of 0.8): the count holds `n` for an absent list,
+    and the length counts it.
+23. **"An absent list writes `n`"** also covers a group whose `if` or `opt`
+    block is not written.
+24. **Count names** are names as presence names are: no `.`, `!` or `@`. A
+    name declared again in a nested block hides the outer one there (ruling
+    12 of 0.8), and references in that block name the inner one.
+25. **Counts in kinds.** Each kind is its own block for count names: two
+    kinds may each declare a count of the same name.
+26. **Wire lines** (ruling 11) are lines that read or write bits; an `if`,
+    `switch` or `chain` whose body holds no wire line is not a wire line.
+27. **`rest` and `last` in item kinds** follow the same rules inside the
+    item kind's body.
+28. **A `last` group with an empty list** inside an `if` or `opt` written for
+    another reason is `transform-encode` (ruling 6 of 0.8).
+29. **A `rest` item that writes no bits** is `transform-encode` (its output
+    would not decode).
+30. **The range check of a count** runs when the message is finished, after
+    the group has filled it; a count whose group is never reached holds `n`
+    and is `transform-encode` when `n` does not fit.
+31. **At the end of a `length` extent** an `if` or a chain is still walked,
+    so a `rest` inside an `if` whose bits hold is present and empty; an
+    `opt` there reads as absent (ruling 21 of 0.8) and its block is not read.
+32. **Wire lines** (ruling 26): `opt`, `length`, `count`, `presence`,
+    `const` and a `group` line of any mode always are; an `if` or `switch` is one only when it holds one; a
+    kind's `when` lines are wire lines, so a `rest` in common lines followed
+    by a kind with `when` lines is `bad-directive`.
+33. **Reading paths** (ruling 2) split only at kinds and `switch` cases; an
+    `if` or `opt` does not split a path, so references in two `if` blocks
+    are two references.
+34. **The byte-padded end** (ruling 4) is measured from the first bit of the
+    extent: 0 for the message, the first bit of the block for
+    `length … bytes`.
+35. **Ruling 10 is judged by what is written.** An item counts as holding
+    the inner `rest` when it writes the inner `rest` group (the group is
+    reached and its block written, empty or not); an inner `rest` inside an
+    `if` or `opt` not written for that item does not count.
+36. **Common lines and kinds** are one block for count names, as for
+    presence names: a count in common lines and a count or presence of the
+    same name in a kind is `bad-directive`; two kinds may each declare it
+    (ruling 25).
+37. **A group locator that is not valid for its wire** is `bad-directive` on
+    every non-sequential wire (on `protobuf`, `rest` and `last` are such a
+    locator).
+38. **Chains.** A `rest` in a chain part followed by an `fx` line is
+    `bad-directive`: an `fx` line is a wire line.
+39. **A `rest` nested in a block** of an outer `rest` item (`if`, `opt`,
+    `chain`, `case`) is allowed when no wire line follows it in reading
+    order within the item.
+40. **Reading paths and Version 0.19.** The `alt`s of a `choice` do not split
+    a reading path (ruling 33 splits only at kinds and `switch` cases): a
+    `count` before a `choice` named by `group … count @<name>` in two `alt`s
+    is two references, `bad-directive`.
+41. **Wire lines of 0.19 blocks** (rulings 26 and 32). An `ext` is a wire
+    line (it reads its extension bit). A `choice` is one when it has `ext`,
+    more than one root alternative, or an `alt` holding a wire line.
+42. **`rest` inside `ext` and `alt`.** An `ext` body is the extent of the
+    block around it, as an `if` body is; each `alt` is checked as a `switch`
+    case is (ruling 39).
+43. **`rest` under six-bit armor** (Version 0.14). The message stays counted
+    in bytes for `rest` (8 bits at least to start an item, and the ruling 4
+    check before the byte-padded end), not in the armored bit length.
+    Rulings 40 to 43 are stated, not yet pinned by a vector.
+44. **Ruling 37 and 5a of 0.11.** On `protobuf` the group locators `rest` and
+    `last` are `bad-directive`, a check after the file (ruling 37, load vectors
+    906 and 1004: `group probe.nums rest` followed by a line `bogus` is
+    `unknown-directive`); any other step
+    that is not digits only stays `bad-locator` (5a of 0.11), and the group
+    locators of `xml` and `json` keep 5a (load vector 456).

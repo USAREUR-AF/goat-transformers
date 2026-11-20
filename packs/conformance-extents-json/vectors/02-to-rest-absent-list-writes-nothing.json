@@ -1,0 +1,9 @@
+{
+  "name": "to-rest-absent-list-writes-nothing",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-rest",
+  "input": "{\"z\":9}",
+  "expect": "09",
+  "source": "constructed",
+  "reference": "spec 0.21, A list to the end of its extent; an empty or absent list writes nothing"
+}

@@ -18,8 +18,11 @@
 %% static  the presence bits an `if` in no case names; pending the bits that
 %%         are 1 and that only `if` lines in cases name, until such a case
 %%         is read (rulings 21, 30 and 36 of 0.20)
+%% unit    how the innermost extent is counted: bytes (the message, `length
+%%         ... bytes`) or bits (`length ... bits`), for a `rest` group (0.21)
+%% counts  #{CountId => Items | absent}: the counts read (0.21)
 -record(d, {msg, hard, pos = 0, model = #{}, lists = #{}, failed = [], env = #{},
-            pack, named, static = #{}, pending = []}).
+            pack, named, static = #{}, pending = [], unit = bytes, counts = #{}}).
 
 decode(#{common := Common, kinds := Kinds, has_kinds := HasKinds, name := Name} = Pack, Bytes) ->
     Msg = gt_bits:open(gt_engine:unwire(Pack, Bytes), maps:get(bit_order, Pack)),
@@ -217,8 +220,8 @@ line({len, Len, Unit, Plus, Body}, Ext, #d{pos = Pos} = D) ->
                 true -> ok;
                 false -> malformed(D, "the length at bit ~p reaches beyond what holds it", [Pos])
             end,
-            D1 = lines(Body, End, D#d{pos = Start}),
-            D1#d{pos = End}                    % what no line read is skipped
+            D1 = lines(Body, End, D#d{pos = Start, unit = Unit}),
+            D1#d{pos = End, unit = D#d.unit}   % what no line read is skipped
     end;
 line({lenwhole, Len, Plus}, Ext, #d{pos = Pos} = D) ->
     case need(Pos, Len, Ext, D) of
@@ -250,6 +253,19 @@ line({switch, Key, _Ref, Cases, Else}, Ext, #d{pack = Pack} = D) ->
             %% the bits pending so far that the case's `if` lines name are
             %% satisfied (ruling 36: a case read later in the decode)
             lines(Ls, Ext, D#d{pending = [IB || IB <- D#d.pending, not lists:member(IB, Named)]})
+    end;
+%% a count (0.21): the number of items of the group that references it is
+%% the value less `plus`; a value below `plus` fails here. A count line at
+%% the end of a length extent leaves its group absent.
+line({scount, Id, Len, Plus}, Ext, #d{pos = Pos, counts = Cs} = D) ->
+    case need(Pos, Len, Ext, D) of
+        absent -> D#d{counts = Cs#{Id => absent}};
+        ok ->
+            V = gt_bits:read(D#d.msg, Pos, Len),
+            case V < Plus of
+                true -> malformed(D, "the count at bit ~p is ~p, below its plus ~p", [Pos, V, Plus]);
+                false -> D#d{pos = Pos + Len, counts = Cs#{Id => V - Plus}}
+            end
     end;
 line({sgroup, List, Mode, Body}, Ext, D) ->
     %% a later group of a list replaces the items of an earlier one; those
@@ -393,6 +409,37 @@ group({size, unc}, Body, Ext, D, Release) ->
             {N, D1} = ldet(Ext, D),
             uitems(N, Body, Ext, D1, Release)
     end;
+group({countref, Id}, Body, Ext, #d{pos = Pos} = D, Release) ->
+    case {avail(Pos, 0, Ext, D), maps:get(Id, D#d.counts, absent)} of
+        {absent, _} -> absent;
+        {_, absent} -> absent;
+        {_, N} ->
+            %% the count is compared with the limit before any item is read
+            %% (ruling 7d of 0.11), and with the bits left at the group
+            %% (ruling 14 of 0.8, ruling 20 of 0.21)
+            Release(),
+            gt_engine:items_reserve(N, D#d.pack),
+            case N > limit(Ext, D) - Pos of
+                true -> malformed(D, "a count of ~p is larger than the bits left", [N]);
+                false -> ok
+            end,
+            lists:mapfoldl(fun(_, Acc) -> item_lines(Body, Ext, Acc) end, D, lists:seq(1, N))
+    end;
+%% items while at least 8 bits remain in a byte-counted extent, 1 in a
+%% bit-counted one; fewer are padding. At the end of the extent the list is
+%% present and empty (ruling 3 of 0.21).
+group(rest, Body, Ext, #d{unit = Unit} = D, Release) ->
+    Min = case Unit of
+              bytes -> 8;
+              bits -> 1
+          end,
+    Release(),
+    rest(Body, Ext, limit(Ext, D), Min, D, []);
+group(last, Body, Ext, D, Release) ->
+    case bit(Ext, D) of
+        absent -> absent;
+        {B, D1} -> Release(), last(B, Body, Ext, D1, [])
+    end;
 group(while, Body, Ext, D, Release) ->
     case bit(Ext, D) of
         absent -> absent;
@@ -439,6 +486,27 @@ more(More, Body, Ext, D, Acc) ->
             case bit(Ext, D1) of
                 absent -> more(0, Body, Ext, D1, [Item | Acc]);
                 {B, D2} -> more(B, Body, Ext, D2, [Item | Acc])
+            end
+    end.
+
+rest(Body, Ext, Limit, Min, #d{pos = Pos} = D, Acc) when Limit - Pos >= Min ->
+    {Item, D1} = item(Body, Ext, D),
+    case D1#d.pos =:= Pos of
+        true -> malformed(D, "an item of a rest group at bit ~p reads no bits", [Pos]);
+        false -> rest(Body, Ext, Limit, Min, D1, [Item | Acc])
+    end;
+rest(_Body, _Ext, Limit, _Min, D, Acc) ->
+    {lists:reverse(Acc), D#d{pos = max(Limit, D#d.pos)}}.
+
+%% an indicator after the first at the end of a length extent (ruling 13)
+last(B, Body, Ext, D, Acc) ->
+    {Item, D1} = item(Body, Ext, D),
+    case B of
+        1 -> {lists:reverse([Item | Acc]), D1};
+        0 ->
+            case bit(Ext, D1) of
+                absent -> malformed(D1, "the list ends at its length extent before its last item", []);
+                {B1, D2} -> last(B1, Body, Ext, D2, [Item | Acc])
             end
     end.
 
@@ -656,15 +724,25 @@ uscale(V, {frac, Num, Den}, O) -> float(V) * Num / Den + O.
 %% process dictionary (gt_seq_actual), so that a pass that fails still
 %% tells which cases it selected: #{SwitchId => CaseIndex}, 0 the else.
 %% icount  #{{Path, List} => items written so far}
+%% 0.21:
+%% counts  #{CountId => Pos}: where the latest count line of that id was
+%%         written; its value is filled in when the message is finished
+%% cvals   #{Pos => Items}: the items of the group a count at Pos counts
+%% rest_hit  a `rest` group was written in the current extent since the
+%%         item of an outer `rest` group began (ruling 35)
+%% unit, starts  how the innermost extent is counted (bytes | bits), and the
+%%         first bits of the `rest` items written in it, checked against
+%%         its byte-padded end when it is laid out (rulings 4, 21 and 34)
 -record(e, {pos = 0, segs = [], env = #{}, wrote = #{}, pack,
-            path = [], forced = #{}, icount = #{}}).
+            path = [], forced = #{}, icount = #{},
+            counts = #{}, cvals = #{}, unit = bytes, starts = [], rest_hit = false}).
 
 -define(MAX_PASSES, 16).
 
 encode(Pack, Lines, Defaults, Entity) ->
     Src = #{model => maps:get(model, Entity), lists => maps:get(lists, Entity, #{}),
             defaults => Defaults},
-    #e{pos = End, segs = Segs} =
+    #e{pos = End, segs = Segs, cvals = CVals, starts = Starts} =
         case maps:get(has_switch, Pack, false) of
             false -> elines(Lines, Src, #e{pack = Pack});
             true -> settle(Lines, Src, Pack, #{}, 1)
@@ -679,14 +757,32 @@ encode(Pack, Lines, Defaults, Entity) ->
              sixbit -> gt_bits:new_bits(End, maps:get(bit_order, Pack));
              hex -> gt_bits:new(Bytes, maps:get(bit_order, Pack))
          end,
+    %% ruling 4 of 0.21: the message stays counted in bytes, under armor
+    %% too (ruling 43 of 0.21)
+    check_starts(Starts, Bytes * 8, Pack),
     M = lists:foldl(
           fun({whole, Pos, Len, Plus}, Acc) ->
                   gt_bits:overwrite(Acc, Pos, Len, fits(Bytes + Plus, Len, Pack));
+             %% a count holds its group's items plus n; n when the group was
+             %% not written (ruling 30)
+             ({count, Pos, Len, Plus}, Acc) ->
+                  gt_bits:overwrite(Acc, Pos, Len, fits(maps:get(Pos, CVals, 0) + Plus, Len, Pack));
              ({Pos, Len, Val}, Acc) -> gt_bits:overwrite(Acc, Pos, Len, Val)
           end, M0, Segs),
     case maps:get(armor, Pack) of
         sixbit -> gt_engine:armor_out(gt_bits:to_bytes(M), End, Pack);
         hex -> gt_bits:bytes_to_hex(gt_bits:to_bytes(M))
+    end.
+
+%% Ruling 4 of 0.21 on encode: an item of a `rest` group in a byte-counted
+%% extent starts with at least 8 bits left before the extent's byte-padded
+%% end, or decode would not read it.
+check_starts(Starts, End, Pack) ->
+    case [S || S <- Starts, End - S < 8] of
+        [] -> ok;
+        [S | _] -> gt_engine:conv_error('transform-encode', Pack,
+                                        "an item of a rest group at bit ~p starts fewer than 8 bits before the end of its extent",
+                                        [S])
     end.
 
 %% Encode again with the cases the last pass selected until every case the
@@ -840,9 +936,11 @@ eline({opt, Body}, _Rest, Src, #e{pack = Pack} = E) ->
     end;
 eline({chain, First, Parts, EndsFx}, _Rest, Src, E) ->
     eparts(Parts, EndsFx, Src, elines(First, Src, E));
-eline({len, Len, Unit, Plus, Body}, _Rest, Src, #e{pos = Pos, pack = Pack} = E) ->
+eline({scount, Id, Len, Plus}, _Rest, _Src, #e{pos = Pos, segs = Segs, counts = Cs} = E) ->
+    E#e{pos = Pos + Len, segs = [{count, Pos, Len, Plus} | Segs], counts = Cs#{Id => Pos}};
+eline({len, Len, Unit, Plus, Body}, _Rest, Src, #e{pos = Pos, pack = Pack, unit = OUnit, starts = OStarts} = E) ->
     Start = Pos + Len,
-    E1 = elines(Body, Src, E#e{pos = Start}),
+    E1 = elines(Body, Src, E#e{pos = Start, unit = Unit, starts = [], rest_hit = false}),
     Bits = E1#e.pos - Start,
     Count = case Unit of
                 bits -> Bits;
@@ -852,7 +950,9 @@ eline({len, Len, Unit, Plus, Body}, _Rest, Src, #e{pos = Pos, pack = Pack} = E) 
               bits -> E1#e.pos;
               bytes -> Start + Count * 8
           end,
-    E1#e{pos = End, segs = [{Pos, Len, fits(Count + Plus, Len, Pack)} | E1#e.segs]};
+    check_starts(E1#e.starts, End, Pack),
+    E1#e{pos = End, segs = [{Pos, Len, fits(Count + Plus, Len, Pack)} | E1#e.segs],
+         unit = OUnit, starts = OStarts, rest_hit = E#e.rest_hit};
 eline({lenwhole, Len, Plus}, _Rest, _Src, #e{pos = Pos, segs = Segs} = E) ->
     E#e{pos = Pos + Len, segs = [{whole, Pos, Len, Plus} | Segs]};
 %% a switch (0.20): the case decode would select from what the key's line
@@ -880,10 +980,49 @@ eline({sgroup, List, Mode, Body}, _Rest, Src, #e{pack = Pack} = E) ->
             lists:foldl(Item, emit(Len, fits(length(Items), Len, Pack), E), Items);
         while ->
             emit(1, 0, lists:foldl(fun(I, Acc) -> Item(I, emit(1, 1, Acc)) end, E, Items));
+        %% the count line is filled in when the message is finished
+        {countref, Id} ->
+            #e{counts = Cs, cvals = CV} = E,
+            E1 = E#e{cvals = CV#{maps:get(Id, Cs) => length(Items)}},
+            lists:foldl(Item, E1, Items);
+        rest ->
+            %% ruling 10, judged by what is written (ruling 35): an item before
+            %% the last that writes a rest group of the same extent, which
+            %% would read the items after it
+            Last = length(Items),
+            {E1, _} = lists:foldl(
+              fun(I, {#e{pos = P0, rest_hit = Hit} = Acc, N}) ->
+                      Acc1 = Item(I, Acc#e{rest_hit = false}),
+                      case Acc1#e.rest_hit andalso N < Last of
+                          true -> gt_engine:conv_error('transform-encode', Pack,
+                                                       "list ~s: an item before the last writes a rest group, which takes the rest of the extent",
+                                                       [List]);
+                          false -> ok
+                      end,
+                      case Acc1#e.pos =:= P0 of
+                          true -> gt_engine:conv_error('transform-encode', Pack,
+                                                       "an item of list ~s writes no bits (ruling 29 of 0.21)", [List]);
+                          false -> ok
+                      end,
+                      Acc2 = Acc1#e{rest_hit = Hit},
+                      {case Acc2#e.unit of
+                           bytes -> Acc2#e{starts = [P0 | Acc2#e.starts]};
+                           bits -> Acc2
+                       end, N + 1}
+              end, {E, 1}, Items),
+            %% this group is written: it counts for an item that holds it
+            E1#e{rest_hit = true};
         _ when Items =:= [] ->
             gt_engine:conv_error('transform-encode', Pack,
                                  "list ~s is absent or empty and its group holds at least one item",
                                  [List]);
+        last ->
+            Last = length(Items),
+            {E1, _} = lists:foldl(
+                        fun(I, {Acc, N}) ->
+                                {Item(I, ebits([N =:= Last], Acc)), N + 1}
+                        end, {E, 1}, Items),
+            E1;
         more ->
             Last = length(Items),
             {E1, _} = lists:foldl(

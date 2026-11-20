@@ -1,0 +1,9 @@
+{
+  "name": "to-if-one-item",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-if",
+  "input": "{\"nums\":[5]}",
+  "expect": "8005",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 18 with ruling 5 of 0.8; 1 0000000 00000101"
+}

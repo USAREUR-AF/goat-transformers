@@ -1,0 +1,15 @@
+{
+  "name": "ruling-24-inner-count-names-the-inner-list",
+  "from": "conformance-extents-hide",
+  "to": "conformance-extents-hide",
+  "input": "02880a0506",
+  "expect": "02880a0506",
+  "model": {
+    "probe.recs.#": "1",
+    "probe.recs[0].probe.x": "10",
+    "probe.nums.#": "2",
+    "probe.nums[1].probe.val": "6"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 24; the n declared in the opt block hides the outer n there: recs takes 1 item, nums after the block takes the outer 2"
+}

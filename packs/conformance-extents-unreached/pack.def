@@ -1,0 +1,21 @@
+# Conformance probe pack for a count whose group sits in an `opt` block
+# (spec 0.21 rulings 6 and 18), most significant bit first. Public. No kinds.
+#
+#   n           an 8-bit count: the number of nums plus 1
+#   opt         one bit, then 7 unused bits and the n - 1 nums (val in 8 bits)
+#               when it is 1
+format     conformance-extents-unreached
+version    0.21.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+count n 8 plus 1
+opt
+  pad 7
+  group  probe.nums count @n
+    field  probe.val  8  uint
+  end
+end

@@ -1,0 +1,9 @@
+{
+  "name": "to-optcount-absent",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-optcount",
+  "input": "{}",
+  "expect": "00",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 18; a count line is never content: the opt bit is 0"
+}

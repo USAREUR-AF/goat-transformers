@@ -1,0 +1,9 @@
+{
+  "name": "967-extents-ruling-09-reference-inside-a-group-body",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey x int -\nkey y int -\nkey z int -\nkey val int -\nkey qty int -\nlist nums \"a list\"\nlist recs \"a list\"\nlist items \"a list\"\nlist subs \"a list\"\n"
+  ],
+  "pack": "format probe\nversion 0.21.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nlayout sequential\ncount n 8\ngroup probe.items count 8\n  group probe.subs count @n\n    field probe.val 8 uint\n  end\nend\n",
+  "expect_error": "bad-directive"
+}

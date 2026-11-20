@@ -1,0 +1,12 @@
+{
+  "name": "one-item",
+  "from": "conformance-extents-unreached-minus",
+  "to": "conformance-extents-unreached-minus",
+  "input": "008005",
+  "expect": "008005",
+  "model": {
+    "probe.nums.#": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 30; 0 - (-1) = 1 item"
+}

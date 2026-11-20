@@ -1,0 +1,12 @@
+{
+  "name": "two-items",
+  "from": "conformance-extents-plus1",
+  "to": "conformance-extents-plus1",
+  "input": "03070506",
+  "expect": "03070506",
+  "model": {
+    "probe.nums.#": "2"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21, A count before other fields; 3 - 1 = 2"
+}

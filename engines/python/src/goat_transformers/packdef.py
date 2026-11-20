@@ -31,6 +31,7 @@ PACK_DIRECTIVES = frozenset((
     # outside a UPER pack, checked after the file is read
     "encoding", "ext", "choice", "alt",
     "switch", "case", "else",  # sequential layouts (0.20)
+    "count",  # sequential layouts (0.21)
 ))
 # The lines that stand after the `wire` line (5b): before it, `missing-wire`.
 NEEDS_WIRE = frozenset((
@@ -59,13 +60,16 @@ ARG_COUNTS = dict({kw: (1, 1) for kw in _ONE_ARG}, **{
     "encoding": (1, 1), "ext": (0, 0), "choice": (1, 2), "alt": (1, 1),
     # 0.20: `switch <key>`, `case <values>`, `else`
     "switch": (1, 1), "case": (1, 1), "else": (0, 0),
+    # 0.21: `count <name> <len> [plus <n>]`; the form of the options is checked after the file
+    "count": (2, 4),
 })
 HEADER_ONCE = ("format", "version", "wire", "distribution")  # a second one is `bad-directive` (5b step 5)
 _SINGLE = ("word_bytes", "bit_order", "layout")
 LAYOUTS = ("fixed", "sequential")
 # Lines of a sequential pack (0.8): each is `bad-directive` in a fixed-layout pack.
 _SEQ_ONLY = ("pad", "align", "presence", "opt", "chain", "fx", "length", "also",
-             "switch", "case", "else")  # 0.20: `switch` is a block of a sequential layout
+             "switch", "case", "else",  # 0.20: `switch` is a block of a sequential layout
+             "count")  # 0.21: `count <name> <len> [plus <n>]`
 _GROUP_LINES = ("field", "const", "default", "group", "if", "end")
 # The lines of a gate block (0.17).
 _GATE_LINES = ("field", "const", "default", "if", "end")
@@ -1070,6 +1074,11 @@ def _resolve_tlv_when(name, locator, value, where, lineno, const):
     return cls(locator, (tags, size), value=n, lineno=lineno)
 
 
+class _WrongGroupLocator(ValueError):
+    """A group locator of the right form that is not valid for its wire:
+    `bad-directive` (ruling 37 of 0.21), not `bad-locator` (5a of 0.11)."""
+
+
 def _resolve_group(wire, name, list_name, locator, options, source, lineno, in_group, deferred):
     """-> Group for one `group` line (spec 0.7, "Group locators and
     item-relative locators, by wire"). The locator is a line check
@@ -1082,7 +1091,7 @@ def _resolve_group(wire, name, list_name, locator, options, source, lineno, in_g
     def bad(msg):
         problems.append((lineno, BadDirective("%s at %s" % (msg, where), format=name, locator=locator)))
 
-    if wire == "bits" and locator in ("count", "while", "more", "fx"):
+    if wire == "bits" and locator in ("count", "while", "more", "fx", "rest", "last"):  # 0.21 adds two
         raise _LineBad("a group with %r is a line of a sequential pack at %s" % (locator, where),
                            format=name, locator=locator)
     # the locator
@@ -1101,9 +1110,11 @@ def _resolve_group(wire, name, list_name, locator, options, source, lineno, in_g
             if wire == "xml":
                 loc = parse_xml_locator(locator, allow_presence=True)
                 if loc[1] != "elem":
-                    raise ValueError("an xml group locator is a path of element names")
+                    raise _WrongGroupLocator("an xml group locator is a path of element names")
                 loc = loc[0]
             elif wire == "protobuf":
+                if locator in ("rest", "last"):  # the sequential group modes of 0.21
+                    raise _WrongGroupLocator("%r is a group mode of a sequential pack, not a field path" % locator)
                 loc = parse_protobuf_locator(locator)
             elif wire == "json" or in_group:
                 loc = parse_json_locator(locator)
@@ -1111,6 +1122,9 @@ def _resolve_group(wire, name, list_name, locator, options, source, lineno, in_g
                 loc = parse_geojson_locator(locator)
                 if loc[0] == "coord":
                     raise ValueError("a geojson group locator is a properties member or a top-level member")
+        except _WrongGroupLocator as e:  # 0.21 ruling 37: not valid for its wire, after the file
+            bad("bad %s group locator: %s" % (wire, e))
+            loc = ()
         except ValueError as e:
             raise _bad_locator(wire, where, name, locator, e)
 

@@ -1,0 +1,9 @@
+{
+  "name": "to-outerkind-a-a-b",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-outerkind",
+  "input": "{\"items\":[{\"qty\":9},{\"qty\":3},{\"subs\":[{\"val\":5}]}]}",
+  "expect": "010901030205",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 10 with ruling 27; items with qty select a (requires), the last has none and selects b"
+}

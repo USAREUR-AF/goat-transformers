@@ -1,0 +1,9 @@
+{
+  "name": "to-last-opt-one-item",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-last-opt",
+  "input": "{\"nums\":[5]}",
+  "expect": "8085",
+  "source": "constructed",
+  "reference": "spec 0.21, The last-item flag; 1 0000000 1 0000101"
+}

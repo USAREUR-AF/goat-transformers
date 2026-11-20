@@ -1,0 +1,9 @@
+{
+  "name": "to-kinds-a",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-kinds",
+  "input": "{\"nums\":[5,6]}",
+  "expect": "02010506",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 2; no x: a, which has no requires"
+}

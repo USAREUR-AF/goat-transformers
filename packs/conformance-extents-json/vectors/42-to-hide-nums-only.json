@@ -1,0 +1,9 @@
+{
+  "name": "to-hide-nums-only",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-hide",
+  "input": "{\"nums\":[5]}",
+  "expect": "010005",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 24; opt 0, then align, then nums"
+}

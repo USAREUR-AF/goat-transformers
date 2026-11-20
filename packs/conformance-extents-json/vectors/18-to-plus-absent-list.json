@@ -1,0 +1,9 @@
+{
+  "name": "to-plus-absent-list",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-plus",
+  "input": "{\"x\":170}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 7; an absent list writes n = -1: outside 0 ... 255"
+}

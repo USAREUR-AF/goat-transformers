@@ -1,0 +1,15 @@
+{
+  "name": "ruling-20-count-within-the-bits-left-at-the-group",
+  "from": "conformance-extents-bitsleft",
+  "to": "conformance-extents-bitsleft",
+  "input": "01000700",
+  "expect": "010007",
+  "model": {
+    "probe.nums.#": "1",
+    "@absent": [
+      "probe.nums[0].probe.val"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 20 with ruling 14 of 0.8; 8 bits remain at the group; an item of a count group may read no bits (ruling 1 is about rest); input beyond the last line is ignored (ruling 9 of 0.8)"
+}

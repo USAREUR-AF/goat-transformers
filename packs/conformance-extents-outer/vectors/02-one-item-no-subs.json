@@ -1,0 +1,13 @@
+{
+  "name": "one-item-no-subs",
+  "from": "conformance-extents-outer",
+  "to": "conformance-extents-outer",
+  "input": "09",
+  "expect": "09",
+  "model": {
+    "probe.items.#": "1",
+    "probe.items[0].probe.subs.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 10 (`rest` as the last line of an outer `rest` item); subs present and empty"
+}

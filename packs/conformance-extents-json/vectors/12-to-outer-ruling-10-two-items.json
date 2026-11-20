@@ -1,0 +1,9 @@
+{
+  "name": "to-outer-ruling-10-two-items",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-outer",
+  "input": "{\"items\":[{\"qty\":9},{\"qty\":3}]}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 10 (`rest` as the last line of an outer `rest` item); encoding an outer list of more than one item is transform-encode"
+}

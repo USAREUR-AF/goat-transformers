@@ -1,0 +1,16 @@
+{
+  "name": "ruling-05-y-at-the-end-absent",
+  "from": "conformance-extents-bits",
+  "to": "conformance-extents-bits",
+  "input": "0c1230",
+  "expect": "101230",
+  "model": {
+    "probe.recs.#": "2",
+    "probe.recs[1].probe.x": "3",
+    "@absent": [
+      "probe.recs[1].probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 5 and A list to the end of its extent (an extent counted in bits); a line starting at the extent's end reads as absent"
+}

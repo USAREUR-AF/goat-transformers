@@ -1,0 +1,12 @@
+{
+  "name": "one-item",
+  "from": "conformance-extents-last",
+  "to": "conformance-extents-last",
+  "input": "85",
+  "expect": "85",
+  "model": {
+    "probe.nums.#": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21, The last-item flag; 1 0000101"
+}

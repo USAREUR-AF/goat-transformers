@@ -1,0 +1,9 @@
+{
+  "name": "to-hide-recs-only",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-hide",
+  "input": "{\"recs\":[{\"x\":10},{\"x\":11}]}",
+  "expect": "00900a0b",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 24; the inner n = 2, the outer n = 0 for an absent list"
+}

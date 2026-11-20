@@ -1,0 +1,9 @@
+{
+  "name": "ruling-05-x-straddles-the-end",
+  "from": "conformance-extents-bits",
+  "to": "conformance-extents-bits",
+  "input": "0a1230",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 5 and A list to the end of its extent (an extent counted in bits); at least 1 bit remains, so item 1 is read; its x straddles the end"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "opt-read-rest-at-the-end",
+  "from": "conformance-extents-walk",
+  "to": "conformance-extents-walk",
+  "input": "80020705020980",
+  "expect": "80020705020900",
+  "model": {
+    "probe.nums.#": "1",
+    "probe.recs.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 31; the opt bit lies inside the extent: its rest is at the end, present and empty; encode: the empty list does not set the opt bit"
+}

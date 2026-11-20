@@ -123,6 +123,23 @@ bool parse_uper_locator(const std::string& loc, SeqNode& n) {
     return parse_uper_num(t[1], n.lb) && parse_uper_num(t[2], n.ub) && 0 <= n.lb && n.lb <= n.ub && n.ub < 65536;
 }
 
+// v0.21 ruling 16: `plus <n>` of a count line, an optional `-` then digits
+// (leading zeros allowed) within signed 64 bits.
+bool parse_plus(const std::string& s, std::int64_t& out) {
+    const bool neg = !s.empty() && s[0] == '-';
+    std::uint64_t v = 0;
+    if (!parse_u64(neg ? s.substr(1) : s, v)) return false;
+    const std::uint64_t top = static_cast<std::uint64_t>(INT64_MAX);
+    if (neg) {
+        if (v > top + 1) return false;
+        out = v == top + 1 ? INT64_MIN : -static_cast<std::int64_t>(v);
+    } else {
+        if (v > top) return false;
+        out = static_cast<std::int64_t>(v);
+    }
+    return true;
+}
+
 template <class Lines, class Fn>
 void each_node(Lines& lines, Fn&& fn) {
     for (auto& n : lines) {
@@ -200,6 +217,177 @@ void check_lists_once(const Pack& p, const SeqBody& body, const std::string& sou
     }
 }
 
+// ---- v0.21: count references and `rest` placement
+
+// The numbers of references to the count `id` over the reading paths of
+// `lines` from `from`, each capped at 2. Paths split at kinds and at the cases
+// of a switch only (rulings 2 and 33).
+std::set<int> ref_paths(const std::vector<SeqNode>& lines, std::size_t from, int id);
+
+std::set<int> add_paths(const std::set<int>& a, const std::set<int>& b) {
+    std::set<int> out;
+    for (int x : a)
+        for (int y : b) out.insert(std::min(x + y, 2));
+    return out;
+}
+
+std::set<int> node_refs(const SeqNode& n, int id) {
+    switch (n.type) {
+        case Type::Group: return {n.repeat == Repeat::CountRef && n.count_id == id ? 1 : 0};
+        case Type::Switch: {
+            std::set<int> out;
+            for (const auto& c : n.cases) {
+                const std::set<int> r = ref_paths(c.body.lines, 0, id);
+                out.insert(r.begin(), r.end());
+            }
+            if (out.empty()) out.insert(0);
+            return out;
+        }
+        case Type::If:
+        case Type::Opt:
+        case Type::Chain:
+        case Type::Length: return ref_paths(n.inner.lines, 0, id);
+        default: return {0};
+    }
+}
+
+std::set<int> ref_paths(const std::vector<SeqNode>& lines, std::size_t from, int id) {
+    std::set<int> out{0};
+    for (std::size_t k = from; k < lines.size(); ++k) out = add_paths(out, node_refs(lines[k], id));
+    return out;
+}
+
+void check_count_refs(const Pack& p, const std::vector<SeqNode>& lines, const std::vector<SeqKind>* kinds,
+                      const std::string& source);
+
+void check_count_refs_body(const Pack& p, const SeqBody& body, const std::string& source) {
+    check_count_refs(p, body.lines, body.kinds.empty() ? nullptr : &body.kinds, source);
+    for (const auto& k : body.kinds) check_count_refs(p, k.lines, nullptr, source);
+}
+
+// Every count line is referenced by exactly one group in each reading path
+// from its line to the end of its block (v0.21 ruling 2).
+void check_count_refs(const Pack& p, const std::vector<SeqNode>& lines, const std::vector<SeqKind>* kinds,
+                      const std::string& source) {
+    for (std::size_t i = 0; i < lines.size(); ++i) {
+        const SeqNode& n = lines[i];
+        if (n.type == Type::Count) {
+            std::set<int> paths = ref_paths(lines, i + 1, n.count_id);
+            if (kinds) {
+                std::set<int> all;
+                for (const auto& k : *kinds) {
+                    const std::set<int> r = add_paths(paths, ref_paths(k.lines, 0, n.count_id));
+                    all.insert(r.begin(), r.end());
+                }
+                paths = all;
+            }
+            if (paths != std::set<int>{1})
+                throw Error(ErrorKind::BadDirective, p.format, "",
+                            source + ":" + std::to_string(n.line) + ": the count '" + n.count_name +
+                                "' is not referenced by exactly one 'group ... count @" + n.count_name +
+                                "' in every reading path after it");
+        }
+        if (n.type == Type::Group) check_count_refs_body(p, n.inner, source);
+        else if (n.type == Type::Switch)
+            for (const auto& c : n.cases) check_count_refs(p, c.body.lines, nullptr, source);
+        else check_count_refs(p, n.inner.lines, nullptr, source);
+    }
+}
+
+// Does the line read or write bits (rulings 26 and 32)? An `if`, `switch` or
+// `chain` is one only when it holds one.
+bool is_wire_line(const SeqNode& n) {
+    switch (n.type) {
+        case Type::If:
+        case Type::Chain:
+            for (const auto& l : n.inner.lines)
+                if (is_wire_line(l)) return true;
+            return false;
+        case Type::Switch:
+            for (const auto& c : n.cases)
+                for (const auto& l : c.body.lines)
+                    if (is_wire_line(l)) return true;
+            return false;
+        // 0.21 ruling 41: an `ext` reads its extension bit, so it always is; a
+        // `choice` is one with `ext`, more than one root alternative (its index
+        // has bits), or an `alt` holding a wire line.
+        case Type::Choice:
+            if (n.uext || n.number > 1) return true;
+            for (const auto& a : n.inner.lines)
+                if (is_wire_line(a)) return true;
+            return false;
+        case Type::Alt:
+            for (const auto& l : n.inner.lines)
+                if (is_wire_line(l)) return true;
+            return false;
+        default: return true;
+    }
+}
+
+// Where a `rest` group may be (rulings 10, 11 and 27): `in_item` is true inside
+// a group body outside any `length` block of it, `rest_item` when that group
+// is itself `rest`.
+struct RestPlace {
+    bool in_item = false;
+    bool rest_item = false;
+};
+
+bool check_rest_body(const Pack& p, const SeqBody& body, bool after_rest, RestPlace at, const std::string& source);
+
+// Walks `lines` in reading order; `after_rest` is true when a `rest` group
+// came earlier in the same extent. Returns that state after the lines.
+bool check_rest_lines(const Pack& p, const std::vector<SeqNode>& lines, bool after_rest, RestPlace at,
+                      const std::string& source) {
+    for (const auto& n : lines) {
+        if (after_rest && is_wire_line(n))
+            throw Error(ErrorKind::BadDirective, p.format, "",
+                        source + ":" + std::to_string(n.line) +
+                            ": a line after a 'rest' group in the same extent (a 'rest' group is the last line of its extent)");
+        switch (n.type) {
+            case Type::Group:
+                if (n.repeat == Repeat::Rest) {
+                    if (at.in_item && !at.rest_item)
+                        throw Error(ErrorKind::BadDirective, p.format, "",
+                                    source + ":" + std::to_string(n.line) + ": the 'rest' group '" + n.list +
+                                        "' is inside an item, neither within a 'length' block of the item nor the "
+                                        "last line of an outer 'rest' item");
+                    after_rest = true;
+                }
+                check_rest_body(p, n.inner, false, RestPlace{true, n.repeat == Repeat::Rest}, source);
+                break;
+            case Type::Length: check_rest_lines(p, n.inner.lines, false, RestPlace{}, source); break;
+            case Type::If:
+            case Type::Opt:
+            case Type::Chain: after_rest = check_rest_lines(p, n.inner.lines, after_rest, at, source); break;
+            case Type::Switch: {
+                bool any = false;
+                for (const auto& c : n.cases) any = check_rest_lines(p, c.body.lines, after_rest, at, source) || any;
+                after_rest = any;
+                break;
+            }
+            // 0.21 ruling 42: an `ext` body is the extent around it, as an `if`
+            // body is; each `alt` of a `choice` is checked as a `switch` case is.
+            case Type::Ext: after_rest = check_rest_lines(p, n.inner.lines, after_rest, at, source); break;
+            case Type::Choice: {
+                bool any = false;
+                for (const auto& a : n.inner.lines) any = check_rest_lines(p, a.inner.lines, after_rest, at, source) || any;
+                after_rest = any;
+                break;
+            }
+            default: break;
+        }
+    }
+    return after_rest;
+}
+
+bool check_rest_body(const Pack& p, const SeqBody& body, bool after_rest, RestPlace at, const std::string& source) {
+    const bool common = check_rest_lines(p, body.lines, after_rest, at, source);
+    if (body.kinds.empty()) return common;
+    bool any = false;
+    for (const auto& k : body.kinds) any = check_rest_lines(p, k.lines, common, at, source) || any;
+    return any;
+}
+
 }  // namespace
 
 bool is_sequential_pack(const std::string& text) {
@@ -245,6 +433,11 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
         std::string what;
         std::map<std::string, int> names;       // presence names declared in this block
         std::map<std::string, int> kind_names;  // those declared in the kind that is open
+        // v0.21: count names declared in this block, and in the kind that is open.
+        std::map<std::string, int> counts, kind_counts;
+        bool declares(const std::string& n) const {
+            return names.count(n) || kind_names.count(n) || counts.count(n) || kind_counts.count(n);
+        }
         std::set<std::string> kinds;
         // v0.20. A body: the keys its `field` and `also` lines have mapped so
         // far, in the common lines and in the kind that is open.
@@ -485,6 +678,7 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
             f.body->kinds.back().line = lineno;
             f.kind_names.clear();
             if (first_kind_line == 0) first_kind_line = lineno;
+            f.kind_counts.clear();
             f.kind_keys.clear();
         } else if (kw == "when") {
             // The `when` lines of a kind are its first lines; a `when` before
@@ -699,7 +893,7 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
             Frame& f = stack.back();
             if (f.type == Type::Ext && !lines_of(f).empty())
                 throw bad("a 'presence' line inside an 'ext' block is its first line");
-            if (t[1].empty() || f.names.count(t[1]) || f.kind_names.count(t[1]))
+            if (t[1].empty() || f.declares(t[1]))
                 throw bad("the presence '" + t[1] + "' is declared twice in " + f.what);
             SeqPresence pr;
             pr.name = t[1];
@@ -733,6 +927,9 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
                 const std::string name = s.substr(0, dot);
                 std::size_t found = 0;
                 for (std::size_t d = stack.size(); d-- > 0 && c.presence < 0;) {
+                    // v0.21 ruling 15: counts and presences share one namespace.
+                    if (stack[d].kind_counts.count(name) || stack[d].counts.count(name))
+                        throw bad("'if' names '" + name + "', which is a count, not a presence");
                     auto it = stack[d].kind_names.find(name);
                     if (it == stack[d].kind_names.end()) {
                         it = stack[d].names.find(name);
@@ -815,11 +1012,40 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
             SeqNode n;
             n.type = Type::Group;
             if (t.size() >= 2) n.list = t[1];
-            if (t.size() == 4 && t[2] == "count") {
+            if (t.size() == 4 && t[2] == "count" && !t[3].empty() && t[3][0] == '@') {
+                // v0.21: `count @<name>`, a count line visible here in the same
+                // group body (rulings 9, 12, 15 and 24).
+                const std::string name = t[3].substr(1);
+                if (name.empty()) throw bad("'count @' names no count");
+                n.repeat = Repeat::CountRef;
+                for (std::size_t d = stack.size(); d-- > 0 && n.count_id < 0;) {
+                    const Frame& f = stack[d];
+                    auto it = f.kind_counts.find(name);
+                    if (it != f.kind_counts.end()) {
+                        n.count_id = it->second;
+                        break;
+                    }
+                    it = f.counts.find(name);
+                    if (it != f.counts.end()) {
+                        n.count_id = it->second;
+                        break;
+                    }
+                    if (f.kind_names.count(name) || f.names.count(name))
+                        throw bad("'count @" + name + "' names a presence, not a count");
+                    if (f.is_body) break;  // a reference stays in its group body
+                }
+                if (n.count_id < 0)
+                    throw bad("'count @" + name + "' names no count line visible here in the same group body");
+            } else if (t.size() == 4 && t[2] == "count") {
                 n.repeat = Repeat::Count;
                 n.len = small_len(t[3], "a count");
-            } else if (t.size() == 3 && (t[2] == "while" || t[2] == "more" || t[2] == "fx")) {
-                n.repeat = t[2] == "while" ? Repeat::While : t[2] == "more" ? Repeat::More : Repeat::Fx;
+            } else if (t.size() == 3 && (t[2] == "while" || t[2] == "more" || t[2] == "fx" || t[2] == "rest" ||
+                                         t[2] == "last")) {
+                n.repeat = t[2] == "while" ? Repeat::While
+                           : t[2] == "more" ? Repeat::More
+                           : t[2] == "fx"   ? Repeat::Fx
+                           : t[2] == "rest" ? Repeat::Rest
+                                            : Repeat::Last;
             } else if ((t.size() == 3 || t.size() == 5) && t[2] == "size") {
                 // v0.19: SEQUENCE OF, `size <lb> <ub>` or no size constraint.
                 n.repeat = Repeat::Size;
@@ -831,7 +1057,8 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
                 }
                 note_uper(lineno, "'group ... size'");
             } else {
-                throw bad("a group of a sequential pack is 'group <list> count <len>' or 'group <list> while | more | fx'");
+                throw bad("a group of a sequential pack is 'group <list> count <len> | count @<name>' or "
+                          "'group <list> while | more | fx | rest | last'");
             }
             open(std::move(n), "the group '" + t[1] + "'");
         } else if (kw == "ext") {
@@ -872,6 +1099,31 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
             n.type = Type::Alt;
             n.number = static_cast<std::uint64_t>(index);
             open(std::move(n), "an 'alt'");
+        } else if (kw == "count") {
+            // v0.21: `count <name> <len> [plus <n>]`.
+            if (t.size() < 3) throw bad("'count' takes a name and a bit length");
+            const std::string& name = t[1];
+            if (name.empty() || name.find_first_of(".!@") != std::string::npos)
+                throw bad("the count name '" + name + "' is empty or holds '.', '!' or '@'");
+            Frame& f = stack.back();
+            if (f.declares(name)) throw bad("the name '" + name + "' is declared twice in " + f.what);
+            SeqNode n;
+            n.type = Type::Count;
+            n.count_name = name;
+            n.len = small_len(t[2], "a count");
+            bool plus = false;
+            for (std::size_t k = 3; k < t.size(); ++k) {
+                if (t[k] == "plus" && !plus && k + 1 < t.size() && parse_plus(t[k + 1], n.plus)) {
+                    plus = true;
+                    ++k;
+                } else {
+                    throw bad("after its bit length a 'count' takes 'plus <n>' once, a signed decimal integer; got '" +
+                              t[k] + (k + 1 < t.size() ? " " + t[k + 1] : std::string()) + "'");
+                }
+            }
+            n.count_id = static_cast<int>(p.seq_count_lines++);
+            (f.is_body && !f.body->kinds.empty() ? f.kind_counts : f.counts).emplace(name, n.count_id);
+            add(std::move(n));
         } else if (kw == "switch") {
             // v0.20: `switch <model-key>`, a key mapped earlier in the scope.
             if (t.size() != 2 || t[1].empty()) throw bad("'switch' takes one model key");
@@ -976,6 +1228,8 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
         throw Error(ErrorKind::BadDirective, p.format, "",
                     source + ":" + std::to_string(whole_line) + ": 'length ... whole' in a pack with 'armor sixbit'");
     check_lists_once(p, p.seq, source);
+    check_count_refs_body(p, p.seq, source);
+    check_rest_body(p, p.seq, false, RestPlace{}, source);
     // `via` names a table of the pack; a `map` line may follow the field.
     auto resolve = [&](FieldLine& f) {
         if (f.via.empty()) return;
@@ -1089,6 +1343,11 @@ struct SeqIn {
     std::vector<std::uint64_t> case_read;  // by case id: the tick it was last read at; 0 = never
     std::vector<int> open_cases;           // the cases being read, outermost first
     std::uint64_t tick = 0;
+    bool ext_bits = false;                 // v0.21: the innermost `length` block is counted in bits
+    // v0.21, by count line: whether its last reading was on the wire (0 when
+    // it lay at or past the end of its extent), and the items it stated.
+    std::vector<char> count_set{};
+    std::vector<std::uint64_t> counts{};
 
     [[noreturn]] void malformed(const std::string& why) const {
         throw Error(ErrorKind::MalformedWire, p.format, "", why + " (at bit " + std::to_string(cur) + " of " +
@@ -1404,6 +1663,54 @@ void decode_group(SeqIn& in, const SeqNode& n, Item& out) {
         return items;
     };
     switch (n.repeat) {
+        case Repeat::Rest: {
+            // v0.21: items while bits remain in the enclosing extent: at least
+            // 8 when it is counted in bytes, 1 when in bits. Fewer are padding.
+            const bool in_length = in.ext != kNoExtent;
+            const std::uint64_t end = in_length ? in.ext : in.have;
+            const std::uint64_t unit = in_length && in.ext_bits ? 1 : 8;
+            std::vector<Item>& items = out.lists[n.list];
+            items.clear();
+            while (in.cur <= end && end - in.cur >= unit) {
+                const std::uint64_t start = in.cur;
+                item(items);
+                if (in.cur == start) in.malformed("an item of the 'rest' group '" + n.list + "' reads no bits");
+            }
+            return;
+        }
+        case Repeat::Last: {
+            // v0.21: each item is preceded by one bit, 1 for the last item. A
+            // first bit at the end of the extent gives an absent list (ruling
+            // 34 of 0.8); a later one there is malformed-wire (ruling 13).
+            if (!in.need(1, "the bit before an item")) return;
+            std::vector<Item>& items = out.lists[n.list];
+            items.clear();
+            for (;;) {
+                if (!in.need(1, "the bit before an item"))
+                    in.malformed("the bit before an item of the 'last' group '" + n.list +
+                                 "' lies at the end of its 'length' extent");
+                const bool last = in.take(1) == 1;
+                item(items);
+                if (last) return;
+            }
+        }
+        case Repeat::CountRef: {
+            // v0.21: the count line's value; absent when the group or its count
+            // line lies at or past the end of a `length` extent (ruling 6).
+            if (in.ext != kNoExtent && in.cur >= in.ext) return;
+            const std::size_t id = static_cast<std::size_t>(n.count_id);
+            if (!in.count_set[id]) return;
+            const std::uint64_t count = in.counts[id];
+            // Ruling 20: compared with the bits left at the group.
+            const std::uint64_t end = in.ext != kNoExtent ? in.ext : in.have;
+            if (in.cur > end || count > end - in.cur)
+                in.malformed("the count " + std::to_string(count) + " of the group '" + n.list +
+                             "' is larger than the bits left");
+            std::vector<Item>& items = out.lists[n.list];
+            items.clear();
+            for (std::uint64_t k = 0; k < count; ++k) item(items);
+            return;
+        }
         case Repeat::Count: {
             if (!in.need(n.len, "a count")) return;  // beyond the extent: an absent list
             const std::uint64_t count = in.take(n.len);
@@ -1561,7 +1868,8 @@ void decode_node(SeqIn& in, const SeqNode& n, Item& out, Decoder& d) {
             if (in.need(1, "the bit of an 'opt'") && in.take(1) == 1) decode_lines(in, n.inner.lines, 0, out, d);
             return;
         case Type::Chain: {
-            if (in.ext != kNoExtent && in.cur >= in.ext) return;
+            // At the end of a `length` extent a chain is still walked (0.21
+            // ruling 31): its lines read as absent, its `fx` bits as 0.
             const std::vector<SeqNode>& lines = n.inner.lines;
             for (std::size_t k = 0; k < lines.size(); ++k) {
                 if (lines[k].type != Type::Fx) {
@@ -1587,10 +1895,13 @@ void decode_node(SeqIn& in, const SeqNode& n, Item& out, Decoder& d) {
             const std::uint64_t outer = in.ext != kNoExtent ? in.ext : in.have;
             if (bits > outer - in.cur) in.malformed("a 'length' extent of " + std::to_string(bits) + " bits runs past the input");
             const std::uint64_t saved = in.ext;
+            const bool saved_bits = in.ext_bits;
             in.ext = in.cur + bits;
+            in.ext_bits = n.unit_bits;
             decode_lines(in, n.inner.lines, 0, out, d);
             in.cur = in.ext;  // content of the extent no line read is skipped
             in.ext = saved;
+            in.ext_bits = saved_bits;
             return;
         }
         case Type::LengthWhole: {
@@ -1636,6 +1947,23 @@ void decode_node(SeqIn& in, const SeqNode& n, Item& out, Decoder& d) {
             in.malformed("the choice index " + std::to_string(index) + " has no 'alt'");
         }
         case Type::Alt: return;  // read by its choice
+        case Type::Count: {
+            // v0.21: the value less `plus`; below `plus` is malformed-wire here.
+            const std::size_t id = static_cast<std::size_t>(n.count_id);
+            in.count_set[id] = 0;
+            if (!in.need(n.len, "a count")) return;
+            const std::uint64_t v = in.take(n.len);
+            std::uint64_t items = 0;
+            if (!stated_units(v, n.plus, items)) {
+                if (n.plus >= 0)
+                    in.malformed("the count '" + n.count_name + "' holds " + std::to_string(v) + ", below its 'plus " +
+                                 std::to_string(n.plus) + "'");
+                items = ~std::uint64_t{0};  // more than any bits left
+            }
+            in.counts[id] = items;
+            in.count_set[id] = 1;
+            return;
+        }
     }
 }
 
@@ -1698,6 +2026,8 @@ Entity decode_seq(const Pack& p, const std::string& bytes) {
              p.armor_sixbit ? armored : static_cast<std::uint64_t>(data.size()) * 8, kNoExtent, 0,
              std::vector<std::vector<bool>>(p.seq_presences.size()), false, {}, {}, {}, {}, {}, 0};
     in.case_read.assign(p.seq_cases.size(), 0);
+    in.count_set.assign(p.seq_count_lines, 0);
+    in.counts.assign(p.seq_count_lines, 0);
     Entity e;
     decode_body(in, p.seq, e);
     // A presence bit named only inside cases none of which was read after it (0.20 ruling 21).
@@ -1860,6 +2190,24 @@ struct SeqOut {
     };
     std::vector<Whole> wholes;  // `length ... whole` fields, written last
     SwitchState* sw = nullptr;
+    // v0.21: every count line written, filled in when the message is finished
+    // (ruling 30); `at_count[id]` is the last one written for a count line.
+    struct CountField {
+        std::uint64_t at;
+        const SeqNode* node;
+        std::uint64_t items;
+    };
+    std::vector<CountField> count_fields{};
+    std::map<int, std::size_t> at_count{};
+    // v0.21 ruling 4: the first bit of each `rest` item, by extent being laid
+    // out; the message's is the first. `counted_in_bytes` per extent.
+    struct Extent {
+        std::uint64_t start;
+        bool bytes;
+        std::vector<std::uint64_t> item_starts;
+    };
+    std::vector<Extent> extents{Extent{0, true, {}}};
+    bool rest_ran = false;  // a `rest` group of the current extent was written
 
     void reach(std::uint64_t bits) {
         const std::size_t bytes = static_cast<std::size_t>((bits + 7) / 8);
@@ -2126,6 +2474,17 @@ void encode_field(SeqOut& out, const SeqNode& n, const Scope& s) {
     }
 }
 
+// v0.21 ruling 4: each `rest` item of a byte-counted extent starts at least 8
+// bits before the extent's byte-padded end.
+void check_rest_items(const Pack& p, const SeqOut::Extent& e, std::uint64_t end) {
+    if (!e.bytes) return;
+    for (std::uint64_t at : e.item_starts)
+        if (end < at || end - at < 8)
+            throw Error(ErrorKind::TransformEncode, p.format, "",
+                        "a 'rest' item starts " + std::to_string(end < at ? 0 : end - at) +
+                            " bits before the byte-padded end of its extent; decode would not read it");
+}
+
 void encode_group(SeqOut& out, const SeqNode& n, const Scope& s) {
     const Pack& p = out.p;
     auto it = s.item.lists.find(n.list);
@@ -2133,6 +2492,44 @@ void encode_group(SeqOut& out, const SeqNode& n, const Scope& s) {
     const std::vector<Item>& items = it == s.item.lists.end() ? none : it->second;
     const std::size_t count = items.size();
     switch (n.repeat) {
+        case Repeat::Rest: {
+            // Items back to back; an empty or absent list writes nothing.
+            for (std::size_t k = 0; k < count; ++k) {
+                const std::uint64_t start = out.cur;
+                out.extents.back().item_starts.push_back(start);
+                out.rest_ran = false;
+                encode_body(out, n.inner, items[k]);
+                if (out.cur == start)
+                    throw Error(ErrorKind::TransformEncode, p.format, "",
+                                "an item of the 'rest' group '" + n.list + "' writes no bits");
+                // Ruling 10: an item that ends with a `rest` group of its own
+                // reads to the end of the extent; no item can follow it.
+                if (out.rest_ran && k + 1 < count)
+                    throw Error(ErrorKind::TransformEncode, p.format, "",
+                                "item " + std::to_string(k) + " of the list '" + n.list +
+                                    "' ends with a 'rest' group, and another item follows it");
+            }
+            out.rest_ran = true;
+            return;
+        }
+        case Repeat::Last:
+            if (count == 0)
+                throw Error(ErrorKind::TransformEncode, p.format, "",
+                            "the list '" + n.list + "' is absent or empty, and its 'last' group needs at least one item");
+            for (std::size_t k = 0; k < count; ++k) {
+                out.put(k + 1 == count ? 1 : 0, 1);
+                encode_body(out, n.inner, items[k]);
+            }
+            return;
+        case Repeat::CountRef: {
+            auto at = out.at_count.find(n.count_id);
+            if (at == out.at_count.end())
+                throw Error(ErrorKind::TransformEncode, p.format, "",
+                            "the count of the list '" + n.list + "' was not written before it");
+            out.count_fields[at->second].items = count;
+            for (const Item& item : items) encode_body(out, n.inner, item);
+            return;
+        }
         case Repeat::Count:
             // An absent list writes a count of 0 (0.7 ruling 14).
             if (n.len < 64 && (static_cast<std::uint64_t>(count) >> n.len) != 0)
@@ -2271,8 +2668,13 @@ void encode_node(SeqOut& out, const std::vector<SeqNode>& lines, std::size_t ind
             const std::uint64_t at = out.cur;
             out.zeros(n.len);
             const std::uint64_t start = out.cur;
+            out.extents.push_back({start, !n.unit_bits, {}});
+            const bool rest_ran = out.rest_ran;
             encode_lines(out, n.inner.lines, s, nullptr);
+            out.rest_ran = rest_ran;
             if (!n.unit_bits) out.zeros((8 - (out.cur - start) % 8) % 8);
+            check_rest_items(p, out.extents.back(), out.cur);
+            out.extents.pop_back();
             const std::uint64_t units = n.unit_bits ? out.cur - start : (out.cur - start) / 8;
             const std::int64_t stated = static_cast<std::int64_t>(units) + n.plus;
             if (stated < 0 || (n.len < 64 && (static_cast<std::uint64_t>(stated) >> n.len) != 0))
@@ -2305,6 +2707,12 @@ void encode_node(SeqOut& out, const std::vector<SeqNode>& lines, std::size_t ind
             return;
         }
         case Type::Alt: return;  // written by its choice
+        case Type::Count:
+            // v0.21: filled in when the message is finished; an absent list holds `plus`.
+            out.at_count[n.count_id] = out.count_fields.size();
+            out.count_fields.push_back({out.cur, &n, 0});
+            out.zeros(n.len);
+            return;
     }
 }
 
@@ -2416,12 +2824,38 @@ std::string encode_seq(const Pack& p, const Entity& e) {
 
 namespace {
 std::string finish_seq(const Pack& p, SeqOut& out) {
-    // Under armor, L is the cursor after the last line, not rounded to a byte
-    // (0.14); `length ... whole` is refused at load.
-    if (p.armor_sixbit) return bytes_to_armor(out.data, out.cur);
     // A message is a whole number of bytes: the last byte's remaining bits are
     // zero. A UPER encoding of no bits is one octet 00 (0.19).
     out.data.resize(static_cast<std::size_t>((out.cur + 7) / 8), '\0');
+    check_rest_items(p, out.extents.front(), (out.cur + 7) / 8 * 8);
+    // v0.21: each count holds its items plus `n` (ruling 30: checked here).
+    for (const auto& c : out.count_fields) {
+        const SeqNode& n = *c.node;
+        const bool fits = n.plus >= 0
+                              ? c.items <= ~std::uint64_t{0} - static_cast<std::uint64_t>(n.plus)
+                              : true;
+        std::uint64_t value = 0;
+        bool ok = fits;
+        if (fits) {
+            if (n.plus >= 0) {
+                value = c.items + static_cast<std::uint64_t>(n.plus);
+            } else {
+                const std::uint64_t sub = static_cast<std::uint64_t>(-(n.plus + 1)) + 1;
+                ok = c.items >= sub;
+                value = ok ? c.items - sub : 0;
+            }
+        }
+        if (ok && n.len < 64 && (value >> n.len) != 0) ok = false;
+        if (!ok)
+            throw Error(ErrorKind::TransformEncode, p.format, "",
+                        "the count '" + n.count_name + "' of " + std::to_string(c.items) + " items plus " +
+                            std::to_string(n.plus) + " does not fit 0 to 2^" + std::to_string(n.len) + " - 1");
+        write_bits(out.data, c.at, n.len, value, p.bit_order == BitOrder::Msb);
+    }
+    // Under armor, L is the cursor after the last line, not rounded to a byte
+    // (0.14), once the counts are filled in (0.21); `length ... whole` is
+    // refused at load.
+    if (p.armor_sixbit) return bytes_to_armor(out.data, out.cur);
     if (p.uper && out.data.empty()) out.data.assign(1, '\0');
     for (const auto& w : out.wholes) {
         const std::int64_t stated = static_cast<std::int64_t>(out.data.size()) + w.node->plus;

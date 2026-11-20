@@ -1,0 +1,9 @@
+{
+  "name": "to-if-empty-list",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-if",
+  "input": "{\"nums\":[]}",
+  "expect": "00",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 18 with ruling 5 of 0.8; the bit is 0"
+}

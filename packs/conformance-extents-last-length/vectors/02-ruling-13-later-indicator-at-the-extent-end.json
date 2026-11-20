@@ -1,0 +1,9 @@
+{
+  "name": "ruling-13-later-indicator-at-the-extent-end",
+  "from": "conformance-extents-last-length",
+  "to": "conformance-extents-last-length",
+  "input": "010509",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 13; item 0 says another follows; that item's bit starts at the extent end"
+}

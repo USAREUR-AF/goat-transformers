@@ -1,0 +1,13 @@
+{
+  "name": "ruling-39-rest-last-in-an-if-of-the-item",
+  "from": "conformance-extents-outerif",
+  "to": "conformance-extents-outerif",
+  "input": "800506",
+  "expect": "800506",
+  "model": {
+    "probe.items.#": "1",
+    "probe.items[0].probe.subs.#": "2"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 rulings 35 and 39; a rest nested in an if of an outer rest item, with no wire line after it in the item"
+}

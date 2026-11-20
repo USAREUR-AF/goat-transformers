@@ -1,0 +1,9 @@
+{
+  "name": "to-outerkind-ruling-10-b-then-a",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-outerkind",
+  "input": "{\"items\":[{\"subs\":[{\"val\":5}]},{\"qty\":9}]}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 10 with ruling 27; an item before the last is of kind b, which ends in the inner rest"
+}

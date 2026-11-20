@@ -1,0 +1,15 @@
+{
+  "name": "ruling-25-kind-a",
+  "from": "conformance-extents-kindcounts",
+  "to": "conformance-extents-kindcounts",
+  "input": "01030105",
+  "expect": "01030105",
+  "model": {
+    "@kind": "a",
+    "probe.x": "3",
+    "probe.nums.#": "1",
+    "probe.nums[0].probe.val": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 25; each kind is its own block for count names; a's n is 8 bits"
+}

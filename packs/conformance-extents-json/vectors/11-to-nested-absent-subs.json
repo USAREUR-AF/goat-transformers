@@ -1,0 +1,9 @@
+{
+  "name": "to-nested-absent-subs",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-nested",
+  "input": "{\"items\":[{\"qty\":3}]}",
+  "expect": "010003",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 10 (`rest` within a `length` block of the item's body) and ruling 3; an absent list writes nothing; the length is 0"
+}

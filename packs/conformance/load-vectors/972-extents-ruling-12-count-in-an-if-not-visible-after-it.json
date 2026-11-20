@@ -1,0 +1,9 @@
+{
+  "name": "972-extents-ruling-12-count-in-an-if-not-visible-after-it",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey x int -\nkey y int -\nkey z int -\nkey val int -\nkey qty int -\nlist nums \"a list\"\nlist recs \"a list\"\nlist items \"a list\"\nlist subs \"a list\"\n"
+  ],
+  "pack": "format probe\nversion 0.21.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nlayout sequential\npresence p 1\nif p.1\n  count n 8\nend\ngroup probe.nums count @n\n  field probe.val 8 uint\nend\n",
+  "expect_error": "bad-directive"
+}

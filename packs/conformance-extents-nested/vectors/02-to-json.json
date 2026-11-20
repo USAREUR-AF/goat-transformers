@@ -1,0 +1,9 @@
+{
+  "name": "to-json",
+  "from": "conformance-extents-nested",
+  "to": "conformance-extents-json",
+  "input": "02020506090003",
+  "expect": "{\"items\":[{\"qty\":9,\"subs\":[{\"val\":5},{\"val\":6}]},{\"qty\":3,\"subs\":[]}]}",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 10 (`rest` within a `length` block of the item's body) and ruling 3; item 1's subs: []"
+}

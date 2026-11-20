@@ -1,0 +1,9 @@
+{
+  "name": "to-unreached-absent",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-unreached",
+  "input": "{}",
+  "expect": "0100",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 6; encode writes n"
+}

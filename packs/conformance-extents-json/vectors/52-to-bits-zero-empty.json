@@ -1,0 +1,9 @@
+{
+  "name": "to-bits-zero-empty",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-bits-zero",
+  "input": "{\"nums\":[]}",
+  "expect": "0000",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 21 in an extent counted in bits; an empty list writes nothing"
+}

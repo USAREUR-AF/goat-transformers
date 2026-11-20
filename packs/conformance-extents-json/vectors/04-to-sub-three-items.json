@@ -1,0 +1,9 @@
+{
+  "name": "to-sub-three-items",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-sub",
+  "input": "{\"x\":0,\"nums\":[1,2,3]}",
+  "expect": "009180",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 4 and A list to the end of its extent; items start at bits 5, 9 and 13 of 24: 19, 15 and 11 bits left"
+}

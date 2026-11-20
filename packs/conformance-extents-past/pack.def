@@ -1,0 +1,23 @@
+# Conformance probe pack for a count and its group at the end of a `length`
+# extent (spec 0.21, A count before other fields, and ruling 6), most
+# significant bit first. Public. No kinds.
+#
+#   block       an 8-bit length in bytes: n in 8 bits, x in 8 bits, then n
+#               nums (val in 8 bits each)
+#   y           8 bits, after the block
+format     conformance-extents-past
+version    0.21.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+length 8
+  count n 8
+  field  probe.x  8  uint
+  group  probe.nums count @n
+    field  probe.val  8  uint
+  end
+end
+field   probe.y  8  uint

@@ -1,0 +1,12 @@
+{
+  "name": "absent-list-does-not-encode",
+  "from": "conformance-extents-unreached-minus",
+  "to": "conformance-extents-unreached-minus",
+  "input": "0000",
+  "expect_error": "transform-encode",
+  "model": {
+    "probe.nums.#": "absent"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 30; decode: opt 0, the list is absent; encode: the count holds -1"
+}

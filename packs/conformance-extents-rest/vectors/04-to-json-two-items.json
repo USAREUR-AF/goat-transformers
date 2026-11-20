@@ -1,0 +1,9 @@
+{
+  "name": "to-json-two-items",
+  "from": "conformance-extents-rest",
+  "to": "conformance-extents-json",
+  "input": "0901020304",
+  "expect": "{\"z\":9,\"recs\":[{\"x\":1,\"y\":2},{\"x\":3,\"y\":4}]}",
+  "source": "constructed",
+  "reference": "spec 0.21, A list to the end of its extent; the json pack writes z, then recs, in its line order"
+}

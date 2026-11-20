@@ -1,0 +1,29 @@
+# Conformance probe pack for two kinds that each declare a count of the same
+# name (spec 0.21 ruling 25), most significant bit first. Public.
+#
+#   kind a      when 8 1, requires x: x in 8 bits, n in 8 bits, n nums
+#   kind b      when 8 2: n in 4 bits, 4 unused bits, n nums
+#   an item of nums is val in 8 bits
+format     conformance-extents-kindcounts
+version    0.21.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+kind    a
+when    8  1
+requires probe.x
+field   probe.x  8  uint
+count n 8
+group   probe.nums count @n
+  field  probe.val  8  uint
+end
+kind    b
+when    8  2
+count n 4
+pad 4
+group   probe.nums count @n
+  field  probe.val  8  uint
+end

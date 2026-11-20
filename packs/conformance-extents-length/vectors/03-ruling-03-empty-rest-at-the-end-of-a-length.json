@@ -1,0 +1,13 @@
+{
+  "name": "ruling-03-empty-rest-at-the-end-of-a-length",
+  "from": "conformance-extents-length",
+  "to": "conformance-extents-length",
+  "input": "0009",
+  "expect": "0009",
+  "model": {
+    "probe.recs.#": "0",
+    "probe.z": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 rulings 3 and 5; ruling 3: a rest group at the end of a length extent is present and empty (amends ruling 7 of 0.8)"
+}

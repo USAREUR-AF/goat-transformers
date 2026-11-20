@@ -1,0 +1,14 @@
+{
+  "name": "ruling-02-header-count-kind-a",
+  "from": "conformance-extents-kinds",
+  "to": "conformance-extents-kinds",
+  "input": "02010506",
+  "expect": "02010506",
+  "model": {
+    "@kind": "a",
+    "probe.nums.#": "2",
+    "probe.nums[1].probe.val": "6"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 2; a header count in common lines may be referenced by the list in every kind; when 1: a"
+}

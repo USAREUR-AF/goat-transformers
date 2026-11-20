@@ -1,0 +1,14 @@
+{
+  "name": "two-items",
+  "from": "conformance-extents-last",
+  "to": "conformance-extents-last",
+  "input": "0586",
+  "expect": "0586",
+  "model": {
+    "probe.nums.#": "2",
+    "probe.nums[0].probe.val": "5",
+    "probe.nums[1].probe.val": "6"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21, The last-item flag; the bit before each item is 1 for the last item and 0 for the others"
+}

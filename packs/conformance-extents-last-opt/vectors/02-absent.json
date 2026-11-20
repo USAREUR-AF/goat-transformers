@@ -1,0 +1,12 @@
+{
+  "name": "absent",
+  "from": "conformance-extents-last-opt",
+  "to": "conformance-extents-last-opt",
+  "input": "00",
+  "expect": "00",
+  "model": {
+    "probe.nums.#": "absent"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21, The last-item flag; the opt bit is 0"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "to-whole-absent",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-whole",
+  "input": "{}",
+  "expect": "01",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 14; an absent list writes nothing"
+}

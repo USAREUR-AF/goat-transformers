@@ -1,0 +1,9 @@
+{
+  "name": "ruling-06-below-plus-checked-first",
+  "from": "conformance-extents-unreached",
+  "to": "conformance-extents-unreached",
+  "input": "0000",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 6; the value is ignored after the below-n check: 0 < 1"
+}

@@ -2528,13 +2528,16 @@ fn locatorFormOk(wire: Wire, sequential: bool, loc: []const u8, in_group: bool) 
 }
 
 // Ruling 5a of 0.11 on a `group` line: an empty step or member name, and on
-// `protobuf` a step that is not a field number, are `bad-locator`.
+// `protobuf` a step that is not a field number, are `bad-locator`. The
+// `protobuf` group locators `rest` and `last` are `bad-directive` after the
+// file is read instead (rulings 37 and 44 of 0.21).
 fn groupLocatorFormOk(wire: Wire, loc: []const u8) bool {
     const sep: u8 = switch (wire) {
         .xml => '/',
         .json, .geojson, .protobuf => '.',
         .bits, .text, .tlv => return true,
     };
+    if (wire == .protobuf and (std.mem.eql(u8, loc, "rest") or std.mem.eql(u8, loc, "last"))) return true;
     var it = std.mem.splitScalar(u8, loc, sep);
     while (it.next()) |seg| {
         if (seg.len == 0) return false;
@@ -2558,7 +2561,7 @@ fn fixedLen(loc: []const u8) ?u64 {
 }
 
 // The directives of a pack (ruling 5 of 0.11).
-const PackDir = enum { format, version, distribution, source, uses, wire, root, field, when, @"const", kind, requires, default, map, typemap, group, end, word_bytes, bit_order, layout, also, pad, @"align", presence, @"if", opt, chain, fx, length, delimiter, start, checksum, tag, key, armor, element, encoding, ext, choice, alt, @"switch", case, @"else" };
+const PackDir = enum { format, version, distribution, source, uses, wire, root, field, when, @"const", kind, requires, default, map, typemap, group, end, word_bytes, bit_order, layout, also, pad, @"align", presence, @"if", opt, chain, fx, length, delimiter, start, checksum, tag, key, armor, element, encoding, ext, choice, alt, @"switch", case, @"else", count };
 
 // The header lines a pack has given so far, for the line checks.
 const HeaderSeen = struct {
@@ -2603,6 +2606,9 @@ fn packLineChecks(alloc: std.mem.Allocator, toks: []const []const u8, lineno: us
         // Version 0.20: `switch <key>` and `case <values>` one, `else` none
         // (ruling 39 of 0.20)
         .@"switch", .case => n == 1,
+        // Version 0.21: `count <name> <len> [plus <n>]`; its options are
+        // checked by the sequential parser
+        .count => n >= 2,
         // `checksum sum16 <tag>` of the `tlv` wire has two (ruling 12 of 0.13)
         .checksum => n == 1 or (n == 2 and std.mem.eql(u8, toks[1], "sum16")),
         .field => n >= 3,
@@ -2815,7 +2821,7 @@ fn fixedLine(st: *FState, toks: []const []const u8) anyerror!void {
         const slot = if (is(kw, "tag")) &p.tag_raw else &p.key_raw;
         if ((slot.* != null or p.kinds.items.len > 0) and p.tdir_bad == 0) p.tdir_bad = lineno;
         slot.* = toks[1];
-    } else if (is(kw, "pad") or is(kw, "align") or is(kw, "presence") or is(kw, "opt") or is(kw, "chain") or is(kw, "fx") or is(kw, "length") or is(kw, "also") or is(kw, "switch") or is(kw, "case") or is(kw, "else")) {
+    } else if (is(kw, "pad") or is(kw, "align") or is(kw, "presence") or is(kw, "opt") or is(kw, "chain") or is(kw, "fx") or is(kw, "length") or is(kw, "also") or is(kw, "switch") or is(kw, "case") or is(kw, "else") or is(kw, "count")) {
         return bad(diag, alloc, E.@"bad-directive", "line {d}: {s} is a line of a sequential pack (`layout sequential` on the bits wire)", .{ lineno, kw });
     } else if (is(kw, "typemap")) {
         if (toks.len != 3) return bad(diag, alloc, E.@"bad-directive", "line {d}: typemap takes two arguments", .{lineno});
@@ -9041,8 +9047,11 @@ const SAlso = struct {
     lineno: usize = 0,
 };
 
-const SMode = enum { count, while_, more, fx, size_c, size_u };
-const STag = enum { field, constant, when, pad, align_, presence, if_, opt, group, chain, fx, length, whole, ext, choice, alt, switch_, case_ };
+const SMode = enum { count, while_, more, fx, size_c, size_u, cref, rest, last };
+const STag = enum { field, constant, when, pad, align_, presence, if_, opt, group, chain, fx, length, whole, ext, choice, alt, switch_, case_, count };
+
+// Version 0.21: a `count <name> <len> [plus <n>]` line.
+const SCount = struct { name: []const u8, len: usize, plus: i64, lineno: usize };
 
 // Version 0.19: a UPER locator. `int:<lb>:<ub>[:ext]`, `int:<lb>:`, `int::`,
 // `enum:<n>[:ext]` (lb 0, ub n - 1), `chars:<lb>:<ub>`, `chars:`,
@@ -9173,6 +9182,8 @@ const SNode = struct {
     ranges: []const WRange = &.{}, // when: the values and ranges (Version 0.20)
     sw: ?*SSwitch = null, // switch
     cs: ?*SCase = null, // case
+    // Version 0.21: a count line, or the count a `count @<name>` group names
+    cnt: ?*SCount = null,
 };
 
 const SKind = struct {
@@ -9260,7 +9271,9 @@ const SFrame = struct {
     common_mapped: usize = 0,
 };
 
-const SName = struct { name: []const u8, pres: *SPres, depth: usize };
+// A presence or count name (they share one namespace, ruling 15 of 0.21);
+// `body`: the index of the frame of the message or group body it belongs to.
+const SName = struct { name: []const u8, pres: ?*SPres = null, cnt: ?*SCount = null, depth: usize, body: usize = 0 };
 
 const SParser = struct {
     alloc: std.mem.Allocator,
@@ -9294,6 +9307,16 @@ const SParser = struct {
 
     fn top(self: *SParser) *SFrame {
         return &self.frames.items[self.frames.items.len - 1];
+    }
+
+    // The index of the nearest enclosing message or group body.
+    fn bodyIndex(self: *SParser) usize {
+        var i = self.frames.items.len;
+        while (i > 0) {
+            i -= 1;
+            if (self.frames.items[i].tag == .body) return i;
+        }
+        unreachable;
     }
 
     // The nearest enclosing message or group body.
@@ -9705,8 +9728,34 @@ const SParser = struct {
             }
             const pr = try alloc.create(SPres);
             pr.* = .{ .name = name, .n = if (is(toks[2], "fx")) 0 else try self.bitLen(toks[2], kw, 64) };
-            try self.names.append(alloc, .{ .name = name, .pres = pr, .depth = depth });
+            try self.names.append(alloc, .{ .name = name, .pres = pr, .depth = depth, .body = self.bodyIndex() });
             try self.add(.{ .tag = .presence, .lineno = self.lineno, .pres = pr });
+        } else if (is(kw, "count")) {
+            // count <name> <len> [plus <n>] (Version 0.21)
+            if (toks.len < 3) return self.err(bd, "count takes a name and a bit length", .{});
+            const name = toks[1];
+            // a name as a presence name is: no `.`, `!` or `@` (ruling 24)
+            if (name.len == 0 or std.mem.indexOfAny(u8, name, ".!@") != null) return self.err(bd, "count name {s}", .{name});
+            const len = try self.bitLen(toks[2], kw, 64);
+            var plus: i64 = 0;
+            if (toks.len > 3) {
+                if (!is(toks[3], "plus")) return self.err(bd, "count: the option {s} is not `plus`", .{toks[3]});
+                if (toks.len < 5) return self.err(bd, "count: plus takes a value", .{});
+                if (toks.len > 5) return self.err(bd, "count: {s} after `plus {s}`", .{ toks[5], toks[4] });
+                // an optional `-` then digits, within signed 64 bits (ruling 16)
+                const t = toks[4];
+                const digits = if (t.len > 0 and t[0] == '-') t[1..] else t;
+                if (!allDigits(digits)) return self.err(bd, "count: plus {s} is not an integer", .{t});
+                plus = std.fmt.parseInt(i64, t, 10) catch return self.err(bd, "count: plus {s} is outside signed 64 bits", .{t});
+            }
+            const depth = self.frames.items.len;
+            for (self.names.items) |nm| {
+                if (nm.depth == depth and is(nm.name, name)) return self.err(bd, "{s} is declared twice in one block", .{name});
+            }
+            const c = try alloc.create(SCount);
+            c.* = .{ .name = name, .len = len, .plus = plus, .lineno = self.lineno };
+            try self.names.append(alloc, .{ .name = name, .cnt = c, .depth = depth, .body = self.bodyIndex() });
+            try self.add(.{ .tag = .count, .lineno = self.lineno, .len = len, .cnt = c });
         } else if (is(kw, "if")) {
             if (toks.len < 2) return self.err(bd, "if takes at least one presence bit", .{});
             const conds = try alloc.alloc(SCond, toks.len - 1);
@@ -9720,7 +9769,9 @@ const SParser = struct {
                 while (ni > 0) {
                     ni -= 1;
                     if (is(self.names.items[ni].name, ref[0..dot])) {
-                        found = self.names.items[ni].pres;
+                        // a count name is not a presence (ruling 15 of 0.21)
+                        found = self.names.items[ni].pres orelse
+                            return self.err(bd, "if {s}: {s} names a count, not a presence", .{ tk, ref[0..dot] });
                         break;
                     }
                 }
@@ -9789,11 +9840,29 @@ const SParser = struct {
             }
             try self.open(.length, n);
         } else if (is(kw, "group")) {
-            // group <list> count <len> | while | more | fx
+            // group <list> count <len> | count @<name> | while | more | fx |
+            // rest | last
             var n = SNode{ .tag = .group, .lineno = self.lineno };
-            if (toks.len == 4 and is(toks[2], "count")) {
+            if (toks.len == 4 and is(toks[2], "count") and toks[3].len > 0 and toks[3][0] == '@') {
+                // a count named earlier in the same group body (Version 0.21)
+                n.mode = .cref;
+                const name = toks[3][1..];
+                if (name.len == 0) return self.err(bd, "count @ names no count", .{});
+                var ni = self.names.items.len;
+                const nm = while (ni > 0) {
+                    ni -= 1;
+                    if (is(self.names.items[ni].name, name)) break self.names.items[ni];
+                } else return self.err(bd, "count @{s}: no count of that name is visible here", .{name});
+                n.cnt = nm.cnt orelse return self.err(bd, "count @{s}: {s} names a presence, not a count", .{ name, name });
+                // the reference stays in the count's group body (ruling 9)
+                if (nm.body != self.bodyIndex()) return self.err(bd, "count @{s}: the count is in another group body", .{name});
+            } else if (toks.len == 4 and is(toks[2], "count")) {
                 n.mode = .count;
                 n.len = try self.bitLen(toks[3], "group count", 64);
+            } else if (toks.len == 3 and is(toks[2], "rest")) {
+                n.mode = .rest;
+            } else if (toks.len == 3 and is(toks[2], "last")) {
+                n.mode = .last;
             } else if (toks.len == 3 and is(toks[2], "while")) {
                 n.mode = .while_;
             } else if (toks.len == 3 and is(toks[2], "more")) {
@@ -9811,7 +9880,7 @@ const SParser = struct {
                 n.lb = @intCast(lb);
                 n.ub = @intCast(ub);
                 self.uperLine();
-            } else return self.err(bd, "a group of a sequential pack is `group <list> count <len>`, `while`, `more`, `fx` or `size [<lb> <ub>]`", .{});
+            } else return self.err(bd, "a group of a sequential pack is `group <list>` and one of `count <len>`, `count @<name>`, `while`, `more`, `fx`, `rest`, `last` or `size [<lb> <ub>]`", .{});
             n.list = toks[1];
             const parent = self.bodyFrame().grp;
             const g = try alloc.create(Group);
@@ -10017,6 +10086,123 @@ fn seqLinkBody(alloc: std.mem.Allocator, b: *SBody) anyerror!void {
     }
 }
 
+// Version 0.21, ruling 2: the fewest and the most references to a count
+// along the reading paths of some lines. Paths split at kinds and at the
+// cases of a switch only (ruling 33); a group body is another body (ruling 9).
+const SRefs = struct {
+    min: usize = 0,
+    max: usize = 0,
+
+    fn add(self: *SRefs, o: SRefs) void {
+        self.min += o.min;
+        self.max += o.max;
+    }
+};
+
+fn seqRefs(list: []const SNode, c: *const SCount) SRefs {
+    var r = SRefs{};
+    for (list) |*n| {
+        switch (n.tag) {
+            .group => if (n.mode == .cref and n.cnt == c) r.add(.{ .min = 1, .max = 1 }),
+            .switch_ => {
+                var alt: ?SRefs = null;
+                for (n.body) |*cn| alt = seqAlt(alt, seqRefs(cn.body, c));
+                r.add(alt orelse .{});
+            },
+            else => r.add(seqRefs(n.body, c)),
+        }
+    }
+    return r;
+}
+
+fn seqAlt(a: ?SRefs, b: SRefs) SRefs {
+    const x = a orelse return b;
+    return .{ .min = @min(x.min, b.min), .max = @max(x.max, b.max) };
+}
+
+// Every count is referenced exactly once in each reading path from its line
+// to the end of its block (a body's common lines reach into every kind).
+fn seqCheckCountList(alloc: std.mem.Allocator, list: []const SNode, kinds: []const SKind, diag: *Diag) anyerror!void {
+    for (list, 0..) |*n, i| {
+        switch (n.tag) {
+            .count => {
+                const c = n.cnt.?;
+                var r = seqRefs(list[i + 1 ..], c);
+                var alt: ?SRefs = null;
+                for (kinds) |*k| alt = seqAlt(alt, seqRefs(k.lines, c));
+                if (alt) |a| r.add(a);
+                if (r.min == 0) return bad(diag, alloc, E.@"bad-directive", "line {d}: count {s} is not referenced by a `count @{s}` group in some reading path", .{ n.lineno, c.name, c.name });
+                if (r.max > 1) return bad(diag, alloc, E.@"bad-directive", "line {d}: count {s} is referenced by two groups in one reading path", .{ n.lineno, c.name });
+            },
+            .group => try seqCheckCountBody(alloc, n.gbody.?, diag),
+            else => try seqCheckCountList(alloc, n.body, &.{}, diag),
+        }
+    }
+}
+
+fn seqCheckCountBody(alloc: std.mem.Allocator, b: *const SBody, diag: *Diag) anyerror!void {
+    try seqCheckCountList(alloc, b.common, b.kinds, diag);
+    for (b.kinds) |*k| try seqCheckCountList(alloc, k.lines, &.{}, diag);
+}
+
+// Does a line read or write bits (rulings 26 and 32 of 0.21)? An `if`,
+// `switch` or `chain` is one only when its body holds one.
+// Ruling 41: an `ext` always is (its extension bit); a `choice` is one when
+// it has `ext`, more than one root alternative, or an `alt` holding a wire
+// line; an `alt` when it holds one.
+fn seqWire(n: *const SNode) bool {
+    return switch (n.tag) {
+        .if_, .chain, .switch_, .case_, .alt => seqAnyWire(n.body),
+        .choice => n.ext or n.value > 1 or seqAnyWire(n.body),
+        else => true,
+    };
+}
+
+fn seqAnyWire(list: []const SNode) bool {
+    for (list) |*n| if (seqWire(n)) return true;
+    return false;
+}
+
+// Rulings 10, 11 and 27 of 0.21: a `rest` group is the last wire line of its
+// extent in every reading path; inside an item it sits in a `length` block of
+// the item's body, or last in an item of an outer `rest` group. `after`: a
+// wire line follows the lines in their extent; `forbid`: the lines are in
+// the item body of a group that is not `rest`, outside any `length`.
+fn seqCheckRestList(alloc: std.mem.Allocator, list: []const SNode, after_in: bool, forbid: bool, diag: *Diag) anyerror!void {
+    const bd = E.@"bad-directive";
+    var after = after_in;
+    var i = list.len;
+    while (i > 0) {
+        i -= 1;
+        const n = &list[i];
+        switch (n.tag) {
+            .group => {
+                if (n.mode == .rest) {
+                    if (forbid) return bad(diag, alloc, bd, "line {d}: a rest group inside an item, neither within a `length` block of the item's body nor last in an item of a rest group", .{n.lineno});
+                    if (after) return bad(diag, alloc, bd, "line {d}: a rest group is not the last line of its extent", .{n.lineno});
+                }
+                try seqCheckRestBody(alloc, n.gbody.?, n.mode != .rest, diag);
+            },
+            .length => try seqCheckRestList(alloc, n.body, false, false, diag),
+            .switch_ => for (n.body) |*cn| try seqCheckRestList(alloc, cn.body, after, forbid, diag),
+            // each `alt` is checked as a `switch` case is (ruling 42)
+            .choice => for (n.body) |*a| try seqCheckRestList(alloc, a.body, after, forbid, diag),
+            else => try seqCheckRestList(alloc, n.body, after, forbid, diag),
+        }
+        if (seqWire(n)) after = true;
+    }
+}
+
+fn seqCheckRestBody(alloc: std.mem.Allocator, b: *const SBody, forbid: bool, diag: *Diag) anyerror!void {
+    // a kind's `when` lines are wire lines (ruling 32)
+    var kind_wire = false;
+    for (b.kinds) |*k| {
+        if (k.whens.len > 0 or seqAnyWire(k.lines)) kind_wire = true;
+    }
+    try seqCheckRestList(alloc, b.common, kind_wire, forbid, diag);
+    for (b.kinds) |*k| try seqCheckRestList(alloc, k.lines, false, forbid, diag);
+}
+
 fn parseSeqPack(alloc: std.mem.Allocator, def_text: []const u8, diag: *Diag) anyerror!*Pack {
     const p = try newPack(alloc);
     p.wire = .bits;
@@ -10071,6 +10257,8 @@ fn parseSeqPack(alloc: std.mem.Allocator, def_text: []const u8, diag: *Diag) any
     try seqResolveVia(alloc, p, root.common, diag);
     for (root.kinds) |*k| try seqResolveVia(alloc, p, k.lines, diag);
     try seqCheckLists(alloc, root, diag);
+    try seqCheckCountBody(alloc, root, diag);
+    try seqCheckRestBody(alloc, root, false, diag);
     if (p.seq_switch) try seqLinkBody(alloc, root);
     p.seq = root;
     if (p.distribution == null) return bad(diag, alloc, E.@"missing-distribution", "the pack has no distribution line", .{});
@@ -10141,6 +10329,15 @@ const SDec = struct {
     in_extent: bool = false,
     // the first field that failed (`transform-decode`), reported at the end
     failed_msg: ?[]const u8 = null,
+    // Version 0.21: the innermost extent is counted in bits (a `length …
+    // bits` block), not bytes
+    ext_bits: bool = false,
+    // the number of items each count line read; null: the line lay at or
+    // past the end of its extent
+    cvals: std.AutoHashMapUnmanaged(*const SCount, ?u64) = .{},
+    // > 0: in the first pass of a `rest` or `last` group, which only
+    // counts its items
+    counting: usize = 0,
     // Version 0.20: the cases read so far, and the presence bits that are 1
     // and named only by `if` lines in cases, checked at the end of the
     // presence's block (ruling 21)
@@ -10377,13 +10574,16 @@ const SDec = struct {
                 const end = self.pos + @as(usize, @intCast(nbits));
                 const save_end = self.soft_end;
                 const save_in = self.in_extent;
+                const save_bits = self.ext_bits;
                 self.soft_end = end;
                 self.in_extent = true;
+                self.ext_bits = n.in_bits;
                 try self.block(n.body, se, env.*);
                 // content of the extent no line read is skipped
                 self.pos = end;
                 self.soft_end = save_end;
                 self.in_extent = save_in;
+                self.ext_bits = save_bits;
             },
             .whole => {
                 if (try self.avail(n.len, "length") == .absent) return;
@@ -10419,6 +10619,21 @@ const SDec = struct {
                 return bad(self.diag, alloc, mw, "choice: the index {d} has no `alt`", .{i});
             },
             .alt => unreachable, // an `alt` is read by its `choice`
+            .count => {
+                // Version 0.21: the count is read here, its items when the
+                // group is reached
+                const c = n.cnt.?;
+                if (try self.avail(c.len, c.name) == .absent) {
+                    try self.cvals.put(alloc, c, null);
+                    return;
+                }
+                const v: i128 = self.take(c.len);
+                if (v < c.plus) return bad(self.diag, alloc, mw, "count {s}: the value {d} is below its `plus {d}`", .{ c.name, v, c.plus });
+                // at most 2^64 - 1 - (-2^63) items: clamped, as a count above
+                // the bits left fails anyway
+                const items = v - c.plus;
+                try self.cvals.put(alloc, c, if (items > std.math.maxInt(u64)) std.math.maxInt(u64) else @intCast(items));
+            },
             .fx => unreachable, // an `fx` line is a line of a chain
         }
     }
@@ -10616,6 +10831,48 @@ const SDec = struct {
                 }
                 for (0..@as(usize, @intCast(cnt))) |_| try self.item(n, &items, env);
             },
+            .cref => {
+                // Version 0.21: the count read at its line; absent when that
+                // line, or this group, lay at or past the end of the extent
+                const cnt = (self.cvals.get(n.cnt.?) orelse null) orelse return;
+                if (self.in_extent and self.pos >= self.soft_end) return;
+                // the count against the limit, less the items of the list it
+                // replaces (rulings 7d and 7g of 0.11), before any item is read
+                try self.replaceList(se, n.list);
+                try takeItems(self.diag, self.alloc, cnt, n.list);
+                // compared with the bits left at the group (ruling 20)
+                if (cnt > self.left()) {
+                    return bad(self.diag, self.alloc, mw, "group {s}: a count of {d} is larger than the {d} bits left", .{ n.list, cnt, self.left() });
+                }
+                for (0..@as(usize, @intCast(cnt))) |_| try self.item(n, &items, env);
+            },
+            .rest, .last => {
+                // the first indicator of `last` at the end of the extent: an
+                // absent list (ruling 34 of 0.8)
+                if (n.mode == .last and self.in_extent and self.pos >= self.soft_end) return;
+                // Two passes: the first counts the items into one reused
+                // entity, the second reads them into a list of that size, so
+                // a list of many small items is not held twice while it grows.
+                // Inside a first pass the items are only counted.
+                // The first pass counts nothing against the limit on list
+                // items (ruling 7 of 0.11): the second pass holds the items.
+                const save = self.state();
+                const held = self.diag.held;
+                var sink = Sink{ .scratch = Entity.init(self.alloc) };
+                self.counting += 1;
+                try self.extentItems(n, &sink, env);
+                self.counting -= 1;
+                if (self.counting > 0) return se.e.putList(n.list, &[0]Entity{});
+                self.restore(save);
+                self.diag.held = held;
+                try self.replaceList(se, n.list);
+                try takeItems(self.diag, self.alloc, sink.n, n.list);
+                const slots = try self.alloc.alloc(Entity, sink.n);
+                sink = .{ .scratch = sink.scratch, .slots = slots };
+                try self.extentItems(n, &sink, env);
+                try se.e.putList(n.list, slots[0..sink.n]);
+                return;
+            },
         }
         // two groups of one list both on the wire: the later group's items
         // are kept (ruling 33 of 0.8)
@@ -10628,9 +10885,77 @@ const SDec = struct {
         if (se.e.lists.get(list)) |old| self.diag.held -= itemsHeld(old);
     }
 
+    // Where the items of a `rest` or `last` group go: counted into a reused
+    // entity (`slots` null), or read into `slots`.
+    const Sink = struct { scratch: Entity, slots: ?[]Entity = null, n: usize = 0 };
+
+    const State = struct { pos: usize, hard_end: usize, soft_end: usize, in_extent: bool, ext_bits: bool, read_cases: usize, pending: usize, open_cases: usize };
+
+    fn state(self: *const SDec) State {
+        return .{ .pos = self.pos, .hard_end = self.hard_end, .soft_end = self.soft_end, .in_extent = self.in_extent, .ext_bits = self.ext_bits, .read_cases = self.read_cases.items.len, .pending = self.pending.items.len, .open_cases = self.open_cases.items.len };
+    }
+
+    fn restore(self: *SDec, st: State) void {
+        self.pos = st.pos;
+        self.hard_end = st.hard_end;
+        self.soft_end = st.soft_end;
+        self.in_extent = st.in_extent;
+        self.ext_bits = st.ext_bits;
+        self.read_cases.shrinkRetainingCapacity(st.read_cases);
+        self.pending.shrinkRetainingCapacity(st.pending);
+        self.open_cases.shrinkRetainingCapacity(st.open_cases);
+    }
+
+    fn sinkItem(self: *SDec, n: *const SNode, sink: *Sink, env: ?*const PEnv) anyerror!void {
+        if (sink.slots) |slots| {
+            // the first pass counted them; a second pass reads the same bits
+            if (sink.n >= slots.len) return bad(self.diag, self.alloc, mw, "group {s}: the items do not read back alike", .{n.list});
+            var it = Entity.init(self.alloc);
+            var sit = SEnt{ .e = &it };
+            try self.body(n.gbody.?, &sit, env);
+            slots[sink.n] = it;
+        } else {
+            const sc = &sink.scratch;
+            sc.fields.len = 0;
+            sc.lists.len = 0;
+            sc.clearKind();
+            var sit = SEnt{ .e = sc };
+            try self.body(n.gbody.?, &sit, env);
+        }
+        sink.n += 1;
+    }
+
+    // The items of a `rest` or `last` group.
+    fn extentItems(self: *SDec, n: *const SNode, sink: *Sink, env: ?*const PEnv) anyerror!void {
+        if (n.mode == .rest) {
+            // items while bits remain in the extent: 8 in one counted in
+            // bytes, 1 in one counted in bits; fewer are padding
+            const least: usize = if (self.in_extent and self.ext_bits) 1 else 8;
+            while (self.left() >= least) {
+                const at = self.pos;
+                try self.sinkItem(n, sink, env);
+                if (self.pos == at) return bad(self.diag, self.alloc, mw, "group {s}: an item of a rest group reads no bits", .{n.list});
+            }
+            return;
+        }
+        // `last`: an indicator after the first that starts at the extent end
+        // is `malformed-wire` (ruling 13 of 0.21)
+        var first = true;
+        while (true) {
+            if (!first and self.in_extent and self.pos >= self.soft_end) {
+                return bad(self.diag, self.alloc, mw, "group {s}: the item before said another follows, and the extent ends at bit {d}", .{ n.list, self.pos });
+            }
+            try self.need(1, n.list);
+            const last = self.take(1);
+            try self.sinkItem(n, sink, env);
+            first = false;
+            if (last == 1) break;
+        }
+    }
+
     fn item(self: *SDec, n: *const SNode, items: *ItemList, env: ?*const PEnv) anyerror!void {
         // a counted group took its items before the first was read
-        if (n.mode != .count) try takeItems(self.diag, self.alloc, 1, n.list);
+        if (n.mode != .count and n.mode != .cref) try takeItems(self.diag, self.alloc, 1, n.list);
         var it = Entity.init(self.alloc);
         var sit = SEnt{ .e = &it };
         try self.body(n.gbody.?, &sit, env);
@@ -10706,6 +11031,12 @@ fn seqDecode(alloc: std.mem.Allocator, p: *const Pack, bytes: []const u8, diag: 
 }
 
 const SWhole = struct { at: usize, len: usize, plus: i64 };
+// Version 0.21: a count field at `at`, and the value it holds (items + n)
+const SCountAt = struct { at: usize, cnt: *const SCount, value: i128 };
+// An extent being laid out: counted in bits or bytes, where the last item of
+// a `rest` group in it starts (the one with the fewest bits left), and how
+// many `rest` groups were written in it.
+const SExt = struct { bits: bool, last_start: ?usize = null, rests: usize = 0 };
 
 // Version 0.20: the case each switch selects for one entity or item (an
 // index into the switch node's body; `no_case`: none). Encode runs until
@@ -10734,8 +11065,27 @@ const SEnc = struct {
     kv: ?*std.StringHashMapUnmanaged(MV) = null,
     // keys whose line wrote bits that do not read back
     kv_failed: ?*std.StringHashMapUnmanaged(void) = null,
+    // Version 0.21: the count fields written, filled in when the message is
+    // finished; the latest of each count line
+    cpend: std.ArrayListUnmanaged(SCountAt) = .{},
+    ccur: std.AutoHashMapUnmanaged(*const SCount, usize) = .{},
+    // the extents being laid out, innermost last, with where each item of a
+    // `rest` group in them starts
+    exts: std.ArrayListUnmanaged(SExt) = .{},
 
     const te = E.@"transform-encode";
+
+    // Ruling 4 of 0.21, checked once the extent is laid out (ruling 21):
+    // every item of a `rest` group starts with at least 8 bits (1 in an
+    // extent counted in bits) left before the extent's byte-padded end.
+    fn checkExt(self: *SEnc, x: SExt, end: usize) !void {
+        const least: usize = if (x.bits) 1 else 8;
+        if (x.last_start) |st| {
+            if (end -| st < least) {
+                return bad(self.diag, self.alloc, te, "an item of a rest group starts at bit {d}, {d} bits before the end of its extent at bit {d}: the output would not decode it", .{ st, end -| st, end });
+            }
+        }
+    }
 
     // The value decode would read for key `j` of a field (0: its own, i: its
     // i-th `also`) from the bits at `at`; null: a sentinel or a failure.
@@ -11162,11 +11512,13 @@ const SEnc = struct {
                 const lpos = self.pos;
                 try self.zeros(n.len);
                 const start = self.pos;
+                try self.exts.append(alloc, .{ .bits = n.in_bits });
                 try self.block(n.body, ent, ds, env.*);
                 if (!n.in_bits) {
                     const r = (self.pos - start) % 8;
                     if (r != 0) try self.zeros(8 - r);
                 }
+                try self.checkExt(self.exts.pop(), self.pos);
                 const size = self.pos - start;
                 const stated: i128 = @as(i128, if (n.in_bits) size else size / 8) + n.plus;
                 if (stated < 0 or stated > std.math.maxInt(u64) or !fitsBits(@intCast(stated), n.len)) {
@@ -11212,7 +11564,7 @@ const SEnc = struct {
                             for (0..@as(usize, @intCast(n.lb))) |_| try self.body(b, &empty, env.*, true);
                         } else try self.elenDet(0, n.list);
                     },
-                    .more, .fx => {
+                    .more, .fx, .last => {
                         // a list has at least one item on the wire
                         if (items.len == 0) {
                             return bad(self.diag, alloc, te, "group {s}: the list is absent or empty, and the wire holds at least one item", .{n.list});
@@ -11220,8 +11572,35 @@ const SEnc = struct {
                         for (items, 0..) |*it, i| {
                             const more = @intFromBool(i + 1 < items.len);
                             if (n.mode == .more) try self.put(1, more);
+                            if (n.mode == .last) try self.put(1, 1 - more);
                             try self.body(b, it, env.*, true);
                             if (n.mode == .fx) try self.put(1, more);
+                        }
+                    },
+                    .cref => {
+                        // Version 0.21: the items here; the count, at its own
+                        // line, holds their number plus n
+                        for (items) |*it| try self.body(b, it, env.*, true);
+                        if (self.ccur.get(n.cnt.?)) |ci| self.cpend.items[ci].value = @as(i128, items.len) + n.cnt.?.plus;
+                    },
+                    .rest => {
+                        // back to back. An item before the last that writes a
+                        // rest group in this extent would take the rest of
+                        // it (rulings 10 and 35).
+                        const x = &self.exts.items[self.exts.items.len - 1];
+                        x.rests += 1;
+                        for (items, 0..) |*it, i| {
+                            const at = self.pos;
+                            const rests = self.exts.items[self.exts.items.len - 1].rests;
+                            try self.body(b, it, env.*, true);
+                            if (self.pos == at) return bad(self.diag, alloc, te, "group {s}: an item of a rest group writes no bits", .{n.list});
+                            const top = &self.exts.items[self.exts.items.len - 1];
+                            if (i + 1 < items.len and top.rests != rests) {
+                                return bad(self.diag, alloc, te, "group {s}: item {d} writes a rest group, which reads to the end of the extent, and another item follows it", .{ n.list, i });
+                            }
+                            // an inner rest item, written inside this one,
+                            // starts later
+                            top.last_start = @max(top.last_start orelse 0, at);
                         }
                     },
                 }
@@ -11244,6 +11623,12 @@ const SEnc = struct {
                 try self.block(sel.body, ent, ds, env.*);
             },
             .alt => unreachable, // an `alt` is written by its `choice`
+            .count => {
+                // Version 0.21: n until the group fills it in (ruling 30)
+                try self.cpend.append(alloc, .{ .at = self.pos, .cnt = n.cnt.?, .value = n.cnt.?.plus });
+                try self.ccur.put(alloc, n.cnt.?, self.cpend.items.len - 1);
+                try self.zeros(n.cnt.?.len);
+            },
             .fx => unreachable, // an `fx` line is a line of a chain
         }
     }
@@ -11393,6 +11778,7 @@ fn seqEncode(alloc: std.mem.Allocator, p: *const Pack, e: *const Entity, diag: *
         var iter: usize = 0;
         while (true) : (iter += 1) {
             var dry = SEnc{ .alloc = alloc, .p = p, .diag = diag, .out = std.ArrayList(u8).init(alloc), .table = &table, .dry = true };
+            try dry.exts.append(alloc, .{ .bits = false });
             dry.body(p.seq.?, e, null, false) catch |err| {
                 if (err == error.OutOfMemory) return err;
                 break; // the final encode reports it (ruling 34)
@@ -11403,7 +11789,18 @@ fn seqEncode(alloc: std.mem.Allocator, p: *const Pack, e: *const Entity, diag: *
         }
     }
     var enc = SEnc{ .alloc = alloc, .p = p, .diag = diag, .out = std.ArrayList(u8).init(alloc), .table = if (p.seq_switch) &table else null };
+    try enc.exts.append(alloc, .{ .bits = false });
     try enc.body(p.seq.?, e, null, false);
+    // the message extent ends at its byte-padded end, under `armor sixbit`
+    // (0.14) too (ruling 43 of 0.21)
+    try enc.checkExt(enc.exts.items[0], (enc.pos + 7) / 8 * 8);
+    // the count fields, in range once the groups have filled them (ruling 30)
+    for (enc.cpend.items) |c| {
+        if (c.value < 0 or c.value > std.math.maxInt(u64) or !fitsBits(@intCast(c.value), c.cnt.len)) {
+            return bad(diag, alloc, E.@"transform-encode", "count {s}: the value {d} is outside 0 to 2^{d} - 1", .{ c.cnt.name, c.value, c.cnt.len });
+        }
+        setBits(enc.out.items, p.msb, c.at, c.cnt.len, @intCast(c.value));
+    }
     // armored: the bits to the cursor, not rounded to a byte (Version 0.14)
     if (p.armor) return armorEncode(alloc, enc.out.items, enc.pos);
     // a message is a whole number of bytes; `length … whole` holds that

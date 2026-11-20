@@ -1,0 +1,13 @@
+{
+  "name": "two-items",
+  "from": "conformance-extents-bitsleft",
+  "to": "conformance-extents-bitsleft",
+  "input": "0280070506",
+  "expect": "0280070506",
+  "model": {
+    "probe.nums.#": "2",
+    "probe.nums[1].probe.val": "6"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 20 with ruling 14 of 0.8; 16 bits left at the group"
+}

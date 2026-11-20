@@ -1,0 +1,9 @@
+{
+  "name": "to-last-absent-list",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-last",
+  "input": "{}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.21, The last-item flag; an absent list"
+}

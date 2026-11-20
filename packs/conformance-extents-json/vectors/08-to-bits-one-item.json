@@ -1,0 +1,9 @@
+{
+  "name": "to-bits-one-item",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-bits",
+  "input": "{\"recs\":[{\"x\":1,\"y\":2}]}",
+  "expect": "0812",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 5 and A list to the end of its extent (an extent counted in bits); 8 bits"
+}

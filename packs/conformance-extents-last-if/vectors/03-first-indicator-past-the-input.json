@@ -1,0 +1,9 @@
+{
+  "name": "first-indicator-past-the-input",
+  "from": "conformance-extents-last-if",
+  "to": "conformance-extents-last-if",
+  "input": "83",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 28; at message level the first last-item bit lies past the input (ruling 5)"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "to-last-if-empty-list-block-not-written",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-last-if",
+  "input": "{\"nums\":[]}",
+  "expect": "00",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 28; no content: p.1 = 0 and the block is not written"
+}

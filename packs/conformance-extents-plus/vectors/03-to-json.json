@@ -1,0 +1,9 @@
+{
+  "name": "to-json",
+  "from": "conformance-extents-plus",
+  "to": "conformance-extents-json",
+  "input": "01aa0506",
+  "expect": "{\"x\":170,\"nums\":[5,6]}",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 7; two items"
+}

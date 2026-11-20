@@ -1,0 +1,9 @@
+{
+  "name": "to-sub-ruling-04-two-items",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-sub",
+  "input": "{\"x\":0,\"nums\":[1,2]}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 4 and A list to the end of its extent; the second item would start at bit 9 of 16, 7 bits before the byte-padded end"
+}

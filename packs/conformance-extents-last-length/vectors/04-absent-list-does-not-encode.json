@@ -1,0 +1,12 @@
+{
+  "name": "absent-list-does-not-encode",
+  "from": "conformance-extents-last-length",
+  "to": "conformance-extents-last-length",
+  "input": "0009",
+  "expect_error": "transform-encode",
+  "model": {
+    "probe.nums.#": "absent"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 13; decode gives an absent list, which a `last` group outside an if or opt block cannot write"
+}

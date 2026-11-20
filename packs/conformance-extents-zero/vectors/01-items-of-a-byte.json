@@ -1,0 +1,13 @@
+{
+  "name": "items-of-a-byte",
+  "from": "conformance-extents-zero",
+  "to": "conformance-extents-zero",
+  "input": "800506",
+  "expect": "800506",
+  "model": {
+    "probe.nums.#": "2",
+    "probe.nums[1].probe.val": "6"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 1; p.1 = 1: each item is val in 8 bits; encode sets p.1 from the items (ruling 12 of 0.8)"
+}

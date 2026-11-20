@@ -1,0 +1,9 @@
+{
+  "name": "to-plus-empty-list",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-plus",
+  "input": "{\"x\":170,\"nums\":[]}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 7; 0 items + (-1) = -1 is outside 0 ... 255 (absent and empty lists included)"
+}

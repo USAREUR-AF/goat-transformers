@@ -1,0 +1,9 @@
+{
+  "name": "to-offset-ruling-34-padded-end-from-the-block-start",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-offset",
+  "input": "{\"x\":0,\"nums\":[1,2,3]}",
+  "expect": "0c108300",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 34; the byte-padded end is measured from the first bit of the block"
+}

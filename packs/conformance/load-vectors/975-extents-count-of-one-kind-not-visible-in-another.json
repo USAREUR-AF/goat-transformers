@@ -1,0 +1,9 @@
+{
+  "name": "975-extents-count-of-one-kind-not-visible-in-another",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey x int -\nkey y int -\nkey z int -\nkey val int -\nkey qty int -\nlist nums \"a list\"\nlist recs \"a list\"\nlist items \"a list\"\nlist subs \"a list\"\n"
+  ],
+  "pack": "format probe\nversion 0.21.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nlayout sequential\nkind a\nwhen 8 1\ncount n 8\nfield probe.x 8 uint\nkind b\nwhen 8 2\ngroup probe.nums count @n\n  field probe.val 8 uint\nend\n",
+  "expect_error": "bad-directive"
+}

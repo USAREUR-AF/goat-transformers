@@ -1,0 +1,9 @@
+{
+  "name": "to-sub-ruling-04-four-items",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-sub",
+  "input": "{\"x\":0,\"nums\":[1,2,3,4]}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 4 and A list to the end of its extent; the fourth item would start at bit 17 of 24, 7 bits before the byte-padded end: the output would decode three items"
+}

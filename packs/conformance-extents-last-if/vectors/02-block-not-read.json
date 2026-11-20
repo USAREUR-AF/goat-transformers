@@ -1,0 +1,12 @@
+{
+  "name": "block-not-read",
+  "from": "conformance-extents-last-if",
+  "to": "conformance-extents-last-if",
+  "input": "00",
+  "expect": "00",
+  "model": {
+    "probe.nums.#": "absent"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 28; p.1 = 0"
+}

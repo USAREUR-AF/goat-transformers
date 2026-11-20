@@ -1,0 +1,12 @@
+{
+  "name": "if-not-read-absent",
+  "from": "conformance-extents-if",
+  "to": "conformance-extents-if",
+  "input": "00",
+  "expect": "00",
+  "model": {
+    "probe.nums.#": "absent"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 18 with ruling 5 of 0.8; ruling 3: a rest group whose block is not read stays absent"
+}

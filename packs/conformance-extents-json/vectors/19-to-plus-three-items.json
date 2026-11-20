@@ -1,0 +1,9 @@
+{
+  "name": "to-plus-three-items",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-plus",
+  "input": "{\"x\":170,\"nums\":[5,6,7]}",
+  "expect": "02aa050607",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 7; 3 - 1 = 2"
+}

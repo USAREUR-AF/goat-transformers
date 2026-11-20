@@ -1,0 +1,9 @@
+{
+  "name": "to-json-empty",
+  "from": "conformance-extents-rest",
+  "to": "conformance-extents-json",
+  "input": "09",
+  "expect": "{\"z\":9,\"recs\":[]}",
+  "source": "constructed",
+  "reference": "spec 0.21, A list to the end of its extent; present and empty: []"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "to-kindcounts-a",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-kindcounts",
+  "input": "{\"x\":3,\"nums\":[5]}",
+  "expect": "01030105",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 25; requires x: a"
+}

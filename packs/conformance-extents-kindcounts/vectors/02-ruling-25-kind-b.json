@@ -1,0 +1,14 @@
+{
+  "name": "ruling-25-kind-b",
+  "from": "conformance-extents-kindcounts",
+  "to": "conformance-extents-kindcounts",
+  "input": "021007",
+  "expect": "021007",
+  "model": {
+    "@kind": "b",
+    "probe.nums.#": "1",
+    "probe.nums[0].probe.val": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 25; b's n is 4 bits"
+}

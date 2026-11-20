@@ -1,0 +1,12 @@
+{
+  "name": "whole-length-one-byte-empty",
+  "from": "conformance-extents-whole",
+  "to": "conformance-extents-whole",
+  "input": "01",
+  "expect": "01",
+  "model": {
+    "probe.nums.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 14; no bits after the length byte"
+}

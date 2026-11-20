@@ -1,0 +1,9 @@
+{
+  "name": "line-past-the-input-after-the-block",
+  "from": "conformance-extents-length",
+  "to": "conformance-extents-length",
+  "input": "020102",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.21 rulings 3 and 5; z is a message-level line past the input (ruling 5, last sentence)"
+}

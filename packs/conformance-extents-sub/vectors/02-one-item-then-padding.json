@@ -1,0 +1,13 @@
+{
+  "name": "one-item-then-padding",
+  "from": "conformance-extents-sub",
+  "to": "conformance-extents-sub",
+  "input": "0091",
+  "expect": "0080",
+  "model": {
+    "probe.nums.#": "1",
+    "probe.nums[0].probe.val": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 4 and A list to the end of its extent; after one item 7 bits remain: padding (ruling 17)"
+}

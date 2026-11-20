@@ -1,0 +1,14 @@
+{
+  "name": "one-item-takes-the-message",
+  "from": "conformance-extents-outer",
+  "to": "conformance-extents-outer",
+  "input": "090506",
+  "expect": "090506",
+  "model": {
+    "probe.items.#": "1",
+    "probe.items[0].probe.qty": "9",
+    "probe.items[0].probe.subs.#": "2"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 10 (`rest` as the last line of an outer `rest` item); the inner list runs to the end of the message, so the outer list has one item"
+}

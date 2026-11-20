@@ -1,0 +1,9 @@
+{
+  "name": "to-last-if-ruling-28-empty-list-in-a-written-if",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-last-if",
+  "input": "{\"x\":3,\"nums\":[]}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 28; x sets p.1, so the block is written; its last group has no item"
+}

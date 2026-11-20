@@ -1,0 +1,21 @@
+# Conformance probe pack for the byte-padded end of a `length` block that does
+# not start on a byte (spec 0.21 ruling 34), most significant bit first.
+# Public. No kinds.
+#
+#   x           2 bits
+#   block       a 4-bit length in bytes, starting at bit 6: nums to its end,
+#               val in 6 bits each, read while at least 8 bits remain
+format     conformance-extents-offset
+version    0.21.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field   probe.x  2  uint
+length 4
+  group  probe.nums rest
+    field  probe.val  6  uint
+  end
+end

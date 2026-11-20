@@ -1,0 +1,9 @@
+{
+  "name": "to-offset-four-items",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-offset",
+  "input": "{\"x\":0,\"nums\":[1,2,3,4]}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 34; 24 bits of items, block padded end 24 bits from its start; item 3 starts 6 bits before it"
+}

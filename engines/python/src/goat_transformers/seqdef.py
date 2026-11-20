@@ -16,9 +16,10 @@ from .transforms import (
 from . import uper
 
 (T_FIELD, T_CONST, T_PAD, T_ALIGN, T_WHEN, T_PRESENCE, T_IF, T_OPT, T_GROUP, T_CHAIN, T_LENGTH,
- T_WHOLE, T_EXT, T_CHOICE, T_ALT, T_SWITCH) = range(16)
+ T_WHOLE, T_EXT, T_CHOICE, T_ALT, T_SWITCH, T_COUNT) = range(17)
 
-GROUP_MODES = ("count", "while", "more", "fx", "size")
+# 0.19 adds `size`; 0.21 adds `rest`, `last` and `count @<name>` (the count of a `count` line)
+GROUP_MODES = ("count", "while", "more", "fx", "size", "rest", "last")
 _HEADER = ("format", "version", "wire", "layout", "bit_order", "word_bytes", "distribution", "source", "uses",
            "map", "typemap", "root", "armor", "encoding")
 _SINGLE = ("layout", "bit_order")
@@ -33,7 +34,10 @@ class Node:
     presence  `name`, `length` (None with `fx`), `named`: the bits some `if` names
     if        `conds`: (presence node, bit, negated); `body`
     opt       `body`
-    group     `list`, `mode`, `length` (the count's bits), `scope`: the Body of an item
+    group     `list`, `mode`, `length` (the count's bits), `scope`: the Body of an item; with
+              `count @<name>` (0.21) `count_node`, the `count` line; `tail_rest`: this `rest`
+              group is the last line of an item of an outer `rest` group (ruling 10 of 0.21)
+    count     `name`, `length`, `plus` (0.21)
     chain     `parts`: the lines between `fx` lines; `ends_fx`: the last line is `fx`
     length    `length`, `unit` ("bytes" | "bits"), `plus`, `body`
     whole     `length`, `plus`
@@ -51,7 +55,8 @@ class Node:
 
     __slots__ = ("t", "lineno", "length", "value", "bindings", "name", "named", "conds", "body", "list", "mode",
                  "scope", "parts", "ends_fx", "unit", "plus", "locator", "uper", "n", "ext", "alts", "index",
-                 "lb", "ub", "key", "cases", "other", "key_type", "ranges", "named_static", "chain", "key_lines")
+                 "lb", "ub", "key", "cases", "other", "key_type", "ranges", "named_static", "chain", "key_lines",
+                 "count_node", "tail_rest")
 
     is_field = False
     is_const = False
@@ -63,6 +68,8 @@ class Node:
         self.length = None
         self.locator = None
         self.uper = None
+        self.count_node = None
+        self.tail_rest = False
         for k, v in kw.items():
             setattr(self, k, v)
 
@@ -213,6 +220,57 @@ class Body:
             walk(k.nodes)
 
 
+def _index(lines, nd):
+    for k, x in enumerate(lines):
+        if x is nd:
+            return k
+    raise ValueError("line not in its block")
+
+
+_FX_BIT = Node(T_PAD, 0, length=1)  # the `fx` bit of a chain, as a wire line
+
+
+def is_wire(nd):
+    """0.21 rulings 26 and 32: a line that reads or writes bits; an `if`,
+    `switch` or `chain` is one only when it holds one."""
+    t = nd.t
+    if t == T_IF:
+        return any(is_wire(x) for x in nd.body)
+    if t == T_SWITCH:
+        return any(is_wire(x) for c in switch_cases(nd) for x in c.nodes)
+    if t == T_CHAIN:
+        return len(nd.parts) > 1 or nd.ends_fx or any(is_wire(x) for part in nd.parts for x in part)
+    if t == T_CHOICE:  # ruling 41: an `ext` bit, an index of more than 0 bits, or an alt with a wire line
+        return nd.ext or (nd.n is not None and nd.n > 1) or any(is_wire(x) for a in nd.alts for x in a.body)
+    return True  # an `ext` reads its extension bit (ruling 41)
+
+
+def _plus(a, b):
+    """The numbers of references along a path then another, capped at 2."""
+    return {min(x + y, 2) for x in a for y in b}
+
+
+def _refs(lines, count):
+    """0.21 ruling 33: the possible numbers of groups that reference `count`
+    along the reading paths of `lines` (capped at 2). Only a switch splits a
+    path; group bodies are not entered (ruling 9)."""
+    got = {0}
+    for nd in lines:
+        t = nd.t
+        if t == T_GROUP:
+            if nd.count_node is count:
+                got = _plus(got, {1})
+        elif t == T_SWITCH:
+            sub = set()
+            for c in switch_cases(nd):
+                sub |= _refs(c.nodes, count)
+            got = _plus(got, sub)
+        else:  # `if`, `opt`, `length`, a chain, an `ext` and the `alt`s of a choice (0.19): one path
+            for part in children(nd):
+                got = _plus(got, _refs(part, count))
+    return got
+
+
 def switch_cases(nd):
     """The `case` bodies of a switch, then its `else`."""
     return nd.cases + [nd.other] if nd.other is not None else nd.cases
@@ -273,6 +331,8 @@ def parse_seq_pack_text(text, *, source="pack.def"):
     def line_bad(msg_text, lineno, locator=None):
         """A line check of ruling 5b of 0.11 (steps 7 to 10)."""
         return _LineBad("%s, at %s:%d" % (msg_text, source, lineno), format=seen.get("format"), locator=locator)
+    rest_groups = []   # 0.21: (group node, the levels around it up to its extent, what ends the levels)
+    count_lines = []   # 0.21: (count node, where it stands: ("list", lines) | ("chain", node) | ("body", body, kind))
 
     def bad(msg_text, lineno, locator=None):
         return BadDirective("%s, at %s:%d" % (msg_text, source, lineno), format=seen.get("format"), locator=locator)
@@ -293,6 +353,43 @@ def parse_seq_pack_text(text, *, source="pack.def"):
     def in_block():
         """True when the line stands inside an `if`, `opt`, `chain` or `length` block."""
         return bool(stack) and stack[-1].what != "group"
+
+    def find_count(name):
+        """0.21: the name visible here within the current group body (ruling 9), innermost first."""
+        for fr in reversed(stack):
+            if fr.what == "group":
+                b = fr.body
+                if b.cur is not None and name in b.cur.presences:
+                    return b.cur.presences[name]
+                return b.presences.get(name)
+            if name in fr.presences:
+                return fr.presences[name]
+        if msg.cur is not None and name in msg.cur.presences:
+            return msg.cur.presences[name]
+        return msg.presences.get(name)
+
+    def declare(name, nd, body, lineno, what):
+        """Enter a presence or count name in the table of its block (rulings 12 of 0.8, 15 of 0.21)."""
+        if not name or "." in name or "!" in name or "@" in name:
+            raise bad("bad %s name %r" % (what, name), lineno)
+        if in_block():
+            table = stack[-1].presences
+            twice = name in table
+        else:
+            table = body.cur.presences if body.cur is not None else body.presences
+            twice = name in body.presences or name in table
+        if twice:  # ruling 12 of 0.8
+            raise bad("the name %r is declared twice in one block" % name, lineno)
+        table[name] = nd
+
+    def home_of(body):
+        """0.21: where a line being added stands, as `count_lines` records it."""
+        if in_block():
+            fr = stack[-1]
+            if fr.what == "chain":
+                return ("chain", fr.node)
+            return ("list", fr.nodes)
+        return ("body", body, body.cur)
 
     def find_presence(name):
         for fr in reversed(stack):
@@ -494,6 +591,91 @@ def parse_seq_pack_text(text, *, source="pack.def"):
             deferred.append((lineno, bad("'%s' value %d does not fit %d bit(s)" % (kw, n, length), lineno, args[0])))
         return Node(t, lineno, length=length, value=n, locator=args[0])
 
+    def rest_levels(nd, body):
+        """0.21: the blocks around a `rest` group, innermost first, up to its
+        extent: [(level, child)] where level is ("list", lines), ("chain",
+        node) or ("body", body, kind), and child the node of that level that
+        holds the group; then what ends them: "extent" (a `length` block or the
+        message) or the group node whose item body holds it."""
+        levels = []
+        child = nd
+        for fr in reversed(stack):
+            w = fr.what
+            if w == "switch":
+                continue  # its case stood for it
+            if w == "group":
+                levels.append((("body", fr.body, fr.body.cur), child))
+                return levels, fr.node
+            if w == "chain":
+                levels.append((("chain", fr.node), child))
+            elif w == "case" or w == "else":
+                levels.append((("list", fr.case.nodes), child))
+            else:
+                levels.append((("list", fr.nodes), child))
+            if w == "length":
+                return levels, "extent"
+            child = fr.node
+        levels.append((("body", msg, msg.cur), child))
+        return levels, "extent"
+
+    def after(level, child):
+        """The lines read after `child` in one level, to the end of that level."""
+        if level[0] == "list":
+            lines = level[1]
+            return lines[_index(lines, child) + 1:]
+        if level[0] == "chain":
+            parts = level[1].parts
+            for k, part in enumerate(parts):
+                if any(x is child for x in part):
+                    out = part[_index(part, child) + 1:]
+                    if k < len(parts) - 1 or level[1].ends_fx:
+                        out = out + [_FX_BIT]  # an `fx` bit follows
+                    for later in parts[k + 1:]:
+                        out = out + later
+                    return out
+            return []
+        _, b, kind = level
+        if kind is not None:
+            return kind.nodes[_index(kind.nodes, child) + 1:]
+        out = b.common[_index(b.common, child) + 1:]
+        for k in b.kinds:
+            out = out + k.whens + k.nodes
+        return out
+
+    def check_rest(nd, found, lineno):
+        """Rulings 10, 11, 26, 27 and 32 of 0.21: a `rest` group is the last wire
+        line of its extent; inside an item it stands within a `length` block of
+        the item's body or as the last line of an outer `rest` item."""
+        levels, end = found
+        for level, child in levels:
+            for ln in after(level, child):
+                if is_wire(ln):
+                    deferred.append((lineno, bad("a 'rest' group is not the last line of its extent (line %d is "
+                                                 "read after it)" % ln.lineno, lineno, "rest")))
+                    return
+        if end != "extent":
+            if end.mode != "rest":
+                deferred.append((lineno, bad("a 'rest' group inside an item stands within a 'length' block of the "
+                                             "item's body, or last in an item of a 'rest' group", lineno, "rest")))
+                return
+            nd.tail_rest = True
+
+    def check_count(nd, home):
+        """Rulings 2 and 33 of 0.21: in each reading path of the count's scope
+        exactly one group references it."""
+        if home[0] == "body" and home[2] is None and home[1].kinds:
+            b = home[1]
+            first = _refs(b.common[_index(b.common, nd) + 1:], nd)
+            paths = [_plus(first, _refs(k.nodes, nd)) for k in b.kinds]
+        else:
+            paths = [_refs(after(home, nd), nd)]
+        for got in paths:
+            if got != {1}:
+                deferred.append((nd.lineno, bad(
+                    "count %r is referenced by %s group in a reading path; exactly one 'count @%s' is needed"
+                    % (nd.name, "no" if 0 in got else "more than one", nd.name), nd.lineno, nd.locator)))
+                return
+
     def close_body(body, lineno):
         if body.first_when is not None and not body.kinds:
             deferred.append((body.first_when, bad("'when' in a body with no 'kind' line", body.first_when)))
@@ -686,22 +868,32 @@ def parse_seq_pack_text(text, *, source="pack.def"):
                 target(body).append(Node(T_PAD if kw == "pad" else T_ALIGN, lineno, length=n, locator=args[0]))
             elif kw == "presence":
                 name = args[0]
-                if not name or "." in name or name[0] == "!":
-                    raise bad("bad presence name %r" % name, lineno)
-                if in_block():
-                    table = stack[-1].presences
-                    twice = name in table
-                else:
-                    table = body.cur.presences if body.cur is not None else body.presences
-                    twice = name in body.presences or name in table
-                if twice:  # ruling 12 of 0.8
-                    raise bad("presence %r is declared twice in one block" % name, lineno)
                 if stack and stack[-1].what == "ext" and stack[-1].nodes:  # ruling 15 of 0.19
                     raise bad("a 'presence' line inside an 'ext' block is its first line", lineno)
                 length = None if args[1] == "fx" else bit_len(args[1], "a 'presence'", lineno)
                 nd = Node(T_PRESENCE, lineno, name=name, length=length, named=set(), locator=args[1],
                           named_static=set(), chain=cases_open())
-                table[name] = nd
+                declare(name, nd, body, lineno, "presence")  # one namespace with counts (ruling 15 of 0.21)
+                target(body).append(nd)
+            elif kw == "count":  # 0.21: `count <name> <len> [plus <n>]`
+                name = args[0]
+                length = bit_len(args[1], "a 'count'", lineno)
+                plus = 0
+                opts = args[2:]
+                if opts:
+                    # ruling 16: an optional `-` then digits, within signed 64 bits
+                    if len(opts) != 2 or opts[0] != "plus":
+                        raise bad("a 'count' line takes only 'plus <n>', got %r" % " ".join(opts), lineno, args[1])
+                    ptext = opts[1]
+                    digits = ptext[1:] if ptext.startswith("-") else ptext
+                    if not (digits.isascii() and digits.isdigit()):
+                        raise bad("'plus' takes a decimal integer, got %r" % ptext, lineno, args[1])
+                    plus = int(ptext)
+                    if not -(1 << 63) <= plus < (1 << 63):
+                        raise bad("'plus' %s is outside signed 64 bits" % ptext, lineno, args[1])
+                nd = Node(T_COUNT, lineno, name=name, length=length, plus=plus, locator=args[1])
+                declare(name, nd, body, lineno, "count")
+                count_lines.append((nd, home_of(body)))
                 target(body).append(nd)
             elif kw == "if":
                 # 0.8's `if` (presence names); a 0.17 gate locator here is
@@ -719,6 +911,9 @@ def parse_seq_pack_text(text, *, source="pack.def"):
                     p = find_presence(name)
                     if p is None:
                         failure = bad("'if' names presence %r, which is not visible here" % name, lineno)
+                        break
+                    if p.t == T_COUNT:  # ruling 15 of 0.21
+                        failure = bad("'if' names %r, which is a count" % name, lineno)
                         break
                     if p.length is not None and n > p.length:
                         failure = bad("'if' names bit %d of presence %r, which has %d bit(s)"
@@ -806,8 +1001,19 @@ def parse_seq_pack_text(text, *, source="pack.def"):
                                                          % (args[2], args[3]), lineno, mode)))
                             lb, ub = 0, 0
                 elif mode not in GROUP_MODES or len(args) != (3 if mode == "count" else 2):
-                    raise bad("a sequential 'group' line is: group <list> count <len> | while | more | fx", lineno, mode)
-                length = bit_len(args[2], "a group 'count'", lineno) if mode == "count" else None
+                    raise bad("a sequential 'group' line is: group <list> count <len> | count @<name> | while | "
+                              "more | fx | rest | last", lineno, mode)
+                length = None
+                count_node = None
+                if mode == "count" and args[2].startswith("@"):  # 0.21: the count of a `count` line
+                    cname = args[2][1:]
+                    count_node = find_count(cname) if cname else None
+                    if count_node is None:
+                        raise bad("'count @%s' names no count visible in this group body" % cname, lineno, mode)
+                    if count_node.t != T_COUNT:  # ruling 15
+                        raise bad("'count @%s' names a presence" % cname, lineno, mode)
+                elif mode == "count":
+                    length = bit_len(args[2], "a group 'count'", lineno)
                 # Ruling 23 of 0.8: a list in two groups of one scope is allowed
                 # when the two groups sit in different `if` or `opt` blocks. A
                 # group in no such block, two groups in one block, and a group in
@@ -831,6 +1037,9 @@ def parse_seq_pack_text(text, *, source="pack.def"):
                 lists.setdefault(name, []).append(blocks)
                 nd = GroupNode(T_GROUP, lineno, list=name, mode=mode, length=length, scope=Body(), locator=mode,
                                lb=lb, ub=ub)
+                nd.count_node = count_node
+                if mode == "rest":
+                    rest_groups.append((nd, rest_levels(nd, body), lineno))
                 target(body).append(nd)
                 key_refs.append((name, nd))
                 stack.append(_Frame("group", nd, None, lineno, body=nd.scope))
@@ -888,6 +1097,11 @@ def parse_seq_pack_text(text, *, source="pack.def"):
             deferred.append((lineno, e))
 
     name = seen.get("format")
+    if not stack:  # 0.21: checks that need every line of the block
+        for nd, levels, lineno in rest_groups:
+            check_rest(nd, levels, lineno)
+        for nd, home in count_lines:
+            check_count(nd, home)
     version = seen.get("version")
     if not name:
         raise MissingFormat("the pack has no 'format' line in %s" % source)

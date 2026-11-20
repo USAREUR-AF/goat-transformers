@@ -1,0 +1,14 @@
+{
+  "name": "three-items-in-a-block-at-bit-6",
+  "from": "conformance-extents-offset",
+  "to": "conformance-extents-offset",
+  "input": "0c108300",
+  "expect": "0c108300",
+  "model": {
+    "probe.x": "0",
+    "probe.nums.#": "3",
+    "probe.nums[2].probe.val": "3"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 34; block bits 6..30: items at 6, 12 and 18; at 24, 6 bits remain: padding"
+}

@@ -1,0 +1,17 @@
+{
+  "name": "ruling-09-count-in-an-item-body",
+  "from": "conformance-extents-item",
+  "to": "conformance-extents-item",
+  "input": "0229050603",
+  "expect": "0229050603",
+  "model": {
+    "probe.items.#": "2",
+    "probe.items[0].probe.qty": "9",
+    "probe.items[0].probe.subs.#": "2",
+    "probe.items[0].probe.subs[1].probe.val": "6",
+    "probe.items[1].probe.qty": "3",
+    "probe.items[1].probe.subs.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 9; a count line and its reference in one group body"
+}

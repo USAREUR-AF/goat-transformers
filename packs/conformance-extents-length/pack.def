@@ -1,0 +1,21 @@
+# Conformance probe pack for `rest` inside a `length` block counted in bytes
+# (spec 0.21 rulings 3 and 5), most significant bit first. Public. No kinds.
+#
+#   block       an 8-bit length in bytes: recs to the end of the block, x in 8
+#               bits and y in 8 bits each
+#   byte        z, after the block
+format     conformance-extents-length
+version    0.21.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+length 8
+  group  probe.recs rest
+    field  probe.x  8  uint
+    field  probe.y  8  uint
+  end
+end
+field   probe.z  8  uint

@@ -1,0 +1,12 @@
+{
+  "name": "plus-minus-one-zero-is-one-item",
+  "from": "conformance-extents-plus",
+  "to": "conformance-extents-plus",
+  "input": "00aa05",
+  "expect": "00aa05",
+  "model": {
+    "probe.nums.#": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 7; 0 - (-1) = 1 item"
+}

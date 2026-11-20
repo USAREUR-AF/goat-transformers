@@ -1,0 +1,13 @@
+{
+  "name": "count-zero-present-and-empty",
+  "from": "conformance-extents-count",
+  "to": "conformance-extents-count",
+  "input": "0709",
+  "expect": "0709",
+  "model": {
+    "probe.nums.#": "0",
+    "probe.y": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21, A count before other fields; n = 0: no items"
+}

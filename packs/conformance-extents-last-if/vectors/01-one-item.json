@@ -1,0 +1,13 @@
+{
+  "name": "one-item",
+  "from": "conformance-extents-last-if",
+  "to": "conformance-extents-last-if",
+  "input": "8385",
+  "expect": "8385",
+  "model": {
+    "probe.x": "3",
+    "probe.nums.#": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 28; p.1 = 1"
+}
