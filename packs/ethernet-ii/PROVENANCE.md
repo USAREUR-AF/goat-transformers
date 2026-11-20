@@ -1,5 +1,10 @@
 # Provenance: ethernet-ii pack
 
+SPDX licence: Apache-2.0
+
+Our restatement of facts from IETF RFCs (IETF Trust, BCP 78); RFC 6325 carries the
+pre-5378 notice described below.
+
 Read on 2026-11-20. No source file is copied into this tree. The pack, the
 module `inet` and pack.md state the layout in this repository's words. The
 vectors of `tools/gen/link-headers-vectors.py` are built from that layout and
@@ -39,10 +44,18 @@ The copyright notice of RFC 7348:
 
 The notice goes on to say that code components extracted from the document must carry the Simplified BSD License text. No code component is extracted here.
 
-RFC 6325 restates the inner layout of the tag information, but carries the
-notice that material from before 10 November 2008 in it may not be modified or
-used for derivative works outside the IETF Standards Process; it is not used
-here (pack.md, Not mapped).
+RFC 6325 (Routing Bridges (RBridges): Base Protocol Specification, July 2011,
+https://www.rfc-editor.org/rfc/rfc6325.txt, SHA-256
+`1b5c66cc4504d19fa8d20e133f3ea5dd2aeedafb4e1a90feb111fc98d5360eb4`, read
+2026-11-20) gives the split of the tag information used for `inet.vlan_pcp`,
+`inet.vlan_dei` and `inet.vlan_vid` (section 4.1.1, Figure 8). Its notice is
+the IETF Trust notice above, with code components under the Simplified BSD
+License, and adds that the document may contain material published before
+10 November 2008 whose copyright holders may not have granted the right to
+modify it or create derivative works of it outside the IETF Standards Process.
+The pack takes three facts from it (bit widths and order) and states them in
+its own words; no text or figure is copied or modified. The operator decided
+on 2026-11-20 to use these facts and label them.
 
 The pack holds field positions, widths and the meaning of values, restated; no
 text, figure or table of a document is copied.

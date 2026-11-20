@@ -8,7 +8,8 @@ pcapng-section-header, pcapng-epb-be, pcapng-epb-le.
 
 Python 3 standard library only; imports no engine and reads no pack.def. The
 layouts below are this program's own restatement of RFC 894, RFC 7042 section 3
-and RFC 7348 section 5 (Ethernet II and the C-tag), RFC 1661 and RFC 1662
+and RFC 7348 section 5 (Ethernet II and the C-tag), RFC 6325 section 4.1.1 (the
+split of the tag information), RFC 1661 and RFC 1662
 (PPP), RFC 3931 (L2TPv3), RFC 4303 and RFC 4302 (ESP, AH), RFC 8999 (QUIC
 invariants) and the Internet-Drafts draft-ietf-opsawg-pcap-09 and
 draft-ietf-opsawg-pcapng-06: each header is a list of (field, bits) in wire
@@ -115,6 +116,20 @@ def ethernet_vectors():
                    ref=SRC + "the C-tagged frame cut to 16 octets, inside its inner EtherType"))
     out.append(vec(P, "thirteen-octets-is-malformed", h[:13].hex(), error="malformed-wire",
                    ref=SRC + "the untagged header cut to 13 octets"))
+    # The tag information split as RFC 6325 section 4.1.1 Figure 8 draws it:
+    # priority (3 bits), the C bit (1), VLAN ID (12).
+    for name, pcp, dei, vid in (("c-tag-split-priority-5-vid-100", 5, 0, 100),
+                                ("c-tag-split-largest-values", 7, 1, 0xFFF)):
+        tag = (pcp << 13) | (dei << 12) | vid
+        st = dict(u, vlan_tag_info=tag, eth_type=0x0800)
+        hs = pack([("eth_dst_addr", 48), ("eth_src_addr", 48), (C(0x8100), 16),
+                   ("vlan_pcp", 3), ("vlan_dei", 1), ("vlan_vid", 12), ("eth_type", 16)],
+                  dict(st, vlan_pcp=pcp, vlan_dei=dei, vlan_vid=vid))
+        m = model_of(st, ["vlan_tag_info", "eth_type"], "c-tagged")
+        m.update({"inet.vlan_pcp": str(pcp), "inet.vlan_dei": str(dei), "inet.vlan_vid": str(vid)})
+        out.append(vec(P, name, hs.hex(), hs.hex(), m,
+                       SRC + "a C-tagged frame whose tag information is priority %d, C bit %d, VLAN ID %d "
+                             "(RFC 6325 section 4.1.1, Figure 8); vlan_tag_info holds the same 16 bits" % (pcp, dei, vid)))
     return out
 
 
