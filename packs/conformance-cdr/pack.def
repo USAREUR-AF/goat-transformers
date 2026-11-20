@@ -1,0 +1,39 @@
+# Conformance probe pack for the `cdr` wire (spec 0.43), XCDR version 1. Public.
+# A final struct with every type, a sequence of structs, a sequence of a
+# primitive, a fixed array, a const and kinds chosen by the first member.
+format          conformance-cdr
+version         0.43.0
+distribution    public
+source          "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses            probe
+wire            cdr
+cdr             1
+representation  0000
+
+field    probe.x      uint8
+field    probe.n      int16
+field    probe.y      uint32
+field    probe.z      int64
+field    probe.a      float64
+field    uid          string
+field    probe.w      bool
+field    probe.c1     enum32
+field    lat          int32      sscale:90/2147483647
+const    uint16       7
+group    probe.items  seq
+  field  probe.label  string
+  field  probe.qty    uint16
+end
+group    probe.nums   seq
+  field  probe.val    int32
+end
+group    probe.gains  array:2
+  field  probe.ratio  float32
+end
+
+kind     plain
+when     1            1
+
+kind     other
+when     1            2
+field    probe.c2     uint64

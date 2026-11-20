@@ -4665,3 +4665,169 @@ sentinel):
 `tools/tests/test_time_quality_guard.py` covers each refused form, bare and
 `core.`-prefixed, an `optional` and a gated `bits` field that pass, and the whole
 repository.
+
+---
+
+# Version 0.43: the `cdr` wire
+
+Status: Draft. A `cdr` format is one value of a final IDL struct encoded in
+OMG Common Data Representation as DDS writes it into an RTPS serialized
+payload: a 4-byte encapsulation header, then the members in declaration
+order, each aligned. XCDR version 1 (DDS-XTypes clause 7.4.1.1) and version 2
+(clause 7.4.3.4) are both stated. Input and output are hex text. Mutable and
+appendable types, optional members, unions and maps are not in this version.
+
+```
+wire            cdr
+cdr             <1 | 2>                       # the XCDR version; required
+representation  <hex>                         # the 2-byte identifier written on encode
+field  <model-key> <type> [<transform>] [via <table>]
+group  <list> <seq | array:<n>>               # 0.7 groups: a sequence or an array of structs
+  field ...
+end
+```
+
+`cdr` and `representation` appear once each, before the first `kind`, on
+`cdr` only; `<hex>` is four lowercase hex digits. A field line has no
+locator: its place is its position among the lines, as in a sequential
+`bits` pack (Version 0.8). These checks run after the file is read.
+
+## The header
+
+The input begins with 4 bytes: the representation identifier and 2 option
+bytes. The low bit of the identifier's second byte gives the byte order of
+every multi-byte value: 0 big-endian, 1 little-endian. On decode the
+identifier's first byte and the second byte's other bits must equal those of
+`representation`, else `malformed-wire`; the options are read and not used.
+On encode the identifier is `representation`, with its low bit set by the
+byte order written (always big-endian unless `representation`'s low bit is
+1), and the options are `00 0p`, where `p` is the number of padding bytes
+written after the last member to end on a multiple of 4 (XTypes 7.6.3.1.2).
+Offsets for alignment count from the byte after the header (RTPS 10.2).
+
+## Types
+
+| Type | Size | Align (cdr 1) | Align (cdr 2) | Decode | Default transform |
+|---|---|---|---|---|---|
+| `int8`, `uint8`, `char8`, `octet` | 1 | 1 | 1 | the byte, signed for `int8` | `int` |
+| `bool` | 1 | 1 | 1 | 0 or 1; another value is `transform-decode` | `bool` |
+| `int16`, `uint16` | 2 | 2 | 2 | signed or unsigned | `int` |
+| `int32`, `uint32` | 4 | 4 | 4 | signed or unsigned | `int` |
+| `int64`, `uint64` | 8 | 8 | 4 | signed or unsigned; `uint64` above 2^63-1 is `transform-decode` | `int` |
+| `float32`, `float64` | 4, 8 | 4, 8 | 4, 4 | IEEE 754 | `float` |
+| `enum8`, `enum16`, `enum32` | 1, 2, 4 | as the size | as the size | signed | `int` |
+| `string` | 4 + n | 4 | 4 | a `uint32` length counting the bytes and a final NUL, the UTF-8 bytes, the NUL | `string` |
+
+A field's transform is its type's default, or `uscale` or `sscale` (Version
+0.2) on an integer type, read from the integer. `via` applies as on every
+wire. Before each value the writer adds the fewest bytes, each zero, that
+bring the offset to a multiple of its alignment; the reader skips them,
+whatever they hold.
+
+## Strings
+
+A string's length must be at least 1 and its last byte 0, else
+`malformed-wire`; a NUL before the last byte, or bytes that are not UTF-8,
+are `transform-decode`. An absent string key writes the empty string
+(length 1, one zero byte).
+
+## Groups
+
+`group <list> seq` is an IDL sequence of a struct: a `uint32` element count,
+then each element's members as the body lines state them. `group <list>
+array:<n>` is an array of `n` elements with no count; a list of another
+length is `transform-encode`. A sequence or array of a primitive type is a
+group whose body is one field line; each item holds that one key.
+With `cdr 2`, a sequence or array whose element is a struct or a string is
+preceded by a DHEADER: a `uint32`, 4-aligned, the byte length of what
+follows it in that collection (XTypes 7.4.3.4.1). On decode a DHEADER that
+does not equal the bytes the collection takes is `malformed-wire`.
+
+## Reading and writing
+
+1. Lines are read in order; each value is aligned, then read. An input that
+   ends inside a value, a count or a DHEADER is `malformed-wire`.
+2. After the last line, at most 3 bytes may remain, each zero; anything else
+   is `malformed-wire`.
+3. An absent key writes zero bits of its type's size (0, false, 0.0), and an
+   absent list writes a count of 0 (`seq`) or is `transform-encode`
+   (`array:<n>`).
+4. A group's elements count against the item limit of ruling 7 of 0.11; a
+   count larger than the bytes left could hold (one byte per element at
+   least) is `malformed-wire` before any memory is taken.
+
+## Rulings for 0.43
+
+1. **The identifier values of XCDR2 differ between the published
+   documents** (XTypes 1.3 Table 60 and 1.4 Table 57 against RTPS 2.5
+   Table 10.3). The pack states the bytes it writes, and decode checks
+   only them and the byte-order bit, so no engine chooses between the
+   tables.
+2. **Kinds** are chosen by `when <n> <value>`, where `<n>` is the
+   1-based position of a common line, compared as on `bits`.
+3. **`when <n>`.** `<n>` counts the `field` and `group` lines of the common
+   scope in file order from 1, not lines inside a group body. A `when`
+   naming 0, a number past the last such line, a `group`, a `string` or a
+   float line, or standing inside a group, is `bad-directive` after the
+   file. The line's value, as an unsigned integer of its size in the
+   message's byte order, is compared with an unsigned decimal; lists and
+   ranges are allowed as on `bits`; on encode that value is written over
+   the field. Input ending inside the common lines is `malformed-wire`.
+4. **Transforms.** The third token may be omitted, may name the type's
+   default, or may be `uscale` or `sscale` on `int8` to `uint64` or
+   `octet`; any other known transform is `bad-directive` after the file,
+   and an unknown name is `unknown-transform`. This amends the validity
+   sentences of 0.2 and 0.5 for `cdr`. The scales take the integer the type
+   decodes, signed as the table says, and encode is checked against the
+   type's range.
+5. **Trailing padding.** Encode always pads with zero bytes after the last
+   member until the length after the header is a multiple of 4, under both
+   versions, and writes that number as `p`. Decode never reads `p`.
+6. **Counts and absent lists.** A count of 0 decodes as a present, empty
+   list. An absent `seq` list writes a count of 0; this replaces 0.7's
+   "An absent list writes nothing" on `cdr`.
+7. **Encode ranges.** A value outside its type's range, compared as an
+   integer of any size, is `transform-encode` (`bool` takes 0 and 1 only,
+   `enum8/16/32` are signed, `uint64` takes 0 to 2^63-1); so is a float
+   outside single range for `float32`. A NaN or an infinity read from the
+   wire is `transform-decode`. A string holding U+0000 is
+   `transform-encode`.
+8. **What takes a DHEADER under `cdr 2`.** A group's body is primitive
+   exactly when its only wire line is one `field` of a type other than
+   `string` and `enum8/16/32` (XTypes 7.2.2.2 lists neither as
+   primitive); every other body, a nested group included, takes a
+   DHEADER.
+9. **Where the DHEADER stands.** Before the count of a `seq` (before the
+   first element of an `array`), counting from the byte after it through
+   the last byte of the last element: the count included, padding after
+   the last element excluded.
+10. **The new lines and 0.11.** `cdr` and `representation` join 5b's
+    directive list and 5e with one argument each, checked as the line is
+    read; they may stand before `wire`. A missing `cdr` or
+    `representation`, a `<hex>` that is not four lowercase digits, an
+    unknown type, and either line on another wire are `bad-directive` after
+    the file. `representation` is not checked against `cdr`.
+11. **Structural errors first.** Every structural check (header, length,
+    count, DHEADER, trailing bytes, item limit) wins over a
+    `transform-decode` of any line.
+12. **`const <type> <value>`** is a wire line written at its position, an
+    unsigned decimal for integer types, not checked on decode, and counted
+    by `when <n>`.
+13. **Options.** Only `via` (and 0.18's `with`) is a field option on `cdr`;
+    `absent`, `optional`, `swap`, `trim` and `stop` are `bad-directive`
+    after the file.
+14. **Groups.** A group with no wire line in its body and `array:0` are
+    `bad-directive`; nested `seq` and `array` groups are allowed; an
+    array's `n` is checked against the bytes left as a count is.
+15. **No struct padding.** CDR adds no padding at the end of a struct or an
+    element; padding comes only before a value that needs alignment.
+16. **`default` first.** An absent key with a `default` in scope writes the
+    default; zero bits, or the empty string, only when none applies.
+17. **Hex text** follows rulings 36 and 40 of 0.8 and ruling 7 of 0.5;
+    output is lowercase.
+18. **Input shorter than 4 bytes** is `malformed-wire`.
+19. **No residue.** Decode keeps none; encode writes `representation`'s
+    byte order, zero padding and its own `p`, so a same-format round trip
+    is exact only for input in that form.
+20. **Three trailing zero bytes** after a body whose length is already a
+    multiple of 4 are accepted (step 2 as written).
