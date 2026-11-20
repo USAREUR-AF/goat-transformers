@@ -37,7 +37,7 @@ import re
 import struct
 import sys
 
-VERSION = 3
+VERSION = 4
 MAGIC = b"GTP1"
 
 # section ids
@@ -50,8 +50,10 @@ SECTION_NAMES = {
 
 # op codes
 (OP_BODY, OP_KIND, OP_WHEN, OP_REQ, OP_DEFAULT, OP_FIELD, OP_ALSO, OP_CONST, OP_PAD, OP_ALIGN, OP_PRESENCE,
- OP_IF, OP_OPT, OP_CHAIN, OP_PART, OP_LENGTH, OP_WHOLE, OP_GROUP_SEQ, OP_GROUP_FIX) = range(1, 20)
-BLOCK_OPS = (OP_BODY, OP_KIND, OP_IF, OP_OPT, OP_CHAIN, OP_PART, OP_LENGTH)
+ OP_IF, OP_OPT, OP_CHAIN, OP_PART, OP_LENGTH, OP_WHOLE, OP_GROUP_SEQ, OP_GROUP_FIX, OP_GATE) = range(1, 21)
+BLOCK_OPS = (OP_BODY, OP_KIND, OP_IF, OP_OPT, OP_CHAIN, OP_PART, OP_LENGTH, OP_GATE)
+# GATE flags: the gate is negated (`if !<locator>`); step 3 of 0.17 Encode gives it a value
+G_NEG, G_HAS_VALUE = 1, 2
 
 XF = {"uint": 0, "twos": 1, "linscale": 2, "uscale": 3, "sscale": 4, "f32": 5, "f64": 6, "ascii": 7, "sixbit": 8,
       # the transforms of spec 0.15 from 9
@@ -91,6 +93,7 @@ MAX_DEPTH = 12
 MAX_PRESENCE = 16
 MAX_WHOLES = 4
 MAX_DERIVE_ARGS = 8
+MAX_GATES = 256         # gate blocks of one scope: the message's common lines and one kind, or one item
 
 
 class Refused(Exception):
@@ -467,13 +470,31 @@ class Pack:
             refuse("bad-pack", "%s: `%s` is not <word>:<pos>:<len>" % (self.format, loc))
         return int(p[0]) * self.word_bytes * 8 + int(p[1]), int(p[2])
 
+    def _gate(self, t):
+        """`if [!]<locator> <value>[,<value>...]` on a fixed layout (engine-spec 0.17)."""
+        if len(t) != 3:
+            refuse("bad-pack", "%s: `%s` is not one locator and one value list" % (self.format, " ".join(t)))
+        loc, neg = t[1], t[1].startswith("!")
+        off, ln = self._span(loc[1:] if neg else loc)
+        if not 1 <= ln <= 64:
+            refuse("bad-pack", "%s: a gate of %d bits" % (self.format, ln))
+        values = []
+        for v in t[2].split(","):
+            if not _DIGITS.match(v) or int(v) >= 1 << ln or int(v) in values:
+                refuse("bad-pack", "%s: gate value `%s` of `%s`" % (self.format, v, t[2]))
+            values.append(int(v))
+        return {"t": "gate", "off": off, "len": ln, "neg": neg, "values": values, "body": [], "defaults": []}
+
     def _fixed(self, rows):
         body = self.body
+        # open groups and gate blocks, innermost last; `end` closes the innermost
         open_groups = []
         for t in rows:
             d = t[0]
             scope_kind = body["kinds"][-1] if body["kinds"] else None
-            if open_groups:
+            if open_groups and open_groups[-1]["t"] == "gate":
+                lines, defaults = open_groups[-1]["body"], open_groups[-1]["defaults"]
+            elif open_groups:
                 lines = open_groups[-1]["body"]["common"]
                 defaults = open_groups[-1]["body"]["defaults"]
             elif scope_kind is not None:
@@ -518,18 +539,22 @@ class Pack:
                     i += 2
                 if g["count"] is None:
                     refuse("bad-pack", "%s: a bits group needs `count`" % self.format)
+                if any(o["t"] == "gate" for o in open_groups):
+                    refuse("bad-pack", "%s: a group inside a gate block" % self.format)
                 open_groups.append(g)
             elif d == "end":
                 g = open_groups.pop()
-                if open_groups:
+                if open_groups and open_groups[-1]["t"] == "gate":
+                    open_groups[-1]["body"].append(g)
+                elif open_groups:
                     open_groups[-1]["body"]["common"].append(g)
                 elif scope_kind is not None:
                     scope_kind["lines"].append(g)
                 else:
                     body["common"].append(g)
             elif d == "if":
-                refuse("unsupported-feature", "%s: gate blocks on a fixed layout (`if`, spec 0.17) are not in the "
-                       "device profile" % self.format)
+                # a gate block (engine-spec 0.17): field, const, default and nested gates
+                open_groups.append(self._gate(t))
             else:
                 refuse("bad-pack", "%s: directive `%s` is not a line of a fixed-layout bits pack" % (self.format, d))
 
@@ -721,7 +746,7 @@ class Pack:
 
 def sub_blocks(line):
     """The line lists nested directly in a line (not group bodies)."""
-    if line["t"] in ("if", "opt", "length"):
+    if line["t"] in ("if", "opt", "length", "gate"):
         return [line["body"]]
     if line["t"] == "chain":
         return line["parts"]
@@ -755,6 +780,9 @@ def scope_keys(body, kinds, path, keys, lists, defaults):
             if l["t"] == "field":
                 for key, _ in l["keys"]:
                     keys.setdefault(path, set()).add(key)
+            elif l["t"] == "gate":
+                for key, _ in l["defaults"]:
+                    defaults.setdefault(path, set()).add(key)
             elif l["t"] in ("group", "gfix"):
                 lists.setdefault(path, set()).add(l["list"])
                 scope_keys(l["body"], None, path + (l["list"],), keys, lists, defaults)
@@ -967,19 +995,12 @@ class Compiler:
         dec = role in ("dec", "both")
         n = self.node(OP_BODY)
         kids = n["kids"]
-
-        def defaults(defs):
-            out = []
-            for key, text in defs if enc else []:
-                ty = self.model.type_of(key)
-                v = read_as(ty, text)
-                self.check(ty != T_LIST and v is not None, "bad-pack",
-                           "%s: default `%s` of `%s` is not of the key's type" % (pack.format, text, key))
-                out.append(self.node(OP_DEFAULT, xf=ty, key=self.key(key), b=self.pool_of([self.value_word(ty, v)])))
-            return out
-
+        defaults = lambda defs: self.defaults(pack, defs, enc)
+        # gate blocks are numbered per scope, in line order, depth first: the
+        # common lines from 0, each kind after them
+        gates = [0]
         kids.extend(defaults(body["defaults"]))
-        kids.extend(self.lines(pack, body["common"], role, view, path, depth, top))
+        kids.extend(self.lines(pack, body["common"], role, view, path, depth, top, gates))
         if not pack.seq:
             ext = self.fixed_extent(body["common"])
             w0 = [k for k in body["common"] if k["t"] == "when"]
@@ -1009,26 +1030,39 @@ class Compiler:
                     kn["kids"].append(self.node(OP_REQ, key=self.key(r), flags=1 if ty == T_LIST else 0))
             if not excluded:
                 kn["kids"].extend(defaults(k["defaults"]))
-                kn["kids"].extend(self.lines(pack, k["lines"], role, view, path, depth, top))
+                kn["kids"].extend(self.lines(pack, k["lines"], role, view, path, depth, top, [gates[0]]))
             if not pack.seq:
                 kn["b"] = self.pool_of(self.fixed_extent(k["lines"])[:1] + tuple(
                     max(x, max([off + ln for off, ln, _ in k["whens"]] or [0])) for x in self.fixed_extent(k["lines"])[1:]))
             kids.append(kn)
         return n
 
-    def lines(self, pack, lines, role, view, path, depth, top):
+    def defaults(self, pack, defs, enc):
+        out = []
+        for key, text in defs if enc else []:
+            ty = self.model.type_of(key)
+            v = read_as(ty, text)
+            self.check(ty != T_LIST and v is not None, "bad-pack",
+                       "%s: default `%s` of `%s` is not of the key's type" % (pack.format, text, key))
+            out.append(self.node(OP_DEFAULT, xf=ty, key=self.key(key), b=self.pool_of([self.value_word(ty, v)])))
+        return out
+
+    def lines(self, pack, lines, role, view, path, depth, top, gates=None):
         self.check(depth <= MAX_DEPTH, "nesting-too-deep",
                    "%s nests blocks more than %d deep" % (pack.format, MAX_DEPTH))
         self.max_depth = max(self.max_depth, depth)
         out = []
         if not pack.seq:
-            # fixed layout: the engine passes over a scope by kind of line; fields come first
-            order = {"field": 0, "when": 1, "const": 2, "gfix": 3}
+            # fixed layout: the engine passes over a scope by kind of line; fields and gate
+            # blocks come first, in line order (the sort is stable)
+            order = {"field": 0, "gate": 0, "when": 1, "const": 2, "gfix": 3}
             lines = sorted(lines, key=lambda l: order[l["t"]])
         for l in lines:
             t = l["t"]
             if t == "field":
                 out.extend(self.field(pack, l, role, view, path))
+            elif t == "gate":
+                out.append(self.gate(pack, l, role, view, path, depth, top, gates))
             elif t in ("const", "when"):
                 self.check(1 <= l["len"] <= 64, "bad-pack", "%s: a `%s` of %d bits" % (pack.format, t, l["len"]))
                 out.append(self.node(OP_CONST if t == "const" else OP_WHEN, length=l["len"],
@@ -1076,6 +1110,33 @@ class Compiler:
             elif t in ("group", "gfix"):
                 out.append(self.group(pack, l, role, view, path, depth))
         return out
+
+    def gate(self, pack, l, role, view, path, depth, top, gates):
+        """A gate block (engine-spec 0.17): its defaults, its fields and nested blocks in line
+        order, then its `const` lines. Every block stays in the plan, also one whose lines the
+        conversion does not carry: its gate and its extent still decide the length."""
+        index = gates[0]
+        gates[0] += 1
+        self.check(index < MAX_GATES, "too-many-gates", "%s: more than %d gate blocks in one scope; the device "
+                   "engine holds %d" % (pack.format, MAX_GATES, MAX_GATES))
+        enc = role in ("enc", "both")
+        kids = self.defaults(pack, l["defaults"], enc)
+        kids.extend(self.lines(pack, l["body"], role, view, path, depth + 1, top, gates))
+        # step 3 of Encode: the first value listed, or for `!` the smallest value not listed
+        if l["neg"]:
+            listed = set(l["values"])
+            value = next((v for v in range(len(listed) + 1) if v not in listed), None)
+            if value is not None and value >= 1 << l["len"]:
+                value = None
+        else:
+            value = l["values"][0]
+        self.check(len(l["values"]) <= 0xFFFF, "value-range", "%s: a gate with %d values; the compiled form "
+                   "holds 65535" % (pack.format, len(l["values"])))
+        # the extent of the block's own lines: nested blocks count only when they hold
+        words = [l["off"]] + list(self.fixed_extent(l["body"])) + [value or 0] + l["values"]
+        flags = (G_NEG if l["neg"] else 0) | (G_HAS_VALUE if value is not None else 0)
+        return self.node(OP_GATE, flags=flags, key=index, length=l["len"], b=self.pool_of(words),
+                         c=len(l["values"]), kids=kids)
 
     def field(self, pack, l, role, view, path):
         enc = role in ("enc", "both")

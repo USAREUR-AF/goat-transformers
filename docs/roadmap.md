@@ -39,7 +39,7 @@ vectors, and the same change in the other six engines.
 | Strict rulings | one byte sequence and one named error where earlier sections were silent: XML text, number and time grammars, rounding and range on `bits`, a kind for every load failure, the capability report, a limit on list items | Built, seven engines (spec 0.11) |
 | Value transforms | scales that yield integers, a scale on a text wire, sign-and-magnitude numbers, scaled IEEE floats, 6-bit and 7-bit character sets, octal digits | Built, seven engines (spec 0.15) |
 | Derive functions for time, distance and frames | an instant split into seconds and nanoseconds, meters to degrees at a latitude, radians, sums and differences (mean sea level from a geoid separation), ECEF | Built, seven engines (spec 0.16) |
-| Gated fields on a fixed layout | a field that exists only when other bits of the message hold a value: validity bits, multi-bit modes, one bit choosing between two meanings of the same bits | Built, seven engines (spec 0.17) |
+| Gated fields on a fixed layout | a field that exists only when other bits of the message hold a value: validity bits, multi-bit modes, one bit choosing between two meanings of the same bits | Built, seven engines and the embedded profile (spec 0.17) |
 | Encode selection by value | choosing the target message kind from the value of a key, not only from which keys are present | Built, seven engines (spec 0.20) |
 | Conditional output and flag tokens | a value written only when another exists; several flags joined into one token list | Built, seven engines (spec 0.18) |
 | XML namespaces and prefixes | documents whose elements carry a prefix | Designed |

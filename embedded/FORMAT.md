@@ -1,6 +1,6 @@
 # Compiled pack format (`.gtp`)
 
-Status: Written and Built. Format version 3. Written by `tools/gen/packc.py`,
+Status: Written and Built. Format version 4. Written by `tools/gen/packc.py`,
 read by `embedded/gt-core`.
 
 A `.gtp` blob holds one plan: a source format, a target format, or both,
@@ -20,7 +20,7 @@ address, in flash or in RAM, with no relocation and no alignment requirement.
 ```
 offset  size  field
 0       4     magic "GTP1"
-4       2     format version (3)
+4       2     format version (4)
 6       2     flags: bit 0 = the blob holds names (sections 12 and 13)
 8       4     total length in bytes
 12      2     number of sections
@@ -51,6 +51,11 @@ Version 3 adds six-bit armor (engine-spec 0.14): bit 2 of a format's flags,
 0 in version 2, marks `armor sixbit`, and transform 8 is `sixbit`. A version 2
 reader would ignore the flag and read armored text as bytes, so the version
 changed. Nothing else changed.
+
+Version 4 adds the GATE operation (gate blocks on a fixed layout,
+engine-spec 0.17). A version 3 reader steps over an operation it does not know
+as one operation, so it would read the lines inside a gate block as lines of
+the scope; the version changed so that it refuses the blob instead.
 
 | Id | Section | Entry | Holds |
 |---|---|---|---|
@@ -136,6 +141,7 @@ so a reader steps over a whole block with one addition.
 | 17 | WHOLE | `len`-bit length of the whole message; pool[`b`] = `plus` |
 | 18 | GROUP_SEQ | list `key`; `xf` 0 `count` (`len` bits), 1 `while`, 2 `more`, 3 `fx`; the next operation is the item BODY; flags bit 0 = read and drop |
 | 19 | GROUP_FIX | list `key`, first item at bit `a`; pool[`b`] = item bits; `xf` 0: pool[`b`+1] items, `xf` 1: a `len`-bit count at bit pool[`b`+1]; then the item BODY |
+| 20 | GATE | `a` nested operations: a gate block (spec 0.17, below); `key` = its number in its scope; `len` gate bits; `c` listed values; flags 1 `!`, 2 = step 3 of Encode gives the gate a value; pool[`b`] = the gate's bit offset, pool[`b`+1..`b`+3] = (reach, decode need, encode need) of the block's own lines, pool[`b`+4] = the gate value, then the `c` values |
 
 Transforms (`xf` of FIELD): 0 `uint`, 1 `twos`, 2 `linscale`, 3 `uscale`,
 4 `sscale`, 5 `f32`, 6 `f64`, 7 `ascii`, 8 `sixbit` (spec 0.14); the value
@@ -191,10 +197,55 @@ text, one byte a character.
 
 Order inside a block. A BODY holds its DEFAULT operations, then its common
 lines, then its KIND blocks. A KIND holds its WHEN, REQ and DEFAULT
-operations, then its lines. In a fixed-layout scope the FIELD operations come
-first and together, then WHEN, CONST and GROUP_FIX, because the engine passes
-over such a scope once for each kind of line; in a sequential scope the lines keep
-their file order, because the order is the layout.
+operations, then its lines. In a fixed-layout scope the FIELD and GATE
+operations come first and together, in line order, then WHEN, CONST and
+GROUP_FIX, because the engine passes over such a scope once for each kind of
+line. A GATE holds its DEFAULT operations, then its FIELD and nested GATE
+operations in line order, then its CONST operations. In a sequential scope the
+lines keep their file order, because the order is the layout.
+
+### Gate blocks (spec 0.17)
+
+A gate block is a GATE operation in a fixed-layout scope: the common lines and
+a kind of the message, or a group's item, where its offset is item-relative.
+The blocks of a scope are numbered from 0 in line order, depth first: the
+common lines first, each kind after them. A scope holds at most 256 blocks
+(`too-many-gates` otherwise). The extents of BODY and KIND hold the lines
+outside any block only; a block's extent holds its own lines, the lines the
+plan left out included, and not those of the blocks nested in it.
+
+- Decode: the gate's bits are read as a WHEN reads them; the block holds when
+  they equal one of the values (with `!`, none of them), and a gate any of
+  whose bits lies beyond the input does not hold. A block that holds is read
+  as its lines, its nested blocks evaluated in turn, and its decode need
+  counts toward the length; a block that does not hold sets no key.
+- Encode, for each scope: the lines outside any block are written first, as
+  without blocks (step 2). In line order, depth first, a block that is open
+  (one of its fields, or of the blocks nested in it, maps a key the entity or
+  item holds) and has a gate value gets it when none of its gate bits is
+  written: by a line outside any block with a present key, a CONST, a WHEN, a
+  group count, or the gate value of an earlier block (step 3). Each block is
+  then evaluated on those bits, a nested one only when the block enclosing it
+  holds (step 4). The scope is written again with the lines of the held
+  blocks: sentinels, then fields later lines first, then the gate values of
+  the held blocks on the bits no line with a present key covers, then CONST,
+  WHEN and counts (ruling 7). The output is decoded again for the blocks:
+  every held block must hold and every other must not, and no key the entity
+  holds may be mapped only by lines of blocks that are not held, or the
+  encode is `transform-encode` (step 6).
+- Length: the held blocks' encode need and gate locators count toward the
+  message's words. Under six-bit armor `L` counts the held blocks' decode
+  need and gate locators, and an `optional` field of a held block only when
+  it writes a value, a default or a sentinel (ruling 14). Step 6 reads the
+  output as it will be read: `L` bits, then zeros to a multiple of 6.
+- Where gt-core differs from the text: the step 6 check of a group item runs
+  right after that item is written, not on the whole output (ruling 9 of
+  0.17). The two differ only for a pack whose `const`, `when` or count lies
+  inside the bits of an item; no pack does, and every vector and fuzz run
+  agrees with the reference engine.
+- A default inside a block applies to the fields of that block and of the
+  blocks nested in it, before the defaults of the kind and the body; the
+  innermost wins (ruling 5).
 
 ### Scales are rationals
 
@@ -371,6 +422,7 @@ feature refuses a plan that uses it (`bad-plan`).
 | context keys | Built; the keys are named when the plan is compiled |
 | `derive`: the functions in the table above | Built |
 | `absent` (0.9): fixed and sequential layout, with `swap`, `optional`, `also`, in kinds and groups | Built, up to 255 sentinels per field |
+| gate blocks on a fixed layout (`if [!]<locator> <values>` ... `end`, 0.17): in common lines, kinds and group items, nested, with `field`, `const` and `default`, with six-bit armor | Built, up to 256 blocks per scope |
 
 ## What the compiler refuses
 
@@ -386,10 +438,11 @@ feature refuses a plan that uses it (`bad-plan`).
 | `too-many-presences` | more than 16 presence fields in one format |
 | `too-many-wholes`, `whole-in-group` | more than 4 `length ... whole` lines, or one inside a group |
 | `nesting-too-deep` | blocks and groups nested more than 12 deep |
+| `too-many-gates` | more than 256 gate blocks (spec 0.17) in one scope: the common lines and one kind of a message, or one item |
 | `length-plus-range` | a `plus` outside 32 bits |
 | `value-range`, `table-overflow` | an offset, count or table index beyond what an entry holds; more than 255 sentinels on one field |
 | `unknown-format`, `unknown-kind`, `unknown-key`, `bad-arguments` | a name the inputs do not have |
-| `unsupported-feature` | a pack line of the specification that the device profile does not implement. Refused this way, when a conversion needs one: the derive functions of spec 0.16 `deg_lat_of` and `m_lat_of` (the meridional radius takes the power x^1.5) and `lat_of_ecef` and `hae_of_ecef` (Heikkinen's closed form takes a cube root). gt-core has neither function, and an approximation would not give the platform library's results bit for bit. Refused this way too: gate blocks on a fixed layout (`if`, spec 0.17), and the field option `with` and the derive functions `tokens`, `has_token` and `text_if` of spec 0.18, and the kind selection of spec 0.20 (`when` lists and ranges, `requires <key>=<value>`, `switch`) |
+| `unsupported-feature` | a pack line of the specification that the device profile does not implement. Refused this way, when a conversion needs one: the derive functions of spec 0.16 `deg_lat_of` and `m_lat_of` (the meridional radius takes the power x^1.5) and `lat_of_ecef` and `hae_of_ecef` (Heikkinen's closed form takes a cube root). gt-core has neither function, and an approximation would not give the platform library's results bit for bit. Refused this way too: the field option `with` and the derive functions `tokens`, `has_token` and `text_if` of spec 0.18, and `encoding uper` (spec 0.19), and the kind selection of spec 0.20 (`when` lists and ranges, `requires <key>=<value>`, `switch`) |
 | `bad-pack`, `bad-model` | text the compiler cannot read; it compiles packs the reference engine loads and does not repeat that engine's load checks |
 
 The text wires are out of scope for the device profile. A text format needs a

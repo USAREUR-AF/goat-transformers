@@ -114,6 +114,7 @@ The blob layout, the operation table and the full list are in
 | `const`, `default`, `map` and `via`, `typemap`, `also` | Built |
 | `absent` field option (absent-value sentinels, spec 0.9): fixed and sequential layout, `also`, groups, `optional`, presence | Built |
 | Groups with a fixed count or a count field, nested | Built |
+| Gate blocks on a fixed layout (spec 0.17): `if [!]<locator> <values>` ... `end` with `field`, `const`, `default` and nested blocks, in common lines, kinds and group items, with six-bit armor | Built, up to 256 blocks in one scope |
 | `layout sequential`: `pad`, `align`, `presence`, `if`, `opt`, `chain`, `length`, `group ... count / while / more / fx`, items by kind | Built |
 | Context keys, named when the plan is compiled | Built |
 | Derivations `copy`, `neg`, `scale`, `offset`, `day_seconds`, `any`, `not`, `parse_int`, `present` | Built |
@@ -155,16 +156,18 @@ runs, in one of three ways:
 
 | Group | What the device does | Compared with | Vectors | Pass |
 |---|---|---|---|---|
-| bits to bits | converts the input | the vector's `expect` byte for byte, or its `expect_error` kind; the decoded values with the reference engine's and with the vector's `model`, `"@absent"` included | 9,189 | 9,189 |
-| bits to text | decodes the input | every value, list, item and kind the reference engine decodes; the vector's `model`, `"@absent"` included | 184 | 184 |
-| text to bits | takes the values the reference engine decodes from the text side, fills the context, derives, encodes | the vector's `expect` byte for byte, or its `expect_error` kind | 249 | 249 |
+| bits to bits | converts the input | the vector's `expect` byte for byte, or its `expect_error` kind; the decoded values with the reference engine's and with the vector's `model`, `"@absent"` included | 9,836 | 9,836 |
+| bits to text | decodes the input | every value, list, item and kind the reference engine decodes; the vector's `model`, `"@absent"` included | 187 | 187 |
+| text to bits | takes the values the reference engine decodes from the text side, fills the context, derives, encodes | the vector's `expect` byte for byte, or its `expect_error` kind | 283 | 283 |
 
-Measured. 9 vectors with a `bits` side do not run, each for a reason the test
-states and checks: 7 of `conformance-malformed-bits`, whose input is hex text
-that is not well formed (ruling 36 of 0.8), because the device takes bytes, not
-hex text; and 2 of `conformance-limit-bits`, whose message holds more list
-items than the proof's scratch (`scratch-full`, below). Any other refusal fails
-the test. By pack that owns the vector:
+Measured. 94 vectors with a `bits` side do not run, each for a reason the
+test states and checks: 7 of `conformance-malformed-bits`, whose input is hex
+text that is not well formed (ruling 36 of 0.8), because the device takes
+bytes, not hex text; 2 of `conformance-limit-bits`, whose message holds more
+list items than the proof's scratch (`scratch-full`, below); 35 whose `bits`
+side uses the field option `with` of spec 0.18 and 50 whose `bits` side uses
+`encoding uper` of spec 0.19, both refused as `unsupported-feature`. Any other
+refusal fails the test. By pack that owns the vector:
 
 | Pack | bits to bits | bits to text | text to bits |
 |---|---|---|---|
@@ -178,41 +181,43 @@ the test. By pack that owns the vector:
 | `asterix-cat062-full` | 9 | 1 |  |
 | the 28 other `asterix-cat*` packs | 179 | 7 |  |
 | `canonical-track-v2` |  |  | 21 |
-| the 5 `ccsds-*` packs | 33 |  |  |
-| `conformance-absent-bits`, `-bits-lsb`, `-seq`, `-seq-also`, `conformance-numbers-absent` | 14 | 3 |  |
-| `conformance-absent-json` |  |  | 4 |
-| `conformance-armor`, `conformance-armor-absent`, `conformance-armor-seq`, `conformance-sixbit-lsb` | 39 | 4 |  |
-| `conformance-groups-bits`, `-msb`, `-var`, `-rulings-bits` | 20 | 7 |  |
-| `conformance-groups-json`, `-protobuf`, `-xml` |  |  | 12 |
+| the 8 `ccsds-*` packs | 54 |  |  |
+| the 5 `conformance-absent*` packs | 13 | 1 | 4 |
+| `conformance-armor`, `conformance-armor-absent`, `conformance-armor-seq` | 33 | 4 |  |
+| the 19 `conformance-gates*` packs | 49 | 2 | 34 |
+| the 7 `conformance-groups*` packs | 20 | 7 | 12 |
 | `conformance-json` |  |  | 5 |
-| the 4 `conformance-limit-*` packs | 8 | 3 |  |
+| `conformance-limit-bits`, `conformance-limit-bits-fail`, `conformance-limit-seq`, `conformance-limit-seq-fail` | 8 | 3 |  |
 | `conformance-malformed-bits` | 6 |  |  |
-| `conformance-numbers`, `-numbers-f64` |  | 26 | 4 |
-| `conformance-rules-bits`, `-lsb`, `conformance-rulings-bits` | 13 | 5 |  |
-| `conformance-scale`, `-scale-widths-lsb`, `-scale-widths-msb` | 128 | 12 |  |
-| `conformance-scale-json` |  |  | 70 |
-| `conformance-seq-*` (the 15 sequential bits packs) | 77 | 20 |  |
-| `conformance-seq-json` |  |  | 43 |
-| `conformance-transforms-bits`, `-bits-lsb`, `-seq` | 58 | 5 |  |
-| `conformance-transforms-json` |  |  | 44 |
+| `conformance-numbers`, `conformance-numbers-absent`, `conformance-numbers-f64` | 1 | 28 | 4 |
+| `conformance-rules-bits`, `conformance-rules-bits-lsb` | 8 | 5 |  |
+| `conformance-rulings-bits` | 5 |  |  |
+| `conformance-scale`, `conformance-scale-json`, `conformance-scale-widths-lsb`, `conformance-scale-widths-msb` | 128 | 12 | 70 |
+| the 16 `conformance-seq*` packs | 77 | 20 | 43 |
+| `conformance-sixbit-lsb` | 6 |  |  |
+| `conformance-transforms-bits`, `conformance-transforms-bits-lsb`, `conformance-transforms-json`, `conformance-transforms-seq` | 58 | 5 | 44 |
 | `cot-xml` |  |  | 2 |
 | the 250 `cyphal-*` packs | 304 |  |  |
 | the 91 `dbc-*` packs | 5,298 | 2 |  |
-| `demo-bits`, `-bytes`, `-msb`, `demo-kinds-bits` | 33 | 7 |  |
-| `demo-track-json` |  |  | 1 |
+| the 5 `demo*` packs | 33 | 7 | 1 |
+| `dis7` | 21 |  |  |
 | `drip` | 9 | 1 |  |
 | the 133 `dronecan-*` packs | 143 | 6 |  |
 | `gdl90` | 17 | 2 |  |
 | `geojson` |  |  | 43 |
 | `mavlink2` | 364 | 9 |  |
 | the 13 `mavlink2-*` dialect packs | 181 | 5 |  |
-| the 15 network protocol header packs (`arp-*`, `bfd-*`, `dns-*`, `gre-*`, `icmp-*`, `igmpv2`, `ipv4-*`, `ipv6-*`, `mpls-*`, `rtcp-*`, `rtp-*`, `sctp-*`, `tcp-*`, `udp-*`, `vxlan-*`) | 94 |  |  |
+| the 26 network protocol header packs (`arp*`, `bfd*`, `bgp*`, `coap*`, `dns*`, `dtls*`, `geneve*`, `gre*`, `icmp*`, `icmpv6*`, `igmpv2*`, `igmpv3*`, `ipv4*`, `ipv6*`, `mpls*`, `ospfv2*`, `ripv2*`, `rtcp*`, `rtp*`, `sctp*`, `tcp*`, `tls*`, `udp*`, `vrrpv3*`, `vxlan*`) | 179 |  |  |
 | `nmea2000` | 475 | 6 |  |
 | `nmea2000-seq` | 33 | 1 |  |
 | `ntp-header` | 7 | 1 |  |
 | the 301 `px4-ulog-*` packs | 306 | 15 |  |
 | `remote-id` | 12 | 4 |  |
+| `rtcm3` | 134 |  |  |
+| the 17 `sbf-*` packs | 83 |  |  |
 | the 22 `sbp-*` packs | 144 | 1 |  |
+| the 14 `ubx-*` packs | 205 | 1 |  |
+| `unicore` | 49 |  |  |
 
 Every vector in a row passes. In the text-to-bits group the model values come
 from the reference engine's decode of the text side, because a vector's
@@ -235,20 +240,32 @@ are within the comparison of 0.16 (1e-9 relative or 1e-7 absolute) without
 being equal to the bit, because gt-core's sine, cosine and arctangent are its
 own, 55,382 are absent on both, and 0 differ. Measured.
 
+Gate blocks of spec 0.17, beyond their vectors and the same-format fuzz runs
+below, in `gt-proof/tests/gates017.rs`: 51,000 seeded random entities of
+`conformance-gates-json` (any key present or absent, values on the gate bits,
+the sentinels and the field limits, items) decoded by the reference engine and
+encoded by the device to the 17 `conformance-gates-*` bits packs: 24,920 equal
+outputs, 26,080 equal error kinds, 0 differ. 80,000 seeded random messages,
+and vector inputs with bits flipped and tails cut, decoded by both engines
+through the 20 bits packs with gate blocks the compiler takes: 50,238 equal
+entities (every value, list, item and kind), 29,762 equal error kinds, 0
+differ. Measured.
+
 The example plan of `embedded/example-bare`, with its `Scratch<12>`, gives the
 reference engine's bytes on the four Remote ID Location vectors. Measured.
 
 Fuzz-style runs, with a seeded generator, through the same-format plan of each
-of the 1,305 `bits` formats and four cross-format plans (1,309 plans). For a
+of the 1,371 `bits` formats the compiler takes and four cross-format plans
+(1,375 plans). For a
 source with six-bit armor, half the inputs are mapped onto armor characters,
 so that they reach the lines:
 
 | Run | Inputs | Result |
 |---|---|---|
-| Random bytes, and vector inputs with bits flipped, bytes replaced, tails cut or extended | 14,399,000 | no panic: 7,146,994 converted, 7,252,006 refused with a named error |
-| The same kinds of input, device against reference engine | 1,963,500 | 975,792 equal outputs, 987,610 equal error kinds, 98 beyond the device's buffers, 0 differences |
-| Every proper prefix of every same-format vector input | 197,318 | 195,836 refused with the reference engine's error kind; 1,482 accepted with the reference engine's bytes (the prefix is itself a message of the format); 0 differences |
-| Plan blobs with one to four bytes changed | 2,618,000 | no panic; 1,650,118 still parsed and were run |
+| Random bytes, and vector inputs with bits flipped, bytes replaced, tails cut or extended | 15,125,000 | no panic: 7,453,764 converted, 7,671,236 refused with a named error |
+| The same kinds of input, device against reference engine | 2,062,500 | 1,017,794 equal outputs, 1,044,606 equal error kinds, 100 beyond the device's buffers, 0 differences |
+| Every proper prefix of every same-format vector input | 226,983 | 224,434 refused with the reference engine's error kind; 2,549 accepted with the reference engine's bytes (the prefix is itself a message of the format); 0 differences |
+| Plan blobs with one to four bytes changed | 2,750,000 | no panic; 1,750,828 still parsed and were run |
 
 Measured in a build with overflow checks and debug assertions on.
 
@@ -266,13 +283,15 @@ workflow above: 68 operations, 14 keys, nesting 3.
 
 | | Bytes |
 |---|---|
-| Plan blob (in `.rodata`, 1,817 bytes in all) | 1,752 |
-| Code (`.text`), no derive features | 35,996 |
-| Code (`.text`), with `sqrt` and `trig` | 41,588 |
+| Plan blob (in `.rodata`, 1,933 bytes in all) | 1,752 |
+| Code (`.text`), no derive features | 43,772 |
+| Code (`.text`), with `sqrt` and `trig` | 49,380 |
 | Zero-initialised data of the measurement image (`.bss`) | 81 |
 
-Of the 35,996 bytes of code, about 29,300 are the engine and the C wrapper
-(1,266 of them the 128-bit rounded division of the integer scales),
+Of the 43,772 bytes of code, about 37,100 are the engine and the C wrapper
+(1,266 of them the 128-bit rounded division of the integer scales, and about
+7,800 the gate blocks of spec 0.17: choosing, writing and checking the gates
+on encode; the image without them had 35,996 bytes of code),
 and about 6,600 are support routines the compiler adds for this target:
 double-precision arithmetic in software, 64-bit division and memory copy. The
 engine computes in doubles because the reference engine does; on a core with a
@@ -302,9 +321,10 @@ Stack. `embedded/elfsize.py` bounds the stack from the disassembly of the
 linked image: the bytes each function pushes and reserves, added along the
 deepest chain of calls, with the functions that walk nested blocks counted
 once per level of nesting. For this plan (nesting 3, counted as 4) the bound
-is 3,492 bytes from the entry of `gt_rid_location_to_cat062`; for the deepest
-plan the compiler accepts (nesting 12) it is 6,436 bytes, and 6,468 bytes
-in the image with `sqrt` and `trig`. A call through a register is followed
+is 3,708 bytes from the entry of `gt_rid_location_to_cat062`; for the deepest
+plan the compiler accepts (nesting 12) it is 6,652 bytes, and 6,684 bytes
+in the image with `sqrt` and `trig` (3,492, 6,436 and 6,468 before the gate
+blocks of spec 0.17; nesting counts gate blocks as it counts groups). A call through a register is followed
 only when an unconditional load from the literal pool put a function's
 address in it within one straight-line run of instructions: no branch, no
 write to pc and no branch target (the targets of `tbb` and `tbh` tables

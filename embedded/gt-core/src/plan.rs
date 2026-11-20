@@ -37,12 +37,14 @@ pub(crate) const OP_LENGTH: u8 = 16;
 pub(crate) const OP_WHOLE: u8 = 17;
 pub(crate) const OP_GROUP_SEQ: u8 = 18;
 pub(crate) const OP_GROUP_FIX: u8 = 19;
+/// a gate block on a fixed layout (engine-spec 0.17)
+pub(crate) const OP_GATE: u8 = 20;
 
 pub(crate) const NONE16: u16 = 0xFFFF;
 pub(crate) const NONE32: u32 = 0xFFFF_FFFF;
 
 /// The version of the blob layout this engine reads.
-pub const FORMAT_VERSION: u16 = 3;
+pub const FORMAT_VERSION: u16 = 4;
 
 /// One entry of the operation table.
 #[derive(Clone, Copy)]
@@ -244,7 +246,7 @@ impl<'a> Plan<'a> {
     /// The index of the operation after `o` and everything nested in it.
     pub(crate) fn next(&self, i: u32, o: &Op) -> Result<u32, Error> {
         let n = match o.op {
-            OP_BODY | OP_KIND | OP_IF | OP_OPT | OP_CHAIN | OP_PART | OP_LENGTH => o.a as u64 + 1,
+            OP_BODY | OP_KIND | OP_IF | OP_OPT | OP_CHAIN | OP_PART | OP_LENGTH | OP_GATE => o.a as u64 + 1,
             OP_GROUP_SEQ | OP_GROUP_FIX => {
                 let body = self.op(i.checked_add(1).ok_or(Error::BadPlan)?)?;
                 if body.op != OP_BODY {

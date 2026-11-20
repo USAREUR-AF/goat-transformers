@@ -20,6 +20,13 @@ pub const MAX_PRESENCE: usize = 16;
 pub const MAX_WHOLES: usize = 4;
 /// Arguments of one derive line.
 pub const MAX_ARGS: usize = 8;
+/// Gate blocks one scope may hold (engine-spec 0.17): the message's common
+/// lines and one kind, or one item.
+pub const MAX_GATES: usize = 256;
+const GW: usize = MAX_GATES / 64;
+/// GATE flags: the gate is `!`; step 3 of 0.17 Encode gives it a value
+const G_NEG: u8 = 1;
+const G_HAS_VALUE: u8 = 2;
 
 const T_INT: u8 = 0;
 const T_FLOAT: u8 = 1;
@@ -360,6 +367,61 @@ fn words(bits: u64, word_bytes: u16) -> u64 {
 struct Defs {
     body: u32,
     kind: u32,
+}
+
+/// The gate blocks of one scope, by their number (GATE `key`): which got a
+/// gate value in step 3 of 0.17 Encode, and which are held (step 4).
+#[derive(Clone, Copy)]
+struct Gates {
+    valued: [u64; GW],
+    held: [u64; GW],
+}
+
+impl Gates {
+    const NONE: Gates = Gates { valued: [0; GW], held: [0; GW] };
+
+    fn has(set: &[u64; GW], k: u16) -> bool {
+        set.get(k as usize / 64).is_some_and(|w| w >> (k % 64) & 1 != 0)
+    }
+
+    fn add(set: &mut [u64; GW], k: u16) -> Result<(), Error> {
+        let w = set.get_mut(k as usize / 64).ok_or(Error::BadPlan)?;
+        *w |= 1u64 << (k % 64);
+        Ok(())
+    }
+}
+
+/// The gate blocks that enclose a line, outermost first, by operation index.
+/// Their defaults apply innermost first (ruling 5 of 0.17).
+#[derive(Clone, Copy)]
+struct Chain {
+    at: [u32; MAX_DEPTH as usize],
+    n: usize,
+}
+
+impl Chain {
+    const EMPTY: Chain = Chain { at: [0; MAX_DEPTH as usize], n: 0 };
+
+    fn push(&mut self, i: u32) -> Result<(), Error> {
+        *self.at.get_mut(self.n).ok_or(Error::BadPlan)? = i;
+        self.n += 1;
+        Ok(())
+    }
+}
+
+/// Do the bit ranges `[a, a + an)` and `[b, b + bn)` meet?
+fn overlaps(a: u64, an: u64, b: u64, bn: u64) -> bool {
+    a < b.saturating_add(bn) && b < a.saturating_add(an)
+}
+
+/// The shift of bit `k`, counted from the first, of a `len`-bit value in
+/// the format's bit order (`k < len <= 64`).
+fn shift_of(len: u32, k: u64, msb: bool) -> u64 {
+    if msb {
+        (len as u64).saturating_sub(1 + k)
+    } else {
+        k
+    }
 }
 
 struct BodyInfo {
@@ -1211,10 +1273,31 @@ impl<'a, 's> Session<'a, 's> {
     /// The value encode uses for a key: the entity's, else the `default` of
     /// the selected kind, else of the body (ruling 2 of 0.6).
     fn value_of(&self, scope: u16, key: u16, defs: Defs) -> Result<Option<Val>, Error> {
+        self.value_in(scope, key, defs, &Chain::EMPTY)
+    }
+
+    /// `value_of` for a line inside gate blocks: the defaults of the blocks
+    /// enclosing it come first, the innermost first (ruling 5 of 0.17).
+    fn value_in(&self, scope: u16, key: u16, defs: Defs, chain: &Chain) -> Result<Option<Val>, Error> {
         if let Some(v) = self.scalar(scope, key) {
             return Ok(Some(v));
         }
         let plan = self.plan;
+        for k in (0..chain.n).rev() {
+            let g = *chain.at.get(k).ok_or(Error::BadPlan)?;
+            let end = plan.next(g, &plan.op(g)?)?;
+            let mut i = g + 1;
+            while i < end {
+                let o = plan.op(i)?;
+                if o.op != OP_DEFAULT {
+                    break;
+                }
+                if o.key == key {
+                    return Ok(Some(Self::typed(o.xf, plan.pool(o.b as u32)?)));
+                }
+                i += 1;
+            }
+        }
         for start in [defs.kind, defs.body] {
             if start == NONE32 {
                 continue;
@@ -1346,7 +1429,13 @@ impl<'a, 's> Session<'a, 's> {
             if self.total < need {
                 return Err(Error::MalformedWire);
             }
-            return self.fx_decode_scope(parts, reach0, 0, 0, &mut 0, 1).map(|_| ());
+            let mut reach = 0u64;
+            self.fx_decode_scope(parts, reach0, 0, 0, &mut reach, 1)?;
+            // the lines of the gate blocks that hold count too (ruling 14 of 0.17)
+            if self.total < reach {
+                return Err(Error::MalformedWire);
+            }
+            return Ok(());
         }
         let input_len = self.input.len() as u64;
         // whole words up to the furthest mapped, `when` or `const` bit
@@ -1389,6 +1478,18 @@ impl<'a, 's> Session<'a, 's> {
             let mut i = start;
             while i < end {
                 let o = plan.op(i)?;
+                if o.op == OP_GATE {
+                    // engine-spec 0.17: a block that holds is read as its lines,
+                    // and its lines count toward the length; one that does not,
+                    // or whose gate lies beyond the input, sets no key
+                    if self.gate_holds(&o, base, |s, at, len| s.bits(at, len))? {
+                        *reach = (*reach).max(base.saturating_add(self.gate_extent(&o)?.1));
+                        i += 1;
+                    } else {
+                        i = plan.next(i, &o)?;
+                    }
+                    continue;
+                }
                 if o.op == OP_FIELD {
                     let at = base + o.a as u64;
                     // an `optional` field beyond the input is absent
@@ -1514,25 +1615,428 @@ impl<'a, 's> Session<'a, 's> {
         Ok(end)
     }
 
+    // -- gate blocks (engine-spec 0.17) ----------------------------------------
+
+    /// (bit offset in its scope, length) of a gate block's locator.
+    fn gate_span(&self, o: &Op) -> Result<(u64, u32), Error> {
+        let len = o.len as u32;
+        if len == 0 || len > 64 {
+            return Err(Error::BadPlan);
+        }
+        Ok((self.plan.pool(o.b as u32)?, len))
+    }
+
+    /// (reach, decode need, encode need) of a block's own lines, from the
+    /// start of its scope; its nested blocks count only when they hold.
+    fn gate_extent(&self, o: &Op) -> Result<(u64, u64, u64), Error> {
+        let b = o.b as u32 + 1;
+        Ok((self.plan.pool(b)?, self.plan.pool(b + 1)?, self.plan.pool(b + 2)?))
+    }
+
+    /// The value step 3 of Encode gives a block's gate: the first value
+    /// listed, or for `!` the smallest not listed. None when there is none.
+    fn gate_value(&self, o: &Op) -> Result<Option<u64>, Error> {
+        if o.flags & G_HAS_VALUE == 0 {
+            return Ok(None);
+        }
+        Ok(Some(self.plan.pool(o.b as u32 + 4)?))
+    }
+
+    /// Does a gate whose bits read `raw` hold: the value is one listed, or
+    /// with `!` none of them.
+    fn gate_matches(&self, o: &Op, raw: u64) -> Result<bool, Error> {
+        let first = o.b as u32 + 5;
+        let mut listed = false;
+        for k in 0..o.c as u32 {
+            if self.plan.pool(first + k)? == raw {
+                listed = true;
+                break;
+            }
+        }
+        Ok(listed != (o.flags & G_NEG != 0))
+    }
+
+    /// Does the gate of a block hold on the bits `read` gives? A gate any of
+    /// whose bits `read` cannot give (beyond the input) does not hold, in
+    /// either form.
+    fn gate_holds<F: Fn(&Self, u64, u32) -> Option<u64>>(&self, o: &Op, base: u64, read: F) -> Result<bool, Error> {
+        let (off, len) = self.gate_span(o)?;
+        match read(self, base.saturating_add(off), len) {
+            Some(raw) => self.gate_matches(o, raw),
+            None => Ok(false),
+        }
+    }
+
+    /// Does a part of a scope hold a gate block?
+    fn has_gates(&self, parts: [(u32, u32); 2]) -> Result<bool, Error> {
+        for (start, end) in parts {
+            let mut i = start;
+            while i < end {
+                let o = self.plan.op(i)?;
+                if o.op == OP_GATE {
+                    return Ok(true);
+                }
+                i = self.plan.next(i, &o)?;
+            }
+        }
+        Ok(false)
+    }
+
+    /// Every line of a scope in force under `g`, in line order: the lines
+    /// outside any block and those of the held blocks, each with the blocks
+    /// that enclose it. The GATE operation of a held block is passed too,
+    /// before its lines. Group items are not entered.
+    fn each_line<F: FnMut(&Op, &Chain) -> Result<(), Error>>(
+        &self,
+        parts: [(u32, u32); 2],
+        g: &Gates,
+        mut f: F,
+    ) -> Result<(), Error> {
+        let plan = self.plan;
+        for (start, end) in parts {
+            let mut chain = Chain::EMPTY;
+            let mut ends = [0u32; MAX_DEPTH as usize];
+            let mut i = start;
+            while i < end {
+                // leave the blocks that end here
+                while chain.n > 0 && ends.get(chain.n - 1).is_some_and(|e| i >= *e) {
+                    chain.n -= 1;
+                }
+                let o = plan.op(i)?;
+                let next = plan.next(i, &o)?;
+                if o.op == OP_GATE {
+                    if Gates::has(&g.held, o.key) {
+                        f(&o, &chain)?;
+                        *ends.get_mut(chain.n).ok_or(Error::BadPlan)? = next;
+                        chain.push(i)?;
+                        i += 1;
+                    } else {
+                        i = next;
+                    }
+                    continue;
+                }
+                f(&o, &chain)?;
+                i = next;
+            }
+        }
+        Ok(())
+    }
+
+    /// The blocks enclosing operation `j` of the lines `first..last`, when
+    /// they are all held; None when one is not.
+    fn chain_of(&self, first: u32, last: u32, j: u32, g: &Gates) -> Result<Option<Chain>, Error> {
+        let plan = self.plan;
+        let mut chain = Chain::EMPTY;
+        let mut i = first;
+        while i < last {
+            if i == j {
+                return Ok(Some(chain));
+            }
+            let o = plan.op(i)?;
+            let next = plan.next(i, &o)?;
+            if j < next {
+                if o.op != OP_GATE || !Gates::has(&g.held, o.key) {
+                    return Ok(None);
+                }
+                chain.push(i)?;
+                i += 1;
+            } else {
+                i = next;
+            }
+        }
+        Ok(None)
+    }
+
+    /// Steps 3 and 4 of 0.17 Encode for one scope. `msg` holds the lines
+    /// outside any block, written by the 0.5 and 0.6 rules (step 2).
+    #[inline(never)]
+    fn fx_choose(
+        &self,
+        parts: [(u32, u32); 2],
+        scope: u16,
+        base: u64,
+        msg: &[u8],
+        msb: bool,
+        g: &mut Gates,
+    ) -> Result<(), Error> {
+        let plan = self.plan;
+        // step 3: in line order, depth first, each open block none of whose
+        // gate bits is written gets its gate value; its bits are then written
+        for (start, end) in parts {
+            let mut i = start;
+            while i < end {
+                let o = plan.op(i)?;
+                if o.op != OP_GATE {
+                    i = plan.next(i, &o)?;
+                    continue;
+                }
+                if o.flags & G_HAS_VALUE != 0 && self.gate_open(i, &o, scope)? && !self.gate_written(parts, &o, scope, base, g)? {
+                    Gates::add(&mut g.valued, o.key)?;
+                }
+                i += 1;
+            }
+        }
+        // step 4: each block on the bits as written, a nested block only when
+        // the block enclosing it holds
+        for (start, end) in parts {
+            let mut i = start;
+            while i < end {
+                let o = plan.op(i)?;
+                if o.op != OP_GATE {
+                    i = plan.next(i, &o)?;
+                    continue;
+                }
+                let image = |s: &Self, at: u64, len: u32| s.gate_image(parts, base, at, len, msg, msb, g).ok();
+                if self.gate_holds(&o, base, image)? {
+                    Gates::add(&mut g.held, o.key)?;
+                    i += 1;
+                } else {
+                    i = plan.next(i, &o)?;
+                }
+            }
+        }
+        Ok(())
+    }
+
+    /// Is a block open: does one of its fields, or of the blocks nested in
+    /// it, map a key the entity (the item) holds? A default does not open it.
+    fn gate_open(&self, i: u32, o: &Op, scope: u16) -> Result<bool, Error> {
+        let end = self.plan.next(i, o)?;
+        let mut j = i + 1;
+        while j < end {
+            let f = self.plan.op(j)?;
+            if f.op == OP_FIELD && self.scalar(scope, f.key).is_some() {
+                return Ok(true);
+            }
+            j += 1;
+        }
+        Ok(false)
+    }
+
+    /// Is a bit of the gate of `o` written (step 2 and 3): by a line outside
+    /// any block with a present key, a `const`, a `when` or a group count,
+    /// or by the gate value of an earlier block?
+    fn gate_written(&self, parts: [(u32, u32); 2], o: &Op, scope: u16, base: u64, g: &Gates) -> Result<bool, Error> {
+        let plan = self.plan;
+        let (off, len) = self.gate_span(o)?;
+        let (at, n) = (base.saturating_add(off), len as u64);
+        for (start, end) in parts {
+            // operations before `inside` lie inside a block
+            let mut inside = 0u32;
+            let mut i = start;
+            while i < end {
+                let x = plan.op(i)?;
+                let next = plan.next(i, &x)?;
+                let outside = i >= inside;
+                let hit = match x.op {
+                    OP_FIELD if outside => {
+                        self.scalar(scope, x.key).is_some() && overlaps(at, n, base + x.a as u64, x.len as u64)
+                    }
+                    OP_CONST | OP_WHEN if outside => overlaps(at, n, base + x.a as u64, x.len as u64),
+                    OP_GROUP_FIX if outside => {
+                        x.xf != 0 && overlaps(at, n, base.saturating_add(plan.pool(x.b as u32 + 1)?), x.len as u64)
+                    }
+                    OP_GATE => {
+                        if outside {
+                            inside = next;
+                        }
+                        let (xo, xl) = self.gate_span(&x)?;
+                        Gates::has(&g.valued, x.key) && overlaps(at, n, base.saturating_add(xo), xl as u64)
+                    }
+                    _ => false,
+                };
+                if hit {
+                    return Ok(true);
+                }
+                i = if x.op == OP_GATE { i + 1 } else { next };
+            }
+        }
+        Ok(false)
+    }
+
+    /// `len` bits from bit `at` as step 4 reads them: the gate values of
+    /// step 3 where they lie, else the bits in `msg`; bits nothing wrote
+    /// read as 0, wherever they lie.
+    #[allow(clippy::too_many_arguments)]
+    fn gate_image(
+        &self,
+        parts: [(u32, u32); 2],
+        base: u64,
+        at: u64,
+        len: u32,
+        msg: &[u8],
+        msb: bool,
+        g: &Gates,
+    ) -> Result<u64, Error> {
+        let plan = self.plan;
+        let mut v = 0u64;
+        for k in 0..len as u64 {
+            let bit = get_bits(msg, at.saturating_add(k), 1, msb).unwrap_or(0);
+            v |= bit << shift_of(len, k, msb);
+        }
+        // the gate values of step 3 lie on bits no line wrote, and never on
+        // one another
+        for (start, end) in parts {
+            let mut i = start;
+            while i < end {
+                let x = plan.op(i)?;
+                if x.op != OP_GATE {
+                    i = plan.next(i, &x)?;
+                    continue;
+                }
+                if Gates::has(&g.valued, x.key) {
+                    let (xo, xl) = self.gate_span(&x)?;
+                    let xv = self.gate_value(&x)?.unwrap_or(0);
+                    let xat = base.saturating_add(xo);
+                    for k in 0..len as u64 {
+                        let p = at.saturating_add(k);
+                        if p >= xat && p - xat < xl as u64 {
+                            let bit = xv >> shift_of(xl, p - xat, msb) & 1;
+                            let s = shift_of(len, k, msb);
+                            v = v & !(1u64 << s) | bit << s;
+                        }
+                    }
+                }
+                i += 1;
+            }
+        }
+        Ok(v)
+    }
+
+    /// Step 6 of 0.17 Encode for one scope, on the output: every held block
+    /// holds and every other block does not, and no key the entity holds is
+    /// mapped only by lines of blocks that are not held. `bits`: the bits the
+    /// output carries as it will be read, and how many of them the message
+    /// fills (the rest read as 0).
+    #[inline(never)]
+    #[allow(clippy::too_many_arguments)]
+    fn fx_check(
+        &self,
+        parts: [(u32, u32); 2],
+        scope: u16,
+        base: u64,
+        msg: &[u8],
+        msb: bool,
+        g: &Gates,
+        bits: (u64, u64),
+    ) -> Result<(), Error> {
+        let plan = self.plan;
+        let (filled, limit) = bits;
+        let read = |_: &Self, at: u64, len: u32| -> Option<u64> {
+            if at.checked_add(len as u64)? > limit {
+                return None;
+            }
+            let mut v = 0u64;
+            for k in 0..len as u64 {
+                let p = at + k;
+                let bit = if p < filled { get_bits(msg, p, 1, msb).unwrap_or(0) } else { 0 };
+                v |= bit << shift_of(len, k, msb);
+            }
+            Some(v)
+        };
+        for (start, end) in parts {
+            let mut i = start;
+            while i < end {
+                let o = plan.op(i)?;
+                if o.op != OP_GATE {
+                    i = plan.next(i, &o)?;
+                    continue;
+                }
+                let holds = self.gate_holds(&o, base, read)?;
+                if holds != Gates::has(&g.held, o.key) {
+                    return Err(Error::TransformEncode);
+                }
+                i = if holds { i + 1 } else { plan.next(i, &o)? };
+            }
+        }
+        for (start, end) in parts {
+            // operations before `dead` lie inside a block that is not held
+            let mut dead = 0u32;
+            let mut i = start;
+            while i < end {
+                let o = plan.op(i)?;
+                let next = plan.next(i, &o)?;
+                if o.op == OP_GATE {
+                    if i >= dead && !Gates::has(&g.held, o.key) {
+                        dead = next;
+                    }
+                    i += 1;
+                    continue;
+                }
+                if o.op == OP_FIELD && i < dead && self.scalar(scope, o.key).is_some() {
+                    let mut mapped = false;
+                    self.each_line(parts, g, |f, _| {
+                        mapped |= f.op == OP_FIELD && f.key == o.key;
+                        Ok(())
+                    })?;
+                    if !mapped {
+                        return Err(Error::TransformEncode);
+                    }
+                }
+                i = next;
+            }
+        }
+        Ok(())
+    }
+
     fn fx_encode(&mut self, fmt: &Format, out: &mut [u8]) -> Result<usize, Error> {
         let body = self.body_info(fmt.body)?;
         let kind = self.select(&body, 0)?;
-        let mut need = self.extent(body.extent)?.2;
+        let (mut need, mut l) = {
+            let e = self.extent(body.extent)?;
+            (e.2, e.1)
+        };
         let mut kind_lines = (0u32, 0u32);
         if kind != NONE32 {
             let ki = self.kind_info(kind)?;
-            need = need.max(self.extent(ki.extent)?.2);
+            let e = self.extent(ki.extent)?;
+            need = need.max(e.2);
+            l = l.max(e.1);
             kind_lines = (ki.whens, ki.end);
         }
         let parts = [(body.lines, body.first_kind), kind_lines];
+        let defs = Defs { body: fmt.body, kind };
+        let wb = fmt.word_bytes;
         // whole words up to the furthest bit: the lines in force, extended by the items
-        let items = words(self.fx_group_reach(parts, 0, 0, 1)?, fmt.word_bytes);
-        let size = words(need, fmt.word_bytes).max(fmt.word_bytes as u64).max(items);
+        let items = self.fx_group_reach(parts, 0, 0, 1)?;
+        let mut size = words(need, wb).max(wb as u64).max(words(items, wb));
+        let mut g = Gates::NONE;
+        if self.has_gates(parts)? {
+            // engine-spec 0.17, Encode: the lines outside any block are
+            // written first (step 2), then the gates are chosen (3 and 4)
+            let first = usize::try_from(size).map_err(|_| Error::OutputFull)?;
+            let msg = out.get_mut(..first).ok_or(Error::OutputFull)?;
+            msg.fill(0);
+            g = self.fx_gates(parts, defs, 0, 0, msg, fmt.msb)?;
+        }
+        // the held blocks' lines and gate locators count toward the length;
+        // under armor an `optional` field counts only when it writes a value,
+        // a default or a sentinel (ruling 14 of 0.17, engine-spec 0.14)
+        let (mut all, mut written) = (0u64, l.max(items));
+        self.each_line(parts, &g, |o, chain| {
+            if o.op == OP_GATE {
+                let (off, len) = self.gate_span(o)?;
+                let e = self.gate_extent(o)?;
+                let end = off.saturating_add(len as u64);
+                all = all.max(end).max(e.2);
+                written = written.max(end).max(e.1);
+            } else if o.op == OP_FIELD
+                && o.flags & F_OPTIONAL != 0
+                && (o.nabsent != 0 || self.value_in(0, o.key, defs, chain)?.is_some())
+            {
+                written = written.max(o.a as u64 + o.len as u64);
+            }
+            Ok(())
+        })?;
+        size = size.max(words(all, wb));
         let size = usize::try_from(size).map_err(|_| Error::OutputFull)?;
         let msg = out.get_mut(..size).ok_or(Error::OutputFull)?;
         msg.fill(0);
-        let defs = Defs { body: fmt.body, kind };
-        self.fx_write_scope(parts, defs, 0, 0, msg, fmt.msb, 1)?;
+        // the bits the output carries as it is read back (step 6): six-bit
+        // armor carries the first L bits, then zeros to a multiple of 6
+        let bits = if fmt.sixbit { (written, written.div_ceil(6) * 6) } else { (size as u64 * 8, size as u64 * 8) };
+        self.fx_lines(parts, defs, 0, 0, msg, fmt.msb, 1, &g, bits)?;
+        self.fx_check(parts, 0, 0, msg, fmt.msb, &g, bits)?;
         if !fmt.sixbit {
             return Ok(size);
         }
@@ -1541,27 +2045,26 @@ impl<'a, 's> Session<'a, 's> {
         // items, an `optional` field counted only when it writes a value or
         // a sentinel. The decode need of the extents holds every line but the
         // `optional` fields, the ones the plan left out included.
-        let mut l = self.extent(body.extent)?.1.max(self.fx_group_reach(parts, 0, 0, 1)?);
-        if kind != NONE32 {
-            l = l.max(self.extent(self.kind_info(kind)?.extent)?.1);
-        }
-        for (start, end) in parts {
-            let mut i = start;
-            while i < end {
-                let o = self.plan.op(i)?;
-                if o.op == OP_FIELD
-                    && o.flags & F_OPTIONAL != 0
-                    && (o.nabsent != 0 || self.value_of(0, o.key, defs)?.is_some())
-                {
-                    l = l.max(o.a as u64 + o.len as u64);
-                }
-                i = self.plan.next(i, &o)?;
-            }
-        }
-        armor_out(out, l)
+        armor_out(out, written)
     }
 
-    fn fx_write_scope(
+    /// Steps 2 to 4 of 0.17 Encode for one scope: the lines outside any
+    /// block are written into `msg`, then the gates are chosen.
+    #[inline(never)]
+    fn fx_gates(&self, parts: [(u32, u32); 2], defs: Defs, scope: u16, base: u64, msg: &mut [u8], msb: bool) -> Result<Gates, Error> {
+        self.fx_fields(parts, defs, scope, base, msg, msb, &Gates::NONE)?;
+        self.fx_marks(parts, scope, base, msg, msb, &Gates::NONE)?;
+        let mut g = Gates::NONE;
+        self.fx_choose(parts, scope, base, msg, msb, &mut g)?;
+        Ok(g)
+    }
+
+    /// The lines of one scope in force under `g`, by the 0.5 rules and the
+    /// precedence of ruling 7 of 0.17, its items included, each item's gate
+    /// blocks chosen and checked (step 6) on the item's bits. `bits`: as
+    /// `fx_check` takes them.
+    #[allow(clippy::too_many_arguments)]
+    fn fx_lines(
         &self,
         parts: [(u32, u32); 2],
         defs: Defs,
@@ -1570,52 +2073,14 @@ impl<'a, 's> Session<'a, 's> {
         msg: &mut [u8],
         msb: bool,
         depth: u8,
+        g: &Gates,
+        bits: (u64, u64),
     ) -> Result<(), Error> {
         if depth > MAX_DEPTH {
             return Err(Error::BadPlan);
         }
         let plan = self.plan;
-        // The compiler puts the fields of a part first, one operation each.
-        // (first, last) of the fields of each part, the kind's part first;
-        // no indexing, so no bounds check reaches the image
-        let span = |(start, end): (u32, u32)| -> Result<(u32, u32), Error> {
-            let mut first = start;
-            while first < end && matches!(plan.op(first)?.op, OP_WHEN | OP_REQ | OP_DEFAULT) {
-                first += 1;
-            }
-            let mut last = first;
-            while last < end && plan.op(last)?.op == OP_FIELD {
-                last += 1;
-            }
-            Ok((first, last))
-        };
-        let fields = [span(parts[1])?, span(parts[0])?];
-        // an absent key whose field has `absent` writes its first sentinel,
-        // first: a line with a value wins over it whatever their order
-        // (ruling 16 of 0.9); of two sentinels the earlier line's stays
-        for (first, last) in fields {
-            let mut i = last;
-            while i > first {
-                i -= 1;
-                let o = plan.op(i)?;
-                if o.nabsent != 0 && self.value_of(scope, o.key, defs)?.is_none() {
-                    self.write_sentinel(&o, base + o.a as u64, msg, msb)?;
-                }
-            }
-        }
-        // later lines first: where two fields cover the same bits the earlier
-        // line's value is the one left on the wire (ruling 5 of 0.5)
-        for (first, last) in fields {
-            let mut i = last;
-            while i > first {
-                i -= 1;
-                let o = plan.op(i)?;
-                if let Some(v) = self.value_of(scope, o.key, defs)? {
-                    let wire = self.through(o.c, v, false)?.ok_or(Error::TransformEncode)?;
-                    self.write_field(&o, wire, base + o.a as u64, msg, msb)?;
-                }
-            }
-        }
+        self.fx_fields(parts, defs, scope, base, msg, msb, g)?;
         // the items of each list the entity has, back to back
         for (start, end) in parts {
             let mut i = start;
@@ -1625,18 +2090,16 @@ impl<'a, 's> Session<'a, 's> {
                     match self.list_len(scope, o.key) {
                         Some(n) => {
                             let body = self.body_info(i + 1)?;
+                            let ip = [(body.lines, body.end), (0, 0)];
+                            let idefs = Defs { body: i + 1, kind: NONE32 };
+                            let gated = self.has_gates(ip)?;
                             let mut at = base + o.a as u64;
                             for k in 0..n {
                                 let item = self.item(scope, o.key, k).ok_or(Error::BadPlan)?;
-                                self.fx_write_scope(
-                                    [(body.lines, body.end), (0, 0)],
-                                    Defs { body: i + 1, kind: NONE32 },
-                                    item,
-                                    at,
-                                    msg,
-                                    msb,
-                                    depth + 1,
-                                )?;
+                                // an item's gate blocks see the item's bits (ruling 2 of 0.17)
+                                let ig = if gated { self.fx_gates(ip, idefs, item, at, msg, msb)? } else { Gates::NONE };
+                                self.fx_lines(ip, idefs, item, at, msg, msb, depth + 1, &ig, bits)?;
+                                self.fx_check(ip, item, at, msg, msb, &ig, bits)?;
                                 at += self.fx_item_len(i, &o, item, depth)?;
                             }
                             // a fixed `count <n>` with a different number of items
@@ -1653,18 +2116,22 @@ impl<'a, 's> Session<'a, 's> {
                 i = plan.next(i, &o)?;
             }
         }
-        // over the same bits: fields, then `const`, then `when`, then counts (ruling 15 of 0.7)
+        self.fx_marks(parts, scope, base, msg, msb, g)
+    }
+
+    /// The `const` and `when` lines of a scope in force under `g`, then its
+    /// group counts: over the same bits, fields, then `const`, then `when`,
+    /// then counts (ruling 15 of 0.7).
+    #[inline(never)]
+    fn fx_marks(&self, parts: [(u32, u32); 2], scope: u16, base: u64, msg: &mut [u8], msb: bool, g: &Gates) -> Result<(), Error> {
+        let plan = self.plan;
         for which in [OP_CONST, OP_WHEN] {
-            for (start, end) in parts {
-                let mut i = start;
-                while i < end {
-                    let o = plan.op(i)?;
-                    if o.op == which {
-                        set_bits(msg, base + o.a as u64, o.len as u32, plan.pool(o.b as u32)?, msb);
-                    }
-                    i = plan.next(i, &o)?;
+            self.each_line(parts, g, |o, _| {
+                if o.op == which {
+                    set_bits(msg, base + o.a as u64, o.len as u32, plan.pool(o.b as u32)?, msb);
                 }
-            }
+                Ok(())
+            })?;
         }
         for (start, end) in parts {
             let mut i = start;
@@ -1681,6 +2148,109 @@ impl<'a, 's> Session<'a, 's> {
             }
         }
         Ok(())
+    }
+
+    /// The fields of one scope in force under `g`, then the gate values of
+    /// its held blocks.
+    #[inline(never)]
+    #[allow(clippy::too_many_arguments)]
+    fn fx_fields(
+        &self,
+        parts: [(u32, u32); 2],
+        defs: Defs,
+        scope: u16,
+        base: u64,
+        msg: &mut [u8],
+        msb: bool,
+        g: &Gates,
+    ) -> Result<(), Error> {
+        let plan = self.plan;
+        // The compiler puts the fields and gate blocks of a part first.
+        // (first, last, holds a block) of them for each part, the kind's first
+        let span = |(start, end): (u32, u32)| -> Result<(u32, u32, bool), Error> {
+            let mut first = start;
+            while first < end && matches!(plan.op(first)?.op, OP_WHEN | OP_REQ | OP_DEFAULT) {
+                first += 1;
+            }
+            let (mut last, mut gated) = (first, false);
+            while last < end {
+                let o = plan.op(last)?;
+                match o.op {
+                    OP_FIELD => last += 1,
+                    OP_GATE => {
+                        gated = true;
+                        last = plan.next(last, &o)?;
+                    }
+                    _ => break,
+                }
+            }
+            Ok((first, last, gated))
+        };
+        let areas = [span(parts[1])?, span(parts[0])?];
+        // an absent key whose field has `absent` writes its first sentinel,
+        // first: a line with a value wins over it whatever their order
+        // (ruling 16 of 0.9); of two sentinels the earlier line's stays.
+        // Then later lines first: where two fields cover the same bits the
+        // earlier line's value is the one left on the wire (ruling 5 of 0.5).
+        // A line of a block that is not held writes nothing (ruling 10 of 0.17).
+        for sentinels in [true, false] {
+            for (first, last, gated) in areas {
+                let mut i = last;
+                while i > first {
+                    i -= 1;
+                    let o = plan.op(i)?;
+                    if o.op != OP_FIELD {
+                        continue;
+                    }
+                    let chain = if gated {
+                        match self.chain_of(first, last, i, g)? {
+                            Some(c) => c,
+                            None => continue,
+                        }
+                    } else {
+                        Chain::EMPTY
+                    };
+                    let v = self.value_in(scope, o.key, defs, &chain)?;
+                    if sentinels {
+                        if o.nabsent != 0 && v.is_none() {
+                            self.write_sentinel(&o, base + o.a as u64, msg, msb)?;
+                        }
+                    } else if let Some(v) = v {
+                        let wire = self.through(o.c, v, false)?.ok_or(Error::TransformEncode)?;
+                        self.write_field(&o, wire, base + o.a as u64, msg, msb)?;
+                    }
+                }
+            }
+        }
+        // the gate value of a held block is written over the bits of a
+        // default or a sentinel, under those of a line with a present key
+        // (ruling 7 of 0.17); `const`, `when` and counts follow
+        self.each_line(parts, g, |o, _| {
+            if o.op != OP_GATE || !Gates::has(&g.valued, o.key) {
+                return Ok(());
+            }
+            let (off, len) = self.gate_span(o)?;
+            let at = base.saturating_add(off);
+            let value = self.gate_value(o)?.unwrap_or(0);
+            let mut covered = 0u64;
+            self.each_line(parts, g, |f, _| {
+                if f.op == OP_FIELD && self.scalar(scope, f.key).is_some() {
+                    let fa = base + f.a as u64;
+                    for k in 0..len as u64 {
+                        if overlaps(at.saturating_add(k), 1, fa, f.len as u64) {
+                            covered |= 1u64 << k;
+                        }
+                    }
+                }
+                Ok(())
+            })?;
+            for k in 0..len as u64 {
+                if covered >> k & 1 == 0 {
+                    set_bits(msg, at.saturating_add(k), 1, value >> shift_of(len, k, msb) & 1, msb);
+                }
+            }
+            Ok(())
+        })
     }
 
     // -- sequential layout: decode --------------------------------------------
