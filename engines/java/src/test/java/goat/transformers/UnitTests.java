@@ -1449,18 +1449,20 @@ final class UnitTests {
     }
 
     static void residue(Engine e) {
-        String in = "<event access=\"open\" version=\"1.0\" uid=\"U&amp;1\" type=\"a-h-A\" time=\"2021-02-27T20:00:00.000Z\" how=\"h-e\">"
+        String in = "<event access=\"open\" qos=\"1-r-c\" version=\"1.0\" uid=\"U&amp;1\" type=\"a-h-A\" time=\"2021-02-27T20:00:00.000Z\" how=\"h-e\">"
                 + "<point lat=\"1\" lon=\"2\" hae=\"3\" ce=\"4\" le=\"5\"/>"
                 + "<detail><contact callsign=\"X\" endpoint=\"*:-1:stcp\"/><__group name=\"Cyan\" role=\"Team\"/>"
                 + "<remarks>hi &lt;there&gt;</remarks><status/></detail></event>";
-        // Residue is the unmapped attributes of the root element; unmapped child elements and their attributes
-        // are not carried (0.1.1 ruling 6). `version` is a const of the pack: mapped, so not residue, and written as 2.0.
-        String want = "<event version=\"2.0\" uid=\"U&amp;1\" type=\"a-h-A\" time=\"2021-02-27T20:00:00.000Z\" start=\"2021-02-27T20:00:00.000Z\" how=\"h-e\" access=\"open\">"
+        // Residue is the unmapped attributes of the root element (`qos`), written after the mapped ones; unmapped
+        // child elements and their attributes (`endpoint`, `__group`, `status`) are not carried (0.1.1 ruling 6).
+        // `version` is a const of the pack: mapped, so not residue, and written as 2.0. The remarks text is mapped
+        // (track.status_text at detail/remarks/#text, cot-xml 0.6.0), so it comes back as a mapped value.
+        String want = "<event version=\"2.0\" uid=\"U&amp;1\" type=\"a-h-A\" time=\"2021-02-27T20:00:00.000Z\" start=\"2021-02-27T20:00:00.000Z\" how=\"h-e\" access=\"open\" qos=\"1-r-c\">"
                 + "<point lat=\"1\" lon=\"2\" hae=\"3\" ce=\"4\" le=\"5\"/>"
-                + "<detail><contact callsign=\"X\"/></detail></event>";
+                + "<detail><contact callsign=\"X\"/><remarks>hi &lt;there&gt;</remarks></detail></event>";
         eq("xml residue round-trip", want, e.convert("cot-xml", "cot-xml", in));
         String gj = e.convert("cot-xml", "geojson", in);
-        check("xml residue does not cross into geojson", !gj.contains("access") && !gj.contains("Cyan"), gj);
+        check("xml residue does not cross into geojson", !gj.contains("access") && !gj.contains("qos") && !gj.contains("Cyan"), gj);
         eq("geojson integer-valued floats", "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[2,1,3]},"
                 + "\"properties\":{\"type\":\"a-h-A\",\"time_ms\":1614456000000,\"how\":\"h-e\",\"ce\":4,\"le\":5,\"callsign\":\"X\"},\"id\":\"U&1\"}", gj);
 

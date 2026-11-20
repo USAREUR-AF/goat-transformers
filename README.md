@@ -19,7 +19,7 @@ by [`tools/repo-stats`](tools/repo-stats).
 
 ```console
 $ echo 122624160b42bf241b6ed1b4b69808ac0870086b53150e0200 | goat-xf convert --from remote-id --to cot-xml
-<event version="2.0" type="a-u-X"><point lat="45.539309" lon="-122.966389" hae="110" ce="9999999" le="9999999"/></event>
+<event version="2.0" type="a-u-X"><point lat="45.539309" lon="-122.966389" hae="110" ce="9999999" le="9999999"/><detail/></event>
 $ echo 122624160b42bf241b6ed1b4b69808ac0870086b53150e0200 | goat-xf convert --from remote-id --to nmea2000
 01f80142bf241b6ed1b4b6
 $ goat-xf convert --from canonical-track-v2 --to asterix-cat062 --set cat062.sac=1 --set cat062.sic=7 < track.json

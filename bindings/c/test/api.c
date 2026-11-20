@@ -15,7 +15,7 @@
 static const char EVENT[] = "<event uid=\"a\" type=\"a-f-G\"/>";
 static const char EVENT_CANONICAL[] =
     "<event version=\"2.0\" uid=\"a\" type=\"a-f-G\">"
-    "<point hae=\"9999999\" ce=\"9999999\" le=\"9999999\"/></event>";
+    "<point hae=\"9999999\" ce=\"9999999\" le=\"9999999\"/><detail/></event>";
 
 /* Synthetic texts for the load tests: a model and two packs of one format. */
 static const char PROBE_CORE[] =
