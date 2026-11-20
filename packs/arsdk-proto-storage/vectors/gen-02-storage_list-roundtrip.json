@@ -1,0 +1,15 @@
+{
+  "name": "gen-storage_list-roundtrip",
+  "from": "arsdk-proto-storage",
+  "to": "arsdk-proto-storage",
+  "input": "82010d0a04086410010a0508ae011001",
+  "expect": "82010d0a04086410010a0508ae011001",
+  "model": {
+    "@kind": "storage_list",
+    "arsdkprotostorage.storage_list_storages.#": "2",
+    "arsdkprotostorage.storage_list_storages[0].arsdkprotostorage.storage_id": "100",
+    "arsdkprotostorage.storage_list_storages[0].arsdkprotostorage.storage_type": "1",
+    "arsdkprotostorage.storage_list_storages[1].arsdkprotostorage.storage_id": "174",
+    "arsdkprotostorage.storage_list_storages[1].arsdkprotostorage.storage_type": "1"
+  }
+}

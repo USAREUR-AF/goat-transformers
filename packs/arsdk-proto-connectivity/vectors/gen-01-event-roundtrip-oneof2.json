@@ -1,0 +1,20 @@
+{
+  "name": "gen-event-roundtrip-oneof2",
+  "from": "arsdk-proto-connectivity",
+  "to": "arsdk-proto-connectivity",
+  "input": "a2013108f00812150a070a05080110ba091201011a07737369642d333112150a070a05080110ce0a1201011a07737369642d3335",
+  "expect": "a2013108f00812150a070a05080110ba091201011a07737369642d333112150a070a05080110ce0a1201011a07737369642d3335",
+  "model": {
+    "@kind": "event",
+    "arsdkprotoconnectivity.scan_result_radio_id": "1136",
+    "arsdkprotoconnectivity.scan_result_networks.#": "2",
+    "arsdkprotoconnectivity.scan_result_networks[0].arsdkprotoconnectivity.network_channel_radio_channel_band": "1",
+    "arsdkprotoconnectivity.scan_result_networks[0].arsdkprotoconnectivity.network_channel_radio_channel_id": "1210",
+    "arsdkprotoconnectivity.scan_result_networks[0].arsdkprotoconnectivity.network_encryption.#": "1",
+    "arsdkprotoconnectivity.scan_result_networks[0].arsdkprotoconnectivity.network_encryption[0].arsdkprotoconnectivity.network_encryption_item": "1",
+    "arsdkprotoconnectivity.scan_result_networks[1].arsdkprotoconnectivity.network_channel_radio_channel_band": "1",
+    "arsdkprotoconnectivity.scan_result_networks[1].arsdkprotoconnectivity.network_channel_radio_channel_id": "1358",
+    "arsdkprotoconnectivity.scan_result_networks[1].arsdkprotoconnectivity.network_encryption.#": "1",
+    "arsdkprotoconnectivity.scan_result_networks[1].arsdkprotoconnectivity.network_encryption[0].arsdkprotoconnectivity.network_encryption_item": "1"
+  }
+}

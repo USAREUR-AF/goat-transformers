@@ -1,0 +1,23 @@
+{
+  "name": "gen-state-roundtrip",
+  "from": "arsdk-proto-geofence",
+  "to": "arsdk-proto-geofence",
+  "input": "82014a0a1c0a020101120a0d0000003e150000403f1a0a0d0000b03f1500000040120208011a02080122050d000078402a050d0000904032140a12090000000000802c40110000000000003040",
+  "expect": "82014a0a1c0a020101120a0d0000003e150000403f1a0a0d0000b03f1500000040120208011a02080122050d000078402a050d0000904032140a12090000000000802c40110000000000003040",
+  "model": {
+    "@kind": "state",
+    "arsdkprotogeofence.default_capabilities_max_distance_range_min": "0.125",
+    "arsdkprotogeofence.default_capabilities_max_distance_range_max": "0.75",
+    "arsdkprotogeofence.default_capabilities_max_altitude_range_min": "1.375",
+    "arsdkprotogeofence.default_capabilities_max_altitude_range_max": "2",
+    "arsdkprotogeofence.is_available_value": "1",
+    "arsdkprotogeofence.mode_value": "1",
+    "arsdkprotogeofence.max_distance_value": "3.875",
+    "arsdkprotogeofence.max_altitude_value": "4.5",
+    "arsdkprotogeofence.center_coordinates_latitude": "14.25",
+    "arsdkprotogeofence.center_coordinates_longitude": "16",
+    "arsdkprotogeofence.default_capabilities_modes.#": "2",
+    "arsdkprotogeofence.default_capabilities_modes[0].arsdkprotogeofence.capabilities_modes_item": "1",
+    "arsdkprotogeofence.default_capabilities_modes[1].arsdkprotogeofence.capabilities_modes_item": "1"
+  }
+}

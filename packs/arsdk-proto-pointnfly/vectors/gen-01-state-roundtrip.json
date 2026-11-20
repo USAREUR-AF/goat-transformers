@@ -1,0 +1,16 @@
+{
+  "name": "gen-state-roundtrip",
+  "from": "arsdk-proto-pointnfly",
+  "to": "arsdk-proto-pointnfly",
+  "input": "82010c12040a0201012a040a020101",
+  "expect": "82010c12040a0201012a040a020101",
+  "model": {
+    "@kind": "state",
+    "arsdkprotopointnfly.unavailable_reasons.#": "2",
+    "arsdkprotopointnfly.unavailable_reasons[0].arsdkprotopointnfly.unavailable_reasons_item": "1",
+    "arsdkprotopointnfly.unavailable_reasons[1].arsdkprotopointnfly.unavailable_reasons_item": "1",
+    "arsdkprotopointnfly.capabilities_allowed_links.#": "2",
+    "arsdkprotopointnfly.capabilities_allowed_links[0].arsdkprotopointnfly.capabilities_allowed_links_item": "1",
+    "arsdkprotopointnfly.capabilities_allowed_links[1].arsdkprotopointnfly.capabilities_allowed_links_item": "1"
+  }
+}

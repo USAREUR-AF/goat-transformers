@@ -1,0 +1,12 @@
+{
+  "name": "gen-log-roundtrip",
+  "from": "arsdk-proto-netdebuglog",
+  "to": "arsdk-proto-netdebuglog",
+  "input": "8a01110a0873657269616c2d3012056d73672d31",
+  "expect": "8a01110a0873657269616c2d3012056d73672d31",
+  "model": {
+    "@kind": "log",
+    "arsdkprotonetdebuglog.log_serial": "serial-0",
+    "arsdkprotonetdebuglog.log_msg": "msg-1"
+  }
+}

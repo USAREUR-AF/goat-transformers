@@ -1,0 +1,18 @@
+{
+  "name": "gen-state-roundtrip",
+  "from": "arsdk-proto-controller-backuplink",
+  "to": "arsdk-proto-controller-backuplink",
+  "input": "82011d0a080a060a049d02c20212060801100118011a090a0308d30112020801",
+  "expect": "82011d0a080a060a049d02c20212060801100118011a090a0308d30112020801",
+  "model": {
+    "@kind": "state",
+    "arsdkprotocontrollerbackuplink.link_info_state": "1",
+    "arsdkprotocontrollerbackuplink.link_info_rx_active": "1",
+    "arsdkprotocontrollerbackuplink.link_info_tx_active": "1",
+    "arsdkprotocontrollerbackuplink.config_frequency_value": "211",
+    "arsdkprotocontrollerbackuplink.config_enabled_links_value": "1",
+    "arsdkprotocontrollerbackuplink.default_capabilities_supported_frequencies_frequencies.#": "2",
+    "arsdkprotocontrollerbackuplink.default_capabilities_supported_frequencies_frequencies[0].arsdkprotocontrollerbackuplink.frequencies_frequencies_item": "285",
+    "arsdkprotocontrollerbackuplink.default_capabilities_supported_frequencies_frequencies[1].arsdkprotocontrollerbackuplink.frequencies_frequencies_item": "322"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "gen-capabilities-roundtrip",
+  "from": "arsdk-proto-unguarded-flight",
+  "to": "arsdk-proto-unguarded-flight",
+  "input": "8201040a020101",
+  "expect": "8201040a020101",
+  "model": {
+    "@kind": "capabilities",
+    "arsdkprotounguardedflight.capabilities_unguarded_flight_elements.#": "2",
+    "arsdkprotounguardedflight.capabilities_unguarded_flight_elements[0].arsdkprotounguardedflight.config_unguarded_flight_elements_item": "1",
+    "arsdkprotounguardedflight.capabilities_unguarded_flight_elements[1].arsdkprotounguardedflight.config_unguarded_flight_elements_item": "1"
+  }
+}

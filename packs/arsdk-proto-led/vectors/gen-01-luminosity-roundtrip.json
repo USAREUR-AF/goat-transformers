@@ -1,0 +1,11 @@
+{
+  "name": "gen-luminosity-roundtrip",
+  "from": "arsdk-proto-led",
+  "to": "arsdk-proto-led",
+  "input": "8201020864",
+  "expect": "8201020864",
+  "model": {
+    "@kind": "luminosity",
+    "arsdkprotoled.luminosity_value": "100"
+  }
+}

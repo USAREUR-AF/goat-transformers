@@ -1,0 +1,15 @@
+{
+  "name": "gen-connection_failure-roundtrip",
+  "from": "arsdk-proto-device-manager",
+  "to": "arsdk-proto-device-manager",
+  "input": "8a011e0a180a057569642d301089011a0c6e6574776f726b5f69642d3210011801",
+  "expect": "8a011e0a180a057569642d301089011a0c6e6574776f726b5f69642d3210011801",
+  "model": {
+    "@kind": "connection_failure",
+    "arsdkprotodevicemanager.device_uid": "uid-0",
+    "arsdkprotodevicemanager.device_model": "137",
+    "arsdkprotodevicemanager.device_network_id": "network_id-2",
+    "arsdkprotodevicemanager.connection_failure_transport": "1",
+    "arsdkprotodevicemanager.connection_failure_reason": "1"
+  }
+}

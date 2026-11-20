@@ -1,0 +1,11 @@
+{
+  "name": "gen-hardware_error-roundtrip",
+  "from": "arsdk-proto-microhard",
+  "to": "arsdk-proto-microhard",
+  "input": "9201020800",
+  "expect": "9201020800",
+  "model": {
+    "@kind": "hardware_error",
+    "arsdkprotomicrohard.hardware_error_cause": "0"
+  }
+}

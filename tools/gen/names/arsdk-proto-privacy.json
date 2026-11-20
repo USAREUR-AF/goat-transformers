@@ -1,0 +1,12 @@
+{
+ "16.1.1[]": "default_capabilities_supported_log_storage",
+ "16.1.2[]": "default_capabilities_supported_log_config_persistence",
+ "16.1.3[]": "default_capabilities_supported_authorizations",
+ "16.2": "state_log_storage",
+ "16.3": "state_log_config_persistence",
+ "16.4.1": "log_encryption_enabled",
+ "16.5.1": "pairing_authorization_value",
+ "arsdk.privacy.Capabilities:1[]item": "capabilities_supported_log_storage_item",
+ "arsdk.privacy.Capabilities:2[]item": "capabilities_supported_log_config_persistence_item",
+ "arsdk.privacy.Capabilities:3[]item": "capabilities_supported_authorizations_item"
+}

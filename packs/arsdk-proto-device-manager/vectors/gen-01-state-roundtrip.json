@@ -1,0 +1,24 @@
+{
+  "name": "gen-state-roundtrip",
+  "from": "arsdk-proto-device-manager",
+  "to": "arsdk-proto-device-manager",
+  "input": "8201770a0f0a020101120510641889011a0201011a60122e0a1a0a067569642d323210b7071a0d6e6574776f726b5f69642d3234120408011001220a08cb0810f00818012001122e0a1a0a067569642d333110840a1a0d6e6574776f726b5f69642d3333120408011001220a08980b10bd0b180120012a020801",
+  "expect": "8201770a0f0a020101120510641889011a0201011a60122e0a1a0a067569642d323210b7071a0d6e6574776f726b5f69642d3234120408011001220a08cb0810f00818012001122e0a1a0a067569642d333110840a1a0d6e6574776f726b5f69642d3333120408011001220a08980b10bd0b180120012a020801",
+  "model": {
+    "@kind": "state",
+    "arsdkprotodevicemanager.default_capabilities_microhard_power_min": "100",
+    "arsdkprotodevicemanager.default_capabilities_microhard_power_max": "137",
+    "arsdkprotodevicemanager.searching_scanning_idle_devices": "1",
+    "arsdkprotodevicemanager.default_capabilities_discovery_transports.#": "2",
+    "arsdkprotodevicemanager.default_capabilities_discovery_transports[0].arsdkprotodevicemanager.capabilities_discovery_transports_item": "1",
+    "arsdkprotodevicemanager.default_capabilities_discovery_transports[1].arsdkprotodevicemanager.capabilities_discovery_transports_item": "1",
+    "arsdkprotodevicemanager.default_capabilities_available_transports.#": "2",
+    "arsdkprotodevicemanager.default_capabilities_available_transports[0].arsdkprotodevicemanager.capabilities_available_transports_item": "1",
+    "arsdkprotodevicemanager.default_capabilities_available_transports[1].arsdkprotodevicemanager.capabilities_available_transports_item": "1",
+    "arsdkprotodevicemanager.known_devices_devices.#": "2",
+    "arsdkprotodevicemanager.known_devices_devices[0].arsdkprotodevicemanager.known_device_info_uid": "uid-22",
+    "arsdkprotodevicemanager.known_devices_devices[0].arsdkprotodevicemanager.known_device_info_model": "951",
+    "arsdkprotodevicemanager.known_devices_devices[1].arsdkprotodevicemanager.known_device_info_uid": "uid-31",
+    "arsdkprotodevicemanager.known_devices_devices[1].arsdkprotodevicemanager.known_device_info_model": "1284"
+  }
+}

@@ -1,0 +1,5 @@
+{
+ "16.3": "config_changed_frequency",
+ "16.4": "config_changed_silent",
+ "16.5": "config_changed_protocol_version"
+}

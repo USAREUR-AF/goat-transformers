@@ -1,0 +1,12 @@
+{
+ "1.1": "telemetry_flying_state",
+ "1.10": "telemetry_location_uses_magnetometer",
+ "1.2": "telemetry_battery_charge",
+ "1.3": "telemetry_speed",
+ "1.4": "telemetry_heading",
+ "1.5": "telemetry_altitude_ato",
+ "1.6": "telemetry_latitude",
+ "1.7": "telemetry_longitude",
+ "1.8": "telemetry_location_uses_gnss",
+ "1.9": "telemetry_location_is_reliable"
+}

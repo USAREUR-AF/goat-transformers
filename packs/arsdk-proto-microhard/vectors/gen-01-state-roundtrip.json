@@ -1,0 +1,29 @@
+{
+  "name": "gen-state-roundtrip",
+  "from": "arsdk-proto-microhard",
+  "to": "arsdk-proto-microhard",
+  "input": "82013d0a15086410890118ae0120d3012a0201013202010138012a240a0c6e6574776f726b5f69642d35120a08c20210e702180120011a0808d60310fb031801",
+  "expect": "82013d0a15086410890118ae0120d3012a0201013202010138012a240a0c6e6574776f726b5f69642d35120a08c20210e702180120011a0808d60310fb031801",
+  "model": {
+    "@kind": "state",
+    "arsdkprotomicrohard.default_capabilities_channel_min": "100",
+    "arsdkprotomicrohard.default_capabilities_channel_max": "137",
+    "arsdkprotomicrohard.default_capabilities_power_min": "174",
+    "arsdkprotomicrohard.default_capabilities_power_max": "211",
+    "arsdkprotomicrohard.default_capabilities_model": "1",
+    "arsdkprotomicrohard.state_pairing_network_id": "network_id-5",
+    "arsdkprotomicrohard.pairing_pairing_parameters_channel": "322",
+    "arsdkprotomicrohard.pairing_pairing_parameters_power": "359",
+    "arsdkprotomicrohard.pairing_pairing_parameters_bandwidth": "1",
+    "arsdkprotomicrohard.pairing_pairing_parameters_encryption_algorithm": "1",
+    "arsdkprotomicrohard.pairing_connection_parameters_channel": "470",
+    "arsdkprotomicrohard.pairing_connection_parameters_power": "507",
+    "arsdkprotomicrohard.pairing_connection_parameters_bandwidth": "1",
+    "arsdkprotomicrohard.default_capabilities_bandwidths.#": "2",
+    "arsdkprotomicrohard.default_capabilities_bandwidths[0].arsdkprotomicrohard.capabilities_bandwidths_item": "1",
+    "arsdkprotomicrohard.default_capabilities_bandwidths[1].arsdkprotomicrohard.capabilities_bandwidths_item": "1",
+    "arsdkprotomicrohard.default_capabilities_encryption_algorithms.#": "2",
+    "arsdkprotomicrohard.default_capabilities_encryption_algorithms[0].arsdkprotomicrohard.capabilities_encryption_algorithms_item": "1",
+    "arsdkprotomicrohard.default_capabilities_encryption_algorithms[1].arsdkprotomicrohard.capabilities_encryption_algorithms_item": "1"
+  }
+}

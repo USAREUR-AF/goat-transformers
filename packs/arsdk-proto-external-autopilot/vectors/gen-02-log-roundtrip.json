@@ -1,0 +1,13 @@
+{
+  "name": "gen-log-roundtrip",
+  "from": "arsdk-proto-external-autopilot",
+  "to": "arsdk-proto-external-autopilot",
+  "input": "8a010b080110011a056d73672d32",
+  "expect": "8a010b080110011a056d73672d32",
+  "model": {
+    "@kind": "log",
+    "arsdkprotoexternalautopilot.log_level": "1",
+    "arsdkprotoexternalautopilot.log_source": "1",
+    "arsdkprotoexternalautopilot.log_msg": "msg-2"
+  }
+}

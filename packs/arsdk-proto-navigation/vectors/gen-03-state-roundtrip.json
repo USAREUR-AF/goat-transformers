@@ -1,0 +1,20 @@
+{
+  "name": "gen-state-roundtrip",
+  "from": "arsdk-proto-navigation",
+  "to": "arsdk-proto-navigation",
+  "input": "8201310a040a02010122080a0208010a0208012a020801321b090000000000000040110000000000000e40190000000000001640",
+  "expect": "8201310a040a02010122080a0208010a0208012a020801321b090000000000000040110000000000000e40190000000000001640",
+  "model": {
+    "@kind": "state",
+    "arsdkprotonavigation.gnss_source_value": "1",
+    "arsdkprotonavigation.first_fix_latitude": "2",
+    "arsdkprotonavigation.first_fix_longitude": "3.75",
+    "arsdkprotonavigation.first_fix_altitude": "5.5",
+    "arsdkprotonavigation.available_frames_frames.#": "2",
+    "arsdkprotonavigation.available_frames_frames[0].arsdkprotonavigation.frames_frames_item": "1",
+    "arsdkprotonavigation.available_frames_frames[1].arsdkprotonavigation.frames_frames_item": "1",
+    "arsdkprotonavigation.raised_alarms_alarms.#": "2",
+    "arsdkprotonavigation.raised_alarms_alarms[0].arsdkprotonavigation.alarm_type": "1",
+    "arsdkprotonavigation.raised_alarms_alarms[1].arsdkprotonavigation.alarm_type": "1"
+  }
+}

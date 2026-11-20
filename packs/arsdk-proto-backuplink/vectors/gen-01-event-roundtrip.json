@@ -1,0 +1,20 @@
+{
+  "name": "gen-event-roundtrip",
+  "from": "arsdk-proto-backuplink",
+  "to": "arsdk-proto-backuplink",
+  "input": "0a2c08011089011d0000b03f25000000402d00002840310000000000002240390000000000802540400148015001",
+  "expect": "0a2c08011089011d0000b03f25000000402d00002840310000000000002240390000000000802540400148015001",
+  "model": {
+    "@kind": "event",
+    "arsdkprotobackuplink.telemetry_flying_state": "1",
+    "arsdkprotobackuplink.telemetry_battery_charge": "137",
+    "arsdkprotobackuplink.telemetry_speed": "1.375",
+    "arsdkprotobackuplink.telemetry_heading": "2",
+    "arsdkprotobackuplink.telemetry_altitude_ato": "2.625",
+    "arsdkprotobackuplink.telemetry_latitude": "9",
+    "arsdkprotobackuplink.telemetry_longitude": "10.75",
+    "arsdkprotobackuplink.telemetry_location_uses_gnss": "1",
+    "arsdkprotobackuplink.telemetry_location_is_reliable": "1",
+    "arsdkprotobackuplink.telemetry_location_uses_magnetometer": "1"
+  }
+}

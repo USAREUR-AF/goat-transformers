@@ -1,0 +1,18 @@
+{
+  "name": "gen-state-roundtrip",
+  "from": "arsdk-proto-calibration",
+  "to": "arsdk-proto-calibration",
+  "input": "8201180a040a02000012100a060800100118010a06080010011801",
+  "expect": "8201180a040a02000012100a060800100118010a06080010011801",
+  "model": {
+    "@kind": "state",
+    "arsdkprotocalibration.default_capabilities_supported_sensors.#": "2",
+    "arsdkprotocalibration.default_capabilities_supported_sensors[0].arsdkprotocalibration.capabilities_supported_sensors_item": "0",
+    "arsdkprotocalibration.default_capabilities_supported_sensors[1].arsdkprotocalibration.capabilities_supported_sensors_item": "0",
+    "arsdkprotocalibration.calibration_state_list_calibration_state.#": "2",
+    "arsdkprotocalibration.calibration_state_list_calibration_state[0].arsdkprotocalibration.calibration_state_sensor": "0",
+    "arsdkprotocalibration.calibration_state_list_calibration_state[0].arsdkprotocalibration.calibration_state_status": "1",
+    "arsdkprotocalibration.calibration_state_list_calibration_state[1].arsdkprotocalibration.calibration_state_sensor": "0",
+    "arsdkprotocalibration.calibration_state_list_calibration_state[1].arsdkprotocalibration.calibration_state_status": "1"
+  }
+}

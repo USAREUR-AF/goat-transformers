@@ -1,0 +1,13 @@
+{
+  "name": "gen-state-roundtrip",
+  "from": "arsdk-proto-developer",
+  "to": "arsdk-proto-developer",
+  "input": "8201160a100801120c7075626c69635f6b65792d3112020801",
+  "expect": "8201160a100801120c7075626c69635f6b65792d3112020801",
+  "model": {
+    "@kind": "state",
+    "arsdkprotodeveloper.shell_enabled": "1",
+    "arsdkprotodeveloper.shell_public_key": "public_key-1",
+    "arsdkprotodeveloper.airsdklog_enabled": "1"
+  }
+}

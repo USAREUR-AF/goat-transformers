@@ -1,0 +1,15 @@
+{
+  "name": "gen-state-roundtrip",
+  "from": "arsdk-proto-flight-data",
+  "to": "arsdk-proto-flight-data",
+  "input": "82010a0a040a02010110011801",
+  "expect": "82010a0a040a02010110011801",
+  "model": {
+    "@kind": "state",
+    "arsdkprotoflightdata.state_is_wind_speed_available": "1",
+    "arsdkprotoflightdata.state_is_air_speed_available": "1",
+    "arsdkprotoflightdata.default_capabilities_supported_features.#": "2",
+    "arsdkprotoflightdata.default_capabilities_supported_features[0].arsdkprotoflightdata.capabilities_supported_features_item": "1",
+    "arsdkprotoflightdata.default_capabilities_supported_features[1].arsdkprotoflightdata.capabilities_supported_features_item": "1"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "gen-heading-roundtrip",
+  "from": "arsdk-proto-remote-antenna",
+  "to": "arsdk-proto-remote-antenna",
+  "input": "0a050d0000003e",
+  "expect": "0a050d0000003e",
+  "model": {
+    "@kind": "heading",
+    "arsdkprotoremoteantenna.heading_value": "0.125"
+  }
+}

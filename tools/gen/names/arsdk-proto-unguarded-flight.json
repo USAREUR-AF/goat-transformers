@@ -1,0 +1,5 @@
+{
+ "16.1[]": "capabilities_unguarded_flight_elements",
+ "17.1[]": "current_config_unguarded_flight_elements",
+ "arsdk.unguardedflight.Config:1[]item": "config_unguarded_flight_elements_item"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "gen-unlock_result-roundtrip",
+  "from": "arsdk-proto-storage",
+  "to": "arsdk-proto-storage",
+  "input": "a2010408641001",
+  "expect": "a2010408641001",
+  "model": {
+    "@kind": "unlock_result",
+    "arsdkprotostorage.unlock_result_id": "100",
+    "arsdkprotostorage.unlock_result_status": "1"
+  }
+}

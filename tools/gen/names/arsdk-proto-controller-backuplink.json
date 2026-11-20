@@ -1,0 +1,12 @@
+{
+ "16.1.1.1[]": "default_capabilities_supported_frequencies_frequencies",
+ "16.1.2.1[]": "default_capabilities_supported_bands_bands",
+ "16.2.1": "link_info_state",
+ "16.2.2": "link_info_rx_active",
+ "16.2.3": "link_info_tx_active",
+ "16.3.1.1": "config_frequency_value",
+ "16.3.2.1": "config_enabled_links_value",
+ "arsdk.backuplink.Band:1": "band_min_frequency",
+ "arsdk.backuplink.Band:2": "band_max_frequency",
+ "arsdk.backuplink.Frequencies:1[]item": "frequencies_frequencies_item"
+}

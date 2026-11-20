@@ -1,0 +1,11 @@
+{
+  "name": "gen-execution-roundtrip",
+  "from": "arsdk-proto-pointnfly",
+  "to": "arsdk-proto-pointnfly",
+  "input": "8a01020801",
+  "expect": "8a01020801",
+  "model": {
+    "@kind": "execution",
+    "arsdkprotopointnfly.execution_status": "1"
+  }
+}

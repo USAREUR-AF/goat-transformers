@@ -1,0 +1,18 @@
+{
+  "name": "gen-state-roundtrip",
+  "from": "arsdk-proto-piloting",
+  "to": "arsdk-proto-piloting",
+  "input": "8201230a02080112050d0000403f1a020801220208012a020801320208013a02080142020801",
+  "expect": "8201230a02080112050d0000403f1a020801220208012a020801320208013a02080142020801",
+  "model": {
+    "@kind": "state",
+    "arsdkprotopiloting.speed_mode_value": "1",
+    "arsdkprotopiloting.takeoff_hovering_altitude_value": "0.75",
+    "arsdkprotopiloting.preferred_atti_mode_enabled": "1",
+    "arsdkprotopiloting.current_atti_mode_enabled": "1",
+    "arsdkprotopiloting.assistance_mode_value": "1",
+    "arsdkprotopiloting.takeoff_state_value": "1",
+    "arsdkprotopiloting.vehicle_type_value": "1",
+    "arsdkprotopiloting.vehicle_mode_value": "1"
+  }
+}

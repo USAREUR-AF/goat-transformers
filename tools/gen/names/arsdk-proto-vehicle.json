@@ -1,0 +1,17 @@
+{
+ "16.1.1": "default_capabilities_max_horizontal_distance",
+ "16.1.2[]": "default_capabilities_supported_platform_types",
+ "16.2.1": "is_enabled_value",
+ "16.3.1": "ready_state_value",
+ "16.4.1[]": "missing_requirements_requirements",
+ "16.5.1[]": "improvements_improvements",
+ "16.6.1[]": "notifications_notifications",
+ "16.7.1": "relative_guidance_is_enabled",
+ "16.7.2": "relative_guidance_is_modifiable",
+ "16.8.1": "is_precise_calibration_enabled_value",
+ "16.9.1": "platform_type_value",
+ "arsdk.vehicle.Capabilities:2[]item": "capabilities_supported_platform_types_item",
+ "arsdk.vehicle.Improvements:1[]item": "improvements_improvements_item",
+ "arsdk.vehicle.MissingRequirements:1[]item": "missing_requirements_requirements_item",
+ "arsdk.vehicle.Notifications:1[]item": "notifications_notifications_item"
+}

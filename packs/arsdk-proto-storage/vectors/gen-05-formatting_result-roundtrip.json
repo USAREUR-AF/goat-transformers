@@ -1,0 +1,12 @@
+{
+  "name": "gen-formatting_result-roundtrip",
+  "from": "arsdk-proto-storage",
+  "to": "arsdk-proto-storage",
+  "input": "9a010408641001",
+  "expect": "9a010408641001",
+  "model": {
+    "@kind": "formatting_result",
+    "arsdkprotostorage.formatting_result_id": "100",
+    "arsdkprotostorage.formatting_result_status": "1"
+  }
+}

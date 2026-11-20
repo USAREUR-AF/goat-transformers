@@ -1,0 +1,16 @@
+{
+  "name": "gen-discovered_devices-roundtrip",
+  "from": "arsdk-proto-device-manager",
+  "to": "arsdk-proto-device-manager",
+  "input": "92015c0a2a0a180a057569642d3110ae011a0c6e6574776f726b5f69642d3310011a080a0408011001104b2a0208010a2c0a190a057569642d3910d6031a0d6e6574776f726b5f69642d313110011a090a0408011001109b012a0208011001",
+  "expect": "92015c0a2a0a180a057569642d3110ae011a0c6e6574776f726b5f69642d3310011a080a0408011001104b2a0208010a2c0a190a057569642d3910d6031a0d6e6574776f726b5f69642d313110011a090a0408011001109b012a0208011001",
+  "model": {
+    "@kind": "discovered_devices",
+    "arsdkprotodevicemanager.discovered_devices_status": "1",
+    "arsdkprotodevicemanager.discovered_devices_devices.#": "2",
+    "arsdkprotodevicemanager.discovered_devices_devices[0].arsdkprotodevicemanager.discovered_device_info_uid": "uid-1",
+    "arsdkprotodevicemanager.discovered_devices_devices[0].arsdkprotodevicemanager.discovered_device_info_model": "174",
+    "arsdkprotodevicemanager.discovered_devices_devices[1].arsdkprotodevicemanager.discovered_device_info_uid": "uid-9",
+    "arsdkprotodevicemanager.discovered_devices_devices[1].arsdkprotodevicemanager.discovered_device_info_model": "470"
+  }
+}

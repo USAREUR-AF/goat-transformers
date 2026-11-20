@@ -1,0 +1,12 @@
+{
+  "name": "gen-state-roundtrip",
+  "from": "arsdk-proto-external-autopilot",
+  "to": "arsdk-proto-external-autopilot",
+  "input": "82010410011801",
+  "expect": "82010410011801",
+  "model": {
+    "@kind": "state",
+    "arsdkprotoexternalautopilot.state_flight_mode": "1",
+    "arsdkprotoexternalautopilot.state_connected": "1"
+  }
+}

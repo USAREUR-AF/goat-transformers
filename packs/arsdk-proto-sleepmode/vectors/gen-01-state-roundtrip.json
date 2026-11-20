@@ -1,0 +1,11 @@
+{
+  "name": "gen-state-roundtrip",
+  "from": "arsdk-proto-sleepmode",
+  "to": "arsdk-proto-sleepmode",
+  "input": "82010b12090a0776616c75652d30",
+  "expect": "82010b12090a0776616c75652d30",
+  "model": {
+    "@kind": "state",
+    "arsdkprotosleepmode.secure_message_value": "value-0"
+  }
+}

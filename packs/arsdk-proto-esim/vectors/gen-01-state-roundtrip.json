@@ -1,0 +1,23 @@
+{
+  "name": "gen-state-roundtrip",
+  "from": "arsdk-proto-esim",
+  "to": "arsdk-proto-esim",
+  "input": "8201a601120208011a090a0776616c75652d3122620a2f0a0869636369642d3133120b70726f76696465722d3134180122076e616d652d31362a0b6e69636b6e616d652d31370a2f0a0869636369642d3138120b70726f76696465722d3139180122076e616d652d32312a0b6e69636b6e616d652d32322a310801122d0a2b0a0769636369642d33120a70726f76696465722d34180122066e616d652d362a0a6e69636b6e616d652d37",
+  "expect": "8201a601120208011a090a0776616c75652d3122620a2f0a0869636369642d3133120b70726f76696465722d3134180122076e616d652d31362a0b6e69636b6e616d652d31370a2f0a0869636369642d3138120b70726f76696465722d3139180122076e616d652d32312a0b6e69636b6e616d652d32322a310801122d0a2b0a0769636369642d33120a70726f76696465722d34180122066e616d652d362a0a6e69636b6e616d652d37",
+  "model": {
+    "@kind": "state",
+    "arsdkprotoesim.sim_status_value_value": "1",
+    "arsdkprotoesim.eid_value": "value-1",
+    "arsdkprotoesim.profile_operation_status_error_code": "1",
+    "arsdkprotoesim.profile_operation_status_profile_iccid": "iccid-3",
+    "arsdkprotoesim.profile_operation_status_profile_provider": "provider-4",
+    "arsdkprotoesim.profile_operation_status_profile_enabled": "1",
+    "arsdkprotoesim.profile_operation_status_profile_name": "name-6",
+    "arsdkprotoesim.profile_operation_status_profile_nickname": "nickname-7",
+    "arsdkprotoesim.profile_list_profiles.#": "2",
+    "arsdkprotoesim.profile_list_profiles[0].arsdkprotoesim.profile_iccid": "iccid-13",
+    "arsdkprotoesim.profile_list_profiles[0].arsdkprotoesim.profile_provider": "provider-14",
+    "arsdkprotoesim.profile_list_profiles[1].arsdkprotoesim.profile_iccid": "iccid-18",
+    "arsdkprotoesim.profile_list_profiles[1].arsdkprotoesim.profile_provider": "provider-19"
+  }
+}
