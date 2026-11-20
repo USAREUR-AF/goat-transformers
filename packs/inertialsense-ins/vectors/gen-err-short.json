@@ -1,0 +1,8 @@
+{
+  "name": "err-short",
+  "from": "inertialsense-ins",
+  "to": "inertialsense-ins",
+  "source": "one byte short of the 86-byte message of ins_1 (vector-format, malformed input)",
+  "input": "ef4904045000eaa9379ee9263108ac1c00404c9da6dafd16de780000ccc00000c4c00000bcc00000b4c00000acc00000a4c08195438b6c2726405eba490c022b28c03bdf4f8d972e2a40000084c0000078c0000068",
+  "expect_error": "malformed-wire"
+}

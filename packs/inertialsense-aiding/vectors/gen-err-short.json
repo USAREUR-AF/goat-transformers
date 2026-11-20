@@ -1,0 +1,8 @@
+{
+  "name": "err-short",
+  "from": "inertialsense-aiding",
+  "to": "inertialsense-aiding",
+  "source": "one byte short of the 78-byte message of ground_vehicle (vector-format, malformed input)",
+  "input": "ef4904574800eaa9379e9b236f3c4c9da6dafd16de780000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0000094c000008cc0000084c0000078c0000068c0000058c0000048",
+  "expect_error": "malformed-wire"
+}

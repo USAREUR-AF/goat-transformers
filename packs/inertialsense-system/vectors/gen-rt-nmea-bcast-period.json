@@ -1,0 +1,15 @@
+{
+  "name": "rt-nmea_bcast_period",
+  "from": "inertialsense-system",
+  "to": "inertialsense-system",
+  "source": "tools/gen/cstruct2pack.py: the inertialsense frame header, then nmea_msgs_t with values chosen by the generator, packed by its serializer at the offsets of the layout",
+  "input": "ef4904082c00eaa9379e9b4cfdae5f10c17223d48536e79849faab5c0dbe6f20d18233e49546f7a8590abb6c1dce7f30e192",
+  "expect": "ef4904082c00eaa9379e9b4cfdae5f10c17223d48536e79849faab5c0dbe6f20d18233e49546f7a8590abb6c1dce7f30e192",
+  "model": {
+    "@kind": "nmea_bcast_period",
+    "inertialsense.nmea_msgs_t_options": "2654448106",
+    "inertialsense.nmea_msgs_t_nmea_broadcast_msgs_0_msg_id": "155",
+    "inertialsense.nmea_msgs_t_nmea_broadcast_msgs_0_msg_period": "76",
+    "inertialsense.nmea_msgs_t_nmea_broadcast_msgs_1_msg_id": "253"
+  }
+}

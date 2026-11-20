@@ -1,0 +1,15 @@
+{
+  "name": "rt-gpx_debug_array",
+  "from": "inertialsense-gpx",
+  "to": "inertialsense-gpx",
+  "source": "tools/gen/cstruct2pack.py: the inertialsense frame header, then debug_array_t with values chosen by the generator, packed by its serializer at the offsets of the layout",
+  "input": "ef49047c60003e9e0080753c0180acda0180e37802801a17038051b5038088530480bff10480f68f05800000a4c000009cc0000094c000008cc0000084c0000078c0000068c0000058c0000048c0355eba490c223340a4703d0ad72334401283c0caa12535c0",
+  "expect": "ef49047c60003e9e0080753c0180acda0180e37802801a17038051b5038088530480bff10480f68f05800000a4c000009cc0000094c000008cc0000084c0000078c0000068c0000058c0000048c0355eba490c223340a4703d0ad72334401283c0caa12535c0",
+  "model": {
+    "@kind": "gpx_debug_array",
+    "inertialsense.debug_array_t_i_0": "-2147443138",
+    "inertialsense.debug_array_t_i_1": "-2147402635",
+    "inertialsense.debug_array_t_i_2": "-2147362132",
+    "inertialsense.debug_array_t_i_3": "-2147321629"
+  }
+}

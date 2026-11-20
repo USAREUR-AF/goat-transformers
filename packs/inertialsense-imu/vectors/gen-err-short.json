@@ -1,0 +1,8 @@
+{
+  "name": "err-short",
+  "from": "inertialsense-imu",
+  "to": "inertialsense-imu",
+  "source": "one byte short of the 46-byte message of pimu (vector-format, malformed input)",
+  "input": "ef4904032800e9263108ac1cf03f0000e4c04c9da6da0000d4c00000ccc00000c4c00000bcc00000b4c00000ac",
+  "expect_error": "malformed-wire"
+}

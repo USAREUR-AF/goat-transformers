@@ -1,0 +1,15 @@
+{
+  "name": "rt-gpx_status",
+  "from": "inertialsense-gpx",
+  "to": "inertialsense-gpx",
+  "source": "tools/gen/cstruct2pack.py: the inertialsense frame header, then gpx_status_t with values chosen by the generator, packed by its serializer at the offsets of the layout",
+  "input": "ef49047b6d00eaa9379e9b236f3cc9b78165000000000cfa9065000000004f3ca06500000000927eaf6500000000d5c0be65000000001803ce65000000005b45dd65000000009e87ec6500000000d46a62cc000094c0365ed108e7d708a79851404549faab5c0dbe6f20d1cdcccccccc2c3940",
+  "expect": "ef49047b6d00eaa9379e9b236f3cc9b78165000000000cfa9065000000004f3ca06500000000927eaf6500000000d5c0be65000000001803ce65000000005b45dd65000000009e87ec6500000000d46a62cc000094c0365ed108e7d708a79851404549faab5c0dbe6f20d1cdcccccccc2c3940",
+  "model": {
+    "@kind": "gpx_status",
+    "inertialsense.gpx_status_t_time_of_week_ms": "2654448106",
+    "inertialsense.gpx_status_t_status": "1013916571",
+    "inertialsense.gpx_status_t_grmc_bits_ser0": "1703000009",
+    "inertialsense.gpx_status_t_grmc_bits_ser1": "1704000012"
+  }
+}

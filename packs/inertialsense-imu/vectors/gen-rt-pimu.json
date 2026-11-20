@@ -1,0 +1,15 @@
+{
+  "name": "rt-pimu",
+  "from": "inertialsense-imu",
+  "to": "inertialsense-imu",
+  "source": "tools/gen/cstruct2pack.py: the inertialsense frame header, then pimu_t with values chosen by the generator, packed by its serializer at the offsets of the layout",
+  "input": "ef4904032800e9263108ac1cf03f0000e4c04c9da6da0000d4c00000ccc00000c4c00000bcc00000b4c00000acc0",
+  "expect": "ef4904032800e9263108ac1cf03f0000e4c04c9da6da0000d4c00000ccc00000c4c00000bcc00000b4c00000acc0",
+  "model": {
+    "@kind": "pimu",
+    "inertialsense.pimu_t_time": "1.007",
+    "inertialsense.pimu_t_dt": "-7.125",
+    "inertialsense.pimu_t_status": "3668352332",
+    "inertialsense.pimu_t_theta_0": "-6.625"
+  }
+}

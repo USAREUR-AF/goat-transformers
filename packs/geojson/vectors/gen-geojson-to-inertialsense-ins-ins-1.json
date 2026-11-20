@@ -1,0 +1,13 @@
+{
+  "name": "gen-geojson-to-inertialsense-ins-ins_1",
+  "from": "geojson",
+  "to": "inertialsense-ins",
+  "source": "tools/gen/cstruct2pack.py: the kind is the first whose requires hold (lat lon); the frame header holds its when values and the header defaults; every other payload byte is zero",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.5,47.25,410.5]},\"properties\":{\"callsign\":\"UAV1\"},\"id\":\"u-1\"}",
+  "expect": "ef490404500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000a0474000000000000021400000000000a87940000000000000000000000000",
+  "model": {
+    "lat": "47.25",
+    "lon": "8.5",
+    "hae": "410.5"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "rt-timepulse",
+  "from": "inertialsense-sensors",
+  "to": "inertialsense-sensors",
+  "source": "tools/gen/cstruct2pack.py: the inertialsense frame header, then is_timepulse_t with values chosen by the generator, packed by its serializer at the offsets of the layout",
+  "input": "ef49042b2000eaa9379e9b236f3c4c9da6dafd16de78ae9015175f0a4db510848453c1fdbbf1",
+  "expect": "ef49042b2000eaa9379e9b236f3c4c9da6dafd16de78ae9015175f0a4db510848453c1fdbbf1",
+  "model": {
+    "@kind": "timepulse",
+    "inertialsense.is_timepulse_t_week": "2654448106",
+    "inertialsense.is_timepulse_t_time_of_week_ms": "1013916571",
+    "inertialsense.is_timepulse_t_status": "3668352332",
+    "inertialsense.is_timepulse_t_sync_cnt": "2027820797"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "name": "err-other-id",
+  "from": "inertialsense-aiding",
+  "to": "inertialsense-aiding",
+  "source": "message id 0 is not a kind of this pack",
+  "input": "ef4904004800eaa9379e9b236f3c4c9da6dafd16de780000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0000094c000008cc0000084c0000078c0000068c0000058c0000048c0",
+  "expect_error": "no-kind"
+}

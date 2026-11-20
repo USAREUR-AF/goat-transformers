@@ -1,0 +1,15 @@
+{
+  "name": "rt-ins_4",
+  "from": "inertialsense-ins",
+  "to": "inertialsense-ins",
+  "source": "tools/gen/cstruct2pack.py: the inertialsense frame header, then ins_4_t with values chosen by the generator, packed by its serializer at the offsets of the layout",
+  "input": "ef4904424800eaa9379ee9263108ac1c00404c9da6dafd16de780000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc05eba490c022b28c03bdf4f8d972e2a401904560e2d322c40",
+  "expect": "ef4904424800eaa9379ee9263108ac1c00404c9da6dafd16de780000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc05eba490c022b28c03bdf4f8d972e2a401904560e2d322c40",
+  "model": {
+    "@kind": "ins_4",
+    "inertialsense.ins_4_t_week": "2654448106",
+    "inertialsense.ins_4_t_time_of_week": "2.014",
+    "inertialsense.ins_4_t_ins_status": "3668352332",
+    "inertialsense.ins_4_t_hdw_status": "2027820797"
+  }
+}

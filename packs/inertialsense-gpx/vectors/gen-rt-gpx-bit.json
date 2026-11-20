@@ -1,0 +1,15 @@
+{
+  "name": "rt-gpx_bit",
+  "from": "inertialsense-gpx",
+  "to": "inertialsense-gpx",
+  "source": "tools/gen/cstruct2pack.py: the inertialsense frame header, then gpx_bit_t with values chosen by the generator, packed by its serializer at the offsets of the layout",
+  "input": "ef49047d0c00eaa9379e9b4cfdae5f0a10c1",
+  "expect": "ef49047d0c00eaa9379e9b4cfdae5f0a10c1",
+  "model": {
+    "@kind": "gpx_bit",
+    "inertialsense.gpx_bit_t_results": "2654448106",
+    "inertialsense.gpx_bit_t_command": "155",
+    "inertialsense.gpx_bit_t_port": "76",
+    "inertialsense.gpx_bit_t_test_mode": "253"
+  }
+}

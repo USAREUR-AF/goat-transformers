@@ -1,0 +1,15 @@
+{
+  "name": "rt-bit",
+  "from": "inertialsense-system",
+  "to": "inertialsense-system",
+  "source": "tools/gen/cstruct2pack.py: the inertialsense frame header, then bit_t with values chosen by the generator, packed by its serializer at the offsets of the layout",
+  "input": "ef4904403800ea9b4cfdae9015175f0a4db50000bcc00000b4c00000acc00000a4c000009cc0000094c000008cc0000084c0000078c0000068c0faab5c38",
+  "expect": "ef4904403800ea9b4cfdae9015175f0a4db50000bcc00000b4c00000acc00000a4c000009cc0000094c000008cc0000084c0000078c0000068c0faab5c38",
+  "model": {
+    "@kind": "bit",
+    "inertialsense.bit_t_command": "234",
+    "inertialsense.bit_t_last_command": "155",
+    "inertialsense.bit_t_state": "76",
+    "inertialsense.bit_t_reserved": "253"
+  }
+}

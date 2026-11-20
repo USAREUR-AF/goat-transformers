@@ -1,0 +1,8 @@
+{
+  "name": "err-short",
+  "from": "inertialsense-sensors",
+  "to": "inertialsense-sensors",
+  "source": "one byte short of the 86-byte message of sys_sensors (vector-format, malformed input)",
+  "input": "ef49040b5000e9263108ac1cf03f0000e4c00000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0000094c000008cc0000084c0000078c0000068c0000058c0000048c0000038",
+  "expect_error": "malformed-wire"
+}

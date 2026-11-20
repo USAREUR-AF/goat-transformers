@@ -1,0 +1,8 @@
+{
+  "name": "err-short",
+  "from": "inertialsense-gpx",
+  "to": "inertialsense-gpx",
+  "source": "one byte short of the 90-byte message of gpx_dev_info (vector-format, malformed input)",
+  "input": "ef4904785400ea9b4cfdae9015175f10c17223d48536e7d708a79849faab5c381ebe743230000000000000000000000000000000000000000000be6f20d18233e4957432390000000000000000000000000000000000000000",
+  "expect_error": "malformed-wire"
+}

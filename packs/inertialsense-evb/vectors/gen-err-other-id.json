@@ -1,0 +1,8 @@
+{
+  "name": "err-other-id",
+  "from": "inertialsense-evb",
+  "to": "inertialsense-evb",
+  "source": "message id 0 is not a kind of this pack",
+  "input": "ef4904002800eaa9379e9b236f3c4cfdae5f10848453c1fdbbf17277f38f23f12a2ed46a62cc5eba490c022b28c0",
+  "expect_error": "no-kind"
+}

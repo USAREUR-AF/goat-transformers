@@ -1,0 +1,15 @@
+{
+  "name": "rt-sys_params",
+  "from": "inertialsense-system",
+  "to": "inertialsense-system",
+  "source": "tools/gen/cstruct2pack.py: the inertialsense frame header, then sys_params_t with values chosen by the generator, packed by its serializer at the offsets of the layout",
+  "input": "ef49040a4000eaa9379e9b236f3c4c9da6da0000d4c00000ccc00000c4c010848453c1fdbbf17277f38fa4703d0ad7232440d46a62cc85e4996a365ed1081904560e2d322c40",
+  "expect": "ef49040a4000eaa9379e9b236f3c4c9da6da0000d4c00000ccc00000c4c010848453c1fdbbf17277f38fa4703d0ad7232440d46a62cc85e4996a365ed1081904560e2d322c40",
+  "model": {
+    "@kind": "sys_params",
+    "inertialsense.sys_params_t_time_of_week_ms": "2654448106",
+    "inertialsense.sys_params_t_ins_status": "1013916571",
+    "inertialsense.sys_params_t_hdw_status": "3668352332",
+    "inertialsense.sys_params_t_imu_temp": "-6.625"
+  }
+}

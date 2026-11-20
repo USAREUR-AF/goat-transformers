@@ -1,0 +1,8 @@
+{
+  "name": "err-short",
+  "from": "inertialsense-evb",
+  "to": "inertialsense-evb",
+  "source": "one byte short of the 46-byte message of evb_status (vector-format, malformed input)",
+  "input": "ef4904502800eaa9379e9b236f3c4cfdae5f10848453c1fdbbf17277f38f23f12a2ed46a62cc5eba490c022b28",
+  "expect_error": "malformed-wire"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "rt-imus_raw",
+  "from": "inertialsense-imu",
+  "to": "inertialsense-imu",
+  "source": "tools/gen/cstruct2pack.py: the inertialsense frame header, then imus_t with values chosen by the generator, packed by its serializer at the offsets of the layout",
+  "input": "ef4904608400e9263108ac1cf03f9b236f3c0000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0000094c000008cc0000084c0000078c0000068c0000058c0000048c0000038c0000028c0000018c0000008c00000f0bf0000d0bf0000b0bf000090bf000060bf000020bf0000c0be000000be0000003e0000c03e",
+  "expect": "ef4904608400e9263108ac1cf03f9b236f3c0000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0000094c000008cc0000084c0000078c0000068c0000058c0000048c0000038c0000028c0000018c0000008c00000f0bf0000d0bf0000b0bf000090bf000060bf000020bf0000c0be000000be0000003e0000c03e",
+  "model": {
+    "@kind": "imus_raw",
+    "inertialsense.imus_t_time": "1.007",
+    "inertialsense.imus_t_status": "1013916571",
+    "inertialsense.imus_t_i_0_pqr_0": "-6.875",
+    "inertialsense.imus_t_i_0_pqr_1": "-6.625"
+  }
+}
