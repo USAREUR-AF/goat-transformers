@@ -1,6 +1,6 @@
 # Compiled pack format (`.gtp`)
 
-Status: Written and Built. Format version 2. Written by `tools/gen/packc.py`,
+Status: Written and Built. Format version 3. Written by `tools/gen/packc.py`,
 read by `embedded/gt-core`.
 
 A `.gtp` blob holds one plan: a source format, a target format, or both,
@@ -20,7 +20,7 @@ address, in flash or in RAM, with no relocation and no alignment requirement.
 ```
 offset  size  field
 0       4     magic "GTP1"
-4       2     format version (2)
+4       2     format version (3)
 6       2     flags: bit 0 = the blob holds names (sections 12 and 13)
 8       4     total length in bytes
 12      2     number of sections
@@ -45,8 +45,12 @@ version 2 blob as values.
 
 Version 2 adds the sentinels of the `absent` field option (engine-spec 0.9)
 to the FIELD operation: byte 3, reserved and 0 in version 1, is the number of
-sentinels, and the sentinels follow the field's scale in the pool. Nothing
-else changed.
+sentinels, and the sentinels follow the field's scale in the pool.
+
+Version 3 adds six-bit armor (engine-spec 0.14): bit 2 of a format's flags,
+0 in version 2, marks `armor sixbit`, and transform 8 is `sixbit`. A version 2
+reader would ignore the flag and read armored text as bytes, so the version
+changed. Nothing else changed.
 
 | Id | Section | Entry | Holds |
 |---|---|---|---|
@@ -84,7 +88,7 @@ needs no names.
 ## Formats
 
 ```
-0   1  flags: bit 0 = bit order msb, bit 1 = layout sequential
+0   1  flags: bit 0 = bit order msb, bit 1 = layout sequential, bit 2 = `armor sixbit`
 1   1  reserved
 2   2  word_bytes (fixed layout)
 4   4  index of the format's BODY operation
@@ -134,7 +138,36 @@ so a reader steps over a whole block with one addition.
 | 19 | GROUP_FIX | list `key`, first item at bit `a`; pool[`b`] = item bits; `xf` 0: pool[`b`+1] items, `xf` 1: a `len`-bit count at bit pool[`b`+1]; then the item BODY |
 
 Transforms (`xf` of FIELD): 0 `uint`, 1 `twos`, 2 `linscale`, 3 `uscale`,
-4 `sscale`, 5 `f32`, 6 `f64`, 7 `ascii`.
+4 `sscale`, 5 `f32`, 6 `f64`, 7 `ascii`, 8 `sixbit`.
+
+### Six-bit armor
+
+A format with flag bit 2 (`armor sixbit`, engine-spec 0.14; the compiler
+requires `bit_order msb` with it) reads and writes its message as armored
+text, one byte a character.
+
+- Decode: every character is checked first; one outside `0` to `W` and
+  `` ` `` to `w` is `malformed-wire`. The message is 6 bits a character, most
+  significant first, read in place: the engine never copies it. In the fixed
+  layout the input must reach every bit of the lines in force that are not
+  `optional` (the decode need of the BODY and KIND extents), not whole words;
+  a group's items are checked as they are read. In the sequential layout the
+  end of the message is the last bit of the last character.
+- Encode: the message is laid out as for bytes, then its first `L` bits,
+  with zero bits to a multiple of 6, are written over the output buffer as
+  characters, the last character first, so no second buffer is needed. In
+  the sequential layout `L` is the cursor after the last line. In the fixed
+  layout `L` is the furthest of: the decode need of the BODY and of the
+  selected KIND (every line but the `optional` fields, the lines the plan
+  left out included), the end of the groups' items and count fields, and each
+  `optional` field that writes a value, a default or a sentinel.
+- `sixbit` (FIELD transform 8, `len` a multiple of 6 from 6 to 1530): decode
+  gives a text whose characters are read from the input when used (each six
+  bits, in the format's bit order: 0 to 31 as `@` to `_`, 32 to 63 as space
+  to `?`), less the trailing `@` (with `trim`, `@` and space). Encode writes
+  each character's six bits, padded with `@`; a character outside 0x20 to
+  0x5F, or a text longer than the field, is `transform-encode`. It is valid
+  with either armor.
 
 Order inside a block. A BODY holds its DEFAULT operations, then its common
 lines, then its KIND blocks. A KIND holds its WHEN, REQ and DEFAULT
@@ -283,6 +316,7 @@ feature refuses a plan that uses it (`bad-plan`).
 |---|---|
 | `bits` wire, fixed layout: `word_bytes`, `bit_order`, fields past their word (0.2, 0.5) | Built |
 | `uint`, `twos`, `linscale`, `uscale`, `sscale` with a decimal or fraction factor, `f32`, `f64`, `ascii` | Built |
+| `armor sixbit` and the `sixbit` transform (0.14), fixed and sequential layout | Built |
 | kinds: `kind`, `when`, `requires`, common lines; slicing to named kinds | Built |
 | `const`, `default`, `map` / `via`, `typemap`, `swap`, `trim`, `optional` (0.6) | Built |
 | several lines for one key; overlapping lines | Built |
@@ -312,7 +346,7 @@ feature refuses a plan that uses it (`bad-plan`).
 | `length-plus-range` | a `plus` outside 32 bits |
 | `value-range`, `table-overflow` | an offset, count or table index beyond what an entry holds; more than 255 sentinels on one field |
 | `unknown-format`, `unknown-kind`, `unknown-key`, `bad-arguments` | a name the inputs do not have |
-| `unsupported-feature` | a pack line of the specification that the device profile does not implement. Refused this way: `sixbit` and `armor sixbit` (spec 0.14), and the bits transforms of spec 0.15 (`uiscale`, `siscale`, `smag`, `smscale`, `f32scale`, `f64scale`, `chars`, `octal`), and the derive functions of spec 0.16 (`sec_of`, `ms_of`, `deg`, `add`, the distance and ECEF functions and the others of its table) when a conversion needs one |
+| `unsupported-feature` | a pack line of the specification that the device profile does not implement. Refused this way: the bits transforms of spec 0.15 (`uiscale`, `siscale`, `smag`, `smscale`, `f32scale`, `f64scale`, `chars`, `octal`), and the derive functions of spec 0.16 (`sec_of`, `ms_of`, `deg`, `add`, the distance and ECEF functions and the others of its table) when a conversion needs one |
 | `bad-pack`, `bad-model` | text the compiler cannot read; it compiles packs the reference engine loads and does not repeat that engine's load checks |
 
 The text wires are out of scope for the device profile. A text format needs a

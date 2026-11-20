@@ -23,7 +23,7 @@ to build time:
 | Formats and kinds held | every pack loaded | the formats and kinds named when the plan is compiled |
 | Model keys | names | small integers; names only in an optional debug section |
 | Memory | allocates | caller's buffers, fixed size |
-| Wires | `xml`, `geojson`, `json`, `protobuf`, `bits` | `bits` only |
+| Wires | `xml`, `geojson`, `json`, `protobuf`, `bits` | `bits` only, as bytes or as six-bit armored text |
 | Needs | a standard library | `core` only: `#![no_std]`, no allocator, no dependency, `forbid(unsafe_code)` |
 
 ## What it is not
@@ -88,6 +88,11 @@ below, not by sharing that engine's code.
 `build.rs` compiles the plan, `src/lib.rs` exports
 `gt_rid_location_to_cat062`, and `include/gt_example.h` is the header.
 
+A format with `armor sixbit` (spec 0.14) takes and gives its message as the
+armored text itself, one byte a character: `convert` reads the characters of
+`message` and writes characters to `out`, which needs one byte for each six
+bits of the message.
+
 A plan may also hold one format only. `--from` alone gives a decode-only plan
 (wire to values, read with `Session::get`); `--to` alone gives an encode-only
 plan (values set with `Session::put_int`, `put_float`, `put_text` and
@@ -103,6 +108,8 @@ The blob layout, the operation table and the full list are in
 |---|---|
 | `bits` wire, fixed layout: words, `bit_order`, fields past their word, `optional` | Built |
 | Transforms `uint`, `twos`, `linscale`, `uscale`, `sscale`, `f32`, `f64`, `ascii`; `swap`, `trim` | Built |
+| Six-bit armor (spec 0.14): `armor sixbit`, fixed and sequential layout, and the `sixbit` transform with either armor | Built |
+| The value transforms of spec 0.15 (`uiscale`, `siscale`, `smag`, `smscale`, `f32scale`, `f64scale`, `chars`, `octal`) | Not built; refused as `unsupported-feature` |
 | Kinds: `kind`, `when`, `requires`; a plan compiled for some kinds of a format | Built |
 | `const`, `default`, `map` and `via`, `typemap`, `also` | Built |
 | `absent` field option (absent-value sentinels, spec 0.9): fixed and sequential layout, `also`, groups, `optional`, presence | Built |
@@ -142,53 +149,59 @@ runs, in one of three ways:
 
 | Group | What the device does | Compared with | Vectors | Pass |
 |---|---|---|---|---|
-| bits to bits | converts the input | the vector's `expect` byte for byte, or its `expect_error` kind; the decoded values with the reference engine's and with the vector's `model`, `"@absent"` included | 8,108 | 8,108 |
-| bits to text | decodes the input | every value, list, item and kind the reference engine decodes; the vector's `model`, `"@absent"` included | 142 | 142 |
-| text to bits | takes the values the reference engine decodes from the text side, fills the context, derives, encodes | the vector's `expect` byte for byte, or its `expect_error` kind | 175 | 175 |
+| bits to bits | converts the input | the vector's `expect` byte for byte, or its `expect_error` kind; the decoded values with the reference engine's and with the vector's `model`, `"@absent"` included | 7,836 | 7,836 |
+| bits to text | decodes the input | every value, list, item and kind the reference engine decodes; the vector's `model`, `"@absent"` included | 139 | 139 |
+| text to bits | takes the values the reference engine decodes from the text side, fills the context, derives, encodes | the vector's `expect` byte for byte, or its `expect_error` kind | 185 | 185 |
 
-Measured. 9 vectors with a `bits` side do not run, each for a reason the test
-states and checks: 7 of `conformance-malformed-bits`, whose input is hex text
-that is not well formed (ruling 36 of 0.8), because the device takes bytes, not
-hex text; and 2 of `conformance-limit-bits`, whose message holds more list
-items than the proof's scratch (`scratch-full`, below). Any other refusal fails
+Measured. 805 vectors with a `bits` side do not run, each for a reason the
+test states and checks: 7 of `conformance-malformed-bits`, whose input is hex
+text that is not well formed (ruling 36 of 0.8), because the device takes
+bytes, not hex text; 2 of `conformance-limit-bits`, whose message holds more
+list items than the proof's scratch (`scratch-full`, below); and 796 whose
+plan the compiler refuses as `unsupported-feature`, because a pack of the
+conversion uses a value transform of spec 0.15 (by the first transform the
+compiler meets: `uiscale` 608, `chars` 176, `smag` 12). Any other refusal fails
 the test. By pack that owns the vector:
 
 | Pack | bits to bits | bits to text | text to bits |
 |---|---|---|---|
-| `adsb` | 50 | | |
-| `adsb-df18` | 40 | | |
-| the 342 `ardupilot-log-*` packs | 343 | 7 | |
-| `asterix-cat062` | 18 | 2 | |
-| `asterix-cat062-full` | 9 | 1 | |
-| the 28 other `asterix-cat*` packs | 179 | 7 | |
-| `canonical-track-v2` | | | 21 |
-| the 5 `ccsds-*` packs | 33 | | |
-| `conformance-absent-bits`, `-bits-lsb`, `-seq`, `-seq-also`, `conformance-numbers-absent` | 14 | 3 | |
-| `conformance-absent-json` | | | 4 |
-| `conformance-groups-bits`, `-msb`, `-var`, `-rulings-bits` | 20 | 7 | |
-| `conformance-groups-json`, `-protobuf`, `-xml` | | | 12 |
-| the 4 `conformance-limit-*` packs | 8 | 3 | |
-| `conformance-malformed-bits` | 6 | | |
-| `conformance-numbers`, `-numbers-f64` | | 26 | 4 |
-| `conformance-rules-bits`, `-lsb`, `conformance-rulings-bits` | 13 | 5 | |
-| `conformance-scale`, `-scale-widths-lsb`, `-scale-widths-msb` | 128 | 12 | |
-| `conformance-scale-json` | | | 70 |
-| `conformance-seq-*` (the 15 sequential bits packs) | 77 | 20 | |
-| `conformance-seq-json` | | | 39 |
-| the 250 `cyphal-*` packs | 304 | | |
-| the 91 `dbc-*` packs | 5,298 | 2 | |
-| `demo-bits`, `-bytes`, `-msb`, `demo-kinds-bits` | 33 | 7 | |
-| `demo-track-json` | | | 1 |
-| `drip` | 9 | 1 | |
-| the 133 `dronecan-*` packs | 143 | 5 | |
-| `gdl90` | 17 | 2 | |
-| `geojson` | | | 24 |
-| `mavlink2` | 362 | 7 | |
-| the 13 `mavlink2-*` dialect packs | 181 | 5 | |
-| `nmea2000` | 475 | 6 | |
-| `nmea2000-seq` | 33 | 1 | |
-| the 301 `px4-ulog-*` packs | 303 | 9 | |
-| `remote-id` | 12 | 4 | |
+| `ais` | 47 | 9 |  |
+| `ais-binary` | 29 | 3 |  |
+| the 342 `ardupilot-log-*` packs | 343 | 7 |  |
+| `asterix-cat062` | 18 | 2 |  |
+| the 20 other `asterix-cat*` packs | 124 | 1 |  |
+| `canonical-track-v2` |  |  | 14 |
+| the 5 `ccsds-*` packs | 33 |  |  |
+| `conformance-absent-bits`, `-bits-lsb`, `-seq`, `-seq-also`, `conformance-numbers-absent` | 14 | 3 |  |
+| `conformance-absent-json` |  |  | 4 |
+| `conformance-armor`, `conformance-armor-absent`, `conformance-armor-seq`, `conformance-sixbit-lsb` | 39 | 4 |  |
+| `conformance-groups-bits`, `-msb`, `-var`, `-rulings-bits` | 20 | 7 |  |
+| `conformance-groups-json`, `-protobuf`, `-xml` |  |  | 12 |
+| `conformance-json` |  |  | 5 |
+| the 4 `conformance-limit-*` packs | 8 | 3 |  |
+| `conformance-malformed-bits` | 6 |  |  |
+| `conformance-numbers`, `-numbers-f64` |  | 26 | 4 |
+| `conformance-rules-bits`, `-lsb`, `conformance-rulings-bits` | 13 | 5 |  |
+| `conformance-scale`, `-scale-widths-lsb`, `-scale-widths-msb` | 128 | 12 |  |
+| `conformance-scale-json` |  |  | 70 |
+| `conformance-seq-*` (the 15 sequential bits packs) | 77 | 20 |  |
+| `conformance-seq-json` |  |  | 43 |
+| `cot-xml` |  |  | 1 |
+| the 250 `cyphal-*` packs | 304 |  |  |
+| the 91 `dbc-*` packs | 5,298 | 2 |  |
+| `demo-bits`, `-bytes`, `-msb`, `demo-kinds-bits` | 33 | 7 |  |
+| `demo-track-json` |  |  | 1 |
+| `drip` | 9 | 1 |  |
+| the 132 `dronecan-*` packs | 142 | 5 |  |
+| `gdl90` | 17 | 2 |  |
+| `geojson` |  |  | 31 |
+| the 11 `mavlink2-*` dialect packs | 76 | 1 |  |
+| the 15 network protocol header packs (`arp-*`, `bfd-*`, `dns-*`, `gre-*`, `icmp-*`, `igmpv2`, `ipv4-*`, `ipv6-*`, `mpls-*`, `rtcp-*`, `rtp-*`, `sctp-*`, `tcp-*`, `udp-*`, `vxlan-*`) | 94 |  |  |
+| `nmea2000` | 475 | 6 |  |
+| `nmea2000-seq` | 33 | 1 |  |
+| the 298 `px4-ulog-*` packs | 300 | 7 |  |
+| `remote-id` | 12 | 4 |  |
+| the 22 `sbp-*` packs | 144 | 1 |  |
 
 Every vector in a row passes. In the text-to-bits group the model values come
 from the reference engine's decode of the text side, because a vector's
@@ -197,22 +210,27 @@ from the reference engine's decode of the text side, because a vector's
 Plans compiled for one kind of a format, over nine formats (`remote-id`,
 `adsb`, `demo-kinds-bits`, `demo-bits-bytes`, `demo-bits-msb`,
 `conformance-seq-kinds`, `conformance-seq-msb`, and up to twelve kinds each of
-`mavlink2` and `nmea2000`): 77 one-kind plans; 104 vector messages of the
-compiled kind converted to the vector's bytes; 11,608 messages of other kinds
-were refused with `no-kind`. The compiler refused no kind. Measured.
+`mavlink2` and `nmea2000`): 33 one-kind plans; 43 vector messages of the
+compiled kind converted to the vector's bytes; 5,821 messages of other kinds
+were refused with `no-kind`. 44 kinds, of `adsb` and `mavlink2`, use a value
+transform of spec 0.15 and are refused by the compiler as
+`unsupported-feature`. Measured.
 
 The example plan of `embedded/example-bare`, with its `Scratch<12>`, gives the
 reference engine's bytes on the four Remote ID Location vectors. Measured.
 
 Fuzz-style runs, with a seeded generator, through the same-format plan of each
-of the 1,214 `bits` formats and four cross-format plans (1,218 plans):
+of the 1,238 `bits` formats the profile compiles (23 of the 1,261 use a value
+transform of spec 0.15) and four cross-format plans (1,242 plans). For a
+source with six-bit armor, half the inputs are mapped onto armor characters,
+so that they reach the lines:
 
 | Run | Inputs | Result |
 |---|---|---|
-| Random bytes, and vector inputs with bits flipped, bytes replaced, tails cut or extended | 13,398,000 | no panic: 6,853,495 converted, 6,544,505 refused with a named error |
-| The same kinds of input, device against reference engine | 1,827,000 | 935,848 equal outputs, 891,060 equal error kinds, 92 beyond the device's buffers, 0 differences |
-| Every proper prefix of every same-format vector input | 178,228 | 177,253 refused with the reference engine's error kind; 975 accepted with the reference engine's bytes (the prefix is itself a message of the format); 0 differences |
-| Plan blobs with one to four bytes changed | 2,436,000 | no panic; 1,514,112 still parsed and were run |
+| Random bytes, and vector inputs with bits flipped, bytes replaced, tails cut or extended | 13,662,000 | no panic: 6,982,416 converted, 6,679,584 refused with a named error |
+| The same kinds of input, device against reference engine | 1,863,000 | 953,500 equal outputs, 909,387 equal error kinds, 113 beyond the device's buffers, 0 differences |
+| Every proper prefix of every same-format vector input | 154,113 | 152,657 refused with the reference engine's error kind; 1,456 accepted with the reference engine's bytes (the prefix is itself a message of the format); 0 differences |
+| Plan blobs with one to four bytes changed | 2,484,000 | no panic; 1,540,703 still parsed and were run |
 
 Measured in a build with overflow checks and debug assertions on.
 
@@ -230,12 +248,12 @@ workflow above: 68 operations, 14 keys, nesting 3.
 
 | | Bytes |
 |---|---|
-| Plan blob (`.rodata`) | 1,728 |
-| Code (`.text`), no derive features | 29,132 |
-| Code (`.text`), with `sqrt` and `trig` | 33,236 |
+| Plan blob (in `.rodata`, 1,758 bytes in all) | 1,752 |
+| Code (`.text`), no derive features | 30,580 |
+| Code (`.text`), with `sqrt` and `trig` | 34,804 |
 | Zero-initialised data of the measurement image (`.bss`) | 81 |
 
-Of the 29,132 bytes of code, about 22,500 are the engine and the C wrapper,
+Of the 30,580 bytes of code, about 23,900 are the engine and the C wrapper,
 and about 6,600 are support routines the compiler adds for this target:
 double-precision arithmetic in software, 64-bit division and memory copy. The
 engine computes in doubles because the reference engine does; on a core with a
@@ -252,9 +270,9 @@ The plan blob by table:
 | `if` conditions | 40 |
 | value tables | 8 |
 | keys | 56 |
-| derive lines and their arguments | 0 |
+| derive lines and their arguments | 10 |
 | plan | 12 |
-| carry (the conversion plan) | 96 |
+| carry (the conversion plan) | 108 |
 
 Working memory for this plan: it needs a `Scratch<9>`; the example takes a
 `Scratch<12>` of 384 bytes, so a pack change that adds a value or two does not
@@ -265,16 +283,18 @@ Stack. `embedded/elfsize.py` bounds the stack from the disassembly of the
 linked image: the bytes each function pushes and reserves, added along the
 deepest chain of calls, with the functions that walk nested blocks counted
 once per level of nesting. For this plan (nesting 3, counted as 4) the bound
-is 3,484 bytes from the entry of `gt_rid_location_to_cat062`; for the deepest
-plan the compiler accepts (nesting 12) it is 6,428 bytes. This is a bound
+is 3,476 bytes from the entry of `gt_rid_location_to_cat062`; for the deepest
+plan the compiler accepts (nesting 12) it is 6,420 bytes. This is a bound
 computed from the image, not a measurement on a running device.
 `elfsize.py` needs a disassembler that reads ARM images: LLVM's
 `llvm-objdump`, or the one `rustup component add llvm-tools` installs.
 `GT_DEPTH=4 embedded/measure.sh` gives the bound for nesting counted as 4.
 
-For comparison, the whole `mavlink2` pack compiled both ways with names is
-262,392 bytes (256 KiB). The same pack compiled for the one kind
-`global_position_int`, without names, is 2,472 bytes.
+For comparison, the whole `nmea2000` pack (473 kinds) compiled both ways with
+names is 161,356 bytes, and the whole `ais` pack (22 kinds, six-bit armor)
+10,352 bytes. `nmea2000` compiled for the one kind `pgn129025`, without names,
+is 19,992 bytes: the kinds before it stay in the plan as selectors, so that a
+message of another kind is refused and not read as this one.
 
 ## What is not supported and not done
 
