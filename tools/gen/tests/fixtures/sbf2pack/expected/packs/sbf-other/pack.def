@@ -20,3 +20,15 @@ requires  sbfother.quality_tow sbfother.quality_pdop
 field     sbfother.quality_tow 0:32:32 uint
 field     sbfother.quality_pdop 0:64:16 uscale:1/100
 const     0:80:16 0
+
+kind      track
+when      0:0:13 4101
+requires  sbfother.track_tow sbfother.track_reserved
+field     sbf.length 0:16:16 uint
+field     sbfother.track_tow 0:32:32 uint
+field     sbfother.track_reserved 0:72:24 uint
+group     sbfother.track_sv 0:96 item 32 count 0:64:8
+  field   sbfother.track_sv_svid 0:0:8 uint
+  field   sbfother.track_sv_flags 0:8:8 uint
+  field   sbfother.track_sv_level 0:16:16 uint
+end

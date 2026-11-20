@@ -180,3 +180,21 @@ requires  ubxlog.log_retrievebatch_set_version ubxlog.log_retrievebatch_set_send
 field     ubxlog.log_retrievebatch_set_version 0:48:8 uint
 field     ubxlog.log_retrievebatch_set_sendmonfirst 0:56:1 uint
 field     ubxlog.log_retrievebatch_set_reserved0 0:64:16 uint
+
+kind      log_retrievestring
+when      0:24:8 13
+requires  ubxlog.log_retrievestring_entryindex ubxlog.log_retrievestring_version ubxlog.log_retrievestring_reserved0
+field     ubxlog.payload_length 0:32:16 uint
+field     ubxlog.log_retrievestring_entryindex 0:48:32 uint
+field     ubxlog.log_retrievestring_version 0:80:8 uint
+field     ubxlog.log_retrievestring_reserved0 0:88:8 uint
+field     ubxlog.log_retrievestring_year 0:96:16 uint
+field     ubxlog.log_retrievestring_month 0:112:8 uint
+field     ubxlog.log_retrievestring_day 0:120:8 uint
+field     ubxlog.log_retrievestring_hour 0:128:8 uint
+field     ubxlog.log_retrievestring_minute 0:136:8 uint
+field     ubxlog.log_retrievestring_second 0:144:8 uint
+field     ubxlog.log_retrievestring_reserved1 0:152:8 uint
+group     ubxlog.log_retrievestring_byte 0:176 item 8 count 0:160:16
+  field   ubxlog.log_retrievestring_byte_bytes 0:0:8 uint
+end

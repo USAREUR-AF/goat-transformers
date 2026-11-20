@@ -5,3 +5,4 @@ version       0.1.0
 distribution  public
 source        "https://github.com/semuconsulting/pysbf2 src/pysbf2/sbftypes_core.py at v1.0.7 (commit 38eb890ddfae29f55a8cdfe4029033e2077767fc)"
 key  revision  int  -  "SBF block header: the block revision, the high 3 bits of the block ID"
+key  length  int  -  "SBF block header: the block length in bytes, a field of a block with a counted group"

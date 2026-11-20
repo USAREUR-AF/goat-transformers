@@ -1,0 +1,11 @@
+{
+  "name": "ubx-cfg-roundtrip-cfg_esrc",
+  "from": "ubx-cfg",
+  "to": "ubx-cfg",
+  "input": "b56206604c009f0276166ee30200427de069b7ddf5002c3e0b18a19e202f16ff8b5f00c060347520760bea808b2243b801001780c3558ce0d86c0141ee0376a1031beb016062d5c243204a235977bf836e0e",
+  "expect": "b56206604c009f0276166ee30200427de069b7ddf5002c3e0b18a19e202f16ff8b5f00c060347520760bea808b2243b801001780c3558ce0d86c0141ee0376a1031beb016062d5c243204a235977bf836e0e",
+  "model": {
+    "@kind": "cfg_esrc",
+    "ubxcfg.cfg_esrc_source.#": "2"
+  }
+}

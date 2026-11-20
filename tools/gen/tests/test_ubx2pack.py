@@ -163,12 +163,18 @@ class Layout(UbxCase):
         self.assertLess(first, self.nav.index("kind      nav_variant\n"))
 
     def test_what_is_not_built(self):
-        for row in ("| NAV-COUNTED | GET | 0x01 0x51 | a group repeated by field `numCh` |",
+        for row in (
                     "| NAV-TEXT | GET | 0x01 0x52 | text that runs to the end of the payload |",
                     "| NAV-MIXED | SET | 0x01 0x50 | the same class, id and payload length as kind `nav_mixed` |",
                     "| NAV-PVT | POLL | 0x01 0x07 | an empty payload: a kind needs at least one field |"):
             self.assertIn(row, self.md)
         self.assertFalse(os.path.exists(os.path.join(self.root, "packs", "ubx-foo")))
+
+    def test_a_counted_group_ending_the_payload(self):
+        self.assertIn("kind      nav_counted\nwhen      0:24:8 81\nfield     ubxnav.payload_length 0:32:16 uint\n"
+                      "group     ubxnav.nav_counted_ch 0:56 item 8 count 0:48:8\n"
+                      "  field   ubxnav.nav_counted_ch_svid 0:0:8 uint\nend\n", self.nav)
+        self.assertLess(self.nav.index("kind      nav_posllh"), self.nav.index("kind      nav_counted"))
 
     def test_vectors_decode_through_the_pack(self):
         pack = self.pack(self.root, "ubx-nav", "ubxnav")

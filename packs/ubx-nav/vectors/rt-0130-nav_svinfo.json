@@ -1,0 +1,11 @@
+{
+  "name": "ubx-nav-roundtrip-nav_svinfo",
+  "from": "ubx-nav",
+  "to": "ubx-nav",
+  "input": "b562013020002498920a0203d23f3eb3aa00453a2f7da45de23f138855051a0f04807960c52b",
+  "expect": "b562013020002498920a0203d23f3eb3aa00453a2f7da45de23f138855051a0f04807960c52b",
+  "model": {
+    "@kind": "nav_svinfo",
+    "ubxnav.nav_svinfo_channel.#": "2"
+  }
+}

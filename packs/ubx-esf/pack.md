@@ -41,6 +41,8 @@ A definition is the receiver's output (GET), a command to it (SET, kind suffix
 |---|---|---|---|---|
 | `esf_alg` | ESF-ALG | GET | 0x10 0x14 | 16 |
 | `esf_ins` | ESF-INS | GET | 0x10 0x15 | 36 |
+| `esf_status` | ESF-STATUS | GET | 0x10 0x10 | 16 + 4 per item of `ubxesf.esf_status_sens` |
+| `esf_meas_set` | ESF-MEAS | SET | 0x10 0x02 | 8 + 4 per item of `ubxesf.esf_meas_set_meas` |
 
 ## What is mapped
 
@@ -55,6 +57,12 @@ A definition is the receiver's output (GET), a command to it (SET, kind suffix
 | a group with a fixed repeat count (`_grp`) | its fields once per repeat, `_01`, `_02`, … appended | as the field |
 | `A<n>` (a byte array) | one `uint` byte per element, `_01` … appended | int |
 | an unsigned integer wider than 8 bytes | 8-byte `uint` parts, `_01` … appended, the last part shorter | int |
+| a group repeated by an unsigned field before it, ending the payload | a `group` of `item` bits counted by that field (`count <locator>`); the field has no key of its own | a list |
+
+A kind with a counted group has no length `when`: encode writes
+`ubxesf.payload_length` as the entity holds it, so a frame encoded from another
+format needs it set (a length derived from the items is not in the pack
+language). Such kinds come after the fixed-length kinds, which select first.
 
 Keys are `ubxesf.<kind>_<field>` in lower case. A scale the source states is
 applied; the source states no unit, so the module declares none (`-`).
@@ -92,17 +100,16 @@ Definitions with no kind:
 | ESF-CAL | GET | 0x10 0x04 | a group repeated to the end of the payload |
 | ESF-MEAS | GET | 0x10 0x02 | a group repeated to the end of the payload |
 | ESF-RAW | GET | 0x10 0x03 | a group repeated to the end of the payload |
-| ESF-STATUS | GET | 0x10 0x10 | a group repeated by field `numSens` |
-| ESF-MEAS | SET | 0x10 0x02 | a group repeated by field `numMeas` |
 | ESF-RESETALG | SET | 0x10 0x13 | an empty payload: a kind needs at least one field |
 | ESF-ALG | POLL | 0x10 0x14 | an empty payload: a kind needs at least one field |
 | ESF-CAL | POLL | 0x10 0x04 | an empty payload: a kind needs at least one field |
 | ESF-INS | POLL | 0x10 0x15 | an empty payload: a kind needs at least one field |
 | ESF-STATUS | POLL | 0x10 0x10 | an empty payload: a kind needs at least one field |
 
-5 of them have a variable part: a group repeated by a count field or to the end
-of the payload, or text that runs to the end. Stating one needs a repeated group
-counted by a field, or a trailing field of the remaining length.
+3 of them have a variable part the pack cannot state: a group that does not
+end the payload or whose items vary, a group repeated to the end of the
+payload, or text that runs to the end. Stating one needs a group counted by a
+field that is not last, or a trailing field of the remaining length.
 
 - The checksum (see The message), and frames whose payload length is not the
   definition's fixed length: such a frame selects no kind (`no-kind`).
@@ -112,6 +119,7 @@ counted by a field, or a trailing field of the remaining length.
 ## Vectors
 
 `vectors/rt-<class><id>-<kind>.json`: one same-format round trip per kind, the
-frame written by a UBX serializer in the generator from sample values.
+frame written by a UBX serializer in the generator from sample values; a kind
+with a counted group has one with two items and one with none (`-no-items`).
 
-2 vectors.
+6 vectors.

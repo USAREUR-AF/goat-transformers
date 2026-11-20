@@ -1,0 +1,11 @@
+{
+  "name": "ubx-nav-roundtrip-nav_sig-no-items",
+  "from": "ubx-nav",
+  "to": "ubx-nav",
+  "input": "b562014308003bbae85a1200e961",
+  "expect": "b562014308003bbae85a1200e961",
+  "model": {
+    "@kind": "nav_sig",
+    "ubxnav.nav_sig_sig.#": "0"
+  }
+}

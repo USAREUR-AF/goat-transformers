@@ -1,0 +1,11 @@
+{
+  "name": "ubx-mon-roundtrip-mon_hw3",
+  "from": "ubx-mon",
+  "to": "ubx-mon",
+  "input": "b5620a372200cd02025333300000000000000000c0607400000080d785a8ae02a2175aab590177ec",
+  "expect": "b5620a372200cd02025333300000000000000000c0607400000080d785a8ae02a2175aab590177ec",
+  "model": {
+    "@kind": "mon_hw3",
+    "ubxmon.mon_hw3_pin.#": "2"
+  }
+}

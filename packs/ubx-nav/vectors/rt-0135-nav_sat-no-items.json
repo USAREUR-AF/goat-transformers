@@ -1,0 +1,11 @@
+{
+  "name": "ubx-nav-roundtrip-nav_sat-no-items",
+  "from": "ubx-nav",
+  "to": "ubx-nav",
+  "input": "b5620135080003928f6bda00b139",
+  "expect": "b5620135080003928f6bda00b139",
+  "model": {
+    "@kind": "nav_sat",
+    "ubxnav.nav_sat_sv.#": "0"
+  }
+}

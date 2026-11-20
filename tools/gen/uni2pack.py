@@ -59,6 +59,14 @@ HEADER = [("cpuidle", 0, 8), ("msgid", 8, 16), ("length", 24, 16), ("timeref", 4
           ("reserved", 136, 8), ("leapsecond", 144, 8), ("delay", 152, 16)]
 PAYLOAD_BIT0 = 168
 MAX_REQUIRES = 3
+GROUP_SAMPLE_ITEMS = 2
+# Messages whose fields pyunigps decodes by rules in its code (unimessage.py)
+# that the definition does not state: the pack would give those fields a
+# different value, so the message gets no kind.
+CODE_DECODED = {
+    "OBSVMCMP": "pyunigps decodes three of its fields by rules in its code that the definition does not state "
+                "(a lookup table for psrstd, 1 added to adrstd before its scale, 20 added to cno)",
+}
 LICENSE_LINE = "BSD 3-Clause, copyright (c) 2020 semuadin (Steve Smith)"
 INT64_MAX = (1 << 63) - 1
 
@@ -199,7 +207,8 @@ def unpack_type(src, v, where):
 def flatten(src, defn, bitpos, where, leaves):
     """Append the leaves of `defn` from body bit `bitpos`; the bit after them."""
     for key, v in defn.items():
-        if key.endswith("_bit"):
+        if key.endswith("_bit") or (isinstance(v, tuple) and len(v) == 2 and isinstance(v[0], Ref)
+                                    and isinstance(v[1], dict) and str(src.type_name(v[0])).startswith("X")):
             ty, _ = unpack_type(src, v[0], where)
             size = width(ty)
             if not ty.startswith("X") or size is None:
@@ -217,6 +226,8 @@ def flatten(src, defn, bitpos, where, leaves):
             bitpos += 8 * size
         elif isinstance(v, tuple) and len(v) == 2 and isinstance(v[1], dict):
             spec = v[0]
+            if isinstance(spec, Ref):
+                spec = src.type_name(spec)     # a named count, such as FREQNO
             if isinstance(spec, tuple):
                 raise Variable("a part present only when field `%s` is %r" % spec)
             if isinstance(spec, int) and not isinstance(spec, bool):
@@ -285,14 +296,64 @@ Line = collections.namedtuple("Line", "key pos bits tr leaf")
 
 
 class KindPlan:
-    def __init__(self, name, msg, num, size, lines):
+    def __init__(self, name, msg, num, size, lines, group=None):
         self.name, self.msg, self.num, self.size, self.lines = name, msg, num, size, lines
+        self.group = group             # a Group when the payload ends in a counted group, size then None
         self.requires = []
+
+
+Group = collections.namedtuple("Group", "key name start item_bits count_pos count_bits lines")
+
+
+def tail_group(src, defn, where):
+    """When the definition ends in a group counted by an unsigned field before
+    it, and both the part before and one item have a fixed layout: (head leaves,
+    the bit after them, group name, the count leaf, item leaves, item bits).
+    None when the definition does not end in such a group; Variable with the
+    reason when it does but the pack cannot state it."""
+    items = list(defn.items())
+    if not items:
+        return None
+    gname, v = items[-1]
+    if gname.endswith("_bit") or not (isinstance(v, tuple) and len(v) == 2 and isinstance(v[1], dict)):
+        return None
+    count = src.type_name(v[0]) if isinstance(v[0], Ref) else v[0]
+    if not isinstance(count, str) or count == "None" or count == src.consts.get("FREQNO"):
+        return None
+    head = collections.OrderedDict(items[:-1])
+    leaves = []
+    nbits = flatten(src, head, PAYLOAD_BIT0, where, leaves)
+    found = [l for l in leaves if l.name == count]
+    if len(found) != 1 or found[0].kind != "u" or found[0].scale is not None:
+        raise Variable("a group counted by `%s`, which is not one unsigned field before it" % count)
+    body = []
+    try:
+        ibits = flatten(src, v[1], 0, where, body)
+    except Variable as e:
+        raise Variable("a group counted by field `%s` whose items vary: %s" % (count, e))
+    if not body:
+        raise Variable("a group counted by field `%s` with empty items" % count)
+    return leaves, nbits, gname, found[0], body, ibits
+
+
+def transform_of(leaf):
+    """(transform, model type, scaled) of a leaf."""
+    if leaf.kind == "ascii":
+        return "ascii", "string", False
+    if leaf.kind in ("f32", "f64") and leaf.scale not in (None, 1):
+        return "%sscale:%s" % (leaf.kind, factor_text(leaf.scale)), "float", True
+    if leaf.kind in ("f32", "f64"):
+        return leaf.kind, "float", False
+    if leaf.scale is not None and leaf.scale != 1:
+        if leaf.scale.denominator == 1:
+            return ("siscale:" if leaf.kind == "s" else "uiscale:") + factor_text(leaf.scale), "int", True
+        return ("sscale:" if leaf.kind == "s" else "uscale:") + factor_text(leaf.scale), "float", True
+    return ("twos" if leaf.kind == "s" else "uint"), "int", False
 
 
 class Plan:
     def __init__(self, src):
-        self.kinds, self.keys = [], collections.OrderedDict()
+        self.kinds, self.keys, self.lists = [], collections.OrderedDict(), collections.OrderedDict()
         self.not_built = []            # (message, ID, reason)
         self.scaled = []
         for f, _, _ in HEADER:
@@ -302,24 +363,57 @@ class Plan:
             if not isinstance(defn, dict):
                 raise GenError("%s: not a dictionary" % msg)
             self.add(src, msg, defn)
+        # a kind with a counted group has no length `when`: it goes after the
+        # fixed-length kinds, which select first
+        self.kinds = [k for k in self.kinds if not k.group] + [k for k in self.kinds if k.group]
         own = MODULE + "."
         usage = collections.Counter(l.key for k in self.kinds for l in k.lines)
         for k in self.kinds:
-            raw = [l.key for l in k.lines if l.key.startswith(own)]
+            raw = [l.key for l in k.lines if l.key.startswith(own) and l.leaf is not None]
             ranked = sorted(range(len(raw)), key=lambda i: (usage[raw[i]], i))
             k.requires = [raw[i] for i in sorted(ranked[:MAX_REQUIRES])]
+
+    def leaf_lines(self, prefix, leaves, msg, where_kind, skip=None):
+        lines, seen = [], set()
+        for leaf in leaves:
+            if leaf is skip:
+                continue
+            base = "%s_%s" % (prefix, slug(leaf.name))
+            name, n = base, 2
+            while name in seen:
+                name, n = "%s_%d" % (base, n), n + 1
+            seen.add(name)
+            tr, typ, scaled = transform_of(leaf)
+            if scaled:
+                self.scaled.append((where_kind, leaf.name, tr))
+            if name in self.keys or name in self.lists:
+                raise GenError("%s: key %s twice" % (msg, name))
+            self.keys[name] = (typ, msg, leaf.name)
+            lines.append(Line("%s.%s" % (MODULE, name), leaf.bitpos, leaf.bits, tr, leaf))
+        return lines
 
     def add(self, src, msg, defn):
         num = src.numbers.get(msg)
         if num is None:
             self.not_built.append((msg, None, "no message ID in UNI_MSGIDS"))
             return
-        leaves = []
+        if msg in CODE_DECODED:
+            self.not_built.append((msg, num, CODE_DECODED[msg]))
+            return
+        leaves, group = [], None
         try:
             nbits = flatten(src, defn, PAYLOAD_BIT0, msg, leaves)
         except Variable as e:
-            self.not_built.append((msg, num, str(e)))
-            return
+            try:
+                tail = tail_group(src, defn, msg)
+            except Variable as e2:
+                self.not_built.append((msg, num, str(e2)))
+                return
+            if tail is None:
+                self.not_built.append((msg, num, str(e)))
+                return
+            leaves, nbits, gname, count_leaf, body, ibits = tail
+            group = (gname, count_leaf, body, ibits)
         if not leaves:
             self.not_built.append((msg, num, "an empty payload: a kind needs at least one field"))
             return
@@ -327,39 +421,27 @@ class Plan:
         if size > 0xFFFF:
             raise GenError("%s: payload of %d bytes" % (msg, size))
         kind = slug(msg)
-        lines, seen = [], set()
-        for leaf in leaves:
-            base = "%s_%s" % (kind, slug(leaf.name))
-            name, n = base, 2
-            while name in seen:
-                name, n = "%s_%d" % (base, n), n + 1
-            seen.add(name)
-            if leaf.kind == "ascii":
-                tr, typ = "ascii", "string"
-            elif leaf.kind in ("f32", "f64") and leaf.scale not in (None, 1):
-                tr, typ = "%sscale:%s" % (leaf.kind, factor_text(leaf.scale)), "float"
-                self.scaled.append((kind, leaf.name, tr))
-            elif leaf.kind in ("f32", "f64"):
-                tr, typ = leaf.kind, "float"
-            elif leaf.scale is not None and leaf.scale != 1:
-                if leaf.scale.denominator == 1:
-                    tr, typ = ("siscale:" if leaf.kind == "s" else "uiscale:") + factor_text(leaf.scale), "int"
-                else:
-                    tr, typ = ("sscale:" if leaf.kind == "s" else "uscale:") + factor_text(leaf.scale), "float"
-                self.scaled.append((kind, leaf.name, tr))
-            else:
-                tr, typ = ("twos" if leaf.kind == "s" else "uint"), "int"
-            if name in self.keys:
-                raise GenError("%s: key %s twice" % (msg, name))
-            self.keys[name] = (typ, msg, leaf.name)
-            lines.append(Line("%s.%s" % (MODULE, name), leaf.bitpos, leaf.bits, tr, leaf))
         if any(k.name == kind for k in self.kinds):
             raise GenError("two messages give the kind %s" % kind)
-        for k in self.kinds:
-            if k.num == num and k.size == size:
-                self.not_built.append((msg, num, "the same ID and payload length as kind `%s`" % k.name))
-                return
-        self.kinds.append(KindPlan(kind, msg, num, size, lines))
+        if group is None:
+            for k in self.kinds:
+                if k.num == num and k.size == size:
+                    self.not_built.append((msg, num, "the same ID and payload length as kind `%s`" % k.name))
+                    return
+        lines = self.leaf_lines(kind, leaves, msg, kind, skip=group[1] if group else None)
+        g = None
+        if group:
+            gname, count_leaf, body, ibits = group
+            lname = "%s_%s" % (kind, slug(gname[:-4] if gname.endswith("_grp") else gname))
+            if lname in self.keys or lname in self.lists:
+                raise GenError("%s: list %s collides with a key" % (msg, lname))
+            self.lists[lname] = "message %s, the items of group %s, counted by field %s" % (msg, gname, count_leaf.name)
+            ilines = self.leaf_lines(lname, body, msg, kind)
+            g = Group(MODULE + "." + lname, gname, nbits, ibits, count_leaf.bitpos, count_leaf.bits, ilines)
+            self.keys.setdefault("payload_length", ("int", "header", "length, as the message states it"))
+            lines.insert(0, Line(MODULE + ".payload_length", 24, 16, "uint", None))
+            size = None
+        self.kinds.append(KindPlan(kind, msg, num, size, lines, g))
 
 
 # ------------------------------------------------------------------- emit ---
@@ -392,11 +474,18 @@ def pack_text(plan, sha, tag):
         o.append("")
         o.append("kind      %s" % k.name)
         o.append("when      %s %d" % (loc(8, 16), k.num))
-        o.append("when      %s %d" % (loc(24, 16), k.size))
+        if k.size is not None:
+            o.append("when      %s %d" % (loc(24, 16), k.size))
         if k.requires:
             o.append("requires  %s" % " ".join(k.requires))
         for l in k.lines:
             o.append("field     %s %s %s" % (l.key, loc(l.pos, l.bits), l.tr))
+        if k.group:
+            g = k.group
+            o.append("group     %s 0:%d item %d count %s" % (g.key, g.start, g.item_bits, loc(g.count_pos, g.count_bits)))
+            for l in g.lines:
+                o.append("  field   %s %s %s" % (l.key, loc(l.pos, l.bits), l.tr))
+            o.append("end")
     return "\n".join(o) + "\n"
 
 
@@ -412,6 +501,8 @@ def module_text(plan, sha, tag):
     for name, (typ, msg, fname) in plan.keys.items():
         what = "UNI frame header: field %s" % fname if msg == "header" else "message %s, field %s" % (msg, fname)
         o.append('key  %s  %s  -  "%s"' % (name, typ, what))
+    for name, what in plan.lists.items():
+        o.append('list  %s  "%s"' % (name, what))
     return "\n".join(o) + "\n"
 
 
@@ -439,14 +530,26 @@ def raw_of(leaf, value):
     return int.from_bytes(value.encode("ascii").ljust(leaf.bits // 8, b"\0"), "little")
 
 
-def message_bytes(k, header, values):
-    acc = (k.num << 8) | (k.size << 24)
+def message_bytes(k, header, values, items=()):
+    if k.group:
+        g = k.group
+        size = (g.start - PAYLOAD_BIT0 + len(items) * g.item_bits + 7) // 8
+    else:
+        size = k.size
+    acc = (k.num << 8) | (size << 24)
     for f, pos, n in HEADER:
         if f not in ("msgid", "length"):
             acc |= (header[f] & ((1 << n) - 1)) << pos
     for l in k.lines:
-        acc |= raw_of(l.leaf, values[l.leaf.name]) << l.pos
-    return acc.to_bytes(PAYLOAD_BIT0 // 8 + k.size, "little")
+        if l.leaf is not None:
+            acc |= raw_of(l.leaf, values[l.leaf.name]) << l.pos
+    if k.group:
+        g = k.group
+        acc |= len(items) << g.count_pos
+        for i, item in enumerate(items):
+            for l in g.lines:
+                acc |= raw_of(l.leaf, item[l.leaf.name]) << (g.start + i * g.item_bits + l.pos)
+    return acc.to_bytes(PAYLOAD_BIT0 // 8 + size, "little")
 
 
 def sample(leaf, salt):
@@ -472,11 +575,20 @@ def vector_files(plan):
     files = []
     for i, k in enumerate(plan.kinds):
         header = {f: (k.num * 13 + j * 29 + 7) % (1 << min(n, 31)) for j, (f, _, n) in enumerate(HEADER)}
-        values = {l.leaf.name: sample(l.leaf, k.num * 31 + j * 7 + 3) for j, l in enumerate(k.lines)}
-        data = message_bytes(k, header, values).hex()
-        files.append(("rt-%05d-%s.json" % (k.num, k.name), vector_text([
-            ("name", "%s-roundtrip-%s" % (FORMAT, k.name)), ("from", FORMAT), ("to", FORMAT),
-            ("input", data), ("expect", data), ("model", {"@kind": k.name})])))
+        values = {l.leaf.name: sample(l.leaf, k.num * 31 + j * 7 + 3) for j, l in enumerate(k.lines) if l.leaf}
+        cases = [("", ())]
+        if k.group:
+            items = [{l.leaf.name: sample(l.leaf, k.num * 17 + 101 * (n + 1) + 5 * j) for j, l in enumerate(k.group.lines)}
+                     for n in range(GROUP_SAMPLE_ITEMS)]
+            cases = [("", items), ("-no-items", ())]
+        for suffix, items in cases:
+            data = message_bytes(k, header, values, items).hex()
+            model = collections.OrderedDict([("@kind", k.name)])
+            if k.group:
+                model[k.group.key + ".#"] = str(len(items))
+            files.append(("rt-%05d-%s%s.json" % (k.num, k.name, suffix), vector_text([
+                ("name", "%s-roundtrip-%s%s" % (FORMAT, k.name, suffix)), ("from", FORMAT), ("to", FORMAT),
+                ("input", data), ("expect", data), ("model", model)])))
     return files
 
 
@@ -583,10 +695,24 @@ def decode(pack, data):
     lines = pack.common + kind.lines
     if 8 * len(data) < max(n.start + n.bits for n in lines if n.d in ("when", "field", "const")):
         raise CodecError("malformed-wire")
-    ent = collections.OrderedDict()
+    ent, lists = collections.OrderedDict(), collections.OrderedDict()
     for n in lines:
         if n.d == "field":
             ent[n.key] = decode_value(n, get_bits(data, n.start, n.bits))
+        elif n.d == "group":
+            # a group counted by a field of the message (0.7): `count` items of
+            # `item` bits from `start`, the count read at its locator as unsigned
+            count = get_bits(data, n.count[0], n.count[1])
+            if 8 * len(data) < n.start + count * n.item:
+                raise CodecError("malformed-wire")
+            items = []
+            for i in range(count):
+                base = n.start + i * n.item
+                items.append(collections.OrderedDict(
+                    (f.key, decode_value(f, get_bits(data, base + f.start, f.bits))) for f in n.body if f.d == "field"))
+            lists[n.key] = items
+    if lists:
+        ent["@lists"] = lists
     return kind.name, ent
 
 
@@ -599,7 +725,20 @@ def encode(pack, name, ent):
             acc |= encode_value(n, ent[n.key]) << n.start
         elif n.d in ("when", "const"):
             acc |= int(n.value) << n.start
-    nbytes = (max(n.start + n.bits for n in lines if n.d in ("when", "field", "const")) + 7) // 8
+    end = max(n.start + n.bits for n in lines if n.d in ("when", "field", "const"))
+    for n in lines:
+        if n.d == "group":
+            items = ent.get("@lists", {}).get(n.key, [])
+            if len(items) >> n.count[1]:
+                raise CodecError("transform-encode")
+            acc = (acc & ~(((1 << n.count[1]) - 1) << n.count[0])) | (len(items) << n.count[0])
+            for i, item in enumerate(items):
+                base = n.start + i * n.item
+                for f in n.body:
+                    if f.d == "field" and f.key in item:
+                        acc |= encode_value(f, item[f.key]) << (base + f.start)
+            end = max(end, n.start + len(items) * n.item)
+    nbytes = (end + 7) // 8
     return acc.to_bytes(nbytes, "little")
 
 
@@ -610,7 +749,10 @@ def check_vectors(pack, vectors, fmt):
         try:
             kname, ent = decode(pack, bytes.fromhex(vec["input"]))
             for key, want in vec.get("model", {}).items():
-                got = kname if key == "@kind" else ent.get(key)
+                if key.endswith(".#"):
+                    got = str(len(ent.get("@lists", {}).get(key[:-2], [])))
+                else:
+                    got = kname if key == "@kind" else ent.get(key)
                 if got is None:
                     raise GenError("%s/%s: model %s not decoded" % (fmt, fn, key))
                 if key != "@kind" and isinstance(got, float):
@@ -675,7 +817,9 @@ def pack_md(plan, sha, tag, nvec):
     a("| Kind | Message | ID | Payload bytes |")
     a("|---|---|---|---|")
     for k in plan.kinds:
-        a("| `%s` | %s | %d | %d |" % (k.name, k.msg, k.num, k.size))
+        a("| `%s` | %s | %d | %s |" % (k.name, k.msg, k.num, k.size if k.size is not None else
+                                        "%d + %d per item of `%s`" % ((k.group.start - PAYLOAD_BIT0) // 8,
+                                                                      k.group.item_bits // 8, k.group.key)))
     a("")
     a("## What is mapped")
     a("")
@@ -689,6 +833,7 @@ def pack_md(plan, sha, tag, nvec):
     a("| a bit field (`_bit`) | each named bit group as its own field, from the least significant bit | int |")
     a("| a group with a fixed repeat count | its fields once per repeat, `_01`, `_02`, … appended | as the field |")
     a("| an unsigned integer or byte field wider than 8 bytes | 8-byte `uint` parts, `_01` … appended | int |")
+    a("| a group repeated by an unsigned field before it, ending the payload | a `group` of `item` bits counted by that field (`count <locator>`); the field has no key of its own | a list |")
     a("")
     a("Keys are `%s.<message>_<field>` in lower case. A scale the source states is" % MODULE)
     a("applied; the source states no unit, so the module declares none (`-`).")
@@ -725,14 +870,22 @@ def pack_md(plan, sha, tag, nvec):
         for m, num, why in plan.not_built:
             a("| %s | %s | %s |" % (m, "-" if num is None else num, why))
         a("")
-    a("- A message whose length varies: a group repeated by a count field or to the")
-    a("  end of the payload, or text whose length the payload length gives.")
+    if any(k.group for k in plan.kinds):
+        a("A kind with a counted group has no length `when`: encode writes")
+        a("`unicore.payload_length` as the entity holds it, so a message encoded from")
+        a("another format needs it set (a length derived from the items is not in the")
+        a("pack language). Such kinds come after the fixed-length kinds.")
+        a("")
+    a("- A message whose length varies otherwise: a group that does not end the")
+    a("  payload, a group whose items vary, a group repeated to the end of the")
+    a("  payload, or text whose length the payload length gives.")
     a("- The sync bytes and the CRC (see The message).")
     a("")
     a("## Vectors")
     a("")
     a("`vectors/rt-<ID>-<kind>.json`: one same-format round trip per kind, the frame")
-    a("written by a serializer in the generator from sample values.")
+    a("written by a serializer in the generator from sample values; a kind with a")
+    a("counted group has one with two items and one with none (`-no-items`).")
     a("")
     a("%d vectors." % nvec)
     return "\n".join(o) + "\n"

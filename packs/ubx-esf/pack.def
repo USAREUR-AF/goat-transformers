@@ -49,3 +49,44 @@ field     ubxesf.esf_ins_zangrate 0:208:32 sscale:1/1000
 field     ubxesf.esf_ins_xaccel 0:240:32 sscale:1/100
 field     ubxesf.esf_ins_yaccel 0:272:32 sscale:1/100
 field     ubxesf.esf_ins_zaccel 0:304:32 sscale:1/100
+
+kind      esf_status
+when      0:24:8 16
+requires  ubxesf.esf_status_itow ubxesf.esf_status_version ubxesf.esf_status_wtinitstatus
+field     ubxesf.payload_length 0:32:16 uint
+field     ubxesf.esf_status_itow 0:48:32 uint
+field     ubxesf.esf_status_version 0:80:8 uint
+field     ubxesf.esf_status_wtinitstatus 0:88:2 uint
+field     ubxesf.esf_status_mntalgstatus 0:90:3 uint
+field     ubxesf.esf_status_insinitstatus 0:93:3 uint
+field     ubxesf.esf_status_imuinitstatus 0:96:2 uint
+field     ubxesf.esf_status_reserved0 0:104:40 uint
+field     ubxesf.esf_status_fusionmode 0:144:8 uint
+field     ubxesf.esf_status_reserved1 0:152:16 uint
+group     ubxesf.esf_status_sens 0:176 item 32 count 0:168:8
+  field   ubxesf.esf_status_sens_type 0:0:6 uint
+  field   ubxesf.esf_status_sens_used 0:6:1 uint
+  field   ubxesf.esf_status_sens_ready 0:7:1 uint
+  field   ubxesf.esf_status_sens_calibstatus 0:8:2 uint
+  field   ubxesf.esf_status_sens_timestatus 0:10:2 uint
+  field   ubxesf.esf_status_sens_freq 0:16:8 uint
+  field   ubxesf.esf_status_sens_badmeas 0:24:1 uint
+  field   ubxesf.esf_status_sens_badttag 0:25:1 uint
+  field   ubxesf.esf_status_sens_missingmeas 0:26:1 uint
+  field   ubxesf.esf_status_sens_noisymeas 0:27:1 uint
+end
+
+kind      esf_meas_set
+when      0:24:8 2
+requires  ubxesf.esf_meas_set_timetag ubxesf.esf_meas_set_timemarksent ubxesf.esf_meas_set_timemarkedge
+field     ubxesf.payload_length 0:32:16 uint
+field     ubxesf.esf_meas_set_timetag 0:48:32 uint
+field     ubxesf.esf_meas_set_timemarksent 0:80:2 uint
+field     ubxesf.esf_meas_set_timemarkedge 0:82:1 uint
+field     ubxesf.esf_meas_set_calibttagvalid 0:83:1 uint
+field     ubxesf.esf_meas_set_reserved0 0:84:7 uint
+field     ubxesf.esf_meas_set_id 0:96:16 uint
+group     ubxesf.esf_meas_set_meas 0:112 item 32 count 0:91:5
+  field   ubxesf.esf_meas_set_meas_datafield 0:0:24 uint
+  field   ubxesf.esf_meas_set_meas_datatype 0:24:6 uint
+end

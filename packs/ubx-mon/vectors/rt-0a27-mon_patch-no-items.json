@@ -1,0 +1,11 @@
+{
+  "name": "ubx-mon-roundtrip-mon_patch-no-items",
+  "from": "ubx-mon",
+  "to": "ubx-mon",
+  "input": "b5620a270400f0c20000",
+  "expect": "b5620a270400f0c20000",
+  "model": {
+    "@kind": "mon_patch",
+    "ubxmon.mon_patch_entry.#": "0"
+  }
+}

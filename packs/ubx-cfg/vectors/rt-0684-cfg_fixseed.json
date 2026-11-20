@@ -1,0 +1,11 @@
+{
+  "name": "ubx-cfg-roundtrip-cfg_fixseed",
+  "from": "ubx-cfg",
+  "to": "ubx-cfg",
+  "input": "b562068410004e022503fc566518d3aae96b920767dc",
+  "expect": "b562068410004e022503fc566518d3aae96b920767dc",
+  "model": {
+    "@kind": "cfg_fixseed",
+    "ubxcfg.cfg_fixseed_seed.#": "2"
+  }
+}

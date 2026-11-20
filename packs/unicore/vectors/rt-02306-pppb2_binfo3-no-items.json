@@ -1,0 +1,11 @@
+{
+  "name": "unicore-roundtrip-pppb2_binfo3-no-items",
+  "from": "unicore",
+  "to": "unicore",
+  "input": "21020908007895b275cf750000ec750000092643760151d800aff8421c",
+  "expect": "21020908007895b275cf750000ec750000092643760151d800aff8421c",
+  "model": {
+    "@kind": "pppb2_binfo3",
+    "unicore.pppb2_binfo3_groupbias.#": "0"
+  }
+}

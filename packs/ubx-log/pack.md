@@ -48,6 +48,7 @@ A definition is the receiver's output (GET), a command to it (SET, kind suffix
 | `log_findtime_set` | LOG-FINDTIME | SET | 0x21 0x0E | 10 |
 | `log_retrieve_set` | LOG-RETRIEVE | SET | 0x21 0x09 | 12 |
 | `log_retrievebatch_set` | LOG-RETRIEVEBATCH | SET | 0x21 0x10 | 4 |
+| `log_retrievestring` | LOG-RETRIEVESTRING | GET | 0x21 0x0D | 16 + 1 per item of `ubxlog.log_retrievestring_byte` |
 
 ## What is mapped
 
@@ -62,6 +63,12 @@ A definition is the receiver's output (GET), a command to it (SET, kind suffix
 | a group with a fixed repeat count (`_grp`) | its fields once per repeat, `_01`, `_02`, … appended | as the field |
 | `A<n>` (a byte array) | one `uint` byte per element, `_01` … appended | int |
 | an unsigned integer wider than 8 bytes | 8-byte `uint` parts, `_01` … appended, the last part shorter | int |
+| a group repeated by an unsigned field before it, ending the payload | a `group` of `item` bits counted by that field (`count <locator>`); the field has no key of its own | a list |
+
+A kind with a counted group has no length `when`: encode writes
+`ubxlog.payload_length` as the entity holds it, so a frame encoded from another
+format needs it set (a length derived from the items is not in the pack
+language). Such kinds come after the fixed-length kinds, which select first.
 
 Keys are `ubxlog.<kind>_<field>` in lower case. A scale the source states is
 applied; the source states no unit, so the module declares none (`-`).
@@ -95,15 +102,15 @@ Definitions with no kind:
 
 | Definition | Mode | Identity | Reason |
 |---|---|---|---|
-| LOG-RETRIEVESTRING | GET | 0x21 0x0D | a group repeated by field `byteCount` |
 | LOG-ERASE | SET | 0x21 0x03 | an empty payload: a kind needs at least one field |
 | LOG-STRING | SET | 0x21 0x04 | a group repeated to the end of the payload |
 | LOG-BATCH | POLL | 0x21 0x11 | an empty payload: a kind needs at least one field |
 | LOG-INFO | POLL | 0x21 0x08 | an empty payload: a kind needs at least one field |
 
-2 of them have a variable part: a group repeated by a count field or to the end
-of the payload, or text that runs to the end. Stating one needs a repeated group
-counted by a field, or a trailing field of the remaining length.
+1 of them have a variable part the pack cannot state: a group that does not
+end the payload or whose items vary, a group repeated to the end of the
+payload, or text that runs to the end. Stating one needs a group counted by a
+field that is not last, or a trailing field of the remaining length.
 
 - The checksum (see The message), and frames whose payload length is not the
   definition's fixed length: such a frame selects no kind (`no-kind`).
@@ -113,6 +120,7 @@ counted by a field, or a trailing field of the remaining length.
 ## Vectors
 
 `vectors/rt-<class><id>-<kind>.json`: one same-format round trip per kind, the
-frame written by a UBX serializer in the generator from sample values.
+frame written by a UBX serializer in the generator from sample values; a kind
+with a counted group has one with two items and one with none (`-no-items`).
 
-9 vectors.
+11 vectors.

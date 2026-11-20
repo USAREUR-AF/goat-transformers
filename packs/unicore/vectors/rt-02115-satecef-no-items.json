@@ -1,0 +1,11 @@
+{
+  "name": "unicore-roundtrip-satecef-no-items",
+  "from": "unicore",
+  "to": "unicore",
+  "input": "6e43080400c5e2ff6b1c6c0000396c00005673906c00000000",
+  "expect": "6e43080400c5e2ff6b1c6c0000396c00005673906c00000000",
+  "model": {
+    "@kind": "satecef",
+    "unicore.satecef_groupsat.#": "0"
+  }
+}

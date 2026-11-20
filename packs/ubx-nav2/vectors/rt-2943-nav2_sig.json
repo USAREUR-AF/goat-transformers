@@ -1,0 +1,11 @@
+{
+  "name": "ubx-nav2-roundtrip-nav2_sig",
+  "from": "ubx-nav2",
+  "to": "ubx-nav2",
+  "input": "b56229432800f87bdb55cf02a62391067bf065a3da4fc4395601cb69367c66db50c53aa6af24990eab02a06c1968",
+  "expect": "b56229432800f87bdb55cf02a62391067bf065a3da4fc4395601cb69367c66db50c53aa6af24990eab02a06c1968",
+  "model": {
+    "@kind": "nav2_sig",
+    "ubxnav2.nav2_sig_sig.#": "2"
+  }
+}

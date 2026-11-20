@@ -1,0 +1,11 @@
+{
+  "name": "sbf-galileo-decoded-message-roundtrip-galsarrlm",
+  "from": "sbf-galileo-decoded-message",
+  "to": "sbf-galileo-decoded-message",
+  "input": "c2af1c00413e724d1892efc6029d8d83503cc874253fab60",
+  "expect": "c2af1c00413e724d1892efc6029d8d83503cc874253fab60",
+  "model": {
+    "@kind": "galsarrlm",
+    "sbfgalileodecodedmessage.galsarrlm_rlm.#": "2"
+  }
+}

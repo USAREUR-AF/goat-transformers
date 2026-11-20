@@ -1,0 +1,11 @@
+{
+  "name": "unicore-roundtrip-sats",
+  "from": "unicore",
+  "to": "unicore",
+  "input": "f112040300486582359f350000bc350000d9f6133602a075",
+  "expect": "f112040300486582359f350000bc350000d9f6133602a075",
+  "model": {
+    "@kind": "sats",
+    "unicore.sats_sat.#": "2"
+  }
+}

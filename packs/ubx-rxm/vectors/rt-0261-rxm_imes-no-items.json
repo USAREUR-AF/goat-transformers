@@ -1,0 +1,11 @@
+{
+  "name": "ubx-rxm-roundtrip-rxm_imes-no-items",
+  "from": "ubx-rxm",
+  "to": "ubx-rxm",
+  "input": "b562026104000016edc7",
+  "expect": "b562026104000016edc7",
+  "model": {
+    "@kind": "rxm_imes",
+    "ubxrxm.rxm_imes_tx.#": "0"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "ubx-nav2-roundtrip-nav2_sat",
+  "from": "ubx-nav2",
+  "to": "ubx-nav2",
+  "input": "b56229352000c053826697026efb0378ede2d7804ce1b1aaaa02d84dc2b7ac8321e44e575501",
+  "expect": "b56229352000c053826697026efb0378ede2d7804ce1b1aaaa02d84dc2b7ac8321e44e575501",
+  "model": {
+    "@kind": "nav2_sat",
+    "ubxnav2.nav2_sat_sv.#": "2"
+  }
+}

@@ -59,6 +59,7 @@ A definition is the receiver's output (GET), a command to it (SET, kind suffix
 | a group with a fixed repeat count (`_grp`) | its fields once per repeat, `_01`, `_02`, … appended | as the field |
 | `A<n>` (a byte array) | one `uint` byte per element, `_01` … appended | int |
 | an unsigned integer wider than 8 bytes | 8-byte `uint` parts, `_01` … appended, the last part shorter | int |
+| a group repeated by an unsigned field before it, ending the payload | a `group` of `item` bits counted by that field (`count <locator>`); the field has no key of its own | a list |
 
 Keys are `ubxaid.<kind>_<field>` in lower case. A scale the source states is
 applied; the source states no unit, so the module declares none (`-`).
@@ -81,10 +82,8 @@ Definitions with no kind:
 |---|---|---|---|
 | AID-ALM | GET | 0x0B 0x30 | a group repeated to the end of the payload |
 | AID-EPH | GET | 0x0B 0x31 | a group repeated to the end of the payload |
-| AID-ALPSRV-SEND | GET | 0x0B 0x32 | a group repeated by field `size` |
 | AID-ALM | SET | 0x0B 0x30 | a group repeated to the end of the payload |
 | AID-ALP | SET | 0x0B 0x50 | a group repeated to the end of the payload |
-| AID-ALPSRV | SET | 0x0B 0x32 | a group repeated by field `dataSize` |
 | AID-AOP | SET | 0x0B 0x33 | the same class, id and payload length as kind `aid_aop` |
 | AID-EPH | SET | 0x0B 0x31 | a group repeated to the end of the payload |
 | AID-HUI | SET | 0x0B 0x02 | the same class, id and payload length as kind `aid_hui` |
@@ -96,10 +95,13 @@ Definitions with no kind:
 | AID-HUI | POLL | 0x0B 0x02 | an empty payload: a kind needs at least one field |
 | AID-INI | POLL | 0x0B 0x01 | an empty payload: a kind needs at least one field |
 | AID-REQ | POLL | 0x0B 0x00 | an empty payload: a kind needs at least one field |
+| AID-ALPSRV-SEND | GET | 0x0B 0x32 | a counted group whose frames can have the class, id and length of kind `aid_alpsrv_req` |
+| AID-ALPSRV | SET | 0x0B 0x32 | a counted group whose frames can have the class, id and length of kind `aid_alpsrv_req` |
 
-10 of them have a variable part: a group repeated by a count field or to the end
-of the payload, or text that runs to the end. Stating one needs a repeated group
-counted by a field, or a trailing field of the remaining length.
+8 of them have a variable part the pack cannot state: a group that does not
+end the payload or whose items vary, a group repeated to the end of the
+payload, or text that runs to the end. Stating one needs a group counted by a
+field that is not last, or a trailing field of the remaining length.
 
 3 have the class, id and length of a kind above; the source tells the
 variants apart by a version field or by the direction of the message, which a
@@ -113,6 +115,7 @@ variants apart by a version field or by the direction of the message, which a
 ## Vectors
 
 `vectors/rt-<class><id>-<kind>.json`: one same-format round trip per kind, the
-frame written by a UBX serializer in the generator from sample values.
+frame written by a UBX serializer in the generator from sample values; a kind
+with a counted group has one with two items and one with none (`-no-items`).
 
 6 vectors.

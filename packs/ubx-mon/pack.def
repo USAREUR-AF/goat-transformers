@@ -263,3 +263,384 @@ field     ubxmon.mon_txbuf_limit 0:256:6 uint
 field     ubxmon.mon_txbuf_lem 0:262:1 uint
 field     ubxmon.mon_txbuf_alloc 0:263:1 uint
 field     ubxmon.mon_txbuf_reserved0 0:264:8 uint
+
+kind      mon_comms
+when      0:24:8 54
+requires  ubxmon.mon_comms_version ubxmon.mon_comms_mem ubxmon.mon_comms_alloc
+field     ubxmon.payload_length 0:32:16 uint
+field     ubxmon.mon_comms_version 0:48:8 uint
+field     ubxmon.mon_comms_mem 0:64:1 uint
+field     ubxmon.mon_comms_alloc 0:65:1 uint
+field     ubxmon.mon_comms_outputport 0:66:3 uint
+field     ubxmon.mon_comms_reserved0 0:72:8 uint
+field     ubxmon.mon_comms_protids_01 0:80:8 uint
+field     ubxmon.mon_comms_protids_02 0:88:8 uint
+field     ubxmon.mon_comms_protids_03 0:96:8 uint
+field     ubxmon.mon_comms_protids_04 0:104:8 uint
+group     ubxmon.mon_comms_ports 0:112 item 320 count 0:56:8
+  field   ubxmon.mon_comms_ports_portid 0:0:16 uint
+  field   ubxmon.mon_comms_ports_txpending 0:16:16 uint
+  field   ubxmon.mon_comms_ports_txbytes 0:32:32 uint
+  field   ubxmon.mon_comms_ports_txusage 0:64:8 uint
+  field   ubxmon.mon_comms_ports_txpeakusage 0:72:8 uint
+  field   ubxmon.mon_comms_ports_rxpending 0:80:16 uint
+  field   ubxmon.mon_comms_ports_rxbytes 0:96:32 uint
+  field   ubxmon.mon_comms_ports_rxusage 0:128:8 uint
+  field   ubxmon.mon_comms_ports_rxpeakusage 0:136:8 uint
+  field   ubxmon.mon_comms_ports_overrunerrs 0:144:16 uint
+  field   ubxmon.mon_comms_ports_msgs_01 0:160:16 uint
+  field   ubxmon.mon_comms_ports_msgs_02 0:176:16 uint
+  field   ubxmon.mon_comms_ports_msgs_03 0:192:16 uint
+  field   ubxmon.mon_comms_ports_msgs_04 0:208:16 uint
+  field   ubxmon.mon_comms_ports_reserved1 0:224:64 uint
+  field   ubxmon.mon_comms_ports_skipped 0:288:32 uint
+end
+
+kind      mon_hw3
+when      0:24:8 55
+requires  ubxmon.mon_hw3_version ubxmon.mon_hw3_rtccalib ubxmon.mon_hw3_safeboot
+field     ubxmon.payload_length 0:32:16 uint
+field     ubxmon.mon_hw3_version 0:48:8 uint
+field     ubxmon.mon_hw3_rtccalib 0:64:1 uint
+field     ubxmon.mon_hw3_safeboot 0:65:1 uint
+field     ubxmon.mon_hw3_xtalabsent 0:66:1 uint
+field     ubxmon.mon_hw3_hwversion 0:72:80 ascii
+field     ubxmon.mon_hw3_reserved0_01 0:152:64 uint
+field     ubxmon.mon_hw3_reserved0_02 0:216:8 uint
+group     ubxmon.mon_hw3_pin 0:224 item 48 count 0:56:8
+  field   ubxmon.mon_hw3_pin_pinid 0:0:16 uint
+  field   ubxmon.mon_hw3_pin_periphpio 0:16:1 uint
+  field   ubxmon.mon_hw3_pin_pinbank 0:17:3 uint
+  field   ubxmon.mon_hw3_pin_direction 0:20:1 uint
+  field   ubxmon.mon_hw3_pin_pinvalue 0:21:1 uint
+  field   ubxmon.mon_hw3_pin_vpmanager 0:22:1 uint
+  field   ubxmon.mon_hw3_pin_pioirq 0:23:1 uint
+  field   ubxmon.mon_hw3_pin_piopullhigh 0:24:1 uint
+  field   ubxmon.mon_hw3_pin_piopulllow 0:25:1 uint
+  field   ubxmon.mon_hw3_pin_vp 0:32:8 uint
+  field   ubxmon.mon_hw3_pin_reserved1 0:40:8 uint
+end
+
+kind      mon_patch
+when      0:24:8 39
+requires  ubxmon.mon_patch_version
+field     ubxmon.payload_length 0:32:16 uint
+field     ubxmon.mon_patch_version 0:48:16 uint
+group     ubxmon.mon_patch_entry 0:80 item 128 count 0:64:16
+  field   ubxmon.mon_patch_entry_activated 0:0:1 uint
+  field   ubxmon.mon_patch_entry_location 0:1:2 uint
+  field   ubxmon.mon_patch_entry_comparatornumber 0:32:32 uint
+  field   ubxmon.mon_patch_entry_patchaddress 0:64:32 uint
+  field   ubxmon.mon_patch_entry_patchdata 0:96:32 uint
+end
+
+kind      mon_pmp
+when      0:24:8 53
+requires  ubxmon.mon_pmp_version ubxmon.mon_pmp_reserved0
+field     ubxmon.payload_length 0:32:16 uint
+field     ubxmon.mon_pmp_version 0:48:8 uint
+field     ubxmon.mon_pmp_reserved0 0:64:16 uint
+group     ubxmon.mon_pmp_pmp 0:80 item 160 count 0:56:8
+  field   ubxmon.mon_pmp_pmp_reserved1 0:0:32 uint
+  field   ubxmon.mon_pmp_pmp_locked 0:32:1 uint
+  field   ubxmon.mon_pmp_pmp_framesync 0:33:1 uint
+  field   ubxmon.mon_pmp_pmp_reserved2 0:64:64 uint
+  field   ubxmon.mon_pmp_pmp_cno 0:128:8 uint
+  field   ubxmon.mon_pmp_pmp_cnofrac 0:136:8 uscale:1/256
+  field   ubxmon.mon_pmp_pmp_reserved3 0:144:16 uint
+end
+
+kind      mon_rf
+when      0:24:8 56
+requires  ubxmon.mon_rf_version ubxmon.mon_rf_msgsource ubxmon.mon_rf_reserved0
+field     ubxmon.payload_length 0:32:16 uint
+field     ubxmon.mon_rf_version 0:48:8 uint
+field     ubxmon.mon_rf_msgsource 0:64:2 uint
+field     ubxmon.mon_rf_reserved0 0:72:8 uint
+group     ubxmon.mon_rf_block 0:80 item 192 count 0:56:8
+  field   ubxmon.mon_rf_block_blockid 0:0:8 uint
+  field   ubxmon.mon_rf_block_jammingstate 0:8:2 uint
+  field   ubxmon.mon_rf_block_antstatus 0:16:8 uint
+  field   ubxmon.mon_rf_block_antpower 0:24:8 uint
+  field   ubxmon.mon_rf_block_poststatus 0:32:32 uint
+  field   ubxmon.mon_rf_block_reserved1 0:64:32 uint
+  field   ubxmon.mon_rf_block_noiseperms 0:96:16 uint
+  field   ubxmon.mon_rf_block_agccnt 0:112:16 uint
+  field   ubxmon.mon_rf_block_jamind 0:128:8 uint
+  field   ubxmon.mon_rf_block_ofsi 0:136:8 twos
+  field   ubxmon.mon_rf_block_magi 0:144:8 uint
+  field   ubxmon.mon_rf_block_ofsq 0:152:8 twos
+  field   ubxmon.mon_rf_block_magq 0:160:8 uint
+  field   ubxmon.mon_rf_block_reserved2 0:168:24 uint
+end
+
+kind      mon_span
+when      0:24:8 49
+requires  ubxmon.mon_span_version ubxmon.mon_span_msgsource ubxmon.mon_span_reserved0
+field     ubxmon.payload_length 0:32:16 uint
+field     ubxmon.mon_span_version 0:48:8 uint
+field     ubxmon.mon_span_msgsource 0:64:2 uint
+field     ubxmon.mon_span_reserved0 0:72:8 uint
+group     ubxmon.mon_span_rfblock 0:80 item 2176 count 0:56:8
+  field   ubxmon.mon_span_rfblock_spectrum_01 0:0:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_02 0:8:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_03 0:16:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_04 0:24:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_05 0:32:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_06 0:40:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_07 0:48:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_08 0:56:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_09 0:64:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_10 0:72:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_11 0:80:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_12 0:88:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_13 0:96:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_14 0:104:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_15 0:112:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_16 0:120:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_17 0:128:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_18 0:136:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_19 0:144:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_20 0:152:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_21 0:160:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_22 0:168:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_23 0:176:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_24 0:184:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_25 0:192:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_26 0:200:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_27 0:208:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_28 0:216:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_29 0:224:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_30 0:232:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_31 0:240:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_32 0:248:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_33 0:256:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_34 0:264:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_35 0:272:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_36 0:280:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_37 0:288:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_38 0:296:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_39 0:304:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_40 0:312:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_41 0:320:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_42 0:328:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_43 0:336:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_44 0:344:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_45 0:352:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_46 0:360:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_47 0:368:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_48 0:376:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_49 0:384:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_50 0:392:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_51 0:400:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_52 0:408:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_53 0:416:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_54 0:424:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_55 0:432:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_56 0:440:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_57 0:448:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_58 0:456:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_59 0:464:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_60 0:472:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_61 0:480:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_62 0:488:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_63 0:496:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_64 0:504:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_65 0:512:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_66 0:520:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_67 0:528:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_68 0:536:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_69 0:544:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_70 0:552:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_71 0:560:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_72 0:568:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_73 0:576:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_74 0:584:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_75 0:592:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_76 0:600:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_77 0:608:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_78 0:616:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_79 0:624:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_80 0:632:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_81 0:640:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_82 0:648:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_83 0:656:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_84 0:664:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_85 0:672:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_86 0:680:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_87 0:688:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_88 0:696:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_89 0:704:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_90 0:712:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_91 0:720:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_92 0:728:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_93 0:736:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_94 0:744:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_95 0:752:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_96 0:760:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_97 0:768:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_98 0:776:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_99 0:784:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_100 0:792:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_101 0:800:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_102 0:808:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_103 0:816:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_104 0:824:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_105 0:832:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_106 0:840:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_107 0:848:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_108 0:856:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_109 0:864:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_110 0:872:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_111 0:880:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_112 0:888:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_113 0:896:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_114 0:904:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_115 0:912:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_116 0:920:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_117 0:928:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_118 0:936:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_119 0:944:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_120 0:952:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_121 0:960:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_122 0:968:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_123 0:976:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_124 0:984:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_125 0:992:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_126 0:1000:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_127 0:1008:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_128 0:1016:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_129 0:1024:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_130 0:1032:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_131 0:1040:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_132 0:1048:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_133 0:1056:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_134 0:1064:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_135 0:1072:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_136 0:1080:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_137 0:1088:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_138 0:1096:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_139 0:1104:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_140 0:1112:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_141 0:1120:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_142 0:1128:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_143 0:1136:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_144 0:1144:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_145 0:1152:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_146 0:1160:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_147 0:1168:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_148 0:1176:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_149 0:1184:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_150 0:1192:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_151 0:1200:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_152 0:1208:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_153 0:1216:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_154 0:1224:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_155 0:1232:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_156 0:1240:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_157 0:1248:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_158 0:1256:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_159 0:1264:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_160 0:1272:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_161 0:1280:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_162 0:1288:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_163 0:1296:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_164 0:1304:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_165 0:1312:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_166 0:1320:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_167 0:1328:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_168 0:1336:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_169 0:1344:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_170 0:1352:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_171 0:1360:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_172 0:1368:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_173 0:1376:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_174 0:1384:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_175 0:1392:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_176 0:1400:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_177 0:1408:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_178 0:1416:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_179 0:1424:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_180 0:1432:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_181 0:1440:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_182 0:1448:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_183 0:1456:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_184 0:1464:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_185 0:1472:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_186 0:1480:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_187 0:1488:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_188 0:1496:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_189 0:1504:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_190 0:1512:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_191 0:1520:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_192 0:1528:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_193 0:1536:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_194 0:1544:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_195 0:1552:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_196 0:1560:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_197 0:1568:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_198 0:1576:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_199 0:1584:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_200 0:1592:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_201 0:1600:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_202 0:1608:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_203 0:1616:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_204 0:1624:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_205 0:1632:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_206 0:1640:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_207 0:1648:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_208 0:1656:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_209 0:1664:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_210 0:1672:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_211 0:1680:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_212 0:1688:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_213 0:1696:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_214 0:1704:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_215 0:1712:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_216 0:1720:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_217 0:1728:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_218 0:1736:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_219 0:1744:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_220 0:1752:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_221 0:1760:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_222 0:1768:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_223 0:1776:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_224 0:1784:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_225 0:1792:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_226 0:1800:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_227 0:1808:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_228 0:1816:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_229 0:1824:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_230 0:1832:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_231 0:1840:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_232 0:1848:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_233 0:1856:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_234 0:1864:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_235 0:1872:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_236 0:1880:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_237 0:1888:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_238 0:1896:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_239 0:1904:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_240 0:1912:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_241 0:1920:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_242 0:1928:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_243 0:1936:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_244 0:1944:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_245 0:1952:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_246 0:1960:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_247 0:1968:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_248 0:1976:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_249 0:1984:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_250 0:1992:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_251 0:2000:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_252 0:2008:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_253 0:2016:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_254 0:2024:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_255 0:2032:8 uint
+  field   ubxmon.mon_span_rfblock_spectrum_256 0:2040:8 uint
+  field   ubxmon.mon_span_rfblock_span 0:2048:32 uint
+  field   ubxmon.mon_span_rfblock_res 0:2080:32 uint
+  field   ubxmon.mon_span_rfblock_center 0:2112:32 uint
+  field   ubxmon.mon_span_rfblock_pga 0:2144:8 uint
+  field   ubxmon.mon_span_rfblock_reserved1 0:2152:24 uint
+end

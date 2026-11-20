@@ -1,0 +1,11 @@
+{
+  "name": "ubx-esf-roundtrip-esf_status",
+  "from": "ubx-esf",
+  "to": "ubx-esf",
+  "input": "b562101018003992f36e10bb0043890d64001af130025e09670ab30e3c05",
+  "expect": "b562101018003992f36e10bb0043890d64001af130025e09670ab30e3c05",
+  "model": {
+    "@kind": "esf_status",
+    "ubxesf.esf_status_sens.#": "2"
+  }
+}

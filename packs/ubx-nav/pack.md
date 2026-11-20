@@ -75,6 +75,14 @@ A definition is the receiver's output (GET), a command to it (SET, kind suffix
 | `nav_timeutc` | NAV-TIMEUTC | GET | 0x01 0x21 | 20 |
 | `nav_velecef` | NAV-VELECEF | GET | 0x01 0x11 | 20 |
 | `nav_velned` | NAV-VELNED | GET | 0x01 0x12 | 36 |
+| `nav_dgps` | NAV-DGPS | GET | 0x01 0x31 | 16 + 12 per item of `ubxnav.nav_dgps_channel` |
+| `nav_geofence` | NAV-GEOFENCE | GET | 0x01 0x39 | 8 + 2 per item of `ubxnav.nav_geofence_fence` |
+| `nav_orb` | NAV-ORB | GET | 0x01 0x34 | 8 + 6 per item of `ubxnav.nav_orb_sv` |
+| `nav_sat` | NAV-SAT | GET | 0x01 0x35 | 8 + 12 per item of `ubxnav.nav_sat_sv` |
+| `nav_sbas` | NAV-SBAS | GET | 0x01 0x32 | 12 + 12 per item of `ubxnav.nav_sbas_channel` |
+| `nav_sig` | NAV-SIG | GET | 0x01 0x43 | 8 + 16 per item of `ubxnav.nav_sig_sig` |
+| `nav_slas` | NAV-SLAS | GET | 0x01 0x42 | 20 + 8 per item of `ubxnav.nav_slas_cnt` |
+| `nav_svinfo` | NAV-SVINFO | GET | 0x01 0x30 | 8 + 12 per item of `ubxnav.nav_svinfo_channel` |
 
 ## What is mapped
 
@@ -89,6 +97,12 @@ A definition is the receiver's output (GET), a command to it (SET, kind suffix
 | a group with a fixed repeat count (`_grp`) | its fields once per repeat, `_01`, `_02`, … appended | as the field |
 | `A<n>` (a byte array) | one `uint` byte per element, `_01` … appended | int |
 | an unsigned integer wider than 8 bytes | 8-byte `uint` parts, `_01` … appended, the last part shorter | int |
+| a group repeated by an unsigned field before it, ending the payload | a `group` of `item` bits counted by that field (`count <locator>`); the field has no key of its own | a list |
+
+A kind with a counted group has no length `when`: encode writes
+`ubxnav.payload_length` as the entity holds it, so a frame encoded from another
+format needs it set (a length derived from the items is not in the pack
+language). Such kinds come after the fixed-length kinds, which select first.
 
 Keys are `ubxnav.<kind>_<field>` in lower case. A scale the source states is
 applied; the source states no unit, so the module declares none (`-`).
@@ -174,6 +188,10 @@ Scaled fields:
 | `nav_relposned` | `accD` | `uscale:1/10` |
 | `nav_relposned` | `accLength` | `uscale:1/10` |
 | `nav_relposned` | `accHeading` | `uscale:1/100000` |
+| `nav_sat` | `prRes` | `sscale:1/10` |
+| `nav_sig` | `prRes` | `sscale:1/10` |
+| `nav_slas` | `gmsLon` | `sscale:1/1000` |
+| `nav_slas` | `gmsLat` | `sscale:1/1000` |
 | `nav_sol` | `pDOP` | `uscale:1/100` |
 | `nav_velned` | `cAcc` | `uscale:1/100000` |
 
@@ -240,14 +258,6 @@ Definitions with no kind:
 
 | Definition | Mode | Identity | Reason |
 |---|---|---|---|
-| NAV-DGPS | GET | 0x01 0x31 | a group repeated by field `numCh` |
-| NAV-GEOFENCE | GET | 0x01 0x39 | a group repeated by field `numFences` |
-| NAV-ORB | GET | 0x01 0x34 | a group repeated by field `numSv` |
-| NAV-SAT | GET | 0x01 0x35 | a group repeated by field `numSvs` |
-| NAV-SBAS | GET | 0x01 0x32 | a group repeated by field `cnt` |
-| NAV-SIG | GET | 0x01 0x43 | a group repeated by field `numSigs` |
-| NAV-SLAS | GET | 0x01 0x42 | a group repeated by field `cnt` |
-| NAV-SVINFO | GET | 0x01 0x30 | a group repeated by field `numCh` |
 | NAV-RESETODO | SET | 0x01 0x10 | an empty payload: a kind needs at least one field |
 | NAV-AOPSTATUS | POLL | 0x01 0x60 | an empty payload: a kind needs at least one field |
 | NAV-ATT | POLL | 0x01 0x05 | an empty payload: a kind needs at least one field |
@@ -290,10 +300,6 @@ Definitions with no kind:
 | NAV-VELECEF | POLL | 0x01 0x11 | an empty payload: a kind needs at least one field |
 | NAV-VELNED | POLL | 0x01 0x12 | an empty payload: a kind needs at least one field |
 
-8 of them have a variable part: a group repeated by a count field or to the end
-of the payload, or text that runs to the end. Stating one needs a repeated group
-counted by a field, or a trailing field of the remaining length.
-
 - The checksum (see The message), and frames whose payload length is not the
   definition's fixed length: such a frame selects no kind (`no-kind`).
 - Enumerations are carried as integers; the bits of a bit field that the
@@ -302,9 +308,10 @@ counted by a field, or a trailing field of the remaining length.
 ## Vectors
 
 `vectors/rt-<class><id>-<kind>.json`: one same-format round trip per kind, the
-frame written by a UBX serializer in the generator from sample values.
+frame written by a UBX serializer in the generator from sample values; a kind
+with a counted group has one with two items and one with none (`-no-items`).
 
 `vectors/x-*-to-geojson.json`: a frame converted to GeoJSON; the expected text
 is written by hand from the field values.
 
-37 vectors.
+53 vectors.

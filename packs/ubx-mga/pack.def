@@ -814,3 +814,15 @@ field     ubxmga.mga_ini_att_set_heading 0:144:32 sscale:1/100000
 field     ubxmga.mga_ini_att_set_accroll 0:176:32 uscale:1/100000
 field     ubxmga.mga_ini_att_set_accpitch 0:208:32 uscale:1/100000
 field     ubxmga.mga_ini_att_set_accheading 0:240:32 uscale:1/100000
+
+kind      mga_flash_data_set
+when      0:24:8 33
+when      0:48:8 1
+requires  ubxmga.mga_flash_data_set_type ubxmga.mga_flash_data_set_version ubxmga.mga_flash_data_set_sequence
+field     ubxmga.payload_length 0:32:16 uint
+field     ubxmga.mga_flash_data_set_type 0:48:8 uint
+field     ubxmga.mga_flash_data_set_version 0:56:8 uint
+field     ubxmga.mga_flash_data_set_sequence 0:64:16 uint
+group     ubxmga.mga_flash_data_set_data 0:96 item 8 count 0:80:16
+  field   ubxmga.mga_flash_data_set_data_data 0:0:8 uint
+end

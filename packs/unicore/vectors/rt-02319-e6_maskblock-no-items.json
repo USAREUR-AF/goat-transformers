@@ -1,0 +1,11 @@
+{
+  "name": "unicore-roundtrip-e6_maskblock-no-items",
+  "from": "unicore",
+  "to": "unicore",
+  "input": "ca0f090c00213e5b767876000095760000b2cfec76a4e28e067b5229000000d785",
+  "expect": "ca0f090c00213e5b767876000095760000b2cfec76a4e28e067b5229000000d785",
+  "model": {
+    "@kind": "e6_maskblock",
+    "unicore.e6_maskblock_groupsys.#": "0"
+  }
+}

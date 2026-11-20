@@ -1,0 +1,11 @@
+{
+  "name": "ubx-rxm-roundtrip-rxm_svsi",
+  "from": "ubx-rxm",
+  "to": "ubx-rxm",
+  "input": "b5620220140046bd2f4a1d91f4022ea3ec8de1b60358c190b60b",
+  "expect": "b5620220140046bd2f4a1d91f4022ea3ec8de1b60358c190b60b",
+  "model": {
+    "@kind": "rxm_svsi",
+    "ubxrxm.rxm_svsi_sv.#": "2"
+  }
+}

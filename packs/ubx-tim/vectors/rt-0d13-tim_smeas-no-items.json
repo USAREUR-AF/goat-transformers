@@ -1,0 +1,11 @@
+{
+  "name": "ubx-tim-roundtrip-tim_smeas-no-items",
+  "from": "ubx-tim",
+  "to": "ubx-tim",
+  "input": "b5620d130c001e00f583ccd75665a32bdb38",
+  "expect": "b5620d130c001e00f583ccd75665a32bdb38",
+  "model": {
+    "@kind": "tim_smeas",
+    "ubxtim.tim_smeas_meas.#": "0"
+  }
+}

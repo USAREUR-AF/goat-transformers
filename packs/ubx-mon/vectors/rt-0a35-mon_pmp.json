@@ -1,0 +1,11 @@
+{
+  "name": "ubx-mon-roundtrip-mon_pmp",
+  "from": "ubx-mon",
+  "to": "ubx-mon",
+  "input": "b5620a352c001502ecd1037f22450200000062a0620a00000080d74cc1c1d88105310100000037a3457600000000ac2196c4",
+  "expect": "b5620a352c001502ecd1037f22450200000062a0620a00000080d74cc1c1d88105310100000037a3457600000000ac2196c4",
+  "model": {
+    "@kind": "mon_pmp",
+    "ubxmon.mon_pmp_pmp.#": "2"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "unicore-roundtrip-obsvm-no-items",
+  "from": "unicore",
+  "to": "unicore",
+  "input": "a30c000400fa173401510100006e0100008ba8c50100000000",
+  "expect": "a30c000400fa173401510100006e0100008ba8c50100000000",
+  "model": {
+    "@kind": "obsvm",
+    "unicore.obsvm_groupobs.#": "0"
+  }
+}

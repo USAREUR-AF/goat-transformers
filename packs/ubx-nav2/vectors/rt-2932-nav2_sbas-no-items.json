@@ -1,0 +1,11 @@
+{
+  "name": "ubx-nav2-roundtrip-nav2_sbas-no-items",
+  "from": "ubx-nav2",
+  "to": "ubx-nav2",
+  "input": "b56229320c00868b01475d348b0a0001ecd1",
+  "expect": "b56229320c00868b01475d348b0a0001ecd1",
+  "model": {
+    "@kind": "nav2_sbas",
+    "ubxnav2.nav2_sbas_channel.#": "0"
+  }
+}

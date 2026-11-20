@@ -903,3 +903,96 @@ when      0:24:8 49
 when      0:32:16 1
 requires  ubxcfg.cfg_tp5_tpx_poll_tpidx
 field     ubxcfg.cfg_tp5_tpx_poll_tpidx 0:48:8 uint
+
+kind      cfg_dosc
+when      0:24:8 97
+requires  ubxcfg.cfg_dosc_version ubxcfg.cfg_dosc_reserved1
+field     ubxcfg.payload_length 0:32:16 uint
+field     ubxcfg.cfg_dosc_version 0:48:8 uint
+field     ubxcfg.cfg_dosc_reserved1 0:64:16 uint
+group     ubxcfg.cfg_dosc_osc 0:80 item 256 count 0:56:8
+  field   ubxcfg.cfg_dosc_osc_oscid 0:0:8 uint
+  field   ubxcfg.cfg_dosc_osc_reserved2 0:8:8 uint
+  field   ubxcfg.cfg_dosc_osc_iscalibrated 0:16:1 uint
+  field   ubxcfg.cfg_dosc_osc_controlif 0:17:4 uint
+  field   ubxcfg.cfg_dosc_osc_freq 0:32:32 uscale:1/4
+  field   ubxcfg.cfg_dosc_osc_phaseoffset 0:64:32 twos
+  field   ubxcfg.cfg_dosc_osc_withtemp 0:96:32 uscale:1/256
+  field   ubxcfg.cfg_dosc_osc_withage 0:128:32 uscale:1/256
+  field   ubxcfg.cfg_dosc_osc_timetotemp 0:160:16 uint
+  field   ubxcfg.cfg_dosc_osc_reserved3 0:176:16 uint
+  field   ubxcfg.cfg_dosc_osc_gainvco 0:192:32 sscale:1/65536
+  field   ubxcfg.cfg_dosc_osc_gainuncertainty 0:224:8 uscale:1/256
+  field   ubxcfg.cfg_dosc_osc_reserved4 0:232:24 uint
+end
+
+kind      cfg_esrc
+when      0:24:8 96
+requires  ubxcfg.cfg_esrc_version ubxcfg.cfg_esrc_reserved1
+field     ubxcfg.payload_length 0:32:16 uint
+field     ubxcfg.cfg_esrc_version 0:48:8 uint
+field     ubxcfg.cfg_esrc_reserved1 0:64:16 uint
+group     ubxcfg.cfg_esrc_source 0:80 item 288 count 0:56:8
+  field   ubxcfg.cfg_esrc_source_extint 0:0:8 uint
+  field   ubxcfg.cfg_esrc_source_sourcetype 0:8:8 uint
+  field   ubxcfg.cfg_esrc_source_polarity 0:16:1 uint
+  field   ubxcfg.cfg_esrc_source_gnssutc 0:17:1 uint
+  field   ubxcfg.cfg_esrc_source_freq 0:32:32 uscale:1/4
+  field   ubxcfg.cfg_esrc_source_reserved2 0:64:32 uint
+  field   ubxcfg.cfg_esrc_source_withtemp 0:96:32 uscale:1/256
+  field   ubxcfg.cfg_esrc_source_withage 0:128:32 uscale:1/256
+  field   ubxcfg.cfg_esrc_source_timetotemp 0:160:16 uint
+  field   ubxcfg.cfg_esrc_source_maxdevlifetim 0:176:16 uint
+  field   ubxcfg.cfg_esrc_source_offset 0:192:32 twos
+  field   ubxcfg.cfg_esrc_source_offsetuncertainty 0:224:32 uint
+  field   ubxcfg.cfg_esrc_source_jitter 0:256:32 uint
+end
+
+kind      cfg_fixseed
+when      0:24:8 132
+requires  ubxcfg.cfg_fixseed_version ubxcfg.cfg_fixseed_reserved1 ubxcfg.cfg_fixseed_seedhi
+field     ubxcfg.payload_length 0:32:16 uint
+field     ubxcfg.cfg_fixseed_version 0:48:8 uint
+field     ubxcfg.cfg_fixseed_reserved1 0:64:16 uint
+field     ubxcfg.cfg_fixseed_seedhi 0:80:32 uint
+field     ubxcfg.cfg_fixseed_seedlo 0:112:32 uint
+group     ubxcfg.cfg_fixseed_seed 0:144 item 16 count 0:56:8
+  field   ubxcfg.cfg_fixseed_seed_classid 0:0:8 uint
+  field   ubxcfg.cfg_fixseed_seed_msgid 0:8:8 uint
+end
+
+kind      cfg_geofence
+when      0:24:8 105
+requires  ubxcfg.cfg_geofence_version ubxcfg.cfg_geofence_conflvl ubxcfg.cfg_geofence_reserved0
+field     ubxcfg.payload_length 0:32:16 uint
+field     ubxcfg.cfg_geofence_version 0:48:8 uint
+field     ubxcfg.cfg_geofence_conflvl 0:64:8 uint
+field     ubxcfg.cfg_geofence_reserved0 0:72:8 uint
+field     ubxcfg.cfg_geofence_pioenabled 0:80:8 uint
+field     ubxcfg.cfg_geofence_pinpolarity 0:88:8 uint
+field     ubxcfg.cfg_geofence_pin 0:96:8 uint
+field     ubxcfg.cfg_geofence_reserved1 0:104:8 uint
+group     ubxcfg.cfg_geofence_fence 0:112 item 96 count 0:56:8
+  field   ubxcfg.cfg_geofence_fence_lat 0:0:32 sscale:1/10000000
+  field   ubxcfg.cfg_geofence_fence_lon 0:32:32 sscale:1/10000000
+  field   ubxcfg.cfg_geofence_fence_radius 0:64:32 uscale:1/100
+end
+
+kind      cfg_gnss
+when      0:24:8 62
+requires  ubxcfg.cfg_gnss_msgver ubxcfg.cfg_gnss_numtrkchhw ubxcfg.cfg_gnss_numtrkchuse
+field     ubxcfg.payload_length 0:32:16 uint
+field     ubxcfg.cfg_gnss_msgver 0:48:8 uint
+field     ubxcfg.cfg_gnss_numtrkchhw 0:56:8 uint
+field     ubxcfg.cfg_gnss_numtrkchuse 0:64:8 uint
+group     ubxcfg.cfg_gnss_block 0:80 item 64 count 0:72:8
+  field   ubxcfg.cfg_gnss_block_gnssid 0:0:8 uint
+  field   ubxcfg.cfg_gnss_block_restrkch 0:8:8 uint
+  field   ubxcfg.cfg_gnss_block_maxtrkch 0:16:8 uint
+  field   ubxcfg.cfg_gnss_block_reserved0 0:24:8 uint
+  field   ubxcfg.cfg_gnss_block_enable 0:32:1 uint
+  field   ubxcfg.cfg_gnss_block_reserved1 0:33:7 uint
+  field   ubxcfg.cfg_gnss_block_reserved2 0:40:8 uint
+  field   ubxcfg.cfg_gnss_block_sigcfmask 0:48:8 uint
+  field   ubxcfg.cfg_gnss_block_reserved3 0:56:8 uint
+end

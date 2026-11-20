@@ -408,3 +408,118 @@ field     speed_ms 0:208:32 uscale:1/100
 field     course 0:240:32 sscale:1/100000
 field     ubxnav2.nav2_velned_sacc 0:272:32 uint
 field     ubxnav2.nav2_velned_cacc 0:304:32 uscale:1/100000
+
+kind      nav2_sat
+when      0:24:8 53
+requires  ubxnav2.nav2_sat_itow ubxnav2.nav2_sat_version ubxnav2.nav2_sat_reserved0
+field     ubxnav2.payload_length 0:32:16 uint
+field     ubxnav2.nav2_sat_itow 0:48:32 uint
+field     ubxnav2.nav2_sat_version 0:80:8 uint
+field     ubxnav2.nav2_sat_reserved0 0:96:16 uint
+group     ubxnav2.nav2_sat_sv 0:112 item 96 count 0:88:8
+  field   ubxnav2.nav2_sat_sv_gnssid 0:0:8 uint
+  field   ubxnav2.nav2_sat_sv_svid 0:8:8 uint
+  field   ubxnav2.nav2_sat_sv_cno 0:16:8 uint
+  field   ubxnav2.nav2_sat_sv_elev 0:24:8 twos
+  field   ubxnav2.nav2_sat_sv_azim 0:32:16 twos
+  field   ubxnav2.nav2_sat_sv_prres 0:48:16 sscale:1/10
+  field   ubxnav2.nav2_sat_sv_qualityind 0:64:3 uint
+  field   ubxnav2.nav2_sat_sv_svused 0:67:1 uint
+  field   ubxnav2.nav2_sat_sv_health 0:68:2 uint
+  field   ubxnav2.nav2_sat_sv_diffcorr 0:70:1 uint
+  field   ubxnav2.nav2_sat_sv_smoothed 0:71:1 uint
+  field   ubxnav2.nav2_sat_sv_orbitsource 0:72:3 uint
+  field   ubxnav2.nav2_sat_sv_ephavail 0:75:1 uint
+  field   ubxnav2.nav2_sat_sv_almavail 0:76:1 uint
+  field   ubxnav2.nav2_sat_sv_anoavail 0:77:1 uint
+  field   ubxnav2.nav2_sat_sv_aopavail 0:78:1 uint
+  field   ubxnav2.nav2_sat_sv_reserved13 0:79:1 uint
+  field   ubxnav2.nav2_sat_sv_sbascorrused 0:80:1 uint
+  field   ubxnav2.nav2_sat_sv_rtcmcorrused 0:81:1 uint
+  field   ubxnav2.nav2_sat_sv_slascorrused 0:82:1 uint
+  field   ubxnav2.nav2_sat_sv_spartncorrused 0:83:1 uint
+  field   ubxnav2.nav2_sat_sv_prcorrused 0:84:1 uint
+  field   ubxnav2.nav2_sat_sv_crcorrused 0:85:1 uint
+  field   ubxnav2.nav2_sat_sv_docorrused 0:86:1 uint
+  field   ubxnav2.nav2_sat_sv_clascorrused 0:87:1 uint
+  field   ubxnav2.nav2_sat_sv_lppcorrused 0:88:1 uint
+  field   ubxnav2.nav2_sat_sv_hascorrused 0:89:1 uint
+end
+
+kind      nav2_sbas
+when      0:24:8 50
+requires  ubxnav2.nav2_sbas_itow ubxnav2.nav2_sbas_geo ubxnav2.nav2_sbas_mode
+field     ubxnav2.payload_length 0:32:16 uint
+field     ubxnav2.nav2_sbas_itow 0:48:32 uint
+field     ubxnav2.nav2_sbas_geo 0:80:8 uint
+field     ubxnav2.nav2_sbas_mode 0:88:8 uint
+field     ubxnav2.nav2_sbas_sys 0:96:8 twos
+field     ubxnav2.nav2_sbas_ranging 0:104:1 uint
+field     ubxnav2.nav2_sbas_corrections 0:105:1 uint
+field     ubxnav2.nav2_sbas_integrity 0:106:1 uint
+field     ubxnav2.nav2_sbas_testmode 0:107:1 uint
+field     ubxnav2.nav2_sbas_bad 0:108:1 uint
+field     ubxnav2.nav2_sbas_integrityused 0:120:2 uint
+field     ubxnav2.nav2_sbas_reserved1 0:128:16 uint
+group     ubxnav2.nav2_sbas_channel 0:144 item 96 count 0:112:8
+  field   ubxnav2.nav2_sbas_channel_svid 0:0:8 uint
+  field   ubxnav2.nav2_sbas_channel_flags 0:8:8 uint
+  field   ubxnav2.nav2_sbas_channel_udre 0:16:8 uint
+  field   ubxnav2.nav2_sbas_channel_svsys 0:24:8 uint
+  field   ubxnav2.nav2_sbas_channel_svservice 0:32:8 uint
+  field   ubxnav2.nav2_sbas_channel_reserved2 0:40:8 uint
+  field   ubxnav2.nav2_sbas_channel_prc 0:48:16 twos
+  field   ubxnav2.nav2_sbas_channel_reserved3 0:64:16 uint
+  field   ubxnav2.nav2_sbas_channel_ic 0:80:16 twos
+end
+
+kind      nav2_sig
+when      0:24:8 67
+requires  ubxnav2.nav2_sig_itow ubxnav2.nav2_sig_version ubxnav2.nav2_sig_reserved0
+field     ubxnav2.payload_length 0:32:16 uint
+field     ubxnav2.nav2_sig_itow 0:48:32 uint
+field     ubxnav2.nav2_sig_version 0:80:8 uint
+field     ubxnav2.nav2_sig_reserved0 0:96:16 uint
+group     ubxnav2.nav2_sig_sig 0:112 item 128 count 0:88:8
+  field   ubxnav2.nav2_sig_sig_gnssid 0:0:8 uint
+  field   ubxnav2.nav2_sig_sig_svid 0:8:8 uint
+  field   ubxnav2.nav2_sig_sig_sigid 0:16:8 uint
+  field   ubxnav2.nav2_sig_sig_freqid 0:24:8 uint
+  field   ubxnav2.nav2_sig_sig_prres 0:32:16 sscale:1/10
+  field   ubxnav2.nav2_sig_sig_cno 0:48:8 uint
+  field   ubxnav2.nav2_sig_sig_qualityind 0:56:8 uint
+  field   ubxnav2.nav2_sig_sig_corrsource 0:64:8 uint
+  field   ubxnav2.nav2_sig_sig_ionomodel 0:72:8 uint
+  field   ubxnav2.nav2_sig_sig_health 0:80:2 uint
+  field   ubxnav2.nav2_sig_sig_prsmoothed 0:82:1 uint
+  field   ubxnav2.nav2_sig_sig_prused 0:83:1 uint
+  field   ubxnav2.nav2_sig_sig_crused 0:84:1 uint
+  field   ubxnav2.nav2_sig_sig_doused 0:85:1 uint
+  field   ubxnav2.nav2_sig_sig_prcorrused 0:86:1 uint
+  field   ubxnav2.nav2_sig_sig_crcorrused 0:87:1 uint
+  field   ubxnav2.nav2_sig_sig_docorrused 0:88:1 uint
+  field   ubxnav2.nav2_sig_sig_authstatus 0:89:1 uint
+  field   ubxnav2.nav2_sig_sig_reserved1 0:96:32 uint
+end
+
+kind      nav2_slas
+when      0:24:8 66
+requires  ubxnav2.nav2_slas_itow ubxnav2.nav2_slas_version ubxnav2.nav2_slas_reserved0
+field     ubxnav2.payload_length 0:32:16 uint
+field     ubxnav2.nav2_slas_itow 0:48:32 uint
+field     ubxnav2.nav2_slas_version 0:80:8 uint
+field     ubxnav2.nav2_slas_reserved0 0:88:24 uint
+field     ubxnav2.nav2_slas_gmslon 0:112:32 sscale:1/1000
+field     ubxnav2.nav2_slas_gmslat 0:144:32 sscale:1/1000
+field     ubxnav2.nav2_slas_gmscode 0:176:8 uint
+field     ubxnav2.nav2_slas_qzsssvid 0:184:8 uint
+field     ubxnav2.nav2_slas_gmsavailable 0:192:1 uint
+field     ubxnav2.nav2_slas_qzsssvavailable 0:193:1 uint
+field     ubxnav2.nav2_slas_testmode 0:194:1 uint
+group     ubxnav2.nav2_slas_cnt 0:208 item 64 count 0:200:8
+  field   ubxnav2.nav2_slas_cnt_gnssid 0:0:8 uint
+  field   ubxnav2.nav2_slas_cnt_svid 0:8:8 uint
+  field   ubxnav2.nav2_slas_cnt_reserved1 0:16:8 uint
+  field   ubxnav2.nav2_slas_cnt_reserved2 0:24:24 uint
+  field   ubxnav2.nav2_slas_cnt_prc 0:48:16 twos
+end

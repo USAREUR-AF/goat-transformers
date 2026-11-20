@@ -46,6 +46,7 @@ A definition is the receiver's output (GET), a command to it (SET, kind suffix
 | `nav_variant` | NAV-VARIANT | GET | 0x01 0x53 | 5 |
 | `nav_variant_l` | NAV-VARIANT-L | GET | 0x01 0x53 | 9 |
 | `nav_posllh` | NAV-POSLLH | GET | 0x01 0x02 | 52 |
+| `nav_counted` | NAV-COUNTED | GET | 0x01 0x51 | 1 + 1 per item of `ubxnav.nav_counted_ch` |
 
 ## What is mapped
 
@@ -60,6 +61,12 @@ A definition is the receiver's output (GET), a command to it (SET, kind suffix
 | a group with a fixed repeat count (`_grp`) | its fields once per repeat, `_01`, `_02`, … appended | as the field |
 | `A<n>` (a byte array) | one `uint` byte per element, `_01` … appended | int |
 | an unsigned integer wider than 8 bytes | 8-byte `uint` parts, `_01` … appended, the last part shorter | int |
+| a group repeated by an unsigned field before it, ending the payload | a `group` of `item` bits counted by that field (`count <locator>`); the field has no key of its own | a list |
+
+A kind with a counted group has no length `when`: encode writes
+`ubxnav.payload_length` as the entity holds it, so a frame encoded from another
+format needs it set (a length derived from the items is not in the pack
+language). Such kinds come after the fixed-length kinds, which select first.
 
 Keys are `ubxnav.<kind>_<field>` in lower case. A scale the source states is
 applied; the source states no unit, so the module declares none (`-`).
@@ -129,14 +136,14 @@ Definitions with no kind:
 
 | Definition | Mode | Identity | Reason |
 |---|---|---|---|
-| NAV-COUNTED | GET | 0x01 0x51 | a group repeated by field `numCh` |
 | NAV-TEXT | GET | 0x01 0x52 | text that runs to the end of the payload |
 | NAV-MIXED | SET | 0x01 0x50 | the same class, id and payload length as kind `nav_mixed` |
 | NAV-PVT | POLL | 0x01 0x07 | an empty payload: a kind needs at least one field |
 
-2 of them have a variable part: a group repeated by a count field or to the end
-of the payload, or text that runs to the end. Stating one needs a repeated group
-counted by a field, or a trailing field of the remaining length.
+1 of them have a variable part the pack cannot state: a group that does not
+end the payload or whose items vary, a group repeated to the end of the
+payload, or text that runs to the end. Stating one needs a group counted by a
+field that is not last, or a trailing field of the remaining length.
 
 1 have the class, id and length of a kind above; the source tells the
 variants apart by a version field or by the direction of the message, which a
@@ -150,9 +157,10 @@ variants apart by a version field or by the direction of the message, which a
 ## Vectors
 
 `vectors/rt-<class><id>-<kind>.json`: one same-format round trip per kind, the
-frame written by a UBX serializer in the generator from sample values.
+frame written by a UBX serializer in the generator from sample values; a kind
+with a counted group has one with two items and one with none (`-no-items`).
 
 `vectors/x-*-to-geojson.json`: a frame converted to GeoJSON; the expected text
 is written by hand from the field values.
 
-8 vectors.
+10 vectors.

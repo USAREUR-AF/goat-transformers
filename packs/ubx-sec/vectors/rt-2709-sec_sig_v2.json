@@ -1,0 +1,11 @@
+{
+  "name": "ubx-sec-roundtrip-sec_sig_v2",
+  "from": "ubx-sec",
+  "to": "ubx-sec",
+  "input": "b56227090c0069569c02d7ed0a82acf0ed2d",
+  "expect": "b56227090c0069569c02d7ed0a82acf0ed2d",
+  "model": {
+    "@kind": "sec_sig_v2",
+    "ubxsec.sec_sig_v2_famfreq.#": "2"
+  }
+}

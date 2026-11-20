@@ -144,3 +144,16 @@ field     sbfgalileodecodedmessage.galgst_gps_a_0_g 0:128:32 f32scale:1/10000000
 field     sbfgalileodecodedmessage.galgst_gps_t_o_g 0:160:32 uint
 field     sbfgalileodecodedmessage.galgst_gps_wn_o_g 0:192:8 uint
 const     0:200:24 0
+
+kind      galsarrlm
+when      0:0:13 4034
+requires  sbfgalileodecodedmessage.galsarrlm_tow sbfgalileodecodedmessage.galsarrlm_wnc sbfgalileodecodedmessage.galsarrlm_svid
+field     sbf.length 0:16:16 uint
+field     sbfgalileodecodedmessage.galsarrlm_tow 0:32:32 uint
+field     sbfgalileodecodedmessage.galsarrlm_wnc 0:64:16 uint
+field     sbfgalileodecodedmessage.galsarrlm_svid 0:80:8 uint
+field     sbfgalileodecodedmessage.galsarrlm_source 0:88:8 uint
+field     sbfgalileodecodedmessage.galsarrlm_reserved 0:104:24 uint
+group     sbfgalileodecodedmessage.galsarrlm_rlm 0:128 item 32 count 0:96:8
+  field   sbfgalileodecodedmessage.galsarrlm_rlm_rlmbits 0:0:32 uint
+end
