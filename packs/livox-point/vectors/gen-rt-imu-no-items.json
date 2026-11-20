@@ -1,0 +1,11 @@
+{
+  "name": "rt-imu-no-items",
+  "from": "livox-point",
+  "to": "livox-point",
+  "source": "as gen-rt-imu, with dot_num = 0 and no items",
+  "input": "2824008ab80000ecab9d00ffb06112c37425d68738e99a4bfc46caa0ad5e0fc07122d384",
+  "expect": "2824008ab80000ecab9d00ffb06112c37425d68738e99a4bfc46caa0ad5e0fc07122d384",
+  "model": {
+    "@kind": "imu"
+  }
+}

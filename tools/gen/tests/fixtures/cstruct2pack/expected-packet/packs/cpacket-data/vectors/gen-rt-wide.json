@@ -1,0 +1,14 @@
+{
+  "name": "rt-wide",
+  "from": "cpacket-data",
+  "to": "cpacket-data",
+  "source": "tools/gen/cstruct2pack.py: DemoPacket with values chosen by the generator, item_type = 1, count = 2, then two WideItem items, packed by its serializer at the offsets of the layouts",
+  "input": "ea1200020001ae5f88530480c1f68f058023",
+  "expect": "ea1200020001ae5f88530480c1f68f058023",
+  "model": {
+    "@kind": "wide",
+    "cpacket.demo_packet_version": "234",
+    "cpacket.demo_packet_length": "18",
+    "cpacket.demo_packet_rsvd_0": "174"
+  }
+}

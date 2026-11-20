@@ -11,6 +11,11 @@ with an array longer than the unroll limit, a two-dimensional array and an
 int64, a struct of bit-fields (skipped by the config) and a function
 prototype (ignored). fixtures/cstruct2pack/expected is the tree the run
 writes.
+
+Packet mode: `cpacket.json` and `inc/packet.h` (under `#pragma pack(1)`, reset
+by `#pragma pack()`): a header struct with a flexible last member, an item type
+from an enum, an item count and two item structs.
+fixtures/cstruct2pack/expected-packet is the tree that run writes.
 """
 import json
 import os
@@ -112,6 +117,62 @@ class CStructTest(unittest.TestCase):
         status, _, err = self.run_gen(*COMMIT)
         self.assertEqual(status, 1)
         self.assertIn("pos_t", err)
+
+
+class CStructPacketTest(unittest.TestCase):
+    setUp = CStructTest.setUp
+    read = CStructTest.read
+    edit = CStructTest.edit
+
+    def run_gen(self, *extra):
+        return support.run_main(C.main, ["--config", os.path.join(self.inp, "cpacket.json"),
+                                         "--src", os.path.join(self.inp, "src"), "--out", self.gt] + list(extra))
+
+    def test_run_writes_the_expected_tree(self):
+        status, out, err = self.run_gen(*COMMIT)
+        self.assertEqual((status, err), (0, ""))
+        self.assertIn("2 messages in 1 packs (0 skipped), 10 keys and lists, 5 vectors checked", out)
+        support.assert_same_tree(self, os.path.join(FIXTURE, "expected-packet"), self.gt, ignore=INPUTS)
+
+    def test_layout_under_pragma_pack_1(self):
+        self.assertEqual(self.run_gen(*COMMIT)[0], 0)
+        pack = self.read("packs", "cpacket-data", "pack.def")
+        for line in ("field  cpacket.demo_packet_length  0:8:16  uint\n",
+                     "field  cpacket.demo_packet_rsvd_1  0:56:8  uint\n",
+                     "kind      wide\nwhen      0:40:8  1\n",
+                     "group  cpacket.demo_packet_wide  0:64  item 40  count 0:24:16\n",
+                     "group  cpacket.demo_packet_narrow  0:64  item 40  count 0:24:16\n",
+                     "  field  cpacket.narrow_item_label  0:16:24  ascii\n"):
+            self.assertIn(line, pack)
+        self.assertNotIn("demo_packet_count", pack)
+        v = json.loads(self.read("packs", "cpacket-data", "vectors", "gen-rt-wide.json"))
+        data = bytes.fromhex(v["input"])
+        self.assertEqual(len(data), 8 + 2 * 5)
+        self.assertEqual(int.from_bytes(data[1:3], "little"), len(data))
+        self.assertEqual((int.from_bytes(data[3:5], "little"), data[5]), (2, 1))
+
+    def test_an_unknown_pragma_pack_stops_the_run(self):
+        self.edit("inc/packet.h", "#pragma pack(1)", "#pragma pack(show)")
+        status, _, err = self.run_gen(*COMMIT)
+        self.assertEqual(status, 1)
+        self.assertIn("a form of pack this reader does not know", err)
+
+    def test_config_errors_stop_the_run(self):
+        path = os.path.join(self.inp, "cpacket.json")
+        with open(path, encoding="utf-8") as fh:
+            base = json.load(fh)
+        for change, message in (
+                (lambda c: c["packet"]["kinds"][0].update(id="kItemNone"), "defines no constant kItemNone"),
+                (lambda c: c["packet"].update(tail="rsvd"), "is not the last member"),
+                (lambda c: c["packet"].update(count="rsvd"), "is not an unsigned scalar"),
+                (lambda c: c["packet"]["kinds"][1].update(type="ItemType"), "has no size the C standard fixes")):
+            cfg = json.loads(json.dumps(base))
+            change(cfg)
+            with open(path, "w", encoding="utf-8") as fh:
+                json.dump(cfg, fh)
+            status, _, err = self.run_gen(*COMMIT)
+            self.assertEqual(status, 1, message)
+            self.assertIn(message, err)
 
 
 if __name__ == "__main__":

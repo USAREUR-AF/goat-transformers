@@ -1,0 +1,14 @@
+{
+  "name": "rt-cartesian_high",
+  "from": "livox-point",
+  "to": "livox-point",
+  "source": "tools/gen/cstruct2pack.py: LivoxLidarEthernetPacket with values chosen by the generator, data_type = 1, dot_num = 2, then two LivoxLidarCartesianHighRawPoint items, packed by its serializer at the offsets of the layouts",
+  "input": "434000a51a0200070eb8011acb7c2dde8f40f1a25304b56617a96f51c8792adb8c3dee9f48e12b807f7f2c80b61d2d8063145bf82e8092962f80c9343080d889",
+  "expect": "434000a51a0200070eb8011acb7c2dde8f40f1a25304b56617a96f51c8792adb8c3dee9f48e12b807f7f2c80b61d2d8063145bf82e8092962f80c9343080d889",
+  "model": {
+    "@kind": "cartesian_high",
+    "livox.livox_lidar_ethernet_packet_version": "67",
+    "livox.livox_lidar_ethernet_packet_length": "64",
+    "livox.livox_lidar_ethernet_packet_time_interval": "6821"
+  }
+}

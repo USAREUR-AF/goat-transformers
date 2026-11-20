@@ -1,0 +1,70 @@
+{
+  "family": "cpacket",
+  "module": "cpacket",
+  "version": "0.1.0",
+  "headers": [
+    "inc/packet.h"
+  ],
+  "constant_headers": [],
+  "license_files": [
+    "LICENSE"
+  ],
+  "license_quote": [
+    {
+      "path": "LICENSE",
+      "lines": [
+        1,
+        1
+      ]
+    }
+  ],
+  "defines": [],
+  "attributes": [],
+  "pack_macros": {},
+  "int_bits": 32,
+  "title": "Synthetic packet (inc/packet.h)",
+  "title_short": "Synthetic packet",
+  "repository": "https://example.org/cpacket",
+  "raw_url": "https://example.org/cpacket/<commit>/<path>",
+  "license_line": "member names, types and array sizes only; synthetic",
+  "extra_sources": [],
+  "byte_order_statement": "little-endian, as the test's config states",
+  "packet": {
+    "name": "data",
+    "struct": "DemoPacket",
+    "tail": "data",
+    "id": "item_type",
+    "count": "count",
+    "length": "length",
+    "kinds": [
+      {
+        "kind": "wide",
+        "id": "kItemWide",
+        "type": "WideItem"
+      },
+      {
+        "kind": "narrow",
+        "id": "kItemNarrow",
+        "type": "NarrowItem"
+      }
+    ],
+    "convention": [
+      "A message is a DemoPacket header, then its items."
+    ],
+    "evidence": [
+      "The test's config names the item struct of each type."
+    ]
+  },
+  "not_mapped": [
+    [
+      "Nothing else",
+      "synthetic"
+    ]
+  ],
+  "license_statement": [
+    "- `LICENSE`: a synthetic stand-in."
+  ],
+  "licence_note": [
+    "Licence of this pack: as the repository's."
+  ]
+}

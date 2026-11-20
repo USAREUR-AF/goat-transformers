@@ -1,0 +1,8 @@
+{
+  "name": "err-short",
+  "from": "livox-point",
+  "to": "livox-point",
+  "source": "one byte short of the 84 bytes that dot_num = 2 items of LivoxLidarImuRawPoint need (vector-format, malformed input)",
+  "input": "35540097810200f974aa000cbd6e1fd08132e39445f6a7580910138dba6b1ccd7e2fe0910000603f0000903f0000b03f0000d03f0000f03f000008400000184000002840000038400000484000005840000068",
+  "expect_error": "malformed-wire"
+}

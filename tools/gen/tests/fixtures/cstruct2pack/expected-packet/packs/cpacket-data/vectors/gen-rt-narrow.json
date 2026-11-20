@@ -1,0 +1,14 @@
+{
+  "name": "rt-narrow",
+  "from": "cpacket-data",
+  "to": "cpacket-data",
+  "source": "tools/gen/cstruct2pack.py: DemoPacket with values chosen by the generator, item_type = 2, count = 2, then two NarrowItem items, packed by its serializer at the offsets of the layouts",
+  "input": "d412000200029849ae017431381c3e743230",
+  "expect": "d412000200029849ae017431381c3e743230",
+  "model": {
+    "@kind": "narrow",
+    "cpacket.demo_packet_version": "212",
+    "cpacket.demo_packet_length": "18",
+    "cpacket.demo_packet_rsvd_0": "152"
+  }
+}

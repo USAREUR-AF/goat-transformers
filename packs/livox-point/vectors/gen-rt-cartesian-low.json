@@ -1,0 +1,14 @@
+{
+  "name": "rt-cartesian_low",
+  "from": "livox-point",
+  "to": "livox-point",
+  "source": "tools/gen/cstruct2pack.py: LivoxLidarEthernetPacket with values chosen by the generator, data_type = 2, dot_num = 2, then two LivoxLidarCartesianLowRawPoint items, packed by its serializer at the offsets of the layouts",
+  "input": "3a34009ca40200fe97af0211c27324d58637e8994afbac5d0e33e36bbf7021d28334e596a97be01917b85a0bbc92f3302acfcf80",
+  "expect": "3a34009ca40200fe97af0211c27324d58637e8994afbac5d0e33e36bbf7021d28334e596a97be01917b85a0bbc92f3302acfcf80",
+  "model": {
+    "@kind": "cartesian_low",
+    "livox.livox_lidar_ethernet_packet_version": "58",
+    "livox.livox_lidar_ethernet_packet_length": "52",
+    "livox.livox_lidar_ethernet_packet_time_interval": "42140"
+  }
+}

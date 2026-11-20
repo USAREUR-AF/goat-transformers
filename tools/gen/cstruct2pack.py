@@ -18,13 +18,21 @@ header text that yields a name, a number and a struct type per message. Each
 message is a kind of its pack, selected by `when` lines on the header fields the
 config marks; a checksum or trailer is the framer's and is not part of the message.
 
+Packet mode (config `packet`, one pack `<family>-<name>`): the message is one header
+struct from the headers whose last member is a flexible array (`tail`), then items.
+One member of the header (`id`) selects the item struct, from a list of enum or
+#define constants and struct types the config gives (`kinds`); another (`count`)
+counts the items, which follow the header back to back. Each item struct is a kind:
+its `when` is the constant on `id`, and its items are a `group` counted by `count`.
+
 The reader is strict. It understands, and only these:
 
   - comments, `#define NAME <integer expression>`, `#undef`, and `#if`, `#ifdef`,
     `#ifndef`, `#elif`, `#else`, `#endif` with `defined(NAME)` and integers, taking
     the branches of the config's define set. A constant defined inside a
     conditional is marked, and a layout that uses one is refused;
-  - packing: `#pragma pack(push, n)`, `#pragma pack(pop)` and macros the config maps
+  - packing: `#pragma pack(push, n)`, `#pragma pack(pop)`, `#pragma pack(n)`, `#pragma pack()`
+    and macros the config maps
     to those;
   - `enum [name] { A [= expr], ... };` and `typedef enum ... name;`, for their
     constant values (an implicit value is the previous one plus 1);
@@ -328,9 +336,15 @@ class Reader:
                 elif d == "undef":
                     self.consts.pop(arg.split()[0], None)
                 elif d == "pragma":
-                    pm = re.match(r"pack\s*\(\s*(push\s*,\s*(\d+)|pop)\s*\)", arg)
+                    pm = re.match(r"pack\s*\(\s*(push\s*,\s*(\d+)|pop)\s*\)\s*$", arg)
+                    ps = re.match(r"pack\s*\(\s*(\d*)\s*\)\s*$", arg)
                     if pm:
                         out_lines.append((no, "@pack %s" % (pm.group(2) or "pop")))
+                    elif ps:
+                        # `#pragma pack(n)` sets the current value, `#pragma pack()` the default
+                        out_lines.append((no, "@pack set %s" % (ps.group(1) or "default")))
+                    elif re.match(r"pack\b", arg):
+                        fail("%s:%d: #pragma %s: a form of pack this reader does not know" % (rel, no, arg))
                 out_lines.append((no, ""))
                 continue
             if not taking:
@@ -388,7 +402,10 @@ class Reader:
             no, t = toks[i]
             if t.startswith("@pack "):
                 v = t.split()[1]
-                if v == "pop":
+                if v == "set":
+                    s = t.split()[2]
+                    pack[-1] = None if s == "default" else int(s)
+                elif v == "pop":
                     if len(pack) == 1:
                         fail("%s:%d: pack pop with nothing pushed" % (rel, no))
                     pack.pop()
@@ -873,7 +890,7 @@ def serialize(lay, buf, base, sampler, values, path, override=None):
 # --------------------------------------------------------------------------
 # Independent check: a fixed-layout `bits` codec with kinds (engine-spec 0.2,
 # 0.5 kinds, lsb order, f32, f64, ascii, sscale; 0.6 const and default; 0.7
-# groups with a fixed count). It reads pack.def text.
+# groups with a fixed count or a count locator). It reads pack.def text.
 # --------------------------------------------------------------------------
 
 class Fail(Exception):
@@ -916,7 +933,8 @@ def read_pack(text):
         elif d == "group":
             b = int(t[2].split(":")[0]) * 8 + int(t[2].split(":")[1])
             body = []
-            cur.append(("group", t[1], b, int(t[t.index("item") + 1]), int(t[t.index("count") + 1]), body))
+            c = t[t.index("count") + 1]
+            cur.append(("group", t[1], b, int(t[t.index("item") + 1]), loc(c) if ":" in c else int(c), body))
             stack.append(cur)
             cur = body
         elif d == "end":
@@ -924,11 +942,15 @@ def read_pack(text):
     return pack
 
 
-def extent(lines, base=0):
+def extent(lines, base=0, counts=None):
+    """The end bit of `lines`; a group counted by a locator takes its count from
+    `counts` (by list key), 0 when absent, and its count field ends there too."""
     end = 0
     for ln in lines:
         if ln[0] == "field":
             end = max(end, base + ln[2] + ln[3])
+        elif isinstance(ln[4], tuple):
+            end = max(end, base + ln[4][0] + ln[4][1], base + ln[2] + ln[3] * (counts or {}).get(ln[1], 0))
         else:
             end = max(end, base + ln[2] + ln[3] * ln[4])
     return end
@@ -977,13 +999,14 @@ def decode_lines(lines, whole, base):
         if ln[0] == "field":
             ent[ln[1]] = decode_value(get(whole, base + ln[2], ln[3]), ln[3], ln[4])
         else:
-            ent[ln[1]] = [decode_lines(ln[5], whole, base + ln[2] + i * ln[3]) for i in range(ln[4])]
+            n = get(whole, base + ln[4][0], ln[4][1]) if isinstance(ln[4], tuple) else ln[4]
+            ent[ln[1]] = [decode_lines(ln[5], whole, base + ln[2] + i * ln[3]) for i in range(n)]
     return ent
 
 
-def msg_bits(pack, kname):
+def msg_bits(pack, kname, counts=None):
     k = pack["kinds"][kname]
-    ends = [extent(pack["common"]), extent(k["lines"])]
+    ends = [extent(pack["common"], 0, counts), extent(k["lines"], 0, counts)]
     ends += [b + n for b, n, _ in pack.get("when", []) + pack.get("const", []) + k["when"] + k["const"]]
     return max(ends)
 
@@ -996,7 +1019,9 @@ def decode(pack, data):
             raise Fail("no-kind", "common when")
     for name, k in pack["kinds"].items():
         if all(b + n <= nbits and get(whole, b, n) == v for b, n, v in k["when"]):
-            if len(data) * 8 < msg_bits(pack, name):
+            counts = {ln[1]: (get(whole, ln[4][0], ln[4][1]) if ln[4][0] + ln[4][1] <= nbits else 0)
+                      for ln in pack["common"] + k["lines"] if ln[0] == "group" and isinstance(ln[4], tuple)}
+            if len(data) * 8 < msg_bits(pack, name, counts):
                 raise Fail("malformed-wire", "short input")
             ent = decode_lines(pack["common"], whole, 0)
             ent.update(decode_lines(k["lines"], whole, 0))
@@ -1012,6 +1037,14 @@ def encode_lines(lines, ent, base, acc, defaults):
                 v = int(defaults[ln[1]]) if ln[4] in ("uint", "twos") else float(defaults[ln[1]])
             if v is not None:
                 acc |= encode_value(v, ln[3], ln[4]) << (base + ln[2])
+        elif isinstance(ln[4], tuple):
+            items = ent.get(ln[1]) or []
+            cb, cn = ln[4]
+            if len(items) >> cn:
+                raise Fail("transform-encode", "count does not fit")
+            acc = (acc & ~(((1 << cn) - 1) << (base + cb))) | (len(items) << (base + cb))
+            for i, it in enumerate(items):
+                acc = encode_lines(ln[5], it, base + ln[2] + i * ln[3], acc, defaults)
         else:
             items = ent.get(ln[1])
             if items is None:
@@ -1036,7 +1069,9 @@ def encode(pack, kname, ent):
     acc = encode_lines(k["lines"], ent, 0, acc, pack["defaults"])
     for b, n, v in pack.get("const", []) + k["const"] + pack.get("when", []) + k["when"]:
         acc = (acc & ~(((1 << n) - 1) << b)) | (v << b)
-    return acc.to_bytes((msg_bits(pack, kname) + 7) // 8, "little")
+    counts = {ln[1]: len(ent.get(ln[1]) or []) for ln in pack["common"] + k["lines"]
+              if ln[0] == "group" and isinstance(ln[4], tuple)}
+    return acc.to_bytes((msg_bits(pack, kname, counts) + 7) // 8, "little")
 
 
 def fmt_float(x):
@@ -1106,7 +1141,8 @@ def emit_lines(module, items, indent=""):
     out = []
     for x in items:
         if isinstance(x, Group):
-            out.append("%sgroup  %s  0:%d  item %d  count %d" % (indent, qual(module, x.key), x.bit, x.item_bits, x.count))
+            count = "0:%d:%d" % x.count if isinstance(x.count, tuple) else "%d" % x.count
+            out.append("%sgroup  %s  0:%d  item %d  count %s" % (indent, qual(module, x.key), x.bit, x.item_bits, count))
             out.extend(emit_lines(module, x.body, indent + "  "))
             out.append("%send" % indent)
         else:
@@ -1137,10 +1173,10 @@ def build(args, out):
     with open(args.config, encoding="utf-8") as fh:
         cfg = json.load(fh)
     fam, module = cfg["family"], cfg["module"]
-    KIND_PREFIX[0] = cfg["messages"].get("strip_prefix", "")
+    KIND_PREFIX[0] = cfg.get("messages", {}).get("strip_prefix", "")
     prov_rel = "tools/gen/sources/%s-PROVENANCE.md" % fam
     names_rel = "tools/gen/names/%s.json" % fam
-    files = cfg["constant_headers"] + cfg["headers"] + cfg.get("license_files", [])
+    files = cfg["constant_headers"] + cfg["headers"] + cfg.get("license_files", []) + cfg.get("evidence_files", [])
     if args.commit:
         out.write(prov_rel, emit_sources_provenance(cfg, args.commit, args.ref, files, args.src, args.date_read))
     text = out.read(prov_rel)
@@ -1156,6 +1192,8 @@ def build(args, out):
         reader.read(os.path.join(args.src, *rel.split("/")), rel, structs=True)
     for rel in cfg["headers"]:
         reader.read(os.path.join(args.src, *rel.split("/")), rel, structs=True)
+    if "packet" in cfg:
+        return build_packet(args, out, cfg, reader, commit, ref, files, shas, names_rel)
     # messages
     with open(os.path.join(args.src, *cfg["messages"]["file"].split("/")), encoding="utf-8") as fh:
         mtext = fh.read()
@@ -1310,6 +1348,201 @@ def build(args, out):
     for path in vectors:
         check_vector(json.loads(out.read(path)), codecs, path)
     return sum(len(e) for e in plan.values()), len(plan), len(skipped), len(decls), len(vectors), skipped
+
+
+# --------------------------------------------------------------------------
+# Packet mode: one header struct whose last member is a flexible array, a
+# member that selects the item struct (the kind) and a member that counts the
+# items (config `packet`)
+# --------------------------------------------------------------------------
+
+def packet_layouts(cfg, reader):
+    pk = cfg["packet"]
+    try:
+        hdr, dims, _, _ = resolve(reader, pk["struct"], pk["struct"])
+    except Unsupported as e:
+        fail("packet struct %s: %s" % (pk["struct"], e))
+    if not isinstance(hdr, Layout) or dims:
+        fail("packet struct %s is not a struct" % pk["struct"])
+    by = {f.member.name: f for f in hdr.fields}
+    for role in ("tail", "id", "count"):
+        if pk[role] not in by:
+            fail("packet %s `%s` is not a member of %s" % (role, pk[role], pk["struct"]))
+    tail = by[pk["tail"]]
+    if tail is not hdr.fields[-1]:
+        fail("packet tail `%s` is not the last member of %s" % (pk["tail"], pk["struct"]))
+    if pk.get("length") and pk["length"] not in by:
+        fail("packet length `%s` is not a member of %s" % (pk["length"], pk["struct"]))
+    for role in ("id", "count"):
+        f = by[pk[role]]
+        if isinstance(f.elem, Layout) or f.counts or SCALARS[f.elem][1] != "u":
+            fail("packet %s `%s` is not an unsigned scalar" % (role, pk[role]))
+    head = Layout(hdr.struct, hdr.fields[:-1], tail.offset, 1)
+    kinds = []
+    for k in pk["kinds"]:
+        c = reader.consts.get(k["id"])
+        if c is None:
+            fail("packet kind %s: the header defines no constant %s" % (k["kind"], k["id"]))
+        if c.conditional:
+            fail("packet kind %s: %s is defined under a conditional" % (k["kind"], k["id"]))
+        try:
+            item, dims, _, _ = resolve(reader, k["type"], k["type"])
+        except Unsupported as e:
+            fail("packet kind %s (%s): %s" % (k["kind"], k["type"], e))
+        if not isinstance(item, Layout) or dims:
+            fail("packet kind %s: %s is not a struct" % (k["kind"], k["type"]))
+        kinds.append(dict(k, value=c.value, layout=item))
+    return head, by[pk["id"]], by[pk["count"]], kinds
+
+
+def build_packet(args, out, cfg, reader, commit, ref, files, shas, names_rel):
+    pk = cfg["packet"]
+    fam, module = cfg["family"], cfg["module"]
+    fmt = "%s-%s" % (fam, pk["name"])
+    head, idf, cntf, kinds = packet_layouts(cfg, reader)
+    names = json.loads(out.read(names_rel)) if out.exists(names_rel) else {}
+    namer = Namer(names)
+    common = [x for x in leaves(head, 0, "", [], pk["struct"], namer, {})
+              if not (isinstance(x, Leaf) and x.path in (pk["id"], pk["count"]))]
+    hbits = head.size * 8
+    id_loc = (idf.offset * 8, idf.elem_size * 8)
+    cnt_loc = (cntf.offset * 8, cntf.elem_size * 8)
+    for k in kinds:
+        if k["value"] >> id_loc[1]:
+            fail("packet kind %s: id %d does not fit `%s`" % (k["kind"], k["value"], pk["id"]))
+        key = namer.name("%s:%s[]" % (pk["struct"], k["kind"]), "%s_%s" % (snake(pk["struct"]), k["kind"]))
+        body = item_leaves(k["layout"], k["type"], "", [], namer)
+        k["group"] = Group(key, hbits, k["layout"].size * 8, cnt_loc, body, "%s[]" % pk["tail"], None)
+    # module
+    decls, seen = [], set()
+    for x in common:
+        decls.append(("key", x.key, x.keytype, "%s.%s (%s)" % (pk["struct"], x.path, x.ctype)))
+        seen.add(x.key)
+    for k in kinds:
+        decls.append(("list", k["group"].key, None, "%s.%s as %s items (%s %s)" % (
+            pk["struct"], pk["tail"], k["type"], pk["id"], k["id"])))
+        for y in k["group"].body:
+            if y.key not in seen:
+                seen.add(y.key)
+                decls.append(("key", y.key, y.keytype, "%s.%s (%s)" % (k["type"], y.path, y.ctype)))
+    out.write("model/%s.def" % module, emit_module(cfg, decls, commit, ref))
+    out.write(names_rel, json.dumps(collections.OrderedDict(sorted(namer.names.items())), indent=1) + "\n")
+    # pack
+    a = ["# %s: one %s, then its items." % (cfg["title_short"], pk["struct"]),
+         "# Generated by tools/gen/cstruct2pack.py from tools/gen/cstruct/%s.json; do not edit by hand." % fam,
+         "format        %s" % fmt, "version       %s" % cfg["version"], "distribution  public"]
+    a += ["source        %s" % s for s in source_lines(cfg, commit, ref)]
+    a += ["uses          %s" % module, "wire          bits", "bit_order     lsb", "word_bytes    1"]
+    a += emit_lines(module, common)
+    for k in kinds:
+        a += ["", "kind      %s" % k["kind"], "when      0:%d:%d  %d" % (id_loc[0], id_loc[1], k["value"]),
+              "requires  %s" % qual(module, k["group"].key)]
+        a += emit_lines(module, [k["group"]])
+    text = "\n".join(a) + "\n"
+    rel = "packs/" + fmt
+    out.write(rel + "/pack.def", text)
+    out.write(rel + "/PROVENANCE.md", emit_provenance(cfg, commit, ref, files, shas, args.date_read, args.src))
+    # vectors: written from the layouts by the serializer
+    sampler = Sampler()
+
+    def message(k, n_items, id_value=None):
+        buf = bytearray(head.size)
+        values = {}
+        serialize(head, buf, 0, sampler, values, "")
+        buf[idf.offset:idf.offset + idf.elem_size] = (k["value"] if id_value is None else id_value).to_bytes(idf.elem_size, "little")
+        buf[cntf.offset:cntf.offset + cntf.elem_size] = n_items.to_bytes(cntf.elem_size, "little")
+        items = []
+        for _ in range(n_items):
+            ib = bytearray(k["layout"].size)
+            iv = {}
+            serialize(k["layout"], ib, 0, sampler, iv, "")
+            buf += ib
+            items.append(iv)
+        if pk.get("length"):
+            # the member that holds the message length in bytes: the true length, so the
+            # vector is a packet a device could send (the pack carries it as a raw key)
+            lf = next(f for f in head.fields if f.member.name == pk["length"])
+            buf[lf.offset:lf.offset + lf.elem_size] = len(buf).to_bytes(lf.elem_size, "little")
+            values[pk["length"]] = len(buf)
+        return bytes(buf), values, items
+
+    vs = []
+    for k in kinds:
+        data, values, items = message(k, 2)
+        model = collections.OrderedDict([("@kind", k["kind"])])
+        for x in common[:3]:
+            v = values[x.path]
+            model[qual(module, x.key)] = fmt_float(v) if x.transform.startswith("f") else str(v)
+        vs.append(("gen-rt-%s.json" % k["kind"].replace("_", "-"), vec(
+            "rt-" + k["kind"], fmt, fmt, data.hex(), data.hex(), model,
+            source="tools/gen/cstruct2pack.py: %s with values chosen by the generator, %s = %d, %s = 2, "
+                   "then two %s items, packed by its serializer at the offsets of the layouts"
+                   % (pk["struct"], pk["id"], k["value"], pk["count"], k["type"]))))
+    k0 = kinds[0]
+    data, _, _ = message(k0, 0)
+    vs.append(("gen-rt-%s-no-items.json" % k0["kind"].replace("_", "-"), vec(
+        "rt-%s-no-items" % k0["kind"], fmt, fmt, data.hex(), data.hex(),
+        collections.OrderedDict([("@kind", k0["kind"])]),
+        source="as gen-rt-%s, with %s = 0 and no items" % (k0["kind"], pk["count"]))))
+    data, _, _ = message(k0, 2)
+    vs.append(("gen-err-short.json", vec(
+        "err-short", fmt, fmt, data[:-1].hex(), error="malformed-wire",
+        source="one byte short of the %d bytes that %s = 2 items of %s need (vector-format, malformed input)"
+               % (len(data), pk["count"], k0["type"]))))
+    used = {k["value"] for k in kinds}
+    unknown = next(v for v in range(1 << id_loc[1]) if v not in used)
+    data, _, _ = message(k0, 0, id_value=unknown)
+    vs.append(("gen-err-other-id.json", vec(
+        "err-other-id", fmt, fmt, data.hex(), error="no-kind",
+        source="%s = %d names no item struct of this pack" % (pk["id"], unknown))))
+    for name in out.listdir(rel + "/vectors"):
+        if name.startswith("gen-") and name not in {n for n, _ in vs}:
+            out.remove(rel + "/vectors/" + name)
+    for name, v in vs:
+        out.write(rel + "/vectors/" + name, dump_json(v))
+    out.write(rel + "/pack.md", emit_packet_md(cfg, fmt, module, head, idf, cntf, kinds, common, len(vs)))
+    # check
+    model = gtcheck.Model()
+    with open(args.core_def, encoding="utf-8") as fh:
+        model.add(fh.read(), "model/core.def")
+    model.add(out.read("model/%s.def" % module), "model/%s.def" % module)
+    try:
+        gtcheck.load_pack(out.read(rel + "/pack.def"), model, label=rel + "/pack.def")
+    except gtcheck.CheckError as e:
+        fail(str(e))
+    codec = {fmt: read_pack(out.read(rel + "/pack.def"))}
+    for name, _ in vs:
+        check_vector(json.loads(out.read(rel + "/vectors/" + name)), codec, rel + "/vectors/" + name)
+    return len(kinds), 1, 0, len(decls), len(vs), []
+
+
+def emit_packet_md(cfg, fmt, module, head, idf, cntf, kinds, common, n_vec):
+    pk = cfg["packet"]
+    a = ["# %s" % fmt, "",
+         "%s. Generated by `tools/gen/cstruct2pack.py` from" % cfg["title_short"],
+         "`tools/gen/cstruct/%s.json` (run by `tools/gen/%s-run.sh`); do not edit by hand." % (cfg["family"], cfg["family"]),
+         "", "## Message convention", ""]
+    a += pk["convention"]
+    a += ["", "The header is `%s` up to its last member `%s` (%d bytes), %s; `#pragma pack(1)`" % (
+        pk["struct"], pk["tail"], head.size, cfg["byte_order_statement"]),
+        "is in force where it is declared, so the members follow one another with no padding.",
+        "`%s` (byte %d) selects the kind; `%s` (bytes %d-%d) counts the items, which follow" % (
+            pk["id"], idf.offset, pk["count"], cntf.offset, cntf.offset + cntf.elem_size - 1),
+        "the header back to back. On encode the count is the number of items in the list.",
+        "", "## Kinds", "", "| Kind | `%s` | Constant | Item struct | Item bytes |" % pk["id"], "|---|---|---|---|---|"]
+    for k in kinds:
+        a.append("| `%s` | %d | `%s` | `%s` | %d |" % (k["kind"], k["value"], k["id"], k["type"], k["layout"].size))
+    a += [""] + pk.get("evidence", [])
+    a += ["", "## Shared-model keys", ""] + pk.get("bind_note", ["None: every field is a raw key of module `%s`." % module])
+    a += ["", "## Not mapped, and why", "", "| What | Why |", "|---|---|"]
+    for row in cfg.get("not_mapped", []):
+        a.append("| %s | %s |" % (row[0], row[1]))
+    a += ["", "## Vectors", "",
+          "`vectors/gen-rt-<kind>.json`: a round trip per kind with two items, values chosen by the",
+          "generator and packed by its own serializer from the layouts; `-no-items` has a count of 0.",
+          "`gen-err-short` is one byte short of its items, `gen-err-other-id` names no kind.",
+          "%d vector files." % n_vec, "", "## Sources", "", "See `PROVENANCE.md`."]
+    return "\n".join(a) + "\n"
 
 
 KIND_PREFIX = [""]      # the prefix of message names that kind names leave out (config messages.strip_prefix)
@@ -1472,14 +1705,20 @@ def emit_provenance(cfg, commit, ref, files, shas, date_read, src):
     for rel in files:
         a.append("| `%s` | `%s` |" % (rel, shas[rel]))
     a += ["", "## License, as the sources state it", ""] + cfg["license_statement"]
-    for rel in cfg.get("license_quote", []):
+    for q in cfg.get("license_quote", []):
+        rel, lines = (q, None) if isinstance(q, str) else (q["path"], q["lines"])
         if rel not in shas:
             fail("license_quote %s is not one of the files with a SHA-256" % rel)
         with open(os.path.join(src, *rel.split("/")), encoding="utf-8") as fh:
             body = fh.read().rstrip("\n").splitlines()
+        if lines:
+            if not 1 <= lines[0] <= lines[1] <= len(body):
+                fail("license_quote %s: lines %d-%d" % (rel, lines[0], lines[1]))
+            body = body[lines[0] - 1:lines[1]]
         if any(line.startswith("```") for line in body):
             fail("license_quote %s holds a code fence" % rel)
-        a += ["", "`%s`, quoted whole:" % rel, "", "```"] + body + ["```"]
+        what = "quoted whole" if not lines else "lines %d to %d, quoted" % (lines[0], lines[1])
+        a += ["", "`%s`, %s:" % (rel, what), "", "```"] + body + ["```"]
     a += [""] + cfg.get("licence_note", []) + (["" ] if cfg.get("licence_note") else []) + [
           "No source carries a distribution statement, handling marking, export-control",
           "notice or proprietary notice."]

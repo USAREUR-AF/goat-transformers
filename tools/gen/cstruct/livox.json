@@ -1,0 +1,134 @@
+{
+  "family": "livox",
+  "module": "livox",
+  "version": "0.1.0",
+  "headers": [
+    "include/livox_lidar_def.h"
+  ],
+  "constant_headers": [],
+  "license_files": [
+    "LICENSE.txt"
+  ],
+  "evidence_files": [
+    "samples/livox_lidar_quick_start/main.cpp"
+  ],
+  "license_quote": [
+    {
+      "path": "LICENSE.txt",
+      "lines": [
+        1,
+        116
+      ]
+    }
+  ],
+  "defines": [],
+  "attributes": [],
+  "pack_macros": {},
+  "int_bits": 32,
+  "title": "Livox SDK2 LiDAR definitions (include/livox_lidar_def.h)",
+  "title_short": "Livox SDK2 point cloud and IMU data packet",
+  "repository": "https://github.com/Livox-SDK/Livox-SDK2",
+  "raw_url": "https://raw.githubusercontent.com/Livox-SDK/Livox-SDK2/<commit>/<path>",
+  "license_line": "struct member names, types and array sizes only; MIT License",
+  "extra_sources": [
+    "Livox SDK2 samples/livox_lidar_quick_start/main.cpp at the same commit: which item struct each data_type value carries",
+    "Livox wiki, Mid-360 Ethernet protocol page (livox-wiki-en.readthedocs.io): the byte order only"
+  ],
+  "byte_order_statement": "little-endian",
+  "packet": {
+    "name": "point",
+    "struct": "LivoxLidarEthernetPacket",
+    "tail": "data",
+    "id": "data_type",
+    "count": "dot_num",
+    "length": "length",
+    "kinds": [
+      {
+        "kind": "imu",
+        "id": "kLivoxLidarImuData",
+        "type": "LivoxLidarImuRawPoint"
+      },
+      {
+        "kind": "cartesian_high",
+        "id": "kLivoxLidarCartesianCoordinateHighData",
+        "type": "LivoxLidarCartesianHighRawPoint"
+      },
+      {
+        "kind": "cartesian_low",
+        "id": "kLivoxLidarCartesianCoordinateLowData",
+        "type": "LivoxLidarCartesianLowRawPoint"
+      },
+      {
+        "kind": "spherical",
+        "id": "kLivoxLidarSphericalCoordinateData",
+        "type": "LivoxLidarSpherPoint"
+      }
+    ],
+    "convention": [
+      "A message of this format is the UDP payload of one Livox SDK2 point cloud or IMU data packet:",
+      "the header struct `LivoxLidarEthernetPacket` of `include/livox_lidar_def.h` without its",
+      "flexible last member, then `dot_num` items of the struct that `data_type` names. The UDP",
+      "datagram, its ports and the device discovery are the transport's, not this pack's."
+    ],
+    "evidence": [
+      "Which struct each `data_type` carries: the header's enum `LivoxLidarPointDataType` names the",
+      "values, and the SDK's quick-start sample casts the packet's `data` to",
+      "`LivoxLidarCartesianHighRawPoint`, `LivoxLidarCartesianLowRawPoint` and `LivoxLidarSpherPoint`",
+      "for the values 1, 2 and 3 and reads `dot_num` of them. For 0 (IMU) the sample has no cast;",
+      "the pack takes `LivoxLidarImuRawPoint`, the header's only IMU sample struct, by its name.",
+      "",
+      "Byte order: the header does not state it. The SDK reads a received packet by casting its",
+      "bytes onto the packed struct with no byte swap, so the wire order is the host's of the",
+      "machines it runs on; Livox's public protocol page for the Mid-360 states that the protocol",
+      "data is little-endian. Only that fact is taken from the page, which states no licence."
+    ],
+    "bind_note": [
+      "None. The Cartesian points are in millimetres (high) or centimetres (low) in the LiDAR's own",
+      "frame and the spherical points are range and angles from it: no shared key has that",
+      "meaning. The packet's timestamp is 8 bytes whose epoch depends on `time_type`; the header",
+      "declares it as bytes, so it is 8 raw keys. Every field is a raw key of module `livox`."
+    ]
+  },
+  "not_mapped": [
+    [
+      "`length` (the UDP payload length in bytes)",
+      "a raw key, written on encode as the entity holds it: a field that counts the whole message is not in the fixed `bits` layout (`length \u2026 whole` is sequential only, and this packet's count field is not adjacent to its items)"
+    ],
+    [
+      "`crc32`",
+      "a raw key, not checked on decode and not computed on encode: the pack language has no CRC"
+    ],
+    [
+      "`timestamp` as one time",
+      "the header declares `uint8_t[8]`, so the pack carries 8 byte keys; its unit and epoch depend on `time_type`"
+    ],
+    [
+      "`time_interval` in seconds",
+      "a raw integer (the header's comment gives a unit of 0.1 microsecond); no shared key has that meaning"
+    ],
+    [
+      "The state-information push (`LivoxLidarCmdPacket` with command 0x0102)",
+      "a key-value list: a 16-bit key count, then a 16-bit reserved word, then the items. The sequential `group \u2026 count` reads its count immediately before the items, and the fixed layout has no items of varying length, so the list cannot be stated; see the report's missing additions"
+    ],
+    [
+      "Command and response packets",
+      "the control protocol (`LivoxLidarCmdPacket` with a CRC-16 over its header and a CRC-32 over its data), not data packets"
+    ],
+    [
+      "`data_type` values the header does not name",
+      "no kind: `no-kind`"
+    ]
+  ],
+  "license_statement": [
+    "- `LICENSE.txt` puts the portions it lists under the MIT License and gives its text; the list",
+    "  names `include/livox_lidar_def.h` and `sample/livox_lidar_quick_start/main.cpp` (the tag's",
+    "  directory is `samples/`). The rest of the file covers third-party code (RapidJSON, spdlog)",
+    "  that this pack does not use.",
+    "- `include/livox_lidar_def.h` opens with the MIT License text and \"Copyright (c) 2022 Livox.\""
+  ],
+  "licence_note": [
+    "Licence of this pack: Apache-2.0, the repository's (REUSE.toml). It restates member names,",
+    "types, array sizes and constant values, with descriptions of its own; the MIT notice above",
+    "is kept with it here and in NOTICE."
+  ]
+}

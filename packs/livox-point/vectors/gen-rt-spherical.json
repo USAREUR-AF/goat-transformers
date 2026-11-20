@@ -1,0 +1,14 @@
+{
+  "name": "rt-spherical",
+  "from": "livox-point",
+  "to": "livox-point",
+  "source": "tools/gen/cstruct2pack.py: LivoxLidarEthernetPacket with values chosen by the generator, data_type = 3, dot_num = 2, then two LivoxLidarSpherPoint items, packed by its serializer at the offsets of the layouts",
+  "input": "313800932e0200f521a60308b96a1bcc7d2edf9041f2a35405bd5686b66718c97a2bdc8d3e044a16ef7da0f75102b3645f2d64de1558c677",
+  "expect": "313800932e0200f521a60308b96a1bcc7d2edf9041f2a35405bd5686b66718c97a2bdc8d3e044a16ef7da0f75102b3645f2d64de1558c677",
+  "model": {
+    "@kind": "spherical",
+    "livox.livox_lidar_ethernet_packet_version": "49",
+    "livox.livox_lidar_ethernet_packet_length": "56",
+    "livox.livox_lidar_ethernet_packet_time_interval": "11923"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "name": "err-short",
+  "from": "cpacket-data",
+  "to": "cpacket-data",
+  "source": "one byte short of the 18 bytes that count = 2 items of WideItem need (vector-format, malformed input)",
+  "input": "e41200020001a8591e651480bb8ca11580",
+  "expect_error": "malformed-wire"
+}
