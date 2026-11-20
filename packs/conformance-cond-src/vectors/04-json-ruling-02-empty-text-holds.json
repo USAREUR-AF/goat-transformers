@@ -1,0 +1,9 @@
+{
+  "name": "json-ruling-02-empty-text-holds",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-json",
+  "input": "{\"z\":4,\"s1\":\"\"}",
+  "expect": "{\"z\":4,\"n\":3,\"s1\":\"\"}",
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; ruling 2: the empty text holds"
+}

@@ -468,7 +468,9 @@ final class BitsCodec extends Codec<Codec.BitMsg> {
             if (line instanceof Pack.Field) {
                 Pack.Field f = (Pack.Field) line;
                 // A field with absent writes its first sentinel, so it counts, optional or not (ruling 12 of 0.14).
-                if (f.optional && f.absent == null && e.get(f.key) == null && scope.defaultValues.get(f.key) == null) continue;
+                // A line suppressed by `with` writes neither its value, its default nor its sentinel (ruling 1 of 0.18).
+                if (f.optional && (f.suppressed(e)
+                        || (f.absent == null && e.get(f.key) == null && scope.defaultValues.get(f.key) == null))) continue;
             }
             l = Math.max(l, ((Loc) line.loc).end());
         }
@@ -520,7 +522,8 @@ final class BitsCodec extends Codec<Codec.BitMsg> {
         boolean any = false;
         for (Pack.Line l : lines) {
             if (l instanceof Pack.Field) {
-                if (e.get(((Pack.Field) l).key) != null) any = true;
+                // a line suppressed by `with` opens no block (ruling 1 of 0.18)
+                if (held((Pack.Field) l, e)) any = true;
             } else if (l instanceof Pack.Gate) {
                 Pack.Gate g = (Pack.Gate) l;
                 if (open(g.body.lines, e, open)) {
@@ -590,12 +593,12 @@ final class BitsCodec extends Codec<Codec.BitMsg> {
      * covers ({@code present}), then const values, then when values (ruling 15 of 0.7, ruling 7 of 0.17).
      */
     private void writeLines(byte[] b, long base, List<Pack.Line> lines, Object[] values, List<long[]> gateValues,
-                            java.util.BitSet present) {
+                            java.util.BitSet present, Entity e) {
         // The sentinels of absent keys first: a line that writes a value wins over them whatever the order (ruling 16 of 0.9).
         for (int i = lines.size() - 1; i >= 0; i--) {
             if (!(lines.get(i) instanceof Pack.Field) || values[i] != null) continue;
             Pack.Field f = (Pack.Field) lines.get(i);
-            if (f.absent == null) continue; // absent key and no default: its bits stay zero
+            if (f.absent == null || f.suppressed(e)) continue; // absent key and no default, or `with`: its bits stay zero
             Loc loc = (Loc) f.loc;
             long raw = f.absent.firstNum();
             writeBits(b, base + loc.start, loc.len, f.swap ? swapBytes(raw, loc.len) : raw);
@@ -626,6 +629,9 @@ final class BitsCodec extends Codec<Codec.BitMsg> {
         }
     }
 
+    /** True when the entity holds the line's key and the line is not suppressed by {@code with} (ruling 1 of 0.18). */
+    private static boolean held(Pack.Field f, Entity e) { return e.get(f.key) != null && !f.suppressed(e); }
+
     /** Set in {@code mask} the bits of {@code loc}. */
     private static void mark(java.util.BitSet mask, Loc loc) { mask.set((int) loc.start, (int) loc.end()); }
 
@@ -645,7 +651,7 @@ final class BitsCodec extends Codec<Codec.BitMsg> {
         }
         long far = 0;
         if (!info.gated) {
-            writeLines(buf.b, base, outside, outValues, null, null);
+            writeLines(buf.b, base, outside, outValues, null, null, e);
         } else {
             far = encodeGated(buf, scope, base, e, outside, outValues, choices);
         }
@@ -687,11 +693,11 @@ final class BitsCodec extends Codec<Codec.BitMsg> {
         // 2. The lines outside any block, on a scratch copy of the scope; the bits a present key, a const, a when
         //    or a group count wrote are written (the union of their ranges, whatever line wrote last).
         byte[] ev = new byte[((span + 7) >>> 3) + 1];
-        writeLines(ev, 0, outside, outValues, null, null);
+        writeLines(ev, 0, outside, outValues, null, null, e);
         java.util.BitSet written = new java.util.BitSet(span);
         for (int i = 0; i < outside.size(); i++) {
             Pack.Line l = outside.get(i);
-            if (l instanceof Pack.When || e.get(((Pack.Field) l).key) != null) mark(written, (Loc) l.loc);
+            if (l instanceof Pack.When || held((Pack.Field) l, e)) mark(written, (Loc) l.loc);
         }
         for (Pack.Group g : scope.groups) {
             if (g.countLocator == null) continue;
@@ -740,10 +746,13 @@ final class BitsCodec extends Codec<Codec.BitMsg> {
             // Lines of blocks that are not held are never valued: they raise no encode error (ruling 10 of 0.17).
             partValues[i] = isOutside ? outValues[o - 1] : valueToEncode(f, e, partDefaults.get(i));
             // a held block's field counts toward the length; under armor sixbit an optional one only when it is
-            // written, by a value, a default or a sentinel (ruling 14 of 0.17)
-            if (!isOutside && !(pack.armorSixbit && f.optional && partValues[i] == null && f.absent == null)) {
+            // written, by a value, a default or a sentinel (ruling 14 of 0.17); a line suppressed by `with` writes
+            // none of them (ruling 1 of 0.18)
+            boolean writesSentinel = f.absent != null && !f.suppressed(e);
+            if (!isOutside && !(pack.armorSixbit && f.optional && partValues[i] == null && !writesSentinel)) {
                 far = Math.max(far, base + ((Loc) f.loc).end());
             }
+            if (f.suppressed(e)) continue;   // its key does not count as mapped for step 6 (ruling 1 of 0.18)
             if (e.get(f.key) != null) mark(present, (Loc) f.loc);
             mapped.add(f.key);
         }
@@ -758,7 +767,7 @@ final class BitsCodec extends Codec<Codec.BitMsg> {
         for (Pack.Gate g : all) {
             if (held.contains(g)) continue;
             for (Pack.Line l : g.body.lines) {
-                if (!(l instanceof Pack.Field)) continue;
+                if (!(l instanceof Pack.Field) || ((Pack.Field) l).suppressed(e)) continue;   // ruling 1 of 0.18
                 String key = ((Pack.Field) l).key;
                 if (e.get(key) != null && !mapped.contains(key)) {
                     throw new GtException(GtException.Code.TRANSFORM_ENCODE, pack.format, l.locator, key
@@ -766,7 +775,7 @@ final class BitsCodec extends Codec<Codec.BitMsg> {
                 }
             }
         }
-        writeLines(buf.b, base, part, partValues, gateValues, present);
+        writeLines(buf.b, base, part, partValues, gateValues, present, e);
         choices.add(new Choice(base, lines, all, held));
         return far;
     }

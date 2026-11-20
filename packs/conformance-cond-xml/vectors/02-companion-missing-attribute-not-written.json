@@ -1,0 +1,15 @@
+{
+  "name": "companion-missing-attribute-not-written",
+  "from": "conformance-cond-xml",
+  "to": "conformance-cond-xml",
+  "input": "<msg id=\"u\" x=\"1\"/>",
+  "expect": "<msg id=\"u\"/>",
+  "model": {
+    "probe.x": "1",
+    "@absent": [
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; nothing on text wires; ruling 6"
+}

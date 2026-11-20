@@ -1,0 +1,9 @@
+{
+  "name": "armor-ruling-23-optional-with-sentinel-suppressed-not-counted",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-armor",
+  "input": "{\"x\":1,\"w\":3,\"z\":2,\"s1\":\"\"}",
+  "expect": "102",
+  "source": "constructed",
+  "reference": "spec 0.18 ruling 23 (`with` under six-bit armor); ruling 1: a suppressed line has no sentinel; an optional field that `with` suppresses is not written and does not count"
+}

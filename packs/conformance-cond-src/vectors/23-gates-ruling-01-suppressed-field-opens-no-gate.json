@@ -1,0 +1,9 @@
+{
+  "name": "gates-ruling-01-suppressed-field-opens-no-gate",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-gates",
+  "input": "{\"z\":5}",
+  "expect": "00",
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; with Version 0.17 Encode; ruling 1: it does not open a gate block and its key does not count as mapped for step 6"
+}

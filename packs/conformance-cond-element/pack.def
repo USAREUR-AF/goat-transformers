@@ -1,0 +1,30 @@
+# Conformance probe pack for the `xml` directive `element` (spec 0.18).
+# Public. No kinds. Lines, in order, and the elements they place:
+#
+#   label  d/@cs, with x   the first line that addresses d: d is placed here
+#   x      a/@x
+#   element d              d is already placed; written when empty
+#   element e              e is placed here, after a
+#   y      e/f/@y
+#   z      b/@z
+#   element e              a second line for e: loads and adds nothing
+#   element g/h            g and h, written when empty
+#
+# Ruling 13: an element is placed at the first line, of any kind, that
+# addresses it or a path under it.
+format  conformance-cond-element
+version 0.18.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses    probe
+wire    xml
+root    msg
+field   uid          @id     string
+field   probe.label  d/@cs   string  with probe.x
+field   probe.x      a/@x    int
+element d
+element e
+field   probe.y      e/f/@y  int
+field   probe.z      b/@z    int
+element e
+element g/h

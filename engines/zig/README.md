@@ -20,8 +20,11 @@ transforms of spec Version 0.15 (exact integer scales, sign and magnitude,
 scaled floats, 6- and 7-bit character sets, octal digits on `bits`; `scale`
 and `iscale` on the text wires), reads and writes fields that exist only when
 other bits hold a value (gate blocks `if [!]<locator> <values>` … `end` on the
-fixed `bits` layout, spec Version 0.17), and converts between formats via the
-shared model.
+fixed `bits` layout, spec Version 0.17), writes a line only when another key
+is held (`with`), builds and reads token lists (`tokens`, `has_token`,
+`text_if`), writes a time without a zero fraction (`iso8601_short`) and empty
+`xml` elements (`element`, spec Version 0.18), and converts between formats
+via the shared model.
 
 ## Build and run the conformance harness
 

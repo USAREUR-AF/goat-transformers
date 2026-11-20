@@ -1,0 +1,9 @@
+{
+  "name": "armor-ruling-23-optional-with-sentinel-companion-held",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-armor",
+  "input": "{\"x\":1,\"w\":3,\"z\":2,\"s1\":\"\",\"c1\":0}",
+  "expect": "102w",
+  "source": "constructed",
+  "reference": "spec 0.18 ruling 23 (`with` under six-bit armor); ruling 12 of 0.14: a field with `absent` whose key is absent writes its first sentinel and counts toward L, optional or not"
+}

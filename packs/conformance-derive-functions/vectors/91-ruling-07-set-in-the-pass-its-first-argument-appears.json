@@ -1,0 +1,14 @@
+{
+  "name": "ruling-07-set-in-the-pass-its-first-argument-appears",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"flsrc\":0}",
+  "context": {},
+  "expect": "{\"flsrc\":0,\"fllate\":1,\"ptok\":\"q\"}",
+  "model": {
+    "@complete": true,
+    "probe.ptok": "q"
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, Derive functions; ruling 7: no argument is present in pass 1; fl_late is, in pass 2"
+}

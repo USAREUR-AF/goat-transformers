@@ -1,0 +1,15 @@
+{
+  "name": "has-token-sets-only-absent-flags",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"fla\":5,\"flags\":\"gamma\"}",
+  "context": {},
+  "expect": "{\"fla\":5,\"flb\":0,\"flc\":1,\"flags\":\"gamma\"}",
+  "model": {
+    "@complete": true,
+    "probe.fl_a": "5",
+    "probe.fl_c": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, Derive functions; 0.6 Derived keys: a line whose target is absent; tokens is not applied, flags is present"
+}

@@ -92,8 +92,9 @@ repeating part of a message to a list in the model (spec 0.7); wire values that
 mean "no value" (spec 0.9); integer and text-wire scales, sign-and-magnitude
 numbers, character sets and octal digits (spec 0.15); derive functions for
 time, distance and frames (spec 0.16); fields gated by other bits of a fixed
-layout (spec 0.17). Designed: layered wires and framing,
-conditional output, XML namespaces.
+layout (spec 0.17); values written only beside another key, flag tokens,
+short time text and always-written XML elements (spec 0.18). Designed: layered
+wires and framing, XML namespaces.
 
 ### What an encoder does around the copy of a value
 

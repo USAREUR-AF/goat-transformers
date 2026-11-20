@@ -493,9 +493,10 @@ def _choose(pack, enc):
     gates = plan.gates
     have = enc.have or {}
     opened = dict.fromkeys(gates, False)
-    for f in plan.fields:
+    suppressed = enc.suppressed
+    for i, f in plan.ifields:
         g = f.gate
-        if g is not None and f.key in have:
+        if g is not None and f.key in have and i not in suppressed:  # 0.18 ruling 1
             while g is not None and not opened[g]:
                 opened[g] = True
                 g = g.parent
@@ -575,8 +576,8 @@ def _emit(pack, enc, base, ops, checks):
         have = enc.have or {}
         unheld = set()
         kept = set()
-        for f in plan.fields:
-            if f.key in have:
+        for i, f in plan.ifields:
+            if f.key in have and i not in enc.suppressed:  # 0.18 ruling 1: not mapped for step 6
                 if f.gate is None or held[f.gate]:
                     kept.add(f.key)
                 else:

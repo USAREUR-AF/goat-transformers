@@ -1,0 +1,9 @@
+{
+  "name": "seq-default-is-content-when-not-suppressed",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-seq",
+  "input": "{\"y\":1}",
+  "expect": "2120",
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; with Version 0.8 Presence; ruling 2 of 0.8: a default in scope counts as present; the line is not suppressed"
+}

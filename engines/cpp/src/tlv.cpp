@@ -751,7 +751,8 @@ std::string encode_tlv(const Pack& p, const Entity& e) {
             s.named = true;
             if (s.fixed || s.has_value || fixed_paths.count(path)) continue;  // another line writes the item
             Value v;
-            if (!src.value(*line.field, v)) continue;
+            // A line suppressed by `with` writes nothing, its default included (0.18 ruling 1).
+            if (src.suppressed(*line.field) || !src.value(*line.field, v)) continue;
             try {
                 s.value = encode_item(*line.field, v);
             } catch (const std::invalid_argument& ex) {

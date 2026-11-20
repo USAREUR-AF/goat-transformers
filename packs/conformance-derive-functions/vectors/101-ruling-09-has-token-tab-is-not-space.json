@@ -1,0 +1,15 @@
+{
+  "name": "ruling-09-has-token-tab-is-not-space",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"wtxt\": \"a\\tb\"}",
+  "context": {},
+  "expect": "{\"wtxt\":\"a\\tb\",\"wsp\":0,\"wcol\":0}",
+  "model": {
+    "@complete": true,
+    "probe.wsp": "0",
+    "probe.wcol": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, Derive functions; ruling 9: space and colon name U+0020 and :"
+}

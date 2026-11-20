@@ -274,14 +274,15 @@ def parse_seq_pack_text(text, *, source="pack.def"):
             opt = options[i]
             if opt == "optional":
                 raise bad("the field option 'optional' in a sequential pack", lineno, len_text)
-            if opt not in ("via", "swap", "trim", "absent"):
+            if opt not in ("via", "swap", "trim", "absent", "with"):
                 raise line_bad("unknown field option %r" % opt, lineno, len_text)
             if opt in opts:
                 raise line_bad("field option %r is given twice" % opt, lineno, len_text)
-            if opt == "via" or opt == "absent":  # the token after `absent` is its argument (ruling 11 of 0.9)
+            if opt in ("via", "absent", "with"):  # the token after `absent` is its argument (ruling 11 of 0.9)
                 if i + 1 >= len(options):
-                    raise line_bad("field option %r takes %s" % (opt, "a table name" if opt == "via" else "a value"),
-                              lineno, len_text)
+                    raise line_bad("field option %r takes %s" % (
+                        opt, "a table name" if opt == "via" else "a model key" if opt == "with" else "a value"),
+                        lineno, len_text)
                 opts[opt] = options[i + 1]
                 i += 2
             else:
@@ -321,6 +322,9 @@ def parse_seq_pack_text(text, *, source="pack.def"):
                 deferred.append((lineno, d.err))
                 return None
         key_refs.append((key, f))
+        if "with" in opts:  # 0.18: checked as a `requires` key is
+            f.with_key = opts["with"]
+            key_refs.append((f.with_key, None))
         if f.via is not None:
             via_fields.append(f)
         return f
@@ -377,8 +381,9 @@ def parse_seq_pack_text(text, *, source="pack.def"):
                         raise bad("a second layout, %r, in a sequential pack" % args[0], lineno, "layout")
                     if wired is not None:  # ruling 5b of 0.11
                         raise bad("'layout sequential' after a %r line" % wired, lineno, "layout")
-            elif kw in TEXT_DIRECTIVES or kw == "tag" or kw == "key":
-                # `delimiter`, `start`, `checksum` (0.10); `tag`, `key`, `checksum sum16` (0.13): another wire's
+            elif kw in TEXT_DIRECTIVES or kw == "tag" or kw == "key" or kw == "element":
+                # `delimiter`, `start`, `checksum` (0.10); `tag`, `key`, `checksum sum16` (0.13);
+                # `element` (0.18, xml): another wire's
                 text_dirs.append((lineno, bad("%r is a directive of another wire" % kw, lineno, kw)))
             elif kw == "armor":
                 armor_line(args, armor, any_kind, lineno)
@@ -446,7 +451,7 @@ def parse_seq_pack_text(text, *, source="pack.def"):
                 carried = []
                 k = 0
                 while k < len(options):
-                    if options[k] in ("via", "absent"):
+                    if options[k] in ("via", "absent", "with"):  # `with` is the line's own (ruling 5 of 0.18)
                         if options[k] == "absent":
                             carried.extend(options[k:k + 2])
                         k += 2

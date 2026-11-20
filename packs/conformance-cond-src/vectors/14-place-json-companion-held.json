@@ -1,0 +1,9 @@
+{
+  "name": "place-json-companion-held",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-place-json",
+  "input": "{\"x\":1,\"s2\":\"a\",\"cs\":\"b\",\"y\":1}",
+  "expect": "{\"s\":\"a\",\"x\":1}",
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; y held: s2 is the earliest line whose key is present"
+}

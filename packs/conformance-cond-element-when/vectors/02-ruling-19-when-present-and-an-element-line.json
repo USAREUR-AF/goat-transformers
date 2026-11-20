@@ -1,0 +1,12 @@
+{
+  "name": "ruling-19-when-present-and-an-element-line",
+  "from": "conformance-cond-element-when",
+  "to": "conformance-cond-element-when",
+  "input": "<msg><b a=\"q\"/></msg>",
+  "expect": "<msg><a/><b/></msg>",
+  "model": {
+    "@kind": "k"
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, xml: an element written when empty; ruling 19: b is placed at `element b`, after `element a`; the when line names no position"
+}

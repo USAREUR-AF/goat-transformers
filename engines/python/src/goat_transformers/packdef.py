@@ -26,6 +26,7 @@ PACK_DIRECTIVES = frozenset((
     "align", "presence", "if", "opt", "chain", "fx", "length", "delimiter", "start", "checksum",
     "tag", "key",  # the `tlv` wire (0.13)
     "armor",  # the `bits` wire (0.14)
+    "element",  # the `xml` wire (0.18)
 ))
 # The lines that stand after the `wire` line (5b): before it, `missing-wire`.
 NEEDS_WIRE = frozenset((
@@ -47,6 +48,8 @@ ARG_COUNTS = dict({kw: (1, 1) for kw in _ONE_ARG}, **{
     # 0.14: `armor <hex | sixbit>`, exactly one argument, checked as the line
     # is read (ruling 13 of 0.14)
     "armor": (1, 1),
+    # 0.18: `element <path>`, one path
+    "element": (1, 1),
 })
 HEADER_ONCE = ("format", "version", "wire", "distribution")  # a second one is `bad-directive` (5b step 5)
 _SINGLE = ("word_bytes", "bit_order", "layout")
@@ -56,7 +59,7 @@ _SEQ_ONLY = ("pad", "align", "presence", "opt", "chain", "fx", "length", "also")
 _GROUP_LINES = ("field", "const", "default", "group", "if", "end")
 # The lines of a gate block (0.17).
 _GATE_LINES = ("field", "const", "default", "if", "end")
-FIELD_OPTIONS = ("via", "swap", "trim", "optional", "absent")
+FIELD_OPTIONS = ("via", "swap", "trim", "optional", "absent", "with")
 _JSON_NUMBER = re.compile(r"-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?\Z")
 TEXT_DIRECTIVES = ("delimiter", "start", "checksum")  # the `text` wire (0.10)
 ARMORS = ("hex", "sixbit")  # the `bits` wire (0.14)
@@ -81,6 +84,7 @@ class Field:
     absent: frozenset = None
     absent_out: object = None
     gate: object = None     # bits, fixed layout: the innermost gate block holding the line (0.17)
+    with_key: str = None    # `with <other-key>` (0.18): written only when the scope holds that key
 
     is_field = True
     is_const = False
@@ -126,6 +130,24 @@ class Const:
 
 
 @dataclass
+class Element:
+    """`element <path>` (0.18, xml): the element at `path`, and each on the way
+    to it, is written on encode even when nothing inside it is. Decode ignores
+    it; it maps no member."""
+
+    locator: str
+    loc: tuple  # the element names
+    lineno: int = 0
+
+    is_field = False
+    is_const = False
+    is_group = False
+    is_element = True
+    present = True  # like `when <locator> present`: not in a plan's order nor mapped
+    gate = None
+
+
+@dataclass
 class Default:
     """`default <model-key> <value>` (0.6). `value` is `text` read as the key's
     declared type, set when the pack is checked against the loaded modules."""
@@ -155,7 +177,8 @@ class Kind:
 
     @property
     def whens(self):
-        return [ln for ln in self.lines if not ln.is_field and not ln.is_const and not ln.is_group]
+        return [ln for ln in self.lines if not ln.is_field and not ln.is_const and not ln.is_group
+                and not getattr(ln, "is_element", False)]
 
 
 class Group:
@@ -307,6 +330,7 @@ class Plan:
         if name == "whens":
             value = self.whens = [
                 ln for ln in self.lines if not ln.is_field and not ln.is_const and not ln.is_group
+                and not getattr(ln, "is_element", False)
             ]
             return value
         if name == "order" or name == "mapped":
@@ -442,7 +466,11 @@ def split_key(key):
 
 # One token: a double-quoted value, a `#` or an unterminated quote at the start
 # of a token, or a run of non-blank characters.
-_TOKEN = re.compile(r'''\s*(?:"([^"]*)"|(["#])|(\S+))''')
+_TOKEN = re.compile(r'''[ \t\n\r]*(?:"([^"]*)"|(["#])|([^ \t\n\r]+))''')
+# Tokens are separated by space, tab, line feed and carriage return only; any
+# other character, U+00A0 included, is part of a token (ruling 15 of 0.18).
+_WS_SPLIT = re.compile(r"[ \t\n\r]+")
+_OTHER_WS = re.compile(r"[\f\v\x1c-\x1f]")  # what `str.split` also splits an ASCII line at
 
 
 def tokenize(line, *, source="pack.def", lineno=0, error=UnterminatedQuote):
@@ -452,7 +480,10 @@ def tokenize(line, *, source="pack.def", lineno=0, error=UnterminatedQuote):
     no escape, so a quoted value cannot contain a double quote (0.5 rulings 6, 17)."""
     if '"' not in line:
         # No quoted token: whitespace-separated tokens up to the first that starts with `#`.
-        toks = line.split()
+        if line.isascii() and _OTHER_WS.search(line) is None:
+            toks = line.split()
+        else:
+            toks = [t for t in _WS_SPLIT.split(line) if t]
         if "#" not in line:
             return toks
         for k, tok in enumerate(toks):
@@ -642,11 +673,12 @@ def _parse_options(tokens, fmt, locator, where):
             raise _LineBad("unknown field option %r at %s" % (opt, where), format=fmt, locator=locator)
         if opt in out:
             raise _LineBad("field option %r is given twice at %s" % (opt, where), format=fmt, locator=locator)
-        if opt == "via" or opt == "absent":
+        if opt == "via" or opt == "absent" or opt == "with":
             # The token after `absent` is always its argument (ruling 11 of 0.9).
             if i + 1 >= len(tokens):
                 raise _LineBad(
-                    "field option %r takes %s at %s" % (opt, "a table name" if opt == "via" else "a value", where),
+                    "field option %r takes %s at %s" % (
+                        opt, "a table name" if opt == "via" else "a model key" if opt == "with" else "a value", where),
                     format=fmt, locator=locator,
                 )
             out[opt] = tokens[i + 1]
@@ -871,7 +903,8 @@ def _resolve_field(wire, name, key, locator, tname, options, source, lineno, def
 
     f = None
     if transform is not None:
-        f = Field(key, locator, transform, loc, lineno, via=via, swap="swap" in opts, optional="optional" in opts)
+        f = Field(key, locator, transform, loc, lineno, via=via, swap="swap" in opts, optional="optional" in opts,
+                  with_key=opts.get("with"))
         # step 10: the values of `absent`
         if wire != "text":
             try:
@@ -886,6 +919,7 @@ def _resolve_field(wire, name, key, locator, tname, options, source, lineno, def
 
 def _with_absent(f, wire, opts, fmt, where):
     """Set the sentinels of the `absent` option on `f`, if it has one. -> f."""
+    f.with_key = opts.get("with")
     text = opts.get("absent")
     if text is not None:
         length = f.loc[2] if wire == "bits" else None
@@ -929,7 +963,7 @@ def _resolve_tlv_field(name, key, locator, tname, options, where, lineno, deferr
     if later:
         deferred.extend(later)
         return None
-    return Field(key, locator, transform, loc, lineno, via=opts.get("via"))
+    return Field(key, locator, transform, loc, lineno, via=opts.get("via"), with_key=opts.get("with"))
 
 
 def _resolve_tlv_when(name, locator, value, where, lineno, const):
@@ -1446,6 +1480,16 @@ def _check_scalar_body(g, fmt, where, deferred):
         deferred.append((g.lineno, BadDirective(
             "the body of group %s mixes '.' with paths, at %s" % (g.list, where), format=fmt, locator=g.locator
         )))
+    # Rulings 4 and 17 of 0.18: a packed group (a body of `.` fields with numeric
+    # transforms only) takes no `with`.
+    if scalar and not other and all(ln.transform.wire_type != 2 for ln in g.lines):
+        for ln in g.lines:
+            if ln.with_key is not None:
+                deferred.append((ln.lineno, BadDirective(
+                    "field option 'with' on a '.' item of the packed group %s, at %s" % (g.list, where),
+                    format=fmt, locator=ln.locator,
+                )))
+                break
 
 
 def parse_pack_text(text, *, source="pack.def"):
@@ -1475,6 +1519,7 @@ def parse_pack_text(text, *, source="pack.def"):
     common_gates = []
     via_fields = []
     deferred = []        # (lineno, BadDirective)
+    elements = []        # (Element, the Kind holding it or None) (0.18)
     root = None
     current = None       # the Kind being read, None before the first `kind`
     first_when = None    # (lineno, locator) of the first `when`, for the no-kind check
@@ -1663,8 +1708,21 @@ def parse_pack_text(text, *, source="pack.def"):
                     field_memo[1 if stack else 0][line] = f
                 (stack[-1].lines if stack else current.lines if current is not None else common).append(f)
                 key_refs.append((key, f))
+                if f.with_key is not None:  # checked as a `requires` key (0.18)
+                    key_refs.append((f.with_key, None))
                 if f.via is not None:
                     via_fields.append(f)
+            elif kw == "element":  # 0.18; its wire is checked after the file
+                try:
+                    loc = parse_xml_locator(args[0], allow_presence=True)
+                    if loc[1] != "elem" or any("@" in seg or "#" in seg for seg in loc[0]):
+                        raise ValueError("a path of element names, without '@' or '#' (ruling 16)")
+                except ValueError as e:
+                    raise BadDirective("'element' path %r at %s: %s" % (args[0], where, e), format=fmt,
+                                       locator=args[0])
+                el = Element(args[0], loc[0], lineno)
+                (current.lines if current is not None else common).append(el)
+                elements.append((el, current))
             elif kw == "when" or kw == "const":
                 if kw == "when" and first_when is None:
                     first_when = (lineno, args[0])
@@ -1748,6 +1806,23 @@ def parse_pack_text(text, *, source="pack.def"):
             tlv.get("tag", ("ber-oid",))[0], tlv.get("checksum", (None,))[0], tlv.get("checksum", (None, 0))[1],
             common, kinds, deferred, source, name,
         )
+    for el, k in elements:  # 0.18: `element` is xml only; ruling 12
+        if wire != "xml":
+            deferred.append((el.lineno, BadDirective(
+                "'element' is xml only, at %s:%d" % (source, el.lineno), format=name, locator=el.locator,
+            )))
+            continue
+        groups = [ln for ln in common if ln.is_group]
+        for kk in kinds if k is None else (k,):
+            groups.extend(ln for ln in kk.lines if ln.is_group)
+        for g in groups:
+            gp = tuple(g.loc)
+            if el.loc[:len(gp)] == gp:
+                deferred.append((el.lineno, BadDirective(
+                    "'element' %s equals or passes through the path of group %s, at %s:%d"
+                    % (el.locator, g.list, source, el.lineno), format=name, locator=el.locator,
+                )))
+                break
     if first_when is not None and not kinds:
         deferred.append((first_when[0], BadDirective(
             "'when' in a pack with no 'kind' line, at %s:%d" % (source, first_when[0]),

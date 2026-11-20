@@ -1,0 +1,13 @@
+{
+  "name": "ruling-04-text-item-suppressed-is-an-empty-element",
+  "from": "conformance-cond-xml",
+  "to": "conformance-cond-xml",
+  "input": "<msg><names><name>a</name></names></msg>",
+  "expect": "<msg><names><name/></names></msg>",
+  "model": {
+    "probe.names.#": "1",
+    "probe.names[0].probe.tag": "a"
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; ruling 4: an empty element on xml; the item holds no val"
+}

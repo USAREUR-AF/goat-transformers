@@ -41,10 +41,16 @@ void civil_from_days(std::int64_t z, std::int64_t& y, unsigned& m, unsigned& d);
 bool parse_iso8601_ms(std::string_view s, std::int64_t& out);
 // The instants ruling 3 of 0.11 allows, in epoch ms.
 constexpr std::int64_t kMinIsoMs = -62135596800000;
+// 0000-01-01T00:00:00Z, the first instant iso8601_short writes (0.18 ruling 11).
+constexpr std::int64_t kMinIsoShortMs = -62167219200000;
 constexpr std::int64_t kMaxIsoMs = 253402300799999;
 // epoch ms -> YYYY-MM-DDTHH:MM:SS.fffZ. Throws std::domain_error outside
 // kMinIsoMs to kMaxIsoMs (0.11 ruling 3f).
 std::string format_iso8601_ms(std::int64_t ms);
+// v0.18 `iso8601_short`: no fraction when the milliseconds are 0, otherwise the
+// three digits with trailing zeros removed. Throws std::domain_error outside
+// the years 0000-9999.
+std::string format_iso8601_short(std::int64_t ms);
 
 void append_utf8(std::string& out, std::uint32_t cp);
 

@@ -1,0 +1,9 @@
+{
+  "name": "seq-ruling-01-value-and-default-not-content",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-seq",
+  "input": "{\"w\":3}",
+  "expect": "00",
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; with Version 0.8 Presence; ruling 1: w held but its line suppressed: the opt bit is 0"
+}

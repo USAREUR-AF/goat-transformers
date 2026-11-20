@@ -1,0 +1,17 @@
+# Conformance probe pack for `element` (spec 0.18) on a strict prefix of a
+# group's path: `element body` and the group `body/item`. Public. No kinds.
+# Ruling 12: the container is written even when the list is absent, where
+# ruling 20 of 0.7 alone writes nothing for an absent or empty list.
+format  conformance-cond-element-group
+version 0.18.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses    probe
+wire    xml
+root    msg
+field   uid  @id  string
+element body
+group   probe.items  body/item
+  field probe.label  @name  string
+end
+field   callsign  tail/@cs  string

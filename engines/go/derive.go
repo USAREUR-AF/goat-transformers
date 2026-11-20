@@ -6,6 +6,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"unicode/utf8"
 )
 
 // Derived keys (spec/engine-spec.md, "Version 0.6: mapping rules", Derived
@@ -19,15 +20,18 @@ type Derive struct {
 	Args     []string
 	Line     int
 
-	name   string  // the function name, without its parameter
-	param  string  // the text after the first `:`, for scale, offset and join
-	frac   bool    // scale: the factor is a fraction num/den
-	factor float64 // scale: the decimal factor
-	num    float64 // scale: fraction numerator
-	den    float64 // scale: fraction denominator
-	addF   float64 // offset on floats
-	addI   int64   // offset on ints
-	isInt  bool    // offset: integer addition
+	name   string   // the function name, without its parameter
+	param  string   // the text after the first `:`, for scale, offset and join
+	frac   bool     // scale: the factor is a fraction num/den
+	factor float64  // scale: the decimal factor
+	num    float64  // scale: fraction numerator
+	den    float64  // scale: fraction denominator
+	addF   float64  // offset on floats
+	addI   int64    // offset on ints
+	isInt  bool     // offset: integer addition
+	sep    string   // tokens, has_token: the separator character (0.18)
+	toks   []string // tokens, has_token: the tokens, in order (0.18)
+	text   string   // text_if: the text (0.18)
 }
 
 // deriveArity is the number of argument keys each function takes; -1 means
@@ -44,6 +48,62 @@ var deriveArity = map[string]int{
 	"deg_lat_of": 2, "deg_lon_of": 2, "m_lat_of": 2, "m_lon_of": 2,
 	"ecef_x": 3, "ecef_y": 3, "ecef_z": 3,
 	"lat_of_ecef": 3, "lon_of_ecef": 3, "hae_of_ecef": 3,
+	// spec 0.18, "Derive functions": tokens takes one argument per token.
+	"tokens": -1, "has_token": 1, "text_if": 1,
+}
+
+// isSpec18Space reports whether r is whitespace as Version 0.18 states it:
+// space, tab, line feed and carriage return.
+func isSpec18Space(r rune) bool { return r == ' ' || r == '\t' || r == '\n' || r == '\r' }
+
+// parseTokenSep reads the <sep> of tokens and has_token (0.18): one code point
+// other than `:`, `,` or whitespace, or one of the names space, comma and
+// colon, lowercase and exact (ruling 9).
+func parseTokenSep(s string) (string, error) {
+	switch s {
+	case "space":
+		return " ", nil
+	case "comma":
+		return ",", nil
+	case "colon":
+		return ":", nil
+	}
+	if utf8.RuneCountInString(s) != 1 {
+		return "", fmt.Errorf("a separator is one character or space, comma or colon, got %q", s)
+	}
+	r, _ := utf8.DecodeRuneInString(s)
+	if r == utf8.RuneError || r == ':' || r == ',' || isSpec18Space(r) {
+		return "", fmt.Errorf("a separator is one character other than `:`, `,` or whitespace, got %q", s)
+	}
+	return s, nil
+}
+
+// parseTokenList reads <sep>:<t1>,<t2>,… (0.18): every token one or more
+// characters other than `:`, `,`, whitespace and the separator, none twice.
+func parseTokenList(name, param string, hasParam bool) (string, []string, error) {
+	sepText, list, ok := strings.Cut(param, ":")
+	if !hasParam || !ok {
+		return "", nil, fmt.Errorf("%s needs a separator and tokens: %s:<sep>:<token>", name, name)
+	}
+	sep, err := parseTokenSep(sepText)
+	if err != nil {
+		return "", nil, err
+	}
+	toks := strings.Split(list, ",")
+	seen := map[string]bool{}
+	for _, t := range toks {
+		if t == "" {
+			return "", nil, fmt.Errorf("%s: an empty token", name)
+		}
+		if strings.ContainsAny(t, ":, \t\n\r") || strings.Contains(t, sep) {
+			return "", nil, fmt.Errorf("%s: token %q holds `:`, `,`, whitespace or the separator", name, t)
+		}
+		if seen[t] {
+			return "", nil, fmt.Errorf("%s: token %q given twice", name, t)
+		}
+		seen[t] = true
+	}
+	return sep, toks, nil
 }
 
 // parseDerive reads the function of a `derive` line and checks what the line
@@ -90,6 +150,26 @@ func parseDerive(d *Derive) error {
 		if !hasParam {
 			return fmt.Errorf("join needs a separator: join:<sep>")
 		}
+	case "tokens", "has_token":
+		sep, toks, err := parseTokenList(name, param, hasParam)
+		if err != nil {
+			return err
+		}
+		if name == "has_token" && len(toks) != 1 {
+			return fmt.Errorf("has_token takes one token, got %d", len(toks))
+		}
+		if name == "tokens" && len(d.Args) != len(toks) {
+			return fmt.Errorf("tokens takes one argument key per token: %d token(s), %d argument key(s)", len(toks), len(d.Args))
+		}
+		d.sep, d.toks = sep, toks
+	case "text_if":
+		if !hasParam || param == "" {
+			return fmt.Errorf("text_if needs a text: text_if:<text>")
+		}
+		if strings.IndexFunc(param, isSpec18Space) >= 0 {
+			return fmt.Errorf("text_if: the text holds whitespace")
+		}
+		d.text = param
 	default:
 		if hasParam {
 			return fmt.Errorf("derive function %s takes no parameter, got %q", name, d.Function)
@@ -196,9 +276,18 @@ func (e *Engine) checkDerives(m *Module) error {
 			if target != KindInt || args[0] != KindString {
 				return bad("parse_int needs an int target and a string argument")
 			}
-		case "text_of":
-			if target != KindString || args[0] != KindInt {
-				return bad("text_of needs a string target and an int argument")
+		case "text_of", "tokens", "text_if":
+			if target != KindString {
+				return bad("%s needs a string target and int arguments", d.name)
+			}
+			for _, a := range args {
+				if a != KindInt {
+					return bad("%s needs a string target and int arguments", d.name)
+				}
+			}
+		case "has_token":
+			if target != KindInt || args[0] != KindString {
+				return bad("has_token needs an int target and a string argument")
 			}
 		case "present":
 			// The argument is any scalar key (0.12 ruling 3); a list is no key
@@ -320,6 +409,18 @@ func (d *Derive) apply(args []Value) (Value, bool) {
 		// The argument handed in is held by the entity, whatever its value
 		// (spec 0.12 ruling 1).
 		return Value{Kind: KindInt, I: 1}, true
+	case "has_token":
+		for _, part := range strings.Split(args[0].S, d.sep) {
+			if part != "" && part == d.toks[0] {
+				return Value{Kind: KindInt, I: 1}, true
+			}
+		}
+		return Value{Kind: KindInt, I: 0}, true
+	case "text_if":
+		if args[0].I == 0 {
+			return Value{}, false
+		}
+		return Value{Kind: KindString, S: d.text}, true
 	case "join":
 		parts := make([]string, len(args))
 		for i, a := range args {
@@ -428,6 +529,21 @@ func (e *Engine) Complete(ent *Entity) {
 			if _, has := ent.Fields[d.Target]; has {
 				continue
 			}
+			if d.name == "tokens" {
+				// tokens needs only some of its arguments, and sets its
+				// target once one of them is present and not 0 (0.18 ruling 7).
+				var parts []string
+				for i, a := range d.Args {
+					if v, ok := ent.Fields[a]; ok && v.I != 0 {
+						parts = append(parts, d.toks[i])
+					}
+				}
+				if len(parts) > 0 {
+					ent.Fields[d.Target] = Value{Kind: KindString, S: strings.Join(parts, d.sep)}
+					set = true
+				}
+				continue
+			}
 			args = args[:0]
 			for _, a := range d.Args {
 				v, ok := ent.Fields[a]
@@ -455,8 +571,12 @@ func (e *Engine) Complete(ent *Entity) {
 	}
 }
 
-// readAs reads text as a model value of the given type.
+// readAs reads text as a model value of the given type. A number is read as
+// written, without trimming: `"5 "` is not an int (0.18 ruling 18).
 func readAs(text string, kind Kind) (Value, error) {
+	if (kind == KindInt || kind == KindFloat) && strings.TrimSpace(text) != text {
+		return Value{}, fmt.Errorf("%q is not a number: a number is read as written, without whitespace", text)
+	}
 	switch kind {
 	case KindInt:
 		i, err := parseIntText(text)

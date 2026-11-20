@@ -17,6 +17,7 @@ const char* transform_name(Transform t) {
         case Transform::Float: return "float";
         case Transform::Int: return "int";
         case Transform::Iso8601Ms: return "iso8601_ms";
+        case Transform::Iso8601Short: return "iso8601_short";
         case Transform::Uint: return "uint";
         case Transform::Twos: return "twos";
         case Transform::Linscale: return "linscale";
@@ -177,6 +178,7 @@ int parse_any_transform(std::string_view token, FieldLine& f, std::string& err) 
         Transform t;
     } kPlain[] = {{"string", Transform::String},   {"float", Transform::Float},
                   {"int", Transform::Int},         {"iso8601_ms", Transform::Iso8601Ms},
+                  {"iso8601_short", Transform::Iso8601Short},
                   {"uint", Transform::Uint},       {"twos", Transform::Twos},
                   {"pstring", Transform::Pstring}, {"pvarint", Transform::Pvarint},
                   {"psint", Transform::Psint},     {"pdouble", Transform::Pdouble},
@@ -370,7 +372,9 @@ bool transform_is_text_only(Transform t) {
 
 bool transform_is_tlv_only(Transform t) { return t == Transform::Utf8 || t == Transform::Hex; }
 
-bool transform_is_textual(Transform t) { return t == Transform::String || t == Transform::Iso8601Ms; }
+bool transform_is_textual(Transform t) {
+    return t == Transform::String || t == Transform::Iso8601Ms || t == Transform::Iso8601Short;
+}
 
 bool transform_is_bits(Transform t) {
     switch (t) {
@@ -497,7 +501,8 @@ Value decode_value(const FieldLine& f, const std::string& text) {
             if (!parse_int_text(text, v)) throw std::invalid_argument("not integer text: \"" + text + "\"");
             return Value::of_int(v);
         }
-        case Transform::Iso8601Ms: {
+        case Transform::Iso8601Ms:
+        case Transform::Iso8601Short: {  // 0.18: decode is that of iso8601_ms
             std::int64_t ms;
             if (!parse_iso8601_ms(text, ms))
                 throw std::invalid_argument("not an ISO 8601 time: \"" + text + "\"");
@@ -1021,7 +1026,8 @@ std::string encode_value(const FieldLine& f, const Value& v) {
                 }
                 return std::to_string(n);
             }
-            case Transform::Iso8601Ms: {
+            case Transform::Iso8601Ms:
+            case Transform::Iso8601Short: {
                 std::int64_t ms = 0;
                 switch (v.kind) {
                     case Value::Kind::Int: ms = v.i; break;
@@ -1033,7 +1039,7 @@ std::string encode_value(const FieldLine& f, const Value& v) {
                             throw std::invalid_argument("not a time: \"" + v.s + "\"");
                         break;
                 }
-                return format_iso8601_ms(ms);
+                return f.transform == Transform::Iso8601Short ? format_iso8601_short(ms) : format_iso8601_ms(ms);
             }
             default: throw std::invalid_argument("not a text transform");
         }

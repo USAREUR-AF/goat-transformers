@@ -1,0 +1,14 @@
+{
+  "name": "ruling-09-join-space-joins-with-the-text-space",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"w1\":\"x\",\"w2\":\"y\"}",
+  "context": {},
+  "expect": "{\"w1\":\"x\",\"w2\":\"y\",\"wj\":\"xspacey\"}",
+  "model": {
+    "@complete": true,
+    "probe.wj": "xspacey"
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, Derive functions; ruling 9: the names apply to tokens and has_token only; join:space still joins with the text space"
+}

@@ -426,7 +426,7 @@ func encodeGeoJSON(p *Pack, lay *layout, ent *Entity, rec *Item) ([]byte, error)
 		if !ok {
 			// A sentinel is written where no line has written; one for lon or
 			// lat counts as a value, so geometry is written (0.9 ruling 10).
-			if f.absent != nil && !written[f.Locator] {
+			if f.absent != nil && !f.suppressed(rec) && !written[f.Locator] {
 				put(f.loc, f.sentinelJSONText(true), false)
 				written[f.Locator], weak[f.Locator] = true, true
 			}

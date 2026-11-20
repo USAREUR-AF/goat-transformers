@@ -1,0 +1,16 @@
+{
+  "name": "text-if-0-absent",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"tifin\":0}",
+  "context": {},
+  "expect": "{\"tifin\":0}",
+  "model": {
+    "@complete": true,
+    "@absent": [
+      "probe.tif"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, Derive functions; text_if: absent when a is 0"
+}

@@ -11,6 +11,7 @@
 %% Line = {field, Key, Loc, Transform, LocText, Opts}
 %%      | {wh, Loc, Value, LocText}          % `when`
 %%      | {const, Loc, Value, LocText}
+%%      | {element, [ElementName], PathText}   (xml, 0.18; decode ignores it)
 %%      | {group, List, GroupLoc, Spec, Body, LocText}
 %%      | {gate, {BitOffset, Len}, Negated, [Value], Body, LocText}   (bits, 0.17)
 %%   a gate block's Body = #{lines => [Line], defaults => [{Key, ValueText}]}:
@@ -27,7 +28,8 @@
 %%     bits     BitOffset of the first item in its scope
 %%     text     the index of the item's first field; Spec {text_item, N}
 %%   Key, LocText :: binary()
-%%   Opts = {Via :: none | TableName, Swap, Trim, Optional, Absent}
+%%   Opts = {Via :: none | TableName, Swap, Trim, Optional, Absent, With}
+%%   With = none | Key: the line writes only when the scope holds Key (0.18)
 %%   Absent = none | [Sentinel] (Version 0.9), the first is the one written:
 %%     bits, and protobuf pvarint psint pdouble pfloat: the raw unsigned integer
 %%     protobuf pstring, xml: the text
@@ -272,6 +274,7 @@ yields(pdouble) -> float;
 yields(pfloat)  -> float;
 yields(int)        -> int;
 yields(iso8601_ms) -> int;
+yields(iso8601_short) -> int;
 yields(bool)       -> int;
 yields(uint)       -> int;
 yields(twos)       -> int;
@@ -296,11 +299,13 @@ named(#{common := Common, defaults := Ds, kinds := Kinds}) ->
 named_scope(Lines, Defaults) ->
     lists:append(
       [case L of
-           {field, K, _, Tr, _, Opts} -> [{K, {field, Tr, element(1, Opts)}}];
+           {field, K, _, Tr, _, Opts} ->
+               [{K, {field, Tr, element(1, Opts)}} | with_named(element(6, Opts))];
            {group, List, _, _, #{lines := Ls, defaults := Ds}, _} ->
                [{List, list} | named_scope(Ls, Ds)];
            {gate, _, _, _, #{lines := Ls, defaults := Ds}, _} -> named_scope(Ls, Ds);
-           {sfield, Keys, _, Tr, _, _, _, _} -> [{K, {field, Tr, Via}} || {K, Via} <- Keys];
+           {sfield, Keys, _, Tr, _, _, _, _, With} ->
+               [{K, {field, Tr, Via}} || {K, Via} <- Keys] ++ with_named(With);
            {sgroup, List, _, #{lines := Ls, defaults := Ds, kinds := Ks}} ->
                [{List, list} | named_scope(Ls, Ds)] ++
                    lists:append([named_scope(maps:get(lines, K), maps:get(defaults, K))
@@ -312,6 +317,10 @@ named_scope(Lines, Defaults) ->
                    Bodies -> named_scope(lists:append(Bodies), [])
                end
        end || L <- Lines]) ++ [{K, default} || {K, _} <- Defaults].
+
+%% The key of a `with` option is checked as a `requires` key is (0.18).
+with_named(none) -> [];
+with_named(K) -> [{K, requires}].
 
 %% The bodies of a sequential block line that belong to the scope the line
 %% stands in (`if`, `opt`, `length`, `chain`).
@@ -342,7 +351,7 @@ key_names(Lines, Prefix) ->
                Name = <<Prefix/binary, List/binary, "[]">>,
                [Name | key_names(Ls, <<Name/binary, ".">>)];
            {gate, _, _, _, #{lines := Ls}, _} -> key_names(Ls, Prefix);
-           {sfield, Keys, _, _, _, _, _, _} -> [<<Prefix/binary, K/binary>> || {K, _} <- Keys];
+           {sfield, Keys, _, _, _, _, _, _, _} -> [<<Prefix/binary, K/binary>> || {K, _} <- Keys];
            {sgroup, List, _, #{lines := Ls, kinds := Ks}} ->
                Name = <<Prefix/binary, List/binary, "[]">>,
                [Name | key_names(Ls ++ lists:append([maps:get(lines, K) || K <- Ks]),
@@ -399,7 +408,9 @@ pack_directives() ->
      %% the `tlv` wire (Version 0.13)
      <<"tag">>, <<"key">>,
      %% six-bit armor (Version 0.14)
-     <<"armor">>].
+     <<"armor">>,
+     %% an xml element written when empty (Version 0.18)
+     <<"element">>].
 
 %% The lines that stand after the `wire` line (ruling 5b of 0.11).
 after_wire() ->
@@ -414,7 +425,9 @@ arg_count_ok(Dir, N) ->
            <<"layout">>, <<"pad">>, <<"align">>, <<"delimiter">>, <<"start">>,
            <<"checksum">>,
            %% ruling 13 of 0.14
-           <<"armor">>],
+           <<"armor">>,
+           %% `element <path>` (0.18)
+           <<"element">>],
     case lists:member(Dir, One) of
         true -> N =:= 1;
         false ->
@@ -514,7 +527,8 @@ known_directives() ->
      <<"default">>, <<"map">>, <<"group">>, <<"end">>,
      <<"layout">>, <<"pad">>, <<"align">>, <<"presence">>, <<"if">>, <<"opt">>,
      <<"chain">>, <<"fx">>, <<"length">>, <<"also">>,
-     <<"delimiter">>, <<"start">>, <<"checksum">>, <<"tag">>, <<"key">>, <<"armor">>].
+     <<"delimiter">>, <<"start">>, <<"checksum">>, <<"tag">>, <<"key">>, <<"armor">>,
+     <<"element">>].
 
 in_group(#{gstack := Stack}) -> Stack =/= [].
 
@@ -677,11 +691,28 @@ apply_line([<<"end">>], #{gstack := Stack} = P) ->
             Body = #{lines => lists:reverse(Ls), defaults => lists:reverse(Ds)},
             add_line({group, List, Loc, Spec, Body, LocS}, P#{gstack := Rest})
     end;
+%% `element <path>` (xml, 0.18): an element written even when empty
+apply_line([<<"element">>, PathS], P) ->
+    case need_wire(P) of
+        xml -> ok;
+        W -> load_error('bad-directive', "element is valid only on an xml wire, not ~s", [W])
+    end,
+    Steps = binary:split(PathS, <<"/">>, [global]),
+    case lists:any(fun(St) -> St =:= <<>> end, Steps) of
+        true -> load_error('bad-directive', "element ~s: an empty path or step", [PathS]);
+        false -> ok
+    end,
+    case lists:any(fun(St) -> binary:match(St, [<<"@">>, <<"#">>]) =/= nomatch   % ruling 16
+                   end, Steps) of
+        true -> load_error('bad-directive', "element ~s names an attribute or #text", [PathS]);
+        false -> ok
+    end,
+    add_line({element, Steps, PathS}, P);
 apply_line([<<"field">>, Key, LocS, TrS | OptToks], P0) ->
     Wire = need_wire(P0),
     {Tr, TrChecks} = parse_transform(Wire, TrS),
     Loc = parse_loc(Wire, LocS, P0),
-    {_Via, Swap, Trim, Optional, _} = Opts0 = parse_opts(OptToks, {none, false, false, false, none}),
+    {_Via, Swap, Trim, Optional, _, _With} = Opts0 = parse_opts(OptToks, {none, false, false, false, none, none}),
     Len = case Wire of
               bits -> element(2, Loc);
               _ -> Loc                            % a geojson coordinate (ruling 25 of 0.9)
@@ -731,6 +762,9 @@ parse_opts([<<"optional">> | Rest], Opts) ->
 %% the token after `absent` is always its argument (ruling 11 of 0.9)
 parse_opts([<<"absent">>, Arg | Rest], Opts) ->
     parse_opts(Rest, set_opt(5, none, {arg, Arg}, <<"absent">>, Opts));
+parse_opts([<<"with">>, Key | Rest], Opts) ->
+    parse_opts(Rest, set_opt(6, none, Key, <<"with">>, Opts));
+parse_opts([<<"with">>], _) -> line_error('bad-directive', "with names no key", []);
 parse_opts([<<"absent">>], _) -> line_error('bad-directive', "absent names no value", []);
 parse_opts([<<"via">>], _) -> line_error('bad-directive', "via names no table", []);
 parse_opts([Other | _], _) -> line_error('bad-directive', "unknown field option ~s", [Other]).
@@ -1136,6 +1170,17 @@ check_bodies(Lines, Wire) ->
                                      "the body of group ~s mixes `.` with other lines", [List]);
                   false -> ok
               end,
+              %% `with` on a `.` field of a packed group (ruling 4 of 0.18)
+              Packed = fun({field, _, [], Tr, _, _}) ->
+                               lists:member(Tr, [pvarint, psint, pdouble, pfloat]);
+                          (_) -> false
+                       end,
+              case Wire =:= protobuf andalso lists:all(Packed, Ls) andalso
+                  lists:any(fun({field, _, _, _, _, O}) -> element(6, O) =/= none end, Ls) of
+                  true -> load_error('bad-directive',
+                                     "with on a `.` field of the packed group ~s", [List]);
+                  false -> ok
+              end,
               check_bodies(Ls, Wire);
          (_) -> ok
       end, Lines).
@@ -1169,6 +1214,18 @@ check_scope(Lines0, ItemBits, Wire) ->
                   true -> load_error('bad-directive',
                                      "field ~s at ~s passes through the path of a group",
                                      [Key, LocT]);
+                  false -> ok
+              end;
+         (_) -> ok
+      end, Lines),
+    %% an `element` path neither equals nor passes through a group's path
+    %% (ruling 12 of 0.18)
+    lists:foreach(
+      fun({element, EPath, PathS}) ->
+              case lists:any(fun(G) -> lists:prefix(G, EPath) end, maps:keys(GroupPaths)) of
+                  true -> load_error('bad-directive',
+                                     "element ~s equals or passes through the path of a group",
+                                     [PathS]);
                   false -> ok
               end;
          (_) -> ok
@@ -1405,6 +1462,7 @@ transform(<<"string">>)     -> {text, string};
 transform(<<"float">>)      -> {text, float};
 transform(<<"int">>)        -> {text, int};
 transform(<<"iso8601_ms">>) -> {text, iso8601_ms};
+transform(<<"iso8601_short">>) -> {text15, iso8601_short};     % 0.18
 transform(<<"bool">>)       -> {json, bool};
 transform(<<"uint">>)       -> {bits, uint};
 transform(<<"twos">>)       -> {bits, twos};
@@ -1622,6 +1680,9 @@ number(Text) ->
 %% unterminated-quote (ruling 5 of 0.11); tokens_lax/1 reads it to the end
 %% of the line, for the readers that look ahead.
 tokens(Line) when is_list(Line) -> tokens(unicode:characters_to_binary(Line));
+%% Tokens are separated by space, tab and carriage return only (lines are
+%% split at line feed); any other byte, U+00A0 included, is part of a token
+%% (ruling 15 of 0.18). Pack and model lines share this tokenizer.
 tokens(Line) -> tokens(Line, [], strict).
 
 tokens_lax(Line) when is_list(Line) -> tokens_lax(unicode:characters_to_binary(Line));
@@ -1664,7 +1725,9 @@ scan_bare(Bin, 0) ->
 %% ===================================================================
 %% In a `layout sequential` pack a locator is a bit length and the lines are
 %% read in file order from a cursor. Lines:
-%%   {sfield, [{Key, Via}], Len, Transform, LenText, Swap, Trim, Absent}
+%%   {sfield, [{Key, Via}], Len, Transform, LenText, Swap, Trim, Absent, With}
+%%     With (0.18) applies to the first key only: the `also` keys stay
+%%     candidates when the line is suppressed
 %%        the first key is the `field` line's, the others those of the `also`
 %%        lines after it
 %%   {sconst, Len, Value} | {pad, Len} | {align, N} | {swhen, Len, Value}
@@ -1697,7 +1760,7 @@ seq_line([Dir | _] = Tokens, #{sstack := Stack} = P) ->
 seq_apply([<<"field">>, Key, LenS, TrS | OptToks], P0) ->
     {Tr, TrChecks} = parse_transform(bits, TrS),
     Len = seq_loc(LenS, infinity),
-    {Via, Swap, Trim, Optional, _} = Opts0 = parse_opts(OptToks, {none, false, false, false, none}),
+    {Via, Swap, Trim, Optional, _, With} = Opts0 = parse_opts(OptToks, {none, false, false, false, none, none}),
     {Opts, AbsentChecks} = sentinels(bits, Tr, Len, Opts0),
     Absent = element(5, Opts),
     case Optional of
@@ -1715,7 +1778,7 @@ seq_apply([<<"field">>, Key, LenS, TrS | OptToks], P0) ->
         [{via, Via} || Via =/= none] ++
         AbsentChecks,
     P1 = lists:foldl(fun late/2, P0, Checks),
-    seq_add({sfield, [{Key, Via}], Len, Tr, LenS, Swap, Trim, Absent}, P1);
+    seq_add({sfield, [{Key, Via}], Len, Tr, LenS, Swap, Trim, Absent, With}, P1);
 seq_apply([<<"also">>, Key | Rest], P0) ->
     Via = case Rest of
               [] -> none;
@@ -1727,8 +1790,9 @@ seq_apply([<<"also">>, Key | Rest], P0) ->
             _ -> late({via, Via}, P0)
         end,
     case seq_lines(P) of
-        [{sfield, Keys, Len, Tr, LenS, Swap, Trim, Absent} | Before] ->
-            seq_set_lines([{sfield, Keys ++ [{Key, Via}], Len, Tr, LenS, Swap, Trim, Absent} | Before], P);
+        [{sfield, Keys, Len, Tr, LenS, Swap, Trim, Absent, With} | Before] ->
+            seq_set_lines([{sfield, Keys ++ [{Key, Via}], Len, Tr, LenS, Swap, Trim, Absent, With}
+                           | Before], P);
         _ -> load_error('bad-directive', "also ~s does not follow a field line", [Key])
     end;
 seq_apply([<<"const">>, LenS, ValS], P) ->

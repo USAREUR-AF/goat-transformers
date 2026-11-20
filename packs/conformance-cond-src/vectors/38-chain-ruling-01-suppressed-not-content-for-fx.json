@@ -1,0 +1,9 @@
+{
+  "name": "chain-ruling-01-suppressed-not-content-for-fx",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-chain",
+  "input": "{\"z\":3,\"c1\":1,\"c2\":2}",
+  "expect": "000100",
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; with Version 0.8 Presence; ruling 1: not content for an fx presence bit nor for the fx bit of a chain"
+}

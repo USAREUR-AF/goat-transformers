@@ -1,0 +1,16 @@
+{
+  "name": "optional-beyond-the-input-absent",
+  "from": "conformance-cond-armor",
+  "to": "conformance-cond-armor",
+  "input": "13",
+  "expect": "10",
+  "model": {
+    "probe.x": "1",
+    "probe.w": "3",
+    "@absent": [
+      "probe.z"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.18 ruling 23 (`with` under six-bit armor); 0.14: an optional field beyond the input is absent"
+}

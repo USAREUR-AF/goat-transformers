@@ -13,6 +13,8 @@ public enum Transform {
     FLOAT("float"),
     INT("int"),
     ISO8601_MS("iso8601_ms"),
+    /** engine-spec 0.18: decode as {@code iso8601_ms}; encode without a zero fraction, trailing zeros removed. */
+    ISO8601_SHORT("iso8601_short"),
     /** {@code json} wire only: JSON {@code true}/{@code false} to int 1/0. The text forms are "true" and "false". */
     BOOL("bool");
 
@@ -50,6 +52,7 @@ public enum Transform {
             case INT:
                 return parseInt(text);
             case ISO8601_MS:
+            case ISO8601_SHORT:
                 return parseIso(text);
             case BOOL:
                 if (text.equals("true")) return 1L;
@@ -72,6 +75,8 @@ public enum Transform {
                 return Long.toString(asLong(value));
             case ISO8601_MS:
                 return formatIso(asLong(value));
+            case ISO8601_SHORT:
+                return formatIsoShort(asLong(value));
             case BOOL: {
                 long b = asLong(value);
                 if (b == 1) return "true";
@@ -228,6 +233,32 @@ public enum Transform {
         return String.format("%04d-%02d-%02dT%02d:%02d:%02d.%03dZ",
                 t.getYear(), t.getMonthValue(), t.getDayOfMonth(),
                 t.getHour(), t.getMinute(), t.getSecond(), ms);
+    }
+
+    /**
+     * The first instant of 0000-01-01 and the last of 9999-12-31, in epoch milliseconds: the range {@code iso8601_short}
+     * writes (ruling 11 of 0.18), which starts a year before the one of {@code iso8601_ms} (ruling 3 of 0.11).
+     */
+    private static final long ISO_SHORT_MIN = -62167219200000L, ISO_SHORT_MAX = 253402300799999L;
+
+    /**
+     * {@code iso8601_short} (engine-spec 0.18): no fraction when the milliseconds are 0, else the three digits with
+     * trailing zeros removed. The milliseconds are {@code ms - 1000 * floor(ms / 1000)} (ruling 11); an instant
+     * outside the years 0000 to 9999 cannot be written.
+     */
+    static String formatIsoShort(long epochMs) {
+        if (epochMs < ISO_SHORT_MIN || epochMs > ISO_SHORT_MAX) {
+            throw new IllegalArgumentException("instant " + epochMs + " ms is outside 0000-01-01 to 9999-12-31");
+        }
+        long secs = Math.floorDiv(epochMs, 1000L);
+        int ms = (int) Math.floorMod(epochMs, 1000L);
+        LocalDateTime t = LocalDateTime.ofEpochSecond(secs, 0, ZoneOffset.UTC);
+        String base = String.format("%04d-%02d-%02dT%02d:%02d:%02d",
+                t.getYear(), t.getMonthValue(), t.getDayOfMonth(), t.getHour(), t.getMinute(), t.getSecond());
+        if (ms == 0) return base + "Z";
+        String f = String.format("%03d", ms);
+        while (f.endsWith("0")) f = f.substring(0, f.length() - 1);
+        return base + "." + f + "Z";
     }
 
     /**

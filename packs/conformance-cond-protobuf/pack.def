@@ -1,0 +1,18 @@
+# Conformance probe pack for `with` (spec 0.18) on the `protobuf` wire.
+# Public. No kinds.
+#
+#   2   y with z: nothing is written when z is not held; z = 0 holds
+#   4   names, a scalar `pstring` item with val: a suppressed item is an
+#       empty occurrence (ruling 4, ruling 11 of 0.7)
+format  conformance-cond-protobuf
+version 0.18.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses    probe
+wire    protobuf
+field   probe.x  1  pvarint
+field   probe.y  2  pvarint  with probe.z
+field   probe.z  3  pvarint
+group   probe.names  4
+  field probe.tag  .  pstring  with probe.val
+end

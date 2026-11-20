@@ -424,6 +424,13 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
                     f.absent_arg = t[++k];
                     continue;
                 }
+                // v0.18: `with <other-key>`, once.
+                if (t[k] == "with") {
+                    if (k + 1 >= t.size() || t[k + 1].empty() || !f.with.empty())
+                        throw bad("'with' takes one key, once");
+                    f.with = t[++k];
+                    continue;
+                }
                 bool* flag = t[k] == "swap" ? &f.swap : t[k] == "trim" ? &f.trim : nullptr;
                 if (t[k] == "optional") throw bad("the field option 'optional' is not allowed in a sequential pack");
                 if (!flag || *flag) throw bad("'" + t[k] + "' is not a field option, or is given twice");
@@ -451,9 +458,11 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
             f.line = lineno;
             f.via = t.size() == 4 ? t[3] : std::string();
             f.table = -1;
+            f.with.clear();  // `with` belongs to the field line (0.18 ruling 5)
             prev_field->also.push_back(std::move(f));
             also_target = prev_field;
         } else if (kw == "const") {
+            if (t.size() > 3 && t[3] == "with") throw bad("'with' applies to a 'field' line only");
             arity(2);
             SeqNode n;
             n.type = Type::Const;
@@ -593,6 +602,8 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
             arity(0);
             check_common_when(stack.back());
             stack.pop_back();
+        } else if (kw == "element") {
+            throw bad("'element' applies to wire xml only");
         } else {
             throw Error(ErrorKind::UnknownDirective, p.format, "", where + ": directive '" + kw + "'");
         }
@@ -1081,7 +1092,9 @@ const SeqKind* select_kind(const Pack& p, const SeqBody& body, const Item& item)
 bool content(const SeqNode& n, const Scope& s) {
     switch (n.type) {
         case Type::Field:
-            if (s.present(n.field.key)) return true;
+            // A line suppressed by `with` is not content, nor is its default
+            // (0.18 ruling 1); its `also` keys still are (ruling 5).
+            if (s.present(n.field.key) && !s.src.suppressed(n.field)) return true;
             for (const auto& a : n.also)
                 if (s.present(a.key)) return true;
             return false;
@@ -1183,6 +1196,7 @@ void encode_field(SeqOut& out, const SeqNode& n, const Scope& s) {
     for (const bool held : {true, false}) {
         for (std::size_t k = 0; !f && k <= n.also.size(); ++k) {
             const FieldLine& line = k == 0 ? n.field : n.also[k - 1];
+            if (k == 0 && s.src.suppressed(line)) continue;  // 0.18 rulings 1 and 5
             if (held && !s.item.fields.count(line.key)) continue;
             if (s.src.value(line, mv)) f = &line;
         }
@@ -1191,7 +1205,7 @@ void encode_field(SeqOut& out, const SeqNode& n, const Scope& s) {
     if (!f) {
         // The first sentinel in place of the zero bits (0.9); it is never
         // content for a presence, `opt` or `fx` bit (ruling 4).
-        if (n.field.has_absent) {
+        if (n.field.has_absent && !s.src.suppressed(n.field)) {
             std::uint64_t raw = n.field.absent_num.front();
             if (n.field.swap) raw = swap_bytes(raw, n.len);
             out.put(raw, n.len);

@@ -513,7 +513,7 @@ func encodePBScope(p *Pack, lay *layout, rec *Item, tree *pbTree) error {
 				return err
 			}
 			if !ok {
-				if f.absent != nil {
+				if f.absent != nil && !f.suppressed(rec) {
 					tree.setSentinel(f.loc.pbPath, f.sentinelPB())
 				}
 				continue
@@ -578,7 +578,7 @@ func encodePBItems(p *Pack, g *Group, items []*Item) ([]pbVal, error) {
 			return pv, true, nil
 		}
 		for _, f := range g.dots {
-			if f.absent != nil {
+			if f.absent != nil && !f.suppressed(it) {
 				return f.sentinelPB(), true, nil
 			}
 		}

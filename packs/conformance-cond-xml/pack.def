@@ -1,0 +1,19 @@
+# Conformance probe pack for `with` (spec 0.18) on the `xml` wire. Public.
+# No kinds.
+#
+#   @x                 x with y: an attribute written only when y is held
+#   names/name #text   tag with val: a suppressed text item is an empty
+#                      element (ruling 4, ruling 11 of 0.7)
+format  conformance-cond-xml
+version 0.18.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses    probe
+wire    xml
+root    msg
+field   uid      @id    string
+field   probe.x  @x     int  with probe.y
+field   probe.y  a/@y   int
+group   probe.names  names/name
+  field probe.tag  "#text"  string  with probe.val
+end

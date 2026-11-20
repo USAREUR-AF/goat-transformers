@@ -1,0 +1,15 @@
+{
+  "name": "json-ruling-14-no-derived-key-not-held",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-json",
+  "input": "{\"qty\":6}",
+  "expect": "{\"n\":3}",
+  "model": {
+    "@complete": true,
+    "@absent": [
+      "probe.notx"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; ruling 14: x is absent, so notx is not derived and q is not written"
+}

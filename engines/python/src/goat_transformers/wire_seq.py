@@ -426,6 +426,20 @@ def select_kind(pack, body, kind_ref, fields, lists, item=False):
     raise NoKind("the entity has the required keys of no kind", format=pack.name)
 
 
+def _live(bindings, ctx):
+    """The bindings of a field line that may write: a line with `with` whose
+    key the scope does not hold is absent everywhere (0.18, ruling 1)."""
+    out = None
+    for k, f in enumerate(bindings):
+        w = f.with_key
+        if w is not None and w not in ctx.fields and not ctx.lists.get(w):
+            if out is None:
+                out = list(bindings[:k])
+        elif out is not None:
+            out.append(f)
+    return bindings if out is None else out
+
+
 class _Writer:
     def __init__(self, pack):
         self.pack = pack
@@ -461,7 +475,7 @@ class _Writer:
         for nd in nodes:
             t = nd.t
             if t == T_FIELD:
-                for f in nd.bindings:
+                for f in _live(nd.bindings, ctx):
                     if f.key in ctx.fields or f.key in ctx.defaults:
                         return True
             elif t == T_GROUP:
@@ -580,19 +594,20 @@ class _Writer:
         else zero bits. A sentinel is never content (ruling 4 of 0.9)."""
         length = nd.length
         fields = ctx.fields
-        for f in nd.bindings:
+        bindings = _live(nd.bindings, ctx)
+        for f in bindings:
             if f.key in fields:
                 value = fields[f.key]
                 break
         else:
             defaults = ctx.defaults
-            for f in nd.bindings:
+            for f in bindings:
                 if f.key in defaults:
                     value = defaults[f.key]
                     break
             else:
                 first = nd.bindings[0]
-                if first.absent_out is None:
+                if first.absent_out is None or not bindings or bindings[0] is not first:  # ruling 20 of 0.18
                     self.pos += length
                 else:  # the integer into the field's bits, then `swap`
                     v = first.absent_out & ((1 << length) - 1)

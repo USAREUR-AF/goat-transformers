@@ -1,0 +1,26 @@
+# Conformance probe pack for `with` (spec 0.18) on a sequential `bits`
+# layout, most significant bit first: an `fx` presence and a chain. Public.
+# No kinds. y is mapped by no line of this pack.
+#
+#   presence f fx   f.1: z with y
+#   chain           c1, then an fx bit, then c2 with y
+#
+# A suppressed line is not content for an fx presence bit nor for the fx bit
+# of a chain (ruling 1).
+format     conformance-cond-chain
+version    0.18.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+presence f fx
+if f.1
+  field probe.z  8  uint  with probe.y
+end
+chain
+  field probe.c1  8  uint
+  fx
+  field probe.c2  8  uint  with probe.y
+end

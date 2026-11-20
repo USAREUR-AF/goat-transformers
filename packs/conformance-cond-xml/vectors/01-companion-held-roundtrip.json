@@ -1,0 +1,13 @@
+{
+  "name": "companion-held-roundtrip",
+  "from": "conformance-cond-xml",
+  "to": "conformance-cond-xml",
+  "input": "<msg id=\"u\" x=\"1\"><a y=\"2\"/></msg>",
+  "expect": "<msg id=\"u\" x=\"1\"><a y=\"2\"/></msg>",
+  "model": {
+    "probe.x": "1",
+    "probe.y": "2"
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; ruling 6"
+}

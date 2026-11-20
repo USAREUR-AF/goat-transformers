@@ -1,0 +1,9 @@
+{
+  "name": "bits-ruling-01-companion-not-held",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-bits",
+  "input": "{\"x\":1,\"z\":2,\"w\":4,\"c1\":5}",
+  "expect": "020000",
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; ruling 1: byte 0 is z's (x is not a candidate); w and c1 write zero bits, neither the sentinel nor the default"
+}

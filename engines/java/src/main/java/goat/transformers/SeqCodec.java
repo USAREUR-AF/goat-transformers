@@ -432,6 +432,7 @@ final class SeqCodec extends Codec<byte[]> {
             switch (n.op) {
                 case FIELD:
                     for (Pack.Field f : n.keys) {
+                        if (f.suppressed(e)) continue;   // neither its value nor its default is content (ruling 1 of 0.18)
                         if (e.get(f.key) != null || scope.defaultValues.containsKey(f.key)) return true;
                     }
                     break;
@@ -600,12 +601,13 @@ final class SeqCodec extends Codec<byte[]> {
      */
     private void encodeField(Seq.Node n, Writer w, Entity e, Pack.Scope scope) {
         Pack.Field f = null;
+        // a field line suppressed by `with` is no candidate; its `also` keys stay candidates (ruling 5 of 0.18)
         for (Pack.Field k : n.keys) {
-            if (e.get(k.key) != null) { f = k; break; }
+            if (e.get(k.key) != null && !k.suppressed(e)) { f = k; break; }
         }
         if (f == null) {
             for (Pack.Field k : n.keys) {
-                if (scope.defaultValues.containsKey(k.key)) { f = k; break; }
+                if (scope.defaultValues.containsKey(k.key) && !k.suppressed(e)) { f = k; break; }
             }
         }
         Object v = f == null ? null : valueToEncode(f, e, scope);
@@ -631,7 +633,7 @@ final class SeqCodec extends Codec<byte[]> {
         }
         // No key has a value: the field's first sentinel, else zero bits. A sentinel is never content (ruling 4 of 0.9).
         Pack.Field first = n.keys.get(0);
-        if (first.absent != null) {
+        if (first.absent != null && !first.suppressed(e)) {
             long raw = first.absent.firstNum();
             w.put(n.len, first.swap ? BitsCodec.swapBytes(raw, n.len) : raw);
             return;

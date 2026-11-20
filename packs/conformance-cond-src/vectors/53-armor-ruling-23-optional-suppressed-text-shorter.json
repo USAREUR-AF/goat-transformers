@@ -1,0 +1,9 @@
+{
+  "name": "armor-ruling-23-optional-suppressed-text-shorter",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-armor",
+  "input": "{\"x\":1,\"w\":3,\"z\":2,\"y\":0}",
+  "expect": "13",
+  "source": "constructed",
+  "reference": "spec 0.18 ruling 23 (`with` under six-bit armor); the suppressed optional field is not written, so the text ends after w"
+}

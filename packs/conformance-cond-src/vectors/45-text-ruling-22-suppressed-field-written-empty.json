@@ -1,0 +1,9 @@
+{
+  "name": "text-ruling-22-suppressed-field-written-empty",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-text",
+  "input": "{\"y\":2,\"z\":3}",
+  "expect": ",,3",
+  "source": "constructed",
+  "reference": "spec 0.18 ruling 22 (`with` on text and tlv); on text an empty field (Version 0.10); y is held by the entity although its own line is suppressed (ruling 2)"
+}

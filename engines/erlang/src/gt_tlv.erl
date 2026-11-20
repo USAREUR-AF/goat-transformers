@@ -301,9 +301,9 @@ residue(Sets, Lines) ->
 %% ===================================================================
 %% encode
 %% ===================================================================
-%% Lines: the selected scope; Src = {Value, Lists}; Residue: [{Path, Hex}]
+%% Lines: the selected scope; Src = {Value, Lists, Held}; Residue: [{Path, Hex}]
 %% when the entity was decoded from this format.
-encode(Pack, Lines, {Value, _Lists}, Residue) ->
+encode(Pack, Lines, Src, Residue) ->
     %% the children of each set, in order of the first line naming them
     Kids = lists:foldl(
              fun(L, Acc) ->
@@ -324,7 +324,7 @@ encode(Pack, Lines, {Value, _Lists}, Residue) ->
                                  A#{P => maps:get(P, A, []) ++ [L]}
                          end, #{}, Lines),
     ResPaths = maps:from_list([{P, true} || {P, _} <- Residue]),
-    Env = #{pack => Pack, kids => Kids, lines => ByPath, value => Value,
+    Env = #{pack => Pack, kids => Kids, lines => ByPath, src => Src,
             residue => Residue, res_paths => ResPaths},
     gt_bits:bytes_to_hex(top(Pack, set_items(Env, []))).
 
@@ -368,13 +368,15 @@ child(#{pack := Pack} = Env, Path, false) ->
 %% `when` or `const` value first, then the earliest field whose key has a
 %% value, then an empty item for `when … present` unless residue of the set
 %% holds the item.
-leaf(#{pack := Pack, lines := ByPath, value := Value, res_paths := ResPaths}, Path) ->
+leaf(#{pack := Pack, lines := ByPath, src := Src, res_paths := ResPaths}, Path) ->
     Ls = maps:get(Path, ByPath),
     case [{V, N} || L <- Ls, {W, {_, N}, {uint, V}, _} <- [L], W =:= wh orelse W =:= const] of
         [{V, N} | _] -> <<V:(8 * N)>>;
         [] ->
             Fields = [{K, Tr, LocT, Opts, Val, Size}
-                      || {field, K, {_, Size}, Tr, LocT, Opts} <- Ls, {ok, Val} <- [Value(K)]],
+                      || {field, K, {_, Size}, Tr, LocT, Opts} <- Ls,
+                         %% a line suppressed by `with` has no value (0.18)
+                         {ok, Val} <- [gt_engine:line_value(Src, K, Opts)]],
             case Fields of
                 [{K, Tr, LocT, Opts, Val, Size} | _] ->
                     gt_engine:guard_encode(

@@ -1,0 +1,9 @@
+{
+  "name": "seq-also-ruling-20-no-key-zero-bits-not-the-sentinel",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-seq-also",
+  "input": "{\"x\":1}",
+  "expect": "00",
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; with Version 0.8 Presence; ruling 20: a suppressed sequential line whose also keys give no value writes zero bits, not its sentinel (255)"
+}

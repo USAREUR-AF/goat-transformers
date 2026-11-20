@@ -359,7 +359,8 @@ public final class Engine {
         if (type == null) {
             throw new GtException(GtException.Code.UNDECLARED_KEY, format, null, what + " key " + key + " is declared by no loaded module");
         }
-        Object v = Pack.read(text, type);
+        // a context value comes from the caller and is trimmed; a default is read as written (ruling 18 of 0.18)
+        Object v = what.equals("context") ? Pack.readTrimmed(text, type) : Pack.read(text, type);
         if (v == Pack.UNREADABLE) {
             throw new GtException(GtException.Code.KEY_TYPE_MISMATCH, format, null,
                     what + " key " + key + " is declared " + type + " and \"" + text + "\" is not one");
@@ -398,7 +399,11 @@ public final class Engine {
                         if (a == null) all = false;
                         else args[present++] = a;
                     }
-                    if (d.fn == ModelModule.Derive.Fn.ANY) {
+                    if (d.fn == ModelModule.Derive.Fn.TOKENS) {
+                        // set when only some arguments are present (ruling 7 of 0.18): each keeps its token's place
+                        if (present == 0) continue;
+                        for (int i = 0; i < args.length; i++) args[i] = e.get(d.args.get(i));
+                    } else if (d.fn == ModelModule.Derive.Fn.ANY) {
                         // the one function whose target is set when only some arguments are present
                         if (present == 0) continue;
                         args = Arrays.copyOf(args, present);

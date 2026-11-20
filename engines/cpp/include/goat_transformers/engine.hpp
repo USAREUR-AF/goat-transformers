@@ -134,7 +134,8 @@ enum class DeriveFn { Copy, Hypot, Bearing, EastOf, NorthOf, Neg, Scale, Offset,
                       DaySeconds, Any, Not, ParseInt, TextOf,  // v0.8
                       Present,  // v0.12
                       SecOf, NsecOf, MsOf, Deg, Rad, Add, Sub, DegLatOf, DegLonOf, MLatOf, MLonOf,  // v0.16
-                      EcefX, EcefY, EcefZ, LatOfEcef, LonOfEcef, HaeOfEcef
+                      EcefX, EcefY, EcefZ, LatOfEcef, LonOfEcef, HaeOfEcef,
+                      Tokens, HasToken, TextIf  // v0.18
 };
 
 // `derive <model-key> <function> <argument-key> [<argument-key>...]` (v0.6).
@@ -153,7 +154,9 @@ struct DeriveLine {
     bool offset_is_int = false;
     std::int64_t int_offset = 0;
     bool int_arith = false;         // offset, add or sub on `int` keys: integer arithmetic
-    std::string sep;                // join
+    std::string sep;                // join; tokens and has_token: the separator character
+    std::vector<std::string> tokens;  // tokens: the tokens; has_token: the one token
+    std::string text;               // text_if
     std::size_t line = 0;           // line number in the module file
 };
 
@@ -199,7 +202,8 @@ enum class Transform { String, Float, Int, Iso8601Ms, Uint, Twos, Linscale,
                        // v0.15, bits wire
                        Uiscale, Siscale, Smag, Smscale, F32scale, F64scale,
                        CharsIcao6, CharsAis6, CharsAscii7, Octal,
-                       Scale, Iscale                     // v0.15, xml, json and geojson
+                       Scale, Iscale,                    // v0.15, xml, json and geojson
+                       Iso8601Short                      // v0.18, xml, json and geojson
 };
 enum class Wire { Xml, GeoJson, Bits, Protobuf, Json, Text, Tlv };
 
@@ -264,6 +268,9 @@ struct FieldLine {
     KeyType key_type = KeyType::String;
     // v0.17: the innermost gate block holding the line (index in Pack::gates); -1 outside any.
     int gate = -1;
+    // v0.18 `with <other-key>`: encode writes the line only when the entity (or
+    // the item) holds that key. Empty when the line has no `with`.
+    std::string with;
 };
 
 // `when <locator> <value>` (v0.5), and `const <locator> <value>` (v0.6), which is
@@ -411,6 +418,14 @@ struct SeqNode {
     SeqBody inner;                     // if, opt, chain, length: the block; group: one item
 };
 
+// `element <path>` (v0.18, xml only): the element at `path`, and each one on
+// the way to it, is written on encode even when nothing inside it is.
+struct ElementLine {
+    std::string path;                // as written (`a/b`)
+    std::vector<std::string> steps;  // the element names under the root
+    std::size_t line = 0;            // line number in pack.def
+};
+
 struct Kind {
     std::string name;
     std::string root;                     // xml only: this kind's root element; empty = the pack's
@@ -421,6 +436,7 @@ struct Kind {
     std::vector<GroupLine> groups;        // `group` blocks, line order (v0.7)
     std::vector<std::string> requires_keys;  // every `requires` key or list of the kind
     std::vector<int> gates;               // v0.17: the kind's gate blocks, line order (indices in Pack::gates)
+    std::vector<ElementLine> elements;    // v0.18: the kind's `element` lines, line order
 };
 
 struct Pack {
@@ -441,6 +457,7 @@ struct Pack {
     std::vector<std::pair<std::string, std::string>> typemap; // native code -> CoT type
     std::vector<GateBlock> gates;                             // v0.17: every gate block, line order
     std::vector<int> common_gates;                            // v0.17: the common lines' gate blocks
+    std::vector<ElementLine> elements;                        // v0.18: the common `element` lines, line order
     Distribution distribution = Distribution::Controlled;     // `distribution` line (required)
     std::vector<std::string> sources;                         // `source` lines (at least one)
     std::vector<std::string> uses;                            // `uses` lines; `core` is always used

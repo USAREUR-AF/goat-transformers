@@ -196,6 +196,7 @@ abstract class Codec<W> {
 
     /** As {@link #valueToEncode(Pack.Field, Entity, Pack.Scope)}, with the defaults in force for the line. */
     Object valueToEncode(Pack.Field f, Entity e, java.util.Map<String, Object> defaults) {
+        if (f.suppressed(e)) return null;   // `with` (engine-spec 0.18): neither the value nor a default
         Object v = e.get(f.key);
         if (v == null) v = defaults.get(f.key);
         if (v == null) return null;

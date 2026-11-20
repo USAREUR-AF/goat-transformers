@@ -1,0 +1,9 @@
+{
+  "name": "json-ruling-02-key-with-only-a-default-does-not-hold",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-json",
+  "input": "{\"c2\":4}",
+  "expect": "{\"n\":3}",
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; ruling 2: checked on the entity only, never on a default"
+}

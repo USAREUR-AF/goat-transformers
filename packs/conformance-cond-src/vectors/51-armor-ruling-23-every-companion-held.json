@@ -1,0 +1,9 @@
+{
+  "name": "armor-ruling-23-every-companion-held",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-armor",
+  "input": "{\"x\":40,\"w\":3,\"z\":2,\"y\":0,\"s1\":\"\"}",
+  "expect": "`32",
+  "source": "constructed",
+  "reference": "spec 0.18 ruling 23 (`with` under six-bit armor); L = 18 bits, three characters; 40 is written 0x38 + 40"
+}

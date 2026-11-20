@@ -1,0 +1,15 @@
+{
+  "name": "ruling-09-one-token",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"sp1\":0,\"sp2\":3}",
+  "context": {},
+  "expect": "{\"sp1\":0,\"sp2\":3,\"spt\":\"y\",\"ut\":\"b\"}",
+  "model": {
+    "@complete": true,
+    "probe.spt": "y",
+    "probe.ut": "b"
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, Derive functions; tokens"
+}

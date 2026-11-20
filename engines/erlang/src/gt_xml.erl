@@ -8,7 +8,8 @@
 -module(gt_xml).
 -export([parse/1, serialize/1, name/1, attrs/1,
          new/1, get_attr/2, get_text/1, find_child/2,
-         children/2, set_attr/3, set_text/3, add_root_attr/3, append_children/3]).
+         children/2, set_attr/3, set_text/3, add_root_attr/3, append_children/3,
+         ensure/2]).
 
 %% Elements nest at most this deep; the root element is level 1.
 -define(MAX_DEPTH, 64).
@@ -260,6 +261,9 @@ set_text(Elem, Path, Val) ->
                        end).
 
 add_root_attr(Elem, Name, Val) -> set_attr(Elem, [], {Name, Val}).
+
+%% Make the element reached by Path, and each on the way, if missing.
+ensure(Elem, Path) -> put_at(Elem, Path, fun(E) -> E end).
 
 put_at(Elem, [], Fun) -> Fun(Elem);
 put_at({element, N, A, Ch, T}, [H | Rest], Fun) ->

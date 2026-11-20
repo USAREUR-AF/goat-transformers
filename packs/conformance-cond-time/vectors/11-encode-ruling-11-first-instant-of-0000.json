@@ -1,0 +1,12 @@
+{
+  "name": "encode-ruling-11-first-instant-of-0000",
+  "from": "conformance-cond-time",
+  "to": "conformance-cond-time",
+  "input": "{\"ms\":-62167219200000}",
+  "expect": "{\"ms\":-62167219200000,\"t\":\"0000-01-01T00:00:00Z\"}",
+  "model": {
+    "time_ms": "-62167219200000"
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, A time without a zero fraction; encode; ruling 11: ms - 1000 x floor(ms / 1000)"
+}

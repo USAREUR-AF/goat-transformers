@@ -1,0 +1,14 @@
+{
+  "name": "ruling-19-when-present-names-no-position",
+  "from": "conformance-cond-element-when",
+  "to": "conformance-cond-element-when",
+  "input": "<msg><a x=\"1\"/><b a=\"q\" y=\"2\"/></msg>",
+  "expect": "<msg><a x=\"1\"/><b y=\"2\"/></msg>",
+  "model": {
+    "@kind": "k",
+    "probe.x": "1",
+    "probe.y": "2"
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, xml: an element written when empty; ruling 19: placement does not count `when <locator> present` lines, so a is placed before b; the when line writes nothing (ruling 27 of 0.5)"
+}

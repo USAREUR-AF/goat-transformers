@@ -1,0 +1,13 @@
+{
+  "name": "ruling-05-roundtrip",
+  "from": "conformance-cond-seq-also",
+  "to": "conformance-cond-seq-also",
+  "input": "05",
+  "expect": "05",
+  "model": {
+    "probe.x": "5",
+    "probe.z": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; with Version 0.8 Presence; ruling 5: z is held and written"
+}

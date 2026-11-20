@@ -1,0 +1,9 @@
+{
+  "name": "protobuf-ruling-04-string-item-suppressed-is-empty",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-protobuf",
+  "input": "{\"names\":[{\"t\":\"a\",\"v\":1},{\"t\":\"b\"}]}",
+  "expect": "2201612200",
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; ruling 4 with ruling 11 of 0.7: a pstring item without the value is an empty occurrence"
+}

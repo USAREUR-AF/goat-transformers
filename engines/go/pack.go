@@ -85,6 +85,8 @@ type Field struct {
 	Trim      bool
 	Optional  bool
 	Absent    []string // `absent <value>[,<value>…]`: the values as written, nil when the line has none
+	With      string   // `with <other-key>` (0.18): the line writes only when the entity or item holds the key; "" when the line has none
+	WithLine  bool     // the line has `with`
 
 	absent  *sentinels // the sentinels read for the pack's wire; nil when the line has no `absent`
 	loc     locator
@@ -152,8 +154,17 @@ type line struct {
 	f  *Field
 	w  *When
 	g  *Group
-	gt *Gate // the line opens this gate block
-	in *Gate // the innermost gate block the line is in, nil outside a block
+	gt *Gate    // the line opens this gate block
+	in *Gate    // the innermost gate block the line is in, nil outside a block
+	el *Element // an `element` line of an xml pack (0.18)
+}
+
+// Element is one `element <path>` line of an xml pack (0.18): the element at
+// Path, and each element on the way to it, is written even when empty.
+type Element struct {
+	Path string
+	Line int
+	path []string
 }
 
 // Group is one `group` block (spec/engine-spec.md, "Version 0.7: groups"): a
@@ -207,6 +218,7 @@ type layout struct {
 	kind     *KindDef // nil in a pack with no kind, and in a group body
 	lines    []line
 	fieldsAt map[string][]*Field // locator -> the field lines bound to it
+	elemAt   map[int][][]string  // xml: line index -> the element paths an encode creates there, shortest first (0.18 ruling 13)
 	whenAt   map[string]bool     // locators a `when` or `const` line maps
 	forced   map[string]*When    // text wires: locator -> the when or const whose value is written there
 	defaults map[string]*Default // model key -> the default in scope
@@ -267,6 +279,7 @@ type Pack struct {
 	kindsByRoot    map[string][]int // xml: root element name -> the kinds with that root, in pack order
 	keyRefs        []keyRef         // field, requires, default and group names in file order
 	modelKeys      []string
+	elements       []*Element // xml: every `element` line, in file order (0.18)
 	msb            bool
 	seq            bool     // bits: `layout sequential` (spec 0.8)
 	gates          []*Gate  // every gate block, in file order (0.17)
@@ -332,6 +345,41 @@ func (p *Pack) ModelKeys() []string {
 // TypeMapped reports whether the pack carries a typemap.
 func (p *Pack) TypeMapped() bool { return len(p.nativeToCot) > 0 }
 
+// addWithRef records the key of a line's `with` option, which is checked as a
+// `requires` key is, in the same order of errors (0.18 ruling 5).
+func (p *Pack) addWithRef(f *Field) {
+	if f.WithLine {
+		p.keyRefs = append(p.keyRefs, keyRef{key: f.With, locator: f.Locator, line: f.Line, req: true})
+	}
+}
+
+// holdsKey reports whether a record holds a key for `with` (0.18 ruling 2): a
+// scalar that is present, whatever its value, or a list with at least one
+// item.
+func holdsKey(rec *Item, key string) bool {
+	if _, ok := rec.Fields[key]; ok {
+		return true
+	}
+	return len(rec.Lists[key]) > 0
+}
+
+// suppressed reports whether the line's `with` key is missing from the record
+// being encoded: the line is then absent everywhere, its default and its
+// sentinel included (0.18 ruling 1).
+func (f *Field) suppressed(rec *Item) bool {
+	return f.WithLine && !holdsKey(rec, f.With)
+}
+
+// has reports whether an encode of the record writes the line from a present
+// key: the record holds the key and the line is not suppressed by `with`.
+func (f *Field) has(rec *Item) bool {
+	if f.suppressed(rec) {
+		return false
+	}
+	_, ok := rec.Fields[f.Key]
+	return ok
+}
+
 // ParsePackFile reads and parses one pack.def.
 func ParsePackFile(path string) (*Pack, error) {
 	b, err := os.ReadFile(path)
@@ -369,6 +417,13 @@ func parseFieldOptions(f *Field, opts []string) error {
 				return err
 			}
 			f.Absent = vals
+		case "with":
+			// with <other-key> (0.18): the token after `with` is its key.
+			i++
+			if i >= len(opts) || opts[i] == "" {
+				return fmt.Errorf("`with` needs a model key")
+			}
+			f.With, f.WithLine = opts[i], true
 		case "swap":
 			f.Swap = true
 		case "trim":
@@ -376,7 +431,7 @@ func parseFieldOptions(f *Field, opts []string) error {
 		case "optional":
 			f.Optional = true
 		default:
-			return fmt.Errorf("unknown field option %q (via <table>, swap, trim, optional, absent <values>)", o)
+			return fmt.Errorf("unknown field option %q (via <table>, swap, trim, optional, absent <values>, with <key>)", o)
 		}
 	}
 	return nil
@@ -455,7 +510,8 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 	// The argument count of each directive; a negative count is a minimum.
 	want := map[string]int{"format": 1, "version": 1, "wire": 1, "root": 1, "word_bytes": 1, "bit_order": 1, "field": -3, "typemap": 2,
 		"distribution": 1, "source": 1, "uses": 1, "kind": 1, "when": 2, "requires": -1, "const": 2, "default": 2, "map": 3, "group": -2, "end": 0,
-		"layout": 1, "delimiter": 1, "start": 1, "checksum": -1, "tag": 1, "key": 1, "pad": 1, "align": 1, "presence": 2, "if": -1, "opt": 0, "chain": 0, "fx": 0, "length": -1, "also": -1, "armor": 1}
+		"layout": 1, "delimiter": 1, "start": 1, "checksum": -1, "tag": 1, "key": 1, "pad": 1, "align": 1, "presence": 2, "if": -1, "opt": 0, "chain": 0, "fx": 0, "length": -1, "also": -1, "armor": 1,
+		"element": 1}
 	// A pack is sequential when it has a `layout sequential` line, wherever
 	// the line stands.
 	p.seq = hasSequentialLayout(text)
@@ -733,6 +789,7 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 			}
 			p.Fields = append(p.Fields, f)
 			p.keyRefs = append(p.keyRefs, keyRef{key: f.Key, locator: f.Locator, line: n, field: f})
+			p.addWithRef(f)
 			addLine(line{f: f})
 		case "when", "const":
 			w := &When{Locator: args[0], Value: args[1], Line: n, Const: kw == "const", group: inner(), gate: topGate()}
@@ -770,6 +827,10 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 			default:
 				cur.defaults = append(cur.defaults, d)
 			}
+		case "element":
+			el := &Element{Path: args[0], Line: n}
+			p.elements = append(p.elements, el)
+			addLine(line{el: el})
 		case "map":
 			t := p.tables[args[0]]
 			if t == nil {
@@ -829,7 +890,8 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 			if !isIntText(e.model) {
 				allInt = false
 			}
-			if _, err := parseFloat(e.model); err != nil {
+			// Read as written, without trimming (0.18 ruling 18).
+			if _, err := readAs(e.model, KindFloat); err != nil {
 				allNum = false
 			}
 		}
@@ -863,6 +925,19 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 	// The tlv directives, on another wire and with their values (0.13).
 	if ln, err := p.checkTLVDirectives(); err != nil {
 		return nil, perr(ErrBadDirective, ln, "", "%v", err)
+	}
+	if len(p.elements) > 0 && p.Wire != "" && p.Wire != WireXML {
+		return nil, perr(ErrBadDirective, p.elements[0].Line, p.elements[0].Path, "element is valid only on wire xml")
+	}
+	for _, el := range p.elements {
+		// A path of element names under the root (0.18 ruling 13).
+		names := strings.Split(el.Path, "/")
+		for _, e := range names {
+			if e == "" || strings.ContainsAny(e, "@#") {
+				return nil, perr(ErrBadDirective, el.Line, el.Path, "element takes a path of element names under the root (a, a/b), got %q", el.Path)
+			}
+		}
+		el.path = names
 	}
 	if len(p.gates) > 0 && p.Wire != "" && p.Wire != WireBits {
 		return nil, perr(ErrBadDirective, p.gates[0].Line, p.gates[0].Locator, "a gate block is valid only on wire bits")
@@ -1054,6 +1129,27 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 				if p.Wire == WireProtobuf && len(g.dots) > 0 && g.needsMsg {
 					return nil, perr(ErrBadDirective, g.Line, g.Locator, "the body of group %s mixes `.` with other lines", g.List)
 				}
+			}
+			for _, g := range p.Groups {
+				// A packed item has no form without its value (0.18 ruling
+				// 4). A packed group is one whose body is `.` fields with a
+				// numeric transform only (ruling 17).
+				packed17 := p.Wire == WireProtobuf && len(g.dots) > 0 && !g.needsMsg
+				for _, f := range g.dots {
+					if f.pbf == nil || f.pbf.wire == pbLenDelim {
+						packed17 = false
+					}
+				}
+				if packed17 {
+					for _, f := range g.dots {
+						if f.WithLine {
+							return nil, perr(ErrBadDirective, f.Line, f.Locator, "`with` is not valid on a `.` field of a packed protobuf group")
+						}
+					}
+				}
+			}
+			if el, g := p.elementOnGroup(); el != nil {
+				return nil, perr(ErrBadDirective, el.Line, el.Path, "the element path equals or passes through the path of the group on line %d", g.Line)
 			}
 			if f, g := p.fieldThroughGroup(); f != nil {
 				return nil, perr(ErrBadDirective, f.Line, f.Locator, "the locator passes through the path of the group on line %d of the same scope", g.Line)
@@ -1276,6 +1372,99 @@ func (p *Pack) fieldThroughGroup() (*Field, *Group) {
 	return nil, nil
 }
 
+// elementOnGroup returns an `element` line whose path equals or passes through
+// the path of a group of the same scope, and that group (0.18 ruling 12).
+func (p *Pack) elementOnGroup() (*Element, *Group) {
+	if len(p.elements) == 0 || p.Wire != WireXML {
+		return nil, nil
+	}
+	scan := func(lines []line) (*Element, *Group) {
+		for _, ln := range lines {
+			if ln.el == nil {
+				continue
+			}
+			for _, lg := range lines {
+				if g := lg.g; g != nil && g.loc.kind == locElem && pathHasPrefix(ln.el.path, g.loc.path) {
+					return ln.el, g
+				}
+			}
+		}
+		return nil, nil
+	}
+	if !p.HasKinds() {
+		return scan(p.common)
+	}
+	for _, k := range p.Kinds {
+		if el, g := scan(append(append([]line(nil), p.common...), k.lines...)); el != nil {
+			return el, g
+		}
+	}
+	return nil, nil
+}
+
+// pathHasPrefix reports whether path starts with prefix.
+func pathHasPrefix(path, prefix []string) bool {
+	if len(prefix) > len(path) {
+		return false
+	}
+	for i := range prefix {
+		if path[i] != prefix[i] {
+			return false
+		}
+	}
+	return true
+}
+
+// elementPlaces computes, for the `element` lines of an xml layout, where an
+// encode creates each element and each element on the way to it: at the
+// first line, of any kind, that addresses the element or a path under it
+// (0.18 ruling 13).
+func elementPlaces(lines []line) map[int][][]string {
+	var need [][]string
+	seen := map[string]bool{}
+	for _, ln := range lines {
+		if ln.el == nil {
+			continue
+		}
+		for i := 1; i <= len(ln.el.path); i++ {
+			if k := strings.Join(ln.el.path[:i], "/"); !seen[k] {
+				seen[k] = true
+				need = append(need, ln.el.path[:i])
+			}
+		}
+	}
+	if len(need) == 0 {
+		return nil
+	}
+	addressed := func(ln line) []string {
+		switch {
+		case ln.el != nil:
+			return ln.el.path
+		case ln.f != nil:
+			return ln.f.loc.path
+		case ln.w != nil && !ln.w.present:
+			// `when <locator> present` names no position (0.18 ruling 19).
+			return ln.w.loc.path
+		case ln.g != nil:
+			return ln.g.loc.path
+		}
+		return nil
+	}
+	at := map[int][][]string{}
+	for _, path := range need {
+		for i, ln := range lines {
+			if pathHasPrefix(addressed(ln), path) {
+				at[i] = append(at[i], path)
+				break
+			}
+		}
+	}
+	for _, ps := range at {
+		sort.SliceStable(ps, func(a, b int) bool { return len(ps[a]) < len(ps[b]) })
+	}
+	return at
+}
+
 // isDigits reports whether s is one or more decimal digits.
 func isDigits(s string) bool {
 	if s == "" {
@@ -1472,9 +1661,15 @@ func (p *Pack) newLayout(k *KindDef, lines []line, defaults ...[]*Default) *layo
 	l := &layout{kind: k, lines: lines, fieldsAt: map[string][]*Field{}, whenAt: map[string]bool{}, root: p.Root}
 	textWire := p.Wire == WireXML || p.Wire == WireGeoJSON || p.Wire == WireJSON
 	maxBit, needBit, allBit := 0, 0, 0
+	if p.Wire == WireXML {
+		l.elemAt = elementPlaces(lines)
+	}
 	for _, ln := range lines {
 		var loc locator
 		optional := false
+		if ln.el != nil {
+			continue
+		}
 		if g := ln.gt; g != nil {
 			l.gates = append(l.gates, g)
 			if end := g.loc.bit + g.loc.blen; end > allBit {

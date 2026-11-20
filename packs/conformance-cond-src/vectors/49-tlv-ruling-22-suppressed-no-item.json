@@ -1,0 +1,9 @@
+{
+  "name": "tlv-ruling-22-suppressed-no-item",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-tlv",
+  "input": "{\"x\":1,\"y\":2,\"z\":3}",
+  "expect": "010101020102",
+  "source": "constructed",
+  "reference": "spec 0.18 ruling 22 (`with` on text and tlv); on tlv no item (Version 0.13: an absent key writes no item)"
+}

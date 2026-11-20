@@ -1,0 +1,9 @@
+{
+  "name": "gates-companion-held-opens-the-gate",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-gates",
+  "input": "{\"z\":5,\"y\":1}",
+  "expect": "00000105",
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; with Version 0.17 Encode; y held: z opens its block, bit 16 gets 1; w absent writes zero bits"
+}

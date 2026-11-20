@@ -1,0 +1,15 @@
+{
+  "name": "ruling-06-roundtrip-drops-the-lines-with",
+  "from": "conformance-cond-bits",
+  "to": "conformance-cond-bits",
+  "input": "050607",
+  "expect": "050000",
+  "model": {
+    "probe.x": "5",
+    "probe.z": "5",
+    "probe.w": "6",
+    "probe.c1": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; ruling 6: decode is unchanged; y is mapped by no line, so no line with `with` is written"
+}

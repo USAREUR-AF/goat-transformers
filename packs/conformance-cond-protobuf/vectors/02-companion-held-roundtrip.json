@@ -1,0 +1,12 @@
+{
+  "name": "companion-held-roundtrip",
+  "from": "conformance-cond-protobuf",
+  "to": "conformance-cond-protobuf",
+  "input": "080110021803",
+  "expect": "080110021803",
+  "model": {
+    "probe.z": "3"
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; ruling 6: every `with` key held"
+}

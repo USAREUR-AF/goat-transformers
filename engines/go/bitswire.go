@@ -631,6 +631,12 @@ func (f *Field) bitsSentinel(data []byte, at int, msb bool) bool {
 // field that is not optional always does; an optional one when it has a
 // value or a default to write, or a sentinel (0.14 ruling 12).
 func armorWrites(p *Pack, lay *layout, f *Field, rec *Item) (bool, error) {
+	// An optional field that `with` suppresses is not written and does not
+	// count, its sentinel included; a suppressed line that is not optional
+	// writes zero bits and counts (0.18 rulings 1 and 23).
+	if f.Optional && f.suppressed(rec) {
+		return false, nil
+	}
 	if !f.Optional || f.absent != nil {
 		return true, nil
 	}

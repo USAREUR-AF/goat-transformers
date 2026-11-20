@@ -1,0 +1,14 @@
+{
+  "name": "text-if-not-0",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"tifin\":1}",
+  "context": {},
+  "expect": "{\"tifin\":1,\"tif\":\"a:b\"}",
+  "model": {
+    "@complete": true,
+    "probe.tif": "a:b"
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, Derive functions; text_if: the text when a is not 0; the text may contain :"
+}

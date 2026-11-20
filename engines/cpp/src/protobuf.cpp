@@ -439,13 +439,15 @@ std::string group_bytes(const Pack& p, const GroupLine& g, std::uint32_t num, co
     for (const Item& item : items) {
         std::uint64_t scalar = 0;
         std::string bytes;
-        if (EncodeSource(p, g, item).value(f, v)) {
+        const EncodeSource src(p, g, item);
+        const bool sup = src.suppressed(f);  // an item without the value (0.18 ruling 4)
+        if (!sup && src.value(f, v)) {
             try {
                 encode_protobuf_value(f.transform, v, scalar, bytes);
             } catch (const std::invalid_argument& ex) {
                 throw Error(ErrorKind::TransformEncode, p.format, g.locator, f.key + ": " + ex.what());
             }
-        } else if (f.has_absent) {
+        } else if (!sup && f.has_absent) {
             sentinel_value(f, scalar, bytes);  // in place of 0.7 ruling 11 (0.9 ruling 5)
         } else if (packed) {
             continue;  // an item with no value adds nothing to the packed form
@@ -493,6 +495,7 @@ void build_scope(const Pack& p, const std::vector<LineRef>& lines, const EncodeS
         if (!line.field) continue;
         const FieldLine& f = *line.field;
         if (f.locator == ".") continue;
+        if (src.suppressed(f)) continue;  // 0.18 ruling 1
         // Only mapped fields that have a value are written, and the sentinel of an absent key (0.9).
         const bool present = src.value(f, v);
         if (!present && !f.has_absent) continue;

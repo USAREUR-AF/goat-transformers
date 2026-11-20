@@ -21,6 +21,7 @@ final class XmlCodec extends Codec<Xml.Element> {
         super(pack);
         for (Pack.Kind k : pack.kinds) {
             prepare(k.scope);
+            k.scope.info = elementPlan(k.scope);
             byRoot.computeIfAbsent(k.root, r -> new ArrayList<>()).add(k);
         }
     }
@@ -31,6 +32,36 @@ final class XmlCodec extends Codec<Xml.Element> {
             l.loc = split(l.locator);
             if (l instanceof Pack.Group) prepare(((Pack.Group) l).body);
         }
+    }
+
+    /**
+     * The {@code element} lines of a scope (engine-spec 0.18) as the elements to create before each line: each
+     * element named by an {@code element} line, and each element on the way to it, is placed at the first line of
+     * any kind that addresses it or a path under it (ruling 13). Line index to the paths, shorter paths first; null
+     * when the scope has no {@code element} line.
+     */
+    private static Map<Integer, List<List<String>>> elementPlan(Pack.Scope scope) {
+        java.util.LinkedHashSet<List<String>> prefixes = new java.util.LinkedHashSet<>();
+        for (Pack.Line l : scope.lines) {
+            if (!(l instanceof Pack.Element)) continue;
+            List<String> path = ((Loc) l.loc).path;
+            for (int n = 1; n <= path.size(); n++) prefixes.add(path.subList(0, n));
+        }
+        if (prefixes.isEmpty()) return null;
+        Map<Integer, List<List<String>>> plan = new HashMap<>();
+        for (List<String> p : prefixes) {
+            for (int i = 0; i < scope.lines.size(); i++) {
+                Pack.Line l = scope.lines.get(i);
+                if (l instanceof Pack.When && ((Pack.When) l).present) continue;   // names no position (ruling 19)
+                List<String> path = ((Loc) l.loc).path;
+                if (path.size() >= p.size() && path.subList(0, p.size()).equals(p)) {
+                    plan.computeIfAbsent(i, k -> new ArrayList<>()).add(p);
+                    break;
+                }
+            }
+        }
+        for (List<List<String>> ps : plan.values()) ps.sort((a, b) -> Integer.compare(a.size(), b.size()));
+        return plan;
     }
 
     /** Null when {@code locator} is a path of element names, as a group needs, else the reason. */
@@ -133,6 +164,7 @@ final class XmlCodec extends Codec<Xml.Element> {
     /** Decode the lines of one scope under {@code el}: the root, or one item element ({@code mapped} is then null). */
     private void decodeScope(Xml.Element el, Pack.Scope scope, Entity e, Failures fails, Set<String> mapped) {
         for (Pack.Line l : scope.lines) {
+            if (l instanceof Pack.Element) continue;   // decode ignores an element line (engine-spec 0.18)
             if (l instanceof Pack.Group) {
                 // The items: each child named by the last name, under the first element matched by the names before.
                 Pack.Group g = (Pack.Group) l;
@@ -203,8 +235,15 @@ final class XmlCodec extends Codec<Xml.Element> {
     private void encodeScope(Xml.Element root, Pack.Scope scope, Entity e, Set<String> written) {
         // Locators that hold only a sentinel so far: a later line whose key is present writes over it (ruling 16 of 0.9).
         Set<String> sentinel = new HashSet<>();
-        for (Pack.Line l : scope.lines) {
+        @SuppressWarnings("unchecked")
+        Map<Integer, List<List<String>>> plan = scope.info instanceof Map ? (Map<Integer, List<List<String>>>) scope.info : null;
+        for (int i = 0; i < scope.lines.size(); i++) {
+            Pack.Line l = scope.lines.get(i);
             Loc loc = (Loc) l.loc;
+            if (plan != null && plan.containsKey(i)) {
+                for (List<String> p : plan.get(i)) ensure(root, p);   // written even when nothing inside it is
+            }
+            if (l instanceof Pack.Element) continue;
             if (l instanceof Pack.Group) {
                 // One element per item, at the position of the group line. An empty or absent list writes nothing.
                 Pack.Group g = (Pack.Group) l;
@@ -238,7 +277,7 @@ final class XmlCodec extends Codec<Xml.Element> {
             Pack.Field f = (Pack.Field) l;
             String s = encodeField(f, e, scope);
             if (s == null) {
-                if (f.absent == null || written.contains(l.locator)) continue;
+                if (f.absent == null || f.suppressed(e) || written.contains(l.locator)) continue;
                 put(root, loc, f.absent.firstText());
                 written.add(l.locator);
                 sentinel.add(l.locator);
@@ -257,6 +296,34 @@ final class XmlCodec extends Codec<Xml.Element> {
             }
             put(root, loc, s);
             written.add(l.locator);
+        }
+        placeAttributes(root, scope);
+    }
+
+    /**
+     * Order each element's attributes by the first line naming them, whichever line's value was written there:
+     * a line that wrote nothing, one suppressed by {@code with} included (ruling 23 of 0.9, ruling 1 of 0.18).
+     * Attributes no line names (residue) keep their order after them. A {@code when ... present} names no position.
+     */
+    private static void placeAttributes(Xml.Element root, Pack.Scope scope) {
+        Map<Xml.Element, List<String>> order = null;
+        for (Pack.Line l : scope.lines) {
+            if (!(l instanceof Pack.Field) && !(l instanceof Pack.When && !((Pack.When) l).present)) continue;
+            Loc loc = (Loc) l.loc;
+            if (loc.attr == null) continue;
+            Xml.Element el = find(root, loc.path);
+            if (el == null || el.attrs.size() < 2) continue;
+            if (order == null) order = new java.util.IdentityHashMap<>();
+            List<String> names = order.computeIfAbsent(el, k -> new ArrayList<>());
+            if (!names.contains(loc.attr)) names.add(loc.attr);
+        }
+        if (order == null) return;
+        for (Map.Entry<Xml.Element, List<String>> o : order.entrySet()) {
+            Xml.Element el = o.getKey();
+            java.util.LinkedHashMap<String, String> was = new java.util.LinkedHashMap<>(el.attrs);
+            el.attrs.clear();
+            for (String n : o.getValue()) if (was.containsKey(n)) el.attrs.put(n, was.remove(n));
+            el.attrs.putAll(was);
         }
     }
 

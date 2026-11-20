@@ -33,7 +33,10 @@ const std::set<std::string>& pack_directives() {
                                          // v0.14, six-bit armor of the bits wire. Its value, its
                                          // wire, `bit_order msb`, a second line and its place before
                                          // the first `kind` are checked after the file is read.
-                                         "armor"};
+                                         "armor",
+                                         // v0.18, the xml wire. Its wire and its path are checked
+                                         // after the file is read.
+                                         "element"};
     return s;
 }
 
@@ -52,7 +55,9 @@ const std::set<std::string>& one_argument() {
                                          "bit_order",  "layout",    "pad",          "align",  "delimiter",
                                          "start",      "checksum",
                                          // v0.14 ruling 13
-                                         "armor"};
+                                         "armor",
+                                         // v0.18 ruling 25
+                                         "element"};
     return s;
 }
 
@@ -288,6 +293,13 @@ void check_pack_lines(const std::string& text, const std::string& source) {
                 if (k + 1 >= t.size() || t[k + 1].empty() || !f.via.empty())
                     c.fail(ErrorKind::BadDirective, "'via' takes one table name, once", f.locator);
                 f.via = t[++k];
+                continue;
+            }
+            // v0.18: `with <other-key>`, once.
+            if (t[k] == "with") {
+                if (k + 1 >= t.size() || t[k + 1].empty() || !f.with.empty())
+                    c.fail(ErrorKind::BadDirective, "'with' takes one key, once", f.locator);
+                f.with = t[++k];
                 continue;
             }
             if (t[k] == "absent") {

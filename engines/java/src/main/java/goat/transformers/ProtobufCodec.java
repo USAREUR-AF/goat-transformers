@@ -381,7 +381,7 @@ final class ProtobufCodec extends Codec<Map<Integer, ProtobufCodec.Val>> {
             if (((int[]) f.loc).length == 0) continue;            // `.`: written by encodeItems
             Object v = valueToEncode(f, e, scope);
             if (v != null) writeField(root, f, encodeValue(f, v));
-            else if (f.absent != null) sentinels.add(f);          // absent key and no default: protobuf omits it
+            else if (f.absent != null && !f.suppressed(e)) sentinels.add(f);          // absent key and no default: protobuf omits it
         }
         for (Pack.Field f : sentinels) writeField(root, f, sentinelPayload(f));
         encodeRest(root, scope, e);
@@ -473,7 +473,7 @@ final class ProtobufCodec extends Codec<Map<Integer, ProtobufCodec.Val>> {
                 Object v = body.itself == null ? null : valueToEncode(body.itself, item, g.body);
                 n.wt = 2;
                 n.payload = v != null ? encodeValue(body.itself, v)
-                        : body.itself != null && body.itself.absent != null ? sentinelPayload(body.itself) : new byte[0];
+                        : body.itself != null && body.itself.absent != null && !body.itself.suppressed(item) ? sentinelPayload(body.itself) : new byte[0];
             }
             out.items.add(n);
         }

@@ -1,0 +1,9 @@
+{
+  "name": "seq-companion-held",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-seq",
+  "input": "{\"x\":5,\"y\":1}",
+  "expect": "816120",
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; with Version 0.8 Presence; y held: p.1 = 1; the default of w is content for the opt bit (ruling 2 of 0.8)"
+}

@@ -174,7 +174,7 @@ func decodeJSONValue(f *Field, v *jval) (Value, error) {
 		return Value{Kind: KindInt, I: 0}, nil
 	}
 	switch f.Transform {
-	case "string", "iso8601_ms":
+	case "string", "iso8601_ms", "iso8601_short":
 		if v.k != jStr {
 			return wrong("string")
 		}
@@ -561,7 +561,7 @@ func encodeJSONScope(p *Pack, lay *layout, rec *Item, root *jnode, geo bool) err
 		if !ok {
 			// An absent key writes the sentinel where nothing is written; a
 			// scalar item writes it in place of null (0.9 ruling 5).
-			if f.absent != nil && !n.set {
+			if f.absent != nil && !f.suppressed(rec) && !n.set {
 				n.raw, n.set, n.weak = f.sentinelJSONText(geo), true, true
 			}
 			continue

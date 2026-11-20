@@ -1,0 +1,15 @@
+{
+  "name": "ruling-22-roundtrip-every-companion-held",
+  "from": "conformance-cond-tlv",
+  "to": "conformance-cond-tlv",
+  "input": "01010102010203020003040161",
+  "expect": "01010102010203020003040161",
+  "model": {
+    "probe.x": "1",
+    "probe.y": "2",
+    "probe.z": "3",
+    "probe.s1": "a"
+  },
+  "source": "constructed",
+  "reference": "spec 0.18 ruling 22 (`with` on text and tlv); ruling 6"
+}

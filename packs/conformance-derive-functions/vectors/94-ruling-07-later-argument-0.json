@@ -1,0 +1,17 @@
+{
+  "name": "ruling-07-later-argument-0",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"flsrc\":5}",
+  "context": {},
+  "expect": "{\"flsrc\":5,\"fllate\":0}",
+  "model": {
+    "@complete": true,
+    "probe.fl_late": "0",
+    "@absent": [
+      "probe.ptok"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, Derive functions; ruling 7: fl_late is 0, so no argument is present and not 0"
+}

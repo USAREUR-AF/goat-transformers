@@ -1,0 +1,14 @@
+{
+  "name": "ruling-14-roundtrip-with-empty-context-derives",
+  "from": "conformance-cond-json",
+  "to": "conformance-cond-json",
+  "input": "{\"x\":0,\"q\":6}",
+  "context": {},
+  "expect": "{\"x\":0,\"n\":3,\"q\":6}",
+  "model": {
+    "@complete": true,
+    "probe.notx": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; ruling 14: an empty context counts as given (ruling 10 of 0.6); notx is derived"
+}

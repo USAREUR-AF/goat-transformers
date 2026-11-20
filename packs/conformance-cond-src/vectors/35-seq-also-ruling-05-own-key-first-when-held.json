@@ -1,0 +1,9 @@
+{
+  "name": "seq-also-ruling-05-own-key-first-when-held",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-seq-also",
+  "input": "{\"x\":1,\"z\":2,\"y\":1}",
+  "expect": "01",
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; with Version 0.8 Presence; ruling 13 of 0.8: the earliest present key of the field is written"
+}

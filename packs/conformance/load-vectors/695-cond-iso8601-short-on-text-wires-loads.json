@@ -1,0 +1,8 @@
+{
+  "name": "695-cond-iso8601-short-on-text-wires-loads",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey type string -\nkey lat float deg\nkey lon float deg\nkey callsign string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey x int -\nkey y int -\nkey s string -\nkey f float -\nkey label string -\nkey val int -\nkey tag string -\nlist items \"a list\"\nlist nums \"scalar items\"\n"
+  ],
+  "pack": "format probe\nversion 0.18.0\ndistribution public\nsource \"probe\"\nuses probe\nwire xml\nroot msg\nfield time_ms @t iso8601_short\n"
+}

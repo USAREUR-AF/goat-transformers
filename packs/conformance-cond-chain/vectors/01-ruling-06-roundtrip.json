@@ -1,0 +1,14 @@
+{
+  "name": "ruling-06-roundtrip",
+  "from": "conformance-cond-chain",
+  "to": "conformance-cond-chain",
+  "input": "8003018100",
+  "expect": "000100",
+  "model": {
+    "probe.z": "3",
+    "probe.c1": "1",
+    "probe.c2": "2"
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; with Version 0.8 Presence; ruling 6"
+}

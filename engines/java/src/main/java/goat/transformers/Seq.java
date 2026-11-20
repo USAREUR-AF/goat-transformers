@@ -253,11 +253,16 @@ final class Seq {
                     }
                     int len = bitLength(locator, 1, Integer.MAX_VALUE, "a field", where, format);
                     BitsTransform bt = BitsTransform.isBitsName(tname) ? BitsTransform.parse(tname, format, where) : null;
-                    String via = null, absent = null;
+                    String via = null, absent = null, with = null;
                     boolean swap = false, trim = false;
                     for (int i = 3; i < args.size(); i++) {
                         String o = args.get(i);
-                        if (o.equals("absent")) {
+                        if (o.equals("with")) {
+                            // engine-spec 0.18: the line writes only when the entity holds the key
+                            if (with != null) throw bad(format, locator, where + ": with given twice");
+                            if (i + 1 >= args.size()) throw bad(format, locator, where + ": with takes one key");
+                            with = args.get(++i);
+                        } else if (o.equals("absent")) {
                             // the token after `absent` is always its argument (ruling 11 of 0.9)
                             if (absent != null) throw bad(format, locator, where + ": absent given twice");
                             if (i + 1 >= args.size()) throw bad(format, locator, where + ": absent takes one or more values");
@@ -273,9 +278,11 @@ final class Seq {
                     Pack.Field fl = new Pack.Field(key, locator, null, bt, null, via, swap, trim, false, ln);
                     fl.absent = sentinels;
                     afterFile.add(new Object[]{fl, tname, len, where, absent});
+                    fl.with = with;
                     fields.add(fl);
                     typed.add(fl);
                     keyRefs.add(new String[]{key, locator});
+                    if (with != null) keyRefs.add(new String[]{with, locator});
                     Node n = new Node(Op.FIELD, ln);
                     n.len = len;
                     n.keys = new ArrayList<>();

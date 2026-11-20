@@ -106,8 +106,9 @@ final class JsonCodec extends Codec<Map<String, Object>> {
                 }
                 throw new IllegalArgumentException("int needs a JSON number, found " + typeName(v));
             case ISO8601_MS:
+            case ISO8601_SHORT:
                 if (v instanceof String) return Transform.parseIso((String) v);
-                throw new IllegalArgumentException("iso8601_ms needs a JSON string, found " + typeName(v));
+                throw new IllegalArgumentException(t.wireName() + " needs a JSON string, found " + typeName(v));
             case BOOL:
                 if (v instanceof Boolean) return ((Boolean) v) ? 1L : 0L;
                 throw new IllegalArgumentException("bool needs true or false, found " + typeName(v));
@@ -244,6 +245,7 @@ final class JsonCodec extends Codec<Map<String, Object>> {
         switch (t) {
             case STRING:
             case ISO8601_MS:
+            case ISO8601_SHORT:
                 return t.encode(v);
             case FLOAT:
             case INT:
@@ -264,7 +266,7 @@ final class JsonCodec extends Codec<Map<String, Object>> {
         Map<String, Object> cur = top;
         for (int i = 0; i < path.length - 1; i++) {
             Object v = cur.get(path[i]);
-            if (v == null) {
+            if (v == null || v == RESERVED) {
                 v = new LinkedHashMap<String, Object>();
                 cur.put(path[i], v);
             } else if (!(v instanceof Map)) {
@@ -300,12 +302,24 @@ final class JsonCodec extends Codec<Map<String, Object>> {
         Placed(Object v) { this.v = v; }
     }
 
-    /** Replace every {@link Placed} in the object, and in the objects nested in it, by the value it holds. */
+    /**
+     * The place of a member the first line naming it wrote nothing at: a later line on the locator writes there
+     * (ruling 23 of 0.9, ruling 1 of 0.18). Removed when no line wrote.
+     */
+    static final Object RESERVED = new Object();
+
+    /**
+     * Replace every {@link Placed} in the object, and in the objects nested in it, by the value it holds, and
+     * remove every {@link #RESERVED} place.
+     */
     @SuppressWarnings("unchecked")
     static void unplace(Map<String, Object> obj) {
-        for (Map.Entry<String, Object> m : obj.entrySet()) {
+        Iterator<Map.Entry<String, Object>> it = obj.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, Object> m = it.next();
             Object v = m.getValue();
-            if (v instanceof Placed) m.setValue(((Placed) v).v);
+            if (v == RESERVED) it.remove();
+            else if (v instanceof Placed) m.setValue(((Placed) v).v);
             else if (v instanceof Map) unplace((Map<String, Object>) v);
         }
     }
@@ -323,7 +337,7 @@ final class JsonCodec extends Codec<Map<String, Object>> {
                 if (itself != null && !(itself instanceof Placed)) continue;
                 Object jv = encodeOne(f, e, scope, geo);
                 if (jv != null) itself = jv;
-                else if (itself == null && f.absent != null) itself = new Placed(f.absent.firstJson());
+                else if (itself == null && f.absent != null && !f.suppressed(e)) itself = new Placed(f.absent.firstJson());
                 continue;
             }
             Map<String, Object> obj = parent(top, path);
@@ -333,7 +347,7 @@ final class JsonCodec extends Codec<Map<String, Object>> {
                 List<Entity> items = e.list(g.list);
                 if (items == null || obj == null) continue;   // an absent list writes nothing
                 Object have = obj.get(last);
-                if (have != null && !isEmptyObject(have)) continue;
+                if (have != null && have != RESERVED && !isEmptyObject(have)) continue;
                 obj.put(last, encodeItems(g, items, geo));
                 continue;
             }
@@ -348,10 +362,11 @@ final class JsonCodec extends Codec<Map<String, Object>> {
             if (obj == null) continue;
             Object have = obj.get(last);
             boolean over = have instanceof Placed;
-            if (have != null && !isEmptyObject(have) && !over) continue; // an earlier line on this locator already wrote it
+            if (have != null && have != RESERVED && !isEmptyObject(have) && !over) continue; // an earlier line on this locator already wrote it
             Object jv = encodeOne(f, e, scope, geo);
             if (jv != null) obj.put(last, jv);
-            else if (f.absent != null && !over) obj.put(last, new Placed(f.absent.firstJson()));
+            else if (f.absent != null && !over && !f.suppressed(e)) obj.put(last, new Placed(f.absent.firstJson()));
+            else if (have == null) obj.put(last, RESERVED);   // the member's place, should a later line write it
         }
         return itself instanceof Placed ? ((Placed) itself).v : itself;
     }

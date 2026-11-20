@@ -1,0 +1,9 @@
+{
+  "name": "armor-ruling-23-suppressed-counts-optional-does-not",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-armor",
+  "input": "{\"x\":1,\"w\":3,\"z\":2}",
+  "expect": "10",
+  "source": "constructed",
+  "reference": "spec 0.18 ruling 23 (`with` under six-bit armor); a suppressed line writes zero bits and counts toward L; an optional field that `with` suppresses is not written and does not count"
+}

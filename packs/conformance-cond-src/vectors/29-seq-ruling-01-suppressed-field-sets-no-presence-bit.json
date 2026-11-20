@@ -1,0 +1,9 @@
+{
+  "name": "seq-ruling-01-suppressed-field-sets-no-presence-bit",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-seq",
+  "input": "{\"x\":5}",
+  "expect": "00",
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; with Version 0.8 Presence; ruling 1: not content for a presence or opt bit, and neither is its default"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "seq-also-ruling-05-also-key-stays-a-candidate",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-seq-also",
+  "input": "{\"x\":1,\"z\":2}",
+  "expect": "02",
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; with Version 0.8 Presence; ruling 5: when a sequential field line is suppressed, its also keys stay candidates for the bits"
+}

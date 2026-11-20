@@ -1,0 +1,9 @@
+{
+  "name": "721-cond-tokens-int-target",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey type string -\nkey lat float deg\nkey lon float deg\nkey callsign string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey x int -\nkey y int -\nkey s string -\nkey f float -\nkey label string -\nkey val int -\nkey tag string -\nlist items \"a list\"\nlist nums \"scalar items\"\nkey t1 int -\nkey t2 int -\nkey out string -\nkey hit int -\nderive probe.hit tokens:comma:a probe.t1\n"
+  ],
+  "pack": "format probe\nversion 0.18.0\ndistribution public\nsource \"probe\"\nuses probe\nwire json\nfield uid id string\n",
+  "expect_error": "bad-directive"
+}

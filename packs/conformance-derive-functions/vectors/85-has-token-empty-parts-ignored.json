@@ -1,0 +1,14 @@
+{
+  "name": "has-token-empty-parts-ignored",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"flags\":\",,beta,\"}",
+  "context": {},
+  "expect": "{\"fla\":0,\"flb\":1,\"flc\":0,\"flags\":\",,beta,\"}",
+  "model": {
+    "@complete": true,
+    "probe.fl_b": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, Derive functions; has_token: empty parts ignored"
+}

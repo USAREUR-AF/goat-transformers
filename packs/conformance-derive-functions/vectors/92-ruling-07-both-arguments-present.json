@@ -1,0 +1,14 @@
+{
+  "name": "ruling-07-both-arguments-present",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"flp\":1,\"fllate\":1}",
+  "context": {},
+  "expect": "{\"flp\":1,\"fllate\":1,\"ptok\":\"p/q\"}",
+  "model": {
+    "@complete": true,
+    "probe.ptok": "p/q"
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, Derive functions; tokens with a one-character separator"
+}

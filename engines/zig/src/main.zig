@@ -275,12 +275,14 @@ const TKind = enum {
     octal,
     tscale, // `scale` on the text wires
     iscale,
+    // Version 0.18
+    iso8601_short,
 };
 
 // A transform of Version 0.15: on a wire it does not list it is `bad-directive`.
 fn isValueTransform(k: TKind) bool {
     return switch (k) {
-        .uiscale, .siscale, .smag, .smscale, .f32scale, .f64scale, .chars, .octal, .tscale, .iscale => true,
+        .uiscale, .siscale, .smag, .smscale, .f32scale, .f64scale, .chars, .octal, .tscale, .iscale, .iso8601_short => true,
         else => false,
     };
 }
@@ -293,7 +295,7 @@ const KindCat = enum { text, bits, proto, rec, tlv };
 
 fn kindCategory(k: TKind) KindCat {
     return switch (k) {
-        .string, .float, .int, .iso8601_ms, .bool_, .tscale, .iscale => .text,
+        .string, .float, .int, .iso8601_ms, .iso8601_short, .bool_, .tscale, .iscale => .text,
         .uint, .twos, .linscale, .uscale, .sscale, .f32_, .f64_, .ascii, .sixbit => .bits,
         .uiscale, .siscale, .smag, .smscale, .f32scale, .f64scale, .chars, .octal => .bits,
         .pstring, .pvarint, .psint, .pdouble, .pfloat => .proto,
@@ -335,7 +337,7 @@ const Transform = struct {
     cset: CharSet = .ascii7,
 };
 
-const LineTag = enum { field, when, constant, group };
+const LineTag = enum { field, when, constant, group, element };
 
 // One row of a value table: `map <table> <native> <model>`.
 const TableEntry = struct { native: []const u8, model: []const u8 };
@@ -474,6 +476,9 @@ const Line = struct {
     swap: bool = false,
     trim: bool = false,
     optional: bool = false,
+    // `with <other-key>` (Version 0.18): the line writes only when the
+    // entity (inside a group, the item) holds that key
+    with_key: ?[]const u8 = null,
     // `absent <value>[,<value>…]` (Version 0.9): the argument as written,
     // then, once the line is resolved against its wire, the sentinels
     absent_raw: ?[]const u8 = null,
@@ -527,7 +532,26 @@ const Line = struct {
     // Does the line map its locator (so the member is not residue)? A
     // `when <locator> present` on a text wire does not (ruling 27 of 0.5).
     fn maps(self: *const Line) bool {
+        if (self.tag == .element) return false;
         return !(self.tag == .when and self.wpresent);
+    }
+    // Version 0.18: is the line suppressed by `with` for this entity or
+    // item? A scalar holds when present, a list when present with at least
+    // one item; a `default` never holds (ruling 2).
+    fn suppressed(self: *const Line, e: *const Entity) bool {
+        const k = self.with_key orelse return false;
+        return !e.has(k);
+    }
+    // The value of the line's own key in the entity, none when the line is
+    // suppressed (ruling 1 of 0.18: a suppressed line is absent everywhere).
+    fn heldValue(self: *const Line, e: *const Entity) ?MV {
+        if (self.suppressed(e)) return null;
+        return e.get(self.key);
+    }
+    // Does the line write its first sentinel for this entity? Its key is
+    // absent and it is not suppressed.
+    fn sentinelOn(self: *const Line, e: *const Entity) bool {
+        return self.abs_set and !self.suppressed(e);
     }
 };
 
@@ -551,7 +575,7 @@ const KeyUse = struct {
     key: []const u8,
     tkind: ?TKind,
     via: []const u8 = "",
-    use: enum { field, group, requires, default } = .field,
+    use: enum { field, group, requires, default, with } = .field,
     // the innermost group the line is in: `model_keys` lists a key inside a
     // group as `<list>[].<key>`
     grp: ?*const Group = null,
@@ -616,6 +640,8 @@ const Pack = struct {
     // first gate of the pack (0: none)
     common_gates: std.ArrayListUnmanaged(*Gate) = .{},
     gate_line: usize = 0,
+    // Version 0.18: the line of the first `element` line (0: none)
+    element_line: usize = 0,
 
     fn usesModule(self: *const Pack, name: []const u8) bool {
         if (std.mem.eql(u8, name, "core")) return true; // `core` is always used
@@ -751,6 +777,10 @@ const DFn = enum {
     parse_int,
     text_of,
     present, // Version 0.12
+    // Version 0.18
+    tokens,
+    has_token,
+    text_if,
     // Version 0.16
     sec_of,
     nsec_of,
@@ -809,15 +839,66 @@ const Derive = struct {
     int_mode: bool = false, // offset on an int target and argument
     off_f: f64 = 0,
     off_i: i64 = 0,
-    sep: []const u8 = "", // join
+    sep: []const u8 = "", // join; tokens and has_token: the separator
+    toks: []const []const u8 = &.{}, // tokens; has_token: the one token
+    text: []const u8 = "", // text_if
 };
+
+// Version 0.18: whitespace for the parameters of `tokens`, `has_token` and
+// `text_if`.
+fn isWs(c: u8) bool {
+    return c == ' ' or c == '\t' or c == '\n' or c == '\r';
+}
+
+// The parameter of `tokens:<sep>:<t…>` or `has_token:<sep>:<t>` (the text
+// after the function name and its colon): the separator, and the tokens.
+// null: it does not parse, a token is empty or repeated.
+const SepParam = struct { sep: []const u8, toks: []const []const u8 };
+
+fn parseSepParam(alloc: std.mem.Allocator, param: []const u8) ?SepParam {
+    const c = std.mem.indexOfScalar(u8, param, ':') orelse return null;
+    const st = param[0..c];
+    const rest = param[c + 1 ..];
+    var sep: []const u8 = undefined;
+    if (std.mem.eql(u8, st, "space")) {
+        sep = " ";
+    } else if (std.mem.eql(u8, st, "comma")) {
+        sep = ",";
+    } else if (std.mem.eql(u8, st, "colon")) {
+        sep = ":";
+    } else {
+        // one code point other than `:`, `,` or whitespace
+        if (st.len == 0) return null;
+        const n = std.unicode.utf8ByteSequenceLength(st[0]) catch return null;
+        if (n != st.len or !std.unicode.utf8ValidateSlice(st)) return null;
+        if (n == 1 and (st[0] == ',' or isWs(st[0]))) return null;
+        sep = st;
+    }
+    var list = std.ArrayList([]const u8).init(alloc);
+    var it = std.mem.splitScalar(u8, rest, ',');
+    while (it.next()) |t| {
+        if (t.len == 0) return null;
+        for (t) |ch| if (ch == ':' or isWs(ch)) return null;
+        if (std.mem.indexOf(u8, t, sep) != null) return null;
+        for (list.items) |prev| if (std.mem.eql(u8, prev, t)) return null;
+        list.append(t) catch return null;
+    }
+    return .{ .sep = sep, .toks = list.items };
+}
+
+// `text_if:<text>`: one or more characters other than whitespace.
+fn textIfOk(text: []const u8) bool {
+    if (text.len == 0) return false;
+    for (text) |ch| if (isWs(ch)) return false;
+    return true;
+}
 
 // The type a transform yields (spec: "The type a transform yields").
 fn yields(k: TKind) KeyType {
     return switch (k) {
         .string, .pstring, .ascii, .sixbit, .utf8, .hex, .chars, .octal => .string,
         .float, .linscale, .uscale, .sscale, .f32_, .f64_, .pdouble, .pfloat, .dec, .dm, .hms, .smscale, .f32scale, .f64scale, .tscale => .float,
-        .int, .iso8601_ms, .bool_, .uint, .twos, .pvarint, .psint, .int_w, .hms_dmy, .uiscale, .siscale, .smag, .iscale => .int,
+        .int, .iso8601_ms, .iso8601_short, .bool_, .uint, .twos, .pvarint, .psint, .int_w, .hms_dmy, .uiscale, .siscale, .smag, .iscale => .int,
     };
 }
 
@@ -1074,7 +1155,7 @@ fn parseExactOffset(s: []const u8) ?i64 {
 fn parseTransform(alloc: std.mem.Allocator, s: []const u8) !Transform {
     const simple = [_]struct { n: []const u8, k: TKind }{
         .{ .n = "string", .k = .string },   .{ .n = "float", .k = .float },
-        .{ .n = "int", .k = .int },         .{ .n = "iso8601_ms", .k = .iso8601_ms },
+        .{ .n = "int", .k = .int },         .{ .n = "iso8601_ms", .k = .iso8601_ms }, .{ .n = "iso8601_short", .k = .iso8601_short },
         .{ .n = "bool", .k = .bool_ },      .{ .n = "uint", .k = .uint },
         .{ .n = "twos", .k = .twos },       .{ .n = "f32", .k = .f32_ },
         .{ .n = "f64", .k = .f64_ },        .{ .n = "ascii", .k = .ascii },
@@ -1313,6 +1394,24 @@ fn resolveDerive(alloc: std.mem.Allocator, m: *const Module, mods: *const Module
         // any scalar argument; the result is an int (Version 0.12)
         if (d.args.len != 1 or tt != .int) return null;
         d.f = .present;
+    } else if (eq(u8, head, "tokens")) {
+        const sp = parseSepParam(alloc, param orelse return null) orelse return null;
+        if (sp.toks.len != d.args.len or tt != .string) return null;
+        for (at) |ty| if (ty != .int) return null;
+        d.f = .tokens;
+        d.sep = sp.sep;
+        d.toks = sp.toks;
+    } else if (eq(u8, head, "has_token")) {
+        const sp = parseSepParam(alloc, param orelse return null) orelse return null;
+        if (sp.toks.len != 1 or d.args.len != 1 or at[0] != .string or tt != .int) return null;
+        d.f = .has_token;
+        d.sep = sp.sep;
+        d.toks = sp.toks;
+    } else if (eq(u8, head, "text_if")) {
+        const text = param orelse return null;
+        if (!textIfOk(text) or d.args.len != 1 or at[0] != .int or tt != .string) return null;
+        d.f = .text_if;
+        d.text = text;
     } else return null;
     return d;
 }
@@ -1347,6 +1446,19 @@ fn deriveShapeOk(toks: []const []const u8) bool {
         .{ .name = "present", .param = false, .min = 1, .max = 1 },
     };
     if (find16(head)) |fn16| return colon == null and nargs == fn16.nargs;
+    // Version 0.18: the parameter, and the argument count it fixes
+    if (std.mem.eql(u8, head, "tokens") or std.mem.eql(u8, head, "has_token")) {
+        const c = colon orelse return false;
+        var fba_buf: [4096]u8 = undefined;
+        var fba = std.heap.FixedBufferAllocator.init(&fba_buf);
+        const sp = parseSepParam(fba.allocator(), fname[c + 1 ..]) orelse return false;
+        if (std.mem.eql(u8, head, "has_token")) return sp.toks.len == 1 and nargs == 1;
+        return sp.toks.len == nargs;
+    }
+    if (std.mem.eql(u8, head, "text_if")) {
+        const c = colon orelse return false;
+        return textIfOk(fname[c + 1 ..]) and nargs == 1;
+    }
     for (shapes) |sh| {
         if (!std.mem.eql(u8, sh.name, head)) continue;
         if (sh.param != (colon != null) or nargs < sh.min or nargs > sh.max) return false;
@@ -1923,6 +2035,18 @@ fn finalizeGroup(alloc: std.mem.Allocator, p: *Pack, g: *Group, nested: bool, di
         if (has_dot and has_path) {
             return bad(diag, alloc, bd, "line {d}: the body of group {s} mixes `.` with paths", .{ g.lineno, g.list });
         }
+        // a packed group: a body of `.` fields with numeric transforms only
+        // (ruling 17 of 0.18); `with` on one of its fields is `bad-directive`
+        // (ruling 4)
+        var is_packed = g.lines.len > 0;
+        var any_with = false;
+        for (g.lines) |*ln| {
+            if (!(ln.isField() and ln.dot and ln.transform.kind != .pstring)) is_packed = false;
+            if (ln.with_key != null) any_with = true;
+        }
+        if (is_packed and any_with) {
+            return bad(diag, alloc, bd, "line {d}: with on the item of the packed protobuf group {s}", .{ g.lineno, g.list });
+        }
     }
 }
 
@@ -1982,7 +2106,7 @@ fn checkScope(alloc: std.mem.Allocator, p: *const Pack, a: []const Line, b: []co
     for (both) |glines| for (glines) |*gl| {
         if (gl.tag != .group) continue;
         for (both) |lines| for (lines) |*ln| {
-            if (ln.tag == .field and passesThrough(p, ln, gl.grp.?, item_scope)) {
+            if ((ln.tag == .field or ln.tag == .element) and passesThrough(p, ln, gl.grp.?, item_scope)) {
                 return bad(diag, alloc, bd, "line {d}: the locator {s} passes through the path of the group on line {d}", .{ ln.lineno, ln.locator, gl.lineno });
             }
         };
@@ -2233,7 +2357,7 @@ fn fixedLen(loc: []const u8) ?u64 {
 }
 
 // The directives of a pack (ruling 5 of 0.11).
-const PackDir = enum { format, version, distribution, source, uses, wire, root, field, when, @"const", kind, requires, default, map, typemap, group, end, word_bytes, bit_order, layout, also, pad, @"align", presence, @"if", opt, chain, fx, length, delimiter, start, checksum, tag, key, armor };
+const PackDir = enum { format, version, distribution, source, uses, wire, root, field, when, @"const", kind, requires, default, map, typemap, group, end, word_bytes, bit_order, layout, also, pad, @"align", presence, @"if", opt, chain, fx, length, delimiter, start, checksum, tag, key, armor, element };
 
 // The header lines a pack has given so far, for the line checks.
 const HeaderSeen = struct {
@@ -2269,7 +2393,7 @@ fn packLineChecks(alloc: std.mem.Allocator, toks: []const []const u8, lineno: us
     const n = toks.len - 1;
     const ok = switch (d) {
         // `armor` takes exactly one, checked here (ruling 13 of 0.14)
-        .format, .version, .distribution, .source, .uses, .wire, .root, .kind, .word_bytes, .bit_order, .layout, .pad, .@"align", .delimiter, .start, .tag, .key, .armor => n == 1,
+        .format, .version, .distribution, .source, .uses, .wire, .root, .kind, .word_bytes, .bit_order, .layout, .pad, .@"align", .delimiter, .start, .tag, .key, .armor, .element => n == 1,
         // `checksum sum16 <tag>` of the `tlv` wire has two (ruling 12 of 0.13)
         .checksum => n == 1 or (n == 2 and std.mem.eql(u8, toks[1], "sum16")),
         .field => n >= 3,
@@ -2543,6 +2667,20 @@ fn fixedLine(st: *FState, toks: []const []const u8) anyerror!void {
             gop.value_ptr.* = t;
         }
         try gop.value_ptr.*.entries.append(.{ .native = toks[2], .model = toks[3] });
+    } else if (is(kw, "element")) {
+        // element <path> (Version 0.18, xml): a path of element names
+        if (toks.len != 2) return bad(diag, alloc, E.@"bad-directive", "line {d}: element takes one path", .{lineno});
+        const path = toks[1];
+        if (path.len == 0) return bad(diag, alloc, E.@"bad-directive", "line {d}: element with an empty path", .{lineno});
+        var it = std.mem.splitScalar(u8, path, '/');
+        while (it.next()) |nm| {
+            // a step with `@` or `#` anywhere (ruling 16 of 0.18)
+            if (nm.len == 0 or std.mem.indexOfAny(u8, nm, "@#") != null) {
+                return bad(diag, alloc, E.@"bad-directive", "line {d}: element {s} is not a path of element names", .{ lineno, path });
+            }
+        }
+        if (p.element_line == 0) p.element_line = lineno;
+        try curLines(p, in_group, gtmp).append(.{ .tag = .element, .locator = path, .lineno = lineno });
     } else if (is(kw, "field")) {
         if (toks.len < 4) return bad(diag, alloc, E.@"bad-directive", "line {d}: field takes a key, a locator and a transform", .{lineno});
         // on `tlv` a transform that does not parse is kept and refused after
@@ -2590,6 +2728,12 @@ fn fixedLine(st: *FState, toks: []const []const u8) anyerror!void {
                 if (oi >= toks.len) return lineBad(diag, alloc, E.@"bad-directive", "line {d}: absent takes one or more values", .{lineno});
                 again = ln.absent_raw != null;
                 ln.absent_raw = toks[oi];
+            } else if (is(o, "with")) {
+                // with <other-key> (Version 0.18)
+                oi += 1;
+                if (oi >= toks.len or toks[oi].len == 0) return lineBad(diag, alloc, E.@"bad-directive", "line {d}: with takes a key", .{lineno});
+                again = ln.with_key != null;
+                ln.with_key = toks[oi];
             } else return lineBad(diag, alloc, E.@"bad-directive", "line {d}: unknown field option {s}", .{ lineno, o });
             if (again) return lineBad(diag, alloc, E.@"bad-directive", "line {d}: field option {s} is repeated", .{ lineno, o });
         }
@@ -2604,6 +2748,7 @@ fn fixedLine(st: *FState, toks: []const []const u8) anyerror!void {
         }
         try curLines(p, in_group, gtmp).append(ln);
         try p.key_uses.append(.{ .key = toks[1], .tkind = t.kind, .via = ln.via_name, .grp = if (in_group) gstack.items[gstack.items.len - 1] else null });
+        if (ln.with_key) |wk| try p.key_uses.append(.{ .key = wk, .tkind = null, .use = .with });
     } else {
         return bad(diag, alloc, E.@"unknown-directive", "line {d}: unknown directive {s}", .{ lineno, kw });
     }
@@ -2659,6 +2804,9 @@ fn parsePack(alloc: std.mem.Allocator, def_text: []const u8, diag: *Diag) anyerr
     }
     if (gstack.items.len > 0) {
         return bad(diag, alloc, E.@"bad-directive", "line {d}: a `group` with no `end`", .{gstack.items[gstack.items.len - 1].lineno});
+    }
+    if (p.element_line != 0 and p.wire != .xml) {
+        return bad(diag, alloc, E.@"bad-directive", "line {d}: element on wire {s}; it is for the xml wire only", .{ p.element_line, @tagName(p.wire) });
     }
     if (p.gate_line != 0 and p.wire != .bits) {
         return bad(diag, alloc, E.@"bad-directive", "line {d}: a gate block on wire {s}; it is for the fixed layout of the bits wire", .{ p.gate_line, @tagName(p.wire) });
@@ -2996,7 +3144,7 @@ pub const Engine = struct {
             const fits = switch (ku.use) {
                 .group => is_list,
                 .field, .default => !is_list,
-                .requires => true,
+                .requires, .with => true,
             };
             if (!fits) {
                 const err = E.@"key-type-mismatch";
@@ -3404,8 +3552,39 @@ fn applyDerive(alloc: std.mem.Allocator, d: Derive, e: *Entity) !bool {
         try e.put(d.target, MV{ .int = if (nonzero) 1 else 0 });
         return true;
     }
+    if (d.f == .tokens) {
+        // the tokens whose argument is present and not 0, in order; absent
+        // when there is none (ruling 7 of 0.18)
+        var buf = std.ArrayList(u8).init(alloc);
+        var n: usize = 0;
+        for (d.args, 0..) |a, i| {
+            const v = e.get(a) orelse continue;
+            if (v != .int or v.int == 0) continue;
+            if (n > 0) try buf.appendSlice(d.sep);
+            try buf.appendSlice(d.toks[i]);
+            n += 1;
+        }
+        if (n == 0) return false;
+        try e.put(d.target, MV{ .str = try buf.toOwnedSlice() });
+        return true;
+    }
     for (d.args) |a| if (!e.fields.contains(a)) return false;
     const a0 = e.get(d.args[0]).?;
+    if (d.f == .has_token) {
+        if (a0 != .str) return false;
+        var hit = false;
+        var it = std.mem.splitSequence(u8, a0.str, d.sep);
+        while (it.next()) |part| {
+            if (part.len > 0 and std.mem.eql(u8, part, d.toks[0])) hit = true;
+        }
+        try e.put(d.target, MV{ .int = @intFromBool(hit) });
+        return true;
+    }
+    if (d.f == .text_if) {
+        if (a0 != .int or a0.int == 0) return false;
+        try e.put(d.target, MV{ .str = d.text });
+        return true;
+    }
     var out: MV = undefined;
     if (@intFromEnum(d.f) >= @intFromEnum(DFn.sec_of)) {
         var av: [3]MV = undefined;
@@ -3655,7 +3834,7 @@ fn intToStr(alloc: std.mem.Allocator, v: i64) ![]const u8 {
 
 fn daysFromCivil(y_in: i64, m: i64, d: i64) i64 {
     const y = y_in - @as(i64, if (m <= 2) 1 else 0);
-    const era = @divFloor(if (y >= 0) y else y - 399, 400);
+    const era = @divFloor(y, 400); // floor division: no adjustment for y < 0
     const yoe = y - era * 400; // [0, 399]
     const mp = if (m > 2) m - 3 else m + 9; // [0,11]
     const doy = @divFloor(153 * mp + 2, 5) + d - 1; // [0,365]
@@ -3667,7 +3846,7 @@ const Civil = struct { y: i64, m: i64, d: i64 };
 
 fn civilFromDays(z_in: i64) Civil {
     const z = z_in + 719468;
-    const era = @divFloor(if (z >= 0) z else z - 146096, 146097);
+    const era = @divFloor(z, 146097); // floor division: no adjustment for z < 0
     const doe = z - era * 146097; // [0, 146096]
     const yoe = @divFloor(doe - @divFloor(doe, 1460) + @divFloor(doe, 36524) - @divFloor(doe, 146096), 365); // [0,399]
     const y = yoe + era * 400;
@@ -3735,8 +3914,12 @@ fn isoToMs(s: []const u8) !i64 {
 const iso_min_ms: i64 = -62135596800000;
 const iso_max_ms: i64 = 253402300799999;
 
-fn msToIso(alloc: std.mem.Allocator, ms: i64) ![]const u8 {
-    if (ms < iso_min_ms or ms > iso_max_ms) return E.@"transform-encode"; // ruling 3f of 0.11
+// `short` (iso8601_short, Version 0.18): no fraction when the milliseconds
+// are 0, else their digits with trailing zeros removed. `iso8601_ms` writes
+// 0001-01-01 to 9999-12-31 (ruling 3f of 0.11); `iso8601_short` 0000-01-01
+// to 9999-12-31 (ruling 11 of 0.18), checked on the civil year below.
+fn msToIso(alloc: std.mem.Allocator, ms: i64, short: bool) ![]const u8 {
+    if (!short and (ms < iso_min_ms or ms > iso_max_ms)) return E.@"transform-encode"; // ruling 3f of 0.11
     const total_secs = @divFloor(ms, 1000);
     const msec = @mod(ms, 1000);
     const days = @divFloor(total_secs, 86400);
@@ -3747,6 +3930,18 @@ fn msToIso(alloc: std.mem.Allocator, ms: i64) ![]const u8 {
     const ss = rem - mm * 60;
     const c = civilFromDays(days);
     if (c.y < 0 or c.y > 9999) return E.@"transform-encode"; // no four-digit year
+    if (short) {
+        const head = try std.fmt.allocPrint(alloc, "{d:0>4}-{d:0>2}-{d:0>2}T{d:0>2}:{d:0>2}:{d:0>2}", .{
+            @as(u64, @intCast(c.y)), @as(u64, @intCast(c.m)), @as(u64, @intCast(c.d)),
+            @as(u64, @intCast(hh)),  @as(u64, @intCast(mm)),  @as(u64, @intCast(ss)),
+        });
+        if (msec == 0) return std.fmt.allocPrint(alloc, "{s}Z", .{head});
+        var digits: [3]u8 = undefined;
+        _ = std.fmt.bufPrint(&digits, "{d:0>3}", .{@as(u64, @intCast(msec))}) catch unreachable;
+        var n: usize = 3;
+        while (digits[n - 1] == '0') n -= 1;
+        return std.fmt.allocPrint(alloc, "{s}.{s}Z", .{ head, digits[0..n] });
+    }
     return std.fmt.allocPrint(alloc, "{d:0>4}-{d:0>2}-{d:0>2}T{d:0>2}:{d:0>2}:{d:0>2}.{d:0>3}Z", .{
         @as(u64, @intCast(c.y)), @as(u64, @intCast(c.m)), @as(u64, @intCast(c.d)),
         @as(u64, @intCast(hh)),  @as(u64, @intCast(mm)),  @as(u64, @intCast(ss)),
@@ -3760,7 +3955,9 @@ fn msToIso(alloc: std.mem.Allocator, ms: i64) ![]const u8 {
 
 // `weak`: written by a sentinel (Version 0.9); a field line whose key is
 // present writes over it.
-const XmlAttr = struct { name: []const u8, value: []const u8, weak: bool = false };
+// `unset`: a place a line named that no line has written yet (ruling 23 of
+// 0.9, ruling 1 of 0.18); it is not output.
+const XmlAttr = struct { name: []const u8, value: []const u8, weak: bool = false, unset: bool = false };
 
 const XmlNode = struct {
     name: []const u8,
@@ -3772,6 +3969,9 @@ const XmlNode = struct {
     // a parsed element holds character data (ruling 1m of 0.11): without
     // it, `#text` is absent
     has_text: bool = false,
+    // encode: written even when nothing inside it is (an `element` line of
+    // 0.18, a group item)
+    forced: bool = false,
 
     fn attr(self: *const XmlNode, name: []const u8) ?[]const u8 {
         for (self.attrs.items) |a| if (std.mem.eql(u8, a.name, name)) return a.value;
@@ -4421,7 +4621,7 @@ fn jsonToMV(t: TKind, val: JValue) !MV {
             if (!(f >= -9223372036854775808.0 and f < 9223372036854775808.0) or @floor(f) != f) return E.@"transform-decode";
             return MV{ .int = @intFromFloat(f) };
         },
-        .iso8601_ms => {
+        .iso8601_ms, .iso8601_short => {
             if (val != .string) return E.@"transform-decode";
             return MV{ .int = try isoToMs(val.string) };
         },
@@ -4514,9 +4714,9 @@ fn jsonRaw(alloc: std.mem.Allocator, tr: Transform, mv: MV) ![]const u8 {
             if (mv != .int) return E.@"transform-encode";
             return intToStr(alloc, mv.int);
         },
-        .iso8601_ms => {
+        .iso8601_ms, .iso8601_short => {
             if (mv != .int) return E.@"transform-encode";
-            return jsonStr(alloc, try msToIso(alloc, mv.int));
+            return jsonStr(alloc, try msToIso(alloc, mv.int, tr.kind == .iso8601_short));
         },
         .bool_ => {
             if (mv != .int) return E.@"transform-encode";
@@ -5695,7 +5895,7 @@ fn textToMV(t: TKind, raw: []const u8) !MV {
         .string => MV{ .str = raw },
         .float => MV{ .float = try parseDecimal(raw) },
         .int => MV{ .int = try parseDecimalInt(raw) },
-        .iso8601_ms => MV{ .int = try isoToMs(raw) },
+        .iso8601_ms, .iso8601_short => MV{ .int = try isoToMs(raw) },
         else => E.@"transform-decode",
     };
 }
@@ -6336,6 +6536,8 @@ fn selectKindEncode(alloc: std.mem.Allocator, p: *const Pack, e: *const Entity, 
 // `default` in scope; the CoT type token mapped back to the format's native
 // code; then through the line's `via` table. null: nothing to write.
 fn fieldValue(p: *const Pack, sc: *const Scope, e: *const Entity, ln: *const Line) !?MV {
+    // a line suppressed by `with` writes nothing, its default included
+    if (ln.suppressed(e)) return null;
     var mv = e.get(ln.key) orelse sc.lineDefault(ln) orelse return null;
     if (mv == .str and std.mem.eql(u8, ln.key, "type")) {
         if (p.tm_cot2nat.get(mv.str)) |nat| mv = MV{ .str = nat };
@@ -6360,9 +6562,9 @@ fn xmlText(alloc: std.mem.Allocator, tr: Transform, mv: MV) ![]const u8 {
             if (mv != .int) return E.@"transform-encode";
             return intToStr(alloc, mv.int);
         },
-        .iso8601_ms => {
+        .iso8601_ms, .iso8601_short => {
             if (mv != .int) return E.@"transform-encode";
-            return msToIso(alloc, mv.int);
+            return msToIso(alloc, mv.int, tr.kind == .iso8601_short);
         },
         else => return E.@"transform-encode",
     }
@@ -6372,7 +6574,10 @@ fn xmlText(alloc: std.mem.Allocator, tr: Transform, mv: MV) ![]const u8 {
 // value (the earliest line wins), a `when` or `const` value (written over any
 // field), or a sentinel (Version 0.9: written only where no field value is,
 // and any field value is written over it, ruling 16).
-const WMode = enum { field, fixed, sentinel };
+// `reserve`: a line that names the place and writes nothing there; the
+// place is taken at its position (ruling 23 of 0.9, rulings 1 and 13 of
+// 0.18).
+const WMode = enum { field, fixed, sentinel, reserve };
 
 // Write a value at an xml locator. A locator already written keeps its value
 // (the earliest line wins) unless the new value is a `when` value.
@@ -6391,14 +6596,21 @@ fn xmlSet(alloc: std.mem.Allocator, root: *XmlNode, locator: []const u8, value: 
     if (rest.len > 0 and rest[0] == '@') {
         for (node.attrs.items) |*a| {
             if (std.mem.eql(u8, a.name, rest[1..])) {
-                if (mode == .fixed or (mode == .field and a.weak)) {
+                if (mode == .reserve) return;
+                if (a.unset) {
+                    a.value = value;
+                    a.unset = false;
+                    a.weak = mode == .sentinel;
+                } else if (mode == .fixed or (mode == .field and a.weak)) {
                     a.value = value;
                     a.weak = false;
                 }
                 return;
             }
         }
-        try node.attrs.append(.{ .name = rest[1..], .value = value, .weak = mode == .sentinel });
+        try node.attrs.append(.{ .name = rest[1..], .value = value, .weak = mode == .sentinel, .unset = mode == .reserve });
+    } else if (mode == .reserve) {
+        return;
     } else if (std.mem.eql(u8, rest, "#text")) {
         if (node.text_set and !(mode == .fixed or (mode == .field and node.text_weak))) return;
         node.text = value;
@@ -6407,23 +6619,39 @@ fn xmlSet(alloc: std.mem.Allocator, root: *XmlNode, locator: []const u8, value: 
     }
 }
 
+// Encode: is anything inside the element written, or is it forced? An
+// element only a line that wrote nothing placed is not output.
+fn xmlHas(node: *const XmlNode) bool {
+    if (node.forced or node.text_set) return true;
+    for (node.attrs.items) |a| if (!a.unset) return true;
+    for (node.children.items) |c| if (xmlHas(c)) return true;
+    return false;
+}
+
 fn xmlWrite(buf: *std.ArrayList(u8), node: *XmlNode) anyerror!void {
     try buf.append('<');
     try buf.appendSlice(node.name);
+    var nkids: usize = 0;
+    for (node.children.items) |c| {
+        if (xmlHas(c)) nkids += 1;
+    }
     for (node.attrs.items) |a| {
+        if (a.unset) continue;
         try buf.append(' ');
         try buf.appendSlice(a.name);
         try buf.appendSlice("=\"");
         try xmlEscape(buf, a.value, true);
         try buf.append('"');
     }
-    if (node.children.items.len == 0 and node.text.len == 0) {
+    if (nkids == 0 and node.text.len == 0) {
         try buf.appendSlice("/>");
         return;
     }
     try buf.append('>');
     if (node.text.len > 0) try xmlEscape(buf, node.text, false);
-    for (node.children.items) |c| try xmlWrite(buf, c);
+    for (node.children.items) |c| {
+        if (xmlHas(c)) try xmlWrite(buf, c);
+    }
     try buf.appendSlice("</");
     try buf.appendSlice(node.name);
     try buf.append('>');
@@ -6448,26 +6676,32 @@ fn xmlEscape(buf: *std.ArrayList(u8), s: []const u8, attr: bool) !void {
 }
 
 // Members of one flat JSON object in output order: name and JSON text.
-const Member = struct { name: []const u8, raw: []const u8, weak: bool = false };
+const Member = struct { name: []const u8, raw: []const u8, weak: bool = false, unset: bool = false };
 
 // Add a member. A name already written keeps its value (the earliest line
 // wins) unless the new value is a `when` value.
 fn memberAdd(list: *std.ArrayList(Member), name: []const u8, raw: []const u8, mode: WMode) !void {
     for (list.items) |*m| {
         if (std.mem.eql(u8, m.name, name)) {
-            if (mode == .fixed or (mode == .field and m.weak)) {
+            if (mode == .reserve) return;
+            if (m.unset) {
+                m.raw = raw;
+                m.unset = false;
+                m.weak = mode == .sentinel;
+            } else if (mode == .fixed or (mode == .field and m.weak)) {
                 m.raw = raw;
                 m.weak = false;
             }
             return;
         }
     }
-    try list.append(.{ .name = name, .raw = raw, .weak = mode == .sentinel });
+    try list.append(.{ .name = name, .raw = raw, .weak = mode == .sentinel, .unset = mode == .reserve });
 }
 
 fn membersWrite(buf: *std.ArrayList(u8), list: []const Member, first_in: bool) !void {
     var first = first_in;
     for (list) |m| {
+        if (m.unset) continue;
         if (!first) try buf.append(',');
         first = false;
         try jsonEscape(buf, m.name);
@@ -6482,6 +6716,7 @@ const JNode = struct {
     name: []const u8,
     raw: ?[]const u8 = null,
     weak: bool = false, // `raw` was written by a sentinel
+    reserved: bool = false, // a member a line placed without a value
     children: std.ArrayList(*JNode),
 
     fn child(self: *const JNode, name: []const u8) ?*JNode {
@@ -6512,6 +6747,13 @@ fn jnodeInsert(alloc: std.mem.Allocator, root: *JNode, segs: []const []const u8,
     const last = segs[segs.len - 1];
     if (node.child(last)) |c| {
         const r = raw orelse return;
+        // a place a line took without writing (ruling 23 of 0.9)
+        if (c.raw == null and c.reserved) {
+            c.raw = r;
+            c.reserved = false;
+            c.weak = mode == .sentinel;
+            return;
+        }
         // `when` and `const` values are written over any field, a field's
         // value over a sentinel
         if (c.raw != null and (mode == .fixed or (mode == .field and c.weak))) {
@@ -6520,10 +6762,11 @@ fn jnodeInsert(alloc: std.mem.Allocator, root: *JNode, segs: []const []const u8,
         }
         return;
     }
-    if (raw == null) return;
+    if (raw == null and mode != .reserve) return;
     const c = try jnodeNew(alloc, last);
     c.raw = raw;
     c.weak = mode == .sentinel;
+    c.reserved = raw == null;
     try node.children.append(c);
 }
 
@@ -6559,14 +6802,29 @@ fn xmlEncodeScope(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, no
             .when, .constant => {
                 if (!ln.wpresent) try xmlSet(alloc, node, ln.locator, ln.wtext, .fixed);
             },
+            .element => {
+                // Version 0.18: the element and each one on the way to it,
+                // written even when empty, at this line's position
+                var cur = node;
+                var it = std.mem.splitScalar(u8, ln.locator, '/');
+                while (it.next()) |nm| {
+                    cur = cur.child(nm) orelse blk: {
+                        const c = try xmlNewNode(alloc, nm);
+                        try cur.children.append(c);
+                        break :blk c;
+                    };
+                }
+                cur.forced = true;
+            },
             .field => {
                 const mv = (fieldValue(p, sc, e, ln) catch |err|
                     return bad(diag, alloc, err, "field {s} at {s}", .{ ln.key, ln.locator })) orelse {
-                    // an absent key writes its first sentinel (Version 0.9)
-                    if (ln.abs_set) {
+                    // an absent key writes its first sentinel (Version 0.9);
+                    // otherwise the line still takes its place
+                    if (ln.sentinelOn(e)) {
                         if (!xmlWritable(ln.abs_texts[0])) return bad(diag, alloc, E.@"transform-encode", "field {s} at {s}: the sentinel holds a character xml cannot hold", .{ ln.key, ln.locator });
                         try xmlSet(alloc, node, ln.locator, ln.abs_texts[0], .sentinel);
-                    }
+                    } else try xmlSet(alloc, node, ln.locator, "", .reserve);
                     continue;
                 };
                 const vs = xmlText(alloc, ln.transform, mv) catch |err|
@@ -6579,8 +6837,9 @@ fn xmlEncodeScope(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, no
                 // one element per item at the group's position; an absent or
                 // empty list writes nothing
                 const g = ln.grp.?;
-                const items = e.lists.get(g.list) orelse continue;
-                if (items.len == 0) continue;
+                const items: []const Entity = e.lists.get(g.list) orelse &.{};
+                // the containers take their place here; with no item they
+                // are written only when an `element` line forces them
                 var cont = node;
                 for (g.xpath) |nm| {
                     cont = cont.child(nm) orelse blk: {
@@ -6591,6 +6850,7 @@ fn xmlEncodeScope(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, no
                 }
                 for (items) |*it| {
                     const c = try xmlNewNode(alloc, g.xname);
+                    c.forced = true; // an item with nothing written is an empty element
                     try cont.children.append(c);
                     try xmlEncodeScope(alloc, p, &g.body, c, it, diag);
                 }
@@ -6617,7 +6877,7 @@ fn jsonEncodeScope(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, r
                 if (got) |mv| {
                     raw = jsonRaw(alloc, ln.transform, mv) catch |err|
                         return bad(diag, alloc, err, "field {s} at {s}", .{ ln.key, ln.locator });
-                } else if (ln.abs_set) {
+                } else if (ln.sentinelOn(e)) {
                     // an absent key writes its first sentinel (Version 0.9)
                     raw = ln.abs_json;
                     mode = .sentinel;
@@ -6628,7 +6888,11 @@ fn jsonEncodeScope(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, r
                 try jnodeInsert(alloc, root, g.segs, try jsonGroupRaw(alloc, p, g, e, diag), .field);
                 continue;
             },
+            .element => continue,
         }
+        // a field line that writes nothing still takes its member's place
+        // (ruling 23 of 0.9, ruling 1 of 0.18)
+        if (raw == null and ln.tag == .field) mode = .reserve;
         if (ln.dot) {
             if (raw) |r| {
                 if (root.raw == null or mode == .fixed or (mode == .field and root.weak)) {
@@ -6686,7 +6950,7 @@ fn pbEncodeScope(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, roo
                         if (got) |mv| {
                             encodeProtoPayload(&payload, tk, mv) catch |err|
                                 return bad(diag, alloc, err, "field {s} in group {s}", .{ dl.key, g.list });
-                        } else if (dl.abs_set) {
+                        } else if (dl.sentinelOn(it)) {
                             // an item without the value writes the sentinel (ruling 5 of 0.9)
                             try encodeSentinelPayload(&payload, dl);
                         } else continue;
@@ -6705,7 +6969,7 @@ fn pbEncodeScope(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, roo
                         if (got) |mv| {
                             encodeProtoField(&fb, tk, number, mv) catch |err|
                                 return bad(diag, alloc, err, "field {s} in group {s}", .{ dl.key, g.list });
-                        } else if (dl.abs_set) {
+                        } else if (dl.sentinelOn(it)) {
                             try writeTag(&fb, number, 2);
                             try encodeSentinelPayload(&fb, dl);
                         } else {
@@ -6748,7 +7012,7 @@ fn pbEncodeScope(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, roo
         {
             encodeProtoField(&fb, ln.transform.kind, number, mv) catch |err|
                 return bad(diag, alloc, err, "field {s} at {s}", .{ ln.key, ln.locator });
-        } else if (ln.abs_set) {
+        } else if (ln.sentinelOn(e)) {
             // an absent key writes its first sentinel (Version 0.9); it is a
             // written field for `when <path> present` (ruling 16)
             try writeTag(&fb, number, protoWireType(ln.transform.kind));
@@ -6790,7 +7054,7 @@ fn bitsWriteLines(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, bu
     while (si > 0) {
         si -= 1;
         const ln = &lines[si];
-        if (ln.tag != .field or !ln.abs_set or !lineOn(ln, held)) continue;
+        if (ln.tag != .field or !ln.sentinelOn(e) or !lineOn(ln, held)) continue;
         if (e.get(ln.key) != null or sc.lineDefault(ln) != null) continue;
         bitsWriteRaw(p, buf, base, ln, ln.abs_ints[0]);
     }
@@ -6863,7 +7127,7 @@ fn bitsEncodeScope(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, o
         const open = try alloc.alloc(bool, ng);
         @memset(open, false);
         for (lines) |*ln| {
-            if (ln.tag != .field or e.get(ln.key) == null) continue;
+            if (ln.tag != .field or ln.heldValue(e) == null) continue;
             var g = ln.gate;
             while (g) |gt| : (g = gt.parent) open[gt.idx] = true;
         }
@@ -6878,12 +7142,13 @@ fn bitsEncodeScope(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, o
         for (lines) |*ln| {
             if (ln.gate != null) continue;
             switch (ln.tag) {
-                .field => if (e.get(ln.key) != null) markRange(written, ln.bstart, ln.blen),
+                .field => if (ln.heldValue(e) != null) markRange(written, ln.bstart, ln.blen),
                 .when, .constant => markRange(written, ln.bstart, ln.blen),
                 .group => {
                     const g = ln.grp.?;
                     if (g.count_fixed == null) markRange(written, g.cstart, g.clen);
                 },
+                .element => {}, // xml only
             }
         }
         // 3. each open block none of whose gate bits is written gets its gate
@@ -6901,10 +7166,10 @@ fn bitsEncodeScope(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, o
         // 6, second half: a key the entity holds mapped only by lines of
         // blocks that are not held
         for (lines) |*ln| {
-            if (ln.tag != .field or ln.gate == null or lineOn(ln, held) or e.get(ln.key) == null) continue;
+            if (ln.tag != .field or ln.gate == null or lineOn(ln, held) or ln.heldValue(e) == null) continue;
             var mapped = false;
             for (lines) |*l2| {
-                if (l2.tag == .field and lineOn(l2, held) and std.mem.eql(u8, l2.key, ln.key)) {
+                if (l2.tag == .field and lineOn(l2, held) and !l2.suppressed(e) and std.mem.eql(u8, l2.key, ln.key)) {
                     mapped = true;
                     break;
                 }
@@ -6928,7 +7193,7 @@ fn bitsEncodeScope(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, o
         const strong = try alloc.alloc(bool, nbits);
         @memset(strong, false);
         for (lines) |*ln| {
-            if (ln.tag == .field and lineOn(ln, held) and e.get(ln.key) != null) markRange(strong, ln.bstart, ln.blen);
+            if (ln.tag == .field and lineOn(ln, held) and ln.heldValue(e) != null) markRange(strong, ln.bstart, ln.blen);
         }
         for (sc.gates) |gt| {
             if (!held[gt.idx]) continue;
@@ -6990,7 +7255,7 @@ fn armorLength(p: *const Pack, sc: *const Scope, e: *const Entity, end: usize, h
         }
         if (!lineOn(ln, held)) continue;
         // a field with `absent` writes its first sentinel (ruling 12 of 0.14)
-        if (ln.isField() and ln.optional and !ln.abs_set and (try fieldValue(p, sc, e, ln)) == null) continue;
+        if (ln.isField() and ln.optional and !ln.sentinelOn(e) and (try fieldValue(p, sc, e, ln)) == null) continue;
         l = @max(l, ln.bstart + ln.blen);
     }
     return l;
@@ -7035,16 +7300,22 @@ fn encodePack(alloc: std.mem.Allocator, p: *const Pack, e: *const Entity, diag: 
                 {
                     raw = jsonRaw(alloc, ln.transform, mv) catch |err|
                         return bad(diag, alloc, err, "field {s} at {s}", .{ ln.key, ln.locator });
-                } else if (ln.abs_set) {
+                } else if (ln.sentinelOn(e)) {
                     // an absent key writes its first sentinel; for `lon` and
                     // `lat` it counts as a value (ruling 10 of 0.9)
                     raw = ln.abs_json;
                     mode = .sentinel;
+                } else if (ln.isField()) {
+                    // writes nothing, and takes its member's place (ruling
+                    // 23 of 0.9, ruling 1 of 0.18)
+                    raw = "";
+                    mode = .reserve;
                 } else continue;
                 const loc = ln.locator;
                 if (std.mem.startsWith(u8, loc, geom_prefix)) {
                     const comp = loc[geom_prefix.len..];
                     const idx: usize = if (std.mem.eql(u8, comp, "lon")) 0 else if (std.mem.eql(u8, comp, "lat")) 1 else if (std.mem.eql(u8, comp, "alt")) 2 else continue;
+                    if (mode == .reserve) continue;
                     if (coords[idx] == null or mode == .fixed or (mode == .field and coords_weak[idx])) {
                         coords[idx] = raw;
                         coords_weak[idx] = mode == .sentinel;
@@ -7655,6 +7926,7 @@ const TextEnc = struct {
         for (sc.lines) |*ln| {
             switch (ln.tag) {
                 .when, .constant => try self.fixed.append(self.alloc, .{ .ln = ln, .base = base }),
+                .element => {}, // xml only (Version 0.18)
                 .group => {
                     const g = ln.grp.?;
                     const items = e.lists.get(g.list) orelse continue;
@@ -8735,6 +9007,12 @@ const SParser = struct {
                     if (oi >= toks.len) return self.lineErr(bd, "absent takes one or more values", .{});
                     again = ln.absent_raw != null;
                     ln.absent_raw = toks[oi];
+                } else if (is(o, "with")) {
+                    // with <other-key> (Version 0.18)
+                    oi += 1;
+                    if (oi >= toks.len or toks[oi].len == 0) return self.lineErr(bd, "with takes a key", .{});
+                    again = ln.with_key != null;
+                    ln.with_key = toks[oi];
                 } else return self.lineErr(bd, "unknown field option {s}", .{o});
                 if (again) return self.lineErr(bd, "field option {s} is repeated", .{o});
             }
@@ -8743,6 +9021,7 @@ const SParser = struct {
                 ln.abs_checked = true;
             }
             try p.key_uses.append(.{ .key = toks[1], .tkind = t.kind, .via = ln.via_name, .grp = self.bodyFrame().grp });
+            if (ln.with_key) |wk| try p.key_uses.append(.{ .key = wk, .tkind = null, .use = .with });
             try self.add(.{ .tag = .field, .lineno = self.lineno, .ln = ln });
         } else if (is(kw, "also")) {
             // also <key> [via <table>], directly after a `field` line
@@ -8875,6 +9154,8 @@ const SParser = struct {
                 n.body = try f.nodes.toOwnedSlice(alloc);
             }
             try self.add(n);
+        } else if (is(kw, "element")) {
+            return self.err(E.@"bad-directive", "element is for the xml wire only", .{});
         } else {
             return self.err(E.@"unknown-directive", "unknown directive {s}", .{kw});
         }
@@ -9438,9 +9719,13 @@ const SEnc = struct {
         const ln = &n.ln;
         const wire_ty = yields(ln.transform.kind);
         const nkeys = n.also.items.len + 1;
+        // a line suppressed by `with`: its own key is not a candidate, its
+        // `also` keys stay ones (ruling 5 of 0.18)
+        const own = !ln.suppressed(ent);
         var i: usize = 0;
         while (i < 2 * nkeys) : (i += 1) {
             const j = i % nkeys;
+            if (j == 0 and !own) continue;
             const key = if (j == 0) ln.key else n.also.items[j - 1].key;
             const via = if (j == 0) ln.via else n.also.items[j - 1].via;
             var mv = (if (i < nkeys) ent.get(key) else ds.get(key)) orelse continue;
@@ -9457,7 +9742,7 @@ const SEnc = struct {
     }
 
     fn keyPresent(n: *const SNode, ent: *const Entity, ds: DS) bool {
-        if (ent.fields.contains(n.ln.key) or ds.get(n.ln.key) != null) return true;
+        if (!n.ln.suppressed(ent) and (ent.fields.contains(n.ln.key) or ds.get(n.ln.key) != null)) return true;
         for (n.also.items) |a| if (ent.fields.contains(a.key) or ds.get(a.key) != null) return true;
         return false;
     }
@@ -9559,7 +9844,7 @@ const SEnc = struct {
                 if (try self.fieldValue(n, ent, ds)) |mv| {
                     bitsWriteField(alloc, self.p, self.out.items, self.pos, ln, mv) catch |err|
                         return bad(self.diag, alloc, err, "field {s}: the value does not encode in {d} bits", .{ ln.key, ln.blen });
-                } else if (ln.abs_set) {
+                } else if (ln.sentinelOn(ent)) {
                     bitsWriteRaw(self.p, self.out.items, self.pos, ln, ln.abs_ints[0]);
                 }
                 self.pos += ln.blen;

@@ -1,0 +1,13 @@
+{
+  "name": "json-ruling-14-derived-key-holds",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-json",
+  "input": "{\"x\":0,\"qty\":6}",
+  "expect": "{\"x\":0,\"n\":3,\"q\":6}",
+  "model": {
+    "@complete": true,
+    "probe.notx": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; ruling 14: derivations fill keys before encode; probe.notx is `not probe.x`"
+}

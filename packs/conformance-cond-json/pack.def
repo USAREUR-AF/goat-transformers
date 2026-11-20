@@ -1,0 +1,41 @@
+# Conformance probe pack for the field option `with` (spec 0.18) on the `json`
+# wire. Public. No kinds. Each line below states what it pins:
+#
+#   y   with x       a scalar holds when present, 0 included (ruling 2)
+#   z   with s1      the empty text holds (ruling 2)
+#   w   with items   a list holds when present with at least one item
+#   c1  with c1      its own key, beside a default (ruling 3)
+#   c2  with n       n has a default here; a default never holds (ruling 2)
+#   s   two lines    s2 with y, then callsign: a suppressed first line is not
+#                    a candidate, the later line is written (ruling 1)
+#   q   with notx    probe.notx is derived (`not probe.x`): ruling 14
+#   items            qty with label (an item key), val with x (a key the
+#                    group maps, checked on the item only: ruling 2)
+#   nums             a scalar item suppressed is null (ruling 4)
+format  conformance-cond-json
+version 0.18.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses    probe
+wire    json
+field   probe.x   x   int
+field   probe.y   y   int  with probe.x
+field   probe.z   z   int  with probe.s1
+field   probe.w   w   int  with probe.items
+field   probe.c1  c1  int  with probe.c1
+default probe.c1  7
+field   probe.n   n   int
+default probe.n   3
+field   probe.c2  c2  int  with probe.n
+field   probe.s1  s1  string
+field   probe.s2  s   string  with probe.y
+field   callsign  s   string
+field   probe.qty q   int  with probe.notx
+group   probe.items  items
+  field probe.label  label  string
+  field probe.qty    qty    int  with probe.label
+  field probe.val    val    int  with probe.x
+end
+group   probe.nums  nums
+  field probe.val  .  int  with probe.tag
+end

@@ -1,0 +1,9 @@
+{
+  "name": "json-with-key-held-writes-the-line",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-json",
+  "input": "{\"x\":1,\"y\":2}",
+  "expect": "{\"x\":1,\"y\":2,\"n\":3}",
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; the entity holds x, so y is written"
+}

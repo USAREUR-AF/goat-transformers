@@ -1,0 +1,9 @@
+{
+  "name": "json-ruling-03-own-key-held-no-effect",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-json",
+  "input": "{\"c1\":5}",
+  "expect": "{\"c1\":5,\"n\":3}",
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; ruling 3: no effect when the entity holds the key"
+}

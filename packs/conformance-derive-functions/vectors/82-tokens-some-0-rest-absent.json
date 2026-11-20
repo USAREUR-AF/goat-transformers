@@ -1,0 +1,18 @@
+{
+  "name": "tokens-some-0-rest-absent",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"flb\":0}",
+  "context": {},
+  "expect": "{\"flb\":0}",
+  "model": {
+    "@complete": true,
+    "@absent": [
+      "probe.flags",
+      "probe.fl_a",
+      "probe.fl_c"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, Derive functions; tokens: absent when no argument is present and not 0; has_token has no argument then"
+}

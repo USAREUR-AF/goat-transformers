@@ -1,7 +1,7 @@
 %% gt_iso: ISO 8601 <-> epoch milliseconds (engine-spec transform
 %% `iso8601_ms`; Version 0.6 replaces ruling 8 of 0.1.1).
 -module(gt_iso).
--export([decode/1, encode/1]).
+-export([decode/1, encode/1, encode_short/1]).
 
 -define(EPOCH_GREGORIAN_SECONDS, 62167219200).
 %% 0001-01-01T00:00:00.000Z and 9999-12-31T23:59:59.999Z (ruling 3 of 0.11)
@@ -75,7 +75,13 @@ int(B) ->
     binary_to_integer(B).
 
 %% epoch ms -> "YYYY-MM-DDTHH:MM:SS.fffZ"
-encode(Ms) when is_integer(Ms), Ms >= ?MIN_MS, Ms =< ?MAX_MS ->
+encode(Ms) when is_integer(Ms), Ms >= ?MIN_MS, Ms =< ?MAX_MS -> format(Ms).
+
+%% 0000-01-01T00:00:00Z, the first instant `iso8601_short` writes (ruling
+%% 11 of 0.18; iso8601_ms keeps 0001 of ruling 3 of 0.11)
+-define(MIN_SHORT_MS, -62167219200000).
+
+format(Ms) ->
     Milli = ((Ms rem 1000) + 1000) rem 1000,
     Secs = (Ms - Milli) div 1000,
     {{Y, Mo, D}, {H, Mi, S}} =
@@ -84,3 +90,21 @@ encode(Ms) when is_integer(Ms), Ms >= ?MIN_MS, Ms =< ?MAX_MS ->
     iolist_to_binary(
       io_lib:format("~4..0b-~2..0b-~2..0bT~2..0b:~2..0b:~2..0b.~3..0bZ",
                     [Y, Mo, D, H, Mi, S, Milli])).
+
+%% epoch ms -> "YYYY-MM-DDTHH:MM:SS[.f]Z" (`iso8601_short`, 0.18): no
+%% fraction when the milliseconds are 0, else their three digits with
+%% trailing zeros removed. The milliseconds are ms - 1000 * floor(ms / 1000)
+%% (ruling 11); a year outside 0000 - 9999 fails.
+encode_short(Ms) when is_integer(Ms), Ms >= ?MIN_SHORT_MS, Ms =< ?MAX_MS ->
+    <<Head:19/binary, $., Frac:3/binary, "Z">> = format(Ms),
+    case strip_zeros(Frac) of
+        <<>> -> <<Head/binary, "Z">>;
+        F -> <<Head/binary, $., F/binary, "Z">>
+    end.
+
+strip_zeros(<<>>) -> <<>>;
+strip_zeros(B) ->
+    case binary:last(B) of
+        $0 -> strip_zeros(binary:part(B, 0, byte_size(B) - 1));
+        _ -> B
+    end.

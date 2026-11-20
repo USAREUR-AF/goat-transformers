@@ -1,0 +1,15 @@
+{
+  "name": "ruling-09-separator-names-space-and-one-code-point",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"sp1\":1,\"sp2\":1}",
+  "context": {},
+  "expect": "{\"sp1\":1,\"sp2\":1,\"spt\":\"x y\",\"ut\":\"aéb\"}",
+  "model": {
+    "@complete": true,
+    "probe.spt": "x y",
+    "probe.ut": "aéb"
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, Derive functions; ruling 9: space is U+0020; a character is one Unicode code point"
+}

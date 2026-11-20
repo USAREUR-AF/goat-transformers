@@ -1,0 +1,12 @@
+{
+  "name": "roundtrip-trailing-zeros-removed",
+  "from": "conformance-cond-time-geojson",
+  "to": "conformance-cond-time-geojson",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"t\":\"2025-10-29T12:00:00.500Z\"},\"id\":\"u\"}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"t\":\"2025-10-29T12:00:00.5Z\"},\"id\":\"u\"}",
+  "model": {
+    "time_ms": "1761739200500"
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, A time without a zero fraction; on geojson"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "encode-fraction-5",
+  "from": "conformance-cond-time",
+  "to": "conformance-cond-time",
+  "input": "{\"ms\":1500}",
+  "expect": "{\"ms\":1500,\"t\":\"1970-01-01T00:00:01.5Z\"}",
+  "model": {
+    "time_ms": "1500"
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, A time without a zero fraction; encode; ruling 11: ms - 1000 x floor(ms / 1000)"
+}

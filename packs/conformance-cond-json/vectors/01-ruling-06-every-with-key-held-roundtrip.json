@@ -1,0 +1,16 @@
+{
+  "name": "ruling-06-every-with-key-held-roundtrip",
+  "from": "conformance-cond-json",
+  "to": "conformance-cond-json",
+  "input": "{\"x\":1,\"y\":2,\"z\":3,\"w\":4,\"c1\":5,\"n\":6,\"c2\":7,\"s1\":\"t\",\"s\":\"u\",\"items\":[{\"label\":\"a\",\"qty\":1}],\"nums\":[]}",
+  "expect": "{\"x\":1,\"y\":2,\"z\":3,\"w\":4,\"c1\":5,\"n\":6,\"c2\":7,\"s1\":\"t\",\"s\":\"u\",\"items\":[{\"label\":\"a\",\"qty\":1}],\"nums\":[]}",
+  "model": {
+    "probe.y": "2",
+    "probe.s2": "u",
+    "callsign": "u",
+    "probe.items[0].probe.qty": "1",
+    "probe.nums.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; ruling 6: a same-format round trip is byte-exact when every `with` key is held"
+}

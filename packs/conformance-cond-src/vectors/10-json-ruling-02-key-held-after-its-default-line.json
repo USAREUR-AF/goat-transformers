@@ -1,0 +1,9 @@
+{
+  "name": "json-ruling-02-key-held-after-its-default-line",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-json",
+  "input": "{\"c2\":4,\"n\":1}",
+  "expect": "{\"n\":1,\"c2\":4}",
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; ruling 2: n is held"
+}

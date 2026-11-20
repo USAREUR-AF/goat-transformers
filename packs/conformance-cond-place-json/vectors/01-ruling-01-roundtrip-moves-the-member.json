@@ -1,0 +1,14 @@
+{
+  "name": "ruling-01-roundtrip-moves-the-member",
+  "from": "conformance-cond-place-json",
+  "to": "conformance-cond-place-json",
+  "input": "{\"x\":1,\"s\":\"b\"}",
+  "expect": "{\"s\":\"b\",\"x\":1}",
+  "model": {
+    "probe.s2": "b",
+    "callsign": "b",
+    "probe.x": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; ruling 1 with ruling 23 of 0.9 and ruling 6"
+}

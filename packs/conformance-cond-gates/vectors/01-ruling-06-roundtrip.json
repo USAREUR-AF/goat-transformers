@@ -1,0 +1,16 @@
+{
+  "name": "ruling-06-roundtrip",
+  "from": "conformance-cond-gates",
+  "to": "conformance-cond-gates",
+  "input": "ff05",
+  "expect": "0105",
+  "model": {
+    "probe.w": "255",
+    "probe.x": "5",
+    "@absent": [
+      "probe.z"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; with Version 0.17 Encode; ruling 6: w decodes, and is dropped on re-encode"
+}

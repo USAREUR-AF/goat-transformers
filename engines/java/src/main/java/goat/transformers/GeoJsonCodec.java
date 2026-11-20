@@ -209,7 +209,13 @@ final class GeoJsonCodec extends Codec<GeoJsonCodec.Doc> {
     /** Write {@code v} unless the member holds a value; a sentinel there is replaced in its place. */
     private static void putOver(Map<String, Object> m, String name, Object v) {
         Object have = m.get(name);
-        if (have == null || have instanceof JsonCodec.Placed) m.put(name, v);
+        if (have == null || have == JsonCodec.RESERVED || have instanceof JsonCodec.Placed) m.put(name, v);
+    }
+
+    /** Write {@code v} unless the member holds a value or a sentinel; a reserved place is filled. */
+    private static void putFirst(Map<String, Object> m, String name, Object v) {
+        Object have = m.get(name);
+        if (have == null || have == JsonCodec.RESERVED) m.put(name, v);
     }
 
     static Object jsonValue(Transform t, String s) {
@@ -252,15 +258,20 @@ final class GeoJsonCodec extends Codec<GeoJsonCodec.Doc> {
                 List<Entity> list = e.list(g.list);
                 if (list == null) continue;              // an absent list writes nothing
                 List<Object> arr = items.encodeItems(g, list, true);
-                if (l.locator.startsWith("properties.")) props.putIfAbsent(l.locator.substring("properties.".length()), arr);
-                else top.putIfAbsent(l.locator, arr);
+                if (l.locator.startsWith("properties.")) putFirst(props, l.locator.substring("properties.".length()), arr);
+                else putFirst(top, l.locator, arr);
                 continue;
             }
             Pack.Field f = (Pack.Field) l;
             String s = encodeField(f, e, kind.scope);
             if (s == null) {
                 // the first sentinel of an absent key, in place until a line whose key is present writes (ruling 16 of 0.9)
-                if (f.absent == null) continue;
+                if (f.absent == null || f.suppressed(e)) {
+                    // the member's place, should a later line on the locator write it (ruling 23 of 0.9, ruling 1 of 0.18)
+                    if (ci < 0 && l.locator.startsWith("properties.")) props.putIfAbsent(l.locator.substring("properties.".length()), JsonCodec.RESERVED);
+                    else if (ci < 0) top.putIfAbsent(l.locator, JsonCodec.RESERVED);
+                    continue;
+                }
                 Object jv = f.absent.firstJson();
                 if (ci >= 0) {
                     if (coord[ci] != null) continue;
@@ -270,9 +281,9 @@ final class GeoJsonCodec extends Codec<GeoJsonCodec.Doc> {
                     }
                     coord[ci] = new JsonCodec.Placed(jv);   // counts as a value for ruling 5 of 0.1.1 (ruling 10 of 0.9)
                 } else if (l.locator.startsWith("properties.")) {
-                    props.putIfAbsent(l.locator.substring("properties.".length()), new JsonCodec.Placed(jv));
+                    putFirst(props, l.locator.substring("properties.".length()), new JsonCodec.Placed(jv));
                 } else {
-                    top.putIfAbsent(l.locator, new JsonCodec.Placed(jv));
+                    putFirst(top, l.locator, new JsonCodec.Placed(jv));
                 }
                 continue;
             }

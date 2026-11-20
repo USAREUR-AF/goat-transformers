@@ -1,0 +1,9 @@
+{
+  "name": "json-ruling-01-suppressed-first-line-later-line-written",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-json",
+  "input": "{\"s2\":\"a\",\"cs\":\"b\"}",
+  "expect": "{\"n\":3,\"s\":\"b\"}",
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; ruling 1: not a candidate for ruling 16 of 0.5, so a later line on the same locator whose key is present is written"
+}

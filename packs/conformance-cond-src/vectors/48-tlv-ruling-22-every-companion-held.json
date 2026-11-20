@@ -1,0 +1,9 @@
+{
+  "name": "tlv-ruling-22-every-companion-held",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-tlv",
+  "input": "{\"x\":1,\"y\":2,\"z\":3,\"s1\":\"a\"}",
+  "expect": "01010102010203020003040161",
+  "source": "constructed",
+  "reference": "spec 0.18 ruling 22 (`with` on text and tlv); 0.13 Writing a message steps 1 and 2"
+}

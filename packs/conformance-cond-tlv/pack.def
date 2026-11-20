@@ -1,0 +1,19 @@
+# Conformance probe pack for `with` (spec 0.18, ruling 22) on the `tlv` wire
+# (spec 0.13). Public. No kinds. Tags ber-oid, lengths ber (the defaults), no
+# key, no checksum: every tag here is below 128, so each tag and each length
+# is one byte.
+#
+#   tag 1   x, 1 byte
+#   tag 2   y with x, 1 byte: suppressed when x is not held, no item
+#   tag 3   z with s1, 2 bytes: s1 = "" holds (ruling 2)
+#   tag 4   s1, utf8: the empty text writes an item of length 0
+format  conformance-cond-tlv
+version 0.18.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses    probe
+wire    tlv
+field   probe.x   1:1  uint
+field   probe.y   2:1  uint  with probe.x
+field   probe.z   3:2  uint  with probe.s1
+field   probe.s1  4    utf8
