@@ -1590,3 +1590,48 @@ class DeepWalkTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+# A chameleon include (TransXChange's NaPTAN files have this shape): a file with no
+# targetNamespace and no import, included by a file of the set. Its declarations take the
+# set's namespace, so its types are referred to without a prefix and its elements are
+# qualified like the set's own. Its header metadata declares a default namespace inside
+# xs:annotation, which is not schema context and does not apply to the unprefixed type names.
+CHAMELEON_MAIN = ('<xs:schema xmlns="urn:example:c" xmlns:xs="http://www.w3.org/2001/XMLSchema" '
+                  'targetNamespace="urn:example:c" elementFormDefault="qualified">\n'
+                  '<xs:include schemaLocation="cham.xsd"/>\n'
+                  '<xs:element name="Doc"><xs:complexType><xs:sequence>'
+                  '<xs:element name="Place" type="PlaceType"/></xs:sequence></xs:complexType></xs:element>\n'
+                  '</xs:schema>\n')
+CHAMELEON_INC = ('<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">\n'
+                 '<xs:annotation><xs:appinfo><Metadata xmlns="urn:example:metadata"><Title>t</Title></Metadata>'
+                 '</xs:appinfo></xs:annotation>\n'
+                 '<xs:complexType name="PlaceType"><xs:sequence>'
+                 '<xs:element name="Longitude" type="xs:decimal"/><xs:element name="Latitude" type="xs:decimal"/>'
+                 '</xs:sequence></xs:complexType>\n</xs:schema>\n')
+
+
+class ChameleonIncludeTest(Workspace):
+    def run_set(self, *extra):
+        with open(self.path("main.xsd"), "w", encoding="utf-8") as fh:
+            fh.write(CHAMELEON_MAIN)
+        with open(self.path("cham.xsd"), "w", encoding="utf-8") as fh:
+            fh.write(CHAMELEON_INC)
+        return support.run_main(x.main, [
+            "--xsd", self.path("main.xsd"), self.path("cham.xsd"), "--format", "demo", "--module", "demo",
+            "--out", self.out, "--model-dir", self.path("in", "model"), "--title", "Demo set",
+            "--public-statement", PUBLIC, "--message", "Doc",
+            "--names-file", self.path("out", "names", "demo.json")] + list(extra))
+
+    def test_chameleon_include_takes_the_set_namespace(self):
+        status, _, err = self.run_set()
+        self.assertEqual((status, err), (0, ""))
+        pack = gtcheck.load_pack_file(self.path("out", "packs", "demo", "pack.def"),
+                                      gtcheck.Model().load_dir(self.path("out", "model")))
+        self.assertEqual([n.loc for n in pack.common + pack.kinds[0].lines],
+                         ["Place/Longitude/#text", "Place/Latitude/#text"])
+        md = self.read_out("packs", "demo", "pack.md")
+        self.assertIn("- chameleon includes (no targetNamespace, so their declarations take `urn:example:c`): "
+                      "`cham.xsd`.", md)
+        vec = json.loads(self.read_out("packs", "demo", "vectors", "gen-1-doc-roundtrip.json"))
+        self.assertTrue(vec["input"].startswith('<Doc xmlns="urn:example:c">'), vec["input"])

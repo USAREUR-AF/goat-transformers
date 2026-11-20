@@ -170,3 +170,12 @@ share_alike = false
 attribution = true
 field_of_use = []
 distribution = "public"
+
+[licences."OGL-UK-3.0"]
+name = "Open Government Licence v3.0"
+url = "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+commercial = "yes"
+share_alike = false
+attribution = true
+field_of_use = []
+distribution = "public"

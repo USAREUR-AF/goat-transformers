@@ -229,11 +229,14 @@ def parse_xml(raw, path):
     """(root element, {element: line}, {prefix: namespace}) of an XML file.
     The tree is the one xml.etree builds (tags as `{namespace}local`); expat is
     driven directly because that is the only way to learn the line of an
-    element. The first declaration of a prefix in the file is the one kept."""
+    element. The first declaration of a prefix in the file is the one kept;
+    declarations inside an xs:annotation (documentation or appinfo content, such
+    as metadata in a namespace of its own) are not schema context and are not kept."""
     builder = ET.TreeBuilder()
     lines, prefixes = {}, {}
     parser = expat.ParserCreate(namespace_separator="}")
     parser.buffer_text = True
+    annotation = [0]          # depth inside xs:annotation elements
 
     def name(text):
         return "{" + text if "}" in text else text
@@ -241,11 +244,22 @@ def parse_xml(raw, path):
     def start(tag, attrs):
         node = builder.start(name(tag), {name(k): v for k, v in attrs.items()})
         lines[node] = parser.CurrentLineNumber
+        if annotation[0] or name(tag) == xs("annotation"):
+            annotation[0] += 1
+
+    def end(tag):
+        builder.end(name(tag))
+        if annotation[0]:
+            annotation[0] -= 1
+
+    def decl(prefix, uri):
+        if not annotation[0]:
+            prefixes.setdefault(prefix or "", uri or "")
 
     parser.StartElementHandler = start
-    parser.EndElementHandler = lambda tag: builder.end(name(tag))
+    parser.EndElementHandler = end
     parser.CharacterDataHandler = builder.data
-    parser.StartNamespaceDeclHandler = lambda prefix, uri: prefixes.setdefault(prefix or "", uri or "")
+    parser.StartNamespaceDeclHandler = decl
     try:
         parser.Parse(raw, True)
     except expat.ExpatError as e:
@@ -290,6 +304,7 @@ class Schema:
         self.anon = 0
         self._content = {}
         self._simple = {}
+        self.chameleon = []           # base names of chameleon includes (no targetNamespace)
 
     # -- reading ----------------------------------------------------------
     def read(self, path, aliases):
@@ -305,7 +320,12 @@ class Schema:
         tns = root.get("targetNamespace")
         base = os.path.basename(path)
         imports = frozenset(c.get("namespace") for c in root if c.tag == xs("import") and c.get("namespace"))
-        if tns is None and imports:
+        if tns is None and self.tns is not None and imports <= self.declined:
+            # A chameleon include: a file with no targetNamespace, included by a file of the set,
+            # that imports no namespace or only declined ones. Its declarations take the
+            # namespace of the set (XSD 1.0, 4.2.1).
+            self.chameleon.append(base)
+        elif tns is None and imports:
             # A "master" file with no targetNamespace that imports the set's namespace: its own
             # declarations (the message roots) are in no namespace, and it may refer to names of
             # the namespaces it imports. read_schema checks that it imports only the set's.
@@ -2791,6 +2811,9 @@ def md_sources(schema, statements, plan):
             "" if inc.location == inc.resolved else " (the set ships the file under that name)"))
     L.append("- targetNamespace `%s`; elementFormDefault: %s." % (
         plan.tns, ", ".join("%s in `%s`" % (v, f) for f, v in schema.element_form.items())))
+    if schema.chameleon:
+        L.append("- chameleon includes (no targetNamespace, so their declarations take `%s`): %s." % (
+            plan.tns, ", ".join("`%s`" % b for b in schema.chameleon)))
     return L
 
 
