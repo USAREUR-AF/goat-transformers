@@ -1,0 +1,8 @@
+{
+  "name": "NHC tropical cyclone status",
+  "domain": "maps",
+  "prefixes": [
+    "nhc-"
+  ],
+  "detail": "CurrentStorms.json: one storm, the whole file"
+}

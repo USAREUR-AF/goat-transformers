@@ -1,0 +1,8 @@
+{
+  "name": "CCSDS frames and packets",
+  "domain": "space",
+  "prefixes": [
+    "ccsds-"
+  ],
+  "detail": "AOS, TC, TM, USLP, Proximity-1, CLCW, Space Packet, Encapsulation Packet, CFDP, CUC, CDS, CCS time codes"
+}

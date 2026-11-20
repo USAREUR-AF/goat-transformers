@@ -1,0 +1,7 @@
+{
+  "name": "Eclipse SUMO traffic simulation files",
+  "domain": "transport",
+  "prefixes": [
+    "sumo-"
+  ]
+}

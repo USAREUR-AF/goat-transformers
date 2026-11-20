@@ -1,0 +1,7 @@
+{
+  "name": "Tesla Fleet Telemetry",
+  "domain": "land",
+  "prefixes": [
+    "tesla-fleet-"
+  ]
+}

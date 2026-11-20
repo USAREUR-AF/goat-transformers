@@ -1,0 +1,8 @@
+{
+  "name": "OCPI",
+  "domain": "transport",
+  "prefixes": [
+    "ocpi-"
+  ],
+  "detail": "2.2.1: Locations, Sessions, CDRs, Tariffs, Tokens, Commands"
+}

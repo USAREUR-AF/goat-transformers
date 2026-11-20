@@ -1,0 +1,9 @@
+{
+  "name": "UCI",
+  "domain": "c2",
+  "exact": [
+    "uci",
+    "uci-2.5"
+  ],
+  "detail": "2.5, 2.6"
+}

@@ -1,0 +1,8 @@
+{
+  "name": "Garmin TCX",
+  "domain": "maps",
+  "exact": [
+    "tcx"
+  ],
+  "detail": "Training Center Database v2: activities, laps, trackpoints"
+}

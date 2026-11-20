@@ -1,0 +1,7 @@
+{
+  "name": "Eclipse uProtocol",
+  "domain": "land",
+  "prefixes": [
+    "uprotocol-"
+  ]
+}

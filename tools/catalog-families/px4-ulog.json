@@ -1,0 +1,7 @@
+{
+  "name": "PX4 ULog",
+  "domain": "uncrewed",
+  "prefixes": [
+    "px4-ulog"
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "name": "Cursor on Target",
+  "domain": "c2",
+  "prefixes": [
+    "cot-"
+  ],
+  "detail": "XML, protobuf"
+}

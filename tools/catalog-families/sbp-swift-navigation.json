@@ -1,0 +1,12 @@
+{
+  "name": "SBP (Swift Navigation)",
+  "domain": "sensors",
+  "prefixes": [
+    "sbp-"
+  ],
+  "members": {
+    "pattern": "^sbp-(.+)$",
+    "label": "{n} message packages",
+    "list": false
+  }
+}

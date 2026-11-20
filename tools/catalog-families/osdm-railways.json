@@ -1,0 +1,7 @@
+{
+  "name": "OSDM (railways)",
+  "domain": "transport",
+  "prefixes": [
+    "osdm-"
+  ]
+}

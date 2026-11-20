@@ -1,0 +1,7 @@
+{
+  "name": "MISB local sets",
+  "domain": "sensors",
+  "prefixes": [
+    "misb-st"
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "name": "Waymo Open Dataset",
+  "domain": "land",
+  "prefixes": [
+    "waymo-"
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "name": "Open-RMF (ROS 2)",
+  "domain": "uncrewed",
+  "prefixes": [
+    "ros2-rmf-"
+  ]
+}

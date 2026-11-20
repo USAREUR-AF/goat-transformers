@@ -1,0 +1,9 @@
+{
+  "name": "SAPIENT",
+  "domain": "sensors",
+  "exact": [
+    "sapient",
+    "sapient-v1"
+  ],
+  "detail": "v1, v2"
+}

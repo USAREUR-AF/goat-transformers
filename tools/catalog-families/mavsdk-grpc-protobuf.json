@@ -1,0 +1,7 @@
+{
+  "name": "MAVSDK (gRPC protobuf)",
+  "domain": "uncrewed",
+  "prefixes": [
+    "mavsdk-"
+  ]
+}

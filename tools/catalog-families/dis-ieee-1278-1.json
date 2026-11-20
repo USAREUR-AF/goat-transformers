@@ -1,0 +1,8 @@
+{
+  "name": "DIS (IEEE 1278.1)",
+  "domain": "c2",
+  "exact": [
+    "dis7"
+  ],
+  "detail": "version 7"
+}

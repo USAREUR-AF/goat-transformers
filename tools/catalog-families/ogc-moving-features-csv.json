@@ -1,0 +1,7 @@
+{
+  "name": "OGC Moving Features CSV",
+  "domain": "maps",
+  "exact": [
+    "mf-csv"
+  ]
+}

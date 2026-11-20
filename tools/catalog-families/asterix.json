@@ -1,0 +1,11 @@
+{
+  "name": "ASTERIX",
+  "domain": "air",
+  "prefixes": [
+    "asterix-cat"
+  ],
+  "members": {
+    "pattern": "^asterix-cat([0-9]{3})",
+    "label": "{n} categories"
+  }
+}

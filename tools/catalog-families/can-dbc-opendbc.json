@@ -1,0 +1,7 @@
+{
+  "name": "CAN DBC (opendbc)",
+  "domain": "land",
+  "prefixes": [
+    "dbc-"
+  ]
+}

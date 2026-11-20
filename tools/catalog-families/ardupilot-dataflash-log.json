@@ -1,0 +1,7 @@
+{
+  "name": "ArduPilot DataFlash log",
+  "domain": "uncrewed",
+  "prefixes": [
+    "ardupilot-log"
+  ]
+}

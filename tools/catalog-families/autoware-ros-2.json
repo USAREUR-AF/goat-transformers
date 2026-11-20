@@ -1,0 +1,7 @@
+{
+  "name": "Autoware (ROS 2)",
+  "domain": "land",
+  "prefixes": [
+    "ros2-autoware-"
+  ]
+}

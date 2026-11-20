@@ -1,0 +1,7 @@
+{
+  "name": "GeoJSON",
+  "domain": "maps",
+  "exact": [
+    "geojson"
+  ]
+}

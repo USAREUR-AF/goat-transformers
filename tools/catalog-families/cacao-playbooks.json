@@ -1,0 +1,7 @@
+{
+  "name": "CACAO playbooks",
+  "domain": "networks",
+  "exact": [
+    "cacao-playbook"
+  ]
+}

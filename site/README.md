@@ -82,7 +82,7 @@ module it loaded from `bundle.json`.
 When a number changes, edit `index.html` to the new value and run `build.sh`
 again. The two figures are images and are not checked: `model-bus.svg` states
 the packs and message kinds of thirteen families (as
-`tools/catalog-families.json` groups them), and `journey.svg` quotes three
+`tools/catalog-families/` groups them), and `journey.svg` quotes three
 `field` lines of `packs/remote-id/pack.def` and `packs/cot-xml/pack.def`;
 compare them with the tree when those packs change.
 

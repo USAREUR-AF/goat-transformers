@@ -1,0 +1,7 @@
+{
+  "name": "DRIP (RFC 9575)",
+  "domain": "uncrewed",
+  "exact": [
+    "drip"
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "name": "Livox SDK2",
+  "domain": "sensors",
+  "exact": [
+    "livox-point"
+  ],
+  "detail": "point cloud and IMU data packet"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "ASAM OSI (Open Simulation Interface)",
+  "domain": "land",
+  "prefixes": [
+    "osi-"
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "name": "OMA LwM2M",
+  "domain": "iot",
+  "exact": [
+    "lwm2m-json"
+  ],
+  "detail": "LwM2M 1.0 JSON content format"
+}

@@ -1,0 +1,8 @@
+{
+  "name": "RTCM 3",
+  "domain": "sensors",
+  "exact": [
+    "rtcm3"
+  ],
+  "detail": "10403.x message bodies"
+}

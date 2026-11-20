@@ -1,0 +1,7 @@
+{
+  "name": "NOAA CO-OPS tides and currents",
+  "domain": "maps",
+  "exact": [
+    "coops-data"
+  ]
+}

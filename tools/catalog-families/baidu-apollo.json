@@ -1,0 +1,7 @@
+{
+  "name": "Baidu Apollo",
+  "domain": "land",
+  "prefixes": [
+    "apollo-"
+  ]
+}

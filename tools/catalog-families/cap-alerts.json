@@ -1,0 +1,7 @@
+{
+  "name": "CAP alerts",
+  "domain": "maps",
+  "exact": [
+    "cap"
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "name": "Unicore UNI",
+  "domain": "sensors",
+  "exact": [
+    "unicore"
+  ],
+  "detail": "binary messages"
+}

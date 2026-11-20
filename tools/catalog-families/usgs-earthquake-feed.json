@@ -1,0 +1,8 @@
+{
+  "name": "USGS earthquake feed",
+  "domain": "maps",
+  "prefixes": [
+    "usgs-earthquake"
+  ],
+  "detail": "GeoJSON summary feed: one event, the whole feed"
+}

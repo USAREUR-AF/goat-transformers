@@ -1,0 +1,7 @@
+{
+  "name": "Open311 GeoReport v2",
+  "domain": "maps",
+  "prefixes": [
+    "open311-"
+  ]
+}

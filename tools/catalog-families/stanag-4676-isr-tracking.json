@@ -1,0 +1,7 @@
+{
+  "name": "STANAG 4676 ISR tracking",
+  "domain": "c2",
+  "exact": [
+    "isr-tracking"
+  ]
+}

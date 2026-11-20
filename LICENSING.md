@@ -4,9 +4,10 @@
 The library's code, and its restatements of message formats, are under the
 Apache License 2.0. A format whose source allows less is still included, with
 its real licence on the pack, so that a build can leave it out. Each pack has
-one SPDX licence, given in [REUSE.toml](REUSE.toml) (the
-[REUSE](https://reuse.software) specification, read by `reuse lint` and SBOM
-tools); [licences.toml](licences.toml) gives each licence its flags; the
+one SPDX licence: Apache-2.0 from the root [REUSE.toml](REUSE.toml), or the
+pack's own `packs/<name>/REUSE.toml`, or for a model module its
+`model/<module>.def.license` (the [REUSE](https://reuse.software) specification,
+read by `reuse lint` and SBOM tools); [licences.toml](licences.toml) gives each licence its flags; the
 profile of a pack follows from those. [licences.json](licences.json) holds the
 same as this page, for machines.
 

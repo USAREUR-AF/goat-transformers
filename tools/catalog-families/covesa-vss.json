@@ -1,0 +1,7 @@
+{
+  "name": "COVESA VSS",
+  "domain": "land",
+  "exact": [
+    "vss-vehicle"
+  ]
+}

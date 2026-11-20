@@ -1,0 +1,8 @@
+{
+  "name": "aviationweather.gov Data API",
+  "domain": "maps",
+  "prefixes": [
+    "awc-"
+  ],
+  "detail": "METAR, TAF, PIREP, SIGMET/AIRMET, CWA, TCF, stations and navigational data"
+}

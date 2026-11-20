@@ -1,0 +1,12 @@
+{
+  "name": "NITF 2.1",
+  "domain": "sensors",
+  "prefixes": [
+    "nitf-"
+  ],
+  "members": {
+    "pattern": "^nitf-tre-(.+)$",
+    "label": "two headers and {n} TREs",
+    "list": false
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "MAVLink 2",
+  "domain": "uncrewed",
+  "exact": [
+    "mavlink2"
+  ],
+  "prefixes": [
+    "mavlink2-"
+  ],
+  "members": {
+    "pattern": "^mavlink2-(.+)$",
+    "label": "common and {n} dialects"
+  }
+}

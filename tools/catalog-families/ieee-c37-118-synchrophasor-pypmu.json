@@ -1,0 +1,7 @@
+{
+  "name": "IEEE C37.118 synchrophasor (pypmu)",
+  "domain": "iot",
+  "prefixes": [
+    "c37118-"
+  ]
+}

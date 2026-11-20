@@ -1,0 +1,7 @@
+{
+  "name": "Eclipse KUKSA.val",
+  "domain": "land",
+  "prefixes": [
+    "kuksa-"
+  ]
+}

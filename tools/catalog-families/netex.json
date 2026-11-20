@@ -1,0 +1,7 @@
+{
+  "name": "NeTEx",
+  "domain": "transport",
+  "prefixes": [
+    "netex-"
+  ]
+}

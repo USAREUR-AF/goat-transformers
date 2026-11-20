@@ -1,0 +1,17 @@
+{
+  "name": "IETF option areas",
+  "domain": "networks",
+  "exact": [
+    "dhcpv6-options",
+    "edns0-options"
+  ],
+  "members": {
+    "pattern": "^(.+)-options$",
+    "label": "",
+    "upper": true,
+    "rename": {
+      "dhcpv6": "DHCPv6",
+      "edns0": "EDNS(0)"
+    }
+  }
+}
