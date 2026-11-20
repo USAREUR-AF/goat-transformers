@@ -1,0 +1,12 @@
+{
+  "name": "members-not-in-the-format",
+  "from": "lwm2m-json",
+  "to": "lwm2m-json",
+  "input": "{\"bn\":\"/3303/0/\",\"ver\":1,\"e\":[{\"n\":\"5700\",\"v\":19.75,\"x\":2},{\"n\":\"5701\",\"sv\":\"Cel\"}]}",
+  "expect": "{\"bn\":\"/3303/0/\",\"e\":[{\"n\":\"5700\",\"v\":19.75},{\"n\":\"5701\",\"sv\":\"Cel\"}],\"ver\":1}",
+  "model": {
+    "lwm2m.entries[0].lwm2m.value": "19.75"
+  },
+  "source": "derived by tools/gen/lwm2m-tcx-vectors.py from the members the pack maps and spec/engine-spec.md; no engine run",
+  "reference": "OMA LwM2M 1.0.2 technical specification, section 6.4.4 JSON; resource IDs from the OMA LwM2M registry; a top-level member the format does not define is residue and comes back after e; one inside an entry is dropped, as an item carries no residue"
+}

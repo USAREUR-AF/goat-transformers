@@ -1,0 +1,33 @@
+# The tcx module: the activities, laps and trackpoints of a Garmin Training Center Database
+# (TCX v2) document, as the document holds them. packs/tcx/pack.md says why no trackpoint is
+# bound to lat, lon or time_ms.
+module        tcx
+version       0.1.0
+distribution  public
+source        "Garmin Training Center Database XML schema v2, https://www8.garmin.com/xmlschemas/TrainingCenterDatabasev2.xsd (sha256 ec392e16a33756df03d3e16fc12fd39f55601ec9e4e22cebb83243a8deb5a0dd); restated by goat-transformers"
+list  activities                     "activities of the document (Activities/Activity), in order"
+key   activity_sport          string  -    "sport of the activity (attribute Sport): Running, Biking or Other"
+key   activity_id             string  -    "identifier of the activity (Id), an XML date-time: when the activity started"
+key   activity_notes          string  -    "notes on the activity (Notes)"
+list  laps                           "laps of an activity (Lap), in order"
+key   lap_start_time          string  -    "start of the lap (attribute StartTime), an XML date-time"
+key   lap_total_time_seconds  float   s    "duration of the lap (TotalTimeSeconds)"
+key   lap_distance_meters     float   m    "distance covered in the lap (DistanceMeters)"
+key   lap_maximum_speed       float   m/s  "highest speed in the lap (MaximumSpeed)"
+key   lap_calories            int     kcal "energy spent in the lap (Calories)"
+key   lap_average_heart_rate  int     bpm  "mean heart rate over the lap (AverageHeartRateBpm/Value)"
+key   lap_maximum_heart_rate  int     bpm  "highest heart rate in the lap (MaximumHeartRateBpm/Value)"
+key   lap_intensity           string  -    "intensity of the lap (Intensity): Active or Resting"
+key   lap_cadence             int     rpm  "cadence over the lap (Cadence), 0 to 254"
+key   lap_trigger_method      string  -    "what ended the lap (TriggerMethod): Manual, Distance, Location, Time or HeartRate"
+key   lap_notes               string  -    "notes on the lap (Notes)"
+list  tracks                         "tracks of a lap (Track), in order"
+list  trackpoints                    "points of a track (Trackpoint), in order"
+key   point_time              string  -    "time of the trackpoint (Time), an XML date-time"
+key   point_latitude          float   deg  "latitude of the trackpoint (Position/LatitudeDegrees), degrees from -90 to 90; the schema states no datum"
+key   point_longitude         float   deg  "longitude of the trackpoint (Position/LongitudeDegrees), degrees from -180 to 180; the schema states no datum"
+key   point_altitude          float   m    "altitude of the trackpoint (AltitudeMeters); the schema states no reference surface"
+key   point_distance          float   m    "distance covered up to the trackpoint (DistanceMeters)"
+key   point_heart_rate        int     bpm  "heart rate at the trackpoint (HeartRateBpm/Value)"
+key   point_cadence           int     rpm  "cadence at the trackpoint (Cadence)"
+key   point_sensor_state      string  -    "state of the sensor at the trackpoint (SensorState): Present or Absent"

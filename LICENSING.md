@@ -35,6 +35,7 @@ below, and every vector of another pack that converts from or to one of them.
 | [LicenseRef-NGA-MSI](https://msi.nga.mil) | yes | no | yes | none | `open` |
 | [LicenseRef-OASIS-Notice](https://www.oasis-open.org/policies-guidelines/ipr/) | yes | no | yes | none | `open` |
 | [LicenseRef-OGC-Document](https://www.ogc.org/about/policies/document-license-agreement/) | yes | no | yes | none | `open` |
+| [LicenseRef-OMA-Internal](http://www.openmobilealliance.org/UseAgreement.html) | no | no | yes | none | `everything` |
 | LicenseRef-unstated | unknown | no | yes | none | `everything` |
 
 ## Packs outside `open`, or not under Apache-2.0
@@ -177,6 +178,7 @@ below, and every vector of another pack that converts from or to one of them.
 | `packs/gbfs-3.1-rc3-vehicle-availability` | `gbfs-3.1-rc3-vehicle-availability` | CC-BY-3.0 | `open` | its own licence |
 | `packs/gpx` | `gpx` | LicenseRef-unstated | `everything` | its own licence |
 | `packs/kml` | `kml` | LicenseRef-OGC-Document | `open` | its own licence |
+| `packs/lwm2m-json` | `lwm2m-json` | LicenseRef-OMA-Internal | `everything` | its own licence |
 | `packs/mavsdk-action-server-arm-disarm` | `mavsdk-action-server-arm-disarm` | LicenseRef-unstated | `everything` | its own licence |
 | `packs/mavsdk-action-server-flight-mode-change` | `mavsdk-action-server-flight-mode-change` | LicenseRef-unstated | `everything` | its own licence |
 | `packs/mavsdk-action-server-land` | `mavsdk-action-server-land` | LicenseRef-unstated | `everything` | its own licence |
@@ -707,6 +709,7 @@ below, and every vector of another pack that converts from or to one of them.
 | `packs/sdm-weather-weather-alert` | `sdm-weather-weather-alert` | CC-BY-4.0 | `open` | its own licence |
 | `packs/sdm-weather-weather-forecast` | `sdm-weather-weather-forecast` | CC-BY-4.0 | `open` | its own licence |
 | `packs/sdm-weather-weather-observed` | `sdm-weather-weather-observed` | CC-BY-4.0 | `open` | its own licence |
+| `packs/tcx` | `tcx` | LicenseRef-unstated | `everything` | its own licence |
 
 ## Model modules outside `open`, or not under Apache-2.0
 
@@ -847,6 +850,7 @@ below, and every vector of another pack that converts from or to one of them.
 | `model/gbfs31rc3vehicleavailability.def` | CC-BY-3.0 | `open` | its own licence |
 | `model/gpx.def` | LicenseRef-unstated | `everything` | its own licence |
 | `model/kml.def` | LicenseRef-OGC-Document | `open` | its own licence |
+| `model/lwm2m.def` | LicenseRef-OMA-Internal | `everything` | its own licence |
 | `model/mavsdkactionserverarmdisarm.def` | LicenseRef-unstated | `everything` | its own licence |
 | `model/mavsdkactionserverflightmodechange.def` | LicenseRef-unstated | `everything` | its own licence |
 | `model/mavsdkactionserverland.def` | LicenseRef-unstated | `everything` | its own licence |
@@ -1077,6 +1081,7 @@ below, and every vector of another pack that converts from or to one of them.
 | `model/sdmweatheralert.def` | CC-BY-4.0 | `open` | its own licence |
 | `model/sdmweatherforecast.def` | CC-BY-4.0 | `open` | its own licence |
 | `model/sdmweatherobserved.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/tcx.def` | LicenseRef-unstated | `everything` | its own licence |
 
 Every pack and module not listed here is Apache-2.0, profile `open`.
 [NOTICE](NOTICE) carries the attribution each licence asks for.

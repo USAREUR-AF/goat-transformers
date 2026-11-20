@@ -1,0 +1,18 @@
+LicenseRef-OMA-Internal: the use terms of Open Mobile Alliance technical specifications
+
+The packs under this label restate a content format defined in an OMA technical
+specification. The specification (OMA-TS-LightweightM2M-V1_0_2-20180209-A, page 2) states:
+
+  Use of this document is subject to all of the terms and conditions of the Use
+  Agreement located at http://www.openmobilealliance.org/UseAgreement.html.
+
+  You may use this document or any part of the document for internal or educational
+  purposes only, provided you do not modify, edit or take out of context the
+  information in this document in any manner. Information contained in this document
+  may be used, at your sole risk, for any purposes. You may not use this document in
+  any other manner without the prior written permission of the Open Mobile Alliance.
+
+This repository holds no copy of the document; the packs restate the members of the
+format in this repository's words. Under this label the commercial use of a pack is
+treated as not allowed (licences.toml: commercial "no") until the Open Mobile Alliance
+states otherwise. The full notice is quoted in the PROVENANCE.md of each pack.

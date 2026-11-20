@@ -1,0 +1,18 @@
+# The lwm2m module: the members of an OMA LwM2M JSON payload (content format 11543,
+# application/vnd.oma.lwm2m+json, LwM2M 1.0), as the payload holds them. An entry names its
+# resource by path (n, after the base name bn); which object, instance and resource that is,
+# and its type, come from the OMA LwM2M object registry. packs/lwm2m-json/pack.md says why no
+# entry is bound to a shared key.
+module        lwm2m
+version       0.1.0
+distribution  public
+source        "OMA Lightweight M2M Technical Specification, Approved Version 1.0.2 (OMA-TS-LightweightM2M-V1_0_2-20180209-A), section 6.4.4 JSON; restated by goat-transformers"
+key   base_name      string  -  "base name (bn): the path prepended to each entry's name, such as /6/0/ for instance 0 of object 6"
+key   base_time      float   s  "base time (bt) in seconds: above zero, seconds since 1970-01-01 UTC; zero or below, seconds before now; the entry times are relative to it"
+list  entries                   "resource instance entries (e), in order"
+key   name           string  -  "name of the entry (n): its path after the base name, such as 0 or 6/1 (resource, or resource and resource instance)"
+key   time           float   s  "time of the entry (t) in seconds, relative to the base time; used in notifications that carry earlier values"
+key   value          float   -  "numeric value (v) of an Integer, Float or Time resource; a Time is seconds since 1970-01-01 UTC"
+key   boolean_value  int     -  "boolean value (bv) of a Boolean resource: 1 true, 0 false"
+key   objlnk_value   string  -  "object link value (ov) of an Objlnk resource, written object:instance such as 66:0"
+key   string_value   string  -  "string value (sv) of a String resource, or of an Opaque resource in base64"

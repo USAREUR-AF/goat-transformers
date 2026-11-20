@@ -1,0 +1,14 @@
+{
+  "name": "full-names-and-booleans-roundtrip",
+  "from": "lwm2m-json",
+  "to": "lwm2m-json",
+  "input": "{\"e\":[{\"n\":\"/3303/0/5700\",\"v\":21.5},{\"n\":\"/3303/0/5701\",\"sv\":\"Cel\"},{\"n\":\"/3311/0/5850\",\"bv\":true},{\"n\":\"/3311/1/5850\",\"bv\":false}]}",
+  "expect": "{\"e\":[{\"n\":\"/3303/0/5700\",\"v\":21.5},{\"n\":\"/3303/0/5701\",\"sv\":\"Cel\"},{\"n\":\"/3311/0/5850\",\"bv\":true},{\"n\":\"/3311/1/5850\",\"bv\":false}]}",
+  "model": {
+    "lwm2m.entries[0].lwm2m.name": "/3303/0/5700",
+    "lwm2m.entries[2].lwm2m.boolean_value": "1",
+    "lwm2m.entries[3].lwm2m.boolean_value": "0"
+  },
+  "source": "derived by tools/gen/lwm2m-tcx-vectors.py from the members the pack maps and spec/engine-spec.md; no engine run",
+  "reference": "OMA LwM2M 1.0.2 technical specification, section 6.4.4 JSON; resource IDs from the OMA LwM2M registry; no base name, so each name is the full path: a Temperature (3303) value and its unit, and the on/off state of two Light Control (3311) instances; a boolean is held as 1 or 0"
+}

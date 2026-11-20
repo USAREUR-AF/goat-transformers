@@ -99,6 +99,7 @@
     {"name": "Sparkplug B", "domain": "iot", "exact": ["sparkplug-b"]},
     {"name": "EVerest charging stack", "domain": "iot", "prefixes": ["everest-"]},
     {"name": "SunSpec Modbus", "domain": "iot", "prefixes": ["sunspec-"], "members": {"pattern": "^sunspec-([0-9]+)$", "label": "{n} information models", "list": false}},
+    {"name": "OMA LwM2M", "domain": "iot", "exact": ["lwm2m-json"], "detail": "LwM2M 1.0 JSON content format"},
 
     {"name": "OpenTelemetry OTLP", "domain": "networks", "prefixes": ["otlp-"]},
     {"name": "gNMI", "domain": "networks", "prefixes": ["gnmi-"]},
@@ -122,6 +123,7 @@
     {"name": "Geobuf", "domain": "maps", "exact": ["geobuf"]},
     {"name": "GPX", "domain": "maps", "exact": ["gpx"]},
     {"name": "NGA Maritime Safety Information", "domain": "sea", "prefixes": ["nga-msi-"]},
+    {"name": "Garmin TCX", "domain": "maps", "exact": ["tcx"], "detail": "Training Center Database v2: activities, laps, trackpoints"},
     {"name": "KML", "domain": "maps", "exact": ["kml"]},
     {"name": "Mapbox Vector Tile", "domain": "maps", "exact": ["mvt"]},
     {"name": "Overture Maps", "domain": "maps", "prefixes": ["overture-"]},

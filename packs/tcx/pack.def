@@ -1,0 +1,45 @@
+# Garmin Training Center Database (TCX v2): the activities of a document, each with its laps,
+# tracks and trackpoints. Public; licensed LicenseRef-unstated (the schema states no licence).
+# Written by hand from the XML schema. The document's default namespace is the root's xmlns
+# attribute, as in the kml pack; no prefix is needed. pack.md states what is mapped and why
+# no trackpoint is bound to lat, lon or time_ms.
+format  tcx
+version 0.1.0
+distribution public
+source  "Garmin Training Center Database XML schema v2, https://www8.garmin.com/xmlschemas/TrainingCenterDatabasev2.xsd (sha256 ec392e16a33756df03d3e16fc12fd39f55601ec9e4e22cebb83243a8deb5a0dd, read 2026-11-20); the schema states no licence"
+uses    tcx
+wire    xml
+root    TrainingCenterDatabase
+when    @xmlns  http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2
+
+kind    database
+group  tcx.activities  Activities/Activity
+  field  tcx.activity_sport  @Sport     string
+  field  tcx.activity_id     Id/#text   string
+  group  tcx.laps  Lap
+    field  tcx.lap_start_time          @StartTime                     string
+    field  tcx.lap_total_time_seconds  TotalTimeSeconds/#text         float
+    field  tcx.lap_distance_meters     DistanceMeters/#text           float
+    field  tcx.lap_maximum_speed       MaximumSpeed/#text             float
+    field  tcx.lap_calories            Calories/#text                 int
+    field  tcx.lap_average_heart_rate  AverageHeartRateBpm/Value/#text  int
+    field  tcx.lap_maximum_heart_rate  MaximumHeartRateBpm/Value/#text  int
+    field  tcx.lap_intensity           Intensity/#text                string
+    field  tcx.lap_cadence             Cadence/#text                  int
+    field  tcx.lap_trigger_method      TriggerMethod/#text            string
+    group  tcx.tracks  Track
+      group  tcx.trackpoints  Trackpoint
+        field  tcx.point_time          Time/#text                       string
+        field  tcx.point_latitude      Position/LatitudeDegrees/#text   float
+        field  tcx.point_longitude     Position/LongitudeDegrees/#text  float
+        field  tcx.point_altitude      AltitudeMeters/#text             float
+        field  tcx.point_distance      DistanceMeters/#text             float
+        field  tcx.point_heart_rate    HeartRateBpm/Value/#text         int
+        field  tcx.point_cadence       Cadence/#text                    int
+        field  tcx.point_sensor_state  SensorState/#text                string
+      end
+    end
+    field  tcx.lap_notes  Notes/#text  string
+  end
+  field  tcx.activity_notes  Notes/#text  string
+end

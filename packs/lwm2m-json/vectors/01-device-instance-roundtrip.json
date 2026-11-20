@@ -1,0 +1,17 @@
+{
+  "name": "device-instance-roundtrip",
+  "from": "lwm2m-json",
+  "to": "lwm2m-json",
+  "input": "{\"bn\":\"/3/0/\",\"e\":[{\"n\":\"0\",\"sv\":\"Example Systems\"},{\"n\":\"1\",\"sv\":\"EX-200\"},{\"n\":\"2\",\"sv\":\"SN-000417\"},{\"n\":\"3\",\"sv\":\"2.4.1\"},{\"n\":\"6/0\",\"v\":1},{\"n\":\"7/0\",\"v\":3700},{\"n\":\"9\",\"v\":87},{\"n\":\"11/0\",\"v\":0},{\"n\":\"13\",\"v\":1763640000},{\"n\":\"14\",\"sv\":\"+01:00\"},{\"n\":\"16\",\"sv\":\"U\"},{\"n\":\"17\",\"sv\":\"tracker\"}]}",
+  "expect": "{\"bn\":\"/3/0/\",\"e\":[{\"n\":\"0\",\"sv\":\"Example Systems\"},{\"n\":\"1\",\"sv\":\"EX-200\"},{\"n\":\"2\",\"sv\":\"SN-000417\"},{\"n\":\"3\",\"sv\":\"2.4.1\"},{\"n\":\"6/0\",\"v\":1},{\"n\":\"7/0\",\"v\":3700},{\"n\":\"9\",\"v\":87},{\"n\":\"11/0\",\"v\":0},{\"n\":\"13\",\"v\":1763640000},{\"n\":\"14\",\"sv\":\"+01:00\"},{\"n\":\"16\",\"sv\":\"U\"},{\"n\":\"17\",\"sv\":\"tracker\"}]}",
+  "model": {
+    "lwm2m.base_name": "/3/0/",
+    "lwm2m.entries.#": "12",
+    "lwm2m.entries[0].lwm2m.string_value": "Example Systems",
+    "lwm2m.entries[6].lwm2m.name": "9",
+    "lwm2m.entries[6].lwm2m.value": "87",
+    "lwm2m.entries[8].lwm2m.value": "1763640000"
+  },
+  "source": "derived by tools/gen/lwm2m-tcx-vectors.py from the members the pack maps and spec/engine-spec.md; no engine run",
+  "reference": "OMA LwM2M 1.0.2 technical specification, section 6.4.4 JSON; resource IDs from the OMA LwM2M registry; instance 0 of the Device object (3): manufacturer, model, serial, firmware, power source, voltage, battery level, error code, current time, UTC offset, binding, device type"
+}

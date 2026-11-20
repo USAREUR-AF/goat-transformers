@@ -1,0 +1,17 @@
+{
+  "name": "two-activities-roundtrip",
+  "from": "tcx",
+  "to": "tcx",
+  "input": "<TrainingCenterDatabase xmlns=\"http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2\"><Activities><Activity Sport=\"Biking\"><Id>2026-11-16T16:00:00Z</Id><Lap StartTime=\"2026-11-16T16:00:00Z\"><TotalTimeSeconds>600.5</TotalTimeSeconds><DistanceMeters>4200.25</DistanceMeters><Calories>95</Calories><Intensity>Active</Intensity><TriggerMethod>Distance</TriggerMethod><Track><Trackpoint><Time>2026-11-16T16:00:00Z</Time><Position><LatitudeDegrees>51.5007</LatitudeDegrees><LongitudeDegrees>-0.1246</LongitudeDegrees></Position></Trackpoint></Track><Track><Trackpoint><Time>2026-11-16T16:05:00Z</Time><Position><LatitudeDegrees>51.5101</LatitudeDegrees><LongitudeDegrees>-0.1342</LongitudeDegrees></Position></Trackpoint></Track></Lap><Lap StartTime=\"2026-11-16T16:10:00.5Z\"><TotalTimeSeconds>300.25</TotalTimeSeconds><DistanceMeters>1800.5</DistanceMeters><Calories>40</Calories><Intensity>Resting</Intensity><TriggerMethod>Manual</TriggerMethod></Lap></Activity><Activity Sport=\"Other\"><Id>2026-11-16T18:00:00Z</Id><Lap StartTime=\"2026-11-16T18:00:00Z\"><TotalTimeSeconds>60.5</TotalTimeSeconds><DistanceMeters>0.25</DistanceMeters><Calories>2</Calories><Intensity>Resting</Intensity><TriggerMethod>Time</TriggerMethod></Lap></Activity></Activities></TrainingCenterDatabase>",
+  "expect": "<TrainingCenterDatabase xmlns=\"http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2\"><Activities><Activity Sport=\"Biking\"><Id>2026-11-16T16:00:00Z</Id><Lap StartTime=\"2026-11-16T16:00:00Z\"><TotalTimeSeconds>600.5</TotalTimeSeconds><DistanceMeters>4200.25</DistanceMeters><Calories>95</Calories><Intensity>Active</Intensity><TriggerMethod>Distance</TriggerMethod><Track><Trackpoint><Time>2026-11-16T16:00:00Z</Time><Position><LatitudeDegrees>51.5007</LatitudeDegrees><LongitudeDegrees>-0.1246</LongitudeDegrees></Position></Trackpoint></Track><Track><Trackpoint><Time>2026-11-16T16:05:00Z</Time><Position><LatitudeDegrees>51.5101</LatitudeDegrees><LongitudeDegrees>-0.1342</LongitudeDegrees></Position></Trackpoint></Track></Lap><Lap StartTime=\"2026-11-16T16:10:00.5Z\"><TotalTimeSeconds>300.25</TotalTimeSeconds><DistanceMeters>1800.5</DistanceMeters><Calories>40</Calories><Intensity>Resting</Intensity><TriggerMethod>Manual</TriggerMethod></Lap></Activity><Activity Sport=\"Other\"><Id>2026-11-16T18:00:00Z</Id><Lap StartTime=\"2026-11-16T18:00:00Z\"><TotalTimeSeconds>60.5</TotalTimeSeconds><DistanceMeters>0.25</DistanceMeters><Calories>2</Calories><Intensity>Resting</Intensity><TriggerMethod>Time</TriggerMethod></Lap></Activity></Activities></TrainingCenterDatabase>",
+  "model": {
+    "@kind": "database",
+    "tcx.activities.#": "2",
+    "tcx.activities[0].tcx.laps.#": "2",
+    "tcx.activities[0].tcx.laps[0].tcx.tracks.#": "2",
+    "tcx.activities[0].tcx.laps[1].tcx.lap_start_time": "2026-11-16T16:10:00.5Z",
+    "tcx.activities[1].tcx.activity_sport": "Other"
+  },
+  "source": "derived by tools/gen/lwm2m-tcx-vectors.py from the members the pack maps and spec/engine-spec.md; no engine run",
+  "reference": "Garmin Training Center Database XML schema v2 (TrainingCenterDatabasev2.xsd); a ride whose first lap has two tracks and whose second lap has none, then a second activity; date-times are kept as text, fractions of a second included"
+}
