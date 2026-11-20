@@ -1,0 +1,11 @@
+{
+  "name": "gen-geojson-to-osi-host-vehicle-data",
+  "from": "geojson",
+  "to": "osi-host-vehicle-data",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[30.5,32.25]},\"properties\":{}}",
+  "expect": "42141a12090000000000803e40110000000000204040",
+  "model": {
+    "lat": "32.25",
+    "lon": "30.5"
+  }
+}

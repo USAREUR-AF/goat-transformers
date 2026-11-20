@@ -22,6 +22,7 @@
 
     {"name": "CAN DBC (opendbc)", "domain": "land", "prefixes": ["dbc-"]},
     {"name": "Baidu Apollo", "domain": "land", "prefixes": ["apollo-"]},
+    {"name": "ASAM OSI (Open Simulation Interface)", "domain": "land", "prefixes": ["osi-"]},
     {"name": "Autoware (ROS 2)", "domain": "land", "prefixes": ["ros2-autoware-"]},
     {"name": "Tier IV (ROS 2)", "domain": "land", "prefixes": ["ros2-tier4-"]},
     {"name": "Eclipse KUKSA.val", "domain": "land", "prefixes": ["kuksa-"]},

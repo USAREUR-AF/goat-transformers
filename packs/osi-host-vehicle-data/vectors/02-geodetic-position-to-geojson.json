@@ -1,0 +1,7 @@
+{
+  "name": "02-geodetic-position-to-geojson",
+  "from": "osi-host-vehicle-data",
+  "to": "geojson",
+  "input": "421d1a1b0900000000002027401100000000001848401900000000003a80404a06080310081800520c0880e2cfaa061080cab5ee01",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[11.5625,48.1875]},\"properties\":{}}"
+}

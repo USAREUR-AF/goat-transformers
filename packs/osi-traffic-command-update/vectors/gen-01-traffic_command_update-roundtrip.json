@@ -1,0 +1,21 @@
+{
+  "name": "gen-traffic_command_update-roundtrip",
+  "from": "osi-traffic-command-update",
+  "to": "osi-traffic-command-update",
+  "input": "0a08086410890118ae01120608d30110f8011a03089d0222170a0308c20212106661696c7572655f726561736f6e2d3722170a03088c0312106661696c7572655f726561736f6e2d39",
+  "expect": "0a08086410890118ae01120608d30110f8011a03089d0222170a0308c20212106661696c7572655f726561736f6e2d3722170a03088c0312106661696c7572655f726561736f6e2d39",
+  "model": {
+    "@kind": "traffic_command_update",
+    "ositrafficcommandupdate.version_version_major": "100",
+    "ositrafficcommandupdate.version_version_minor": "137",
+    "ositrafficcommandupdate.version_version_patch": "174",
+    "ositrafficcommandupdate.timestamp_seconds": "211",
+    "ositrafficcommandupdate.timestamp_nanos": "248",
+    "ositrafficcommandupdate.traffic_participant_id_value": "285",
+    "ositrafficcommandupdate.traffic_command_update_dismissed_action.#": "2",
+    "ositrafficcommandupdate.traffic_command_update_dismissed_action[0].ositrafficcommandupdate.dismissed_action_dismissed_action_id_value": "322",
+    "ositrafficcommandupdate.traffic_command_update_dismissed_action[0].ositrafficcommandupdate.dismissed_action_failure_reason": "failure_reason-7",
+    "ositrafficcommandupdate.traffic_command_update_dismissed_action[1].ositrafficcommandupdate.dismissed_action_dismissed_action_id_value": "396",
+    "ositrafficcommandupdate.traffic_command_update_dismissed_action[1].ositrafficcommandupdate.dismissed_action_failure_reason": "failure_reason-9"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "131-to-osi-host-vehicle-data-latitude-longitude",
+  "from": "geojson",
+  "to": "osi-host-vehicle-data",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[11.5625,48.1875,520.5]},\"properties\":{}}",
+  "expect": "42141a12090000000000202740110000000000184840",
+  "model": {
+    "lat": "48.1875",
+    "lon": "11.5625",
+    "hae": "520.5"
+  }
+}
