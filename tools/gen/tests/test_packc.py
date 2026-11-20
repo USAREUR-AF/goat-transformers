@@ -5,7 +5,8 @@ and the `present` derive function (engine-spec 0.12) is compiled as function 13;
 and `armor sixbit` and the `sixbit` transform (engine-spec 0.14) are compiled
 as format flag 4 and transform 8; the value transforms of engine-spec 0.15
 as transforms 9 to 18; and the derive functions of engine-spec 0.16 as
-functions 14 to 28, the four that need a power or a cube root refused.
+functions 14 to 28, the four that need a power or a cube root refused; and the
+gate blocks of engine-spec 0.17 as GATE operations.
 
 A model module may state both directions between `uid` and a numeric
 identifier (`derive uid text_of x.id`, `derive x.id parse_int uid`). A derive
@@ -213,7 +214,7 @@ class AbsentSentinelTest(unittest.TestCase):
     def test_the_plan_format_version(self):
         version, _, _ = self.compile("fx", "fx")
         self.assertEqual(version, packc.VERSION)
-        self.assertEqual(packc.VERSION, 3)
+        self.assertEqual(packc.VERSION, 4)
 
     def test_fixed_sentinels_follow_the_scale_in_the_pool(self):
         _, secs, report = self.compile("fx", "fx")
@@ -437,7 +438,8 @@ class SixbitArmorTest(unittest.TestCase):
     def compile(self, name):
         blob, report = packc.compile_plan(self.model_dir, self.packs_dir, name, name, {}, False)[:2]
         version, secs = sections(blob)
-        self.assertEqual(version, 3)
+        # version 3 added armor; version 4 (spec 0.17) keeps it
+        self.assertGreaterEqual(version, 3)
         entry, data = secs[packc.S_FORMATS]
         flags = [data[i] for i in range(0, len(data), entry)]
         ids = {v: k for k, v in report["key_ids"].items()}
@@ -722,6 +724,148 @@ class Derive016Test(unittest.TestCase):
 
     def test_only_four_functions_of_016_stay_refused(self):
         self.assertEqual(sorted(packc.V016_DERIVES), ["deg_lat_of", "hae_of_ecef", "lat_of_ecef", "m_lat_of"])
+
+
+GATE_MODEL = """module        probe
+version       0.1.0
+distribution  public
+source        "test"
+key  a  int  -
+key  b  int  -
+key  c  int  -
+key  d  int  -
+key  e  int  -
+list items
+"""
+
+GATE_PACK = """format        gt
+version       0.1.0
+distribution  public
+source        "test"
+uses          probe
+wire          bits
+word_bytes    1
+field  probe.a  0:0:4   uint
+if     0:4:2  2,1
+  default probe.b  7
+  const  0:40:8  170
+  field  probe.b  0:8:8   uint
+  if     !0:6:1 0
+    field probe.c  0:16:8  uint  optional
+  end
+end
+field  probe.d  0:24:8  uint
+if     !0:7:1 0,1
+  field probe.e  0:32:8  uint
+end
+group  probe.items  0:64  item 16  count 0:56:8
+  field probe.a  0:0:4  uint
+  if    0:4:1  1
+    field probe.b  0:8:8  uint
+  end
+end
+kind   k1
+when   0:48:4  1
+if     0:52:2  0,2,3
+  field probe.c  0:48:8  uint
+end
+kind   k2
+when   0:48:4  2
+"""
+
+
+class GateBlockTest(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        root = self.tmp.name
+        os.makedirs(os.path.join(root, "model"))
+        for name, text in (("core.def", CORE), ("probe.def", GATE_MODEL)):
+            with open(os.path.join(root, "model", name), "w", encoding="utf-8") as fh:
+                fh.write(text)
+        self.model_dir = os.path.join(root, "model")
+        self.packs_dir = os.path.join(root, "packs")
+        self.write_pack("gt", GATE_PACK)
+
+    def tearDown(self):
+        packc._INDEX.clear()
+        packc._MODELS.clear()
+        self.tmp.cleanup()
+
+    def write_pack(self, name, text):
+        d = os.path.join(self.packs_dir, name)
+        os.makedirs(d, exist_ok=True)
+        with open(os.path.join(d, "pack.def"), "w", encoding="utf-8") as fh:
+            fh.write(text)
+        packc._INDEX.clear()
+        packc._MODELS.clear()
+
+    def compile(self, src, dst):
+        blob, report = packc.compile_plan(self.model_dir, self.packs_dir, src, dst, {}, False)[:2]
+        return sections(blob)[1], report
+
+    def test_gate_operations(self):
+        secs, report = self.compile("gt", "gt")
+        o, words = ops(secs), pool(secs)
+        ids = {v: k for k, v in report["key_ids"].items()}
+        gates = [(i, g) for i, g in enumerate(o) if g["op"] == packc.OP_GATE]
+        self.assertEqual(packc.OP_GATE, 20)
+        # numbered per scope in line order, depth first: common 0 to 2, the kind
+        # after them, an item's from 0
+        self.assertEqual([g["key"] for _, g in gates], [0, 1, 2, 0, 3])
+        # the pool run: offset, the extent of the block's own lines, the gate value
+        # of step 3, then the values
+        def run(g):
+            return words[g["b"]:g["b"] + 5 + g["c"]]
+        i0, g0 = gates[0]
+        self.assertEqual((g0["len"], g0["flags"], g0["c"]), (2, packc.G_HAS_VALUE, 2))
+        # reach 16 (probe.b), decode need 48 (the const), encode need 48; step 3 takes the first value listed
+        self.assertEqual(run(g0), [4, 16, 48, 48, 2, 2, 1])
+        # `!` with 0 listed: the smallest value not listed is 1; an optional field
+        # counts toward the encode need only
+        g1 = gates[1][1]
+        self.assertEqual(g1["flags"], packc.G_NEG | packc.G_HAS_VALUE)
+        self.assertEqual(run(g1), [6, 0, 0, 24, 1, 0])
+        # `!` listing every value: no gate value
+        g2 = gates[2][1]
+        self.assertEqual(g2["flags"], packc.G_NEG)
+        self.assertEqual(run(g2), [7, 40, 40, 40, 0, 0, 1])
+        # inside the block: its defaults, then fields and blocks in line order, then `const`
+        kids = [o[i] for i in range(i0 + 1, i0 + 1 + g0["a"])]
+        self.assertEqual([k["op"] for k in kids], [packc.OP_DEFAULT, packc.OP_FIELD, packc.OP_GATE, packc.OP_FIELD,
+                                                   packc.OP_CONST])
+        self.assertEqual(ids[kids[1]["key"]], "probe.b")
+        # the body's extent leaves the blocks out: probe.a, probe.d and the group count
+        body = o[0]
+        self.assertEqual(words[body["b"]:body["b"] + 3], [32, 32, 32])
+
+    def test_blocks_stay_when_their_lines_are_not_carried(self):
+        self.write_pack("only", GATE_PACK.replace("format        gt", "format        only").split("\nif")[0]
+                        .replace("field  probe.a  0:0:4   uint", "field  probe.d  0:0:8  uint") + "\n")
+        secs, _ = self.compile("gt", "only")
+        # probe.b, probe.c and probe.e are not carried; the gates still decide the length
+        self.assertEqual(sum(1 for g in ops(secs) if g["op"] == packc.OP_GATE), 5)
+
+    def refused(self, text):
+        self.write_pack("bad", text.replace("format        gt", "format        bad"))
+        with self.assertRaises(packc.Refused) as cm:
+            packc.compile_plan(self.model_dir, self.packs_dir, "bad", "bad", {}, False)
+        return cm.exception.reason
+
+    def test_refusals(self):
+        self.assertEqual(self.refused(GATE_PACK.replace("if     0:4:2  2,1", "if     0:4:2  4")), "bad-pack")
+        self.assertEqual(self.refused(GATE_PACK.replace("if     0:4:2  2,1", "if     0:4:2  1,1")), "bad-pack")
+        self.assertEqual(self.refused(GATE_PACK.replace("if     0:4:2  2,1", "if     0:4:0  0")), "bad-pack")
+        many = "".join("if  0:%d:1  1\nend\n" % (i % 64) for i in range(packc.MAX_GATES + 1))
+        self.assertEqual(self.refused(GATE_PACK + many), "too-many-gates")
+        # one fewer loads
+        self.write_pack("fits", GATE_PACK.replace("format        gt", "format        fits") + "".join(
+            "if  0:%d:1  1\nend\n" % (i % 64) for i in range(packc.MAX_GATES - 4)))
+        self.compile("fits", "fits")
+
+    def test_gates_are_no_longer_unsupported(self):
+        self.compile("gt", "gt")
+        self.compile("gt", None)
+        self.compile(None, "gt")
 
 
 if __name__ == "__main__":

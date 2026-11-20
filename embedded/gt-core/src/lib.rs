@@ -29,7 +29,8 @@ pub mod num;
 mod plan;
 
 pub use engine::{
-    Got, Scope, Scratch, Session, TextRef, DEFAULT_MAX_ITEMS, MAX_ARGS, MAX_DEPTH, MAX_PRESENCE, MAX_WHOLES, ROOT,
+    Got, Scope, Scratch, Session, TextRef, DEFAULT_MAX_ITEMS, MAX_ARGS, MAX_DEPTH, MAX_GATES, MAX_PRESENCE, MAX_WHOLES,
+    ROOT,
 };
 pub use plan::{Carry, Plan, FORMAT_VERSION};
 
