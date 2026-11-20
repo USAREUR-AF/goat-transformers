@@ -22,7 +22,8 @@ Writes, under --out:
 Category 062 is written as the pack `asterix-cat062-full` with the module `cat062full`, because
 the library holds a hand-written pack `asterix-cat062` and module `cat062`.
 
-One record per data block; the first UAP of a category that has several. Besides the newest
+One record per data block; the first UAP of a category that has several, except the categories
+of SWITCHED_UAPS, which hold every UAP behind a `switch` on the selecting item (engine-spec 0.20). Besides the newest
 edition of each category, the editions in OTHER_EDITIONS are written as packs
 asterix-cat<NNN>-ed<major><minor> with modules cat<NNN>ed<major><minor> (CAT021 0.23 and 0.26).
 
@@ -31,7 +32,7 @@ Guarantees:
     the name the names file pins; a vectors directory holds only the vectors of this run.
   - Every module and pack is loaded back through gtcheck (the load rules of spec/engine-spec.md)
     and checked to have the shape this generator writes. Every vector is replayed through a
-    sequential codec written from spec/engine-spec.md (Version 0.8) that reads the loaded pack.
+    sequential codec written from spec/engine-spec.md (Versions 0.8 and 0.20) that reads the loaded pack.
   - A category that fails a check is reported with its definition file and the reason, and
     leaves no files; the other categories are still written.
   - The network is reached only with --fetch.
@@ -84,6 +85,13 @@ RENAME = {62: ("asterix-cat062-full", "cat062full")}
 # and I021/130 of 24-bit angles in 0.23 against 32-bit in 0.26. A data block does not state
 # its edition, so a reader chooses the pack by configuration.
 OTHER_EDITIONS = {21: ["0.23", "0.26"]}
+# Categories whose definition holds several UAPs, one chosen by the value of an item, that are
+# written with all their UAPs: the items up to the selecting item as common lines, then a
+# `switch` on the selecting key (engine-spec 0.20) with one `case` per further UAP and the first
+# UAP under `else`, so a record without the selecting item reads the first UAP. Any other such
+# category keeps its first UAP only (CAT007 qualifies; it is not switched yet, so that its pack
+# stays as reviewed).
+SWITCHED_UAPS = (1,)
 
 
 def edition_tag(ed):
@@ -507,6 +515,7 @@ class Cat:
             self.title = fold(c["title"])
             self.catalogue = OrderedDict((it["name"], it) for it in c["catalogue"])
             self.uap, self.uap_note = self._first_uap(c["uap"])
+            self.uaps, self.selector = self._all_uaps(c["uap"])
         except (KeyError, TypeError, IndexError) as x:
             raise GenError("the definition lacks a member the generator reads (%s: %s)" % (type(x).__name__, x),
                            file=self.label)
@@ -529,6 +538,18 @@ class Cat:
                    ", selected by the value of item %s" % "/".join(sel["item"]) if sel else "",
                    cases[0][0]))
         return cases[0][1], note
+
+    def _all_uaps(self, u):
+        """([(UAP name, UAP items)], selector) of a category in SWITCHED_UAPS that has several UAPs
+        chosen by an item; ([], None) for any other. The selector is dict(item=[path], cases=[(value,
+        UAP name)])."""
+        if self.num not in SWITCHED_UAPS or self.other or u["tag"] != "Uaps":
+            return [], None
+        sel = u["contents"]["selector"]
+        if not sel:
+            raise GenError("the category has several UAPs and no selecting item", file=self.label)
+        cases = [(name, items) for name, items in u["contents"]["cases"]]
+        return cases, dict(item=list(sel["item"]), cases=[(int(v), name) for v, name in sel["cases"]])
 
 
 def load_category(root, src_name, rel, other=False):
@@ -568,6 +589,44 @@ class Plan:
         self.bindings = []                  # dict(key, ident, how, evidence, ...): pack.md rows
         self.names = {}                     # item path -> key name, of this run
         self.uses = []                      # modules the pack uses beside `core` and its own
+        # A category of SWITCHED_UAPS: `entries` are those of the first UAP (the `else` arm);
+        # `arms` holds every UAP in the order of the definition as dict(name, values, default,
+        # entries), and `sel` the selecting field as dict(frn, ident, key). Otherwise [] and None.
+        self.arms = []
+        self.sel = None
+
+    def unique_entries(self):
+        """Every entry once: those of `entries`, then the items only another UAP names."""
+        out = list(self.entries)
+        seen = {e["name"] for e in out if e["name"]}
+        for arm in self.arms:
+            for e in arm["entries"]:
+                if e["name"] and e["name"] not in seen:
+                    seen.add(e["name"])
+                    out.append(e)
+        return out
+
+    def pack_entries(self):
+        """The entries in the order the pack writes their lines: the common ones, then those of
+        each arm after the selecting item."""
+        if not self.sel:
+            return list(self.entries)
+        out = [e for e in self.entries if e["frn"] <= self.sel["frn"]]
+        for arm in self.arms:
+            out += [e for e in arm["entries"] if e["frn"] > self.sel["frn"]]
+        return out
+
+    def uap_of(self, rec):
+        """The arm a raw record is written with: the one whose values hold the selecting field's
+        value; the default arm when no arm lists it or the selecting item is absent."""
+        if not self.sel:
+            return None
+        sel_entry = next(e for e in self.entries if e["frn"] == self.sel["frn"])
+        default = next(a for a in self.arms if a["default"])
+        if not raw_has(sel_entry["nodes"], rec):
+            return default
+        v = rec.get(self.sel["key"], 0)
+        return next((a for a in self.arms if not a["default"] and v in a["values"]), default)
 
     def mapped(self):
         """The entries the pack has an `if` block for."""
@@ -579,7 +638,7 @@ class Plan:
 
     def field_count(self):
         """The number of `field` lines of the pack."""
-        return sum(1 for e in self.mapped() for _ in walk_fields(e["nodes"]))
+        return sum(1 for e in self.pack_entries() if e["nodes"] for _ in walk_fields(e["nodes"]))
 
     def names_file(self):
         """The names to pin: those of earlier runs, overwritten by those of this run."""
@@ -874,15 +933,58 @@ def plan_entry(builder, frn, u):
     return e
 
 
+def plan_arms(plan, builder):
+    """The entries of every UAP of a category of SWITCHED_UAPS. An item two UAPs name is planned
+    once and its nodes shared, so it has one set of keys. Every UAP names the same items up to
+    and including the selecting item, at the same FRNs; those are the common lines."""
+    cat = plan.cat
+    cache = {}
+    for name, items in cat.uaps:
+        entries = []
+        for i, u in enumerate(items):
+            key = u["contents"] if u["tag"] == "UapItem" else None
+            if key in cache:
+                e = dict(cache[key])
+                e["frn"] = i + 1
+            else:
+                e = plan_entry(builder, i + 1, u)
+                if key:
+                    cache[key] = e
+            entries.append(e)
+        values = [v for v, n in cat.selector["cases"] if n == name]
+        plan.arms.append(dict(name=name, values=values, default=not plan.arms, entries=entries))
+    plan.entries = plan.arms[0]["entries"]
+    item = cat.selector["item"]
+    frns = {next((e["frn"] for e in a["entries"] if e["name"] == item[0]), None) for a in plan.arms}
+    if len(frns) != 1 or None in frns:
+        raise GenError("the selecting item %s does not stand at one FRN in every UAP" % item[0], file=cat.label)
+    frn = frns.pop()
+    if len({tuple(e["name"] for e in a["entries"][:frn]) for a in plan.arms}) != 1:
+        raise GenError("the UAPs differ before the selecting item %s" % item[0], file=cat.label)
+    entry = plan.entries[frn - 1]
+    ident = "/".join(item)
+    node = next((n for n, lst in walk_fields(entry["nodes"] or []) if n["ident"] == ident and lst is None), None)
+    if node is None or node["kind"] != "uint":
+        raise GenError("the selecting item %s is not a field of its own" % ident, file=cat.label)
+    if any(not a["values"] for a in plan.arms[1:]):
+        raise GenError("a UAP that no value of %s selects" % ident, file=cat.label)
+    plan.sel = dict(frn=frn, ident=ident, key=node["key"])
+
+
 def plan_category(cat, pinned=None):
     """Cat -> Plan: every decision the emit functions need. `pinned` is the names file of an
     earlier run (item path -> key name)."""
     plan = Plan(cat, pinned)
     builder = Builder(plan)
-    for i, u in enumerate(cat.uap):
-        plan.entries.append(plan_entry(builder, i + 1, u))
+    if cat.selector:
+        plan_arms(plan, builder)
+    else:
+        for i, u in enumerate(cat.uap):
+            plan.entries.append(plan_entry(builder, i + 1, u))
     bind(plan)
-    for e in plan.mapped():
+    for e in plan.unique_entries():
+        if not e["nodes"]:
+            continue
         for n, _ in walk_fields(e["nodes"]):
             if n["declare"]:
                 plan.keys[n["raw"].split(".", 1)[1]] = (n["vt"], n["unit"], n["meaning"])
@@ -1021,7 +1123,7 @@ def bind(plan):
     that stand directly in the UAP and are fixed (an Element or a Group) are looked at. A time of
     day is bound, through `derive ... day_seconds time_ms`, only when the category has one."""
     pos, tod = [], []
-    for e in plan.entries:
+    for e in plan.unique_entries():
         if not e["nodes"] or e["kind"] != "fixed":
             continue
         c = Candidate(plan.cat, e)
@@ -1115,7 +1217,7 @@ def order_of_names(plan):
             elif t == "compound":
                 for _, _, _, sub in n["subs"]:
                     walk(sub)
-    for e in plan.entries:
+    for e in plan.unique_entries():
         if e["nodes"]:
             walk(e["nodes"])
     return out
@@ -1161,7 +1263,7 @@ def emit_pack(plan, sha):
     L = ["# ASTERIX Category %s, %s, edition %s: one data block holding one record." % (cat.nnn, cat.title, cat.edition),
          "# Public. Generated by tools/gen/asterix2pack.py from the category definition of",
          "# github.com/%s (BSD-3-Clause); do not edit by hand. I/O is hex text." % REPO,
-         "# Needs engine version 0.8 (`layout sequential`). See pack.md.",
+         "# Needs engine version %s. See pack.md." % ("0.20 (`switch`)" if plan.sel else "0.8 (`layout sequential`)"),
          "#",
          "#   octet 1       CAT = %d" % cat.num,
          "#   octets 2-3    LEN, the length of the data block in octets, CAT and LEN included",
@@ -1170,6 +1272,11 @@ def emit_pack(plan, sha):
          "#",
          "# An FRN with no `if` block is not mapped: a record with that FSPEC bit set fails",
          "# with `malformed-wire` (ruling 1 of engine-spec 0.8), and encode never sets the bit.",
+         ] + ([
+         "# The category has %d UAPs. The items up to I%s/%s are the same in each; after them" % (len(plan.arms), cat.nnn, plan.sel["ident"].split("/")[0]),
+         "# a `switch` on I%s/%s (engine-spec 0.20) reads the items of the UAP it selects, and" % (cat.nnn, plan.sel["ident"]),
+         "# only the `if` lines of that case name FSPEC bits.",
+         ] if plan.sel else []) + [
          "format     " + cat.format, "version    " + PACK_VERSION, "distribution public",
          "source  " + q(source_line(cat, sha))]
     for m in plan.uses:
@@ -1177,15 +1284,38 @@ def emit_pack(plan, sha):
     L += ["uses       " + cat.module, "wire       bits", "layout     sequential", "bit_order  msb",
           "kind    record", "when    8  %d%s# CAT" % (cat.num, " " * 30), "length  16 whole" + " " * 25 + "# LEN",
           "presence f fx"]
-    for e in plan.entries:
-        if e["nodes"] is None:
-            L.append("# FRN %d: %s" % (e["frn"], ("I%s/%s %s, not mapped: %s" % (cat.nnn, e["name"], e["title"], e["reason"]))
-                                       if e["name"] else e["reason"]))
-            continue
-        L.append("if f.%d%s# FRN %d, I%s/%s %s" % (e["frn"], " " * max(1, 36 - len(str(e["frn"]))), e["frn"], cat.nnn, e["name"], e["title"]))
-        emit_nodes(e["nodes"], 1, L)
-        L.append("end")
+    if not plan.sel:
+        emit_entries(cat, plan.entries, 0, L)
+        return "\n".join(L)
+    sel = plan.sel
+    emit_entries(cat, [e for e in plan.entries if e["frn"] <= sel["frn"]], 0, L)
+    def col(text):
+        return text + " " * max(1, 41 - len(text))
+    L.append(col("switch " + sel["key"]) + "# the UAP, chosen by I%s/%s (engine-spec 0.20)" % (cat.nnn, sel["ident"]))
+    for arm in plan.arms[1:] + plan.arms[:1]:
+        vals = ",".join(str(v) for v in arm["values"])
+        if arm["default"]:
+            L.append(col("  else") + "# UAP `%s`: I%s/%s = %s, or I%s/%s absent" % (
+                arm["name"], cat.nnn, sel["ident"], vals, cat.nnn, sel["ident"].split("/")[0]))
+        else:
+            L.append(col("  case " + vals) + "# UAP `%s`" % arm["name"])
+        emit_entries(cat, [e for e in arm["entries"] if e["frn"] > sel["frn"]], 2, L)
+    L.append("end")
     return "\n".join(L)
+
+
+def emit_entries(cat, entries, ind, L):
+    """Append one `if f.<frn>` block per mapped entry, and a comment per entry with none."""
+    pad = "  " * ind
+    for e in entries:
+        if e["nodes"] is None:
+            L.append("%s# FRN %d: %s" % (pad, e["frn"], ("I%s/%s %s, not mapped: %s" % (cat.nnn, e["name"], e["title"], e["reason"]))
+                                         if e["name"] else e["reason"]))
+            continue
+        L.append("%sif f.%d%s# FRN %d, I%s/%s %s" % (pad, e["frn"], " " * max(1, 36 - len(str(e["frn"])) - len(pad)), e["frn"], cat.nnn,
+                                                   e["name"], e["title"]))
+        emit_nodes(e["nodes"], ind + 1, L)
+        L.append(pad + "end")
 
 
 # ---------------------------------------------------------------- raw records (written from the definition)
@@ -1269,13 +1399,15 @@ def raw_block(plan, rec, extra=None):
     """Hex of the data block for a raw record. `extra` is FRN -> bits of an item written as is."""
     cat = plan.cat
     extra = extra or {}
-    setbits = {e["frn"] for e in plan.entries if e["nodes"] and raw_has(e["nodes"], rec)} | set(extra)
+    entries = plan.uap_of(rec)["entries"] if plan.sel else plan.entries
+    setbits = {e["frn"] for e in entries if e["nodes"] and raw_has(e["nodes"], rec)} | set(extra)
     body = fx_octets(setbits)
-    for e in plan.entries:
-        if e["frn"] in extra:
-            body += extra[e["frn"]]
-        elif e["frn"] in setbits:
-            body += raw_enc(e["nodes"], rec)
+    by_frn = {e["frn"]: e for e in entries}
+    for frn in sorted(setbits):
+        if frn in extra:
+            body += extra[frn]
+        else:
+            body += raw_enc(by_frn[frn]["nodes"], rec)
     if len(body) % 8:
         raise GenError("cat %s: a record of %d bits" % (cat.nnn, len(body)))
     total = 3 + len(body) // 8
@@ -1571,6 +1703,8 @@ class VectorSet:
     def roundtrips(self):
         """Every mapped item; one item; extended items cut after their first part."""
         plan, cat = self.plan, self.plan.cat
+        if plan.sel:
+            return self.uap_roundtrips()
         mapped = [e for e in plan.mapped() if e["kind"] != "explicit"]
         rec, model = filled(mapped)
         hx = raw_block(plan, rec)
@@ -1594,6 +1728,78 @@ class VectorSet:
                          input=hx, expect=hx, model=model_strings(model))
         return first
 
+    def uap_roundtrips(self):
+        """A category of SWITCHED_UAPS: every mapped item of each UAP with the selecting field set to
+        the UAP's value; the first UAP's items without the selecting item; one item; extended
+        items cut after their first part, for each UAP."""
+        plan, cat = self.plan, self.plan.cat
+        sel, key = plan.sel, plan.sel["key"]
+        item = sel["ident"].split("/")[0]
+
+        def put_uap(name, what, rec, model, arm):
+            rec[key] = arm["values"][0]
+            if key in model:
+                model[key] = arm["values"][0]
+            if plan.uap_of(rec) is not arm:
+                raise GenError("vector %s: the record does not select UAP %s" % (name, arm["name"]))
+            hx = raw_block(plan, rec)
+            self.put(name, "UAP `%s`, I%s/%s = %d: %s" % (arm["name"], cat.nnn, sel["ident"], arm["values"][0], what)
+                     + (" (%d octets)" % (len(hx) // 2) if "every" in name else ""),
+                     input=hx, expect=hx, model=model_strings(model))
+
+        for arm in plan.arms:
+            mapped = [e for e in arm["entries"] if e["nodes"] and e["kind"] != "explicit"]
+            rec, model = filled(mapped)
+            put_uap("%s-every-mapped-item-roundtrip" % arm["name"],
+                    "every mapped FRN of the UAP present, every field of it set, two repetitions in every repetitive "
+                    "item, every extent of every extended item", rec, model, arm)
+        default = plan.arms[0]
+        rest = [e for e in default["entries"] if e["nodes"] and e["kind"] != "explicit" and e["frn"] != sel["frn"]]
+        rec, model = filled(rest)
+        hx = raw_block(plan, rec)
+        if plan.uap_of(rec) is not default:
+            raise GenError("a record without I%s/%s does not read UAP %s" % (cat.nnn, item, default["name"]))
+        self.put("without-i%s-reads-uap-%s-roundtrip" % (item.lower(), default["name"]),
+                 "a record without I%s/%s, every other mapped FRN of UAP `%s` present: the `switch` finds "
+                 "`%s` absent and reads the `else` lines, the layout of UAP `%s` (%d octets)"
+                 % (cat.nnn, item, default["name"], key, default["name"], len(hx) // 2),
+                 input=hx, expect=hx, model=model_strings(model))
+        first = plan.entries[0]
+        rec, model = filled([first], items=1)
+        hx = raw_block(plan, rec)
+        self.put("one-item-roundtrip",
+                 "a record holding only FRN %d, I%s/%s (the definition does not mark items as mandatory)" % (first["frn"], cat.nnn, first["name"]),
+                 input=hx, expect=hx, model=model_strings(model))
+        for arm in plan.arms:
+            chains = [e for e in arm["entries"] if e["nodes"] and e["kind"] == "extended"]
+            rec, model = filled(chains, part=0)
+            put_uap("%s-extended-items-first-part-only-roundtrip" % arm["name"],
+                    "each extended item of the UAP with its first part and the extension bit 0; the keys of later "
+                    "parts are absent", rec, model, arm)
+        return first
+
+    def other_uap_bits(self):
+        """A category of SWITCHED_UAPS: a record of one UAP with an FSPEC bit set that only another
+        UAP maps is `malformed-wire`, because only the `if` lines of the case read count."""
+        plan, cat = self.plan, self.plan.cat
+        if not plan.sel:
+            return
+        for arm in plan.arms:
+            own = {e["frn"] for e in arm["entries"] if e["nodes"]}
+            other = sorted({e["frn"] for a in plan.arms if a is not arm for e in a["entries"] if e["nodes"]} - own)
+            if not other:
+                continue
+            frn = other[0]
+            by = next(a for a in plan.arms if a is not arm and any(e["frn"] == frn and e["nodes"] for e in a["entries"]))
+            sel_entry = plan.entries[plan.sel["frn"] - 1]
+            rec, _ = filled([sel_entry], part=0) if sel_entry["kind"] == "extended" else filled([sel_entry], items=1)
+            rec[plan.sel["key"]] = arm["values"][0]
+            self.put("uap-%s-record-with-an-frn-only-uap-%s-maps" % (arm["name"], by["name"]),
+                     "I%s/%s = %d (UAP `%s`) and FSPEC bit %d set, which only UAP `%s` maps: only the `if` lines of "
+                     "the case read name FSPEC bits (engine-spec 0.20), so the bit is `malformed-wire`"
+                     % (cat.nnn, plan.sel["ident"], arm["values"][0], arm["name"], frn, by["name"]),
+                     input=raw_block(plan, rec, {frn: to_bits(0, 8)}), expect_error="malformed-wire")
+
     def explicit_items(self, first):
         """Explicit items are read over on decode and not written on encode."""
         plan = self.plan
@@ -1610,7 +1816,8 @@ class VectorSet:
     def refusals(self, first):
         """An FRN with no `if` block, another category, and a block shorter than its LEN."""
         plan, cat = self.plan, self.plan.cat
-        unm = plan.unmapped()
+        unm = [e for e in plan.unmapped()           # with several UAPs, an FRN that none maps
+               if not any(x["frn"] == e["frn"] and x["nodes"] for a in plan.arms for x in a["entries"])]
         if unm:
             e = unm[0]
             self.put("frn-the-pack-does-not-map",
@@ -1713,6 +1920,7 @@ def make_vectors(plan, pack, model):
     first = vs.roundtrips()
     vs.explicit_items(first)
     vs.refusals(first)
+    vs.other_uap_bits()
     track_vec = None
     bound = [b["key"] for b in plan.bindings if b["how"] not in ("derive", "day_seconds")]
     if "lat" in bound and "lon" in bound:
@@ -1768,6 +1976,17 @@ ICAO6_SET = {ICAO6[c] for c in ICAO6_CODES}
 _SHAPE_SCALE = re.compile(r"\d+(/\d+)?\Z")
 
 
+def arm_paths(lines, path=()):
+    """id(node) -> the `case` and `else` nodes it stands in, outermost first, as ids."""
+    out = {}
+    for node in lines:
+        out[id(node)] = path
+        if node.body:
+            inner = path + (id(node),) if node.d in ("case", "else") else path
+            out.update(arm_paths(node.body, inner))
+    return out
+
+
 def check_shape(pack, module):
     """The invariants of this generator's output that are narrower than the specification.
 
@@ -1775,8 +1994,10 @@ def check_shape(pack, module):
     `layout sequential`, `bit_order msb`; one kind that holds every line and has no `requires`; no
     value table; `field` lines with no option, one of five transforms and a scale that is an
     integer or a fraction with no offset; `also` lines with no table; `presence` in the `fx` form
-    only; groups in the `count` and `fx` forms with no item kinds; each list mapped by one group;
-    no `const`, `default`, `align` or `opt` line. A generated module derives with `copy` and
+    only; groups in the `count` and `fx` forms with no item kinds; each list mapped by one group,
+    or by one group in each arm of a `switch` (ruling 10 of 0.20); a `switch` only among the
+    kind's own lines, with `case` values that are unsigned integers; no `const`, `default`,
+    `align` or `opt` line. A generated module derives with `copy` and
     `day_seconds` only. The sequential codec of this file relies on every one of these."""
 
     def bad(what, line=None):
@@ -1791,9 +2012,14 @@ def check_shape(pack, module):
         bad("the kind has a `requires` line", pack.kinds[0].line)
     if pack.tables or pack.typemap:
         bad("a `map` or `typemap` line")
-    lists = set()
+    lists = []                  # (list, the switch arms the group stands in)
+    arms = arm_paths(pack.kinds[0].lines)
     for node in gtcheck.walk(pack.kinds[0].lines):
         d = node.d
+        if d == "switch" and node not in pack.kinds[0].lines:
+            bad("a `switch` inside a block", node.line)
+        elif d == "case" and not all(re.fullmatch(r"\d+", v) for v in node.values):
+            bad("a `case` value that is not an unsigned integer", node.line)
         if d in ("const", "default", "align", "opt"):
             bad("a `%s` line" % d, node.line)
         elif d == "field":
@@ -1810,16 +2036,17 @@ def check_shape(pack, module):
         elif d == "group":
             if node.mode not in ("count", "fx") or node.kinds:
                 bad("a group that is not `count` or `fx`, or that has item kinds", node.line)
-            if node.key in lists:
+            path = arms[id(node)]
+            if any(k == node.key and (p[:len(path)] == path or path[:len(p)] == p) for k, p in lists):
                 bad("the list %s is mapped by two groups" % node.key, node.line)
-            lists.add(node.key)
+            lists.append((node.key, path))
     for derive in module.derives:
         if derive.function not in SHAPE_DERIVES:
             raise GenError("not a module this generator writes: the derive function `%s`" % derive.function,
                            file=module.label, line=derive.line)
 
 
-# ---------------------------------------------------------------- sequential codec (spec 0.8)
+# ---------------------------------------------------------------- sequential codec (spec 0.8 and 0.20)
 #
 # Decode and encode of a pack that passed `check_shape`, written from spec/engine-spec.md. It walks
 # the tree gtcheck returns. An entity is a dict of key -> value and a dict of list -> items, an
@@ -1831,6 +2058,7 @@ class Reader:
     def __init__(self, bits):
         self.bits, self.pos, self.end = bits, 0, len(bits)
         self.extents = []
+        self.chosen = set()         # ids of the `case` and `else` nodes read (spec 0.20)
 
     def take(self, n):
         """n bits as an int; None when the line starts at or after the end of a length extent."""
@@ -1852,28 +2080,51 @@ def pack_lines(pack):
     return pack.kinds[0].lines
 
 
-def named_bits(lines, name):
-    """Bit numbers of presence `name` that an `if` of these lines names without `!`, with the blocks."""
+def named_bits(lines, name, chosen=frozenset()):
+    """Bit numbers of presence `name` that an `if` of these lines names without `!`, with the blocks.
+    Of a `switch`, only the arms in `chosen` (ids) count (spec 0.20)."""
     out = []
     for x in lines:
         if x.d == "if":
             for neg, nm, bit in x.conds:
                 if nm == name and not neg:
                     out.append((bit, x))
+        if x.d in ("case", "else") and id(x) not in chosen:
+            continue
         if x.body:
-            out += named_bits(x.body, name)
+            out += named_bits(x.body, name, chosen)
     return out
 
 
-def all_named(lines, name):
-    """Every bit number of presence `name` that an `if` of these lines names (ruling 17 of 0.8)."""
+def all_named(lines, name, chosen=frozenset()):
+    """Every bit number of presence `name` that an `if` of these lines names (ruling 17 of 0.8);
+    an `if` in a `switch` arm counts only when the arm was read (spec 0.20), its id in `chosen`."""
     out = set()
     for x in lines:
         if x.d == "if":
             out |= {bit for _, nm, bit in x.conds if nm == name}
+        if x.d in ("case", "else") and id(x) not in chosen:
+            continue
         if x.body:
-            out |= all_named(x.body, name)
+            out |= all_named(x.body, name, chosen)
     return out
+
+
+def has_switch(lines):
+    """True when a `switch` stands among these lines or in a block of them."""
+    return any(x.d == "switch" or (x.body and has_switch(x.body)) for x in lines)
+
+
+def case_holds(arm, value):
+    """True when a `case` lists the value (spec 0.20; the generator writes integer values only)."""
+    return value is not None and not isinstance(value, str) and any(int(v) == value for v in arm.values)
+
+
+def select_arm(x, value):
+    """The arm of a `switch` the key's value selects: the first `case` that lists it, else the
+    `else` arm; None when there is neither (`no-kind`)."""
+    arm = next((a for a in x.body if a.d == "case" and case_holds(a, value)), None)
+    return arm or next((a for a in x.body if a.d == "else"), None)
 
 
 def scale_of(field):
@@ -1948,9 +2199,10 @@ def holds(conds, env):
     return all((bit in env[name]) != negated for negated, name, bit in conds)
 
 
-def dec_presence(x, rd, following):
+def dec_presence(x, rd, following, check=True):
     """The set bits of an `fx` presence: octets of 7 bits and an extension bit. A set bit that no
-    `if` of the lines after it names is `malformed-wire` (ruling 1 of 0.8)."""
+    `if` of the lines after it names is `malformed-wire` (ruling 1 of 0.8); with `check` False the
+    caller tests that once the arms of a `switch` are read (`stray_presence`)."""
     setbits, octet = set(), 0
     while True:
         v = rd.take(8)
@@ -1962,10 +2214,17 @@ def dec_presence(x, rd, following):
         octet += 1
         if not v & 1:
             break
-    stray = setbits - all_named(following, x.name)
-    if stray:
-        raise WireError("malformed-wire", "presence bit %s.%d is 1 and no `if` names it" % (x.name, min(stray)))
+    if check:
+        stray_presence(x.name, setbits, following, frozenset())
     return setbits
+
+
+def stray_presence(name, setbits, following, chosen):
+    """A set bit that no `if` of the lines after the presence names, of the arms read, is
+    `malformed-wire` (ruling 1 of 0.8, and spec 0.20: only the selected case counts)."""
+    stray = setbits - all_named(following, name, chosen)
+    if stray:
+        raise WireError("malformed-wire", "presence bit %s.%d is 1 and no `if` names it" % (name, min(stray)))
 
 
 def dec_chain(x, rd, ent, lists, env):
@@ -2029,6 +2288,7 @@ def dec_length(x, rd, ent, lists, env):
 def dec_lines(lines, rd, ent, lists, env):
     """Read the lines of one block in file order. `env` maps a visible presence name to its set bits."""
     env = dict(env)
+    deferred = []               # presences whose stray bits are checked once the switch arms are read
     for i, x in enumerate(lines):
         d = x.d
         if d == "when":
@@ -2045,7 +2305,16 @@ def dec_lines(lines, rd, ent, lists, env):
         elif d == "pad":
             rd.take(x.bits)
         elif d == "presence":
-            env[x.name] = dec_presence(x, rd, lines[i + 1:])
+            later = not has_switch(lines[i + 1:])
+            env[x.name] = dec_presence(x, rd, lines[i + 1:], check=later)
+            if not later:
+                deferred.append((x.name, env[x.name], lines[i + 1:]))
+        elif d == "switch":
+            arm = select_arm(x, ent.get(x.key))
+            if arm is None:
+                raise WireError("no-kind", "no `case` of the switch on %s holds %r" % (x.key, ent.get(x.key)))
+            rd.chosen.add(id(arm))
+            dec_lines(arm.body, rd, ent, lists, env)
         elif d == "if":
             if holds(x.conds, env):
                 dec_lines(x.body, rd, ent, lists, env)
@@ -2057,6 +2326,8 @@ def dec_lines(lines, rd, ent, lists, env):
             dec_length(x, rd, ent, lists, env)
         else:
             raise GenError("the codec has no line `%s`" % d)
+    for name, setbits, following in deferred:
+        stray_presence(name, setbits, following, rd.chosen)
 
 
 def seq_decode(pack, hx):
@@ -2125,13 +2396,23 @@ def enc_lines(lines, ent, lists, env, st):
             out += to_bits(int(x.value), x.bits)
         elif d == "field":
             val = next((ent[k] for k in gtcheck.keys_of(x) if k in ent), None)     # ruling 13 of 0.8
-            out += to_bits(t_encode(x, val) if val is not None else 0, x.bits)
+            wire = t_encode(x, val) if val is not None else 0
+            out += to_bits(wire, x.bits)
+            if x.tr in ("uint", "twos"):            # what decode reads back, for a `switch` (0.20)
+                for k in gtcheck.keys_of(x):
+                    st["written"].setdefault(k, t_decode(x, wire))
         elif d == "pad":
             out += "0" * x.bits
         elif d == "presence":
-            setbits = {bit for bit, blk in named_bits(lines[i + 1:], x.name) if has_content(blk.body, ent, lists)}
+            setbits = {bit for bit, blk in named_bits(lines[i + 1:], x.name, st["sel"]) if has_content(blk.body, ent, lists)}
             env[x.name] = setbits
             out += fx_octets(setbits)
+        elif d == "switch":
+            arm = select_arm(x, st["written"].get(x.key))
+            if arm is None:
+                raise WireError("no-kind", "no `case` of the switch on %s holds %r" % (x.key, st["written"].get(x.key)))
+            st["chosen"].add(id(arm))
+            out += enc_lines(arm.body, ent, lists, env, st)
         elif d == "if":
             if holds(x.conds, env):
                 out += enc_lines(x.body, ent, lists, env, st)
@@ -2156,8 +2437,18 @@ def enc_lines(lines, ent, lists, env, st):
 
 def seq_encode(pack, ent, lists):
     """Encode an entity through a generated pack -> hex text. The whole length is filled in last."""
-    st = dict(prefix="", whole=None)
-    bits = enc_lines(pack_lines(pack), ent, lists, {}, st)
+    sel = frozenset()
+    for _ in range(4):
+        # The presence bits are computed before the switch is reached, from the arms in `sel`;
+        # the arms the switches then chose are taken as `sel` and the record written again until
+        # the two agree (an FSPEC bit the selecting key depends on stands before the switch).
+        st = dict(prefix="", whole=None, written={}, sel=sel, chosen=set())
+        bits = enc_lines(pack_lines(pack), ent, lists, {}, st)
+        if st["chosen"] == sel:
+            break
+        sel = frozenset(st["chosen"])
+    else:
+        raise GenError("the arms of a switch do not settle on encode")
     bits += "0" * (-len(bits) % 8)
     if st["whole"]:
         pos, x = st["whole"]
@@ -2288,7 +2579,7 @@ def md_intro(a, plan, sha):
     a("Public. Generated by `tools/gen/asterix2pack.py` from the machine-readable definition of the")
     a("category in `github.com/%s` (BSD-3-Clause), file `%s` at commit" % (REPO, cat.rel))
     a("`%s`. The category itself is specified by EUROCONTROL. I/O is hex text." % sha)
-    a("Needs engine version 0.8 (`layout sequential`).")
+    a("Needs engine version 0.20 (`switch`)." if plan.sel else "Needs engine version 0.8 (`layout sequential`).")
     a("")
     a("Uses the modules `core`%s and `%s` (`model/%s.def`, generated with the pack)." % (
         "".join(", `%s`" % m for m in plan.uses), cat.module, cat.module))
@@ -2318,10 +2609,19 @@ def md_layout(a, plan):
     a("| CAT, one octet | `when 8 %d` | selects the kind; another category is `no-kind` |" % cat.num)
     a("| LEN, two octets | `length 16 whole` | the block length in octets, CAT and LEN included; written on encode, and on decode input beyond it is not read |")
     a("| FSPEC | `presence f fx` | bit n is FRN n of the UAP |")
-    a("| items | one `if f.<frn>` block per mapped FRN, in FRN order | below |")
+    if plan.sel:
+        sel = plan.sel
+        item = sel["ident"].split("/")[0]
+        a("| common items | one `if f.<frn>` block per FRN up to %d, I%s/%s | the same items in every UAP |" % (sel["frn"], cat.nnn, item))
+        a("| `switch %s` | one `case` per UAP after the first, and `else` | the items of the UAP that I%s/%s selects, one `if f.<frn>` block per mapped FRN |"
+          % (sel["key"], cat.nnn, sel["ident"]))
+    else:
+        a("| items | one `if f.<frn>` block per mapped FRN, in FRN order | below |")
     a("")
     a("A data block that holds more than one record: the first record is read and the rest of the block is not.")
-    if cat.uap_note:
+    if plan.sel:
+        md_uaps(a, plan)
+    elif cat.uap_note:
         a("")
         a(cat.uap_note)
     a("")
@@ -2348,9 +2648,42 @@ def md_layout(a, plan):
     a("| content that depends on another subitem | `uint` | int: the raw bits |")
 
 
+def md_uaps(a, plan):
+    """pack.md of a category of SWITCHED_UAPS: how the UAP is chosen, on decode and on encode."""
+    cat, sel = plan.cat, plan.sel
+    item = sel["ident"].split("/")[0]
+    a("")
+    a("### The UAPs")
+    a("")
+    a("The definition gives the category %d UAPs and names I%s/%s as the field whose value says which one" % (len(plan.arms), cat.nnn, sel["ident"]))
+    a("a record follows. Every UAP holds the same items up to FRN %d, so those are written once, before a" % sel["frn"])
+    a("`switch` on `%s` (engine-spec 0.20):" % sel["key"])
+    a("")
+    a("| UAP | Arm | I%s/%s | FRNs | mapped |" % (cat.nnn, sel["ident"]))
+    a("|---|---|---|---|---|")
+    for arm in plan.arms:
+        a("| `%s` | `%s` | %s%s | %d | %d |" % (
+            arm["name"], "else" if arm["default"] else "case " + ",".join(str(v) for v in arm["values"]),
+            ", ".join(str(v) for v in arm["values"]), ", or the item absent" if arm["default"] else "",
+            len(arm["entries"]), sum(1 for e in arm["entries"] if e["nodes"])))
+    a("")
+    a("- **Decode.** The value read from I%s/%s picks the case. A record without I%s/%s leaves the key absent," % (cat.nnn, sel["ident"], cat.nnn, item))
+    a("  and the `else` lines are read: UAP `%s`, which is also the layout the earlier one-UAP pack read." % plan.arms[0]["name"])
+    a("  The definition names no UAP for a record without the item; reading the first is this pack's choice.")
+    a("- **FSPEC bits.** Only the `if` lines of the case read name FSPEC bits, so a bit that only another UAP")
+    a("  maps is `malformed-wire` in a record of this UAP.")
+    a("- **Encode.** The case is the one decode would pick from what was written: the value of `%s`," % sel["key"])
+    a("  zero when the item is written without it, and `else` when the item is not written at all. Keys of")
+    a("  items that only another UAP holds are not written.")
+    a("- **One kind.** The UAP is not a kind: `@kind` is `record` for every UAP, and the decoded `%s`" % sel["key"])
+    a("  tells them apart. An item two UAPs share has one set of keys, whichever FRN it has in each.")
+
+
 def md_items(a, plan):
     """pack.md: the counts, and one row per mapped FRN."""
     cat = plan.cat
+    if plan.sel:
+        return md_items_uaps(a, plan)
     a("")
     a("## Items")
     a("")
@@ -2377,12 +2710,46 @@ def md_items(a, plan):
     a("every key, with its table of values or its LSB and unit, is in `model/%s.def`." % cat.module)
 
 
+def md_items_uaps(a, plan):
+    """pack.md: md_items for a category of SWITCHED_UAPS, one row per item with its FRN in each UAP."""
+    cat = plan.cat
+    items = [e for e in plan.unique_entries() if e["nodes"]]
+    a("")
+    a("## Items")
+    a("")
+    a("| | Count |")
+    a("|---|---|")
+    for arm in plan.arms:
+        a("| FRNs in UAP `%s` | %d |" % (arm["name"], len(arm["entries"])))
+    for kind in ("fixed", "extended", "repetitive", "compound", "explicit"):
+        n = sum(1 for e in items if e["kind"] == kind)
+        if n:
+            a("| items mapped, %s | %d |" % (kind, n))
+    for arm in plan.arms:
+        a("| not mapped in UAP `%s` | %d |" % (arm["name"], sum(1 for e in arm["entries"] if e["nodes"] is None)))
+    a("| keys of `%s` | %d |" % (cat.module, len(plan.keys)))
+    a("| lists of `%s` | %d |" % (cat.module, len(plan.lists)))
+    a("| `field` lines (an item of two UAPs has its lines in each case) | %d |" % plan.field_count())
+    a("")
+    a("| Item | Title | Type | %s | Written as |" % " | ".join("FRN in `%s`" % arm["name"] for arm in plan.arms))
+    a("|---|---|---|%s---|" % ("---|" * len(plan.arms)))
+    for e in items:
+        frns = [next((str(x["frn"]) for x in arm["entries"] if x["name"] == e["name"]), "-") for arm in plan.arms]
+        a("| I%s/%s | %s | %s | %s | %s |" % (cat.nnn, e["name"], e["title"], e["kind"], " | ".join(frns), mapped_as(e)))
+    a("")
+    ex = next((i, k) for i, k in sorted(plan.names.items()) if "/" in i and not i.endswith(("[]", "#")))
+    a("A key is named after its item and subitems: `%s.%s` is I%s/%s. The meaning of" % (cat.module, ex[1], cat.nnn, ex[0]))
+    a("every key, with its table of values or its LSB and unit, is in `model/%s.def`." % cat.module)
+
+
 def md_not_mapped(a, plan):
     """pack.md: the FRNs with no `if` block and why, explicit items, items no FRN names."""
     cat = plan.cat
     a("")
     a("## Items not mapped")
     a("")
+    if plan.sel:
+        return md_not_mapped_uaps(a, plan)
     unm = [e for e in plan.entries if e["nodes"] is None]
     if unm:
         a("No `if` block names these FSPEC bits. A record with one of them set fails to decode with")
@@ -2405,6 +2772,36 @@ def md_not_mapped(a, plan):
     if notin:
         a("")
         a("Items of the catalogue that the UAP read here does not name, and that the pack therefore does not hold: %s." %
+          ", ".join("I%s/%s" % (cat.nnn, n) for n in notin))
+
+
+def md_not_mapped_uaps(a, plan):
+    """pack.md: md_not_mapped for a category of SWITCHED_UAPS."""
+    cat = plan.cat
+    a("No `if` line of the case read names these FSPEC bits. A record of that UAP with one of them set fails")
+    a("to decode with `malformed-wire`, and encode never sets them.")
+    a("")
+    a("| UAP | FRN | Item | Reason |")
+    a("|---|---|---|---|")
+    for arm in plan.arms:
+        for e in arm["entries"]:
+            if e["nodes"] is None:
+                a("| `%s` | %d | %s | %s |" % (arm["name"], e["frn"], "I%s/%s %s" % (cat.nnn, e["name"], e["title"]) if e["name"] else "-",
+                                             e["reason"]))
+    expl = [e for e in plan.unique_entries() if e["nodes"] and e["kind"] == "explicit"]
+    if expl:
+        a("")
+        a("Mapped without content: %s. Decode reads the length octet and passes over the content; no key holds it," %
+          ", ".join("%s, %s (FRN %s)" % (e["name"], e["title"], " and ".join(
+              "%d in `%s`" % (x["frn"], arm["name"]) for arm in plan.arms for x in arm["entries"] if x["name"] == e["name"]))
+              for e in expl))
+        a("so encode never writes the item, and a same-format round trip of a record that holds one returns the")
+        a("record without it.")
+    named = {e["name"] for e in plan.unique_entries()}
+    notin = [n for n in cat.catalogue if n not in named]
+    if notin:
+        a("")
+        a("Items of the catalogue that no UAP names, and that the pack therefore does not hold: %s." %
           ", ".join("I%s/%s" % (cat.nnn, n) for n in notin))
 
 
@@ -2447,6 +2844,14 @@ def md_shared_keys(a, plan):
         a("the scale (one foot is 381/1250 m, one NM/s is 1852 m/s, one knot is 1852/3600 m/s), the field holds")
         a("the shared key alone, and `model/%s.def` has no raw key for it: an `also` line shares the transform of" % cat.module)
         a("its field, so one field cannot hold feet in one key and metres in another.")
+        for b in binds:
+            item = b["ident"].split("/")[0]
+            held = [arm["name"] for arm in plan.arms if any(e["name"] == item for e in arm["entries"])]
+            if plan.arms and len(held) < len(plan.arms):
+                a("")
+                a("`%s` stands in I%s/%s, which only UAP %s holds: it is read and written only in %s case. An entity" % (
+                    b["key"], cat.nnn, item, ", ".join("`%s`" % h for h in held), "that"))
+                a("converted from another format reaches it only when it also holds `%s` with that UAP's value." % plan.sel["key"])
     else:
         a("None. No item of this category meets a rule of the generator: a position of the target in WGS-84")
         a("degrees, a height above the WGS-84 ellipsoid, a ground speed, a track angle from true north, a")
@@ -2467,6 +2872,9 @@ def md_converting(a, plan):
     a("")
     a("The kind has no `requires` line: the definition does not mark items as mandatory, so encode writes the")
     a("items whose keys the entity holds. A field of a written item whose key is absent is written as zero.")
+    if plan.sel:
+        a("The UAP follows `%s` as written (section \"The UAPs\"): an entity without it is written with UAP" % plan.sel["key"])
+        a("`%s`, and keys of items only another UAP holds are left out." % plan.arms[0]["name"])
     a("Keys of `%s` that another format does not carry (SAC and SIC, for example) are given as context." % cat.module)
 
 
@@ -2595,7 +3003,8 @@ def generate(cat, pinned, sha, master, definition_sha256):
         raise GenError("the module is named %s" % module.name, file=module_path(cat))
     pack = load_pack(model, pack_text, pack_dir(cat) + "/pack.def")
     check_shape(pack, module)
-    mapped_keys = {n["raw"].split(".", 1)[1] for e in plan.mapped() for n, _ in walk_fields(e["nodes"]) if n["declare"]}
+    mapped_keys = {n["raw"].split(".", 1)[1] for e in plan.unique_entries() if e["nodes"]
+                   for n, _ in walk_fields(e["nodes"]) if n["declare"]}
     if set(module.keys) != mapped_keys:
         raise GenError("module keys and mapped keys differ: %s" % sorted(set(module.keys) ^ mapped_keys)[:5],
                        file=module_path(cat))

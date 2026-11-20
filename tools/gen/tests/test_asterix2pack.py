@@ -980,6 +980,83 @@ class OtherEditions(Workdir):
         self.assertIn("asterix2pack: sources/asterix-specs/manifest.json: lists no edition 0.1 of category 250", stderr)
 
 
+def two_uaps(track_prefix=("010", "020")):
+    """A category 1 (SWITCHED_UAPS) of two UAPs chosen by 020/TYP: `plot` holds 010, 020, 040 and
+    `track` 010, 020, 161, 040."""
+    items = [item("010", "Source", element(8)),
+             item("020", "Descriptor", group(member("TYP", "Type", element(1)), spare(7))),
+             item("040", "Plot Value", element(8)),
+             item("161", "Track Number", element(16))]
+    d = definition(items, number=1)
+    uap = lambda names: [tagged("UapItem", n) for n in names]
+    d["contents"]["uap"] = tagged("Uaps", {"cases": [["plot", uap(["010", "020", "040"])],
+                                                     ["track", uap(list(track_prefix) + ["161", "040"])]],
+                                           "selector": {"item": ["020", "TYP"], "cases": [[0, "plot"], [1, "track"]]}})
+    return a2p.Cat(d, "cat001-1.0.json", "specs/x.json")
+
+
+class SwitchedUaps(unittest.TestCase):
+    """A category of SWITCHED_UAPS: one kind, the common items, then `switch` on the selecting key."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.plan = a2p.plan_category(two_uaps())
+        model = a2p.shared_model()
+        module = a2p.load_module(model, a2p.emit_module(cls.plan, "0" * 40), "model/cat001.def")
+        cls.pack = a2p.load_pack(model, a2p.emit_pack(cls.plan, "0" * 40), "packs/asterix-cat001/pack.def")
+        a2p.check_shape(cls.pack, module)
+
+    def test_common_items_then_a_switch_with_the_first_uap_under_else(self):
+        self.assertEqual(pack_lines(self.plan), [
+            "if f.1", "field cat001.i010 8 uint", "end",
+            "if f.2", "field cat001.i020_typ 1 uint", "pad 7", "end",
+            "switch cat001.i020_typ",
+            "case 1", "if f.3", "field cat001.i161 16 uint", "end", "if f.4", "field cat001.i040 8 uint", "end",
+            "else", "if f.3", "field cat001.i040 8 uint", "end",
+            "end"])
+
+    def test_the_selecting_value_picks_the_layout_and_no_item_reads_the_first_uap(self):
+        decode = lambda hx: a2p.seq_decode(self.pack, hx)[0]
+        self.assertEqual(decode("010008" "e0" "05" "80" "0102"), {"cat001.i010": 5, "cat001.i020_typ": 1, "cat001.i161": 258})
+        self.assertEqual(decode("010007" "e0" "05" "00" "07"), {"cat001.i010": 5, "cat001.i020_typ": 0, "cat001.i040": 7})
+        self.assertEqual(decode("010006" "a0" "05" "07"), {"cat001.i010": 5, "cat001.i040": 7})
+        self.assertEqual(decode("010007" "d0" "05" "80" "07"), {"cat001.i010": 5, "cat001.i020_typ": 1, "cat001.i040": 7})
+
+    def test_fspec_bit_only_the_other_uap_names_is_malformed_wire(self):
+        with self.assertRaises(a2p.WireError) as c:
+            a2p.seq_decode(self.pack, "010007" "d0" "05" "00" "07")       # plot, FRN 4: only track maps it
+        self.assertEqual(c.exception.kind, "malformed-wire")
+
+    def test_encode_takes_the_case_from_the_value_written(self):
+        enc = lambda ent: a2p.seq_encode(self.pack, ent, {})
+        self.assertEqual(enc({"cat001.i010": 5, "cat001.i020_typ": 1, "cat001.i161": 258, "cat001.i040": 7}), "010009" "f0" "05" "80" "0102" "07")
+        self.assertEqual(enc({"cat001.i010": 5, "cat001.i020_typ": 0, "cat001.i161": 258, "cat001.i040": 7}), "010007" "e0" "05" "00" "07")
+        self.assertEqual(enc({"cat001.i010": 5, "cat001.i161": 258, "cat001.i040": 7}), "010006" "a0" "05" "07")
+
+    def test_raw_writer_follows_the_uap_of_the_selecting_value(self):
+        rec = {"cat001.i010": 5, "cat001.i020_typ": 1, "cat001.i161": 258, "cat001.i040": 7}
+        self.assertEqual(a2p.raw_block(self.plan, rec), "010009" "f0" "05" "80" "0102" "07")
+        del rec["cat001.i020_typ"]
+        self.assertEqual(a2p.raw_block(self.plan, rec), "010006" "a0" "05" "07")
+
+    def test_every_vector_replays(self):
+        g = a2p.generate(two_uaps(), {}, "0" * 40, "0" * 40, "0" * 64)
+        model = a2p.shared_model()
+        a2p.load_module(model, g.files["model/cat001.def"], "model/cat001.def")
+        packs = {"asterix-cat001": a2p.load_pack(model, g.files["packs/asterix-cat001/pack.def"], "p")}
+        names = [json.loads(t)["name"] for t in g.vectors.values()]
+        self.assertIn("track-every-mapped-item-roundtrip", names)
+        self.assertIn("without-i020-reads-uap-plot-roundtrip", names)
+        self.assertIn("uap-plot-record-with-an-frn-only-uap-track-maps", names)
+        for text in g.vectors.values():
+            a2p.replay(json.loads(text), packs, a2p.all_derives(model))
+
+    def test_uaps_that_differ_before_the_selecting_item_are_refused(self):
+        with self.assertRaises(a2p.GenError) as c:
+            a2p.plan_category(two_uaps(track_prefix=("020", "010")))
+        self.assertIn("the selecting item 020 does not stand at one FRN in every UAP", str(c.exception))
+
+
 class CommittedPacks(unittest.TestCase):
     """The generated ASTERIX packs of the repository, read without regenerating them: all of them
     load in gtcheck with the shape the codec reads, and every one of their vectors replays."""
