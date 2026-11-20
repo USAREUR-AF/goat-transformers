@@ -1,5 +1,7 @@
 # Provenance: kml pack
 
+SPDX licence: LicenseRef-OGC-Software (element names and value types are taken from the OGC schema files ogckml22.xsd and ogckml23.xsd as well as from the standards' text).
+
 OGC 07-147r2 read on 2026-11-19; OGC 12-007r2 read on 2026-11-20. No source
 file is copied into this tree. The pack and the
 module `kml` hold element names and value types from the standard and its

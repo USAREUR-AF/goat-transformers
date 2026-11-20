@@ -1,5 +1,7 @@
 # Provenance: mf-csv pack
 
+SPDX licence: Apache-2.0 (built from the standard's text only; no OGC schema file is used).
+
 Read on 2026-11-20. No source file is copied into this tree. The pack and the
 module `mfcsv` hold the line names, column order and code values the standard
 states; descriptions are in our own words. The vectors are lines written for
