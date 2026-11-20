@@ -14,7 +14,7 @@ no engine holds code for any of the three formats.
 [![conformance](https://github.com/USAREUR-AF/goat-transformers/actions/workflows/conformance.yml/badge.svg)](https://github.com/USAREUR-AF/goat-transformers/actions/workflows/conformance.yml)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 
-**1,958 formats · 11,884 message kinds · 14,789 conversion vectors · 7 engines**, counted
+**2,531 formats · 13,663 message kinds · 17,628 conversion vectors · 7 engines**, counted
 by [`tools/repo-stats`](tools/repo-stats).
 
 ```console
@@ -58,13 +58,13 @@ Counted from the tree by `python3 -I tools/repo-stats`.
 
 | | Count |
 |---|---:|
-| Formats | 1,958 |
-| Message kinds (one message layout of a format, such as one MAVLink message or one NMEA 2000 parameter group) | 11,884 |
-| Typed keys in the shared model, in 977 modules | 182,386 |
-| Lists in the shared model (parts of a message that repeat) | 21,335 |
-| Conversion vectors (an input message and the exact expected output) | 14,789 |
-| Load vectors (a pack that must load, or must be refused with a named error) | 605 |
-| Synthetic formats that exercise each rule of the specification | 108 |
+| Formats | 2,531 |
+| Message kinds (one message layout of a format, such as one MAVLink message or one NMEA 2000 parameter group) | 13,663 |
+| Typed keys in the shared model, in 1,531 modules | 249,773 |
+| Lists in the shared model (parts of a message that repeat) | 26,619 |
+| Conversion vectors (an input message and the exact expected output) | 17,628 |
+| Load vectors (a pack that must load, or must be refused with a named error) | 862 |
+| Synthetic formats that exercise each rule of the specification | 156 |
 | Wire types (an engine's codec for a family of encodings): `xml`, `json`, `geojson`, `protobuf`, `bits`, `text`, `tlv` | 7 |
 | Engines, each using only its language's standard library | 7 |
 | WebAssembly module of the Rust engine, small build, no imports | 376,470 bytes |
