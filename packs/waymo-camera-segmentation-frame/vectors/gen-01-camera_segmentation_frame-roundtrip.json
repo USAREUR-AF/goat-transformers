@@ -1,0 +1,20 @@
+{
+  "name": "gen-camera_segmentation_frame-roundtrip",
+  "from": "waymo-camera-segmentation-frame",
+  "to": "waymo-camera-segmentation-frame",
+  "input": "0a2508641a08089d0210c20218011a08088c0310b1031801220d73657175656e63655f69642d31120e636f6e746578745f6e616d652d3218d3012001",
+  "expect": "0a2508641a08089d0210c20218011a08088c0310b1031801220d73657175656e63655f69642d31120e636f6e746578745f6e616d652d3218d3012001",
+  "model": {
+    "@kind": "camera_segmentation_frame",
+    "waymocamerasegmentationframe.camera_segmentation_label_panoptic_label_divisor": "100",
+    "waymocamerasegmentationframe.camera_segmentation_label_sequence_id": "sequence_id-1",
+    "waymocamerasegmentationframe.camera_segmentation_frame_context_name": "context_name-2",
+    "waymocamerasegmentationframe.camera_segmentation_frame_frame_timestamp_micros": "211",
+    "waymocamerasegmentationframe.camera_segmentation_frame_camera_name": "1",
+    "waymocamerasegmentationframe.camera_segmentation_label_instance_id_to_global_id_mapping.#": "2",
+    "waymocamerasegmentationframe.camera_segmentation_label_instance_id_to_global_id_mapping[0].waymocamerasegmentationframe.instance_idto_global_idmapping_local_instance_id": "285",
+    "waymocamerasegmentationframe.camera_segmentation_label_instance_id_to_global_id_mapping[0].waymocamerasegmentationframe.instance_idto_global_idmapping_global_instance_id": "322",
+    "waymocamerasegmentationframe.camera_segmentation_label_instance_id_to_global_id_mapping[1].waymocamerasegmentationframe.instance_idto_global_idmapping_local_instance_id": "396",
+    "waymocamerasegmentationframe.camera_segmentation_label_instance_id_to_global_id_mapping[1].waymocamerasegmentationframe.instance_idto_global_idmapping_global_instance_id": "433"
+  }
+}

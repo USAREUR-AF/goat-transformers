@@ -1,0 +1,19 @@
+{
+  "name": "gen-laser_calibration-roundtrip",
+  "from": "waymo-laser-calibration",
+  "to": "waymo-laser-calibration",
+  "input": "0801121000000000000016400000000000001d40190000000000000040210000000000000e402a120a1000000000000022400000000000802540",
+  "expect": "0801121000000000000016400000000000001d40190000000000000040210000000000000e402a120a1000000000000022400000000000802540",
+  "model": {
+    "@kind": "laser_calibration",
+    "waymolasercalibration.laser_calibration_name": "1",
+    "waymolasercalibration.laser_calibration_beam_inclination_min": "2",
+    "waymolasercalibration.laser_calibration_beam_inclination_max": "3.75",
+    "waymolasercalibration.laser_calibration_beam_inclinations.#": "2",
+    "waymolasercalibration.laser_calibration_beam_inclinations[0].waymolasercalibration.laser_calibration_beam_inclinations_item": "5.5",
+    "waymolasercalibration.laser_calibration_beam_inclinations[1].waymolasercalibration.laser_calibration_beam_inclinations_item": "7.25",
+    "waymolasercalibration.extrinsic_transform.#": "2",
+    "waymolasercalibration.extrinsic_transform[0].waymolasercalibration.transform_transform_item": "9",
+    "waymolasercalibration.extrinsic_transform[1].waymolasercalibration.transform_transform_item": "10.75"
+  }
+}

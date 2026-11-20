@@ -1,0 +1,28 @@
+{
+  "name": "gen-challenge_submission-roundtrip",
+  "from": "waymo-occupancy-flow-challenge-submission",
+  "to": "waymo-occupancy-flow-challenge-submission",
+  "input": "0a0e6163636f756e745f6e616d652d301214756e697175655f6d6574686f645f6e616d652d311a09617574686f72732d391a0a617574686f72732d3130220d616666696c696174696f6e2d322a0d6465736372697074696f6e2d33320d6d6574686f645f6c696e6b2d343a100a0e7363656e6172696f5f69642d31313a100a0e7363656e6172696f5f69642d31324001480150015a157075626c69635f6d6f64656c5f6e616d65732d31335a157075626c69635f6d6f64656c5f6e616d65732d313462166e756d5f6d6f64656c5f706172616d65746572732d38",
+  "expect": "0a0e6163636f756e745f6e616d652d301214756e697175655f6d6574686f645f6e616d652d311a09617574686f72732d391a0a617574686f72732d3130220d616666696c696174696f6e2d322a0d6465736372697074696f6e2d33320d6d6574686f645f6c696e6b2d343a100a0e7363656e6172696f5f69642d31313a100a0e7363656e6172696f5f69642d31324001480150015a157075626c69635f6d6f64656c5f6e616d65732d31335a157075626c69635f6d6f64656c5f6e616d65732d313462166e756d5f6d6f64656c5f706172616d65746572732d38",
+  "model": {
+    "@kind": "challenge_submission",
+    "waymooccupancyflowchallengesubmission.challenge_submission_account_name": "account_name-0",
+    "waymooccupancyflowchallengesubmission.challenge_submission_unique_method_name": "unique_method_name-1",
+    "waymooccupancyflowchallengesubmission.challenge_submission_affiliation": "affiliation-2",
+    "waymooccupancyflowchallengesubmission.challenge_submission_description": "description-3",
+    "waymooccupancyflowchallengesubmission.challenge_submission_method_link": "method_link-4",
+    "waymooccupancyflowchallengesubmission.challenge_submission_uses_lidar_data": "1",
+    "waymooccupancyflowchallengesubmission.challenge_submission_uses_camera_data": "1",
+    "waymooccupancyflowchallengesubmission.challenge_submission_uses_public_model_pretraining": "1",
+    "waymooccupancyflowchallengesubmission.challenge_submission_num_model_parameters": "num_model_parameters-8",
+    "waymooccupancyflowchallengesubmission.challenge_submission_authors.#": "2",
+    "waymooccupancyflowchallengesubmission.challenge_submission_authors[0].waymooccupancyflowchallengesubmission.challenge_submission_authors_item": "authors-9",
+    "waymooccupancyflowchallengesubmission.challenge_submission_authors[1].waymooccupancyflowchallengesubmission.challenge_submission_authors_item": "authors-10",
+    "waymooccupancyflowchallengesubmission.challenge_submission_scenario_predictions.#": "2",
+    "waymooccupancyflowchallengesubmission.challenge_submission_scenario_predictions[0].waymooccupancyflowchallengesubmission.scenario_prediction_scenario_id": "scenario_id-11",
+    "waymooccupancyflowchallengesubmission.challenge_submission_scenario_predictions[1].waymooccupancyflowchallengesubmission.scenario_prediction_scenario_id": "scenario_id-12",
+    "waymooccupancyflowchallengesubmission.challenge_submission_public_model_names.#": "2",
+    "waymooccupancyflowchallengesubmission.challenge_submission_public_model_names[0].waymooccupancyflowchallengesubmission.challenge_submission_public_model_names_item": "public_model_names-13",
+    "waymooccupancyflowchallengesubmission.challenge_submission_public_model_names[1].waymooccupancyflowchallengesubmission.challenge_submission_public_model_names_item": "public_model_names-14"
+  }
+}

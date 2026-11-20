@@ -1,0 +1,16 @@
+{
+  "name": "gen-velocity-roundtrip",
+  "from": "waymo-velocity",
+  "to": "waymo-velocity",
+  "input": "0d0000003e150000403f1d0000b03f210000000000001640290000000000001d40310000000000002240",
+  "expect": "0d0000003e150000403f1d0000b03f210000000000001640290000000000001d40310000000000002240",
+  "model": {
+    "@kind": "velocity",
+    "waymovelocity.velocity_v_x": "0.125",
+    "waymovelocity.velocity_v_y": "0.75",
+    "waymovelocity.velocity_v_z": "1.375",
+    "waymovelocity.velocity_w_x": "5.5",
+    "waymovelocity.velocity_w_y": "7.25",
+    "waymovelocity.velocity_w_z": "9"
+  }
+}

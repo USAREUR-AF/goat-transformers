@@ -1,0 +1,31 @@
+{
+  "name": "gen-camera_image-roundtrip",
+  "from": "waymo-camera-image",
+  "to": "waymo-camera-image",
+  "input": "08011a120a1000000000000037400000000000c03840222a0d0000403f150000b03f1d00000040210000000000001d40290000000000002240310000000000802540290000000000002940310000000000802c40390000000000003040410000000000c03140522708fb031a08088f0510b40518011a0808fe0510a3061801220e73657175656e63655f69642d3132",
+  "expect": "08011a120a1000000000000037400000000000c03840222a0d0000403f150000b03f1d00000040210000000000001d40290000000000002240310000000000802540290000000000002940310000000000802c40390000000000003040410000000000c03140522708fb031a08088f0510b40518011a0808fe0510a3061801220e73657175656e63655f69642d3132",
+  "model": {
+    "@kind": "camera_image",
+    "waymocameraimage.camera_image_name": "1",
+    "waymocameraimage.velocity_v_x": "0.75",
+    "waymocameraimage.velocity_v_y": "1.375",
+    "waymocameraimage.velocity_v_z": "2",
+    "waymocameraimage.velocity_w_x": "7.25",
+    "waymocameraimage.velocity_w_y": "9",
+    "waymocameraimage.velocity_w_z": "10.75",
+    "waymocameraimage.camera_image_pose_timestamp": "12.5",
+    "waymocameraimage.camera_image_shutter": "14.25",
+    "waymocameraimage.camera_image_camera_trigger_time": "16",
+    "waymocameraimage.camera_image_camera_readout_done_time": "17.75",
+    "waymocameraimage.camera_segmentation_label_panoptic_label_divisor": "507",
+    "waymocameraimage.camera_segmentation_label_sequence_id": "sequence_id-12",
+    "waymocameraimage.pose_transform.#": "2",
+    "waymocameraimage.pose_transform[0].waymocameraimage.transform_transform_item": "23",
+    "waymocameraimage.pose_transform[1].waymocameraimage.transform_transform_item": "24.75",
+    "waymocameraimage.camera_segmentation_label_instance_id_to_global_id_mapping.#": "2",
+    "waymocameraimage.camera_segmentation_label_instance_id_to_global_id_mapping[0].waymocameraimage.instance_idto_global_idmapping_local_instance_id": "655",
+    "waymocameraimage.camera_segmentation_label_instance_id_to_global_id_mapping[0].waymocameraimage.instance_idto_global_idmapping_global_instance_id": "692",
+    "waymocameraimage.camera_segmentation_label_instance_id_to_global_id_mapping[1].waymocameraimage.instance_idto_global_idmapping_local_instance_id": "766",
+    "waymocameraimage.camera_segmentation_label_instance_id_to_global_id_mapping[1].waymocameraimage.instance_idto_global_idmapping_global_instance_id": "803"
+  }
+}

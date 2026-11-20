@@ -1,0 +1,16 @@
+{
+  "name": "gen-segmentation_measurements-roundtrip",
+  "from": "waymo-segmentation-measurements",
+  "to": "waymo-segmentation-measurements",
+  "input": "0a036489011204ae01d301",
+  "expect": "0a036489011204ae01d301",
+  "model": {
+    "@kind": "segmentation_measurements",
+    "waymosegmentationmeasurements.segmentation_measurements_intersections.#": "2",
+    "waymosegmentationmeasurements.segmentation_measurements_intersections[0].waymosegmentationmeasurements.segmentation_measurements_intersections_item": "100",
+    "waymosegmentationmeasurements.segmentation_measurements_intersections[1].waymosegmentationmeasurements.segmentation_measurements_intersections_item": "137",
+    "waymosegmentationmeasurements.segmentation_measurements_unions.#": "2",
+    "waymosegmentationmeasurements.segmentation_measurements_unions[0].waymosegmentationmeasurements.segmentation_measurements_unions_item": "174",
+    "waymosegmentationmeasurements.segmentation_measurements_unions[1].waymosegmentationmeasurements.segmentation_measurements_unions_item": "211"
+  }
+}

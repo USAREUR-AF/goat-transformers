@@ -1,0 +1,24 @@
+{
+  "name": "gen-e2_edmetrics-roundtrip",
+  "from": "waymo-e2ed-metrics",
+  "to": "waymo-e2ed-metrics",
+  "input": "0d0000003e150000403f1d0000b03f25000000402d0000284035000050403d0000784045000090404d0000a440550000b8405d0000cc40650000e0406d0000f440750000803e",
+  "expect": "0d0000003e150000403f1d0000b03f25000000402d0000284035000050403d0000784045000090404d0000a440550000b8405d0000cc40650000e0406d0000f440750000803e",
+  "model": {
+    "@kind": "e2_edmetrics",
+    "waymoe2edmetrics.e2_edmetrics_average_score": "0.125",
+    "waymoe2edmetrics.e2_edmetrics_construction_score": "0.75",
+    "waymoe2edmetrics.e2_edmetrics_intersection_score": "1.375",
+    "waymoe2edmetrics.e2_edmetrics_pedestrian_score": "2",
+    "waymoe2edmetrics.e2_edmetrics_cyclist_score": "2.625",
+    "waymoe2edmetrics.e2_edmetrics_multi_lane_maneuver_score": "3.25",
+    "waymoe2edmetrics.e2_edmetrics_single_lane_maneuver_score": "3.875",
+    "waymoe2edmetrics.e2_edmetrics_cut_in_score": "4.5",
+    "waymoe2edmetrics.e2_edmetrics_foreign_object_debris_score": "5.125",
+    "waymoe2edmetrics.e2_edmetrics_special_vehicle_score": "5.75",
+    "waymoe2edmetrics.e2_edmetrics_spotlight_score": "6.375",
+    "waymoe2edmetrics.e2_edmetrics_others_score": "7",
+    "waymoe2edmetrics.e2_edmetrics_ade_at_three_sec": "7.625",
+    "waymoe2edmetrics.e2_edmetrics_ade_at_five_sec": "0.25"
+  }
+}

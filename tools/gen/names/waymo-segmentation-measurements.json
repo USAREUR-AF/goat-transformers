@@ -1,0 +1,6 @@
+{
+ "1[]": "segmentation_measurements_intersections",
+ "2[]": "segmentation_measurements_unions",
+ "waymo.open_dataset.SegmentationMeasurements:1[]item": "segmentation_measurements_intersections_item",
+ "waymo.open_dataset.SegmentationMeasurements:2[]item": "segmentation_measurements_unions_item"
+}

@@ -1,0 +1,22 @@
+{
+  "name": "gen-single_object_prediction-roundtrip",
+  "from": "waymo-single-object-prediction",
+  "to": "waymo-single-object-prediction",
+  "input": "086412130a0c12040000b03f1a0400000040150000403f12130a0c1204000050401a04000078401500002840",
+  "expect": "086412130a0c12040000b03f1a0400000040150000403f12130a0c1204000050401a04000078401500002840",
+  "model": {
+    "@kind": "single_object_prediction",
+    "waymosingleobjectprediction.single_object_prediction_object_id": "100",
+    "waymosingleobjectprediction.single_object_prediction_trajectories.#": "2",
+    "waymosingleobjectprediction.single_object_prediction_trajectories[0].waymosingleobjectprediction.scored_trajectory_confidence": "0.75",
+    "waymosingleobjectprediction.single_object_prediction_trajectories[0].waymosingleobjectprediction.scored_trajectory_trajectory_center_x.#": "1",
+    "waymosingleobjectprediction.single_object_prediction_trajectories[0].waymosingleobjectprediction.scored_trajectory_trajectory_center_x[0].waymosingleobjectprediction.trajectory_center_x_item": "1.375",
+    "waymosingleobjectprediction.single_object_prediction_trajectories[0].waymosingleobjectprediction.scored_trajectory_trajectory_center_y.#": "1",
+    "waymosingleobjectprediction.single_object_prediction_trajectories[0].waymosingleobjectprediction.scored_trajectory_trajectory_center_y[0].waymosingleobjectprediction.trajectory_center_y_item": "2",
+    "waymosingleobjectprediction.single_object_prediction_trajectories[1].waymosingleobjectprediction.scored_trajectory_confidence": "2.625",
+    "waymosingleobjectprediction.single_object_prediction_trajectories[1].waymosingleobjectprediction.scored_trajectory_trajectory_center_x.#": "1",
+    "waymosingleobjectprediction.single_object_prediction_trajectories[1].waymosingleobjectprediction.scored_trajectory_trajectory_center_x[0].waymosingleobjectprediction.trajectory_center_x_item": "3.25",
+    "waymosingleobjectprediction.single_object_prediction_trajectories[1].waymosingleobjectprediction.scored_trajectory_trajectory_center_y.#": "1",
+    "waymosingleobjectprediction.single_object_prediction_trajectories[1].waymosingleobjectprediction.scored_trajectory_trajectory_center_y[0].waymosingleobjectprediction.trajectory_center_y_item": "3.875"
+  }
+}

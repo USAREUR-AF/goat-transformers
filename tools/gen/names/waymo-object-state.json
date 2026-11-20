@@ -1,0 +1,12 @@
+{
+ "10": "object_state_velocity_y",
+ "11": "object_state_valid",
+ "2": "object_state_center_x",
+ "3": "object_state_center_y",
+ "4": "object_state_center_z",
+ "5": "object_state_length",
+ "6": "object_state_width",
+ "7": "object_state_height",
+ "8": "object_state_heading",
+ "9": "object_state_velocity_x"
+}

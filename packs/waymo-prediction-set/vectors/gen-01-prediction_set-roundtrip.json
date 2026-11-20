@@ -1,0 +1,25 @@
+{
+  "name": "gen-prediction_set-roundtrip",
+  "from": "waymo-prediction-set",
+  "to": "waymo-prediction-set",
+  "input": "0a17086412130a0c12040000b03f1a0400000040150000403f0a1808f80112130a0c1204000078401a04000090401500005040",
+  "expect": "0a17086412130a0c12040000b03f1a0400000040150000403f0a1808f80112130a0c1204000078401a04000090401500005040",
+  "model": {
+    "@kind": "prediction_set",
+    "waymopredictionset.prediction_set_predictions.#": "2",
+    "waymopredictionset.prediction_set_predictions[0].waymopredictionset.single_object_prediction_object_id": "100",
+    "waymopredictionset.prediction_set_predictions[0].waymopredictionset.single_object_prediction_trajectories.#": "1",
+    "waymopredictionset.prediction_set_predictions[0].waymopredictionset.single_object_prediction_trajectories[0].waymopredictionset.scored_trajectory_confidence": "0.75",
+    "waymopredictionset.prediction_set_predictions[0].waymopredictionset.single_object_prediction_trajectories[0].waymopredictionset.scored_trajectory_trajectory_center_x.#": "1",
+    "waymopredictionset.prediction_set_predictions[0].waymopredictionset.single_object_prediction_trajectories[0].waymopredictionset.scored_trajectory_trajectory_center_x[0].waymopredictionset.trajectory_center_x_item": "1.375",
+    "waymopredictionset.prediction_set_predictions[0].waymopredictionset.single_object_prediction_trajectories[0].waymopredictionset.scored_trajectory_trajectory_center_y.#": "1",
+    "waymopredictionset.prediction_set_predictions[0].waymopredictionset.single_object_prediction_trajectories[0].waymopredictionset.scored_trajectory_trajectory_center_y[0].waymopredictionset.trajectory_center_y_item": "2",
+    "waymopredictionset.prediction_set_predictions[1].waymopredictionset.single_object_prediction_object_id": "248",
+    "waymopredictionset.prediction_set_predictions[1].waymopredictionset.single_object_prediction_trajectories.#": "1",
+    "waymopredictionset.prediction_set_predictions[1].waymopredictionset.single_object_prediction_trajectories[0].waymopredictionset.scored_trajectory_confidence": "3.25",
+    "waymopredictionset.prediction_set_predictions[1].waymopredictionset.single_object_prediction_trajectories[0].waymopredictionset.scored_trajectory_trajectory_center_x.#": "1",
+    "waymopredictionset.prediction_set_predictions[1].waymopredictionset.single_object_prediction_trajectories[0].waymopredictionset.scored_trajectory_trajectory_center_x[0].waymopredictionset.trajectory_center_x_item": "3.875",
+    "waymopredictionset.prediction_set_predictions[1].waymopredictionset.single_object_prediction_trajectories[0].waymopredictionset.scored_trajectory_trajectory_center_y.#": "1",
+    "waymopredictionset.prediction_set_predictions[1].waymopredictionset.single_object_prediction_trajectories[0].waymopredictionset.scored_trajectory_trajectory_center_y[0].waymopredictionset.trajectory_center_y_item": "4.5"
+  }
+}

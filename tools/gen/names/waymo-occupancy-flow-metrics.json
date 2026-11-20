@@ -1,0 +1,12 @@
+{
+ "1": "occupancy_flow_metrics_vehicles_observed_auc",
+ "10": "occupancy_flow_metrics_num_waypoints_with_flow",
+ "2": "occupancy_flow_metrics_vehicles_observed_iou",
+ "3": "occupancy_flow_metrics_vehicles_occluded_auc",
+ "4": "occupancy_flow_metrics_vehicles_occluded_iou",
+ "5": "occupancy_flow_metrics_vehicles_flow_epe",
+ "6": "occupancy_flow_metrics_vehicles_flow_warped_occupancy_auc",
+ "7": "occupancy_flow_metrics_vehicles_flow_warped_occupancy_iou",
+ "8": "occupancy_flow_metrics_num_waypoints_with_observed_occupancy",
+ "9": "occupancy_flow_metrics_num_waypoints_with_occluded_occupancy"
+}

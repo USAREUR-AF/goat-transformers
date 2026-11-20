@@ -1,0 +1,27 @@
+{
+  "name": "gen-sim_agent_metrics-roundtrip",
+  "from": "waymo-sim-agent-metrics",
+  "to": "waymo-sim-agent-metrics",
+  "input": "0a0d7363656e6172696f5f69642d30150000403f1d0000b03f25000028402d0000504035000078403d00009040450000a4404d0000b840550000cc405d0000e040650000f4406d00000040750000603f7d0000c03f85010000803e8d0100000840",
+  "expect": "0a0d7363656e6172696f5f69642d30150000403f1d0000b03f25000028402d0000504035000078403d00009040450000a4404d0000b840550000cc405d0000e040650000f4406d00000040750000603f7d0000c03f85010000803e8d0100000840",
+  "model": {
+    "@kind": "sim_agent_metrics",
+    "waymosimagentmetrics.sim_agent_metrics_scenario_id": "scenario_id-0",
+    "waymosimagentmetrics.sim_agent_metrics_metametric": "0.75",
+    "waymosimagentmetrics.sim_agent_metrics_average_displacement_error": "1.375",
+    "waymosimagentmetrics.sim_agent_metrics_min_average_displacement_error": "2",
+    "waymosimagentmetrics.sim_agent_metrics_linear_speed_likelihood": "2.625",
+    "waymosimagentmetrics.sim_agent_metrics_linear_acceleration_likelihood": "3.25",
+    "waymosimagentmetrics.sim_agent_metrics_angular_speed_likelihood": "3.875",
+    "waymosimagentmetrics.sim_agent_metrics_angular_acceleration_likelihood": "4.5",
+    "waymosimagentmetrics.sim_agent_metrics_distance_to_nearest_object_likelihood": "5.125",
+    "waymosimagentmetrics.sim_agent_metrics_collision_indication_likelihood": "5.75",
+    "waymosimagentmetrics.sim_agent_metrics_time_to_collision_likelihood": "6.375",
+    "waymosimagentmetrics.sim_agent_metrics_distance_to_road_edge_likelihood": "7",
+    "waymosimagentmetrics.sim_agent_metrics_offroad_indication_likelihood": "7.625",
+    "waymosimagentmetrics.sim_agent_metrics_traffic_light_violation_likelihood": "0.25",
+    "waymosimagentmetrics.sim_agent_metrics_simulated_collision_rate": "0.875",
+    "waymosimagentmetrics.sim_agent_metrics_simulated_offroad_rate": "1.5",
+    "waymosimagentmetrics.sim_agent_metrics_simulated_traffic_light_violation_rate": "2.125"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "name": "gen-ego_trajectory_states-roundtrip",
+  "from": "waymo-ego-trajectory-states",
+  "to": "waymo-ego-trajectory-states",
+  "input": "0a080000403f0000b03f120800000040000028401a0800005040000078402208000090400000a4402a080000b8400000cc4032080000e0400000f4403a080000803e0000603f450000003e",
+  "expect": "0a080000403f0000b03f120800000040000028401a0800005040000078402208000090400000a4402a080000b8400000cc4032080000e0400000f4403a080000803e0000603f450000003e",
+  "model": {
+    "@kind": "ego_trajectory_states",
+    "waymoegotrajectorystates.ego_trajectory_states_preference_score": "0.125",
+    "waymoegotrajectorystates.ego_trajectory_states_pos_x.#": "2",
+    "waymoegotrajectorystates.ego_trajectory_states_pos_x[0].waymoegotrajectorystates.ego_trajectory_states_pos_x_item": "0.75",
+    "waymoegotrajectorystates.ego_trajectory_states_pos_x[1].waymoegotrajectorystates.ego_trajectory_states_pos_x_item": "1.375",
+    "waymoegotrajectorystates.ego_trajectory_states_pos_y.#": "2",
+    "waymoegotrajectorystates.ego_trajectory_states_pos_y[0].waymoegotrajectorystates.ego_trajectory_states_pos_y_item": "2",
+    "waymoegotrajectorystates.ego_trajectory_states_pos_y[1].waymoegotrajectorystates.ego_trajectory_states_pos_y_item": "2.625",
+    "waymoegotrajectorystates.ego_trajectory_states_pos_z.#": "2",
+    "waymoegotrajectorystates.ego_trajectory_states_pos_z[0].waymoegotrajectorystates.ego_trajectory_states_pos_z_item": "3.25",
+    "waymoegotrajectorystates.ego_trajectory_states_pos_z[1].waymoegotrajectorystates.ego_trajectory_states_pos_z_item": "3.875",
+    "waymoegotrajectorystates.ego_trajectory_states_vel_x.#": "2",
+    "waymoegotrajectorystates.ego_trajectory_states_vel_x[0].waymoegotrajectorystates.ego_trajectory_states_vel_x_item": "4.5",
+    "waymoegotrajectorystates.ego_trajectory_states_vel_x[1].waymoegotrajectorystates.ego_trajectory_states_vel_x_item": "5.125",
+    "waymoegotrajectorystates.ego_trajectory_states_vel_y.#": "2",
+    "waymoegotrajectorystates.ego_trajectory_states_vel_y[0].waymoegotrajectorystates.ego_trajectory_states_vel_y_item": "5.75",
+    "waymoegotrajectorystates.ego_trajectory_states_vel_y[1].waymoegotrajectorystates.ego_trajectory_states_vel_y_item": "6.375",
+    "waymoegotrajectorystates.ego_trajectory_states_accel_x.#": "2",
+    "waymoegotrajectorystates.ego_trajectory_states_accel_x[0].waymoegotrajectorystates.ego_trajectory_states_accel_x_item": "7",
+    "waymoegotrajectorystates.ego_trajectory_states_accel_x[1].waymoegotrajectorystates.ego_trajectory_states_accel_x_item": "7.625",
+    "waymoegotrajectorystates.ego_trajectory_states_accel_y.#": "2",
+    "waymoegotrajectorystates.ego_trajectory_states_accel_y[0].waymoegotrajectorystates.ego_trajectory_states_accel_y_item": "0.25",
+    "waymoegotrajectorystates.ego_trajectory_states_accel_y[1].waymoegotrajectorystates.ego_trajectory_states_accel_y_item": "0.875"
+  }
+}

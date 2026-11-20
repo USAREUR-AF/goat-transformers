@@ -1,0 +1,15 @@
+{
+  "name": "gen-traffic_signal_lane_state-roundtrip",
+  "from": "waymo-traffic-signal-lane-state",
+  "to": "waymo-traffic-signal-lane-state",
+  "input": "086410011a1b090000000000000e40110000000000001640190000000000001d40",
+  "expect": "086410011a1b090000000000000e40110000000000001640190000000000001d40",
+  "model": {
+    "@kind": "traffic_signal_lane_state",
+    "waymotrafficsignallanestate.traffic_signal_lane_state_lane": "100",
+    "waymotrafficsignallanestate.traffic_signal_lane_state_state": "1",
+    "waymotrafficsignallanestate.stop_point_x": "3.75",
+    "waymotrafficsignallanestate.stop_point_y": "5.5",
+    "waymotrafficsignallanestate.stop_point_z": "7.25"
+  }
+}

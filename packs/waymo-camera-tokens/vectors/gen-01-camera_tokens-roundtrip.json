@@ -1,0 +1,14 @@
+{
+  "name": "gen-camera_tokens-roundtrip",
+  "from": "waymo-camera-tokens",
+  "to": "waymo-camera-tokens",
+  "input": "080112048901ae01",
+  "expect": "080112048901ae01",
+  "model": {
+    "@kind": "camera_tokens",
+    "waymocameratokens.camera_tokens_camera_name": "1",
+    "waymocameratokens.camera_tokens_tokens.#": "2",
+    "waymocameratokens.camera_tokens_tokens[0].waymocameratokens.camera_tokens_tokens_item": "137",
+    "waymocameratokens.camera_tokens_tokens[1].waymocameratokens.camera_tokens_tokens_item": "174"
+  }
+}

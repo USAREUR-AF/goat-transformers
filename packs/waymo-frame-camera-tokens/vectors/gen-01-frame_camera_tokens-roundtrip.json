@@ -1,0 +1,17 @@
+{
+  "name": "gen-frame_camera_tokens-roundtrip",
+  "from": "waymo-frame-camera-tokens",
+  "to": "waymo-frame-camera-tokens",
+  "input": "0a060801120289010a0608011202d301",
+  "expect": "0a060801120289010a0608011202d301",
+  "model": {
+    "@kind": "frame_camera_tokens",
+    "waymoframecameratokens.frame_camera_tokens_camera_tokens.#": "2",
+    "waymoframecameratokens.frame_camera_tokens_camera_tokens[0].waymoframecameratokens.camera_tokens_camera_name": "1",
+    "waymoframecameratokens.frame_camera_tokens_camera_tokens[0].waymoframecameratokens.camera_tokens_tokens.#": "1",
+    "waymoframecameratokens.frame_camera_tokens_camera_tokens[0].waymoframecameratokens.camera_tokens_tokens[0].waymoframecameratokens.camera_tokens_tokens_item": "137",
+    "waymoframecameratokens.frame_camera_tokens_camera_tokens[1].waymoframecameratokens.camera_tokens_camera_name": "1",
+    "waymoframecameratokens.frame_camera_tokens_camera_tokens[1].waymoframecameratokens.camera_tokens_tokens.#": "1",
+    "waymoframecameratokens.frame_camera_tokens_camera_tokens[1].waymoframecameratokens.camera_tokens_tokens[0].waymoframecameratokens.camera_tokens_tokens_item": "211"
+  }
+}

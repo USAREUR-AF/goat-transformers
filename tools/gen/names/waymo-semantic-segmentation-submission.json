@@ -1,0 +1,20 @@
+{
+ "1": "semantic_segmentation_submission_account_name",
+ "10.1[]": "inference_results_frames",
+ "2": "semantic_segmentation_submission_unique_method_name",
+ "3[]": "semantic_segmentation_submission_authors",
+ "4": "semantic_segmentation_submission_affiliation",
+ "5": "semantic_segmentation_submission_description",
+ "6": "semantic_segmentation_submission_method_link",
+ "7": "semantic_segmentation_submission_sensor_type",
+ "8": "semantic_segmentation_submission_number_past_frames_exclude_current",
+ "9": "semantic_segmentation_submission_number_future_frames_exclude_current",
+ "waymo.open_dataset.Laser:1": "laser_name",
+ "waymo.open_dataset.Laser:2.1.1[]": "laser_ri_return1_range_image_data",
+ "waymo.open_dataset.Laser:3.1.1[]": "laser_ri_return2_range_image_data",
+ "waymo.open_dataset.MatrixFloat:1[]item": "matrix_float_data_item",
+ "waymo.open_dataset.SegmentationFrame:1[]": "segmentation_frame_segmentation_labels",
+ "waymo.open_dataset.SegmentationFrame:2": "segmentation_frame_context_name",
+ "waymo.open_dataset.SegmentationFrame:3": "segmentation_frame_frame_timestamp_micros",
+ "waymo.open_dataset.SemanticSegmentationSubmission:3[]item": "semantic_segmentation_submission_authors_item"
+}

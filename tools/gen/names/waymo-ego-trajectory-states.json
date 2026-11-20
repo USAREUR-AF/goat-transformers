@@ -1,0 +1,17 @@
+{
+ "1[]": "ego_trajectory_states_pos_x",
+ "2[]": "ego_trajectory_states_pos_y",
+ "3[]": "ego_trajectory_states_pos_z",
+ "4[]": "ego_trajectory_states_vel_x",
+ "5[]": "ego_trajectory_states_vel_y",
+ "6[]": "ego_trajectory_states_accel_x",
+ "7[]": "ego_trajectory_states_accel_y",
+ "8": "ego_trajectory_states_preference_score",
+ "waymo.open_dataset.EgoTrajectoryStates:1[]item": "ego_trajectory_states_pos_x_item",
+ "waymo.open_dataset.EgoTrajectoryStates:2[]item": "ego_trajectory_states_pos_y_item",
+ "waymo.open_dataset.EgoTrajectoryStates:3[]item": "ego_trajectory_states_pos_z_item",
+ "waymo.open_dataset.EgoTrajectoryStates:4[]item": "ego_trajectory_states_vel_x_item",
+ "waymo.open_dataset.EgoTrajectoryStates:5[]item": "ego_trajectory_states_vel_y_item",
+ "waymo.open_dataset.EgoTrajectoryStates:6[]item": "ego_trajectory_states_accel_x_item",
+ "waymo.open_dataset.EgoTrajectoryStates:7[]item": "ego_trajectory_states_accel_y_item"
+}

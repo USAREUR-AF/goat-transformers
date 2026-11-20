@@ -1,0 +1,7 @@
+{
+ "1": "frame_trajectory_predictions_frame_name",
+ "2.1[]": "trajectory_pos_x",
+ "2.2[]": "trajectory_pos_y",
+ "waymo.open_dataset.TrajectoryPrediction:1[]item": "trajectory_prediction_pos_x_item",
+ "waymo.open_dataset.TrajectoryPrediction:2[]item": "trajectory_prediction_pos_y_item"
+}

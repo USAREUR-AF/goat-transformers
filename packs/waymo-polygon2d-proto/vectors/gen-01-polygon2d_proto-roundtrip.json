@@ -1,0 +1,17 @@
+{
+  "name": "gen-polygon2d_proto-roundtrip",
+  "from": "waymo-polygon2d-proto",
+  "to": "waymo-polygon2d-proto",
+  "input": "0a1000000000000000400000000000000e40121000000000000016400000000000001d401a0469642d30",
+  "expect": "0a1000000000000000400000000000000e40121000000000000016400000000000001d401a0469642d30",
+  "model": {
+    "@kind": "polygon2d_proto",
+    "waymopolygon2dproto.polygon2d_proto_id": "id-0",
+    "waymopolygon2dproto.polygon2d_proto_x.#": "2",
+    "waymopolygon2dproto.polygon2d_proto_x[0].waymopolygon2dproto.polygon2d_proto_x_item": "2",
+    "waymopolygon2dproto.polygon2d_proto_x[1].waymopolygon2dproto.polygon2d_proto_x_item": "3.75",
+    "waymopolygon2dproto.polygon2d_proto_y.#": "2",
+    "waymopolygon2dproto.polygon2d_proto_y[0].waymopolygon2dproto.polygon2d_proto_y_item": "5.5",
+    "waymopolygon2dproto.polygon2d_proto_y[1].waymopolygon2dproto.polygon2d_proto_y_item": "7.25"
+  }
+}

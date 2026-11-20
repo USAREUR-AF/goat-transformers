@@ -1,0 +1,16 @@
+{
+ "1": "e2_edmetrics_average_score",
+ "10": "e2_edmetrics_special_vehicle_score",
+ "11": "e2_edmetrics_spotlight_score",
+ "12": "e2_edmetrics_others_score",
+ "13": "e2_edmetrics_ade_at_three_sec",
+ "14": "e2_edmetrics_ade_at_five_sec",
+ "2": "e2_edmetrics_construction_score",
+ "3": "e2_edmetrics_intersection_score",
+ "4": "e2_edmetrics_pedestrian_score",
+ "5": "e2_edmetrics_cyclist_score",
+ "6": "e2_edmetrics_multi_lane_maneuver_score",
+ "7": "e2_edmetrics_single_lane_maneuver_score",
+ "8": "e2_edmetrics_cut_in_score",
+ "9": "e2_edmetrics_foreign_object_debris_score"
+}

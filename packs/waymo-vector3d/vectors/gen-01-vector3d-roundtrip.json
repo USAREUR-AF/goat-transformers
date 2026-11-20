@@ -1,0 +1,13 @@
+{
+  "name": "gen-vector3d-roundtrip",
+  "from": "waymo-vector3d",
+  "to": "waymo-vector3d",
+  "input": "09000000000000d03f110000000000000040190000000000000e40",
+  "expect": "09000000000000d03f110000000000000040190000000000000e40",
+  "model": {
+    "@kind": "vector3d",
+    "waymovector3d.vector3d_x": "0.25",
+    "waymovector3d.vector3d_y": "2",
+    "waymovector3d.vector3d_z": "3.75"
+  }
+}

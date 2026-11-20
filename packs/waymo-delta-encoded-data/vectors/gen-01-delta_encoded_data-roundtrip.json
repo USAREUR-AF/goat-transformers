@@ -1,0 +1,22 @@
+{
+  "name": "gen-delta_encoded_data-roundtrip",
+  "from": "waymo-delta-encoded-data",
+  "to": "waymo-delta-encoded-data",
+  "input": "0a02050f1204ae01d3011a100a04f8019d0212080000784000009040",
+  "expect": "0a02050f1204ae01d3011a100a04f8019d0212080000784000009040",
+  "model": {
+    "@kind": "delta_encoded_data",
+    "waymodeltaencodeddata.delta_encoded_data_residual.#": "2",
+    "waymodeltaencodeddata.delta_encoded_data_residual[0].waymodeltaencodeddata.delta_encoded_data_residual_item": "-3",
+    "waymodeltaencodeddata.delta_encoded_data_residual[1].waymodeltaencodeddata.delta_encoded_data_residual_item": "-8",
+    "waymodeltaencodeddata.delta_encoded_data_mask.#": "2",
+    "waymodeltaencodeddata.delta_encoded_data_mask[0].waymodeltaencodeddata.delta_encoded_data_mask_item": "174",
+    "waymodeltaencodeddata.delta_encoded_data_mask[1].waymodeltaencodeddata.delta_encoded_data_mask_item": "211",
+    "waymodeltaencodeddata.metadata_shape.#": "2",
+    "waymodeltaencodeddata.metadata_shape[0].waymodeltaencodeddata.metadata_shape_item": "248",
+    "waymodeltaencodeddata.metadata_shape[1].waymodeltaencodeddata.metadata_shape_item": "285",
+    "waymodeltaencodeddata.metadata_quant_precision.#": "2",
+    "waymodeltaencodeddata.metadata_quant_precision[0].waymodeltaencodeddata.metadata_quant_precision_item": "3.875",
+    "waymodeltaencodeddata.metadata_quant_precision[1].waymodeltaencodeddata.metadata_quant_precision_item": "4.5"
+  }
+}

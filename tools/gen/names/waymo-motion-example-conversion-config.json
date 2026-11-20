@@ -1,0 +1,11 @@
+{
+ "1": "motion_example_conversion_config_max_num_agents",
+ "10": "motion_example_conversion_config_max_num_modeled_agents",
+ "2": "motion_example_conversion_config_num_past_steps",
+ "3": "motion_example_conversion_config_num_future_steps",
+ "5": "motion_example_conversion_config_max_roadgraph_samples",
+ "6": "motion_example_conversion_config_source_polyline_spacing",
+ "7": "motion_example_conversion_config_polyline_sample_spacing",
+ "8": "motion_example_conversion_config_polygon_sample_spacing",
+ "9": "motion_example_conversion_config_max_traffic_light_control_points_per_step"
+}

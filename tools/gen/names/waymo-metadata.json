@@ -1,0 +1,6 @@
+{
+ "1[]": "metadata_shape",
+ "2[]": "metadata_quant_precision",
+ "waymo.open_dataset.Metadata:1[]item": "metadata_shape_item",
+ "waymo.open_dataset.Metadata:2[]item": "metadata_quant_precision_item"
+}

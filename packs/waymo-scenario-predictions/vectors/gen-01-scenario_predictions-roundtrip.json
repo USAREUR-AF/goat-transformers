@@ -1,0 +1,28 @@
+{
+  "name": "gen-scenario_predictions-roundtrip",
+  "from": "waymo-scenario-predictions",
+  "to": "waymo-scenario-predictions",
+  "input": "0a0d7363656e6172696f5f69642d3012180a16120f08ae011204000000401a04000028401d0000403f12180a16120f08c2021204000090401a040000a4401d00005040",
+  "expect": "0a0d7363656e6172696f5f69642d3012180a16120f08ae011204000000401a04000028401d0000403f12180a16120f08c2021204000090401a040000a4401d00005040",
+  "model": {
+    "@kind": "scenario_predictions",
+    "waymoscenariopredictions.scenario_predictions_scenario_id": "scenario_id-0",
+    "waymoscenariopredictions.scenario_predictions_multi_modal_predictions.#": "2",
+    "waymoscenariopredictions.scenario_predictions_multi_modal_predictions[0].waymoscenariopredictions.multimodal_prediction_joint_predictions.#": "1",
+    "waymoscenariopredictions.scenario_predictions_multi_modal_predictions[0].waymoscenariopredictions.multimodal_prediction_joint_predictions[0].waymoscenariopredictions.joint_trajectories_confidence": "0.75",
+    "waymoscenariopredictions.scenario_predictions_multi_modal_predictions[0].waymoscenariopredictions.multimodal_prediction_joint_predictions[0].waymoscenariopredictions.joint_trajectories_trajectories.#": "1",
+    "waymoscenariopredictions.scenario_predictions_multi_modal_predictions[0].waymoscenariopredictions.multimodal_prediction_joint_predictions[0].waymoscenariopredictions.joint_trajectories_trajectories[0].waymoscenariopredictions.single_trajectory_object_id": "174",
+    "waymoscenariopredictions.scenario_predictions_multi_modal_predictions[0].waymoscenariopredictions.multimodal_prediction_joint_predictions[0].waymoscenariopredictions.joint_trajectories_trajectories[0].waymoscenariopredictions.single_trajectory_center_x.#": "1",
+    "waymoscenariopredictions.scenario_predictions_multi_modal_predictions[0].waymoscenariopredictions.multimodal_prediction_joint_predictions[0].waymoscenariopredictions.joint_trajectories_trajectories[0].waymoscenariopredictions.single_trajectory_center_x[0].waymoscenariopredictions.single_trajectory_center_x_item": "2",
+    "waymoscenariopredictions.scenario_predictions_multi_modal_predictions[0].waymoscenariopredictions.multimodal_prediction_joint_predictions[0].waymoscenariopredictions.joint_trajectories_trajectories[0].waymoscenariopredictions.single_trajectory_center_y.#": "1",
+    "waymoscenariopredictions.scenario_predictions_multi_modal_predictions[0].waymoscenariopredictions.multimodal_prediction_joint_predictions[0].waymoscenariopredictions.joint_trajectories_trajectories[0].waymoscenariopredictions.single_trajectory_center_y[0].waymoscenariopredictions.single_trajectory_center_y_item": "2.625",
+    "waymoscenariopredictions.scenario_predictions_multi_modal_predictions[1].waymoscenariopredictions.multimodal_prediction_joint_predictions.#": "1",
+    "waymoscenariopredictions.scenario_predictions_multi_modal_predictions[1].waymoscenariopredictions.multimodal_prediction_joint_predictions[0].waymoscenariopredictions.joint_trajectories_confidence": "3.25",
+    "waymoscenariopredictions.scenario_predictions_multi_modal_predictions[1].waymoscenariopredictions.multimodal_prediction_joint_predictions[0].waymoscenariopredictions.joint_trajectories_trajectories.#": "1",
+    "waymoscenariopredictions.scenario_predictions_multi_modal_predictions[1].waymoscenariopredictions.multimodal_prediction_joint_predictions[0].waymoscenariopredictions.joint_trajectories_trajectories[0].waymoscenariopredictions.single_trajectory_object_id": "322",
+    "waymoscenariopredictions.scenario_predictions_multi_modal_predictions[1].waymoscenariopredictions.multimodal_prediction_joint_predictions[0].waymoscenariopredictions.joint_trajectories_trajectories[0].waymoscenariopredictions.single_trajectory_center_x.#": "1",
+    "waymoscenariopredictions.scenario_predictions_multi_modal_predictions[1].waymoscenariopredictions.multimodal_prediction_joint_predictions[0].waymoscenariopredictions.joint_trajectories_trajectories[0].waymoscenariopredictions.single_trajectory_center_x[0].waymoscenariopredictions.single_trajectory_center_x_item": "4.5",
+    "waymoscenariopredictions.scenario_predictions_multi_modal_predictions[1].waymoscenariopredictions.multimodal_prediction_joint_predictions[0].waymoscenariopredictions.joint_trajectories_trajectories[0].waymoscenariopredictions.single_trajectory_center_y.#": "1",
+    "waymoscenariopredictions.scenario_predictions_multi_modal_predictions[1].waymoscenariopredictions.multimodal_prediction_joint_predictions[0].waymoscenariopredictions.joint_trajectories_trajectories[0].waymoscenariopredictions.single_trajectory_center_y[0].waymoscenariopredictions.single_trajectory_center_y_item": "5.125"
+  }
+}

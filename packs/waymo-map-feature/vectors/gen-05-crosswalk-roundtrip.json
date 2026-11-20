@@ -1,0 +1,16 @@
+{
+  "name": "gen-crosswalk-roundtrip",
+  "from": "waymo-map-feature",
+  "to": "waymo-map-feature",
+  "input": "0864423a0a1b090000000000000040110000000000000e401900000000000016400a1b090000000000001d40110000000000002240190000000000802540",
+  "expect": "0864423a0a1b090000000000000040110000000000000e401900000000000016400a1b090000000000001d40110000000000002240190000000000802540",
+  "model": {
+    "@kind": "crosswalk",
+    "waymomapfeature.id": "100",
+    "waymomapfeature.crosswalk_polygon.#": "2",
+    "waymomapfeature.crosswalk_polygon[0].waymomapfeature.map_point_x": "2",
+    "waymomapfeature.crosswalk_polygon[0].waymomapfeature.map_point_y": "3.75",
+    "waymomapfeature.crosswalk_polygon[1].waymomapfeature.map_point_x": "7.25",
+    "waymomapfeature.crosswalk_polygon[1].waymomapfeature.map_point_y": "9"
+  }
+}

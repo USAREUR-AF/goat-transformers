@@ -1,0 +1,17 @@
+{
+ "1": "challenge_submission_account_name",
+ "10": "challenge_submission_uses_public_model_pretraining",
+ "11[]": "challenge_submission_public_model_names",
+ "12": "challenge_submission_num_model_parameters",
+ "2": "challenge_submission_unique_method_name",
+ "3[]": "challenge_submission_authors",
+ "4": "challenge_submission_affiliation",
+ "5": "challenge_submission_description",
+ "6": "challenge_submission_method_link",
+ "7[]": "challenge_submission_scenario_predictions",
+ "8": "challenge_submission_uses_lidar_data",
+ "9": "challenge_submission_uses_camera_data",
+ "waymo.open_dataset.occupancy_flow.ChallengeSubmission:11[]item": "challenge_submission_public_model_names_item",
+ "waymo.open_dataset.occupancy_flow.ChallengeSubmission:3[]item": "challenge_submission_authors_item",
+ "waymo.open_dataset.occupancy_flow.ScenarioPrediction:1": "scenario_prediction_scenario_id"
+}

@@ -1,0 +1,28 @@
+{
+  "name": "gen-map-roundtrip-oneof3",
+  "from": "waymo-map",
+  "to": "waymo-map",
+  "input": "0a2508643a210a02b103121b090000000000802540110000000000002940190000000000802c400a2608d6033a210a02a306121b090000000000403c40110000000000003e40190000000000c03f40122d090000000000a04140122208ed0610011a1b09000000000000e03f110000000000000240190000000000001040122d090000000000001740122208cb0810011a1b090000000000002640110000000000802940190000000000002d40",
+  "expect": "0a2508643a210a02b103121b090000000000802540110000000000002940190000000000802c400a2608d6033a210a02a306121b090000000000403c40110000000000003e40190000000000c03f40122d090000000000a04140122208ed0610011a1b09000000000000e03f110000000000000240190000000000001040122d090000000000001740122208cb0810011a1b090000000000002640110000000000802940190000000000002d40",
+  "model": {
+    "@kind": "map",
+    "waymomap.map_map_features.#": "2",
+    "waymomap.map_map_features[0].waymomap.map_feature_id": "100",
+    "waymomap.map_map_features[0].waymomap.map_feature_stop_sign_position_x": "10.75",
+    "waymomap.map_map_features[0].waymomap.map_feature_stop_sign_lane.#": "1",
+    "waymomap.map_map_features[0].waymomap.map_feature_stop_sign_lane[0].waymomap.stop_sign_lane_item": "433",
+    "waymomap.map_map_features[1].waymomap.map_feature_id": "470",
+    "waymomap.map_map_features[1].waymomap.map_feature_stop_sign_position_x": "28.25",
+    "waymomap.map_map_features[1].waymomap.map_feature_stop_sign_lane.#": "1",
+    "waymomap.map_map_features[1].waymomap.map_feature_stop_sign_lane[0].waymomap.stop_sign_lane_item": "803",
+    "waymomap.map_dynamic_states.#": "2",
+    "waymomap.map_dynamic_states[0].waymomap.dynamic_state_timestamp_seconds": "35.25",
+    "waymomap.map_dynamic_states[0].waymomap.dynamic_state_lane_states.#": "1",
+    "waymomap.map_dynamic_states[0].waymomap.dynamic_state_lane_states[0].waymomap.traffic_signal_lane_state_lane": "877",
+    "waymomap.map_dynamic_states[0].waymomap.dynamic_state_lane_states[0].waymomap.traffic_signal_lane_state_state": "1",
+    "waymomap.map_dynamic_states[1].waymomap.dynamic_state_timestamp_seconds": "5.75",
+    "waymomap.map_dynamic_states[1].waymomap.dynamic_state_lane_states.#": "1",
+    "waymomap.map_dynamic_states[1].waymomap.dynamic_state_lane_states[0].waymomap.traffic_signal_lane_state_lane": "1099",
+    "waymomap.map_dynamic_states[1].waymomap.dynamic_state_lane_states[0].waymomap.traffic_signal_lane_state_state": "1"
+  }
+}

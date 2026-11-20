@@ -1,0 +1,10 @@
+{
+ "1": "camera_keypoint_type",
+ "2.1.1": "keypoint_2d_location_px_x",
+ "2.1.2": "keypoint_2d_location_px_y",
+ "2.2.1": "keypoint_2d_visibility_is_occluded",
+ "3.1.1": "keypoint_3d_location_m_x",
+ "3.1.2": "keypoint_3d_location_m_y",
+ "3.1.3": "keypoint_3d_location_m_z",
+ "3.2.1": "keypoint_3d_visibility_is_occluded"
+}

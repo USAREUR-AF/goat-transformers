@@ -1,0 +1,20 @@
+{
+  "name": "gen-camera_calibration-roundtrip",
+  "from": "waymo-camera-calibration",
+  "to": "waymo-camera-calibration",
+  "input": "080112100000000000001d4000000000000022401a120a100000000000802540000000000000294020890128ae013001",
+  "expect": "080112100000000000001d4000000000000022401a120a100000000000802540000000000000294020890128ae013001",
+  "model": {
+    "@kind": "camera_calibration",
+    "waymocameracalibration.camera_calibration_name": "1",
+    "waymocameracalibration.camera_calibration_width": "137",
+    "waymocameracalibration.camera_calibration_height": "174",
+    "waymocameracalibration.camera_calibration_rolling_shutter_direction": "1",
+    "waymocameracalibration.camera_calibration_intrinsic.#": "2",
+    "waymocameracalibration.camera_calibration_intrinsic[0].waymocameracalibration.camera_calibration_intrinsic_item": "7.25",
+    "waymocameracalibration.camera_calibration_intrinsic[1].waymocameracalibration.camera_calibration_intrinsic_item": "9",
+    "waymocameracalibration.extrinsic_transform.#": "2",
+    "waymocameracalibration.extrinsic_transform[0].waymocameracalibration.transform_transform_item": "10.75",
+    "waymocameracalibration.extrinsic_transform[1].waymocameracalibration.transform_transform_item": "12.5"
+  }
+}

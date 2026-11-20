@@ -1,0 +1,15 @@
+{
+ "1": "motion_metrics_config_track_steps_per_second",
+ "10": "motion_metrics_config_max_predictions",
+ "2": "motion_metrics_config_prediction_steps_per_second",
+ "3": "motion_metrics_config_track_history_samples",
+ "4": "motion_metrics_config_track_future_samples",
+ "5": "motion_metrics_config_speed_lower_bound",
+ "6": "motion_metrics_config_speed_upper_bound",
+ "7": "motion_metrics_config_speed_scale_lower",
+ "8": "motion_metrics_config_speed_scale_upper",
+ "9[]": "motion_metrics_config_step_configurations",
+ "waymo.open_dataset.MotionMetricsConfig.MeasurementStepConfig:1": "measurement_step_config_measurement_step",
+ "waymo.open_dataset.MotionMetricsConfig.MeasurementStepConfig:2": "measurement_step_config_lateral_miss_threshold",
+ "waymo.open_dataset.MotionMetricsConfig.MeasurementStepConfig:3": "measurement_step_config_longitudinal_miss_threshold"
+}

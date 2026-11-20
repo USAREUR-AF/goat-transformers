@@ -1,0 +1,15 @@
+{
+  "name": "gen-camera_keypoints-roundtrip",
+  "from": "waymo-keypoints-camera-keypoints",
+  "to": "waymo-keypoints-camera-keypoints",
+  "input": "0a3f080112180a12090000000000000040110000000000000e40120208011a210a1b090000000000001d40110000000000002240190000000000802540120208010a3f080112180a12090000000000003040110000000000c03140120208011a210a1b090000000000403540110000000000003740190000000000c0384012020801",
+  "expect": "0a3f080112180a12090000000000000040110000000000000e40120208011a210a1b090000000000001d40110000000000002240190000000000802540120208010a3f080112180a12090000000000003040110000000000c03140120208011a210a1b090000000000403540110000000000003740190000000000c0384012020801",
+  "model": {
+    "@kind": "camera_keypoints",
+    "waymokeypointscamerakeypoints.camera_keypoints_keypoint.#": "2",
+    "waymokeypointscamerakeypoints.camera_keypoints_keypoint[0].waymokeypointscamerakeypoints.camera_keypoint_type": "1",
+    "waymokeypointscamerakeypoints.camera_keypoints_keypoint[0].waymokeypointscamerakeypoints.camera_keypoint_keypoint_2d_location_px_x": "2",
+    "waymokeypointscamerakeypoints.camera_keypoints_keypoint[1].waymokeypointscamerakeypoints.camera_keypoint_type": "1",
+    "waymokeypointscamerakeypoints.camera_keypoints_keypoint[1].waymokeypointscamerakeypoints.camera_keypoint_keypoint_2d_location_px_x": "16"
+  }
+}

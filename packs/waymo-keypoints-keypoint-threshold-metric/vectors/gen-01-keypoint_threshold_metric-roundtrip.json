@@ -1,0 +1,13 @@
+{
+  "name": "gen-keypoint_threshold_metric-roundtrip",
+  "from": "waymo-keypoints-keypoint-threshold-metric",
+  "to": "waymo-keypoints-keypoint-threshold-metric",
+  "input": "0d0000003e120c67726f75705f6e616d652d311d0000b03f",
+  "expect": "0d0000003e120c67726f75705f6e616d652d311d0000b03f",
+  "model": {
+    "@kind": "keypoint_threshold_metric",
+    "waymokeypointskeypointthresholdmetric.keypoint_threshold_metric_value": "0.125",
+    "waymokeypointskeypointthresholdmetric.keypoint_threshold_metric_group_name": "group_name-1",
+    "waymokeypointskeypointthresholdmetric.keypoint_threshold_metric_threshold": "1.375"
+  }
+}

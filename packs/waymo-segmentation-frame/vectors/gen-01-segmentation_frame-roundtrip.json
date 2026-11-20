@@ -1,0 +1,31 @@
+{
+  "name": "gen-segmentation_frame-roundtrip",
+  "from": "waymo-segmentation-frame",
+  "to": "waymo-segmentation-frame",
+  "input": "0a220801120e0a0c0a040000004012040a02f8011a0e0a0c0a040000504012040a02c2020a220801120e0a0c0a040000a44012040a02b1031a0e0a0c0a040000cc4012040a02fb03120e636f6e746578745f6e616d652d30188901",
+  "expect": "0a220801120e0a0c0a040000004012040a02f8011a0e0a0c0a040000504012040a02c2020a220801120e0a0c0a040000a44012040a02b1031a0e0a0c0a040000cc4012040a02fb03120e636f6e746578745f6e616d652d30188901",
+  "model": {
+    "@kind": "segmentation_frame",
+    "waymosegmentationframe.segmentation_frame_context_name": "context_name-0",
+    "waymosegmentationframe.segmentation_frame_frame_timestamp_micros": "137",
+    "waymosegmentationframe.segmentation_frame_segmentation_labels.#": "2",
+    "waymosegmentationframe.segmentation_frame_segmentation_labels[0].waymosegmentationframe.laser_name": "1",
+    "waymosegmentationframe.segmentation_frame_segmentation_labels[0].waymosegmentationframe.laser_ri_return1_range_image_data.#": "1",
+    "waymosegmentationframe.segmentation_frame_segmentation_labels[0].waymosegmentationframe.laser_ri_return1_range_image_data[0].waymosegmentationframe.matrix_float_data_item": "2",
+    "waymosegmentationframe.segmentation_frame_segmentation_labels[0].waymosegmentationframe.laser_ri_return1_range_image_shape_dims.#": "1",
+    "waymosegmentationframe.segmentation_frame_segmentation_labels[0].waymosegmentationframe.laser_ri_return1_range_image_shape_dims[0].waymosegmentationframe.matrix_shape_dims_item": "248",
+    "waymosegmentationframe.segmentation_frame_segmentation_labels[0].waymosegmentationframe.laser_ri_return2_range_image_data.#": "1",
+    "waymosegmentationframe.segmentation_frame_segmentation_labels[0].waymosegmentationframe.laser_ri_return2_range_image_data[0].waymosegmentationframe.matrix_float_data_item": "3.25",
+    "waymosegmentationframe.segmentation_frame_segmentation_labels[0].waymosegmentationframe.laser_ri_return2_range_image_shape_dims.#": "1",
+    "waymosegmentationframe.segmentation_frame_segmentation_labels[0].waymosegmentationframe.laser_ri_return2_range_image_shape_dims[0].waymosegmentationframe.matrix_shape_dims_item": "322",
+    "waymosegmentationframe.segmentation_frame_segmentation_labels[1].waymosegmentationframe.laser_name": "1",
+    "waymosegmentationframe.segmentation_frame_segmentation_labels[1].waymosegmentationframe.laser_ri_return1_range_image_data.#": "1",
+    "waymosegmentationframe.segmentation_frame_segmentation_labels[1].waymosegmentationframe.laser_ri_return1_range_image_data[0].waymosegmentationframe.matrix_float_data_item": "5.125",
+    "waymosegmentationframe.segmentation_frame_segmentation_labels[1].waymosegmentationframe.laser_ri_return1_range_image_shape_dims.#": "1",
+    "waymosegmentationframe.segmentation_frame_segmentation_labels[1].waymosegmentationframe.laser_ri_return1_range_image_shape_dims[0].waymosegmentationframe.matrix_shape_dims_item": "433",
+    "waymosegmentationframe.segmentation_frame_segmentation_labels[1].waymosegmentationframe.laser_ri_return2_range_image_data.#": "1",
+    "waymosegmentationframe.segmentation_frame_segmentation_labels[1].waymosegmentationframe.laser_ri_return2_range_image_data[0].waymosegmentationframe.matrix_float_data_item": "6.375",
+    "waymosegmentationframe.segmentation_frame_segmentation_labels[1].waymosegmentationframe.laser_ri_return2_range_image_shape_dims.#": "1",
+    "waymosegmentationframe.segmentation_frame_segmentation_labels[1].waymosegmentationframe.laser_ri_return2_range_image_shape_dims[0].waymosegmentationframe.matrix_shape_dims_item": "507"
+  }
+}

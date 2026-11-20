@@ -1,0 +1,19 @@
+{
+ "1": "sim_agent_metrics_scenario_id",
+ "10": "sim_agent_metrics_time_to_collision_likelihood",
+ "11": "sim_agent_metrics_distance_to_road_edge_likelihood",
+ "12": "sim_agent_metrics_offroad_indication_likelihood",
+ "13": "sim_agent_metrics_min_average_displacement_error",
+ "14": "sim_agent_metrics_simulated_collision_rate",
+ "15": "sim_agent_metrics_simulated_offroad_rate",
+ "16": "sim_agent_metrics_traffic_light_violation_likelihood",
+ "17": "sim_agent_metrics_simulated_traffic_light_violation_rate",
+ "2": "sim_agent_metrics_metametric",
+ "3": "sim_agent_metrics_average_displacement_error",
+ "4": "sim_agent_metrics_linear_speed_likelihood",
+ "5": "sim_agent_metrics_linear_acceleration_likelihood",
+ "6": "sim_agent_metrics_angular_speed_likelihood",
+ "7": "sim_agent_metrics_angular_acceleration_likelihood",
+ "8": "sim_agent_metrics_distance_to_nearest_object_likelihood",
+ "9": "sim_agent_metrics_collision_indication_likelihood"
+}

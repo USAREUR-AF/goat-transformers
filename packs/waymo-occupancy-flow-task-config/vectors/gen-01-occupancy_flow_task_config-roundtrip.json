@@ -1,0 +1,22 @@
+{
+  "name": "gen-occupancy_flow_task_config-roundtrip",
+  "from": "waymo-occupancy-flow-task-config",
+  "to": "waymo-occupancy-flow-task-config",
+  "input": "086410890118ae012001289d0230c20238e702408c034d0000b84050d60358fb036001",
+  "expect": "086410890118ae012001289d0230c20238e702408c034d0000b84050d60358fb036001",
+  "model": {
+    "@kind": "occupancy_flow_task_config",
+    "waymooccupancyflowtaskconfig.occupancy_flow_task_config_num_past_steps": "100",
+    "waymooccupancyflowtaskconfig.occupancy_flow_task_config_num_future_steps": "137",
+    "waymooccupancyflowtaskconfig.occupancy_flow_task_config_num_waypoints": "174",
+    "waymooccupancyflowtaskconfig.occupancy_flow_task_config_cumulative_waypoints": "1",
+    "waymooccupancyflowtaskconfig.occupancy_flow_task_config_normalize_sdc_yaw": "1",
+    "waymooccupancyflowtaskconfig.occupancy_flow_task_config_grid_height_cells": "285",
+    "waymooccupancyflowtaskconfig.occupancy_flow_task_config_grid_width_cells": "322",
+    "waymooccupancyflowtaskconfig.occupancy_flow_task_config_sdc_y_in_grid": "359",
+    "waymooccupancyflowtaskconfig.occupancy_flow_task_config_sdc_x_in_grid": "396",
+    "waymooccupancyflowtaskconfig.occupancy_flow_task_config_pixels_per_meter": "5.75",
+    "waymooccupancyflowtaskconfig.occupancy_flow_task_config_agent_points_per_side_length": "470",
+    "waymooccupancyflowtaskconfig.occupancy_flow_task_config_agent_points_per_side_width": "507"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "gen-keypoint_group_metric-roundtrip",
+  "from": "waymo-keypoints-keypoint-group-metric",
+  "to": "waymo-keypoints-keypoint-group-metric",
+  "input": "0d0000003e120c67726f75705f6e616d652d31",
+  "expect": "0d0000003e120c67726f75705f6e616d652d31",
+  "model": {
+    "@kind": "keypoint_group_metric",
+    "waymokeypointskeypointgroupmetric.keypoint_group_metric_value": "0.125",
+    "waymokeypointskeypointgroupmetric.keypoint_group_metric_group_name": "group_name-1"
+  }
+}

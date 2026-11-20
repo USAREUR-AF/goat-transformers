@@ -1,0 +1,9 @@
+{
+ "1": "laser_name",
+ "2.1.1[]": "ri_return1_range_image_data",
+ "2.1.2.1[]": "ri_return1_shape_dims",
+ "3.1.1[]": "ri_return2_range_image_data",
+ "3.1.2.1[]": "ri_return2_shape_dims",
+ "waymo.open_dataset.MatrixFloat:1[]item": "matrix_float_data_item",
+ "waymo.open_dataset.MatrixShape:1[]item": "matrix_shape_dims_item"
+}

@@ -1,0 +1,20 @@
+{
+ "11": "e2_edchallenge_submission_uses_public_model_pretraining",
+ "12": "e2_edchallenge_submission_num_model_parameters",
+ "13[]": "e2_edchallenge_submission_public_model_names",
+ "1[]": "e2_edchallenge_submission_predictions",
+ "2": "e2_edchallenge_submission_submission_type",
+ "3": "e2_edchallenge_submission_account_name",
+ "4": "e2_edchallenge_submission_unique_method_name",
+ "5[]": "e2_edchallenge_submission_authors",
+ "6": "e2_edchallenge_submission_affiliation",
+ "7": "e2_edchallenge_submission_description",
+ "8": "e2_edchallenge_submission_method_link",
+ "waymo.open_dataset.E2EDChallengeSubmission:13[]item": "e2_edchallenge_submission_public_model_names_item",
+ "waymo.open_dataset.E2EDChallengeSubmission:5[]item": "e2_edchallenge_submission_authors_item",
+ "waymo.open_dataset.FrameTrajectoryPredictions:1": "frame_trajectory_predictions_frame_name",
+ "waymo.open_dataset.FrameTrajectoryPredictions:2.1[]": "frame_trajectory_predictions_trajectory_pos_x",
+ "waymo.open_dataset.FrameTrajectoryPredictions:2.2[]": "frame_trajectory_predictions_trajectory_pos_y",
+ "waymo.open_dataset.TrajectoryPrediction:1[]item": "trajectory_prediction_pos_x_item",
+ "waymo.open_dataset.TrajectoryPrediction:2[]item": "trajectory_prediction_pos_y_item"
+}

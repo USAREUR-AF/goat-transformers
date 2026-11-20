@@ -1,0 +1,12 @@
+{
+  "name": "gen-vector2d-roundtrip",
+  "from": "waymo-vector2d",
+  "to": "waymo-vector2d",
+  "input": "09000000000000d03f110000000000000040",
+  "expect": "09000000000000d03f110000000000000040",
+  "model": {
+    "@kind": "vector2d",
+    "waymovector2d.vector2d_x": "0.25",
+    "waymovector2d.vector2d_y": "2"
+  }
+}

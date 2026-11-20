@@ -1,0 +1,26 @@
+{
+  "name": "gen-joint_prediction-roundtrip",
+  "from": "waymo-challenge-scenario-predictions",
+  "to": "waymo-challenge-scenario-predictions",
+  "input": "0a0d7363656e6172696f5f69642d301a340a18121108ae01120c1204000000401a04000028401d0000403f0a18121108c202120c1204000090401a040000a4401d00005040",
+  "expect": "0a0d7363656e6172696f5f69642d301a340a18121108ae01120c1204000000401a04000028401d0000403f0a18121108c202120c1204000090401a040000a4401d00005040",
+  "model": {
+    "@kind": "joint_prediction",
+    "waymochallengescenariopredictions.scenario_id": "scenario_id-0",
+    "waymochallengescenariopredictions.joint_prediction_joint_trajectories.#": "2",
+    "waymochallengescenariopredictions.joint_prediction_joint_trajectories[0].waymochallengescenariopredictions.scored_joint_trajectory_confidence": "0.75",
+    "waymochallengescenariopredictions.joint_prediction_joint_trajectories[0].waymochallengescenariopredictions.scored_joint_trajectory_trajectories.#": "1",
+    "waymochallengescenariopredictions.joint_prediction_joint_trajectories[0].waymochallengescenariopredictions.scored_joint_trajectory_trajectories[0].waymochallengescenariopredictions.object_trajectory_object_id": "174",
+    "waymochallengescenariopredictions.joint_prediction_joint_trajectories[0].waymochallengescenariopredictions.scored_joint_trajectory_trajectories[0].waymochallengescenariopredictions.object_trajectory_trajectory_center_x.#": "1",
+    "waymochallengescenariopredictions.joint_prediction_joint_trajectories[0].waymochallengescenariopredictions.scored_joint_trajectory_trajectories[0].waymochallengescenariopredictions.object_trajectory_trajectory_center_x[0].waymochallengescenariopredictions.trajectory_center_x_item": "2",
+    "waymochallengescenariopredictions.joint_prediction_joint_trajectories[0].waymochallengescenariopredictions.scored_joint_trajectory_trajectories[0].waymochallengescenariopredictions.object_trajectory_trajectory_center_y.#": "1",
+    "waymochallengescenariopredictions.joint_prediction_joint_trajectories[0].waymochallengescenariopredictions.scored_joint_trajectory_trajectories[0].waymochallengescenariopredictions.object_trajectory_trajectory_center_y[0].waymochallengescenariopredictions.trajectory_center_y_item": "2.625",
+    "waymochallengescenariopredictions.joint_prediction_joint_trajectories[1].waymochallengescenariopredictions.scored_joint_trajectory_confidence": "3.25",
+    "waymochallengescenariopredictions.joint_prediction_joint_trajectories[1].waymochallengescenariopredictions.scored_joint_trajectory_trajectories.#": "1",
+    "waymochallengescenariopredictions.joint_prediction_joint_trajectories[1].waymochallengescenariopredictions.scored_joint_trajectory_trajectories[0].waymochallengescenariopredictions.object_trajectory_object_id": "322",
+    "waymochallengescenariopredictions.joint_prediction_joint_trajectories[1].waymochallengescenariopredictions.scored_joint_trajectory_trajectories[0].waymochallengescenariopredictions.object_trajectory_trajectory_center_x.#": "1",
+    "waymochallengescenariopredictions.joint_prediction_joint_trajectories[1].waymochallengescenariopredictions.scored_joint_trajectory_trajectories[0].waymochallengescenariopredictions.object_trajectory_trajectory_center_x[0].waymochallengescenariopredictions.trajectory_center_x_item": "4.5",
+    "waymochallengescenariopredictions.joint_prediction_joint_trajectories[1].waymochallengescenariopredictions.scored_joint_trajectory_trajectories[0].waymochallengescenariopredictions.object_trajectory_trajectory_center_y.#": "1",
+    "waymochallengescenariopredictions.joint_prediction_joint_trajectories[1].waymochallengescenariopredictions.scored_joint_trajectory_trajectories[0].waymochallengescenariopredictions.object_trajectory_trajectory_center_y[0].waymochallengescenariopredictions.trajectory_center_y_item": "5.125"
+  }
+}

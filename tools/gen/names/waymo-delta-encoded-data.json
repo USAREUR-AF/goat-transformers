@@ -1,0 +1,10 @@
+{
+ "1[]": "delta_encoded_data_residual",
+ "2[]": "delta_encoded_data_mask",
+ "3.1[]": "metadata_shape",
+ "3.2[]": "metadata_quant_precision",
+ "waymo.open_dataset.DeltaEncodedData:1[]item": "delta_encoded_data_residual_item",
+ "waymo.open_dataset.DeltaEncodedData:2[]item": "delta_encoded_data_mask_item",
+ "waymo.open_dataset.Metadata:1[]item": "metadata_shape_item",
+ "waymo.open_dataset.Metadata:2[]item": "metadata_quant_precision_item"
+}

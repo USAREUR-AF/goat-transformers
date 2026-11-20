@@ -1,0 +1,19 @@
+{
+  "name": "gen-no_label_zone_object-roundtrip",
+  "from": "waymo-no-label-zone-object",
+  "to": "waymo-no-label-zone-object",
+  "input": "0a2a0a1000000000000016400000000000001d401210000000000000224000000000008025401a0469642d30120e636f6e746578745f6e616d652d3118ae01",
+  "expect": "0a2a0a1000000000000016400000000000001d401210000000000000224000000000008025401a0469642d30120e636f6e746578745f6e616d652d3118ae01",
+  "model": {
+    "@kind": "no_label_zone_object",
+    "waymonolabelzoneobject.zone_id": "id-0",
+    "waymonolabelzoneobject.no_label_zone_object_context_name": "context_name-1",
+    "waymonolabelzoneobject.no_label_zone_object_frame_timestamp_micros": "174",
+    "waymonolabelzoneobject.zone_x.#": "2",
+    "waymonolabelzoneobject.zone_x[0].waymonolabelzoneobject.polygon2d_proto_x_item": "5.5",
+    "waymonolabelzoneobject.zone_x[1].waymonolabelzoneobject.polygon2d_proto_x_item": "7.25",
+    "waymonolabelzoneobject.zone_y.#": "2",
+    "waymonolabelzoneobject.zone_y[0].waymonolabelzoneobject.polygon2d_proto_y_item": "9",
+    "waymonolabelzoneobject.zone_y[1].waymonolabelzoneobject.polygon2d_proto_y_item": "10.75"
+  }
+}

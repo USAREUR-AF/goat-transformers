@@ -1,0 +1,15 @@
+{
+  "name": "gen-speed_bump-roundtrip",
+  "from": "waymo-speed-bump",
+  "to": "waymo-speed-bump",
+  "input": "0a1b09000000000000d03f110000000000000040190000000000000e400a1b090000000000001640110000000000001d40190000000000002240",
+  "expect": "0a1b09000000000000d03f110000000000000040190000000000000e400a1b090000000000001640110000000000001d40190000000000002240",
+  "model": {
+    "@kind": "speed_bump",
+    "waymospeedbump.speed_bump_polygon.#": "2",
+    "waymospeedbump.speed_bump_polygon[0].waymospeedbump.map_point_x": "0.25",
+    "waymospeedbump.speed_bump_polygon[0].waymospeedbump.map_point_y": "2",
+    "waymospeedbump.speed_bump_polygon[1].waymospeedbump.map_point_x": "5.5",
+    "waymospeedbump.speed_bump_polygon[1].waymospeedbump.map_point_y": "7.25"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "gen-keypoint_visibility-roundtrip",
+  "from": "waymo-keypoints-keypoint-visibility",
+  "to": "waymo-keypoints-keypoint-visibility",
+  "input": "0801",
+  "expect": "0801",
+  "model": {
+    "@kind": "keypoint_visibility",
+    "waymokeypointskeypointvisibility.keypoint_visibility_is_occluded": "1"
+  }
+}

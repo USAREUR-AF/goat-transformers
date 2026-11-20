@@ -1,0 +1,13 @@
+{
+  "name": "gen-map_point-roundtrip",
+  "from": "waymo-map-point",
+  "to": "waymo-map-point",
+  "input": "09000000000000d03f110000000000000040190000000000000e40",
+  "expect": "09000000000000d03f110000000000000040190000000000000e40",
+  "model": {
+    "@kind": "map_point",
+    "waymomappoint.map_point_x": "0.25",
+    "waymomappoint.map_point_y": "2",
+    "waymomappoint.map_point_z": "3.75"
+  }
+}

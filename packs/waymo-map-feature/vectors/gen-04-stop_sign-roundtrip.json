@@ -1,0 +1,17 @@
+{
+  "name": "gen-stop_sign-roundtrip",
+  "from": "waymo-map-feature",
+  "to": "waymo-map-feature",
+  "input": "08643a230a04f8019d02121b090000000000000040110000000000000e40190000000000001640",
+  "expect": "08643a230a04f8019d02121b090000000000000040110000000000000e40190000000000001640",
+  "model": {
+    "@kind": "stop_sign",
+    "waymomapfeature.id": "100",
+    "waymomapfeature.position_x": "2",
+    "waymomapfeature.position_y": "3.75",
+    "waymomapfeature.position_z": "5.5",
+    "waymomapfeature.stop_sign_lane.#": "2",
+    "waymomapfeature.stop_sign_lane[0].waymomapfeature.stop_sign_lane_item": "248",
+    "waymomapfeature.stop_sign_lane[1].waymomapfeature.stop_sign_lane_item": "285"
+  }
+}

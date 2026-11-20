@@ -1,0 +1,15 @@
+{
+  "name": "gen-motion_metrics-roundtrip",
+  "from": "waymo-motion-metrics",
+  "to": "waymo-motion-metrics",
+  "input": "0a230d0000b03f15000000401d0000284025000050402d00007840308901380145000090400a230d0000cc40150000e0401d0000f440250000803e2d0000603f30b1033801450000c03f",
+  "expect": "0a230d0000b03f15000000401d0000284025000050402d00007840308901380145000090400a230d0000cc40150000e0401d0000f440250000803e2d0000603f30b1033801450000c03f",
+  "model": {
+    "@kind": "motion_metrics",
+    "waymomotionmetrics.motion_metrics_metrics_bundles.#": "2",
+    "waymomotionmetrics.motion_metrics_metrics_bundles[0].waymomotionmetrics.motion_metrics_bundle_object_filter": "1",
+    "waymomotionmetrics.motion_metrics_metrics_bundles[0].waymomotionmetrics.motion_metrics_bundle_measurement_step": "137",
+    "waymomotionmetrics.motion_metrics_metrics_bundles[1].waymomotionmetrics.motion_metrics_bundle_object_filter": "1",
+    "waymomotionmetrics.motion_metrics_metrics_bundles[1].waymomotionmetrics.motion_metrics_bundle_measurement_step": "433"
+  }
+}

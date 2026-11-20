@@ -1,0 +1,13 @@
+{
+ "1[]": "compressed_frame_laser_data_lasers",
+ "2[]": "compressed_frame_laser_data_laser_calibrations",
+ "3.1[]": "pose_transform",
+ "waymo.open_dataset.CompressedLaser:1": "compressed_laser_name",
+ "waymo.open_dataset.LaserCalibration:1": "laser_calibration_name",
+ "waymo.open_dataset.LaserCalibration:2[]": "laser_calibration_beam_inclinations",
+ "waymo.open_dataset.LaserCalibration:2[]item": "laser_calibration_beam_inclinations_item",
+ "waymo.open_dataset.LaserCalibration:3": "laser_calibration_beam_inclination_min",
+ "waymo.open_dataset.LaserCalibration:4": "laser_calibration_beam_inclination_max",
+ "waymo.open_dataset.LaserCalibration:5.1[]": "laser_calibration_extrinsic_transform",
+ "waymo.open_dataset.Transform:1[]item": "transform_transform_item"
+}

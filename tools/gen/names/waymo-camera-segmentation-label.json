@@ -1,0 +1,8 @@
+{
+ "1": "camera_segmentation_label_panoptic_label_divisor",
+ "3[]": "camera_segmentation_label_instance_id_to_global_id_mapping",
+ "4": "camera_segmentation_label_sequence_id",
+ "waymo.open_dataset.CameraSegmentationLabel.InstanceIDToGlobalIDMapping:1": "instance_idto_global_idmapping_local_instance_id",
+ "waymo.open_dataset.CameraSegmentationLabel.InstanceIDToGlobalIDMapping:2": "instance_idto_global_idmapping_global_instance_id",
+ "waymo.open_dataset.CameraSegmentationLabel.InstanceIDToGlobalIDMapping:3": "instance_idto_global_idmapping_is_tracked"
+}

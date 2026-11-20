@@ -1,0 +1,6 @@
+{
+ "1.1[]": "range_image_data",
+ "1.2.1[]": "range_image_shape_dims",
+ "waymo.open_dataset.MatrixFloat:1[]item": "matrix_float_data_item",
+ "waymo.open_dataset.MatrixShape:1[]item": "matrix_shape_dims_item"
+}

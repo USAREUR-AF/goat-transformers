@@ -1,0 +1,12 @@
+{
+ "1": "lane_neighbor_feature_id",
+ "2": "lane_neighbor_self_start_index",
+ "3": "lane_neighbor_self_end_index",
+ "4": "lane_neighbor_neighbor_start_index",
+ "5": "lane_neighbor_neighbor_end_index",
+ "6[]": "lane_neighbor_boundaries",
+ "waymo.open_dataset.BoundarySegment:1": "boundary_segment_lane_start_index",
+ "waymo.open_dataset.BoundarySegment:2": "boundary_segment_lane_end_index",
+ "waymo.open_dataset.BoundarySegment:3": "boundary_segment_boundary_feature_id",
+ "waymo.open_dataset.BoundarySegment:4": "boundary_segment_boundary_type"
+}

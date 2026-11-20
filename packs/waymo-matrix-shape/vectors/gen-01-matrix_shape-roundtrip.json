@@ -1,0 +1,13 @@
+{
+  "name": "gen-matrix_shape-roundtrip",
+  "from": "waymo-matrix-shape",
+  "to": "waymo-matrix-shape",
+  "input": "0a03648901",
+  "expect": "0a03648901",
+  "model": {
+    "@kind": "matrix_shape",
+    "waymomatrixshape.matrix_shape_dims.#": "2",
+    "waymomatrixshape.matrix_shape_dims[0].waymomatrixshape.matrix_shape_dims_item": "100",
+    "waymomatrixshape.matrix_shape_dims[1].waymomatrixshape.matrix_shape_dims_item": "137"
+  }
+}

@@ -1,0 +1,6 @@
+{
+ "1[]": "matrix_int32_data",
+ "2.1[]": "shape_dims",
+ "waymo.open_dataset.MatrixInt32:1[]item": "matrix_int32_data_item",
+ "waymo.open_dataset.MatrixShape:1[]item": "matrix_shape_dims_item"
+}

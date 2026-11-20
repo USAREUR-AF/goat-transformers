@@ -1,0 +1,22 @@
+{
+  "name": "gen-joint_trajectories-roundtrip",
+  "from": "waymo-joint-trajectories",
+  "to": "waymo-joint-trajectories",
+  "input": "120f08890112040000b03f1a0400000040120f08f8011204000050401a04000078401d0000003e",
+  "expect": "120f08890112040000b03f1a0400000040120f08f8011204000050401a04000078401d0000003e",
+  "model": {
+    "@kind": "joint_trajectories",
+    "waymojointtrajectories.joint_trajectories_confidence": "0.125",
+    "waymojointtrajectories.joint_trajectories_trajectories.#": "2",
+    "waymojointtrajectories.joint_trajectories_trajectories[0].waymojointtrajectories.single_trajectory_object_id": "137",
+    "waymojointtrajectories.joint_trajectories_trajectories[0].waymojointtrajectories.single_trajectory_center_x.#": "1",
+    "waymojointtrajectories.joint_trajectories_trajectories[0].waymojointtrajectories.single_trajectory_center_x[0].waymojointtrajectories.single_trajectory_center_x_item": "1.375",
+    "waymojointtrajectories.joint_trajectories_trajectories[0].waymojointtrajectories.single_trajectory_center_y.#": "1",
+    "waymojointtrajectories.joint_trajectories_trajectories[0].waymojointtrajectories.single_trajectory_center_y[0].waymojointtrajectories.single_trajectory_center_y_item": "2",
+    "waymojointtrajectories.joint_trajectories_trajectories[1].waymojointtrajectories.single_trajectory_object_id": "248",
+    "waymojointtrajectories.joint_trajectories_trajectories[1].waymojointtrajectories.single_trajectory_center_x.#": "1",
+    "waymojointtrajectories.joint_trajectories_trajectories[1].waymojointtrajectories.single_trajectory_center_x[0].waymojointtrajectories.single_trajectory_center_x_item": "3.25",
+    "waymojointtrajectories.joint_trajectories_trajectories[1].waymojointtrajectories.single_trajectory_center_y.#": "1",
+    "waymojointtrajectories.joint_trajectories_trajectories[1].waymojointtrajectories.single_trajectory_center_y[0].waymojointtrajectories.single_trajectory_center_y_item": "3.875"
+  }
+}

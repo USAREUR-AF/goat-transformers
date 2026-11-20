@@ -1,0 +1,7 @@
+{
+ "1": "camera_segmentation_metrics_wstq",
+ "2": "camera_segmentation_metrics_waq",
+ "3": "camera_segmentation_metrics_miou",
+ "5": "camera_segmentation_metrics_frame_dt",
+ "6": "camera_segmentation_metrics_runtime_ms"
+}

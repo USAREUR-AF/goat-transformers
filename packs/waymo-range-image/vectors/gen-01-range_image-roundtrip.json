@@ -1,0 +1,16 @@
+{
+  "name": "gen-range_image-roundtrip",
+  "from": "waymo-range-image",
+  "to": "waymo-range-image",
+  "input": "0a120a080000003e0000403f12060a04ae01d301",
+  "expect": "0a120a080000003e0000403f12060a04ae01d301",
+  "model": {
+    "@kind": "range_image",
+    "waymorangeimage.range_image_data.#": "2",
+    "waymorangeimage.range_image_data[0].waymorangeimage.matrix_float_data_item": "0.125",
+    "waymorangeimage.range_image_data[1].waymorangeimage.matrix_float_data_item": "0.75",
+    "waymorangeimage.range_image_shape_dims.#": "2",
+    "waymorangeimage.range_image_shape_dims[0].waymorangeimage.matrix_shape_dims_item": "174",
+    "waymorangeimage.range_image_shape_dims[1].waymorangeimage.matrix_shape_dims_item": "211"
+  }
+}

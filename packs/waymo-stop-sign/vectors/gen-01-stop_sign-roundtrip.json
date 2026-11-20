@@ -1,0 +1,16 @@
+{
+  "name": "gen-stop_sign-roundtrip",
+  "from": "waymo-stop-sign",
+  "to": "waymo-stop-sign",
+  "input": "0a04d301f801121b09000000000000d03f110000000000000040190000000000000e40",
+  "expect": "0a04d301f801121b09000000000000d03f110000000000000040190000000000000e40",
+  "model": {
+    "@kind": "stop_sign",
+    "waymostopsign.position_x": "0.25",
+    "waymostopsign.position_y": "2",
+    "waymostopsign.position_z": "3.75",
+    "waymostopsign.stop_sign_lane.#": "2",
+    "waymostopsign.stop_sign_lane[0].waymostopsign.stop_sign_lane_item": "211",
+    "waymostopsign.stop_sign_lane[1].waymostopsign.stop_sign_lane_item": "248"
+  }
+}

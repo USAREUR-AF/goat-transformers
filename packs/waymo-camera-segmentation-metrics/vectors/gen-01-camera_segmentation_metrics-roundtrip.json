@@ -1,0 +1,15 @@
+{
+  "name": "gen-camera_segmentation_metrics-roundtrip",
+  "from": "waymo-camera-segmentation-metrics",
+  "to": "waymo-camera-segmentation-metrics",
+  "input": "0d0000003e150000403f1d0000b03f28d3013500002840",
+  "expect": "0d0000003e150000403f1d0000b03f28d3013500002840",
+  "model": {
+    "@kind": "camera_segmentation_metrics",
+    "waymocamerasegmentationmetrics.camera_segmentation_metrics_wstq": "0.125",
+    "waymocamerasegmentationmetrics.camera_segmentation_metrics_waq": "0.75",
+    "waymocamerasegmentationmetrics.camera_segmentation_metrics_miou": "1.375",
+    "waymocamerasegmentationmetrics.camera_segmentation_metrics_frame_dt": "211",
+    "waymocamerasegmentationmetrics.camera_segmentation_metrics_runtime_ms": "2.625"
+  }
+}

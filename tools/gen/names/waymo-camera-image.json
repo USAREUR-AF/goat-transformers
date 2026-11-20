@@ -1,0 +1,21 @@
+{
+ "1": "camera_image_name",
+ "10.1": "camera_segmentation_label_panoptic_label_divisor",
+ "10.3[]": "camera_segmentation_label_instance_id_to_global_id_mapping",
+ "10.4": "camera_segmentation_label_sequence_id",
+ "3.1[]": "pose_transform",
+ "4.1": "velocity_v_x",
+ "4.2": "velocity_v_y",
+ "4.3": "velocity_v_z",
+ "4.4": "velocity_w_x",
+ "4.5": "velocity_w_y",
+ "4.6": "velocity_w_z",
+ "5": "camera_image_pose_timestamp",
+ "6": "camera_image_shutter",
+ "7": "camera_image_camera_trigger_time",
+ "8": "camera_image_camera_readout_done_time",
+ "waymo.open_dataset.CameraSegmentationLabel.InstanceIDToGlobalIDMapping:1": "instance_idto_global_idmapping_local_instance_id",
+ "waymo.open_dataset.CameraSegmentationLabel.InstanceIDToGlobalIDMapping:2": "instance_idto_global_idmapping_global_instance_id",
+ "waymo.open_dataset.CameraSegmentationLabel.InstanceIDToGlobalIDMapping:3": "instance_idto_global_idmapping_is_tracked",
+ "waymo.open_dataset.Transform:1[]item": "transform_transform_item"
+}

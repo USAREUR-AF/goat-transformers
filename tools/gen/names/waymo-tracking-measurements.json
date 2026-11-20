@@ -1,0 +1,22 @@
+{
+ "1[]": "tracking_measurements_measurements",
+ "2.1": "breakdown_generator_id",
+ "2.2": "breakdown_shard",
+ "2.3": "breakdown_difficulty_level",
+ "waymo.open_dataset.TrackingMeasurement.Details:1[]": "details_fp_pred_ids",
+ "waymo.open_dataset.TrackingMeasurement.Details:1[]item": "details_fp_pred_ids_item",
+ "waymo.open_dataset.TrackingMeasurement.Details:2[]": "details_fn_gt_ids",
+ "waymo.open_dataset.TrackingMeasurement.Details:2[]item": "details_fn_gt_ids_item",
+ "waymo.open_dataset.TrackingMeasurement.Details:3[]": "details_tp_gt_ids",
+ "waymo.open_dataset.TrackingMeasurement.Details:3[]item": "details_tp_gt_ids_item",
+ "waymo.open_dataset.TrackingMeasurement.Details:4[]": "details_tp_pred_ids",
+ "waymo.open_dataset.TrackingMeasurement.Details:4[]item": "details_tp_pred_ids_item",
+ "waymo.open_dataset.TrackingMeasurement:1": "tracking_measurement_num_misses",
+ "waymo.open_dataset.TrackingMeasurement:2": "tracking_measurement_num_fps",
+ "waymo.open_dataset.TrackingMeasurement:3": "tracking_measurement_num_mismatches",
+ "waymo.open_dataset.TrackingMeasurement:4": "tracking_measurement_matching_cost",
+ "waymo.open_dataset.TrackingMeasurement:5": "tracking_measurement_num_matches",
+ "waymo.open_dataset.TrackingMeasurement:6": "tracking_measurement_num_objects_gt",
+ "waymo.open_dataset.TrackingMeasurement:7": "tracking_measurement_score_cutoff",
+ "waymo.open_dataset.TrackingMeasurement:8[]": "tracking_measurement_details"
+}

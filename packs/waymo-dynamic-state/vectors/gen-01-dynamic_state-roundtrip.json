@@ -1,0 +1,16 @@
+{
+  "name": "gen-dynamic_state-roundtrip",
+  "from": "waymo-dynamic-state",
+  "to": "waymo-dynamic-state",
+  "input": "09000000000000d03f122208890110011a1b090000000000001640110000000000001d40190000000000002240122208c20210011a1b090000000000802c40110000000000003040190000000000c03140",
+  "expect": "09000000000000d03f122208890110011a1b090000000000001640110000000000001d40190000000000002240122208c20210011a1b090000000000802c40110000000000003040190000000000c03140",
+  "model": {
+    "@kind": "dynamic_state",
+    "waymodynamicstate.dynamic_state_timestamp_seconds": "0.25",
+    "waymodynamicstate.dynamic_state_lane_states.#": "2",
+    "waymodynamicstate.dynamic_state_lane_states[0].waymodynamicstate.traffic_signal_lane_state_lane": "137",
+    "waymodynamicstate.dynamic_state_lane_states[0].waymodynamicstate.traffic_signal_lane_state_state": "1",
+    "waymodynamicstate.dynamic_state_lane_states[1].waymodynamicstate.traffic_signal_lane_state_lane": "322",
+    "waymodynamicstate.dynamic_state_lane_states[1].waymodynamicstate.traffic_signal_lane_state_state": "1"
+  }
+}

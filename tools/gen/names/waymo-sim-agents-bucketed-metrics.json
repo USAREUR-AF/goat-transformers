@@ -1,0 +1,10 @@
+{
+ "1": "sim_agents_bucketed_metrics_realism_meta_metric",
+ "10": "sim_agents_bucketed_metrics_simulated_traffic_light_violation_rate",
+ "2": "sim_agents_bucketed_metrics_kinematic_metrics",
+ "5": "sim_agents_bucketed_metrics_interactive_metrics",
+ "6": "sim_agents_bucketed_metrics_map_based_metrics",
+ "7": "sim_agents_bucketed_metrics_min_ade",
+ "8": "sim_agents_bucketed_metrics_simulated_collision_rate",
+ "9": "sim_agents_bucketed_metrics_simulated_offroad_rate"
+}

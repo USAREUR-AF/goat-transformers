@@ -1,0 +1,6 @@
+{
+ "2[]": "trajectory_center_x",
+ "3[]": "trajectory_center_y",
+ "waymo.open_dataset.Trajectory:2[]item": "trajectory_center_x_item",
+ "waymo.open_dataset.Trajectory:3[]item": "trajectory_center_y_item"
+}

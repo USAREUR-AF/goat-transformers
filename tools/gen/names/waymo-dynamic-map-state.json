@@ -1,0 +1,8 @@
+{
+ "1[]": "dynamic_map_state_lane_states",
+ "waymo.open_dataset.TrafficSignalLaneState:1": "traffic_signal_lane_state_lane",
+ "waymo.open_dataset.TrafficSignalLaneState:2": "traffic_signal_lane_state_state",
+ "waymo.open_dataset.TrafficSignalLaneState:3.1": "traffic_signal_lane_state_stop_point_x",
+ "waymo.open_dataset.TrafficSignalLaneState:3.2": "traffic_signal_lane_state_stop_point_y",
+ "waymo.open_dataset.TrafficSignalLaneState:3.3": "traffic_signal_lane_state_stop_point_z"
+}

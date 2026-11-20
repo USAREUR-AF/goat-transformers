@@ -1,0 +1,15 @@
+{
+  "name": "gen-dynamic_map_state-roundtrip",
+  "from": "waymo-dynamic-map-state",
+  "to": "waymo-dynamic-map-state",
+  "input": "0a21086410011a1b090000000000000e40110000000000001640190000000000001d400a22089d0210011a1b090000000000002940110000000000802c40190000000000003040",
+  "expect": "0a21086410011a1b090000000000000e40110000000000001640190000000000001d400a22089d0210011a1b090000000000002940110000000000802c40190000000000003040",
+  "model": {
+    "@kind": "dynamic_map_state",
+    "waymodynamicmapstate.dynamic_map_state_lane_states.#": "2",
+    "waymodynamicmapstate.dynamic_map_state_lane_states[0].waymodynamicmapstate.traffic_signal_lane_state_lane": "100",
+    "waymodynamicmapstate.dynamic_map_state_lane_states[0].waymodynamicmapstate.traffic_signal_lane_state_state": "1",
+    "waymodynamicmapstate.dynamic_map_state_lane_states[1].waymodynamicmapstate.traffic_signal_lane_state_lane": "285",
+    "waymodynamicmapstate.dynamic_map_state_lane_states[1].waymodynamicmapstate.traffic_signal_lane_state_state": "1"
+  }
+}

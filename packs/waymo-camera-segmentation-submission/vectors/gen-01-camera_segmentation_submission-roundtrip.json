@@ -1,0 +1,31 @@
+{
+  "name": "gen-camera_segmentation_submission-roundtrip",
+  "from": "waymo-camera-segmentation-submission",
+  "to": "waymo-camera-segmentation-submission",
+  "input": "0a0e6163636f756e745f6e616d652d301214756e697175655f6d6574686f645f6e616d652d311a09617574686f72732d371a09617574686f72732d38220d616666696c696174696f6e2d322a0d6465736372697074696f6e2d33320d6d6574686f645f6c696e6b2d34389d0245000078404a6e0a350a1d08b1031a0808ea04108f051801220e73657175656e63655f69642d3130120f636f6e746578745f6e616d652d313118a00420010a350a1d08d9051a0808920710b7071801220e73657175656e63655f69642d3138120f636f6e746578745f6e616d652d313918c8062001",
+  "expect": "0a0e6163636f756e745f6e616d652d301214756e697175655f6d6574686f645f6e616d652d311a09617574686f72732d371a09617574686f72732d38220d616666696c696174696f6e2d322a0d6465736372697074696f6e2d33320d6d6574686f645f6c696e6b2d34389d0245000078404a6e0a350a1d08b1031a0808ea04108f051801220e73657175656e63655f69642d3130120f636f6e746578745f6e616d652d313118a00420010a350a1d08d9051a0808920710b7071801220e73657175656e63655f69642d3138120f636f6e746578745f6e616d652d313918c8062001",
+  "model": {
+    "@kind": "camera_segmentation_submission",
+    "waymocamerasegmentationsubmission.camera_segmentation_submission_account_name": "account_name-0",
+    "waymocamerasegmentationsubmission.camera_segmentation_submission_unique_method_name": "unique_method_name-1",
+    "waymocamerasegmentationsubmission.camera_segmentation_submission_affiliation": "affiliation-2",
+    "waymocamerasegmentationsubmission.camera_segmentation_submission_description": "description-3",
+    "waymocamerasegmentationsubmission.camera_segmentation_submission_method_link": "method_link-4",
+    "waymocamerasegmentationsubmission.camera_segmentation_submission_frame_dt": "285",
+    "waymocamerasegmentationsubmission.camera_segmentation_submission_runtime_ms": "3.875",
+    "waymocamerasegmentationsubmission.camera_segmentation_submission_authors.#": "2",
+    "waymocamerasegmentationsubmission.camera_segmentation_submission_authors[0].waymocamerasegmentationsubmission.camera_segmentation_submission_authors_item": "authors-7",
+    "waymocamerasegmentationsubmission.camera_segmentation_submission_authors[1].waymocamerasegmentationsubmission.camera_segmentation_submission_authors_item": "authors-8",
+    "waymocamerasegmentationsubmission.predicted_segmentation_labels_frames.#": "2",
+    "waymocamerasegmentationsubmission.predicted_segmentation_labels_frames[0].waymocamerasegmentationsubmission.camera_segmentation_frame_camera_segmentation_label_panoptic_label_divisor": "433",
+    "waymocamerasegmentationsubmission.predicted_segmentation_labels_frames[0].waymocamerasegmentationsubmission.camera_segmentation_frame_camera_segmentation_label_sequence_id": "sequence_id-10",
+    "waymocamerasegmentationsubmission.predicted_segmentation_labels_frames[0].waymocamerasegmentationsubmission.camera_segmentation_frame_camera_segmentation_label_instance_id_to_global_id_mapping.#": "1",
+    "waymocamerasegmentationsubmission.predicted_segmentation_labels_frames[0].waymocamerasegmentationsubmission.camera_segmentation_frame_camera_segmentation_label_instance_id_to_global_id_mapping[0].waymocamerasegmentationsubmission.instance_idto_global_idmapping_local_instance_id": "618",
+    "waymocamerasegmentationsubmission.predicted_segmentation_labels_frames[0].waymocamerasegmentationsubmission.camera_segmentation_frame_camera_segmentation_label_instance_id_to_global_id_mapping[0].waymocamerasegmentationsubmission.instance_idto_global_idmapping_global_instance_id": "655",
+    "waymocamerasegmentationsubmission.predicted_segmentation_labels_frames[1].waymocamerasegmentationsubmission.camera_segmentation_frame_camera_segmentation_label_panoptic_label_divisor": "729",
+    "waymocamerasegmentationsubmission.predicted_segmentation_labels_frames[1].waymocamerasegmentationsubmission.camera_segmentation_frame_camera_segmentation_label_sequence_id": "sequence_id-18",
+    "waymocamerasegmentationsubmission.predicted_segmentation_labels_frames[1].waymocamerasegmentationsubmission.camera_segmentation_frame_camera_segmentation_label_instance_id_to_global_id_mapping.#": "1",
+    "waymocamerasegmentationsubmission.predicted_segmentation_labels_frames[1].waymocamerasegmentationsubmission.camera_segmentation_frame_camera_segmentation_label_instance_id_to_global_id_mapping[0].waymocamerasegmentationsubmission.instance_idto_global_idmapping_local_instance_id": "914",
+    "waymocamerasegmentationsubmission.predicted_segmentation_labels_frames[1].waymocamerasegmentationsubmission.camera_segmentation_frame_camera_segmentation_label_instance_id_to_global_id_mapping[0].waymocamerasegmentationsubmission.instance_idto_global_idmapping_global_instance_id": "951"
+  }
+}
