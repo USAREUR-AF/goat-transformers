@@ -1,0 +1,9 @@
+{
+  "name": "uat-ground-to-geojson",
+  "from": "uat",
+  "to": "geojson",
+  "input": "18a1b2c35b8d803d090002998035961a51177a836a18840b46a58a800011a86481a8",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[42.91534423828125,64.37301635742188]},\"properties\":{\"course\":210.9375}}",
+  "source": "constructed",
+  "reference": "dump978 f40aa9a0 uat_message.cc; bytes by tools/gen/uat-vectors.py; geojson by hand: course carried, altitude not"
+}

@@ -1,0 +1,527 @@
+# UAT (978 MHz) ADS-B downlink payloads: basic (18 bytes, payload type 0) and long
+# (34 bytes, payload types 1-31), after Reed-Solomon decoding. Public.
+# Bit offsets count from the most significant bit of the first payload byte;
+# dump978 numbers the same bit as byte 1, bit 1 (pack.md, Layout).
+format     uat
+version    0.1.0
+distribution public
+source     "dump978 (https://github.com/flightaware/dump978, BSD-2-Clause, Copyright 2015 Oliver Jowett, 2019 FlightAware LLC) at commit f40aa9a0d2d0a0067c0c628b44ba316f7049b8ce: uat_message.cc (AdsbMessage, DecodeSV, DecodeMS, DecodeAUXSV, DecodeTS), uat_message.h (RawMessage::Bits, the enumerations), uat_protocol.h; layouts restated, no code copied"
+source     "Not used: RTCA DO-282 (UAT MOPS), a paid document not held"
+uses       uat
+wire       bits
+word_bytes 1
+bit_order  msb
+
+# HDR, bytes 1-4
+field    uat.payload_type                   0:0:5  uint
+field    uat.address_qualifier              0:5:3  uint
+field    uat.address                        0:8:24  uint
+
+kind     long-sv-ms-auxsv
+when     0:0:5  1
+requires uat.payload_type=1
+# State vector, bytes 5-17 (bits 32-135)
+if  !0:32:47  0                                # a position is present when latitude or longitude is not zero
+  field    lat                                0:32:23  sscale:180/8388608
+  field    lon                                0:55:24  sscale:180/8388608
+end
+field    uat.altitude_type                  0:79:1  uint
+if  0:79:1  0
+  field    uat.pressure_altitude_ft           0:80:12  siscale:25:-1025  absent 0
+end
+if  0:79:1  1
+  field    uat.geometric_altitude_ft          0:80:12  siscale:25:-1025  absent 0
+end
+field    uat.nic                            0:92:4  uint
+field    uat.air_ground_state               0:96:2  uint
+field    uat.sv_reserved_98                 0:98:1  uint
+if  0:96:2  0,1                               # airborne
+  field    uat.north_south_sign               0:99:1  uint
+  field    uat.north_south_velocity_raw       0:100:10  uint
+  field    uat.east_west_sign                 0:110:1  uint
+  field    uat.east_west_velocity_raw         0:111:10  uint
+  field    uat.vertical_velocity_source       0:121:1  uint
+  field    uat.vertical_velocity_sign         0:122:1  uint
+  field    uat.vertical_velocity_raw          0:123:9  uint
+end
+if  0:96:2  2                                  # on the ground
+  field    uat.ground_reserved_99             0:99:1  uint
+  field    uat.ground_speed_raw               0:100:10  uint
+  field    uat.track_heading_type             0:110:2  uint
+  field    uat.track_heading_raw              0:112:9  uint
+  field    uat.aircraft_size                  0:121:4  uint
+  field    uat.ground_reserved_125            0:125:1  uint
+  field    uat.gps_offset_longitudinal        0:126:1  uint
+  field    uat.gps_offset_raw                 0:127:5  uint
+  if  0:110:2  1                               # a true track
+    field    course                             0:112:9  uscale:45/64
+  end
+end
+if  0:96:2  3
+  field    uat.air_ground_reserved_bits       0:99:33  uint
+end
+if  0:5:3  0,1,4,5                             # ADS-B, surface vehicle, fixed beacon
+  field    uat.utc_coupled                    0:132:1  uint
+  field    uat.uplink_feedback                0:133:3  uint
+end
+if  0:5:3  2,3,6                               # TIS-B and ADS-R
+  field    uat.tisb_site_id                   0:132:4  uint
+end
+if  0:5:3  7
+  field    uat.sv_aq_reserved                 0:132:4  uint
+end
+# Mode status, bytes 18-29 (bits 136-231)
+field    uat.callsign_word1                 0:136:16  uint
+field    uat.callsign_word2                 0:152:16  uint
+field    uat.callsign_word3                 0:168:16  uint
+field    uat.emergency_status               0:184:3  uint
+field    uat.mops_version                   0:187:3  uint
+field    uat.sil                            0:190:2  uint
+field    uat.transmit_mso                   0:192:6  uint
+field    uat.sda                            0:198:2  uint
+field    uat.nac_p                          0:200:4  uint
+field    uat.nac_v                          0:204:3  uint
+field    uat.nic_baro                       0:207:1  uint
+field    uat.cc_uat_in                      0:208:1  uint
+field    uat.cc_es_in                       0:209:1  uint
+field    uat.cc_tcas_operational            0:210:1  uint
+field    uat.om_tcas_ra_active              0:211:1  uint
+field    uat.om_ident_active                0:212:1  uint
+field    uat.om_atc_services                0:213:1  uint
+field    uat.csid                           0:214:1  uint
+field    uat.sil_supplement                 0:215:1  uint
+field    uat.gva                            0:216:2  uint
+field    uat.single_antenna                 0:218:1  uint
+field    uat.nic_supplement                 0:219:1  uint
+field    uat.ms_reserved                    0:220:12  uint
+# Auxiliary state vector, bytes 30-31 (bits 232-243): the other altitude
+if  0:79:1  0
+  field    uat.geometric_altitude_ft          0:232:12  siscale:25:-1025  absent 0
+end
+if  0:79:1  1
+  field    uat.pressure_altitude_ft           0:232:12  siscale:25:-1025  absent 0
+end
+field    uat.auxsv_reserved                 0:244:28  uint
+
+kind     long-sv-auxsv
+when     0:0:5  2,5
+requires uat.payload_type=2,5
+# State vector, bytes 5-17 (bits 32-135)
+if  !0:32:47  0                                # a position is present when latitude or longitude is not zero
+  field    lat                                0:32:23  sscale:180/8388608
+  field    lon                                0:55:24  sscale:180/8388608
+end
+field    uat.altitude_type                  0:79:1  uint
+if  0:79:1  0
+  field    uat.pressure_altitude_ft           0:80:12  siscale:25:-1025  absent 0
+end
+if  0:79:1  1
+  field    uat.geometric_altitude_ft          0:80:12  siscale:25:-1025  absent 0
+end
+field    uat.nic                            0:92:4  uint
+field    uat.air_ground_state               0:96:2  uint
+field    uat.sv_reserved_98                 0:98:1  uint
+if  0:96:2  0,1                               # airborne
+  field    uat.north_south_sign               0:99:1  uint
+  field    uat.north_south_velocity_raw       0:100:10  uint
+  field    uat.east_west_sign                 0:110:1  uint
+  field    uat.east_west_velocity_raw         0:111:10  uint
+  field    uat.vertical_velocity_source       0:121:1  uint
+  field    uat.vertical_velocity_sign         0:122:1  uint
+  field    uat.vertical_velocity_raw          0:123:9  uint
+end
+if  0:96:2  2                                  # on the ground
+  field    uat.ground_reserved_99             0:99:1  uint
+  field    uat.ground_speed_raw               0:100:10  uint
+  field    uat.track_heading_type             0:110:2  uint
+  field    uat.track_heading_raw              0:112:9  uint
+  field    uat.aircraft_size                  0:121:4  uint
+  field    uat.ground_reserved_125            0:125:1  uint
+  field    uat.gps_offset_longitudinal        0:126:1  uint
+  field    uat.gps_offset_raw                 0:127:5  uint
+  if  0:110:2  1                               # a true track
+    field    course                             0:112:9  uscale:45/64
+  end
+end
+if  0:96:2  3
+  field    uat.air_ground_reserved_bits       0:99:33  uint
+end
+if  0:5:3  0,1,4,5                             # ADS-B, surface vehicle, fixed beacon
+  field    uat.utc_coupled                    0:132:1  uint
+  field    uat.uplink_feedback                0:133:3  uint
+end
+if  0:5:3  2,3,6                               # TIS-B and ADS-R
+  field    uat.tisb_site_id                   0:132:4  uint
+end
+if  0:5:3  7
+  field    uat.sv_aq_reserved                 0:132:4  uint
+end
+field    uat.reserved_bits_136_183          0:136:48  uint
+field    uat.reserved_bits_184_231          0:184:48  uint
+# Auxiliary state vector, bytes 30-31 (bits 232-243): the other altitude
+if  0:79:1  0
+  field    uat.geometric_altitude_ft          0:232:12  siscale:25:-1025  absent 0
+end
+if  0:79:1  1
+  field    uat.pressure_altitude_ft           0:232:12  siscale:25:-1025  absent 0
+end
+field    uat.auxsv_reserved                 0:244:28  uint
+
+kind     long-sv-ms-ts
+when     0:0:5  3
+requires uat.payload_type=3
+# State vector, bytes 5-17 (bits 32-135)
+if  !0:32:47  0                                # a position is present when latitude or longitude is not zero
+  field    lat                                0:32:23  sscale:180/8388608
+  field    lon                                0:55:24  sscale:180/8388608
+end
+field    uat.altitude_type                  0:79:1  uint
+if  0:79:1  0
+  field    uat.pressure_altitude_ft           0:80:12  siscale:25:-1025  absent 0
+end
+if  0:79:1  1
+  field    uat.geometric_altitude_ft          0:80:12  siscale:25:-1025  absent 0
+end
+field    uat.nic                            0:92:4  uint
+field    uat.air_ground_state               0:96:2  uint
+field    uat.sv_reserved_98                 0:98:1  uint
+if  0:96:2  0,1                               # airborne
+  field    uat.north_south_sign               0:99:1  uint
+  field    uat.north_south_velocity_raw       0:100:10  uint
+  field    uat.east_west_sign                 0:110:1  uint
+  field    uat.east_west_velocity_raw         0:111:10  uint
+  field    uat.vertical_velocity_source       0:121:1  uint
+  field    uat.vertical_velocity_sign         0:122:1  uint
+  field    uat.vertical_velocity_raw          0:123:9  uint
+end
+if  0:96:2  2                                  # on the ground
+  field    uat.ground_reserved_99             0:99:1  uint
+  field    uat.ground_speed_raw               0:100:10  uint
+  field    uat.track_heading_type             0:110:2  uint
+  field    uat.track_heading_raw              0:112:9  uint
+  field    uat.aircraft_size                  0:121:4  uint
+  field    uat.ground_reserved_125            0:125:1  uint
+  field    uat.gps_offset_longitudinal        0:126:1  uint
+  field    uat.gps_offset_raw                 0:127:5  uint
+  if  0:110:2  1                               # a true track
+    field    course                             0:112:9  uscale:45/64
+  end
+end
+if  0:96:2  3
+  field    uat.air_ground_reserved_bits       0:99:33  uint
+end
+if  0:5:3  0,1,4,5                             # ADS-B, surface vehicle, fixed beacon
+  field    uat.utc_coupled                    0:132:1  uint
+  field    uat.uplink_feedback                0:133:3  uint
+end
+if  0:5:3  2,3,6                               # TIS-B and ADS-R
+  field    uat.tisb_site_id                   0:132:4  uint
+end
+if  0:5:3  7
+  field    uat.sv_aq_reserved                 0:132:4  uint
+end
+# Mode status, bytes 18-29 (bits 136-231)
+field    uat.callsign_word1                 0:136:16  uint
+field    uat.callsign_word2                 0:152:16  uint
+field    uat.callsign_word3                 0:168:16  uint
+field    uat.emergency_status               0:184:3  uint
+field    uat.mops_version                   0:187:3  uint
+field    uat.sil                            0:190:2  uint
+field    uat.transmit_mso                   0:192:6  uint
+field    uat.sda                            0:198:2  uint
+field    uat.nac_p                          0:200:4  uint
+field    uat.nac_v                          0:204:3  uint
+field    uat.nic_baro                       0:207:1  uint
+field    uat.cc_uat_in                      0:208:1  uint
+field    uat.cc_es_in                       0:209:1  uint
+field    uat.cc_tcas_operational            0:210:1  uint
+field    uat.om_tcas_ra_active              0:211:1  uint
+field    uat.om_ident_active                0:212:1  uint
+field    uat.om_atc_services                0:213:1  uint
+field    uat.csid                           0:214:1  uint
+field    uat.sil_supplement                 0:215:1  uint
+field    uat.gva                            0:216:2  uint
+field    uat.single_antenna                 0:218:1  uint
+field    uat.nic_supplement                 0:219:1  uint
+field    uat.ms_reserved                    0:220:12  uint
+# Target state, bits 232-271
+field    uat.selected_altitude_type         0:232:1  uint
+field    uat.selected_altitude_ft           0:233:11  siscale:32:-32  absent 0
+field    uat.barometric_pressure_setting_hpa 0:244:9  uscale:0.8:799.2  absent 0
+field    uat.selected_heading_valid         0:253:1  uint
+field    uat.selected_heading_sign          0:254:1  uint
+field    uat.selected_heading_raw           0:255:8  uint
+field    uat.mode_indicators_valid          0:263:1  uint
+field    uat.mode_autopilot                 0:264:1  uint
+field    uat.mode_vnav                      0:265:1  uint
+field    uat.mode_altitude_hold             0:266:1  uint
+field    uat.mode_approach                  0:267:1  uint
+field    uat.mode_lnav                      0:268:1  uint
+field    uat.ts_reserved                    0:269:3  uint
+
+kind     long-sv-ts
+when     0:0:5  4
+requires uat.payload_type=4
+# State vector, bytes 5-17 (bits 32-135)
+if  !0:32:47  0                                # a position is present when latitude or longitude is not zero
+  field    lat                                0:32:23  sscale:180/8388608
+  field    lon                                0:55:24  sscale:180/8388608
+end
+field    uat.altitude_type                  0:79:1  uint
+if  0:79:1  0
+  field    uat.pressure_altitude_ft           0:80:12  siscale:25:-1025  absent 0
+end
+if  0:79:1  1
+  field    uat.geometric_altitude_ft          0:80:12  siscale:25:-1025  absent 0
+end
+field    uat.nic                            0:92:4  uint
+field    uat.air_ground_state               0:96:2  uint
+field    uat.sv_reserved_98                 0:98:1  uint
+if  0:96:2  0,1                               # airborne
+  field    uat.north_south_sign               0:99:1  uint
+  field    uat.north_south_velocity_raw       0:100:10  uint
+  field    uat.east_west_sign                 0:110:1  uint
+  field    uat.east_west_velocity_raw         0:111:10  uint
+  field    uat.vertical_velocity_source       0:121:1  uint
+  field    uat.vertical_velocity_sign         0:122:1  uint
+  field    uat.vertical_velocity_raw          0:123:9  uint
+end
+if  0:96:2  2                                  # on the ground
+  field    uat.ground_reserved_99             0:99:1  uint
+  field    uat.ground_speed_raw               0:100:10  uint
+  field    uat.track_heading_type             0:110:2  uint
+  field    uat.track_heading_raw              0:112:9  uint
+  field    uat.aircraft_size                  0:121:4  uint
+  field    uat.ground_reserved_125            0:125:1  uint
+  field    uat.gps_offset_longitudinal        0:126:1  uint
+  field    uat.gps_offset_raw                 0:127:5  uint
+  if  0:110:2  1                               # a true track
+    field    course                             0:112:9  uscale:45/64
+  end
+end
+if  0:96:2  3
+  field    uat.air_ground_reserved_bits       0:99:33  uint
+end
+if  0:5:3  0,1,4,5                             # ADS-B, surface vehicle, fixed beacon
+  field    uat.utc_coupled                    0:132:1  uint
+  field    uat.uplink_feedback                0:133:3  uint
+end
+if  0:5:3  2,3,6                               # TIS-B and ADS-R
+  field    uat.tisb_site_id                   0:132:4  uint
+end
+if  0:5:3  7
+  field    uat.sv_aq_reserved                 0:132:4  uint
+end
+field    uat.reserved_bits_136_183          0:136:48  uint
+field    uat.reserved_bits_184_231          0:184:48  uint
+# Target state, bits 232-271
+field    uat.selected_altitude_type         0:232:1  uint
+field    uat.selected_altitude_ft           0:233:11  siscale:32:-32  absent 0
+field    uat.barometric_pressure_setting_hpa 0:244:9  uscale:0.8:799.2  absent 0
+field    uat.selected_heading_valid         0:253:1  uint
+field    uat.selected_heading_sign          0:254:1  uint
+field    uat.selected_heading_raw           0:255:8  uint
+field    uat.mode_indicators_valid          0:263:1  uint
+field    uat.mode_autopilot                 0:264:1  uint
+field    uat.mode_vnav                      0:265:1  uint
+field    uat.mode_altitude_hold             0:266:1  uint
+field    uat.mode_approach                  0:267:1  uint
+field    uat.mode_lnav                      0:268:1  uint
+field    uat.ts_reserved                    0:269:3  uint
+
+kind     long-sv-ts25-auxsv
+when     0:0:5  6
+requires uat.payload_type=6
+# State vector, bytes 5-17 (bits 32-135)
+if  !0:32:47  0                                # a position is present when latitude or longitude is not zero
+  field    lat                                0:32:23  sscale:180/8388608
+  field    lon                                0:55:24  sscale:180/8388608
+end
+field    uat.altitude_type                  0:79:1  uint
+if  0:79:1  0
+  field    uat.pressure_altitude_ft           0:80:12  siscale:25:-1025  absent 0
+end
+if  0:79:1  1
+  field    uat.geometric_altitude_ft          0:80:12  siscale:25:-1025  absent 0
+end
+field    uat.nic                            0:92:4  uint
+field    uat.air_ground_state               0:96:2  uint
+field    uat.sv_reserved_98                 0:98:1  uint
+if  0:96:2  0,1                               # airborne
+  field    uat.north_south_sign               0:99:1  uint
+  field    uat.north_south_velocity_raw       0:100:10  uint
+  field    uat.east_west_sign                 0:110:1  uint
+  field    uat.east_west_velocity_raw         0:111:10  uint
+  field    uat.vertical_velocity_source       0:121:1  uint
+  field    uat.vertical_velocity_sign         0:122:1  uint
+  field    uat.vertical_velocity_raw          0:123:9  uint
+end
+if  0:96:2  2                                  # on the ground
+  field    uat.ground_reserved_99             0:99:1  uint
+  field    uat.ground_speed_raw               0:100:10  uint
+  field    uat.track_heading_type             0:110:2  uint
+  field    uat.track_heading_raw              0:112:9  uint
+  field    uat.aircraft_size                  0:121:4  uint
+  field    uat.ground_reserved_125            0:125:1  uint
+  field    uat.gps_offset_longitudinal        0:126:1  uint
+  field    uat.gps_offset_raw                 0:127:5  uint
+  if  0:110:2  1                               # a true track
+    field    course                             0:112:9  uscale:45/64
+  end
+end
+if  0:96:2  3
+  field    uat.air_ground_reserved_bits       0:99:33  uint
+end
+if  0:5:3  0,1,4,5                             # ADS-B, surface vehicle, fixed beacon
+  field    uat.utc_coupled                    0:132:1  uint
+  field    uat.uplink_feedback                0:133:3  uint
+end
+if  0:5:3  2,3,6                               # TIS-B and ADS-R
+  field    uat.tisb_site_id                   0:132:4  uint
+end
+if  0:5:3  7
+  field    uat.sv_aq_reserved                 0:132:4  uint
+end
+field    uat.reserved_bits_136_191          0:136:56  uint
+# Target state, bits 192-231
+field    uat.selected_altitude_type         0:192:1  uint
+field    uat.selected_altitude_ft           0:193:11  siscale:32:-32  absent 0
+field    uat.barometric_pressure_setting_hpa 0:204:9  uscale:0.8:799.2  absent 0
+field    uat.selected_heading_valid         0:213:1  uint
+field    uat.selected_heading_sign          0:214:1  uint
+field    uat.selected_heading_raw           0:215:8  uint
+field    uat.mode_indicators_valid          0:223:1  uint
+field    uat.mode_autopilot                 0:224:1  uint
+field    uat.mode_vnav                      0:225:1  uint
+field    uat.mode_altitude_hold             0:226:1  uint
+field    uat.mode_approach                  0:227:1  uint
+field    uat.mode_lnav                      0:228:1  uint
+field    uat.ts_reserved                    0:229:3  uint
+# Auxiliary state vector, bytes 30-31 (bits 232-243): the other altitude
+if  0:79:1  0
+  field    uat.geometric_altitude_ft          0:232:12  siscale:25:-1025  absent 0
+end
+if  0:79:1  1
+  field    uat.pressure_altitude_ft           0:232:12  siscale:25:-1025  absent 0
+end
+field    uat.auxsv_reserved                 0:244:28  uint
+
+kind     long-sv
+when     0:0:5  7..10
+requires uat.payload_type=7,8,9,10
+# State vector, bytes 5-17 (bits 32-135)
+if  !0:32:47  0                                # a position is present when latitude or longitude is not zero
+  field    lat                                0:32:23  sscale:180/8388608
+  field    lon                                0:55:24  sscale:180/8388608
+end
+field    uat.altitude_type                  0:79:1  uint
+if  0:79:1  0
+  field    uat.pressure_altitude_ft           0:80:12  siscale:25:-1025  absent 0
+end
+if  0:79:1  1
+  field    uat.geometric_altitude_ft          0:80:12  siscale:25:-1025  absent 0
+end
+field    uat.nic                            0:92:4  uint
+field    uat.air_ground_state               0:96:2  uint
+field    uat.sv_reserved_98                 0:98:1  uint
+if  0:96:2  0,1                               # airborne
+  field    uat.north_south_sign               0:99:1  uint
+  field    uat.north_south_velocity_raw       0:100:10  uint
+  field    uat.east_west_sign                 0:110:1  uint
+  field    uat.east_west_velocity_raw         0:111:10  uint
+  field    uat.vertical_velocity_source       0:121:1  uint
+  field    uat.vertical_velocity_sign         0:122:1  uint
+  field    uat.vertical_velocity_raw          0:123:9  uint
+end
+if  0:96:2  2                                  # on the ground
+  field    uat.ground_reserved_99             0:99:1  uint
+  field    uat.ground_speed_raw               0:100:10  uint
+  field    uat.track_heading_type             0:110:2  uint
+  field    uat.track_heading_raw              0:112:9  uint
+  field    uat.aircraft_size                  0:121:4  uint
+  field    uat.ground_reserved_125            0:125:1  uint
+  field    uat.gps_offset_longitudinal        0:126:1  uint
+  field    uat.gps_offset_raw                 0:127:5  uint
+  if  0:110:2  1                               # a true track
+    field    course                             0:112:9  uscale:45/64
+  end
+end
+if  0:96:2  3
+  field    uat.air_ground_reserved_bits       0:99:33  uint
+end
+if  0:5:3  0,1,4,5                             # ADS-B, surface vehicle, fixed beacon
+  field    uat.utc_coupled                    0:132:1  uint
+  field    uat.uplink_feedback                0:133:3  uint
+end
+if  0:5:3  2,3,6                               # TIS-B and ADS-R
+  field    uat.tisb_site_id                   0:132:4  uint
+end
+if  0:5:3  7
+  field    uat.sv_aq_reserved                 0:132:4  uint
+end
+field    uat.reserved_bits_136_199          0:136:64  uint
+field    uat.reserved_bits_200_263          0:200:64  uint
+field    uat.reserved_bits_264_271          0:264:8  uint
+
+kind     basic
+when     0:0:5  0
+requires lat lon
+# State vector, bytes 5-17 (bits 32-135)
+if  !0:32:47  0                                # a position is present when latitude or longitude is not zero
+  field    lat                                0:32:23  sscale:180/8388608
+  field    lon                                0:55:24  sscale:180/8388608
+end
+field    uat.altitude_type                  0:79:1  uint
+if  0:79:1  0
+  field    uat.pressure_altitude_ft           0:80:12  siscale:25:-1025  absent 0
+end
+if  0:79:1  1
+  field    uat.geometric_altitude_ft          0:80:12  siscale:25:-1025  absent 0
+end
+field    uat.nic                            0:92:4  uint
+field    uat.air_ground_state               0:96:2  uint
+field    uat.sv_reserved_98                 0:98:1  uint
+if  0:96:2  0,1                               # airborne
+  field    uat.north_south_sign               0:99:1  uint
+  field    uat.north_south_velocity_raw       0:100:10  uint
+  field    uat.east_west_sign                 0:110:1  uint
+  field    uat.east_west_velocity_raw         0:111:10  uint
+  field    uat.vertical_velocity_source       0:121:1  uint
+  field    uat.vertical_velocity_sign         0:122:1  uint
+  field    uat.vertical_velocity_raw          0:123:9  uint
+end
+if  0:96:2  2                                  # on the ground
+  field    uat.ground_reserved_99             0:99:1  uint
+  field    uat.ground_speed_raw               0:100:10  uint
+  field    uat.track_heading_type             0:110:2  uint
+  field    uat.track_heading_raw              0:112:9  uint
+  field    uat.aircraft_size                  0:121:4  uint
+  field    uat.ground_reserved_125            0:125:1  uint
+  field    uat.gps_offset_longitudinal        0:126:1  uint
+  field    uat.gps_offset_raw                 0:127:5  uint
+  if  0:110:2  1                               # a true track
+    field    course                             0:112:9  uscale:45/64
+  end
+end
+if  0:96:2  3
+  field    uat.air_ground_reserved_bits       0:99:33  uint
+end
+if  0:5:3  0,1,4,5                             # ADS-B, surface vehicle, fixed beacon
+  field    uat.utc_coupled                    0:132:1  uint
+  field    uat.uplink_feedback                0:133:3  uint
+end
+if  0:5:3  2,3,6                               # TIS-B and ADS-R
+  field    uat.tisb_site_id                   0:132:4  uint
+end
+if  0:5:3  7
+  field    uat.sv_aq_reserved                 0:132:4  uint
+end
+field    uat.reserved_bits_136_143          0:136:8  uint
+
+kind     header-only
+when     0:0:5  11..31
+requires uat.reserved_bits_32_91
+field    uat.reserved_bits_32_91            0:32:60  uint
+field    uat.reserved_bits_92_151           0:92:60  uint
+field    uat.reserved_bits_152_211          0:152:60  uint
+field    uat.reserved_bits_212_271          0:212:60  uint
