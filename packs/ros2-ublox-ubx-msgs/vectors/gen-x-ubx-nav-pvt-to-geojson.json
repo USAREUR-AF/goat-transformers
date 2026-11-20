@@ -1,0 +1,14 @@
+{
+  "name": "x-ubx_nav_pvt-to-geojson",
+  "from": "ros2-ublox-ubx-msgs",
+  "to": "geojson",
+  "source": "tools/gen/ros2msg2pack.py: a full sample message with the bound fields set to a point; latitude, longitude and altitude are core lat, lon, hae (pack.md); geojson writes [lon, lat, alt] (RFC 7946, engine-spec 0.1.1 ruling 4)",
+  "input": "{\"op\":\"publish\",\"topic\":\"/geo\",\"type\":\"ublox_ubx_msgs/msg/UBXNavPVT\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"itow\":2147645667,\"year\":38682,\"month\":209,\"day\":8,\"hour\":63,\"min\":118,\"sec\":173,\"valid_date\":true,\"valid_time\":false,\"fully_resolved\":true,\"valid_mag\":false,\"t_acc\":2148091200,\"nano\":648055,\"gps_fix\":{\"fix_type\":46},\"gnss_fix_ok\":false,\"diff_soln\":true,\"psm\":{\"state\":211},\"head_veh_valid\":true,\"carr_soln\":{\"status\":65},\"confirmed_avail\":true,\"confirmed_date\":false,\"confirmed_time\":true,\"num_sv\":29,\"lon\":85312500,\"lat\":470625000,\"height\":431500,\"hmsl\":1215097,\"h_acc\":2148739248,\"v_acc\":2148779751,\"vel_n\":1336606,\"vel_e\":1377109,\"vel_d\":1417612,\"g_speed\":1458115,\"head_mot\":1498618,\"s_acc\":2149022769,\"head_acc\":2149063272,\"p_dop\":14495,\"invalid_llh\":true,\"head_veh\":1701133,\"mag_dec\":-27836,\"mag_acc\":45435}}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.53125,47.0625,431.5]},\"properties\":{}}",
+  "model": {
+    "@kind": "ubx_nav_pvt",
+    "lon": "8.53125",
+    "lat": "47.0625",
+    "hae": "431.5"
+  }
+}

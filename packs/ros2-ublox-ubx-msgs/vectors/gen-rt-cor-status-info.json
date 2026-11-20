@@ -1,0 +1,17 @@
+{
+  "name": "rt-cor_status_info",
+  "from": "ros2-ublox-ubx-msgs",
+  "to": "ros2-ublox-ubx-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/cor_status_info\",\"type\":\"ublox_ubx_msgs/msg/CorStatusInfo\",\"msg\":{\"protocol\":190,\"err_status\":245,\"msg_used\":44,\"correction_id\":63715,\"msg_type_valid\":true,\"msg_sub_type_valid\":false,\"msg_input_handle\":true,\"msg_encrypted\":63,\"msg_decrypted\":118},\"id\":\"gen-cor_status_info\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/cor_status_info\",\"type\":\"ublox_ubx_msgs/msg/CorStatusInfo\",\"msg\":{\"protocol\":190,\"err_status\":245,\"msg_used\":44,\"correction_id\":63715,\"msg_type_valid\":true,\"msg_sub_type_valid\":false,\"msg_input_handle\":true,\"msg_encrypted\":63,\"msg_decrypted\":118},\"id\":\"gen-cor_status_info\"}",
+  "model": {
+    "@kind": "cor_status_info",
+    "ros2ubloxubx.cor_status_info_protocol": "190",
+    "ros2ubloxubx.cor_status_info_err_status": "245",
+    "ros2ubloxubx.cor_status_info_msg_used": "44",
+    "ros2ubloxubx.cor_status_info_correction_id": "63715",
+    "ros2ubloxubx.cor_status_info_msg_type_valid": "1",
+    "ros2ubloxubx.topic": "/gen/cor_status_info"
+  }
+}

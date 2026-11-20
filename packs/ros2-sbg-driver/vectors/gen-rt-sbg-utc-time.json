@@ -1,0 +1,17 @@
+{
+  "name": "rt-sbg_utc_time",
+  "from": "ros2-sbg-driver",
+  "to": "ros2-sbg-driver",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/sbg_utc_time\",\"type\":\"sbg_driver/msg/SbgUtcTime\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"time_stamp\":2147645667,\"clock_status\":{\"clock_stable\":true,\"clock_status\":209,\"clock_utc_sync\":true,\"clock_utc_status\":63},\"year\":4086,\"month\":173,\"day\":228,\"hour\":27,\"min\":82,\"sec\":137,\"nanosec\":2148091200,\"gps_tow\":2148131703,\"clk_bias_std\":-0.875,\"clk_sf_error_std\":-0.625,\"clk_residual_error\":-0.375},\"id\":\"gen-sbg_utc_time\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/sbg_utc_time\",\"type\":\"sbg_driver/msg/SbgUtcTime\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"time_stamp\":2147645667,\"clock_status\":{\"clock_stable\":true,\"clock_status\":209,\"clock_utc_sync\":true,\"clock_utc_status\":63},\"year\":4086,\"month\":173,\"day\":228,\"hour\":27,\"min\":82,\"sec\":137,\"nanosec\":2148091200,\"gps_tow\":2148131703,\"clk_bias_std\":-0.875,\"clk_sf_error_std\":-0.625,\"clk_residual_error\":-0.375},\"id\":\"gen-sbg_utc_time\"}",
+  "model": {
+    "@kind": "sbg_utc_time",
+    "ros2sbg.sbg_utc_time_header_stamp_sec": "40510",
+    "ros2sbg.sbg_utc_time_header_stamp_nanosec": "2147564661",
+    "ros2sbg.sbg_utc_time_header_frame_id": "s3",
+    "ros2sbg.sbg_utc_time_time_stamp": "2147645667",
+    "ros2sbg.sbg_utc_time_clock_status_clock_stable": "1",
+    "ros2sbg.topic": "/gen/sbg_utc_time"
+  }
+}

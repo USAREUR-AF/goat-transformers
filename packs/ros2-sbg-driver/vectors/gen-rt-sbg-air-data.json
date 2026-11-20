@@ -1,0 +1,17 @@
+{
+  "name": "rt-sbg_air_data",
+  "from": "ros2-sbg-driver",
+  "to": "ros2-sbg-driver",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/sbg_air_data\",\"type\":\"sbg_driver/msg/SbgAirData\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"time_stamp\":2147645667,\"status\":{\"is_delay_time\":true,\"pressure_valid\":false,\"altitude_valid\":true,\"pressure_diff_valid\":false,\"air_speed_valid\":true,\"air_temperature_valid\":false},\"pressure_abs\":11.077,\"altitude\":-12.084,\"pressure_diff\":13.091,\"true_air_speed\":14.098,\"air_temperature\":-15.105},\"id\":\"gen-sbg_air_data\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/sbg_air_data\",\"type\":\"sbg_driver/msg/SbgAirData\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"time_stamp\":2147645667,\"status\":{\"is_delay_time\":true,\"pressure_valid\":false,\"altitude_valid\":true,\"pressure_diff_valid\":false,\"air_speed_valid\":true,\"air_temperature_valid\":false},\"pressure_abs\":11.077,\"altitude\":-12.084,\"pressure_diff\":13.091,\"true_air_speed\":14.098,\"air_temperature\":-15.105},\"id\":\"gen-sbg_air_data\"}",
+  "model": {
+    "@kind": "sbg_air_data",
+    "ros2sbg.sbg_air_data_header_stamp_sec": "40510",
+    "ros2sbg.sbg_air_data_header_stamp_nanosec": "2147564661",
+    "ros2sbg.sbg_air_data_header_frame_id": "s3",
+    "ros2sbg.sbg_air_data_time_stamp": "2147645667",
+    "ros2sbg.sbg_air_data_status_is_delay_time": "1",
+    "ros2sbg.topic": "/gen/sbg_air_data"
+  }
+}

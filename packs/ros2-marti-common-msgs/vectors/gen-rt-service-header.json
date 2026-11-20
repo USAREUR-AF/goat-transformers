@@ -1,0 +1,17 @@
+{
+  "name": "rt-service_header",
+  "from": "ros2-marti-common-msgs",
+  "to": "ros2-marti-common-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/service_header\",\"type\":\"marti_common_msgs/msg/ServiceHeader\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"sequence\":2147605164,\"sender\":\"s4\",\"result\":true},\"id\":\"gen-service_header\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/service_header\",\"type\":\"marti_common_msgs/msg/ServiceHeader\",\"msg\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"sequence\":2147605164,\"sender\":\"s4\",\"result\":true},\"id\":\"gen-service_header\"}",
+  "model": {
+    "@kind": "service_header",
+    "ros2marticommon.service_header_stamp_sec": "40510",
+    "ros2marticommon.service_header_stamp_nanosec": "2147564661",
+    "ros2marticommon.service_header_sequence": "2147605164",
+    "ros2marticommon.service_header_sender": "s4",
+    "ros2marticommon.service_header_result": "1",
+    "ros2marticommon.topic": "/gen/service_header"
+  }
+}

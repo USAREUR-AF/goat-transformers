@@ -1,0 +1,17 @@
+{
+  "name": "rt-drive_feedback",
+  "from": "ros2-clearpath-platform-msgs",
+  "to": "ros2-clearpath-platform-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/drive_feedback\",\"type\":\"clearpath_platform_msgs/msg/DriveFeedback\",\"msg\":{\"current\":-4.875,\"duty_cycle\":-4.625,\"bridge_temperature\":-4.375,\"motor_temperature\":-4.125,\"measured_velocity\":-3.875,\"measured_travel\":-3.625,\"driver_fault\":true},\"id\":\"gen-drive_feedback\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/drive_feedback\",\"type\":\"clearpath_platform_msgs/msg/DriveFeedback\",\"msg\":{\"current\":-4.875,\"duty_cycle\":-4.625,\"bridge_temperature\":-4.375,\"motor_temperature\":-4.125,\"measured_velocity\":-3.875,\"measured_travel\":-3.625,\"driver_fault\":true},\"id\":\"gen-drive_feedback\"}",
+  "model": {
+    "@kind": "drive_feedback",
+    "ros2clearpathplatform.drive_feedback_current": "-4.875",
+    "ros2clearpathplatform.drive_feedback_duty_cycle": "-4.625",
+    "ros2clearpathplatform.drive_feedback_bridge_temperature": "-4.375",
+    "ros2clearpathplatform.drive_feedback_motor_temperature": "-4.125",
+    "ros2clearpathplatform.drive_feedback_measured_velocity": "-3.875",
+    "ros2clearpathplatform.topic": "/gen/drive_feedback"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "rt-ubx_nav_clock",
+  "from": "ros2-ublox-ubx-msgs",
+  "to": "ros2-ublox-ubx-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/ubx_nav_clock\",\"type\":\"ublox_ubx_msgs/msg/UBXNavClock\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"itow\":2147645667,\"clk_b\":202522,\"clk_d\":243025,\"t_acc\":2147767176,\"f_acc\":2147807679},\"id\":\"gen-ubx_nav_clock\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/ubx_nav_clock\",\"type\":\"ublox_ubx_msgs/msg/UBXNavClock\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"itow\":2147645667,\"clk_b\":202522,\"clk_d\":243025,\"t_acc\":2147767176,\"f_acc\":2147807679},\"id\":\"gen-ubx_nav_clock\"}",
+  "model": {
+    "@kind": "ubx_nav_clock",
+    "ros2ubloxubx.ubx_nav_clock_header_stamp_sec": "40510",
+    "ros2ubloxubx.ubx_nav_clock_header_stamp_nanosec": "2147564661",
+    "ros2ubloxubx.ubx_nav_clock_header_frame_id": "s3",
+    "ros2ubloxubx.ubx_nav_clock_itow": "2147645667",
+    "ros2ubloxubx.ubx_nav_clock_clk_b": "202522",
+    "ros2ubloxubx.topic": "/gen/ubx_nav_clock"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "rt-gpgsa",
+  "from": "ros2-nmea-msgs",
+  "to": "ros2-nmea-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/gpgsa\",\"type\":\"nmea_msgs/msg/Gpgsa\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"message_id\":\"s4\",\"auto_manual_mode\":\"s5\",\"fix_mode\":209,\"sv_ids\":\"BxX/AIA=\",\"pdop\":-3.125,\"hdop\":-2.875,\"vdop\":-2.625},\"id\":\"gen-gpgsa\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/gpgsa\",\"type\":\"nmea_msgs/msg/Gpgsa\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"message_id\":\"s4\",\"auto_manual_mode\":\"s5\",\"fix_mode\":209,\"sv_ids\":\"BxX/AIA=\",\"pdop\":-3.125,\"hdop\":-2.875,\"vdop\":-2.625},\"id\":\"gen-gpgsa\"}",
+  "model": {
+    "@kind": "gpgsa",
+    "ros2nmea.gpgsa_header_stamp_sec": "40510",
+    "ros2nmea.gpgsa_header_stamp_nanosec": "2147564661",
+    "ros2nmea.gpgsa_header_frame_id": "s3",
+    "ros2nmea.gpgsa_message_id": "s4",
+    "ros2nmea.gpgsa_auto_manual_mode": "s5",
+    "ros2nmea.topic": "/gen/gpgsa"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "rt-command",
+  "from": "ros2-marti-nav-msgs",
+  "to": "ros2-marti-nav-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/command\",\"type\":\"marti_nav_msgs/msg/Command\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"startstop\":[162019,202522]},\"id\":\"gen-command\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/command\",\"type\":\"marti_nav_msgs/msg/Command\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"startstop\":[162019,202522]},\"id\":\"gen-command\"}",
+  "model": {
+    "@kind": "command",
+    "ros2martinav.command_header_stamp_sec": "40510",
+    "ros2martinav.command_header_stamp_nanosec": "2147564661",
+    "ros2martinav.command_header_frame_id": "s3",
+    "ros2martinav.command_startstop.#": "2",
+    "ros2martinav.command_startstop[0].ros2martinav.command_startstop_value": "162019",
+    "ros2martinav.topic": "/gen/command"
+  }
+}

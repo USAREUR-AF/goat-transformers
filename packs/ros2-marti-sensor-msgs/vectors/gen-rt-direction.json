@@ -1,0 +1,16 @@
+{
+  "name": "rt-direction",
+  "from": "ros2-marti-sensor-msgs",
+  "to": "ros2-marti-sensor-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/direction\",\"type\":\"marti_sensor_msgs/msg/Direction\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"direction\":-29},\"id\":\"gen-direction\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/direction\",\"type\":\"marti_sensor_msgs/msg/Direction\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"direction\":-29},\"id\":\"gen-direction\"}",
+  "model": {
+    "@kind": "direction",
+    "ros2martisensor.direction_header_stamp_sec": "40510",
+    "ros2martisensor.direction_header_stamp_nanosec": "2147564661",
+    "ros2martisensor.direction_header_frame_id": "s3",
+    "ros2martisensor.direction_direction": "-29",
+    "ros2martisensor.topic": "/gen/direction"
+  }
+}

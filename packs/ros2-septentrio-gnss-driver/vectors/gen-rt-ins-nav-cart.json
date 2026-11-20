@@ -1,0 +1,17 @@
+{
+  "name": "rt-ins_nav_cart",
+  "from": "ros2-septentrio-gnss-driver",
+  "to": "ros2-septentrio-gnss-driver",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/ins_nav_cart\",\"type\":\"septentrio_gnss_driver/msg/INSNavCart\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"block_header\":{\"sync_1\":99,\"sync_2\":154,\"crc\":13649,\"id\":54152,\"revision\":63,\"length\":4086,\"tow\":2147888685,\"wnc\":19556},\"gnss_mode\":27,\"error\":82,\"info\":9993,\"gnss_age\":50496,\"x\":16.112,\"y\":17.119,\"z\":-18.126,\"accuracy\":15900,\"latency\":56403,\"datum\":10,\"sb_list\":6337,\"x_std_dev\":0.625,\"y_std_dev\":0.875,\"z_std_dev\":1.125,\"xy_cov\":1.375,\"xz_cov\":1.625,\"yz_cov\":1.875,\"heading\":2.125,\"pitch\":2.375,\"roll\":2.625,\"heading_std_dev\":2.875,\"pitch_std_dev\":3.125,\"roll_std_dev\":3.375,\"heading_pitch_cov\":3.625,\"heading_roll_cov\":3.875,\"pitch_roll_cov\":4.125,\"vx\":4.375,\"vy\":4.625,\"vz\":4.875,\"vx_std_dev\":5.125,\"vy_std_dev\":5.375,\"vz_std_dev\":5.625,\"vx_vy_cov\":5.875,\"vx_vz_cov\":6.125,\"vy_vz_cov\":6.375},\"id\":\"gen-ins_nav_cart\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/ins_nav_cart\",\"type\":\"septentrio_gnss_driver/msg/INSNavCart\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"block_header\":{\"sync_1\":99,\"sync_2\":154,\"crc\":13649,\"id\":54152,\"revision\":63,\"length\":4086,\"tow\":2147888685,\"wnc\":19556},\"gnss_mode\":27,\"error\":82,\"info\":9993,\"gnss_age\":50496,\"x\":16.112,\"y\":17.119,\"z\":-18.126,\"accuracy\":15900,\"latency\":56403,\"datum\":10,\"sb_list\":6337,\"x_std_dev\":0.625,\"y_std_dev\":0.875,\"z_std_dev\":1.125,\"xy_cov\":1.375,\"xz_cov\":1.625,\"yz_cov\":1.875,\"heading\":2.125,\"pitch\":2.375,\"roll\":2.625,\"heading_std_dev\":2.875,\"pitch_std_dev\":3.125,\"roll_std_dev\":3.375,\"heading_pitch_cov\":3.625,\"heading_roll_cov\":3.875,\"pitch_roll_cov\":4.125,\"vx\":4.375,\"vy\":4.625,\"vz\":4.875,\"vx_std_dev\":5.125,\"vy_std_dev\":5.375,\"vz_std_dev\":5.625,\"vx_vy_cov\":5.875,\"vx_vz_cov\":6.125,\"vy_vz_cov\":6.375},\"id\":\"gen-ins_nav_cart\"}",
+  "model": {
+    "@kind": "ins_nav_cart",
+    "ros2septentrio.ins_nav_cart_header_stamp_sec": "40510",
+    "ros2septentrio.ins_nav_cart_header_stamp_nanosec": "2147564661",
+    "ros2septentrio.ins_nav_cart_header_frame_id": "s3",
+    "ros2septentrio.ins_nav_cart_block_header_sync_1": "99",
+    "ros2septentrio.ins_nav_cart_block_header_sync_2": "154",
+    "ros2septentrio.topic": "/gen/ins_nav_cart"
+  }
+}

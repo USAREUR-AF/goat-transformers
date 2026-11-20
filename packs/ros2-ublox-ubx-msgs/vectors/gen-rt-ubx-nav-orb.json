@@ -1,0 +1,19 @@
+{
+  "name": "rt-ubx_nav_orb",
+  "from": "ros2-ublox-ubx-msgs",
+  "to": "ros2-ublox-ubx-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/ubx_nav_orb\",\"type\":\"ublox_ubx_msgs/msg/UBXNavOrb\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"itow\":2147645667,\"version\":154,\"num_sv\":209,\"reserved_0\":\"BxX/AIA=\",\"sv_info\":[{\"gnss_id\":63,\"sv_id\":118,\"sv_flag\":{\"health\":173,\"visibility\":228},\"eph\":{\"eph_usability\":27,\"eph_source\":82},\"alm\":{\"alm_usability\":137,\"alm_source\":192},\"other_orb\":{\"ano_aop_usability\":247,\"orb_type\":46}},{\"gnss_id\":101,\"sv_id\":156,\"sv_flag\":{\"health\":211,\"visibility\":10},\"eph\":{\"eph_usability\":65,\"eph_source\":120},\"alm\":{\"alm_usability\":175,\"alm_source\":230},\"other_orb\":{\"ano_aop_usability\":29,\"orb_type\":84}}]},\"id\":\"gen-ubx_nav_orb\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/ubx_nav_orb\",\"type\":\"ublox_ubx_msgs/msg/UBXNavOrb\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"itow\":2147645667,\"version\":154,\"num_sv\":209,\"reserved_0\":\"BxX/AIA=\",\"sv_info\":[{\"gnss_id\":63,\"sv_id\":118,\"sv_flag\":{\"health\":173,\"visibility\":228},\"eph\":{\"eph_usability\":27,\"eph_source\":82},\"alm\":{\"alm_usability\":137,\"alm_source\":192},\"other_orb\":{\"ano_aop_usability\":247,\"orb_type\":46}},{\"gnss_id\":101,\"sv_id\":156,\"sv_flag\":{\"health\":211,\"visibility\":10},\"eph\":{\"eph_usability\":65,\"eph_source\":120},\"alm\":{\"alm_usability\":175,\"alm_source\":230},\"other_orb\":{\"ano_aop_usability\":29,\"orb_type\":84}}]},\"id\":\"gen-ubx_nav_orb\"}",
+  "model": {
+    "@kind": "ubx_nav_orb",
+    "ros2ubloxubx.ubx_nav_orb_header_stamp_sec": "40510",
+    "ros2ubloxubx.ubx_nav_orb_header_stamp_nanosec": "2147564661",
+    "ros2ubloxubx.ubx_nav_orb_header_frame_id": "s3",
+    "ros2ubloxubx.ubx_nav_orb_itow": "2147645667",
+    "ros2ubloxubx.ubx_nav_orb_version": "154",
+    "ros2ubloxubx.ubx_nav_orb_sv_info.#": "2",
+    "ros2ubloxubx.ubx_nav_orb_sv_info[0].ros2ubloxubx.ubx_nav_orb_sv_info_gnss_id": "63",
+    "ros2ubloxubx.topic": "/gen/ubx_nav_orb"
+  }
+}

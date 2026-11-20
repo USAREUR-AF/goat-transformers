@@ -1,0 +1,19 @@
+{
+  "name": "rt-ubx_nav_sat",
+  "from": "ros2-ublox-ubx-msgs",
+  "to": "ros2-ublox-ubx-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/ubx_nav_sat\",\"type\":\"ublox_ubx_msgs/msg/UBXNavSat\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"itow\":2147645667,\"version\":154,\"num_svs\":209,\"sv_info\":[{\"gnss_id\":8,\"sv_id\":63,\"cno\":118,\"elev\":45,\"azim\":-13212,\"pr_res\":27291,\"flags\":{\"quality_ind\":82,\"sv_used\":false,\"health\":192,\"diff_corr\":false,\"smoothed\":true,\"orbit_source\":101,\"eph_avail\":true,\"alm_avail\":false,\"ano_avail\":true,\"aop_avail\":false,\"sbas_corr_used\":true,\"rtcm_corr_used\":false,\"slas_corr_used\":true,\"spartn_corr_used\":false,\"pr_corr_used\":true,\"cr_corr_used\":false,\"do_corr_used\":true,\"clas_corr_used\":false,\"lpp_corr_used\":true,\"has_corr_used\":false}},{\"gnss_id\":158,\"sv_id\":213,\"cno\":12,\"elev\":-61,\"azim\":-8710,\"pr_res\":31793,\"flags\":{\"quality_ind\":232,\"sv_used\":false,\"health\":86,\"diff_corr\":false,\"smoothed\":true,\"orbit_source\":251,\"eph_avail\":true,\"alm_avail\":false,\"ano_avail\":true,\"aop_avail\":false,\"sbas_corr_used\":true,\"rtcm_corr_used\":false,\"slas_corr_used\":true,\"spartn_corr_used\":false,\"pr_corr_used\":true,\"cr_corr_used\":false,\"do_corr_used\":true,\"clas_corr_used\":false,\"lpp_corr_used\":true,\"has_corr_used\":false}}]},\"id\":\"gen-ubx_nav_sat\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/ubx_nav_sat\",\"type\":\"ublox_ubx_msgs/msg/UBXNavSat\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"itow\":2147645667,\"version\":154,\"num_svs\":209,\"sv_info\":[{\"gnss_id\":8,\"sv_id\":63,\"cno\":118,\"elev\":45,\"azim\":-13212,\"pr_res\":27291,\"flags\":{\"quality_ind\":82,\"sv_used\":false,\"health\":192,\"diff_corr\":false,\"smoothed\":true,\"orbit_source\":101,\"eph_avail\":true,\"alm_avail\":false,\"ano_avail\":true,\"aop_avail\":false,\"sbas_corr_used\":true,\"rtcm_corr_used\":false,\"slas_corr_used\":true,\"spartn_corr_used\":false,\"pr_corr_used\":true,\"cr_corr_used\":false,\"do_corr_used\":true,\"clas_corr_used\":false,\"lpp_corr_used\":true,\"has_corr_used\":false}},{\"gnss_id\":158,\"sv_id\":213,\"cno\":12,\"elev\":-61,\"azim\":-8710,\"pr_res\":31793,\"flags\":{\"quality_ind\":232,\"sv_used\":false,\"health\":86,\"diff_corr\":false,\"smoothed\":true,\"orbit_source\":251,\"eph_avail\":true,\"alm_avail\":false,\"ano_avail\":true,\"aop_avail\":false,\"sbas_corr_used\":true,\"rtcm_corr_used\":false,\"slas_corr_used\":true,\"spartn_corr_used\":false,\"pr_corr_used\":true,\"cr_corr_used\":false,\"do_corr_used\":true,\"clas_corr_used\":false,\"lpp_corr_used\":true,\"has_corr_used\":false}}]},\"id\":\"gen-ubx_nav_sat\"}",
+  "model": {
+    "@kind": "ubx_nav_sat",
+    "ros2ubloxubx.ubx_nav_sat_header_stamp_sec": "40510",
+    "ros2ubloxubx.ubx_nav_sat_header_stamp_nanosec": "2147564661",
+    "ros2ubloxubx.ubx_nav_sat_header_frame_id": "s3",
+    "ros2ubloxubx.ubx_nav_sat_itow": "2147645667",
+    "ros2ubloxubx.ubx_nav_sat_version": "154",
+    "ros2ubloxubx.ubx_nav_sat_sv_info.#": "2",
+    "ros2ubloxubx.ubx_nav_sat_sv_info[0].ros2ubloxubx.ubx_nav_sat_sv_info_gnss_id": "8",
+    "ros2ubloxubx.topic": "/gen/ubx_nav_sat"
+  }
+}

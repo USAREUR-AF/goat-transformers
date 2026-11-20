@@ -1,0 +1,17 @@
+{
+  "name": "rt-ubx_nav_status",
+  "from": "ros2-ublox-ubx-msgs",
+  "to": "ros2-ublox-ubx-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/ubx_nav_status\",\"type\":\"ublox_ubx_msgs/msg/UBXNavStatus\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"itow\":2147645667,\"gps_fix\":{\"fix_type\":154},\"gps_fix_ok\":false,\"diff_soln\":true,\"wkn_set\":false,\"tow_set\":true,\"diff_corr\":false,\"carr_soln_valid\":true,\"map_matching\":{\"status\":27},\"psm\":{\"state\":82},\"spoof_det\":{\"state\":137},\"carr_soln\":{\"status\":192},\"ttff\":2148131703,\"msss\":2148172206},\"id\":\"gen-ubx_nav_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/ubx_nav_status\",\"type\":\"ublox_ubx_msgs/msg/UBXNavStatus\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"itow\":2147645667,\"gps_fix\":{\"fix_type\":154},\"gps_fix_ok\":false,\"diff_soln\":true,\"wkn_set\":false,\"tow_set\":true,\"diff_corr\":false,\"carr_soln_valid\":true,\"map_matching\":{\"status\":27},\"psm\":{\"state\":82},\"spoof_det\":{\"state\":137},\"carr_soln\":{\"status\":192},\"ttff\":2148131703,\"msss\":2148172206},\"id\":\"gen-ubx_nav_status\"}",
+  "model": {
+    "@kind": "ubx_nav_status",
+    "ros2ubloxubx.ubx_nav_status_header_stamp_sec": "40510",
+    "ros2ubloxubx.ubx_nav_status_header_stamp_nanosec": "2147564661",
+    "ros2ubloxubx.ubx_nav_status_header_frame_id": "s3",
+    "ros2ubloxubx.ubx_nav_status_itow": "2147645667",
+    "ros2ubloxubx.ubx_nav_status_gps_fix_fix_type": "154",
+    "ros2ubloxubx.topic": "/gen/ubx_nav_status"
+  }
+}

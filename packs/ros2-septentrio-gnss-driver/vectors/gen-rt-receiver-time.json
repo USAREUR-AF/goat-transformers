@@ -1,0 +1,17 @@
+{
+  "name": "rt-receiver_time",
+  "from": "ros2-septentrio-gnss-driver",
+  "to": "ros2-septentrio-gnss-driver",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/receiver_time\",\"type\":\"septentrio_gnss_driver/msg/ReceiverTime\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"block_header\":{\"sync_1\":99,\"sync_2\":154,\"crc\":13649,\"id\":54152,\"revision\":63,\"length\":4086,\"tow\":2147888685,\"wnc\":19556},\"utc_year\":-101,\"utc_month\":-46,\"utc_day\":9,\"utc_hour\":64,\"utc_min\":119,\"utc_second\":-82,\"delta_ls\":-27,\"sync_level\":156},\"id\":\"gen-receiver_time\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/receiver_time\",\"type\":\"septentrio_gnss_driver/msg/ReceiverTime\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"block_header\":{\"sync_1\":99,\"sync_2\":154,\"crc\":13649,\"id\":54152,\"revision\":63,\"length\":4086,\"tow\":2147888685,\"wnc\":19556},\"utc_year\":-101,\"utc_month\":-46,\"utc_day\":9,\"utc_hour\":64,\"utc_min\":119,\"utc_second\":-82,\"delta_ls\":-27,\"sync_level\":156},\"id\":\"gen-receiver_time\"}",
+  "model": {
+    "@kind": "receiver_time",
+    "ros2septentrio.receiver_time_header_stamp_sec": "40510",
+    "ros2septentrio.receiver_time_header_stamp_nanosec": "2147564661",
+    "ros2septentrio.receiver_time_header_frame_id": "s3",
+    "ros2septentrio.receiver_time_block_header_sync_1": "99",
+    "ros2septentrio.receiver_time_block_header_sync_2": "154",
+    "ros2septentrio.topic": "/gen/receiver_time"
+  }
+}

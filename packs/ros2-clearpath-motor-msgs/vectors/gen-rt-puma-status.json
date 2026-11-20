@@ -1,0 +1,17 @@
+{
+  "name": "rt-puma_status",
+  "from": "ros2-clearpath-motor-msgs",
+  "to": "ros2-clearpath-motor-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/puma_status\",\"type\":\"clearpath_motor_msgs/msg/PumaStatus\",\"msg\":{\"device_number\":190,\"device_name\":\"s2\",\"bus_voltage\":-4.375,\"temperature\":-4.125,\"output_voltage\":-3.875,\"analog_input\":-3.625,\"mode\":8,\"fault\":63},\"id\":\"gen-puma_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/puma_status\",\"type\":\"clearpath_motor_msgs/msg/PumaStatus\",\"msg\":{\"device_number\":190,\"device_name\":\"s2\",\"bus_voltage\":-4.375,\"temperature\":-4.125,\"output_voltage\":-3.875,\"analog_input\":-3.625,\"mode\":8,\"fault\":63},\"id\":\"gen-puma_status\"}",
+  "model": {
+    "@kind": "puma_status",
+    "ros2clearpathmotor.puma_status_device_number": "190",
+    "ros2clearpathmotor.puma_status_device_name": "s2",
+    "ros2clearpathmotor.puma_status_bus_voltage": "-4.375",
+    "ros2clearpathmotor.puma_status_temperature": "-4.125",
+    "ros2clearpathmotor.puma_status_output_voltage": "-3.875",
+    "ros2clearpathmotor.topic": "/gen/puma_status"
+  }
+}

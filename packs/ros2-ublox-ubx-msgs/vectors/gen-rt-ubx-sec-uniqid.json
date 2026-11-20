@@ -1,0 +1,17 @@
+{
+  "name": "rt-ubx_sec_uniqid",
+  "from": "ros2-ublox-ubx-msgs",
+  "to": "ros2-ublox-ubx-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/ubx_sec_uniqid\",\"type\":\"ublox_ubx_msgs/msg/UBXSecUniqid\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"version\":99,\"unique_id\":\"BQ//AIA=\"},\"id\":\"gen-ubx_sec_uniqid\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/ubx_sec_uniqid\",\"type\":\"ublox_ubx_msgs/msg/UBXSecUniqid\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"version\":99,\"unique_id\":\"BQ//AIA=\"},\"id\":\"gen-ubx_sec_uniqid\"}",
+  "model": {
+    "@kind": "ubx_sec_uniqid",
+    "ros2ubloxubx.ubx_sec_uniqid_header_stamp_sec": "40510",
+    "ros2ubloxubx.ubx_sec_uniqid_header_stamp_nanosec": "2147564661",
+    "ros2ubloxubx.ubx_sec_uniqid_header_frame_id": "s3",
+    "ros2ubloxubx.ubx_sec_uniqid_version": "99",
+    "ros2ubloxubx.ubx_sec_uniqid_unique_id": "BQ//AIA=",
+    "ros2ubloxubx.topic": "/gen/ubx_sec_uniqid"
+  }
+}

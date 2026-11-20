@@ -1,0 +1,17 @@
+{
+  "name": "rt-carla_traffic_light_info",
+  "from": "ros2-carla-msgs",
+  "to": "ros2-carla-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/carla_traffic_light_info\",\"type\":\"carla_msgs/msg/CarlaTrafficLightInfo\",\"msg\":{\"id\":2147524158,\"transform\":{\"position\":{\"x\":2.014,\"y\":-3.021,\"z\":4.028},\"orientation\":{\"x\":5.035,\"y\":-6.042,\"z\":7.049,\"w\":8.056}},\"trigger_volume\":{\"center\":{\"x\":-9.063,\"y\":10.07,\"z\":11.077},\"size\":{\"x\":-12.084,\"y\":13.091,\"z\":14.098}}},\"id\":\"gen-carla_traffic_light_info\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/carla_traffic_light_info\",\"type\":\"carla_msgs/msg/CarlaTrafficLightInfo\",\"msg\":{\"id\":2147524158,\"transform\":{\"position\":{\"x\":2.014,\"y\":-3.021,\"z\":4.028},\"orientation\":{\"x\":5.035,\"y\":-6.042,\"z\":7.049,\"w\":8.056}},\"trigger_volume\":{\"center\":{\"x\":-9.063,\"y\":10.07,\"z\":11.077},\"size\":{\"x\":-12.084,\"y\":13.091,\"z\":14.098}}},\"id\":\"gen-carla_traffic_light_info\"}",
+  "model": {
+    "@kind": "carla_traffic_light_info",
+    "ros2carla.carla_traffic_light_info_id": "2147524158",
+    "ros2carla.carla_traffic_light_info_transform_position_x": "2.014",
+    "ros2carla.carla_traffic_light_info_transform_position_y": "-3.021",
+    "ros2carla.carla_traffic_light_info_transform_position_z": "4.028",
+    "ros2carla.carla_traffic_light_info_transform_orientation_x": "5.035",
+    "ros2carla.topic": "/gen/carla_traffic_light_info"
+  }
+}

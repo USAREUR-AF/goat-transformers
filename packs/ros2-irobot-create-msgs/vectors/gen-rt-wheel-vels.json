@@ -1,0 +1,17 @@
+{
+  "name": "rt-wheel_vels",
+  "from": "ros2-irobot-create-msgs",
+  "to": "ros2-irobot-create-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/wheel_vels\",\"type\":\"irobot_create_msgs/msg/WheelVels\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"velocity_left\":-4.125,\"velocity_right\":-3.875},\"id\":\"gen-wheel_vels\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/wheel_vels\",\"type\":\"irobot_create_msgs/msg/WheelVels\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"velocity_left\":-4.125,\"velocity_right\":-3.875},\"id\":\"gen-wheel_vels\"}",
+  "model": {
+    "@kind": "wheel_vels",
+    "ros2irobotcreate.wheel_vels_header_stamp_sec": "40510",
+    "ros2irobotcreate.wheel_vels_header_stamp_nanosec": "2147564661",
+    "ros2irobotcreate.wheel_vels_header_frame_id": "s3",
+    "ros2irobotcreate.wheel_vels_velocity_left": "-4.125",
+    "ros2irobotcreate.wheel_vels_velocity_right": "-3.875",
+    "ros2irobotcreate.topic": "/gen/wheel_vels"
+  }
+}

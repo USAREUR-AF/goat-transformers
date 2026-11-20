@@ -1,0 +1,17 @@
+{
+  "name": "rt-sbg_gps_vel",
+  "from": "ros2-sbg-driver",
+  "to": "ros2-sbg-driver",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/sbg_gps_vel\",\"type\":\"sbg_driver/msg/SbgGpsVel\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"time_stamp\":2147645667,\"status\":{\"vel_status\":154,\"vel_type\":209},\"gps_tow\":2147767176,\"velocity\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07},\"velocity_accuracy\":{\"x\":11.077,\"y\":-12.084,\"z\":13.091},\"course\":-1.625,\"course_acc\":-1.375},\"id\":\"gen-sbg_gps_vel\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/sbg_gps_vel\",\"type\":\"sbg_driver/msg/SbgGpsVel\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"time_stamp\":2147645667,\"status\":{\"vel_status\":154,\"vel_type\":209},\"gps_tow\":2147767176,\"velocity\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07},\"velocity_accuracy\":{\"x\":11.077,\"y\":-12.084,\"z\":13.091},\"course\":-1.625,\"course_acc\":-1.375},\"id\":\"gen-sbg_gps_vel\"}",
+  "model": {
+    "@kind": "sbg_gps_vel",
+    "ros2sbg.sbg_gps_vel_header_stamp_sec": "40510",
+    "ros2sbg.sbg_gps_vel_header_stamp_nanosec": "2147564661",
+    "ros2sbg.sbg_gps_vel_header_frame_id": "s3",
+    "ros2sbg.sbg_gps_vel_time_stamp": "2147645667",
+    "ros2sbg.sbg_gps_vel_status_vel_status": "154",
+    "ros2sbg.topic": "/gen/sbg_gps_vel"
+  }
+}

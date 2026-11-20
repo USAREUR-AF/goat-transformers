@@ -1,0 +1,19 @@
+{
+  "name": "rt-ubx_rxm_measx",
+  "from": "ros2-ublox-ubx-msgs",
+  "to": "ros2-ublox-ubx-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/ubx_rxm_measx\",\"type\":\"ublox_ubx_msgs/msg/UBXRxmMeasx\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"version\":99,\"gps_tow\":2147686170,\"glo_tow\":2147726673,\"bds_tow\":2147767176,\"qzss_tow\":2147807679,\"gps_tow_acc\":4086,\"glo_tow_acc\":44589,\"bds_tow_acc\":19556,\"qzss_tow_acc\":60059,\"num_sv\":82,\"flags\":137,\"sv_data\":[{\"gnss_id\":192,\"sv_id\":247,\"c_no\":46,\"mpath_indic\":101,\"doppler_ms\":769564,\"doppler_hz\":810067,\"whole_chips\":31370,\"frac_chips\":6337,\"code_phase\":2148415224,\"int_code_phase\":175,\"pseu_range_rms_err\":230},{\"gnss_id\":29,\"sv_id\":84,\"c_no\":139,\"mpath_indic\":194,\"doppler_ms\":1215097,\"doppler_hz\":1255600,\"whole_chips\":18151,\"frac_chips\":58654,\"code_phase\":2148860757,\"int_code_phase\":12,\"pseu_range_rms_err\":67}]},\"id\":\"gen-ubx_rxm_measx\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/ubx_rxm_measx\",\"type\":\"ublox_ubx_msgs/msg/UBXRxmMeasx\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"version\":99,\"gps_tow\":2147686170,\"glo_tow\":2147726673,\"bds_tow\":2147767176,\"qzss_tow\":2147807679,\"gps_tow_acc\":4086,\"glo_tow_acc\":44589,\"bds_tow_acc\":19556,\"qzss_tow_acc\":60059,\"num_sv\":82,\"flags\":137,\"sv_data\":[{\"gnss_id\":192,\"sv_id\":247,\"c_no\":46,\"mpath_indic\":101,\"doppler_ms\":769564,\"doppler_hz\":810067,\"whole_chips\":31370,\"frac_chips\":6337,\"code_phase\":2148415224,\"int_code_phase\":175,\"pseu_range_rms_err\":230},{\"gnss_id\":29,\"sv_id\":84,\"c_no\":139,\"mpath_indic\":194,\"doppler_ms\":1215097,\"doppler_hz\":1255600,\"whole_chips\":18151,\"frac_chips\":58654,\"code_phase\":2148860757,\"int_code_phase\":12,\"pseu_range_rms_err\":67}]},\"id\":\"gen-ubx_rxm_measx\"}",
+  "model": {
+    "@kind": "ubx_rxm_measx",
+    "ros2ubloxubx.ubx_rxm_measx_header_stamp_sec": "40510",
+    "ros2ubloxubx.ubx_rxm_measx_header_stamp_nanosec": "2147564661",
+    "ros2ubloxubx.ubx_rxm_measx_header_frame_id": "s3",
+    "ros2ubloxubx.ubx_rxm_measx_version": "99",
+    "ros2ubloxubx.ubx_rxm_measx_gps_tow": "2147686170",
+    "ros2ubloxubx.ubx_rxm_measx_sv_data.#": "2",
+    "ros2ubloxubx.ubx_rxm_measx_sv_data[0].ros2ubloxubx.ubx_rxm_measx_sv_data_gnss_id": "192",
+    "ros2ubloxubx.topic": "/gen/ubx_rxm_measx"
+  }
+}

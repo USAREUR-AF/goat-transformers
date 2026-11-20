@@ -1,0 +1,17 @@
+{
+  "name": "rt-vehicle_control",
+  "from": "ros2-marti-nav-msgs",
+  "to": "ros2-marti-nav-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/vehicle_control\",\"type\":\"marti_nav_msgs/msg/VehicleControl\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"engine\":162019,\"gear\":202522,\"steering\":-6.042,\"throttle\":7.049,\"brake\":8.056,\"steering_position\":-28682,\"gb_position\":11821},\"id\":\"gen-vehicle_control\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/vehicle_control\",\"type\":\"marti_nav_msgs/msg/VehicleControl\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"engine\":162019,\"gear\":202522,\"steering\":-6.042,\"throttle\":7.049,\"brake\":8.056,\"steering_position\":-28682,\"gb_position\":11821},\"id\":\"gen-vehicle_control\"}",
+  "model": {
+    "@kind": "vehicle_control",
+    "ros2martinav.vehicle_control_header_stamp_sec": "40510",
+    "ros2martinav.vehicle_control_header_stamp_nanosec": "2147564661",
+    "ros2martinav.vehicle_control_header_frame_id": "s3",
+    "ros2martinav.vehicle_control_engine": "162019",
+    "ros2martinav.vehicle_control_gear": "202522",
+    "ros2martinav.topic": "/gen/vehicle_control"
+  }
+}

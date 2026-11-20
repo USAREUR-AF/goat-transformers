@@ -1,0 +1,13 @@
+{
+  "name": "rt-psmpvt",
+  "from": "ros2-ublox-ubx-msgs",
+  "to": "ros2-ublox-ubx-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/psmpvt\",\"type\":\"ublox_ubx_msgs/msg/PSMPVT\",\"msg\":{\"state\":190},\"id\":\"gen-psmpvt\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/psmpvt\",\"type\":\"ublox_ubx_msgs/msg/PSMPVT\",\"msg\":{\"state\":190},\"id\":\"gen-psmpvt\"}",
+  "model": {
+    "@kind": "psmpvt",
+    "ros2ubloxubx.psmpvt_state": "190",
+    "ros2ubloxubx.topic": "/gen/psmpvt"
+  }
+}

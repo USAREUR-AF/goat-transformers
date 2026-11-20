@@ -1,0 +1,17 @@
+{
+  "name": "rt-aim_plus_status",
+  "from": "ros2-septentrio-gnss-driver",
+  "to": "ros2-septentrio-gnss-driver",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/aim_plus_status\",\"type\":\"septentrio_gnss_driver/msg/AIMPlusStatus\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"tow\":2147645667,\"wnc\":38682,\"interference\":209,\"spoofing\":8,\"osnma_authenticating\":false,\"galileo_authentic\":118,\"galileo_spoofed\":173,\"gps_authentic\":228,\"gps_spoofed\":27},\"id\":\"gen-aim_plus_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/aim_plus_status\",\"type\":\"septentrio_gnss_driver/msg/AIMPlusStatus\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"tow\":2147645667,\"wnc\":38682,\"interference\":209,\"spoofing\":8,\"osnma_authenticating\":false,\"galileo_authentic\":118,\"galileo_spoofed\":173,\"gps_authentic\":228,\"gps_spoofed\":27},\"id\":\"gen-aim_plus_status\"}",
+  "model": {
+    "@kind": "aim_plus_status",
+    "ros2septentrio.aim_plus_status_header_stamp_sec": "40510",
+    "ros2septentrio.aim_plus_status_header_stamp_nanosec": "2147564661",
+    "ros2septentrio.aim_plus_status_header_frame_id": "s3",
+    "ros2septentrio.aim_plus_status_tow": "2147645667",
+    "ros2septentrio.aim_plus_status_wnc": "38682",
+    "ros2septentrio.topic": "/gen/aim_plus_status"
+  }
+}

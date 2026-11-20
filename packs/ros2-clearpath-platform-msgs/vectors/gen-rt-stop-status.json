@@ -1,0 +1,17 @@
+{
+  "name": "rt-stop_status",
+  "from": "ros2-clearpath-platform-msgs",
+  "to": "ros2-clearpath-platform-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/stop_status\",\"type\":\"clearpath_platform_msgs/msg/StopStatus\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"stop_power_status\":false,\"external_stop_present\":true,\"needs_reset\":false},\"id\":\"gen-stop_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/stop_status\",\"type\":\"clearpath_platform_msgs/msg/StopStatus\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"stop_power_status\":false,\"external_stop_present\":true,\"needs_reset\":false},\"id\":\"gen-stop_status\"}",
+  "model": {
+    "@kind": "stop_status",
+    "ros2clearpathplatform.stop_status_header_stamp_sec": "40510",
+    "ros2clearpathplatform.stop_status_header_stamp_nanosec": "2147564661",
+    "ros2clearpathplatform.stop_status_header_frame_id": "s3",
+    "ros2clearpathplatform.stop_status_stop_power_status": "0",
+    "ros2clearpathplatform.stop_status_external_stop_present": "1",
+    "ros2clearpathplatform.topic": "/gen/stop_status"
+  }
+}

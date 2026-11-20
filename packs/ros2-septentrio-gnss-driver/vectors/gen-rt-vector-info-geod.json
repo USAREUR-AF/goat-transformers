@@ -1,0 +1,17 @@
+{
+  "name": "rt-vector_info_geod",
+  "from": "ros2-septentrio-gnss-driver",
+  "to": "ros2-septentrio-gnss-driver",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/vector_info_geod\",\"type\":\"septentrio_gnss_driver/msg/VectorInfoGeod\",\"msg\":{\"nr_sv\":190,\"error\":245,\"mode\":44,\"misc\":99,\"delta_east\":5.035,\"delta_north\":-6.042,\"delta_up\":7.049,\"delta_ve\":-3.125,\"delta_vn\":-2.875,\"delta_vu\":-2.625,\"azimuth\":19556,\"elevation\":27291,\"reference_id\":35026,\"corr_age\":9993,\"signal_info\":2148091200},\"id\":\"gen-vector_info_geod\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/vector_info_geod\",\"type\":\"septentrio_gnss_driver/msg/VectorInfoGeod\",\"msg\":{\"nr_sv\":190,\"error\":245,\"mode\":44,\"misc\":99,\"delta_east\":5.035,\"delta_north\":-6.042,\"delta_up\":7.049,\"delta_ve\":-3.125,\"delta_vn\":-2.875,\"delta_vu\":-2.625,\"azimuth\":19556,\"elevation\":27291,\"reference_id\":35026,\"corr_age\":9993,\"signal_info\":2148091200},\"id\":\"gen-vector_info_geod\"}",
+  "model": {
+    "@kind": "vector_info_geod",
+    "ros2septentrio.vector_info_geod_nr_sv": "190",
+    "ros2septentrio.vector_info_geod_error": "245",
+    "ros2septentrio.vector_info_geod_mode": "44",
+    "ros2septentrio.vector_info_geod_misc": "99",
+    "ros2septentrio.vector_info_geod_delta_east": "5.035",
+    "ros2septentrio.topic": "/gen/vector_info_geod"
+  }
+}

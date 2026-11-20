@@ -1,0 +1,17 @@
+{
+  "name": "rt-carla_ego_vehicle_status",
+  "from": "ros2-carla-msgs",
+  "to": "ros2-carla-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/carla_ego_vehicle_status\",\"type\":\"carla_msgs/msg/CarlaEgoVehicleStatus\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"velocity\":-4.125,\"acceleration\":{\"linear\":{\"x\":5.035,\"y\":-6.042,\"z\":7.049},\"angular\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07}},\"orientation\":{\"x\":11.077,\"y\":-12.084,\"z\":13.091,\"w\":14.098},\"control\":{\"header\":{\"stamp\":{\"sec\":607552,\"nanosec\":2148131703},\"frame_id\":\"s17\"},\"throttle\":-0.625,\"steer\":-0.375,\"brake\":-0.125,\"hand_brake\":true,\"reverse\":false,\"gear\":931576,\"manual_gear_shift\":false}},\"id\":\"gen-carla_ego_vehicle_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/carla_ego_vehicle_status\",\"type\":\"carla_msgs/msg/CarlaEgoVehicleStatus\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"velocity\":-4.125,\"acceleration\":{\"linear\":{\"x\":5.035,\"y\":-6.042,\"z\":7.049},\"angular\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07}},\"orientation\":{\"x\":11.077,\"y\":-12.084,\"z\":13.091,\"w\":14.098},\"control\":{\"header\":{\"stamp\":{\"sec\":607552,\"nanosec\":2148131703},\"frame_id\":\"s17\"},\"throttle\":-0.625,\"steer\":-0.375,\"brake\":-0.125,\"hand_brake\":true,\"reverse\":false,\"gear\":931576,\"manual_gear_shift\":false}},\"id\":\"gen-carla_ego_vehicle_status\"}",
+  "model": {
+    "@kind": "carla_ego_vehicle_status",
+    "ros2carla.carla_ego_vehicle_status_header_stamp_sec": "40510",
+    "ros2carla.carla_ego_vehicle_status_header_stamp_nanosec": "2147564661",
+    "ros2carla.carla_ego_vehicle_status_header_frame_id": "s3",
+    "ros2carla.carla_ego_vehicle_status_velocity": "-4.125",
+    "ros2carla.carla_ego_vehicle_status_acceleration_linear_x": "5.035",
+    "ros2carla.topic": "/gen/carla_ego_vehicle_status"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "rt-sbas_sv_data",
+  "from": "ros2-ublox-ubx-msgs",
+  "to": "ros2-ublox-ubx-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/sbas_sv_data\",\"type\":\"ublox_ubx_msgs/msg/SBASSvData\",\"msg\":{\"svid\":190,\"reserved_1\":245,\"udre\":44,\"sv_sys\":99,\"sv_service\":154,\"reserved_2\":209,\"prc\":21384,\"reserved_3\":\"CBj/AIA=\",\"ic\":-28682},\"id\":\"gen-sbas_sv_data\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/sbas_sv_data\",\"type\":\"ublox_ubx_msgs/msg/SBASSvData\",\"msg\":{\"svid\":190,\"reserved_1\":245,\"udre\":44,\"sv_sys\":99,\"sv_service\":154,\"reserved_2\":209,\"prc\":21384,\"reserved_3\":\"CBj/AIA=\",\"ic\":-28682},\"id\":\"gen-sbas_sv_data\"}",
+  "model": {
+    "@kind": "sbas_sv_data",
+    "ros2ubloxubx.sbas_sv_data_svid": "190",
+    "ros2ubloxubx.sbas_sv_data_reserved_1": "245",
+    "ros2ubloxubx.sbas_sv_data_udre": "44",
+    "ros2ubloxubx.sbas_sv_data_sv_sys": "99",
+    "ros2ubloxubx.sbas_sv_data_sv_service": "154",
+    "ros2ubloxubx.topic": "/gen/sbas_sv_data"
+  }
+}

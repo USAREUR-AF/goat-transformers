@@ -1,0 +1,17 @@
+{
+  "name": "rt-route_speed_array",
+  "from": "ros2-marti-nav-msgs",
+  "to": "ros2-marti-nav-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/route_speed_array\",\"type\":\"marti_nav_msgs/msg/RouteSpeedArray\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"speeds\":[{\"header\":{\"stamp\":{\"sec\":162019,\"nanosec\":2147686170},\"frame_id\":\"s6\"},\"id\":\"s7\",\"distance\":-3.125,\"speed\":-2.875},{\"header\":{\"stamp\":{\"sec\":405037,\"nanosec\":2147929188},\"frame_id\":\"s12\"},\"id\":\"s13\",\"distance\":-1.625,\"speed\":-1.375}]},\"id\":\"gen-route_speed_array\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/route_speed_array\",\"type\":\"marti_nav_msgs/msg/RouteSpeedArray\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"speeds\":[{\"header\":{\"stamp\":{\"sec\":162019,\"nanosec\":2147686170},\"frame_id\":\"s6\"},\"id\":\"s7\",\"distance\":-3.125,\"speed\":-2.875},{\"header\":{\"stamp\":{\"sec\":405037,\"nanosec\":2147929188},\"frame_id\":\"s12\"},\"id\":\"s13\",\"distance\":-1.625,\"speed\":-1.375}]},\"id\":\"gen-route_speed_array\"}",
+  "model": {
+    "@kind": "route_speed_array",
+    "ros2martinav.route_speed_array_header_stamp_sec": "40510",
+    "ros2martinav.route_speed_array_header_stamp_nanosec": "2147564661",
+    "ros2martinav.route_speed_array_header_frame_id": "s3",
+    "ros2martinav.route_speed_array_speeds.#": "2",
+    "ros2martinav.route_speed_array_speeds[0].ros2martinav.route_speed_array_speeds_header_stamp_sec": "162019",
+    "ros2martinav.topic": "/gen/route_speed_array"
+  }
+}

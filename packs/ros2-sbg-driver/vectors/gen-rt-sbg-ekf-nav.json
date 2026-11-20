@@ -1,0 +1,17 @@
+{
+  "name": "rt-sbg_ekf_nav",
+  "from": "ros2-sbg-driver",
+  "to": "ros2-sbg-driver",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/sbg_ekf_nav\",\"type\":\"sbg_driver/msg/SbgEkfNav\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"time_stamp\":2147645667,\"velocity\":{\"x\":5.035,\"y\":-6.042,\"z\":7.049},\"velocity_accuracy\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07},\"latitude\":11.077,\"longitude\":-12.084,\"altitude\":13.091,\"undulation\":-1.625,\"position_accuracy\":{\"x\":-15.105,\"y\":16.112,\"z\":17.119},\"status\":{\"solution_mode\":101,\"attitude_valid\":true,\"heading_valid\":false,\"velocity_valid\":true,\"position_valid\":false,\"vert_ref_used\":true,\"mag_ref_used\":false,\"gps1_vel_used\":true,\"gps1_pos_used\":false,\"gps1_hdt_used\":true,\"gps2_vel_used\":false,\"gps2_pos_used\":true,\"gps2_hdt_used\":false,\"odo_used\":true,\"dvl_bt_used\":false,\"dvl_wt_used\":true,\"vel1_used\":false,\"usbl_used\":true,\"air_data_used\":false,\"zupt_used\":true,\"align_valid\":false,\"depth_used\":true,\"zaru_used\":false}},\"id\":\"gen-sbg_ekf_nav\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/sbg_ekf_nav\",\"type\":\"sbg_driver/msg/SbgEkfNav\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"time_stamp\":2147645667,\"velocity\":{\"x\":5.035,\"y\":-6.042,\"z\":7.049},\"velocity_accuracy\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07},\"latitude\":11.077,\"longitude\":-12.084,\"altitude\":13.091,\"undulation\":-1.625,\"position_accuracy\":{\"x\":-15.105,\"y\":16.112,\"z\":17.119},\"status\":{\"solution_mode\":101,\"attitude_valid\":true,\"heading_valid\":false,\"velocity_valid\":true,\"position_valid\":false,\"vert_ref_used\":true,\"mag_ref_used\":false,\"gps1_vel_used\":true,\"gps1_pos_used\":false,\"gps1_hdt_used\":true,\"gps2_vel_used\":false,\"gps2_pos_used\":true,\"gps2_hdt_used\":false,\"odo_used\":true,\"dvl_bt_used\":false,\"dvl_wt_used\":true,\"vel1_used\":false,\"usbl_used\":true,\"air_data_used\":false,\"zupt_used\":true,\"align_valid\":false,\"depth_used\":true,\"zaru_used\":false}},\"id\":\"gen-sbg_ekf_nav\"}",
+  "model": {
+    "@kind": "sbg_ekf_nav",
+    "ros2sbg.sbg_ekf_nav_header_stamp_sec": "40510",
+    "ros2sbg.sbg_ekf_nav_header_stamp_nanosec": "2147564661",
+    "ros2sbg.sbg_ekf_nav_header_frame_id": "s3",
+    "ros2sbg.sbg_ekf_nav_time_stamp": "2147645667",
+    "ros2sbg.sbg_ekf_nav_velocity_x": "5.035",
+    "ros2sbg.topic": "/gen/sbg_ekf_nav"
+  }
+}

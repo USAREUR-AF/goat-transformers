@@ -1,0 +1,17 @@
+{
+  "name": "rt-carla_lane_invasion_event",
+  "from": "ros2-carla-msgs",
+  "to": "ros2-carla-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/carla_lane_invasion_event\",\"type\":\"carla_msgs/msg/CarlaLaneInvasionEvent\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"crossed_lane_markings\":[162019,202522]},\"id\":\"gen-carla_lane_invasion_event\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/carla_lane_invasion_event\",\"type\":\"carla_msgs/msg/CarlaLaneInvasionEvent\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"crossed_lane_markings\":[162019,202522]},\"id\":\"gen-carla_lane_invasion_event\"}",
+  "model": {
+    "@kind": "carla_lane_invasion_event",
+    "ros2carla.carla_lane_invasion_event_header_stamp_sec": "40510",
+    "ros2carla.carla_lane_invasion_event_header_stamp_nanosec": "2147564661",
+    "ros2carla.carla_lane_invasion_event_header_frame_id": "s3",
+    "ros2carla.carla_lane_invasion_event_crossed_lane_markings.#": "2",
+    "ros2carla.carla_lane_invasion_event_crossed_lane_markings[0].ros2carla.carla_lane_invasion_event_crossed_lane_markings_value": "162019",
+    "ros2carla.topic": "/gen/carla_lane_invasion_event"
+  }
+}

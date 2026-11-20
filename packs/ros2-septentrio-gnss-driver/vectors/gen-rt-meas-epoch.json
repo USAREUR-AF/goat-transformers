@@ -1,0 +1,19 @@
+{
+  "name": "rt-meas_epoch",
+  "from": "ros2-septentrio-gnss-driver",
+  "to": "ros2-septentrio-gnss-driver",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/meas_epoch\",\"type\":\"septentrio_gnss_driver/msg/MeasEpoch\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"block_header\":{\"sync_1\":99,\"sync_2\":154,\"crc\":13649,\"id\":54152,\"revision\":63,\"length\":4086,\"tow\":2147888685,\"wnc\":19556},\"n\":27,\"sb1_length\":82,\"sb2_length\":137,\"common_flags\":192,\"cum_clk_jumps\":247,\"type1\":[{\"rx_channel\":46,\"type\":101,\"sv_id\":156,\"misc\":211,\"code_lsb\":2148334218,\"doppler\":891073,\"carrier_lsb\":46840,\"carrier_msb\":47,\"cn0\":230,\"lock_time\":37277,\"obs_info\":84,\"n2\":139,\"type2\":[{\"type\":194,\"lock_time\":249,\"cn0\":48,\"offsets_msb\":103,\"carrier_msb\":30,\"obs_info\":213,\"code_offset_lsb\":8588,\"carrier_lsb\":49091,\"doppler_offset_lsb\":24058}]},{\"rx_channel\":177,\"type\":232,\"sv_id\":31,\"misc\":86,\"code_lsb\":2149184781,\"doppler\":1741636,\"carrier_lsb\":45435,\"carrier_msb\":-78,\"cn0\":105,\"lock_time\":35872,\"obs_info\":215,\"n2\":14,\"type2\":[{\"type\":69,\"lock_time\":124,\"cn0\":179,\"offsets_msb\":234,\"carrier_msb\":-95,\"obs_info\":88,\"code_offset_lsb\":7183,\"carrier_lsb\":47686,\"doppler_offset_lsb\":22653}]}]},\"id\":\"gen-meas_epoch\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/meas_epoch\",\"type\":\"septentrio_gnss_driver/msg/MeasEpoch\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"block_header\":{\"sync_1\":99,\"sync_2\":154,\"crc\":13649,\"id\":54152,\"revision\":63,\"length\":4086,\"tow\":2147888685,\"wnc\":19556},\"n\":27,\"sb1_length\":82,\"sb2_length\":137,\"common_flags\":192,\"cum_clk_jumps\":247,\"type1\":[{\"rx_channel\":46,\"type\":101,\"sv_id\":156,\"misc\":211,\"code_lsb\":2148334218,\"doppler\":891073,\"carrier_lsb\":46840,\"carrier_msb\":47,\"cn0\":230,\"lock_time\":37277,\"obs_info\":84,\"n2\":139,\"type2\":[{\"type\":194,\"lock_time\":249,\"cn0\":48,\"offsets_msb\":103,\"carrier_msb\":30,\"obs_info\":213,\"code_offset_lsb\":8588,\"carrier_lsb\":49091,\"doppler_offset_lsb\":24058}]},{\"rx_channel\":177,\"type\":232,\"sv_id\":31,\"misc\":86,\"code_lsb\":2149184781,\"doppler\":1741636,\"carrier_lsb\":45435,\"carrier_msb\":-78,\"cn0\":105,\"lock_time\":35872,\"obs_info\":215,\"n2\":14,\"type2\":[{\"type\":69,\"lock_time\":124,\"cn0\":179,\"offsets_msb\":234,\"carrier_msb\":-95,\"obs_info\":88,\"code_offset_lsb\":7183,\"carrier_lsb\":47686,\"doppler_offset_lsb\":22653}]}]},\"id\":\"gen-meas_epoch\"}",
+  "model": {
+    "@kind": "meas_epoch",
+    "ros2septentrio.meas_epoch_header_stamp_sec": "40510",
+    "ros2septentrio.meas_epoch_header_stamp_nanosec": "2147564661",
+    "ros2septentrio.meas_epoch_header_frame_id": "s3",
+    "ros2septentrio.meas_epoch_block_header_sync_1": "99",
+    "ros2septentrio.meas_epoch_block_header_sync_2": "154",
+    "ros2septentrio.meas_epoch_type1.#": "2",
+    "ros2septentrio.meas_epoch_type1[0].ros2septentrio.meas_epoch_type1_rx_channel": "46",
+    "ros2septentrio.topic": "/gen/meas_epoch"
+  }
+}

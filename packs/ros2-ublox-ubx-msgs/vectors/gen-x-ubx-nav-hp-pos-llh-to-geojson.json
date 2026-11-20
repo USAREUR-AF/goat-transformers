@@ -1,0 +1,14 @@
+{
+  "name": "x-ubx_nav_hp_pos_llh-to-geojson",
+  "from": "ros2-ublox-ubx-msgs",
+  "to": "geojson",
+  "source": "tools/gen/ros2msg2pack.py: a full sample message with the bound fields set to a point; latitude, longitude and altitude are core lat, lon, hae (pack.md); geojson writes [lon, lat, alt] (RFC 7946, engine-spec 0.1.1 ruling 4)",
+  "input": "{\"op\":\"publish\",\"topic\":\"/geo\",\"type\":\"ublox_ubx_msgs/msg/UBXNavHPPosLLH\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"version\":99,\"invalid_lon\":true,\"invalid_lat\":false,\"invalid_height\":true,\"invalid_hmsl\":false,\"invalid_lon_hp\":true,\"invalid_lat_hp\":false,\"invalid_height_hp\":true,\"invalid_hmsl_hp\":false,\"itow\":2148010194,\"lon\":85312500,\"lat\":470625000,\"height\":431500,\"hmsl\":688558,\"lon_hp\":-27,\"lat_hp\":28,\"height_hp\":83,\"hmsl_hp\":-118,\"h_acc\":2148374721,\"v_acc\":2148415224}}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.53125,47.0625,431.5]},\"properties\":{}}",
+  "model": {
+    "@kind": "ubx_nav_hp_pos_llh",
+    "lon": "8.53125",
+    "lat": "47.0625",
+    "hae": "431.5"
+  }
+}

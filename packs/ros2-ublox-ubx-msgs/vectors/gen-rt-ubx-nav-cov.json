@@ -1,0 +1,17 @@
+{
+  "name": "rt-ubx_nav_cov",
+  "from": "ros2-ublox-ubx-msgs",
+  "to": "ros2-ublox-ubx-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/ubx_nav_cov\",\"type\":\"ublox_ubx_msgs/msg/UBXNavCov\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"itow\":2147645667,\"version\":154,\"pos_cor_valid\":false,\"vel_cor_valid\":true,\"pos_cov_nn\":-3.125,\"pos_cov_ne\":-2.875,\"pos_cov_nd\":-2.625,\"pos_cov_ee\":-2.375,\"pos_cov_ed\":-2.125,\"pos_cov_dd\":-1.875,\"vel_cov_nn\":-1.625,\"vel_cov_ne\":-1.375,\"vel_cov_nd\":-1.125,\"vel_cov_ee\":-0.875,\"vel_cov_ed\":-0.625,\"vel_cov_dd\":-0.375},\"id\":\"gen-ubx_nav_cov\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/ubx_nav_cov\",\"type\":\"ublox_ubx_msgs/msg/UBXNavCov\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"itow\":2147645667,\"version\":154,\"pos_cor_valid\":false,\"vel_cor_valid\":true,\"pos_cov_nn\":-3.125,\"pos_cov_ne\":-2.875,\"pos_cov_nd\":-2.625,\"pos_cov_ee\":-2.375,\"pos_cov_ed\":-2.125,\"pos_cov_dd\":-1.875,\"vel_cov_nn\":-1.625,\"vel_cov_ne\":-1.375,\"vel_cov_nd\":-1.125,\"vel_cov_ee\":-0.875,\"vel_cov_ed\":-0.625,\"vel_cov_dd\":-0.375},\"id\":\"gen-ubx_nav_cov\"}",
+  "model": {
+    "@kind": "ubx_nav_cov",
+    "ros2ubloxubx.ubx_nav_cov_header_stamp_sec": "40510",
+    "ros2ubloxubx.ubx_nav_cov_header_stamp_nanosec": "2147564661",
+    "ros2ubloxubx.ubx_nav_cov_header_frame_id": "s3",
+    "ros2ubloxubx.ubx_nav_cov_itow": "2147645667",
+    "ros2ubloxubx.ubx_nav_cov_version": "154",
+    "ros2ubloxubx.topic": "/gen/ubx_nav_cov"
+  }
+}

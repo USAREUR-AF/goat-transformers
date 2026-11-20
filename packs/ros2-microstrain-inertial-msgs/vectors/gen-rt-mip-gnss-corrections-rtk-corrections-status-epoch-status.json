@@ -1,0 +1,17 @@
+{
+  "name": "rt-mip_gnss_corrections_rtk_corrections_status_epoch_status",
+  "from": "ros2-microstrain-inertial-msgs",
+  "to": "ros2-microstrain-inertial-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/mip_gnss_corrections_rtk_corrections_status_epoch_status\",\"type\":\"microstrain_inertial_msgs/msg/MipGnssCorrectionsRtkCorrectionsStatusEpochStatus\",\"msg\":{\"antenna_location_received\":true,\"antenna_description_received\":false,\"gps_received\":true,\"galileo_received\":false,\"glonass_received\":true,\"beidou_received\":false,\"using_gps_msm_messages\":true,\"using_glonass_msm_messages\":false,\"dongle_status_read_failed\":true},\"id\":\"gen-mip_gnss_corrections_rtk_corrections_status_epoch_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/mip_gnss_corrections_rtk_corrections_status_epoch_status\",\"type\":\"microstrain_inertial_msgs/msg/MipGnssCorrectionsRtkCorrectionsStatusEpochStatus\",\"msg\":{\"antenna_location_received\":true,\"antenna_description_received\":false,\"gps_received\":true,\"galileo_received\":false,\"glonass_received\":true,\"beidou_received\":false,\"using_gps_msm_messages\":true,\"using_glonass_msm_messages\":false,\"dongle_status_read_failed\":true},\"id\":\"gen-mip_gnss_corrections_rtk_corrections_status_epoch_status\"}",
+  "model": {
+    "@kind": "mip_gnss_corrections_rtk_corrections_status_epoch_status",
+    "ros2microstrain.mip_gnss_corrections_rtk_corrections_status_epoch_status_antenna_location_received_2": "1",
+    "ros2microstrain.mip_gnss_corrections_rtk_corrections_status_epoch_status_antenna_description_received_2": "0",
+    "ros2microstrain.mip_gnss_corrections_rtk_corrections_status_epoch_status_gps_received_2": "1",
+    "ros2microstrain.mip_gnss_corrections_rtk_corrections_status_epoch_status_galileo_received_2": "0",
+    "ros2microstrain.mip_gnss_corrections_rtk_corrections_status_epoch_status_glonass_received_2": "1",
+    "ros2microstrain.topic": "/gen/mip_gnss_corrections_rtk_corrections_status_epoch_status"
+  }
+}

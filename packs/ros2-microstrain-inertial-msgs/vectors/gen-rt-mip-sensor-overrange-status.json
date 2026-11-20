@@ -1,0 +1,17 @@
+{
+  "name": "rt-mip_sensor_overrange_status",
+  "from": "ros2-microstrain-inertial-msgs",
+  "to": "ros2-microstrain-inertial-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/mip_sensor_overrange_status\",\"type\":\"microstrain_inertial_msgs/msg/MipSensorOverrangeStatus\",\"msg\":{\"header\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"event_source\":99,\"reference_timestamp\":617283945065,\"gps_timestamp\":{\"tow\":-6.042,\"week_number\":54152,\"valid_flags\":{\"tow\":false,\"week_number\":true,\"time_valid\":false}}},\"status\":{\"accel_x\":true,\"accel_y\":false,\"accel_z\":true,\"gyro_x\":false,\"gyro_y\":true,\"gyro_z\":false,\"mag_x\":true,\"mag_y\":false,\"mag_z\":true,\"press\":false}},\"id\":\"gen-mip_sensor_overrange_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/mip_sensor_overrange_status\",\"type\":\"microstrain_inertial_msgs/msg/MipSensorOverrangeStatus\",\"msg\":{\"header\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"event_source\":99,\"reference_timestamp\":617283945065,\"gps_timestamp\":{\"tow\":-6.042,\"week_number\":54152,\"valid_flags\":{\"tow\":false,\"week_number\":true,\"time_valid\":false}}},\"status\":{\"accel_x\":true,\"accel_y\":false,\"accel_z\":true,\"gyro_x\":false,\"gyro_y\":true,\"gyro_z\":false,\"mag_x\":true,\"mag_y\":false,\"mag_z\":true,\"press\":false}},\"id\":\"gen-mip_sensor_overrange_status\"}",
+  "model": {
+    "@kind": "mip_sensor_overrange_status",
+    "ros2microstrain.mip_sensor_overrange_status_header_header_stamp_sec": "40510",
+    "ros2microstrain.mip_sensor_overrange_status_header_header_stamp_nanosec": "2147564661",
+    "ros2microstrain.mip_sensor_overrange_status_header_header_frame_id": "s3",
+    "ros2microstrain.mip_sensor_overrange_status_header_event_source": "99",
+    "ros2microstrain.mip_sensor_overrange_status_header_reference_timestamp": "617283945065",
+    "ros2microstrain.topic": "/gen/mip_sensor_overrange_status"
+  }
+}

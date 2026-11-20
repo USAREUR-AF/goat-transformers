@@ -1,0 +1,17 @@
+{
+  "name": "rt-matrix3x3_stamped",
+  "from": "ros2-marti-common-msgs",
+  "to": "ros2-marti-common-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/matrix3x3_stamped\",\"type\":\"marti_common_msgs/msg/Matrix3x3Stamped\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"matrix\":[4.028,5.035,-6.042,7.049,8.056,-9.063,10.07,11.077,-12.084]},\"id\":\"gen-matrix3x3_stamped\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/matrix3x3_stamped\",\"type\":\"marti_common_msgs/msg/Matrix3x3Stamped\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"matrix\":[4.028,5.035,-6.042,7.049,8.056,-9.063,10.07,11.077,-12.084]},\"id\":\"gen-matrix3x3_stamped\"}",
+  "model": {
+    "@kind": "matrix3x3_stamped",
+    "ros2marticommon.matrix3x3_stamped_header_stamp_sec": "40510",
+    "ros2marticommon.matrix3x3_stamped_header_stamp_nanosec": "2147564661",
+    "ros2marticommon.matrix3x3_stamped_header_frame_id": "s3",
+    "ros2marticommon.matrix3x3_stamped_matrix.#": "9",
+    "ros2marticommon.matrix3x3_stamped_matrix[0].ros2marticommon.matrix3x3_stamped_matrix_value": "4.028",
+    "ros2marticommon.topic": "/gen/matrix3x3_stamped"
+  }
+}

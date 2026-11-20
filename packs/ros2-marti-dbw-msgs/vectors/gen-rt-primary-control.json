@@ -1,0 +1,17 @@
+{
+  "name": "rt-primary_control",
+  "from": "ros2-marti-dbw-msgs",
+  "to": "ros2-marti-dbw-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/primary_control\",\"type\":\"marti_dbw_msgs/msg/PrimaryControl\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"active\":false,\"estop\":true,\"steering_command\":-3.625,\"throttle_command\":-3.375,\"brake_command\":-3.125},\"id\":\"gen-primary_control\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/primary_control\",\"type\":\"marti_dbw_msgs/msg/PrimaryControl\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"active\":false,\"estop\":true,\"steering_command\":-3.625,\"throttle_command\":-3.375,\"brake_command\":-3.125},\"id\":\"gen-primary_control\"}",
+  "model": {
+    "@kind": "primary_control",
+    "ros2martidbw.primary_control_header_stamp_sec": "40510",
+    "ros2martidbw.primary_control_header_stamp_nanosec": "2147564661",
+    "ros2martidbw.primary_control_header_frame_id": "s3",
+    "ros2martidbw.primary_control_active": "0",
+    "ros2martidbw.primary_control_estop": "1",
+    "ros2martidbw.topic": "/gen/primary_control"
+  }
+}

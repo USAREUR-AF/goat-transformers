@@ -1,0 +1,14 @@
+{
+  "name": "rt-orb_sv_flag",
+  "from": "ros2-ublox-ubx-msgs",
+  "to": "ros2-ublox-ubx-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/orb_sv_flag\",\"type\":\"ublox_ubx_msgs/msg/OrbSVFlag\",\"msg\":{\"health\":190,\"visibility\":245},\"id\":\"gen-orb_sv_flag\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/orb_sv_flag\",\"type\":\"ublox_ubx_msgs/msg/OrbSVFlag\",\"msg\":{\"health\":190,\"visibility\":245},\"id\":\"gen-orb_sv_flag\"}",
+  "model": {
+    "@kind": "orb_sv_flag",
+    "ros2ubloxubx.orb_sv_flag_health": "190",
+    "ros2ubloxubx.orb_sv_flag_visibility": "245",
+    "ros2ubloxubx.topic": "/gen/orb_sv_flag"
+  }
+}

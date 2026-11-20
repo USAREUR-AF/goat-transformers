@@ -1,0 +1,10 @@
+{
+ "CanFrame:data": "can_frame_data",
+ "CanFrame:data_length": "can_frame_data_length",
+ "CanFrame:header.frame_id": "can_frame_header_frame_id",
+ "CanFrame:header.stamp.nanosec": "can_frame_header_stamp_nanosec",
+ "CanFrame:header.stamp.sec": "can_frame_header_stamp_sec",
+ "CanFrame:id": "can_frame_id",
+ "CanFrame:msg_type": "can_frame_msg_type",
+ "topic": "topic"
+}

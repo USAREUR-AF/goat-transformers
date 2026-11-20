@@ -1,0 +1,19 @@
+{
+  "name": "rt-mip_filter_multi_antenna_offset_correction",
+  "from": "ros2-microstrain-inertial-msgs",
+  "to": "ros2-microstrain-inertial-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/mip_filter_multi_antenna_offset_correction\",\"type\":\"microstrain_inertial_msgs/msg/MipFilterMultiAntennaOffsetCorrection\",\"msg\":{\"header\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"event_source\":99,\"reference_timestamp\":617283945065,\"gps_timestamp\":{\"tow\":-6.042,\"week_number\":54152,\"valid_flags\":{\"tow\":false,\"week_number\":true,\"time_valid\":false}}},\"receiver_id\":228,\"offset\":[-2.125,-1.875,-1.625]},\"id\":\"gen-mip_filter_multi_antenna_offset_correction\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/mip_filter_multi_antenna_offset_correction\",\"type\":\"microstrain_inertial_msgs/msg/MipFilterMultiAntennaOffsetCorrection\",\"msg\":{\"header\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"event_source\":99,\"reference_timestamp\":617283945065,\"gps_timestamp\":{\"tow\":-6.042,\"week_number\":54152,\"valid_flags\":{\"tow\":false,\"week_number\":true,\"time_valid\":false}}},\"receiver_id\":228,\"offset\":[-2.125,-1.875,-1.625]},\"id\":\"gen-mip_filter_multi_antenna_offset_correction\"}",
+  "model": {
+    "@kind": "mip_filter_multi_antenna_offset_correction",
+    "ros2microstrain.mip_filter_multi_antenna_offset_correction_header_header_stamp_sec": "40510",
+    "ros2microstrain.mip_filter_multi_antenna_offset_correction_header_header_stamp_nanosec": "2147564661",
+    "ros2microstrain.mip_filter_multi_antenna_offset_correction_header_header_frame_id": "s3",
+    "ros2microstrain.mip_filter_multi_antenna_offset_correction_header_event_source": "99",
+    "ros2microstrain.mip_filter_multi_antenna_offset_correction_header_reference_timestamp": "617283945065",
+    "ros2microstrain.mip_filter_multi_antenna_offset_correction_offset.#": "3",
+    "ros2microstrain.mip_filter_multi_antenna_offset_correction_offset[0].ros2microstrain.mip_filter_multi_antenna_offset_correction_offset_value": "-2.125",
+    "ros2microstrain.topic": "/gen/mip_filter_multi_antenna_offset_correction"
+  }
+}

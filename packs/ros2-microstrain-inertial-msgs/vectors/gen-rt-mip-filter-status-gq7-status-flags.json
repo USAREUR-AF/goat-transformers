@@ -1,0 +1,17 @@
+{
+  "name": "rt-mip_filter_status_gq7_status_flags",
+  "from": "ros2-microstrain-inertial-msgs",
+  "to": "ros2-microstrain-inertial-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/mip_filter_status_gq7_status_flags\",\"type\":\"microstrain_inertial_msgs/msg/MipFilterStatusGq7StatusFlags\",\"msg\":{\"filter_condition\":190,\"roll_pitch_warning\":false,\"heading_warning\":true,\"position_warning\":false,\"velocity_warning\":true,\"imu_bias_warning\":false,\"gnss_clk_warning\":true,\"antenna_lever_arm_warning\":false,\"mounting_transform_warning\":true,\"time_sync_warning\":false,\"solution_error\":true},\"id\":\"gen-mip_filter_status_gq7_status_flags\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/mip_filter_status_gq7_status_flags\",\"type\":\"microstrain_inertial_msgs/msg/MipFilterStatusGq7StatusFlags\",\"msg\":{\"filter_condition\":190,\"roll_pitch_warning\":false,\"heading_warning\":true,\"position_warning\":false,\"velocity_warning\":true,\"imu_bias_warning\":false,\"gnss_clk_warning\":true,\"antenna_lever_arm_warning\":false,\"mounting_transform_warning\":true,\"time_sync_warning\":false,\"solution_error\":true},\"id\":\"gen-mip_filter_status_gq7_status_flags\"}",
+  "model": {
+    "@kind": "mip_filter_status_gq7_status_flags",
+    "ros2microstrain.mip_filter_status_gq7_status_flags_filter_condition_2": "190",
+    "ros2microstrain.mip_filter_status_gq7_status_flags_roll_pitch_warning_2": "0",
+    "ros2microstrain.mip_filter_status_gq7_status_flags_heading_warning_2": "1",
+    "ros2microstrain.mip_filter_status_gq7_status_flags_position_warning_2": "0",
+    "ros2microstrain.mip_filter_status_gq7_status_flags_velocity_warning_2": "1",
+    "ros2microstrain.topic": "/gen/mip_filter_status_gq7_status_flags"
+  }
+}

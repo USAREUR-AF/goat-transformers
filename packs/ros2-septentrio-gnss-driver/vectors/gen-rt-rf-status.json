@@ -1,0 +1,19 @@
+{
+  "name": "rt-rf_status",
+  "from": "ros2-septentrio-gnss-driver",
+  "to": "ros2-septentrio-gnss-driver",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/rf_status\",\"type\":\"septentrio_gnss_driver/msg/RFStatus\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"block_header\":{\"sync_1\":99,\"sync_2\":154,\"crc\":13649,\"id\":54152,\"revision\":63,\"length\":4086,\"tow\":2147888685,\"wnc\":19556},\"n\":27,\"sb_length\":82,\"flags\":137,\"rfband\":[{\"frequency\":2148091200,\"bandwidth\":25463,\"info\":46},{\"frequency\":2148212709,\"bandwidth\":15900,\"info\":211}]},\"id\":\"gen-rf_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/rf_status\",\"type\":\"septentrio_gnss_driver/msg/RFStatus\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"block_header\":{\"sync_1\":99,\"sync_2\":154,\"crc\":13649,\"id\":54152,\"revision\":63,\"length\":4086,\"tow\":2147888685,\"wnc\":19556},\"n\":27,\"sb_length\":82,\"flags\":137,\"rfband\":[{\"frequency\":2148091200,\"bandwidth\":25463,\"info\":46},{\"frequency\":2148212709,\"bandwidth\":15900,\"info\":211}]},\"id\":\"gen-rf_status\"}",
+  "model": {
+    "@kind": "rf_status",
+    "ros2septentrio.rf_status_header_stamp_sec": "40510",
+    "ros2septentrio.rf_status_header_stamp_nanosec": "2147564661",
+    "ros2septentrio.rf_status_header_frame_id": "s3",
+    "ros2septentrio.rf_status_block_header_sync_1": "99",
+    "ros2septentrio.rf_status_block_header_sync_2": "154",
+    "ros2septentrio.rf_status_rfband.#": "2",
+    "ros2septentrio.rf_status_rfband[0].ros2septentrio.rf_status_rfband_frequency": "2148091200",
+    "ros2septentrio.topic": "/gen/rf_status"
+  }
+}

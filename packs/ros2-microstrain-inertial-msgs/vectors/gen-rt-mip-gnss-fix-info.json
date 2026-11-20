@@ -1,0 +1,17 @@
+{
+  "name": "rt-mip_gnss_fix_info",
+  "from": "ros2-microstrain-inertial-msgs",
+  "to": "ros2-microstrain-inertial-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/mip_gnss_fix_info\",\"type\":\"microstrain_inertial_msgs/msg/MipGnssFixInfo\",\"msg\":{\"header\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"event_source\":99,\"reference_timestamp\":617283945065,\"gps_timestamp\":{\"tow\":-6.042,\"week_number\":54152,\"valid_flags\":{\"tow\":false,\"week_number\":true,\"time_valid\":false}}},\"fix_type\":228,\"num_sv\":27,\"fix_flags\":{\"sbas_used\":true,\"dgnss_used\":false}},\"id\":\"gen-mip_gnss_fix_info\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/mip_gnss_fix_info\",\"type\":\"microstrain_inertial_msgs/msg/MipGnssFixInfo\",\"msg\":{\"header\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"event_source\":99,\"reference_timestamp\":617283945065,\"gps_timestamp\":{\"tow\":-6.042,\"week_number\":54152,\"valid_flags\":{\"tow\":false,\"week_number\":true,\"time_valid\":false}}},\"fix_type\":228,\"num_sv\":27,\"fix_flags\":{\"sbas_used\":true,\"dgnss_used\":false}},\"id\":\"gen-mip_gnss_fix_info\"}",
+  "model": {
+    "@kind": "mip_gnss_fix_info",
+    "ros2microstrain.mip_gnss_fix_info_header_header_stamp_sec": "40510",
+    "ros2microstrain.mip_gnss_fix_info_header_header_stamp_nanosec": "2147564661",
+    "ros2microstrain.mip_gnss_fix_info_header_header_frame_id": "s3",
+    "ros2microstrain.mip_gnss_fix_info_header_event_source": "99",
+    "ros2microstrain.mip_gnss_fix_info_header_reference_timestamp": "617283945065",
+    "ros2microstrain.topic": "/gen/mip_gnss_fix_info"
+  }
+}

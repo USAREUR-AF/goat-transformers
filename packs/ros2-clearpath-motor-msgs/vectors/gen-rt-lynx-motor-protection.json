@@ -1,0 +1,15 @@
+{
+  "name": "rt-lynx_motor_protection",
+  "from": "ros2-clearpath-motor-msgs",
+  "to": "ros2-clearpath-motor-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/lynx_motor_protection\",\"type\":\"clearpath_motor_msgs/msg/LynxMotorProtection\",\"msg\":{\"can_id\":190,\"joint_name\":\"s2\",\"state\":44},\"id\":\"gen-lynx_motor_protection\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/lynx_motor_protection\",\"type\":\"clearpath_motor_msgs/msg/LynxMotorProtection\",\"msg\":{\"can_id\":190,\"joint_name\":\"s2\",\"state\":44},\"id\":\"gen-lynx_motor_protection\"}",
+  "model": {
+    "@kind": "lynx_motor_protection",
+    "ros2clearpathmotor.lynx_motor_protection_can_id": "190",
+    "ros2clearpathmotor.lynx_motor_protection_joint_name": "s2",
+    "ros2clearpathmotor.lynx_motor_protection_state": "44",
+    "ros2clearpathmotor.topic": "/gen/lynx_motor_protection"
+  }
+}

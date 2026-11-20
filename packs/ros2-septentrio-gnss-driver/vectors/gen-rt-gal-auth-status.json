@@ -1,0 +1,17 @@
+{
+  "name": "rt-gal_auth_status",
+  "from": "ros2-septentrio-gnss-driver",
+  "to": "ros2-septentrio-gnss-driver",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/gal_auth_status\",\"type\":\"septentrio_gnss_driver/msg/GALAuthStatus\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"block_header\":{\"sync_1\":99,\"sync_2\":154,\"crc\":13649,\"id\":54152,\"revision\":63,\"length\":4086,\"tow\":2147888685,\"wnc\":19556},\"osnma_status\":60059,\"trusted_time_delta\":-1.875,\"gal_active_mask\":1728395046182,\"gal_authentic_mask\":1851851835195,\"gps_active_mask\":1975308624208,\"gps_authentic_mask\":2098765413221},\"id\":\"gen-gal_auth_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/gal_auth_status\",\"type\":\"septentrio_gnss_driver/msg/GALAuthStatus\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"block_header\":{\"sync_1\":99,\"sync_2\":154,\"crc\":13649,\"id\":54152,\"revision\":63,\"length\":4086,\"tow\":2147888685,\"wnc\":19556},\"osnma_status\":60059,\"trusted_time_delta\":-1.875,\"gal_active_mask\":1728395046182,\"gal_authentic_mask\":1851851835195,\"gps_active_mask\":1975308624208,\"gps_authentic_mask\":2098765413221},\"id\":\"gen-gal_auth_status\"}",
+  "model": {
+    "@kind": "gal_auth_status",
+    "ros2septentrio.gal_auth_status_header_stamp_sec": "40510",
+    "ros2septentrio.gal_auth_status_header_stamp_nanosec": "2147564661",
+    "ros2septentrio.gal_auth_status_header_frame_id": "s3",
+    "ros2septentrio.gal_auth_status_block_header_sync_1": "99",
+    "ros2septentrio.gal_auth_status_block_header_sync_2": "154",
+    "ros2septentrio.topic": "/gen/gal_auth_status"
+  }
+}

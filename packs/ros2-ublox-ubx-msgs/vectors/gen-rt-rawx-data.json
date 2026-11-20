@@ -1,0 +1,17 @@
+{
+  "name": "rt-rawx_data",
+  "from": "ros2-ublox-ubx-msgs",
+  "to": "ros2-ublox-ubx-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/rawx_data\",\"type\":\"ublox_ubx_msgs/msg/RawxData\",\"msg\":{\"pr_mes\":1.007,\"cp_mes\":2.014,\"do_mes\":-4.375,\"gnss_id\":99,\"sv_id\":154,\"sig_id\":209,\"freq_id\":8,\"locktime\":29119,\"c_no\":118,\"pr_stdev\":173,\"cp_stdev\":228,\"do_stdev\":27,\"trk_stat\":{\"pr_valid\":true,\"cp_valid\":false,\"half_cyc\":true,\"sub_half_cyc\":false}},\"id\":\"gen-rawx_data\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/rawx_data\",\"type\":\"ublox_ubx_msgs/msg/RawxData\",\"msg\":{\"pr_mes\":1.007,\"cp_mes\":2.014,\"do_mes\":-4.375,\"gnss_id\":99,\"sv_id\":154,\"sig_id\":209,\"freq_id\":8,\"locktime\":29119,\"c_no\":118,\"pr_stdev\":173,\"cp_stdev\":228,\"do_stdev\":27,\"trk_stat\":{\"pr_valid\":true,\"cp_valid\":false,\"half_cyc\":true,\"sub_half_cyc\":false}},\"id\":\"gen-rawx_data\"}",
+  "model": {
+    "@kind": "rawx_data",
+    "ros2ubloxubx.rawx_data_pr_mes": "1.007",
+    "ros2ubloxubx.rawx_data_cp_mes": "2.014",
+    "ros2ubloxubx.rawx_data_do_mes": "-4.375",
+    "ros2ubloxubx.rawx_data_gnss_id": "99",
+    "ros2ubloxubx.rawx_data_sv_id": "154",
+    "ros2ubloxubx.topic": "/gen/rawx_data"
+  }
+}

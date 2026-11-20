@@ -1,0 +1,12 @@
+{
+ "DeviceInfo:device_class": "device_info_device_class",
+ "DeviceInfo:device_id": "device_info_device_id",
+ "DeviceInfo:firmware_version": "device_info_firmware_version",
+ "DeviceInfo:hardware_version": "device_info_hardware_version",
+ "DeviceInfo:manufacturer": "device_info_manufacturer",
+ "DeviceInfo:model": "device_info_model",
+ "DeviceInfo:serial_number": "device_info_serial_number",
+ "StreamControl:enabled": "stream_control_enabled",
+ "StreamControl:stream": "stream_control_stream",
+ "topic": "topic"
+}

@@ -1,0 +1,17 @@
+{
+  "name": "rt-gpvtg",
+  "from": "ros2-nmea-msgs",
+  "to": "ros2-nmea-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/gpvtg\",\"type\":\"nmea_msgs/msg/Gpvtg\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"message_id\":\"s4\",\"track_t\":-3.875,\"track_t_ref\":\"s6\",\"track_m\":-3.375,\"track_m_ref\":\"s8\",\"speed_n\":-2.875,\"speed_n_unit\":\"s10\",\"speed_k\":-2.375,\"speed_k_unit\":\"s12\",\"mode_indicator\":\"s13\"},\"id\":\"gen-gpvtg\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/gpvtg\",\"type\":\"nmea_msgs/msg/Gpvtg\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"message_id\":\"s4\",\"track_t\":-3.875,\"track_t_ref\":\"s6\",\"track_m\":-3.375,\"track_m_ref\":\"s8\",\"speed_n\":-2.875,\"speed_n_unit\":\"s10\",\"speed_k\":-2.375,\"speed_k_unit\":\"s12\",\"mode_indicator\":\"s13\"},\"id\":\"gen-gpvtg\"}",
+  "model": {
+    "@kind": "gpvtg",
+    "ros2nmea.gpvtg_header_stamp_sec": "40510",
+    "ros2nmea.gpvtg_header_stamp_nanosec": "2147564661",
+    "ros2nmea.gpvtg_header_frame_id": "s3",
+    "ros2nmea.gpvtg_message_id": "s4",
+    "ros2nmea.gpvtg_track_t": "-3.875",
+    "ros2nmea.topic": "/gen/gpvtg"
+  }
+}

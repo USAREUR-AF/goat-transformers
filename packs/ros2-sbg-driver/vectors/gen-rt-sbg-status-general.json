@@ -1,0 +1,17 @@
+{
+  "name": "rt-sbg_status_general",
+  "from": "ros2-sbg-driver",
+  "to": "ros2-sbg-driver",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/sbg_status_general\",\"type\":\"sbg_driver/msg/SbgStatusGeneral\",\"msg\":{\"main_power\":true,\"imu_power\":false,\"gps_power\":true,\"settings\":false,\"temperature\":true,\"datalogger\":false,\"cpu\":true},\"id\":\"gen-sbg_status_general\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/sbg_status_general\",\"type\":\"sbg_driver/msg/SbgStatusGeneral\",\"msg\":{\"main_power\":true,\"imu_power\":false,\"gps_power\":true,\"settings\":false,\"temperature\":true,\"datalogger\":false,\"cpu\":true},\"id\":\"gen-sbg_status_general\"}",
+  "model": {
+    "@kind": "sbg_status_general",
+    "ros2sbg.sbg_status_general_main_power": "1",
+    "ros2sbg.sbg_status_general_imu_power": "0",
+    "ros2sbg.sbg_status_general_gps_power": "1",
+    "ros2sbg.sbg_status_general_settings": "0",
+    "ros2sbg.sbg_status_general_temperature": "1",
+    "ros2sbg.topic": "/gen/sbg_status_general"
+  }
+}

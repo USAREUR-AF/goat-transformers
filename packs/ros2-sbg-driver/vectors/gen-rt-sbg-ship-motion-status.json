@@ -1,0 +1,17 @@
+{
+  "name": "rt-sbg_ship_motion_status",
+  "from": "ros2-sbg-driver",
+  "to": "ros2-sbg-driver",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/sbg_ship_motion_status\",\"type\":\"sbg_driver/msg/SbgShipMotionStatus\",\"msg\":{\"heave_valid\":true,\"heave_vel_aided\":false,\"surge_sway_included\":true,\"period_valid\":false,\"swell_mode\":true,\"accel_valid\":false},\"id\":\"gen-sbg_ship_motion_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/sbg_ship_motion_status\",\"type\":\"sbg_driver/msg/SbgShipMotionStatus\",\"msg\":{\"heave_valid\":true,\"heave_vel_aided\":false,\"surge_sway_included\":true,\"period_valid\":false,\"swell_mode\":true,\"accel_valid\":false},\"id\":\"gen-sbg_ship_motion_status\"}",
+  "model": {
+    "@kind": "sbg_ship_motion_status",
+    "ros2sbg.sbg_ship_motion_status_heave_valid_2": "1",
+    "ros2sbg.sbg_ship_motion_status_heave_vel_aided_2": "0",
+    "ros2sbg.sbg_ship_motion_status_surge_sway_included_2": "1",
+    "ros2sbg.sbg_ship_motion_status_period_valid_2": "0",
+    "ros2sbg.sbg_ship_motion_status_swell_mode_2": "1",
+    "ros2sbg.topic": "/gen/sbg_ship_motion_status"
+  }
+}

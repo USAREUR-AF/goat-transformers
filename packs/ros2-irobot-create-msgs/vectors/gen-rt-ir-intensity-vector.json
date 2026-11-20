@@ -1,0 +1,17 @@
+{
+  "name": "rt-ir_intensity_vector",
+  "from": "ros2-irobot-create-msgs",
+  "to": "ros2-irobot-create-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/ir_intensity_vector\",\"type\":\"irobot_create_msgs/msg/IrIntensityVector\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"readings\":[{\"header\":{\"stamp\":{\"sec\":162019,\"nanosec\":2147686170},\"frame_id\":\"s6\"},\"value\":21384},{\"header\":{\"stamp\":{\"sec\":324031,\"nanosec\":2147848182},\"frame_id\":\"s10\"},\"value\":-13212}]},\"id\":\"gen-ir_intensity_vector\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/ir_intensity_vector\",\"type\":\"irobot_create_msgs/msg/IrIntensityVector\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"readings\":[{\"header\":{\"stamp\":{\"sec\":162019,\"nanosec\":2147686170},\"frame_id\":\"s6\"},\"value\":21384},{\"header\":{\"stamp\":{\"sec\":324031,\"nanosec\":2147848182},\"frame_id\":\"s10\"},\"value\":-13212}]},\"id\":\"gen-ir_intensity_vector\"}",
+  "model": {
+    "@kind": "ir_intensity_vector",
+    "ros2irobotcreate.ir_intensity_vector_header_stamp_sec": "40510",
+    "ros2irobotcreate.ir_intensity_vector_header_stamp_nanosec": "2147564661",
+    "ros2irobotcreate.ir_intensity_vector_header_frame_id": "s3",
+    "ros2irobotcreate.ir_intensity_vector_readings.#": "2",
+    "ros2irobotcreate.ir_intensity_vector_readings[0].ros2irobotcreate.ir_intensity_vector_readings_header_stamp_sec": "162019",
+    "ros2irobotcreate.topic": "/gen/ir_intensity_vector"
+  }
+}

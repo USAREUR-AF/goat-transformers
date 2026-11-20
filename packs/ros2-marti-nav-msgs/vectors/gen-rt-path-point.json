@@ -1,0 +1,16 @@
+{
+  "name": "rt-path_point",
+  "from": "ros2-marti-nav-msgs",
+  "to": "ros2-marti-nav-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/path_point\",\"type\":\"marti_nav_msgs/msg/PathPoint\",\"msg\":{\"x\":1.007,\"y\":2.014,\"yaw\":-4.375,\"speed\":-4.125},\"id\":\"gen-path_point\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/path_point\",\"type\":\"marti_nav_msgs/msg/PathPoint\",\"msg\":{\"x\":1.007,\"y\":2.014,\"yaw\":-4.375,\"speed\":-4.125},\"id\":\"gen-path_point\"}",
+  "model": {
+    "@kind": "path_point",
+    "ros2martinav.path_point_x": "1.007",
+    "ros2martinav.path_point_y": "2.014",
+    "ros2martinav.path_point_yaw": "-4.375",
+    "ros2martinav.path_point_speed": "-4.125",
+    "ros2martinav.topic": "/gen/path_point"
+  }
+}

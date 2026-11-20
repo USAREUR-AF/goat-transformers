@@ -1,0 +1,21 @@
+{
+  "name": "rt-human_readable_status",
+  "from": "ros2-microstrain-inertial-msgs",
+  "to": "ros2-microstrain-inertial-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/human_readable_status\",\"type\":\"microstrain_inertial_msgs/msg/HumanReadableStatus\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"device_info\":{\"firmware_version\":\"s4\",\"model_name\":\"s5\",\"model_number\":\"s6\",\"serial_number\":\"s7\",\"lot_number\":\"s8\",\"device_options\":\"s9\"},\"gnss_state\":\"s10\",\"dual_antenna_fix_type\":\"s11\",\"filter_state\":\"s12\",\"status_flags\":[\"s13\",\"s14\"],\"continuous_bit_flags\":[\"s15\",\"s16\"]},\"id\":\"gen-human_readable_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/human_readable_status\",\"type\":\"microstrain_inertial_msgs/msg/HumanReadableStatus\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"device_info\":{\"firmware_version\":\"s4\",\"model_name\":\"s5\",\"model_number\":\"s6\",\"serial_number\":\"s7\",\"lot_number\":\"s8\",\"device_options\":\"s9\"},\"gnss_state\":\"s10\",\"dual_antenna_fix_type\":\"s11\",\"filter_state\":\"s12\",\"status_flags\":[\"s13\",\"s14\"],\"continuous_bit_flags\":[\"s15\",\"s16\"]},\"id\":\"gen-human_readable_status\"}",
+  "model": {
+    "@kind": "human_readable_status",
+    "ros2microstrain.human_readable_status_header_stamp_sec": "40510",
+    "ros2microstrain.human_readable_status_header_stamp_nanosec": "2147564661",
+    "ros2microstrain.human_readable_status_header_frame_id": "s3",
+    "ros2microstrain.human_readable_status_device_info_firmware_version": "s4",
+    "ros2microstrain.human_readable_status_device_info_model_name": "s5",
+    "ros2microstrain.human_readable_status_status_flags.#": "2",
+    "ros2microstrain.human_readable_status_status_flags[0].ros2microstrain.human_readable_status_status_flags_value": "s13",
+    "ros2microstrain.human_readable_status_continuous_bit_flags.#": "2",
+    "ros2microstrain.human_readable_status_continuous_bit_flags[0].ros2microstrain.human_readable_status_continuous_bit_flags_value": "s15",
+    "ros2microstrain.topic": "/gen/human_readable_status"
+  }
+}

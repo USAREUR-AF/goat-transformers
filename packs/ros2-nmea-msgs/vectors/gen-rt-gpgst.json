@@ -1,0 +1,17 @@
+{
+  "name": "rt-gpgst",
+  "from": "ros2-nmea-msgs",
+  "to": "ros2-nmea-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/gpgst\",\"type\":\"nmea_msgs/msg/Gpgst\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"message_id\":\"s4\",\"utc_seconds\":5.035,\"rms\":-3.625,\"semi_major_dev\":-3.375,\"semi_minor_dev\":-3.125,\"orientation\":-2.875,\"lat_dev\":-2.625,\"lon_dev\":-2.375,\"alt_dev\":-2.125},\"id\":\"gen-gpgst\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/gpgst\",\"type\":\"nmea_msgs/msg/Gpgst\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"message_id\":\"s4\",\"utc_seconds\":5.035,\"rms\":-3.625,\"semi_major_dev\":-3.375,\"semi_minor_dev\":-3.125,\"orientation\":-2.875,\"lat_dev\":-2.625,\"lon_dev\":-2.375,\"alt_dev\":-2.125},\"id\":\"gen-gpgst\"}",
+  "model": {
+    "@kind": "gpgst",
+    "ros2nmea.gpgst_header_stamp_sec": "40510",
+    "ros2nmea.gpgst_header_stamp_nanosec": "2147564661",
+    "ros2nmea.gpgst_header_frame_id": "s3",
+    "ros2nmea.gpgst_message_id": "s4",
+    "ros2nmea.gpgst_utc_seconds": "5.035",
+    "ros2nmea.topic": "/gen/gpgst"
+  }
+}

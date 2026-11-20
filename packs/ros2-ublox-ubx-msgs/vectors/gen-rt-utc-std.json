@@ -1,0 +1,13 @@
+{
+  "name": "rt-utc_std",
+  "from": "ros2-ublox-ubx-msgs",
+  "to": "ros2-ublox-ubx-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/utc_std\",\"type\":\"ublox_ubx_msgs/msg/UtcStd\",\"msg\":{\"id\":190},\"id\":\"gen-utc_std\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/utc_std\",\"type\":\"ublox_ubx_msgs/msg/UtcStd\",\"msg\":{\"id\":190},\"id\":\"gen-utc_std\"}",
+  "model": {
+    "@kind": "utc_std",
+    "ros2ubloxubx.utc_std_id": "190",
+    "ros2ubloxubx.topic": "/gen/utc_std"
+  }
+}

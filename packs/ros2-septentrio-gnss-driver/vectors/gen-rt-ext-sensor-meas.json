@@ -1,0 +1,17 @@
+{
+  "name": "rt-ext_sensor_meas",
+  "from": "ros2-septentrio-gnss-driver",
+  "to": "ros2-septentrio-gnss-driver",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/ext_sensor_meas\",\"type\":\"septentrio_gnss_driver/msg/ExtSensorMeas\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"block_header\":{\"sync_1\":99,\"sync_2\":154,\"crc\":13649,\"id\":54152,\"revision\":63,\"length\":4086,\"tow\":2147888685,\"wnc\":19556},\"n\":27,\"sb_length\":82,\"source\":\"Dir/AIA=\",\"sensor_model\":\"Dy3/AIA=\",\"type\":\"EDD/AIA=\",\"obs_info\":\"ETP/AIA=\",\"acceleration_x\":-18.126,\"acceleration_y\":19.133,\"acceleration_z\":20.14,\"angular_rate_x\":-21.147,\"angular_rate_y\":22.154,\"angular_rate_z\":23.161,\"velocity_x\":0.875,\"velocity_y\":1.125,\"velocity_z\":1.375,\"std_dev_x\":1.625,\"std_dev_y\":1.875,\"std_dev_z\":2.125,\"sensor_temperature\":2.375,\"zero_velocity_flag\":31.217},\"id\":\"gen-ext_sensor_meas\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/ext_sensor_meas\",\"type\":\"septentrio_gnss_driver/msg/ExtSensorMeas\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"block_header\":{\"sync_1\":99,\"sync_2\":154,\"crc\":13649,\"id\":54152,\"revision\":63,\"length\":4086,\"tow\":2147888685,\"wnc\":19556},\"n\":27,\"sb_length\":82,\"source\":\"Dir/AIA=\",\"sensor_model\":\"Dy3/AIA=\",\"type\":\"EDD/AIA=\",\"obs_info\":\"ETP/AIA=\",\"acceleration_x\":-18.126,\"acceleration_y\":19.133,\"acceleration_z\":20.14,\"angular_rate_x\":-21.147,\"angular_rate_y\":22.154,\"angular_rate_z\":23.161,\"velocity_x\":0.875,\"velocity_y\":1.125,\"velocity_z\":1.375,\"std_dev_x\":1.625,\"std_dev_y\":1.875,\"std_dev_z\":2.125,\"sensor_temperature\":2.375,\"zero_velocity_flag\":31.217},\"id\":\"gen-ext_sensor_meas\"}",
+  "model": {
+    "@kind": "ext_sensor_meas",
+    "ros2septentrio.ext_sensor_meas_header_stamp_sec": "40510",
+    "ros2septentrio.ext_sensor_meas_header_stamp_nanosec": "2147564661",
+    "ros2septentrio.ext_sensor_meas_header_frame_id": "s3",
+    "ros2septentrio.ext_sensor_meas_block_header_sync_1": "99",
+    "ros2septentrio.ext_sensor_meas_block_header_sync_2": "154",
+    "ros2septentrio.topic": "/gen/ext_sensor_meas"
+  }
+}

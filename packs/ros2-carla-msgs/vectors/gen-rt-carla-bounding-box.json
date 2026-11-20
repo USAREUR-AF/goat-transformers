@@ -1,0 +1,17 @@
+{
+  "name": "rt-carla_bounding_box",
+  "from": "ros2-carla-msgs",
+  "to": "ros2-carla-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/carla_bounding_box\",\"type\":\"carla_msgs/msg/CarlaBoundingBox\",\"msg\":{\"center\":{\"x\":1.007,\"y\":2.014,\"z\":-3.021},\"size\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042}},\"id\":\"gen-carla_bounding_box\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/carla_bounding_box\",\"type\":\"carla_msgs/msg/CarlaBoundingBox\",\"msg\":{\"center\":{\"x\":1.007,\"y\":2.014,\"z\":-3.021},\"size\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042}},\"id\":\"gen-carla_bounding_box\"}",
+  "model": {
+    "@kind": "carla_bounding_box",
+    "ros2carla.carla_bounding_box_center_x": "1.007",
+    "ros2carla.carla_bounding_box_center_y": "2.014",
+    "ros2carla.carla_bounding_box_center_z": "-3.021",
+    "ros2carla.carla_bounding_box_size_x": "4.028",
+    "ros2carla.carla_bounding_box_size_y": "5.035",
+    "ros2carla.topic": "/gen/carla_bounding_box"
+  }
+}

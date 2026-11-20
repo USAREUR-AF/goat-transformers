@@ -1,0 +1,17 @@
+{
+  "name": "rt-puma_multi_status",
+  "from": "ros2-clearpath-motor-msgs",
+  "to": "ros2-clearpath-motor-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/puma_multi_status\",\"type\":\"clearpath_motor_msgs/msg/PumaMultiStatus\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"drivers\":[{\"device_number\":99,\"device_name\":\"s5\",\"bus_voltage\":-3.625,\"temperature\":-3.375,\"output_voltage\":-3.125,\"analog_input\":-2.875,\"mode\":173,\"fault\":228},{\"device_number\":27,\"device_name\":\"s13\",\"bus_voltage\":-1.625,\"temperature\":-1.375,\"output_voltage\":-1.125,\"analog_input\":-0.875,\"mode\":101,\"fault\":156}]},\"id\":\"gen-puma_multi_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/puma_multi_status\",\"type\":\"clearpath_motor_msgs/msg/PumaMultiStatus\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"drivers\":[{\"device_number\":99,\"device_name\":\"s5\",\"bus_voltage\":-3.625,\"temperature\":-3.375,\"output_voltage\":-3.125,\"analog_input\":-2.875,\"mode\":173,\"fault\":228},{\"device_number\":27,\"device_name\":\"s13\",\"bus_voltage\":-1.625,\"temperature\":-1.375,\"output_voltage\":-1.125,\"analog_input\":-0.875,\"mode\":101,\"fault\":156}]},\"id\":\"gen-puma_multi_status\"}",
+  "model": {
+    "@kind": "puma_multi_status",
+    "ros2clearpathmotor.puma_multi_status_header_stamp_sec": "40510",
+    "ros2clearpathmotor.puma_multi_status_header_stamp_nanosec": "2147564661",
+    "ros2clearpathmotor.puma_multi_status_header_frame_id": "s3",
+    "ros2clearpathmotor.puma_multi_status_drivers.#": "2",
+    "ros2clearpathmotor.puma_multi_status_drivers[0].ros2clearpathmotor.puma_multi_status_drivers_device_number": "99",
+    "ros2clearpathmotor.topic": "/gen/puma_multi_status"
+  }
+}

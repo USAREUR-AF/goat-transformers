@@ -1,0 +1,16 @@
+{
+  "name": "rt-spartn_key_info",
+  "from": "ros2-ublox-ubx-msgs",
+  "to": "ros2-ublox-ubx-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/spartn_key_info\",\"type\":\"ublox_ubx_msgs/msg/SpartnKeyInfo\",\"msg\":{\"reserved1\":190,\"key_length_bytes\":245,\"valid_from_wno\":23212,\"valid_from_tow\":2147645667},\"id\":\"gen-spartn_key_info\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/spartn_key_info\",\"type\":\"ublox_ubx_msgs/msg/SpartnKeyInfo\",\"msg\":{\"reserved1\":190,\"key_length_bytes\":245,\"valid_from_wno\":23212,\"valid_from_tow\":2147645667},\"id\":\"gen-spartn_key_info\"}",
+  "model": {
+    "@kind": "spartn_key_info",
+    "ros2ubloxubx.spartn_key_info_reserved1": "190",
+    "ros2ubloxubx.spartn_key_info_key_length_bytes": "245",
+    "ros2ubloxubx.spartn_key_info_valid_from_wno": "23212",
+    "ros2ubloxubx.spartn_key_info_valid_from_tow": "2147645667",
+    "ros2ubloxubx.topic": "/gen/spartn_key_info"
+  }
+}

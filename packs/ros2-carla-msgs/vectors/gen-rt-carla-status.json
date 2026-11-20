@@ -1,0 +1,16 @@
+{
+  "name": "rt-carla_status",
+  "from": "ros2-carla-msgs",
+  "to": "ros2-carla-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/carla_status\",\"type\":\"carla_msgs/msg/CarlaStatus\",\"msg\":{\"frame\":123456789013,\"fixed_delta_seconds\":-4.625,\"synchronous_mode\":true,\"synchronous_mode_running\":false},\"id\":\"gen-carla_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/carla_status\",\"type\":\"carla_msgs/msg/CarlaStatus\",\"msg\":{\"frame\":123456789013,\"fixed_delta_seconds\":-4.625,\"synchronous_mode\":true,\"synchronous_mode_running\":false},\"id\":\"gen-carla_status\"}",
+  "model": {
+    "@kind": "carla_status",
+    "ros2carla.carla_status_frame": "123456789013",
+    "ros2carla.carla_status_fixed_delta_seconds": "-4.625",
+    "ros2carla.carla_status_synchronous_mode": "1",
+    "ros2carla.carla_status_synchronous_mode_running": "0",
+    "ros2carla.topic": "/gen/carla_status"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "rt-carla_ego_vehicle_control",
+  "from": "ros2-carla-msgs",
+  "to": "ros2-carla-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/carla_ego_vehicle_control\",\"type\":\"carla_msgs/msg/CarlaEgoVehicleControl\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"throttle\":-4.125,\"steer\":-3.875,\"brake\":-3.625,\"hand_brake\":true,\"reverse\":false,\"gear\":364534,\"manual_gear_shift\":false},\"id\":\"gen-carla_ego_vehicle_control\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/carla_ego_vehicle_control\",\"type\":\"carla_msgs/msg/CarlaEgoVehicleControl\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"throttle\":-4.125,\"steer\":-3.875,\"brake\":-3.625,\"hand_brake\":true,\"reverse\":false,\"gear\":364534,\"manual_gear_shift\":false},\"id\":\"gen-carla_ego_vehicle_control\"}",
+  "model": {
+    "@kind": "carla_ego_vehicle_control",
+    "ros2carla.carla_ego_vehicle_control_header_stamp_sec": "40510",
+    "ros2carla.carla_ego_vehicle_control_header_stamp_nanosec": "2147564661",
+    "ros2carla.carla_ego_vehicle_control_header_frame_id": "s3",
+    "ros2carla.carla_ego_vehicle_control_throttle": "-4.125",
+    "ros2carla.carla_ego_vehicle_control_steer": "-3.875",
+    "ros2carla.topic": "/gen/carla_ego_vehicle_control"
+  }
+}

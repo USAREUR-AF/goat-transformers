@@ -1,0 +1,14 @@
+{
+  "name": "rt-rec_stat",
+  "from": "ros2-ublox-ubx-msgs",
+  "to": "ros2-ublox-ubx-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/rec_stat\",\"type\":\"ublox_ubx_msgs/msg/RecStat\",\"msg\":{\"leap_sec\":true,\"clk_reset\":false},\"id\":\"gen-rec_stat\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/rec_stat\",\"type\":\"ublox_ubx_msgs/msg/RecStat\",\"msg\":{\"leap_sec\":true,\"clk_reset\":false},\"id\":\"gen-rec_stat\"}",
+  "model": {
+    "@kind": "rec_stat",
+    "ros2ubloxubx.rec_stat_leap_sec": "1",
+    "ros2ubloxubx.rec_stat_clk_reset": "0",
+    "ros2ubloxubx.topic": "/gen/rec_stat"
+  }
+}

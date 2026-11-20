@@ -1,0 +1,17 @@
+{
+  "name": "rt-lynx_multi_status",
+  "from": "ros2-clearpath-motor-msgs",
+  "to": "ros2-clearpath-motor-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/lynx_multi_status\",\"type\":\"clearpath_motor_msgs/msg/LynxMultiStatus\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"drivers\":[{\"can_id\":99,\"joint_name\":\"s5\",\"firmware_version\":\"s6\",\"motor_temperature\":-3.375,\"mcu_temperature\":-3.125,\"pcb_temperature\":-2.875,\"stopped\":false,\"status_flags\":2147929188,\"warning_flags\":2147969691,\"error_flags\":2148010194},{\"can_id\":137,\"joint_name\":\"s15\",\"firmware_version\":\"s16\",\"motor_temperature\":-0.875,\"mcu_temperature\":-0.625,\"pcb_temperature\":-0.375,\"stopped\":false,\"status_flags\":2148334218,\"warning_flags\":2148374721,\"error_flags\":2148415224}]},\"id\":\"gen-lynx_multi_status\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/lynx_multi_status\",\"type\":\"clearpath_motor_msgs/msg/LynxMultiStatus\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"drivers\":[{\"can_id\":99,\"joint_name\":\"s5\",\"firmware_version\":\"s6\",\"motor_temperature\":-3.375,\"mcu_temperature\":-3.125,\"pcb_temperature\":-2.875,\"stopped\":false,\"status_flags\":2147929188,\"warning_flags\":2147969691,\"error_flags\":2148010194},{\"can_id\":137,\"joint_name\":\"s15\",\"firmware_version\":\"s16\",\"motor_temperature\":-0.875,\"mcu_temperature\":-0.625,\"pcb_temperature\":-0.375,\"stopped\":false,\"status_flags\":2148334218,\"warning_flags\":2148374721,\"error_flags\":2148415224}]},\"id\":\"gen-lynx_multi_status\"}",
+  "model": {
+    "@kind": "lynx_multi_status",
+    "ros2clearpathmotor.lynx_multi_status_header_stamp_sec": "40510",
+    "ros2clearpathmotor.lynx_multi_status_header_stamp_nanosec": "2147564661",
+    "ros2clearpathmotor.lynx_multi_status_header_frame_id": "s3",
+    "ros2clearpathmotor.lynx_multi_status_drivers.#": "2",
+    "ros2clearpathmotor.lynx_multi_status_drivers[0].ros2clearpathmotor.lynx_multi_status_drivers_can_id": "99",
+    "ros2clearpathmotor.topic": "/gen/lynx_multi_status"
+  }
+}

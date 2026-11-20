@@ -1,0 +1,14 @@
+{
+  "name": "rt-lights",
+  "from": "ros2-clearpath-platform-msgs",
+  "to": "ros2-clearpath-platform-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/lights\",\"type\":\"clearpath_platform_msgs/msg/Lights\",\"msg\":{\"lights\":[{\"red\":190,\"green\":245,\"blue\":44},{\"red\":99,\"green\":154,\"blue\":209}]},\"id\":\"gen-lights\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/lights\",\"type\":\"clearpath_platform_msgs/msg/Lights\",\"msg\":{\"lights\":[{\"red\":190,\"green\":245,\"blue\":44},{\"red\":99,\"green\":154,\"blue\":209}]},\"id\":\"gen-lights\"}",
+  "model": {
+    "@kind": "lights",
+    "ros2clearpathplatform.lights_lights.#": "2",
+    "ros2clearpathplatform.lights_lights[0].ros2clearpathplatform.lights_lights_red": "190",
+    "ros2clearpathplatform.topic": "/gen/lights"
+  }
+}

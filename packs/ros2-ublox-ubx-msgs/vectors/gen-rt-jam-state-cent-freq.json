@@ -1,0 +1,14 @@
+{
+  "name": "rt-jam_state_cent_freq",
+  "from": "ros2-ublox-ubx-msgs",
+  "to": "ros2-ublox-ubx-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/jam_state_cent_freq\",\"type\":\"ublox_ubx_msgs/msg/JamStateCentFreq\",\"msg\":{\"cent_freq\":2147524158,\"jammed\":false},\"id\":\"gen-jam_state_cent_freq\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/jam_state_cent_freq\",\"type\":\"ublox_ubx_msgs/msg/JamStateCentFreq\",\"msg\":{\"cent_freq\":2147524158,\"jammed\":false},\"id\":\"gen-jam_state_cent_freq\"}",
+  "model": {
+    "@kind": "jam_state_cent_freq",
+    "ros2ubloxubx.jam_state_cent_freq_cent_freq": "2147524158",
+    "ros2ubloxubx.jam_state_cent_freq_jammed": "0",
+    "ros2ubloxubx.topic": "/gen/jam_state_cent_freq"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "rt-ubx_nav_sig",
+  "from": "ros2-ublox-ubx-msgs",
+  "to": "ros2-ublox-ubx-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/ubx_nav_sig\",\"type\":\"ublox_ubx_msgs/msg/UBXNavSig\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"itow\":2147645667,\"version\":154,\"num_sigs\":209,\"reserved_0\":\"BxX/AIA=\",\"sig_data\":[{\"gnss_id\":63,\"sv_id\":118,\"sig_id\":173,\"freq_id\":228,\"pr_res\":27291,\"cno\":82,\"quality_ind\":137,\"corr_source\":192,\"iono_model\":247,\"sig_flags\":{\"health\":46,\"pr_smoothed\":false,\"pr_used\":true,\"cr_used\":false,\"do_used\":true,\"pr_corr_used\":false,\"cr_corr_used\":true,\"do_corr_used\":false}},{\"gnss_id\":230,\"sv_id\":29,\"sig_id\":84,\"freq_id\":139,\"pr_res\":-5054,\"cno\":249,\"quality_ind\":48,\"corr_source\":103,\"iono_model\":158,\"sig_flags\":{\"health\":213,\"pr_smoothed\":true,\"pr_used\":false,\"cr_used\":true,\"do_used\":false,\"pr_corr_used\":true,\"cr_corr_used\":false,\"do_corr_used\":true}}]},\"id\":\"gen-ubx_nav_sig\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/ubx_nav_sig\",\"type\":\"ublox_ubx_msgs/msg/UBXNavSig\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"itow\":2147645667,\"version\":154,\"num_sigs\":209,\"reserved_0\":\"BxX/AIA=\",\"sig_data\":[{\"gnss_id\":63,\"sv_id\":118,\"sig_id\":173,\"freq_id\":228,\"pr_res\":27291,\"cno\":82,\"quality_ind\":137,\"corr_source\":192,\"iono_model\":247,\"sig_flags\":{\"health\":46,\"pr_smoothed\":false,\"pr_used\":true,\"cr_used\":false,\"do_used\":true,\"pr_corr_used\":false,\"cr_corr_used\":true,\"do_corr_used\":false}},{\"gnss_id\":230,\"sv_id\":29,\"sig_id\":84,\"freq_id\":139,\"pr_res\":-5054,\"cno\":249,\"quality_ind\":48,\"corr_source\":103,\"iono_model\":158,\"sig_flags\":{\"health\":213,\"pr_smoothed\":true,\"pr_used\":false,\"cr_used\":true,\"do_used\":false,\"pr_corr_used\":true,\"cr_corr_used\":false,\"do_corr_used\":true}}]},\"id\":\"gen-ubx_nav_sig\"}",
+  "model": {
+    "@kind": "ubx_nav_sig",
+    "ros2ubloxubx.ubx_nav_sig_header_stamp_sec": "40510",
+    "ros2ubloxubx.ubx_nav_sig_header_stamp_nanosec": "2147564661",
+    "ros2ubloxubx.ubx_nav_sig_header_frame_id": "s3",
+    "ros2ubloxubx.ubx_nav_sig_itow": "2147645667",
+    "ros2ubloxubx.ubx_nav_sig_version": "154",
+    "ros2ubloxubx.ubx_nav_sig_sig_data.#": "2",
+    "ros2ubloxubx.ubx_nav_sig_sig_data[0].ros2ubloxubx.ubx_nav_sig_sig_data_gnss_id": "63",
+    "ros2ubloxubx.topic": "/gen/ubx_nav_sig"
+  }
+}

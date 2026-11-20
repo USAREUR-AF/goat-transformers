@@ -1,0 +1,17 @@
+{
+  "name": "rt-ins_nav_geod",
+  "from": "ros2-septentrio-gnss-driver",
+  "to": "ros2-septentrio-gnss-driver",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/ins_nav_geod\",\"type\":\"septentrio_gnss_driver/msg/INSNavGeod\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"block_header\":{\"sync_1\":99,\"sync_2\":154,\"crc\":13649,\"id\":54152,\"revision\":63,\"length\":4086,\"tow\":2147888685,\"wnc\":19556},\"gnss_mode\":27,\"error\":82,\"info\":9993,\"gnss_age\":50496,\"latitude\":16.112,\"longitude\":17.119,\"height\":-18.126,\"undulation\":-0.375,\"accuracy\":56403,\"latency\":31370,\"datum\":65,\"sb_list\":46840,\"latitude_std_dev\":0.875,\"longitude_std_dev\":1.125,\"height_std_dev\":1.375,\"latitude_longitude_cov\":1.625,\"latitude_height_cov\":1.875,\"longitude_height_cov\":2.125,\"heading\":2.375,\"pitch\":2.625,\"roll\":2.875,\"heading_std_dev\":3.125,\"pitch_std_dev\":3.375,\"roll_std_dev\":3.625,\"heading_pitch_cov\":3.875,\"heading_roll_cov\":4.125,\"pitch_roll_cov\":4.375,\"ve\":4.625,\"vn\":4.875,\"vu\":5.125,\"ve_std_dev\":5.375,\"vn_std_dev\":5.625,\"vu_std_dev\":5.875,\"ve_vn_cov\":6.125,\"ve_vu_cov\":6.375,\"vn_vu_cov\":6.625},\"id\":\"gen-ins_nav_geod\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/ins_nav_geod\",\"type\":\"septentrio_gnss_driver/msg/INSNavGeod\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"block_header\":{\"sync_1\":99,\"sync_2\":154,\"crc\":13649,\"id\":54152,\"revision\":63,\"length\":4086,\"tow\":2147888685,\"wnc\":19556},\"gnss_mode\":27,\"error\":82,\"info\":9993,\"gnss_age\":50496,\"latitude\":16.112,\"longitude\":17.119,\"height\":-18.126,\"undulation\":-0.375,\"accuracy\":56403,\"latency\":31370,\"datum\":65,\"sb_list\":46840,\"latitude_std_dev\":0.875,\"longitude_std_dev\":1.125,\"height_std_dev\":1.375,\"latitude_longitude_cov\":1.625,\"latitude_height_cov\":1.875,\"longitude_height_cov\":2.125,\"heading\":2.375,\"pitch\":2.625,\"roll\":2.875,\"heading_std_dev\":3.125,\"pitch_std_dev\":3.375,\"roll_std_dev\":3.625,\"heading_pitch_cov\":3.875,\"heading_roll_cov\":4.125,\"pitch_roll_cov\":4.375,\"ve\":4.625,\"vn\":4.875,\"vu\":5.125,\"ve_std_dev\":5.375,\"vn_std_dev\":5.625,\"vu_std_dev\":5.875,\"ve_vn_cov\":6.125,\"ve_vu_cov\":6.375,\"vn_vu_cov\":6.625},\"id\":\"gen-ins_nav_geod\"}",
+  "model": {
+    "@kind": "ins_nav_geod",
+    "ros2septentrio.ins_nav_geod_header_stamp_sec": "40510",
+    "ros2septentrio.ins_nav_geod_header_stamp_nanosec": "2147564661",
+    "ros2septentrio.ins_nav_geod_header_frame_id": "s3",
+    "ros2septentrio.ins_nav_geod_block_header_sync_1": "99",
+    "ros2septentrio.ins_nav_geod_block_header_sync_2": "154",
+    "ros2septentrio.topic": "/gen/ins_nav_geod"
+  }
+}

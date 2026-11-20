@@ -1,0 +1,20 @@
+{
+  "name": "rt-lynx_debug",
+  "from": "ros2-clearpath-motor-msgs",
+  "to": "ros2-clearpath-motor-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/lynx_debug\",\"type\":\"clearpath_motor_msgs/msg/LynxDebug\",\"msg\":{\"can_id\":190,\"joint_name\":\"s2\",\"fault_frequency\":23212,\"accumulator_flags\":2147645667,\"accumulators\":[-3.875,-3.625],\"currents\":[-3.375,-3.125]},\"id\":\"gen-lynx_debug\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/lynx_debug\",\"type\":\"clearpath_motor_msgs/msg/LynxDebug\",\"msg\":{\"can_id\":190,\"joint_name\":\"s2\",\"fault_frequency\":23212,\"accumulator_flags\":2147645667,\"accumulators\":[-3.875,-3.625],\"currents\":[-3.375,-3.125]},\"id\":\"gen-lynx_debug\"}",
+  "model": {
+    "@kind": "lynx_debug",
+    "ros2clearpathmotor.lynx_debug_can_id": "190",
+    "ros2clearpathmotor.lynx_debug_joint_name": "s2",
+    "ros2clearpathmotor.lynx_debug_fault_frequency": "23212",
+    "ros2clearpathmotor.lynx_debug_accumulator_flags": "2147645667",
+    "ros2clearpathmotor.lynx_debug_accumulators.#": "2",
+    "ros2clearpathmotor.lynx_debug_accumulators[0].ros2clearpathmotor.lynx_debug_accumulators_value": "-3.875",
+    "ros2clearpathmotor.lynx_debug_currents.#": "2",
+    "ros2clearpathmotor.lynx_debug_currents[0].ros2clearpathmotor.lynx_debug_currents_value": "-3.375",
+    "ros2clearpathmotor.topic": "/gen/lynx_debug"
+  }
+}

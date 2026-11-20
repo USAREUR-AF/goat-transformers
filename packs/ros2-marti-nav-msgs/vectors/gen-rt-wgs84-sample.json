@@ -1,0 +1,19 @@
+{
+  "name": "rt-wgs84_sample",
+  "from": "ros2-marti-nav-msgs",
+  "to": "ros2-marti-nav-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/wgs84_sample\",\"type\":\"marti_nav_msgs/msg/Wgs84Sample\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"odom\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"wgs84\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063},\"wgs84_covariance\":[10.07,11.077,-12.084,13.091,14.098,-15.105,16.112,17.119,-18.126]},\"id\":\"gen-wgs84_sample\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/wgs84_sample\",\"type\":\"marti_nav_msgs/msg/Wgs84Sample\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"odom\":{\"x\":4.028,\"y\":5.035,\"z\":-6.042},\"wgs84\":{\"x\":7.049,\"y\":8.056,\"z\":-9.063},\"wgs84_covariance\":[10.07,11.077,-12.084,13.091,14.098,-15.105,16.112,17.119,-18.126]},\"id\":\"gen-wgs84_sample\"}",
+  "model": {
+    "@kind": "wgs84_sample",
+    "ros2martinav.wgs84_sample_header_stamp_sec": "40510",
+    "ros2martinav.wgs84_sample_header_stamp_nanosec": "2147564661",
+    "ros2martinav.wgs84_sample_header_frame_id": "s3",
+    "ros2martinav.wgs84_sample_odom_x": "4.028",
+    "ros2martinav.wgs84_sample_odom_y": "5.035",
+    "ros2martinav.wgs84_sample_wgs84_covariance.#": "9",
+    "ros2martinav.wgs84_sample_wgs84_covariance[0].ros2martinav.wgs84_sample_wgs84_covariance_value": "10.07",
+    "ros2martinav.topic": "/gen/wgs84_sample"
+  }
+}

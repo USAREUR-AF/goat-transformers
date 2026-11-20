@@ -1,0 +1,17 @@
+{
+  "name": "rt-sbg_ekf_euler",
+  "from": "ros2-sbg-driver",
+  "to": "ros2-sbg-driver",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/sbg_ekf_euler\",\"type\":\"sbg_driver/msg/SbgEkfEuler\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"time_stamp\":2147645667,\"angle\":{\"x\":5.035,\"y\":-6.042,\"z\":7.049},\"accuracy\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07},\"status\":{\"solution_mode\":228,\"attitude_valid\":false,\"heading_valid\":true,\"velocity_valid\":false,\"position_valid\":true,\"vert_ref_used\":false,\"mag_ref_used\":true,\"gps1_vel_used\":false,\"gps1_pos_used\":true,\"gps1_hdt_used\":false,\"gps2_vel_used\":true,\"gps2_pos_used\":false,\"gps2_hdt_used\":true,\"odo_used\":false,\"dvl_bt_used\":true,\"dvl_wt_used\":false,\"vel1_used\":true,\"usbl_used\":false,\"air_data_used\":true,\"zupt_used\":false,\"align_valid\":true,\"depth_used\":false,\"zaru_used\":true}},\"id\":\"gen-sbg_ekf_euler\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/sbg_ekf_euler\",\"type\":\"sbg_driver/msg/SbgEkfEuler\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"time_stamp\":2147645667,\"angle\":{\"x\":5.035,\"y\":-6.042,\"z\":7.049},\"accuracy\":{\"x\":8.056,\"y\":-9.063,\"z\":10.07},\"status\":{\"solution_mode\":228,\"attitude_valid\":false,\"heading_valid\":true,\"velocity_valid\":false,\"position_valid\":true,\"vert_ref_used\":false,\"mag_ref_used\":true,\"gps1_vel_used\":false,\"gps1_pos_used\":true,\"gps1_hdt_used\":false,\"gps2_vel_used\":true,\"gps2_pos_used\":false,\"gps2_hdt_used\":true,\"odo_used\":false,\"dvl_bt_used\":true,\"dvl_wt_used\":false,\"vel1_used\":true,\"usbl_used\":false,\"air_data_used\":true,\"zupt_used\":false,\"align_valid\":true,\"depth_used\":false,\"zaru_used\":true}},\"id\":\"gen-sbg_ekf_euler\"}",
+  "model": {
+    "@kind": "sbg_ekf_euler",
+    "ros2sbg.sbg_ekf_euler_header_stamp_sec": "40510",
+    "ros2sbg.sbg_ekf_euler_header_stamp_nanosec": "2147564661",
+    "ros2sbg.sbg_ekf_euler_header_frame_id": "s3",
+    "ros2sbg.sbg_ekf_euler_time_stamp": "2147645667",
+    "ros2sbg.sbg_ekf_euler_angle_x": "5.035",
+    "ros2sbg.topic": "/gen/sbg_ekf_euler"
+  }
+}

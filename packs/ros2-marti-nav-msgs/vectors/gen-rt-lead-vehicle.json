@@ -1,0 +1,17 @@
+{
+  "name": "rt-lead_vehicle",
+  "from": "ros2-marti-nav-msgs",
+  "to": "ros2-marti-nav-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/lead_vehicle\",\"type\":\"marti_nav_msgs/msg/LeadVehicle\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"headway_distance\":-4.125,\"speed\":-3.875,\"heading\":-3.625,\"x_pos\":-3.375,\"y_pos\":-3.125,\"classification\":-10,\"type\":45},\"id\":\"gen-lead_vehicle\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/lead_vehicle\",\"type\":\"marti_nav_msgs/msg/LeadVehicle\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"headway_distance\":-4.125,\"speed\":-3.875,\"heading\":-3.625,\"x_pos\":-3.375,\"y_pos\":-3.125,\"classification\":-10,\"type\":45},\"id\":\"gen-lead_vehicle\"}",
+  "model": {
+    "@kind": "lead_vehicle",
+    "ros2martinav.lead_vehicle_header_stamp_sec": "40510",
+    "ros2martinav.lead_vehicle_header_stamp_nanosec": "2147564661",
+    "ros2martinav.lead_vehicle_header_frame_id": "s3",
+    "ros2martinav.lead_vehicle_headway_distance": "-4.125",
+    "ros2martinav.lead_vehicle_speed": "-3.875",
+    "ros2martinav.topic": "/gen/lead_vehicle"
+  }
+}

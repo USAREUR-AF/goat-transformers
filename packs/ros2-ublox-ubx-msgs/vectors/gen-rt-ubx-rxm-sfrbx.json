@@ -1,0 +1,19 @@
+{
+  "name": "rt-ubx_rxm_sfrbx",
+  "from": "ros2-ublox-ubx-msgs",
+  "to": "ros2-ublox-ubx-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/ubx_rxm_sfrbx\",\"type\":\"ublox_ubx_msgs/msg/UBXRxmSfrbx\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"gnss_id\":99,\"sv_id\":154,\"sig_id\":209,\"freq_id\":8,\"num_words\":63,\"chn\":118,\"version\":173,\"dwrd\":[2147929188,2147969691]},\"id\":\"gen-ubx_rxm_sfrbx\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/ubx_rxm_sfrbx\",\"type\":\"ublox_ubx_msgs/msg/UBXRxmSfrbx\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"gnss_id\":99,\"sv_id\":154,\"sig_id\":209,\"freq_id\":8,\"num_words\":63,\"chn\":118,\"version\":173,\"dwrd\":[2147929188,2147969691]},\"id\":\"gen-ubx_rxm_sfrbx\"}",
+  "model": {
+    "@kind": "ubx_rxm_sfrbx",
+    "ros2ubloxubx.ubx_rxm_sfrbx_header_stamp_sec": "40510",
+    "ros2ubloxubx.ubx_rxm_sfrbx_header_stamp_nanosec": "2147564661",
+    "ros2ubloxubx.ubx_rxm_sfrbx_header_frame_id": "s3",
+    "ros2ubloxubx.ubx_rxm_sfrbx_gnss_id": "99",
+    "ros2ubloxubx.ubx_rxm_sfrbx_sv_id": "154",
+    "ros2ubloxubx.ubx_rxm_sfrbx_dwrd.#": "2",
+    "ros2ubloxubx.ubx_rxm_sfrbx_dwrd[0].ros2ubloxubx.ubx_rxm_sfrbx_dwrd_value": "2147929188",
+    "ros2ubloxubx.topic": "/gen/ubx_rxm_sfrbx"
+  }
+}

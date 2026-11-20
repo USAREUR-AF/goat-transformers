@@ -1,0 +1,17 @@
+{
+  "name": "rt-ubx_rxm_rtcm",
+  "from": "ros2-ublox-ubx-msgs",
+  "to": "ros2-ublox-ubx-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/ubx_rxm_rtcm\",\"type\":\"ublox_ubx_msgs/msg/UBXRxmRTCM\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"version\":99,\"crc_failed\":true,\"msg_used\":209,\"sub_type\":54152,\"ref_station\":29119,\"msg_type\":4086},\"id\":\"gen-ubx_rxm_rtcm\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/ubx_rxm_rtcm\",\"type\":\"ublox_ubx_msgs/msg/UBXRxmRTCM\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"},\"version\":99,\"crc_failed\":true,\"msg_used\":209,\"sub_type\":54152,\"ref_station\":29119,\"msg_type\":4086},\"id\":\"gen-ubx_rxm_rtcm\"}",
+  "model": {
+    "@kind": "ubx_rxm_rtcm",
+    "ros2ubloxubx.ubx_rxm_rtcm_header_stamp_sec": "40510",
+    "ros2ubloxubx.ubx_rxm_rtcm_header_stamp_nanosec": "2147564661",
+    "ros2ubloxubx.ubx_rxm_rtcm_header_frame_id": "s3",
+    "ros2ubloxubx.ubx_rxm_rtcm_version": "99",
+    "ros2ubloxubx.ubx_rxm_rtcm_crc_failed": "1",
+    "ros2ubloxubx.topic": "/gen/ubx_rxm_rtcm"
+  }
+}

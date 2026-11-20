@@ -1,0 +1,15 @@
+{
+  "name": "rt-sbg_mag_calib",
+  "from": "ros2-sbg-driver",
+  "to": "ros2-sbg-driver",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/sbg_mag_calib\",\"type\":\"sbg_driver/msg/SbgMagCalib\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"}},\"id\":\"gen-sbg_mag_calib\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/sbg_mag_calib\",\"type\":\"sbg_driver/msg/SbgMagCalib\",\"msg\":{\"header\":{\"stamp\":{\"sec\":40510,\"nanosec\":2147564661},\"frame_id\":\"s3\"}},\"id\":\"gen-sbg_mag_calib\"}",
+  "model": {
+    "@kind": "sbg_mag_calib",
+    "ros2sbg.sbg_mag_calib_header_stamp_sec": "40510",
+    "ros2sbg.sbg_mag_calib_header_stamp_nanosec": "2147564661",
+    "ros2sbg.sbg_mag_calib_header_frame_id": "s3",
+    "ros2sbg.topic": "/gen/sbg_mag_calib"
+  }
+}

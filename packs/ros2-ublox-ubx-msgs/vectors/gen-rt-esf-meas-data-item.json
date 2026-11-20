@@ -1,0 +1,14 @@
+{
+  "name": "rt-esf_meas_data_item",
+  "from": "ros2-ublox-ubx-msgs",
+  "to": "ros2-ublox-ubx-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/esf_meas_data_item\",\"type\":\"ublox_ubx_msgs/msg/ESFMeasDataItem\",\"msg\":{\"data_field\":2147524158,\"data_type\":245},\"id\":\"gen-esf_meas_data_item\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/esf_meas_data_item\",\"type\":\"ublox_ubx_msgs/msg/ESFMeasDataItem\",\"msg\":{\"data_field\":2147524158,\"data_type\":245},\"id\":\"gen-esf_meas_data_item\"}",
+  "model": {
+    "@kind": "esf_meas_data_item",
+    "ros2ubloxubx.esf_meas_data_item_data_field": "2147524158",
+    "ros2ubloxubx.esf_meas_data_item_data_type": "245",
+    "ros2ubloxubx.topic": "/gen/esf_meas_data_item"
+  }
+}

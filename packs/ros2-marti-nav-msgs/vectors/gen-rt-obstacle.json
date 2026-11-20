@@ -1,0 +1,19 @@
+{
+  "name": "rt-obstacle",
+  "from": "ros2-marti-nav-msgs",
+  "to": "ros2-marti-nav-msgs",
+  "source": "tools/gen/ros2msg2pack.py: values chosen by the generator from the .msg field types; input written in the field order of the .msg file, which is the order rosbridge writes; expect is that text with byte[] arrays and empty objects removed",
+  "input": "{\"op\":\"publish\",\"topic\":\"/gen/obstacle\",\"type\":\"marti_nav_msgs/msg/Obstacle\",\"msg\":{\"id\":\"s1\",\"pose\":{\"position\":{\"x\":2.014,\"y\":-3.021,\"z\":4.028},\"orientation\":{\"x\":5.035,\"y\":-6.042,\"z\":7.049,\"w\":8.056}},\"polygon\":[{\"x\":-9.063,\"y\":10.07,\"z\":11.077},{\"x\":-12.084,\"y\":13.091,\"z\":14.098}]},\"id\":\"gen-obstacle\"}",
+  "expect": "{\"op\":\"publish\",\"topic\":\"/gen/obstacle\",\"type\":\"marti_nav_msgs/msg/Obstacle\",\"msg\":{\"id\":\"s1\",\"pose\":{\"position\":{\"x\":2.014,\"y\":-3.021,\"z\":4.028},\"orientation\":{\"x\":5.035,\"y\":-6.042,\"z\":7.049,\"w\":8.056}},\"polygon\":[{\"x\":-9.063,\"y\":10.07,\"z\":11.077},{\"x\":-12.084,\"y\":13.091,\"z\":14.098}]},\"id\":\"gen-obstacle\"}",
+  "model": {
+    "@kind": "obstacle",
+    "ros2martinav.obstacle_id": "s1",
+    "ros2martinav.obstacle_pose_position_x": "2.014",
+    "ros2martinav.obstacle_pose_position_y": "-3.021",
+    "ros2martinav.obstacle_pose_position_z": "4.028",
+    "ros2martinav.obstacle_pose_orientation_x": "5.035",
+    "ros2martinav.obstacle_polygon.#": "2",
+    "ros2martinav.obstacle_polygon[0].ros2martinav.obstacle_polygon_x": "-9.063",
+    "ros2martinav.topic": "/gen/obstacle"
+  }
+}
