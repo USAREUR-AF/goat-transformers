@@ -56,18 +56,6 @@ SPDX-FileCopyrightText = "2010 OASIS"
 SPDX-License-Identifier = "LicenseRef-OASIS-Notice"
 
 [[annotations]]
-path = "packs/kml/**"
-precedence = "override"
-SPDX-FileCopyrightText = "2007-2008 Open Geospatial Consortium"
-SPDX-License-Identifier = "LicenseRef-OGC-Document"
-
-[[annotations]]
-path = "model/kml.def"
-precedence = "override"
-SPDX-FileCopyrightText = "2007-2008 Open Geospatial Consortium"
-SPDX-License-Identifier = "LicenseRef-OGC-Document"
-
-[[annotations]]
 path = "packs/gbfs-*/**"
 precedence = "override"
 SPDX-FileCopyrightText = "MobilityData (GBFS)"
