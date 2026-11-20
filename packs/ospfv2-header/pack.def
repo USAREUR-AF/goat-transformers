@@ -1,0 +1,55 @@
+# OSPFv2 packet (RFC 2328 appendix A.3): the 24-octet header and the fixed part
+# of each packet type. Public. Hello neighbors, LSA headers, link state
+# requests and LSAs are not mapped (pack.md).
+#
+# Addressing: word_bytes 1 and bit_order msb; multi-octet fields are big-endian.
+format        ospfv2-header
+version       0.1.0
+distribution  public
+source        "IETF RFC 2328, OSPF Version 2, April 1998, appendix A.3, https://www.rfc-editor.org/rfc/rfc2328.txt; layout restated"
+uses          inet
+wire          bits
+word_bytes    1
+bit_order     msb
+
+field  inet.ospf_version            0:0:8      uint
+field  inet.ospf_packet_length      0:16:16    uint
+field  inet.ospf_router_id          0:32:32    uint
+field  inet.ospf_area_id            0:64:32    uint
+field  inet.ospf_checksum           0:96:16    uint
+field  inet.ospf_autype             0:112:16   uint
+field  inet.ospf_auth_hi            0:128:32   uint
+field  inet.ospf_auth_lo            0:160:32   uint
+
+kind      hello
+when      0:8:8  1
+requires  inet.ospf_network_mask
+field  inet.ospf_network_mask       0:192:32   uint
+field  inet.ospf_hello_interval     0:224:16   uint
+field  inet.ospf_options            0:240:8    uint
+field  inet.ospf_router_priority    0:248:8    uint
+field  inet.ospf_router_dead_interval 0:256:32 uint
+field  inet.ospf_dr                 0:288:32   uint
+field  inet.ospf_bdr                0:320:32   uint
+
+kind      database-description
+when      0:8:8  2
+requires  inet.ospf_dd_sequence
+field  inet.ospf_interface_mtu      0:192:16   uint
+field  inet.ospf_options            0:208:8    uint
+field  inet.ospf_dd_reserved        0:216:5    uint
+field  inet.ospf_dd_init            0:221:1    uint
+field  inet.ospf_dd_more            0:222:1    uint
+field  inet.ospf_dd_master          0:223:1    uint
+field  inet.ospf_dd_sequence        0:224:32   uint
+
+kind      link-state-update
+when      0:8:8  4
+requires  inet.ospf_lsa_count
+field  inet.ospf_lsa_count          0:192:32   uint
+
+kind      link-state-request
+when      0:8:8  3
+
+kind      link-state-ack
+when      0:8:8  5

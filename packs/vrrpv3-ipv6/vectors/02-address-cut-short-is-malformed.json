@@ -1,0 +1,8 @@
+{
+  "name": "address-cut-short-is-malformed",
+  "from": "vrrpv3-ipv6",
+  "to": "vrrpv3-ipv6",
+  "input": "3107640200644a5bfe80000000000000000000000000000120010db80000",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/ietf-headers-4-vectors.py from values chosen there; the advertisement cut to 30 octets, inside its second address"
+}

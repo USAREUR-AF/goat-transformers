@@ -1,0 +1,8 @@
+{
+  "name": "ciphertext-length-cut-short-is-malformed",
+  "from": "dtls-record-header",
+  "to": "dtls-record-header",
+  "input": "2e123400",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/ietf-headers-4-vectors.py from values chosen there; the S 1, L 1 header cut to 4 octets: the length does not fit"
+}

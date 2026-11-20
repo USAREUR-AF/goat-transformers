@@ -1,0 +1,19 @@
+{
+  "name": "link-state-ack-empty-roundtrip",
+  "from": "ospfv2-header",
+  "to": "ospfv2-header",
+  "input": "02050018c0000202000000003be000000000000000000000",
+  "expect": "02050018c0000202000000003be000000000000000000000",
+  "model": {
+    "@kind": "link-state-ack",
+    "inet.ospf_version": "2",
+    "inet.ospf_packet_length": "24",
+    "inet.ospf_router_id": "3221225986",
+    "inet.ospf_area_id": "0",
+    "inet.ospf_checksum": "15328",
+    "inet.ospf_autype": "0",
+    "inet.ospf_auth_hi": "0",
+    "inet.ospf_auth_lo": "0"
+  },
+  "source": "built by tools/gen/ietf-headers-4-vectors.py from values chosen there; a Link State Acknowledgment with no LSA header: the 24-octet header"
+}

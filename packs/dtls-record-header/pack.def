@@ -1,0 +1,56 @@
+# DTLS 1.3 record headers (RFC 9147 section 4): the 13-octet DTLSPlaintext
+# header, and the unified header of a DTLSCiphertext record without a
+# connection ID. Public. The record body and a connection ID are not mapped
+# (pack.md).
+#
+# Addressing: word_bytes 1 and bit_order msb; multi-octet fields are big-endian.
+# The unified header's sequence number is 8 or 16 bits by the S bit, and the
+# length follows it when the L bit is 1: gate blocks (engine-spec 0.17).
+format        dtls-record-header
+version       0.1.0
+distribution  public
+source        "IETF RFC 9147, The Datagram Transport Layer Security (DTLS) Protocol Version 1.3, April 2022, section 4, https://www.rfc-editor.org/rfc/rfc9147.txt; layout restated"
+uses          inet
+wire          bits
+word_bytes    1
+bit_order     msb
+
+# A first octet 001xxxxx is a unified header; the content types are below 32.
+kind      ciphertext
+when      0:0:3  1
+when      0:3:1  0
+requires  inet.dtls_seq_low
+field  inet.dtls_seq_16bit          0:4:1      uint
+field  inet.dtls_length_present     0:5:1      uint
+field  inet.dtls_epoch_low          0:6:2      uint
+if  0:4:1  0
+  field  inet.dtls_seq_low          0:8:8      uint
+  if  0:5:1  1
+    field  inet.tls_record_length   0:16:16    uint
+  end
+end
+if  0:4:1  1
+  field  inet.dtls_seq_low          0:8:16     uint
+  if  0:5:1  1
+    field  inet.tls_record_length   0:24:16    uint
+  end
+end
+
+# A unified header with a connection ID: its length is not on the wire, so only
+# the first octet is read.
+kind      ciphertext-with-cid
+when      0:0:3  1
+when      0:3:1  1
+requires  inet.dtls_cid_present
+field  inet.dtls_cid_present        0:3:1      uint
+field  inet.dtls_seq_16bit          0:4:1      uint
+field  inet.dtls_length_present     0:5:1      uint
+field  inet.dtls_epoch_low          0:6:2      uint
+
+kind      plaintext
+requires  inet.tls_content_type
+field  inet.tls_content_type        0:0:8      uint
+field  inet.tls_legacy_version      0:8:16     uint
+field  inet.dtls_epoch              0:24:16    uint
+field  inet.dtls_sequence           0:40:48    uint
+field  inet.tls_record_length       0:88:16    uint

@@ -1,0 +1,8 @@
+{
+  "name": "alert-cut-short-is-malformed",
+  "from": "tls-record-header",
+  "to": "tls-record-header",
+  "input": "150303000202",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/ietf-headers-4-vectors.py from values chosen there; the alert record cut to 6 octets"
+}

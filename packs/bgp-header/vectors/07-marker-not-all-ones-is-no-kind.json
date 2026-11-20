@@ -1,0 +1,8 @@
+{
+  "name": "marker-not-all-ones-is-no-kind",
+  "from": "bgp-header",
+  "to": "bgp-header",
+  "input": "fffffffffffffffffffffffffffffffe001304",
+  "expect_error": "no-kind",
+  "source": "built by tools/gen/ietf-headers-4-vectors.py from values chosen there; the KEEPALIVE with the last marker octet 0xfe"
+}

@@ -1,0 +1,8 @@
+{
+  "name": "option-cut-short-is-malformed",
+  "from": "geneve-header",
+  "to": "geneve-header",
+  "input": "024008000000070001028001c0ff",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/ietf-headers-4-vectors.py from values chosen there; the one-option header cut to 14 octets, inside its second word"
+}

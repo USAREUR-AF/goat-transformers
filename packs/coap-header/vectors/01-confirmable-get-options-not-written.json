@@ -1,0 +1,21 @@
+{
+  "name": "confirmable-get-options-not-written",
+  "from": "coap-header",
+  "to": "coap-header",
+  "input": "44017d3471625344b474656d70ff32322e35",
+  "expect": "44017d3471625344",
+  "model": {
+    "inet.coap_version": "1",
+    "inet.coap_type": "0",
+    "inet.coap_token_length": "4",
+    "inet.coap_code_class": "0",
+    "inet.coap_code_detail": "1",
+    "inet.coap_message_id": "32052",
+    "inet.coap_token.#": "4",
+    "inet.coap_token[0].inet.coap_token_octet": "113",
+    "inet.coap_token[1].inet.coap_token_octet": "98",
+    "inet.coap_token[2].inet.coap_token_octet": "83",
+    "inet.coap_token[3].inet.coap_token_octet": "68"
+  },
+  "source": "built by tools/gen/ietf-headers-4-vectors.py from values chosen there; a confirmable GET (0.01), message ID 0x7d34, a 4-octet token, then a Uri-Path option and a payload after the 0xff marker, read over"
+}

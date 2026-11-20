@@ -1,0 +1,21 @@
+{
+  "name": "backup-two-addresses-roundtrip",
+  "from": "vrrpv3-ipv4",
+  "to": "vrrpv3-ipv4",
+  "input": "310164020064e49bc00002fec00002fd",
+  "expect": "310164020064e49bc00002fec00002fd",
+  "model": {
+    "inet.vrrp_version": "3",
+    "inet.vrrp_type": "1",
+    "inet.vrrp_vrid": "1",
+    "inet.vrrp_priority": "100",
+    "inet.vrrp_addr_count": "2",
+    "inet.vrrp_reserved": "0",
+    "inet.vrrp_max_adver_int": "100",
+    "inet.vrrp_checksum": "58523",
+    "inet.vrrp_ipv4_addrs.#": "2",
+    "inet.vrrp_ipv4_addrs[0].inet.vrrp_ipv4_addr": "3221226238",
+    "inet.vrrp_ipv4_addrs[1].inet.vrrp_ipv4_addr": "3221226237"
+  },
+  "source": "built by tools/gen/ietf-headers-4-vectors.py from values chosen there; an advertisement for virtual router 1, priority 100, interval 100 cs (1 s), two addresses; checksum computed here"
+}

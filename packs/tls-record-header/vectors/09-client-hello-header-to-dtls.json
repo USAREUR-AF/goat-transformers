@@ -1,0 +1,16 @@
+{
+  "name": "client-hello-header-to-dtls",
+  "from": "tls-record-header",
+  "to": "dtls-record-header",
+  "input": "1603010200010001fc",
+  "expect": "16030100000000000000000200",
+  "model": {
+    "@kind": "handshake",
+    "inet.tls_content_type": "22",
+    "inet.tls_legacy_version": "769",
+    "inet.tls_record_length": "512",
+    "inet.tls_handshake_type": "1",
+    "inet.tls_handshake_length": "508"
+  },
+  "source": "built by tools/gen/ietf-headers-4-vectors.py from values chosen there; the client_hello record to dtls-record-header: content type, legacy version and length carry (RFC 9147 keeps their meaning); kind plaintext, epoch and sequence absent and written 0, the handshake keys not mapped there"
+}

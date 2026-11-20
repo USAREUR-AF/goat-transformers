@@ -1,0 +1,26 @@
+{
+  "name": "hello-neighbor-not-written",
+  "from": "ospfv2-header",
+  "to": "ospfv2-header",
+  "input": "02010030c000020100000000b69400000000000000000000ffffff00000a020100000028c000020100000000c0000202",
+  "expect": "02010030c000020100000000b69400000000000000000000ffffff00000a020100000028c000020100000000",
+  "model": {
+    "@kind": "hello",
+    "inet.ospf_version": "2",
+    "inet.ospf_packet_length": "48",
+    "inet.ospf_router_id": "3221225985",
+    "inet.ospf_area_id": "0",
+    "inet.ospf_checksum": "46740",
+    "inet.ospf_autype": "0",
+    "inet.ospf_auth_hi": "0",
+    "inet.ospf_auth_lo": "0",
+    "inet.ospf_network_mask": "4294967040",
+    "inet.ospf_hello_interval": "10",
+    "inet.ospf_options": "2",
+    "inet.ospf_router_priority": "1",
+    "inet.ospf_router_dead_interval": "40",
+    "inet.ospf_dr": "3221225985",
+    "inet.ospf_bdr": "0"
+  },
+  "source": "built by tools/gen/ietf-headers-4-vectors.py from values chosen there; a Hello in area 0 from 192.0.2.1, mask 255.255.255.0, interval 10 s, E option, priority 1, dead interval 40 s, itself designated router, one neighbor 192.0.2.2 read over; packet length 48 and checksum computed here"
+}

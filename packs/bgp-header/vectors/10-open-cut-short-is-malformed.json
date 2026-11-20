@@ -1,0 +1,8 @@
+{
+  "name": "open-cut-short-is-malformed",
+  "from": "bgp-header",
+  "to": "bgp-header",
+  "input": "ffffffffffffffffffffffffffffffff001d0104fbf0005ac0000201",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/ietf-headers-4-vectors.py from values chosen there; the first OPEN cut to 28 octets: kind open is selected and its optional parameters length does not fit"
+}

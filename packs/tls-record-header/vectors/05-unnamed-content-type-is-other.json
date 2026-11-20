@@ -1,0 +1,14 @@
+{
+  "name": "unnamed-content-type-is-other",
+  "from": "tls-record-header",
+  "to": "tls-record-header",
+  "input": "1803030000",
+  "expect": "1803030000",
+  "model": {
+    "@kind": "other",
+    "inet.tls_content_type": "24",
+    "inet.tls_legacy_version": "771",
+    "inet.tls_record_length": "0"
+  },
+  "source": "built by tools/gen/ietf-headers-4-vectors.py from values chosen there; content type 24, which RFC 8446 does not define: kind other, the header alone"
+}

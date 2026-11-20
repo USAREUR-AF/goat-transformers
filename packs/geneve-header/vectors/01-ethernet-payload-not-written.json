@@ -1,0 +1,19 @@
+{
+  "name": "ethernet-payload-not-written",
+  "from": "geneve-header",
+  "to": "geneve-header",
+  "input": "0000655800abcd000000000000000000000000000000",
+  "expect": "0000655800abcd00",
+  "model": {
+    "inet.geneve_version": "0",
+    "inet.geneve_opt_len": "0",
+    "inet.geneve_control": "0",
+    "inet.geneve_critical": "0",
+    "inet.geneve_reserved1": "0",
+    "inet.geneve_protocol_type": "25944",
+    "inet.geneve_vni": "43981",
+    "inet.geneve_reserved2": "0",
+    "inet.geneve_option_words.#": "0"
+  },
+  "source": "built by tools/gen/ietf-headers-4-vectors.py from values chosen there; a base header carrying Ethernet (0x6558), VNI 43981, no option, then 14 octets standing for the inner Ethernet header, read over"
+}

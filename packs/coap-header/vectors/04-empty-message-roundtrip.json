@@ -1,0 +1,17 @@
+{
+  "name": "empty-message-roundtrip",
+  "from": "coap-header",
+  "to": "coap-header",
+  "input": "40000001",
+  "expect": "40000001",
+  "model": {
+    "inet.coap_version": "1",
+    "inet.coap_type": "0",
+    "inet.coap_token_length": "0",
+    "inet.coap_code_class": "0",
+    "inet.coap_code_detail": "0",
+    "inet.coap_message_id": "1",
+    "inet.coap_token.#": "0"
+  },
+  "source": "built by tools/gen/ietf-headers-4-vectors.py from values chosen there; an empty confirmable message (code 0.00, no token, a CoAP ping): 4 octets"
+}

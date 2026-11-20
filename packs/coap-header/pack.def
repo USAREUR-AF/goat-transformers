@@ -1,0 +1,26 @@
+# CoAP message header (RFC 7252 section 3): the 4-octet fixed header and the
+# token. Public. Options (delta encoded) and the payload are not mapped
+# (pack.md).
+#
+# Addressing: word_bytes 1 and bit_order msb; multi-octet fields are big-endian.
+format        coap-header
+version       0.1.0
+distribution  public
+source        "IETF RFC 7252, The Constrained Application Protocol (CoAP), June 2014, section 3, https://www.rfc-editor.org/rfc/rfc7252.txt; layout restated"
+uses          inet
+wire          bits
+word_bytes    1
+bit_order     msb
+
+field  inet.coap_version            0:0:2      uint
+field  inet.coap_type               0:2:2      uint
+field  inet.coap_token_length       0:4:4      uint
+field  inet.coap_code_class         0:8:3      uint
+field  inet.coap_code_detail        0:11:5     uint
+field  inet.coap_message_id         0:16:16    uint
+
+# The token: token-length octets. On encode the count is written from the
+# number of items, over inet.coap_token_length (ruling 2 of 0.7).
+group  inet.coap_token  0:32  item 8  count 0:4:4
+  field  inet.coap_token_octet      0:0:8      uint
+end

@@ -1,0 +1,16 @@
+# RIP message header (RFC 2453 section 3.6): the 4 octets before the entries.
+# Public. The route entries are not mapped (pack.md).
+#
+# Addressing: word_bytes 1 and bit_order msb; multi-octet fields are big-endian.
+format        ripv2-header
+version       0.1.0
+distribution  public
+source        "IETF RFC 2453, RIP Version 2, November 1998, sections 3.6 and 4, https://www.rfc-editor.org/rfc/rfc2453.txt; layout restated"
+uses          inet
+wire          bits
+word_bytes    1
+bit_order     msb
+
+field  inet.rip_command             0:0:8      uint
+field  inet.rip_version             0:8:8      uint
+field  inet.rip_zero                0:16:16    uint

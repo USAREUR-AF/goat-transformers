@@ -1,0 +1,26 @@
+{
+  "name": "database-description-roundtrip",
+  "from": "ospfv2-header",
+  "to": "ospfv2-header",
+  "input": "02020020c000020200000000d50a0000000000000000000005dc020700005eed",
+  "expect": "02020020c000020200000000d50a0000000000000000000005dc020700005eed",
+  "model": {
+    "@kind": "database-description",
+    "inet.ospf_version": "2",
+    "inet.ospf_packet_length": "32",
+    "inet.ospf_router_id": "3221225986",
+    "inet.ospf_area_id": "0",
+    "inet.ospf_checksum": "54538",
+    "inet.ospf_autype": "0",
+    "inet.ospf_auth_hi": "0",
+    "inet.ospf_auth_lo": "0",
+    "inet.ospf_interface_mtu": "1500",
+    "inet.ospf_options": "2",
+    "inet.ospf_dd_reserved": "0",
+    "inet.ospf_dd_init": "1",
+    "inet.ospf_dd_more": "1",
+    "inet.ospf_dd_master": "1",
+    "inet.ospf_dd_sequence": "24301"
+  },
+  "source": "built by tools/gen/ietf-headers-4-vectors.py from values chosen there; the first Database Description of an exchange: MTU 1500, I, M and MS set, sequence 0x5eed, no LSA header"
+}

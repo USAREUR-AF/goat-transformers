@@ -1,0 +1,43 @@
+# TLS record header (RFC 8446 section 5.1): the 5-octet header of a TLSPlaintext
+# or TLSCiphertext record, and the first octets of a plaintext change cipher
+# spec, alert or handshake record. Public. The rest of the fragment is not
+# mapped (pack.md).
+#
+# Addressing: word_bytes 1 and bit_order msb; multi-octet fields are big-endian.
+# The content type is a common field and a `when` of each kind over the same
+# bits; on encode the kind's `when` value is written last.
+format        tls-record-header
+version       0.1.0
+distribution  public
+source        "IETF RFC 8446, The Transport Layer Security (TLS) Protocol Version 1.3, August 2018, sections 4, 5.1 and 6, https://www.rfc-editor.org/rfc/rfc8446.txt; layout restated"
+uses          inet
+wire          bits
+word_bytes    1
+bit_order     msb
+
+field  inet.tls_content_type        0:0:8      uint
+field  inet.tls_legacy_version      0:8:16     uint
+field  inet.tls_record_length       0:24:16    uint
+
+kind      change-cipher-spec
+when      0:0:8  20
+requires  inet.tls_ccs_value
+field  inet.tls_ccs_value           0:40:8     uint
+
+kind      alert
+when      0:0:8  21
+requires  inet.tls_alert_level
+field  inet.tls_alert_level         0:40:8     uint
+field  inet.tls_alert_description   0:48:8     uint
+
+kind      handshake
+when      0:0:8  22
+requires  inet.tls_handshake_type
+field  inet.tls_handshake_type      0:40:8     uint
+field  inet.tls_handshake_length    0:48:24    uint
+
+kind      application-data
+when      0:0:8  23
+
+# Any other content type: the header alone.
+kind      other
