@@ -1,0 +1,11 @@
+{
+ "keys": {
+  "|certificateHashData.customData.vendorId|string": "certificate_hash_data_custom_data_vendor_id",
+  "|certificateHashData.hashAlgorithm|string": "certificate_hash_data_hash_algorithm",
+  "|certificateHashData.issuerKeyHash|string": "certificate_hash_data_issuer_key_hash",
+  "|certificateHashData.issuerNameHash|string": "certificate_hash_data_issuer_name_hash",
+  "|certificateHashData.serialNumber|string": "certificate_hash_data_serial_number",
+  "|customData.vendorId|string": "custom_data_vendor_id"
+ },
+ "lists": {}
+}

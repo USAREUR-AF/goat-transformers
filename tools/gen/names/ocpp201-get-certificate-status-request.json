@@ -1,0 +1,12 @@
+{
+ "keys": {
+  "|customData.vendorId|string": "custom_data_vendor_id",
+  "|ocspRequestData.customData.vendorId|string": "ocsp_request_data_custom_data_vendor_id",
+  "|ocspRequestData.hashAlgorithm|string": "ocsp_request_data_hash_algorithm",
+  "|ocspRequestData.issuerKeyHash|string": "ocsp_request_data_issuer_key_hash",
+  "|ocspRequestData.issuerNameHash|string": "ocsp_request_data_issuer_name_hash",
+  "|ocspRequestData.responderURL|string": "ocsp_request_data_responder_url",
+  "|ocspRequestData.serialNumber|string": "ocsp_request_data_serial_number"
+ },
+ "lists": {}
+}

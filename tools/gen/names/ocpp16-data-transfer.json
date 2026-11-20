@@ -1,0 +1,8 @@
+{
+ "keys": {
+  "|data|string": "data",
+  "|messageId|string": "message_id",
+  "|vendorId|string": "vendor_id"
+ },
+ "lists": {}
+}

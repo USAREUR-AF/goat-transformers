@@ -1,0 +1,7 @@
+{
+ "name": "gen-stop_transaction_response-residue",
+ "from": "ocpp16-stop-transaction-response",
+ "to": "ocpp16-stop-transaction-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"idTagInfo\":{\"expiryDate\":\"2026-09-19T20:41:11.548Z\",\"parentIdTag\":\"s43454\",\"status\":\"Accepted\"}}",
+ "expect": "{\"idTagInfo\":{\"expiryDate\":\"2026-09-19T20:41:11.548Z\",\"parentIdTag\":\"s43454\",\"status\":\"Accepted\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

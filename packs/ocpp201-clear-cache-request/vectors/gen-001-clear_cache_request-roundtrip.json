@@ -1,0 +1,10 @@
+{
+ "name": "gen-clear_cache_request-roundtrip",
+ "from": "ocpp201-clear-cache-request",
+ "to": "ocpp201-clear-cache-request",
+ "input": "{\"customData\":{\"vendorId\":\"s16404\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s16404\"}}",
+ "model": {
+  "ocpp201clearcacherequest.custom_data_vendor_id": "s16404"
+ }
+}

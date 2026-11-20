@@ -1,0 +1,14 @@
+{
+ "name": "gen-change_availability_request-roundtrip",
+ "from": "ocpp201-change-availability-request",
+ "to": "ocpp201-change-availability-request",
+ "input": "{\"customData\":{\"vendorId\":\"s76477\"},\"evse\":{\"customData\":{\"vendorId\":\"s20882\"},\"id\":58826,\"connectorId\":76637},\"operationalStatus\":\"Operative\"}",
+ "expect": "{\"customData\":{\"vendorId\":\"s76477\"},\"evse\":{\"customData\":{\"vendorId\":\"s20882\"},\"id\":58826,\"connectorId\":76637},\"operationalStatus\":\"Operative\"}",
+ "model": {
+  "ocpp201changeavailabilityrequest.custom_data_vendor_id": "s76477",
+  "ocpp201changeavailabilityrequest.evse_custom_data_vendor_id": "s20882",
+  "ocpp201changeavailabilityrequest.evse_id": "58826",
+  "ocpp201changeavailabilityrequest.evse_connector_id": "76637",
+  "ocpp201changeavailabilityrequest.operational_status": "Operative"
+ }
+}

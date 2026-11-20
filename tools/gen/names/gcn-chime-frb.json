@@ -1,0 +1,43 @@
+{
+ "keys": {
+  "spectral_band|.|float": "spectral_band_value",
+  "|alert_datetime|string": "alert_datetime",
+  "|alert_tense|string": "alert_tense",
+  "|alert_type|string": "alert_type",
+  "|association_probability|float": "association_probability",
+  "|containment_probability|float": "containment_probability",
+  "|data_archive_page|string": "data_archive_page",
+  "|dec|float": "dec",
+  "|dm_gal_ne_2001_max|float": "dm_gal_ne_2001_max",
+  "|dm|float": "dm",
+  "|healpix_file|string": "healpix_file",
+  "|healpix_url|string": "healpix_url",
+  "|importance|float": "importance",
+  "|instrument_phi|float": "instrument_phi",
+  "|instrument_semimajor_angle|float": "instrument_semimajor_angle",
+  "|instrument_theta|float": "instrument_theta",
+  "|instrument|string": "instrument",
+  "|known_source|string": "known_source",
+  "|messenger|string": "messenger",
+  "|mission|string": "mission",
+  "|npol|float": "npol",
+  "|observation_livetime|float": "observation_livetime",
+  "|observation_start|string": "observation_start",
+  "|observation_stop|string": "observation_stop",
+  "|ra|float": "ra",
+  "|record_number|float": "record_number",
+  "|sampling_time|float": "sampling_time",
+  "|service|string": "service",
+  "|snr|float": "snr",
+  "|spectral_band_units|string": "spectral_band_units",
+  "|systematic_included|int": "systematic_included",
+  "|trigger_time_inf_freq_error|float": "trigger_time_inf_freq_error",
+  "|trigger_time_inf_freq|string": "trigger_time_inf_freq",
+  "|trigger_time|string": "trigger_time",
+  "|tsys|float": "tsys",
+  "|update_message|string": "update_message"
+ },
+ "lists": {
+  "|spectral_band": "spectral_band"
+ }
+}

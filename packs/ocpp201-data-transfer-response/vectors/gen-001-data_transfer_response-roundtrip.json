@@ -1,0 +1,14 @@
+{
+ "name": "gen-data_transfer_response-roundtrip",
+ "from": "ocpp201-data-transfer-response",
+ "to": "ocpp201-data-transfer-response",
+ "input": "{\"customData\":{\"vendorId\":\"s87076\"},\"status\":\"UnknownMessageId\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s68559\"},\"reasonCode\":\"s40675\",\"additionalInfo\":\"s40882\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s87076\"},\"status\":\"UnknownMessageId\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s68559\"},\"reasonCode\":\"s40675\",\"additionalInfo\":\"s40882\"}}",
+ "model": {
+  "ocpp201datatransferresponse.custom_data_vendor_id": "s87076",
+  "ocpp201datatransferresponse.status": "UnknownMessageId",
+  "ocpp201datatransferresponse.status_info_custom_data_vendor_id": "s68559",
+  "ocpp201datatransferresponse.status_info_reason_code": "s40675",
+  "ocpp201datatransferresponse.status_info_additional_info": "s40882"
+ }
+}

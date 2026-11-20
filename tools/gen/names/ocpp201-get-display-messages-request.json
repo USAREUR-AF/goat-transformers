@@ -1,0 +1,12 @@
+{
+ "keys": {
+  "id|.|int": "id_value",
+  "|customData.vendorId|string": "custom_data_vendor_id",
+  "|priority|string": "priority",
+  "|requestId|int": "request_id",
+  "|state|string": "state"
+ },
+ "lists": {
+  "|id": "id"
+ }
+}

@@ -1,0 +1,14 @@
+{
+ "keys": {
+  "clear_monitoring_result|customData.vendorId|string": "clear_monitoring_result_custom_data_vendor_id",
+  "clear_monitoring_result|id|int": "clear_monitoring_result_id",
+  "clear_monitoring_result|statusInfo.additionalInfo|string": "clear_monitoring_result_status_info_additional_info",
+  "clear_monitoring_result|statusInfo.customData.vendorId|string": "clear_monitoring_result_status_info_custom_data_vendor_id",
+  "clear_monitoring_result|statusInfo.reasonCode|string": "clear_monitoring_result_status_info_reason_code",
+  "clear_monitoring_result|status|string": "clear_monitoring_result_status",
+  "|customData.vendorId|string": "custom_data_vendor_id"
+ },
+ "lists": {
+  "|clearMonitoringResult": "clear_monitoring_result"
+ }
+}

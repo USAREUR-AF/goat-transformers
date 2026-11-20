@@ -1,0 +1,12 @@
+{
+ "name": "gen-get_transaction_status_response-roundtrip",
+ "from": "ocpp201-get-transaction-status-response",
+ "to": "ocpp201-get-transaction-status-response",
+ "input": "{\"customData\":{\"vendorId\":\"s73006\"},\"ongoingIndicator\":false,\"messagesInQueue\":true}",
+ "expect": "{\"customData\":{\"vendorId\":\"s73006\"},\"ongoingIndicator\":false,\"messagesInQueue\":true}",
+ "model": {
+  "ocpp201gettransactionstatusresponse.custom_data_vendor_id": "s73006",
+  "ocpp201gettransactionstatusresponse.ongoing_indicator": "0",
+  "ocpp201gettransactionstatusresponse.messages_in_queue": "1"
+ }
+}

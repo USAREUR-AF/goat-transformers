@@ -1,0 +1,7 @@
+{
+ "keys": {
+  "|filename|string": "filename",
+  "|status|string": "status"
+ },
+ "lists": {}
+}

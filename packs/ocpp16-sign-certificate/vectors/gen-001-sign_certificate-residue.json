@@ -1,0 +1,7 @@
+{
+ "name": "gen-sign_certificate-residue",
+ "from": "ocpp16-sign-certificate",
+ "to": "ocpp16-sign-certificate",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"csr\":\"s88249\"}",
+ "expect": "{\"csr\":\"s88249\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

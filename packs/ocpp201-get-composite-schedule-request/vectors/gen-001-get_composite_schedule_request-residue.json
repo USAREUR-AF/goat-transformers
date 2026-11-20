@@ -1,0 +1,7 @@
+{
+ "name": "gen-get_composite_schedule_request-residue",
+ "from": "ocpp201-get-composite-schedule-request",
+ "to": "ocpp201-get-composite-schedule-request",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s70133\"},\"duration\":95565,\"chargingRateUnit\":\"A\",\"evseId\":10725}",
+ "expect": "{\"customData\":{\"vendorId\":\"s70133\"},\"duration\":95565,\"chargingRateUnit\":\"A\",\"evseId\":10725,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

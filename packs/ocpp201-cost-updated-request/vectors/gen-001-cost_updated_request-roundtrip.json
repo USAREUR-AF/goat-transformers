@@ -1,0 +1,12 @@
+{
+ "name": "gen-cost_updated_request-roundtrip",
+ "from": "ocpp201-cost-updated-request",
+ "to": "ocpp201-cost-updated-request",
+ "input": "{\"customData\":{\"vendorId\":\"s71802\"},\"totalCost\":42.375,\"transactionId\":\"s9252\"}",
+ "expect": "{\"customData\":{\"vendorId\":\"s71802\"},\"totalCost\":42.375,\"transactionId\":\"s9252\"}",
+ "model": {
+  "ocpp201costupdatedrequest.custom_data_vendor_id": "s71802",
+  "ocpp201costupdatedrequest.total_cost": "42.375",
+  "ocpp201costupdatedrequest.transaction_id": "s9252"
+ }
+}

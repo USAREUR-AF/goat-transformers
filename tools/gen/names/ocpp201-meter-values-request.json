@@ -1,0 +1,26 @@
+{
+ "keys": {
+  "meter_value_sampled_value|context|string": "meter_value_sampled_value_context",
+  "meter_value_sampled_value|customData.vendorId|string": "meter_value_sampled_value_custom_data_vendor_id",
+  "meter_value_sampled_value|location|string": "meter_value_sampled_value_location",
+  "meter_value_sampled_value|measurand|string": "meter_value_sampled_value_measurand",
+  "meter_value_sampled_value|phase|string": "meter_value_sampled_value_phase",
+  "meter_value_sampled_value|signedMeterValue.customData.vendorId|string": "meter_value_sampled_value_signed_meter_value_custom_data_vendor_id",
+  "meter_value_sampled_value|signedMeterValue.encodingMethod|string": "meter_value_sampled_value_signed_meter_value_encoding_method",
+  "meter_value_sampled_value|signedMeterValue.publicKey|string": "meter_value_sampled_value_signed_meter_value_public_key",
+  "meter_value_sampled_value|signedMeterValue.signedMeterData|string": "meter_value_sampled_value_signed_meter_value_signed_meter_data",
+  "meter_value_sampled_value|signedMeterValue.signingMethod|string": "meter_value_sampled_value_signed_meter_value_signing_method",
+  "meter_value_sampled_value|unitOfMeasure.customData.vendorId|string": "meter_value_sampled_value_unit_of_measure_custom_data_vendor_id",
+  "meter_value_sampled_value|unitOfMeasure.multiplier|int": "meter_value_sampled_value_unit_of_measure_multiplier",
+  "meter_value_sampled_value|unitOfMeasure.unit|string": "meter_value_sampled_value_unit_of_measure_unit",
+  "meter_value_sampled_value|value|float": "meter_value_sampled_value_value",
+  "meter_value|customData.vendorId|string": "meter_value_custom_data_vendor_id",
+  "meter_value|timestamp|string": "meter_value_timestamp",
+  "|customData.vendorId|string": "custom_data_vendor_id",
+  "|evseId|int": "evse_id"
+ },
+ "lists": {
+  "meter_value|sampledValue": "meter_value_sampled_value",
+  "|meterValue": "meter_value"
+ }
+}

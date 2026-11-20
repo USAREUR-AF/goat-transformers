@@ -1,0 +1,7 @@
+{
+ "name": "gen-delete_certificate_request-residue",
+ "from": "ocpp201-delete-certificate-request",
+ "to": "ocpp201-delete-certificate-request",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s57912\"},\"certificateHashData\":{\"customData\":{\"vendorId\":\"s64571\"},\"hashAlgorithm\":\"SHA384\",\"issuerNameHash\":\"s97115\",\"issuerKeyHash\":\"s26707\",\"serialNumber\":\"s15470\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s57912\"},\"certificateHashData\":{\"customData\":{\"vendorId\":\"s64571\"},\"hashAlgorithm\":\"SHA384\",\"issuerNameHash\":\"s97115\",\"issuerKeyHash\":\"s26707\",\"serialNumber\":\"s15470\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

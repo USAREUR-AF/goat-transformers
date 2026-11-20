@@ -1,0 +1,8 @@
+{
+ "keys": {
+  "|customData.vendorId|string": "custom_data_vendor_id",
+  "|reservationId|int": "reservation_id",
+  "|reservationUpdateStatus|string": "reservation_update_status"
+ },
+ "lists": {}
+}

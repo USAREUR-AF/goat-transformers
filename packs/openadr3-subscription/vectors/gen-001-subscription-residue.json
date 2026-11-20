@@ -1,0 +1,7 @@
+{
+ "name": "gen-subscription-residue",
+ "from": "openadr3-subscription",
+ "to": "openadr3-subscription",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"id\":\"s1044\",\"createdDateTime\":\"2024-03-19T12:02:24.845Z\",\"modificationDateTime\":\"2025-05-25T22:29:34.915Z\",\"objectType\":\"EVENT\",\"clientName\":\"s93459\",\"programID\":\"s96552\",\"objectOperations\":[{\"objects\":[\"PROGRAM\"],\"operations\":[\"UPDATE\"],\"callbackUrl\":\"https://example.org/289\",\"bearerToken\":\"s24431\"},{\"objects\":[\"PROGRAM\"],\"operations\":[\"DELETE\"],\"callbackUrl\":\"https://example.org/103\",\"bearerToken\":\"s18776\"}],\"targets\":[\"s63574\",\"s36134\"],\"clientID\":\"s7195\"}",
+ "expect": "{\"id\":\"s1044\",\"createdDateTime\":\"2024-03-19T12:02:24.845Z\",\"modificationDateTime\":\"2025-05-25T22:29:34.915Z\",\"objectType\":\"EVENT\",\"clientName\":\"s93459\",\"programID\":\"s96552\",\"objectOperations\":[{\"objects\":[\"PROGRAM\"],\"operations\":[\"UPDATE\"],\"callbackUrl\":\"https://example.org/289\",\"bearerToken\":\"s24431\"},{\"objects\":[\"PROGRAM\"],\"operations\":[\"DELETE\"],\"callbackUrl\":\"https://example.org/103\",\"bearerToken\":\"s18776\"}],\"targets\":[\"s63574\",\"s36134\"],\"clientID\":\"s7195\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

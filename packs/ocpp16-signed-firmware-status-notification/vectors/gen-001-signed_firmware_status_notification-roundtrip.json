@@ -1,0 +1,11 @@
+{
+ "name": "gen-signed_firmware_status_notification-roundtrip",
+ "from": "ocpp16-signed-firmware-status-notification",
+ "to": "ocpp16-signed-firmware-status-notification",
+ "input": "{\"status\":\"Installed\",\"requestId\":50086}",
+ "expect": "{\"status\":\"Installed\",\"requestId\":50086}",
+ "model": {
+  "ocpp16signedfirmwarestatusnotification.status": "Installed",
+  "ocpp16signedfirmwarestatusnotification.request_id": "50086"
+ }
+}

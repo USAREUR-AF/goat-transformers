@@ -1,0 +1,17 @@
+{
+ "name": "gen-customer_information_request-roundtrip",
+ "from": "ocpp201-customer-information-request",
+ "to": "ocpp201-customer-information-request",
+ "input": "{\"customData\":{\"vendorId\":\"s59556\"},\"customerCertificate\":{\"customData\":{\"vendorId\":\"s47943\"},\"hashAlgorithm\":\"SHA384\",\"issuerNameHash\":\"s37746\",\"issuerKeyHash\":\"s3691\",\"serialNumber\":\"s38363\"},\"idToken\":{\"customData\":{\"vendorId\":\"s81396\"},\"additionalInfo\":[{\"customData\":{\"vendorId\":\"s3160\"},\"additionalIdToken\":\"s3869\",\"type\":\"s16318\"},{\"customData\":{\"vendorId\":\"s21443\"},\"additionalIdToken\":\"s39096\",\"type\":\"s60295\"}],\"idToken\":\"s15679\",\"type\":\"Central\"},\"requestId\":99502,\"report\":false,\"clear\":false,\"customerIdentifier\":\"s7182\"}",
+ "expect": "{\"customData\":{\"vendorId\":\"s59556\"},\"customerCertificate\":{\"customData\":{\"vendorId\":\"s47943\"},\"hashAlgorithm\":\"SHA384\",\"issuerNameHash\":\"s37746\",\"issuerKeyHash\":\"s3691\",\"serialNumber\":\"s38363\"},\"idToken\":{\"customData\":{\"vendorId\":\"s81396\"},\"additionalInfo\":[{\"customData\":{\"vendorId\":\"s3160\"},\"additionalIdToken\":\"s3869\",\"type\":\"s16318\"},{\"customData\":{\"vendorId\":\"s21443\"},\"additionalIdToken\":\"s39096\",\"type\":\"s60295\"}],\"idToken\":\"s15679\",\"type\":\"Central\"},\"requestId\":99502,\"report\":false,\"clear\":false,\"customerIdentifier\":\"s7182\"}",
+ "model": {
+  "ocpp201customerinformationrequest.custom_data_vendor_id": "s59556",
+  "ocpp201customerinformationrequest.customer_certificate_custom_data_vendor_id": "s47943",
+  "ocpp201customerinformationrequest.customer_certificate_hash_algorithm": "SHA384",
+  "ocpp201customerinformationrequest.customer_certificate_issuer_name_hash": "s37746",
+  "ocpp201customerinformationrequest.customer_certificate_issuer_key_hash": "s3691",
+  "ocpp201customerinformationrequest.customer_certificate_serial_number": "s38363",
+  "ocpp201customerinformationrequest.id_token_custom_data_vendor_id": "s81396",
+  "ocpp201customerinformationrequest.id_token_additional_info.#": "2"
+ }
+}

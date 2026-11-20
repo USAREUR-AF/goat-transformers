@@ -1,0 +1,11 @@
+{
+ "name": "gen-unpublish_firmware_response-roundtrip",
+ "from": "ocpp201-unpublish-firmware-response",
+ "to": "ocpp201-unpublish-firmware-response",
+ "input": "{\"customData\":{\"vendorId\":\"s44717\"},\"status\":\"DownloadOngoing\"}",
+ "expect": "{\"customData\":{\"vendorId\":\"s44717\"},\"status\":\"DownloadOngoing\"}",
+ "model": {
+  "ocpp201unpublishfirmwareresponse.custom_data_vendor_id": "s44717",
+  "ocpp201unpublishfirmwareresponse.status": "DownloadOngoing"
+ }
+}

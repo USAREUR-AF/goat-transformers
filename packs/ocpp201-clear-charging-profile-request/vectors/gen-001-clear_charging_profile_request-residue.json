@@ -1,0 +1,7 @@
+{
+ "name": "gen-clear_charging_profile_request-residue",
+ "from": "ocpp201-clear-charging-profile-request",
+ "to": "ocpp201-clear-charging-profile-request",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s58537\"},\"chargingProfileId\":96569,\"chargingProfileCriteria\":{\"customData\":{\"vendorId\":\"s25260\"},\"evseId\":91116,\"chargingProfilePurpose\":\"TxDefaultProfile\",\"stackLevel\":36972}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s58537\"},\"chargingProfileId\":96569,\"chargingProfileCriteria\":{\"customData\":{\"vendorId\":\"s25260\"},\"evseId\":91116,\"chargingProfilePurpose\":\"TxDefaultProfile\",\"stackLevel\":36972},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

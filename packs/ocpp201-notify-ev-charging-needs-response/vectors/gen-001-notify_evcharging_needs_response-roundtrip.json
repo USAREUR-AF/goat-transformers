@@ -1,0 +1,14 @@
+{
+ "name": "gen-notify_evcharging_needs_response-roundtrip",
+ "from": "ocpp201-notify-ev-charging-needs-response",
+ "to": "ocpp201-notify-ev-charging-needs-response",
+ "input": "{\"customData\":{\"vendorId\":\"s15499\"},\"status\":\"Accepted\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s91427\"},\"reasonCode\":\"s83807\",\"additionalInfo\":\"s24527\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s15499\"},\"status\":\"Accepted\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s91427\"},\"reasonCode\":\"s83807\",\"additionalInfo\":\"s24527\"}}",
+ "model": {
+  "ocpp201notifyevchargingneedsresponse.custom_data_vendor_id": "s15499",
+  "ocpp201notifyevchargingneedsresponse.status": "Accepted",
+  "ocpp201notifyevchargingneedsresponse.status_info_custom_data_vendor_id": "s91427",
+  "ocpp201notifyevchargingneedsresponse.status_info_reason_code": "s83807",
+  "ocpp201notifyevchargingneedsresponse.status_info_additional_info": "s24527"
+ }
+}

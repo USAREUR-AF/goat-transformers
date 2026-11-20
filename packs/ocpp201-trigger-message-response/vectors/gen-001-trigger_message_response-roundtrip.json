@@ -1,0 +1,14 @@
+{
+ "name": "gen-trigger_message_response-roundtrip",
+ "from": "ocpp201-trigger-message-response",
+ "to": "ocpp201-trigger-message-response",
+ "input": "{\"customData\":{\"vendorId\":\"s24831\"},\"status\":\"NotImplemented\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s15036\"},\"reasonCode\":\"s6232\",\"additionalInfo\":\"s28637\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s24831\"},\"status\":\"NotImplemented\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s15036\"},\"reasonCode\":\"s6232\",\"additionalInfo\":\"s28637\"}}",
+ "model": {
+  "ocpp201triggermessageresponse.custom_data_vendor_id": "s24831",
+  "ocpp201triggermessageresponse.status": "NotImplemented",
+  "ocpp201triggermessageresponse.status_info_custom_data_vendor_id": "s15036",
+  "ocpp201triggermessageresponse.status_info_reason_code": "s6232",
+  "ocpp201triggermessageresponse.status_info_additional_info": "s28637"
+ }
+}

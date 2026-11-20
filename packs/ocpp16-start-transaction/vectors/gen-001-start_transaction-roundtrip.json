@@ -1,0 +1,14 @@
+{
+ "name": "gen-start_transaction-roundtrip",
+ "from": "ocpp16-start-transaction",
+ "to": "ocpp16-start-transaction",
+ "input": "{\"connectorId\":35464,\"idTag\":\"s52064\",\"meterStart\":17090,\"reservationId\":89704,\"timestamp\":\"2025-12-16T13:20:10.758Z\"}",
+ "expect": "{\"connectorId\":35464,\"idTag\":\"s52064\",\"meterStart\":17090,\"reservationId\":89704,\"timestamp\":\"2025-12-16T13:20:10.758Z\"}",
+ "model": {
+  "ocpp16starttransaction.connector_id": "35464",
+  "ocpp16starttransaction.id_tag": "s52064",
+  "ocpp16starttransaction.meter_start": "17090",
+  "ocpp16starttransaction.reservation_id": "89704",
+  "ocpp16starttransaction.timestamp": "2025-12-16T13:20:10.758Z"
+ }
+}

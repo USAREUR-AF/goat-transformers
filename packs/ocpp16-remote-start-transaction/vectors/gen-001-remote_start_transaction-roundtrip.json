@@ -1,0 +1,17 @@
+{
+ "name": "gen-remote_start_transaction-roundtrip",
+ "from": "ocpp16-remote-start-transaction",
+ "to": "ocpp16-remote-start-transaction",
+ "input": "{\"connectorId\":37907,\"idTag\":\"s98849\",\"chargingProfile\":{\"chargingProfileId\":41192,\"transactionId\":14857,\"stackLevel\":81144,\"chargingProfilePurpose\":\"TxDefaultProfile\",\"chargingProfileKind\":\"Absolute\",\"recurrencyKind\":\"Daily\",\"validFrom\":\"2024-08-18T22:43:54.511Z\",\"validTo\":\"2026-02-18T10:37:18.761Z\",\"chargingSchedule\":{\"duration\":98826,\"startSchedule\":\"2024-01-03T17:47:11.584Z\",\"chargingRateUnit\":\"W\",\"chargingSchedulePeriod\":[{\"startPeriod\":12288,\"limit\":7.0625,\"numberPhases\":95765},{\"startPeriod\":68871,\"limit\":42.375,\"numberPhases\":46673}],\"minChargingRate\":-0.5}}}",
+ "expect": "{\"connectorId\":37907,\"idTag\":\"s98849\",\"chargingProfile\":{\"chargingProfileId\":41192,\"transactionId\":14857,\"stackLevel\":81144,\"chargingProfilePurpose\":\"TxDefaultProfile\",\"chargingProfileKind\":\"Absolute\",\"recurrencyKind\":\"Daily\",\"validFrom\":\"2024-08-18T22:43:54.511Z\",\"validTo\":\"2026-02-18T10:37:18.761Z\",\"chargingSchedule\":{\"duration\":98826,\"startSchedule\":\"2024-01-03T17:47:11.584Z\",\"chargingRateUnit\":\"W\",\"chargingSchedulePeriod\":[{\"startPeriod\":12288,\"limit\":7.0625,\"numberPhases\":95765},{\"startPeriod\":68871,\"limit\":42.375,\"numberPhases\":46673}],\"minChargingRate\":-0.5}}}",
+ "model": {
+  "ocpp16remotestarttransaction.connector_id": "37907",
+  "ocpp16remotestarttransaction.id_tag": "s98849",
+  "ocpp16remotestarttransaction.charging_profile_charging_profile_id": "41192",
+  "ocpp16remotestarttransaction.charging_profile_transaction_id": "14857",
+  "ocpp16remotestarttransaction.charging_profile_stack_level": "81144",
+  "ocpp16remotestarttransaction.charging_profile_charging_profile_purpose": "TxDefaultProfile",
+  "ocpp16remotestarttransaction.charging_profile_charging_profile_kind": "Absolute",
+  "ocpp16remotestarttransaction.charging_profile_recurrency_kind": "Daily"
+ }
+}

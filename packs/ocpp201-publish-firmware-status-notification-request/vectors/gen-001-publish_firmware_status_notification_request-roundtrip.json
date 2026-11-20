@@ -1,0 +1,13 @@
+{
+ "name": "gen-publish_firmware_status_notification_request-roundtrip",
+ "from": "ocpp201-publish-firmware-status-notification-request",
+ "to": "ocpp201-publish-firmware-status-notification-request",
+ "input": "{\"customData\":{\"vendorId\":\"s89242\"},\"status\":\"DownloadScheduled\",\"location\":[\"s58085\",\"s4432\"],\"requestId\":13672}",
+ "expect": "{\"customData\":{\"vendorId\":\"s89242\"},\"status\":\"DownloadScheduled\",\"location\":[\"s58085\",\"s4432\"],\"requestId\":13672}",
+ "model": {
+  "ocpp201publishfirmwarestatusnotificationrequest.custom_data_vendor_id": "s89242",
+  "ocpp201publishfirmwarestatusnotificationrequest.status": "DownloadScheduled",
+  "ocpp201publishfirmwarestatusnotificationrequest.location.#": "2",
+  "ocpp201publishfirmwarestatusnotificationrequest.request_id": "13672"
+ }
+}

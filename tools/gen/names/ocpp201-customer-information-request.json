@@ -1,0 +1,23 @@
+{
+ "keys": {
+  "id_token_additional_info|additionalIdToken|string": "id_token_additional_info_additional_id_token",
+  "id_token_additional_info|customData.vendorId|string": "id_token_additional_info_custom_data_vendor_id",
+  "id_token_additional_info|type|string": "id_token_additional_info_type",
+  "|clear|int": "clear",
+  "|customData.vendorId|string": "custom_data_vendor_id",
+  "|customerCertificate.customData.vendorId|string": "customer_certificate_custom_data_vendor_id",
+  "|customerCertificate.hashAlgorithm|string": "customer_certificate_hash_algorithm",
+  "|customerCertificate.issuerKeyHash|string": "customer_certificate_issuer_key_hash",
+  "|customerCertificate.issuerNameHash|string": "customer_certificate_issuer_name_hash",
+  "|customerCertificate.serialNumber|string": "customer_certificate_serial_number",
+  "|customerIdentifier|string": "customer_identifier",
+  "|idToken.customData.vendorId|string": "id_token_custom_data_vendor_id",
+  "|idToken.idToken|string": "id_token_id_token",
+  "|idToken.type|string": "id_token_type",
+  "|report|int": "report",
+  "|requestId|int": "request_id"
+ },
+ "lists": {
+  "|idToken.additionalInfo": "id_token_additional_info"
+ }
+}

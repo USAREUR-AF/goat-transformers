@@ -1,0 +1,8 @@
+{
+  "name": "Signal K",
+  "domain": "sea",
+  "prefixes": [
+    "signalk-"
+  ],
+  "detail": "delta, full model, vessel"
+}

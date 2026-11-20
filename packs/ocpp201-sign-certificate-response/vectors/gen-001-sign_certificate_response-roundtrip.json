@@ -1,0 +1,14 @@
+{
+ "name": "gen-sign_certificate_response-roundtrip",
+ "from": "ocpp201-sign-certificate-response",
+ "to": "ocpp201-sign-certificate-response",
+ "input": "{\"customData\":{\"vendorId\":\"s52285\"},\"status\":\"Rejected\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s46939\"},\"reasonCode\":\"s57721\",\"additionalInfo\":\"s46788\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s52285\"},\"status\":\"Rejected\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s46939\"},\"reasonCode\":\"s57721\",\"additionalInfo\":\"s46788\"}}",
+ "model": {
+  "ocpp201signcertificateresponse.custom_data_vendor_id": "s52285",
+  "ocpp201signcertificateresponse.status": "Rejected",
+  "ocpp201signcertificateresponse.status_info_custom_data_vendor_id": "s46939",
+  "ocpp201signcertificateresponse.status_info_reason_code": "s57721",
+  "ocpp201signcertificateresponse.status_info_additional_info": "s46788"
+ }
+}

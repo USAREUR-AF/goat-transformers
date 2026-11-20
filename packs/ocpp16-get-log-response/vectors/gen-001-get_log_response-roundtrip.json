@@ -1,0 +1,11 @@
+{
+ "name": "gen-get_log_response-roundtrip",
+ "from": "ocpp16-get-log-response",
+ "to": "ocpp16-get-log-response",
+ "input": "{\"status\":\"Rejected\",\"filename\":\"s16784\"}",
+ "expect": "{\"status\":\"Rejected\",\"filename\":\"s16784\"}",
+ "model": {
+  "ocpp16getlogresponse.status": "Rejected",
+  "ocpp16getlogresponse.filename": "s16784"
+ }
+}

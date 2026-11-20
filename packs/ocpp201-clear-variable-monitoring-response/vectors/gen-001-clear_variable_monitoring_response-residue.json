@@ -1,0 +1,7 @@
+{
+ "name": "gen-clear_variable_monitoring_response-residue",
+ "from": "ocpp201-clear-variable-monitoring-response",
+ "to": "ocpp201-clear-variable-monitoring-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s82610\"},\"clearMonitoringResult\":[{\"customData\":{\"vendorId\":\"s57681\"},\"status\":\"Accepted\",\"id\":42204,\"statusInfo\":{\"customData\":{\"vendorId\":\"s94891\"},\"reasonCode\":\"s61066\",\"additionalInfo\":\"s27566\"}},{\"customData\":{\"vendorId\":\"s14370\"},\"status\":\"Rejected\",\"id\":20501,\"statusInfo\":{\"customData\":{\"vendorId\":\"s31448\"},\"reasonCode\":\"s78477\",\"additionalInfo\":\"s70989\"}}]}",
+ "expect": "{\"customData\":{\"vendorId\":\"s82610\"},\"clearMonitoringResult\":[{\"customData\":{\"vendorId\":\"s57681\"},\"status\":\"Accepted\",\"id\":42204,\"statusInfo\":{\"customData\":{\"vendorId\":\"s94891\"},\"reasonCode\":\"s61066\",\"additionalInfo\":\"s27566\"}},{\"customData\":{\"vendorId\":\"s14370\"},\"status\":\"Rejected\",\"id\":20501,\"statusInfo\":{\"customData\":{\"vendorId\":\"s31448\"},\"reasonCode\":\"s78477\",\"additionalInfo\":\"s70989\"}}],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

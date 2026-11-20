@@ -1,0 +1,7 @@
+{
+ "name": "gen-authorize-residue",
+ "from": "ocpp16-authorize",
+ "to": "ocpp16-authorize",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"idTag\":\"s97540\"}",
+ "expect": "{\"idTag\":\"s97540\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

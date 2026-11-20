@@ -1,0 +1,12 @@
+{
+  "name": "states-roundtrip",
+  "from": "opensky-states",
+  "to": "opensky-states",
+  "input": "{\"time\":1700000010,\"states\":[[\"a1b2c3\",\"TEST123 \",\"Testland\",1700000009,1700000010,8.25,47.5,10972.8,false,231.5,87.25,-2.5,null,11010.9,\"7421\",false,0,3],[\"0f0e0d\",null,\"Testland\",null,1700000004,null,null,null,true,0,null,null,null,null,null,false,0]]}",
+  "expect": "{\"time\":1700000010}",
+  "model": {
+    "time_ms": "1700000010000"
+  },
+  "source": "derived by tools/gen/opensky-vectors.py from the documentation's tables and spec/engine-spec.md; no engine run",
+  "reference": "OpenSky Network REST API documentation, github.com/openskynetwork/opensky-api commit 98fecf7438dfbd23c4a26c8a7286a25b805eb2d3, docs/free/states-response.rst; time, seconds, is time_ms through iscale:1000; the state vectors are arrays of arrays and are not carried (0.5 json residue)"
+}

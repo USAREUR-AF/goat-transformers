@@ -1,0 +1,7 @@
+{
+ "name": "gen-gnss_broadcast_binary_message-residue",
+ "from": "aisstream",
+ "to": "aisstream",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"MessageType\":\"GnssBroadcastBinaryMessage\",\"Message\":{\"GnssBroadcastBinaryMessage\":{\"MessageID\":22537,\"RepeatIndicator\":20368,\"UserID\":99973,\"Valid\":true,\"Spare1\":88136,\"Longitude\":1.5,\"Latitude\":1.5,\"Spare2\":97510,\"Data\":\"s63542\"}}}",
+ "expect": "{\"MessageType\":\"GnssBroadcastBinaryMessage\",\"Message\":{\"GnssBroadcastBinaryMessage\":{\"MessageID\":22537,\"RepeatIndicator\":20368,\"UserID\":99973,\"Valid\":true,\"Spare1\":88136,\"Longitude\":1.5,\"Latitude\":1.5,\"Spare2\":97510,\"Data\":\"s63542\"}},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

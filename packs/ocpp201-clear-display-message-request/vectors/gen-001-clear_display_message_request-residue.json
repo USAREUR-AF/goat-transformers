@@ -1,0 +1,7 @@
+{
+ "name": "gen-clear_display_message_request-residue",
+ "from": "ocpp201-clear-display-message-request",
+ "to": "ocpp201-clear-display-message-request",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s4754\"},\"id\":55035}",
+ "expect": "{\"customData\":{\"vendorId\":\"s4754\"},\"id\":55035,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

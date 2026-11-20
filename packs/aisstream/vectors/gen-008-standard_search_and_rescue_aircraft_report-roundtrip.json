@@ -1,0 +1,17 @@
+{
+ "name": "gen-standard_search_and_rescue_aircraft_report-roundtrip",
+ "from": "aisstream",
+ "to": "aisstream",
+ "input": "{\"MessageType\":\"StandardSearchAndRescueAircraftReport\",\"Message\":{\"StandardSearchAndRescueAircraftReport\":{\"MessageID\":84356,\"RepeatIndicator\":75317,\"UserID\":30384,\"Valid\":true,\"Altitude\":80593,\"Sog\":0.75,\"PositionAccuracy\":false,\"Longitude\":0.75,\"Latitude\":0.75,\"Cog\":-0.5,\"Timestamp\":31869,\"AltFromBaro\":true,\"Spare1\":49526,\"Dte\":false,\"Spare2\":84082,\"AssignedMode\":true,\"Raim\":true,\"CommunicationStateIsItdma\":true,\"CommunicationState\":48512}}}",
+ "expect": "{\"MessageType\":\"StandardSearchAndRescueAircraftReport\",\"Message\":{\"StandardSearchAndRescueAircraftReport\":{\"MessageID\":84356,\"RepeatIndicator\":75317,\"UserID\":30384,\"Valid\":true,\"Altitude\":80593,\"Sog\":0.75,\"PositionAccuracy\":false,\"Longitude\":0.75,\"Latitude\":0.75,\"Cog\":-0.5,\"Timestamp\":31869,\"AltFromBaro\":true,\"Spare1\":49526,\"Dte\":false,\"Spare2\":84082,\"AssignedMode\":true,\"Raim\":true,\"CommunicationStateIsItdma\":true,\"CommunicationState\":48512}}}",
+ "model": {
+  "@kind": "standard_search_and_rescue_aircraft_report",
+  "aisstream.message_standard_search_and_rescue_aircraft_report_message_id": "84356",
+  "aisstream.message_standard_search_and_rescue_aircraft_report_repeat_indicator": "75317",
+  "aisstream.message_standard_search_and_rescue_aircraft_report_user_id": "30384",
+  "aisstream.message_standard_search_and_rescue_aircraft_report_valid": "1",
+  "aisstream.message_standard_search_and_rescue_aircraft_report_altitude": "80593",
+  "aisstream.message_standard_search_and_rescue_aircraft_report_sog": "0.75",
+  "aisstream.message_standard_search_and_rescue_aircraft_report_position_accuracy": "0"
+ }
+}

@@ -1,0 +1,9 @@
+{
+  "name": "time-as-text",
+  "from": "opensky-states",
+  "to": "opensky-states",
+  "input": "{\"time\":\"1700000010\",\"states\":[]}",
+  "expect_error": "transform-decode",
+  "source": "derived by tools/gen/opensky-vectors.py from the documentation's tables and spec/engine-spec.md; no engine run",
+  "reference": "OpenSky Network REST API documentation, github.com/openskynetwork/opensky-api commit 98fecf7438dfbd23c4a26c8a7286a25b805eb2d3, docs/free/states-response.rst; time is an integer; a JSON string under iscale is a transform failure (0.15)"
+}

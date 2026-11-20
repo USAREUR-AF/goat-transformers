@@ -1,0 +1,7 @@
+{
+ "name": "gen-customer_information_request-residue",
+ "from": "ocpp201-customer-information-request",
+ "to": "ocpp201-customer-information-request",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s59556\"},\"customerCertificate\":{\"customData\":{\"vendorId\":\"s47943\"},\"hashAlgorithm\":\"SHA384\",\"issuerNameHash\":\"s37746\",\"issuerKeyHash\":\"s3691\",\"serialNumber\":\"s38363\"},\"idToken\":{\"customData\":{\"vendorId\":\"s81396\"},\"additionalInfo\":[{\"customData\":{\"vendorId\":\"s3160\"},\"additionalIdToken\":\"s3869\",\"type\":\"s16318\"},{\"customData\":{\"vendorId\":\"s21443\"},\"additionalIdToken\":\"s39096\",\"type\":\"s60295\"}],\"idToken\":\"s15679\",\"type\":\"Central\"},\"requestId\":99502,\"report\":false,\"clear\":false,\"customerIdentifier\":\"s7182\"}",
+ "expect": "{\"customData\":{\"vendorId\":\"s59556\"},\"customerCertificate\":{\"customData\":{\"vendorId\":\"s47943\"},\"hashAlgorithm\":\"SHA384\",\"issuerNameHash\":\"s37746\",\"issuerKeyHash\":\"s3691\",\"serialNumber\":\"s38363\"},\"idToken\":{\"customData\":{\"vendorId\":\"s81396\"},\"additionalInfo\":[{\"customData\":{\"vendorId\":\"s3160\"},\"additionalIdToken\":\"s3869\",\"type\":\"s16318\"},{\"customData\":{\"vendorId\":\"s21443\"},\"additionalIdToken\":\"s39096\",\"type\":\"s60295\"}],\"idToken\":\"s15679\",\"type\":\"Central\"},\"requestId\":99502,\"report\":false,\"clear\":false,\"customerIdentifier\":\"s7182\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

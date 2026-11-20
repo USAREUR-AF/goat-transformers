@@ -1,0 +1,17 @@
+{
+ "name": "gen-coincidence-roundtrip",
+ "from": "gcn-snews2-coincidence",
+ "to": "gcn-snews2-coincidence",
+ "input": "{\"snews_schema_version\":\"s5008\",\"snews2_tier\":\"s94878\",\"event_times_utc\":[\"s45594\",\"s3768\"],\"tier_data\":{\"neutrino_time_utc\":\"s70874\",\"p_values\":[0.75,0.75],\"false_alarm_prob\":1.5},\"alert_datetime\":\"s30059\",\"alert_tense\":\"test\",\"alert_type\":\"subsequent\",\"data_archive_page\":\"s8113\",\"mission\":\"s30328\",\"instrument\":\"s87111\",\"service\":\"s93847\",\"record_number\":-0.5,\"messenger\":\"Neutrino\",\"spectral_band\":[0.75,-0.5],\"spectral_band_units\":\"keV\",\"trigger_time\":\"s38249\",\"observation_start\":\"s38605\",\"observation_stop\":\"s1135\",\"observation_livetime\":0.75,\"far\":101.125,\"trigger_type\":\"image\",\"net_count_rate\":7.0625,\"background_count_rate\":1.5,\"rate_snr\":12.5,\"rate_duration\":-3.25,\"rate_energy_range\":[42.375,-3.25],\"image_snr\":7.0625,\"image_duration\":12.5,\"image_energy_range\":[12.5,7.0625],\"p_astro\":7.0625,\"ra\":1.5,\"dec\":-3.25,\"containment_probability\":42.375,\"systematic_included\":true,\"instrument_phi\":42.375,\"instrument_theta\":101.125,\"instrument_semimajor_angle\":7.0625,\"healpix_url\":\"s26320\",\"healpix_file\":\"s85388\"}",
+ "expect": "{\"snews_schema_version\":\"s5008\",\"snews2_tier\":\"s94878\",\"event_times_utc\":[\"s45594\",\"s3768\"],\"tier_data\":{\"neutrino_time_utc\":\"s70874\",\"p_values\":[0.75,0.75],\"false_alarm_prob\":1.5},\"alert_datetime\":\"s30059\",\"alert_tense\":\"test\",\"alert_type\":\"subsequent\",\"data_archive_page\":\"s8113\",\"mission\":\"s30328\",\"instrument\":\"s87111\",\"service\":\"s93847\",\"record_number\":-0.5,\"messenger\":\"Neutrino\",\"spectral_band\":[0.75,-0.5],\"spectral_band_units\":\"keV\",\"trigger_time\":\"s38249\",\"observation_start\":\"s38605\",\"observation_stop\":\"s1135\",\"observation_livetime\":0.75,\"far\":101.125,\"trigger_type\":\"image\",\"net_count_rate\":7.0625,\"background_count_rate\":1.5,\"rate_snr\":12.5,\"rate_duration\":-3.25,\"rate_energy_range\":[42.375,-3.25],\"image_snr\":7.0625,\"image_duration\":12.5,\"image_energy_range\":[12.5,7.0625],\"p_astro\":7.0625,\"ra\":1.5,\"dec\":-3.25,\"containment_probability\":42.375,\"systematic_included\":true,\"instrument_phi\":42.375,\"instrument_theta\":101.125,\"instrument_semimajor_angle\":7.0625,\"healpix_url\":\"s26320\",\"healpix_file\":\"s85388\"}",
+ "model": {
+  "gcnsnews2.snews_schema_version": "s5008",
+  "gcnsnews2.snews2_tier": "s94878",
+  "gcnsnews2.event_times_utc.#": "2",
+  "gcnsnews2.tier_data_neutrino_time_utc": "s70874",
+  "gcnsnews2.tier_data_p_values.#": "2",
+  "gcnsnews2.tier_data_false_alarm_prob": "1.5",
+  "gcnsnews2.alert_datetime": "s30059",
+  "gcnsnews2.alert_tense": "test"
+ }
+}

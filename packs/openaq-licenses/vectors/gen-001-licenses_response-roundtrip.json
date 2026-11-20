@@ -1,0 +1,14 @@
+{
+ "name": "gen-licenses_response-roundtrip",
+ "from": "openaq-licenses",
+ "to": "openaq-licenses",
+ "input": "{\"meta\":{\"name\":\"s58047\",\"website\":\"s8727\",\"page\":1884,\"limit\":47544},\"results\":[{\"id\":56568,\"name\":\"s22830\",\"commercialUseAllowed\":false,\"attributionRequired\":true,\"shareAlikeRequired\":true,\"modificationAllowed\":true,\"redistributionAllowed\":false,\"sourceUrl\":\"s87426\"},{\"id\":60496,\"name\":\"s53317\",\"commercialUseAllowed\":true,\"attributionRequired\":false,\"shareAlikeRequired\":true,\"modificationAllowed\":false,\"redistributionAllowed\":true,\"sourceUrl\":\"s90285\"}]}",
+ "expect": "{\"meta\":{\"name\":\"s58047\",\"website\":\"s8727\",\"page\":1884,\"limit\":47544},\"results\":[{\"id\":56568,\"name\":\"s22830\",\"commercialUseAllowed\":false,\"attributionRequired\":true,\"shareAlikeRequired\":true,\"modificationAllowed\":true,\"redistributionAllowed\":false,\"sourceUrl\":\"s87426\"},{\"id\":60496,\"name\":\"s53317\",\"commercialUseAllowed\":true,\"attributionRequired\":false,\"shareAlikeRequired\":true,\"modificationAllowed\":false,\"redistributionAllowed\":true,\"sourceUrl\":\"s90285\"}]}",
+ "model": {
+  "openaqlicenses.meta_name": "s58047",
+  "openaqlicenses.meta_website": "s8727",
+  "openaqlicenses.meta_page": "1884",
+  "openaqlicenses.meta_limit": "47544",
+  "openaqlicenses.results.#": "2"
+ }
+}

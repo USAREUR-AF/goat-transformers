@@ -1,0 +1,7 @@
+{
+ "name": "gen-heartbeat-residue",
+ "from": "ocpp16-heartbeat",
+ "to": "ocpp16-heartbeat",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7}",
+ "expect": "{\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

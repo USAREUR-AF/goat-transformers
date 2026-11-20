@@ -1,0 +1,12 @@
+{
+ "name": "gen-reset_request-roundtrip",
+ "from": "ocpp201-reset-request",
+ "to": "ocpp201-reset-request",
+ "input": "{\"customData\":{\"vendorId\":\"s19173\"},\"type\":\"Immediate\",\"evseId\":89926}",
+ "expect": "{\"customData\":{\"vendorId\":\"s19173\"},\"type\":\"Immediate\",\"evseId\":89926}",
+ "model": {
+  "ocpp201resetrequest.custom_data_vendor_id": "s19173",
+  "ocpp201resetrequest.type": "Immediate",
+  "ocpp201resetrequest.evse_id": "89926"
+ }
+}

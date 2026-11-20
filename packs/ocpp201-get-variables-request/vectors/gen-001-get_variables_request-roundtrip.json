@@ -1,0 +1,11 @@
+{
+ "name": "gen-get_variables_request-roundtrip",
+ "from": "ocpp201-get-variables-request",
+ "to": "ocpp201-get-variables-request",
+ "input": "{\"customData\":{\"vendorId\":\"s9806\"},\"getVariableData\":[{\"customData\":{\"vendorId\":\"s11809\"},\"attributeType\":\"MinSet\",\"component\":{\"customData\":{\"vendorId\":\"s28035\"},\"evse\":{\"customData\":{\"vendorId\":\"s93428\"},\"id\":68930,\"connectorId\":87849},\"name\":\"s47497\",\"instance\":\"s85151\"},\"variable\":{\"customData\":{\"vendorId\":\"s70708\"},\"name\":\"s1259\",\"instance\":\"s27864\"}},{\"customData\":{\"vendorId\":\"s81336\"},\"attributeType\":\"Target\",\"component\":{\"customData\":{\"vendorId\":\"s16947\"},\"evse\":{\"customData\":{\"vendorId\":\"s7055\"},\"id\":73592,\"connectorId\":46180},\"name\":\"s42136\",\"instance\":\"s89940\"},\"variable\":{\"customData\":{\"vendorId\":\"s34692\"},\"name\":\"s28538\",\"instance\":\"s95500\"}}]}",
+ "expect": "{\"customData\":{\"vendorId\":\"s9806\"},\"getVariableData\":[{\"customData\":{\"vendorId\":\"s11809\"},\"attributeType\":\"MinSet\",\"component\":{\"customData\":{\"vendorId\":\"s28035\"},\"evse\":{\"customData\":{\"vendorId\":\"s93428\"},\"id\":68930,\"connectorId\":87849},\"name\":\"s47497\",\"instance\":\"s85151\"},\"variable\":{\"customData\":{\"vendorId\":\"s70708\"},\"name\":\"s1259\",\"instance\":\"s27864\"}},{\"customData\":{\"vendorId\":\"s81336\"},\"attributeType\":\"Target\",\"component\":{\"customData\":{\"vendorId\":\"s16947\"},\"evse\":{\"customData\":{\"vendorId\":\"s7055\"},\"id\":73592,\"connectorId\":46180},\"name\":\"s42136\",\"instance\":\"s89940\"},\"variable\":{\"customData\":{\"vendorId\":\"s34692\"},\"name\":\"s28538\",\"instance\":\"s95500\"}}]}",
+ "model": {
+  "ocpp201getvariablesrequest.custom_data_vendor_id": "s9806",
+  "ocpp201getvariablesrequest.get_variable_data.#": "2"
+ }
+}

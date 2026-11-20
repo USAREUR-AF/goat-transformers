@@ -1,0 +1,36 @@
+{
+ "keys": {
+  "report_data_variable_attribute|constant|int": "report_data_variable_attribute_constant",
+  "report_data_variable_attribute|customData.vendorId|string": "report_data_variable_attribute_custom_data_vendor_id",
+  "report_data_variable_attribute|mutability|string": "report_data_variable_attribute_mutability",
+  "report_data_variable_attribute|persistent|int": "report_data_variable_attribute_persistent",
+  "report_data_variable_attribute|type|string": "report_data_variable_attribute_type",
+  "report_data_variable_attribute|value|string": "report_data_variable_attribute_value",
+  "report_data|component.customData.vendorId|string": "report_data_component_custom_data_vendor_id",
+  "report_data|component.evse.connectorId|int": "report_data_component_evse_connector_id",
+  "report_data|component.evse.customData.vendorId|string": "report_data_component_evse_custom_data_vendor_id",
+  "report_data|component.evse.id|int": "report_data_component_evse_id",
+  "report_data|component.instance|string": "report_data_component_instance",
+  "report_data|component.name|string": "report_data_component_name",
+  "report_data|customData.vendorId|string": "report_data_custom_data_vendor_id",
+  "report_data|variable.customData.vendorId|string": "report_data_variable_custom_data_vendor_id",
+  "report_data|variable.instance|string": "report_data_variable_instance",
+  "report_data|variable.name|string": "report_data_variable_name",
+  "report_data|variableCharacteristics.customData.vendorId|string": "report_data_variable_characteristics_custom_data_vendor_id",
+  "report_data|variableCharacteristics.dataType|string": "report_data_variable_characteristics_data_type",
+  "report_data|variableCharacteristics.maxLimit|float": "report_data_variable_characteristics_max_limit",
+  "report_data|variableCharacteristics.minLimit|float": "report_data_variable_characteristics_min_limit",
+  "report_data|variableCharacteristics.supportsMonitoring|int": "report_data_variable_characteristics_supports_monitoring",
+  "report_data|variableCharacteristics.unit|string": "report_data_variable_characteristics_unit",
+  "report_data|variableCharacteristics.valuesList|string": "report_data_variable_characteristics_values_list",
+  "|customData.vendorId|string": "custom_data_vendor_id",
+  "|generatedAt|string": "generated_at",
+  "|requestId|int": "request_id",
+  "|seqNo|int": "seq_no",
+  "|tbc|int": "tbc"
+ },
+ "lists": {
+  "report_data|variableAttribute": "report_data_variable_attribute",
+  "|reportData": "report_data"
+ }
+}

@@ -132,3 +132,21 @@ share_alike = false
 attribution = true
 field_of_use = []
 distribution = "public"
+
+[licences."LicenseRef-OpenAQ"]
+name = "OpenAQ terms of use"
+url = "https://docs.openaq.org/about/terms"
+commercial = "yes"
+share_alike = false
+attribution = true
+field_of_use = ["using the hosted OpenAQ API to build products or services that substantially duplicate or directly compete with OpenAQ"]
+distribution = "public"
+
+[licences."LicenseRef-OpenSky"]
+name = "OpenSky Network terms of use and data licence agreement"
+url = "https://opensky-network.org/about/terms-of-use"
+commercial = "no"
+share_alike = false
+attribution = true
+field_of_use = ["any use other than non-profit research and non-profit education without a written licence", "operational use of the REST API without a written agreement"]
+distribution = "public"

@@ -1,0 +1,17 @@
+{
+ "name": "gen-boot_notification_request-roundtrip",
+ "from": "ocpp201-boot-notification-request",
+ "to": "ocpp201-boot-notification-request",
+ "input": "{\"customData\":{\"vendorId\":\"s33398\"},\"chargingStation\":{\"customData\":{\"vendorId\":\"s17626\"},\"serialNumber\":\"s10892\",\"model\":\"s71584\",\"modem\":{\"customData\":{\"vendorId\":\"s68795\"},\"iccid\":\"s92615\",\"imsi\":\"s90015\"},\"vendorName\":\"s35435\",\"firmwareVersion\":\"s96639\"},\"reason\":\"ApplicationReset\"}",
+ "expect": "{\"customData\":{\"vendorId\":\"s33398\"},\"chargingStation\":{\"customData\":{\"vendorId\":\"s17626\"},\"serialNumber\":\"s10892\",\"model\":\"s71584\",\"modem\":{\"customData\":{\"vendorId\":\"s68795\"},\"iccid\":\"s92615\",\"imsi\":\"s90015\"},\"vendorName\":\"s35435\",\"firmwareVersion\":\"s96639\"},\"reason\":\"ApplicationReset\"}",
+ "model": {
+  "ocpp201bootnotificationrequest.custom_data_vendor_id": "s33398",
+  "ocpp201bootnotificationrequest.charging_station_custom_data_vendor_id": "s17626",
+  "ocpp201bootnotificationrequest.charging_station_serial_number": "s10892",
+  "ocpp201bootnotificationrequest.charging_station_model": "s71584",
+  "ocpp201bootnotificationrequest.charging_station_modem_custom_data_vendor_id": "s68795",
+  "ocpp201bootnotificationrequest.charging_station_modem_iccid": "s92615",
+  "ocpp201bootnotificationrequest.charging_station_modem_imsi": "s90015",
+  "ocpp201bootnotificationrequest.charging_station_vendor_name": "s35435"
+ }
+}

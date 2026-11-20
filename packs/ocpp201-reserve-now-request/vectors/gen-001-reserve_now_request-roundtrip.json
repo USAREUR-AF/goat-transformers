@@ -1,0 +1,17 @@
+{
+ "name": "gen-reserve_now_request-roundtrip",
+ "from": "ocpp201-reserve-now-request",
+ "to": "ocpp201-reserve-now-request",
+ "input": "{\"customData\":{\"vendorId\":\"s92916\"},\"id\":88785,\"expiryDateTime\":\"2025-07-06T23:46:58.523Z\",\"connectorType\":\"Unknown\",\"idToken\":{\"customData\":{\"vendorId\":\"s79338\"},\"additionalInfo\":[{\"customData\":{\"vendorId\":\"s47798\"},\"additionalIdToken\":\"s48801\",\"type\":\"s16819\"},{\"customData\":{\"vendorId\":\"s89858\"},\"additionalIdToken\":\"s48194\",\"type\":\"s60501\"}],\"idToken\":\"s52406\",\"type\":\"NoAuthorization\"},\"evseId\":71046,\"groupIdToken\":{\"customData\":{\"vendorId\":\"s72590\"},\"additionalInfo\":[{\"customData\":{\"vendorId\":\"s56831\"},\"additionalIdToken\":\"s87024\",\"type\":\"s16027\"},{\"customData\":{\"vendorId\":\"s76507\"},\"additionalIdToken\":\"s96038\",\"type\":\"s45106\"}],\"idToken\":\"s95313\",\"type\":\"ISO15693\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s92916\"},\"id\":88785,\"expiryDateTime\":\"2025-07-06T23:46:58.523Z\",\"connectorType\":\"Unknown\",\"idToken\":{\"customData\":{\"vendorId\":\"s79338\"},\"additionalInfo\":[{\"customData\":{\"vendorId\":\"s47798\"},\"additionalIdToken\":\"s48801\",\"type\":\"s16819\"},{\"customData\":{\"vendorId\":\"s89858\"},\"additionalIdToken\":\"s48194\",\"type\":\"s60501\"}],\"idToken\":\"s52406\",\"type\":\"NoAuthorization\"},\"evseId\":71046,\"groupIdToken\":{\"customData\":{\"vendorId\":\"s72590\"},\"additionalInfo\":[{\"customData\":{\"vendorId\":\"s56831\"},\"additionalIdToken\":\"s87024\",\"type\":\"s16027\"},{\"customData\":{\"vendorId\":\"s76507\"},\"additionalIdToken\":\"s96038\",\"type\":\"s45106\"}],\"idToken\":\"s95313\",\"type\":\"ISO15693\"}}",
+ "model": {
+  "ocpp201reservenowrequest.custom_data_vendor_id": "s92916",
+  "ocpp201reservenowrequest.id": "88785",
+  "ocpp201reservenowrequest.expiry_date_time": "2025-07-06T23:46:58.523Z",
+  "ocpp201reservenowrequest.connector_type": "Unknown",
+  "ocpp201reservenowrequest.id_token_custom_data_vendor_id": "s79338",
+  "ocpp201reservenowrequest.id_token_additional_info.#": "2",
+  "ocpp201reservenowrequest.id_token_id_token": "s52406",
+  "ocpp201reservenowrequest.id_token_type": "NoAuthorization"
+ }
+}

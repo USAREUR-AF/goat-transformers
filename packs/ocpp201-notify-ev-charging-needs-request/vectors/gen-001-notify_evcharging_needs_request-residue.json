@@ -1,0 +1,7 @@
+{
+ "name": "gen-notify_evcharging_needs_request-residue",
+ "from": "ocpp201-notify-ev-charging-needs-request",
+ "to": "ocpp201-notify-ev-charging-needs-request",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s14537\"},\"maxScheduleTuples\":18084,\"chargingNeeds\":{\"customData\":{\"vendorId\":\"s30213\"},\"acChargingParameters\":{\"customData\":{\"vendorId\":\"s25008\"},\"energyAmount\":15298,\"evMinCurrent\":13247,\"evMaxCurrent\":61254,\"evMaxVoltage\":55867},\"dcChargingParameters\":{\"customData\":{\"vendorId\":\"s85499\"},\"evMaxCurrent\":3504,\"evMaxVoltage\":55305,\"energyAmount\":11131,\"evMaxPower\":48775,\"stateOfCharge\":11,\"evEnergyCapacity\":14434,\"fullSoC\":9,\"bulkSoC\":11},\"requestedEnergyTransfer\":\"AC_two_phase\",\"departureTime\":\"2026-01-02T16:17:28.553Z\"},\"evseId\":34823}",
+ "expect": "{\"customData\":{\"vendorId\":\"s14537\"},\"maxScheduleTuples\":18084,\"chargingNeeds\":{\"customData\":{\"vendorId\":\"s30213\"},\"acChargingParameters\":{\"customData\":{\"vendorId\":\"s25008\"},\"energyAmount\":15298,\"evMinCurrent\":13247,\"evMaxCurrent\":61254,\"evMaxVoltage\":55867},\"dcChargingParameters\":{\"customData\":{\"vendorId\":\"s85499\"},\"evMaxCurrent\":3504,\"evMaxVoltage\":55305,\"energyAmount\":11131,\"evMaxPower\":48775,\"stateOfCharge\":11,\"evEnergyCapacity\":14434,\"fullSoC\":9,\"bulkSoC\":11},\"requestedEnergyTransfer\":\"AC_two_phase\",\"departureTime\":\"2026-01-02T16:17:28.553Z\"},\"evseId\":34823,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

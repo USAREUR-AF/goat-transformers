@@ -1,0 +1,14 @@
+{
+ "name": "gen-trigger_message_request-roundtrip",
+ "from": "ocpp201-trigger-message-request",
+ "to": "ocpp201-trigger-message-request",
+ "input": "{\"customData\":{\"vendorId\":\"s92856\"},\"evse\":{\"customData\":{\"vendorId\":\"s50279\"},\"id\":85923,\"connectorId\":44388},\"requestedMessage\":\"StatusNotification\"}",
+ "expect": "{\"customData\":{\"vendorId\":\"s92856\"},\"evse\":{\"customData\":{\"vendorId\":\"s50279\"},\"id\":85923,\"connectorId\":44388},\"requestedMessage\":\"StatusNotification\"}",
+ "model": {
+  "ocpp201triggermessagerequest.custom_data_vendor_id": "s92856",
+  "ocpp201triggermessagerequest.evse_custom_data_vendor_id": "s50279",
+  "ocpp201triggermessagerequest.evse_id": "85923",
+  "ocpp201triggermessagerequest.evse_connector_id": "44388",
+  "ocpp201triggermessagerequest.requested_message": "StatusNotification"
+ }
+}

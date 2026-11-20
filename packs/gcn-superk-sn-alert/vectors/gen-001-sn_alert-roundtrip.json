@@ -1,0 +1,17 @@
+{
+ "name": "gen-sn_alert-roundtrip",
+ "from": "gcn-superk-sn-alert",
+ "to": "gcn-superk-sn-alert",
+ "input": "{\"n_events\":-3.25,\"n_ibd_events\":42.375,\"detection_interval\":12.5,\"processed_sample\":\"partial\",\"pipeline\":\"wit\",\"trigger_number\":42.375,\"alert_datetime\":\"s31004\",\"alert_tense\":\"archival\",\"alert_type\":\"retraction\",\"trigger_time\":\"s14674\",\"observation_start\":\"s13834\",\"observation_stop\":\"s20555\",\"observation_livetime\":101.125,\"luminosity_distance\":42.375,\"data_archive_page\":\"s15082\",\"ra\":12.5,\"dec\":1.5,\"containment_probability\":12.5,\"systematic_included\":true,\"instrument_phi\":101.125,\"instrument_theta\":7.0625,\"instrument_semimajor_angle\":42.375,\"healpix_url\":\"s44610\",\"healpix_file\":\"s69546\",\"far\":7.0625,\"trigger_type\":\"image\",\"net_count_rate\":-3.25,\"background_count_rate\":7.0625,\"rate_snr\":-3.25,\"rate_duration\":101.125,\"rate_energy_range\":[-3.25,1.5],\"image_snr\":0.75,\"image_duration\":1.5,\"image_energy_range\":[7.0625,101.125],\"p_astro\":101.125,\"mission\":\"s72455\",\"instrument\":\"s13027\",\"service\":\"s32942\",\"record_number\":101.125,\"messenger\":\"GW\",\"spectral_band\":[-3.25,101.125],\"spectral_band_units\":\"nm\"}",
+ "expect": "{\"n_events\":-3.25,\"n_ibd_events\":42.375,\"detection_interval\":12.5,\"processed_sample\":\"partial\",\"pipeline\":\"wit\",\"trigger_number\":42.375,\"alert_datetime\":\"s31004\",\"alert_tense\":\"archival\",\"alert_type\":\"retraction\",\"trigger_time\":\"s14674\",\"observation_start\":\"s13834\",\"observation_stop\":\"s20555\",\"observation_livetime\":101.125,\"luminosity_distance\":42.375,\"data_archive_page\":\"s15082\",\"ra\":12.5,\"dec\":1.5,\"containment_probability\":12.5,\"systematic_included\":true,\"instrument_phi\":101.125,\"instrument_theta\":7.0625,\"instrument_semimajor_angle\":42.375,\"healpix_url\":\"s44610\",\"healpix_file\":\"s69546\",\"far\":7.0625,\"trigger_type\":\"image\",\"net_count_rate\":-3.25,\"background_count_rate\":7.0625,\"rate_snr\":-3.25,\"rate_duration\":101.125,\"rate_energy_range\":[-3.25,1.5],\"image_snr\":0.75,\"image_duration\":1.5,\"image_energy_range\":[7.0625,101.125],\"p_astro\":101.125,\"mission\":\"s72455\",\"instrument\":\"s13027\",\"service\":\"s32942\",\"record_number\":101.125,\"messenger\":\"GW\",\"spectral_band\":[-3.25,101.125],\"spectral_band_units\":\"nm\"}",
+ "model": {
+  "gcnsuperk.n_events": "-3.25",
+  "gcnsuperk.n_ibd_events": "42.375",
+  "gcnsuperk.detection_interval": "12.5",
+  "gcnsuperk.processed_sample": "partial",
+  "gcnsuperk.pipeline": "wit",
+  "gcnsuperk.trigger_number": "42.375",
+  "gcnsuperk.alert_datetime": "s31004",
+  "gcnsuperk.alert_tense": "archival"
+ }
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-extended_trigger_message-residue",
+ "from": "ocpp16-extended-trigger-message",
+ "to": "ocpp16-extended-trigger-message",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"requestedMessage\":\"FirmwareStatusNotification\",\"connectorId\":76287}",
+ "expect": "{\"requestedMessage\":\"FirmwareStatusNotification\",\"connectorId\":76287,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

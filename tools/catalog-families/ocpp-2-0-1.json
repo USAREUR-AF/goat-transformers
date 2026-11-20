@@ -1,0 +1,12 @@
+{
+  "name": "OCPP 2.0.1",
+  "domain": "land",
+  "prefixes": [
+    "ocpp201-"
+  ],
+  "members": {
+    "pattern": "^ocpp201-(.+)$",
+    "label": "{n} message payloads",
+    "list": false
+  }
+}

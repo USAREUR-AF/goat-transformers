@@ -1,0 +1,7 @@
+{
+ "name": "gen-base_station_report-residue",
+ "from": "aisstream",
+ "to": "aisstream",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"MessageType\":\"BaseStationReport\",\"Message\":{\"BaseStationReport\":{\"MessageID\":20620,\"RepeatIndicator\":2393,\"UserID\":48640,\"Valid\":false,\"UtcYear\":59222,\"UtcMonth\":88886,\"UtcDay\":55362,\"UtcHour\":58098,\"UtcMinute\":82590,\"UtcSecond\":56871,\"PositionAccuracy\":true,\"Longitude\":42.375,\"Latitude\":12.5,\"FixType\":68744,\"LongRangeEnable\":false,\"Spare\":90587,\"Raim\":true,\"CommunicationState\":89537}}}",
+ "expect": "{\"MessageType\":\"BaseStationReport\",\"Message\":{\"BaseStationReport\":{\"MessageID\":20620,\"RepeatIndicator\":2393,\"UserID\":48640,\"Valid\":false,\"UtcYear\":59222,\"UtcMonth\":88886,\"UtcDay\":55362,\"UtcHour\":58098,\"UtcMinute\":82590,\"UtcSecond\":56871,\"PositionAccuracy\":true,\"Longitude\":42.375,\"Latitude\":12.5,\"FixType\":68744,\"LongRangeEnable\":false,\"Spare\":90587,\"Raim\":true,\"CommunicationState\":89537}},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

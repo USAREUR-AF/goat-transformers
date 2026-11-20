@@ -1,0 +1,13 @@
+{
+ "name": "gen-get_monitoring_report_request-roundtrip",
+ "from": "ocpp201-get-monitoring-report-request",
+ "to": "ocpp201-get-monitoring-report-request",
+ "input": "{\"customData\":{\"vendorId\":\"s13226\"},\"componentVariable\":[{\"customData\":{\"vendorId\":\"s42855\"},\"component\":{\"customData\":{\"vendorId\":\"s23502\"},\"evse\":{\"customData\":{\"vendorId\":\"s25017\"},\"id\":15838,\"connectorId\":60522},\"name\":\"s20568\",\"instance\":\"s20935\"},\"variable\":{\"customData\":{\"vendorId\":\"s4394\"},\"name\":\"s94078\",\"instance\":\"s433\"}},{\"customData\":{\"vendorId\":\"s66215\"},\"component\":{\"customData\":{\"vendorId\":\"s73755\"},\"evse\":{\"customData\":{\"vendorId\":\"s18248\"},\"id\":53791,\"connectorId\":73971},\"name\":\"s83197\",\"instance\":\"s59651\"},\"variable\":{\"customData\":{\"vendorId\":\"s99498\"},\"name\":\"s92926\",\"instance\":\"s26275\"}}],\"requestId\":36732,\"monitoringCriteria\":[\"PeriodicMonitoring\",\"PeriodicMonitoring\"]}",
+ "expect": "{\"customData\":{\"vendorId\":\"s13226\"},\"componentVariable\":[{\"customData\":{\"vendorId\":\"s42855\"},\"component\":{\"customData\":{\"vendorId\":\"s23502\"},\"evse\":{\"customData\":{\"vendorId\":\"s25017\"},\"id\":15838,\"connectorId\":60522},\"name\":\"s20568\",\"instance\":\"s20935\"},\"variable\":{\"customData\":{\"vendorId\":\"s4394\"},\"name\":\"s94078\",\"instance\":\"s433\"}},{\"customData\":{\"vendorId\":\"s66215\"},\"component\":{\"customData\":{\"vendorId\":\"s73755\"},\"evse\":{\"customData\":{\"vendorId\":\"s18248\"},\"id\":53791,\"connectorId\":73971},\"name\":\"s83197\",\"instance\":\"s59651\"},\"variable\":{\"customData\":{\"vendorId\":\"s99498\"},\"name\":\"s92926\",\"instance\":\"s26275\"}}],\"requestId\":36732,\"monitoringCriteria\":[\"PeriodicMonitoring\",\"PeriodicMonitoring\"]}",
+ "model": {
+  "ocpp201getmonitoringreportrequest.custom_data_vendor_id": "s13226",
+  "ocpp201getmonitoringreportrequest.component_variable.#": "2",
+  "ocpp201getmonitoringreportrequest.request_id": "36732",
+  "ocpp201getmonitoringreportrequest.monitoring_criteria.#": "2"
+ }
+}

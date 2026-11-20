@@ -1,0 +1,17 @@
+{
+ "name": "gen-coordinated_utcinquiry-roundtrip",
+ "from": "aisstream",
+ "to": "aisstream",
+ "input": "{\"MessageType\":\"CoordinatedUTCInquiry\",\"Message\":{\"CoordinatedUTCInquiry\":{\"MessageID\":25067,\"RepeatIndicator\":38700,\"UserID\":85032,\"Valid\":false,\"Spare1\":99556,\"DestinationID\":76575,\"Spare2\":46021}}}",
+ "expect": "{\"MessageType\":\"CoordinatedUTCInquiry\",\"Message\":{\"CoordinatedUTCInquiry\":{\"MessageID\":25067,\"RepeatIndicator\":38700,\"UserID\":85032,\"Valid\":false,\"Spare1\":99556,\"DestinationID\":76575,\"Spare2\":46021}}}",
+ "model": {
+  "@kind": "coordinated_utcinquiry",
+  "aisstream.message_coordinated_utcinquiry_message_id": "25067",
+  "aisstream.message_coordinated_utcinquiry_repeat_indicator": "38700",
+  "aisstream.message_coordinated_utcinquiry_user_id": "85032",
+  "aisstream.message_coordinated_utcinquiry_valid": "0",
+  "aisstream.message_coordinated_utcinquiry_spare1": "99556",
+  "aisstream.message_coordinated_utcinquiry_destination_id": "76575",
+  "aisstream.message_coordinated_utcinquiry_spare2": "46021"
+ }
+}

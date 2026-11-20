@@ -1,0 +1,8 @@
+{
+ "keys": {
+  "|certificateType|string": "certificate_type",
+  "|csr|string": "csr",
+  "|customData.vendorId|string": "custom_data_vendor_id"
+ },
+ "lists": {}
+}

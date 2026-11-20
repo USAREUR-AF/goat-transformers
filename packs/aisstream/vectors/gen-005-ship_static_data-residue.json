@@ -1,0 +1,7 @@
+{
+ "name": "gen-ship_static_data-residue",
+ "from": "aisstream",
+ "to": "aisstream",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"MessageType\":\"ShipStaticData\",\"Message\":{\"ShipStaticData\":{\"MessageID\":25,\"RepeatIndicator\":92090,\"UserID\":39058,\"Valid\":false,\"AisVersion\":10799,\"ImoNumber\":63726,\"CallSign\":\"s36041\",\"Name\":\"s76262\",\"Type\":39067,\"Dimension\":{\"A\":97524,\"B\":70210,\"C\":99652,\"D\":2684},\"FixType\":84305,\"Eta\":{\"Month\":53723,\"Day\":42876,\"Hour\":14217,\"Minute\":53420},\"MaximumStaticDraught\":1.5,\"Destination\":\"s44937\",\"Dte\":false,\"Spare\":true}}}",
+ "expect": "{\"MessageType\":\"ShipStaticData\",\"Message\":{\"ShipStaticData\":{\"MessageID\":25,\"RepeatIndicator\":92090,\"UserID\":39058,\"Valid\":false,\"AisVersion\":10799,\"ImoNumber\":63726,\"CallSign\":\"s36041\",\"Name\":\"s76262\",\"Type\":39067,\"Dimension\":{\"A\":97524,\"B\":70210,\"C\":99652,\"D\":2684},\"FixType\":84305,\"Eta\":{\"Month\":53723,\"Day\":42876,\"Hour\":14217,\"Minute\":53420},\"MaximumStaticDraught\":1.5,\"Destination\":\"s44937\",\"Dte\":false,\"Spare\":true}},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

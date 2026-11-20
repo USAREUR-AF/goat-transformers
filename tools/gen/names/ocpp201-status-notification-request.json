@@ -1,0 +1,10 @@
+{
+ "keys": {
+  "|connectorId|int": "connector_id",
+  "|connectorStatus|string": "connector_status",
+  "|customData.vendorId|string": "custom_data_vendor_id",
+  "|evseId|int": "evse_id",
+  "|timestamp|string": "timestamp"
+ },
+ "lists": {}
+}

@@ -1,0 +1,13 @@
+{
+ "keys": {
+  "local_authorization_list|idTagInfo.expiryDate|string": "local_authorization_list_id_tag_info_expiry_date",
+  "local_authorization_list|idTagInfo.parentIdTag|string": "local_authorization_list_id_tag_info_parent_id_tag",
+  "local_authorization_list|idTagInfo.status|string": "local_authorization_list_id_tag_info_status",
+  "local_authorization_list|idTag|string": "local_authorization_list_id_tag",
+  "|listVersion|int": "list_version",
+  "|updateType|string": "update_type"
+ },
+ "lists": {
+  "|localAuthorizationList": "local_authorization_list"
+ }
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-sign_certificate_request-residue",
+ "from": "ocpp201-sign-certificate-request",
+ "to": "ocpp201-sign-certificate-request",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s23299\"},\"csr\":\"s15768\",\"certificateType\":\"ChargingStationCertificate\"}",
+ "expect": "{\"customData\":{\"vendorId\":\"s23299\"},\"csr\":\"s15768\",\"certificateType\":\"ChargingStationCertificate\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

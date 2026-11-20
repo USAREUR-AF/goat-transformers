@@ -1,0 +1,17 @@
+{
+ "name": "gen-binary_acknowledge-roundtrip",
+ "from": "aisstream",
+ "to": "aisstream",
+ "input": "{\"MessageType\":\"BinaryAcknowledge\",\"Message\":{\"BinaryAcknowledge\":{\"MessageID\":13664,\"RepeatIndicator\":32317,\"UserID\":594,\"Valid\":false,\"Spare\":84344,\"Destinations\":{\"0\":{\"Valid\":true,\"DestinationID\":85084,\"Sequenceinteger\":96171},\"1\":{\"Valid\":false,\"DestinationID\":93311,\"Sequenceinteger\":27473},\"2\":{\"Valid\":true,\"DestinationID\":89259,\"Sequenceinteger\":12863},\"3\":{\"Valid\":true,\"DestinationID\":70185,\"Sequenceinteger\":8663}}}}}",
+ "expect": "{\"MessageType\":\"BinaryAcknowledge\",\"Message\":{\"BinaryAcknowledge\":{\"MessageID\":13664,\"RepeatIndicator\":32317,\"UserID\":594,\"Valid\":false,\"Spare\":84344,\"Destinations\":{\"0\":{\"Valid\":true,\"DestinationID\":85084,\"Sequenceinteger\":96171},\"1\":{\"Valid\":false,\"DestinationID\":93311,\"Sequenceinteger\":27473},\"2\":{\"Valid\":true,\"DestinationID\":89259,\"Sequenceinteger\":12863},\"3\":{\"Valid\":true,\"DestinationID\":70185,\"Sequenceinteger\":8663}}}}}",
+ "model": {
+  "@kind": "binary_acknowledge",
+  "aisstream.message_binary_acknowledge_message_id": "13664",
+  "aisstream.message_binary_acknowledge_repeat_indicator": "32317",
+  "aisstream.message_binary_acknowledge_user_id": "594",
+  "aisstream.message_binary_acknowledge_valid": "0",
+  "aisstream.message_binary_acknowledge_spare": "84344",
+  "aisstream.message_binary_acknowledge_destinations_0_valid": "1",
+  "aisstream.message_binary_acknowledge_destinations_0_destination_id": "85084"
+ }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "WMO WIS2 notification",
+  "domain": "maps",
+  "exact": [
+    "wis2-notification"
+  ]
+}

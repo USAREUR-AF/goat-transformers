@@ -1,0 +1,7 @@
+{
+ "name": "gen-customer_information_response-residue",
+ "from": "ocpp201-customer-information-response",
+ "to": "ocpp201-customer-information-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s26887\"},\"status\":\"Accepted\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s34504\"},\"reasonCode\":\"s14070\",\"additionalInfo\":\"s24623\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s26887\"},\"status\":\"Accepted\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s34504\"},\"reasonCode\":\"s14070\",\"additionalInfo\":\"s24623\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

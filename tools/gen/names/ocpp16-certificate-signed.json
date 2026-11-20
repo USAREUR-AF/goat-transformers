@@ -1,0 +1,6 @@
+{
+ "keys": {
+  "|certificateChain|string": "certificate_chain"
+ },
+ "lists": {}
+}

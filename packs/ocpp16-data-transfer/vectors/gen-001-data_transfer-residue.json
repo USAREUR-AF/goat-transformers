@@ -1,0 +1,7 @@
+{
+ "name": "gen-data_transfer-residue",
+ "from": "ocpp16-data-transfer",
+ "to": "ocpp16-data-transfer",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"vendorId\":\"s21428\",\"messageId\":\"s99204\",\"data\":\"s97635\"}",
+ "expect": "{\"vendorId\":\"s21428\",\"messageId\":\"s99204\",\"data\":\"s97635\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

@@ -1,0 +1,16 @@
+{
+ "name": "gen-status_notification-roundtrip",
+ "from": "ocpp16-status-notification",
+ "to": "ocpp16-status-notification",
+ "input": "{\"connectorId\":25671,\"errorCode\":\"GroundFailure\",\"info\":\"s29540\",\"status\":\"Unavailable\",\"timestamp\":\"2025-11-23T15:13:22.075Z\",\"vendorId\":\"s29517\",\"vendorErrorCode\":\"s35625\"}",
+ "expect": "{\"connectorId\":25671,\"errorCode\":\"GroundFailure\",\"info\":\"s29540\",\"status\":\"Unavailable\",\"timestamp\":\"2025-11-23T15:13:22.075Z\",\"vendorId\":\"s29517\",\"vendorErrorCode\":\"s35625\"}",
+ "model": {
+  "ocpp16statusnotification.connector_id": "25671",
+  "ocpp16statusnotification.error_code": "GroundFailure",
+  "ocpp16statusnotification.info": "s29540",
+  "ocpp16statusnotification.status": "Unavailable",
+  "ocpp16statusnotification.timestamp": "2025-11-23T15:13:22.075Z",
+  "ocpp16statusnotification.vendor_id": "s29517",
+  "ocpp16statusnotification.vendor_error_code": "s35625"
+ }
+}

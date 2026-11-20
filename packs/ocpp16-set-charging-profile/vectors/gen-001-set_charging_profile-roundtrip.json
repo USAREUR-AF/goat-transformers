@@ -1,0 +1,17 @@
+{
+ "name": "gen-set_charging_profile-roundtrip",
+ "from": "ocpp16-set-charging-profile",
+ "to": "ocpp16-set-charging-profile",
+ "input": "{\"connectorId\":62285,\"csChargingProfiles\":{\"chargingProfileId\":24245,\"transactionId\":98727,\"stackLevel\":88083,\"chargingProfilePurpose\":\"TxDefaultProfile\",\"chargingProfileKind\":\"Recurring\",\"recurrencyKind\":\"Weekly\",\"validFrom\":\"2024-06-28T13:38:11.997Z\",\"validTo\":\"2026-06-14T09:04:04.180Z\",\"chargingSchedule\":{\"duration\":17746,\"startSchedule\":\"2025-07-16T12:02:09.079Z\",\"chargingRateUnit\":\"W\",\"chargingSchedulePeriod\":[{\"startPeriod\":46473,\"limit\":42.375,\"numberPhases\":28897},{\"startPeriod\":62262,\"limit\":12.5,\"numberPhases\":27537}],\"minChargingRate\":42.375}}}",
+ "expect": "{\"connectorId\":62285,\"csChargingProfiles\":{\"chargingProfileId\":24245,\"transactionId\":98727,\"stackLevel\":88083,\"chargingProfilePurpose\":\"TxDefaultProfile\",\"chargingProfileKind\":\"Recurring\",\"recurrencyKind\":\"Weekly\",\"validFrom\":\"2024-06-28T13:38:11.997Z\",\"validTo\":\"2026-06-14T09:04:04.180Z\",\"chargingSchedule\":{\"duration\":17746,\"startSchedule\":\"2025-07-16T12:02:09.079Z\",\"chargingRateUnit\":\"W\",\"chargingSchedulePeriod\":[{\"startPeriod\":46473,\"limit\":42.375,\"numberPhases\":28897},{\"startPeriod\":62262,\"limit\":12.5,\"numberPhases\":27537}],\"minChargingRate\":42.375}}}",
+ "model": {
+  "ocpp16setchargingprofile.connector_id": "62285",
+  "ocpp16setchargingprofile.cs_charging_profiles_charging_profile_id": "24245",
+  "ocpp16setchargingprofile.cs_charging_profiles_transaction_id": "98727",
+  "ocpp16setchargingprofile.cs_charging_profiles_stack_level": "88083",
+  "ocpp16setchargingprofile.cs_charging_profiles_charging_profile_purpose": "TxDefaultProfile",
+  "ocpp16setchargingprofile.cs_charging_profiles_charging_profile_kind": "Recurring",
+  "ocpp16setchargingprofile.cs_charging_profiles_recurrency_kind": "Weekly",
+  "ocpp16setchargingprofile.cs_charging_profiles_valid_from": "2024-06-28T13:38:11.997Z"
+ }
+}

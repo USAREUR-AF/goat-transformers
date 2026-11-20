@@ -1,0 +1,14 @@
+{
+ "name": "gen-get_monitoring_report_response-roundtrip",
+ "from": "ocpp201-get-monitoring-report-response",
+ "to": "ocpp201-get-monitoring-report-response",
+ "input": "{\"customData\":{\"vendorId\":\"s47172\"},\"status\":\"NotSupported\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s66636\"},\"reasonCode\":\"s30706\",\"additionalInfo\":\"s18844\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s47172\"},\"status\":\"NotSupported\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s66636\"},\"reasonCode\":\"s30706\",\"additionalInfo\":\"s18844\"}}",
+ "model": {
+  "ocpp201getmonitoringreportresponse.custom_data_vendor_id": "s47172",
+  "ocpp201getmonitoringreportresponse.status": "NotSupported",
+  "ocpp201getmonitoringreportresponse.status_info_custom_data_vendor_id": "s66636",
+  "ocpp201getmonitoringreportresponse.status_info_reason_code": "s30706",
+  "ocpp201getmonitoringreportresponse.status_info_additional_info": "s18844"
+ }
+}

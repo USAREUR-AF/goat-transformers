@@ -1,0 +1,14 @@
+{
+ "name": "gen-certificate_signed_response-roundtrip",
+ "from": "ocpp201-certificate-signed-response",
+ "to": "ocpp201-certificate-signed-response",
+ "input": "{\"customData\":{\"vendorId\":\"s15925\"},\"status\":\"Accepted\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s33895\"},\"reasonCode\":\"s22156\",\"additionalInfo\":\"s69006\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s15925\"},\"status\":\"Accepted\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s33895\"},\"reasonCode\":\"s22156\",\"additionalInfo\":\"s69006\"}}",
+ "model": {
+  "ocpp201certificatesignedresponse.custom_data_vendor_id": "s15925",
+  "ocpp201certificatesignedresponse.status": "Accepted",
+  "ocpp201certificatesignedresponse.status_info_custom_data_vendor_id": "s33895",
+  "ocpp201certificatesignedresponse.status_info_reason_code": "s22156",
+  "ocpp201certificatesignedresponse.status_info_additional_info": "s69006"
+ }
+}

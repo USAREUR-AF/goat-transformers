@@ -1,0 +1,7 @@
+{
+ "name": "gen-send_local_list_response-residue",
+ "from": "ocpp16-send-local-list-response",
+ "to": "ocpp16-send-local-list-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"status\":\"NotSupported\"}",
+ "expect": "{\"status\":\"NotSupported\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

@@ -1,0 +1,34 @@
+{
+ "keys": {
+  "charging_schedule_charging_schedule_period|customData.vendorId|string": "charging_schedule_charging_schedule_period_custom_data_vendor_id",
+  "charging_schedule_charging_schedule_period|limit|float": "charging_schedule_charging_schedule_period_limit",
+  "charging_schedule_charging_schedule_period|numberPhases|int": "charging_schedule_charging_schedule_period_number_phases",
+  "charging_schedule_charging_schedule_period|phaseToUse|int": "charging_schedule_charging_schedule_period_phase_to_use",
+  "charging_schedule_charging_schedule_period|startPeriod|int": "charging_schedule_charging_schedule_period_start_period",
+  "charging_schedule_sales_tariff_sales_tariff_entry_consumption_cost|customData.vendorId|string": "charging_schedule_sales_tariff_sales_tariff_entry_consumption_cost_custom_data_vendor_id",
+  "charging_schedule_sales_tariff_sales_tariff_entry_consumption_cost|startValue|float": "charging_schedule_sales_tariff_sales_tariff_entry_consumption_cost_start_value",
+  "charging_schedule_sales_tariff_sales_tariff_entry|customData.vendorId|string": "charging_schedule_sales_tariff_sales_tariff_entry_custom_data_vendor_id",
+  "charging_schedule_sales_tariff_sales_tariff_entry|ePriceLevel|int": "charging_schedule_sales_tariff_sales_tariff_entry_e_price_level",
+  "charging_schedule_sales_tariff_sales_tariff_entry|relativeTimeInterval.customData.vendorId|string": "charging_schedule_sales_tariff_sales_tariff_entry_relative_time_interval_custom_data_vendor_id",
+  "charging_schedule_sales_tariff_sales_tariff_entry|relativeTimeInterval.duration|int": "charging_schedule_sales_tariff_sales_tariff_entry_relative_time_interval_duration",
+  "charging_schedule_sales_tariff_sales_tariff_entry|relativeTimeInterval.start|int": "charging_schedule_sales_tariff_sales_tariff_entry_relative_time_interval_start",
+  "|chargingSchedule.chargingRateUnit|string": "charging_schedule_charging_rate_unit",
+  "|chargingSchedule.customData.vendorId|string": "charging_schedule_custom_data_vendor_id",
+  "|chargingSchedule.duration|int": "charging_schedule_duration",
+  "|chargingSchedule.id|int": "charging_schedule_id",
+  "|chargingSchedule.minChargingRate|float": "charging_schedule_min_charging_rate",
+  "|chargingSchedule.salesTariff.customData.vendorId|string": "charging_schedule_sales_tariff_custom_data_vendor_id",
+  "|chargingSchedule.salesTariff.id|int": "charging_schedule_sales_tariff_id",
+  "|chargingSchedule.salesTariff.numEPriceLevels|int": "charging_schedule_sales_tariff_num_eprice_levels",
+  "|chargingSchedule.salesTariff.salesTariffDescription|string": "charging_schedule_sales_tariff_sales_tariff_description",
+  "|chargingSchedule.startSchedule|string": "charging_schedule_start_schedule",
+  "|customData.vendorId|string": "custom_data_vendor_id",
+  "|evseId|int": "evse_id",
+  "|timeBase|string": "time_base"
+ },
+ "lists": {
+  "charging_schedule_sales_tariff_sales_tariff_entry|consumptionCost": "charging_schedule_sales_tariff_sales_tariff_entry_consumption_cost",
+  "|chargingSchedule.chargingSchedulePeriod": "charging_schedule_charging_schedule_period",
+  "|chargingSchedule.salesTariff.salesTariffEntry": "charging_schedule_sales_tariff_sales_tariff_entry"
+ }
+}

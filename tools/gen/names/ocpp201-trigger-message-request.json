@@ -1,0 +1,10 @@
+{
+ "keys": {
+  "|customData.vendorId|string": "custom_data_vendor_id",
+  "|evse.connectorId|int": "evse_connector_id",
+  "|evse.customData.vendorId|string": "evse_custom_data_vendor_id",
+  "|evse.id|int": "evse_id",
+  "|requestedMessage|string": "requested_message"
+ },
+ "lists": {}
+}

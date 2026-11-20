@@ -1,0 +1,17 @@
+{
+ "name": "gen-boot_notification-roundtrip",
+ "from": "ocpp16-boot-notification",
+ "to": "ocpp16-boot-notification",
+ "input": "{\"chargePointVendor\":\"s70176\",\"chargePointModel\":\"s82787\",\"chargePointSerialNumber\":\"s96695\",\"chargeBoxSerialNumber\":\"s78547\",\"firmwareVersion\":\"s64638\",\"iccid\":\"s98418\",\"imsi\":\"s72751\",\"meterType\":\"s11843\",\"meterSerialNumber\":\"s12099\"}",
+ "expect": "{\"chargePointVendor\":\"s70176\",\"chargePointModel\":\"s82787\",\"chargePointSerialNumber\":\"s96695\",\"chargeBoxSerialNumber\":\"s78547\",\"firmwareVersion\":\"s64638\",\"iccid\":\"s98418\",\"imsi\":\"s72751\",\"meterType\":\"s11843\",\"meterSerialNumber\":\"s12099\"}",
+ "model": {
+  "ocpp16bootnotification.charge_point_vendor": "s70176",
+  "ocpp16bootnotification.charge_point_model": "s82787",
+  "ocpp16bootnotification.charge_point_serial_number": "s96695",
+  "ocpp16bootnotification.charge_box_serial_number": "s78547",
+  "ocpp16bootnotification.firmware_version": "s64638",
+  "ocpp16bootnotification.iccid": "s98418",
+  "ocpp16bootnotification.imsi": "s72751",
+  "ocpp16bootnotification.meter_type": "s11843"
+ }
+}

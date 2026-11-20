@@ -1,0 +1,14 @@
+{
+ "name": "gen-reserve_now-roundtrip",
+ "from": "ocpp16-reserve-now",
+ "to": "ocpp16-reserve-now",
+ "input": "{\"connectorId\":13134,\"expiryDate\":\"2025-09-14T20:12:39.255Z\",\"idTag\":\"s38081\",\"parentIdTag\":\"s46003\",\"reservationId\":69290}",
+ "expect": "{\"connectorId\":13134,\"expiryDate\":\"2025-09-14T20:12:39.255Z\",\"idTag\":\"s38081\",\"parentIdTag\":\"s46003\",\"reservationId\":69290}",
+ "model": {
+  "ocpp16reservenow.connector_id": "13134",
+  "ocpp16reservenow.expiry_date": "2025-09-14T20:12:39.255Z",
+  "ocpp16reservenow.id_tag": "s38081",
+  "ocpp16reservenow.parent_id_tag": "s46003",
+  "ocpp16reservenow.reservation_id": "69290"
+ }
+}

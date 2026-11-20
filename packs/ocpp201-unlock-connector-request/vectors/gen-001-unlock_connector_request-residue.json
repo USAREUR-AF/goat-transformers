@@ -1,0 +1,7 @@
+{
+ "name": "gen-unlock_connector_request-residue",
+ "from": "ocpp201-unlock-connector-request",
+ "to": "ocpp201-unlock-connector-request",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s34569\"},\"evseId\":32891,\"connectorId\":663}",
+ "expect": "{\"customData\":{\"vendorId\":\"s34569\"},\"evseId\":32891,\"connectorId\":663,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

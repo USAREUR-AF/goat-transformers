@@ -1,0 +1,11 @@
+{
+ "keys": {
+  "|chargingProfileCriteria.chargingProfilePurpose|string": "charging_profile_criteria_charging_profile_purpose",
+  "|chargingProfileCriteria.customData.vendorId|string": "charging_profile_criteria_custom_data_vendor_id",
+  "|chargingProfileCriteria.evseId|int": "charging_profile_criteria_evse_id",
+  "|chargingProfileCriteria.stackLevel|int": "charging_profile_criteria_stack_level",
+  "|chargingProfileId|int": "charging_profile_id",
+  "|customData.vendorId|string": "custom_data_vendor_id"
+ },
+ "lists": {}
+}

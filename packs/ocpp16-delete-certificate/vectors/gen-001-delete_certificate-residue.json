@@ -1,0 +1,7 @@
+{
+ "name": "gen-delete_certificate-residue",
+ "from": "ocpp16-delete-certificate",
+ "to": "ocpp16-delete-certificate",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"certificateHashData\":{\"hashAlgorithm\":\"SHA512\",\"issuerNameHash\":\"s17809\",\"issuerKeyHash\":\"s81847\",\"serialNumber\":\"s54371\"}}",
+ "expect": "{\"certificateHashData\":{\"hashAlgorithm\":\"SHA512\",\"issuerNameHash\":\"s17809\",\"issuerKeyHash\":\"s81847\",\"serialNumber\":\"s54371\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

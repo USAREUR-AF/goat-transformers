@@ -1,0 +1,17 @@
+{
+ "name": "gen-addressed_binary_message-roundtrip",
+ "from": "aisstream",
+ "to": "aisstream",
+ "input": "{\"MessageType\":\"AddressedBinaryMessage\",\"Message\":{\"AddressedBinaryMessage\":{\"MessageID\":33449,\"RepeatIndicator\":41667,\"UserID\":64519,\"Valid\":true,\"Sequenceinteger\":24791,\"DestinationID\":59914,\"Retransmission\":false,\"Spare\":true,\"ApplicationID\":{\"Valid\":false,\"DesignatedAreaCode\":18284,\"FunctionIdentifier\":86541},\"BinaryData\":\"s14730\"}}}",
+ "expect": "{\"MessageType\":\"AddressedBinaryMessage\",\"Message\":{\"AddressedBinaryMessage\":{\"MessageID\":33449,\"RepeatIndicator\":41667,\"UserID\":64519,\"Valid\":true,\"Sequenceinteger\":24791,\"DestinationID\":59914,\"Retransmission\":false,\"Spare\":true,\"ApplicationID\":{\"Valid\":false,\"DesignatedAreaCode\":18284,\"FunctionIdentifier\":86541},\"BinaryData\":\"s14730\"}}}",
+ "model": {
+  "@kind": "addressed_binary_message",
+  "aisstream.message_addressed_binary_message_message_id": "33449",
+  "aisstream.message_addressed_binary_message_repeat_indicator": "41667",
+  "aisstream.message_addressed_binary_message_user_id": "64519",
+  "aisstream.message_addressed_binary_message_valid": "1",
+  "aisstream.message_addressed_binary_message_sequenceinteger": "24791",
+  "aisstream.message_addressed_binary_message_destination_id": "59914",
+  "aisstream.message_addressed_binary_message_retransmission": "0"
+ }
+}

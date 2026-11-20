@@ -1,0 +1,11 @@
+{
+ "name": "gen-trigger_message-roundtrip",
+ "from": "ocpp16-trigger-message",
+ "to": "ocpp16-trigger-message",
+ "input": "{\"requestedMessage\":\"Heartbeat\",\"connectorId\":94166}",
+ "expect": "{\"requestedMessage\":\"Heartbeat\",\"connectorId\":94166}",
+ "model": {
+  "ocpp16triggermessage.requested_message": "Heartbeat",
+  "ocpp16triggermessage.connector_id": "94166"
+ }
+}

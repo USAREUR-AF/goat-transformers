@@ -1,0 +1,11 @@
+{
+ "name": "gen-get_transaction_status_request-roundtrip",
+ "from": "ocpp201-get-transaction-status-request",
+ "to": "ocpp201-get-transaction-status-request",
+ "input": "{\"customData\":{\"vendorId\":\"s43618\"},\"transactionId\":\"s68644\"}",
+ "expect": "{\"customData\":{\"vendorId\":\"s43618\"},\"transactionId\":\"s68644\"}",
+ "model": {
+  "ocpp201gettransactionstatusrequest.custom_data_vendor_id": "s43618",
+  "ocpp201gettransactionstatusrequest.transaction_id": "s68644"
+ }
+}

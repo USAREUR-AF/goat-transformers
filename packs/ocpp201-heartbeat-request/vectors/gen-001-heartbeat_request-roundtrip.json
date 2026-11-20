@@ -1,0 +1,10 @@
+{
+ "name": "gen-heartbeat_request-roundtrip",
+ "from": "ocpp201-heartbeat-request",
+ "to": "ocpp201-heartbeat-request",
+ "input": "{\"customData\":{\"vendorId\":\"s31975\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s31975\"}}",
+ "model": {
+  "ocpp201heartbeatrequest.custom_data_vendor_id": "s31975"
+ }
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-channel_management-residue",
+ "from": "aisstream",
+ "to": "aisstream",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"MessageType\":\"ChannelManagement\",\"Message\":{\"ChannelManagement\":{\"MessageID\":48364,\"RepeatIndicator\":96933,\"UserID\":12290,\"Valid\":false,\"Spare1\":81399,\"ChannelA\":69228,\"ChannelB\":72179,\"TxRxMode\":71330,\"LowPower\":true,\"Area\":{\"Longitude1\":0.75,\"Latitude1\":0.75,\"Longitude2\":-3.25,\"Latitude2\":0.75},\"Unicast\":{\"AddressStation1\":40930,\"Spare2\":47690,\"AddressStation2\":11951,\"Spare3\":66603},\"IsAddressed\":false,\"BwA\":false,\"BwB\":true,\"TransitionalZoneSize\":42285,\"Spare4\":49521}}}",
+ "expect": "{\"MessageType\":\"ChannelManagement\",\"Message\":{\"ChannelManagement\":{\"MessageID\":48364,\"RepeatIndicator\":96933,\"UserID\":12290,\"Valid\":false,\"Spare1\":81399,\"ChannelA\":69228,\"ChannelB\":72179,\"TxRxMode\":71330,\"LowPower\":true,\"Area\":{\"Longitude1\":0.75,\"Latitude1\":0.75,\"Longitude2\":-3.25,\"Latitude2\":0.75},\"Unicast\":{\"AddressStation1\":40930,\"Spare2\":47690,\"AddressStation2\":11951,\"Spare3\":66603},\"IsAddressed\":false,\"BwA\":false,\"BwB\":true,\"TransitionalZoneSize\":42285,\"Spare4\":49521}},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-trigger_message_request-residue",
+ "from": "ocpp201-trigger-message-request",
+ "to": "ocpp201-trigger-message-request",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s92856\"},\"evse\":{\"customData\":{\"vendorId\":\"s50279\"},\"id\":85923,\"connectorId\":44388},\"requestedMessage\":\"StatusNotification\"}",
+ "expect": "{\"customData\":{\"vendorId\":\"s92856\"},\"evse\":{\"customData\":{\"vendorId\":\"s50279\"},\"id\":85923,\"connectorId\":44388},\"requestedMessage\":\"StatusNotification\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

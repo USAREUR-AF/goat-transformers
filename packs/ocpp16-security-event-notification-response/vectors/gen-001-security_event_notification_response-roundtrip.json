@@ -1,0 +1,8 @@
+{
+ "name": "gen-security_event_notification_response-roundtrip",
+ "from": "ocpp16-security-event-notification-response",
+ "to": "ocpp16-security-event-notification-response",
+ "input": "{}",
+ "expect": "{}",
+ "model": {}
+}

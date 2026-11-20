@@ -1,0 +1,12 @@
+{
+ "keys": {
+  "configuration_key|key|string": "configuration_key_key",
+  "configuration_key|readonly|int": "configuration_key_readonly",
+  "configuration_key|value|string": "configuration_key_value",
+  "unknown_key|.|string": "unknown_key_value"
+ },
+ "lists": {
+  "|configurationKey": "configuration_key",
+  "|unknownKey": "unknown_key"
+ }
+}

@@ -1,0 +1,23 @@
+{
+ "keys": {
+  "cs_charging_profiles_charging_schedule_charging_schedule_period|limit|float": "cs_charging_profiles_charging_schedule_charging_schedule_period_limit",
+  "cs_charging_profiles_charging_schedule_charging_schedule_period|numberPhases|int": "cs_charging_profiles_charging_schedule_charging_schedule_period_number_phases",
+  "cs_charging_profiles_charging_schedule_charging_schedule_period|startPeriod|int": "cs_charging_profiles_charging_schedule_charging_schedule_period_start_period",
+  "|connectorId|int": "connector_id",
+  "|csChargingProfiles.chargingProfileId|int": "cs_charging_profiles_charging_profile_id",
+  "|csChargingProfiles.chargingProfileKind|string": "cs_charging_profiles_charging_profile_kind",
+  "|csChargingProfiles.chargingProfilePurpose|string": "cs_charging_profiles_charging_profile_purpose",
+  "|csChargingProfiles.chargingSchedule.chargingRateUnit|string": "cs_charging_profiles_charging_schedule_charging_rate_unit",
+  "|csChargingProfiles.chargingSchedule.duration|int": "cs_charging_profiles_charging_schedule_duration",
+  "|csChargingProfiles.chargingSchedule.minChargingRate|float": "cs_charging_profiles_charging_schedule_min_charging_rate",
+  "|csChargingProfiles.chargingSchedule.startSchedule|string": "cs_charging_profiles_charging_schedule_start_schedule",
+  "|csChargingProfiles.recurrencyKind|string": "cs_charging_profiles_recurrency_kind",
+  "|csChargingProfiles.stackLevel|int": "cs_charging_profiles_stack_level",
+  "|csChargingProfiles.transactionId|int": "cs_charging_profiles_transaction_id",
+  "|csChargingProfiles.validFrom|string": "cs_charging_profiles_valid_from",
+  "|csChargingProfiles.validTo|string": "cs_charging_profiles_valid_to"
+ },
+ "lists": {
+  "|csChargingProfiles.chargingSchedule.chargingSchedulePeriod": "cs_charging_profiles_charging_schedule_charging_schedule_period"
+ }
+}

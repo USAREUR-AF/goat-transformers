@@ -1,0 +1,7 @@
+{
+ "name": "gen-boot_notification_response-residue",
+ "from": "ocpp16-boot-notification-response",
+ "to": "ocpp16-boot-notification-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"status\":\"Rejected\",\"currentTime\":\"2025-04-18T14:29:08.559Z\",\"interval\":34638}",
+ "expect": "{\"status\":\"Rejected\",\"currentTime\":\"2025-04-18T14:29:08.559Z\",\"interval\":34638,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

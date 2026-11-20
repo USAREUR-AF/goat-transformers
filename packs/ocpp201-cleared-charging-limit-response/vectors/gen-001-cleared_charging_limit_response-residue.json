@@ -1,0 +1,7 @@
+{
+ "name": "gen-cleared_charging_limit_response-residue",
+ "from": "ocpp201-cleared-charging-limit-response",
+ "to": "ocpp201-cleared-charging-limit-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s52124\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s52124\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

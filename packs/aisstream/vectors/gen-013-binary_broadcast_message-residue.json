@@ -1,0 +1,7 @@
+{
+ "name": "gen-binary_broadcast_message-residue",
+ "from": "aisstream",
+ "to": "aisstream",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"MessageType\":\"BinaryBroadcastMessage\",\"Message\":{\"BinaryBroadcastMessage\":{\"MessageID\":90423,\"RepeatIndicator\":64609,\"UserID\":67864,\"Valid\":false,\"Spare\":45083,\"ApplicationID\":{\"Valid\":false,\"DesignatedAreaCode\":1276,\"FunctionIdentifier\":60538},\"BinaryData\":\"s28\"}}}",
+ "expect": "{\"MessageType\":\"BinaryBroadcastMessage\",\"Message\":{\"BinaryBroadcastMessage\":{\"MessageID\":90423,\"RepeatIndicator\":64609,\"UserID\":67864,\"Valid\":false,\"Spare\":45083,\"ApplicationID\":{\"Valid\":false,\"DesignatedAreaCode\":1276,\"FunctionIdentifier\":60538},\"BinaryData\":\"s28\"}},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

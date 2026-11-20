@@ -1,0 +1,14 @@
+{
+ "name": "gen-get_report_response-roundtrip",
+ "from": "ocpp201-get-report-response",
+ "to": "ocpp201-get-report-response",
+ "input": "{\"customData\":{\"vendorId\":\"s11959\"},\"status\":\"EmptyResultSet\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s16845\"},\"reasonCode\":\"s86629\",\"additionalInfo\":\"s14546\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s11959\"},\"status\":\"EmptyResultSet\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s16845\"},\"reasonCode\":\"s86629\",\"additionalInfo\":\"s14546\"}}",
+ "model": {
+  "ocpp201getreportresponse.custom_data_vendor_id": "s11959",
+  "ocpp201getreportresponse.status": "EmptyResultSet",
+  "ocpp201getreportresponse.status_info_custom_data_vendor_id": "s16845",
+  "ocpp201getreportresponse.status_info_reason_code": "s86629",
+  "ocpp201getreportresponse.status_info_additional_info": "s14546"
+ }
+}

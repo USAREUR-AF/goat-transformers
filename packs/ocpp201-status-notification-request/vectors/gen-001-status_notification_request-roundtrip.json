@@ -1,0 +1,14 @@
+{
+ "name": "gen-status_notification_request-roundtrip",
+ "from": "ocpp201-status-notification-request",
+ "to": "ocpp201-status-notification-request",
+ "input": "{\"customData\":{\"vendorId\":\"s3558\"},\"timestamp\":\"2025-08-14T22:12:30.184Z\",\"connectorStatus\":\"Reserved\",\"evseId\":2312,\"connectorId\":94522}",
+ "expect": "{\"customData\":{\"vendorId\":\"s3558\"},\"timestamp\":\"2025-08-14T22:12:30.184Z\",\"connectorStatus\":\"Reserved\",\"evseId\":2312,\"connectorId\":94522}",
+ "model": {
+  "ocpp201statusnotificationrequest.custom_data_vendor_id": "s3558",
+  "ocpp201statusnotificationrequest.timestamp": "2025-08-14T22:12:30.184Z",
+  "ocpp201statusnotificationrequest.connector_status": "Reserved",
+  "ocpp201statusnotificationrequest.evse_id": "2312",
+  "ocpp201statusnotificationrequest.connector_id": "94522"
+ }
+}

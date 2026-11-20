@@ -1,0 +1,7 @@
+{
+ "name": "gen-reserve_now_response-residue",
+ "from": "ocpp16-reserve-now-response",
+ "to": "ocpp16-reserve-now-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"status\":\"Rejected\"}",
+ "expect": "{\"status\":\"Rejected\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

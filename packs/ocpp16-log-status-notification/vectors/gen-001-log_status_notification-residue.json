@@ -1,0 +1,7 @@
+{
+ "name": "gen-log_status_notification-residue",
+ "from": "ocpp16-log-status-notification",
+ "to": "ocpp16-log-status-notification",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"status\":\"UploadFailure\",\"requestId\":17630}",
+ "expect": "{\"status\":\"UploadFailure\",\"requestId\":17630,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

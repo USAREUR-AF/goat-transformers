@@ -1,0 +1,11 @@
+{
+ "name": "gen-get_local_list_version_response-roundtrip",
+ "from": "ocpp201-get-local-list-version-response",
+ "to": "ocpp201-get-local-list-version-response",
+ "input": "{\"customData\":{\"vendorId\":\"s98315\"},\"versionNumber\":86165}",
+ "expect": "{\"customData\":{\"vendorId\":\"s98315\"},\"versionNumber\":86165}",
+ "model": {
+  "ocpp201getlocallistversionresponse.custom_data_vendor_id": "s98315",
+  "ocpp201getlocallistversionresponse.version_number": "86165"
+ }
+}

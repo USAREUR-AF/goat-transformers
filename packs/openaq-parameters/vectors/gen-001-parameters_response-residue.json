@@ -1,0 +1,7 @@
+{
+ "name": "gen-parameters_response-residue",
+ "from": "openaq-parameters",
+ "to": "openaq-parameters",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"meta\":{\"name\":\"s9788\",\"website\":\"s92732\",\"page\":332,\"limit\":18533},\"results\":[{\"id\":671,\"name\":\"s4785\",\"units\":\"s95512\",\"displayName\":\"s5486\",\"description\":\"s56645\"},{\"id\":74564,\"name\":\"s47208\",\"units\":\"s65066\",\"displayName\":\"s56019\",\"description\":\"s4831\"}]}",
+ "expect": "{\"meta\":{\"name\":\"s9788\",\"website\":\"s92732\",\"page\":332,\"limit\":18533},\"results\":[{\"id\":671,\"name\":\"s4785\",\"units\":\"s95512\",\"displayName\":\"s5486\",\"description\":\"s56645\"},{\"id\":74564,\"name\":\"s47208\",\"units\":\"s65066\",\"displayName\":\"s56019\",\"description\":\"s4831\"}],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

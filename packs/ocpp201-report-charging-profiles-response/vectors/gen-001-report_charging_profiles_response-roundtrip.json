@@ -1,0 +1,10 @@
+{
+ "name": "gen-report_charging_profiles_response-roundtrip",
+ "from": "ocpp201-report-charging-profiles-response",
+ "to": "ocpp201-report-charging-profiles-response",
+ "input": "{\"customData\":{\"vendorId\":\"s13800\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s13800\"}}",
+ "model": {
+  "ocpp201reportchargingprofilesresponse.custom_data_vendor_id": "s13800"
+ }
+}

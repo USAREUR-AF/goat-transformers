@@ -1,0 +1,7 @@
+{
+ "name": "gen-unpublish_firmware_request-residue",
+ "from": "ocpp201-unpublish-firmware-request",
+ "to": "ocpp201-unpublish-firmware-request",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s45033\"},\"checksum\":\"s37853\"}",
+ "expect": "{\"customData\":{\"vendorId\":\"s45033\"},\"checksum\":\"s37853\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

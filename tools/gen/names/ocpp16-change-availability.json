@@ -1,0 +1,7 @@
+{
+ "keys": {
+  "|connectorId|int": "connector_id",
+  "|type|string": "type"
+ },
+ "lists": {}
+}

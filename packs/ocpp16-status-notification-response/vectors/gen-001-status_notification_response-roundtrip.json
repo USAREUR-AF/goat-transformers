@@ -1,0 +1,8 @@
+{
+ "name": "gen-status_notification_response-roundtrip",
+ "from": "ocpp16-status-notification-response",
+ "to": "ocpp16-status-notification-response",
+ "input": "{}",
+ "expect": "{}",
+ "model": {}
+}

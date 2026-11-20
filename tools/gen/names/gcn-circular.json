@@ -1,0 +1,16 @@
+{
+ "keys": {
+  "event_type|.|string": "event_type_value",
+  "|body|string": "body",
+  "|circularId|float": "circular_id",
+  "|createdOn|float": "created_on",
+  "|eventId|string": "event_id",
+  "|format|string": "format",
+  "|subject|string": "subject",
+  "|submittedHow|string": "submitted_how",
+  "|submitter|string": "submitter"
+ },
+ "lists": {
+  "|eventType": "event_type"
+ }
+}

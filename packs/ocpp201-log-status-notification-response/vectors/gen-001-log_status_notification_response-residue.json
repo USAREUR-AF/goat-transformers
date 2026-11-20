@@ -1,0 +1,7 @@
+{
+ "name": "gen-log_status_notification_response-residue",
+ "from": "ocpp201-log-status-notification-response",
+ "to": "ocpp201-log-status-notification-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s81094\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s81094\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

@@ -1,0 +1,16 @@
+{
+ "name": "gen-boot_notification_response-roundtrip",
+ "from": "ocpp201-boot-notification-response",
+ "to": "ocpp201-boot-notification-response",
+ "input": "{\"customData\":{\"vendorId\":\"s17483\"},\"currentTime\":\"2025-04-18T14:29:08.559Z\",\"interval\":34638,\"status\":\"Rejected\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s59611\"},\"reasonCode\":\"s8719\",\"additionalInfo\":\"s76996\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s17483\"},\"currentTime\":\"2025-04-18T14:29:08.559Z\",\"interval\":34638,\"status\":\"Rejected\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s59611\"},\"reasonCode\":\"s8719\",\"additionalInfo\":\"s76996\"}}",
+ "model": {
+  "ocpp201bootnotificationresponse.custom_data_vendor_id": "s17483",
+  "ocpp201bootnotificationresponse.current_time": "2025-04-18T14:29:08.559Z",
+  "ocpp201bootnotificationresponse.interval": "34638",
+  "ocpp201bootnotificationresponse.status": "Rejected",
+  "ocpp201bootnotificationresponse.status_info_custom_data_vendor_id": "s59611",
+  "ocpp201bootnotificationresponse.status_info_reason_code": "s8719",
+  "ocpp201bootnotificationresponse.status_info_additional_info": "s76996"
+ }
+}

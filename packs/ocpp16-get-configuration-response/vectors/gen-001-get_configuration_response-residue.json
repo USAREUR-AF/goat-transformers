@@ -1,0 +1,7 @@
+{
+ "name": "gen-get_configuration_response-residue",
+ "from": "ocpp16-get-configuration-response",
+ "to": "ocpp16-get-configuration-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"configurationKey\":[{\"key\":\"s27254\",\"readonly\":false,\"value\":\"s33663\"},{\"key\":\"s68825\",\"readonly\":false,\"value\":\"s86820\"}],\"unknownKey\":[\"s31604\",\"s65753\"]}",
+ "expect": "{\"configurationKey\":[{\"key\":\"s27254\",\"readonly\":false,\"value\":\"s33663\"},{\"key\":\"s68825\",\"readonly\":false,\"value\":\"s86820\"}],\"unknownKey\":[\"s31604\",\"s65753\"],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

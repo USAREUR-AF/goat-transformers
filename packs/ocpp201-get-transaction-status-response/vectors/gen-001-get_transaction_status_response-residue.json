@@ -1,0 +1,7 @@
+{
+ "name": "gen-get_transaction_status_response-residue",
+ "from": "ocpp201-get-transaction-status-response",
+ "to": "ocpp201-get-transaction-status-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s73006\"},\"ongoingIndicator\":false,\"messagesInQueue\":true}",
+ "expect": "{\"customData\":{\"vendorId\":\"s73006\"},\"ongoingIndicator\":false,\"messagesInQueue\":true,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

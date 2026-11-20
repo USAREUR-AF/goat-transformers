@@ -1,0 +1,14 @@
+{
+ "name": "gen-owners_response-roundtrip",
+ "from": "openaq-owners",
+ "to": "openaq-owners",
+ "input": "{\"meta\":{\"name\":\"s54313\",\"website\":\"s27650\",\"page\":9290,\"limit\":56185},\"results\":[{\"id\":43882,\"name\":\"s81980\"},{\"id\":91610,\"name\":\"s58735\"}]}",
+ "expect": "{\"meta\":{\"name\":\"s54313\",\"website\":\"s27650\",\"page\":9290,\"limit\":56185},\"results\":[{\"id\":43882,\"name\":\"s81980\"},{\"id\":91610,\"name\":\"s58735\"}]}",
+ "model": {
+  "openaqowners.meta_name": "s54313",
+  "openaqowners.meta_website": "s27650",
+  "openaqowners.meta_page": "9290",
+  "openaqowners.meta_limit": "56185",
+  "openaqowners.results.#": "2"
+ }
+}

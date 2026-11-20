@@ -1,0 +1,7 @@
+{
+ "name": "gen-publish_firmware_response-residue",
+ "from": "ocpp201-publish-firmware-response",
+ "to": "ocpp201-publish-firmware-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s12799\"},\"status\":\"Rejected\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s62449\"},\"reasonCode\":\"s71839\",\"additionalInfo\":\"s68307\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s12799\"},\"status\":\"Rejected\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s62449\"},\"reasonCode\":\"s71839\",\"additionalInfo\":\"s68307\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

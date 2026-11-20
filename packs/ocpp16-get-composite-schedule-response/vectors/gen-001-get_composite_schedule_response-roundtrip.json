@@ -1,0 +1,17 @@
+{
+ "name": "gen-get_composite_schedule_response-roundtrip",
+ "from": "ocpp16-get-composite-schedule-response",
+ "to": "ocpp16-get-composite-schedule-response",
+ "input": "{\"status\":\"Accepted\",\"connectorId\":4279,\"scheduleStart\":\"2025-02-07T08:32:03.264Z\",\"chargingSchedule\":{\"duration\":81577,\"startSchedule\":\"2024-11-04T12:21:04.270Z\",\"chargingRateUnit\":\"A\",\"chargingSchedulePeriod\":[{\"startPeriod\":23213,\"limit\":42.375,\"numberPhases\":8004},{\"startPeriod\":33798,\"limit\":1.5,\"numberPhases\":42651}],\"minChargingRate\":-3.25}}",
+ "expect": "{\"status\":\"Accepted\",\"connectorId\":4279,\"scheduleStart\":\"2025-02-07T08:32:03.264Z\",\"chargingSchedule\":{\"duration\":81577,\"startSchedule\":\"2024-11-04T12:21:04.270Z\",\"chargingRateUnit\":\"A\",\"chargingSchedulePeriod\":[{\"startPeriod\":23213,\"limit\":42.375,\"numberPhases\":8004},{\"startPeriod\":33798,\"limit\":1.5,\"numberPhases\":42651}],\"minChargingRate\":-3.25}}",
+ "model": {
+  "ocpp16getcompositescheduleresponse.status": "Accepted",
+  "ocpp16getcompositescheduleresponse.connector_id": "4279",
+  "ocpp16getcompositescheduleresponse.schedule_start": "2025-02-07T08:32:03.264Z",
+  "ocpp16getcompositescheduleresponse.charging_schedule_duration": "81577",
+  "ocpp16getcompositescheduleresponse.charging_schedule_start_schedule": "2024-11-04T12:21:04.270Z",
+  "ocpp16getcompositescheduleresponse.charging_schedule_charging_rate_unit": "A",
+  "ocpp16getcompositescheduleresponse.charging_schedule_charging_schedule_period.#": "2",
+  "ocpp16getcompositescheduleresponse.charging_schedule_min_charging_rate": "-3.25"
+ }
+}

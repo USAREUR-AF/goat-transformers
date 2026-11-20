@@ -1,0 +1,12 @@
+{
+ "name": "gen-get_composite_schedule-roundtrip",
+ "from": "ocpp16-get-composite-schedule",
+ "to": "ocpp16-get-composite-schedule",
+ "input": "{\"connectorId\":35760,\"duration\":45506,\"chargingRateUnit\":\"A\"}",
+ "expect": "{\"connectorId\":35760,\"duration\":45506,\"chargingRateUnit\":\"A\"}",
+ "model": {
+  "ocpp16getcompositeschedule.connector_id": "35760",
+  "ocpp16getcompositeschedule.duration": "45506",
+  "ocpp16getcompositeschedule.charging_rate_unit": "A"
+ }
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-standard_class_bposition_report-residue",
+ "from": "aisstream",
+ "to": "aisstream",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"MessageType\":\"StandardClassBPositionReport\",\"Message\":{\"StandardClassBPositionReport\":{\"MessageID\":61707,\"RepeatIndicator\":48651,\"UserID\":70897,\"Valid\":true,\"Spare1\":28886,\"Sog\":0.75,\"PositionAccuracy\":false,\"Longitude\":-3.25,\"Latitude\":0.75,\"Cog\":-0.5,\"TrueHeading\":57912,\"Timestamp\":6836,\"Spare2\":22419,\"ClassBUnit\":false,\"ClassBDisplay\":false,\"ClassBDsc\":true,\"ClassBBand\":true,\"ClassBMsg22\":false,\"AssignedMode\":true,\"Raim\":true,\"CommunicationStateIsItdma\":false,\"CommunicationState\":66842}}}",
+ "expect": "{\"MessageType\":\"StandardClassBPositionReport\",\"Message\":{\"StandardClassBPositionReport\":{\"MessageID\":61707,\"RepeatIndicator\":48651,\"UserID\":70897,\"Valid\":true,\"Spare1\":28886,\"Sog\":0.75,\"PositionAccuracy\":false,\"Longitude\":-3.25,\"Latitude\":0.75,\"Cog\":-0.5,\"TrueHeading\":57912,\"Timestamp\":6836,\"Spare2\":22419,\"ClassBUnit\":false,\"ClassBDisplay\":false,\"ClassBDsc\":true,\"ClassBBand\":true,\"ClassBMsg22\":false,\"AssignedMode\":true,\"Raim\":true,\"CommunicationStateIsItdma\":false,\"CommunicationState\":66842}},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

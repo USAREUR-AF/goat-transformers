@@ -1,0 +1,7 @@
+{
+ "name": "gen-notify_display_messages_response-residue",
+ "from": "ocpp201-notify-display-messages-response",
+ "to": "ocpp201-notify-display-messages-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s54494\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s54494\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

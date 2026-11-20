@@ -1,0 +1,14 @@
+{
+ "name": "gen-change_availability_response-roundtrip",
+ "from": "ocpp201-change-availability-response",
+ "to": "ocpp201-change-availability-response",
+ "input": "{\"customData\":{\"vendorId\":\"s60651\"},\"status\":\"Scheduled\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s24983\"},\"reasonCode\":\"s63078\",\"additionalInfo\":\"s60873\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s60651\"},\"status\":\"Scheduled\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s24983\"},\"reasonCode\":\"s63078\",\"additionalInfo\":\"s60873\"}}",
+ "model": {
+  "ocpp201changeavailabilityresponse.custom_data_vendor_id": "s60651",
+  "ocpp201changeavailabilityresponse.status": "Scheduled",
+  "ocpp201changeavailabilityresponse.status_info_custom_data_vendor_id": "s24983",
+  "ocpp201changeavailabilityresponse.status_info_reason_code": "s63078",
+  "ocpp201changeavailabilityresponse.status_info_additional_info": "s60873"
+ }
+}

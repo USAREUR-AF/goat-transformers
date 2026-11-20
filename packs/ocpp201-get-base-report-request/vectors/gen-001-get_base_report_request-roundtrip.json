@@ -1,0 +1,12 @@
+{
+ "name": "gen-get_base_report_request-roundtrip",
+ "from": "ocpp201-get-base-report-request",
+ "to": "ocpp201-get-base-report-request",
+ "input": "{\"customData\":{\"vendorId\":\"s24991\"},\"requestId\":83511,\"reportBase\":\"FullInventory\"}",
+ "expect": "{\"customData\":{\"vendorId\":\"s24991\"},\"requestId\":83511,\"reportBase\":\"FullInventory\"}",
+ "model": {
+  "ocpp201getbasereportrequest.custom_data_vendor_id": "s24991",
+  "ocpp201getbasereportrequest.request_id": "83511",
+  "ocpp201getbasereportrequest.report_base": "FullInventory"
+ }
+}

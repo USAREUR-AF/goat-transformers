@@ -1,0 +1,11 @@
+{
+ "name": "gen-log_status_notification-roundtrip",
+ "from": "ocpp16-log-status-notification",
+ "to": "ocpp16-log-status-notification",
+ "input": "{\"status\":\"UploadFailure\",\"requestId\":17630}",
+ "expect": "{\"status\":\"UploadFailure\",\"requestId\":17630}",
+ "model": {
+  "ocpp16logstatusnotification.status": "UploadFailure",
+  "ocpp16logstatusnotification.request_id": "17630"
+ }
+}

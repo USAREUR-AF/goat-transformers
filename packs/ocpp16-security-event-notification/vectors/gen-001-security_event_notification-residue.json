@@ -1,0 +1,7 @@
+{
+ "name": "gen-security_event_notification-residue",
+ "from": "ocpp16-security-event-notification",
+ "to": "ocpp16-security-event-notification",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"type\":\"s15809\",\"timestamp\":\"2027-01-08T04:40:42.383Z\",\"techInfo\":\"s48345\"}",
+ "expect": "{\"type\":\"s15809\",\"timestamp\":\"2027-01-08T04:40:42.383Z\",\"techInfo\":\"s48345\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

@@ -1,0 +1,16 @@
+{
+ "name": "gen-get_certificate_status_request-roundtrip",
+ "from": "ocpp201-get-certificate-status-request",
+ "to": "ocpp201-get-certificate-status-request",
+ "input": "{\"customData\":{\"vendorId\":\"s88823\"},\"ocspRequestData\":{\"customData\":{\"vendorId\":\"s32239\"},\"hashAlgorithm\":\"SHA512\",\"issuerNameHash\":\"s93871\",\"issuerKeyHash\":\"s80901\",\"serialNumber\":\"s27184\",\"responderURL\":\"s82210\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s88823\"},\"ocspRequestData\":{\"customData\":{\"vendorId\":\"s32239\"},\"hashAlgorithm\":\"SHA512\",\"issuerNameHash\":\"s93871\",\"issuerKeyHash\":\"s80901\",\"serialNumber\":\"s27184\",\"responderURL\":\"s82210\"}}",
+ "model": {
+  "ocpp201getcertificatestatusrequest.custom_data_vendor_id": "s88823",
+  "ocpp201getcertificatestatusrequest.ocsp_request_data_custom_data_vendor_id": "s32239",
+  "ocpp201getcertificatestatusrequest.ocsp_request_data_hash_algorithm": "SHA512",
+  "ocpp201getcertificatestatusrequest.ocsp_request_data_issuer_name_hash": "s93871",
+  "ocpp201getcertificatestatusrequest.ocsp_request_data_issuer_key_hash": "s80901",
+  "ocpp201getcertificatestatusrequest.ocsp_request_data_serial_number": "s27184",
+  "ocpp201getcertificatestatusrequest.ocsp_request_data_responder_url": "s82210"
+ }
+}

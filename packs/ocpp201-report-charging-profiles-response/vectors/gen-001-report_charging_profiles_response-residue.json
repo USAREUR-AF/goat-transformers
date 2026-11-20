@@ -1,0 +1,7 @@
+{
+ "name": "gen-report_charging_profiles_response-residue",
+ "from": "ocpp201-report-charging-profiles-response",
+ "to": "ocpp201-report-charging-profiles-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s13800\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s13800\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

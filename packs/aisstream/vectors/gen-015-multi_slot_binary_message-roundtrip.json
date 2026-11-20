@@ -1,0 +1,17 @@
+{
+ "name": "gen-multi_slot_binary_message-roundtrip",
+ "from": "aisstream",
+ "to": "aisstream",
+ "input": "{\"MessageType\":\"MultiSlotBinaryMessage\",\"Message\":{\"MultiSlotBinaryMessage\":{\"MessageID\":74835,\"RepeatIndicator\":23850,\"UserID\":30293,\"Valid\":true,\"DestinationIDValid\":true,\"ApplicationIDValid\":true,\"DestinationID\":20228,\"Spare1\":47743,\"ApplicationID\":{\"Valid\":true,\"DesignatedAreaCode\":63327,\"FunctionIdentifier\":17522},\"Payload\":\"s94482\",\"Spare2\":67,\"CommunicationStateIsItdma\":false,\"CommunicationState\":64680}}}",
+ "expect": "{\"MessageType\":\"MultiSlotBinaryMessage\",\"Message\":{\"MultiSlotBinaryMessage\":{\"MessageID\":74835,\"RepeatIndicator\":23850,\"UserID\":30293,\"Valid\":true,\"DestinationIDValid\":true,\"ApplicationIDValid\":true,\"DestinationID\":20228,\"Spare1\":47743,\"ApplicationID\":{\"Valid\":true,\"DesignatedAreaCode\":63327,\"FunctionIdentifier\":17522},\"Payload\":\"s94482\",\"Spare2\":67,\"CommunicationStateIsItdma\":false,\"CommunicationState\":64680}}}",
+ "model": {
+  "@kind": "multi_slot_binary_message",
+  "aisstream.message_multi_slot_binary_message_message_id": "74835",
+  "aisstream.message_multi_slot_binary_message_repeat_indicator": "23850",
+  "aisstream.message_multi_slot_binary_message_user_id": "30293",
+  "aisstream.message_multi_slot_binary_message_valid": "1",
+  "aisstream.message_multi_slot_binary_message_destination_idvalid": "1",
+  "aisstream.message_multi_slot_binary_message_application_idvalid": "1",
+  "aisstream.message_multi_slot_binary_message_destination_id": "20228"
+ }
+}

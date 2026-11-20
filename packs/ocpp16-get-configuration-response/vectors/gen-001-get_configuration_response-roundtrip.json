@@ -1,0 +1,11 @@
+{
+ "name": "gen-get_configuration_response-roundtrip",
+ "from": "ocpp16-get-configuration-response",
+ "to": "ocpp16-get-configuration-response",
+ "input": "{\"configurationKey\":[{\"key\":\"s27254\",\"readonly\":false,\"value\":\"s33663\"},{\"key\":\"s68825\",\"readonly\":false,\"value\":\"s86820\"}],\"unknownKey\":[\"s31604\",\"s65753\"]}",
+ "expect": "{\"configurationKey\":[{\"key\":\"s27254\",\"readonly\":false,\"value\":\"s33663\"},{\"key\":\"s68825\",\"readonly\":false,\"value\":\"s86820\"}],\"unknownKey\":[\"s31604\",\"s65753\"]}",
+ "model": {
+  "ocpp16getconfigurationresponse.configuration_key.#": "2",
+  "ocpp16getconfigurationresponse.unknown_key.#": "2"
+ }
+}

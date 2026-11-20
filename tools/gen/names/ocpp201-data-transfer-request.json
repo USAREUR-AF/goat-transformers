@@ -1,0 +1,8 @@
+{
+ "keys": {
+  "|customData.vendorId|string": "custom_data_vendor_id",
+  "|messageId|string": "message_id",
+  "|vendorId|string": "vendor_id"
+ },
+ "lists": {}
+}

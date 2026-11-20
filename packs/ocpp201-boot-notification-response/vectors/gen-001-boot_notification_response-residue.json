@@ -1,0 +1,7 @@
+{
+ "name": "gen-boot_notification_response-residue",
+ "from": "ocpp201-boot-notification-response",
+ "to": "ocpp201-boot-notification-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s17483\"},\"currentTime\":\"2025-04-18T14:29:08.559Z\",\"interval\":34638,\"status\":\"Rejected\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s59611\"},\"reasonCode\":\"s8719\",\"additionalInfo\":\"s76996\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s17483\"},\"currentTime\":\"2025-04-18T14:29:08.559Z\",\"interval\":34638,\"status\":\"Rejected\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s59611\"},\"reasonCode\":\"s8719\",\"additionalInfo\":\"s76996\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

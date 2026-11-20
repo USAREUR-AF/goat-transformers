@@ -1,0 +1,7 @@
+{
+ "name": "gen-group_assignment_command-residue",
+ "from": "aisstream",
+ "to": "aisstream",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"MessageType\":\"GroupAssignmentCommand\",\"Message\":{\"GroupAssignmentCommand\":{\"MessageID\":98085,\"RepeatIndicator\":49528,\"UserID\":93025,\"Valid\":true,\"Spare1\":80059,\"Longitude1\":101.125,\"Latitude1\":1.5,\"Longitude2\":101.125,\"Latitude2\":7.0625,\"StationType\":92235,\"ShipType\":30667,\"Spare2\":64758,\"TxRxMode\":9299,\"ReportingInterval\":54157,\"QuietTime\":80821,\"Spare3\":15300}}}",
+ "expect": "{\"MessageType\":\"GroupAssignmentCommand\",\"Message\":{\"GroupAssignmentCommand\":{\"MessageID\":98085,\"RepeatIndicator\":49528,\"UserID\":93025,\"Valid\":true,\"Spare1\":80059,\"Longitude1\":101.125,\"Latitude1\":1.5,\"Longitude2\":101.125,\"Latitude2\":7.0625,\"StationType\":92235,\"ShipType\":30667,\"Spare2\":64758,\"TxRxMode\":9299,\"ReportingInterval\":54157,\"QuietTime\":80821,\"Spare3\":15300}},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

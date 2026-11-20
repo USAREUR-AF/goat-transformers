@@ -1,0 +1,7 @@
+{
+ "name": "gen-signed_update_firmware-residue",
+ "from": "ocpp16-signed-update-firmware",
+ "to": "ocpp16-signed-update-firmware",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"retries\":61795,\"retryInterval\":65485,\"requestId\":41596,\"firmware\":{\"location\":\"s33978\",\"retrieveDateTime\":\"2026-08-07T21:30:49.278Z\",\"installDateTime\":\"2024-12-04T15:27:42.248Z\",\"signingCertificate\":\"s48916\",\"signature\":\"s72654\"}}",
+ "expect": "{\"retries\":61795,\"retryInterval\":65485,\"requestId\":41596,\"firmware\":{\"location\":\"s33978\",\"retrieveDateTime\":\"2026-08-07T21:30:49.278Z\",\"installDateTime\":\"2024-12-04T15:27:42.248Z\",\"signingCertificate\":\"s48916\",\"signature\":\"s72654\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

@@ -1,0 +1,14 @@
+{
+ "name": "gen-clear_charging_profile_response-roundtrip",
+ "from": "ocpp201-clear-charging-profile-response",
+ "to": "ocpp201-clear-charging-profile-response",
+ "input": "{\"customData\":{\"vendorId\":\"s6123\"},\"status\":\"Unknown\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s95903\"},\"reasonCode\":\"s53113\",\"additionalInfo\":\"s70078\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s6123\"},\"status\":\"Unknown\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s95903\"},\"reasonCode\":\"s53113\",\"additionalInfo\":\"s70078\"}}",
+ "model": {
+  "ocpp201clearchargingprofileresponse.custom_data_vendor_id": "s6123",
+  "ocpp201clearchargingprofileresponse.status": "Unknown",
+  "ocpp201clearchargingprofileresponse.status_info_custom_data_vendor_id": "s95903",
+  "ocpp201clearchargingprofileresponse.status_info_reason_code": "s53113",
+  "ocpp201clearchargingprofileresponse.status_info_additional_info": "s70078"
+ }
+}

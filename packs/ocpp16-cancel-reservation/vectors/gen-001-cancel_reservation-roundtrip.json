@@ -1,0 +1,10 @@
+{
+ "name": "gen-cancel_reservation-roundtrip",
+ "from": "ocpp16-cancel-reservation",
+ "to": "ocpp16-cancel-reservation",
+ "input": "{\"reservationId\":14332}",
+ "expect": "{\"reservationId\":14332}",
+ "model": {
+  "ocpp16cancelreservation.reservation_id": "14332"
+ }
+}

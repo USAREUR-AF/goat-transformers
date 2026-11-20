@@ -1,0 +1,7 @@
+{
+ "name": "gen-reservation_status_update_request-residue",
+ "from": "ocpp201-reservation-status-update-request",
+ "to": "ocpp201-reservation-status-update-request",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s48007\"},\"reservationId\":4772,\"reservationUpdateStatus\":\"Removed\"}",
+ "expect": "{\"customData\":{\"vendorId\":\"s48007\"},\"reservationId\":4772,\"reservationUpdateStatus\":\"Removed\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

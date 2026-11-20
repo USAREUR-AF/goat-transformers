@@ -1,0 +1,10 @@
+{
+ "name": "gen-unlock_connector_response-roundtrip",
+ "from": "ocpp16-unlock-connector-response",
+ "to": "ocpp16-unlock-connector-response",
+ "input": "{\"status\":\"NotSupported\"}",
+ "expect": "{\"status\":\"NotSupported\"}",
+ "model": {
+  "ocpp16unlockconnectorresponse.status": "NotSupported"
+ }
+}

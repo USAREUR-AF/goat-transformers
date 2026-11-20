@@ -1,0 +1,7 @@
+{
+ "name": "gen-change_availability_request-residue",
+ "from": "ocpp201-change-availability-request",
+ "to": "ocpp201-change-availability-request",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s76477\"},\"evse\":{\"customData\":{\"vendorId\":\"s20882\"},\"id\":58826,\"connectorId\":76637},\"operationalStatus\":\"Operative\"}",
+ "expect": "{\"customData\":{\"vendorId\":\"s76477\"},\"evse\":{\"customData\":{\"vendorId\":\"s20882\"},\"id\":58826,\"connectorId\":76637},\"operationalStatus\":\"Operative\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

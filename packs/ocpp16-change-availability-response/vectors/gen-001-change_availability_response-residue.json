@@ -1,0 +1,7 @@
+{
+ "name": "gen-change_availability_response-residue",
+ "from": "ocpp16-change-availability-response",
+ "to": "ocpp16-change-availability-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"status\":\"Scheduled\"}",
+ "expect": "{\"status\":\"Scheduled\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

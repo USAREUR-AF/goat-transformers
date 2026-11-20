@@ -1,0 +1,7 @@
+{
+ "name": "gen-cleared_charging_limit_request-residue",
+ "from": "ocpp201-cleared-charging-limit-request",
+ "to": "ocpp201-cleared-charging-limit-request",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s14605\"},\"chargingLimitSource\":\"CSO\",\"evseId\":44931}",
+ "expect": "{\"customData\":{\"vendorId\":\"s14605\"},\"chargingLimitSource\":\"CSO\",\"evseId\":44931,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

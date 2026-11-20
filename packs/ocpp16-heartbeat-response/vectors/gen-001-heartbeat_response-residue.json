@@ -1,0 +1,7 @@
+{
+ "name": "gen-heartbeat_response-residue",
+ "from": "ocpp16-heartbeat-response",
+ "to": "ocpp16-heartbeat-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"currentTime\":\"2024-10-02T10:32:39.469Z\"}",
+ "expect": "{\"currentTime\":\"2024-10-02T10:32:39.469Z\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

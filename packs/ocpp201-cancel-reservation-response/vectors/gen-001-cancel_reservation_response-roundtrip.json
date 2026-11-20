@@ -1,0 +1,14 @@
+{
+ "name": "gen-cancel_reservation_response-roundtrip",
+ "from": "ocpp201-cancel-reservation-response",
+ "to": "ocpp201-cancel-reservation-response",
+ "input": "{\"customData\":{\"vendorId\":\"s69393\"},\"status\":\"Accepted\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s15530\"},\"reasonCode\":\"s38254\",\"additionalInfo\":\"s76969\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s69393\"},\"status\":\"Accepted\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s15530\"},\"reasonCode\":\"s38254\",\"additionalInfo\":\"s76969\"}}",
+ "model": {
+  "ocpp201cancelreservationresponse.custom_data_vendor_id": "s69393",
+  "ocpp201cancelreservationresponse.status": "Accepted",
+  "ocpp201cancelreservationresponse.status_info_custom_data_vendor_id": "s15530",
+  "ocpp201cancelreservationresponse.status_info_reason_code": "s38254",
+  "ocpp201cancelreservationresponse.status_info_additional_info": "s76969"
+ }
+}

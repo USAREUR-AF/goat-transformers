@@ -1,0 +1,7 @@
+{
+ "name": "gen-remote_start_transaction-residue",
+ "from": "ocpp16-remote-start-transaction",
+ "to": "ocpp16-remote-start-transaction",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"connectorId\":37907,\"idTag\":\"s98849\",\"chargingProfile\":{\"chargingProfileId\":41192,\"transactionId\":14857,\"stackLevel\":81144,\"chargingProfilePurpose\":\"TxDefaultProfile\",\"chargingProfileKind\":\"Absolute\",\"recurrencyKind\":\"Daily\",\"validFrom\":\"2024-08-18T22:43:54.511Z\",\"validTo\":\"2026-02-18T10:37:18.761Z\",\"chargingSchedule\":{\"duration\":98826,\"startSchedule\":\"2024-01-03T17:47:11.584Z\",\"chargingRateUnit\":\"W\",\"chargingSchedulePeriod\":[{\"startPeriod\":12288,\"limit\":7.0625,\"numberPhases\":95765},{\"startPeriod\":68871,\"limit\":42.375,\"numberPhases\":46673}],\"minChargingRate\":-0.5}}}",
+ "expect": "{\"connectorId\":37907,\"idTag\":\"s98849\",\"chargingProfile\":{\"chargingProfileId\":41192,\"transactionId\":14857,\"stackLevel\":81144,\"chargingProfilePurpose\":\"TxDefaultProfile\",\"chargingProfileKind\":\"Absolute\",\"recurrencyKind\":\"Daily\",\"validFrom\":\"2024-08-18T22:43:54.511Z\",\"validTo\":\"2026-02-18T10:37:18.761Z\",\"chargingSchedule\":{\"duration\":98826,\"startSchedule\":\"2024-01-03T17:47:11.584Z\",\"chargingRateUnit\":\"W\",\"chargingSchedulePeriod\":[{\"startPeriod\":12288,\"limit\":7.0625,\"numberPhases\":95765},{\"startPeriod\":68871,\"limit\":42.375,\"numberPhases\":46673}],\"minChargingRate\":-0.5}},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

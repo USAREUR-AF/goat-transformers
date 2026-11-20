@@ -1,0 +1,10 @@
+{
+ "name": "gen-notify_display_messages_response-roundtrip",
+ "from": "ocpp201-notify-display-messages-response",
+ "to": "ocpp201-notify-display-messages-response",
+ "input": "{\"customData\":{\"vendorId\":\"s54494\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s54494\"}}",
+ "model": {
+  "ocpp201notifydisplaymessagesresponse.custom_data_vendor_id": "s54494"
+ }
+}

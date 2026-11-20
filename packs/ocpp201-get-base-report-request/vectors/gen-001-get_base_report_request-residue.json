@@ -1,0 +1,7 @@
+{
+ "name": "gen-get_base_report_request-residue",
+ "from": "ocpp201-get-base-report-request",
+ "to": "ocpp201-get-base-report-request",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s24991\"},\"requestId\":83511,\"reportBase\":\"FullInventory\"}",
+ "expect": "{\"customData\":{\"vendorId\":\"s24991\"},\"requestId\":83511,\"reportBase\":\"FullInventory\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

@@ -1,0 +1,24 @@
+{
+ "keys": {
+  "charging_profile_charging_schedule_charging_schedule_period|limit|float": "charging_profile_charging_schedule_charging_schedule_period_limit",
+  "charging_profile_charging_schedule_charging_schedule_period|numberPhases|int": "charging_profile_charging_schedule_charging_schedule_period_number_phases",
+  "charging_profile_charging_schedule_charging_schedule_period|startPeriod|int": "charging_profile_charging_schedule_charging_schedule_period_start_period",
+  "|chargingProfile.chargingProfileId|int": "charging_profile_charging_profile_id",
+  "|chargingProfile.chargingProfileKind|string": "charging_profile_charging_profile_kind",
+  "|chargingProfile.chargingProfilePurpose|string": "charging_profile_charging_profile_purpose",
+  "|chargingProfile.chargingSchedule.chargingRateUnit|string": "charging_profile_charging_schedule_charging_rate_unit",
+  "|chargingProfile.chargingSchedule.duration|int": "charging_profile_charging_schedule_duration",
+  "|chargingProfile.chargingSchedule.minChargingRate|float": "charging_profile_charging_schedule_min_charging_rate",
+  "|chargingProfile.chargingSchedule.startSchedule|string": "charging_profile_charging_schedule_start_schedule",
+  "|chargingProfile.recurrencyKind|string": "charging_profile_recurrency_kind",
+  "|chargingProfile.stackLevel|int": "charging_profile_stack_level",
+  "|chargingProfile.transactionId|int": "charging_profile_transaction_id",
+  "|chargingProfile.validFrom|string": "charging_profile_valid_from",
+  "|chargingProfile.validTo|string": "charging_profile_valid_to",
+  "|connectorId|int": "connector_id",
+  "|idTag|string": "id_tag"
+ },
+ "lists": {
+  "|chargingProfile.chargingSchedule.chargingSchedulePeriod": "charging_profile_charging_schedule_charging_schedule_period"
+ }
+}

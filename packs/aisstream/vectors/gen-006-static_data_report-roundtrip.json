@@ -1,0 +1,17 @@
+{
+ "name": "gen-static_data_report-roundtrip",
+ "from": "aisstream",
+ "to": "aisstream",
+ "input": "{\"MessageType\":\"StaticDataReport\",\"Message\":{\"StaticDataReport\":{\"MessageID\":71656,\"RepeatIndicator\":91398,\"UserID\":63054,\"Valid\":true,\"Reserved\":64071,\"PartNumber\":false,\"ReportA\":{\"Valid\":true,\"Name\":\"s48548\"},\"ReportB\":{\"Valid\":true,\"ShipType\":13256,\"VendorIDName\":\"s12632\",\"VenderIDModel\":93897,\"VenderIDSerial\":14045,\"CallSign\":\"s79391\",\"Dimension\":{\"A\":50362,\"B\":2277,\"C\":15566,\"D\":79505},\"FixType\":60547,\"Spare\":35542}}}}",
+ "expect": "{\"MessageType\":\"StaticDataReport\",\"Message\":{\"StaticDataReport\":{\"MessageID\":71656,\"RepeatIndicator\":91398,\"UserID\":63054,\"Valid\":true,\"Reserved\":64071,\"PartNumber\":false,\"ReportA\":{\"Valid\":true,\"Name\":\"s48548\"},\"ReportB\":{\"Valid\":true,\"ShipType\":13256,\"VendorIDName\":\"s12632\",\"VenderIDModel\":93897,\"VenderIDSerial\":14045,\"CallSign\":\"s79391\",\"Dimension\":{\"A\":50362,\"B\":2277,\"C\":15566,\"D\":79505},\"FixType\":60547,\"Spare\":35542}}}}",
+ "model": {
+  "@kind": "static_data_report",
+  "aisstream.message_static_data_report_message_id": "71656",
+  "aisstream.message_static_data_report_repeat_indicator": "91398",
+  "aisstream.message_static_data_report_user_id": "63054",
+  "aisstream.message_static_data_report_valid": "1",
+  "aisstream.message_static_data_report_reserved": "64071",
+  "aisstream.message_static_data_report_part_number": "0",
+  "aisstream.message_static_data_report_report_a_valid": "1"
+ }
+}

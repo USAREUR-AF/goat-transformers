@@ -1,0 +1,11 @@
+{
+ "name": "gen-full-roundtrip",
+ "from": "signalk-full",
+ "to": "signalk-full",
+ "input": "{\"self\":\"s38122\",\"version\":\"s69181\"}",
+ "expect": "{\"self\":\"s38122\",\"version\":\"s69181\"}",
+ "model": {
+  "signalkfull.self": "s38122",
+  "signalkfull.version": "s69181"
+ }
+}

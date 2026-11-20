@@ -1,0 +1,15 @@
+{
+ "keys": {
+  "|chargingStation.customData.vendorId|string": "charging_station_custom_data_vendor_id",
+  "|chargingStation.firmwareVersion|string": "charging_station_firmware_version",
+  "|chargingStation.model|string": "charging_station_model",
+  "|chargingStation.modem.customData.vendorId|string": "charging_station_modem_custom_data_vendor_id",
+  "|chargingStation.modem.iccid|string": "charging_station_modem_iccid",
+  "|chargingStation.modem.imsi|string": "charging_station_modem_imsi",
+  "|chargingStation.serialNumber|string": "charging_station_serial_number",
+  "|chargingStation.vendorName|string": "charging_station_vendor_name",
+  "|customData.vendorId|string": "custom_data_vendor_id",
+  "|reason|string": "reason"
+ },
+ "lists": {}
+}

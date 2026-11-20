@@ -1,0 +1,7 @@
+{
+ "name": "gen-cancel_reservation-residue",
+ "from": "ocpp16-cancel-reservation",
+ "to": "ocpp16-cancel-reservation",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"reservationId\":14332}",
+ "expect": "{\"reservationId\":14332,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

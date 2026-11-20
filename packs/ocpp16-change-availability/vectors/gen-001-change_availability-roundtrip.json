@@ -1,0 +1,11 @@
+{
+ "name": "gen-change_availability-roundtrip",
+ "from": "ocpp16-change-availability",
+ "to": "ocpp16-change-availability",
+ "input": "{\"connectorId\":85069,\"type\":\"Inoperative\"}",
+ "expect": "{\"connectorId\":85069,\"type\":\"Inoperative\"}",
+ "model": {
+  "ocpp16changeavailability.connector_id": "85069",
+  "ocpp16changeavailability.type": "Inoperative"
+ }
+}

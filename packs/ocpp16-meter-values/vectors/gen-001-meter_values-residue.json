@@ -1,0 +1,7 @@
+{
+ "name": "gen-meter_values-residue",
+ "from": "ocpp16-meter-values",
+ "to": "ocpp16-meter-values",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"connectorId\":38787,\"transactionId\":53936,\"meterValue\":[{\"timestamp\":\"2026-06-03T15:02:19.440Z\",\"sampledValue\":[{\"value\":\"s5147\",\"context\":\"Interruption.End\",\"format\":\"SignedData\",\"measurand\":\"Energy.Reactive.Import.Register\",\"phase\":\"L1-N\",\"location\":\"Inlet\",\"unit\":\"kvar\"}]},{\"timestamp\":\"2024-03-26T04:25:56.059Z\",\"sampledValue\":[{\"value\":\"s99064\",\"context\":\"Trigger\",\"format\":\"Raw\",\"measurand\":\"Power.Offered\",\"phase\":\"L1-N\",\"location\":\"Body\",\"unit\":\"K\"}]}]}",
+ "expect": "{\"connectorId\":38787,\"transactionId\":53936,\"meterValue\":[{\"timestamp\":\"2026-06-03T15:02:19.440Z\",\"sampledValue\":[{\"value\":\"s5147\",\"context\":\"Interruption.End\",\"format\":\"SignedData\",\"measurand\":\"Energy.Reactive.Import.Register\",\"phase\":\"L1-N\",\"location\":\"Inlet\",\"unit\":\"kvar\"}]},{\"timestamp\":\"2024-03-26T04:25:56.059Z\",\"sampledValue\":[{\"value\":\"s99064\",\"context\":\"Trigger\",\"format\":\"Raw\",\"measurand\":\"Power.Offered\",\"phase\":\"L1-N\",\"location\":\"Body\",\"unit\":\"K\"}]}],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

@@ -1,0 +1,10 @@
+{
+ "name": "gen-heartbeat_response-roundtrip",
+ "from": "ocpp16-heartbeat-response",
+ "to": "ocpp16-heartbeat-response",
+ "input": "{\"currentTime\":\"2024-10-02T10:32:39.469Z\"}",
+ "expect": "{\"currentTime\":\"2024-10-02T10:32:39.469Z\"}",
+ "model": {
+  "ocpp16heartbeatresponse.current_time": "2024-10-02T10:32:39.469Z"
+ }
+}

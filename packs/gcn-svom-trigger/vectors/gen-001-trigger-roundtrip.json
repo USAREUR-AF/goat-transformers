@@ -1,0 +1,17 @@
+{
+ "name": "gen-trigger-roundtrip",
+ "from": "gcn-svom-trigger",
+ "to": "gcn-svom-trigger",
+ "input": "{\"slew_status\":\"accepted\",\"triggered_GRDs\":[true,true],\"additional_info\":\"s6527\",\"alert_datetime\":\"s1128\",\"alert_tense\":\"test\",\"alert_type\":\"subsequent\",\"trigger_time\":\"s12300\",\"observation_start\":\"s11305\",\"observation_stop\":\"s70964\",\"observation_livetime\":1.5,\"data_archive_page\":\"s78696\",\"ra\":12.5,\"dec\":42.375,\"containment_probability\":12.5,\"systematic_included\":false,\"instrument_phi\":42.375,\"instrument_theta\":1.5,\"instrument_semimajor_angle\":101.125,\"healpix_url\":\"s682\",\"healpix_file\":\"s41089\",\"mission\":\"s21468\",\"instrument\":\"s16256\",\"service\":\"s97846\",\"record_number\":0.75,\"messenger\":\"EM\",\"spectral_band\":[-0.5,42.375],\"spectral_band_units\":\"MHz\",\"far\":42.375,\"trigger_type\":\"rate\",\"net_count_rate\":1.5,\"background_count_rate\":12.5,\"rate_snr\":12.5,\"rate_duration\":-0.5,\"rate_energy_range\":[-3.25,-3.25],\"image_snr\":1.5,\"image_duration\":42.375,\"image_energy_range\":[12.5,42.375],\"p_astro\":-3.25,\"ra_pointing\":12.5,\"dec_pointing\":-0.5,\"roll\":-0.5,\"position_angle\":101.125,\"attitude_quarternion\":[42.375,101.125],\"rotation_rate\":[-3.25,-0.5],\"time\":\"s17622\",\"latitude\":1.5,\"longitude\":0.75,\"altitude\":101.125,\"mcilwain_l\":7.0625,\"geoloc_time\":\"s25737\"}",
+ "expect": "{\"slew_status\":\"accepted\",\"triggered_GRDs\":[true,true],\"additional_info\":\"s6527\",\"alert_datetime\":\"s1128\",\"alert_tense\":\"test\",\"alert_type\":\"subsequent\",\"trigger_time\":\"s12300\",\"observation_start\":\"s11305\",\"observation_stop\":\"s70964\",\"observation_livetime\":1.5,\"data_archive_page\":\"s78696\",\"ra\":12.5,\"dec\":42.375,\"containment_probability\":12.5,\"systematic_included\":false,\"instrument_phi\":42.375,\"instrument_theta\":1.5,\"instrument_semimajor_angle\":101.125,\"healpix_url\":\"s682\",\"healpix_file\":\"s41089\",\"mission\":\"s21468\",\"instrument\":\"s16256\",\"service\":\"s97846\",\"record_number\":0.75,\"messenger\":\"EM\",\"spectral_band\":[-0.5,42.375],\"spectral_band_units\":\"MHz\",\"far\":42.375,\"trigger_type\":\"rate\",\"net_count_rate\":1.5,\"background_count_rate\":12.5,\"rate_snr\":12.5,\"rate_duration\":-0.5,\"rate_energy_range\":[-3.25,-3.25],\"image_snr\":1.5,\"image_duration\":42.375,\"image_energy_range\":[12.5,42.375],\"p_astro\":-3.25,\"ra_pointing\":12.5,\"dec_pointing\":-0.5,\"roll\":-0.5,\"position_angle\":101.125,\"attitude_quarternion\":[42.375,101.125],\"rotation_rate\":[-3.25,-0.5],\"time\":\"s17622\",\"latitude\":1.5,\"longitude\":0.75,\"altitude\":101.125,\"mcilwain_l\":7.0625,\"geoloc_time\":\"s25737\"}",
+ "model": {
+  "gcnsvom.slew_status": "accepted",
+  "gcnsvom.triggered_grds.#": "2",
+  "gcnsvom.additional_info": "s6527",
+  "gcnsvom.alert_datetime": "s1128",
+  "gcnsvom.alert_tense": "test",
+  "gcnsvom.alert_type": "subsequent",
+  "gcnsvom.trigger_time": "s12300",
+  "gcnsvom.observation_start": "s11305"
+ }
+}

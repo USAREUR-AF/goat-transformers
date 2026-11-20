@@ -1,0 +1,17 @@
+{
+ "name": "gen-gnss_broadcast_binary_message-roundtrip",
+ "from": "aisstream",
+ "to": "aisstream",
+ "input": "{\"MessageType\":\"GnssBroadcastBinaryMessage\",\"Message\":{\"GnssBroadcastBinaryMessage\":{\"MessageID\":22537,\"RepeatIndicator\":20368,\"UserID\":99973,\"Valid\":true,\"Spare1\":88136,\"Longitude\":1.5,\"Latitude\":1.5,\"Spare2\":97510,\"Data\":\"s63542\"}}}",
+ "expect": "{\"MessageType\":\"GnssBroadcastBinaryMessage\",\"Message\":{\"GnssBroadcastBinaryMessage\":{\"MessageID\":22537,\"RepeatIndicator\":20368,\"UserID\":99973,\"Valid\":true,\"Spare1\":88136,\"Longitude\":1.5,\"Latitude\":1.5,\"Spare2\":97510,\"Data\":\"s63542\"}}}",
+ "model": {
+  "@kind": "gnss_broadcast_binary_message",
+  "aisstream.message_gnss_broadcast_binary_message_message_id": "22537",
+  "aisstream.message_gnss_broadcast_binary_message_repeat_indicator": "20368",
+  "aisstream.message_gnss_broadcast_binary_message_user_id": "99973",
+  "aisstream.message_gnss_broadcast_binary_message_valid": "1",
+  "aisstream.message_gnss_broadcast_binary_message_spare1": "88136",
+  "aisstream.message_gnss_broadcast_binary_message_longitude": "1.5",
+  "aisstream.message_gnss_broadcast_binary_message_latitude": "1.5"
+ }
+}

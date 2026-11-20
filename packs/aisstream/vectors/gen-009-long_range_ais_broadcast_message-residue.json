@@ -1,0 +1,7 @@
+{
+ "name": "gen-long_range_ais_broadcast_message-residue",
+ "from": "aisstream",
+ "to": "aisstream",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"MessageType\":\"LongRangeAisBroadcastMessage\",\"Message\":{\"LongRangeAisBroadcastMessage\":{\"MessageID\":50990,\"RepeatIndicator\":93547,\"UserID\":51886,\"Valid\":false,\"PositionAccuracy\":false,\"Raim\":true,\"NavigationalStatus\":14448,\"Longitude\":-3.25,\"Latitude\":0.75,\"Sog\":12.5,\"Cog\":101.125,\"PositionLatency\":true,\"Spare\":false}}}",
+ "expect": "{\"MessageType\":\"LongRangeAisBroadcastMessage\",\"Message\":{\"LongRangeAisBroadcastMessage\":{\"MessageID\":50990,\"RepeatIndicator\":93547,\"UserID\":51886,\"Valid\":false,\"PositionAccuracy\":false,\"Raim\":true,\"NavigationalStatus\":14448,\"Longitude\":-3.25,\"Latitude\":0.75,\"Sog\":12.5,\"Cog\":101.125,\"PositionLatency\":true,\"Spare\":false}},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

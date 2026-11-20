@@ -1,0 +1,10 @@
+{
+ "name": "gen-remote_stop_transaction_response-roundtrip",
+ "from": "ocpp16-remote-stop-transaction-response",
+ "to": "ocpp16-remote-stop-transaction-response",
+ "input": "{\"status\":\"Rejected\"}",
+ "expect": "{\"status\":\"Rejected\"}",
+ "model": {
+  "ocpp16remotestoptransactionresponse.status": "Rejected"
+ }
+}

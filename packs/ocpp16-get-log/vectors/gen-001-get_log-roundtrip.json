@@ -1,0 +1,16 @@
+{
+ "name": "gen-get_log-roundtrip",
+ "from": "ocpp16-get-log",
+ "to": "ocpp16-get-log",
+ "input": "{\"log\":{\"remoteLocation\":\"s24981\",\"oldestTimestamp\":\"2024-01-24T17:33:14.806Z\",\"latestTimestamp\":\"2024-07-31T10:05:29.830Z\"},\"logType\":\"SecurityLog\",\"requestId\":90540,\"retries\":43755,\"retryInterval\":33045}",
+ "expect": "{\"log\":{\"remoteLocation\":\"s24981\",\"oldestTimestamp\":\"2024-01-24T17:33:14.806Z\",\"latestTimestamp\":\"2024-07-31T10:05:29.830Z\"},\"logType\":\"SecurityLog\",\"requestId\":90540,\"retries\":43755,\"retryInterval\":33045}",
+ "model": {
+  "ocpp16getlog.log_remote_location": "s24981",
+  "ocpp16getlog.log_oldest_timestamp": "2024-01-24T17:33:14.806Z",
+  "ocpp16getlog.log_latest_timestamp": "2024-07-31T10:05:29.830Z",
+  "ocpp16getlog.log_type": "SecurityLog",
+  "ocpp16getlog.request_id": "90540",
+  "ocpp16getlog.retries": "43755",
+  "ocpp16getlog.retry_interval": "33045"
+ }
+}

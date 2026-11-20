@@ -1,0 +1,12 @@
+{
+ "name": "gen-authorize_response-roundtrip",
+ "from": "ocpp16-authorize-response",
+ "to": "ocpp16-authorize-response",
+ "input": "{\"idTagInfo\":{\"expiryDate\":\"2025-12-08T19:34:46.558Z\",\"parentIdTag\":\"s3235\",\"status\":\"Invalid\"}}",
+ "expect": "{\"idTagInfo\":{\"expiryDate\":\"2025-12-08T19:34:46.558Z\",\"parentIdTag\":\"s3235\",\"status\":\"Invalid\"}}",
+ "model": {
+  "ocpp16authorizeresponse.id_tag_info_expiry_date": "2025-12-08T19:34:46.558Z",
+  "ocpp16authorizeresponse.id_tag_info_parent_id_tag": "s3235",
+  "ocpp16authorizeresponse.id_tag_info_status": "Invalid"
+ }
+}

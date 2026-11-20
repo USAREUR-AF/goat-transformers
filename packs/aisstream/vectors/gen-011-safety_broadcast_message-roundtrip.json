@@ -1,0 +1,17 @@
+{
+ "name": "gen-safety_broadcast_message-roundtrip",
+ "from": "aisstream",
+ "to": "aisstream",
+ "input": "{\"MessageType\":\"SafetyBroadcastMessage\",\"Message\":{\"SafetyBroadcastMessage\":{\"MessageID\":22847,\"RepeatIndicator\":21893,\"UserID\":11388,\"Valid\":false,\"Spare\":37545,\"Text\":\"s13958\"}}}",
+ "expect": "{\"MessageType\":\"SafetyBroadcastMessage\",\"Message\":{\"SafetyBroadcastMessage\":{\"MessageID\":22847,\"RepeatIndicator\":21893,\"UserID\":11388,\"Valid\":false,\"Spare\":37545,\"Text\":\"s13958\"}}}",
+ "model": {
+  "@kind": "safety_broadcast_message",
+  "aisstream.message_safety_broadcast_message_message_id": "22847",
+  "aisstream.message_safety_broadcast_message_repeat_indicator": "21893",
+  "aisstream.message_safety_broadcast_message_user_id": "11388",
+  "aisstream.message_safety_broadcast_message_valid": "0",
+  "aisstream.message_safety_broadcast_message_spare": "37545",
+  "aisstream.message_safety_broadcast_message_text": "s13958",
+  "aisstream.message_type": "SafetyBroadcastMessage"
+ }
+}

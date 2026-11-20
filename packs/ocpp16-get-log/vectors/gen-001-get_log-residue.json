@@ -1,0 +1,7 @@
+{
+ "name": "gen-get_log-residue",
+ "from": "ocpp16-get-log",
+ "to": "ocpp16-get-log",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"log\":{\"remoteLocation\":\"s24981\",\"oldestTimestamp\":\"2024-01-24T17:33:14.806Z\",\"latestTimestamp\":\"2024-07-31T10:05:29.830Z\"},\"logType\":\"SecurityLog\",\"requestId\":90540,\"retries\":43755,\"retryInterval\":33045}",
+ "expect": "{\"log\":{\"remoteLocation\":\"s24981\",\"oldestTimestamp\":\"2024-01-24T17:33:14.806Z\",\"latestTimestamp\":\"2024-07-31T10:05:29.830Z\"},\"logType\":\"SecurityLog\",\"requestId\":90540,\"retries\":43755,\"retryInterval\":33045,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

@@ -1,0 +1,13 @@
+{
+ "name": "gen-update_firmware-roundtrip",
+ "from": "ocpp16-update-firmware",
+ "to": "ocpp16-update-firmware",
+ "input": "{\"location\":\"https://example.org/367\",\"retries\":16023,\"retrieveDate\":\"2023-12-01T23:31:08.740Z\",\"retryInterval\":2364}",
+ "expect": "{\"location\":\"https://example.org/367\",\"retries\":16023,\"retrieveDate\":\"2023-12-01T23:31:08.740Z\",\"retryInterval\":2364}",
+ "model": {
+  "ocpp16updatefirmware.location": "https://example.org/367",
+  "ocpp16updatefirmware.retries": "16023",
+  "ocpp16updatefirmware.retrieve_date": "2023-12-01T23:31:08.740Z",
+  "ocpp16updatefirmware.retry_interval": "2364"
+ }
+}

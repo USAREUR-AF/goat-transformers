@@ -1,0 +1,16 @@
+{
+ "name": "gen-authorize_request-roundtrip",
+ "from": "ocpp201-authorize-request",
+ "to": "ocpp201-authorize-request",
+ "input": "{\"customData\":{\"vendorId\":\"s53271\"},\"idToken\":{\"customData\":{\"vendorId\":\"s10697\"},\"additionalInfo\":[{\"customData\":{\"vendorId\":\"s59509\"},\"additionalIdToken\":\"s2030\",\"type\":\"s38670\"},{\"customData\":{\"vendorId\":\"s40281\"},\"additionalIdToken\":\"s37737\",\"type\":\"s15254\"}],\"idToken\":\"s23369\",\"type\":\"eMAID\"},\"certificate\":\"s15821\",\"iso15118CertificateHashData\":[{\"customData\":{\"vendorId\":\"s48458\"},\"hashAlgorithm\":\"SHA512\",\"issuerNameHash\":\"s5332\",\"issuerKeyHash\":\"s41786\",\"serialNumber\":\"s242\",\"responderURL\":\"s33168\"},{\"customData\":{\"vendorId\":\"s22460\"},\"hashAlgorithm\":\"SHA512\",\"issuerNameHash\":\"s98249\",\"issuerKeyHash\":\"s97309\",\"serialNumber\":\"s98905\",\"responderURL\":\"s86063\"}]}",
+ "expect": "{\"customData\":{\"vendorId\":\"s53271\"},\"idToken\":{\"customData\":{\"vendorId\":\"s10697\"},\"additionalInfo\":[{\"customData\":{\"vendorId\":\"s59509\"},\"additionalIdToken\":\"s2030\",\"type\":\"s38670\"},{\"customData\":{\"vendorId\":\"s40281\"},\"additionalIdToken\":\"s37737\",\"type\":\"s15254\"}],\"idToken\":\"s23369\",\"type\":\"eMAID\"},\"certificate\":\"s15821\",\"iso15118CertificateHashData\":[{\"customData\":{\"vendorId\":\"s48458\"},\"hashAlgorithm\":\"SHA512\",\"issuerNameHash\":\"s5332\",\"issuerKeyHash\":\"s41786\",\"serialNumber\":\"s242\",\"responderURL\":\"s33168\"},{\"customData\":{\"vendorId\":\"s22460\"},\"hashAlgorithm\":\"SHA512\",\"issuerNameHash\":\"s98249\",\"issuerKeyHash\":\"s97309\",\"serialNumber\":\"s98905\",\"responderURL\":\"s86063\"}]}",
+ "model": {
+  "ocpp201authorizerequest.custom_data_vendor_id": "s53271",
+  "ocpp201authorizerequest.id_token_custom_data_vendor_id": "s10697",
+  "ocpp201authorizerequest.id_token_additional_info.#": "2",
+  "ocpp201authorizerequest.id_token_id_token": "s23369",
+  "ocpp201authorizerequest.id_token_type": "eMAID",
+  "ocpp201authorizerequest.certificate": "s15821",
+  "ocpp201authorizerequest.iso15118_certificate_hash_data.#": "2"
+ }
+}

@@ -1,0 +1,10 @@
+{
+ "name": "gen-reset-roundtrip",
+ "from": "ocpp16-reset",
+ "to": "ocpp16-reset",
+ "input": "{\"type\":\"Hard\"}",
+ "expect": "{\"type\":\"Hard\"}",
+ "model": {
+  "ocpp16reset.type": "Hard"
+ }
+}

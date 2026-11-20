@@ -1,0 +1,11 @@
+{
+ "name": "gen-request_stop_transaction_request-roundtrip",
+ "from": "ocpp201-request-stop-transaction-request",
+ "to": "ocpp201-request-stop-transaction-request",
+ "input": "{\"customData\":{\"vendorId\":\"s71861\"},\"transactionId\":\"s72336\"}",
+ "expect": "{\"customData\":{\"vendorId\":\"s71861\"},\"transactionId\":\"s72336\"}",
+ "model": {
+  "ocpp201requeststoptransactionrequest.custom_data_vendor_id": "s71861",
+  "ocpp201requeststoptransactionrequest.transaction_id": "s72336"
+ }
+}

@@ -1,0 +1,14 @@
+{
+ "name": "gen-install_certificate_response-roundtrip",
+ "from": "ocpp201-install-certificate-response",
+ "to": "ocpp201-install-certificate-response",
+ "input": "{\"customData\":{\"vendorId\":\"s14007\"},\"status\":\"Failed\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s29949\"},\"reasonCode\":\"s78469\",\"additionalInfo\":\"s46127\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s14007\"},\"status\":\"Failed\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s29949\"},\"reasonCode\":\"s78469\",\"additionalInfo\":\"s46127\"}}",
+ "model": {
+  "ocpp201installcertificateresponse.custom_data_vendor_id": "s14007",
+  "ocpp201installcertificateresponse.status": "Failed",
+  "ocpp201installcertificateresponse.status_info_custom_data_vendor_id": "s29949",
+  "ocpp201installcertificateresponse.status_info_reason_code": "s78469",
+  "ocpp201installcertificateresponse.status_info_additional_info": "s46127"
+ }
+}

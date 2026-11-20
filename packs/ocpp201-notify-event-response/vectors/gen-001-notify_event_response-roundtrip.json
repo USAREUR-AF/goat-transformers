@@ -1,0 +1,10 @@
+{
+ "name": "gen-notify_event_response-roundtrip",
+ "from": "ocpp201-notify-event-response",
+ "to": "ocpp201-notify-event-response",
+ "input": "{\"customData\":{\"vendorId\":\"s85035\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s85035\"}}",
+ "model": {
+  "ocpp201notifyeventresponse.custom_data_vendor_id": "s85035"
+ }
+}

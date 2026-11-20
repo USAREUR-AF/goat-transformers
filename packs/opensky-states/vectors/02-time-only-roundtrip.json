@@ -1,0 +1,12 @@
+{
+  "name": "time-only-roundtrip",
+  "from": "opensky-states",
+  "to": "opensky-states",
+  "input": "{\"time\":1700000020}",
+  "expect": "{\"time\":1700000020}",
+  "model": {
+    "time_ms": "1700000020000"
+  },
+  "source": "derived by tools/gen/opensky-vectors.py from the documentation's tables and spec/engine-spec.md; no engine run",
+  "reference": "OpenSky Network REST API documentation, github.com/openskynetwork/opensky-api commit 98fecf7438dfbd23c4a26c8a7286a25b805eb2d3, docs/free/states-response.rst; a response with no state vectors (states null in the API) reads as time alone"
+}

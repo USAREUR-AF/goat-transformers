@@ -1,0 +1,7 @@
+{
+ "name": "gen-clear_cache_request-residue",
+ "from": "ocpp201-clear-cache-request",
+ "to": "ocpp201-clear-cache-request",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s16404\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s16404\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

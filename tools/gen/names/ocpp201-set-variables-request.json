@@ -1,0 +1,20 @@
+{
+ "keys": {
+  "set_variable_data|attributeType|string": "set_variable_data_attribute_type",
+  "set_variable_data|attributeValue|string": "set_variable_data_attribute_value",
+  "set_variable_data|component.customData.vendorId|string": "set_variable_data_component_custom_data_vendor_id",
+  "set_variable_data|component.evse.connectorId|int": "set_variable_data_component_evse_connector_id",
+  "set_variable_data|component.evse.customData.vendorId|string": "set_variable_data_component_evse_custom_data_vendor_id",
+  "set_variable_data|component.evse.id|int": "set_variable_data_component_evse_id",
+  "set_variable_data|component.instance|string": "set_variable_data_component_instance",
+  "set_variable_data|component.name|string": "set_variable_data_component_name",
+  "set_variable_data|customData.vendorId|string": "set_variable_data_custom_data_vendor_id",
+  "set_variable_data|variable.customData.vendorId|string": "set_variable_data_variable_custom_data_vendor_id",
+  "set_variable_data|variable.instance|string": "set_variable_data_variable_instance",
+  "set_variable_data|variable.name|string": "set_variable_data_variable_name",
+  "|customData.vendorId|string": "custom_data_vendor_id"
+ },
+ "lists": {
+  "|setVariableData": "set_variable_data"
+ }
+}

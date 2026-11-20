@@ -1,0 +1,39 @@
+{
+ "keys": {
+  "charging_profile_charging_schedule_charging_schedule_period|customData.vendorId|string": "charging_profile_charging_schedule_charging_schedule_period_custom_data_vendor_id",
+  "charging_profile_charging_schedule_charging_schedule_period|limit|float": "charging_profile_charging_schedule_charging_schedule_period_limit",
+  "charging_profile_charging_schedule_charging_schedule_period|numberPhases|int": "charging_profile_charging_schedule_charging_schedule_period_number_phases",
+  "charging_profile_charging_schedule_charging_schedule_period|phaseToUse|int": "charging_profile_charging_schedule_charging_schedule_period_phase_to_use",
+  "charging_profile_charging_schedule_charging_schedule_period|startPeriod|int": "charging_profile_charging_schedule_charging_schedule_period_start_period",
+  "charging_profile_charging_schedule_sales_tariff_sales_tariff_entry|customData.vendorId|string": "charging_profile_charging_schedule_sales_tariff_sales_tariff_entry_custom_data_vendor_id",
+  "charging_profile_charging_schedule_sales_tariff_sales_tariff_entry|ePriceLevel|int": "charging_profile_charging_schedule_sales_tariff_sales_tariff_entry_e_price_level",
+  "charging_profile_charging_schedule_sales_tariff_sales_tariff_entry|relativeTimeInterval.duration|int": "charging_profile_charging_schedule_sales_tariff_sales_tariff_entry_relative_time_interv_98db5116",
+  "charging_profile_charging_schedule_sales_tariff_sales_tariff_entry|relativeTimeInterval.start|int": "charging_profile_charging_schedule_sales_tariff_sales_tariff_entry_relative_time_interval_start",
+  "charging_profile_charging_schedule|chargingRateUnit|string": "charging_profile_charging_schedule_charging_rate_unit",
+  "charging_profile_charging_schedule|customData.vendorId|string": "charging_profile_charging_schedule_custom_data_vendor_id",
+  "charging_profile_charging_schedule|duration|int": "charging_profile_charging_schedule_duration",
+  "charging_profile_charging_schedule|id|int": "charging_profile_charging_schedule_id",
+  "charging_profile_charging_schedule|minChargingRate|float": "charging_profile_charging_schedule_min_charging_rate",
+  "charging_profile_charging_schedule|salesTariff.customData.vendorId|string": "charging_profile_charging_schedule_sales_tariff_custom_data_vendor_id",
+  "charging_profile_charging_schedule|salesTariff.id|int": "charging_profile_charging_schedule_sales_tariff_id",
+  "charging_profile_charging_schedule|salesTariff.numEPriceLevels|int": "charging_profile_charging_schedule_sales_tariff_num_eprice_levels",
+  "charging_profile_charging_schedule|salesTariff.salesTariffDescription|string": "charging_profile_charging_schedule_sales_tariff_sales_tariff_description",
+  "charging_profile_charging_schedule|startSchedule|string": "charging_profile_charging_schedule_start_schedule",
+  "|chargingProfile.chargingProfileKind|string": "charging_profile_charging_profile_kind",
+  "|chargingProfile.chargingProfilePurpose|string": "charging_profile_charging_profile_purpose",
+  "|chargingProfile.customData.vendorId|string": "charging_profile_custom_data_vendor_id",
+  "|chargingProfile.id|int": "charging_profile_id",
+  "|chargingProfile.recurrencyKind|string": "charging_profile_recurrency_kind",
+  "|chargingProfile.stackLevel|int": "charging_profile_stack_level",
+  "|chargingProfile.transactionId|string": "charging_profile_transaction_id",
+  "|chargingProfile.validFrom|string": "charging_profile_valid_from",
+  "|chargingProfile.validTo|string": "charging_profile_valid_to",
+  "|customData.vendorId|string": "custom_data_vendor_id",
+  "|evseId|int": "evse_id"
+ },
+ "lists": {
+  "charging_profile_charging_schedule|chargingSchedulePeriod": "charging_profile_charging_schedule_charging_schedule_period",
+  "charging_profile_charging_schedule|salesTariff.salesTariffEntry": "charging_profile_charging_schedule_sales_tariff_sales_tariff_entry",
+  "|chargingProfile.chargingSchedule": "charging_profile_charging_schedule"
+ }
+}

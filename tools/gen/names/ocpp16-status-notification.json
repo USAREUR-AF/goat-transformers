@@ -1,0 +1,12 @@
+{
+ "keys": {
+  "|connectorId|int": "connector_id",
+  "|errorCode|string": "error_code",
+  "|info|string": "info",
+  "|status|string": "status",
+  "|timestamp|string": "timestamp",
+  "|vendorErrorCode|string": "vendor_error_code",
+  "|vendorId|string": "vendor_id"
+ },
+ "lists": {}
+}

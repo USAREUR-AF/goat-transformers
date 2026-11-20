@@ -1,0 +1,7 @@
+{
+ "name": "gen-clear_variable_monitoring_request-residue",
+ "from": "ocpp201-clear-variable-monitoring-request",
+ "to": "ocpp201-clear-variable-monitoring-request",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s57731\"},\"id\":[61515,51609]}",
+ "expect": "{\"customData\":{\"vendorId\":\"s57731\"},\"id\":[61515,51609],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

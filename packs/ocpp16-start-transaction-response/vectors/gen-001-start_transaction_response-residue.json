@@ -1,0 +1,7 @@
+{
+ "name": "gen-start_transaction_response-residue",
+ "from": "ocpp16-start-transaction-response",
+ "to": "ocpp16-start-transaction-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"idTagInfo\":{\"expiryDate\":\"2025-12-29T22:35:36.541Z\",\"parentIdTag\":\"s25179\",\"status\":\"Accepted\"},\"transactionId\":44134}",
+ "expect": "{\"idTagInfo\":{\"expiryDate\":\"2025-12-29T22:35:36.541Z\",\"parentIdTag\":\"s25179\",\"status\":\"Accepted\"},\"transactionId\":44134,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

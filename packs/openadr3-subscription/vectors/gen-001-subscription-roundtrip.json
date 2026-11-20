@@ -1,0 +1,17 @@
+{
+ "name": "gen-subscription-roundtrip",
+ "from": "openadr3-subscription",
+ "to": "openadr3-subscription",
+ "input": "{\"id\":\"s1044\",\"createdDateTime\":\"2024-03-19T12:02:24.845Z\",\"modificationDateTime\":\"2025-05-25T22:29:34.915Z\",\"objectType\":\"EVENT\",\"clientName\":\"s93459\",\"programID\":\"s96552\",\"objectOperations\":[{\"objects\":[\"PROGRAM\"],\"operations\":[\"UPDATE\"],\"callbackUrl\":\"https://example.org/289\",\"bearerToken\":\"s24431\"},{\"objects\":[\"PROGRAM\"],\"operations\":[\"DELETE\"],\"callbackUrl\":\"https://example.org/103\",\"bearerToken\":\"s18776\"}],\"targets\":[\"s63574\",\"s36134\"],\"clientID\":\"s7195\"}",
+ "expect": "{\"id\":\"s1044\",\"createdDateTime\":\"2024-03-19T12:02:24.845Z\",\"modificationDateTime\":\"2025-05-25T22:29:34.915Z\",\"objectType\":\"EVENT\",\"clientName\":\"s93459\",\"programID\":\"s96552\",\"objectOperations\":[{\"objects\":[\"PROGRAM\"],\"operations\":[\"UPDATE\"],\"callbackUrl\":\"https://example.org/289\",\"bearerToken\":\"s24431\"},{\"objects\":[\"PROGRAM\"],\"operations\":[\"DELETE\"],\"callbackUrl\":\"https://example.org/103\",\"bearerToken\":\"s18776\"}],\"targets\":[\"s63574\",\"s36134\"],\"clientID\":\"s7195\"}",
+ "model": {
+  "uid": "s1044",
+  "openadr3sub.id": "s1044",
+  "openadr3sub.created_date_time": "2024-03-19T12:02:24.845Z",
+  "openadr3sub.modification_date_time": "2025-05-25T22:29:34.915Z",
+  "openadr3sub.object_type": "EVENT",
+  "openadr3sub.client_name": "s93459",
+  "openadr3sub.program_id": "s96552",
+  "openadr3sub.object_operations.#": "2"
+ }
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-data_transfer_response-residue",
+ "from": "ocpp201-data-transfer-response",
+ "to": "ocpp201-data-transfer-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s87076\"},\"status\":\"UnknownMessageId\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s68559\"},\"reasonCode\":\"s40675\",\"additionalInfo\":\"s40882\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s87076\"},\"status\":\"UnknownMessageId\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s68559\"},\"reasonCode\":\"s40675\",\"additionalInfo\":\"s40882\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

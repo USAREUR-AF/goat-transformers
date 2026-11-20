@@ -1,0 +1,7 @@
+{
+ "name": "gen-get_installed_certificate_ids-residue",
+ "from": "ocpp16-get-installed-certificate-ids",
+ "to": "ocpp16-get-installed-certificate-ids",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"certificateType\":\"CentralSystemRootCertificate\"}",
+ "expect": "{\"certificateType\":\"CentralSystemRootCertificate\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

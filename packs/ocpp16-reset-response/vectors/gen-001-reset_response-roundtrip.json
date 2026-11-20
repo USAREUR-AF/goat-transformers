@@ -1,0 +1,10 @@
+{
+ "name": "gen-reset_response-roundtrip",
+ "from": "ocpp16-reset-response",
+ "to": "ocpp16-reset-response",
+ "input": "{\"status\":\"Accepted\"}",
+ "expect": "{\"status\":\"Accepted\"}",
+ "model": {
+  "ocpp16resetresponse.status": "Accepted"
+ }
+}

@@ -1,0 +1,22 @@
+{
+ "keys": {
+  "results_sensor_ids|.|int": "results_sensor_ids_value",
+  "results|datetimeFrom.local|string": "results_datetime_from_local",
+  "results|datetimeFrom.utc|string": "results_datetime_from_utc",
+  "results|datetimeTo.local|string": "results_datetime_to_local",
+  "results|datetimeTo.utc|string": "results_datetime_to_utc",
+  "results|flagType.id|int": "results_flag_type_id",
+  "results|flagType.label|string": "results_flag_type_label",
+  "results|flagType.level|string": "results_flag_type_level",
+  "results|locationId|int": "results_location_id",
+  "results|note|string": "results_note",
+  "|meta.limit|int": "meta_limit",
+  "|meta.name|string": "meta_name",
+  "|meta.page|int": "meta_page",
+  "|meta.website|string": "meta_website"
+ },
+ "lists": {
+  "results|sensorIds": "results_sensor_ids",
+  "|results": "results"
+ }
+}

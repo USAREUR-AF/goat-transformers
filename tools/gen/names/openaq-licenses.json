@@ -1,0 +1,19 @@
+{
+ "keys": {
+  "results|attributionRequired|int": "results_attribution_required",
+  "results|commercialUseAllowed|int": "results_commercial_use_allowed",
+  "results|id|int": "results_id",
+  "results|modificationAllowed|int": "results_modification_allowed",
+  "results|name|string": "results_name",
+  "results|redistributionAllowed|int": "results_redistribution_allowed",
+  "results|shareAlikeRequired|int": "results_share_alike_required",
+  "results|sourceUrl|string": "results_source_url",
+  "|meta.limit|int": "meta_limit",
+  "|meta.name|string": "meta_name",
+  "|meta.page|int": "meta_page",
+  "|meta.website|string": "meta_website"
+ },
+ "lists": {
+  "|results": "results"
+ }
+}

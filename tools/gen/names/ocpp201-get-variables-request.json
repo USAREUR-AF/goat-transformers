@@ -1,0 +1,19 @@
+{
+ "keys": {
+  "get_variable_data|attributeType|string": "get_variable_data_attribute_type",
+  "get_variable_data|component.customData.vendorId|string": "get_variable_data_component_custom_data_vendor_id",
+  "get_variable_data|component.evse.connectorId|int": "get_variable_data_component_evse_connector_id",
+  "get_variable_data|component.evse.customData.vendorId|string": "get_variable_data_component_evse_custom_data_vendor_id",
+  "get_variable_data|component.evse.id|int": "get_variable_data_component_evse_id",
+  "get_variable_data|component.instance|string": "get_variable_data_component_instance",
+  "get_variable_data|component.name|string": "get_variable_data_component_name",
+  "get_variable_data|customData.vendorId|string": "get_variable_data_custom_data_vendor_id",
+  "get_variable_data|variable.customData.vendorId|string": "get_variable_data_variable_custom_data_vendor_id",
+  "get_variable_data|variable.instance|string": "get_variable_data_variable_instance",
+  "get_variable_data|variable.name|string": "get_variable_data_variable_name",
+  "|customData.vendorId|string": "custom_data_vendor_id"
+ },
+ "lists": {
+  "|getVariableData": "get_variable_data"
+ }
+}

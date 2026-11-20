@@ -1,0 +1,7 @@
+{
+ "name": "gen-trigger_message_response-residue",
+ "from": "ocpp16-trigger-message-response",
+ "to": "ocpp16-trigger-message-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"status\":\"NotImplemented\"}",
+ "expect": "{\"status\":\"NotImplemented\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

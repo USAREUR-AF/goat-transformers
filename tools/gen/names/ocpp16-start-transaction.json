@@ -1,0 +1,10 @@
+{
+ "keys": {
+  "|connectorId|int": "connector_id",
+  "|idTag|string": "id_tag",
+  "|meterStart|int": "meter_start",
+  "|reservationId|int": "reservation_id",
+  "|timestamp|string": "timestamp"
+ },
+ "lists": {}
+}

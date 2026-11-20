@@ -1,0 +1,7 @@
+{
+ "name": "gen-cost_updated_request-residue",
+ "from": "ocpp201-cost-updated-request",
+ "to": "ocpp201-cost-updated-request",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s71802\"},\"totalCost\":42.375,\"transactionId\":\"s9252\"}",
+ "expect": "{\"customData\":{\"vendorId\":\"s71802\"},\"totalCost\":42.375,\"transactionId\":\"s9252\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

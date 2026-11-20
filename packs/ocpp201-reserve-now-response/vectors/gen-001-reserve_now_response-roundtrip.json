@@ -1,0 +1,14 @@
+{
+ "name": "gen-reserve_now_response-roundtrip",
+ "from": "ocpp201-reserve-now-response",
+ "to": "ocpp201-reserve-now-response",
+ "input": "{\"customData\":{\"vendorId\":\"s41203\"},\"status\":\"Rejected\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s21398\"},\"reasonCode\":\"s71258\",\"additionalInfo\":\"s38790\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s41203\"},\"status\":\"Rejected\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s21398\"},\"reasonCode\":\"s71258\",\"additionalInfo\":\"s38790\"}}",
+ "model": {
+  "ocpp201reservenowresponse.custom_data_vendor_id": "s41203",
+  "ocpp201reservenowresponse.status": "Rejected",
+  "ocpp201reservenowresponse.status_info_custom_data_vendor_id": "s21398",
+  "ocpp201reservenowresponse.status_info_reason_code": "s71258",
+  "ocpp201reservenowresponse.status_info_additional_info": "s38790"
+ }
+}

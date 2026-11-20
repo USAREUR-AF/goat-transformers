@@ -1,0 +1,7 @@
+{
+ "name": "gen-get15118_evcertificate_response-residue",
+ "from": "ocpp201-get15118-ev-certificate-response",
+ "to": "ocpp201-get15118-ev-certificate-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s80267\"},\"status\":\"Accepted\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s85688\"},\"reasonCode\":\"s468\",\"additionalInfo\":\"s99331\"},\"exiResponse\":\"s18913\"}",
+ "expect": "{\"customData\":{\"vendorId\":\"s80267\"},\"status\":\"Accepted\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s85688\"},\"reasonCode\":\"s468\",\"additionalInfo\":\"s99331\"},\"exiResponse\":\"s18913\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

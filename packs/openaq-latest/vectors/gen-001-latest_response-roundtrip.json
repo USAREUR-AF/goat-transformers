@@ -1,0 +1,14 @@
+{
+ "name": "gen-latest_response-roundtrip",
+ "from": "openaq-latest",
+ "to": "openaq-latest",
+ "input": "{\"meta\":{\"name\":\"s18554\",\"website\":\"s78779\",\"page\":59378,\"limit\":69753},\"results\":[{\"datetime\":{\"utc\":\"2024-04-20T08:30:27.824Z\",\"local\":\"2025-12-21T11:13:44.212Z\"},\"value\":101.125,\"coordinates\":{\"latitude\":12.5,\"longitude\":42.375},\"sensorsId\":91503,\"locationsId\":2257},{\"datetime\":{\"utc\":\"2024-05-12T04:11:27.273Z\",\"local\":\"2024-06-30T01:25:37.684Z\"},\"value\":-3.25,\"coordinates\":{\"latitude\":1.5,\"longitude\":42.375},\"sensorsId\":32146,\"locationsId\":35215}]}",
+ "expect": "{\"meta\":{\"name\":\"s18554\",\"website\":\"s78779\",\"page\":59378,\"limit\":69753},\"results\":[{\"datetime\":{\"utc\":\"2024-04-20T08:30:27.824Z\",\"local\":\"2025-12-21T11:13:44.212Z\"},\"value\":101.125,\"coordinates\":{\"latitude\":12.5,\"longitude\":42.375},\"sensorsId\":91503,\"locationsId\":2257},{\"datetime\":{\"utc\":\"2024-05-12T04:11:27.273Z\",\"local\":\"2024-06-30T01:25:37.684Z\"},\"value\":-3.25,\"coordinates\":{\"latitude\":1.5,\"longitude\":42.375},\"sensorsId\":32146,\"locationsId\":35215}]}",
+ "model": {
+  "openaqlatest.meta_name": "s18554",
+  "openaqlatest.meta_website": "s78779",
+  "openaqlatest.meta_page": "59378",
+  "openaqlatest.meta_limit": "69753",
+  "openaqlatest.results.#": "2"
+ }
+}

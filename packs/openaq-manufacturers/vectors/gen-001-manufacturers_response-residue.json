@@ -1,0 +1,7 @@
+{
+ "name": "gen-manufacturers_response-residue",
+ "from": "openaq-manufacturers",
+ "to": "openaq-manufacturers",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"meta\":{\"name\":\"s5451\",\"website\":\"s61611\",\"page\":45122,\"limit\":20133},\"results\":[{\"id\":22731,\"name\":\"s10282\",\"instruments\":[{\"id\":63430,\"name\":\"s25950\"}]},{\"id\":60479,\"name\":\"s30681\",\"instruments\":[{\"id\":33171,\"name\":\"s56901\"}]}]}",
+ "expect": "{\"meta\":{\"name\":\"s5451\",\"website\":\"s61611\",\"page\":45122,\"limit\":20133},\"results\":[{\"id\":22731,\"name\":\"s10282\",\"instruments\":[{\"id\":63430,\"name\":\"s25950\"}]},{\"id\":60479,\"name\":\"s30681\",\"instruments\":[{\"id\":33171,\"name\":\"s56901\"}]}],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

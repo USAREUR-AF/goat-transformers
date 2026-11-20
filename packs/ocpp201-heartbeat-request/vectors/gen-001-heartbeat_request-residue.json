@@ -1,0 +1,7 @@
+{
+ "name": "gen-heartbeat_request-residue",
+ "from": "ocpp201-heartbeat-request",
+ "to": "ocpp201-heartbeat-request",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s31975\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s31975\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

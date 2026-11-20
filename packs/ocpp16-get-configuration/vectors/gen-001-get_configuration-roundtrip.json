@@ -1,0 +1,10 @@
+{
+ "name": "gen-get_configuration-roundtrip",
+ "from": "ocpp16-get-configuration",
+ "to": "ocpp16-get-configuration",
+ "input": "{\"key\":[\"s73256\",\"s90840\"]}",
+ "expect": "{\"key\":[\"s73256\",\"s90840\"]}",
+ "model": {
+  "ocpp16getconfiguration.key.#": "2"
+ }
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-boot_notification-residue",
+ "from": "ocpp16-boot-notification",
+ "to": "ocpp16-boot-notification",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"chargePointVendor\":\"s70176\",\"chargePointModel\":\"s82787\",\"chargePointSerialNumber\":\"s96695\",\"chargeBoxSerialNumber\":\"s78547\",\"firmwareVersion\":\"s64638\",\"iccid\":\"s98418\",\"imsi\":\"s72751\",\"meterType\":\"s11843\",\"meterSerialNumber\":\"s12099\"}",
+ "expect": "{\"chargePointVendor\":\"s70176\",\"chargePointModel\":\"s82787\",\"chargePointSerialNumber\":\"s96695\",\"chargeBoxSerialNumber\":\"s78547\",\"firmwareVersion\":\"s64638\",\"iccid\":\"s98418\",\"imsi\":\"s72751\",\"meterType\":\"s11843\",\"meterSerialNumber\":\"s12099\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

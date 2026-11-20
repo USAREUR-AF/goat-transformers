@@ -1,0 +1,17 @@
+{
+ "name": "gen-channel_management-roundtrip",
+ "from": "aisstream",
+ "to": "aisstream",
+ "input": "{\"MessageType\":\"ChannelManagement\",\"Message\":{\"ChannelManagement\":{\"MessageID\":48364,\"RepeatIndicator\":96933,\"UserID\":12290,\"Valid\":false,\"Spare1\":81399,\"ChannelA\":69228,\"ChannelB\":72179,\"TxRxMode\":71330,\"LowPower\":true,\"Area\":{\"Longitude1\":0.75,\"Latitude1\":0.75,\"Longitude2\":-3.25,\"Latitude2\":0.75},\"Unicast\":{\"AddressStation1\":40930,\"Spare2\":47690,\"AddressStation2\":11951,\"Spare3\":66603},\"IsAddressed\":false,\"BwA\":false,\"BwB\":true,\"TransitionalZoneSize\":42285,\"Spare4\":49521}}}",
+ "expect": "{\"MessageType\":\"ChannelManagement\",\"Message\":{\"ChannelManagement\":{\"MessageID\":48364,\"RepeatIndicator\":96933,\"UserID\":12290,\"Valid\":false,\"Spare1\":81399,\"ChannelA\":69228,\"ChannelB\":72179,\"TxRxMode\":71330,\"LowPower\":true,\"Area\":{\"Longitude1\":0.75,\"Latitude1\":0.75,\"Longitude2\":-3.25,\"Latitude2\":0.75},\"Unicast\":{\"AddressStation1\":40930,\"Spare2\":47690,\"AddressStation2\":11951,\"Spare3\":66603},\"IsAddressed\":false,\"BwA\":false,\"BwB\":true,\"TransitionalZoneSize\":42285,\"Spare4\":49521}}}",
+ "model": {
+  "@kind": "channel_management",
+  "aisstream.message_channel_management_message_id": "48364",
+  "aisstream.message_channel_management_repeat_indicator": "96933",
+  "aisstream.message_channel_management_user_id": "12290",
+  "aisstream.message_channel_management_valid": "0",
+  "aisstream.message_channel_management_spare1": "81399",
+  "aisstream.message_channel_management_channel_a": "69228",
+  "aisstream.message_channel_management_channel_b": "72179"
+ }
+}

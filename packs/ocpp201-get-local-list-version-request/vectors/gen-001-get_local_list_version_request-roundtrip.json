@@ -1,0 +1,10 @@
+{
+ "name": "gen-get_local_list_version_request-roundtrip",
+ "from": "ocpp201-get-local-list-version-request",
+ "to": "ocpp201-get-local-list-version-request",
+ "input": "{\"customData\":{\"vendorId\":\"s41369\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s41369\"}}",
+ "model": {
+  "ocpp201getlocallistversionrequest.custom_data_vendor_id": "s41369"
+ }
+}

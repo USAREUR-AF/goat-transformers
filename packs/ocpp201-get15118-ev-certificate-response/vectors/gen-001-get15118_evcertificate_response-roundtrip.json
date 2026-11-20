@@ -1,0 +1,15 @@
+{
+ "name": "gen-get15118_evcertificate_response-roundtrip",
+ "from": "ocpp201-get15118-ev-certificate-response",
+ "to": "ocpp201-get15118-ev-certificate-response",
+ "input": "{\"customData\":{\"vendorId\":\"s80267\"},\"status\":\"Accepted\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s85688\"},\"reasonCode\":\"s468\",\"additionalInfo\":\"s99331\"},\"exiResponse\":\"s18913\"}",
+ "expect": "{\"customData\":{\"vendorId\":\"s80267\"},\"status\":\"Accepted\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s85688\"},\"reasonCode\":\"s468\",\"additionalInfo\":\"s99331\"},\"exiResponse\":\"s18913\"}",
+ "model": {
+  "ocpp201get15118evcertificateresponse.custom_data_vendor_id": "s80267",
+  "ocpp201get15118evcertificateresponse.status": "Accepted",
+  "ocpp201get15118evcertificateresponse.status_info_custom_data_vendor_id": "s85688",
+  "ocpp201get15118evcertificateresponse.status_info_reason_code": "s468",
+  "ocpp201get15118evcertificateresponse.status_info_additional_info": "s99331",
+  "ocpp201get15118evcertificateresponse.exi_response": "s18913"
+ }
+}

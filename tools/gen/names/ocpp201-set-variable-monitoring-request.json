@@ -1,0 +1,23 @@
+{
+ "keys": {
+  "set_monitoring_data|component.customData.vendorId|string": "set_monitoring_data_component_custom_data_vendor_id",
+  "set_monitoring_data|component.evse.connectorId|int": "set_monitoring_data_component_evse_connector_id",
+  "set_monitoring_data|component.evse.customData.vendorId|string": "set_monitoring_data_component_evse_custom_data_vendor_id",
+  "set_monitoring_data|component.evse.id|int": "set_monitoring_data_component_evse_id",
+  "set_monitoring_data|component.instance|string": "set_monitoring_data_component_instance",
+  "set_monitoring_data|component.name|string": "set_monitoring_data_component_name",
+  "set_monitoring_data|customData.vendorId|string": "set_monitoring_data_custom_data_vendor_id",
+  "set_monitoring_data|id|int": "set_monitoring_data_id",
+  "set_monitoring_data|severity|int": "set_monitoring_data_severity",
+  "set_monitoring_data|transaction|int": "set_monitoring_data_transaction",
+  "set_monitoring_data|type|string": "set_monitoring_data_type",
+  "set_monitoring_data|value|float": "set_monitoring_data_value",
+  "set_monitoring_data|variable.customData.vendorId|string": "set_monitoring_data_variable_custom_data_vendor_id",
+  "set_monitoring_data|variable.instance|string": "set_monitoring_data_variable_instance",
+  "set_monitoring_data|variable.name|string": "set_monitoring_data_variable_name",
+  "|customData.vendorId|string": "custom_data_vendor_id"
+ },
+ "lists": {
+  "|setMonitoringData": "set_monitoring_data"
+ }
+}

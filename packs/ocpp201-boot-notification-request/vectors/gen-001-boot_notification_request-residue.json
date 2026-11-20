@@ -1,0 +1,7 @@
+{
+ "name": "gen-boot_notification_request-residue",
+ "from": "ocpp201-boot-notification-request",
+ "to": "ocpp201-boot-notification-request",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s33398\"},\"chargingStation\":{\"customData\":{\"vendorId\":\"s17626\"},\"serialNumber\":\"s10892\",\"model\":\"s71584\",\"modem\":{\"customData\":{\"vendorId\":\"s68795\"},\"iccid\":\"s92615\",\"imsi\":\"s90015\"},\"vendorName\":\"s35435\",\"firmwareVersion\":\"s96639\"},\"reason\":\"ApplicationReset\"}",
+ "expect": "{\"customData\":{\"vendorId\":\"s33398\"},\"chargingStation\":{\"customData\":{\"vendorId\":\"s17626\"},\"serialNumber\":\"s10892\",\"model\":\"s71584\",\"modem\":{\"customData\":{\"vendorId\":\"s68795\"},\"iccid\":\"s92615\",\"imsi\":\"s90015\"},\"vendorName\":\"s35435\",\"firmwareVersion\":\"s96639\"},\"reason\":\"ApplicationReset\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

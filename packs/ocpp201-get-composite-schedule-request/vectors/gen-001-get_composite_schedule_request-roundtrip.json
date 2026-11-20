@@ -1,0 +1,13 @@
+{
+ "name": "gen-get_composite_schedule_request-roundtrip",
+ "from": "ocpp201-get-composite-schedule-request",
+ "to": "ocpp201-get-composite-schedule-request",
+ "input": "{\"customData\":{\"vendorId\":\"s70133\"},\"duration\":95565,\"chargingRateUnit\":\"A\",\"evseId\":10725}",
+ "expect": "{\"customData\":{\"vendorId\":\"s70133\"},\"duration\":95565,\"chargingRateUnit\":\"A\",\"evseId\":10725}",
+ "model": {
+  "ocpp201getcompositeschedulerequest.custom_data_vendor_id": "s70133",
+  "ocpp201getcompositeschedulerequest.duration": "95565",
+  "ocpp201getcompositeschedulerequest.charging_rate_unit": "A",
+  "ocpp201getcompositeschedulerequest.evse_id": "10725"
+ }
+}

@@ -1,0 +1,8 @@
+{
+  "name": "OpenADR 3",
+  "domain": "iot",
+  "prefixes": [
+    "openadr3-"
+  ],
+  "detail": "program, event, report, subscription, VEN, resource, notification"
+}

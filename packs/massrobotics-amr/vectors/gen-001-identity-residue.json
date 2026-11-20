@@ -1,0 +1,7 @@
+{
+ "name": "gen-identity-residue",
+ "from": "massrobotics-amr",
+ "to": "massrobotics-amr",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"uuid\":\"df457e88-0032-4be6-87da-4d67e0148be6\",\"timestamp\":\"2024-07-20T19:12:00.093Z\",\"manufacturerName\":\"s56302\",\"robotModel\":\"s9295\",\"robotSerialNumber\":\"s48877\",\"baseRobotEnvelope\":{\"x\":-0.5,\"y\":7.0625,\"z\":12.5},\"maxSpeed\":1.5,\"maxRunTime\":-3.25,\"emergencyContactInformation\":\"s35703\",\"chargerType\":\"s28522\",\"supportVendorName\":\"s15109\",\"supportVendorContactInformation\":\"s64962\",\"productDocumentation\":\"https://example.org/543\",\"thumbnailImage\":\"https://example.org/753\",\"cargoType\":\"s69870\",\"cargoMaxVolume\":{\"x\":101.125,\"y\":0.75,\"z\":12.5},\"cargoMaxWeight\":\"s74282\"}",
+ "expect": "{\"uuid\":\"df457e88-0032-4be6-87da-4d67e0148be6\",\"timestamp\":\"2024-07-20T19:12:00.093Z\",\"manufacturerName\":\"s56302\",\"robotModel\":\"s9295\",\"robotSerialNumber\":\"s48877\",\"baseRobotEnvelope\":{\"x\":-0.5,\"y\":7.0625,\"z\":12.5},\"maxSpeed\":1.5,\"maxRunTime\":-3.25,\"emergencyContactInformation\":\"s35703\",\"chargerType\":\"s28522\",\"supportVendorName\":\"s15109\",\"supportVendorContactInformation\":\"s64962\",\"productDocumentation\":\"https://example.org/543\",\"thumbnailImage\":\"https://example.org/753\",\"cargoType\":\"s69870\",\"cargoMaxVolume\":{\"x\":101.125,\"y\":0.75,\"z\":12.5},\"cargoMaxWeight\":\"s74282\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

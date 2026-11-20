@@ -1,0 +1,17 @@
+{
+ "name": "gen-test-roundtrip",
+ "from": "gcn-burstcube-test",
+ "to": "gcn-burstcube-test",
+ "input": "{\"detector_status\":{\"CsI0\":\"on\",\"CsI1\":\"on\",\"CsI2\":\"off\",\"CsI3\":\"off\"},\"alert_datetime\":\"s54473\",\"alert_tense\":\"archival\",\"alert_type\":\"retraction\",\"mission\":\"s17437\",\"instrument\":\"s71106\",\"service\":\"s78546\",\"record_number\":7.0625,\"messenger\":\"EM\",\"spectral_band\":[42.375,0.75],\"spectral_band_units\":\"keV\",\"trigger_time\":\"s82657\",\"observation_start\":\"s10312\",\"observation_stop\":\"s81629\",\"observation_livetime\":-3.25,\"data_archive_page\":\"s79861\",\"ra\":0.75,\"dec\":101.125,\"containment_probability\":1.5,\"systematic_included\":false,\"instrument_phi\":42.375,\"instrument_theta\":-0.5,\"instrument_semimajor_angle\":12.5,\"healpix_url\":\"s80933\",\"healpix_file\":\"s85697\",\"far\":0.75,\"trigger_type\":\"image\",\"net_count_rate\":7.0625,\"background_count_rate\":7.0625,\"rate_snr\":42.375,\"rate_duration\":12.5,\"rate_energy_range\":[0.75,42.375],\"image_snr\":-3.25,\"image_duration\":7.0625,\"image_energy_range\":[12.5,1.5],\"p_astro\":42.375,\"t90\":0.75,\"t50\":0.75}",
+ "expect": "{\"detector_status\":{\"CsI0\":\"on\",\"CsI1\":\"on\",\"CsI2\":\"off\",\"CsI3\":\"off\"},\"alert_datetime\":\"s54473\",\"alert_tense\":\"archival\",\"alert_type\":\"retraction\",\"mission\":\"s17437\",\"instrument\":\"s71106\",\"service\":\"s78546\",\"record_number\":7.0625,\"messenger\":\"EM\",\"spectral_band\":[42.375,0.75],\"spectral_band_units\":\"keV\",\"trigger_time\":\"s82657\",\"observation_start\":\"s10312\",\"observation_stop\":\"s81629\",\"observation_livetime\":-3.25,\"data_archive_page\":\"s79861\",\"ra\":0.75,\"dec\":101.125,\"containment_probability\":1.5,\"systematic_included\":false,\"instrument_phi\":42.375,\"instrument_theta\":-0.5,\"instrument_semimajor_angle\":12.5,\"healpix_url\":\"s80933\",\"healpix_file\":\"s85697\",\"far\":0.75,\"trigger_type\":\"image\",\"net_count_rate\":7.0625,\"background_count_rate\":7.0625,\"rate_snr\":42.375,\"rate_duration\":12.5,\"rate_energy_range\":[0.75,42.375],\"image_snr\":-3.25,\"image_duration\":7.0625,\"image_energy_range\":[12.5,1.5],\"p_astro\":42.375,\"t90\":0.75,\"t50\":0.75}",
+ "model": {
+  "gcnburstcubetest.detector_status_cs_i0": "on",
+  "gcnburstcubetest.detector_status_cs_i1": "on",
+  "gcnburstcubetest.detector_status_cs_i2": "off",
+  "gcnburstcubetest.detector_status_cs_i3": "off",
+  "gcnburstcubetest.alert_datetime": "s54473",
+  "gcnburstcubetest.alert_tense": "archival",
+  "gcnburstcubetest.alert_type": "retraction",
+  "gcnburstcubetest.mission": "s17437"
+ }
+}

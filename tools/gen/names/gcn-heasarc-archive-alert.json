@@ -1,0 +1,26 @@
+{
+ "keys": {
+  "spectral_band|.|float": "spectral_band_value",
+  "|alert_datetime|string": "alert_datetime",
+  "|alert_tense|string": "alert_tense",
+  "|alert_type|string": "alert_type",
+  "|data_archive_page|string": "data_archive_page",
+  "|facility_name|string": "facility_name",
+  "|instrument|string": "instrument",
+  "|messenger|string": "messenger",
+  "|mission_page|string": "mission_page",
+  "|mission|string": "mission",
+  "|obs_id|string": "obs_id",
+  "|observation_livetime|float": "observation_livetime",
+  "|observation_start|string": "observation_start",
+  "|observation_stop|string": "observation_stop",
+  "|record_number|float": "record_number",
+  "|service|string": "service",
+  "|spectral_band_units|string": "spectral_band_units",
+  "|target_name|string": "target_name",
+  "|trigger_time|string": "trigger_time"
+ },
+ "lists": {
+  "|spectral_band": "spectral_band"
+ }
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-get_diagnostics_response-residue",
+ "from": "ocpp16-get-diagnostics-response",
+ "to": "ocpp16-get-diagnostics-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"fileName\":\"s21815\"}",
+ "expect": "{\"fileName\":\"s21815\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

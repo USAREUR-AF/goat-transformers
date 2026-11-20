@@ -1,0 +1,15 @@
+{
+ "name": "gen-get_certificate_status_response-roundtrip",
+ "from": "ocpp201-get-certificate-status-response",
+ "to": "ocpp201-get-certificate-status-response",
+ "input": "{\"customData\":{\"vendorId\":\"s33489\"},\"status\":\"Accepted\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s2002\"},\"reasonCode\":\"s45841\",\"additionalInfo\":\"s53816\"},\"ocspResult\":\"s23219\"}",
+ "expect": "{\"customData\":{\"vendorId\":\"s33489\"},\"status\":\"Accepted\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s2002\"},\"reasonCode\":\"s45841\",\"additionalInfo\":\"s53816\"},\"ocspResult\":\"s23219\"}",
+ "model": {
+  "ocpp201getcertificatestatusresponse.custom_data_vendor_id": "s33489",
+  "ocpp201getcertificatestatusresponse.status": "Accepted",
+  "ocpp201getcertificatestatusresponse.status_info_custom_data_vendor_id": "s2002",
+  "ocpp201getcertificatestatusresponse.status_info_reason_code": "s45841",
+  "ocpp201getcertificatestatusresponse.status_info_additional_info": "s53816",
+  "ocpp201getcertificatestatusresponse.ocsp_result": "s23219"
+ }
+}

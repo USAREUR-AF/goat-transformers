@@ -1,0 +1,8 @@
+{
+ "keys": {
+  "|chargingRateUnit|string": "charging_rate_unit",
+  "|connectorId|int": "connector_id",
+  "|duration|int": "duration"
+ },
+ "lists": {}
+}

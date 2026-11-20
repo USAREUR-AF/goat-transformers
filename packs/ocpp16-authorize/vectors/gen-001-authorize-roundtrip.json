@@ -1,0 +1,10 @@
+{
+ "name": "gen-authorize-roundtrip",
+ "from": "ocpp16-authorize",
+ "to": "ocpp16-authorize",
+ "input": "{\"idTag\":\"s97540\"}",
+ "expect": "{\"idTag\":\"s97540\"}",
+ "model": {
+  "ocpp16authorize.id_tag": "s97540"
+ }
+}

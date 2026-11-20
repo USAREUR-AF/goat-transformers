@@ -1,0 +1,7 @@
+{
+ "name": "gen-trigger_message-residue",
+ "from": "ocpp16-trigger-message",
+ "to": "ocpp16-trigger-message",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"requestedMessage\":\"Heartbeat\",\"connectorId\":94166}",
+ "expect": "{\"requestedMessage\":\"Heartbeat\",\"connectorId\":94166,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

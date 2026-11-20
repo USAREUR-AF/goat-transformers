@@ -1,0 +1,10 @@
+{
+ "name": "gen-get_diagnostics_response-roundtrip",
+ "from": "ocpp16-get-diagnostics-response",
+ "to": "ocpp16-get-diagnostics-response",
+ "input": "{\"fileName\":\"s21815\"}",
+ "expect": "{\"fileName\":\"s21815\"}",
+ "model": {
+  "ocpp16getdiagnosticsresponse.file_name": "s21815"
+ }
+}

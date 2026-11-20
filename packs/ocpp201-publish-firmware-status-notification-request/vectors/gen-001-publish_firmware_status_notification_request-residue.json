@@ -1,0 +1,7 @@
+{
+ "name": "gen-publish_firmware_status_notification_request-residue",
+ "from": "ocpp201-publish-firmware-status-notification-request",
+ "to": "ocpp201-publish-firmware-status-notification-request",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s89242\"},\"status\":\"DownloadScheduled\",\"location\":[\"s58085\",\"s4432\"],\"requestId\":13672}",
+ "expect": "{\"customData\":{\"vendorId\":\"s89242\"},\"status\":\"DownloadScheduled\",\"location\":[\"s58085\",\"s4432\"],\"requestId\":13672,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

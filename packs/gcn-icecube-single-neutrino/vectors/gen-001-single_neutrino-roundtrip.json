@@ -1,0 +1,17 @@
+{
+ "name": "gen-single_neutrino-roundtrip",
+ "from": "gcn-icecube-single-neutrino",
+ "to": "gcn-icecube-single-neutrino",
+ "input": "{\"nu_energy\":7.0625,\"pipeline\":\"Gold Track Alert\",\"number_of_events\":101.125,\"alert_topology\":\"Shower\",\"data_archive_page\":\"s73076\",\"alert_datetime\":\"s91982\",\"alert_tense\":\"current\",\"alert_type\":\"initial\",\"mission\":\"s39900\",\"instrument\":\"s42143\",\"service\":\"s60102\",\"record_number\":1.5,\"messenger\":\"EM\",\"spectral_band\":[0.75,7.0625],\"spectral_band_units\":\"nm\",\"far\":7.0625,\"trigger_type\":\"image\",\"net_count_rate\":12.5,\"background_count_rate\":1.5,\"rate_snr\":101.125,\"rate_duration\":1.5,\"rate_energy_range\":[7.0625,42.375],\"image_snr\":7.0625,\"image_duration\":0.75,\"image_energy_range\":[1.5,12.5],\"p_astro\":1.5,\"ra\":1.5,\"dec\":0.75,\"containment_probability\":42.375,\"systematic_included\":true,\"instrument_phi\":1.5,\"instrument_theta\":12.5,\"instrument_semimajor_angle\":0.75,\"healpix_url\":\"s97838\",\"healpix_file\":\"s52832\",\"trigger_time\":\"s78584\",\"observation_start\":\"s1359\",\"observation_stop\":\"s33942\",\"observation_livetime\":42.375}",
+ "expect": "{\"nu_energy\":7.0625,\"pipeline\":\"Gold Track Alert\",\"number_of_events\":101.125,\"alert_topology\":\"Shower\",\"data_archive_page\":\"s73076\",\"alert_datetime\":\"s91982\",\"alert_tense\":\"current\",\"alert_type\":\"initial\",\"mission\":\"s39900\",\"instrument\":\"s42143\",\"service\":\"s60102\",\"record_number\":1.5,\"messenger\":\"EM\",\"spectral_band\":[0.75,7.0625],\"spectral_band_units\":\"nm\",\"far\":7.0625,\"trigger_type\":\"image\",\"net_count_rate\":12.5,\"background_count_rate\":1.5,\"rate_snr\":101.125,\"rate_duration\":1.5,\"rate_energy_range\":[7.0625,42.375],\"image_snr\":7.0625,\"image_duration\":0.75,\"image_energy_range\":[1.5,12.5],\"p_astro\":1.5,\"ra\":1.5,\"dec\":0.75,\"containment_probability\":42.375,\"systematic_included\":true,\"instrument_phi\":1.5,\"instrument_theta\":12.5,\"instrument_semimajor_angle\":0.75,\"healpix_url\":\"s97838\",\"healpix_file\":\"s52832\",\"trigger_time\":\"s78584\",\"observation_start\":\"s1359\",\"observation_stop\":\"s33942\",\"observation_livetime\":42.375}",
+ "model": {
+  "gcnicecubesingle.nu_energy": "7.0625",
+  "gcnicecubesingle.pipeline": "Gold Track Alert",
+  "gcnicecubesingle.number_of_events": "101.125",
+  "gcnicecubesingle.alert_topology": "Shower",
+  "gcnicecubesingle.data_archive_page": "s73076",
+  "gcnicecubesingle.alert_datetime": "s91982",
+  "gcnicecubesingle.alert_tense": "current",
+  "gcnicecubesingle.alert_type": "initial"
+ }
+}

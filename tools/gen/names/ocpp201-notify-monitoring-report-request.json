@@ -1,0 +1,29 @@
+{
+ "keys": {
+  "monitor_variable_monitoring|customData.vendorId|string": "monitor_variable_monitoring_custom_data_vendor_id",
+  "monitor_variable_monitoring|id|int": "monitor_variable_monitoring_id",
+  "monitor_variable_monitoring|severity|int": "monitor_variable_monitoring_severity",
+  "monitor_variable_monitoring|transaction|int": "monitor_variable_monitoring_transaction",
+  "monitor_variable_monitoring|type|string": "monitor_variable_monitoring_type",
+  "monitor_variable_monitoring|value|float": "monitor_variable_monitoring_value",
+  "monitor|component.customData.vendorId|string": "monitor_component_custom_data_vendor_id",
+  "monitor|component.evse.connectorId|int": "monitor_component_evse_connector_id",
+  "monitor|component.evse.customData.vendorId|string": "monitor_component_evse_custom_data_vendor_id",
+  "monitor|component.evse.id|int": "monitor_component_evse_id",
+  "monitor|component.instance|string": "monitor_component_instance",
+  "monitor|component.name|string": "monitor_component_name",
+  "monitor|customData.vendorId|string": "monitor_custom_data_vendor_id",
+  "monitor|variable.customData.vendorId|string": "monitor_variable_custom_data_vendor_id",
+  "monitor|variable.instance|string": "monitor_variable_instance",
+  "monitor|variable.name|string": "monitor_variable_name",
+  "|customData.vendorId|string": "custom_data_vendor_id",
+  "|generatedAt|string": "generated_at",
+  "|requestId|int": "request_id",
+  "|seqNo|int": "seq_no",
+  "|tbc|int": "tbc"
+ },
+ "lists": {
+  "monitor|variableMonitoring": "monitor_variable_monitoring",
+  "|monitor": "monitor"
+ }
+}

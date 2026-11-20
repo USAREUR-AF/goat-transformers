@@ -1,0 +1,10 @@
+{
+ "name": "gen-sign_certificate-roundtrip",
+ "from": "ocpp16-sign-certificate",
+ "to": "ocpp16-sign-certificate",
+ "input": "{\"csr\":\"s88249\"}",
+ "expect": "{\"csr\":\"s88249\"}",
+ "model": {
+  "ocpp16signcertificate.csr": "s88249"
+ }
+}

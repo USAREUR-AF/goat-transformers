@@ -1,0 +1,10 @@
+{
+ "name": "gen-clear_cache_response-roundtrip",
+ "from": "ocpp16-clear-cache-response",
+ "to": "ocpp16-clear-cache-response",
+ "input": "{\"status\":\"Accepted\"}",
+ "expect": "{\"status\":\"Accepted\"}",
+ "model": {
+  "ocpp16clearcacheresponse.status": "Accepted"
+ }
+}

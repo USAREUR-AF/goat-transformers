@@ -1,0 +1,7 @@
+{
+ "name": "gen-set_charging_profile_response-residue",
+ "from": "ocpp16-set-charging-profile-response",
+ "to": "ocpp16-set-charging-profile-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"status\":\"Rejected\"}",
+ "expect": "{\"status\":\"Rejected\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

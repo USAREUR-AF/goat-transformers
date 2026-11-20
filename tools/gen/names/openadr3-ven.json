@@ -1,0 +1,16 @@
+{
+ "keys": {
+  "attributes|type|string": "attributes_type",
+  "targets|.|string": "targets_value",
+  "|clientID|string": "client_id",
+  "|createdDateTime|string": "created_date_time",
+  "|id|string": "id",
+  "|modificationDateTime|string": "modification_date_time",
+  "|objectType|string": "object_type",
+  "|venName|string": "ven_name"
+ },
+ "lists": {
+  "|attributes": "attributes",
+  "|targets": "targets"
+ }
+}

@@ -1,0 +1,18 @@
+{
+ "keys": {
+  "meter_value_sampled_value|context|string": "meter_value_sampled_value_context",
+  "meter_value_sampled_value|format|string": "meter_value_sampled_value_format",
+  "meter_value_sampled_value|location|string": "meter_value_sampled_value_location",
+  "meter_value_sampled_value|measurand|string": "meter_value_sampled_value_measurand",
+  "meter_value_sampled_value|phase|string": "meter_value_sampled_value_phase",
+  "meter_value_sampled_value|unit|string": "meter_value_sampled_value_unit",
+  "meter_value_sampled_value|value|string": "meter_value_sampled_value_value",
+  "meter_value|timestamp|string": "meter_value_timestamp",
+  "|connectorId|int": "connector_id",
+  "|transactionId|int": "transaction_id"
+ },
+ "lists": {
+  "meter_value|sampledValue": "meter_value_sampled_value",
+  "|meterValue": "meter_value"
+ }
+}

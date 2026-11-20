@@ -1,0 +1,7 @@
+{
+ "name": "gen-send_local_list-residue",
+ "from": "ocpp16-send-local-list",
+ "to": "ocpp16-send-local-list",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"listVersion\":80587,\"localAuthorizationList\":[{\"idTag\":\"s71861\",\"idTagInfo\":{\"expiryDate\":\"2024-08-05T17:17:23.119Z\",\"parentIdTag\":\"s76908\",\"status\":\"Invalid\"}},{\"idTag\":\"s46049\",\"idTagInfo\":{\"expiryDate\":\"2024-04-13T21:36:27.824Z\",\"parentIdTag\":\"s98844\",\"status\":\"Blocked\"}}],\"updateType\":\"Differential\"}",
+ "expect": "{\"listVersion\":80587,\"localAuthorizationList\":[{\"idTag\":\"s71861\",\"idTagInfo\":{\"expiryDate\":\"2024-08-05T17:17:23.119Z\",\"parentIdTag\":\"s76908\",\"status\":\"Invalid\"}},{\"idTag\":\"s46049\",\"idTagInfo\":{\"expiryDate\":\"2024-04-13T21:36:27.824Z\",\"parentIdTag\":\"s98844\",\"status\":\"Blocked\"}}],\"updateType\":\"Differential\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

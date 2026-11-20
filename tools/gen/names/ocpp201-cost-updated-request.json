@@ -1,0 +1,8 @@
+{
+ "keys": {
+  "|customData.vendorId|string": "custom_data_vendor_id",
+  "|totalCost|float": "total_cost",
+  "|transactionId|string": "transaction_id"
+ },
+ "lists": {}
+}

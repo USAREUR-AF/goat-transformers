@@ -1,0 +1,8 @@
+{
+ "name": "gen-heartbeat-roundtrip",
+ "from": "ocpp16-heartbeat",
+ "to": "ocpp16-heartbeat",
+ "input": "{}",
+ "expect": "{}",
+ "model": {}
+}

@@ -1,0 +1,25 @@
+{
+ "keys": {
+  "set_monitoring_result|component.customData.vendorId|string": "set_monitoring_result_component_custom_data_vendor_id",
+  "set_monitoring_result|component.evse.connectorId|int": "set_monitoring_result_component_evse_connector_id",
+  "set_monitoring_result|component.evse.customData.vendorId|string": "set_monitoring_result_component_evse_custom_data_vendor_id",
+  "set_monitoring_result|component.evse.id|int": "set_monitoring_result_component_evse_id",
+  "set_monitoring_result|component.instance|string": "set_monitoring_result_component_instance",
+  "set_monitoring_result|component.name|string": "set_monitoring_result_component_name",
+  "set_monitoring_result|customData.vendorId|string": "set_monitoring_result_custom_data_vendor_id",
+  "set_monitoring_result|id|int": "set_monitoring_result_id",
+  "set_monitoring_result|severity|int": "set_monitoring_result_severity",
+  "set_monitoring_result|statusInfo.additionalInfo|string": "set_monitoring_result_status_info_additional_info",
+  "set_monitoring_result|statusInfo.customData.vendorId|string": "set_monitoring_result_status_info_custom_data_vendor_id",
+  "set_monitoring_result|statusInfo.reasonCode|string": "set_monitoring_result_status_info_reason_code",
+  "set_monitoring_result|status|string": "set_monitoring_result_status",
+  "set_monitoring_result|type|string": "set_monitoring_result_type",
+  "set_monitoring_result|variable.customData.vendorId|string": "set_monitoring_result_variable_custom_data_vendor_id",
+  "set_monitoring_result|variable.instance|string": "set_monitoring_result_variable_instance",
+  "set_monitoring_result|variable.name|string": "set_monitoring_result_variable_name",
+  "|customData.vendorId|string": "custom_data_vendor_id"
+ },
+ "lists": {
+  "|setMonitoringResult": "set_monitoring_result"
+ }
+}

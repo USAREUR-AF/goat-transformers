@@ -1,0 +1,17 @@
+{
+ "name": "gen-single_slot_binary_message-roundtrip",
+ "from": "aisstream",
+ "to": "aisstream",
+ "input": "{\"MessageType\":\"SingleSlotBinaryMessage\",\"Message\":{\"SingleSlotBinaryMessage\":{\"MessageID\":70982,\"RepeatIndicator\":3890,\"UserID\":53473,\"Valid\":true,\"DestinationIDValid\":false,\"ApplicationIDValid\":false,\"DestinationID\":5535,\"Spare\":3823,\"ApplicationID\":{\"Valid\":true,\"DesignatedAreaCode\":28740,\"FunctionIdentifier\":39718},\"Payload\":\"s93527\"}}}",
+ "expect": "{\"MessageType\":\"SingleSlotBinaryMessage\",\"Message\":{\"SingleSlotBinaryMessage\":{\"MessageID\":70982,\"RepeatIndicator\":3890,\"UserID\":53473,\"Valid\":true,\"DestinationIDValid\":false,\"ApplicationIDValid\":false,\"DestinationID\":5535,\"Spare\":3823,\"ApplicationID\":{\"Valid\":true,\"DesignatedAreaCode\":28740,\"FunctionIdentifier\":39718},\"Payload\":\"s93527\"}}}",
+ "model": {
+  "@kind": "single_slot_binary_message",
+  "aisstream.message_single_slot_binary_message_message_id": "70982",
+  "aisstream.message_single_slot_binary_message_repeat_indicator": "3890",
+  "aisstream.message_single_slot_binary_message_user_id": "53473",
+  "aisstream.message_single_slot_binary_message_valid": "1",
+  "aisstream.message_single_slot_binary_message_destination_idvalid": "0",
+  "aisstream.message_single_slot_binary_message_application_idvalid": "0",
+  "aisstream.message_single_slot_binary_message_destination_id": "5535"
+ }
+}

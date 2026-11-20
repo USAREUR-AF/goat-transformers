@@ -1,0 +1,7 @@
+{
+ "name": "gen-start_transaction-residue",
+ "from": "ocpp16-start-transaction",
+ "to": "ocpp16-start-transaction",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"connectorId\":35464,\"idTag\":\"s52064\",\"meterStart\":17090,\"reservationId\":89704,\"timestamp\":\"2025-12-16T13:20:10.758Z\"}",
+ "expect": "{\"connectorId\":35464,\"idTag\":\"s52064\",\"meterStart\":17090,\"reservationId\":89704,\"timestamp\":\"2025-12-16T13:20:10.758Z\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

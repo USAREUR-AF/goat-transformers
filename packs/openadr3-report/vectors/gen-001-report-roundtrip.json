@@ -1,0 +1,17 @@
+{
+ "name": "gen-report-roundtrip",
+ "from": "openadr3-report",
+ "to": "openadr3-report",
+ "input": "{\"id\":\"s89149\",\"createdDateTime\":\"2025-04-28T02:53:20.829Z\",\"modificationDateTime\":\"2026-04-08T21:10:39.499Z\",\"objectType\":\"PROGRAM\",\"eventID\":\"s36865\",\"clientName\":\"s10716\",\"reportName\":\"s45707\",\"payloadDescriptors\":[{\"objectType\":\"REPORT_PAYLOAD_DESCRIPTOR\",\"payloadType\":\"s89905\",\"readingType\":\"s6747\",\"units\":\"s21842\",\"accuracy\":7.0625,\"confidence\":95},{\"objectType\":\"REPORT_PAYLOAD_DESCRIPTOR\",\"payloadType\":\"s77188\",\"readingType\":\"s34399\",\"units\":\"s4119\",\"accuracy\":12.5,\"confidence\":75}],\"resources\":[{\"resourceName\":\"s36734\",\"intervalPeriod\":{\"start\":\"2026-03-15T23:11:43.410Z\",\"duration\":\"s32723\",\"randomizeStart\":\"s97328\"},\"intervals\":[{\"id\":13674,\"intervalPeriod\":{\"start\":\"2025-12-03T02:43:05.360Z\",\"duration\":\"s70119\",\"randomizeStart\":\"s87377\"},\"payloads\":[{\"type\":\"s50491\"}]}]},{\"resourceName\":\"s34980\",\"intervalPeriod\":{\"start\":\"2026-03-03T08:17:05.893Z\",\"duration\":\"s50607\",\"randomizeStart\":\"s50133\"},\"intervals\":[{\"id\":6903,\"intervalPeriod\":{\"start\":\"2025-03-05T11:51:54.156Z\",\"duration\":\"s74539\",\"randomizeStart\":\"s32846\"},\"payloads\":[{\"type\":\"s79109\"}]}]}],\"clientID\":\"s19328\"}",
+ "expect": "{\"id\":\"s89149\",\"createdDateTime\":\"2025-04-28T02:53:20.829Z\",\"modificationDateTime\":\"2026-04-08T21:10:39.499Z\",\"objectType\":\"PROGRAM\",\"eventID\":\"s36865\",\"clientName\":\"s10716\",\"reportName\":\"s45707\",\"payloadDescriptors\":[{\"objectType\":\"REPORT_PAYLOAD_DESCRIPTOR\",\"payloadType\":\"s89905\",\"readingType\":\"s6747\",\"units\":\"s21842\",\"accuracy\":7.0625,\"confidence\":95},{\"objectType\":\"REPORT_PAYLOAD_DESCRIPTOR\",\"payloadType\":\"s77188\",\"readingType\":\"s34399\",\"units\":\"s4119\",\"accuracy\":12.5,\"confidence\":75}],\"resources\":[{\"resourceName\":\"s36734\",\"intervalPeriod\":{\"start\":\"2026-03-15T23:11:43.410Z\",\"duration\":\"s32723\",\"randomizeStart\":\"s97328\"},\"intervals\":[{\"id\":13674,\"intervalPeriod\":{\"start\":\"2025-12-03T02:43:05.360Z\",\"duration\":\"s70119\",\"randomizeStart\":\"s87377\"},\"payloads\":[{\"type\":\"s50491\"}]}]},{\"resourceName\":\"s34980\",\"intervalPeriod\":{\"start\":\"2026-03-03T08:17:05.893Z\",\"duration\":\"s50607\",\"randomizeStart\":\"s50133\"},\"intervals\":[{\"id\":6903,\"intervalPeriod\":{\"start\":\"2025-03-05T11:51:54.156Z\",\"duration\":\"s74539\",\"randomizeStart\":\"s32846\"},\"payloads\":[{\"type\":\"s79109\"}]}]}],\"clientID\":\"s19328\"}",
+ "model": {
+  "uid": "s89149",
+  "openadr3report.id": "s89149",
+  "openadr3report.created_date_time": "2025-04-28T02:53:20.829Z",
+  "openadr3report.modification_date_time": "2026-04-08T21:10:39.499Z",
+  "openadr3report.object_type": "PROGRAM",
+  "openadr3report.event_id": "s36865",
+  "openadr3report.client_name": "s10716",
+  "openadr3report.report_name": "s45707"
+ }
+}

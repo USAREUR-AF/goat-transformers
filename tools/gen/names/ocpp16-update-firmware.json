@@ -1,0 +1,9 @@
+{
+ "keys": {
+  "|location|string": "location",
+  "|retries|int": "retries",
+  "|retrieveDate|string": "retrieve_date",
+  "|retryInterval|int": "retry_interval"
+ },
+ "lists": {}
+}

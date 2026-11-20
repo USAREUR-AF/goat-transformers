@@ -1,0 +1,7 @@
+{
+ "name": "gen-change_availability_response-residue",
+ "from": "ocpp201-change-availability-response",
+ "to": "ocpp201-change-availability-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s60651\"},\"status\":\"Scheduled\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s24983\"},\"reasonCode\":\"s63078\",\"additionalInfo\":\"s60873\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s60651\"},\"status\":\"Scheduled\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s24983\"},\"reasonCode\":\"s63078\",\"additionalInfo\":\"s60873\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

@@ -1,0 +1,12 @@
+{
+ "name": "gen-data_transfer_request-roundtrip",
+ "from": "ocpp201-data-transfer-request",
+ "to": "ocpp201-data-transfer-request",
+ "input": "{\"customData\":{\"vendorId\":\"s67785\"},\"messageId\":\"s36871\",\"vendorId\":\"s60933\"}",
+ "expect": "{\"customData\":{\"vendorId\":\"s67785\"},\"messageId\":\"s36871\",\"vendorId\":\"s60933\"}",
+ "model": {
+  "ocpp201datatransferrequest.custom_data_vendor_id": "s67785",
+  "ocpp201datatransferrequest.message_id": "s36871",
+  "ocpp201datatransferrequest.vendor_id": "s60933"
+ }
+}

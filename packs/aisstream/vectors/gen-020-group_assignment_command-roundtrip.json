@@ -1,0 +1,17 @@
+{
+ "name": "gen-group_assignment_command-roundtrip",
+ "from": "aisstream",
+ "to": "aisstream",
+ "input": "{\"MessageType\":\"GroupAssignmentCommand\",\"Message\":{\"GroupAssignmentCommand\":{\"MessageID\":98085,\"RepeatIndicator\":49528,\"UserID\":93025,\"Valid\":true,\"Spare1\":80059,\"Longitude1\":101.125,\"Latitude1\":1.5,\"Longitude2\":101.125,\"Latitude2\":7.0625,\"StationType\":92235,\"ShipType\":30667,\"Spare2\":64758,\"TxRxMode\":9299,\"ReportingInterval\":54157,\"QuietTime\":80821,\"Spare3\":15300}}}",
+ "expect": "{\"MessageType\":\"GroupAssignmentCommand\",\"Message\":{\"GroupAssignmentCommand\":{\"MessageID\":98085,\"RepeatIndicator\":49528,\"UserID\":93025,\"Valid\":true,\"Spare1\":80059,\"Longitude1\":101.125,\"Latitude1\":1.5,\"Longitude2\":101.125,\"Latitude2\":7.0625,\"StationType\":92235,\"ShipType\":30667,\"Spare2\":64758,\"TxRxMode\":9299,\"ReportingInterval\":54157,\"QuietTime\":80821,\"Spare3\":15300}}}",
+ "model": {
+  "@kind": "group_assignment_command",
+  "aisstream.message_group_assignment_command_message_id": "98085",
+  "aisstream.message_group_assignment_command_repeat_indicator": "49528",
+  "aisstream.message_group_assignment_command_user_id": "93025",
+  "aisstream.message_group_assignment_command_valid": "1",
+  "aisstream.message_group_assignment_command_spare1": "80059",
+  "aisstream.message_group_assignment_command_longitude1": "101.125",
+  "aisstream.message_group_assignment_command_latitude1": "1.5"
+ }
+}

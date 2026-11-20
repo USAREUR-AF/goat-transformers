@@ -1,0 +1,7 @@
+{
+ "name": "gen-set_display_message_response-residue",
+ "from": "ocpp201-set-display-message-response",
+ "to": "ocpp201-set-display-message-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s77931\"},\"status\":\"NotSupportedPriority\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s38409\"},\"reasonCode\":\"s14840\",\"additionalInfo\":\"s35234\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s77931\"},\"status\":\"NotSupportedPriority\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s38409\"},\"reasonCode\":\"s14840\",\"additionalInfo\":\"s35234\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

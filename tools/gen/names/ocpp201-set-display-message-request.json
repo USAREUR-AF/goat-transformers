@@ -1,0 +1,23 @@
+{
+ "keys": {
+  "|customData.vendorId|string": "custom_data_vendor_id",
+  "|message.customData.vendorId|string": "message_custom_data_vendor_id",
+  "|message.display.customData.vendorId|string": "message_display_custom_data_vendor_id",
+  "|message.display.evse.connectorId|int": "message_display_evse_connector_id",
+  "|message.display.evse.customData.vendorId|string": "message_display_evse_custom_data_vendor_id",
+  "|message.display.evse.id|int": "message_display_evse_id",
+  "|message.display.instance|string": "message_display_instance",
+  "|message.display.name|string": "message_display_name",
+  "|message.endDateTime|string": "message_end_date_time",
+  "|message.id|int": "message_id",
+  "|message.message.content|string": "message_message_content",
+  "|message.message.customData.vendorId|string": "message_message_custom_data_vendor_id",
+  "|message.message.format|string": "message_message_format",
+  "|message.message.language|string": "message_message_language",
+  "|message.priority|string": "message_priority",
+  "|message.startDateTime|string": "message_start_date_time",
+  "|message.state|string": "message_state",
+  "|message.transactionId|string": "message_transaction_id"
+ },
+ "lists": {}
+}

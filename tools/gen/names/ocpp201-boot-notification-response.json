@@ -1,0 +1,12 @@
+{
+ "keys": {
+  "|currentTime|string": "current_time",
+  "|customData.vendorId|string": "custom_data_vendor_id",
+  "|interval|int": "interval",
+  "|statusInfo.additionalInfo|string": "status_info_additional_info",
+  "|statusInfo.customData.vendorId|string": "status_info_custom_data_vendor_id",
+  "|statusInfo.reasonCode|string": "status_info_reason_code",
+  "|status|string": "status"
+ },
+ "lists": {}
+}

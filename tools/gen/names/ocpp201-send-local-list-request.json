@@ -1,0 +1,37 @@
+{
+ "keys": {
+  "local_authorization_list_id_token_additional_info|additionalIdToken|string": "local_authorization_list_id_token_additional_info_additional_id_token",
+  "local_authorization_list_id_token_additional_info|customData.vendorId|string": "local_authorization_list_id_token_additional_info_custom_data_vendor_id",
+  "local_authorization_list_id_token_additional_info|type|string": "local_authorization_list_id_token_additional_info_type",
+  "local_authorization_list_id_token_info_evse_id|.|int": "local_authorization_list_id_token_info_evse_id_value",
+  "local_authorization_list_id_token_info_group_id_token_additional_info|additionalIdToken|string": "local_authorization_list_id_token_info_group_id_token_additional_info_additional_id_token",
+  "local_authorization_list_id_token_info_group_id_token_additional_info|customData.vendorId|string": "local_authorization_list_id_token_info_group_id_token_additional_info_custom_data_vendor_id",
+  "local_authorization_list_id_token_info_group_id_token_additional_info|type|string": "local_authorization_list_id_token_info_group_id_token_additional_info_type",
+  "local_authorization_list|customData.vendorId|string": "local_authorization_list_custom_data_vendor_id",
+  "local_authorization_list|idToken.customData.vendorId|string": "local_authorization_list_id_token_custom_data_vendor_id",
+  "local_authorization_list|idToken.idToken|string": "local_authorization_list_id_token_id_token",
+  "local_authorization_list|idToken.type|string": "local_authorization_list_id_token_type",
+  "local_authorization_list|idTokenInfo.cacheExpiryDateTime|string": "local_authorization_list_id_token_info_cache_expiry_date_time",
+  "local_authorization_list|idTokenInfo.chargingPriority|int": "local_authorization_list_id_token_info_charging_priority",
+  "local_authorization_list|idTokenInfo.customData.vendorId|string": "local_authorization_list_id_token_info_custom_data_vendor_id",
+  "local_authorization_list|idTokenInfo.groupIdToken.customData.vendorId|string": "local_authorization_list_id_token_info_group_id_token_custom_data_vendor_id",
+  "local_authorization_list|idTokenInfo.groupIdToken.idToken|string": "local_authorization_list_id_token_info_group_id_token_id_token",
+  "local_authorization_list|idTokenInfo.groupIdToken.type|string": "local_authorization_list_id_token_info_group_id_token_type",
+  "local_authorization_list|idTokenInfo.language1|string": "local_authorization_list_id_token_info_language1",
+  "local_authorization_list|idTokenInfo.language2|string": "local_authorization_list_id_token_info_language2",
+  "local_authorization_list|idTokenInfo.personalMessage.content|string": "local_authorization_list_id_token_info_personal_message_content",
+  "local_authorization_list|idTokenInfo.personalMessage.customData.vendorId|string": "local_authorization_list_id_token_info_personal_message_custom_data_vendor_id",
+  "local_authorization_list|idTokenInfo.personalMessage.format|string": "local_authorization_list_id_token_info_personal_message_format",
+  "local_authorization_list|idTokenInfo.personalMessage.language|string": "local_authorization_list_id_token_info_personal_message_language",
+  "local_authorization_list|idTokenInfo.status|string": "local_authorization_list_id_token_info_status",
+  "|customData.vendorId|string": "custom_data_vendor_id",
+  "|updateType|string": "update_type",
+  "|versionNumber|int": "version_number"
+ },
+ "lists": {
+  "local_authorization_list|idToken.additionalInfo": "local_authorization_list_id_token_additional_info",
+  "local_authorization_list|idTokenInfo.evseId": "local_authorization_list_id_token_info_evse_id",
+  "local_authorization_list|idTokenInfo.groupIdToken.additionalInfo": "local_authorization_list_id_token_info_group_id_token_additional_info",
+  "|localAuthorizationList": "local_authorization_list"
+ }
+}

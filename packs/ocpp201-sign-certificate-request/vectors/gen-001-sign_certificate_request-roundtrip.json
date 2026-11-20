@@ -1,0 +1,12 @@
+{
+ "name": "gen-sign_certificate_request-roundtrip",
+ "from": "ocpp201-sign-certificate-request",
+ "to": "ocpp201-sign-certificate-request",
+ "input": "{\"customData\":{\"vendorId\":\"s23299\"},\"csr\":\"s15768\",\"certificateType\":\"ChargingStationCertificate\"}",
+ "expect": "{\"customData\":{\"vendorId\":\"s23299\"},\"csr\":\"s15768\",\"certificateType\":\"ChargingStationCertificate\"}",
+ "model": {
+  "ocpp201signcertificaterequest.custom_data_vendor_id": "s23299",
+  "ocpp201signcertificaterequest.csr": "s15768",
+  "ocpp201signcertificaterequest.certificate_type": "ChargingStationCertificate"
+ }
+}

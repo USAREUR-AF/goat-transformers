@@ -1,0 +1,14 @@
+{
+ "name": "gen-reset_response-roundtrip",
+ "from": "ocpp201-reset-response",
+ "to": "ocpp201-reset-response",
+ "input": "{\"customData\":{\"vendorId\":\"s42310\"},\"status\":\"Accepted\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s28687\"},\"reasonCode\":\"s97757\",\"additionalInfo\":\"s32058\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s42310\"},\"status\":\"Accepted\",\"statusInfo\":{\"customData\":{\"vendorId\":\"s28687\"},\"reasonCode\":\"s97757\",\"additionalInfo\":\"s32058\"}}",
+ "model": {
+  "ocpp201resetresponse.custom_data_vendor_id": "s42310",
+  "ocpp201resetresponse.status": "Accepted",
+  "ocpp201resetresponse.status_info_custom_data_vendor_id": "s28687",
+  "ocpp201resetresponse.status_info_reason_code": "s97757",
+  "ocpp201resetresponse.status_info_additional_info": "s32058"
+ }
+}

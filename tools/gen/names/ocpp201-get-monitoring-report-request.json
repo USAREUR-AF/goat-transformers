@@ -1,0 +1,21 @@
+{
+ "keys": {
+  "component_variable|component.customData.vendorId|string": "component_variable_component_custom_data_vendor_id",
+  "component_variable|component.evse.connectorId|int": "component_variable_component_evse_connector_id",
+  "component_variable|component.evse.customData.vendorId|string": "component_variable_component_evse_custom_data_vendor_id",
+  "component_variable|component.evse.id|int": "component_variable_component_evse_id",
+  "component_variable|component.instance|string": "component_variable_component_instance",
+  "component_variable|component.name|string": "component_variable_component_name",
+  "component_variable|customData.vendorId|string": "component_variable_custom_data_vendor_id",
+  "component_variable|variable.customData.vendorId|string": "component_variable_variable_custom_data_vendor_id",
+  "component_variable|variable.instance|string": "component_variable_variable_instance",
+  "component_variable|variable.name|string": "component_variable_variable_name",
+  "monitoring_criteria|.|string": "monitoring_criteria_value",
+  "|customData.vendorId|string": "custom_data_vendor_id",
+  "|requestId|int": "request_id"
+ },
+ "lists": {
+  "|componentVariable": "component_variable",
+  "|monitoringCriteria": "monitoring_criteria"
+ }
+}

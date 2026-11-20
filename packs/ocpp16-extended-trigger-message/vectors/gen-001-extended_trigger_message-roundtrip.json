@@ -1,0 +1,11 @@
+{
+ "name": "gen-extended_trigger_message-roundtrip",
+ "from": "ocpp16-extended-trigger-message",
+ "to": "ocpp16-extended-trigger-message",
+ "input": "{\"requestedMessage\":\"FirmwareStatusNotification\",\"connectorId\":76287}",
+ "expect": "{\"requestedMessage\":\"FirmwareStatusNotification\",\"connectorId\":76287}",
+ "model": {
+  "ocpp16extendedtriggermessage.requested_message": "FirmwareStatusNotification",
+  "ocpp16extendedtriggermessage.connector_id": "76287"
+ }
+}

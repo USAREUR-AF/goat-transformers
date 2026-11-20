@@ -1,0 +1,7 @@
+{
+ "name": "gen-publish_firmware_status_notification_response-residue",
+ "from": "ocpp201-publish-firmware-status-notification-response",
+ "to": "ocpp201-publish-firmware-status-notification-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s41149\"}}",
+ "expect": "{\"customData\":{\"vendorId\":\"s41149\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

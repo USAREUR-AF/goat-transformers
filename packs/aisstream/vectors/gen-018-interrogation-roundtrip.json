@@ -1,0 +1,17 @@
+{
+ "name": "gen-interrogation-roundtrip",
+ "from": "aisstream",
+ "to": "aisstream",
+ "input": "{\"MessageType\":\"Interrogation\",\"Message\":{\"Interrogation\":{\"MessageID\":44059,\"RepeatIndicator\":54744,\"UserID\":20596,\"Valid\":true,\"Spare\":46117,\"Station1Msg1\":{\"Valid\":true,\"StationID\":54556,\"MessageID\":41548,\"SlotOffset\":52888},\"Station1Msg2\":{\"Valid\":true,\"Spare\":9533,\"MessageID\":79421,\"SlotOffset\":57232},\"Station2\":{\"Valid\":false,\"Spare1\":26218,\"StationID\":42675,\"MessageID\":6933,\"SlotOffset\":66812,\"Spare2\":27558}}}}",
+ "expect": "{\"MessageType\":\"Interrogation\",\"Message\":{\"Interrogation\":{\"MessageID\":44059,\"RepeatIndicator\":54744,\"UserID\":20596,\"Valid\":true,\"Spare\":46117,\"Station1Msg1\":{\"Valid\":true,\"StationID\":54556,\"MessageID\":41548,\"SlotOffset\":52888},\"Station1Msg2\":{\"Valid\":true,\"Spare\":9533,\"MessageID\":79421,\"SlotOffset\":57232},\"Station2\":{\"Valid\":false,\"Spare1\":26218,\"StationID\":42675,\"MessageID\":6933,\"SlotOffset\":66812,\"Spare2\":27558}}}}",
+ "model": {
+  "@kind": "interrogation",
+  "aisstream.message_interrogation_message_id": "44059",
+  "aisstream.message_interrogation_repeat_indicator": "54744",
+  "aisstream.message_interrogation_user_id": "20596",
+  "aisstream.message_interrogation_valid": "1",
+  "aisstream.message_interrogation_spare": "46117",
+  "aisstream.message_interrogation_station1_msg1_valid": "1",
+  "aisstream.message_interrogation_station1_msg1_station_id": "54556"
+ }
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-log_status_notification_request-residue",
+ "from": "ocpp201-log-status-notification-request",
+ "to": "ocpp201-log-status-notification-request",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"customData\":{\"vendorId\":\"s34113\"},\"status\":\"Uploaded\",\"requestId\":18212}",
+ "expect": "{\"customData\":{\"vendorId\":\"s34113\"},\"status\":\"Uploaded\",\"requestId\":18212,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

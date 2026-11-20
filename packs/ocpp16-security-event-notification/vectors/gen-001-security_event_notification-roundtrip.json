@@ -1,0 +1,12 @@
+{
+ "name": "gen-security_event_notification-roundtrip",
+ "from": "ocpp16-security-event-notification",
+ "to": "ocpp16-security-event-notification",
+ "input": "{\"type\":\"s15809\",\"timestamp\":\"2027-01-08T04:40:42.383Z\",\"techInfo\":\"s48345\"}",
+ "expect": "{\"type\":\"s15809\",\"timestamp\":\"2027-01-08T04:40:42.383Z\",\"techInfo\":\"s48345\"}",
+ "model": {
+  "ocpp16securityeventnotification.type": "s15809",
+  "ocpp16securityeventnotification.timestamp": "2027-01-08T04:40:42.383Z",
+  "ocpp16securityeventnotification.tech_info": "s48345"
+ }
+}

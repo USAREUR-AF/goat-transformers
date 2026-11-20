@@ -1,0 +1,22 @@
+{
+ "keys": {
+  "object_operations_objects|.|string": "object_operations_objects_value",
+  "object_operations_operations|.|string": "object_operations_operations_value",
+  "object_operations|bearerToken|string": "object_operations_bearer_token",
+  "object_operations|callbackUrl|string": "object_operations_callback_url",
+  "targets|.|string": "targets_value",
+  "|clientID|string": "client_id",
+  "|clientName|string": "client_name",
+  "|createdDateTime|string": "created_date_time",
+  "|id|string": "id",
+  "|modificationDateTime|string": "modification_date_time",
+  "|objectType|string": "object_type",
+  "|programID|string": "program_id"
+ },
+ "lists": {
+  "object_operations|objects": "object_operations_objects",
+  "object_operations|operations": "object_operations_operations",
+  "|objectOperations": "object_operations",
+  "|targets": "targets"
+ }
+}

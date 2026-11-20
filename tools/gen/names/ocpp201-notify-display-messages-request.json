@@ -1,0 +1,27 @@
+{
+ "keys": {
+  "message_info|customData.vendorId|string": "message_info_custom_data_vendor_id",
+  "message_info|display.customData.vendorId|string": "message_info_display_custom_data_vendor_id",
+  "message_info|display.evse.connectorId|int": "message_info_display_evse_connector_id",
+  "message_info|display.evse.customData.vendorId|string": "message_info_display_evse_custom_data_vendor_id",
+  "message_info|display.evse.id|int": "message_info_display_evse_id",
+  "message_info|display.instance|string": "message_info_display_instance",
+  "message_info|display.name|string": "message_info_display_name",
+  "message_info|endDateTime|string": "message_info_end_date_time",
+  "message_info|id|int": "message_info_id",
+  "message_info|message.content|string": "message_info_message_content",
+  "message_info|message.customData.vendorId|string": "message_info_message_custom_data_vendor_id",
+  "message_info|message.format|string": "message_info_message_format",
+  "message_info|message.language|string": "message_info_message_language",
+  "message_info|priority|string": "message_info_priority",
+  "message_info|startDateTime|string": "message_info_start_date_time",
+  "message_info|state|string": "message_info_state",
+  "message_info|transactionId|string": "message_info_transaction_id",
+  "|customData.vendorId|string": "custom_data_vendor_id",
+  "|requestId|int": "request_id",
+  "|tbc|int": "tbc"
+ },
+ "lists": {
+  "|messageInfo": "message_info"
+ }
+}

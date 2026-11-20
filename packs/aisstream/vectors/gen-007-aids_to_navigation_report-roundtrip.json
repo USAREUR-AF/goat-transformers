@@ -1,0 +1,17 @@
+{
+ "name": "gen-aids_to_navigation_report-roundtrip",
+ "from": "aisstream",
+ "to": "aisstream",
+ "input": "{\"MessageType\":\"AidsToNavigationReport\",\"Message\":{\"AidsToNavigationReport\":{\"MessageID\":66290,\"RepeatIndicator\":34855,\"UserID\":28942,\"Valid\":false,\"Type\":73721,\"Name\":\"s40273\",\"PositionAccuracy\":true,\"Longitude\":12.5,\"Latitude\":-0.5,\"Dimension\":{\"A\":49667,\"B\":13563,\"C\":59910,\"D\":72953},\"Fixtype\":94654,\"Timestamp\":23847,\"OffPosition\":false,\"AtoN\":56687,\"Raim\":false,\"VirtualAtoN\":true,\"AssignedMode\":true,\"Spare\":true,\"NameExtension\":\"s53473\"}}}",
+ "expect": "{\"MessageType\":\"AidsToNavigationReport\",\"Message\":{\"AidsToNavigationReport\":{\"MessageID\":66290,\"RepeatIndicator\":34855,\"UserID\":28942,\"Valid\":false,\"Type\":73721,\"Name\":\"s40273\",\"PositionAccuracy\":true,\"Longitude\":12.5,\"Latitude\":-0.5,\"Dimension\":{\"A\":49667,\"B\":13563,\"C\":59910,\"D\":72953},\"Fixtype\":94654,\"Timestamp\":23847,\"OffPosition\":false,\"AtoN\":56687,\"Raim\":false,\"VirtualAtoN\":true,\"AssignedMode\":true,\"Spare\":true,\"NameExtension\":\"s53473\"}}}",
+ "model": {
+  "@kind": "aids_to_navigation_report",
+  "aisstream.message_aids_to_navigation_report_message_id": "66290",
+  "aisstream.message_aids_to_navigation_report_repeat_indicator": "34855",
+  "aisstream.message_aids_to_navigation_report_user_id": "28942",
+  "aisstream.message_aids_to_navigation_report_valid": "0",
+  "aisstream.message_aids_to_navigation_report_type": "73721",
+  "aisstream.message_aids_to_navigation_report_name": "s40273",
+  "aisstream.message_aids_to_navigation_report_position_accuracy": "1"
+ }
+}
