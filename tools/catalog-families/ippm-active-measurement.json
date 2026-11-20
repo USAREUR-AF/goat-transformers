@@ -1,0 +1,10 @@
+{
+  "name": "IPPM active measurement (OWAMP, TWAMP, STAMP)",
+  "domain": "networks",
+  "prefixes": [
+    "owamp-",
+    "twamp-",
+    "stamp-"
+  ],
+  "detail": "test packets, unauthenticated and authenticated"
+}

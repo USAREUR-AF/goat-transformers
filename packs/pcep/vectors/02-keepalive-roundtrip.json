@@ -1,0 +1,12 @@
+{
+  "name": "keepalive-roundtrip",
+  "from": "pcep",
+  "to": "pcep",
+  "input": "20020004",
+  "expect": "20020004",
+  "model": {
+    "pcep.message_type": "2",
+    "pcep.objects.#": "0"
+  },
+  "source": "built by tools/gen/ietf-more-vectors.py from values chosen there; layout restated from RFC 5440 sections 6 and 7 and RFC 3209 section 4.3.3; a Keepalive message, the common header alone; expect derived there, no engine run"
+}

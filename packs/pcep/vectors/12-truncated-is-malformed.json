@@ -1,0 +1,8 @@
+{
+  "name": "truncated-is-malformed",
+  "from": "pcep",
+  "to": "pcep",
+  "input": "2001001c01100018201e78010010000400000005001a0003",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/ietf-more-vectors.py from values chosen there; layout restated from RFC 5440 sections 6 and 7 and RFC 3209 section 4.3.3; the Open message without its last 4 octets, shorter than its length field; expect derived there, no engine run"
+}

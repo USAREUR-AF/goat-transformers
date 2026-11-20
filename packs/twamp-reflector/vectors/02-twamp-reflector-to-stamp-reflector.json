@@ -1,0 +1,8 @@
+{
+  "name": "twamp-reflector-to-stamp-reflector",
+  "from": "twamp-reflector",
+  "to": "stamp-reflector",
+  "input": "00000065ed5fa85d402000000a030000ed5fa85d4010000000000007ed5fa85d4000000084010000fe000102",
+  "expect": "00000065ed5fa85d402000000a030000ed5fa85d4010000000000007ed5fa85d4000000084010000fe000000",
+  "source": "built by tools/gen/ietf-more-vectors.py from values chosen there; layout restated from RFC 5357 section 4.2.1 and RFC 8762 sections 4.2 and 4.3 and RFC 8972 sections 3 and 4; the reflected packet as a STAMP Session-Reflector packet (SSID 0, padding dropped); expect derived there, no engine run"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "authenticated-roundtrip",
+  "from": "stamp-reflector-auth",
+  "to": "stamp-reflector-auth",
+  "input": "00000038000000000000000000000000ed5fa85d402000000a031f2e00000000ed5fa85d4010000000000000000000000000000a000000000000000000000000ed5fa85d40000000840100000000000040000000000000000000000000000000101112131415161718191a1b1c1d1e1f0005000c000000010000000100000001",
+  "expect": "00000038000000000000000000000000ed5fa85d402000000a031f2e00000000ed5fa85d4010000000000000000000000000000a000000000000000000000000ed5fa85d40000000840100000000000040000000000000000000000000000000101112131415161718191a1b1c1d1e1f0005000c000000010000000100000001",
+  "model": {
+    "ippm.sequence": "56",
+    "ippm.sender_sequence": "10",
+    "ippm.sender_ttl": "64",
+    "ippm.tlvs.#": "1",
+    "ippm.tlvs[0].ippm.dm_reflector_tx": "1"
+  },
+  "source": "built by tools/gen/ietf-more-vectors.py from values chosen there; layout restated from RFC 8762 sections 4.2 and 4.3 and RFC 8972 sections 3 and 4; an authenticated-mode Session-Reflector packet with a direct measurement TLV; expect derived there, no engine run"
+}

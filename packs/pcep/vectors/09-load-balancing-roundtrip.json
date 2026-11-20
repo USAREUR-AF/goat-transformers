@@ -1,0 +1,12 @@
+{
+  "name": "load-balancing-roundtrip",
+  "from": "pcep",
+  "to": "pcep",
+  "input": "2003001c0212000c000000000000004f0e10000c0000000448742400",
+  "expect": "2003001c0212000c000000000000004f0e10000c0000000448742400",
+  "model": {
+    "pcep.objects[1].pcep.max_lsp": "4",
+    "pcep.objects[1].pcep.min_bandwidth": "250000"
+  },
+  "source": "built by tools/gen/ietf-more-vectors.py from values chosen there; layout restated from RFC 5440 sections 6 and 7 and RFC 3209 section 4.3.3; a PCReq with a LOAD-BALANCING object; expect derived there, no engine run"
+}

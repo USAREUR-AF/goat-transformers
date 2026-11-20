@@ -1,0 +1,19 @@
+{
+  "name": "reflector-with-tlvs-roundtrip",
+  "from": "stamp-reflector",
+  "to": "stamp-reflector",
+  "input": "00000037ed5fa85d402000000a031f2eed5fa85d4010000000000009ed5fa85d40000000840100003f0000000005000c000003e8000003e6000003e600040004bae8000080c8000401020304",
+  "expect": "00000037ed5fa85d402000000a031f2eed5fa85d4010000000000009ed5fa85d40000000840100003f0000000005000c000003e8000003e6000003e600040004bae8000080c8000401020304",
+  "model": {
+    "ippm.ssid": "7982",
+    "ippm.sender_sequence": "9",
+    "ippm.sender_ttl": "63",
+    "ippm.tlvs.#": "3",
+    "ippm.tlvs[0].ippm.dm_reflector_rx": "998",
+    "ippm.tlvs[1].ippm.cos_dscp2": "46",
+    "ippm.tlvs[2].ippm.tlv_flag_u": "1",
+    "ippm.tlvs[2].ippm.tlv_type": "200",
+    "ippm.tlvs[2].ippm.tlv_value.#": "4"
+  },
+  "source": "built by tools/gen/ietf-more-vectors.py from values chosen there; layout restated from RFC 8762 sections 4.2 and 4.3 and RFC 8972 sections 3 and 4; a Session-Reflector packet answering with direct measurement and class of service TLVs, and an unknown TLV returned with the U flag; expect derived there, no engine run"
+}

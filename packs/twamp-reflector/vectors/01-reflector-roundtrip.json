@@ -1,0 +1,17 @@
+{
+  "name": "reflector-roundtrip",
+  "from": "twamp-reflector",
+  "to": "twamp-reflector",
+  "input": "00000065ed5fa85d402000000a030000ed5fa85d4010000000000007ed5fa85d4000000084010000fe000102",
+  "expect": "00000065ed5fa85d402000000a030000ed5fa85d4010000000000007ed5fa85d4000000084010000fe000102",
+  "model": {
+    "ippm.sequence": "101",
+    "ippm.rcv_ts_frac": "1074790400",
+    "ippm.sender_sequence": "7",
+    "ippm.sender_ts_frac": "1073741824",
+    "ippm.sender_err_s": "1",
+    "ippm.sender_ttl": "254",
+    "ippm.padding.#": "3"
+  },
+  "source": "built by tools/gen/ietf-more-vectors.py from values chosen there; layout restated from RFC 5357 section 4.2.1; a reflected packet with 3 octets of padding; expect derived there, no engine run"
+}

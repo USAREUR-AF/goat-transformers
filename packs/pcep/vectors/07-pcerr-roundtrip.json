@@ -1,0 +1,13 @@
+{
+  "name": "pcerr-roundtrip",
+  "from": "pcep",
+  "to": "pcep",
+  "input": "2006000c0d10000800000101",
+  "expect": "2006000c0d10000800000101",
+  "model": {
+    "pcep.message_type": "6",
+    "pcep.objects[0].pcep.error_type": "1",
+    "pcep.objects[0].pcep.error_value": "1"
+  },
+  "source": "built by tools/gen/ietf-more-vectors.py from values chosen there; layout restated from RFC 5440 sections 6 and 7 and RFC 3209 section 4.3.3; a PCErr with a PCEP-ERROR object, type 1 value 1; expect derived there, no engine run"
+}

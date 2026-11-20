@@ -1,0 +1,12 @@
+{
+  "name": "close-roundtrip",
+  "from": "pcep",
+  "to": "pcep",
+  "input": "2007000c0f10000800000002",
+  "expect": "2007000c0f10000800000002",
+  "model": {
+    "pcep.message_type": "7",
+    "pcep.objects[0].pcep.close_reason": "2"
+  },
+  "source": "built by tools/gen/ietf-more-vectors.py from values chosen there; layout restated from RFC 5440 sections 6 and 7 and RFC 3209 section 4.3.3; a Close message, reason 2 (DeadTimer expired); expect derived there, no engine run"
+}

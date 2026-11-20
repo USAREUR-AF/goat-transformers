@@ -1,0 +1,8 @@
+{
+  "name": "short-is-malformed",
+  "from": "hsrp",
+  "to": "hsrp",
+  "input": "000010030a6e0100636973636f000000c00002",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/ietf-more-vectors.py from values chosen there; layout restated from RFC 2281 section 5.1; the hello without its last octet; expect derived there, no engine run"
+}

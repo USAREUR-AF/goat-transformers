@@ -1,0 +1,20 @@
+{
+  "name": "open-roundtrip",
+  "from": "pcep",
+  "to": "pcep",
+  "input": "2001001c01100018201e78010010000400000005001a000301020300",
+  "expect": "2001001c01100018201e78010010000400000005001a000301020300",
+  "model": {
+    "@kind": "message",
+    "pcep.message_type": "1",
+    "pcep.objects.#": "1",
+    "pcep.objects[0].pcep.object_class": "1",
+    "pcep.objects[0].pcep.open_version": "1",
+    "pcep.objects[0].pcep.keepalive": "30",
+    "pcep.objects[0].pcep.deadtimer": "120",
+    "pcep.objects[0].pcep.sid": "1",
+    "pcep.objects[0].pcep.tlvs.#": "2",
+    "pcep.objects[0].pcep.tlvs[1].pcep.tlv_value.#": "3"
+  },
+  "source": "built by tools/gen/ietf-more-vectors.py from values chosen there; layout restated from RFC 5440 sections 6 and 7 and RFC 3209 section 4.3.3; an Open message: OPEN object, keepalive 30, deadtimer 120, two TLVs (one padded); expect derived there, no engine run"
+}

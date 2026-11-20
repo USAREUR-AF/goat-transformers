@@ -1,0 +1,33 @@
+# TWAMP-Test packet of a Session-Reflector, unauthenticated mode. Public. Written by tools/gen/ippm-pack.py; do not edit by hand.
+# Wire bits, layout sequential, msb; I/O is hex text. pack.md states what is mapped.
+format        twamp-reflector
+version       0.1.0
+distribution  public
+source        "IETF RFC 5357, A Two-Way Active Measurement Protocol (TWAMP), October 2008, section 4.2.1, https://www.rfc-editor.org/rfc/rfc5357.txt (sha256 473849a8af63f863caad7c5b65e922e278190b16bf6c2ff877972738f476669a); layout restated"
+uses          ippm
+wire          bits
+layout        sequential
+bit_order     msb
+
+field  ippm.sequence  32  uint
+field  ippm.ts_sec  32  uint
+field  ippm.ts_frac  32  uint
+field  ippm.err_s  1  uint
+field  ippm.err_z  1  uint
+field  ippm.err_scale  6  uint
+field  ippm.err_multiplier  8  uint
+pad  16
+field  ippm.rcv_ts_sec  32  uint
+field  ippm.rcv_ts_frac  32  uint
+field  ippm.sender_sequence  32  uint
+field  ippm.sender_ts_sec  32  uint
+field  ippm.sender_ts_frac  32  uint
+field  ippm.sender_err_s  1  uint
+field  ippm.sender_err_z  1  uint
+field  ippm.sender_err_scale  6  uint
+field  ippm.sender_err_multiplier  8  uint
+pad  16
+field  ippm.sender_ttl  8  uint
+group  ippm.padding  rest
+  field  ippm.octet  8  uint
+end

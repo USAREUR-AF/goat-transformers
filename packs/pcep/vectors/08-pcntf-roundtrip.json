@@ -1,0 +1,13 @@
+{
+  "name": "pcntf-roundtrip",
+  "from": "pcep",
+  "to": "pcep",
+  "input": "2005000c0c10000800000201",
+  "expect": "2005000c0c10000800000201",
+  "model": {
+    "pcep.message_type": "5",
+    "pcep.objects[0].pcep.notification_type": "2",
+    "pcep.objects[0].pcep.notification_value": "1"
+  },
+  "source": "built by tools/gen/ietf-more-vectors.py from values chosen there; layout restated from RFC 5440 sections 6 and 7 and RFC 3209 section 4.3.3; a PCNtf with a NOTIFICATION object, type 2 value 1; expect derived there, no engine run"
+}

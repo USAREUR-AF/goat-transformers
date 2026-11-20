@@ -1,0 +1,14 @@
+{
+  "name": "coup-roundtrip",
+  "from": "hsrp",
+  "to": "hsrp",
+  "input": "000104030ac8010050613535776f7264c00002fe",
+  "expect": "000104030ac8010050613535776f7264c00002fe",
+  "model": {
+    "hsrp.op_code": "1",
+    "hsrp.state": "4",
+    "hsrp.priority": "200",
+    "hsrp.authentication": "Pa55word"
+  },
+  "source": "built by tools/gen/ietf-more-vectors.py from values chosen there; layout restated from RFC 2281 section 5.1; a coup from a speaking router of higher priority, with eight characters of authentication data; expect derived there, no engine run"
+}
