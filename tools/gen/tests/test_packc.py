@@ -1,7 +1,9 @@
 """packc: a derive line whose target the source decode already gives is not
 needed by a cross-format plan; and the sentinels of the `absent` field option
 (engine-spec 0.9) are compiled into the FIELD operation (embedded/FORMAT.md);
-and the `present` derive function (engine-spec 0.12) is compiled as function 13.
+and the `present` derive function (engine-spec 0.12) is compiled as function 13;
+and `armor sixbit` and the `sixbit` transform (engine-spec 0.14) are compiled
+as format flag 4 and transform 8.
 
 A model module may state both directions between `uid` and a numeric
 identifier (`derive uid text_of x.id`, `derive x.id parse_int uid`). A derive
@@ -206,10 +208,10 @@ class AbsentSentinelTest(unittest.TestCase):
         ids = {v: k for k, v in report["key_ids"].items()}
         return {ids[o["key"]]: o for o in ops(secs) if o["op"] == packc.OP_FIELD}
 
-    def test_the_plan_format_is_version_2(self):
+    def test_the_plan_format_version(self):
         version, _, _ = self.compile("fx", "fx")
-        self.assertEqual(version, 2)
-        self.assertEqual(packc.VERSION, 2)
+        self.assertEqual(version, packc.VERSION)
+        self.assertEqual(packc.VERSION, 3)
 
     def test_fixed_sentinels_follow_the_scale_in_the_pool(self):
         _, secs, report = self.compile("fx", "fx")
@@ -356,6 +358,130 @@ class PresentDeriveTest(unittest.TestCase):
         # the caller may set any key, so the argument may be present
         blob, report = packc.compile_plan(self.model_dir, self.packs_dir, None, "pt", {}, False)[:2]
         self.assertIn("probe.mrh = present(probe.alt)", report["derives"])
+
+
+SIXBIT_MODEL = """module        probe
+version       0.1.0
+distribution  public
+source        "test"
+key  x     int    -
+key  name  string -
+"""
+
+ARMOR_FIXED = """format        af
+version       0.1.0
+distribution  public
+source        "test"
+uses          probe
+wire          bits
+bit_order     msb
+armor         sixbit
+word_bytes    1
+field  probe.x     0:0:6    uint
+field  probe.name  0:6:42   sixbit  trim
+"""
+
+ARMOR_SEQ = """format        aq
+version       0.1.0
+distribution  public
+source        "test"
+uses          probe
+wire          bits
+bit_order     msb
+armor         sixbit
+layout        sequential
+field  probe.x     6   uint
+field  probe.name  12  sixbit
+"""
+
+# `sixbit` without armor, on hex input in lsb order
+SIXBIT_HEX = """format        sh
+version       0.1.0
+distribution  public
+source        "test"
+uses          probe
+wire          bits
+word_bytes    1
+field  probe.name  0:0:24  sixbit
+"""
+
+
+class SixbitArmorTest(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        root = self.tmp.name
+        os.makedirs(os.path.join(root, "model"))
+        for name, text in (("core.def", CORE), ("probe.def", SIXBIT_MODEL)):
+            with open(os.path.join(root, "model", name), "w", encoding="utf-8") as fh:
+                fh.write(text)
+        self.model_dir = os.path.join(root, "model")
+        self.packs_dir = os.path.join(root, "packs")
+        for name, text in (("af", ARMOR_FIXED), ("aq", ARMOR_SEQ), ("sh", SIXBIT_HEX)):
+            self.write_pack(name, text)
+
+    def tearDown(self):
+        packc._INDEX.clear()
+        packc._MODELS.clear()
+        self.tmp.cleanup()
+
+    def write_pack(self, name, text):
+        d = os.path.join(self.packs_dir, name)
+        os.makedirs(d, exist_ok=True)
+        with open(os.path.join(d, "pack.def"), "w", encoding="utf-8") as fh:
+            fh.write(text)
+        packc._INDEX.clear()
+        packc._MODELS.clear()
+
+    def compile(self, name):
+        blob, report = packc.compile_plan(self.model_dir, self.packs_dir, name, name, {}, False)[:2]
+        version, secs = sections(blob)
+        self.assertEqual(version, 3)
+        entry, data = secs[packc.S_FORMATS]
+        flags = [data[i] for i in range(0, len(data), entry)]
+        ids = {v: k for k, v in report["key_ids"].items()}
+        fields = {ids[o["key"]]: o for o in ops(secs) if o["op"] == packc.OP_FIELD}
+        return flags, fields
+
+    def test_armor_is_format_flag_4_in_both_layouts(self):
+        for name, seq in (("af", 0), ("aq", 2)):
+            flags, fields = self.compile(name)
+            self.assertEqual(flags, [1 | seq | 4], name)
+            self.assertEqual(fields["probe.name"]["xf"], packc.XF["sixbit"])
+            self.assertEqual(packc.XF["sixbit"], 8)
+        _, fields = self.compile("af")
+        self.assertEqual(fields["probe.name"]["flags"] & packc.F_TRIM, packc.F_TRIM)
+        self.assertEqual(fields["probe.name"]["len"], 42)
+
+    def test_sixbit_without_armor_is_hex(self):
+        flags, fields = self.compile("sh")
+        self.assertEqual(flags, [0])
+        self.assertEqual(fields["probe.name"]["xf"], 8)
+
+    def refused(self, text):
+        self.write_pack("bad", text.replace("format        af", "format        bad"))
+        with self.assertRaises(packc.Refused) as cm:
+            packc.compile_plan(self.model_dir, self.packs_dir, "bad", "bad", {}, False)
+        return cm.exception.reason
+
+    def test_refusals(self):
+        line = "field  probe.name  0:6:42   sixbit  trim"
+        # a length that is not a multiple of 6, or outside 6 to 1530
+        self.assertEqual(self.refused(ARMOR_FIXED.replace(line, "field  probe.name  0:6:40  sixbit")), "bad-pack")
+        self.assertEqual(self.refused(ARMOR_FIXED.replace(line, "field  probe.name  0:6:1536  sixbit")), "bad-pack")
+        # `swap` on `sixbit`
+        self.assertEqual(self.refused(ARMOR_FIXED.replace(line, "field  probe.name  0:6:48  sixbit  swap")), "bad-pack")
+        # `armor sixbit` needs `bit_order msb`; `armor` takes `hex` or `sixbit`
+        self.assertEqual(self.refused(ARMOR_FIXED.replace("bit_order     msb\n", "")), "bad-pack")
+        self.assertEqual(self.refused(ARMOR_FIXED.replace("armor         sixbit", "armor  base64")), "bad-pack")
+        # `length ... whole` under armor (ruling 3 of 0.14)
+        whole = ARMOR_SEQ.replace("format        aq", "format        af") + "length  8  whole\n"
+        self.assertEqual(self.refused(whole), "bad-pack")
+
+    def test_armor_hex_is_the_default(self):
+        self.write_pack("hx", ARMOR_FIXED.replace("format        af", "format        hx").replace(
+            "armor         sixbit", "armor         hex"))
+        flags, _ = self.compile("hx")
+        self.assertEqual(flags, [1])
 
 
 if __name__ == "__main__":

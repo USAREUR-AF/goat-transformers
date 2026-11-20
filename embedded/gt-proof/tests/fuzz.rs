@@ -29,11 +29,24 @@ const PAIRS: [(&str, &str, &[&str]); 4] = [
     ("conformance-seq-msb", "conformance-seq-lsb", &[]),
 ];
 
+/// A message as the reference engine takes it: hex, or the armored text.
+/// Bytes that are not UTF-8 become U+FFFD, which is no armor character
+/// either, so both engines refuse the message as `malformed-wire`.
+fn text_in(p: &Proof, format: &str, m: &[u8]) -> String {
+    if p.is_armored(format) {
+        String::from_utf8_lossy(m).into_owned()
+    } else {
+        hex(m)
+    }
+}
+
 struct Case {
     from: String,
     to: String,
     blob: Rc<Vec<u8>>,
     seeds: Vec<Vec<u8>>,
+    /// the source is six-bit armored text (engine-spec 0.14)
+    armored: bool,
 }
 
 fn cases(p: &mut Proof) -> Vec<Case> {
@@ -53,15 +66,29 @@ fn cases(p: &mut Proof) -> Vec<Case> {
             Err(e) if e.contains("refused: unsupported-feature:") => continue,
             Err(e) => panic!("{} -> {}: {}", from, to, e),
         };
-        let seeds = vectors.iter().filter(|v| v.from == from).filter_map(|v| unhex(&v.input)).collect();
-        out.push(Case { from, to, blob, seeds });
+        let seeds = vectors.iter().filter(|v| v.from == from).filter_map(|v| p.wire_in(&from, &v.input)).collect();
+        let armored = p.is_armored(&from);
+        out.push(Case { from, to, blob, seeds, armored });
     }
     out
 }
 
 /// A random message, or a vector input with a few bits flipped, a byte
-/// replaced, or its tail cut or extended.
-fn input(rng: &mut Rng, seeds: &[Vec<u8>]) -> Vec<u8> {
+/// replaced, or its tail cut or extended. For a source of six-bit armored
+/// text, half the inputs are then mapped onto armor characters, so that they
+/// reach the lines and are not all refused for a character.
+fn input(rng: &mut Rng, seeds: &[Vec<u8>], armored: bool) -> Vec<u8> {
+    let mut m = raw_input(rng, seeds);
+    if armored && rng.below(2) == 0 {
+        for b in m.iter_mut() {
+            let v = *b & 0x3F;
+            *b = if v < 40 { 0x30 + v } else { 0x38 + v };
+        }
+    }
+    m
+}
+
+fn raw_input(rng: &mut Rng, seeds: &[Vec<u8>]) -> Vec<u8> {
     if seeds.is_empty() || rng.below(3) == 0 {
         let n = rng.below(81);
         return rng.bytes(n);
@@ -100,7 +127,7 @@ fn random_and_mutated_inputs_never_panic() {
     for c in &cases {
         let plan = Plan::parse(&c.blob).expect("plan");
         for _ in 0..per_case {
-            let m = input(&mut rng, &c.seeds);
+            let m = input(&mut rng, &c.seeds, c.armored);
             let name = match gt_core::convert(&plan, &m, &mut out, &mut scratch, &[]) {
                 Ok(n) => {
                     assert!(n <= out.len());
@@ -138,12 +165,12 @@ fn differential_against_reference() {
         let ctx = device_context(&plan, &typed);
         let given = (!ctx_text.is_empty()).then_some(ctx_text.as_slice());
         for _ in 0..per_case {
-            let m = input(&mut rng, &c.seeds);
-            let want = p.engine.convert_text(&c.from, &c.to, &hex(&m), given);
+            let m = input(&mut rng, &c.seeds, c.armored);
+            let want = p.engine.convert_text(&c.from, &c.to, &text_in(&p, &c.from, &m), given);
             let got = gt_core::convert(&plan, &m, &mut out, &mut scratch, &ctx);
             total += 1;
             match (want, got) {
-                (Ok(w), Ok(n)) if w == hex(&out[..n]) => same_ok += 1,
+                (Ok(w), Ok(n)) if w == p.wire_out(&c.to, &out[..n]) => same_ok += 1,
                 (Err(e), Err(d)) if kind_of(&e) == d.name() => same_err += 1,
                 (_, Err(Error::ScratchFull | Error::OutputFull)) => capacity += 1,
                 (w, g) => {
@@ -190,7 +217,7 @@ fn truncated_inputs_match_reference() {
         if !p.is_bits(&v.from) {
             continue;
         }
-        let full = match unhex(&v.input) {
+        let full = match p.wire_in(&v.from, &v.input) {
             Some(b) => b,
             None => continue,
         };
@@ -202,11 +229,11 @@ fn truncated_inputs_match_reference() {
         let plan = Plan::parse(&blob).expect("plan");
         for cut in 0..full.len() {
             let m = &full[..cut];
-            let want = p.engine.convert(&v.from, &v.to, &hex(m));
+            let want = p.engine.convert(&v.from, &v.to, &text_in(&p, &v.from, m));
             let got = gt_core::convert(&plan, m, &mut out, &mut scratch, &[]);
             total += 1;
             match (want, got) {
-                (Ok(w), Ok(n)) if w == hex(&out[..n]) => accepted += 1,
+                (Ok(w), Ok(n)) if w == p.wire_out(&v.to, &out[..n]) => accepted += 1,
                 (Err(e), Err(d)) if kind_of(&e) == d.name() => errors += 1,
                 (w, g) => differ.push(format!(
                     "{}/{} cut to {} bytes: reference {:?}, device {:?}",
@@ -249,7 +276,7 @@ fn corrupted_plans_never_panic() {
                 let i = rng.below(blob.len());
                 blob[i] = rng.next() as u8;
             }
-            let m = input(&mut rng, &c.seeds);
+            let m = input(&mut rng, &c.seeds, c.armored);
             total += 1;
             if let Ok(plan) = Plan::parse(&blob) {
                 parsed += 1;

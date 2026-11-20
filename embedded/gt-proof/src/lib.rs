@@ -47,6 +47,9 @@ pub struct Proof {
     pub engine: Engine,
     root: PathBuf,
     wires: HashMap<String, String>,
+    /// formats with `armor sixbit` (engine-spec 0.14): their messages are
+    /// armored text, not hex
+    armored: std::collections::HashSet<String>,
     plans: HashMap<String, Result<Rc<Vec<u8>>, String>>,
 }
 
@@ -63,6 +66,7 @@ impl Proof {
         engine.load_model_dir(&root.join("model")).expect("model modules");
         engine.load_pack_dir(&root.join("packs")).expect("packs");
         let mut wires = HashMap::new();
+        let mut armored = std::collections::HashSet::new();
         for dir in sorted(&root.join("packs")) {
             let text = match std::fs::read_to_string(dir.join("pack.def")) {
                 Ok(t) => t,
@@ -75,10 +79,38 @@ impl Proof {
                 })
             };
             if let (Some(format), Some(wire)) = (word("format"), word("wire")) {
+                if word("armor").as_deref() == Some("sixbit") {
+                    armored.insert(format.clone());
+                }
                 wires.insert(format, wire);
             }
         }
-        Proof { engine, root, wires, plans: HashMap::new() }
+        Proof { engine, root, wires, armored, plans: HashMap::new() }
+    }
+
+    /// Does the format carry its messages as six-bit armored text?
+    pub fn is_armored(&self, format: &str) -> bool {
+        self.armored.contains(format)
+    }
+
+    /// A vector's message text as the bytes the device takes: the armored
+    /// text itself, or the bytes hex text stands for. None: hex that is not.
+    pub fn wire_in(&self, format: &str, text: &str) -> Option<Vec<u8>> {
+        if self.is_armored(format) {
+            Some(text.as_bytes().to_vec())
+        } else {
+            unhex(text)
+        }
+    }
+
+    /// The device's output as the reference engine writes it: armored text,
+    /// or hex.
+    pub fn wire_out(&self, format: &str, bytes: &[u8]) -> String {
+        if self.is_armored(format) {
+            String::from_utf8_lossy(bytes).into_owned()
+        } else {
+            hex(bytes)
+        }
     }
 
     pub fn is_bits(&self, format: &str) -> bool {

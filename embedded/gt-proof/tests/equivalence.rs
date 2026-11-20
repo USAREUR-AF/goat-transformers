@@ -99,7 +99,7 @@ fn run(p: &mut Proof, v: &Vector, scratch: &mut Scratch, skipped: &mut Vec<Strin
     };
     let mut out = vec![0u8; 1 << 16];
     if fb && tb {
-        let input = match unhex(&v.input) {
+        let input = match p.wire_in(&v.from, &v.input) {
             Some(b) => b,
             None => return skip("the input is not hex text; the device takes bytes".into()),
         };
@@ -118,15 +118,15 @@ fn run(p: &mut Proof, v: &Vector, scratch: &mut Scratch, skipped: &mut Vec<Strin
             v.max_items as u64,
         );
         match (&v.expect, &v.expect_error, got) {
-            (Some(want), _, Ok(n)) if hex(&out[..n]) == *want => {}
-            (Some(want), _, Ok(n)) => return Err(format!("got {} want {}", hex(&out[..n]), want)),
+            (Some(want), _, Ok(n)) if p.wire_out(&v.to, &out[..n]) == *want => {}
+            (Some(want), _, Ok(n)) => return Err(format!("got {} want {}", p.wire_out(&v.to, &out[..n]), want)),
             (_, Some(kind), Err(e)) if e.name() == kind => {}
             // a device limit docs/embedded.md states: the proof's scratch
             // holds fewer items than the message
             (_, _, Err(gt_core::Error::ScratchFull)) => {
                 return skip("scratch-full: the message holds more values or list items than the proof's scratch".into())
             }
-            (_, _, got) => return Err(format!("got {:?}, want {:?}{:?}", got.map(|n| hex(&out[..n])), v.expect, v.expect_error)),
+            (_, _, got) => return Err(format!("got {:?}, want {:?}{:?}", got.map(|n| p.wire_out(&v.to, &out[..n])), v.expect, v.expect_error)),
         }
         // the decoded values, against the reference engine's and the vector's
         if let Ok(ent) = p.engine.decode_limited(&v.from, &v.input, v.max_items) {
@@ -148,7 +148,7 @@ fn run(p: &mut Proof, v: &Vector, scratch: &mut Scratch, skipped: &mut Vec<Strin
     }
     if fb {
         // bits to text: the decode side
-        let input = match unhex(&v.input) {
+        let input = match p.wire_in(&v.from, &v.input) {
             Some(b) => b,
             None => return skip("the input is not hex text; the device takes bytes".into()),
         };
@@ -201,10 +201,10 @@ fn run(p: &mut Proof, v: &Vector, scratch: &mut Scratch, skipped: &mut Vec<Strin
         s.encode(&mut out)
     })();
     match (&v.expect, &v.expect_error, got) {
-        (Some(want), _, Ok(n)) if hex(&out[..n]) == *want => Ok(true),
-        (Some(want), _, Ok(n)) => Err(format!("got {} want {}", hex(&out[..n]), want)),
+        (Some(want), _, Ok(n)) if p.wire_out(&v.to, &out[..n]) == *want => Ok(true),
+        (Some(want), _, Ok(n)) => Err(format!("got {} want {}", p.wire_out(&v.to, &out[..n]), want)),
         (_, Some(kind), Err(e)) if e.name() == kind => Ok(true),
-        (_, _, got) => Err(format!("got {:?}, want {:?}{:?}", got.map(|n| hex(&out[..n])), v.expect, v.expect_error)),
+        (_, _, got) => Err(format!("got {:?}, want {:?}{:?}", got.map(|n| p.wire_out(&v.to, &out[..n])), v.expect, v.expect_error)),
     }
 }
 

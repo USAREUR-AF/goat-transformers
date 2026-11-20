@@ -60,14 +60,14 @@ fn a_plan_for_one_kind_refuses_the_others() {
             let plan = Plan::parse(&blob).expect("plan");
             plans += 1;
             for v in vectors.iter().filter(|v| v.from == *format && v.to == *format && v.context.is_none()) {
-                let (input, theirs) = match (unhex(&v.input), kind_of_vector(v)) {
+                let (input, theirs) = match (p.wire_in(&v.from, &v.input), kind_of_vector(v)) {
                     (Some(i), Some(k)) => (i, k),
                     _ => continue,
                 };
                 let got = gt_core::convert(&plan, &input, &mut out, &mut scratch, &[]);
                 if theirs == *kind {
                     let n = got.unwrap_or_else(|e| panic!("{} on {}/{}: {:?}", side, v.pack, v.name, e));
-                    assert_eq!(Some(hex(&out[..n])), v.expect, "{} on {}/{}", side, v.pack, v.name);
+                    assert_eq!(Some(p.wire_out(&v.to, &out[..n])), v.expect, "{} on {}/{}", side, v.pack, v.name);
                     converted += 1;
                 } else {
                     assert_eq!(got, Err(Error::NoKind), "{} on {}/{} (a `{}` message)", side, v.pack, v.name, theirs);

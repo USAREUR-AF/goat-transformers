@@ -42,7 +42,7 @@ pub(crate) const NONE16: u16 = 0xFFFF;
 pub(crate) const NONE32: u32 = 0xFFFF_FFFF;
 
 /// The version of the blob layout this engine reads.
-pub const FORMAT_VERSION: u16 = 2;
+pub const FORMAT_VERSION: u16 = 3;
 
 /// One entry of the operation table.
 #[derive(Clone, Copy)]
@@ -64,6 +64,8 @@ pub(crate) struct Op {
 pub(crate) struct Format {
     pub msb: bool,
     pub sequential: bool,
+    /// `armor sixbit` (engine-spec 0.14): the message is six-bit armored text
+    pub sixbit: bool,
     pub word_bytes: u16,
     pub body: u32,
 }
@@ -268,6 +270,7 @@ impl<'a> Plan<'a> {
         Ok(Format {
             msb: b[0] & 1 != 0,
             sequential: b[0] & 2 != 0,
+            sixbit: b[0] & 4 != 0,
             word_bytes: u16::from_le_bytes([b[2], b[3]]),
             body: u32::from_le_bytes([b[4], b[5], b[6], b[7]]),
         })

@@ -37,7 +37,7 @@ import re
 import struct
 import sys
 
-VERSION = 2
+VERSION = 3
 MAGIC = b"GTP1"
 
 # section ids
@@ -53,7 +53,7 @@ SECTION_NAMES = {
  OP_IF, OP_OPT, OP_CHAIN, OP_PART, OP_LENGTH, OP_WHOLE, OP_GROUP_SEQ, OP_GROUP_FIX) = range(1, 20)
 BLOCK_OPS = (OP_BODY, OP_KIND, OP_IF, OP_OPT, OP_CHAIN, OP_PART, OP_LENGTH)
 
-XF = {"uint": 0, "twos": 1, "linscale": 2, "uscale": 3, "sscale": 4, "f32": 5, "f64": 6, "ascii": 7}
+XF = {"uint": 0, "twos": 1, "linscale": 2, "uscale": 3, "sscale": 4, "f32": 5, "f64": 6, "ascii": 7, "sixbit": 8}
 T_INT, T_FLOAT, T_STR, T_LIST = 0, 1, 2, 3
 TYPES = {"int": T_INT, "float": T_FLOAT, "string": T_STR}
 F_SWAP, F_TRIM, F_OPTIONAL = 1, 2, 4
@@ -188,7 +188,7 @@ def parse_transform(name):
     if name == "ascii":
         return (name, None, T_STR)
     if name == "sixbit":
-        refuse("unsupported-feature", "transform `sixbit` (six-bit text, spec 0.14) is not in the device profile")
+        return (name, None, T_STR)
     if name.split(":", 1)[0] in V015_BITS:
         refuse("unsupported-feature", "transform `%s` (value transforms, spec 0.15) is not in the device profile"
                % name.split(":", 1)[0])
@@ -268,6 +268,7 @@ class Pack:
         self.wire = None
         self.msb = False
         self.seq = False
+        self.sixbit = False     # `armor sixbit` (engine-spec 0.14)
         self.word_bytes = 1
         self.maps = {}          # table -> [(native, model)]
         self.typemap = []       # (native, cot) in line order
@@ -310,15 +311,19 @@ class Pack:
                 self.msb = t[1] == "msb"
             elif d == "word_bytes":
                 self.word_bytes = int(t[1])
-            elif d == "armor" and len(t) == 2 and t[1] != "hex":
-                refuse("unsupported-feature", "%s: `armor %s` (six-bit armored text, spec 0.14) is not in the "
-                       "device profile" % (self.where, t[1]))
+            elif d == "armor" and len(t) == 2:
+                # engine-spec 0.14: `hex` (the default) or `sixbit`
+                if t[1] not in ("hex", "sixbit"):
+                    refuse("bad-pack", "%s: `armor %s`" % (self.where, t[1]))
+                self.sixbit = t[1] == "sixbit"
             elif d == "map" and len(t) == 4:
                 self.maps.setdefault(t[1], []).append((t[2], t[3]))
             elif d == "typemap" and len(t) == 3:
                 self.typemap.append((t[1], t[2]))
         if self.format is None or self.wire is None:
             refuse("bad-pack", "%s: no `format` or no `wire` line" % self.where)
+        if self.sixbit and not self.msb:
+            refuse("bad-pack", "%s: `armor sixbit` needs `bit_order msb`" % self.where)
         if not (1 <= self.word_bytes <= 0xFFFF):
             refuse("bad-pack", "%s: word_bytes %d" % (self.where, self.word_bytes))
 
@@ -348,9 +353,10 @@ class Pack:
                 i += 2
                 continue
             refuse("bad-pack", "%s: unknown field option `%s`" % (self.format, t[i]))
-        ok = {"f32": length == 32, "f64": length == 64, "ascii": length % 8 == 0 and 8 <= length <= 2040}.get(
+        ok = {"f32": length == 32, "f64": length == 64, "ascii": length % 8 == 0 and 8 <= length <= 2040,
+              "sixbit": length % 6 == 0 and 6 <= length <= 1530}.get(
             xf, 1 <= length <= 64)
-        if not ok or (f["swap"] and length % 8 != 0):
+        if not ok or (f["swap"] and (length % 8 != 0 or xf == "sixbit")):
             refuse("bad-pack", "%s: bit length %d is not allowed for `%s`" % (self.format, length, t[3]))
         return f
 
@@ -598,6 +604,8 @@ class Pack:
                     plus = int(t[i])
                 i += 1
             if whole:
+                if self.sixbit:
+                    refuse("bad-pack", "%s: `length ... whole` with `armor sixbit` (ruling 3 of 0.14)" % self.format)
                 return {"t": "whole", "len": int(t[1]), "plus": plus}
             return {"t": "length", "len": int(t[1]), "in_bits": in_bits, "plus": plus, "body": self._seq_block()}
         if d == "group":
@@ -836,7 +844,7 @@ class Compiler:
                    "%s has %d `length ... whole` lines; the device engine holds %d" % (pack.format, self.wholes, MAX_WHOLES))
         first = len(self.ops)
         self.flatten(root, self.ops)
-        self.formats.append({"flags": (1 if pack.msb else 0) | (2 if pack.seq else 0), "word_bytes": pack.word_bytes,
+        self.formats.append({"flags": (1 if pack.msb else 0) | (2 if pack.seq else 0) | (4 if pack.sixbit else 0), "word_bytes": pack.word_bytes,
                              "body": first, "name": self.name_id(pack.format), "npresence": pack.npresence,
                              "first": first, "end": len(self.ops), "format": pack.format})
         return len(self.formats) - 1

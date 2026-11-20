@@ -34,6 +34,7 @@ const XF_SSCALE: u8 = 4;
 const XF_F32: u8 = 5;
 const XF_F64: u8 = 6;
 const XF_ASCII: u8 = 7;
+const XF_SIXBIT: u8 = 8;
 
 const F_SWAP: u8 = 1;
 const F_TRIM: u8 = 2;
@@ -52,6 +53,68 @@ const SRC_PLAN: u8 = 2;
 const SRC_TEXT: u8 = 3;
 /// text of a context value
 const SRC_CONTEXT: u8 = 4;
+/// six-bit characters read from the input (`sixbit`, engine-spec 0.14),
+/// first character at bit `off`
+const SRC_SIXBIT: u8 = 5;
+
+/// The six bits a character of six-bit armor stands for (engine-spec 0.14):
+/// `0` to `W` and `` ` `` to `w`. None: not an armor character.
+fn armor_value(c: u8) -> Option<u8> {
+    match c {
+        0x30..=0x57 => Some(c - 0x30),
+        0x60..=0x77 => Some(c - 0x38),
+        _ => None,
+    }
+}
+
+/// The armor character for six bits: 0 to 39 as `0x30 + v`, 40 to 63 as `0x38 + v`.
+fn armor_char(v: u8) -> u8 {
+    let v = v & 0x3F;
+    if v < 40 {
+        0x30 + v
+    } else {
+        0x38 + v
+    }
+}
+
+/// `len` (1..=64) bits from bit `start` of armored text, most significant
+/// first. The characters were checked when the decode began. None when the
+/// range runs past the text.
+fn get_armored(text: &[u8], start: u64, len: u32) -> Option<u64> {
+    if len == 0 || len > 64 || start.checked_add(len as u64)? > text.len() as u64 * 6 {
+        return None;
+    }
+    let mut v: u64 = 0;
+    for k in 0..len as u64 {
+        let bit = start + k;
+        let c = armor_value(*text.get((bit / 6) as usize)?)?;
+        v = v << 1 | (c >> (5 - bit % 6) & 1) as u64;
+    }
+    Some(v)
+}
+
+/// The first `l` bits of the message in `out` (most significant first),
+/// then zero bits to a multiple of 6, written over `out` as armored text.
+/// Character k takes bits 6k to 6k+5, which lie in bytes k and before, so
+/// the text is written last character first over the bytes it was read from.
+fn armor_out(out: &mut [u8], l: u64) -> Result<usize, Error> {
+    let n = usize::try_from(l.div_ceil(6)).map_err(|_| Error::OutputFull)?;
+    if n > out.len() {
+        return Err(Error::OutputFull);
+    }
+    for k in (0..n).rev() {
+        let mut v = 0u8;
+        for b in 0..6u64 {
+            let i = k as u64 * 6 + b;
+            let bit = if i < l { get_bits(out, i, 1, true).unwrap_or(0) as u8 } else { 0 };
+            v = v << 1 | bit;
+        }
+        if let Some(c) = out.get_mut(k) {
+            *c = armor_char(v);
+        }
+    }
+    Ok(n)
+}
 
 /// Text is never copied: a value holds where its bytes are.
 #[derive(Clone, Copy)]
@@ -283,6 +346,10 @@ pub struct Session<'a, 's> {
     failed: bool,
     decoded: bool,
     src_msb: bool,
+    /// the source is six-bit armored text (engine-spec 0.14)
+    armor: bool,
+    /// the bits of the input: 8 a byte, or 6 a character of armor
+    total: u64,
     // the cursor of a sequential decode
     pos: u64,
     end: u64,
@@ -309,6 +376,8 @@ impl<'a, 's> Session<'a, 's> {
             failed: false,
             decoded: false,
             src_msb: false,
+            armor: false,
+            total: 0,
             pos: 0,
             end: 0,
             whole: 0,
@@ -448,15 +517,35 @@ impl<'a, 's> Session<'a, 's> {
 
     // -- text ---------------------------------------------------------------
 
+    /// `len` (1..=64) bits of the input from bit `start`, in the source's
+    /// bit order: from the bytes, or from the armored text. None when the
+    /// range runs past the input.
+    fn bits(&self, start: u64, len: u32) -> Option<u64> {
+        if self.armor {
+            get_armored(self.input, start, len)
+        } else {
+            get_bits(self.input, start, len, self.src_msb)
+        }
+    }
+
     fn text_at(&self, r: TextRef, i: u16) -> u8 {
         if i >= r.len {
             return 0;
         }
         match r.src {
-            SRC_INPUT => get_bits(self.input, r.off as u64 + 8 * i as u64, 8, self.src_msb).unwrap_or(0) as u8,
+            SRC_INPUT => self.bits(r.off as u64 + 8 * i as u64, 8).unwrap_or(0) as u8,
             SRC_INPUT_REV => {
                 let k = (r.room.wrapping_sub(1).wrapping_sub(i)) as u64;
-                get_bits(self.input, r.off as u64 + 8 * k, 8, self.src_msb).unwrap_or(0) as u8
+                self.bits(r.off as u64 + 8 * k, 8).unwrap_or(0) as u8
+            }
+            // 0 to 31 as `@` to `_`, 32 to 63 as space to `?`
+            SRC_SIXBIT => {
+                let v = self.bits(r.off as u64 + 6 * i as u64, 6).unwrap_or(0) as u8;
+                if v < 32 {
+                    0x40 + v
+                } else {
+                    v
+                }
             }
             SRC_PLAN => self.plan.byte(r.off as u64 + i as u64).unwrap_or(0),
             SRC_TEXT => self.texts.get(r.off as usize).and_then(|t| t.get(i as usize)).copied().unwrap_or(0),
@@ -560,7 +649,7 @@ impl<'a, 's> Session<'a, 's> {
         if o.nabsent == 0 || len == 0 || len > 64 {
             return Ok(false);
         }
-        let mut raw = get_bits(self.input, start, len, self.src_msb).unwrap_or(0);
+        let mut raw = self.bits(start, len).unwrap_or(0);
         if o.flags & F_SWAP != 0 {
             raw = swap_bytes(raw, len);
         }
@@ -593,7 +682,6 @@ impl<'a, 's> Session<'a, 's> {
     /// refuses the bits. The caller has checked the bits are in the input.
     fn read_field(&self, o: &Op, start: u64) -> Result<Option<Val>, Error> {
         let len = o.len as u32;
-        let msb = self.src_msb;
         if o.xf == XF_ASCII {
             if len % 8 != 0 || start > u32::MAX as u64 {
                 return Err(Error::BadPlan);
@@ -610,10 +698,28 @@ impl<'a, 's> Session<'a, 's> {
             let printable = (0..t.len).all(|i| (0x20..=0x7e).contains(&self.text_at(t, i)));
             return Ok(if printable { Some(Val::Str(t)) } else { None });
         }
+        if o.xf == XF_SIXBIT {
+            // engine-spec 0.14: six bits a character, then the trailing `@`
+            // removed; with `trim`, the trailing run of `@` and space
+            if len % 6 != 0 || !(6..=1530).contains(&len) || start > u32::MAX as u64 {
+                return Err(Error::BadPlan);
+            }
+            let room = (len / 6) as u16;
+            let mut t = TextRef { src: SRC_SIXBIT, len: room, room, off: start as u32 };
+            while t.len > 0 {
+                let c = self.text_at(t, t.len - 1);
+                if c == b'@' || (o.flags & F_TRIM != 0 && c == b' ') {
+                    t.len -= 1;
+                } else {
+                    break;
+                }
+            }
+            return Ok(Some(Val::Str(t)));
+        }
         if len == 0 || len > 64 {
             return Err(Error::BadPlan);
         }
-        let mut raw = get_bits(self.input, start, len, msb).unwrap_or(0);
+        let mut raw = self.bits(start, len).unwrap_or(0);
         if o.flags & F_SWAP != 0 {
             raw = swap_bytes(raw, len);
         }
@@ -667,6 +773,27 @@ impl<'a, 's> Session<'a, 's> {
             for k in 0..room {
                 let at = if o.flags & F_SWAP != 0 { room - 1 - k } else { k };
                 set_bits(out, start + at as u64 * 8, 8, self.text_at(t, k) as u64, msb);
+            }
+            return Ok(());
+        }
+        if o.xf == XF_SIXBIT {
+            let t = match v {
+                Val::Str(t) => t,
+                _ => return Err(fail),
+            };
+            // engine-spec 0.14: `@` to `_` as c - 0x40, space to `?` as c,
+            // padded with `@` (0); another character, or more than fit, fails
+            let room = (len / 6) as u16;
+            if len % 6 != 0 || !(6..=1530).contains(&len) {
+                return Err(Error::BadPlan);
+            }
+            if t.len > room || !(0..t.len).all(|i| (0x20..=0x5f).contains(&self.text_at(t, i))) {
+                return Err(fail);
+            }
+            for k in 0..room {
+                let c = if k < t.len { self.text_at(t, k) } else { 0x40 };
+                let v = if c >= 0x40 { c - 0x40 } else { c };
+                set_bits(out, start + k as u64 * 6, 6, v as u64, msb);
             }
             return Ok(());
         }
@@ -860,11 +987,10 @@ impl<'a, 's> Session<'a, 's> {
 
     fn fx_decode(&mut self, fmt: &Format) -> Result<(), Error> {
         let plan = self.plan;
-        let input = self.input;
-        let msb = fmt.msb;
         let body = self.body_info(fmt.body)?;
-        let holds = |o: &Op| -> Result<bool, Error> {
-            Ok(get_bits(input, o.a as u64, o.len as u32, msb) == Some(plan.pool(o.b as u32)?))
+        // a `when` whose bits lie beyond the input does not hold
+        let holds = |s: &Self, o: &Op| -> Result<bool, Error> {
+            Ok(s.bits(o.a as u64, o.len as u32) == Some(plan.pool(o.b as u32)?))
         };
         let (mut reach0, mut need) = {
             let e = self.extent(body.extent)?;
@@ -876,7 +1002,7 @@ impl<'a, 's> Session<'a, 's> {
             let mut i = body.lines;
             while i < body.first_kind {
                 let o = plan.op(i)?;
-                if o.op == OP_WHEN && !holds(&o)? {
+                if o.op == OP_WHEN && !holds(self, &o)? {
                     return Err(Error::NoKind);
                 }
                 i = plan.next(i, &o)?;
@@ -888,7 +1014,7 @@ impl<'a, 's> Session<'a, 's> {
                 let mut all = true;
                 for w in ki.whens..ki.lines {
                     let o = plan.op(w)?;
-                    if o.op == OP_WHEN && !holds(&o)? {
+                    if o.op == OP_WHEN && !holds(self, &o)? {
                         all = false;
                         break;
                     }
@@ -911,15 +1037,25 @@ impl<'a, 's> Session<'a, 's> {
                 return Err(Error::NoKind);
             }
         }
+        let parts = [(body.lines, body.first_kind), kind_lines];
+        if self.armor {
+            // every bit of the lines in force, not whole words (engine-spec 0.14);
+            // the items of a group are checked as they are read
+            if self.total < need {
+                return Err(Error::MalformedWire);
+            }
+            return self.fx_decode_scope(parts, reach0, 0, 0, &mut 0, 1).map(|_| ());
+        }
+        let input_len = self.input.len() as u64;
         // whole words up to the furthest mapped, `when` or `const` bit
         let need = words(need, fmt.word_bytes).max(fmt.word_bytes as u64);
-        if (input.len() as u64) < need {
+        if input_len < need {
             return Err(Error::MalformedWire);
         }
         let mut reach = 0u64;
-        self.fx_decode_scope([(body.lines, body.first_kind), kind_lines], reach0, 0, 0, &mut reach, 1)?;
+        self.fx_decode_scope(parts, reach0, 0, 0, &mut reach, 1)?;
         // and up to the furthest bit read, the items of every group included
-        if (input.len() as u64) < words(reach, fmt.word_bytes) {
+        if input_len < words(reach, fmt.word_bytes) {
             return Err(Error::MalformedWire);
         }
         Ok(())
@@ -940,7 +1076,7 @@ impl<'a, 's> Session<'a, 's> {
             return Err(Error::BadPlan);
         }
         let plan = self.plan;
-        let total = self.input.len() as u64 * 8;
+        let total = self.total;
         // every field that is not `optional` lies inside the input
         let must = base.checked_add(static_reach).ok_or(Error::MalformedWire)?;
         if must > total {
@@ -981,7 +1117,7 @@ impl<'a, 's> Session<'a, 's> {
                     } else {
                         let at = base.checked_add(second).ok_or(Error::BadPlan)?;
                         *reach = (*reach).max(at + o.len as u64);
-                        get_bits(self.input, at, o.len as u32, self.src_msb).ok_or(Error::MalformedWire)?
+                        self.bits(at, o.len as u32).ok_or(Error::MalformedWire)?
                     };
                     // the count against what the limit still allows (7d)
                     self.replacing(scope, o.key);
@@ -1093,8 +1229,34 @@ impl<'a, 's> Session<'a, 's> {
         let size = usize::try_from(size).map_err(|_| Error::OutputFull)?;
         let msg = out.get_mut(..size).ok_or(Error::OutputFull)?;
         msg.fill(0);
-        self.fx_write_scope(parts, Defs { body: fmt.body, kind }, 0, 0, msg, fmt.msb, 1)?;
-        Ok(size)
+        let defs = Defs { body: fmt.body, kind };
+        self.fx_write_scope(parts, defs, 0, 0, msg, fmt.msb, 1)?;
+        if !fmt.sixbit {
+            return Ok(size);
+        }
+        // six-bit armor (engine-spec 0.14): the first L bits, L one more than
+        // the highest bit of any line of the selected scope or of a group's
+        // items, an `optional` field counted only when it writes a value or
+        // a sentinel. The decode need of the extents holds every line but the
+        // `optional` fields, the ones the plan left out included.
+        let mut l = self.extent(body.extent)?.1.max(self.fx_group_reach(parts, 0, 0, 1)?);
+        if kind != NONE32 {
+            l = l.max(self.extent(self.kind_info(kind)?.extent)?.1);
+        }
+        for (start, end) in parts {
+            let mut i = start;
+            while i < end {
+                let o = self.plan.op(i)?;
+                if o.op == OP_FIELD
+                    && o.flags & F_OPTIONAL != 0
+                    && (o.nabsent != 0 || self.value_of(0, o.key, defs)?.is_some())
+                {
+                    l = l.max(o.a as u64 + o.len as u64);
+                }
+                i = self.plan.next(i, &o)?;
+            }
+        }
+        armor_out(out, l)
     }
 
     fn fx_write_scope(
@@ -1234,7 +1396,7 @@ impl<'a, 's> Session<'a, 's> {
             return Err(Error::BadPlan);
         }
         self.need(len as u64)?;
-        let v = get_bits(self.input, self.pos, len, self.src_msb).unwrap_or(0);
+        let v = self.bits(self.pos, len).unwrap_or(0);
         self.pos += len as u64;
         Ok(v)
     }
@@ -1290,7 +1452,7 @@ impl<'a, 's> Session<'a, 's> {
                 }
                 // a `when` any of whose bits lies beyond the input does not hold
                 let ok = at + o.len as u64 <= self.end
-                    && get_bits(self.input, at, o.len as u32, self.src_msb) == Some(plan.pool(o.b as u32)?);
+                    && self.bits(at, o.len as u32) == Some(plan.pool(o.b as u32)?);
                 at += o.len as u64;
                 if !ok {
                     holds = false;
@@ -1465,7 +1627,7 @@ impl<'a, 's> Session<'a, 's> {
                 OP_WHOLE => {
                     let bits = self.stated(&o)?.checked_mul(8).ok_or(Error::MalformedWire)?;
                     // ruling 8 of 0.8: a whole length is the end of the input
-                    if bits > self.input.len() as u64 * 8 || bits < self.pos {
+                    if bits > self.total || bits < self.pos {
                         return Err(Error::MalformedWire);
                     }
                     self.whole = bits;
@@ -1995,6 +2157,16 @@ impl<'a, 's> Session<'a, 's> {
         }
         self.input = input;
         self.src_msb = fmt.msb;
+        self.armor = fmt.sixbit;
+        if fmt.sixbit {
+            // every character is checked before any line is read (engine-spec 0.14)
+            if input.iter().any(|c| armor_value(*c).is_none()) {
+                return Err(Error::MalformedWire);
+            }
+            self.total = input.len() as u64 * 6;
+        } else {
+            self.total = input.len() as u64 * 8;
+        }
         self.nslots = 0;
         self.nscopes = 0;
         self.kind = NONE16;
@@ -2002,7 +2174,7 @@ impl<'a, 's> Session<'a, 's> {
         self.held = 0;
         self.presence = [0; MAX_PRESENCE];
         if fmt.sequential {
-            let total = input.len() as u64 * 8;
+            let total = self.total;
             self.pos = 0;
             self.end = total;
             self.whole = total;
@@ -2098,6 +2270,11 @@ impl<'a, 's> Session<'a, 's> {
                 return Err(Error::TransformEncode);
             }
             set_bits(w.out, at, len as u32, stated as u64, w.msb);
+        }
+        if fmt.sixbit {
+            // six-bit armor (engine-spec 0.14): the cursor after the last line, not rounded
+            let l = w.pos;
+            return armor_out(w.out, l);
         }
         Ok(bytes)
     }
