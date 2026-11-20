@@ -1,0 +1,20 @@
+{
+  "name": "stated-not-attested",
+  "from": "conformance-time-hygiene",
+  "to": "conformance-time-hygiene",
+  "input": "{\"time_state\":\"free-running\",\"time_utc_state\":\"unknown\",\"time_anchor\":\"none\",\"time_attested\":0}",
+  "context": {},
+  "expect": "{\"time_state\":\"free-running\",\"time_utc_state\":\"unknown\",\"time_anchor\":\"none\",\"time_attested\":0}",
+  "model": {
+    "@complete": true,
+    "time_state": "free-running",
+    "time_utc_state": "unknown",
+    "time_anchor": "none",
+    "time_attested": "0",
+    "@absent": [
+      "time_anchor_age_ms",
+      "time_attestation"
+    ]
+  },
+  "reference": "spec 0.32 ruling 3: 0 when the source states it is not attested; with time_anchor none the anchor age is absent (ruling 2)"
+}

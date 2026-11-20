@@ -1,0 +1,20 @@
+{
+  "name": "both-axes-and-the-attestation-round-trip",
+  "from": "conformance-time-hygiene",
+  "to": "conformance-time-hygiene",
+  "input": "{\"time_error_ms\":5.5,\"time_state\":\"coherent\",\"time_utc_state\":\"unknown\",\"time_utc_error_ms\":1.5,\"time_anchor\":\"peer_nts\",\"time_anchor_age_ms\":2000,\"time_attested\":1,\"time_attestation\":\"ntp-attest-v1:1763640000000:fd00::1\"}",
+  "context": {},
+  "expect": "{\"time_error_ms\":5.5,\"time_state\":\"coherent\",\"time_utc_state\":\"unknown\",\"time_utc_error_ms\":1.5,\"time_anchor\":\"peer_nts\",\"time_anchor_age_ms\":2000,\"time_attested\":1,\"time_attestation\":\"ntp-attest-v1:1763640000000:fd00::1\"}",
+  "model": {
+    "@complete": true,
+    "time_error_ms": "5.5",
+    "time_state": "coherent",
+    "time_utc_state": "unknown",
+    "time_utc_error_ms": "1.5",
+    "time_anchor": "peer_nts",
+    "time_anchor_age_ms": "2000",
+    "time_attested": "1",
+    "time_attestation": "ntp-attest-v1:1763640000000:fd00::1"
+  },
+  "reference": "spec 0.32: the eight time-quality keys of core carry as stated; the attestation's host_id (fd00::1) holds ':' and round-trips byte-exact (ruling 4)"
+}

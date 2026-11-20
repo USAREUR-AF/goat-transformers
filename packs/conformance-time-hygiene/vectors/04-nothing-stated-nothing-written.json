@@ -1,0 +1,22 @@
+{
+  "name": "nothing-stated-nothing-written",
+  "from": "conformance-time-hygiene",
+  "to": "conformance-time-hygiene",
+  "input": "{}",
+  "context": {},
+  "expect": "{}",
+  "model": {
+    "@complete": true,
+    "@absent": [
+      "time_error_ms",
+      "time_state",
+      "time_utc_state",
+      "time_utc_error_ms",
+      "time_anchor",
+      "time_anchor_age_ms",
+      "time_attested",
+      "time_attestation"
+    ]
+  },
+  "reference": "spec 0.32, 'never invented': no key is stated, so no member is written on the way out"
+}

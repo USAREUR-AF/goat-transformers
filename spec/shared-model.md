@@ -101,6 +101,12 @@ pack, so a deployment entitled only to public formats cannot load anything else.
 | `time_ms` | int | epoch milliseconds UTC | time the report is valid |
 | `time_error_ms` | float | milliseconds | coherence error bound of the clock that stamped `time_ms`, 0 or more: the bound, not the offset; absent when not stated |
 | `time_state` | string | | state of the clock that stamped `time_ms`: `coherent`, `drifting` or `free-running`; absent when not stated |
+| `time_utc_state` | string | | UTC confidence of the clock that stamped `time_ms`: `confident` or `unknown`; absent when not stated |
+| `time_utc_error_ms` | float | milliseconds | one-sigma uncertainty of `time_ms`'s offset from UTC, 0 or more; absent when not stated |
+| `time_anchor` | string | | the time source the clock is anchored to: `gnss`, `peer_nts`, `wan_nts`, `orphan` or `none`; absent when not stated |
+| `time_anchor_age_ms` | int | milliseconds | time from the last external anchor (`gnss`, `wan_nts`, `peer_nts`) to `time_ms`; absent when not stated |
+| `time_attested` | int | | 1 when a signed attestation backs the time quality, 0 when the source states it is not attested; absent when not stated |
+| `time_attestation` | string | | the attestation the time quality rests on: `ntp-attest-v1:<valid_until epoch ms>:<host_id>`; absent when not stated |
 | `lat` | float | degrees, WGS84 | latitude |
 | `lon` | float | degrees, WGS84 | longitude |
 | `hae` | float | metres | height above WGS84 ellipsoid |
@@ -111,6 +117,19 @@ pack, so a deployment entitled only to public formats cannot load anything else.
 | `speed_ms` | float | metres per second | ground speed |
 | `how` | string | | provenance token (`m-g`, `h-e`, ...) |
 | `stale_ms` | int | epoch milliseconds UTC | time after which the report is no longer valid |
+
+### Time quality: two axes, never invented
+
+goat's time hygiene asks two independent questions about the clock that stamped
+`time_ms`: is it in step with its fabric (internal coherence: `time_error_ms`,
+`time_state`), and how well is it anchored to UTC (UTC confidence:
+`time_utc_state`, `time_utc_error_ms`, `time_anchor`, `time_anchor_age_ms`). A
+report can be coherent but UTC-unknown, a normal state at a denied edge.
+`time_attested` and `time_attestation` say whether a signed attestation backs the
+claim. None of these keys is ever defaulted, derived or written by a pack that
+does not read it from the source (`tools/time-quality-guard.py`); a caller may
+pass them as context. Version 0.32 of `spec/engine-spec.md` and ADR 0005 give
+the sources of the names in goat's own documents.
 
 ## The `track` module
 

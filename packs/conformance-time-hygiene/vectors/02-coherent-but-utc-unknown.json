@@ -1,0 +1,22 @@
+{
+  "name": "coherent-but-utc-unknown",
+  "from": "conformance-time-hygiene",
+  "to": "conformance-time-hygiene",
+  "input": "{\"time_error_ms\":2,\"time_state\":\"coherent\",\"time_utc_state\":\"unknown\"}",
+  "context": {},
+  "expect": "{\"time_error_ms\":2,\"time_state\":\"coherent\",\"time_utc_state\":\"unknown\"}",
+  "model": {
+    "@complete": true,
+    "time_error_ms": "2",
+    "time_state": "coherent",
+    "time_utc_state": "unknown",
+    "@absent": [
+      "time_utc_error_ms",
+      "time_anchor",
+      "time_anchor_age_ms",
+      "time_attested",
+      "time_attestation"
+    ]
+  },
+  "reference": "spec 0.32: coherent on the first axis and UTC-unknown on the second, a normal state; nothing else is stated, so nothing else is written"
+}
