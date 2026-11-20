@@ -425,6 +425,13 @@ Packs yang-ietf-*; modules yangietf*
   value ranges only, restated under the Apache License 2.0; each pack's
   PROVENANCE.md quotes the statement of every module read.
 
+Packs openconfig-*; modules openconfig*
+  OpenConfig data models, https://github.com/openconfig/public tag v5.11.0
+  (commit 160da73440205de252066233b1ee0f3085d51d2d), release/models and
+  third_party/ietf. Apache License, Version 2.0; the IETF modules under
+  third_party/ietf carry the IETF Trust copyright and the Simplified or Revised
+  BSD License as above. Node names, types and value ranges only.
+
 Pack openxc-vehicle-message; module openxc
   OpenXC message format openxc.proto, https://github.com/openxc/openxc-message-format.
   BSD 3-Clause License, Copyright (c) 2012 Ford Motor Company. Field numbers,
