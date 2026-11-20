@@ -10,7 +10,9 @@ and `switch` blocks, and the sequential extents and counts of 0.21: `group
 <list> rest`, `group <list> last`, `count <name> <len> [plus <n>]` with
 `group <list> count @<name>`, and the long and terminated fields of 0.22:
 the `hex` transform, the set `ascii8`, the locator `until:<code>`, the field
-option `stop <code>` and `bit_order msb-lsb`) and imports no engine, so a generator
+option `stop <code>` and `bit_order msb-lsb`, and the load rules of the `cdr` wire of
+0.43: `cdr`, `representation`, typed field lines with no locator, `group <list>
+seq | array:<n>`, `const <type> <value>` and `when <n> <value>`) and imports no engine, so a generator
 stays independent of the engines it writes packs for.
 
 What it checks is what an engine checks when it loads a file: the line grammar,
@@ -82,10 +84,26 @@ TLV_FLOAT_SIZE = {"f32": 4, "f64": 8}                  # `:<n>` optional, and th
 UPER_TRANSFORMS = {"int": {"uint": "int", "twos": "int", "uscale": "float", "sscale": "float"},
                    "enum": {"uint": "int"}, "chars": {"ascii": "string"},
                    "octets": {"hex": "string", "utf8": "string"}}
+# 0.43 "Types": each `cdr` type, its size in bytes and its default transform;
+# ruling 4 adds `uscale` and `sscale` on the integer types of ruling 23
+CDR_TYPES = {"int8": (1, "int"), "uint8": (1, "int"), "char8": (1, "int"), "octet": (1, "int"),
+             "bool": (1, "bool"), "int16": (2, "int"), "uint16": (2, "int"), "int32": (4, "int"),
+             "uint32": (4, "int"), "int64": (8, "int"), "uint64": (8, "int"),
+             "float32": (4, "float"), "float64": (8, "float"),
+             "enum8": (1, "int"), "enum16": (2, "int"), "enum32": (4, "int"), "string": (None, "string")}
+CDR_SCALED = ("int8", "uint8", "int16", "uint16", "int32", "uint32", "int64", "uint64", "octet")
+CDR_TRANSFORMS = {"int": "int", "bool": "int", "float": "float", "string": "string",
+                  "uscale": "float", "sscale": "float"}
+# 0.43 ruling 26: a third token of these names begins the options
+FIELD_OPTIONS = ("via", "with", "absent", "optional", "swap", "trim", "stop")
+_CDR_ARRAY = re.compile(r"array:([0-9]+)\Z")
+_CDR_REPRESENTATION = re.compile(r"[0-9a-f]{4}\Z")
 TRANSFORMS = {"xml": TEXT_TRANSFORMS, "geojson": TEXT_TRANSFORMS, "json": JSON_TRANSFORMS,
               "bits": BITS_TRANSFORMS, "protobuf": PROTOBUF_TRANSFORMS, "text": RECORD_TRANSFORMS,
-              "tlv": TLV_TRANSFORMS}
+              "tlv": TLV_TRANSFORMS, "cdr": CDR_TRANSFORMS}
 WIRES = tuple(TRANSFORMS)
+# every transform name of every wire, to tell an unknown name from one the wire refuses
+KNOWN_TRANSFORMS = set().union(*TRANSFORMS.values(), *UPER_TRANSFORMS.values())
 
 # the directives of the text wire (0.10): at most once, before the first `kind`
 TEXT_HEADER = ("delimiter", "start", "checksum")
@@ -97,8 +115,11 @@ TLV_FORMS = {"tag": ("ber-oid", "1", "2", "4"), "length": ("ber", "1", "2", "4")
 ARMORS = ("hex", "sixbit")
 # the encoding of the bits wire (0.19): at most once, before the first `kind`
 ENCODINGS = ("none", "uper")
+# the header of the cdr wire (0.43): once each, before the first `kind`, and
+# allowed before `wire` (ruling 10); values checked after the file (ruling 22)
+CDR_HEADER = ("cdr", "representation")
 HEADER = ("format", "version", "distribution", "source", "uses", "wire", "layout",
-          "bit_order", "word_bytes", "armor", "encoding") + TEXT_HEADER
+          "bit_order", "word_bytes", "armor", "encoding") + TEXT_HEADER + CDR_HEADER
 TABLES = ("map", "typemap")
 BLOCKS = ("group", "if", "opt", "chain", "length", "ext", "choice")
 UPER_ONLY = ("ext", "choice", "alt")          # 0.19 ruling 9; `alt` closes at the next `alt` or `end`
@@ -685,6 +706,7 @@ class Pack:
         self.delimiter = self.start = self.checksum = None      # text wire, as written
         self.tag, self.length, self.key = "ber-oid", "ber", None  # tlv wire
         self.sum16 = None                                        # tlv: the checksum tag, an int
+        self.cdr = self.representation = None                    # cdr wire, 0.43: 1 or 2, the hex
         self.sources, self.uses = [], ["core"]
         self.tables, self.typemap = {}, []
         self.common, self.kinds = [], []
@@ -741,6 +763,7 @@ class _Loader:
         self.tlv_lines = []         # (line number, directive, args, after a `kind`), 0.13
         self.armor_line = None      # (line number, value, after a `kind`), 0.14
         self.encoding_line = None   # (line number, value, after a `kind`), 0.19
+        self.cdr_lines = []         # (line number, directive, value, after a `kind`), 0.43
         self._header_lines = {}
         self.switches = []          # spec 0.20: `switch` nodes, for the checks of their values
         self.counts = []            # spec 0.21: count lines
@@ -776,7 +799,7 @@ class _Loader:
             if d in HEADER:
                 if len(a) != 1:
                     self.bad(no, "`%s` takes one argument, has %d" % (d, len(a)))
-                if d not in ("source", "uses") and d in seen:
+                if d not in ("source", "uses") + CDR_HEADER and d in seen:
                     self.bad(no, "a second `%s` line" % d)
                 seen.add(d)
                 self._header(no, d, a[0])
@@ -916,6 +939,9 @@ class _Loader:
         elif d == "encoding":
             # checked in `lines`, after the file is read (0.19; ruling 10 of 0.10)
             self.encoding_line = (no, value, bool(pack.kinds))
+        elif d in CDR_HEADER:
+            # checked in `lines`, after the file is read (0.43 rulings 10 and 22)
+            self.cdr_lines.append((no, d, value, bool(pack.kinds)))
         elif d in TEXT_HEADER:
             if pack.kinds:
                 self.bad(no, "`%s` after the first `kind`" % d)
@@ -990,6 +1016,7 @@ class _Loader:
         self._tlv_header()
         self._armor()
         self._encoding()
+        self._cdr_header()
         if pack.wire != "xml" and (pack.root is not None or any(k.root is not None for k in pack.kinds)):
             self.bad(where["root"], "`root` on the %s wire" % pack.wire)
         if not pack.kinds:
@@ -1044,6 +1071,29 @@ class _Loader:
             if pack.armor == "sixbit":
                 self.bad(no, "`encoding uper` with `armor sixbit` (ruling 11 of 0.19)")
         pack.encoding = value
+
+    def _cdr_header(self):
+        """0.43: `cdr <1|2>` and `representation <hex>` on the cdr wire only,
+        each exactly once, before the first `kind` (rulings 10 and 22);
+        `representation` is not checked against `cdr`."""
+        pack, seen = self.pack, set()
+        for no, d, value, after_kind in self.cdr_lines:
+            if pack.wire != "cdr":
+                self.bad(no, "`%s` on the %s wire" % (d, pack.wire))
+            if d in seen:
+                self.bad(no, "a second `%s` line" % d)
+            seen.add(d)
+            if after_kind:
+                self.bad(no, "`%s` after the first `kind`" % d)
+            if d == "cdr" and value not in ("1", "2"):
+                self.bad(no, "`cdr %s`: the XCDR version is 1 or 2" % value)
+            if d == "representation" and not _CDR_REPRESENTATION.match(value):
+                self.bad(no, "`representation %s` is not four lowercase hex digits" % value)
+            setattr(pack, d, int(value) if d == "cdr" else value)
+        if pack.wire == "cdr":
+            for d in CDR_HEADER:
+                if d not in seen:
+                    self.fail("bad-directive", "a cdr pack has no `%s` line" % d)
 
     def _tlv_header(self):
         """0.13: `tag`, `length`, `key` and `checksum sum16 <tag>` on the tlv
@@ -1108,6 +1158,8 @@ class _Loader:
                 self._text_group_last(lines)
             elif self.pack.wire == "tlv":
                 self._tlv_paths(lines)
+            elif self.pack.wire == "cdr":
+                self._one_group_per_list(lines)
             else:
                 self._one_group_per_list(lines)
                 self._paths_through_groups(lines)
@@ -1431,6 +1483,9 @@ class _Loader:
 
     def _field(self, node, group):
         a = node.args
+        if self.pack.wire == "cdr":
+            self._cdr_field(node)
+            return
         if len(a) < 3:
             self.bad(node, "`field` takes a key, a locator and a transform")
         node.key = a[0]
@@ -1488,6 +1543,78 @@ class _Loader:
         if node.with_ is not None:
             # 0.18 ruling 5: checked as a `requires` key is
             self.key_uses.append((node.line, node.with_, "requires"))
+
+    def _cdr_field(self, node):
+        """0.43: `field <key> <type> [<transform>] [options]`, no locator. The
+        transform is the type's default, named or not (a third token that is
+        an option name begins the options, ruling 26), or `uscale`/`sscale` on
+        the integer types of ruling 23 (ruling 4); the options are `via` and
+        `with` only (ruling 13)."""
+        a = node.args
+        if len(a) < 2:
+            self.bad(node, "`field` takes a key and a cdr type")
+        node.key, node.size = a[0], self._cdr_type(node, a[1])
+        node.loc, default = a[1], CDR_TYPES[a[1]][1]
+        rest = a[2:]
+        name, targs = default, []
+        if rest and rest[0] not in FIELD_OPTIONS:
+            name, *targs = rest[0].split(":")
+            rest = rest[1:]
+            if name in ("uscale", "sscale"):
+                if a[1] not in CDR_SCALED:
+                    self.bad(node, "`%s` on the cdr type `%s` (ruling 23 of 0.43)" % (name, a[1]))
+                if len(targs) not in (1, 2) or parse_factor(targs[0]) is None or not all(
+                        _NUMBER.match(t) for t in targs[1:]):
+                    self.bad(node, "`%s` takes a factor (a number or `<num>/<den>`) and an optional offset" % name)
+            elif name != default:
+                self.bad(node, "transform `%s` %s" % (name, "on the cdr type `%s`, whose transform is `%s` "
+                                                               "(ruling 4 of 0.43)" % (a[1], default)
+                                                      if name in KNOWN_TRANSFORMS else "is unknown"))
+            elif targs:
+                self.bad(node, "transform `%s` takes no argument" % name)
+        node.tr, node.targs = name, tuple(targs)
+        node.opts, node.also = set(), []
+        i = 0
+        while i < len(rest):
+            opt = rest[i]
+            if opt == "via" and node.via is None and i + 1 < len(rest):
+                node.via = rest[i + 1]
+            elif opt == "with" and node.with_ is None and i + 1 < len(rest):
+                node.with_ = rest[i + 1]
+            else:
+                self.bad(node, "field option `%s` is not valid on the cdr wire, repeated or incomplete "
+                               "(ruling 13 of 0.43)" % opt)
+            i += 2
+        self._via(node, node.via)
+        self.key_uses.append((node, node.key, "field"))
+        if node.with_ is not None:
+            self.key_uses.append((node.line, node.with_, "requires"))
+
+    def _cdr_type(self, node, text):
+        """A type of the 0.43 table; its size in bytes (None for `string`)."""
+        if text not in CDR_TYPES:
+            self.bad(node, "`%s` is not a cdr type" % text)
+        return CDR_TYPES[text][0]
+
+    def _cdr_when(self, node, group):
+        """0.43 rulings 2, 3 and 24: `when <n> <value>[,<value>...]`, n the
+        1-based position among the `field`, `group` and `const` lines of the
+        common scope (ruling 12); the line named is an integer or `bool`
+        field, or a const, and every value fits its size unsigned."""
+        if group is not None:
+            self.bad(node, "`when` inside a group (ruling 3 of 0.43)")
+        n = node.args[0]
+        wire_lines = [x for x in self.pack.common if x.d in ("field", "group", "const")]
+        if not _UINT.match(n) or not 1 <= int(n) <= len(wire_lines):
+            self.bad(node, "`when %s`: not a position from 1 to %d of a common line" % (n, len(wire_lines)))
+        target = wire_lines[int(n) - 1]
+        # the type as written: a common line after this `when` is read later
+        typed = {"field": target.args[1:2], "const": target.args[:1]}.get(target.d, ["group"])
+        ctype = typed[0] if typed else ""
+        if ctype not in CDR_TYPES or CDR_TYPES[ctype][1] in ("float", "string"):
+            self.bad(node, "`when %s` names a line of `%s`, not of an integer type or `bool` (ruling 3 of 0.43)"
+                     % (n, ctype))
+        node.loc, node.bits = ctype, 8 * CDR_TYPES[ctype][0]
 
     def _terminated(self, node, bits_wire):
         """engine-spec 0.22: `until:<code>` and `stop <code>` (rulings 9 and 16)."""
@@ -1602,7 +1729,10 @@ class _Loader:
         """`when <locator> <value>[,<value>...]` (0.5, lists and ranges 0.20)."""
         if len(node.args) != 2:
             self.bad(node, "`when` takes a locator and a value")
-        self._locator(node, node.args[0], group, "when")
+        if self.pack.wire == "cdr":
+            self._cdr_when(node, group)
+        else:
+            self._locator(node, node.args[0], group, "when")
         node.value = node.args[1]
         if self.pack.wire == "text":
             self._text_value(node, "when")
@@ -1616,11 +1746,11 @@ class _Loader:
             self.bad(node, "`present` combined with other values")
         if wire == "bits" and not 1 <= node.bits <= 64:
             self.bad(node, "a `when` is 1 to 64 bits")
-        if wire not in ("bits", "protobuf") or node.values == ["present"]:
-            if wire == "bits":
+        if wire not in ("bits", "protobuf", "cdr") or node.values == ["present"]:
+            if wire in ("bits", "cdr"):
                 self.bad(node, "a bits `when` value is an unsigned integer or a range")
             return
-        limit = 1 << (node.bits if wire == "bits" else 64)
+        limit = 1 << (node.bits if wire in ("bits", "cdr") else 64)
         node.ranges = []
         for v in node.values:
             m = _WHEN_RANGE.match(v)
@@ -1639,6 +1769,17 @@ class _Loader:
     def _const(self, node, group):
         if len(node.args) != 2:
             self.bad(node, "`const` takes a locator and a value")
+        if self.pack.wire == "cdr":
+            # 0.43 rulings 12 and 27: `const <type> <value>`, an integer type or
+            # `bool`, an unsigned decimal that fits the type's size
+            node.loc, node.value = node.args
+            node.size = self._cdr_type(node, node.loc)
+            if node.size is None or CDR_TYPES[node.loc][1] == "float":
+                self.bad(node, "`const %s`: a const takes an integer type or `bool` (ruling 27 of 0.43)" % node.loc)
+            limit = 2 if node.loc == "bool" else 1 << (8 * node.size)
+            if not _UINT.match(node.value) or int(node.value) >= limit:
+                self.bad(node, "the `const` value `%s` is not an unsigned decimal below %d" % (node.value, limit))
+            return
         self._locator(node, node.args[0], group, "const")
         node.value = node.args[1]
         if node.value == "present":
@@ -1802,6 +1943,16 @@ class _Loader:
         node.key = a[0]
         self.key_uses.append((node, node.key, "group"))
         rest = a[1:]
+        if pack.wire == "cdr":
+            # 0.43 "Groups" and ruling 14: `seq` or `array:<n>` with n from 1,
+            # and at least one wire line in the body
+            array = _CDR_ARRAY.match(rest[0])
+            if len(rest) != 1 or not (rest[0] == "seq" or (array and int(array.group(1)) >= 1)):
+                self.bad(node, "a cdr group is `group <list> seq` or `group <list> array:<n>` with n from 1")
+            node.mode, node.count = ("array", int(array.group(1))) if array else ("seq", None)
+            if not any(x.d in ("field", "const", "group") for x in node.body):
+                self.bad(node, "a cdr group with no wire line in its body (ruling 14 of 0.43)")
+            return
         if pack.wire == "bits" and pack.sequential:
             if rest in (["while"], ["more"], ["fx"], ["rest"], ["last"]):
                 node.mode = rest[0]

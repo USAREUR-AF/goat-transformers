@@ -4852,3 +4852,7 @@ does not equal the bytes the collection takes is `malformed-wire`.
     the file.
 28. **A common and a kind `when` on one line.** On encode the kind's value
     is written; for a list or a range, its first value.
+29. **`const` values and transform parameters.** A `const` value that does
+    not fit its type (`const uint8 256`), and a type's default transform
+    written with parameters (`int16 int:3`), are `bad-directive` after the
+    file.
