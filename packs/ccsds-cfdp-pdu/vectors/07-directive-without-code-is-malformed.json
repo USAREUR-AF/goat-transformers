@@ -1,0 +1,9 @@
+{
+  "name": "directive-without-code-is-malformed",
+  "from": "ccsds-cfdp-pdu",
+  "to": "ccsds-cfdp-pdu",
+  "input": "20000a00012a02",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "the EOF header without its directive code octet"
+}

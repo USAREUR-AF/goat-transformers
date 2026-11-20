@@ -1,0 +1,23 @@
+{
+  "name": "largest-values-seven-octet-count",
+  "from": "ccsds-uslp-frame",
+  "to": "ccsds-uslp-frame",
+  "input": "cffffffeffffffffffffffffffff",
+  "expect": "cffffffeffffffffffffffffffff",
+  "model": {
+    "@kind": "non-truncated",
+    "ccsdsuslp.spacecraft_id": "65535",
+    "ccsdsuslp.source_dest_id": "1",
+    "ccsdsuslp.virtual_channel_id": "63",
+    "ccsdsuslp.map_id": "15",
+    "ccsdsuslp.frame_length": "65535",
+    "ccsdsuslp.bypass_flag": "1",
+    "ccsdsuslp.protocol_control_command_flag": "1",
+    "ccsdsuslp.reserve_spares": "3",
+    "ccsdsuslp.ocf_flag": "1",
+    "ccsdsuslp.vcf_count_length": "7",
+    "ccsdsuslp.vcf_count": "72057594037927935"
+  },
+  "source": "constructed",
+  "reference": "every field at its largest value, the reserve spares included (the pack does not check them), and a 7-octet count of 2^56-1: 14 octets"
+}

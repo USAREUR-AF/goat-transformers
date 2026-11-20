@@ -1,0 +1,9 @@
+{
+  "name": "frame-count-cut-short-is-malformed",
+  "from": "ccsds-uslp-frame",
+  "to": "ccsds-uslp-frame",
+  "input": "c0abc0a400630cdead",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "the 4-octet-count header cut to 9 octets, inside its count"
+}

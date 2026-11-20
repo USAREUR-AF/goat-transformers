@@ -1,0 +1,25 @@
+{
+  "name": "eof-directive-one-octet-ids",
+  "from": "ccsds-cfdp-pdu",
+  "to": "ccsds-cfdp-pdu",
+  "input": "20000a00012a02040012345678000003e8",
+  "expect": "20000a00012a0204",
+  "model": {
+    "@kind": "file-directive",
+    "ccsdscfdp.direction": "0",
+    "ccsdscfdp.transmission_mode": "0",
+    "ccsdscfdp.crc_flag": "0",
+    "ccsdscfdp.large_file_flag": "0",
+    "ccsdscfdp.data_field_length": "10",
+    "ccsdscfdp.segmentation_control": "0",
+    "ccsdscfdp.entity_id_length": "0",
+    "ccsdscfdp.segment_metadata_flag": "0",
+    "ccsdscfdp.tsn_length": "0",
+    "ccsdscfdp.source_entity_id": "1",
+    "ccsdscfdp.transaction_seq_num": "42",
+    "ccsdscfdp.dest_entity_id": "2",
+    "ccsdscfdp.directive_code": "4"
+  },
+  "source": "constructed",
+  "reference": "an EOF directive (code 4), acknowledged mode, 1-octet entity IDs 1 and 2, 1-octet sequence number 42: a 7-octet header and the code; condition code, checksum and file size (9 octets) read over"
+}

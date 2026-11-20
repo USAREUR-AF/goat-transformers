@@ -1,0 +1,9 @@
+{
+  "name": "six-octets-is-malformed",
+  "from": "ccsds-uslp-frame",
+  "to": "ccsds-uslp-frame",
+  "input": "c0abc0a40063",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "the first header cut to 6 octets: not truncated, so 7 octets are needed"
+}

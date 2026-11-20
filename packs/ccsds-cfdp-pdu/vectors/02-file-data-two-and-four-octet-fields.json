@@ -1,0 +1,24 @@
+{
+  "name": "file-data-two-and-four-octet-fields",
+  "from": "ccsds-cfdp-pdu",
+  "to": "ccsds-cfdp-pdu",
+  "input": "3402089b010100010002020200000000000000000000000000000000",
+  "expect": "3402089b0101000100020202",
+  "model": {
+    "@kind": "file-data",
+    "ccsdscfdp.direction": "0",
+    "ccsdscfdp.transmission_mode": "1",
+    "ccsdscfdp.crc_flag": "0",
+    "ccsdscfdp.large_file_flag": "0",
+    "ccsdscfdp.data_field_length": "520",
+    "ccsdscfdp.segmentation_control": "1",
+    "ccsdscfdp.entity_id_length": "1",
+    "ccsdscfdp.segment_metadata_flag": "1",
+    "ccsdscfdp.tsn_length": "3",
+    "ccsdscfdp.source_entity_id": "257",
+    "ccsdscfdp.transaction_seq_num": "65538",
+    "ccsdscfdp.dest_entity_id": "514"
+  },
+  "source": "constructed",
+  "reference": "a file data PDU, unacknowledged, record boundaries kept and segment metadata present, 2-octet entity IDs and a 4-octet sequence number: a 12-octet header, the data read over"
+}

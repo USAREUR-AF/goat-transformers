@@ -1,0 +1,22 @@
+{
+  "name": "no-vc-frame-count",
+  "from": "ccsds-uslp-frame",
+  "to": "ccsds-uslp-frame",
+  "input": "c0abc0a4006300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "expect": "c0abc0a4006300",
+  "model": {
+    "@kind": "non-truncated",
+    "ccsdsuslp.spacecraft_id": "2748",
+    "ccsdsuslp.source_dest_id": "0",
+    "ccsdsuslp.virtual_channel_id": "5",
+    "ccsdsuslp.map_id": "2",
+    "ccsdsuslp.frame_length": "99",
+    "ccsdsuslp.bypass_flag": "0",
+    "ccsdsuslp.protocol_control_command_flag": "0",
+    "ccsdsuslp.reserve_spares": "0",
+    "ccsdsuslp.ocf_flag": "0",
+    "ccsdsuslp.vcf_count_length": "0"
+  },
+  "source": "constructed",
+  "reference": "non-truncated header with a count length of 0: 7 octets; spacecraft 0x0abc as source, VC 5, MAP 2, frame length 99 (100 octets), the 93 octets after the header read over"
+}

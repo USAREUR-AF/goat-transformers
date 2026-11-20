@@ -1,0 +1,28 @@
+# CCSDS Proximity-1 Version-3 Transfer Frame header (211.0-B-6 section 3.2.2), the
+# 5-octet header. Public (CCSDS Blue Book). A message of this pack is a whole
+# frame. Decode ignores the data field and the CRC; encode writes the header only
+# (pack.md, "Not mapped").
+# Bits are numbered from 0 at the first transmitted bit, most significant bit first.
+format     ccsds-prox1-frame
+version    0.1.0
+distribution public
+source     "CCSDS 211.0-B-6 Proximity-1 Space Link Protocol, Data Link Layer, Blue Book, July 2020 (Editorial Change 1), https://ccsds.org/Pubs/211x0b6e1.pdf, section 3.2.2; reuse with attribution under the CCSDS reproduction permission statement"
+uses       ccsdsprox1
+wire       bits
+word_bytes 1
+bit_order  msb
+when   0:0:2  2                                       # transfer frame version number: 10 (version 3)
+field  ccsdsprox1.qos_indicator        0:2:1    uint
+field  ccsdsprox1.dfc_id               0:4:2    uint
+field  ccsdsprox1.spacecraft_id        0:6:10   uint
+field  ccsdsprox1.physical_channel_id  0:16:1   uint
+field  ccsdsprox1.port_id              0:17:3   uint
+field  ccsdsprox1.source_dest_id       0:20:1   uint
+field  ccsdsprox1.frame_length         0:21:11  uint
+field  ccsdsprox1.frame_seq_number     0:32:8   uint
+
+kind     u-frame                                      # PDU type ID 0: user data
+when     0:3:1  0
+
+kind     p-frame                                      # PDU type ID 1: supervisory protocol data units
+when     0:3:1  1

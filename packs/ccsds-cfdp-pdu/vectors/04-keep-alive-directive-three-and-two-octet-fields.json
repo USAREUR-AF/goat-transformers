@@ -1,0 +1,25 @@
+{
+  "name": "keep-alive-directive-three-and-two-octet-fields",
+  "from": "ccsds-cfdp-pdu",
+  "to": "ccsds-cfdp-pdu",
+  "input": "20000521010203ffff0405060c",
+  "expect": "20000521010203ffff0405060c",
+  "model": {
+    "@kind": "file-directive",
+    "ccsdscfdp.direction": "0",
+    "ccsdscfdp.transmission_mode": "0",
+    "ccsdscfdp.crc_flag": "0",
+    "ccsdscfdp.large_file_flag": "0",
+    "ccsdscfdp.data_field_length": "5",
+    "ccsdscfdp.segmentation_control": "0",
+    "ccsdscfdp.entity_id_length": "2",
+    "ccsdscfdp.segment_metadata_flag": "0",
+    "ccsdscfdp.tsn_length": "1",
+    "ccsdscfdp.source_entity_id": "66051",
+    "ccsdscfdp.transaction_seq_num": "65535",
+    "ccsdscfdp.dest_entity_id": "263430",
+    "ccsdscfdp.directive_code": "12"
+  },
+  "source": "constructed",
+  "reference": "a Keep Alive directive (code 12), 3-octet entity IDs, 2-octet sequence number: a 12-octet header and the code"
+}

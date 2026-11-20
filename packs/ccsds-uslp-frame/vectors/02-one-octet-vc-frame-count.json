@@ -1,0 +1,23 @@
+{
+  "name": "one-octet-vc-frame-count",
+  "from": "ccsds-uslp-frame",
+  "to": "ccsds-uslp-frame",
+  "input": "c0abc8a4006381c8",
+  "expect": "c0abc8a4006381c8",
+  "model": {
+    "@kind": "non-truncated",
+    "ccsdsuslp.spacecraft_id": "2748",
+    "ccsdsuslp.source_dest_id": "1",
+    "ccsdsuslp.virtual_channel_id": "5",
+    "ccsdsuslp.map_id": "2",
+    "ccsdsuslp.frame_length": "99",
+    "ccsdsuslp.bypass_flag": "1",
+    "ccsdsuslp.protocol_control_command_flag": "0",
+    "ccsdsuslp.reserve_spares": "0",
+    "ccsdsuslp.ocf_flag": "0",
+    "ccsdsuslp.vcf_count_length": "1",
+    "ccsdsuslp.vcf_count": "200"
+  },
+  "source": "constructed",
+  "reference": "an expedited frame (bypass flag 1) whose spacecraft ID names the destination, a 1-octet VC frame count of 200: 8 octets"
+}

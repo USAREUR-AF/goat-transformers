@@ -1,0 +1,18 @@
+# The ccsdsuslp module: the fields of the CCSDS USLP Transfer Frame primary header,
+# non-truncated and truncated, each as the wire integer. The pack ccsds-uslp-frame
+# maps them. Bit numbers count from 0 at the first transmitted bit.
+module        ccsdsuslp
+version       0.1.0
+distribution  public
+source        "CCSDS 732.1-B-3 Unified Space Data Link Protocol, Blue Book, June 2024 (Editorial Change 1), https://ccsds.org/Pubs/732x1b3e1.pdf, section 4.1.2 and annex D; reuse with attribution under the CCSDS reproduction permission statement"
+key  spacecraft_id               int  -  "bits 4-19: spacecraft identifier, 16 bits"
+key  source_dest_id              int  -  "bit 20: 0 = the spacecraft identifier names the frame's source, 1 = its destination"
+key  virtual_channel_id          int  -  "bits 21-26: virtual channel identifier, 0-63"
+key  map_id                      int  -  "bits 27-30: multiplexer access point identifier, 0-15"
+key  frame_length                int  -  "bits 32-47 (non-truncated header): total octets of the frame, minus one"
+key  bypass_flag                 int  -  "bit 48: 0 = sequence-controlled frame, 1 = expedited frame"
+key  protocol_control_command_flag int -  "bit 49: 1 = the data field holds protocol control information, 0 = user data"
+key  reserve_spares              int  -  "bits 50-51: reserved, 0"
+key  ocf_flag                    int  -  "bit 52: 1 = the frame carries an operational control field"
+key  vcf_count_length            int  -  "bits 53-55: length of the virtual channel frame count in octets, 0-7"
+key  vcf_count                   int  -  "from bit 56: virtual channel frame count, 0 to 7 octets as the length says"
