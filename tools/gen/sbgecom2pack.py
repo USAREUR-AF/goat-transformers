@@ -6,7 +6,8 @@ Reads   <src>/src/sbgEComIds.h            message classes and log ids (enums)
         <src>/src/logs/sbgEComLog*.c      the parse functions (`...ReadFromStream`)
         <src>/src/logs/sbgEComLog*.h      array sizes of members a parse function reads
                                           as one buffer
-        <src>/doc/binaryMessages.md       evidence for the shared keys (pinned, not parsed)
+        <src>/doc/binaryMessages.md       payload sizes (a cross-check) and evidence for the shared keys
+        <src>/doc/commonDefs.md           evidence for the datum (pinned, not parsed)
         <src>/LICENSE.md
         tools/gen/sources/sbgecom-PROVENANCE.md (commit and SHA-256 of every file;
                                           written with --commit, checked otherwise)
@@ -62,7 +63,7 @@ VERSION = "0.1.0"
 REPO = "https://github.com/SBG-Systems/sbgECom"
 PROV = "tools/gen/sources/sbgecom-PROVENANCE.md"
 DATE_READ = "2026-11-20"
-FIXED_FILES = ["LICENSE.md", "src/sbgEComIds.h", "src/logs/sbgEComLog.c", "doc/binaryMessages.md"]
+FIXED_FILES = ["LICENSE.md", "src/sbgEComIds.h", "src/logs/sbgEComLog.c", "doc/binaryMessages.md", "doc/commonDefs.md"]
 
 READS = {   # sbgStreamBufferRead<T> -> (bits, transform, kind) kind: u, s, f
     "Uint8": (8, "uint", "u"), "Uint8LE": (8, "uint", "u"), "Int8": (8, "twos", "s"), "Int8LE": (8, "twos", "s"),
@@ -73,10 +74,9 @@ READS = {   # sbgStreamBufferRead<T> -> (bits, transform, kind) kind: u, s, f
 MAX_UNROLL = 64
 
 # Shared keys. (parse function, path) -> (key, evidence). The track keys need
-# `uses track`. Latitude and longitude are bound only with BIND_POSITION: the
-# source states the position in the datum of the position aiding source, with
-# no datum conversion, so it is not WGS 84 by statement (pack.md).
-BIND_POSITION = False
+# `uses track`. The position is in the datum of the position aiding source (WGS 84
+# with GNSS aiding); pack.md states it. BIND_POSITION False keeps it raw.
+BIND_POSITION = True
 BINDS = {
     ("sbgEComLogEkfNavReadFromStream", "velocity[0]"): (
         "track.vel_north_ms", "the struct comment and the log's table in doc/binaryMessages.md: element 0 of "
@@ -94,6 +94,20 @@ POSITION_BINDS = {
     ("sbgEComLogEkfNavReadFromStream", "position[1]"): ("lon", "longitude in degrees, positive east"),
     ("sbgEComLogGnssPosReadFromStream", "latitude"): ("lat", "latitude in degrees, positive north"),
     ("sbgEComLogGnssPosReadFromStream", "longitude"): ("lon", "longitude in degrees, positive east"),
+}
+# A second line on the same bits, after the raw key's line: (key, transform, evidence)
+ALSO = {
+    ("sbgEComLogEkfNavReadFromStream", "velocity[2]"): (
+        "track.vel_up_ms", "f32scale:-1", "element 2 of the NED velocity is down, in metres per second; up is its "
+                                          "negation"),
+    ("sbgEComLogGnssVelReadFromStream", "velocity[2]"): (
+        "track.vel_up_ms", "f32scale:-1", "element 2 is down; up is its negation"),
+}
+# hae = altitude above mean sea level + undulation, as the struct comments and the
+# EKF navigation log's note state: (parse function) -> (altitude path, undulation path)
+HAE = {
+    "sbgEComLogEkfNavReadFromStream": ("position[2]", "undulation"),
+    "sbgEComLogGnssPosReadFromStream": ("altitude", "undulation"),
 }
 
 
@@ -349,7 +363,8 @@ def header_consts(htext):
 # Lines
 # --------------------------------------------------------------------------
 
-Line = collections.namedtuple("Line", "key bit bits transform keytype path optional")
+Line = collections.namedtuple("Line", "key bit bits transform keytype path optional also")
+Line.__new__.__defaults__ = (False,)
 
 
 def fn_short(fn):
@@ -377,6 +392,11 @@ def lines_of(fn, reads):
         if b:
             key = b[0]
         out.append(Line(key, bit, r.bits, tr, kt, r.path, r.optional))
+        a = ALSO.get((fn, r.path))
+        if a:
+            if r.transform != "f32" or r.factor is not None:
+                fail("%s %s: an ALSO line on a field that is not a plain float32" % (fn, r.path))
+            out.append(Line(a[0], bit, r.bits, a[1], "float", r.path, r.optional, True))
         bit += r.bits
     return out, bit
 
@@ -387,9 +407,9 @@ def lines_of(fn, reads):
 
 def sample(line, n):
     if line.transform == "f32":
-        return ((n * 37) % 2001 - 1000) / 8.0
+        return (((n * 37) % 2001 - 1000) or 1) / 8.0       # never 0: -0 and 0 differ on the wire
     if line.transform == "f64":
-        return ((n * 7919) % 200001 - 100000) / 64.0
+        return (((n * 7919) % 200001 - 100000) or 1) / 64.0
     if line.transform.startswith(("sscale", "uscale")):
         raw = (n * 40503 + 7) % (1 << (line.bits - 1))
         return raw
@@ -409,9 +429,11 @@ def raw_of(line, v):
 
 def model_value(line, raw):
     """The model value of a raw sample, as vector text."""
-    if line.transform in ("f32", "f64"):
-        return fmt_float(struct.unpack("<f" if line.transform == "f32" else "<d",
-                                       raw.to_bytes(line.bits // 8, "little"))[0])
+    if line.transform in ("f32", "f64") or line.transform.startswith("f32scale:"):
+        v = struct.unpack("<d" if line.transform == "f64" else "<f", raw.to_bytes(line.bits // 8, "little"))[0]
+        if line.transform.startswith("f32scale:"):
+            v *= float(line.transform.split(":")[1])
+        return fmt_float(v)
     if line.transform.startswith(("sscale", "uscale")):
         signed = raw - (1 << line.bits) if line.transform.startswith("s") and raw >> (line.bits - 1) else raw
         return fmt_float(float(Decimal(signed) * Decimal(line.transform.split(":")[1])))
@@ -427,13 +449,16 @@ def fmt_float(x):
     return s.rstrip("0").rstrip(".") if "." in s else s
 
 
-def message(kind_id, cls, lines, total_bits, salt, upto=None):
+def message(kind_id, cls, lines, total_bits, salt, upto=None, override=None):
     acc = kind_id | (cls << 8)
     raws = {}
     for i, ln in enumerate(lines):
         if upto is not None and ln.bit >= upto:
             break
-        raw = raw_of(ln, sample(ln, salt + 7 * i + 1))
+        if ln.also:
+            continue
+        v = override[ln.path] if override and ln.path in override else sample(ln, salt + 7 * i + 1)
+        raw = raw_of(ln, v)
         raws[ln.path] = raw
         acc |= raw << ln.bit
     end = total_bits if upto is None else upto
@@ -446,8 +471,15 @@ class Fail(Exception):
         self.kind = kind
 
 
-def read_pack(text):
-    pack = {"kinds": collections.OrderedDict()}
+def read_pack(text, module_texts=()):
+    """The pack's kinds, and the `derive` lines of the modules in the order given
+    (engine-spec 0.16: modules in byte order of name, lines in order)."""
+    pack = {"kinds": collections.OrderedDict(), "derive": []}
+    for module_text in module_texts:
+        for line in module_text.split("\n"):
+            t = gtcheck.tokenize(line)
+            if t and t[0] == "derive":
+                pack["derive"].append((t[1], t[2], t[3:]))
     cur = None
     for line in text.split("\n"):
         t = gtcheck.tokenize(line)
@@ -462,7 +494,36 @@ def read_pack(text):
         elif t[0] == "field":
             w, p, n = (int(x) for x in t[2].split(":"))
             cur["fields"].append((t[1], w * 8 + p, n, t[3], "optional" in t[4:]))
+        elif t[0] == "requires":
+            cur["requires"] = t[1:]
     return pack
+
+
+def derive(pack, ent):
+    """The modules' `derive` lines, to the decoded entity (engine-spec 0.16); the
+    functions this pack's keys can reach: add, hypot and bearing."""
+    for _ in range(8):
+        changed = False
+        for target, fn, argv in pack["derive"]:
+            if target in ent or not all(a in ent for a in argv):
+                continue
+            x = [float(ent[a]) for a in argv]
+            if fn == "add":
+                v = sum(x)
+            elif fn == "hypot":
+                v = math.sqrt(x[0] * x[0] + x[1] * x[1])
+            elif fn == "bearing":
+                if x[0] == 0 and x[1] == 0:
+                    continue
+                v = math.degrees(math.atan2(x[0], x[1])) % 360.0
+            else:
+                fail("derive function %s reached, not in this codec" % fn)
+            if math.isfinite(v):
+                ent[target] = v
+                changed = True
+        if not changed:
+            break
+    return ent
 
 
 def decode(pack, data):
@@ -477,10 +538,12 @@ def decode(pack, data):
                 if b + n > nbits:
                     continue
                 raw = (whole >> b) & ((1 << n) - 1)
-                if tr in ("f32", "f64"):
-                    v = struct.unpack("<f" if tr == "f32" else "<d", raw.to_bytes(n // 8, "little"))[0]
+                if tr in ("f32", "f64") or tr.startswith("f32scale:"):
+                    v = struct.unpack("<d" if tr == "f64" else "<f", raw.to_bytes(n // 8, "little"))[0]
                     if math.isnan(v) or math.isinf(v):
                         raise Fail("transform-decode")
+                    if tr.startswith("f32scale:"):
+                        v = v * float(tr.split(":")[1])
                 elif tr == "twos":
                     v = raw - (1 << n) if raw >> (n - 1) else raw
                 elif tr.startswith(("sscale", "uscale")):
@@ -503,6 +566,8 @@ def encode(pack, name, ent):
         v = ent[key]
         if tr in ("f32", "f64"):
             raw = int.from_bytes(struct.pack("<f" if tr == "f32" else "<d", v), "little")
+        elif tr.startswith("f32scale:"):
+            raw = int.from_bytes(struct.pack("<f", v / float(tr.split(":")[1])), "little")
         elif tr.startswith(("sscale", "uscale")):
             q = Decimal(repr(v)) / Decimal(tr.split(":")[1])
             raw = int(q.to_integral_value(rounding="ROUND_HALF_UP")) & ((1 << n) - 1)
@@ -517,15 +582,29 @@ def encode(pack, name, ent):
 
 def geojson(ent):
     if "lat" in ent and "lon" in ent:
-        return '{"type":"Feature","geometry":{"type":"Point","coordinates":[%s,%s]},"properties":{}}' % (
-            fmt_float(ent["lon"]), fmt_float(ent["lat"]))
+        c = [ent["lon"], ent["lat"]] + ([ent["hae"]] if "hae" in ent else [])
+        props = ",".join('"%s":%s' % (k, fmt_float(ent[k])) for k in ("course", "speed_ms") if k in ent)
+        return '{"type":"Feature","geometry":{"type":"Point","coordinates":[%s]},"properties":{%s}}' % (
+            ",".join(fmt_float(x) for x in c), props)
     return '{"type":"Feature","geometry":null,"properties":{}}'
 
 
 def check_vector(pack, vec, where):
     try:
-        name, ent = decode(pack, bytes.fromhex(vec["input"]))
-        out = encode(pack, name, ent).hex() if vec["to"] == FORMAT else geojson(ent)
+        if vec["from"] == "geojson":
+            c = json.loads(vec["input"])["geometry"]["coordinates"]
+            ent = {"lon": float(c[0]), "lat": float(c[1])}
+            if len(c) > 2:
+                ent["hae"] = float(c[2])
+            name = next((n for n, k in pack["kinds"].items() if k.get("requires") and
+                         all(r in ent for r in k["requires"])), None)
+            if name is None:
+                raise Fail("no-kind")
+            out = encode(pack, name, ent).hex()
+        else:
+            name, ent = decode(pack, bytes.fromhex(vec["input"]))
+            derive(pack, ent)
+            out = encode(pack, name, ent).hex() if vec["to"] == FORMAT else geojson(ent)
         for k, want in vec.get("model", {}).items():
             got = name if k == "@kind" else ent.get(k)
             ok = abs(got - float(want)) <= 1e-9 * max(1.0, abs(float(want))) if isinstance(got, float) else str(got) == want
@@ -656,6 +735,13 @@ def build(args, out):
     w = max(len(k) for k in decls)
     for k, (t, d) in decls.items():
         mod.append('key  %-*s  %-6s  -  "%s"' % (w, k, t, d))
+    if BIND_POSITION:
+        for fn, (alt, und) in sorted(HAE.items()):
+            if fn not in plans:
+                continue
+            by = {ln.path: ln.key for ln in plans[fn][0] if not ln.also}
+            if alt in by and und in by:
+                mod.append("derive  hae  add  %s  %s" % (by[alt], by[und]))
     out.write("model/%s.def" % MODULE, "\n".join(mod) + "\n")
     # pack
     uses_track = any(ln.key.startswith("track.") for lines, _ in plans.values() for ln in lines)
@@ -667,8 +753,11 @@ def build(args, out):
     for name, idname, idv, cls, clsv, fn in kinds:
         lines, _ = plans[fn]
         p += ["", "kind      %s" % name, "when      0:0:8  %d" % idv, "when      0:8:8  %d" % clsv]
+        keys = {ln.key for ln in lines}
         first = next((ln.key for ln in lines if not ln.optional), None)
-        if first:
+        if "lat" in keys and "lon" in keys:
+            p.append("requires  lat lon")
+        elif first:
             p.append("requires  %s" % first)
         for ln in lines:
             p.append("field     %s  0:%d:%d  %s%s" % (ln.key, ln.bit, ln.bits, ln.transform, "  optional" if ln.optional else ""))
@@ -695,6 +784,44 @@ def build(args, out):
                 source="a message of an earlier firmware that ends before the optional fields: they decode "
                        "as absent, and encode writes zero bits for them (engine-spec 0.6, `optional`; "
                        "encode is unchanged)")))
+    # the position: EKF_NAV to geojson (hae derived from altitude and undulation), and geojson to
+    # the first kind whose requires (lat lon) hold
+    xv = []
+    nav = next((k for k in kinds if k[5] == "sbgEComLogEkfNavReadFromStream"), None)
+    if BIND_POSITION and nav:
+        name, idname, idv, cls, clsv, fn = nav
+        lines, total = plans[fn]
+        by = {ln.path: ln for ln in lines if not ln.also}
+        point = {"position[0]": 47.3977419, "position[1]": 8.5455938, "position[2]": 488.25, "undulation": 47.5,
+                 "velocity[0]": 5.0, "velocity[1]": 0.0}
+        data, raws = message(idv, clsv, lines, total, 4242, override=point)
+        hae = point["position[2]"] + point["undulation"]
+        vs.append(("gen-x-%s-to-geojson.json" % name.replace("_", "-"), vec(
+            "x-%s-to-geojson" % name, FORMAT, "geojson", data.hex(),
+            '{"type":"Feature","geometry":{"type":"Point","coordinates":[%s,%s,%s]},'
+            '"properties":{"course":0,"speed_ms":5}}' % (
+                fmt_float(point["position[1]"]), fmt_float(point["position[0]"]), fmt_float(hae)),
+            collections.OrderedDict([("@kind", name), ("lat", fmt_float(point["position[0]"])),
+                                     ("lon", fmt_float(point["position[1]"]))]),
+            source="latitude and longitude in degrees bind lat and lon; hae is altitude above mean sea level "
+                   "plus undulation (the module's derive add, engine-spec 0.16); the velocity is 5 m/s north and "
+                   "0 east, so track's derives give course 0 (bearing) and speed_ms 5 (hypot); geojson writes "
+                   "[lon, lat, alt] (RFC 7946, engine-spec 0.1.1 rulings 3 to 5)")))
+        first = next(k for k in kinds if {"lat", "lon"} <= {ln.key for ln in plans[k[5]][0]})
+        fname, _, fid, _, fcls, ffn = first
+        flines, ftotal = plans[ffn]
+        acc = fid | (fcls << 8)
+        for ln in flines:
+            if ln.key in ("lat", "lon"):
+                acc |= raw_of(ln, {"lat": 47.25, "lon": 8.5}[ln.key]) << ln.bit
+        gv = vec("geojson-to-%s-%s" % (FORMAT, fname), "geojson", FORMAT,
+                 '{"type":"Feature","geometry":{"type":"Point","coordinates":[8.5,47.25,410.5]},'
+                 '"properties":{"callsign":"UAV1"},"id":"u-1"}', acc.to_bytes(ftotal // 8, "little").hex(),
+                 collections.OrderedDict([("lat", "47.25"), ("lon", "8.5"), ("hae", "410.5")]),
+                 source="tools/gen/sbgecom2pack.py: the kind is the first whose requires hold (lat lon); "
+                        "hae has no field (the pack carries altitude above mean sea level, and a derive runs "
+                        "one way); every other payload byte is zero")
+        xv.append(("packs/geojson/vectors/gen-geojson-to-%s-%s.json" % (FORMAT, fname.replace("_", "-")), gv))
     name, idname, idv, cls, clsv, fn = kinds[0]
     lines, total = plans[fn]
     need = max(ln.bit + ln.bits for ln in lines if not ln.optional)
@@ -711,6 +838,8 @@ def build(args, out):
             out.remove(rel + "/" + f)
     for f, v in vs:
         out.write(rel + "/" + f, dump(v))
+    for path, v in xv:
+        out.write(path, dump(v))
     out.write("packs/%s/pack.md" % FORMAT, pack_md(kinds, skipped, notbuilt, plans, len(vs), commit, ref))
     out.write("packs/%s/PROVENANCE.md" % FORMAT, provenance(commit, ref, files, shas, args.src))
     # check
@@ -722,10 +851,13 @@ def build(args, out):
         gtcheck.load_pack(out.read("packs/%s/pack.def" % FORMAT), model, label="packs/%s/pack.def" % FORMAT)
     except gtcheck.CheckError as e:
         fail(str(e))
-    codec = read_pack(out.read("packs/%s/pack.def" % FORMAT))
+    codec = read_pack(out.read("packs/%s/pack.def" % FORMAT),
+                      [out.read(m) for m in ("model/core.def", "model/%s.def" % MODULE, "model/track.def")])
     for f, _ in vs:
         check_vector(codec, json.loads(out.read(rel + "/" + f)), rel + "/" + f)
-    return kinds, skipped, notbuilt, len(decls), len(vs)
+    for path, _ in xv:
+        check_vector(codec, json.loads(out.read(path)), path)
+    return kinds, skipped, notbuilt, len(decls), len(vs) + len(xv)
 
 
 def source_line(commit, ref):
@@ -753,24 +885,38 @@ def pack_md(kinds, skipped, notbuilt, plans, nvec, commit, ref):
     for name, idname, idv, cls, clsv, fn in kinds:
         a.append("| `%s` | %d | %d | `%s` | %d |" % (name, idv, clsv, fn, plans[fn][1] // 8 - 2))
     a += ["", "## Shared keys", ""]
-    rows = [(fn, path, k, ev) for (fn, path), (k, ev) in BINDS.items()]
+    rows = [(fn, path, k, "", ev) for (fn, path), (k, ev) in BINDS.items()]
+    rows += [(fn, path, k, tr, ev) for (fn, path), (k, tr, ev) in ALSO.items()]
     if BIND_POSITION:
-        rows += [(fn, path, k, ev) for (fn, path), (k, ev) in POSITION_BINDS.items()]
-    a += ["| Parse function | Field | Key | Evidence |", "|---|---|---|---|"]
-    for fn, path, k, ev in rows:
-        a.append("| `%s` | `%s` | `%s` | %s |" % (fn, path, k, ev))
+        rows += [(fn, path, k, "", ev) for (fn, path), (k, ev) in POSITION_BINDS.items()]
+    a += ["| Parse function | Field | Key | Transform | Evidence |", "|---|---|---|---|---|"]
+    for fn, path, k, tr, ev in sorted(rows):
+        a.append("| `%s` | `%s` | `%s` | %s | %s |" % (fn, path, k, "`%s`" % tr if tr else "as the field", ev))
     a += ["",
-          "The down component of a NED velocity stays a raw key: `track.vel_up_ms` is up, and a `derive`",
-          "line may target only a key of `core` or of its own module, so `sbgecom` cannot negate it into",
-          "`track`. The body-frame velocities (`EKF_VEL_BODY`, odometer, DVL) are not in a shared frame.", ""]
-    if not BIND_POSITION:
-        a += ["Latitude and longitude are raw keys, not `lat` and `lon`. The logs state them in degrees,",
-              "and the altitude above mean sea level with the undulation to the ellipsoid, but the",
-              "documentation of the EKF navigation log (`doc/binaryMessages.md`) and the common definitions",
-              "say the position is in the datum of the position aiding source, with no datum conversion:",
-              "WGS 84 for a plain GNSS fix, another frame when the aiding (an RTK base, a manual position)",
-              "is given in one. The shared `lat` and `lon` are WGS 84, so binding them would claim a datum",
-              "the source does not state. Times are microseconds since power-up or GPS time of week.", ""]
+          "The velocities are stated in the North-East-Down frame in metres per second. North and east",
+          "bind `track.vel_north_ms` and `track.vel_east_ms`. Down keeps its raw key, and a second line on",
+          "the same bits binds `track.vel_up_ms` with `f32scale:-1`; encode from either key writes the",
+          "same bits (a down velocity of 0 decodes as an up velocity of -0, which encodes back to 0).",
+          "The body-frame velocities (`EKF_VEL_BODY`, odometer, DVL) are not in a shared frame.", ""]
+    if BIND_POSITION:
+        a += ["Latitude and longitude are in degrees, positive north and east, and bind `lat` and `lon`.",
+              "The altitude is above mean sea level, with the undulation (the geoid's height over the",
+              "ellipsoid) beside it; the struct comments and the EKF navigation log's note give the height",
+              "over the ellipsoid as altitude plus undulation. The module states that as",
+              "`derive hae add <altitude> <undulation>` (engine-spec 0.16), for the EKF navigation log and",
+              "the GNSS position logs. The altitude above mean sea level stays a raw key; a derive runs one",
+              "way, so a message encoded from `hae` alone leaves altitude and undulation zero.", "",
+              "**Datum.** The documentation of the EKF navigation log and the common definitions",
+              "(`doc/binaryMessages.md`, `doc/commonDefs.md`) state that the position is in the datum of the",
+              "position aiding source, with no datum conversion. With GNSS aiding that is WGS 84, the datum",
+              "of the shared `lat`, `lon` and `hae`. With aiding in a local frame, such as an RTK base whose",
+              "coordinates are given in ETRS89, the position is in that frame, which differs from WGS 84 by",
+              "up to about a metre; the pack cannot tell the two apart. Times are microseconds since",
+              "power-up or GPS time of week, and stay raw.", ""]
+    else:
+        a += ["Latitude and longitude are raw keys, not `lat` and `lon`: the position is in the datum of",
+              "the position aiding source (`doc/binaryMessages.md`), which the source does not fix to",
+              "WGS 84.", ""]
     a += ["## Not mapped, and why", "", "| What | Why |", "|---|---|",
           "| The frame (sync, length, CRC-16, end byte; extended frames) | the framer's (see Message convention) |",
           "| Enumerations and bit fields (status words) | carried as the integer the log holds |",

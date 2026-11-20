@@ -12,6 +12,8 @@ SbgErrorCode sbgEComLogEkfNavReadFromStream(SbgEComLogDemoNav *pLogData, SbgStre
     pLogData->velocity[2]   = sbgStreamBufferReadFloatLE(pStreamBuffer);
     pLogData->position[0]   = sbgStreamBufferReadDoubleLE(pStreamBuffer);
     pLogData->position[1]   = sbgStreamBufferReadDoubleLE(pStreamBuffer);
+    pLogData->position[2]   = sbgStreamBufferReadDoubleLE(pStreamBuffer);
+    pLogData->undulation    = sbgStreamBufferReadFloatLE(pStreamBuffer);
     pLogData->status        = (SbgDemoStatus)sbgStreamBufferReadUint16LE(pStreamBuffer);
 
     if (sbgStreamBufferGetSpace(pStreamBuffer) >= sizeof(uint8_t))

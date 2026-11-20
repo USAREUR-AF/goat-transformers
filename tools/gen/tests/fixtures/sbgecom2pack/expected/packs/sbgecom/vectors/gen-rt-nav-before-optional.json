@@ -3,8 +3,8 @@
   "from": "sbgecom",
   "to": "sbgecom",
   "source": "a message of an earlier firmware that ends before the optional fields: they decode as absent, and encode writes zero bits for them (engine-spec 0.6, `optional`; encode is unchanged)",
-  "input": "08005205eba600000b42004086420000c7420000000060bc874000000000506d97c05cfc",
-  "expect": "08005205eba600000b42004086420000c7420000000060bc874000000000506d97c05cfc00",
+  "input": "08005205eba600000b42004086420000c74200000000506d97c00000000080c983c000000000801e6d4000003441e1f7",
+  "expect": "08005205eba600000b42004086420000c74200000000506d97c00000000080c983c000000000801e6d4000003441e1f700",
   "model": {
     "@kind": "nav"
   }

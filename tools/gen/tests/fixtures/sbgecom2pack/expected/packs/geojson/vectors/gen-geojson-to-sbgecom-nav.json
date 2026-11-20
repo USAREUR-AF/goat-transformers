@@ -1,0 +1,13 @@
+{
+  "name": "geojson-to-sbgecom-nav",
+  "from": "geojson",
+  "to": "sbgecom",
+  "source": "tools/gen/sbgecom2pack.py: the kind is the first whose requires hold (lat lon); hae has no field (the pack carries altitude above mean sea level, and a derive runs one way); every other payload byte is zero",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.5,47.25,410.5]},\"properties\":{\"callsign\":\"UAV1\"},\"id\":\"u-1\"}",
+  "expect": "0800000000000000000000000000000000000000000000a047400000000000002140000000000000000000000000000000",
+  "model": {
+    "lat": "47.25",
+    "lon": "8.5",
+    "hae": "410.5"
+  }
+}

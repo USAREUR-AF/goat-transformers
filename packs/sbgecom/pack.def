@@ -132,16 +132,17 @@ field     sbgecom.ekf_quat_mag_inclination  0:336:32  f32  optional
 kind      ekf_nav
 when      0:0:8  8
 when      0:8:8  0
-requires  sbgecom.ekf_nav_time_stamp
+requires  lat lon
 field     sbgecom.ekf_nav_time_stamp  0:16:32  uint
 field     track.vel_north_ms  0:48:32  f32
 field     track.vel_east_ms  0:80:32  f32
 field     sbgecom.ekf_nav_velocity_2  0:112:32  f32
+field     track.vel_up_ms  0:112:32  f32scale:-1
 field     sbgecom.ekf_nav_velocity_std_dev_0  0:144:32  f32
 field     sbgecom.ekf_nav_velocity_std_dev_1  0:176:32  f32
 field     sbgecom.ekf_nav_velocity_std_dev_2  0:208:32  f32
-field     sbgecom.ekf_nav_position_0  0:240:64  f64
-field     sbgecom.ekf_nav_position_1  0:304:64  f64
+field     lat  0:240:64  f64
+field     lon  0:304:64  f64
 field     sbgecom.ekf_nav_position_2  0:368:64  f64
 field     sbgecom.ekf_nav_undulation  0:432:32  f32
 field     sbgecom.ekf_nav_position_std_dev_0  0:464:32  f32
@@ -176,6 +177,7 @@ field     sbgecom.gnss_vel_time_of_week  0:80:32  uint
 field     track.vel_north_ms  0:112:32  f32
 field     track.vel_east_ms  0:144:32  f32
 field     sbgecom.gnss_vel_velocity_2  0:176:32  f32
+field     track.vel_up_ms  0:176:32  f32scale:-1
 field     sbgecom.gnss_vel_velocity_acc_0  0:208:32  f32
 field     sbgecom.gnss_vel_velocity_acc_1  0:240:32  f32
 field     sbgecom.gnss_vel_velocity_acc_2  0:272:32  f32
@@ -185,12 +187,12 @@ field     sbgecom.gnss_vel_course_acc  0:336:32  f32
 kind      gps1_pos
 when      0:0:8  14
 when      0:8:8  0
-requires  sbgecom.gnss_pos_time_stamp
+requires  lat lon
 field     sbgecom.gnss_pos_time_stamp  0:16:32  uint
 field     sbgecom.gnss_pos_status  0:48:32  uint
 field     sbgecom.gnss_pos_time_of_week  0:80:32  uint
-field     sbgecom.gnss_pos_latitude  0:112:64  f64
-field     sbgecom.gnss_pos_longitude  0:176:64  f64
+field     lat  0:112:64  f64
+field     lon  0:176:64  f64
 field     sbgecom.gnss_pos_altitude  0:240:64  f64
 field     sbgecom.gnss_pos_undulation  0:304:32  f32
 field     sbgecom.gnss_pos_latitude_accuracy  0:336:32  f32
@@ -229,6 +231,7 @@ field     sbgecom.gnss_vel_time_of_week  0:80:32  uint
 field     track.vel_north_ms  0:112:32  f32
 field     track.vel_east_ms  0:144:32  f32
 field     sbgecom.gnss_vel_velocity_2  0:176:32  f32
+field     track.vel_up_ms  0:176:32  f32scale:-1
 field     sbgecom.gnss_vel_velocity_acc_0  0:208:32  f32
 field     sbgecom.gnss_vel_velocity_acc_1  0:240:32  f32
 field     sbgecom.gnss_vel_velocity_acc_2  0:272:32  f32
@@ -238,12 +241,12 @@ field     sbgecom.gnss_vel_course_acc  0:336:32  f32
 kind      gps2_pos
 when      0:0:8  17
 when      0:8:8  0
-requires  sbgecom.gnss_pos_time_stamp
+requires  lat lon
 field     sbgecom.gnss_pos_time_stamp  0:16:32  uint
 field     sbgecom.gnss_pos_status  0:48:32  uint
 field     sbgecom.gnss_pos_time_of_week  0:80:32  uint
-field     sbgecom.gnss_pos_latitude  0:112:64  f64
-field     sbgecom.gnss_pos_longitude  0:176:64  f64
+field     lat  0:112:64  f64
+field     lon  0:176:64  f64
 field     sbgecom.gnss_pos_altitude  0:240:64  f64
 field     sbgecom.gnss_pos_undulation  0:304:32  f32
 field     sbgecom.gnss_pos_latitude_accuracy  0:336:32  f32

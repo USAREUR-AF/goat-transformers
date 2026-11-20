@@ -65,24 +65,40 @@ absent. Encode writes the whole layout (zero bits for an absent optional field).
 
 ## Shared keys
 
-| Parse function | Field | Key | Evidence |
-|---|---|---|---|
-| `sbgEComLogEkfNavReadFromStream` | `velocity[0]` | `track.vel_north_ms` | the struct comment and the log's table in doc/binaryMessages.md: element 0 of the velocity is north, in metres per second, in the NED frame |
-| `sbgEComLogEkfNavReadFromStream` | `velocity[1]` | `track.vel_east_ms` | the same: element 1 is east, in metres per second |
-| `sbgEComLogGnssVelReadFromStream` | `velocity[0]` | `track.vel_north_ms` | the struct comment: the GNSS velocity is north, east, down in metres per second; element 0 is north |
-| `sbgEComLogGnssVelReadFromStream` | `velocity[1]` | `track.vel_east_ms` | the same: element 1 is east |
+| Parse function | Field | Key | Transform | Evidence |
+|---|---|---|---|---|
+| `sbgEComLogEkfNavReadFromStream` | `position[0]` | `lat` | as the field | latitude in degrees, positive north |
+| `sbgEComLogEkfNavReadFromStream` | `position[1]` | `lon` | as the field | longitude in degrees, positive east |
+| `sbgEComLogEkfNavReadFromStream` | `velocity[0]` | `track.vel_north_ms` | as the field | the struct comment and the log's table in doc/binaryMessages.md: element 0 of the velocity is north, in metres per second, in the NED frame |
+| `sbgEComLogEkfNavReadFromStream` | `velocity[1]` | `track.vel_east_ms` | as the field | the same: element 1 is east, in metres per second |
+| `sbgEComLogEkfNavReadFromStream` | `velocity[2]` | `track.vel_up_ms` | `f32scale:-1` | element 2 of the NED velocity is down, in metres per second; up is its negation |
+| `sbgEComLogGnssPosReadFromStream` | `latitude` | `lat` | as the field | latitude in degrees, positive north |
+| `sbgEComLogGnssPosReadFromStream` | `longitude` | `lon` | as the field | longitude in degrees, positive east |
+| `sbgEComLogGnssVelReadFromStream` | `velocity[0]` | `track.vel_north_ms` | as the field | the struct comment: the GNSS velocity is north, east, down in metres per second; element 0 is north |
+| `sbgEComLogGnssVelReadFromStream` | `velocity[1]` | `track.vel_east_ms` | as the field | the same: element 1 is east |
+| `sbgEComLogGnssVelReadFromStream` | `velocity[2]` | `track.vel_up_ms` | `f32scale:-1` | element 2 is down; up is its negation |
 
-The down component of a NED velocity stays a raw key: `track.vel_up_ms` is up, and a `derive`
-line may target only a key of `core` or of its own module, so `sbgecom` cannot negate it into
-`track`. The body-frame velocities (`EKF_VEL_BODY`, odometer, DVL) are not in a shared frame.
+The velocities are stated in the North-East-Down frame in metres per second. North and east
+bind `track.vel_north_ms` and `track.vel_east_ms`. Down keeps its raw key, and a second line on
+the same bits binds `track.vel_up_ms` with `f32scale:-1`; encode from either key writes the
+same bits (a down velocity of 0 decodes as an up velocity of -0, which encodes back to 0).
+The body-frame velocities (`EKF_VEL_BODY`, odometer, DVL) are not in a shared frame.
 
-Latitude and longitude are raw keys, not `lat` and `lon`. The logs state them in degrees,
-and the altitude above mean sea level with the undulation to the ellipsoid, but the
-documentation of the EKF navigation log (`doc/binaryMessages.md`) and the common definitions
-say the position is in the datum of the position aiding source, with no datum conversion:
-WGS 84 for a plain GNSS fix, another frame when the aiding (an RTK base, a manual position)
-is given in one. The shared `lat` and `lon` are WGS 84, so binding them would claim a datum
-the source does not state. Times are microseconds since power-up or GPS time of week.
+Latitude and longitude are in degrees, positive north and east, and bind `lat` and `lon`.
+The altitude is above mean sea level, with the undulation (the geoid's height over the
+ellipsoid) beside it; the struct comments and the EKF navigation log's note give the height
+over the ellipsoid as altitude plus undulation. The module states that as
+`derive hae add <altitude> <undulation>` (engine-spec 0.16), for the EKF navigation log and
+the GNSS position logs. The altitude above mean sea level stays a raw key; a derive runs one
+way, so a message encoded from `hae` alone leaves altitude and undulation zero.
+
+**Datum.** The documentation of the EKF navigation log and the common definitions
+(`doc/binaryMessages.md`, `doc/commonDefs.md`) state that the position is in the datum of the
+position aiding source, with no datum conversion. With GNSS aiding that is WGS 84, the datum
+of the shared `lat`, `lon` and `hae`. With aiding in a local frame, such as an RTK base whose
+coordinates are given in ETRS89, the position is in that frame, which differs from WGS 84 by
+up to about a metre; the pack cannot tell the two apart. Times are microseconds since
+power-up or GPS time of week, and stay raw.
 
 ## Not mapped, and why
 
@@ -106,7 +122,7 @@ the source does not state. Times are microseconds since power-up or GPS time of 
 generator and packed by its own serializer from the read list. `-before-optional`: a payload
 that ends before the optional fields, re-encoded with them as zero bytes. `gen-err-short` is
 one byte short of the fields that are not optional; `gen-err-other-id` names no kind.
-50 vector files.
+51 vector files.
 
 ## Sources
 

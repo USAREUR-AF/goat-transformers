@@ -3,6 +3,6 @@
   "from": "sbgecom",
   "to": "sbgecom",
   "source": "one byte short of the fields of nav that are not optional",
-  "input": "0800c1fdbbf100805ec20000bac1000012410000000080226dc00000000080c88340cb",
+  "input": "0800c1fdbbf100805ec20000bac1000012410000000080c8834000000000d06c97400000000060bd87c000409ec250",
   "expect_error": "malformed-wire"
 }

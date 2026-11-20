@@ -10,6 +10,6 @@
     "sbgecom.gnss_pos_time_stamp": "403089818",
     "sbgecom.gnss_pos_status": "1804270961",
     "sbgecom.gnss_pos_time_of_week": "3205452104",
-    "sbgecom.gnss_pos_latitude": "-942.765625"
+    "lat": "-942.765625"
   }
 }

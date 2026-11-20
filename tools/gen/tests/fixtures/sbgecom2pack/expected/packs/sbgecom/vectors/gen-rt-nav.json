@@ -3,8 +3,8 @@
   "from": "sbgecom",
   "to": "sbgecom",
   "source": "tools/gen/sbgecom2pack.py: id 8, class 0, then the fields sbgEComLogEkfNavReadFromStream reads, with values chosen by the generator, little-endian at their offsets",
-  "input": "08005205eba600000b42004086420000c7420000000060bc874000000000506d97c05cfc1d",
-  "expect": "08005205eba600000b42004086420000c7420000000060bc874000000000506d97c05cfc1d",
+  "input": "08005205eba600000b42004086420000c74200000000506d97c00000000080c983c000000000801e6d4000003441e1f7a0",
+  "expect": "08005205eba600000b42004086420000c74200000000506d97c00000000080c983c000000000801e6d4000003441e1f7a0",
   "model": {
     "@kind": "nav",
     "sbgecom.ekf_nav_time_stamp": "2800420178",

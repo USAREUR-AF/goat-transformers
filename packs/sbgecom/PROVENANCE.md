@@ -19,6 +19,7 @@ Each file is `https://raw.githubusercontent.com/SBG-Systems/sbgECom/<commit>/<pa
 | `src/sbgEComIds.h` | `39d32989896938c0b31b374be04da555b4c317db2ba7351352eb2b665f2a33c2` |
 | `src/logs/sbgEComLog.c` | `8343972f7782bfc142afd590e6c69eee04fa3b2aa4117ebfecddad2f3b4b0c9b` |
 | `doc/binaryMessages.md` | `3d7b88d27bd33c7af775853ea53d0db8b0371586633f2b27f76dc6532d098551` |
+| `doc/commonDefs.md` | `9c18d2e0e19227fac76a0ed3bd934502ba2ffdf6d633115064db8c28191e0ae4` |
 | `src/logs/sbgEComLog.h` | `b7e683b9887d9e039613b776f9f00af09a02211c160dad759b4889098c973927` |
 | `src/logs/sbgEComLogAirData.c` | `3e3d87518818c06c933afc9e089dfd8b46616c450cf1774c34b630fb7dcdeb87` |
 | `src/logs/sbgEComLogAirData.h` | `df6d981a911f955c1fe5e43be268c13b19b463a0acb2f39e38b28f16921dc1bb` |

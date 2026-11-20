@@ -1,0 +1,13 @@
+{
+  "name": "x-nav-to-geojson",
+  "from": "sbgecom",
+  "to": "geojson",
+  "source": "latitude and longitude in degrees bind lat and lon; hae is altitude above mean sea level plus undulation (the module's derive add, engine-spec 0.16); the velocity is 5 m/s north and 0 east, so track's derives give course 0 (bearing) and speed_ms 5 (hypot); geojson writes [lon, lat, alt] (RFC 7946, engine-spec 0.1.1 rulings 3 to 5)",
+  "input": "0800dc2076510000a040000000000080ac42dc5fe234e9b24740fdcc0f12581721400000000000847e4000003e426b1326",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.5455938,47.3977419,535.75]},\"properties\":{\"course\":0,\"speed_ms\":5}}",
+  "model": {
+    "@kind": "nav",
+    "lat": "47.3977419",
+    "lon": "8.5455938"
+  }
+}

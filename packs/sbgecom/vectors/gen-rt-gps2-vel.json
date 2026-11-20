@@ -3,8 +3,8 @@
   "from": "sbgecom",
   "to": "sbgecom",
   "source": "tools/gen/sbgecom2pack.py: id 16, class 0, then the fields sbgEComLogGnssVelReadFromStream reads, with values chosen by the generator, little-endian at their offsets",
-  "input": "1000324e530f09a2d762e0f55bb600808f420040d0420040e3c20080a2c2008043c2000084c100007e4100004142",
-  "expect": "1000324e530f09a2d762e0f55bb600808f420040d0420040e3c20080a2c2008043c2000084c100007e4100004142",
+  "input": "1000324e530f09a2d762e0f55bb600808f420040d0420040e3c2008043c2000084c100007e41000041420040a142",
+  "expect": "1000324e530f09a2d762e0f55bb600808f420040d0420040e3c2008043c2000084c100007e41000041420040a142",
   "model": {
     "@kind": "gps2_vel",
     "sbgecom.gnss_vel_time_stamp": "257117746",
