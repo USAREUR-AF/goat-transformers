@@ -1,0 +1,15 @@
+{
+ "keys": {
+  "tags|.|string": "tags_value",
+  "|class_uid|int": "class_uid",
+  "|device.location.lat|float": "device_location_lat",
+  "|device.location.long|float": "device_location_long",
+  "|device.name|string": "device_name",
+  "|device.uid|string": "device_uid",
+  "|metadata.uid|string": "metadata_uid",
+  "|time|int": "time"
+ },
+ "lists": {
+  "|tags": "tags"
+ }
+}

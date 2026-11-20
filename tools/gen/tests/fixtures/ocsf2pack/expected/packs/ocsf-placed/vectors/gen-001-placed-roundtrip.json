@@ -1,0 +1,17 @@
+{
+ "name": "gen-placed-roundtrip",
+ "from": "ocsf-placed",
+ "to": "ocsf-placed",
+ "input": "{\"class_uid\":7002,\"device\":{\"uid\":\"s45602\",\"name\":\"s43519\",\"location\":{\"lat\":-33.865,\"long\":-157.8583}},\"time\":1718789316579,\"metadata\":{\"uid\":\"s83011\"},\"tags\":[\"s36161\",\"s44414\"]}",
+ "expect": "{\"class_uid\":7002,\"device\":{\"uid\":\"s45602\",\"name\":\"s43519\",\"location\":{\"lat\":-33.865,\"long\":-157.8583}},\"time\":1718789316579,\"metadata\":{\"uid\":\"s83011\"},\"tags\":[\"s36161\",\"s44414\"]}",
+ "model": {
+  "@kind": "placed",
+  "time_ms": "1718789316579",
+  "uid": "s83011",
+  "lat": "-33.865",
+  "lon": "-157.8583",
+  "ocsfplaced.device_uid": "s45602",
+  "ocsfplaced.device_name": "s43519",
+  "ocsfplaced.device_location_lat": "-33.865"
+ }
+}

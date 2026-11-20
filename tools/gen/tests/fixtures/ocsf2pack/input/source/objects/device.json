@@ -1,0 +1,1 @@
+{"name": "device", "extends": "_entity", "attributes": {"location": {}}}

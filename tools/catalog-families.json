@@ -82,6 +82,7 @@
 
     {"name": "OpenTelemetry OTLP", "domain": "networks", "prefixes": ["otlp-"]},
     {"name": "gNMI", "domain": "networks", "prefixes": ["gnmi-"]},
+    {"name": "OCSF", "domain": "networks", "prefixes": ["ocsf-"], "detail": "event classes"},
     {"name": "STIX 2.1", "domain": "networks", "prefixes": ["stix-"], "detail": "domain, relationship and cyber-observable objects"},
     {"name": "OpenC2", "domain": "networks", "prefixes": ["openc2-"], "detail": "commands and responses: language 1.1, stateless packet filter profile 1.1"},
     {"name": "CACAO playbooks", "domain": "networks", "exact": ["cacao-playbook"]},

@@ -1,0 +1,1 @@
+{"name": "base_event", "attributes": {"$include": ["profiles/host.json"], "class_uid": {}, "time": {}, "metadata": {}, "unmapped": {}}}
