@@ -1,0 +1,8 @@
+{
+  "name": "err-short",
+  "from": "robosense-rsa",
+  "to": "robosense-rsa",
+  "source": "one byte short of the 32-byte msop packet",
+  "input": "55aa050ac17223d48536e79849fabeab385c0d2bbe6f1f2098d1828c33e47f",
+  "expect_error": "malformed-wire"
+}

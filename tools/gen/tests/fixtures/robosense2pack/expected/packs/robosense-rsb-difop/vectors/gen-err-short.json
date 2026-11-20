@@ -1,0 +1,8 @@
+{
+  "name": "err-short",
+  "from": "robosense-rsb-difop",
+  "to": "robosense-rsb-difop",
+  "source": "one byte short of the 6-byte difop packet",
+  "input": "1234f1bbfd",
+  "expect_error": "malformed-wire"
+}

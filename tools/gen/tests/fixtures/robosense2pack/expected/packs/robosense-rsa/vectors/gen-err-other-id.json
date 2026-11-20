@@ -1,0 +1,8 @@
+{
+  "name": "err-other-id",
+  "from": "robosense-rsa",
+  "to": "robosense-rsa",
+  "source": "the first identity byte changed: no kind's `when` holds",
+  "input": "aaaa050ac17223d48536e79849fabeab385c0d2bbe6f1f2098d1828c33e47f95",
+  "expect_error": "no-kind"
+}
