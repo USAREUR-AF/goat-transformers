@@ -1,0 +1,7 @@
+{
+ "name": "gen-zone_set-residue",
+ "from": "vda5050-zone-set",
+ "to": "vda5050-zone-set",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"headerId\":46011,\"timestamp\":\"2026-02-22T07:30:39.964Z\",\"version\":\"s22188\",\"manufacturer\":\"s52531\",\"serialNumber\":\"s35180\",\"zoneSet\":{\"mapId\":\"s73098\",\"zoneSetId\":\"s14406\",\"zoneSetDescriptor\":\"s79937\",\"zones\":[{\"zoneId\":\"s53623\",\"zoneType\":\"PRIORITY\",\"zoneDescriptor\":\"s68867\",\"vertices\":[{\"x\":7.0625,\"y\":0.75}]},{\"zoneId\":\"s30587\",\"zoneType\":\"SPEED_LIMIT\",\"zoneDescriptor\":\"s63330\",\"vertices\":[{\"x\":0.75,\"y\":7.0625}]}]}}",
+ "expect": "{\"headerId\":46011,\"timestamp\":\"2026-02-22T07:30:39.964Z\",\"version\":\"s22188\",\"manufacturer\":\"s52531\",\"serialNumber\":\"s35180\",\"zoneSet\":{\"mapId\":\"s73098\",\"zoneSetId\":\"s14406\",\"zoneSetDescriptor\":\"s79937\",\"zones\":[{\"zoneId\":\"s53623\",\"zoneType\":\"PRIORITY\",\"zoneDescriptor\":\"s68867\",\"vertices\":[{\"x\":7.0625,\"y\":0.75}]},{\"zoneId\":\"s30587\",\"zoneType\":\"SPEED_LIMIT\",\"zoneDescriptor\":\"s63330\",\"vertices\":[{\"x\":0.75,\"y\":7.0625}]}]},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

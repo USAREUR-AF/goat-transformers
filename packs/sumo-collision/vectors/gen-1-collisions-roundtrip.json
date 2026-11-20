@@ -1,0 +1,12 @@
+{
+  "name": "gen-collisions-roundtrip",
+  "from": "sumo-collision",
+  "to": "sumo-collision",
+  "input": "<collisions><collision time=\"s0\" type=\"s1\" lane=\"s2\" pos=\"001.0\" collider=\"s4\" victim=\"s5\" colliderType=\"s6\" victimType=\"s7\" colliderSpeed=\"s8\" victimSpeed=\"s9\" colliderFront=\"v10\" victimFront=\"v11\" colliderBack=\"v12\" victimBack=\"v13\"/><collision time=\"s14\" type=\"s15\" lane=\"s16\" pos=\"001.0\" collider=\"s18\" victim=\"s19\" colliderType=\"s20\" victimType=\"s21\" colliderSpeed=\"s22\" victimSpeed=\"s23\" colliderFront=\"v24\" victimFront=\"v25\" colliderBack=\"v26\" victimBack=\"v27\"/></collisions>",
+  "expect": "<collisions><collision time=\"s0\" type=\"s1\" lane=\"s2\" pos=\"001.0\" collider=\"s4\" victim=\"s5\" colliderType=\"s6\" victimType=\"s7\" colliderSpeed=\"s8\" victimSpeed=\"s9\" colliderFront=\"v10\" victimFront=\"v11\" colliderBack=\"v12\" victimBack=\"v13\"/><collision time=\"s14\" type=\"s15\" lane=\"s16\" pos=\"001.0\" collider=\"s18\" victim=\"s19\" colliderType=\"s20\" victimType=\"s21\" colliderSpeed=\"s22\" victimSpeed=\"s23\" colliderFront=\"v24\" victimFront=\"v25\" colliderBack=\"v26\" victimBack=\"v27\"/></collisions>",
+  "model": {
+    "@kind": "collisions",
+    "sumocollision.collision.#": "2",
+    "sumocollision.collision[1].sumocollision.time": "s14"
+  }
+}

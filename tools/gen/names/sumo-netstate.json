@@ -1,0 +1,18 @@
+{
+ "@angle string": "angle",
+ "@containerNumber int": "container_number",
+ "@id string": "id",
+ "@personNumber int": "person_number",
+ "@pos float": "pos",
+ "@posLat string": "pos_lat",
+ "@speed float": "speed",
+ "@speedLat string": "speed_lat",
+ "@stage string": "stage",
+ "@time float": "time",
+ "container/[] list": "container",
+ "edge/[] list": "edge",
+ "lane/[] list": "lane",
+ "person/[] list": "person",
+ "timestep/[] list": "timestep",
+ "vehicle/[] list": "vehicle"
+}

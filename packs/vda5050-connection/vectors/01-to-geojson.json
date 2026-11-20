@@ -1,0 +1,19 @@
+{
+ "name": "vda5050-connection-to-geojson",
+ "from": "vda5050-connection",
+ "to": "geojson",
+ "input": "{\"headerId\":412,\"timestamp\":\"2026-03-14T09:26:53.589Z\",\"version\":\"3.0.0\",\"manufacturer\":\"ExampleRobotics\",\"serialNumber\":\"AMR-0042\",\"connectionState\":\"ONLINE\"}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"time_ms\":1773480413589},\"id\":\"AMR-0042\"}",
+ "model": {
+  "time_ms": "1773480413589",
+  "uid": "AMR-0042",
+  "vda5050connection.header_id": "412",
+  "vda5050connection.timestamp": "2026-03-14T09:26:53.589Z",
+  "vda5050connection.version": "3.0.0",
+  "vda5050connection.manufacturer": "ExampleRobotics",
+  "vda5050connection.serial_number": "AMR-0042",
+  "vda5050connection.connection_state": "ONLINE"
+ },
+ "source": "derived by tools/gen/vda5050-vectors.py from the schema and spec/engine-spec.md; no engine run",
+ "reference": "VDA 5050 version 3.0.0, VDA5050_EN.md and json_schemas/connection.schema (commit f480c4020c91)"
+}

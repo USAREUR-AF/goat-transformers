@@ -1,0 +1,12 @@
+{
+  "name": "gen-detector-roundtrip",
+  "from": "sumo-det-e1meso",
+  "to": "sumo-det-e1meso",
+  "input": "<detector><interval begin=\"0.5\" end=\"1.5\" id=\"s2\" sampledSeconds=\"2.5\" departed=\"5\" arrived=\"6\" entered=\"0.75\" left=\"8\" density=\"1.5\" laneDensity=\"0.25\" occupancy=\"2.5\" waitingTime=\"0.125\" timeLoss=\"001.0\" speed=\"0.75\" speedRelative=\"0.5\" vaporized=\"7\" flow=\"001.0\" distance=\"001.0\"/><interval begin=\"0.125\" end=\"3.5\" id=\"s20\" sampledSeconds=\"0.5\" departed=\"5\" arrived=\"6\" entered=\"2.5\" left=\"8\" density=\"3.5\" laneDensity=\"0.75\" occupancy=\"0.5\" waitingTime=\"1.5\" timeLoss=\"001.0\" speed=\"2.5\" speedRelative=\"0.125\" vaporized=\"7\" flow=\"001.0\" distance=\"001.0\"/></detector>",
+  "expect": "<detector><interval begin=\"0.5\" end=\"1.5\" id=\"s2\" sampledSeconds=\"2.5\" departed=\"5\" arrived=\"6\" entered=\"0.75\" left=\"8\" density=\"1.5\" laneDensity=\"0.25\" occupancy=\"2.5\" waitingTime=\"0.125\" timeLoss=\"001.0\" speed=\"0.75\" speedRelative=\"0.5\" vaporized=\"7\" flow=\"001.0\" distance=\"001.0\"/><interval begin=\"0.125\" end=\"3.5\" id=\"s20\" sampledSeconds=\"0.5\" departed=\"5\" arrived=\"6\" entered=\"2.5\" left=\"8\" density=\"3.5\" laneDensity=\"0.75\" occupancy=\"0.5\" waitingTime=\"1.5\" timeLoss=\"001.0\" speed=\"2.5\" speedRelative=\"0.125\" vaporized=\"7\" flow=\"001.0\" distance=\"001.0\"/></detector>",
+  "model": {
+    "@kind": "detector",
+    "sumodete1meso.interval.#": "2",
+    "sumodete1meso.interval[1].sumodete1meso.begin": "0.125"
+  }
+}

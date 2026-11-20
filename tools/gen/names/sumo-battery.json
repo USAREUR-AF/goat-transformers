@@ -1,0 +1,23 @@
+{
+ "@acceleration string": "acceleration",
+ "@actualBatteryCapacity string": "actual_battery_capacity",
+ "@chargingStationId string": "charging_station_id",
+ "@edge string": "edge",
+ "@energyCharged float": "energy_charged",
+ "@energyChargedInTransit float": "energy_charged_in_transit",
+ "@energyChargedStopped float": "energy_charged_stopped",
+ "@energyConsumed string": "energy_consumed",
+ "@id string": "id",
+ "@lane string": "lane",
+ "@maximumBatteryCapacity string": "maximum_battery_capacity",
+ "@posOnLane float": "pos_on_lane",
+ "@speed float": "speed",
+ "@time float": "time",
+ "@timeStopped string": "time_stopped",
+ "@totalEnergyConsumed string": "total_energy_consumed",
+ "@totalEnergyRegenerated string": "total_energy_regenerated",
+ "@x string": "x",
+ "@y string": "y",
+ "timestep/[] list": "timestep",
+ "vehicle/[] list": "vehicle"
+}

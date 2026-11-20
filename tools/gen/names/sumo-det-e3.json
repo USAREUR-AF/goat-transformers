@@ -1,0 +1,20 @@
+{
+ "@begin float": "begin",
+ "@end float": "end",
+ "@id string": "id",
+ "@meanDurationWithin float": "mean_duration_within",
+ "@meanHaltsPerVehicle float": "mean_halts_per_vehicle",
+ "@meanHaltsPerVehicleWithin float": "mean_halts_per_vehicle_within",
+ "@meanIntervalDurationWithin float": "mean_interval_duration_within",
+ "@meanIntervalHaltsPerVehicleWithin float": "mean_interval_halts_per_vehicle_within",
+ "@meanIntervalSpeedWithin float": "mean_interval_speed_within",
+ "@meanOverlapTravelTime float": "mean_overlap_travel_time",
+ "@meanSpeed float": "mean_speed",
+ "@meanSpeedWithin float": "mean_speed_within",
+ "@meanTimeLoss float": "mean_time_loss",
+ "@meanTimeLossWithin float": "mean_time_loss_within",
+ "@meanTravelTime float": "mean_travel_time",
+ "@vehicleSum int": "vehicle_sum",
+ "@vehicleSumWithin int": "vehicle_sum_within",
+ "interval/[] list": "interval"
+}

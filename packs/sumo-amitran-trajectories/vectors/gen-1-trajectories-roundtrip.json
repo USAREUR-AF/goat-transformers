@@ -1,0 +1,17 @@
+{
+  "name": "gen-trajectories-roundtrip",
+  "from": "sumo-amitran-trajectories",
+  "to": "sumo-amitran-trajectories",
+  "input": "<trajectories timeStepSize=\"1\"><actorConfig id=\"2\" vehicleClass=\"Motorcycle\" fuel=\"Diesel2S\" emissionClass=\"Euro4\" length=\"6\" weight=\"7\" age=\"8\" brand=\"s8\" model=\"s9\" ref=\"s10\"/><actorConfig id=\"3\" vehicleClass=\"UrbanBus\" fuel=\"Diesel2S\" emissionClass=\"Euro0\" length=\"7\" weight=\"8\" age=\"9\" brand=\"s18\" model=\"s19\" ref=\"s20\"/><vehicle id=\"4\" actorConfig=\"5\" startTime=\"6\" ref=\"s24\"/><vehicle id=\"8\" actorConfig=\"9\" startTime=\"1\" ref=\"s28\"/><motionState vehicle=\"3\" speed=\"4\" time=\"5\" acceleration=\"6\" gear=\"7\" engineSpeed=\"8\" worldLocationLong=\"9\" worldLocationLat=\"1\" worldLocationHeight=\"2\" cartesianX=\"3\" cartesianY=\"4\" cartesianZ=\"5\" link=\"6\" laneIndex=\"7\" slope=\"8\" radiusOfCurvature=\"9\" roadType=\"motorway\" speedLimitKmh=\"2\" airDragCoefficient=\"3\" timeHeadway=\"4\" timeToCollision=\"5\" vehicleInFrontId=\"6\"/><motionState vehicle=\"7\" speed=\"8\" time=\"9\" acceleration=\"1\" gear=\"2\" engineSpeed=\"3\" worldLocationLong=\"4\" worldLocationLat=\"5\" worldLocationHeight=\"6\" cartesianX=\"7\" cartesianY=\"8\" cartesianZ=\"9\" link=\"1\" laneIndex=\"2\" slope=\"3\" radiusOfCurvature=\"4\" roadType=\"motorway\" speedLimitKmh=\"6\" airDragCoefficient=\"7\" timeHeadway=\"8\" timeToCollision=\"9\" vehicleInFrontId=\"1\"/></trajectories>",
+  "expect": "<trajectories timeStepSize=\"1\"><actorConfig id=\"2\" vehicleClass=\"Motorcycle\" fuel=\"Diesel2S\" emissionClass=\"Euro4\" length=\"6\" weight=\"7\" age=\"8\" brand=\"s8\" model=\"s9\" ref=\"s10\"/><actorConfig id=\"3\" vehicleClass=\"UrbanBus\" fuel=\"Diesel2S\" emissionClass=\"Euro0\" length=\"7\" weight=\"8\" age=\"9\" brand=\"s18\" model=\"s19\" ref=\"s20\"/><vehicle id=\"4\" actorConfig=\"5\" startTime=\"6\" ref=\"s24\"/><vehicle id=\"8\" actorConfig=\"9\" startTime=\"1\" ref=\"s28\"/><motionState vehicle=\"3\" speed=\"4\" time=\"5\" acceleration=\"6\" gear=\"7\" engineSpeed=\"8\" worldLocationLong=\"9\" worldLocationLat=\"1\" worldLocationHeight=\"2\" cartesianX=\"3\" cartesianY=\"4\" cartesianZ=\"5\" link=\"6\" laneIndex=\"7\" slope=\"8\" radiusOfCurvature=\"9\" roadType=\"motorway\" speedLimitKmh=\"2\" airDragCoefficient=\"3\" timeHeadway=\"4\" timeToCollision=\"5\" vehicleInFrontId=\"6\"/><motionState vehicle=\"7\" speed=\"8\" time=\"9\" acceleration=\"1\" gear=\"2\" engineSpeed=\"3\" worldLocationLong=\"4\" worldLocationLat=\"5\" worldLocationHeight=\"6\" cartesianX=\"7\" cartesianY=\"8\" cartesianZ=\"9\" link=\"1\" laneIndex=\"2\" slope=\"3\" radiusOfCurvature=\"4\" roadType=\"motorway\" speedLimitKmh=\"6\" airDragCoefficient=\"7\" timeHeadway=\"8\" timeToCollision=\"9\" vehicleInFrontId=\"1\"/></trajectories>",
+  "model": {
+    "@kind": "trajectories",
+    "sumoamitrantrajectories.time_step_size": "1",
+    "sumoamitrantrajectories.actor_config_list.#": "2",
+    "sumoamitrantrajectories.actor_config_list[1].sumoamitrantrajectories.id": "3",
+    "sumoamitrantrajectories.vehicle_list.#": "2",
+    "sumoamitrantrajectories.vehicle_list[1].sumoamitrantrajectories.id": "8",
+    "sumoamitrantrajectories.motion_state.#": "2",
+    "sumoamitrantrajectories.motion_state[1].sumoamitrantrajectories.vehicle_attr": "7"
+  }
+}

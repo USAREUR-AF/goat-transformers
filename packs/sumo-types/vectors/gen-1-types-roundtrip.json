@@ -1,0 +1,17 @@
+{
+  "name": "gen-types-roundtrip",
+  "from": "sumo-types",
+  "to": "sumo-types",
+  "input": "<types version=\"001.0\"><type id=\"s1\" priority=\"3\" numLanes=\"4\" speed=\"001.0\" friction=\"3.5\" allow=\"s6\" disallow=\"s7\" discard=\"1\" oneway=\"0\" width=\"001.0\" widthResolution=\"0.125\" maxWidth=\"3.5\" minWidth=\"0.75\" sidewalkWidth=\"001.0\" bikeLaneWidth=\"001.0\" spreadType=\"roadCenter\"><restriction vClass=\"s17\" speed=\"001.0\"/><meso tauff=\"3.5\" taufj=\"0.75\" taujf=\"0.5\" taujj=\"1.5\" jamThreshold=\"001.0\" junctionControl=\"true\" tlsPenalty=\"0.125\" tlsFlowPenalty=\"3.5\" minorPenalty=\"0.75\" overtaking=\"yes\" edgeLength=\"1.5\"/><laneType index=\"4\" allow=\"s31\" disallow=\"s32\" speed=\"001.0\" width=\"001.0\"><restriction vClass=\"s35\" speed=\"001.0\"/></laneType></type><type id=\"s37\" priority=\"3\" numLanes=\"4\" speed=\"001.0\" friction=\"0.75\" allow=\"s42\" disallow=\"s43\" discard=\"1\" oneway=\"0\" width=\"001.0\" widthResolution=\"3.5\" maxWidth=\"0.75\" minWidth=\"0.5\" sidewalkWidth=\"001.0\" bikeLaneWidth=\"001.0\" spreadType=\"roadCenter\"><restriction vClass=\"s53\" speed=\"001.0\"/><meso tauff=\"0.75\" taufj=\"0.5\" taujf=\"1.5\" taujj=\"0.25\" jamThreshold=\"001.0\" junctionControl=\"true\" tlsPenalty=\"3.5\" tlsFlowPenalty=\"0.75\" minorPenalty=\"0.5\" overtaking=\"yes\" edgeLength=\"0.25\"/><laneType index=\"4\" allow=\"s67\" disallow=\"s68\" speed=\"001.0\" width=\"001.0\"><restriction vClass=\"s71\" speed=\"001.0\"/></laneType></type></types>",
+  "expect": "<types version=\"001.0\"><type id=\"s1\" priority=\"3\" numLanes=\"4\" speed=\"001.0\" friction=\"3.5\" allow=\"s6\" disallow=\"s7\" discard=\"1\" oneway=\"0\" width=\"001.0\" widthResolution=\"0.125\" maxWidth=\"3.5\" minWidth=\"0.75\" sidewalkWidth=\"001.0\" bikeLaneWidth=\"001.0\" spreadType=\"roadCenter\"><restriction vClass=\"s17\" speed=\"001.0\"/><meso tauff=\"3.5\" taufj=\"0.75\" taujf=\"0.5\" taujj=\"1.5\" jamThreshold=\"001.0\" junctionControl=\"true\" tlsPenalty=\"0.125\" tlsFlowPenalty=\"3.5\" minorPenalty=\"0.75\" overtaking=\"yes\" edgeLength=\"1.5\"/><laneType index=\"4\" allow=\"s31\" disallow=\"s32\" speed=\"001.0\" width=\"001.0\"><restriction vClass=\"s35\" speed=\"001.0\"/></laneType></type><type id=\"s37\" priority=\"3\" numLanes=\"4\" speed=\"001.0\" friction=\"0.75\" allow=\"s42\" disallow=\"s43\" discard=\"1\" oneway=\"0\" width=\"001.0\" widthResolution=\"3.5\" maxWidth=\"0.75\" minWidth=\"0.5\" sidewalkWidth=\"001.0\" bikeLaneWidth=\"001.0\" spreadType=\"roadCenter\"><restriction vClass=\"s53\" speed=\"001.0\"/><meso tauff=\"0.75\" taufj=\"0.5\" taujf=\"1.5\" taujj=\"0.25\" jamThreshold=\"001.0\" junctionControl=\"true\" tlsPenalty=\"3.5\" tlsFlowPenalty=\"0.75\" minorPenalty=\"0.5\" overtaking=\"yes\" edgeLength=\"0.25\"/><laneType index=\"4\" allow=\"s67\" disallow=\"s68\" speed=\"001.0\" width=\"001.0\"><restriction vClass=\"s71\" speed=\"001.0\"/></laneType></type></types>",
+  "model": {
+    "@kind": "types",
+    "sumotypes.version": "001.0",
+    "sumotypes.type[0].sumotypes.restriction.#": "1",
+    "sumotypes.type[0].sumotypes.meso.#": "1",
+    "sumotypes.type[0].sumotypes.lane_type[0].sumotypes.restriction.#": "1",
+    "sumotypes.type[0].sumotypes.lane_type.#": "1",
+    "sumotypes.type.#": "2",
+    "sumotypes.type[1].sumotypes.id": "s37"
+  }
+}

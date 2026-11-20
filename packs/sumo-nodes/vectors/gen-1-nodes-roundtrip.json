@@ -1,0 +1,22 @@
+{
+  "name": "gen-nodes-roundtrip",
+  "from": "sumo-nodes",
+  "to": "sumo-nodes",
+  "input": "<nodes version=\"001.0\"><location netOffset=\"v1\" convBoundary=\"v2\" origBoundary=\"v3\" projParameter=\"s4\"/><node x=\"001.0\" y=\"001.0\" z=\"001.0\" type=\"allway_stop\" tl=\"s9\" tlType=\"static\" tlLayout=\"alternateOneWay\" controlledInner=\"s12\" shape=\"v13\" name=\"s14\" radius=\"s15\" keepClear=\"yes\" rightOfWay=\"mixedPriority\" fringe=\"default\" roundabout=\"0\" id=\"s20\"><param key=\"s21\" value=\"s22\"/></node><node x=\"001.0\" y=\"001.0\" z=\"001.0\" type=\"rail_crossing\" tl=\"s27\" tlType=\"actuated\" tlLayout=\"alternateOneWay\" controlledInner=\"s30\" shape=\"v31\" name=\"s32\" radius=\"s33\" keepClear=\"x\" rightOfWay=\"edgePriority\" fringe=\"default\" roundabout=\"0\" id=\"s38\"><param key=\"s39\" value=\"s40\"/></node><delete id=\"s41\"/><delete id=\"s42\"/><join x=\"001.0\" y=\"001.0\" z=\"001.0\" type=\"right_before_left\" tl=\"s47\" tlType=\"actuated\" tlLayout=\"incoming\" controlledInner=\"s50\" shape=\"v51\" name=\"s52\" radius=\"s53\" keepClear=\"on\" rightOfWay=\"edgePriority\" fringe=\"inner\" roundabout=\"1\" nodes=\"s58\" id=\"s59\" reset=\"true\"><param key=\"s61\" value=\"s62\"/></join><join x=\"001.0\" y=\"001.0\" z=\"001.0\" type=\"traffic_light_unregulated\" tl=\"s67\" tlType=\"actuated\" tlLayout=\"opposites\" controlledInner=\"s70\" shape=\"v71\" name=\"s72\" radius=\"s73\" keepClear=\"True\" rightOfWay=\"edgePriority\" fringe=\"outer\" roundabout=\"default\" nodes=\"s78\" id=\"s79\" reset=\"1\"><param key=\"s81\" value=\"s82\"/></join><joinExclude nodes=\"s83\"/><joinExclude nodes=\"s84\"/></nodes>",
+  "expect": "<nodes version=\"001.0\"><location netOffset=\"v1\" convBoundary=\"v2\" origBoundary=\"v3\" projParameter=\"s4\"/><node x=\"001.0\" y=\"001.0\" z=\"001.0\" type=\"allway_stop\" tl=\"s9\" tlType=\"static\" tlLayout=\"alternateOneWay\" controlledInner=\"s12\" shape=\"v13\" name=\"s14\" radius=\"s15\" keepClear=\"yes\" rightOfWay=\"mixedPriority\" fringe=\"default\" roundabout=\"0\" id=\"s20\"><param key=\"s21\" value=\"s22\"/></node><node x=\"001.0\" y=\"001.0\" z=\"001.0\" type=\"rail_crossing\" tl=\"s27\" tlType=\"actuated\" tlLayout=\"alternateOneWay\" controlledInner=\"s30\" shape=\"v31\" name=\"s32\" radius=\"s33\" keepClear=\"x\" rightOfWay=\"edgePriority\" fringe=\"default\" roundabout=\"0\" id=\"s38\"><param key=\"s39\" value=\"s40\"/></node><delete id=\"s41\"/><delete id=\"s42\"/><join x=\"001.0\" y=\"001.0\" z=\"001.0\" type=\"right_before_left\" tl=\"s47\" tlType=\"actuated\" tlLayout=\"incoming\" controlledInner=\"s50\" shape=\"v51\" name=\"s52\" radius=\"s53\" keepClear=\"on\" rightOfWay=\"edgePriority\" fringe=\"inner\" roundabout=\"1\" nodes=\"s58\" id=\"s59\" reset=\"true\"><param key=\"s61\" value=\"s62\"/></join><join x=\"001.0\" y=\"001.0\" z=\"001.0\" type=\"traffic_light_unregulated\" tl=\"s67\" tlType=\"actuated\" tlLayout=\"opposites\" controlledInner=\"s70\" shape=\"v71\" name=\"s72\" radius=\"s73\" keepClear=\"True\" rightOfWay=\"edgePriority\" fringe=\"outer\" roundabout=\"default\" nodes=\"s78\" id=\"s79\" reset=\"1\"><param key=\"s81\" value=\"s82\"/></join><joinExclude nodes=\"s83\"/><joinExclude nodes=\"s84\"/></nodes>",
+  "model": {
+    "@kind": "nodes",
+    "sumonodes.version": "001.0",
+    "sumonodes.location_net_offset": "v1",
+    "sumonodes.node[0].sumonodes.param.#": "1",
+    "sumonodes.node.#": "2",
+    "sumonodes.node[1].sumonodes.x": "001.0",
+    "sumonodes.delete.#": "2",
+    "sumonodes.delete[1].sumonodes.id": "s42",
+    "sumonodes.join[0].sumonodes.param.#": "1",
+    "sumonodes.join.#": "2",
+    "sumonodes.join[1].sumonodes.x": "001.0",
+    "sumonodes.join_exclude.#": "2",
+    "sumonodes.join_exclude[1].sumonodes.nodes": "s84"
+  }
+}

@@ -1,0 +1,18 @@
+{
+ "keys": {
+  "actions_action_parameters|key|string": "actions_action_parameters_key",
+  "actions|actionDescriptor|string": "actions_action_descriptor",
+  "actions|actionId|string": "actions_action_id",
+  "actions|actionType|string": "actions_action_type",
+  "actions|blockingType|string": "actions_blocking_type",
+  "|headerId|int": "header_id",
+  "|manufacturer|string": "manufacturer",
+  "|serialNumber|string": "serial_number",
+  "|timestamp|string": "timestamp",
+  "|version|string": "version"
+ },
+ "lists": {
+  "actions|actionParameters": "actions_action_parameters",
+  "|actions": "actions"
+ }
+}

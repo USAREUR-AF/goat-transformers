@@ -1,0 +1,13 @@
+{
+  "name": "gen-battery_export-roundtrip",
+  "from": "sumo-battery",
+  "to": "sumo-battery",
+  "input": "<battery-export><timestep time=\"0.5\"><vehicle id=\"s1\" energyConsumed=\"001.0\" totalEnergyConsumed=\"001.0\" totalEnergyRegenerated=\"001.0\" actualBatteryCapacity=\"001.0\" maximumBatteryCapacity=\"001.0\" chargingStationId=\"s7\" energyCharged=\"1.5\" energyChargedInTransit=\"0.25\" energyChargedStopped=\"2.5\" speed=\"0.125\" acceleration=\"001.0\" x=\"001.0\" y=\"001.0\" edge=\"s15\" lane=\"s16\" posOnLane=\"2.5\" timeStopped=\"001.0\"/></timestep><timestep time=\"3.5\"><vehicle id=\"s20\" energyConsumed=\"001.0\" totalEnergyConsumed=\"001.0\" totalEnergyRegenerated=\"001.0\" actualBatteryCapacity=\"001.0\" maximumBatteryCapacity=\"001.0\" chargingStationId=\"s26\" energyCharged=\"0.75\" energyChargedInTransit=\"0.5\" energyChargedStopped=\"1.5\" speed=\"0.25\" acceleration=\"001.0\" x=\"001.0\" y=\"001.0\" edge=\"s34\" lane=\"s35\" posOnLane=\"1.5\" timeStopped=\"001.0\"/></timestep></battery-export>",
+  "expect": "<battery-export><timestep time=\"0.5\"><vehicle id=\"s1\" energyConsumed=\"001.0\" totalEnergyConsumed=\"001.0\" totalEnergyRegenerated=\"001.0\" actualBatteryCapacity=\"001.0\" maximumBatteryCapacity=\"001.0\" chargingStationId=\"s7\" energyCharged=\"1.5\" energyChargedInTransit=\"0.25\" energyChargedStopped=\"2.5\" speed=\"0.125\" acceleration=\"001.0\" x=\"001.0\" y=\"001.0\" edge=\"s15\" lane=\"s16\" posOnLane=\"2.5\" timeStopped=\"001.0\"/></timestep><timestep time=\"3.5\"><vehicle id=\"s20\" energyConsumed=\"001.0\" totalEnergyConsumed=\"001.0\" totalEnergyRegenerated=\"001.0\" actualBatteryCapacity=\"001.0\" maximumBatteryCapacity=\"001.0\" chargingStationId=\"s26\" energyCharged=\"0.75\" energyChargedInTransit=\"0.5\" energyChargedStopped=\"1.5\" speed=\"0.25\" acceleration=\"001.0\" x=\"001.0\" y=\"001.0\" edge=\"s34\" lane=\"s35\" posOnLane=\"1.5\" timeStopped=\"001.0\"/></timestep></battery-export>",
+  "model": {
+    "@kind": "battery_export",
+    "sumobattery.timestep[0].sumobattery.vehicle.#": "1",
+    "sumobattery.timestep.#": "2",
+    "sumobattery.timestep[1].sumobattery.time": "3.5"
+  }
+}

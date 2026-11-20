@@ -1,0 +1,14 @@
+{
+ "@from int": "from",
+ "@id int": "id",
+ "@length int": "length",
+ "@numberOfLanes int": "number_of_lanes",
+ "@odZone int": "od_zone",
+ "@ref string": "ref",
+ "@roadClass string": "road_class",
+ "@speedLimitKmh int": "speed_limit_kmh",
+ "@to int": "to",
+ "@type string": "type",
+ "link/[] list": "link",
+ "node/[] list": "node"
+}

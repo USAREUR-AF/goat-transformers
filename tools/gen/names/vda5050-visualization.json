@@ -1,0 +1,36 @@
+{
+ "keys": {
+  "intermediate_path_polyline|eta|string": "intermediate_path_polyline_eta",
+  "intermediate_path_polyline|theta|float": "intermediate_path_polyline_theta",
+  "intermediate_path_polyline|x|float": "intermediate_path_polyline_x",
+  "intermediate_path_polyline|y|float": "intermediate_path_polyline_y",
+  "planned_path_trajectory_control_points|weight|float": "planned_path_trajectory_control_points_weight",
+  "planned_path_trajectory_control_points|x|float": "planned_path_trajectory_control_points_x",
+  "planned_path_trajectory_control_points|y|float": "planned_path_trajectory_control_points_y",
+  "planned_path_trajectory_knot_vector|.|float": "planned_path_trajectory_knot_vector_value",
+  "planned_path_traversed_nodes|.|string": "planned_path_traversed_nodes_value",
+  "|headerId|int": "header_id",
+  "|manufacturer|string": "manufacturer",
+  "|mobileRobotPosition.deviationRange|float": "mobile_robot_position_deviation_range",
+  "|mobileRobotPosition.localizationScore|float": "mobile_robot_position_localization_score",
+  "|mobileRobotPosition.localized|int": "mobile_robot_position_localized",
+  "|mobileRobotPosition.mapId|string": "mobile_robot_position_map_id",
+  "|mobileRobotPosition.theta|float": "mobile_robot_position_theta",
+  "|mobileRobotPosition.x|float": "mobile_robot_position_x",
+  "|mobileRobotPosition.y|float": "mobile_robot_position_y",
+  "|plannedPath.trajectory.degree|int": "planned_path_trajectory_degree",
+  "|referenceStateHeaderId|int": "reference_state_header_id",
+  "|serialNumber|string": "serial_number",
+  "|timestamp|string": "timestamp",
+  "|velocity.omega|float": "velocity_omega",
+  "|velocity.vx|float": "velocity_vx",
+  "|velocity.vy|float": "velocity_vy",
+  "|version|string": "version"
+ },
+ "lists": {
+  "|intermediatePath.polyline": "intermediate_path_polyline",
+  "|plannedPath.trajectory.controlPoints": "planned_path_trajectory_control_points",
+  "|plannedPath.trajectory.knotVector": "planned_path_trajectory_knot_vector",
+  "|plannedPath.traversedNodes": "planned_path_traversed_nodes"
+ }
+}

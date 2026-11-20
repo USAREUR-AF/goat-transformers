@@ -1,0 +1,14 @@
+{
+  "name": "gen-tls_states-roundtrip",
+  "from": "sumo-tlsstates",
+  "to": "sumo-tlsstates",
+  "input": "<tlsStates detectors=\"s0\" conditions=\"s1\"><tlsState time=\"s2\" id=\"s3\" programID=\"s4\" phase=\"6\" state=\"s6\" name=\"s7\" detectors=\"s8\" conditions=\"s9\"/><tlsState time=\"s10\" id=\"s11\" programID=\"s12\" phase=\"5\" state=\"s14\" name=\"s15\" detectors=\"s16\" conditions=\"s17\"/></tlsStates>",
+  "expect": "<tlsStates detectors=\"s0\" conditions=\"s1\"><tlsState time=\"s2\" id=\"s3\" programID=\"s4\" phase=\"6\" state=\"s6\" name=\"s7\" detectors=\"s8\" conditions=\"s9\"/><tlsState time=\"s10\" id=\"s11\" programID=\"s12\" phase=\"5\" state=\"s14\" name=\"s15\" detectors=\"s16\" conditions=\"s17\"/></tlsStates>",
+  "model": {
+    "@kind": "tls_states",
+    "sumotlsstates.detectors": "s0",
+    "sumotlsstates.conditions": "s1",
+    "sumotlsstates.tls_state.#": "2",
+    "sumotlsstates.tls_state[1].sumotlsstates.time": "s10"
+  }
+}

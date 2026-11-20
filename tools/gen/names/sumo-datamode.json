@@ -1,0 +1,13 @@
+{
+ "@begin string": "begin",
+ "@count string": "count",
+ "@end string": "end",
+ "@from string": "from",
+ "@id string": "id",
+ "@probability string": "probability",
+ "@to string": "to",
+ "edge/[] list": "edge",
+ "edgeRelation/[] list": "edge_relation",
+ "interval/[] list": "interval",
+ "tazRelation/[] list": "taz_relation"
+}

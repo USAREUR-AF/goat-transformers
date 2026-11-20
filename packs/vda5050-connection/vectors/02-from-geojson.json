@@ -1,0 +1,15 @@
+{
+ "name": "geojson-to-vda5050-connection",
+ "from": "geojson",
+ "to": "vda5050-connection",
+ "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.6821,50.1109]},\"properties\":{\"time_ms\":1773480600250},\"id\":\"AMR-0042\"}",
+ "expect": "{\"timestamp\":\"2026-03-14T09:30:00.250Z\",\"serialNumber\":\"AMR-0042\"}",
+ "model": {
+  "uid": "AMR-0042",
+  "time_ms": "1773480600250",
+  "lat": "50.1109",
+  "lon": "8.6821"
+ },
+ "source": "derived by tools/gen/vda5050-vectors.py from the schema and spec/engine-spec.md; no engine run",
+ "reference": "VDA 5050 version 3.0.0, VDA5050_EN.md and json_schemas/connection.schema (commit f480c4020c91)"
+}

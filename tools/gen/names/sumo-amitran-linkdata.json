@@ -1,0 +1,10 @@
+{
+ "@amount float": "amount",
+ "@averageSpeed int": "average_speed",
+ "@duration int": "duration",
+ "@id int": "id",
+ "@startTime int": "start_time",
+ "actorConfig/[] list": "actor_config",
+ "link/[] list": "link",
+ "timeSlice/[] list": "time_slice"
+}

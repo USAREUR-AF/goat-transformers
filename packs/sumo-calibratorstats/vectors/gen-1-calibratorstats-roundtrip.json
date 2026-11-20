@@ -1,0 +1,12 @@
+{
+  "name": "gen-calibratorstats-roundtrip",
+  "from": "sumo-calibratorstats",
+  "to": "sumo-calibratorstats",
+  "input": "<calibratorstats><interval begin=\"0.5\" end=\"1.5\" id=\"s2\" nVehContrib=\"4\" removed=\"5\" inserted=\"6\" cleared=\"7\" flow=\"0.5\" aspiredFlow=\"s8\" speed=\"s9\" aspiredSpeed=\"s10\" vaporizedOnNextEdge=\"3\"/><interval begin=\"3.5\" end=\"0.75\" id=\"s14\" nVehContrib=\"7\" removed=\"8\" inserted=\"9\" cleared=\"1\" flow=\"3.5\" aspiredFlow=\"s20\" speed=\"s21\" aspiredSpeed=\"s22\" vaporizedOnNextEdge=\"6\"/></calibratorstats>",
+  "expect": "<calibratorstats><interval begin=\"0.5\" end=\"1.5\" id=\"s2\" nVehContrib=\"4\" removed=\"5\" inserted=\"6\" cleared=\"7\" flow=\"0.5\" aspiredFlow=\"s8\" speed=\"s9\" aspiredSpeed=\"s10\" vaporizedOnNextEdge=\"3\"/><interval begin=\"3.5\" end=\"0.75\" id=\"s14\" nVehContrib=\"7\" removed=\"8\" inserted=\"9\" cleared=\"1\" flow=\"3.5\" aspiredFlow=\"s20\" speed=\"s21\" aspiredSpeed=\"s22\" vaporizedOnNextEdge=\"6\"/></calibratorstats>",
+  "model": {
+    "@kind": "calibratorstats",
+    "sumocalibratorstats.interval.#": "2",
+    "sumocalibratorstats.interval[1].sumocalibratorstats.begin": "3.5"
+  }
+}

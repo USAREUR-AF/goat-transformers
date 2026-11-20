@@ -1,0 +1,14 @@
+{
+  "name": "gen-queue_export-roundtrip",
+  "from": "sumo-queue",
+  "to": "sumo-queue",
+  "input": "<queue-export><data timestep=\"0.5\"><lanes><lane id=\"s1\" segment=\"3\" queueing_time=\"2.5\" queueing_length=\"0.125\" queueing_length_experimental=\"3.5\" queueing_count=\"7\"/></lanes></data><data timestep=\"0.5\"><lanes><lane id=\"s8\" segment=\"1\" queueing_time=\"2.5\" queueing_length=\"0.125\" queueing_length_experimental=\"3.5\" queueing_count=\"5\"/></lanes></data></queue-export>",
+  "expect": "<queue-export><data timestep=\"0.5\"><lanes><lane id=\"s1\" segment=\"3\" queueing_time=\"2.5\" queueing_length=\"0.125\" queueing_length_experimental=\"3.5\" queueing_count=\"7\"/></lanes></data><data timestep=\"0.5\"><lanes><lane id=\"s8\" segment=\"1\" queueing_time=\"2.5\" queueing_length=\"0.125\" queueing_length_experimental=\"3.5\" queueing_count=\"5\"/></lanes></data></queue-export>",
+  "model": {
+    "@kind": "queue_export",
+    "sumoqueue.data[0].sumoqueue.lanes_lane.#": "1",
+    "sumoqueue.data.#": "2",
+    "sumoqueue.data[1].sumoqueue.timestep": "0.5",
+    "sumoqueue.interval.#": "absent"
+  }
+}

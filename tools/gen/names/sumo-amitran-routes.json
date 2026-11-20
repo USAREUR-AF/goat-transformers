@@ -1,0 +1,5 @@
+{
+ "@id int": "id",
+ "link/[] list": "link",
+ "route/[] list": "route"
+}

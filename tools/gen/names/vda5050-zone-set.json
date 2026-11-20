@@ -1,0 +1,21 @@
+{
+ "keys": {
+  "zone_set_zones_vertices|x|float": "zone_set_zones_vertices_x",
+  "zone_set_zones_vertices|y|float": "zone_set_zones_vertices_y",
+  "zone_set_zones|zoneDescriptor|string": "zone_set_zones_zone_descriptor",
+  "zone_set_zones|zoneId|string": "zone_set_zones_zone_id",
+  "zone_set_zones|zoneType|string": "zone_set_zones_zone_type",
+  "|headerId|int": "header_id",
+  "|manufacturer|string": "manufacturer",
+  "|serialNumber|string": "serial_number",
+  "|timestamp|string": "timestamp",
+  "|version|string": "version",
+  "|zoneSet.mapId|string": "zone_set_map_id",
+  "|zoneSet.zoneSetDescriptor|string": "zone_set_zone_set_descriptor",
+  "|zoneSet.zoneSetId|string": "zone_set_zone_set_id"
+ },
+ "lists": {
+  "zone_set_zones|vertices": "zone_set_zones_vertices",
+  "|zoneSet.zones": "zone_set_zones"
+ }
+}

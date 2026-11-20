@@ -1,0 +1,11 @@
+{
+ "keys": {
+  "|connectionState|string": "connection_state",
+  "|headerId|int": "header_id",
+  "|manufacturer|string": "manufacturer",
+  "|serialNumber|string": "serial_number",
+  "|timestamp|string": "timestamp",
+  "|version|string": "version"
+ },
+ "lists": {}
+}

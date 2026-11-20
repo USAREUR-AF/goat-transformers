@@ -1,0 +1,17 @@
+{
+ "name": "gen-responses-roundtrip",
+ "from": "vda5050-responses",
+ "to": "vda5050-responses",
+ "input": "{\"headerId\":19106,\"timestamp\":\"2025-07-25T10:17:51.904Z\",\"version\":\"s17358\",\"manufacturer\":\"s1254\",\"serialNumber\":\"s37295\",\"responses\":[{\"requestId\":\"s19869\",\"grantType\":\"REJECTED\",\"leaseExpiry\":\"s7499\"},{\"requestId\":\"s69767\",\"grantType\":\"QUEUED\",\"leaseExpiry\":\"s61458\"}]}",
+ "expect": "{\"headerId\":19106,\"timestamp\":\"2025-07-25T10:17:51.904Z\",\"version\":\"s17358\",\"manufacturer\":\"s1254\",\"serialNumber\":\"s37295\",\"responses\":[{\"requestId\":\"s19869\",\"grantType\":\"REJECTED\",\"leaseExpiry\":\"s7499\"},{\"requestId\":\"s69767\",\"grantType\":\"QUEUED\",\"leaseExpiry\":\"s61458\"}]}",
+ "model": {
+  "time_ms": "1753438671904",
+  "uid": "s37295",
+  "vda5050responses.header_id": "19106",
+  "vda5050responses.timestamp": "2025-07-25T10:17:51.904Z",
+  "vda5050responses.version": "s17358",
+  "vda5050responses.manufacturer": "s1254",
+  "vda5050responses.serial_number": "s37295",
+  "vda5050responses.responses.#": "2"
+ }
+}

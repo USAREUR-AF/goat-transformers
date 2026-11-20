@@ -1,0 +1,14 @@
+{
+  "name": "gen-network-roundtrip",
+  "from": "sumo-amitran-network",
+  "to": "sumo-amitran-network",
+  "input": "<network><node id=\"1\" type=\"priority\" odZone=\"3\" ref=\"s3\"/><node id=\"5\" type=\"roundaboutSingle\" odZone=\"7\" ref=\"s7\"/><link id=\"9\" from=\"1\" to=\"2\" roadClass=\"5\" length=\"4\" speedLimitKmh=\"5\" numberOfLanes=\"6\" ref=\"s15\"/><link id=\"8\" from=\"9\" to=\"1\" roadClass=\"1\" length=\"3\" speedLimitKmh=\"4\" numberOfLanes=\"5\" ref=\"s23\"/></network>",
+  "expect": "<network><node id=\"1\" type=\"priority\" odZone=\"3\" ref=\"s3\"/><node id=\"5\" type=\"roundaboutSingle\" odZone=\"7\" ref=\"s7\"/><link id=\"9\" from=\"1\" to=\"2\" roadClass=\"5\" length=\"4\" speedLimitKmh=\"5\" numberOfLanes=\"6\" ref=\"s15\"/><link id=\"8\" from=\"9\" to=\"1\" roadClass=\"1\" length=\"3\" speedLimitKmh=\"4\" numberOfLanes=\"5\" ref=\"s23\"/></network>",
+  "model": {
+    "@kind": "network",
+    "sumoamitrannetwork.node.#": "2",
+    "sumoamitrannetwork.node[1].sumoamitrannetwork.id": "5",
+    "sumoamitrannetwork.link.#": "2",
+    "sumoamitrannetwork.link[1].sumoamitrannetwork.id": "8"
+  }
+}

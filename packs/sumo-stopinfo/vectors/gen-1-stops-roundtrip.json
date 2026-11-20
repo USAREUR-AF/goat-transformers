@@ -1,0 +1,12 @@
+{
+  "name": "gen-stops-roundtrip",
+  "from": "sumo-stopinfo",
+  "to": "sumo-stopinfo",
+  "input": "<stops><stopinfo id=\"s0\" type=\"s1\" lane=\"s2\" edge=\"s3\" pos=\"s4\" parking=\"no\" started=\"001.0\" ended=\"s7\" delay=\"001.0\" arrivalDelay=\"001.0\" initialPersons=\"2\" loadedPersons=\"3\" unloadedPersons=\"4\" initialContainers=\"5\" loadedContainers=\"6\" unloadedContainers=\"7\" busStop=\"s16\" containerStop=\"s17\" parkingArea=\"s18\" chargingStation=\"s19\" tripId=\"s20\" line=\"s21\" split=\"s22\" usedEnded=\"-\" blockedDuration=\"s24\" state=\"s25\" actType=\"s26\"/><stopinfo id=\"s27\" type=\"s28\" lane=\"s29\" edge=\"s30\" pos=\"s31\" parking=\"1\" started=\"001.0\" ended=\"s34\" delay=\"001.0\" arrivalDelay=\"001.0\" initialPersons=\"2\" loadedPersons=\"3\" unloadedPersons=\"4\" initialContainers=\"5\" loadedContainers=\"6\" unloadedContainers=\"7\" busStop=\"s43\" containerStop=\"s44\" parkingArea=\"s45\" chargingStation=\"s46\" tripId=\"s47\" line=\"s48\" split=\"s49\" usedEnded=\"True\" blockedDuration=\"s51\" state=\"s52\" actType=\"s53\"/></stops>",
+  "expect": "<stops><stopinfo id=\"s0\" type=\"s1\" lane=\"s2\" edge=\"s3\" pos=\"s4\" parking=\"no\" started=\"001.0\" ended=\"s7\" delay=\"001.0\" arrivalDelay=\"001.0\" initialPersons=\"2\" loadedPersons=\"3\" unloadedPersons=\"4\" initialContainers=\"5\" loadedContainers=\"6\" unloadedContainers=\"7\" busStop=\"s16\" containerStop=\"s17\" parkingArea=\"s18\" chargingStation=\"s19\" tripId=\"s20\" line=\"s21\" split=\"s22\" usedEnded=\"-\" blockedDuration=\"s24\" state=\"s25\" actType=\"s26\"/><stopinfo id=\"s27\" type=\"s28\" lane=\"s29\" edge=\"s30\" pos=\"s31\" parking=\"1\" started=\"001.0\" ended=\"s34\" delay=\"001.0\" arrivalDelay=\"001.0\" initialPersons=\"2\" loadedPersons=\"3\" unloadedPersons=\"4\" initialContainers=\"5\" loadedContainers=\"6\" unloadedContainers=\"7\" busStop=\"s43\" containerStop=\"s44\" parkingArea=\"s45\" chargingStation=\"s46\" tripId=\"s47\" line=\"s48\" split=\"s49\" usedEnded=\"True\" blockedDuration=\"s51\" state=\"s52\" actType=\"s53\"/></stops>",
+  "model": {
+    "@kind": "stops",
+    "sumostopinfo.stopinfo.#": "2",
+    "sumostopinfo.stopinfo[1].sumostopinfo.id": "s27"
+  }
+}

@@ -1,0 +1,22 @@
+{
+ "@begin string": "begin",
+ "@end string": "end",
+ "@id string": "id",
+ "@maxQueueLengthInMeters float": "max_queue_length_in_meters",
+ "@maxQueueLengthInVehicles float": "max_queue_length_in_vehicles",
+ "@medianQueueLengthInMeters float": "median_queue_length_in_meters",
+ "@medianQueueLengthInVehicles float": "median_queue_length_in_vehicles",
+ "@percentileQueueLengthInMeters float": "percentile_queue_length_in_meters",
+ "@percentileQueueLengthInVehicles float": "percentile_queue_length_in_vehicles",
+ "@queueing_count int": "queueing_count",
+ "@queueing_length float": "queueing_length",
+ "@queueing_length_experimental float": "queueing_length_experimental",
+ "@queueing_time float": "queueing_time",
+ "@samples int": "samples",
+ "@segment int": "segment",
+ "@timestep float": "timestep",
+ "data/[] list": "data",
+ "edge/[] list": "edge",
+ "interval/[] list": "interval",
+ "lanes/lane/[] list": "lanes_lane"
+}

@@ -1,0 +1,10 @@
+{
+ "@begin float": "begin",
+ "@duration float": "duration",
+ "@end float": "end",
+ "@fromLane string": "from_lane",
+ "@id string": "id",
+ "@programID string": "program_id",
+ "@toLane string": "to_lane",
+ "tlsSwitch/[] list": "tls_switch"
+}

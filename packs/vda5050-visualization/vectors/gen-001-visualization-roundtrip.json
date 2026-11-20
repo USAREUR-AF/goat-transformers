@@ -1,0 +1,17 @@
+{
+ "name": "gen-visualization-roundtrip",
+ "from": "vda5050-visualization",
+ "to": "vda5050-visualization",
+ "input": "{\"headerId\":69281,\"timestamp\":\"2025-11-28T06:26:51.414Z\",\"version\":\"s4653\",\"manufacturer\":\"s21773\",\"serialNumber\":\"s12801\",\"referenceStateHeaderId\":91872,\"plannedPath\":{\"trajectory\":{\"degree\":1644,\"knotVector\":[0.75,0.75],\"controlPoints\":[{\"x\":101.125,\"y\":12.5,\"weight\":1.5},{\"x\":-0.5,\"y\":-0.5,\"weight\":-0.5}]},\"traversedNodes\":[\"s40356\",\"s46109\"]},\"intermediatePath\":{\"polyline\":[{\"x\":42.375,\"y\":101.125,\"theta\":-0.5,\"eta\":\"s86372\"},{\"x\":12.5,\"y\":1.5,\"theta\":-0.5,\"eta\":\"s38486\"}]},\"mobileRobotPosition\":{\"x\":-3.25,\"y\":101.125,\"theta\":-0.5,\"mapId\":\"s43031\",\"localized\":false,\"localizationScore\":0.75,\"deviationRange\":7.0625},\"velocity\":{\"vx\":101.125,\"vy\":-3.25,\"omega\":-0.5}}",
+ "expect": "{\"headerId\":69281,\"timestamp\":\"2025-11-28T06:26:51.414Z\",\"version\":\"s4653\",\"manufacturer\":\"s21773\",\"serialNumber\":\"s12801\",\"referenceStateHeaderId\":91872,\"plannedPath\":{\"trajectory\":{\"degree\":1644,\"knotVector\":[0.75,0.75],\"controlPoints\":[{\"x\":101.125,\"y\":12.5,\"weight\":1.5},{\"x\":-0.5,\"y\":-0.5,\"weight\":-0.5}]},\"traversedNodes\":[\"s40356\",\"s46109\"]},\"intermediatePath\":{\"polyline\":[{\"x\":42.375,\"y\":101.125,\"theta\":-0.5,\"eta\":\"s86372\"},{\"x\":12.5,\"y\":1.5,\"theta\":-0.5,\"eta\":\"s38486\"}]},\"mobileRobotPosition\":{\"x\":-3.25,\"y\":101.125,\"theta\":-0.5,\"mapId\":\"s43031\",\"localized\":false,\"localizationScore\":0.75,\"deviationRange\":7.0625},\"velocity\":{\"vx\":101.125,\"vy\":-3.25,\"omega\":-0.5}}",
+ "model": {
+  "time_ms": "1764311211414",
+  "uid": "s12801",
+  "vda5050visualization.header_id": "69281",
+  "vda5050visualization.timestamp": "2025-11-28T06:26:51.414Z",
+  "vda5050visualization.version": "s4653",
+  "vda5050visualization.manufacturer": "s21773",
+  "vda5050visualization.serial_number": "s12801",
+  "vda5050visualization.reference_state_header_id": "91872"
+ }
+}

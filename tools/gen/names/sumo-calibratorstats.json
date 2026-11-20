@@ -1,0 +1,15 @@
+{
+ "@aspiredFlow string": "aspired_flow",
+ "@aspiredSpeed string": "aspired_speed",
+ "@begin float": "begin",
+ "@cleared int": "cleared",
+ "@end float": "end",
+ "@flow float": "flow",
+ "@id string": "id",
+ "@inserted int": "inserted",
+ "@nVehContrib int": "n_veh_contrib",
+ "@removed int": "removed",
+ "@speed string": "speed",
+ "@vaporizedOnNextEdge int": "vaporized_on_next_edge",
+ "interval/[] list": "interval"
+}

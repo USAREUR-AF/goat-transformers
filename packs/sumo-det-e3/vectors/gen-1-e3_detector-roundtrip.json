@@ -1,0 +1,12 @@
+{
+  "name": "gen-e3_detector-roundtrip",
+  "from": "sumo-det-e3",
+  "to": "sumo-det-e3",
+  "input": "<e3Detector><interval begin=\"0.5\" end=\"1.5\" id=\"s2\" meanTravelTime=\"2.5\" meanOverlapTravelTime=\"0.125\" meanSpeed=\"3.5\" meanHaltsPerVehicle=\"0.75\" meanTimeLoss=\"0.5\" vehicleSum=\"9\" meanSpeedWithin=\"0.25\" meanHaltsPerVehicleWithin=\"2.5\" meanDurationWithin=\"0.125\" vehicleSumWithin=\"4\" meanIntervalSpeedWithin=\"0.75\" meanIntervalHaltsPerVehicleWithin=\"0.5\" meanIntervalDurationWithin=\"1.5\" meanTimeLossWithin=\"0.25\"/><interval begin=\"2.5\" end=\"0.125\" id=\"s19\" meanTravelTime=\"0.75\" meanOverlapTravelTime=\"0.5\" meanSpeed=\"1.5\" meanHaltsPerVehicle=\"0.25\" meanTimeLoss=\"2.5\" vehicleSum=\"8\" meanSpeedWithin=\"3.5\" meanHaltsPerVehicleWithin=\"0.75\" meanDurationWithin=\"0.5\" vehicleSumWithin=\"3\" meanIntervalSpeedWithin=\"0.25\" meanIntervalHaltsPerVehicleWithin=\"2.5\" meanIntervalDurationWithin=\"0.125\" meanTimeLossWithin=\"3.5\"/></e3Detector>",
+  "expect": "<e3Detector><interval begin=\"0.5\" end=\"1.5\" id=\"s2\" meanTravelTime=\"2.5\" meanOverlapTravelTime=\"0.125\" meanSpeed=\"3.5\" meanHaltsPerVehicle=\"0.75\" meanTimeLoss=\"0.5\" vehicleSum=\"9\" meanSpeedWithin=\"0.25\" meanHaltsPerVehicleWithin=\"2.5\" meanDurationWithin=\"0.125\" vehicleSumWithin=\"4\" meanIntervalSpeedWithin=\"0.75\" meanIntervalHaltsPerVehicleWithin=\"0.5\" meanIntervalDurationWithin=\"1.5\" meanTimeLossWithin=\"0.25\"/><interval begin=\"2.5\" end=\"0.125\" id=\"s19\" meanTravelTime=\"0.75\" meanOverlapTravelTime=\"0.5\" meanSpeed=\"1.5\" meanHaltsPerVehicle=\"0.25\" meanTimeLoss=\"2.5\" vehicleSum=\"8\" meanSpeedWithin=\"3.5\" meanHaltsPerVehicleWithin=\"0.75\" meanDurationWithin=\"0.5\" vehicleSumWithin=\"3\" meanIntervalSpeedWithin=\"0.25\" meanIntervalHaltsPerVehicleWithin=\"2.5\" meanIntervalDurationWithin=\"0.125\" meanTimeLossWithin=\"3.5\"/></e3Detector>",
+  "model": {
+    "@kind": "e3_detector",
+    "sumodete3.interval.#": "2",
+    "sumodete3.interval[1].sumodete3.begin": "2.5"
+  }
+}

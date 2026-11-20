@@ -1,0 +1,12 @@
+{
+  "name": "gen-instant_e1-roundtrip",
+  "from": "sumo-instant-e1",
+  "to": "sumo-instant-e1",
+  "input": "<instantE1><instantOut id=\"s0\" time=\"1.5\" state=\"leave\" vehID=\"s3\" speed=\"0.125\" length=\"3.5\" type=\"s6\" gap=\"0.5\" occupancy=\"1.5\"/><instantOut id=\"s9\" time=\"2.5\" state=\"leave\" vehID=\"s12\" speed=\"0.75\" length=\"0.5\" type=\"s15\" gap=\"0.25\" occupancy=\"2.5\"/></instantE1>",
+  "expect": "<instantE1><instantOut id=\"s0\" time=\"1.5\" state=\"leave\" vehID=\"s3\" speed=\"0.125\" length=\"3.5\" type=\"s6\" gap=\"0.5\" occupancy=\"1.5\"/><instantOut id=\"s9\" time=\"2.5\" state=\"leave\" vehID=\"s12\" speed=\"0.75\" length=\"0.5\" type=\"s15\" gap=\"0.25\" occupancy=\"2.5\"/></instantE1>",
+  "model": {
+    "@kind": "instant_e1",
+    "sumoinstante1.instant_out.#": "2",
+    "sumoinstante1.instant_out[1].sumoinstante1.id": "s9"
+  }
+}
