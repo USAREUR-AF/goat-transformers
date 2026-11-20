@@ -1,0 +1,25 @@
+{
+  "name": "track-roundtrip",
+  "from": "kml",
+  "to": "kml",
+  "input": "<kml xmlns=\"http://www.opengis.net/kml/2.2\" version=\"2.3\"><Placemark id=\"t1\"><name>ROVER</name><description>survey run</description><styleUrl>#trk</styleUrl><Track><extrude>1</extrude><altitudeMode>absolute</altitudeMode><when>2024-05-01T08:00:00Z</when><when>2024-05-01T08:00:10Z</when><coord>11.5 48.1 520</coord><coord>11.5001 48.1002 521.5</coord><angles>90 0 0</angles><angles>92.5 0 0</angles></Track></Placemark></kml>",
+  "expect": "<kml xmlns=\"http://www.opengis.net/kml/2.2\" version=\"2.3\"><Placemark id=\"t1\"><name>ROVER</name><description>survey run</description><styleUrl>#trk</styleUrl><Track><extrude>1</extrude><altitudeMode>absolute</altitudeMode><when>2024-05-01T08:00:00Z</when><when>2024-05-01T08:00:10Z</when><coord>11.5 48.1 520</coord><coord>11.5001 48.1002 521.5</coord><angles>90 0 0</angles><angles>92.5 0 0</angles></Track></Placemark></kml>",
+  "model": {
+    "@kind": "track",
+    "callsign": "ROVER",
+    "kml.placemark_id": "t1",
+    "kml.description": "survey run",
+    "kml.style_url": "#trk",
+    "kml.extrude": "1",
+    "kml.altitude_mode": "absolute",
+    "kml.track_whens.#": "2",
+    "kml.track_whens[0].kml.track_when": "2024-05-01T08:00:00Z",
+    "kml.track_whens[1].kml.track_when": "2024-05-01T08:00:10Z",
+    "kml.track_coords.#": "2",
+    "kml.track_coords[1].kml.coord": "11.5001 48.1002 521.5",
+    "kml.track_angles.#": "2",
+    "kml.track_angles[0].kml.angles": "90 0 0"
+  },
+  "source": "derived by tools/gen/ogc-mf-kml-vectors.py from the standard and spec/engine-spec.md; no engine run",
+  "reference": "OGC 12-007r2 (KML 2.3) 10.15 kml:Track, 10.16 kml:MultiTrack; ogckml23.xsd TrackType, MultiTrackType; a KML 2.3 Track as a Placemark's geometry; the root's version attribute is residue; when, coord and angles are three lists in document order; coord texts are carried whole"
+}

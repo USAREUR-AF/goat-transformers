@@ -1,17 +1,20 @@
-# OGC KML 2.2 Placemark with a Point, XML. Public OGC standard (OGC 07-147r2).
+# OGC KML 2.2 and 2.3 Placemark with a Point or a Track, XML. Public OGC
+# standards (OGC 07-147r2, OGC 12-007r2; both use the KML 2.2 namespace).
 # One message is one KML document whose feature is a Placemark, either the
 # root's own feature or the first Placemark of a Document. The Point's
 # coordinates are one text value "lon,lat[,alt]" and the pack language has no
 # transform that splits it, so they are carried as text (kml.coordinates) and
-# not bound to lat and lon. pack.md states the evidence and what is not mapped.
+# not bound to lat and lon; so are the coord texts of a Track. pack.md states
+# the evidence and what is not mapped.
 format  kml
-version 0.1.0
+version 0.2.0
 distribution public
 source  "OGC KML 2.2.0, OGC 07-147r2 (2008-04-14), https://docs.ogc.org/is/07-147r2/07-147r2.pdf; schema https://schemas.opengis.net/kml/2.2.0/ogckml22.xsd (OGC Document License Agreement)"
+source  "OGC KML 2.3, OGC 12-007r2 (2015-08-04), https://docs.ogc.org/is/12-007r2/12-007r2.html; schema https://schemas.opengis.net/kml/2.3/ogckml23.xsd (OGC Document License Agreement); kml:Track and kml:MultiTrack"
 uses    kml
 wire    xml
 root    kml
-# The default namespace of KML 2.2; the encoder writes it.
+# The default namespace of KML 2.2, unchanged in KML 2.3; the encoder writes it.
 when    @xmlns  http://www.opengis.net/kml/2.2
 
 kind    placemark
@@ -38,3 +41,68 @@ field   kml.style_url      Document/Placemark/styleUrl/#text              string
 field   kml.extrude        Document/Placemark/Point/extrude/#text         string
 field   kml.altitude_mode  Document/Placemark/Point/altitudeMode/#text    string
 field   kml.coordinates    Document/Placemark/Point/coordinates/#text     string
+
+# KML 2.3 (10.15): a Track's when, coord and angles elements are parallel
+# arrays, one list each; the encoder writes every when, then every coord, then
+# every angles.
+kind    track
+when    Placemark/Track/when/#text  present
+requires kml.track_whens
+field   kml.placemark_id   Placemark/@id                         string
+field   callsign           Placemark/name/#text                  string
+field   kml.description    Placemark/description/#text           string
+field   kml.style_url      Placemark/styleUrl/#text              string
+field   kml.extrude        Placemark/Track/extrude/#text         string
+field   kml.altitude_mode  Placemark/Track/altitudeMode/#text    string
+group   kml.track_whens    Placemark/Track/when
+  field  kml.track_when  "#text"  string
+end
+group   kml.track_coords   Placemark/Track/coord
+  field  kml.coord  "#text"  string
+end
+group   kml.track_angles   Placemark/Track/angles
+  field  kml.angles  "#text"  string
+end
+
+kind    document-track
+when    Document/Placemark/Track/when/#text  present
+requires kml.track_whens
+field   kml.document_name  Document/name/#text                   string
+field   kml.placemark_id   Document/Placemark/@id                string
+field   callsign           Document/Placemark/name/#text         string
+field   kml.description    Document/Placemark/description/#text  string
+field   kml.style_url      Document/Placemark/styleUrl/#text     string
+field   kml.extrude        Document/Placemark/Track/extrude/#text       string
+field   kml.altitude_mode  Document/Placemark/Track/altitudeMode/#text  string
+group   kml.track_whens    Document/Placemark/Track/when
+  field  kml.track_when  "#text"  string
+end
+group   kml.track_coords   Document/Placemark/Track/coord
+  field  kml.coord  "#text"  string
+end
+group   kml.track_angles   Document/Placemark/Track/angles
+  field  kml.angles  "#text"  string
+end
+
+# KML 2.3 (10.16): a MultiTrack holds Tracks; each Track is one item.
+kind    multitrack
+when    Placemark/MultiTrack/Track/when/#text  present
+requires kml.tracks
+field   kml.placemark_id   Placemark/@id                              string
+field   callsign           Placemark/name/#text                       string
+field   kml.description    Placemark/description/#text                string
+field   kml.style_url      Placemark/styleUrl/#text                   string
+field   kml.altitude_mode  Placemark/MultiTrack/altitudeMode/#text    string
+field   kml.interpolate    Placemark/MultiTrack/interpolate/#text     string
+group   kml.tracks         Placemark/MultiTrack/Track
+  field  kml.altitude_mode  altitudeMode/#text  string
+  group  kml.track_whens  when
+    field  kml.track_when  "#text"  string
+  end
+  group  kml.track_coords  coord
+    field  kml.coord  "#text"  string
+  end
+  group  kml.track_angles  angles
+    field  kml.angles  "#text"  string
+  end
+end

@@ -1,0 +1,9 @@
+{
+  "name": "gx-track-is-no-kind",
+  "from": "kml",
+  "to": "kml",
+  "input": "<kml xmlns=\"http://www.opengis.net/kml/2.2\" xmlns:gx=\"http://www.google.com/kml/ext/2.2\"><Placemark><name>ROVER</name><gx:Track><when>2024-05-01T08:00:00Z</when><gx:coord>11.5 48.1 520</gx:coord></gx:Track></Placemark></kml>",
+  "expect_error": "no-kind",
+  "source": "derived by tools/gen/ogc-mf-kml-vectors.py from the standard and spec/engine-spec.md; no engine run",
+  "reference": "OGC 12-007r2 (KML 2.3) 10.15 kml:Track, 10.16 kml:MultiTrack; ogckml23.xsd TrackType, MultiTrackType; the gx extension namespace of KML 2.2 documents; the same track written as the KML 2.2 extension gx:Track: element names are compared as written, so the prefixed name matches no kind until the pack language has XML namespaces"
+}

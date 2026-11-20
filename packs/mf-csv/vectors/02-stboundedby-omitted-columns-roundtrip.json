@@ -1,0 +1,17 @@
+{
+  "name": "stboundedby-omitted-columns-roundtrip",
+  "from": "mf-csv",
+  "to": "mf-csv",
+  "input": "@stboundedby,urn:ogc:def:crs:EPSG::4326,,48.10 11.50,48.20 11.60,2024-05-01T08:00:00Z,2024-05-01T09:00:00Z",
+  "expect": "@stboundedby,urn:ogc:def:crs:EPSG::4326,,48.10 11.50,48.20 11.60,2024-05-01T08:00:00Z,2024-05-01T09:00:00Z",
+  "model": {
+    "@kind": "stboundedby",
+    "mfcsv.srid": "urn:ogc:def:crs:EPSG::4326",
+    "@absent": [
+      "mfcsv.dim",
+      "mfcsv.time_encode"
+    ]
+  },
+  "source": "derived by tools/gen/ogc-mf-kml-vectors.py from the standard and spec/engine-spec.md; no engine run",
+  "reference": "OGC 14-084r2 (Moving Features Simple CSV 1.0) 7.2 omissible columns, 8.2.1; an empty field is absent and is written back empty; the last column, time encode, is optional and is not written when absent"
+}

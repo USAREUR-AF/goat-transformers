@@ -1,0 +1,13 @@
+{
+  "name": "columns-without-attributes-roundtrip",
+  "from": "mf-csv",
+  "to": "mf-csv",
+  "input": "@columns,mfidref,trajectory",
+  "expect": "@columns,mfidref,trajectory",
+  "model": {
+    "@kind": "columns",
+    "mfcsv.attribute_defs.#": "absent"
+  },
+  "source": "derived by tools/gen/ogc-mf-kml-vectors.py from the standard and spec/engine-spec.md; no engine run",
+  "reference": "OGC 14-084r2 (Moving Features Simple CSV 1.0) 8.2.2 @columns; no varying attribute: the list is absent and the line ends at the fixed names"
+}

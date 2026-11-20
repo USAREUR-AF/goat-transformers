@@ -132,6 +132,7 @@
     {"name": "NGA Maritime Safety Information", "domain": "sea", "prefixes": ["nga-msi-"]},
     {"name": "Garmin TCX", "domain": "maps", "exact": ["tcx"], "detail": "Training Center Database v2: activities, laps, trackpoints"},
     {"name": "KML", "domain": "maps", "exact": ["kml"]},
+    {"name": "OGC Moving Features CSV", "domain": "maps", "exact": ["mf-csv"]},
     {"name": "Mapbox Vector Tile", "domain": "maps", "exact": ["mvt"]},
     {"name": "Overture Maps", "domain": "maps", "prefixes": ["overture-"]},
     {"name": "STAC Item", "domain": "maps", "exact": ["stac-item"]},

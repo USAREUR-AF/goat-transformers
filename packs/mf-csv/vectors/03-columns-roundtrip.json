@@ -1,0 +1,17 @@
+{
+  "name": "columns-roundtrip",
+  "from": "mf-csv",
+  "to": "mf-csv",
+  "input": "@columns,mfidref,trajectory,state,xsd:token,speed,xsd:decimal",
+  "expect": "@columns,mfidref,trajectory,state,xsd:token,speed,xsd:decimal",
+  "model": {
+    "@kind": "columns",
+    "mfcsv.attribute_defs.#": "2",
+    "mfcsv.attribute_defs[0].mfcsv.attribute_name": "state",
+    "mfcsv.attribute_defs[0].mfcsv.attribute_type": "xsd:token",
+    "mfcsv.attribute_defs[1].mfcsv.attribute_name": "speed",
+    "mfcsv.attribute_defs[1].mfcsv.attribute_type": "xsd:decimal"
+  },
+  "source": "derived by tools/gen/ogc-mf-kml-vectors.py from the standard and spec/engine-spec.md; no engine run",
+  "reference": "OGC 14-084r2 (Moving Features Simple CSV 1.0) 8.2.2 @columns; columns 1 and 2 are the fixed names, written by const lines; the definitions are items of two fields from column 3"
+}

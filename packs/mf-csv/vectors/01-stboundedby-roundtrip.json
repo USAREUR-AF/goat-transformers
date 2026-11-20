@@ -1,0 +1,19 @@
+{
+  "name": "stboundedby-roundtrip",
+  "from": "mf-csv",
+  "to": "mf-csv",
+  "input": "@stboundedby,urn:ogc:def:crs:EPSG::4326,2D,48.10 11.50,48.20 11.60,2024-05-01T08:00:00Z,2024-05-01T09:00:00Z,sec",
+  "expect": "@stboundedby,urn:ogc:def:crs:EPSG::4326,2D,48.10 11.50,48.20 11.60,2024-05-01T08:00:00Z,2024-05-01T09:00:00Z,sec",
+  "model": {
+    "@kind": "stboundedby",
+    "mfcsv.srid": "urn:ogc:def:crs:EPSG::4326",
+    "mfcsv.dim": "2D",
+    "mfcsv.upper_left": "48.10 11.50",
+    "mfcsv.lower_right": "48.20 11.60",
+    "mfcsv.period_start": "2024-05-01T08:00:00Z",
+    "mfcsv.period_end": "2024-05-01T09:00:00Z",
+    "mfcsv.time_encode": "sec"
+  },
+  "source": "derived by tools/gen/ogc-mf-kml-vectors.py from the standard and spec/engine-spec.md; no engine run",
+  "reference": "OGC 14-084r2 (Moving Features Simple CSV 1.0) 8.2.1 @stboundedby; every column of the header line, carried as written; the corners keep their space and their digits"
+}

@@ -1,0 +1,24 @@
+# The mfcsv module: the values of one line of an OGC Moving Features Simple CSV
+# file (OGC 14-084r2) that have no shared-model key. packs/mf-csv/pack.md says
+# why the points and the times are carried as text.
+module        mfcsv
+version       0.1.0
+distribution  public
+source        "OGC Moving Features Encoding Extension: Simple Comma Separated Values (CSV), OGC 14-084r2, version 1.0 (2015-02-17), https://docs.ogc.org/is/14-084r2/14-084r2.html; OGC Document License Agreement"
+key   points          string  -  "the trajectory line's points as written: x y, or x y z, per point, all values separated by whitespace, in the axis order and units of the file's coordinate reference system"
+key   start_time      string  -  "the trajectory line's start time as written: an offset from the file's start time in the file's time unit, or an absolute date-time"
+key   end_time        string  -  "the trajectory line's end time, written as the start time"
+list  attributes      "the trajectory line's attribute values after its points, in column order; each item holds one value"
+key   value           string  -  "one attribute value of a trajectory line, as written (escape sequences kept)"
+key   srid            string  -  "the coordinate reference system the file names in its @stboundedby line"
+key   dim             string  -  "the dimension the @stboundedby line names: 2D (the default when empty) or 3D"
+key   upper_left      string  -  "the upper-left corner of the bounding box: two coordinates separated by a space, as written"
+key   lower_right     string  -  "the lower-right corner of the bounding box: two coordinates separated by a space, as written"
+key   period_start    string  -  "the date-time before every movement of the file starts, as written"
+key   period_end      string  -  "the date-time after every movement of the file ends, as written"
+key   time_encode     string  -  "how trajectory lines write their times: sec (the default when absent), minute or absolute"
+list  attribute_defs  "the attribute definitions of the @columns line after mfidref and trajectory; each item is a name and a type"
+key   attribute_name  string  -  "the name of one varying attribute, as written in the @columns line"
+key   attribute_type  string  -  "the XML Schema type of one varying attribute, as written (for example xsd:integer)"
+key   order           string  -  "the trajectory order the @foliation line states: Time (the default) or Sequential"
+key   header_name     string  -  "the first column of a header line that the pack has no kind for, the @ included"

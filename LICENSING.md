@@ -34,7 +34,7 @@ below, and every vector of another pack that converts from or to one of them.
 | [CC-BY-NC-SA-4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) | no | yes | yes | none | `everything` |
 | [LicenseRef-NGA-MSI](https://msi.nga.mil) | yes | no | yes | none | `open` |
 | [LicenseRef-OASIS-Notice](https://www.oasis-open.org/policies-guidelines/ipr/) | yes | no | yes | none | `open` |
-| [LicenseRef-OGC-Document](https://www.ogc.org/about/policies/document-license-agreement/) | yes | no | yes | none | `open` |
+| [LicenseRef-OGC-Software](https://www.ogc.org/legal/) | yes | no | yes | none | `open` |
 | [LicenseRef-OMA-Internal](http://www.openmobilealliance.org/UseAgreement.html) | no | no | yes | none | `everything` |
 | LicenseRef-unstated | unknown | no | yes | none | `everything` |
 
@@ -177,7 +177,7 @@ below, and every vector of another pack that converts from or to one of them.
 | `packs/gbfs-3.0-vehicle-types` | `gbfs-3.0-vehicle-types` | CC-BY-3.0 | `open` | its own licence |
 | `packs/gbfs-3.1-rc3-vehicle-availability` | `gbfs-3.1-rc3-vehicle-availability` | CC-BY-3.0 | `open` | its own licence |
 | `packs/gpx` | `gpx` | LicenseRef-unstated | `everything` | its own licence |
-| `packs/kml` | `kml` | LicenseRef-OGC-Document | `open` | its own licence |
+| `packs/kml` | `kml` | LicenseRef-OGC-Software | `open` | its own licence |
 | `packs/lwm2m-json` | `lwm2m-json` | LicenseRef-OMA-Internal | `everything` | its own licence |
 | `packs/mavsdk-action-server-arm-disarm` | `mavsdk-action-server-arm-disarm` | LicenseRef-unstated | `everything` | its own licence |
 | `packs/mavsdk-action-server-flight-mode-change` | `mavsdk-action-server-flight-mode-change` | LicenseRef-unstated | `everything` | its own licence |
@@ -849,7 +849,7 @@ below, and every vector of another pack that converts from or to one of them.
 | `model/gbfs30vehicletypes.def` | CC-BY-3.0 | `open` | its own licence |
 | `model/gbfs31rc3vehicleavailability.def` | CC-BY-3.0 | `open` | its own licence |
 | `model/gpx.def` | LicenseRef-unstated | `everything` | its own licence |
-| `model/kml.def` | LicenseRef-OGC-Document | `open` | its own licence |
+| `model/kml.def` | LicenseRef-OGC-Software | `open` | its own licence |
 | `model/lwm2m.def` | LicenseRef-OMA-Internal | `everything` | its own licence |
 | `model/mavsdkactionserverarmdisarm.def` | LicenseRef-unstated | `everything` | its own licence |
 | `model/mavsdkactionserverflightmodechange.def` | LicenseRef-unstated | `everything` | its own licence |

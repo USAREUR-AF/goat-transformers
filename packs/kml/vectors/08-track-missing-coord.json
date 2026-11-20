@@ -1,0 +1,14 @@
+{
+  "name": "track-missing-coord",
+  "from": "kml",
+  "to": "kml",
+  "input": "<kml xmlns=\"http://www.opengis.net/kml/2.2\"><Placemark><name>ROVER</name><Track><when>2024-05-01T08:00:00Z</when><when>2024-05-01T08:00:10Z</when><when>2024-05-01T08:00:20Z</when><coord>11.5 48.1 520</coord><coord></coord><coord>11.5002 48.1004 523</coord></Track></Placemark></kml>",
+  "expect": "<kml xmlns=\"http://www.opengis.net/kml/2.2\"><Placemark><name>ROVER</name><Track><when>2024-05-01T08:00:00Z</when><when>2024-05-01T08:00:10Z</when><when>2024-05-01T08:00:20Z</when><coord>11.5 48.1 520</coord><coord/><coord>11.5002 48.1004 523</coord></Track></Placemark></kml>",
+  "model": {
+    "@kind": "track",
+    "kml.track_coords.#": "3",
+    "kml.track_coords[2].kml.coord": "11.5002 48.1004 523"
+  },
+  "source": "derived by tools/gen/ogc-mf-kml-vectors.py from the standard and spec/engine-spec.md; no engine run",
+  "reference": "OGC 12-007r2 (KML 2.3) 10.15 kml:Track, 10.16 kml:MultiTrack; ogckml23.xsd TrackType, MultiTrackType; 10.15.2 allows an empty coord for missing data: written <coord></coord> it is an item with no value, and is written back as <coord/>"
+}

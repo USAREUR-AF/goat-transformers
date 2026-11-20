@@ -1,0 +1,53 @@
+# OGC Moving Features Simple CSV (OGC 14-084r2): one line of the file. Public.
+# Header lines (@stboundedby, @columns, @foliation, other @ lines) and
+# trajectory lines are kinds, selected by the first column. The points of a
+# trajectory line are one column of whitespace-separated numbers and the pack
+# language has no transform that splits it, so they are carried as text and
+# not bound to lat and lon. pack.md states the evidence and what is not mapped.
+format        mf-csv
+version       0.1.0
+distribution  public
+source        "OGC Moving Features Encoding Extension: Simple Comma Separated Values (CSV), OGC 14-084r2, version 1.0 (2015-02-17), https://docs.ogc.org/is/14-084r2/14-084r2.html (OGC Document License Agreement); line layouts, column order and column values from sections 7 to 9"
+uses          mfcsv
+wire          text
+
+kind  stboundedby
+when      0  @stboundedby
+requires  mfcsv.srid
+field  mfcsv.srid          1  string
+field  mfcsv.dim           2  string
+field  mfcsv.upper_left    3  string
+field  mfcsv.lower_right   4  string
+field  mfcsv.period_start  5  string
+field  mfcsv.period_end    6  string
+field  mfcsv.time_encode   7  string  optional
+
+kind  columns
+when      0  @columns
+requires  mfcsv.attribute_defs
+const  1  mfidref
+const  2  trajectory
+group  mfcsv.attribute_defs  3  item 2
+  field  mfcsv.attribute_name  0  string
+  field  mfcsv.attribute_type  1  string
+end
+
+kind  foliation
+when      0  @foliation
+requires  mfcsv.order
+field  mfcsv.order  1  string
+
+kind  header
+when      0:0:1  @
+requires  mfcsv.header_name
+field  mfcsv.header_name  0  string
+
+kind  trajectory
+requires  uid mfcsv.points
+field  uid               0  string
+field  mfcsv.start_time  1  string
+field  mfcsv.end_time    2  string
+field  mfcsv.points      3  string
+group  mfcsv.attributes  4  item 1
+  field  mfcsv.value  0  string
+end
