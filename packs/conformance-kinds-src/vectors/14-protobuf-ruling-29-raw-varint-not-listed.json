@@ -1,0 +1,9 @@
+{
+  "name": "protobuf-ruling-29-raw-varint-not-listed",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-protobuf",
+  "input": "{\"n\":5,\"c2\":2}",
+  "expect": "18022005",
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 29: on protobuf the raw varint the field wrote is compared, with no zig-zag; a default never counts; c2 = 2 writes the raw 4, not listed: the first value 2 (which reads back as 1)"
+}

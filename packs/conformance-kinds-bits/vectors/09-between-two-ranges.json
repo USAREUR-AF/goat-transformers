@@ -1,0 +1,9 @@
+{
+  "name": "between-two-ranges",
+  "from": "conformance-kinds-bits",
+  "to": "conformance-kinds-bits",
+  "input": "0a02",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.20, Lists and ranges in `when`; 10 lies after hi's 4..9 and before 20"
+}

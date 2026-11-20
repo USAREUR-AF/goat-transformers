@@ -3757,3 +3757,234 @@ tool and its version.
     there is `bad-directive` after the file (ruling 13 of 0.17). `ext`,
     `choice` and `alt` inside a 0.17 gate block, which only a fixed layout
     has, are `bad-directive` after the file.
+
+---
+
+# Version 0.20: kind selection
+
+Status: Written. Version 0.5 picks a kind on decode from `when` values that
+each equal one value, and on encode from which keys the entity holds. Real
+formats need three more things: a kind that covers a range or a list of wire
+values, an encode kind chosen by the value of a key (a track environment), and
+a record whose later part is laid out according to a value read earlier in the
+same record, after other fields.
+
+## Lists and ranges in `when`
+
+```
+when  <locator> <value>[,<value>…]
+```
+
+Each `<value>` is a value as in 0.5, or, on `bits` and on a `protobuf` varint,
+a range `<lo>..<hi>` of unsigned decimal integers with `lo ≤ hi`. The `when`
+holds when the wire value matches any of the listed values or lies in any of
+the ranges (both ends included). On encode the first listed value is written;
+for a range listed first, its `lo`. `present` may not be combined with other
+values. On `bits` and `protobuf` a value is digits or digits`..`digits;
+anything else (`5..`, `..5`, `1..2..3`, `0x10`), a range with `lo > hi`, a
+range end that does not fit the field, a third token (`1, 2`) or an empty value
+in the list is `bad-directive`. On text wires `..` has no meaning and the text
+is literal. A comma now separates values; no pack had a `when` text with a
+comma. `""` alone is the empty text (Version 0.9, ruling 11).
+
+## Encode kind by value
+
+```
+requires  <model-key>=<value>[,<value>…]  [<model-key>…]
+```
+
+A `requires` key may carry `=` and a list of values. The kind qualifies only
+when the entity holds the key and its value, as canonical text (ruling 3 of
+0.1.1 for floats, decimal digits for integers, the text itself for strings),
+equals one of the listed values. A plain key keeps its 0.5 meaning (present).
+A value is read as the key's declared type at load: one that cannot be is
+`key-type-mismatch`. A list key with `=` is `bad-directive`.
+
+## A switch on a decoded value (sequential layouts)
+
+```
+switch  <model-key>
+  case  <value>[,<value>…]
+    …
+  case  …
+    …
+  else
+    …
+end
+```
+
+Valid in a `layout sequential` pack, in common lines, in a kind and inside a
+group body or an `if`, `opt` or chain block. `<model-key>` must be mapped by
+a `field` (or `also`) line of the same scope that comes before the `switch`
+line in reading order; otherwise `bad-directive`.
+
+Decode: when the cursor reaches `switch`, the key's decoded value (after `via`
+and `typemap`), as canonical text, selects the first `case` whose list holds
+it; its lines are read at the cursor. When no `case` holds it, the `else`
+lines are read; with no `else`, the message (or the item) is `no-kind`. When
+the key is absent (its line was in a block not read, or held a sentinel), the
+`else` lines are read, or `no-kind`.
+
+Encode: the case is the one decode would select from the bits the key's line
+wrote: the value is read back through the transform, `via`, `typemap` and the
+sentinels, so a `default`, a sentinel, the zero bits of an absent key or of a
+line suppressed by `with`, and the value an `also` line chose all select as
+decode would. A key whose line wrote nothing is absent: `else`, or `no-kind`.
+A value that no `case` holds selects `else`, or, with no `else`, is
+`no-kind`, on encode as on decode.
+
+Lines inside a case are `field`, `also`, `const`, `pad`, `align`, `default`,
+`presence`, `if`, `opt`, `chain`, `length`, `group` and nested `switch`
+blocks; `kind`, `when`, `requires` and the header and table directives are
+`bad-directive` there, and so is `fx` directly inside a case. Presence names
+declared before the `switch` are visible inside every case. Rulings 1, 17 and
+22 of 0.8 count only the selected case of each switch: a presence bit is set
+on encode only by the selected case's lines, and on decode a bit that is 1
+and that no `if` of the lines read names is `malformed-wire`. An `fx` bit
+likewise counts the selected case only.
+
+## Load errors
+
+`bad-directive`: `switch` outside a sequential layout; a `switch` key not
+mapped earlier in the scope (any line of common plus the kind, or of the same
+group body, at any block depth, that precedes the `switch` in reading order,
+cases of an earlier switch included; a message-level key is not visible in a
+group body); a `case` or `else` outside a `switch`; a
+`switch` with no `case`; two `else`; `else` before a `case`; a value listed
+in two cases of one switch, or twice in one case; `switch` without `end`. A
+`case` value that cannot be read as the key's type is `key-type-mismatch`;
+an `int` value is an optional `-` then digits (`1.0` and `+1` are
+`key-type-mismatch`).
+
+## Rulings for 0.20
+
+1. **Canonical text** of a `requires =` value and of a `case` value is
+   computed at load, so `01` and `1` are one integer value and `2.50` and
+   `2.5` one float value. `when` values compare as 0.5 states (text as
+   written on text wires, numbers on `bits` and `protobuf`).
+2. **Overlap.** `when` lists and ranges may overlap other kinds' lists and
+   ranges on every wire; the first kind in pack order whose `when` lines hold
+   is selected, as in 0.5. Lists and ranges are valid in every `when` on
+   `bits` (fixed and sequential layouts, item kinds) and on an integer
+   `protobuf` `when`. A value repeated in one `when` list loads.
+3. **Encode of a `when` with a list or a range.** When a field line with a
+   present key covers exactly the `when`'s bits and its value matches the
+   `when`, that value is written; otherwise the first value is written over
+   the field. This amends ruling 5 of 0.5 for lists and ranges only.
+4. **`requires` with `=` and `Entity.kind`.** A kind recorded on the entity
+   (same format) is used as in 0.5; `=` is checked only when the kind is
+   chosen by `requires`. Every `requires` term of a kind must hold, across
+   lines (`requires env=1` and `requires env=2` never both hold). The term
+   is split at the first `=`; the rest is the value list, with no `=`
+   stripped; `k=` with nothing after `=`, and `=v` with nothing before it,
+   are `bad-directive`. Load errors of a
+   term come in this order: `undeclared-key` or `module-not-used`, then
+   `bad-directive` for a list key, then `key-type-mismatch`.
+5. **Nested switches** are allowed; each switch is read where the cursor is.
+6. **Empty cases.** An empty `case` or `else` reads and writes nothing;
+   there is no fall-through.
+7. **Defaults in a case** apply only to that case's lines and only when the
+   case is selected; they are content for presence only then.
+8. **Presence names declared in a case** belong to that case: each `case`
+   and `else` body is a block for ruling 12 of 0.8, and the names are not
+   visible after `end`.
+9. **The key read again.** Selection uses the value the key holds when the
+   cursor reaches `switch`; later lines of the key are read as usual and do
+   not reselect.
+10. **Groups in cases.** Two cases are different blocks for ruling 23 of
+    0.8, so one list may be grouped in two cases.
+11. **An item that is `no-kind`** fails the whole decode or convert.
+12. **Error order.** Of encode errors, the one raised by the line earliest
+    in reading order is reported.
+13. **Capability.** Keys mapped only inside a `case` or `else` are listed by
+    `model_keys` as every other mapped key.
+14. **Extents.** A switch whose key line lies past the end of a `length`
+    extent sees the key absent (ruling 7 of 0.8) and reads `else`; with no
+    `else` it is `no-kind` (the switch is still evaluated past the end).
+15. **Ruling 3 on text wires.** Ruling 3 applies to `bits` (the same offset
+    and length) and `protobuf` (the same path); on `xml`, `json` and
+    `geojson` a `when` with a list writes its first value (ruling 26 of
+    0.5). "A present key" there means the entity holds it; a `default` does
+    not count.
+16. **Empty items.** An empty item in any list (`a,,b`, `a,`) is
+    `bad-directive` on every wire; only a lone `""` is the empty text.
+17. **Integer values** in `requires =` and `case` alike are an optional `-`
+    then digits; `+1` is `key-type-mismatch`.
+18. **Duplicates** in two cases of one switch are compared as canonical
+    values (`1` and `01` are one value): `bad-directive`.
+19. **Order of load errors** across lines: `module-not-used` and
+    `undeclared-key` over every line; then `bad-directive` for a list key
+    with `=` over every line; then the field and `default` type checks; then
+    the `requires =` and `case` value checks in line order, each line's
+    types before that line's duplicates.
+20. **Lines between `switch` and its first `case`** are `bad-directive`. A
+    key mapped in an earlier case of the same switch counts as mapped
+    earlier for a nested switch.
+21. **Presence names and cases** (ruling 8 with ruling 17 of 0.8): an `if`
+    naming a presence counts only when the innermost case it sits in is the
+    one read; `if` lines in other kinds count as before.
+22. **Defaults in nested cases** apply inside the cases nested in their
+    case; the innermost wins.
+23. **A third token** on a `when` line (`when @t a, b`) is `bad-directive` on
+    every wire.
+24. **Float values** in `requires =` and `case` are `-?digits[.digits]` with
+    an optional exponent, as JSON numbers are; a leading `+` is
+    `key-type-mismatch`. On a float key an integer value compares as the
+    float it equals.
+25. **`present` in a list** of two or more values is `bad-directive` on
+    every wire.
+26. **Repeated values in one `requires =` list** load; only `case` values
+    may not repeat.
+27. **`case` structure.** A `case` after the switch's `else`, a `case` with
+    no value, a `case` with more than one token (`case 1 2`), and an `else`
+    with an argument are `bad-directive`.
+28. **Commas in `const`.** A `const` value is one literal value; a comma in
+    it is text, and `const` takes no ranges.
+29. **Ruling 3 on `bits` and `protobuf`** counts only a key the entity
+    holds, never a `default` (as ruling 15). On `protobuf` the raw varint
+    the field wrote is compared, with no zig-zag; a field that does not
+    write a varint is not compared.
+30. **A presence declared inside a case** (ruling 21): an `if` counts when
+    the innermost case that holds the `if` and not the presence is read;
+    the search crosses group-body boundaries.
+31. **A switch key that does not read back** on encode (its value fails its
+    transform or table when decoded from the bits written) is
+    `transform-encode`: the output would not decode.
+32. **Leading `=`** in a text-wire `when` list is stripped from each item;
+    the first item's `=` decides whether `json` writes a string.
+33. **Settling encode.** An engine may compute presence, `opt` and `fx` bits
+    by predicting the selected cases and encoding again until the
+    prediction holds; the result must equal what decode selects from the
+    output, and a prediction that never settles is `transform-encode`.
+34. **Error order** (ruling 12): errors of a prediction pass that is
+    discarded are not reported; only the final encode reports.
+35. **A switch key whose line fails its transform** on decode fails the
+    decode with `transform-decode` (ruling 9 of 0.1.1), whatever the
+    switch would read.
+36. **Presence bits across items.** A bit named only inside cases is
+    satisfied by such a case read anywhere later in the same decode, a later
+    group item included.
+37. **The first prediction** (ruling 33) for each switch is the case decode
+    would select from what the first line mapping its key would write; the
+    prediction that settles from it is the result.
+38. **The `text` wire** (Version 0.10) is not one of the text wires of this
+    version: its `when` value stays one literal value, a comma included, and
+    a value holding the record's delimiter is `bad-directive` as 0.10 states
+    (load vector `wire-text-25`). The `tlv` wire (Version 0.13) takes no list
+    or range either: `when 5:1 1,2` is `bad-directive`. Lists and ranges are
+    for `bits` and `protobuf`, and lists for `xml`, `json` and `geojson`.
+39. **Argument counts of `switch`, `case` and `else`** are line checks
+    (ruling 5b of 0.11, step 3), as for `element` (ruling 25 of 0.18):
+    `switch` and `case` take one argument and `else` none. So `else x`
+    followed by a line `bogus` is `bad-directive`. Their other errors
+    (ruling 27) are checks after the file.
+40. **`switch` and the blocks of Version 0.19.** In a `uper` pack a `switch`
+    may stand inside an `ext` or an `alt`, and an `ext` or a `choice` inside
+    a `case` or `else`: they nest as the other blocks of 0.8 do. A `switch`
+    on a key that a UPER locator maps reads the key back as 0.19 decodes it,
+    at the length that line wrote. A key mapped in an earlier `alt` of an
+    open `choice` counts as mapped earlier, as one in an earlier `case` does
+    (ruling 20).
+41. **Presence bits inside a `choice`** keep the rules of Version 0.19: this
+    version's "only the selected case of each switch" is about `switch`
+    alone. Stated, not yet pinned by a vector (40 and 41).

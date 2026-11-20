@@ -1,0 +1,14 @@
+{
+  "name": "ruling-29-psint-raw-varint-listed",
+  "from": "conformance-kinds-protobuf",
+  "to": "conformance-kinds-protobuf",
+  "input": "18012005",
+  "expect": "18012005",
+  "model": {
+    "@kind": "d",
+    "probe.c2": "-1",
+    "probe.n": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 29: on protobuf the raw varint the field wrote is compared, with no zig-zag; a default never counts; field 3 = 1 is in d's 2,1 (not in c's 7..9): d; psint 1 is -1. Re-encode: -1 writes the raw 1, listed, so it is kept"
+}

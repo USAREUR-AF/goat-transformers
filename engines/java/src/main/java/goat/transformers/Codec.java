@@ -122,14 +122,9 @@ abstract class Codec<W> {
             return k;
         }
         for (Pack.Kind k : pack.kinds) {
-            boolean all = true;
-            for (String key : k.requires) {
-                if (e.get(key) != null) continue;
-                // `requires <list>` holds when the list is present and has at least one item.
-                List<Entity> items = e.list(key);
-                if (items == null || items.isEmpty()) { all = false; break; }
-            }
-            if (all) return k;
+            // `requires <list>` holds when the list is present and has at least one item; `<key>=<values>` when
+            // the key's canonical text is listed (engine-spec 0.20). Every term must hold.
+            if (Pack.allHold(k.requires, e)) return k;
         }
         throw new GtException(GtException.Code.NO_KIND, pack.format, null,
                 "the entity has the required keys of no kind");

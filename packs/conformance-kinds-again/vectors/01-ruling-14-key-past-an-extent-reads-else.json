@@ -1,0 +1,19 @@
+{
+  "name": "ruling-14-key-past-an-extent-reads-else",
+  "from": "conformance-kinds-again",
+  "to": "conformance-kinds-again",
+  "input": "0005ff0107",
+  "expect": "0100050100",
+  "model": {
+    "probe.z": "5",
+    "probe.c1": "1",
+    "probe.v1": "7",
+    "@absent": [
+      "probe.x",
+      "probe.y",
+      "probe.c2"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; rulings 9 and 14; ruling 14: the extent is 0 bytes, x's line lies past it and x is absent: else, z. Ruling 9: c1 holds the sentinel, else; the else's c1 line reads 1 and does not reselect case 1. Re-encode writes every line of the extent (ruling 7 of 0.8): x zero bits, length 1, else; c1 = 1 now selects case 1, c2 absent"
+}

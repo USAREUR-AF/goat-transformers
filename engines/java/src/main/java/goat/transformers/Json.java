@@ -283,15 +283,15 @@ public final class Json {
     static boolean holds(Object v, Pack.When when) {
         if (v == null || v == NULL) return false;
         if (when.present) return true;
-        if (v instanceof String) return v.equals(when.text);
+        if (v instanceof String) return when.matchesText((String) v);
         if (v instanceof Num) {
             try {
-                return canonNumber(((Num) v).text).equals(when.text);
+                return when.matchesText(canonNumber(((Num) v).text));
             } catch (IllegalArgumentException ex) {
                 return false;
             }
         }
-        if (v instanceof Boolean) return v.toString().equals(when.text);
+        if (v instanceof Boolean) return when.matchesText(v.toString());
         return false;
     }
 

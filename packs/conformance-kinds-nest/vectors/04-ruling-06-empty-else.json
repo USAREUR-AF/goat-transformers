@@ -1,0 +1,15 @@
+{
+  "name": "ruling-06-empty-else",
+  "from": "conformance-kinds-nest",
+  "to": "conformance-kinds-nest",
+  "input": "0b02000000",
+  "expect": "0b02000000",
+  "model": {
+    "probe.y": "2",
+    "@absent": [
+      "probe.z"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; switch blocks inside other blocks; ruling 6: an empty else reads nothing"
+}

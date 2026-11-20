@@ -141,7 +141,7 @@ func decodeProtobuf(d *decodeState, b []byte) error {
 		if err != nil || pv == nil {
 			return false
 		}
-		return w.present || (pv.wire == pbVarint && pv.u == w.num)
+		return w.present || (pv.wire == pbVarint && w.matchNum(pv.u))
 	})
 	if err != nil {
 		return err
@@ -547,7 +547,7 @@ func encodePBScope(p *Pack, lay *layout, rec *Item, tree *pbTree) error {
 		if w.present {
 			tree.ensure(w.loc.pbPath)
 		} else {
-			tree.set(w.loc.pbPath, pbVal{wire: pbVarint, u: w.num}, true)
+			tree.set(w.loc.pbPath, pbVal{wire: pbVarint, u: whenPBValue(p, lay, rec, w)}, true)
 		}
 	}
 	return nil
@@ -621,4 +621,37 @@ func encodePBItems(p *Pack, g *Group, items []*Item) ([]pbVal, error) {
 		occs = append(occs, pbVal{wire: pbLenDelim, b: sub.marshal()})
 	}
 	return occs, nil
+}
+
+// whenPBValue is the varint an encode writes for an integer `when`: the value
+// of the first field line with a present key on the same path whose varint
+// matches the when, else the when's first value (0.20 rulings 3 and 15).
+func whenPBValue(p *Pack, lay *layout, rec *Item, w *When) uint64 {
+	for _, ln := range lay.lines {
+		f := ln.f
+		if f == nil || f.dot || f.pbf == nil || !f.has(rec) || !samePath(f.loc.pbPath, w.loc.pbPath) {
+			continue
+		}
+		v, ok, err := fieldValue(p, lay, f, rec)
+		if err != nil || !ok {
+			continue
+		}
+		pv, err := f.pbf.encode(v)
+		if err == nil && pv.wire == pbVarint && w.matchNum(pv.u) {
+			return pv.u
+		}
+	}
+	return w.num
+}
+
+func samePath(a, b []int) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i := range a {
+		if a[i] != b[i] {
+			return false
+		}
+	}
+	return true
 }

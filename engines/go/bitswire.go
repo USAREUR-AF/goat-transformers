@@ -233,7 +233,7 @@ func decodeBits(d *decodeState, b []byte) error {
 		if w.loc.bit+w.loc.blen > bits {
 			return false
 		}
-		return getBits(data, w.loc.bit, w.loc.blen, p.msb) == w.num
+		return w.matchNum(getBits(data, w.loc.bit, w.loc.blen, p.msb))
 	})
 	if err != nil {
 		return err

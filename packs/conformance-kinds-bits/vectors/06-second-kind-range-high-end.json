@@ -1,0 +1,13 @@
+{
+  "name": "second-kind-range-high-end",
+  "from": "conformance-kinds-bits",
+  "to": "conformance-kinds-bits",
+  "input": "0902",
+  "expect": "0902",
+  "model": {
+    "@kind": "hi",
+    "probe.x": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, Lists and ranges in `when`; 9: hi; x = 9 matches hi and is written (ruling 3)"
+}

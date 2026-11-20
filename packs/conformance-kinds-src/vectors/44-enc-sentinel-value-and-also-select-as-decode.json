@@ -1,0 +1,9 @@
+{
+  "name": "enc-sentinel-value-and-also-select-as-decode",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-enc",
+  "input": "{\"x\":3,\"c2\":5,\"y\":255,\"v1\":6,\"z\":4,\"n\":1,\"qty\":7,\"v4\":9}",
+  "expect": "0305ff00040709",
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; Encode: the case is the one decode would select from the bits the key's line wrote; x = 3: else, c2; y = 255 is written (0.9 Encode) and reads back absent: else, v2 zero, v1 not written; z = 4 with n held: else; w absent: the line writes qty's 7 (`also`), read back w = 7: case 7, v4"
+}

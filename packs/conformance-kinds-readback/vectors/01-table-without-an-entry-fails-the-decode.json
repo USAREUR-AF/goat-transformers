@@ -1,0 +1,9 @@
+{
+  "name": "table-without-an-entry-fails-the-decode",
+  "from": "conformance-kinds-readback",
+  "to": "conformance-kinds-readback",
+  "input": "0003",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.6 Value tables and ruling 4: 0 has no entry and uint yields int, the key a string"
+}

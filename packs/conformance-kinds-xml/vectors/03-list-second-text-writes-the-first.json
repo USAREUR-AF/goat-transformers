@@ -1,0 +1,13 @@
+{
+  "name": "list-second-text-writes-the-first",
+  "from": "conformance-kinds-xml",
+  "to": "conformance-kinds-xml",
+  "input": "<msg t=\"d\" y=\"2\"/>",
+  "expect": "<msg t=\"c\" y=\"2\"/>",
+  "model": {
+    "@kind": "l",
+    "probe.y": "2"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, Lists and ranges in `when`, on text wires; d is listed: l; encode writes the first value, c"
+}

@@ -1,0 +1,47 @@
+# Conformance probe pack for `requires <key>=<value>[,<value>...]` (spec 0.20)
+# on `json`. Public. The member k is each kind's `when`, so decode finds
+# the kind again and encode shows which kind was chosen.
+#
+#   one    n is 1 (written 01: one integer value, ruling 1) and x is held
+#   two    n is 2 or 3
+#   both   n is 4 and n is 5: never both (ruling 4)
+#   eq     s1 is the text =x (the term is split at the first =)
+#   fl     a is 2.5 (written 2.50)
+#   f1     a is 1 (written 1e0, ruling 24)
+#   f2     a is 2 (written 2: an integer value on a float key, ruling 24)
+#   other  no requires: every entity qualifies
+format     conformance-kinds-env
+version    0.20.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       json
+field  probe.n   n  int
+field  probe.x   x  int
+field  probe.s1  s  string
+field  probe.a   a  float
+kind   one
+when   k  one
+requires probe.n=01
+requires probe.x
+kind   two
+when   k  two
+requires probe.n=2,3
+kind   both
+when   k  both
+requires probe.n=4
+requires probe.n=5
+kind   eq
+when   k  eq
+requires probe.s1==x
+kind   fl
+when   k  fl
+requires probe.a=2.50
+kind   f1
+when   k  f1
+requires probe.a=1e0
+kind   f2
+when   k  f2
+requires probe.a=2
+kind   other
+when   k  other

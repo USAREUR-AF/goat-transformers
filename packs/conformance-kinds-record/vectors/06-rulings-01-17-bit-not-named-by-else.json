@@ -1,0 +1,9 @@
+{
+  "name": "rulings-01-17-bit-not-named-by-else",
+  "from": "conformance-kinds-record",
+  "to": "conformance-kinds-record",
+  "input": "603344",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; a switch key read inside an earlier `if` and chain block; FSPEC 60: p.2 and p.3; y absent: else names p.2 only"
+}

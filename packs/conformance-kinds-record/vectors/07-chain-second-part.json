@@ -1,0 +1,15 @@
+{
+  "name": "chain-second-part",
+  "from": "conformance-kinds-record",
+  "to": "conformance-kinds-record",
+  "input": "e00b04112233",
+  "expect": "e00b04112233",
+  "model": {
+    "probe.y": "0",
+    "probe.x": "5",
+    "probe.c1": "2",
+    "probe.z": "17"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; a switch key read inside an earlier `if` and chain block; 0b: fx 1; 04 = c1 0000010, the last fx 0 (ruling 3 of 0.8)"
+}

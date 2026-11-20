@@ -1,0 +1,15 @@
+{
+  "name": "range-kind-and-switch-on-a-common-key",
+  "from": "conformance-kinds-seq",
+  "to": "conformance-kinds-seq",
+  "input": "01050709",
+  "expect": "01000709",
+  "model": {
+    "@kind": "a",
+    "probe.x": "1",
+    "probe.y": "7",
+    "probe.z": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, Lists and ranges in `when` on a sequential layout; 05 is in 0..9: a; the switch in a reads x from the common lines: z. Re-encode writes a's first value, the lo 0"
+}

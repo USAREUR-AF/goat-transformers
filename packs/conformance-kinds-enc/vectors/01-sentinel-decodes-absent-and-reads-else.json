@@ -1,0 +1,22 @@
+{
+  "name": "sentinel-decodes-absent-and-reads-else",
+  "from": "conformance-kinds-enc",
+  "to": "conformance-kinds-enc",
+  "input": "0100ff06000000",
+  "expect": "0100ff06000000",
+  "model": {
+    "probe.x": "1",
+    "probe.c1": "0",
+    "probe.v2": "6",
+    "probe.z": "0",
+    "probe.v3": "0",
+    "probe.w": "0",
+    "probe.qty": "0",
+    "@absent": [
+      "probe.y",
+      "probe.v1"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; Decode: y holds its sentinel, so the key is absent and the else lines are read: v2 = 6, not case 255's v1. Then z = 0: case 0, v3 = 0; w = 0: else"
+}

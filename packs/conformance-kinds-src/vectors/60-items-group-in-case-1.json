@@ -1,0 +1,9 @@
+{
+  "name": "items-group-in-case-1",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-items",
+  "input": "{\"x\":1,\"nums\":[{\"val\":5},{\"val\":6}]}",
+  "expect": "010205060000",
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; groups, presence and defaults in cases; case 1's group; recs and items absent: count 0 (ruling 14 of 0.7)"
+}

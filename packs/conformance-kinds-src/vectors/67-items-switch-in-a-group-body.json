@@ -1,0 +1,9 @@
+{
+  "name": "items-switch-in-a-group-body",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-items",
+  "input": "{\"items\":[{\"qty\":1,\"val\":5},{\"qty\":2,\"label\":\"AB\"}]}",
+  "expect": "0000020105024142",
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; groups, presence and defaults in cases; per item"
+}

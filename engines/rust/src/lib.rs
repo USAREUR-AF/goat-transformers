@@ -1908,6 +1908,32 @@ pub struct WhenDef {
     pub line: usize,
     /// a `const` in a gate block: the innermost one (engine-spec v0.17)
     pub gate: Option<usize>,
+    /// bits and protobuf: every listed value and range, `(lo, hi)` both
+    /// included (engine-spec v0.20); the first `lo` is `num`
+    pub nums: Vec<(u64, u64)>,
+    /// text wires: every listed text, `=` stripped; the first is `text`
+    pub texts: Vec<String>,
+}
+
+impl WhenDef {
+    /// Does an unsigned wire value match the line (any value or range)?
+    pub(crate) fn holds_num(&self, v: u64) -> bool {
+        if self.nums.is_empty() {
+            return v == self.num;
+        }
+        self.nums.iter().any(|(lo, hi)| *lo <= v && v <= *hi)
+    }
+    /// Does a wire text match the line (any listed text)?
+    pub(crate) fn holds_text(&self, t: &str) -> bool {
+        if self.texts.is_empty() {
+            return t == self.text;
+        }
+        self.texts.iter().any(|x| x == t)
+    }
+    /// A list or a range: more than one wire value matches (ruling 3 of 0.20).
+    pub(crate) fn several(&self) -> bool {
+        self.nums.len() > 1 || self.nums.first().map_or(false, |(lo, hi)| lo != hi) || self.texts.len() > 1
+    }
 }
 
 /// The `count` of a `bits` group.
@@ -1970,13 +1996,115 @@ impl GroupDef {
     }
 }
 
+/// One term of a `requires` line: a key, or a key with `=` and values
+/// (engine-spec v0.20).
+#[derive(Clone, Debug)]
+pub struct ReqDef {
+    pub key: String,
+    pub line: usize,
+    /// the values after `=`, as written; None: the plain key of 0.5
+    pub values: Option<Vec<String>>,
+    /// the values as canonical text of the key's type, set when the pack is loaded
+    pub canon: Vec<String>,
+}
+
+impl ReqDef {
+    /// The terms of one `requires` line.
+    pub(crate) fn parse(toks: &[String], ln: usize) -> Result<Vec<ReqDef>, Error> {
+        let mut out = Vec::new();
+        for term in toks {
+            // split at the first `=`; the rest is the value list (ruling 4 of 0.20)
+            let (key, values) = match term.split_once('=') {
+                None => (term.clone(), None),
+                Some((k, rest)) => {
+                    // a term with nothing before `=` names no key (provisional: the
+                    // grammar `<model-key>=<value>` needs one; vector 556)
+                    if k.is_empty() {
+                        return bad(ln, format!("`requires {}` has no key before `=`", term));
+                    }
+                    if rest.is_empty() {
+                        return bad(ln, format!("`requires {}` has no value after `=`", term));
+                    }
+                    let vs: Vec<String> = rest.split(',').map(|v| v.to_string()).collect();
+                    if vs.iter().any(|v| v.is_empty()) {
+                        return bad(ln, format!("`requires {}` has an empty value in its list", term));
+                    }
+                    (k.to_string(), Some(vs))
+                }
+            };
+            out.push(ReqDef { key, line: ln, values, canon: Vec::new() });
+        }
+        Ok(out)
+    }
+    /// Does the entity meet the term? A plain key: the key is present, or the
+    /// list has an item. With `=`: the value's canonical text is listed.
+    pub(crate) fn holds(&self, ent: &Entity) -> bool {
+        match &self.values {
+            None => ent.fields.contains_key(&self.key) || ent.lists.get(&self.key).map_or(false, |l| !l.is_empty()),
+            Some(vs) => {
+                let listed = if self.canon.is_empty() { vs } else { &self.canon };
+                ent.fields.get(&self.key).map_or(false, |v| listed.contains(&v.as_display()))
+            }
+        }
+    }
+}
+
+/// A value of a `requires =` term or of a `case`, read as the key's declared
+/// type (engine-spec v0.20): its canonical text, or None when it is not one.
+/// An `int` is an optional `-` then digits.
+pub(crate) fn canon_value(ty: KeyType, text: &str) -> Option<String> {
+    match ty {
+        KeyType::Str => Some(text.to_string()),
+        KeyType::Int => {
+            let digits = text.strip_prefix('-').unwrap_or(text);
+            if digits.is_empty() || !digits.bytes().all(|b| b.is_ascii_digit()) {
+                return None;
+            }
+            text.parse::<i64>().ok().map(|n| n.to_string())
+        }
+        // a JSON number: -?digits[.digits][(e|E)[+|-]digits] (ruling 24 of 0.20)
+        KeyType::Float => {
+            let b = text.as_bytes();
+            let mut i = usize::from(b.first() == Some(&b'-'));
+            let digits = |i: &mut usize| {
+                let s = *i;
+                while *i < b.len() && b[*i].is_ascii_digit() {
+                    *i += 1;
+                }
+                *i > s
+            };
+            if !digits(&mut i) {
+                return None;
+            }
+            if i < b.len() && b[i] == b'.' {
+                i += 1;
+                if !digits(&mut i) {
+                    return None;
+                }
+            }
+            if i < b.len() && (b[i] == b'e' || b[i] == b'E') {
+                i += 1;
+                if i < b.len() && (b[i] == b'+' || b[i] == b'-') {
+                    i += 1;
+                }
+                if !digits(&mut i) {
+                    return None;
+                }
+            }
+            if i != b.len() {
+                return None;
+            }
+            text.parse::<f64>().ok().filter(|x| x.is_finite()).map(|x| fmt_f64(x))
+        }
+    }
+}
+
 /// One message layout of a format.
 #[derive(Clone, Debug)]
 pub struct KindDef {
     pub name: String,
     pub whens: Vec<WhenDef>,
-    /// (model key, line)
-    pub requires: Vec<(String, usize)>,
+    pub requires: Vec<ReqDef>,
     pub fields: Vec<FieldDef>,
     /// `const` lines of this kind (same shape as a `when`; never `present`)
     pub consts: Vec<WhenDef>,
@@ -2356,6 +2484,8 @@ impl Pack {
                         num: 0,
                         line: ln,
                         gate: gate_stack.last().copied(),
+                        nums: Vec::new(),
+                        texts: Vec::new(),
                     };
                     match (open.last_mut(), kinds.last_mut()) {
                         (Some(g), _) => g.consts.push(c),
@@ -2448,6 +2578,8 @@ impl Pack {
                         num: 0,
                         line: ln,
                         gate: None,
+                        nums: Vec::new(),
+                        texts: Vec::new(),
                     };
                     match kinds.last_mut() {
                         Some(k) => k.whens.push(w),
@@ -2462,9 +2594,7 @@ impl Pack {
                     if toks.len() < 2 {
                         return bad(ln, "requires needs at least one <model-key>");
                     }
-                    for key in &toks[1..] {
-                        k.requires.push((key.clone(), ln));
-                    }
+                    k.requires.extend(ReqDef::parse(&toks[1..], ln)?);
                 }
                 "field" => {
                     if toks.len() < 4 {
@@ -2516,6 +2646,10 @@ impl Pack {
                 // engine-spec v0.8: a sequential line in a fixed-layout pack
                 "pad" | "align" | "presence" | "opt" | "chain" | "fx" | "also" => {
                     return bad(ln, format!("`{}` is a line of a `layout sequential` pack", toks[0]));
+                }
+                // engine-spec v0.20: a switch reads a sequential layout
+                "switch" | "case" | "else" => {
+                    return bad(ln, format!("`{}` is valid only in a `layout sequential` pack", toks[0]));
                 }
                 other => return err(format!("unknown-directive: line {}: `{}` is not a directive of a pack", ln, other)),
             }
@@ -2632,7 +2766,7 @@ impl Pack {
             resolve_absent(wire, f, fixed_bits_len(wire, f))?;
         }
         for w in whens.iter_mut().chain(kinds.iter_mut().flat_map(|k| k.whens.iter_mut())) {
-            resolve_when(wire, w, false)?;
+            resolve_when(wire, w, false, true)?;
         }
         let no_present = |c: &WhenDef| -> Result<(), Error> {
             if c.present {
@@ -2641,7 +2775,7 @@ impl Pack {
             Ok(())
         };
         for c in consts.iter_mut().chain(kinds.iter_mut().flat_map(|k| k.consts.iter_mut())) {
-            resolve_when(wire, c, false)?;
+            resolve_when(wire, c, false, false)?;
             no_present(c)?;
         }
         // groups (engine-spec v0.7): the lines of every body, then each scope
@@ -2665,7 +2799,7 @@ impl Pack {
                         resolve_absent(wire, f, fixed_bits_len(wire, f))?;
                     }
                     for c in g.consts.iter_mut() {
-                        resolve_when(wire, c, true)?;
+                        resolve_when(wire, c, true, false)?;
                         no_present(c)?;
                     }
                     Ok(())
@@ -2830,12 +2964,9 @@ impl Pack {
         match self
             .kinds
             .iter()
-            .find(|k| {
-                // a key that is present, or a list that has at least one item
-                k.requires
-                    .iter()
-                    .all(|(key, _)| ent.fields.contains_key(key) || ent.lists.get(key).map_or(false, |l| !l.is_empty()))
-            })
+            // a key that is present, or a list that has at least one item; a
+            // key with `=` that holds a listed value (engine-spec v0.20)
+            .find(|k| k.requires.iter().all(|r| r.holds(ent)))
         {
             Some(k) => Ok(self.sel(Some(k))),
             None => err(format!(
@@ -2968,15 +3099,20 @@ impl Pack {
 
     /// Every `requires` key of the pack: (line, key).
     fn every_requires(&self) -> Vec<(usize, &str)> {
-        let mut out: Vec<(usize, &str)> =
-            self.kinds.iter().flat_map(|k| k.requires.iter().map(|(key, line)| (*line, key.as_str()))).collect();
+        self.every_require_def().into_iter().map(|r| (r.line, r.key.as_str())).collect()
+    }
+
+    /// Every `requires` term of the pack, in line order.
+    fn every_require_def(&self) -> Vec<&ReqDef> {
+        let mut out: Vec<&ReqDef> = self.kinds.iter().flat_map(|k| k.requires.iter()).collect();
         if let Some(body) = &self.seq {
             body.visit(&mut |v| {
-                if let seq::Visit::Requires(line, key) = v {
-                    out.push((line, key));
+                if let seq::Visit::Requires(r) = v {
+                    out.push(r);
                 }
             });
         }
+        out.sort_by_key(|r| r.line);
         out
     }
 
@@ -3578,15 +3714,56 @@ fn resolve_gate(wire: Wire, g: &mut GateDef) -> Result<(), Error> {
     Ok(())
 }
 
-/// Validate one `when` line against the wire and work out its value.
-fn resolve_when(wire: Wire, w: &mut WhenDef, in_group: bool) -> Result<(), Error> {
-    let number = |w: &WhenDef| -> Result<u64, Error> {
-        if w.value.is_empty() || !w.value.bytes().all(|b| b.is_ascii_digit()) {
-            return bad(w.line, format!("`when` value `{}` is not an unsigned decimal integer", w.value));
+/// The values of a `when` on `bits` and `protobuf` (engine-spec v0.20): a
+/// comma-separated list of unsigned decimal integers and ranges `lo..hi`,
+/// each within `len` bits when the field has a bit length.
+pub(crate) fn num_list(text: &str, len: Option<u32>, ln: usize) -> Result<Vec<(u64, u64)>, Error> {
+    let number = |t: &str| -> Result<u64, Error> {
+        if t.is_empty() || !t.bytes().all(|b| b.is_ascii_digit()) {
+            return bad(ln, format!("`when` value `{}` is not an unsigned decimal integer or a range", text));
         }
-        w.value
-            .parse::<u64>()
-            .or_else(|_| bad(w.line, format!("`when` value `{}` is too large", w.value)))
+        let v = t.parse::<u64>().or_else(|_| bad(ln, format!("`when` value `{}` is too large", t)))?;
+        if let Some(len) = len {
+            if len < 64 && v >> len != 0 {
+                return bad(ln, format!("`when` value {} does not fit {} bits", v, len));
+            }
+        }
+        Ok(v)
+    };
+    let mut out = Vec::new();
+    for item in text.split(',') {
+        let (lo, hi) = match item.split_once("..") {
+            Some((a, b)) => (number(a)?, number(b)?),
+            None => {
+                let v = number(item)?;
+                (v, v)
+            }
+        };
+        if lo > hi {
+            return bad(ln, format!("`when` range `{}` has its low end above its high end", item));
+        }
+        out.push((lo, hi));
+    }
+    Ok(out)
+}
+
+/// Validate one `when` line against the wire and work out its value. `list`:
+/// the line is a `when`, whose value may be a list (engine-spec v0.20); a
+/// `const` has one value.
+fn resolve_when(wire: Wire, w: &mut WhenDef, in_group: bool, list: bool) -> Result<(), Error> {
+    let numbers = |w: &mut WhenDef, len: Option<u32>| -> Result<(), Error> {
+        if !list && w.value.contains(',') {
+            return bad(w.line, format!("`const` value `{}` is not an unsigned decimal integer", w.value));
+        }
+        if !list && w.value.contains("..") {
+            return bad(w.line, format!("`const` value `{}` is not an unsigned decimal integer", w.value));
+        }
+        if w.value.split(',').any(|v| v == "present") {
+            return bad(w.line, "`present` may not be combined with other values");
+        }
+        w.nums = num_list(&w.value, len, w.line)?;
+        w.num = w.nums[0].0;
+        Ok(())
     };
     match wire {
         Wire::Bits => {
@@ -3595,10 +3772,7 @@ fn resolve_when(wire: Wire, w: &mut WhenDef, in_group: bool) -> Result<(), Error
             if !(1..=64).contains(&len) {
                 return bad(w.line, format!("bit length {} is not allowed on a `when`", len));
             }
-            w.num = number(w)?;
-            if len < 64 && w.num >> len != 0 {
-                return bad(w.line, format!("`when` value {} does not fit {} bits", w.num, len));
-            }
+            numbers(w, Some(len))?;
         }
         Wire::Protobuf => {
             protobuf::parse_path(&w.locator)
@@ -3606,7 +3780,7 @@ fn resolve_when(wire: Wire, w: &mut WhenDef, in_group: bool) -> Result<(), Error
             if w.value == "present" {
                 w.present = true;
             } else {
-                w.num = number(w)?;
+                numbers(w, None)?;
             }
         }
         Wire::Tlv => tlv::resolve_when(w)?,
@@ -3638,9 +3812,22 @@ fn resolve_when(wire: Wire, w: &mut WhenDef, in_group: bool) -> Result<(), Error
             }
             if w.value == "present" {
                 w.present = true;
+            } else if list && w.value.contains(',') {
+                // a comma separates values (engine-spec v0.20); `..` is literal text here
+                let items: Vec<&str> = w.value.split(',').collect();
+                if items.iter().any(|v| *v == "present") {
+                    return bad(w.line, "`present` may not be combined with other values");
+                }
+                if items.iter().any(|v| v.is_empty()) {
+                    return bad(w.line, format!("`when` value `{}` has an empty value in its list", w.value));
+                }
+                w.forced = items[0].starts_with('=');
+                w.texts = items.iter().map(|v| v.strip_prefix('=').unwrap_or(v).to_string()).collect();
+                w.text = w.texts[0].clone();
             } else {
                 w.forced = w.value.starts_with('=');
                 w.text = w.value.strip_prefix('=').unwrap_or(&w.value).to_string();
+                w.texts = vec![w.text.clone()];
             }
         }
     }
@@ -3770,6 +3957,15 @@ impl Engine {
                 ));
             }
         }
+        // a list key with `=` (ruling 4 of 0.20)
+        for r in p.every_require_def() {
+            if r.values.is_some() && self.is_list(&r.key) {
+                return err(format!(
+                    "bad-directive: line {}: `requires {}=…` names a list; a list takes no value",
+                    r.line, r.key
+                ));
+            }
+        }
         // the type check: a field's transform, or the model side of its table
         // a `group` naming a scalar key, or a `field` naming a list (engine-spec v0.7)
         let mut lines: Vec<(usize, Option<&FieldDef>, Option<&str>)> = p
@@ -3840,6 +4036,67 @@ impl Engine {
                 ));
             }
         }
+        // engine-spec v0.20: `requires =` and `case` values read as the key's
+        // type, in line order; a value listed twice in one switch
+        let mut valued: Vec<(usize, &str, &[String], Option<&seq::Switch>)> = Vec::new();
+        for r in p.every_require_def() {
+            if let Some(vs) = &r.values {
+                valued.push((r.line, &r.key, vs, None));
+            }
+        }
+        if let Some(body) = &p.seq {
+            body.visit(&mut |v| {
+                if let seq::Visit::Switch(sw) = v {
+                    for c in &sw.cases {
+                        valued.push((c.line, &sw.key, &c.values, Some(sw)));
+                    }
+                }
+            });
+        }
+        valued.sort_by_key(|v| v.0);
+        let mut seen: Vec<(usize, Vec<String>)> = Vec::new();
+        for (line, key, values, sw) in valued {
+            let def_ty = match self.key_def(key) {
+                Some(d) => d.ty,
+                None => continue,
+            };
+            // the types of the line's values, then its duplicates (ruling 19 of 0.20)
+            let mut canon: Vec<(String, &String)> = Vec::new();
+            for v in values {
+                let c = match canon_value(def_ty, v) {
+                    Some(c) => c,
+                    None => {
+                        return err(format!(
+                            "key-type-mismatch: pack `{}`: line {}: value `{}` of `{}` is not a {}",
+                            p.format,
+                            line,
+                            v,
+                            key,
+                            def_ty.name()
+                        ))
+                    }
+                };
+                canon.push((c, v));
+            }
+            for (c, v) in canon {
+                if let Some(sw) = sw {
+                    let i = match seen.iter().position(|(l, _)| *l == sw.line) {
+                        Some(i) => i,
+                        None => {
+                            seen.push((sw.line, Vec::new()));
+                            seen.len() - 1
+                        }
+                    };
+                    if seen[i].1.contains(&c) {
+                        return err(format!(
+                            "bad-directive: line {}: `case` value `{}` is listed twice in the switch of line {}",
+                            line, v, sw.line
+                        ));
+                    }
+                    seen[i].1.push(c);
+                }
+            }
+        }
         Ok(())
     }
 
@@ -3873,6 +4130,16 @@ impl Engine {
         });
         if let Some(body) = &mut pack.seq {
             body.visit_mut(&mut |f| set_field(f), &mut |d| set_default(d));
+        }
+        // the canonical text of `requires =` and `case` values (ruling 1 of 0.20)
+        let ty = |key: &str| self.key_def(key).map(|d| d.ty);
+        for r in pack.kinds.iter_mut().flat_map(|k| k.requires.iter_mut()) {
+            if let (Some(vs), Some(t)) = (&r.values, ty(&r.key)) {
+                r.canon = vs.iter().filter_map(|v| canon_value(t, v)).collect();
+            }
+        }
+        if let Some(body) = &mut pack.seq {
+            body.resolve(&ty);
         }
         self.packs.insert(pack.format.clone(), pack);
         Ok(())
@@ -4347,10 +4614,10 @@ pub mod xml {
             None => false,
             Some((node, Loc::Attr(a))) => match node.attr(&a) {
                 None => false,
-                Some(v) => w.present || v == w.text,
+                Some(v) => w.present || w.holds_text(v),
             },
-            // an element with no character data has no text: no value holds (1m)
-            Some((node, Loc::Text)) => w.present || node.text.as_deref() == Some(w.text.as_str()),
+            // an element with no character data has no text: no value holds (1m of 0.11)
+            Some((node, Loc::Text)) => w.present || node.text.as_deref().map_or(false, |t| w.holds_text(t)),
         }
     }
 
@@ -5554,7 +5821,7 @@ fn json_when_holds(member: Option<&json::Json>, w: &WhenDef) -> bool {
     match member {
         None | Some(json::Json::Null) => false,
         Some(_) if w.present => true,
-        Some(j) => json_when_text(j).as_deref() == Some(w.text.as_str()),
+        Some(j) => json_when_text(j).map_or(false, |t| w.holds_text(&t)),
     }
 }
 
@@ -6490,6 +6757,22 @@ pub mod bits {
         values: Vec<Option<u64>>,
     }
 
+    /// Ruling 3 of 0.20: a `when` with a list or a range leaves the bits of a
+    /// field line with a present key that covers exactly its bits, when the
+    /// value written there matches it.
+    fn keeps_field(p: &Pack, sel: &Sel, ent: &Entity, w: &WhenDef, msg: &[u8], base: u64) -> Result<bool, Error> {
+        if !w.several() {
+            return Ok(false);
+        }
+        let (off, len) = span(p, &w.locator)?;
+        for f in sel.fields.iter().filter(|f| has_key(ent, f)) {
+            if span(p, &f.locator)? == (off, len) {
+                return Ok(get_bits(msg, base + off, len, p.msb).map_or(false, |v| w.holds_num(v)));
+            }
+        }
+        Ok(false)
+    }
+
     fn plan_gates(p: &Pack, sel: &Sel, ent: &Entity) -> Result<GatePlan, Error> {
         let gates = sel.gates;
         if gates.is_empty() {
@@ -6556,7 +6839,9 @@ pub mod bits {
         }
         for w in sel.consts.iter().filter(|c| c.gate.is_none()).chain(sel.whens.iter().filter(|w| !w.present)) {
             let (off, len) = span(p, &w.locator)?;
-            set_bits(&mut work, off, len, w.num, p.msb);
+            if !keeps_field(p, sel, ent, w, &work, 0)? {
+                set_bits(&mut work, off, len, w.num, p.msb);
+            }
             mark(&mut written, off, len);
         }
         for (l, g) in counts {
@@ -6705,7 +6990,7 @@ pub mod bits {
         }
         // a `when` whose bits lie beyond the input does not hold
         let sel = p.select_decode(None, |w| match span(p, &w.locator) {
-            Ok((start, len)) => start + len as u64 <= total && get_bits(&raw, start, len, p.msb) == Some(w.num),
+            Ok((start, len)) => start + len as u64 <= total && get_bits(&raw, start, len, p.msb).map_or(false, |v| w.holds_num(v)),
             Err(_) => false,
         })?;
         // the lines of the gate blocks that hold (engine-spec v0.17)
@@ -6864,7 +7149,9 @@ pub mod bits {
         // over the same bits: fields, then `const`, then `when`, then counts (ruling 15 of 0.7)
         for w in sel.consts.iter().chain(sel.whens.iter().filter(|w| !w.present)) {
             let (off, len) = span(p, &w.locator)?;
-            set_bits(msg, base + off, len, w.num, p.msb);
+            if !keeps_field(p, sel, ent, w, msg, base)? {
+                set_bits(msg, base + off, len, w.num, p.msb);
+            }
         }
         for (l, n, g) in counts {
             let (coff, len) = span(p, l)?;
@@ -7328,7 +7615,7 @@ pub mod protobuf {
         let sel = p.select_decode(None, |w| {
             let found = parse_path(&w.locator).and_then(|path| msg.borrow_mut().resolve(&path));
             match found {
-                Ok(Some(v)) => w.present || v == WireVal::Varint(w.num),
+                Ok(Some(v)) => w.present || matches!(v, WireVal::Varint(x) if w.holds_num(x)),
                 _ => false,
             }
         })?;
@@ -7454,7 +7741,20 @@ pub mod protobuf {
         }
         // `when` and `const` values: a varint for an integer, nothing for `present`
         for w in sel.fixed() {
-            insert(&mut tree, &parse_path(&w.locator)?, WireVal::Varint(w.num))?;
+            // ruling 3 of 0.20: a list or a range keeps the varint of the
+            // earliest field line on the path whose key is present, when it matches
+            let mut num = w.num;
+            if w.several() {
+                if let Some(f) = sel.fields.iter().find(|f| f.locator == w.locator && has_key(ent, f)) {
+                    let v = sel.value_of(ent, f).expect("present");
+                    if let Ok(WireVal::Varint(x)) = p.to_wire(f, v).and_then(|v| f.transform.encode_pb(&v)) {
+                        if w.holds_num(x) {
+                            num = x;
+                        }
+                    }
+                }
+            }
+            insert(&mut tree, &parse_path(&w.locator)?, WireVal::Varint(num))?;
         }
         Ok(tree)
     }
@@ -7604,6 +7904,11 @@ const PACK_DIRECTIVES: &[(&str, usize, usize)] = &[
     ("ext", 0, 0),
     ("choice", 1, 2),
     ("alt", 1, 1),
+    // engine-spec v0.20: a switch on a decoded value (ruling 27: `case` takes
+    // one value list, `else` none)
+    ("switch", 1, 1),
+    ("case", 1, 1),
+    ("else", 0, 0),
 ];
 
 /// The lines that stand after the `wire` line (ruling 5b of 0.11).

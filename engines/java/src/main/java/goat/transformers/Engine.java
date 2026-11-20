@@ -295,6 +295,13 @@ public final class Engine {
                         "module " + module + " declares no key " + ModelModule.keyOf(ref[0]) + " (model key " + ref[0] + ")");
             }
         }
+        // A list key with `=` in a requires term (ruling 19 of 0.20: after undeclared-key over every line).
+        for (Pack.ValueList vl : p.valueLists) {
+            if (!vl.isCase() && isList(vl.key)) {
+                throw new GtException(GtException.Code.BAD_DIRECTIVE, p.format, null,
+                        vl.where + ": requires " + vl.key + "= names a list; a list takes no value");
+            }
+        }
         for (Pack.Line l : p.typed) {
             if (l instanceof Pack.Group) {
                 Pack.Group g = (Pack.Group) l;
@@ -326,7 +333,48 @@ public final class Engine {
         // Every check has passed: read each default as its key's type, then bind fields to key types and tables.
         for (Pack.Kind k : p.kinds) readDefaults(k.scope, p.format);
         for (Pack.Scope body : p.bodies) readDefaults(body, p.format);
+        // The requires = and case values, in line order: type, then duplicates (rulings 1, 17, 18 and 19 of 0.20).
+        for (Pack.ValueList vl : p.valueLists) readValueList(vl, p.format);
         for (Pack.Field f : p.fields) f.bind(keyType(f.key), f.via == null ? null : p.tables.get(f.via));
+    }
+
+    /** Read a requires = or case value list as its key's declared type, into canonical texts. */
+    private void readValueList(Pack.ValueList vl, String format) {
+        String type = keyType(vl.key);
+        java.util.LinkedHashSet<String> canon = new java.util.LinkedHashSet<>();
+        String[] texts = new String[vl.values.length];
+        for (int i = 0; i < vl.values.length; i++) {
+            String v = vl.values[i];
+            Object o;
+            if (type.equals("int")) {
+                // an optional `-` then digits: `+1` and `1.0` are not int values (ruling 17)
+                o = v.matches("-?\\d+") ? Pack.read(v, "int") : Pack.UNREADABLE;
+            } else if (type.equals("float")) {
+                // -?digits[.digits] with an optional exponent, as a JSON number (ruling 24)
+                o = v.matches("-?\\d+(\\.\\d+)?([eE][+-]?\\d+)?") ? Pack.read(v, "float") : Pack.UNREADABLE;
+            } else {
+                o = Pack.read(v, type);
+            }
+            if (o == Pack.UNREADABLE) {
+                throw new GtException(GtException.Code.KEY_TYPE_MISMATCH, format, null, vl.where + ": "
+                        + (vl.isCase() ? "case" : "requires") + " value \"" + v + "\" is not a " + type + " value of " + vl.key);
+            }
+            texts[i] = Pack.canonText(o);
+        }
+        for (String t : texts) {
+            if (!canon.add(t) && vl.isCase()) {
+                throw new GtException(GtException.Code.BAD_DIRECTIVE, format, null, vl.where + ": case value " + t + " is listed twice");
+            }
+            if (vl.isCase()) {
+                for (Pack.ValueList other : vl.earlierCases) {
+                    if (other.canon != null && other.canon.contains(t)) {
+                        throw new GtException(GtException.Code.BAD_DIRECTIVE, format, null, vl.where + ": case value " + t
+                                + " is also listed by the case of line " + other.line);
+                    }
+                }
+            }
+        }
+        vl.canon = canon;
     }
 
     private void readDefaults(Pack.Scope scope, String format) {

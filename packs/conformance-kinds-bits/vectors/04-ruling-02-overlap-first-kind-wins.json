@@ -1,0 +1,17 @@
+{
+  "name": "ruling-02-overlap-first-kind-wins",
+  "from": "conformance-kinds-bits",
+  "to": "conformance-kinds-bits",
+  "input": "0402",
+  "expect": "0402",
+  "model": {
+    "@kind": "lo",
+    "probe.x": "4",
+    "probe.y": "2",
+    "@absent": [
+      "probe.z"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, Lists and ranges in `when`; ruling 2: 4 is in lo's 3..5 and hi's 4..9; lo is first in pack order"
+}

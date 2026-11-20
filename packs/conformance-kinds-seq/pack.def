@@ -1,0 +1,30 @@
+# Conformance probe pack for `when` ranges and lists on a sequential layout
+# and for a `switch` inside a kind on a common key (spec 0.20), most
+# significant bit first. Public.
+#
+#   x : 8, common
+#   kind a   when 8 0..9          y : 8, then switch x: 1 z : 8, else nothing
+#   kind b   when 8 12..14,10     w : 8      encode writes 12, the lo of the
+#                                            range listed first
+format     conformance-kinds-seq
+version    0.20.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field  probe.x  8  uint
+kind   a
+when   8  0..9
+requires probe.y
+field  probe.y  8  uint
+switch probe.x
+  case 1
+    field  probe.z  8  uint
+  else
+end
+kind   b
+when   8  12..14,10
+requires probe.w
+field  probe.w  8  uint

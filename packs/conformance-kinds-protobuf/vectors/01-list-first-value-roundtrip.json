@@ -1,0 +1,13 @@
+{
+  "name": "list-first-value-roundtrip",
+  "from": "conformance-kinds-protobuf",
+  "to": "conformance-kinds-protobuf",
+  "input": "08011002",
+  "expect": "08011002",
+  "model": {
+    "@kind": "a",
+    "probe.y": "2"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, Lists and ranges in `when`, on an integer protobuf `when`; 1: a"
+}

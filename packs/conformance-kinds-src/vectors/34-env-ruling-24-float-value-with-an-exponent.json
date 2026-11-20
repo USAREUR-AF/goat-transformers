@@ -1,0 +1,9 @@
+{
+  "name": "env-ruling-24-float-value-with-an-exponent",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-env",
+  "input": "{\"a\":1}",
+  "expect": "{\"a\":1,\"k\":\"f1\"}",
+  "source": "constructed",
+  "reference": "spec 0.20, Encode kind by value; ruling 24: `requires probe.a=1e0` is the float 1; the json number 1 on a float key is 1.0"
+}

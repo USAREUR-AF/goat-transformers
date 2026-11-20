@@ -23,8 +23,10 @@
 // capability report and the limit on list items. Value transforms (spec
 // Version 0.15): uiscale, siscale, smag, smscale, f32scale, f64scale,
 // chars:<set> and octal on bits, scale and iscale on the text wires, in exact
-// integer arithmetic (big integers where a text number needs them). Stdlib
-// only.
+// integer arithmetic (big integers where a text number needs them). Kind
+// selection (spec Version 0.20): `when` value lists and ranges, `requires
+// <key>=<value>…`, and the sequential `switch` / `case` / `else` block.
+// Stdlib only.
 //
 // Errors the specification names are Zig errors whose name IS the spec token
 // (`error.@"no-kind"`); `Engine.last_error` holds `<kind>: <detail>`.
@@ -518,6 +520,11 @@ const Line = struct {
     tsize: u8 = 0,
     // a transform that did not parse, refused after the file is read
     t_err: ?anyerror = null,
+    // Version 0.20: every value of a `when` list. bits and protobuf: the
+    // values and ranges (`wint` is the first value, or the first range's lo);
+    // text wires: the texts (`wtext` is the first).
+    wranges: []const WRange = &.{},
+    walts: []const WAlt = &.{},
 
     fn isField(self: *const Line) bool {
         return self.tag == .field;
@@ -556,11 +563,168 @@ const Line = struct {
 };
 
 const TLoc = enum { whole, column, pair };
+// Version 0.20: one value or range `lo..hi` of a `when` list on bits and
+// protobuf, both ends included.
+const WRange = struct { lo: u64, hi: u64 };
+
+fn inRanges(rs: []const WRange, v: u64) bool {
+    for (rs) |r| if (v >= r.lo and v <= r.hi) return true;
+    return false;
+}
+
+// Is the list more than one single value (ruling 3 applies only then)?
+fn isWhenList(rs: []const WRange) bool {
+    return rs.len > 1 or (rs.len == 1 and rs[0].lo != rs[0].hi);
+}
+
+// `<value>[,<value>…]` on bits and protobuf: unsigned decimal integers or
+// ranges `<lo>..<hi>` with lo ≤ hi, each end fitting `width` bits. null: the
+// text is `bad-directive`.
+fn parseWhenInts(alloc: std.mem.Allocator, text: []const u8, width: usize) !?[]const WRange {
+    var out = std.ArrayList(WRange).init(alloc);
+    var it = std.mem.splitScalar(u8, text, ',');
+    while (it.next()) |item| {
+        var lo_t = item;
+        var hi_t = item;
+        if (std.mem.indexOf(u8, item, "..")) |dd| {
+            lo_t = item[0..dd];
+            hi_t = item[dd + 2 ..];
+        }
+        const lo = parseUnsigned(lo_t) orelse return null;
+        const hi = parseUnsigned(hi_t) orelse return null;
+        if (lo > hi or !fitsBits(hi, width)) return null;
+        try out.append(.{ .lo = lo, .hi = hi });
+    }
+    return out.items;
+}
+
+// One text of a `when` list on a text wire; `forced`: written with a leading `=`.
+const WAlt = struct { text: []const u8, forced: bool };
+
+// `<value>[,<value>…]` on a text wire: `..` is literal, a comma separates
+// values, the empty token alone is the empty text. null: `bad-directive` (an
+// empty item, `present` with other values).
+fn parseWhenTexts(alloc: std.mem.Allocator, raw: []const u8) !?[]const WAlt {
+    var out = std.ArrayList(WAlt).init(alloc);
+    if (raw.len == 0) {
+        try out.append(.{ .text = "", .forced = false });
+        return out.items;
+    }
+    var it = std.mem.splitScalar(u8, raw, ',');
+    var n: usize = 0;
+    var present = false;
+    while (it.next()) |item| {
+        n += 1;
+        if (item.len == 0) return null;
+        if (std.mem.eql(u8, item, "present")) present = true;
+        const forced = item[0] == '=';
+        try out.append(.{ .text = if (forced) item[1..] else item, .forced = forced });
+    }
+    if (present and n > 1) return null;
+    return out.items;
+}
+
+// Version 0.20: a `requires` term, `<key>` or `<key>=<value>[,<value>…]`.
+const ReqTerm = struct {
+    key: []const u8,
+    vals: ?[]const []const u8 = null, // the `=` values as written
+    canon: []const []const u8 = &.{}, // their canonical texts, set at load
+    kty: KeyType = .string,
+    lineno: usize = 0,
+};
+
+// Split a term at its first `=`. null: `k=`, `=v` or an empty item.
+fn parseReqTerm(alloc: std.mem.Allocator, tok: []const u8, lineno: usize) !?*ReqTerm {
+    const t = try alloc.create(ReqTerm);
+    t.* = .{ .key = tok, .lineno = lineno };
+    const eq = std.mem.indexOfScalar(u8, tok, '=') orelse return t;
+    t.key = tok[0..eq];
+    const rest = tok[eq + 1 ..];
+    if (t.key.len == 0 or rest.len == 0) return null;
+    t.vals = (try splitValueList(alloc, rest)) orelse return null;
+    return t;
+}
+
+// A comma-separated list with no empty item (ruling 16). null: an empty item.
+fn splitValueList(alloc: std.mem.Allocator, text: []const u8) !?[]const []const u8 {
+    var out = std.ArrayList([]const u8).init(alloc);
+    var it = std.mem.splitScalar(u8, text, ',');
+    while (it.next()) |item| {
+        if (item.len == 0) return null;
+        try out.append(item);
+    }
+    return out.items;
+}
+
+// The canonical text of a `requires =` or `case` value read as the key's
+// type (ruling 1); null: it is not of that type. An `int` is an optional `-`
+// then digits (ruling 17).
+fn canonValue(alloc: std.mem.Allocator, kty: KeyType, text: []const u8) !?[]const u8 {
+    return switch (kty) {
+        .string => text,
+        .int => try intToStr(alloc, parseIntText(text) orelse return null),
+        .float => if (isFloatValueText(text)) try floatToStr(alloc, parseDecimal(text) catch return null) else null,
+    };
+}
+
+// Ruling 24 of 0.20: a float value is `-?digits[.digits]` with an optional
+// exponent `e`/`E`, `+`/`-`, digits.
+fn isFloatValueText(s: []const u8) bool {
+    var i: usize = 0;
+    if (i < s.len and s[i] == '-') i += 1;
+    const d0 = i;
+    while (i < s.len and isDigit(s[i])) i += 1;
+    if (i == d0) return false;
+    if (i < s.len and s[i] == '.') {
+        i += 1;
+        const d1 = i;
+        while (i < s.len and isDigit(s[i])) i += 1;
+        if (i == d1) return false;
+    }
+    if (i < s.len and (s[i] == 'e' or s[i] == 'E')) {
+        i += 1;
+        if (i < s.len and (s[i] == '+' or s[i] == '-')) i += 1;
+        const d2 = i;
+        while (i < s.len and isDigit(s[i])) i += 1;
+        if (i == d2) return false;
+    }
+    return i == s.len;
+}
+
+// The canonical text of a model value of a key of type `kty`.
+fn canonOfMV(alloc: std.mem.Allocator, kty: KeyType, mv: MV) ![]const u8 {
+    return switch (mv) {
+        .str => |s| s,
+        .int => |i| if (kty == .float) floatToStr(alloc, @floatFromInt(i)) else intToStr(alloc, i),
+        .float => |f| floatToStr(alloc, f),
+    };
+}
+
+fn listHolds(list: []const []const u8, s: []const u8) bool {
+    for (list) |v| if (std.mem.eql(u8, v, s)) return true;
+    return false;
+}
+
+// Does the entity satisfy the term? A plain key: present (a list: with an
+// item). With `=`: held, and its canonical text is listed.
+fn termHolds(alloc: std.mem.Allocator, t: *const ReqTerm, e: *const Entity) bool {
+    if (t.vals == null) return e.has(t.key);
+    const mv = e.get(t.key) orelse return false;
+    const c = canonOfMV(alloc, t.kty, mv) catch return false;
+    return listHolds(t.canon, c);
+}
+
+// A value check of ruling 19, step 5, in line order: a `requires =` term or a
+// `case` line.
+const VCheck = union(enum) {
+    req: *ReqTerm,
+    case_: struct { sw: *SSwitch, cs: *SCase },
+};
 
 const Kind = struct {
     name: []const u8,
     lines: std.ArrayList(Line),
-    requires: std.ArrayList([]const u8),
+    requires: std.ArrayList(*ReqTerm),
     defaults: std.ArrayList(Default),
     // xml: this kind's root element; null uses the pack's
     root: ?[]const u8 = null,
@@ -576,6 +740,8 @@ const KeyUse = struct {
     tkind: ?TKind,
     via: []const u8 = "",
     use: enum { field, group, requires, default, with } = .field,
+    // a `requires <key>=…` term (Version 0.20)
+    eq: bool = false,
     // the innermost group the line is in: `model_keys` lists a key inside a
     // group as `<list>[].<key>`
     grp: ?*const Group = null,
@@ -651,6 +817,10 @@ const Pack = struct {
     enc_bad: usize = 0,
     uper: bool = false,
     uper_line: usize = 0,
+    // Version 0.20: the `requires =` terms and `case` lines, in line order,
+    // for the value checks at load; does the sequential pack hold a `switch`
+    vchecks: std.ArrayListUnmanaged(VCheck) = .{},
+    seq_switch: bool = false,
 
     fn usesModule(self: *const Pack, name: []const u8) bool {
         if (std.mem.eql(u8, name, "core")) return true; // `core` is always used
@@ -1721,6 +1891,13 @@ fn finalizeLine(alloc: std.mem.Allocator, p: *Pack, ln: *Line, in_group: bool, d
                 if (ln.blen < 1 or ln.blen > 64) {
                     return bad(diag, alloc, E.@"bad-directive", "line {d}: bit length {d} is not 1..64", .{ ln.lineno, ln.blen });
                 }
+                if (ln.isWhen()) {
+                    // a list of values and ranges (Version 0.20)
+                    ln.wranges = (try parseWhenInts(alloc, ln.wraw, ln.blen)) orelse
+                        return bad(diag, alloc, E.@"bad-directive", "line {d}: when {s}: not a list of unsigned values and ranges that fit {d} bits", .{ ln.lineno, ln.wraw, ln.blen });
+                    ln.wint = ln.wranges[0].lo;
+                    return;
+                }
                 const v = parseUnsigned(ln.wraw) orelse
                     return bad(diag, alloc, E.@"bad-directive", "line {d}: value {s} is not an unsigned decimal integer", .{ ln.lineno, ln.wraw });
                 if (ln.blen < 64 and (v >> @as(u6, @intCast(ln.blen))) != 0) {
@@ -1749,6 +1926,10 @@ fn finalizeLine(alloc: std.mem.Allocator, p: *Pack, ln: *Line, in_group: bool, d
             if (ln.isFixed()) {
                 if (std.mem.eql(u8, ln.wraw, "present")) {
                     ln.wpresent = true;
+                } else if (ln.isWhen()) {
+                    ln.wranges = (try parseWhenInts(alloc, ln.wraw, 64)) orelse
+                        return bad(diag, alloc, E.@"bad-directive", "line {d}: when {s}: not `present` or a list of unsigned values and ranges", .{ ln.lineno, ln.wraw });
+                    ln.wint = ln.wranges[0].lo;
                 } else {
                     ln.wint = parseUnsigned(ln.wraw) orelse
                         return bad(diag, alloc, E.@"bad-directive", "line {d}: value {s} is not `present` or an unsigned decimal integer", .{ ln.lineno, ln.wraw });
@@ -1759,6 +1940,12 @@ fn finalizeLine(alloc: std.mem.Allocator, p: *Pack, ln: *Line, in_group: bool, d
             if (ln.isFixed()) {
                 if (std.mem.eql(u8, ln.wraw, "present")) {
                     ln.wpresent = true;
+                } else if (ln.isWhen()) {
+                    // a list of texts (Version 0.20); the first is written
+                    ln.walts = (try parseWhenTexts(alloc, ln.wraw)) orelse
+                        return bad(diag, alloc, E.@"bad-directive", "line {d}: when {s}: an empty value, or `present` with other values", .{ ln.lineno, ln.wraw });
+                    ln.wtext = ln.walts[0].text;
+                    ln.wforced = ln.walts[0].forced;
                 } else if (ln.wraw.len > 0 and ln.wraw[0] == '=') {
                     ln.wforced = true;
                     ln.wtext = ln.wraw[1..];
@@ -2371,7 +2558,7 @@ fn fixedLen(loc: []const u8) ?u64 {
 }
 
 // The directives of a pack (ruling 5 of 0.11).
-const PackDir = enum { format, version, distribution, source, uses, wire, root, field, when, @"const", kind, requires, default, map, typemap, group, end, word_bytes, bit_order, layout, also, pad, @"align", presence, @"if", opt, chain, fx, length, delimiter, start, checksum, tag, key, armor, element, encoding, ext, choice, alt };
+const PackDir = enum { format, version, distribution, source, uses, wire, root, field, when, @"const", kind, requires, default, map, typemap, group, end, word_bytes, bit_order, layout, also, pad, @"align", presence, @"if", opt, chain, fx, length, delimiter, start, checksum, tag, key, armor, element, encoding, ext, choice, alt, @"switch", case, @"else" };
 
 // The header lines a pack has given so far, for the line checks.
 const HeaderSeen = struct {
@@ -2413,6 +2600,9 @@ fn packLineChecks(alloc: std.mem.Allocator, toks: []const []const u8, lineno: us
         // Their wire, layout and values are checked after the file is read.
         .encoding, .alt => n == 1,
         .choice => n == 1 or n == 2,
+        // Version 0.20: `switch <key>` and `case <values>` one, `else` none
+        // (ruling 39 of 0.20)
+        .@"switch", .case => n == 1,
         // `checksum sum16 <tag>` of the `tlv` wire has two (ruling 12 of 0.13)
         .checksum => n == 1 or (n == 2 and std.mem.eql(u8, toks[1], "sum16")),
         .field => n >= 3,
@@ -2422,7 +2612,7 @@ fn packLineChecks(alloc: std.mem.Allocator, toks: []const []const u8, lineno: us
         .group => n >= 2,
         .presence => n == 2,
         .also => n == 1 or n == 3,
-        .end, .opt, .chain, .fx, .ext => n == 0,
+        .end, .opt, .chain, .fx, .ext, .@"else" => n == 0,
     };
     if (!ok) return lineBad(diag, alloc, bd, "line {d}: {s} takes another number of arguments", .{ lineno, kw });
     if (needsWire(d) and !hdr.wire) {
@@ -2625,7 +2815,7 @@ fn fixedLine(st: *FState, toks: []const []const u8) anyerror!void {
         const slot = if (is(kw, "tag")) &p.tag_raw else &p.key_raw;
         if ((slot.* != null or p.kinds.items.len > 0) and p.tdir_bad == 0) p.tdir_bad = lineno;
         slot.* = toks[1];
-    } else if (is(kw, "pad") or is(kw, "align") or is(kw, "presence") or is(kw, "opt") or is(kw, "chain") or is(kw, "fx") or is(kw, "length") or is(kw, "also")) {
+    } else if (is(kw, "pad") or is(kw, "align") or is(kw, "presence") or is(kw, "opt") or is(kw, "chain") or is(kw, "fx") or is(kw, "length") or is(kw, "also") or is(kw, "switch") or is(kw, "case") or is(kw, "else")) {
         return bad(diag, alloc, E.@"bad-directive", "line {d}: {s} is a line of a sequential pack (`layout sequential` on the bits wire)", .{ lineno, kw });
     } else if (is(kw, "typemap")) {
         if (toks.len != 3) return bad(diag, alloc, E.@"bad-directive", "line {d}: typemap takes two arguments", .{lineno});
@@ -2649,7 +2839,7 @@ fn fixedLine(st: *FState, toks: []const []const u8) anyerror!void {
         try p.kinds.append(.{
             .name = toks[1],
             .lines = std.ArrayList(Line).init(alloc),
-            .requires = std.ArrayList([]const u8).init(alloc),
+            .requires = std.ArrayList(*ReqTerm).init(alloc),
             .defaults = std.ArrayList(Default).init(alloc),
         });
     } else if (is(kw, "requires")) {
@@ -2659,8 +2849,12 @@ fn fixedLine(st: *FState, toks: []const []const u8) anyerror!void {
         if (toks.len < 2) return bad(diag, alloc, E.@"bad-directive", "line {d}: requires takes at least one key", .{lineno});
         const k = &p.kinds.items[p.kinds.items.len - 1];
         for (toks[1..]) |key| {
-            try k.requires.append(key);
-            try p.key_uses.append(.{ .key = key, .tkind = null, .use = .requires });
+            // a term `<key>` or `<key>=<value>[,<value>…]` (Version 0.20)
+            const t = (try parseReqTerm(alloc, key, lineno)) orelse
+                return bad(diag, alloc, E.@"bad-directive", "line {d}: requires {s}: a key and a non-empty value list around `=`", .{ lineno, key });
+            try k.requires.append(t);
+            try p.key_uses.append(.{ .key = t.key, .tkind = null, .use = .requires, .eq = t.vals != null });
+            if (t.vals != null) try p.vchecks.append(alloc, .{ .req = t });
         }
     } else if (is(kw, "when") or is(kw, "const")) {
         const is_when = is(kw, "when");
@@ -3183,6 +3377,15 @@ pub const Engine = struct {
                 return err;
             }
         }
+        // Version 0.20: `requires <list>=…` (ruling 19: after the key
+        // checks, before the type checks)
+        for (p.key_uses.items) |ku| {
+            if (ku.use == .requires and ku.eq and self.isList(ku.key)) {
+                const err = E.@"bad-directive";
+                self.fail(err, "pack {s}: requires {s}=…: {s} is a list", .{ p.format, ku.key, ku.key });
+                return err;
+            }
+        }
         // key-type-mismatch: the transform yields the key's type, or, with
         // `via`, the table's model side is of the key's type
         for (p.key_uses.items) |ku| {
@@ -3224,6 +3427,7 @@ pub const Engine = struct {
         }
         for (p.common_defaults.items) |*d| try self.readDefault(p, d);
         if (p.seq) |b| try self.resolveSeqBody(p, b);
+        try self.checkValues(p);
         try finishPack(self.alloc, p);
         // last: a format name already loaded (ruling 5 of 0.11); the first
         // pack stays loaded
@@ -3441,8 +3645,56 @@ pub const Engine = struct {
                 n.ln.kty = self.keyType(n.ln.key).?;
                 for (n.also.items) |*a| a.kty = self.keyType(a.key).?;
             }
+            // Version 0.20: the switch key's type, each case's defaults
+            if (n.sw) |sw| sw.kty = self.keyType(sw.key) orelse .string;
+            if (n.cs) |cs| try self.resolveSeqDefaults(p, cs.defaults.items, &cs.dmap);
             try self.resolveSeqNodes(p, n.body);
             if (n.gbody) |b| try self.resolveSeqBody(p, b);
+        }
+    }
+
+    // Version 0.20, ruling 19: the `requires =` and `case` values in line
+    // order, each line its type, then its duplicates.
+    fn checkValues(self: *Engine, p: *Pack) anyerror!void {
+        for (p.vchecks.items) |vc| {
+            switch (vc) {
+                .req => |t| {
+                    t.kty = self.keyType(t.key) orelse .string;
+                    const out = try self.alloc.alloc([]const u8, t.vals.?.len);
+                    for (t.vals.?, 0..) |v, i| {
+                        out[i] = (try canonValue(self.alloc, t.kty, v)) orelse {
+                            const err = E.@"key-type-mismatch";
+                            self.fail(err, "pack {s}: line {d}: requires {s}={s}: {s} is not of the key's type {s}", .{ p.format, t.lineno, t.key, v, v, @tagName(t.kty) });
+                            return err;
+                        };
+                    }
+                    t.canon = out;
+                },
+                .case_ => |c| {
+                    const kty = self.keyType(c.sw.key) orelse .string;
+                    const out = try self.alloc.alloc([]const u8, c.cs.vals.len);
+                    for (c.cs.vals, 0..) |v, i| {
+                        out[i] = (try canonValue(self.alloc, kty, v)) orelse {
+                            const err = E.@"key-type-mismatch";
+                            self.fail(err, "pack {s}: line {d}: case {s}: not of the type {s} of {s}", .{ p.format, c.cs.lineno, v, @tagName(kty), c.sw.key });
+                            return err;
+                        };
+                    }
+                    for (out, 0..) |v, i| {
+                        var dup = listHolds(out[0..i], v);
+                        for (c.sw.cases.items) |other| {
+                            if (other == c.cs) break;
+                            if (listHolds(other.canon, v)) dup = true;
+                        }
+                        if (dup) {
+                            const err = E.@"bad-directive";
+                            self.fail(err, "pack {s}: line {d}: case value {s} is listed twice in the switch on {s}", .{ p.format, c.cs.lineno, c.cs.vals[i], c.sw.key });
+                            return err;
+                        }
+                    }
+                    c.cs.canon = out;
+                },
+            }
         }
     }
 
@@ -4792,6 +5044,18 @@ fn whenJsonRaw(alloc: std.mem.Allocator, ln: Line) ![]const u8 {
     return jsonStr(alloc, ln.wtext);
 }
 
+// Does any value of a `when` list hold for this member value (Version 0.20)?
+fn whenJsonHoldsAny(alloc: std.mem.Allocator, ln: *const Line, val: ?JValue) bool {
+    if (ln.wpresent) return whenJsonHolds(alloc, ln.*, val);
+    var l2 = ln.*;
+    for (ln.walts) |a| {
+        l2.wtext = a.text;
+        l2.wforced = a.forced;
+        if (whenJsonHolds(alloc, l2, val)) return true;
+    }
+    return false;
+}
+
 // Does a `when` hold for this member value (null: the member is absent)?
 fn whenJsonHolds(alloc: std.mem.Allocator, ln: Line, val: ?JValue) bool {
     const v = val orelse return false;
@@ -5725,19 +5989,20 @@ fn whenHolds(alloc: std.mem.Allocator, p: *const Pack, doc: Doc, ln: *const Line
             }
             const got = xmlGet(root, ln.locator) orelse return false;
             if (ln.wpresent) return true;
-            return std.mem.eql(u8, got, ln.wtext);
+            for (ln.walts) |a| if (std.mem.eql(u8, got, a.text)) return true;
+            return false;
         },
-        .geojson => |d| return whenJsonHolds(alloc, ln.*, geoLookup(d, ln.locator)),
-        .json => |it| return whenJsonHolds(alloc, ln.*, jitemLookup(it, ln)),
+        .geojson => |d| return whenJsonHoldsAny(alloc, ln, geoLookup(d, ln.locator)),
+        .json => |it| return whenJsonHoldsAny(alloc, ln, jitemLookup(it, ln)),
         .bits => |bd| {
             // a `when` that lies beyond the input does not hold
             if (bd.base + ln.bstart + ln.blen > bd.nbits) return false;
-            return getBits(bd.buf, p.msb, bd.base + ln.bstart, ln.blen) == ln.wint;
+            return inRanges(ln.wranges, getBits(bd.buf, p.msb, bd.base + ln.bstart, ln.blen));
         },
         .protobuf => |pd| {
             const leaf = (resolvePb(alloc, pd, ln.ppath) catch return false) orelse return false;
             if (ln.wpresent) return true;
-            return leaf.wt == 0 and leaf.uval == ln.wint;
+            return leaf.wt == 0 and inRanges(ln.wranges, leaf.uval);
         },
         .text => |td| {
             // a `when` on a column its field does not reach does not hold
@@ -6567,9 +6832,10 @@ fn selectKindEncode(alloc: std.mem.Allocator, p: *const Pack, e: *const Entity, 
     }
     for (p.kinds.items, 0..) |k, i| {
         var all = true;
-        for (k.requires.items) |key| {
-            // a key that is present, or a list with at least one item
-            if (!e.has(key)) {
+        for (k.requires.items) |t| {
+            // a key that is present, or a list with at least one item; with
+            // `=`, a listed value (Version 0.20)
+            if (!termHolds(alloc, t, e)) {
                 all = false;
                 break;
             }
@@ -7052,7 +7318,7 @@ fn pbEncodeScope(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, roo
         if (ln.isFixed()) {
             if (!ln.wpresent) {
                 try writeTag(&fb, number, 0);
-                try writeVarint(&fb, ln.wint);
+                try writeVarint(&fb, if (ln.isWhen()) try whenPbValue(alloc, p, sc, e, ln) else ln.wint);
             }
         } else if (fieldValue(p, sc, e, ln) catch |err|
             return bad(diag, alloc, err, "field {s} at {s}", .{ ln.key, ln.locator })) |mv|
@@ -7123,7 +7389,7 @@ fn bitsWriteLines(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, bu
 // the number of items.
 fn bitsWriteFixed(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, buf: []u8, base: usize, e: *const Entity, held: []const bool, diag: *Diag) anyerror!void {
     for (sc.lines) |*ln| {
-        if (ln.isFixed() and lineOn(ln, held)) setBits(buf, p.msb, base + ln.bstart, ln.blen, ln.wint);
+        if (ln.isFixed() and lineOn(ln, held)) setBits(buf, p.msb, base + ln.bstart, ln.blen, try whenBitsValue(alloc, p, sc, e, ln, held));
     }
     for (sc.lines) |*ln| {
         if (ln.tag != .group) continue;
@@ -7135,6 +7401,42 @@ fn bitsWriteFixed(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, bu
         }
         setBits(buf, p.msb, base + g.cstart, g.clen, n);
     }
+}
+
+// The value a `when` or `const` line writes on a fixed layout. Ruling 3 of
+// 0.20: for a `when` list, the value of the first field line whose key the
+// entity holds and that covers exactly the `when`'s bits, when it matches
+// the list; otherwise the first value.
+fn whenBitsValue(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, e: *const Entity, ln: *const Line, held: []const bool) !u64 {
+    if (!ln.isWhen() or !isWhenList(ln.wranges)) return ln.wint;
+    for (sc.lines) |*f| {
+        if (f.tag != .field or !lineOn(f, held)) continue;
+        if (f.bstart != ln.bstart or f.blen != ln.blen or f.heldValue(e) == null) continue;
+        const mv = (fieldValue(p, sc, e, f) catch return ln.wint) orelse return ln.wint;
+        const tmp = try alloc.alloc(u8, (f.bstart + f.blen + 7) / 8);
+        @memset(tmp, 0);
+        bitsWriteField(alloc, p, tmp, 0, f, mv) catch return ln.wint;
+        const v = getBits(tmp, p.msb, ln.bstart, ln.blen);
+        return if (inRanges(ln.wranges, v)) v else ln.wint;
+    }
+    return ln.wint;
+}
+
+// The varint a protobuf `when` writes. Ruling 3 of 0.20: for a list, the
+// value of the first field line on the same path whose key the entity
+// holds, when it is a varint the list matches; otherwise the first value.
+fn whenPbValue(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, e: *const Entity, ln: *const Line) !u64 {
+    if (!isWhenList(ln.wranges)) return ln.wint;
+    for (sc.lines) |*f| {
+        if (f.tag != .field or !std.mem.eql(usize, f.ppath, ln.ppath) or f.heldValue(e) == null) continue;
+        const mv = (fieldValue(p, sc, e, f) catch return ln.wint) orelse return ln.wint;
+        var fb = std.ArrayList(u8).init(alloc);
+        encodeProtoField(&fb, f.transform.kind, 1, mv) catch return ln.wint;
+        const ents = parsePb(alloc, fb.items) catch return ln.wint;
+        if (ents.len != 1 or ents[0].wt != 0) return ln.wint;
+        return if (inRanges(ln.wranges, ents[0].uval)) ents[0].uval else ln.wint;
+    }
+    return ln.wint;
 }
 
 // One gated scope or item, for the check of step 6 once the whole message
@@ -8687,8 +8989,44 @@ fn tlvEncode(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, e: *con
 const SPres = struct {
     name: []const u8,
     n: usize, // the number of presence bits; 0: `fx`
-    // named[i - 1]: some `if` block names bit i, with or without `!`
+    // named[i - 1]: some `if` block outside every `case` names bit i, with
+    // or without `!`
     named: std.ArrayListUnmanaged(bool) = .{},
+    // Version 0.20: the bits named by an `if` inside a case, with the id of
+    // the innermost case it sits in (ruling 21)
+    case_named: std.ArrayListUnmanaged(SCaseName) = .{},
+
+    fn namedInCase(self: *const SPres, bit: usize) bool {
+        for (self.case_named.items) |cn| if (cn.bit == bit) return true;
+        return false;
+    }
+};
+
+const SCaseName = struct { bit: usize, case_id: u32 };
+
+// Version 0.20: a `switch <key>` block. Its node's body holds one `.case_`
+// node per `case` or `else`, in line order.
+const SSwitch = struct {
+    key: []const u8,
+    lineno: usize,
+    kty: KeyType = .string,
+    cases: std.ArrayListUnmanaged(*SCase) = .{},
+    has_else: bool = false,
+    // the first line of the scope that maps the key before the switch, and
+    // which of its keys (0: its own, i: its i-th `also`)
+    key_src: ?*const SNode = null,
+    key_idx: usize = 0,
+};
+
+// One `case <value>[,<value>…]` or `else` of a switch.
+const SCase = struct {
+    id: u32,
+    lineno: usize,
+    is_else: bool = false,
+    vals: []const []const u8 = &.{}, // as written
+    canon: []const []const u8 = &.{}, // canonical texts, set at load
+    defaults: std.ArrayListUnmanaged(Default) = .{},
+    dmap: DMap = .{},
 };
 
 // One `<name>.<i>` or `!<name>.<i>` of an `if` line; `bit` counts from 1.
@@ -8704,7 +9042,7 @@ const SAlso = struct {
 };
 
 const SMode = enum { count, while_, more, fx, size_c, size_u };
-const STag = enum { field, constant, when, pad, align_, presence, if_, opt, group, chain, fx, length, whole, ext, choice, alt };
+const STag = enum { field, constant, when, pad, align_, presence, if_, opt, group, chain, fx, length, whole, ext, choice, alt, switch_, case_ };
 
 // Version 0.19: a UPER locator. `int:<lb>:<ub>[:ext]`, `int:<lb>:`, `int::`,
 // `enum:<n>[:ext]` (lb 0, ub n - 1), `chars:<lb>:<ub>`, `chars:`,
@@ -8832,13 +9170,16 @@ const SNode = struct {
     ext: bool = false,
     lb: i64 = 0,
     ub: i64 = 0,
+    ranges: []const WRange = &.{}, // when: the values and ranges (Version 0.20)
+    sw: ?*SSwitch = null, // switch
+    cs: ?*SCase = null, // case
 };
 
 const SKind = struct {
     name: []const u8,
     whens: []SNode = &.{},
     lines: []SNode = &.{},
-    requires: std.ArrayListUnmanaged([]const u8) = .{},
+    requires: std.ArrayListUnmanaged(*ReqTerm) = .{},
     defaults: std.ArrayListUnmanaged(Default) = .{},
     dmap: DMap = .{},
 };
@@ -8893,7 +9234,7 @@ fn isSequentialPack(alloc: std.mem.Allocator, def_text: []const u8) !bool {
     return bits and seq;
 }
 
-const SFrameTag = enum { body, if_, opt, chain, length, ext, choice, alt };
+const SFrameTag = enum { body, if_, opt, chain, length, ext, choice, alt, switch_, case_ };
 
 // An open block while a sequential pack is read. The message is the first
 // frame; a group body is a `body` frame with `is_group`.
@@ -8912,6 +9253,11 @@ const SFrame = struct {
     common_when: bool = false,
     kind_names_base: usize = 0,
     grp: ?*Group = null,
+    // body frames: the keys mapped by `field` and `also` lines read so far
+    // in the scope (Version 0.20); `common_mapped`: how many of them are the
+    // common lines'
+    mapped: std.ArrayListUnmanaged([]const u8) = .{},
+    common_mapped: usize = 0,
 };
 
 const SName = struct { name: []const u8, pres: *SPres, depth: usize };
@@ -8928,8 +9274,23 @@ const SParser = struct {
     // `length … whole`
     kind_seen: bool = false,
     whole_line: usize = 0,
+    next_case: u32 = 0,
 
     const bd = E.@"bad-directive";
+
+    // A key a `field` or `also` line maps, in its scope (Version 0.20).
+    fn mapKey(self: *SParser, key: []const u8) !void {
+        try self.bodyFrame().mapped.append(self.alloc, key);
+    }
+
+    // Close the open `case` or `else`: its lines join the switch.
+    fn closeCase(self: *SParser) !void {
+        var f = self.frames.pop();
+        self.names.shrinkRetainingCapacity(f.names_base);
+        var n = f.node;
+        n.body = try f.nodes.toOwnedSlice(self.alloc);
+        try self.top().nodes.append(self.alloc, n);
+    }
 
     fn top(self: *SParser) *SFrame {
         return &self.frames.items[self.frames.items.len - 1];
@@ -9027,6 +9388,11 @@ const SParser = struct {
                 // `layout sequential` stands before every line that needs the wire
                 if (self.hdr.wire_line) return self.err(bd, "layout sequential after a line it governs", .{});
             } else if (needsWire(d)) self.hdr.wire_line = true;
+        }
+        // between `switch` and its first `case`: only `case`, `else` or
+        // `end` (ruling 20 of 0.20)
+        if (self.top().tag == .switch_ and !(is(kw, "case") or is(kw, "else") or is(kw, "end"))) {
+            return self.err(bd, "{s} between a switch and its first case", .{kw});
         }
         // header and table directives belong to the pack, not to a block
         // (ruling 24 of 0.8)
@@ -9167,10 +9533,13 @@ const SParser = struct {
             try self.closeKind(f);
             if (f.kinds.items.len == 0) {
                 f.kind_names_base = self.names.items.len;
+                f.common_mapped = f.mapped.items.len;
             } else {
                 // the presence names of the kind before are no longer visible
                 self.names.shrinkRetainingCapacity(f.kind_names_base);
             }
+            // nor its mapped keys (a switch key is mapped in its scope)
+            f.mapped.shrinkRetainingCapacity(f.common_mapped);
             try f.kinds.append(alloc, .{ .name = toks[1] });
             self.kind_seen = true;
             f.in_whens = true;
@@ -9180,15 +9549,31 @@ const SParser = struct {
             if (f.tag != .body or f.kinds.items.len == 0) return self.err(bd, "requires outside a kind", .{});
             if (toks.len < 2) return self.err(bd, "requires takes at least one key", .{});
             const k = &f.kinds.items[f.kinds.items.len - 1];
-            for (toks[1..]) |key| {
-                try k.requires.append(alloc, key);
-                try p.key_uses.append(.{ .key = key, .tkind = null, .use = .requires });
+            for (toks[1..]) |tok| {
+                const t = (try parseReqTerm(alloc, tok, self.lineno)) orelse
+                    return self.err(bd, "requires {s}: a key and a non-empty value list around `=`", .{tok});
+                try k.requires.append(alloc, t);
+                try p.key_uses.append(.{ .key = t.key, .tkind = null, .use = .requires, .eq = t.vals != null });
+                if (t.vals != null) try p.vchecks.append(alloc, .{ .req = t });
             }
             f.last_field = false;
         } else if (is(kw, "default")) {
             if (toks.len != 3) return self.err(bd, "default takes a key and a value", .{});
-            const f = self.bodyFrame();
             const d = Default{ .key = toks[1], .text = toks[2] };
+            // inside a case: the case's (ruling 7 of 0.20)
+            var fi = self.frames.items.len;
+            const owner = while (fi > 0) {
+                fi -= 1;
+                const t = self.frames.items[fi].tag;
+                if (t == .case_ or t == .body) break &self.frames.items[fi];
+            } else unreachable;
+            if (owner.tag == .case_) {
+                try owner.node.cs.?.defaults.append(alloc, d);
+                try p.key_uses.append(.{ .key = toks[1], .tkind = null, .use = .default });
+                self.top().last_field = false;
+                return;
+            }
+            const f = self.bodyFrame();
             if (f.kinds.items.len == 0) {
                 try f.sbody.?.defaults.append(alloc, d);
             } else {
@@ -9201,9 +9586,18 @@ const SParser = struct {
             if (toks.len != 3) return self.err(bd, "{s} takes a bit length and a value", .{kw});
             if (!locatorFormOk(.bits, true, toks[1], false)) return self.lineErr(E.@"bad-locator", "{s}: {s} is not a bit length", .{ kw, toks[1] });
             const len = try self.bitLen(toks[1], kw, 64);
-            const v = parseUnsigned(toks[2]) orelse return self.err(bd, "{s}: the value {s} is not an unsigned decimal integer", .{ kw, toks[2] });
-            if (!fitsBits(v, len)) return self.err(bd, "{s}: the value {d} does not fit {d} bits", .{ kw, v, len });
-            const n = SNode{ .tag = if (is_when) .when else .constant, .lineno = self.lineno, .len = len, .value = v };
+            var ranges: []const WRange = &.{};
+            var v: u64 = 0;
+            if (is_when) {
+                // a list of values and ranges (Version 0.20)
+                ranges = (try parseWhenInts(alloc, toks[2], len)) orelse
+                    return self.err(bd, "when: {s} is not a list of unsigned values and ranges that fit {d} bits", .{ toks[2], len });
+                v = ranges[0].lo;
+            } else {
+                v = parseUnsigned(toks[2]) orelse return self.err(bd, "{s}: the value {s} is not an unsigned decimal integer", .{ kw, toks[2] });
+                if (!fitsBits(v, len)) return self.err(bd, "{s}: the value {d} does not fit {d} bits", .{ kw, v, len });
+            }
+            const n = SNode{ .tag = if (is_when) .when else .constant, .lineno = self.lineno, .len = len, .value = v, .ranges = ranges };
             if (!is_when) return self.add(n);
             const f = self.top();
             if (f.tag != .body) return self.err(bd, "when inside a block", .{});
@@ -9282,6 +9676,7 @@ const SParser = struct {
             }
             try p.key_uses.append(.{ .key = toks[1], .tkind = t.kind, .via = ln.via_name, .grp = self.bodyFrame().grp });
             if (ln.with_key) |wk| try p.key_uses.append(.{ .key = wk, .tkind = null, .use = .with });
+            try self.mapKey(toks[1]);
             try self.add(.{ .tag = .field, .lineno = self.lineno, .ln = ln, .uloc = uloc });
         } else if (is(kw, "also")) {
             // also <key> [via <table>], directly after a `field` line
@@ -9292,6 +9687,7 @@ const SParser = struct {
             const via_name: []const u8 = if (toks.len == 4) toks[3] else "";
             try fld.also.append(alloc, .{ .key = toks[1], .via_name = via_name, .lineno = self.lineno });
             try p.key_uses.append(.{ .key = toks[1], .tkind = fld.ln.transform.kind, .via = via_name, .grp = self.bodyFrame().grp });
+            try self.mapKey(toks[1]);
         } else if (is(kw, "pad")) {
             if (toks.len != 2) return self.err(bd, "pad takes a bit length", .{});
             try self.add(.{ .tag = .pad, .lineno = self.lineno, .len = try self.bitLen(toks[1], kw, 1 << 30) });
@@ -9331,8 +9727,23 @@ const SParser = struct {
                 const pr = found orelse return self.err(bd, "if {s}: no presence of that name is visible here", .{tk});
                 if (idx < 1 or idx > 4096 or (pr.n > 0 and idx > pr.n)) return self.err(bd, "if {s}: the bit is beyond the size of the presence", .{tk});
                 const bit: usize = @intCast(idx);
-                while (pr.named.items.len < bit) try pr.named.append(alloc, false);
-                pr.named.items[bit - 1] = true;
+                // inside a case: the bit is named only when the innermost
+                // case is read (ruling 21 of 0.20)
+                var in_case: ?u32 = null;
+                var fi = self.frames.items.len;
+                while (fi > 0) {
+                    fi -= 1;
+                    if (self.frames.items[fi].tag == .case_) {
+                        in_case = self.frames.items[fi].node.cs.?.id;
+                        break;
+                    }
+                }
+                if (in_case) |cid| {
+                    try pr.case_named.append(alloc, .{ .bit = bit, .case_id = cid });
+                } else {
+                    while (pr.named.items.len < bit) try pr.named.append(alloc, false);
+                    pr.named.items[bit - 1] = true;
+                }
                 conds[ci] = .{ .pres = pr, .bit = bit, .neg = neg };
             }
             try self.open(.if_, .{ .tag = .if_, .lineno = self.lineno, .conds = conds });
@@ -9413,10 +9824,50 @@ const SParser = struct {
             f.is_group = true;
             f.sbody = sb;
             f.grp = g;
+        } else if (is(kw, "switch")) {
+            // switch <model-key> (Version 0.20): the key is mapped by a
+            // `field` or `also` line of the scope before this line
+            if (toks.len != 2) return self.err(bd, "switch takes one model key", .{});
+            const bf = self.bodyFrame();
+            if (!listHolds(bf.mapped.items, toks[1])) {
+                return self.err(bd, "switch {s}: no field or also line of the scope maps the key before the switch", .{toks[1]});
+            }
+            const sw = try alloc.create(SSwitch);
+            sw.* = .{ .key = toks[1], .lineno = self.lineno };
+            p.seq_switch = true;
+            try self.open(.switch_, .{ .tag = .switch_, .lineno = self.lineno, .sw = sw });
+        } else if (is(kw, "case") or is(kw, "else")) {
+            const is_else = is(kw, "else");
+            if (is_else and toks.len != 1) return self.err(bd, "else takes no argument", .{});
+            if (!is_else and toks.len != 2) return self.err(bd, "case takes one value list", .{});
+            if (self.top().tag == .case_) {
+                try self.closeCase();
+            } else if (self.top().tag != .switch_) {
+                return self.err(bd, "{s} outside a switch", .{kw});
+            }
+            const sw = self.top().node.sw.?;
+            if (sw.has_else) return self.err(bd, "{s} after the else of the switch", .{kw});
+            if (is_else and sw.cases.items.len == 0) return self.err(bd, "else before a case", .{});
+            const cs = try alloc.create(SCase);
+            self.next_case += 1;
+            cs.* = .{ .id = self.next_case, .lineno = self.lineno, .is_else = is_else };
+            if (!is_else) {
+                // a lone `""` is the empty text (ruling 16)
+                cs.vals = if (toks[1].len == 0)
+                    try alloc.dupe([]const u8, &.{""})
+                else
+                    (try splitValueList(alloc, toks[1])) orelse return self.err(bd, "case {s}: an empty value in the list", .{toks[1]});
+                try p.vchecks.append(alloc, .{ .case_ = .{ .sw = sw, .cs = cs } });
+            }
+            sw.has_else = is_else;
+            try sw.cases.append(alloc, cs);
+            try self.frames.append(alloc, .{ .tag = .case_, .node = .{ .tag = .case_, .lineno = self.lineno, .cs = cs }, .names_base = self.names.items.len });
         } else if (is(kw, "end")) {
             if (toks.len != 1) return self.err(bd, "end takes no argument", .{});
             if (self.frames.items.len < 2) return self.err(bd, "end with no open block", .{});
             if (self.top().tag == .alt) try self.closeAlt();
+            if (self.top().tag == .switch_) return self.err(bd, "a switch with no case", .{});
+            if (self.top().tag == .case_) try self.closeCase();
             var f = self.frames.pop();
             self.names.shrinkRetainingCapacity(f.names_base);
             var n = f.node;
@@ -9484,13 +9935,14 @@ fn seqCollectGroups(alloc: std.mem.Allocator, nodes: []const SNode, blocks: *std
         switch (n.tag) {
             .group => try out.append(alloc, .{ .node = n, .blocks = try alloc.dupe(*const SNode, blocks.items) }),
             // an `alt` separates as an `if` or `opt` block does (ruling 20
-            // of 0.19)
-            .if_, .opt, .alt => {
+            // of 0.19), and two cases are different blocks (ruling 10 of
+            // 0.20)
+            .if_, .opt, .alt, .case_ => {
                 try blocks.append(alloc, n);
                 try seqCollectGroups(alloc, n.body, blocks, out);
                 _ = blocks.pop();
             },
-            .chain, .length, .ext, .choice => try seqCollectGroups(alloc, n.body, blocks, out),
+            .chain, .length, .ext, .choice, .switch_ => try seqCollectGroups(alloc, n.body, blocks, out),
             else => {},
         }
     }
@@ -9527,6 +9979,41 @@ fn seqCheckLists(alloc: std.mem.Allocator, b: *const SBody, diag: *Diag) anyerro
         }
         // each group body is a scope of its own
         for (all.items[if (ki == 0) 0 else common.items.len..]) |g| try seqCheckLists(alloc, g.node.gbody.?, diag);
+    }
+}
+
+// Version 0.20: each switch's key source, the first line of its scope that
+// maps the key before the switch in reading order.
+const SKeySrc = struct { node: *const SNode, idx: usize };
+
+fn seqLinkNodes(nodes: []SNode, map: *std.StringHashMap(SKeySrc)) anyerror!void {
+    for (nodes) |*n| {
+        switch (n.tag) {
+            .field => {
+                if (!map.contains(n.ln.key)) try map.put(n.ln.key, .{ .node = n, .idx = 0 });
+                for (n.also.items, 0..) |a, i| {
+                    if (!map.contains(a.key)) try map.put(a.key, .{ .node = n, .idx = i + 1 });
+                }
+            },
+            .switch_ => {
+                if (map.get(n.sw.?.key)) |src| {
+                    n.sw.?.key_src = src.node;
+                    n.sw.?.key_idx = src.idx;
+                }
+                try seqLinkNodes(n.body, map);
+            },
+            .group => try seqLinkBody(map.allocator, n.gbody.?),
+            else => try seqLinkNodes(n.body, map),
+        }
+    }
+}
+
+fn seqLinkBody(alloc: std.mem.Allocator, b: *SBody) anyerror!void {
+    var common = std.StringHashMap(SKeySrc).init(alloc);
+    try seqLinkNodes(b.common, &common);
+    for (b.kinds) |*k| {
+        var m = try common.clone();
+        try seqLinkNodes(k.lines, &m);
     }
 }
 
@@ -9584,6 +10071,7 @@ fn parseSeqPack(alloc: std.mem.Allocator, def_text: []const u8, diag: *Diag) any
     try seqResolveVia(alloc, p, root.common, diag);
     for (root.kinds) |*k| try seqResolveVia(alloc, p, k.lines, diag);
     try seqCheckLists(alloc, root, diag);
+    if (p.seq_switch) try seqLinkBody(alloc, root);
     p.seq = root;
     if (p.distribution == null) return bad(diag, alloc, E.@"missing-distribution", "the pack has no distribution line", .{});
     if (p.sources.items.len == 0) return bad(diag, alloc, E.@"missing-source", "the pack has no source line", .{});
@@ -9608,12 +10096,23 @@ fn condsHold(env: ?*const PEnv, conds: []const SCond) bool {
     return true;
 }
 
-// The `default` values in scope: a kind's, then the common ones of its body.
+// The `default` values in scope: those of the cases the line sits in,
+// innermost first (rulings 7 and 22 of 0.20), then a kind's, then the common
+// ones of its body.
+const DLink = struct { map: *const DMap, parent: ?*const DLink };
+
 const DS = struct {
     a: ?*const DMap = null,
     b: ?*const DMap = null,
+    c: ?*const DLink = null,
 
     fn get(self: DS, key: []const u8) ?MV {
+        var l = self.c;
+        while (l) |x| : (l = x.parent) {
+            if (x.map.count() > 0) {
+                if (x.map.get(key)) |v| return v;
+            }
+        }
         if (self.a) |m| {
             if (m.get(key)) |v| return v;
         }
@@ -9642,8 +10141,31 @@ const SDec = struct {
     in_extent: bool = false,
     // the first field that failed (`transform-decode`), reported at the end
     failed_msg: ?[]const u8 = null,
+    // Version 0.20: the cases read so far, and the presence bits that are 1
+    // and named only by `if` lines in cases, checked at the end of the
+    // presence's block (ruling 21)
+    read_cases: std.ArrayListUnmanaged(u32) = .{},
+    pending: std.ArrayListUnmanaged(SPending) = .{},
+    // the cases being read, outermost first
+    open_cases: std.ArrayListUnmanaged(u32) = .{},
 
     const mw = E.@"malformed-wire";
+    const SPending = struct { pres: *const SPres, bit: usize, start: usize };
+
+    // The pending bits from `mark` on: each needs a case that names it read
+    // since its presence was.
+    fn checkPending(self: *SDec, mark: usize) !void {
+        if (self.pending.items.len <= mark) return;
+        for (self.pending.items[mark..]) |pd| {
+            var ok = false;
+            for (pd.pres.case_named.items) |cn| {
+                if (cn.bit != pd.bit) continue;
+                if (std.mem.indexOfScalar(u32, self.read_cases.items[pd.start..], cn.case_id) != null) ok = true;
+            }
+            if (!ok) return bad(self.diag, self.alloc, mw, "presence bit {s}.{d} is 1 and no `if` of the lines read names it", .{ pd.pres.name, pd.bit });
+        }
+        self.pending.shrinkRetainingCapacity(mark);
+    }
     const Avail = enum { ok, absent };
 
     fn limit(self: *const SDec) usize {
@@ -9703,8 +10225,12 @@ const SDec = struct {
         if (se.e.fields.contains(key)) return; // the earliest line of a key wins
         var mv = raw;
         if (via) |t| {
-            mv = tableDecode(t, mv, kty) catch
+            mv = tableDecode(t, mv, kty) catch {
+                // the key failed: a `switch` on it fails the decode
+                // (ruling 35 of 0.20)
+                try se.failed.append(self.alloc, key);
                 return self.fieldFailed(try std.fmt.allocPrint(self.alloc, "field {s}: the table {s} has no entry for the value", .{ key, via_name }));
+            };
         }
         if (mv == .str and std.mem.eql(u8, key, "type")) {
             if (self.p.tm_nat2cot.get(mv.str)) |cot| mv = MV{ .str = cot };
@@ -9718,7 +10244,9 @@ const SDec = struct {
 
     fn block(self: *SDec, list: []const SNode, se: *SEnt, env: ?*const PEnv) anyerror!void {
         var inner = env;
+        const mark = self.pending.items.len;
         try self.nodes(list, se, &inner);
+        try self.checkPending(mark);
     }
 
     fn node(self: *SDec, n: *const SNode, se: *SEnt, env: *?*const PEnv) anyerror!void {
@@ -9755,7 +10283,7 @@ const SDec = struct {
             },
             .when => {
                 // a common `when`: it must hold for any message of the format
-                if (!self.fits(n.len) or self.take(n.len) != n.value) {
+                if (!self.fits(n.len) or !inRanges(n.ranges, self.take(n.len))) {
                     return bad(self.diag, alloc, E.@"no-kind", "the common `when {d} {d}` does not hold", .{ n.len, n.value });
                 }
             },
@@ -9775,9 +10303,19 @@ const SDec = struct {
                     }
                 }
                 // a bit that is 1 and that no `if` block names: the message
-                // holds a part the pack does not describe
+                // holds a part the pack does not describe. A bit named only
+                // inside cases waits for the cases read (ruling 21 of 0.20).
                 for (bits.items, 0..) |b, i| {
                     if (b and (i >= pr.named.items.len or !pr.named.items[i])) {
+                        if (pr.namedInCase(i + 1)) {
+                            // named in a case being read: it is read
+                            var open_named = false;
+                            for (pr.case_named.items) |cn| {
+                                if (cn.bit == i + 1 and std.mem.indexOfScalar(u32, self.open_cases.items, cn.case_id) != null) open_named = true;
+                            }
+                            if (!open_named) try self.pending.append(alloc, .{ .pres = pr, .bit = i + 1, .start = self.read_cases.items.len });
+                            continue;
+                        }
                         return bad(self.diag, alloc, mw, "presence bit {s}.{d} is 1 and no `if` block names it", .{ pr.name, i + 1 });
                     }
                 }
@@ -9794,6 +10332,7 @@ const SDec = struct {
             },
             .chain => {
                 var inner = env.*;
+                const mark = self.pending.items.len;
                 for (n.body, 0..) |*c, j| {
                     if (c.tag != .fx) {
                         try self.node(c, se, &inner);
@@ -9805,7 +10344,27 @@ const SDec = struct {
                         return bad(self.diag, alloc, mw, "the last fx bit of a chain is 1", .{});
                     }
                 }
+                try self.checkPending(mark);
             },
+            .switch_ => {
+                // Version 0.20: the key's decoded value selects the case
+                const sw = n.sw.?;
+                // a key line that failed its transform fails the decode
+                // (ruling 35 of 0.20)
+                if (se.e.get(sw.key) == null) {
+                    for (se.failed.items) |fk| {
+                        if (std.mem.eql(u8, fk, sw.key)) return bad(self.diag, alloc, E.@"transform-decode", "switch {s}: its line fails its transform", .{sw.key});
+                    }
+                }
+                const idx = try caseIndex(alloc, n, se.e.get(sw.key)) orelse
+                    return bad(self.diag, alloc, E.@"no-kind", "switch {s}: no case holds the value, and there is no else", .{sw.key});
+                const c = &n.body[idx];
+                try self.read_cases.append(alloc, c.cs.?.id);
+                try self.open_cases.append(alloc, c.cs.?.id);
+                try self.block(c.body, se, env.*);
+                _ = self.open_cases.pop();
+            },
+            .case_ => unreachable, // a case is read by its switch
             .length => {
                 if (try self.avail(n.len, "length") == .absent) return;
                 const stated: i128 = self.take(n.len);
@@ -10083,6 +10642,7 @@ const SDec = struct {
     // lines.
     fn body(self: *SDec, b: *const SBody, se: *SEnt, env_in: ?*const PEnv) anyerror!void {
         var env = env_in;
+        const mark = self.pending.items.len;
         try self.nodes(b.common, se, &env);
         if (b.kinds.len > 0) {
             var sel: ?*const SKind = null;
@@ -10091,7 +10651,7 @@ const SDec = struct {
                 var ok = true;
                 for (k.whens) |*w| {
                     // a `when` any of whose bits lies beyond the input does not hold
-                    if (!self.fits(w.len) or self.take(w.len) != w.value) {
+                    if (!self.fits(w.len) or !inRanges(w.ranges, self.take(w.len))) {
                         ok = false;
                         break;
                     }
@@ -10107,6 +10667,7 @@ const SDec = struct {
             se.e.kind_name = k.name;
             try self.nodes(k.lines, se, &env);
         }
+        try self.checkPending(mark);
         for (se.failed.items) |key| {
             if (!se.e.fields.contains(key)) return self.fieldFailed(try std.fmt.allocPrint(self.alloc, "failed fields: {s}", .{key}));
         }
@@ -10120,6 +10681,20 @@ const SDec = struct {
     }
 };
 
+// Version 0.20: the case of a switch node (an index into its body) that a
+// value of its key selects: the first case listing its canonical text, else
+// the `else`; null: none (`no-kind`). An absent key selects the `else`.
+fn caseIndex(alloc: std.mem.Allocator, n: *const SNode, val: ?MV) !?usize {
+    if (val) |mv| {
+        const c = try canonOfMV(alloc, n.sw.?.kty, mv);
+        for (n.body, 0..) |*cn, i| {
+            if (!cn.cs.?.is_else and listHolds(cn.cs.?.canon, c)) return i;
+        }
+    }
+    for (n.body, 0..) |*cn, i| if (cn.cs.?.is_else) return i;
+    return null;
+}
+
 fn seqDecode(alloc: std.mem.Allocator, p: *const Pack, bytes: []const u8, diag: *Diag) anyerror!Entity {
     const in = bitsInput(alloc, p, bytes) catch |err| return bad(diag, alloc, err, "{s}", .{if (p.armor) "the input is not six-bit armored text" else "the input is not hex of even length"});
     var d = SDec{ .alloc = alloc, .p = p, .buf = in.buf, .diag = diag, .hard_end = in.nbits, .soft_end = in.nbits };
@@ -10132,6 +10707,14 @@ fn seqDecode(alloc: std.mem.Allocator, p: *const Pack, bytes: []const u8, diag: 
 
 const SWhole = struct { at: usize, len: usize, plus: i64 };
 
+// Version 0.20: the case each switch selects for one entity or item (an
+// index into the switch node's body; `no_case`: none). Encode runs until
+// the cases it assumed ahead (for presence, `opt` and `fx` bits) are the
+// cases the written bits select.
+const SwKey = struct { n: usize, e: usize };
+const SwTable = std.AutoHashMapUnmanaged(SwKey, u32);
+const no_case = std.math.maxInt(u32);
+
 // The encoder lays out a scope in two passes: the presence bits and `fx` bits
 // are computed from the entity (`scan`, `hasContent`) before they are written.
 const SEnc = struct {
@@ -10141,8 +10724,116 @@ const SEnc = struct {
     out: std.ArrayList(u8), // zero beyond the cursor
     pos: usize = 0,
     wholes: std.ArrayListUnmanaged(SWhole) = .{},
+    // Version 0.20: the switch cases, assumed or found; a dry run settles
+    // them and raises no `no-kind` for a switch
+    table: ?*SwTable = null,
+    dry: bool = false,
+    changed: bool = false,
+    // the values decode would read back from the lines written so far in
+    // the current message or item, by key (the earliest line wins)
+    kv: ?*std.StringHashMapUnmanaged(MV) = null,
+    // keys whose line wrote bits that do not read back
+    kv_failed: ?*std.StringHashMapUnmanaged(void) = null,
 
     const te = E.@"transform-encode";
+
+    // The value decode would read for key `j` of a field (0: its own, i: its
+    // i-th `also`) from the bits at `at`; null: a sentinel or a failure.
+    fn readBack(self: *SEnc, buf: []const u8, at: usize, n: *const SNode, j: usize) ?MV {
+        return switch (self.readBackR(buf, at, n, j)) {
+            .val => |v| v,
+            else => null,
+        };
+    }
+
+    // As `readBack`, telling a sentinel (`absent`) from a value that fails
+    // its transform or table (`failed`, ruling 31 of 0.20).
+    const RB = union(enum) { val: MV, absent, failed };
+
+    fn readBackR(self: *SEnc, buf: []const u8, at: usize, n: *const SNode, j: usize) RB {
+        const ln = &n.ln;
+        if (ln.abs_set and absentInt(ln, bitsRaw(self.p, buf, at, ln))) return .absent;
+        var mv = bitsDecodeField(self.alloc, self.p, buf, at, ln) catch return .failed;
+        const key = if (j == 0) ln.key else n.also.items[j - 1].key;
+        const via = if (j == 0) ln.via else n.also.items[j - 1].via;
+        const kty = if (j == 0) ln.kty else n.also.items[j - 1].kty;
+        if (via) |t| mv = tableDecode(t, mv, kty) catch return .failed;
+        if (mv == .str and std.mem.eql(u8, key, "type")) {
+            if (self.p.tm_nat2cot.get(mv.str)) |cot| mv = MV{ .str = cot };
+        }
+        return .{ .val = mv };
+    }
+
+    // The case a switch selects, assumed before its key's line is written:
+    // the one recorded, else the one the key's line would select if it were
+    // written (a run that reaches the switch corrects it).
+    fn predictCase(self: *SEnc, n: *const SNode, ent: *const Entity, ds: DS) !u32 {
+        const k = SwKey{ .n = @intFromPtr(n), .e = @intFromPtr(ent) };
+        const tbl = self.table.?;
+        if (tbl.get(k)) |v| return v;
+        const sw = n.sw.?;
+        var val: ?MV = null;
+        if (sw.key_src) |src| if (src.uloc) |u| {
+            // a UPER key line (0.19): its bits depend on its value; write
+            // it alone and read it back
+            var tmp = SEnc{ .alloc = self.alloc, .p = self.p, .diag = self.diag, .out = std.ArrayList(u8).init(self.alloc), .dry = true };
+            const save = self.diag.msg;
+            const wrote = if (tmp.uperField(src, u, ent, ds)) true else |err| blk: {
+                if (err == error.OutOfMemory) return err;
+                break :blk false;
+            };
+            self.diag.msg = save;
+            if (wrote) val = switch (tmp.uperReadBackR(tmp.out.items, 0, tmp.pos, src, u, sw.key_idx)) {
+                .val => |v| v,
+                else => null,
+            };
+            const idx: u32 = if (try caseIndex(self.alloc, n, val)) |i| @intCast(i) else no_case;
+            try tbl.put(self.alloc, k, idx);
+            return idx;
+        };
+        if (sw.key_src) |src| {
+            const ln = &src.ln;
+            const tmp = try self.alloc.alloc(u8, (ln.blen + 7) / 8);
+            @memset(tmp, 0);
+            const mv = self.fieldValueQuiet(src, ent, ds);
+            if (mv) |v| {
+                bitsWriteField(self.alloc, self.p, tmp, 0, ln, v) catch {};
+            } else if (ln.sentinelOn(ent)) {
+                bitsWriteRaw(self.p, tmp, 0, ln, ln.abs_ints[0]);
+            }
+            val = self.readBack(tmp, 0, src, sw.key_idx);
+        }
+        const idx: u32 = if (try caseIndex(self.alloc, n, val)) |i| @intCast(i) else no_case;
+        try tbl.put(self.alloc, k, idx);
+        return idx;
+    }
+
+    // As `readBackR` for a field with a UPER locator (Version 0.19): decode
+    // its bits `buf[at..end)` as decode would read them.
+    fn uperReadBackR(self: *SEnc, buf: []const u8, at: usize, end: usize, n: *const SNode, u: ULoc, j: usize) RB {
+        const save = self.diag.msg;
+        defer self.diag.msg = save;
+        var e = Entity.init(self.alloc);
+        var se = SEnt{ .e = &e };
+        var d = SDec{ .alloc = self.alloc, .p = self.p, .buf = buf, .diag = self.diag, .pos = at, .hard_end = end, .soft_end = end };
+        d.uperField(n, u, &se) catch return .failed;
+        if (d.failed_msg != null) return .failed;
+        const key = if (j == 0) n.ln.key else n.also.items[j - 1].key;
+        for (se.failed.items) |fk| if (std.mem.eql(u8, fk, key)) return .failed;
+        return if (e.get(key)) |v| .{ .val = v } else .absent;
+    }
+
+    fn fieldValueQuiet(self: *SEnc, n: *const SNode, ent: *const Entity, ds: DS) ?MV {
+        const save = self.diag.msg;
+        defer self.diag.msg = save;
+        return self.fieldValue(n, ent, ds) catch null;
+    }
+
+    // The defaults in scope inside a case.
+    fn caseDS(ds: DS, c: *const SNode, link: *DLink) DS {
+        link.* = .{ .map = &c.cs.?.dmap, .parent = ds.c };
+        return .{ .a = ds.a, .b = ds.b, .c = link };
+    }
 
     fn ensure(self: *SEnc, nbits: usize) !void {
         const nb = (nbits + 7) / 8;
@@ -10175,8 +10866,8 @@ const SEnc = struct {
         }
         for (b.kinds) |*k| {
             var all = true;
-            for (k.requires.items) |key| {
-                if (!ent.has(key)) {
+            for (k.requires.items) |t| {
+                if (!termHolds(self.alloc, t, ent)) {
                     all = false;
                     break;
                 }
@@ -10236,6 +10927,14 @@ const SEnc = struct {
                     }
                 },
                 .if_, .opt, .chain, .length, .ext, .choice, .alt => if (try self.hasContent(n.body, ent, ds)) return true,
+                // the selected case only (Version 0.20)
+                .switch_ => {
+                    const idx = try self.predictCase(n, ent, ds);
+                    if (idx == no_case) continue;
+                    var link: DLink = undefined;
+                    const c = &n.body[idx];
+                    if (try self.hasContent(c.body, ent, caseDS(ds, c, &link))) return true;
+                },
                 else => {},
             }
         }
@@ -10267,6 +10966,14 @@ const SEnc = struct {
                     try self.scan(pres, n.body, ent, ds, bits);
                 },
                 .opt, .chain, .length, .ext, .choice, .alt => try self.scan(pres, n.body, ent, ds, bits),
+                // the selected case only (Version 0.20)
+                .switch_ => {
+                    const idx = try self.predictCase(n, ent, ds);
+                    if (idx == no_case) continue;
+                    var link: DLink = undefined;
+                    const c = &n.body[idx];
+                    try self.scan(pres, c.body, ent, caseDS(ds, c, &link), bits);
+                },
                 .group => {
                     const items = ent.lists.get(n.list) orelse continue;
                     const b = n.gbody.?;
@@ -10288,6 +10995,19 @@ const SEnc = struct {
     }
 
     fn body(self: *SEnc, b: *const SBody, ent: *const Entity, env_in: ?*const PEnv, is_item: bool) anyerror!void {
+        // the values read back are per message or item
+        var kv = std.StringHashMapUnmanaged(MV){};
+        var kvf = std.StringHashMapUnmanaged(void){};
+        const save_kv = self.kv;
+        const save_kvf = self.kv_failed;
+        if (self.table != null) {
+            self.kv = &kv;
+            self.kv_failed = &kvf;
+        }
+        defer {
+            self.kv = save_kv;
+            self.kv_failed = save_kvf;
+        }
         const k = try self.selectKind(b, ent, is_item);
         const ds = DS{ .a = if (k) |kk| &kk.dmap else null, .b = &b.dmap };
         var env = env_in;
@@ -10314,19 +11034,75 @@ const SEnc = struct {
         const alloc = self.alloc;
         switch (n.tag) {
             .field => {
-                if (n.uloc) |u| return self.uperField(n, u, ent, ds);
+                if (n.uloc) |u| {
+                    const at = self.pos;
+                    try self.uperField(n, u, ent, ds);
+                    // Version 0.20 beside 0.19: what decode reads back from
+                    // the bits the UPER field wrote, for a switch
+                    if (self.kv) |m| {
+                        for (0..n.also.items.len + 1) |j| {
+                            const key = if (j == 0) n.ln.key else n.also.items[j - 1].key;
+                            if (m.contains(key)) continue;
+                            switch (self.uperReadBackR(self.out.items, at, self.pos, n, u, j)) {
+                                .val => |mv| try m.put(alloc, key, mv),
+                                .failed => try self.kv_failed.?.put(alloc, key, {}),
+                                .absent => {},
+                            }
+                        }
+                    }
+                    return;
+                }
                 const ln = &n.ln;
                 try self.ensure(self.pos + ln.blen);
                 // an absent key writes zero bits, or with `absent` its first
                 // sentinel (Version 0.9), which is not content (ruling 4)
-                if (try self.fieldValue(n, ent, ds)) |mv| {
-                    bitsWriteField(alloc, self.p, self.out.items, self.pos, ln, mv) catch |err|
-                        return bad(self.diag, alloc, err, "field {s}: the value does not encode in {d} bits", .{ ln.key, ln.blen });
+                const fv = if (self.dry) self.fieldValueQuiet(n, ent, ds) else try self.fieldValue(n, ent, ds);
+                if (fv) |mv| {
+                    bitsWriteField(alloc, self.p, self.out.items, self.pos, ln, mv) catch |err| {
+                        if (!self.dry) return bad(self.diag, alloc, err, "field {s}: the value does not encode in {d} bits", .{ ln.key, ln.blen });
+                    };
                 } else if (ln.sentinelOn(ent)) {
                     bitsWriteRaw(self.p, self.out.items, self.pos, ln, ln.abs_ints[0]);
                 }
+                // Version 0.20: what decode reads back, for a switch
+                if (self.kv) |m| {
+                    for (0..n.also.items.len + 1) |j| {
+                        const key = if (j == 0) ln.key else n.also.items[j - 1].key;
+                        if (m.contains(key)) continue;
+                        switch (self.readBackR(self.out.items, self.pos, n, j)) {
+                            .val => |mv| try m.put(alloc, key, mv),
+                            .failed => try self.kv_failed.?.put(alloc, key, {}),
+                            .absent => {},
+                        }
+                    }
+                }
                 self.pos += ln.blen;
             },
+            .switch_ => {
+                // Version 0.20: the case decode would select from the bits
+                // the key's line wrote
+                const sw = n.sw.?;
+                const val = if (self.kv) |m| m.get(sw.key) else null;
+                // a key whose line wrote bits that do not decode (ruling 31)
+                if (val == null and !self.dry and self.kv_failed != null and self.kv_failed.?.contains(sw.key)) {
+                    return bad(self.diag, alloc, te, "switch {s}: the bits its line wrote do not read back", .{sw.key});
+                }
+                const found: u32 = if (try caseIndex(alloc, n, val)) |i| @intCast(i) else no_case;
+                const k = SwKey{ .n = @intFromPtr(n), .e = @intFromPtr(ent) };
+                const tbl = self.table.?;
+                if (tbl.get(k)) |was| {
+                    if (was != found) self.changed = true;
+                }
+                try tbl.put(alloc, k, found);
+                if (found == no_case) {
+                    if (self.dry) return;
+                    return bad(self.diag, alloc, E.@"no-kind", "switch {s}: no case holds the value its line wrote, and there is no else", .{sw.key});
+                }
+                const c = &n.body[found];
+                var link: DLink = undefined;
+                try self.block(c.body, ent, caseDS(ds, c, &link), env.*);
+            },
+            .case_ => unreachable, // a case is written by its switch
             .constant, .when => try self.put(n.len, n.value),
             .pad => try self.zeros(n.len),
             .align_ => {
@@ -10610,7 +11386,23 @@ const SEnc = struct {
 };
 
 fn seqEncode(alloc: std.mem.Allocator, p: *const Pack, e: *const Entity, diag: *Diag) anyerror![]u8 {
-    var enc = SEnc{ .alloc = alloc, .p = p, .diag = diag, .out = std.ArrayList(u8).init(alloc) };
+    var table = SwTable{};
+    if (p.seq_switch) {
+        // Version 0.20: dry runs until the cases assumed ahead are the cases
+        // the written bits select
+        var iter: usize = 0;
+        while (true) : (iter += 1) {
+            var dry = SEnc{ .alloc = alloc, .p = p, .diag = diag, .out = std.ArrayList(u8).init(alloc), .table = &table, .dry = true };
+            dry.body(p.seq.?, e, null, false) catch |err| {
+                if (err == error.OutOfMemory) return err;
+                break; // the final encode reports it (ruling 34)
+            };
+            if (!dry.changed) break;
+            // a prediction that never settles (ruling 33)
+            if (iter == 32) return bad(diag, alloc, E.@"transform-encode", "the predicted switch cases do not settle", .{});
+        }
+    }
+    var enc = SEnc{ .alloc = alloc, .p = p, .diag = diag, .out = std.ArrayList(u8).init(alloc), .table = if (p.seq_switch) &table else null };
     try enc.body(p.seq.?, e, null, false);
     // armored: the bits to the cursor, not rounded to a byte (Version 0.14)
     if (p.armor) return armorEncode(alloc, enc.out.items, enc.pos);

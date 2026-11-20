@@ -1,0 +1,9 @@
+{
+  "name": "comma-separates-values",
+  "from": "conformance-kinds-json",
+  "to": "conformance-kinds-json",
+  "input": "{\"t\":\"a,b\",\"x\":1}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.20, Lists and ranges in `when`, on text wires; a comma separates values: the text a,b is in no list"
+}

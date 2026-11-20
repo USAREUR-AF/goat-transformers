@@ -1,0 +1,9 @@
+{
+  "name": "items-ruling-07-no-default-in-another-case",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-items",
+  "input": "{\"x\":6}",
+  "expect": "06000000",
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; groups, presence and defaults in cases; ruling 7: the default of case 5 does not apply in case 6"
+}

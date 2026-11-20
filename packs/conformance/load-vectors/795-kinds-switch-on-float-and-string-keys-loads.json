@@ -1,0 +1,8 @@
+{
+  "name": "795-kinds-switch-on-float-and-string-keys-loads",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey x int -\nkey y int -\nkey z int -\nkey a float -\nkey s string -\nkey label string -\nlist items \"a list\"\n"
+  ],
+  "pack": "format probe\nversion 0.20.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nlayout sequential\nfield probe.a 8 uscale:1/2\nfield probe.s 16 ascii\nswitch probe.a\n  case 2.50,0,-1\nend\nswitch probe.s\n  case AB,1.0\n  case 01\nend\n"
+}

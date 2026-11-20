@@ -1,0 +1,35 @@
+# Conformance probe pack for presence bits named only inside cases of group
+# items (spec 0.20, ruling 36), most significant bit first. Public.
+#
+#   presence p 8              a message presence
+#   recs, count 8; each item: x : 8, then by x
+#     1     if p.1: y : 8
+#     2     if p.2: z : 8
+#     else  nothing
+#
+# A bit named only inside cases is satisfied by such a case read anywhere
+# later in the same decode, a later item included. On encode any item with
+# the content sets the bit (ruling 12 of 0.8).
+format     conformance-kinds-across
+version    0.20.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+presence p 8
+group  probe.recs  count 8
+  field  probe.x  8  uint
+  switch probe.x
+    case 1
+      if p.1
+        field  probe.y  8  uint
+      end
+    case 2
+      if p.2
+        field  probe.z  8  uint
+      end
+    else
+  end
+end

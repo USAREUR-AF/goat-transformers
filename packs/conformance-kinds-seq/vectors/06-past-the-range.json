@@ -1,0 +1,9 @@
+{
+  "name": "past-the-range",
+  "from": "conformance-kinds-seq",
+  "to": "conformance-kinds-seq",
+  "input": "010f07",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.20, Lists and ranges in `when` on a sequential layout; 15"
+}

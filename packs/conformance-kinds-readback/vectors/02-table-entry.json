@@ -1,0 +1,13 @@
+{
+  "name": "table-entry",
+  "from": "conformance-kinds-readback",
+  "to": "conformance-kinds-readback",
+  "input": "0102",
+  "expect": "0102",
+  "model": {
+    "probe.label": "alpha",
+    "probe.y": "2"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 31: a switch key that does not read back on encode is transform-encode: the output would not decode; 1 is alpha"
+}

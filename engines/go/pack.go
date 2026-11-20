@@ -117,12 +117,45 @@ type When struct {
 	Line    int
 	Const   bool
 	loc     locator
-	group   *Group // the innermost group the line is in, nil outside a group
-	gate    *Gate  // the innermost gate block the line is in, nil outside a block (0.17)
-	present bool   // the value is the word `present`
-	text    string // text wires: the value, a leading `=` stripped
-	forced  bool   // text wires: the value was written with a leading `=`
-	num     uint64 // bits and protobuf: the unsigned integer
+	group   *Group     // the innermost group the line is in, nil outside a group
+	gate    *Gate      // the innermost gate block the line is in, nil outside a block (0.17)
+	present bool       // the value is the word `present`
+	text    string     // text wires: the value, a leading `=` stripped
+	forced  bool       // text wires: the value was written with a leading `=`
+	num     uint64     // bits and protobuf: the unsigned integer
+	texts   []string   // text wires: every listed value, a leading `=` stripped (0.20)
+	ranges  []numRange // bits and protobuf: every listed value or range (0.20)
+}
+
+// numRange is one value (lo = hi) or one range lo..hi of a `when` list.
+type numRange struct{ lo, hi uint64 }
+
+// matchNum reports whether an unsigned wire value matches the `when`: it
+// equals a listed value or lies in a listed range (0.20).
+func (w *When) matchNum(u uint64) bool {
+	if w.ranges == nil {
+		return u == w.num
+	}
+	for _, r := range w.ranges {
+		if u >= r.lo && u <= r.hi {
+			return true
+		}
+	}
+	return false
+}
+
+// matchText reports whether a text matches one of the listed values of a
+// text-wire `when` (0.20).
+func (w *When) matchText(s string) bool {
+	if w.texts == nil {
+		return s == w.text
+	}
+	for _, t := range w.texts {
+		if s == t {
+			return true
+		}
+	}
+	return false
 }
 
 // Default is one `default` line: the value an encode uses for a key the
@@ -206,8 +239,9 @@ type Group struct {
 type KindDef struct {
 	Name     string
 	Line     int
-	Requires []string
-	Root     string // xml: the kind's root element, "" to use the pack's
+	Requires []string   // the keys of the `requires` terms, in line order
+	reqs     []*reqTerm // the `requires` terms, in line order
+	Root     string     // xml: the kind's root element, "" to use the pack's
 	rootLine int
 	lines    []line
 	whens    []*When // the kind's `when` lines, in line order
@@ -253,6 +287,110 @@ type keyRef struct {
 	def     *Default // nil unless a `default` line
 	group   *Group   // nil unless a `group` line
 	req     bool     // a `requires` key: a key or a list
+	term    *reqTerm // a `requires` term with `=` (0.20), nil otherwise
+}
+
+// reqTerm is one term of a `requires` line: a key, and since 0.20 with `=`
+// a list of values the key must hold one of.
+type reqTerm struct {
+	key   string
+	eq    bool
+	vals  []string        // the values as written
+	canon map[string]bool // the canonical texts of the values, set when the pack is loaded
+	line  int
+}
+
+// valueCheck is one line whose values are read as a key's declared type once
+// the modules are known (0.20 ruling 19): a `requires` line with `=` terms,
+// or a `case` line of a switch.
+type valueCheck struct {
+	line  int
+	terms []*reqTerm // a requires line
+	cas   *seqCase   // a case line
+}
+
+// parseRequires reads the terms of a `requires` line (0.20): `<key>` or
+// `<key>=<value>[,<value>…]`, split at the first `=`.
+func parseRequires(args []string, line int) ([]*reqTerm, error) {
+	var out []*reqTerm
+	for _, a := range args {
+		t := &reqTerm{key: a, line: line}
+		if i := strings.IndexByte(a, '='); i >= 0 {
+			if i == 0 {
+				return nil, fmt.Errorf("requires %q: no key before `=`", a)
+			}
+			rest := a[i+1:]
+			if rest == "" {
+				return nil, fmt.Errorf("requires %q: no value after `=`", a)
+			}
+			vals, err := splitValueList(rest)
+			if err != nil {
+				return nil, fmt.Errorf("requires %q: %v", a, err)
+			}
+			t.key, t.eq, t.vals = a[:i], true, vals
+		}
+		out = append(out, t)
+	}
+	return out, nil
+}
+
+// splitValueList splits a list of values separated by commas; an empty item
+// is refused (0.20 ruling 16).
+func splitValueList(s string) ([]string, error) {
+	vals := strings.Split(s, ",")
+	for _, v := range vals {
+		if v == "" {
+			return nil, fmt.Errorf("an empty value in the list %q", s)
+		}
+	}
+	return vals, nil
+}
+
+// canonValue is the canonical text of a `requires =` or `case` value read as
+// a key's declared type (0.20 rulings 1 and 17): an integer is an optional
+// `-` then digits.
+func canonValue(text string, kind Kind) (string, error) {
+	switch kind {
+	case KindInt:
+		digits := strings.TrimPrefix(text, "-")
+		if !isDigits(digits) {
+			return "", fmt.Errorf("%q is not an integer (an optional - then digits)", text)
+		}
+		v, err := strconv.ParseInt(text, 10, 64)
+		if err != nil {
+			return "", fmt.Errorf("%q does not fit a 64-bit integer", text)
+		}
+		return strconv.FormatInt(v, 10), nil
+	case KindFloat:
+		if !isFloatText(text) {
+			return "", fmt.Errorf("%q is not a number (-?digits[.digits] with an optional exponent)", text)
+		}
+		v, err := readAs(text, KindFloat)
+		if err != nil {
+			return "", err
+		}
+		return v.String(), nil
+	}
+	return text, nil
+}
+
+// reqHolds reports whether a record meets every `requires` term: a plain key
+// present (a list with at least one item), a key with `=` present with one of
+// the listed values as canonical text (0.20).
+func reqHolds(terms []*reqTerm, rec *Item) bool {
+	for _, t := range terms {
+		if t.eq {
+			v, ok := rec.Fields[t.key]
+			if !ok || !t.canon[v.String()] {
+				return false
+			}
+			continue
+		}
+		if _, ok := rec.Fields[t.key]; !ok && len(rec.Lists[t.key]) == 0 {
+			return false
+		}
+	}
+	return true
 }
 
 // Pack is one parsed pack.def.
@@ -282,7 +420,8 @@ type Pack struct {
 	kindsByRoot    map[string][]int // xml: root element name -> the kinds with that root, in pack order
 	keyRefs        []keyRef         // field, requires, default and group names in file order
 	modelKeys      []string
-	elements       []*Element // xml: every `element` line, in file order (0.18)
+	elements       []*Element   // xml: every `element` line, in file order (0.18)
+	valueChecks    []valueCheck // requires lines with `=` and case lines, in file order (0.20)
 	msb            bool
 	seq            bool     // bits: `layout sequential` (spec 0.8)
 	gates          []*Gate  // every gate block, in file order (0.17)
@@ -357,6 +496,22 @@ func (p *Pack) TypeMapped() bool { return len(p.nativeToCot) > 0 }
 func (p *Pack) addWithRef(f *Field) {
 	if f.WithLine {
 		p.keyRefs = append(p.keyRefs, keyRef{key: f.With, locator: f.Locator, line: f.Line, req: true})
+	}
+}
+
+// addRequires records the keys of a `requires` line for the load checks.
+func (p *Pack) addRequires(terms []*reqTerm, line int) {
+	var eq []*reqTerm
+	for _, t := range terms {
+		r := keyRef{key: t.key, line: line, req: true}
+		if t.eq {
+			r.term = t
+			eq = append(eq, t)
+		}
+		p.keyRefs = append(p.keyRefs, r)
+	}
+	if len(eq) > 0 {
+		p.valueChecks = append(p.valueChecks, valueCheck{line: line, terms: eq})
 	}
 }
 
@@ -521,7 +676,7 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 	want := map[string]int{"format": 1, "version": 1, "wire": 1, "root": 1, "word_bytes": 1, "bit_order": 1, "field": -3, "typemap": 2,
 		"distribution": 1, "source": 1, "uses": 1, "kind": 1, "when": 2, "requires": -1, "const": 2, "default": 2, "map": 3, "group": -2, "end": 0,
 		"layout": 1, "delimiter": 1, "start": 1, "checksum": -1, "tag": 1, "key": 1, "pad": 1, "align": 1, "presence": 2, "if": -1, "opt": 0, "chain": 0, "fx": 0, "length": -1, "also": -1, "armor": 1,
-		"element": 1, "encoding": 1, "ext": 0, "choice": -1, "alt": 1}
+		"element": 1, "encoding": 1, "ext": 0, "choice": -1, "alt": 1, "switch": 1, "case": 1, "else": 0}
 	// A pack is sequential when it has a `layout sequential` line, wherever
 	// the line stands.
 	p.seq = hasSequentialLayout(text)
@@ -808,10 +963,15 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 			if cur == nil {
 				return nil, perr(ErrBadDirective, n, "", "requires before the first kind line")
 			}
-			for _, k := range args {
-				cur.Requires = append(cur.Requires, k)
-				p.keyRefs = append(p.keyRefs, keyRef{key: k, line: n, req: true})
+			terms, err := parseRequires(args, n)
+			if err != nil {
+				return nil, perr(ErrBadDirective, n, "", "%v", err)
 			}
+			p.addRequires(terms, n)
+			for _, t := range terms {
+				cur.Requires = append(cur.Requires, t.key)
+			}
+			cur.reqs = append(cur.reqs, terms...)
 		case "field":
 			f := &Field{Key: args[0], Locator: args[1], Transform: args[2], Line: n, group: inner(), gate: topGate()}
 			if kind, err := p.checkFieldLine(f, args[3:], f.group != nil); err != nil {
@@ -1845,45 +2005,127 @@ func (p *Pack) wholeWords(bits int) int {
 }
 
 // resolveWhen reads the value of a `when` line for the pack's wire
-// (spec/engine-spec.md, "`when` values, by wire").
+// (spec/engine-spec.md, "`when` values, by wire"): since 0.20 a list of values
+// separated by commas, and on `bits` and `protobuf` ranges `lo..hi`.
 func resolveWhen(wire string, w *When) error {
 	switch wire {
-	case WireBits:
-		if w.loc.blen > 64 {
+	case WireBits, WireProtobuf:
+		if wire == WireBits && w.loc.blen > 64 {
 			return fmt.Errorf("a when covers at most 64 bits, got %d", w.loc.blen)
 		}
-		v, err := parseUintText(w.Value, 1<<64-1)
-		if err != nil {
-			return fmt.Errorf("a bits when value is an unsigned decimal integer, got %q", w.Value)
-		}
-		if w.loc.blen < 64 && v>>uint(w.loc.blen) != 0 {
-			return fmt.Errorf("when value %d does not fit in %d bit(s)", v, w.loc.blen)
-		}
-		w.num = v
-	case WireProtobuf:
-		if w.Value == "present" {
+		if wire == WireProtobuf && w.Value == "present" && !w.Const {
 			w.present = true
 			return nil
 		}
-		v, err := parseUintText(w.Value, 1<<64-1)
-		if err != nil {
-			return fmt.Errorf("a protobuf when value is `present` or an unsigned decimal integer, got %q", w.Value)
+		bits := 64
+		if wire == WireBits {
+			bits = w.loc.blen
 		}
-		w.num = v
+		if w.Const {
+			v, err := strconv.ParseUint(w.Value, 10, 64)
+			if err != nil || !isDigits(w.Value) {
+				return fmt.Errorf("a const value is an unsigned decimal integer, got %q", w.Value)
+			}
+			if bits < 64 && v>>uint(bits) != 0 {
+				return fmt.Errorf("const value %d does not fit in %d bit(s)", v, bits)
+			}
+			w.num = v
+			return nil
+		}
+		rs, err := parseNumList(w.Value, bits)
+		if err != nil {
+			return err
+		}
+		w.ranges, w.num = rs, rs[0].lo
 	default:
 		if wire == WireGeoJSON && w.loc.kind == locCoord {
 			return fmt.Errorf("a when names a member, not a coordinate")
 		}
-		switch {
-		case w.Value == "present":
-			w.present = true
-		case strings.HasPrefix(w.Value, "="):
-			w.text, w.forced = w.Value[1:], true
-		default:
-			w.text = w.Value
+		// On the `text` wire (0.10) a when value stays one literal value:
+		// the lists of 0.20 are for xml, json and geojson (its ruling 15),
+		// and a comma there is checked against the delimiter (ruling 25 of
+		// 0.10). Provisional reading.
+		if w.Const || w.Value == "" || wire == WireText {
+			switch {
+			case !w.Const && w.Value == "present":
+				w.present = true
+			case strings.HasPrefix(w.Value, "="):
+				w.text, w.forced = w.Value[1:], true
+			default:
+				w.text = w.Value
+			}
+			return nil
+		}
+		items := strings.Split(w.Value, ",")
+		for i, it := range items {
+			if it == "" {
+				return fmt.Errorf("when %q: an empty value in the list; only the single value \"\" names the empty text", w.Value)
+			}
+			if it == "present" {
+				if len(items) > 1 {
+					return fmt.Errorf("when %q: `present` may not be combined with other values", w.Value)
+				}
+				w.present = true
+				return nil
+			}
+			text, forced := it, false
+			if strings.HasPrefix(it, "=") {
+				text, forced = it[1:], true
+			}
+			if i == 0 {
+				w.text, w.forced = text, forced
+			}
+			w.texts = append(w.texts, text)
 		}
 	}
 	return nil
+}
+
+// parseNumList reads the value list of a `when` on `bits` or `protobuf`: each
+// item digits or digits..digits, lo <= hi, every end below 2^bits (0.20).
+func parseNumList(text string, bits int) ([]numRange, error) {
+	num := func(s string) (uint64, error) {
+		if !isDigits(s) {
+			return 0, fmt.Errorf("when %q: %q is not an unsigned decimal integer", text, s)
+		}
+		v, err := strconv.ParseUint(s, 10, 64)
+		if err != nil {
+			return 0, fmt.Errorf("when %q: %q does not fit in 64 bits", text, s)
+		}
+		if bits < 64 && v>>uint(bits) != 0 {
+			return 0, fmt.Errorf("when value %d does not fit in %d bit(s)", v, bits)
+		}
+		return v, nil
+	}
+	var out []numRange
+	for _, it := range strings.Split(text, ",") {
+		if it == "" {
+			return nil, fmt.Errorf("when %q: an empty value in the list", text)
+		}
+		var r numRange
+		if i := strings.Index(it, ".."); i >= 0 {
+			lo, err := num(it[:i])
+			if err != nil {
+				return nil, err
+			}
+			hi, err := num(it[i+2:])
+			if err != nil {
+				return nil, err
+			}
+			if lo > hi {
+				return nil, fmt.Errorf("when %q: the range %s has lo > hi", text, it)
+			}
+			r = numRange{lo, hi}
+		} else {
+			v, err := num(it)
+			if err != nil {
+				return nil, err
+			}
+			r = numRange{v, v}
+		}
+		out = append(out, r)
+	}
+	return out, nil
 }
 
 // tokenize splits a directive line. `#` at the start of a token begins a
@@ -2051,4 +2293,24 @@ func LoadPacks(dir string) ([]*Pack, error) {
 		packs = append(packs, p)
 	}
 	return packs, nil
+}
+
+// isFloatText reports whether s is -?digits[.digits][(e|E)[+|-]digits], the
+// grammar of a float `requires =` or `case` value (0.20 ruling 24).
+func isFloatText(s string) bool {
+	s = strings.TrimPrefix(s, "-")
+	if i := strings.IndexAny(s, "eE"); i >= 0 {
+		exp := s[i+1:]
+		if len(exp) > 0 && (exp[0] == '+' || exp[0] == '-') {
+			exp = exp[1:]
+		}
+		if !isDigits(exp) {
+			return false
+		}
+		s = s[:i]
+	}
+	if i := strings.IndexByte(s, '.'); i >= 0 {
+		return isDigits(s[:i]) && isDigits(s[i+1:])
+	}
+	return isDigits(s)
 }

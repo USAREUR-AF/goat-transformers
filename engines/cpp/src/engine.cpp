@@ -333,6 +333,30 @@ void Engine::add_pack(Pack pack) {
             throw Error(ErrorKind::UndeclaredKey, pack.format, *m.locator,
                         "module '" + mod + "' declares no key or list '" + name + "'");
     }
+    // v0.20: the `requires` terms with `=`, line order within each kind. A list
+    // key with `=` is bad-directive, after every undeclared key (rulings 4 and 19).
+    std::vector<RequiresTerm*> valued_terms;
+    std::vector<SeqNode*> switches;
+    for (auto& k : pack.kinds)
+        for (auto& t : k.requires_terms)
+            if (t.has_values) valued_terms.push_back(&t);
+    if (pack.sequential) {
+        detail::SeqVisitor v;
+        v.kind = [&](SeqKind& k) {
+            for (auto& t : k.requires_terms)
+                if (t.has_values) valued_terms.push_back(&t);
+        };
+        v.switch_node = [&](SeqNode& n) { switches.push_back(&n); };
+        detail::seq_visit(pack.seq, v);
+    }
+    for (const RequiresTerm* t : valued_terms) {
+        split_model_key(t->key, mod, name);
+        const Module& m = modules_.at(mod);
+        if (!m.find(name))
+            throw Error(ErrorKind::BadDirective, pack.format, "",
+                        "'requires " + t->key + "=…' names a list; '=' takes a key (" + pack.source + ":" +
+                            std::to_string(t->line) + ")");
+    }
     for (std::size_t i = 0; i < mapped.size(); ++i) {
         const Mapped& m = mapped[i];
         split_model_key(*m.key, mod, name);
@@ -418,6 +442,54 @@ void Engine::add_pack(Pack pack) {
             d = one[0];
         };
         detail::seq_visit(pack.seq, v);
+    }
+    // v0.20: the `requires =` and `case` values read as their key's type, then
+    // the duplicates of a switch, in line order (ruling 19).
+    {
+        struct Check {
+            std::size_t line;
+            RequiresTerm* term;
+            SeqNode* sw;
+            std::size_t c;  // the case of `sw`
+        };
+        std::vector<Check> checks;
+        for (RequiresTerm* t : valued_terms) checks.push_back({t->line, t, nullptr, 0});
+        for (SeqNode* n : switches)
+            for (std::size_t c = 0; c < n->cases.size(); ++c) checks.push_back({n->cases[c].line, nullptr, n, c});
+        std::stable_sort(checks.begin(), checks.end(), [](const Check& a, const Check& b) { return a.line < b.line; });
+        auto type_of = [&](const std::string& key) {
+            split_model_key(key, mod, name);
+            return modules_.at(mod).find(name)->type;
+        };
+        for (const Check& ch : checks) {
+            const std::string& key = ch.term ? ch.term->key : ch.sw->field.key;
+            const KeyType type = type_of(key);
+            std::vector<std::string>& values = ch.term ? ch.term->values : ch.sw->cases[ch.c].values;
+            std::vector<std::string>& canon = ch.term ? ch.term->canon : ch.sw->cases[ch.c].canon;
+            canon.clear();
+            for (const auto& v : values) {
+                std::string text;
+                if (!detail::canonical_value_text(v, type, text))
+                    throw Error(ErrorKind::KeyTypeMismatch, pack.format, "",
+                                "the value '" + v + "' cannot be read as key '" + key + "', which is " +
+                                    key_type_name(type) + " (" + pack.source + ":" + std::to_string(ch.line) + ")");
+                canon.push_back(std::move(text));
+            }
+            if (!ch.sw) continue;
+            // A value listed twice in one case, or in two cases of the switch (ruling 18).
+            for (std::size_t i = 0; i < canon.size(); ++i) {
+                bool dup = std::find(canon.begin(), canon.begin() + static_cast<std::ptrdiff_t>(i), canon[i]) !=
+                           canon.begin() + static_cast<std::ptrdiff_t>(i);
+                for (std::size_t c = 0; c < ch.c && !dup; ++c) {
+                    const auto& other = ch.sw->cases[c].canon;
+                    dup = std::find(other.begin(), other.end(), canon[i]) != other.end();
+                }
+                if (dup)
+                    throw Error(ErrorKind::BadDirective, pack.format, "",
+                                "the value '" + values[i] + "' is listed twice in the switch on '" + key + "' (" +
+                                    pack.source + ":" + std::to_string(ch.line) + ")");
+            }
+        }
     }
     pack.kinds_by_root.clear();
     for (std::size_t k = 0; k < pack.kinds.size(); ++k) {

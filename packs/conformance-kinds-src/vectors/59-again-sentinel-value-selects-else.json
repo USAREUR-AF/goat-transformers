@@ -1,0 +1,9 @@
+{
+  "name": "again-sentinel-value-selects-else",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-again",
+  "input": "{\"x\":1,\"y\":5,\"c1\":255,\"c2\":7}",
+  "expect": "010105ffff00",
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; rulings 9 and 14; c1 = 255 is written and reads back absent: else; the else's c1 line writes 255 again, v1 zero bits"
+}

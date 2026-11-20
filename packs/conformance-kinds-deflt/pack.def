@@ -1,0 +1,34 @@
+# Conformance probe pack for defaults in nested cases (spec 0.20, ruling 22),
+# most significant bit first. Public.
+#
+#   n : 8, then by n
+#     1     defaults v1 5 and v2 6; c1 : 8, then by c1
+#             0     default v2 7; v1 : 8, v2 : 8
+#                   v1 takes the outer case's 5, v2 the innermost 7
+#             else  v2 : 8      the outer case's 6
+#     else  v2 : 8              no default: zero bits
+format     conformance-kinds-deflt
+version    0.20.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field  probe.n  8  uint
+switch probe.n
+  case 1
+    default probe.v1  5
+    default probe.v2  6
+    field  probe.c1  8  uint
+    switch probe.c1
+      case 0
+        default probe.v2  7
+        field  probe.v1  8  uint
+        field  probe.v2  8  uint
+      else
+        field  probe.v2  8  uint
+    end
+  else
+    field  probe.v2  8  uint
+end

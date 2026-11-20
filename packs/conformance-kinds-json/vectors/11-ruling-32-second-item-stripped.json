@@ -1,0 +1,13 @@
+{
+  "name": "ruling-32-second-item-stripped",
+  "from": "conformance-kinds-json",
+  "to": "conformance-kinds-json",
+  "input": "{\"v\":\"x\",\"c\":1}",
+  "expect": "{\"v\":\"5\",\"c\":1}",
+  "model": {
+    "@kind": "eqv",
+    "probe.c1": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 32: a leading `=` is stripped from each item of a text-wire `when` list; =x is the text x; encode writes the first item, =5, as the string 5"
+}

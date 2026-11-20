@@ -1,0 +1,14 @@
+{
+  "name": "list-first-value",
+  "from": "conformance-kinds-bits",
+  "to": "conformance-kinds-bits",
+  "input": "0102",
+  "expect": "0102",
+  "model": {
+    "@kind": "lo",
+    "probe.x": "1",
+    "probe.y": "2"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, Lists and ranges in `when`; 1 is listed: lo; x = 1 matches lo's list and is written (ruling 3)"
+}

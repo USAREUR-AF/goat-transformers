@@ -1,0 +1,12 @@
+{
+  "name": "outer-else",
+  "from": "conformance-kinds-presnest",
+  "to": "conformance-kinds-presnest",
+  "input": "00",
+  "expect": "00",
+  "model": {
+    "probe.x": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 30: an `if` counts when the innermost case that holds the `if` and not the presence is read; x = 0: else"
+}

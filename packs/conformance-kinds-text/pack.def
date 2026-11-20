@@ -1,0 +1,20 @@
+# Conformance probe pack for `when` on the `text` wire (spec 0.20, ruling 38;
+# spec 0.10). Public. Delimiter ";", so a comma is an ordinary character of
+# a field. On `text` a `when` value is one literal value, a comma included:
+# `A,B` is the three characters A , B and not a list of A and B.
+#
+#   a   when 0 A,B   s1 at field 1
+#   b   when 0 B     s2 at field 1
+format     conformance-kinds-text
+version    0.20.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       text
+delimiter  ";"
+kind   a
+when   0  A,B
+field  probe.s1  1  string
+kind   b
+when   0  B
+field  probe.s2  1  string

@@ -1,0 +1,13 @@
+{
+  "name": "ruling-15-field-on-the-member-writes-the-first-value",
+  "from": "conformance-kinds-json",
+  "to": "conformance-kinds-json",
+  "input": "{\"u\":\"q\"}",
+  "expect": "{\"u\":\"p\"}",
+  "model": {
+    "@kind": "lbl",
+    "probe.label": "q"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 15: on text wires a `when` with a list writes its first value; label = q is listed, yet the member is written once, with p (ruling 26 of 0.5)"
+}

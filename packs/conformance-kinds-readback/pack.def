@@ -1,0 +1,30 @@
+# Conformance probe pack for a switch key that does not read back (spec 0.20,
+# ruling 31), most significant bit first. Public.
+#
+#   label : 8 uint via tbl (1 alpha, 256 big), then by label
+#     big    x : 8
+#     alpha  y : 8
+#     else   z : 8
+#
+# big writes the low 8 bits of 256, 0; 0 has no table entry, so decode of
+# those bits fails: the key does not read back and encode is
+# transform-encode, because the output would not decode.
+format     conformance-kinds-readback
+version    0.20.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+map    tbl  1    alpha
+map    tbl  256  big
+field  probe.label  8  uint  via tbl
+switch probe.label
+  case big
+    field  probe.x  8  uint
+  case alpha
+    field  probe.y  8  uint
+  else
+    field  probe.z  8  uint
+end

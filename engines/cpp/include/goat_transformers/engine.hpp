@@ -271,6 +271,9 @@ struct FieldLine {
     // v0.18 `with <other-key>`: encode writes the line only when the entity (or
     // the item) holds that key. Empty when the line has no `with`.
     std::string with;
+    // v0.20, sequential: the innermost `case` or `else` holding the line
+    // (index in Pack::seq_cases); -1 outside any.
+    int scase = -1;
 };
 
 // `when <locator> <value>` (v0.5), and `const <locator> <value>` (v0.6), which is
@@ -287,6 +290,33 @@ struct WhenLine {
     std::uint32_t tlv_size = 0;           // tlv wire: `:<n>`, 0 when none
     std::size_t line = 0;         // line number in pack.def
     int gate = -1;                // v0.17, a `const` only: the innermost gate block holding it
+    // v0.20, a `when` only: the values it holds for. bits and the integer form
+    // of protobuf: closed ranges, a single value as lo == hi, in line order (the
+    // first is `number`). Text wires: the texts, each with a leading `=`
+    // stripped (the first is `text`).
+    std::vector<std::pair<std::uint64_t, std::uint64_t>> ranges;
+    std::vector<std::string> texts;
+    bool holds_number(std::uint64_t v) const {
+        if (ranges.empty()) return v == number;
+        for (const auto& r : ranges)
+            if (v >= r.first && v <= r.second) return true;
+        return false;
+    }
+    bool holds_text(const std::string& v) const {
+        if (texts.empty()) return v == text;
+        for (const auto& t : texts)
+            if (v == t) return true;
+        return false;
+    }
+};
+
+// v0.20: one term of a `requires` line, `<key>` or `<key>=<value>[,<value>...]`.
+struct RequiresTerm {
+    std::string key;
+    bool has_values = false;
+    std::vector<std::string> values;  // as written
+    std::vector<std::string> canon;   // canonical text of each, as the key's type; Engine::add_pack fills it
+    std::size_t line = 0;
 };
 
 // `default <model-key> <value>` (v0.6): the value encode uses for every `field`
@@ -365,6 +395,7 @@ struct SeqNode;
 struct SeqKind {
     std::string name;
     std::vector<std::string> requires_keys;
+    std::vector<RequiresTerm> requires_terms;  // v0.20: every term, line order
     std::vector<DefaultLine> defaults;
     std::vector<SeqNode> lines;
     std::size_t line = 0;
@@ -393,13 +424,34 @@ struct SeqPresence {
     bool fx = false;
     std::uint32_t bits = 0;        // `presence <name> <n>`; 0 with `fx`
     std::uint32_t max_named = 0;   // the highest bit an `if` names
-    std::vector<bool> named;       // named[i - 1]: some `if` names bit i, with or without `!`
+    std::vector<bool> named;       // named[i - 1]: some `if` outside every case names bit i, with or without `!`
+    // v0.20 ruling 21: case_named[i - 1]: the innermost cases of the `if` lines
+    // inside a case that name bit i.
+    std::vector<std::vector<int>> case_named;
     std::size_t line = 0;
+};
+
+// v0.20: one `case` (or the `else`) of a `switch`: its lines and its
+// `default` lines, which apply to its lines only (rulings 7 and 22).
+struct SeqCase {
+    bool is_else = false;
+    std::vector<std::string> values;  // as written
+    std::vector<std::string> canon;   // canonical text of each, as the key's type; Engine::add_pack fills it
+    SeqBody body;
+    int id = -1;                      // index in Pack::seq_cases
+    std::size_t line = 0;
+};
+
+// v0.20: where a case is in the pack: the case it is nested in, in the same
+// message or item.
+struct SeqCaseScope {
+    int parent = -1;  // the innermost case holding the switch; -1 when none
 };
 
 struct SeqNode {
     enum class Type { Field, Const, Pad, Align, When, Presence, If, Opt, Chain, Fx, Length, LengthWhole, Group,
-                      Ext, Choice, Alt };
+                      Ext, Choice, Alt,  // v0.19
+                      Switch };  // v0.20
     enum class Repeat { Count, While, More, Fx, Size };
     // v0.19, `encoding uper`: the form of a field's locator. None is a bit length.
     enum class Uper { None, Int, IntExt, IntSemi, IntUn, Enum, EnumExt, Chars, Octets };
@@ -428,6 +480,18 @@ struct SeqNode {
     bool uext = false;
     std::int64_t lb = 0;
     std::int64_t ub = 0;
+    // v0.20. when: the values it holds for, closed ranges in line order (the first's lo is `number`).
+    std::vector<std::pair<std::uint64_t, std::uint64_t>> ranges;
+    // v0.20. switch: the key (`field.key`) and the cases, the `else` last.
+    std::vector<SeqCase> cases;
+    // v0.20. if: the innermost case holding the block; -1 when none.
+    int in_case = -1;
+    bool holds(std::uint64_t v) const {
+        if (ranges.empty()) return v == number;
+        for (const auto& r : ranges)
+            if (v >= r.first && v <= r.second) return true;
+        return false;
+    }
 };
 
 // `element <path>` (v0.18, xml only): the element at `path`, and each one on
@@ -447,6 +511,7 @@ struct Kind {
     std::vector<DefaultLine> defaults;    // `default` lines, line order
     std::vector<GroupLine> groups;        // `group` blocks, line order (v0.7)
     std::vector<std::string> requires_keys;  // every `requires` key or list of the kind
+    std::vector<RequiresTerm> requires_terms;  // v0.20: every term, line order
     std::vector<int> gates;               // v0.17: the kind's gate blocks, line order (indices in Pack::gates)
     std::vector<ElementLine> elements;    // v0.18: the kind's `element` lines, line order
 };
@@ -497,6 +562,7 @@ struct Pack {
     std::string tlv_key;                 // the key's bytes
     bool tlv_checksum = false;           // `checksum sum16 <tag>`
     std::uint32_t tlv_checksum_tag = 0;
+    std::vector<SeqCaseScope> seq_cases;  // v0.20: every `case` and `else`, file order
 };
 
 // Parse the text of a pack.def. `source` names the file in error messages.

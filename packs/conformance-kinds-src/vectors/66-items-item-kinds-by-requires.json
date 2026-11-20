@@ -1,0 +1,9 @@
+{
+  "name": "items-item-kinds-by-requires",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-items",
+  "input": "{\"recs\":[{\"y\":5},{\"z\":258},{\"y\":1,\"z\":2}]}",
+  "expect": "000301050a0102010100",
+  "source": "constructed",
+  "reference": "spec 0.20, Lists and ranges in `when`; items choose their kind by requires (0.8): small writes 1, big writes 10 (the lo of its first range); an item with y and z is small, the first kind whose requires it holds"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "across-bits-from-any-item",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-across",
+  "input": "{\"recs\":[{\"x\":1,\"y\":5},{\"x\":2,\"z\":7}]}",
+  "expect": "c00201050207",
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 36: a bit named only inside cases is satisfied by such a case read anywhere later in the decode, a later item included; encode: item 0's y sets p.1, item 1's z sets p.2 (ruling 12 of 0.8)"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "bits-repeated-value-written-once",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-bits",
+  "input": "{\"w\":1}",
+  "expect": "1e01",
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 3, Encode of a `when` with a list or a range; dup: 30"
+}

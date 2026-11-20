@@ -1,0 +1,13 @@
+{
+  "name": "range-high-end-writes-its-lo",
+  "from": "conformance-kinds-protobuf",
+  "to": "conformance-kinds-protobuf",
+  "input": "08ac021005",
+  "expect": "08c8011005",
+  "model": {
+    "@kind": "b",
+    "probe.z": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, Lists and ranges in `when`, on an integer protobuf `when`; 300 = ac 02 is the high end: b; re-encode writes 200, the range's lo"
+}

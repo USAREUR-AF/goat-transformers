@@ -261,7 +261,7 @@ final class BitsCodec extends Codec<Codec.BitMsg> {
     boolean holds(BitMsg msg, Pack.When when) {
         Loc loc = (Loc) when.loc;
         if (loc.start + loc.len > msg.bits) return false; // beyond the input: does not hold
-        return readBits(msg.b, loc.start, loc.len) == when.number;
+        return when.matches(readBits(msg.b, loc.start, loc.len));   // a value, a list or a range (0.20)
     }
 
     @Override
@@ -624,9 +624,26 @@ final class BitsCodec extends Codec<Codec.BitMsg> {
             for (Pack.Line l : lines) {
                 if (!(l instanceof Pack.When) || ((Pack.When) l).isConst != (pass == 0)) continue;
                 Loc loc = (Loc) l.loc;
-                writeBits(b, base + loc.start, loc.len, ((Pack.When) l).number);
+                Pack.When w = (Pack.When) l;
+                if (w.isList() && coveredByMatch(lines, values, w, loc, b, base, e)) continue;
+                writeBits(b, base + loc.start, loc.len, w.number);
             }
         }
+    }
+
+    /**
+     * Ruling 3 of 0.20: a field line whose key the entity holds (a default does not count) covers exactly the bits
+     * of a {@code when} with a list or a range, and the value written there matches the {@code when}: it stays.
+     */
+    private boolean coveredByMatch(List<Pack.Line> lines, Object[] values, Pack.When w, Loc loc, byte[] b, long base, Entity e) {
+        for (int i = 0; i < lines.size(); i++) {
+            if (!(lines.get(i) instanceof Pack.Field) || values[i] == null) continue;
+            Pack.Field f = (Pack.Field) lines.get(i);
+            Loc fl = (Loc) f.loc;
+            if (fl.start != loc.start || fl.len != loc.len || !held(f, e)) continue;
+            if (w.matches(readBits(b, base + loc.start, loc.len))) return true;
+        }
+        return false;
     }
 
     /** True when the entity holds the line's key and the line is not suppressed by {@code with} (ruling 1 of 0.18). */

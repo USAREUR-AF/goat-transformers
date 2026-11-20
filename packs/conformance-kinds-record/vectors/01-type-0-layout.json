@@ -1,0 +1,19 @@
+{
+  "name": "type-0-layout",
+  "from": "conformance-kinds-record",
+  "to": "conformance-kinds-record",
+  "input": "e00a112233",
+  "expect": "e00a112233",
+  "model": {
+    "probe.y": "0",
+    "probe.x": "5",
+    "probe.z": "17",
+    "probe.w": "8755",
+    "@absent": [
+      "probe.c2",
+      "probe.n"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; a switch key read inside an earlier `if` and chain block; FSPEC e0: p.1 p.2 p.3; 0a = y 0, x 000101, fx 0; y = 0: p.2 z = 0x11, p.3 w = 0x2233"
+}

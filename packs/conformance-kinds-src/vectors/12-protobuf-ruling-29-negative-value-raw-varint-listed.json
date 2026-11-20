@@ -1,0 +1,9 @@
+{
+  "name": "protobuf-ruling-29-negative-value-raw-varint-listed",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-protobuf",
+  "input": "{\"n\":5,\"c2\":-1}",
+  "expect": "18012005",
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 29: on protobuf the raw varint the field wrote is compared, with no zig-zag; a default never counts; requires n: d; c2 = -1 writes the raw varint 1, which is listed: kept (the model value -1 is not)"
+}

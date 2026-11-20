@@ -1,0 +1,9 @@
+{
+  "name": "seq-range-kind-by-requires",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-seq",
+  "input": "{\"x\":1,\"y\":7,\"z\":9}",
+  "expect": "01000709",
+  "source": "constructed",
+  "reference": "spec 0.20, Lists and ranges in `when` on a sequential layout; requires y: a, when 0"
+}

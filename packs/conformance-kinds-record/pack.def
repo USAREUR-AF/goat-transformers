@@ -1,0 +1,55 @@
+# Conformance probe pack for `switch` (spec 0.20): an ASTERIX-like synthetic
+# record, most significant bit first. Public. No external standard.
+#
+#   FSPEC        presence p fx: one octet, p.1 to p.7 then the FX bit
+#   p.1          an extensible item: [y : 1][x : 6][fx], then [c1 : 7][fx]
+#                y is the type bit, read inside the `if` and the chain
+#   then by y, the same presence bits laid out twice:
+#     0     p.2 z : 8     p.3 w : 16     p.4 qty : 8
+#     1     p.2 c2 : 16   p.3 n : 8      (p.4 is named by no line of case 1)
+#     else  p.2 val : 8                  (y absent: p.1 was 0)
+#
+# Presence bits count the selected case only: on decode a bit that is 1 and
+# that no `if` of the lines read names is malformed-wire; on encode a key of
+# a case not selected sets no bit and is not written.
+format     conformance-kinds-record
+version    0.20.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+presence p fx
+if p.1
+  chain
+    field  probe.y  1  uint
+    field  probe.x  6  uint
+    fx
+    field  probe.c1  7  uint
+    fx
+  end
+end
+switch probe.y
+  case 0
+    if p.2
+      field  probe.z  8  uint
+    end
+    if p.3
+      field  probe.w  16  uint
+    end
+    if p.4
+      field  probe.qty  8  uint
+    end
+  case 1
+    if p.2
+      field  probe.c2  16  uint
+    end
+    if p.3
+      field  probe.n  8  uint
+    end
+  else
+    if p.2
+      field  probe.val  8  uint
+    end
+end

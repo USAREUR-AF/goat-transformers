@@ -1,0 +1,16 @@
+{
+  "name": "key-in-a-block-not-read-reads-else",
+  "from": "conformance-kinds-record",
+  "to": "conformance-kinds-record",
+  "input": "4033",
+  "expect": "4033",
+  "model": {
+    "probe.val": "51",
+    "@absent": [
+      "probe.y",
+      "probe.x"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; a switch key read inside an earlier `if` and chain block; FSPEC 40: p.1 is 0, so y's line is not read: the key is absent, the else lines are read: p.2 val"
+}

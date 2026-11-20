@@ -19,6 +19,7 @@ SCRIPTS = (
     "conformance-derive16-vectors.py",
     "conformance-gates-vectors.py",
     "conformance-groups-vectors.py",
+    "conformance-kinds-vectors.py",
     "conformance-malformed-vectors.py",
     "conformance-rulings07-vectors.py",
     "conformance-rulings011-vectors.py",

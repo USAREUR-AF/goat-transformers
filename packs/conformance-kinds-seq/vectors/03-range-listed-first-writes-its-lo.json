@@ -1,0 +1,13 @@
+{
+  "name": "range-listed-first-writes-its-lo",
+  "from": "conformance-kinds-seq",
+  "to": "conformance-kinds-seq",
+  "input": "010d07",
+  "expect": "010c07",
+  "model": {
+    "@kind": "b",
+    "probe.w": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, Lists and ranges in `when` on a sequential layout; 13 is in 12..14: b; encode writes 12, the lo of the range listed first"
+}

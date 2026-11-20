@@ -1,0 +1,9 @@
+{
+  "name": "item-kind-value-in-no-list",
+  "from": "conformance-kinds-items",
+  "to": "conformance-kinds-items",
+  "input": "0001040700",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 11 and 0.8 Items by kind: 4 is in no item kind's list; the item is no-kind and fails the decode"
+}

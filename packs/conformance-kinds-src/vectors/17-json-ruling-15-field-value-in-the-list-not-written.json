@@ -1,0 +1,9 @@
+{
+  "name": "json-ruling-15-field-value-in-the-list-not-written",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-json",
+  "input": "{\"label\":\"q\"}",
+  "expect": "{\"u\":\"p\"}",
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 15: on text wires a `when` with a list writes its first value; requires label: lbl; ruling 3 does not apply on text wires"
+}

@@ -25,10 +25,12 @@ const (
 	seqLength
 	seqWhole
 	seqGroup
-	seqExt    // UPER: an `ext` block
-	seqChoice // UPER: a `choice` block; its body is its `alt` nodes
-	seqAlt    // UPER: one `alt` of a choice; num is its index
-	seqMsg    // the frame of a message body; not a line
+	seqExt      // UPER: an `ext` block
+	seqChoice   // UPER: a `choice` block; its body is its `alt` nodes
+	seqAlt      // UPER: one `alt` of a choice; num is its index
+	seqSwitchOp // a `switch` block (0.20)
+	seqCaseOp   // the frame of a `case` or `else` body; not a line
+	seqMsg      // the frame of a message body; not a line
 )
 
 // How the items of a sequential group are delimited.
@@ -48,6 +50,7 @@ var seqStructural = map[string]bool{
 	"if": true, "opt": true, "chain": true, "fx": true, "length": true, "also": true,
 	"group": true, "end": true, "kind": true, "requires": true, "default": true,
 	"ext": true, "choice": true, "alt": true,
+	"switch": true, "case": true, "else": true,
 }
 
 // uperDirective names the block directives of spec 0.19; outside a
@@ -59,6 +62,7 @@ var seqOnly = map[string]bool{
 	"pad": true, "align": true, "presence": true, "if": true, "opt": true,
 	"chain": true, "fx": true, "length": true, "also": true,
 	"ext": true, "choice": true, "alt": true,
+	"switch": true, "case": true, "else": true,
 }
 
 // hasSequentialLayout reports whether pack text has a `layout sequential`
@@ -95,7 +99,59 @@ type seqPresenceDef struct {
 	n     int
 	fx    bool
 	line  int
-	named map[int]bool // the bits some `if` block names, with or without `!`
+	named map[int]bool // the bits some `if` block outside every case names, with or without `!`
+	// caseNamed holds, for each bit an `if` inside a case names, the
+	// innermost case of each such `if`: the `if` counts only when that case
+	// is read (0.20 ruling 21).
+	caseNamed map[int][]*seqCase
+}
+
+// seqSwitch is one `switch` block (0.20): the key whose decoded value selects
+// a case, the cases in line order and the `else`.
+type seqSwitch struct {
+	key   string
+	line  int
+	cases []*seqCase
+	els   *seqCase
+	seen  map[string]*seqCase // canonical value -> the case listing it, filled by the load checks
+}
+
+// seqCase is one `case` or the `else` of a switch.
+type seqCase struct {
+	sw       *seqSwitch
+	line     int
+	isElse   bool
+	vals     []string        // as written
+	canon    map[string]bool // canonical texts, set when the pack is loaded
+	body     []*seqNode
+	defaults []*Default
+	block    *seqNode // identifies the case as a block for ruling 23 of 0.8
+}
+
+// selectCase returns the case a decoded value selects: the first case that
+// lists its canonical text, else the `else`; nil when neither (no-kind). An
+// absent key selects the `else` (0.20).
+func (sw *seqSwitch) selectCase(vals map[string]Value) *seqCase {
+	if v, ok := vals[sw.key]; ok {
+		s := v.String()
+		for _, c := range sw.cases {
+			if c.canon[s] {
+				return c
+			}
+		}
+	}
+	return sw.els
+}
+
+// inRanges reports whether u is one of the values or lies in one of the
+// ranges of a `when` list.
+func inRanges(rs []numRange, u uint64) bool {
+	for _, r := range rs {
+		if u >= r.lo && u <= r.hi {
+			return true
+		}
+	}
+	return false
 }
 
 // seqCond is one bit an `if` line names.
@@ -116,9 +172,11 @@ type seqNode struct {
 	conds []seqCond
 	body  []*seqNode
 	g     *Group
-	bits  bool  // length: the block is counted in bits
-	plus  int64 // length, whole: what the field holds beyond the length
-	ext   bool  // choice: extensible
+	bits  bool       // length: the block is counted in bits
+	plus  int64      // length, whole: what the field holds beyond the length
+	ext   bool       // choice: extensible
+	rng   []numRange // when: the listed values and ranges (0.20)
+	sw    *seqSwitch // switch
 }
 
 // seqKind is one kind of a body: of the message, or of the items of a group.
@@ -126,7 +184,7 @@ type seqKind struct {
 	name     string
 	line     int
 	whens    []*seqNode
-	requires []string
+	requires []*reqTerm
 	nodes    []*seqNode
 	defaults []*Default
 	defs     map[string]*Default // the defaults in scope: the body's, then the kind's
@@ -158,6 +216,13 @@ func (b *seqBody) modelKeys(add func(string), prefix string) {
 			case seqGroup:
 				add(prefix + n.g.List + "[]")
 				n.g.sbody.modelKeys(add, prefix+n.g.List+"[].")
+			case seqSwitchOp:
+				for _, c := range n.sw.cases {
+					walk(c.body)
+				}
+				if n.sw.els != nil {
+					walk(n.sw.els.body)
+				}
 			default:
 				walk(n.body)
 			}
@@ -184,6 +249,10 @@ type seqFrame struct {
 	klists    map[string][]seqListAt     // the groups of the kind being read, by list
 	last      *Field                     // the field line directly before, for `also`
 	group     *Group
+	mapped    map[string]bool // message and group frames: the keys a field or also line of the common lines maps so far
+	kmapped   map[string]bool // the same, in the kind being read
+	sw        *seqSwitch      // switch and case frames
+	cas       *seqCase        // case frames
 }
 
 // seqListAt is one group of a scope: its line and the `if`, `opt` and `alt` blocks
@@ -233,7 +302,7 @@ func (sp *seqParser) init() {
 	body := &seqBody{}
 	sp.p.sbody = body
 	sp.bodies = append(sp.bodies, body)
-	sp.stack = []*seqFrame{{op: seqMsg, body: body, nodes: &body.common, kindNames: map[string]int{}, pres: map[string]*seqPresenceDef{}, lists: map[string][]seqListAt{}}}
+	sp.stack = []*seqFrame{{op: seqMsg, body: body, nodes: &body.common, kindNames: map[string]int{}, pres: map[string]*seqPresenceDef{}, lists: map[string][]seqListAt{}, mapped: map[string]bool{}}}
 }
 
 func (sp *seqParser) top() *seqFrame { return sp.stack[len(sp.stack)-1] }
@@ -302,6 +371,38 @@ func (sp *seqParser) lookup(name string) *seqPresenceDef {
 	return nil
 }
 
+// innerCase returns the innermost case or else body the line stands in, nil
+// when it stands in none. With inScope the search stops at the innermost
+// message or group body.
+func (sp *seqParser) innerCase(inScope bool) *seqCase {
+	for i := len(sp.stack) - 1; i >= 0; i-- {
+		f := sp.stack[i]
+		if f.op == seqCaseOp {
+			return f.cas
+		}
+		if inScope && (f.op == seqMsg || f.op == seqGroup) {
+			return nil
+		}
+	}
+	return nil
+}
+
+// caseOfIf returns the innermost case that holds an `if` line being read
+// and not the presence it names, nil when there is none; the search crosses
+// group bodies (0.20 rulings 21 and 30).
+func (sp *seqParser) caseOfIf(pr *seqPresenceDef) *seqCase {
+	for i := len(sp.stack) - 1; i >= 0; i-- {
+		f := sp.stack[i]
+		if f.pres[pr.name] == pr || f.kpres[pr.name] == pr {
+			return nil
+		}
+		if f.op == seqCaseOp {
+			return f.cas
+		}
+	}
+	return nil
+}
+
 func (sp *seqParser) push(f *seqFrame) {
 	if f.pres == nil {
 		f.pres = map[string]*seqPresenceDef{}
@@ -338,6 +439,20 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 		// file (ruling 26); the line is still read, so a later line's error
 		// comes first.
 		sp.lateErr(sp.bad(n, "", "a %s line stands between choice (line %d) and its first alt", kw, top.line))
+	}
+	// Between `switch` and its first `case` no line stands (0.20 ruling 20).
+	if top.op == seqSwitchOp && kw != "case" && kw != "else" && kw != "end" {
+		return sp.bad(n, "", "%s stands between the switch on line %d and its first case", kw, top.line)
+	}
+	// mark records a key a field or also line maps, for the switch lines
+	// that follow in the scope.
+	mark := func(key string) {
+		sc := sp.scope()
+		if sc.kind != nil {
+			sc.kmapped[key] = true
+		} else {
+			sc.mapped[key] = true
+		}
 	}
 	switch kw {
 	case "ext":
@@ -407,6 +522,7 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 		p.keyRefs = append(p.keyRefs, keyRef{key: f.Key, locator: f.Locator, line: n, field: f})
 		p.addWithRef(f)
 		add(&seqNode{op: seqField, f: f})
+		mark(f.Key)
 		top.last = f
 	case "also":
 		// also <key> [via <table>]: another key on the bits of the field
@@ -422,6 +538,7 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 			f.Via = args[2]
 		}
 		last.also = append(last.also, f)
+		mark(f.Key)
 		p.Fields = append(p.Fields, f)
 		p.keyRefs = append(p.keyRefs, keyRef{key: f.Key, locator: f.Locator, line: n, field: f})
 		top.last = last
@@ -459,13 +576,14 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 		if err != nil {
 			return err
 		}
-		// The form of the value is checked after the file (ruling 5b of
-		// 0.11).
-		v, err := sp.value(kw, args[1], ln, n)
+		// The form of the value, a list of values and ranges since 0.20,
+		// is checked after the file (ruling 5b of 0.11).
+		rs, err := parseNumList(args[1], ln)
 		if err != nil {
-			sp.lateErr(err)
+			sp.lateErr(sp.bad(n, "", "%v", err))
+			rs = []numRange{{}}
 		}
-		node := &seqNode{op: seqWhen, n: ln, num: v, line: n}
+		node := &seqNode{op: seqWhen, n: ln, num: rs[0].lo, rng: rs, line: n}
 		if k := top.kind; k != nil {
 			if len(k.nodes) > 0 {
 				return sp.bad(n, "", "the when lines of kind %s must be its first lines", k.name)
@@ -486,7 +604,7 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 		k := &seqKind{name: args[0], line: n}
 		top.body.kinds = append(top.body.kinds, k)
 		top.kind, top.nodes = k, &k.nodes
-		top.kpres, top.klists = map[string]*seqPresenceDef{}, map[string][]seqListAt{}
+		top.kpres, top.klists, top.kmapped = map[string]*seqPresenceDef{}, map[string][]seqListAt{}, map[string]bool{}
 		if top.op == seqMsg {
 			p.Kinds = append(p.Kinds, &KindDef{Name: k.name, Line: n})
 		}
@@ -494,18 +612,28 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 		if (top.op != seqMsg && top.op != seqGroup) || top.kind == nil {
 			return sp.bad(n, "", "requires must stand in a kind, outside any block")
 		}
-		for _, key := range args {
-			top.kind.requires = append(top.kind.requires, key)
-			p.keyRefs = append(p.keyRefs, keyRef{key: key, line: n, req: true})
+		terms, err := parseRequires(args, n)
+		if err != nil {
+			return sp.bad(n, "", "%v", err)
 		}
+		p.addRequires(terms, n)
+		top.kind.requires = append(top.kind.requires, terms...)
 		if top.op == seqMsg {
 			kd := p.Kinds[len(p.Kinds)-1]
-			kd.Requires = append(kd.Requires, args...)
+			for _, t := range terms {
+				kd.Requires = append(kd.Requires, t.key)
+			}
+			kd.reqs = append(kd.reqs, terms...)
 		}
 	case "default":
 		// A default belongs to the message or the item it stands in.
 		d := &Default{Key: args[0], Value: args[1], Line: n}
 		p.keyRefs = append(p.keyRefs, keyRef{key: d.Key, line: n, def: d})
+		// In a case it belongs to the case (0.20 rulings 7 and 22).
+		if c := sp.innerCase(true); c != nil {
+			c.defaults = append(c.defaults, d)
+			break
+		}
 		sc := sp.scope()
 		if sc.kind != nil {
 			sc.kind.defaults = append(sc.kind.defaults, d)
@@ -522,7 +650,7 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 		if top.op == seqExt && len(top.node.body) > 0 {
 			return sp.bad(n, "", "a presence line in an ext block is its first line")
 		}
-		pr := &seqPresenceDef{name: name, line: n, named: map[int]bool{}}
+		pr := &seqPresenceDef{name: name, line: n, named: map[int]bool{}, caseNamed: map[int][]*seqCase{}}
 		if args[1] == "fx" {
 			pr.fx = true
 		} else {
@@ -570,7 +698,11 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 				return sp.bad(n, "", "if names bit %d of presence %s, which has %d bit(s)", bit, c.p.name, c.p.n)
 			}
 			c.bit = bit
-			c.p.named[bit] = true
+			if cs := sp.caseOfIf(c.p); cs != nil {
+				c.p.caseNamed[bit] = append(c.p.caseNamed[bit], cs)
+			} else {
+				c.p.named[bit] = true
+			}
 			node.conds = append(node.conds, c)
 		}
 		add(node)
@@ -677,6 +809,9 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 		for i := len(sp.stack) - 1; i >= 0 && sp.stack[i] != sc; i-- {
 			if fr := sp.stack[i]; fr.op == seqIf || fr.op == seqOpt || fr.op == seqAlt {
 				here.blocks = append(here.blocks, fr.node)
+			} else if fr.op == seqCaseOp {
+				// Each case and else body is a block (0.20 ruling 10).
+				here.blocks = append(here.blocks, fr.cas.block)
 			}
 		}
 		for _, prev := range append(append([]seqListAt(nil), sc.lists[g.List]...), sc.klists[g.List]...) {
@@ -693,13 +828,65 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 		sp.bodies = append(sp.bodies, g.sbody)
 		p.keyRefs = append(p.keyRefs, keyRef{key: g.List, locator: g.Locator, line: n, group: g})
 		add(&seqNode{op: seqGroup, g: g})
-		sp.push(&seqFrame{op: seqGroup, line: n, group: g, body: g.sbody, nodes: &g.sbody.common, kindNames: map[string]int{}, lists: map[string][]seqListAt{}})
+		sp.push(&seqFrame{op: seqGroup, line: n, group: g, body: g.sbody, nodes: &g.sbody.common, kindNames: map[string]int{}, lists: map[string][]seqListAt{}, mapped: map[string]bool{}})
+	case "switch":
+		// switch <model-key>: the key is mapped by a field or also line of
+		// the scope before this line (0.20).
+		key := args[0]
+		sc := sp.scope()
+		if !sc.mapped[key] && !sc.kmapped[key] {
+			return sp.bad(n, key, "switch %s: no field or also line of the scope before the switch maps the key", key)
+		}
+		sw := &seqSwitch{key: key, line: n, seen: map[string]*seqCase{}}
+		add(&seqNode{op: seqSwitchOp, sw: sw})
+		sp.push(&seqFrame{op: seqSwitchOp, line: n, sw: sw})
+	case "case", "else":
+		if top.op == seqCaseOp {
+			if top.cas.isElse {
+				return sp.bad(n, "", "%s after the else of the switch on line %d", kw, top.sw.line)
+			}
+			sp.stack = sp.stack[:len(sp.stack)-1]
+			top = sp.top()
+		}
+		if top.op != seqSwitchOp {
+			return sp.bad(n, "", "%s outside a switch", kw)
+		}
+		sw := top.sw
+		c := &seqCase{sw: sw, line: n, isElse: kw == "else", block: &seqNode{op: seqCaseOp, line: n}}
+		if c.isElse {
+			if len(sw.cases) == 0 {
+				return sp.bad(n, "", "else before the first case of the switch on line %d", sw.line)
+			}
+			sw.els = c
+		} else {
+			if args[0] == "" {
+				c.vals = []string{""}
+			} else {
+				vals, err := splitValueList(args[0])
+				if err != nil {
+					return sp.bad(n, "", "case: %v", err)
+				}
+				c.vals = vals
+			}
+			sw.cases = append(sw.cases, c)
+			p.valueChecks = append(p.valueChecks, valueCheck{line: n, cas: c})
+		}
+		sp.push(&seqFrame{op: seqCaseOp, line: n, sw: sw, cas: c, nodes: &c.body})
 	case "end":
 		if err := count(0); err != nil {
 			return err
 		}
 		if len(sp.stack) == 1 {
 			sp.lateErr(sp.bad(n, "", "end with no open block"))
+			return nil
+		}
+		if top.op == seqSwitchOp {
+			return sp.bad(top.line, "", "the switch has no case")
+		}
+		if top.op == seqCaseOp {
+			// The end closes the case and its switch.
+			sp.stack = sp.stack[:len(sp.stack)-1]
+			sp.stack = sp.stack[:len(sp.stack)-1]
 			return nil
 		}
 		if top.op == seqGroup && top.body.whens > 0 && len(top.body.kinds) == 0 {
@@ -759,6 +946,15 @@ type seqReader struct {
 	limit int  // the first bit the lines may not read
 	ext   bool // inside a `length` extent: a line at or after limit reads as absent
 	pres  map[*seqPresenceDef][]bool
+	read  map[*seqCase]bool // the cases and else bodies read (0.20 ruling 21)
+	// pending holds the presence bits that are 1 and that only an `if`
+	// inside a case names: each is checked once the message is read.
+	pending []seqPendingBit
+}
+
+type seqPendingBit struct {
+	p   *seqPresenceDef
+	bit int
 }
 
 func (r *seqReader) malformed(format string, a ...any) error {
@@ -790,10 +986,26 @@ func (r *seqReader) beyond() bool { return r.ext && r.pos >= r.limit }
 
 func decodeSeq(d *decodeState, data []byte, nbits int) error {
 	p := d.pack
-	r := &seqReader{d: d, p: p, data: data, limit: nbits, pres: map[*seqPresenceDef][]bool{}}
+	// limit is the bits the input carries: under six-bit armor not a whole
+	// number of bytes (0.14).
+	r := &seqReader{d: d, p: p, data: data, limit: nbits, pres: map[*seqPresenceDef][]bool{}, read: map[*seqCase]bool{}}
 	k, err := r.body(p.sbody)
 	if err != nil {
 		return err
+	}
+	// A bit named only inside cases counts when one of those cases was read
+	// (0.20 ruling 21 with rulings 1 and 17 of 0.8).
+	for _, pb := range r.pending {
+		counted := false
+		for _, c := range pb.p.caseNamed[pb.bit] {
+			if r.read[c] {
+				counted = true
+				break
+			}
+		}
+		if !counted {
+			return r.malformed("presence bit %s.%d is 1 and no if block of the lines read names it", pb.p.name, pb.bit)
+		}
 	}
 	if k != nil {
 		d.ent.Kind = EntityKind{Format: p.Format, Name: k.name}
@@ -813,7 +1025,7 @@ func (r *seqReader) body(b *seqBody) (*seqKind, error) {
 	for _, k := range b.kinds {
 		pos, holds := r.pos, true
 		for _, w := range k.whens {
-			if pos+w.n > r.limit || getBits(r.data, pos, w.n, r.p.msb) != w.num {
+			if pos+w.n > r.limit || !inRanges(w.rng, getBits(r.data, pos, w.n, r.p.msb)) {
 				holds = false
 				break
 			}
@@ -850,22 +1062,9 @@ func (r *seqReader) node(n *seqNode) error {
 		}
 		// A sentinel leaves the key of the line, and those of its `also`
 		// lines, absent.
-		if f.bitsSentinel(r.data, at, p.msb) {
+		v, absent, err := seqFieldDecode(p, f, r.data, at)
+		if absent {
 			return nil
-		}
-		var v Value
-		if f.btf.sixbit {
-			v = decodeSixbit(r.data, f, at, p.msb)
-		} else if f.btf.decodeAt != nil {
-			v, err = f.btf.decodeAt(r.data, at, f.loc.blen, p.msb)
-		} else if f.btf.ascii {
-			v, err = decodeASCII(r.data, f, at, p.msb)
-		} else {
-			raw := getBits(r.data, at, f.loc.blen, p.msb)
-			if f.Swap {
-				raw = swapBytes(raw, f.loc.blen/8)
-			}
-			v, err = f.btf.decode(raw, f.loc.blen)
 		}
 		if err != nil {
 			d.fail(f, err.Error())
@@ -894,7 +1093,7 @@ func (r *seqReader) node(n *seqNode) error {
 	case seqWhen:
 		// A common when: it must hold for any message of the format.
 		at, ok, err := r.take(n.n, "when")
-		if err != nil || !ok || getBits(r.data, at, n.n, p.msb) != n.num {
+		if err != nil || !ok || !inRanges(n.rng, getBits(r.data, at, n.n, p.msb)) {
 			return &Error{Kind: ErrNoKind, Format: p.Format, Detail: fmt.Sprintf("the message does not hold %d at the common when on line %d", n.num, n.line)}
 		}
 	case seqPresence:
@@ -984,8 +1183,48 @@ func (r *seqReader) node(n *seqNode) error {
 		return r.extBlock(n)
 	case seqChoice:
 		return r.choice(n)
+	case seqSwitchOp:
+		// The key's decoded value when the cursor reaches the switch selects
+		// the case (0.20).
+		// A key whose line failed its transform fails the decode (0.20
+		// ruling 35).
+		if _, ok := d.rec.Fields[n.sw.key]; !ok {
+			for i, fe := range d.failed {
+				if d.failedKey[i] == n.sw.key && d.failedIn[i] == d.rec {
+					return fe
+				}
+			}
+		}
+		c := n.sw.selectCase(d.rec.Fields)
+		if c == nil {
+			return &Error{Kind: ErrNoKind, Format: p.Format, Detail: fmt.Sprintf("the switch on line %d: the value of %s is in no case and there is no else", n.sw.line, n.sw.key)}
+		}
+		r.read[c] = true
+		return r.nodes(c.body)
 	}
 	return nil
+}
+
+// seqFieldDecode reads the bits of a field line at a bit of data as a decode
+// does: absent when they hold a sentinel, else the transform's value.
+func seqFieldDecode(p *Pack, f *Field, data []byte, at int) (v Value, absent bool, err error) {
+	if f.bitsSentinel(data, at, p.msb) {
+		return Value{}, true, nil
+	}
+	if f.btf.sixbit {
+		v = decodeSixbit(data, f, at, p.msb)
+	} else if f.btf.decodeAt != nil {
+		v, err = f.btf.decodeAt(data, at, f.loc.blen, p.msb)
+	} else if f.btf.ascii {
+		v, err = decodeASCII(data, f, at, p.msb)
+	} else {
+		raw := getBits(data, at, f.loc.blen, p.msb)
+		if f.Swap {
+			raw = swapBytes(raw, f.loc.blen/8)
+		}
+		v, err = f.btf.decode(raw, f.loc.blen)
+	}
+	return v, false, err
 }
 
 // stated reads a length field and takes away what it counts beyond the
@@ -1036,7 +1275,10 @@ func (r *seqReader) presence(pr *seqPresenceDef) error {
 	}
 	for i := 1; i < len(bits); i++ {
 		if bits[i] && !pr.named[i] {
-			return r.malformed("presence bit %s.%d is 1 and no if block names it", pr.name, i)
+			if len(pr.caseNamed[i]) == 0 {
+				return r.malformed("presence bit %s.%d is 1 and no if block names it", pr.name, i)
+			}
+			r.pending = append(r.pending, seqPendingBit{pr, i})
 		}
 	}
 	r.pres[pr] = bits
@@ -1155,6 +1397,111 @@ type seqScope struct {
 	rec  *Item
 	defs map[string]*Default
 	uper bool // a UPER pack: no default counts as content (0.19 ruling 19)
+	// vals is what a decode of the lines written so far in the scope would
+	// hold, each key its first value: a switch selects from it (0.20).
+	vals map[string]Value
+	// bad holds the keys a written line gave that would not read back: the
+	// bits fail the transform or the table on decode (0.20 ruling 31).
+	bad map[string]bool
+}
+
+// withVals returns the scope with a copy of its decoded values, for a
+// simulation that must not change them.
+func (sc seqScope) withVals() seqScope {
+	vals := make(map[string]Value, len(sc.vals))
+	for k, v := range sc.vals {
+		vals[k] = v
+	}
+	sc.vals = vals
+	sc.bad = map[string]bool{}
+	return sc
+}
+
+// newScope is the scope of a message or an item with nothing written yet.
+func newScope(p *Pack, rec *Item, defs map[string]*Default) seqScope {
+	return seqScope{rec: rec, defs: defs, uper: p.uper, vals: map[string]Value{}, bad: map[string]bool{}}
+}
+
+// inCase returns the scope of the lines of a case: its defaults over those
+// in scope, the innermost winning (0.20 rulings 7 and 22).
+func (sc seqScope) inCase(c *seqCase) seqScope {
+	if len(c.defaults) == 0 {
+		return sc
+	}
+	defs := make(map[string]*Default, len(sc.defs)+len(c.defaults))
+	for k, d := range sc.defs {
+		defs[k] = d
+	}
+	for _, d := range c.defaults {
+		defs[d.Key] = d
+	}
+	sc.defs = defs
+	return sc
+}
+
+// storeBack puts a value read back from written bits in vals as a decode
+// stores it: through the line's value table and the typemap, the first value
+// of a key staying.
+func storeBack(p *Pack, sc seqScope, f *Field, v Value) {
+	vals := sc.vals
+	if _, done := vals[f.Key]; done {
+		return
+	}
+	if f.table != nil {
+		mv, err := f.viaDecode(v)
+		if err != nil {
+			sc.bad[f.Key] = true
+			return
+		}
+		v = mv
+	}
+	if f.Key == "type" && p.TypeMapped() && v.Kind == KindString {
+		if cot, ok := p.nativeToCot[v.S]; ok {
+			v.S = cot
+		}
+	}
+	vals[f.Key] = v
+}
+
+// readBack reads the bits a field line wrote at a bit of data as a decode
+// would, and records the keys of the line and of its `also` lines in the
+// scope's decoded values (0.20, Encode).
+func readBack(p *Pack, f *Field, sc seqScope, data []byte, at int) {
+	v, absent, err := seqFieldDecode(p, f, data, at)
+	if absent {
+		return
+	}
+	if err != nil {
+		sc.bad[f.Key] = true
+		for _, a := range f.also {
+			sc.bad[a.Key] = true
+		}
+		return
+	}
+	storeBack(p, sc, f, v)
+	for _, a := range f.also {
+		storeBack(p, sc, a, v)
+	}
+}
+
+// fieldBits returns the bits a field line writes, from bit 0 of a scratch
+// buffer; nil when the value cannot be written.
+func (w *seqWriter) fieldBits(f *Field, sc seqScope) []byte {
+	buf := make([]byte, (f.loc.blen+7)/8+1)
+	v, from, ok, err := seqFieldValue(w.p, f, sc)
+	if err != nil {
+		return nil
+	}
+	if !ok {
+		if f.absent != nil && !f.suppressed(sc.rec) {
+			putBits(buf, 0, f.loc.blen, f.sentinelBits(), w.p.msb)
+		}
+		return buf
+	}
+	if putBitsField(w.p, from, v, buf, 0) != nil {
+		return nil
+	}
+	return buf
 }
 
 // seqWriter writes a sequential message at a cursor.
@@ -1164,6 +1511,50 @@ type seqWriter struct {
 	pos    int
 	pres   map[*seqPresenceDef][]bool
 	wholes []seqWholeAt
+	// Settling encode (0.20 rulings 33, 34, 37): the presence, opt and fx
+	// bits are computed from a prediction of the case each switch selects.
+	// forced holds the cases a previous pass found the switches to select;
+	// predicted the cases the prediction used; actual the cases the encode
+	// selected from the bits written.
+	forced    map[seqSwitchAt]*seqCase
+	predicted []seqPrediction
+	actual    map[seqSwitchAt]*seqCase
+}
+
+// seqSwitchAt is one evaluation of a switch: the switch and the message or
+// item it is written for.
+type seqSwitchAt struct {
+	sw  *seqSwitch
+	rec *Item
+}
+
+type seqPrediction struct {
+	at seqSwitchAt
+	c  *seqCase
+}
+
+// predict returns the case a simulation takes for a switch: the case a
+// previous pass found it to select, else the case decode would select from
+// the values simulated so far.
+func (w *seqWriter) predict(sw *seqSwitch, sc seqScope) *seqCase {
+	at := seqSwitchAt{sw, sc.rec}
+	c, ok := w.forced[at]
+	if !ok {
+		c = sw.selectCase(sc.vals)
+	}
+	w.predicted = append(w.predicted, seqPrediction{at, c})
+	return c
+}
+
+// settled reports whether every prediction of a switch the encode reached
+// is the case it selected.
+func (w *seqWriter) settled() bool {
+	for _, pr := range w.predicted {
+		if c, ok := w.actual[pr.at]; ok && c != pr.c {
+			return false
+		}
+	}
+	return true
 }
 
 type seqWholeAt struct {
@@ -1184,19 +1575,46 @@ func (w *seqWriter) fail(format string, a ...any) error {
 	return &Error{Kind: ErrTransformEncode, Format: w.p.Format, Detail: fmt.Sprintf(format, a...)}
 }
 
+// seqMaxPasses bounds the passes of a settling encode (0.20 ruling 33).
+const seqMaxPasses = 16
+
 func encodeSeq(p *Pack, ent *Entity) ([]byte, error) {
-	w := &seqWriter{p: p, buf: &bitBuf{}, pres: map[*seqPresenceDef][]bool{}}
 	rec := ent.item()
 	nodes, defs, err := seqSelect(p, p.sbody, ent.Kind, rec, "the entity")
 	if err != nil {
 		return nil, err
 	}
-	if err := w.emit(nodes, seqScope{rec: rec, defs: defs, uper: p.uper}, false); err != nil {
+	forced := map[seqSwitchAt]*seqCase{}
+	for pass := 1; ; pass++ {
+		w := &seqWriter{p: p, buf: &bitBuf{}, pres: map[*seqPresenceDef][]bool{}, forced: forced, actual: map[seqSwitchAt]*seqCase{}}
+		out, err := w.encodePass(nodes, newScope(p, rec, defs))
+		// Errors of a pass whose prediction does not hold are not reported
+		// (ruling 34): the next pass predicts the cases this one selected.
+		if w.settled() {
+			return out, err
+		}
+		if pass == seqMaxPasses {
+			return nil, &Error{Kind: ErrTransformEncode, Format: p.Format, Detail: fmt.Sprintf("the cases predicted for the presence, opt and fx bits do not settle in %d passes", seqMaxPasses)}
+		}
+		next := map[seqSwitchAt]*seqCase{}
+		for k, c := range forced {
+			next[k] = c
+		}
+		for k, c := range w.actual {
+			next[k] = c
+		}
+		forced = next
+	}
+}
+
+// encodePass writes the message once, from the writer's prediction.
+func (w *seqWriter) encodePass(nodes []*seqNode, sc seqScope) ([]byte, error) {
+	if err := w.emit(nodes, sc, false); err != nil {
 		return nil, err
 	}
 	// Armored text is the bits up to the cursor, not rounded to a byte
 	// (spec 0.14); `length … whole` is refused under armor at load.
-	if p.sixbitArmor {
+	if w.p.sixbitArmor {
 		w.buf.need(w.pos)
 		return sixbitArmorText(w.buf.data, w.pos), nil
 	}
@@ -1205,7 +1623,7 @@ func encodeSeq(p *Pack, ent *Entity) ([]byte, error) {
 	if rem := w.pos % 8; rem != 0 {
 		w.alloc(8 - rem)
 	}
-	if p.uper && w.pos == 0 {
+	if w.p.uper && w.pos == 0 {
 		w.alloc(8)
 	}
 	for _, wh := range w.wholes {
@@ -1237,14 +1655,10 @@ func seqSelect(p *Pack, b *seqBody, kind EntityKind, rec *Item, what string) ([]
 			return nil, nil, &Error{Kind: ErrNoKind, Format: p.Format, Detail: fmt.Sprintf("%s names kind %q, which the format does not have", what, kind.Name)}
 		}
 	}
-next:
 	for _, k := range b.kinds {
-		for _, key := range k.requires {
-			if _, ok := rec.Fields[key]; !ok && len(rec.Lists[key]) == 0 {
-				continue next
-			}
+		if reqHolds(k.requires, rec) {
+			return k.all, k.defs, nil
 		}
-		return k.all, k.defs, nil
 	}
 	return nil, nil, &Error{Kind: ErrNoKind, Format: p.Format, Detail: what + " has the required keys of no kind"}
 }
@@ -1272,83 +1686,167 @@ func fieldPresent(f *Field, sc seqScope) bool {
 	return false
 }
 
-// seqPresent reports whether lines would write a present key or a non-empty
-// list.
-func seqPresent(nodes []*seqNode, sc seqScope) bool {
+// seqSim walks lines as an encode would write them, without writing: it
+// tells whether they have content (a present key, a default in scope or a
+// non-empty list), records in the scope what a decode of the written lines
+// would hold, so that a switch selects as decode would (0.20), and with a
+// target collects the bits of that presence: a bit is 1 when an `if` that
+// names it without `!`, among the lines walked, has content. Only the
+// selected case of a switch is walked (0.20, rulings 1, 17 and 22 of 0.8).
+type seqSim struct {
+	w      *seqWriter
+	target *seqPresenceDef
+	bits   []bool
+}
+
+// content reports whether lines would write a present key or a non-empty
+// list, the scope's decoded values left unchanged.
+func (w *seqWriter) content(nodes []*seqNode, sc seqScope) bool {
+	s := &seqSim{w: w}
+	return s.walk(nodes, sc.withVals(), true)
+}
+
+func (s *seqSim) set(i int) {
+	for len(s.bits) <= i {
+		s.bits = append(s.bits, false)
+	}
+	s.bits[i] = true
+}
+
+// ifWritten reports whether an `if` block is written: its conditions on
+// presences already written, on the bits of the target found so far, and on
+// a presence not yet known as its block's content.
+func (s *seqSim) ifWritten(n *seqNode, content bool) bool {
+	for _, c := range n.conds {
+		var bit bool
+		switch bits, known := s.w.pres[c.p]; {
+		case c.p == s.target:
+			bit = c.bit < len(s.bits) && s.bits[c.bit]
+		case known:
+			bit = c.bit < len(bits) && bits[c.bit]
+		default:
+			bit = content && !c.neg
+		}
+		if bit == c.neg {
+			return false
+		}
+	}
+	return true
+}
+
+// walk walks lines; written tells whether the lines are written, so that
+// their fields record decoded values. Without a target it stops at the first
+// content.
+func (s *seqSim) walk(nodes []*seqNode, sc seqScope, written bool) bool {
+	content := false
 	for _, n := range nodes {
+		if content && s.target == nil {
+			return true
+		}
 		switch n.op {
 		case seqField:
 			if fieldPresent(n.f, sc) {
-				return true
+				content = true
+			}
+			if written {
+				if n.f.uper != nil {
+					uperReadBack(s.w, n.f, sc)
+				} else if buf := s.w.fieldBits(n.f, sc); buf != nil {
+					readBack(s.w.p, n.f, sc, buf, 0)
+				}
 			}
 		case seqGroup:
-			if len(sc.rec.Lists[n.g.List]) > 0 {
-				return true
+			items := sc.rec.Lists[n.g.List]
+			if len(items) > 0 {
+				content = true
 			}
-		case seqIf, seqOpt, seqChain, seqLength, seqExt, seqChoice, seqAlt:
-			if seqPresent(n.body, sc) {
-				return true
+			if s.target == nil {
+				continue
+			}
+			for _, it := range items {
+				nodes, defs, err := seqSelect(s.w.p, n.g.sbody, it.Kind, it, "an item of list "+n.g.List)
+				if err != nil {
+					// The encode reports it when it reaches the group.
+					continue
+				}
+				s.walk(nodes, newScope(s.w.p, it, defs), written)
+			}
+		case seqIf:
+			body := s.w.content(n.body, sc)
+			if body && s.target != nil {
+				for _, c := range n.conds {
+					if c.p == s.target && !c.neg {
+						s.set(c.bit)
+					}
+				}
+			}
+			if body {
+				content = true
+			}
+			s.walk(n.body, sc, written && s.ifWritten(n, body))
+		case seqOpt:
+			body := s.w.content(n.body, sc)
+			if body {
+				content = true
+			}
+			s.walk(n.body, sc, written && body)
+		case seqChain:
+			on := written
+			for j, c := range n.body {
+				if c.op == seqFx {
+					// At an fx bit of 0 the chain ends.
+					if on && !s.w.content(n.body[j+1:], sc) {
+						on = false
+					}
+					continue
+				}
+				if s.walk([]*seqNode{c}, sc, on) {
+					content = true
+					if s.target == nil {
+						return true
+					}
+				}
+			}
+		case seqLength:
+			if s.walk(n.body, sc, written) {
+				content = true
+			}
+		case seqExt:
+			// Content is looked for inside ext, choice and alt blocks
+			// (0.19 ruling 3); encode writes an ext block's lines.
+			if s.walk(n.body, sc, written) {
+				content = true
+			}
+		case seqChoice:
+			// Encode writes the alt w.choice picks; with a target every alt
+			// is walked for the bits it names, as before 0.20.
+			alt := s.w.choiceAlt(n, sc)
+			for _, a := range n.body {
+				if a != alt && s.target == nil {
+					continue
+				}
+				if s.walk(a.body, sc, written && a == alt) {
+					content = true
+				}
+			}
+		case seqSwitchOp:
+			if c := s.w.predict(n.sw, sc); c != nil {
+				if s.walk(c.body, sc.inCase(c), written) {
+					content = true
+				}
 			}
 		}
 	}
-	return false
+	return content
 }
 
-// presenceBits computes the bits of a presence before it is written: a bit
-// is 1 when some `if` block that names it without `!`, among the lines that
-// follow the presence line, has content. A block inside a group item counts
-// for every item (0.8 rulings 4 and 12).
-func (w *seqWriter) presenceBits(pr *seqPresenceDef, rest []*seqNode, sc seqScope) ([]bool, error) {
-	bits := make([]bool, pr.n+1)
-	set := func(i int) {
-		for len(bits) <= i {
-			bits = append(bits, false)
-		}
-		bits[i] = true
-	}
-	var walk func(nodes []*seqNode, sc seqScope) error
-	walk = func(nodes []*seqNode, sc seqScope) error {
-		for _, n := range nodes {
-			switch n.op {
-			case seqIf:
-				names := false
-				for _, c := range n.conds {
-					if c.p == pr && !c.neg {
-						names = true
-					}
-				}
-				if names && seqPresent(n.body, sc) {
-					for _, c := range n.conds {
-						if c.p == pr && !c.neg {
-							set(c.bit)
-						}
-					}
-				}
-				if err := walk(n.body, sc); err != nil {
-					return err
-				}
-			case seqOpt, seqChain, seqLength, seqExt, seqChoice, seqAlt:
-				if err := walk(n.body, sc); err != nil {
-					return err
-				}
-			case seqGroup:
-				for _, it := range sc.rec.Lists[n.g.List] {
-					nodes, defs, err := seqSelect(w.p, n.g.sbody, it.Kind, it, "an item of list "+n.g.List)
-					if err != nil {
-						return err
-					}
-					if err := walk(nodes, seqScope{rec: it, defs: defs, uper: w.p.uper}); err != nil {
-						return err
-					}
-				}
-			}
-		}
-		return nil
-	}
-	if err := walk(rest, sc); err != nil {
-		return nil, err
-	}
-	return bits, nil
+// presenceBits computes the bits of a presence before it is written, over
+// the lines that follow the presence line (0.8 rulings 4 and 12). A block
+// inside a group item counts for every item.
+func (w *seqWriter) presenceBits(pr *seqPresenceDef, rest []*seqNode, sc seqScope) []bool {
+	s := &seqSim{w: w, target: pr, bits: make([]bool, pr.n+1)}
+	s.walk(rest, sc.withVals(), true)
+	return s.bits
 }
 
 // seqFieldValue returns the value a field line writes and the line it comes
@@ -1422,11 +1920,11 @@ func (w *seqWriter) emit(nodes []*seqNode, sc seqScope, chain bool) error {
 				if f.absent != nil && !f.suppressed(sc.rec) {
 					w.put(at, f.loc.blen, f.sentinelBits())
 				}
-				continue
-			}
-			if err := putBitsField(p, from, v, w.buf.data, at); err != nil {
+			} else if err := putBitsField(p, from, v, w.buf.data, at); err != nil {
 				return err
 			}
+			// What a decode would read back from the bits (0.20).
+			readBack(p, f, sc, w.buf.data, at)
 		case seqConst, seqWhen:
 			w.put(w.alloc(n.n), n.n, n.num)
 		case seqPad:
@@ -1437,10 +1935,7 @@ func (w *seqWriter) emit(nodes []*seqNode, sc seqScope, chain bool) error {
 			}
 		case seqPresence:
 			pr := n.pres
-			bits, err := w.presenceBits(pr, nodes[i+1:], sc)
-			if err != nil {
-				return err
-			}
+			bits := w.presenceBits(pr, nodes[i+1:], sc)
 			w.pres[pr] = bits
 			if !pr.fx {
 				at := w.alloc(pr.n)
@@ -1486,7 +1981,7 @@ func (w *seqWriter) emit(nodes []*seqNode, sc seqScope, chain bool) error {
 			}
 		case seqOpt:
 			at := w.alloc(1)
-			if seqPresent(n.body, sc) {
+			if w.content(n.body, sc) {
 				w.put(at, 1, 1)
 				if err := w.emit(n.body, sc, false); err != nil {
 					return err
@@ -1500,7 +1995,7 @@ func (w *seqWriter) emit(nodes []*seqNode, sc seqScope, chain bool) error {
 			// An fx bit is 1 when a line after it in the chain would write a
 			// present key; at 0 the chain ends.
 			at := w.alloc(1)
-			if !chain || !seqPresent(nodes[i+1:], sc) {
+			if !chain || !w.content(nodes[i+1:], sc) {
 				return nil
 			}
 			w.put(at, 1, 1)
@@ -1537,6 +2032,19 @@ func (w *seqWriter) emit(nodes []*seqNode, sc seqScope, chain bool) error {
 			if err := w.choice(n, sc); err != nil {
 				return err
 			}
+		case seqSwitchOp:
+			// The case decode would select from the bits written (0.20).
+			if _, ok := sc.vals[n.sw.key]; !ok && sc.bad[n.sw.key] {
+				return &Error{Kind: ErrTransformEncode, Format: p.Format, Detail: fmt.Sprintf("the switch on line %d: the value written for %s does not read back, so the output would not decode", n.sw.line, n.sw.key)}
+			}
+			c := n.sw.selectCase(sc.vals)
+			w.actual[seqSwitchAt{n.sw, sc.rec}] = c
+			if c == nil {
+				return &Error{Kind: ErrNoKind, Format: p.Format, Detail: fmt.Sprintf("the switch on line %d: the value of %s written is in no case and there is no else", n.sw.line, n.sw.key)}
+			}
+			if err := w.emit(c.body, sc.inCase(c), false); err != nil {
+				return err
+			}
 		}
 	}
 	return nil
@@ -1561,7 +2069,7 @@ func (w *seqWriter) group(g *Group, sc seqScope) error {
 		if err != nil {
 			return err
 		}
-		return w.emit(nodes, seqScope{rec: it, defs: defs, uper: w.p.uper}, false)
+		return w.emit(nodes, newScope(w.p, it, defs), false)
 	}
 	bit := func(one bool) {
 		at := w.alloc(1)

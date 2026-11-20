@@ -1,0 +1,48 @@
+# Conformance probe pack for the encode side of `switch` (spec 0.20), on a
+# sequential `bits` layout, most significant bit first. Public. Four keys,
+# each followed by a switch on it; encode selects from what decode would read
+# back from the bits the key's line wrote.
+#
+#   x : 8, default 1           switch: 1 c1 : 8, else c2 : 8
+#   y : 8, absent 255          switch: 255 v1 : 8, else v2 : 8
+#                              (255 reads back absent: never case 255)
+#   z : 8, with n              switch: 0 v3 : 8, else nothing
+#                              (suppressed: zero bits, so case 0)
+#   w : 8, also qty            switch: 7 v4 : 8, else nothing
+#                              (the value the line chose, qty's when w is absent)
+format     conformance-kinds-enc
+version    0.20.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+default probe.x  1
+field  probe.x  8  uint
+switch probe.x
+  case 1
+    field  probe.c1  8  uint
+  else
+    field  probe.c2  8  uint
+end
+field  probe.y  8  uint  absent 255
+switch probe.y
+  case 255
+    field  probe.v1  8  uint
+  else
+    field  probe.v2  8  uint
+end
+field  probe.z  8  uint  with probe.n
+switch probe.z
+  case 0
+    field  probe.v3  8  uint
+  else
+end
+field  probe.w  8  uint
+also   probe.qty
+switch probe.w
+  case 7
+    field  probe.v4  8  uint
+  else
+end

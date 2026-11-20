@@ -1,0 +1,37 @@
+# Conformance probe pack for `when` lists and ranges (spec 0.20) on an
+# integer `protobuf` `when`. Public. Field 1 selects the kind and no
+# `field` line maps it, so encode writes the first value of the list.
+#
+#   a   when 1 1,3..5      field 2: y
+#   b   when 1 200..300    field 2: z    (two-byte varints)
+#   c   when 3 7..9        field 3: w    a field on the `when`'s path: its
+#                                        value is written when it matches,
+#                                        else the first value (ruling 15)
+#   d   when 3 2,1         field 3: c2 psint, default -1; field 4: n
+#                          the raw varint c2 writes is compared, with no
+#                          zig-zag: -1 writes 1, which is listed; the
+#                          default never counts (ruling 29)
+format     conformance-kinds-protobuf
+version    0.20.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       protobuf
+kind   a
+when   1  1,3..5
+requires probe.y
+field  probe.y  2  pvarint
+kind   b
+when   1  200..300
+requires probe.z
+field  probe.z  2  pvarint
+kind   c
+when   3  7..9
+requires probe.w
+field  probe.w  3  pvarint
+kind   d
+when   3  2,1
+requires probe.n
+default probe.c2  -1
+field  probe.c2  3  psint
+field  probe.n  4  pvarint

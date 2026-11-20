@@ -1,0 +1,14 @@
+{
+  "name": "switch-in-a-group-body",
+  "from": "conformance-kinds-items",
+  "to": "conformance-kinds-items",
+  "input": "0000020105024142",
+  "expect": "0000020105024142",
+  "model": {
+    "probe.items.#": "2",
+    "probe.items[0].probe.val": "5",
+    "probe.items[1].probe.label": "AB"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; groups, presence and defaults in cases; each item: qty, then the switch on the item's qty"
+}

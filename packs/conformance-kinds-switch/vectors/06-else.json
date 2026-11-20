@@ -1,0 +1,14 @@
+{
+  "name": "else",
+  "from": "conformance-kinds-switch",
+  "to": "conformance-kinds-switch",
+  "input": "090507",
+  "expect": "090507",
+  "model": {
+    "probe.x": "9",
+    "probe.w": "5",
+    "probe.c1": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; no case holds 9: the else lines"
+}

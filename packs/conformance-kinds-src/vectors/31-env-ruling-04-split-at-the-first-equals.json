@@ -1,0 +1,9 @@
+{
+  "name": "env-ruling-04-split-at-the-first-equals",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-env",
+  "input": "{\"s1\":\"=x\"}",
+  "expect": "{\"s\":\"=x\",\"k\":\"eq\"}",
+  "source": "constructed",
+  "reference": "spec 0.20, Encode kind by value; ruling 4: `probe.s1==x` is split at the first `=`; the value is the text =x, no `=` stripped"
+}

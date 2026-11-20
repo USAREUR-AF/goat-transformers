@@ -1,0 +1,16 @@
+{
+  "name": "ruling-38-listed-text-does-not-select-a",
+  "from": "conformance-kinds-text",
+  "to": "conformance-kinds-text",
+  "input": "B;y",
+  "expect": "B;y",
+  "model": {
+    "@kind": "b",
+    "probe.s2": "y",
+    "@absent": [
+      "probe.s1"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 38: on the 0.10 `text` wire a `when` value stays one literal value, a comma included; B is not the value A,B, so a does not hold; b's value is B"
+}

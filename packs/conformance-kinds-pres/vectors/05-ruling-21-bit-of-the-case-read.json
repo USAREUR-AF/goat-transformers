@@ -1,0 +1,12 @@
+{
+  "name": "ruling-21-bit-of-the-case-read",
+  "from": "conformance-kinds-pres",
+  "to": "conformance-kinds-pres",
+  "input": "80010500",
+  "expect": "80010500",
+  "model": {
+    "probe.y": "5"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 21: an `if` naming a presence counts only when the innermost case it sits in is read; x = 1: p.1, y"
+}

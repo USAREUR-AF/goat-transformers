@@ -1,0 +1,9 @@
+{
+  "name": "kind-holds-field-short",
+  "from": "conformance-kinds-bits",
+  "to": "conformance-kinds-bits",
+  "input": "01",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.20, Lists and ranges in `when`; lo holds on byte 0; y on byte 1 is beyond the input (ruling 21 of 0.5)"
+}

@@ -1,0 +1,44 @@
+# Conformance probe pack for `when` lists on a text wire (spec 0.20), `json`.
+# Public. On a text wire `..` has no meaning and the text is literal; a comma
+# separates values; `""` alone is the empty text; `01` is the text `01`,
+# not the number 1 (ruling 1).
+#
+#   ab     when t a,b     x
+#   dots   when t 1..3    y     the text 1..3
+#   empty  when t ""      z
+#   lead   when t 01      w
+#   lbl    when u p,q     label, on the same member u: a text wire writes
+#                         the first value, p, whatever label holds (ruling 15)
+#   eqv    when v =5,=x   c1    each item's leading = is stripped; the first
+#                         item's = makes json write the string "5" (ruling 32)
+format     conformance-kinds-json
+version    0.20.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       json
+field  probe.s1  s  string
+kind   ab
+when   t  a,b
+requires probe.x
+field  probe.x  x  int
+kind   dots
+when   t  1..3
+requires probe.y
+field  probe.y  y  int
+kind   empty
+when   t  ""
+requires probe.z
+field  probe.z  z  int
+kind   lead
+when   t  01
+requires probe.w
+field  probe.w  w  int
+kind   lbl
+when   u  p,q
+requires probe.label
+field  probe.label  u  string
+kind   eqv
+when   v  =5,=x
+requires probe.c1
+field  probe.c1  c  int

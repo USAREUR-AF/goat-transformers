@@ -1,0 +1,15 @@
+{
+  "name": "extent-holds-the-key",
+  "from": "conformance-kinds-again",
+  "to": "conformance-kinds-again",
+  "input": "0101050107",
+  "expect": "0101050107",
+  "model": {
+    "probe.x": "1",
+    "probe.y": "5",
+    "probe.c1": "1",
+    "probe.c2": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; rulings 9 and 14; length 1: x = 1, case 1"
+}

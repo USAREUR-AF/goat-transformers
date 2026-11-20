@@ -1,0 +1,9 @@
+{
+  "name": "past-the-range",
+  "from": "conformance-kinds-protobuf",
+  "to": "conformance-kinds-protobuf",
+  "input": "08ad021002",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.20, Lists and ranges in `when`, on an integer protobuf `when`; 301 = ad 02"
+}

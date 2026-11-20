@@ -1,0 +1,9 @@
+{
+  "name": "presnest-nested-else-sets-no-bit",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-presnest",
+  "input": "{\"x\":1,\"y\":3,\"c1\":5}",
+  "expect": "010003",
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 30: an `if` counts when the innermost case that holds the `if` and not the presence is read; y = 3: the nested else; q is all zero"
+}

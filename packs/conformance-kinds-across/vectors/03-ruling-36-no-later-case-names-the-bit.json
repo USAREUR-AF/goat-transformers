@@ -1,0 +1,9 @@
+{
+  "name": "ruling-36-no-later-case-names-the-bit",
+  "from": "conformance-kinds-across",
+  "to": "conformance-kinds-across",
+  "input": "c0010105",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 36: a bit named only inside cases is satisfied by such a case read anywhere later in the decode, a later item included; p.2 is 1 and no item reads case 2 (ruling 1 of 0.8)"
+}

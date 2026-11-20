@@ -1,0 +1,9 @@
+{
+  "name": "bits-ruling-03-value-of-another-kind-not-written",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-bits",
+  "input": "{\"x\":3,\"z\":7}",
+  "expect": "0407",
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 3, Encode of a `when` with a list or a range; hi; x = 3 is lo's, not in hi's 4..9,20: hi's first value 4"
+}

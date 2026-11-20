@@ -1,0 +1,9 @@
+{
+  "name": "items-ruling-11-encode-item-no-case",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-items",
+  "input": "{\"items\":[{\"qty\":3}]}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; groups, presence and defaults in cases; the item's qty line writes 3: no case, no else: no-kind"
+}

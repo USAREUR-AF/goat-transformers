@@ -1,0 +1,16 @@
+{
+  "name": "switch-in-an-opt-not-read",
+  "from": "conformance-kinds-nest",
+  "to": "conformance-kinds-nest",
+  "input": "0a000000",
+  "expect": "0a000000",
+  "model": {
+    "probe.x": "5",
+    "@absent": [
+      "probe.y",
+      "probe.z"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; switch blocks inside other blocks; the opt bit is 0: the block and its switch are not read"
+}

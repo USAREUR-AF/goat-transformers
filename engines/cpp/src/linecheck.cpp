@@ -40,7 +40,11 @@ const std::set<std::string>& pack_directives() {
                                          // v0.19, ASN.1 unaligned PER (ruling 21: directives on
                                          // every wire). Whether they fit their pack is checked
                                          // after the file is read (rulings 9 and 21).
-                                         "encoding", "ext", "choice", "alt"};
+                                         "encoding", "ext", "choice", "alt",
+                                         // v0.20, sequential layouts. Their argument counts
+                                         // are line checks (0.20 ruling 39); their structure
+                                         // and values are checked as the pack is read.
+                                         "switch", "case", "else"};
     return s;
 }
 
@@ -63,7 +67,10 @@ const std::set<std::string>& one_argument() {
                                          // v0.18 ruling 25
                                          "element",
                                          // v0.19: a pack directive of one value, as `armor`
-                                         "encoding"};
+                                         "encoding",
+
+                                         // v0.20 ruling 39
+                                         "switch", "case"};
     return s;
 }
 
@@ -239,7 +246,7 @@ void check_pack_lines(const std::string& text, const std::string& source) {
         else if (kw == "when" || kw == "const" || kw == "default") count(nargs == 2, "two arguments");
         else if (kw == "map") count(nargs == 3, "three arguments");
         else if (kw == "typemap") count(nargs == 2, "two arguments");
-        else if (kw == "end") count(nargs == 0, "no argument");
+        else if (kw == "end" || kw == "else") count(nargs == 0, "no argument");
         // v0.19 ruling 23: `ext` none, `choice` one or two, `alt` one (`encoding`
         // is in the one-argument list); their values are checked after the file.
         else if (kw == "ext") count(nargs == 0, "no argument");

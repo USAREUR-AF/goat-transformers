@@ -1,0 +1,12 @@
+{
+  "name": "case-list-second",
+  "from": "conformance-kinds-switch",
+  "to": "conformance-kinds-switch",
+  "input": "03010207",
+  "expect": "03010207",
+  "model": {
+    "probe.z": "258"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; 3 is in the list 2,3: z = 0x0102 = 258"
+}

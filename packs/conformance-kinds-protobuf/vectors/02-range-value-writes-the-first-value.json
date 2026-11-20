@@ -1,0 +1,13 @@
+{
+  "name": "range-value-writes-the-first-value",
+  "from": "conformance-kinds-protobuf",
+  "to": "conformance-kinds-protobuf",
+  "input": "08041002",
+  "expect": "08011002",
+  "model": {
+    "@kind": "a",
+    "probe.y": "2"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, Lists and ranges in `when`, on an integer protobuf `when`; 4 is in 3..5: a. No field line maps field 1, so encode writes a's first value, 1 (0.5 Encode step 4)"
+}

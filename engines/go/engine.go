@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strings"
 )
 
 // Engine holds the loaded model modules, keyed by module name, and the loaded
@@ -163,6 +164,17 @@ func (e *Engine) AddPack(p *Pack) error {
 			return lerr(ErrUndeclaredKey, mod, r, "module %s declares no %s %q", mod, what, name)
 		}
 	}
+	// A list key with `=` in `requires` (0.20 rulings 4 and 19).
+	for i := range p.keyRefs {
+		r := &p.keyRefs[i]
+		if r.term == nil {
+			continue
+		}
+		mod, name := splitModelKey(r.key)
+		if e.modules[mod].IsList(name) {
+			return &Error{Kind: ErrBadDirective, Format: p.Format, Module: mod, Source: p.Source, Line: r.line, Detail: fmt.Sprintf("requires %s=…: %s is a list, a value cannot be required of it", r.key, r.key)}
+		}
+	}
 	// A field with `via` is checked against the model side of its table; a
 	// default value must read as its key's declared type.
 	for i := range p.keyRefs {
@@ -202,6 +214,13 @@ func (e *Engine) AddPack(p *Pack) error {
 		}
 		f.keyType = k.Type
 		f.bindTable()
+	}
+	// The values of `requires =` terms and of `case` lines, read as the key's
+	// declared type, in line order: the type, then duplicates (0.20 ruling 19).
+	for _, vc := range p.valueChecks {
+		if err := e.checkValues(p, vc); err != nil {
+			return err
+		}
 	}
 	if prev, dup := e.packs[p.Format]; dup {
 		return &Error{Kind: ErrDuplicateFormat, Format: p.Format, Source: p.Source, Detail: "already loaded from " + prev.Source}
@@ -670,16 +689,13 @@ func chooseEncode(p *Pack, ent *Entity) (*layout, error) {
 		// (0.5 ruling 24).
 		return nil, &Error{Kind: ErrNoKind, Format: p.Format, Detail: fmt.Sprintf("the entity names kind %q, which the format does not have", ent.Kind.Name)}
 	}
-next:
+	rec := ent.item()
 	for i, k := range p.Kinds {
 		// A required key is present; a required list is present and has at
-		// least one item.
-		for _, key := range k.Requires {
-			if _, ok := ent.Fields[key]; !ok && len(ent.Lists[key]) == 0 {
-				continue next
-			}
+		// least one item; a key with `=` holds a listed value (0.20).
+		if reqHolds(k.reqs, rec) {
+			return p.layouts[i], nil
 		}
-		return p.layouts[i], nil
 	}
 	return nil, &Error{Kind: ErrNoKind, Format: p.Format, Detail: "the entity has the required keys of no kind of the format"}
 }
@@ -859,4 +875,57 @@ func residueFor(p *Pack, ent *Entity, written map[string]bool) []ResidueEntry {
 		out = append(out, r)
 	}
 	return out
+}
+
+// checkValues reads the values of one `requires` line with `=` terms, or of
+// one `case` line, as the key's declared type (0.20 rulings 1, 17, 18).
+func (e *Engine) checkValues(p *Pack, vc valueCheck) error {
+	bad := func(kind ErrorKind, format string, a ...any) error {
+		return &Error{Kind: kind, Format: p.Format, Source: p.Source, Line: vc.line, Detail: fmt.Sprintf(format, a...)}
+	}
+	canon := func(key string, vals []string) ([]string, error) {
+		kind, err := e.keyType(key)
+		if err != nil {
+			return nil, err
+		}
+		out := make([]string, len(vals))
+		for i, v := range vals {
+			c, err := canonValue(v, kind)
+			if err != nil {
+				return nil, bad(ErrKeyTypeMismatch, "key %s is %s: %v", key, kindName(kind), err)
+			}
+			out[i] = c
+		}
+		return out, nil
+	}
+	for _, t := range vc.terms {
+		cs, err := canon(t.key, t.vals)
+		if err != nil {
+			return err
+		}
+		t.canon = map[string]bool{}
+		for _, c := range cs {
+			t.canon[c] = true
+		}
+	}
+	if c := vc.cas; c != nil {
+		cs, err := canon(c.sw.key, c.vals)
+		if err != nil {
+			return err
+		}
+		c.canon = map[string]bool{}
+		for i, v := range cs {
+			if c.canon[v] {
+				return bad(ErrBadDirective, "case %s: the value %s is listed twice", strings.Join(c.vals, ","), c.vals[i])
+			}
+			if prev := c.sw.seen[v]; prev != nil {
+				return bad(ErrBadDirective, "case %s: the value %s is already listed by the case on line %d", strings.Join(c.vals, ","), c.vals[i], prev.line)
+			}
+			c.canon[v] = true
+		}
+		for v := range c.canon {
+			c.sw.seen[v] = c
+		}
+	}
+	return nil
 }

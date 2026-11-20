@@ -1,0 +1,9 @@
+{
+  "name": "switch-else",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-switch",
+  "input": "{\"x\":200,\"w\":1,\"y\":2}",
+  "expect": "c80100",
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; Encode: 200 is in no case: else, w"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "nest-ruling-22-fx-counts-the-selected-case",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-nest",
+  "input": "{\"x\":5,\"c1\":1,\"v1\":7}",
+  "expect": "0a020000",
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; switch blocks inside other blocks; rulings 22 of 0.8 counts the selected case only: c1 = 1 selects case 1; v1 is else's, so it is not content and the fx bit is 0"
+}

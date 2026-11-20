@@ -1,0 +1,12 @@
+{
+  "name": "ruling-32-first-item-matches-a-number",
+  "from": "conformance-kinds-json",
+  "to": "conformance-kinds-json",
+  "input": "{\"v\":5,\"c\":1}",
+  "expect": "{\"v\":\"5\",\"c\":1}",
+  "model": {
+    "@kind": "eqv"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 32: a leading `=` is stripped from each item of a text-wire `when` list; the number 5, canonical text 5, is the first item; written as the string 5"
+}

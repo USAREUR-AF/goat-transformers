@@ -1,0 +1,9 @@
+{
+  "name": "items-ruling-07-default-in-its-case",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-items",
+  "input": "{\"x\":5}",
+  "expect": "0580090000",
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; groups, presence and defaults in cases; ruling 7: case 5's default 9 is content for d.1"
+}

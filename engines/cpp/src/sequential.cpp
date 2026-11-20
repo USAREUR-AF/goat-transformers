@@ -129,6 +129,7 @@ void each_node(Lines& lines, Fn&& fn) {
         fn(n);
         each_node(n.inner.lines, fn);
         for (auto& k : n.inner.kinds) each_node(k.lines, fn);
+        for (auto& c : n.cases) each_node(c.body.lines, fn);
     }
 }
 
@@ -140,12 +141,14 @@ void each_node(Lines& lines, Fn&& fn) {
 // wire, decode keeps the later group's items.
 struct ListUse {
     const SeqNode* group;
-    std::vector<const SeqNode*> blocks;  // the `if` and `opt` blocks of the scope that hold the group, outermost first
+    // The `if` and `opt` blocks and the cases (0.20 ruling 10) of the scope
+    // that hold the group, outermost first.
+    std::vector<const void*> blocks;
 };
 
 void check_lists_once(const Pack& p, const SeqBody& body, const std::string& source);
 
-void collect_groups(const Pack& p, const std::vector<SeqNode>& lines, std::vector<const SeqNode*>& blocks,
+void collect_groups(const Pack& p, const std::vector<SeqNode>& lines, std::vector<const void*>& blocks,
                     const std::string& source, std::vector<ListUse>& out) {
     for (const auto& n : lines) {
         if (n.type == Type::Group) {
@@ -155,6 +158,12 @@ void collect_groups(const Pack& p, const std::vector<SeqNode>& lines, std::vecto
             blocks.push_back(&n);
             collect_groups(p, n.inner.lines, blocks, source, out);
             blocks.pop_back();
+        } else if (n.type == Type::Switch) {
+            for (const auto& c : n.cases) {
+                blocks.push_back(&c);
+                collect_groups(p, c.body.lines, blocks, source, out);
+                blocks.pop_back();
+            }
         } else {
             collect_groups(p, n.inner.lines, blocks, source, out);
         }
@@ -162,7 +171,7 @@ void collect_groups(const Pack& p, const std::vector<SeqNode>& lines, std::vecto
 }
 
 void check_lists_once(const Pack& p, const SeqBody& body, const std::string& source) {
-    std::vector<const SeqNode*> blocks;
+    std::vector<const void*> blocks;
     std::vector<ListUse> common;
     collect_groups(p, body.lines, blocks, source, common);
     // Does the innermost block of `a` enclose the innermost block of `b`?
@@ -237,6 +246,14 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
         std::map<std::string, int> names;       // presence names declared in this block
         std::map<std::string, int> kind_names;  // those declared in the kind that is open
         std::set<std::string> kinds;
+        // v0.20. A body: the keys its `field` and `also` lines have mapped so
+        // far, in the common lines and in the kind that is open.
+        std::set<std::string> common_keys, kind_keys;
+        // v0.20. A `switch` before its first `case`, and a `case` or `else`.
+        bool is_switch = false, is_case = false, is_else = false;
+        SeqNode* sw = nullptr;  // a switch: its node
+        int parent_case = -1;   // a switch: the innermost case of its body holding it
+        int case_id = -1;       // a case
     };
     std::vector<Frame> stack(1);
     stack[0].is_body = true;
@@ -271,6 +288,20 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
         for (std::size_t k = stack.size(); k-- > 0;)
             if (stack[k].is_body) return stack[k];
         return stack[0];
+    };
+    // v0.20: the innermost case of the innermost body; -1 when none. With
+    // `across`, the innermost case at any depth.
+    auto innermost_case = [&](bool across) -> int {
+        for (std::size_t k = stack.size(); k-- > 0;) {
+            if (stack[k].is_case) return stack[k].case_id;
+            if (stack[k].is_body && !across) return -1;
+        }
+        return -1;
+    };
+    // v0.20: a key mapped by a `field` or `also` line, for the `switch` lines after it.
+    auto mapped_key = [&](const std::string& key) {
+        Frame& f = body_frame();
+        (f.body->kinds.empty() ? f.common_keys : f.kind_keys).insert(key);
     };
     // A `when` before the first `kind` of a body with no `kind` (0.5 ruling 8).
     auto check_common_when = [&](const Frame& f) {
@@ -336,6 +367,10 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
 
         SeqNode* const prev_field = also_target;
         also_target = nullptr;
+
+        // v0.20 ruling 20: the lines between `switch` and its first `case`.
+        if (stack.back().is_switch && kw != "case" && kw != "end")
+            throw bad("'" + kw + "' between 'switch' and its first 'case'");
 
         // Header and table directives describe the pack, not a part of the
         // message: inside any block they are bad-directive (0.8 ruling 24).
@@ -450,11 +485,13 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
             f.body->kinds.back().line = lineno;
             f.kind_names.clear();
             if (first_kind_line == 0) first_kind_line = lineno;
+            f.kind_keys.clear();
         } else if (kw == "when") {
             // The `when` lines of a kind are its first lines; a `when` before
             // the first `kind` is a common one (0.8 ruling 10).
             Frame& f = stack.back();
             if (!f.is_body) throw bad("'when' inside " + f.what);
+            if (t.size() > 3) throw bad("'when' takes a bit length and one value list; a list has no spaces");
             arity(2);
             for (const auto& n : lines_of(f))
                 if (!f.body->kinds.empty() && n.type != Type::When)
@@ -462,10 +499,10 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
             SeqNode n;
             n.type = Type::When;
             n.len = small_len(t[1], "a 'when'");
-            if (!parse_u64(t[2], n.number))
-                throw bad("'when' value '" + t[2] + "' is not an unsigned decimal integer");
-            if (n.len < 64 && (n.number >> n.len) != 0)
-                throw bad("'when' value " + t[2] + " does not fit " + std::to_string(n.len) + " bits");
+            // v0.20: values and ranges.
+            std::string why;
+            if (!parse_when_numbers(t[2], n.len, n.ranges, why)) throw bad("'when' " + why);
+            n.number = n.ranges.front().first;
             add(std::move(n));
         } else if (kw == "requires") {
             Frame& f = stack.back();
@@ -473,7 +510,13 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
             if (f.body->kinds.empty()) throw bad("'requires' before the first 'kind'");
             if (t.size() < 2)
                 throw Error(ErrorKind::BadDirective, p.format, "", where + ": 'requires' takes at least 1 argument");
-            for (std::size_t k = 1; k < t.size(); ++k) f.body->kinds.back().requires_keys.push_back(t[k]);
+            for (std::size_t k = 1; k < t.size(); ++k) {
+                RequiresTerm term;
+                std::string why;
+                if (!parse_requires_term(t[k], lineno, term, why)) throw bad(why);
+                f.body->kinds.back().requires_keys.push_back(term.key);
+                f.body->kinds.back().requires_terms.push_back(std::move(term));
+            }
         } else if (kw == "default") {
             // A `default` inside a block belongs to the message or item that holds the block.
             arity(2);
@@ -481,8 +524,13 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
             d.key = t[1];
             d.text = t[2];
             d.line = lineno;
-            Frame& f = body_frame();
-            (f.body->kinds.empty() ? f.body->defaults : f.body->kinds.back().defaults).push_back(std::move(d));
+            // Inside a case it belongs to the innermost case (0.20 ruling 7).
+            Frame* target = nullptr;
+            for (std::size_t k = stack.size(); k-- > 0 && !target;)
+                if (stack[k].is_case || stack[k].is_body) target = &stack[k];
+            Frame& f = *target;
+            if (f.is_case) f.body->defaults.push_back(std::move(d));
+            else (f.body->kinds.empty() ? f.body->defaults : f.body->kinds.back().defaults).push_back(std::move(d));
         } else if (kw == "field") {
             if (t.size() < 4)
                 throw Error(ErrorKind::BadDirective, p.format, "",
@@ -494,6 +542,7 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
             f.key = t[1];
             f.locator = t[2];
             f.line = lineno;
+            f.scase = innermost_case(false);
             if (is_uper_locator(f.locator)) {
                 // v0.19: a locator whose bit length follows from its ASN.1 constraint.
                 if (!parse_uper_locator(f.locator, n)) throw bad("'" + f.locator + "' is not a valid UPER locator");
@@ -548,6 +597,7 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
                         throw bad("'absent' does not apply to the UPER locator '" + f.locator + "'");
                     throw bad("'" + t[k] + "' is not a field option of a UPER locator, or is given twice");
                 }
+                mapped_key(t[1]);  // a `switch` key (0.20)
                 also_target = &add(std::move(n));
                 continue;
             }
@@ -604,6 +654,7 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
                 throw bad("option 'swap' does not apply to transform " + std::string(transform_name(f.transform)));
             if (f.swap && n.len % 8 != 0)
                 throw bad("option 'swap' needs a length that is a multiple of 8 bits, not " + std::to_string(n.len));
+            mapped_key(t[1]);
             also_target = &add(std::move(n));
         } else if (kw == "also") {
             // A second key on one field (0.8 ruling 13): the same bits through
@@ -618,6 +669,7 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
             f.table = -1;
             f.with.clear();  // `with` belongs to the field line (0.18 ruling 5)
             prev_field->also.push_back(std::move(f));
+            mapped_key(t[1]);
             also_target = prev_field;
         } else if (kw == "const") {
             if (t.size() > 3 && t[3] == "with") throw bad("'with' applies to a 'field' line only");
@@ -665,6 +717,7 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
             if (t.size() < 2) throw bad("'if' takes at least one <name>.<i>");
             SeqNode n;
             n.type = Type::If;
+            n.in_case = innermost_case(true);
             for (std::size_t k = 1; k < t.size(); ++k) {
                 SeqCond c;
                 std::string s = t[k];
@@ -678,6 +731,7 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
                 // The name is visible from its `presence` line to the end of the
                 // block that holds it; a nested block may hide it.
                 const std::string name = s.substr(0, dot);
+                std::size_t found = 0;
                 for (std::size_t d = stack.size(); d-- > 0 && c.presence < 0;) {
                     auto it = stack[d].kind_names.find(name);
                     if (it == stack[d].kind_names.end()) {
@@ -685,14 +739,27 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
                         if (it == stack[d].names.end()) continue;
                     }
                     c.presence = it->second;
+                    found = d;
                 }
+                // The innermost case that holds the `if` and not the presence,
+                // across group bodies (0.20 rulings 21 and 30); -1 when none.
+                int in_case = -1;
+                if (c.presence >= 0)
+                    for (std::size_t d = stack.size(); d-- > found + 1 && in_case < 0;)
+                        if (stack[d].is_case) in_case = stack[d].case_id;
                 if (c.presence < 0) throw bad("'if' names the presence '" + name + "', which is not visible here");
                 SeqPresence& pr = p.seq_presences[static_cast<std::size_t>(c.presence)];
                 if (!pr.fx && c.bit > pr.bits)
                     throw bad("'if' names bit " + std::to_string(c.bit) + " of the presence '" + name + "', which has " +
                               std::to_string(pr.bits));
-                if (pr.named.size() < c.bit) pr.named.resize(c.bit, false);
-                pr.named[c.bit - 1] = true;
+                // An `if` inside a case counts only when that case is read (0.20 ruling 21).
+                if (in_case >= 0) {
+                    if (pr.case_named.size() < c.bit) pr.case_named.resize(c.bit);
+                    pr.case_named[c.bit - 1].push_back(in_case);
+                } else {
+                    if (pr.named.size() < c.bit) pr.named.resize(c.bit, false);
+                    pr.named[c.bit - 1] = true;
+                }
                 pr.max_named = std::max(pr.max_named, c.bit);
                 n.conds.push_back(c);
             }
@@ -805,13 +872,72 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
             n.type = Type::Alt;
             n.number = static_cast<std::uint64_t>(index);
             open(std::move(n), "an 'alt'");
+        } else if (kw == "switch") {
+            // v0.20: `switch <model-key>`, a key mapped earlier in the scope.
+            if (t.size() != 2 || t[1].empty()) throw bad("'switch' takes one model key");
+            Frame& bf = body_frame();
+            if (!bf.common_keys.count(t[1]) && !bf.kind_keys.count(t[1]))
+                throw bad("the 'switch' key '" + t[1] + "' is not mapped by a 'field' or 'also' line before it in " +
+                          bf.what);
+            SeqNode n;
+            n.type = Type::Switch;
+            n.field.key = t[1];
+            n.field.line = lineno;
+            const int parent_case = innermost_case(false);
+            SeqNode& node = add(std::move(n));
+            Frame f;
+            f.type = Type::Switch;
+            f.is_switch = true;
+            f.sw = &node;
+            f.body = &node.inner;
+            f.parent_case = parent_case;
+            f.line = lineno;
+            f.what = "a 'switch'";
+            stack.push_back(std::move(f));
+        } else if (kw == "case" || kw == "else") {
+            const bool is_else = kw == "else";
+            if (stack.back().is_case) {
+                if (stack.back().is_else)
+                    throw bad(is_else ? "a 'switch' with two 'else'" : "'case' after the 'else' of its switch");
+                stack.pop_back();
+            }
+            if (!stack.back().is_switch) throw bad("'" + kw + "' outside a 'switch'");
+            Frame& sf = stack.back();
+            if (is_else && sf.sw->cases.empty()) throw bad("'else' before the first 'case'");
+            SeqCase c;
+            c.is_else = is_else;
+            c.line = lineno;
+            if (is_else) {
+                if (t.size() != 1) throw bad("'else' takes no argument");
+            } else {
+                if (t.size() != 2) throw bad("'case' takes one value list; a list has no spaces");
+                if (!split_value_list(t[1], c.values)) throw bad("the 'case' list '" + t[1] + "' has an empty value");
+            }
+            c.id = static_cast<int>(p.seq_cases.size());
+            p.seq_cases.push_back(SeqCaseScope{sf.parent_case});
+            sf.sw->cases.push_back(std::move(c));
+            Frame f;
+            f.type = Type::Switch;
+            f.is_case = true;
+            f.is_else = is_else;
+            f.case_id = sf.sw->cases.back().id;
+            f.body = &sf.sw->cases.back().body;
+            f.line = lineno;
+            f.what = is_else ? "an 'else'" : "a 'case'";
+            stack.push_back(std::move(f));
         } else if (kw == "end") {
             if (stack.size() < 2) throw bad("'end' with no open block");
             arity(0);
+            if (stack.back().is_switch) throw bad("a 'switch' with no 'case'");
             if (stack.back().type == Type::Choice) throw bad("a 'choice' with no 'alt' line");
-            if (stack.back().type == Type::Alt) stack.pop_back();  // the `end` closes the choice
-            check_common_when(stack.back());
-            stack.pop_back();
+            if (stack.back().is_case) {
+                stack.pop_back();  // the last case; `end` closes its switch (0.20)
+                stack.pop_back();
+            } else {
+                if (stack.back().type == Type::Alt) stack.pop_back();  // the `end` closes the choice (0.19)
+                check_common_when(stack.back());
+                stack.pop_back();
+            }
         } else if (kw == "element") {
             throw bad("'element' applies to wire xml only");
         } else {
@@ -822,9 +948,11 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
     // Checks that need the whole file, before `missing-distribution`.
     if (!have_format || p.format.empty()) throw Error(ErrorKind::MissingFormat, "", "", source + ": missing 'format'");
     if (!have_wire) throw Error(ErrorKind::MissingWire, p.format, "", source + ": missing 'wire'");
-    if (stack.size() > 1)
+    if (stack.size() > 1) {
+        const Frame& f = stack.back().is_case ? stack[stack.size() - 2] : stack.back();
         throw Error(ErrorKind::BadDirective, p.format, "",
-                    source + ":" + std::to_string(stack.back().line) + ": " + stack.back().what + " has no 'end'");
+                    source + ":" + std::to_string(f.line) + ": " + f.what + " has no 'end'");
+    }
     check_common_when(stack[0]);
     if (have_wire && p.wire != Wire::Bits)
         throw Error(ErrorKind::BadDirective, p.format, "", source + ": 'layout sequential' applies to wire bits only");
@@ -885,6 +1013,7 @@ void visit_body(SeqBody& body, const SeqVisitor& v) {
     if (v.default_line)
         for (auto& d : body.defaults) v.default_line(d);
     for (auto& k : body.kinds) {
+        if (v.kind) v.kind(k);
         if (v.requires_key)
             for (auto& r : k.requires_keys) v.requires_key(r);
         visit_lines(k.lines, v);
@@ -900,7 +1029,9 @@ void visit_lines(std::vector<SeqNode>& lines, const SeqVisitor& v) {
             for (auto& a : n.also) v.field(a);
         }
         if (n.type == Type::Group && v.group) v.group(n);
+        if (n.type == Type::Switch && v.switch_node) v.switch_node(n);
         visit_body(n.inner, v);
+        for (auto& c : n.cases) visit_body(c.body, v);
     }
 }
 
@@ -915,6 +1046,7 @@ void keys_of_lines(const std::vector<SeqNode>& lines, const std::string& prefix,
             seq_model_keys(n.inner, prefix + n.list + "[].", add);
         } else {
             keys_of_lines(n.inner.lines, prefix, add);
+            for (const auto& c : n.cases) keys_of_lines(c.body.lines, prefix, add);  // 0.20 ruling 13
         }
     }
 }
@@ -946,6 +1078,17 @@ struct SeqIn {
     // read, so that input that is too short is malformed-wire first.
     bool failed = false;
     std::string fail_locator, fail_detail;
+    // v0.20 ruling 21: a presence bit that is 1 and that only `if` lines inside
+    // cases name holds when one of those cases is read after the bit.
+    struct Pending {
+        int presence;
+        std::size_t bit;  // from 0
+        std::uint64_t tick;
+    };
+    std::vector<Pending> pending;
+    std::vector<std::uint64_t> case_read;  // by case id: the tick it was last read at; 0 = never
+    std::vector<int> open_cases;           // the cases being read, outermost first
+    std::uint64_t tick = 0;
 
     [[noreturn]] void malformed(const std::string& why) const {
         throw Error(ErrorKind::MalformedWire, p.format, "", why + " (at bit " + std::to_string(cur) + " of " +
@@ -1165,6 +1308,72 @@ void decode_uper_field(SeqIn& in, const SeqNode& n, Decoder& d) {
 }
 
 void decode_body(SeqIn& in, const SeqBody& body, Item& out);
+
+// The value of a `field` line's bits at `start`, into every key bound to them,
+// each through its own table; nothing for a sentinel (0.9).
+void read_field(const std::string& data, std::uint64_t start, const SeqNode& n, bool msb, Decoder& d) {
+    const FieldLine& f = n.field;
+    if (f.has_absent) {
+        // The raw value after `swap` (0.9 ruling 2); every key bound to the bits is absent.
+        std::uint64_t raw = read_bits(data, start, n.len, msb);
+        if (f.swap) raw = swap_bytes(raw, n.len);
+        if (sentinel_num(f, raw)) return;
+    }
+    try {
+        Value v;
+        // ascii, sixbit (0.14) and chars (0.15) through the shared reader.
+        if (!decode_bits_text(f, data, start, n.len, msb, v)) {
+            std::uint64_t raw = read_bits(data, start, n.len, msb);
+            if (f.swap) raw = swap_bytes(raw, n.len);
+            v = decode_bits_value(f, raw, n.len);
+        }
+        d.put(f, v);
+        for (const auto& a : n.also) d.put(a, v);
+    } catch (const std::invalid_argument& ex) {
+        d.fail(f, ex.what());
+        for (const auto& a : n.also) d.fail(a, ex.what());
+    }
+}
+
+// v0.20: a line's written bits, from `start` to `end`, read back as decode
+// reads them, for the switches. A UPER locator (0.19) is read by its own
+// reader, whose length follows from the value.
+void read_back(const Pack& p, const std::string& data, std::uint64_t start, std::uint64_t end, const SeqNode& n,
+               bool msb, Decoder& d) {
+    if (n.uper == SeqNode::Uper::None) {
+        read_field(data, start, n, msb, d);
+        return;
+    }
+    SeqIn in{p, data, msb, end, kNoExtent, start, std::vector<std::vector<bool>>(p.seq_presences.size()),
+             false, {}, {}, {}, {}, {}, 0};
+    decode_uper_field(in, n, d);
+}
+
+// v0.20: the case a switch selects from the value its key holds in `item`
+// (after `via` and `typemap`, as canonical text); the `else` when no case holds
+// it or the key is absent; null when there is no `else` either.
+const SeqCase* select_case(const Pack& p, const SeqNode& n, const Item& item) {
+    const SeqCase* fallback = !n.cases.empty() && n.cases.back().is_else ? &n.cases.back() : nullptr;
+    auto it = item.fields.find(n.field.key);
+    if (it == item.fields.end()) return fallback;
+    Value v = it->second;
+    if (n.field.key == "type" && !p.typemap.empty() && v.kind == Value::Kind::String)
+        for (const auto& tm : p.typemap)
+            if (tm.first == v.s) {
+                v.s = tm.second;
+                break;
+            }
+    std::string text;
+    try {
+        text = value_canonical_text(v);
+    } catch (const std::invalid_argument&) {
+        return fallback;
+    }
+    for (const auto& c : n.cases)
+        if (!c.is_else && std::find(c.canon.begin(), c.canon.end(), text) != c.canon.end()) return &c;
+    return fallback;
+}
+
 void decode_lines(SeqIn& in, const std::vector<SeqNode>& lines, std::size_t from, Item& out, Decoder& d);
 
 // The length a `length` field states, less `plus`: false when it is negative.
@@ -1262,29 +1471,29 @@ void decode_node(SeqIn& in, const SeqNode& n, Item& out, Decoder& d) {
                 return;
             }
             if (!in.need(n.len, "a field")) return;
-            const FieldLine& f = n.field;
             const std::uint64_t start = in.cur;
             in.cur += n.len;
-            if (f.has_absent) {
-                // The raw value after `swap` (0.9 ruling 2); every key bound to the bits is absent.
-                std::uint64_t raw = read_bits(in.data, start, n.len, in.msb);
-                if (f.swap) raw = swap_bytes(raw, n.len);
-                if (sentinel_num(f, raw)) return;
-            }
-            // Every key bound to the bits takes the value, each through its own table.
-            try {
-                Value v;
-                if (!decode_bits_text(f, in.data, start, n.len, in.msb, v)) {
-                    std::uint64_t raw = read_bits(in.data, start, n.len, in.msb);
-                    if (f.swap) raw = swap_bytes(raw, n.len);
-                    v = decode_bits_value(f, raw, n.len);
-                }
-                d.put(f, v);
-                for (const auto& a : n.also) d.put(a, v);
-            } catch (const std::invalid_argument& ex) {
-                d.fail(f, ex.what());
-                for (const auto& a : n.also) d.fail(a, ex.what());
-            }
+            read_field(in.data, start, n, in.msb, d);
+            return;
+        }
+        case Type::Switch: {
+            // v0.20: the case the key's value selects, read at the cursor. A
+            // key whose line failed its transform or table fails the decode
+            // (ruling 35).
+            if (!out.fields.count(n.field.key))
+                for (const auto& f : d.failures)
+                    if (f.key == n.field.key)
+                        throw Error(ErrorKind::TransformDecode, p.format, f.locator,
+                                    "the 'switch' key " + f.key + " failed: " + f.why);
+            const SeqCase* c = select_case(p, n, out);
+            if (!c)
+                throw Error(ErrorKind::NoKind, p.format, "",
+                            "no 'case' of the switch on '" + n.field.key + "' (line " + std::to_string(n.field.line) +
+                                ") holds its value, and it has no 'else'");
+            in.case_read[static_cast<std::size_t>(c->id)] = ++in.tick;
+            in.open_cases.push_back(c->id);
+            decode_lines(in, c->body.lines, 0, out, d);
+            in.open_cases.pop_back();
             return;
         }
         case Type::Const:
@@ -1304,7 +1513,7 @@ void decode_node(SeqIn& in, const SeqNode& n, Item& out, Decoder& d) {
         case Type::When:
             // A common `when`: it must hold for any message of the format.
             if (in.cur > in.have || n.len > in.have - in.cur || (in.ext != kNoExtent && in.cur + n.len > in.ext) ||
-                in.take(n.len) != n.number)
+                !n.holds(in.take(n.len)))
                 throw Error(ErrorKind::NoKind, p.format, "",
                             "the common 'when " + std::to_string(n.len) + " " + std::to_string(n.number) +
                                 "' does not hold");
@@ -1327,10 +1536,19 @@ void decode_node(SeqIn& in, const SeqNode& n, Item& out, Decoder& d) {
             }
             // A bit that is 1 and that no `if` names: the message holds a part
             // the pack does not describe (0.8 ruling 1).
-            for (std::size_t k = 0; k < bits.size(); ++k)
-                if (bits[k] && (k >= pr.named.size() || !pr.named[k]))
-                    in.malformed("bit " + std::to_string(k + 1) + " of the presence '" + pr.name +
-                                 "' is 1 and no 'if' block names it");
+            for (std::size_t k = 0; k < bits.size(); ++k) {
+                if (!bits[k] || (k < pr.named.size() && pr.named[k])) continue;
+                if (k < pr.case_named.size() && !pr.case_named[k].empty()) {
+                    // A case being read names it, or one read later may.
+                    bool open = false;
+                    for (int id : pr.case_named[k])
+                        open = open || std::find(in.open_cases.begin(), in.open_cases.end(), id) != in.open_cases.end();
+                    if (!open) in.pending.push_back({n.presence, k, in.tick});
+                    continue;
+                }
+                in.malformed("bit " + std::to_string(k + 1) + " of the presence '" + pr.name +
+                             "' is 1 and no 'if' block names it");
+            }
             return;
         }
         case Type::If: {
@@ -1442,7 +1660,7 @@ void decode_body(SeqIn& in, const SeqBody& body, Item& out) {
             for (; i < k.lines.size() && k.lines[i].type == Type::When && holds; ++i) {
                 const SeqNode& w = k.lines[i];
                 // A `when` any of whose bits lies beyond the input does not hold.
-                if (at > end || w.len > end - at || read_bits(in.data, at, w.len, in.msb) != w.number) holds = false;
+                if (at > end || w.len > end - at || !w.holds(read_bits(in.data, at, w.len, in.msb))) holds = false;
                 else at += w.len;
             }
             if (!holds) continue;
@@ -1478,9 +1696,20 @@ Entity decode_seq(const Pack& p, const std::string& bytes) {
     const std::string data = p.armor_sixbit ? armor_to_bytes(p, bytes, armored) : hex_to_bytes(p, bytes);
     SeqIn in{p, data, p.bit_order == BitOrder::Msb,
              p.armor_sixbit ? armored : static_cast<std::uint64_t>(data.size()) * 8, kNoExtent, 0,
-             std::vector<std::vector<bool>>(p.seq_presences.size()), false, {}, {}};
+             std::vector<std::vector<bool>>(p.seq_presences.size()), false, {}, {}, {}, {}, {}, 0};
+    in.case_read.assign(p.seq_cases.size(), 0);
     Entity e;
     decode_body(in, p.seq, e);
+    // A presence bit named only inside cases none of which was read after it (0.20 ruling 21).
+    for (const auto& pend : in.pending) {
+        const SeqPresence& pr = p.seq_presences[static_cast<std::size_t>(pend.presence)];
+        bool read = false;
+        for (int id : pr.case_named[pend.bit]) read = read || in.case_read[static_cast<std::size_t>(id)] > pend.tick;
+        if (!read)
+            throw Error(ErrorKind::MalformedWire, p.format, "",
+                        "bit " + std::to_string(pend.bit + 1) + " of the presence '" + pr.name +
+                            "' is 1 and no 'if' block of the lines read names it");
+    }
     // Input beyond the last line, whole bytes included, is ignored (0.8 ruling 9).
     if (in.failed) throw Error(ErrorKind::TransformDecode, p.format, in.fail_locator, in.fail_detail);
     return e;
@@ -1490,29 +1719,74 @@ Entity decode_seq(const Pack& p, const std::string& bytes) {
 
 namespace {
 
+// v0.20: what the encoder knows of the switches. The case a switch selects is
+// the one decode would read from the bits its key's line wrote; presence,
+// `opt` and `fx` bits are computed before those bits are written, from a
+// prediction, and the encode is repeated until every prediction it used is the
+// case selected.
+struct SwitchState {
+    using Key = std::pair<const Item*, const SeqNode*>;
+    std::vector<const SeqCase*> cases;  // by id
+    std::map<Key, int> guess;           // the predicted case index; -1: none
+    std::map<Key, int> used;            // the predictions this pass relied on
+    std::map<Key, int> actual;          // the cases this pass selected
+};
+
 // What one message or item is written from: its keys and lists, its kind, and
 // the `default` lines in scope (the kind's, then the common ones of its body).
 struct Scope {
+    const Pack& p;
     const Item& item;
     const SeqBody& body;
     const SeqKind* kind;
     EncodeSource src;
+    SwitchState* sw;
+    // v0.20: the written bits read back as decode reads them, for the switches.
+    mutable Item shadow;
+    mutable Decoder shadow_d;
 
-    Scope(const Pack& p, const Item& it, const SeqBody& b, const SeqKind* k)
-        : item(it), body(b), kind(k), src(p, static_cast<const Kind*>(nullptr), it) {
+    Scope(const Pack& pack, const Item& it, const SeqBody& b, const SeqKind* k, SwitchState* state)
+        : p(pack), item(it), body(b), kind(k), src(pack, static_cast<const Kind*>(nullptr), it), sw(state),
+          shadow(), shadow_d(pack, shadow) {
         src.defaults = Defaults{k ? &k->defaults : nullptr, &b.defaults};
     }
+    // v0.20: the default of a case holding the line, the innermost first
+    // (rulings 7 and 22); null when none.
+    const DefaultLine* case_default(const FieldLine& f) const {
+        for (int c = f.scase; c >= 0; c = p.seq_cases[static_cast<std::size_t>(c)].parent)
+            for (const auto& d : sw->cases[static_cast<std::size_t>(c)]->body.defaults)
+                if (d.key == f.key) return &d;
+        return nullptr;
+    }
     // A key with a `default` in scope counts as present (0.8 ruling 2).
-    // In a UPER pack no `default` counts (rulings 2 and 19 of 0.19).
-    bool present(const std::string& key) const {
-        if (item.fields.count(key)) return true;
+    // In a UPER pack no `default` counts (rulings 2 and 19 of 0.19), a case's included.
+    bool present(const FieldLine& f) const {
+        if (item.fields.count(f.key)) return true;
         if (src.p.uper) return false;
+        if (case_default(f)) return true;
         for (const std::vector<DefaultLine>* defs : {src.defaults.first, src.defaults.second}) {
             if (!defs) continue;
             for (const auto& d : *defs)
-                if (d.key == key) return true;
+                if (d.key == f.key) return true;
         }
         return false;
+    }
+    // The value a line writes: the item's, else a case default, else the kind's
+    // or the body's default. False when it has none. Throws transform-encode.
+    bool value(const FieldLine& f, Value& out) const {
+        if (!item.fields.count(f.key))
+            if (const DefaultLine* d = case_default(f)) {
+                out = typemapped_out(p, f, d->value);
+                if (f.table >= 0) {
+                    try {
+                        out = table_encode(p, f, out);
+                    } catch (const std::invalid_argument& ex) {
+                        throw Error(ErrorKind::TransformEncode, p.format, f.locator, f.key + ": " + ex.what());
+                    }
+                }
+                return true;
+            }
+        return src.value(f, out);
     }
 };
 
@@ -1530,20 +1804,12 @@ const SeqKind* select_kind(const Pack& p, const SeqBody& body, const Item& item)
             throw Error(ErrorKind::NoKind, p.format, "",
                         "the kind '" + item.kind.second + "' is not one of the format's kinds");
     }
-    for (const auto& k : body.kinds) {
-        bool all = true;
-        for (const auto& key : k.requires_keys) {
-            if (item.fields.count(key)) continue;
-            auto list = item.lists.find(key);
-            if (list == item.lists.end() || list->second.empty()) {
-                all = false;
-                break;
-            }
-        }
-        if (all) return &k;
-    }
+    for (const auto& k : body.kinds)
+        if (requires_hold(k.requires_terms, k.requires_keys, item)) return &k;
     throw Error(ErrorKind::NoKind, p.format, "", "the entity or item has the 'requires' keys of no kind");
 }
+
+int predicted_case(const SeqNode& n, const Scope& s);
 
 // Would the line write a present key, a non-empty list, or a nested presence
 // that is not all zero?
@@ -1552,10 +1818,18 @@ bool content(const SeqNode& n, const Scope& s) {
         case Type::Field:
             // A line suppressed by `with` is not content, nor is its default
             // (0.18 ruling 1); its `also` keys still are (ruling 5).
-            if (s.present(n.field.key) && !s.src.suppressed(n.field)) return true;
+            if (s.present(n.field) && !s.src.suppressed(n.field)) return true;
             for (const auto& a : n.also)
-                if (s.present(a.key)) return true;
+                if (s.present(a)) return true;
             return false;
+        case Type::Switch: {
+            // Only the selected case counts (0.20).
+            const int c = predicted_case(n, s);
+            if (c < 0) return false;
+            for (const auto& line : n.cases[static_cast<std::size_t>(c)].body.lines)
+                if (content(line, s)) return true;
+            return false;
+        }
         case Type::Group: {
             auto it = s.item.lists.find(n.list);
             return it != s.item.lists.end() && !it->second.empty();
@@ -1585,6 +1859,7 @@ struct SeqOut {
         const SeqNode* node;
     };
     std::vector<Whole> wholes;  // `length ... whole` fields, written last
+    SwitchState* sw = nullptr;
 
     void reach(std::uint64_t bits) {
         const std::size_t bytes = static_cast<std::size_t>((bits + 7) / 8);
@@ -1626,10 +1901,15 @@ void compute_presence(const Pack& p, int id, const std::vector<SeqNode>& lines, 
                     kind = select_kind(p, n.inner, item);
                 } catch (const Error&) {
                 }
-                const Scope inner(p, item, n.inner, kind);
+                const Scope inner(p, item, n.inner, kind, s.sw);
                 compute_presence(p, id, n.inner.lines, 0, inner, bits);
                 if (inner.kind) compute_presence(p, id, inner.kind->lines, 0, inner, bits);
             }
+            continue;
+        }
+        if (n.type == Type::Switch) {
+            const int c = predicted_case(n, s);
+            if (c >= 0) compute_presence(p, id, n.cases[static_cast<std::size_t>(c)].body.lines, 0, s, bits);
             continue;
         }
         if (n.type == Type::If) {
@@ -1655,7 +1935,7 @@ const FieldLine* field_value(const SeqNode& n, const Scope& s, Value& mv) {
             const FieldLine& line = k == 0 ? n.field : n.also[k - 1];
             if (k == 0 && s.src.suppressed(line)) continue;  // 0.18 rulings 1 and 5
             if (held && !s.item.fields.count(line.key)) continue;
-            if (s.src.value(line, mv)) return &line;
+            if (s.value(line, mv)) return &line;
         }
     return nullptr;
 }
@@ -1906,7 +2186,30 @@ void encode_node(SeqOut& out, const std::vector<SeqNode>& lines, std::size_t ind
     const Pack& p = out.p;
     const SeqNode& n = lines[index];
     switch (n.type) {
-        case Type::Field: encode_field(out, n, s); return;
+        case Type::Field: {
+            // The bits written are read back as decode reads them (0.20).
+            const std::uint64_t start = out.cur;
+            encode_field(out, n, s);
+            read_back(p, out.data, start, out.cur, n, out.msb, s.shadow_d);
+            return;
+        }
+        case Type::Switch: {
+            // A key whose written bits do not read back (ruling 31).
+            if (!s.shadow.fields.count(n.field.key))
+                for (const auto& f : s.shadow_d.failures)
+                    if (f.key == n.field.key)
+                        throw Error(ErrorKind::TransformEncode, p.format, f.locator,
+                                    "the 'switch' key " + f.key + " does not read back from the bits written: " + f.why);
+            const SeqCase* c = select_case(p, n, s.shadow);
+            const int index = c ? static_cast<int>(c - n.cases.data()) : -1;
+            s.sw->actual.emplace(SwitchState::Key{&s.item, &n}, index);
+            if (!c)
+                throw Error(ErrorKind::NoKind, p.format, "",
+                            "no 'case' of the switch on '" + n.field.key + "' (line " + std::to_string(n.field.line) +
+                                ") holds the value its line wrote, and it has no 'else'");
+            encode_lines(out, c->body.lines, s, nullptr);
+            return;
+        }
         case Type::Const:
         case Type::When: out.put(n.number, n.len); return;
         case Type::Pad: out.zeros(n.len); return;
@@ -2009,18 +2312,110 @@ void encode_lines(SeqOut& out, const std::vector<SeqNode>& lines, const Scope& s
     for (std::size_t k = 0; k < lines.size(); ++k) encode_node(out, lines, k, s, tail);
 }
 
+// v0.20: the case a switch is predicted to select. The first prediction is
+// what the first line of the scope that maps the key would write, read back.
+int predicted_case(const SeqNode& n, const Scope& s) {
+    const SwitchState::Key key{&s.item, &n};
+    auto it = s.sw->guess.find(key);
+    int index = -1;
+    if (it != s.sw->guess.end()) {
+        index = it->second;
+    } else {
+        const SeqNode* line = nullptr;
+        std::function<void(const std::vector<SeqNode>&)> find = [&](const std::vector<SeqNode>& lines) {
+            for (const auto& l : lines) {
+                if (line) return;
+                if (l.type == Type::Field) {
+                    if (l.field.key == n.field.key) line = &l;
+                    for (const auto& a : l.also)
+                        if (a.key == n.field.key) line = &l;
+                } else if (l.type != Type::Group) {
+                    find(l.inner.lines);
+                    for (const auto& c : l.cases) find(c.body.lines);
+                }
+            }
+        };
+        find(s.body.lines);
+        if (!line && s.kind) find(s.kind->lines);
+        Item back;
+        if (line) {
+            SeqOut tmp{s.p, std::string(), s.p.bit_order == BitOrder::Msb, 0, {}, {}, s.sw};
+            try {
+                encode_field(tmp, *line, s);
+                Decoder d(s.p, back);
+                read_back(s.p, tmp.data, 0, tmp.cur, *line, tmp.msb, d);
+            } catch (const Error&) {
+            }
+        }
+        const SeqCase* c = select_case(s.p, n, back);
+        index = c ? static_cast<int>(c - n.cases.data()) : -1;
+        s.sw->guess.emplace(key, index);
+    }
+    s.sw->used.emplace(key, index);
+    return index;
+}
+
 void encode_body(SeqOut& out, const SeqBody& body, const Item& item) {
-    const Scope s(out.p, item, body, select_kind(out.p, body, item));
+    const Scope s(out.p, item, body, select_kind(out.p, body, item), out.sw);
     encode_lines(out, body.lines, s, s.kind ? &s.kind->lines : nullptr);
     if (s.kind) encode_lines(out, s.kind->lines, s, nullptr);
 }
 
 }  // namespace
 
+namespace {
+std::string finish_seq(const Pack& p, SeqOut& out);
+}
+
 std::string encode_seq(const Pack& p, const Entity& e) {
-    SeqOut out{p, std::string(), p.bit_order == BitOrder::Msb, 0,
-               std::vector<std::vector<bool>>(p.seq_presences.size()), {}};
-    encode_body(out, p.seq, e);
+    SwitchState state;
+    state.cases.assign(p.seq_cases.size(), nullptr);
+    {
+        std::function<void(const std::vector<SeqNode>&)> walk = [&](const std::vector<SeqNode>& lines) {
+            for (const auto& n : lines) {
+                walk(n.inner.lines);
+                for (const auto& k : n.inner.kinds) walk(k.lines);
+                for (const auto& c : n.cases) {
+                    state.cases[static_cast<std::size_t>(c.id)] = &c;
+                    walk(c.body.lines);
+                }
+            }
+        };
+        walk(p.seq.lines);
+        for (const auto& k : p.seq.kinds) walk(k.lines);
+    }
+    // The encode is repeated while a switch selects another case than the one
+    // its presence, `opt` and `fx` bits were computed from (a few passes at most).
+    for (int pass = 0;; ++pass) {
+        SeqOut out{p, std::string(), p.bit_order == BitOrder::Msb, 0,
+                   std::vector<std::vector<bool>>(p.seq_presences.size()), {}, &state};
+        state.used.clear();
+        state.actual.clear();
+        auto mispredicted = [&]() {
+            bool changed = false;
+            for (const auto& a : state.actual) {
+                auto u = state.used.find(a.first);
+                if (u != state.used.end() && u->second != a.second) changed = true;
+                state.guess[a.first] = a.second;
+            }
+            if (changed && pass >= 8)
+                throw Error(ErrorKind::TransformEncode, p.format, "",
+                            "the cases of the switches do not settle (ruling 33)");
+            return changed;
+        };
+        try {
+            encode_body(out, p.seq, e);
+        } catch (const Error&) {
+            if (mispredicted()) continue;
+            throw;
+        }
+        if (mispredicted()) continue;
+        return finish_seq(p, out);
+    }
+}
+
+namespace {
+std::string finish_seq(const Pack& p, SeqOut& out) {
     // Under armor, L is the cursor after the last line, not rounded to a byte
     // (0.14); `length ... whole` is refused at load.
     if (p.armor_sixbit) return bytes_to_armor(out.data, out.cur);
@@ -2038,5 +2433,6 @@ std::string encode_seq(const Pack& p, const Entity& e) {
     }
     return bytes_to_hex(out.data);
 }
+}  // namespace
 
 }  // namespace goat_transformers::detail

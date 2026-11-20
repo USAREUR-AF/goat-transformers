@@ -1,0 +1,9 @@
+{
+  "name": "dots-are-not-a-range",
+  "from": "conformance-kinds-xml",
+  "to": "conformance-kinds-xml",
+  "input": "<msg t=\"a\" x=\"1\"/>",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.20, Lists and ranges in `when`, on text wires; a is not the text a..b"
+}

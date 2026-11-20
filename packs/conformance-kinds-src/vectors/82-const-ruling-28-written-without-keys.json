@@ -1,0 +1,9 @@
+{
+  "name": "const-ruling-28-written-without-keys",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-const",
+  "input": "{}",
+  "expect": "{\"c\":\"a,b\",\"d\":\"1..3\"}",
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 28: a `const` value is one literal value; a comma in it is text; "
+}

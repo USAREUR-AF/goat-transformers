@@ -1,0 +1,13 @@
+{
+  "name": "dots-are-literal-text",
+  "from": "conformance-kinds-xml",
+  "to": "conformance-kinds-xml",
+  "input": "<msg t=\"a..b\" x=\"1\"/>",
+  "expect": "<msg t=\"a..b\" x=\"1\"/>",
+  "model": {
+    "@kind": "r",
+    "probe.x": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, Lists and ranges in `when`, on text wires; `when @t a..b` matches the literal text a..b"
+}

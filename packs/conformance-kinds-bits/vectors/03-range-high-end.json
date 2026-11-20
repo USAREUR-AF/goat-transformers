@@ -1,0 +1,13 @@
+{
+  "name": "range-high-end",
+  "from": "conformance-kinds-bits",
+  "to": "conformance-kinds-bits",
+  "input": "0502",
+  "expect": "0502",
+  "model": {
+    "@kind": "lo",
+    "probe.y": "2"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, Lists and ranges in `when`; both ends included: 5"
+}

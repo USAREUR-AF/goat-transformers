@@ -1,0 +1,9 @@
+{
+  "name": "bits-no-kind-qualifies",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-bits",
+  "input": "{\"x\":1}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.5 Encode step 2: no kind's `requires` is held"
+}

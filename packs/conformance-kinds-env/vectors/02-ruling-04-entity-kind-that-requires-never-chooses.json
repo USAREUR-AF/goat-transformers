@@ -1,0 +1,12 @@
+{
+  "name": "ruling-04-entity-kind-that-requires-never-chooses",
+  "from": "conformance-kinds-env",
+  "to": "conformance-kinds-env",
+  "input": "{\"n\":1,\"k\":\"both\"}",
+  "expect": "{\"n\":1,\"k\":\"both\"}",
+  "model": {
+    "@kind": "both"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, Encode kind by value; ruling 4: both is never chosen by requires, but the recorded kind is used"
+}

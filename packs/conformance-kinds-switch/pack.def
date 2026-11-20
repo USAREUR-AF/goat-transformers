@@ -1,0 +1,34 @@
+# Conformance probe pack for `switch` (spec 0.20) on a sequential `bits`
+# layout, most significant bit first. Public. No kinds.
+#
+#   x : 8, then by x
+#     0      c2 : 8
+#     01     y : 8          the integer 1 (ruling 1)
+#     2,3    z : 16
+#     4      nothing        an empty case (ruling 6)
+#     else   w : 8
+#   c1 : 8, after the switch
+#
+# Encode selects the case decode would select from the bits x wrote: an
+# entity without x writes zero bits, so case 0.
+format     conformance-kinds-switch
+version    0.20.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field  probe.x  8  uint
+switch probe.x
+  case 0
+    field  probe.c2  8  uint
+  case 01
+    field  probe.y  8  uint
+  case 2,3
+    field  probe.z  16  uint
+  case 4
+  else
+    field  probe.w  8  uint
+end
+field  probe.c1  8  uint

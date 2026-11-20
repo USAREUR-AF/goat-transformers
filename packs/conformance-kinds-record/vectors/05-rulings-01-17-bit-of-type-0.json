@@ -1,0 +1,13 @@
+{
+  "name": "rulings-01-17-bit-of-type-0",
+  "from": "conformance-kinds-record",
+  "to": "conformance-kinds-record",
+  "input": "f00a11223344",
+  "expect": "f00a11223344",
+  "model": {
+    "probe.y": "0",
+    "probe.qty": "68"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; a switch key read inside an earlier `if` and chain block; y = 0: case 0 names p.4: qty = 0x44"
+}

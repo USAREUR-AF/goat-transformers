@@ -1,0 +1,15 @@
+{
+  "name": "ruling-07-default-not-in-another-case",
+  "from": "conformance-kinds-items",
+  "to": "conformance-kinds-items",
+  "input": "06000000",
+  "expect": "06000000",
+  "model": {
+    "probe.x": "6",
+    "@absent": [
+      "probe.c1"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; groups, presence and defaults in cases; ruling 7: case 6 has no default: d stays 0"
+}

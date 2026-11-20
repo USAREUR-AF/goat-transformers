@@ -1,0 +1,9 @@
+{
+  "name": "seq-range-lo",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-seq",
+  "input": "{\"w\":7}",
+  "expect": "000c07",
+  "source": "constructed",
+  "reference": "spec 0.20, Lists and ranges in `when` on a sequential layout; requires w: b, when 12"
+}

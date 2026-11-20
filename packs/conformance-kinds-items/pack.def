@@ -1,0 +1,83 @@
+# Conformance probe pack for `switch` with groups, presence and defaults
+# (spec 0.20), most significant bit first. Public.
+#
+#   x : 8, then by x
+#     1     nums, count 8, each val : 8
+#     2     nums, count 8, each val : 16     one list grouped in two cases
+#                                            (ruling 10)
+#     3     presence q 8: q.2 c1 : 8, q.3 c2 : 8
+#     4     presence q 8: q.2 c2 : 8         the same name in another case
+#                                            (ruling 8)
+#     5     default c1 9; presence d 8: d.1 c1 : 8   (ruling 7)
+#     6     presence d 8: d.1 c1 : 8         no default here
+#     else  nothing
+#   recs, count 8; each item selects a kind by a `when` range or list
+#     small  when 1..3       y : 8
+#     big    when 10..20,2   z : 16          2 is small's (ruling 2)
+#   items, count 8; each item: qty : 8, then a switch on qty, no else
+#     1     val : 8
+#     2     label : 16 ascii
+#   an item whose qty has no case is no-kind and fails the decode (ruling 11)
+format     conformance-kinds-items
+version    0.20.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field  probe.x  8  uint
+switch probe.x
+  case 1
+    group  probe.nums  count 8
+      field  probe.val  8  uint
+    end
+  case 2
+    group  probe.nums  count 8
+      field  probe.val  16  uint
+    end
+  case 3
+    presence q 8
+    if q.2
+      field  probe.c1  8  uint
+    end
+    if q.3
+      field  probe.c2  8  uint
+    end
+  case 4
+    presence q 8
+    if q.2
+      field  probe.c2  8  uint
+    end
+  case 5
+    default probe.c1  9
+    presence d 8
+    if d.1
+      field  probe.c1  8  uint
+    end
+  case 6
+    presence d 8
+    if d.1
+      field  probe.c1  8  uint
+    end
+  else
+end
+group  probe.recs  count 8
+  kind   small
+  when   8  1..3
+  requires probe.y
+  field  probe.y  8  uint
+  kind   big
+  when   8  10..20,2
+  requires probe.z
+  field  probe.z  16  uint
+end
+group  probe.items  count 8
+  field  probe.qty  8  uint
+  switch probe.qty
+    case 1
+      field  probe.val  8  uint
+    case 2
+      field  probe.label  16  ascii
+  end
+end

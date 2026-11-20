@@ -1,0 +1,9 @@
+{
+  "name": "json-leading-zero-text",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-json",
+  "input": "{\"s1\":\"q\",\"w\":5}",
+  "expect": "{\"s\":\"q\",\"t\":\"01\",\"w\":5}",
+  "source": "constructed",
+  "reference": "spec 0.20, Lists and ranges in `when`, on text wires; requires w: lead; 01 is written as the string 01 (ruling 11 of 0.5)"
+}

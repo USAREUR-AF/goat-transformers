@@ -1,0 +1,19 @@
+{
+  "name": "second-table-value-float-0-short-text",
+  "from": "conformance-kinds-typed",
+  "to": "conformance-kinds-typed",
+  "input": "020800064100",
+  "expect": "020800064100",
+  "model": {
+    "probe.label": "beta",
+    "probe.y": "8",
+    "probe.a": "0",
+    "probe.w": "6",
+    "probe.s1": "A",
+    "@absent": [
+      "probe.c1"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; the key's decoded value (after `via` and `typemap`), as canonical text; beta is in beta,gamma; 0 is case 0; the text A is not AB: else"
+}

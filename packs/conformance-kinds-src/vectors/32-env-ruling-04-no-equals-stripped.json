@@ -1,0 +1,9 @@
+{
+  "name": "env-ruling-04-no-equals-stripped",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-env",
+  "input": "{\"s1\":\"x\"}",
+  "expect": "{\"s\":\"x\",\"k\":\"other\"}",
+  "source": "constructed",
+  "reference": "spec 0.20, Encode kind by value; ruling 4: the text x is not =x"
+}

@@ -15,13 +15,17 @@
 %% hard   the end of the input in bits; `length ... whole` moves it down
 %% env    #{PresenceId => [bit numbers that are 1]}
 %% model, lists, failed   of the scope being read (the message, or one item)
+%% static  the presence bits an `if` in no case names; pending the bits that
+%%         are 1 and that only `if` lines in cases name, until such a case
+%%         is read (rulings 21, 30 and 36 of 0.20)
 -record(d, {msg, hard, pos = 0, model = #{}, lists = #{}, failed = [], env = #{},
-            pack, named}).
+            pack, named, static = #{}, pending = []}).
 
 decode(#{common := Common, kinds := Kinds, has_kinds := HasKinds, name := Name} = Pack, Bytes) ->
     Msg = gt_bits:open(gt_engine:unwire(Pack, Bytes), maps:get(bit_order, Pack)),
     D0 = #d{msg = Msg, hard = gt_bits:bit_size(Msg), pack = Pack,
-            named = maps:get(presence_named, Pack)},
+            named = maps:get(presence_named, Pack),
+            static = maps:get(presence_static, Pack, #{})},
     D1 = lines(Common, none, D0),
     {Kind, D2} = case HasKinds of
                      false -> {undefined, D1};
@@ -30,6 +34,10 @@ decode(#{common := Common, kinds := Kinds, has_kinds := HasKinds, name := Name} 
                          {{Name, K}, Dk}
                  end,
     check_failed(D2),
+    case D2#d.pending of
+        [] -> ok;
+        [{_, B} | _] -> malformed(D2, "presence bit ~p is 1 and no if block of the lines read names it", [B])
+    end,
     #{model => D2#d.model, lists => D2#d.lists, residue => [], src => Name, kind => Kind}.
 
 %% A key whose every line failed its transform fails the decode.
@@ -60,7 +68,7 @@ kind([#{name := Name, lines := Lines} | Rest], Ext, D) ->
 %% A `when` any of whose bits lies beyond the input does not hold.
 whens([], Pos, _Ext, _D) -> Pos;
 whens([{swhen, Len, Val} | Rest], Pos, Ext, D) ->
-    case avail(Pos, Len, Ext, D) =:= ok andalso gt_bits:read(D#d.msg, Pos, Len) =:= Val of
+    case avail(Pos, Len, Ext, D) =:= ok andalso gt_pack:when_match(gt_bits:read(D#d.msg, Pos, Len), Val) of
         true -> whens(Rest, Pos + Len, Ext, D);
         false -> false
     end.
@@ -227,6 +235,22 @@ line({lenwhole, Len, Plus}, Ext, #d{pos = Pos} = D) ->
             end,
             D#d{pos = Pos + Len, hard = Bits}  % input beyond it is ignored
     end;
+%% a switch (0.20): the case the key's value selects, else the else lines
+line({switch, Key, _Ref, Cases, Else}, Ext, #d{pack = Pack} = D) ->
+    %% a key whose line failed its transform fails the decode (ruling 35)
+    case [L || {K, L} <- D#d.failed, K =:= Key] of
+        [LenT | _] when not is_map_key(Key, D#d.model) ->
+            gt_engine:conv_error('transform-decode', Pack, "failed fields: ~s of ~s bits", [Key, LenT]);
+        _ -> ok
+    end,
+    case select(Key, D#d.model, Cases, Else) of
+        none -> gt_engine:conv_error('no-kind', Pack,
+                                     "switch ~s: no case holds the key's value and there is no else", [Key]);
+        #{lines := Ls, named := Named} ->
+            %% the bits pending so far that the case's `if` lines name are
+            %% satisfied (ruling 36: a case read later in the decode)
+            lines(Ls, Ext, D#d{pending = [IB || IB <- D#d.pending, not lists:member(IB, Named)]})
+    end;
 line({sgroup, List, Mode, Body}, Ext, D) ->
     %% a later group of a list replaces the items of an earlier one; those
     %% are no longer counted against the limit (ruling 7g of 0.11)
@@ -297,8 +321,26 @@ fx_octets(Pos, Base, Ext, #d{msg = Msg} = D, Acc) ->
 %% a part the pack does not describe.
 present(Id, Bits, #d{named = Named, env = Env} = D) ->
     case Bits -- maps:get(Id, Named) of
-        [] -> D#d{env = Env#{Id => Bits}};
+        [] ->
+            %% a bit only `if` lines in cases name counts when one of those
+            %% cases is read
+            Pending = [{Id, B} || B <- Bits -- maps:get(Id, D#d.static, [])],
+            D#d{env = Env#{Id => Bits}, pending = Pending ++ D#d.pending};
         [B | _] -> malformed(D, "presence bit ~p is 1 and no if block names it", [B])
+    end.
+
+%% The case of a switch the value of Key selects (as canonical text), else
+%% the else -> Case | none. An absent key selects the else.
+select(Key, Values, Cases, Else) ->
+    case maps:find(Key, Values) of
+        {ok, readback_failed} -> failed;
+        {ok, V} ->
+            C = gt_num:canon(V),
+            case [Case || #{vals := Vals} = Case <- Cases, lists:member(C, Vals)] of
+                [Case | _] -> Case;
+                [] -> Else
+            end;
+        error -> Else
     end.
 
 holds(Conds, Env) ->
@@ -597,14 +639,36 @@ uscale(V, {frac, Num, Den}, O) -> float(V) * Num / Den + O.
 %% Because a presence bit is written before the blocks that set it, a scope
 %% is laid out in two passes: at a `presence` line the lines after it are
 %% scanned for the `if` blocks that name it and have content; then they are
-%% written. Src = #{model, lists, defaults}: what a scope is written from.
+%% written. Src = #{model, lists, defaults}: what a scope is written from;
+%% for the scan also `wrote` and `env` (below).
 %% segs: [{Pos, Len, Value} | {whole, Pos, Len, Plus}], bits not named are 0.
--record(e, {pos = 0, segs = [], env = #{}, pack}).
+%% wrote: #{Key => Value}, what decode would read back from the field lines
+%%        written so far in the scope; a `switch` (0.20) selects from it.
+%% Settling (rulings 33, 34 and 37 of 0.20): a presence, `opt` or `fx` bit
+%% may be computed before the key of a switch it depends on is written, so
+%% the scan predicts that switch's case. A switch is identified by
+%% {Ref, Path}, Path the items it stands in ({List, Index}, innermost
+%% first).
+%% path    the items the scope being written stands in
+%% forced  #{SwitchId => CaseIndex}: the cases the scan assumes (from the
+%%         previous pass); a switch not in it is predicted from `wrote`
+%% The cases a pass selects from the bits it writes are collected in the
+%% process dictionary (gt_seq_actual), so that a pass that fails still
+%% tells which cases it selected: #{SwitchId => CaseIndex}, 0 the else.
+%% icount  #{{Path, List} => items written so far}
+-record(e, {pos = 0, segs = [], env = #{}, wrote = #{}, pack,
+            path = [], forced = #{}, icount = #{}}).
+
+-define(MAX_PASSES, 16).
 
 encode(Pack, Lines, Defaults, Entity) ->
     Src = #{model => maps:get(model, Entity), lists => maps:get(lists, Entity, #{}),
             defaults => Defaults},
-    #e{pos = End, segs = Segs} = elines(Lines, Src, #e{pack = Pack}),
+    #e{pos = End, segs = Segs} =
+        case maps:get(has_switch, Pack, false) of
+            false -> elines(Lines, Src, #e{pack = Pack});
+            true -> settle(Lines, Src, Pack, #{}, 1)
+        end,
     Bytes = case {End, maps:get(encoding, Pack)} of
                 {0, uper} -> 1;                 % an empty UPER encoding is 00
                 _ -> (End + 7) div 8            % a whole number of bytes
@@ -625,6 +689,37 @@ encode(Pack, Lines, Defaults, Entity) ->
         hex -> gt_bits:bytes_to_hex(gt_bits:to_bytes(M))
     end.
 
+%% Encode again with the cases the last pass selected until every case the
+%% scan assumed is the case selected from the bits written. A pass whose
+%% assumptions did not hold is discarded with its errors; an encode error
+%% is reported only from a pass whose assumptions held so far.
+settle(_Lines, _Src, Pack, _Forced, N) when N > ?MAX_PASSES ->
+    gt_engine:conv_error('transform-encode', Pack,
+                         "the cases of the switches do not settle in ~p passes", [?MAX_PASSES]);
+settle(Lines, Src, Pack, Forced, N) ->
+    put(gt_seq_actual, #{}),
+    Result = try elines(Lines, Src, #e{pack = Pack, forced = Forced}) of
+                 E -> {ok, E}
+             catch
+                 Class:Reason:Stack -> {error, Class, Reason, Stack}
+             end,
+    Actual = erase(gt_seq_actual),
+    Held = Forced =:= maps:merge(Forced, Actual) andalso
+        (N > 1 orelse Actual =:= #{}),
+    case {Result, Held} of
+        {{ok, E1}, true} -> E1;
+        {{error, C, R, St}, true} -> erlang:raise(C, R, St);
+        {_, false} ->
+            Next = maps:merge(Forced, Actual),
+            case Next =:= Forced of
+                true -> case Result of
+                            {ok, E2} -> E2;
+                            {error, C, R, St} -> erlang:raise(C, R, St)
+                        end;
+                false -> settle(Lines, Src, Pack, Next, N + 1)
+            end
+    end.
+
 fits(V, Len, _Pack) when V >= 0, V < (1 bsl Len) -> V;
 fits(V, Len, Pack) ->
     gt_engine:conv_error('transform-encode', Pack,
@@ -637,7 +732,26 @@ emit(Len, Val, #e{pos = Pos, segs = Segs} = E) ->
 elines([], _Src, E) -> E;
 elines([L | Rest], Src, E) -> elines(Rest, Src, eline(L, Rest, Src, E)).
 
-eline({sfield, Keys, {uper, Loc}, Tr, LenT, _, _, _, With}, _Rest, Src, #e{pack = Pack} = E) ->
+%% What the scan sees of the encode so far.
+seen(Src, #e{wrote = W, env = Env, path = Path, forced = F}) ->
+    Src#{wrote => W, env => Env, path => Path, forced => F}.
+
+%% The case of a switch as the scan sees it: the one assumed for it, else
+%% the one `wrote` selects.
+predict(Key, Ref, Cases, Else, Src) ->
+    case maps:find({Ref, maps:get(path, Src, [])}, maps:get(forced, Src, #{})) of
+        {ok, 0} -> Else;
+        {ok, I} -> lists:nth(I, Cases);
+        error -> select(Key, maps:get(wrote, Src, #{}), Cases, Else)
+    end.
+
+case_index(Case, Cases) ->
+    case [I || {I, C} <- lists:zip(lists:seq(1, length(Cases)), Cases), C =:= Case] of
+        [I | _] -> I;
+        [] -> 0
+    end.
+
+eline({sfield, Keys, {uper, Loc}, Tr, LenT, _, _, _, With} = L, _Rest, Src, #e{pack = Pack, wrote = Wrote} = E) ->
     %% a line suppressed by `with` (0.18) is a line whose key is absent and
     %% has no default: it writes what ruling 1 of 0.19 states for the locator
     Pieces = case pick(candidates(Keys, With, Src), Src) of
@@ -650,7 +764,13 @@ eline({sfield, Keys, {uper, Loc}, Tr, LenT, _, _, _, With}, _Rest, Src, #e{pack 
                                uenc(Loc, Tr, W)
                        end)
              end,
-    epieces(Pieces, E);
+    E1 = epieces(Pieces, E),
+    %% a switch key on a UPER locator selects from the value decode would
+    %% read back from these pieces (0.20)
+    case maps:get(has_switch, Pack, false) of
+        true -> E1#e{wrote = uread_back(L, Pieces, Wrote, Pack)};
+        false -> E1
+    end;
 eline({uext, Body}, _Rest, Src, E) -> elines(Body, Src, emit(1, 0, E));
 eline({uchoice, N, IsExt, Alts}, _Rest, Src, #e{pack = Pack} = E) ->
     {I, Body} = chosen(Alts, Src, Pack),
@@ -671,7 +791,7 @@ eline({sgroup, List, {size, Lb, Ub}, Body}, _Rest, Src, #e{pack = Pack} = E) ->
                                       "list ~s has ~p items, outside its size ~p..~p",
                                       [List, C, Lb, Ub])
     end,
-    lists:foldl(fun(I, Acc) -> eitem(I, Body, Acc) end, emit(bitlen(Ub - Lb), C - Lb, E), Items);
+    lists:foldl(fun(I, Acc) -> eitem(I, List, Body, Acc) end, emit(bitlen(Ub - Lb), C - Lb, E), Items);
 eline({sgroup, List, {size, unc}, Body}, _Rest, Src, #e{pack = Pack} = E) ->
     Items = maps:get(List, maps:get(lists, Src), []),
     C = length(Items),
@@ -680,36 +800,20 @@ eline({sgroup, List, {size, unc}, Body}, _Rest, Src, #e{pack = Pack} = E) ->
         false -> gt_engine:conv_error('transform-encode', Pack,
                                       "list ~s has ~p items: a fragmented length", [List, C])
     end,
-    lists:foldl(fun(I, Acc) -> eitem(I, Body, Acc) end, epieces(ld(C), E), Items);
-eline({sfield, Keys, Len, Tr, LenT, Swap, _Trim, Absent, With}, _Rest, Src, #e{pack = Pack} = E) ->
-    Cands = candidates(Keys, With, Src),
-    case pick(Cands, Src) of
-        %% an absent key writes zero bits, or its first sentinel; neither is
-        %% content for a presence, opt or fx bit (ruling 4 of 0.9). A line
-        %% suppressed by `with` whose `also` keys give no value writes zero
-        %% bits, not its sentinel (ruling 20 of 0.18)
-        none when Absent =:= none -> emit(Len, 0, E);
-        none when length(Cands) < length(Keys) -> emit(Len, 0, E);
-        none -> emit(Len, gt_engine:bits_sentinel(Absent, Len, Swap), E);
-        {Key, Via, Val} ->
-            U = gt_engine:guard_encode(
-                  Pack, Key, LenT,
-                  fun() ->
-                          W = gt_engine:wire_value(Pack, Key, Tr, {Via, false, false, false, none, none}, Val),
-                          U0 = gt_engine:bits_encode(Tr, W, Len, maps:get(bit_order, Pack)),
-                          case Swap of
-                              true -> gt_engine:swap_bytes(U0, Len);
-                              false -> U0
-                          end
-                  end),
-            emit(Len, U, E)
+    lists:foldl(fun(I, Acc) -> eitem(I, List, Body, Acc) end, epieces(ld(C), E), Items);
+eline({sfield, _, Len, _, _, _, _, _, _} = L, _Rest, Src, #e{pack = Pack, wrote = W} = E) ->
+    {Bits, Raw} = field_bits(L, Src, Pack),
+    E1 = emit(Len, Bits, E),
+    case maps:get(has_switch, Pack, false) of
+        true -> E1#e{wrote = read_back(L, Raw, W, Pack)};
+        false -> E1
     end;
 eline({sconst, Len, Val}, _Rest, _Src, E) -> emit(Len, Val, E);
-eline({swhen, Len, Val}, _Rest, _Src, E) -> emit(Len, Val, E);
+eline({swhen, Len, Val}, _Rest, _Src, E) -> emit(Len, gt_pack:when_first(Val), E);
 eline({pad, Len}, _Rest, _Src, E) -> emit(Len, 0, E);
 eline({align, N}, _Rest, _Src, #e{pos = Pos} = E) -> emit((N - Pos rem N) rem N, 0, E);
 eline({presence, Id, Size}, Rest, Src, #e{pack = Pack, env = Env} = E) ->
-    Bits = lists:usort(scan(Rest, Src, Id, Pack, [])),
+    Bits = lists:usort(scan(Rest, seen(Src, E), Id, Pack, [])),
     N = case Size of
             fx -> max(1, (lists:max([0 | Bits]) + 6) div 7);   % octets
             _ -> Size
@@ -730,7 +834,7 @@ eline({ifb, Conds, Body}, _Rest, Src, E) ->
         false -> E
     end;
 eline({opt, Body}, _Rest, Src, #e{pack = Pack} = E) ->
-    case has(Body, Src, Pack) of
+    case has(Body, seen(Src, E), Pack) of
         true -> elines(Body, Src, emit(1, 1, E));
         false -> emit(1, 0, E)
     end;
@@ -751,9 +855,25 @@ eline({len, Len, Unit, Plus, Body}, _Rest, Src, #e{pos = Pos, pack = Pack} = E) 
     E1#e{pos = End, segs = [{Pos, Len, fits(Count + Plus, Len, Pack)} | E1#e.segs]};
 eline({lenwhole, Len, Plus}, _Rest, _Src, #e{pos = Pos, segs = Segs} = E) ->
     E#e{pos = Pos + Len, segs = [{whole, Pos, Len, Plus} | Segs]};
+%% a switch (0.20): the case decode would select from what the key's line
+%% wrote; the case's defaults apply to its lines, the innermost winning
+eline({switch, Key, Ref, Cases, Else}, _Rest, Src, #e{pack = Pack, wrote = W, path = Path} = E) ->
+    Selected = select(Key, W, Cases, Else),
+    case is_map(Selected) of
+        true -> put(gt_seq_actual, (get(gt_seq_actual))#{{Ref, Path} => case_index(Selected, Cases)});
+        false -> ok
+    end,
+    case Selected of
+        failed -> gt_engine:conv_error('transform-encode', Pack,
+                                       "switch ~s: the value its line wrote does not read back", [Key]);
+        none -> gt_engine:conv_error('no-kind', Pack,
+                                     "switch ~s: no case holds the value the key's line wrote, and there is no else",
+                                     [Key]);
+        Case -> elines(maps:get(lines, Case), case_src(Case, Src), E)
+    end;
 eline({sgroup, List, Mode, Body}, _Rest, Src, #e{pack = Pack} = E) ->
     Items = maps:get(List, maps:get(lists, Src), []),
-    Item = fun(I, Acc) -> eitem(I, Body, Acc) end,
+    Item = fun(I, Acc) -> eitem(I, List, Body, Acc) end,
     case Mode of
         {count, Len} ->
             %% an absent list writes a count of 0
@@ -884,24 +1004,126 @@ ebits(Bools, E) ->
                    (false, Acc) -> emit(1, 0, Acc)
                 end, E, Bools).
 
+%% The source of a case's lines: its defaults over those that reach the
+%% switch (rulings 7 and 22 of 0.20).
+case_src(#{defaults := Ds}, #{defaults := Outer} = Src) when map_size(Ds) > 0 ->
+    Src#{defaults := maps:merge(Outer, Ds)};
+case_src(_Case, Src) -> Src.
+
+%% What a field line writes -> {Bits, Raw}: the bits on the wire, and the
+%% value decode reads from them before `trim`, `via` and the transform
+%% (after `swap`).
+field_bits({sfield, Keys, Len, Tr, LenT, Swap, _Trim, Absent, With}, Src, Pack) ->
+    Cands = candidates(Keys, With, Src),
+    Bits = case pick(Cands, Src) of
+               %% an absent key writes zero bits, or its first sentinel;
+               %% neither is content for a presence, opt or fx bit (ruling 4
+               %% of 0.9). A line suppressed by `with` whose `also` keys give
+               %% no value writes zero bits, not its sentinel (ruling 20 of
+               %% 0.18)
+               none when Absent =:= none -> 0;
+               none when length(Cands) < length(Keys) -> 0;
+               none -> gt_engine:bits_sentinel(Absent, Len, Swap);
+               {Key, Via, Val} ->
+                   gt_engine:guard_encode(
+                     Pack, Key, LenT,
+                     fun() ->
+                             W = gt_engine:wire_value(Pack, Key, Tr, {Via, false, false, false, none, none}, Val),
+                             U0 = gt_engine:bits_encode(Tr, W, Len, maps:get(bit_order, Pack)),
+                             case Swap of
+                                 true -> gt_engine:swap_bytes(U0, Len);
+                                 false -> U0
+                             end
+                     end)
+           end,
+    Raw = case Swap of
+              true -> gt_engine:swap_bytes(Bits, Len);
+              false -> Bits
+          end,
+    {Bits, Raw}.
+
+%% The keys decode would set from Raw, put in Wrote where it does not hold
+%% them yet (decode keeps a key's first value): none for a sentinel, and
+%% none whose transform or table fails.
+read_back({sfield, Keys, Len, Tr, _LenT, _Swap, Trim, Absent, _With}, Raw, Wrote, Pack) ->
+    case Absent =/= none andalso lists:member(Raw, Absent) of
+        true -> Wrote;
+        false ->
+            lists:foldl(
+              fun({Key, Via}, W) ->
+                      case maps:is_key(Key, W) of
+                          true -> W;
+                          false ->
+                              try
+                                  V0 = gt_engine:bits_decode(Tr, Raw, Len, maps:get(bit_order, Pack)),
+                                  V1 = case Trim of
+                                           true -> gt_engine:trim(Tr, V0);
+                                           false -> V0
+                                       end,
+                                  V2 = gt_engine:via_decode({Via, false, false, false, none, none},
+                                                            V1, Tr, Key, <<>>, Pack),
+                                  gt_engine:typemap_decode(Key, V2, Pack)
+                              of
+                                  V -> W#{Key => V}
+                              catch
+                                  %% the output would not decode (ruling 31)
+                                  _:_ -> W#{Key => readback_failed}
+                              end
+                      end
+              end, Wrote, Keys)
+    end.
+
+%% As read_back/4 for a field on a UPER locator (0.19): the pieces written
+%% are read as decode reads them.
+uread_back({sfield, Keys, {uper, Loc}, Tr, LenT, _, _, _, _}, Pieces, Wrote, Pack) ->
+    Len = lists:sum([L || {L, _} <- Pieces]),
+    Pad = (8 - Len rem 8) rem 8,
+    Bin = << << <<V:L>> || {L, V} <- Pieces >>/bits, 0:Pad >>,
+    Msg = gt_bits:open(Bin, msb),
+    D = #d{msg = Msg, hard = gt_bits:bit_size(Msg), pack = Pack, named = #{}},
+    lists:foldl(
+      fun({Key, Via}, W) ->
+              case maps:is_key(Key, W) of
+                  true -> W;
+                  false ->
+                      try
+                          {Res, _} = uread(Loc, none, D),
+                          V0 = uvalue(Res, Tr),
+                          V1 = gt_engine:via_decode({Via, false, false, false, none, none},
+                                                    V0, Tr, Key, LenT, Pack),
+                          gt_engine:typemap_decode(Key, V1, Pack)
+                      of
+                          V -> W#{Key => V}
+                      catch
+                          %% the output would not decode (ruling 31 of 0.20)
+                          _:_ -> W#{Key => readback_failed}
+                      end
+              end
+      end, Wrote, Keys).
+
 %% An fx bit is 1 when a line after it in the chain has content; the parts
 %% after a 0 bit are not written. The bit of a closing fx line is 0.
 eparts([], false, _Src, E) -> E;
 eparts([], true, _Src, E) -> emit(1, 0, E);
 eparts([Part | Rest] = Parts, EndsFx, Src, #e{pack = Pack} = E) ->
-    case lists:any(fun(P) -> has(P, Src, Pack) end, Parts) of
+    case has(lists:append(Parts), seen(Src, E), Pack) of
         true -> eparts(Rest, EndsFx, Src, elines(Part, Src, emit(1, 1, E)));
         false -> emit(1, 0, E)
     end.
 
-eitem(Item, Body, #e{pack = Pack} = E) ->
+%% An item is a scope of its own: what its lines wrote is not the
+%% message's.
+eitem(Item, List, Body, #e{pack = Pack, wrote = W, path = Path, icount = IC} = E) ->
     {Lines, Src} = item_scope(Item, Body, Pack),
-    elines(Lines, Src, E).
+    N = maps:get({Path, List}, IC, 0),
+    E1 = elines(Lines, Src, E#e{wrote = #{}, path = [{List, N} | Path],
+                               icount = IC#{{Path, List} => N + 1}}),
+    E1#e{wrote = W, path = Path}.
 
 %% The lines an item is written by, and what it is written from: the lines
 %% common to every item, then those of the kind the item recorded when it
 %% was decoded from this format, else of the first kind whose every
-%% `requires` name the item has.
+%% `requires` term the item holds.
 item_scope(Item, #{lines := Common, defaults := Defaults, kinds := Kinds}, Pack) ->
     Model = maps:get(model, Item),
     Lists = maps:get(lists, Item, #{}),
@@ -914,13 +1136,7 @@ item_scope(Item, #{lines := Common, defaults := Defaults, kinds := Kinds}, Pack)
                            {Name, KindName} -> [K || #{name := N} = K <- Kinds, N =:= KindName];
                            _ -> []
                        end,
-            Has = fun(K) ->
-                          maps:is_key(K, Model) orelse
-                              case maps:find(K, Lists) of
-                                  {ok, [_ | _]} -> true;
-                                  _ -> false
-                              end
-                  end,
+            Has = fun(T) -> gt_engine:req_holds(T, Model, Lists) end,
             Chosen = Recorded ++ [K || #{requires := Req} = K <- Kinds, lists:all(Has, Req)],
             case Chosen of
                 [] -> gt_engine:conv_error('no-kind', Pack, "an item selects no kind of its group", []);
@@ -951,8 +1167,10 @@ candidates([_Own | Also] = Keys, With, #{model := Model, lists := Lists}) ->
     end.
 
 %% Would these lines write a present key (a key with a default counts), or a
-%% list that is not empty?
-has(Lines, Src, Pack) -> lists:any(fun(L) -> has1(L, Src, Pack) end, Lines).
+%% list that is not empty? A switch counts the case it would select only.
+has([], _Src, _Pack) -> false;
+has([L | Rest], Src, Pack) ->
+    has1(L, Src, Pack) orelse has(Rest, sim1(L, Src, Pack), Pack).
 
 %% In a UPER pack no default counts as content (rulings 2 and 19 of 0.19).
 has1({sfield, Keys0, _, _, _, _, _, _, With}, #{model := Model} = Src, Pack) ->
@@ -971,15 +1189,72 @@ has1({sgroup, List, _, _}, #{lists := Lists}, _Pack) ->
 has1({ifb, _, Body}, Src, Pack) -> has(Body, Src, Pack);
 has1({opt, Body}, Src, Pack) -> has(Body, Src, Pack);
 has1({len, _, _, _, Body}, Src, Pack) -> has(Body, Src, Pack);
-has1({chain, First, Parts, _}, Src, Pack) ->
-    lists:any(fun(P) -> has(P, Src, Pack) end, [First | Parts]);
+has1({chain, First, Parts, _}, Src, Pack) -> has(lists:append([First | Parts]), Src, Pack);
+has1({switch, Key, Ref, Cases, Else}, Src, Pack) ->
+    case predict(Key, Ref, Cases, Else, Src) of
+        Case when is_map(Case) -> has(maps:get(lines, Case), case_src(Case, Src), Pack);
+        _ -> false
+    end;
 has1(_, _Src, _Pack) -> false.
 
+%% The scan's view of what decode would read back from a line, were it
+%% written as the encode would write it (only a pack with a switch needs
+%% it): a field line records its keys; an `if` is written when its bits
+%% are known to hold, or else when it has content; an `opt` when it has
+%% content; a chain part when a later part has content.
+sim1(L, Src, Pack) ->
+    case maps:get(has_switch, Pack, false) of
+        false -> Src;
+        true -> sim(L, Src, Pack)
+    end.
+
+sims(Lines, Src, Pack) -> lists:foldl(fun(L, S) -> sim(L, S, Pack) end, Src, Lines).
+
+sim({sfield, _, _, _, _, _, _, _, _} = L, Src, Pack) ->
+    try field_bits(L, Src, Pack) of
+        {_, Raw} -> Src#{wrote => read_back(L, Raw, maps:get(wrote, Src, #{}), Pack)}
+    catch
+        _:_ -> Src
+    end;
+sim({ifb, Conds, Body}, Src, Pack) ->
+    Env = maps:get(env, Src, #{}),
+    Written = case lists:all(fun({Id, _, _}) -> maps:is_key(Id, Env) end, Conds) of
+                  true -> holds(Conds, Env);
+                  false -> has(Body, Src, Pack)
+              end,
+    case Written of
+        true -> sims(Body, Src, Pack);
+        false -> Src
+    end;
+sim({opt, Body}, Src, Pack) ->
+    case has(Body, Src, Pack) of
+        true -> sims(Body, Src, Pack);
+        false -> Src
+    end;
+sim({len, _, _, _, Body}, Src, Pack) -> sims(Body, Src, Pack);
+sim({chain, First, Parts, _}, Src, Pack) -> sim_parts(Parts, sims(First, Src, Pack), Pack);
+sim({switch, Key, Ref, Cases, Else}, Src, Pack) ->
+    case predict(Key, Ref, Cases, Else, Src) of
+        Case when not is_map(Case) -> Src;
+        Case ->
+            S1 = sims(maps:get(lines, Case), case_src(Case, Src), Pack),
+            S1#{defaults := maps:get(defaults, Src)}
+    end;
+sim(_, Src, _Pack) -> Src.
+
+sim_parts([], Src, _Pack) -> Src;
+sim_parts([Part | Rest] = Parts, Src, Pack) ->
+    case has(lists:append(Parts), Src, Pack) of
+        true -> sim_parts(Rest, sims(Part, Src, Pack), Pack);
+        false -> Src
+    end.
+
 %% The bits of presence Id that are 1: those some `if` block names without
-%% `!` and whose content is present. The blocks may stand in nested blocks
-%% and in the items of groups.
-scan(Lines, Src, Id, Pack, Acc) ->
-    lists:foldl(fun(L, A) -> scan1(L, Src, Id, Pack, A) end, Acc, Lines).
+%% `!` and whose content is present. The blocks may stand in nested blocks,
+%% in the case a switch selects and in the items of groups.
+scan([], _Src, _Id, _Pack, Acc) -> Acc;
+scan([L | Rest], Src, Id, Pack, Acc) ->
+    scan(Rest, sim1(L, Src, Pack), Id, Pack, scan1(L, Src, Id, Pack, Acc)).
 
 scan1({ifb, Conds, Body}, Src, Id, Pack, Acc) ->
     Acc1 = case [B || {I, B, false} <- Conds, I =:= Id] of
@@ -998,17 +1273,26 @@ scan1({uchoice, _, _, Alts}, Src, Id, Pack, Acc) ->
     scan(Body, Src, Id, Pack, Acc);
 scan1({len, _, _, _, Body}, Src, Id, Pack, Acc) -> scan(Body, Src, Id, Pack, Acc);
 scan1({chain, First, Parts, _}, Src, Id, Pack, Acc) ->
-    lists:foldl(fun(P, A) -> scan(P, Src, Id, Pack, A) end, Acc, [First | Parts]);
-scan1({sgroup, List, _, Body}, #{lists := Lists}, Id, Pack, Acc) ->
+    scan(lists:append([First | Parts]), Src, Id, Pack, Acc);
+scan1({switch, Key, Ref, Cases, Else}, Src, Id, Pack, Acc) ->
+    case predict(Key, Ref, Cases, Else, Src) of
+        Case when is_map(Case) -> scan(maps:get(lines, Case), case_src(Case, Src), Id, Pack, Acc);
+        _ -> Acc
+    end;
+scan1({sgroup, List, _, Body}, #{lists := Lists} = Src, Id, Pack, Acc) ->
+    Path = maps:get(path, Src, []),
+    Items = maps:get(List, Lists, []),
     lists:foldl(
-      fun(Item, A) ->
+      fun({N, Item}, A) ->
               %% an item that selects no kind of this group fails when the
               %% group is written, and the group may stand in a block that
               %% is not
               try item_scope(Item, Body, Pack) of
-                  {Lines, ISrc} -> scan(Lines, ISrc, Id, Pack, A)
+                  {Lines, ISrc} ->
+                      scan(Lines, ISrc#{path => [{List, N} | Path],
+                                        forced => maps:get(forced, Src, #{})}, Id, Pack, A)
               catch
                   error:{convert_error, 'no-kind', _} -> A
               end
-      end, Acc, maps:get(List, Lists, []));
+      end, Acc, lists:zip(lists:seq(0, length(Items) - 1), Items));
 scan1(_, _Src, _Id, _Pack, Acc) -> Acc.

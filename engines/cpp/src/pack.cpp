@@ -420,6 +420,14 @@ void resolve_when(const Pack& p, WhenLine& w, const std::string& word) {
         if (loc.len < 1 || loc.len > 64)
             throw Error(ErrorKind::BadDirective, p.format, w.locator,
                         where + ": a '" + word + "' covers 1 to 64 bits");
+        if (word == "when") {
+            // v0.20: a list of values and ranges.
+            std::string why;
+            if (!detail::parse_when_numbers(w.value, loc.len, w.ranges, why))
+                throw Error(ErrorKind::BadDirective, p.format, w.locator, where + ": 'when' " + why);
+            w.number = w.ranges.front().first;
+            return;
+        }
         if (!parse_u64(w.value, w.number))
             throw Error(ErrorKind::BadDirective, p.format, w.locator,
                         where + ": '" + word + "' value '" + w.value + "' is not an unsigned decimal integer");
@@ -432,6 +440,33 @@ void resolve_when(const Pack& p, WhenLine& w, const std::string& word) {
     if (w.value == "present" && word == "const")
         throw Error(ErrorKind::BadDirective, p.format, w.locator,
                     where + ": 'const' cannot write 'present'; write '=present' for the text");
+    // v0.20 lists on xml, json, geojson and protobuf. The `text` wire (0.10)
+    // keeps one literal value: 0.20 does not extend lists to it, and a comma
+    // there is the default delimiter, which a `when` value may not hold.
+    if (word == "when" && w.value != "present" && p.wire != Wire::Text) {
+        std::vector<std::string> items;
+        if (!detail::split_value_list(w.value, items))
+            throw Error(ErrorKind::BadDirective, p.format, w.locator,
+                        where + ": the 'when' value list '" + w.value + "' has an empty value");
+        if (items.size() > 1 && std::find(items.begin(), items.end(), "present") != items.end())
+            throw Error(ErrorKind::BadDirective, p.format, w.locator,
+                        where + ": 'present' may not be combined with other values");
+        if (p.wire == Wire::Protobuf) {
+            std::string why;
+            if (!detail::parse_when_numbers(w.value, 64, w.ranges, why))
+                throw Error(ErrorKind::BadDirective, p.format, w.locator, where + ": 'when' " + why);
+            w.number = w.ranges.front().first;
+            return;
+        }
+        // Text wires: `..` is literal; a leading `=` is stripped from each value.
+        for (auto& item : items) {
+            if (!item.empty() && item[0] == '=') item.erase(0, 1);
+            w.texts.push_back(item);
+        }
+        w.forced_string = !w.value.empty() && w.value[0] == '=';
+        w.text = w.texts.front();
+        return;
+    }
     if (p.wire == Wire::Protobuf) {
         if (w.value == "present") w.present = true;
         else if (!parse_u64(w.value, w.number))
@@ -1352,6 +1387,10 @@ Pack parse_pack(const std::string& text, const std::string& source) {
             p.tables[static_cast<std::size_t>(it->second)].entries.emplace_back(t[2], t[3]);
         } else if (kw == "when") {
             not_in_group();
+            // A third token (`1, 2`) is not a value list (0.20).
+            if (t.size() > 3)
+                throw Error(ErrorKind::BadDirective, p.format, "",
+                            where + ": 'when' takes a locator and one value list; a list has no spaces");
             arity(2);
             WhenLine w;
             w.locator = t[1];
@@ -1365,7 +1404,14 @@ Pack parse_pack(const std::string& text, const std::string& source) {
                 throw Error(ErrorKind::BadDirective, p.format, "", where + ": 'requires' before the first 'kind'");
             if (t.size() < 2)
                 throw Error(ErrorKind::BadDirective, p.format, "", where + ": 'requires' takes at least 1 argument");
-            for (std::size_t k = 1; k < t.size(); ++k) p.kinds.back().requires_keys.push_back(t[k]);
+            for (std::size_t k = 1; k < t.size(); ++k) {
+                RequiresTerm term;
+                std::string why;
+                if (!detail::parse_requires_term(t[k], lineno, term, why))
+                    throw Error(ErrorKind::BadDirective, p.format, "", where + ": " + why);
+                p.kinds.back().requires_keys.push_back(term.key);
+                p.kinds.back().requires_terms.push_back(std::move(term));
+            }
         } else if (kw == "field") {
             if (t.size() < 4)
                 throw Error(ErrorKind::BadDirective, p.format, "",
@@ -1438,6 +1484,10 @@ Pack parse_pack(const std::string& text, const std::string& source) {
             if (!natives.insert(t[1]).second)
                 throw Error(ErrorKind::BadDirective, p.format, "", where + ": duplicate typemap code '" + t[1] + "'");
             p.typemap.emplace_back(t[1], t[2]);
+        } else if (kw == "switch" || kw == "case" || kw == "else") {
+            // v0.20: a switch belongs to a sequential layout.
+            throw Error(ErrorKind::BadDirective, p.format, "",
+                        where + ": '" + kw + "' is a line of a 'layout sequential' pack");
         } else {
             throw Error(ErrorKind::UnknownDirective, p.format, "", where + ": directive '" + kw + "'");
         }

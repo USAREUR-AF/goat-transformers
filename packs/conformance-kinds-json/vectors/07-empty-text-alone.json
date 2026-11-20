@@ -1,0 +1,13 @@
+{
+  "name": "empty-text-alone",
+  "from": "conformance-kinds-json",
+  "to": "conformance-kinds-json",
+  "input": "{\"t\":\"\",\"z\":3}",
+  "expect": "{\"t\":\"\",\"z\":3}",
+  "model": {
+    "@kind": "empty",
+    "probe.z": "3"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, Lists and ranges in `when`, on text wires; `\"\"` alone is the empty text (ruling 11 of 0.9)"
+}

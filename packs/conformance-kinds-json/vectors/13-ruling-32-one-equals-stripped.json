@@ -1,0 +1,9 @@
+{
+  "name": "ruling-32-one-equals-stripped",
+  "from": "conformance-kinds-json",
+  "to": "conformance-kinds-json",
+  "input": "{\"v\":\"=x\",\"c\":1}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 32: a leading `=` is stripped from each item of a text-wire `when` list; the text =x is not x"
+}

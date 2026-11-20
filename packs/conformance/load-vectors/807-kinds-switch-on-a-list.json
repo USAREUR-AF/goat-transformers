@@ -1,0 +1,9 @@
+{
+  "name": "807-kinds-switch-on-a-list",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey x int -\nkey y int -\nkey z int -\nkey a float -\nkey s string -\nkey label string -\nlist items \"a list\"\n"
+  ],
+  "pack": "format probe\nversion 0.20.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nlayout sequential\nfield probe.x 8 uint\ngroup probe.items count 8\n  field probe.y 8 uint\nend\nswitch probe.items\n  case 1\nend\n",
+  "expect_error": "bad-directive"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "deflt-ruling-22-outer-default-in-a-nested-else",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-deflt",
+  "input": "{\"n\":1,\"c1\":2}",
+  "expect": "010206",
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 22: defaults in nested cases apply inside the cases nested in their case; the innermost wins; c1 = 2: the nested else; v2 takes case 1's 6"
+}

@@ -2,7 +2,10 @@ package goat.transformers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The {@code bits} wire with {@code layout sequential} (engine-spec 0.8): the lines of the pack are read, and
@@ -48,6 +51,13 @@ final class SeqCodec extends Codec<byte[]> {
         long soft = -1;
         final boolean[][] presence = new boolean[pack.seqPresences][];
         final Failures fails = new Failures();
+        /** The cases read so far, in reading order (engine-spec 0.20). */
+        final List<Seq.Case> casesRead = new ArrayList<>();
+        /**
+         * Presence bits that are 1 and are named only by {@code if} lines inside cases: {presence, bit, index into
+         * {@link #casesRead} when the presence was read}. Checked when the body that read them ends (ruling 21).
+         */
+        final List<Object[]> pending = new ArrayList<>();
 
         Reader(BitMsg in) {
             this.msg = in.b;
@@ -163,12 +173,31 @@ final class SeqCodec extends Codec<byte[]> {
         Reader r = new Reader(parseBits(text));
         Entity e = new Entity();
         Seq.Kind kind = decodeBody(root, r, e);
+        checkPending(r);
         finishDecode(e, r.fails);
         if (root.hasKinds) e.setKind(pack.format, kind.name);
         return e;
     }
 
     /** Decode the common lines, select the kind at the cursor, decode its lines. */
+    /**
+     * A presence bit named only inside cases is 1: some case naming it must have been read after it, anywhere later
+     * in the decode, a later group item included (ruling 36 of 0.20).
+     */
+    private void checkPending(Reader r) {
+        for (int i = 0; i < r.pending.size(); i++) {
+            Object[] p = r.pending.get(i);
+            Seq.Node n = (Seq.Node) p[0];
+            int bit = (Integer) p[1];
+            List<Seq.Case> named = n.caseNamed.get(bit);
+            boolean read = false;
+            for (int j = (Integer) p[2]; j < r.casesRead.size() && !read; j++) {
+                for (Seq.Case c : named) if (c == r.casesRead.get(j)) { read = true; break; }
+            }
+            if (!read) throw malformed("presence bit " + n.name + "." + bit + " is 1 and no if of the cases read names it");
+        }
+    }
+
     private Seq.Kind decodeBody(Seq.Body body, Reader r, Entity e) {
         decodeLines(body.common, r, e);
         Seq.Kind kind = body.kinds.get(0);
@@ -180,7 +209,7 @@ final class SeqCodec extends Codec<byte[]> {
                 boolean all = true;
                 for (Seq.Node w : k.whens) {
                     // a when any of whose bits lies beyond the input does not hold
-                    if (r.pos + w.len > r.limit() || r.take(w.len) != w.value) { all = false; break; }
+                    if (r.pos + w.len > r.limit() || !matches(w, r.take(w.len))) { all = false; break; }
                 }
                 if (all) { kind = k; break; }
             }
@@ -192,6 +221,11 @@ final class SeqCodec extends Codec<byte[]> {
         }
         decodeLines(kind.lines, r, e);
         return kind;
+    }
+
+    /** True when a {@code when} line holds for the value read: one of its values, or within one of its ranges. */
+    private static boolean matches(Seq.Node w, long v) {
+        return w.ranges == null ? v == w.value : Pack.inRanges(w.ranges, v);
     }
 
     private static boolean bit(boolean[] bits, int i) { return bits != null && i < bits.length && bits[i]; }
@@ -219,29 +253,11 @@ final class SeqCodec extends Codec<byte[]> {
                         }
                     }
                     Object v;
+                    long at = r.pos;
+                    // the cursor moves on whether or not the transform succeeds; a UPER field moves it as it reads
+                    if (n.u == null) r.pos += n.len;
                     try {
-                        if (n.u != null) {
-                            v = readUper(n.u, f, r);
-                        } else if (f.bits.isChars()) {
-                            int cw = f.bits.charWidth();
-                            int[] codes = new int[n.len / cw];
-                            for (int i = 0; i < codes.length; i++) codes[i] = (int) r.take(cw);
-                            v = f.bits.decodeChars(codes);
-                        } else if (f.bits.isAscii()) {
-                            byte[] bytes = new byte[n.len / 8];
-                            for (int i = 0; i < bytes.length; i++) bytes[i] = (byte) r.take(8);
-                            if (f.swap) BitsCodec.reverseBytes(bytes);
-                            v = f.bits.decodeAscii(bytes, f.trim);
-                        } else if (f.bits.isSixbit()) {
-                            long at = r.pos;
-                            r.pos += n.len;
-                            v = BitsTransform.decodeSixbit(BitsCodec.readSixbit(r.msg, at, n.len, msb), f.trim);
-                        } else {
-                            long at = r.pos;
-                            r.pos += n.len;   // the cursor moves on whether or not the transform succeeds
-                            long raw = BitsCodec.readBits(r.msg, at, n.len, msb);
-                            v = f.bits.decode(f.swap ? BitsCodec.swapBytes(raw, n.len) : raw, n.len);
-                        }
+                        v = n.u != null ? readUper(n.u, f, r) : valueAt(f, r.msg, at, n.len);
                     } catch (IllegalArgumentException ex) {
                         for (Pack.Field k : n.keys) r.fails.add(k, ex.getMessage(), e);
                         break;
@@ -256,7 +272,7 @@ final class SeqCodec extends Codec<byte[]> {
                     break;
                 case WHEN:
                     // a common when: it must hold for every message (or item) of the format
-                    if (r.pos + n.len > r.limit() || r.take(n.len) != n.value) {
+                    if (r.pos + n.len > r.limit() || !matches(n, r.take(n.len))) {
                         throw new GtException(GtException.Code.NO_KIND, pack.format, null,
                                 "the common when line " + n.len + " " + Long.toUnsignedString(n.value) + " does not hold");
                     }
@@ -338,6 +354,21 @@ final class SeqCodec extends Codec<byte[]> {
                     decodeLines(n.altLines.get(at), r, e);
                     break;
                 }
+                case SWITCH: {
+                    // a key line that failed its transform fails the decode, whatever the switch would read (ruling 35)
+                    for (int i = 0; i < r.fails.fields.size(); i++) {
+                        if (r.fails.into.get(i) == e && r.fails.fields.get(i).key.equals(n.switchKey)
+                                && (r.fails.hard.get(i) || e.get(n.switchKey) == null)) {
+                            finishDecode(e, r.fails);
+                        }
+                    }
+                    // the key's decoded value when the cursor reaches the switch selects the case (engine-spec 0.20)
+                    Seq.Case c = Seq.select(n, e.get(n.switchKey));
+                    if (c == null) throw noCase(n, e.get(n.switchKey));
+                    r.casesRead.add(c);
+                    decodeLines(c.body, r, e);
+                    break;
+                }
                 default:
                     throw new IllegalStateException(n.op.name());
             }
@@ -403,6 +434,30 @@ final class SeqCodec extends Codec<byte[]> {
         }
     }
 
+    private GtException noCase(Seq.Node n, Object v) {
+        return new GtException(GtException.Code.NO_KIND, pack.format, null, "switch " + n.switchKey + " (line " + n.line + "): "
+                + (v == null ? "the key is absent" : "no case lists " + Pack.canonText(v)) + " and there is no else");
+    }
+
+    /** The value of a field line's bits at {@code at}, by its transform ({@code swap} included). Throws IllegalArgumentException. */
+    private Object valueAt(Pack.Field f, byte[] msg, long at, int len) {
+        if (f.bits.isChars()) {
+            int cw = f.bits.charWidth();
+            int[] codes = new int[len / cw];
+            for (int i = 0; i < codes.length; i++) codes[i] = (int) BitsCodec.readBits(msg, at + (long) i * cw, cw, msb);
+            return f.bits.decodeChars(codes);
+        }
+        if (f.bits.isAscii()) {
+            byte[] bytes = new byte[len / 8];
+            for (int i = 0; i < bytes.length; i++) bytes[i] = (byte) BitsCodec.readBits(msg, at + 8L * i, 8, msb);
+            if (f.swap) BitsCodec.reverseBytes(bytes);
+            return f.bits.decodeAscii(bytes, f.trim);
+        }
+        if (f.bits.isSixbit()) return BitsTransform.decodeSixbit(BitsCodec.readSixbit(msg, at, len, msb), f.trim);
+        long raw = BitsCodec.readBits(msg, at, len, msb);
+        return f.bits.decode(f.swap ? BitsCodec.swapBytes(raw, len) : raw, len);
+    }
+
     /** The bits of the block a length field of value {@code units} counts; malformed when it is not within {@code left} bits. */
     private long extent(long units, Seq.Node n, long left) {
         long block = units - n.plus;
@@ -434,9 +489,10 @@ final class SeqCodec extends Codec<byte[]> {
             }
         }
         for (int i = 1; i < bits.length; i++) {
-            if (bits[i] && !n.named.get(i)) {
-                throw malformed("presence bit " + n.name + "." + i + " is 1 and no if block names it");
-            }
+            if (!bits[i] || n.named.get(i)) continue;
+            // a bit named only inside cases counts when one of those cases is read (ruling 21 of 0.20)
+            if (n.caseNamed.containsKey(i)) r.pending.add(new Object[]{n, i, r.casesRead.size()});
+            else throw malformed("presence bit " + n.name + "." + i + " is 1 and no if block names it");
         }
         return bits;
     }
@@ -512,6 +568,19 @@ final class SeqCodec extends Codec<byte[]> {
         /** {@code length ... whole} fields to write once the message is laid out. */
         final List<Seq.Node> wholes = new ArrayList<>();
         final List<Long> wholeAt = new ArrayList<>();
+        /**
+         * The case of each switch, per entity or item, assumed where a presence, {@code opt} or {@code fx} bit is
+         * computed before the switch is reached: the case the previous pass selected, else an estimate.
+         */
+        final Map<Entity, Map<Seq.Node, Seq.Case>> assumed;
+        /** The case each switch selected in this pass, from the bits its key's line wrote. */
+        final Map<Entity, Map<Seq.Node, Seq.Case>> actual = new IdentityHashMap<>();
+        /** True when a switch selected a case other than the one assumed: the pass is run again. */
+        boolean mismatch;
+        /** Per shadow entity: the keys whose bits did not read back through their transform or table. */
+        final Map<Entity, java.util.Set<String>> failed = new IdentityHashMap<>();
+
+        Writer(Map<Entity, Map<Seq.Node, Seq.Case>> assumed) { this.assumed = assumed; }
 
         void ensure(long bits) {
             long bytes = (bits + 7) >>> 3;
@@ -551,6 +620,14 @@ final class SeqCodec extends Codec<byte[]> {
                 put(8 * octets, v);
             }
         }
+
+        /** The case assumed for switch {@code sw} of entity {@code e}. */
+        Seq.Case assumedCase(Seq.Node sw, Entity e, Map<String, Object> defs) {
+            Map<Seq.Node, Seq.Case> m = assumed.get(e);
+            if (m != null && m.containsKey(sw)) return m.get(sw);
+            // no earlier pass reached it: what the first line mapping the key would write, read back (ruling 37)
+            return Seq.select(sw, predict(sw, e, defs));
+        }
     }
 
     /** The fewest octets, at least one, that hold {@code v} as an unsigned number. */
@@ -563,15 +640,50 @@ final class SeqCodec extends Codec<byte[]> {
         return n;
     }
 
+    /** The value decode would read from what the switch's first key line writes for {@code e}, or null. */
+    private Object predict(Seq.Node sw, Entity e, Map<String, Object> defs) {
+        Seq.Node line = sw.keyLine;
+        Writer scratch = new Writer(new IdentityHashMap<>());
+        Entity shadow = new Entity();
+        try {
+            encodeField(line, scratch, e, defs);
+            scratch.ensure(line.len);
+            readBack(line, scratch, 0, shadow);
+        } catch (GtException ex) {
+            return null;
+        }
+        return shadow.get(sw.switchKey);
+    }
+
     private GtException encodeError(String why) {
         return new GtException(GtException.Code.TRANSFORM_ENCODE, pack.format, null, why);
     }
 
+    /** At most this many passes settle the cases a switch selects. */
+    private static final int PASSES = 8;
+
     @Override
     String encode(Entity e) {
-        Writer w = new Writer();
         Seq.Kind kind = selectForEncode(root, e, "the entity");
-        encodeLines(kind.all, w, e, kind.scope);
+        Map<Entity, Map<Seq.Node, Seq.Case>> assumed = new IdentityHashMap<>();
+        for (int pass = 1; ; pass++) {
+            Writer w = new Writer(assumed);
+            try {
+                encodeLines(kind.all, w, e, kind.scope.defaultValues, new Entity());
+            } catch (GtException ex) {
+                // the errors of a pass whose prediction is discarded are not reported (ruling 34)
+                if (!w.mismatch) throw ex;
+            }
+            if (!w.mismatch) return finish(w);
+            if (pass >= PASSES) {
+                // a prediction that never settles (ruling 33)
+                throw encodeError("the cases the switches select do not settle after " + PASSES + " passes");
+            }
+            assumed = w.actual;
+        }
+    }
+
+    private String finish(Writer w) {
         // armored text: the bits up to the cursor, not rounded to a byte (`length ... whole` is refused at load)
         if (pack.armorSixbit) return toArmor(w.b, w.pos);
         int bytes = (int) ((w.pos + 7) >>> 3);   // a whole number of bytes; the remaining bits are zero
@@ -603,46 +715,54 @@ final class SeqCodec extends Codec<byte[]> {
             }
         }
         for (Seq.Kind k : body.kinds) {
-            boolean all = true;
-            for (String key : k.requires) {
-                if (e.get(key) != null) continue;
-                List<Entity> items = e.list(key);
-                if (items == null || items.isEmpty()) { all = false; break; }
-            }
-            if (all) return k;
+            if (Pack.allHold(k.requires, e)) return k;
         }
         throw new GtException(GtException.Code.NO_KIND, pack.format, null, what + " has the required keys of no kind");
+    }
+
+    /** The defaults in force inside a case: those around it, replaced by the case's own (ruling 22 of 0.20). */
+    private static Map<String, Object> merge(Map<String, Object> defs, Seq.Case c) {
+        if (c.scope.defaultValues.isEmpty()) return defs;
+        Map<String, Object> m = new HashMap<>(defs);
+        m.putAll(c.scope.defaultValues);
+        return m;
     }
 
     /**
      * True when the lines would write a present key (a key with a default counts as present), a non-empty list, or
      * a nested presence that is not all zero: what sets a presence bit, an {@code opt} bit and an {@code fx} bit.
+     * Of a switch only the selected case counts (engine-spec 0.20).
      */
-    private boolean content(List<Seq.Node> nodes, Entity e, Pack.Scope scope) {
+    private boolean content(List<Seq.Node> nodes, Entity e, Map<String, Object> defs, Writer w) {
         for (Seq.Node n : nodes) {
             switch (n.op) {
                 case FIELD:
                     for (Pack.Field f : n.keys) {
                         if (f.suppressed(e)) continue;   // neither its value nor its default is content (ruling 1 of 0.18)
                         // in a UPER pack no default counts as content (rulings 2 and 19 of 0.19)
-                        if (e.get(f.key) != null || (!pack.uper && scope.defaultValues.containsKey(f.key))) return true;
+                        if (e.get(f.key) != null || (!pack.uper && defs.containsKey(f.key))) return true;
                     }
                     break;
                 case IF:
                 case OPT:
                 case LENGTH:
                 case EXT:
-                    if (content(n.body, e, scope)) return true;
+                    if (content(n.body, e, defs, w)) return true;
                     break;
                 case CHOICE:
-                    for (List<Seq.Node> alt : n.altLines) if (content(alt, e, scope)) return true;
+                    for (List<Seq.Node> alt : n.altLines) if (content(alt, e, defs, w)) return true;
                     break;
                 case CHAIN:
-                    for (List<Seq.Node> part : n.parts) if (content(part, e, scope)) return true;
+                    for (List<Seq.Node> part : n.parts) if (content(part, e, defs, w)) return true;
                     break;
                 case GROUP: {
                     List<Entity> items = e.list(n.list);
                     if (items != null && !items.isEmpty()) return true;
+                    break;
+                }
+                case SWITCH: {
+                    Seq.Case c = w.assumedCase(n, e, defs);
+                    if (c != null && content(c.body, e, merge(defs, c), w)) return true;
                     break;
                 }
                 default:
@@ -655,9 +775,9 @@ final class SeqCodec extends Codec<byte[]> {
     /**
      * Compute the bits of presence {@code p} from the lines after it: a bit is 1 when some {@code if} block naming
      * it without {@code !} has content. The blocks may lie in the items of a group: any item with the content sets
-     * the bit.
+     * the bit. Of a switch only the selected case's lines set a bit.
      */
-    private void collect(List<Seq.Node> nodes, int from, Entity e, Pack.Scope scope, Seq.Node p, boolean[] bits) {
+    private void collect(List<Seq.Node> nodes, int from, Entity e, Map<String, Object> defs, Seq.Node p, boolean[] bits, Writer w) {
         for (int i = from; i < nodes.size(); i++) {
             Seq.Node n = nodes.get(i);
             switch (n.op) {
@@ -666,25 +786,30 @@ final class SeqCodec extends Codec<byte[]> {
                     for (int k = 0; k < n.refBit.length; k++) {
                         if (n.refPresence[k] != p || n.refNot[k]) continue;
                         if (!known) {
-                            has = content(n.body, e, scope);
+                            has = content(n.body, e, defs, w);
                             known = true;
                         }
                         if (has) bits[n.refBit[k]] = true;
                     }
-                    collect(n.body, 0, e, scope, p, bits);
+                    collect(n.body, 0, e, defs, p, bits, w);
                     break;
                 }
                 case OPT:
                 case LENGTH:
                 case EXT:
-                    collect(n.body, 0, e, scope, p, bits);
+                    collect(n.body, 0, e, defs, p, bits, w);
                     break;
                 case CHOICE:
-                    for (List<Seq.Node> alt : n.altLines) collect(alt, 0, e, scope, p, bits);
+                    for (List<Seq.Node> alt : n.altLines) collect(alt, 0, e, defs, p, bits, w);
                     break;
                 case CHAIN:
-                    for (List<Seq.Node> part : n.parts) collect(part, 0, e, scope, p, bits);
+                    for (List<Seq.Node> part : n.parts) collect(part, 0, e, defs, p, bits, w);
                     break;
+                case SWITCH: {
+                    Seq.Case c = w.assumedCase(n, e, defs);
+                    if (c != null) collect(c.body, 0, e, merge(defs, c), p, bits, w);
+                    break;
+                }
                 case GROUP: {
                     List<Entity> items = e.list(n.list);
                     if (items == null) break;
@@ -695,7 +820,7 @@ final class SeqCodec extends Codec<byte[]> {
                         } catch (GtException ex) {
                             continue;   // reported when the item is written
                         }
-                        collect(kind.all, 0, item, kind.scope, p, bits);
+                        collect(kind.all, 0, item, kind.scope.defaultValues, p, bits, w);
                     }
                     break;
                 }
@@ -705,13 +830,20 @@ final class SeqCodec extends Codec<byte[]> {
         }
     }
 
-    private void encodeLines(List<Seq.Node> nodes, Writer w, Entity e, Pack.Scope scope) {
+    /**
+     * Write {@code nodes}. {@code shadow} is what decode would read back from the bits written so far for this
+     * entity or item: a switch selects its case from it.
+     */
+    private void encodeLines(List<Seq.Node> nodes, Writer w, Entity e, Map<String, Object> defs, Entity shadow) {
         for (int idx = 0; idx < nodes.size(); idx++) {
             Seq.Node n = nodes.get(idx);
             switch (n.op) {
-                case FIELD:
-                    encodeField(n, w, e, scope);
+                case FIELD: {
+                    long at = w.pos;
+                    encodeField(n, w, e, defs);
+                    readBack(n, w, at, shadow);
                     break;
+                }
                 case CONST:
                 case WHEN:
                     w.put(n.len, n.value);
@@ -723,8 +855,8 @@ final class SeqCodec extends Codec<byte[]> {
                     w.skip((w.pos + n.len - 1) / n.len * n.len - w.pos);
                     break;
                 case PRESENCE: {
-                    boolean[] bits = new boolean[(n.fx ? Math.max(n.named.length(), 1) : n.len + 1)];
-                    collect(nodes, idx + 1, e, scope, n, bits);
+                    boolean[] bits = new boolean[(n.fx ? Math.max(n.anyNamed.length(), 1) : n.len + 1)];
+                    collect(nodes, idx + 1, e, defs, n, bits, w);
                     w.presence[n.id] = bits;
                     if (!n.fx) {
                         for (int i = 1; i <= n.len; i++) w.put(1, bits[i] ? 1 : 0);
@@ -741,12 +873,12 @@ final class SeqCodec extends Codec<byte[]> {
                     break;
                 }
                 case IF:
-                    if (holds(n, w.presence)) encodeLines(n.body, w, e, scope);
+                    if (holds(n, w.presence)) encodeLines(n.body, w, e, defs, shadow);
                     break;
                 case OPT:
-                    if (content(n.body, e, scope)) {
+                    if (content(n.body, e, defs, w)) {
                         w.put(1, 1);
-                        encodeLines(n.body, w, e, scope);
+                        encodeLines(n.body, w, e, defs, shadow);
                     } else {
                         w.put(1, 0);
                     }
@@ -754,11 +886,11 @@ final class SeqCodec extends Codec<byte[]> {
                 case CHAIN: {
                     int last = n.parts.size() - 1;
                     for (int k = 0; k <= last; k++) {
-                        encodeLines(n.parts.get(k), w, e, scope);
+                        encodeLines(n.parts.get(k), w, e, defs, shadow);
                         if (k == last && !n.endsWithFx) break;
                         // an fx bit is 1 when any line after it in the chain would write a present key
                         boolean more = false;
-                        for (int j = k + 1; j <= last && !more; j++) more = content(n.parts.get(j), e, scope);
+                        for (int j = k + 1; j <= last && !more; j++) more = content(n.parts.get(j), e, defs, w);
                         w.put(1, more ? 1 : 0);
                         if (!more) break;
                     }
@@ -768,7 +900,7 @@ final class SeqCodec extends Codec<byte[]> {
                     long at = w.pos;
                     w.skip(n.len);
                     long start = w.pos;
-                    encodeLines(n.body, w, e, scope);
+                    encodeLines(n.body, w, e, defs, shadow);
                     long units = w.pos - start;
                     if (!n.inBits) {
                         units = (units + 7) / 8;
@@ -791,17 +923,33 @@ final class SeqCodec extends Codec<byte[]> {
                     break;
                 case EXT:
                     w.put(1, 0);   // extension additions are never written
-                    encodeLines(n.body, w, e, scope);
+                    encodeLines(n.body, w, e, defs, shadow);
                     break;
                 case CHOICE: {
                     // the first alt in line order with content, else the first alt
                     int pick = 0;
                     for (int k = 0; k < n.altLines.size(); k++) {
-                        if (content(n.altLines.get(k), e, scope)) { pick = k; break; }
+                        if (content(n.altLines.get(k), e, defs, w)) { pick = k; break; }
                     }
                     if (n.ext) w.put(1, 0);
                     w.put(Seq.rangeBits(0, n.alts - 1), n.altIndex.get(pick));
-                    encodeLines(n.altLines.get(pick), w, e, scope);
+                    encodeLines(n.altLines.get(pick), w, e, defs, shadow);
+                    break;
+                }
+                case SWITCH: {
+                    // the case decode would select from the bits the key's line wrote (engine-spec 0.20)
+                    Object v = shadow.get(n.switchKey);
+                    java.util.Set<String> bad = w.failed.get(shadow);
+                    if (v == null && bad != null && bad.contains(n.switchKey)) {
+                        // the key's bits would not decode: the output would not decode either (ruling 31)
+                        throw encodeError("switch " + n.switchKey + " (line " + n.line
+                                + "): the value written for the key does not read back through its transform or table");
+                    }
+                    Seq.Case c = Seq.select(n, v);
+                    if (c != w.assumedCase(n, e, defs)) w.mismatch = true;
+                    w.actual.computeIfAbsent(e, k -> new IdentityHashMap<>()).put(n, c);
+                    if (c == null) throw noCase(n, v);
+                    encodeLines(c.body, w, e, merge(defs, c), shadow);
                     break;
                 }
                 default:
@@ -810,11 +958,47 @@ final class SeqCodec extends Codec<byte[]> {
         }
     }
 
+    /** Decode the bits a field line just wrote into {@code shadow}, as decode would read them. */
+    private void readBack(Seq.Node n, Writer w, long at, Entity shadow) {
+        Pack.Field f = n.keys.get(0);
+        if (n.u != null) {
+            // a UPER field (0.19): read back from the bits it wrote, at its variable length
+            Reader rr = new Reader(new BitMsg(w.b, w.pos));
+            rr.pos = at;
+            Object v;
+            try {
+                v = readUper(n.u, f, rr);
+            } catch (IllegalArgumentException ex) {
+                for (Pack.Field k : n.keys) if (shadow.get(k.key) == null) w.failed.computeIfAbsent(shadow, x -> new java.util.HashSet<>()).add(k.key);
+                return;
+            }
+            Failures fails = new Failures();
+            for (Pack.Field k : n.keys) putDecoded(k, v, shadow, fails);
+            for (Pack.Field k : fails.fields) w.failed.computeIfAbsent(shadow, x -> new java.util.HashSet<>()).add(k.key);
+            return;
+        }
+        if (f.absent != null) {
+            long raw = BitsCodec.readBits(w.b, at, n.len, msb);
+            if (f.absent.matches(f.swap ? BitsCodec.swapBytes(raw, n.len) : raw)) return;   // a sentinel: absent
+        }
+        Object v;
+        try {
+            v = valueAt(f, w.b, at, n.len);
+        } catch (IllegalArgumentException ex) {
+            // decode would fail the line: its keys do not read back
+            for (Pack.Field k : n.keys) if (shadow.get(k.key) == null) w.failed.computeIfAbsent(shadow, x -> new java.util.HashSet<>()).add(k.key);
+            return;
+        }
+        Failures fails = new Failures();
+        for (Pack.Field k : n.keys) putDecoded(k, v, shadow, fails);
+        for (Pack.Field k : fails.fields) w.failed.computeIfAbsent(shadow, x -> new java.util.HashSet<>()).add(k.key);
+    }
+
     /**
      * The value of the earliest key of the line that the entity holds; when it holds none, the default of the
      * earliest key that has one (ruling 16 of 0.8); zero bits when there is neither.
      */
-    private void encodeField(Seq.Node n, Writer w, Entity e, Pack.Scope scope) {
+    private void encodeField(Seq.Node n, Writer w, Entity e, Map<String, Object> defs) {
         Pack.Field f = null;
         // a field line suppressed by `with` is no candidate; its `also` keys stay candidates (ruling 5 of 0.18)
         for (Pack.Field k : n.keys) {
@@ -822,10 +1006,10 @@ final class SeqCodec extends Codec<byte[]> {
         }
         if (f == null) {
             for (Pack.Field k : n.keys) {
-                if (scope.defaultValues.containsKey(k.key) && !k.suppressed(e)) { f = k; break; }
+                if (defs.containsKey(k.key) && !k.suppressed(e)) { f = k; break; }
             }
         }
-        Object v = f == null ? null : valueToEncode(f, e, scope);
+        Object v = f == null ? null : valueToEncode(f, e, defs);
         if (n.u != null) {
             Pack.Field k = f == null ? n.keys.get(0) : f;
             try {
@@ -989,6 +1173,6 @@ final class SeqCodec extends Codec<byte[]> {
 
     private void encodeItem(Seq.Node g, Writer w, Entity item) {
         Seq.Kind kind = selectForEncode(g.items, item, "an item of " + g.list);
-        encodeLines(kind.all, w, item, kind.scope);
+        encodeLines(kind.all, w, item, kind.scope.defaultValues, new Entity());
     }
 }

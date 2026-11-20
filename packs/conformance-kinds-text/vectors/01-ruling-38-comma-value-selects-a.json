@@ -1,0 +1,13 @@
+{
+  "name": "ruling-38-comma-value-selects-a",
+  "from": "conformance-kinds-text",
+  "to": "conformance-kinds-text",
+  "input": "A,B;x",
+  "expect": "A,B;x",
+  "model": {
+    "@kind": "a",
+    "probe.s1": "x"
+  },
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 38: on the 0.10 `text` wire a `when` value stays one literal value, a comma included; field 0 is the text A,B, equal to a's value"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "decode-ignores-requires",
+  "from": "conformance-kinds-env",
+  "to": "conformance-kinds-env",
+  "input": "{\"x\":0,\"k\":\"one\"}",
+  "expect": "{\"x\":0,\"k\":\"one\"}",
+  "model": {
+    "@kind": "one",
+    "@absent": [
+      "probe.n"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.5 Decode: kinds are selected by `when`; `requires` is for encode"
+}

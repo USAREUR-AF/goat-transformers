@@ -1,0 +1,16 @@
+{
+  "name": "float-in-no-case",
+  "from": "conformance-kinds-typed",
+  "to": "conformance-kinds-typed",
+  "input": "010703414203",
+  "expect": "010703414203",
+  "model": {
+    "probe.a": "1.5",
+    "@absent": [
+      "probe.z",
+      "probe.w"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; the key's decoded value (after `via` and `typemap`), as canonical text; 1.5: else"
+}

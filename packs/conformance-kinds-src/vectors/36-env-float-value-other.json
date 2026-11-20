@@ -1,0 +1,9 @@
+{
+  "name": "env-float-value-other",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-env",
+  "input": "{\"a\":2.25}",
+  "expect": "{\"a\":2.25,\"k\":\"other\"}",
+  "source": "constructed",
+  "reference": "spec 0.20, Encode kind by value; 2.25 is not 2.5"
+}

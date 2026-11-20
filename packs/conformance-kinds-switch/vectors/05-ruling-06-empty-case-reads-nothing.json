@@ -1,0 +1,19 @@
+{
+  "name": "ruling-06-empty-case-reads-nothing",
+  "from": "conformance-kinds-switch",
+  "to": "conformance-kinds-switch",
+  "input": "0407",
+  "expect": "0407",
+  "model": {
+    "probe.x": "4",
+    "probe.c1": "7",
+    "@absent": [
+      "probe.c2",
+      "probe.y",
+      "probe.z",
+      "probe.w"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; ruling 6: an empty case reads and writes nothing; there is no fall-through into else"
+}

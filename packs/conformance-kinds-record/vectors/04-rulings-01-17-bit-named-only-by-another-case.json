@@ -1,0 +1,9 @@
+{
+  "name": "rulings-01-17-bit-named-only-by-another-case",
+  "from": "conformance-kinds-record",
+  "to": "conformance-kinds-record",
+  "input": "f08a11223344",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; a switch key read inside an earlier `if` and chain block; rulings 1 and 17 of 0.8 count only the selected case: p.4 is 1 and no `if` of case 1 or of the lines around the switch names it"
+}

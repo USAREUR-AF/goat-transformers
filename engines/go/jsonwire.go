@@ -94,9 +94,9 @@ func whenHoldsJSON(w *When, v *jval) bool {
 	}
 	switch v.k {
 	case jStr, jBool:
-		return v.s == w.text
+		return w.matchText(v.s)
 	case jNum:
-		return canonNumber(v.s) == w.text
+		return w.matchText(canonNumber(v.s))
 	}
 	return false
 }

@@ -1,0 +1,38 @@
+# Conformance probe pack for a presence declared inside a case and named in a
+# nested case (spec 0.20, ruling 30), most significant bit first. Public.
+#
+#   x : 8, then by x
+#     1     presence q 8; y : 8, then by y
+#             1     if q.1: c1 : 8
+#             2     if q.2: c2 : 8
+#             else  nothing
+#     else  nothing
+#
+# An `if` counts when the innermost case that holds the `if` and not the
+# presence is read: q.1 counts only when y = 1, q.2 only when y = 2.
+format     conformance-kinds-presnest
+version    0.20.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field  probe.x  8  uint
+switch probe.x
+  case 1
+    presence q 8
+    field  probe.y  8  uint
+    switch probe.y
+      case 1
+        if q.1
+          field  probe.c1  8  uint
+        end
+      case 2
+        if q.2
+          field  probe.c2  8  uint
+        end
+      else
+    end
+  else
+end

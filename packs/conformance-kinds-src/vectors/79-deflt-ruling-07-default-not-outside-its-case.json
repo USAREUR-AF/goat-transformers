@@ -1,0 +1,9 @@
+{
+  "name": "deflt-ruling-07-default-not-outside-its-case",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-deflt",
+  "input": "{\"n\":3}",
+  "expect": "0300",
+  "source": "constructed",
+  "reference": "spec 0.20 ruling 22: defaults in nested cases apply inside the cases nested in their case; the innermost wins; n = 3: else; case 1's defaults do not apply (ruling 7): v2 zero bits"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "nest-ruling-22-opt-counts-the-selected-case",
+  "from": "conformance-kinds-src",
+  "to": "conformance-kinds-nest",
+  "input": "{\"v2\":1,\"v4\":5}",
+  "expect": "00000100",
+  "source": "constructed",
+  "reference": "spec 0.20, A switch on a decoded value; switch blocks inside other blocks; v2 = 1 selects case 1: v4 is not content, the opt bit is 0 and v4 is not written"
+}
