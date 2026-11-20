@@ -1,0 +1,7 @@
+{
+ "name": "gen-vehicle-residue",
+ "from": "vss-vehicle",
+ "to": "vss-vehicle",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"Vehicle\":{\"Speed\":0.75,\"CurrentLocation\":{\"Timestamp\":\"2026-05-16T11:21:59.510Z\",\"Latitude\":38.8977,\"Longitude\":151.2094},\"Gear\":\"s67157\",\"Seat\":{\"Count\":67933,\"Row1\":{\"Left\":{\"IsOccupied\":false},\"Right\":{\"IsOccupied\":false}},\"Row2\":{\"Left\":{\"IsOccupied\":true},\"Right\":{\"IsOccupied\":true}}},\"Door\":{\"Front\":{\"Codes\":[\"s53091\",\"s16070\"],\"IsOpen\":true},\"Rear\":{\"Codes\":[\"s3612\",\"s97845\"],\"IsOpen\":false}}}}",
+ "expect": "{\"Vehicle\":{\"Speed\":0.75,\"CurrentLocation\":{\"Timestamp\":\"2026-05-16T11:21:59.510Z\",\"Latitude\":38.8977,\"Longitude\":151.2094},\"Gear\":\"s67157\",\"Seat\":{\"Count\":67933,\"Row1\":{\"Left\":{\"IsOccupied\":false},\"Right\":{\"IsOccupied\":false}},\"Row2\":{\"Left\":{\"IsOccupied\":true},\"Right\":{\"IsOccupied\":true}}},\"Door\":{\"Front\":{\"Codes\":[\"s53091\",\"s16070\"],\"IsOpen\":true},\"Rear\":{\"Codes\":[\"s3612\",\"s97845\"],\"IsOpen\":false}}},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

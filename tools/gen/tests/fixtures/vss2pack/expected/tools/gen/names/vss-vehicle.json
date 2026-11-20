@@ -1,0 +1,22 @@
+{
+ "keys": {
+  "vehicle_door_front_codes|.|string": "vehicle_door_front_codes_value",
+  "vehicle_door_rear_codes|.|string": "vehicle_door_rear_codes_value",
+  "|Vehicle.CurrentLocation.Latitude|float": "vehicle_current_location_latitude",
+  "|Vehicle.CurrentLocation.Longitude|float": "vehicle_current_location_longitude",
+  "|Vehicle.CurrentLocation.Timestamp|string": "vehicle_current_location_timestamp",
+  "|Vehicle.Door.Front.IsOpen|int": "vehicle_door_front_is_open",
+  "|Vehicle.Door.Rear.IsOpen|int": "vehicle_door_rear_is_open",
+  "|Vehicle.Gear|string": "vehicle_gear",
+  "|Vehicle.Seat.Count|int": "vehicle_seat_count",
+  "|Vehicle.Seat.Row1.Left.IsOccupied|int": "vehicle_seat_row1_left_is_occupied",
+  "|Vehicle.Seat.Row1.Right.IsOccupied|int": "vehicle_seat_row1_right_is_occupied",
+  "|Vehicle.Seat.Row2.Left.IsOccupied|int": "vehicle_seat_row2_left_is_occupied",
+  "|Vehicle.Seat.Row2.Right.IsOccupied|int": "vehicle_seat_row2_right_is_occupied",
+  "|Vehicle.Speed|float": "vehicle_speed"
+ },
+ "lists": {
+  "|Vehicle.Door.Front.Codes": "vehicle_door_front_codes",
+  "|Vehicle.Door.Rear.Codes": "vehicle_door_rear_codes"
+ }
+}
