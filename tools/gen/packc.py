@@ -72,9 +72,15 @@ F_SWAP, F_TRIM, F_OPTIONAL = 1, 2, 4
 REP = {"count": 0, "while": 1, "more": 2, "fx": 3}
 DERIVE = {"copy": 0, "hypot": 1, "bearing": 2, "east_of": 3, "north_of": 4, "neg": 5, "scale": 6,
           "offset_f": 7, "offset_i": 8, "day_seconds": 9, "any": 10, "not": 11, "parse_int": 12,
-          "present": 13}
+          "present": 13,
+          # spec 0.16
+          "sec_of": 14, "nsec_of": 15, "ms_of": 16, "deg": 17, "rad": 18, "add_i": 19, "add_f": 20,
+          "sub_i": 21, "sub_f": 22, "deg_lon_of": 23, "m_lon_of": 24, "ecef_x": 25, "ecef_y": 26, "ecef_z": 27,
+          "lon_of_ecef": 28}
 # what gt-core must be built with for a function
-DERIVE_FEATURE = {"hypot": "sqrt", "bearing": "trig", "east_of": "trig", "north_of": "trig"}
+DERIVE_FEATURE = {"hypot": ("sqrt",), "bearing": ("trig",), "east_of": ("trig",), "north_of": ("trig",),
+                  "deg_lon_of": ("sqrt", "trig"), "m_lon_of": ("sqrt", "trig"), "ecef_x": ("sqrt", "trig"),
+                  "ecef_y": ("sqrt", "trig"), "ecef_z": ("sqrt", "trig"), "lon_of_ecef": ("trig",)}
 K_CONTEXT, K_LIVE = 1, 2
 NONE16 = 0xFFFF
 NONE32 = 0xFFFFFFFF
@@ -248,10 +254,13 @@ def parse_exact(args, what):
         refuse("bad-pack", "`%s`: the factor is 0 or does not fit 2^32 over 2^32" % what)
     return (q.numerator, q.denominator, offset)
 # The derive functions of spec 0.16; the device profile does not carry them.
-V016_DERIVES = ("sec_of", "nsec_of", "ms_of", "deg", "rad", "add", "sub", "deg_lat_of", "deg_lon_of",
-                "m_lat_of", "m_lon_of", "ecef_x", "ecef_y", "ecef_z", "lat_of_ecef", "lon_of_ecef",
-                "hae_of_ecef")
-V016_REASON = "the derive function `%s` (time, distance and frames, spec 0.16) is not in the device profile"
+# The derive functions of spec 0.16 the device does not compute: the meridional
+# radius of `deg_lat_of` and `m_lat_of` takes a power (x^1.5) and the closed
+# form of `lat_of_ecef` and `hae_of_ecef` a cube root, which gt-core does not
+# carry and could not give the reference engine's platform results bit for bit.
+V016_DERIVES = ("deg_lat_of", "m_lat_of", "lat_of_ecef", "hae_of_ecef")
+V016_REASON = ("the derive function `%s` (spec 0.16) is not in the device profile: it needs a power or a cube "
+               "root, which gt-core does not compute as the platform library does")
 
 
 # ---------------------------------------------------------------------------
@@ -1129,6 +1138,9 @@ class Compiler:
             return "offset_f", (f64_bits(read_float(a)),)
         if text.startswith("join:") or text == "text_of":
             return None, "`%s` builds new text, and the device engine has no text store" % text.split(":")[0]
+        if text in ("add", "sub"):
+            # spec 0.16, ruling 4: all `int` or all `float`
+            return text + ("_i" if tty == T_INT else "_f"), ()
         if text in DERIVE:
             return text, ()
         if text in V016_DERIVES:
@@ -1180,7 +1192,7 @@ class Compiler:
                 self.notes.append("derive %s %s: not compiled (%s)" % (target, fn, why))
                 continue
             if name in DERIVE_FEATURE:
-                self.features.add(DERIVE_FEATURE[name])
+                self.features.update(DERIVE_FEATURE[name])
             first = len(self.args)
             self.args.extend(self.key(a) for a in args)
             self.check(len(self.args) < NONE16, "table-overflow", "more than 65534 derive arguments")

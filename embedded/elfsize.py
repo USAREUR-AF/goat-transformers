@@ -41,38 +41,143 @@ def objdump():
     return sorted(found)[-1] if found else "objdump"
 
 
+def bytes_at(image, addr, n):
+    """`n` bytes at virtual address `addr` of an ELF image, from the allocated
+    section that holds them; None when none does."""
+    shoff, = struct.unpack_from("<I", image, 0x20)
+    shentsize, shnum = struct.unpack_from("<HH", image, 0x2E)
+    for i in range(shnum):
+        _, kind, flags, vaddr, off, size = struct.unpack_from("<6I", image, shoff + i * shentsize)
+        if flags & 2 and kind != 8 and vaddr <= addr and addr + n <= vaddr + size:
+            return image[off + addr - vaddr:off + addr - vaddr + n]
+    return None
+
+
+def word_at(image, addr):
+    """The 32-bit little-endian word at virtual address `addr`, or None."""
+    b = bytes_at(image, addr, 4)
+    return struct.unpack("<I", b)[0] if b is not None else None
+
+
+def table_targets(image, at, half):
+    """The targets of the `tbb` (bytes) or `tbh` (halfwords) at address `at`.
+    The table starts after the instruction and ends where the first target
+    begins: the code of the cases follows the table. None when it cannot be
+    read."""
+    base, size = at + 4, 2 if half else 1
+    out, end, i = set(), None, 0
+    while end is None or base + i * size < end:
+        b = bytes_at(image, base + i * size, size)
+        if b is None or i > 4096:
+            return None
+        t = base + 2 * (struct.unpack("<H", b)[0] if half else b[0])
+        out.add(t)
+        end = t if end is None else min(end, t)
+        i += 1
+    return out
+
+
+REG = re.compile(r"^(r\d+|lr|ip|sb|sl|fp)\b")
+
+
 def stack_bound(path, entry, depth):
     text = subprocess.run([objdump(), "-d", "--no-show-raw-insn", path], capture_output=True, text=True, check=True).stdout
+    with open(path, "rb") as fh:
+        image = fh.read()
     frames, calls, cur = {}, {}, None
-    head = re.compile(r"^[0-9a-f]+ <(.+)>:$")
+    head = re.compile(r"^([0-9a-f]+) <(.+)>:$")
+    # the instructions of each function: (address, op, args)
+    body, order = {}, []
     for line in text.split("\n"):
         m = head.match(line.strip())
         if m:
-            cur = m.group(1)
-            frames[cur], calls[cur] = 0, set()
+            cur = m.group(2)
+            body[cur] = []
+            order.append((int(m.group(1), 16), cur))
             continue
-        if cur is None or "\t" not in line:
+        if cur is None or "\t" not in line or ":" not in line:
             continue
-        ins = line.split("\t", 1)[1].strip() if ":" in line else ""
+        addr = line.split(":", 1)[0].strip()
+        ins = line.split("\t", 1)[1].strip()
         parts = ins.split(None, 1)
-        if not parts:
+        if not parts or not re.match(r"^[0-9a-f]+$", addr):
             continue
-        op, args = parts[0], parts[1] if len(parts) > 1 else ""
-        if op.startswith("push") or (op.startswith("stmdb") and args.startswith("sp!")):
-            frames[cur] += 4 * len(re.findall(r"\b(r\d+|lr|pc|sb|sl|fp|ip)\b", args[args.find("{"):]))
-        elif op.startswith("vpush"):
-            frames[cur] += 8 * len(re.findall(r"\bd\d+\b", args)) + 4 * len(re.findall(r"\bs\d+\b", args))
-        elif op.startswith("sub") and re.match(r"sp,\s*(sp,\s*)?#", args):
-            frames[cur] += int(re.search(r"#(0x[0-9a-f]+|\d+)", args).group(1), 0)
-        elif op.startswith("blx") and "<" not in args:
-            sys.exit("elfsize: %s makes an indirect call; the stack cannot be bounded from the disassembly" % cur)
-        elif op[0] == "b" or op.startswith("cb"):
-            # a call or tail call goes to the start of a function. A branch into
-            # the middle of another function is the linker's fill between two
-            # functions (0xd4d4 on Thumb), which disassembles as `bmi`.
-            t = re.search(r"<([^>+]+)(\+0x[0-9a-f]+)?>", args)
-            if t and t.group(1) != cur and not t.group(2):
-                calls[cur].add(t.group(1))
+        body[cur].append((int(addr, 16), parts[0], parts[1] if len(parts) > 1 else ""))
+    starts = {a: n for a, n in order}
+    # Calls through a register: opt-level z calls one routine many times through
+    # a register that an unconditional `ldr rN, [pc, #...]` loaded from the
+    # literal pool. Such a call is followed when the register's value is known
+    # along one straight-line run of instructions: what is known is forgotten
+    # at every address some branch of the function goes to, after every branch
+    # or write to pc, at every write to the register, and in a function with a
+    # table branch whose table cannot be read altogether. A call clobbers r0-r3, ip and lr and keeps
+    # r4-r11, as the procedure call standard requires of every callee.
+    branch = re.compile(r"^(b|b(eq|ne|cs|hs|cc|lo|mi|pl|vs|vc|hi|ls|ge|lt|gt|le|al))(\.w|\.n)?$")
+    for _, cur in order:
+        frames[cur], calls[cur] = 0, set()
+        targets, tables = set(), False
+        for _, op, args in body[cur]:
+            if branch.match(op) or op.startswith(("cbz", "cbnz")):
+                t = re.search(r"(?:^|,\s*)(?:0x)?([0-9a-f]+)\s*<", args)
+                if t:
+                    targets.add(int(t.group(1), 16))
+            if op.startswith(("tbb", "tbh")):
+                # a table branch goes to every address its table holds
+                t = table_targets(image, addr, op.startswith("tbh"))
+                if t is None:
+                    tables = True
+                else:
+                    targets |= t
+        held = {}
+        for addr, op, args in body[cur]:
+            if tables or addr in targets:
+                held = {}
+            lit = re.match(r"(r\d+),\s*\[pc,\s*#(?:0x[0-9a-f]+|\d+)\]\s*@\s*0x([0-9a-f]+)(\s*<[^>]*>)?$", args)
+            mov = re.match(r"(r\d+),\s*(r\d+)$", args)
+            if op in ("ldr", "ldr.w") and lit:
+                w = word_at(image, int(lit.group(2), 16))
+                fn = starts.get(w & ~1) if w is not None else None
+                held.pop(lit.group(1), None)
+                if fn is not None:
+                    held[lit.group(1)] = fn
+                continue
+            if op == "mov" and mov:
+                if mov.group(2) in held:
+                    held[mov.group(1)] = held[mov.group(2)]
+                else:
+                    held.pop(mov.group(1), None)
+                continue
+            if op in ("blx", "blx.w") and "<" not in args and args.strip() in held:
+                calls[cur].add(held[args.strip()])
+                for r in ("r0", "r1", "r2", "r3", "ip", "lr"):
+                    held.pop(r, None)
+                continue
+            writes_pc = op.startswith("bx") or re.match(r"pc\b", args) or (
+                op.startswith(("pop", "ldm")) and re.search(r"\bpc\b", args))
+            if branch.match(op) or op.startswith(("cbz", "cbnz", "tbb", "tbh")) or writes_pc:
+                held = {}
+            elif op.startswith("bl"):
+                for r in ("r0", "r1", "r2", "r3", "ip", "lr"):
+                    held.pop(r, None)
+            else:
+                # any register an instruction names may be written by it
+                for r in re.findall(r"\b(r\d+|lr|ip|sb|sl|fp)\b", args):
+                    held.pop(r, None)
+            if op.startswith("push") or (op.startswith("stmdb") and args.startswith("sp!")):
+                frames[cur] += 4 * len(re.findall(r"\b(r\d+|lr|pc|sb|sl|fp|ip)\b", args[args.find("{"):]))
+            elif op.startswith("vpush"):
+                frames[cur] += 8 * len(re.findall(r"\bd\d+\b", args)) + 4 * len(re.findall(r"\bs\d+\b", args))
+            elif op.startswith("sub") and re.match(r"sp,\s*(sp,\s*)?#", args):
+                frames[cur] += int(re.search(r"#(0x[0-9a-f]+|\d+)", args).group(1), 0)
+            elif op.startswith("blx") and "<" not in args:
+                sys.exit("elfsize: %s makes an indirect call; the stack cannot be bounded from the disassembly" % cur)
+            elif op[0] == "b" or op.startswith("cb"):
+                # a call or tail call goes to the start of a function. A branch into
+                # the middle of another function is the linker's fill between two
+                # functions (0xd4d4 on Thumb), which disassembles as `bmi`.
+                t = re.search(r"<([^>+]+)(\+0x[0-9a-f]+)?>", args)
+                if t and t.group(1) != cur and not t.group(2):
+                    calls[cur].add(t.group(1))
     if entry not in frames:
         sys.exit("elfsize: no function `%s` in %s" % (entry, path))
     # strongly connected groups (Tarjan), then the deepest chain over the groups

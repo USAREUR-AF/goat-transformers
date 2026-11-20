@@ -3,8 +3,9 @@ needed by a cross-format plan; and the sentinels of the `absent` field option
 (engine-spec 0.9) are compiled into the FIELD operation (embedded/FORMAT.md);
 and the `present` derive function (engine-spec 0.12) is compiled as function 13;
 and `armor sixbit` and the `sixbit` transform (engine-spec 0.14) are compiled
-as format flag 4 and transform 8; and the value transforms of engine-spec 0.15
-as transforms 9 to 18.
+as format flag 4 and transform 8; the value transforms of engine-spec 0.15
+as transforms 9 to 18; and the derive functions of engine-spec 0.16 as
+functions 14 to 28, the four that need a power or a cube root refused.
 
 A model module may state both directions between `uid` and a numeric
 identifier (`derive uid text_of x.id`, `derive x.id parse_int uid`). A derive
@@ -607,6 +608,120 @@ class ValueTransformTest(unittest.TestCase):
             self.assertIn(t, packc.FALLIBLE)
         for t in ("smag", "chars_ais6", "octal"):
             self.assertNotIn(t, packc.FALLIBLE)
+
+
+D016_MODEL = """module        probe
+version       0.1.0
+distribution  public
+source        "test"
+key  ms     int    -
+key  sec    int    -
+key  nsec   int    -
+key  back   int    -
+key  i0     int    -
+key  i1     int    -
+key  isum   int    -
+key  f0     float  -
+key  f1     float  -
+key  fdiff  float  -
+key  r      float  -
+key  d      float  -
+key  lat    float  -
+key  lon    float  -
+key  hae    float  -
+key  dlon   float  -
+key  x      float  -
+key  y      float  -
+key  z      float  -
+key  rlon   float  -
+key  dlat   float  -
+key  rlat   float  -
+derive  probe.sec    sec_of       probe.ms
+derive  probe.nsec   nsec_of      probe.ms
+derive  probe.back   ms_of        probe.sec  probe.nsec
+derive  probe.isum   add          probe.i0  probe.i1
+derive  probe.fdiff  sub          probe.f0  probe.f1
+derive  probe.d      deg          probe.r
+derive  probe.dlon   deg_lon_of   probe.d  probe.lat
+derive  probe.x      ecef_x       probe.lat  probe.lon  probe.hae
+derive  probe.y      ecef_y       probe.lat  probe.lon  probe.hae
+derive  probe.z      ecef_z       probe.lat  probe.lon  probe.hae
+derive  probe.rlon   lon_of_ecef  probe.x  probe.y  probe.z
+derive  probe.dlat   deg_lat_of   probe.d  probe.lat
+derive  probe.rlat   lat_of_ecef  probe.x  probe.y  probe.z
+"""
+
+
+def d016_pack(name, keys):
+    text = ("format        %s\nversion       0.1.0\ndistribution  public\nsource        \"test\"\n"
+            "uses          probe\nwire          bits\nword_bytes    1\n" % name)
+    for i, (k, xf) in enumerate(keys):
+        text += "field  probe.%s  %d:0:64  %s\n" % (k, i * 8, xf)
+    return text
+
+
+D016_ARGS = [("ms", "twos"), ("i0", "twos"), ("i1", "twos"), ("f0", "f64"), ("f1", "f64"), ("r", "f64"),
+             ("lat", "f64"), ("lon", "f64"), ("hae", "f64")]
+
+
+class Derive016Test(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        root = self.tmp.name
+        os.makedirs(os.path.join(root, "model"))
+        for name, text in (("core.def", CORE), ("probe.def", D016_MODEL)):
+            with open(os.path.join(root, "model", name), "w", encoding="utf-8") as fh:
+                fh.write(text)
+        self.model_dir = os.path.join(root, "model")
+        self.packs_dir = os.path.join(root, "packs")
+        self.write_pack("da", d016_pack("da", D016_ARGS))
+        self.write_pack("dr", d016_pack("dr", [("sec", "twos"), ("nsec", "twos"), ("back", "twos"),
+                                               ("isum", "twos"), ("fdiff", "f64"), ("d", "f64"), ("dlon", "f64"),
+                                               ("x", "f64"), ("rlon", "f64")]))
+
+    def tearDown(self):
+        packc._INDEX.clear()
+        packc._MODELS.clear()
+        self.tmp.cleanup()
+
+    def write_pack(self, name, text):
+        d = os.path.join(self.packs_dir, name)
+        os.makedirs(d, exist_ok=True)
+        with open(os.path.join(d, "pack.def"), "w", encoding="utf-8") as fh:
+            fh.write(text)
+        packc._INDEX.clear()
+        packc._MODELS.clear()
+
+    def test_function_numbers_and_features(self):
+        blob, report = packc.compile_plan(self.model_dir, self.packs_dir, "da", "dr", {}, False)[:2]
+        _, secs = sections(blob)
+        entry, data = secs[packc.S_DERIVES]
+        ids = {v: k for k, v in report["key_ids"].items()}
+        funcs = {ids[struct.unpack_from("<BBHHH", data, i)[2]]: data[i] for i in range(0, len(data), entry)}
+        self.assertEqual(funcs, {"probe.sec": 14, "probe.nsec": 15, "probe.back": 16, "probe.isum": 19,
+                                 "probe.fdiff": 22, "probe.d": 17, "probe.dlon": 23, "probe.x": 25,
+                                 "probe.y": 26, "probe.z": 27, "probe.rlon": 28})
+        # the WGS 84 functions need the square root and the trigonometry of gt-core
+        self.assertEqual(report["features"], ["sqrt", "trig"])
+
+    def test_add_and_sub_by_type(self):
+        self.assertEqual(packc.DERIVE["add_i"], 19)
+        self.assertEqual(packc.DERIVE["add_f"], 20)
+        self.assertEqual(packc.DERIVE["sub_i"], 21)
+        self.assertEqual(packc.DERIVE["sub_f"], 22)
+
+    def test_power_and_cube_root_functions_are_refused_when_needed(self):
+        for key, fn in (("dlat", "deg_lat_of"), ("rlat", "lat_of_ecef")):
+            self.write_pack("dx", d016_pack("dx", [(key, "f64")]))
+            with self.assertRaises(packc.Refused) as cm:
+                packc.compile_plan(self.model_dir, self.packs_dir, "da", "dx", {}, False)
+            self.assertEqual(cm.exception.reason, "unsupported-feature")
+            self.assertIn(fn, str(cm.exception))
+        # not needed by the conversion: not compiled, and no refusal
+        packc.compile_plan(self.model_dir, self.packs_dir, "da", "dr", {}, False)
+
+    def test_only_four_functions_of_016_stay_refused(self):
+        self.assertEqual(sorted(packc.V016_DERIVES), ["deg_lat_of", "hae_of_ecef", "lat_of_ecef", "m_lat_of"])
 
 
 if __name__ == "__main__":
