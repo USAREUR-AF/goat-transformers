@@ -1,0 +1,38 @@
+# A KNX cEMI L_Data frame whose group value is a DPT9 value. Public.
+format        knx-cemi-dpt9
+version       0.1.0
+distribution  public
+source        "calimero-core (https://github.com/calimero-project/calimero-core, GPL-2.0-or-later with the Classpath Exception) at commit 68c99bffb5d065220410311fbdf8f372fd84555e: cemi/CEMILData.java, knxnetip/servicetype/KNXnetIPHeader.java, ServiceRequest.java, ServiceAck.java, DataUnitBuilder.java, dptxlator/DPTXlatorBoolean, 8BitUnsigned, 2ByteFloat, 4ByteFloat; facts restated, no code copied"
+source        "Not used: the KNX Standard (KNX Association), a paid document not held"
+uses          knx
+wire          bits
+layout        sequential
+bit_order     msb
+field  knx.message_code  8  uint
+length  8  bytes
+  group  knx.additional_info  rest
+    field  knx.additional_info_byte  8  uint
+  end
+end
+field  knx.frame_format  1  uint
+field  knx.ctrl1_reserved  1  uint
+field  knx.repeat  1  uint
+field  knx.system_broadcast  1  uint
+field  knx.priority  2  uint
+field  knx.ack_request  1  uint
+field  knx.confirm  1  uint
+field  knx.destination_is_group  1  uint
+field  knx.hop_count  3  uint
+field  knx.extended_frame_format  4  uint
+field  knx.source_area  4  uint
+field  knx.source_line  4  uint
+field  knx.source_device  8  uint
+field  knx.destination  16  uint
+length  8  bytes  plus -1
+  field  knx.tpci  6  uint
+  field  knx.apci  4  uint
+  field  knx.apci_data  6  uint
+  field  knx.dpt9_sign  1  uint
+  field  knx.dpt9_exponent  4  uint
+  field  knx.dpt9_mantissa  11  uint
+end

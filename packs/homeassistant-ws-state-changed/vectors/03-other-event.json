@@ -1,0 +1,9 @@
+{
+  "name": "homeassistant-ws-other-event",
+  "from": "homeassistant-ws-state-changed",
+  "to": "homeassistant-ws-state-changed",
+  "input": "{\"id\":8,\"type\":\"event\",\"event\":{\"event_type\":\"call_service\",\"data\":{\"domain\":\"light\"},\"origin\":\"LOCAL\",\"time_fired\":\"2026-11-20T09:00:00+00:00\",\"context\":{\"id\":\"x\"}}}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "Home Assistant core 2026.11.2 State/Event dict forms; text by tools/gen/homeassistant-vectors.py; only state_changed events are messages of this pack"
+}

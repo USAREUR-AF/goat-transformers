@@ -1,0 +1,33 @@
+{
+  "name": "knx-cemi-dpt9-21-5",
+  "from": "knx-cemi-dpt9",
+  "to": "knx-cemi-dpt9",
+  "input": "2900bce011050a030300800c33",
+  "expect": "2900bce011050a030300800c33",
+  "model": {
+    "knx.message_code": "41",
+    "knx.additional_info.#": "0",
+    "knx.frame_format": "1",
+    "knx.ctrl1_reserved": "0",
+    "knx.repeat": "1",
+    "knx.system_broadcast": "1",
+    "knx.priority": "3",
+    "knx.ack_request": "0",
+    "knx.confirm": "0",
+    "knx.destination_is_group": "1",
+    "knx.hop_count": "6",
+    "knx.extended_frame_format": "0",
+    "knx.source_area": "1",
+    "knx.source_line": "1",
+    "knx.source_device": "5",
+    "knx.destination": "2563",
+    "knx.tpci": "0",
+    "knx.apci": "2",
+    "knx.apci_data": "0",
+    "knx.dpt9_sign": "0",
+    "knx.dpt9_exponent": "1",
+    "knx.dpt9_mantissa": "1075"
+  },
+  "source": "constructed",
+  "reference": "calimero-core 68c99bff (cEMI and KNXnet/IP layouts); bytes worked by hand in tools/gen/knx-vectors.py; 21.5 = 0.01 x 1075 x 2^1"
+}

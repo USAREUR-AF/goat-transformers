@@ -1,0 +1,21 @@
+# A Home Assistant state object, as the REST API returns it for /api/states/<entity_id>
+# and as State.as_dict() writes it. Public.
+format        homeassistant-state
+version       0.1.0
+distribution  public
+source        "Home Assistant core (https://github.com/home-assistant/core, Apache License 2.0) tag 2026.11.2 (commit ff5d56b825a0fb66b03d01bc297d49e206cdaba3): homeassistant/core.py (State._as_dict, Event._as_dict, Context._as_dict), homeassistant/components/websocket_api/messages.py (event_message), homeassistant/const.py (ATTR_LATITUDE, ATTR_LONGITUDE, ATTR_GPS_ACCURACY, ATTR_FRIENDLY_NAME), homeassistant/util/location.py (WGS 84 ellipsoid); member names restated"
+uses          homeassistant
+wire          json
+field  uid                           entity_id               string
+field  homeassistant.state           state                   string
+field  lat                           attributes.latitude     float
+field  lon                           attributes.longitude    float
+field  homeassistant.gps_accuracy    attributes.gps_accuracy float
+field  homeassistant.radius          attributes.radius       float
+field  callsign                      attributes.friendly_name string
+field  homeassistant.last_changed    last_changed            string
+field  homeassistant.last_reported   last_reported           string
+field  time_ms                       last_updated            iso8601_ms
+field  homeassistant.context_id      context.id              string
+field  homeassistant.context_parent_id context.parent_id     string
+field  homeassistant.context_user_id context.user_id         string

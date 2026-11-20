@@ -1,0 +1,9 @@
+{
+  "name": "homeassistant-state-sensor",
+  "from": "homeassistant-state",
+  "to": "homeassistant-state",
+  "input": "{\"entity_id\":\"sensor.water_temp\",\"state\":\"14.5\",\"attributes\":{\"unit_of_measurement\":\"°C\",\"friendly_name\":\"Water\"},\"last_changed\":\"2026-11-20T09:00:00+00:00\",\"last_reported\":\"2026-11-20T09:00:00+00:00\",\"last_updated\":\"2026-11-20T09:00:00+00:00\",\"context\":{\"id\":\"01JCX70000000000000000000A\",\"parent_id\":null,\"user_id\":null}}",
+  "expect": "{\"entity_id\":\"sensor.water_temp\",\"state\":\"14.5\",\"attributes\":{\"friendly_name\":\"Water\",\"unit_of_measurement\":\"°C\"},\"last_changed\":\"2026-11-20T09:00:00+00:00\",\"last_reported\":\"2026-11-20T09:00:00+00:00\",\"last_updated\":\"2026-11-20T09:00:00.000Z\",\"context\":{\"id\":\"01JCX70000000000000000000A\"}}",
+  "source": "constructed",
+  "reference": "Home Assistant core 2026.11.2 State/Event dict forms; text by tools/gen/homeassistant-vectors.py; an entity with no position: the state stays text"
+}

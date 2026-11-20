@@ -1,0 +1,18 @@
+{
+  "name": "knx-ip-tunneling-ack",
+  "from": "knx-ip",
+  "to": "knx-ip",
+  "input": "06100421000a04072a00",
+  "expect": "06100421000a04072a00",
+  "model": {
+    "@kind": "tunneling_ack",
+    "knx.header_length": "6",
+    "knx.protocol_version": "16",
+    "knx.connection_header_length": "4",
+    "knx.channel_id": "7",
+    "knx.sequence_counter": "42",
+    "knx.status": "0"
+  },
+  "source": "constructed",
+  "reference": "calimero-core 68c99bff (cEMI and KNXnet/IP layouts); bytes worked by hand in tools/gen/knx-vectors.py; status 0"
+}

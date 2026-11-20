@@ -1,0 +1,7 @@
+{
+  "name": "Zigbee Cluster Library (zigbee-herdsman)",
+  "domain": "iot",
+  "prefixes": [
+    "zcl-"
+  ]
+}

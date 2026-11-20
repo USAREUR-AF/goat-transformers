@@ -1,0 +1,22 @@
+{
+  "name": "homeassistant-ws-state-changed",
+  "from": "homeassistant-ws-state-changed",
+  "to": "homeassistant-ws-state-changed",
+  "input": "{\"id\":7,\"type\":\"event\",\"event\":{\"event_type\":\"state_changed\",\"data\":{\"entity_id\":\"device_tracker.boat\",\"old_state\":{\"entity_id\":\"device_tracker.boat\",\"state\":\"home\",\"attributes\":{\"friendly_name\":\"Boat\"},\"last_changed\":\"2026-11-20T09:00:00+00:00\",\"last_reported\":\"2026-11-20T09:00:00+00:00\",\"last_updated\":\"2026-11-20T09:00:00+00:00\",\"context\":{\"id\":\"01JCX5000000000000000000AA\",\"parent_id\":null,\"user_id\":null}},\"new_state\":{\"entity_id\":\"device_tracker.boat\",\"state\":\"not_home\",\"attributes\":{\"source_type\":\"gps\",\"latitude\":52.37,\"longitude\":4.89,\"gps_accuracy\":12,\"battery_level\":87,\"friendly_name\":\"Boat\"},\"last_changed\":\"2026-11-20T10:15:30.123456+00:00\",\"last_reported\":\"2026-11-20T10:16:02.500999+00:00\",\"last_updated\":\"2026-11-20T10:16:02.500999+00:00\",\"context\":{\"id\":\"01JCX6Z3Q9K2M4N5P6R7S8T9V0\",\"parent_id\":null,\"user_id\":null}}},\"origin\":\"LOCAL\",\"time_fired\":\"2026-11-20T10:16:02.500999+00:00\",\"context\":{\"id\":\"01JCX6Z3Q9K2M4N5P6R7S8T9V0\",\"parent_id\":null,\"user_id\":null}}}",
+  "expect": "{\"id\":7,\"type\":\"event\",\"event\":{\"event_type\":\"state_changed\",\"data\":{\"entity_id\":\"device_tracker.boat\",\"old_state\":{\"state\":\"home\",\"last_updated\":\"2026-11-20T09:00:00+00:00\",\"entity_id\":\"device_tracker.boat\",\"attributes\":{\"friendly_name\":\"Boat\"},\"last_changed\":\"2026-11-20T09:00:00+00:00\",\"last_reported\":\"2026-11-20T09:00:00+00:00\",\"context\":{\"id\":\"01JCX5000000000000000000AA\"}},\"new_state\":{\"entity_id\":\"device_tracker.boat\",\"state\":\"not_home\",\"attributes\":{\"latitude\":52.37,\"longitude\":4.89,\"gps_accuracy\":12,\"friendly_name\":\"Boat\",\"source_type\":\"gps\",\"battery_level\":87},\"last_changed\":\"2026-11-20T10:15:30.123456+00:00\",\"last_reported\":\"2026-11-20T10:16:02.500999+00:00\",\"last_updated\":\"2026-11-20T10:16:02.500Z\",\"context\":{\"id\":\"01JCX6Z3Q9K2M4N5P6R7S8T9V0\"}}},\"origin\":\"LOCAL\",\"time_fired\":\"2026-11-20T10:16:02.500999+00:00\",\"context\":{\"id\":\"01JCX6Z3Q9K2M4N5P6R7S8T9V0\"}}}",
+  "model": {
+    "uid": "device_tracker.boat",
+    "lat": "52.37",
+    "lon": "4.89",
+    "time_ms": "1795169762500",
+    "callsign": "Boat",
+    "homeassistant.state": "not_home",
+    "homeassistant.gps_accuracy": "12",
+    "homeassistant.last_changed": "2026-11-20T10:15:30.123456+00:00",
+    "@kind": "state_changed",
+    "homeassistant.message_id": "7",
+    "homeassistant.old_state": "home"
+  },
+  "source": "constructed",
+  "reference": "Home Assistant core 2026.11.2 State/Event dict forms; text by tools/gen/homeassistant-vectors.py; old_state: state and last_updated mapped, the rest residue after them"
+}

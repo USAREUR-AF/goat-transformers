@@ -1,0 +1,18 @@
+{
+  "name": "zcl-demo-gen-06-state",
+  "from": "zcl-demo",
+  "to": "zcl-demo",
+  "input": "19310001",
+  "expect": "19310001",
+  "model": {
+    "zcl.frame_type": "1",
+    "zcl.direction": "1",
+    "zcl.disable_default_response": "1",
+    "zcl.frame_control_reserved": "0",
+    "zcl.transaction_sequence": "49",
+    "zcl.command_id": "0",
+    "zcldemocluster.state_on": "1"
+  },
+  "source": "constructed",
+  "reference": "tools/gen/zcl2pack.py: frame bytes by its ZCL frame writer; cluster command state (server to client)"
+}

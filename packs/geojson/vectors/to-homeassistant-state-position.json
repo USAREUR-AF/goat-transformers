@@ -1,0 +1,9 @@
+{
+  "name": "geojson-to-homeassistant-state",
+  "from": "geojson",
+  "to": "homeassistant-state",
+  "input": "{\"type\":\"Feature\",\"id\":\"device_tracker.boat\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[4.89,52.37]},\"properties\":{\"time_ms\":1795169762500,\"callsign\":\"Boat\"}}",
+  "expect": "{\"entity_id\":\"device_tracker.boat\",\"attributes\":{\"latitude\":52.37,\"longitude\":4.89,\"friendly_name\":\"Boat\"},\"last_updated\":\"2026-11-20T10:16:02.500Z\"}",
+  "source": "constructed",
+  "reference": "Home Assistant core 2026.11.2 State/Event dict forms; text by tools/gen/homeassistant-vectors.py"
+}

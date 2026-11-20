@@ -1,0 +1,19 @@
+{
+  "name": "zcl-basic-gen-04-default-response",
+  "from": "zcl-basic",
+  "to": "zcl-basic",
+  "input": "18240b0200",
+  "expect": "18240b0200",
+  "model": {
+    "zcl.frame_type": "0",
+    "zcl.direction": "1",
+    "zcl.disable_default_response": "1",
+    "zcl.frame_control_reserved": "0",
+    "zcl.transaction_sequence": "36",
+    "zcl.command_id": "11",
+    "zcl.default_rsp_command_id": "2",
+    "zcl.default_rsp_status": "0"
+  },
+  "source": "constructed",
+  "reference": "tools/gen/zcl2pack.py: frame bytes by its ZCL frame writer; default response"
+}

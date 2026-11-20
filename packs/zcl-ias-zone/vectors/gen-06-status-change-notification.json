@@ -1,0 +1,21 @@
+{
+  "name": "zcl-ias-zone-gen-06-status-change-notification",
+  "from": "zcl-ias-zone",
+  "to": "zcl-ias-zone",
+  "input": "193100490050575e00",
+  "expect": "193100490050575e00",
+  "model": {
+    "zcl.frame_type": "1",
+    "zcl.direction": "1",
+    "zcl.disable_default_response": "1",
+    "zcl.frame_control_reserved": "0",
+    "zcl.transaction_sequence": "49",
+    "zcl.command_id": "0",
+    "zclssiaszone.status_change_notification_zonestatus": "73",
+    "zclssiaszone.status_change_notification_extendedstatus": "80",
+    "zclssiaszone.status_change_notification_zone_id": "87",
+    "zclssiaszone.status_change_notification_delay": "94"
+  },
+  "source": "constructed",
+  "reference": "tools/gen/zcl2pack.py: frame bytes by its ZCL frame writer; cluster command statusChangeNotification (server to client)"
+}

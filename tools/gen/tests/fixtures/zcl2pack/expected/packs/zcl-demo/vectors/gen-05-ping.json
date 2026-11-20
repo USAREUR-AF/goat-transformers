@@ -1,0 +1,17 @@
+{
+  "name": "zcl-demo-gen-05-ping",
+  "from": "zcl-demo",
+  "to": "zcl-demo",
+  "input": "113001",
+  "expect": "113001",
+  "model": {
+    "zcl.frame_type": "1",
+    "zcl.direction": "0",
+    "zcl.disable_default_response": "1",
+    "zcl.frame_control_reserved": "0",
+    "zcl.transaction_sequence": "48",
+    "zcl.command_id": "1"
+  },
+  "source": "constructed",
+  "reference": "tools/gen/zcl2pack.py: frame bytes by its ZCL frame writer; cluster command ping (client to server)"
+}

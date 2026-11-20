@@ -1,0 +1,27 @@
+{
+  "name": "zcl-temperature-measurement-gen-01-report-attributes",
+  "from": "zcl-temperature-measurement",
+  "to": "zcl-temperature-measurement",
+  "input": "18210a000029feff010029fdfff0ff213412",
+  "expect": "18210a000029feff010029fdfff0ff213412",
+  "model": {
+    "zcl.frame_type": "0",
+    "zcl.direction": "1",
+    "zcl.disable_default_response": "1",
+    "zcl.frame_control_reserved": "0",
+    "zcl.transaction_sequence": "33",
+    "zcl.command_id": "10",
+    "zcl.report_records.#": "3",
+    "zcl.report_records[0].zcl.report_attribute_id": "0",
+    "zcl.report_records[0].zcl.report_data_type": "41",
+    "zcl.report_records[0].zclmstemperaturemeasurement.measured_value": "-2",
+    "zcl.report_records[1].zcl.report_attribute_id": "1",
+    "zcl.report_records[1].zcl.report_data_type": "41",
+    "zcl.report_records[1].zclmstemperaturemeasurement.min_measured_value": "-3",
+    "zcl.report_records[2].zcl.report_attribute_id": "65520",
+    "zcl.report_records[2].zcl.report_data_type": "33",
+    "zcl.report_records[2].zcl.report_value_uint": "4660"
+  },
+  "source": "constructed",
+  "reference": "tools/gen/zcl2pack.py: frame bytes by its ZCL frame writer; report attributes: two attributes of the cluster and one id it does not define"
+}

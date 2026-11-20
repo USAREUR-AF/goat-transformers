@@ -1,0 +1,33 @@
+# A Home Assistant websocket API message carrying a state_changed event, as
+# subscribe_events sends it: {"id", "type": "event", "event": Event.as_dict()}. Public.
+format        homeassistant-ws-state-changed
+version       0.1.0
+distribution  public
+source        "Home Assistant core (https://github.com/home-assistant/core, Apache License 2.0) tag 2026.11.2 (commit ff5d56b825a0fb66b03d01bc297d49e206cdaba3): homeassistant/core.py (State._as_dict, Event._as_dict, Context._as_dict), homeassistant/components/websocket_api/messages.py (event_message), homeassistant/const.py (ATTR_LATITUDE, ATTR_LONGITUDE, ATTR_GPS_ACCURACY, ATTR_FRIENDLY_NAME), homeassistant/util/location.py (WGS 84 ellipsoid); member names restated"
+uses          homeassistant
+wire          json
+field  homeassistant.message_id      id                          int
+kind  state_changed
+when  type              event
+when  event.event_type  state_changed
+field  homeassistant.event_entity_id event.data.entity_id        string
+field  homeassistant.old_state       event.data.old_state.state  string
+field  homeassistant.old_last_updated event.data.old_state.last_updated string
+field  uid                           event.data.new_state.entity_id               string
+field  homeassistant.state           event.data.new_state.state                   string
+field  lat                           event.data.new_state.attributes.latitude     float
+field  lon                           event.data.new_state.attributes.longitude    float
+field  homeassistant.gps_accuracy    event.data.new_state.attributes.gps_accuracy float
+field  homeassistant.radius          event.data.new_state.attributes.radius       float
+field  callsign                      event.data.new_state.attributes.friendly_name string
+field  homeassistant.last_changed    event.data.new_state.last_changed            string
+field  homeassistant.last_reported   event.data.new_state.last_reported           string
+field  time_ms                       event.data.new_state.last_updated            iso8601_ms
+field  homeassistant.context_id      event.data.new_state.context.id              string
+field  homeassistant.context_parent_id event.data.new_state.context.parent_id     string
+field  homeassistant.context_user_id event.data.new_state.context.user_id         string
+field  homeassistant.origin          event.origin                string
+field  homeassistant.time_fired      event.time_fired            string
+field  homeassistant.event_context_id event.context.id           string
+field  homeassistant.event_context_parent_id event.context.parent_id string
+field  homeassistant.event_context_user_id event.context.user_id string
