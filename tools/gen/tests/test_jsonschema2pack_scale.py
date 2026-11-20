@@ -81,12 +81,36 @@ class ScaleTest(unittest.TestCase):
         self.assertIn("field  time_ms  now  iscale:1000\nfield  sc.now  now  float\n",
                       self.read("packs", "sc", "pack.def"))
 
+    def test_float_scale_puts_the_raw_line_first(self):
+        status, _, err = support.run_main(j.main, self.argv("--map", "Doc:level=speed_ms",
+                                                           "--scale", "Doc:level=scale:5/18"))
+        self.assertEqual(status, 0, err)
+        self.assertIn("field  sc.level  level  float\nfield  speed_ms  level  scale:5/18\n",
+                      self.read("packs", "sc", "pack.def"))
+        md = self.read("packs", "sc", "pack.md")
+        self.assertIn("number, read with `scale:5/18`", md)
+        self.assertIn("A path read with a float `scale` has its raw key's line first", md)
+        v = json.loads(self.read("packs", "sc", "vectors", "gen-001-doc-roundtrip.json"))
+        level = json.loads(v["input"])["level"]
+        self.assertEqual(v["input"], v["expect"])
+        self.assertEqual(float(v["model"]["speed_ms"]), level * 5.0 / 18.0)
+        # the codec's arithmetic and order (ruling 1 of 0.5)
+        self.assertEqual(j.dec_value(36.0, "scale:5/18", "x"), 36.0 * 5 / 18)
+        self.assertEqual(j.enc_value(10.0, "scale:5/18"), 10.0 * 18 / 5)
+        self.assertEqual(j.dec_value(2, "scale:0.5:1", "x"), 2.0)
+        self.assertEqual(j.enc_value(2.0, "scale:0.5:1"), 2.0)
+
     def test_refusals(self):
         cases = [
             (("--scale", "Doc:updated=iscale:1000"), "no --map binding at that path"),
             (("--map", "Doc:name=uid", "--scale", "Doc:name=iscale:1000"), "the leaf is string, not a number"),
             (("--map", "Doc:level=lat", "--scale", "Doc:level=iscale:1000"), "iscale yields int, the key lat is float"),
-            (("--map", "Doc:updated=time_ms", "--scale", "Doc:updated=scale:1000"), "not iscale:<factor>[:<offset>]"),
+            (("--map", "Doc:updated=time_ms", "--scale", "Doc:updated=scale:1000"),
+             "scale yields float, the key time_ms is int"),
+            (("--map", "Doc:updated=time_ms", "--scale", "Doc:updated=iscale:x"), "not iscale:<factor>[:<offset>]"),
+            (("--map", "Doc:level=speed_ms", "--scale", "Doc:level=iscale:1000"),
+             "iscale yields int, the key speed_ms is float"),
+            (("--map", "Doc:level=speed_ms", "--scale", "Doc:level=scale:1/0"), "factor 0"),
             (("--map", "Doc:updated=time_ms", "--scale", "Doc:updated=iscale:0"), "factor 0"),
         ]
         for extra, needle in cases:

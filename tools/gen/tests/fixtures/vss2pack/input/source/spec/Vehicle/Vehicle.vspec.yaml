@@ -1,0 +1,64 @@
+# Vehicle file written for the tests
+Speed:
+  datatype: float
+  type: sensor
+  unit: km/h
+  description: A speed.
+
+CurrentLocation:
+  type: branch
+  description: A location.
+
+CurrentLocation.Timestamp:
+  datatype: string
+  type: sensor
+  description: A time.
+
+CurrentLocation.Latitude:
+  datatype: double
+  type: sensor
+  description: A latitude.
+
+CurrentLocation.Longitude:
+  datatype: double
+  type: sensor
+  description: A longitude.
+
+Gear:
+  datatype: string
+  type: actuator
+  allowed: [
+    'PARK',
+    'DRIVE'
+  ]
+  description: A gear.
+
+Seat:
+  type: branch
+  instances:
+    - Row[1,2]
+    - ["Left","Right"]
+  description: Seats.
+
+Seat.IsOccupied:
+  datatype: boolean
+  type: sensor
+  description: Occupied.
+
+Seat.Count:
+  datatype: uint8
+  type: attribute
+  instantiate: false
+  description: Not instantiated.
+
+Door:
+  type: branch
+  instances: ["Front", "Rear"]
+  description: Doors.
+
+Door.Codes:
+  datatype: string[]
+  type: attribute
+  description: An array.
+
+#include include/Extra.vspec Door

@@ -1,0 +1,5 @@
+# Included file written for the tests
+IsOpen:
+  datatype: boolean
+  type: actuator
+  description: Open.

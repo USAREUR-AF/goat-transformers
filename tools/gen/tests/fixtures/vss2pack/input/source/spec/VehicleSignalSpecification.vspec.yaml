@@ -1,0 +1,11 @@
+# Root file written for the tests
+VehicleDataTypes:
+  type: branch
+  description: Types, left out.
+
+Vehicle:
+  type: branch
+  description: A vehicle
+    described over two lines.
+
+#include Vehicle/Vehicle.vspec Vehicle

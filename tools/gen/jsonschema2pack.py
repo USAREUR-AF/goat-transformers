@@ -965,7 +965,35 @@ def dec_value(v, tr, where):
         # round half away from zero (engine-spec 0.15, ruling 4)
         n = (abs(x.numerator) * 2 + x.denominator) // (2 * x.denominator)
         return (n if x >= 0 else -n) + offset
+    if tr.startswith("scale:"):
+        if isinstance(v, bool) or not isinstance(v, (int, float)):
+            raise GenError("self-check: %s is not a number" % where)
+        num, den, factor, offset = scale_params(tr)
+        # ruling 1 of 0.5: in doubles, v * num / den (or v * factor), then + offset
+        x = float(v) * num / den if den is not None else float(v) * factor
+        return x + offset
     raise GenError("self-check: transform %s" % tr)
+
+
+def scale_params(tr):
+    """(num, den, factor, offset) of `scale:<factor>[:<offset>]` (engine-spec 0.15, text wires):
+    a fraction `num/den` (den not None) or a decimal factor, and a decimal offset."""
+    parts = tr.split(":")
+    dec = r"-?\d+(\.\d+)?"
+    if len(parts) not in (2, 3) or parts[0] != "scale" or \
+            not (re.fullmatch(r"-?\d+/\d+", parts[1]) or re.fullmatch(dec, parts[1])) or \
+            (len(parts) == 3 and not re.fullmatch(dec, parts[2])):
+        raise GenError("transform %r: not scale:<factor>[:<offset>]" % tr)
+    offset = float(parts[2]) if len(parts) == 3 else 0.0
+    if "/" in parts[1]:
+        num, den = (int(x) for x in parts[1].split("/"))
+        if num == 0 or den == 0:
+            raise GenError("transform %r: factor 0" % tr)
+        return float(num), float(den), None, offset
+    factor = float(parts[1])
+    if factor == 0:
+        raise GenError("transform %r: factor 0" % tr)
+    return None, None, factor, offset
 
 
 def iscale_params(tr):
@@ -1041,6 +1069,10 @@ def enc_value(v, tr):
         if text is None:
             raise GenError("self-check: %s does not encode %r exactly" % (tr, v))
         return Raw(text)
+    if tr.startswith("scale:"):
+        num, den, factor, offset = scale_params(tr)
+        # ruling 1 of 0.5: (x - offset) * den / num (or / factor)
+        return (float(v) - offset) * den / num if den is not None else (float(v) - offset) / factor
     raise GenError(tr)
 
 
@@ -1614,7 +1646,7 @@ def run(argv=None):
     for spec in a.scale:
         kn, rest = spec.split(":", 1) if ":" in spec else (spec, "")
         path, tr = parse_kv(rest, "--scale")
-        iscale_params(tr)
+        (scale_params if tr.startswith("scale:") else iscale_params)(tr)
         hits = [(k, p, key, leaf) for k, p, key, leaf in bound
                 if leaf is not None and p == path and (kn == "*" or k["label"] == kn)]
         if not hits:
@@ -1622,8 +1654,10 @@ def run(argv=None):
         for k, p, key, leaf in hits:
             if leaf.jtype not in ("integer", "number"):
                 raise GenError("--scale %s: the leaf is %s, not a number" % (spec, leaf.jtype))
-            if shared_keys[key][0] != "int":
-                raise GenError("--scale %s: iscale yields int, the key %s is %s" % (spec, key, shared_keys[key][0]))
+            want = "float" if tr.startswith("scale:") else "int"
+            if shared_keys[key][0] != want:
+                raise GenError("--scale %s: %s yields %s, the key %s is %s"
+                               % (spec, tr.split(":")[0], want, key, shared_keys[key][0]))
             leaf.shared_transform = tr
 
     # model module
@@ -1836,7 +1870,14 @@ def canonical_input(pack, inst):
 def line_for(ln, indent, wire, shared):
     out = []
     loc = ".".join(ln.path) if ln.path else "."
-    if getattr(ln, "shared", None):
+    shared = getattr(ln, "shared", None)
+    if shared and str(ln.shared_transform).startswith("scale:"):
+        # a float scale does not return the text it read; the raw key's line comes first, so a
+        # same-format round trip writes the number as read (ruling 16 of 0.5)
+        out.append("%sfield  %s  %s  %s" % (indent, ln.key, q(loc), ln.transform))
+        out.append("%sfield  %s  %s  %s" % (indent, ln.shared, q(loc), ln.shared_transform))
+        return out
+    if shared:
         out.append("%sfield  %s  %s  %s" % (indent, ln.shared, q(loc), ln.shared_transform))
     out.append("%sfield  %s  %s  %s" % (indent, ln.key, q(loc), ln.transform))
     return out
@@ -2056,10 +2097,15 @@ def write_md(a, reg, kinds, bound, keys, lists, vectors, cross, use_kinds):
                     k["name"], path, key, KEYS_CACHE.get(key, ("?", "?"))[0], KEYS_CACHE.get(key, ("?", "?"))[1],
                     leaf.jtype, ((", " + leaf.node.format) if leaf.node.format else "") +
                     ((", read with `%s`" % leaf.shared_transform)
-                     if str(getattr(leaf, "shared_transform", "")).startswith("iscale:") else ""),
+                     if str(getattr(leaf, "shared_transform", "")).startswith(("iscale:", "scale:")) else ""),
                     ev.replace("|", "\\|")))
         w.append("\nEach bound path also has its raw key on a second line (ruling 16 of 0.5): the shared")
         w.append("key first, so encode writes the shared value when the entity has it.\n")
+        if any(leaf is not None and str(getattr(leaf, "shared_transform", "")).startswith("scale:")
+               for _, _, _, leaf in bound):
+            w.append("A path read with a float `scale` has its raw key's line first instead: the scaled value")
+            w.append("does not always return the number as written, so a same-format round trip writes the raw")
+            w.append("key, and an entity from another format, which has only the shared key, gets the scaled one.\n")
     else:
         w.append("None.\n")
     if a.notes_file:
