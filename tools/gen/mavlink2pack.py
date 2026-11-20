@@ -1346,12 +1346,13 @@ CROSS = [
      '{"type":"Feature","geometry":null,"properties":{"time_ms":1700000000000}}'),
     # The same UTM position as a CoT event: time and start are the report time,
     # 1700000000000 ms = 2023-11-14T22:13:20.000Z; type and the three point
-    # numbers are the cot-xml pack's defaults for "not known".
+    # numbers are the cot-xml pack's defaults for "not known"; the pack writes
+    # detail even when it is empty.
     ("UTM_GLOBAL_POSITION", 15, 3, 1,
      {"time": 1700000000000000, "lat": 356762000, "lon": 1396503000, "alt": 40000,
       "relative_alt": 5000, "flight_state": 3},
      '<event version="2.0" type="a-u-X" time="2023-11-14T22:13:20.000Z" start="2023-11-14T22:13:20.000Z">'
-     '<point lat="35.6762" lon="139.6503" hae="9999999" ce="9999999" le="9999999"/></event>', "cot-xml"),
+     '<point lat="35.6762" lon="139.6503" hae="9999999" ce="9999999" le="9999999"/><detail/></event>', "cot-xml"),
 ]
 
 # Same-format vectors of the time binding, written by hand: a microsecond count
@@ -2294,12 +2295,13 @@ def iso_ms(ms):
 def cot_encode(entity):
     """CoT event XML for an entity that holds lat, lon and time_ms and no other
     key the cot-xml pack maps: its defaults give type a-u-X and the three point
-    numbers 9999999 (packs/cot-xml/pack.def)."""
+    numbers 9999999, and `detail` is written empty (`element detail`, spec
+    0.18) (packs/cot-xml/pack.def)."""
     times = (' time="%s" start="%s"' % (iso_ms(entity["time_ms"]), iso_ms(entity["time_ms"]))
              if "time_ms" in entity else "")
     point = ('<point lat="%s" lon="%s" hae="9999999" ce="9999999" le="9999999"/>'
              % (fmt_float(entity["lat"]), fmt_float(entity["lon"])))
-    return '<event version="2.0" type="a-u-X"%s>%s</event>' % (times, point)
+    return '<event version="2.0" type="a-u-X"%s>%s<detail/></event>' % (times, point)
 
 
 # ------------------------------------------------------------------ check ---

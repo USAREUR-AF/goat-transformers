@@ -7,5 +7,5 @@
     "stale_ms": "1614456180250",
     "how": "m-p"
   },
-  "expect": "<event version=\"2.0\" uid=\"trk-0042\" type=\"a-u-A-M-F-Q\" time=\"2021-02-27T20:00:00.250Z\" start=\"2021-02-27T20:00:00.250Z\" stale=\"2021-02-27T20:03:00.250Z\" how=\"m-p\"><point lat=\"30.0090027\" lon=\"-85.9578182\" hae=\"1250.5\" ce=\"15\" le=\"30\"/><detail><track course=\"270\" speed=\"40.25\"/></detail></event>"
+  "expect": "<event version=\"2.0\" uid=\"trk-0042\" type=\"a-u-A-M-F-Q\" time=\"2021-02-27T20:00:00.250Z\" start=\"2021-02-27T20:00:00.250Z\" stale=\"2021-02-27T20:03:00.250Z\" how=\"m-p\" opex=\"s\"><point lat=\"30.0090027\" lon=\"-85.9578182\" hae=\"1250.5\" ce=\"15\" le=\"30\"/><detail><track course=\"270\" speed=\"40.25\"/><remarks>simulated</remarks></detail></event>"
 }

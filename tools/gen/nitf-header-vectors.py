@@ -145,7 +145,7 @@ def image_subheader_vectors():
                    ref=REF % "the first IGEOLO corner as the point; geojson canonical form by hand"))
     out.append(vec("decimal-degrees-to-cot-xml", p, "cot-xml", d,
                    '<event version="2.0" type="a-u-X"><point lat="45.123" lon="-122.654" hae="9999999" '
-                   'ce="9999999" le="9999999"/></event>',
+                   'ce="9999999" le="9999999"/><detail/></event>',
                    ref=REF % "the first IGEOLO corner; cot-xml canonical form by hand from its pack"))
     short = ["+45.1  -122.6  "] * 4
     ds = text(IMAGE_SUBHEADER, dict(IS, ICORDS="D")) + "".join(short) + "0"

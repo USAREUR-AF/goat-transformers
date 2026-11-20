@@ -18,7 +18,7 @@ import { loadEngine, root, vector, wasm } from "./support.mjs";
 const PACKS = ["cot-xml", "geojson", "canonical-track-v2"];
 const EVENT = '<event uid="a" type="a-f-G"/>';
 const EVENT_CANONICAL =
-  '<event version="2.0" uid="a" type="a-f-G"><point hae="9999999" ce="9999999" le="9999999"/></event>';
+  '<event version="2.0" uid="a" type="a-f-G"><point hae="9999999" ce="9999999" le="9999999"/><detail/></event>';
 
 // Synthetic texts for the load tests. The controlled ones exist only here
 // and in a temporary directory: the repository holds nothing controlled.

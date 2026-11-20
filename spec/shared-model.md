@@ -118,7 +118,7 @@ The keys match the Canonical Track v2 contract of `USAREUR-AF/open-billie`
 `generation`, `vel_east_ms`, `vel_north_ms`, `vel_up_ms`, `class`,
 `confidence`, `sigma_east_m`, `sigma_north_m`, `sigma_up_m`, and the flags
 `confirmed`, `coasting`, `simulated`, `header_simulated`, `test_data`,
-`final_update`. Types, units
+`final_update`. Four keys are derived from the flags (`model/track.def`, Versions 0.8 and 0.18): `simulated_any` (any of `simulated`, `header_simulated`, `test_data`), `tentative` (`not confirmed`), `status_text` (the flags as the comma-separated tokens `test-data`, `simulated`, `tentative`, `coasting`, `final-update`) and `opex` (`s` for a simulated track, as CoT writes it). Types, units
 and meanings are in `model/track.def`.
 
 The contract's `identifiers` array is the list `track.identifiers`. Each item
