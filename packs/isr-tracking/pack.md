@@ -69,6 +69,23 @@ No position binds. The model gives a position as one element holding a space-sep
 (`pos`, `points`, `vertices`, `center`) in the coordinate system the sibling `cs` names; a
 latitude, longitude or height is never an element of its own. Those lists are raw text keys.
 
+## The track module (`model/track.def`)
+
+A track of this model maps onto the track module only through its identity. The other keys a
+track carries are not elements of their own here, and each needs a construct the pack language
+does not have:
+
+| track key | element of the model | why it is not bound |
+|---|---|---|
+| `uid` | `TrackData/uid` (kind `track`), `TrackPoint/uid` (kind `tp`) | bound: the UUID of the object |
+| `track.scoped_id`, `track.source_id` | `TrackData/uid`; `trackSource/sensorUID`, `trackerUID` | `scoped_id` would read the same element as `uid`: an xml field line reads one key, and a derive line may target only core or its own module (`isrtrack`), not `track`. The sources are lists (`0..*`), so a scalar key cannot take one of them |
+| `lat`, `lon`, `hae` | `TrackPoint/dynamics/pos` with `cs` | one text holding the numbers of a vector, for example `<cs>...</cs><pos>48.5 11.25 512.0</pos>`, whose order and frame the sibling `cs` names: needs a transform that reads the n-th number of a text, and a choice by the value of `cs` (a kind or gate on an element of each list item) |
+| `track.vel_east_ms`, `track.vel_north_ms`, `track.vel_up_ms` | `TrackPoint/dynamics/vel` | as `pos`: one text of three numbers in the frame `cs` names |
+| `time_ms` of a track point | `TrackPoint/relTime` | `baseTime + relTime x relTimeIncrement`: two keys of the message (another kind) and a product of keys, which no derive function computes |
+| `track.confidence` | `TrackPoint/confidence/value` | an unsigned byte whose meaning the sibling `type` (a certainty statistic) chooses; not one scale |
+| `track.class` | `TrackedObject/objectClass` | an APP-6 table and entity codes; the mapping onto the track vocabulary is not stated by the model |
+| `track.confirmed`, `track.coasting`, `track.final_update` | `TrackSegment/status` | an enumeration (`TrackStatus`) whose values the model's tables in this repository do not list |
+
 ## Not mapped
 
 | What | Count | Why (construct the pack language lacks) |

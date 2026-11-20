@@ -10,6 +10,7 @@ source        "NATO AEDP-4607.1 Edition A Version 1, GMTIF implementation guide;
 source        "layouts restated in tools/gmti/segments.tsv.txt, kinds.tsv.txt and tables.tsv.txt of this repository"
 uses          gmti
 uses          track
+uses          detection
 wire          bits
 layout        sequential
 bit_order     msb
@@ -562,12 +563,13 @@ length  32  plus  5
   end
   if  dwell_mask.6
     field  gmti.sensor_lat  32  sscale:180/4294967296
+    also  detection.sensor_lat
   end
   if  dwell_mask.7
-    field  gmti.sensor_lon  32  uscale:360/4294967296
+    field  detection.sensor_lon  32  sscale:360/4294967296
   end
   if  dwell_mask.8
-    field  gmti.sensor_alt_cm  32  twos
+    field  detection.sensor_hae  32  sscale:1/100
   end
   if  dwell_mask.9
     field  gmti.lat_scale  32  sscale:180/4294967296
@@ -635,61 +637,64 @@ length  32  plus  5
   if  dwell_mask.30
     field  gmti.mdv_dms  8  uint
   end
-  if  dwell_mask.31
-    field  gmti.mti_report_index  16  uint
-  end
-  if  dwell_mask.32
-    field  lat  32  sscale:180/4294967296
-  end
-  if  dwell_mask.33
-    field  lon  32  sscale:360/4294967296
-  end
-  if  dwell_mask.34
-    field  gmti.target_delta_lat  16  twos
-  end
-  if  dwell_mask.35
-    field  gmti.target_delta_lon  16  twos
-  end
-  if  dwell_mask.36
-    field  hae  16  sscale:1
-  end
-  if  dwell_mask.37
-    field  gmti.target_los_vel_cms  16  twos
-  end
-  if  dwell_mask.38
-    field  gmti.target_wrap_vel_cms  16  uint
-  end
-  if  dwell_mask.39
-    field  gmti.target_snr_db  8  twos
-  end
-  if  dwell_mask.40
-    field  gmti.target_class  8  uint
-    also  track.class via target_class
-    also  track.simulated via target_simulated
-  end
-  if  dwell_mask.41
-    field  gmti.target_class_prob  8  uint
-  end
-  if  dwell_mask.42
-    field  gmti.target_unc_slant_cm  16  uint
-  end
-  if  dwell_mask.43
-    field  gmti.target_unc_cross_dm  16  uint
-  end
-  if  dwell_mask.44
-    field  gmti.target_unc_height_m  8  uint
-  end
-  if  dwell_mask.45
-    field  gmti.target_unc_los_vel_cms  16  uint
-  end
-  if  dwell_mask.46
-    field  gmti.truth_tag_app  8  uint
-  end
-  if  dwell_mask.47
-    field  gmti.truth_tag_entity  32  uint
-  end
-  if  dwell_mask.48
-    field  gmti.target_rcs_halfdb  8  twos
+  group  detection.items  rest
+    if  dwell_mask.31
+      field  gmti.mti_report_index  16  uint
+    end
+    if  dwell_mask.32
+      field  lat  32  sscale:180/4294967296
+    end
+    if  dwell_mask.33
+      field  lon  32  sscale:360/4294967296
+    end
+    if  dwell_mask.34
+      field  gmti.target_delta_lat  16  twos
+    end
+    if  dwell_mask.35
+      field  gmti.target_delta_lon  16  twos
+    end
+    if  dwell_mask.36
+      field  hae  16  sscale:1
+    end
+    if  dwell_mask.37
+      field  detection.radial_velocity_ms  16  sscale:1/100
+    end
+    if  dwell_mask.38
+      field  gmti.target_wrap_vel_cms  16  uint
+    end
+    if  dwell_mask.39
+      field  detection.snr_db  8  sscale:1
+    end
+    if  dwell_mask.40
+      field  gmti.target_class  8  uint
+      also  track.class via target_class
+      also  track.simulated via target_simulated
+      also  detection.classification via target_class
+    end
+    if  dwell_mask.41
+      field  detection.classification_probability  8  uscale:1/100
+    end
+    if  dwell_mask.42
+      field  detection.range_error_m  16  uscale:1/100
+    end
+    if  dwell_mask.43
+      field  detection.cross_range_error_m  16  uscale:1/10
+    end
+    if  dwell_mask.44
+      field  le  8  uscale:1
+    end
+    if  dwell_mask.45
+      field  detection.radial_velocity_error_ms  16  uscale:1/100
+    end
+    if  dwell_mask.46
+      field  gmti.truth_tag_app  8  uint
+    end
+    if  dwell_mask.47
+      field  gmti.truth_tag_entity  32  uint
+    end
+    if  dwell_mask.48
+      field  gmti.target_rcs_halfdb  8  twos
+    end
   end
 end
 kind  hrr

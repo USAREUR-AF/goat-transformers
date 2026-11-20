@@ -1,0 +1,24 @@
+{
+  "name": "gmti-segment-observed-s4607-joback-seg",
+  "from": "gmti-segment",
+  "to": "gmti-segment",
+  "input": "6600000054123456784a6f622041636b2049444a41636b5461736b49441b4461727468206340000000f555555540000000f555555540000000f555555540000000f555555515012312340207e205170a0b32584e",
+  "expect": "6600000054123456784a6f622041636b2049444a41636b5461736b49441b4461727468206340000000f555555540000000f555555540000000f555555540000000f555555515012312340207e205170a0b32584e",
+  "model": {
+    "@kind": "joback",
+    "gmti.ack_job_id": "305419896",
+    "gmti.requestor_id": "Job Ack ID",
+    "gmti.requestor_task_id": "JAckTaskID",
+    "gmti.sensor_type": "27",
+    "gmti.sensor_model": "Darth ",
+    "gmti.radar_priority": "99",
+    "gmti.radar_mode": "21",
+    "gmti.duration_s": "291",
+    "gmti.revisit_interval_ds": "4660",
+    "gmti.request_status": "2",
+    "gmti.job_start_year": "2018",
+    "gmti.requestor_nationality": "XN"
+  },
+  "source": "observed",
+  "reference": "pentlandedge/s4607 (Apache-2.0) commit be131209068384529116950ae902fbf90bcb7edd test/job_ack_tests.erl sample_job_ack: the segment body as the test holds it, behind a 5-byte segment header (type 102, size 84)"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "gmti-segment-observed-s4607-freetext-seg",
+  "from": "gmti-segment",
+  "to": "gmti-segment",
+  "input": "06000000274142434445464748494a31323334353637383930536f6d6520667265652074657874",
+  "expect": "06000000194142434445464748494a31323334353637383930",
+  "model": {
+    "@kind": "freetext",
+    "gmti.originator_id": "ABCDEFGHIJ",
+    "gmti.recipient_id": "1234567890"
+  },
+  "source": "observed",
+  "reference": "pentlandedge/s4607 (Apache-2.0) commit be131209068384529116950ae902fbf90bcb7edd test/free_text_tests.erl sample_free_text: the segment body as the test holds it, behind a 5-byte segment header (type 6, size 39); the free text runs to the end of the segment and is not written"
+}

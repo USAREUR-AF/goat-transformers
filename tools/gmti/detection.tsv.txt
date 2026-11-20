@@ -1,0 +1,19 @@
+# The gmti fields bound to keys of the detection module (model/detection.def) and to core keys inside a
+# detection item, beside the raw keys of segments.tsv.txt. kind and ref name the row of segments.tsv.txt.
+# transform: the transform that gives the key's unit from the field. In the sequential packs (gmti,
+# gmti-segment) a field is read once: when the transform is the raw key's own, the key is an `also` line
+# of the raw field; otherwise this line reads the field in place of the raw key, which those packs then
+# leave unread. The fixed-layout packs (gmti-records, gmti-segment-records) read both at the same bits.
+# The evidence for each row is the field's meaning in segments.tsv.txt against the key's meaning.
+kind	ref	key	transform	evidence
+header	P8	detection.sensor_id	ascii	the platform identifier names the platform that carries the sensor
+dwell	D7	detection.sensor_lat	sscale:180/4294967296	sensor latitude, WGS 84, signed binary angle
+dwell	D8	detection.sensor_lon	sscale:360/4294967296	sensor longitude: the 32-bit binary angle read as two's complement gives -180 to 180
+dwell	D9	detection.sensor_hae	sscale:1/100	sensor height above the WGS 84 ellipsoid, centimetres to metres
+dwell	D32.7	detection.radial_velocity_ms	sscale:1/100	line-of-sight speed, away from the sensor positive, centimetres per second to metres per second
+dwell	D32.9	detection.snr_db	sscale:1	signal-to-noise ratio in dB
+dwell	D32.11	detection.classification_probability	uscale:1/100	probability of the classification in percent, to [0,1]
+dwell	D32.12	detection.range_error_m	uscale:1/100	one-sigma slant range error, centimetres to metres
+dwell	D32.13	detection.cross_range_error_m	uscale:1/10	one-sigma cross range error, decimetres to metres
+dwell	D32.14	le	uscale:1	one-sigma height error in metres (model/track.def derives le from the one-sigma upward error)
+dwell	D32.15	detection.radial_velocity_error_ms	uscale:1/100	one-sigma line-of-sight speed error, centimetres per second to metres per second

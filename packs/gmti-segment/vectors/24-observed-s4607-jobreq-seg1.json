@@ -1,0 +1,23 @@
+{
+  "name": "gmti-segment-observed-s4607-jobreq-seg1",
+  "from": "gmti-segment",
+  "to": "gmti-segment",
+  "input": "65000000544a6f62205265712049444a5265715461736b49440040000000f555555540000000f555555540000000f555555540000000f555555518012c000007e205170a0b32fde800000000ff4e6f6e65202000",
+  "expect": "65000000544a6f62205265712049444a5265715461736b49440040000000f555555540000000f555555540000000f555555540000000f555555518012c000007e205170a0b32fde800000000ff4e6f6e65202000",
+  "model": {
+    "@kind": "jobreq",
+    "gmti.requestor_id": "Job Req ID",
+    "gmti.requestor_task_id": "JReqTaskID",
+    "gmti.requestor_priority": "0",
+    "gmti.area_a_lat": "45.0",
+    "gmti.area_a_lon": "344.9999999720603",
+    "gmti.radar_mode": "24",
+    "gmti.range_resolution_cm": "300",
+    "gmti.start_year": "2018",
+    "gmti.duration_s": "0",
+    "gmti.sensor_model": "None  ",
+    "gmti.request_type": "0"
+  },
+  "source": "observed",
+  "reference": "pentlandedge/s4607 (Apache-2.0) commit be131209068384529116950ae902fbf90bcb7edd test/job_req_tests.erl sample_job_request: the segment body as the test holds it, behind a 5-byte segment header (type 101, size 84)"
+}

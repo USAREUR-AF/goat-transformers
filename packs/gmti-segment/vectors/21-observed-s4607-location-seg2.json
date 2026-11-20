@@ -1,0 +1,19 @@
+{
+  "name": "gmti-segment-observed-s4607-location-seg2",
+  "from": "gmti-segment",
+  "to": "gmti-segment",
+  "input": "0d0000001c3ade68b11cba98761bbbbbbcffffb1e0d13500000064d2",
+  "expect": "0d0000001c3ade68b11cba98761bbbbbbcffffb1e0d13500000064d2",
+  "model": {
+    "@kind": "location",
+    "gmti.location_time_ms": "987654321",
+    "lat": "20.199999986216426",
+    "lon": "39.00000002235174",
+    "hae": "-200.0",
+    "course": "294.1973876953125",
+    "speed_ms": "0.1",
+    "track.vel_up_ms": "-4.6"
+  },
+  "source": "observed",
+  "reference": "pentlandedge/s4607 (Apache-2.0) commit be131209068384529116950ae902fbf90bcb7edd test/platform_loc_tests.erl sample_platform_location_seg2: the segment body as the test holds it, behind a 5-byte segment header (type 13, size 28)"
+}

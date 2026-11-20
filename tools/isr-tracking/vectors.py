@@ -142,22 +142,46 @@ def main():
                    "<track><uid>0f8fad5b-d9cb-469f-a165-70867728950e</uid></track>",
                    {"uid": "0f8fad5b-d9cb-469f-a165-70867728950e"},
                    "an entity of another format with a uid encodes as a track; its position has no element to go to"))
+    import sys
+    check = "--check" in sys.argv[1:]
+    differs = []
+
+    def put(path, v):
+        text = json.dumps(v, indent=2) + "\n"
+        if check:
+            try:
+                cur = open(path, encoding="utf-8").read()
+            except OSError:
+                cur = None
+            if cur != text:
+                differs.append(os.path.relpath(path, REPO))
+        else:
+            with open(path, "w", encoding="utf-8") as fh:
+                fh.write(text)
+
     os.makedirs(OUT, exist_ok=True)
-    for old in os.listdir(OUT):
-        if old.endswith(".json"):
-            os.remove(os.path.join(OUT, old))
     # A vector lives under the pack that owns its input (its "from"); one whose
     # input is another pack's goes to that pack's vectors/ as to-isr-tracking-<name>.
     for v in [v for v in out if v["from"] != "isr-tracking"]:
         cd = os.path.join(REPO, "packs", v["from"], "vectors")
-        with open(os.path.join(cd, "to-isr-tracking-%s.json" % v["name"][13:]), "w", encoding="utf-8") as fh:
-            json.dump(v, fh, indent=2)
-            fh.write("\n")
+        put(os.path.join(cd, "to-isr-tracking-%s.json" % v["name"][13:]), v)
     out = [v for v in out if v["from"] == "isr-tracking"]
+    keep = set()
     for i, v in enumerate(out, 1):
-        with open(os.path.join(OUT, "%02d-%s.json" % (i, v["name"][13:])), "w", encoding="utf-8") as fh:
-            json.dump(v, fh, indent=2)
-            fh.write("\n")
+        fn = "%02d-%s.json" % (i, v["name"][13:])
+        keep.add(fn)
+        put(os.path.join(OUT, fn), v)
+    for old in os.listdir(OUT):          # every file of the pack's own vectors/ is this script's
+        if old.endswith(".json") and old not in keep:
+            if check:
+                differs.append(os.path.join("packs", "isr-tracking", "vectors", old) + " (not written by this script)")
+            else:
+                os.remove(os.path.join(OUT, old))
+    if check:
+        for d in differs:
+            print("differs: " + d)
+        print("isr-tracking vectors: %s" % ("ok" if not differs else "%d differ" % len(differs)))
+        sys.exit(1 if differs else 0)
     print("isr-tracking: %d vectors" % len(out))
 
 

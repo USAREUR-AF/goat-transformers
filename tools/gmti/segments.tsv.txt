@@ -63,7 +63,7 @@ dwell	D32.6	36		2	S	m	hae sscale:1		height of the first target above the WGS 84 
 dwell	D32.7	37	target_los_vel_cms	2	S	cm/s			line-of-sight speed of the first target, away from the sensor positive
 dwell	D32.8	38	target_wrap_vel_cms	2	I	cm/s			half the velocity ambiguity of the first target
 dwell	D32.9	39	target_snr_db	1	S	dB			signal-to-noise ratio of the first target
-dwell	D32.10	40	target_class	1	E	-		track.class via target_class; track.simulated via target_simulated	classification of the first target (enumeration; 128 and above: simulated)
+dwell	D32.10	40	target_class	1	E	-		track.class via target_class; track.simulated via target_simulated; detection.classification via target_class	classification of the first target (enumeration; 128 and above: simulated)
 dwell	D32.11	41	target_class_prob	1	I	%			probability of that classification
 dwell	D32.12	42	target_unc_slant_cm	2	I	cm			one-sigma slant range error of the first target
 dwell	D32.13	43	target_unc_cross_dm	2	I	dm			one-sigma cross range error of the first target

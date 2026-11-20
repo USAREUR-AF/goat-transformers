@@ -14,6 +14,7 @@
     "gmti.platform_id": "N12345    ",
     "gmti.mission_id": "1001",
     "gmti.job_id": "7",
+    "detection.sensor_id": "N12345    ",
     "gmti.area_a_lat": "48.515625",
     "gmti.area_a_lon": "350.15625",
     "gmti.area_b_lat": "48.679046630859375",
