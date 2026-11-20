@@ -1,0 +1,12 @@
+{
+  "name": "ruling-18-empty-rest-in-an-if-writes-bit-0",
+  "from": "conformance-extents-if",
+  "to": "conformance-extents-if",
+  "input": "80",
+  "expect": "00",
+  "model": {
+    "probe.nums.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 18 with ruling 5 of 0.8; p.1 = 1 and no bits remain: present and empty; a present, empty list does not set the bit"
+}

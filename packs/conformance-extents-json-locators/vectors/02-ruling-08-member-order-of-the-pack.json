@@ -1,0 +1,12 @@
+{
+  "name": "ruling-08-member-order-of-the-pack",
+  "from": "conformance-extents-json-locators",
+  "to": "conformance-extents-json-locators",
+  "input": "{\"last\":[],\"rest\":[3]}",
+  "expect": "{\"rest\":[3],\"last\":[]}",
+  "model": {
+    "probe.names.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 8: on json, `rest` and `last` after a list name are the group locator; canonical output in line order; an empty list writes []"
+}

@@ -1,5 +1,7 @@
 package goat.transformers;
 
+import java.math.BigInteger;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -49,6 +51,10 @@ final class SeqCodec extends Codec<byte[]> {
         long end;
         /** The end of the innermost open {@code length} extent, or -1 outside every extent. */
         long soft = -1;
+        /** The innermost open {@code length} extent is counted in bits (engine-spec 0.21). */
+        boolean softBits;
+        /** The number of items each {@code count} line read last; -1 when it lay at or past an extent's end. */
+        final Map<Seq.Node, Long> counts = new IdentityHashMap<>();
         final boolean[][] presence = new boolean[pack.seqPresences][];
         final Failures fails = new Failures();
         /** The cases read so far, in reading order (engine-spec 0.20). */
@@ -306,10 +312,26 @@ final class SeqCodec extends Codec<byte[]> {
                     long units = r.take(n.len);
                     long bits = extent(units, n, r.limit() - r.pos);
                     long outer = r.soft;
+                    boolean outerBits = r.softBits;
                     r.soft = r.pos + bits;
+                    r.softBits = n.inBits;
                     decodeLines(n.body, r, e);
                     r.pos = r.soft;   // content of the extent no line reads is skipped
                     r.soft = outer;
+                    r.softBits = outerBits;
+                    break;
+                }
+                case COUNT: {
+                    // engine-spec 0.21: the number of items is the value less n; at or past an extent's end the group is absent
+                    if (!r.line(n.len, "count " + n.name)) {
+                        r.counts.put(n, -1L);
+                        break;
+                    }
+                    BigInteger items = new BigInteger(Long.toUnsignedString(r.take(n.len))).subtract(BigInteger.valueOf(n.plus));
+                    if (items.signum() < 0) {
+                        throw malformed("count " + n.name + " holds " + items.add(BigInteger.valueOf(n.plus)) + ", below its plus " + n.plus);
+                    }
+                    r.counts.put(n, items.bitLength() > 63 ? Long.MAX_VALUE : items.longValue());
                     break;
                 }
                 case WHOLE: {
@@ -520,6 +542,36 @@ final class SeqCodec extends Codec<byte[]> {
                 for (long i = 0; i < n; i++) items.add(decodeItem(g, r));
                 break;
             }
+            case REF: {
+                // the count line read earlier in this body; the bits left are those at the group (ruling 20 of 0.21)
+                Long c = r.counts.get(g.countRef);
+                if (c == null || c < 0) return;
+                if (r.soft >= 0 && r.pos >= r.soft) return;   // the group past an extent's end: absent (ruling 6)
+                long left = r.limit() - r.pos;
+                if (c > left) throw malformed("count " + g.countRef.name + " of " + g.list + " is " + c + " and " + left + " bits are left");
+                for (long i = 0; i < c; i++) items.add(decodeItem(g, r));
+                break;
+            }
+            case REST: {
+                // items while bits remain in the extent: 8 when it is counted in bytes, 1 when in bits; fewer are padding
+                long unit = r.soft >= 0 && r.softBits ? 1 : 8;
+                while (r.limit() - r.pos >= unit) {
+                    long at = r.pos;
+                    items.add(decodeItem(g, r));
+                    if (r.pos == at) throw malformed("an item of " + g.list + " reads no bits (ruling 1 of 0.21)");
+                }
+                break;
+            }
+            case LAST:
+                // the first bit at an extent's end: an absent list (ruling 34 of 0.8); a later one there is malformed (ruling 13)
+                if (r.soft >= 0 && r.pos >= r.soft) return;
+                while (true) {
+                    r.need(1, "the bit before an item of " + g.list);
+                    long last = r.take(1);
+                    items.add(decodeItem(g, r));
+                    if (last == 1) break;
+                }
+                break;
             case WHILE:
                 if (r.soft >= 0 && r.pos >= r.soft) return;
                 giveBackItems(e.list(g.list));
@@ -568,6 +620,11 @@ final class SeqCodec extends Codec<byte[]> {
         /** {@code length ... whole} fields to write once the message is laid out. */
         final List<Seq.Node> wholes = new ArrayList<>();
         final List<Long> wholeAt = new ArrayList<>();
+        /** {@code count} fields to fill in once the message is laid out, and the latest of each count line. */
+        final List<CountSlot> slots = new ArrayList<>();
+        final Map<Seq.Node, CountSlot> slotOf = new IdentityHashMap<>();
+        /** The open extents, innermost first: the message, then each {@code length} block being written. */
+        final ArrayDeque<Extent> extents = new ArrayDeque<>();
         /**
          * The case of each switch, per entity or item, assumed where a presence, {@code opt} or {@code fx} bit is
          * computed before the switch is reached: the case the previous pass selected, else an estimate.
@@ -580,7 +637,10 @@ final class SeqCodec extends Codec<byte[]> {
         /** Per shadow entity: the keys whose bits did not read back through their transform or table. */
         final Map<Entity, java.util.Set<String>> failed = new IdentityHashMap<>();
 
-        Writer(Map<Entity, Map<Seq.Node, Seq.Case>> assumed) { this.assumed = assumed; }
+        Writer(Map<Entity, Map<Seq.Node, Seq.Case>> assumed) {
+            this.assumed = assumed;
+            extents.push(new Extent(0, false));
+        }
 
         void ensure(long bits) {
             long bytes = (bits + 7) >>> 3;
@@ -640,6 +700,46 @@ final class SeqCodec extends Codec<byte[]> {
         return n;
     }
 
+    /** A {@code count} field written as {@code n} and filled in by its group (engine-spec 0.21). */
+    private static final class CountSlot {
+        final Seq.Node node;
+        final long at;
+        BigInteger value;
+
+        CountSlot(Seq.Node node, long at) {
+            this.node = node;
+            this.at = at;
+            this.value = BigInteger.valueOf(node.plus);
+        }
+    }
+
+    /** An extent being written: where it starts, whether it counts bits, the starts of the rest items in it. */
+    private static final class Extent {
+        final long start;
+        final boolean bits;
+        final List<Long> restItems = new ArrayList<>();
+        /** A rest group of this extent has been written: within an item of an outer rest group, it ends the list. */
+        boolean restReached;
+
+        Extent(long start, boolean bits) {
+            this.start = start;
+            this.bits = bits;
+        }
+    }
+
+    /**
+     * Ruling 4 (with 21 and 34) of 0.21: in an extent counted in bytes, no rest item starts with fewer than 8 bits
+     * left before its byte-padded end.
+     */
+    private void checkRestItems(Extent x, long end) {
+        for (long at : x.restItems) {
+            if (end - at < 8) {
+                throw encodeError("an item of a rest group starts " + (end - at) + " bits before the end of its extent;"
+                        + " decode reads an item only while 8 bits remain");
+            }
+        }
+    }
+
     /** The value decode would read from what the switch's first key line writes for {@code e}, or null. */
     private Object predict(Seq.Node sw, Entity e, Map<String, Object> defs) {
         Seq.Node line = sw.keyLine;
@@ -684,11 +784,19 @@ final class SeqCodec extends Codec<byte[]> {
     }
 
     private String finish(Writer w) {
-        // armored text: the bits up to the cursor, not rounded to a byte (`length ... whole` is refused at load)
-        if (pack.armorSixbit) return toArmor(w.b, w.pos);
         int bytes = (int) ((w.pos + 7) >>> 3);   // a whole number of bytes; the remaining bits are zero
         if (pack.uper && bytes == 0) bytes = 1;   // an encoding of no bits is one octet 00 (X.691 10.1.3)
         w.ensure(w.pos);
+        // under armor sixbit the message stays counted in bytes for rest (ruling 43 of 0.21)
+        checkRestItems(w.extents.getLast(), (long) bytes * 8);
+        for (CountSlot c : w.slots) {
+            // the range check runs once the message is finished (ruling 30 of 0.21)
+            Seq.Node n = c.node;
+            if (c.value.signum() < 0 || c.value.bitLength() > n.len) {
+                throw encodeError("count " + n.name + " holds " + c.value + ", which does not fit its " + n.len + " bits");
+            }
+            BitsCodec.writeBits(w.b, c.at, n.len, c.value.longValue(), msb);
+        }
         for (int i = 0; i < w.wholes.size(); i++) {
             Seq.Node n = w.wholes.get(i);
             long value = bytes + n.plus;
@@ -697,6 +805,9 @@ final class SeqCodec extends Codec<byte[]> {
             }
             BitsCodec.writeBits(w.b, w.wholeAt.get(i), n.len, value, msb);
         }
+        // armored text: the bits up to the cursor, not rounded to a byte (`length ... whole` is refused at load);
+        // the counts of 0.21 are filled in first
+        if (pack.armorSixbit) return toArmor(w.b, w.pos);
         return toHex(Arrays.copyOf(w.b, bytes));
     }
 
@@ -900,17 +1011,29 @@ final class SeqCodec extends Codec<byte[]> {
                     long at = w.pos;
                     w.skip(n.len);
                     long start = w.pos;
+                    Extent x = new Extent(start, n.inBits);
+                    w.extents.push(x);
                     encodeLines(n.body, w, e, defs, shadow);
+                    w.extents.pop();
                     long units = w.pos - start;
                     if (!n.inBits) {
                         units = (units + 7) / 8;
                         w.skip(start + units * 8 - w.pos);   // a block counted in bytes is padded to a whole byte
+                        checkRestItems(x, w.pos);
                     }
                     long value = units + n.plus;
                     if (value < 0 || (n.len < 63 && value > BitsTransform.mask(n.len))) {
                         throw encodeError("a length of " + value + " does not fit its " + n.len + " bits");
                     }
                     BitsCodec.writeBits(w.b, at, n.len, value, msb);
+                    break;
+                }
+                case COUNT: {
+                    // written as n; the group that names it fills it in (engine-spec 0.21)
+                    CountSlot c = new CountSlot(n, w.pos);
+                    w.slots.add(c);
+                    w.slotOf.put(n, c);
+                    w.skip(n.len);
                     break;
                 }
                 case WHOLE:
@@ -1150,6 +1273,29 @@ final class SeqCodec extends Codec<byte[]> {
                 w.put(g.len, n);   // an absent list writes a count of 0
                 for (int i = 0; i < n; i++) encodeItem(g, w, items.get(i));
                 break;
+            case REF: {
+                CountSlot c = w.slotOf.get(g.countRef);
+                if (c != null) c.value = BigInteger.valueOf(n).add(BigInteger.valueOf(g.countRef.plus));
+                for (int i = 0; i < n; i++) encodeItem(g, w, items.get(i));
+                break;
+            }
+            case REST: {
+                Extent x = w.extents.peek();
+                for (int i = 0; i < n; i++) {
+                    long at = w.pos;
+                    if (!x.bits) x.restItems.add(at);
+                    x.restReached = false;
+                    encodeItem(g, w, items.get(i));
+                    if (w.pos == at) throw encodeError("an item of " + g.list + " writes no bits (ruling 29 of 0.21)");
+                    if (x.restReached && i + 1 < n) {
+                        // the item's own rest group reads to the end of the extent: no item can follow it (ruling 10)
+                        throw encodeError(g.list + ": item " + i + " writes a rest group that runs to the end of the extent,"
+                                + " and another item follows it (ruling 10 of 0.21)");
+                    }
+                }
+                x.restReached = true;
+                break;
+            }
             case WHILE:
                 for (int i = 0; i < n; i++) {
                     w.put(1, 1);
@@ -1161,10 +1307,11 @@ final class SeqCodec extends Codec<byte[]> {
                 if (n == 0) {
                     throw new GtException(GtException.Code.TRANSFORM_ENCODE, pack.format, null, g.list + ": the list is "
                             + (items == null ? "absent" : "empty") + " and a group with "
-                            + (g.repeat == Seq.Repeat.MORE ? "more" : "fx") + " has at least one item on the wire");
+                            + g.repeat.name().toLowerCase(java.util.Locale.ROOT) + " has at least one item on the wire");
                 }
                 for (int i = 0; i < n; i++) {
                     if (g.repeat == Seq.Repeat.MORE) w.put(1, i + 1 < n ? 1 : 0);
+                    if (g.repeat == Seq.Repeat.LAST) w.put(1, i + 1 < n ? 0 : 1);
                     encodeItem(g, w, items.get(i));
                     if (g.repeat == Seq.Repeat.FX) w.put(1, i + 1 < n ? 1 : 0);
                 }

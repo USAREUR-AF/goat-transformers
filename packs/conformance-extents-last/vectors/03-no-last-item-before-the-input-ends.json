@@ -1,0 +1,9 @@
+{
+  "name": "no-last-item-before-the-input-ends",
+  "from": "conformance-extents-last",
+  "to": "conformance-extents-last",
+  "input": "05",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.21, The last-item flag; the bit before a second item lies past the input"
+}

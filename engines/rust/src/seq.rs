@@ -31,6 +31,12 @@ pub enum Rep {
     Fx,
     /// `size [<lb> <ub>]` (engine-spec v0.19): a constrained count, or a length determinant
     Size(crate::uper::Size),
+    /// items until the end of the enclosing extent (engine-spec v0.21)
+    Rest,
+    /// as many items as the `count` line of this id states (engine-spec v0.21)
+    Named(usize),
+    /// each item is preceded by one bit: 1 = this is the last item (engine-spec v0.21)
+    Last,
 }
 
 #[derive(Clone, Debug)]
@@ -71,6 +77,9 @@ pub enum SeqLine {
     Choice { n: u32, ext: bool, alts: Vec<(u32, Vec<SeqLine>)> },
     /// `switch <key>` … `end` (engine-spec v0.20)
     Switch(Switch),
+    /// `count <name> <len> [plus <n>]`: a count a later `group … count @<name>`
+    /// uses (engine-spec v0.21)
+    Count { id: usize, len: u32, plus: i64, line: usize },
 }
 
 /// One `case` or `else` body of a `switch`.
@@ -217,8 +226,12 @@ fn visit_lines_mut(lines: &mut [SeqLine], ff: &mut dyn FnMut(&mut FieldDef), fd:
 fn resolve_lines(lines: &mut [SeqLine], ty: &dyn Fn(&str) -> Option<KeyType>) {
     for l in lines {
         match l {
-            SeqLine::If { body, .. } | SeqLine::Opt { body } | SeqLine::Length { body, .. } => resolve_lines(body, ty),
+            SeqLine::If { body, .. } | SeqLine::Opt { body } | SeqLine::Length { body, .. } | SeqLine::Ext { body } => {
+                resolve_lines(body, ty)
+            }
             SeqLine::Chain { parts, .. } => parts.iter_mut().for_each(|p| resolve_lines(p, ty)),
+            // a switch inside a 0.19 `choice` (ruling 40 of 0.20)
+            SeqLine::Choice { alts, .. } => alts.iter_mut().for_each(|(_, p)| resolve_lines(p, ty)),
             SeqLine::Group(g) => g.body.resolve(ty),
             SeqLine::Switch(sw) => {
                 let t = ty(&sw.key);
@@ -315,8 +328,10 @@ struct Parser<'a> {
     lines: &'a [(usize, Vec<String>)],
     i: usize,
     next_id: usize,
-    /// the presences visible here, innermost last: (name, id, bits)
-    names: Vec<(String, usize, Option<u32>)>,
+    /// the presences and counts visible here, innermost last: (name, id, what)
+    names: Vec<(String, usize, Named)>,
+    /// how many group bodies are open: a count is referenced from its own (ruling 9 of 0.21)
+    body_depth: usize,
     /// kind names of the whole pack
     /// where the names of the block being read start in `names`
     block_start: usize,
@@ -351,6 +366,25 @@ struct Parser<'a> {
     uper_line: Option<usize>,
     to_cot: BTreeMap<String, String>,
     from_cot: BTreeMap<String, String>,
+}
+
+/// What a name of `Parser::names` is.
+#[derive(Clone, Copy, Debug)]
+enum Named {
+    /// a presence of this many bits (None: `fx` octets)
+    Presence(Option<u32>),
+    /// a count declared in the group body of this depth (engine-spec v0.21)
+    Count(usize),
+}
+
+/// A `plus` value of a `count` line: an optional `-` then digits, leading
+/// zeros allowed, within signed 64 bits (ruling 16 of 0.21).
+fn plus_value(text: &str, ln: usize) -> Result<i64, Error> {
+    let digits = text.strip_prefix('-').unwrap_or(text);
+    if digits.is_empty() || !digits.bytes().all(|b| b.is_ascii_digit()) {
+        return bad(ln, format!("`plus {}` is not an optional `-` then digits", text));
+    }
+    text.parse::<i64>().or_else(|_| bad(ln, format!("`plus {}` is outside signed 64 bits", text)))
 }
 
 /// A decimal bit length of at least 1. A positional locator is `bad-directive`.
@@ -449,6 +483,13 @@ impl<'a> Parser<'a> {
 
     /// The lines of a message (`top`) or of one group body, up to its `end`.
     fn body(&mut self, top: bool, open_line: usize) -> Result<SeqBody, Error> {
+        self.body_depth += 1;
+        let res = self.body_in(top, open_line);
+        self.body_depth -= 1;
+        res
+    }
+
+    fn body_in(&mut self, top: bool, open_line: usize) -> Result<SeqBody, Error> {
         let mut out = SeqBody::default();
         let visible = self.names.len();
         let outer_block = std::mem::replace(&mut self.block_start, visible);
@@ -854,7 +895,7 @@ impl<'a> Parser<'a> {
                 let id = self.next_id;
                 self.next_id += 1;
                 self.named.push(Vec::new());
-                self.names.push((name.clone(), id, bits));
+                self.names.push((name.clone(), id, Named::Presence(bits)));
                 self.case_named.push(Vec::new());
                 self.case_depth.push(self.case_ifs.len());
                 SeqLine::Presence { id, bits, named: Vec::new(), in_cases: Vec::new() }
@@ -878,7 +919,9 @@ impl<'a> Parser<'a> {
                         _ => return bad(ln, format!("`{}` does not name a presence bit from 1", t)),
                     };
                     let (id, size) = match self.names.iter().rev().find(|(n, _, _)| n == name) {
-                        Some((_, id, size)) => (*id, *size),
+                        Some((_, id, Named::Presence(size))) => (*id, *size),
+                        // counts and presences share one namespace (ruling 15 of 0.21)
+                        Some((_, _, Named::Count(_))) => return bad(ln, format!("`{}` names a count, not a presence", t)),
                         None => return bad(ln, format!("`{}` names a presence that is not visible here", t)),
                     };
                     if size.map_or(false, |n| bit > n) {
@@ -994,6 +1037,18 @@ impl<'a> Parser<'a> {
             }
             "group" => {
                 let rep = match (toks.get(2).map(|s| s.as_str()), toks.len()) {
+                    // `count @<name>`: the count of an earlier `count` line (engine-spec v0.21)
+                    (Some("count"), 4) if toks[3].starts_with('@') => {
+                        let name = &toks[3][1..];
+                        match self.names.iter().rev().find(|(n, _, _)| n == name) {
+                            Some((_, id, Named::Count(depth))) if *depth == self.body_depth => Rep::Named(*id),
+                            Some((_, _, Named::Count(_))) => {
+                                return bad(ln, format!("`count {}` names a count of another group body (ruling 9 of 0.21)", toks[3]));
+                            }
+                            Some((_, _, Named::Presence(_))) => return bad(ln, format!("`count {}` names a presence, not a count", toks[3])),
+                            None => return bad(ln, format!("`count {}` names a count that is not visible here", toks[3])),
+                        }
+                    }
                     (Some("count"), 4) => Rep::Count(value_len(&toks[3], ln)?),
                     // engine-spec v0.19: SEQUENCE OF
                     (Some("size"), 3 | 5) => {
@@ -1008,10 +1063,12 @@ impl<'a> Parser<'a> {
                     (Some("while"), 3) => Rep::While,
                     (Some("more"), 3) => Rep::More,
                     (Some("fx"), 3) => Rep::Fx,
+                    (Some("rest"), 3) => Rep::Rest,
+                    (Some("last"), 3) => Rep::Last,
                     (Some(l), _) if l.contains(':') => {
                         return bad(ln, format!("`{}` is a positional locator; a sequential group is `count <len>`, `while`, `more` or `fx`", l));
                     }
-                    _ => return bad(ln, "group needs <list> and `count <len>`, `while`, `more` or `fx`"),
+                    _ => return bad(ln, "group needs <list> and one of `count <len>`, `count @<name>`, `while`, `more`, `fx`, `rest` or `last`"),
                 };
                 SeqLine::Group(SeqGroup { list: toks[1].clone(), rep, body: self.body(false, ln)?, line: ln })
             }
@@ -1073,6 +1130,37 @@ impl<'a> Parser<'a> {
             }
             "alt" => return bad(ln, "`alt` outside a `choice`"),
             "switch" => SeqLine::Switch(self.switch(ln, toks)?),
+            // engine-spec v0.21: a named count, written after its group is laid out
+            "count" => {
+                if toks.len() < 3 {
+                    return bad(ln, "count needs <name> <len> [plus <n>]");
+                }
+                let name = &toks[1];
+                // names as presence names are: no `.`, `!` or `@` (ruling 24 of 0.21)
+                if name.is_empty() || name.contains(['.', '!', '@']) {
+                    return bad(ln, format!("`{}` is not a count name", name));
+                }
+                let len = value_len(&toks[2], ln)?;
+                let plus = match &toks[3..] {
+                    [] => 0,
+                    [p, n] if p == "plus" => plus_value(n, ln)?,
+                    _ => return bad(ln, "a `count` line takes only `plus <n>`, once"),
+                };
+                // one namespace with presences (ruling 15 of 0.21, ruling 12 of 0.8);
+                // common lines and kinds are one block, and a kind's names end
+                // with the kind, so two kinds may each declare it (rulings 25, 36)
+                if self.names[self.block_start..].iter().any(|(n, _, _)| n == name) {
+                    return bad(ln, format!("`{}` is declared twice in one block", name));
+                }
+                let id = self.next_id;
+                self.next_id += 1;
+                // ids are shared with presences: keep the per-id tables aligned
+                self.named.push(Vec::new());
+                self.case_named.push(Vec::new());
+                self.case_depth.push(self.case_ifs.len());
+                self.names.push((name.clone(), id, Named::Count(self.body_depth)));
+                SeqLine::Count { id, len, plus, line: ln }
+            }
             "case" | "else" => return bad(ln, format!("`{}` outside a `switch`", toks[0])),
             "fx" => return bad(ln, "`fx` outside a `chain`"),
             "also" => return bad(ln, "`also` stands directly after a `field` line"),
@@ -1163,6 +1251,171 @@ fn check_lists(body: &SeqBody) -> Result<(), Error> {
     Ok(())
 }
 
+/// The fewest and the most groups that reference count `id` on one reading
+/// path through `lines` (ruling 2 of 0.21): a switch is one of its cases.
+/// Group bodies are not entered: a reference there is refused as it is read
+/// (ruling 9).
+fn count_refs(lines: &[SeqLine], id: usize) -> (usize, usize) {
+    let mut at = (0, 0);
+    let add = |at: &mut (usize, usize), r: (usize, usize)| {
+        at.0 += r.0;
+        at.1 += r.1;
+    };
+    for l in lines {
+        match l {
+            SeqLine::Group(g) if g.rep == Rep::Named(id) => add(&mut at, (1, 1)),
+            SeqLine::If { body, .. } | SeqLine::Opt { body } | SeqLine::Length { body, .. } | SeqLine::Ext { body } => {
+                add(&mut at, count_refs(body, id))
+            }
+            SeqLine::Chain { parts, .. } => parts.iter().for_each(|p| add(&mut at, count_refs(p, id))),
+            // reading paths split only at kinds and switch cases (ruling 33 of
+            // 0.21): the `alt`s of a 0.19 `choice` count as `if` blocks do
+            SeqLine::Choice { alts, .. } => alts.iter().for_each(|(_, p)| add(&mut at, count_refs(p, id))),
+            SeqLine::Switch(sw) => {
+                let rs: Vec<(usize, usize)> = sw.bodies().map(|c| count_refs(&c.lines, id)).collect();
+                let lo = rs.iter().map(|r| r.0).min().unwrap_or(0);
+                let hi = rs.iter().map(|r| r.1).max().unwrap_or(0);
+                add(&mut at, (lo, hi));
+            }
+            _ => {}
+        }
+    }
+    at
+}
+
+/// Every `count` line is referenced by exactly one group on each reading
+/// path that holds it (rulings 2 and 12 of 0.21). `tail`: the reading paths
+/// after `lines` that still see their names, as (fewest, most) for one count.
+fn check_counts_lines(lines: &[SeqLine], tail: &dyn Fn(usize) -> (usize, usize)) -> Result<(), Error> {
+    for (i, l) in lines.iter().enumerate() {
+        match l {
+            SeqLine::Count { id, line, .. } => {
+                let (a, b) = count_refs(&lines[i + 1..], *id);
+                let (c, d) = tail(*id);
+                let (lo, hi) = (a + c, b + d);
+                if lo == 0 {
+                    return bad(*line, "the count is not referenced by a `group … count @` line on every reading path");
+                }
+                if hi > 1 {
+                    return bad(*line, "the count is referenced by two groups on one reading path");
+                }
+            }
+            SeqLine::If { body, .. } | SeqLine::Opt { body } | SeqLine::Length { body, .. } | SeqLine::Ext { body } => {
+                check_counts_lines(body, &|_| (0, 0))?
+            }
+            // each `alt` is a block of its own for names (ruling 21 of 0.19)
+            SeqLine::Choice { alts, .. } => {
+                for (_, part) in alts {
+                    check_counts_lines(part, &|_| (0, 0))?;
+                }
+            }
+            SeqLine::Chain { parts, .. } => {
+                // a chain is one block for names: a count sees the parts after its own
+                for (k, part) in parts.iter().enumerate() {
+                    let later = &parts[k + 1..];
+                    check_counts_lines(part, &|id| {
+                        later.iter().fold((0, 0), |at, p| {
+                            let r = count_refs(p, id);
+                            (at.0 + r.0, at.1 + r.1)
+                        })
+                    })?;
+                }
+            }
+            SeqLine::Switch(sw) => {
+                for c in sw.bodies() {
+                    check_counts_lines(&c.lines, &|_| (0, 0))?;
+                }
+            }
+            SeqLine::Group(g) => check_counts(&g.body)?,
+            _ => {}
+        }
+    }
+    Ok(())
+}
+
+fn check_counts(body: &SeqBody) -> Result<(), Error> {
+    // a count among the common lines is seen by every kind: one path per kind
+    let kinds = |id: usize| {
+        let rs: Vec<(usize, usize)> = body.kinds.iter().map(|k| count_refs(&k.lines, id)).collect();
+        (rs.iter().map(|r| r.0).min().unwrap_or(0), rs.iter().map(|r| r.1).max().unwrap_or(0))
+    };
+    check_counts_lines(&body.common, &kinds)?;
+    for k in &body.kinds {
+        check_counts_lines(&k.lines, &|_| (0, 0))?;
+    }
+    Ok(())
+}
+
+/// Does a line read or write bits of the wire? `default` and `requires` are
+/// not lines here; a block is a wire line when it reads a bit of its own or
+/// holds one (ruling 11 of 0.21).
+fn wire_line(l: &SeqLine) -> bool {
+    match l {
+        SeqLine::If { body, .. } => body.iter().any(wire_line),
+        SeqLine::Switch(sw) => sw.bodies().any(|c| c.lines.iter().any(wire_line)),
+        SeqLine::Chain { parts, ends_fx } => *ends_fx || parts.len() > 1 || parts.iter().flatten().any(wire_line),
+        // a `choice` reads its index unless it has one root alternative and
+        // no extension bit (engine-spec v0.19); an `ext` always reads its bit
+        SeqLine::Choice { n, ext, alts } => *ext || *n > 1 || alts.iter().any(|(_, p)| p.iter().any(wire_line)),
+        _ => true,
+    }
+}
+
+/// A `rest` group is the last line of its extent (rulings 10 and 11 of
+/// 0.21). `after`: some wire line follows `lines` in the same extent on a
+/// reading path; `allow`: a `rest` may stand in this extent here.
+fn check_rest_lines(lines: &[SeqLine], after: bool, allow: bool) -> Result<(), Error> {
+    for (i, l) in lines.iter().enumerate() {
+        let after = after || lines[i + 1..].iter().any(wire_line);
+        match l {
+            SeqLine::Group(g) => {
+                if g.rep == Rep::Rest {
+                    if !allow {
+                        return bad(g.line, format!("`group {} rest` inside an item stands only in a `length` block of the item or at the end of an outer `rest` item", g.list));
+                    }
+                    if after {
+                        return bad(g.line, format!("`group {} rest` is not the last line of its extent", g.list));
+                    }
+                }
+                // the item of a `rest` group may end in a `rest` of the same extent
+                check_rest_body(&g.body, false, g.rep == Rep::Rest)?;
+            }
+            SeqLine::If { body, .. } | SeqLine::Opt { body } | SeqLine::Ext { body } => check_rest_lines(body, after, allow)?,
+            // one `alt` is read, as one case of a switch (engine-spec v0.19)
+            SeqLine::Choice { alts, .. } => {
+                for (_, part) in alts {
+                    check_rest_lines(part, after, allow)?;
+                }
+            }
+            SeqLine::Chain { parts, ends_fx } => {
+                for (k, part) in parts.iter().enumerate() {
+                    let more = after || k + 1 < parts.len() || *ends_fx;
+                    check_rest_lines(part, more, allow)?;
+                }
+            }
+            SeqLine::Switch(sw) => {
+                for c in sw.bodies() {
+                    check_rest_lines(&c.lines, after, allow)?;
+                }
+            }
+            // a `length` block is an extent of its own
+            SeqLine::Length { body, .. } => check_rest_lines(body, false, true)?,
+            _ => {}
+        }
+    }
+    Ok(())
+}
+
+fn check_rest_body(body: &SeqBody, after: bool, allow: bool) -> Result<(), Error> {
+    // a kind's `when` lines are wire lines after the common lines
+    let kinds_wire = body.kinds.iter().any(|k| !k.whens.is_empty() || k.lines.iter().any(wire_line));
+    check_rest_lines(&body.common, after || kinds_wire, allow)?;
+    for k in &body.kinds {
+        check_rest_lines(&k.lines, after, allow)?;
+    }
+    Ok(())
+}
+
 /// Parse a `layout sequential` pack.
 pub fn parse(text: &str) -> Result<Pack, Error> {
     let mut lines: Vec<(usize, Vec<String>)> = Vec::new();
@@ -1177,6 +1430,7 @@ pub fn parse(text: &str) -> Result<Pack, Error> {
         i: 0,
         next_id: 0,
         names: Vec::new(),
+        body_depth: 0,
         block_start: 0,
         named: Vec::new(),
         case_named: Vec::new(),
@@ -1230,6 +1484,8 @@ pub fn parse(text: &str) -> Result<Pack, Error> {
     if p.version.is_none() {
         return err("missing-version: the pack has no `version` line");
     }
+    check_counts(&body)?;
+    check_rest_body(&body, false, true)?;
     match p.wire.as_deref() {
         Some("bits") => {}
         Some(_) => return err("bad-directive: `layout` is valid only on a bits wire"),
@@ -1310,6 +1566,12 @@ pub(crate) struct Reader<'a> {
     case_named: Vec<(usize, u32, u64)>,
     /// counts the presence lines read: orders the two lists above
     clock: u64,
+    /// the bits an item of a `rest` group needs left: 8 when the innermost
+    /// extent is counted in bytes, 1 in bits (engine-spec v0.21)
+    unit: u64,
+    /// per `count` line id: the number of items it states, None when the
+    /// line lay at or past the end of a `length` extent (engine-spec v0.21)
+    counts: HashMap<usize, Option<u64>>,
 }
 
 impl<'a> Reader<'a> {
@@ -1385,9 +1647,18 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
     for line in lines {
         // inside a `length` block, lines beyond its extent read as absent; a
         // switch there still selects, and its lines read as absent (ruling 14 of 0.20)
-        if r.depth > 0 && r.pos >= r.end && !matches!(line, SeqLine::Switch(_)) {
-            if let SeqLine::Presence { id, .. } = line {
-                r.presence.insert(*id, Vec::new());
+        // an `if` or a chain there is read the same way, so that a `rest` group
+        // in it is present and empty (ruling 3 of 0.21)
+        if r.depth > 0 && r.pos >= r.end && !matches!(line, SeqLine::Switch(_) | SeqLine::If { .. } | SeqLine::Chain { .. }) {
+            match line {
+                SeqLine::Presence { id, .. } => {
+                    r.presence.insert(*id, Vec::new());
+                }
+                SeqLine::Count { id, .. } => {
+                    r.counts.insert(*id, None);
+                }
+                SeqLine::Group(g) if g.rep == Rep::Rest => d.put_list(&g.list, Vec::new()),
+                _ => {}
             }
             continue;
         }
@@ -1498,9 +1769,11 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
                 }
                 let stop = r.pos + extent as u64;
                 let outer = std::mem::replace(&mut r.end, stop);
+                let outer_unit = std::mem::replace(&mut r.unit, if *in_bits { 1 } else { 8 });
                 r.depth += 1;
                 let res = decode_lines(body, r, d);
                 r.depth -= 1;
+                r.unit = outer_unit;
                 // content of the extent no line reads is skipped
                 r.pos = stop;
                 r.end = outer.min(r.whole);
@@ -1588,6 +1861,39 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
                             break;
                         }
                     },
+                    // items while a whole unit of the extent remains; fewer bits are padding
+                    Rep::Rest => {
+                        while r.end.saturating_sub(r.pos) >= r.unit {
+                            let start = r.pos;
+                            item(r, &mut items)?;
+                            if r.pos == start {
+                                return Err(r.short(format!("an item of list `{}` reads no bits (ruling 1 of 0.21)", g.list)));
+                            }
+                        }
+                    }
+                    Rep::Named(id) => {
+                        let n = match r.counts.get(id).copied().flatten() {
+                            Some(n) => n,
+                            // the count line lay past the end of its extent: the list is absent
+                            None => continue,
+                        };
+                        // the bits left at the group (ruling 20 of 0.21)
+                        if n > r.end.saturating_sub(r.pos) {
+                            return Err(r.short(format!("list `{}` has {} items, more than the input holds", g.list, n)));
+                        }
+                        for _ in 0..n {
+                            item(r, &mut items)?;
+                        }
+                    }
+                    // an indicator after the first that starts at the extent end is
+                    // `malformed-wire` (ruling 13 of 0.21)
+                    Rep::Last => loop {
+                        let last = r.read(1, "the bit before an item")?;
+                        item(r, &mut items)?;
+                        if last == 1 {
+                            break;
+                        }
+                    },
                 }
                 d.put_list(&g.list, items);
             }
@@ -1616,6 +1922,16 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
                 }
                 decode_lines(&case.lines, r, d)?;
             }
+            SeqLine::Count { id, len, plus, .. } => {
+                let v = r.read(*len, "a `count`")?;
+                // `value − n` without overflow; below `n` is checked here (ruling 7 of 0.21)
+                let n = v as i128 - *plus as i128;
+                if n < 0 {
+                    return Err(r.short(format!("a count of {} is below its `plus {}`", v, plus)));
+                }
+                // more items than u64 holds are more than any input's bits
+                r.counts.insert(*id, Some(u64::try_from(n).unwrap_or(u64::MAX)));
+            }
         }
     }
     Ok(())
@@ -1634,6 +1950,8 @@ pub fn decode(p: &Pack, body: &SeqBody, raw: &[u8], total: u64) -> Result<Entity
         pending: Vec::new(),
         case_named: Vec::new(),
         clock: 0,
+        unit: 8,
+        counts: HashMap::new(),
     };
     let mut d = Decoded::new();
     let kind = decode_body(body, &mut r, &mut d)?;
@@ -1759,6 +2077,10 @@ impl<'p> Look<'p> {
                     wholes: Vec::new(),
                     back: Vec::new(),
                     look: self,
+                    count_fields: Vec::new(),
+                    counts: HashMap::new(),
+                    extents: vec![(0, false)],
+                    rests: 0,
                 };
                 if write_uper_line(&mut w, f, loc, also, ent, defs).is_ok() {
                     read_back_uper(self.p, f, loc, also, &w.buf, 0, &mut back);
@@ -1940,6 +2262,8 @@ fn read_back_uper(p: &Pack, f: &FieldDef, loc: &crate::uper::Loc, also: &[FieldD
         pending: Vec::new(),
         case_named: Vec::new(),
         clock: 0,
+        unit: 8,
+        counts: HashMap::new(),
     };
     if let Ok(v) = crate::uper::read_field(&mut r, f, loc) {
         for a in also {
@@ -1975,6 +2299,15 @@ pub(crate) struct Writer<'a> {
     /// scope being written, innermost last: a switch selects from it
     back: Vec<Decoded>,
     look: &'a Look<'a>,
+    /// every `count` field written: (bit, len, plus, filled by its group),
+    /// filled in once the group is laid out (engine-spec v0.21)
+    count_fields: Vec<(u64, u32, i64, bool)>,
+    /// per `count` line id: its latest field in `count_fields`
+    counts: HashMap<usize, usize>,
+    /// the extents being written, innermost last: (first bit, counted in bits)
+    extents: Vec<(u64, bool)>,
+    /// how many `rest` groups the innermost extent has written so far
+    rests: u64,
 }
 
 impl<'a> Writer<'a> {
@@ -2100,7 +2433,12 @@ fn encode_lines(lines: &[SeqLine], tail: &[SeqLine], ent: &Entity, defs: Default
                 let at = w.pos;
                 w.zeros(*len as u64);
                 let start = w.pos;
-                encode_lines(body, &[], ent, defs, w)?;
+                w.extents.push((start, *in_bits));
+                let outer_rests = std::mem::replace(&mut w.rests, 0);
+                let res = encode_lines(body, &[], ent, defs, w);
+                w.rests = outer_rests;
+                w.extents.pop();
+                res?;
                 // a block counted in bytes is padded with zero bits to a whole byte
                 if !*in_bits {
                     w.zeros((8 - (w.pos - start) % 8) % 8);
@@ -2170,6 +2508,63 @@ fn encode_lines(lines: &[SeqLine], tail: &[SeqLine], ent: &Entity, defs: Default
                         }
                         w.put(1, 0);
                     }
+                    Rep::Rest => {
+                        // a `rest` group written in this extent (rulings 10 and 35 of 0.21)
+                        w.rests += 1;
+                        let mut starts = Vec::with_capacity(n);
+                        for (k, item) in items.iter().enumerate() {
+                            let start = w.pos;
+                            let before = w.rests;
+                            encode_body(&g.body, item, true, w)?;
+                            // an item before the last that wrote an inner `rest` would take
+                            // the rest of the extent (rulings 10 and 35)
+                            if k + 1 < n && w.rests > before {
+                                return Err(w.fail(format!(
+                                    "list `{}`: item {} of {} writes a `rest` list that takes the rest of the extent",
+                                    g.list, k, n
+                                )));
+                            }
+                            if w.pos == start {
+                                return Err(w.fail(format!("list `{}`: an item writes no bits (ruling 1 of 0.21)", g.list)));
+                            }
+                            starts.push(start);
+                        }
+                        // decode reads an item while a whole unit of the extent is left:
+                        // an item that starts with less before the padded end would be lost
+                        // (ruling 4 of 0.21). The group is the last line of its extent.
+                        let (first, in_bits) = *w.extents.last().expect("an extent");
+                        let unit = if in_bits { 1 } else { 8 };
+                        let end = first + (w.pos - first).div_ceil(unit) * unit;
+                        if let Some(at) = starts.iter().position(|s| end - s < unit) {
+                            return Err(w.fail(format!(
+                                "list `{}`: item {} starts with fewer than {} bits left in its extent; decode would not read it",
+                                g.list, at, unit
+                            )));
+                        }
+                    }
+                    Rep::Named(id) => {
+                        for item in items {
+                            encode_body(&g.body, item, true, w)?;
+                        }
+                        // the count is written at its own place now the group is laid out
+                        let k = *w.counts.get(id).expect("the count line is written before its group");
+                        w.count_fields[k].3 = true;
+                        let (at, len, plus, _) = w.count_fields[k];
+                        let v = n as i128 + plus as i128;
+                        if v < 0 || (len < 64 && v >> len != 0) || v > u64::MAX as i128 {
+                            return Err(w.fail(format!("list `{}`: a count of {} does not fit its {} bits", g.list, v, len)));
+                        }
+                        set_bits(&mut w.buf, at, len, v as u64, p.msb);
+                    }
+                    Rep::Last => {
+                        if n == 0 {
+                            return Err(w.fail(format!("list `{}` is absent or empty, the group holds at least one item", g.list)));
+                        }
+                        for (k, item) in items.iter().enumerate() {
+                            w.put(1, (k + 1 == n) as u64);
+                            encode_body(&g.body, item, true, w)?;
+                        }
+                    }
                     Rep::More | Rep::Fx => {
                         if n == 0 {
                             return Err(w.fail(format!("list `{}` is absent or empty, the group holds at least one item", g.list)));
@@ -2214,6 +2609,14 @@ fn encode_lines(lines: &[SeqLine], tail: &[SeqLine], ent: &Entity, defs: Default
                 };
                 encode_lines(&c.lines, &[], ent, defs.inside(c), w)?;
             }
+            // the field holds `n` until its group is laid out: a group not
+            // reached leaves it so (ruling 6 of 0.21)
+            // (checked in `encode` once every group is written)
+            SeqLine::Count { id, len, plus, .. } => {
+                w.counts.insert(*id, w.count_fields.len());
+                w.count_fields.push((w.pos, *len, *plus, false));
+                w.zeros(*len as u64);
+            }
         }
     }
     Ok(())
@@ -2231,7 +2634,7 @@ pub fn encode_bits(p: &Pack, body: &SeqBody, ent: &Entity) -> Result<(Vec<u8>, u
     let mut w = loop {
         pass += 1;
         look.changed.set(false);
-        let mut w = Writer { p, buf: Vec::new(), pos: 0, presence: BTreeMap::new(), wholes: Vec::new(), back: Vec::new(), look: &look };
+        let mut w = Writer { p, buf: Vec::new(), pos: 0, presence: BTreeMap::new(), wholes: Vec::new(), back: Vec::new(), look: &look, count_fields: Vec::new(), counts: HashMap::new(), extents: vec![(0, false)], rests: 0 };
         let res = encode_body(body, ent, false, &mut w);
         if !look.changed.get() {
             res?;
@@ -2244,6 +2647,15 @@ pub fn encode_bits(p: &Pack, body: &SeqBody, ent: &Entity) -> Result<(Vec<u8>, u
             ));
         }
     };
+    // a count whose group was not written holds `n` (ruling 6 of 0.21)
+    for (at, len, plus, filled) in std::mem::take(&mut w.count_fields) {
+        if !filled {
+            if plus < 0 || (len < 64 && (plus as u64) >> len != 0) {
+                return Err(w.fail(format!("an absent list writes a count of {}, which does not fit its {} bits", plus, len)));
+            }
+            set_bits(&mut w.buf, at, len, plus as u64, p.msb);
+        }
+    }
     // an encoding of no bits is one octet `00` (engine-spec v0.19, X.691 10.1.3)
     if p.uper && w.buf.is_empty() {
         w.buf.push(0);

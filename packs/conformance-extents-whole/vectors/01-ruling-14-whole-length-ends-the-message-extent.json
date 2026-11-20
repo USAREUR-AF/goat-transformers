@@ -1,0 +1,13 @@
+{
+  "name": "ruling-14-whole-length-ends-the-message-extent",
+  "from": "conformance-extents-whole",
+  "to": "conformance-extents-whole",
+  "input": "0305060708",
+  "expect": "030506",
+  "model": {
+    "probe.nums.#": "2",
+    "probe.nums[1].probe.val": "6"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 14; the stated 3 bytes end the extent: items 05 06; 07 08 lie beyond and are ignored"
+}

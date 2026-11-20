@@ -1,0 +1,12 @@
+{
+  "name": "ruling-18-empty-list-in-an-opt",
+  "from": "conformance-extents-unreached",
+  "to": "conformance-extents-unreached",
+  "input": "0180",
+  "expect": "0100",
+  "model": {
+    "probe.nums.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 18: ruling 5 of 0.8 extends to `count @`: a present, empty list does not set the opt bit and decodes back as absent"
+}

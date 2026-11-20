@@ -1,0 +1,15 @@
+{
+  "name": "ruling-31-if-walked-and-opt-absent-at-the-extent-end",
+  "from": "conformance-extents-walk",
+  "to": "conformance-extents-walk",
+  "input": "8001070109",
+  "expect": "000107020900",
+  "model": {
+    "probe.x": "7",
+    "probe.nums.#": "0",
+    "probe.y": "9",
+    "probe.recs.#": "absent"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 31; an if at the end of a length extent is still walked, so the rest inside it is present and empty; an opt there reads as absent and its block is not read"
+}

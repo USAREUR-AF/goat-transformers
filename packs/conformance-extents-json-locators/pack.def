@@ -1,0 +1,18 @@
+# Conformance probe pack for spec 0.21 ruling 8: on a wire other than `bits`,
+# `rest` and `last` after a list name are the group locator, as before 0.21.
+# Public. No kinds.
+#
+#   nums    the array at the member `rest`, one integer per item
+#   names   the array at the member `last`, one text per item
+format     conformance-extents-json-locators
+version    0.21.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       json
+group   probe.nums  rest
+  field  probe.val  .  int
+end
+group   probe.names  last
+  field  probe.tag  .  string
+end

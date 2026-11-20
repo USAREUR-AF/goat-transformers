@@ -1,0 +1,12 @@
+{
+  "name": "ruling-03-empty",
+  "from": "conformance-extents-bits",
+  "to": "conformance-extents-bits",
+  "input": "00",
+  "expect": "00",
+  "model": {
+    "probe.recs.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 5 and A list to the end of its extent (an extent counted in bits); ruling 3: present and empty"
+}

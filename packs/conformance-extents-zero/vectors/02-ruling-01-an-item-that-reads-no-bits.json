@@ -1,0 +1,9 @@
+{
+  "name": "ruling-01-an-item-that-reads-no-bits",
+  "from": "conformance-extents-zero",
+  "to": "conformance-extents-zero",
+  "input": "0005",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 1; p.1 = 0 and 8 bits remain: the item reads no bits"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "to-optcount-one-item",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-optcount",
+  "input": "{\"nums\":[5]}",
+  "expect": "808280",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 18; the list sets the bit"
+}

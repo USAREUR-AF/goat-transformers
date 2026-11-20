@@ -3,6 +3,8 @@ package goatxf
 import (
 	"encoding/hex"
 	"fmt"
+	"math/bits"
+	"strconv"
 	"strings"
 )
 
@@ -31,17 +33,36 @@ const (
 	seqSwitchOp // a `switch` block (0.20)
 	seqCaseOp   // the frame of a `case` or `else` body; not a line
 	seqMsg      // the frame of a message body; not a line
+	seqCountOp  // a `count <name> <len> [plus <n>]` line (0.21)
 )
 
 // How the items of a sequential group are delimited.
 const (
-	seqCount   = iota + 1 // a count field, then that many items
-	seqWhile              // one bit before each item: 1 = an item follows, 0 = the list ends
-	seqMore               // one bit before each item: 1 = another item follows this one
-	seqFxMode             // one bit after each item: 1 = another item follows
-	seqSize               // UPER `size <lb> <ub>`: the count as a constrained whole number
-	seqSizeUnc            // UPER `size`: the count as a length determinant
+	seqCount    = iota + 1 // a count field, then that many items
+	seqWhile               // one bit before each item: 1 = an item follows, 0 = the list ends
+	seqMore                // one bit before each item: 1 = another item follows this one
+	seqFxMode              // one bit after each item: 1 = another item follows
+	seqSize                // UPER `size <lb> <ub>`: the count as a constrained whole number
+	seqSizeUnc             // UPER `size`: the count as a length determinant
+	seqRest                // items until the end of the enclosing extent (0.21)
+	seqLast                // one bit before each item: 1 = this is the last item (0.21)
+	seqCountRef            // as many items as a named count line states (0.21)
 )
+
+// seqCountDef is one `count <name> <len> [plus <n>]` line (0.21): a count
+// field at the cursor that one later group references by name.
+type seqCountDef struct {
+	name string
+	n    int   // the bit length of the field
+	plus int64 // what the field holds beyond the number of items
+	line int
+	// list and idx locate the line in its block: the lines after it, to the
+	// end of the block, are its range. body is set when the line is among the
+	// common lines of a body: the body's kinds are in its range too.
+	list *[]*seqNode
+	idx  int
+	body *seqBody
+}
 
 // seqStructural names the directives the sequential parser reads; the others
 // (format, wire, map, …) are read as in a fixed-layout pack.
@@ -50,7 +71,7 @@ var seqStructural = map[string]bool{
 	"if": true, "opt": true, "chain": true, "fx": true, "length": true, "also": true,
 	"group": true, "end": true, "kind": true, "requires": true, "default": true,
 	"ext": true, "choice": true, "alt": true,
-	"switch": true, "case": true, "else": true,
+	"switch": true, "case": true, "else": true, "count": true,
 }
 
 // uperDirective names the block directives of spec 0.19; outside a
@@ -62,7 +83,7 @@ var seqOnly = map[string]bool{
 	"pad": true, "align": true, "presence": true, "if": true, "opt": true,
 	"chain": true, "fx": true, "length": true, "also": true,
 	"ext": true, "choice": true, "alt": true,
-	"switch": true, "case": true, "else": true,
+	"switch": true, "case": true, "else": true, "count": true,
 }
 
 // hasSequentialLayout reports whether pack text has a `layout sequential`
@@ -172,11 +193,12 @@ type seqNode struct {
 	conds []seqCond
 	body  []*seqNode
 	g     *Group
-	bits  bool       // length: the block is counted in bits
-	plus  int64      // length, whole: what the field holds beyond the length
-	ext   bool       // choice: extensible
-	rng   []numRange // when: the listed values and ranges (0.20)
-	sw    *seqSwitch // switch
+	bits  bool         // length: the block is counted in bits
+	plus  int64        // length, whole: what the field holds beyond the length
+	ext   bool         // choice: extensible
+	rng   []numRange   // when: the listed values and ranges (0.20)
+	sw    *seqSwitch   // switch
+	cnt   *seqCountDef // count
 }
 
 // seqKind is one kind of a body: of the message, or of the items of a group.
@@ -253,6 +275,17 @@ type seqFrame struct {
 	kmapped   map[string]bool // the same, in the kind being read
 	sw        *seqSwitch      // switch and case frames
 	cas       *seqCase        // case frames
+	// Count names (0.21): those declared in this block, and in message and
+	// group frames those of the kind being read.
+	cnts  map[string]*seqCountDef
+	kcnts map[string]*seqCountDef
+	// afterRest is set once a `rest` group, or a block holding one, has
+	// ended in this block: a wire line after it is bad-directive (0.21
+	// ruling 11). kafterRest is the same within the kind being read, and
+	// restCase, in a switch frame, that a closed case held one.
+	afterRest  bool
+	kafterRest bool
+	restCase   bool
 }
 
 // seqListAt is one group of a scope: its line and the `if`, `opt` and `alt` blocks
@@ -288,6 +321,7 @@ type seqParser struct {
 	perr   func(kind ErrorKind, line int, loc, format string, a ...any) error
 	stack  []*seqFrame
 	bodies []*seqBody
+	counts []*seqCountDef
 	late   error // the first failure checked after the file (ruling 5b of 0.11)
 }
 
@@ -302,7 +336,7 @@ func (sp *seqParser) init() {
 	body := &seqBody{}
 	sp.p.sbody = body
 	sp.bodies = append(sp.bodies, body)
-	sp.stack = []*seqFrame{{op: seqMsg, body: body, nodes: &body.common, kindNames: map[string]int{}, pres: map[string]*seqPresenceDef{}, lists: map[string][]seqListAt{}, mapped: map[string]bool{}}}
+	sp.stack = []*seqFrame{{op: seqMsg, body: body, nodes: &body.common, kindNames: map[string]int{}, pres: map[string]*seqPresenceDef{}, cnts: map[string]*seqCountDef{}, lists: map[string][]seqListAt{}, mapped: map[string]bool{}}}
 }
 
 func (sp *seqParser) top() *seqFrame { return sp.stack[len(sp.stack)-1] }
@@ -358,17 +392,94 @@ func (sp *seqParser) value(kw, text string, n, line int) (uint64, error) {
 
 // lookup finds the presence a name refers to where the line stands: the
 // innermost block that declares it.
-func (sp *seqParser) lookup(name string) *seqPresenceDef {
+func (sp *seqParser) lookup(name string) (*seqPresenceDef, *seqCountDef) {
 	for i := len(sp.stack) - 1; i >= 0; i-- {
 		f := sp.stack[i]
 		if pr := f.kpres[name]; pr != nil {
-			return pr
+			return pr, nil
+		}
+		if cd := f.kcnts[name]; cd != nil {
+			return nil, cd
 		}
 		if pr := f.pres[name]; pr != nil {
-			return pr
+			return pr, nil
+		}
+		if cd := f.cnts[name]; cd != nil {
+			return nil, cd
+		}
+	}
+	return nil, nil
+}
+
+// lookupCount finds the count a `count @<name>` reference names: the
+// innermost declaration of the name within the group body the line stands
+// in (0.21 rulings 9, 15 and 24).
+func (sp *seqParser) lookupCount(name string) (*seqCountDef, error) {
+	for i := len(sp.stack) - 1; i >= 0; i-- {
+		f := sp.stack[i]
+		for _, m := range []struct {
+			p map[string]*seqPresenceDef
+			c map[string]*seqCountDef
+		}{{f.kpres, f.kcnts}, {f.pres, f.cnts}} {
+			if m.p[name] != nil {
+				return nil, fmt.Errorf("count @%s names a presence, not a count", name)
+			}
+			if cd := m.c[name]; cd != nil {
+				return cd, nil
+			}
+		}
+		if f.op == seqMsg || f.op == seqGroup {
+			break
+		}
+	}
+	return nil, fmt.Errorf("count @%s names no count visible here in the same group body", name)
+}
+
+// declared reports the line of a presence or count of the name declared in
+// the block of the top frame; 0 when there is none. The common lines and a
+// kind are one block (0.8 ruling 12, 0.21 ruling 15).
+func (sp *seqParser) declared(name string) int {
+	top := sp.top()
+	if pr := top.pres[name]; pr != nil {
+		return pr.line
+	}
+	if cd := top.cnts[name]; cd != nil {
+		return cd.line
+	}
+	if top.kind != nil {
+		if pr := top.kpres[name]; pr != nil {
+			return pr.line
+		}
+		if cd := top.kcnts[name]; cd != nil {
+			return cd.line
+		}
+	}
+	return 0
+}
+
+// wireLine refuses a line that reads or writes bits after a `rest` group of
+// the same extent (0.21 rulings 11, 26 and 32).
+func (sp *seqParser) wireLine(kw string, n int) error {
+	for i := len(sp.stack) - 1; i >= 0; i-- {
+		f := sp.stack[i]
+		if f.afterRest || f.kafterRest {
+			return sp.bad(n, "", "%s stands after a rest group of the same extent; a rest group is the last line of its extent", kw)
+		}
+		if f.op == seqLength || f.op == seqMsg || f.op == seqGroup {
+			break
 		}
 	}
 	return nil
+}
+
+// restEnded records in a frame that a `rest` group, or a block holding one,
+// has ended in it.
+func restEnded(f *seqFrame) {
+	if (f.op == seqMsg || f.op == seqGroup) && f.kind != nil {
+		f.kafterRest = true
+	} else {
+		f.afterRest = true
+	}
 }
 
 // innerCase returns the innermost case or else body the line stands in, nil
@@ -406,6 +517,9 @@ func (sp *seqParser) caseOfIf(pr *seqPresenceDef) *seqCase {
 func (sp *seqParser) push(f *seqFrame) {
 	if f.pres == nil {
 		f.pres = map[string]*seqPresenceDef{}
+	}
+	if f.cnts == nil {
+		f.cnts = map[string]*seqCountDef{}
 	}
 	sp.stack = append(sp.stack, f)
 }
@@ -455,6 +569,20 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 		}
 	}
 	switch kw {
+	// An ext reads its extension bit, so it is a wire line; a choice is one
+	// when it reads bits itself (0.21 ruling 41, checked at its line).
+	case "field", "const", "pad", "align", "presence", "opt", "fx", "length", "group", "count", "ext":
+		if err := sp.wireLine(kw, n); err != nil {
+			return err
+		}
+	case "when":
+		if top.kind != nil || top.op == seqMsg || top.op == seqGroup {
+			if err := sp.wireLine(kw, n); err != nil {
+				return err
+			}
+		}
+	}
+	switch kw {
 	case "ext":
 		if sp.p.uperLine == 0 {
 			sp.p.uperLine = n
@@ -475,6 +603,15 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 		if !ok || c < 1 || c > 65536 {
 			sp.lateErr(sp.bad(n, "", "choice takes a number of alternatives from 1 to 65536, got %q", args[0]))
 			c = 0
+		}
+		// A choice with ext or more than one root alternative reads bits,
+		// so it is a wire line; one with a single alt is one only when the
+		// alt holds a wire line, which wireLine checks at that line (0.21
+		// ruling 41).
+		if len(args) == 2 || c > 1 {
+			if err := sp.wireLine(kw, n); err != nil {
+				return err
+			}
 		}
 		node := &seqNode{op: seqChoice, num: uint64(c), ext: len(args) == 2}
 		add(node)
@@ -508,6 +645,11 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 			}
 		}
 		if top.op == seqAlt {
+			// An alt that held a rest group: the lines after the choice
+			// follow it (0.21 ruling 39, as for a case).
+			if top.afterRest {
+				ch.restCase = true
+			}
 			sp.stack = sp.stack[:len(sp.stack)-1]
 		}
 		node := &seqNode{op: seqAlt, num: uint64(idx), line: n}
@@ -605,6 +747,7 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 		top.body.kinds = append(top.body.kinds, k)
 		top.kind, top.nodes = k, &k.nodes
 		top.kpres, top.klists, top.kmapped = map[string]*seqPresenceDef{}, map[string][]seqListAt{}, map[string]bool{}
+		top.kcnts, top.kafterRest = map[string]*seqCountDef{}, false
 		if top.op == seqMsg {
 			p.Kinds = append(p.Kinds, &KindDef{Name: k.name, Line: n})
 		}
@@ -662,13 +805,10 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 		}
 		// A name is declared once in a block; the common lines and a kind
 		// are one block (0.8 ruling 12).
-		if prev := top.pres[name]; prev != nil {
-			return sp.bad(n, "", "presence %s is already declared in this block on line %d", name, prev.line)
+		if prev := sp.declared(name); prev != 0 {
+			return sp.bad(n, "", "presence %s: the name is already declared in this block on line %d", name, prev)
 		}
 		if top.kind != nil {
-			if prev := top.kpres[name]; prev != nil {
-				return sp.bad(n, "", "presence %s is already declared in this block on line %d", name, prev.line)
-			}
 			top.kpres[name] = pr
 		} else {
 			top.pres[name] = pr
@@ -690,7 +830,11 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 			if err != nil || bit < 1 {
 				return sp.bad(n, "", "if names presence bits as <name>.<i> with i >= 1, got %q", a)
 			}
-			c.p = sp.lookup(text[:i])
+			var cd *seqCountDef
+			c.p, cd = sp.lookup(text[:i])
+			if cd != nil {
+				return sp.bad(n, "", "if names %q, which is a count, not a presence", text[:i])
+			}
 			if c.p == nil {
 				return sp.bad(n, "", "if names presence %q, which is not visible here", text[:i])
 			}
@@ -772,6 +916,32 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 			}
 		}
 		switch {
+		case len(args) == 2 && args[1] == "rest":
+			// A rest group inside an item stands in a length block of the
+			// item, or is the last line of an item of a rest group (0.21
+			// ruling 10).
+			for i := len(sp.stack) - 1; i >= 0; i-- {
+				fr := sp.stack[i]
+				if fr.op == seqLength || fr.op == seqMsg {
+					break
+				}
+				if fr.op == seqGroup {
+					if fr.group.seqMode != seqRest {
+						return sp.bad(n, g.Locator, "a rest group inside an item of list %s stands outside any length block of the item, and that list is not a rest list", fr.group.List)
+					}
+					fr.group.innerRest = true
+					break
+				}
+			}
+			g.seqMode = seqRest
+		case len(args) == 2 && args[1] == "last":
+			g.seqMode = seqLast
+		case len(args) == 3 && args[1] == "count" && strings.HasPrefix(args[2], "@"):
+			cd, err := sp.lookupCount(args[2][1:])
+			if err != nil {
+				return sp.bad(n, g.Locator, "%v", err)
+			}
+			g.seqMode, g.cnt = seqCountRef, cd
 		case len(args) == 3 && args[1] == "count":
 			bits, err := sp.bitLen("group count", args[2], 64, n)
 			if err != nil {
@@ -799,7 +969,7 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 				g.seqMode, g.sizeLB, g.sizeUB = seqSize, int(lb), int(ub)
 			}
 		default:
-			return sp.bad(n, g.Locator, "a sequential group is `group <list> count <len>`, `while`, `more`, `fx` or `size [<lb> <ub>]`")
+			return sp.bad(n, g.Locator, "a sequential group is `group <list> count <len>`, `count @<name>`, `while`, `more`, `fx`, `rest`, `last` or `size [<lb> <ub>]`")
 		}
 		// Within one scope a list is mapped by one group, or by groups that
 		// sit in different `if`, `opt` or `alt` blocks (0.8 ruling 23, 0.19
@@ -829,6 +999,42 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 		p.keyRefs = append(p.keyRefs, keyRef{key: g.List, locator: g.Locator, line: n, group: g})
 		add(&seqNode{op: seqGroup, g: g})
 		sp.push(&seqFrame{op: seqGroup, line: n, group: g, body: g.sbody, nodes: &g.sbody.common, kindNames: map[string]int{}, lists: map[string][]seqListAt{}, mapped: map[string]bool{}})
+	case "count":
+		// count <name> <len> [plus <n>] (0.21)
+		name := args[0]
+		if name == "" || strings.ContainsAny(name, ".!@") {
+			return sp.bad(n, "", "count name %q must be non-empty and hold no '.', '!' or '@'", name)
+		}
+		ln, err := sp.bitLen(kw, args[1], 64, n)
+		if err != nil {
+			return err
+		}
+		cd := &seqCountDef{name: name, n: ln, line: n}
+		switch {
+		case len(args) == 2:
+		case len(args) == 4 && args[2] == "plus":
+			v, ok := parsePlus(args[3])
+			if !ok {
+				return sp.bad(n, "", "count: `plus` takes an optional '-' then digits within signed 64 bits, got %q", args[3])
+			}
+			cd.plus = v
+		default:
+			return sp.bad(n, "", "a count line is `count <name> <len> [plus <n>]`")
+		}
+		if prev := sp.declared(name); prev != 0 {
+			return sp.bad(n, "", "count %s: the name is already declared in this block on line %d", name, prev)
+		}
+		if top.kind != nil {
+			top.kcnts[name] = cd
+		} else {
+			top.cnts[name] = cd
+		}
+		cd.list, cd.idx = top.nodes, len(*top.nodes)
+		if (top.op == seqMsg || top.op == seqGroup) && top.kind == nil {
+			cd.body = top.body
+		}
+		sp.counts = append(sp.counts, cd)
+		add(&seqNode{op: seqCountOp, cnt: cd})
 	case "switch":
 		// switch <model-key>: the key is mapped by a field or also line of
 		// the scope before this line (0.20).
@@ -844,6 +1050,9 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 		if top.op == seqCaseOp {
 			if top.cas.isElse {
 				return sp.bad(n, "", "%s after the else of the switch on line %d", kw, top.sw.line)
+			}
+			if top.afterRest {
+				sp.stack[len(sp.stack)-2].restCase = true
 			}
 			sp.stack = sp.stack[:len(sp.stack)-1]
 			top = sp.top()
@@ -885,17 +1094,36 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 		}
 		if top.op == seqCaseOp {
 			// The end closes the case and its switch.
+			rest := top.afterRest || sp.stack[len(sp.stack)-2].restCase
 			sp.stack = sp.stack[:len(sp.stack)-1]
 			sp.stack = sp.stack[:len(sp.stack)-1]
+			if rest {
+				restEnded(sp.top())
+			}
 			return nil
 		}
 		if top.op == seqGroup && top.body.whens > 0 && len(top.body.kinds) == 0 {
 			return sp.bad(top.line, "", "a when line needs a body with a kind line")
 		}
 		sp.stack = sp.stack[:len(sp.stack)-1]
-		// The end of a choice closes its last alt and the choice.
-		if top.op == seqAlt {
+		switch {
+		case top.op == seqAlt:
+			// The end of a choice closes its last alt and the choice (0.19).
+			// A rest group in an alt ends the extent's other lines after
+			// the choice, as one in a case does after its switch (0.21
+			// ruling 39 with 0.20 ruling 40).
+			rest := top.afterRest || sp.top().restCase
 			sp.stack = sp.stack[:len(sp.stack)-1]
+			if rest {
+				restEnded(sp.top())
+			}
+		case top.op == seqGroup && top.group.seqMode == seqRest:
+			// What follows a rest group, or a block holding one, in the
+			// same extent is checked by wireLine (0.21 ruling 11). A length
+			// block ends the extent; a group body is its items' own.
+			restEnded(sp.top())
+		case (top.op == seqIf || top.op == seqOpt || top.op == seqChain || top.op == seqExt) && top.afterRest:
+			restEnded(sp.top())
 		}
 	}
 	return nil
@@ -911,7 +1139,74 @@ func (sp *seqParser) finish() error {
 	if b := sp.p.sbody; b.whens > 0 && len(b.kinds) == 0 {
 		return sp.bad(0, "", "a when line needs a pack with a kind line")
 	}
+	// Each reading path through a count's range holds exactly one group
+	// that references it (0.21 rulings 2 and 33).
+	for _, cd := range sp.counts {
+		lo, hi := countRefs((*cd.list)[cd.idx+1:], cd)
+		paths := [][2]int{{lo, hi}}
+		if cd.body != nil && len(cd.body.kinds) > 0 {
+			paths = paths[:0]
+			for _, k := range cd.body.kinds {
+				a, b := countRefs(k.nodes, cd)
+				paths = append(paths, [2]int{lo + a, hi + b})
+			}
+		}
+		for _, pr := range paths {
+			if pr[0] != 1 || pr[1] != 1 {
+				return sp.bad(cd.line, "", "count %s: a reading path holds %d to %d groups that reference it, and must hold exactly one", cd.name, pr[0], pr[1])
+			}
+		}
+	}
 	return nil
+}
+
+// countRefs returns the fewest and the most groups that reference a count
+// along the reading paths through lines. Paths split only at switch cases
+// (0.21 ruling 33); a group body is not entered (ruling 9).
+func countRefs(nodes []*seqNode, cd *seqCountDef) (lo, hi int) {
+	for _, n := range nodes {
+		switch n.op {
+		case seqGroup:
+			if n.g.cnt == cd {
+				lo++
+				hi++
+			}
+		case seqSwitchOp:
+			cases := append([]*seqCase(nil), n.sw.cases...)
+			if n.sw.els != nil {
+				cases = append(cases, n.sw.els)
+			}
+			cl, ch := -1, 0
+			for _, c := range cases {
+				a, b := countRefs(c.body, cd)
+				if cl < 0 || a < cl {
+					cl = a
+				}
+				if b > ch {
+					ch = b
+				}
+			}
+			if cl > 0 {
+				lo += cl
+			}
+			hi += ch
+		default:
+			a, b := countRefs(n.body, cd)
+			lo += a
+			hi += b
+		}
+	}
+	return lo, hi
+}
+
+// parsePlus reads the `plus` value of a count line: an optional '-' then
+// digits, leading zeros allowed, within signed 64 bits (0.21 ruling 16).
+func parsePlus(s string) (int64, bool) {
+	if !isDigits(strings.TrimPrefix(s, "-")) {
+		return 0, false
+	}
+	v, err := strconv.ParseInt(s, 10, 64)
+	return v, err == nil
 }
 
 // bind indexes each body once the pack has loaded: the defaults in scope of
@@ -945,11 +1240,25 @@ type seqReader struct {
 	pos   int
 	limit int  // the first bit the lines may not read
 	ext   bool // inside a `length` extent: a line at or after limit reads as absent
-	pres  map[*seqPresenceDef][]bool
-	read  map[*seqCase]bool // the cases and else bodies read (0.20 ruling 21)
+	// extBits is set when the innermost extent is counted in bits (a
+	// `length … bits` block): a rest item needs 1 bit there, not 8 (0.21).
+	extBits bool
+	// cnts holds what each count line last read (0.21).
+	cnts map[*seqCountDef]*seqCountRead
+	pres map[*seqPresenceDef][]bool
+	read map[*seqCase]bool // the cases and else bodies read (0.20 ruling 21)
 	// pending holds the presence bits that are 1 and that only an `if`
 	// inside a case names: each is checked once the message is read.
 	pending []seqPendingBit
+}
+
+// seqCountRead is what a count line read: the number of items, unless the
+// line lay at or past the end of a length extent (ok false). huge is set when
+// the value minus `plus` exceeds 64 bits.
+type seqCountRead struct {
+	ok    bool
+	items uint64
+	huge  bool
 }
 
 type seqPendingBit struct {
@@ -988,7 +1297,7 @@ func decodeSeq(d *decodeState, data []byte, nbits int) error {
 	p := d.pack
 	// limit is the bits the input carries: under six-bit armor not a whole
 	// number of bytes (0.14).
-	r := &seqReader{d: d, p: p, data: data, limit: nbits, pres: map[*seqPresenceDef][]bool{}, read: map[*seqCase]bool{}}
+	r := &seqReader{d: d, p: p, data: data, limit: nbits, pres: map[*seqPresenceDef][]bool{}, read: map[*seqCase]bool{}, cnts: map[*seqCountDef]*seqCountRead{}}
 	k, err := r.body(p.sbody)
 	if err != nil {
 		return err
@@ -1151,10 +1460,10 @@ func (r *seqReader) node(n *seqNode) error {
 			return r.malformed("the length block on line %d states %d bit(s) at bit %d and %d are left", n.line, size, r.pos, r.limit-r.pos)
 		}
 		end := r.pos + int(size)
-		limit, ext := r.limit, r.ext
-		r.limit, r.ext = end, true
+		limit, ext, extBits := r.limit, r.ext, r.extBits
+		r.limit, r.ext, r.extBits = end, true, n.bits
 		err = r.nodes(n.body)
-		r.limit, r.ext = limit, ext
+		r.limit, r.ext, r.extBits = limit, ext, extBits
 		if err != nil {
 			return err
 		}
@@ -1183,6 +1492,31 @@ func (r *seqReader) node(n *seqNode) error {
 		return r.extBlock(n)
 	case seqChoice:
 		return r.choice(n)
+	case seqCountOp:
+		// A count line at or past the end of a length extent leaves its
+		// group absent; a value below `plus` is malformed-wire here (0.21).
+		cd := n.cnt
+		at, ok, err := r.take(cd.n, "count "+cd.name)
+		if err != nil {
+			return err
+		}
+		if !ok {
+			r.cnts[cd] = &seqCountRead{}
+			return nil
+		}
+		raw := getBits(r.data, at, cd.n, p.msb)
+		st := &seqCountRead{ok: true}
+		if cd.plus >= 0 {
+			if raw < uint64(cd.plus) {
+				return r.malformed("count %s on line %d holds %d, below its plus of %d", cd.name, cd.line, raw, cd.plus)
+			}
+			st.items = raw - uint64(cd.plus)
+		} else {
+			var carry uint64
+			st.items, carry = bits.Add64(raw, uint64(-(cd.plus+1))+1, 0)
+			st.huge = carry != 0
+		}
+		r.cnts[cd] = st
 	case seqSwitchOp:
 		// The key's decoded value when the cursor reaches the switch selects
 		// the case (0.20).
@@ -1288,8 +1622,9 @@ func (r *seqReader) presence(pr *seqPresenceDef) error {
 // group reads the items of a sequential group.
 func (r *seqReader) group(g *Group) error {
 	p, d := r.p, r.d
-	// A group at or after the end of a length extent gives an absent list.
-	if r.beyond() {
+	// A group at or after the end of a length extent gives an absent list;
+	// a rest group there is present and empty (0.21 ruling 3).
+	if r.beyond() && g.seqMode != seqRest {
 		return nil
 	}
 	d.replacing(g.List)
@@ -1343,6 +1678,56 @@ func (r *seqReader) group(g *Group) error {
 		for i := uint64(0); i < count; i++ {
 			if err := item(); err != nil {
 				return err
+			}
+		}
+	case seqCountRef:
+		// The count was read at its own line; the bits left are counted at
+		// the group (0.21 ruling 20).
+		st := r.cnts[g.cnt]
+		if st == nil || !st.ok {
+			return nil
+		}
+		if st.huge || st.items > uint64(r.limit-r.pos) {
+			return r.malformed("list %s: count %s states more items than the %d bit(s) left", g.List, g.cnt.name, r.limit-r.pos)
+		}
+		for i := uint64(0); i < st.items; i++ {
+			if err := item(); err != nil {
+				return err
+			}
+		}
+	case seqRest:
+		// Items while bits remain in the extent; fewer are padding (0.21).
+		least := 8
+		if r.extBits {
+			least = 1
+		}
+		for r.limit-r.pos >= least {
+			start := r.pos
+			if err := item(); err != nil {
+				return err
+			}
+			if r.pos == start {
+				return r.malformed("list %s: an item of the rest group reads no bits", g.List)
+			}
+		}
+		r.pos = r.limit
+	case seqLast:
+		// The first indicator at the extent end gives an absent list (above);
+		// a later one there is malformed-wire (0.21 ruling 13).
+		for {
+			at, ok, err := r.take(1, "list "+g.List)
+			if err != nil {
+				return err
+			}
+			if !ok {
+				return r.malformed("list %s: the last-item bit of an item after the first starts at bit %d, the end of its length extent", g.List, r.pos)
+			}
+			last := bitAt(r.data, at, p.msb) == 1
+			if err := item(); err != nil {
+				return err
+			}
+			if last {
+				break
 			}
 		}
 	case seqWhile:
@@ -1519,6 +1904,65 @@ type seqWriter struct {
 	forced    map[seqSwitchAt]*seqCase
 	predicted []seqPrediction
 	actual    map[seqSwitchAt]*seqCase
+	// counts holds each count line written, in order; cntAt the last one
+	// written of each count line, which its group fills in (0.21).
+	counts []*seqCountAt
+	cntAt  map[*seqCountDef]*seqCountAt
+	// exts holds the extents open at the cursor: the message, then each
+	// length block (0.21).
+	exts []*seqExtent
+}
+
+// seqCountAt is one count field written: where it is and the number of items
+// its group wrote.
+type seqCountAt struct {
+	cd    *seqCountDef
+	at    int
+	items int
+}
+
+// seqExtent is one extent while it is written: where it starts, whether it
+// is counted in bits, and where each item of a rest group in it starts.
+type seqExtent struct {
+	start int
+	bits  bool
+	items []int
+	// reached is set when a rest group of the extent is written.
+	reached bool
+}
+
+// fillCounts writes each count: its group's items plus `plus`, checked once
+// the message is laid out (0.21 ruling 30).
+func (w *seqWriter) fillCounts() error {
+	for _, c := range w.counts {
+		v, ok := countValue(c.items, c.cd.plus)
+		if !ok || (c.cd.n < 64 && v>>uint(c.cd.n) != 0) {
+			return w.fail("count %s on line %d: %d item(s) plus %d do not fit its %d-bit field", c.cd.name, c.cd.line, c.items, c.cd.plus, c.cd.n)
+		}
+		w.put(c.at, c.cd.n, v)
+	}
+	return nil
+}
+
+// closeExtent checks, once an extent is laid out and padded, that each rest
+// item in it starts with enough bits left for a decode to read it: 8 before
+// the byte-padded end of a byte-counted extent (0.21 rulings 4, 21 and 34).
+func (w *seqWriter) closeExtent() error {
+	e := w.exts[len(w.exts)-1]
+	w.exts = w.exts[:len(w.exts)-1]
+	end, least := w.pos, 1
+	// The message stays counted in bytes, under six-bit armor too (0.21
+	// ruling 43).
+	if !e.bits {
+		least = 8
+		end = e.start + (w.pos-e.start+7)/8*8
+	}
+	for _, at := range e.items {
+		if end-at < least {
+			return w.fail("an item of a rest group starts at bit %d with %d bit(s) left before the end of its extent at bit %d; the output would not decode it", at, end-at, end)
+		}
+	}
+	return nil
 }
 
 // seqSwitchAt is one evaluation of a switch: the switch and the message or
@@ -1609,12 +2053,22 @@ func encodeSeq(p *Pack, ent *Entity) ([]byte, error) {
 
 // encodePass writes the message once, from the writer's prediction.
 func (w *seqWriter) encodePass(nodes []*seqNode, sc seqScope) ([]byte, error) {
+	w.cntAt = map[*seqCountDef]*seqCountAt{}
+	w.exts = []*seqExtent{{}}
 	if err := w.emit(nodes, sc, false); err != nil {
 		return nil, err
 	}
 	// Armored text is the bits up to the cursor, not rounded to a byte
-	// (spec 0.14); `length … whole` is refused under armor at load.
+	// (spec 0.14); `length … whole` is refused under armor at load. Its
+	// counts are filled and its rest items checked as for a message of
+	// bytes (0.21 ruling 43).
 	if w.p.sixbitArmor {
+		if err := w.closeExtent(); err != nil {
+			return nil, err
+		}
+		if err := w.fillCounts(); err != nil {
+			return nil, err
+		}
 		w.buf.need(w.pos)
 		return sixbitArmorText(w.buf.data, w.pos), nil
 	}
@@ -1625,6 +2079,12 @@ func (w *seqWriter) encodePass(nodes []*seqNode, sc seqScope) ([]byte, error) {
 	}
 	if w.p.uper && w.pos == 0 {
 		w.alloc(8)
+	}
+	if err := w.closeExtent(); err != nil {
+		return nil, err
+	}
+	if err := w.fillCounts(); err != nil {
+		return nil, err
 	}
 	for _, wh := range w.wholes {
 		if err := w.length(wh.n, wh.at, int64(w.pos/8)); err != nil {
@@ -2002,6 +2462,7 @@ func (w *seqWriter) emit(nodes []*seqNode, sc seqScope, chain bool) error {
 		case seqLength:
 			at := w.alloc(n.n)
 			start := w.pos
+			w.exts = append(w.exts, &seqExtent{start: start, bits: n.bits})
 			if err := w.emit(n.body, sc, false); err != nil {
 				return err
 			}
@@ -2012,6 +2473,9 @@ func (w *seqWriter) emit(nodes []*seqNode, sc seqScope, chain bool) error {
 					w.alloc(8 - rem)
 				}
 				size = int64(w.pos-start) / 8
+			}
+			if err := w.closeExtent(); err != nil {
+				return err
 			}
 			if err := w.length(n, at, size); err != nil {
 				return err
@@ -2032,6 +2496,12 @@ func (w *seqWriter) emit(nodes []*seqNode, sc seqScope, chain bool) error {
 			if err := w.choice(n, sc); err != nil {
 				return err
 			}
+		case seqCountOp:
+			// The value is written once the message is laid out; until its
+			// group is reached it holds `plus` (0.21 rulings 22, 23 and 30).
+			c := &seqCountAt{cd: n.cnt, at: w.alloc(n.cnt.n)}
+			w.counts = append(w.counts, c)
+			w.cntAt[n.cnt] = c
 		case seqSwitchOp:
 			// The case decode would select from the bits written (0.20).
 			if _, ok := sc.vals[n.sw.key]; !ok && sc.bad[n.sw.key] {
@@ -2048,6 +2518,20 @@ func (w *seqWriter) emit(nodes []*seqNode, sc seqScope, chain bool) error {
 		}
 	}
 	return nil
+}
+
+// countValue is items + plus as an unsigned field value; ok is false when it
+// is below 0 or above 2^64-1.
+func countValue(items int, plus int64) (uint64, bool) {
+	if plus >= 0 {
+		v, carry := bits.Add64(uint64(items), uint64(plus), 0)
+		return v, carry == 0
+	}
+	m := uint64(-(plus + 1)) + 1
+	if uint64(items) < m {
+		return 0, false
+	}
+	return uint64(items) - m, true
 }
 
 // length writes a length field: the size plus what the field counts beyond
@@ -2084,6 +2568,46 @@ func (w *seqWriter) group(g *Group, sc seqScope) error {
 			return err
 		}
 		for _, it := range items {
+			if err := item(it); err != nil {
+				return err
+			}
+		}
+	case seqCountRef:
+		if c := w.cntAt[g.cnt]; c != nil {
+			c.items = len(items)
+		}
+		for _, it := range items {
+			if err := item(it); err != nil {
+				return err
+			}
+		}
+	case seqRest:
+		ext := w.exts[len(w.exts)-1]
+		for i, it := range items {
+			start := w.pos
+			ext.reached = false
+			if err := item(it); err != nil {
+				return err
+			}
+			if w.pos == start {
+				return w.fail("list %s: an item of the rest group writes no bits, so the output would not decode", g.List)
+			}
+			// An item whose lines reach a rest group of the same extent
+			// takes the rest of it: only the last item may (0.21 rulings 10
+			// and 27).
+			if g.innerRest && ext.reached && i < len(items)-1 {
+				return w.fail("list %s: item %d reaches a rest list that takes the rest of the extent, and %d item(s) follow it", g.List, i, len(items)-1-i)
+			}
+			ext.items = append(ext.items, start)
+		}
+		ext.reached = true
+	case seqLast:
+		// The list holds at least one item on the wire (0.21).
+		if len(items) == 0 {
+			return w.fail("list %s is absent or empty and its last group holds at least one item", g.List)
+		}
+		for i, it := range items {
+			bit(i == len(items)-1)
 			if err := item(it); err != nil {
 				return err
 			}

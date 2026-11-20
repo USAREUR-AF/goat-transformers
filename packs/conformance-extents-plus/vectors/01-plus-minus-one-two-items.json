@@ -1,0 +1,15 @@
+{
+  "name": "plus-minus-one-two-items",
+  "from": "conformance-extents-plus",
+  "to": "conformance-extents-plus",
+  "input": "01aa0506",
+  "expect": "01aa0506",
+  "model": {
+    "probe.x": "170",
+    "probe.nums.#": "2",
+    "probe.nums[0].probe.val": "5",
+    "probe.nums[1].probe.val": "6"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 7; the field is items + n with n = -1: 1 - (-1) = 2 items"
+}

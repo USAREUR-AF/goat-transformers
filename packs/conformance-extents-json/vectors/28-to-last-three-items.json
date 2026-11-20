@@ -1,0 +1,9 @@
+{
+  "name": "to-last-three-items",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-last",
+  "input": "{\"nums\":[5,6,7]}",
+  "expect": "050687",
+  "source": "constructed",
+  "reference": "spec 0.21, The last-item flag; 0 0000101 0 0000110 1 0000111"
+}

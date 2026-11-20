@@ -1,0 +1,22 @@
+# Conformance probe pack for `rest` as the last line of an item of an outer
+# `rest` group (spec 0.21 ruling 10), most significant bit first. Public. No
+# kinds.
+#
+#   items       items to the end of the message: qty in 8 bits, then subs to
+#               the end of the message (val in 8 bits each). The first item
+#               takes the whole message, so an outer list of more than one
+#               item does not encode.
+format     conformance-extents-outer
+version    0.21.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+group   probe.items rest
+  field  probe.qty  8  uint
+  group  probe.subs rest
+    field  probe.val  8  uint
+  end
+end

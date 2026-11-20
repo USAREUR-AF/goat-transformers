@@ -1,0 +1,19 @@
+{
+  "name": "ruling-10-a-a-b-round-trip",
+  "from": "conformance-extents-outerkind",
+  "to": "conformance-extents-outerkind",
+  "input": "01090103020506",
+  "expect": "01090103020506",
+  "model": {
+    "probe.items.#": "3",
+    "probe.items[0].@kind": "a",
+    "probe.items[0].probe.qty": "9",
+    "probe.items[1].@kind": "a",
+    "probe.items[1].probe.qty": "3",
+    "probe.items[2].@kind": "b",
+    "probe.items[2].probe.subs.#": "2",
+    "probe.items[2].probe.subs[1].probe.val": "6"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 10 with ruling 27; only the last item is of the kind that ends in the inner rest"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "to-rest-item-without-y",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-rest",
+  "input": "{\"z\":9,\"recs\":[{\"x\":1}]}",
+  "expect": "090100",
+  "source": "constructed",
+  "reference": "spec 0.21, A list to the end of its extent; y absent in the item writes zero bits (0.8 Lines)"
+}

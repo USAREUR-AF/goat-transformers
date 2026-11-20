@@ -451,7 +451,9 @@ pack_directives() ->
      %% ASN.1 unaligned PER (Version 0.19): directives on every wire (ruling 21)
      <<"encoding">>, <<"ext">>, <<"choice">>, <<"alt">>,
      %% a switch on a decoded value (Version 0.20)
-     <<"switch">>, <<"case">>, <<"else">>].
+     <<"switch">>, <<"case">>, <<"else">>,
+     %% a named count (Version 0.21)
+     <<"count">>].
 
 %% The lines that stand after the `wire` line (ruling 5b of 0.11).
 after_wire() ->
@@ -580,7 +582,8 @@ known_directives() ->
      <<"delimiter">>, <<"start">>, <<"checksum">>, <<"tag">>, <<"key">>, <<"armor">>,
      <<"element">>,
      <<"encoding">>, <<"ext">>, <<"choice">>, <<"alt">>,
-     <<"switch">>, <<"case">>, <<"else">>].
+     <<"switch">>, <<"case">>, <<"else">>,
+     <<"count">>].
 
 in_group(#{gstack := Stack}) -> Stack =/= [].
 
@@ -686,10 +689,15 @@ apply_line([<<"group">>, List, _LocS | _], #{wire := tlv}) ->
     load_error('bad-directive', "group ~s: groups are not allowed on a tlv wire in 0.13", [List]);
 apply_line([<<"group">>, List, LocS | Rest], #{gstack := Stack} = P) ->
     Wire = need_wire(P),
-    Loc = group_loc(Wire, LocS, in_group(P), P),
+    %% a group locator refused after the file (ruling 44 of 0.21) leaves the
+    %% group open with no locator, so that its body and `end` read as usual
+    {Loc, P0} = try {group_loc(Wire, LocS, in_group(P), P), P}
+                catch error:{load_error, LK, LM} when Wire =:= protobuf ->
+                        {[], late({raw, LK, LM}, P)}
+                end,
     %% a group's options are checked after the file is read (ruling 5b of 0.11)
-    {Spec, P1} = try {group_spec(Wire, Rest, LocS, P), P}
-                 catch error:{load_error, K, M} -> {none, late({raw, K, M}, P)}
+    {Spec, P1} = try {group_spec(Wire, Rest, LocS, P0), P0}
+                 catch error:{load_error, K, M} -> {none, late({raw, K, M}, P0)}
                  end,
     G = #{list => List, loc => Loc, spec => Spec, loct => LocS,
           lines => [], defaults => []},
@@ -1179,6 +1187,11 @@ group_loc(geojson, <<"geometry", _/binary>> = S, false, _P) ->
 group_loc(geojson, S, false, P) -> top_loc(geojson, S, P);
 group_loc(geojson, S, true, P) -> top_loc(json, S, P);
 group_loc(json, S, _InGroup, P) -> top_loc(json, S, P);
+%% `rest` and `last` are not protobuf group locators: bad-directive, a
+%% check after the file (rulings 37 and 44 of 0.21); any other step that is
+%% not digits stays bad-locator, a line check (5a of 0.11)
+group_loc(protobuf, S, _InGroup, _P) when S =:= <<"rest">>; S =:= <<"last">> ->
+    load_error('bad-directive', "~s is a group form of a sequential pack, not a protobuf locator", [S]);
 group_loc(protobuf, S, _InGroup, P) -> top_loc(protobuf, S, P);
 group_loc(bits, S, _InGroup, #{word_bytes := WB0}) ->
     WB = case WB0 of
@@ -2065,12 +2078,19 @@ seq_apply([<<"group">>, List, <<"size">> | SizeToks], P) ->
     seq_push(#{type => group, hdr => {List, Mode}}, late({need_uper, "group ... size"}, P));
 seq_apply([<<"group">>, List | ModeToks], P) ->
     Mode = case ModeToks of
+               %% 0.21: a count named by an earlier `count` line
+               [<<"count">>, <<"@", Name/binary>>] when Name =/= <<>> -> {countref, Name};
+               [<<"count">>, <<"@">>] ->
+                   load_error('bad-directive', "group ~s: count @ names no count", [List]);
                [<<"count">>, LenS] -> {count, seq_len(LenS, 1, 64)};
                [<<"while">>] -> while;
                [<<"more">>] -> more;
                [<<"fx">>] -> fx;
+               [<<"rest">>] -> rest;
+               [<<"last">>] -> last;
                _ -> load_error('bad-directive',
-                               "group ~s is not `count <len>`, `while`, `more` or `fx`", [List])
+                               "group ~s is not `count <len>`, `count @<name>`, `while`, `more`, `fx`, `rest` or `last`",
+                               [List])
            end,
     seq_push(#{type => group, hdr => {List, Mode}}, P);
 seq_apply([<<"ext">>], P) ->
@@ -2103,6 +2123,20 @@ seq_apply([<<"alt">>, IS], #{sstack := Stack} = P) ->
             P#{sstack := [F1#{alt := I, lines := []} | Rest]};
         _ -> load_error('bad-directive', "alt ~s outside a choice", [IS])
     end;
+%% `count <name> <len> [plus <n>]` (0.21): a count field named for a later
+%% `group <list> count @<name>`
+seq_apply([<<"count">> | Args], P) ->
+    {Name, LenS, Plus} =
+        case Args of
+            [N, L] -> {N, L, 0};
+            [N, L, <<"plus">>, NS] -> {N, L, count_plus(NS)};
+            _ -> load_error('bad-directive', "count is `count <name> <len> [plus <n>]`", [])
+        end,
+    case binary:match(Name, [<<".">>, <<"!">>, <<"@">>]) of
+        nomatch -> ok;
+        _ -> load_error('bad-directive', "count name ~s holds . ! or @", [Name])
+    end,
+    seq_add({scount, Name, seq_len(LenS, 1, 64), Plus}, P);
 %% `switch <key>` / `case <value>[,...]` / `else` / `end` (0.20)
 seq_apply([<<"switch">> | Args], #{switch_n := N} = P) ->
     Key = case Args of
@@ -2191,6 +2225,20 @@ seq_apply([Dir | Args], _P) ->
         true -> load_error('bad-directive', "~s takes a different number of arguments than ~p",
                            [Dir, length(Args)]);
         false -> load_error('unknown-directive', "~s", [Dir])
+    end.
+
+%% An optional `-` then digits (leading zeros allowed) within signed 64 bits
+%% (ruling 16 of 0.21).
+count_plus(NS) ->
+    {Neg, Digits} = minus(NS),
+    case uint(Digits) of
+        V when is_integer(V) ->
+            N = sign(Neg, V),
+            case N >= -(1 bsl 63) andalso N < (1 bsl 63) of
+                true -> N;
+                false -> load_error('bad-directive', "count plus ~s is outside signed 64 bits", [NS])
+            end;
+        error -> load_error('bad-directive', "count plus ~s is not an integer", [NS])
     end.
 
 default(undefined, D) -> D;
@@ -2402,6 +2450,8 @@ seq_resolve(#{common := Common, kinds := Kinds, has_kinds := HasKinds} = P) ->
     end,
     {Common1, Kinds1, St} = seq_res_scope(Common, Kinds, #{}, {0, #{}, #{}, {[], #{}}}),
     seq_check_lists(Common1, Kinds1),
+    seq_check_counts(Common1, Kinds1),
+    rest_scope(Common1, Kinds1, false, top),
     P#{common := Common1, kinds := Kinds1, presence_named => element(2, St),
        presence_static => element(3, St)}.
 
@@ -2482,6 +2532,13 @@ seq_res([], Env, Decl, St, Acc) -> {lists:reverse(Acc), Env, Decl, St};
 %% St = {NextId, Named, Static, CaseAcc}: Named the bits every `if` names,
 %% Static those named by an `if` in no case; inside a case CaseAcc collects
 %% the {Id, Bit} its own `if` lines name (ruling 21 of 0.20), else `top`.
+seq_res([{scount, Name, Len, Plus} | Rest], Env, Decl, St, Acc) ->
+    case maps:is_key(Name, Decl) of
+        true -> load_error('bad-directive', "~s is declared twice in one block", [Name]);
+        false -> ok
+    end,
+    Id = make_ref(),
+    seq_res(Rest, Env#{Name => {count, Id}}, Decl#{Name => true}, St, [{scount, Id, Len, Plus} | Acc]);
 seq_res([{presence, Name, Size} | Rest], Env, Decl, {Next, Named, Static, {CStack, _} = CA}, Acc) ->
     case maps:is_key(Name, Decl) of
         true -> load_error('bad-directive', "presence ~s is declared twice in one block", [Name]);
@@ -2503,6 +2560,8 @@ seq_res([{ifb, Conds, Body} | Rest], Env, Decl, {Next, Named0, Static0, CA0}, Ac
                   case maps:find(Name, Env) of
                       error ->
                           load_error('bad-directive', "if names presence ~s, which is not visible here", [Name]);
+                      {ok, C} when element(1, C) =:= count; C =:= outside ->
+                          load_error('bad-directive', "if names ~s, which is a count", [Name]);
                       {ok, {_, Size, _}} when is_integer(Size), Bit > Size ->
                           load_error('bad-directive', "if names bit ~p of presence ~s, which has ~p bits",
                                      [Bit, Name, Size]);
@@ -2549,8 +2608,25 @@ seq_res([{chain, First, Parts, EndsFx} | Rest], Env, Decl, St, Acc) ->
                   {Part1, {E1, D1, S1}}
           end, {Env, #{}, St}, [First | Parts]),
     seq_res(Rest, Env, Decl, St1, [{chain, First1, Parts1, EndsFx} | Acc]);
-seq_res([{sgroup, List, Mode, #{lines := Ls, kinds := Ks} = Body} | Rest], Env, Decl, St, Acc) ->
-    {Ls1, Ks1, St1} = seq_res_scope(Ls, Ks, Env, St),
+seq_res([{sgroup, List, Mode0, #{lines := Ls, kinds := Ks} = Body} | Rest], Env, Decl, St, Acc) ->
+    Mode = case Mode0 of
+               {countref, Name} ->
+                   case maps:find(Name, Env) of
+                       {ok, {count, Id}} -> {countref, Id};
+                       {ok, outside} ->
+                           load_error('bad-directive',
+                                      "group ~s: count ~s stands outside the group body (ruling 9 of 0.21)",
+                                      [List, Name]);
+                       {ok, _} -> load_error('bad-directive', "group ~s: ~s is a presence, not a count",
+                                             [List, Name]);
+                       error -> load_error('bad-directive', "group ~s: no count ~s is visible here",
+                                           [List, Name])
+                   end;
+               _ -> Mode0
+           end,
+    %% a count reference stays in the group body of its count (ruling 9)
+    Inner = maps:map(fun(_, {count, _}) -> outside; (_, V) -> V end, Env),
+    {Ls1, Ks1, St1} = seq_res_scope(Ls, Ks, Inner, St),
     seq_res(Rest, Env, Decl, St1, [{sgroup, List, Mode, Body#{lines := Ls1, kinds := Ks1}} | Acc]);
 seq_res([L | Rest], Env, Decl, St, Acc) -> seq_res(Rest, Env, Decl, St, [L | Acc]).
 
@@ -2567,7 +2643,7 @@ seq_res_block(Body, Env, St) ->
     {Body1, _, _, St1} = seq_res(Body, Env, #{}, St, []),
     {Body1, St1}.
 
-%% ===================================================================
+%% ============================================================
 %% ASN.1 unaligned PER locators (engine-spec Version 0.19)
 %% ===================================================================
 %% A UPER field is an sfield whose Len is {uper, Loc} (its With as any sfield):
@@ -3037,3 +3113,106 @@ tlv_scopes(#{common := Common, kinds := Kinds}) ->
                         end
                 end, Lines)
       end, Scopes).
+%% ---- count references (0.21, rulings 2, 9, 12, 15, 24, 25 and 33) ----
+%% After seq_res every count line and `count @` reference holds the id of
+%% the count it names. Each count must be referenced by exactly one group in
+%% every reading path from its line to the end of its block; paths split
+%% only at kinds and switch cases. A count among the common lines of a
+%% scope with kinds reaches into every kind.
+seq_check_counts(Common, Kinds) -> count_block(Common, Kinds).
+
+count_block(Lines, Kinds) ->
+    count_lines(Lines, Kinds),
+    lists:foreach(fun(#{lines := Ls}) -> count_block(Ls, []) end, Kinds).
+
+count_lines([], _Kinds) -> ok;
+count_lines([L | Rest], Kinds) ->
+    case L of
+        {scount, Id, _, _} ->
+            Paths = case Kinds of
+                        [] -> count_refs(Id, Rest);
+                        _ -> lists:usort(lists:append([count_add(count_refs(Id, Rest), count_refs(Id, Ls))
+                                                       || #{lines := Ls} <- Kinds]))
+                    end,
+                    case Paths of
+                        [1] -> ok;
+                        _ -> load_error('bad-directive',
+                                        "a count is not referenced by exactly one count @ group in each reading path", [])
+                    end;
+        {sgroup, _, _, #{lines := Ls, kinds := Ks}} -> count_block(Ls, Ks);
+        %% the parts of a chain are one block
+        {chain, First, Parts, _} -> count_block(lists:append([First | Parts]), []);
+        _ when is_tuple(L) -> lists:foreach(fun(B) -> count_block(B, []) end, seq_bodies(L));
+        _ -> ok
+    end,
+    count_lines(Rest, Kinds).
+
+%% The numbers of references to count Id over the reading paths through
+%% Lines, as an ordset of 0, 1 and 2 (2 standing for two or more).
+count_refs(Id, Lines) -> lists:foldl(fun(L, S) -> count_add(S, count_refs1(Id, L)) end, [0], Lines).
+
+count_refs1(Id, {sgroup, _, {countref, Id}, _}) -> [1];
+count_refs1(_Id, {sgroup, _, _, _}) -> [0];
+count_refs1(Id, {switch, _, _, Cases, Else}) ->
+    lists:usort(lists:append([count_refs(Id, maps:get(lines, C)) || C <- switch_bodies(Cases, Else)]));
+count_refs1(Id, L) when is_tuple(L) -> count_refs(Id, lists:append(seq_bodies(L)));
+count_refs1(_Id, _) -> [0].
+
+count_add(A, B) -> lists:usort([min(X + Y, 2) || X <- A, Y <- B]).
+
+%% ---- where a `rest` group may stand (0.21, rulings 10, 11, 26, 27, 32) ----
+%% A `rest` group is the last wire line of its extent (the innermost
+%% `length` block, else the message), in reading order: no wire line
+%% follows the block holding it, up to the end of the extent, whatever case
+%% is selected; the common lines of a scope are followed by every kind's.
+%% Inside an item it stands within a `length` block of the item's body, or
+%% last in an item of an outer `rest` group.
+%% Ctx: top (directly in an extent), item (in a counted, while, more, fx or
+%% last item, no length between), rest_item (in an item of a rest group).
+rest_scope(Common, Kinds, After, Ctx) ->
+    KindWire = lists:any(fun(#{lines := Ls}) -> wire_any(Ls) end, Kinds),
+    rest_block(Common, After orelse KindWire, Ctx),
+    lists:foreach(fun(#{lines := Ls}) -> rest_block(Ls, After, Ctx) end, Kinds).
+
+rest_block([], _After, _Ctx) -> ok;
+rest_block([L | Rest], After0, Ctx) ->
+    After = After0 orelse wire_any(Rest),
+    case L of
+        {sgroup, List, rest, #{lines := Ls, kinds := Ks}} ->
+            case Ctx of
+                item -> load_error('bad-directive',
+                                   "group ~s rest stands in an item outside a length block of the item (ruling 10 of 0.21)",
+                                   [List]);
+                _ -> ok
+            end,
+            case After of
+                true -> load_error('bad-directive',
+                                   "group ~s rest is not the last line of its extent (ruling 11 of 0.21)", [List]);
+                false -> ok
+            end,
+            rest_scope(Ls, Ks, false, rest_item);
+        {sgroup, _, _, #{lines := Ls, kinds := Ks}} -> rest_scope(Ls, Ks, true, item);
+        {len, _, _, _, Body} -> rest_block(Body, false, top);
+        {chain, First, Parts, EndsFx} ->
+            N = length(Parts),
+            lists:foreach(fun({I, Part}) -> rest_block(Part, After orelse I < N orelse EndsFx, Ctx) end,
+                          lists:zip(lists:seq(0, N), [First | Parts]));
+        _ when is_tuple(L) -> lists:foreach(fun(B) -> rest_block(B, After, Ctx) end, seq_bodies(L));
+        _ -> ok
+    end,
+    rest_block(Rest, After0, Ctx).
+
+%% Does a line read or write bits (rulings 26 and 32)? An `if`, `switch` or
+%% chain only when it holds a wire line (a chain's `fx` lines are).
+wire_any(Lines) -> lists:any(fun wire_line/1, Lines).
+
+wire_line({ifb, _, Body}) -> wire_any(Body);
+wire_line({switch, _, _, Cases, Else}) ->
+    lists:any(fun(C) -> wire_any(maps:get(lines, C)) end, switch_bodies(Cases, Else));
+wire_line({chain, First, Parts, EndsFx}) -> Parts =/= [] orelse EndsFx orelse wire_any(First);
+%% a choice reads bits when it has `ext`, more than one root alternative
+%% (its index) or an alt that reads bits; an `ext` always does, its
+%% extension bit (ruling 41)
+wire_line({uchoice, N, IsExt, Alts}) ->
+    IsExt orelse N > 1 orelse lists:any(fun({_, B}) -> wire_any(B) end, Alts);
+wire_line(_) -> true.

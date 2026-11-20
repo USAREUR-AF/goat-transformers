@@ -1,0 +1,18 @@
+{
+  "name": "ruling-27-rest-in-an-item-kind",
+  "from": "conformance-extents-itemkind",
+  "to": "conformance-extents-itemkind",
+  "input": "0201020506090203",
+  "expect": "0201020506090203",
+  "model": {
+    "probe.items.#": "2",
+    "probe.items[0].@kind": "a",
+    "probe.items[0].probe.subs.#": "2",
+    "probe.items[0].probe.qty": "9",
+    "probe.items[1].@kind": "b",
+    "probe.items[1].probe.qty": "3",
+    "probe.items[1].probe.subs.#": "absent"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 27; the rest group is the last line of the length block of kind a's body (ruling 10)"
+}

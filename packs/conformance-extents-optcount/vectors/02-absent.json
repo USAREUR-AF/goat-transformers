@@ -1,0 +1,12 @@
+{
+  "name": "absent",
+  "from": "conformance-extents-optcount",
+  "to": "conformance-extents-optcount",
+  "input": "00",
+  "expect": "00",
+  "model": {
+    "probe.nums.#": "absent"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 18; opt 0"
+}

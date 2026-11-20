@@ -1,0 +1,12 @@
+{
+  "name": "no-bits-left-empty",
+  "from": "conformance-extents-zero",
+  "to": "conformance-extents-zero",
+  "input": "00",
+  "expect": "00",
+  "model": {
+    "probe.nums.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 1; no bits remain after the pad: no item is read, so none reads no bits"
+}

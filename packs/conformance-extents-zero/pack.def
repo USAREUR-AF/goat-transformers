@@ -1,0 +1,21 @@
+# Conformance probe pack for a `rest` item that reads no bits (spec 0.21
+# ruling 1), most significant bit first. Public. No kinds.
+#
+#   p           one presence bit, then 7 unused bits
+#   nums        items to the end of the message; an item is val in 8 bits
+#               when p.1 is 1, and nothing when it is 0
+format     conformance-extents-zero
+version    0.21.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+presence p 1
+pad 7
+group   probe.nums rest
+  if p.1
+    field  probe.val  8  uint
+  end
+end

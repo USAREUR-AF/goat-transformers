@@ -1,0 +1,18 @@
+# Conformance probe pack for `rest` items shorter than a byte at message level
+# (spec 0.21 rulings 4 and 17), most significant bit first. Public. No kinds.
+#
+#   x           5 bits
+#   nums        items to the end of the message, val in 4 bits each, read
+#               while at least 8 bits remain; fewer bits are padding
+format     conformance-extents-sub
+version    0.21.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field   probe.x  5  uint
+group   probe.nums rest
+  field  probe.val  4  uint
+end

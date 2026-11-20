@@ -1,0 +1,13 @@
+{
+  "name": "two-items-in-the-block",
+  "from": "conformance-extents-last-length",
+  "to": "conformance-extents-last-length",
+  "input": "02058609",
+  "expect": "02058609",
+  "model": {
+    "probe.nums.#": "2",
+    "probe.x": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 13; the last item ends the list at the block's end"
+}

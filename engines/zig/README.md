@@ -24,8 +24,11 @@ fixed `bits` layout, spec Version 0.17), writes a line only when another key
 is held (`with`), builds and reads token lists (`tokens`, `has_token`,
 `text_if`), writes a time without a zero fraction (`iso8601_short`) and empty
 `xml` elements (`element`, spec Version 0.18), reads and writes ASN.1
-unaligned PER (`encoding uper`, spec Version 0.19), and converts between
-formats via the shared model.
+unaligned PER (`encoding uper`, spec Version 0.19), reads and writes
+sequential lists that run to the end of their extent, counts that sit before
+other fields and last-item flags (`group … rest`, `count <name>` with
+`group … count @<name>`, `group … last`, spec Version 0.21), and converts
+between formats via the shared model.
 
 ## Build and run the conformance harness
 

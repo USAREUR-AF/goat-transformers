@@ -1,0 +1,9 @@
+{
+  "name": "ruling-20-count-above-the-bits-left-at-the-group",
+  "from": "conformance-extents-bitsleft",
+  "to": "conformance-extents-bitsleft",
+  "input": "010007",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 20 with ruling 14 of 0.8; 16 bits remain at the count line, none at the group: a count of 1 is larger than the bits left"
+}

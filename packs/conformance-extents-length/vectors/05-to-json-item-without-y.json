@@ -1,0 +1,9 @@
+{
+  "name": "to-json-item-without-y",
+  "from": "conformance-extents-length",
+  "to": "conformance-extents-json",
+  "input": "0301020309",
+  "expect": "{\"z\":9,\"recs\":[{\"x\":1,\"y\":2},{\"x\":3}]}",
+  "source": "constructed",
+  "reference": "spec 0.21 rulings 3 and 5; y of item 1 is absent"
+}

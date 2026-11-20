@@ -1,0 +1,9 @@
+{
+  "name": "input-shorter-than-the-whole-length",
+  "from": "conformance-extents-whole",
+  "to": "conformance-extents-whole",
+  "input": "040506",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 14; input shorter than it is malformed-wire (0.8 Lengths)"
+}

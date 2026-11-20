@@ -451,8 +451,11 @@ struct SeqCaseScope {
 struct SeqNode {
     enum class Type { Field, Const, Pad, Align, When, Presence, If, Opt, Chain, Fx, Length, LengthWhole, Group,
                       Ext, Choice, Alt,  // v0.19
-                      Switch };  // v0.20
-    enum class Repeat { Count, While, More, Fx, Size };
+                      Switch,  // v0.20
+                      Count };  // v0.21
+    // v0.19: Size (`group <list> size`). v0.21: Rest (`group <list> rest`), Last
+    // (`group <list> last`) and CountRef (`group <list> count @<name>`).
+    enum class Repeat { Count, While, More, Fx, Size, Rest, Last, CountRef };
     // v0.19, `encoding uper`: the form of a field's locator. None is a bit length.
     enum class Uper { None, Int, IntExt, IntSemi, IntUn, Enum, EnumExt, Chars, Octets };
     Type type = Type::Pad;
@@ -486,6 +489,11 @@ struct SeqNode {
     std::vector<SeqCase> cases;
     // v0.20. if: the innermost case holding the block; -1 when none.
     int in_case = -1;
+    // v0.21. count: the name; `len` is its bits and `plus` its `plus <n>`.
+    // count and a group with `count @<name>`: the count line's index in
+    // Pack::seq_count_lines.
+    std::string count_name;
+    int count_id = -1;
     bool holds(std::uint64_t v) const {
         if (ranges.empty()) return v == number;
         for (const auto& r : ranges)
@@ -563,6 +571,7 @@ struct Pack {
     bool tlv_checksum = false;           // `checksum sum16 <tag>`
     std::uint32_t tlv_checksum_tag = 0;
     std::vector<SeqCaseScope> seq_cases;  // v0.20: every `case` and `else`, file order
+    std::size_t seq_count_lines = 0;      // v0.21: the number of `count <name>` lines
 };
 
 // Parse the text of a pack.def. `source` names the file in error messages.

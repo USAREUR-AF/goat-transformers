@@ -1,0 +1,9 @@
+{
+  "name": "to-outerif-ruling-35-first-item-with-subs",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-outerif",
+  "input": "{\"items\":[{\"subs\":[{\"val\":5}]},{}]}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.21 rulings 35 and 39; item 0 writes the inner rest and another item follows it"
+}

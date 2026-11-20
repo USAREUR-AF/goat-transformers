@@ -1,0 +1,9 @@
+{
+  "name": "to-count-absent-list-writes-n",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-count",
+  "input": "{\"x\":7,\"y\":9}",
+  "expect": "0709",
+  "source": "constructed",
+  "reference": "spec 0.21, A count before other fields; an absent list writes n, here 0"
+}

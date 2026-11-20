@@ -1,0 +1,12 @@
+{
+  "name": "input-after-the-last-item-ignored",
+  "from": "conformance-extents-last",
+  "to": "conformance-extents-last",
+  "input": "058607",
+  "expect": "0586",
+  "model": {
+    "probe.nums.#": "2"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21, The last-item flag; input beyond the last line is ignored (ruling 9 of 0.8)"
+}

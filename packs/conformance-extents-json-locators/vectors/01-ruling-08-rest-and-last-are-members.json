@@ -1,0 +1,14 @@
+{
+  "name": "ruling-08-rest-and-last-are-members",
+  "from": "conformance-extents-json-locators",
+  "to": "conformance-extents-json-locators",
+  "input": "{\"rest\":[1,2],\"last\":[\"a\"]}",
+  "expect": "{\"rest\":[1,2],\"last\":[\"a\"]}",
+  "model": {
+    "probe.nums.#": "2",
+    "probe.nums[1].probe.val": "2",
+    "probe.names[0].probe.tag": "a"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 8: on json, `rest` and `last` after a list name are the group locator; the arrays at the members rest and last"
+}

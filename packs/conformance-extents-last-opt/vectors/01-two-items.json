@@ -1,0 +1,12 @@
+{
+  "name": "two-items",
+  "from": "conformance-extents-last-opt",
+  "to": "conformance-extents-last-opt",
+  "input": "800586",
+  "expect": "800586",
+  "model": {
+    "probe.nums.#": "2"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21, The last-item flag; the opt bit is 1"
+}

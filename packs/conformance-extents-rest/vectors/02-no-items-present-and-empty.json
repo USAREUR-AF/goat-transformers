@@ -1,0 +1,12 @@
+{
+  "name": "no-items-present-and-empty",
+  "from": "conformance-extents-rest",
+  "to": "conformance-extents-rest",
+  "input": "09",
+  "expect": "09",
+  "model": {
+    "probe.recs.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21, A list to the end of its extent; after z no bits remain: a list of no items is present and empty; encode writes nothing"
+}

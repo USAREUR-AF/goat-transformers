@@ -1,0 +1,12 @@
+{
+  "name": "count-zero",
+  "from": "conformance-extents-bitsleft",
+  "to": "conformance-extents-bitsleft",
+  "input": "000007",
+  "expect": "000007",
+  "model": {
+    "probe.nums.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 20 with ruling 14 of 0.8; no item"
+}

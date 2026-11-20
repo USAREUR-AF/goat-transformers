@@ -1,0 +1,9 @@
+{
+  "name": "to-json",
+  "from": "conformance-extents-itemkind",
+  "to": "conformance-extents-json",
+  "input": "0201020506090203",
+  "expect": "{\"items\":[{\"qty\":9,\"subs\":[{\"val\":5},{\"val\":6}]},{\"qty\":3}]}",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 27; item b has no subs"
+}

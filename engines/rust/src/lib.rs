@@ -2644,7 +2644,7 @@ impl Pack {
                     layout_line = Some(ln);
                 }
                 // engine-spec v0.8: a sequential line in a fixed-layout pack
-                "pad" | "align" | "presence" | "opt" | "chain" | "fx" | "also" => {
+                "pad" | "align" | "presence" | "opt" | "chain" | "fx" | "also" | "count" => {
                     return bad(ln, format!("`{}` is a line of a `layout sequential` pack", toks[0]));
                 }
                 // engine-spec v0.20: a switch reads a sequential layout
@@ -7909,6 +7909,9 @@ const PACK_DIRECTIVES: &[(&str, usize, usize)] = &[
     ("switch", 1, 1),
     ("case", 1, 1),
     ("else", 0, 0),
+    // engine-spec v0.21: `count <name> <len> [plus <n>]`; its form is checked
+    // with the rest of the sequential layout, after the file is read
+    ("count", 2, usize::MAX),
 ];
 
 /// The lines that stand after the `wire` line (ruling 5b of 0.11).
@@ -8036,6 +8039,16 @@ fn pack_line_checks(text: &str) -> Result<(), Error> {
             // 5a: an empty step of an `xml` group locator is a line check too
             "group" if wire == Some(Wire::Xml) && toks[2].split('/').any(|s| s.is_empty()) => {
                 return err(format!("bad-locator: line {}: `{}`: an empty step", ln, toks[2]));
+            }
+            // ruling 44 of 0.21: a `protobuf` group step that is not digits only
+            // is `bad-locator` (5a); `rest` and `last` are `bad-directive` after
+            // the file (ruling 37)
+            "group"
+                if wire == Some(Wire::Protobuf)
+                    && !matches!(toks[2].as_str(), "rest" | "last")
+                    && toks[2].split('.').any(|s| s.is_empty() || !s.bytes().all(|b| b.is_ascii_digit())) =>
+            {
+                return err(format!("bad-locator: line {}: `{}`: a step is a field number, digits only", ln, toks[2]));
             }
             _ => {}
         }

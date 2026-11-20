@@ -518,7 +518,7 @@ V011_TLV = {"wire-tlv-68", "wire-tlv-69", "wire-tlv-71", "wire-tlv-72", "wire-tl
 # Likewise rulings 13 and 14 of 0.14 and the second-armor vector.
 V011_TLV |= {"wire-armor-18", "wire-armor-19"}
 # Ruling 28 of 0.15 pins the same order for a 0.15 transform on tlv.
-V011_ORDER = {"580", "667", "668"}  # and ruling 13 of 0.17
+V011_ORDER = {"580", "667", "668", "1003", "1004"}  # ruling 13 of 0.17, ruling 44 of 0.21 (bad-locator)
 # And the UPER vectors of rulings 23-26 of 0.19 that pin the 0.11 order.
 V011_TLV |= {"wire-uper-58", "wire-uper-61", "wire-uper-48", "wire-uper-50", "wire-uper-52", "wire-uper-53", "wire-uper-54", "wire-uper-55", "wire-uper-56", "wire-uper-57"}
 

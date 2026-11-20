@@ -1,0 +1,28 @@
+# Conformance probe pack for `rest` in an item kind (spec 0.21 ruling 27),
+# most significant bit first. Public. No message kinds.
+#
+#   items       an 8-bit count; each item selects a kind by its first byte
+#     kind a    when 8 1: a block with an 8-bit length in bytes holding subs
+#               to its end (val in 8 bits each), then qty in 8 bits
+#     kind b    when 8 2: qty in 8 bits
+format     conformance-extents-itemkind
+version    0.21.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+group   probe.items count 8
+  kind  a
+  when  8  1
+  length 8
+    group  probe.subs rest
+      field  probe.val  8  uint
+    end
+  end
+  field  probe.qty  8  uint
+  kind  b
+  when  8  2
+  field  probe.qty  8  uint
+end

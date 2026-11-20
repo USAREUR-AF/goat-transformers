@@ -1,0 +1,9 @@
+{
+  "name": "to-outerkind-b-alone-empty",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-outerkind",
+  "input": "{\"items\":[{}]}",
+  "expect": "02",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 10 with ruling 27; no qty: b; an absent subs writes nothing"
+}

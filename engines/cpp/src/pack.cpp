@@ -930,8 +930,10 @@ void check_group_locators(const Pack& p, const GroupLine& g, bool in_group) {
         case Wire::Text:
         case Wire::Tlv: ok = true; break;
     }
+    // A group whose locator is not one of its wire is a bad group line (0.21
+    // ruling 8: `rest` is not a protobuf path).
     if (!ok)
-        throw Error(ErrorKind::BadLocator, p.format, g.locator,
+        throw Error(ErrorKind::BadDirective, p.format, g.locator,
                     p.source + ":" + std::to_string(g.line) + ": not a " + wire_name(p.wire) + " group locator");
     for (const auto& f : g.fields) check_field(p, f, true);
     for (const auto& c : g.consts) check_when(p, c, true);
@@ -1484,6 +1486,10 @@ Pack parse_pack(const std::string& text, const std::string& source) {
             if (!natives.insert(t[1]).second)
                 throw Error(ErrorKind::BadDirective, p.format, "", where + ": duplicate typemap code '" + t[1] + "'");
             p.typemap.emplace_back(t[1], t[2]);
+        } else if (kw == "count") {
+            // v0.21: a count line belongs to a sequential layout.
+            throw Error(ErrorKind::BadDirective, p.format, "",
+                        where + ": 'count' is a line of a 'layout sequential' pack");
         } else if (kw == "switch" || kw == "case" || kw == "else") {
             // v0.20: a switch belongs to a sequential layout.
             throw Error(ErrorKind::BadDirective, p.format, "",

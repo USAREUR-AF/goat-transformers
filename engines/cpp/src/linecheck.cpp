@@ -44,7 +44,10 @@ const std::set<std::string>& pack_directives() {
                                          // v0.20, sequential layouts. Their argument counts
                                          // are line checks (0.20 ruling 39); their structure
                                          // and values are checked as the pack is read.
-                                         "switch", "case", "else"};
+                                         "switch", "case", "else",
+                                         // v0.21, sequential layouts: `count <name> <len> [plus <n>]`,
+                                         // checked as the pack is read.
+                                         "count"};
     return s;
 }
 
@@ -188,6 +191,9 @@ void check_group_locator(const LineChecker& c, Wire wire, const std::string& loc
             if (empty_step('.')) bad("a group locator with an empty member name");
             return;
         case Wire::Protobuf: {
+            // `rest` and `last` are bad-directive, checked with the pack (0.21
+            // rulings 37 and 44); any other step that is not a path stays 5a.
+            if (loc == "rest" || loc == "last") return;
             ProtobufLocator pb;
             if (!parse_protobuf_locator(loc, pb)) bad("not a protobuf locator");
             return;

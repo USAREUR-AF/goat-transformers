@@ -17,9 +17,10 @@ import java.util.Set;
 final class Seq {
     private Seq() {}
 
-    enum Op { FIELD, CONST, WHEN, PAD, ALIGN, PRESENCE, IF, OPT, CHAIN, LENGTH, WHOLE, GROUP, EXT, CHOICE, SWITCH }
+    enum Op { FIELD, CONST, WHEN, PAD, ALIGN, PRESENCE, IF, OPT, CHAIN, LENGTH, WHOLE, GROUP, EXT, CHOICE, SWITCH, COUNT }
 
-    enum Repeat { COUNT, WHILE, MORE, FX, SIZE }
+    /** {@code SIZE}: engine-spec 0.19; {@code REF}: {@code count @<name>}; {@code REST} and {@code LAST}: engine-spec 0.21. */
+    enum Repeat { COUNT, WHILE, MORE, FX, SIZE, REST, LAST, REF }
 
     /** The forms of a UPER locator (engine-spec 0.19). */
     enum UKind { INT, INT_SEMI, INT_FREE, ENUM, CHARS, OCTETS }
@@ -83,7 +84,7 @@ final class Seq {
         List<List<Node>> parts;
         /** {@code chain}: its last line is an {@code fx} line. */
         boolean endsWithFx;
-        /** {@code length}: counted in bits, not bytes; and the {@code plus} value. */
+        /** {@code length}: counted in bits, not bytes; and the {@code plus} value (also of a {@code count} line). */
         boolean inBits;
         long plus;
         /** {@code group}: the list, how it repeats, and the lines of one item. */
@@ -103,6 +104,8 @@ final class Seq {
         final List<List<Node>> altLines = new ArrayList<>();
         /** {@code choice}: alt index to its position in {@link #altLines}. */
         final Map<Integer, Integer> altAt = new HashMap<>();
+        /** {@code group ... count @<name>}: the {@code count} line it names. */
+        Node countRef;
         /** {@code switch}: the key, its cases in line order, and its {@code else} (or null). */
         String switchKey;
         /** {@code switch}: the first field line mapping its key in its scope (ruling 37 of 0.20). */
@@ -173,7 +176,7 @@ final class Seq {
     /** Directives that are lines of the layout: in a sequential pack the parser below reads them. */
     static final Set<String> LINES = Set.of("field", "also", "const", "when", "pad", "align", "presence", "if", "opt",
             "chain", "fx", "length", "group", "end", "kind", "requires", "default", "ext", "choice", "alt",
-            "switch", "case", "else");
+            "switch", "case", "else", "count");
 
     /** The lines that exist only in a UPER pack (engine-spec 0.19, ruling 9). */
     static final Set<String> UPER_ONLY = Set.of("ext", "choice", "alt");
@@ -256,7 +259,7 @@ final class Seq {
 
     /** Directives that exist only in a sequential pack. */
     static final Set<String> SEQUENTIAL_ONLY = Set.of("also", "pad", "align", "presence", "if", "opt", "chain", "fx", "length",
-            "switch", "case", "else");
+            "switch", "case", "else", "count");
 
     /** The largest presence bit an {@code if} may name in an {@code fx} presence. */
     private static final int MAX_FX_BIT = 7 * 4096;
@@ -394,6 +397,16 @@ final class Seq {
         private void mapped(String key, Node line) {
             Frame b = bodyFrame();
             (b.kindMapped != null ? b.kindMapped : b.mapped).putIfAbsent(key, line);
+        }
+
+        /** The count or presence a {@code count @<name>} names: visible here and within the same group body. */
+        private Node lookupCount(String name) {
+            for (Frame f : stack) {
+                if (f.kindNames != null && f.kindNames.containsKey(name)) return f.kindNames.get(name);
+                if (f.names.containsKey(name)) return f.names.get(name);
+                if (f.isBody()) return null;
+            }
+            return null;
         }
 
         private void push(char type, String what, int ln, Node node, List<Node> lines) {
@@ -607,6 +620,37 @@ final class Seq {
                     f.lines.add(n);
                     break;
                 }
+                case "count": {
+                    // engine-spec 0.21: count <name> <len> [plus <n>]
+                    String form = where + ": a count line is count <name> <len> [plus <n>]";
+                    if (args.size() < 2) throw bad(format, null, form);
+                    String name = args.get(0);
+                    if (name.isEmpty() || name.indexOf('.') >= 0 || name.indexOf('!') >= 0 || name.indexOf('@') >= 0) {
+                        throw bad(format, null, where + ": a count name is not empty and has no \".\", \"!\" or \"@\" (ruling 24 of 0.21)");
+                    }
+                    Node n = new Node(Op.COUNT, ln);
+                    n.name = name;
+                    n.len = bitLength(args.get(1), 1, 64, "count", where, format);
+                    if (args.size() == 4 && args.get(2).equals("plus")) {
+                        // an optional - then digits, leading zeros allowed, within signed 64 bits (ruling 16 of 0.21)
+                        String v = args.get(3);
+                        if (!v.matches("-?\\d+")) throw bad(format, null, where + ": plus takes an integer, got \"" + v + "\"");
+                        try {
+                            n.plus = Long.parseLong(v);
+                        } catch (NumberFormatException ex) {
+                            throw bad(format, null, where + ": plus " + v + " is not within signed 64 bits");
+                        }
+                    } else if (args.size() != 2) {
+                        throw bad(format, null, form);
+                    }
+                    Map<String, Node> names = f.kindNames != null ? f.kindNames : f.names;
+                    if (names.containsKey(name) || f.names.containsKey(name)) {
+                        throw bad(format, null, where + ": the name " + name + " is declared twice in one block");
+                    }
+                    names.put(name, n);
+                    f.lines.add(n);
+                    break;
+                }
                 case "if": {
                     if (args.isEmpty()) throw bad(format, null, where + ": if names at least one presence bit");
                     Node n = new Node(Op.IF, ln);
@@ -623,6 +667,7 @@ final class Seq {
                         }
                         Node p = lookup(a.substring(0, dot));
                         if (p == null) throw bad(format, null, where + ": if names presence " + a.substring(0, dot) + ", which is not visible here");
+                        if (p.op == Op.COUNT) throw bad(format, null, where + ": if names " + p.name + ", which is a count, not a presence (ruling 15 of 0.21)");
                         int bit = Integer.parseInt(a.substring(dot + 1));
                         if (bit < 1 || bit > (p.fx ? MAX_FX_BIT : p.len)) {
                             throw bad(format, null, where + ": presence " + p.name + " has no bit " + bit);
@@ -694,18 +739,28 @@ final class Seq {
                     break;
                 }
                 case "group": {
-                    String form = "a group of a sequential pack is group <list> count <len> | while | more | fx";
+                    String form = "a group of a sequential pack is group <list> count <len> | count @<name> | while | more | fx | rest | last";
                     if (args.size() < 2) {
                         throw new GtException(GtException.Code.BAD_DIRECTIVE, format, null, where + ": group takes at least 2 arguments, got " + args.size());
                     }
                     Node n = new Node(Op.GROUP, ln);
                     n.list = args.get(0);
                     String mode = args.get(1);
-                    if (mode.equals("count") && args.size() == 3) {
+                    if (mode.equals("count") && args.size() == 3 && args.get(2).startsWith("@")) {
+                        // a count named earlier in this group body (rulings 9, 12, 15 and 24 of 0.21)
+                        String name = args.get(2).substring(1);
+                        Node c = name.isEmpty() ? null : lookupCount(name);
+                        if (c == null) throw bad(format, mode, where + ": count @" + name + " names no count visible here in this group body");
+                        if (c.op != Op.COUNT) throw bad(format, mode, where + ": count @" + name + " names a presence, not a count");
+                        n.repeat = Repeat.REF;
+                        n.countRef = c;
+                    } else if (mode.equals("count") && args.size() == 3) {
                         n.repeat = Repeat.COUNT;
                         n.len = bitLength(args.get(2), 1, 64, "count", where, format);
-                    } else if (args.size() == 2 && (mode.equals("while") || mode.equals("more") || mode.equals("fx"))) {
-                        n.repeat = mode.equals("while") ? Repeat.WHILE : mode.equals("more") ? Repeat.MORE : Repeat.FX;
+                    } else if (args.size() == 2 && (mode.equals("while") || mode.equals("more") || mode.equals("fx")
+                            || mode.equals("rest") || mode.equals("last"))) {
+                        n.repeat = mode.equals("while") ? Repeat.WHILE : mode.equals("more") ? Repeat.MORE
+                                : mode.equals("fx") ? Repeat.FX : mode.equals("rest") ? Repeat.REST : Repeat.LAST;
                     } else if (mode.equals("size") && (args.size() == 2 || args.size() == 4)) {
                         uper(ln);
                         n.repeat = Repeat.SIZE;
@@ -723,6 +778,20 @@ final class Seq {
                         }
                     } else {
                         throw bad(format, mode, where + ": " + form);
+                    }
+                    if (n.repeat == Repeat.REST) {
+                        // inside an item, only within a length block of the item's body, or in the item of an outer
+                        // rest group (ruling 10 of 0.21)
+                        for (Frame x : stack) {
+                            if (x.type == 'L' || x.type == 'M') break;
+                            if (x.type == 'G') {
+                                if (x.node.repeat != Repeat.REST) {
+                                    throw bad(format, mode, where + ": a rest group inside an item of " + x.node.list
+                                            + " is allowed only within a length block of the item");
+                                }
+                                break;
+                            }
+                        }
                     }
                     // Within one scope (common plus one kind, or one group body) two groups map one list only when
                     // they sit in if or opt blocks neither of which encloses the other (rulings 23 and 33 of 0.8).
@@ -967,6 +1036,200 @@ final class Seq {
         /** The field lines whose transform and length are checked after the file: {field, transform, len, where}. */
         private final List<Object[]> afterFile = new ArrayList<>();
 
+        // ---- counts (rulings 2 and 33 of 0.21) ----
+        // The possible numbers of references on the reading paths of a range, as a mask: bit i set when some path
+        // holds i references (2 standing for two or more).
+
+        private static int combine(int a, int b) {
+            int out = 0;
+            for (int i = 0; i < 3; i++) {
+                if ((a & (1 << i)) == 0) continue;
+                for (int j = 0; j < 3; j++) if ((b & (1 << j)) != 0) out |= 1 << Math.min(i + j, 2);
+            }
+            return out;
+        }
+
+        /** The reference counts to count line {@code c} on the paths of {@code lines} from {@code from}. */
+        private static int refs(List<Node> lines, int from, Node c) {
+            int m = 1;
+            for (int i = from; i < lines.size(); i++) m = combine(m, refs(lines.get(i), c));
+            return m;
+        }
+
+        private static int refs(Node n, Node c) {
+            switch (n.op) {
+                case GROUP:
+                    // a reference stays in its group body (ruling 9): an item body holds none to c
+                    return n.countRef == c ? 2 : 1;
+                case IF:
+                case OPT:
+                case LENGTH:
+                case EXT:   // a SEQUENCE's extension block (0.19) is read in the same path
+                    return refs(n.body, 0, c);
+                case CHAIN:
+                    return refs(chainLines(n), 0, c);
+                case CHOICE: {
+                    // the alts of a choice (0.19) do not split a reading path: references in two alts are two
+                    // (ruling 40 of 0.21)
+                    int m = 1;
+                    for (List<Node> alt : n.altLines) m = combine(m, refs(alt, 0, c));
+                    return m;
+                }
+                case SWITCH: {
+                    // each case is a reading path of its own; an if or opt does not split a path (ruling 33)
+                    int m = 0;
+                    for (Case k : n.cases) m |= refs(k.body, 0, c);
+                    if (n.elseCase != null) m |= refs(n.elseCase.body, 0, c);
+                    return m;
+                }
+                default:
+                    return 1;
+            }
+        }
+
+        private static List<Node> chainLines(Node n) {
+            List<Node> all = new ArrayList<>();
+            for (List<Node> part : n.parts) all.addAll(part);
+            return all;
+        }
+
+        /** Every count line is referenced exactly once on each reading path of its range. */
+        private void checkCounts(Body b, String format) {
+            countsIn(b.common, b, format);
+            for (Kind k : b.kinds) countsIn(k.lines, null, format);
+        }
+
+        /** {@code common}: the body when {@code lines} are its common lines, whose range runs on into every kind. */
+        private void countsIn(List<Node> lines, Body common, String format) {
+            for (int i = 0; i < lines.size(); i++) {
+                Node n = lines.get(i);
+                switch (n.op) {
+                    case COUNT: {
+                        int m = refs(lines, i + 1, n);
+                        if (common != null && common.hasKinds) {
+                            int all = 0;
+                            for (Kind k : common.kinds) all |= combine(m, refs(k.lines, 0, n));
+                            m = all;
+                        }
+                        if (m != 2) {
+                            throw bad(format, null, source + ":" + n.line + ": count " + n.name
+                                    + " must be referenced by exactly one group ... count @" + n.name + " on each reading path");
+                        }
+                        break;
+                    }
+                    case IF:
+                    case OPT:
+                    case LENGTH:
+                    case EXT:
+                        countsIn(n.body, null, format);
+                        break;
+                    case CHOICE:
+                        for (List<Node> alt : n.altLines) countsIn(alt, null, format);
+                        break;
+                    case CHAIN:
+                        countsIn(chainLines(n), null, format);
+                        break;
+                    case SWITCH:
+                        for (Case k : n.cases) countsIn(k.body, null, format);
+                        if (n.elseCase != null) countsIn(n.elseCase.body, null, format);
+                        break;
+                    case GROUP:
+                        checkCounts(n.items, format);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        // ---- rest is the last line of its extent (rulings 11, 26, 27 and 32 of 0.21) ----
+
+        /** A line that reads or writes bits; an if, switch or chain is one only when it holds one. */
+        private static boolean isWire(Node n) {
+            switch (n.op) {
+                case IF:
+                    return anyWire(n.body);
+                case SWITCH:
+                    for (Case k : n.cases) if (anyWire(k.body)) return true;
+                    return n.elseCase != null && anyWire(n.elseCase.body);
+                case CHAIN:
+                    return n.parts.size() > 1 || n.endsWithFx || anyWire(chainLines(n));
+                case CHOICE:
+                    // with ext, more than one root alternative, or an alt holding a wire line (ruling 41 of 0.21)
+                    if (n.ext || n.alts > 1) return true;
+                    for (List<Node> alt : n.altLines) if (anyWire(alt)) return true;
+                    return false;
+                default:
+                    return true;   // an ext block reads its extension bit (ruling 41 of 0.21)
+            }
+        }
+
+        private static boolean anyWire(List<Node> lines) {
+            for (Node n : lines) if (isWire(n)) return true;
+            return false;
+        }
+
+        private void checkRest(Body b, String format) {
+            boolean sealed = restIn(b.common, false, format);
+            for (Kind k : b.kinds) {
+                restIn(k.whens, sealed, format);   // a kind's when lines are wire lines (ruling 32)
+                restIn(k.lines, sealed, format);
+            }
+        }
+
+        /** Walk {@code lines} in reading order; true when a rest group has been passed in this extent. */
+        private boolean restIn(List<Node> lines, boolean sealed, String format) {
+            for (Node n : lines) {
+                if (sealed && isWire(n)) {
+                    throw bad(format, null, source + ":" + n.line + ": a line after a rest group in its extent (ruling 11 of 0.21)");
+                }
+                switch (n.op) {
+                    case GROUP:
+                        checkRest(n.items, format);
+                        if (n.repeat == Repeat.REST) sealed = true;
+                        break;
+                    case IF:
+                    case OPT:
+                    case EXT:
+                        sealed |= restIn(n.body, sealed, format);
+                        break;
+                    case CHOICE: {
+                        boolean s = sealed;
+                        for (List<Node> alt : n.altLines) s |= restIn(alt, sealed, format);
+                        sealed = s;
+                        break;
+                    }
+                    case LENGTH:
+                        restIn(n.body, false, format);   // an extent of its own
+                        break;
+                    case CHAIN: {
+                        boolean s = sealed;
+                        for (int i = 0; i < n.parts.size(); i++) {
+                            if (i > 0 && s) {
+                                throw bad(format, null, source + ":" + n.line + ": an fx line after a rest group in its extent (ruling 11 of 0.21)");
+                            }
+                            s = restIn(n.parts.get(i), s, format);
+                        }
+                        if (n.endsWithFx && s) {
+                            throw bad(format, null, source + ":" + n.line + ": an fx line after a rest group in its extent (ruling 11 of 0.21)");
+                        }
+                        sealed = s;
+                        break;
+                    }
+                    case SWITCH: {
+                        boolean s = sealed;
+                        for (Case k : n.cases) s |= restIn(k.body, sealed, format);
+                        if (n.elseCase != null) s |= restIn(n.elseCase.body, sealed, format);
+                        sealed = s;
+                        break;
+                    }
+                    default:
+                        break;
+                }
+            }
+            return sealed;
+        }
+
         /**
          * The checks that need the whole file: every block is ended, each field's transform is a transform of the
          * bits wire and allows its length (ruling 25 of 0.5), and every table a line names has a map line.
@@ -991,6 +1254,8 @@ final class Seq {
                 if (a[4] != null && len > 64) Sentinels.integers((String) a[4], len, format, fl.locator, where);
             }
             finishBody(root, format, source);
+            checkCounts(root, format);
+            checkRest(root, format);
             for (String[] v : vias) {
                 if (!tables.containsKey(v[0])) throw bad(format, v[1], v[2] + ": via names table " + v[0] + ", which has no map line");
             }

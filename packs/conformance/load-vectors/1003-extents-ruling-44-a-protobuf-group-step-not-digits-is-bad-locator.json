@@ -1,0 +1,9 @@
+{
+  "name": "1003-extents-ruling-44-a-protobuf-group-step-not-digits-is-bad-locator",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey x int -\nkey y int -\nkey z int -\nkey val int -\nkey qty int -\nlist nums \"a list\"\nlist recs \"a list\"\nlist items \"a list\"\nlist subs \"a list\"\n"
+  ],
+  "pack": "format probe\nversion 0.21.0\ndistribution public\nsource \"probe\"\nuses probe\nwire protobuf\ngroup probe.nums abc\n  field probe.val . pvarint\nend\n",
+  "expect_error": "bad-locator"
+}

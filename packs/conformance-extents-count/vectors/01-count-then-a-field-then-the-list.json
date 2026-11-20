@@ -1,0 +1,15 @@
+{
+  "name": "count-then-a-field-then-the-list",
+  "from": "conformance-extents-count",
+  "to": "conformance-extents-count",
+  "input": "87050609",
+  "expect": "87050609",
+  "model": {
+    "probe.x": "7",
+    "probe.nums.#": "2",
+    "probe.nums[0].probe.val": "5",
+    "probe.y": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21, A count before other fields; the count is read at its line, the items when the group is reached"
+}

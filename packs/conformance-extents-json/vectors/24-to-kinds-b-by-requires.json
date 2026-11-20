@@ -1,0 +1,9 @@
+{
+  "name": "to-kinds-b-by-requires",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-kinds",
+  "input": "{\"x\":170,\"nums\":[7]}",
+  "expect": "0102aa07",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 2; requires probe.x: b, the first kind in pack order that qualifies"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "to-outerif-ruling-35-empty-subs-not-written",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-outerif",
+  "input": "{\"items\":[{\"subs\":[]},{}]}",
+  "expect": "0000",
+  "source": "constructed",
+  "reference": "spec 0.21 rulings 35 and 39; an empty list does not set p.1, so item 0 does not write the inner rest"
+}

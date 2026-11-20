@@ -1,0 +1,12 @@
+{
+  "name": "items-in-the-if",
+  "from": "conformance-extents-if",
+  "to": "conformance-extents-if",
+  "input": "800506",
+  "expect": "800506",
+  "model": {
+    "probe.nums.#": "2"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 18 with ruling 5 of 0.8; p.1 = 1"
+}

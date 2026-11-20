@@ -1,0 +1,9 @@
+{
+  "name": "to-json",
+  "from": "conformance-extents-count",
+  "to": "conformance-extents-json",
+  "input": "87050609",
+  "expect": "{\"x\":7,\"y\":9,\"nums\":[5,6]}",
+  "source": "constructed",
+  "reference": "spec 0.21, A count before other fields; json line order"
+}

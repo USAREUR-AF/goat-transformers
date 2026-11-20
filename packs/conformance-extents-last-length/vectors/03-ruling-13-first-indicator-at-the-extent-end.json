@@ -1,0 +1,13 @@
+{
+  "name": "ruling-13-first-indicator-at-the-extent-end",
+  "from": "conformance-extents-last-length",
+  "to": "conformance-extents-json",
+  "input": "0009",
+  "expect": "{\"x\":9}",
+  "model": {
+    "probe.nums.#": "absent",
+    "probe.x": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 13; the first indicator at the extent end: ruling 34 of 0.8, an absent list"
+}

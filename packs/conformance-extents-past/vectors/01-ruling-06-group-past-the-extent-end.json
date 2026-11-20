@@ -1,0 +1,14 @@
+{
+  "name": "ruling-06-group-past-the-extent-end",
+  "from": "conformance-extents-past",
+  "to": "conformance-extents-past",
+  "input": "02010709",
+  "expect": "02000709",
+  "model": {
+    "probe.x": "7",
+    "probe.nums.#": "absent",
+    "probe.y": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 6 and A count before other fields (Decode); the group lies at the end of the length extent: the list is absent, the count ignored; encode writes n for the absent list"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "ruling-02-header-count-kind-b",
+  "from": "conformance-extents-kinds",
+  "to": "conformance-extents-kinds",
+  "input": "0102aa07",
+  "expect": "0102aa07",
+  "model": {
+    "@kind": "b",
+    "probe.x": "170",
+    "probe.nums.#": "1",
+    "probe.nums[0].probe.val": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 2; when 2: b; x lies between the count and the list"
+}

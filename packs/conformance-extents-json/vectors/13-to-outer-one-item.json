@@ -1,0 +1,9 @@
+{
+  "name": "to-outer-one-item",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-outer",
+  "input": "{\"items\":[{\"qty\":9,\"subs\":[{\"val\":5}]}]}",
+  "expect": "0905",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 10 (`rest` as the last line of an outer `rest` item); one item"
+}

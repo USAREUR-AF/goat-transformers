@@ -1,0 +1,9 @@
+{
+  "name": "to-last-if-absent-list-in-a-written-if",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-last-if",
+  "input": "{\"x\":3}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 28; with ruling 6 of 0.8: an absent list in a block written for another reason"
+}

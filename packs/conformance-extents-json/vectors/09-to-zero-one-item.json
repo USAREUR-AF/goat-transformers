@@ -1,0 +1,9 @@
+{
+  "name": "to-zero-one-item",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-zero",
+  "input": "{\"nums\":[5]}",
+  "expect": "8005",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 1; val sets p.1"
+}

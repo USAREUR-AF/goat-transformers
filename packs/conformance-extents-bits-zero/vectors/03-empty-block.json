@@ -1,0 +1,12 @@
+{
+  "name": "empty-block",
+  "from": "conformance-extents-bits-zero",
+  "to": "conformance-extents-bits-zero",
+  "input": "0000",
+  "expect": "0000",
+  "model": {
+    "probe.nums.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 21 in an extent counted in bits; ruling 3"
+}

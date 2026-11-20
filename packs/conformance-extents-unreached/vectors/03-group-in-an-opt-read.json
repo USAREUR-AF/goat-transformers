@@ -1,0 +1,12 @@
+{
+  "name": "group-in-an-opt-read",
+  "from": "conformance-extents-unreached",
+  "to": "conformance-extents-unreached",
+  "input": "03800506",
+  "expect": "03800506",
+  "model": {
+    "probe.nums.#": "2"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 6; opt bit 1: 3 - 1 = 2 items"
+}

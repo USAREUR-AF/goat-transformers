@@ -1,0 +1,13 @@
+{
+  "name": "opt-not-read",
+  "from": "conformance-extents-hide",
+  "to": "conformance-extents-hide",
+  "input": "02000506",
+  "expect": "02000506",
+  "model": {
+    "probe.recs.#": "absent",
+    "probe.nums.#": "2"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 24; opt 0, align to bit 16, nums 5 6"
+}

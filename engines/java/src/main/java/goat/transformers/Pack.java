@@ -711,7 +711,8 @@ public final class Pack {
             "delimiter", "start", "checksum", "tag", "key", "armor",
             "element",    // engine-spec 0.18
             "encoding", "ext", "choice", "alt",   // 0.19: directives on every wire (ruling 21)
-            "switch", "case", "else");   // engine-spec 0.20
+            "switch", "case", "else",   // engine-spec 0.20
+            "count");   // engine-spec 0.21
 
     /** The directives that take exactly one argument (ruling 5e of 0.11). */
     private static final Set<String> ONE_ARGUMENT = Set.of("format", "version", "distribution", "source", "uses", "wire",
@@ -817,15 +818,31 @@ public final class Pack {
     private static void lineCheckGroupLocator(Wire wire, String loc, boolean inGroup, String format, String where) {
         String why;
         switch (wire) {
-            case XML: why = XmlCodec.checkGroupLocator(loc); break;
+            // xml: the forms 5a names (an empty step, an empty attribute name, a step after @name or #text); a group
+            // locator that is otherwise not valid for its wire (`@a`) is bad-directive after the file (ruling 37 of 0.21)
+            case XML: why = xmlGroupForm(loc); break;
             case JSON: why = JsonCodec.checkLocator(loc); break;
             case GEOJSON: why = inGroup ? JsonCodec.checkLocator(loc) : GeoJsonCodec.checkGroupLocator(loc); break;
-            case PROTOBUF: why = ProtobufCodec.checkFieldLocator(loc); break;
+            // protobuf: `rest` and `last` are a group locator not valid for the wire, bad-directive after the file
+            // (ruling 37 of 0.21), not the bad-locator of 5a
+            case PROTOBUF: why = loc.equals("rest") || loc.equals("last") ? null : ProtobufCodec.checkFieldLocator(loc); break;
             // bits: 5a names field, when and const lines only, and a group with a sequential form (`while`) in a
             // fixed-layout pack stays bad-directive; text: its group form is checked after the file
             default: why = null;
         }
         if (why != null) throw badLocator(format, loc, where + ": " + why);
+    }
+
+    /** The 5a forms of an xml locator on a {@code group} line, or null. */
+    private static String xmlGroupForm(String loc) {
+        boolean after = false;
+        for (String seg : loc.split("/", -1)) {
+            if (seg.isEmpty()) return "an xml locator has an empty step: " + loc;
+            if (seg.equals("@")) return "an xml locator has an empty attribute name: " + loc;
+            if (after) return "an xml locator has a step after @name or #text: " + loc;
+            if (seg.startsWith("@") || seg.equals("#text")) after = true;
+        }
+        return null;
     }
 
     /** Check 8 for a {@code when} or {@code const} line of a sequential pack: its bit length (ruling 5a of 0.11). */
@@ -1780,7 +1797,7 @@ public final class Pack {
             if (item == null) throw badDirective(format, s.locator, where + ": a bits group needs item <bits>");
             if (count == null) throw badDirective(format, s.locator, where + ": a bits group needs count <locator | n>");
             why = BitsCodec.checkGroupLocator(s.locator);
-            if (why != null) throw badLocator(format, s.locator, where + ": " + why);
+            if (why != null) throw badLocator(format, s.locator, where + ": " + why);   // 5a of 0.11 (ruling 44 of 0.21)
             try {
                 if (!Transform.UNSIGNED.matcher(item).matches()) throw new NumberFormatException();
                 itemBits = Integer.parseInt(item);
@@ -1812,7 +1829,15 @@ public final class Pack {
             else if (ctx.wire == Wire.PROTOBUF) why = ProtobufCodec.checkFieldLocator(s.locator);
             else if (ctx.wire == Wire.GEOJSON && !inGroup) why = GeoJsonCodec.checkGroupLocator(s.locator);
             else why = JsonCodec.checkLocator(s.locator);
-            if (why != null) throw badLocator(format, s.locator, where + ": " + why);
+            if (why != null) {
+                // ruling 44 of 0.21: protobuf `rest` and `last`, and a well-formed xml locator of the wrong kind (`@a`),
+                // are a group locator not valid for the wire (ruling 37), bad-directive; every other malformed group
+                // locator keeps the bad-locator of 5a of 0.11
+                boolean wrongKind = (ctx.wire == Wire.PROTOBUF && (s.locator.equals("rest") || s.locator.equals("last")))
+                        || (ctx.wire == Wire.XML && xmlGroupForm(s.locator) == null);
+                if (wrongKind) throw badDirective(format, s.locator, where + ": " + why);
+                throw badLocator(format, s.locator, where + ": " + why);
+            }
         }
         List<Line> lines = new ArrayList<>(s.body.lines.size());
         Set<String> lists = null;

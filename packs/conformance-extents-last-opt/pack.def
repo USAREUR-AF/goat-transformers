@@ -1,0 +1,19 @@
+# Conformance probe pack for `last` inside an `opt` block (spec 0.21, The
+# last-item flag, and ruling 18), most significant bit first. Public. No kinds.
+#
+#   opt         one bit, then 7 unused bits and nums when it is 1: a last-item
+#               bit before each item, val in 7 bits
+format     conformance-extents-last-opt
+version    0.21.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+opt
+  pad 7
+  group  probe.nums last
+    field  probe.val  7  uint
+  end
+end

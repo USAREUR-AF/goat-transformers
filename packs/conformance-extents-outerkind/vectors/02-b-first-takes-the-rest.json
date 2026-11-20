@@ -1,0 +1,14 @@
+{
+  "name": "b-first-takes-the-rest",
+  "from": "conformance-extents-outerkind",
+  "to": "conformance-extents-outerkind",
+  "input": "02050109",
+  "expect": "02050109",
+  "model": {
+    "probe.items.#": "1",
+    "probe.items[0].@kind": "b",
+    "probe.items[0].probe.subs.#": "3"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 10 with ruling 27; an item of kind b reads to the end of the message"
+}

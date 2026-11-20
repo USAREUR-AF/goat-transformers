@@ -222,16 +222,18 @@ type Group struct {
 	itemBits  int      // bits: the size of an item
 	countLoc  *locator // bits: where the scope holds the number of items; nil when the count is fixed
 	countN    int      // bits: the fixed count
-	seqMode   int      // sequential layouts: how the items are delimited (seqCount, seqWhile, seqMore, seqFx)
+	seqMode   int      // sequential layouts: how the items are delimited (seqCount, seqWhile, seqMore, seqFx, …)
 	countBits int      // sequential layouts: the length of the count field of a `count` group
 	sizeLB    int      // UPER `group … size <lb> <ub>`: the size bounds
 	sizeUB    int
-	sbody     *seqBody // sequential layouts: the lines of one item
-	dots      []*Field // the `.` fields of the body, in line order
-	packed    bool     // protobuf: the first `.` field has a numeric transform, so the list is a repeated scalar
-	needsMsg  bool     // protobuf: the body has a line that reads into the item as a submessage
-	tstart    int      // text: the index of the first field of the first item
-	titem     int      // text: the number of fields of an item
+	sbody     *seqBody     // sequential layouts: the lines of one item
+	cnt       *seqCountDef // sequential layouts: the count a `count @<name>` group references (0.21)
+	innerRest bool         // sequential layouts: a `rest` group is the last line of an item, outside any length block (0.21 ruling 10)
+	dots      []*Field     // the `.` fields of the body, in line order
+	packed    bool         // protobuf: the first `.` field has a numeric transform, so the list is a repeated scalar
+	needsMsg  bool         // protobuf: the body has a line that reads into the item as a submessage
+	tstart    int          // text: the index of the first field of the first item
+	titem     int          // text: the number of fields of an item
 }
 
 // KindDef is one `kind` of a pack: its `when`, `requires`, `field`, `const`
@@ -676,7 +678,7 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 	want := map[string]int{"format": 1, "version": 1, "wire": 1, "root": 1, "word_bytes": 1, "bit_order": 1, "field": -3, "typemap": 2,
 		"distribution": 1, "source": 1, "uses": 1, "kind": 1, "when": 2, "requires": -1, "const": 2, "default": 2, "map": 3, "group": -2, "end": 0,
 		"layout": 1, "delimiter": 1, "start": 1, "checksum": -1, "tag": 1, "key": 1, "pad": 1, "align": 1, "presence": 2, "if": -1, "opt": 0, "chain": 0, "fx": 0, "length": -1, "also": -1, "armor": 1,
-		"element": 1, "encoding": 1, "ext": 0, "choice": -1, "alt": 1, "switch": 1, "case": 1, "else": 0}
+		"element": 1, "encoding": 1, "ext": 0, "choice": -1, "alt": 1, "switch": 1, "case": 1, "else": 0, "count": -2}
 	// A pack is sequential when it has a `layout sequential` line, wherever
 	// the line stands.
 	p.seq = hasSequentialLayout(text)
@@ -871,7 +873,14 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 					return nil, perr(ErrBadDirective, n, g.Locator, "group: unknown or repeated word %q (item <bits>, count <count-locator | n>)", args[i])
 				}
 			}
-			if err := p.checkGroupLocator(g.Locator, g.parent != nil); err != nil {
+			// `rest` and `last` as the group locator of a protobuf pack are
+			// bad-directive, checked after the file; every other locator
+			// form keeps ruling 5a of 0.11 (0.21 rulings 37 and 44).
+			if !p.seq && p.lineWire(g.parent != nil) == WireProtobuf && (g.Locator == "rest" || g.Locator == "last") {
+				if late == nil {
+					late = perr(ErrBadDirective, n, g.Locator, "group: %q is a sequential list form, not a protobuf path", g.Locator)
+				}
+			} else if err := p.checkGroupLocator(g.Locator, g.parent != nil); err != nil {
 				return nil, perr(ErrBadLocator, n, g.Locator, "%v", err)
 			}
 			p.Groups = append(p.Groups, g)
@@ -1724,6 +1733,9 @@ func isDigits(s string) bool {
 // resolveGroup reads the locator of a `group` line, and on the bits wire its
 // `item <bits>` and `count`, for the pack's wire (spec 0.7, "Group locators
 // and item-relative locators, by wire").
+//
+// A group locator that is not valid for its wire is bad-directive (0.21
+// ruling 37); on protobuf `rest` and `last` are such a locator.
 func (p *Pack) resolveGroup(g *Group) (ErrorKind, error) {
 	if p.Wire != WireBits {
 		if g.hasCount {
@@ -1738,7 +1750,7 @@ func (p *Pack) resolveGroup(g *Group) (ErrorKind, error) {
 		names := strings.Split(g.Locator, "/")
 		for _, e := range names {
 			if e == "" || strings.ContainsAny(e, "@#") {
-				return ErrBadLocator, fmt.Errorf("an xml group locator is a path of element names, got %q", g.Locator)
+				return ErrBadDirective, fmt.Errorf("an xml group locator is a path of element names, got %q", g.Locator)
 			}
 		}
 		g.loc = locator{raw: g.Locator, kind: locElem, path: names}
@@ -1749,16 +1761,16 @@ func (p *Pack) resolveGroup(g *Group) (ErrorKind, error) {
 		}
 		loc, err := parseLocator(wire, g.Locator, false)
 		if err != nil {
-			return ErrBadLocator, err
+			return ErrBadDirective, err
 		}
 		if loc.kind == locCoord {
-			return ErrBadLocator, fmt.Errorf("a geojson group locator is a properties member or a top-level member")
+			return ErrBadDirective, fmt.Errorf("a geojson group locator is a properties member or a top-level member")
 		}
 		g.loc = loc
 	case WireProtobuf:
 		loc, err := parseLocator(WireProtobuf, g.Locator, false)
 		if err != nil {
-			return ErrBadLocator, err
+			return ErrBadDirective, err
 		}
 		g.loc = loc
 	case WireBits:
@@ -1767,7 +1779,7 @@ func (p *Pack) resolveGroup(g *Group) (ErrorKind, error) {
 		}
 		parts := strings.Split(g.Locator, ":")
 		if len(parts) != 2 {
-			return ErrBadLocator, fmt.Errorf("a bits group locator is word:pos, got %q", g.Locator)
+			return ErrBadDirective, fmt.Errorf("a bits group locator is word:pos, got %q", g.Locator)
 		}
 		word, e1 := parseSmallUint(parts[0])
 		pos, e2 := parseSmallUint(parts[1])

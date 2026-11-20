@@ -1,0 +1,17 @@
+{
+  "name": "rest-in-a-length-of-each-item",
+  "from": "conformance-extents-nested",
+  "to": "conformance-extents-nested",
+  "input": "02020506090003",
+  "expect": "02020506090003",
+  "model": {
+    "probe.items.#": "2",
+    "probe.items[0].probe.subs.#": "2",
+    "probe.items[0].probe.subs[1].probe.val": "6",
+    "probe.items[0].probe.qty": "9",
+    "probe.items[1].probe.subs.#": "0",
+    "probe.items[1].probe.qty": "3"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 10 (`rest` within a `length` block of the item's body) and ruling 3; the line after the block is not in the rest group's extent"
+}

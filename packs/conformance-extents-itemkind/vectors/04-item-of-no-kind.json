@@ -1,0 +1,9 @@
+{
+  "name": "item-of-no-kind",
+  "from": "conformance-extents-itemkind",
+  "to": "conformance-extents-itemkind",
+  "input": "0103",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 27; an item that is no-kind fails the whole decode (ruling 11 of 0.20)"
+}

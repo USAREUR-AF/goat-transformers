@@ -1,0 +1,28 @@
+# Conformance probe pack for a header count in common lines that the list of
+# each kind references (spec 0.21 ruling 2), most significant bit first.
+# Public.
+#
+#   n           an 8-bit count of nums, common
+#   kind b      when 8 2: x in 8 bits, then n nums (val in 8 bits each)
+#   kind a      when 8 1: n nums
+format     conformance-extents-kinds
+version    0.21.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+count n 8
+kind    b
+when    8  2
+requires probe.x
+field   probe.x  8  uint
+group   probe.nums count @n
+  field  probe.val  8  uint
+end
+kind    a
+when    8  1
+group   probe.nums count @n
+  field  probe.val  8  uint
+end

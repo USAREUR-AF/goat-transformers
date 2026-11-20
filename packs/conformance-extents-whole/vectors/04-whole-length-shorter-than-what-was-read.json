@@ -1,0 +1,9 @@
+{
+  "name": "whole-length-shorter-than-what-was-read",
+  "from": "conformance-extents-whole",
+  "to": "conformance-extents-whole",
+  "input": "0005",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 14; a stated whole length shorter than what was already read (ruling 8 of 0.8)"
+}

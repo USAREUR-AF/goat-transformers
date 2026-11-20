@@ -1,0 +1,13 @@
+{
+  "name": "count-line-at-the-extent-end",
+  "from": "conformance-extents-past",
+  "to": "conformance-extents-past",
+  "input": "0009",
+  "expect": "02000009",
+  "model": {
+    "probe.nums.#": "absent",
+    "probe.y": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 6 and A count before other fields (Decode); if the count line lay at or past the end of a length extent, the group is absent"
+}

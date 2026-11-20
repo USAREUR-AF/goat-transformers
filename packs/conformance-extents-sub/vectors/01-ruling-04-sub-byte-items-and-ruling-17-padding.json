@@ -1,0 +1,16 @@
+{
+  "name": "ruling-04-sub-byte-items-and-ruling-17-padding",
+  "from": "conformance-extents-sub",
+  "to": "conformance-extents-sub",
+  "input": "0091a0",
+  "expect": "009180",
+  "model": {
+    "probe.x": "0",
+    "probe.nums.#": "3",
+    "probe.nums[0].probe.val": "1",
+    "probe.nums[1].probe.val": "2",
+    "probe.nums[2].probe.val": "3"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 4 and A list to the end of its extent; the message is counted in bytes: an item is read while at least 8 bits remain; the 7 bits left are padding, ignored though not zero (ruling 17); encode writes them 0"
+}

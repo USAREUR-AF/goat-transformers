@@ -1,0 +1,9 @@
+{
+  "name": "to-walk-both-lists",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-walk",
+  "input": "{\"x\":7,\"y\":9,\"nums\":[5],\"recs\":[{\"x\":3}]}",
+  "expect": "8002070503098003",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 31; block 2: y, opt 1, pad 7, x = 3: 3 bytes"
+}

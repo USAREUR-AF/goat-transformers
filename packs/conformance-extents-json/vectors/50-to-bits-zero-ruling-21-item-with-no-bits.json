@@ -1,0 +1,9 @@
+{
+  "name": "to-bits-zero-ruling-21-item-with-no-bits",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-bits-zero",
+  "input": "{\"nums\":[null]}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 21 in an extent counted in bits; p.1 = 0; the item writes no bits and starts at the end of the 0-bit block: 0 bits left, fewer than the 1 an item of a bits extent needs"
+}

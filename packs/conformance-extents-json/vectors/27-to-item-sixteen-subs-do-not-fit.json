@@ -1,0 +1,9 @@
+{
+  "name": "to-item-sixteen-subs-do-not-fit",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-item",
+  "input": "{\"items\":[{\"qty\":1,\"subs\":[{\"val\":0},{\"val\":0},{\"val\":0},{\"val\":0},{\"val\":0},{\"val\":0},{\"val\":0},{\"val\":0},{\"val\":0},{\"val\":0},{\"val\":0},{\"val\":0},{\"val\":0},{\"val\":0},{\"val\":0},{\"val\":0}]}]}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 9; 16 is outside 0 ... 2^4 - 1"
+}

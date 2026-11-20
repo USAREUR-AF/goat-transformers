@@ -1,0 +1,28 @@
+# Conformance probe pack for `rest` as the last line of one item kind of an
+# outer `rest` group (spec 0.21 rulings 10 and 27), most significant bit
+# first. Public. No message kinds.
+#
+#   items       items to the end of the message; each selects a kind by its
+#               first byte
+#     kind a    when 8 1, requires qty: qty in 8 bits
+#     kind b    when 8 2: subs to the end of the message (val in 8 bits
+#               each). Only the last item may be of kind b.
+format     conformance-extents-outerkind
+version    0.21.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+group   probe.items rest
+  kind  a
+  when  8  1
+  requires probe.qty
+  field  probe.qty  8  uint
+  kind  b
+  when  8  2
+  group  probe.subs rest
+    field  probe.val  8  uint
+  end
+end

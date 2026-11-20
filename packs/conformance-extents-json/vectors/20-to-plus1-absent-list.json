@@ -1,0 +1,9 @@
+{
+  "name": "to-plus1-absent-list",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-plus1",
+  "input": "{\"x\":7}",
+  "expect": "0107",
+  "source": "constructed",
+  "reference": "spec 0.21, A count before other fields; an absent list writes n = 1"
+}

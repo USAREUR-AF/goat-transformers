@@ -1,0 +1,9 @@
+{
+  "name": "to-unreached-minus-one-item",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-unreached-minus",
+  "input": "{\"nums\":[5]}",
+  "expect": "008005",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 30; 1 - 1 = 0"
+}

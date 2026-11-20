@@ -1,0 +1,12 @@
+{
+  "name": "presence-set-and-no-items",
+  "from": "conformance-extents-zero",
+  "to": "conformance-extents-zero",
+  "input": "80",
+  "expect": "00",
+  "model": {
+    "probe.nums.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 1; p.1 = 1 and no bits remain: present and empty; encode: no item has content, p.1 = 0"
+}

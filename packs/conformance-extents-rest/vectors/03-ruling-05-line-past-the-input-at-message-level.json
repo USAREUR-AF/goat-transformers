@@ -1,0 +1,9 @@
+{
+  "name": "ruling-05-line-past-the-input-at-message-level",
+  "from": "conformance-extents-rest",
+  "to": "conformance-extents-rest",
+  "input": "09010203",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 5: at message level, reading past the input stays malformed-wire (item 1's y)"
+}

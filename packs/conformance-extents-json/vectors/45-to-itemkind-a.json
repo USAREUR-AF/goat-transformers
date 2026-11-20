@@ -1,0 +1,9 @@
+{
+  "name": "to-itemkind-a",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-itemkind",
+  "input": "{\"items\":[{\"qty\":9,\"subs\":[{\"val\":5}]}]}",
+  "expect": "0101010509",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 27; no requires: the first item kind, a"
+}

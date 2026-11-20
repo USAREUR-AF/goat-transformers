@@ -1,0 +1,9 @@
+{
+  "name": "to-kindcounts-b",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-kindcounts",
+  "input": "{\"nums\":[7]}",
+  "expect": "021007",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 25; no x: b"
+}

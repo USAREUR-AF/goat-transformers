@@ -1,0 +1,9 @@
+{
+  "name": "to-optcount-empty",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-optcount",
+  "input": "{\"nums\":[]}",
+  "expect": "00",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 18; ruling 5 of 0.8 extends to count @: an empty list does not set the bit"
+}

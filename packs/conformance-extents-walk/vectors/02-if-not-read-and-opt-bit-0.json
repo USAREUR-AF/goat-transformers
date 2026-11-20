@@ -1,0 +1,13 @@
+{
+  "name": "if-not-read-and-opt-bit-0",
+  "from": "conformance-extents-walk",
+  "to": "conformance-extents-walk",
+  "input": "000107020900",
+  "expect": "000107020900",
+  "model": {
+    "probe.nums.#": "absent",
+    "probe.recs.#": "absent"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 31; p.1 = 0; opt bit 0"
+}

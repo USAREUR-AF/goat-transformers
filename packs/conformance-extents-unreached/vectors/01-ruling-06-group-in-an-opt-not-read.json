@@ -1,0 +1,12 @@
+{
+  "name": "ruling-06-group-in-an-opt-not-read",
+  "from": "conformance-extents-unreached",
+  "to": "conformance-extents-unreached",
+  "input": "0500",
+  "expect": "0100",
+  "model": {
+    "probe.nums.#": "absent"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 6; n = 5 is read and the opt bit is 0: the list is absent and the count ignored; encode writes n = 1"
+}

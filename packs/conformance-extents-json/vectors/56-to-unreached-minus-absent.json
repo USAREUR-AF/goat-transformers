@@ -1,0 +1,9 @@
+{
+  "name": "to-unreached-minus-absent",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-unreached-minus",
+  "input": "{}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 30; the group is never reached: the count holds n = -1, which does not fit"
+}

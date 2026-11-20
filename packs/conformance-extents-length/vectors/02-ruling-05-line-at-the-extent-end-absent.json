@@ -1,0 +1,17 @@
+{
+  "name": "ruling-05-line-at-the-extent-end-absent",
+  "from": "conformance-extents-length",
+  "to": "conformance-extents-length",
+  "input": "0301020309",
+  "expect": "040102030009",
+  "model": {
+    "probe.recs.#": "2",
+    "probe.recs[1].probe.x": "3",
+    "@absent": [
+      "probe.recs[1].probe.y"
+    ],
+    "probe.z": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.21 rulings 3 and 5; a line of an item that starts at the extent's end reads as absent; encode writes every line"
+}

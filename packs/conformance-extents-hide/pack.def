@@ -1,0 +1,28 @@
+# Conformance probe pack for a count name declared again in a nested block
+# (spec 0.21 ruling 24), most significant bit first. Public. No kinds.
+#
+#   n           an 8-bit count of nums (the outer n)
+#   opt         one bit; when it is 1: an inner n in 4 bits, 3 unused bits,
+#               then n recs (x in 8 bits each), counted by the inner n
+#   align 8
+#   nums        outer-n items, val in 8 bits each
+format     conformance-extents-hide
+version    0.21.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+count n 8
+opt
+  count n 4
+  pad 3
+  group  probe.recs count @n
+    field  probe.x  8  uint
+  end
+end
+align 8
+group   probe.nums count @n
+  field  probe.val  8  uint
+end

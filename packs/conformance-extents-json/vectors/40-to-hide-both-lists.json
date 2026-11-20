@@ -1,0 +1,9 @@
+{
+  "name": "to-hide-both-lists",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-hide",
+  "input": "{\"recs\":[{\"x\":10}],\"nums\":[5,6]}",
+  "expect": "02880a0506",
+  "source": "constructed",
+  "reference": "spec 0.21 ruling 24; each count holds the items of the list that references it"
+}

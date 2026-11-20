@@ -1,0 +1,9 @@
+{
+  "name": "to-last-empty-list",
+  "from": "conformance-extents-json",
+  "to": "conformance-extents-last",
+  "input": "{\"nums\":[]}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.21, The last-item flag; a list has at least one item on the wire; an empty list outside an if or opt block"
+}

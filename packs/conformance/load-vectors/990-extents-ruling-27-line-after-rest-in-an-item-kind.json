@@ -1,0 +1,9 @@
+{
+  "name": "990-extents-ruling-27-line-after-rest-in-an-item-kind",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey x int -\nkey y int -\nkey z int -\nkey val int -\nkey qty int -\nlist nums \"a list\"\nlist recs \"a list\"\nlist items \"a list\"\nlist subs \"a list\"\n"
+  ],
+  "pack": "format probe\nversion 0.21.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nlayout sequential\ngroup probe.items rest\n  kind a\n  when 8 1\n  group probe.subs rest\n    field probe.val 8 uint\n  end\n  field probe.qty 8 uint\n  kind b\n  when 8 2\nend\n",
+  "expect_error": "bad-directive"
+}
