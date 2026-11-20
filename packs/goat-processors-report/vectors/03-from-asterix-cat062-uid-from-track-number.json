@@ -1,0 +1,8 @@
+{
+ "name": "03-from-asterix-cat062-uid-from-track-number",
+ "from": "asterix-cat062",
+ "to": "goat-processors-report",
+ "input": "3e0018990c01075460100000000000000000013781010100",
+ "expect": "{\"uid\":\"311\",\"lat\":0,\"lon\":0}",
+ "note": "Input is asterix-cat062 vector 03. Worked by hand: FSPEC 99 0c gives I062/010, /070, /105, /040, /080; I062/105 is zero (lat 0, lon 0); I062/040 is 0x0137 = 311, and model/cat062.def derives uid as its decimal text. No velocity, so no course or speed; ASTERIX carries no source or date, so track.source_id and time_ms are set on the command line in use."
+}
