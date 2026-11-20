@@ -24,6 +24,15 @@ class YamlReader(unittest.TestCase):
         self.assertEqual(doc, {"a": 1, "b": "x y", "c": ["p", {"q": 2, "r": "it's"}], "d": [1, "two"],
                                "e": True, "f": "no"})
 
+    def test_flow_mapping_as_a_sequence_item(self):
+        doc = J.yaml_load('allOf:\n  - {"$ref": "#/a"}\n  - { "$ref": "#/b" }\n  - [1, 2]\n')
+        self.assertEqual(doc, {"allOf": [{"$ref": "#/a"}, {"$ref": "#/b"}, [1, 2]]})
+
+    def test_plain_scalar_that_starts_on_the_key_line(self):
+        doc = J.yaml_load("m:\n  description: Physical surface. May be\n    one value, or\n    several.\n  type: array\n")
+        self.assertEqual(doc, {"m": {"description": "Physical surface. May be one value, or several.",
+                                     "type": "array"}})
+
     def test_quoted_scalar_over_several_lines(self):
         doc = J.yaml_load("m:\n  description: 'one line\n    and the next ''quoted''\n\n    after a blank'\n  type: string\n")
         self.assertEqual(doc, {"m": {"description": "one line and the next 'quoted'\nafter a blank",

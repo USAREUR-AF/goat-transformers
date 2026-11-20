@@ -187,6 +187,8 @@ def _strip_comment(line):
 
 def _split_key(content):
     """('key', rest) when the line is `key: rest` or `key:`; else None."""
+    if content[0] in "[{":
+        return None     # a flow sequence or mapping (`- {"a": 1}`), not a key
     if content[0] in "\"'":
         q = content[0]
         j = content.index(q, 1)
@@ -301,6 +303,13 @@ def yaml_load(text):
             return None
         if rest[0] in "|>":
             return block_scalar(rest, indent, raw_i)
+        if rest[0] not in "\"'[{" and pos[0] < len(lines) and lines[pos[0]][0] > indent:
+            # a plain scalar that starts on the key's line and goes on below it, more indented
+            parts = [rest]
+            while pos[0] < len(lines) and lines[pos[0]][0] > indent:
+                parts.append(lines[pos[0]][1])
+                pos[0] += 1
+            return " ".join(parts)
         return _yaml_scalar(rest)
 
     def node(indent):
@@ -1272,6 +1281,19 @@ def encode(pack, kind, ent, residue):
     # geojson
     props = collections.OrderedDict()
     top = collections.OrderedDict()
+    # ruling 10 of 0.5: mapped members and `when` members are written in line order, common
+    # lines first, then the kind's (this generator writes a scope's `when` lines before its
+    # field lines); the first line that addresses a member places it
+    for loc, val in pack.common["when"] + [(ln[2], None) for ln in pack.common["lines"]] + \
+            (kind["when"] if kind else []) + [(ln[2], None) for ln in (kind["lines"] if kind else [])]:
+        if val == "present" or loc.startswith("geometry."):
+            continue
+        if val is None:
+            key = [ln[1] for ln in lines if ln[2] == loc]
+            if not any(k in ent for k in key):
+                continue
+        tgt, name = (props, loc[11:]) if loc.startswith("properties.") else (top, loc)
+        tgt.setdefault(name, None)
     lon = lat = alt = None
     for ln in lines:
         _, key, loc, tr = ln
@@ -1285,9 +1307,11 @@ def encode(pack, kind, ent, residue):
         elif loc == "geometry.alt":
             alt = v if alt is None else alt
         elif loc.startswith("properties."):
-            props.setdefault(loc[11:], v)
+            if props.get(loc[11:]) is None:
+                props[loc[11:]] = v
         else:
-            top.setdefault(loc, v)
+            if top.get(loc) is None:
+                top[loc] = v
     for loc, val in whens:
         if val == "present":
             continue

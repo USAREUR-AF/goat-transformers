@@ -91,7 +91,36 @@ FAMILIES = {
                  "license. Its `schema/README.md` calls the schemas partial and a work in "
                  "progress. The pack takes no text of the specification."),
     },
+    "overture": {
+        "repo": "https://github.com/OvertureMaps/schema",
+        "raw": "https://raw.githubusercontent.com/OvertureMaps/schema",
+        "publisher": "Overture Maps Foundation",
+        "tag": "v2.0.0",
+        "read_on": "2026-11-20",
+        "quote_lines": ["Attribution 4.0 International",
+                        "Creative Commons Attribution 4.0 International Public License"],
+        "run": "tools/gen/overture-run.sh",
+        "full_license": False,
+        "license_intro": ("The repository's `LICENSE` is the Creative Commons Attribution 4.0 International "
+                          "Public License (CC BY 4.0); its title lines:"),
+        "spec": ("The schema files under `schema/` are covered by that `LICENSE`. The Python packages "
+                 "under `packages/` declare the MIT license in their `pyproject.toml`; they are not read. "
+                 "Overture's map data carries its own licenses, which do not apply here: only the schema "
+                 "is used. Attribution: the pack is derived from the Overture Maps schema (CC BY 4.0), "
+                 "restated with keys of this project's naming."),
+    },
 }
+
+# Overture: (format, theme directory, feature file base name)
+OVERTURE = [("overture-address", "addresses", "address"), ("overture-bathymetry", "base", "bathymetry"),
+            ("overture-infrastructure", "base", "infrastructure"), ("overture-land", "base", "land"),
+            ("overture-land-cover", "base", "land_cover"), ("overture-land-use", "base", "land_use"),
+            ("overture-water", "base", "water"), ("overture-building", "buildings", "building"),
+            ("overture-building-part", "buildings", "building_part"), ("overture-division", "divisions", "division"),
+            ("overture-division-area", "divisions", "division_area"),
+            ("overture-division-boundary", "divisions", "division_boundary"),
+            ("overture-place", "places", "place"), ("overture-connector", "transportation", "connector"),
+            ("overture-segment", "transportation", "segment")]
 
 
 def sha256(path):
@@ -142,6 +171,14 @@ def packs(family, src):
         main = os.path.join(src, "schemas", "playbook.json")
         out.append(("cacao-playbook", "CACAO Security Playbooks 2.0, JSON Schema of the playbook",
                     [os.path.relpath(p, src) for p in closure(main)], "schemas/playbook.json"))
+    elif family == "overture":
+        for fmt, theme, base in OVERTURE:
+            rel = "schema/%s/%s.yaml" % (theme, base)
+            files = ["schema/defs.yaml"]
+            if os.path.exists(os.path.join(src, "schema", theme, "defs.yaml")):
+                files.append("schema/%s/defs.yaml" % theme)
+            out.append((fmt, "Overture Maps schema, feature type `%s` (theme `%s`), JSON Schema in YAML"
+                        % (base, theme), files + [rel], rel))
     elif family == "cloudevents":
         rel = "cloudevents/formats/cloudevents.json"
         out.append(("cloudevents", "CloudEvents 1.0.2, JSON Schema of the JSON event format", [rel], rel))
@@ -163,13 +200,19 @@ def text_for(family, fmt, title, files, main, src, commit):
         quote = lic_text.split("\n")
     else:
         quote = [l.strip() for l in lic_text.split("\n") if l.strip()][:3]
+    if c.get("quote_lines"):
+        stripped = [l.strip() for l in lic_text.split("\n")]
+        for l in c["quote_lines"]:
+            if l not in stripped:
+                raise SystemExit("jsonmore-provenance: LICENSE has no line %r" % l)
+        quote = c["quote_lines"]
     w = ["# Provenance of the %s pack\n" % fmt,
          "`tools/gen/jsonschema2pack.py` (run script `%s`) reads the files below and nothing" % c["run"],
          "else. They are not kept in this repository. Read on %s.\n" % c.get("read_on", READ_ON),
          "| | |\n|---|---|",
          "| Document | %s |" % title,
          "| Publisher | %s |" % c["publisher"],
-         "| Repository | %s at commit `%s` |" % (c["repo"], commit),
+         "| Repository | %s at %scommit `%s` |" % (c["repo"], ("tag `%s`, " % c["tag"]) if c.get("tag") else "", commit),
          "| Download | `%s/%s/%s` |" % (c["raw"], commit, main), "",
          "| File | SHA-256 |\n|---|---|"]
     for f in files:
