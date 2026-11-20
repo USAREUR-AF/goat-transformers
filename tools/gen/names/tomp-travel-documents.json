@@ -1,0 +1,29 @@
+{
+ "keys": {
+  "features_properties_links|description|string": "features_properties_links_description",
+  "features_properties_links|expires|string": "features_properties_links_expires",
+  "features_properties_links|hash|string": "features_properties_links_hash",
+  "features_properties_links|href|string": "features_properties_links_href",
+  "features_properties_links|mandatory|int": "features_properties_links_mandatory",
+  "features_properties_links|method|string": "features_properties_links_method",
+  "features_properties_links|rel|string": "features_properties_links_rel",
+  "features_properties_links|type|string": "features_properties_links_type",
+  "features_properties_validity|.|string": "features_properties_validity_value",
+  "features|id|string": "features_id",
+  "features|properties.base64|string": "features_properties_base64",
+  "features|properties.contentType|string": "features_properties_content_type",
+  "features|properties.ekey.key|string": "features_properties_ekey_key",
+  "features|properties.ekey.passkey|string": "features_properties_ekey_passkey",
+  "features|properties.lock.bdAddress|string": "features_properties_lock_bd_address",
+  "features|properties.lock.deviceName|string": "features_properties_lock_device_name",
+  "features|properties.travelDocumentType|string": "features_properties_travel_document_type",
+  "features|properties.type|string": "features_properties_type",
+  "features|type|string": "features_type",
+  "|type|string": "type"
+ },
+ "lists": {
+  "features|properties.links": "features_properties_links",
+  "features|properties.validity": "features_properties_validity",
+  "|features": "features"
+ }
+}
