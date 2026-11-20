@@ -432,6 +432,69 @@ build:       cargo build --release --lib --target wasm32-unknown-unknown</span><
   </div>
 </section>
 
+<!-- section shared-model: generated from docs/shared-model-section.md by tools/doc-sections.py; edit that file -->
+<section id="shared-model" aria-labelledby="h-shared-model">
+  <div class="wrap">
+    <p class="tag">Under the hood</p>
+    <h2 id="h-shared-model">The shared model</h2>
+    <p>Every format in this library converts through one common set of typed values: the shared model. This section says what it is, why the library is built on it, what it guarantees, and how it is kept safe. The full definition is <a href="https://github.com/USAREUR-AF/goat-transformers/blob/main/spec/shared-model.md">spec/shared-model.md</a>.</p>
+    <figure><div class="scroll"><img src="assets/model-bus.svg" alt="The shared model drawn as a horizontal bar that every format connects to; formats of a private overlay connect to the same bar."></div></figure>
+    <h3>What it is</h3>
+    <p>A conversion is two steps: decode the source message into keys of the model, then encode those keys into the target format. No format is converted to another directly.</p>
+    <div class="table-scroll"><table>
+      <thead><tr><th>Part</th><th>What it holds</th><th>Defined in</th></tr></thead>
+      <tbody>
+        <tr><td><code>core</code></td><td>what any position report means, in fixed units: identifier, type, time, latitude and longitude (WGS 84), height above the ellipsoid, horizontal and vertical error, course, speed, name. These are the fields of a Cursor on Target event.</td><td><a href="https://github.com/USAREUR-AF/goat-transformers/blob/main/model/core.def">model/core.def</a></td></tr>
+        <tr><td><code>track</code></td><td>facts about a sensor track: its source, velocity vector, class, confidence, uncertainty and status flags. These follow the Canonical Track v2 contract field for field.</td><td><a href="https://github.com/USAREUR-AF/goat-transformers/blob/main/model/track.def">model/track.def</a></td></tr>
+        <tr><td>one module per format</td><td>every other field of that format, under its own name, so that nothing is lost when a message goes back to its own format</td><td><code>model/&lt;module&gt;.def</code></td></tr>
+      </tbody>
+    </table></div>
+    <p>Units are fixed by the model, not by a format: degrees, meters, meters per second, milliseconds since 1970 (UTC). Each format's pack converts its own units on the way in and on the way out.</p>
+    <h3>Why a shared model</h3>
+    <div class="table-scroll"><table>
+      <thead><tr><th>Approach</th><th>Work for N formats</th><th>A new format needs</th></tr></thead>
+      <tbody>
+        <tr><td>A converter for each pair of formats</td><td>N × (N − 1) converters</td><td>a converter to and from every existing format</td></tr>
+        <tr><td>One shared model (this library)</td><td>N packs</td><td>one pack</td></tr>
+      </tbody>
+    </table></div>
+    <p>The same pattern carries other wide conversion tools: pandoc converts documents through one document model, and GDAL converts geographic data through one data model.</p>
+    <p>The library does not use an existing message standard as the hub. Each candidate covers one domain (air traffic, land tactical data, maritime, space telemetry) and leaves the others out, several are heavy to implement, and some are not public. The shared model reuses existing definitions where they fit instead of inventing new ones: <code>core</code> is the Cursor on Target event, and <code>track</code> is the Canonical Track v2 contract.</p>
+    <h3>What it guarantees, and what it does not</h3>
+    <div class="table-scroll"><table>
+      <thead><tr><th>Conversion</th><th>What happens</th></tr></thead>
+      <tbody>
+        <tr><td>A format to itself</td><td>Nothing is lost. A field the model has no key for is kept with the message and written back, so the message returns in its canonical form. Round-trip conformance vectors pin this.</td></tr>
+        <tr><td>One format to another</td><td>Exactly the values that both formats map carry. The capability report (<code>goat-xf capability --from A --to B</code>, or <code>goat-xf matrix</code>) lists what carries and what is dropped, from the two packs alone, before any message is converted.</td></tr>
+        <tr><td>A pair that must lose nothing</td><td>Not guaranteed by the model. A direct rule for that pair is planned (spec version 0.53).</td></tr>
+      </tbody>
+    </table></div>
+    <p>Cross-format loss is listed by the capability report but not yet reported per message. A per-conversion loss report, and a strict mode that refuses a conversion that would drop a field the caller requires, are being added.</p>
+    <h3>How it is kept safe</h3>
+    <div class="table-scroll"><table>
+      <thead><tr><th>Risk</th><th>Safeguard</th></tr></thead>
+      <tbody>
+        <tr><td>A key changes meaning under its users</td><td>Keys are never renamed and never change type. A new meaning is a new key.</td></tr>
+        <tr><td>A pack writes a value of the wrong type</td><td>Every engine checks each pack against the model when it loads, and refuses a mismatch.</td></tr>
+        <tr><td>One implementation reads the model differently</td><td>Seven engines, written independently from the specification, must give the same bytes on every conformance vector.</td></tr>
+        <tr><td>All engines agree on a wrong value</td><td>Values are compared with the projects' own encoders and decoders on their own inputs (<a href="https://github.com/USAREUR-AF/goat-transformers/blob/main/docs/consumer-proofs.md">docs/consumer-proofs.md</a>). Checks against each format's reference implementation and range checks on every key are being added.</td></tr>
+        <tr><td>A change to the model breaks a user</td><td>Each project pins a library commit, so a change reaches no one until they move. A change to <code>core</code> or <code>track</code> needs a written decision record (<a href="https://github.com/USAREUR-AF/goat-transformers/blob/main/docs/adr/INDEX.md">docs/adr/</a>) and is measured against every known user before it merges.</td></tr>
+      </tbody>
+    </table></div>
+    <h3>Time quality</h3>
+    <p>Time quality travels with every report, on two independent axes. A pack never invents it: each key is absent unless the source message states it.</p>
+    <div class="table-scroll"><table>
+      <thead><tr><th>Axis</th><th>Keys</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>Coherence of the clock that stamped the report</td><td><code>time_error_ms</code> (the error bound), <code>time_state</code> (<code>coherent</code>, <code>drifting</code> or <code>free-running</code>)</td><td>in <code>core</code></td></tr>
+        <tr><td>Confidence in UTC, and a signed attestation of time quality</td><td>the UTC state, its error bound, the anchor and the age of the last anchor; an attestation reference</td><td>being added</td></tr>
+      </tbody>
+    </table></div>
+    <p>A clock can be coherent while its relation to UTC is unknown. That is a normal, healthy state, and with the second axis the model can state it.</p>
+  </div>
+</section>
+<!-- /section shared-model -->
+
 </main>
 
 <footer>
