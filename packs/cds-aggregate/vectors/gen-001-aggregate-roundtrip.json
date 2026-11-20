@@ -1,0 +1,15 @@
+{
+ "name": "gen-aggregate-roundtrip",
+ "from": "cds-aggregate",
+ "to": "cds-aggregate",
+ "input": "{\"curb_place_type\":\"space\",\"curb_place_id\":\"9f8a28f6-88c8-4c11-8294-05e31de4bd49\",\"metric_type\":\"total_sessions\",\"date\":\"2024-07-15\",\"hour\":70172,\"value\":-3.25}",
+ "expect": "{\"curb_place_type\":\"space\",\"curb_place_id\":\"9f8a28f6-88c8-4c11-8294-05e31de4bd49\",\"metric_type\":\"total_sessions\",\"date\":\"2024-07-15\",\"hour\":70172,\"value\":-3.25}",
+ "model": {
+  "cdsaggregate.curb_place_type": "space",
+  "cdsaggregate.curb_place_id": "9f8a28f6-88c8-4c11-8294-05e31de4bd49",
+  "cdsaggregate.metric_type": "total_sessions",
+  "cdsaggregate.date": "2024-07-15",
+  "cdsaggregate.hour": "70172",
+  "cdsaggregate.value": "-3.25"
+ }
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-request_response-residue",
+ "from": "open311-request-response",
+ "to": "open311-request-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"service_request_id\":\"s99532\",\"token\":\"s71935\",\"service_notice\":\"s88458\",\"account_id\":\"s69645\"}",
+ "expect": "{\"service_request_id\":\"s99532\",\"token\":\"s71935\",\"service_notice\":\"s88458\",\"account_id\":\"s69645\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

@@ -1,0 +1,17 @@
+{
+ "name": "gen-curb_area-roundtrip",
+ "from": "cds-curb-area",
+ "to": "cds-curb-area",
+ "input": "{\"curb_area_id\":\"1d026afb-2998-4b24-8b4e-d90c83aea108\",\"geometry\":{\"type\":\"s95175\"},\"name\":\"s35542\",\"published_date\":25262,\"last_updated_date\":1748140910944,\"curb_zone_ids\":[\"7f9b9285-00b0-4eaa-88c2-1661ef71192c\",\"ef7ebee9-d6c1-418e-8680-76bc020abec6\"],\"external_references\":[{\"reference_url\":\"https://example.org/280\",\"name\":\"s40647\",\"public\":true,\"identifier_name\":\"s10128\",\"ids\":[\"s27608\"]},{\"reference_url\":\"https://example.org/317\",\"name\":\"s22763\",\"public\":true,\"identifier_name\":\"s72305\",\"ids\":[\"s65397\"]}]}",
+ "expect": "{\"curb_area_id\":\"1d026afb-2998-4b24-8b4e-d90c83aea108\",\"geometry\":{\"type\":\"s95175\"},\"name\":\"s35542\",\"published_date\":25262,\"last_updated_date\":1748140910944,\"curb_zone_ids\":[\"7f9b9285-00b0-4eaa-88c2-1661ef71192c\",\"ef7ebee9-d6c1-418e-8680-76bc020abec6\"],\"external_references\":[{\"reference_url\":\"https://example.org/280\",\"name\":\"s40647\",\"public\":true,\"identifier_name\":\"s10128\",\"ids\":[\"s27608\"]},{\"reference_url\":\"https://example.org/317\",\"name\":\"s22763\",\"public\":true,\"identifier_name\":\"s72305\",\"ids\":[\"s65397\"]}]}",
+ "model": {
+  "uid": "1d026afb-2998-4b24-8b4e-d90c83aea108",
+  "time_ms": "1748140910944",
+  "cdscurbarea.curb_area_id": "1d026afb-2998-4b24-8b4e-d90c83aea108",
+  "cdscurbarea.geometry_type": "s95175",
+  "cdscurbarea.name": "s35542",
+  "cdscurbarea.published_date": "25262",
+  "cdscurbarea.last_updated_date": "1748140910944",
+  "cdscurbarea.curb_zone_ids.#": "2"
+ }
+}

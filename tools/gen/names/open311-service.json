@@ -1,0 +1,12 @@
+{
+ "keys": {
+  "|description|string": "description",
+  "|group|string": "group",
+  "|keywords|string": "keywords",
+  "|metadata|int": "metadata",
+  "|service_code|string": "service_code",
+  "|service_name|string": "service_name",
+  "|type|string": "type"
+ },
+ "lists": {}
+}

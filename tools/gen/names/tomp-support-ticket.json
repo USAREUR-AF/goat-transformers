@@ -1,0 +1,37 @@
+{
+ "keys": {
+  "damage_pictures|.|string": "damage_pictures_value",
+  "links_links|description|string": "links_links_description",
+  "links_links|expires|string": "links_links_expires",
+  "links_links|hash|string": "links_links_hash",
+  "links_links|href|string": "links_links_href",
+  "links_links|mandatory|int": "links_links_mandatory",
+  "links_links|method|string": "links_links_method",
+  "links_links|rel|string": "links_links_rel",
+  "links_links|type|string": "links_links_type",
+  "urls|.|string": "urls_value",
+  "|comment|string": "comment",
+  "|contactInformationEndUser|string": "contact_information_end_user",
+  "|context.asset|string": "context_asset",
+  "|context.leg|string": "context_leg",
+  "|context.package|string": "context_package",
+  "|context.product|string": "context_product",
+  "|damage.assetComponent|string": "damage_asset_component",
+  "|damage.description|string": "damage_description",
+  "|id|string": "id",
+  "|location|string": "location",
+  "|priority|string": "priority",
+  "|requestedResponseTime|int": "requested_response_time",
+  "|sequence|int": "sequence",
+  "|status|string": "status",
+  "|supportType|string": "support_type",
+  "|timeToResolution|int": "time_to_resolution",
+  "|timestamp|string": "timestamp",
+  "|type|string": "type"
+ },
+ "lists": {
+  "|damage.pictures": "damage_pictures",
+  "|links.links": "links_links",
+  "|urls": "urls"
+ }
+}

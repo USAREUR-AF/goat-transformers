@@ -1,0 +1,14 @@
+{
+ "name": "gen-request_response-roundtrip",
+ "from": "open311-request-response",
+ "to": "open311-request-response",
+ "input": "{\"service_request_id\":\"s99532\",\"token\":\"s71935\",\"service_notice\":\"s88458\",\"account_id\":\"s69645\"}",
+ "expect": "{\"service_request_id\":\"s99532\",\"token\":\"s71935\",\"service_notice\":\"s88458\",\"account_id\":\"s69645\"}",
+ "model": {
+  "uid": "s99532",
+  "open311requestresponse.service_request_id": "s99532",
+  "open311requestresponse.token": "s71935",
+  "open311requestresponse.service_notice": "s88458",
+  "open311requestresponse.account_id": "s69645"
+ }
+}

@@ -1,0 +1,35 @@
+{
+ "keys": {
+  "external_references_ids|.|string": "external_references_ids_value",
+  "external_references|identifier_name|string": "external_references_identifier_name",
+  "external_references|name|string": "external_references_name",
+  "external_references|public|int": "external_references_public",
+  "external_references|reference_url|string": "external_references_reference_url",
+  "geometry_coordinates|.|float": "geometry_coordinates_value",
+  "|curb_object_id|string": "curb_object_id",
+  "|curb_policy_id|string": "curb_policy_id",
+  "|curb_space_id|string": "curb_space_id",
+  "|curb_zone_id|string": "curb_zone_id",
+  "|description|string": "description",
+  "|geometry.type|string": "geometry_type",
+  "|lane_type|string": "lane_type",
+  "|last_updated_date|int": "last_updated_date",
+  "|linear_distance|int": "linear_distance",
+  "|max_depth|int": "max_depth",
+  "|max_height|int": "max_height",
+  "|max_length|int": "max_length",
+  "|name|string": "name",
+  "|object_line.type|string": "object_line_type",
+  "|object_shape.type|string": "object_shape_type",
+  "|object_type|string": "object_type",
+  "|operator|string": "operator",
+  "|owner|string": "owner",
+  "|perpendicular_distance|int": "perpendicular_distance",
+  "|published_date|int": "published_date"
+ },
+ "lists": {
+  "external_references|ids": "external_references_ids",
+  "|external_references": "external_references",
+  "|geometry.coordinates": "geometry_coordinates"
+ }
+}

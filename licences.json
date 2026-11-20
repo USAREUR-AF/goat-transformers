@@ -97,6 +97,46 @@
       "licence": "LicenseRef-OASIS-Notice",
       "profile": "open"
     },
+    "cds-aggregate": {
+      "format": "cds-aggregate",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "cds-curb-area": {
+      "format": "cds-curb-area",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "cds-curb-event": {
+      "format": "cds-curb-event",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "cds-curb-object": {
+      "format": "cds-curb-object",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "cds-curb-space": {
+      "format": "cds-curb-space",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "cds-curb-status": {
+      "format": "cds-curb-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "cds-curb-zone": {
+      "format": "cds-curb-zone",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "cds-session": {
+      "format": "cds-session",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
     "gbfs-1.0-free-bike-status": {
       "format": "gbfs-1.0-free-bike-status",
       "licence": "CC-BY-3.0",
@@ -534,6 +574,21 @@
     },
     "mvt": {
       "format": "mvt",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "open311-request": {
+      "format": "open311-request",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "open311-request-response": {
+      "format": "open311-request-response",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "open311-service": {
+      "format": "open311-service",
       "licence": "CC-BY-3.0",
       "profile": "open"
     },
@@ -2589,6 +2644,46 @@
       "licence": "LicenseRef-OASIS-Notice",
       "profile": "open"
     },
+    "cdsaggregate.def": {
+      "module": "cdsaggregate",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "cdscurbarea.def": {
+      "module": "cdscurbarea",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "cdscurbevent.def": {
+      "module": "cdscurbevent",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "cdscurbobject.def": {
+      "module": "cdscurbobject",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "cdscurbspace.def": {
+      "module": "cdscurbspace",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "cdscurbstatus.def": {
+      "module": "cdscurbstatus",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "cdscurbzone.def": {
+      "module": "cdscurbzone",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "cdssession.def": {
+      "module": "cdssession",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
     "gbfs10freebikestatus.def": {
       "module": "gbfs10freebikestatus",
       "licence": "CC-BY-3.0",
@@ -3026,6 +3121,21 @@
     },
     "mvt.def": {
       "module": "mvt",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "open311request.def": {
+      "module": "open311request",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "open311requestresponse.def": {
+      "module": "open311requestresponse",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "open311service.def": {
+      "module": "open311service",
       "licence": "CC-BY-3.0",
       "profile": "open"
     },

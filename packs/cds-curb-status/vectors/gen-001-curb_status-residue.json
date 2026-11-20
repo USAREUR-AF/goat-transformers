@@ -1,0 +1,7 @@
+{
+ "name": "gen-curb_status-residue",
+ "from": "cds-curb-status",
+ "to": "cds-curb-status",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"data_source_device_id\":\"800b59e7-1c34-4b72-8178-8696cae72c04\",\"data_source_type\":\"payment\",\"data_source_operator_id\":\"f5272adb-7b59-45ce-84fe-cd4cffb21896\",\"sensor_status_is_commissioned\":false,\"sensor_status_is_online\":false}",
+ "expect": "{\"data_source_device_id\":\"800b59e7-1c34-4b72-8178-8696cae72c04\",\"data_source_type\":\"payment\",\"data_source_operator_id\":\"f5272adb-7b59-45ce-84fe-cd4cffb21896\",\"sensor_status_is_commissioned\":false,\"sensor_status_is_online\":false,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

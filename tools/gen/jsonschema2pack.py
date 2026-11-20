@@ -77,7 +77,16 @@ def _yaml_scalar(text):
     if t == "" or t in ("~", "null", "Null", "NULL"):
         return None
     if t[0] == '"':
-        return json.loads(t)
+        try:
+            return json.loads(t)
+        except ValueError:
+            # YAML escapes JSON lacks (YAML 1.2, 5.7): `\ ` an escaped space (a folded line
+            # break leaves one), `\_` no-break space, `\0`, `\a`, `\v`, `\e`, `\N`, `\L`, `\P`
+            yaml_only = {" ": " ", "_": "\\u00a0", "0": "\\u0000", "a": "\\u0007", "v": "\\u000b",
+                         "e": "\\u001b", "N": "\\u0085", "L": "\\u2028", "P": "\\u2029", "\t": "\\t"}
+            fixed = re.sub(r'\\(\\|[ _0avNLPe\t])', lambda m: "\\\\" if m.group(1) == "\\" else
+                           yaml_only[m.group(1)], t)
+            return json.loads(fixed)
     if t[0] == "'":
         if not t.endswith("'"):
             raise GenError("yaml: unterminated quoted scalar %r" % t)

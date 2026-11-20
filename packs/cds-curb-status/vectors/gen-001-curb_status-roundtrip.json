@@ -1,0 +1,14 @@
+{
+ "name": "gen-curb_status-roundtrip",
+ "from": "cds-curb-status",
+ "to": "cds-curb-status",
+ "input": "{\"data_source_device_id\":\"800b59e7-1c34-4b72-8178-8696cae72c04\",\"data_source_type\":\"payment\",\"data_source_operator_id\":\"f5272adb-7b59-45ce-84fe-cd4cffb21896\",\"sensor_status_is_commissioned\":false,\"sensor_status_is_online\":false}",
+ "expect": "{\"data_source_device_id\":\"800b59e7-1c34-4b72-8178-8696cae72c04\",\"data_source_type\":\"payment\",\"data_source_operator_id\":\"f5272adb-7b59-45ce-84fe-cd4cffb21896\",\"sensor_status_is_commissioned\":false,\"sensor_status_is_online\":false}",
+ "model": {
+  "cdscurbstatus.data_source_device_id": "800b59e7-1c34-4b72-8178-8696cae72c04",
+  "cdscurbstatus.data_source_type": "payment",
+  "cdscurbstatus.data_source_operator_id": "f5272adb-7b59-45ce-84fe-cd4cffb21896",
+  "cdscurbstatus.sensor_status_is_commissioned": "0",
+  "cdscurbstatus.sensor_status_is_online": "0"
+ }
+}

@@ -1,0 +1,17 @@
+{
+ "name": "gen-stop_place-roundtrip",
+ "from": "osdm-stop-place",
+ "to": "osdm-stop-place",
+ "input": "{\"objectType\":\"s78092\",\"id\":\"s56944\",\"alternativeIds\":[\"s71770\",\"s35303\"],\"geoPosition\":{\"longitude\":-0.0014,\"latitude\":38.8977},\"modes\":[{\"ptMode\":\"s36297\",\"name\":\"s7950\",\"shortName\":\"s21874\",\"description\":\"s72352\"},{\"ptMode\":\"s31677\",\"name\":\"s99112\",\"shortName\":\"s88725\",\"description\":\"s35968\"}],\"ref\":{\"objectType\":\"s10181\"},\"_links\":[{\"rel\":\"s8229\",\"href\":\"https://example.org/919\",\"type\":\"s58625\",\"value\":\"s26727\"},{\"rel\":\"s35462\",\"href\":\"https://example.org/817\",\"type\":\"s53608\",\"value\":\"s81157\"}],\"name\":\"s36534\",\"nameTranslations\":[{\"language\":\"s92909\",\"text\":\"s35905\",\"shortText\":\"s69913\"},{\"language\":\"s72520\",\"text\":\"s45833\",\"shortText\":\"s28374\"}]}",
+ "expect": "{\"objectType\":\"s78092\",\"id\":\"s56944\",\"alternativeIds\":[\"s71770\",\"s35303\"],\"geoPosition\":{\"longitude\":-0.0014,\"latitude\":38.8977},\"modes\":[{\"ptMode\":\"s36297\",\"name\":\"s7950\",\"shortName\":\"s21874\",\"description\":\"s72352\"},{\"ptMode\":\"s31677\",\"name\":\"s99112\",\"shortName\":\"s88725\",\"description\":\"s35968\"}],\"ref\":{\"objectType\":\"s10181\"},\"_links\":[{\"rel\":\"s8229\",\"href\":\"https://example.org/919\",\"type\":\"s58625\",\"value\":\"s26727\"},{\"rel\":\"s35462\",\"href\":\"https://example.org/817\",\"type\":\"s53608\",\"value\":\"s81157\"}],\"name\":\"s36534\",\"nameTranslations\":[{\"language\":\"s92909\",\"text\":\"s35905\",\"shortText\":\"s69913\"},{\"language\":\"s72520\",\"text\":\"s45833\",\"shortText\":\"s28374\"}]}",
+ "model": {
+  "uid": "s56944",
+  "lat": "38.8977",
+  "lon": "-0.0014",
+  "osdmstopplace.object_type": "s78092",
+  "osdmstopplace.id": "s56944",
+  "osdmstopplace.alternative_ids.#": "2",
+  "osdmstopplace.geo_position_longitude": "-0.0014",
+  "osdmstopplace.geo_position_latitude": "38.8977"
+ }
+}
