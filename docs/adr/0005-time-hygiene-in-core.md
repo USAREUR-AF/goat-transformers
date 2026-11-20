@@ -1,9 +1,7 @@
 # ADR 0005: Time hygiene in core, on two axes, never invented
 
-Status: Proposed (2026-11-20)
+Status: Accepted (2026-11-20, merged as #217)
 
-<!-- Number 0005 assumes 0.30 and 0.31 take 0003 and 0004; renumbered on rebase
-if not, and the consumers re-measured again if the rebase changes the library. -->
 
 ## Changes
 
@@ -93,17 +91,19 @@ engine builds the two-axis split.
 
 ## Consumers re-measured
 
-Each project's own comparison and tests, run with this branch's library
-(`211a35fb6`, on main `6d99371`) in place of the commit it pins, on 2026-11-20.
-No project passes or maps the new keys, so none moves.
+Each project's own comparison and tests, run with the library at a commit in
+place of the one it pins, on 2026-11-20: first at the branch (`211a35fb6`)
+before merge, then at main after merge (`f6d3bb9`, the first green main commit
+that holds #217; no other change to `core` or `track` lies between). No project
+passes or maps the new keys, so none moves.
 
 | Project | Library commit | Result before | Result after | Differences |
 |---|---|---|---|---|
-| open-entity-gateway | 211a35fb6 (main pins 240d06d / 7597d81) | baseline of `tests/vectors/goat-transformers-baseline.json`; the same tests fail or pass | baseline unchanged; the same tests | none |
-| open-billie | 211a35fb6 (branch feat/goat-transformers-default-cot-cat062, pins 7597d81) | CAT-062 397 of 397, CoT 588 of 594, SAPIENT 685 of 719 fields equal; 53 feature tests | the same; baseline file unchanged; 53 pass | none |
-| first-bite | 211a35fb6 (#75 branch, pins 6d99371) | 461 of 462 fixture fields equal (`flow/tests/xf_packs.rs`); 363 tests | 461 of 462; 363 pass; bite2pack self-check passes | none |
-| goatstuff | 211a35fb6 (#111 / goat-map default branch, pins 7597d81) | `cot_parity` baseline; `pytest ops` 333 passed | `cot_parity --check` unchanged; 333 passed (both bundles rebuilt from the branch) | none |
-| octo-pod | 211a35fb6 (#31 branch, pins 7597d81) | 40 tests | 40 pass; the bundle refreshed from the branch | none |
+| open-entity-gateway | 211a35fb6; main f6d3bb9 (gateway main pins 7597d81) | `tests/vectors/goat-transformers-baseline.json`; 233 passed, 11 skipped, 3 xfailed | baseline unchanged; 233 passed, 11 skipped, 3 xfailed; the same failing set (none) | none |
+| open-billie | 211a35fb6; main f6d3bb9 (branch feat/goat-transformers-default-cot-cat062, pins 7597d81) | CAT-062 397 of 397, CoT 588 of 594, SAPIENT 685 of 719 fields equal; 53 feature tests | the same; baseline file unchanged; 53 pass | none |
+| first-bite | 211a35fb6; main f6d3bb9 (#75 branch, pins 6d99371) | 461 of 462 fixture fields equal (`flow/tests/xf_packs.rs`); 363 tests | 461 of 462; 363 pass; bite2pack self-check passes | none |
+| goatstuff | 211a35fb6; main f6d3bb9 (goat-map default branch on #111, pins 7597d81) | `cot_parity` baseline; `pytest ops` 333 passed, 2 skipped | `cot_parity --check` unchanged; 333 passed, 2 skipped (both bundles rebuilt from the library) | none |
+| octo-pod | 211a35fb6; main f6d3bb9 (#31 branch, pins 7597d81) | 40 tests | 40 pass; the bundle refreshed from the library | none |
 
 ## Consequences
 
