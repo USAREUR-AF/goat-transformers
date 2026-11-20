@@ -138,7 +138,12 @@ so a reader steps over a whole block with one addition.
 | 19 | GROUP_FIX | list `key`, first item at bit `a`; pool[`b`] = item bits; `xf` 0: pool[`b`+1] items, `xf` 1: a `len`-bit count at bit pool[`b`+1]; then the item BODY |
 
 Transforms (`xf` of FIELD): 0 `uint`, 1 `twos`, 2 `linscale`, 3 `uscale`,
-4 `sscale`, 5 `f32`, 6 `f64`, 7 `ascii`, 8 `sixbit`.
+4 `sscale`, 5 `f32`, 6 `f64`, 7 `ascii`, 8 `sixbit` (spec 0.14); the value
+transforms of spec 0.15: 9 `uiscale`, 10 `siscale`, 11 `smag`,
+12 `smscale`, 13 `f32scale`, 14 `f64scale`, 15 `chars:icao6`, 16
+`chars:ais6`, 17 `chars:ascii7`, 18 `octal`. A transform number the engine
+does not know is `bad-plan`, so the numbers 9 to 18 needed no version of
+their own; version 3 is the one six-bit armor set.
 
 ### Six-bit armor
 
@@ -168,6 +173,21 @@ text, one byte a character.
   each character's six bits, padded with `@`; a character outside 0x20 to
   0x5F, or a text longer than the field, is `transform-encode`. It is valid
   with either armor.
+
+### Value transforms (spec 0.15)
+
+- `uiscale` and `siscale` take three pool words at `b`, as integers: the
+  factor's numerator (signed) and denominator in lowest terms, and the
+  offset. Decode is `round(v * num / den) + offset` and encode
+  `round((x - offset) * den / num)`, exact in 128-bit integers, rounding half
+  away from zero; a decoded value outside 64 bits is `transform-decode`, an
+  encoded one outside the field `transform-encode`.
+- `smscale`, `f32scale` and `f64scale` take the three doubles of `sscale`
+  and its arithmetic (ruling 1 of 0.5); a result that is not finite fails.
+  `smag` and `smscale` put the sign in the field's highest bit.
+- `chars:<set>` and `octal` give text read from the input when used, never
+  copied, as `ascii` does. A sentinel of `absent` follows the three words
+  of a scaled transform, as for `sscale`.
 
 Order inside a block. A BODY holds its DEFAULT operations, then its common
 lines, then its KIND blocks. A KIND holds its WHEN, REQ and DEFAULT
@@ -317,6 +337,7 @@ feature refuses a plan that uses it (`bad-plan`).
 | `bits` wire, fixed layout: `word_bytes`, `bit_order`, fields past their word (0.2, 0.5) | Built |
 | `uint`, `twos`, `linscale`, `uscale`, `sscale` with a decimal or fraction factor, `f32`, `f64`, `ascii` | Built |
 | `armor sixbit` and the `sixbit` transform (0.14), fixed and sequential layout | Built |
+| `uiscale`, `siscale`, `smag`, `smscale`, `f32scale`, `f64scale`, `chars:icao6`, `chars:ais6`, `chars:ascii7`, `octal` (0.15) | Built |
 | kinds: `kind`, `when`, `requires`, common lines; slicing to named kinds | Built |
 | `const`, `default`, `map` / `via`, `typemap`, `swap`, `trim`, `optional` (0.6) | Built |
 | several lines for one key; overlapping lines | Built |
@@ -346,7 +367,7 @@ feature refuses a plan that uses it (`bad-plan`).
 | `length-plus-range` | a `plus` outside 32 bits |
 | `value-range`, `table-overflow` | an offset, count or table index beyond what an entry holds; more than 255 sentinels on one field |
 | `unknown-format`, `unknown-kind`, `unknown-key`, `bad-arguments` | a name the inputs do not have |
-| `unsupported-feature` | a pack line of the specification that the device profile does not implement. Refused this way: the bits transforms of spec 0.15 (`uiscale`, `siscale`, `smag`, `smscale`, `f32scale`, `f64scale`, `chars`, `octal`), and the derive functions of spec 0.16 (`sec_of`, `ms_of`, `deg`, `add`, the distance and ECEF functions and the others of its table) when a conversion needs one |
+| `unsupported-feature` | a pack line of the specification that the device profile does not implement. Refused this way: the derive functions of spec 0.16 (`sec_of`, `ms_of`, `deg`, `add`, the distance and ECEF functions and the others of its table) when a conversion needs one |
 | `bad-pack`, `bad-model` | text the compiler cannot read; it compiles packs the reference engine loads and does not repeat that engine's load checks |
 
 The text wires are out of scope for the device profile. A text format needs a

@@ -53,7 +53,19 @@ SECTION_NAMES = {
  OP_IF, OP_OPT, OP_CHAIN, OP_PART, OP_LENGTH, OP_WHOLE, OP_GROUP_SEQ, OP_GROUP_FIX) = range(1, 20)
 BLOCK_OPS = (OP_BODY, OP_KIND, OP_IF, OP_OPT, OP_CHAIN, OP_PART, OP_LENGTH)
 
-XF = {"uint": 0, "twos": 1, "linscale": 2, "uscale": 3, "sscale": 4, "f32": 5, "f64": 6, "ascii": 7, "sixbit": 8}
+XF = {"uint": 0, "twos": 1, "linscale": 2, "uscale": 3, "sscale": 4, "f32": 5, "f64": 6, "ascii": 7, "sixbit": 8,
+      # the transforms of spec 0.15 from 9
+      "uiscale": 9, "siscale": 10, "smag": 11, "smscale": 12, "f32scale": 13, "f64scale": 14,
+      "chars_icao6": 15, "chars_ais6": 16, "chars_ascii7": 17, "octal": 18}
+# transforms whose pool run starts with three parameter words
+SCALED = ("linscale", "uscale", "sscale", "uiscale", "siscale", "smscale", "f32scale", "f64scale")
+# transforms whose decode can fail: such a field stays in a plan that does not carry its key
+FALLIBLE = ("ascii", "f32", "f64", "uiscale", "siscale", "smscale", "f32scale", "f64scale", "chars_icao6",
+            "chars_ascii7")
+# integer scales (spec 0.15, Exact factors): the words are integers, not doubles
+EXACT = ("uiscale", "siscale")
+# bits per character of `chars:<set>`
+CHAR_WIDTH = {"chars_icao6": 6, "chars_ais6": 6, "chars_ascii7": 7}
 T_INT, T_FLOAT, T_STR, T_LIST = 0, 1, 2, 3
 TYPES = {"int": T_INT, "float": T_FLOAT, "string": T_STR}
 F_SWAP, F_TRIM, F_OPTIONAL = 1, 2, 4
@@ -189,14 +201,52 @@ def parse_transform(name):
         return (name, None, T_STR)
     if name == "sixbit":
         return (name, None, T_STR)
-    if name.split(":", 1)[0] in V015_BITS:
-        refuse("unsupported-feature", "transform `%s` (value transforms, spec 0.15) is not in the device profile"
-               % name.split(":", 1)[0])
+    # spec 0.15: the value transforms
+    for prefix in EXACT:
+        if name.startswith(prefix + ":"):
+            return (prefix, parse_exact(name[len(prefix) + 1:], name), T_INT)
+    for prefix in ("smscale", "f32scale", "f64scale"):
+        if name.startswith(prefix + ":"):
+            return (prefix, parse_scale(name[len(prefix) + 1:], name), T_FLOAT)
+    if name == "smag":
+        return (name, None, T_INT)
+    if name == "octal":
+        return (name, None, T_STR)
+    if name in ("chars:icao6", "chars:ais6", "chars:ascii7"):
+        return ("chars_" + name[len("chars:"):], None, T_STR)
     refuse("bad-pack", "transform `%s` is not a bits transform" % name)
 
 
-# The bits transforms of spec 0.15; the device profile does not carry them.
-V015_BITS = ("uiscale", "siscale", "smag", "smscale", "f32scale", "f64scale", "chars", "octal")
+def parse_exact(args, what):
+    """`<factor>[:<offset>]` of an integer scale (spec 0.15, Exact factors):
+    (num, den, offset) as integers, the factor in lowest terms."""
+    from fractions import Fraction
+    parts = args.split(":")
+    if len(parts) > 2:
+        refuse("bad-pack", "`%s`: <factor>[:<offset>] expected" % what)
+    offset = 0
+    if len(parts) == 2:
+        if not re.match(r"^-?[0-9]+$", parts[1]) or abs(int(parts[1])) >= 1 << 63:
+            refuse("bad-pack", "`%s`: bad offset" % what)
+        offset = int(parts[1])
+    f = parts[0]
+    neg = f.startswith("-")
+    body = f[1:] if neg else f
+    if "/" in body:
+        n, d = body.split("/", 1)
+        if not (_DIGITS.match(n) and _DIGITS.match(d)) or int(d) == 0:
+            refuse("bad-pack", "`%s`: bad fraction" % what)
+        q = Fraction(int(n), int(d))
+    else:
+        m = re.match(r"^([0-9]+)(?:\.([0-9]+))?$", body)
+        if not m:
+            refuse("bad-pack", "`%s`: bad factor" % what)
+        q = Fraction(int(m.group(1) + (m.group(2) or "")), 10 ** len(m.group(2) or ""))
+    if neg:
+        q = -q
+    if q == 0 or abs(q.numerator) > 1 << 32 or q.denominator > 1 << 32:
+        refuse("bad-pack", "`%s`: the factor is 0 or does not fit 2^32 over 2^32" % what)
+    return (q.numerator, q.denominator, offset)
 # The derive functions of spec 0.16; the device profile does not carry them.
 V016_DERIVES = ("sec_of", "nsec_of", "ms_of", "deg", "rad", "add", "sub", "deg_lat_of", "deg_lon_of",
                 "m_lat_of", "m_lon_of", "ecef_x", "ecef_y", "ecef_z", "lat_of_ecef", "lon_of_ecef",
@@ -354,9 +404,19 @@ class Pack:
                 continue
             refuse("bad-pack", "%s: unknown field option `%s`" % (self.format, t[i]))
         ok = {"f32": length == 32, "f64": length == 64, "ascii": length % 8 == 0 and 8 <= length <= 2040,
-              "sixbit": length % 6 == 0 and 6 <= length <= 1530}.get(
+              "sixbit": length % 6 == 0 and 6 <= length <= 1530,
+              # spec 0.15
+              "f32scale": length == 32, "f64scale": length == 64, "smag": 2 <= length <= 64,
+              "smscale": 2 <= length <= 64, "octal": length % 3 == 0 and 3 <= length <= 63}.get(
             xf, 1 <= length <= 64)
-        if not ok or (f["swap"] and (length % 8 != 0 or xf == "sixbit")):
+        if xf in CHAR_WIDTH:
+            w = CHAR_WIDTH[xf]
+            ok = length % w == 0 and w <= length <= 2040
+        # spec 0.15: `swap` with `chars` or `octal`, and `trim` with any of its transforms, are refused
+        v015 = xf in CHAR_WIDTH or xf in ("octal", "uiscale", "siscale", "smag", "smscale", "f32scale", "f64scale")
+        if f["trim"] and v015:
+            refuse("bad-pack", "%s: `trim` with `%s`" % (self.format, t[3]))
+        if not ok or (f["swap"] and (length % 8 != 0 or xf in CHAR_WIDTH or xf in ("octal", "sixbit"))):
             refuse("bad-pack", "%s: bit length %d is not allowed for `%s`" % (self.format, length, t[3]))
         return f
 
@@ -1010,7 +1070,10 @@ class Compiler:
             return [self.node(OP_PAD, a=l["len"])] if pack.seq else []
         flags = (F_SWAP if l["swap"] else 0) | (F_TRIM if l["trim"] else 0) | (F_OPTIONAL if l["optional"] else 0)
         # the pool run of a field: its scale (three words), then its sentinels
-        words = [f64_bits(x) for x in l["params"]] if l["params"] else []
+        if l["xf"] in EXACT:
+            words = list(l["params"])
+        else:
+            words = [f64_bits(x) for x in l["params"]] if l["params"] else []
         words += l["absent"]
         b = self.pool_of(words) if words else 0
         out = []
@@ -1288,7 +1351,7 @@ def compile_plan(model_dir, packs_dir, src, dst, context, keep_names):
                 def see(l):
                     if l["t"] == "field":
                         for key, via in l["keys"]:
-                            if l["xf"] in ("ascii", "f32", "f64") or (
+                            if l["xf"] in FALLIBLE or (
                                     via is not None and c.table_fallible(spack, via, l["yields"], model.type_of(key))):
                                 view.fallible.setdefault(path, set()).add(key)
                     elif l["t"] in ("group", "gfix"):
