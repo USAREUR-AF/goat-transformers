@@ -1,0 +1,12 @@
+{
+  "name": "empty-feed",
+  "from": "usgs-earthquake-feed",
+  "to": "usgs-earthquake-feed",
+  "input": "{\"type\":\"FeatureCollection\",\"metadata\":{\"generated\":1772602000000,\"count\":0,\"status\":200},\"bbox\":[],\"features\":[]}",
+  "expect": "{\"type\":\"FeatureCollection\",\"metadata\":{\"generated\":1772602000000,\"count\":0,\"status\":200},\"bbox\":[],\"features\":[]}",
+  "model": {
+    "usgsquake.events.#": "0"
+  },
+  "source": "derived by tools/gen/usgs-earthquake-vectors.py from the documented member list and spec/engine-spec.md; no engine run",
+  "reference": "USGS GeoJSON Summary Format (earthquake.usgs.gov/earthquakes/feed/v1.0/geojson.php, read 2026-11-20); ComCat event terms (data/comcat/index.php, archived 2026-04-14); a feed with no events: present, empty lists are written as []"
+}

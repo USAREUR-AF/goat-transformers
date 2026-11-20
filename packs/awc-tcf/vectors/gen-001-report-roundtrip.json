@@ -1,0 +1,17 @@
+{
+ "name": "gen-report-roundtrip",
+ "from": "awc-tcf",
+ "to": "awc-tcf",
+ "input": "{\"type\":\"Feature\",\"id\":-0.5,\"properties\":{\"validTime\":\"s93206\",\"issueTime\":\"s563\",\"coverage\":\"sparse\",\"confidence\":\"high\",\"tops\":340,\"labelpos\":[7.0625,0.75]},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[7.0625,-0.5]}}",
+ "expect": "{\"type\":\"Feature\",\"id\":-0.5,\"properties\":{\"validTime\":\"s93206\",\"issueTime\":\"s563\",\"coverage\":\"sparse\",\"confidence\":\"high\",\"tops\":340,\"labelpos\":[7.0625,0.75]},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[7.0625,-0.5]}}",
+ "model": {
+  "awctcf.type": "Feature",
+  "awctcf.id": "-0.5",
+  "awctcf.properties_valid_time": "s93206",
+  "awctcf.properties_issue_time": "s563",
+  "awctcf.properties_coverage": "sparse",
+  "awctcf.properties_confidence": "high",
+  "awctcf.properties_tops": "340",
+  "awctcf.properties_labelpos.#": "2"
+ }
+}

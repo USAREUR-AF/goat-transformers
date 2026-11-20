@@ -1,0 +1,24 @@
+{
+ "keys": {
+  "|airSigmetType|string": "air_sigmet_type",
+  "|alphaChar|string": "alpha_char",
+  "|altitudeHi1|int": "altitude_hi1",
+  "|altitudeHi2|int": "altitude_hi2",
+  "|altitudeLo1|int": "altitude_lo1",
+  "|altitudeLo2|int": "altitude_lo2",
+  "|creationTime|string": "creation_time",
+  "|hazard|string": "hazard",
+  "|icaoId|string": "icao_id",
+  "|movementDir|int": "movement_dir",
+  "|movementSpd|int": "movement_spd",
+  "|postProcessFlag|int": "post_process_flag",
+  "|qualifier|string": "qualifier",
+  "|rawAirSigmet|string": "raw_air_sigmet",
+  "|receiptTime|string": "receipt_time",
+  "|seriesId|string": "series_id",
+  "|severity|int": "severity",
+  "|validTimeFrom|int": "valid_time_from",
+  "|validTimeTo|int": "valid_time_to"
+ },
+ "lists": {}
+}

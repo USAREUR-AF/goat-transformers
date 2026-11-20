@@ -196,5 +196,32 @@ class CheckModeTest(Workspace):
         self.assertIn("jsonschema2pack (names file): --check: fieldnet.json differs", err)
 
 
+class EnumTypeMismatchTest(Workspace):
+    """A source schema that lists strings as the enum of a number (an error in the source,
+    as the aviationweather.gov PIREP schema has) gives the declared type's sample, so the
+    vector round-trips and the self-check holds."""
+
+    def test_enum_values_that_do_not_fit_the_declared_type_are_no_sample(self):
+        schema = self.path("mixed.json")
+        with open(schema, "w", encoding="utf-8") as fh:
+            json.dump({"$schema": "http://json-schema.org/draft-07/schema#", "type": "object", "properties": {
+                "level": {"type": "number", "enum": ["LOW", "HIGH"]},
+                "count": {"type": "integer", "enum": [1.5, 3, "x"]},
+                "flag": {"type": "boolean", "enum": ["yes", True]},
+                "name": {"type": "string", "enum": [8, "ok"]}}}, fh)
+        status, _, err = support.run_main(j.main, [
+            "--schema", schema, "--message", "Rec=" + schema, "--format", "mixed", "--module", "mixed",
+            "--title", "Mixed enum test schema", "--license", "written for the tests", "--out", self.out,
+            "--model-dir", self.path("out", "model"), "--names-file", self.path("out", "names", "mixed.json")])
+        self.assertEqual((status, err), (0, ""))
+        vecs = [n for n in os.listdir(self.path("out", "packs", "mixed", "vectors")) if n.endswith("-roundtrip.json")]
+        with open(self.path("out", "packs", "mixed", "vectors", vecs[0]), encoding="utf-8") as fh:
+            doc = json.loads(json.load(fh)["input"])
+        self.assertIsInstance(doc["level"], float)                 # the declared type, not "LOW"
+        self.assertEqual(doc["count"], 3)                          # the one integer of the enum
+        self.assertIs(doc["flag"], True)
+        self.assertEqual(doc["name"], "ok")
+
+
 if __name__ == "__main__":
     unittest.main()

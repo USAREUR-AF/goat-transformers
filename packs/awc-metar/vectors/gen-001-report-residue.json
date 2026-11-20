@@ -1,0 +1,7 @@
+{
+ "name": "gen-report-residue",
+ "from": "awc-metar",
+ "to": "awc-metar",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"icaoId\":\"s16815\",\"receiptTime\":\"s85935\",\"obsTime\":1725408754,\"reportTime\":\"s40368\",\"temp\":7.0625,\"dewp\":0.75,\"wspd\":78290,\"wgst\":81581,\"altim\":7.0625,\"slp\":42.375,\"wxString\":\"s15242\",\"presTend\":42.375,\"maxT\":7.0625,\"minT\":0.75,\"maxT24\":12.5,\"minT24\":7.0625,\"precip\":42.375,\"pcp3hr\":0.75,\"pcp6hr\":0.75,\"pcp24hr\":42.375,\"snow\":0.75,\"vertVis\":860,\"metarType\":\"BUOY\",\"rawOb\":\"s75343\",\"lat\":38.8977,\"lon\":-77.0365,\"elev\":88882,\"name\":\"s60252\",\"clouds\":[{\"cover\":\"CLR\",\"base\":25160,\"top\":8986},{\"cover\":\"CLR\",\"base\":11687,\"top\":97524}],\"fltCat\":\"s10374\"}",
+ "expect": "{\"icaoId\":\"s16815\",\"receiptTime\":\"s85935\",\"obsTime\":1725408754,\"reportTime\":\"s40368\",\"temp\":7.0625,\"dewp\":0.75,\"wspd\":78290,\"wgst\":81581,\"altim\":7.0625,\"slp\":42.375,\"wxString\":\"s15242\",\"presTend\":42.375,\"maxT\":7.0625,\"minT\":0.75,\"maxT24\":12.5,\"minT24\":7.0625,\"precip\":42.375,\"pcp3hr\":0.75,\"pcp6hr\":0.75,\"pcp24hr\":42.375,\"snow\":0.75,\"vertVis\":860,\"metarType\":\"BUOY\",\"rawOb\":\"s75343\",\"lat\":38.8977,\"lon\":-77.0365,\"elev\":88882,\"name\":\"s60252\",\"clouds\":[{\"cover\":\"CLR\",\"base\":25160,\"top\":8986},{\"cover\":\"CLR\",\"base\":11687,\"top\":97524}],\"fltCat\":\"s10374\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

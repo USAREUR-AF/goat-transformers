@@ -1,0 +1,14 @@
+{
+ "name": "gen-report-roundtrip",
+ "from": "awc-airmet",
+ "to": "awc-airmet",
+ "input": "{\"region\":\"s72065\",\"receiptTime\":\"s85935\",\"validTimeFrom\":51892,\"validTimeTo\":50074,\"hazard\":\"s33910\"}",
+ "expect": "{\"region\":\"s72065\",\"receiptTime\":\"s85935\",\"validTimeFrom\":51892,\"validTimeTo\":50074,\"hazard\":\"s33910\"}",
+ "model": {
+  "awcairmet.region": "s72065",
+  "awcairmet.receipt_time": "s85935",
+  "awcairmet.valid_time_from": "51892",
+  "awcairmet.valid_time_to": "50074",
+  "awcairmet.hazard": "s33910"
+ }
+}

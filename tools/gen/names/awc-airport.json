@@ -1,0 +1,18 @@
+{
+ "keys": {
+  "|country|string": "country",
+  "|elev|string": "elev",
+  "|faaId|string": "faa_id",
+  "|iataId|string": "iata_id",
+  "|icaoId|string": "icao_id",
+  "|lat|string": "lat",
+  "|lon|string": "lon",
+  "|magdec|string": "magdec",
+  "|name|string": "name",
+  "|owner|string": "owner",
+  "|source|string": "source",
+  "|state|string": "state",
+  "|type|string": "type"
+ },
+ "lists": {}
+}

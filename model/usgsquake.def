@@ -1,0 +1,43 @@
+# The usgsquake module: the members of an earthquake event of the USGS Earthquake Hazards
+# Program GeoJSON summary feed, and of the feed's metadata, that have no shared key. Units
+# are those of the ComCat event terms documentation. packs/usgs-earthquake/pack.md states
+# why depth is not hae and which members are bound.
+module        usgsquake
+version       0.1.0
+distribution  public
+source        "USGS Earthquake Hazards Program, GeoJSON Summary Format, https://earthquake.usgs.gov/earthquakes/feed/v1.0/geojson.php, and the ANSS ComCat event terms documentation (US Government work, public domain)"
+key   depth_km   float  km      "depth of the event below the epicentre; the reference (WGS 84 geoid, mean sea level or the stations' average elevation) depends on the locating network"
+key   mag        float  -       "magnitude of the event"
+key   place      string -       "text naming the region or place near the event"
+key   updated    int    ms      "time the event was most recently updated, milliseconds since the Unix epoch"
+key   tz         int    min     "time zone offset from UTC at the epicentre, in minutes"
+key   url        string -       "address of the USGS event page"
+key   detail     string -       "address of the GeoJSON detail feed of the event"
+key   felt       int    -       "number of felt reports"
+key   cdi        float  -       "maximum reported intensity (community decimal intensity)"
+key   mmi        float  -       "maximum estimated instrumental intensity"
+key   alert      string -       "PAGER alert level: green, yellow, orange or red"
+key   status     string -       "review status: automatic, reviewed or deleted"
+key   tsunami    int    -       "1 for an event in an oceanic region where tsunami information applies, else 0"
+key   sig        int    -       "significance of the event, 0 to 1000 and more"
+key   net        string -       "identifier of the preferred contributing network"
+key   code       string -       "the network's code for the event"
+key   ids        string -       "comma-separated list of the event's identifiers"
+key   sources    string -       "comma-separated list of the contributing networks"
+key   types      string -       "comma-separated list of the product types of the event"
+key   nst        int    -       "number of seismic stations used to locate the event"
+key   dmin       float  deg     "horizontal distance from the epicentre to the nearest station"
+key   rms        float  s       "root-mean-square travel time residual"
+key   gap        float  deg     "largest azimuthal gap between stations"
+key   mag_type   string -       "method or algorithm used to compute the magnitude"
+key   event_type string -       "type of seismic event (earthquake, quarry blast, ...)"
+key   coordinate float  -       "one coordinate of an event item of the feed: longitude, latitude (degrees) or depth (km), in that order"
+key   feed_url   string -       "address of the feed"
+key   feed_title string -       "title of the feed"
+key   feed_api   string -       "version of the feed's API"
+key   feed_count int    -       "number of events in the feed"
+key   feed_status int   -       "HTTP status of the feed request"
+list  bbox                      "bounding box of the feed: min longitude, min latitude, min depth, max longitude, max latitude, max depth"
+key   bbox_value float  -       "one value of the feed's bounding box"
+list  events                    "the events of the feed"
+list  coordinates               "the coordinates of an event item: longitude, latitude, depth"

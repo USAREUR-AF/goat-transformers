@@ -1,0 +1,7 @@
+{
+ "name": "gen-report-residue",
+ "from": "awc-taf-geojson",
+ "to": "awc-taf-geojson",
+ "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"icaoId\":\"s77459\",\"dbPopTime\":\"s10522\",\"bulletinTime\":\"s99668\",\"issueTime\":\"s563\",\"validTimeFrom\":25742,\"validTimeTo\":21613,\"rawTAF\":\"s93662\",\"mostRecent\":45582,\"remarks\":\"s30026\",\"lat\":12.5,\"lon\":12.5,\"elev\":28143,\"prior\":32426,\"name\":\"s55593\",\"fcsts\":[\"r1\",\"r2\"]},\"id\":-0.5}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"icaoId\":\"s77459\",\"dbPopTime\":\"s10522\",\"bulletinTime\":\"s99668\",\"issueTime\":\"s563\",\"validTimeFrom\":25742,\"validTimeTo\":21613,\"rawTAF\":\"s93662\",\"mostRecent\":45582,\"remarks\":\"s30026\",\"lat\":12.5,\"lon\":12.5,\"elev\":28143,\"prior\":32426,\"name\":\"s55593\",\"fcsts\":[\"r1\",\"r2\"]},\"id\":-0.5}"
+}

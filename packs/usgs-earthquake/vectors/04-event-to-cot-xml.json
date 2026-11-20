@@ -1,0 +1,9 @@
+{
+  "name": "event-to-cot-xml",
+  "from": "usgs-earthquake",
+  "to": "cot-xml",
+  "input": "{\"type\":\"Feature\",\"properties\":{\"mag\":4.25,\"place\":\"12 km SSW of Example Town, Region\",\"time\":1772600767250,\"updated\":1772601888125,\"tz\":null,\"url\":\"https://earthquake.usgs.gov/earthquakes/eventpage/zz00000001\",\"detail\":\"https://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/zz00000001.geojson\",\"felt\":37,\"cdi\":3.8,\"mmi\":4.125,\"alert\":\"green\",\"status\":\"reviewed\",\"tsunami\":0,\"sig\":301,\"net\":\"zz\",\"code\":\"00000001\",\"ids\":\",zz00000001,yy00000042,\",\"sources\":\",zz,yy,\",\"types\":\",dyfi,origin,phase-data,shakemap,\",\"nst\":42,\"dmin\":0.0675,\"rms\":0.21,\"gap\":37.5,\"magType\":\"ml\",\"type\":\"earthquake\"},\"geometry\":{\"type\":\"Point\",\"coordinates\":[-121.6125,36.7875,8.25]},\"id\":\"zz00000001\"}",
+  "expect": "<event version=\"2.0\" uid=\"zz00000001\" type=\"a-u-X\" time=\"2026-03-04T05:06:07.250Z\" start=\"2026-03-04T05:06:07.250Z\"><point lat=\"36.7875\" lon=\"-121.6125\" hae=\"9999999\" ce=\"9999999\" le=\"9999999\"/></event>",
+  "source": "derived by tools/gen/usgs-earthquake-vectors.py from the documented member list and spec/engine-spec.md; no engine run",
+  "reference": "USGS GeoJSON Summary Format (earthquake.usgs.gov/earthquakes/feed/v1.0/geojson.php, read 2026-11-20); ComCat event terms (data/comcat/index.php, archived 2026-04-14); cot-xml writes its defaults for type, hae, ce and le; the origin time is time and start"
+}

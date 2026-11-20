@@ -1,0 +1,14 @@
+{
+ "keys": {
+  "|id|float": "id",
+  "|properties.country|string": "properties_country",
+  "|properties.elev|float": "properties_elev",
+  "|properties.faaId|string": "properties_faa_id",
+  "|properties.iataId|string": "properties_iata_id",
+  "|properties.icaoId|string": "properties_icao_id",
+  "|properties.priority|float": "properties_priority",
+  "|properties.site|string": "properties_site",
+  "|properties.state|string": "properties_state"
+ },
+ "lists": {}
+}

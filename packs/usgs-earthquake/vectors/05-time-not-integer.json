@@ -1,0 +1,9 @@
+{
+  "name": "time-not-integer",
+  "from": "usgs-earthquake",
+  "to": "usgs-earthquake",
+  "input": "{\"type\":\"Feature\",\"properties\":{\"time\":\"soon\"},\"geometry\":{\"type\":\"Point\",\"coordinates\":[1,2,3]},\"id\":\"x\"}",
+  "expect_error": "transform-decode",
+  "source": "derived by tools/gen/usgs-earthquake-vectors.py from the documented member list and spec/engine-spec.md; no engine run",
+  "reference": "USGS GeoJSON Summary Format (earthquake.usgs.gov/earthquakes/feed/v1.0/geojson.php, read 2026-11-20); ComCat event terms (data/comcat/index.php, archived 2026-04-14); time is a long integer; text that is not an integer fails the int transform"
+}

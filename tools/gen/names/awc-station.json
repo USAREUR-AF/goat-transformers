@@ -1,0 +1,18 @@
+{
+ "keys": {
+  "site_type|.|string": "site_type_value",
+  "|country|string": "country",
+  "|elev|float": "elev",
+  "|faaId|string": "faa_id",
+  "|iataId|string": "iata_id",
+  "|icaoId|string": "icao_id",
+  "|lat|float": "lat",
+  "|lon|float": "lon",
+  "|priority|float": "priority",
+  "|site|string": "site",
+  "|state|string": "state"
+ },
+ "lists": {
+  "|siteType": "site_type"
+ }
+}

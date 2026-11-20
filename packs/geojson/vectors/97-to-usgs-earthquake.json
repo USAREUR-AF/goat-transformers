@@ -1,0 +1,9 @@
+{
+  "name": "to-usgs-earthquake",
+  "from": "geojson",
+  "to": "usgs-earthquake",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-121.6125,36.7875,120.5]},\"properties\":{\"time_ms\":1772600767250,\"callsign\":\"X\"},\"id\":\"zz00000001\"}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-121.6125,36.7875]},\"properties\":{\"time\":1772600767250},\"id\":\"zz00000001\"}",
+  "source": "derived by tools/gen/usgs-earthquake-vectors.py from the documented member list and spec/engine-spec.md; no engine run",
+  "reference": "USGS GeoJSON Summary Format (earthquake.usgs.gov/earthquakes/feed/v1.0/geojson.php, read 2026-11-20); ComCat event terms (data/comcat/index.php, archived 2026-04-14); hae has no usgs line (depth is not hae), so the Point has two coordinates; callsign has no usgs line"
+}

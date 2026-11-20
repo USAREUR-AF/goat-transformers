@@ -1,0 +1,17 @@
+{
+ "name": "gen-report-roundtrip",
+ "from": "awc-metar-geojson",
+ "to": "awc-metar-geojson",
+ "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"icaoId\":\"s77459\",\"receiptTime\":\"s6827\",\"obsTime\":1750422960,\"reportTime\":\"s81430\",\"temp\":-0.5,\"dewp\":7.0625,\"wspd\":67486,\"wgst\":61934,\"altim\":-3.25,\"slp\":12.5,\"wxString\":\"s11041\",\"presTend\":101.125,\"maxT\":0.75,\"minT\":101.125,\"maxT24\":0.75,\"minT24\":1.5,\"precip\":12.5,\"pcp3hr\":12.5,\"pcp6hr\":42.375,\"pcp24hr\":0.75,\"snow\":0.75,\"vertVis\":21405,\"metarType\":\"BUOY\",\"rawOb\":\"s84592\",\"lat\":12.5,\"lon\":12.5,\"elev\":28143,\"name\":\"s55593\",\"fltCat\":\"s89132\"},\"id\":-0.5}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"icaoId\":\"s77459\",\"receiptTime\":\"s6827\",\"obsTime\":1750422960,\"reportTime\":\"s81430\",\"temp\":-0.5,\"dewp\":7.0625,\"wspd\":67486,\"wgst\":61934,\"altim\":-3.25,\"slp\":12.5,\"wxString\":\"s11041\",\"presTend\":101.125,\"maxT\":0.75,\"minT\":101.125,\"maxT24\":0.75,\"minT24\":1.5,\"precip\":12.5,\"pcp3hr\":12.5,\"pcp6hr\":42.375,\"pcp24hr\":0.75,\"snow\":0.75,\"vertVis\":21405,\"metarType\":\"BUOY\",\"rawOb\":\"s84592\",\"lat\":12.5,\"lon\":12.5,\"elev\":28143,\"name\":\"s55593\",\"fltCat\":\"s89132\"},\"id\":-0.5}",
+ "model": {
+  "lon": "-77.0365",
+  "lat": "38.8977",
+  "uid": "s77459",
+  "callsign": "s55593",
+  "time_ms": "1750422960000",
+  "awcmetargeo.id": "-0.5",
+  "awcmetargeo.properties_icao_id": "s77459",
+  "awcmetargeo.properties_receipt_time": "s6827"
+ }
+}

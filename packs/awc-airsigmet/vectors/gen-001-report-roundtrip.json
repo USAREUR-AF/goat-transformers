@@ -1,0 +1,17 @@
+{
+ "name": "gen-report-roundtrip",
+ "from": "awc-airsigmet",
+ "to": "awc-airsigmet",
+ "input": "{\"icaoId\":\"s16815\",\"alphaChar\":\"s36234\",\"seriesId\":\"s16561\",\"receiptTime\":\"s85935\",\"creationTime\":\"s18443\",\"validTimeFrom\":51892,\"validTimeTo\":50074,\"airSigmetType\":\"SIGMET\",\"hazard\":\"s33910\",\"qualifier\":\"s92630\",\"altitudeHi1\":58095,\"altitudeHi2\":29361,\"altitudeLo1\":63811,\"altitudeLo2\":72152,\"movementDir\":47963,\"movementSpd\":77388,\"postProcessFlag\":20750,\"severity\":33534,\"rawAirSigmet\":\"s72491\"}",
+ "expect": "{\"icaoId\":\"s16815\",\"alphaChar\":\"s36234\",\"seriesId\":\"s16561\",\"receiptTime\":\"s85935\",\"creationTime\":\"s18443\",\"validTimeFrom\":51892,\"validTimeTo\":50074,\"airSigmetType\":\"SIGMET\",\"hazard\":\"s33910\",\"qualifier\":\"s92630\",\"altitudeHi1\":58095,\"altitudeHi2\":29361,\"altitudeLo1\":63811,\"altitudeLo2\":72152,\"movementDir\":47963,\"movementSpd\":77388,\"postProcessFlag\":20750,\"severity\":33534,\"rawAirSigmet\":\"s72491\"}",
+ "model": {
+  "awcairsigmet.icao_id": "s16815",
+  "awcairsigmet.alpha_char": "s36234",
+  "awcairsigmet.series_id": "s16561",
+  "awcairsigmet.receipt_time": "s85935",
+  "awcairsigmet.creation_time": "s18443",
+  "awcairsigmet.valid_time_from": "51892",
+  "awcairsigmet.valid_time_to": "50074",
+  "awcairsigmet.air_sigmet_type": "SIGMET"
+ }
+}

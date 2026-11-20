@@ -1,0 +1,7 @@
+{
+ "name": "gen-report-residue",
+ "from": "awc-navaid",
+ "to": "awc-navaid",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"id\":\"s89149\",\"type\":\"s67152\",\"name\":\"s60252\",\"state\":\"s46165\",\"country\":\"s43551\",\"lat\":7.0625,\"lon\":7.0625,\"elev\":42.375,\"freq\":-0.5,\"mag_dec\":\"s31100\"}",
+ "expect": "{\"id\":\"s89149\",\"type\":\"s67152\",\"name\":\"s60252\",\"state\":\"s46165\",\"country\":\"s43551\",\"lat\":7.0625,\"lon\":7.0625,\"elev\":42.375,\"freq\":-0.5,\"mag_dec\":\"s31100\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}
