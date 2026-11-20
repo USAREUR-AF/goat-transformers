@@ -7,9 +7,9 @@ module        sunspec160
 version       0.1.0
 distribution  public
 source        "https://github.com/sunspec/models json/model_*.json at v0-test (commit 1111111111111111111111111111111111111111); unimplemented values from https://github.com/sunspec/pysunspec2 sunspec2/mb.py at v0-test (commit 2222222222222222222222222222222222222222)"
-key   counted_a_sf  int  -  "model 160, point A_SF"
-key   counted_module_id  int  -  "model 160, point Id"
-key   counted_module_a  int  -  "model 160, point A, unscaled (scale factor point A_SF)"
-key   counted_module_tmp  int  C  "model 160, point Tmp"
+key   counted_a_sf  int  -  "model 160, point: A_SF"
+key   counted_module_id  int  -  "model 160, point: Id"
+key   counted_module_a  int  -  "model 160, point: A, unscaled (scale factor point A_SF)"
+key   counted_module_tmp  int  C  "model 160, point: Tmp"
 key   l  int  registers  "point L, the model length in registers"
 list  counted_module  "model 160, the items of group module, counted by point N"

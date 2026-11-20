@@ -7,5 +7,5 @@ module        sunspec305
 version       0.1.0
 distribution  public
 source        "https://github.com/sunspec/models json/model_*.json at v0-test (commit 1111111111111111111111111111111111111111); unimplemented values from https://github.com/sunspec/pysunspec2 sunspec2/mb.py at v0-test (commit 2222222222222222222222222222222222222222)"
-key   gps_tm  string  -  "model 305, point Tm"
-key   gps_alt  int  Meters  "model 305, point Alt"
+key   gps_tm  string  -  "model 305, point: Tm"
+key   gps_alt  int  Meters  "model 305, point: Alt"

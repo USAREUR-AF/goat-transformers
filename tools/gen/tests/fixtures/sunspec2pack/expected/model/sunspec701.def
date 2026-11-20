@@ -7,5 +7,5 @@ module        sunspec701
 version       0.1.0
 distribution  public
 source        "https://github.com/sunspec/models json/model_*.json at v0-test (commit 1111111111111111111111111111111111111111); unimplemented values from https://github.com/sunspec/pysunspec2 sunspec2/mb.py at v0-test (commit 2222222222222222222222222222222222222222)"
-key   repeated_ena  int  -  "model 701, point Ena"
+key   repeated_ena  int  -  "model 701, point: Ena"
 key   l  int  registers  "point L, the model length in registers"

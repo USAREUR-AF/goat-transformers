@@ -68,7 +68,7 @@ class SunSpecTest(unittest.TestCase):
                      "field     sunspec1.basic_hdr_evt 0:448:32 uint absent 4294967295\n",
                      "const     0:400:16 0\n"):
             self.assertIn(line, basic)
-        self.assertIn('key   basic_w  int  -  "model 1, point W, unscaled (scale factor point W_SF)"',
+        self.assertIn('key   basic_w  int  -  "model 1, point: W, unscaled (scale factor point W_SF)"',
                       self.read("model", "sunspec1.def"))
         gps = self.read("packs", "sunspec-305", "pack.def")
         self.assertIn("field     lat 0:128:32 sscale:1/10000000 absent 2147483648\n", gps)

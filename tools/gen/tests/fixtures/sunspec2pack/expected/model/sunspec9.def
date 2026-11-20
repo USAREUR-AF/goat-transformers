@@ -7,5 +7,5 @@ module        sunspec9
 version       0.1.0
 distribution  public
 source        "https://github.com/sunspec/models json/model_*.json at v0-test (commit 1111111111111111111111111111111111111111); unimplemented values from https://github.com/sunspec/pysunspec2 sunspec2/mb.py at v0-test (commit 2222222222222222222222222222222222222222)"
-key   nested_n  int  -  "model 9, point N"
+key   nested_n  int  -  "model 9, point: N"
 key   l  int  registers  "point L, the model length in registers"
