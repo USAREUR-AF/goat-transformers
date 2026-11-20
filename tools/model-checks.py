@@ -12,7 +12,8 @@ entity, items of lists included, against the rules of tools/model-ranges.json:
   - a set of values (`one_of`, or `one_of_meaning`: the words the key's
     meaning in model/*.def lists after its last colon),
   - every int key whose meaning begins with `flag:` is 0 or 1,
-  - `order`: stale_ms is not earlier than time_ms in one entity or item.
+  - `order`: an entity's (or a list item's) stale_ms comes no sooner than
+    its time_ms.
 
 A wire value a pack declares as a sentinel (`absent`, spec 0.9) never reaches
 the entity: the engine leaves the key absent, so it is not checked.
