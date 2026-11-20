@@ -1,0 +1,12 @@
+{
+  "name": "hdlc-ipv4-information-not-written",
+  "from": "ppp-frame",
+  "to": "ppp-frame",
+  "input": "ff03002100000000000000000000000000000000000000001234",
+  "expect": "ff030021",
+  "model": {
+    "@kind": "hdlc-protocol-16",
+    "inet.ppp_protocol": "33"
+  },
+  "source": "built by tools/gen/link-headers-vectors.py from values chosen there; address 0xff, control 0x03, protocol 0x0021 (IPv4), then 20 information octets and a 2-octet FCS, read over"
+}

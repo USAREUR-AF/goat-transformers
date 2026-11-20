@@ -1,0 +1,31 @@
+# QUIC packet header invariants (RFC 8999 section 5): the long header to the end
+# of the source connection ID, and the first octet of a short header. Public. The
+# version-specific rest, and the short header's connection ID, are not mapped
+# (pack.md).
+#
+# Sequential layout, bit_order msb: each connection ID is a group of octets
+# counted by the length octet before it.
+format        quic-invariant
+version       0.1.0
+distribution  public
+source        "IETF RFC 8999, Version-Independent Properties of QUIC, May 2021, section 5, https://www.rfc-editor.org/rfc/rfc8999.txt; layout restated"
+uses          inet
+wire          bits
+layout        sequential
+bit_order     msb
+
+kind      long-header
+when      1  1
+requires  inet.quic_version
+field  inet.quic_version_specific   7    uint
+field  inet.quic_version            32   uint
+group  inet.quic_dcid count 8
+  field  inet.quic_cid_octet        8    uint
+end
+group  inet.quic_scid count 8
+  field  inet.quic_cid_octet        8    uint
+end
+
+kind      short-header
+when      1  0
+field  inet.quic_version_specific   7    uint

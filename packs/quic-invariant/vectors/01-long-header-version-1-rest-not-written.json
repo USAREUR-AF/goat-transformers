@@ -1,0 +1,27 @@
+{
+  "name": "long-header-version-1-rest-not-written",
+  "from": "quic-invariant",
+  "to": "quic-invariant",
+  "input": "c00000000108010203040506070804aabbccdd0000000000000000000000000000000000000000",
+  "expect": "c00000000108010203040506070804aabbccdd",
+  "model": {
+    "@kind": "long-header",
+    "inet.quic_version_specific": "64",
+    "inet.quic_version": "1",
+    "inet.quic_dcid.#": "8",
+    "inet.quic_scid.#": "4",
+    "inet.quic_dcid[0].inet.quic_cid_octet": "1",
+    "inet.quic_dcid[1].inet.quic_cid_octet": "2",
+    "inet.quic_dcid[2].inet.quic_cid_octet": "3",
+    "inet.quic_dcid[3].inet.quic_cid_octet": "4",
+    "inet.quic_dcid[4].inet.quic_cid_octet": "5",
+    "inet.quic_dcid[5].inet.quic_cid_octet": "6",
+    "inet.quic_dcid[6].inet.quic_cid_octet": "7",
+    "inet.quic_dcid[7].inet.quic_cid_octet": "8",
+    "inet.quic_scid[0].inet.quic_cid_octet": "170",
+    "inet.quic_scid[1].inet.quic_cid_octet": "187",
+    "inet.quic_scid[2].inet.quic_cid_octet": "204",
+    "inet.quic_scid[3].inet.quic_cid_octet": "221"
+  },
+  "source": "built by tools/gen/link-headers-vectors.py from values chosen there; a long header, version 0x00000001, an 8-octet destination and 4-octet source connection ID; the 20 version-specific octets after them read over"
+}

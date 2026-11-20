@@ -1,0 +1,8 @@
+{
+  "name": "twenty-three-octets-is-malformed",
+  "from": "pcap-file-header",
+  "to": "pcap-file-header",
+  "input": "d4c3b2a102000400000000000000000000000400010000",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/link-headers-vectors.py from values chosen there; the little-endian header cut to 23 octets"
+}

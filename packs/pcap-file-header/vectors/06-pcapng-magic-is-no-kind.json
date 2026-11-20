@@ -1,0 +1,8 @@
+{
+  "name": "pcapng-magic-is-no-kind",
+  "from": "pcap-file-header",
+  "to": "pcap-file-header",
+  "input": "0a0d0d0a0000000000000000000000000000000000000000",
+  "expect_error": "no-kind",
+  "source": "built by tools/gen/link-headers-vectors.py from values chosen there; the first octets of a pcapng file (block type 0a 0d 0d 0a)"
+}

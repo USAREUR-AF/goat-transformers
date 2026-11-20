@@ -1,0 +1,12 @@
+{
+  "name": "data-session-cookie-not-written",
+  "from": "l2tpv3-ip",
+  "to": "l2tpv3-ip",
+  "input": "1234567800000000000000000000000000000000000000000000",
+  "expect": "12345678",
+  "model": {
+    "@kind": "data",
+    "inet.l2tp_session_id": "305419896"
+  },
+  "source": "built by tools/gen/link-headers-vectors.py from values chosen there; a data message for session 0x12345678 with an 8-octet cookie and payload: the cookie's length is configured, not on the wire, so only the session ID is read"
+}

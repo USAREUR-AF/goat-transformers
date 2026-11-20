@@ -1,0 +1,26 @@
+# Ethernet II frame header (RFC 894, RFC 7042 section 3, RFC 7348 section 5):
+# destination and source MAC addresses and the EtherType, or one 802.1Q C-tag
+# (EtherType 0x8100 and 16 bits of tag information) and the inner EtherType.
+# Public. The payload and the FCS are not mapped (pack.md).
+#
+# Addressing: word_bytes 1 and bit_order msb; multi-octet fields are big-endian.
+format        ethernet-ii
+version       0.1.0
+distribution  public
+source        "IETF RFC 894, A Standard for the Transmission of IP Datagrams over Ethernet Networks, April 1984; IETF RFC 7042, IANA Considerations and IETF Protocol and Documentation Usage for IEEE 802 Parameters, October 2013, section 3; IETF RFC 7348, Virtual eXtensible Local Area Network (VXLAN), August 2014, section 5; https://www.rfc-editor.org/; layout restated"
+uses          inet
+wire          bits
+word_bytes    1
+bit_order     msb
+
+field  inet.eth_dst_addr            0:0:48     uint
+field  inet.eth_src_addr            0:48:48    uint
+
+kind      c-tagged                                    # EtherType 0x8100: a C-tag follows
+when      0:96:16  33024
+requires  inet.vlan_tag_info
+field  inet.vlan_tag_info           0:112:16   uint
+field  inet.eth_type                0:128:16   uint
+
+kind      untagged
+field  inet.eth_type                0:96:16    uint

@@ -1,0 +1,12 @@
+{
+  "name": "spi-and-sequence-to-ah-header",
+  "from": "esp-header",
+  "to": "ah-header",
+  "input": "0000100100000001",
+  "expect": "000000000000100100000001",
+  "model": {
+    "inet.ipsec_spi": "4097",
+    "inet.ipsec_seq": "1"
+  },
+  "source": "built by tools/gen/link-headers-vectors.py from values chosen there; the ESP header to ah-header: the shared keys inet.ipsec_spi and inet.ipsec_seq carry; next header, payload length and reserved are absent and written 0"
+}

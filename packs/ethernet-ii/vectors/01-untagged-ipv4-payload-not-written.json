@@ -1,0 +1,14 @@
+{
+  "name": "untagged-ipv4-payload-not-written",
+  "from": "ethernet-ii",
+  "to": "ethernet-ii",
+  "input": "00005e00530100005e005302080000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "expect": "00005e00530100005e0053020800",
+  "model": {
+    "@kind": "untagged",
+    "inet.eth_dst_addr": "1577079553",
+    "inet.eth_src_addr": "1577079554",
+    "inet.eth_type": "2048"
+  },
+  "source": "built by tools/gen/link-headers-vectors.py from values chosen there; an untagged frame carrying IPv4 (EtherType 0x0800) between two documentation MAC addresses, followed by 46 payload octets, read over"
+}

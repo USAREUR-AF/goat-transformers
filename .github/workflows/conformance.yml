@@ -69,7 +69,7 @@ jobs:
       # committed), so the scripts checked here are the ones that need none.
       - name: Committed vectors are what their scripts write
         run: |
-          for script in tools/gen/conformance-*-vectors.py tools/gen/cot-protobuf-vectors.py tools/gen/protobuf-*-vectors.py tools/gen/ccsds-vectors.py tools/gen/ccsds-2-vectors.py tools/gen/ccsds-3-vectors.py tools/gen/gdl90-vectors.py tools/gen/adsb-vectors.py tools/gen/drip-vectors.py tools/gen/gtfs-vectors.py tools/gen/nmea0183-vendor-vectors.py tools/gen/gpsd-json-vectors.py tools/gen/nitf-header-vectors.py tools/gen/ietf-headers-vectors.py tools/gen/ietf-options-vectors.py tools/gen/ais-binary-vectors.py tools/gen/ietf-headers-2-vectors.py tools/gen/ietf-headers-4-vectors.py; do
+          for script in tools/gen/conformance-*-vectors.py tools/gen/cot-protobuf-vectors.py tools/gen/protobuf-*-vectors.py tools/gen/ccsds-vectors.py tools/gen/ccsds-2-vectors.py tools/gen/ccsds-3-vectors.py tools/gen/gdl90-vectors.py tools/gen/adsb-vectors.py tools/gen/drip-vectors.py tools/gen/gtfs-vectors.py tools/gen/nmea0183-vendor-vectors.py tools/gen/gpsd-json-vectors.py tools/gen/nitf-header-vectors.py tools/gen/ietf-headers-vectors.py tools/gen/ietf-options-vectors.py tools/gen/ais-binary-vectors.py tools/gen/ietf-headers-2-vectors.py tools/gen/ietf-headers-4-vectors.py tools/gen/link-headers-vectors.py; do
             python3 -I "$script" --check
           done
   rust:

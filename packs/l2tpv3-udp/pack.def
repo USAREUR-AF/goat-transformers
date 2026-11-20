@@ -1,0 +1,32 @@
+# L2TPv3 over UDP (RFC 3931 section 4.1.2): the session header of a data message
+# (T bit 0), or the control message header (T bit 1, section 3.2.1). Public. The
+# cookie, the L2-specific sublayer, the payload and control message AVPs are not
+# mapped (pack.md).
+#
+# Addressing: word_bytes 1 and bit_order msb; multi-octet fields are big-endian.
+format        l2tpv3-udp
+version       0.1.0
+distribution  public
+source        "IETF RFC 3931, Layer Two Tunneling Protocol - Version 3 (L2TPv3), March 2005, sections 3.2.1 and 4.1.2, https://www.rfc-editor.org/rfc/rfc3931.txt; layout restated"
+uses          inet
+wire          bits
+word_bytes    1
+bit_order     msb
+
+kind      control
+when      0:0:1   1
+requires  inet.l2tp_control_connection_id
+field  inet.l2tp_length_bit       0:1:1      uint
+field  inet.l2tp_sequence_bit     0:4:1      uint
+field  inet.l2tp_version          0:12:4     uint
+field  inet.l2tp_length           0:16:16    uint
+field  inet.l2tp_control_connection_id 0:32:32 uint
+field  inet.l2tp_ns               0:64:16    uint
+field  inet.l2tp_nr               0:80:16    uint
+
+kind      data
+when      0:0:1   0
+requires  inet.l2tp_session_id
+field  inet.l2tp_version            0:12:4     uint
+field  inet.l2tp_reserved           0:16:16    uint
+field  inet.l2tp_session_id         0:32:32    uint

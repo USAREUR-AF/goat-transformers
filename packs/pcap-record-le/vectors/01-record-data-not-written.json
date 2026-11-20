@@ -1,0 +1,14 @@
+{
+  "name": "record-data-not-written",
+  "from": "pcap-record-le",
+  "to": "pcap-record-le",
+  "input": "1033066b40e201003c0000003c000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "expect": "1033066b40e201003c0000003c000000",
+  "model": {
+    "pcap.pcap_ts_sec": "1795568400",
+    "pcap.pcap_ts_frac": "123456",
+    "pcap.pcap_caplen": "60",
+    "pcap.pcap_origlen": "60"
+  },
+  "source": "built by tools/gen/link-headers-vectors.py from values chosen there; a record at 1795568400 s and 123456 microseconds (or nanoseconds, as the file says), 60 octets captured of 60, the 60 data octets read over"
+}

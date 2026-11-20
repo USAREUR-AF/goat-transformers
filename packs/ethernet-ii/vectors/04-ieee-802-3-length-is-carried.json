@@ -1,0 +1,14 @@
+{
+  "name": "ieee-802-3-length-is-carried",
+  "from": "ethernet-ii",
+  "to": "ethernet-ii",
+  "input": "00005e00530100005e005302002e",
+  "expect": "00005e00530100005e005302002e",
+  "model": {
+    "@kind": "untagged",
+    "inet.eth_dst_addr": "1577079553",
+    "inet.eth_src_addr": "1577079554",
+    "inet.eth_type": "46"
+  },
+  "source": "built by tools/gen/link-headers-vectors.py from values chosen there; a value of 46, below 0x0600: an IEEE 802.3 length, not an EtherType; carried as the key"
+}

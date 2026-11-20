@@ -1,0 +1,14 @@
+{
+  "name": "data-session-payload-not-written",
+  "from": "l2tpv3-udp",
+  "to": "l2tpv3-udp",
+  "input": "00030000cafe000100000000000000000000",
+  "expect": "00030000cafe0001",
+  "model": {
+    "@kind": "data",
+    "inet.l2tp_version": "3",
+    "inet.l2tp_reserved": "0",
+    "inet.l2tp_session_id": "3405643777"
+  },
+  "source": "built by tools/gen/link-headers-vectors.py from values chosen there; a data message over UDP: T 0, version 3, session 0xcafe0001, 10 octets read over"
+}

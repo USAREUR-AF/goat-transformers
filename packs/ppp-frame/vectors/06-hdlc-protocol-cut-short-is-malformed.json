@@ -1,0 +1,8 @@
+{
+  "name": "hdlc-protocol-cut-short-is-malformed",
+  "from": "ppp-frame",
+  "to": "ppp-frame",
+  "input": "ff0300",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/link-headers-vectors.py from values chosen there; address, control and one even protocol octet: the second octet is missing"
+}

@@ -1,0 +1,65 @@
+# pcap file header (draft-ietf-opsawg-pcap section 4): the 24 octets at the start
+# of a pcap file, in the byte order of the writer, which the magic number shows.
+# Public. The packet records that follow are packs pcap-record-be and
+# pcap-record-le (pack.md).
+#
+# Addressing: word_bytes 1 and bit_order msb. In the little-endian kinds every
+# multi-octet field has the option swap; the flags byte of the link-type word is
+# its last octet there.
+format        pcap-file-header
+version       0.1.0
+distribution  public
+source        "IETF Internet-Draft draft-ietf-opsawg-pcap-09, PCAP Capture File Format, September 2026, sections 4 and 5, https://www.ietf.org/archive/id/draft-ietf-opsawg-pcap-09.txt; layout restated"
+uses          pcap
+wire          bits
+word_bytes    1
+bit_order     msb
+
+
+kind      big-endian-microseconds
+when      0:0:32  2712847316
+field  pcap.pcap_version_major      0:32:16    uint
+field  pcap.pcap_version_minor      0:48:16    uint
+field  pcap.pcap_reserved1          0:64:32    uint
+field  pcap.pcap_reserved2          0:96:32    uint
+field  pcap.pcap_snaplen            0:128:32   uint
+field  pcap.pcap_fcs_len            0:160:4    uint
+field  pcap.pcap_r_bit              0:164:1    uint
+field  pcap.pcap_p_bit              0:165:1    uint
+field  pcap.pcap_linktype           0:176:16   uint
+
+kind      big-endian-nanoseconds
+when      0:0:32  2712812621
+field  pcap.pcap_version_major      0:32:16    uint
+field  pcap.pcap_version_minor      0:48:16    uint
+field  pcap.pcap_reserved1          0:64:32    uint
+field  pcap.pcap_reserved2          0:96:32    uint
+field  pcap.pcap_snaplen            0:128:32   uint
+field  pcap.pcap_fcs_len            0:160:4    uint
+field  pcap.pcap_r_bit              0:164:1    uint
+field  pcap.pcap_p_bit              0:165:1    uint
+field  pcap.pcap_linktype           0:176:16   uint
+
+kind      little-endian-microseconds
+when      0:0:32  3569595041
+field  pcap.pcap_version_major      0:32:16    uint  swap
+field  pcap.pcap_version_minor      0:48:16    uint  swap
+field  pcap.pcap_reserved1          0:64:32    uint  swap
+field  pcap.pcap_reserved2          0:96:32    uint  swap
+field  pcap.pcap_snaplen            0:128:32   uint  swap
+field  pcap.pcap_linktype           0:160:16   uint  swap
+field  pcap.pcap_fcs_len            0:184:4    uint
+field  pcap.pcap_r_bit              0:188:1    uint
+field  pcap.pcap_p_bit              0:189:1    uint
+
+kind      little-endian-nanoseconds
+when      0:0:32  1295823521
+field  pcap.pcap_version_major      0:32:16    uint  swap
+field  pcap.pcap_version_minor      0:48:16    uint  swap
+field  pcap.pcap_reserved1          0:64:32    uint  swap
+field  pcap.pcap_reserved2          0:96:32    uint  swap
+field  pcap.pcap_snaplen            0:128:32   uint  swap
+field  pcap.pcap_linktype           0:160:16   uint  swap
+field  pcap.pcap_fcs_len            0:184:4    uint
+field  pcap.pcap_r_bit              0:188:1    uint
+field  pcap.pcap_p_bit              0:189:1    uint

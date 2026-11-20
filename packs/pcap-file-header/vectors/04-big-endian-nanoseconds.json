@@ -1,0 +1,20 @@
+{
+  "name": "big-endian-nanoseconds",
+  "from": "pcap-file-header",
+  "to": "pcap-file-header",
+  "input": "a1b23c4d0002000400000000000000000004000000000001",
+  "expect": "a1b23c4d0002000400000000000000000004000000000001",
+  "model": {
+    "@kind": "big-endian-nanoseconds",
+    "pcap.pcap_version_major": "2",
+    "pcap.pcap_version_minor": "4",
+    "pcap.pcap_reserved1": "0",
+    "pcap.pcap_reserved2": "0",
+    "pcap.pcap_snaplen": "262144",
+    "pcap.pcap_fcs_len": "0",
+    "pcap.pcap_r_bit": "0",
+    "pcap.pcap_p_bit": "0",
+    "pcap.pcap_linktype": "1"
+  },
+  "source": "built by tools/gen/link-headers-vectors.py from values chosen there; a big-endian file with nanosecond timestamps (a1 b2 3c 4d)"
+}

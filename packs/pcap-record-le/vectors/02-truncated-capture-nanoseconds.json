@@ -1,0 +1,14 @@
+{
+  "name": "truncated-capture-nanoseconds",
+  "from": "pcap-record-le",
+  "to": "pcap-record-le",
+  "input": "1033066bffc99a3bffff0000ea050000",
+  "expect": "1033066bffc99a3bffff0000ea050000",
+  "model": {
+    "pcap.pcap_ts_sec": "1795568400",
+    "pcap.pcap_ts_frac": "999999999",
+    "pcap.pcap_caplen": "65535",
+    "pcap.pcap_origlen": "1514"
+  },
+  "source": "built by tools/gen/link-headers-vectors.py from values chosen there; a record whose fraction 999999999 only a nanosecond file allows, captured length 65535, original 1514: the pack carries both lengths as they are"
+}

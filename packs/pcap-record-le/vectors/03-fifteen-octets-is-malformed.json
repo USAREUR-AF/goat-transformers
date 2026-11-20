@@ -1,0 +1,8 @@
+{
+  "name": "fifteen-octets-is-malformed",
+  "from": "pcap-record-le",
+  "to": "pcap-record-le",
+  "input": "1033066b40e201003c0000003c0000",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/link-headers-vectors.py from values chosen there; the record header cut to 15 octets"
+}

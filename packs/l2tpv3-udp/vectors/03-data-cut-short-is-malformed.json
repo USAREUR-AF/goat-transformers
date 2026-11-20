@@ -1,0 +1,8 @@
+{
+  "name": "data-cut-short-is-malformed",
+  "from": "l2tpv3-udp",
+  "to": "l2tpv3-udp",
+  "input": "00030000cafe",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/link-headers-vectors.py from values chosen there; the data header cut to 6 octets"
+}

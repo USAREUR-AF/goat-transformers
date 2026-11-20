@@ -1,0 +1,20 @@
+# pcap packet record header (draft-ietf-opsawg-pcap section 5), big-endian: the 16
+# octets before the packet data. Public. A record does not state its byte order
+# or timestamp unit; the file header does, so the caller picks this pack or
+# pcap-record-le (pack.md). The packet data is not mapped.
+#
+# Addressing: word_bytes 1 and bit_order msb.
+format        pcap-record-be
+version       0.1.0
+distribution  public
+source        "IETF Internet-Draft draft-ietf-opsawg-pcap-09, PCAP Capture File Format, September 2026, sections 4 and 5, https://www.ietf.org/archive/id/draft-ietf-opsawg-pcap-09.txt; layout restated"
+uses          pcap
+wire          bits
+word_bytes    1
+bit_order     msb
+
+
+field  pcap.pcap_ts_sec             0:0:32     uint
+field  pcap.pcap_ts_frac            0:32:32    uint
+field  pcap.pcap_caplen             0:64:32    uint
+field  pcap.pcap_origlen            0:96:32    uint

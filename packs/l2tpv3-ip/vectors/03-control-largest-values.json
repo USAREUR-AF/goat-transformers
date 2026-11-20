@@ -1,0 +1,18 @@
+{
+  "name": "control-largest-values",
+  "from": "l2tpv3-ip",
+  "to": "l2tpv3-ip",
+  "input": "00000000c80fffffffffffffffffffff",
+  "expect": "00000000c80fffffffffffffffffffff",
+  "model": {
+    "@kind": "control",
+    "inet.l2tp_length_bit": "1",
+    "inet.l2tp_sequence_bit": "1",
+    "inet.l2tp_version": "15",
+    "inet.l2tp_length": "65535",
+    "inet.l2tp_control_connection_id": "4294967295",
+    "inet.l2tp_ns": "65535",
+    "inet.l2tp_nr": "65535"
+  },
+  "source": "built by tools/gen/link-headers-vectors.py from values chosen there; a control header with every field at its largest value"
+}

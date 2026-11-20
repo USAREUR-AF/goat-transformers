@@ -1,0 +1,16 @@
+# IPsec ESP header (RFC 4303 section 2): the SPI and the sequence number, the 8
+# octets before the payload. Public. The encrypted payload, padding, trailer and
+# ICV are not mapped (pack.md).
+#
+# Addressing: word_bytes 1 and bit_order msb; multi-octet fields are big-endian.
+format        esp-header
+version       0.1.0
+distribution  public
+source        "IETF RFC 4303, IP Encapsulating Security Payload (ESP), December 2005, section 2, https://www.rfc-editor.org/rfc/rfc4303.txt; layout restated"
+uses          inet
+wire          bits
+word_bytes    1
+bit_order     msb
+
+field  inet.ipsec_spi               0:0:32     uint
+field  inet.ipsec_seq               0:32:32    uint

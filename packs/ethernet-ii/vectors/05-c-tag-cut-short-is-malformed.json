@@ -1,0 +1,8 @@
+{
+  "name": "c-tag-cut-short-is-malformed",
+  "from": "ethernet-ii",
+  "to": "ethernet-ii",
+  "input": "00005e00530100005e0053028100a064",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/link-headers-vectors.py from values chosen there; the C-tagged frame cut to 16 octets, inside its inner EtherType"
+}

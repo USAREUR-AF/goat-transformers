@@ -1,0 +1,12 @@
+{
+  "name": "hdlc-compressed-protocol",
+  "from": "ppp-frame",
+  "to": "ppp-frame",
+  "input": "ff0321",
+  "expect": "ff0321",
+  "model": {
+    "@kind": "hdlc-protocol-8",
+    "inet.ppp_protocol": "33"
+  },
+  "source": "built by tools/gen/link-headers-vectors.py from values chosen there; address and control, then the 1-octet protocol 0x21 (protocol field compression)"
+}

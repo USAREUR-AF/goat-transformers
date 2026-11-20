@@ -1,0 +1,20 @@
+{
+  "name": "little-endian-fcs-and-old-reserved",
+  "from": "pcap-file-header",
+  "to": "pcap-file-header",
+  "input": "d4c3b2a102000400f0ffffff0000000000000400ffff0024",
+  "expect": "d4c3b2a102000400f0ffffff0000000000000400ffff0024",
+  "model": {
+    "@kind": "little-endian-microseconds",
+    "pcap.pcap_version_major": "2",
+    "pcap.pcap_version_minor": "4",
+    "pcap.pcap_reserved1": "4294967280",
+    "pcap.pcap_reserved2": "0",
+    "pcap.pcap_snaplen": "262144",
+    "pcap.pcap_fcs_len": "2",
+    "pcap.pcap_r_bit": "0",
+    "pcap.pcap_p_bit": "1",
+    "pcap.pcap_linktype": "65535"
+  },
+  "source": "built by tools/gen/link-headers-vectors.py from values chosen there; a little-endian header with P set and an FCS of 2 words (4 octets), link type 0xffff, and reserved1 0xfffffff0 as an older writer's time zone offset: carried, not checked"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "largest-values",
+  "from": "ah-header",
+  "to": "ah-header",
+  "input": "ffffffffffffffffffffffff",
+  "expect": "ffffffffffffffffffffffff",
+  "model": {
+    "inet.ip_protocol": "255",
+    "inet.ah_payload_len": "255",
+    "inet.ah_reserved": "65535",
+    "inet.ipsec_spi": "4294967295",
+    "inet.ipsec_seq": "4294967295"
+  },
+  "source": "built by tools/gen/link-headers-vectors.py from values chosen there; every field at its largest value, the reserved bits included (the pack does not check them)"
+}

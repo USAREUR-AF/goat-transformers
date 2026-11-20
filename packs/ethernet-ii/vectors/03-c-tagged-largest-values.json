@@ -1,0 +1,15 @@
+{
+  "name": "c-tagged-largest-values",
+  "from": "ethernet-ii",
+  "to": "ethernet-ii",
+  "input": "ffffffffffff00005e0053028100ffffffff",
+  "expect": "ffffffffffff00005e0053028100ffffffff",
+  "model": {
+    "@kind": "c-tagged",
+    "inet.eth_dst_addr": "281474976710655",
+    "inet.eth_src_addr": "1577079554",
+    "inet.vlan_tag_info": "65535",
+    "inet.eth_type": "65535"
+  },
+  "source": "built by tools/gen/link-headers-vectors.py from values chosen there; the broadcast destination, tag information 0xffff and EtherType 0xffff (the pack checks neither)"
+}

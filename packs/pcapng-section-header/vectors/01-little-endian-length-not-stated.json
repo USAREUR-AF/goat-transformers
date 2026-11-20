@@ -1,0 +1,15 @@
+{
+  "name": "little-endian-length-not-stated",
+  "from": "pcapng-section-header",
+  "to": "pcapng-section-header",
+  "input": "0a0d0d0a1c0000004d3c2b1a01000000ffffffffffffffff1c000000",
+  "expect": "0a0d0d0a1c0000004d3c2b1a01000000ffffffffffffffff",
+  "model": {
+    "@kind": "little-endian",
+    "pcap.pcapng_block_total_length": "28",
+    "pcap.pcapng_version_major": "1",
+    "pcap.pcapng_version_minor": "0",
+    "pcap.pcapng_section_length": "-1"
+  },
+  "source": "built by tools/gen/link-headers-vectors.py from values chosen there; a little endian section header block, version 1.0, section length -1 (not stated), no option; its trailing block total length read over"
+}
