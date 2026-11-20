@@ -20,7 +20,13 @@ conversion vector's `max_items` sets the limit on list items for that vector,
 and a `model` value its grammar refuses (ruling 2c of 0.11) fails the vector.
 A vector whose format is not loaded is run, and pins `unknown-format`.
 It also loads one pack alone through `gt_engine:load_packs/4` and runs that
-pack's vectors on the engine it gives (`named load: ...`).
+pack's vectors on the engine it gives (`named load: ...`). To pick that pack
+it lists the vector files once and checks each pack against its own files.
+Until 2026-11 it listed every pack's vectors again for each pack (packs x
+packs): with 2249 packs and 16231 vectors that one check took about 535 of
+the 580 s of a run. It now takes about 6 s and the whole run about 44 s
+(`nice -n 10`, one machine, 16 cores). Nothing is sampled: every vector and
+every check still runs, so there is no switch for a full run.
 The malformed-input check takes the input of the first five conversion vectors
 of each pack and of every vector of the packs `conformance-malformed-*`,
 `conformance-tlv*`, `conformance-armor*` and `conformance-sixbit*`, cuts

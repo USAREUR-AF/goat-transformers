@@ -486,20 +486,25 @@ run_capability_vector(Engine, Path) ->
 %% all stay inside the pack is loaded alone, with the modules it needs: the
 %% engine then holds that one pack, and the pack's vectors pass on it.
 %% -> the number of failures (0 or 1).
+%% The vector files are listed once and grouped by pack: listing them again
+%% for each pack made this check grow as packs x packs.
 run_named_load(PacksDir, ModelsDir) ->
+    Files = vector_files(PacksDir),
+    ByPack = lists:foldl(fun({P, F}, M) -> M#{P => [F | maps:get(P, M, [])]} end,
+                         #{}, Files),
     Candidates =
         lists:sort(
           [{filelib:file_size(filename:join([PacksDir, Pack, "pack.def"])), Pack}
-           || Pack <- lists:usort([P || {P, _} <- vector_files(PacksDir)]),
+           || Pack <- lists:sort(maps:keys(ByPack)),
               filelib:is_regular(filename:join([PacksDir, Pack, "pack.def"])),
-              self_contained(PacksDir, Pack)]),
+              self_contained(Pack, maps:get(Pack, ByPack))]),
     case Candidates of
         [] -> 0;
         [{_, Pack} | _] ->
             try
                 E = gt_engine:load_packs(gt_engine:new(), PacksDir, [Pack], ModelsDir),
                 1 = maps:size(gt_engine:packs(E)),
-                [] = [{Name, Why} || {P, File} <- vector_files(PacksDir), P =:= Pack,
+                [] = [{Name, Why} || {P, File} <- Files, P =:= Pack,
                                      {error, Name, Why} <- [run_vector_file(E, File)]],
                 io:format("named load: pack ~s alone, ~p module(s)~n",
                           [Pack, maps:size(gt_engine:modules(E))]),
@@ -510,12 +515,12 @@ run_named_load(PacksDir, ModelsDir) ->
             end
     end.
 
-%% Does every vector of the pack convert from and to the pack itself?
-self_contained(PacksDir, Pack) ->
+%% Does every vector of the pack (its vector files) convert from and to the
+%% pack itself?
+self_contained(Pack, PackFiles) ->
     Name = list_to_binary(Pack),
     lists:all(
-      fun({P, _}) when P =/= Pack -> true;
-         ({_, File}) ->
+      fun(File) ->
               try
                   {ok, Bin} = file:read_file(File),
                   Obj = gt_json:parse(Bin),
@@ -523,7 +528,7 @@ self_contained(PacksDir, Pack) ->
                       andalso gt_json:get(Obj, <<"to">>) =:= {ok, Name}
               catch _:_ -> false
               end
-      end, vector_files(PacksDir)).
+      end, PackFiles).
 
 %% ===================================================================
 %% malformed inputs (spec/engine-spec.md, Malformed input)
