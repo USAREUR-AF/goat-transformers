@@ -1,0 +1,18 @@
+{
+  "name": "gen-opcua-alias_category_update_data_type-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100125f0111000000020000007631022c0172110100035ed0b2",
+  "expect": "0100125f0111000000020000007631022c0172110100035ed0b2",
+  "model": {
+    "@kind": "alias_category_update_data_type",
+    "opcua.alias_category_update_data_type_category_identifier_encoding": "2",
+    "opcua.alias_category_update_data_type_category_identifier_namespace": "300",
+    "opcua.alias_category_update_data_type_category_identifier_id": "70002",
+    "opcua.alias_category_update_data_type_last_change": "3000000003",
+    "opcua.alias_category_update_data_type_category_namespace_uri.#": "2",
+    "opcua.alias_category_update_data_type_category_namespace_uri[0].opcua.alias_category_update_data_type_category_namespace_uri_byte": "118",
+    "opcua.alias_category_update_data_type_category_namespace_uri[1].opcua.alias_category_update_data_type_category_namespace_uri_byte": "49"
+  }
+}

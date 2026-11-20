@@ -1,0 +1,20 @@
+{
+  "name": "gen-opcua-issued_identity_token-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100ac030112000000020000007631020000007632020000007633",
+  "expect": "0100ac030112000000020000007631020000007632020000007633",
+  "model": {
+    "@kind": "issued_identity_token",
+    "opcua.issued_identity_token_policy_id.#": "2",
+    "opcua.issued_identity_token_policy_id[0].opcua.issued_identity_token_policy_id_byte": "118",
+    "opcua.issued_identity_token_policy_id[1].opcua.issued_identity_token_policy_id_byte": "49",
+    "opcua.issued_identity_token_token_data.#": "2",
+    "opcua.issued_identity_token_token_data[0].opcua.issued_identity_token_token_data_byte": "118",
+    "opcua.issued_identity_token_token_data[1].opcua.issued_identity_token_token_data_byte": "50",
+    "opcua.issued_identity_token_encryption_algorithm.#": "2",
+    "opcua.issued_identity_token_encryption_algorithm[0].opcua.issued_identity_token_encryption_algorithm_byte": "118",
+    "opcua.issued_identity_token_encryption_algorithm[1].opcua.issued_identity_token_encryption_algorithm_byte": "51"
+  }
+}

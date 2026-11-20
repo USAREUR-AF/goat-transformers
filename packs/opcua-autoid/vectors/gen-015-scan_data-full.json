@@ -1,0 +1,16 @@
+{
+  "name": "gen-opcua-autoid-scan_data-full",
+  "from": "opcua-autoid",
+  "to": "opcua-autoid",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0102a613010a00000001000000020000007631",
+  "expect": "0102a613010a00000001000000020000007631",
+  "model": {
+    "@kind": "scan_data",
+    "opcuaautoid.namespace_index": "2",
+    "opcuaautoid.scan_data_switch_field": "1",
+    "opcuaautoid.scan_data_byte_string.#": "2",
+    "opcuaautoid.scan_data_byte_string[0].opcuaautoid.scan_data_byte_string_byte": "118",
+    "opcuaautoid.scan_data_byte_string[1].opcuaautoid.scan_data_byte_string_byte": "49"
+  }
+}

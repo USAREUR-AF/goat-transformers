@@ -1,0 +1,17 @@
+{
+  "name": "gen-opcua-test-choice-sparse",
+  "from": "opcua-test",
+  "to": "opcua-test",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "01028c13010c000000030000000100020000007131",
+  "expect": "01028c13010c000000030000000100020000007131",
+  "model": {
+    "@kind": "choice",
+    "opcuatest.namespace_index": "2",
+    "opcuatest.choice_switch_field": "3",
+    "opcuatest.choice_name_namespace_index": "1",
+    "opcuatest.choice_name_name.#": "2",
+    "opcuatest.choice_name_name[0].opcuatest.choice_name_name_byte": "113",
+    "opcuatest.choice_name_name[1].opcuatest.choice_name_name_byte": "49"
+  }
+}

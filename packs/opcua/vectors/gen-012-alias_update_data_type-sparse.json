@@ -1,0 +1,15 @@
+{
+  "name": "gen-opcua-alias_update_data_type-sparse",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100135f010a00000002000000763100000000",
+  "expect": "0100135f010a00000002000000763100000000",
+  "model": {
+    "@kind": "alias_update_data_type",
+    "opcua.alias_update_data_type_application_uri.#": "2",
+    "opcua.alias_update_data_type_application_uri[0].opcua.alias_update_data_type_application_uri_byte": "118",
+    "opcua.alias_update_data_type_application_uri[1].opcua.alias_update_data_type_application_uri_byte": "49",
+    "opcua.alias_update_data_type_categories.#": "0"
+  }
+}

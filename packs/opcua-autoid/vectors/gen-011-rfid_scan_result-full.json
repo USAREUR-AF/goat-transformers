@@ -1,0 +1,33 @@
+{
+  "name": "gen-opcua-autoid-rfid_scan_result-full",
+  "from": "opcua-autoid",
+  "to": "opcua-autoid",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "010293130152000000010000000200000076310100000002000000763230f5209bcb82d80101000000020000007634020000008beefeff8aeefeff7091219bcb82d80188eefeff87eefeff86eefeffb02d229bcb82d80184eefeff",
+  "expect": "010293130152000000010000000200000076310100000002000000763230f5209bcb82d80101000000020000007634020000008beefeff8aeefeff7091219bcb82d80188eefeff87eefeff86eefeffb02d229bcb82d80184eefeff",
+  "model": {
+    "@kind": "rfid_scan_result",
+    "opcuaautoid.namespace_index": "2",
+    "opcuaautoid.rfid_scan_result_scan_data_switch_field": "1",
+    "time_ms": "1655526400003",
+    "opcuaautoid.rfid_scan_result_location_switch_field": "1",
+    "opcuaautoid.rfid_scan_result_code_type.#": "2",
+    "opcuaautoid.rfid_scan_result_code_type[0].opcuaautoid.rfid_scan_result_code_type_byte": "118",
+    "opcuaautoid.rfid_scan_result_code_type[1].opcuaautoid.rfid_scan_result_code_type_byte": "49",
+    "opcuaautoid.rfid_scan_result_scan_data_byte_string.#": "2",
+    "opcuaautoid.rfid_scan_result_scan_data_byte_string[0].opcuaautoid.rfid_scan_result_scan_data_byte_string_byte": "118",
+    "opcuaautoid.rfid_scan_result_scan_data_byte_string[1].opcuaautoid.rfid_scan_result_scan_data_byte_string_byte": "50",
+    "opcuaautoid.rfid_scan_result_location_nmea.#": "2",
+    "opcuaautoid.rfid_scan_result_location_nmea[0].opcuaautoid.rfid_scan_result_location_nmea_byte": "118",
+    "opcuaautoid.rfid_scan_result_location_nmea[1].opcuaautoid.rfid_scan_result_location_nmea_byte": "52",
+    "opcuaautoid.rfid_scan_result_sighting.#": "2",
+    "opcuaautoid.rfid_scan_result_sighting[0].opcuaautoid.rfid_scan_result_sighting_antenna": "-70005",
+    "opcuaautoid.rfid_scan_result_sighting[0].opcuaautoid.rfid_scan_result_sighting_strength": "-70006",
+    "opcuaautoid.rfid_scan_result_sighting[0].opcuaautoid.rfid_scan_result_sighting_timestamp": "133000000000070000",
+    "opcuaautoid.rfid_scan_result_sighting[0].opcuaautoid.rfid_scan_result_sighting_current_power_level": "-70008",
+    "opcuaautoid.rfid_scan_result_sighting[1].opcuaautoid.rfid_scan_result_sighting_antenna": "-70009",
+    "opcuaautoid.rfid_scan_result_sighting[1].opcuaautoid.rfid_scan_result_sighting_strength": "-70010",
+    "opcuaautoid.rfid_scan_result_sighting[1].opcuaautoid.rfid_scan_result_sighting_timestamp": "133000000000110000",
+    "opcuaautoid.rfid_scan_result_sighting[1].opcuaautoid.rfid_scan_result_sighting_current_power_level": "-70012"
+  }
+}

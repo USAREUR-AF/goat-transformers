@@ -1,0 +1,18 @@
+{
+  "name": "gen-opcua-enum_value_type-sparse",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "01003b200116000000ff0dfad5feffffff0202000000743202020000007433",
+  "expect": "01003b200116000000ff0dfad5feffffff0202000000743202020000007433",
+  "model": {
+    "@kind": "enum_value_type",
+    "opcua.enum_value_type_value": "-5000000001",
+    "opcua.enum_value_type_display_name_text.#": "2",
+    "opcua.enum_value_type_display_name_text[0].opcua.enum_value_type_display_name_text_byte": "116",
+    "opcua.enum_value_type_display_name_text[1].opcua.enum_value_type_display_name_text_byte": "50",
+    "opcua.enum_value_type_description_text.#": "2",
+    "opcua.enum_value_type_description_text[0].opcua.enum_value_type_description_text_byte": "116",
+    "opcua.enum_value_type_description_text[1].opcua.enum_value_type_description_text_byte": "51"
+  }
+}

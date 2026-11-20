@@ -1,0 +1,19 @@
+{
+  "name": "gen-opcua-currency_unit_type-sparse",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100d35b0110000000d3fefe02000000763302020000007434",
+  "expect": "0100d35b0110000000d3fefe02000000763302020000007434",
+  "model": {
+    "@kind": "currency_unit_type",
+    "opcua.currency_unit_type_numeric_code": "-301",
+    "opcua.currency_unit_type_exponent": "-2",
+    "opcua.currency_unit_type_alphabetic_code.#": "2",
+    "opcua.currency_unit_type_alphabetic_code[0].opcua.currency_unit_type_alphabetic_code_byte": "118",
+    "opcua.currency_unit_type_alphabetic_code[1].opcua.currency_unit_type_alphabetic_code_byte": "51",
+    "opcua.currency_unit_type_currency_text.#": "2",
+    "opcua.currency_unit_type_currency_text[0].opcua.currency_unit_type_currency_text_byte": "116",
+    "opcua.currency_unit_type_currency_text[1].opcua.currency_unit_type_currency_text_byte": "52"
+  }
+}

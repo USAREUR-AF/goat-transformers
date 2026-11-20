@@ -1,0 +1,30 @@
+{
+  "name": "gen-opcua-alias_update_data_type-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100135f012900000002000000763102000000020000007632032c01020000007333045ed0b20200000076350006075ed0b2",
+  "expect": "0100135f012900000002000000763102000000020000007632032c01020000007333045ed0b20200000076350006075ed0b2",
+  "model": {
+    "@kind": "alias_update_data_type",
+    "opcua.alias_update_data_type_application_uri.#": "2",
+    "opcua.alias_update_data_type_application_uri[0].opcua.alias_update_data_type_application_uri_byte": "118",
+    "opcua.alias_update_data_type_application_uri[1].opcua.alias_update_data_type_application_uri_byte": "49",
+    "opcua.alias_update_data_type_categories.#": "2",
+    "opcua.alias_update_data_type_categories[0].opcua.alias_update_data_type_categories_category_identifier_encoding": "3",
+    "opcua.alias_update_data_type_categories[0].opcua.alias_update_data_type_categories_category_identifier_namespace": "300",
+    "opcua.alias_update_data_type_categories[0].opcua.alias_update_data_type_categories_last_change": "3000000004",
+    "opcua.alias_update_data_type_categories[0].opcua.alias_update_data_type_categories_category_namespace_uri.#": "2",
+    "opcua.alias_update_data_type_categories[0].opcua.alias_update_data_type_categories_category_namespace_uri[0].opcua.alias_update_data_type_categories_category_namespace_uri_byte": "118",
+    "opcua.alias_update_data_type_categories[0].opcua.alias_update_data_type_categories_category_namespace_uri[1].opcua.alias_update_data_type_categories_category_namespace_uri_byte": "50",
+    "opcua.alias_update_data_type_categories[0].opcua.alias_update_data_type_categories_category_identifier_string_id.#": "2",
+    "opcua.alias_update_data_type_categories[0].opcua.alias_update_data_type_categories_category_identifier_string_id[0].opcua.alias_update_data_type_categories_category_identifier_string_id_byte": "115",
+    "opcua.alias_update_data_type_categories[0].opcua.alias_update_data_type_categories_category_identifier_string_id[1].opcua.alias_update_data_type_categories_category_identifier_string_id_byte": "51",
+    "opcua.alias_update_data_type_categories[1].opcua.alias_update_data_type_categories_category_identifier_encoding": "0",
+    "opcua.alias_update_data_type_categories[1].opcua.alias_update_data_type_categories_category_identifier_id": "6",
+    "opcua.alias_update_data_type_categories[1].opcua.alias_update_data_type_categories_last_change": "3000000007",
+    "opcua.alias_update_data_type_categories[1].opcua.alias_update_data_type_categories_category_namespace_uri.#": "2",
+    "opcua.alias_update_data_type_categories[1].opcua.alias_update_data_type_categories_category_namespace_uri[0].opcua.alias_update_data_type_categories_category_namespace_uri_byte": "118",
+    "opcua.alias_update_data_type_categories[1].opcua.alias_update_data_type_categories_category_namespace_uri[1].opcua.alias_update_data_type_categories_category_namespace_uri_byte": "53"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "gen-opcua-annotation_data_type-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100307f0112000000020000007631020000007632020000007633",
+  "expect": "0100307f0112000000020000007631020000007632020000007633",
+  "model": {
+    "@kind": "annotation_data_type",
+    "opcua.annotation_data_type_annotation.#": "2",
+    "opcua.annotation_data_type_annotation[0].opcua.annotation_data_type_annotation_byte": "118",
+    "opcua.annotation_data_type_annotation[1].opcua.annotation_data_type_annotation_byte": "49",
+    "opcua.annotation_data_type_discipline.#": "2",
+    "opcua.annotation_data_type_discipline[0].opcua.annotation_data_type_discipline_byte": "118",
+    "opcua.annotation_data_type_discipline[1].opcua.annotation_data_type_discipline_byte": "50",
+    "opcua.annotation_data_type_uri.#": "2",
+    "opcua.annotation_data_type_uri[0].opcua.annotation_data_type_uri_byte": "118",
+    "opcua.annotation_data_type_uri[1].opcua.annotation_data_type_uri_byte": "51"
+  }
+}

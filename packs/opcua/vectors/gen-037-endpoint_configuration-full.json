@@ -1,0 +1,20 @@
+{
+  "name": "gen-opcua-endpoint_configuration-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "01004d0101210000008feefeff008deefeff8ceefeff8beefeff8aeefeff89eefeff88eefeff87eefeff",
+  "expect": "01004d0101210000008feefeff008deefeff8ceefeff8beefeff8aeefeff89eefeff88eefeff87eefeff",
+  "model": {
+    "@kind": "endpoint_configuration",
+    "opcua.endpoint_configuration_operation_timeout": "-70001",
+    "opcua.endpoint_configuration_use_binary_encoding": "0",
+    "opcua.endpoint_configuration_max_string_length": "-70003",
+    "opcua.endpoint_configuration_max_byte_string_length": "-70004",
+    "opcua.endpoint_configuration_max_array_length": "-70005",
+    "opcua.endpoint_configuration_max_message_size": "-70006",
+    "opcua.endpoint_configuration_max_buffer_size": "-70007",
+    "opcua.endpoint_configuration_channel_lifetime": "-70008",
+    "opcua.endpoint_configuration_security_token_lifetime": "-70009"
+  }
+}

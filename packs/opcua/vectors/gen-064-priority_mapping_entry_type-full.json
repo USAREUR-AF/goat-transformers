@@ -1,0 +1,19 @@
+{
+  "name": "gen-opcua-priority_mapping_entry_type-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "01009762011100000002000000763102000000763204045ed0b2",
+  "expect": "01009762011100000002000000763102000000763204045ed0b2",
+  "model": {
+    "@kind": "priority_mapping_entry_type",
+    "opcua.priority_mapping_entry_type_priority_value_pcp": "4",
+    "opcua.priority_mapping_entry_type_priority_value_dscp": "3000000004",
+    "opcua.priority_mapping_entry_type_mapping_uri.#": "2",
+    "opcua.priority_mapping_entry_type_mapping_uri[0].opcua.priority_mapping_entry_type_mapping_uri_byte": "118",
+    "opcua.priority_mapping_entry_type_mapping_uri[1].opcua.priority_mapping_entry_type_mapping_uri_byte": "49",
+    "opcua.priority_mapping_entry_type_priority_label.#": "2",
+    "opcua.priority_mapping_entry_type_priority_label[0].opcua.priority_mapping_entry_type_priority_label_byte": "118",
+    "opcua.priority_mapping_entry_type_priority_label[1].opcua.priority_mapping_entry_type_priority_label_byte": "50"
+  }
+}

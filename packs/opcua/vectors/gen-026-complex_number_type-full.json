@@ -1,0 +1,13 @@
+{
+  "name": "gen-opcua-complex_number_type-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100952f01080000000000c03f00002040",
+  "expect": "0100952f01080000000000c03f00002040",
+  "model": {
+    "@kind": "complex_number_type",
+    "opcua.complex_number_type_real": "1.5",
+    "opcua.complex_number_type_imaginary": "2.5"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "gen-opcua-delete_nodes_item-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100800101050000000102e90300",
+  "expect": "0100800101050000000102e90300",
+  "model": {
+    "@kind": "delete_nodes_item",
+    "opcua.delete_nodes_item_node_id_encoding": "1",
+    "opcua.delete_nodes_item_node_id_namespace": "2",
+    "opcua.delete_nodes_item_node_id_id": "1001",
+    "opcua.delete_nodes_item_delete_target_references": "0"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "name": "gen-opcua-user_token_policy-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "01003201011c00000002000000763102000000020000007633020000007634020000007635",
+  "expect": "01003201011c00000002000000763102000000020000007633020000007634020000007635",
+  "model": {
+    "@kind": "user_token_policy",
+    "opcua.user_token_policy_token_type": "2",
+    "opcua.user_token_policy_policy_id.#": "2",
+    "opcua.user_token_policy_policy_id[0].opcua.user_token_policy_policy_id_byte": "118",
+    "opcua.user_token_policy_policy_id[1].opcua.user_token_policy_policy_id_byte": "49",
+    "opcua.user_token_policy_issued_token_type.#": "2",
+    "opcua.user_token_policy_issued_token_type[0].opcua.user_token_policy_issued_token_type_byte": "118",
+    "opcua.user_token_policy_issued_token_type[1].opcua.user_token_policy_issued_token_type_byte": "51",
+    "opcua.user_token_policy_issuer_endpoint_url.#": "2",
+    "opcua.user_token_policy_issuer_endpoint_url[0].opcua.user_token_policy_issuer_endpoint_url_byte": "118",
+    "opcua.user_token_policy_issuer_endpoint_url[1].opcua.user_token_policy_issuer_endpoint_url_byte": "52",
+    "opcua.user_token_policy_security_policy_uri.#": "2",
+    "opcua.user_token_policy_security_policy_uri[0].opcua.user_token_policy_security_policy_uri_byte": "118",
+    "opcua.user_token_policy_security_policy_uri[1].opcua.user_token_policy_security_policy_uri_byte": "53"
+  }
+}

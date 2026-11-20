@@ -1,0 +1,33 @@
+{
+  "name": "gen-opcua-relative_path-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "01001e020126000000020000000102e90300010400020000007134052c010300000005010200010300020000007138",
+  "expect": "01001e020126000000020000000102e90300010400020000007134052c010300000005010200010300020000007138",
+  "model": {
+    "@kind": "relative_path",
+    "opcua.relative_path_elements.#": "2",
+    "opcua.relative_path_elements[0].opcua.relative_path_elements_reference_type_id_encoding": "1",
+    "opcua.relative_path_elements[0].opcua.relative_path_elements_reference_type_id_namespace": "2",
+    "opcua.relative_path_elements[0].opcua.relative_path_elements_reference_type_id_id": "1001",
+    "opcua.relative_path_elements[0].opcua.relative_path_elements_is_inverse": "0",
+    "opcua.relative_path_elements[0].opcua.relative_path_elements_include_subtypes": "1",
+    "opcua.relative_path_elements[0].opcua.relative_path_elements_target_name_namespace_index": "4",
+    "opcua.relative_path_elements[0].opcua.relative_path_elements_target_name_name.#": "2",
+    "opcua.relative_path_elements[0].opcua.relative_path_elements_target_name_name[0].opcua.relative_path_elements_target_name_name_byte": "113",
+    "opcua.relative_path_elements[0].opcua.relative_path_elements_target_name_name[1].opcua.relative_path_elements_target_name_name_byte": "52",
+    "opcua.relative_path_elements[1].opcua.relative_path_elements_reference_type_id_encoding": "5",
+    "opcua.relative_path_elements[1].opcua.relative_path_elements_reference_type_id_namespace": "300",
+    "opcua.relative_path_elements[1].opcua.relative_path_elements_is_inverse": "0",
+    "opcua.relative_path_elements[1].opcua.relative_path_elements_include_subtypes": "1",
+    "opcua.relative_path_elements[1].opcua.relative_path_elements_target_name_namespace_index": "3",
+    "opcua.relative_path_elements[1].opcua.relative_path_elements_reference_type_id_opaque_id.#": "3",
+    "opcua.relative_path_elements[1].opcua.relative_path_elements_reference_type_id_opaque_id[0].opcua.relative_path_elements_reference_type_id_opaque_id_byte": "5",
+    "opcua.relative_path_elements[1].opcua.relative_path_elements_reference_type_id_opaque_id[1].opcua.relative_path_elements_reference_type_id_opaque_id_byte": "1",
+    "opcua.relative_path_elements[1].opcua.relative_path_elements_reference_type_id_opaque_id[2].opcua.relative_path_elements_reference_type_id_opaque_id_byte": "2",
+    "opcua.relative_path_elements[1].opcua.relative_path_elements_target_name_name.#": "2",
+    "opcua.relative_path_elements[1].opcua.relative_path_elements_target_name_name[0].opcua.relative_path_elements_target_name_name_byte": "113",
+    "opcua.relative_path_elements[1].opcua.relative_path_elements_target_name_name[1].opcua.relative_path_elements_target_name_name_byte": "56"
+  }
+}

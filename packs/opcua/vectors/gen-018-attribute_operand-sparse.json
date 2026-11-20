@@ -1,0 +1,22 @@
+{
+  "name": "gen-opcua-attribute_operand-sparse",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100580201180000000102e90302000000763200000000035ed0b2020000007634",
+  "expect": "0100580201180000000102e90302000000763200000000035ed0b2020000007634",
+  "model": {
+    "@kind": "attribute_operand",
+    "opcua.attribute_operand_node_id_encoding": "1",
+    "opcua.attribute_operand_node_id_namespace": "2",
+    "opcua.attribute_operand_node_id_id": "1001",
+    "opcua.attribute_operand_attribute_id": "3000000003",
+    "opcua.attribute_operand_alias.#": "2",
+    "opcua.attribute_operand_alias[0].opcua.attribute_operand_alias_byte": "118",
+    "opcua.attribute_operand_alias[1].opcua.attribute_operand_alias_byte": "50",
+    "opcua.attribute_operand_browse_path_elements.#": "0",
+    "opcua.attribute_operand_index_range.#": "2",
+    "opcua.attribute_operand_index_range[0].opcua.attribute_operand_index_range_byte": "118",
+    "opcua.attribute_operand_index_range[1].opcua.attribute_operand_index_range_byte": "52"
+  }
+}

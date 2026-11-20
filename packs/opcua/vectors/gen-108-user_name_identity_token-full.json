@@ -1,0 +1,23 @@
+{
+  "name": "gen-opcua-user_name_identity_token-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "010044010118000000020000007631020000007632020000007633020000007634",
+  "expect": "010044010118000000020000007631020000007632020000007633020000007634",
+  "model": {
+    "@kind": "user_name_identity_token",
+    "opcua.user_name_identity_token_policy_id.#": "2",
+    "opcua.user_name_identity_token_policy_id[0].opcua.user_name_identity_token_policy_id_byte": "118",
+    "opcua.user_name_identity_token_policy_id[1].opcua.user_name_identity_token_policy_id_byte": "49",
+    "opcua.user_name_identity_token_user_name.#": "2",
+    "opcua.user_name_identity_token_user_name[0].opcua.user_name_identity_token_user_name_byte": "118",
+    "opcua.user_name_identity_token_user_name[1].opcua.user_name_identity_token_user_name_byte": "50",
+    "opcua.user_name_identity_token_password.#": "2",
+    "opcua.user_name_identity_token_password[0].opcua.user_name_identity_token_password_byte": "118",
+    "opcua.user_name_identity_token_password[1].opcua.user_name_identity_token_password_byte": "51",
+    "opcua.user_name_identity_token_encryption_algorithm.#": "2",
+    "opcua.user_name_identity_token_encryption_algorithm[0].opcua.user_name_identity_token_encryption_algorithm_byte": "118",
+    "opcua.user_name_identity_token_encryption_algorithm[1].opcua.user_name_identity_token_encryption_algorithm_byte": "52"
+  }
+}

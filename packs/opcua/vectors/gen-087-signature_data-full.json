@@ -1,0 +1,17 @@
+{
+  "name": "gen-opcua-signature_data-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100ca01010c000000020000007631020000007632",
+  "expect": "0100ca01010c000000020000007631020000007632",
+  "model": {
+    "@kind": "signature_data",
+    "opcua.signature_data_algorithm.#": "2",
+    "opcua.signature_data_algorithm[0].opcua.signature_data_algorithm_byte": "118",
+    "opcua.signature_data_algorithm[1].opcua.signature_data_algorithm_byte": "49",
+    "opcua.signature_data_signature.#": "2",
+    "opcua.signature_data_signature[0].opcua.signature_data_signature_byte": "118",
+    "opcua.signature_data_signature[1].opcua.signature_data_signature_byte": "50"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "name": "gen-opcua-autoid-dhcp_geo_conf_coordinate-full",
+  "from": "opcua-autoid",
+  "to": "opcua-autoid",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0102aa13011700000002d2fe8deefeff05cffe8aeefeff080987eefeffcafe0c",
+  "expect": "0102aa13011700000002d2fe8deefeff05cffe8aeefeff080987eefeffcafe0c",
+  "model": {
+    "@kind": "dhcp_geo_conf_coordinate",
+    "opcuaautoid.namespace_index": "2",
+    "opcuaautoid.dhcp_geo_conf_coordinate_la_res": "2",
+    "opcuaautoid.dhcp_geo_conf_coordinate_latitude_integer": "-302",
+    "opcuaautoid.dhcp_geo_conf_coordinate_latitude_fraction": "-70003",
+    "opcuaautoid.dhcp_geo_conf_coordinate_lo_res": "5",
+    "opcuaautoid.dhcp_geo_conf_coordinate_longitude_integer": "-305",
+    "opcuaautoid.dhcp_geo_conf_coordinate_longitude_fraction": "-70006",
+    "opcuaautoid.dhcp_geo_conf_coordinate_at": "8",
+    "opcuaautoid.dhcp_geo_conf_coordinate_alt_res": "9",
+    "opcuaautoid.dhcp_geo_conf_coordinate_altitude_integer": "-70009",
+    "opcuaautoid.dhcp_geo_conf_coordinate_altitude_fraction": "-310",
+    "opcuaautoid.dhcp_geo_conf_coordinate_datum": "12"
+  }
+}

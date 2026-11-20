@@ -1,0 +1,20 @@
+{
+  "name": "gen-opcua-gpos-global_location_data_type-full",
+  "from": "opcua-gpos",
+  "to": "opcua-gpos",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "01028c1301440000000100000007000000000000000000f4bf00000000000002c00000000000000ac000000000000011c00000b04000000000000019c00000000000001dc000000000008020c0",
+  "expect": "01028c1301440000000100000007000000000000000000f4bf00000000000002c00000000000000ac000000000000011c00000b04000000000000019c00000000000001dc000000000008020c0",
+  "model": {
+    "@kind": "global_location_data_type",
+    "opcuagpos.namespace_index": "2",
+    "opcuagpos.global_location_data_type_position_longitude": "-1.25",
+    "opcuagpos.global_location_data_type_position_latitude": "-2.25",
+    "opcuagpos.global_location_data_type_position_elevation": "-3.25",
+    "opcuagpos.global_location_data_type_position_accuracy": "-4.25",
+    "opcuagpos.global_location_data_type_position_floor": "5.5",
+    "opcuagpos.global_location_data_type_orientation_a": "-6.25",
+    "opcuagpos.global_location_data_type_orientation_b": "-7.25",
+    "opcuagpos.global_location_data_type_orientation_c": "-8.25"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "gen-opcua-3d_cartesian_coordinates-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "010083490118000000000000000000f4bf00000000000002c00000000000000ac0",
+  "expect": "010083490118000000000000000000f4bf00000000000002c00000000000000ac0",
+  "model": {
+    "@kind": "3d_cartesian_coordinates",
+    "opcua.3d_cartesian_coordinates_x": "-1.25",
+    "opcua.3d_cartesian_coordinates_y": "-2.25",
+    "opcua.3d_cartesian_coordinates_z": "-3.25"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "name": "gen-opcua-eu_information-sparse",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100790301180000000200000076318eeefeff0202000000743302020000007434",
+  "expect": "0100790301180000000200000076318eeefeff0202000000743302020000007434",
+  "model": {
+    "@kind": "eu_information",
+    "opcua.eu_information_unit_id": "-70002",
+    "opcua.eu_information_namespace_uri.#": "2",
+    "opcua.eu_information_namespace_uri[0].opcua.eu_information_namespace_uri_byte": "118",
+    "opcua.eu_information_namespace_uri[1].opcua.eu_information_namespace_uri_byte": "49",
+    "opcua.eu_information_display_name_text.#": "2",
+    "opcua.eu_information_display_name_text[0].opcua.eu_information_display_name_text_byte": "116",
+    "opcua.eu_information_display_name_text[1].opcua.eu_information_display_name_text_byte": "51",
+    "opcua.eu_information_description_text.#": "2",
+    "opcua.eu_information_description_text[0].opcua.eu_information_description_text_byte": "116",
+    "opcua.eu_information_description_text[1].opcua.eu_information_description_text_byte": "52"
+  }
+}

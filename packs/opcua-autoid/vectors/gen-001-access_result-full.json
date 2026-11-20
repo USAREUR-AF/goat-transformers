@@ -1,0 +1,20 @@
+{
+  "name": "gen-opcua-autoid-access_result-full",
+  "from": "opcua-autoid",
+  "to": "opcua-autoid",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "01029e13011c000000070000000200000076310100000002000000763230f5209bcb82d801",
+  "expect": "01029e13011c000000070000000200000076310100000002000000763230f5209bcb82d801",
+  "model": {
+    "@kind": "access_result",
+    "opcuaautoid.namespace_index": "2",
+    "opcuaautoid.access_result_identifier_switch_field": "1",
+    "time_ms": "1655526400003",
+    "opcuaautoid.access_result_code_type.#": "2",
+    "opcuaautoid.access_result_code_type[0].opcuaautoid.access_result_code_type_byte": "118",
+    "opcuaautoid.access_result_code_type[1].opcuaautoid.access_result_code_type_byte": "49",
+    "opcuaautoid.access_result_identifier_byte_string.#": "2",
+    "opcuaautoid.access_result_identifier_byte_string[0].opcuaautoid.access_result_identifier_byte_string_byte": "118",
+    "opcuaautoid.access_result_identifier_byte_string[1].opcuaautoid.access_result_identifier_byte_string_byte": "50"
+  }
+}

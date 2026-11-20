@@ -1,0 +1,8 @@
+{
+  "name": "opcua-eu-information-null-string",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "worked by hand from OPC 10000-6, 5.2 (tools/gen/opcua-vectors.py): a null String has length -1, which the pack's count reads as 4294967295 bytes",
+  "input": "01007903010a000000ffffffff050000000000",
+  "expect_error": "malformed-wire"
+}

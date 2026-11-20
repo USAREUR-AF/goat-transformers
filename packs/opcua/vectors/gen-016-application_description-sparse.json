@@ -1,0 +1,28 @@
+{
+  "name": "gen-opcua-application_description-sparse",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "010036010127000000020000007631020000007632020200000074330100000002000000763502000000763600000000",
+  "expect": "010036010127000000020000007631020000007632020200000074330100000002000000763502000000763600000000",
+  "model": {
+    "@kind": "application_description",
+    "opcua.application_description_application_type": "1",
+    "opcua.application_description_application_uri.#": "2",
+    "opcua.application_description_application_uri[0].opcua.application_description_application_uri_byte": "118",
+    "opcua.application_description_application_uri[1].opcua.application_description_application_uri_byte": "49",
+    "opcua.application_description_product_uri.#": "2",
+    "opcua.application_description_product_uri[0].opcua.application_description_product_uri_byte": "118",
+    "opcua.application_description_product_uri[1].opcua.application_description_product_uri_byte": "50",
+    "opcua.application_description_application_name_text.#": "2",
+    "opcua.application_description_application_name_text[0].opcua.application_description_application_name_text_byte": "116",
+    "opcua.application_description_application_name_text[1].opcua.application_description_application_name_text_byte": "51",
+    "opcua.application_description_gateway_server_uri.#": "2",
+    "opcua.application_description_gateway_server_uri[0].opcua.application_description_gateway_server_uri_byte": "118",
+    "opcua.application_description_gateway_server_uri[1].opcua.application_description_gateway_server_uri_byte": "53",
+    "opcua.application_description_discovery_profile_uri.#": "2",
+    "opcua.application_description_discovery_profile_uri[0].opcua.application_description_discovery_profile_uri_byte": "118",
+    "opcua.application_description_discovery_profile_uri[1].opcua.application_description_discovery_profile_uri_byte": "54",
+    "opcua.application_description_discovery_urls.#": "0"
+  }
+}

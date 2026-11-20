@@ -1,0 +1,16 @@
+{
+  "name": "gen-opcua-redundant_server_data_type-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "01005703010b0000000200000076310300000000",
+  "expect": "01005703010b0000000200000076310300000000",
+  "model": {
+    "@kind": "redundant_server_data_type",
+    "opcua.redundant_server_data_type_service_level": "3",
+    "opcua.redundant_server_data_type_server_state": "0",
+    "opcua.redundant_server_data_type_server_id.#": "2",
+    "opcua.redundant_server_data_type_server_id[0].opcua.redundant_server_data_type_server_id_byte": "118",
+    "opcua.redundant_server_data_type_server_id[1].opcua.redundant_server_data_type_server_id_byte": "49"
+  }
+}

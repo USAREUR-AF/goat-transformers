@@ -1,0 +1,12 @@
+{
+  "name": "gen-opcua-json_writer_group_message_data_type-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100673d0104000000015ed0b2",
+  "expect": "0100673d0104000000015ed0b2",
+  "model": {
+    "@kind": "json_writer_group_message_data_type",
+    "opcua.json_writer_group_message_data_type_network_message_content_mask": "3000000001"
+  }
+}

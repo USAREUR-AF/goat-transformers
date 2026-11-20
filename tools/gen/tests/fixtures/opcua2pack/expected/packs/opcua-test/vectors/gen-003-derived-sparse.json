@@ -1,0 +1,20 @@
+{
+  "name": "gen-opcua-test-derived-sparse",
+  "from": "opcua-test",
+  "to": "opcua-test",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "01028b130119000000000000008feefeff0000000002000000032c01020000007333",
+  "expect": "01028b130119000000000000008feefeff0000000002000000032c01020000007333",
+  "model": {
+    "@kind": "derived",
+    "opcuatest.namespace_index": "2",
+    "opcuatest.derived_count": "-70001",
+    "opcuatest.derived_colour": "2",
+    "opcuatest.derived_source_encoding": "3",
+    "opcuatest.derived_source_namespace": "300",
+    "opcuatest.derived_values.#": "0",
+    "opcuatest.derived_source_string_id.#": "2",
+    "opcuatest.derived_source_string_id[0].opcuatest.derived_source_string_id_byte": "115",
+    "opcuatest.derived_source_string_id[1].opcuatest.derived_source_string_id_byte": "51"
+  }
+}

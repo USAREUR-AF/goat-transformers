@@ -1,0 +1,17 @@
+{
+  "name": "gen-opcua-gpos-ground_control_point_data_type-sparse",
+  "from": "opcua-gpos",
+  "to": "opcua-gpos",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "01029013012c00000000000000000000000000f4bf00000000000002c00000000000000ac000000000000011c000000000000015c0",
+  "expect": "01029013012c00000000000000000000000000f4bf00000000000002c00000000000000ac000000000000011c000000000000015c0",
+  "model": {
+    "@kind": "ground_control_point_data_type",
+    "opcuagpos.namespace_index": "2",
+    "opcuagpos.ground_control_point_data_type_global_position_longitude": "-1.25",
+    "opcuagpos.ground_control_point_data_type_global_position_latitude": "-2.25",
+    "opcuagpos.ground_control_point_data_type_local_position_x": "-3.25",
+    "opcuagpos.ground_control_point_data_type_local_position_y": "-4.25",
+    "opcuagpos.ground_control_point_data_type_local_position_z": "-5.25"
+  }
+}

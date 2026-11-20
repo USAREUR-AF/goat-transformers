@@ -1,0 +1,17 @@
+{
+  "name": "gen-opcua-x509_identity_token-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "01004701010c000000020000007631020000007632",
+  "expect": "01004701010c000000020000007631020000007632",
+  "model": {
+    "@kind": "x509_identity_token",
+    "opcua.x509_identity_token_policy_id.#": "2",
+    "opcua.x509_identity_token_policy_id[0].opcua.x509_identity_token_policy_id_byte": "118",
+    "opcua.x509_identity_token_policy_id[1].opcua.x509_identity_token_policy_id_byte": "49",
+    "opcua.x509_identity_token_certificate_data.#": "2",
+    "opcua.x509_identity_token_certificate_data[0].opcua.x509_identity_token_certificate_data_byte": "118",
+    "opcua.x509_identity_token_certificate_data[1].opcua.x509_identity_token_certificate_data_byte": "50"
+  }
+}

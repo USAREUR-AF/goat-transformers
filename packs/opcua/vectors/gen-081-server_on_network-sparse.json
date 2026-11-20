@@ -1,0 +1,19 @@
+{
+  "name": "gen-opcua-server_on_network-sparse",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100af2f0114000000015ed0b202000000763202000000763300000000",
+  "expect": "0100af2f0114000000015ed0b202000000763202000000763300000000",
+  "model": {
+    "@kind": "server_on_network",
+    "opcua.server_on_network_record_id": "3000000001",
+    "opcua.server_on_network_server_name.#": "2",
+    "opcua.server_on_network_server_name[0].opcua.server_on_network_server_name_byte": "118",
+    "opcua.server_on_network_server_name[1].opcua.server_on_network_server_name_byte": "50",
+    "opcua.server_on_network_discovery_url.#": "2",
+    "opcua.server_on_network_discovery_url[0].opcua.server_on_network_discovery_url_byte": "118",
+    "opcua.server_on_network_discovery_url[1].opcua.server_on_network_discovery_url_byte": "51",
+    "opcua.server_on_network_server_capabilities.#": "0"
+  }
+}

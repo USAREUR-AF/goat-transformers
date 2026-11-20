@@ -1,0 +1,16 @@
+{
+  "name": "gen-opcua-autoid-antenna_name_id_pair-full",
+  "from": "opcua-autoid",
+  "to": "opcua-autoid",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "01029913010a0000008feefeff020000007632",
+  "expect": "01029913010a0000008feefeff020000007632",
+  "model": {
+    "@kind": "antenna_name_id_pair",
+    "opcuaautoid.namespace_index": "2",
+    "opcuaautoid.antenna_name_id_pair_antenna_id": "-70001",
+    "opcuaautoid.antenna_name_id_pair_antenna_name.#": "2",
+    "opcuaautoid.antenna_name_id_pair_antenna_name[0].opcuaautoid.antenna_name_id_pair_antenna_name_byte": "118",
+    "opcuaautoid.antenna_name_id_pair_antenna_name[1].opcuaautoid.antenna_name_id_pair_antenna_name_byte": "50"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "gen-opcua-autoid-rfid_sighting-full",
+  "from": "opcua-autoid",
+  "to": "opcua-autoid",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0102911301140000008feefeff8eeefeff30f5209bcb82d8018ceefeff",
+  "expect": "0102911301140000008feefeff8eeefeff30f5209bcb82d8018ceefeff",
+  "model": {
+    "@kind": "rfid_sighting",
+    "opcuaautoid.namespace_index": "2",
+    "opcuaautoid.rfid_sighting_antenna": "-70001",
+    "opcuaautoid.rfid_sighting_strength": "-70002",
+    "time_ms": "1655526400003",
+    "opcuaautoid.rfid_sighting_current_power_level": "-70004"
+  }
+}

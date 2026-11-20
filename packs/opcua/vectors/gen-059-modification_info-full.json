@@ -1,0 +1,16 @@
+{
+  "name": "gen-opcua-modification_info-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100da2b011200000010a7209bcb82d80102000000020000007633",
+  "expect": "0100da2b011200000010a7209bcb82d80102000000020000007633",
+  "model": {
+    "@kind": "modification_info",
+    "opcua.modification_info_modification_time": "133000000000010000",
+    "opcua.modification_info_update_type": "2",
+    "opcua.modification_info_user_name.#": "2",
+    "opcua.modification_info_user_name[0].opcua.modification_info_user_name_byte": "118",
+    "opcua.modification_info_user_name[1].opcua.modification_info_user_name_byte": "51"
+  }
+}

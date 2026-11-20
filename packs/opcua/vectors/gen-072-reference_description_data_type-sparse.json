@@ -1,0 +1,31 @@
+{
+  "name": "gen-opcua-reference_description_data_type-sparse",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100957f011f0000000102e903022c017211010001042c010d0c0b0a010002000001020304050607",
+  "expect": "0100957f011f0000000102e903022c017211010001042c010d0c0b0a010002000001020304050607",
+  "model": {
+    "@kind": "reference_description_data_type",
+    "opcua.reference_description_data_type_source_node_encoding": "1",
+    "opcua.reference_description_data_type_source_node_namespace": "2",
+    "opcua.reference_description_data_type_source_node_id": "1001",
+    "opcua.reference_description_data_type_reference_type_encoding": "2",
+    "opcua.reference_description_data_type_reference_type_namespace": "300",
+    "opcua.reference_description_data_type_reference_type_id": "70002",
+    "opcua.reference_description_data_type_is_forward": "1",
+    "opcua.reference_description_data_type_target_node_encoding": "4",
+    "opcua.reference_description_data_type_target_node_namespace": "300",
+    "opcua.reference_description_data_type_target_node_guid_id_data1": "168496141",
+    "opcua.reference_description_data_type_target_node_guid_id_data2": "1",
+    "opcua.reference_description_data_type_target_node_guid_id_data3": "2",
+    "opcua.reference_description_data_type_target_node_guid_id_data4_0": "0",
+    "opcua.reference_description_data_type_target_node_guid_id_data4_1": "1",
+    "opcua.reference_description_data_type_target_node_guid_id_data4_2": "2",
+    "opcua.reference_description_data_type_target_node_guid_id_data4_3": "3",
+    "opcua.reference_description_data_type_target_node_guid_id_data4_4": "4",
+    "opcua.reference_description_data_type_target_node_guid_id_data4_5": "5",
+    "opcua.reference_description_data_type_target_node_guid_id_data4_6": "6",
+    "opcua.reference_description_data_type_target_node_guid_id_data4_7": "7"
+  }
+}

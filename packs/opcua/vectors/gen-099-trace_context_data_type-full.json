@@ -1,0 +1,27 @@
+{
+  "name": "gen-opcua-trace_context_data_type-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "01002b4d0126000000050302010605080701020304050607080200e8890423c78a0300e8890423c78a020000007634",
+  "expect": "01002b4d0126000000050302010605080701020304050607080200e8890423c78a0300e8890423c78a020000007634",
+  "model": {
+    "@kind": "trace_context_data_type",
+    "opcua.trace_context_data_type_trace_id_data1": "16909061",
+    "opcua.trace_context_data_type_trace_id_data2": "1286",
+    "opcua.trace_context_data_type_trace_id_data3": "1800",
+    "opcua.trace_context_data_type_trace_id_data4_0": "1",
+    "opcua.trace_context_data_type_trace_id_data4_1": "2",
+    "opcua.trace_context_data_type_trace_id_data4_2": "3",
+    "opcua.trace_context_data_type_trace_id_data4_3": "4",
+    "opcua.trace_context_data_type_trace_id_data4_4": "5",
+    "opcua.trace_context_data_type_trace_id_data4_5": "6",
+    "opcua.trace_context_data_type_trace_id_data4_6": "7",
+    "opcua.trace_context_data_type_trace_id_data4_7": "8",
+    "opcua.trace_context_data_type_span_id": "10000000000000000002",
+    "opcua.trace_context_data_type_parent_span_id": "10000000000000000003",
+    "opcua.trace_context_data_type_parent_identifier.#": "2",
+    "opcua.trace_context_data_type_parent_identifier[0].opcua.trace_context_data_type_parent_identifier_byte": "118",
+    "opcua.trace_context_data_type_parent_identifier[1].opcua.trace_context_data_type_parent_identifier_byte": "52"
+  }
+}

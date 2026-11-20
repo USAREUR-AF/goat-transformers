@@ -1,0 +1,12 @@
+{
+  "name": "gen-opcua-endpoint_url_list_data_type-sparse",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100b52e010400000000000000",
+  "expect": "0100b52e010400000000000000",
+  "model": {
+    "@kind": "endpoint_url_list_data_type",
+    "opcua.endpoint_url_list_data_type_endpoint_url_list.#": "0"
+  }
+}

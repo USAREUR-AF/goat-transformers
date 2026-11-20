@@ -1,0 +1,16 @@
+{
+  "name": "gen-opcua-alias_name_data_type-sparse",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100cb5b010c000000010002000000713100000000",
+  "expect": "0100cb5b010c000000010002000000713100000000",
+  "model": {
+    "@kind": "alias_name_data_type",
+    "opcua.alias_name_data_type_alias_name_namespace_index": "1",
+    "opcua.alias_name_data_type_alias_name_name.#": "2",
+    "opcua.alias_name_data_type_alias_name_name[0].opcua.alias_name_data_type_alias_name_name_byte": "113",
+    "opcua.alias_name_data_type_alias_name_name[1].opcua.alias_name_data_type_alias_name_name_byte": "49",
+    "opcua.alias_name_data_type_referenced_nodes.#": "0"
+  }
+}

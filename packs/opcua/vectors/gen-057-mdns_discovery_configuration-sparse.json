@@ -1,0 +1,15 @@
+{
+  "name": "gen-opcua-mdns_discovery_configuration-sparse",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "01006532010a00000002000000763100000000",
+  "expect": "01006532010a00000002000000763100000000",
+  "model": {
+    "@kind": "mdns_discovery_configuration",
+    "opcua.mdns_discovery_configuration_mdns_server_name.#": "2",
+    "opcua.mdns_discovery_configuration_mdns_server_name[0].opcua.mdns_discovery_configuration_mdns_server_name_byte": "118",
+    "opcua.mdns_discovery_configuration_mdns_server_name[1].opcua.mdns_discovery_configuration_mdns_server_name_byte": "49",
+    "opcua.mdns_discovery_configuration_server_capabilities.#": "0"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "gen-opcua-configuration_version_data_type-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100ff390108000000015ed0b2025ed0b2",
+  "expect": "0100ff390108000000015ed0b2025ed0b2",
+  "model": {
+    "@kind": "configuration_version_data_type",
+    "opcua.configuration_version_data_type_major_version": "3000000001",
+    "opcua.configuration_version_data_type_minor_version": "3000000002"
+  }
+}

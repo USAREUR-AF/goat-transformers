@@ -1,0 +1,26 @@
+{
+  "name": "gen-opcua-structure_field-sparse",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100fc39012300000002000000763102020000007432032c010200000073338ceefeff00000000055ed0b200",
+  "expect": "0100fc39012300000002000000763102020000007432032c010200000073338ceefeff00000000055ed0b200",
+  "model": {
+    "@kind": "structure_field",
+    "opcua.structure_field_data_type_encoding": "3",
+    "opcua.structure_field_data_type_namespace": "300",
+    "opcua.structure_field_value_rank": "-70004",
+    "opcua.structure_field_max_string_length": "3000000005",
+    "opcua.structure_field_is_optional": "0",
+    "opcua.structure_field_name.#": "2",
+    "opcua.structure_field_name[0].opcua.structure_field_name_byte": "118",
+    "opcua.structure_field_name[1].opcua.structure_field_name_byte": "49",
+    "opcua.structure_field_description_text.#": "2",
+    "opcua.structure_field_description_text[0].opcua.structure_field_description_text_byte": "116",
+    "opcua.structure_field_description_text[1].opcua.structure_field_description_text_byte": "50",
+    "opcua.structure_field_data_type_string_id.#": "2",
+    "opcua.structure_field_data_type_string_id[0].opcua.structure_field_data_type_string_id_byte": "115",
+    "opcua.structure_field_data_type_string_id[1].opcua.structure_field_data_type_string_id_byte": "51",
+    "opcua.structure_field_array_dimensions.#": "0"
+  }
+}

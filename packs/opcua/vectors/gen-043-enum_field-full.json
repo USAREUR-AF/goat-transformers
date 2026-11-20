@@ -1,0 +1,27 @@
+{
+  "name": "gen-opcua-enum_field-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100fd390128000000ff0dfad5feffffff0302000000656e0200000074320302000000656e020000007433020000007634",
+  "expect": "0100fd390128000000ff0dfad5feffffff0302000000656e0200000074320302000000656e020000007433020000007634",
+  "model": {
+    "@kind": "enum_field",
+    "opcua.enum_field_value": "-5000000001",
+    "opcua.enum_field_display_name_locale.#": "2",
+    "opcua.enum_field_display_name_locale[0].opcua.enum_field_display_name_locale_byte": "101",
+    "opcua.enum_field_display_name_locale[1].opcua.enum_field_display_name_locale_byte": "110",
+    "opcua.enum_field_display_name_text.#": "2",
+    "opcua.enum_field_display_name_text[0].opcua.enum_field_display_name_text_byte": "116",
+    "opcua.enum_field_display_name_text[1].opcua.enum_field_display_name_text_byte": "50",
+    "opcua.enum_field_description_locale.#": "2",
+    "opcua.enum_field_description_locale[0].opcua.enum_field_description_locale_byte": "101",
+    "opcua.enum_field_description_locale[1].opcua.enum_field_description_locale_byte": "110",
+    "opcua.enum_field_description_text.#": "2",
+    "opcua.enum_field_description_text[0].opcua.enum_field_description_text_byte": "116",
+    "opcua.enum_field_description_text[1].opcua.enum_field_description_text_byte": "51",
+    "opcua.enum_field_name.#": "2",
+    "opcua.enum_field_name[0].opcua.enum_field_name_byte": "118",
+    "opcua.enum_field_name[1].opcua.enum_field_name_byte": "52"
+  }
+}

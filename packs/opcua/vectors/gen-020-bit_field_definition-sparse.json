@@ -1,0 +1,20 @@
+{
+  "name": "gen-opcua-bit_field_definition-sparse",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100a67e01160000000200000076310202000000743201045ed0b2055ed0b2",
+  "expect": "0100a67e01160000000200000076310202000000743201045ed0b2055ed0b2",
+  "model": {
+    "@kind": "bit_field_definition",
+    "opcua.bit_field_definition_reserved": "1",
+    "opcua.bit_field_definition_starting_bit_position": "3000000004",
+    "opcua.bit_field_definition_ending_bit_position": "3000000005",
+    "opcua.bit_field_definition_name.#": "2",
+    "opcua.bit_field_definition_name[0].opcua.bit_field_definition_name_byte": "118",
+    "opcua.bit_field_definition_name[1].opcua.bit_field_definition_name_byte": "49",
+    "opcua.bit_field_definition_description_text.#": "2",
+    "opcua.bit_field_definition_description_text[0].opcua.bit_field_definition_description_text_byte": "116",
+    "opcua.bit_field_definition_description_text[1].opcua.bit_field_definition_description_text_byte": "50"
+  }
+}

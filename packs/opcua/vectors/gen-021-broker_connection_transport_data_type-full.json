@@ -1,0 +1,17 @@
+{
+  "name": "gen-opcua-broker_connection_transport_data_type-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100773c010c000000020000007631020000007632",
+  "expect": "0100773c010c000000020000007631020000007632",
+  "model": {
+    "@kind": "broker_connection_transport_data_type",
+    "opcua.broker_connection_transport_data_type_resource_uri.#": "2",
+    "opcua.broker_connection_transport_data_type_resource_uri[0].opcua.broker_connection_transport_data_type_resource_uri_byte": "118",
+    "opcua.broker_connection_transport_data_type_resource_uri[1].opcua.broker_connection_transport_data_type_resource_uri_byte": "49",
+    "opcua.broker_connection_transport_data_type_authentication_profile_uri.#": "2",
+    "opcua.broker_connection_transport_data_type_authentication_profile_uri[0].opcua.broker_connection_transport_data_type_authentication_profile_uri_byte": "118",
+    "opcua.broker_connection_transport_data_type_authentication_profile_uri[1].opcua.broker_connection_transport_data_type_authentication_profile_uri_byte": "50"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "gen-opcua-configuration_update_target_type-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "01009d40010a00000002000000763102000000",
+  "expect": "01009d40010a00000002000000763102000000",
+  "model": {
+    "@kind": "configuration_update_target_type",
+    "opcua.configuration_update_target_type_update_type": "2",
+    "opcua.configuration_update_target_type_path.#": "2",
+    "opcua.configuration_update_target_type_path[0].opcua.configuration_update_target_type_path_byte": "118",
+    "opcua.configuration_update_target_type_path[1].opcua.configuration_update_target_type_path_byte": "49"
+  }
+}

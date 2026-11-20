@@ -1,0 +1,16 @@
+{
+  "name": "gen-opcua-log_record-sparse",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100b34b01150000000000000010a7209bcb82d801ea0302020000007433",
+  "expect": "0100b34b01150000000000000010a7209bcb82d801ea0302020000007433",
+  "model": {
+    "@kind": "log_record",
+    "opcua.log_record_time": "133000000000010000",
+    "opcua.log_record_severity": "1002",
+    "opcua.log_record_message_text.#": "2",
+    "opcua.log_record_message_text[0].opcua.log_record_message_text_byte": "116",
+    "opcua.log_record_message_text[1].opcua.log_record_message_text_byte": "51"
+  }
+}

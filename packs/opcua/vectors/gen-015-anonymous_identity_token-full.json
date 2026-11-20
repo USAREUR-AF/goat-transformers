@@ -1,0 +1,14 @@
+{
+  "name": "gen-opcua-anonymous_identity_token-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "010041010106000000020000007631",
+  "expect": "010041010106000000020000007631",
+  "model": {
+    "@kind": "anonymous_identity_token",
+    "opcua.anonymous_identity_token_policy_id.#": "2",
+    "opcua.anonymous_identity_token_policy_id[0].opcua.anonymous_identity_token_policy_id_byte": "118",
+    "opcua.anonymous_identity_token_policy_id[1].opcua.anonymous_identity_token_policy_id_byte": "49"
+  }
+}

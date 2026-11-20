@@ -1,0 +1,19 @@
+{
+  "name": "gen-opcua-quantity_dimension-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100327f0108000000fffefdfcfbfaf9f8",
+  "expect": "0100327f0108000000fffefdfcfbfaf9f8",
+  "model": {
+    "@kind": "quantity_dimension",
+    "opcua.quantity_dimension_mass_exponent": "-1",
+    "opcua.quantity_dimension_length_exponent": "-2",
+    "opcua.quantity_dimension_time_exponent": "-3",
+    "opcua.quantity_dimension_electric_current_exponent": "-4",
+    "opcua.quantity_dimension_amount_of_substance_exponent": "-5",
+    "opcua.quantity_dimension_luminous_intensity_exponent": "-6",
+    "opcua.quantity_dimension_absolute_temperature_exponent": "-7",
+    "opcua.quantity_dimension_dimensionless_exponent": "-8"
+  }
+}

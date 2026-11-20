@@ -1,0 +1,13 @@
+{
+  "name": "gen-opcua-range-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "010076030110000000000000000000f4bf00000000000002c0",
+  "expect": "010076030110000000000000000000f4bf00000000000002c0",
+  "model": {
+    "@kind": "range",
+    "opcua.range_low": "-1.25",
+    "opcua.range_high": "-2.25"
+  }
+}

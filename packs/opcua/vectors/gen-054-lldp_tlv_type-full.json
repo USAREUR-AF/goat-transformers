@@ -1,0 +1,15 @@
+{
+  "name": "gen-opcua-lldp_tlv_type-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100894a010a000000015ed0b2020000007632",
+  "expect": "0100894a010a000000015ed0b2020000007632",
+  "model": {
+    "@kind": "lldp_tlv_type",
+    "opcua.lldp_tlv_type_tlv_type": "3000000001",
+    "opcua.lldp_tlv_type_tlv_info.#": "2",
+    "opcua.lldp_tlv_type_tlv_info[0].opcua.lldp_tlv_type_tlv_info_byte": "118",
+    "opcua.lldp_tlv_type_tlv_info[1].opcua.lldp_tlv_type_tlv_info_byte": "50"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "gen-opcua-role_permission_type-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "008001080000000102e903025ed0b2",
+  "expect": "008001080000000102e903025ed0b2",
+  "model": {
+    "@kind": "role_permission_type",
+    "opcua.role_permission_type_role_id_encoding": "1",
+    "opcua.role_permission_type_role_id_namespace": "2",
+    "opcua.role_permission_type_role_id_id": "1001",
+    "opcua.role_permission_type_permissions": "3000000002"
+  }
+}

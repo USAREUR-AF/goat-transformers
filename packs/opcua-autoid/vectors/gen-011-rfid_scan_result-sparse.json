@@ -1,0 +1,24 @@
+{
+  "name": "gen-opcua-autoid-rfid_scan_result-sparse",
+  "from": "opcua-autoid",
+  "to": "opcua-autoid",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0102931301260000000000000002000000763103000000ea03020000007633ec03ed03606a219bcb82d80100000000",
+  "expect": "0102931301260000000000000002000000763103000000ea03020000007633ec03ed03606a219bcb82d80100000000",
+  "model": {
+    "@kind": "rfid_scan_result",
+    "opcuaautoid.namespace_index": "2",
+    "opcuaautoid.rfid_scan_result_scan_data_switch_field": "3",
+    "opcuaautoid.rfid_scan_result_scan_data_epc_pc": "1002",
+    "opcuaautoid.rfid_scan_result_scan_data_epc_xpc_w1": "1004",
+    "opcuaautoid.rfid_scan_result_scan_data_epc_xpc_w2": "1005",
+    "time_ms": "1655526400006",
+    "opcuaautoid.rfid_scan_result_code_type.#": "2",
+    "opcuaautoid.rfid_scan_result_code_type[0].opcuaautoid.rfid_scan_result_code_type_byte": "118",
+    "opcuaautoid.rfid_scan_result_code_type[1].opcuaautoid.rfid_scan_result_code_type_byte": "49",
+    "opcuaautoid.rfid_scan_result_scan_data_epc_u_id.#": "2",
+    "opcuaautoid.rfid_scan_result_scan_data_epc_u_id[0].opcuaautoid.rfid_scan_result_scan_data_epc_u_id_byte": "118",
+    "opcuaautoid.rfid_scan_result_scan_data_epc_u_id[1].opcuaautoid.rfid_scan_result_scan_data_epc_u_id_byte": "51",
+    "opcuaautoid.rfid_scan_result_sighting.#": "0"
+  }
+}

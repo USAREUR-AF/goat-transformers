@@ -1,0 +1,32 @@
+{
+  "name": "gen-opcua-delete_references_item-sparse",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100830101200000000102e903022c017211010001042c010d0c0b0a01000200000102030405060701",
+  "expect": "0100830101200000000102e903022c017211010001042c010d0c0b0a01000200000102030405060701",
+  "model": {
+    "@kind": "delete_references_item",
+    "opcua.delete_references_item_source_node_id_encoding": "1",
+    "opcua.delete_references_item_source_node_id_namespace": "2",
+    "opcua.delete_references_item_source_node_id_id": "1001",
+    "opcua.delete_references_item_reference_type_id_encoding": "2",
+    "opcua.delete_references_item_reference_type_id_namespace": "300",
+    "opcua.delete_references_item_reference_type_id_id": "70002",
+    "opcua.delete_references_item_is_forward": "1",
+    "opcua.delete_references_item_target_node_id_encoding": "4",
+    "opcua.delete_references_item_target_node_id_namespace": "300",
+    "opcua.delete_references_item_target_node_id_guid_id_data1": "168496141",
+    "opcua.delete_references_item_target_node_id_guid_id_data2": "1",
+    "opcua.delete_references_item_target_node_id_guid_id_data3": "2",
+    "opcua.delete_references_item_target_node_id_guid_id_data4_0": "0",
+    "opcua.delete_references_item_target_node_id_guid_id_data4_1": "1",
+    "opcua.delete_references_item_target_node_id_guid_id_data4_2": "2",
+    "opcua.delete_references_item_target_node_id_guid_id_data4_3": "3",
+    "opcua.delete_references_item_target_node_id_guid_id_data4_4": "4",
+    "opcua.delete_references_item_target_node_id_guid_id_data4_5": "5",
+    "opcua.delete_references_item_target_node_id_guid_id_data4_6": "6",
+    "opcua.delete_references_item_target_node_id_guid_id_data4_7": "7",
+    "opcua.delete_references_item_delete_bidirectional": "1"
+  }
+}

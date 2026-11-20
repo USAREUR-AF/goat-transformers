@@ -1,0 +1,32 @@
+{
+  "name": "gen-opcua-autoid-ocr_scan_result-sparse",
+  "from": "opcua-autoid",
+  "to": "opcua-autoid",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "01028c13013b0000000000000002000000763103000000ea03020000007633ec03ed03606a219bcb82d8010102ef030987eefeff86eefeff85eefeff84eefeff83eefeff",
+  "expect": "01028c13013b0000000000000002000000763103000000ea03020000007633ec03ed03606a219bcb82d8010102ef030987eefeff86eefeff85eefeff84eefeff83eefeff",
+  "model": {
+    "@kind": "ocr_scan_result",
+    "opcuaautoid.namespace_index": "2",
+    "opcuaautoid.ocr_scan_result_scan_data_switch_field": "3",
+    "opcuaautoid.ocr_scan_result_scan_data_epc_pc": "1002",
+    "opcuaautoid.ocr_scan_result_scan_data_epc_xpc_w1": "1004",
+    "opcuaautoid.ocr_scan_result_scan_data_epc_xpc_w2": "1005",
+    "time_ms": "1655526400006",
+    "opcuaautoid.ocr_scan_result_image_id_encoding": "1",
+    "opcuaautoid.ocr_scan_result_image_id_namespace": "2",
+    "opcuaautoid.ocr_scan_result_image_id_id": "1007",
+    "opcuaautoid.ocr_scan_result_quality": "9",
+    "opcuaautoid.ocr_scan_result_position_position_x": "-70009",
+    "opcuaautoid.ocr_scan_result_position_position_y": "-70010",
+    "opcuaautoid.ocr_scan_result_position_size_x": "-70011",
+    "opcuaautoid.ocr_scan_result_position_size_y": "-70012",
+    "opcuaautoid.ocr_scan_result_position_rotation": "-70013",
+    "opcuaautoid.ocr_scan_result_code_type.#": "2",
+    "opcuaautoid.ocr_scan_result_code_type[0].opcuaautoid.ocr_scan_result_code_type_byte": "118",
+    "opcuaautoid.ocr_scan_result_code_type[1].opcuaautoid.ocr_scan_result_code_type_byte": "49",
+    "opcuaautoid.ocr_scan_result_scan_data_epc_u_id.#": "2",
+    "opcuaautoid.ocr_scan_result_scan_data_epc_u_id[0].opcuaautoid.ocr_scan_result_scan_data_epc_u_id_byte": "118",
+    "opcuaautoid.ocr_scan_result_scan_data_epc_u_id[1].opcuaautoid.ocr_scan_result_scan_data_epc_u_id_byte": "51"
+  }
+}

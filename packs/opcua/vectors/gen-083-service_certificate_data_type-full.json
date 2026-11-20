@@ -1,0 +1,23 @@
+{
+  "name": "gen-opcua-service_certificate_data_type-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100ad5c012600000002000000763102000000020000007632020000007633401c219bcb82d8015043219bcb82d801",
+  "expect": "0100ad5c012600000002000000763102000000020000007632020000007633401c219bcb82d8015043219bcb82d801",
+  "model": {
+    "@kind": "service_certificate_data_type",
+    "opcua.service_certificate_data_type_valid_from": "133000000000040000",
+    "opcua.service_certificate_data_type_valid_to": "133000000000050000",
+    "opcua.service_certificate_data_type_certificate.#": "2",
+    "opcua.service_certificate_data_type_certificate[0].opcua.service_certificate_data_type_certificate_byte": "118",
+    "opcua.service_certificate_data_type_certificate[1].opcua.service_certificate_data_type_certificate_byte": "49",
+    "opcua.service_certificate_data_type_issuers.#": "2",
+    "opcua.service_certificate_data_type_issuers[0].opcua.service_certificate_data_type_issuers_item.#": "2",
+    "opcua.service_certificate_data_type_issuers[0].opcua.service_certificate_data_type_issuers_item[0].opcua.service_certificate_data_type_issuers_item_byte": "118",
+    "opcua.service_certificate_data_type_issuers[0].opcua.service_certificate_data_type_issuers_item[1].opcua.service_certificate_data_type_issuers_item_byte": "50",
+    "opcua.service_certificate_data_type_issuers[1].opcua.service_certificate_data_type_issuers_item.#": "2",
+    "opcua.service_certificate_data_type_issuers[1].opcua.service_certificate_data_type_issuers_item[0].opcua.service_certificate_data_type_issuers_item_byte": "118",
+    "opcua.service_certificate_data_type_issuers[1].opcua.service_certificate_data_type_issuers_item[1].opcua.service_certificate_data_type_issuers_item_byte": "51"
+  }
+}

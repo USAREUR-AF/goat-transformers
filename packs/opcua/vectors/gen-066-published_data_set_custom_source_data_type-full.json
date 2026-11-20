@@ -1,0 +1,12 @@
+{
+  "name": "gen-opcua-published_data_set_custom_source_data_type-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100b963010100000001",
+  "expect": "0100b963010100000001",
+  "model": {
+    "@kind": "published_data_set_custom_source_data_type",
+    "opcua.published_data_set_custom_source_data_type_cyclic_data_set": "1"
+  }
+}

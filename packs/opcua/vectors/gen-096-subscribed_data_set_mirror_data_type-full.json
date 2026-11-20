@@ -1,0 +1,33 @@
+{
+  "name": "gen-opcua-subscribed_data_set_mirror_data_type-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100613d012c00000002000000763102000000022c0172110100035ed0b2042c010d0c0b0a010002000001020304050607055ed0b2",
+  "expect": "0100613d012c00000002000000763102000000022c0172110100035ed0b2042c010d0c0b0a010002000001020304050607055ed0b2",
+  "model": {
+    "@kind": "subscribed_data_set_mirror_data_type",
+    "opcua.subscribed_data_set_mirror_data_type_parent_node_name.#": "2",
+    "opcua.subscribed_data_set_mirror_data_type_parent_node_name[0].opcua.subscribed_data_set_mirror_data_type_parent_node_name_byte": "118",
+    "opcua.subscribed_data_set_mirror_data_type_parent_node_name[1].opcua.subscribed_data_set_mirror_data_type_parent_node_name_byte": "49",
+    "opcua.subscribed_data_set_mirror_data_type_role_permissions.#": "2",
+    "opcua.subscribed_data_set_mirror_data_type_role_permissions[0].opcua.subscribed_data_set_mirror_data_type_role_permissions_role_id_encoding": "2",
+    "opcua.subscribed_data_set_mirror_data_type_role_permissions[0].opcua.subscribed_data_set_mirror_data_type_role_permissions_role_id_namespace": "300",
+    "opcua.subscribed_data_set_mirror_data_type_role_permissions[0].opcua.subscribed_data_set_mirror_data_type_role_permissions_role_id_id": "70002",
+    "opcua.subscribed_data_set_mirror_data_type_role_permissions[0].opcua.subscribed_data_set_mirror_data_type_role_permissions_permissions": "3000000003",
+    "opcua.subscribed_data_set_mirror_data_type_role_permissions[1].opcua.subscribed_data_set_mirror_data_type_role_permissions_role_id_encoding": "4",
+    "opcua.subscribed_data_set_mirror_data_type_role_permissions[1].opcua.subscribed_data_set_mirror_data_type_role_permissions_role_id_namespace": "300",
+    "opcua.subscribed_data_set_mirror_data_type_role_permissions[1].opcua.subscribed_data_set_mirror_data_type_role_permissions_role_id_guid_id_data1": "168496141",
+    "opcua.subscribed_data_set_mirror_data_type_role_permissions[1].opcua.subscribed_data_set_mirror_data_type_role_permissions_role_id_guid_id_data2": "1",
+    "opcua.subscribed_data_set_mirror_data_type_role_permissions[1].opcua.subscribed_data_set_mirror_data_type_role_permissions_role_id_guid_id_data3": "2",
+    "opcua.subscribed_data_set_mirror_data_type_role_permissions[1].opcua.subscribed_data_set_mirror_data_type_role_permissions_role_id_guid_id_data4_0": "0",
+    "opcua.subscribed_data_set_mirror_data_type_role_permissions[1].opcua.subscribed_data_set_mirror_data_type_role_permissions_role_id_guid_id_data4_1": "1",
+    "opcua.subscribed_data_set_mirror_data_type_role_permissions[1].opcua.subscribed_data_set_mirror_data_type_role_permissions_role_id_guid_id_data4_2": "2",
+    "opcua.subscribed_data_set_mirror_data_type_role_permissions[1].opcua.subscribed_data_set_mirror_data_type_role_permissions_role_id_guid_id_data4_3": "3",
+    "opcua.subscribed_data_set_mirror_data_type_role_permissions[1].opcua.subscribed_data_set_mirror_data_type_role_permissions_role_id_guid_id_data4_4": "4",
+    "opcua.subscribed_data_set_mirror_data_type_role_permissions[1].opcua.subscribed_data_set_mirror_data_type_role_permissions_role_id_guid_id_data4_5": "5",
+    "opcua.subscribed_data_set_mirror_data_type_role_permissions[1].opcua.subscribed_data_set_mirror_data_type_role_permissions_role_id_guid_id_data4_6": "6",
+    "opcua.subscribed_data_set_mirror_data_type_role_permissions[1].opcua.subscribed_data_set_mirror_data_type_role_permissions_role_id_guid_id_data4_7": "7",
+    "opcua.subscribed_data_set_mirror_data_type_role_permissions[1].opcua.subscribed_data_set_mirror_data_type_role_permissions_permissions": "3000000005"
+  }
+}

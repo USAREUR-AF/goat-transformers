@@ -1,0 +1,21 @@
+{
+  "name": "gen-opcua-broker_writer_group_transport_data_type-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "01006f3d011600000002000000763102000000763202000000763301000000",
+  "expect": "01006f3d011600000002000000763102000000763202000000763301000000",
+  "model": {
+    "@kind": "broker_writer_group_transport_data_type",
+    "opcua.broker_writer_group_transport_data_type_requested_delivery_guarantee": "1",
+    "opcua.broker_writer_group_transport_data_type_queue_name.#": "2",
+    "opcua.broker_writer_group_transport_data_type_queue_name[0].opcua.broker_writer_group_transport_data_type_queue_name_byte": "118",
+    "opcua.broker_writer_group_transport_data_type_queue_name[1].opcua.broker_writer_group_transport_data_type_queue_name_byte": "49",
+    "opcua.broker_writer_group_transport_data_type_resource_uri.#": "2",
+    "opcua.broker_writer_group_transport_data_type_resource_uri[0].opcua.broker_writer_group_transport_data_type_resource_uri_byte": "118",
+    "opcua.broker_writer_group_transport_data_type_resource_uri[1].opcua.broker_writer_group_transport_data_type_resource_uri_byte": "50",
+    "opcua.broker_writer_group_transport_data_type_authentication_profile_uri.#": "2",
+    "opcua.broker_writer_group_transport_data_type_authentication_profile_uri[0].opcua.broker_writer_group_transport_data_type_authentication_profile_uri_byte": "118",
+    "opcua.broker_writer_group_transport_data_type_authentication_profile_uri[1].opcua.broker_writer_group_transport_data_type_authentication_profile_uri_byte": "51"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "gen-opcua-enum_definition-sparse",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "007b010400000000000000",
+  "expect": "007b010400000000000000",
+  "model": {
+    "@kind": "enum_definition",
+    "opcua.enum_definition_fields.#": "0"
+  }
+}
