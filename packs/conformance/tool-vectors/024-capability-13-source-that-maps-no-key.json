@@ -1,0 +1,16 @@
+{
+  "name": "capability-13-source-that-maps-no-key",
+  "args": [
+    "capability",
+    "--from",
+    "conformance-cap-empty",
+    "--to",
+    "conformance-cap-a",
+    "--packs",
+    "{packs}",
+    "--packs-only",
+    "conformance-cap-empty,conformance-cap-a"
+  ],
+  "exit": 0,
+  "stdout_text": "conformance-cap-empty\tconformance-cap-a\tnone\t\t\n"
+}

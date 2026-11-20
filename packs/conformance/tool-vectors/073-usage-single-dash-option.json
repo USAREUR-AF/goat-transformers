@@ -1,0 +1,9 @@
+{
+  "name": "usage-single-dash-option",
+  "args": [
+    "list-formats",
+    "-packs",
+    "{packs}"
+  ],
+  "exit": 2
+}

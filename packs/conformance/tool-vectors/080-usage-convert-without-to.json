@@ -1,0 +1,11 @@
+{
+  "name": "usage-convert-without-to",
+  "args": [
+    "convert",
+    "--from",
+    "conformance-cap-a",
+    "--packs",
+    "{packs}"
+  ],
+  "exit": 2
+}

@@ -1,0 +1,17 @@
+{
+  "name": "convert-transform-decode",
+  "args": [
+    "convert",
+    "--from",
+    "conformance-absent-json",
+    "--to",
+    "conformance-absent-json",
+    "--packs",
+    "{packs}",
+    "--packs-only",
+    "conformance-absent-json"
+  ],
+  "stdin_hex": "7b22616c74223a22393939393939392e30227d",
+  "exit": 1,
+  "error_kind": "transform-decode"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "capability-08-lists-and-item-keys",
+  "args": [
+    "capability",
+    "--from",
+    "conformance-cap-lists",
+    "--to",
+    "conformance-cap-lists-b",
+    "--packs",
+    "{packs}",
+    "--packs-only",
+    "conformance-cap-lists,conformance-cap-lists-b"
+  ],
+  "exit": 0,
+  "stdout_text": "conformance-cap-lists\tconformance-cap-lists-b\tpartial\tuid probe.items[] probe.items[].probe.label probe.items[].probe.subs[] probe.items[].probe.subs[].probe.tag\tprobe.items[].probe.qty probe.items[].probe.subs[].probe.val probe.nums[] probe.nums[].probe.val\n"
+}

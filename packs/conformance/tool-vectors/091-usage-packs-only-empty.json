@@ -1,0 +1,11 @@
+{
+  "name": "usage-packs-only-empty",
+  "args": [
+    "list-formats",
+    "--packs",
+    "{packs}",
+    "--packs-only",
+    ""
+  ],
+  "exit": 2
+}

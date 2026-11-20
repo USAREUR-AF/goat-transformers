@@ -1,0 +1,16 @@
+{
+  "name": "capability-02-one-source-key-has-no-target-field",
+  "args": [
+    "capability",
+    "--from",
+    "conformance-cap-b",
+    "--to",
+    "conformance-cap-a",
+    "--packs",
+    "{packs}",
+    "--packs-only",
+    "conformance-cap-b,conformance-cap-a"
+  ],
+  "exit": 0,
+  "stdout_text": "conformance-cap-b\tconformance-cap-a\tpartial\tlat uid lon probe.n callsign\thae\n"
+}

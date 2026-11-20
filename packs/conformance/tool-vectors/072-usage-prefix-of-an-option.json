@@ -1,0 +1,9 @@
+{
+  "name": "usage-prefix-of-an-option",
+  "args": [
+    "list-formats",
+    "--pack",
+    "{packs}"
+  ],
+  "exit": 2
+}

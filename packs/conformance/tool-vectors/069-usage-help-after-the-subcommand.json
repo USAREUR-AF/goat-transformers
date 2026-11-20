@@ -1,0 +1,8 @@
+{
+  "name": "usage-help-after-the-subcommand",
+  "args": [
+    "convert",
+    "--help"
+  ],
+  "exit": 2
+}

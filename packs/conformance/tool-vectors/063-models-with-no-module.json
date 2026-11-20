@@ -1,0 +1,14 @@
+{
+  "name": "models-with-no-module",
+  "args": [
+    "list-formats",
+    "--packs",
+    "{packs}",
+    "--models",
+    "{packs}/conformance/capability-vectors",
+    "--packs-only",
+    "conformance-cap-a"
+  ],
+  "exit": 1,
+  "error_kind": "unknown-module"
+}

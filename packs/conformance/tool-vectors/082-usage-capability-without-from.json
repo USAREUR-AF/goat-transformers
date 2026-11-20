@@ -1,0 +1,11 @@
+{
+  "name": "usage-capability-without-from",
+  "args": [
+    "capability",
+    "--to",
+    "conformance-cap-a",
+    "--packs",
+    "{packs}"
+  ],
+  "exit": 2
+}

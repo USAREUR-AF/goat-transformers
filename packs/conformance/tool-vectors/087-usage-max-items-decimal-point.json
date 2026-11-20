@@ -1,0 +1,11 @@
+{
+  "name": "usage-max-items-decimal-point",
+  "args": [
+    "list-formats",
+    "--packs",
+    "{packs}",
+    "--max-items",
+    "1.0"
+  ],
+  "exit": 2
+}

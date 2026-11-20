@@ -60,12 +60,12 @@ pack's `pack.md` states which keys the caller supplies.
 ## 5. Read the capability report before trusting a pair
 
 ```bash
-$X matrix $P                       # F, P or . for every pair
-$X matrix --detail $P | grep -- 'remote-id -> cot-xml'
+$X capability --from remote-id --to cot-xml $P   # one pair: grade, carried, dropped
+$X matrix $P | cut -f1-3                          # the grade of every pair
 ```
 
-`carries` lists the keys both packs map; `dropped` lists the keys of the source
-the target has no field for. `FULL` means every key the source maps has a place
+The `carried` column lists the keys both packs map; `dropped` lists the keys of the source
+the target has no field for. `full` means every key the source maps has a place
 in the target. Derived keys do not appear in the report: the model computes
 `course` and `speed_ms` from a velocity vector, and the reverse
 (`derive` lines in `model/track.def`), so those can reach the target when the

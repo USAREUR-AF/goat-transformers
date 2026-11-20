@@ -463,26 +463,27 @@ carry from one format to another and which the target has no field for. It is
 computed from the packs, not from a message.
 
 ```
-goat-xf matrix --detail --packs vendor/goat/packs --packs-only cot-xml,geojson
+goat-xf matrix --packs vendor/goat/packs --packs-only cot-xml,geojson
 ```
 
 ```
-from\to cot-xm geojso
-cot-xml      -      P
-geojson      F      -
-
-F = all mapped fields carry   P = some carry, some dropped   . = no shared fields   - = same format
-
-Per-pair detail (carried | dropped and why):
-         cot-xml -> geojson        PARTIAL  carries: [uid, type, time_ms, how, lat, lon, hae, ce, le, callsign, course, speed_ms]  dropped: track.scoped_id, stale_ms (target `geojson` has no field for them)
-         geojson -> cot-xml        FULL     carries: [uid, type, time_ms, how, lat, lon, hae, ce, le, callsign, course, speed_ms]
+from	to	grade	carried	dropped
+cot-xml	cot-xml	full	track.scoped_id uid type time_ms stale_ms how access lat lon hae ce le callsign course speed_ms time_text stale_text display_name	
+cot-xml	geojson	partial	uid type time_ms how lat lon hae ce le callsign course speed_ms	track.scoped_id stale_ms access time_text stale_text display_name
+geojson	cot-xml	full	uid type time_ms how lat lon hae ce le callsign course speed_ms	
+geojson	geojson	full	uid type time_ms how lat lon hae ce le callsign course speed_ms	
 ```
+
+One line per ordered pair, tab-separated: source, target, grade, the keys that
+carry and the keys dropped (each list joined by spaces). `goat-xf capability
+--from cot-xml --to geojson` prints the one line of a pair. Every engine's
+tool prints these bytes (spec 0.23).
 
 | Grade | Means |
 |---|---|
-| `FULL` | every key the source maps has a field in the target |
-| `PARTIAL` | some keys carry; the dropped keys are listed, and the target has no field for them |
-| `NONE` | the two formats share no key |
+| `full` | every key the source maps has a field in the target |
+| `partial` | some keys carry; the dropped keys are listed, and the target has no field for them |
+| `none` | the two formats share no key |
 
 `geojson -> cot-xml` is `FULL` and still needed `stale_ms` as context above:
 the report lists what the source can give the target, not what the target

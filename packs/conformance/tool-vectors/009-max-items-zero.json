@@ -1,0 +1,14 @@
+{
+  "name": "max-items-zero",
+  "args": [
+    "list-formats",
+    "--packs",
+    "{packs}",
+    "--packs-only",
+    "conformance-cap-a",
+    "--max-items",
+    "0"
+  ],
+  "exit": 0,
+  "stdout_text": "conformance-cap-a\t0.11.0\tjson\n"
+}

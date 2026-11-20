@@ -1,0 +1,16 @@
+{
+  "name": "capability-06-kinds-are-joined-and-requires-default-when-const-are-not-keys",
+  "args": [
+    "capability",
+    "--from",
+    "conformance-cap-kinds",
+    "--to",
+    "conformance-cap-a",
+    "--packs",
+    "{packs}",
+    "--packs-only",
+    "conformance-cap-kinds,conformance-cap-a"
+  ],
+  "exit": 0,
+  "stdout_text": "conformance-cap-kinds\tconformance-cap-a\tfull\tuid lat lon callsign\t\n"
+}

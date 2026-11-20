@@ -1,0 +1,12 @@
+{
+  "name": "packs-only-dot",
+  "args": [
+    "list-formats",
+    "--packs",
+    "{packs}",
+    "--packs-only",
+    "."
+  ],
+  "exit": 1,
+  "error_kind": "unknown-format"
+}

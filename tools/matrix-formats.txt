@@ -1,0 +1,21 @@
+# The formats of the capability matrix that CI produces with every engine's
+# tool and compares byte for byte (spec 0.23; .github/workflows/conformance.yml).
+# One pack directory name per line; a line that begins with # is a comment.
+adsb
+ais
+asterix-cat021
+asterix-cat048
+asterix-cat062
+c2sim
+ccsds-space-packet
+cot-protobuf
+cot-xml
+gdl90
+geojson
+gtfs-realtime
+mavlink2
+misb-st0601
+nmea0183
+nmea2000
+remote-id
+sapient

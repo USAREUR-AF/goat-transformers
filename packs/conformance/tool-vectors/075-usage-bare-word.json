@@ -1,0 +1,10 @@
+{
+  "name": "usage-bare-word",
+  "args": [
+    "matrix",
+    "--packs",
+    "{packs}",
+    "foo"
+  ],
+  "exit": 2
+}

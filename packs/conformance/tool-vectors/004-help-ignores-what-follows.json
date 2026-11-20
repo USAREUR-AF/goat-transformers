@@ -1,0 +1,10 @@
+{
+  "name": "help-ignores-what-follows",
+  "args": [
+    "help",
+    "convert",
+    "--packs"
+  ],
+  "exit": 0,
+  "stdout_any": true
+}

@@ -1,0 +1,12 @@
+{
+  "name": "list-formats-one-pack",
+  "args": [
+    "list-formats",
+    "--packs-only",
+    "conformance-cap-a",
+    "--packs",
+    "{packs}"
+  ],
+  "exit": 0,
+  "stdout_text": "conformance-cap-a\t0.11.0\tjson\n"
+}

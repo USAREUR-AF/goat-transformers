@@ -1,0 +1,14 @@
+{
+  "name": "models-that-do-not-exist",
+  "args": [
+    "list-formats",
+    "--packs",
+    "{packs}",
+    "--models",
+    "{packs}/conformance-no-such-directory",
+    "--packs-only",
+    "conformance-cap-a"
+  ],
+  "exit": 1,
+  "error_kind": "unknown-module"
+}

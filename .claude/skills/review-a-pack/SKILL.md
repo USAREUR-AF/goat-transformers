@@ -92,8 +92,7 @@ python3 -c "import json,sys;print(json.load(open(sys.argv[1]))['input'])" packs/
 ## 5. What it does to the other formats
 
 ```bash
-$X matrix $P
-$X matrix --detail $P | grep -- '<format> -> ' | cut -c1-300
+$X matrix $P | awk -F'\t' '$1 == "<format>" || $2 == "<format>"' | cut -c1-300
 ```
 
 - [ ] The keys that carry to and from `geojson` and `cot-xml` are the ones the

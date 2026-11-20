@@ -1,0 +1,16 @@
+{
+  "name": "capability-14-target-that-maps-no-key",
+  "args": [
+    "capability",
+    "--from",
+    "conformance-cap-a",
+    "--to",
+    "conformance-cap-empty",
+    "--packs",
+    "{packs}",
+    "--packs-only",
+    "conformance-cap-a,conformance-cap-empty"
+  ],
+  "exit": 0,
+  "stdout_text": "conformance-cap-a\tconformance-cap-empty\tnone\t\tuid callsign lat lon probe.n\n"
+}

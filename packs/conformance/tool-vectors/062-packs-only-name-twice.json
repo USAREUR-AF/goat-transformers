@@ -1,0 +1,12 @@
+{
+  "name": "packs-only-name-twice",
+  "args": [
+    "list-formats",
+    "--packs",
+    "{packs}",
+    "--packs-only",
+    "conformance-cap-a,conformance-cap-a"
+  ],
+  "exit": 1,
+  "error_kind": "duplicate-format"
+}

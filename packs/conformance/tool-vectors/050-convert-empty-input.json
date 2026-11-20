@@ -1,0 +1,17 @@
+{
+  "name": "convert-empty-input",
+  "args": [
+    "convert",
+    "--from",
+    "conformance-cap-a",
+    "--to",
+    "conformance-cap-a",
+    "--packs",
+    "{packs}",
+    "--packs-only",
+    "conformance-cap-a"
+  ],
+  "stdin_hex": "",
+  "exit": 1,
+  "error_kind": "malformed-wire"
+}

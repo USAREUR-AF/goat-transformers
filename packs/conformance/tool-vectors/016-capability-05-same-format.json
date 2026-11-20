@@ -1,0 +1,16 @@
+{
+  "name": "capability-05-same-format",
+  "args": [
+    "capability",
+    "--from",
+    "conformance-cap-a",
+    "--to",
+    "conformance-cap-a",
+    "--packs",
+    "{packs}",
+    "--packs-only",
+    "conformance-cap-a"
+  ],
+  "exit": 0,
+  "stdout_text": "conformance-cap-a\tconformance-cap-a\tfull\tuid callsign lat lon probe.n\t\n"
+}

@@ -41,8 +41,8 @@ pass the specification section and the failing vector names only.
   other `engines/` directory, including through search tools.
 - For a quick check, load only the packs you need:
   `goat-xf … --packs packs --packs-only a,b` (AGENTS.md, Commands).
-- Do not paste the output of `goat-xf matrix --detail` or `tools/goat-pkg plan`
-  into the conversation for a catalog format: a single line can be tens of
-  thousands of characters. Filter it for the pair you need.
+- Do not paste the output of `goat-xf matrix` or `tools/goat-pkg plan` into the
+  conversation for a catalog format: a single line can be tens of thousands of
+  characters. Ask for the pair you need (`goat-xf capability --from a --to b`).
 - Run `python3 -I tools/boundary-gate` before proposing a commit.
 - Commit and push only when the person asks.

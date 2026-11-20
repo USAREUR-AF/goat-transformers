@@ -4366,6 +4366,182 @@ fixed and sequential layouts.
 
 ---
 
+# Version 0.23: the command-line contract
+
+Status: Written. Every engine ships a command-line tool with the same
+arguments, the same output and the same exit status, so a script, a pipeline
+or a test written against one engine's tool runs against any other. The tool
+also prints the capability report (ruling 6 of 0.11) of one pair and of every
+pair of the loaded formats, in one text form that all seven engines produce
+byte for byte. Tool vectors (`spec/vector-format.md`, Tool vectors) pin the
+contract, and CI runs them against the tool of each engine.
+
+The program's name and how it is built belong to each engine; its README
+names them. This section calls it `<tool>`.
+
+## Invocation
+
+```
+<tool> convert --from <format> --to <format> [--set <key>=<value>]... <options>
+<tool> list-formats <options>
+<tool> capability --from <format> --to <format> <options>
+<tool> matrix <options>
+<tool> help
+```
+
+`<options>` are, in any order:
+
+| Option | Means | Default |
+|---|---|---|
+| `--packs <dir>` | the directory whose subdirectories are packs | the engine's own; the contract does not fix it |
+| `--models <dir>` | the directory of model modules | the `--packs` text as given, followed by `/../model`, resolved by the operating system |
+| `--packs-only <name>[,<name>...]` | load only these subdirectories of `--packs`, in the order given | every subdirectory (Loading) |
+| `--max-items <n>` | the limit on list items one decode holds (ruling 7 of 0.11) | 100000 |
+| `--max-distribution <public \| controlled>` | the engine's distribution limit (Version 0.4, Distribution limit) | `controlled` |
+
+**Arguments.** The first argument is the subcommand. After it the arguments
+come in pairs: an option name, then its value. An option name is exactly one
+of the names the subcommand takes: `--from`, `--to` and `--set` for
+`convert`; `--from` and `--to` for `capability`; and `<options>` for the
+four subcommands. The argument after an option name is its value, whatever
+it begins with, so in `capability --from --to --to x` the source format is
+`--to`. `--set` may be given more than once, its occurrences applied in the
+order given; every other option is given at most once.
+
+**Usage errors.** Each of these exits 2:
+
+1. no argument;
+2. a first argument that is not `convert`, `list-formats`, `capability`,
+   `matrix`, `help`, `-h` or `--help`;
+3. at a place where an option name stands, an argument that is not one of
+   the names the subcommand takes: an unknown name, a name with `=value`
+   appended, a prefix of a name, a single-dash name, `--` alone, or a word
+   that does not begin with `-`;
+4. an option name that is the last argument, with no value after it;
+5. an option other than `--set` given twice;
+6. `convert` or `capability` without `--from` or without `--to`;
+7. a `--set` value with no `=`, or with nothing before its first `=`;
+8. a `--max-items` value that is not one or more digits `0` to `9` alone,
+   or whose value is above 2^63 − 1 (`+1`, `-1`, `1.0` and the empty text
+   are usage errors; leading zeros are not, so `0000000000000000000000001`
+   is 1);
+9. a `--max-distribution` value other than `public` or `controlled`;
+10. an empty `--packs-only` value, or an empty name in it (`a,,b`, `a,`).
+
+The tool checks every argument before it loads anything, so a usage error is
+reported whatever else is wrong. An empty `--from`, `--to` or `--set` key,
+or one that holds whitespace, is not a usage error: it reaches the call and
+fails there (`unknown-format`, `undeclared-key`). Text on the command line is
+UTF-8.
+
+**Help.** `help`, `-h` or `--help` as the first argument prints the usage on
+standard output and exits 0, whatever arguments follow; the contract does not
+fix its text. Anywhere else these words are arguments like any other, so
+`convert --help` is a usage error (3).
+
+## Loading
+
+After the arguments are checked, the tool loads, stopping at the first
+failure:
+
+1. **Modules.** From `--models`: `core.def` first, then every other file
+   whose name ends in `.def`, in byte order of file name, compared case
+   sensitively, not recursing into subdirectories (Version 0.4, Loading, and
+   ruling 9 of 0.6; a module is still loaded after the modules it uses). A
+   `--models` that does not exist, or is not a directory, loads no modules
+   (ruling 4 of 0.4).
+2. **Packs.** With `--packs-only`, the named subdirectories of `--packs`, in
+   the order given; a name given twice is loaded twice, so the second is
+   `duplicate-format`. A name that is not one path component (it holds `/`
+   or `\`, or is `.` or `..`) or that is not a subdirectory of `--packs`
+   holding a file `pack.def` is `unknown-format`, raised when the tool
+   reaches that name. Without `--packs-only`, every entry of `--packs` that
+   is a directory, a symbolic link to one included, and holds `pack.def`,
+   other than names that begin with `.`, in byte order of name.
+
+A `--packs` that does not exist, is not a directory or cannot be read exits
+1; the contract does not give this case a kind, so its first line of standard
+error is the engine's. The format names are the `format` lines of the loaded
+packs; a directory's name is never compared with them, so a pack in
+directory `d` whose `format` line says `f` is the format `f`, and `--from d`
+is `unknown-format`. `help` loads nothing.
+
+## Output and exit status
+
+| Exit status | When | Standard output | Standard error |
+|---|---|---|---|
+| 0 | the subcommand succeeded | its result (below) | empty |
+| 1 | a load failure or a call failure | empty | with a kind: the failure's message (ruling 5 of 0.11) as its first line, which begins with the kind and a colon |
+| 2 | a usage error | empty | any text, at least one byte |
+
+Every failure that is not a usage error exits 1:
+
+- a load failure of a module or a pack, with its kind;
+- a `--packs-only` name the tool cannot load as a pack (Loading, 2);
+- a `--from` or `--to` that is not loaded: `unknown-format`, `--from` checked
+  first, before standard input is read;
+- for `convert`, every failure of `convert(from, to, bytes, context)`;
+- a `--packs` that cannot be read (Loading).
+
+## The subcommands
+
+**`convert`** reads standard input to its end and passes it to
+`convert(from, to, input, context)` (Version 0.6, Order inside `convert`)
+unchanged: for a format whose input is hex text (`bits`, `protobuf`, `tlv`)
+standard input is that hex text, and the whitespace hex text allows (ruling
+36 of 0.8) may surround it. Input that is not valid UTF-8 is
+`malformed-wire` on every wire (on a hex wire such bytes are not hex digits,
+ruling 36 of 0.8). A byte-order mark is not removed. The context is the `--set` options: the text before the first `=` is
+the key, the rest (possibly empty, possibly holding `=`) the value in string
+form, read as the key's declared type as a vector's `context` value is. A key
+given twice takes its last value and keeps the place of its first. The context
+keys are checked (ruling 10 of 0.6) in that order, so the first failing key
+names the kind. With no `--set`, no context is given. The
+result is written to standard output exactly, with nothing added: a hex
+wire's result is its lower-case hex text, and no line feed follows any
+result.
+
+**`list-formats`** writes one line per loaded pack, in byte order of format
+name: the format, a tab, the `version` value, a tab, the `wire` value. A value
+written in double quotes in the pack is written without them.
+
+**`capability`** writes the report of `capability(from, to)` as one line of
+the matrix form below, without the header line.
+
+**`matrix`** writes the header line
+
+```
+from<TAB>to<TAB>grade<TAB>carried<TAB>dropped
+```
+
+then one line per ordered pair of loaded formats, a format paired with itself
+included: `from` in byte order of format name, and for each `from` every `to`
+in that order. A line is the `from` format, a tab, the `to` format, a tab,
+the grade (`full`, `partial` or `none`), a tab, the `carried` entries, a tab,
+the `dropped` entries. The entries of a list are joined by a single space, in
+the order of ruling 6d; an empty list is the empty text, so a line may end in
+a tab. With n formats loaded the output has n² + 1 lines.
+
+Every line that `list-formats`, `capability` and `matrix` write, the last
+included, ends in a line feed, the byte 0x0A, with no carriage return.
+
+## What the contract leaves to an engine
+
+An engine's tool may have more subcommands than this section names, and an
+engine's own options (for example a peak-memory report), whose names begin
+with `--x-`; any other name this section does not give is a usage error. The
+default of `--packs`, the text of `help` and of a usage error, the text after
+the kind on standard error, and the message of an unreadable `--packs` are
+the engine's.
+
+## Vectors
+
+`packs/conformance/tool-vectors/*.json` (`spec/vector-format.md`, Tool
+vectors), run by `tools/tool-vectors.py` against the command that starts an
+engine's tool.
+
+---
+
 # Version 0.32: time hygiene in core
 
 A change to `core`: it took the merge slot, carries ADR 0005 ("Time hygiene in

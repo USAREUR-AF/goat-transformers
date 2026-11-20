@@ -5,7 +5,7 @@ query (`tools/goat-options`) are Built. Synchronizing stores between
 organizations is Not built.
 
 The library already knows which formats convert to which and what carries
-(`goat-xf matrix --detail`). It knows nothing about systems: which sensor or
+(`goat-xf matrix`). It knows nothing about systems: which sensor or
 application emits or accepts which format, over which transport, in which
 version. A **system record** states that, one plain-text file per system. Given
 a system that produces data and a system that needs it, `tools/goat-options`
@@ -103,7 +103,7 @@ already listed as one step. No format repeats within a path.
 
 For a library step, what carries and what is lost is the library's capability
 report for that pair (`Engine.capability` in the Python engine; it agrees with
-`goat-xf matrix --detail` on every pair the two were compared on). For a path
+`goat-xf matrix` on every pair the two were compared on). For a path
 of library steps the tool gives the keys that carry end to end. For a step made
 by a system, the record says nothing about keys, so `carried` and `lost` are
 `null`. A catalog format's own module (for example `isa.*`) has keys no other

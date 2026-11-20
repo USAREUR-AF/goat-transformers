@@ -97,6 +97,18 @@ jobs:
             cp -r engines/rust "$dir/engines/rust"
             (cd "$dir/engines/rust" && CARGO_TARGET_DIR="$GITHUB_WORKSPACE/engines/rust/target" cargo test --test vectors)
           done
+      # The command-line contract of spec 0.23, run against the tool cargo test built.
+      - name: Tool vectors
+        run: python3 -I tools/tool-vectors.py -- engines/rust/target/debug/goat-xf
+      - name: Capability matrix of tools/matrix-formats.txt
+        run: |
+          engines/rust/target/debug/goat-xf matrix --packs packs \
+            --packs-only "$(grep -v '^#' tools/matrix-formats.txt | paste -sd, -)" > capability-matrix-rust.tsv
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: capability-matrix-rust
+          path: capability-matrix-rust.tsv
+          if-no-files-found: error
   go:
     runs-on: ubuntu-latest
     timeout-minutes: 10

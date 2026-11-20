@@ -1,0 +1,16 @@
+{
+  "name": "capability-16-sequential-pack-with-also-opt-and-a-group",
+  "args": [
+    "capability",
+    "--from",
+    "conformance-cap-seq",
+    "--to",
+    "conformance-cap-seq-b",
+    "--packs",
+    "{packs}",
+    "--packs-only",
+    "conformance-cap-seq,conformance-cap-seq-b"
+  ],
+  "exit": 0,
+  "stdout_text": "conformance-cap-seq\tconformance-cap-seq-b\tpartial\tprobe.y probe.z probe.recs[] probe.recs[].probe.x\tprobe.x\n"
+}

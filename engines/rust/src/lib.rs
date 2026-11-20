@@ -1590,6 +1590,21 @@ pub enum Wire {
     Tlv,
 }
 
+impl Wire {
+    /// The name the `wire` line gives.
+    pub fn name(self) -> &'static str {
+        match self {
+            Wire::Xml => "xml",
+            Wire::GeoJson => "geojson",
+            Wire::Bits => "bits",
+            Wire::Protobuf => "protobuf",
+            Wire::Json => "json",
+            Wire::Text => "text",
+            Wire::Tlv => "tlv",
+        }
+    }
+}
+
 #[derive(Clone, Debug)]
 pub struct FieldDef {
     pub model_key: String,
@@ -4547,6 +4562,13 @@ impl Engine {
     /// The wire of a loaded format.
     pub fn wire(&self, format: &str) -> Option<Wire> {
         self.packs.get(format).map(|p| p.wire)
+    }
+
+    /// The `version` value and the `wire` name of a loaded format, as the
+    /// pack's lines give them with any quotes removed (`list-formats`, spec
+    /// 0.23).
+    pub fn pack_header(&self, format: &str) -> Option<(String, &'static str)> {
+        self.packs.get(format).map(|p| (p.version.clone(), p.wire.name()))
     }
 
     /// All loaded format names, sorted.

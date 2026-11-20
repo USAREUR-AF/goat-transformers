@@ -1,0 +1,11 @@
+{
+  "name": "usage-max-items-plus",
+  "args": [
+    "list-formats",
+    "--packs",
+    "{packs}",
+    "--max-items",
+    "+1"
+  ],
+  "exit": 2
+}

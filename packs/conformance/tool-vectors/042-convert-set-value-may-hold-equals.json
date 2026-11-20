@@ -1,0 +1,19 @@
+{
+  "name": "convert-set-value-may-hold-equals",
+  "args": [
+    "convert",
+    "--from",
+    "conformance-cap-a",
+    "--to",
+    "conformance-cap-a",
+    "--packs",
+    "{packs}",
+    "--packs-only",
+    "conformance-cap-a",
+    "--set",
+    "callsign=a=b"
+  ],
+  "stdin_hex": "7b226964223a2278227d",
+  "exit": 0,
+  "stdout_text": "{\"id\":\"x\",\"name\":\"a=b\"}"
+}

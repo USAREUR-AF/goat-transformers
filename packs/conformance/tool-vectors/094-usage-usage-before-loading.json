@@ -1,0 +1,10 @@
+{
+  "name": "usage-usage-before-loading",
+  "args": [
+    "convert",
+    "--packs",
+    "{packs}/conformance-no-such-directory",
+    "--from"
+  ],
+  "exit": 2
+}

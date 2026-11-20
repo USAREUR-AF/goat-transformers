@@ -107,6 +107,7 @@ Run from the repository root unless a directory is named.
 | A core or track change carries an ADR | `python3 -I tools/model-governance.py --base origin/main` (CI on every pull request) |
 | Sections shared by README.md and the site (`docs/<name>-section.md`) | `python3 -I tools/doc-sections.py` writes them into both; `--check` (CI) fails when either is stale. Edit the source, never the copies |
 | Licences and profiles (`LICENSING.md`, `licences.json`) | `python3 -I tools/licences.py` writes them; `--check` (CI) fails on a pack with no known licence or a stale file; `--list --profile open`; `reuse lint` (pip `reuse`) |
+| Tool vectors of an engine's command-line tool (spec 0.23) | `python3 -I tools/tool-vectors.py -- <the tool's command>`, e.g. `-- engines/rust/target/release/goat-xf` |
 | Go | `cd engines/go && go vet ./... && go test ./...` |
 | Python | `cd engines/python && PYTHONPATH=src python3 -m unittest discover -s tests` |
 | Java | `cd engines/java && ./build.sh` |
@@ -123,7 +124,7 @@ check of one pack, load only the packs you name with `--packs-only`:
 
 ```bash
 engines/rust/target/release/goat-xf list-formats --packs packs --packs-only geojson,cot-xml
-engines/rust/target/release/goat-xf matrix --detail --packs packs --packs-only geojson,cot-xml
+engines/rust/target/release/goat-xf capability --from cot-xml --to geojson --packs packs --packs-only geojson,cot-xml
 ```
 
 Every tool reads model modules from `<packs>/../model` unless `--models <dir>`

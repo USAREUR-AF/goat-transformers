@@ -1,0 +1,8 @@
+{
+  "name": "help",
+  "args": [
+    "help"
+  ],
+  "exit": 0,
+  "stdout_any": true
+}

@@ -13,7 +13,7 @@ built. It gives no dates.
 | Shared model | Modules `core` and `track`, and one module of raw wire values for each catalog format. Every mapped key is declared and type-checked at load (`spec/shared-model.md`) |
 | Packs | The table in `README.md`; coverage by format in `docs/coverage-roadmap.md` |
 | Pack generators | `tools/gen/proto2pack.py`, `xsd2pack.py`, `canboat2pack.py`, `mavlink2pack.py`: a pack, its module and its round-trip vectors from a machine-readable definition |
-| Capability matrix | `Engine::capability` and `goat-xf matrix [--detail]`: for every pair of formats, which keys carry and which the target cannot represent |
+| Capability matrix | `Engine::capability` and `goat-xf matrix` and `goat-xf capability` (spec 0.23): for every pair of formats, which keys carry and which the target cannot represent |
 | Public and controlled boundary | `distribution` and `source` on every module and pack, enforced by the engines; `tools/boundary-gate` on this repository (`docs/boundary.md`) |
 | Package planner | `tools/goat-pkg`: constraints in, the smallest package out (`docs/package-configurator.md`) |
 | System records and the options query | `.rec` records of what a system emits, accepts and converts; `tools/goat-options` lists every path between two systems with its status and evidence, from the records and the capability report (`docs/system-records.md`) |
@@ -87,7 +87,7 @@ has a pack:
 | A C-ABI library and a WebAssembly module of the Rust engine, in `bindings/`, for hosts in languages with no native engine | Built |
 | An embedded profile in `embedded/`: `tools/gen/packc.py` compiles `bits` packs to a binary plan, and `gt-core` (no standard library, no heap) runs it on a microcontroller; equivalence with the Rust engine and the image sizes for `thumbv7em-none-eabihf` in `docs/embedded.md` | Measured |
 | Per-wire feature gates in each engine, so that a package for `xml` formats only does not compile the binary codecs | Designed |
-| The capability matrix as a checked CI artifact | Designed |
+| The capability matrix as a checked CI artifact: one command-line contract for all seven engines' tools (spec 0.23), pinned by tool vectors, and the matrix of the formats in `tools/matrix-formats.txt` produced by every engine's tool and compared byte for byte | Spec written; Rust built (95 tool vectors); six engines to do |
 | Parse-once caching for packs and protobuf submessages; a benchmark for each engine | Designed |
 | An HTTP front end over the package planner (`tools/goat-pkg serve`) | Built |
 | Transport adapters in `adapters/`: stdin, files, directories, TCP, UDP, serial and MQTT 3.1.1 through `goat-xf-pipe`, standard library only (`docs/adapters.md`) | Built |
