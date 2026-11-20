@@ -1,0 +1,8 @@
+{
+  "name": "err-other-id",
+  "from": "cdemo-misc",
+  "to": "cdemo-misc",
+  "source": "message id 0 is not a kind of this pack",
+  "input": "a5009c00eaa975bcac5ae3f81a97513588d3bf71f60f2dae644c9bead288092740c57763ae01e59f1c3e53dc8a7ac118f8b62f5566f39d91d42f0bce426c790ab0a8e7461ee555838c21c3bffa5d31fc689a9f38d6d60d7544137bb1b24fe9ed208c572a8ec8c566fc0433a36a41a1dfd87d0f1c46ba7d58b4f6eb94223359d1906fc70dfeab354a6ce8a386da2411c3486101b26314c57696cf59fbffffffff",
+  "expect_error": "no-kind"
+}

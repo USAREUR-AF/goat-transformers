@@ -1,0 +1,15 @@
+{
+  "name": "rt-stat",
+  "from": "cdemo-misc",
+  "to": "cdemo-misc",
+  "source": "tools/gen/cstruct2pack.py: the cdemo frame header, then stat_t with values chosen by the generator, packed by its serializer at the offsets of the layout",
+  "input": "a5029c00eaa975bcac5ae3f81a97513588d3bf71f60f2dae644c9bead288092740c57763ae01e59f1c3e53dc8a7ac118f8b62f5566f39d91d42f0bce426c790ab0a8e7461ee555838c21c3bffa5d31fc689a9f38d6d60d7544137bb1b24fe9ed208c572a8ec8c566fc0433a36a41a1dfd87d0f1c46ba7d58b4f6eb94223359d1906fc70dfeab354a6ce8a386da2411c3486101b26314c57696cf59fbffffffff",
+  "expect": "a5029c00eaa975bcac5ae3f81a97513588d3bf71f60f2dae644c9bead288092740c57763ae01e59f1c3e53dc8a7ac118f8b62f5566f39d91d42f0bce426c790ab0a8e7461ee555838c21c3bffa5d31fc689a9f38d6d60d7544137bb1b24fe9ed208c572a8ec8c566fc0433a36a41a1dfd87d0f1c46ba7d58b4f6eb94223359d1906fc70dfeab354a6ce8a386da2411c3486101b26314c57696cf59fbffffffff",
+  "model": {
+    "@kind": "stat",
+    "cdemo.stat_t_count": "43498",
+    "cdemo.stat_t_flags_0_0": "1",
+    "cdemo.stat_t_flags_0_1": "178",
+    "cdemo.stat_t_flags_0_2": "99"
+  }
+}

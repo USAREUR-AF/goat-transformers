@@ -1,0 +1,15 @@
+{
+  "name": "rt-pos",
+  "from": "cdemo-nav",
+  "to": "cdemo-nav",
+  "source": "tools/gen/cstruct2pack.py: the cdemo frame header, then pos_t with values chosen by the generator, packed by its serializer at the offsets of the layout",
+  "input": "a5013900eaa9379ee9263108ac1c00405eba490c022b08c0e9263108ac1c1040a4703d0ad72314400000c4c00000bcc00000b4c0743900000000000023",
+  "expect": "a5013900eaa9379ee9263108ac1c00405eba490c022b08c0e9263108ac1c1040a4703d0ad72314400000c4c00000bcc00000b4c0743900000000000023",
+  "model": {
+    "@kind": "pos",
+    "cdemo.pos_t_time_week": "2654448106",
+    "cdemo.pos_t_time_tow": "2.014",
+    "lat": "-3.021",
+    "lon": "4.028"
+  }
+}

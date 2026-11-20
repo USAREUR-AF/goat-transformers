@@ -1,0 +1,8 @@
+{
+  "name": "err-short",
+  "from": "cdemo-nav",
+  "to": "cdemo-nav",
+  "source": "one byte short of the 61-byte message of pos (vector-format, malformed input)",
+  "input": "a5013900eaa9379ee9263108ac1c00405eba490c022b08c0e9263108ac1c1040a4703d0ad72314400000c4c00000bcc00000b4c07439000000000000",
+  "expect_error": "malformed-wire"
+}

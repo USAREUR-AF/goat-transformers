@@ -1,0 +1,8 @@
+{
+  "name": "err-other-id",
+  "from": "cdemo-nav",
+  "to": "cdemo-nav",
+  "source": "message id 0 is not a kind of this pack",
+  "input": "a5003900eaa9379ee9263108ac1c00405eba490c022b08c0e9263108ac1c1040a4703d0ad72314400000c4c00000bcc00000b4c0743900000000000023",
+  "expect_error": "no-kind"
+}

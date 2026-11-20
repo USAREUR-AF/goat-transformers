@@ -1,0 +1,112 @@
+{
+  "family": "cdemo",
+  "module": "cdemo",
+  "version": "0.1.0",
+  "headers": [
+    "inc/demo.h"
+  ],
+  "constant_headers": [
+    "inc/consts.h"
+  ],
+  "license_files": [
+    "LICENSE"
+  ],
+  "license_quote": [
+    "LICENSE"
+  ],
+  "defines": [],
+  "attributes": [
+    "PACKED"
+  ],
+  "pack_macros": {
+    "PUSH_PACK_1": 1,
+    "POP_PACK": "pop"
+  },
+  "messages": {
+    "file": "inc/demo.h",
+    "strip_prefix": "DID_",
+    "regex": "^#define (?P<name>DID_\\w+)\\s+\\(eDataIDs\\)(?P<id>\\d+)\\s*/\\*\\*<\\s*\\((?P<type>\\w+)\\)"
+  },
+  "int_bits": 32,
+  "title": "Synthetic C structs (inc/demo.h)",
+  "title_short": "Synthetic C structs",
+  "repository": "https://example.org/cdemo",
+  "raw_url": "https://example.org/cdemo/<commit>/<path>",
+  "license_line": "member names, types and array sizes only; synthetic",
+  "extra_sources": [],
+  "byte_order_statement": "little-endian, as the test's config states",
+  "frame": {
+    "name": "demo header",
+    "header_bits": 32,
+    "id_byte": 1,
+    "fields": [
+      {
+        "name": "sync",
+        "bits": 8,
+        "when": 165
+      },
+      {
+        "name": "id",
+        "bits": 8,
+        "role": "id"
+      },
+      {
+        "name": "size",
+        "bits": 16,
+        "role": "size"
+      }
+    ],
+    "convention": [
+      "A message is a 4-byte demo header, then the struct its id names."
+    ]
+  },
+  "groups": [
+    {
+      "name": "nav",
+      "match": "^DID_POS"
+    },
+    {
+      "name": "misc",
+      "match": "^DID_(STAT|BAD|MISSING)"
+    }
+  ],
+  "skip": {
+    "DID_BAD": "its struct holds bit-fields",
+    "DID_MISSING": "its type is not declared"
+  },
+  "bind": {
+    "pos_t:lla[0]": {
+      "key": "lat",
+      "type": "float",
+      "evidence": "the member's comment: degrees"
+    },
+    "pos_t:lla[1]": {
+      "key": "lon",
+      "type": "float",
+      "evidence": "the member's comment: degrees"
+    },
+    "pos_t:lla[2]": {
+      "key": "hae",
+      "type": "float",
+      "evidence": "the member's comment: metres over the ellipsoid"
+    }
+  },
+  "from_geojson": [
+    "DID_POS"
+  ],
+  "bind_note": [
+    "The test binds the three elements of `lla`."
+  ],
+  "not_mapped": [
+    [
+      "Enumerations",
+      "carried as integers"
+    ]
+  ],
+  "license_statement": [
+    "- `LICENSE`: a synthetic stand-in."
+  ],
+  "licence_note": [
+    "Licence of this pack: as the repository's."
+  ]
+}
