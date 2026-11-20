@@ -1,0 +1,27 @@
+# Conformance probe pack for gate blocks (spec 0.17) under six-bit armor
+# (spec 0.14, ruling 14 of 0.17). Fixed `bits` layout, most significant bit
+# first, read and written as armored text. Public. No kinds. Exercises: a
+# block held by its gate, and one that does not hold, in the armored text; a
+# gate that lies after its field and whose locator extends the text by one
+# character; an `optional` field of a held block that counts toward `L` only
+# when it is written; a gate whose bit lies beyond the bits the text carries
+# does not hold.
+#
+#   bits 0-5     n, outside any block (the first character)
+#   bits 6-11    x, in the block (the second character)
+#   bit  12      the gate of x and y: they are there when the bit is 1
+#   bits 13-23   y, in the block, optional
+format       conformance-gates-armor
+version      0.17.0
+distribution public
+source       "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses         probe
+wire         bits
+word_bytes   1
+bit_order    msb
+armor        sixbit
+field   probe.n   0:0:6    uint
+if      0:12:1  1
+  field probe.x   0:6:6    uint
+  field probe.y   0:13:11  uint  optional
+end

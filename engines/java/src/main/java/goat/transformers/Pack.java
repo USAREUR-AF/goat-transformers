@@ -163,7 +163,7 @@ public final class Pack {
      * one {@code group} block (locators then relative to one item).
      */
     public static final class Scope {
-        /** {@code field}, {@code when}, {@code const} and {@code group} lines, in line order. */
+        /** {@code field}, {@code when}, {@code const}, {@code group} and gate ({@code if}) lines, in line order. */
         public final List<Line> lines;
         /** The {@code group} lines among them, in line order. */
         public final List<Group> groups;
@@ -216,6 +216,53 @@ public final class Pack {
         }
     }
 
+    /**
+     * One gate block {@code if [!]<locator> <value>[,…]} … {@code end} of a fixed-layout bits pack (engine-spec 0.17):
+     * its lines exist on the wire only when the gate's bits hold one of the values ({@code !}: none of them).
+     */
+    public static final class Gate extends Line {
+        /** True for {@code if !<locator>}. */
+        public final boolean not;
+        /** The listed values, as unsigned 64-bit patterns, in the order written. */
+        final long[] values;
+        /** The block's {@code field}, {@code const} and nested gate lines, and its own {@code default} lines. */
+        public final Scope body;
+        /** The gate's length in bits. */
+        final int len;
+
+        Gate(String locator, boolean not, long[] values, int len, Scope body, int line) {
+            super(locator, line);
+            this.not = not;
+            this.values = values;
+            this.len = len;
+            this.body = body;
+        }
+
+        /** True when the gate's bits, read as unsigned, make the block hold. */
+        boolean holds(long v) {
+            boolean in = false;
+            for (long x : values) if (x == v) { in = true; break; }
+            return in != not;
+        }
+
+        /**
+         * The value encode gives the gate: the first listed value, or with {@code !} the smallest value not listed.
+         * Null when a {@code !} list names every value of the gate.
+         */
+        Long gateValue() {
+            if (!not) return values[0];
+            // the list holds at most as many values as it has entries, so a value not listed is found within them
+            long v = 0;
+            for (int tries = 0; tries <= values.length; tries++, v++) {
+                if (len < 64 && Long.compareUnsigned(v, BitsTransform.mask(len)) > 0) return null;
+                boolean listed = false;
+                for (long x : values) if (x == v) { listed = true; break; }
+                if (!listed) return v;
+            }
+            return null;
+        }
+    }
+
     /** One message kind: its name, its {@code requires} keys, and its lines after the common lines. */
     public static final class Kind {
         /** The kind's name; null for the single implicit kind of a pack with no {@code kind} line. */
@@ -258,6 +305,9 @@ public final class Pack {
         final int line;
         /** A {@code group} line: its body ({@code key} is then the list, {@code opts} the tokens after the locator). */
         BodySpec body;
+        /** An {@code if} gate line of a fixed layout: {@code locator} without its {@code !}, {@code arg} the value list. */
+        boolean gate;
+        boolean not;
 
         LineSpec(String key, String locator, String arg, List<String> opts, boolean isConst, int line) {
             this.key = key;
@@ -436,6 +486,9 @@ public final class Pack {
             Group g = (Group) l;
             out.add(prefix + g.list + "[]");
             for (Line b : g.body.lines) modelKeys(b, prefix + g.list + "[].", out);
+        } else if (l instanceof Gate) {
+            // keys inside gate blocks are listed as every other mapped key (ruling 4 of 0.17)
+            for (Line b : ((Gate) l).body.lines) modelKeys(b, prefix, out);
         }
     }
 
@@ -668,6 +721,9 @@ public final class Pack {
         }
     }
 
+    /** The only lines allowed inside a gate block (engine-spec 0.17, Load errors). */
+    private static final Set<String> IN_GATE = Set.of("field", "const", "default", "if", "end");
+
     /** What {@link #resolve} needs to know about the pack, and what it collects. */
     private static final class Ctx {
         Wire wire;
@@ -752,6 +808,7 @@ public final class Pack {
         // The first failure that is not a line check (steps 1 to 10 of ruling 5b): it is reported after the file, so
         // a later line's own line check wins over it. The lines after it are still read, their failures dropped.
         RuntimeException deferred = null;
+        int firstGate = 0;   // the line of the first gate block, 0 when there is none
         for (int i = 0; i < lines.length; i++) {
             int ln = i + 1;
             String where = source + ":" + ln;
@@ -815,8 +872,12 @@ public final class Pack {
                 if (kw.equals("word_bytes")) {
                     throw badDirective(format, null, where + ": word_bytes is not used in a sequential pack");
                 }
-            } else if (Seq.SEQUENTIAL_ONLY.contains(kw) && !kw.equals("length")) {
+            } else if (Seq.SEQUENTIAL_ONLY.contains(kw) && !kw.equals("length") && !kw.equals("if")) {
+                // `length` is also the tlv directive (0.13), and `if` the gate block of a fixed layout (0.17)
                 throw badDirective(format, null, where + ": " + kw + " is a line of a pack with layout sequential");
+            }
+            if (!open.isEmpty() && open.peek().gate && !IN_GATE.contains(kw)) {
+                throw badDirective(format, null, where + ": " + kw + " is not allowed inside an if block");
             }
             if (!open.isEmpty() && NOT_IN_GROUP.contains(kw)) {
                 throw badDirective(format, null, where + ": " + kw + " is not allowed inside a group");
@@ -997,9 +1058,18 @@ public final class Pack {
                     keyRefs.add(new String[]{args.get(0), null});
                     break;
                 }
+                case "if": {
+                    // a gate block of the fixed layout (engine-spec 0.17); the sequential `if` is read by Seq
+                    LineSpec g = gateLine(args, ln, where, format);
+                    if (firstGate == 0) firstGate = ln;
+                    g.body = new BodySpec();
+                    body.lines.add(g);
+                    open.push(g);
+                    break;
+                }
                 case "end":
                     arity(kw, args, 0, where, format);
-                    if (open.isEmpty()) throw badDirective(format, null, where + ": end with no open group");
+                    if (open.isEmpty()) throw badDirective(format, null, where + ": end with no open group or if block");
                     open.pop();
                     break;
                 case "typemap":
@@ -1024,7 +1094,7 @@ public final class Pack {
         if (deferred != null) throw deferred;
         if (!open.isEmpty()) {
             LineSpec g = open.peek();
-            throw badDirective(format, g.locator, source + ":" + g.line + ": group " + g.key + " has no end");
+            throw badDirective(format, g.locator, source + ":" + g.line + ": " + (g.gate ? "if " + g.locator : "group " + g.key) + " has no end");
         }
         // Checks that need the whole file run here, before missing-distribution (ruling 25 of 0.5).
         Seq.Body seqRoot = null;
@@ -1039,10 +1109,13 @@ public final class Pack {
         boolean hasKinds = seqRoot != null ? seqRoot.hasKinds : !kindSpecs.isEmpty();
         if (!hasKinds) {
             for (LineSpec s : common.lines) {
-                if (s.key == null && !s.isConst) {
+                if (s.key == null && !s.isConst && !s.gate) {
                     throw badDirective(format, s.locator, source + ":" + s.line + ": when line in a pack with no kind line");
                 }
             }
+        }
+        if (firstGate != 0 && wire != null && wire != Wire.BITS) {
+            throw badDirective(format, null, source + ":" + firstGate + ": an if block of a fixed layout is for the bits wire only");
         }
         if (bitOrder != null && wire != null && wire != Wire.BITS) {
             throw badDirective(format, null, source + ":" + bitOrderLine + ": bit_order is for the bits wire only");
@@ -1284,6 +1357,65 @@ public final class Pack {
         }
     }
 
+    /**
+     * Read an {@code if [!]<word>:<pos>:<len> <value>[,<value>…]} line of a fixed layout. Anything but one locator
+     * and one value list is {@code bad-directive} (rulings 12 of 0.17), as is a value that is not an unsigned decimal
+     * integer below {@code 2^len}, an empty value, an empty list or a value listed twice.
+     */
+    private static LineSpec gateLine(List<String> args, int ln, String where, String format) {
+        if (args.size() != 2) {
+            throw badDirective(format, null, where + ": a gate is if [!]<word>:<pos>:<len> <value>[,<value>...], got "
+                    + args.size() + " argument(s)");
+        }
+        String loc = args.get(0);
+        boolean not = loc.startsWith("!");
+        if (not) loc = loc.substring(1);
+        if (!loc.matches("\\d+:\\d+:\\d+")) {
+            throw badDirective(format, loc, where + ": a gate locator of a fixed layout is <word>:<pos>:<len>, got \"" + args.get(0) + "\"");
+        }
+        int len;
+        try {
+            int[] wpl = BitsCodec.parseLoc(loc);
+            len = wpl[2];
+        } catch (NumberFormatException ex) {
+            throw badDirective(format, loc, where + ": the gate locator is out of range: " + loc);
+        }
+        if (len < 1 || len > 64) throw badDirective(format, loc, where + ": a gate reads 1 to 64 bits, got " + len);
+        String[] parts = args.get(1).split(",", -1);
+        Set<Long> seen = new HashSet<>();
+        for (String v : parts) {
+            if (!v.matches("\\d+")) {
+                throw badDirective(format, loc, where + ": a gate value is an unsigned decimal integer, got \"" + v + "\"");
+            }
+            long n;
+            try {
+                n = Long.parseUnsignedLong(v);
+            } catch (NumberFormatException ex) {
+                throw badDirective(format, loc, where + ": gate value " + v + " does not fit " + len + " bits");
+            }
+            if (len < 64 && Long.compareUnsigned(n, BitsTransform.mask(len)) > 0) {
+                throw badDirective(format, loc, where + ": gate value " + v + " does not fit " + len + " bits");
+            }
+            if (!seen.add(n)) throw badDirective(format, loc, where + ": gate value " + v + " is listed twice");
+        }
+        LineSpec s = new LineSpec(null, loc, args.get(1), null, false, ln);
+        s.gate = true;
+        s.not = not;
+        return s;
+    }
+
+    /** Turn one raw gate block into its typed form: its lines are resolved in the scope that holds the block. */
+    private static Gate resolveGate(LineSpec s, Ctx ctx, boolean inGroup) {
+        String[] parts = s.arg.split(",", -1);
+        long[] values = new long[parts.length];
+        for (int i = 0; i < parts.length; i++) values[i] = Long.parseUnsignedLong(parts[i]);
+        List<Line> lines = new ArrayList<>(s.body.lines.size());
+        for (LineSpec b : s.body.lines) lines.add(resolve(b, ctx, inGroup));
+        Scope body = new Scope(lines, s.body.defaults);
+        ctx.bodies.add(body);   // its own defaults are read as the keys' types with every other scope's
+        return new Gate(s.locator, s.not, values, BitsCodec.parseLoc(s.locator)[2], body, s.line);
+    }
+
     /** Turn one raw group line and its body into its typed form. {@code inGroup}: the group is nested in another. */
     private static Group resolveGroup(LineSpec s, Ctx ctx, boolean inGroup) {
         String where = ctx.source + ":" + s.line;
@@ -1394,6 +1526,7 @@ public final class Pack {
         String format = ctx.format;
         Map<String, List<String[]>> tables = ctx.tables;
         String where = ctx.source + ":" + s.line;
+        if (s.gate) return resolveGate(s, ctx, inGroup);
         if (s.body != null) return resolveGroup(s, ctx, inGroup);
         // `.` is the item itself as a scalar: a field of a group body on json, geojson and protobuf.
         boolean dot = s.locator.equals(".") && wire != Wire.XML && wire != Wire.BITS && wire != Wire.TEXT && wire != Wire.TLV;

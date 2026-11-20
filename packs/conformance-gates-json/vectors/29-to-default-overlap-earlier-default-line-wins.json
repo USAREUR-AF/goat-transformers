@@ -1,0 +1,13 @@
+{
+  "name": "to-default-overlap-earlier-default-line-wins",
+  "from": "conformance-gates-json",
+  "to": "conformance-gates-default-overlap",
+  "input": "{\"y\":171}",
+  "expect": "0f0a",
+  "model": {
+    "probe.y": "171",
+    "@absent": [
+      "probe.x"
+    ]
+  }
+}

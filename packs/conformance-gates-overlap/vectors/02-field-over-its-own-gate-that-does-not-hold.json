@@ -1,0 +1,13 @@
+{
+  "name": "field-over-its-own-gate-that-does-not-hold",
+  "from": "conformance-gates-overlap",
+  "to": "conformance-gates-overlap",
+  "input": "0607",
+  "expect": "0007",
+  "model": {
+    "probe.y": "7",
+    "@absent": [
+      "probe.x"
+    ]
+  }
+}

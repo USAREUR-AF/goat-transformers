@@ -1,0 +1,7 @@
+{
+  "name": "to-select-bare-block-held-by-zero-bits",
+  "from": "conformance-gates-json",
+  "to": "conformance-gates-select-bare",
+  "input": "{\"x\":42}",
+  "expect": "0000042a"
+}

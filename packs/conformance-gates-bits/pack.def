@@ -1,0 +1,42 @@
+# Conformance probe pack for gate blocks (spec 0.17) on the fixed `bits`
+# layout, least significant bit first. Public. No kinds. One byte per word, so
+# a locator is `0:<bit offset>:<len>`. Exercises: a validity bit before its
+# field (x) and one after it, in a later byte than the field (y); a two-bit
+# mode with a list of values (z); a `!` gate on the same mode (c1), so that
+# modes 2 and 3 hold it and mode 2 holds both blocks; a `!` list that names
+# every value and so never holds (c2). The raw key n fills the rest of byte 1,
+# so every gate of byte 1 lies inside the lines outside blocks.
+#
+#   byte 0       w, outside any block
+#   byte 1       bit 8: x is valid; bits 9-10: the mode; bit 11: the gate of
+#                c2; bits 12-15: n, outside any block
+#   byte 2       x, when bit 8 is 1
+#   byte 3       z, when the mode is 1 or 2
+#   byte 4       c1, when the mode is neither 0 nor 1
+#   byte 5       c2, never
+#   byte 6       y, when bit 56 is 1
+#   byte 7       bit 56: y is valid
+format     conformance-gates-bits
+version    0.17.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+word_bytes 1
+field   probe.w   0:0:8    uint
+field   probe.n   0:12:4   uint
+if      0:8:1  1
+  field probe.x   0:16:8   uint
+end
+if      0:9:2  1,2
+  field probe.z   0:24:8   uint
+end
+if      !0:9:2 0,1
+  field probe.c1  0:32:8   uint
+end
+if      !0:11:1 0,1
+  field probe.c2  0:40:8   uint
+end
+if      0:56:1 1
+  field probe.y   0:48:8   uint
+end

@@ -1,0 +1,10 @@
+{
+  "name": "to-select-bare-earlier-block-gets-its-gate",
+  "from": "conformance-gates-json",
+  "to": "conformance-gates-select-bare",
+  "input": "{\"alt\":400}",
+  "expect": "0010",
+  "model": {
+    "hae": "400"
+  }
+}

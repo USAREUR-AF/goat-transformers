@@ -518,7 +518,7 @@ V011_TLV = {"wire-tlv-68", "wire-tlv-69", "wire-tlv-71", "wire-tlv-72", "wire-tl
 # Likewise rulings 13 and 14 of 0.14 and the second-armor vector.
 V011_TLV |= {"wire-armor-18", "wire-armor-19"}
 # Ruling 28 of 0.15 pins the same order for a 0.15 transform on tlv.
-V011_ORDER = {"580"}
+V011_ORDER = {"580", "667", "668"}  # and ruling 13 of 0.17
 
 class TlvWireTest(Refusals):
     TLV = HEAD + "wire tlv\ntag 2\nkey 060e2b34\nchecksum sum16 1\n"
@@ -576,6 +576,33 @@ class ArmorTest(Refusals):
         no_distribution = 'format demo\nversion 0.1.0\nsource "test"\nuses probe\n'
         self.refuse_pack(no_distribution + "armor hex\nwire json\nfield uid id string\n", "bad-directive", 5)
 
+
+
+class GateTest(Refusals):
+    SEQ = HEAD + "wire bits\nlayout sequential\nbit_order msb\n"
+
+    def test_a_gate_block_on_a_fixed_layout(self):
+        fixed = HEAD + "wire bits\nword_bytes 1\n"
+        pack = gtcheck.load_pack(fixed + "if !0:8:2 0,3\n  default probe.qty 1\n  field probe.qty 0:0:8 uint\n"
+                                 "  if 0:10:1 1\n    const 0:11:1 1\n  end\nend\n", model())
+        gate = pack.common[0]
+        self.assertEqual((gate.d, gate.gate, gate.start, gate.bits), ("if", (True, (0, 3)), 8, 2))
+        self.assertEqual([n.d for n in gate.body], ["default", "field", "if"])
+        self.refuse_pack(fixed + "if 0:0:2 4\nend\n", "bad-directive", 8)
+        self.refuse_pack(fixed + "if 0:0:2 1,1\nend\n", "bad-directive", 8)
+        self.refuse_pack(fixed + "if 0:0:2\nend\n", "bad-directive", 8)
+        self.refuse_pack(fixed + "if p.1\nend\n", "bad-directive", 8)
+        self.refuse_pack(fixed + "if 0:0:1 1\n", "bad-directive", 8)
+        self.refuse_pack(fixed + "kind k\nwhen 0:0:4 1\nif 0:4:1 1\n  when 0:0:4 1\nend\n", "bad-directive", 11)
+        self.refuse_pack(self.SEQ + "if 0:0:1 1\nend\n", "bad-directive", 9)
+        self.refuse_pack(HEAD + "wire json\nif 0:0:1 1\nend\n", "bad-directive", 7)
+        # ruling 2: item-relative, inside the item, before a group counted by a locator
+        gtcheck.load_pack(fixed + "group probe.items 0:8 item 8 count 2\n  if 0:7:1 1\n"
+                          "    field probe.qty 0:0:7 uint\n  end\nend\n", model())
+        self.refuse_pack(fixed + "group probe.items 0:8 item 8 count 2\n  if 0:8:1 1\n  end\nend\n",
+                         "bad-directive", 9)
+        self.refuse_pack(fixed + "group probe.items 0:8 item 8 count 0:0:8\nend\nif 0:8:1 1\nend\n",
+                         "bad-directive", 10)
 
 class ConformanceLoadVectorsTest(unittest.TestCase):
     """gtcheck against the load vectors every engine must pass

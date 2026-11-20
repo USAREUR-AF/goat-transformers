@@ -1,0 +1,11 @@
+{
+  "name": "partly-written-gate-gets-no-value",
+  "from": "conformance-gates-partial",
+  "to": "conformance-gates-partial",
+  "input": "0307",
+  "expect_error": "transform-encode",
+  "model": {
+    "probe.c1": "1",
+    "probe.qty": "7"
+  }
+}

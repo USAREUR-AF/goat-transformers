@@ -1,0 +1,15 @@
+{
+  "name": "zero-gate-holds-on-zero-bits-and-writes-the-sentinel",
+  "from": "conformance-gates-edge",
+  "to": "conformance-gates-edge",
+  "input": "0500ff",
+  "expect": "0500ff00",
+  "model": {
+    "probe.x": "5",
+    "@absent": [
+      "probe.y",
+      "probe.z",
+      "probe.w"
+    ]
+  }
+}

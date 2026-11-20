@@ -1,0 +1,14 @@
+{
+  "name": "gate-held-roundtrip",
+  "from": "conformance-gates-armor",
+  "to": "conformance-gates-armor",
+  "input": "15g`",
+  "expect": "15g`",
+  "model": {
+    "probe.n": "1",
+    "probe.x": "5",
+    "probe.y": "1000"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor: reading, writing, L) and Version 0.17 (Decode; Encode steps 1-6; ruling 14, gates under six-bit armor). Bits 000001 000101 1 01111101000; L = 24 bits, 4 characters."
+}

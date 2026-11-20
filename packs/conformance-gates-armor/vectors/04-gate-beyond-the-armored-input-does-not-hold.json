@@ -1,0 +1,16 @@
+{
+  "name": "gate-beyond-the-armored-input-does-not-hold",
+  "from": "conformance-gates-armor",
+  "to": "conformance-gates-armor",
+  "input": "15",
+  "expect": "1",
+  "model": {
+    "probe.n": "1",
+    "@absent": [
+      "probe.x",
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor: reading, writing, L) and Version 0.17 (Decode; Encode steps 1-6; ruling 14, gates under six-bit armor). 12 input bits: the gate bit 12 is beyond the input and does not hold; re-encode 1 character."
+}

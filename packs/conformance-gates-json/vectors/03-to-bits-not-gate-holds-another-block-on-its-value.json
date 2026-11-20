@@ -1,0 +1,7 @@
+{
+  "name": "to-bits-not-gate-holds-another-block-on-its-value",
+  "from": "conformance-gates-json",
+  "to": "conformance-gates-bits",
+  "input": "{\"w\":3,\"c1\":10}",
+  "expect": "030400000a"
+}

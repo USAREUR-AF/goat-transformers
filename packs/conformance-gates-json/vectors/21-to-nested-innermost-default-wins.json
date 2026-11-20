@@ -1,0 +1,7 @@
+{
+  "name": "to-nested-innermost-default-wins",
+  "from": "conformance-gates-json",
+  "to": "conformance-gates-nested",
+  "input": "{\"c1\":1,\"x\":10,\"z\":5}",
+  "expect": "030a4513"
+}

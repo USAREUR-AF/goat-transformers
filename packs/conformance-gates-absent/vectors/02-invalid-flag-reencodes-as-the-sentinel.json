@@ -1,0 +1,15 @@
+{
+  "name": "invalid-flag-reencodes-as-the-sentinel",
+  "from": "conformance-gates-absent",
+  "to": "conformance-gates-absent",
+  "input": "010700",
+  "expect": "00ff00",
+  "model": {
+    "probe.x": "0",
+    "probe.c1": "0",
+    "@absent": [
+      "probe.y",
+      "probe.z"
+    ]
+  }
+}

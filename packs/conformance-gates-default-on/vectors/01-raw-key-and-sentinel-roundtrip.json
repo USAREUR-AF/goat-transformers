@@ -1,0 +1,14 @@
+{
+  "name": "raw-key-and-sentinel-roundtrip",
+  "from": "conformance-gates-default-on",
+  "to": "conformance-gates-default-on",
+  "input": "01ff",
+  "expect": "01ff",
+  "model": {
+    "probe.c2": "1",
+    "@absent": [
+      "probe.val",
+      "probe.qty"
+    ]
+  }
+}

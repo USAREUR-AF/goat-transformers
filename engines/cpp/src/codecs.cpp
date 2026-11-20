@@ -427,11 +427,23 @@ bool EncodeSource::value(const FieldLine& f, Value& out) const {
     if (it != e.fields.end()) {
         v = &it->second;
     } else {
+        // v0.17 ruling 5: a default inside a gate block applies to the fields of
+        // that block and of the blocks nested in it; the innermost wins, and it
+        // wins over a kind or common default.
+        for (int g = f.gate; g >= 0 && !v; g = p.gates[static_cast<std::size_t>(g)].parent)
+            for (const std::vector<DefaultLine>* defs : {defaults.first, defaults.second}) {
+                if (!defs || v) continue;
+                for (const auto& d : *defs)
+                    if (d.gate == g && d.key == f.key) {
+                        v = &d.value;
+                        break;
+                    }
+            }
         // The default in scope: the selected kind's (or the group body's), else a common one.
         for (const std::vector<DefaultLine>* defs : {defaults.first, defaults.second}) {
             if (!defs || v) continue;
             for (const auto& d : *defs)
-                if (d.key == f.key) {
+                if (d.gate < 0 && d.key == f.key) {
                     v = &d.value;
                     break;
                 }
@@ -1377,25 +1389,78 @@ std::uint64_t swap_bytes(std::uint64_t raw, std::uint32_t len) {
 
 namespace {
 
+// v0.17: the gate block a line belongs to (-1 outside any). Only `field` and
+// `const` lines may stand in a block.
+int line_gate(const LineRef& line) {
+    return line.field ? line.field->gate : line.konst ? line.konst->gate : -1;
+}
+
+// Is a line of gate block `gate` part of the scope as `held` says?
+bool gate_on(int gate, const std::vector<char>* held) {
+    return gate < 0 || (held && (*held)[static_cast<std::size_t>(gate)] != 0);
+}
+
 // The furthest bit one scope's own lines reach, counted from the scope's first
 // bit: every `field`, `when` and `const`, and the count locator of every group.
 // On decode an `optional` field does not count: the input need not reach it.
-std::uint64_t fixed_extent(const Pack& p, const std::vector<LineRef>& lines, bool decode) {
+// The lines of a gate block count only when it holds; on encode the locator of
+// a held gate counts too (0.17).
+std::uint64_t fixed_extent(const Pack& p, const std::vector<LineRef>& lines, bool decode,
+                           const std::vector<char>* held = nullptr, const std::vector<int>* gates = nullptr) {
     std::uint64_t end = 0;
     for (const auto& line : lines) {
         if (line.group) {
             if (!line.group->count_fixed) end = std::max(end, line.group->count_start + line.group->count_len);
             continue;
         }
+        if (!gate_on(line_gate(line), held)) continue;
         if (decode && line.field && line.field->optional) continue;
         end = std::max(end, bit_range(p, line.locator()).end());
     }
+    if (gates && held)
+        for (int id : *gates)
+            if ((*held)[static_cast<std::size_t>(id)]) {
+                const GateBlock& b = p.gates[static_cast<std::size_t>(id)];
+                end = std::max(end, b.start + b.len);
+            }
     return end;
 }
 
 std::size_t whole_words(const Pack& p, std::uint64_t bits) {
     const std::uint64_t word_bits = static_cast<std::uint64_t>(p.word_bytes) * 8;
     return static_cast<std::size_t>((bits + word_bits - 1) / word_bits * p.word_bytes);
+}
+
+// Evaluate the gate blocks `gates` (line order, so an enclosing block comes
+// before the blocks nested in it) of a scope at bit `base` of `data`. A nested
+// block holds only when its enclosing block does. A gate any of whose bits lies
+// beyond `data` does not hold, or, with `beyond_zero` (encode, step 4), reads
+// those bits as 0.
+void eval_gates(const Pack& p, const std::string& data, bool msb, std::uint64_t base, const std::vector<int>& gates,
+                bool beyond_zero, std::vector<char>& held, std::uint64_t have_bits = ~std::uint64_t{0}) {
+    // The input's bits: the whole bytes, or under armor (0.14) the 6 bits a character.
+    const std::uint64_t have = std::min<std::uint64_t>(static_cast<std::uint64_t>(data.size()) * 8, have_bits);
+    for (int id : gates) {
+        const GateBlock& b = p.gates[static_cast<std::size_t>(id)];
+        char& h = held[static_cast<std::size_t>(id)];
+        h = 0;
+        if (b.parent >= 0 && !held[static_cast<std::size_t>(b.parent)]) continue;
+        const std::uint64_t start = base + b.start;
+        std::uint64_t raw = 0;
+        if (start + b.len <= have) {
+            raw = read_bits(data, start, b.len, msb);
+        } else {
+            if (!beyond_zero) continue;
+            for (std::uint32_t k = 0; k < b.len; ++k) {
+                const std::uint64_t g = start + k;
+                std::uint64_t bit = 0;
+                if (g < have) bit = (static_cast<std::uint8_t>(data[static_cast<std::size_t>(g / 8)]) >> (msb ? 7 - g % 8 : g % 8)) & 1u;
+                if (msb) raw = (raw << 1) | bit;
+                else raw |= bit << k;
+            }
+        }
+        h = b.matches(raw) ? 1 : 0;
+    }
 }
 
 struct BitsIn {
@@ -1417,17 +1482,22 @@ struct BitsIn {
 // One scope's lines read from bit `base` of the message: the message itself
 // (base 0) or one item. Returns the bit after the furthest one the scope
 // requires, which for an item whose last group is counted by a locator is where
-// the next item starts.
-std::uint64_t bits_decode_scope(BitsIn& in, const std::vector<LineRef>& lines, std::uint64_t base, Item& out,
-                                const std::string& what) {
+// the next item starts. `gates`: the scope's gate blocks (0.17).
+std::uint64_t bits_decode_scope(BitsIn& in, const std::vector<LineRef>& lines, const std::vector<int>& gates,
+                                std::uint64_t base, Item& out, const std::string& what) {
     const Pack& p = in.p;
-    std::uint64_t end = base + fixed_extent(p, lines, true);
+    // A gate is read like a `when`: it does not count toward the length, and a
+    // line of a block that does not hold is a line whose locator is absent.
+    std::vector<char> held(gates.empty() ? 0 : p.gates.size(), 0);
+    if (!gates.empty()) eval_gates(p, in.data, in.msb, base, gates, false, held, in.have);
+    std::uint64_t end = base + fixed_extent(p, lines, true, &held);
     if (end > in.have) in.too_short(what, end);
 
     Decoder d(p, out);
     for (const auto& line : lines) {
         if (!line.field) continue;
         const FieldLine& f = *line.field;
+        if (!gate_on(f.gate, &held)) continue;
         if (!d.wants(f)) continue;
         BitRange r = bit_range(p, f.locator);
         r.start += base;
@@ -1469,7 +1539,7 @@ std::uint64_t bits_decode_scope(BitsIn& in, const std::vector<LineRef>& lines, s
         for (std::uint64_t k = 0; k < count; ++k) {
             if (at + g.item_bits > in.have) in.too_short(item_what, at + g.item_bits);
             items.emplace_back();
-            const std::uint64_t used = bits_decode_scope(in, body, at, items.back(), item_what);
+            const std::uint64_t used = bits_decode_scope(in, body, g.gates, at, items.back(), item_what);
             at = std::max(at + g.item_bits, used);
         }
         end = std::max(end, at);
@@ -1487,6 +1557,13 @@ std::uint64_t bits_decode_scope(BitsIn& in, const std::vector<LineRef>& lines, s
     return end;
 }
 
+// Step 6 of a gated scope (0.17), checked once on the final output.
+struct GateCheck {
+    std::uint64_t base = 0;
+    const std::vector<int>* gates = nullptr;
+    std::vector<char> held;  // the held blocks of step 4
+};
+
 struct BitsOut {
     const Pack& p;
     std::string data;
@@ -1494,6 +1571,7 @@ struct BitsOut {
     // v0.14: the length L of armored output, one more than the highest bit of
     // any line written, an `optional` field with no value aside.
     std::uint64_t armor_end = 0;
+    std::vector<GateCheck> checks;  // v0.17
 
     void reach(std::uint64_t bits) {
         const std::size_t bytes = static_cast<std::size_t>((bits + 7) / 8);
@@ -1501,67 +1579,209 @@ struct BitsOut {
     }
 };
 
-// One scope's lines written from bit `base`. Returns the bit after the furthest
-// one written or left zero by the scope.
-std::uint64_t bits_encode_scope(BitsOut& out, const std::vector<LineRef>& lines, std::uint64_t base,
-                                const EncodeSource& src) {
-    const Pack& p = out.p;
-    std::uint64_t end = base + fixed_extent(p, lines, false);
-    out.reach(end);
+bool overlaps(const std::vector<BitRange>& ranges, std::uint64_t start, std::uint64_t len) {
+    for (const auto& r : ranges)
+        if (r.start < start + len && start < r.end()) return true;
+    return false;
+}
 
+// The sentinels and the `field` lines of a scope written into `data` from bit
+// `base`; a line of a gate block is written when `held` says the block holds.
+// `present`, when given, receives the ranges of the lines whose key is present.
+void write_field_lines(const Pack& p, std::string& data, bool msb, const std::vector<LineRef>& lines,
+                       std::uint64_t base, const EncodeSource& src, const std::vector<char>* held,
+                       std::vector<BitRange>* present) {
     // An absent key with `absent` writes its first sentinel; a line whose key is
     // present wins over a sentinel whatever their order (0.9 ruling 16), so the
     // sentinels are written first.
     Value mv;
     for (auto it = lines.rbegin(); it != lines.rend(); ++it) {
-        if (!it->field || !it->field->has_absent) continue;
+        if (!it->field || !it->field->has_absent || !gate_on(it->field->gate, held)) continue;
         const FieldLine& f = *it->field;
         if (src.value(f, mv)) continue;
         BitRange r = bit_range(p, f.locator);
         r.start += base;
-        // 0.14 ruling 12: a written sentinel counts toward L, optional or not.
-        out.armor_end = std::max(out.armor_end, r.end());
         std::uint64_t raw = f.absent_num.front();
         if (f.swap) raw = swap_bytes(raw, r.len);
-        write_bits(out.data, r.start, r.len, raw, out.msb);
+        write_bits(data, r.start, r.len, raw, msb);
     }
     // Where two present fields cover the same bits the earlier line's value holds
     // (0.5 ruling 5): write the lines last to first. Absent fields without
     // `absent` leave zero bits.
     for (auto it = lines.rbegin(); it != lines.rend(); ++it) {
-        if (it->group) {
-            if (!it->group->count_fixed)
-                out.armor_end = std::max(out.armor_end, base + it->group->count_start + it->group->count_len);
-            continue;
-        }
-        if (!it->field) {
-            out.armor_end = std::max(out.armor_end, base + bit_range(p, it->locator()).end());
-            continue;
-        }
+        if (!it->field || !gate_on(it->field->gate, held)) continue;
         const FieldLine& f = *it->field;
         const bool has = src.value(f, mv);
-        if (has || !f.optional) out.armor_end = std::max(out.armor_end, base + bit_range(p, f.locator).end());
         if (!has) continue;
         BitRange r = bit_range(p, f.locator);
         r.start += base;
+        if (present && src.e.fields.count(f.key)) present->push_back(r);
         try {
-            if (!encode_bits_text(f, mv, out.data, r.start, r.len, out.msb)) {
+            if (!encode_bits_text(f, mv, data, r.start, r.len, msb)) {
                 std::uint64_t raw = encode_bits_value(f, mv, r.len);
                 if (f.swap) raw = swap_bytes(raw, r.len);
-                write_bits(out.data, r.start, r.len, raw, out.msb);
+                write_bits(data, r.start, r.len, raw, msb);
             }
         } catch (const std::invalid_argument& ex) {
             throw Error(ErrorKind::TransformEncode, p.format, f.locator, f.key + ": " + ex.what());
         }
     }
-    // `when` and `const` values are written over any field, so the output decodes
-    // as the same kind.
+}
+
+// `when` and `const` values are written over any field, so the output decodes
+// as the same kind. `written`, when given, receives their ranges.
+void write_fixed_lines(const Pack& p, std::string& data, bool msb, const std::vector<LineRef>& lines,
+                       std::uint64_t base, const std::vector<char>* held, std::vector<BitRange>* written) {
     for (const auto& line : lines) {
         const WhenLine* w = line.fixed();
-        if (!w) continue;
-        const BitRange r = bit_range(p, w->locator);
-        write_bits(out.data, base + r.start, r.len, w->number, out.msb);
+        if (!w || !gate_on(line_gate(line), held)) continue;
+        BitRange r = bit_range(p, w->locator);
+        r.start += base;
+        write_bits(data, r.start, r.len, w->number, msb);
+        if (written) written->push_back(r);
     }
+}
+
+// The gate value step 3 gives a block: the first listed value, or for `!` the
+// smallest value not listed. False when the list names every value.
+bool gate_value(const GateBlock& b, std::uint64_t& out) {
+    if (!b.negated) {
+        out = b.values.front();
+        return true;
+    }
+    const std::uint64_t max = b.len >= 64 ? ~std::uint64_t{0} : (std::uint64_t{1} << b.len) - 1;
+    for (std::uint64_t v = 0;; ++v) {
+        if (std::find(b.values.begin(), b.values.end(), v) == b.values.end()) {
+            out = v;
+            return true;
+        }
+        if (v == max) return false;
+    }
+}
+
+// v0.14: a scope's contribution to the length L of armored output: every
+// `field`, `when` and `const` line written (an `optional` field whose key is
+// absent aside, unless a sentinel is written for it: 0.14 ruling 12), the
+// count of a locator-counted group, and, with gate blocks (0.17), only the
+// lines outside any block and those of held blocks, with the held blocks'
+// gate locators.
+std::uint64_t armor_extent(const Pack& p, const std::vector<LineRef>& lines, const std::vector<int>& gates,
+                           std::uint64_t base, const EncodeSource& src, const std::vector<char>* held) {
+    std::uint64_t end = 0;
+    Value mv;
+    for (const auto& line : lines) {
+        if (line.group) {
+            if (!line.group->count_fixed) end = std::max(end, base + line.group->count_start + line.group->count_len);
+            continue;
+        }
+        if (!gate_on(line_gate(line), held)) continue;
+        if (line.field && line.field->optional && !line.field->has_absent && !src.value(*line.field, mv)) continue;
+        end = std::max(end, base + bit_range(p, line.locator()).end());
+    }
+    if (held)
+        for (int id : gates)
+            if ((*held)[static_cast<std::size_t>(id)]) {
+                const GateBlock& b = p.gates[static_cast<std::size_t>(id)];
+                end = std::max(end, base + b.start + b.len);
+            }
+    return end;
+}
+
+// One scope's lines written from bit `base`. Returns the bit after the furthest
+// one written or left zero by the scope. `gates`: the scope's gate blocks (0.17).
+std::uint64_t bits_encode_scope(BitsOut& out, const std::vector<LineRef>& lines, const std::vector<int>& gates,
+                                std::uint64_t base, const EncodeSource& src) {
+    const Pack& p = out.p;
+    std::vector<char> held_store;
+    const std::vector<char>* held = nullptr;
+    std::vector<std::uint64_t> gv;    // step 3: the gate value of each block that got one
+    std::vector<char> has_gv;
+    std::vector<BitRange> present;    // step 5: the bits a line with a present key covers
+    if (!gates.empty()) {
+        const std::size_t n = p.gates.size();
+        // Step 1: a block is open when one of its `field` lines, or a line of a
+        // nested open block, maps a key the entity (or the item) holds.
+        std::vector<char> open(n, 0);
+        for (const auto& line : lines)
+            if (line.field && line.field->gate >= 0 && src.e.fields.count(line.field->key))
+                for (int g = line.field->gate; g >= 0 && !open[static_cast<std::size_t>(g)];
+                     g = p.gates[static_cast<std::size_t>(g)].parent)
+                    open[static_cast<std::size_t>(g)] = 1;
+        // Step 2: the lines outside any block. A line with a present key, a
+        // `const`, a `when` or a group count writes its bits; a `default` or a
+        // sentinel does not (ruling 11: the union of the ranges).
+        std::string bits = out.data;
+        const std::vector<char> outside(n, 0);
+        std::vector<BitRange> written;
+        const std::size_t need = static_cast<std::size_t>((base + fixed_extent(p, lines, false, &outside) + 7) / 8);
+        if (bits.size() < need) bits.resize(need, '\0');
+        write_field_lines(p, bits, out.msb, lines, base, src, &outside, &written);
+        write_fixed_lines(p, bits, out.msb, lines, base, &outside, &written);
+        for (const auto& line : lines)
+            if (line.group && !line.group->count_fixed)
+                written.push_back({base + line.group->count_start, line.group->count_len});
+        // Step 3: in line order, each open block none of whose gate bits is
+        // written gets its gate value, and those bits are then written.
+        gv.assign(n, 0);
+        has_gv.assign(n, 0);
+        std::uint64_t gate_end = 0;
+        for (int id : gates) {
+            const GateBlock& b = p.gates[static_cast<std::size_t>(id)];
+            gate_end = std::max(gate_end, base + b.start + b.len);
+            if (!open[static_cast<std::size_t>(id)] || overlaps(written, base + b.start, b.len)) continue;
+            std::uint64_t v = 0;
+            if (!gate_value(b, v)) continue;
+            gv[static_cast<std::size_t>(id)] = v;
+            has_gv[static_cast<std::size_t>(id)] = 1;
+            const std::size_t bytes = static_cast<std::size_t>((base + b.start + b.len + 7) / 8);
+            if (bits.size() < bytes) bits.resize(bytes, '\0');
+            write_bits(bits, base + b.start, b.len, v, out.msb);
+            written.push_back({base + b.start, b.len});
+        }
+        // Step 4: each block evaluated on those bits, as decode evaluates it;
+        // bits nothing wrote read as 0.
+        held_store.assign(n, 0);
+        eval_gates(p, bits, out.msb, base, gates, true, held_store);
+        held = &held_store;
+        // Step 6, second half: a key the entity holds mapped only by lines of
+        // blocks that are not held.
+        for (const auto& line : lines) {
+            if (!line.field || !src.e.fields.count(line.field->key)) continue;
+            bool mapped = false;
+            for (const auto& other : lines)
+                if (other.field && other.field->key == line.field->key && gate_on(other.field->gate, held)) {
+                    mapped = true;
+                    break;
+                }
+            if (!mapped)
+                throw Error(ErrorKind::TransformEncode, p.format, line.field->locator,
+                            line.field->key + ": every line that maps the key is in a gate block that does not hold");
+        }
+    }
+
+    std::uint64_t end = base + fixed_extent(p, lines, false, held, held ? &gates : nullptr);
+    out.reach(end);
+    if (p.armor_sixbit) out.armor_end = std::max(out.armor_end, armor_extent(p, lines, gates, base, src, held));
+
+    // Step 5: the lines outside any block and those of the held blocks; a held
+    // block's gate value over the bits of a `default` or a sentinel and under
+    // those of a line with a present key, a `const` or a `when` (ruling 7).
+    write_field_lines(p, out.data, out.msb, lines, base, src, held, held ? &present : nullptr);
+    if (held) {
+        for (int id : gates) {
+            const std::size_t i = static_cast<std::size_t>(id);
+            if (!held_store[i] || !has_gv[i]) continue;
+            const GateBlock& b = p.gates[i];
+            for (std::uint32_t k = 0; k < b.len; ++k) {
+                const std::uint64_t bit = base + b.start + k;
+                if (overlaps(present, bit, 1)) continue;
+                const std::uint64_t one = (gv[i] >> (out.msb ? b.len - 1 - k : k)) & 1u;
+                write_bits(out.data, bit, 1, one, out.msb);
+            }
+        }
+    }
+    write_fixed_lines(p, out.data, out.msb, lines, base, held, nullptr);
+
     // The groups, in line order: the count over any field on its bits, then the
     // items back to back.
     for (const auto& line : lines) {
@@ -1591,13 +1811,21 @@ std::uint64_t bits_encode_scope(BitsOut& out, const std::vector<LineRef>& lines,
             for (const Item& item : *items) {
                 out.reach(at + g.item_bits);
                 out.armor_end = std::max(out.armor_end, at + g.item_bits);
-                const std::uint64_t used = bits_encode_scope(out, body, at, EncodeSource(p, g, item));
+                const std::uint64_t used = bits_encode_scope(out, body, g.gates, at, EncodeSource(p, g, item));
                 at = std::max(at + g.item_bits, used);
             }
         }
         end = std::max(end, at);
     }
+    if (held) out.checks.push_back({base, &gates, std::move(held_store)});
     return end;
+}
+
+// The gate blocks of the message: the common ones, then the selected kind's.
+std::vector<int> message_gates(const Pack& p, const Kind* kind) {
+    std::vector<int> out = p.common_gates;
+    if (kind) out.insert(out.end(), kind->gates.begin(), kind->gates.end());
+    return out;
 }
 
 }  // namespace
@@ -1621,7 +1849,7 @@ Entity decode_bits(const Pack& p, const std::string& bytes) {
     // bytes ignored; shorter is malformed.
     const std::string what = "the message" + (kind ? " of kind '" + kind->name + "'" : std::string());
     Entity e;
-    const std::uint64_t end = bits_decode_scope(in, active_lines(p, kind), 0, e, what);
+    const std::uint64_t end = bits_decode_scope(in, active_lines(p, kind), message_gates(p, kind), 0, e, what);
     // Under armor the message is any number of bits: whole words are not required.
     const std::size_t need = p.armor_sixbit ? 0 : whole_words(p, end);
     if (data.size() < need)
@@ -1634,11 +1862,34 @@ Entity decode_bits(const Pack& p, const std::string& bytes) {
 
 std::string encode_bits(const Pack& p, const Entity& e) {
     const Kind* kind = select_encode_kind(p, e);
-    BitsOut out{p, std::string(), p.bit_order == BitOrder::Msb};
-    const std::uint64_t end = bits_encode_scope(out, active_lines(p, kind), 0, EncodeSource(p, kind, e));
-    if (p.armor_sixbit) return bytes_to_armor(out.data, out.armor_end);
-    out.data.resize(whole_words(p, end), '\0');
-    return bytes_to_hex(out.data);
+    BitsOut out{p, std::string(), p.bit_order == BitOrder::Msb, 0, {}};
+    const std::vector<int> gates = message_gates(p, kind);
+    const std::uint64_t end = bits_encode_scope(out, active_lines(p, kind), gates, 0, EncodeSource(p, kind, e));
+    // Under armor (0.14) the output is the first L bits; step 6 reads it as decode
+    // would, so a gate past L does not hold.
+    std::string armored;
+    std::uint64_t have_bits = ~std::uint64_t{0};
+    if (p.armor_sixbit) {
+        armored = bytes_to_armor(out.data, out.armor_end);
+        out.data = armor_to_bytes(p, armored, have_bits);
+    } else {
+        out.data.resize(whole_words(p, end), '\0');
+    }
+    // Step 6 (0.17): the output decodes to the same choice, every scope and item.
+    std::vector<char> now(p.gates.size(), 0);
+    for (const auto& c : out.checks) {
+        eval_gates(p, out.data, out.msb, c.base, *c.gates, false, now, have_bits);
+        for (int id : *c.gates)
+            if (now[static_cast<std::size_t>(id)] != c.held[static_cast<std::size_t>(id)]) {
+                const GateBlock& b = p.gates[static_cast<std::size_t>(id)];
+                throw Error(ErrorKind::TransformEncode, p.format, b.locator,
+                            "the gate 'if " + std::string(b.negated ? "!" : "") + b.locator + "' " +
+                                (c.held[static_cast<std::size_t>(id)] ? "held when encoded and does not hold"
+                                                                      : "did not hold when encoded and holds") +
+                                " on the output");
+            }
+    }
+    return p.armor_sixbit ? armored : bytes_to_hex(out.data);
 }
 
 }  // namespace goat_transformers::detail

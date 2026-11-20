@@ -1,0 +1,14 @@
+{
+  "name": "raw-key-zero-holds-the-second-block",
+  "from": "conformance-gates-default-on",
+  "to": "conformance-gates-default-on",
+  "input": "000007",
+  "expect": "000007",
+  "model": {
+    "probe.c2": "0",
+    "probe.qty": "7",
+    "@absent": [
+      "probe.val"
+    ]
+  }
+}

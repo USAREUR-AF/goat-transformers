@@ -1,0 +1,16 @@
+{
+  "name": "to-armor-without-the-gated-keys",
+  "from": "conformance-gates-json",
+  "to": "conformance-gates-armor",
+  "input": "{\"n\":1}",
+  "expect": "1",
+  "model": {
+    "probe.n": "1",
+    "@absent": [
+      "probe.x",
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor: reading, writing, L) and Version 0.17 (Decode; Encode steps 1-6; ruling 14, gates under six-bit armor). No block open, gate bit 12 reads 0 and does not hold; L = 6, 1 character."
+}

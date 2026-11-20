@@ -1,0 +1,16 @@
+{
+  "name": "gate-locator-after-its-field-adds-a-character-roundtrip",
+  "from": "conformance-gates-armor",
+  "to": "conformance-gates-armor",
+  "input": "15P",
+  "expect": "15P",
+  "model": {
+    "probe.n": "1",
+    "probe.x": "5",
+    "@absent": [
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor: reading, writing, L) and Version 0.17 (Decode; Encode steps 1-6; ruling 14, gates under six-bit armor). L = 13: the gate bit 12 counts, the optional y does not; 3 characters, 5 zero fill bits."
+}

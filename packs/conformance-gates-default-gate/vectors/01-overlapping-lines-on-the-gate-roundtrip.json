@@ -1,0 +1,11 @@
+{
+  "name": "overlapping-lines-on-the-gate-roundtrip",
+  "from": "conformance-gates-default-gate",
+  "to": "conformance-gates-default-gate",
+  "input": "a3",
+  "expect": "a3",
+  "model": {
+    "probe.x": "3",
+    "probe.y": "163"
+  }
+}

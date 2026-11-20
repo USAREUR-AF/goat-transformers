@@ -1,0 +1,16 @@
+{
+  "name": "to-armor-optional-gated-key-alone",
+  "from": "conformance-gates-json",
+  "to": "conformance-gates-armor",
+  "input": "{\"y\":1000}",
+  "expect": "00g`",
+  "model": {
+    "probe.y": "1000",
+    "@absent": [
+      "probe.n",
+      "probe.x"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor: reading, writing, L) and Version 0.17 (Decode; Encode steps 1-6; ruling 14, gates under six-bit armor). The optional y opens the block and is written: L = 24, 4 characters."
+}

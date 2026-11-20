@@ -1,0 +1,15 @@
+{
+  "name": "key-of-the-outer-block-opens-the-nested-block",
+  "from": "conformance-gates-nested",
+  "to": "conformance-gates-nested",
+  "input": "010a0062",
+  "expect": "030a2022",
+  "model": {
+    "probe.c1": "1",
+    "probe.x": "10",
+    "probe.y": "2",
+    "@absent": [
+      "probe.z"
+    ]
+  }
+}

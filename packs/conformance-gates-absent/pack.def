@@ -1,0 +1,32 @@
+# Conformance probe pack for gate blocks with sentinels (spec 0.17, ruling 6).
+# Fixed `bits` layout, least significant bit first. Public. No kinds. One
+# byte per word. Exercises: the "invalid when 1" form, a gate of value 0 that
+# holds on the zero bits of an entity without the key and so writes the
+# sentinel; a block whose field holds its sentinel keeps its gate on
+# re-encode when a raw key outside the blocks maps the gate bit (z, c1), and
+# loses it when none does (w).
+#
+#   byte 0       bit 0: y is not valid when 1; bits 1-7: x, outside any block
+#   byte 1       y, absent 255
+#   byte 2       bit 16: z is valid, also the raw key c1
+#   byte 3       z, absent 255
+#   byte 4       bit 32: w is valid, no raw key
+#   byte 5       w, absent 255
+format     conformance-gates-absent
+version    0.17.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+word_bytes 1
+field   probe.x   0:1:7    uint
+if      0:0:1  0
+  field probe.y   0:8:8    uint  absent 255
+end
+field   probe.c1  0:16:1   uint
+if      0:16:1 1
+  field probe.z   0:24:8   uint  absent 255
+end
+if      0:32:1 1
+  field probe.w   0:40:8   uint  absent 255
+end

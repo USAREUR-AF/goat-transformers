@@ -1,0 +1,14 @@
+{
+  "name": "bits-of-an-item-block-that-does-not-hold-are-dropped",
+  "from": "conformance-gates-groups",
+  "to": "conformance-gates-groups",
+  "input": "0701040a",
+  "expect": "07010400",
+  "model": {
+    "probe.items.#": "1",
+    "probe.items[0].probe.val": "2",
+    "@absent": [
+      "probe.items[0].probe.qty"
+    ]
+  }
+}

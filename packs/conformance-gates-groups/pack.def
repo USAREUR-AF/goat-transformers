@@ -1,0 +1,25 @@
+# Conformance probe pack for gate blocks inside a group's item (spec 0.17,
+# ruling 2). Fixed `bits` layout, least significant bit first. Public. No
+# kinds. One byte per word. Exercises: the gate locator is item-relative and
+# is evaluated per item.
+#
+#   byte 0       w
+#   byte 1       the number of items
+#   then         one 2-byte item per count:
+#     bit 0        qty is valid
+#     bits 1-7     val
+#     byte 1       qty, when bit 0 is 1
+format     conformance-gates-groups
+version    0.17.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+word_bytes 1
+field   probe.w      0:0:8   uint
+group   probe.items  0:16  item 16  count 0:8:8
+  field probe.val    0:1:7   uint
+  if    0:0:1  1
+    field probe.qty  0:8:8   uint
+  end
+end

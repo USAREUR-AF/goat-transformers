@@ -10,7 +10,7 @@
 -module(gt_bits).
 -export([hex_to_bytes/1, bytes_to_hex/1, open/2, bit_size/1, read/3,
          new/2, new_bits/2, write/4, overwrite/4, to_bytes/1,
-         unarmor/1, armor/2]).
+         unarmor/1, armor/2, peek/3, written_any/3, write_within/5]).
 
 -define(WS(C), (C =:= $\s orelse C =:= $\t orelse C =:= $\r orelse C =:= $\n)).
 
@@ -100,12 +100,30 @@ write({Order, Size, Val, Written}, Off, Len, U) ->
     Free = Range band (bnot Written),
     {Order, Size, Val bor (((U band mask(Len)) bsl Shift) band Free), Written bor Range}.
 
+%% Write a field only on the bits another message of the same size has
+%% written, and that this one has not.
+write_within({Order, Size, Val, Written}, Off, Len, U, {_, _, _, Allowed}) ->
+    Shift = shift(Order, Size, Off, Len),
+    Range = mask(Len) bsl Shift,
+    Free = Range band (bnot Written) band Allowed,
+    {Order, Size, Val bor (((U band mask(Len)) bsl Shift) band Free), Written bor Free}.
+
 %% Write a `when` value over whatever is there.
 overwrite({Order, Size, Val, Written}, Off, Len, U) ->
     Shift = shift(Order, Size, Off, Len),
     Range = mask(Len) bsl Shift,
     {Order, Size, (Val band (bnot Range)) bor ((U band mask(Len)) bsl Shift),
      Written bor Range}.
+
+%% The Len bits from Off of a message being written, or `beyond` when the
+%% range runs past its end. Bits nothing wrote read as 0.
+peek({_, Size, _, _}, Off, Len) when Off + Len > Size -> beyond;
+peek({Order, Size, Val, _}, Off, Len) ->
+    (Val bsr shift(Order, Size, Off, Len)) band mask(Len).
+
+%% Has a write covered any of the Len bits from Off?
+written_any({Order, Size, _, Written}, Off, Len) ->
+    (Written band (mask(Len) bsl shift(Order, Size, Off, Len))) =/= 0.
 
 shift(lsb, _Size, Off, _Len) -> Off;
 shift(msb, Size, Off, Len) -> Size - Off - Len.

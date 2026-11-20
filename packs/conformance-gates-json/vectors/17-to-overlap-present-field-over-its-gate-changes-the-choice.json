@@ -1,0 +1,7 @@
+{
+  "name": "to-overlap-present-field-over-its-gate-changes-the-choice",
+  "from": "conformance-gates-json",
+  "to": "conformance-gates-overlap",
+  "input": "{\"x\":6,\"y\":7}",
+  "expect_error": "transform-encode"
+}

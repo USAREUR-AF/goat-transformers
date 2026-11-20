@@ -1,0 +1,7 @@
+{
+  "name": "to-absent-entity-without-keys-writes-the-sentinel",
+  "from": "conformance-gates-json",
+  "to": "conformance-gates-absent",
+  "input": "{}",
+  "expect": "00ff00"
+}

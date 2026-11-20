@@ -1,0 +1,34 @@
+# Conformance probe pack for nested gate blocks and defaults inside blocks
+# (spec 0.17, ruling 5). Fixed `bits` layout, least significant bit first.
+# Public. No kinds. One byte per word. Exercises: a nested block evaluated
+# only when its outer block holds; an outer gate written by a raw key (c1),
+# so a nested block of an outer block that does not hold writes no gate; the
+# key y at three lines, decoded from the earliest that holds; a default in
+# each block and a common one, the innermost winning, each written only when
+# its block is held.
+#
+#   byte 0       bit 0: the outer gate, also c1; bit 1: the nested gate
+#   byte 1       x, in the outer block
+#   byte 2       low nibble: z; high nibble: y, in the nested block (default 4)
+#   byte 3       low nibble: y, in the outer block (default 3); high nibble:
+#                y, outside any block (common default 1)
+format     conformance-gates-nested
+version    0.17.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+word_bytes 1
+field   probe.c1   0:0:1    uint
+default probe.y    1
+if      0:0:1  1
+  default probe.y  3
+  field probe.x    0:8:8    uint
+  if    0:1:1  1
+    default probe.y  4
+    field probe.z  0:16:4   uint
+    field probe.y  0:20:4   uint
+  end
+  field probe.y    0:24:4   uint
+end
+field   probe.y    0:28:4   uint

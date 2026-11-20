@@ -1,0 +1,7 @@
+{
+  "name": "to-overlap-present-field-agrees-with-its-gate",
+  "from": "conformance-gates-json",
+  "to": "conformance-gates-overlap",
+  "input": "{\"x\":9,\"y\":7}",
+  "expect": "0907"
+}

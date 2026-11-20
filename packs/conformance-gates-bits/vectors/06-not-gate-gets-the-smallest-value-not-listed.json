@@ -1,0 +1,14 @@
+{
+  "name": "not-gate-gets-the-smallest-value-not-listed",
+  "from": "conformance-gates-bits",
+  "to": "conformance-gates-bits",
+  "input": "030600000a",
+  "expect": "030400000a",
+  "model": {
+    "probe.w": "3",
+    "probe.c1": "10",
+    "@absent": [
+      "probe.z"
+    ]
+  }
+}

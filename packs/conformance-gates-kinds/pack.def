@@ -1,0 +1,34 @@
+# Conformance probe pack for gate blocks inside kinds (spec 0.17, ruling 1).
+# Fixed `bits` layout, least significant bit first. Public. One byte per
+# word. Exercises: a block is evaluated after its kind is selected, so a kind
+# whose block does not hold is still selected; `requires` sees the entity
+# only; a `when` written on a block's gate bits defeats that block, so its
+# key cannot be encoded.
+#
+#   byte 0       w, common
+#   byte 1       bits 8-11: the kind (1: a, 2: b); bit 12: x (a) or z (b) is
+#                valid
+#   byte 2       x (a); y (b), when bits 8-11 are 3, which kind b never has
+#   byte 3       z (b)
+format     conformance-gates-kinds
+version    0.17.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+word_bytes 1
+field    probe.w   0:0:8    uint
+kind     a
+when     0:8:4   1
+requires probe.x
+if       0:12:1  1
+  field  probe.x   0:16:8   uint
+end
+kind     b
+when     0:8:4   2
+if       0:8:4   3
+  field  probe.y   0:16:8   uint
+end
+if       0:12:1  1
+  field  probe.z   0:24:8   uint
+end

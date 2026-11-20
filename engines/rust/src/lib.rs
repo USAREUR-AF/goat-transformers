@@ -1521,6 +1521,27 @@ pub struct FieldDef {
     pub absent_arg: Option<String>,
     /// the sentinels of `absent`, resolved for the wire when the pack is read
     pub absent: Vec<Sentinel>,
+    /// fixed `bits` layout (engine-spec v0.17): the innermost gate block the
+    /// line is in, an index into the gate table of its scope
+    pub gate: Option<usize>,
+}
+
+/// One gate block `if [!]<locator> <value>[,…]` … `end` of a fixed-layout
+/// `bits` pack (engine-spec v0.17).
+#[derive(Clone, Debug)]
+pub struct GateDef {
+    pub locator: String,
+    /// the values as written
+    pub text: String,
+    /// the values, resolved when the wire is known
+    pub values: Vec<u64>,
+    /// `!`: the block holds when the bits equal none of the values
+    pub negate: bool,
+    /// the block this one is nested in
+    pub parent: Option<usize>,
+    /// the kind the block is in (common and kind blocks share the pack's table)
+    pub kind: Option<usize>,
+    pub line: usize,
 }
 
 /// One wire value of an `absent` option that means "no value" (engine-spec v0.9).
@@ -1751,6 +1772,8 @@ pub struct DefaultDef {
     pub line: usize,
     /// the value read as the key's declared type, set when the pack is loaded
     pub value: Option<Value>,
+    /// the innermost gate block the line is in (engine-spec v0.17)
+    pub gate: Option<usize>,
 }
 
 /// One `when` line: a wire value that marks a kind (engine-spec v0.5).
@@ -1768,6 +1791,8 @@ pub struct WhenDef {
     /// bits and protobuf: the unsigned integer to match and write
     pub num: u64,
     pub line: usize,
+    /// a `const` in a gate block: the innermost one (engine-spec v0.17)
+    pub gate: Option<usize>,
 }
 
 /// The `count` of a `bits` group.
@@ -1792,6 +1817,8 @@ pub struct GroupDef {
     pub consts: Vec<WhenDef>,
     pub defaults: Vec<DefaultDef>,
     pub groups: Vec<GroupDef>,
+    /// the gate blocks of the item (engine-spec v0.17)
+    pub gates: Vec<GateDef>,
 }
 
 impl GroupDef {
@@ -1805,6 +1832,7 @@ impl GroupDef {
             defaults: self.defaults.iter().collect(),
             groups: self.groups.iter().collect(),
             root: "",
+            gates: &self.gates,
         }
     }
     /// This group and every group nested in it.
@@ -1855,13 +1883,23 @@ pub struct Sel<'a> {
     pub groups: Vec<&'a GroupDef>,
     /// xml only: the root element in force
     pub root: &'a str,
+    /// the gate table the lines' `gate` indices refer to (engine-spec v0.17)
+    pub gates: &'a [GateDef],
 }
 
 impl<'a> Sel<'a> {
     /// The value encode uses for a field: the entity's, else the `default`.
+    /// A default in a gate block applies to the fields of that block and of
+    /// the blocks nested in it; the innermost wins (ruling 5 of 0.17).
     fn value_of(&self, ent: &'a Entity, f: &FieldDef) -> Option<&'a Value> {
         ent.fields.get(&f.model_key).or_else(|| {
-            self.defaults.iter().find(|d| d.model_key == f.model_key).and_then(|d| d.value.as_ref())
+            let mut at = f.gate;
+            loop {
+                if let Some(d) = self.defaults.iter().find(|d| d.gate == at && d.model_key == f.model_key) {
+                    return d.value.as_ref();
+                }
+                at = self.gates.get(at?).and_then(|g| g.parent);
+            }
         })
     }
     /// The values written over any field: every `when` that is not `present`, and every `const`.
@@ -1918,6 +1956,9 @@ pub struct Pack {
     pub tlv: tlv::TlvConf,
     /// bits only: how the message travels as text (engine-spec v0.14)
     pub armor: armor::Armor,
+    /// fixed `bits` layout: the gate blocks of common lines and of every kind
+    /// (engine-spec v0.17)
+    pub gates: Vec<GateDef>,
 }
 
 fn bad<T>(ln: usize, m: impl AsRef<str>) -> Result<T, Error> {
@@ -1954,6 +1995,12 @@ impl Pack {
         let mut groups: Vec<GroupDef> = Vec::new();
         // `group` blocks not yet closed by `end`, innermost last
         let mut open: Vec<GroupDef> = Vec::new();
+        // the gate blocks of common lines and kinds (engine-spec v0.17)
+        let mut gates: Vec<GateDef> = Vec::new();
+        // gate blocks not yet closed by `end`, innermost last: indices into
+        // the gate table of the innermost open group, else into `gates` (a
+        // gate block holds no `group`, so every open block is in that scope)
+        let mut gate_stack: Vec<usize> = Vec::new();
         let mut maps: Vec<(String, Vec<(String, String)>)> = Vec::new();
         // table name -> its place in `maps`
         let mut map_index: HashMap<String, usize> = HashMap::new();
@@ -1978,10 +2025,39 @@ impl Pack {
             }
             let ln = lineno + 1;
             match toks[0].as_str() {
+                // engine-spec v0.17: only these lines inside a gate block
+                d if !gate_stack.is_empty() && !matches!(d, "field" | "const" | "default" | "if" | "end") => {
+                    return bad(ln, format!("`{}` is not allowed inside a gate block", d));
+                }
                 // ruling 18 of 0.7: only these five directives inside a group
-                // (ruling 24 of 0.8: the header directives among the rest)
-                d if !open.is_empty() && !matches!(d, "field" | "const" | "default" | "group" | "end") => {
+                // (ruling 24 of 0.8: the header directives among the rest),
+                // and gate blocks (engine-spec v0.17)
+                d if !open.is_empty() && !matches!(d, "field" | "const" | "default" | "group" | "if" | "end") => {
                     return bad(ln, format!("`{}` is not allowed inside a group", d));
+                }
+                "if" => {
+                    if toks.len() != 3 {
+                        return bad(ln, "a gate block needs `if [!]<word>:<pos>:<len> <value>[,<value>…]`");
+                    }
+                    let (negate, locator) = match toks[1].strip_prefix('!') {
+                        Some(l) => (true, l.to_string()),
+                        None => (false, toks[1].clone()),
+                    };
+                    let g = GateDef {
+                        locator,
+                        text: toks[2].clone(),
+                        values: Vec::new(),
+                        negate,
+                        parent: gate_stack.last().copied(),
+                        kind: if open.is_empty() { kinds.len().checked_sub(1) } else { None },
+                        line: ln,
+                    };
+                    let table = match open.last_mut() {
+                        Some(group) => &mut group.gates,
+                        None => &mut gates,
+                    };
+                    table.push(g);
+                    gate_stack.push(table.len() - 1);
                 }
                 "format" => format = Some(req_arg(&toks, 1, ln)?),
                 "armor" => armor_lines.record(&toks, ln, !kinds.is_empty()),
@@ -2043,6 +2119,7 @@ impl Pack {
                         consts: Vec::new(),
                         defaults: Vec::new(),
                         groups: Vec::new(),
+                        gates: Vec::new(),
                     };
                     let mut i = 3;
                     while i < toks.len() {
@@ -2074,6 +2151,10 @@ impl Pack {
                 "end" => {
                     if toks.len() != 1 {
                         return bad(ln, "`end` takes no argument");
+                    }
+                    // the innermost open block: a gate block, else a group
+                    if gate_stack.pop().is_some() {
+                        continue;
                     }
                     let g = match open.pop() {
                         Some(g) => g,
@@ -2111,6 +2192,7 @@ impl Pack {
                         forced: false,
                         num: 0,
                         line: ln,
+                        gate: gate_stack.last().copied(),
                     };
                     match (open.last_mut(), kinds.last_mut()) {
                         (Some(g), _) => g.consts.push(c),
@@ -2122,7 +2204,13 @@ impl Pack {
                     if toks.len() != 3 {
                         return bad(ln, "default needs <model-key> <value>");
                     }
-                    let d = DefaultDef { model_key: toks[1].clone(), text: toks[2].clone(), line: ln, value: None };
+                    let d = DefaultDef {
+                        model_key: toks[1].clone(),
+                        text: toks[2].clone(),
+                        line: ln,
+                        value: None,
+                        gate: gate_stack.last().copied(),
+                    };
                     match (open.last_mut(), kinds.last_mut()) {
                         (Some(g), _) => g.defaults.push(d),
                         (None, Some(k)) => k.defaults.push(d),
@@ -2195,6 +2283,7 @@ impl Pack {
                         forced: false,
                         num: 0,
                         line: ln,
+                        gate: None,
                     };
                     match kinds.last_mut() {
                         Some(k) => k.whens.push(w),
@@ -2236,6 +2325,7 @@ impl Pack {
                         key_type: None,
                         absent_arg: None,
                         absent: Vec::new(),
+                        gate: gate_stack.last().copied(),
                     };
                     // options after the transform, in any order (engine-spec v0.6)
                     field_options(&mut f, &toks, ln, true)?;
@@ -2259,11 +2349,18 @@ impl Pack {
                     layout_line = Some(ln);
                 }
                 // engine-spec v0.8: a sequential line in a fixed-layout pack
-                "pad" | "align" | "presence" | "if" | "opt" | "chain" | "fx" | "also" => {
+                "pad" | "align" | "presence" | "opt" | "chain" | "fx" | "also" => {
                     return bad(ln, format!("`{}` is a line of a `layout sequential` pack", toks[0]));
                 }
                 other => return err(format!("unknown-directive: line {}: `{}` is not a directive of a pack", ln, other)),
             }
+        }
+        if let Some(i) = gate_stack.first() {
+            let line = match open.last() {
+                Some(g) => g.gates[*i].line,
+                None => gates[*i].line,
+            };
+            return bad(line, "the gate block has no `end`");
         }
         if let Some(g) = open.first() {
             return bad(g.line, format!("group `{}` has no `end`", g.list));
@@ -2283,6 +2380,11 @@ impl Pack {
                 Wire::Tlv => bad(ln, format!("the transform is not one of the tlv wire: {}", e.msg)),
                 _ => Err(e),
             };
+        }
+        // engine-spec v0.17: gate blocks, on the fixed `bits` layout only
+        // (those of group items are resolved with the rest of each body below)
+        for g in gates.iter_mut() {
+            resolve_gate(wire, g)?;
         }
         // xml: a pack-level root, unless every kind has its own (engine-spec v0.6)
         if wire == Wire::Xml && root.is_empty() && (kinds.is_empty() || kinds.iter().any(|k| k.root.is_none())) {
@@ -2358,6 +2460,9 @@ impl Pack {
                     return;
                 }
                 first = (|| {
+                    for gate in g.gates.iter_mut() {
+                        resolve_gate(wire, gate)?;
+                    }
                     check_group_for_wire(wire, g)?;
                     if wire == Wire::Bits {
                         check_item_bounds(word_bytes, g)?;
@@ -2383,31 +2488,41 @@ impl Pack {
                     .chain(ws.iter().chain(cs.iter()).map(|w| (w.line, w.locator.as_str())))
                     .collect()
             }
-            let common = lines(&fields, &whens, &consts);
+            let mut common = lines(&fields, &whens, &consts);
+            // a gate locator lies in its scope as a field does (ruling 2 of 0.17)
+            let gate_lines = |kind: Option<usize>| -> Vec<(usize, &str)> {
+                gates.iter().filter(|g| g.kind == kind).map(|g| (g.line, g.locator.as_str())).collect()
+            };
+            common.extend(gate_lines(None));
             let common_fields = lines(&fields, &[], &[]);
             if kinds.is_empty() {
-                check_scope(wire, word_bytes, &common, &common_fields, &groups.iter().collect::<Vec<_>>())?;
+                let gs: Vec<&GroupDef> = groups.iter().collect();
+                check_scope(wire, word_bytes, &common, &common_fields, &gs)?;
+                check_gates_off_items(word_bytes, &gate_lines(None), &gs)?;
             }
-            for k in &kinds {
+            for (ki, k) in kinds.iter().enumerate() {
                 let mut ls = common.clone();
                 ls.extend(lines(&k.fields, &k.whens, &k.consts));
+                ls.extend(gate_lines(Some(ki)));
                 let mut fs = common_fields.clone();
                 fs.extend(lines(&k.fields, &[], &[]));
                 let gs: Vec<&GroupDef> = groups.iter().chain(k.groups.iter()).collect();
                 check_scope(wire, word_bytes, &ls, &fs, &gs)?;
+                let mut gl = gate_lines(None);
+                gl.extend(gate_lines(Some(ki)));
+                check_gates_off_items(word_bytes, &gl, &gs)?;
             }
             let mut every: Vec<&GroupDef> = Vec::new();
             for g in groups.iter().chain(kinds.iter().flat_map(|k| k.groups.iter())) {
                 g.walk(&mut every);
             }
             for g in every {
-                check_scope(
-                    wire,
-                    word_bytes,
-                    &lines(&g.fields, &[], &g.consts),
-                    &lines(&g.fields, &[], &[]),
-                    &g.groups.iter().collect::<Vec<_>>(),
-                )?;
+                let mut ls = lines(&g.fields, &[], &g.consts);
+                let gl: Vec<(usize, &str)> = g.gates.iter().map(|x| (x.line, x.locator.as_str())).collect();
+                ls.extend(gl.iter().copied());
+                let gs: Vec<&GroupDef> = g.groups.iter().collect();
+                check_scope(wire, word_bytes, &ls, &lines(&g.fields, &[], &[]), &gs)?;
+                check_gates_off_items(word_bytes, &gl, &gs)?;
             }
         }
         if wire == Wire::Text {
@@ -2449,6 +2564,7 @@ impl Pack {
             text: text_conf,
             tlv: tlv_conf,
             armor,
+            gates,
         })
     }
 
@@ -2471,7 +2587,7 @@ impl Pack {
             }
         }
         defaults.extend(self.defaults.iter());
-        Sel { kind, fields, whens, consts, defaults, groups, root }
+        Sel { kind, fields, whens, consts, defaults, groups, root, gates: &self.gates }
     }
 
     /// Decode-side kind selection: `holds` says whether a `when` matches the
@@ -3018,7 +3134,8 @@ fn check_field_for_wire(wire: Wire, f: &FieldDef, in_group: bool) -> Result<(), 
 fn check_item_bounds(word_bytes: usize, g: &GroupDef) -> Result<(), Error> {
     let wb = word_bytes as u64 * 8;
     let room = g.item_bits.unwrap_or(0);
-    for (line, loc) in g.fields.iter().map(|f| (f.line, &f.locator)).chain(g.consts.iter().map(|c| (c.line, &c.locator))) {
+    let gates = g.gates.iter().map(|x| (x.line, &x.locator));
+    for (line, loc) in g.fields.iter().map(|f| (f.line, &f.locator)).chain(g.consts.iter().map(|c| (c.line, &c.locator))).chain(gates) {
         if let Ok((w, p, l)) = bits::parse_locator(loc) {
             if w as u64 * wb + p as u64 + l as u64 > room {
                 return bad(line, format!("`{}` reaches beyond the {} bits of an item of `{}`", loc, room, g.list));
@@ -3095,6 +3212,33 @@ fn check_group_for_wire(wire: Wire, g: &GroupDef) -> Result<(), Error> {
     };
     if !ok {
         return bad(g.line, format!("`{}` is not a group locator of this wire", g.locator));
+    }
+    Ok(())
+}
+
+/// Ruling 9 of 0.17: a gate of a scope any of whose bits lies within the
+/// items of a fixed-count group of that scope is `bad-directive`.
+fn check_gates_off_items(word_bytes: usize, gates: &[(usize, &str)], groups: &[&GroupDef]) -> Result<(), Error> {
+    let wb = word_bytes as u64 * 8;
+    for g in groups {
+        let n = match &g.count {
+            Some(Count::Fixed(n)) => *n,
+            _ => continue,
+        };
+        let (w, p) = match bits::parse_group_locator(&g.locator) {
+            Ok(x) => x,
+            Err(_) => continue,
+        };
+        let start = w as u64 * wb + p as u64;
+        let end = n.saturating_mul(g.item_bits.unwrap_or(0)).saturating_add(start);
+        for (line, loc) in gates {
+            if let Ok((gw, gp, gl)) = bits::parse_locator(loc) {
+                let a = gw as u64 * wb + gp as u64;
+                if a < end && a + gl as u64 > start {
+                    return bad(*line, format!("the gate `{}` lies within the items of group `{}`", loc, g.list));
+                }
+            }
+        }
     }
     Ok(())
 }
@@ -3189,6 +3333,36 @@ fn check_scope(
             }
         }
     }
+    Ok(())
+}
+
+/// Validate one gate block's `if` line and read its values (engine-spec
+/// v0.17): a fixed-layout locator of 1 to 64 bits, and a non-empty list of
+/// distinct unsigned decimal integers, each below `2^len`.
+fn resolve_gate(wire: Wire, g: &mut GateDef) -> Result<(), Error> {
+    if wire != Wire::Bits {
+        return bad(g.line, "a gate block is valid only on a bits wire");
+    }
+    let (_, _, len) = bits::parse_locator(&g.locator)
+        .map_err(|e| Error { msg: format!("bad-directive: line {}: {}", g.line, e.msg) })?;
+    if !(1..=64).contains(&len) {
+        return bad(g.line, format!("bit length {} is not allowed on a gate", len));
+    }
+    let mut values: Vec<u64> = Vec::new();
+    for v in g.text.split(',') {
+        if v.is_empty() || !v.bytes().all(|b| b.is_ascii_digit()) {
+            return bad(g.line, format!("gate value `{}` is not an unsigned decimal integer", v));
+        }
+        let n = v.parse::<u64>().or_else(|_| bad(g.line, format!("gate value `{}` is too large", v)))?;
+        if len < 64 && n >> len != 0 {
+            return bad(g.line, format!("gate value {} does not fit {} bits", n, len));
+        }
+        if values.contains(&n) {
+            return bad(g.line, format!("gate value {} is listed twice", n));
+        }
+        values.push(n);
+    }
+    g.values = values;
     Ok(())
 }
 
@@ -5979,6 +6153,173 @@ pub mod bits {
         }
     }
 
+    /// Does a gate block hold on `raw`, its locator from bit `base`? A gate
+    /// any of whose bits lies beyond `raw` does not, in either form
+    /// (engine-spec v0.17).
+    fn gate_holds(p: &Pack, g: &GateDef, raw: &[u8], total: u64, base: u64) -> bool {
+        match span(p, &g.locator) {
+            // `total`: the bits of the input, which six-bit armor does not
+            // round to a byte (engine-spec v0.14)
+            Ok((off, len)) if base + off + len as u64 > total => false,
+            Ok((off, len)) => match get_bits(raw, base + off, len, p.msb) {
+                Some(v) => g.values.contains(&v) != g.negate,
+                None => false,
+            },
+            Err(_) => false,
+        }
+    }
+
+    /// Which gate blocks of a scope hold on `raw`: a nested block only when
+    /// the block enclosing it holds. A parent comes before its children in
+    /// the table.
+    fn held_on(p: &Pack, gates: &[GateDef], raw: &[u8], total: u64, base: u64) -> Vec<bool> {
+        let mut held = vec![false; gates.len()];
+        for (i, g) in gates.iter().enumerate() {
+            held[i] = g.parent.map_or(true, |q| held[q]) && gate_holds(p, g, raw, total, base);
+        }
+        held
+    }
+
+    /// The lines of a scope outside any gate block and those of the blocks
+    /// that hold.
+    fn only_held<'a>(sel: &Sel<'a>, held: &[bool]) -> Sel<'a> {
+        let ok = |g: Option<usize>| g.map_or(true, |i| held[i]);
+        Sel {
+            kind: sel.kind,
+            fields: sel.fields.iter().copied().filter(|f| ok(f.gate)).collect(),
+            whens: sel.whens.clone(),
+            consts: sel.consts.iter().copied().filter(|c| ok(c.gate)).collect(),
+            defaults: sel.defaults.iter().copied().filter(|d| ok(d.gate)).collect(),
+            groups: sel.groups.clone(),
+            root: sel.root,
+            gates: sel.gates,
+        }
+    }
+
+    /// The gate blocks encode chooses for one scope (engine-spec v0.17, steps
+    /// 1 to 4): which hold, and the gate value step 3 gave each block.
+    struct GatePlan {
+        held: Vec<bool>,
+        values: Vec<Option<u64>>,
+    }
+
+    fn plan_gates(p: &Pack, sel: &Sel, ent: &Entity) -> Result<GatePlan, Error> {
+        let gates = sel.gates;
+        if gates.is_empty() {
+            return Ok(GatePlan { held: Vec::new(), values: Vec::new() });
+        }
+        // step 1: a block is open when one of its fields, or a nested open
+        // block, maps a key the entity holds
+        let mut open = vec![false; gates.len()];
+        for f in &sel.fields {
+            if f.gate.is_some() && ent.fields.contains_key(&f.model_key) {
+                let mut at = f.gate;
+                while let Some(i) = at {
+                    open[i] = true;
+                    at = gates[i].parent;
+                }
+            }
+        }
+        // the bits of the scope, from its first bit; bits not written read as 0
+        let counts = sel.groups.iter().filter_map(|g| match &g.count {
+            Some(Count::Locator(l)) => Some((l, g)),
+            _ => None,
+        });
+        let mut end = 0u64;
+        let locators = sel
+            .fields
+            .iter()
+            .map(|f| &f.locator)
+            .chain(sel.fixed().map(|w| &w.locator))
+            .chain(gates.iter().map(|g| &g.locator))
+            .chain(counts.clone().map(|(l, _)| l));
+        for loc in locators {
+            let (off, len) = span(p, loc)?;
+            end = end.max(off + len as u64);
+        }
+        let mut work = vec![0u8; ((end + 7) / 8) as usize];
+        let mut written = vec![false; end as usize];
+        let mark = |written: &mut Vec<bool>, off: u64, len: u32| {
+            for b in &mut written[off as usize..(off + len as u64) as usize] {
+                *b = true;
+            }
+        };
+        let low = |n: u64, len: u32| if len >= 64 { n } else { n & ((1u64 << len) - 1) };
+        // step 2: the 0.5 encode of the lines outside any block. A present
+        // key, a `const`, a `when` and a count make their bits written; the
+        // bits of a default or a sentinel are kept for step 4 (where no gate
+        // value replaces them) but are not written. Sentinels first, then
+        // later lines first: the earlier line's value stays.
+        let outside = || sel.fields.iter().rev().filter(|f| f.gate.is_none());
+        for f in outside().filter(|f| sel.value_of(ent, f).is_none()) {
+            let (off, len) = span(p, &f.locator)?;
+            write_sentinel(p, f, off, len, &mut work);
+        }
+        for f in outside() {
+            if let Some(v) = sel.value_of(ent, f) {
+                let (off, len) = span(p, &f.locator)?;
+                // a value that does not encode fails in step 5
+                if let Ok(w) = p.to_wire(f, v) {
+                    let _ = write_field(p, f, &w, off, len, &mut work);
+                }
+                if ent.fields.contains_key(&f.model_key) {
+                    mark(&mut written, off, len);
+                }
+            }
+        }
+        for w in sel.consts.iter().filter(|c| c.gate.is_none()).chain(sel.whens.iter().filter(|w| !w.present)) {
+            let (off, len) = span(p, &w.locator)?;
+            set_bits(&mut work, off, len, w.num, p.msb);
+            mark(&mut written, off, len);
+        }
+        for (l, g) in counts {
+            let (off, len) = span(p, l)?;
+            let n = ent.lists.get(&g.list).map_or(0, |items| items.len() as u64);
+            set_bits(&mut work, off, len, low(n, len), p.msb);
+            mark(&mut written, off, len);
+        }
+        // step 3: in line order, outer blocks first, each open block none of
+        // whose gate bits is written gets its gate value
+        let mut values: Vec<Option<u64>> = vec![None; gates.len()];
+        for (i, g) in gates.iter().enumerate() {
+            if !open[i] {
+                continue;
+            }
+            let (off, len) = span(p, &g.locator)?;
+            if written[off as usize..(off + len as u64) as usize].iter().any(|b| *b) {
+                continue;
+            }
+            let fits = |v: u64| len >= 64 || v >> len == 0;
+            let v = if g.negate {
+                // the smallest value not listed; none when the list names every value
+                (0..=g.values.len() as u64).find(|v| fits(*v) && !g.values.contains(v))
+            } else {
+                g.values.first().copied()
+            };
+            if let Some(v) = v {
+                set_bits(&mut work, off, len, v, p.msb);
+                mark(&mut written, off, len);
+                values[i] = Some(v);
+            }
+        }
+        // step 4: each block evaluated on the bits of step 3 together with
+        // those of an outside default or sentinel no gate value replaced
+        let held = held_on(p, gates, &work, work.len() as u64 * 8, 0);
+        Ok(GatePlan { held, values })
+    }
+
+    /// The furthest bit of a scope's held gate locators (the length paragraph of 0.17).
+    fn held_gates_end(p: &Pack, sel: &Sel, held: &[bool]) -> Result<u64, Error> {
+        let mut end = 0u64;
+        for (g, h) in sel.gates.iter().zip(held) {
+            if *h {
+                let (off, len) = span(p, &g.locator)?;
+                end = end.max(off + len as u64);
+            }
+        }
+        Ok(end)
+    }
+
     fn short(p: &Pack, what: impl AsRef<str>) -> Error {
         Error { msg: format!("malformed-wire: format `{}`: {}", p.format, what.as_ref()) }
     }
@@ -6048,7 +6389,9 @@ pub mod bits {
                     return Err(short(p, format!("the input ends inside an item of list `{}`", g.list)));
                 }
                 let mut di = Decoded::new();
-                let nested_end = decode_scope(p, &body, raw, total, at, &mut di, reach)?;
+                // the gate blocks of the item, evaluated per item (ruling 2 of 0.17)
+                let item = only_held(&body, &held_on(p, &g.gates, raw, total, at));
+                let nested_end = decode_scope(p, &item, raw, total, at, &mut di, reach)?;
                 at = (at + item_bits).max(nested_end);
                 items.push(di);
             }
@@ -6078,6 +6421,8 @@ pub mod bits {
             Ok((start, len)) => start + len as u64 <= total && get_bits(&raw, start, len, p.msb) == Some(w.num),
             Err(_) => false,
         })?;
+        // the lines of the gate blocks that hold (engine-spec v0.17)
+        let sel = only_held(&sel, &held_on(p, sel.gates, &raw, total, 0));
         if sixbit {
             // every bit of the lines in force, not whole words (engine-spec v0.14)
             let need = message_end(p, &sel, false)?;
@@ -6137,7 +6482,22 @@ pub mod bits {
 
     /// Write the lines of one scope: the message (`base` 0), or one item,
     /// whose first bit is `base`.
-    fn write_scope(p: &Pack, sel: &Sel, ent: &Entity, base: u64, msg: &mut [u8]) -> Result<(), Error> {
+    /// A choice of gate blocks step 6 checks on the final output: the
+    /// scope's gate table, its first bit, and the blocks held on encode.
+    type GateCheck<'p> = (&'p [GateDef], u64, Vec<bool>);
+
+    fn write_scope<'p>(
+        p: &Pack,
+        all: &Sel<'p>,
+        ent: &Entity,
+        base: u64,
+        msg: &mut [u8],
+        checks: &mut Vec<GateCheck<'p>>,
+    ) -> Result<(), Error> {
+        // the gate blocks that hold (engine-spec v0.17): the lines written are
+        // those outside any block and those of the held blocks
+        let plan = plan_gates(p, all, ent)?;
+        let sel = &only_held(all, &plan.held);
         // an absent key whose field has `absent` writes its first sentinel,
         // first: a line with a value wins over it whatever their order (ruling
         // 16 of 0.9); of two sentinels the earlier line's stays
@@ -6155,6 +6515,31 @@ pub mod bits {
             let (off, len) = span(p, &f.locator)?;
             let start = base + off;
             write_field(p, f, &v, start, len, msg)?;
+        }
+        // the gate value of each held block: over the bits of a default or a
+        // sentinel, under those of a line with a present key (step 5 of 0.17)
+        if plan.values.iter().any(|v| v.is_some()) {
+            let mut present: Vec<(u64, u64)> = Vec::new();
+            for f in sel.fields.iter().filter(|f| ent.fields.contains_key(&f.model_key)) {
+                let (off, len) = span(p, &f.locator)?;
+                present.push((off, off + len as u64));
+            }
+            for (i, g) in all.gates.iter().enumerate() {
+                let v = match plan.values[i] {
+                    Some(v) if plan.held[i] => v,
+                    _ => continue,
+                };
+                let (off, len) = span(p, &g.locator)?;
+                for k in 0..len {
+                    let at = off + k as u64;
+                    if present.iter().any(|(a, b)| *a <= at && at < *b) {
+                        continue;
+                    }
+                    // bit k of the field: the k-th from the low end (lsb) or the high end (msb)
+                    let bit = if p.msb { (v >> (len - 1 - k)) & 1 } else { (v >> k) & 1 };
+                    set_bits(msg, base + at, 1, bit, p.msb);
+                }
+            }
         }
         // the items of each list the entity has, back to back
         let mut counts: Vec<(&String, u64, &GroupDef)> = Vec::new();
@@ -6178,7 +6563,7 @@ pub mod bits {
             let body = g.body();
             let mut at = base + off;
             for item in items {
-                write_scope(p, &body, item, at, msg)?;
+                write_scope(p, &body, item, at, msg, checks)?;
                 at += item_len(p, g, item)?;
             }
             match &g.count {
@@ -6206,6 +6591,41 @@ pub mod bits {
             }
             set_bits(msg, base + coff, len, n, p.msb);
         }
+        // step 6 of 0.17: every key the entity holds is written by a line in
+        // force, and the output decodes to the same choice of blocks
+        if !all.gates.is_empty() {
+            let fail = |m: String| Error { msg: format!("transform-encode: format `{}`: {}", p.format, m) };
+            for f in all.fields.iter().filter(|f| f.gate.is_some() && ent.fields.contains_key(&f.model_key)) {
+                if !sel.fields.iter().any(|h| h.model_key == f.model_key) {
+                    return Err(fail(format!(
+                        "`{}` is mapped only by lines of gate blocks that do not hold",
+                        f.model_key
+                    )));
+                }
+            }
+            // the choice is checked once the whole output is written (ruling 9 of 0.17)
+            checks.push((all.gates, base, plan.held));
+        }
+        Ok(())
+    }
+
+    /// Step 6 of 0.17 on the final output: every scope and item decodes to
+    /// the blocks encode chose.
+    fn check_gates(p: &Pack, msg: &[u8], total: u64, checks: &[GateCheck]) -> Result<(), Error> {
+        for (gates, base, held) in checks {
+            let out = held_on(p, gates, msg, total, *base);
+            if let Some(i) = (0..out.len()).find(|i| out[*i] != held[*i]) {
+                let g = &gates[i];
+                return err(format!(
+                    "transform-encode: format `{}`: the gate block of line {} (`{}`) {} on the output and {} on encode",
+                    p.format,
+                    g.line,
+                    g.locator,
+                    if out[i] { "holds" } else { "does not hold" },
+                    if held[i] { "held" } else { "did not hold" }
+                ));
+            }
+        }
         Ok(())
     }
 
@@ -6220,11 +6640,26 @@ pub mod bits {
         // whole words up to the furthest bit: the lines in force, extended by the items
         let word_bits = p.word_bytes as u64 * 8;
         let items = ((group_reach(p, &sel, ent, 0)? + word_bits - 1) / word_bits) as usize * p.word_bytes;
-        let mut msg: Vec<u8> = vec![0u8; message_bytes(p, &sel, true)?.max(items)];
-        write_scope(p, &sel, ent, 0, &mut msg)?;
+        // the lines in force and the gate locators of the held blocks (engine-spec v0.17)
+        let held = plan_gates(p, &sel, ent)?.held;
+        let gates_end = held_gates_end(p, &sel, &held)?;
+        let gates = ((gates_end + word_bits - 1) / word_bits) as usize * p.word_bytes;
+        let lines = message_bytes(p, &only_held(&sel, &held), true)?;
+        let mut msg: Vec<u8> = vec![0u8; lines.max(items).max(gates)];
+        let mut checks = Vec::new();
+        write_scope(p, &sel, ent, 0, &mut msg, &mut checks)?;
         if sixbit {
-            return Ok(armor::write(&msg, armor::fixed_len(p, &sel, ent)?));
+            // L: the lines outside any block, the held blocks' lines and their
+            // gate locators (engine-spec v0.14, v0.17); the output decodes
+            // from L bits rounded up to a character
+            let len = armor::fixed_len(p, &only_held(&sel, &held), ent)?.max(gates_end);
+            let bits = (len + 5) / 6 * 6;
+            let mut out = msg.clone();
+            out.resize(((bits + 7) / 8) as usize, 0);
+            check_gates(p, &out, bits, &checks)?;
+            return Ok(armor::write(&msg, len));
         }
+        check_gates(p, &msg, msg.len() as u64 * 8, &checks)?;
         Ok(to_hex(&msg))
     }
 
@@ -6965,6 +7400,7 @@ fn pack_line_checks(text: &str) -> Result<(), Error> {
                     key_type: None,
                     absent_arg: None,
                     absent: Vec::new(),
+                    gate: None,
                 };
                 field_options(&mut f, &toks, ln, true)?;
                 if let Some(w) = wire {

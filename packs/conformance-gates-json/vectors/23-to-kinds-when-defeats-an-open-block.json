@@ -1,0 +1,7 @@
+{
+  "name": "to-kinds-when-defeats-an-open-block",
+  "from": "conformance-gates-json",
+  "to": "conformance-gates-kinds",
+  "input": "{\"w\":2,\"y\":5}",
+  "expect_error": "transform-encode"
+}

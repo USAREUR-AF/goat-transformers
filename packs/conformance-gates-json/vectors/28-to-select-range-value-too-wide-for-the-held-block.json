@@ -1,0 +1,7 @@
+{
+  "name": "to-select-range-value-too-wide-for-the-held-block",
+  "from": "conformance-gates-json",
+  "to": "conformance-gates-select-range",
+  "input": "{\"alt\":30000}",
+  "expect_error": "transform-encode"
+}

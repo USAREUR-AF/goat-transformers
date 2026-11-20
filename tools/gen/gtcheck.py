@@ -3,7 +3,7 @@
 
 Every generator in this directory reads its own output back through this
 module before it reports success. The module is written from
-spec/engine-spec.md (Versions 0.1 to 0.10, 0.13 and 0.14) and imports no engine, so a generator
+spec/engine-spec.md (Versions 0.1 to 0.10, 0.13, 0.14 and the gate blocks of 0.17) and imports no engine, so a generator
 stays independent of the engines it writes packs for.
 
 What it checks is what an engine checks when it loads a file: the line grammar,
@@ -81,7 +81,9 @@ HEADER = ("format", "version", "distribution", "source", "uses", "wire", "layout
           "bit_order", "word_bytes", "armor") + TEXT_HEADER
 TABLES = ("map", "typemap")
 BLOCKS = ("group", "if", "opt", "chain", "length")
-SEQUENTIAL_ONLY = ("pad", "align", "presence", "if", "opt", "chain", "fx", "length", "also")
+SEQUENTIAL_ONLY = ("pad", "align", "presence", "opt", "chain", "fx", "length", "also")
+# spec 0.17: the lines a gate block of a fixed layout may hold
+GATE_BODY = ("field", "const", "default", "if")
 DIRECTIVES = HEADER + TABLES + BLOCKS + SEQUENTIAL_ONLY + (
     "root", "kind", "when", "requires", "field", "const", "default", "end", "tag", "key")
 
@@ -98,6 +100,7 @@ _TEXT_PAIR = re.compile(r"([0-9]+)\+([0-9]+)\Z")
 _TLV_TAG = re.compile(r"(?:0|[1-9][0-9]*)\Z")
 _TLV_LOCATOR = re.compile(r"((?:0|[1-9][0-9]*)(?:\.(?:0|[1-9][0-9]*))*)(?::([0-9]+))?\Z")
 _TLV_KEY = re.compile(r"(?:[0-9a-f]{2}){1,64}\Z")
+_GATE = re.compile(r"(!?)([0-9]+:[0-9]+:[0-9]+)\Z")
 
 
 def printable(text, low=0x20):
@@ -499,7 +502,9 @@ class Node:
       group    key (the list), loc, mode (`count`, `while`, `more`, `fx` or
                None), count (an int, or a locator on a fixed layout), item
                (item bits), body, kinds (item kinds of a sequential group)
-      if       conds ([(negated, presence name, bit number)]), body
+      if       conds ([(negated, presence name, bit number)]), body; on a
+               fixed layout (a gate, 0.17) instead gate ((negated, values)),
+               start, bits, body
       opt, chain          body
       length   bits, unit (`bytes` or `bits`), plus, whole, body (None when `whole`)
       presence name, bits (a count, or the text `fx`)
@@ -516,14 +521,14 @@ class Node:
     None when the locator has none."""
     __slots__ = ("d", "line", "args", "body", "kinds", "key", "loc", "tr", "targs", "via",
                  "opts", "also", "value", "mode", "count", "item", "conds", "name", "bits",
-                 "unit", "plus", "whole", "start", "path", "absent", "fields", "col", "size")
+                 "unit", "plus", "whole", "start", "path", "absent", "fields", "col", "size", "gate")
 
     def __init__(self, d, line, args):
         self.d, self.line, self.args = d, line, args
         self.body = self.kinds = self.key = self.loc = self.tr = self.targs = self.via = None
         self.opts = self.also = self.value = self.mode = self.count = self.item = None
         self.conds = self.name = self.bits = self.unit = self.plus = self.whole = None
-        self.start = self.path = self.absent = self.fields = self.col = self.size = None
+        self.start = self.path = self.absent = self.fields = self.col = self.size = self.gate = None
 
     def __repr__(self):
         return "<%s line %d: %s>" % (self.d, self.line, " ".join(self.args))
@@ -885,8 +890,10 @@ class _Loader:
             d = node.d
             if d in SEQUENTIAL_ONLY and not sequential:
                 self.bad(node, "`%s` in a pack that is not `layout sequential`" % d)
-            if group is not None and not sequential and d not in ("field", "const", "default", "group"):
+            if group is not None and not sequential and d not in ("field", "const", "default", "group", "if"):
                 self.bad(node, "`%s` inside a group" % d)
+            if not sequential and not top and d not in GATE_BODY:
+                self.bad(node, "`%s` inside a gate block" % d)
             if d == "when":
                 if sequential and (not top or (in_kind and lines_seen)):
                     self.bad(node, "`when` after another line of its kind, or inside a block")
@@ -923,7 +930,10 @@ class _Loader:
                             self.bad(line, "`when` in a group body with no `kind`")
                 self._scope(node.body, node.kinds, group=node, visible=inner, top=True)
             elif d == "if":
-                self._if(node, visible)
+                if sequential:
+                    self._if(node, visible)
+                else:
+                    self._gate(node, group)
                 self._block(node.body, group, visible + [{}], set(), in_kind, top=False)
             elif d == "opt":
                 if node.args:
@@ -1278,6 +1288,27 @@ class _Loader:
                 self.bad(node, "presence `%s` has no bit %d" % (name, bit))
             node.conds.append((m.group(1) == "!", name, bit))
 
+    def _gate(self, node, group):
+        """A gate block of a fixed layout (spec 0.17): `if [!]<word>:<pos>:<len>
+        <value>[,<value>...]`, each value an unsigned decimal below 2^len,
+        none listed twice."""
+        if self.pack.wire != "bits":
+            self.bad(node, "`if` on the %s wire" % self.pack.wire)
+        a = node.args
+        m = _GATE.match(a[0]) if len(a) == 2 else None
+        if not m:
+            self.bad(node, "a gate is `if [!]<word>:<pos>:<len> <value>[,<value>...]`")
+        self._locator(node, m.group(2), group, "gate")
+        if not 1 <= node.bits <= 64:
+            self.bad(node, "a gate is 1 to 64 bits")
+        values = a[1].split(",")
+        for v in values:
+            if not _UINT.match(v) or int(v) >> node.bits:
+                self.bad(node, "the gate value `%s` is not an unsigned integer that fits %d bits" % (v, node.bits))
+        if len(set(int(v) for v in values)) != len(values):
+            self.bad(node, "a gate lists a value twice")
+        node.gate = (m.group(1) == "!", tuple(int(v) for v in values))
+
     def _length(self, node):
         a = node.args
         if not a or not _UINT.match(a[0]) or not 1 <= int(a[0]) <= 64:
@@ -1447,7 +1478,9 @@ class _Loader:
         """The bit rules of a fixed-layout scope (0.7 "Group locators", rulings
         2 to 4, 15 and 16). `item` is the item size inside a group body."""
         groups = [n for n in lines if n.d == "group"]
-        placed = [n for n in lines if n.d in ("field", "when", "const")]
+        # a gate (0.17 ruling 2) and the lines of its block are placed as a field is
+        placed = [n for n in walk([x for x in lines if x.d != "group"])
+                  if n.d in ("field", "when", "const", "if")]
         if item is not None:
             for n in placed:
                 if n.start + n.bits > item:
@@ -1458,6 +1491,11 @@ class _Loader:
                 if g.mode == "locator" and sum(g.count) > item:
                     self.bad(g, "the count locator reaches beyond `item %d`" % item)
         for g in groups:
+            if g.mode == "count":
+                # 0.17 ruling 9: a gate of the scope may not lie within the items
+                for n in placed:
+                    if n.d == "if" and n.start < g.start + g.count * g.item and n.start + n.bits > g.start:
+                        self.bad(n, "the gate lies within the items of group `%s`" % g.key)
             if g.mode == "locator":
                 if sum(g.count) > g.start:
                     self.bad(g, "the count locator reaches the start of its group")

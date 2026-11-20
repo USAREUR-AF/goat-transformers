@@ -1,0 +1,12 @@
+{
+  "name": "to-json",
+  "from": "conformance-gates-bits",
+  "to": "conformance-gates-json",
+  "input": "03520009",
+  "expect": "{\"w\":3,\"z\":9,\"n\":5}",
+  "model": {
+    "probe.w": "3",
+    "probe.z": "9",
+    "probe.n": "5"
+  }
+}

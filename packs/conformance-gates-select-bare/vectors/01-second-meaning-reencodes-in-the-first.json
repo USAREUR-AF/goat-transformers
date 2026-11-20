@@ -1,0 +1,14 @@
+{
+  "name": "second-meaning-reencodes-in-the-first",
+  "from": "conformance-gates-select-bare",
+  "to": "conformance-gates-select-bare",
+  "input": "0104",
+  "expect": "0010",
+  "model": {
+    "hae": "400",
+    "@absent": [
+      "probe.x",
+      "probe.y"
+    ]
+  }
+}

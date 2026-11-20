@@ -1,0 +1,11 @@
+{
+  "name": "raw-key-keeps-the-second-meaning",
+  "from": "conformance-gates-select",
+  "to": "conformance-gates-select",
+  "input": "0104",
+  "expect": "0104",
+  "model": {
+    "probe.c1": "1",
+    "hae": "400"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "first-meaning-roundtrip",
+  "from": "conformance-gates-select-range",
+  "to": "conformance-gates-select-range",
+  "input": "0064",
+  "expect": "0064",
+  "model": {
+    "hae": "10000"
+  }
+}

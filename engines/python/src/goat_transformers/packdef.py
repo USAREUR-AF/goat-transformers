@@ -52,8 +52,10 @@ HEADER_ONCE = ("format", "version", "wire", "distribution")  # a second one is `
 _SINGLE = ("word_bytes", "bit_order", "layout")
 LAYOUTS = ("fixed", "sequential")
 # Lines of a sequential pack (0.8): each is `bad-directive` in a fixed-layout pack.
-_SEQ_ONLY = ("pad", "align", "presence", "if", "opt", "chain", "fx", "length", "also")
-_GROUP_LINES = ("field", "const", "default", "group", "end")
+_SEQ_ONLY = ("pad", "align", "presence", "opt", "chain", "fx", "length", "also")
+_GROUP_LINES = ("field", "const", "default", "group", "if", "end")
+# The lines of a gate block (0.17).
+_GATE_LINES = ("field", "const", "default", "if", "end")
 FIELD_OPTIONS = ("via", "swap", "trim", "optional", "absent")
 _JSON_NUMBER = re.compile(r"-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?\Z")
 TEXT_DIRECTIVES = ("delimiter", "start", "checksum")  # the `text` wire (0.10)
@@ -78,6 +80,7 @@ class Field:
     # value", as the wire compares them, and the first as the wire writes it.
     absent: frozenset = None
     absent_out: object = None
+    gate: object = None     # bits, fixed layout: the innermost gate block holding the line (0.17)
 
     is_field = True
     is_const = False
@@ -101,6 +104,7 @@ class When:
     is_field = False
     is_const = False
     is_group = False
+    gate = None
 
 
 @dataclass
@@ -113,6 +117,7 @@ class Const:
     value: object = None
     forced: bool = False
     lineno: int = 0
+    gate: object = None  # the innermost gate block holding the line (0.17)
 
     is_field = False
     is_const = True
@@ -142,6 +147,7 @@ class Kind:
     lineno: int = 0
     root: str = None                                 # xml: the kind's own root element (0.6)
     defaults: list = dc_field(default_factory=list)  # Default lines of the kind
+    gates: list = dc_field(default_factory=list)     # the kind's gate blocks, at any depth, in line order (0.17)
 
     @property
     def fields(self):
@@ -161,12 +167,13 @@ class Group:
     scope) or the fixed `count_n`."""
 
     __slots__ = ("list", "locator", "loc", "lineno", "lines", "defaults", "item_bits", "count_loc", "count_n",
-                 "_plan", "_seen", "broken")
+                 "_plan", "_seen", "broken", "gates")
 
     is_field = False
     is_const = False
     is_group = True
     present = False
+    gate = None
 
     def __init__(self, list, locator, loc, lineno=0, item_bits=None, count_loc=None, count_n=None):
         self.list = list
@@ -181,14 +188,89 @@ class Group:
         self._plan = None
         self._seen = None     # the lists mapped by the groups of the body, while the file is read
         self.broken = False   # its options failed a check made after the file is read
+        self.gates = []       # the gate blocks of the body, at any depth, in line order (0.17)
 
     @property
     def plan(self):
         """The body as a scope: what applies to one item."""
         plan = self._plan
         if plan is None:
-            plan = self._plan = Plan(self.lines, self.defaults)
+            plan = self._plan = Plan(self.lines, self.defaults, gates=self.gates)
         return plan
+
+
+class Gate:
+    """`if [!]<locator> <value>[,<value>...]` ... `end` on a fixed-layout `bits`
+    pack (0.17). The block holds when the unsigned value of the locator's bits
+    is one of `values` (with `negate`, none of them) and the enclosing block,
+    `parent`, holds. `defaults` maps a key to the Default line of the block.
+    `enc_value` is the value encode gives the gate of an open block: the first
+    listed value, or with `!` the smallest value not listed (None when the
+    list names every value)."""
+
+    __slots__ = ("locator", "loc", "values", "vset", "negate", "parent", "defaults", "lineno", "enc_value")
+
+    is_field = False
+    is_const = False
+    is_group = False
+    present = False
+    gate = None
+
+    def __init__(self, locator, loc, values, negate, parent, lineno):
+        self.locator = locator
+        self.loc = loc
+        self.values = values
+        self.vset = frozenset(values)
+        self.negate = negate
+        self.parent = parent
+        self.defaults = {}
+        self.lineno = lineno
+        if not negate:
+            self.enc_value = values[0]
+        else:
+            v = 0
+            while v in self.vset:
+                v += 1
+            self.enc_value = v if v < (1 << loc[2]) else None
+
+
+def _resolve_gate(name, args, parent, source, lineno):
+    """-> Gate for one `if` line of a fixed-layout `bits` pack (0.17). Every
+    error is `bad-directive`: a locator that is not `<word>:<pos>:<len>` with
+    `len` 1 to 64 (a presence name is a sequential layout's), a missing or
+    empty value list, a value that is not an unsigned decimal integer, does
+    not fit `len` or is listed twice."""
+    where = "%s:%d" % (source, lineno)
+
+    def bad(msg):
+        return BadDirective("%s, at %s" % (msg, where), format=name, locator=args[0] if args else None)
+
+    if not args:
+        raise bad("'if' takes a locator and a list of values")
+    text = args[0]
+    negate = text.startswith("!")
+    locator = text[1:] if negate else text
+    try:
+        loc = parse_bits_locator(locator)
+    except ValueError as e:
+        raise bad("an 'if' of a fixed layout takes a <word>:<pos>:<len> locator (%s)" % e)
+    if not 1 <= loc[2] <= 64:
+        raise bad("a gate locator is 1 to 64 bits")
+    if len(args) < 2:
+        raise bad("'if' has an empty value list")
+    if len(args) > 2:  # ruling 12 of 0.17: a third token, or a space after a comma
+        raise bad("'if' takes one locator and one value list, got %d token(s)" % len(args))
+    values = []
+    for v in args[1].split(","):
+        if not (v.isascii() and v.isdigit()):
+            raise bad("a gate value is an unsigned decimal integer, got %r" % v)
+        n = int(v)
+        if n >= (1 << loc[2]):
+            raise bad("gate value %d does not fit %d bit(s)" % (n, loc[2]))
+        if n in values:
+            raise bad("gate value %d is listed twice" % n)
+        values.append(n)
+    return Gate(locator, loc, tuple(values), negate, parent, lineno)
 
 
 class Plan:
@@ -201,10 +283,11 @@ class Plan:
     map its member, 0.5 ruling 27)."""
 
     __slots__ = ("lines", "whens", "defaults", "order", "mapped", "root", "cache", "fields", "groups",
-                 "ifields", "igroups")
+                 "ifields", "igroups", "gates")
 
-    def __init__(self, lines, defaults=(), root=None):
+    def __init__(self, lines, defaults=(), root=None, gates=()):
         self.lines = lines
+        self.gates = gates  # bits: the gate blocks of the scope, outer before nested, in line order (0.17)
         ifields = self.ifields = []
         igroups = self.igroups = []
         for i, ln in enumerate(lines):
@@ -269,6 +352,7 @@ class Pack:
     tlv_key: bytes = None      # tlv: the bytes the message begins with
     tlv_checksum: int = None   # tlv: the tag of the `sum16` checksum item
     armor: str = "hex"         # bits: `hex` or `sixbit` (0.14)
+    gates: list = dc_field(default_factory=list)     # the common gate blocks, at any depth, in line order (0.17)
     _plans: dict = dc_field(default_factory=dict, repr=False)
     _kind_index: dict = dc_field(default_factory=dict, repr=False)
     _kinds_by_root: dict = dc_field(default_factory=dict, repr=False)
@@ -308,9 +392,12 @@ class Pack:
         plan = self._plans.get(key)
         if plan is None:
             if kind is None:
-                plan = Plan(self.common, self.defaults, self.root)
+                plan = Plan(self.common, self.defaults, self.root, self.gates)
             else:
-                plan = Plan(self.common + kind.lines, self.defaults + kind.defaults, kind.root or self.root)
+                plan = Plan(
+                    self.common + kind.lines, self.defaults + kind.defaults, kind.root or self.root,
+                    self.gates + kind.gates,
+                )
             self._plans[key] = plan
         return plan
 
@@ -1057,7 +1144,7 @@ def _resolve_when(wire, name, locator, value, source, lineno, deferred, directiv
     return make(value)
 
 
-def _check_bits_groups(word_bytes, common, kinds, deferred, source, name):
+def _check_bits_groups(word_bytes, common, kinds, deferred, source, name, common_gates=()):
     """The checks of a `bits` pack's groups that need the whole file (0.7):
     a `field`, `when`, `const` or second group whose bits lie at or beyond the
     start of a group counted by a locator; a count locator that reaches its
@@ -1108,10 +1195,36 @@ def _check_bits_groups(word_bytes, common, kinds, deferred, source, name):
                 if beyond:
                     bad(ln, "the line's bits lie at or beyond the start of the group counted by %s" % g.locator)
 
+    def fixed_size(g):
+        """The size of every item of `g`, or None when a group counted by a
+        locator is nested in it."""
+        for ln in g.lines:
+            if ln.is_group and (ln.count_loc is not None or fixed_size(ln) is None):
+                return None
+        return g.item_bits
+
+    def items_cover(lines, gates):
+        # ruling 9 of 0.17: a gate whose bits lie within the items of a group
+        # with a fixed count (whose item bits are known) of the same scope
+        for g in lines:
+            if not g.is_group or g.count_loc is not None:
+                continue
+            size = fixed_size(g)
+            if size is None:
+                continue
+            gs = start(g.loc)
+            ge = gs + g.count_n * size
+            for gate in gates:
+                s0 = start(gate.loc)
+                if s0 < ge and s0 + gate.loc[2] > gs:
+                    bad(gate, "the gate's bits lie within the items of group %s" % g.list)
+
     def bodies(lines):
         for ln in ok(lines):
             if ln.is_group:
-                scope(ln.lines, ln.item_bits)
+                if ln.gates:
+                    items_cover(ln.lines, ln.gates)
+                scope(ln.lines + ln.gates, ln.item_bits)  # a gate locator is checked as a field is (0.17 ruling 2)
                 bodies(ln.lines)
 
     def has_counted(lines):
@@ -1120,12 +1233,20 @@ def _check_bits_groups(word_bytes, common, kinds, deferred, source, name):
     bodies(common)
     for k in kinds:
         bodies(k.lines)
+    if common_gates:
+        items_cover(common, common_gates)
+    for k in kinds:
+        if k.gates:
+            items_cover(common, k.gates)
+            items_cover(k.lines, k.gates)
+        if common_gates:
+            items_cover(k.lines, common_gates)
     common_counted = has_counted(common)
     if common_counted:
-        scope(common, None)
+        scope(common + list(common_gates), None)
     for k in kinds:  # a scope is common plus one kind
         if common_counted or has_counted(k.lines):
-            scope(common + k.lines, None)
+            scope(common + list(common_gates) + k.lines + k.gates, None)
 
 
 def _text_directive(kw, value, seen, current, fmt, lineno, where):
@@ -1351,12 +1472,14 @@ def parse_pack_text(text, *, source="pack.def"):
     key_refs = []
     defaults = []
     tables = {}
+    common_gates = []
     via_fields = []
     deferred = []        # (lineno, BadDirective)
     root = None
     current = None       # the Kind being read, None before the first `kind`
     first_when = None    # (lineno, locator) of the first `when`, for the no-kind check
     stack = []           # the open groups, outermost first (0.7)
+    gstack = []          # the open gate blocks, outermost first (0.17); always inside the open groups
     common_lists = set() # lists mapped by a common group
     kind_lists = None    # lists mapped by a group of the kind being read
     # A generated pack repeats a few thousand distinct lines over a million
@@ -1373,7 +1496,9 @@ def parse_pack_text(text, *, source="pack.def"):
         line = raw.strip()
         if not line:
             continue
-        if stack:
+        if gstack:
+            proto = None  # a line of a gate block: read in full below (lines of a block are not shared)
+        elif stack:
             if line == "end":
                 g = stack.pop()
                 if wire == "protobuf":
@@ -1390,7 +1515,7 @@ def parse_pack_text(text, *, source="pack.def"):
                 (current.lines if current is not None else common).append(f)
                 continue
             proto = group_memo[0].get(line)
-        if proto is not None:
+        if proto is not None and not gstack:
             g = _open_group(
                 proto, lineno, stack, common_lists, kind_lists, seen.get("format"), "%s:%d" % (source, lineno),
                 deferred,
@@ -1417,6 +1542,9 @@ def parse_pack_text(text, *, source="pack.def"):
                     "%r is a line of a sequential pack ('layout sequential' on the bits wire), at %s" % (kw, where),
                     format=fmt,
                 ))
+            if gstack and kw not in _GATE_LINES:
+                # 0.17: only `field`, `const`, `default`, a nested `if` and `end` inside a gate block
+                raise _Deferred(BadDirective("%r inside an 'if' block, at %s" % (kw, where), format=fmt))
             if stack and kw not in _GROUP_LINES:
                 # 0.7: only `field`, `const`, `default`, `group` and `end` inside a group (rulings 9 and 18)
                 raise _Deferred(BadDirective("%r inside a group, at %s" % (kw, where), format=fmt))
@@ -1501,6 +1629,22 @@ def parse_pack_text(text, *, source="pack.def"):
                     group_refs.add(args[0])
                     key_refs.append((args[0], g))
                 stack.append(g)
+            elif kw == "if":
+                # 0.17: every error of a gate line is `bad-directive`, after the
+                # file. A gate that fails still opens its block, so that its
+                # `end` closes the block and not an enclosing group.
+                parent = gstack[-1] if gstack else None
+                try:
+                    if wire != "bits":
+                        raise BadDirective("a gate block ('if') is bits only, at %s" % where, format=fmt)
+                    gate = _resolve_gate(fmt, args, parent, source, lineno)
+                except BadDirective as e:
+                    deferred.append((lineno, e))
+                    gate = Gate(args[0], (0, 0, 1), (0,), False, parent, lineno)
+                (stack[-1].gates if stack else current.gates if current is not None else common_gates).append(gate)
+                gstack.append(gate)
+            elif kw == "end" and gstack:
+                gstack.pop()
             elif kw == "end":
                 if not stack:
                     raise _Deferred(BadDirective("'end' with no open group, at %s" % where, format=fmt))
@@ -1513,7 +1657,10 @@ def parse_pack_text(text, *, source="pack.def"):
                                    in_group=bool(stack))
                 if f is None:
                     continue
-                field_memo[1 if stack else 0][line] = f
+                if gstack:
+                    f.gate = gstack[-1]
+                else:
+                    field_memo[1 if stack else 0][line] = f
                 (stack[-1].lines if stack else current.lines if current is not None else common).append(f)
                 key_refs.append((key, f))
                 if f.via is not None:
@@ -1524,10 +1671,14 @@ def parse_pack_text(text, *, source="pack.def"):
                 w = _resolve_when(wire, fmt, args[0], args[1], source, lineno, deferred, directive=kw,
                                   in_group=bool(stack))
                 if w is not None:
+                    if gstack:
+                        w.gate = gstack[-1]
                     (stack[-1].lines if stack else current.lines if current is not None else common).append(w)
             elif kw == "default":
                 d = Default(args[0], args[1], lineno)
-                if stack:
+                if gstack:
+                    gstack[-1].defaults[args[0]] = d
+                elif stack:
                     stack[-1].defaults = list(stack[-1].defaults) + [d]
                 else:
                     (current.defaults if current is not None else defaults).append(d)
@@ -1563,13 +1714,17 @@ def parse_pack_text(text, *, source="pack.def"):
         raise MissingVersion("the pack has no 'version' line in %s" % source, format=name)
     if wire is None:
         raise MissingWire("the pack has no 'wire' line in %s" % source, format=name)
+    if gstack:
+        deferred.append((gstack[-1].lineno, BadDirective(
+            "'if' with no 'end', at %s:%d" % (source, gstack[-1].lineno), format=name, locator=gstack[-1].locator,
+        )))
     if stack:
         deferred.append((stack[-1].lineno, BadDirective(
             "'group' with no 'end', at %s:%d" % (source, stack[-1].lineno), format=name, locator=stack[-1].locator,
         )))
     word_bytes_raw = once.get("word_bytes", (None,))[0]
     if wire == "bits":
-        _check_bits_groups(word_bytes_raw, common, kinds, deferred, source, name)
+        _check_bits_groups(word_bytes_raw, common, kinds, deferred, source, name, common_gates)
     elif group_refs and wire in ("xml", "json", "protobuf", "geojson"):
         _check_group_paths(wire, common, kinds, deferred, source, name)
     armor_value = check_armor(armor, wire, once.get("bit_order", (None,))[0], deferred, source, name)
@@ -1626,6 +1781,7 @@ def parse_pack_text(text, *, source="pack.def"):
         distribution=distribution, sources=sources, uses=uses, defaults=defaults, tables=tables,
         delimiter=delimiter, start=text_values.get("start"), checksum=text_values.get("checksum", "none"),
         armor=armor_value,
+        gates=common_gates,
     )
     if wire == "tlv":
         pack.tlv_tag = tlv.get("tag", ("ber-oid",))[0]

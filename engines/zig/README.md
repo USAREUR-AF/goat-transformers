@@ -18,8 +18,10 @@ writes `bits` messages as six-bit armored text (`armor sixbit` and the
 `sixbit` transform, spec Version 0.14), converts values through the
 transforms of spec Version 0.15 (exact integer scales, sign and magnitude,
 scaled floats, 6- and 7-bit character sets, octal digits on `bits`; `scale`
-and `iscale` on the text wires), and converts between formats via the shared
-model.
+and `iscale` on the text wires), reads and writes fields that exist only when
+other bits hold a value (gate blocks `if [!]<locator> <values>` … `end` on the
+fixed `bits` layout, spec Version 0.17), and converts between formats via the
+shared model.
 
 ## Build and run the conformance harness
 

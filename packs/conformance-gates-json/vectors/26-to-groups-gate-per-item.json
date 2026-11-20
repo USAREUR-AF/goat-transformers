@@ -1,0 +1,14 @@
+{
+  "name": "to-groups-gate-per-item",
+  "from": "conformance-gates-json",
+  "to": "conformance-gates-groups",
+  "input": "{\"w\":7,\"items\":[{\"v\":1,\"q\":9},{\"v\":2}]}",
+  "expect": "070203090400",
+  "model": {
+    "probe.items.#": "2",
+    "probe.items[0].probe.qty": "9",
+    "@absent": [
+      "probe.items[1].probe.qty"
+    ]
+  }
+}

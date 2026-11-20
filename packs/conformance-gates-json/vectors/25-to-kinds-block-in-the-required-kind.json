@@ -1,0 +1,7 @@
+{
+  "name": "to-kinds-block-in-the-required-kind",
+  "from": "conformance-gates-json",
+  "to": "conformance-gates-kinds",
+  "input": "{\"w\":1,\"x\":7}",
+  "expect": "011107"
+}

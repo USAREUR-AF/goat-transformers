@@ -1,0 +1,11 @@
+{
+  "name": "to-bits-three-gates-get-their-values",
+  "from": "conformance-gates-json",
+  "to": "conformance-gates-bits",
+  "input": "{\"w\":1,\"x\":7,\"y\":5,\"z\":9}",
+  "expect": "0103070900000501",
+  "model": {
+    "probe.w": "1",
+    "probe.x": "7"
+  }
+}

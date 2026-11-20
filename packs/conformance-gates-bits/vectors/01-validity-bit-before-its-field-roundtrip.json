@@ -1,0 +1,18 @@
+{
+  "name": "validity-bit-before-its-field-roundtrip",
+  "from": "conformance-gates-bits",
+  "to": "conformance-gates-bits",
+  "input": "010107",
+  "expect": "010107",
+  "model": {
+    "probe.w": "1",
+    "probe.n": "0",
+    "probe.x": "7",
+    "@absent": [
+      "probe.y",
+      "probe.z",
+      "probe.c1",
+      "probe.c2"
+    ]
+  }
+}

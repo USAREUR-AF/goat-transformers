@@ -1,0 +1,7 @@
+{
+  "name": "to-default-raw-key-defeats-the-open-block",
+  "from": "conformance-gates-json",
+  "to": "conformance-gates-default",
+  "input": "{\"val\":5,\"c2\":0}",
+  "expect_error": "transform-encode"
+}

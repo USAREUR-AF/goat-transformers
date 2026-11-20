@@ -1,0 +1,20 @@
+# Conformance probe pack for gate blocks (spec 0.17, Decode): one key at two
+# locators, the first inside a block. Fixed `bits` layout, least significant
+# bit first. Public. No kinds. One byte per word. Exercises: a line in a block
+# that does not hold counts as a line whose locator is absent, so decode takes
+# the key's next line; encode opens the block for the key and writes both.
+#
+#   byte 0       bit 0: byte 1 holds x
+#   byte 1       x, when bit 0 is 1
+#   byte 2       x
+format     conformance-gates-lines
+version    0.17.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+word_bytes 1
+if      0:0:1  1
+  field probe.x   0:8:8    uint
+end
+field   probe.x   0:16:8   uint

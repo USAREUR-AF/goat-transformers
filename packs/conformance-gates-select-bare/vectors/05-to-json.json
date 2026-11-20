@@ -1,0 +1,10 @@
+{
+  "name": "to-json",
+  "from": "conformance-gates-select-bare",
+  "to": "conformance-gates-json",
+  "input": "0104",
+  "expect": "{\"alt\":400}",
+  "model": {
+    "hae": "400"
+  }
+}

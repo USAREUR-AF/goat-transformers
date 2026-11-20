@@ -191,8 +191,13 @@ abstract class Codec<W> {
      * the field's value table. Null when there is neither a value nor a default.
      */
     Object valueToEncode(Pack.Field f, Entity e, Pack.Scope scope) {
+        return valueToEncode(f, e, scope.defaultValues);
+    }
+
+    /** As {@link #valueToEncode(Pack.Field, Entity, Pack.Scope)}, with the defaults in force for the line. */
+    Object valueToEncode(Pack.Field f, Entity e, java.util.Map<String, Object> defaults) {
         Object v = e.get(f.key);
-        if (v == null) v = scope.defaultValues.get(f.key);
+        if (v == null) v = defaults.get(f.key);
         if (v == null) return null;
         if (f.key.equals("type") && v instanceof String && !pack.cotToNative.isEmpty()) {
             String nat = pack.cotToNative.get(v);

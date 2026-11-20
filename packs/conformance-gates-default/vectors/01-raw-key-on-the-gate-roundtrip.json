@@ -1,0 +1,11 @@
+{
+  "name": "raw-key-on-the-gate-roundtrip",
+  "from": "conformance-gates-default",
+  "to": "conformance-gates-default",
+  "input": "0105",
+  "expect": "0105",
+  "model": {
+    "probe.c2": "1",
+    "probe.val": "5"
+  }
+}

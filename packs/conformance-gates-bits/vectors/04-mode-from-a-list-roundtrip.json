@@ -1,0 +1,17 @@
+{
+  "name": "mode-from-a-list-roundtrip",
+  "from": "conformance-gates-bits",
+  "to": "conformance-gates-bits",
+  "input": "03520009",
+  "expect": "03520009",
+  "model": {
+    "probe.w": "3",
+    "probe.n": "5",
+    "probe.z": "9",
+    "@absent": [
+      "probe.x",
+      "probe.c1",
+      "probe.y"
+    ]
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "to-default-on-gate-value-over-a-nonzero-default",
+  "from": "conformance-gates-json",
+  "to": "conformance-gates-default-on",
+  "input": "{\"qty\":7}",
+  "expect": "000007"
+}

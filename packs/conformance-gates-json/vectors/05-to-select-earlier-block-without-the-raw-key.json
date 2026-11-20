@@ -1,0 +1,7 @@
+{
+  "name": "to-select-earlier-block-without-the-raw-key",
+  "from": "conformance-gates-json",
+  "to": "conformance-gates-select",
+  "input": "{\"alt\":400}",
+  "expect": "0010"
+}

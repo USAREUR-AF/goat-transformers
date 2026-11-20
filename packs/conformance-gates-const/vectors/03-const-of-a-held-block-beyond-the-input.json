@@ -1,0 +1,7 @@
+{
+  "name": "const-of-a-held-block-beyond-the-input",
+  "from": "conformance-gates-const",
+  "to": "conformance-gates-const",
+  "input": "010107",
+  "expect_error": "malformed-wire"
+}

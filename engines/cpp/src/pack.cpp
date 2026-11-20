@@ -583,10 +583,40 @@ std::uint64_t bits_end(const Pack& p, const std::string& locator) {
                     g.list + "', which is counted by a locator and so is the last thing in its scope");
 }
 
+// The gate blocks of a scope (0.17).
+const std::vector<int>& scope_gates(const Pack&, const Pack& scope) { return scope.common_gates; }
+const std::vector<int>& scope_gates(const Pack&, const Kind& scope) { return scope.gates; }
+const std::vector<int>& scope_gates(const Pack&, const GroupLine& scope) { return scope.gates; }
+
+std::uint64_t gate_end(const Pack& p, int id) {
+    const GateBlock& b = p.gates[static_cast<std::size_t>(id)];
+    return b.start + b.len;
+}
+
+// A gate any of whose bits lies within the items of a fixed-count group of its
+// scope (0.17 ruling 9) is bad-directive.
+void check_gates_vs_fixed(const Pack& p, const std::vector<int>& gates, const std::vector<GroupLine>& groups) {
+    for (int id : gates) {
+        const GateBlock& b = p.gates[static_cast<std::size_t>(id)];
+        for (const auto& o : groups) {
+            if (!o.count_fixed || o.bits_start == kNoBit) continue;
+            const std::uint64_t end = o.bits_start + o.count_n * o.item_bits;
+            if (b.start < end && b.start + b.len > o.bits_start)
+                throw Error(ErrorKind::BadDirective, p.format, b.locator,
+                            p.source + ":" + std::to_string(b.line) + ": the gate " + b.locator +
+                                " lies within the items of the group '" + o.list + "'");
+        }
+    }
+}
+
 // One scope's lines against the counted group `g` (of the same scope, or of the
 // common lines when the scope is a kind).
 template <class Scope>
 void check_against_counted(const Pack& p, const Scope& scope, const std::vector<WhenLine>* whens, const GroupLine& g) {
+    for (int id : scope_gates(p, scope))
+        if (gate_end(p, id) > g.bits_start)
+            bad_beyond(p, "the gate", p.gates[static_cast<std::size_t>(id)].locator,
+                       p.gates[static_cast<std::size_t>(id)].line, g);
     for (const auto& f : scope.fields)
         if (bits_end(p, f.locator) > g.bits_start) bad_beyond(p, "the field", f.locator, f.line, g);
     for (const auto& c : scope.consts)
@@ -618,6 +648,14 @@ BitsExtent bits_extent(const Pack& p, const Scope& scope, const std::vector<When
     for (const auto& c : scope.consts) line(c.locator, c.line);
     if (whens)
         for (const auto& w : *whens) line(w.locator, w.line);
+    for (int id : scope_gates(p, scope)) {
+        const GateBlock& b = p.gates[static_cast<std::size_t>(id)];
+        if (b.start + b.len > x.line_end) {
+            x.line_end = b.start + b.len;
+            x.line_locator = &b.locator;
+            x.line_no = b.line;
+        }
+    }
     for (const auto& g : scope.groups) {
         if (g.bits_start == kNoBit) continue;
         x.has_group = true;
@@ -644,6 +682,13 @@ void check_bits_group(const Pack& p, const GroupLine& g) {
             throw Error(ErrorKind::BadDirective, p.format, f.locator,
                         p.source + ":" + std::to_string(f.line) + ": the field reaches beyond 'item " +
                             std::to_string(g.item_bits) + "'");
+    for (int id : g.gates)
+        if (gate_end(p, id) > g.item_bits)
+            throw Error(ErrorKind::BadDirective, p.format, p.gates[static_cast<std::size_t>(id)].locator,
+                        p.source + ":" + std::to_string(p.gates[static_cast<std::size_t>(id)].line) +
+                            ": the gate reaches beyond 'item " + std::to_string(g.item_bits) +
+                            "': a bit outside the item cannot gate a field of every item");
+    check_gates_vs_fixed(p, g.gates, g.groups);
     for (const auto& c : g.consts)
         if (bits_end(p, c.locator) > g.item_bits)
             throw Error(ErrorKind::BadDirective, p.format, c.locator,
@@ -672,8 +717,12 @@ void check_bits_groups(const Pack& p) {
     // costs its own lines only: the common lines enter through their extent.
     const BitsExtent common = bits_extent(p, p, &p.whens);
     if (common.counted) check_against_counted(p, p, &p.whens, *common.counted);
+    check_gates_vs_fixed(p, p.common_gates, p.groups);
     for (const auto& g : p.groups) check_bits_group(p, g);
     for (const auto& k : p.kinds) {
+        check_gates_vs_fixed(p, k.gates, p.groups);
+        check_gates_vs_fixed(p, k.gates, k.groups);
+        check_gates_vs_fixed(p, p.common_gates, k.groups);
         const BitsExtent own = bits_extent(p, k, &k.whens);
         if (common.counted) check_against_counted(p, k, &k.whens, *common.counted);
         if (own.counted) {
@@ -859,6 +908,17 @@ Pack parse_pack(const std::string& text, const std::string& source) {
     // The groups that are open at this line, outermost first. A group stays the
     // last element of its scope while it is open, so the pointers hold.
     std::vector<GroupLine*> open;
+    // v0.17: the gate blocks open at this line, innermost last, each with the
+    // number of groups open when it began. A gate holds no group, so the
+    // innermost block is a gate when its depth is the current one.
+    std::vector<std::pair<int, std::size_t>> gate_open;
+    std::size_t first_gate_line = 0;
+    // The first 0.17 error of a gate line or of a line inside a block, raised
+    // after the file is read (0.17 ruling 13).
+    std::string gate_error, gate_error_locator;
+    auto cur_gate = [&]() -> int {
+        return !gate_open.empty() && gate_open.back().second == open.size() ? gate_open.back().first : -1;
+    };
 
     auto cur_fields = [&]() -> std::vector<FieldLine>& {
         return !open.empty() ? open.back()->fields : p.kinds.empty() ? p.fields : p.kinds.back().fields;
@@ -904,9 +964,18 @@ Pack parse_pack(const std::string& text, const std::string& source) {
                             where + ": '" + kw + "' is not allowed inside a group");
         };
 
-        // Inside a group only `field`, `const`, `default`, `group` and `end` are
-        // allowed (0.7 ruling 18).
-        if (!open.empty() && kw != "field" && kw != "const" && kw != "default" && kw != "group" && kw != "end")
+        // Inside a gate block only `field`, `const`, `default`, a nested `if` and
+        // `end` are allowed (0.17).
+        // Found after the file is read (0.17 ruling 13).
+        if (cur_gate() >= 0 && kw != "field" && kw != "const" && kw != "default" && kw != "if" && kw != "end" &&
+            gate_error.empty()) {
+            gate_error = where + ": '" + kw + "' is not allowed inside a gate block";
+            gate_error_locator.clear();
+        }
+        // Inside a group only `field`, `const`, `default`, `group`, a gate block
+        // and `end` are allowed (0.7 ruling 18, 0.17).
+        if (!open.empty() && kw != "field" && kw != "const" && kw != "default" && kw != "group" && kw != "end" &&
+            kw != "if")
             not_in_group();
 
         if (kw == "format") {
@@ -965,7 +1034,66 @@ Pack parse_pack(const std::string& text, const std::string& source) {
             if (t[1] != "fixed")
                 throw Error(ErrorKind::BadDirective, p.format, "", where + ": layout '" + t[1] + "' is not fixed or sequential");
             if (layout_line == 0) layout_line = lineno;
-        } else if (kw == "pad" || kw == "align" || kw == "presence" || kw == "if" || kw == "opt" || kw == "chain" ||
+        } else if (kw == "if") {
+            // v0.17: `if [!]<word>:<pos>:<len> <value>[,<value>...]`, one locator and
+            // one value list. An `if` with no argument is a line error; every
+            // other error of the line is found after the file is read (0.17
+            // ruling 13, 0.11 ruling 5b), so the block is kept for its `end`.
+            if (t.size() < 2)
+                throw Error(ErrorKind::BadDirective, p.format, "", where + ": a gate 'if' takes a locator and a value list");
+            GateBlock gb;
+            gb.line = lineno;
+            gb.locator = t[1];
+            if (!gb.locator.empty() && gb.locator[0] == '!') {
+                gb.negated = true;
+                gb.locator.erase(0, 1);
+            }
+            auto defer = [&](const std::string& what) {
+                if (gate_error.empty()) {
+                    gate_error = where + ": " + what;
+                    gate_error_locator = t[1];
+                }
+            };
+            detail::BitsLocator loc;
+            if (t.size() != 3) {
+                defer("a gate 'if' takes one locator and one value list, got " + std::to_string(t.size() - 1) +
+                      " argument(s)");
+            } else if (!detail::parse_bits_locator(gb.locator, loc)) {
+                defer("'" + t[1] + "' is not a gate locator [!]<word>:<pos>:<len> of a fixed layout");
+            } else if (loc.len < 1 || loc.len > 64) {
+                defer("a gate covers 1 to 64 bits");
+            } else {
+                gb.len = loc.len;
+                std::size_t from = 0;
+                const std::string& list = t[2];
+                while (true) {
+                    const std::size_t comma = list.find(',', from);
+                    const std::string v = list.substr(from, comma == std::string::npos ? std::string::npos : comma - from);
+                    std::uint64_t n = 0;
+                    if (!parse_u64(v, n)) {
+                        defer("gate value '" + v + "' is not an unsigned decimal integer");
+                        break;
+                    }
+                    if (loc.len < 64 && (n >> loc.len) != 0) {
+                        defer("gate value " + v + " does not fit " + std::to_string(loc.len) + " bits");
+                        break;
+                    }
+                    if (std::find(gb.values.begin(), gb.values.end(), n) != gb.values.end()) {
+                        defer("gate value " + v + " is listed twice");
+                        break;
+                    }
+                    gb.values.push_back(n);
+                    if (comma == std::string::npos) break;
+                    from = comma + 1;
+                }
+            }
+            gb.parent = cur_gate();
+            const int id = static_cast<int>(p.gates.size());
+            p.gates.push_back(std::move(gb));
+            (!open.empty() ? open.back()->gates : p.kinds.empty() ? p.common_gates : p.kinds.back().gates).push_back(id);
+            gate_open.emplace_back(id, open.size());
+            if (first_gate_line == 0) first_gate_line = lineno;
+        } else if (kw == "pad" || kw == "align" || kw == "presence" || kw == "opt" || kw == "chain" ||
                    kw == "fx" || kw == "also") {
             throw Error(ErrorKind::BadDirective, p.format, "",
                         where + ": '" + kw + "' is a line of a sequential layout, and the pack's layout is fixed");
@@ -1094,6 +1222,11 @@ Pack parse_pack(const std::string& text, const std::string& source) {
             groups.push_back(std::move(g));
             open.push_back(&groups.back());
         } else if (kw == "end") {
+            if (cur_gate() >= 0) {
+                arity(0);
+                gate_open.pop_back();
+                continue;
+            }
             if (open.empty())
                 throw Error(ErrorKind::BadDirective, p.format, "", where + ": 'end' with no open group");
             arity(0);
@@ -1104,6 +1237,7 @@ Pack parse_pack(const std::string& text, const std::string& source) {
             w.locator = t[1];
             w.value = t[2];
             w.line = lineno;
+            w.gate = cur_gate();
             cur_consts().push_back(std::move(w));
         } else if (kw == "default") {
             arity(2);
@@ -1111,6 +1245,7 @@ Pack parse_pack(const std::string& text, const std::string& source) {
             d.key = t[1];
             d.text = t[2];
             d.line = lineno;
+            d.gate = cur_gate();
             cur_defaults().push_back(std::move(d));
         } else if (kw == "map") {
             not_in_group();  // tables are pack-wide and are written outside groups (0.7 ruling 9)
@@ -1194,6 +1329,7 @@ Pack parse_pack(const std::string& text, const std::string& source) {
                 *flag = true;
             }
             // A model key may be mapped by several lines (0.6: `duplicate-field` is withdrawn).
+            f.gate = cur_gate();
             cur_fields().push_back(std::move(f));
         } else if (kw == "typemap") {
             not_in_group();
@@ -1206,11 +1342,20 @@ Pack parse_pack(const std::string& text, const std::string& source) {
         }
     }
 
-    // Line errors that need the whole file: a group left open, where a directive
+    // Line errors that need the whole file: a block left open, where a directive
     // is allowed, and what a `when` value and a bits length may be.
     if (pending_transform)  // set on wire tlv only (0.13 ruling 8)
         throw Error(ErrorKind::BadDirective, p.format, pending_locator,
                     pending_detail + " (on wire tlv, a transform not in the table of 0.13)");
+    if (!gate_error.empty()) throw Error(ErrorKind::BadDirective, p.format, gate_error_locator, gate_error);
+    if (!gate_open.empty()) {
+        const GateBlock& g = p.gates[static_cast<std::size_t>(gate_open.back().first)];
+        throw Error(ErrorKind::BadDirective, p.format, g.locator,
+                    source + ":" + std::to_string(g.line) + ": the gate 'if " + g.locator + "' has no 'end'");
+    }
+    if (first_gate_line != 0 && have_wire && p.wire != Wire::Bits)
+        throw Error(ErrorKind::BadDirective, p.format, "",
+                    source + ":" + std::to_string(first_gate_line) + ": a gate block applies to wire bits only");
     if (!open.empty())
         throw Error(ErrorKind::BadDirective, p.format, open.back()->locator,
                     source + ":" + std::to_string(open.back()->line) + ": the group '" + open.back()->list +
@@ -1315,7 +1460,14 @@ Pack parse_pack(const std::string& text, const std::string& source) {
             for (auto& w : k.whens) resolve_when(p, w, "when");
         each_group(p, [&](GroupLine& g) { settle_group(p, g); });
         for (auto& k : p.kinds) each_group(k, [&](GroupLine& g) { settle_group(p, g); });
-        if (p.wire == Wire::Bits) check_bits_groups(p);
+        if (p.wire == Wire::Bits) {
+            for (auto& g : p.gates) {
+                detail::BitsLocator loc;
+                detail::parse_bits_locator(g.locator, loc);
+                g.start = static_cast<std::uint64_t>(loc.word) * p.word_bytes * 8 + loc.pos;
+            }
+            check_bits_groups(p);
+        }
         if (p.wire == Wire::Text) detail::check_text_pack(p);
         if (p.wire == Wire::Tlv) detail::check_tlv_pack(p);
         check_fields_through_groups(p);

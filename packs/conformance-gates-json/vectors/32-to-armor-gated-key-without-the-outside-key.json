@@ -1,0 +1,16 @@
+{
+  "name": "to-armor-gated-key-without-the-outside-key",
+  "from": "conformance-gates-json",
+  "to": "conformance-gates-armor",
+  "input": "{\"x\":5}",
+  "expect": "05P",
+  "model": {
+    "probe.x": "5",
+    "@absent": [
+      "probe.n",
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.14 (six-bit armor: reading, writing, L) and Version 0.17 (Decode; Encode steps 1-6; ruling 14, gates under six-bit armor). n absent writes zeros and counts; gate value 1; L = 13, 3 characters."
+}

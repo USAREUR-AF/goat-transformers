@@ -1,0 +1,14 @@
+{
+  "name": "kind-selected-although-its-block-does-not-hold",
+  "from": "conformance-gates-kinds",
+  "to": "conformance-gates-kinds",
+  "input": "010107",
+  "expect": "0101",
+  "model": {
+    "@kind": "a",
+    "probe.w": "1",
+    "@absent": [
+      "probe.x"
+    ]
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "two-bit-gate-read-msb-first-y",
+  "from": "conformance-gates-select-bare",
+  "to": "conformance-gates-select-bare",
+  "input": "0000082a",
+  "expect": "0000082a",
+  "model": {
+    "hae": "0",
+    "probe.y": "42",
+    "@absent": [
+      "probe.x"
+    ]
+  }
+}
