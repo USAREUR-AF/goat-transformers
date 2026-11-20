@@ -1,0 +1,8 @@
+{
+  "name": "Velodyne lidar",
+  "domain": "sensors",
+  "prefixes": [
+    "velodyne-"
+  ],
+  "detail": "data and HDL-32E position packets"
+}

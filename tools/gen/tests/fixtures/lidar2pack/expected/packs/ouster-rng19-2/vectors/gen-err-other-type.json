@@ -1,0 +1,8 @@
+{
+  "name": "err-other-type",
+  "from": "ouster-rng19-2",
+  "to": "ouster-rng19-2",
+  "source": "the packet type is not 1",
+  "input": "81ba6b5c21e4f3f50615b8681982567b2cdf3f5c83a152c919b46536",
+  "expect_error": "no-kind"
+}

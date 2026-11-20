@@ -1,0 +1,12 @@
+{
+  "name": "rt-position",
+  "from": "velodyne-position-hdl32e",
+  "to": "velodyne-position-hdl32e",
+  "source": "tools/gen/lidar2pack.py: every field set to a value chosen by the generator, little-endian at its place in the layout",
+  "input": "f2a35456b679189d7ab0dc33e3f78d3eefa0",
+  "expect": "f2a35456b679189d7ab0dc33e3f78d3eefa0",
+  "model": {
+    "@kind": "position",
+    "velodyne.pos_gps_timestamp": "4158862300"
+  }
+}

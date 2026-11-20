@@ -1,0 +1,1 @@
+Synthetic stand-in for the velodyne COPYING, written for the lidar2pack tests.

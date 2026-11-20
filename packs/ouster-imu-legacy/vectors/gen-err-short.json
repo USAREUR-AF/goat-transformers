@@ -1,0 +1,8 @@
+{
+  "name": "err-short",
+  "from": "ouster-imu-legacy",
+  "to": "ouster-imu-legacy",
+  "source": "one byte short of the 48-byte packet",
+  "input": "92e085ecba150000435abd8abb150000f4d3f428bc150000000010c0000018400000e04000003a41000082410000a7",
+  "expect_error": "malformed-wire"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "rt-imu",
+  "from": "ouster-imu-legacy",
+  "to": "ouster-imu-legacy",
+  "source": "tools/gen/lidar2pack.py: every field set to a value chosen by the generator, little-endian at its place in the layout",
+  "input": "92e085ecba150000435abd8abb150000f4d3f428bc150000000010c0000018400000e04000003a41000082410000a741",
+  "expect": "92e085ecba150000435abd8abb150000f4d3f428bc150000000010c0000018400000e04000003a41000082410000a741",
+  "model": {
+    "@kind": "imu",
+    "ouster.imu_sys_ts": "23892576297106",
+    "ouster.imu_accel_ts": "23895230732867",
+    "ouster.imu_gyro_ts": "23897885168628"
+  }
+}

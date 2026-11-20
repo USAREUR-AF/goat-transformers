@@ -1,0 +1,8 @@
+{
+  "name": "err-short",
+  "from": "velodyne-position-hdl32e",
+  "to": "velodyne-position-hdl32e",
+  "source": "one byte short of the 18-byte packet",
+  "input": "f2a35456b679189d7ab0dc33e3f78d3eef",
+  "expect_error": "malformed-wire"
+}
