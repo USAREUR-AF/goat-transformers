@@ -1,0 +1,17 @@
+{
+  "name": "ecef-of-minus-30-minus-120-minus-50-and-back",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"glat\":-30,\"glon\":-120,\"ghae\":-50}",
+  "context": {},
+  "expect": "{\"glat\":-30,\"glon\":-120,\"ghae\":-50}",
+  "model": {
+    "@complete": true,
+    "probe.g_x": "-2764106.669011322",
+    "probe.g_y": "-4787573.188267582",
+    "probe.g_z": "-3170348.735383637",
+    "probe.g_rlat": "-29.999999999999996",
+    "probe.g_rlon": "-119.99999999999999",
+    "probe.g_rhae": "-50.00000000116822"
+  }
+}

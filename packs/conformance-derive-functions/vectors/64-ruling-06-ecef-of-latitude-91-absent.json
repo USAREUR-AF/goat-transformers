@@ -1,0 +1,19 @@
+{
+  "name": "ruling-06-ecef-of-latitude-91-absent",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"glat\":91,\"glon\":0,\"ghae\":0}",
+  "context": {},
+  "expect": "{\"glat\":91,\"glon\":0,\"ghae\":0}",
+  "model": {
+    "@complete": true,
+    "@absent": [
+      "probe.g_x",
+      "probe.g_y",
+      "probe.g_z",
+      "probe.g_rlat",
+      "probe.g_rlon",
+      "probe.g_rhae"
+    ]
+  }
+}

@@ -433,7 +433,7 @@ public final class TestRunner {
         return null;
     }
 
-    /** {@code relative}: floats compare within 1e-9 relative (a completed entity), else within 1e-9. */
+    /** {@code relative}: floats compare within 1e-9 relative or 1e-7 absolute (a completed entity, 0.16), else within 1e-9. */
     static String modelMismatch(String want, Object have, boolean relative) {
         if (have == null) return "absent, want " + want;
         if (have instanceof Double) {
@@ -445,7 +445,7 @@ public final class TestRunner {
             }
             double h = (Double) have;
             boolean ok = relative
-                    ? (h == w || Math.abs(h - w) < 1e-9 * Math.max(Math.abs(h), Math.abs(w)))
+                    ? (h == w || Math.abs(h - w) < 1e-9 * Math.max(Math.abs(h), Math.abs(w)) || Math.abs(h - w) < 1e-7)
                     : Math.abs(w - h) <= 1e-9;
             return ok ? null : "want " + want + " got " + have;
         }

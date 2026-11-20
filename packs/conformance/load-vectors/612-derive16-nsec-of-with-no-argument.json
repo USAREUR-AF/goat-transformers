@@ -1,0 +1,9 @@
+{
+  "name": "612-derive16-nsec-of-with-no-argument",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey type string -\nkey lat float deg\nkey lon float deg\nkey callsign string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey ms int ms\nkey ms2 int ms\nkey sec int s\nkey nsec int ns\nkey a float -\nkey b float -\nkey c float -\nkey d float -\nkey i int -\nkey j int -\nderive probe.nsec nsec_of\n"
+  ],
+  "pack": "format probe\nversion 0.16.0\ndistribution public\nsource \"probe\"\nuses probe\nwire json\nfield uid id string\n",
+  "expect_error": "bad-directive"
+}

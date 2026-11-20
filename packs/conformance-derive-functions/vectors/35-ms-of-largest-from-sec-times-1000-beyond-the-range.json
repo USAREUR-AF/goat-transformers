@@ -1,0 +1,12 @@
+{
+  "name": "ms-of-largest-from-sec-times-1000-beyond-the-range",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"usec\":9223372036854776,\"unsec\":-193000000}",
+  "context": {},
+  "expect": "{\"usec\":9223372036854776,\"unsec\":-193000000,\"ums\":9223372036854775807}",
+  "model": {
+    "@complete": true,
+    "probe.u_ms": "9223372036854775807"
+  }
+}

@@ -15,6 +15,7 @@ import support
 SCRIPTS = (
     "conformance-absent-vectors.py",
     "conformance-cat062-vectors.py",
+    "conformance-derive16-vectors.py",
     "conformance-groups-vectors.py",
     "conformance-malformed-vectors.py",
     "conformance-rulings07-vectors.py",

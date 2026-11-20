@@ -1,0 +1,17 @@
+{
+  "name": "ecef-of-0-90-0-x-is-near-0-and-back",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"glat\":0,\"glon\":90,\"ghae\":0}",
+  "context": {},
+  "expect": "{\"glat\":0,\"glon\":90,\"ghae\":0}",
+  "model": {
+    "@complete": true,
+    "probe.g_x": "0.0000000003905482530786651",
+    "probe.g_y": "6378137",
+    "probe.g_z": "0",
+    "probe.g_rlat": "0",
+    "probe.g_rlon": "90",
+    "probe.g_rhae": "0"
+  }
+}

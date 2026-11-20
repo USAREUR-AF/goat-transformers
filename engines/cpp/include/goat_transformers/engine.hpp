@@ -132,7 +132,9 @@ struct ModelKey {
 // The fixed set of functions a `derive` line may name (v0.6, Derived keys).
 enum class DeriveFn { Copy, Hypot, Bearing, EastOf, NorthOf, Neg, Scale, Offset, Join,
                       DaySeconds, Any, Not, ParseInt, TextOf,  // v0.8
-                      Present  // v0.12
+                      Present,  // v0.12
+                      SecOf, NsecOf, MsOf, Deg, Rad, Add, Sub, DegLatOf, DegLonOf, MLatOf, MLonOf,  // v0.16
+                      EcefX, EcefY, EcefZ, LatOfEcef, LonOfEcef, HaeOfEcef
 };
 
 // `derive <model-key> <function> <argument-key> [<argument-key>...]` (v0.6).
@@ -150,7 +152,7 @@ struct DeriveLine {
     double offset = 0.0;
     bool offset_is_int = false;
     std::int64_t int_offset = 0;
-    bool int_arith = false;         // offset on an `int` target and argument: integer addition
+    bool int_arith = false;         // offset, add or sub on `int` keys: integer arithmetic
     std::string sep;                // join
     std::size_t line = 0;           // line number in the module file
 };

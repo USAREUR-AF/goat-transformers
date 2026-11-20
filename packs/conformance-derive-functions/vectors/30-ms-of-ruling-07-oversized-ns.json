@@ -1,0 +1,12 @@
+{
+  "name": "ms-of-ruling-07-oversized-ns",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"usec\":1,\"unsec\":1500000000}",
+  "context": {},
+  "expect": "{\"usec\":1,\"unsec\":1500000000,\"ums\":2500}",
+  "model": {
+    "@complete": true,
+    "probe.u_ms": "2500"
+  }
+}

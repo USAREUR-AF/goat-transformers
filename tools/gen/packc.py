@@ -197,6 +197,11 @@ def parse_transform(name):
 
 # The bits transforms of spec 0.15; the device profile does not carry them.
 V015_BITS = ("uiscale", "siscale", "smag", "smscale", "f32scale", "f64scale", "chars", "octal")
+# The derive functions of spec 0.16; the device profile does not carry them.
+V016_DERIVES = ("sec_of", "nsec_of", "ms_of", "deg", "rad", "add", "sub", "deg_lat_of", "deg_lon_of",
+                "m_lat_of", "m_lon_of", "ecef_x", "ecef_y", "ecef_z", "lat_of_ecef", "lon_of_ecef",
+                "hae_of_ecef")
+V016_REASON = "the derive function `%s` (time, distance and frames, spec 0.16) is not in the device profile"
 
 
 # ---------------------------------------------------------------------------
@@ -1055,6 +1060,8 @@ class Compiler:
             return None, "`%s` builds new text, and the device engine has no text store" % text.split(":")[0]
         if text in DERIVE:
             return text, ()
+        if text in V016_DERIVES:
+            return None, V016_REASON % text
         return None, "unknown function `%s`" % text
 
     def compile_derives(self, possible, needed, strict, produced=()):
@@ -1095,6 +1102,8 @@ class Compiler:
             name, extra = self.derive_fn(fn, target, args)
             if name is None or len(args) > MAX_DERIVE_ARGS:
                 why = extra if name is None else "more than %d arguments" % MAX_DERIVE_ARGS
+                if strict and fn in V016_DERIVES:
+                    refuse("unsupported-feature", "`derive %s %s ...` is needed by this conversion: %s" % (target, fn, why))
                 if strict:
                     refuse("derive-function", "`derive %s %s ...` is needed by this conversion: %s" % (target, fn, why))
                 self.notes.append("derive %s %s: not compiled (%s)" % (target, fn, why))

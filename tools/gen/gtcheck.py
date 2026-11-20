@@ -239,14 +239,28 @@ _DERIVE_SHAPE = {
     "scale": (1, 1, True), "offset": (1, 1, True), "join": (1, None, True),
     "day_seconds": (1, 1, False), "any": (1, None, False), "not": (1, 1, False),
     "parse_int": (1, 1, False), "text_of": (1, 1, False), "present": (1, 1, False),
+    # Version 0.16
+    "sec_of": (1, 1, False), "nsec_of": (1, 1, False), "ms_of": (2, 2, False),
+    "deg": (1, 1, False), "rad": (1, 1, False), "add": (2, 2, False), "sub": (2, 2, False),
+    "deg_lat_of": (2, 2, False), "deg_lon_of": (2, 2, False),
+    "m_lat_of": (2, 2, False), "m_lon_of": (2, 2, False),
+    "ecef_x": (3, 3, False), "ecef_y": (3, 3, False), "ecef_z": (3, 3, False),
+    "lat_of_ecef": (3, 3, False), "lon_of_ecef": (3, 3, False), "hae_of_ecef": (3, 3, False),
 }
-# function -> (type of every argument, type of the target); `copy`, `offset`
-# and `present` are checked apart because they take more than one type.
+# function -> (type of every argument, type of the target); `copy`, `offset`,
+# `present`, `add` and `sub` are checked apart because they take more than one type.
 _DERIVE_TYPES = {
     "hypot": ("float", "float"), "bearing": ("float", "float"), "east_of": ("float", "float"),
     "north_of": ("float", "float"), "neg": ("float", "float"), "scale": ("float", "float"),
     "join": ("string", "string"), "day_seconds": ("int", "float"), "any": ("int", "int"),
     "not": ("int", "int"), "parse_int": ("string", "int"), "text_of": ("int", "string"),
+    # Version 0.16 (ruling 4: no promotion)
+    "sec_of": ("int", "int"), "nsec_of": ("int", "int"), "ms_of": ("int", "int"),
+    "deg": ("float", "float"), "rad": ("float", "float"),
+    "deg_lat_of": ("float", "float"), "deg_lon_of": ("float", "float"),
+    "m_lat_of": ("float", "float"), "m_lon_of": ("float", "float"),
+    "ecef_x": ("float", "float"), "ecef_y": ("float", "float"), "ecef_z": ("float", "float"),
+    "lat_of_ecef": ("float", "float"), "lon_of_ecef": ("float", "float"), "hae_of_ecef": ("float", "float"),
 }
 
 
@@ -432,6 +446,9 @@ class Model:
         elif fn == "offset":
             fits = args[0] == target and target in ("int", "float") and (
                 target == "float" or bool(_INT.match(derive.parameter)))
+        elif fn in ("add", "sub"):
+            # 0.16 ruling 4: the target and both arguments all int or all float
+            fits = target in ("int", "float") and all(a == target for a in args)
         else:
             want_arg, want_target = _DERIVE_TYPES[fn]
             fits = target == want_target and all(a == want_arg for a in args)

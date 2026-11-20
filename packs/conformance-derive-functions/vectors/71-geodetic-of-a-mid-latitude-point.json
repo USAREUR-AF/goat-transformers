@@ -1,0 +1,14 @@
+{
+  "name": "geodetic-of-a-mid-latitude-point",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"ex\":4046089.428,\"ey\":713434.732,\"ez\":4863555.082}",
+  "context": {},
+  "expect": "{\"ex\":4046089.428,\"ey\":713434.732,\"ez\":4863555.082}",
+  "model": {
+    "@complete": true,
+    "probe.e_lat": "49.999999996693035",
+    "probe.e_lon": "9.999999992917763",
+    "probe.e_hae": "1000.0001134700555"
+  }
+}

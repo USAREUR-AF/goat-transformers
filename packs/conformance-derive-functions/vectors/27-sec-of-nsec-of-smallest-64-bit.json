@@ -1,0 +1,13 @@
+{
+  "name": "sec-of-nsec-of-smallest-64-bit",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"tms\":-9223372036854775808}",
+  "context": {},
+  "expect": "{\"tms\":-9223372036854775808,\"tsec\":-9223372036854776,\"tnsec\":192000000}",
+  "model": {
+    "@complete": true,
+    "probe.t_sec": "-9223372036854776",
+    "probe.t_nsec": "192000000"
+  }
+}

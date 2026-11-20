@@ -92,13 +92,16 @@ func checkAbsent(rec *Item, k string) string {
 }
 
 // floatsMatch compares a model float with its expected value: within 1e-9
-// absolute on a decoded entity, within 1e-9 relative on a completed one.
+// absolute on a decoded entity, within 1e-9 relative or 1e-7 absolute on a
+// completed one (spec/vector-format.md step 3; the absolute bound is of
+// Version 0.16).
 func floatsMatch(got, want float64, relative bool) bool {
 	if got == want {
 		return true
 	}
 	if relative {
-		return math.Abs(got-want) < 1e-9*math.Max(math.Abs(got), math.Abs(want))
+		return math.Abs(got-want) < 1e-9*math.Max(math.Abs(got), math.Abs(want)) ||
+			math.Abs(got-want) < 1e-7
 	}
 	return math.Abs(got-want) <= 1e-9
 }
@@ -166,7 +169,7 @@ func checkModelKey(rec *Item, k, want string, relative bool) string {
 			return fmt.Sprintf("expected value %q is not number text; the vector is invalid", want)
 		}
 		if !floatsMatch(val.F, w, relative) {
-			return fmt.Sprintf("got %v, want %v (tolerance 1e-9)", val.F, w)
+			return fmt.Sprintf("got %v, want %v (tolerance 1e-9, or 1e-9 relative / 1e-7 absolute on a completed entity)", val.F, w)
 		}
 		return ""
 	}

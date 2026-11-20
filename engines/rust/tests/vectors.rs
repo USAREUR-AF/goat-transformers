@@ -265,9 +265,11 @@ fn check_vector(engine: &Engine, v: &Json) -> Result<(), String> {
             // float-tolerant compare
             if let (Value::F64(a), Some(Value::F64(b))) = (got_field, &typed) {
                 let b = *b;
-                // decoded: within 1e-9; completed: within 1e-9 relative
+                // decoded: within 1e-9; completed: within 1e-9 relative, or
+                // within 1e-7 absolute (vector-format step 3, Version 0.16)
                 let tolerance = if complete { 1e-9 * a.abs().max(b.abs()) } else { 1e-9 };
-                if *a != b && (a - b).abs() >= tolerance {
+                let absolute = complete && (a - b).abs() < 1e-7;
+                if *a != b && (a - b).abs() >= tolerance && !absolute {
                     return Err(format!("field `{}` = {} want {}", k, a, b));
                 }
             } else if got_field.as_display() != want {

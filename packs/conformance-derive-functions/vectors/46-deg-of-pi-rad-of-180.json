@@ -1,0 +1,13 @@
+{
+  "name": "deg-of-pi-rad-of-180",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"r\":3.141592653589793,\"d\":180}",
+  "context": {},
+  "expect": "{\"r\":3.141592653589793,\"d\":180}",
+  "model": {
+    "@complete": true,
+    "probe.ang_r_deg": "180",
+    "probe.ang_d_rad": "3.141592653589793"
+  }
+}

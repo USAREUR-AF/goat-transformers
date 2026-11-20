@@ -1,0 +1,13 @@
+{
+  "name": "deg-and-rad-negative",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"r\":-0.5,\"d\":-30}",
+  "context": {},
+  "expect": "{\"r\":-0.5,\"d\":-30}",
+  "model": {
+    "@complete": true,
+    "probe.ang_r_deg": "-28.64788975654116",
+    "probe.ang_d_rad": "-0.5235987755982988"
+  }
+}

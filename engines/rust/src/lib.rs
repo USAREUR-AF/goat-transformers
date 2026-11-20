@@ -937,6 +937,26 @@ pub enum DeriveFn {
     TextOf,
     /// 1 when its one argument is held by the entity, whatever its value (engine-spec 0.12)
     Present,
+    /// engine-spec v0.16: an instant in ms as seconds and nanoseconds, and back
+    SecOf,
+    NsecOf,
+    MsOf,
+    Deg,
+    Rad,
+    Add,
+    Sub,
+    /// engine-spec v0.16: a distance and an angle at a latitude, on WGS 84
+    DegLatOf,
+    DegLonOf,
+    MLatOf,
+    MLonOf,
+    /// engine-spec v0.16: geodetic to Earth-centred, Earth-fixed, and back
+    EcefX,
+    EcefY,
+    EcefZ,
+    LatOfEcef,
+    LonOfEcef,
+    HaeOfEcef,
 }
 
 /// One `derive` line: the target key follows from the argument keys.
@@ -987,6 +1007,23 @@ impl DeriveFn {
             "parse_int" => DeriveFn::ParseInt,
             "text_of" => DeriveFn::TextOf,
             "present" => DeriveFn::Present,
+            "sec_of" => DeriveFn::SecOf,
+            "nsec_of" => DeriveFn::NsecOf,
+            "ms_of" => DeriveFn::MsOf,
+            "deg" => DeriveFn::Deg,
+            "rad" => DeriveFn::Rad,
+            "add" => DeriveFn::Add,
+            "sub" => DeriveFn::Sub,
+            "deg_lat_of" => DeriveFn::DegLatOf,
+            "deg_lon_of" => DeriveFn::DegLonOf,
+            "m_lat_of" => DeriveFn::MLatOf,
+            "m_lon_of" => DeriveFn::MLonOf,
+            "ecef_x" => DeriveFn::EcefX,
+            "ecef_y" => DeriveFn::EcefY,
+            "ecef_z" => DeriveFn::EcefZ,
+            "lat_of_ecef" => DeriveFn::LatOfEcef,
+            "lon_of_ecef" => DeriveFn::LonOfEcef,
+            "hae_of_ecef" => DeriveFn::HaeOfEcef,
             _ => return None,
         })
     }
@@ -1009,6 +1046,22 @@ impl DeriveFn {
             DeriveFn::TextOf => args.len() == 1 && args[0] == KeyType::Int && target == KeyType::Str,
             // any scalar argument
             DeriveFn::Present => args.len() == 1 && target == KeyType::Int,
+            // engine-spec v0.16, ruling 4: the types of the table, no promotion
+            DeriveFn::SecOf | DeriveFn::NsecOf => args.len() == 1 && args[0] == KeyType::Int && target == KeyType::Int,
+            DeriveFn::MsOf => args.len() == 2 && target == KeyType::Int && args.iter().all(|t| *t == KeyType::Int),
+            DeriveFn::Deg | DeriveFn::Rad => floats(1),
+            DeriveFn::Add | DeriveFn::Sub => {
+                args.len() == 2
+                    && (target == KeyType::Int || target == KeyType::Float)
+                    && args.iter().all(|t| *t == target)
+            }
+            DeriveFn::DegLatOf | DeriveFn::DegLonOf | DeriveFn::MLatOf | DeriveFn::MLonOf => floats(2),
+            DeriveFn::EcefX
+            | DeriveFn::EcefY
+            | DeriveFn::EcefZ
+            | DeriveFn::LatOfEcef
+            | DeriveFn::LonOfEcef
+            | DeriveFn::HaeOfEcef => floats(3),
         }
     }
 
@@ -1039,6 +1092,40 @@ impl DeriveFn {
             },
             DeriveFn::TextOf => return Some(Value::Str(a[0].as_display())),
             DeriveFn::Present => return Some(Value::I64(1)),
+            // engine-spec v0.16, ruling 3: exact integers, only the result range-checked
+            DeriveFn::SecOf | DeriveFn::NsecOf | DeriveFn::MsOf => {
+                let int = |i: usize| match a[i] {
+                    Value::I64(n) => Some(*n as i128),
+                    _ => None,
+                };
+                let r: i128 = match self {
+                    DeriveFn::SecOf => int(0)?.div_euclid(1000),
+                    DeriveFn::NsecOf => int(0)?.rem_euclid(1000) * 1_000_000,
+                    _ => int(0)? * 1000 + int(1)?.div_euclid(1_000_000),
+                };
+                return i64::try_from(r).ok().map(Value::I64);
+            }
+            DeriveFn::Add | DeriveFn::Sub if matches!(a[0], Value::I64(_)) => match (a[0], a[1]) {
+                (Value::I64(p), Value::I64(q)) => {
+                    let r = if *self == DeriveFn::Add { p.checked_add(*q) } else { p.checked_sub(*q) };
+                    return r.map(Value::I64);
+                }
+                _ => return None,
+            },
+            DeriveFn::Add => x(0) + x(1),
+            DeriveFn::Sub => x(0) - x(1),
+            DeriveFn::Deg => x(0) * (180.0 / std::f64::consts::PI),
+            DeriveFn::Rad => x(0) * rad,
+            DeriveFn::DegLatOf
+            | DeriveFn::DegLonOf
+            | DeriveFn::MLatOf
+            | DeriveFn::MLonOf
+            | DeriveFn::EcefX
+            | DeriveFn::EcefY
+            | DeriveFn::EcefZ
+            | DeriveFn::LatOfEcef
+            | DeriveFn::LonOfEcef
+            | DeriveFn::HaeOfEcef => wgs84(self, x(0), x(1), a.get(2).map(|v| v.as_f64()).unwrap_or(0.0))?,
             DeriveFn::Offset(_, Some(n)) if matches!(a[0], Value::I64(_)) => match a[0] {
                 Value::I64(k) => return k.checked_add(*n).map(Value::I64),
                 _ => return None,
@@ -1073,6 +1160,107 @@ impl DeriveFn {
             None
         }
     }
+}
+
+/// WGS 84 (engine-spec v0.16): the distance, angle and ECEF functions. None
+/// leaves the target absent: a latitude outside [-90, 90], an intermediate
+/// that is not finite (a division by zero, a square root of a negative
+/// number), `G <= 0` near the centre (rulings 1, 2, 6).
+fn wgs84(f: &DeriveFn, x0: f64, x1: f64, x2: f64) -> Option<f64> {
+    use std::f64::consts::PI;
+    const A: f64 = 6378137.0;
+    const FL: f64 = 1.0 / 298.257223563;
+    let e2 = FL * (2.0 - FL);
+    let b = A * (1.0 - FL);
+    let to_rad = PI / 180.0;
+    let to_deg = 180.0 / PI;
+    // every intermediate must be finite (ruling 1)
+    let fin = |v: f64| if v.is_finite() { Some(v) } else { None };
+    let lat_arg = |lat: f64| if (-90.0..=90.0).contains(&lat) { Some(lat * to_rad) } else { None };
+    // prime vertical and meridional radii at phi
+    let radii = |phi: f64| -> Option<(f64, f64)> {
+        let s = phi.sin();
+        let w = fin(1.0 - e2 * s * s)?;
+        let n = fin(A / fin(w.sqrt())?)?;
+        let m = fin(A * (1.0 - e2) / fin(w.powf(1.5))?)?;
+        Some((n, m))
+    };
+    let v = match f {
+        DeriveFn::DegLatOf | DeriveFn::DegLonOf | DeriveFn::MLatOf | DeriveFn::MLonOf => {
+            let phi = lat_arg(x1)?;
+            let (n, m) = radii(phi)?;
+            let c = phi.cos().abs();
+            match f {
+                DeriveFn::DegLatOf => fin(x0 / m)? * to_deg,
+                DeriveFn::DegLonOf => {
+                    if c <= 1e-12 {
+                        return None;
+                    }
+                    fin(x0 / fin(n * c)?)? * to_deg
+                }
+                DeriveFn::MLatOf => fin(fin(x0 * to_rad)? * m)?,
+                _ => fin(fin(fin(x0 * to_rad)? * n)? * c)?,
+            }
+        }
+        DeriveFn::EcefX | DeriveFn::EcefY | DeriveFn::EcefZ => {
+            let phi = lat_arg(x0)?;
+            let lam = fin(x1 * to_rad)?;
+            let (n, _) = radii(phi)?;
+            let hae = fin(x2)?;
+            match f {
+                DeriveFn::EcefX => fin(n + hae)? * phi.cos() * lam.cos(),
+                DeriveFn::EcefY => fin(n + hae)? * phi.cos() * lam.sin(),
+                _ => fin(n * (1.0 - e2) + hae)? * phi.sin(),
+            }
+        }
+        DeriveFn::LonOfEcef => {
+            let (x, y) = (fin(x0)?, fin(x1)?);
+            fin(x2)?;
+            if x == 0.0 && y == 0.0 {
+                return None;
+            }
+            // (-180, 180]: 180 where atan2 gives -180 (ruling 5)
+            let d = y.atan2(x) * to_deg;
+            if d <= -180.0 {
+                d + 360.0
+            } else {
+                d
+            }
+        }
+        DeriveFn::LatOfEcef | DeriveFn::HaeOfEcef => {
+            // Heikkinen's closed form, in the order the specification gives
+            let (x, y, z) = (fin(x0)?, fin(x1)?, fin(x2)?);
+            let (a2, b2) = (A * A, b * b);
+            let e4 = e2 * e2;
+            let p = fin(fin(x * x + y * y)?.sqrt())?;
+            let ff = fin(54.0 * b2 * z * z)?;
+            let g = fin(p * p + (1.0 - e2) * z * z - e2 * (a2 - b2))?;
+            if g <= 0.0 {
+                return None;
+            }
+            let c = fin(e4 * ff * p * p / fin(g * g * g)?)?;
+            let s = fin(fin(1.0 + c + fin(fin(c * c + 2.0 * c)?.sqrt())?)?.cbrt())?;
+            let k = fin(s + 1.0 + fin(1.0 / s)?)?;
+            let pp = fin(ff / fin(3.0 * k * k * g * g)?)?;
+            let q = fin(fin(1.0 + 2.0 * e4 * pp)?.sqrt())?;
+            let inner = fin(a2 / 2.0 * (1.0 + 1.0 / q) - pp * (1.0 - e2) * z * z / fin(q * (1.0 + q))? - pp * p * p / 2.0)?;
+            // ruling 9: 0 in exact arithmetic on the polar axis; a negative argument is taken as 0
+            let inner = if inner < 0.0 { 0.0 } else { inner };
+            let r0 = fin(-pp * e2 * p / fin(1.0 + q)? + fin(inner.sqrt())?)?;
+            let d = fin(p - e2 * r0)?;
+            let u = fin(fin(d * d + z * z)?.sqrt())?;
+            let v = fin(fin(d * d + (1.0 - e2) * z * z)?.sqrt())?;
+            let av = fin(A * v)?;
+            let z0 = fin(b2 * z / av)?;
+            if *f == DeriveFn::HaeOfEcef {
+                fin(u * (1.0 - fin(b2 / av)?))?
+            } else {
+                fin(fin(z + (a2 - b2) / b2 * z0)?.atan2(p))? * to_deg
+            }
+        }
+        _ => return None,
+    };
+    fin(v)
 }
 
 impl Module {

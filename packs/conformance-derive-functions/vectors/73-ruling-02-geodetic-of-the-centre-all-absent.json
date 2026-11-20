@@ -1,0 +1,16 @@
+{
+  "name": "ruling-02-geodetic-of-the-centre-all-absent",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"ex\":0,\"ey\":0,\"ez\":0}",
+  "context": {},
+  "expect": "{\"ex\":0,\"ey\":0,\"ez\":0}",
+  "model": {
+    "@complete": true,
+    "@absent": [
+      "probe.e_lat",
+      "probe.e_lon",
+      "probe.e_hae"
+    ]
+  }
+}

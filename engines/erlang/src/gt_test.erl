@@ -7,7 +7,8 @@
 %%     "<kind>:"); and, when `model` is present, decode(from, input) has each
 %%     listed key (floats within 1e-9) and selects the kind named by "@kind".
 %%     With "@complete": true the keys are checked on the completed entity
-%%     (decode, context, derivations), floats within 1e-9 relative.
+%%     (decode, context, derivations), floats within 1e-9 relative or 1e-7
+%%     absolute.
 %%     "@absent" lists keys, item paths and list names the entity must not
 %%     have; an entry that is also a member of `model` makes the vector fail;
 %%     `max_items` sets the limit on list items for the vector, a `model`
@@ -366,12 +367,14 @@ lookup(Key, #{model := Model, lists := Lists}) ->
     end.
 
 %% Expected model values are given in string form. A float compares within
-%% 1e-9; on a completed entity within 1e-9 relative, or equal.
+%% 1e-9; on a completed entity within 1e-9 relative, or within 1e-7
+%% absolute (Version 0.16), or equal.
 model_eq(Actual, Expected, Complete) when is_float(Actual), is_binary(Expected) ->
     try gt_num:read_as(float, Expected) of
         Want when Complete ->
             Actual == Want orelse
-                abs(Actual - Want) < 1.0e-9 * max(abs(Actual), abs(Want));
+                abs(Actual - Want) < 1.0e-9 * max(abs(Actual), abs(Want)) orelse
+                abs(Actual - Want) < 1.0e-7;
         Want -> abs(Actual - Want) < 1.0e-9
     catch _:_ -> false
     end;

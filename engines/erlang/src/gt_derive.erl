@@ -6,6 +6,11 @@
 %%          | day_seconds | any | 'not' | parse_int | text_of   (Version 0.8)
 %%          | present                                        (Version 0.12)
 %%          | {scale, Factor} | {offset, Text | Number} | {join, Sep}
+%%          | sec_of | nsec_of | ms_of | deg | rad | add | sub
+%%          | deg_lat_of | deg_lon_of | m_lat_of | m_lon_of
+%%          | ecef_x | ecef_y | ecef_z
+%%          | lat_of_ecef | lon_of_ecef | hae_of_ecef            (Version 0.16)
+%% `add` and `sub` are resolved by check_types to {add | sub, int | float}.
 -module(gt_derive).
 -export([parse_function/2, check_types/3, apply_all/2]).
 
@@ -32,6 +37,23 @@ function(<<"not">>) -> {'not', 1};
 function(<<"parse_int">>) -> {parse_int, 1};
 function(<<"text_of">>) -> {text_of, 1};
 function(<<"present">>) -> {present, 1};
+function(<<"sec_of">>) -> {sec_of, 1};
+function(<<"nsec_of">>) -> {nsec_of, 1};
+function(<<"ms_of">>) -> {ms_of, 2};
+function(<<"deg">>) -> {deg, 1};
+function(<<"rad">>) -> {rad, 1};
+function(<<"add">>) -> {add, 2};
+function(<<"sub">>) -> {sub, 2};
+function(<<"deg_lat_of">>) -> {deg_lat_of, 2};
+function(<<"deg_lon_of">>) -> {deg_lon_of, 2};
+function(<<"m_lat_of">>) -> {m_lat_of, 2};
+function(<<"m_lon_of">>) -> {m_lon_of, 2};
+function(<<"ecef_x">>) -> {ecef_x, 3};
+function(<<"ecef_y">>) -> {ecef_y, 3};
+function(<<"ecef_z">>) -> {ecef_z, 3};
+function(<<"lat_of_ecef">>) -> {lat_of_ecef, 3};
+function(<<"lon_of_ecef">>) -> {lon_of_ecef, 3};
+function(<<"hae_of_ecef">>) -> {hae_of_ecef, 3};
 function(<<"scale:", F/binary>>) -> {{scale, gt_pack:factor(F)}, 1};
 function(<<"offset:", N/binary>>) -> _ = gt_pack:number(N), {{offset, N}, 1};
 function(<<"join:", Sep/binary>>) -> {{join, Sep}, any}.
@@ -64,7 +86,18 @@ check_types({join, _} = F, string, Args) ->
         true -> {ok, F};
         false -> {error, "join takes string arguments"}
     end;
-check_types(F, float, Args) when F =:= hypot; F =:= bearing; F =:= east_of;
+%% Version 0.16, ruling 4: no promotion
+check_types(F, int, [int]) when F =:= sec_of; F =:= nsec_of -> {ok, F};
+check_types(ms_of, int, [int, int]) -> {ok, ms_of};
+check_types(F, T, [T, T]) when (F =:= add orelse F =:= sub),
+                               (T =:= int orelse T =:= float) -> {ok, {F, T}};
+check_types(F, float, Args) when F =:= deg; F =:= rad;
+                                 F =:= deg_lat_of; F =:= deg_lon_of;
+                                 F =:= m_lat_of; F =:= m_lon_of;
+                                 F =:= ecef_x; F =:= ecef_y; F =:= ecef_z;
+                                 F =:= lat_of_ecef; F =:= lon_of_ecef;
+                                 F =:= hae_of_ecef;
+                                 F =:= hypot; F =:= bearing; F =:= east_of;
                                  F =:= north_of; F =:= neg;
                                  is_tuple(F) andalso element(1, F) =:= scale ->
     case lists:all(fun(A) -> A =:= float end, Args) of
@@ -166,7 +199,136 @@ eval({offset, N}, [A]) when is_integer(N), is_integer(A) ->
         _ -> absent
     end;
 eval({offset, N}, [A]) when is_float(N) -> A + N;
-eval({join, Sep}, Vals) -> iolist_to_binary(lists:join(Sep, Vals)).
+eval({join, Sep}, Vals) -> iolist_to_binary(lists:join(Sep, Vals));
+%% ---- Version 0.16. Integer results are exact (bignums) and only the final
+%% result is range-checked (ruling 3); a float operation that would not be
+%% finite raises badarith in Erlang, which one/2 turns into an absent target
+%% (ruling 1).
+eval(sec_of, [Ms]) -> int64(floor_div(Ms, 1000));
+eval(nsec_of, [Ms]) -> int64((Ms - 1000 * floor_div(Ms, 1000)) * 1000000);
+eval(ms_of, [Sec, Nsec]) -> int64(Sec * 1000 + floor_div(Nsec, 1000000));
+eval({add, int}, [A, B]) -> int64(A + B);
+eval({sub, int}, [A, B]) -> int64(A - B);
+eval({add, float}, [A, B]) -> A + B;
+eval({sub, float}, [A, B]) -> A - B;
+eval(deg, [R]) -> R * deg_per_rad();
+eval(rad, [D]) -> D * rad_per_deg();
+eval(deg_lat_of, [Dist, Lat]) ->
+    with_lat(Lat, fun(Phi) -> (Dist / m_radius(Phi)) * deg_per_rad() end);
+eval(deg_lon_of, [Dist, Lat]) ->
+    with_lat(Lat, fun(Phi) ->
+                          C = abs(math:cos(Phi)),
+                          case C =< 1.0e-12 of
+                              true -> absent;
+                              false -> (Dist / (n_radius(Phi) * C)) * deg_per_rad()
+                          end
+                  end);
+eval(m_lat_of, [Ang, Lat]) ->
+    with_lat(Lat, fun(Phi) -> Ang * rad_per_deg() * m_radius(Phi) end);
+eval(m_lon_of, [Ang, Lat]) ->
+    with_lat(Lat, fun(Phi) -> Ang * rad_per_deg() * n_radius(Phi) * abs(math:cos(Phi)) end);
+eval(ecef_x, [Lat, Lon, Hae]) ->
+    with_lat(Lat, fun(Phi) ->
+                          L = Lon * rad_per_deg(),
+                          (n_radius(Phi) + Hae) * math:cos(Phi) * math:cos(L)
+                  end);
+eval(ecef_y, [Lat, Lon, Hae]) ->
+    with_lat(Lat, fun(Phi) ->
+                          L = Lon * rad_per_deg(),
+                          (n_radius(Phi) + Hae) * math:cos(Phi) * math:sin(L)
+                  end);
+eval(ecef_z, [Lat, _Lon, Hae]) ->
+    with_lat(Lat, fun(Phi) -> (n_radius(Phi) * (1 - e2()) + Hae) * math:sin(Phi) end);
+eval(lon_of_ecef, [X, Y, _Z]) ->
+    case X == 0 andalso Y == 0 of
+        true -> absent;
+        false ->
+            D = math:atan2(Y, X) * deg_per_rad(),
+            %% ruling 5: (-180, 180]
+            case D == -180.0 of
+                true -> 180.0;
+                false -> D
+            end
+    end;
+eval(lat_of_ecef, [X, Y, Z]) ->
+    case heikkinen(X, Y, Z) of
+        absent -> absent;
+        {Phi, _H} -> Phi * deg_per_rad()
+    end;
+eval(hae_of_ecef, [X, Y, Z]) ->
+    case heikkinen(X, Y, Z) of
+        absent -> absent;
+        {_Phi, H} -> H
+    end.
+
+%% floor(A / B) for integers, rounding toward negative infinity (B > 0 here)
+floor_div(A, B) ->
+    Q = A div B,
+    case (A rem B =/= 0) andalso ((A < 0) =/= (B < 0)) of
+        true -> Q - 1;
+        false -> Q
+    end.
+
+int64(N) when N >= -(1 bsl 63), N < (1 bsl 63) -> N;
+int64(_) -> absent.
+
+%% ruling 6: a latitude outside [-90, 90] leaves the target absent
+with_lat(Lat, F) when Lat >= -90, Lat =< 90 -> F(Lat * rad_per_deg());
+with_lat(_, _) -> absent.
+
+%% WGS 84
+wgs_a() -> 6378137.0.
+wgs_f() -> 1 / 298.257223563.
+e2() -> F = wgs_f(), F * (2 - F).
+wgs_b() -> wgs_a() * (1 - wgs_f()).
+
+%% prime vertical radius N and meridional radius M at φ
+n_radius(Phi) ->
+    S = math:sin(Phi),
+    wgs_a() / math:sqrt(1 - e2() * S * S).
+m_radius(Phi) ->
+    S = math:sin(Phi),
+    wgs_a() * (1 - e2()) / math:pow(1 - e2() * S * S, 1.5).
+
+%% ECEF to geodetic, Heikkinen's closed form in the order of the spec:
+%% {φ in radians, h} | absent (ruling 2: G =< 0).
+heikkinen(X, Y, Z) ->
+    A = wgs_a(), B = wgs_b(), E2 = e2(), E4 = E2 * E2,
+    A2 = A * A, B2 = B * B,
+    P = math:sqrt(X * X + Y * Y),
+    F = 54 * B2 * Z * Z,
+    G = P * P + (1 - E2) * Z * Z - E2 * (A2 - B2),
+    case G =< 0 of
+        true -> absent;
+        false ->
+            C = E4 * F * P * P / (G * G * G),
+            S = cbrt(1 + C + math:sqrt(C * C + 2 * C)),
+            K = S + 1 + 1 / S,
+            PP = F / (3 * K * K * G * G),
+            Q = math:sqrt(1 + 2 * E4 * PP),
+            %% ruling 9: a negative argument of this square root is taken as 0
+            Arg = A2 / 2 * (1 + 1 / Q) - PP * (1 - E2) * Z * Z / (Q * (1 + Q)) - PP * P * P / 2,
+            R0 = -PP * E2 * P / (1 + Q) + math:sqrt(max(Arg, 0.0)),
+            T = P - E2 * R0,
+            U = math:sqrt(T * T + Z * Z),
+            V = math:sqrt(T * T + (1 - E2) * Z * Z),
+            Z0 = B2 * Z / (A * V),
+            H = U * (1 - B2 / (A * V)),
+            Phi = math:atan2(Z + (A2 - B2) / B2 * Z0, P),
+            {Phi, H}
+    end.
+
+%% The real cube root (ruling 1). Erlang's math module has no cbrt: pow on
+%% |x|, the sign restored, then one Newton step to bring it to the double
+%% nearest the root.
+cbrt(X) when X == 0 -> X;
+cbrt(X) when X < 0 -> -cbrt(-X);
+cbrt(X) ->
+    R = math:pow(X, 1 / 3),
+    R - (R * R * R - X) / (3 * R * R).
+
+%% 180/π with π as the double nearest to it, the quotient computed first
+deg_per_rad() -> 180.0 / math:pi().
 
 %% π/180 with π as the double nearest to it
 rad_per_deg() -> math:pi() / 180.0.

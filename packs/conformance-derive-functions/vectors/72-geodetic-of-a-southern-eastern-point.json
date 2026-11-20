@@ -1,0 +1,14 @@
+{
+  "name": "geodetic-of-a-southern-eastern-point",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"ex\":-4667739.625,\"ey\":2560809.649,\"ez\":-3500323.249}",
+  "context": {},
+  "expect": "{\"ex\":-4667739.625,\"ey\":2560809.649,\"ez\":-3500323.249}",
+  "model": {
+    "@complete": true,
+    "probe.e_lat": "-33.5000000001709",
+    "probe.e_lon": "151.25000000336564",
+    "probe.e_hae": "-20.000540742930827"
+  }
+}

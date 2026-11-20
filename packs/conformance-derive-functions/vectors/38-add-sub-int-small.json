@@ -1,0 +1,13 @@
+{
+  "name": "add-sub-int-small",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"i0\":-5,\"i1\":7}",
+  "context": {},
+  "expect": "{\"i0\":-5,\"i1\":7,\"isum\":2,\"idiff\":-12}",
+  "model": {
+    "@complete": true,
+    "probe.isum": "2",
+    "probe.idiff": "-12"
+  }
+}

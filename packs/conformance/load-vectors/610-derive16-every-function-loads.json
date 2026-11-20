@@ -1,0 +1,8 @@
+{
+  "name": "610-derive16-every-function-loads",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey type string -\nkey lat float deg\nkey lon float deg\nkey callsign string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey ms int ms\nkey ms2 int ms\nkey sec int s\nkey nsec int ns\nkey a float -\nkey b float -\nkey c float -\nkey d float -\nkey i int -\nkey j int -\nderive probe.sec sec_of probe.ms\nderive probe.nsec nsec_of probe.ms\nderive probe.ms2 ms_of probe.sec probe.nsec\nderive probe.b deg probe.a\nderive probe.b rad probe.a\nderive probe.c add probe.a probe.b\nderive probe.c sub probe.a probe.b\nderive probe.j add probe.i probe.ms\nderive probe.j sub probe.i probe.ms\nderive probe.c deg_lat_of probe.a probe.b\nderive probe.c deg_lon_of probe.a probe.b\nderive probe.c m_lat_of probe.a probe.b\nderive probe.c m_lon_of probe.a probe.b\nderive probe.d ecef_x probe.a probe.b probe.c\nderive probe.d ecef_y probe.a probe.b probe.c\nderive probe.d ecef_z probe.a probe.b probe.c\nderive probe.d lat_of_ecef probe.a probe.b probe.c\nderive probe.d lon_of_ecef probe.a probe.b probe.c\nderive probe.d hae_of_ecef probe.a probe.b probe.c\n"
+  ],
+  "pack": "format probe\nversion 0.16.0\ndistribution public\nsource \"probe\"\nuses probe\nwire json\nfield uid id string\n"
+}

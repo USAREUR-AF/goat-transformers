@@ -113,3 +113,72 @@ derive  probe.has_d  present  probe.pr_d
 derive  probe.has_b  present  probe.pr_b
 derive  probe.has_c  present  probe.pr_c
 derive  probe.pr_c   copy     probe.pr_i
+# Keys and `derive` lines of the derive functions added in engine-spec 0.16.
+# Every argument here is a key no other probe pack maps, so these lines set
+# nothing in the vectors of earlier versions.
+key  t_ms       int    ms   "an input instant: milliseconds (sec_of, nsec_of)"
+key  t_sec      int    s    "derived: sec_of t_ms"
+key  t_nsec     int    ns   "derived: nsec_of t_ms"
+key  u_sec      int    s    "an input instant: whole seconds (ms_of)"
+key  u_nsec     int    ns   "an input instant: nanoseconds (ms_of)"
+key  u_ms       int    ms   "derived: ms_of u_sec u_nsec"
+key  ang_r      float  rad  "an input angle in radians (deg)"
+key  ang_r_deg  float  deg  "derived: deg ang_r"
+key  ang_d      float  deg  "an input angle in degrees (rad)"
+key  ang_d_rad  float  rad  "derived: rad ang_d"
+key  i0         int    -    "an input integer (add, sub)"
+key  i1         int    -    "an input integer (add, sub)"
+key  isum       int    -    "derived: add i0 i1, integer addition"
+key  idiff      int    -    "derived: sub i0 i1, integer subtraction"
+key  f0         float  m    "an input number (add, sub): a height above the ellipsoid"
+key  f1         float  m    "an input number (add, sub): a geoid separation"
+key  fsum       float  m    "derived: add f0 f1"
+key  fdiff      float  m    "derived: sub f0 f1, a height above mean sea level"
+key  dist       float  m    "an input distance (deg_lat_of, deg_lon_of)"
+key  at_lat     float  deg  "an input latitude of the distance functions"
+key  dist_dlat  float  deg  "derived: deg_lat_of dist at_lat"
+key  dist_dlon  float  deg  "derived: deg_lon_of dist at_lat"
+key  arc        float  deg  "an input angle (m_lat_of, m_lon_of)"
+key  arc_mlat   float  m    "derived: m_lat_of arc at_lat"
+key  arc_mlon   float  m    "derived: m_lon_of arc at_lat"
+key  back_mlat  float  m    "derived: m_lat_of dist_dlat at_lat, dist again"
+key  back_mlon  float  m    "derived: m_lon_of dist_dlon at_lat, dist again"
+key  g_lat      float  deg  "an input geodetic latitude (ecef_x, ecef_y, ecef_z)"
+key  g_lon      float  deg  "an input geodetic longitude"
+key  g_hae      float  m    "an input height above the ellipsoid"
+key  g_x        float  m    "derived: ecef_x g_lat g_lon g_hae"
+key  g_y        float  m    "derived: ecef_y g_lat g_lon g_hae"
+key  g_z        float  m    "derived: ecef_z g_lat g_lon g_hae"
+key  g_rlat     float  deg  "derived: lat_of_ecef g_x g_y g_z, g_lat again"
+key  g_rlon     float  deg  "derived: lon_of_ecef g_x g_y g_z, g_lon again"
+key  g_rhae     float  m    "derived: hae_of_ecef g_x g_y g_z, g_hae again"
+key  e_x        float  m    "an input ECEF x"
+key  e_y        float  m    "an input ECEF y"
+key  e_z        float  m    "an input ECEF z"
+key  e_lat      float  deg  "derived: lat_of_ecef e_x e_y e_z"
+key  e_lon      float  deg  "derived: lon_of_ecef e_x e_y e_z"
+key  e_hae      float  m    "derived: hae_of_ecef e_x e_y e_z"
+derive  probe.t_sec      sec_of       probe.t_ms
+derive  probe.t_nsec     nsec_of      probe.t_ms
+derive  probe.u_ms       ms_of        probe.u_sec  probe.u_nsec
+derive  probe.ang_r_deg  deg          probe.ang_r
+derive  probe.ang_d_rad  rad          probe.ang_d
+derive  probe.isum       add          probe.i0  probe.i1
+derive  probe.idiff      sub          probe.i0  probe.i1
+derive  probe.fsum       add          probe.f0  probe.f1
+derive  probe.fdiff      sub          probe.f0  probe.f1
+derive  probe.dist_dlat  deg_lat_of   probe.dist  probe.at_lat
+derive  probe.dist_dlon  deg_lon_of   probe.dist  probe.at_lat
+derive  probe.arc_mlat   m_lat_of     probe.arc  probe.at_lat
+derive  probe.arc_mlon   m_lon_of     probe.arc  probe.at_lat
+derive  probe.back_mlat  m_lat_of     probe.dist_dlat  probe.at_lat
+derive  probe.back_mlon  m_lon_of     probe.dist_dlon  probe.at_lat
+derive  probe.g_x        ecef_x       probe.g_lat  probe.g_lon  probe.g_hae
+derive  probe.g_y        ecef_y       probe.g_lat  probe.g_lon  probe.g_hae
+derive  probe.g_z        ecef_z       probe.g_lat  probe.g_lon  probe.g_hae
+derive  probe.g_rlat     lat_of_ecef  probe.g_x  probe.g_y  probe.g_z
+derive  probe.g_rlon     lon_of_ecef  probe.g_x  probe.g_y  probe.g_z
+derive  probe.g_rhae     hae_of_ecef  probe.g_x  probe.g_y  probe.g_z
+derive  probe.e_lat      lat_of_ecef  probe.e_x  probe.e_y  probe.e_z
+derive  probe.e_lon      lon_of_ecef  probe.e_x  probe.e_y  probe.e_z
+derive  probe.e_hae      hae_of_ecef  probe.e_x  probe.e_y  probe.e_z

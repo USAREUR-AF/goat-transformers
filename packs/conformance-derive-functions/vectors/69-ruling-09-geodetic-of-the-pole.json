@@ -1,0 +1,16 @@
+{
+  "name": "ruling-09-geodetic-of-the-pole",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"ex\":0,\"ey\":0,\"ez\":6356852.314245179}",
+  "context": {},
+  "expect": "{\"ex\":0,\"ey\":0,\"ez\":6356852.314245179}",
+  "model": {
+    "@complete": true,
+    "probe.e_lat": "90",
+    "probe.e_hae": "100.00000000060967",
+    "@absent": [
+      "probe.e_lon"
+    ]
+  }
+}

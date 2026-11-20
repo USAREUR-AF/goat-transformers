@@ -1,0 +1,14 @@
+{
+  "name": "ruling-05-geodetic-of-minus-6378137-0-0",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"ex\":-6378137,\"ey\":0,\"ez\":0}",
+  "context": {},
+  "expect": "{\"ex\":-6378137,\"ey\":0,\"ez\":0}",
+  "model": {
+    "@complete": true,
+    "probe.e_lat": "0",
+    "probe.e_lon": "180",
+    "probe.e_hae": "0"
+  }
+}

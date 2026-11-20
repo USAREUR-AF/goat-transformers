@@ -1,0 +1,17 @@
+{
+  "name": "ecef-of-10-180-0-and-back",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"glat\":10,\"glon\":180,\"ghae\":0}",
+  "context": {},
+  "expect": "{\"glat\":10,\"glon\":180,\"ghae\":0}",
+  "model": {
+    "@complete": true,
+    "probe.g_x": "-6281872.829603453",
+    "probe.g_y": "0.0000000007693075453424595",
+    "probe.g_z": "1100248.5477353614",
+    "probe.g_rlat": "10",
+    "probe.g_rlon": "180",
+    "probe.g_rhae": "0"
+  }
+}

@@ -3036,3 +3036,120 @@ it does not allow; a parameter that does not parse; an unknown character set;
     any transform the `tlv` table does not hold: `iscale:10` on a `tlv` field
     is `bad-directive`, and with a later line `bogus` the error is
     `unknown-directive`.
+
+---
+
+# Version 0.16: derive functions for time, distance and frames
+
+Status: Written. Derive functions (Version 0.6, Derived keys) for an instant
+split into seconds and nanoseconds, a distance in meters as degrees at a
+latitude, radians, sums and differences (a height above mean sea level from
+a height above the ellipsoid and a geoid separation the caller supplies), and
+Earth-centred, Earth-fixed coordinates.
+
+## Functions
+
+Arguments and results are floats unless the table says `int`. A result that
+is not finite, or an integer result outside the signed 64-bit range, leaves
+the target absent.
+
+| Function | Arguments | Result |
+|---|---|---|
+| `sec_of` | ms (`int`) | `int`: `floor(ms / 1000)` |
+| `nsec_of` | ms (`int`) | `int`: `(ms − 1000 × floor(ms / 1000)) × 1000000`, from 0 to 999000000 |
+| `ms_of` | sec nsec (`int`) | `int`: `sec × 1000 + floor(nsec / 1000000)` |
+| `deg` | rad | `rad × (180 / π)`, the quotient computed first |
+| `rad` | deg | `deg × (π / 180)`, the quotient computed first |
+| `add` | x0 x1 | `x0 + x1`; on `int`, integer addition |
+| `sub` | x0 x1 | `x0 − x1`; on `int`, integer subtraction |
+| `deg_lat_of` | dist lat | `(dist / M) × (180 / π)` |
+| `deg_lon_of` | dist lat | `(dist / (N × |cos φ|)) × (180 / π)`; absent when `|cos φ| ≤ 1e-12` |
+| `m_lat_of` | ang lat | `ang × (π / 180) × M` |
+| `m_lon_of` | ang lat | `ang × (π / 180) × N × |cos φ|` |
+| `ecef_x` | lat lon hae | `(N + hae) cos φ cos λ` |
+| `ecef_y` | lat lon hae | `(N + hae) cos φ sin λ` |
+| `ecef_z` | lat lon hae | `(N (1 − e²) + hae) sin φ` |
+| `lat_of_ecef` | x y z | φ of the closed form below, in degrees |
+| `lon_of_ecef` | x y z | `atan2(y, x)` in degrees, in `(−180, 180]`; absent when x and y are both 0 |
+| `hae_of_ecef` | x y z | h of the closed form below |
+
+Every function takes exactly the arguments listed.
+
+`floor` rounds toward negative infinity: `sec_of(-1)` is `-1` and
+`nsec_of(-1)` is `999000000`.
+
+## The ellipsoid
+
+WGS 84: `a = 6378137` m, `f = 1 / 298.257223563`, `e² = f (2 − f)`,
+`b = a (1 − f)`. For a latitude `lat` in degrees, `φ = lat × (π / 180)` and
+`λ = lon × (π / 180)` (the quotient first), and
+
+- `N = a / sqrt(1 − e² sin² φ)` (prime vertical radius),
+- `M = a (1 − e²) / (1 − e² sin² φ)^1.5` (meridional radius).
+
+ECEF to geodetic is Heikkinen's closed form, computed in this order:
+
+```
+p  = sqrt(x² + y²)
+F  = 54 b² z²
+G  = p² + (1 − e²) z² − e² (a² − b²)
+c  = e⁴ F p² / G³
+s  = cbrt(1 + c + sqrt(c² + 2c))
+k  = s + 1 + 1/s
+P  = F / (3 k² G²)
+Q  = sqrt(1 + 2 e⁴ P)
+r0 = −P e² p / (1 + Q) + sqrt(a²/2 × (1 + 1/Q) − P (1 − e²) z² / (Q (1 + Q)) − P p² / 2)
+U  = sqrt((p − e² r0)² + z²)
+V  = sqrt((p − e² r0)² + (1 − e²) z²)
+z0 = b² z / (a V)
+h  = U (1 − b² / (a V))
+φ  = atan2(z + (a² − b²)/b² × z0, p)
+```
+
+`sin`, `cos`, `sqrt`, `cbrt`, `atan2` and powers are the platform's double
+functions. A vector states every result of these functions in `model` under
+`"@complete": true` and compares as Vector additions below state, except
+the integer functions, which are exact.
+
+## Rulings for 0.16
+
+1. **Never an error.** An intermediate that is not finite, a division by
+   zero or a square root of a negative number leaves the target absent; no
+   derive function fails a conversion. `cbrt` is the real cube root.
+2. **Near the centre.** `lat_of_ecef` and `hae_of_ecef` are absent when
+   `G ≤ 0`, which covers the Earth's centre.
+3. **Exact integers.** `floor` is exact integer division rounding toward
+   negative infinity; no step goes through a float. Integer results are the
+   exact mathematical value, and only the final result is range-checked:
+   `nsec_of(-9223372036854775808)` is `192000000`.
+4. **Types.** For `add` and `sub`, the target and both arguments are all
+   `int` or all `float`. Every other function of this version takes and gives
+   the types the table states; an `int` key where it states a float is
+   `bad-directive`. There is no promotion.
+5. **Longitude.** `lon_of_ecef` gives `180` where `atan2` gives `-180`.
+6. **Latitude range.** A `lat` argument outside `[-90, 90]` leaves the target
+   absent.
+7. **`ms_of`** accepts any `nsec` and applies the formula: `ms_of(0, -1)` is
+   `-1`, `ms_of(1, 999999)` is `1000`, `ms_of(1, 1500000000)` is `2500`.
+8. **Degrees.** Radians become degrees as `x × (180 / π)`, the quotient
+   first, for every function here (ruling 1 of 0.6).
+9. **The square root in `r0`.** Its argument is 0 in exact arithmetic on
+   the polar axis and comes out slightly negative or positive in doubles; a
+   negative argument there is taken as 0, so a point on or near the axis
+   gives latitude ±90 and its height (ruling 1 applies to every other
+   square root).
+10. **Negative zero on input.** A `float` decoded from `-0.0` keeps its
+    sign; `lon_of_ecef` of `(-a, -0.0, 0)` is 180 by ruling 5.
+11. **Longitude** arguments have no range check; only `lat` does (ruling 6).
+
+## Vector additions
+
+A float compared in `model` passes when it is within 1e-9 relative, as
+before, or within `1e-7` absolute: `|got − want| < 1e-7`. Results that are 0
+in exact arithmetic (a height of 0 from ECEF, `ecef_x` at longitude 90) are
+tiny but not 0 in doubles.
+
+## Load errors
+
+As for every derive function: a wrong number of arguments, an undeclared key,
+or a type that does not fit (ruling 4) is `bad-directive`.

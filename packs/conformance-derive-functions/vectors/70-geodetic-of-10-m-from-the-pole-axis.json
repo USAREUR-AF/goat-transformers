@@ -1,0 +1,14 @@
+{
+  "name": "geodetic-of-10-m-from-the-pole-axis",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"ex\":10,\"ey\":0,\"ez\":6356852.314245179}",
+  "context": {},
+  "expect": "{\"ex\":10,\"ey\":0,\"ez\":6356852.314245179}",
+  "model": {
+    "@complete": true,
+    "probe.e_lat": "89.99991047105867",
+    "probe.e_lon": "0",
+    "probe.e_hae": "100.00000781270484"
+  }
+}

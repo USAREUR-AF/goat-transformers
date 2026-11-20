@@ -312,7 +312,7 @@ feature refuses a plan that uses it (`bad-plan`).
 | `length-plus-range` | a `plus` outside 32 bits |
 | `value-range`, `table-overflow` | an offset, count or table index beyond what an entry holds; more than 255 sentinels on one field |
 | `unknown-format`, `unknown-kind`, `unknown-key`, `bad-arguments` | a name the inputs do not have |
-| `unsupported-feature` | a pack line of the specification that the device profile does not implement. Refused this way: `sixbit` and `armor sixbit` (spec 0.14), and the bits transforms of spec 0.15 (`uiscale`, `siscale`, `smag`, `smscale`, `f32scale`, `f64scale`, `chars`, `octal`) |
+| `unsupported-feature` | a pack line of the specification that the device profile does not implement. Refused this way: `sixbit` and `armor sixbit` (spec 0.14), and the bits transforms of spec 0.15 (`uiscale`, `siscale`, `smag`, `smscale`, `f32scale`, `f64scale`, `chars`, `octal`), and the derive functions of spec 0.16 (`sec_of`, `ms_of`, `deg`, `add`, the distance and ECEF functions and the others of its table) when a conversion needs one |
 | `bad-pack`, `bad-model` | text the compiler cannot read; it compiles packs the reference engine loads and does not repeat that engine's load checks |
 
 The text wires are out of scope for the device profile. A text format needs a
