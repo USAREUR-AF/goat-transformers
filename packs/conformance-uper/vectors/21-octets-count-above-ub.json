@@ -1,0 +1,9 @@
+{
+  "name": "octets-count-above-ub",
+  "from": "conformance-uper",
+  "to": "conformance-uper",
+  "input": "070000000000200020000efd740000000000000000",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.19 (ASN.1 unaligned PER): Input: the s1 count (SIZE (0..4), 3 bits) holds 5; above ub, so malformed-wire before any octet is read (Errors). Zero octets follow. Checking codecs on the same input: asn1tools 0.169.0 decodes it; pycrate 0.8.1 fails. Derived without an engine by a standalone X.691 reference program (Python standard library)."
+}

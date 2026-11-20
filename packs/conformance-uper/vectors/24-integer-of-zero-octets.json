@@ -1,0 +1,9 @@
+{
+  "name": "integer-of-zero-octets",
+  "from": "conformance-uper",
+  "to": "conformance-uper",
+  "input": "07000000000020000000000000000000000000000000000000",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.19 (ASN.1 unaligned PER): Input: z (INTEGER, unconstrained) has the octet count 0: malformed-wire (ruling 5). Zero octets follow. Checking codecs on the same input: asn1tools 0.169.0 fails; pycrate 0.8.1 decodes it. Derived without an engine by a standalone X.691 reference program (Python standard library)."
+}

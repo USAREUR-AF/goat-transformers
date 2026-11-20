@@ -907,6 +907,23 @@ std::uint64_t encode_bits_value(const FieldLine& f, const Value& v, std::uint32_
     throw std::invalid_argument("not a bits transform");
 }
 
+Value decode_uper_int(const FieldLine& f, std::int64_t v) {
+    switch (f.transform) {
+        case Transform::Uscale:
+        case Transform::Sscale: return Value::of_float(scale_decode(f, static_cast<double>(v)));
+        default: return Value::of_int(v);
+    }
+}
+
+std::int64_t encode_uper_int(const FieldLine& f, const Value& v) {
+    if (f.transform != Transform::Uscale && f.transform != Transform::Sscale) return model_int(v);
+    // scale_encode gives the quotient; `round` is half away from zero (0.11 ruling 4a).
+    const double r = std::round(scale_encode(f, model_double(v)));
+    if (!std::isfinite(r) || r < -9223372036854775808.0 || r >= 9223372036854775808.0)
+        throw std::invalid_argument("the scaled value is not an integer of 64 signed bits");
+    return static_cast<std::int64_t>(r);
+}
+
 Value decode_ascii(const std::string& bytes, bool trim) {
     std::size_t n = bytes.size();
     while (n > 0 && bytes[n - 1] == '\0') --n;

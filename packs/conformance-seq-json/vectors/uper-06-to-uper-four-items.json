@@ -1,0 +1,9 @@
+{
+  "name": "uper-06-to-uper-four-items",
+  "from": "conformance-seq-json",
+  "to": "conformance-uper",
+  "input": "{\"items\":[{\"qty\":1},{\"qty\":2},{\"qty\":3},{\"qty\":4}]}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.19 (ASN.1 unaligned PER): items of 4 under SIZE (0..3): transform-encode (SEQUENCE OF). Derived without an engine by a standalone X.691 reference program (Python standard library)."
+}

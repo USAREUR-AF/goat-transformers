@@ -1,0 +1,8 @@
+{
+  "name": "wire-uper-43-one-list-in-two-alts-loads",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey lat float deg\nkey lon float deg\nkey callsign string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey n int -\nkey x int -\nkey y int -\nkey z int -\nkey w int -\nkey qty int -\nkey c1 int -\nkey c2 int -\nkey val int -\nkey a float -\nkey ratio float -\nkey label string -\nkey tag string -\nkey s1 string -\nkey s2 string -\nlist items \"a list\"\nlist names \"a list\"\n"
+  ],
+  "pack": "format probe\nversion 0.19.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nlayout sequential\nbit_order msb\nencoding uper\nchoice 2\n  alt 0\n    group probe.items size 0 3\n      field probe.qty int:0:7 uint\n    end\n  alt 1\n    group probe.items size\n      field probe.qty int:0:15 uint\n    end\nend\n"
+}

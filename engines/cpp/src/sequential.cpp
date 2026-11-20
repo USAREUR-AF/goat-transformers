@@ -49,6 +49,80 @@ bool parse_u64(const std::string& s, std::uint64_t& out) {
 // `plus <n>`: integer text (0.11 ruling 2c, by 2a): an optional `-`, no `+`.
 bool parse_i64(const std::string& s, std::int64_t& out) { return parse_int_text(s, out); }
 
+// v0.19, a number of a UPER line (ruling 15): an optional `-` and digits with
+// no leading zero, `-0` refused, within 64 signed bits.
+bool parse_uper_num(const std::string& s, std::int64_t& out) {
+    const bool neg = !s.empty() && s[0] == '-';
+    const std::string digits = neg ? s.substr(1) : s;
+    if (digits.empty() || (digits.size() > 1 && digits[0] == '0') || (neg && digits == "0")) return false;
+    std::uint64_t v = 0;
+    if (!parse_u64(digits, v)) return false;
+    if (neg) {
+        if (v > static_cast<std::uint64_t>(INT64_MAX) + 1) return false;
+        out = v == static_cast<std::uint64_t>(INT64_MAX) + 1 ? INT64_MIN : -static_cast<std::int64_t>(v);
+    } else {
+        if (v > static_cast<std::uint64_t>(INT64_MAX)) return false;
+        out = static_cast<std::int64_t>(v);
+    }
+    return true;
+}
+
+// The numbers of `choice`, `alt` and `group ... size` lines (ruling 15): digits
+// with no leading zero, no sign.
+bool parse_uper_count(const std::string& s, std::int64_t& out) {
+    return !s.empty() && s[0] != '-' && parse_uper_num(s, out);
+}
+
+std::vector<std::string> split_colons(const std::string& s) {
+    std::vector<std::string> out(1);
+    for (char c : s) {
+        if (c == ':') out.emplace_back();
+        else out.back() += c;
+    }
+    return out;
+}
+
+bool is_uper_locator(const std::string& loc) {
+    return loc.compare(0, 4, "int:") == 0 || loc.compare(0, 5, "enum:") == 0 || loc.compare(0, 6, "chars:") == 0 ||
+           loc.compare(0, 7, "octets:") == 0;
+}
+
+// The UPER locator forms (0.19, Locators). False when the text is none of them.
+bool parse_uper_locator(const std::string& loc, SeqNode& n) {
+    const std::vector<std::string> t = split_colons(loc);
+    using U = SeqNode::Uper;
+    if (t[0] == "int") {
+        if (t.size() == 3 && t[1].empty() && t[2].empty()) {
+            n.uper = U::IntUn;
+            return true;
+        }
+        if (t.size() == 3 && t[2].empty()) {
+            n.uper = U::IntSemi;
+            return parse_uper_num(t[1], n.lb);
+        }
+        if (t.size() == 3 || (t.size() == 4 && t[3] == "ext")) {
+            n.uper = t.size() == 4 ? U::IntExt : U::Int;
+            return parse_uper_num(t[1], n.lb) && parse_uper_num(t[2], n.ub) && n.lb <= n.ub;
+        }
+        return false;
+    }
+    if (t[0] == "enum") {
+        if (t.size() != 2 && !(t.size() == 3 && t[2] == "ext")) return false;
+        std::int64_t count = 0;
+        if (!parse_uper_num(t[1], count) || count < 1 || count > 65536) return false;
+        n.uper = t.size() == 3 ? U::EnumExt : U::Enum;
+        n.lb = 0;
+        n.ub = count - 1;
+        return true;
+    }
+    // chars and octets
+    n.uper = t[0] == "chars" ? U::Chars : U::Octets;
+    if (t.size() == 2 && t[1].empty()) return true;
+    if (t.size() != 3) return false;
+    n.bounded = true;
+    return parse_uper_num(t[1], n.lb) && parse_uper_num(t[2], n.ub) && 0 <= n.lb && n.lb <= n.ub && n.ub < 65536;
+}
+
 template <class Lines, class Fn>
 void each_node(Lines& lines, Fn&& fn) {
     for (auto& n : lines) {
@@ -77,7 +151,7 @@ void collect_groups(const Pack& p, const std::vector<SeqNode>& lines, std::vecto
         if (n.type == Type::Group) {
             out.push_back({&n, blocks});
             check_lists_once(p, n.inner, source);  // the items are a scope of their own
-        } else if (n.type == Type::If || n.type == Type::Opt) {
+        } else if (n.type == Type::If || n.type == Type::Opt || n.type == Type::Alt) {
             blocks.push_back(&n);
             collect_groups(p, n.inner.lines, blocks, source, out);
             blocks.pop_back();
@@ -178,6 +252,17 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
     // `length ... whole` lines.
     std::size_t armor_line = 0, first_kind_line = 0, whole_line = 0;
     std::string armor_error;
+    // v0.19: `encoding <none | uper>`, checked after the file is read, and the
+    // first UPER line (ruling 9), refused after the file is read when the pack
+    // has no `encoding uper`.
+    std::size_t encoding_line = 0, uper_line = 0;
+    std::string encoding_error, uper_what;
+    auto note_uper = [&](std::size_t line, const std::string& what) {
+        if (uper_line == 0) {
+            uper_line = line;
+            uper_what = what;
+        }
+    };
 
     auto lines_of = [](Frame& f) -> std::vector<SeqNode>& {
         return f.body->kinds.empty() ? f.body->lines : f.body->kinds.back().lines;
@@ -256,8 +341,12 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
         // message: inside any block they are bad-directive (0.8 ruling 24).
         if (stack.size() > 1 &&
             (kw == "format" || kw == "version" || kw == "distribution" || kw == "source" || kw == "uses" ||
-             kw == "wire" || kw == "layout" || kw == "bit_order" || kw == "armor" || kw == "map" || kw == "typemap"))
+             kw == "wire" || kw == "layout" || kw == "bit_order" || kw == "armor" || kw == "encoding" || kw == "map" ||
+             kw == "typemap"))
             throw bad("'" + kw + "' is not allowed inside " + stack.back().what);
+        // v0.19: a `choice` holds `alt` lines only.
+        if (stack.back().type == Type::Choice && kw != "alt" && kw != "end")
+            throw bad("'" + kw + "' between 'choice' and its first 'alt'");
 
         if (kw == "format") {
             arity(1);
@@ -316,6 +405,18 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
                 p.armor_sixbit = t[1] == "sixbit";
             }
             if (armor_line == 0) armor_line = lineno;
+        } else if (kw == "encoding") {
+            std::string why;
+            if (t.size() != 2) why = "'encoding' takes one value: none or uper";
+            else if (t[1] != "none" && t[1] != "uper") why = "'encoding' is none or uper, not '" + t[1] + "'";
+            else if (encoding_line != 0) why = "'encoding' appears twice";
+            else if (first_kind_line != 0) why = "'encoding' after the first 'kind'";
+            if (!why.empty()) {
+                if (encoding_error.empty()) encoding_error = where + ": " + why;
+            } else {
+                p.uper = t[1] == "uper";
+            }
+            if (encoding_line == 0) encoding_line = lineno;
         } else if (kw == "bit_order") {
             arity(1);
             once(have_bit_order);
@@ -393,6 +494,63 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
             f.key = t[1];
             f.locator = t[2];
             f.line = lineno;
+            if (is_uper_locator(f.locator)) {
+                // v0.19: a locator whose bit length follows from its ASN.1 constraint.
+                if (!parse_uper_locator(f.locator, n)) throw bad("'" + f.locator + "' is not a valid UPER locator");
+                note_uper(lineno, "the locator '" + f.locator + "'");
+                // The transform's name and parameters were checked as the line
+                // was read (0.11 ruling 5b, step 7); a known transform the
+                // locator does not take is bad-directive here (0.19 ruling 19).
+                std::string terr;
+                const int ptf = parse_any_transform(t[3], f, terr);
+                if (ptf == -2)
+                    throw Error(ErrorKind::UnknownTransform, p.format, f.locator,
+                                where + ": " + terr + " for field '" + f.key + "'");
+                if (ptf == -1) throw bad(terr + " for field '" + f.key + "'");
+                using U = SeqNode::Uper;
+                const Transform tf = f.transform;
+                bool ok = false;
+                switch (n.uper) {
+                    case U::Int:
+                    case U::IntExt:
+                    case U::IntSemi:
+                    case U::IntUn:
+                        ok = tf == Transform::Uint || tf == Transform::Twos || tf == Transform::Uscale ||
+                             tf == Transform::Sscale;
+                        break;
+                    case U::Enum:
+                    case U::EnumExt: ok = tf == Transform::Uint; break;
+                    case U::Chars: ok = tf == Transform::Ascii; break;
+                    case U::Octets: ok = tf == Transform::Hex || tf == Transform::Utf8; break;
+                    case U::None: break;
+                }
+                if (!ok)
+                    throw bad("transform '" + std::string(transform_name(tf)) + "' does not apply to the locator '" +
+                              f.locator + "'");
+                for (std::size_t k = 4; k < t.size(); ++k) {
+                    if (t[k] == "via") {
+                        if (k + 1 >= t.size() || t[k + 1].empty() || !f.via.empty())
+                            throw bad("'via' takes one table name, once");
+                        f.via = t[++k];
+                        continue;
+                    }
+                    // v0.18: `with` is a field option on every wire; a suppressed
+                    // UPER field writes what an absent key writes (0.19 ruling 1).
+                    if (t[k] == "with") {
+                        if (k + 1 >= t.size() || t[k + 1].empty() || !f.with.empty())
+                            throw bad("'with' takes one key, once");
+                        f.with = t[++k];
+                        continue;
+                    }
+                    // Ruling 22 of 0.19: the bits of a UPER locator depend on its
+                    // value, so 0.9's raw value is not stated for it.
+                    if (t[k] == "absent")
+                        throw bad("'absent' does not apply to the UPER locator '" + f.locator + "'");
+                    throw bad("'" + t[k] + "' is not a field option of a UPER locator, or is given twice");
+                }
+                also_target = &add(std::move(n));
+                continue;
+            }
             if (f.locator.find(':') != std::string::npos)
                 throw bad("a positional <word>:<pos>:<len> locator in a sequential pack: '" + f.locator + "'");
             if (!parse_u32(f.locator, n.len)) throw bad("the locator of a sequential field is a bit length, not '" + f.locator + "'");
@@ -487,6 +645,8 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
         } else if (kw == "presence") {
             arity(2);
             Frame& f = stack.back();
+            if (f.type == Type::Ext && !lines_of(f).empty())
+                throw bad("a 'presence' line inside an 'ext' block is its first line");
             if (t[1].empty() || f.names.count(t[1]) || f.kind_names.count(t[1]))
                 throw bad("the presence '" + t[1] + "' is declared twice in " + f.what);
             SeqPresence pr;
@@ -593,13 +753,63 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
                 n.len = small_len(t[3], "a count");
             } else if (t.size() == 3 && (t[2] == "while" || t[2] == "more" || t[2] == "fx")) {
                 n.repeat = t[2] == "while" ? Repeat::While : t[2] == "more" ? Repeat::More : Repeat::Fx;
+            } else if ((t.size() == 3 || t.size() == 5) && t[2] == "size") {
+                // v0.19: SEQUENCE OF, `size <lb> <ub>` or no size constraint.
+                n.repeat = Repeat::Size;
+                if (t.size() == 5) {
+                    n.bounded = true;
+                    if (!parse_uper_count(t[3], n.lb) || !parse_uper_count(t[4], n.ub) || n.lb < 0 || n.lb > n.ub ||
+                        n.ub >= 65536)
+                        throw bad("'size <lb> <ub>' needs 0 <= lb <= ub < 65536");
+                }
+                note_uper(lineno, "'group ... size'");
             } else {
                 throw bad("a group of a sequential pack is 'group <list> count <len>' or 'group <list> while | more | fx'");
             }
             open(std::move(n), "the group '" + t[1] + "'");
+        } else if (kw == "ext") {
+            // v0.19: a SEQUENCE with an extension marker.
+            arity(0);
+            note_uper(lineno, "'ext'");
+            SeqNode n;
+            n.type = Type::Ext;
+            open(std::move(n), "an 'ext' block");
+        } else if (kw == "choice") {
+            // v0.19: `choice <n> [ext]`, then `alt <i>` lines.
+            if (t.size() != 2 && !(t.size() == 3 && t[2] == "ext"))
+                throw bad("'choice' takes a number of alternatives and, optionally, 'ext'");
+            std::int64_t count = 0;
+            if (!parse_uper_count(t[1], count) || count < 1 || count > 65536)
+                throw bad("'choice' takes 1 to 65536 alternatives, not '" + t[1] + "'");
+            note_uper(lineno, "'choice'");
+            SeqNode n;
+            n.type = Type::Choice;
+            n.number = static_cast<std::uint64_t>(count);
+            n.uext = t.size() == 3;
+            open(std::move(n), "a 'choice'");
+        } else if (kw == "alt") {
+            arity(1);
+            if (stack.back().type == Type::Alt) stack.pop_back();
+            if (stack.back().type != Type::Choice) throw bad("'alt' outside a 'choice'");
+            std::int64_t index = 0;
+            const std::vector<SeqNode>& alts = lines_of(stack.back());
+            // The choice node: the last line of the block that holds it.
+            Frame& outer = stack[stack.size() - 2];
+            const SeqNode& ch = lines_of(outer).back();
+            if (!parse_uper_count(t[1], index) || static_cast<std::uint64_t>(index) >= ch.number)
+                throw bad("'alt " + t[1] + "' is not an index from 0 to " + std::to_string(ch.number - 1));
+            for (const auto& a : alts)
+                if (a.number == static_cast<std::uint64_t>(index)) throw bad("'alt " + t[1] + "' is given twice");
+            note_uper(lineno, "'alt'");
+            SeqNode n;
+            n.type = Type::Alt;
+            n.number = static_cast<std::uint64_t>(index);
+            open(std::move(n), "an 'alt'");
         } else if (kw == "end") {
             if (stack.size() < 2) throw bad("'end' with no open block");
             arity(0);
+            if (stack.back().type == Type::Choice) throw bad("a 'choice' with no 'alt' line");
+            if (stack.back().type == Type::Alt) stack.pop_back();  // the `end` closes the choice
             check_common_when(stack.back());
             stack.pop_back();
         } else if (kw == "element") {
@@ -622,6 +832,17 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
     if (p.armor_sixbit && p.bit_order != BitOrder::Msb)
         throw Error(ErrorKind::BadDirective, p.format, "",
                     source + ":" + std::to_string(armor_line) + ": 'armor sixbit' needs 'bit_order msb'");
+    // v0.19: `encoding uper` and the lines it allows.
+    if (!encoding_error.empty()) throw Error(ErrorKind::BadDirective, p.format, "", encoding_error);
+    if (p.uper && p.bit_order != BitOrder::Msb)
+        throw Error(ErrorKind::BadDirective, p.format, "",
+                    source + ":" + std::to_string(encoding_line) + ": 'encoding uper' needs 'bit_order msb'");
+    if (p.uper && p.armor_sixbit)
+        throw Error(ErrorKind::BadDirective, p.format, "",
+                    source + ":" + std::to_string(encoding_line) + ": 'encoding uper' with 'armor sixbit'");
+    if (!p.uper && uper_line != 0)
+        throw Error(ErrorKind::BadDirective, p.format, "",
+                    source + ":" + std::to_string(uper_line) + ": " + uper_what + " needs 'encoding uper'");
     // Ruling 3 of 0.14: the armored text has no whole-byte length.
     if (p.armor_sixbit && whole_line != 0)
         throw Error(ErrorKind::BadDirective, p.format, "",
@@ -750,7 +971,198 @@ struct SeqIn {
         const std::vector<bool>& v = presence[static_cast<std::size_t>(c.presence)];
         return c.bit <= v.size() && v[c.bit - 1];
     }
+    // v0.19. Has the cursor reached the end of the `length` extent, so that the
+    // line reads as absent?
+    bool at_extent_end() const { return ext != kNoExtent && cur >= ext; }
+    // The bits left before the end of the input or of the extent.
+    std::uint64_t left() const {
+        const std::uint64_t end = ext != kNoExtent ? std::min(ext, have) : have;
+        return cur < end ? end - cur : 0;
+    }
+    // `len` bits (0 to 64) that the input must hold.
+    std::uint64_t must(std::uint32_t len, const char* what) {
+        if (len == 0) return 0;
+        if (len > left()) malformed(std::string("the input ends inside ") + what);
+        return take(len);
+    }
+    // Skip `bits` bits that the input must hold.
+    void skip(std::uint64_t bits, const char* what) {
+        if (bits > left()) malformed(std::string("the input cannot hold ") + what);
+        cur += bits;
+    }
+    // A failure that belongs to no field (an extension index beyond 64 bits).
+    void fail(const std::string& why) {
+        if (failed) return;
+        failed = true;
+        fail_locator.clear();
+        fail_detail = why;
+    }
 };
+
+// ---------------------------------------------------------------- X.691 terms (0.19)
+
+// The fewest bits that hold `range`: 0 for 0.
+std::uint32_t bits_for(std::uint64_t range) {
+    std::uint32_t b = 0;
+    while (b < 64 && (range >> b) != 0) ++b;
+    return b;
+}
+
+// A 64-bit pattern as the signed value it holds in two's complement.
+std::int64_t as_signed(std::uint64_t u) {
+    return u <= static_cast<std::uint64_t>(INT64_MAX) ? static_cast<std::int64_t>(u)
+                                                       : -static_cast<std::int64_t>(~u) - 1;
+}
+
+std::uint64_t as_unsigned(std::int64_t v) {
+    return v >= 0 ? static_cast<std::uint64_t>(v) : ~static_cast<std::uint64_t>(-(v + 1));
+}
+
+// A constrained whole number in lb..ub; above ub is malformed-wire.
+std::int64_t read_constrained(SeqIn& in, std::int64_t lb, std::int64_t ub, const char* what) {
+    const std::uint64_t range = as_unsigned(ub) - as_unsigned(lb);
+    const std::uint64_t off = in.must(bits_for(range), what);
+    if (off > range) in.malformed(std::string(what) + " lies outside its constraint");
+    return as_signed(as_unsigned(lb) + off);
+}
+
+// A length determinant; a fragmented length is malformed-wire.
+std::uint64_t read_length(SeqIn& in, const char* what) {
+    if (in.must(1, what) == 0) return in.must(7, what);
+    if (in.must(1, what) == 0) return in.must(14, what);
+    in.malformed(std::string("a fragmented length for ") + what);
+}
+
+// The octet count of an integer, then its octets: false, the octets skipped,
+// when there are more than 8; an octet count of 0 is malformed-wire.
+bool read_int_octets(SeqIn& in, std::uint64_t& raw, std::uint32_t& octets, const char* what) {
+    const std::uint64_t n = read_length(in, what);
+    // In order (ruling 20): the input holds the octets, the count is not 0, then
+    // (for the caller) the value fits.
+    if (n * 8 > in.left()) in.malformed(std::string("the input cannot hold the octets of ") + what);
+    if (n == 0) in.malformed(std::string("an integer of 0 octets for ") + what);
+    if (n > 8) {
+        in.skip(n * 8, what);
+        return false;
+    }
+    octets = static_cast<std::uint32_t>(n);
+    raw = in.must(octets * 8, what);
+    return true;
+}
+
+std::int64_t sign_extend_octets(std::uint64_t raw, std::uint32_t octets) {
+    if (octets < 8 && (raw >> (8 * octets - 1)) & 1u) raw |= ~std::uint64_t{0} << (8 * octets);
+    return as_signed(raw);
+}
+
+// A normally small non-negative whole number: false when its long form has
+// more than 8 octets.
+bool read_small(SeqIn& in, std::uint64_t& out, const char* what) {
+    if (in.must(1, what) == 0) {
+        out = in.must(6, what);
+        return true;
+    }
+    std::uint32_t octets = 0;
+    return read_int_octets(in, out, octets, what);
+}
+
+// An open type: skipped.
+void skip_open_type(SeqIn& in) {
+    const std::uint64_t n = read_length(in, "the length of an open type");
+    in.skip(n * 8, "the octets of an open type");
+}
+
+// After an extension bit 1: the additions, skipped (rulings 8 and 16).
+void skip_additions(SeqIn& in) {
+    std::uint64_t m = 0;
+    if (in.must(1, "the number of extension additions") == 0) m = in.must(6, "the number of extension additions") + 1;
+    else m = read_length(in, "the number of extension additions");
+    if (m > in.left()) in.malformed("the input cannot hold the presence bits of the extension additions");
+    std::vector<bool> present;
+    for (std::uint64_t k = 0; k < m; ++k) present.push_back(in.take(1) == 1);
+    for (bool b : present)
+        if (b) skip_open_type(in);
+}
+
+void decode_uper_field(SeqIn& in, const SeqNode& n, Decoder& d) {
+    using U = SeqNode::Uper;
+    if (in.at_extent_end()) return;
+    const FieldLine& f = n.field;
+    const char* what = "a UPER field";
+    std::string why;  // a transform failure
+    Value v;
+    std::uint64_t raw = 0;
+    std::uint32_t octets = 0;
+    try {
+        switch (n.uper) {
+            case U::Int: v = decode_uper_int(f, read_constrained(in, n.lb, n.ub, what)); break;
+            case U::IntExt:
+                if (in.must(1, what) == 0) {
+                    v = decode_uper_int(f, read_constrained(in, n.lb, n.ub, what));
+                } else if (read_int_octets(in, raw, octets, what)) {
+                    v = decode_uper_int(f, sign_extend_octets(raw, octets));
+                } else {
+                    why = "an integer of more than 8 octets";
+                }
+                break;
+            case U::IntUn:
+                if (read_int_octets(in, raw, octets, what)) v = decode_uper_int(f, sign_extend_octets(raw, octets));
+                else why = "an integer of more than 8 octets";
+                break;
+            case U::IntSemi: {
+                if (!read_int_octets(in, raw, octets, what)) {
+                    why = "an integer of more than 8 octets";
+                    break;
+                }
+                // lb + raw within 64 signed bits.
+                const std::uint64_t sum = as_unsigned(n.lb) + raw;
+                const bool fits = n.lb >= 0 ? raw <= static_cast<std::uint64_t>(INT64_MAX - n.lb)
+                                            : raw <= static_cast<std::uint64_t>(INT64_MAX) + as_unsigned(-(n.lb + 1)) + 1;
+                if (!fits) why = "the value does not fit a signed 64-bit integer";
+                else v = decode_uper_int(f, as_signed(sum));
+                break;
+            }
+            case U::Enum: v = Value::of_int(read_constrained(in, 0, n.ub, what)); break;
+            case U::EnumExt:
+                if (in.must(1, what) == 0) {
+                    v = Value::of_int(read_constrained(in, 0, n.ub, what));
+                } else if (!read_small(in, raw, what)) {
+                    why = "an extension index of more than 8 octets";
+                } else if (raw > static_cast<std::uint64_t>(INT64_MAX - (n.ub + 1))) {
+                    why = "an extension index that does not fit 64 signed bits";
+                } else {
+                    v = Value::of_int(n.ub + 1 + static_cast<std::int64_t>(raw));
+                }
+                break;
+            case U::Chars:
+            case U::Octets: {
+                const std::uint64_t count = n.bounded ? static_cast<std::uint64_t>(read_constrained(in, n.lb, n.ub, what))
+                                                      : read_length(in, what);
+                const std::uint32_t width = n.uper == U::Chars ? 7 : 8;
+                if (count * width > in.left()) in.malformed("the input cannot hold the count of a UPER string");
+                std::string text;
+                for (std::uint64_t k = 0; k < count; ++k) text += static_cast<char>(in.take(width));
+                if (n.uper == U::Chars || f.transform == Transform::Utf8) {
+                    if (n.uper == U::Octets && !utf8_is_valid(text)) why = "the value is not valid UTF-8";
+                    else v = Value::of_string(text);
+                } else {
+                    v = Value::of_string(bytes_to_hex(text));
+                }
+                break;
+            }
+            case U::None: break;
+        }
+        if (why.empty()) {
+            d.put(f, v);
+            for (const auto& a : n.also) d.put(a, v);
+            return;
+        }
+    } catch (const std::invalid_argument& ex) {
+        why = ex.what();
+    }
+    d.fail(f, why);
+    for (const auto& a : n.also) d.fail(a, why);
+}
 
 void decode_body(SeqIn& in, const SeqBody& body, Item& out);
 void decode_lines(SeqIn& in, const std::vector<SeqNode>& lines, std::size_t from, Item& out, Decoder& d);
@@ -801,6 +1213,18 @@ void decode_group(SeqIn& in, const SeqNode& n, Item& out) {
             }
             return;
         }
+        case Repeat::Size: {
+            if (in.at_extent_end()) return;  // an absent list
+            const std::uint64_t count = n.bounded ? static_cast<std::uint64_t>(read_constrained(in, n.lb, n.ub, "a count"))
+                                                  : read_length(in, "a count");
+            if (count > in.left())
+                in.malformed("the count " + std::to_string(count) + " of the group '" + n.list +
+                             "' is larger than the bits left");
+            std::vector<Item>& items = out.lists[n.list];
+            items.clear();
+            for (std::uint64_t k = 0; k < count; ++k) item(items);
+            return;
+        }
         case Repeat::While: {
             if (!in.need(1, "the bit before an item")) return;
             std::vector<Item>& items = list();
@@ -833,6 +1257,10 @@ void decode_node(SeqIn& in, const SeqNode& n, Item& out, Decoder& d) {
     const Pack& p = in.p;
     switch (n.type) {
         case Type::Field: {
+            if (n.uper != SeqNode::Uper::None) {
+                decode_uper_field(in, n, d);
+                return;
+            }
             if (!in.need(n.len, "a field")) return;
             const FieldLine& f = n.field;
             const std::uint64_t start = in.cur;
@@ -962,6 +1390,34 @@ void decode_node(SeqIn& in, const SeqNode& n, Item& out, Decoder& d) {
             return;
         }
         case Type::Group: decode_group(in, n, out); return;
+        case Type::Ext: {
+            // v0.19: the extension bit, the root components, then the additions.
+            if (in.at_extent_end()) return;
+            const bool extended = in.must(1, "an extension bit") == 1;
+            decode_lines(in, n.inner.lines, 0, out, d);
+            if (extended) skip_additions(in);
+            return;
+        }
+        case Type::Choice: {
+            if (in.at_extent_end()) return;
+            if (n.uext && in.must(1, "the extension bit of a choice") == 1) {
+                // An extension alternative: its index and an open type, skipped.
+                std::uint64_t index = 0;
+                if (!read_small(in, index, "the index of an extension alternative"))
+                    in.fail("the index of an extension alternative has more than 8 octets");
+                skip_open_type(in);
+                return;
+            }
+            const std::uint64_t index = static_cast<std::uint64_t>(
+                read_constrained(in, 0, static_cast<std::int64_t>(n.number - 1), "the index of a choice"));
+            for (const auto& a : n.inner.lines)
+                if (a.number == index) {
+                    decode_lines(in, a.inner.lines, 0, out, d);
+                    return;
+                }
+            in.malformed("the choice index " + std::to_string(index) + " has no 'alt'");
+        }
+        case Type::Alt: return;  // read by its choice
     }
 }
 
@@ -1047,8 +1503,10 @@ struct Scope {
         src.defaults = Defaults{k ? &k->defaults : nullptr, &b.defaults};
     }
     // A key with a `default` in scope counts as present (0.8 ruling 2).
+    // In a UPER pack no `default` counts (rulings 2 and 19 of 0.19).
     bool present(const std::string& key) const {
         if (item.fields.count(key)) return true;
+        if (src.p.uper) return false;
         for (const std::vector<DefaultLine>* defs : {src.defaults.first, src.defaults.second}) {
             if (!defs) continue;
             for (const auto& d : *defs)
@@ -1106,6 +1564,9 @@ bool content(const SeqNode& n, const Scope& s) {
         case Type::Opt:
         case Type::Chain:
         case Type::Length:
+        case Type::Ext:     // v0.19 ruling 3
+        case Type::Choice:
+        case Type::Alt:
             for (const auto& c : n.inner.lines)
                 if (content(c, s)) return true;
             return false;
@@ -1186,22 +1647,179 @@ void compute_presence(const Pack& p, int id, const std::vector<SeqNode>& lines, 
     }
 }
 
-void encode_field(SeqOut& out, const SeqNode& n, const Scope& s) {
-    const Pack& p = out.p;
-    // The value of the earliest bound key the item holds; when it holds none,
-    // the default of the earliest key that has one (0.8 ruling 16). No key and
-    // no default: zero bits.
-    Value mv;
-    const FieldLine* f = nullptr;
-    for (const bool held : {true, false}) {
-        for (std::size_t k = 0; !f && k <= n.also.size(); ++k) {
+// The value of the earliest bound key the item holds; when it holds none, the
+// default of the earliest key that has one (0.8 ruling 16). Null for none.
+const FieldLine* field_value(const SeqNode& n, const Scope& s, Value& mv) {
+    for (const bool held : {true, false})
+        for (std::size_t k = 0; k <= n.also.size(); ++k) {
             const FieldLine& line = k == 0 ? n.field : n.also[k - 1];
             if (k == 0 && s.src.suppressed(line)) continue;  // 0.18 rulings 1 and 5
             if (held && !s.item.fields.count(line.key)) continue;
-            if (s.src.value(line, mv)) f = &line;
+            if (s.src.value(line, mv)) return &line;
         }
-        if (f) break;
+    return nullptr;
+}
+
+// ---- v0.19 writers. Each throws std::invalid_argument (transform-encode).
+
+void put_any(SeqOut& out, std::uint64_t raw, std::uint32_t len) {
+    if (len > 0) out.put(raw, len);
+}
+
+void put_constrained(SeqOut& out, std::int64_t lb, std::int64_t ub, std::int64_t v) {
+    if (v < lb || v > ub)
+        throw std::invalid_argument(std::to_string(v) + " is outside " + std::to_string(lb) + ".." + std::to_string(ub));
+    put_any(out, as_unsigned(v) - as_unsigned(lb), bits_for(as_unsigned(ub) - as_unsigned(lb)));
+}
+
+void put_length(SeqOut& out, std::uint64_t n) {
+    if (n < 128) out.put(n, 8);
+    else if (n < 16384) out.put(0x8000u | n, 16);
+    else throw std::invalid_argument("a length of " + std::to_string(n) + " needs a fragmented length");
+}
+
+// The fewest octets, at least one, of an unsigned number.
+std::uint32_t unsigned_octets(std::uint64_t u) { return std::max<std::uint32_t>(1, (bits_for(u) + 7) / 8); }
+
+// The fewest octets of a two's-complement number.
+std::uint32_t signed_octets(std::int64_t v) {
+    for (std::uint32_t n = 1; n < 8; ++n) {
+        const std::int64_t half = std::int64_t{1} << (8 * n - 1);
+        if (v >= -half && v < half) return n;
     }
+    return 8;
+}
+
+void put_signed(SeqOut& out, std::int64_t v) {
+    const std::uint32_t n = signed_octets(v);
+    put_length(out, n);
+    out.put(as_unsigned(v), 8 * n);
+}
+
+void put_small(SeqOut& out, std::uint64_t n) {
+    if (n <= 63) {
+        out.put(0, 1);
+        out.put(n, 6);
+        return;
+    }
+    out.put(1, 1);
+    const std::uint32_t octets = unsigned_octets(n);
+    put_length(out, octets);
+    out.put(n, 8 * octets);
+}
+
+void encode_uper_field(SeqOut& out, const SeqNode& n, const Scope& s) {
+    using U = SeqNode::Uper;
+    Value mv;
+    const FieldLine* f = field_value(n, s, mv);
+    if (!f) {
+        // An absent key (ruling 1).
+        switch (n.uper) {
+            case U::IntExt:
+            case U::EnumExt: out.put(0, 1); [[fallthrough]];
+            case U::Int:
+            case U::Enum: put_constrained(out, n.lb, n.ub, n.lb); return;
+            case U::IntSemi:
+            case U::IntUn:
+                put_length(out, 1);
+                out.put(0, 8);
+                return;
+            case U::Chars:
+            case U::Octets:
+                if (n.bounded) put_constrained(out, n.lb, n.ub, n.lb);
+                else put_length(out, 0);
+                out.zeros(static_cast<std::uint64_t>(n.lb) * (n.uper == U::Chars ? 7 : 8));
+                return;
+            case U::None: return;
+        }
+        return;
+    }
+    try {
+        switch (n.uper) {
+            case U::Int: put_constrained(out, n.lb, n.ub, encode_uper_int(*f, mv)); return;
+            case U::IntExt: {
+                const std::int64_t v = encode_uper_int(*f, mv);
+                if (v >= n.lb && v <= n.ub) {
+                    out.put(0, 1);
+                    put_constrained(out, n.lb, n.ub, v);
+                } else {
+                    out.put(1, 1);
+                    put_signed(out, v);
+                }
+                return;
+            }
+            case U::IntSemi: {
+                const std::int64_t v = encode_uper_int(*f, mv);
+                if (v < n.lb) throw std::invalid_argument(std::to_string(v) + " is below " + std::to_string(n.lb));
+                const std::uint64_t u = as_unsigned(v) - as_unsigned(n.lb);
+                const std::uint32_t octets = unsigned_octets(u);
+                put_length(out, octets);
+                out.put(u, 8 * octets);
+                return;
+            }
+            case U::IntUn: put_signed(out, encode_uper_int(*f, mv)); return;
+            case U::Enum:
+            case U::EnumExt: {
+                const std::int64_t v = model_int(mv);
+                if (v < 0) throw std::invalid_argument("a negative enumeration index");
+                if (v <= n.ub) {
+                    if (n.uper == U::EnumExt) out.put(0, 1);
+                    put_constrained(out, 0, n.ub, v);
+                } else if (n.uper == U::EnumExt) {
+                    out.put(1, 1);
+                    put_small(out, static_cast<std::uint64_t>(v - n.ub - 1));
+                } else {
+                    throw std::invalid_argument("the index " + std::to_string(v) + " is outside the root of " +
+                                                std::to_string(n.ub + 1) + " values");
+                }
+                return;
+            }
+            case U::Chars:
+            case U::Octets: {
+                FieldLine as_string;  // the model value as the `string` transform writes it
+                as_string.transform = Transform::String;
+                const std::string text = encode_value(as_string, mv);
+                std::string bytes;
+                if (n.uper == U::Chars) {
+                    for (unsigned char c : text)
+                        if (c > 127) throw std::invalid_argument("a character above 127");
+                    bytes = text;
+                } else if (f->transform == Transform::Hex) {
+                    if (!hex_text_bytes(text, bytes))
+                        throw std::invalid_argument("\"" + text + "\" is not hex text of an even number of digits");
+                } else {
+                    if (!utf8_is_valid(text)) throw std::invalid_argument("the text is not valid UTF-8");
+                    bytes = text;
+                }
+                const std::uint64_t count = bytes.size();
+                if (n.bounded) {
+                    if (count < static_cast<std::uint64_t>(n.lb) || count > static_cast<std::uint64_t>(n.ub))
+                        throw std::invalid_argument("a count of " + std::to_string(count) + " is outside " +
+                                                    std::to_string(n.lb) + ".." + std::to_string(n.ub));
+                    put_constrained(out, n.lb, n.ub, static_cast<std::int64_t>(count));
+                } else {
+                    put_length(out, count);
+                }
+                const std::uint32_t width = n.uper == U::Chars ? 7 : 8;
+                for (unsigned char c : bytes) out.put(c, width);
+                return;
+            }
+            case U::None: return;
+        }
+    } catch (const std::invalid_argument& ex) {
+        throw Error(ErrorKind::TransformEncode, out.p.format, f->locator, f->key + ": " + ex.what());
+    }
+}
+
+void encode_field(SeqOut& out, const SeqNode& n, const Scope& s) {
+    const Pack& p = out.p;
+    if (n.uper != SeqNode::Uper::None) {
+        encode_uper_field(out, n, s);
+        return;
+    }
+    // No key and no default: zero bits.
+    Value mv;
+    const FieldLine* f = field_value(n, s, mv);
     if (!f) {
         // The first sentinel in place of the zero bits (0.9); it is never
         // content for a presence, `opt` or `fx` bit (ruling 4).
@@ -1244,6 +1862,23 @@ void encode_group(SeqOut& out, const SeqNode& n, const Scope& s) {
             out.put(count, n.len);
             for (const Item& item : items) encode_body(out, n.inner, item);
             return;
+        case Repeat::Size: {
+            // v0.19: an absent list is lb items with no keys.
+            static const Item empty_item;
+            const std::size_t written = it == s.item.lists.end() && n.bounded ? static_cast<std::size_t>(n.lb) : count;
+            try {
+                if (n.bounded) put_constrained(out, n.lb, n.ub, static_cast<std::int64_t>(written));
+                else put_length(out, written);
+            } catch (const std::invalid_argument& ex) {
+                throw Error(ErrorKind::TransformEncode, p.format, "",
+                            "the list '" + n.list + "' has " + std::to_string(written) + " items: " + ex.what());
+            }
+            if (it == s.item.lists.end())
+                for (std::size_t k = 0; k < written; ++k) encode_body(out, n.inner, empty_item);
+            else
+                for (const Item& item : items) encode_body(out, n.inner, item);
+            return;
+        }
         case Repeat::While:
             for (const Item& item : items) {
                 out.put(1, 1);
@@ -1349,6 +1984,24 @@ void encode_node(SeqOut& out, const std::vector<SeqNode>& lines, std::size_t ind
             out.zeros(n.len);
             return;
         case Type::Group: encode_group(out, n, s); return;
+        case Type::Ext:
+            out.put(0, 1);  // no extension additions are written
+            encode_lines(out, n.inner.lines, s, nullptr);
+            return;
+        case Type::Choice: {
+            // The first alt, in line order, with content; else the first alt.
+            const SeqNode* alt = &n.inner.lines.front();
+            for (const auto& a : n.inner.lines)
+                if (content(a, s)) {
+                    alt = &a;
+                    break;
+                }
+            if (n.uext) out.put(0, 1);
+            put_any(out, alt->number, bits_for(n.number - 1));
+            encode_lines(out, alt->inner.lines, s, nullptr);
+            return;
+        }
+        case Type::Alt: return;  // written by its choice
     }
 }
 
@@ -1371,8 +2024,10 @@ std::string encode_seq(const Pack& p, const Entity& e) {
     // Under armor, L is the cursor after the last line, not rounded to a byte
     // (0.14); `length ... whole` is refused at load.
     if (p.armor_sixbit) return bytes_to_armor(out.data, out.cur);
-    // A message is a whole number of bytes: the last byte's remaining bits are zero.
+    // A message is a whole number of bytes: the last byte's remaining bits are
+    // zero. A UPER encoding of no bits is one octet 00 (0.19).
     out.data.resize(static_cast<std::size_t>((out.cur + 7) / 8), '\0');
+    if (p.uper && out.data.empty()) out.data.assign(1, '\0');
     for (const auto& w : out.wholes) {
         const std::int64_t stated = static_cast<std::int64_t>(out.data.size()) + w.node->plus;
         if (stated < 0 || (w.node->len < 64 && (static_cast<std::uint64_t>(stated) >> w.node->len) != 0))

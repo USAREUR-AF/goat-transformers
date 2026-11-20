@@ -1,0 +1,9 @@
+{
+  "name": "uper-03-to-uper-value-outside-constraint",
+  "from": "conformance-seq-json",
+  "to": "conformance-uper",
+  "input": "{\"n\":256}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.19 (ASN.1 unaligned PER): n 256 is outside INTEGER (0..255): transform-encode (Transforms on UPER locators). Derived without an engine by a standalone X.691 reference program (Python standard library)."
+}

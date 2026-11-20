@@ -1,0 +1,9 @@
+{
+  "name": "open-type-beyond-input",
+  "from": "conformance-uper",
+  "to": "conformance-uper",
+  "input": "070000000000200020000efd600040190000",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.19 (ASN.1 unaligned PER): Input: the choice extension bit 1, index 0, then an open type of 50 octets where two octets are left: a length the input cannot hold (Errors). Checking codecs on the same input: asn1tools 0.169.0 fails; pycrate 0.8.1 fails. Derived without an engine by a standalone X.691 reference program (Python standard library)."
+}

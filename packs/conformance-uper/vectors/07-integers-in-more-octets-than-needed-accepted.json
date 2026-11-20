@@ -1,0 +1,25 @@
+{
+  "name": "integers-in-more-octets-than-needed-accepted",
+  "from": "conformance-uper",
+  "to": "conformance-uper",
+  "input": "0700000000004000a0600000200efd60000000",
+  "expect": "07000000000020a020200efd60000000",
+  "model": {
+    "probe.n": "7",
+    "lat": "-90",
+    "probe.x": "0",
+    "probe.y": "0",
+    "probe.z": "1",
+    "probe.w": "0",
+    "probe.qty": "0",
+    "probe.c1": "0",
+    "probe.label": "ok",
+    "probe.s1": "",
+    "probe.s2": "",
+    "probe.a": "0",
+    "probe.items.#": "0",
+    "probe.names.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.19 (ASN.1 unaligned PER): Input writes y 0 (5 above lb) as length 2, 0005 and z 1 as length 3, 000001; decode accepts both (ruling 7) and encode writes the fewest octets: length 1, 05 and length 1, 01. 127 bits, padded with 1 zero bits to 16 octets. Derived without an engine by a standalone X.691 reference program (Python standard library) and checked against two independent ASN.1 UPER codecs on the ASN.1 module in the pack header: asn1tools 0.169.0 (MIT, PyPI), codec uper, and pycrate 0.8.1 (LGPL, PyPI), to_uper; asn1tools checks y (INTEGER (-5..MAX)) only as a length and octets, because it encodes a semi-constrained integer as an unconstrained one, which X.691 does not."
+}

@@ -1,0 +1,15 @@
+{
+  "name": "to-conformance-derive",
+  "from": "conformance-uper",
+  "to": "conformance-derive",
+  "input": "010000000000200020000efd6803fc0da30ea41800",
+  "expect": "{\"a\":3,\"neg_a\":-3,\"scaled\":7.5,\"third\":1,\"shifted\":2.5,\"n\":1,\"n_next\":1001,\"n_copy\":1,\"s1\":\"00ff\",\"s2\":\"hé\",\"chain\":3,\"late\":-3}",
+  "model": {
+    "probe.a": "3",
+    "probe.s1": "00ff",
+    "probe.s2": "hé",
+    "probe.n": "1"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.19 (ASN.1 unaligned PER): Input: n 1, a 3 (alt 0), s1 octets 00ff, s2 \"hé\" (3 UTF-8 octets), other keys at lb. Derivations (0.6) on the probe keys, each exact: neg_a -3, scaled 3 * 2.5 = 7.5, third 3 * 1 / 3 = 1, shifted 2.5, n_next 1001, n_copy 1, late -3 (pass 1), chain 3 (pass 2); joined needs uid, absent. Written in conformance-derive line order; s1 is hex text, s2 UTF-8 text. Derived without an engine by a standalone X.691 reference program (Python standard library) and checked against two independent ASN.1 UPER codecs on the ASN.1 module in the pack header: asn1tools 0.169.0 (MIT, PyPI), codec uper, and pycrate 0.8.1 (LGPL, PyPI), to_uper; asn1tools checks y (INTEGER (-5..MAX)) only as a length and octets, because it encodes a semi-constrained integer as an unconstrained one, which X.691 does not."
+}

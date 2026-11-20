@@ -296,6 +296,10 @@ bool parse_tlv_tag(const std::string& text, std::uint32_t& out);
 // (bad-directive). Run after the file is read.
 void check_tlv_pack(Pack& p);
 Entity decode_tlv(const Pack& p, const std::string& bytes);
+// The tlv checks of `utf8` and `hex` (v0.19 uses them on `octets` locators):
+// is the text valid UTF-8; hex text of an even number of digits, either case, to bytes.
+bool utf8_is_valid(const std::string& s);
+bool hex_text_bytes(const std::string& s, std::string& out);
 std::string encode_tlv(const Pack& p, const Entity& e);
 
 }  // namespace goat_transformers::detail

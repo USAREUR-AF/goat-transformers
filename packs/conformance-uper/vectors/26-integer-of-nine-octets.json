@@ -1,0 +1,9 @@
+{
+  "name": "integer-of-nine-octets",
+  "from": "conformance-uper",
+  "to": "conformance-uper",
+  "input": "0700000000002001200000000000000000200efd60000000",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.19 (ASN.1 unaligned PER): Input: z written as length 9, 000000000000000001, and every other line well formed: an int:: value of more than 8 octets is transform-decode (ruling 5), even though its value is 1. Derived without an engine by a standalone X.691 reference program (Python standard library)."
+}

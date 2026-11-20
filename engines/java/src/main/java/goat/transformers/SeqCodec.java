@@ -8,7 +8,9 @@ import java.util.List;
  * The {@code bits} wire with {@code layout sequential} (engine-spec 0.8): the lines of the pack are read, and
  * written, in file order from a cursor. Hex text in and out; a message is a whole number of bytes. With
  * {@code armor sixbit} (engine-spec 0.14) armored text in and out: a message is any number of bits, and encode
- * writes the bits up to the cursor.
+ * writes the bits up to the cursor. With {@code encoding uper} (engine-spec 0.19) the lines also hold the X.691
+ * unaligned PER forms: constrained, semi-constrained and unconstrained integers, enumerations, character and octet
+ * strings, extensible SEQUENCEs ({@code ext}), CHOICE and SEQUENCE OF ({@code group ... size}).
  */
 final class SeqCodec extends Codec<byte[]> {
     private final boolean msb;
@@ -89,6 +91,71 @@ final class SeqCodec extends Codec<byte[]> {
             pos += len;
             return v;
         }
+
+        // ---- the X.691 forms (0.19); every read checks the input or extent first ----
+
+        /** {@code len} more bits at the cursor are within the input or extent, else malformed. */
+        void needBits(long len, String what) {
+            if (len < 0 || len > limit() - pos) throw malformed((soft >= 0 ? "the length extent" : "the input") + " ends before " + what);
+        }
+
+        long bits(int len, String what) {
+            need(len, what);
+            return take(len);
+        }
+
+        /** A length determinant: {@code 0} and 7 bits, or {@code 10} and 14 bits; {@code 11} (fragmented) is malformed. */
+        long lengthDet(String what) {
+            long b = bits(8, "the length of " + what);
+            if (b < 0x80) return b;
+            if ((b & 0x40) == 0) return ((b & 0x3f) << 8) | bits(8, "the length of " + what);
+            throw malformed("the length of " + what + " is fragmented (first bits 11), which this engine does not read");
+        }
+
+        /** A constrained whole number in {@code lb..ub}; a value above {@code ub} is malformed. */
+        long constrained(long lb, long ub, String what) {
+            long raw = bits(Seq.rangeBits(lb, ub), what);
+            if (Long.compareUnsigned(raw, ub - lb) > 0) {
+                throw malformed(what + " reads " + Long.toUnsignedString(raw) + " above its constraint, whose range is " + Long.toUnsignedString(ub - lb));
+            }
+            return lb + raw;
+        }
+
+        /**
+         * {@code octets} octets of an integer, checked in the order of ruling 20 of 0.19: the input holds them
+         * (malformed), the count is not 0 (malformed), the value fits; more than 8 octets are skipped and then refused
+         * as IllegalArgumentException (transform-decode, ruling 5). The bits, unsigned.
+         */
+        long intOctets(long octets, String what) {
+            needBits(octets * 8, what);
+            if (octets == 0) throw malformed(what + " is an integer of 0 octets");
+            if (octets > 8) {
+                pos += octets * 8;
+                throw new IllegalArgumentException(what + " is an integer of " + octets + " octets, more than 8");
+            }
+            return take((int) octets * 8);
+        }
+
+        /** A normally small non-negative whole number; one that does not fit 64 signed bits is IllegalArgumentException. */
+        long normallySmall(String what) {
+            if (bits(1, what) == 0) return bits(6, what);
+            long octets = lengthDet(what);
+            long v = intOctets(octets, what);
+            if (v < 0) throw new IllegalArgumentException(what + " does not fit a signed 64-bit integer");
+            return v;
+        }
+
+        /** A length determinant of an octet count, then a two's-complement integer of that many octets. */
+        long signed(String what) {
+            long octets = lengthDet(what);
+            long raw = intOctets(octets, what);
+            return BitsTransform.twosValue(raw, (int) octets * 8);
+        }
+
+        void skipOctets(long octets, String what) {
+            needBits(octets * 8, what);
+            pos += octets * 8;
+        }
     }
 
     @Override
@@ -153,7 +220,9 @@ final class SeqCodec extends Codec<byte[]> {
                     }
                     Object v;
                     try {
-                        if (f.bits.isChars()) {
+                        if (n.u != null) {
+                            v = readUper(n.u, f, r);
+                        } else if (f.bits.isChars()) {
                             int cw = f.bits.charWidth();
                             int[] codes = new int[n.len / cw];
                             for (int i = 0; i < codes.length; i++) codes[i] = (int) r.take(cw);
@@ -244,8 +313,92 @@ final class SeqCodec extends Codec<byte[]> {
                 case GROUP:
                     decodeGroup(n, r, e);
                     break;
+                case EXT: {
+                    if (!r.line(1, "the extension bit of a SEQUENCE")) break;
+                    boolean additions = r.take(1) == 1;
+                    decodeLines(n.body, r, e);
+                    if (additions) skipAdditions(r);
+                    break;
+                }
+                case CHOICE: {
+                    if (!r.line(n.ext ? 1 : 0, "a choice")) break;
+                    if (n.ext && r.take(1) == 1) {
+                        // an extension alternative: its index and its open type are skipped
+                        try {
+                            r.normallySmall("the index of an extension alternative");
+                        } catch (IllegalArgumentException ex) {
+                            throw new GtException(GtException.Code.TRANSFORM_DECODE, pack.format, null, ex.getMessage());
+                        }
+                        r.skipOctets(r.lengthDet("the open type of an extension alternative"), "the open type of an extension alternative");
+                        break;
+                    }
+                    long i = r.constrained(0, n.alts - 1, "the index of a choice");
+                    Integer at = n.altAt.get((int) i);
+                    if (at == null) throw malformed("the choice index " + i + " has no alt");
+                    decodeLines(n.altLines.get(at), r, e);
+                    break;
+                }
                 default:
                     throw new IllegalStateException(n.op.name());
+            }
+        }
+    }
+
+    /**
+     * The extension additions of a SEQUENCE whose extension bit is 1: their number as a normally small length, the
+     * presence bits, one open type for each bit that is 1. All are skipped.
+     */
+    private void skipAdditions(Reader r) {
+        String what = "the number of extension additions";
+        long m = r.bits(1, what) == 0 ? r.bits(6, what) + 1 : r.lengthDet(what);
+        r.needBits(m, "the presence bits of the extension additions");
+        boolean[] present = new boolean[(int) m];
+        for (int i = 0; i < m; i++) present[i] = r.take(1) == 1;
+        for (boolean p : present) {
+            if (p) r.skipOctets(r.lengthDet("the open type of an extension addition"), "the open type of an extension addition");
+        }
+    }
+
+    /** One field with a UPER locator: the model value, or IllegalArgumentException (transform-decode) once its bits are read. */
+    private Object readUper(Seq.Uper u, Pack.Field f, Reader r) {
+        String what = f.key;
+        switch (u.kind) {
+            case INT: {
+                long v;
+                if (u.ext && r.bits(1, what) == 1) v = r.signed(what);
+                else v = r.constrained(u.lb, u.ub, what);
+                return f.bits.decodeInteger(v);
+            }
+            case INT_SEMI: {
+                long raw = r.intOctets(r.lengthDet(what), what);
+                if (Long.compareUnsigned(raw, Long.MAX_VALUE - u.lb) > 0) {
+                    throw new IllegalArgumentException(what + ": " + Long.toUnsignedString(raw) + " above " + u.lb + " does not fit a signed 64-bit integer");
+                }
+                return f.bits.decodeInteger(u.lb + raw);
+            }
+            case INT_FREE:
+                return f.bits.decodeInteger(r.signed(what));
+            case ENUM: {
+                if (u.ext && r.bits(1, what) == 1) {
+                    long i = r.normallySmall(what);
+                    if (i > Long.MAX_VALUE - u.ub) throw new IllegalArgumentException(what + ": the extension index does not fit a signed 64-bit integer");
+                    return f.bits.decodeInteger(u.ub + i);
+                }
+                return f.bits.decodeInteger(r.constrained(0, u.ub - 1, what));
+            }
+            case CHARS: {
+                long count = u.sized ? r.constrained(u.lb, u.ub, "the character count of " + what) : r.lengthDet(what);
+                r.needBits(count * 7, "the characters of " + what);
+                char[] c = new char[(int) count];
+                for (int i = 0; i < c.length; i++) c[i] = (char) r.take(7);
+                return new String(c);
+            }
+            default: {
+                long count = u.sized ? r.constrained(u.lb, u.ub, "the octet count of " + what) : r.lengthDet(what);
+                r.needBits(count * 8, "the octets of " + what);
+                byte[] b = new byte[(int) count];
+                for (int i = 0; i < b.length; i++) b[i] = (byte) r.take(8);
+                return f.tlv.decode(b, 0, b.length);
             }
         }
     }
@@ -300,6 +453,14 @@ final class SeqCodec extends Codec<byte[]> {
                 if (n < 0 || n > left) {
                     throw malformed("the count of " + g.list + " is " + Long.toUnsignedString(n) + " and " + left + " bits are left");
                 }
+                for (long i = 0; i < n; i++) items.add(decodeItem(g, r));
+                break;
+            }
+            case SIZE: {
+                if (!r.line(0, "the count of " + g.list)) return;   // at the end of the extent: an absent list
+                long n = g.sized ? r.constrained(g.lb, g.ub, "the count of " + g.list) : r.lengthDet(g.list);
+                long left = r.limit() - r.pos;
+                if (n > left) throw malformed("the count of " + g.list + " is " + n + " and " + left + " bits are left");
                 for (long i = 0; i < n; i++) items.add(decodeItem(g, r));
                 break;
             }
@@ -371,6 +532,35 @@ final class SeqCodec extends Codec<byte[]> {
             pos += len;
             ensure(pos);
         }
+
+        /** A length determinant; 16384 or more would need a fragmented form (IllegalArgumentException, transform-encode). */
+        void lengthDet(long n) {
+            if (n < 0x80) put(8, n);
+            else if (n < 0x4000) put(16, 0x8000 | n);
+            else throw new IllegalArgumentException("a length of " + n + " needs a fragmented form, which this engine does not write");
+        }
+
+        void normallySmall(long v) {
+            if (v <= 63) {
+                put(1, 0);
+                put(6, v);
+            } else {
+                put(1, 1);
+                int octets = unsignedOctets(v);
+                lengthDet(octets);
+                put(8 * octets, v);
+            }
+        }
+    }
+
+    /** The fewest octets, at least one, that hold {@code v} as an unsigned number. */
+    private static int unsignedOctets(long v) { return Math.max(1, (64 - Long.numberOfLeadingZeros(v) + 7) / 8); }
+
+    /** The fewest octets that hold {@code v} as a two's-complement number. */
+    private static int twosOctets(long v) {
+        int n = 1;
+        while (n < 8 && (v < -(1L << (8 * n - 1)) || v >= (1L << (8 * n - 1)))) n++;
+        return n;
     }
 
     private GtException encodeError(String why) {
@@ -385,6 +575,7 @@ final class SeqCodec extends Codec<byte[]> {
         // armored text: the bits up to the cursor, not rounded to a byte (`length ... whole` is refused at load)
         if (pack.armorSixbit) return toArmor(w.b, w.pos);
         int bytes = (int) ((w.pos + 7) >>> 3);   // a whole number of bytes; the remaining bits are zero
+        if (pack.uper && bytes == 0) bytes = 1;   // an encoding of no bits is one octet 00 (X.691 10.1.3)
         w.ensure(w.pos);
         for (int i = 0; i < w.wholes.size(); i++) {
             Seq.Node n = w.wholes.get(i);
@@ -427,19 +618,24 @@ final class SeqCodec extends Codec<byte[]> {
      * True when the lines would write a present key (a key with a default counts as present), a non-empty list, or
      * a nested presence that is not all zero: what sets a presence bit, an {@code opt} bit and an {@code fx} bit.
      */
-    private static boolean content(List<Seq.Node> nodes, Entity e, Pack.Scope scope) {
+    private boolean content(List<Seq.Node> nodes, Entity e, Pack.Scope scope) {
         for (Seq.Node n : nodes) {
             switch (n.op) {
                 case FIELD:
                     for (Pack.Field f : n.keys) {
                         if (f.suppressed(e)) continue;   // neither its value nor its default is content (ruling 1 of 0.18)
-                        if (e.get(f.key) != null || scope.defaultValues.containsKey(f.key)) return true;
+                        // in a UPER pack no default counts as content (rulings 2 and 19 of 0.19)
+                        if (e.get(f.key) != null || (!pack.uper && scope.defaultValues.containsKey(f.key))) return true;
                     }
                     break;
                 case IF:
                 case OPT:
                 case LENGTH:
+                case EXT:
                     if (content(n.body, e, scope)) return true;
+                    break;
+                case CHOICE:
+                    for (List<Seq.Node> alt : n.altLines) if (content(alt, e, scope)) return true;
                     break;
                 case CHAIN:
                     for (List<Seq.Node> part : n.parts) if (content(part, e, scope)) return true;
@@ -480,7 +676,11 @@ final class SeqCodec extends Codec<byte[]> {
                 }
                 case OPT:
                 case LENGTH:
+                case EXT:
                     collect(n.body, 0, e, scope, p, bits);
+                    break;
+                case CHOICE:
+                    for (List<Seq.Node> alt : n.altLines) collect(alt, 0, e, scope, p, bits);
                     break;
                 case CHAIN:
                     for (List<Seq.Node> part : n.parts) collect(part, 0, e, scope, p, bits);
@@ -589,6 +789,21 @@ final class SeqCodec extends Codec<byte[]> {
                 case GROUP:
                     encodeGroup(n, w, e);
                     break;
+                case EXT:
+                    w.put(1, 0);   // extension additions are never written
+                    encodeLines(n.body, w, e, scope);
+                    break;
+                case CHOICE: {
+                    // the first alt in line order with content, else the first alt
+                    int pick = 0;
+                    for (int k = 0; k < n.altLines.size(); k++) {
+                        if (content(n.altLines.get(k), e, scope)) { pick = k; break; }
+                    }
+                    if (n.ext) w.put(1, 0);
+                    w.put(Seq.rangeBits(0, n.alts - 1), n.altIndex.get(pick));
+                    encodeLines(n.altLines.get(pick), w, e, scope);
+                    break;
+                }
                 default:
                     throw new IllegalStateException(n.op.name());
             }
@@ -611,6 +826,15 @@ final class SeqCodec extends Codec<byte[]> {
             }
         }
         Object v = f == null ? null : valueToEncode(f, e, scope);
+        if (n.u != null) {
+            Pack.Field k = f == null ? n.keys.get(0) : f;
+            try {
+                writeUper(n.u, k, v, w);
+            } catch (IllegalArgumentException ex) {
+                throw encodeFailure(k, ex);
+            }
+            return;
+        }
         if (v != null) {
             try {
                 if (f.bits.isChars()) {
@@ -641,10 +865,99 @@ final class SeqCodec extends Codec<byte[]> {
         w.skip(n.len);
     }
 
+    /** One field with a UPER locator; {@code v} null for an absent key (ruling 1 of 0.19). Throws IllegalArgumentException. */
+    private static void writeUper(Seq.Uper u, Pack.Field f, Object v, Writer w) {
+        switch (u.kind) {
+            case INT: {
+                long x = v == null ? u.lb : f.bits.encodeInteger(v);
+                boolean root = x >= u.lb && x <= u.ub;
+                if (!root && !u.ext) throw new IllegalArgumentException("value " + x + " is outside " + u.lb + ".." + u.ub);
+                if (u.ext) w.put(1, root ? 0 : 1);
+                if (root) {
+                    w.put(Seq.rangeBits(u.lb, u.ub), x - u.lb);
+                } else {
+                    int octets = twosOctets(x);
+                    w.lengthDet(octets);
+                    w.put(8 * octets, x);
+                }
+                break;
+            }
+            case INT_SEMI: {
+                long x = v == null ? u.lb : f.bits.encodeInteger(v);
+                if (x < u.lb) throw new IllegalArgumentException("value " + x + " is below " + u.lb);
+                long d = x - u.lb;
+                int octets = unsignedOctets(d);
+                w.lengthDet(octets);
+                w.put(8 * octets, d);
+                break;
+            }
+            case INT_FREE: {
+                long x = v == null ? 0 : f.bits.encodeInteger(v);
+                int octets = twosOctets(x);
+                w.lengthDet(octets);
+                w.put(8 * octets, x);
+                break;
+            }
+            case ENUM: {
+                long i = v == null ? 0 : f.bits.encodeInteger(v);
+                if (i < 0) throw new IllegalArgumentException("enumeration index " + i + " is negative");
+                if (i < u.ub) {
+                    if (u.ext) w.put(1, 0);
+                    w.put(Seq.rangeBits(0, u.ub - 1), i);
+                } else if (u.ext) {
+                    w.put(1, 1);
+                    w.normallySmall(i - u.ub);
+                } else {
+                    throw new IllegalArgumentException("enumeration index " + i + " is outside the " + u.ub + " root values and the enumeration is not extensible");
+                }
+                break;
+            }
+            case CHARS: {
+                String s = v == null ? "\0".repeat((int) u.lb) : v instanceof Double ? Transform.formatDouble((Double) v) : String.valueOf(v);
+                for (int i = 0; i < s.length(); i++) {
+                    if (s.charAt(i) > 127) throw new IllegalArgumentException(String.format("character U+%04X at offset %d is above 127", (int) s.charAt(i), i));
+                }
+                writeCount(u, s.length(), w, "characters");
+                for (int i = 0; i < s.length(); i++) w.put(7, s.charAt(i));
+                break;
+            }
+            default: {
+                byte[] b = v == null ? new byte[(int) u.lb] : f.tlv.encode(v, 0);
+                writeCount(u, b.length, w, "octets");
+                for (byte x : b) w.put(8, x & 0xff);
+            }
+        }
+    }
+
+    private static void writeCount(Seq.Uper u, long count, Writer w, String what) {
+        if (u.sized) {
+            if (count < u.lb || count > u.ub) throw new IllegalArgumentException(count + " " + what + " are outside " + u.lb + ".." + u.ub);
+            w.put(Seq.rangeBits(u.lb, u.ub), count - u.lb);
+        } else {
+            w.lengthDet(count);
+        }
+    }
+
     private void encodeGroup(Seq.Node g, Writer w, Entity e) {
         List<Entity> items = e.list(g.list);
         int n = items == null ? 0 : items.size();
         switch (g.repeat) {
+            case SIZE: {
+                if (items == null) {
+                    // an absent list: lb items with no keys
+                    items = new ArrayList<>();
+                    for (long i = 0; g.sized && i < g.lb; i++) items.add(new Entity());
+                    n = items.size();
+                }
+                if (g.sized ? (n < g.lb || n > g.ub) : n >= 0x4000) {
+                    throw new GtException(GtException.Code.TRANSFORM_ENCODE, pack.format, null, g.list + ": " + n + " items are outside "
+                            + (g.sized ? g.lb + ".." + g.ub : "the lengths written without fragments (below 16384)"));
+                }
+                if (g.sized) w.put(Seq.rangeBits(g.lb, g.ub), n - g.lb);
+                else w.lengthDet(n);
+                for (int i = 0; i < n; i++) encodeItem(g, w, items.get(i));
+                break;
+            }
             case COUNT:
                 if (g.len < 63 && n > BitsTransform.mask(g.len)) {
                     throw new GtException(GtException.Code.TRANSFORM_ENCODE, pack.format, null,

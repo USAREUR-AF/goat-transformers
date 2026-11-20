@@ -1,0 +1,15 @@
+{
+  "name": "to-conformance-seq-json",
+  "from": "conformance-uper",
+  "to": "conformance-seq-json",
+  "input": "c88f0fd756a0407da05fefea6c79f06a2d6337ab6fbbc09a1a5cfd05003ff810161c4038c0",
+  "expect": "{\"n\":200,\"qty\":4,\"val\":1000,\"x\":5,\"y\":1000,\"z\":-129,\"w\":2,\"c1\":1,\"c2\":9,\"label\":\"GOAT-1\",\"items\":[{},{}]}",
+  "model": {
+    "probe.n": "200",
+    "probe.w": "2",
+    "probe.items.#": "2",
+    "probe.items[1].probe.ratio": "1023"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.19 (ASN.1 unaligned PER): Input: vector 01. conformance-seq-json writes its fields in line order (n, qty, val, x, y, z, w, c1, c2, label); ratio is a top-level line there and absent at the top level here. items carries the keys both groups map (0.7): the UPER items hold only ratio, which the seq-json item does not map, so each item is {}. lat, s1, s2, a and names are not mapped by the target. Derived without an engine by a standalone X.691 reference program (Python standard library)."
+}

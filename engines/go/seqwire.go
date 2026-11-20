@@ -25,15 +25,20 @@ const (
 	seqLength
 	seqWhole
 	seqGroup
-	seqMsg // the frame of a message body; not a line
+	seqExt    // UPER: an `ext` block
+	seqChoice // UPER: a `choice` block; its body is its `alt` nodes
+	seqAlt    // UPER: one `alt` of a choice; num is its index
+	seqMsg    // the frame of a message body; not a line
 )
 
 // How the items of a sequential group are delimited.
 const (
-	seqCount  = iota + 1 // a count field, then that many items
-	seqWhile             // one bit before each item: 1 = an item follows, 0 = the list ends
-	seqMore              // one bit before each item: 1 = another item follows this one
-	seqFxMode            // one bit after each item: 1 = another item follows
+	seqCount   = iota + 1 // a count field, then that many items
+	seqWhile              // one bit before each item: 1 = an item follows, 0 = the list ends
+	seqMore               // one bit before each item: 1 = another item follows this one
+	seqFxMode             // one bit after each item: 1 = another item follows
+	seqSize               // UPER `size <lb> <ub>`: the count as a constrained whole number
+	seqSizeUnc            // UPER `size`: the count as a length determinant
 )
 
 // seqStructural names the directives the sequential parser reads; the others
@@ -42,12 +47,18 @@ var seqStructural = map[string]bool{
 	"field": true, "const": true, "when": true, "pad": true, "align": true, "presence": true,
 	"if": true, "opt": true, "chain": true, "fx": true, "length": true, "also": true,
 	"group": true, "end": true, "kind": true, "requires": true, "default": true,
+	"ext": true, "choice": true, "alt": true,
 }
+
+// uperDirective names the block directives of spec 0.19; outside a
+// sequential pack they are checked after the file (ruling 21).
+var uperDirective = map[string]bool{"ext": true, "choice": true, "alt": true}
 
 // seqOnly names the directives valid only in a sequential pack.
 var seqOnly = map[string]bool{
 	"pad": true, "align": true, "presence": true, "if": true, "opt": true,
 	"chain": true, "fx": true, "length": true, "also": true,
+	"ext": true, "choice": true, "alt": true,
 }
 
 // hasSequentialLayout reports whether pack text has a `layout sequential`
@@ -107,6 +118,7 @@ type seqNode struct {
 	g     *Group
 	bits  bool  // length: the block is counted in bits
 	plus  int64 // length, whole: what the field holds beyond the length
+	ext   bool  // choice: extensible
 }
 
 // seqKind is one kind of a body: of the message, or of the items of a group.
@@ -174,7 +186,7 @@ type seqFrame struct {
 	group     *Group
 }
 
-// seqListAt is one group of a scope: its line and the `if` and `opt` blocks
+// seqListAt is one group of a scope: its line and the `if`, `opt` and `alt` blocks
 // of the scope it sits in, innermost first.
 type seqListAt struct {
 	line   int
@@ -182,8 +194,8 @@ type seqListAt struct {
 }
 
 // apart reports whether two groups of one list may share a scope: each sits
-// in an `if` or `opt` block, and neither block holds the other group (0.8
-// ruling 23).
+// in an `if`, `opt` or `alt` block, and neither block holds the other group
+// (0.8 ruling 23, 0.19 ruling 20).
 func (a seqListAt) apart(b seqListAt) bool {
 	if len(a.blocks) == 0 || len(b.blocks) == 0 {
 		return false
@@ -313,7 +325,79 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 		}
 		return nil
 	}
+	// A choice holds only `alt` lines; `end` with no `alt` is a choice with
+	// none (spec 0.19 and its ruling 19); both are reported after the file
+	// (ruling 26).
+	if top.op == seqChoice && kw != "alt" {
+		if kw == "end" {
+			sp.lateErr(sp.bad(n, "", "the choice on line %d has no alt line", top.line))
+			sp.stack = sp.stack[:len(sp.stack)-1]
+			return nil
+		}
+		// A line between a choice and its first alt is reported after the
+		// file (ruling 26); the line is still read, so a later line's error
+		// comes first.
+		sp.lateErr(sp.bad(n, "", "a %s line stands between choice (line %d) and its first alt", kw, top.line))
+	}
 	switch kw {
+	case "ext":
+		if sp.p.uperLine == 0 {
+			sp.p.uperLine = n
+		}
+		node := &seqNode{op: seqExt}
+		add(node)
+		sp.push(&seqFrame{op: seqExt, line: n, node: node, nodes: &node.body})
+	case "choice":
+		// The argument count (one or two) is a line check; the values are
+		// checked after the file (rulings 23 and 26 of 0.19).
+		if sp.p.uperLine == 0 {
+			sp.p.uperLine = n
+		}
+		if len(args) == 2 && args[1] != "ext" {
+			sp.lateErr(sp.bad(n, "", "choice is `choice <n> [ext]`, got %q", args[1]))
+		}
+		c, ok := uperCount(args[0])
+		if !ok || c < 1 || c > 65536 {
+			sp.lateErr(sp.bad(n, "", "choice takes a number of alternatives from 1 to 65536, got %q", args[0]))
+			c = 0
+		}
+		node := &seqNode{op: seqChoice, num: uint64(c), ext: len(args) == 2}
+		add(node)
+		sp.push(&seqFrame{op: seqChoice, line: n, node: node, nodes: &node.body})
+	case "alt":
+		// An alt out of range, repeated or outside a choice is checked
+		// after the file (ruling 26 of 0.19); the lines under it are read.
+		if sp.p.uperLine == 0 {
+			sp.p.uperLine = n
+		}
+		var ch *seqFrame
+		switch {
+		case top.op == seqChoice:
+			ch = top
+		case top.op == seqAlt:
+			ch = sp.stack[len(sp.stack)-2]
+		default:
+			sp.lateErr(sp.bad(n, "", "an alt line stands directly in a choice"))
+			return nil
+		}
+		idx, ok := uperCount(args[0])
+		switch {
+		case !ok || uint64(idx) >= ch.node.num:
+			sp.lateErr(sp.bad(n, "", "alt takes an index below the choice's %d alternatives, got %q", ch.node.num, args[0]))
+		default:
+			for _, a := range ch.node.body {
+				if a.num == uint64(idx) {
+					sp.lateErr(sp.bad(n, "", "alt %d is already given on line %d", idx, a.line))
+					break
+				}
+			}
+		}
+		if top.op == seqAlt {
+			sp.stack = sp.stack[:len(sp.stack)-1]
+		}
+		node := &seqNode{op: seqAlt, num: uint64(idx), line: n}
+		ch.node.body = append(ch.node.body, node)
+		sp.push(&seqFrame{op: seqAlt, line: n, node: node, nodes: &node.body})
 	case "field":
 		f := &Field{Key: args[0], Locator: args[1], Transform: args[2], Line: n}
 		if kind, err := p.checkFieldLine(f, args[3:], false); err != nil {
@@ -432,6 +516,11 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 		name := args[0]
 		if name == "" || strings.ContainsAny(name, ".!") {
 			return sp.bad(n, "", "presence name %q must be non-empty and hold no '.' or '!'", name)
+		}
+		// Inside an ext block a presence line is the first line (0.19
+		// ruling 15).
+		if top.op == seqExt && len(top.node.body) > 0 {
+			return sp.bad(n, "", "a presence line in an ext block is its first line")
 		}
 		pr := &seqPresenceDef{name: name, line: n, named: map[int]bool{}}
 		if args[1] == "fx" {
@@ -563,21 +652,36 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 			g.seqMode = seqMore
 		case len(args) == 2 && args[1] == "fx":
 			g.seqMode = seqFxMode
+		case (len(args) == 2 || len(args) == 4) && args[1] == "size":
+			// UPER SEQUENCE OF (spec 0.19, ruling 12).
+			if sp.p.uperLine == 0 {
+				sp.p.uperLine = n
+			}
+			g.seqMode = seqSizeUnc
+			if len(args) == 4 {
+				lb, ok1 := uperCount(args[2])
+				ub, ok2 := uperCount(args[3])
+				if !ok1 || !ok2 || lb > ub || lb >= 65536 || ub >= 65536 {
+					return sp.bad(n, g.Locator, "group size takes <lb> <ub> with 0 <= lb <= ub < 65536, got %s %s", args[2], args[3])
+				}
+				g.seqMode, g.sizeLB, g.sizeUB = seqSize, int(lb), int(ub)
+			}
 		default:
-			return sp.bad(n, g.Locator, "a sequential group is `group <list> count <len>`, `while`, `more` or `fx`")
+			return sp.bad(n, g.Locator, "a sequential group is `group <list> count <len>`, `while`, `more`, `fx` or `size [<lb> <ub>]`")
 		}
 		// Within one scope a list is mapped by one group, or by groups that
-		// sit in different `if` or `opt` blocks (0.8 ruling 23).
+		// sit in different `if`, `opt` or `alt` blocks (0.8 ruling 23, 0.19
+		// ruling 20).
 		sc := sp.scope()
 		here := seqListAt{line: n}
 		for i := len(sp.stack) - 1; i >= 0 && sp.stack[i] != sc; i-- {
-			if fr := sp.stack[i]; fr.op == seqIf || fr.op == seqOpt {
+			if fr := sp.stack[i]; fr.op == seqIf || fr.op == seqOpt || fr.op == seqAlt {
 				here.blocks = append(here.blocks, fr.node)
 			}
 		}
 		for _, prev := range append(append([]seqListAt(nil), sc.lists[g.List]...), sc.klists[g.List]...) {
 			if !here.apart(prev) {
-				return sp.bad(n, g.Locator, "list %s is already mapped by the group on line %d of the same scope, and the two are not in different if or opt blocks", g.List, prev.line)
+				return sp.bad(n, g.Locator, "list %s is already mapped by the group on line %d of the same scope, and the two are not in different if, opt or alt blocks", g.List, prev.line)
 			}
 		}
 		if sc.kind != nil {
@@ -602,6 +706,10 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 			return sp.bad(top.line, "", "a when line needs a body with a kind line")
 		}
 		sp.stack = sp.stack[:len(sp.stack)-1]
+		// The end of a choice closes its last alt and the choice.
+		if top.op == seqAlt {
+			sp.stack = sp.stack[:len(sp.stack)-1]
+		}
 	}
 	return nil
 }
@@ -733,6 +841,9 @@ func (r *seqReader) node(n *seqNode) error {
 	switch n.op {
 	case seqField:
 		f := n.f
+		if f.uper != nil {
+			return r.uperField(f)
+		}
 		at, ok, err := r.take(f.loc.blen, "field "+f.Key)
 		if err != nil || !ok {
 			return err
@@ -869,6 +980,10 @@ func (r *seqReader) node(n *seqNode) error {
 		r.limit = int(size) * 8
 	case seqGroup:
 		return r.group(n.g)
+	case seqExt:
+		return r.extBlock(n)
+	case seqChoice:
+		return r.choice(n)
 	}
 	return nil
 }
@@ -960,12 +1075,21 @@ func (r *seqReader) group(g *Group) error {
 		return bitAt(r.data, at, p.msb) == 1, nil
 	}
 	switch g.seqMode {
-	case seqCount:
-		at, _, err := r.take(g.countBits, "the count of list "+g.List)
-		if err != nil {
-			return err
+	case seqCount, seqSize, seqSizeUnc:
+		var count uint64
+		if g.seqMode == seqCount {
+			at, _, err := r.take(g.countBits, "the count of list "+g.List)
+			if err != nil {
+				return err
+			}
+			count = getBits(r.data, at, g.countBits, p.msb)
+		} else {
+			c, err := r.sizeCount(g)
+			if err != nil {
+				return err
+			}
+			count = c
 		}
-		count := getBits(r.data, at, g.countBits, p.msb)
 		// A count larger than the bits left is refused before any item is
 		// read (0.8 ruling 14).
 		if count > uint64(r.limit-r.pos) {
@@ -1030,6 +1154,7 @@ func (r *seqReader) group(g *Group) error {
 type seqScope struct {
 	rec  *Item
 	defs map[string]*Default
+	uper bool // a UPER pack: no default counts as content (0.19 ruling 19)
 }
 
 // seqWriter writes a sequential message at a cursor.
@@ -1066,7 +1191,7 @@ func encodeSeq(p *Pack, ent *Entity) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	if err := w.emit(nodes, seqScope{rec: rec, defs: defs}, false); err != nil {
+	if err := w.emit(nodes, seqScope{rec: rec, defs: defs, uper: p.uper}, false); err != nil {
 		return nil, err
 	}
 	// Armored text is the bits up to the cursor, not rounded to a byte
@@ -1075,9 +1200,13 @@ func encodeSeq(p *Pack, ent *Entity) ([]byte, error) {
 		w.buf.need(w.pos)
 		return sixbitArmorText(w.buf.data, w.pos), nil
 	}
-	// A message is a whole number of bytes; the last bits are zero.
+	// A message is a whole number of bytes; the last bits are zero. A UPER
+	// encoding of no bits is one octet 00 (spec 0.19).
 	if rem := w.pos % 8; rem != 0 {
 		w.alloc(8 - rem)
+	}
+	if p.uper && w.pos == 0 {
+		w.alloc(8)
 	}
 	for _, wh := range w.wholes {
 		if err := w.length(wh.n, wh.at, int64(w.pos/8)); err != nil {
@@ -1128,7 +1257,7 @@ func fieldPresent(f *Field, sc seqScope) bool {
 		if _, ok := sc.rec.Fields[key]; ok {
 			return true
 		}
-		return sc.defs[key] != nil
+		return !sc.uper && sc.defs[key] != nil
 	}
 	// A line suppressed by `with` is not content, its default included; its
 	// `also` keys still are (0.18 rulings 1 and 5).
@@ -1156,7 +1285,7 @@ func seqPresent(nodes []*seqNode, sc seqScope) bool {
 			if len(sc.rec.Lists[n.g.List]) > 0 {
 				return true
 			}
-		case seqIf, seqOpt, seqChain, seqLength:
+		case seqIf, seqOpt, seqChain, seqLength, seqExt, seqChoice, seqAlt:
 			if seqPresent(n.body, sc) {
 				return true
 			}
@@ -1198,7 +1327,7 @@ func (w *seqWriter) presenceBits(pr *seqPresenceDef, rest []*seqNode, sc seqScop
 				if err := walk(n.body, sc); err != nil {
 					return err
 				}
-			case seqOpt, seqChain, seqLength:
+			case seqOpt, seqChain, seqLength, seqExt, seqChoice, seqAlt:
 				if err := walk(n.body, sc); err != nil {
 					return err
 				}
@@ -1208,7 +1337,7 @@ func (w *seqWriter) presenceBits(pr *seqPresenceDef, rest []*seqNode, sc seqScop
 					if err != nil {
 						return err
 					}
-					if err := walk(nodes, seqScope{rec: it, defs: defs}); err != nil {
+					if err := walk(nodes, seqScope{rec: it, defs: defs, uper: w.p.uper}); err != nil {
 						return err
 					}
 				}
@@ -1276,6 +1405,12 @@ func (w *seqWriter) emit(nodes []*seqNode, sc seqScope, chain bool) error {
 		switch n.op {
 		case seqField:
 			f := n.f
+			if f.uper != nil {
+				if err := w.uperField(f, sc); err != nil {
+					return err
+				}
+				continue
+			}
 			v, from, ok, err := seqFieldValue(p, f, sc)
 			if err != nil {
 				return err
@@ -1392,6 +1527,16 @@ func (w *seqWriter) emit(nodes []*seqNode, sc seqScope, chain bool) error {
 			if err := w.group(n.g, sc); err != nil {
 				return err
 			}
+		case seqExt:
+			// Encode writes the extension bit 0 and the block.
+			w.putU(1, 0)
+			if err := w.emit(n.body, sc, false); err != nil {
+				return err
+			}
+		case seqChoice:
+			if err := w.choice(n, sc); err != nil {
+				return err
+			}
 		}
 	}
 	return nil
@@ -1416,7 +1561,7 @@ func (w *seqWriter) group(g *Group, sc seqScope) error {
 		if err != nil {
 			return err
 		}
-		return w.emit(nodes, seqScope{rec: it, defs: defs}, false)
+		return w.emit(nodes, seqScope{rec: it, defs: defs, uper: w.p.uper}, false)
 	}
 	bit := func(one bool) {
 		at := w.alloc(1)
@@ -1425,6 +1570,16 @@ func (w *seqWriter) group(g *Group, sc seqScope) error {
 		}
 	}
 	switch g.seqMode {
+	case seqSize, seqSizeUnc:
+		items, err := w.sizeItems(g, sc)
+		if err != nil {
+			return err
+		}
+		for _, it := range items {
+			if err := item(it); err != nil {
+				return err
+			}
+		}
 	case seqCount:
 		// An absent list writes a count of 0 (0.7 ruling 14).
 		if g.countBits < 64 && uint64(len(items))>>uint(g.countBits) != 0 {

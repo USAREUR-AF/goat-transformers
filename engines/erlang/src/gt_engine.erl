@@ -261,6 +261,9 @@ type_groups(Lines, TypeDefaults) ->
               #{lines => type_groups(Ls, TypeDefaults), defaults => TypeDefaults(Ds)}, LocT};
          {ifb, Conds, Body} -> {ifb, Conds, type_groups(Body, TypeDefaults)};
          {opt, Body} -> {opt, type_groups(Body, TypeDefaults)};
+         {uext, Body} -> {uext, type_groups(Body, TypeDefaults)};
+         {uchoice, N, Ext, Alts} ->
+             {uchoice, N, Ext, [{I, type_groups(B, TypeDefaults)} || {I, B} <- Alts]};
          {len, Len, Unit, Plus, Body} -> {len, Len, Unit, Plus, type_groups(Body, TypeDefaults)};
          {chain, First, Parts, EndsFx} ->
              {chain, type_groups(First, TypeDefaults),

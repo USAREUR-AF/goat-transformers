@@ -36,7 +36,11 @@ const std::set<std::string>& pack_directives() {
                                          "armor",
                                          // v0.18, the xml wire. Its wire and its path are checked
                                          // after the file is read.
-                                         "element"};
+                                         "element",
+                                         // v0.19, ASN.1 unaligned PER (ruling 21: directives on
+                                         // every wire). Whether they fit their pack is checked
+                                         // after the file is read (rulings 9 and 21).
+                                         "encoding", "ext", "choice", "alt"};
     return s;
 }
 
@@ -57,12 +61,24 @@ const std::set<std::string>& one_argument() {
                                          // v0.14 ruling 13
                                          "armor",
                                          // v0.18 ruling 25
-                                         "element"};
+                                         "element",
+                                         // v0.19: a pack directive of one value, as `armor`
+                                         "encoding"};
     return s;
 }
 
 bool digits_only(const std::string& s) {
     return !s.empty() && s.find_first_not_of("0123456789") == std::string::npos;
+}
+
+// v0.19: the UPER locator forms (ruling 24: a locator that begins `int:`,
+// `enum:`, `chars:` or `octets:`). Their numbers, their use on a `when` or
+// `const` line, and their use outside a UPER pack are bad-directive checked
+// after the file is read (rulings 9, 19, 24 and 26), so 5a does not refuse
+// them as a line is read, in either layout.
+bool uper_locator_form(const std::string& loc) {
+    return loc.compare(0, 4, "int:") == 0 || loc.compare(0, 5, "enum:") == 0 || loc.compare(0, 6, "chars:") == 0 ||
+           loc.compare(0, 7, "octets:") == 0;
 }
 
 struct LineChecker {
@@ -110,6 +126,8 @@ void check_locator(const LineChecker& c, Wire wire, bool sequential, bool in_gro
             return;
         }
         case Wire::Bits: {
+            // 0.19 rulings 24 and 26: any line, either layout.
+            if (uper_locator_form(loc)) return;
             if (sequential) {
                 // A bit length; a <word>:<pos>:<len> locator is bad-directive later.
                 if (loc.find(':') != std::string::npos) return;
@@ -181,6 +199,10 @@ void check_pack_lines(const std::string& text, const std::string& source) {
     bool listed_before_layout = false;  // a line that `layout sequential` stands before
     Wire wire = Wire::Xml;
     int group_depth = 0;  // fixed layout: the groups open at this line
+    // Fixed layout: the blocks open at this line, true for a `group`. A gate
+    // block (0.17), and an `ext` or `choice` (0.19) outside a UPER pack, which
+    // is refused after the file, is closed by its `end` here, not a group.
+    std::vector<bool> blocks;
     std::size_t pos = 0;
     while (pos <= text.size()) {
         const std::size_t nl = text.find('\n', pos);
@@ -218,7 +240,15 @@ void check_pack_lines(const std::string& text, const std::string& source) {
         else if (kw == "map") count(nargs == 3, "three arguments");
         else if (kw == "typemap") count(nargs == 2, "two arguments");
         else if (kw == "end") count(nargs == 0, "no argument");
+        // v0.19 ruling 23: `ext` none, `choice` one or two, `alt` one (`encoding`
+        // is in the one-argument list); their values are checked after the file.
+        else if (kw == "ext") count(nargs == 0, "no argument");
+        else if (kw == "choice") count(nargs == 1 || nargs == 2, "one or two arguments");
+        else if (kw == "alt") count(nargs == 1, "one argument");
         else if (kw == "requires") count(nargs >= 1, "at least one argument");
+        // v0.17 ruling 13: an `if` line with no argument at all is refused as
+        // the line is read; its other errors are found after the file.
+        else if (kw == "if") count(nargs >= 1, "at least one argument");
 
         // 4. missing-wire
         if (after_wire().count(kw) && !have_wire)
@@ -258,11 +288,21 @@ void check_pack_lines(const std::string& text, const std::string& source) {
         if (kw == "group") {
             // 8. the locator form
             if (!sequential && nargs >= 2) check_group_locator(c, wire, t[2]);
-            if (!sequential) ++group_depth;
+            if (!sequential) {
+                ++group_depth;
+                blocks.push_back(true);
+            }
+            continue;
+        }
+        if (kw == "ext" || kw == "choice" || kw == "if") {
+            if (!sequential) blocks.push_back(false);
             continue;
         }
         if (kw == "end") {
-            if (group_depth > 0) --group_depth;
+            if (!blocks.empty()) {
+                if (blocks.back() && group_depth > 0) --group_depth;
+                blocks.pop_back();
+            }
             continue;
         }
         if (kw == "when" || kw == "const") {
@@ -318,6 +358,9 @@ void check_pack_lines(const std::string& text, const std::string& source) {
         if (!f.has_absent) continue;
         // 0.13 ruling 14: `absent` does not fit the tlv wire, which is checked after the file.
         if (wire == Wire::Tlv) continue;
+        // 0.19 ruling 22: `absent` on a UPER locator, whose bits depend on its
+        // value, is bad-directive after the file; it has no raw value to check here.
+        if (wire == Wire::Bits && uper_locator_form(f.locator)) continue;
         std::uint32_t len = 0;
         if (wire == Wire::Bits) {
             std::uint64_t n = 0;

@@ -1,0 +1,26 @@
+{
+  "name": "extension-bit-1-all-additions-absent",
+  "from": "conformance-uper",
+  "to": "conformance-uper",
+  "input": "070000000000200020000efd600289a0400000",
+  "expect": "070000000000200020000efd600089a00000",
+  "model": {
+    "probe.n": "7",
+    "lat": "-90",
+    "probe.x": "0",
+    "probe.y": "-5",
+    "probe.z": "0",
+    "probe.w": "0",
+    "probe.qty": "0",
+    "probe.c1": "0",
+    "probe.label": "ok",
+    "probe.s1": "",
+    "probe.s2": "",
+    "probe.val": "77",
+    "probe.a": "0",
+    "probe.items.#": "0",
+    "probe.names.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.19 (ASN.1 unaligned PER): Input: Inner with extension bit 1, presence 01, val 77, m = 2 (0 000001), and both addition presence bits 0: accepted, nothing skipped (ruling 8); encode writes the extension bit 0. Neither checking codec writes this form (each writes bit 0 when no addition is present); both decode it. 137 bits, padded with 7 zero bits to 18 octets. Derived without an engine by a standalone X.691 reference program (Python standard library) and checked against two independent ASN.1 UPER codecs on the ASN.1 module in the pack header: asn1tools 0.169.0 (MIT, PyPI), codec uper, and pycrate 0.8.1 (LGPL, PyPI), to_uper; asn1tools checks y (INTEGER (-5..MAX)) only as a length and octets, because it encodes a semi-constrained integer as an unconstrained one, which X.691 does not."
+}

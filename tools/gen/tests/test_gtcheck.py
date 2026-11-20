@@ -519,6 +519,8 @@ V011_TLV = {"wire-tlv-68", "wire-tlv-69", "wire-tlv-71", "wire-tlv-72", "wire-tl
 V011_TLV |= {"wire-armor-18", "wire-armor-19"}
 # Ruling 28 of 0.15 pins the same order for a 0.15 transform on tlv.
 V011_ORDER = {"580", "667", "668"}  # and ruling 13 of 0.17
+# And the UPER vectors of rulings 23-26 of 0.19 that pin the 0.11 order.
+V011_TLV |= {"wire-uper-58", "wire-uper-61", "wire-uper-48", "wire-uper-50", "wire-uper-52", "wire-uper-53", "wire-uper-54", "wire-uper-55", "wire-uper-56", "wire-uper-57"}
 
 class TlvWireTest(Refusals):
     TLV = HEAD + "wire tlv\ntag 2\nkey 060e2b34\nchecksum sum16 1\n"
@@ -603,6 +605,94 @@ class GateTest(Refusals):
                          "bad-directive", 9)
         self.refuse_pack(fixed + "group probe.items 0:8 item 8 count 0:0:8\nend\nif 0:8:1 1\nend\n",
                          "bad-directive", 10)
+
+class UperTest(Refusals):
+    SEQ = HEAD + "wire bits\nlayout sequential\nbit_order msb\n"
+    UPER = SEQ + "encoding uper\n"
+
+    def test_uper_locators_blocks_and_sizes_give_a_typed_tree(self):
+        pack = gtcheck.load_pack(
+            self.UPER + "field probe.qty int:-5:5:ext twos\nfield probe.ratio int:0: uscale:1/4\n"
+            "field probe.qty int:: uint\nfield probe.qty enum:3:ext uint\nfield probe.label chars:8:8 ascii\n"
+            "field probe.label octets: hex\nalso uid\nfield probe.qty 1 uint\n"
+            "ext\n  presence p 1\n  if p.1\n    field probe.qty int:0:15 uint\n  end\nend\n"
+            "choice 3 ext\n  alt 2\n    field probe.label chars: ascii\n  alt 0\nend\n"
+            "group probe.items size 0 3\n  field probe.ratio int:0:1023 uscale:1\nend\n"
+            "group probe.subs size\nend\n", model())
+        self.assertEqual(pack.encoding, "uper")
+        locs = [n.uper for n in pack.common if n.d == "field"]
+        self.assertEqual(locs, [("int", -5, 5, True), ("int", 0, None, False), ("int", None, None, False),
+                                ("enum", 3, None, True), ("chars", 8, 8, False), ("octets", None, None, False),
+                                None])
+        choice = next(n for n in pack.common if n.d == "choice")
+        self.assertEqual((choice.count, [(a.d, a.count, len(a.body)) for a in choice.body]),
+                         (3, [("alt", 2, 1), ("alt", 0, 0)]))
+        groups = [n for n in pack.common if n.d == "group"]
+        self.assertEqual([(g.mode, g.count) for g in groups], [("size", (0, 3)), ("size", None)])
+        # `encoding none` loads in any bits pack, and is the default
+        self.assertEqual(gtcheck.load_pack(HEAD + "wire bits\nword_bytes 1\nencoding none\n"
+                                           "field probe.qty 0:0:8 uint\n", model()).encoding, "none")
+
+    def test_the_encoding_directive_is_refused_with_its_line(self):
+        self.refuse_pack(HEAD + "wire bits\nlayout sequential\nencoding uper\n", "bad-directive", 8)
+        self.refuse_pack(HEAD + "wire bits\nword_bytes 1\nbit_order msb\nencoding uper\n", "bad-directive", 9)
+        self.refuse_pack(HEAD + "wire json\nencoding none\nfield uid id string\n", "bad-directive", 7)
+        self.refuse_pack(self.SEQ + "encoding aper\n", "bad-directive", 9)
+        self.refuse_pack(self.UPER + "encoding uper\n", "bad-directive", 10)
+        self.refuse_pack(self.SEQ + "kind a\nencoding uper\n", "bad-directive", 10)
+        self.refuse_pack(self.SEQ + "opt\n  encoding uper\nend\n", "bad-directive", 10)
+        self.refuse_pack(self.UPER + "armor sixbit\n", "bad-directive", 9)
+        # checked after the file is read, before `missing-distribution`
+        no_distribution = 'format demo\nversion 0.1.0\nsource "test"\nuses probe\n'
+        self.refuse_pack(no_distribution + "encoding uper\nwire json\nfield uid id string\n", "bad-directive", 5)
+
+    def test_uper_lines_are_refused_outside_a_uper_pack(self):
+        self.refuse_pack(self.SEQ + "field probe.qty int:0:3 uint\n", "bad-directive", 9)
+        self.refuse_pack(self.SEQ + "ext\nend\n", "bad-directive", 9)
+        self.refuse_pack(self.SEQ + "choice 1\n  alt 0\nend\n", "bad-directive", 9)
+        self.refuse_pack(self.SEQ + "group probe.items size\nend\n", "bad-directive", 9)
+        # on json such a locator is a path (ruling 19)
+        gtcheck.load_pack(HEAD + "wire json\nfield probe.qty int:x int\n", model())
+
+    def test_locator_numbers_and_ranges(self):
+        for loc in ("int:5:4", "int:0:07", "int:-0:5", "int:+1:5", "int:0:9223372036854775808", "int:",
+                    "int:1", "int::ext", "int:0:1:x", "enum:0", "enum:65537", "enum:3:x", "chars:0:65536",
+                    "chars:4:3", "chars:-1:2", "octets:4", "octets:1:2:ext"):
+            self.refuse_pack(self.UPER + "field probe.qty %s uint\n" % loc, "bad-directive", 10)
+        gtcheck.load_pack(self.UPER + "field probe.qty int:-9223372036854775808:9223372036854775807 uint\n"
+                          "field probe.qty enum:65536 uint\nfield probe.label chars:0:65535 ascii\n", model())
+
+    def test_transforms_options_and_lines_on_uper_locators(self):
+        for line in ("field probe.ratio int:0:3 f32", "field probe.qty enum:3 twos",
+                     "field probe.label chars:1:8 utf8", "field probe.label octets: ascii",
+                     "field probe.label chars: sixbit", "field probe.label 8 hex",
+                     "field probe.qty int:0:65535 uint swap", "field probe.label chars:1:8 ascii trim",
+                     "field probe.qty int:0:3 uint:2", "const int:0:3 1"):
+            self.refuse_pack(self.UPER + line + "\n", "bad-directive", 10)
+        self.refuse_pack(self.UPER + "kind a\nwhen int:0:3 1\n", "bad-directive", 11)
+        self.refuse_pack(self.UPER + "group probe.items count int:0:3\nend\n", "bad-directive", 10)
+        self.refuse_pack(self.UPER + "field probe.qty int:0:3 uscale:2\n", "key-type-mismatch", 10)
+        self.refuse_pack(self.UPER + "field probe.qty octets: hex\n", "key-type-mismatch", 10)
+
+    def test_ext_choice_and_size_rules_are_refused_with_their_line(self):
+        self.refuse_pack(self.UPER + "ext\n  field probe.qty 1 uint\n  presence p 1\nend\n", "bad-directive", 12)
+        self.refuse_pack(self.UPER + "ext 1\nend\n", "bad-directive", 10)
+        self.refuse_pack(self.UPER + "choice 2\n  alt 0\n  alt 2\nend\n", "bad-directive", 12)
+        self.refuse_pack(self.UPER + "choice 2\n  alt 0\n  alt 0\nend\n", "bad-directive", 12)
+        self.refuse_pack(self.UPER + "choice 2\n  alt 01\nend\n", "bad-directive", 11)
+        self.refuse_pack(self.UPER + "choice 2\n  field probe.qty 1 uint\n  alt 0\nend\n", "bad-directive", 11)
+        self.refuse_pack(self.UPER + "alt 0\n", "bad-directive", 10)
+        self.refuse_pack(self.UPER + "opt\n  alt 0\nend\n", "bad-directive", 11)
+        self.refuse_pack(self.UPER + "choice 2\nend\n", "bad-directive", 10)
+        for head in ("choice 0", "choice 65537", "choice 2 x", "choice"):
+            self.refuse_pack(self.UPER + head + "\n  alt 0\nend\n", "bad-directive", 10)
+        self.refuse_pack(self.UPER + "choice 1\n  alt 0\n    kind a\nend\n", "bad-directive", 12)
+        for size in ("size 3 1", "size 0 65536", "size 1", "size -1 2"):
+            self.refuse_pack(self.UPER + "group probe.items %s\nend\n" % size, "bad-directive", 10)
+        # nested choices: one `end` closes the inner `alt` and its `choice`
+        gtcheck.load_pack(self.UPER + "choice 2\n  alt 0\n    choice 1\n      alt 0\n    end\n"
+                          "    field probe.qty 1 uint\n  alt 1\nend\n", model())
+
 
 class ConformanceLoadVectorsTest(unittest.TestCase):
     """gtcheck against the load vectors every engine must pass

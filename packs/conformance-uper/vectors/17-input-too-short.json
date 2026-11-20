@@ -1,0 +1,9 @@
+{
+  "name": "input-too-short",
+  "from": "conformance-uper",
+  "to": "conformance-uper",
+  "input": "c88f0fd756a0407da05fefea6c79f06a2d6337ab6fbbc09a1a5cfd05003ff810161c",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.19 (ASN.1 unaligned PER): Input: vector 01 without its last three octets; the names items run past the input (rules of 0.8 on reading past the input). Checking codecs on the same input: asn1tools 0.169.0 fails; pycrate 0.8.1 fails. Derived without an engine by a standalone X.691 reference program (Python standard library)."
+}

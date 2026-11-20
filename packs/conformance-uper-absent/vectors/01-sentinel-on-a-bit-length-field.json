@@ -1,0 +1,12 @@
+{
+  "name": "sentinel-on-a-bit-length-field",
+  "from": "conformance-uper-absent",
+  "to": "conformance-uper-absent",
+  "input": "ff00",
+  "expect": "ff00",
+  "model": {
+    "probe.n": "0"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.19 (constrained whole number, padding) with 0.9 (absent) and ruling 22: x is the 8 bits ff, its sentinel, so x is absent; n is a constrained whole number in 0..7, 3 bits 000. Encode: x absent writes 255 (ff), n 0 writes 000, the 11 bits padded to two octets: ff00. Derived by hand."
+}

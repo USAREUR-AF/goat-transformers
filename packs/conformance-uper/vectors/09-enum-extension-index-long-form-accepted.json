@@ -1,0 +1,25 @@
+{
+  "name": "enum-extension-index-long-form-accepted",
+  "from": "conformance-uper",
+  "to": "conformance-uper",
+  "input": "0700000000002000201808081dfac0000000",
+  "expect": "070000000000200020102077eb00000000",
+  "model": {
+    "probe.n": "7",
+    "lat": "-90",
+    "probe.x": "0",
+    "probe.y": "-5",
+    "probe.z": "0",
+    "probe.w": "4",
+    "probe.qty": "0",
+    "probe.c1": "0",
+    "probe.label": "ok",
+    "probe.s1": "",
+    "probe.s2": "",
+    "probe.a": "0",
+    "probe.items.#": "0",
+    "probe.names.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.19 (ASN.1 unaligned PER): Input writes the extension index 1 of w in the long form of a normally small number (1, length 1, 01) where the short form fits; decode accepts it (ruling 7), giving 4, and encode writes the short form 0 000001. 132 bits, padded with 4 zero bits to 17 octets. Derived without an engine by a standalone X.691 reference program (Python standard library) and checked against two independent ASN.1 UPER codecs on the ASN.1 module in the pack header: asn1tools 0.169.0 (MIT, PyPI), codec uper, and pycrate 0.8.1 (LGPL, PyPI), to_uper; asn1tools checks y (INTEGER (-5..MAX)) only as a length and octets, because it encodes a semi-constrained integer as an unconstrained one, which X.691 does not."
+}

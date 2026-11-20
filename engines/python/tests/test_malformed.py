@@ -622,5 +622,116 @@ class TestArmor(_Rulings):
         self.assertEqual(problems, [], "\n".join(problems[:40]))
 
 
+class TestUper(_Rulings):
+    """ASN.1 unaligned PER (0.19, "Errors"): a length determinant, count or
+    index the input cannot hold, a value outside its constraint and a
+    fragmented length are `malformed-wire`; a value the engine cannot hold is
+    `transform-decode`. No input makes the engine misbehave."""
+
+    fmt = "conformance-uper"
+    GOOD = "c88f0fd756a0407da05fefea6c79f06a2d6337ab6fbbc09a1a5cfd05003ff810161c4038c0"  # vector 01
+
+    def test_every_prefix_is_malformed(self):
+        # every line of the probe is mandatory, so every cut short of the last
+        # line's octet fails; the hex text is cut at whole octets
+        for i in range(0, len(self.GOOD) - 2, 2):
+            self.malformed(self.GOOD[:i])
+
+    def test_every_prefix_and_change(self):
+        rng = random.Random(SEED)
+        problems = []
+        text = self.GOOD
+        forms = [text[:i] for i in range(len(text))]
+        for i in range(len(text)):
+            for ch in rng.sample("0123456789abcdef" + ALPHABET, 6):
+                forms.append(text[:i] + ch + text[i + 1:])
+        for data in forms:
+            for dst in (self.fmt, "conformance-seq-json", "conformance-json"):
+                what = outcome(engine(), self.fmt, dst, data)
+                if what is not None:
+                    problems.append("%s: %s on input %r" % (dst, what, data[:120]))
+        self.assertEqual(problems, [], "\n".join(problems[:40]))
+
+    def test_random_bit_flips_and_long_inputs(self):
+        rng = random.Random(SEED)
+        raw = bytes.fromhex(self.GOOD)
+        problems = []
+        for _ in range(2000):
+            buf = bytearray(raw)
+            for _ in range(rng.randrange(1, 4)):
+                k = rng.randrange(len(buf) * 8)
+                buf[k // 8] ^= 0x80 >> (k % 8)
+            what = outcome(engine(), self.fmt, self.fmt, buf.hex())
+            if what is not None:
+                problems.append("%s on input %s" % (what, buf.hex()))
+        for fill in ("ff", "bf", "7f", "80"):  # long lengths and counts over a large input
+            what = outcome(engine(), self.fmt, self.fmt, fill * 70000)
+            if what is not None:
+                problems.append("%s on %s * 70000" % (what, fill))
+        self.assertEqual(problems, [], "\n".join(problems[:40]))
+
+    def test_choice_extension_index_beyond_64_bits(self):
+        # vector 15 up to the choice (113 bits), then the choice extension bit
+        # 1 and its index in the long form of 9 octets, then an open type: the
+        # decode fails with transform-decode (rulings 19 and 20 of 0.19)
+        v15 = "070000000000200020000efd6000400101f40000"
+        bits = bin(int(v15, 16))[2:].zfill(len(v15) * 4)
+        self.assertEqual(bits[113], "1")
+        tail = "1" + "1" + "0" + format(9, "07b") + "0" * 71 + "1" + "0" + format(2, "07b") + format(1000, "016b")
+        tail += "00" + "0000000"  # items count 0, names length 0
+        data = bits[:113] + tail
+        data += "0" * (-len(data) % 8)
+        with self.assertRaises(GTError) as cm:
+            engine().decode(self.fmt, "%0*x" % (len(data) // 4, int(data, 2)))
+        self.assertEqual(cm.exception.code, "transform-decode")
+        # the same index in one octet is skipped
+        tail = "1" + "1" + "0" + format(1, "07b") + "00000001" + "0" + format(2, "07b") + format(1000, "016b")
+        data = bits[:113] + tail + "00" + "0000000"
+        data += "0" * (-len(data) % 8)
+        engine().decode(self.fmt, "%0*x" % (len(data) // 4, int(data, 2)))
+
+
+class TestUperEncode(unittest.TestCase):
+    """Points of 0.19 no conversion vector pins."""
+
+    CORE = ("module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\n"
+            "key n int -\nkey s string -\n")
+    PACK = ("format probe-uper-x\nversion 0.19.0\ndistribution public\nsource \"probe\"\nwire bits\n"
+            "layout sequential\nbit_order msb\nencoding uper\n%s")
+
+    def engine(self, body):
+        eng = Engine()
+        eng.load_model(self.CORE)
+        eng.load(self.PACK % body)
+        return eng
+
+    def encode(self, body, fields):
+        from goat_transformers.entity import Entity
+        ent = Entity()
+        ent.fields.update(fields)
+        got = self.engine(body).encode("probe-uper-x", ent)
+        return got.decode() if isinstance(got, bytes) else got
+
+    def test_empty_encoding_is_one_octet(self):
+        self.assertEqual(self.encode("choice 1\n  alt 0\nend\n", {}), "00")
+        self.assertEqual(self.encode("field n int:3:3 uint\n", {"n": 3}), "00")
+
+    def test_long_forms(self):
+        # an extension enum index of 64 or more: 1, then 1, length 1, the index
+        self.assertEqual(self.encode("field n enum:2:ext uint\n", {"n": 2 + 64}), "c05000")
+        # a semi-constrained integer far above lb, and an unconstrained negative one
+        self.assertEqual(self.encode("field n int:0: uint\n", {"n": 1 << 62}), "084000000000000000")
+        self.assertEqual(self.encode("field n int:: twos\n", {"n": -(1 << 63)}), "088000000000000000")
+        # a length of 16384 or more would be fragmented
+        with self.assertRaises(GTError) as cm:
+            self.encode("field s chars: ascii\n", {"s": "a" * 16384})
+        self.assertEqual(cm.exception.code, "transform-encode")
+        self.assertTrue(self.encode("field s chars: ascii\n", {"s": "a" * 16383}).startswith("bfff"))
+
+    def test_default_is_not_content(self):
+        body = "default n 5\nopt\n  field n int:0:7 uint\nend\nfield n int:0:7 uint\n"
+        self.assertEqual(self.encode(body, {}), "50")  # opt bit 0, then the default 5 in 3 bits
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -1,0 +1,9 @@
+{
+  "name": "uper-02-to-uper-octets-count-above-ub",
+  "from": "conformance-derive",
+  "to": "conformance-uper",
+  "input": "{\"s1\":\"0102030405\"}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.19 (ASN.1 unaligned PER): s1 of 5 octets under SIZE (0..4): transform-encode. Derived without an engine by a standalone X.691 reference program (Python standard library)."
+}

@@ -1,0 +1,9 @@
+{
+  "name": "uper-03-to-uper-alt-value-outside-constraint",
+  "from": "conformance-derive",
+  "to": "conformance-uper",
+  "input": "{\"a\":4}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.19 (ASN.1 unaligned PER): a 4 under INTEGER (0..3): transform-encode. Derived without an engine by a standalone X.691 reference program (Python standard library)."
+}

@@ -1,0 +1,9 @@
+{
+  "name": "uper-02-to-uper-lat-outside-constraint",
+  "from": "conformance-json",
+  "to": "conformance-uper",
+  "input": "{\"schema\":\"probe\",\"pos\":{\"lat\":90.1}}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.19 (ASN.1 unaligned PER): lat 90.1 gives 901000000, above ub 900000001: transform-encode. Derived without an engine by a standalone X.691 reference program (Python standard library)."
+}

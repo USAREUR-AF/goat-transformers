@@ -1,0 +1,9 @@
+{
+  "name": "uper-07-to-uper-enum-index-outside-root-not-extensible",
+  "from": "conformance-seq-json",
+  "to": "conformance-uper",
+  "input": "{\"qty\":5}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.19 (ASN.1 unaligned PER): qty 5 on enum:5 with no ext: transform-encode (an index of n or more is written in the extension form, :ext only). Derived without an engine by a standalone X.691 reference program (Python standard library)."
+}

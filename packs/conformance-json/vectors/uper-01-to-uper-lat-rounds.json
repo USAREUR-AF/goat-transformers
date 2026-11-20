@@ -1,0 +1,9 @@
+{
+  "name": "uper-01-to-uper-lat-rounds",
+  "from": "conformance-json",
+  "to": "conformance-uper",
+  "input": "{\"schema\":\"probe\",\"pos\":{\"lat\":30.00900273}}",
+  "expect": "008f0fd75600200020000000000000",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.19 (ASN.1 unaligned PER): lat 30.00900273: (x - 0) * 10000000 / 1 = 300090027.3 (in doubles), rounded to 300090027; every other key absent, written per ruling 1. 120 bits, padded to 15 octets. Derived without an engine by a standalone X.691 reference program (Python standard library) and checked against two independent ASN.1 UPER codecs on the ASN.1 module in the pack header: asn1tools 0.169.0 (MIT, PyPI), codec uper, and pycrate 0.8.1 (LGPL, PyPI), to_uper; asn1tools checks y (INTEGER (-5..MAX)) only as a length and octets, because it encodes a semi-constrained integer as an unconstrained one, which X.691 does not."
+}

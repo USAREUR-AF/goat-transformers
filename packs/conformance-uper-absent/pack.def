@@ -1,0 +1,15 @@
+# Conformance probe pack for absent-value sentinels in a UPER pack (spec 0.19
+# ruling 22, spec 0.9). Public. A bit-length field takes `absent` as in any
+# sequential bits pack; the UPER field after it is read at the cursor.
+format        conformance-uper-absent
+version       0.19.0
+distribution  public
+source        "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses          probe
+wire          bits
+layout        sequential
+bit_order     msb
+encoding      uper
+
+field  probe.x  8         uint  absent 255
+field  probe.n  int:0:7   uint

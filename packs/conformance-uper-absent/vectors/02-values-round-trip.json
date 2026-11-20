@@ -1,0 +1,13 @@
+{
+  "name": "values-round-trip",
+  "from": "conformance-uper-absent",
+  "to": "conformance-uper-absent",
+  "input": "0520",
+  "expect": "0520",
+  "model": {
+    "probe.x": "5",
+    "probe.n": "1"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md 0.19 (constrained whole number, padding) with 0.9 (absent) and ruling 22: x is 00000101 = 5; n is the 3 bits 001 = 1; 11 bits padded: 05 20. Derived by hand."
+}

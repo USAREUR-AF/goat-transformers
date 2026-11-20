@@ -398,8 +398,11 @@ struct SeqPresence {
 };
 
 struct SeqNode {
-    enum class Type { Field, Const, Pad, Align, When, Presence, If, Opt, Chain, Fx, Length, LengthWhole, Group };
-    enum class Repeat { Count, While, More, Fx };
+    enum class Type { Field, Const, Pad, Align, When, Presence, If, Opt, Chain, Fx, Length, LengthWhole, Group,
+                      Ext, Choice, Alt };
+    enum class Repeat { Count, While, More, Fx, Size };
+    // v0.19, `encoding uper`: the form of a field's locator. None is a bit length.
+    enum class Uper { None, Int, IntExt, IntSemi, IntUn, Enum, EnumExt, Chars, Octets };
     Type type = Type::Pad;
     std::size_t line = 0;              // line number in pack.def
     // field: the bit length; const, when: the bit length of the value; pad:
@@ -415,7 +418,16 @@ struct SeqNode {
     Repeat repeat = Repeat::Count;     // group
     bool unit_bits = false;            // length: the block is counted in bits, not bytes
     std::int64_t plus = 0;             // length: `plus <n>`
-    SeqBody inner;                     // if, opt, chain, length: the block; group: one item
+    SeqBody inner;                     // if, opt, chain, length, ext, alt: the block; group: one item; choice: its alts
+    // v0.19. field: the UPER locator form, with `lb` and `ub` (int:<lb>:<ub>,
+    // int:<lb>:, chars and octets with `bounded`; enum: 0 and n - 1). group
+    // with `size`: the bounds when `bounded`. choice: `number` is n and
+    // `uext` the `ext` word; alt: `number` is the index.
+    Uper uper = Uper::None;
+    bool bounded = false;
+    bool uext = false;
+    std::int64_t lb = 0;
+    std::int64_t ub = 0;
 };
 
 // `element <path>` (v0.18, xml only): the element at `path`, and each one on
@@ -470,6 +482,7 @@ struct Pack {
     // cursor. `fields`, `whens`, `consts`, `groups`, `kinds` and `defaults`
     // above are then empty.
     bool sequential = false;
+    bool uper = false;  // v0.19: `encoding uper`
     SeqBody seq;
     // v0.10, the `text` wire: `delimiter`, `start` and `checksum`.
     char delimiter = ',';

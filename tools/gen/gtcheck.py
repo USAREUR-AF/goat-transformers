@@ -3,8 +3,8 @@
 
 Every generator in this directory reads its own output back through this
 module before it reports success. The module is written from
-spec/engine-spec.md (Versions 0.1 to 0.10, 0.13, 0.14, the gate blocks of 0.17, and the
-`with` option, `element`, `iso8601_short` and derive functions of 0.18) and
+spec/engine-spec.md (Versions 0.1 to 0.10, 0.13, 0.14, the gate blocks of 0.17, the
+`with` option, `element`, `iso8601_short` and derive functions of 0.18, and 0.19) and
 imports no engine, so a generator
 stays independent of the engines it writes packs for.
 
@@ -69,6 +69,11 @@ TLV_TRANSFORMS = {"uint": "int", "twos": "int", "uscale": "float", "sscale": "fl
                   "f32": "float", "f64": "float", "utf8": "string", "hex": "string"}
 TLV_SIZED = ("uint", "twos", "uscale", "sscale")       # `:<n>` required
 TLV_FLOAT_SIZE = {"f32": 4, "f64": 8}                  # `:<n>` optional, and then this
+# 0.19 "Transforms on UPER locators": the transforms each UPER locator takes and
+# the type each yields; any other transform on such a locator is `bad-directive`
+UPER_TRANSFORMS = {"int": {"uint": "int", "twos": "int", "uscale": "float", "sscale": "float"},
+                   "enum": {"uint": "int"}, "chars": {"ascii": "string"},
+                   "octets": {"hex": "string", "utf8": "string"}}
 TRANSFORMS = {"xml": TEXT_TRANSFORMS, "geojson": TEXT_TRANSFORMS, "json": JSON_TRANSFORMS,
               "bits": BITS_TRANSFORMS, "protobuf": PROTOBUF_TRANSFORMS, "text": RECORD_TRANSFORMS,
               "tlv": TLV_TRANSFORMS}
@@ -82,17 +87,20 @@ TLV_HEADER = ("tag", "length", "key", "checksum")
 TLV_FORMS = {"tag": ("ber-oid", "1", "2", "4"), "length": ("ber", "1", "2", "4")}
 # the armor of the bits wire (0.14): at most once, before the first `kind`
 ARMORS = ("hex", "sixbit")
+# the encoding of the bits wire (0.19): at most once, before the first `kind`
+ENCODINGS = ("none", "uper")
 HEADER = ("format", "version", "distribution", "source", "uses", "wire", "layout",
-          "bit_order", "word_bytes", "armor") + TEXT_HEADER
+          "bit_order", "word_bytes", "armor", "encoding") + TEXT_HEADER
 TABLES = ("map", "typemap")
-BLOCKS = ("group", "if", "opt", "chain", "length")
+BLOCKS = ("group", "if", "opt", "chain", "length", "ext", "choice")
+UPER_ONLY = ("ext", "choice", "alt")          # 0.19 ruling 9; `alt` closes at the next `alt` or `end`
 SEQUENTIAL_ONLY = ("pad", "align", "presence", "opt", "chain", "fx", "length", "also")
 # spec 0.17: the lines a gate block of a fixed layout may hold
 GATE_BODY = ("field", "const", "default", "if")
 DIRECTIVES = HEADER + TABLES + BLOCKS + SEQUENTIAL_ONLY + (
     "root", "kind", "when", "requires", "field", "const", "default", "end", "tag", "key",
     # spec 0.18: an xml element written when empty
-    "element")
+    "element", "alt")
 
 _INT = re.compile(r"-?[0-9]+\Z")
 _UINT = re.compile(r"[0-9]+\Z")
@@ -108,6 +116,10 @@ _TLV_TAG = re.compile(r"(?:0|[1-9][0-9]*)\Z")
 _TLV_LOCATOR = re.compile(r"((?:0|[1-9][0-9]*)(?:\.(?:0|[1-9][0-9]*))*)(?::([0-9]+))?\Z")
 _TLV_KEY = re.compile(r"(?:[0-9a-f]{2}){1,64}\Z")
 _GATE = re.compile(r"(!?)([0-9]+:[0-9]+:[0-9]+)\Z")
+# 0.19 ruling 15: an optional `-` and digits with no leading zero, `-0` refused
+_UPER_NUMBER = re.compile(r"(?:0|-?[1-9][0-9]*)\Z")
+_UPER_LOCATOR = re.compile(r"(int|enum|chars|octets):(.*)\Z")
+INT64 = (-(1 << 63), (1 << 63) - 1)
 
 
 def printable(text, low=0x20):
@@ -581,17 +593,23 @@ class Node:
     pair) and `col` is (from, len) for a column, None otherwise; a group's
     `start` is its first field and `item` the fields of one item.
     On the tlv wire `path` is the tuple of tags and `size` the `:<n>` bytes,
-    None when the locator has none."""
+    None when the locator has none.
+    In a UPER pack (0.19) a field with a UPER locator has `bits` None and
+    `uper` = (form, lb, ub, ext): form `int`, `enum`, `chars` or `octets`, the
+    bounds as ints or None when not written (for `enum`, lb is n), ext a bool.
+    A `group ... size` has mode `size` and count (lb, ub) or None; a `choice`
+    has count n and its body holds only `alt` nodes, each with `count` its
+    index and its own body."""
     __slots__ = ("d", "line", "args", "body", "kinds", "key", "loc", "tr", "targs", "via",
                  "opts", "also", "value", "mode", "count", "item", "conds", "name", "bits",
-                 "unit", "plus", "whole", "start", "path", "absent", "fields", "col", "size", "gate", "with_")
+                 "unit", "plus", "whole", "start", "path", "absent", "fields", "col", "size", "gate", "with_", "uper")
 
     def __init__(self, d, line, args):
         self.d, self.line, self.args = d, line, args
         self.body = self.kinds = self.key = self.loc = self.tr = self.targs = self.via = None
         self.opts = self.also = self.value = self.mode = self.count = self.item = None
         self.conds = self.name = self.bits = self.unit = self.plus = self.whole = None
-        self.start = self.path = self.absent = self.fields = self.col = self.size = self.gate = self.with_ = None
+        self.start = self.path = self.absent = self.fields = self.col = self.size = self.gate = self.with_ = self.uper = None
 
     def __repr__(self):
         return "<%s line %d: %s>" % (self.d, self.line, " ".join(self.args))
@@ -619,6 +637,7 @@ class Pack:
         self.format = self.version = self.wire = self.distribution = self.root = None
         self.layout, self.bit_order, self.word_bytes = "fixed", "lsb", None
         self.armor = "hex"                                       # bits wire, 0.14
+        self.encoding = "none"                                   # bits wire, 0.19
         self.delimiter = self.start = self.checksum = None      # text wire, as written
         self.tag, self.length, self.key = "ber-oid", "ber", None  # tlv wire
         self.sum16 = None                                        # tlv: the checksum tag, an int
@@ -629,6 +648,10 @@ class Pack:
     @property
     def sequential(self):
         return self.layout == "sequential"
+
+    @property
+    def uper(self):
+        return self.encoding == "uper"
 
     @property
     def separator(self):
@@ -673,6 +696,7 @@ class _Loader:
         self.key_uses = []          # (node or line number, key, what is expected)
         self.tlv_lines = []         # (line number, directive, args, after a `kind`), 0.13
         self.armor_line = None      # (line number, value, after a `kind`), 0.14
+        self.encoding_line = None   # (line number, value, after a `kind`), 0.19
         self._header_lines = {}
 
     def fail(self, kind, message, line=None):
@@ -728,7 +752,21 @@ class _Loader:
                     self.bad(no, "`end` takes no argument")
                 if owner is None:
                     self.bad(no, "`end` with no open block")
+                if owner.d == "alt":            # one `end` closes the last `alt` and its `choice`
+                    open_blocks.pop()
                 open_blocks.pop()
+                last = None
+                continue
+            if d == "alt":                      # 0.19: an `alt` ends the `alt` before it
+                if owner is not None and owner.d == "alt":
+                    open_blocks.pop()
+                    owner = open_blocks[-1]
+                if owner is None or owner.d != "choice":
+                    self.bad(no, "`alt` outside a `choice`")
+                node = Node(d, no, a)
+                node.body = []
+                owner.body.append(node)
+                open_blocks.append(node)
                 last = None
                 continue
             if d == "kind":
@@ -794,6 +832,9 @@ class _Loader:
         elif d == "armor":
             # checked in `lines`, after the file is read (0.14; ruling 10 of 0.10)
             self.armor_line = (no, value, bool(pack.kinds))
+        elif d == "encoding":
+            # checked in `lines`, after the file is read (0.19; ruling 10 of 0.10)
+            self.encoding_line = (no, value, bool(pack.kinds))
         elif d in TEXT_HEADER:
             if pack.kinds:
                 self.bad(no, "`%s` after the first `kind`" % d)
@@ -858,6 +899,7 @@ class _Loader:
                                          "without the delimiter" % pack.start)
         self._tlv_header()
         self._armor()
+        self._encoding()
         if pack.wire != "xml" and (pack.root is not None or any(k.root is not None for k in pack.kinds)):
             self.bad(where["root"], "`root` on the %s wire" % pack.wire)
         if not pack.kinds:
@@ -886,6 +928,29 @@ class _Loader:
         if value == "sixbit" and pack.bit_order != "msb":
             self.bad(no, "`armor sixbit` needs `bit_order msb`")
         pack.armor = value
+
+    def _encoding(self):
+        """0.19: `encoding <none|uper>` on the bits wire only (any value, ruling
+        18), before the first `kind`; `uper` needs `layout sequential` and
+        `bit_order msb` and is refused with `armor sixbit` (ruling 11)."""
+        if self.encoding_line is None:
+            return
+        pack = self.pack
+        no, value, after_kind = self.encoding_line
+        if pack.wire != "bits":
+            self.bad(no, "`encoding` on the %s wire" % pack.wire)
+        if after_kind:
+            self.bad(no, "`encoding` after the first `kind`")
+        if value not in ENCODINGS:
+            self.bad(no, "encoding `%s` is not none or uper" % value)
+        if value == "uper":
+            if not pack.sequential:
+                self.bad(no, "`encoding uper` needs `layout sequential`")
+            if pack.bit_order != "msb":
+                self.bad(no, "`encoding uper` needs `bit_order msb`")
+            if pack.armor == "sixbit":
+                self.bad(no, "`encoding uper` with `armor sixbit` (ruling 11 of 0.19)")
+        pack.encoding = value
 
     def _tlv_header(self):
         """0.13: `tag`, `length`, `key` and `checksum sum16 <tag>` on the tlv
@@ -957,6 +1022,8 @@ class _Loader:
                 self.bad(node, "`%s` inside a group" % d)
             if not sequential and not top and d not in GATE_BODY:
                 self.bad(node, "`%s` inside a gate block" % d)
+            if d in UPER_ONLY and not self.pack.uper:
+                self.bad(node, "`%s` in a pack without `encoding uper` (ruling 9 of 0.19)" % d)
             if d == "when":
                 if sequential and (not top or (in_kind and lines_seen)):
                     self.bad(node, "`when` after another line of its kind, or inside a block")
@@ -1012,16 +1079,88 @@ class _Loader:
                 self._length(node)
                 if node.body is not None:
                     self._block(node.body, group, visible + [{}], set(), in_kind, top=False)
+            elif d == "ext":
+                if node.args:
+                    self.bad(node, "`ext` takes no argument")
+                for i, line in enumerate(node.body):
+                    if line.d == "presence" and i:
+                        self.bad(line, "a `presence` line inside an `ext` block that is not its first line")
+                self._block(node.body, group, visible + [{}], set(), in_kind, top=False)
+            elif d == "choice":
+                self._choice(node)
+                for alt in node.body:
+                    self._block(alt.body, group, visible + [{}], set(), in_kind, top=False)
             if d not in ("when", "default"):
                 lines_seen = True
 
     # each reader below fills the node's slots or refuses the line
+
+    def _choice(self, node):
+        """0.19 "CHOICE" and ruling 15: `choice <n> [ext]` with n from 1 to
+        65536, then only `alt <i>` lines, each index in 0..n-1 and given once,
+        and at least one."""
+        a = node.args
+        if not (len(a) in (1, 2) and _UPER_NUMBER.match(a[0]) and 1 <= int(a[0]) <= 65536
+                and a[1:] in ([], ["ext"])):
+            self.bad(node, "`choice <n> [ext]` with n from 1 to 65536")
+        node.count = n = int(a[0])
+        if not node.body:
+            self.bad(node, "a `choice` with no `alt` line")
+        seen = set()
+        for alt in node.body:
+            if alt.d != "alt":
+                self.bad(alt, "`%s` between `choice` and its first `alt`" % alt.d)
+            if len(alt.args) != 1 or not _UPER_NUMBER.match(alt.args[0]) or not 0 <= int(alt.args[0]) < n:
+                self.bad(alt, "`alt <i>` with i from 0 to %d" % (n - 1))
+            alt.count = int(alt.args[0])
+            if alt.count in seen:
+                self.bad(alt, "`alt %d` is given twice" % alt.count)
+            seen.add(alt.count)
+
+    def _uper_locator(self, node, form, rest):
+        """0.19 "Locators" and ruling 15: the bounds of a UPER locator."""
+        text = node.loc
+
+        def number(t, low, high):
+            if not _UPER_NUMBER.match(t) or not low <= int(t) <= high:
+                self.bad(node, "`%s` in `%s` is not a decimal from %d to %d with no leading zero"
+                         % (t, text, low, high))
+            return int(t)
+
+        parts = rest.split(":")
+        lb = ub = None
+        ext = False
+        if form == "int":
+            if parts == ["", ""]:
+                pass
+            elif len(parts) == 2 and parts[1] == "":
+                lb = number(parts[0], *INT64)
+            elif len(parts) == 2 or (len(parts) == 3 and parts[2] == "ext"):
+                lb, ub = number(parts[0], *INT64), number(parts[1], *INT64)
+                ext = len(parts) == 3
+            else:
+                self.bad(node, "`%s` is not `int:<lb>:<ub>[:ext]`, `int:<lb>:` or `int::`" % text)
+        elif form == "enum":
+            if len(parts) not in (1, 2) or parts[1:] not in ([], ["ext"]):
+                self.bad(node, "`%s` is not `enum:<n>[:ext]`" % text)
+            lb, ext = number(parts[0], 1, 65536), len(parts) == 2
+        elif rest != "":
+            if len(parts) != 2:
+                self.bad(node, "`%s` is not `%s:<lb>:<ub>` or `%s:`" % (text, form, form))
+            lb, ub = number(parts[0], 0, 65535), number(parts[1], 0, 65535)
+        if ub is not None and lb > ub:
+            self.bad(node, "`%s` has a lower bound above its upper bound" % text)
+        node.uper = (form, lb, ub, ext)
 
     def _transform(self, node, text, bits):
         """Split `<name>[:<arg>...]`, check it against the wire and, on the bits
         wire, against the field's length (0.5 "bits: more transforms")."""
         name, *targs = text.split(":")
         table = TRANSFORMS[self.pack.wire]
+        if node.uper is not None:
+            table = UPER_TRANSFORMS[node.uper[0]]
+            if name not in table:
+                self.bad(node, "transform `%s` is not one a `%s:` locator takes" % (name, node.uper[0]))
         if name not in table:
             self.bad(node, "transform `%s` is not valid on the %s wire" % (name, self.pack.wire))
         if name in ("uscale", "sscale"):
@@ -1145,8 +1284,13 @@ class _Loader:
                 node.size = int(m.group(2))
         elif pack.wire == "bits":
             if pack.sequential:
+                uper = _UPER_LOCATOR.match(text)
+                if pack.uper and what == "field" and uper:
+                    self._uper_locator(node, *uper.groups())
+                    return
                 if not _UINT.match(text):
-                    self.bad(node, "a %s of a sequential pack takes a bit length, not `%s`" % (what, text))
+                    self.bad(node, "a %s of a sequential pack takes a bit length, not `%s`%s" % (
+                        what, text, " (a UPER locator needs `encoding uper`)" if uper and not pack.uper else ""))
                 node.bits = int(text)
             else:
                 m = _BITS_LOCATOR.match(text)
@@ -1194,6 +1338,8 @@ class _Loader:
         if node.absent is not None:
             self._absent(node, group)
         bits_wire = self.pack.wire == "bits"
+        if node.uper is not None and node.opts & {"swap", "trim"}:
+            self.bad(node, "`%s` on a UPER locator (ruling 10 of 0.19)" % " ".join(sorted(node.opts & {"swap", "trim"})))
         if "swap" in node.opts and not (bits_wire and node.bits % 8 == 0):
             self.bad(node, "`swap` needs the bits wire and a length that is a multiple of 8")
         if "swap" in node.opts and node.tr in ("sixbit", "chars", "octal"):
@@ -1223,6 +1369,8 @@ class _Loader:
             self.bad(node, "`absent` is not valid on the text wire (ruling 16 of 0.10)")
         if wire == "tlv":
             self.bad(node, "`absent` is not valid on the tlv wire (ruling 10 of 0.13)")
+        if getattr(node, "uper", None):
+            self.bad(node, "`absent` is not valid on a UPER locator (ruling 22 of 0.19)")
         values = [""] if arg == "" else arg.split(",")
         for v in values:
             if '"' in v or (v == "" and arg != ""):
@@ -1435,8 +1583,18 @@ class _Loader:
                 node.mode = rest[0]
             elif len(rest) == 2 and rest[0] == "count" and _UINT.match(rest[1]) and 1 <= int(rest[1]) <= 64:
                 node.mode, node.count = "count", int(rest[1])
+            elif rest[0] == "size" and len(rest) in (1, 3):
+                if not pack.uper:
+                    self.bad(node, "`group ... size` in a pack without `encoding uper`")
+                node.mode = "size"
+                if len(rest) == 3:
+                    if not all(_UPER_NUMBER.match(t) and 0 <= int(t) < 65536 for t in rest[1:]) \
+                            or int(rest[1]) > int(rest[2]):
+                        self.bad(node, "`size <lb> <ub>` needs 0 <= lb <= ub < 65536")
+                    node.count = (int(rest[1]), int(rest[2]))
             else:
-                self.bad(node, "a sequential group is `count <len>` (1 to 64 bits), `while`, `more` or `fx`")
+                self.bad(node, "a sequential group is `count <len>` (1 to 64 bits), `while`, `more`, `fx`"
+                               "%s" % (" or `size [<lb> <ub>]`" if pack.uper else ""))
             return
         node.loc = rest[0]
         if pack.wire == "text":
@@ -1533,9 +1691,9 @@ class _Loader:
                              % (other.loc, node.loc))
 
     def _sequential_lists(self, lines):
-        """0.8 rulings 23 and 33: two groups of one list in a sequential scope
-        are allowed only when each sits in an `if` or `opt` block and neither
-        block encloses the other group."""
+        """0.8 rulings 23 and 33, with 0.19 ruling 20: two groups of one list in
+        a sequential scope are allowed only when each sits in an `if`, `opt` or
+        `alt` block and neither block encloses the other group."""
         found = {}                  # list -> [(group node, chain of enclosing if/opt nodes)]
 
         def visit(nodes, blocks):
@@ -1546,10 +1704,10 @@ class _Loader:
                             and other_blocks[-1] not in blocks
                         if not apart:
                             self.bad(node, "list `%s` is mapped by two groups that are not in separate "
-                                           "`if` or `opt` blocks" % node.key)
+                                           "`if`, `opt` or `alt` blocks" % node.key)
                     found.setdefault(node.key, []).append((node, blocks))
                 elif node.body is not None:
-                    visit(node.body, blocks + [node] if node.d in ("if", "opt") else blocks)
+                    visit(node.body, blocks + [node] if node.d in ("if", "opt", "alt") else blocks)
         visit(lines, [])
 
     def _paths_through_groups(self, lines):
@@ -1679,7 +1837,8 @@ class _Loader:
             if yields != found and not (yields == "int" and found == "float"):
                 mismatch("table `%s` holds %s values" % (at.via, yields))
         else:
-            yields = TRANSFORMS[self.pack.wire][field.tr]
+            table = UPER_TRANSFORMS[field.uper[0]] if field.uper else TRANSFORMS[self.pack.wire]
+            yields = table[field.tr]
             if yields != found:
                 mismatch("transform `%s` yields %s" % (field.tr, yields))
 

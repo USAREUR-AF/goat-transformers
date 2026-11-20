@@ -1,0 +1,9 @@
+{
+  "name": "wire-uper-08-encoding-twice",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey lat float deg\nkey lon float deg\nkey callsign string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey n int -\nkey x int -\nkey y int -\nkey z int -\nkey w int -\nkey qty int -\nkey c1 int -\nkey c2 int -\nkey val int -\nkey a float -\nkey ratio float -\nkey label string -\nkey tag string -\nkey s1 string -\nkey s2 string -\nlist items \"a list\"\nlist names \"a list\"\n"
+  ],
+  "pack": "format probe\nversion 0.19.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nlayout sequential\nbit_order msb\nencoding uper\nencoding uper\nfield probe.n int:0:255 uint\n",
+  "expect_error": "bad-directive"
+}

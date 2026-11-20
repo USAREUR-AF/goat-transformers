@@ -93,6 +93,49 @@ limit(End, _D) -> End.
 
 lines(Lines, Ext, D) -> lists:foldl(fun(L, Acc) -> line(L, Ext, Acc) end, D, Lines).
 
+line({sfield, Keys, {uper, Loc}, Tr, LenT, _, _, _, _With}, Ext, D) ->
+    case at_end(Ext, D) of
+        true -> D;
+        false ->
+            {Res, D1} = uread(Loc, Ext, D),
+            lists:foldl(fun(KV, Acc) -> set_ukey(KV, Res, Tr, LenT, Acc) end, D1, Keys)
+    end;
+line({uext, Body}, Ext, D) ->
+    case at_end(Ext, D) of
+        true -> D;
+        false ->
+            {E, D1} = rd(1, Ext, D),
+            D2 = lines(Body, Ext, D1),
+            case E of
+                0 -> D2;
+                1 -> skip_additions(Ext, D2)
+            end
+    end;
+line({uchoice, N, IsExt, Alts}, Ext, D) ->
+    case at_end(Ext, D) of
+        true -> D;
+        false ->
+            {E, D1} = case IsExt of
+                          true -> rd(1, Ext, D);
+                          false -> {0, D}
+                      end,
+            case E of
+                1 ->
+                    %% an extension alternative: its index and an open type, skipped
+                    case nsn(Ext, D1) of
+                        {{bad, Why}, _} ->
+                            gt_engine:conv_error('transform-decode', D#d.pack,
+                                                 "the index of an extension alternative: ~s", [Why]);
+                        {{ok, _}, D2} -> open_type(Ext, D2)
+                    end;
+                0 ->
+                    {I, D2} = cwn(0, N - 1, Ext, D1),
+                    case lists:keyfind(I, 1, Alts) of
+                        {_, Body} -> lines(Body, Ext, D2);
+                        false -> malformed(D, "choice index ~p has no alt", [I])
+                    end
+            end
+    end;
 line({sfield, Keys, Len, Tr, LenT, Swap, Trim, Absent, _With}, Ext, #d{pos = Pos} = D) ->
     case need(Pos, Len, Ext, D) of
         absent -> D;
@@ -294,6 +337,20 @@ group({count, Len}, Body, Ext, #d{pos = Pos} = D, Release) ->
             lists:mapfoldl(fun(_, Acc) -> item_lines(Body, Ext, Acc) end, D#d{pos = Pos1},
                            lists:seq(1, N))
     end;
+group({size, Lb, Ub}, Body, Ext, D, Release) ->
+    case at_end(Ext, D) of
+        true -> absent;
+        false ->
+            {N, D1} = cwn(Lb, Ub, Ext, D),
+            uitems(N, Body, Ext, D1, Release)
+    end;
+group({size, unc}, Body, Ext, D, Release) ->
+    case at_end(Ext, D) of
+        true -> absent;
+        false ->
+            {N, D1} = ldet(Ext, D),
+            uitems(N, Body, Ext, D1, Release)
+    end;
 group(while, Body, Ext, D, Release) ->
     case bit(Ext, D) of
         absent -> absent;
@@ -308,6 +365,18 @@ group(fx, Body, Ext, D, Release) ->
     case avail(D#d.pos, 0, Ext, D) of
         absent -> absent;
         _ -> Release(), fx_items(Body, Ext, D, [])
+    end.
+
+%% A count is compared with the bits left before any item is read
+%% (rulings 14 and 25 of 0.8).
+uitems(N, Body, Ext, #d{pos = Pos} = D, Release) ->
+    %% the count is compared with the limit before any item is read, as for
+    %% `count` (ruling 7d of 0.11)
+    Release(),
+    gt_engine:items_reserve(N, D#d.pack),
+    case N > limit(Ext, D) - Pos of
+        true -> malformed(D, "a count of ~p is larger than the bits left", [N]);
+        false -> lists:mapfoldl(fun(_, Acc) -> item_lines(Body, Ext, Acc) end, D, lists:seq(1, N))
     end.
 
 while(0, _Body, _Ext, D, Acc) -> {lists:reverse(Acc), D};
@@ -358,6 +427,170 @@ item_lines(#{lines := Common, kinds := Kinds}, Ext, #d{model = M, lists = Ls, fa
     check_failed(D2),
     {Item, D2#d{model = M, lists = Ls, failed = F}}.
 
+%% ---- ASN.1 unaligned PER (0.19) ----
+-define(I64MIN, -9223372036854775808).
+-define(I64MAX, 9223372036854775807).
+
+%% A UPER line that starts at or after the end of a `length` extent reads
+%% as absent, as a line of 0.8 does.
+at_end(none, _D) -> false;
+at_end(End, #d{pos = Pos}) -> Pos >= End.
+
+%% Len bits at the cursor; past the input or the extent is malformed-wire.
+rd(0, _Ext, D) -> {0, D};
+rd(Len, Ext, #d{pos = Pos} = D) ->
+    case need(Pos, Len, Ext, D) of
+        ok -> {gt_bits:read(D#d.msg, Pos, Len), D#d{pos = Pos + Len}};
+        absent -> malformed(D, "a UPER value at bit ~p runs past its length extent", [Pos])
+    end.
+
+bitlen(0) -> 0;
+bitlen(N) -> 1 + bitlen(N bsr 1).
+
+%% A constrained whole number in Lb..Ub; a value above Ub is malformed-wire.
+cwn(Lb, Ub, Ext, D) ->
+    R = Ub - Lb,
+    {Off, D1} = rd(bitlen(R), Ext, D),
+    case Off > R of
+        true -> malformed(D, "a value of ~p lies above its constraint ~p..~p", [Lb + Off, Lb, Ub]);
+        false -> {Lb + Off, D1}
+    end.
+
+%% A length determinant; a fragmented length is malformed-wire.
+ldet(Ext, D) ->
+    case rd(1, Ext, D) of
+        {0, D1} -> rd(7, Ext, D1);
+        {1, D1} ->
+            case rd(1, Ext, D1) of
+                {0, D2} -> rd(14, Ext, D2);
+                {1, _} -> malformed(D, "a fragmented length at bit ~p", [D#d.pos])
+            end
+    end.
+
+octs(L, Ext, D) ->
+    {V, D1} = rd(8 * L, Ext, D),
+    {<<V:(8 * L)>>, D1}.
+
+%% An integer in a counted number of octets -> {{ok, V} | {bad, Why}, D}.
+%% The octets must be in the input; 0 octets is malformed-wire; more than 8
+%% is a transform failure (ruling 5 of 0.19).
+int_octets(Signed, Ext, D) ->
+    {L, D1} = ldet(Ext, D),
+    {Bin, D2} = octs(L, Ext, D1),
+    if
+        L =:= 0 -> malformed(D, "an integer of zero octets at bit ~p", [D#d.pos]);
+        L > 8 -> {{bad, "an integer of more than 8 octets"}, D2};
+        Signed -> <<X:L/signed-unit:8>> = Bin, {{ok, X}, D2};
+        true -> {{ok, binary:decode_unsigned(Bin)}, D2}
+    end.
+
+%% A normally small non-negative whole number.
+nsn(Ext, D) ->
+    case rd(1, Ext, D) of
+        {0, D1} ->
+            {V, D2} = rd(6, Ext, D1),
+            {{ok, V}, D2};
+        {1, D1} -> int_octets(false, Ext, D1)
+    end.
+
+open_type(Ext, D) ->
+    {L, #d{pos = Pos} = D1} = ldet(Ext, D),
+    case need(Pos, 8 * L, Ext, D1) of
+        ok -> D1#d{pos = Pos + 8 * L};
+        absent -> malformed(D, "an open type runs past its length extent", [])
+    end.
+
+%% The extension additions of an `ext` block: their number (ruling 16),
+%% the presence bits, an open type for each bit that is 1; all skipped.
+skip_additions(Ext, D) ->
+    {M, D1} = case rd(1, Ext, D) of
+                  {0, Dx} ->
+                      {V, Dy} = rd(6, Ext, Dx),
+                      {V + 1, Dy};
+                  {1, Dx} -> ldet(Ext, Dx)
+              end,
+    {Bits, D2} = rd(M, Ext, D1),
+    Present = length([1 || <<1:1>> <= <<Bits:M>>]),
+    lists:foldl(fun(_, Acc) -> open_type(Ext, Acc) end, D2, lists:seq(1, Present)).
+
+%% The value of a UPER locator -> {{ok, Value} | {bad, Why}, D}.
+uread({int, Lb, Ub, false}, Ext, D) ->
+    {V, D1} = cwn(Lb, Ub, Ext, D),
+    {{ok, V}, D1};
+uread({int, Lb, Ub, true}, Ext, D) ->
+    case rd(1, Ext, D) of
+        {0, D1} -> uread({int, Lb, Ub, false}, Ext, D1);
+        {1, D1} -> int_octets(true, Ext, D1)
+    end;
+uread({semi, Lb}, Ext, D) ->
+    case int_octets(false, Ext, D) of
+        {{ok, U}, D1} when Lb + U > ?I64MAX ->
+            {{bad, "a value beyond signed 64 bits"}, D1};
+        {{ok, U}, D1} -> {{ok, Lb + U}, D1};
+        Bad -> Bad
+    end;
+uread(unc, Ext, D) -> int_octets(true, Ext, D);
+uread({enum, N, false}, Ext, D) ->
+    {V, D1} = cwn(0, N - 1, Ext, D),
+    {{ok, V}, D1};
+uread({enum, N, true}, Ext, D) ->
+    case rd(1, Ext, D) of
+        {0, D1} -> uread({enum, N, false}, Ext, D1);
+        {1, D1} ->
+            case nsn(Ext, D1) of
+                {{ok, K}, D2} when N + K > ?I64MAX -> {{bad, "an index beyond signed 64 bits"}, D2};
+                {{ok, K}, D2} -> {{ok, N + K}, D2};
+                Bad -> Bad
+            end
+    end;
+uread({chars, Lb, Ub}, Ext, D) ->
+    {C, D1} = cwn(Lb, Ub, Ext, D),
+    uchars(C, Ext, D1);
+uread({chars, unc}, Ext, D) ->
+    {C, D1} = ldet(Ext, D),
+    uchars(C, Ext, D1);
+uread({octets, Lb, Ub}, Ext, D) ->
+    {C, D1} = cwn(Lb, Ub, Ext, D),
+    {Bin, D2} = octs(C, Ext, D1),
+    {{ok, Bin}, D2};
+uread({octets, unc}, Ext, D) ->
+    {C, D1} = ldet(Ext, D),
+    {Bin, D2} = octs(C, Ext, D1),
+    {{ok, Bin}, D2}.
+
+uchars(C, Ext, D) ->
+    {V, D1} = rd(7 * C, Ext, D),
+    {{ok, << <<X>> || <<X:7>> <= <<V:(7 * C)>> >>}, D1}.
+
+set_ukey({Key, Via}, Res, Tr, LenT, #d{model = Model, pack = Pack} = D) ->
+    case maps:is_key(Key, Model) of
+        true -> D;
+        false ->
+            try uvalue(Res, Tr) of
+                V0 ->
+                    V1 = gt_engine:via_decode({Via, false, false, false, none, none}, V0, Tr, Key, LenT, Pack),
+                    D#d{model = Model#{Key => gt_engine:typemap_decode(Key, V1, Pack)}}
+            catch
+                _:_ -> D#d{failed = [{Key, LenT} | D#d.failed]}
+            end
+    end.
+
+%% The transform on a UPER value: integers are the value itself (not raw
+%% bits), the scales v * f + o.
+uvalue({bad, Why}, _Tr) -> error({uper, Why});
+uvalue({ok, V}, uint) when is_integer(V) -> V;
+uvalue({ok, V}, twos) when is_integer(V) -> V;
+uvalue({ok, V}, {uscale, F, O}) when is_integer(V) -> uscale(V, F, O);
+uvalue({ok, V}, {sscale, F, O}) when is_integer(V) -> uscale(V, F, O);
+uvalue({ok, B}, ascii) when is_binary(B) -> B;
+uvalue({ok, B}, hex) when is_binary(B) -> gt_bits:bytes_to_hex(B);
+uvalue({ok, B}, utf8) when is_binary(B) ->
+    B = unicode:characters_to_binary(B, utf8, utf8).
+
+%% in doubles: v * factor (or v * num / den), then + offset
+uscale(V, {dec, F}, O) -> float(V) * F + O;
+uscale(V, {frac, Num, Den}, O) -> float(V) * Num / Den + O.
+
 %% ===================================================================
 %% encode
 %% ===================================================================
@@ -372,7 +605,10 @@ encode(Pack, Lines, Defaults, Entity) ->
     Src = #{model => maps:get(model, Entity), lists => maps:get(lists, Entity, #{}),
             defaults => Defaults},
     #e{pos = End, segs = Segs} = elines(Lines, Src, #e{pack = Pack}),
-    Bytes = (End + 7) div 8,                    % a whole number of bytes
+    Bytes = case {End, maps:get(encoding, Pack)} of
+                {0, uper} -> 1;                 % an empty UPER encoding is 00
+                _ -> (End + 7) div 8            % a whole number of bytes
+            end,
     %% under `armor sixbit` the message is the End bits the cursor reached,
     %% not rounded to a byte (0.14); `length ... whole` is refused there
     M0 = case maps:get(armor, Pack) of
@@ -401,6 +637,50 @@ emit(Len, Val, #e{pos = Pos, segs = Segs} = E) ->
 elines([], _Src, E) -> E;
 elines([L | Rest], Src, E) -> elines(Rest, Src, eline(L, Rest, Src, E)).
 
+eline({sfield, Keys, {uper, Loc}, Tr, LenT, _, _, _, With}, _Rest, Src, #e{pack = Pack} = E) ->
+    %% a line suppressed by `with` (0.18) is a line whose key is absent and
+    %% has no default: it writes what ruling 1 of 0.19 states for the locator
+    Pieces = case pick(candidates(Keys, With, Src), Src) of
+                 none -> uabsent(Loc);          % ruling 1 of 0.19
+                 {Key, Via, Val} ->
+                     gt_engine:guard_encode(
+                       Pack, Key, LenT,
+                       fun() ->
+                               W = gt_engine:wire_value(Pack, Key, Tr, {Via, false, false, false, none, none}, Val),
+                               uenc(Loc, Tr, W)
+                       end)
+             end,
+    epieces(Pieces, E);
+eline({uext, Body}, _Rest, Src, E) -> elines(Body, Src, emit(1, 0, E));
+eline({uchoice, N, IsExt, Alts}, _Rest, Src, #e{pack = Pack} = E) ->
+    {I, Body} = chosen(Alts, Src, Pack),
+    E1 = case IsExt of
+             true -> emit(1, 0, E);
+             false -> E
+         end,
+    elines(Body, Src, emit(bitlen(N - 1), I, E1));
+eline({sgroup, List, {size, Lb, Ub}, Body}, _Rest, Src, #e{pack = Pack} = E) ->
+    Items = case maps:find(List, maps:get(lists, Src)) of
+                {ok, Is} -> Is;
+                error -> lists:duplicate(Lb, #{model => #{}, lists => #{}})
+            end,
+    C = length(Items),
+    case C >= Lb andalso C =< Ub of
+        true -> ok;
+        false -> gt_engine:conv_error('transform-encode', Pack,
+                                      "list ~s has ~p items, outside its size ~p..~p",
+                                      [List, C, Lb, Ub])
+    end,
+    lists:foldl(fun(I, Acc) -> eitem(I, Body, Acc) end, emit(bitlen(Ub - Lb), C - Lb, E), Items);
+eline({sgroup, List, {size, unc}, Body}, _Rest, Src, #e{pack = Pack} = E) ->
+    Items = maps:get(List, maps:get(lists, Src), []),
+    C = length(Items),
+    case C < 16384 of
+        true -> ok;
+        false -> gt_engine:conv_error('transform-encode', Pack,
+                                      "list ~s has ~p items: a fragmented length", [List, C])
+    end,
+    lists:foldl(fun(I, Acc) -> eitem(I, Body, Acc) end, epieces(ld(C), E), Items);
 eline({sfield, Keys, Len, Tr, LenT, Swap, _Trim, Absent, With}, _Rest, Src, #e{pack = Pack} = E) ->
     Cands = candidates(Keys, With, Src),
     case pick(Cands, Src) of
@@ -500,6 +780,105 @@ eline({sgroup, List, Mode, Body}, _Rest, Src, #e{pack = Pack} = E) ->
             E1
     end.
 
+%% ---- ASN.1 unaligned PER (0.19) ----
+epieces(Pieces, E) -> lists:foldl(fun({Len, V}, Acc) -> emit(Len, V, Acc) end, E, Pieces).
+
+%% The alt a choice writes: the first, in line order, with content, else
+%% the first.
+chosen([First | _] = Alts, Src, Pack) ->
+    case [A || {_, Body} = A <- Alts, has(Body, Src, Pack)] of
+        [A | _] -> A;
+        [] -> First
+    end.
+
+%% What an absent key writes (ruling 1 of 0.19) -> [{Len, Value}].
+uabsent({int, Lb, Ub, false}) -> [{bitlen(Ub - Lb), 0}];
+uabsent({int, Lb, Ub, true}) -> [{1, 0}, {bitlen(Ub - Lb), 0}];
+uabsent({semi, _}) -> ld(1) ++ [{8, 0}];
+uabsent(unc) -> ld(1) ++ [{8, 0}];
+uabsent({enum, N, false}) -> [{bitlen(N - 1), 0}];
+uabsent({enum, N, true}) -> [{1, 0}, {bitlen(N - 1), 0}];
+uabsent({chars, Lb, Ub}) -> [{bitlen(Ub - Lb), 0}, {7 * Lb, 0}];
+uabsent({octets, Lb, Ub}) -> [{bitlen(Ub - Lb), 0}, {8 * Lb, 0}];
+uabsent({_, unc}) -> ld(0).
+
+%% A present value; any failure is transform-encode (guard_encode).
+uenc({enum, N, IsExt}, uint, V) when is_integer(V), V >= 0, V =< ?I64MAX ->
+    if
+        V < N, IsExt -> [{1, 0}, {bitlen(N - 1), V}];
+        V < N -> [{bitlen(N - 1), V}];
+        IsExt -> [{1, 1} | nsn_pieces(V - N)]
+    end;
+uenc({chars, Lb, Ub}, ascii, B) -> count(byte_size(B), Lb, Ub) ++ uchars_pieces(B);
+uenc({chars, unc}, ascii, B) -> ld(byte_size(B)) ++ uchars_pieces(B);
+uenc({octets, Lb, Ub}, Tr, W) ->
+    B = uoctets(Tr, W),
+    count(byte_size(B), Lb, Ub) ++ [{8 * byte_size(B), binary:decode_unsigned(B)}];
+uenc({octets, unc}, Tr, W) ->
+    B = uoctets(Tr, W),
+    ld(byte_size(B)) ++ [{8 * byte_size(B), binary:decode_unsigned(B)}];
+uenc(Loc, Tr, W) ->
+    V = uint_of(Tr, W),
+    true = V >= ?I64MIN andalso V =< ?I64MAX,
+    case Loc of
+        {int, Lb, Ub, false} when V >= Lb, V =< Ub -> [{bitlen(Ub - Lb), V - Lb}];
+        {int, Lb, Ub, true} when V >= Lb, V =< Ub -> [{1, 0}, {bitlen(Ub - Lb), V - Lb}];
+        {int, _, _, true} -> [{1, 1} | twos_pieces(V)];
+        {semi, Lb} when V >= Lb ->
+            U = V - Lb,
+            L = uoctets_needed(U),
+            ld(L) ++ [{8 * L, U}];
+        unc -> twos_pieces(V)
+    end.
+
+count(C, Lb, Ub) when C >= Lb, C =< Ub -> [{bitlen(Ub - Lb), C - Lb}].
+
+uint_of(T, V) when (T =:= uint orelse T =:= twos), is_integer(V) -> V;
+uint_of({S, F, O}, X) when (S =:= uscale orelse S =:= sscale), is_number(X) ->
+    round(case F of
+              {dec, Fd} -> (X - O) / Fd;
+              {frac, Num, Den} -> (X - O) * Den / Num
+          end).
+
+%% each character in 7 bits; a code above 127 is refused
+uchars_pieces(B) ->
+    [case C =< 127 of
+         true -> {7, C};
+         false -> error({uper, "a character above 127"})
+     end || <<C>> <= B].
+
+uoctets(hex, W) when is_binary(W) -> unhex(W, <<>>);
+uoctets(utf8, W) when is_binary(W) -> W.
+
+unhex(<<>>, Acc) -> Acc;
+unhex(<<H, L, R/binary>>, Acc) -> unhex(R, <<Acc/binary, (nib(H) * 16 + nib(L))>>).
+
+nib(C) when C >= $0, C =< $9 -> C - $0;
+nib(C) when C >= $a, C =< $f -> C - $a + 10;
+nib(C) when C >= $A, C =< $F -> C - $A + 10.
+
+%% A length determinant; 16384 or more (a fragmented length) is refused.
+ld(N) when N < 128 -> [{1, 0}, {7, N}];
+ld(N) when N < 16384 -> [{2, 2}, {14, N}].
+
+nsn_pieces(N) when N =< 63 -> [{1, 0}, {6, N}];
+nsn_pieces(N) ->
+    L = uoctets_needed(N),
+    [{1, 1}] ++ ld(L) ++ [{8 * L, N}].
+
+uoctets_needed(U) -> max(1, (bitlen(U) + 7) div 8).
+
+%% The fewest octets that hold V as a two's-complement number.
+twos_pieces(V) ->
+    L = twos_octets(V, 1),
+    ld(L) ++ [{8 * L, V band ((1 bsl (8 * L)) - 1)}].
+
+twos_octets(V, L) ->
+    case V >= -(1 bsl (8 * L - 1)) andalso V < (1 bsl (8 * L - 1)) of
+        true -> L;
+        false -> twos_octets(V, L + 1)
+    end.
+
 ebits(Bools, E) ->
     lists:foldl(fun(true, Acc) -> emit(1, 1, Acc);
                    (false, Acc) -> emit(1, 0, Acc)
@@ -575,8 +954,15 @@ candidates([_Own | Also] = Keys, With, #{model := Model, lists := Lists}) ->
 %% list that is not empty?
 has(Lines, Src, Pack) -> lists:any(fun(L) -> has1(L, Src, Pack) end, Lines).
 
-has1({sfield, Keys, _, _, _, _, _, _, With}, Src, _Pack) ->
-    pick(candidates(Keys, With, Src), Src) =/= none;
+%% In a UPER pack no default counts as content (rulings 2 and 19 of 0.19).
+has1({sfield, Keys0, _, _, _, _, _, _, With}, #{model := Model} = Src, Pack) ->
+    Keys = candidates(Keys0, With, Src),          % ruling 1 of 0.18
+    case maps:get(encoding, Pack) of
+        uper -> lists:any(fun({K, _}) -> maps:is_key(K, Model) end, Keys);
+        _ -> pick(Keys, Src) =/= none
+    end;
+has1({uext, Body}, Src, Pack) -> has(Body, Src, Pack);
+has1({uchoice, _, _, Alts}, Src, Pack) -> lists:any(fun({_, B}) -> has(B, Src, Pack) end, Alts);
 has1({sgroup, List, _, _}, #{lists := Lists}, _Pack) ->
     case maps:find(List, Lists) of
         {ok, [_ | _]} -> true;
@@ -606,6 +992,10 @@ scan1({ifb, Conds, Body}, Src, Id, Pack, Acc) ->
            end,
     scan(Body, Src, Id, Pack, Acc1);
 scan1({opt, Body}, Src, Id, Pack, Acc) -> scan(Body, Src, Id, Pack, Acc);
+scan1({uext, Body}, Src, Id, Pack, Acc) -> scan(Body, Src, Id, Pack, Acc);
+scan1({uchoice, _, _, Alts}, Src, Id, Pack, Acc) ->
+    {_, Body} = chosen(Alts, Src, Pack),
+    scan(Body, Src, Id, Pack, Acc);
 scan1({len, _, _, _, Body}, Src, Id, Pack, Acc) -> scan(Body, Src, Id, Pack, Acc);
 scan1({chain, First, Parts, _}, Src, Id, Pack, Acc) ->
     lists:foldl(fun(P, A) -> scan(P, Src, Id, Pack, A) end, Acc, [First | Parts]);

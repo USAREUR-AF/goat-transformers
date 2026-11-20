@@ -535,7 +535,8 @@ self_contained(Pack, PackFiles) ->
 %% ===================================================================
 %% The input of the first ?PER_PACK conversion vectors of each pack, and of
 %% every vector of the packs `conformance-malformed-*`, `conformance-tlv*`,
-%% `conformance-armor*` and `conformance-sixbit*`, is cut short at prefixes and has
+%% `conformance-armor*`, `conformance-sixbit*` and `conformance-uper*` (0.19),
+%% is cut short at prefixes and has
 %% single bytes replaced, and each result is converted as the vector
 %% converts. A case passes when convert returns bytes or fails with a
 %% conversion error of a named kind whose message begins with the kind and
@@ -560,7 +561,8 @@ run_malformed(Engine, PacksDir) ->
                   {P1, F1} = case Nth < ?PER_PACK orelse lists:prefix("conformance-malformed-", Pack)
                                      orelse lists:prefix("conformance-tlv", Pack)
                                      orelse lists:prefix("conformance-armor", Pack)
-                                     orelse lists:prefix("conformance-sixbit", Pack) of
+                                     orelse lists:prefix("conformance-sixbit", Pack)
+                                     orelse lists:prefix("conformance-uper", Pack) of
                                  true -> malformed_vector(Engine, Pack, File, Index);
                                  false -> {0, 0}
                              end,

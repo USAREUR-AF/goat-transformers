@@ -57,6 +57,10 @@
 %% gt_engine:load_pack/2 checks the pack against the loaded modules, types the
 %% defaults and adds the lookup indexes (index/1).
 -module(gt_pack).
+-define(UPER_LOC(S), (binary_part(S, 0, min(4, byte_size(S))) =:= <<"int:">> orelse
+                      binary_part(S, 0, min(5, byte_size(S))) =:= <<"enum:">> orelse
+                      binary_part(S, 0, min(6, byte_size(S))) =:= <<"chars:">> orelse
+                      binary_part(S, 0, min(7, byte_size(S))) =:= <<"octets:">>)).
 -export([parse/1, tokens/1, tokens_lax/1, load_error/3, distribution_atom/1,
          require_marking/2, yields/1, model_keys/1, named/1,
          index/1, factor/1, number/1]).
@@ -91,6 +95,7 @@ parse(Bin) ->
              delimiter => <<",">>, start => <<>>, checksum => none, text_seen => #{},
              tag_enc => ber_oid, len_enc => ber, key => none, sum16 => none, tlv_seen => #{},
              armor => hex, armor_seen => false,
+             encoding => none, encoding_seen => false,
              cur => common, late => [], gstack => [], sstack => [], bstack => [],
              headers => #{}, listed_seen => false},
     P0 = lists:foldl(fun(L, P) ->
@@ -143,6 +148,22 @@ parse(Bin) ->
               load_error('bad-directive', "~s is valid only on a tlv wire, not ~s", [Text, Wire]);
          ({text_only, Dir}) ->
               load_error('bad-directive', "~s is valid only on a text wire, not ~s", [Dir, Wire]);
+         (uper_header) ->
+              %% `encoding uper` needs layout sequential and bit_order msb,
+              %% and is refused with armor sixbit (0.19, ruling 11)
+              case {maps:get(layout, P1), maps:get(bit_order, P1), maps:get(armor, P1)} of
+                  {sequential, msb, hex} -> ok;
+                  {sequential, msb, _} ->
+                      load_error('bad-directive', "encoding uper with armor sixbit", []);
+                  _ -> load_error('bad-directive',
+                                  "encoding uper needs layout sequential and bit_order msb", [])
+              end;
+         ({need_uper, What}) ->
+              %% ruling 9 of 0.19
+              case maps:get(encoding, P1) of
+                  uper -> ok;
+                  _ -> load_error('bad-directive', "~s outside a pack with encoding uper", [What])
+              end;
          ({via, Table}) ->
               case maps:is_key(Table, Tables) of
                   true -> ok;
@@ -187,7 +208,8 @@ parse(Bin) ->
              fixed -> check_scopes(P2), P2
          end,
     P = maps:without([cur, late, kind_names, table_names, gstack, sstack, text_seen, tlv_seen,
-                      headers, listed_seen, armor_seen, body_kind_seen, bstack],
+                      headers, listed_seen, armor_seen, body_kind_seen, bstack,
+                      encoding_seen],
                      P3#{defaults := lists:reverse(maps:get(defaults, P1)),
                          typemap := lists:reverse(maps:get(typemap, P1)),
                          sources := lists:reverse(maps:get(sources, P1)),
@@ -328,6 +350,8 @@ seq_bodies({ifb, _, Body}) -> [Body];
 seq_bodies({opt, Body}) -> [Body];
 seq_bodies({len, _, _, _, Body}) -> [Body];
 seq_bodies({chain, First, Rest, _}) -> [First | Rest];
+seq_bodies({uext, Body}) -> [Body];
+seq_bodies({uchoice, _, _, Alts}) -> [Body || {_, Body} <- Alts];
 seq_bodies(_) -> [].
 
 %% Union of mapped keys over common and all kinds, in first appearance order.
@@ -410,7 +434,9 @@ pack_directives() ->
      %% six-bit armor (Version 0.14)
      <<"armor">>,
      %% an xml element written when empty (Version 0.18)
-     <<"element">>].
+     <<"element">>,
+     %% ASN.1 unaligned PER (Version 0.19): directives on every wire (ruling 21)
+     <<"encoding">>, <<"ext">>, <<"choice">>, <<"alt">>].
 
 %% The lines that stand after the `wire` line (ruling 5b of 0.11).
 after_wire() ->
@@ -427,7 +453,9 @@ arg_count_ok(Dir, N) ->
            %% ruling 13 of 0.14
            <<"armor">>,
            %% `element <path>` (0.18)
-           <<"element">>],
+           <<"element">>,
+           %% `encoding <none | uper>` and `alt <i>` (0.19)
+           <<"encoding">>, <<"alt">>],
     case lists:member(Dir, One) of
         true -> N =:= 1;
         false ->
@@ -444,6 +472,9 @@ arg_count_ok(Dir, N) ->
                 <<"opt">> -> N =:= 0;
                 <<"chain">> -> N =:= 0;
                 <<"fx">> -> N =:= 0;
+                %% `ext` and `choice <n> [ext]` (0.19)
+                <<"ext">> -> N =:= 0;
+                <<"choice">> -> N =:= 1 orelse N =:= 2;
                 _ -> N >= 1                       % requires, also, if, length
             end
     end.
@@ -528,7 +559,8 @@ known_directives() ->
      <<"layout">>, <<"pad">>, <<"align">>, <<"presence">>, <<"if">>, <<"opt">>,
      <<"chain">>, <<"fx">>, <<"length">>, <<"also">>,
      <<"delimiter">>, <<"start">>, <<"checksum">>, <<"tag">>, <<"key">>, <<"armor">>,
-     <<"element">>].
+     <<"element">>,
+     <<"encoding">>, <<"ext">>, <<"choice">>, <<"alt">>].
 
 in_group(#{gstack := Stack}) -> Stack =/= [].
 
@@ -552,6 +584,9 @@ apply_line([<<"key">> | Args], P) -> tlv_directive(key, Args, P);
 apply_line([<<"checksum">>, <<"sum16">>, _] = Args, P) ->
     tlv_directive(checksum, tl(Args), P);
 apply_line([<<"armor">>, V], P) -> armor_directive(V, P);
+apply_line([<<"encoding">>, V], P) -> encoding_directive(V, P);
+apply_line([Dir | _], _P) when Dir =:= <<"ext">>; Dir =:= <<"choice">>; Dir =:= <<"alt">> ->
+    load_error('bad-directive', "~s is a line of a sequential pack with encoding uper", [Dir]);
 apply_line([Dir, V], P) when Dir =:= <<"delimiter">>; Dir =:= <<"start">>;
                              Dir =:= <<"checksum">> ->
     text_directive(binary_to_atom(Dir), V, P);
@@ -711,7 +746,13 @@ apply_line([<<"element">>, PathS], P) ->
 apply_line([<<"field">>, Key, LocS, TrS | OptToks], P0) ->
     Wire = need_wire(P0),
     {Tr, TrChecks} = parse_transform(Wire, TrS),
-    Loc = parse_loc(Wire, LocS, P0),
+    Loc = try parse_loc(Wire, LocS, P0)
+          catch error:{load_error, _, _} = UperLoc ->
+                  %% a UPER locator in a fixed-layout pack is refused after the
+                  %% file (ruling 24 of 0.19); the options are still line checks
+                  _ = parse_opts(OptToks, {none, false, false, false, none, none}),
+                  erlang:error(UperLoc)
+          end,
     {_Via, Swap, Trim, Optional, _, _With} = Opts0 = parse_opts(OptToks, {none, false, false, false, none, none}),
     Len = case Wire of
               bits -> element(2, Loc);
@@ -1031,6 +1072,10 @@ top_loc(json, S, _P) ->
         true -> line_error('bad-locator', "json path ~s has an empty member name", [S]);
         false -> Parts
     end;
+top_loc(bits, S, _P) when ?UPER_LOC(S) ->
+    %% outside a UPER pack: bad-directive after the file is read, not
+    %% bad-locator (rulings 9 and 24 of 0.19)
+    load_error('bad-directive', "the UPER locator ~s outside a pack with encoding uper", [S]);
 top_loc(bits, S, #{word_bytes := WB0}) ->
     %% a missing word_bytes line is checked after the file is read
     WB = case WB0 of
@@ -1744,7 +1789,7 @@ scan_bare(Bin, 0) ->
 %% the bits some `if` names in `presence_named`.
 seq_line([Dir | _] = Tokens, #{sstack := Stack} = P) ->
     PackLevel = [<<"format">>, <<"version">>, <<"wire">>, <<"layout">>, <<"bit_order">>,
-                 <<"armor">>,
+                 <<"armor">>, <<"encoding">>,
                  <<"delimiter">>, <<"start">>, <<"checksum">>, <<"tag">>, <<"key">>,
                  <<"distribution">>, <<"source">>, <<"uses">>, <<"typemap">>, <<"map">>,
                  <<"root">>, <<"word_bytes">>],
@@ -1757,6 +1802,8 @@ seq_line([Dir | _] = Tokens, #{sstack := Stack} = P) ->
         false -> seq_apply(Tokens, P)
     end.
 
+seq_apply([<<"field">>, Key, LocS, TrS | OptToks], P0) when ?UPER_LOC(LocS) ->
+    uper_field(Key, LocS, TrS, OptToks, P0);
 seq_apply([<<"field">>, Key, LenS, TrS | OptToks], P0) ->
     {Tr, TrChecks} = parse_transform(bits, TrS),
     Len = seq_loc(LenS, infinity),
@@ -1840,6 +1887,19 @@ seq_apply([<<"length">>, LenS | Rest], P) ->
         {false, _} -> seq_push(#{type => length,
                                  hdr => {Len, default(Unit, bytes), default(Plus, 0)}}, P)
     end;
+seq_apply([<<"group">>, List, <<"size">> | SizeToks], P) ->
+    Mode = case SizeToks of
+               [] -> {size, unc};
+               [LbS, UbS] ->
+                   case {uper_count(LbS), uper_count(UbS)} of
+                       {Lb, Ub} when is_integer(Lb), is_integer(Ub), 0 =< Lb, Lb =< Ub, Ub < 65536 ->
+                           {size, Lb, Ub};
+                       _ -> load_error('bad-directive', "group ~s size ~s ~s: not 0 <= lb <= ub < 65536",
+                                       [List, LbS, UbS])
+                   end;
+               _ -> load_error('bad-directive', "group ~s size takes no bounds or <lb> <ub>", [List])
+           end,
+    seq_push(#{type => group, hdr => {List, Mode}}, late({need_uper, "group ... size"}, P));
 seq_apply([<<"group">>, List | ModeToks], P) ->
     Mode = case ModeToks of
                [<<"count">>, LenS] -> {count, seq_len(LenS, 1, 64)};
@@ -1850,6 +1910,36 @@ seq_apply([<<"group">>, List | ModeToks], P) ->
                                "group ~s is not `count <len>`, `while`, `more` or `fx`", [List])
            end,
     seq_push(#{type => group, hdr => {List, Mode}}, P);
+seq_apply([<<"ext">>], P) ->
+    seq_push(#{type => ext, hdr => none}, late({need_uper, "ext"}, P));
+seq_apply([<<"choice">> | Args], P) ->
+    {N, Ext} = case Args of
+                   [NS] -> {uper_count(NS), false};
+                   [NS, <<"ext">>] -> {uper_count(NS), true};
+                   _ -> load_error('bad-directive', "choice is `choice <n> [ext]`", [])
+               end,
+    case is_integer(N) andalso N >= 1 andalso N =< 65536 of
+        true -> ok;
+        false -> load_error('bad-directive', "choice takes 1 to 65536 alternatives", [])
+    end,
+    seq_push(#{type => choice, hdr => {N, Ext}, alts => [], alt => none},
+             late({need_uper, "choice"}, P));
+seq_apply([<<"alt">>, IS], #{sstack := Stack} = P) ->
+    case Stack of
+        [#{type := choice, hdr := {N, _}} = F | Rest] ->
+            I = uper_count(IS),
+            case is_integer(I) andalso I >= 0 andalso I < N of
+                true -> ok;
+                false -> load_error('bad-directive', "alt ~s is not an index 0 to ~p", [IS, N - 1])
+            end,
+            #{alts := Alts} = F1 = seq_close_alt(F),
+            case lists:keymember(I, 1, Alts) of
+                true -> load_error('bad-directive', "alt ~p is given twice", [I]);
+                false -> ok
+            end,
+            P#{sstack := [F1#{alt := I, lines := []} | Rest]};
+        _ -> load_error('bad-directive', "alt ~s outside a choice", [IS])
+    end;
 seq_apply([<<"end">>], #{sstack := Stack} = P) ->
     case Stack of
         [] -> load_error('bad-directive', "end with no open block", []);
@@ -1910,6 +2000,11 @@ seq_len(S, Min, Max) ->
 %% The locator of a `field`, `when` or `const` line of a sequential pack: a
 %% bit length. A `<word>:<pos>:<len>` locator is bad-directive; text that is
 %% not digits only, and a length of 0, are bad-locator (ruling 5a of 0.11).
+seq_loc(S, _Max) when ?UPER_LOC(S) ->
+    %% `when`, `const` and count fields take bit lengths only; a UPER
+    %% locator there is refused after the file is read (rulings 10 and 26
+    %% of 0.19)
+    load_error('bad-directive', "the UPER locator ~s on a line that takes a bit length", [S]);
 seq_loc(S, Max) ->
     case binary:match(S, <<":">>) of
         nomatch -> ok;
@@ -1962,8 +2057,18 @@ seq_length_opts([Tok | _], _) ->
     load_error('bad-directive', "length: ~s is not expected here", [Tok]).
 
 seq_push(Frame, #{sstack := Stack} = P) ->
+    no_line_before_alt(Stack),
     P#{sstack := [Frame#{lines => [], defaults => [], kinds => [], cur => none,
                          kind_names => #{}} | Stack]}.
+
+%% A line between `choice` and its first `alt` is bad-directive (0.19).
+no_line_before_alt([#{type := choice, alt := none} | _]) ->
+    load_error('bad-directive', "a line stands between choice and its first alt", []);
+no_line_before_alt(_) -> ok.
+
+seq_close_alt(#{alt := none} = F) -> F;
+seq_close_alt(#{alt := I, lines := Ls, alts := Alts} = F) ->
+    F#{alts := [{I, lists:reverse(Ls)} | Alts], alt := none, lines := []}.
 
 %% The lines read so far, latest first, of the body a line now goes to.
 seq_lines(#{sstack := [#{type := group, cur := #{lines := Ls}} | _]}) -> Ls;
@@ -1977,7 +2082,9 @@ seq_set_lines(Ls, #{sstack := [F | Rest]} = P) -> P#{sstack := [F#{lines := Ls} 
 seq_set_lines(Ls, #{cur := common} = P) -> P#{common := Ls};
 seq_set_lines(Ls, #{cur := Cur} = P) -> P#{cur := Cur#{lines := Ls}}.
 
-seq_add(Line, P) -> seq_set_lines([Line | seq_lines(P)], P).
+seq_add(Line, #{sstack := Stack} = P) ->
+    no_line_before_alt(Stack),
+    seq_set_lines([Line | seq_lines(P)], P).
 
 seq_close_kind(#{cur := none} = F) -> F;
 seq_close_kind(#{cur := #{lines := Ls, defaults := Ds} = K, kinds := Ks} = F) ->
@@ -1987,6 +2094,18 @@ seq_close_kind(#{cur := #{lines := Ls, defaults := Ds} = K, kinds := Ks} = F) ->
 %% The line a closed block makes.
 seq_close(#{type := 'if', hdr := Conds, lines := Ls}) -> {ifb, Conds, lists:reverse(Ls)};
 seq_close(#{type := opt, lines := Ls}) -> {opt, lists:reverse(Ls)};
+seq_close(#{type := ext, lines := Ls}) ->
+    Lines = lists:reverse(Ls),
+    %% a presence line of an ext block is its first line (ruling 15 of 0.19)
+    case [L || L <- tl_or_empty(Lines), element(1, L) =:= presence] of
+        [] -> {uext, Lines};
+        _ -> load_error('bad-directive', "a presence line of an ext block is not its first line", [])
+    end;
+seq_close(#{type := choice, hdr := {N, Ext}} = F0) ->
+    case seq_close_alt(F0) of
+        #{alts := []} -> load_error('bad-directive', "choice has no alt line", []);
+        #{alts := Alts} -> {uchoice, N, Ext, lists:reverse(Alts)}
+    end;
 seq_close(#{type := length, hdr := {Len, Unit, Plus}, lines := Ls}) ->
     {len, Len, Unit, Plus, lists:reverse(Ls)};
 seq_close(#{type := chain, lines := Ls}) ->
@@ -2003,6 +2122,9 @@ seq_close(#{type := group, hdr := {List, Mode}} = F0) ->
     end,
     {sgroup, List, Mode,
      #{lines => Common, defaults => lists:reverse(Ds), kinds => lists:reverse(Ks)}}.
+
+tl_or_empty([]) -> [];
+tl_or_empty([_ | T]) -> T.
 
 seq_parts([], Cur, Acc) -> lists:reverse([lists:reverse(Cur) | Acc]);
 seq_parts([fx | Rest], Cur, Acc) -> seq_parts(Rest, [], [lists:reverse(Cur) | Acc]);
@@ -2026,7 +2148,8 @@ seq_resolve(#{common := Common, kinds := Kinds, has_kinds := HasKinds} = P) ->
 %% a group body) two groups may map one list only when each sits in an `if`
 %% or `opt` block and neither block encloses the other. The block of a group
 %% is the nearest `if` or `opt` around it inside the scope, held here as the
-%% path of such blocks down to it; `length` and `chain` are not such blocks.
+%% path of such blocks down to it; each `alt` of a choice is one too (0.19);
+%% `length`, `chain` and `ext` are not such blocks.
 %% A block encloses itself.
 seq_check_lists(Common, Kinds) ->
     Scopes = case Kinds of
@@ -2063,6 +2186,9 @@ seq_groups(Lines, Block) ->
            {sgroup, List, _, _} -> [{List, Block}];
            {ifb, _, Body} -> seq_groups(Body, Block ++ [make_ref()]);
            {opt, Body} -> seq_groups(Body, Block ++ [make_ref()]);
+           %% each alt of a choice is a block of its own (ruling 20 of 0.19)
+           {uchoice, _, _, Alts} ->
+               lists:append([seq_groups(B, Block ++ [make_ref()]) || {_, B} <- Alts]);
            _ -> seq_groups(lists:append(seq_bodies(L)), Block)
        end || L <- Lines, is_tuple(L)]).
 
@@ -2113,6 +2239,15 @@ seq_res([{ifb, Conds, Body} | Rest], Env, Decl, {Next, Named0}, Acc) ->
 seq_res([{opt, Body} | Rest], Env, Decl, St, Acc) ->
     {Body1, St1} = seq_res_block(Body, Env, St),
     seq_res(Rest, Env, Decl, St1, [{opt, Body1} | Acc]);
+seq_res([{uext, Body} | Rest], Env, Decl, St, Acc) ->
+    {Body1, St1} = seq_res_block(Body, Env, St),
+    seq_res(Rest, Env, Decl, St1, [{uext, Body1} | Acc]);
+seq_res([{uchoice, N, Ext, Alts} | Rest], Env, Decl, St, Acc) ->
+    {Alts1, St1} = lists:mapfoldl(fun({I, Body}, S) ->
+                                          {Body1, S1} = seq_res_block(Body, Env, S),
+                                          {{I, Body1}, S1}
+                                  end, St, Alts),
+    seq_res(Rest, Env, Decl, St1, [{uchoice, N, Ext, Alts1} | Acc]);
 seq_res([{len, Len, Unit, Plus, Body} | Rest], Env, Decl, St, Acc) ->
     {Body1, St1} = seq_res_block(Body, Env, St),
     seq_res(Rest, Env, Decl, St1, [{len, Len, Unit, Plus, Body1} | Acc]);
@@ -2133,6 +2268,116 @@ seq_res([L | Rest], Env, Decl, St, Acc) -> seq_res(Rest, Env, Decl, St, [L | Acc
 seq_res_block(Body, Env, St) ->
     {Body1, _, _, St1} = seq_res(Body, Env, #{}, St, []),
     {Body1, St1}.
+
+%% ===================================================================
+%% ASN.1 unaligned PER locators (engine-spec Version 0.19)
+%% ===================================================================
+%% A UPER field is an sfield whose Len is {uper, Loc} (its With as any sfield):
+%%   {int, Lb, Ub, Ext :: boolean()} | {semi, Lb} | unc
+%%   {enum, N, Ext :: boolean()}
+%%   {chars, Lb, Ub} | {chars, unc} | {octets, Lb, Ub} | {octets, unc}
+%% Every refusal but a malformed locator is checked after the file is read.
+uper_field(Key, LocS, TrS, OptToks, P0) ->
+    %% the line checks of 5b of 0.11 in their order: the transform's name and
+    %% parameters (step 7; an unknown name keeps unknown-transform), then the
+    %% field options (step 9). A UPER locator has a `:`, so 5a raises no
+    %% bad-locator for it; its form, like every other refusal of 0.19, is
+    %% bad-directive after the file is read.
+    {_Class, Tr} = transform(TrS),
+    {Via, Swap, Trim, Optional, Absent, With} = parse_opts(OptToks, {none, false, false, false, none, none}),
+    {Loc, LocChecks} = try {uper_loc(LocS), []}
+                       catch error:{load_error, K, M} -> {{int, 0, 0, false}, [{raw, K, M}]}
+                       end,
+    Checks = LocChecks ++
+        [{bad, "optional is not a field option of a sequential pack", []} || Optional] ++
+        [{need_uper, ["locator ", LocS]}] ++
+        [{bad, "transform ~s is not one locator ~s takes", [TrS, LocS]}
+         || not uper_transform_ok(Loc, Tr)] ++
+        [{bad, "swap on the UPER locator ~s", [LocS]} || Swap] ++
+        [{bad, "trim on the UPER locator ~s", [LocS]} || Trim] ++
+        %% ruling 22 of 0.19: no raw value is stated for a UPER locator
+        [{bad, "absent on the UPER locator ~s", [LocS]} || Absent =/= none] ++
+        [{via, Via} || Via =/= none],
+    P1 = lists:foldl(fun late/2, P0, Checks),
+    seq_add({sfield, [{Key, Via}], {uper, Loc}, Tr, LocS, false, false, none, With}, P1).
+
+uper_transform_ok(Loc, Tr) ->
+    case {Loc, Tr} of
+        {{enum, _, _}, uint} -> true;
+        {{enum, _, _}, _} -> false;
+        {{chars, _, _}, ascii} -> true;
+        {{chars, _}, ascii} -> true;
+        {{octets, _, _}, T} -> T =:= hex orelse T =:= utf8;
+        {{octets, _}, T} -> T =:= hex orelse T =:= utf8;
+        {{chars, _, _}, _} -> false;
+        {{chars, _}, _} -> false;
+        {_, uint} -> true;
+        {_, twos} -> true;
+        {_, {uscale, _, _}} -> true;
+        {_, {sscale, _, _}} -> true;
+        _ -> false
+    end.
+
+-define(I64MIN, -9223372036854775808).
+-define(I64MAX, 9223372036854775807).
+
+uper_loc(S) ->
+    Bad = fun() -> load_error('bad-directive', "~s is not a UPER locator", [S]) end,
+    InI64 = fun(V) -> is_integer(V) andalso V >= ?I64MIN andalso V =< ?I64MAX end,
+    Size = fun(LbS, UbS) ->
+                   case {uper_num(LbS), uper_num(UbS)} of
+                       {Lb, Ub} when is_integer(Lb), is_integer(Ub), 0 =< Lb, Lb =< Ub, Ub < 65536 ->
+                           {Lb, Ub};
+                       _ -> Bad()
+                   end
+           end,
+    case binary:split(S, <<":">>, [global]) of
+        [<<"int">>, <<>>, <<>>] -> unc;
+        [<<"int">>, LbS, <<>>] ->
+            Lb = uper_num(LbS),
+            case InI64(Lb) of
+                true -> {semi, Lb};
+                false -> Bad()
+            end;
+        [<<"int">>, LbS, UbS | ExtT] when ExtT =:= []; ExtT =:= [<<"ext">>] ->
+            Lb = uper_num(LbS),
+            Ub = uper_num(UbS),
+            case InI64(Lb) andalso InI64(Ub) andalso Lb =< Ub of
+                true -> {int, Lb, Ub, ExtT =/= []};
+                false -> Bad()
+            end;
+        [<<"enum">>, NS | ExtT] when ExtT =:= []; ExtT =:= [<<"ext">>] ->
+            case uper_num(NS) of
+                N when is_integer(N), N >= 1, N =< 65536 -> {enum, N, ExtT =/= []};
+                _ -> Bad()
+            end;
+        [What, <<>>] when What =:= <<"chars">>; What =:= <<"octets">> ->
+            {binary_to_atom(What), unc};
+        [What, LbS, UbS] when What =:= <<"chars">>; What =:= <<"octets">> ->
+            {Lb, Ub} = Size(LbS, UbS),
+            {binary_to_atom(What), Lb, Ub};
+        _ -> Bad()
+    end.
+
+%% An optional `-` and digits with no leading zero; `-0` is refused
+%% (ruling 15 of 0.19) -> integer() | error.
+uper_num(<<"0">>) -> 0;
+uper_num(<<"-", R/binary>>) ->
+    case uper_num(R) of
+        N when is_integer(N), N > 0 -> -N;
+        _ -> error
+    end;
+uper_num(<<C, _/binary>> = B) when C >= $1, C =< $9 ->
+    case all_digits(B) of
+        true -> binary_to_integer(B);
+        false -> error
+    end;
+uper_num(_) -> error.
+
+%% The number of a `choice`, `alt` or `group ... size` line: digits with no
+%% leading zero, no sign (ruling 15 of 0.19).
+uper_count(<<"-", _/binary>>) -> error;
+uper_count(B) -> uper_num(B).
 
 %% ===================================================================
 %% six-bit armor (engine-spec Version 0.14)
@@ -2158,6 +2403,29 @@ armor_directive(V, #{armor_seen := Seen, cur := Cur, kind_names := Kinds} = P0) 
         <<"hex">> -> P#{armor := hex};
         <<"sixbit">> -> late(need_msb, P#{armor := sixbit});
         _ -> late({bad, "armor ~s is neither hex nor sixbit", [V]}, P)
+    end.
+
+%% `encoding <none | uper>` (0.19): on the bits wire only, at most once,
+%% before the first `kind`; refusals after the file is read.
+encoding_directive(V, #{encoding_seen := Seen, cur := Cur, kind_names := Kinds} = P0) ->
+    %% the wire is checked after the file is read, wherever the wire line
+    %% stands (as for `armor`, ruling 13 of 0.14)
+    P1 = late({bits_only, "encoding"}, P0),
+    P2 = case Seen of
+             true -> late({bad, "encoding appears more than once", []}, P1);
+             false -> P1
+         end,
+    %% every `kind` line counts, one in a group body included (ruling 11 of 0.14)
+    P3 = case Cur =:= common andalso map_size(Kinds) =:= 0
+             andalso not maps:get(body_kind_seen, P0, false) of
+             true -> P2;
+             false -> late({bad, "encoding stands after the first kind", []}, P2)
+         end,
+    P = P3#{encoding_seen := true},
+    case V of
+        <<"none">> -> P;
+        <<"uper">> -> late(uper_header, P#{encoding := uper});
+        _ -> late({bad, "encoding ~s is neither none nor uper", [V]}, P)
     end.
 
 %% ===================================================================

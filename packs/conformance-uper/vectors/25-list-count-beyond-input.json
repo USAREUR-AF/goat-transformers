@@ -1,0 +1,9 @@
+{
+  "name": "list-count-beyond-input",
+  "from": "conformance-uper",
+  "to": "conformance-uper",
+  "input": "070000000000200020000efd600000c8",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.19 (ASN.1 unaligned PER): Input: every line up to names well formed, then the names length 100 with no more octets than the fill bits: a count the input cannot hold, malformed-wire before any item is read (Errors; ruling 14 of 0.8). Checking codecs on the same input: asn1tools 0.169.0 fails; pycrate 0.8.1 fails. Derived without an engine by a standalone X.691 reference program (Python standard library)."
+}

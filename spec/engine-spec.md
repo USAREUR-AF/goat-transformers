@@ -3470,3 +3470,290 @@ written: `<detail/>`. Its position is that of the line, as for a field (ruling
     check as the line is read (ruling 5b of 0.11, step 3); its other errors
     are checks after the file. So `element a b` followed by a line `bogus`
     is `bad-directive`.
+
+---
+
+# Version 0.19: ASN.1 unaligned PER
+
+Status: Written. Many message sets are defined in ASN.1 and sent in the
+unaligned Packed Encoding Rules (UPER, ITU-T X.691): every value takes the
+fewest bits its constraint allows, with no padding between fields. A
+sequential `bits` pack (Version 0.8) with `encoding uper` describes such a
+message. It adds locators that compute the bit length of a field from its
+ASN.1 constraint, the blocks for SEQUENCE extension markers and CHOICE, and
+the X.691 forms of a length.
+
+```
+wire       bits
+layout     sequential
+bit_order  msb
+encoding   <none | uper>        # default none
+```
+
+`encoding uper` needs `layout sequential` and `bit_order msb`; elsewhere, more
+than once, after the first `kind`, or with another value it is
+`bad-directive`, checked after the file is read (ruling 10 of 0.10). Every
+line of 0.8 keeps its meaning in a UPER pack. A pack writes the ASN.1
+structure of its message as lines in the order X.691 encodes the
+components: SEQUENCE components as written, CHOICE alternatives by `alt`
+index in the canonical order of their tags (the order written, under
+AUTOMATIC TAGS), and ENUMERATED root values by index in ascending order of
+their values. The pack, not the engine, holds the ASN.1 definition.
+
+## Terms of X.691 used here
+
+- **Constrained whole number** in `lb..ub`: the value minus `lb` as an unsigned
+  number of `b` bits, `b` the fewest bits that hold `ub - lb` (0 bits when
+  `lb = ub`).
+- **Length determinant** (unconstrained length `n`): when `n < 128`, 8 bits
+  `0` and `n` in 7 bits; when `128 <= n < 16384`, 16 bits `10` and `n` in 14
+  bits. A first bit pair `11` (a fragmented length) is `malformed-wire` on
+  decode and `transform-encode` on encode.
+- **Normally small non-negative whole number** `n`: when `n <= 63`, a `0` bit
+  and `n` in 6 bits; otherwise a `1` bit, a length determinant of the octet
+  count, and `n` in that many octets, big-endian, fewest octets (at least one).
+- **Open type**: a length determinant of an octet count, then that many
+  octets. It holds the complete encoding of one value, padded with zero bits
+  to a whole octet.
+
+## Locators
+
+In a UPER pack a `field` locator may be a bit length as in 0.8, or one of the
+forms below; its bit length then follows from the constraint and the value.
+
+| Locator | ASN.1 | On the wire |
+|---|---|---|
+| `int:<lb>:<ub>` | `INTEGER (lb..ub)` | a constrained whole number |
+| `int:<lb>:<ub>:ext` | `INTEGER (lb..ub, ...)` | one bit, 0 for a value in `lb..ub`, then the constrained whole number; 1, then a length determinant of an octet count and the value as a two's-complement number of that many octets |
+| `int:<lb>:` | `INTEGER (lb..MAX)` | a length determinant of an octet count, then the value minus `lb` as an unsigned number of that many octets, fewest octets (at least one) |
+| `int::` | `INTEGER` | a length determinant of an octet count, then the value as a two's-complement number of that many octets, fewest octets |
+| `enum:<n>` | `ENUMERATED` with `n` root values | the index, `0..n-1`, as a constrained whole number |
+| `enum:<n>:ext` | the same, extensible | one bit, 0 then the index as above; 1 then a normally small non-negative whole number, the index of an extension value |
+| `chars:<lb>:<ub>` | `IA5String`, `VisibleString` or `PrintableString (SIZE (lb..ub))`, with no `FROM` constraint | the character count as a constrained whole number in `lb..ub`, then each character in 7 bits |
+| `chars:` | the same, no size constraint | a length determinant of the character count, then each character in 7 bits |
+| `octets:<lb>:<ub>` | `OCTET STRING (SIZE (lb..ub))` (not `UTF8String`, whose size X.691 ignores) | the octet count as a constrained whole number, then the octets |
+| `octets:` | `OCTET STRING`, `UTF8String` | a length determinant of the octet count, then the octets |
+
+`<lb>` and `<ub>` are decimal integers, `-2^63 <= lb <= ub <= 2^63-1` (for
+`chars` and `octets`, `0 <= lb <= ub < 65536`); `n` is 1 to 65536. Anything
+else is `bad-directive`. A count equal for `lb` and `ub` takes 0 bits, so
+`chars:8:8` is eight characters with no count. A `BOOLEAN` is a 1-bit field,
+`NULL` takes no line, and a `BIT STRING (SIZE (n))` is an `n`-bit field.
+
+## Transforms on UPER locators
+
+| Locator | Transforms | Decode | Encode |
+|---|---|---|---|
+| `int:…` | `uint`, `twos`, `uscale:<f>[:<o>]`, `sscale:<f>[:<o>]` | the integer value `v` (not the raw bits): `uint` and `twos` give `v`; the scales give `v * f + o` (ruling 1 of 0.5) | the value, or `round((x - o) / f)`; a value outside the constraint is `transform-encode` (for `:ext`, outside the root it is written in the extension form) |
+| `enum:…` | `uint` | the index; an extension index decodes to `n + index` | an index below `n` in the root form, `n` or more in the extension form (`:ext` only, else `transform-encode`) |
+| `chars:…` | `ascii` | the characters, each 7 bits as a code from 0 to 127 | each character's code; a character above 127, or a count outside `lb..ub`, is `transform-encode` |
+| `octets:…` | `hex`, `utf8` | the octets as lowercase hex text, or as UTF-8 text | hex text or the text's UTF-8 bytes; a count outside `lb..ub` is `transform-encode` |
+
+`hex` and `utf8` behave as on `tlv` (0.13). `ascii` on a `chars` locator does
+not remove NULs or check printable characters; codes below 32 decode as those
+characters. `via` applies to every form. Another transform is `bad-directive`.
+
+## Extension markers on a SEQUENCE
+
+```
+ext
+  …                 # the root components of the SEQUENCE
+end
+```
+
+An `ext` block is a SEQUENCE whose definition has an extension marker
+(`...`). Decode reads one bit before the block. When it is 0, the block is
+read. When it is 1, the block is read, and then the extension additions after
+it: their number `m` as a normally small length (ruling 16), then `m` presence
+bits, then one open type for each bit that is 1. The additions are skipped; they are
+not mapped and not residue. Encode writes 0 and the block.
+
+The presence bits of the OPTIONAL and DEFAULT root components are a
+`presence <name> <n>` line, first in the block, with an `if` block for each
+component (0.8); a component that has a DEFAULT and is absent is the bit 0.
+
+## CHOICE
+
+```
+choice <n> [ext]
+  alt <i>
+    …
+  alt <j>
+    …
+end
+```
+
+A CHOICE of `n` root alternatives. With `ext`, decode first reads one bit.
+The index is a constrained whole number in `0..n-1`; decode reads it, then the
+lines of the `alt` with that index. An index with no `alt` is
+`malformed-wire`. With `ext` and the bit 1, decode reads a normally small
+non-negative whole number (the index of an extension alternative) and an open
+type, and skips them: no `alt` is read.
+
+Encode writes the first `alt`, in line order, that has content (a present key
+or a non-empty list, at any depth, as ruling 22 of 0.8 states for presence),
+with its index and, under `ext`, the bit 0 first. When no `alt` has content,
+the first `alt` is written. An `alt` index outside `0..n-1`, an index given
+twice, a line between `choice` and the first `alt`, and an `alt` outside a
+`choice` are `bad-directive`.
+
+## SEQUENCE OF
+
+```
+group <list> size <lb> <ub>      # SEQUENCE (SIZE (lb..ub)) OF: the count as a constrained whole number
+group <list> size                # SEQUENCE OF with no size constraint: a length determinant
+```
+
+The count is followed by that many items. A list whose item count is outside
+`lb..ub` is `transform-encode`; an absent list is written with the count `lb`
+of items with no keys when `lb > 0`, else as an empty list. `size` is valid
+only in a UPER pack (`bad-directive` elsewhere); the other group forms of 0.8
+keep their meaning.
+
+## The whole message
+
+Decode reads the lines from bit 0. After the last line, the rest of the input
+is ignored (ruling 9 of 0.8). Encode pads the bits to a whole octet with zero
+bits; an encoding of no bits is one octet `00` (X.691 10.1.3).
+
+## Errors
+
+Every rule of 0.8 on reading past the input applies. A length determinant, a
+count or an index that the input cannot hold is `malformed-wire` before any
+item is read (ruling 14 of 0.8). A value read that lies outside its
+constraint (a constrained whole number whose `ub - lb` is not a power of two
+minus one, read as a value above `ub`) is `malformed-wire`.
+
+## Vectors
+
+`input` and `expect` of a UPER pack are lowercase hex text (ruling 7 of 0.5).
+Expected bytes may be derived with an ASN.1 compiler or library that does not
+import an engine, from a public ASN.1 module, as long as the vector names the
+tool and its version.
+
+## Rulings for 0.19
+
+1. **Absent keys.** An absent key with no `default` writes `lb` for
+   `int:<lb>:<ub>`, `int:<lb>:<ub>:ext` and `int:<lb>:` (the last in one
+   octet), 0 in one octet for `int::`, index 0 for `enum`, `lb` characters of
+   code 0 for `chars`, and `lb` zero octets for `octets`.
+2. **DEFAULT components.** In a UPER pack a `default` does not set a presence
+   bit (ruling 2 of 0.8 does not apply): an absent key under an `if` writes
+   the bit 0, and decode with the bit 0 leaves the key absent; the default is
+   used only where a line writes the key.
+3. **Content** for a presence, `opt` or `choice` decision (ruling 22 of 0.8)
+   is looked for inside `ext`, `choice` and `alt` blocks as well.
+4. **Signed values.** On UPER locators `uint` and `twos` both give the signed
+   value; only the constraint limits it. `ub - lb` and `v - lb` are computed
+   without overflow (as unsigned 64-bit or wider).
+5. **Integers beyond 64 bits.** An `int::` or `int:<lb>:` value of more than 8
+   octets, or one whose value does not fit a signed 64-bit integer, is
+   `transform-decode`. An integer with an octet count of 0 is `malformed-wire`.
+6. **No alignment.** Octets, open types and characters are read and written at
+   the cursor; nothing in a UPER pack aligns to an octet but the end of the
+   whole message.
+7. **Non-minimal forms on decode** are accepted: a two-octet length
+   determinant for a short length, an integer in more octets than needed, a
+   normally small number in its long form, an extensible integer in the
+   extension form with a value inside the root. Encode writes the minimal
+   form, and the extension form of `int:…:ext` in the fewest octets.
+8. **Extension additions all absent.** An extension bit 1 whose addition
+   presence bits are all 0 is accepted; nothing is skipped.
+9. **UPER lines elsewhere.** `int:`, `enum:`, `chars:` and `octets:`
+   locators, `ext`, `choice`, `alt` and `group … size` outside a UPER pack are
+   `bad-directive`, checked after the file is read. `encoding` joins the
+   header directives of ruling 24 of 0.8.
+10. **Options and lines.** `swap` and `trim` on a UPER locator are
+    `bad-directive`; `also` is allowed. `when`, `const` and count fields take
+    bit lengths only.
+11. **With armor.** `encoding uper` and `armor sixbit` in one pack are
+    `bad-directive`.
+12. **Group sizes.** `size <lb> <ub>` needs `0 <= lb <= ub < 65536`
+    (`bad-directive` otherwise). A count of 0 decodes to a present, empty
+    list.
+13. **Empty strings.** A `chars` or `octets` count of 0 decodes to the empty
+    string, present.
+14. **NULL alternatives.** An `alt` with no lines has no content, so a
+    message holding such an alternative re-encodes with the first `alt` that
+    has content, or the first `alt`: the round trip is not exact.
+15. **Numbers in locators**, and the numbers of `choice`, `alt` and
+    `group … size` lines, are an optional `-` (locators only) and digits with
+    no leading zero (`-0` refused); `choice <n>` takes 1 to 65536; inside an `ext` block a
+    `presence` line, when there is one, is the first line.
+16. **The extension bitmap length.** The number of extension additions `m` is
+    written as a normally small length: when `m <= 64`, a `0` bit and `m - 1`
+    in 6 bits; otherwise a `1` bit and a length determinant of `m`.
+17. **Not stated by a UPER pack** in 0.19: an extensible SIZE constraint, an
+    extensible semi-constrained integer, a permitted-alphabet (`FROM`)
+    constraint, and fragmented lengths (16384 or more). A pack whose ASN.1
+    needs one of them leaves that component unmapped.
+18. **Smaller points.** An absent key on `octets:` writes zero octets. The
+    `encoding` directive, whatever its value, on a wire other than `bits` is
+    `bad-directive`; `encoding none` is allowed in any `bits` pack. A negative
+    value for an `enum` locator is `transform-encode`. An `ext` block or an
+    `alt` with no lines is allowed.
+19. **Further points.** A `choice` with no `alt` line is `bad-directive`.
+    Ruling 9 applies to `bits` packs; on `xml` and `json` a locator such as
+    `int:x` is a path as before. In a UPER pack no `default` counts as
+    content anywhere (presence, `opt`, chain `fx`, `choice`). A normally small
+    number in its long form with an octet count of 0 is `malformed-wire`, and
+    one of more than 8 octets, like an extension `enum` value that does not
+    fit 64 signed bits, is `transform-decode`; ruling 5 applies to the
+    extension form of `int:<lb>:<ub>:ext` as well. "Another transform" means a
+    known transform the locator does not take; an unknown name keeps its
+    error of 0.1.
+20. **Points from the implementations.** A list may be mapped by groups in
+    different `alt`s of one `choice`, as ruling 23 of 0.8 allows for
+    different `if` and `opt` blocks. The `presence` rule of ruling 15 holds
+    for lines directly in the `ext` block; a `presence` nested deeper is a
+    nested SEQUENCE's. For an integer read from octets the checks run in this
+    order: the input holds the octets (`malformed-wire`), the count is not 0
+    (`malformed-wire`), the value fits (`transform-decode`, a failure of the
+    field's key as ruling 9 of 0.1.1 states; for a CHOICE extension index,
+    which has no key, the decode fails with it).
+21. **The UPER directives on other wires.** `ext`, `choice`, `alt` and
+    `encoding` are directives of the language on every wire: outside a UPER
+    pack (any wire, any layout) they are `bad-directive`, not
+    `unknown-directive`, checked after the file is read. Ruling 19 is about
+    locators only.
+    Each `alt` is a block of its own for presence names (ruling 12 of 0.8):
+    two `alt`s of one `choice` may each declare `presence p`.
+22. **`absent` (0.9) in a UPER pack.** On a field with a UPER locator
+    (`int:`, `enum:`, `chars:`, `octets:`) `absent` is `bad-directive` in
+    0.19: the bits of such a field depend on its value, so 0.9's raw value is
+    not stated for it. A field with a bit-length locator in a UPER pack takes
+    `absent` as in any sequential `bits` pack.
+23. **The argument counts of the UPER lines.** As a line is read (step 3 of
+    5b of 0.11), `encoding` takes exactly one argument, `ext` none, `choice`
+    one or two, and `alt` one; any other count is `bad-directive` there, as
+    for `armor` in ruling 13 of 0.14. Their values (`encoding per`, `choice
+    0`, `choice 2 foo`) are checked after the file is read.
+24. **UPER locators outside a UPER pack** are `bad-directive` after the file
+    is read (rulings 9 and 19), in a fixed-layout `bits` pack as in a
+    sequential one, not `bad-locator` as the line is read (5a of 0.11). A
+    locator is a UPER locator when it begins `int:`, `enum:`, `chars:` or
+    `octets:`.
+25. **The UPER lines and the `wire` line.** `encoding`, `ext`, `choice` and
+    `alt` are not in the list of 0.11 (5b) of lines that stand after the
+    `wire` line; `end` is, so a block they open before the `wire` line is
+    `missing-wire` at its `end`.
+26. **The other UPER checks are after the file.** The pack is known to be a
+    UPER pack only once its `encoding uper` line is read, which may follow its
+    fields. So the numbers of a UPER locator (`int:5:4`, `int:0:07`), a UPER
+    locator on a `when` or `const` line (ruling 10), the value of a `choice`
+    (`choice 0`), an `alt` out of range, repeated or outside a `choice`, a line between a
+    `choice` and its first `alt`, and
+    `absent` on a UPER locator (ruling 22; step 10 of 5b of 0.11 does not
+    apply, the field having no bit width) are `bad-directive` after the file
+    is read. "After the first `kind`" for `encoding` counts every `kind`
+    line, as ruling 11 of 0.14 states for `armor`.
+27. **0.19 beside 0.15 and 0.17.** In a UPER pack, a field with a UPER
+    locator takes only the transforms of the 0.19 table; a 0.15 transform
+    there (`uiscale:10`, `smag`, `chars:icao6`, `octal`, the text wires'
+    `iscale`) is a known transform the locator does not take, `bad-directive`
+    after the file (ruling 19). A field with a bit length in a UPER pack takes
+    the `bits` transforms of 0.15, as ruling 3 of 0.15 states for sequential
+    layouts. A UPER pack is sequential, so its `if` is 0.8's; a gate locator
+    there is `bad-directive` after the file (ruling 13 of 0.17). `ext`,
+    `choice` and `alt` inside a 0.17 gate block, which only a fixed layout
+    has, are `bad-directive` after the file.

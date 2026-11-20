@@ -1,0 +1,9 @@
+{
+  "name": "utf8-invalid",
+  "from": "conformance-uper",
+  "to": "conformance-uper",
+  "input": "070000000000200020000efd6007fc0000",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.19 (ASN.1 unaligned PER): Input: s2 (utf8) holds the one octet ff, which is not UTF-8: transform-decode (utf8 as on tlv, 0.13). Every other line is well formed. Derived without an engine by a standalone X.691 reference program (Python standard library)."
+}

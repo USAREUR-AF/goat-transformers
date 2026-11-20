@@ -1,0 +1,9 @@
+{
+  "name": "uper-02-to-uper-extension-forms-and-items",
+  "from": "conformance-seq-json",
+  "to": "conformance-uper",
+  "input": "{\"n\":7,\"x\":-1,\"y\":-5,\"z\":-300,\"w\":3,\"c2\":1,\"val\":5,\"label\":\"ok\",\"items\":[{\"qty\":1},{}]}",
+  "expect": "070000000101ff010002fed48003bf580062028400000000",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.19 (ASN.1 unaligned PER): x -1 outside the root: extension form 1, length 1, ff; z -300 = fed4 in 2 octets; w 3 is the first extension value: bit 1, normally small 0 000000; presence 11 (c2 1, val 5); items: two items whose ratio is absent, each written lb 0 in 10 bits (ruling 1; qty is not mapped by the UPER item); lat absent at lb. 187 bits, padded to 24 octets. Derived without an engine by a standalone X.691 reference program (Python standard library) and checked against two independent ASN.1 UPER codecs on the ASN.1 module in the pack header: asn1tools 0.169.0 (MIT, PyPI), codec uper, and pycrate 0.8.1 (LGPL, PyPI), to_uper; asn1tools checks y (INTEGER (-5..MAX)) only as a length and octets, because it encodes a semi-constrained integer as an unconstrained one, which X.691 does not."
+}

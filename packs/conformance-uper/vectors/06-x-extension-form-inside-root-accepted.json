@@ -1,0 +1,25 @@
+{
+  "name": "x-extension-form-inside-root-accepted",
+  "from": "conformance-uper",
+  "to": "conformance-uper",
+  "input": "07000000010105010001000077eb00000000",
+  "expect": "0700000000a0200020000efd60000000",
+  "model": {
+    "probe.n": "7",
+    "lat": "-90",
+    "probe.x": "5",
+    "probe.y": "-5",
+    "probe.z": "0",
+    "probe.w": "0",
+    "probe.qty": "0",
+    "probe.c1": "0",
+    "probe.label": "ok",
+    "probe.s1": "",
+    "probe.s2": "",
+    "probe.a": "0",
+    "probe.items.#": "0",
+    "probe.names.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.19 (ASN.1 unaligned PER): Input writes x 5 in the extension form (bit 1, length 1, 05), a value inside the root; decode accepts it (ruling 7) and encode writes the root form, bit 0 and 101. 127 bits, padded with 1 zero bits to 16 octets. Derived without an engine by a standalone X.691 reference program (Python standard library) and checked against two independent ASN.1 UPER codecs on the ASN.1 module in the pack header: asn1tools 0.169.0 (MIT, PyPI), codec uper, and pycrate 0.8.1 (LGPL, PyPI), to_uper; asn1tools checks y (INTEGER (-5..MAX)) only as a length and octets, because it encodes a semi-constrained integer as an unconstrained one, which X.691 does not."
+}

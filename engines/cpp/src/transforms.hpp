@@ -77,6 +77,13 @@ Value decode_bits_value(const FieldLine& f, std::uint64_t raw, std::uint32_t len
 // Throws std::invalid_argument when the model value cannot be represented.
 std::uint64_t encode_bits_value(const FieldLine& f, const Value& v, std::uint32_t len);
 
+// v0.19, an `int:` locator of a UPER pack: the integer value `v` through
+// `uint`, `twos` (both `v`), `uscale` or `sscale` (`v * f + o`), and back
+// (`round((x - o) / f)`). Encode throws std::invalid_argument when the value is
+// not an integer of 64 signed bits.
+Value decode_uper_int(const FieldLine& f, std::int64_t v);
+std::int64_t encode_uper_int(const FieldLine& f, const Value& v);
+
 // `ascii`: the field's bytes in wire order -> text, trailing NULs removed, and with
 // `trim` the trailing spaces after them. Throws std::invalid_argument on a byte
 // above 0x7E or below 0x20 other than the trailing NULs.

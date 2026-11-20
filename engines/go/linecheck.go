@@ -115,6 +115,12 @@ func (p *Pack) checkLocatorForm(s string, inGroup bool) (locator, bool, ErrorKin
 		return locator{raw: s, kind: locBits, blen: n}, true, "", nil
 	case wire == WireBits && isDigits(s):
 		return locator{}, false, "", nil
+	case wire == WireBits && isUperLocator(s):
+		// An `int:`, `enum:`, `chars:` or `octets:` locator in a bits pack of
+		// any layout: outside a UPER pack it is bad-directive, and its numbers
+		// are checked, after the file is read (0.19 rulings 9 and 19), so 5a
+		// does not make it bad-locator in a fixed-layout pack.
+		return locator{}, false, "", nil
 	case s == "." && (wire == WireJSON || wire == WireGeoJSON || wire == WireProtobuf):
 		return locator{}, false, "", nil
 	}

@@ -1,0 +1,27 @@
+{
+  "name": "x-extension-form-y-two-octets-val-only",
+  "from": "conformance-uper",
+  "to": "conformance-uper",
+  "input": "016b49d2010108020100020080243c1aa00200980200",
+  "expect": "016b49d2010108020100020080243c1aa00200980200",
+  "model": {
+    "probe.n": "1",
+    "lat": "0",
+    "probe.x": "8",
+    "probe.y": "251",
+    "probe.z": "128",
+    "probe.w": "1",
+    "probe.qty": "1",
+    "probe.c1": "0",
+    "probe.label": "x",
+    "probe.s1": "aa",
+    "probe.s2": "",
+    "probe.val": "1",
+    "probe.a": "3",
+    "probe.items.#": "0",
+    "probe.names.#": "1",
+    "probe.names[0].probe.label": ""
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.19 (ASN.1 unaligned PER): x 8 is outside the root 0..7: bit 1, length 1, 08 (two's complement in the fewest octets, ruling 7); y 251 + 5 = 256 needs 2 octets 0100; z 128 needs 2 octets 0080; lat 0 is 900000000 above lb; presence 01 (val only, 1 in 10 bits); a 3 is ub of 0..3; names holds one empty name (length 0), present (ruling 13). 175 bits, padded with 1 zero bits to 22 octets. Derived without an engine by a standalone X.691 reference program (Python standard library) and checked against two independent ASN.1 UPER codecs on the ASN.1 module in the pack header: asn1tools 0.169.0 (MIT, PyPI), codec uper, and pycrate 0.8.1 (LGPL, PyPI), to_uper; asn1tools checks y (INTEGER (-5..MAX)) only as a length and octets, because it encodes a semi-constrained integer as an unconstrained one, which X.691 does not."
+}
