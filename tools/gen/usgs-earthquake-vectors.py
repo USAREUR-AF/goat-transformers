@@ -189,9 +189,9 @@ def single_vectors():
         note="the depth is not hae: the shared GeoJSON Point has two coordinates")
     t = ms_iso(a["properties"]["time"])
     cot = ('<event version="2.0" uid=%s type="a-u-X" time="%s" start="%s"><point lat="%s" lon="%s" hae="9999999" '
-           'ce="9999999" le="9999999"/></event>') % (jstr(a["id"]), t, t, num(36.7875), num(-121.6125))
+           'ce="9999999" le="9999999"/><detail/></event>') % (jstr(a["id"]), t, t, num(36.7875), num(-121.6125))
     V["04-event-to-cot-xml"] = vec("event-to-cot-xml", "usgs-earthquake", "cot-xml", js(a), cot,
-        note="cot-xml writes its defaults for type, hae, ce and le; the origin time is time and start")
+        note="cot-xml writes its defaults for type, hae, ce and le, and an empty detail (cot-xml 0.6.0, spec 0.18); the origin time is time and start")
     V["05-time-not-integer"] = vec("time-not-integer", "usgs-earthquake", "usgs-earthquake",
         js({"type": "Feature", "properties": {"time": "soon"}, "geometry": {"type": "Point", "coordinates": [1, 2, 3]}, "id": "x"}),
         error="transform-decode", note="time is a long integer; text that is not an integer fails the int transform")
