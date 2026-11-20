@@ -97,6 +97,7 @@ Run from the repository root unless a directory is named.
 | Catalog figure (`docs/figures/catalog-*.svg`) | `python3 -I tools/catalog-figure.py` writes it; `--check-families` (CI) fails when a pack has no family in `tools/catalog-families.json`; `--check` (the counts PR) fails when the figure is stale |
 | Rust engine and CLI | `cd engines/rust && cargo build --release` gives `target/release/goat-xf` |
 | Rust, every vector | `cd engines/rust && cargo test --release` |
+| Licences and profiles (`LICENSING.md`, `licences.json`) | `python3 -I tools/licences.py` writes them; `--check` (CI) fails on a pack with no known licence or a stale file; `--list --profile open`; `reuse lint` (pip `reuse`) |
 | Go | `cd engines/go && go vet ./... && go test ./...` |
 | Python | `cd engines/python && PYTHONPATH=src python3 -m unittest discover -s tests` |
 | Java | `cd engines/java && ./build.sh` |
@@ -136,7 +137,14 @@ The `add-a-format` skill has the full steps. In short:
 4. Add vectors under `packs/<format>/vectors/`: a round trip, and a conversion
    to and from one or more other formats, with independently derived `expect`.
 5. Write `pack.md` and `PROVENANCE.md`; add the source to `NOTICE`.
-6. Run all seven engines and the gate.
+6. If the source's licence is not Apache-2.0-compatible for commercial use
+   (non-commercial, share-alike, a field-of-use restriction, or no licence
+   stated), still add the pack, and label it: an annotation in `REUSE.toml`
+   (`path = "packs/<format>/**"`, `precedence = "override"`, its SPDX id or a
+   `LicenseRef-<name>` with its text in `LICENSES/`), the id in
+   `licences.toml` if it is new, then `python3 -I tools/licences.py`
+   (LICENSING.md).
+7. Run all seven engines and the gate.
 
 ## How to add a wire type
 

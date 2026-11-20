@@ -135,6 +135,7 @@ class Plan(PkgCase):
                 "packs": ["packs/alpha", "packs/beta-dir"],
                 "wires_used": ["json"],
                 "build_command": "cargo build --release --target x86_64-unknown-linux-musl",
+                "profile": "open",
             },
             "convertibility": [
                 {"from": "alpha", "to": "beta#2", "carried": ["uid", "lat", "lon"], "dropped": ["callsign"],
@@ -153,6 +154,7 @@ class Plan(PkgCase):
             "packs:       alpha, beta-dir   (only these)",
             "wires used:  json   (a minimal engine build can exclude the rest)",
             "build:       CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build ./cmd/goat-xf",
+            "profile:     open   (LICENSING.md)",
             "",
             "convertibility among the requested formats:",
             "         alpha -> beta#2       PARTIAL carries [uid, lat, lon]  (drops callsign: beta#2 has no field for them)",
@@ -428,6 +430,92 @@ class Archive(PkgCase):
         self.assertEqual(self.archive(), first)
         self.tree.write("model/core.def", FILES["model/core.def"] + 'key hae float m "height"\n')
         self.assertNotEqual(self.archive(), first)
+
+
+REUSE = """version = 1
+
+[[annotations]]
+path = "**"
+precedence = "override"
+SPDX-FileCopyrightText = "2026 test"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = "model/shape.def"
+precedence = "override"
+SPDX-FileCopyrightText = "2026 test"
+SPDX-License-Identifier = "CC-BY-NC-SA-4.0"
+"""
+LICENCES = """[licences."Apache-2.0"]
+commercial = "yes"
+share_alike = false
+attribution = true
+field_of_use = []
+distribution = "public"
+
+[licences."CC-BY-NC-SA-4.0"]
+commercial = "no"
+share_alike = true
+attribution = true
+field_of_use = []
+distribution = "public"
+"""
+
+
+class Profiles(PkgCase):
+    """--profile: the module `shape` is CC-BY-NC-SA-4.0, so `extra`, which uses
+    it, and the pack beta-dir, which uses both, are only in `everything`."""
+
+    def setUp(self):
+        super().setUp()
+        self.tree.write("REUSE.toml", REUSE)
+        self.tree.write("licences.toml", LICENCES)
+        self.tree.write("packs/alpha/vectors/to-beta.json", '{"from": "alpha", "to": "beta#2"}\n')
+
+    def archive(self, *argv):
+        path = os.path.join(self.tree.beside, "p.tar.gz")
+        self.ok("archive", "--out", path, "--vectors", *argv)
+        with tarfile.open(path, mode="r:gz") as tar:
+            return tar.getnames()
+
+    def test_open_archive_leaves_out_the_pack_its_modules_and_the_vectors_that_name_it(self):
+        names = self.archive()
+        for gone in ("packs/beta-dir/pack.def", "model/shape.def", "model/extra.def",
+                     "packs/alpha/vectors/to-beta.json"):
+            self.assertNotIn(gone, names)
+        for kept in ("packs/alpha/pack.def", "packs/alpha/vectors/one.json", "model/core.def",
+                     "REUSE.toml", "licences.toml"):
+            self.assertIn(kept, names)
+
+    def test_everything_archive_keeps_all(self):
+        names = self.archive("--profile", "everything")
+        for kept in ("packs/beta-dir/pack.def", "model/shape.def", "packs/alpha/vectors/to-beta.json"):
+            self.assertIn(kept, names)
+        self.assertEqual(names, sorted(names))
+
+    def test_plan_and_bundle_refuse_a_pack_outside_the_profile(self):
+        for argv in (("plan", "--formats", "alpha,beta#2"),
+                     ("bundle", "--formats", "beta#2", "--out", self.out),
+                     ("plan", "--formats", "beta#2", "--profile", "open+copyleft")):
+            err = self.refused(*argv)
+            self.assertIn("packs/beta-dir, uses module", err)
+        self.assertFalse(os.path.exists(self.out))
+        self.assertEqual(self.plan("--profile", "everything", formats="alpha,beta#2")["package"]["profile"],
+                         "everything")
+
+    def test_bundle_carries_the_licence_files_and_its_profile(self):
+        self.ok("bundle", "--formats", "beta#2", "--out", self.out, "--profile", "everything")
+        files = self.files_in(self.out)
+        self.assertIn("REUSE.toml", files)
+        self.assertIn("licences.toml", files)
+        with open(os.path.join(self.out, "manifest.json"), encoding="utf-8") as fh:
+            self.assertEqual(json.load(fh)["profile"], "everything")
+
+    def test_the_plan_request_takes_a_profile(self):
+        self.assertEqual(pkg.plan_request("formats=a").profile, "open")
+        self.assertEqual(pkg.plan_request("formats=a&profile=everything").profile, "everything")
+        with self.assertRaises(ValueError):
+            pkg.plan_request("formats=a&profile=closed")
 
 
 class CommandLine(PkgCase):

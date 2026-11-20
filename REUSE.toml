@@ -1,0 +1,29 @@
+# The licence of every file, read by standard tools (`reuse lint`, ScanCode,
+# SBOM generators; https://reuse.software) and by tools/licences.py.
+#
+# The first annotation covers everything: the library's code and its
+# restatements are Apache-2.0. Each later annotation labels one pack (its
+# whole directory, vectors included) or one model module whose source allows
+# less. Where several annotations match a file, the last one holds. A pack has
+# exactly one licence; its flags and its profile come from licences.toml.
+# Every annotation takes precedence "override": an SPDX line inside a file
+# (a PROVENANCE.md quoting its upstream's header) describes the upstream
+# source, not the file.
+version = 1
+SPDX-PackageName = "goat-transformers"
+SPDX-PackageDownloadLocation = "https://github.com/USAREUR-AF/goat-transformers"
+
+[[annotations]]
+path = "**"
+precedence = "override"
+SPDX-FileCopyrightText = "2025-2026 U.S. Federal Government (in countries where recognized)"
+SPDX-License-Identifier = "Apache-2.0"
+
+# One annotation per pack (or model module) whose source allows less, after
+# the first, for example:
+#
+#   [[annotations]]
+#   path = "packs/<name>/**"
+#   precedence = "override"
+#   SPDX-FileCopyrightText = "<year> <holder>"
+#   SPDX-License-Identifier = "<SPDX id, or LicenseRef-<name> with LICENSES/LicenseRef-<name>.txt>"

@@ -1,0 +1,26 @@
+{
+  "generated_by": "tools/licences.py from REUSE.toml and licences.toml; do not edit",
+  "default": {
+    "licence": "Apache-2.0",
+    "profile": "open"
+  },
+  "profiles": {
+    "open": "commercial use permitted, no share-alike, no field-of-use restriction (the default build)",
+    "open+copyleft": "open, and packs whose licence is share-alike",
+    "everything": "every public pack, also non-commercial, unknown and field-of-use licences"
+  },
+  "licences": {
+    "Apache-2.0": {
+      "name": "Apache License 2.0",
+      "url": "https://www.apache.org/licenses/LICENSE-2.0",
+      "commercial": "yes",
+      "share_alike": false,
+      "attribution": true,
+      "field_of_use": [],
+      "distribution": "public",
+      "profile": "open"
+    }
+  },
+  "packs": {},
+  "modules": {}
+}

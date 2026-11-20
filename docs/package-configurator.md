@@ -41,6 +41,16 @@ packs into the program. `tools/goat-pkg archive --out <file>.tar.gz
 [--vectors]` writes every module and pack as one archive, the same bytes for
 the same tree. [using.md](using.md) shows each from the consuming side.
 
+Each of `plan`, `bundle` and `archive` builds from one licence profile,
+`--profile open` by default (`open+copyleft`, `everything`;
+[LICENSING.md](../LICENSING.md)). `plan` and `bundle` refuse a format whose
+pack is outside the profile and say why; `archive` leaves out the packs and
+model modules outside it and every vector of another pack that converts from
+or to one of them. A bundle and an archive carry `REUSE.toml`,
+`licences.toml`, `licences.json` and `LICENSING.md`, and a bundle's
+`manifest.json` records its profile. The HTTP plan request takes
+`profile=<profile>`.
+
 ## Over HTTP
 
 `tools/goat-pkg serve` answers the same requests over HTTP. It reads the packs
