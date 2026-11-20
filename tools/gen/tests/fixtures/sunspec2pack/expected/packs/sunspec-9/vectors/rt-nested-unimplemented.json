@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-9-roundtrip-nested-unimplemented",
+  "from": "sunspec-9",
+  "to": "sunspec-9",
+  "input": "00090001ffff",
+  "expect": "00090001ffff",
+  "model": {
+    "@kind": "nested"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-126-roundtrip-volt_var",
+  "from": "sunspec-126",
+  "to": "sunspec-126",
+  "input": "007e000a29724b9f6dcc0ffb322854557682d8b1fade1d0b",
+  "expect": "007e000a29724b9f6dcc0ffb322854557682d8b1fade1d0b",
+  "model": {
+    "@kind": "volt_var"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-702-roundtrip-der_capacity-unimplemented",
+  "from": "sunspec-702",
+  "to": "sunspec-702",
+  "input": "02be0032ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff8000800080008000800080008000",
+  "expect": "02be0032ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff8000800080008000800080008000",
+  "model": {
+    "@kind": "der_capacity"
+  }
+}

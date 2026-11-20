@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-706-roundtrip-der_volt_watt-unimplemented",
+  "from": "sunspec-706",
+  "to": "sunspec-706",
+  "input": "02c2000dffffffffffffffffffffffffffffffffffffffff800080008000",
+  "expect": "02c2000dffffffffffffffffffffffffffffffffffffffff800080008000",
+  "model": {
+    "@kind": "der_volt_watt"
+  }
+}

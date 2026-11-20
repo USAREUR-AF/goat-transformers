@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-130-roundtrip-hvrt-unimplemented",
+  "from": "sunspec-130",
+  "to": "sunspec-130",
+  "input": "0082000affffffffffffffffffffffffffff800080000000",
+  "expect": "0082000affffffffffffffffffffffffffff800080000000",
+  "model": {
+    "@kind": "hvrt"
+  }
+}

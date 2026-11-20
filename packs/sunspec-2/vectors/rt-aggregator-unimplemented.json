@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-2-roundtrip-aggregator-unimplemented",
+  "from": "sunspec-2",
+  "to": "sunspec-2",
+  "input": "0002000effffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "expect": "0002000effffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "model": {
+    "@kind": "aggregator"
+  }
+}

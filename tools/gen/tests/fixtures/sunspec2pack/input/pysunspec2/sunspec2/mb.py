@@ -1,0 +1,28 @@
+# Synthetic stand-in for sunspec2/mb.py, written for the sunspec2pack tests.
+# The generator reads the SUNS_UNIMPL_ assignments as a syntax tree; nothing
+# here is run.
+SUNS_UNIMPL_INT16 = -32768
+SUNS_UNIMPL_UINT16 = 0xffff
+SUNS_UNIMPL_ACC16 = 0
+SUNS_UNIMPL_ENUM16 = 0xffff
+SUNS_UNIMPL_BITFIELD16 = 0xffff
+SUNS_UNIMPL_INT32 = -2147483648
+SUNS_UNIMPL_UINT32 = 0xffffffff
+SUNS_UNIMPL_ACC32 = 0
+SUNS_UNIMPL_ENUM32 = 0xffffffff
+SUNS_UNIMPL_BITFIELD32 = 0xffffffff
+SUNS_UNIMPL_IPADDR = 0
+SUNS_UNIMPL_INT64 = -9223372036854775808
+SUNS_UNIMPL_UINT64 = 0xffffffffffffffff
+SUNS_UNIMPL_ACC64 = 0
+SUNS_UNIMPL_IPV6ADDR = 0
+SUNS_UNIMPL_FLOAT32 = 0x7fc00000
+SUNS_UNIMPL_FLOAT64 = 0x7ff8000000000000
+SUNS_UNIMPL_STRING = '\0'
+SUNS_UNIMPL_SUNSSF = -32768
+SUNS_UNIMPL_EUI48 = 'FF:FF:FF:FF:FF:FF'
+SUNS_UNIMPL_PAD = 0
+
+
+def not_read():
+    raise RuntimeError("the generator never runs this file")

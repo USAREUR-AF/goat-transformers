@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-808-roundtrip-flow_battery_module-unimplemented",
+  "from": "sunspec-808",
+  "to": "sunspec-808",
+  "input": "03280001ffff",
+  "expect": "03280001ffff",
+  "model": {
+    "@kind": "flow_battery_module"
+  }
+}

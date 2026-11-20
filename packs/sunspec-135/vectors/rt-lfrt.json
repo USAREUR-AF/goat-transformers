@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-135-roundtrip-lfrt",
+  "from": "sunspec-135",
+  "to": "sunspec-135",
+  "input": "0087000a0df730245251747e16ad38da5b073d34df630000",
+  "expect": "0087000a0df730245251747e16ad38da5b073d34df630000",
+  "model": {
+    "@kind": "lfrt"
+  }
+}

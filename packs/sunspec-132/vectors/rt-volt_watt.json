@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-132-roundtrip-volt_watt",
+  "from": "sunspec-132",
+  "to": "sunspec-132",
+  "input": "0084000a6c740ea330d052fd752a175939861bb33de0e00f",
+  "expect": "0084000a6c740ea330d052fd752a175939861bb33de0e00f",
+  "model": {
+    "@kind": "volt_watt"
+  }
+}

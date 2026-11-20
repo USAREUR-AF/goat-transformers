@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-304-roundtrip-inclinometer",
+  "from": "sunspec-304",
+  "to": "sunspec-304",
+  "input": "01300000",
+  "expect": "01300000",
+  "model": {
+    "@kind": "inclinometer"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-306-roundtrip-ref_point-unimplemented",
+  "from": "sunspec-306",
+  "to": "sunspec-306",
+  "input": "01320004ffffffffffffffff",
+  "expect": "01320004ffffffffffffffff",
+  "model": {
+    "@kind": "ref_point"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-64111-roundtrip-model_64111-unimplemented",
+  "from": "sunspec-64111",
+  "to": "sunspec-64111",
+  "input": "fa6f0017ffff80008000800080008000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "expect": "fa6f0017ffff80008000800080008000ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "model": {
+    "@kind": "model_64111"
+  }
+}

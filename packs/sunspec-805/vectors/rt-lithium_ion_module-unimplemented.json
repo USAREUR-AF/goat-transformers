@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-805-roundtrip-lithium_ion_module-unimplemented",
+  "from": "sunspec-805",
+  "to": "sunspec-805",
+  "input": "0325002affffffffffffffffffffffffffffffffffffffffffffffffffffffff8000ffff8000ffff8000ffff5337320000000000000000000000000000000000000000000000000000000000800080008000800080008000",
+  "expect": "0325002affffffffffffffffffffffffffffffffffffffffffffffffffffffff8000ffff8000ffff8000ffff5337320000000000000000000000000000000000000000000000000000000000800080008000800080008000",
+  "model": {
+    "@kind": "lithium_ion_module"
+  }
+}

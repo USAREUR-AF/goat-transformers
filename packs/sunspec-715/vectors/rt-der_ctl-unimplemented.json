@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-715-roundtrip-der_ctl-unimplemented",
+  "from": "sunspec-715",
+  "to": "sunspec-715",
+  "input": "02cb0007ffffffffffffffffffffffffffff",
+  "expect": "02cb0007ffffffffffffffffffffffffffff",
+  "model": {
+    "@kind": "der_ctl"
+  }
+}

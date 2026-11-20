@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-130-roundtrip-hvrt",
+  "from": "sunspec-130",
+  "to": "sunspec-130",
+  "input": "0082000a2b744da16fce11fd342a56577884dab3fce00000",
+  "expect": "0082000a2b744da16fce11fd342a56577884dab3fce00000",
+  "model": {
+    "@kind": "hvrt"
+  }
+}

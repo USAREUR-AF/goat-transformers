@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-307-roundtrip-base_met",
+  "from": "sunspec-307",
+  "to": "sunspec-307",
+  "input": "0133000b0220244dc67ce8a90ad62d03cf32f15f138c35b9d7e8",
+  "expect": "0133000b0220244dc67ce8a90ad62d03cf32f15f138c35b9d7e8",
+  "model": {
+    "@kind": "base_met"
+  }
+}

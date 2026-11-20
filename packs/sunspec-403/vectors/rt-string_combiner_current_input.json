@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-403-roundtrip-string_combiner_current_input",
+  "from": "sunspec-403",
+  "to": "sunspec-403",
+  "input": "01930010d47ff6ac18d97b061d3500003f620000618fc3be000025eb08182a45cc74eea1",
+  "expect": "01930010d47ff6ac18d97b061d3500003f620000618fc3be000025eb08182a45cc74eea1",
+  "model": {
+    "@kind": "string_combiner_current_input"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-801-roundtrip-storage-unimplemented",
+  "from": "sunspec-801",
+  "to": "sunspec-801",
+  "input": "03210001ffff",
+  "expect": "03210001ffff",
+  "model": {
+    "@kind": "storage"
+  }
+}

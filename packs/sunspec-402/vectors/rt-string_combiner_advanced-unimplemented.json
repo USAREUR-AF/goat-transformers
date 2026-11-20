@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-402-roundtrip-string_combiner_advanced-unimplemented",
+  "from": "sunspec-402",
+  "to": "sunspec-402",
+  "input": "0192001480008000800080008000ffffffffffffffffffffffff8000ffffffffffff80008000ffffffffffff",
+  "expect": "0192001480008000800080008000ffffffffffffffffffffffff8000ffffffffffff80008000ffffffffffff",
+  "model": {
+    "@kind": "string_combiner_advanced"
+  }
+}

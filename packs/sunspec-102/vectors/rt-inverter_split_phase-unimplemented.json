@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-102-roundtrip-inverter_split_phase-unimplemented",
+  "from": "sunspec-102",
+  "to": "sunspec-102",
+  "input": "00660032ffffffffffffffff8000ffffffffffffffffffffffff800080008000ffff8000800080008000800080008000000000008000ffff8000ffff80008000800080008000800080008000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "expect": "00660032ffffffffffffffff8000ffffffffffffffffffffffff800080008000ffff8000800080008000800080008000000000008000ffff8000ffff80008000800080008000800080008000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "model": {
+    "@kind": "inverter_split_phase"
+  }
+}

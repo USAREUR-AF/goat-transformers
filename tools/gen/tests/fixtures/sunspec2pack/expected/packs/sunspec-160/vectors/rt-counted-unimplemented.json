@@ -1,0 +1,11 @@
+{
+  "name": "sunspec-160-roundtrip-counted-unimplemented",
+  "from": "sunspec-160",
+  "to": "sunspec-160",
+  "input": "00a0000280000000",
+  "expect": "00a0000280000000",
+  "model": {
+    "@kind": "counted",
+    "sunspec160.counted_module.#": "0"
+  }
+}

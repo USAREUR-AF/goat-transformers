@@ -1,0 +1,11 @@
+{
+  "name": "sunspec-804-roundtrip-lithium_ion_string-unimplemented",
+  "from": "sunspec-804",
+  "to": "sunspec-804",
+  "input": "0324002effff0000ffffffffffffffffffffffffffffffffffff8000ffffffffffffffffffffffff8000ffff8000ffff80000000ffffffffffffffffffffffffffffffffffffffffffffffff8000800080008000800080008000000000000000",
+  "expect": "0324002effff0000ffffffffffffffffffffffffffffffffffff8000ffffffffffffffffffffffff8000ffff8000ffff80000000ffffffffffffffffffffffffffffffffffffffffffffffff8000800080008000800080008000000000000000",
+  "model": {
+    "@kind": "lithium_ion_string",
+    "sunspec804.lithium_ion_string_lithium_ion_string_module.#": "0"
+  }
+}

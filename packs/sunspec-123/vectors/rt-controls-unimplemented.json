@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-123-roundtrip-controls-unimplemented",
+  "from": "sunspec-123",
+  "to": "sunspec-123",
+  "input": "007b0018ffffffffffffffffffffffffffffffff8000ffffffffffffffff800080008000ffffffffffffffffffff800080008000",
+  "expect": "007b0018ffffffffffffffffffffffffffffffff8000ffffffffffffffff800080008000ffffffffffffffffffff800080008000",
+  "model": {
+    "@kind": "controls"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-10-roundtrip-model_10-unimplemented",
+  "from": "sunspec-10",
+  "to": "sunspec-10",
+  "input": "000a0004ffffffffffff0000",
+  "expect": "000a0004ffffffffffff0000",
+  "model": {
+    "@kind": "model_10"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-141-roundtrip-lfrtc-unimplemented",
+  "from": "sunspec-141",
+  "to": "sunspec-141",
+  "input": "008d000affffffffffffffffffffffffffff800080000000",
+  "expect": "008d000affffffffffffffffffffffffffff800080000000",
+  "model": {
+    "@kind": "lfrtc"
+  }
+}

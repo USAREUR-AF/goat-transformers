@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-142-roundtrip-hfrtc",
+  "from": "sunspec-142",
+  "to": "sunspec-142",
+  "input": "008e000a317a53a775d418033a305c5d7e8ae0b902e60000",
+  "expect": "008e000a317a53a775d418033a305c5d7e8ae0b902e60000",
+  "model": {
+    "@kind": "hfrtc"
+  }
+}

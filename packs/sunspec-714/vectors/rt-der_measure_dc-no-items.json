@@ -1,0 +1,11 @@
+{
+  "name": "sunspec-714-roundtrip-der_measure_dc-no-items",
+  "from": "sunspec-714",
+  "to": "sunspec-714",
+  "input": "02ca00120000509c000032c9d4f8000000000000372500000000000059523b7fddaeffdb2208c437",
+  "expect": "02ca00120000509c000032c9d4f8000000000000372500000000000059523b7fddaeffdb2208c437",
+  "model": {
+    "@kind": "der_measure_dc",
+    "sunspec714.der_measure_dc_prt.#": "0"
+  }
+}

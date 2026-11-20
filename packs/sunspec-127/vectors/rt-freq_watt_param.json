@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-127-roundtrip-freq_watt_param",
+  "from": "sunspec-127",
+  "to": "sunspec-127",
+  "input": "007f000a67c4c9f3ec204e4d707a12a9f4d6170339300000",
+  "expect": "007f000a67c4c9f3ec204e4d707a12a9f4d6170339300000",
+  "model": {
+    "@kind": "freq_watt_param"
+  }
+}

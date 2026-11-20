@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-302-roundtrip-irradiance",
+  "from": "sunspec-302",
+  "to": "sunspec-302",
+  "input": "012e0000",
+  "expect": "012e0000",
+  "model": {
+    "@kind": "irradiance"
+  }
+}

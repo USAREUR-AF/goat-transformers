@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-138-roundtrip-hvrtc-unimplemented",
+  "from": "sunspec-138",
+  "to": "sunspec-138",
+  "input": "008a000affffffffffffffffffffffffffff800080000000",
+  "expect": "008a000affffffffffffffffffffffffffff800080000000",
+  "model": {
+    "@kind": "hvrtc"
+  }
+}

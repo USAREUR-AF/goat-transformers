@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-305-roundtrip-gps",
+  "from": "sunspec-305",
+  "to": "sunspec-305",
+  "input": "0131000c533439000000000000000000ffffe34d0000057a000027a7",
+  "expect": "0131000c533439000000000000000000ffffe34d0000057a000027a7",
+  "model": {
+    "@kind": "gps"
+  }
+}

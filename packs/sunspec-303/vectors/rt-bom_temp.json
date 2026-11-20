@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-303-roundtrip-bom_temp",
+  "from": "sunspec-303",
+  "to": "sunspec-303",
+  "input": "012f0000",
+  "expect": "012f0000",
+  "model": {
+    "@kind": "bom_temp"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-134-roundtrip-freq_watt",
+  "from": "sunspec-134",
+  "to": "sunspec-134",
+  "input": "0086000a2d764fa371d013ff362c58597a86dcb5fee2210f",
+  "expect": "0086000a2d764fa371d013ff362c58597a86dcb5fee2210f",
+  "model": {
+    "@kind": "freq_watt"
+  }
+}

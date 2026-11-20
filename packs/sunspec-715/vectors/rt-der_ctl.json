@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-715-roundtrip-der_ctl",
+  "from": "sunspec-715",
+  "to": "sunspec-715",
+  "input": "02cb00070ef00000311d0000534a757717a6",
+  "expect": "02cb00070ef00000311d0000534a757717a6",
+  "model": {
+    "@kind": "der_ctl"
+  }
+}

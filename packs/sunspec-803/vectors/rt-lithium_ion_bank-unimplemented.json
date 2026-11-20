@@ -1,0 +1,11 @@
+{
+  "name": "sunspec-803-roundtrip-lithium_ion_bank-unimplemented",
+  "from": "sunspec-803",
+  "to": "sunspec-803",
+  "input": "0323001a0000ffff8000ffffffff8000ffffffff8000ffffffffffffffffffff8000ffff8000ffff8000ffff800080008000800080008000",
+  "expect": "0323001a0000ffff8000ffffffff8000ffffffff8000ffffffffffffffffffff8000ffff8000ffff8000ffff800080008000800080008000",
+  "model": {
+    "@kind": "lithium_ion_bank",
+    "sunspec803.lithium_ion_bank_string.#": "0"
+  }
+}

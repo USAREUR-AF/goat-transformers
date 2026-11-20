@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-704-roundtrip-der_ctl_ac-unimplemented",
+  "from": "sunspec-704",
+  "to": "sunspec-704",
+  "input": "02c00041ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff800000008000000080008000ffffffffffffffffffffffffffffffff800000008000000080008000ffffffffffffffffffffffffffffffffffff800080008000800080008000ffffffffffffffffffffffffffffffff",
+  "expect": "02c00041ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff800000008000000080008000ffffffffffffffffffffffffffffffff800000008000000080008000ffffffffffffffffffffffffffffffffffff800080008000800080008000ffffffffffffffffffffffffffffffff",
+  "model": {
+    "@kind": "der_ctl_ac"
+  }
+}

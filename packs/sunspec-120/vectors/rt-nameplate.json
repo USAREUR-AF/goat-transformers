@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-120-roundtrip-nameplate",
+  "from": "sunspec-120",
+  "to": "sunspec-120",
+  "input": "0078001a4441666ec89d2aca0cf72f24d153f38015ad37da1a09fc361e63c092e2bf04ec27190948eb754da22fcf11fef42b565838850000",
+  "expect": "0078001a4441666ec89d2aca0cf72f24d153f38015ad37da1a09fc361e63c092e2bf04ec27190948eb754da22fcf11fef42b565838850000",
+  "model": {
+    "@kind": "nameplate"
+  }
+}

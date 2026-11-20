@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-120-roundtrip-nameplate-unimplemented",
+  "from": "sunspec-120",
+  "to": "sunspec-120",
+  "input": "0078001affffffff8000ffff800080008000800080008000ffff800080008000800080008000ffff8000ffff8000ffff8000ffff80000000",
+  "expect": "0078001affffffff8000ffff800080008000800080008000ffff800080008000800080008000ffff8000ffff8000ffff8000ffff80000000",
+  "model": {
+    "@kind": "nameplate"
+  }
+}

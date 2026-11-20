@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-1-roundtrip-basic-unimplemented",
+  "from": "sunspec-1",
+  "to": "sunspec-1",
+  "input": "0001001c53333400000000008000ffff8000000000007fc00000ffffffffffffffff000000000000000000000000000000000000ffffffffffffffff",
+  "expect": "0001001c53333400000000008000ffff8000000000007fc00000ffffffffffffffff000000000000000000000000000000000000ffffffffffffffff",
+  "model": {
+    "@kind": "basic"
+  }
+}

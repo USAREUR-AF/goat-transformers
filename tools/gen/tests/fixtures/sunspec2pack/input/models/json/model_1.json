@@ -1,0 +1,95 @@
+{
+  "group": {
+    "groups": [
+      {
+        "name": "Hdr",
+        "points": [
+          {
+            "name": "St",
+            "size": 1,
+            "type": "enum16"
+          },
+          {
+            "name": "Evt",
+            "size": 2,
+            "type": "bitfield32"
+          }
+        ],
+        "type": "group"
+      }
+    ],
+    "name": "basic",
+    "points": [
+      {
+        "name": "ID",
+        "size": 1,
+        "type": "uint16",
+        "value": 1
+      },
+      {
+        "name": "L",
+        "size": 1,
+        "type": "uint16"
+      },
+      {
+        "name": "Mn",
+        "size": 4,
+        "type": "string"
+      },
+      {
+        "name": "Temp",
+        "sf": -1,
+        "size": 1,
+        "type": "int16",
+        "units": "C"
+      },
+      {
+        "name": "W",
+        "sf": "W_SF",
+        "size": 1,
+        "type": "uint16",
+        "units": "W"
+      },
+      {
+        "name": "W_SF",
+        "size": 1,
+        "type": "sunssf"
+      },
+      {
+        "name": "Wh",
+        "size": 2,
+        "type": "acc32",
+        "units": "Wh"
+      },
+      {
+        "name": "Hz",
+        "size": 2,
+        "type": "float32",
+        "units": "Hz"
+      },
+      {
+        "name": "Big",
+        "size": 4,
+        "type": "uint64"
+      },
+      {
+        "name": "Addr",
+        "size": 8,
+        "type": "ipv6addr"
+      },
+      {
+        "name": "Pad",
+        "size": 1,
+        "type": "pad"
+      },
+      {
+        "name": "Gain",
+        "sf": 2,
+        "size": 1,
+        "type": "uint16"
+      }
+    ],
+    "type": "group"
+  },
+  "id": 1
+}

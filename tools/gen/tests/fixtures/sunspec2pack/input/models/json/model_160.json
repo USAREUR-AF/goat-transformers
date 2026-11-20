@@ -1,0 +1,57 @@
+{
+  "group": {
+    "groups": [
+      {
+        "count": "N",
+        "name": "module",
+        "points": [
+          {
+            "name": "Id",
+            "size": 1,
+            "type": "uint16"
+          },
+          {
+            "name": "A",
+            "sf": "A_SF",
+            "size": 1,
+            "type": "uint16",
+            "units": "A"
+          },
+          {
+            "name": "Tmp",
+            "size": 1,
+            "type": "int16",
+            "units": "C"
+          }
+        ],
+        "type": "group"
+      }
+    ],
+    "name": "counted",
+    "points": [
+      {
+        "name": "ID",
+        "size": 1,
+        "type": "uint16",
+        "value": 160
+      },
+      {
+        "name": "L",
+        "size": 1,
+        "type": "uint16"
+      },
+      {
+        "name": "A_SF",
+        "size": 1,
+        "type": "sunssf"
+      },
+      {
+        "name": "N",
+        "size": 1,
+        "type": "count"
+      }
+    ],
+    "type": "group"
+  },
+  "id": 160
+}

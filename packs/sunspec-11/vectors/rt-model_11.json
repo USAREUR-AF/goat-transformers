@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-11-roundtrip-model_11",
+  "from": "sunspec-11",
+  "to": "sunspec-11",
+  "input": "000b000d2d8a4fb771e400000000000014135338310000000000586d7a9a",
+  "expect": "000b000d2d8a4fb771e400000000000014135338310000000000586d7a9a",
+  "model": {
+    "@kind": "model_11"
+  }
+}

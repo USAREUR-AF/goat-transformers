@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-137-roundtrip-lvrtc-unimplemented",
+  "from": "sunspec-137",
+  "to": "sunspec-137",
+  "input": "0089000affffffffffffffffffffffffffff800080000000",
+  "expect": "0089000affffffffffffffffffffffffffff800080000000",
+  "model": {
+    "@kind": "lvrtc"
+  }
+}

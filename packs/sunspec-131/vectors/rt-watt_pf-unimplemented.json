@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-131-roundtrip-watt_pf-unimplemented",
+  "from": "sunspec-131",
+  "to": "sunspec-131",
+  "input": "0083000affffffffffffffffffffffffffff800080008000",
+  "expect": "0083000affffffffffffffffffffffffffff800080008000",
+  "model": {
+    "@kind": "watt_pf"
+  }
+}

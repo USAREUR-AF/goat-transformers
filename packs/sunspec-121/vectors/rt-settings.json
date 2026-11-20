@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-121-roundtrip-settings",
+  "from": "sunspec-121",
+  "to": "sunspec-121",
+  "input": "0079001e24c246ef291c0b4b2d784fa531d2d401f62e185b7a88dcb7fee42111c340256d479a69c70bf62e231050327dd4acf6d919063b33dd62ff8f21bcc3eb",
+  "expect": "0079001e24c246ef291c0b4b2d784fa531d2d401f62e185b7a88dcb7fee42111c340256d479a69c70bf62e231050327dd4acf6d919063b33dd62ff8f21bcc3eb",
+  "model": {
+    "@kind": "settings"
+  }
+}

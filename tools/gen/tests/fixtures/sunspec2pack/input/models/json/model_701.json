@@ -1,0 +1,50 @@
+{
+  "group": {
+    "groups": [
+      {
+        "count": 0,
+        "name": "curve",
+        "points": [
+          {
+            "name": "V",
+            "size": 1,
+            "type": "uint16"
+          }
+        ],
+        "type": "group"
+      },
+      {
+        "name": "tail",
+        "points": [
+          {
+            "name": "X",
+            "size": 1,
+            "type": "uint16"
+          }
+        ],
+        "type": "group"
+      }
+    ],
+    "name": "repeated",
+    "points": [
+      {
+        "name": "ID",
+        "size": 1,
+        "type": "uint16",
+        "value": 701
+      },
+      {
+        "name": "L",
+        "size": 1,
+        "type": "uint16"
+      },
+      {
+        "name": "Ena",
+        "size": 1,
+        "type": "enum16"
+      }
+    ],
+    "type": "group"
+  },
+  "id": 701
+}

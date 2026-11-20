@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-137-roundtrip-lvrtc",
+  "from": "sunspec-137",
+  "to": "sunspec-137",
+  "input": "0089000a4ef771241353358057ad79da1c09fe3620630000",
+  "expect": "0089000a4ef771241353358057ad79da1c09fe3620630000",
+  "model": {
+    "@kind": "lvrtc"
+  }
+}

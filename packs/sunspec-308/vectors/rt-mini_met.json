@@ -1,0 +1,10 @@
+{
+  "name": "sunspec-308-roundtrip-mini_met",
+  "from": "sunspec-308",
+  "to": "sunspec-308",
+  "input": "0134000422a104ce26fb092a",
+  "expect": "0134000422a104ce26fb092a",
+  "model": {
+    "@kind": "mini_met"
+  }
+}
