@@ -14,10 +14,17 @@ Reads the tree it sits in and writes, under site/assets/engine/:
                                 of every file above
 
 Then it checks site/index.html against the tree: every number marked
-data-stat, and the conversion shown when JavaScript is off. A difference is an
-error, so the page cannot drift from the tree without the build failing.
+data-stat, and the conversion shown when JavaScript is off. A conversion the
+page shows that the tree does not give is an error. A count (formats, packs,
+message kinds, vectors) that the tree has moved past is a note, as for the
+README: the counts are updated in the counts pull request after each merge
+wave, never in a feature pull request (AGENTS.md). In that pull request,
+`--counts-only --write` writes the tree's counts into the page, and
+`--counts-only` fails when one differs; neither needs the module built.
 
-Standard library only. Usage: python3 -I site/bundle.py --wasm <file> --goat-xf <file>
+Standard library only. Usage:
+  python3 -I site/bundle.py --wasm <file> --goat-xf <file>
+  python3 -I site/bundle.py --counts-only [--write]
 """
 import argparse
 import hashlib
@@ -147,12 +154,55 @@ def count_stats():
     }
 
 
+COUNTS = ("formats", "packs", "message_kinds", "conversion_vectors", "load_vectors", "engines", "pair_converters")
+
+
+def counts_only(write):
+    """Compare (or with `write`, set) the page's counts with the tree's."""
+    path = os.path.join(HERE, "index.html")
+    with open(path, encoding="utf-8") as f:
+        html = f.read()
+    stats = count_stats()
+    differ = []
+
+    def fix(m):
+        key, text = m.group(1), m.group(3)
+        if key in COUNTS and text.strip().replace(",", "") != str(stats[key]):
+            differ.append((key, text.strip(), format(stats[key], ",")))
+            return 'data-stat="%s"%s>%s<' % (key, m.group(2), format(stats[key], ","))
+        return m.group(0)
+
+    new = re.sub(r'data-stat="([a-z_]+)"([^>]*)>([^<]*)<', fix, html)
+    for key, was, now in differ:
+        print("bundle.py: %s: index.html states %s, the tree has %s" % (key, was, now))
+    if write:
+        if new != html:
+            with open(path, "w", encoding="utf-8") as f:
+                f.write(new)
+        print("bundle.py: wrote %d count(s) into index.html" % len(differ))
+        return 0
+    if differ:
+        print("bundle.py: FAIL, %d count(s) differ: run python3 -I site/bundle.py --counts-only --write" % len(differ))
+        return 1
+    print("bundle.py: every count of index.html is the tree's")
+    return 0
+
+
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--wasm", required=True)
-    ap.add_argument("--goat-xf", required=True)
+    ap.add_argument("--wasm")
+    ap.add_argument("--goat-xf")
     ap.add_argument("--no-check", action="store_true", help="do not compare index.html with the tree")
+    ap.add_argument("--counts-only", action="store_true",
+                    help="only compare the page's counts with the tree (the counts pull request); no module needed")
+    ap.add_argument("--write", action="store_true", help="with --counts-only: write the tree's counts into the page")
     a = ap.parse_args()
+    if a.counts_only:
+        return counts_only(a.write)
+    if a.write:
+        die("--write goes with --counts-only")
+    if not (a.wasm and a.goat_xf):
+        die("--wasm and --goat-xf are required")
     for p in (a.wasm, a.goat_xf):
         if not os.path.isfile(p):
             die("not found: " + p)
@@ -303,6 +353,11 @@ def check_page(stats, pairs):
             if key == "wasm_bytes":
                 print("bundle.py: note: index.html states %s bytes for the module, this build is %s" % (
                     text.strip(), format(stats[key], ",")))
+                continue
+            # Counts move with every pack; the counts pull request updates them.
+            if key in COUNTS:
+                print("bundle.py: note: index.html states %s = %s, the tree has %s (the counts pull request "
+                      "updates it: --counts-only --write)" % (key, text.strip(), format(stats[key], ",")))
                 continue
             print("bundle.py: check: index.html states %s = %s, the tree has %s" % (key, text.strip(), format(stats[key], ",")))
             bad += 1

@@ -54,11 +54,14 @@ it is done.
 
 `build.sh` ends with a check and exits non-zero when it fails:
 
-- every element of `index.html` marked `data-stat="<name>"` must state the
-  number counted from the tree (`formats`, `message_kinds`,
-  `conversion_vectors`, `pair_converters`). The counts come from
-  `tools/repo-stats`, the same counter the top-level README is tested
-  against; the footnotes of the page give the command behind each number;
+- every element of `index.html` marked `data-stat="<name>"` states a number
+  counted from the tree (`formats`, `message_kinds`, `conversion_vectors`,
+  `pair_converters`), from `tools/repo-stats`, the counter of the top-level
+  README; the footnotes of the page give the command behind each number. The
+  counts move with every pack, so a difference is printed as a note, and the
+  counts pull request after each merge wave updates them with the README's:
+  `python3 -I site/bundle.py --counts-only --write`, then `--counts-only`,
+  which fails while one differs (it needs no module built);
 - the two outputs shown near the top of the page must be what `goat-xf` prints
   for the same input;
 - the hub figure is copied from `docs/figures/` on every build, so it is the
