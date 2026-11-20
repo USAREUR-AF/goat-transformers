@@ -33,7 +33,6 @@ of packs; drawn from `packs/` by `python3 -I tools/catalog-figure.py`.
 | STANAG 4607 GMTI | `bits` | Not built | pentlandedge/s4607 |
 | STANAG 4676 ISR tracking | `xml` | Not built | |
 | NFFI (STANAG 5527) | `xml` | Not built. No public copy of the NFFI 1.3 schema: it is NATO UNCLASSIFIED, releasable to NATO, distributed through the NATO Standardization Office | |
-
 | Common Alerting Protocol (CAP) 1.2 | `xml` | Built: pack `cap`, every element; area polygons and circles carried as text; `time_ms` from `sent` | |
 
 ## Internet of things, transit and mesh radio

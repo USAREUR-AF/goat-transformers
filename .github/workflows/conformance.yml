@@ -50,6 +50,10 @@ jobs:
       # fails the job.
       - name: Decoded values are plausible and heights name a datum
         run: python3 -I tools/model-checks.py --check
+      # A blank line inside a table, or a row with another number of cells,
+      # breaks the table on GitHub.
+      - name: Markdown tables of README.md and docs/ are whole
+        run: python3 -I tools/markdown-tables.py
       # Fails only when a pack has no family in tools/catalog-families/.
       # The figure's counts are compared (--check) only in the counts PR.
       - name: Every pack has a family in the catalog figure
