@@ -1,0 +1,72 @@
+# NHC Tropical Cyclone Status JSON: the whole CurrentStorms.json file, an object whose
+# activeStorms array is the list nhc.storms. Public domain (US Government work). Written by
+# hand from the NHC file reference. Items carry no residue: storm members no line maps are
+# dropped (pack.md).
+format  nhc-current-storms
+version 0.1.0
+distribution public
+source  "NHC Tropical Cyclone Status JSON File Reference (last updated 2019-04-08): https://www.nhc.noaa.gov/productexamples/NHC_Tropical_Cyclone_Status_JSON_File_Reference.pdf (sha256 248df25b8e798765deb731d4c69c0609f787e227c699c2ce0d88a0126be7d316, read 2026-11-20); the file is https://www.nhc.noaa.gov/CurrentStorms.json"
+uses    nhc
+wire    json
+group   nhc.storms  activeStorms
+  field   uid                       id                    string
+  field   nhc.bin_number            binNumber             string
+  field   callsign                  name                  string
+  field   nhc.classification        classification        string
+  field   nhc.latitude_text         latitude              string
+  field   nhc.longitude_text        longitude             string
+  field   lat                       latitudeNumeric       float
+  field   lon                       longitudeNumeric      float
+  field   course                    movementDir           float
+  field   nhc.movement_speed_mph    movementSpeed         float
+  field   time_ms                   lastUpdate            iso8601_ms
+  field   nhc.public_advisory_adv_num      publicAdvisory.advNum  string
+  field   nhc.public_advisory_issuance     publicAdvisory.issuance  string
+  field   nhc.public_advisory_url          publicAdvisory.url  string
+  field   nhc.forecast_advisory_adv_num    forecastAdvisory.advNum  string
+  field   nhc.forecast_advisory_issuance   forecastAdvisory.issuance  string
+  field   nhc.forecast_advisory_url        forecastAdvisory.url  string
+  field   nhc.wind_speed_probabilities_adv_num windSpeedProbabilities.advNum  string
+  field   nhc.wind_speed_probabilities_issuance windSpeedProbabilities.issuance  string
+  field   nhc.wind_speed_probabilities_url windSpeedProbabilities.url  string
+  field   nhc.forecast_discussion_adv_num  forecastDiscussion.advNum  string
+  field   nhc.forecast_discussion_issuance forecastDiscussion.issuance  string
+  field   nhc.forecast_discussion_url      forecastDiscussion.url  string
+  field   nhc.forecast_graphics_adv_num    forecastGraphics.advNum  string
+  field   nhc.forecast_graphics_issuance   forecastGraphics.issuance  string
+  field   nhc.forecast_graphics_url        forecastGraphics.url  string
+  field   nhc.forecast_track_adv_num       forecastTrack.advNum  string
+  field   nhc.forecast_track_issuance      forecastTrack.issuance  string
+  field   nhc.forecast_track_zip           forecastTrack.zipFile  string
+  field   nhc.forecast_track_kmz           forecastTrack.kmzFile  string
+  field   nhc.wind_watches_warnings_adv_num windWatchesWarnings.advNum  string
+  field   nhc.wind_watches_warnings_issuance windWatchesWarnings.issuance  string
+  field   nhc.wind_watches_warnings_zip    windWatchesWarnings.zipFile  string
+  field   nhc.wind_watches_warnings_kmz    windWatchesWarnings.kmzFile  string
+  field   nhc.track_cone_adv_num           trackCone.advNum  string
+  field   nhc.track_cone_issuance          trackCone.issuance  string
+  field   nhc.track_cone_zip               trackCone.zipFile  string
+  field   nhc.track_cone_kmz               trackCone.kmzFile  string
+  field   nhc.initial_wind_extent_adv_num  initialWindExtent.advNum  string
+  field   nhc.initial_wind_extent_issuance initialWindExtent.issuance  string
+  field   nhc.initial_wind_extent_zip      initialWindExtent.zipFile  string
+  field   nhc.initial_wind_extent_kmz      initialWindExtent.kmzFile  string
+  field   nhc.forecast_wind_radii_adv_num  forecastWindRadiiGIS.advNum  string
+  field   nhc.forecast_wind_radii_issuance forecastWindRadiiGIS.issuance  string
+  field   nhc.forecast_wind_radii_zip      forecastWindRadiiGIS.zipFile  string
+  field   nhc.forecast_wind_radii_kmz      forecastWindRadiiGIS.kmzFile  string
+  field   nhc.best_track_zip            bestTrackGIS.zipFile  string
+  field   nhc.best_track_kmz            bestTrackGIS.kmzFile  string
+  field   nhc.earliest_arrival_ts_winds_adv_num earliestArrivalTimeTSWindsGIS.advNum  string
+  field   nhc.earliest_arrival_ts_winds_issuance earliestArrivalTimeTSWindsGIS.issuance  string
+  field   nhc.earliest_arrival_ts_winds_kmz earliestArrivalTimeTSWindsGIS.kmzFile  string
+  field   nhc.most_likely_ts_winds_adv_num mostLikelyTimeTSWindsGIS.advNum  string
+  field   nhc.most_likely_ts_winds_issuance mostLikelyTimeTSWindsGIS.issuance  string
+  field   nhc.most_likely_ts_winds_kmz     mostLikelyTimeTSWindsGIS.kmzFile  string
+  field   nhc.wsp_gis_issuance          windSpeedProbabilitiesGIS.issuance       string
+  field   nhc.wsp_gis_zip_5km           windSpeedProbabilitiesGIS.zipFile5km     string
+  field   nhc.wsp_gis_zip_0p5deg        windSpeedProbabilitiesGIS.zipFile0p5deg  string
+  field   nhc.wsp_gis_kmz_34kt          windSpeedProbabilitiesGIS.kmzFile34kt    string
+  field   nhc.wsp_gis_kmz_50kt          windSpeedProbabilitiesGIS.kmzFile50kt    string
+  field   nhc.wsp_gis_kmz_64kt          windSpeedProbabilitiesGIS.kmzFile64kt    string
+end

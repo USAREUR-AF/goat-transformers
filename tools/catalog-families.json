@@ -97,6 +97,7 @@
     {"name": "IETF option areas", "domain": "networks", "exact": ["dhcpv6-options", "edns0-options"], "members": {"pattern": "^(.+)-options$", "label": "", "upper": true, "rename": {"dhcpv6": "DHCPv6", "edns0": "EDNS(0)"}}},
 
     {"name": "NWS weather.gov API", "domain": "maps", "prefixes": ["nws-"]},
+    {"name": "NHC tropical cyclone status", "domain": "maps", "prefixes": ["nhc-"], "detail": "CurrentStorms.json: one storm, the whole file"},
     {"name": "aviationweather.gov Data API", "domain": "maps", "prefixes": ["awc-"], "detail": "METAR, TAF, PIREP, SIGMET/AIRMET, CWA, TCF, stations and navigational data"},
     {"name": "USGS earthquake feed", "domain": "maps", "prefixes": ["usgs-earthquake"], "detail": "GeoJSON summary feed: one event, the whole feed"},
     {"name": "NASA EONET events", "domain": "maps", "exact": ["eonet-event"]},
