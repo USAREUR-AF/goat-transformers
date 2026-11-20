@@ -1,0 +1,10 @@
+{
+  "name": "dis7-roundtrip-is_part_of",
+  "from": "dis7",
+  "to": "dis7",
+  "input": "07e8249950ec104a0034fbac5783ab5aff315308a6dffab64e8da26440900000c0800000c0100000f1c045976e45411cf3caa178",
+  "expect": "07e8249950ec104a0034fbac5783ab5aff315308a6dffab64e8da26440900000c0800000c0100000f1c045976e45411cf3caa178",
+  "model": {
+    "@kind": "is_part_of"
+  }
+}

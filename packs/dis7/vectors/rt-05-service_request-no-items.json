@@ -1,0 +1,11 @@
+{
+  "name": "dis7-roundtrip-service_request-no-items",
+  "from": "dis7",
+  "to": "dis7",
+  "input": "0777052862ac3ed9001c8a3bd9e92dc08197d56e29457d1cf300a4ca",
+  "expect": "0777052862ac3ed9001c8a3bd9e92dc08197d56e29457d1cf300a4ca",
+  "model": {
+    "@kind": "service_request",
+    "dis7.service_request_supplies.#": "0"
+  }
+}

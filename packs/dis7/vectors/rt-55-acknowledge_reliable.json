@@ -1,0 +1,10 @@
+{
+  "name": "dis7-roundtrip-acknowledge_reliable",
+  "from": "dis7",
+  "to": "dis7",
+  "input": "072537d6568f0c87002038e953c0a797fb6e4f45a31cf6f34aca9ea102a4f278",
+  "expect": "072537d6568f0c87002038e953c0a797fb6e4f45a31cf6f34aca9ea102a4f278",
+  "model": {
+    "@kind": "acknowledge_reliable"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "dis7-roundtrip-ping",
+  "from": "dis7",
+  "to": "dis7",
+  "input": "072a02db6885098c00223dee50c5a49cf8738000000073054c4a3f00000078cfa67d",
+  "expect": "072a02db6885098c00223dee50c5a49cf8738000000073054c4a3f00000078cfa67d",
+  "model": {
+    "@kind": "ping"
+  }
+}

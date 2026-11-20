@@ -1,0 +1,10 @@
+{
+  "name": "dis7-roundtrip-create_entity_reliable",
+  "from": "dis7",
+  "to": "dis7",
+  "input": "0769331a33b01acb00207c2d6204b5db09b25d89b16005370eace5bc334a5493",
+  "expect": "0769331a33b01acb00207c2d6204b5db09b25d89b16005370eace5bc334a5493",
+  "model": {
+    "@kind": "create_entity_reliable"
+  }
+}

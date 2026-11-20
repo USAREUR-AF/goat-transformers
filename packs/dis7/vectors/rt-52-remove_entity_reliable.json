@@ -1,0 +1,10 @@
+{
+  "name": "dis7-roundtrip-remove_entity_reliable",
+  "from": "dis7",
+  "to": "dis7",
+  "input": "07d834895c67d73a0020eb9c1e73724ac62119f86dcfc1a67d69542b5c021102",
+  "expect": "07d834895c67d73a0020eb9c1e73724ac62119f86dcfc1a67d69542b5c021102",
+  "model": {
+    "@kind": "remove_entity_reliable"
+  }
+}
