@@ -1,0 +1,9 @@
+{
+  "name": "string-not-utf-8",
+  "from": "conformance-cdr",
+  "to": "conformance-cdr",
+  "input": "0000000001000000000000000000000000000000000000000000000000000002ff00010000000000000000000007000000000000000000003fc00000be800000",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "0.43 Strings: length 2, bytes ff 00; ff is not UTF-8"
+}

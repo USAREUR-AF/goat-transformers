@@ -1,0 +1,9 @@
+{
+  "name": "hex-whitespace-and-capitals",
+  "from": "conformance-cdr",
+  "to": "conformance-cdr",
+  "input": "00000000 0100FFFEB2D05E00FFFFFFFFFFFFFFFB\t40040000000000000000000375310001000000037FFFFFFF000700000000\n00020000000361620000000200000000000263000005000000020000000AFFFFFFEC3FC00000BE800000\r\n",
+  "expect": "000000000100fffeb2d05e00fffffffffffffffb40040000000000000000000375310001000000037fffffff00070000000000020000000361620000000200000000000263000005000000020000000affffffec3fc00000be800000",
+  "source": "constructed",
+  "reference": "0.43 ruling 17 and ruling 40 of 0.8: space, tab, line feed and carriage return are skipped, capital hex digits read; output is lowercase"
+}

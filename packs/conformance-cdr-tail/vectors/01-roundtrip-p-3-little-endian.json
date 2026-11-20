@@ -1,0 +1,15 @@
+{
+  "name": "roundtrip-p-3-little-endian",
+  "from": "conformance-cdr-tail",
+  "to": "conformance-cdr-tail",
+  "input": "0001000307000000d4fe00000400000061626300c8000000",
+  "expect": "0001000307000000d4fe00000400000061626300c8000000",
+  "model": {
+    "probe.y": "7",
+    "probe.n": "-300",
+    "uid": "abc",
+    "probe.x": "200"
+  },
+  "source": "constructed",
+  "reference": "0.43 The header and ruling 5: representation 0001 writes little-endian; the body is 17 bytes (x is the byte at off 16), so 3 zero bytes follow and the options are 0003"
+}

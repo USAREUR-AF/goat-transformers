@@ -1,0 +1,9 @@
+{
+  "name": "float64-nan",
+  "from": "conformance-cdr",
+  "to": "conformance-cdr",
+  "input": "000000000100fffeb2d05e00fffffffffffffffb7ff80000000000000000000375310001000000037fffffff00070000000000020000000361620000000200000000000263000005000000020000000affffffec3fc00000be800000",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "0.43 ruling 7: a NaN read from the wire (probe.a at off 16)"
+}

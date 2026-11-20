@@ -1,0 +1,9 @@
+{
+  "name": "string-length-zero",
+  "from": "conformance-cdr",
+  "to": "conformance-cdr",
+  "input": "00000000010000000000000000000000000000000000000000000000000000000100000000000000000000000007000000000000000000003fc00000be800000",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "0.43 Strings: a length of 0 (at off 24) is below 1"
+}

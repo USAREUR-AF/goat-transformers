@@ -1,0 +1,9 @@
+{
+  "name": "input-ends-inside-int64",
+  "from": "conformance-cdr",
+  "to": "conformance-cdr",
+  "input": "000000000100fffeb2d05e00ffffffff",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "0.43 Reading and writing step 1 and ruling 3: the input ends at off 12, inside z (off 8 to 16), a common line"
+}

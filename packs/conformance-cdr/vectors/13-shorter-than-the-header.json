@@ -1,0 +1,9 @@
+{
+  "name": "shorter-than-the-header",
+  "from": "conformance-cdr",
+  "to": "conformance-cdr",
+  "input": "000000",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "0.43 ruling 18: 3 bytes"
+}

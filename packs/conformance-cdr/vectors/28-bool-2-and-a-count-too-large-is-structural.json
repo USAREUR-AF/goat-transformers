@@ -1,0 +1,9 @@
+{
+  "name": "bool-2-and-a-count-too-large-is-structural",
+  "from": "conformance-cdr",
+  "to": "conformance-cdr",
+  "input": "000000000100fffeb2d05e00fffffffffffffffb40040000000000000000000375310002000000037fffffff000700000000000200000003616200000002000000000002630000057fffffff0000000affffffec3fc00000be800000",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "0.43 ruling 11 and step 4: the nums count 2147483647 wins over bool 2 read before it"
+}

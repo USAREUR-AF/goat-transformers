@@ -1,0 +1,22 @@
+{
+  "name": "kind-other-uint64-at-four-mod-eight-no-pad",
+  "from": "conformance-cdr2",
+  "to": "conformance-cdr2",
+  "input": "000600000200fffeb2d05e00fffffffffffffffbbfc00000000000000000000375310000ffffffff8000000100070000000000040000000000000001000000073fc00000be8000007fffffffffffffff",
+  "expect": "000600000200fffeb2d05e00fffffffffffffffbbfc00000000000000000000375310000ffffffff8000000100070000000000040000000000000001000000073fc00000be8000007fffffffffffffff",
+  "model": {
+    "@kind": "other",
+    "probe.x": "2",
+    "probe.a": "-0.125",
+    "probe.w": "0",
+    "probe.c1": "-1",
+    "lat": "-90",
+    "probe.items.#": "0",
+    "probe.nums.#": "1",
+    "probe.gains.#": "2",
+    "probe.c2": "9223372036854775807",
+    "probe.nums[0].probe.val": "7"
+  },
+  "source": "constructed",
+  "reference": "0.43 Types (uint64 aligns to 4 under cdr 2): gains end at off 68, 4 mod 8, and c2 follows with no pad; the empty items still take a DHEADER of 4 (the count alone, ruling 9)"
+}

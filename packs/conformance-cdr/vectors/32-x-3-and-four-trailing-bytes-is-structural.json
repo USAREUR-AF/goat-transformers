@@ -1,0 +1,9 @@
+{
+  "name": "x-3-and-four-trailing-bytes-is-structural",
+  "from": "conformance-cdr",
+  "to": "conformance-cdr",
+  "input": "000000000300fffeb2d05e00fffffffffffffffb40040000000000000000000375310001000000037fffffff00070000000000020000000361620000000200000000000263000005000000020000000affffffec3fc00000be80000000000000",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "0.43 ruling 25: with x = 3 no kind holds, and no kind line is read, so 4 bytes remain after the common lines (step 2); the structural check ranks above no-kind"
+}

@@ -1,0 +1,21 @@
+{
+  "name": "kind-other-uint64-after-four-pad-bytes",
+  "from": "conformance-cdr",
+  "to": "conformance-cdr",
+  "input": "000000000200fffeb2d05e00fffffffffffffffbbfc00000000000000000000375310000ffffffff800000010007000000000000000000003fc00000be800000000000007fffffffffffffff",
+  "expect": "000000000200fffeb2d05e00fffffffffffffffbbfc00000000000000000000375310000ffffffff800000010007000000000000000000003fc00000be800000000000007fffffffffffffff",
+  "model": {
+    "@kind": "other",
+    "probe.x": "2",
+    "probe.a": "-0.125",
+    "probe.w": "0",
+    "probe.c1": "-1",
+    "lat": "-90",
+    "probe.items.#": "0",
+    "probe.nums.#": "0",
+    "probe.gains.#": "2",
+    "probe.c2": "9223372036854775807"
+  },
+  "source": "constructed",
+  "reference": "0.43 ruling 3 (when 1 2 reads probe.x) and Types (uint64 aligns to 8 under cdr 1): gains end at off 60, so 4 pad bytes stand before c2 at off 64; c2 = 2^63-1 is the largest uint64 that decodes"
+}

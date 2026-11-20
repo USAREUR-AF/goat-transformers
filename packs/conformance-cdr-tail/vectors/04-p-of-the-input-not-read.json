@@ -1,0 +1,12 @@
+{
+  "name": "p-of-the-input-not-read",
+  "from": "conformance-cdr-tail",
+  "to": "conformance-cdr-tail",
+  "input": "0001000001000000010000000100000000010000",
+  "expect": "0001000201000000010000000100000000010000",
+  "model": {
+    "uid": ""
+  },
+  "source": "constructed",
+  "reference": "0.43 ruling 5: the input states p = 0 with 2 trailing zero bytes; decode never reads p, encode writes 2 (body 14 bytes, the empty uid is length 1 and one NUL)"
+}

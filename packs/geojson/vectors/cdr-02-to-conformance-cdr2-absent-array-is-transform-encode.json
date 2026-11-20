@@ -1,0 +1,9 @@
+{
+  "name": "cdr-to-conformance-cdr2-absent-array-is-transform-encode",
+  "from": "geojson",
+  "to": "conformance-cdr2",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[10,30]},\"properties\":{},\"id\":\"g1\"}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "0.43 Reading and writing step 3, as for conformance-cdr"
+}

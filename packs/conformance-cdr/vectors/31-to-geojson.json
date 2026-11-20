@@ -1,0 +1,13 @@
+{
+  "name": "to-geojson",
+  "from": "conformance-cdr",
+  "to": "geojson",
+  "input": "000000000100fffeb2d05e00fffffffffffffffb40040000000000000000000375310001000000037fffffff00070000000000020000000361620000000200000000000263000005000000020000000affffffec3fc00000be800000",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{},\"id\":\"u1\"}",
+  "model": {
+    "uid": "u1",
+    "lat": "90"
+  },
+  "source": "constructed",
+  "reference": "geojson pack: uid is id, lat is geometry.lat; lon is absent, so geometry is null (ruling 5 of 0.1.1) and lat is not written; no probe key is mapped by geojson"
+}

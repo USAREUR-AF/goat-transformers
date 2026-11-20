@@ -4831,3 +4831,19 @@ does not equal the bytes the collection takes is `malformed-wire`.
     is exact only for input in that form.
 20. **Three trailing zero bytes** after a body whose length is already a
     multiple of 4 are accepted (step 2 as written).
+21. **A `when` value over a field** replaces the field's value before any
+    range check (as ruling 29 of 0.28): the field's own key value is never
+    encoded.
+22. **The header lines' values.** `cdr` other than `1` or `2`, and a second
+    `cdr` or `representation` line, are `bad-directive` after the file.
+23. **The scales** are valid only on `int8`, `uint8`, `int16`, `uint16`,
+    `int32`, `uint32`, `int64`, `uint64` and `octet`; on `char8`, `bool`,
+    `enum8/16/32`, a float or `string` they are `bad-directive` after the
+    file.
+24. **A `when` value that does not fit its line's size** is `bad-directive`
+    after the file.
+25. **Structural errors before `no-kind`.** Ruling 11 also ranks every
+    structural check above `no-kind`.
+26. **The third token.** When the third token of a field line is a field
+    option name (`via`, `with`, `absent`, `optional`, `swap`, `trim`,
+    `stop`), the transform is the default and the token begins the options.

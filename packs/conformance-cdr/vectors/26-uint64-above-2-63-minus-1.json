@@ -1,0 +1,9 @@
+{
+  "name": "uint64-above-2-63-minus-1",
+  "from": "conformance-cdr",
+  "to": "conformance-cdr",
+  "input": "000000000200fffeb2d05e00fffffffffffffffbbfc00000000000000000000375310000ffffffff800000010007000000000000000000003fc00000be800000000000008000000000000000",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "0.43 Types: uint64 8000000000000000 (2^63) at off 64 is above 2^63-1"
+}

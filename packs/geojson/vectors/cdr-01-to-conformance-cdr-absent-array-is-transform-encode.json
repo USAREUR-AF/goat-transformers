@@ -1,0 +1,14 @@
+{
+  "name": "cdr-to-conformance-cdr-absent-array-is-transform-encode",
+  "from": "geojson",
+  "to": "conformance-cdr",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[10,30]},\"properties\":{},\"id\":\"g1\"}",
+  "expect_error": "transform-encode",
+  "model": {
+    "uid": "g1",
+    "lat": "30",
+    "lon": "10"
+  },
+  "source": "constructed",
+  "reference": "0.43 Reading and writing step 3: the entity has no probe.gains, and an absent array:2 list is transform-encode; every other line encodes (absent keys write zero bits, absent seqs a count of 0)"
+}

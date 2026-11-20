@@ -1,0 +1,12 @@
+{
+  "name": "cdr-to-conformance-cdr-tail-context-uint8-300",
+  "from": "geojson",
+  "to": "conformance-cdr-tail",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[10,30]},\"properties\":{},\"id\":\"g1\"}",
+  "expect_error": "transform-encode",
+  "context": {
+    "probe.x": "300"
+  },
+  "source": "constructed",
+  "reference": "0.43 ruling 7: uint8 takes 0 to 255"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "dheader-that-lies",
+  "from": "conformance-cdr2",
+  "to": "conformance-cdr2",
+  "input": "000600000100fffeb2d05e00fffffffffffffffb40040000000000000000000375310001000000037fffffff000700000000001c000000020000000361620000000200000000000263000005000000020000000affffffec3fc00000be800000",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "0.43 Groups: the DHEADER holds 28, the collection takes 24 bytes (off 48 to 72)"
+}

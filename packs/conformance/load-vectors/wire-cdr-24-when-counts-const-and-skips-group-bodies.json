@@ -1,0 +1,8 @@
+{
+  "name": "wire-cdr-24-when-counts-const-and-skips-group-bodies",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey lat float deg\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey x int -\nkey n int -\nkey a float -\nkey label string -\nkey qty int -\nkey val int -\nlist items \"a list\"\nlist nums \"a list\"\n"
+  ],
+  "pack": "format probe-cdr\nversion 0.43.0\ndistribution public\nsource \"probe\"\nuses probe\nwire cdr\ncdr 1\nrepresentation 0000\nfield probe.x uint8\ngroup probe.items seq\n  field probe.label string\n  field probe.qty uint16\nend\nconst uint16 7\nfield probe.n int16\nkind k\nwhen 4 5\nkind j\nwhen 3 7\n"
+}

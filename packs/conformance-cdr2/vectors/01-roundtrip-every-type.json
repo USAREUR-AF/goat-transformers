@@ -1,0 +1,35 @@
+{
+  "name": "roundtrip-every-type",
+  "from": "conformance-cdr2",
+  "to": "conformance-cdr2",
+  "input": "000600000100fffeb2d05e00fffffffffffffffb40040000000000000000000375310001000000037fffffff0007000000000018000000020000000361620000000200000000000263000005000000020000000affffffec3fc00000be800000",
+  "expect": "000600000100fffeb2d05e00fffffffffffffffb40040000000000000000000375310001000000037fffffff0007000000000018000000020000000361620000000200000000000263000005000000020000000affffffec3fc00000be800000",
+  "model": {
+    "@kind": "plain",
+    "probe.x": "1",
+    "probe.n": "-2",
+    "probe.y": "3000000000",
+    "probe.z": "-5",
+    "probe.a": "2.5",
+    "uid": "u1",
+    "probe.w": "1",
+    "probe.c1": "3",
+    "lat": "90",
+    "probe.items.#": "2",
+    "probe.items[0].probe.label": "ab",
+    "probe.items[0].probe.qty": "2",
+    "probe.items[1].probe.label": "c",
+    "probe.items[1].probe.qty": "5",
+    "probe.nums.#": "2",
+    "probe.nums[0].probe.val": "10",
+    "probe.nums[1].probe.val": "-20",
+    "probe.gains.#": "2",
+    "probe.gains[0].probe.ratio": "1.5",
+    "probe.gains[1].probe.ratio": "-0.25",
+    "@absent": [
+      "probe.c2"
+    ]
+  },
+  "source": "constructed",
+  "reference": "0.43 rulings 8 and 9: under cdr 2 the seq of a struct takes a DHEADER at off 44 holding 24, the bytes from the count at off 48 through the last qty ending at off 72; the seq of int32 and the array of float32 take none; hand layout B in gen.py"
+}

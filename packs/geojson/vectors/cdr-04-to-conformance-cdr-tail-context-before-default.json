@@ -1,0 +1,12 @@
+{
+  "name": "cdr-to-conformance-cdr-tail-context-before-default",
+  "from": "geojson",
+  "to": "conformance-cdr-tail",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[10,30]},\"properties\":{},\"id\":\"g1\"}",
+  "expect": "0001000000000000fdff00000300000067310000",
+  "context": {
+    "probe.n": "-3"
+  },
+  "source": "constructed",
+  "reference": "0.6 Order inside convert: the context fills probe.n (step 2) before encode looks for a default (step 4), so -3 (fdff) is written"
+}
