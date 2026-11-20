@@ -202,6 +202,21 @@ class Serializer(unittest.TestCase):
         # 8-bit Fletcher over class, id and length of an empty NAV-PVT poll
         self.assertEqual(gen.checksum(bytes([0x01, 0x07, 0x00, 0x00])), bytes([0x08, 0x19]))
 
+    def test_a_scale_beyond_64_bits_is_written_as_exact_decimal_text(self):
+        F = gen.Fraction
+        self.assertEqual(gen.factor_text(F(45, 4194304)), "45/4194304")
+        self.assertEqual(gen.factor_text(F(1, 2 ** 63 - 1)), "1/9223372036854775807")
+        text = gen.factor_text(F(1, 2 ** 66))
+        self.assertEqual(text, "0.000000000000000000013552527156068805425093160010874271392822265625")
+        self.assertEqual(float(text), 2.0 ** -66)          # the nearest double is the value
+        self.assertEqual(gen.factor_text(F(-3, 2 ** 70))[:3], "-0.")
+        self.assertEqual(gen.factor_text(F(2 ** 70)), str(2 ** 70))
+        for f in (F(1, 2 ** 66), F(-3, 2 ** 70), F(7, 10 ** 25)):
+            self.assertEqual(F(gen.Decimal(gen.factor_text(f))), f)
+            self.assertNotIn("e", gen.factor_text(f))
+        with self.assertRaises(gen.GenError):
+            gen.factor_text(F(1, 3 * 2 ** 64))              # no exact decimal text
+
     def test_scale_names(self):
         F = gen.Fraction
         self.assertEqual(gen.scale_of_name("E1_N7"), F(1, 10 ** 7))

@@ -377,8 +377,36 @@ def slug(text):
     return s if s and not s[0].isdigit() else "x" + s
 
 
+INT64_MAX = (1 << 63) - 1
+
+
 def factor_text(f):
-    return str(f.numerator) if f.denominator == 1 else "%d/%d" % (f.numerator, f.denominator)
+    """A scale factor as pack text: `num/den`, or the integer, when both fit a
+    signed 64-bit integer (an engine may read them as one); otherwise the exact
+    value as plain decimal text with no exponent (number text, ruling 2b),
+    which only a fraction whose denominator has no prime factor but 2 and 5
+    has. A power of 2 is such a value, and the double nearest its decimal text
+    is the value itself, so a decode reads the same number either way."""
+    if abs(f.numerator) <= INT64_MAX and f.denominator <= INT64_MAX:
+        return str(f.numerator) if f.denominator == 1 else "%d/%d" % (f.numerator, f.denominator)
+    return exact_decimal(f)
+
+
+def exact_decimal(f):
+    """The exact decimal text of a fraction, or GenError when it has none."""
+    den, twos, fives = f.denominator, 0, 0
+    while den % 2 == 0:
+        den, twos = den // 2, twos + 1
+    while den % 5 == 0:
+        den, fives = den // 5, fives + 1
+    if den != 1:
+        raise GenError("scale %s has no exact decimal text and does not fit a 64-bit fraction" % f)
+    places = max(twos, fives)
+    digits = abs(f.numerator) * 10 ** places // f.denominator     # exact: the denominator divides 10^places
+    text = str(digits).rjust(places + 1, "0")
+    whole, frac = text[:len(text) - places] if places else text, text[len(text) - places:] if places else ""
+    frac = frac.rstrip("0")
+    return ("-" if f.numerator < 0 else "") + whole + ("." + frac if frac else "")
 
 
 Line = collections.namedtuple("Line", "key pos bits tr leaf")

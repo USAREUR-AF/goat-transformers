@@ -107,7 +107,7 @@ Scaled fields:
 | `mga_bds_alm_set` | `omegaDot` | `sscale:1/274877906944` |
 | `mga_bds_alm_set` | `a0` | `sscale:1/1048576` |
 | `mga_bds_alm_set` | `a1` | `sscale:1/274877906944` |
-| `mga_bds_eph_set` | `a2` | `sscale:1/73786976294838206464` |
+| `mga_bds_eph_set` | `a2` | `sscale:0.000000000000000000013552527156068805425093160010874271392822265625` |
 | `mga_bds_eph_set` | `a1` | `sscale:1/1125899906842624` |
 | `mga_bds_eph_set` | `a0` | `sscale:1/8589934592` |
 | `mga_bds_eph_set` | `toc` | `uscale:8` |

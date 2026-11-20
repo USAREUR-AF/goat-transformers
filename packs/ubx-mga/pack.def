@@ -169,7 +169,7 @@ field     ubxmga.mga_bds_eph_set_svid 0:64:8 uint
 field     ubxmga.mga_bds_eph_set_reserved0 0:72:8 uint
 field     ubxmga.mga_bds_eph_set_sath1 0:80:8 uint
 field     ubxmga.mga_bds_eph_set_iodc 0:88:8 uint
-field     ubxmga.mga_bds_eph_set_a2 0:96:16 sscale:1/73786976294838206464
+field     ubxmga.mga_bds_eph_set_a2 0:96:16 sscale:0.000000000000000000013552527156068805425093160010874271392822265625
 field     ubxmga.mga_bds_eph_set_a1 0:112:32 sscale:1/1125899906842624
 field     ubxmga.mga_bds_eph_set_a0 0:144:32 sscale:1/8589934592
 field     ubxmga.mga_bds_eph_set_toc 0:176:32 uscale:8
