@@ -1,0 +1,28 @@
+{
+ "keys": {
+  "classification|id|string": "classification_id",
+  "gene_element|id|string": "gene_element_id",
+  "gene|id|string": "gene_id",
+  "meta_profile|.|string": "meta_profile_value",
+  "target|amountString|string": "target_amount_string",
+  "target|id|string": "target_id",
+  "|comment|string": "comment",
+  "|id|string": "id",
+  "|implicitRules|string": "implicit_rules",
+  "|language|string": "language",
+  "|meta.id|string": "meta_id",
+  "|meta.lastUpdated|string": "meta_last_updated",
+  "|meta.source|string": "meta_source",
+  "|meta.versionId|string": "meta_version_id",
+  "|resourceType|string": "resource_type",
+  "|text.id|string": "text_id",
+  "|text.status|string": "text_status"
+ },
+ "lists": {
+  "|classification": "classification",
+  "|gene": "gene",
+  "|geneElement": "gene_element",
+  "|meta.profile": "meta_profile",
+  "|target": "target"
+ }
+}

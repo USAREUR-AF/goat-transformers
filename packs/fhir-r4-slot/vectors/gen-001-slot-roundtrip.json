@@ -1,0 +1,17 @@
+{
+ "name": "gen-slot-roundtrip",
+ "from": "fhir-r4-slot",
+ "to": "fhir-r4-slot",
+ "input": "{\"resourceType\":\"Slot\",\"id\":\"s88334\",\"meta\":{\"id\":\"s69001\",\"versionId\":\"s21345\",\"lastUpdated\":\"2025-02-08T17:00:27.796Z\",\"source\":\"s48343\",\"profile\":[\"s25538\",\"s31057\"]},\"implicitRules\":\"s84125\",\"language\":\"s11508\",\"text\":{\"id\":\"s19328\",\"status\":\"additional\"},\"identifier\":[{\"id\":\"s66875\",\"use\":\"temp\",\"system\":\"s13555\",\"value\":\"s31295\"},{\"id\":\"s11546\",\"use\":\"temp\",\"system\":\"s34090\",\"value\":\"s21555\"}],\"serviceCategory\":[{\"id\":\"s90473\",\"text\":\"s18040\"},{\"id\":\"s39876\",\"text\":\"s71943\"}],\"serviceType\":[{\"id\":\"s26200\",\"text\":\"s85466\"},{\"id\":\"s3449\",\"text\":\"s60735\"}],\"specialty\":[{\"id\":\"s85356\",\"text\":\"s26058\"},{\"id\":\"s73676\",\"text\":\"s37028\"}],\"appointmentType\":{\"id\":\"s85228\",\"text\":\"s21218\"},\"schedule\":{\"id\":\"s65172\",\"reference\":\"s74594\",\"type\":\"s52848\",\"identifier\":{\"id\":\"s98844\",\"use\":\"secondary\",\"system\":\"s86216\",\"value\":\"s48149\"},\"display\":\"s32646\"},\"status\":\"busy\",\"start\":\"s33860\",\"end\":\"s96462\",\"overbooked\":false,\"comment\":\"s75477\"}",
+ "expect": "{\"resourceType\":\"Slot\",\"id\":\"s88334\",\"meta\":{\"id\":\"s69001\",\"versionId\":\"s21345\",\"lastUpdated\":\"2025-02-08T17:00:27.796Z\",\"source\":\"s48343\",\"profile\":[\"s25538\",\"s31057\"]},\"implicitRules\":\"s84125\",\"language\":\"s11508\",\"text\":{\"id\":\"s19328\",\"status\":\"additional\"},\"identifier\":[{\"id\":\"s66875\",\"use\":\"temp\",\"system\":\"s13555\",\"value\":\"s31295\"},{\"id\":\"s11546\",\"use\":\"temp\",\"system\":\"s34090\",\"value\":\"s21555\"}],\"serviceCategory\":[{\"id\":\"s90473\",\"text\":\"s18040\"},{\"id\":\"s39876\",\"text\":\"s71943\"}],\"serviceType\":[{\"id\":\"s26200\",\"text\":\"s85466\"},{\"id\":\"s3449\",\"text\":\"s60735\"}],\"specialty\":[{\"id\":\"s85356\",\"text\":\"s26058\"},{\"id\":\"s73676\",\"text\":\"s37028\"}],\"appointmentType\":{\"id\":\"s85228\",\"text\":\"s21218\"},\"schedule\":{\"id\":\"s65172\",\"reference\":\"s74594\",\"type\":\"s52848\",\"identifier\":{\"id\":\"s98844\",\"use\":\"secondary\",\"system\":\"s86216\",\"value\":\"s48149\"},\"display\":\"s32646\"},\"status\":\"busy\",\"start\":\"s33860\",\"end\":\"s96462\",\"overbooked\":false,\"comment\":\"s75477\"}",
+ "model": {
+  "@kind": "slot",
+  "uid": "s88334",
+  "time_ms": "1739034027796",
+  "fhirr4slot.resource_type": "Slot",
+  "fhirr4slot.id": "s88334",
+  "fhirr4slot.meta_id": "s69001",
+  "fhirr4slot.meta_version_id": "s21345",
+  "fhirr4slot.meta_last_updated": "2025-02-08T17:00:27.796Z"
+ }
+}

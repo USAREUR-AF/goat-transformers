@@ -1,0 +1,29 @@
+{
+ "keys": {
+  "meta_profile|.|string": "meta_profile_value",
+  "subunit|id|string": "subunit_id",
+  "subunit|length|float": "subunit_length",
+  "subunit|sequence|string": "subunit_sequence",
+  "subunit|subunit|float": "subunit_subunit",
+  "|areaOfHybridisation|string": "area_of_hybridisation",
+  "|id|string": "id",
+  "|implicitRules|string": "implicit_rules",
+  "|language|string": "language",
+  "|meta.id|string": "meta_id",
+  "|meta.lastUpdated|string": "meta_last_updated",
+  "|meta.source|string": "meta_source",
+  "|meta.versionId|string": "meta_version_id",
+  "|numberOfSubunits|float": "number_of_subunits",
+  "|oligoNucleotideType.id|string": "oligo_nucleotide_type_id",
+  "|oligoNucleotideType.text|string": "oligo_nucleotide_type_text",
+  "|resourceType|string": "resource_type",
+  "|sequenceType.id|string": "sequence_type_id",
+  "|sequenceType.text|string": "sequence_type_text",
+  "|text.id|string": "text_id",
+  "|text.status|string": "text_status"
+ },
+ "lists": {
+  "|meta.profile": "meta_profile",
+  "|subunit": "subunit"
+ }
+}

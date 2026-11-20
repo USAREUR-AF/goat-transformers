@@ -1,0 +1,17 @@
+{
+ "name": "gen-basic-roundtrip",
+ "from": "fhir-r4-basic",
+ "to": "fhir-r4-basic",
+ "input": "{\"resourceType\":\"Basic\",\"id\":\"s24908\",\"meta\":{\"id\":\"s81198\",\"versionId\":\"s58950\",\"lastUpdated\":\"2026-10-03T05:26:41.286Z\",\"source\":\"s64168\",\"profile\":[\"s11075\",\"s93598\"]},\"implicitRules\":\"s42530\",\"language\":\"s82470\",\"text\":{\"id\":\"s94586\",\"status\":\"empty\"},\"identifier\":[{\"id\":\"s5591\",\"use\":\"temp\",\"system\":\"s6366\",\"value\":\"s53093\"},{\"id\":\"s71518\",\"use\":\"secondary\",\"system\":\"s56176\",\"value\":\"s63577\"}],\"code\":{\"id\":\"s72973\",\"text\":\"s16564\"},\"subject\":{\"id\":\"s605\",\"reference\":\"s79131\",\"type\":\"s41718\",\"identifier\":{\"id\":\"s43444\",\"use\":\"secondary\",\"system\":\"s10411\",\"value\":\"s83910\"},\"display\":\"s52705\"},\"created\":\"s46751\",\"author\":{\"id\":\"s20211\",\"reference\":\"s84024\",\"type\":\"s45831\",\"identifier\":{\"id\":\"s65222\",\"use\":\"old\",\"system\":\"s85329\",\"value\":\"s37236\"},\"display\":\"s79673\"}}",
+ "expect": "{\"resourceType\":\"Basic\",\"id\":\"s24908\",\"meta\":{\"id\":\"s81198\",\"versionId\":\"s58950\",\"lastUpdated\":\"2026-10-03T05:26:41.286Z\",\"source\":\"s64168\",\"profile\":[\"s11075\",\"s93598\"]},\"implicitRules\":\"s42530\",\"language\":\"s82470\",\"text\":{\"id\":\"s94586\",\"status\":\"empty\"},\"identifier\":[{\"id\":\"s5591\",\"use\":\"temp\",\"system\":\"s6366\",\"value\":\"s53093\"},{\"id\":\"s71518\",\"use\":\"secondary\",\"system\":\"s56176\",\"value\":\"s63577\"}],\"code\":{\"id\":\"s72973\",\"text\":\"s16564\"},\"subject\":{\"id\":\"s605\",\"reference\":\"s79131\",\"type\":\"s41718\",\"identifier\":{\"id\":\"s43444\",\"use\":\"secondary\",\"system\":\"s10411\",\"value\":\"s83910\"},\"display\":\"s52705\"},\"created\":\"s46751\",\"author\":{\"id\":\"s20211\",\"reference\":\"s84024\",\"type\":\"s45831\",\"identifier\":{\"id\":\"s65222\",\"use\":\"old\",\"system\":\"s85329\",\"value\":\"s37236\"},\"display\":\"s79673\"}}",
+ "model": {
+  "@kind": "basic",
+  "uid": "s24908",
+  "time_ms": "1791005201286",
+  "fhirr4basic.resource_type": "Basic",
+  "fhirr4basic.id": "s24908",
+  "fhirr4basic.meta_id": "s81198",
+  "fhirr4basic.meta_version_id": "s58950",
+  "fhirr4basic.meta_last_updated": "2026-10-03T05:26:41.286Z"
+ }
+}

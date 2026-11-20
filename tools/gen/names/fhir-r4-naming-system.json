@@ -1,0 +1,42 @@
+{
+ "keys": {
+  "contact|id|string": "contact_id",
+  "contact|name|string": "contact_name",
+  "jurisdiction|id|string": "jurisdiction_id",
+  "jurisdiction|text|string": "jurisdiction_text",
+  "meta_profile|.|string": "meta_profile_value",
+  "unique_id|comment|string": "unique_id_comment",
+  "unique_id|id|string": "unique_id_id",
+  "unique_id|preferred|int": "unique_id_preferred",
+  "unique_id|type|string": "unique_id_type",
+  "unique_id|value|string": "unique_id_value",
+  "use_context|id|string": "use_context_id",
+  "|date|string": "date",
+  "|description|string": "description",
+  "|id|string": "id",
+  "|implicitRules|string": "implicit_rules",
+  "|kind|string": "kind",
+  "|language|string": "language",
+  "|meta.id|string": "meta_id",
+  "|meta.lastUpdated|string": "meta_last_updated",
+  "|meta.source|string": "meta_source",
+  "|meta.versionId|string": "meta_version_id",
+  "|name|string": "name",
+  "|publisher|string": "publisher",
+  "|resourceType|string": "resource_type",
+  "|responsible|string": "responsible",
+  "|status|string": "status",
+  "|text.id|string": "text_id",
+  "|text.status|string": "text_status",
+  "|type.id|string": "type_id",
+  "|type.text|string": "type_text",
+  "|usage|string": "usage"
+ },
+ "lists": {
+  "|contact": "contact",
+  "|jurisdiction": "jurisdiction",
+  "|meta.profile": "meta_profile",
+  "|uniqueId": "unique_id",
+  "|useContext": "use_context"
+ }
+}

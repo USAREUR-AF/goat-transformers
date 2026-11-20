@@ -1,0 +1,17 @@
+{
+ "name": "gen-search_parameter-roundtrip",
+ "from": "fhir-r4-search-parameter",
+ "to": "fhir-r4-search-parameter",
+ "input": "{\"resourceType\":\"SearchParameter\",\"id\":\"s25169\",\"meta\":{\"id\":\"s9050\",\"versionId\":\"s27064\",\"lastUpdated\":\"2024-03-25T16:31:10.554Z\",\"source\":\"s6896\",\"profile\":[\"s7580\",\"s11585\"]},\"implicitRules\":\"s62520\",\"language\":\"s84463\",\"text\":{\"id\":\"s50884\",\"status\":\"extensions\"},\"url\":\"s4771\",\"version\":\"s7059\",\"name\":\"s47076\",\"derivedFrom\":\"s81155\",\"status\":\"active\",\"experimental\":true,\"date\":\"s81056\",\"publisher\":\"s9091\",\"contact\":[{\"id\":\"s69275\",\"name\":\"s64606\"},{\"id\":\"s91636\",\"name\":\"s46977\"}],\"description\":\"s49751\",\"useContext\":[{\"id\":\"s53482\"},{\"id\":\"s6652\"}],\"jurisdiction\":[{\"id\":\"s12787\",\"text\":\"s52134\"},{\"id\":\"s35988\",\"text\":\"s1267\"}],\"purpose\":\"s22783\",\"code\":\"s9405\",\"base\":[\"s73821\",\"s59469\"],\"type\":\"reference\",\"expression\":\"s51658\",\"xpath\":\"s21486\",\"xpathUsage\":\"distance\",\"target\":[\"s92639\",\"s33852\"],\"multipleOr\":false,\"multipleAnd\":false,\"comparator\":[\"ne\",\"ap\"],\"modifier\":[\"not-in\",\"ofType\"],\"chain\":[\"s68128\",\"s59871\"],\"component\":[{\"id\":\"s88731\",\"definition\":\"s51076\",\"expression\":\"s77295\"},{\"id\":\"s22922\",\"definition\":\"s50809\",\"expression\":\"s12344\"}]}",
+ "expect": "{\"resourceType\":\"SearchParameter\",\"id\":\"s25169\",\"meta\":{\"id\":\"s9050\",\"versionId\":\"s27064\",\"lastUpdated\":\"2024-03-25T16:31:10.554Z\",\"source\":\"s6896\",\"profile\":[\"s7580\",\"s11585\"]},\"implicitRules\":\"s62520\",\"language\":\"s84463\",\"text\":{\"id\":\"s50884\",\"status\":\"extensions\"},\"url\":\"s4771\",\"version\":\"s7059\",\"name\":\"s47076\",\"derivedFrom\":\"s81155\",\"status\":\"active\",\"experimental\":true,\"date\":\"s81056\",\"publisher\":\"s9091\",\"contact\":[{\"id\":\"s69275\",\"name\":\"s64606\"},{\"id\":\"s91636\",\"name\":\"s46977\"}],\"description\":\"s49751\",\"useContext\":[{\"id\":\"s53482\"},{\"id\":\"s6652\"}],\"jurisdiction\":[{\"id\":\"s12787\",\"text\":\"s52134\"},{\"id\":\"s35988\",\"text\":\"s1267\"}],\"purpose\":\"s22783\",\"code\":\"s9405\",\"base\":[\"s73821\",\"s59469\"],\"type\":\"reference\",\"expression\":\"s51658\",\"xpath\":\"s21486\",\"xpathUsage\":\"distance\",\"target\":[\"s92639\",\"s33852\"],\"multipleOr\":false,\"multipleAnd\":false,\"comparator\":[\"ne\",\"ap\"],\"modifier\":[\"not-in\",\"ofType\"],\"chain\":[\"s68128\",\"s59871\"],\"component\":[{\"id\":\"s88731\",\"definition\":\"s51076\",\"expression\":\"s77295\"},{\"id\":\"s22922\",\"definition\":\"s50809\",\"expression\":\"s12344\"}]}",
+ "model": {
+  "@kind": "search_parameter",
+  "uid": "s25169",
+  "time_ms": "1711384270554",
+  "fhirr4searchparameter.resource_type": "SearchParameter",
+  "fhirr4searchparameter.id": "s25169",
+  "fhirr4searchparameter.meta_id": "s9050",
+  "fhirr4searchparameter.meta_version_id": "s27064",
+  "fhirr4searchparameter.meta_last_updated": "2024-03-25T16:31:10.554Z"
+ }
+}

@@ -1,0 +1,17 @@
+{
+ "name": "gen-substance-roundtrip",
+ "from": "fhir-r4-substance",
+ "to": "fhir-r4-substance",
+ "input": "{\"resourceType\":\"Substance\",\"id\":\"s66888\",\"meta\":{\"id\":\"s52158\",\"versionId\":\"s11835\",\"lastUpdated\":\"2025-01-14T04:19:26.583Z\",\"source\":\"s66057\",\"profile\":[\"s38103\",\"s25758\"]},\"implicitRules\":\"s14781\",\"language\":\"s12614\",\"text\":{\"id\":\"s2712\",\"status\":\"generated\"},\"identifier\":[{\"id\":\"s93695\",\"use\":\"secondary\",\"system\":\"s94450\",\"value\":\"s59084\"},{\"id\":\"s24658\",\"use\":\"official\",\"system\":\"s34569\",\"value\":\"s69576\"}],\"status\":\"active\",\"category\":[{\"id\":\"s2778\",\"text\":\"s26309\"},{\"id\":\"s82556\",\"text\":\"s37979\"}],\"code\":{\"id\":\"s68333\",\"text\":\"s77321\"},\"description\":\"s88465\",\"instance\":[{\"id\":\"s89469\",\"expiry\":\"s20260\"},{\"id\":\"s25682\",\"expiry\":\"s29169\"}],\"ingredient\":[{\"id\":\"s29956\"},{\"id\":\"s4287\"}]}",
+ "expect": "{\"resourceType\":\"Substance\",\"id\":\"s66888\",\"meta\":{\"id\":\"s52158\",\"versionId\":\"s11835\",\"lastUpdated\":\"2025-01-14T04:19:26.583Z\",\"source\":\"s66057\",\"profile\":[\"s38103\",\"s25758\"]},\"implicitRules\":\"s14781\",\"language\":\"s12614\",\"text\":{\"id\":\"s2712\",\"status\":\"generated\"},\"identifier\":[{\"id\":\"s93695\",\"use\":\"secondary\",\"system\":\"s94450\",\"value\":\"s59084\"},{\"id\":\"s24658\",\"use\":\"official\",\"system\":\"s34569\",\"value\":\"s69576\"}],\"status\":\"active\",\"category\":[{\"id\":\"s2778\",\"text\":\"s26309\"},{\"id\":\"s82556\",\"text\":\"s37979\"}],\"code\":{\"id\":\"s68333\",\"text\":\"s77321\"},\"description\":\"s88465\",\"instance\":[{\"id\":\"s89469\",\"expiry\":\"s20260\"},{\"id\":\"s25682\",\"expiry\":\"s29169\"}],\"ingredient\":[{\"id\":\"s29956\"},{\"id\":\"s4287\"}]}",
+ "model": {
+  "@kind": "substance",
+  "uid": "s66888",
+  "time_ms": "1736828366583",
+  "fhirr4substance.resource_type": "Substance",
+  "fhirr4substance.id": "s66888",
+  "fhirr4substance.meta_id": "s52158",
+  "fhirr4substance.meta_version_id": "s11835",
+  "fhirr4substance.meta_last_updated": "2025-01-14T04:19:26.583Z"
+ }
+}

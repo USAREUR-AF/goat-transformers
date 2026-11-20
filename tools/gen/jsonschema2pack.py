@@ -57,7 +57,7 @@ NAME = "jsonschema2pack"
 MAX_DEPTH = 8
 # --max-depth and --max-nest of the current run (set by run(); the defaults are the
 # limits every pack had before the options existed)
-LIMITS = {"depth": MAX_DEPTH, "nest": None}
+LIMITS = {"depth": MAX_DEPTH, "nest": None, "omit": frozenset(), "omit_prefix": ()}
 MAX_KEY_LEN = 96
 KEY_BUDGET = 60000
 VECTOR_BUDGET = 12 * 1000 * 1000
@@ -588,6 +588,9 @@ def walk_json(entries, reg, path, required, out, notmapped, depth, stack, nest=0
         for name, subs in n.props.items():
             if "." in name:
                 notmapped.append((loc + "." + name, "member name contains `.` (not addressable, engine-spec 0.5)"))
+                continue
+            if name in LIMITS["omit"] or (LIMITS["omit_prefix"] and name.startswith(LIMITS["omit_prefix"])):
+                notmapped.append((".".join(path + [name]), "omitted (--omit)"))
                 continue
             sig = tuple(sorted((id(s), c.base) for s, c in subs))
             if sig in stack:
@@ -1552,6 +1555,11 @@ def run(argv=None):
                     help="json: an array inside N arrays is not mapped; default no limit")
     ap.add_argument("--limit-reason", metavar="TEXT",
                     help="why --max-depth or --max-nest is set, for pack.md")
+    ap.add_argument("--omit", action="append", default=[], metavar="NAME",
+                    help="json: a member of this name is not mapped at any depth (repeatable)")
+    ap.add_argument("--omit-prefix", action="append", default=[], metavar="TEXT",
+                    help="json: a member whose name begins with TEXT is not mapped at any depth (repeatable)")
+    ap.add_argument("--omit-reason", metavar="TEXT", help="why --omit or --omit-prefix is set, for pack.md")
     a = ap.parse_args(argv)
     for opt in ("max_depth", "max_nest"):
         v = getattr(a, opt)
@@ -1559,6 +1567,10 @@ def run(argv=None):
             raise GenError("--%s must be at least 1" % opt.replace("_", "-"))
     LIMITS["depth"] = a.max_depth if a.max_depth is not None else MAX_DEPTH
     LIMITS["nest"] = a.max_nest
+    LIMITS["omit"] = frozenset(a.omit)
+    LIMITS["omit_prefix"] = tuple(a.omit_prefix)
+    if (a.omit or a.omit_prefix) and a.wire != "json":
+        raise GenError("--omit and --omit-prefix apply to the json wire only")
 
     reg = Registry(a.schema, dict(parse_kv(x, "--alias") for x in a.alias), a.opaque)
     names = Names(a.names_file)
@@ -2084,6 +2096,11 @@ def write_md(a, reg, kinds, bound, keys, lists, vectors, cross, use_kinds):
             w.append("Limits of this pack: %s%s. Such a place is in the table under Not mapped;" % (
                 "; ".join(lim), (" (%s)" % a.limit_reason.rstrip(".")) if a.limit_reason else ""))
             w.append("outside an array its scalars are residue and round-trip, inside an array they are dropped.\n")
+        if a.omit or a.omit_prefix:
+            what = ["`%s`" % x for x in a.omit] + ["names beginning `%s`" % x for x in a.omit_prefix]
+            w.append("Members not mapped at any depth: %s%s. They are in the table under Not mapped;" % (
+                ", ".join(what), (" (%s)" % a.omit_reason.rstrip(".")) if a.omit_reason else ""))
+            w.append("outside an array their scalars are residue and round-trip, inside an array they are dropped.\n")
     else:
         w.append("The message is one GeoJSON Feature. The wire addresses the Point coordinates, top-level")
         w.append("members and one level of `properties`; so scalar members there are `field` lines and")

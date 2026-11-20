@@ -1,0 +1,26 @@
+{
+ "keys": {
+  "meta_profile|.|string": "meta_profile_value",
+  "|contentType|string": "content_type",
+  "|data|string": "data",
+  "|id|string": "id",
+  "|implicitRules|string": "implicit_rules",
+  "|language|string": "language",
+  "|meta.id|string": "meta_id",
+  "|meta.lastUpdated|string": "meta_last_updated",
+  "|meta.source|string": "meta_source",
+  "|meta.versionId|string": "meta_version_id",
+  "|resourceType|string": "resource_type",
+  "|securityContext.display|string": "security_context_display",
+  "|securityContext.identifier.id|string": "security_context_identifier_id",
+  "|securityContext.identifier.system|string": "security_context_identifier_system",
+  "|securityContext.identifier.use|string": "security_context_identifier_use",
+  "|securityContext.identifier.value|string": "security_context_identifier_value",
+  "|securityContext.id|string": "security_context_id",
+  "|securityContext.reference|string": "security_context_reference",
+  "|securityContext.type|string": "security_context_type"
+ },
+ "lists": {
+  "|meta.profile": "meta_profile"
+ }
+}

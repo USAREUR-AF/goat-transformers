@@ -1,0 +1,30 @@
+{
+ "keys": {
+  "item|id|string": "item_id",
+  "item|type|string": "item_type",
+  "meta_profile|.|string": "meta_profile_value",
+  "|active|int": "active",
+  "|author.display|string": "author_display",
+  "|author.identifier.id|string": "author_identifier_id",
+  "|author.identifier.system|string": "author_identifier_system",
+  "|author.identifier.use|string": "author_identifier_use",
+  "|author.identifier.value|string": "author_identifier_value",
+  "|author.id|string": "author_id",
+  "|author.reference|string": "author_reference",
+  "|author.type|string": "author_type",
+  "|id|string": "id",
+  "|implicitRules|string": "implicit_rules",
+  "|language|string": "language",
+  "|meta.id|string": "meta_id",
+  "|meta.lastUpdated|string": "meta_last_updated",
+  "|meta.source|string": "meta_source",
+  "|meta.versionId|string": "meta_version_id",
+  "|resourceType|string": "resource_type",
+  "|text.id|string": "text_id",
+  "|text.status|string": "text_status"
+ },
+ "lists": {
+  "|item": "item",
+  "|meta.profile": "meta_profile"
+ }
+}

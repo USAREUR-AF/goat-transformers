@@ -1,0 +1,17 @@
+{
+ "name": "gen-medicinal_product_undesirable_effect-roundtrip",
+ "from": "fhir-r4-medicinal-product-undesirable-effect",
+ "to": "fhir-r4-medicinal-product-undesirable-effect",
+ "input": "{\"resourceType\":\"MedicinalProductUndesirableEffect\",\"id\":\"s44907\",\"meta\":{\"id\":\"s74775\",\"versionId\":\"s64775\",\"lastUpdated\":\"2026-04-01T22:40:19.190Z\",\"source\":\"s78105\",\"profile\":[\"s34730\",\"s7799\"]},\"implicitRules\":\"s49232\",\"language\":\"s53593\",\"text\":{\"id\":\"s89435\",\"status\":\"empty\"},\"subject\":[{\"id\":\"s54863\",\"reference\":\"s96396\",\"type\":\"s84193\",\"display\":\"s70661\"},{\"id\":\"s5581\",\"reference\":\"s27641\",\"type\":\"s18429\",\"display\":\"s16533\"}],\"symptomConditionEffect\":{\"id\":\"s17207\",\"text\":\"s17611\"},\"classification\":{\"id\":\"s28043\",\"text\":\"s78284\"},\"frequencyOfOccurrence\":{\"id\":\"s98517\",\"text\":\"s59206\"},\"population\":[{\"id\":\"s92177\"},{\"id\":\"s42160\"}]}",
+ "expect": "{\"resourceType\":\"MedicinalProductUndesirableEffect\",\"id\":\"s44907\",\"meta\":{\"id\":\"s74775\",\"versionId\":\"s64775\",\"lastUpdated\":\"2026-04-01T22:40:19.190Z\",\"source\":\"s78105\",\"profile\":[\"s34730\",\"s7799\"]},\"implicitRules\":\"s49232\",\"language\":\"s53593\",\"text\":{\"id\":\"s89435\",\"status\":\"empty\"},\"subject\":[{\"id\":\"s54863\",\"reference\":\"s96396\",\"type\":\"s84193\",\"display\":\"s70661\"},{\"id\":\"s5581\",\"reference\":\"s27641\",\"type\":\"s18429\",\"display\":\"s16533\"}],\"symptomConditionEffect\":{\"id\":\"s17207\",\"text\":\"s17611\"},\"classification\":{\"id\":\"s28043\",\"text\":\"s78284\"},\"frequencyOfOccurrence\":{\"id\":\"s98517\",\"text\":\"s59206\"},\"population\":[{\"id\":\"s92177\"},{\"id\":\"s42160\"}]}",
+ "model": {
+  "@kind": "medicinal_product_undesirable_effect",
+  "uid": "s44907",
+  "time_ms": "1775083219190",
+  "fhirr4medicinalproductundesirableeffect.resource_type": "MedicinalProductUndesirableEffect",
+  "fhirr4medicinalproductundesirableeffect.id": "s44907",
+  "fhirr4medicinalproductundesirableeffect.meta_id": "s74775",
+  "fhirr4medicinalproductundesirableeffect.meta_version_id": "s64775",
+  "fhirr4medicinalproductundesirableeffect.meta_last_updated": "2026-04-01T22:40:19.190Z"
+ }
+}

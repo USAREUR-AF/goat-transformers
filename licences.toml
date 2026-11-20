@@ -150,3 +150,14 @@ share_alike = false
 attribution = true
 field_of_use = ["any use other than non-profit research and non-profit education without a written licence", "operational use of the REST API without a written agreement"]
 distribution = "public"
+
+[licences."CC0-1.0"]
+name = "Creative Commons Zero v1.0 Universal"
+url = "https://creativecommons.org/publicdomain/zero/1.0/"
+commercial = "yes"
+share_alike = false
+attribution = false
+field_of_use = []
+distribution = "public"
+
+# A source that states no licence: kept out of `open` until it is resolved.

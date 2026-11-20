@@ -1,0 +1,17 @@
+{
+ "name": "gen-structure_map-roundtrip",
+ "from": "fhir-r4-structure-map",
+ "to": "fhir-r4-structure-map",
+ "input": "{\"resourceType\":\"StructureMap\",\"id\":\"s20678\",\"meta\":{\"id\":\"s77278\",\"versionId\":\"s43175\",\"lastUpdated\":\"2026-11-21T21:27:18.748Z\",\"source\":\"s36223\",\"profile\":[\"s80614\",\"s47940\"]},\"implicitRules\":\"s24694\",\"language\":\"s44305\",\"text\":{\"id\":\"s25761\",\"status\":\"empty\"},\"url\":\"s74236\",\"identifier\":[{\"id\":\"s32645\",\"use\":\"old\",\"system\":\"s4989\",\"value\":\"s18703\"},{\"id\":\"s20961\",\"use\":\"secondary\",\"system\":\"s72923\",\"value\":\"s71516\"}],\"version\":\"s73666\",\"name\":\"s27574\",\"title\":\"s70603\",\"status\":\"active\",\"experimental\":true,\"date\":\"s62073\",\"publisher\":\"s18932\",\"contact\":[{\"id\":\"s91186\",\"name\":\"s71406\"},{\"id\":\"s51196\",\"name\":\"s90643\"}],\"description\":\"s8082\",\"useContext\":[{\"id\":\"s6954\"},{\"id\":\"s92270\"}],\"jurisdiction\":[{\"id\":\"s90890\",\"text\":\"s86643\"},{\"id\":\"s40971\",\"text\":\"s50740\"}],\"purpose\":\"s83908\",\"copyright\":\"s69268\",\"structure\":[{\"id\":\"s28126\",\"url\":\"s74303\",\"mode\":\"target\",\"alias\":\"s13807\",\"documentation\":\"s54805\"},{\"id\":\"s64097\",\"url\":\"s15466\",\"mode\":\"queried\",\"alias\":\"s37591\",\"documentation\":\"s38147\"}],\"import\":[\"s74124\",\"s21173\"],\"group\":[{\"id\":\"s84864\",\"name\":\"s31511\",\"extends\":\"s44612\",\"typeMode\":\"types\",\"documentation\":\"s84975\"},{\"id\":\"s19519\",\"name\":\"s26648\",\"extends\":\"s32531\",\"typeMode\":\"none\",\"documentation\":\"s55036\"}]}",
+ "expect": "{\"resourceType\":\"StructureMap\",\"id\":\"s20678\",\"meta\":{\"id\":\"s77278\",\"versionId\":\"s43175\",\"lastUpdated\":\"2026-11-21T21:27:18.748Z\",\"source\":\"s36223\",\"profile\":[\"s80614\",\"s47940\"]},\"implicitRules\":\"s24694\",\"language\":\"s44305\",\"text\":{\"id\":\"s25761\",\"status\":\"empty\"},\"url\":\"s74236\",\"identifier\":[{\"id\":\"s32645\",\"use\":\"old\",\"system\":\"s4989\",\"value\":\"s18703\"},{\"id\":\"s20961\",\"use\":\"secondary\",\"system\":\"s72923\",\"value\":\"s71516\"}],\"version\":\"s73666\",\"name\":\"s27574\",\"title\":\"s70603\",\"status\":\"active\",\"experimental\":true,\"date\":\"s62073\",\"publisher\":\"s18932\",\"contact\":[{\"id\":\"s91186\",\"name\":\"s71406\"},{\"id\":\"s51196\",\"name\":\"s90643\"}],\"description\":\"s8082\",\"useContext\":[{\"id\":\"s6954\"},{\"id\":\"s92270\"}],\"jurisdiction\":[{\"id\":\"s90890\",\"text\":\"s86643\"},{\"id\":\"s40971\",\"text\":\"s50740\"}],\"purpose\":\"s83908\",\"copyright\":\"s69268\",\"structure\":[{\"id\":\"s28126\",\"url\":\"s74303\",\"mode\":\"target\",\"alias\":\"s13807\",\"documentation\":\"s54805\"},{\"id\":\"s64097\",\"url\":\"s15466\",\"mode\":\"queried\",\"alias\":\"s37591\",\"documentation\":\"s38147\"}],\"import\":[\"s74124\",\"s21173\"],\"group\":[{\"id\":\"s84864\",\"name\":\"s31511\",\"extends\":\"s44612\",\"typeMode\":\"types\",\"documentation\":\"s84975\"},{\"id\":\"s19519\",\"name\":\"s26648\",\"extends\":\"s32531\",\"typeMode\":\"none\",\"documentation\":\"s55036\"}]}",
+ "model": {
+  "@kind": "structure_map",
+  "uid": "s20678",
+  "time_ms": "1795296438748",
+  "fhirr4structuremap.resource_type": "StructureMap",
+  "fhirr4structuremap.id": "s20678",
+  "fhirr4structuremap.meta_id": "s77278",
+  "fhirr4structuremap.meta_version_id": "s43175",
+  "fhirr4structuremap.meta_last_updated": "2026-11-21T21:27:18.748Z"
+ }
+}

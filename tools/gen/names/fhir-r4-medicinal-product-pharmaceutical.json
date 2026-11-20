@@ -1,0 +1,41 @@
+{
+ "keys": {
+  "characteristics|id|string": "characteristics_id",
+  "device|display|string": "device_display",
+  "device|id|string": "device_id",
+  "device|reference|string": "device_reference",
+  "device|type|string": "device_type",
+  "identifier|id|string": "identifier_id",
+  "identifier|system|string": "identifier_system",
+  "identifier|use|string": "identifier_use",
+  "identifier|value|string": "identifier_value",
+  "ingredient|display|string": "ingredient_display",
+  "ingredient|id|string": "ingredient_id",
+  "ingredient|reference|string": "ingredient_reference",
+  "ingredient|type|string": "ingredient_type",
+  "meta_profile|.|string": "meta_profile_value",
+  "route_of_administration|id|string": "route_of_administration_id",
+  "|administrableDoseForm.id|string": "administrable_dose_form_id",
+  "|administrableDoseForm.text|string": "administrable_dose_form_text",
+  "|id|string": "id",
+  "|implicitRules|string": "implicit_rules",
+  "|language|string": "language",
+  "|meta.id|string": "meta_id",
+  "|meta.lastUpdated|string": "meta_last_updated",
+  "|meta.source|string": "meta_source",
+  "|meta.versionId|string": "meta_version_id",
+  "|resourceType|string": "resource_type",
+  "|text.id|string": "text_id",
+  "|text.status|string": "text_status",
+  "|unitOfPresentation.id|string": "unit_of_presentation_id",
+  "|unitOfPresentation.text|string": "unit_of_presentation_text"
+ },
+ "lists": {
+  "|characteristics": "characteristics",
+  "|device": "device",
+  "|identifier": "identifier",
+  "|ingredient": "ingredient",
+  "|meta.profile": "meta_profile",
+  "|routeOfAdministration": "route_of_administration"
+ }
+}

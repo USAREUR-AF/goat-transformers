@@ -1,0 +1,42 @@
+{
+ "keys": {
+  "identifier|id|string": "identifier_id",
+  "identifier|system|string": "identifier_system",
+  "identifier|use|string": "identifier_use",
+  "identifier|value|string": "identifier_value",
+  "meta_profile|.|string": "meta_profile_value",
+  "|author.display|string": "author_display",
+  "|author.identifier.id|string": "author_identifier_id",
+  "|author.identifier.system|string": "author_identifier_system",
+  "|author.identifier.use|string": "author_identifier_use",
+  "|author.identifier.value|string": "author_identifier_value",
+  "|author.id|string": "author_id",
+  "|author.reference|string": "author_reference",
+  "|author.type|string": "author_type",
+  "|code.id|string": "code_id",
+  "|code.text|string": "code_text",
+  "|created|string": "created",
+  "|id|string": "id",
+  "|implicitRules|string": "implicit_rules",
+  "|language|string": "language",
+  "|meta.id|string": "meta_id",
+  "|meta.lastUpdated|string": "meta_last_updated",
+  "|meta.source|string": "meta_source",
+  "|meta.versionId|string": "meta_version_id",
+  "|resourceType|string": "resource_type",
+  "|subject.display|string": "subject_display",
+  "|subject.identifier.id|string": "subject_identifier_id",
+  "|subject.identifier.system|string": "subject_identifier_system",
+  "|subject.identifier.use|string": "subject_identifier_use",
+  "|subject.identifier.value|string": "subject_identifier_value",
+  "|subject.id|string": "subject_id",
+  "|subject.reference|string": "subject_reference",
+  "|subject.type|string": "subject_type",
+  "|text.id|string": "text_id",
+  "|text.status|string": "text_status"
+ },
+ "lists": {
+  "|identifier": "identifier",
+  "|meta.profile": "meta_profile"
+ }
+}

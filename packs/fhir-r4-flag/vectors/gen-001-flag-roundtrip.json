@@ -1,0 +1,17 @@
+{
+ "name": "gen-flag-roundtrip",
+ "from": "fhir-r4-flag",
+ "to": "fhir-r4-flag",
+ "input": "{\"resourceType\":\"Flag\",\"id\":\"s57080\",\"meta\":{\"id\":\"s72615\",\"versionId\":\"s36337\",\"lastUpdated\":\"2026-07-19T01:32:22.115Z\",\"source\":\"s27313\",\"profile\":[\"s84224\",\"s38994\"]},\"implicitRules\":\"s61297\",\"language\":\"s99992\",\"text\":{\"id\":\"s57476\",\"status\":\"generated\"},\"identifier\":[{\"id\":\"s47207\",\"use\":\"temp\",\"system\":\"s16328\",\"value\":\"s20743\"},{\"id\":\"s83018\",\"use\":\"secondary\",\"system\":\"s78980\",\"value\":\"s24344\"}],\"status\":\"entered-in-error\",\"category\":[{\"id\":\"s62513\",\"text\":\"s2335\"},{\"id\":\"s25721\",\"text\":\"s62289\"}],\"code\":{\"id\":\"s97267\",\"text\":\"s7896\"},\"subject\":{\"id\":\"s96223\",\"reference\":\"s23000\",\"type\":\"s95509\",\"identifier\":{\"id\":\"s44491\",\"use\":\"official\",\"system\":\"s25398\",\"value\":\"s32855\"},\"display\":\"s40101\"},\"period\":{\"id\":\"s33562\",\"start\":\"s16046\",\"end\":\"s56407\"},\"encounter\":{\"id\":\"s70009\",\"reference\":\"s79351\",\"type\":\"s98317\",\"identifier\":{\"id\":\"s94483\",\"use\":\"secondary\",\"system\":\"s65719\",\"value\":\"s96942\"},\"display\":\"s75578\"},\"author\":{\"id\":\"s74937\",\"reference\":\"s28755\",\"type\":\"s16754\",\"identifier\":{\"id\":\"s1633\",\"use\":\"official\",\"system\":\"s99154\",\"value\":\"s65914\"},\"display\":\"s35062\"}}",
+ "expect": "{\"resourceType\":\"Flag\",\"id\":\"s57080\",\"meta\":{\"id\":\"s72615\",\"versionId\":\"s36337\",\"lastUpdated\":\"2026-07-19T01:32:22.115Z\",\"source\":\"s27313\",\"profile\":[\"s84224\",\"s38994\"]},\"implicitRules\":\"s61297\",\"language\":\"s99992\",\"text\":{\"id\":\"s57476\",\"status\":\"generated\"},\"identifier\":[{\"id\":\"s47207\",\"use\":\"temp\",\"system\":\"s16328\",\"value\":\"s20743\"},{\"id\":\"s83018\",\"use\":\"secondary\",\"system\":\"s78980\",\"value\":\"s24344\"}],\"status\":\"entered-in-error\",\"category\":[{\"id\":\"s62513\",\"text\":\"s2335\"},{\"id\":\"s25721\",\"text\":\"s62289\"}],\"code\":{\"id\":\"s97267\",\"text\":\"s7896\"},\"subject\":{\"id\":\"s96223\",\"reference\":\"s23000\",\"type\":\"s95509\",\"identifier\":{\"id\":\"s44491\",\"use\":\"official\",\"system\":\"s25398\",\"value\":\"s32855\"},\"display\":\"s40101\"},\"period\":{\"id\":\"s33562\",\"start\":\"s16046\",\"end\":\"s56407\"},\"encounter\":{\"id\":\"s70009\",\"reference\":\"s79351\",\"type\":\"s98317\",\"identifier\":{\"id\":\"s94483\",\"use\":\"secondary\",\"system\":\"s65719\",\"value\":\"s96942\"},\"display\":\"s75578\"},\"author\":{\"id\":\"s74937\",\"reference\":\"s28755\",\"type\":\"s16754\",\"identifier\":{\"id\":\"s1633\",\"use\":\"official\",\"system\":\"s99154\",\"value\":\"s65914\"},\"display\":\"s35062\"}}",
+ "model": {
+  "@kind": "flag",
+  "uid": "s57080",
+  "time_ms": "1784424742115",
+  "fhirr4flag.resource_type": "Flag",
+  "fhirr4flag.id": "s57080",
+  "fhirr4flag.meta_id": "s72615",
+  "fhirr4flag.meta_version_id": "s36337",
+  "fhirr4flag.meta_last_updated": "2026-07-19T01:32:22.115Z"
+ }
+}

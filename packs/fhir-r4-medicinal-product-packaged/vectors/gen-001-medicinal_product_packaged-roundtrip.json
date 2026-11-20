@@ -1,0 +1,17 @@
+{
+ "name": "gen-medicinal_product_packaged-roundtrip",
+ "from": "fhir-r4-medicinal-product-packaged",
+ "to": "fhir-r4-medicinal-product-packaged",
+ "input": "{\"resourceType\":\"MedicinalProductPackaged\",\"id\":\"s64273\",\"meta\":{\"id\":\"s96807\",\"versionId\":\"s25145\",\"lastUpdated\":\"2024-07-13T18:02:16.038Z\",\"source\":\"s53801\",\"profile\":[\"s40915\",\"s44049\"]},\"implicitRules\":\"s70531\",\"language\":\"s41501\",\"text\":{\"id\":\"s19731\",\"status\":\"additional\"},\"identifier\":[{\"id\":\"s78440\",\"use\":\"temp\",\"system\":\"s68306\",\"value\":\"s37220\"},{\"id\":\"s58396\",\"use\":\"old\",\"system\":\"s19600\",\"value\":\"s5812\"}],\"subject\":[{\"id\":\"s60946\",\"reference\":\"s65505\",\"type\":\"s37177\",\"display\":\"s7357\"},{\"id\":\"s25457\",\"reference\":\"s16310\",\"type\":\"s97048\",\"display\":\"s85972\"}],\"description\":\"s56552\",\"legalStatusOfSupply\":{\"id\":\"s74256\",\"text\":\"s38877\"},\"marketingStatus\":[{\"id\":\"s37033\",\"restoreDate\":\"s25931\"},{\"id\":\"s88455\",\"restoreDate\":\"s4815\"}],\"marketingAuthorization\":{\"id\":\"s85211\",\"reference\":\"s41174\",\"type\":\"s67467\",\"identifier\":{\"id\":\"s42765\",\"use\":\"temp\",\"system\":\"s47501\",\"value\":\"s48909\"},\"display\":\"s36268\"},\"manufacturer\":[{\"id\":\"s56788\",\"reference\":\"s86448\",\"type\":\"s33130\",\"display\":\"s29849\"},{\"id\":\"s68468\",\"reference\":\"s86393\",\"type\":\"s82522\",\"display\":\"s39390\"}],\"batchIdentifier\":[{\"id\":\"s43962\"},{\"id\":\"s75920\"}],\"packageItem\":[{\"id\":\"s4787\"},{\"id\":\"s78105\"}]}",
+ "expect": "{\"resourceType\":\"MedicinalProductPackaged\",\"id\":\"s64273\",\"meta\":{\"id\":\"s96807\",\"versionId\":\"s25145\",\"lastUpdated\":\"2024-07-13T18:02:16.038Z\",\"source\":\"s53801\",\"profile\":[\"s40915\",\"s44049\"]},\"implicitRules\":\"s70531\",\"language\":\"s41501\",\"text\":{\"id\":\"s19731\",\"status\":\"additional\"},\"identifier\":[{\"id\":\"s78440\",\"use\":\"temp\",\"system\":\"s68306\",\"value\":\"s37220\"},{\"id\":\"s58396\",\"use\":\"old\",\"system\":\"s19600\",\"value\":\"s5812\"}],\"subject\":[{\"id\":\"s60946\",\"reference\":\"s65505\",\"type\":\"s37177\",\"display\":\"s7357\"},{\"id\":\"s25457\",\"reference\":\"s16310\",\"type\":\"s97048\",\"display\":\"s85972\"}],\"description\":\"s56552\",\"legalStatusOfSupply\":{\"id\":\"s74256\",\"text\":\"s38877\"},\"marketingStatus\":[{\"id\":\"s37033\",\"restoreDate\":\"s25931\"},{\"id\":\"s88455\",\"restoreDate\":\"s4815\"}],\"marketingAuthorization\":{\"id\":\"s85211\",\"reference\":\"s41174\",\"type\":\"s67467\",\"identifier\":{\"id\":\"s42765\",\"use\":\"temp\",\"system\":\"s47501\",\"value\":\"s48909\"},\"display\":\"s36268\"},\"manufacturer\":[{\"id\":\"s56788\",\"reference\":\"s86448\",\"type\":\"s33130\",\"display\":\"s29849\"},{\"id\":\"s68468\",\"reference\":\"s86393\",\"type\":\"s82522\",\"display\":\"s39390\"}],\"batchIdentifier\":[{\"id\":\"s43962\"},{\"id\":\"s75920\"}],\"packageItem\":[{\"id\":\"s4787\"},{\"id\":\"s78105\"}]}",
+ "model": {
+  "@kind": "medicinal_product_packaged",
+  "uid": "s64273",
+  "time_ms": "1720893736038",
+  "fhirr4medicinalproductpackaged.resource_type": "MedicinalProductPackaged",
+  "fhirr4medicinalproductpackaged.id": "s64273",
+  "fhirr4medicinalproductpackaged.meta_id": "s96807",
+  "fhirr4medicinalproductpackaged.meta_version_id": "s25145",
+  "fhirr4medicinalproductpackaged.meta_last_updated": "2024-07-13T18:02:16.038Z"
+ }
+}

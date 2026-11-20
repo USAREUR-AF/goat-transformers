@@ -1,4 +1,5 @@
-"""Tests of the --max-depth, --max-nest and --limit-reason options of tools/gen/jsonschema2pack.py.
+"""Tests of the --max-depth, --max-nest, --limit-reason, --omit, --omit-prefix and --omit-reason
+options of tools/gen/jsonschema2pack.py.
 
     python3 -I -m unittest discover -s tools/gen/tests -p 'test_jsonschema2pack_limits*.py'
 
@@ -95,6 +96,23 @@ class LimitsTest(unittest.TestCase):
         status, _, err = support.run_main(j.main, argv)
         self.assertEqual(status, 1)
         self.assertIn("--max-depth must be at least 1", err)
+
+
+    def test_omit_skips_a_member_name_at_every_depth_and_pack_md_says_why(self):
+        pack, md = self.run_gen("--omit", "NAME", "--omit", "NEAR", "--omit-reason", "kept out for the test.")
+        self.assertNotIn("NAME", pack)
+        self.assertNotIn("NEAR", pack)
+        self.assertIn("OUTER.INNER.DEEP", pack)
+        self.assertIn("| `lim` | `OUTER.NEAR` | omitted (--omit) |", md)
+        self.assertIn("| `lim` | `ROWS[].NAME` | omitted (--omit) |", md)
+        self.assertIn("Members not mapped at any depth: `NAME`, `NEAR` (kept out for the test).", md)
+
+    def test_omit_prefix_skips_names_that_begin_with_it(self):
+        pack, md = self.run_gen("--omit-prefix", "OU")
+        self.assertNotIn("OUTER", pack)
+        self.assertIn("group  lim.rows  ROWS", pack)
+        self.assertIn("| `lim` | `OUTER` | omitted (--omit) |", md)
+        self.assertIn("Members not mapped at any depth: names beginning `OU`.", md)
 
 
 if __name__ == "__main__":

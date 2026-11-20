@@ -1,0 +1,17 @@
+{
+ "name": "gen-concept_map-roundtrip",
+ "from": "fhir-r4-concept-map",
+ "to": "fhir-r4-concept-map",
+ "input": "{\"resourceType\":\"ConceptMap\",\"id\":\"s99294\",\"meta\":{\"id\":\"s70875\",\"versionId\":\"s96505\",\"lastUpdated\":\"2024-06-01T00:07:43.666Z\",\"source\":\"s5378\",\"profile\":[\"s75776\",\"s88174\"]},\"implicitRules\":\"s41244\",\"language\":\"s25261\",\"text\":{\"id\":\"s17099\",\"status\":\"extensions\"},\"url\":\"s16741\",\"identifier\":{\"id\":\"s11385\",\"use\":\"secondary\",\"type\":{\"id\":\"s70736\",\"text\":\"s62370\"},\"system\":\"s71391\",\"value\":\"s26654\",\"period\":{\"id\":\"s74157\",\"start\":\"s57396\",\"end\":\"s57189\"},\"assigner\":{\"id\":\"s84163\",\"reference\":\"s88539\",\"type\":\"s19020\",\"display\":\"s24746\"}},\"version\":\"s82508\",\"name\":\"s17809\",\"title\":\"s53436\",\"status\":\"draft\",\"experimental\":false,\"date\":\"s58198\",\"publisher\":\"s23250\",\"contact\":[{\"id\":\"s79090\",\"name\":\"s91857\"},{\"id\":\"s77392\",\"name\":\"s2101\"}],\"description\":\"s57779\",\"useContext\":[{\"id\":\"s26975\"},{\"id\":\"s1490\"}],\"jurisdiction\":[{\"id\":\"s95361\",\"text\":\"s74923\"},{\"id\":\"s82939\",\"text\":\"s96845\"}],\"purpose\":\"s92758\",\"copyright\":\"s85390\",\"sourceUri\":\"s70172\",\"sourceCanonical\":\"s21322\",\"targetUri\":\"s62672\",\"targetCanonical\":\"s52723\",\"group\":[{\"id\":\"s96103\",\"source\":\"s26958\",\"sourceVersion\":\"s84918\",\"target\":\"s85656\",\"targetVersion\":\"s94007\"},{\"id\":\"s64535\",\"source\":\"s60580\",\"sourceVersion\":\"s81727\",\"target\":\"s51713\",\"targetVersion\":\"s19796\"}]}",
+ "expect": "{\"resourceType\":\"ConceptMap\",\"id\":\"s99294\",\"meta\":{\"id\":\"s70875\",\"versionId\":\"s96505\",\"lastUpdated\":\"2024-06-01T00:07:43.666Z\",\"source\":\"s5378\",\"profile\":[\"s75776\",\"s88174\"]},\"implicitRules\":\"s41244\",\"language\":\"s25261\",\"text\":{\"id\":\"s17099\",\"status\":\"extensions\"},\"url\":\"s16741\",\"identifier\":{\"id\":\"s11385\",\"use\":\"secondary\",\"type\":{\"id\":\"s70736\",\"text\":\"s62370\"},\"system\":\"s71391\",\"value\":\"s26654\",\"period\":{\"id\":\"s74157\",\"start\":\"s57396\",\"end\":\"s57189\"},\"assigner\":{\"id\":\"s84163\",\"reference\":\"s88539\",\"type\":\"s19020\",\"display\":\"s24746\"}},\"version\":\"s82508\",\"name\":\"s17809\",\"title\":\"s53436\",\"status\":\"draft\",\"experimental\":false,\"date\":\"s58198\",\"publisher\":\"s23250\",\"contact\":[{\"id\":\"s79090\",\"name\":\"s91857\"},{\"id\":\"s77392\",\"name\":\"s2101\"}],\"description\":\"s57779\",\"useContext\":[{\"id\":\"s26975\"},{\"id\":\"s1490\"}],\"jurisdiction\":[{\"id\":\"s95361\",\"text\":\"s74923\"},{\"id\":\"s82939\",\"text\":\"s96845\"}],\"purpose\":\"s92758\",\"copyright\":\"s85390\",\"sourceUri\":\"s70172\",\"sourceCanonical\":\"s21322\",\"targetUri\":\"s62672\",\"targetCanonical\":\"s52723\",\"group\":[{\"id\":\"s96103\",\"source\":\"s26958\",\"sourceVersion\":\"s84918\",\"target\":\"s85656\",\"targetVersion\":\"s94007\"},{\"id\":\"s64535\",\"source\":\"s60580\",\"sourceVersion\":\"s81727\",\"target\":\"s51713\",\"targetVersion\":\"s19796\"}]}",
+ "model": {
+  "@kind": "concept_map",
+  "uid": "s99294",
+  "time_ms": "1717200463666",
+  "fhirr4conceptmap.resource_type": "ConceptMap",
+  "fhirr4conceptmap.id": "s99294",
+  "fhirr4conceptmap.meta_id": "s70875",
+  "fhirr4conceptmap.meta_version_id": "s96505",
+  "fhirr4conceptmap.meta_last_updated": "2024-06-01T00:07:43.666Z"
+ }
+}

@@ -1,0 +1,17 @@
+{
+ "name": "gen-medicinal_product_contraindication-roundtrip",
+ "from": "fhir-r4-medicinal-product-contraindication",
+ "to": "fhir-r4-medicinal-product-contraindication",
+ "input": "{\"resourceType\":\"MedicinalProductContraindication\",\"id\":\"s57716\",\"meta\":{\"id\":\"s17578\",\"versionId\":\"s6652\",\"lastUpdated\":\"2024-10-26T04:47:34.006Z\",\"source\":\"s4989\",\"profile\":[\"s18314\",\"s3125\"]},\"implicitRules\":\"s59571\",\"language\":\"s90017\",\"text\":{\"id\":\"s85609\",\"status\":\"additional\"},\"subject\":[{\"id\":\"s65216\",\"reference\":\"s87193\",\"type\":\"s88370\",\"display\":\"s35452\"},{\"id\":\"s9208\",\"reference\":\"s94571\",\"type\":\"s93506\",\"display\":\"s82605\"}],\"disease\":{\"id\":\"s85746\",\"text\":\"s48584\"},\"diseaseStatus\":{\"id\":\"s40504\",\"text\":\"s44254\"},\"comorbidity\":[{\"id\":\"s58030\",\"text\":\"s61780\"},{\"id\":\"s19992\",\"text\":\"s59213\"}],\"therapeuticIndication\":[{\"id\":\"s28386\",\"reference\":\"s11086\",\"type\":\"s66462\",\"display\":\"s5769\"},{\"id\":\"s84434\",\"reference\":\"s86592\",\"type\":\"s76863\",\"display\":\"s64586\"}],\"otherTherapy\":[{\"id\":\"s28501\"},{\"id\":\"s6000\"}],\"population\":[{\"id\":\"s18522\"},{\"id\":\"s78673\"}]}",
+ "expect": "{\"resourceType\":\"MedicinalProductContraindication\",\"id\":\"s57716\",\"meta\":{\"id\":\"s17578\",\"versionId\":\"s6652\",\"lastUpdated\":\"2024-10-26T04:47:34.006Z\",\"source\":\"s4989\",\"profile\":[\"s18314\",\"s3125\"]},\"implicitRules\":\"s59571\",\"language\":\"s90017\",\"text\":{\"id\":\"s85609\",\"status\":\"additional\"},\"subject\":[{\"id\":\"s65216\",\"reference\":\"s87193\",\"type\":\"s88370\",\"display\":\"s35452\"},{\"id\":\"s9208\",\"reference\":\"s94571\",\"type\":\"s93506\",\"display\":\"s82605\"}],\"disease\":{\"id\":\"s85746\",\"text\":\"s48584\"},\"diseaseStatus\":{\"id\":\"s40504\",\"text\":\"s44254\"},\"comorbidity\":[{\"id\":\"s58030\",\"text\":\"s61780\"},{\"id\":\"s19992\",\"text\":\"s59213\"}],\"therapeuticIndication\":[{\"id\":\"s28386\",\"reference\":\"s11086\",\"type\":\"s66462\",\"display\":\"s5769\"},{\"id\":\"s84434\",\"reference\":\"s86592\",\"type\":\"s76863\",\"display\":\"s64586\"}],\"otherTherapy\":[{\"id\":\"s28501\"},{\"id\":\"s6000\"}],\"population\":[{\"id\":\"s18522\"},{\"id\":\"s78673\"}]}",
+ "model": {
+  "@kind": "medicinal_product_contraindication",
+  "uid": "s57716",
+  "time_ms": "1729918054006",
+  "fhirr4medicinalproductcontraindication.resource_type": "MedicinalProductContraindication",
+  "fhirr4medicinalproductcontraindication.id": "s57716",
+  "fhirr4medicinalproductcontraindication.meta_id": "s17578",
+  "fhirr4medicinalproductcontraindication.meta_version_id": "s6652",
+  "fhirr4medicinalproductcontraindication.meta_last_updated": "2024-10-26T04:47:34.006Z"
+ }
+}

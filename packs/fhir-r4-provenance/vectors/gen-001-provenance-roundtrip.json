@@ -1,0 +1,17 @@
+{
+ "name": "gen-provenance-roundtrip",
+ "from": "fhir-r4-provenance",
+ "to": "fhir-r4-provenance",
+ "input": "{\"resourceType\":\"Provenance\",\"id\":\"s23138\",\"meta\":{\"id\":\"s89901\",\"versionId\":\"s41812\",\"lastUpdated\":\"2025-12-13T00:35:24.028Z\",\"source\":\"s32166\",\"profile\":[\"s46490\",\"s91060\"]},\"implicitRules\":\"s23396\",\"language\":\"s48765\",\"text\":{\"id\":\"s13132\",\"status\":\"additional\"},\"target\":[{\"id\":\"s7394\",\"reference\":\"s20648\",\"type\":\"s93002\",\"display\":\"s18073\"},{\"id\":\"s17557\",\"reference\":\"s19448\",\"type\":\"s1236\",\"display\":\"s1989\"}],\"occurredPeriod\":{\"id\":\"s41721\",\"start\":\"s58797\",\"end\":\"s94130\"},\"occurredDateTime\":\"s7285\",\"recorded\":\"s82759\",\"policy\":[\"s23044\",\"s38864\"],\"location\":{\"id\":\"s8083\",\"reference\":\"s40133\",\"type\":\"s43338\",\"identifier\":{\"id\":\"s60332\",\"use\":\"usual\",\"system\":\"s41827\",\"value\":\"s48268\"},\"display\":\"s86960\"},\"reason\":[{\"id\":\"s56475\",\"text\":\"s94777\"},{\"id\":\"s6675\",\"text\":\"s12751\"}],\"activity\":{\"id\":\"s40697\",\"text\":\"s5462\"},\"agent\":[{\"id\":\"s74293\"},{\"id\":\"s59371\"}],\"entity\":[{\"id\":\"s32988\",\"role\":\"quotation\"},{\"id\":\"s31313\",\"role\":\"revision\"}],\"signature\":[{\"id\":\"s18097\",\"when\":\"s38767\",\"targetFormat\":\"s29295\",\"sigFormat\":\"s3339\",\"data\":\"s48792\"},{\"id\":\"s57617\",\"when\":\"s56017\",\"targetFormat\":\"s95852\",\"sigFormat\":\"s27835\",\"data\":\"s94035\"}]}",
+ "expect": "{\"resourceType\":\"Provenance\",\"id\":\"s23138\",\"meta\":{\"id\":\"s89901\",\"versionId\":\"s41812\",\"lastUpdated\":\"2025-12-13T00:35:24.028Z\",\"source\":\"s32166\",\"profile\":[\"s46490\",\"s91060\"]},\"implicitRules\":\"s23396\",\"language\":\"s48765\",\"text\":{\"id\":\"s13132\",\"status\":\"additional\"},\"target\":[{\"id\":\"s7394\",\"reference\":\"s20648\",\"type\":\"s93002\",\"display\":\"s18073\"},{\"id\":\"s17557\",\"reference\":\"s19448\",\"type\":\"s1236\",\"display\":\"s1989\"}],\"occurredPeriod\":{\"id\":\"s41721\",\"start\":\"s58797\",\"end\":\"s94130\"},\"occurredDateTime\":\"s7285\",\"recorded\":\"s82759\",\"policy\":[\"s23044\",\"s38864\"],\"location\":{\"id\":\"s8083\",\"reference\":\"s40133\",\"type\":\"s43338\",\"identifier\":{\"id\":\"s60332\",\"use\":\"usual\",\"system\":\"s41827\",\"value\":\"s48268\"},\"display\":\"s86960\"},\"reason\":[{\"id\":\"s56475\",\"text\":\"s94777\"},{\"id\":\"s6675\",\"text\":\"s12751\"}],\"activity\":{\"id\":\"s40697\",\"text\":\"s5462\"},\"agent\":[{\"id\":\"s74293\"},{\"id\":\"s59371\"}],\"entity\":[{\"id\":\"s32988\",\"role\":\"quotation\"},{\"id\":\"s31313\",\"role\":\"revision\"}],\"signature\":[{\"id\":\"s18097\",\"when\":\"s38767\",\"targetFormat\":\"s29295\",\"sigFormat\":\"s3339\",\"data\":\"s48792\"},{\"id\":\"s57617\",\"when\":\"s56017\",\"targetFormat\":\"s95852\",\"sigFormat\":\"s27835\",\"data\":\"s94035\"}]}",
+ "model": {
+  "@kind": "provenance",
+  "uid": "s23138",
+  "time_ms": "1765586124028",
+  "fhirr4provenance.resource_type": "Provenance",
+  "fhirr4provenance.id": "s23138",
+  "fhirr4provenance.meta_id": "s89901",
+  "fhirr4provenance.meta_version_id": "s41812",
+  "fhirr4provenance.meta_last_updated": "2025-12-13T00:35:24.028Z"
+ }
+}

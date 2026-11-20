@@ -1,0 +1,17 @@
+{
+ "name": "gen-substance_reference_information-roundtrip",
+ "from": "fhir-r4-substance-reference-information",
+ "to": "fhir-r4-substance-reference-information",
+ "input": "{\"resourceType\":\"SubstanceReferenceInformation\",\"id\":\"s87040\",\"meta\":{\"id\":\"s92110\",\"versionId\":\"s85873\",\"lastUpdated\":\"2024-07-15T10:24:33.858Z\",\"source\":\"s57586\",\"profile\":[\"s35455\",\"s57910\"]},\"implicitRules\":\"s68449\",\"language\":\"s45076\",\"text\":{\"id\":\"s10271\",\"status\":\"extensions\"},\"comment\":\"s88178\",\"gene\":[{\"id\":\"s49478\"},{\"id\":\"s12986\"}],\"geneElement\":[{\"id\":\"s44808\"},{\"id\":\"s5679\"}],\"classification\":[{\"id\":\"s33870\"},{\"id\":\"s7571\"}],\"target\":[{\"id\":\"s78379\",\"amountString\":\"s94376\"},{\"id\":\"s60883\",\"amountString\":\"s98763\"}]}",
+ "expect": "{\"resourceType\":\"SubstanceReferenceInformation\",\"id\":\"s87040\",\"meta\":{\"id\":\"s92110\",\"versionId\":\"s85873\",\"lastUpdated\":\"2024-07-15T10:24:33.858Z\",\"source\":\"s57586\",\"profile\":[\"s35455\",\"s57910\"]},\"implicitRules\":\"s68449\",\"language\":\"s45076\",\"text\":{\"id\":\"s10271\",\"status\":\"extensions\"},\"comment\":\"s88178\",\"gene\":[{\"id\":\"s49478\"},{\"id\":\"s12986\"}],\"geneElement\":[{\"id\":\"s44808\"},{\"id\":\"s5679\"}],\"classification\":[{\"id\":\"s33870\"},{\"id\":\"s7571\"}],\"target\":[{\"id\":\"s78379\",\"amountString\":\"s94376\"},{\"id\":\"s60883\",\"amountString\":\"s98763\"}]}",
+ "model": {
+  "@kind": "substance_reference_information",
+  "uid": "s87040",
+  "time_ms": "1721039073858",
+  "fhirr4substancereferenceinformation.resource_type": "SubstanceReferenceInformation",
+  "fhirr4substancereferenceinformation.id": "s87040",
+  "fhirr4substancereferenceinformation.meta_id": "s92110",
+  "fhirr4substancereferenceinformation.meta_version_id": "s85873",
+  "fhirr4substancereferenceinformation.meta_last_updated": "2024-07-15T10:24:33.858Z"
+ }
+}

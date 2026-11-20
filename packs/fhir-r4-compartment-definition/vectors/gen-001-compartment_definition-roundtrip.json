@@ -1,0 +1,17 @@
+{
+ "name": "gen-compartment_definition-roundtrip",
+ "from": "fhir-r4-compartment-definition",
+ "to": "fhir-r4-compartment-definition",
+ "input": "{\"resourceType\":\"CompartmentDefinition\",\"id\":\"s29640\",\"meta\":{\"id\":\"s54904\",\"versionId\":\"s88819\",\"lastUpdated\":\"2025-05-31T22:21:39.352Z\",\"source\":\"s75856\",\"profile\":[\"s43704\",\"s94084\"]},\"implicitRules\":\"s73948\",\"language\":\"s76956\",\"text\":{\"id\":\"s29474\",\"status\":\"empty\"},\"url\":\"s27108\",\"version\":\"s33583\",\"name\":\"s70845\",\"status\":\"active\",\"experimental\":true,\"date\":\"s74371\",\"publisher\":\"s95012\",\"contact\":[{\"id\":\"s75591\",\"name\":\"s46944\"},{\"id\":\"s19448\",\"name\":\"s54916\"}],\"description\":\"s76803\",\"useContext\":[{\"id\":\"s95233\"},{\"id\":\"s32602\"}],\"purpose\":\"s50945\",\"code\":\"Practitioner\",\"search\":false,\"resource\":[{\"id\":\"s75852\",\"code\":\"s23657\",\"param\":[\"s79782\"],\"documentation\":\"s31442\"},{\"id\":\"s58487\",\"code\":\"s60102\",\"param\":[\"s65676\"],\"documentation\":\"s88097\"}]}",
+ "expect": "{\"resourceType\":\"CompartmentDefinition\",\"id\":\"s29640\",\"meta\":{\"id\":\"s54904\",\"versionId\":\"s88819\",\"lastUpdated\":\"2025-05-31T22:21:39.352Z\",\"source\":\"s75856\",\"profile\":[\"s43704\",\"s94084\"]},\"implicitRules\":\"s73948\",\"language\":\"s76956\",\"text\":{\"id\":\"s29474\",\"status\":\"empty\"},\"url\":\"s27108\",\"version\":\"s33583\",\"name\":\"s70845\",\"status\":\"active\",\"experimental\":true,\"date\":\"s74371\",\"publisher\":\"s95012\",\"contact\":[{\"id\":\"s75591\",\"name\":\"s46944\"},{\"id\":\"s19448\",\"name\":\"s54916\"}],\"description\":\"s76803\",\"useContext\":[{\"id\":\"s95233\"},{\"id\":\"s32602\"}],\"purpose\":\"s50945\",\"code\":\"Practitioner\",\"search\":false,\"resource\":[{\"id\":\"s75852\",\"code\":\"s23657\",\"param\":[\"s79782\"],\"documentation\":\"s31442\"},{\"id\":\"s58487\",\"code\":\"s60102\",\"param\":[\"s65676\"],\"documentation\":\"s88097\"}]}",
+ "model": {
+  "@kind": "compartment_definition",
+  "uid": "s29640",
+  "time_ms": "1748730099352",
+  "fhirr4compartmentdefinition.resource_type": "CompartmentDefinition",
+  "fhirr4compartmentdefinition.id": "s29640",
+  "fhirr4compartmentdefinition.meta_id": "s54904",
+  "fhirr4compartmentdefinition.meta_version_id": "s88819",
+  "fhirr4compartmentdefinition.meta_last_updated": "2025-05-31T22:21:39.352Z"
+ }
+}

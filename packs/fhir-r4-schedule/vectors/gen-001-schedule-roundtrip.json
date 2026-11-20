@@ -1,0 +1,17 @@
+{
+ "name": "gen-schedule-roundtrip",
+ "from": "fhir-r4-schedule",
+ "to": "fhir-r4-schedule",
+ "input": "{\"resourceType\":\"Schedule\",\"id\":\"s736\",\"meta\":{\"id\":\"s77569\",\"versionId\":\"s96565\",\"lastUpdated\":\"2023-11-29T11:22:44.530Z\",\"source\":\"s62953\",\"profile\":[\"s52240\",\"s93248\"]},\"implicitRules\":\"s69543\",\"language\":\"s21938\",\"text\":{\"id\":\"s64457\",\"status\":\"additional\"},\"identifier\":[{\"id\":\"s76575\",\"use\":\"temp\",\"system\":\"s46688\",\"value\":\"s48106\"},{\"id\":\"s9958\",\"use\":\"old\",\"system\":\"s58760\",\"value\":\"s75830\"}],\"active\":true,\"serviceCategory\":[{\"id\":\"s18638\",\"text\":\"s66283\"},{\"id\":\"s54640\",\"text\":\"s66799\"}],\"serviceType\":[{\"id\":\"s57837\",\"text\":\"s38093\"},{\"id\":\"s36035\",\"text\":\"s97468\"}],\"specialty\":[{\"id\":\"s77595\",\"text\":\"s64872\"},{\"id\":\"s23742\",\"text\":\"s9933\"}],\"actor\":[{\"id\":\"s32754\",\"reference\":\"s83356\",\"type\":\"s83331\",\"display\":\"s73241\"},{\"id\":\"s79531\",\"reference\":\"s33934\",\"type\":\"s23861\",\"display\":\"s97765\"}],\"planningHorizon\":{\"id\":\"s74593\",\"start\":\"s34335\",\"end\":\"s23701\"},\"comment\":\"s40172\"}",
+ "expect": "{\"resourceType\":\"Schedule\",\"id\":\"s736\",\"meta\":{\"id\":\"s77569\",\"versionId\":\"s96565\",\"lastUpdated\":\"2023-11-29T11:22:44.530Z\",\"source\":\"s62953\",\"profile\":[\"s52240\",\"s93248\"]},\"implicitRules\":\"s69543\",\"language\":\"s21938\",\"text\":{\"id\":\"s64457\",\"status\":\"additional\"},\"identifier\":[{\"id\":\"s76575\",\"use\":\"temp\",\"system\":\"s46688\",\"value\":\"s48106\"},{\"id\":\"s9958\",\"use\":\"old\",\"system\":\"s58760\",\"value\":\"s75830\"}],\"active\":true,\"serviceCategory\":[{\"id\":\"s18638\",\"text\":\"s66283\"},{\"id\":\"s54640\",\"text\":\"s66799\"}],\"serviceType\":[{\"id\":\"s57837\",\"text\":\"s38093\"},{\"id\":\"s36035\",\"text\":\"s97468\"}],\"specialty\":[{\"id\":\"s77595\",\"text\":\"s64872\"},{\"id\":\"s23742\",\"text\":\"s9933\"}],\"actor\":[{\"id\":\"s32754\",\"reference\":\"s83356\",\"type\":\"s83331\",\"display\":\"s73241\"},{\"id\":\"s79531\",\"reference\":\"s33934\",\"type\":\"s23861\",\"display\":\"s97765\"}],\"planningHorizon\":{\"id\":\"s74593\",\"start\":\"s34335\",\"end\":\"s23701\"},\"comment\":\"s40172\"}",
+ "model": {
+  "@kind": "schedule",
+  "uid": "s736",
+  "time_ms": "1701256964530",
+  "fhirr4schedule.resource_type": "Schedule",
+  "fhirr4schedule.id": "s736",
+  "fhirr4schedule.meta_id": "s77569",
+  "fhirr4schedule.meta_version_id": "s96565",
+  "fhirr4schedule.meta_last_updated": "2023-11-29T11:22:44.530Z"
+ }
+}

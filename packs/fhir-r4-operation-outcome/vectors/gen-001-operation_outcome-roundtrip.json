@@ -1,0 +1,17 @@
+{
+ "name": "gen-operation_outcome-roundtrip",
+ "from": "fhir-r4-operation-outcome",
+ "to": "fhir-r4-operation-outcome",
+ "input": "{\"resourceType\":\"OperationOutcome\",\"id\":\"s2726\",\"meta\":{\"id\":\"s18761\",\"versionId\":\"s60200\",\"lastUpdated\":\"2024-10-07T04:28:47.505Z\",\"source\":\"s96240\",\"profile\":[\"s36579\",\"s25452\"]},\"implicitRules\":\"s49499\",\"language\":\"s93020\",\"text\":{\"id\":\"s48947\",\"status\":\"additional\"},\"issue\":[{\"id\":\"s99906\",\"severity\":\"warning\",\"code\":\"value\",\"diagnostics\":\"s41511\",\"location\":[\"s69975\"],\"expression\":[\"s62721\"]},{\"id\":\"s97566\",\"severity\":\"error\",\"code\":\"not-supported\",\"diagnostics\":\"s72646\",\"location\":[\"s17477\"],\"expression\":[\"s55644\"]}]}",
+ "expect": "{\"resourceType\":\"OperationOutcome\",\"id\":\"s2726\",\"meta\":{\"id\":\"s18761\",\"versionId\":\"s60200\",\"lastUpdated\":\"2024-10-07T04:28:47.505Z\",\"source\":\"s96240\",\"profile\":[\"s36579\",\"s25452\"]},\"implicitRules\":\"s49499\",\"language\":\"s93020\",\"text\":{\"id\":\"s48947\",\"status\":\"additional\"},\"issue\":[{\"id\":\"s99906\",\"severity\":\"warning\",\"code\":\"value\",\"diagnostics\":\"s41511\",\"location\":[\"s69975\"],\"expression\":[\"s62721\"]},{\"id\":\"s97566\",\"severity\":\"error\",\"code\":\"not-supported\",\"diagnostics\":\"s72646\",\"location\":[\"s17477\"],\"expression\":[\"s55644\"]}]}",
+ "model": {
+  "@kind": "operation_outcome",
+  "uid": "s2726",
+  "time_ms": "1728275327505",
+  "fhirr4operationoutcome.resource_type": "OperationOutcome",
+  "fhirr4operationoutcome.id": "s2726",
+  "fhirr4operationoutcome.meta_id": "s18761",
+  "fhirr4operationoutcome.meta_version_id": "s60200",
+  "fhirr4operationoutcome.meta_last_updated": "2024-10-07T04:28:47.505Z"
+ }
+}

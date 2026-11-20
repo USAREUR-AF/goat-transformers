@@ -1,0 +1,38 @@
+{
+ "keys": {
+  "meta_profile|.|string": "meta_profile_value",
+  "parameter|id|string": "parameter_id",
+  "parameter|name|string": "parameter_name",
+  "parameter|valueBase64Binary|string": "parameter_value_base64_binary",
+  "parameter|valueBoolean|int": "parameter_value_boolean",
+  "parameter|valueCanonical|string": "parameter_value_canonical",
+  "parameter|valueCode|string": "parameter_value_code",
+  "parameter|valueDateTime|string": "parameter_value_date_time",
+  "parameter|valueDate|string": "parameter_value_date",
+  "parameter|valueDecimal|float": "parameter_value_decimal",
+  "parameter|valueId|string": "parameter_value_id",
+  "parameter|valueInstant|string": "parameter_value_instant",
+  "parameter|valueInteger|float": "parameter_value_integer",
+  "parameter|valueMarkdown|string": "parameter_value_markdown",
+  "parameter|valueOid|string": "parameter_value_oid",
+  "parameter|valuePositiveInt|float": "parameter_value_positive_int",
+  "parameter|valueString|string": "parameter_value_string",
+  "parameter|valueTime|string": "parameter_value_time",
+  "parameter|valueUnsignedInt|float": "parameter_value_unsigned_int",
+  "parameter|valueUri|string": "parameter_value_uri",
+  "parameter|valueUrl|string": "parameter_value_url",
+  "parameter|valueUuid|string": "parameter_value_uuid",
+  "|id|string": "id",
+  "|implicitRules|string": "implicit_rules",
+  "|language|string": "language",
+  "|meta.id|string": "meta_id",
+  "|meta.lastUpdated|string": "meta_last_updated",
+  "|meta.source|string": "meta_source",
+  "|meta.versionId|string": "meta_version_id",
+  "|resourceType|string": "resource_type"
+ },
+ "lists": {
+  "|meta.profile": "meta_profile",
+  "|parameter": "parameter"
+ }
+}

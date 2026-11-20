@@ -1,0 +1,27 @@
+{
+ "keys": {
+  "issue_expression|.|string": "issue_expression_value",
+  "issue_location|.|string": "issue_location_value",
+  "issue|code|string": "issue_code",
+  "issue|diagnostics|string": "issue_diagnostics",
+  "issue|id|string": "issue_id",
+  "issue|severity|string": "issue_severity",
+  "meta_profile|.|string": "meta_profile_value",
+  "|id|string": "id",
+  "|implicitRules|string": "implicit_rules",
+  "|language|string": "language",
+  "|meta.id|string": "meta_id",
+  "|meta.lastUpdated|string": "meta_last_updated",
+  "|meta.source|string": "meta_source",
+  "|meta.versionId|string": "meta_version_id",
+  "|resourceType|string": "resource_type",
+  "|text.id|string": "text_id",
+  "|text.status|string": "text_status"
+ },
+ "lists": {
+  "issue|expression": "issue_expression",
+  "issue|location": "issue_location",
+  "|issue": "issue",
+  "|meta.profile": "meta_profile"
+ }
+}

@@ -1,0 +1,35 @@
+{
+ "keys": {
+  "category|id|string": "category_id",
+  "category|text|string": "category_text",
+  "identifier|id|string": "identifier_id",
+  "identifier|system|string": "identifier_system",
+  "identifier|use|string": "identifier_use",
+  "identifier|value|string": "identifier_value",
+  "ingredient|id|string": "ingredient_id",
+  "instance|expiry|string": "instance_expiry",
+  "instance|id|string": "instance_id",
+  "meta_profile|.|string": "meta_profile_value",
+  "|code.id|string": "code_id",
+  "|code.text|string": "code_text",
+  "|description|string": "description",
+  "|id|string": "id",
+  "|implicitRules|string": "implicit_rules",
+  "|language|string": "language",
+  "|meta.id|string": "meta_id",
+  "|meta.lastUpdated|string": "meta_last_updated",
+  "|meta.source|string": "meta_source",
+  "|meta.versionId|string": "meta_version_id",
+  "|resourceType|string": "resource_type",
+  "|status|string": "status",
+  "|text.id|string": "text_id",
+  "|text.status|string": "text_status"
+ },
+ "lists": {
+  "|category": "category",
+  "|identifier": "identifier",
+  "|ingredient": "ingredient",
+  "|instance": "instance",
+  "|meta.profile": "meta_profile"
+ }
+}
