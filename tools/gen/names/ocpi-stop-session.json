@@ -1,0 +1,7 @@
+{
+ "keys": {
+  "|response_url|string": "response_url",
+  "|session_id|string": "session_id"
+ },
+ "lists": {}
+}

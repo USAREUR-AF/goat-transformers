@@ -1,0 +1,34 @@
+{
+ "keys": {
+  "charging_periods_dimensions|type|string": "charging_periods_dimensions_type",
+  "charging_periods_dimensions|volume|float": "charging_periods_dimensions_volume",
+  "charging_periods|start_date_time|string": "charging_periods_start_date_time",
+  "charging_periods|tariff_id|string": "charging_periods_tariff_id",
+  "|auth_method|string": "auth_method",
+  "|authorization_reference|string": "authorization_reference",
+  "|cdr_token.contract_id|string": "cdr_token_contract_id",
+  "|cdr_token.country_code|string": "cdr_token_country_code",
+  "|cdr_token.party_id|string": "cdr_token_party_id",
+  "|cdr_token.type|string": "cdr_token_type",
+  "|cdr_token.uid|string": "cdr_token_uid",
+  "|connector_id|string": "connector_id",
+  "|country_code|string": "country_code",
+  "|currency|string": "currency",
+  "|end_date_time|string": "end_date_time",
+  "|evse_uid|string": "evse_uid",
+  "|id|string": "id",
+  "|kwh|float": "kwh",
+  "|last_updated|string": "last_updated",
+  "|location_id|string": "location_id",
+  "|meter_id|string": "meter_id",
+  "|party_id|string": "party_id",
+  "|start_date_time|string": "start_date_time",
+  "|status|string": "status",
+  "|total_cost.excl_vat|float": "total_cost_excl_vat",
+  "|total_cost.incl_vat|float": "total_cost_incl_vat"
+ },
+ "lists": {
+  "charging_periods|dimensions": "charging_periods_dimensions",
+  "|charging_periods": "charging_periods"
+ }
+}

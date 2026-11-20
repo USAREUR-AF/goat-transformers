@@ -1,0 +1,7 @@
+{
+ "name": "gen-cancel_reservation-residue",
+ "from": "ocpi-cancel-reservation",
+ "to": "ocpi-cancel-reservation",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"response_url\":\"s12757\",\"reservation_id\":\"s47647\"}",
+ "expect": "{\"response_url\":\"s12757\",\"reservation_id\":\"s47647\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

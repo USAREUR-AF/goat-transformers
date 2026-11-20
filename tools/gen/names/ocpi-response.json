@@ -1,0 +1,8 @@
+{
+ "keys": {
+  "|status_code|int": "status_code",
+  "|status_message|string": "status_message",
+  "|timestamp|string": "timestamp"
+ },
+ "lists": {}
+}

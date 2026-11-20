@@ -1,0 +1,9 @@
+{
+ "keys": {
+  "|connector_id|string": "connector_id",
+  "|evse_uid|string": "evse_uid",
+  "|location_id|string": "location_id",
+  "|response_url|string": "response_url"
+ },
+ "lists": {}
+}

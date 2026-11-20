@@ -1,0 +1,7 @@
+{
+ "name": "gen-response-residue",
+ "from": "ocpi-response",
+ "to": "ocpi-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"status_code\":95195,\"status_message\":\"s95070\",\"timestamp\":\"2026-11-30T07:22:21.113Z\"}",
+ "expect": "{\"status_code\":95195,\"status_message\":\"s95070\",\"timestamp\":\"2026-11-30T07:22:21.113Z\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

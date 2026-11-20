@@ -1,0 +1,20 @@
+{
+ "keys": {
+  "|contract_id|string": "contract_id",
+  "|country_code|string": "country_code",
+  "|default_profile_type|string": "default_profile_type",
+  "|energy_contract.contract_id|string": "energy_contract_contract_id",
+  "|energy_contract.supplier_name|string": "energy_contract_supplier_name",
+  "|group_id|string": "group_id",
+  "|issuer|string": "issuer",
+  "|language|string": "language",
+  "|last_updated|string": "last_updated",
+  "|party_id|string": "party_id",
+  "|type|string": "type",
+  "|uid|string": "uid",
+  "|valid|int": "valid",
+  "|visual_number|string": "visual_number",
+  "|whitelist|string": "whitelist"
+ },
+ "lists": {}
+}

@@ -1,0 +1,13 @@
+{
+ "name": "gen-charging_preferences-roundtrip",
+ "from": "ocpi-charging-preferences",
+ "to": "ocpi-charging-preferences",
+ "input": "{\"profile_type\":\"s97597\",\"departure_time\":\"2025-11-14T09:43:32.446Z\",\"energy_need\":-3.25,\"discharge_allowed\":false}",
+ "expect": "{\"profile_type\":\"s97597\",\"departure_time\":\"2025-11-14T09:43:32.446Z\",\"energy_need\":-3.25,\"discharge_allowed\":false}",
+ "model": {
+  "ocpipref.profile_type": "s97597",
+  "ocpipref.departure_time": "2025-11-14T09:43:32.446Z",
+  "ocpipref.energy_need": "-3.25",
+  "ocpipref.discharge_allowed": "0"
+ }
+}

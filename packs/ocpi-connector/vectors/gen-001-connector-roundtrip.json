@@ -1,0 +1,17 @@
+{
+ "name": "gen-connector-roundtrip",
+ "from": "ocpi-connector",
+ "to": "ocpi-connector",
+ "input": "{\"id\":\"s26055\",\"standard\":\"s90893\",\"format\":\"s79858\",\"power_type\":\"s73458\",\"max_voltage\":41680,\"max_amperage\":85215,\"max_electric_power\":64329,\"tariff_ids\":[\"s36587\",\"s74204\"],\"terms_and_conditions\":\"s43795\",\"last_updated\":\"2025-03-21T05:23:34.940Z\"}",
+ "expect": "{\"id\":\"s26055\",\"standard\":\"s90893\",\"format\":\"s79858\",\"power_type\":\"s73458\",\"max_voltage\":41680,\"max_amperage\":85215,\"max_electric_power\":64329,\"tariff_ids\":[\"s36587\",\"s74204\"],\"terms_and_conditions\":\"s43795\",\"last_updated\":\"2025-03-21T05:23:34.940Z\"}",
+ "model": {
+  "ocpiconn.id": "s26055",
+  "ocpiconn.standard": "s90893",
+  "ocpiconn.format": "s79858",
+  "ocpiconn.power_type": "s73458",
+  "ocpiconn.max_voltage": "41680",
+  "ocpiconn.max_amperage": "85215",
+  "ocpiconn.max_electric_power": "64329",
+  "ocpiconn.tariff_ids.#": "2"
+ }
+}

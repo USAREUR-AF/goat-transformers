@@ -1,0 +1,7 @@
+{
+ "name": "gen-charging_preferences-residue",
+ "from": "ocpi-charging-preferences",
+ "to": "ocpi-charging-preferences",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"profile_type\":\"s97597\",\"departure_time\":\"2025-11-14T09:43:32.446Z\",\"energy_need\":-3.25,\"discharge_allowed\":false}",
+ "expect": "{\"profile_type\":\"s97597\",\"departure_time\":\"2025-11-14T09:43:32.446Z\",\"energy_need\":-3.25,\"discharge_allowed\":false,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

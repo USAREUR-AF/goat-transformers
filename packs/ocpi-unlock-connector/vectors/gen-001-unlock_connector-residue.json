@@ -1,0 +1,7 @@
+{
+ "name": "gen-unlock_connector-residue",
+ "from": "ocpi-unlock-connector",
+ "to": "ocpi-unlock-connector",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"response_url\":\"s9416\",\"location_id\":\"s47487\",\"evse_uid\":\"s31410\",\"connector_id\":\"s99050\"}",
+ "expect": "{\"response_url\":\"s9416\",\"location_id\":\"s47487\",\"evse_uid\":\"s31410\",\"connector_id\":\"s99050\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

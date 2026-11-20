@@ -1,0 +1,9 @@
+{
+ "keys": {
+  "|departure_time|string": "departure_time",
+  "|discharge_allowed|int": "discharge_allowed",
+  "|energy_need|float": "energy_need",
+  "|profile_type|string": "profile_type"
+ },
+ "lists": {}
+}

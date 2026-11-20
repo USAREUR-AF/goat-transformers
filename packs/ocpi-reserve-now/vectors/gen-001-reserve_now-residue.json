@@ -1,0 +1,7 @@
+{
+ "name": "gen-reserve_now-residue",
+ "from": "ocpi-reserve-now",
+ "to": "ocpi-reserve-now",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"response_url\":\"s69349\",\"token\":{\"country_code\":\"s29472\",\"party_id\":\"s79806\",\"uid\":\"s28656\",\"type\":\"s11132\",\"contract_id\":\"s25564\",\"visual_number\":\"s95020\",\"issuer\":\"s51787\",\"group_id\":\"s65505\",\"valid\":false,\"whitelist\":\"s17786\",\"language\":\"s98187\",\"default_profile_type\":\"s75764\",\"energy_contract\":{\"supplier_name\":\"s13647\",\"contract_id\":\"s76585\"},\"last_updated\":\"2023-12-17T20:18:21.545Z\"},\"expiry_date\":\"2026-06-06T13:04:30.240Z\",\"reservation_id\":\"s74238\",\"location_id\":\"s46407\",\"evse_uid\":\"s85588\",\"authorization_reference\":\"s36141\"}",
+ "expect": "{\"response_url\":\"s69349\",\"token\":{\"country_code\":\"s29472\",\"party_id\":\"s79806\",\"uid\":\"s28656\",\"type\":\"s11132\",\"contract_id\":\"s25564\",\"visual_number\":\"s95020\",\"issuer\":\"s51787\",\"group_id\":\"s65505\",\"valid\":false,\"whitelist\":\"s17786\",\"language\":\"s98187\",\"default_profile_type\":\"s75764\",\"energy_contract\":{\"supplier_name\":\"s13647\",\"contract_id\":\"s76585\"},\"last_updated\":\"2023-12-17T20:18:21.545Z\"},\"expiry_date\":\"2026-06-06T13:04:30.240Z\",\"reservation_id\":\"s74238\",\"location_id\":\"s46407\",\"evse_uid\":\"s85588\",\"authorization_reference\":\"s36141\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

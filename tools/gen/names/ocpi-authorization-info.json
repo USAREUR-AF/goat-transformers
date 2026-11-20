@@ -1,0 +1,28 @@
+{
+ "keys": {
+  "location_evse_uids|.|string": "location_evse_uids_value",
+  "|allowed|string": "allowed",
+  "|authorization_reference|string": "authorization_reference",
+  "|info.language|string": "info_language",
+  "|info.text|string": "info_text",
+  "|location.location_id|string": "location_location_id",
+  "|token.contract_id|string": "token_contract_id",
+  "|token.country_code|string": "token_country_code",
+  "|token.default_profile_type|string": "token_default_profile_type",
+  "|token.energy_contract.contract_id|string": "token_energy_contract_contract_id",
+  "|token.energy_contract.supplier_name|string": "token_energy_contract_supplier_name",
+  "|token.group_id|string": "token_group_id",
+  "|token.issuer|string": "token_issuer",
+  "|token.language|string": "token_language",
+  "|token.last_updated|string": "token_last_updated",
+  "|token.party_id|string": "token_party_id",
+  "|token.type|string": "token_type",
+  "|token.uid|string": "token_uid",
+  "|token.valid|int": "token_valid",
+  "|token.visual_number|string": "token_visual_number",
+  "|token.whitelist|string": "token_whitelist"
+ },
+ "lists": {
+  "|location.evse_uids": "location_evse_uids"
+ }
+}
