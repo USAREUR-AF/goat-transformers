@@ -1,0 +1,21 @@
+{
+  "name": "gen-set_log_mode_cmd-roundtrip",
+  "from": "cfe-evs",
+  "to": "cfe-evs",
+  "input": "1801c0780003132b2a4f",
+  "expect": "1801c0780003132b2a4f",
+  "model": {
+    "@kind": "set_log_mode_cmd",
+    "ccsdssp.packet_type": "1",
+    "ccsdssp.apid": "1",
+    "ccsdssp.sequence_flags": "3",
+    "ccsdssp.data_length": "3",
+    "ccsdssp.sequence_count_or_name": "120",
+    "cfeevs.set_log_mode_log_mode": "42",
+    "cfeevs.set_log_mode_spare": "79",
+    "cfemsg.checksum": "43",
+    "cfemsg.function_code": "19"
+  },
+  "source": "written by tools/gen/cfe-vectors.py: the packet is serialized from tools/gen/cfe/layout.json (the C layout cfe2pack.py reads from nasa/cFE); no engine run",
+  "reference": "https://github.com/nasa/cFE at tag v7.0.2-rc1, commit 73f6fe102eae7949fc5f550e6818fec60319ddea; Apache-2.0, modules/evs/config/default_cfe_evs_msgstruct.h and default_cfe_evs_msgdefs.h; struct CFE_EVS_SetLogModeCmd_t, message ID CFE_EVS_CMD_MID = 0x1801, function code CFE_EVS_SET_LOG_MODE_CC = 19; 10 octets"
+}

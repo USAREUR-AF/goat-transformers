@@ -1,0 +1,9 @@
+{
+  "name": "gen-unknown-function-code-is-no-kind",
+  "from": "cfe-sb",
+  "to": "cfe-sb",
+  "input": "1803c00000010600",
+  "expect_error": "no-kind",
+  "source": "written by tools/gen/cfe-vectors.py: the packet is serialized from tools/gen/cfe/layout.json (the C layout cfe2pack.py reads from nasa/cFE); no engine run",
+  "reference": "function code 6 is not a command of SB on message ID 0x1803"
+}

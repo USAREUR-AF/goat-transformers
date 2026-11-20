@@ -1,0 +1,9 @@
+{
+  "name": "gen-ccsds-space-packet-to-housekeeping_tlm-needs-its-arrays",
+  "from": "ccsds-space-packet",
+  "to": "cfe-evs",
+  "input": "0801c07b0099",
+  "expect_error": "transform-encode",
+  "source": "written by tools/gen/cfe-vectors.py: the packet is serialized from tools/gen/cfe/layout.json (the C layout cfe2pack.py reads from nasa/cFE); no engine run",
+  "reference": "the kind is selected (packet type 0, apid 1) but its payload holds fixed-count arrays, and an absent list under a fixed count is transform-encode (ruling 5 of 0.7)"
+}

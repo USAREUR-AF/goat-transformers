@@ -1,0 +1,21 @@
+{
+  "name": "gen-enable_ports_cmd-roundtrip",
+  "from": "cfe-evs",
+  "to": "cfe-evs",
+  "input": "1801c07100030b3a2a4f",
+  "expect": "1801c07100030b3a2a4f",
+  "model": {
+    "@kind": "enable_ports_cmd",
+    "ccsdssp.packet_type": "1",
+    "ccsdssp.apid": "1",
+    "ccsdssp.sequence_flags": "3",
+    "ccsdssp.data_length": "3",
+    "ccsdssp.sequence_count_or_name": "113",
+    "cfeevs.bit_mask_cmd_bit_mask": "42",
+    "cfeevs.bit_mask_cmd_spare": "79",
+    "cfemsg.checksum": "58",
+    "cfemsg.function_code": "11"
+  },
+  "source": "written by tools/gen/cfe-vectors.py: the packet is serialized from tools/gen/cfe/layout.json (the C layout cfe2pack.py reads from nasa/cFE); no engine run",
+  "reference": "https://github.com/nasa/cFE at tag v7.0.2-rc1, commit 73f6fe102eae7949fc5f550e6818fec60319ddea; Apache-2.0, modules/evs/config/default_cfe_evs_msgstruct.h and default_cfe_evs_msgdefs.h; struct CFE_EVS_EnablePortsCmd_t, message ID CFE_EVS_CMD_MID = 0x1801, function code CFE_EVS_ENABLE_PORTS_CC = 11; 10 octets"
+}

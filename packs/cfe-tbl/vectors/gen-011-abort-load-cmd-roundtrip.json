@@ -1,0 +1,20 @@
+{
+  "name": "gen-abort_load_cmd-roundtrip",
+  "from": "cfe-tbl",
+  "to": "cfe-tbl",
+  "input": "1804c06f0029090954310000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "expect": "1804c06f0029090954310000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "model": {
+    "@kind": "abort_load_cmd",
+    "ccsdssp.packet_type": "1",
+    "ccsdssp.apid": "4",
+    "ccsdssp.sequence_flags": "3",
+    "ccsdssp.data_length": "41",
+    "ccsdssp.sequence_count_or_name": "111",
+    "cfetbl.abort_load_cmd_table_name": "T1",
+    "cfemsg.checksum": "9",
+    "cfemsg.function_code": "9"
+  },
+  "source": "written by tools/gen/cfe-vectors.py: the packet is serialized from tools/gen/cfe/layout.json (the C layout cfe2pack.py reads from nasa/cFE); no engine run",
+  "reference": "https://github.com/nasa/cFE at tag v7.0.2-rc1, commit 73f6fe102eae7949fc5f550e6818fec60319ddea; Apache-2.0, modules/tbl/config/default_cfe_tbl_msgstruct.h and default_cfe_tbl_msgdefs.h; struct CFE_TBL_AbortLoadCmd_t, message ID CFE_TBL_CMD_MID = 0x1804, function code CFE_TBL_ABORT_LOAD_CC = 9; 48 octets"
+}

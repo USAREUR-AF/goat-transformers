@@ -1,0 +1,3660 @@
+{
+ "source": "https://github.com/nasa/cFE at tag v7.0.2-rc1, commit 73f6fe102eae7949fc5f550e6818fec60319ddea; Apache-2.0",
+ "packs": {
+  "cfe-es": [
+   {
+    "kind": "noop_cmd",
+    "struct": "CFE_ES_NoopCmd_t",
+    "mid": 6150,
+    "mid_name": "CFE_ES_CMD_MID",
+    "cc": 0,
+    "cc_name": "CFE_ES_NOOP_CC",
+    "cmd": true,
+    "size": 8,
+    "body": []
+   },
+   {
+    "kind": "reset_counters_cmd",
+    "struct": "CFE_ES_ResetCountersCmd_t",
+    "mid": 6150,
+    "mid_name": "CFE_ES_CMD_MID",
+    "cc": 1,
+    "cc_name": "CFE_ES_RESET_COUNTERS_CC",
+    "cmd": true,
+    "size": 8,
+    "body": []
+   },
+   {
+    "kind": "restart_cmd",
+    "struct": "CFE_ES_RestartCmd_t",
+    "mid": 6150,
+    "mid_name": "CFE_ES_CMD_MID",
+    "cc": 2,
+    "cc_name": "CFE_ES_RESTART_CC",
+    "cmd": true,
+    "size": 10,
+    "body": [
+     {
+      "key": "restart_cmd_restart_type",
+      "offset": 8,
+      "size": 2,
+      "type": "u"
+     }
+    ]
+   },
+   {
+    "kind": "start_app_cmd",
+    "struct": "CFE_ES_StartAppCmd_t",
+    "mid": 6150,
+    "mid_name": "CFE_ES_CMD_MID",
+    "cc": 4,
+    "cc_name": "CFE_ES_START_APP_CC",
+    "cmd": true,
+    "size": 128,
+    "body": [
+     {
+      "key": "start_app_cmd_application",
+      "offset": 8,
+      "size": 20,
+      "type": "a"
+     },
+     {
+      "key": "start_app_cmd_app_entry_point",
+      "offset": 28,
+      "size": 20,
+      "type": "a"
+     },
+     {
+      "key": "start_app_cmd_app_file_name",
+      "offset": 48,
+      "size": 64,
+      "type": "a"
+     },
+     {
+      "key": "start_app_cmd_stack_size",
+      "offset": 112,
+      "size": 8,
+      "type": "u"
+     },
+     {
+      "key": "start_app_cmd_exception_action",
+      "offset": 120,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "start_app_cmd_padding1",
+      "offset": 121,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "start_app_cmd_priority",
+      "offset": 122,
+      "size": 2,
+      "type": "u"
+     },
+     {
+      "key": "start_app_cmd_padding2_0",
+      "offset": 124,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "start_app_cmd_padding2_1",
+      "offset": 125,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "start_app_cmd_padding2_2",
+      "offset": 126,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "start_app_cmd_padding2_3",
+      "offset": 127,
+      "size": 1,
+      "type": "u"
+     }
+    ]
+   },
+   {
+    "kind": "stop_app_cmd",
+    "struct": "CFE_ES_StopAppCmd_t",
+    "mid": 6150,
+    "mid_name": "CFE_ES_CMD_MID",
+    "cc": 5,
+    "cc_name": "CFE_ES_STOP_APP_CC",
+    "cmd": true,
+    "size": 28,
+    "body": [
+     {
+      "key": "app_name_cmd_application",
+      "offset": 8,
+      "size": 20,
+      "type": "a"
+     }
+    ]
+   },
+   {
+    "kind": "restart_app_cmd",
+    "struct": "CFE_ES_RestartAppCmd_t",
+    "mid": 6150,
+    "mid_name": "CFE_ES_CMD_MID",
+    "cc": 6,
+    "cc_name": "CFE_ES_RESTART_APP_CC",
+    "cmd": true,
+    "size": 28,
+    "body": [
+     {
+      "key": "app_name_cmd_application",
+      "offset": 8,
+      "size": 20,
+      "type": "a"
+     }
+    ]
+   },
+   {
+    "kind": "reload_app_cmd",
+    "struct": "CFE_ES_ReloadAppCmd_t",
+    "mid": 6150,
+    "mid_name": "CFE_ES_CMD_MID",
+    "cc": 7,
+    "cc_name": "CFE_ES_RELOAD_APP_CC",
+    "cmd": true,
+    "size": 92,
+    "body": [
+     {
+      "key": "app_reload_cmd_application",
+      "offset": 8,
+      "size": 20,
+      "type": "a"
+     },
+     {
+      "key": "app_reload_cmd_app_file_name",
+      "offset": 28,
+      "size": 64,
+      "type": "a"
+     }
+    ]
+   },
+   {
+    "kind": "query_one_cmd",
+    "struct": "CFE_ES_QueryOneCmd_t",
+    "mid": 6150,
+    "mid_name": "CFE_ES_CMD_MID",
+    "cc": 8,
+    "cc_name": "CFE_ES_QUERY_ONE_CC",
+    "cmd": true,
+    "size": 28,
+    "body": [
+     {
+      "key": "app_name_cmd_application",
+      "offset": 8,
+      "size": 20,
+      "type": "a"
+     }
+    ]
+   },
+   {
+    "kind": "query_all_cmd",
+    "struct": "CFE_ES_QueryAllCmd_t",
+    "mid": 6150,
+    "mid_name": "CFE_ES_CMD_MID",
+    "cc": 9,
+    "cc_name": "CFE_ES_QUERY_ALL_CC",
+    "cmd": true,
+    "size": 72,
+    "body": [
+     {
+      "key": "file_name_cmd_file_name",
+      "offset": 8,
+      "size": 64,
+      "type": "a"
+     }
+    ]
+   },
+   {
+    "kind": "query_all_tasks_cmd",
+    "struct": "CFE_ES_QueryAllTasksCmd_t",
+    "mid": 6150,
+    "mid_name": "CFE_ES_CMD_MID",
+    "cc": 24,
+    "cc_name": "CFE_ES_QUERY_ALL_TASKS_CC",
+    "cmd": true,
+    "size": 72,
+    "body": [
+     {
+      "key": "file_name_cmd_file_name",
+      "offset": 8,
+      "size": 64,
+      "type": "a"
+     }
+    ]
+   },
+   {
+    "kind": "clear_sys_log_cmd",
+    "struct": "CFE_ES_ClearSysLogCmd_t",
+    "mid": 6150,
+    "mid_name": "CFE_ES_CMD_MID",
+    "cc": 10,
+    "cc_name": "CFE_ES_CLEAR_SYS_LOG_CC",
+    "cmd": true,
+    "size": 8,
+    "body": []
+   },
+   {
+    "kind": "write_sys_log_cmd",
+    "struct": "CFE_ES_WriteSysLogCmd_t",
+    "mid": 6150,
+    "mid_name": "CFE_ES_CMD_MID",
+    "cc": 11,
+    "cc_name": "CFE_ES_WRITE_SYS_LOG_CC",
+    "cmd": true,
+    "size": 72,
+    "body": [
+     {
+      "key": "file_name_cmd_file_name",
+      "offset": 8,
+      "size": 64,
+      "type": "a"
+     }
+    ]
+   },
+   {
+    "kind": "over_write_sys_log_cmd",
+    "struct": "CFE_ES_OverWriteSysLogCmd_t",
+    "mid": 6150,
+    "mid_name": "CFE_ES_CMD_MID",
+    "cc": 18,
+    "cc_name": "CFE_ES_OVER_WRITE_SYS_LOG_CC",
+    "cmd": true,
+    "size": 12,
+    "body": [
+     {
+      "key": "over_write_sys_log_cmd_mode",
+      "offset": 8,
+      "size": 4,
+      "type": "u"
+     }
+    ]
+   },
+   {
+    "kind": "clear_er_log_cmd",
+    "struct": "CFE_ES_ClearERLogCmd_t",
+    "mid": 6150,
+    "mid_name": "CFE_ES_CMD_MID",
+    "cc": 12,
+    "cc_name": "CFE_ES_CLEAR_ER_LOG_CC",
+    "cmd": true,
+    "size": 8,
+    "body": []
+   },
+   {
+    "kind": "write_er_log_cmd",
+    "struct": "CFE_ES_WriteERLogCmd_t",
+    "mid": 6150,
+    "mid_name": "CFE_ES_CMD_MID",
+    "cc": 13,
+    "cc_name": "CFE_ES_WRITE_ER_LOG_CC",
+    "cmd": true,
+    "size": 72,
+    "body": [
+     {
+      "key": "file_name_cmd_file_name",
+      "offset": 8,
+      "size": 64,
+      "type": "a"
+     }
+    ]
+   },
+   {
+    "kind": "start_perf_data_cmd",
+    "struct": "CFE_ES_StartPerfDataCmd_t",
+    "mid": 6150,
+    "mid_name": "CFE_ES_CMD_MID",
+    "cc": 14,
+    "cc_name": "CFE_ES_START_PERF_DATA_CC",
+    "cmd": true,
+    "size": 12,
+    "body": [
+     {
+      "key": "start_perf_cmd_trigger_mode",
+      "offset": 8,
+      "size": 4,
+      "type": "u"
+     }
+    ]
+   },
+   {
+    "kind": "stop_perf_data_cmd",
+    "struct": "CFE_ES_StopPerfDataCmd_t",
+    "mid": 6150,
+    "mid_name": "CFE_ES_CMD_MID",
+    "cc": 15,
+    "cc_name": "CFE_ES_STOP_PERF_DATA_CC",
+    "cmd": true,
+    "size": 72,
+    "body": [
+     {
+      "key": "stop_perf_cmd_data_file_name",
+      "offset": 8,
+      "size": 64,
+      "type": "a"
+     }
+    ]
+   },
+   {
+    "kind": "set_perf_filter_mask_cmd",
+    "struct": "CFE_ES_SetPerfFilterMaskCmd_t",
+    "mid": 6150,
+    "mid_name": "CFE_ES_CMD_MID",
+    "cc": 16,
+    "cc_name": "CFE_ES_SET_PERF_FILTER_MASK_CC",
+    "cmd": true,
+    "size": 10,
+    "body": [
+     {
+      "key": "set_perf_filter_mask_cmd_filter_mask_num",
+      "offset": 8,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "set_perf_filter_mask_cmd_filter_mask",
+      "offset": 9,
+      "size": 1,
+      "type": "u"
+     }
+    ]
+   },
+   {
+    "kind": "set_perf_trigger_mask_cmd",
+    "struct": "CFE_ES_SetPerfTriggerMaskCmd_t",
+    "mid": 6150,
+    "mid_name": "CFE_ES_CMD_MID",
+    "cc": 17,
+    "cc_name": "CFE_ES_SET_PERF_TRIGGER_MASK_CC",
+    "cmd": true,
+    "size": 10,
+    "body": [
+     {
+      "key": "set_perf_trig_mask_cmd_trigger_mask_num",
+      "offset": 8,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "set_perf_trig_mask_cmd_trigger_mask",
+      "offset": 9,
+      "size": 1,
+      "type": "u"
+     }
+    ]
+   },
+   {
+    "kind": "reset_pr_count_cmd",
+    "struct": "CFE_ES_ResetPRCountCmd_t",
+    "mid": 6150,
+    "mid_name": "CFE_ES_CMD_MID",
+    "cc": 19,
+    "cc_name": "CFE_ES_RESET_PR_COUNT_CC",
+    "cmd": true,
+    "size": 8,
+    "body": []
+   },
+   {
+    "kind": "set_max_pr_count_cmd",
+    "struct": "CFE_ES_SetMaxPRCountCmd_t",
+    "mid": 6150,
+    "mid_name": "CFE_ES_CMD_MID",
+    "cc": 20,
+    "cc_name": "CFE_ES_SET_MAX_PR_COUNT_CC",
+    "cmd": true,
+    "size": 10,
+    "body": [
+     {
+      "key": "set_max_pr_count_cmd_max_pr_count",
+      "offset": 8,
+      "size": 2,
+      "type": "u"
+     }
+    ]
+   },
+   {
+    "kind": "delete_cds_cmd",
+    "struct": "CFE_ES_DeleteCDSCmd_t",
+    "mid": 6150,
+    "mid_name": "CFE_ES_CMD_MID",
+    "cc": 21,
+    "cc_name": "CFE_ES_DELETE_CDS_CC",
+    "cmd": true,
+    "size": 48,
+    "body": [
+     {
+      "key": "delete_cds_cmd_cds_name",
+      "offset": 8,
+      "size": 40,
+      "type": "a"
+     }
+    ]
+   },
+   {
+    "kind": "send_mem_pool_stats_cmd",
+    "struct": "CFE_ES_SendMemPoolStatsCmd_t",
+    "mid": 6150,
+    "mid_name": "CFE_ES_CMD_MID",
+    "cc": 22,
+    "cc_name": "CFE_ES_SEND_MEM_POOL_STATS_CC",
+    "cmd": true,
+    "size": 32,
+    "body": [
+     {
+      "key": "send_mem_pool_stats_cmd_application",
+      "offset": 8,
+      "size": 20,
+      "type": "a"
+     },
+     {
+      "key": "send_mem_pool_stats_cmd_pool_handle",
+      "offset": 28,
+      "size": 4,
+      "type": "u"
+     }
+    ]
+   },
+   {
+    "kind": "dump_cds_registry_cmd",
+    "struct": "CFE_ES_DumpCDSRegistryCmd_t",
+    "mid": 6150,
+    "mid_name": "CFE_ES_CMD_MID",
+    "cc": 23,
+    "cc_name": "CFE_ES_DUMP_CDS_REGISTRY_CC",
+    "cmd": true,
+    "size": 72,
+    "body": [
+     {
+      "key": "dump_cds_registry_cmd_dump_filename",
+      "offset": 8,
+      "size": 64,
+      "type": "a"
+     }
+    ]
+   },
+   {
+    "kind": "send_hk_cmd",
+    "struct": "CFE_ES_SendHkCmd_t",
+    "mid": 6152,
+    "mid_name": "CFE_ES_SEND_HK_MID",
+    "cc": null,
+    "cc_name": null,
+    "cmd": true,
+    "size": 8,
+    "body": []
+   },
+   {
+    "kind": "housekeeping_tlm",
+    "struct": "CFE_ES_HousekeepingTlm_t",
+    "mid": 2048,
+    "mid_name": "CFE_ES_HK_TLM_MID",
+    "cc": null,
+    "cc_name": null,
+    "cmd": false,
+    "size": 184,
+    "body": [
+     {
+      "key": "housekeeping_tlm_command_counter",
+      "offset": 16,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_command_error_counter",
+      "offset": 17,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_cfe_core_checksum",
+      "offset": 18,
+      "size": 2,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_cfe_major_version",
+      "offset": 20,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_cfe_minor_version",
+      "offset": 21,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_cfe_revision",
+      "offset": 22,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_cfe_mission_revision",
+      "offset": 23,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_osal_major_version",
+      "offset": 24,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_osal_minor_version",
+      "offset": 25,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_osal_revision",
+      "offset": 26,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_osal_mission_revision",
+      "offset": 27,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_psp_major_version",
+      "offset": 28,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_psp_minor_version",
+      "offset": 29,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_psp_revision",
+      "offset": 30,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_psp_mission_revision",
+      "offset": 31,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_sys_log_bytes_used",
+      "offset": 32,
+      "size": 8,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_sys_log_size",
+      "offset": 40,
+      "size": 8,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_sys_log_entries",
+      "offset": 48,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_sys_log_mode",
+      "offset": 52,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_er_log_index",
+      "offset": 56,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_er_log_entries",
+      "offset": 60,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_registered_core_apps",
+      "offset": 64,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_registered_external_apps",
+      "offset": 68,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_registered_tasks",
+      "offset": 72,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_registered_libs",
+      "offset": 76,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_reset_type",
+      "offset": 80,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_reset_subtype",
+      "offset": 84,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_processor_resets",
+      "offset": 88,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_max_processor_resets",
+      "offset": 92,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_boot_source",
+      "offset": 96,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_perf_state",
+      "offset": 100,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_perf_mode",
+      "offset": 104,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_perf_trigger_count",
+      "offset": 108,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "group": "housekeeping_tlm_perf_filter_mask",
+      "offset": 112,
+      "item_size": 1,
+      "count": 16,
+      "body": [
+       {
+        "key": "housekeeping_tlm_perf_filter_mask_value",
+        "offset": 0,
+        "size": 1,
+        "type": "u"
+       }
+      ]
+     },
+     {
+      "group": "housekeeping_tlm_perf_trigger_mask",
+      "offset": 128,
+      "item_size": 1,
+      "count": 16,
+      "body": [
+       {
+        "key": "housekeeping_tlm_perf_trigger_mask_value",
+        "offset": 0,
+        "size": 1,
+        "type": "u"
+       }
+      ]
+     },
+     {
+      "key": "housekeeping_tlm_perf_data_start",
+      "offset": 144,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_perf_data_end",
+      "offset": 148,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_perf_data_count",
+      "offset": 152,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_perf_data_to_write",
+      "offset": 156,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_heap_bytes_free",
+      "offset": 160,
+      "size": 8,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_heap_blocks_free",
+      "offset": 168,
+      "size": 8,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_heap_max_block_size",
+      "offset": 176,
+      "size": 8,
+      "type": "u"
+     }
+    ]
+   },
+   {
+    "kind": "one_app_tlm",
+    "struct": "CFE_ES_OneAppTlm_t",
+    "mid": 2059,
+    "mid_name": "CFE_ES_APP_TLM_MID",
+    "cc": null,
+    "cc_name": null,
+    "cmd": false,
+    "size": 240,
+    "body": [
+     {
+      "key": "one_app_tlm_app_info_resource_id",
+      "offset": 16,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "one_app_tlm_app_info_type",
+      "offset": 20,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "one_app_tlm_app_info_name",
+      "offset": 24,
+      "size": 20,
+      "type": "a"
+     },
+     {
+      "key": "one_app_tlm_app_info_entry_point",
+      "offset": 44,
+      "size": 20,
+      "type": "a"
+     },
+     {
+      "key": "one_app_tlm_app_info_file_name",
+      "offset": 64,
+      "size": 64,
+      "type": "a"
+     },
+     {
+      "key": "one_app_tlm_app_info_stack_size",
+      "offset": 128,
+      "size": 8,
+      "type": "u"
+     },
+     {
+      "key": "one_app_tlm_app_info_addresses_are_valid",
+      "offset": 136,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "one_app_tlm_app_info_padding1_0",
+      "offset": 140,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "one_app_tlm_app_info_padding1_1",
+      "offset": 141,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "one_app_tlm_app_info_padding1_2",
+      "offset": 142,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "one_app_tlm_app_info_padding1_3",
+      "offset": 143,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "one_app_tlm_app_info_code_address",
+      "offset": 144,
+      "size": 8,
+      "type": "u"
+     },
+     {
+      "key": "one_app_tlm_app_info_code_size",
+      "offset": 152,
+      "size": 8,
+      "type": "u"
+     },
+     {
+      "key": "one_app_tlm_app_info_data_address",
+      "offset": 160,
+      "size": 8,
+      "type": "u"
+     },
+     {
+      "key": "one_app_tlm_app_info_data_size",
+      "offset": 168,
+      "size": 8,
+      "type": "u"
+     },
+     {
+      "key": "one_app_tlm_app_info_bss_address",
+      "offset": 176,
+      "size": 8,
+      "type": "u"
+     },
+     {
+      "key": "one_app_tlm_app_info_bss_size",
+      "offset": 184,
+      "size": 8,
+      "type": "u"
+     },
+     {
+      "key": "one_app_tlm_app_info_start_address",
+      "offset": 192,
+      "size": 8,
+      "type": "u"
+     },
+     {
+      "key": "one_app_tlm_app_info_exception_action",
+      "offset": 200,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "one_app_tlm_app_info_padding2",
+      "offset": 201,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "one_app_tlm_app_info_priority",
+      "offset": 202,
+      "size": 2,
+      "type": "u"
+     },
+     {
+      "key": "one_app_tlm_app_info_main_task_id",
+      "offset": 204,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "one_app_tlm_app_info_execution_counter",
+      "offset": 208,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "one_app_tlm_app_info_main_task_name",
+      "offset": 212,
+      "size": 20,
+      "type": "a"
+     },
+     {
+      "key": "one_app_tlm_app_info_num_of_child_tasks",
+      "offset": 232,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "one_app_tlm_app_info_padding3_0",
+      "offset": 236,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "one_app_tlm_app_info_padding3_1",
+      "offset": 237,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "one_app_tlm_app_info_padding3_2",
+      "offset": 238,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "one_app_tlm_app_info_padding3_3",
+      "offset": 239,
+      "size": 1,
+      "type": "u"
+     }
+    ]
+   },
+   {
+    "kind": "mem_stats_tlm",
+    "struct": "CFE_ES_MemStatsTlm_t",
+    "mid": 2064,
+    "mid_name": "CFE_ES_MEMSTATS_TLM_MID",
+    "cc": null,
+    "cc_name": null,
+    "cmd": false,
+    "size": 320,
+    "body": [
+     {
+      "key": "pool_stats_tlm_pool_handle",
+      "offset": 16,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "pool_stats_tlm_padding_0",
+      "offset": 20,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "pool_stats_tlm_padding_1",
+      "offset": 21,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "pool_stats_tlm_padding_2",
+      "offset": 22,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "pool_stats_tlm_padding_3",
+      "offset": 23,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "pool_stats_tlm_pool_stats_pool_size",
+      "offset": 24,
+      "size": 8,
+      "type": "u"
+     },
+     {
+      "key": "pool_stats_tlm_pool_stats_num_blocks_requested",
+      "offset": 32,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "pool_stats_tlm_pool_stats_check_err_ctr",
+      "offset": 36,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "pool_stats_tlm_pool_stats_num_free_bytes",
+      "offset": 40,
+      "size": 8,
+      "type": "u"
+     },
+     {
+      "group": "pool_stats_tlm_pool_stats_block_stats",
+      "offset": 48,
+      "item_size": 16,
+      "count": 17,
+      "body": [
+       {
+        "key": "pool_stats_tlm_pool_stats_block_stats_block_size",
+        "offset": 0,
+        "size": 8,
+        "type": "u"
+       },
+       {
+        "key": "pool_stats_tlm_pool_stats_block_stats_num_created",
+        "offset": 8,
+        "size": 4,
+        "type": "u"
+       },
+       {
+        "key": "pool_stats_tlm_pool_stats_block_stats_num_free",
+        "offset": 12,
+        "size": 4,
+        "type": "u"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "cfe-evs": [
+   {
+    "kind": "send_hk_cmd",
+    "struct": "CFE_EVS_SendHkCmd_t",
+    "mid": 6153,
+    "mid_name": "CFE_EVS_SEND_HK_MID",
+    "cc": null,
+    "cc_name": null,
+    "cmd": true,
+    "size": 8,
+    "body": []
+   },
+   {
+    "kind": "noop_cmd",
+    "struct": "CFE_EVS_NoopCmd_t",
+    "mid": 6145,
+    "mid_name": "CFE_EVS_CMD_MID",
+    "cc": 0,
+    "cc_name": "CFE_EVS_NOOP_CC",
+    "cmd": true,
+    "size": 8,
+    "body": []
+   },
+   {
+    "kind": "reset_counters_cmd",
+    "struct": "CFE_EVS_ResetCountersCmd_t",
+    "mid": 6145,
+    "mid_name": "CFE_EVS_CMD_MID",
+    "cc": 1,
+    "cc_name": "CFE_EVS_RESET_COUNTERS_CC",
+    "cmd": true,
+    "size": 8,
+    "body": []
+   },
+   {
+    "kind": "enable_event_type_cmd",
+    "struct": "CFE_EVS_EnableEventTypeCmd_t",
+    "mid": 6145,
+    "mid_name": "CFE_EVS_CMD_MID",
+    "cc": 2,
+    "cc_name": "CFE_EVS_ENABLE_EVENT_TYPE_CC",
+    "cmd": true,
+    "size": 10,
+    "body": [
+     {
+      "key": "bit_mask_cmd_bit_mask",
+      "offset": 8,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "bit_mask_cmd_spare",
+      "offset": 9,
+      "size": 1,
+      "type": "u"
+     }
+    ]
+   },
+   {
+    "kind": "disable_event_type_cmd",
+    "struct": "CFE_EVS_DisableEventTypeCmd_t",
+    "mid": 6145,
+    "mid_name": "CFE_EVS_CMD_MID",
+    "cc": 3,
+    "cc_name": "CFE_EVS_DISABLE_EVENT_TYPE_CC",
+    "cmd": true,
+    "size": 10,
+    "body": [
+     {
+      "key": "bit_mask_cmd_bit_mask",
+      "offset": 8,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "bit_mask_cmd_spare",
+      "offset": 9,
+      "size": 1,
+      "type": "u"
+     }
+    ]
+   },
+   {
+    "kind": "set_event_format_mode_cmd",
+    "struct": "CFE_EVS_SetEventFormatModeCmd_t",
+    "mid": 6145,
+    "mid_name": "CFE_EVS_CMD_MID",
+    "cc": 4,
+    "cc_name": "CFE_EVS_SET_EVENT_FORMAT_MODE_CC",
+    "cmd": true,
+    "size": 10,
+    "body": [
+     {
+      "key": "set_event_format_mode_msg_format",
+      "offset": 8,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "set_event_format_mode_spare",
+      "offset": 9,
+      "size": 1,
+      "type": "u"
+     }
+    ]
+   },
+   {
+    "kind": "enable_app_event_type_cmd",
+    "struct": "CFE_EVS_EnableAppEventTypeCmd_t",
+    "mid": 6145,
+    "mid_name": "CFE_EVS_CMD_MID",
+    "cc": 5,
+    "cc_name": "CFE_EVS_ENABLE_APP_EVENT_TYPE_CC",
+    "cmd": true,
+    "size": 30,
+    "body": [
+     {
+      "key": "app_name_bit_mask_cmd_app_name",
+      "offset": 8,
+      "size": 20,
+      "type": "a"
+     },
+     {
+      "key": "app_name_bit_mask_cmd_bit_mask",
+      "offset": 28,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "app_name_bit_mask_cmd_spare",
+      "offset": 29,
+      "size": 1,
+      "type": "u"
+     }
+    ]
+   },
+   {
+    "kind": "disable_app_event_type_cmd",
+    "struct": "CFE_EVS_DisableAppEventTypeCmd_t",
+    "mid": 6145,
+    "mid_name": "CFE_EVS_CMD_MID",
+    "cc": 6,
+    "cc_name": "CFE_EVS_DISABLE_APP_EVENT_TYPE_CC",
+    "cmd": true,
+    "size": 30,
+    "body": [
+     {
+      "key": "app_name_bit_mask_cmd_app_name",
+      "offset": 8,
+      "size": 20,
+      "type": "a"
+     },
+     {
+      "key": "app_name_bit_mask_cmd_bit_mask",
+      "offset": 28,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "app_name_bit_mask_cmd_spare",
+      "offset": 29,
+      "size": 1,
+      "type": "u"
+     }
+    ]
+   },
+   {
+    "kind": "enable_app_events_cmd",
+    "struct": "CFE_EVS_EnableAppEventsCmd_t",
+    "mid": 6145,
+    "mid_name": "CFE_EVS_CMD_MID",
+    "cc": 7,
+    "cc_name": "CFE_EVS_ENABLE_APP_EVENTS_CC",
+    "cmd": true,
+    "size": 28,
+    "body": [
+     {
+      "key": "app_name_cmd_app_name",
+      "offset": 8,
+      "size": 20,
+      "type": "a"
+     }
+    ]
+   },
+   {
+    "kind": "disable_app_events_cmd",
+    "struct": "CFE_EVS_DisableAppEventsCmd_t",
+    "mid": 6145,
+    "mid_name": "CFE_EVS_CMD_MID",
+    "cc": 8,
+    "cc_name": "CFE_EVS_DISABLE_APP_EVENTS_CC",
+    "cmd": true,
+    "size": 28,
+    "body": [
+     {
+      "key": "app_name_cmd_app_name",
+      "offset": 8,
+      "size": 20,
+      "type": "a"
+     }
+    ]
+   },
+   {
+    "kind": "reset_app_counter_cmd",
+    "struct": "CFE_EVS_ResetAppCounterCmd_t",
+    "mid": 6145,
+    "mid_name": "CFE_EVS_CMD_MID",
+    "cc": 9,
+    "cc_name": "CFE_EVS_RESET_APP_COUNTER_CC",
+    "cmd": true,
+    "size": 28,
+    "body": [
+     {
+      "key": "app_name_cmd_app_name",
+      "offset": 8,
+      "size": 20,
+      "type": "a"
+     }
+    ]
+   },
+   {
+    "kind": "set_filter_cmd",
+    "struct": "CFE_EVS_SetFilterCmd_t",
+    "mid": 6145,
+    "mid_name": "CFE_EVS_CMD_MID",
+    "cc": 10,
+    "cc_name": "CFE_EVS_SET_FILTER_CC",
+    "cmd": true,
+    "size": 32,
+    "body": [
+     {
+      "key": "app_name_event_id_mask_cmd_app_name",
+      "offset": 8,
+      "size": 20,
+      "type": "a"
+     },
+     {
+      "key": "app_name_event_id_mask_cmd_event_id",
+      "offset": 28,
+      "size": 2,
+      "type": "u"
+     },
+     {
+      "key": "app_name_event_id_mask_cmd_mask",
+      "offset": 30,
+      "size": 2,
+      "type": "u"
+     }
+    ]
+   },
+   {
+    "kind": "enable_ports_cmd",
+    "struct": "CFE_EVS_EnablePortsCmd_t",
+    "mid": 6145,
+    "mid_name": "CFE_EVS_CMD_MID",
+    "cc": 11,
+    "cc_name": "CFE_EVS_ENABLE_PORTS_CC",
+    "cmd": true,
+    "size": 10,
+    "body": [
+     {
+      "key": "bit_mask_cmd_bit_mask",
+      "offset": 8,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "bit_mask_cmd_spare",
+      "offset": 9,
+      "size": 1,
+      "type": "u"
+     }
+    ]
+   },
+   {
+    "kind": "disable_ports_cmd",
+    "struct": "CFE_EVS_DisablePortsCmd_t",
+    "mid": 6145,
+    "mid_name": "CFE_EVS_CMD_MID",
+    "cc": 12,
+    "cc_name": "CFE_EVS_DISABLE_PORTS_CC",
+    "cmd": true,
+    "size": 10,
+    "body": [
+     {
+      "key": "bit_mask_cmd_bit_mask",
+      "offset": 8,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "bit_mask_cmd_spare",
+      "offset": 9,
+      "size": 1,
+      "type": "u"
+     }
+    ]
+   },
+   {
+    "kind": "reset_filter_cmd",
+    "struct": "CFE_EVS_ResetFilterCmd_t",
+    "mid": 6145,
+    "mid_name": "CFE_EVS_CMD_MID",
+    "cc": 13,
+    "cc_name": "CFE_EVS_RESET_FILTER_CC",
+    "cmd": true,
+    "size": 30,
+    "body": [
+     {
+      "key": "app_name_event_id_cmd_app_name",
+      "offset": 8,
+      "size": 20,
+      "type": "a"
+     },
+     {
+      "key": "app_name_event_id_cmd_event_id",
+      "offset": 28,
+      "size": 2,
+      "type": "u"
+     }
+    ]
+   },
+   {
+    "kind": "reset_all_filters_cmd",
+    "struct": "CFE_EVS_ResetAllFiltersCmd_t",
+    "mid": 6145,
+    "mid_name": "CFE_EVS_CMD_MID",
+    "cc": 14,
+    "cc_name": "CFE_EVS_RESET_ALL_FILTERS_CC",
+    "cmd": true,
+    "size": 28,
+    "body": [
+     {
+      "key": "app_name_cmd_app_name",
+      "offset": 8,
+      "size": 20,
+      "type": "a"
+     }
+    ]
+   },
+   {
+    "kind": "add_event_filter_cmd",
+    "struct": "CFE_EVS_AddEventFilterCmd_t",
+    "mid": 6145,
+    "mid_name": "CFE_EVS_CMD_MID",
+    "cc": 15,
+    "cc_name": "CFE_EVS_ADD_EVENT_FILTER_CC",
+    "cmd": true,
+    "size": 32,
+    "body": [
+     {
+      "key": "app_name_event_id_mask_cmd_app_name",
+      "offset": 8,
+      "size": 20,
+      "type": "a"
+     },
+     {
+      "key": "app_name_event_id_mask_cmd_event_id",
+      "offset": 28,
+      "size": 2,
+      "type": "u"
+     },
+     {
+      "key": "app_name_event_id_mask_cmd_mask",
+      "offset": 30,
+      "size": 2,
+      "type": "u"
+     }
+    ]
+   },
+   {
+    "kind": "delete_event_filter_cmd",
+    "struct": "CFE_EVS_DeleteEventFilterCmd_t",
+    "mid": 6145,
+    "mid_name": "CFE_EVS_CMD_MID",
+    "cc": 16,
+    "cc_name": "CFE_EVS_DELETE_EVENT_FILTER_CC",
+    "cmd": true,
+    "size": 30,
+    "body": [
+     {
+      "key": "app_name_event_id_cmd_app_name",
+      "offset": 8,
+      "size": 20,
+      "type": "a"
+     },
+     {
+      "key": "app_name_event_id_cmd_event_id",
+      "offset": 28,
+      "size": 2,
+      "type": "u"
+     }
+    ]
+   },
+   {
+    "kind": "write_app_data_file_cmd",
+    "struct": "CFE_EVS_WriteAppDataFileCmd_t",
+    "mid": 6145,
+    "mid_name": "CFE_EVS_CMD_MID",
+    "cc": 17,
+    "cc_name": "CFE_EVS_WRITE_APP_DATA_FILE_CC",
+    "cmd": true,
+    "size": 72,
+    "body": [
+     {
+      "key": "app_data_cmd_app_data_filename",
+      "offset": 8,
+      "size": 64,
+      "type": "a"
+     }
+    ]
+   },
+   {
+    "kind": "set_log_mode_cmd",
+    "struct": "CFE_EVS_SetLogModeCmd_t",
+    "mid": 6145,
+    "mid_name": "CFE_EVS_CMD_MID",
+    "cc": 19,
+    "cc_name": "CFE_EVS_SET_LOG_MODE_CC",
+    "cmd": true,
+    "size": 10,
+    "body": [
+     {
+      "key": "set_log_mode_log_mode",
+      "offset": 8,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "set_log_mode_spare",
+      "offset": 9,
+      "size": 1,
+      "type": "u"
+     }
+    ]
+   },
+   {
+    "kind": "clear_log_cmd",
+    "struct": "CFE_EVS_ClearLogCmd_t",
+    "mid": 6145,
+    "mid_name": "CFE_EVS_CMD_MID",
+    "cc": 20,
+    "cc_name": "CFE_EVS_CLEAR_LOG_CC",
+    "cmd": true,
+    "size": 8,
+    "body": []
+   },
+   {
+    "kind": "write_log_data_file_cmd",
+    "struct": "CFE_EVS_WriteLogDataFileCmd_t",
+    "mid": 6145,
+    "mid_name": "CFE_EVS_CMD_MID",
+    "cc": 18,
+    "cc_name": "CFE_EVS_WRITE_LOG_DATA_FILE_CC",
+    "cmd": true,
+    "size": 72,
+    "body": [
+     {
+      "key": "log_file_cmd_log_filename",
+      "offset": 8,
+      "size": 64,
+      "type": "a"
+     }
+    ]
+   },
+   {
+    "kind": "housekeeping_tlm",
+    "struct": "CFE_EVS_HousekeepingTlm_t",
+    "mid": 2049,
+    "mid_name": "CFE_EVS_HK_TLM_MID",
+    "cc": null,
+    "cc_name": null,
+    "cmd": false,
+    "size": 160,
+    "body": [
+     {
+      "key": "housekeeping_tlm_command_counter",
+      "offset": 16,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_command_error_counter",
+      "offset": 17,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_message_format_mode",
+      "offset": 18,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_message_trunc_counter",
+      "offset": 19,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_unregistered_app_counter",
+      "offset": 20,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_output_port",
+      "offset": 21,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_log_full_flag",
+      "offset": 22,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_log_mode",
+      "offset": 23,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_message_send_counter",
+      "offset": 24,
+      "size": 2,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_log_overflow_counter",
+      "offset": 26,
+      "size": 2,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_log_enabled",
+      "offset": 28,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_padding_0",
+      "offset": 29,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_padding_1",
+      "offset": 30,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_padding_2",
+      "offset": 31,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "group": "housekeeping_tlm_app_data",
+      "offset": 32,
+      "item_size": 8,
+      "count": 16,
+      "body": [
+       {
+        "key": "housekeeping_tlm_app_data_app_id",
+        "offset": 0,
+        "size": 4,
+        "type": "u"
+       },
+       {
+        "key": "housekeeping_tlm_app_data_app_message_sent_counter",
+        "offset": 4,
+        "size": 2,
+        "type": "u"
+       },
+       {
+        "key": "housekeeping_tlm_app_data_app_enable_status",
+        "offset": 6,
+        "size": 1,
+        "type": "u"
+       },
+       {
+        "key": "housekeeping_tlm_app_data_app_message_squelched_counter",
+        "offset": 7,
+        "size": 1,
+        "type": "u"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "kind": "long_event_tlm",
+    "struct": "CFE_EVS_LongEventTlm_t",
+    "mid": 2056,
+    "mid_name": "CFE_EVS_LONG_EVENT_MSG_MID",
+    "cc": null,
+    "cc_name": null,
+    "cmd": false,
+    "size": 172,
+    "body": [
+     {
+      "key": "long_event_tlm_packet_id_app_name",
+      "offset": 16,
+      "size": 20,
+      "type": "a"
+     },
+     {
+      "key": "long_event_tlm_packet_id_event_id",
+      "offset": 36,
+      "size": 2,
+      "type": "u"
+     },
+     {
+      "key": "long_event_tlm_packet_id_event_type",
+      "offset": 38,
+      "size": 2,
+      "type": "u"
+     },
+     {
+      "key": "long_event_tlm_packet_id_spacecraft_id",
+      "offset": 40,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "long_event_tlm_packet_id_processor_id",
+      "offset": 44,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "long_event_tlm_message",
+      "offset": 48,
+      "size": 122,
+      "type": "a"
+     },
+     {
+      "key": "long_event_tlm_padding_0",
+      "offset": 170,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "long_event_tlm_padding_1",
+      "offset": 171,
+      "size": 1,
+      "type": "u"
+     }
+    ]
+   },
+   {
+    "kind": "short_event_tlm",
+    "struct": "CFE_EVS_ShortEventTlm_t",
+    "mid": 2057,
+    "mid_name": "CFE_EVS_SHORT_EVENT_MSG_MID",
+    "cc": null,
+    "cc_name": null,
+    "cmd": false,
+    "size": 48,
+    "body": [
+     {
+      "key": "short_event_tlm_packet_id_app_name",
+      "offset": 16,
+      "size": 20,
+      "type": "a"
+     },
+     {
+      "key": "short_event_tlm_packet_id_event_id",
+      "offset": 36,
+      "size": 2,
+      "type": "u"
+     },
+     {
+      "key": "short_event_tlm_packet_id_event_type",
+      "offset": 38,
+      "size": 2,
+      "type": "u"
+     },
+     {
+      "key": "short_event_tlm_packet_id_spacecraft_id",
+      "offset": 40,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "short_event_tlm_packet_id_processor_id",
+      "offset": 44,
+      "size": 4,
+      "type": "u"
+     }
+    ]
+   }
+  ],
+  "cfe-sb": [
+   {
+    "kind": "send_prev_subs_cmd",
+    "struct": "CFE_SB_SendPrevSubsCmd_t",
+    "mid": 6147,
+    "mid_name": "CFE_SB_CMD_MID",
+    "cc": 11,
+    "cc_name": "CFE_SB_SEND_PREV_SUBS_CC",
+    "cmd": true,
+    "size": 8,
+    "body": []
+   },
+   {
+    "kind": "enable_sub_reporting_cmd",
+    "struct": "CFE_SB_EnableSubReportingCmd_t",
+    "mid": 6147,
+    "mid_name": "CFE_SB_CMD_MID",
+    "cc": 9,
+    "cc_name": "CFE_SB_ENABLE_SUB_REPORTING_CC",
+    "cmd": true,
+    "size": 8,
+    "body": []
+   },
+   {
+    "kind": "disable_sub_reporting_cmd",
+    "struct": "CFE_SB_DisableSubReportingCmd_t",
+    "mid": 6147,
+    "mid_name": "CFE_SB_CMD_MID",
+    "cc": 10,
+    "cc_name": "CFE_SB_DISABLE_SUB_REPORTING_CC",
+    "cmd": true,
+    "size": 8,
+    "body": []
+   },
+   {
+    "kind": "noop_cmd",
+    "struct": "CFE_SB_NoopCmd_t",
+    "mid": 6147,
+    "mid_name": "CFE_SB_CMD_MID",
+    "cc": 0,
+    "cc_name": "CFE_SB_NOOP_CC",
+    "cmd": true,
+    "size": 8,
+    "body": []
+   },
+   {
+    "kind": "reset_counters_cmd",
+    "struct": "CFE_SB_ResetCountersCmd_t",
+    "mid": 6147,
+    "mid_name": "CFE_SB_CMD_MID",
+    "cc": 1,
+    "cc_name": "CFE_SB_RESET_COUNTERS_CC",
+    "cmd": true,
+    "size": 8,
+    "body": []
+   },
+   {
+    "kind": "send_sb_stats_cmd",
+    "struct": "CFE_SB_SendSbStatsCmd_t",
+    "mid": 6147,
+    "mid_name": "CFE_SB_CMD_MID",
+    "cc": 2,
+    "cc_name": "CFE_SB_SEND_SB_STATS_CC",
+    "cmd": true,
+    "size": 8,
+    "body": []
+   },
+   {
+    "kind": "write_routing_info_cmd",
+    "struct": "CFE_SB_WriteRoutingInfoCmd_t",
+    "mid": 6147,
+    "mid_name": "CFE_SB_CMD_MID",
+    "cc": 3,
+    "cc_name": "CFE_SB_WRITE_ROUTING_INFO_CC",
+    "cmd": true,
+    "size": 72,
+    "body": [
+     {
+      "key": "write_file_info_cmd_filename",
+      "offset": 8,
+      "size": 64,
+      "type": "a"
+     }
+    ]
+   },
+   {
+    "kind": "enable_route_cmd",
+    "struct": "CFE_SB_EnableRouteCmd_t",
+    "mid": 6147,
+    "mid_name": "CFE_SB_CMD_MID",
+    "cc": 4,
+    "cc_name": "CFE_SB_ENABLE_ROUTE_CC",
+    "cmd": true,
+    "size": 20,
+    "body": [
+     {
+      "key": "route_cmd_msg_id_value",
+      "offset": 8,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "route_cmd_pipe",
+      "offset": 12,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "route_cmd_spare",
+      "offset": 16,
+      "size": 1,
+      "type": "u"
+     }
+    ]
+   },
+   {
+    "kind": "disable_route_cmd",
+    "struct": "CFE_SB_DisableRouteCmd_t",
+    "mid": 6147,
+    "mid_name": "CFE_SB_CMD_MID",
+    "cc": 5,
+    "cc_name": "CFE_SB_DISABLE_ROUTE_CC",
+    "cmd": true,
+    "size": 20,
+    "body": [
+     {
+      "key": "route_cmd_msg_id_value",
+      "offset": 8,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "route_cmd_pipe",
+      "offset": 12,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "route_cmd_spare",
+      "offset": 16,
+      "size": 1,
+      "type": "u"
+     }
+    ]
+   },
+   {
+    "kind": "write_pipe_info_cmd",
+    "struct": "CFE_SB_WritePipeInfoCmd_t",
+    "mid": 6147,
+    "mid_name": "CFE_SB_CMD_MID",
+    "cc": 7,
+    "cc_name": "CFE_SB_WRITE_PIPE_INFO_CC",
+    "cmd": true,
+    "size": 72,
+    "body": [
+     {
+      "key": "write_file_info_cmd_filename",
+      "offset": 8,
+      "size": 64,
+      "type": "a"
+     }
+    ]
+   },
+   {
+    "kind": "write_map_info_cmd",
+    "struct": "CFE_SB_WriteMapInfoCmd_t",
+    "mid": 6147,
+    "mid_name": "CFE_SB_CMD_MID",
+    "cc": 8,
+    "cc_name": "CFE_SB_WRITE_MAP_INFO_CC",
+    "cmd": true,
+    "size": 72,
+    "body": [
+     {
+      "key": "write_file_info_cmd_filename",
+      "offset": 8,
+      "size": 64,
+      "type": "a"
+     }
+    ]
+   },
+   {
+    "kind": "send_hk_cmd",
+    "struct": "CFE_SB_SendHkCmd_t",
+    "mid": 6155,
+    "mid_name": "CFE_SB_SEND_HK_MID",
+    "cc": null,
+    "cc_name": null,
+    "cmd": true,
+    "size": 8,
+    "body": []
+   },
+   {
+    "kind": "housekeeping_tlm",
+    "struct": "CFE_SB_HousekeepingTlm_t",
+    "mid": 2051,
+    "mid_name": "CFE_SB_HK_TLM_MID",
+    "cc": null,
+    "cc_name": null,
+    "cmd": false,
+    "size": 44,
+    "body": [
+     {
+      "key": "housekeeping_tlm_command_counter",
+      "offset": 16,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_command_error_counter",
+      "offset": 17,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_no_subscribers_counter",
+      "offset": 18,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_msg_send_error_counter",
+      "offset": 19,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_msg_receive_error_counter",
+      "offset": 20,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_internal_error_counter",
+      "offset": 21,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_create_pipe_error_counter",
+      "offset": 22,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_subscribe_error_counter",
+      "offset": 23,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_pipe_opts_error_counter",
+      "offset": 24,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_duplicate_subscriptions_counter",
+      "offset": 25,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_get_pipe_id_by_name_error_counter",
+      "offset": 26,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_delete_pipe_error_counter",
+      "offset": 27,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_pipe_overflow_error_counter",
+      "offset": 28,
+      "size": 2,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_msg_limit_error_counter",
+      "offset": 30,
+      "size": 2,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_mem_pool_handle",
+      "offset": 32,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_mem_in_use",
+      "offset": 36,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_unmarked_mem",
+      "offset": 40,
+      "size": 4,
+      "type": "u"
+     }
+    ]
+   },
+   {
+    "kind": "stats_tlm",
+    "struct": "CFE_SB_StatsTlm_t",
+    "mid": 2058,
+    "mid_name": "CFE_SB_STATS_TLM_MID",
+    "cc": null,
+    "cc_name": null,
+    "cmd": false,
+    "size": 460,
+    "body": [
+     {
+      "key": "stats_tlm_msg_ids_in_use",
+      "offset": 16,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "stats_tlm_peak_msg_ids_in_use",
+      "offset": 20,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "stats_tlm_max_msg_ids_allowed",
+      "offset": 24,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "stats_tlm_pipes_in_use",
+      "offset": 28,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "stats_tlm_peak_pipes_in_use",
+      "offset": 32,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "stats_tlm_max_pipes_allowed",
+      "offset": 36,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "stats_tlm_mem_in_use",
+      "offset": 40,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "stats_tlm_peak_mem_in_use",
+      "offset": 44,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "stats_tlm_max_mem_allowed",
+      "offset": 48,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "stats_tlm_subscriptions_in_use",
+      "offset": 52,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "stats_tlm_peak_subscriptions_in_use",
+      "offset": 56,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "stats_tlm_max_subscriptions_allowed",
+      "offset": 60,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "stats_tlm_sb_buffers_in_use",
+      "offset": 64,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "stats_tlm_peak_sb_buffers_in_use",
+      "offset": 68,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "stats_tlm_max_pipe_depth_allowed",
+      "offset": 72,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "group": "stats_tlm_pipe_depth_stats",
+      "offset": 76,
+      "item_size": 12,
+      "count": 32,
+      "body": [
+       {
+        "key": "stats_tlm_pipe_depth_stats_pipe_id",
+        "offset": 0,
+        "size": 4,
+        "type": "u"
+       },
+       {
+        "key": "stats_tlm_pipe_depth_stats_max_queue_depth",
+        "offset": 4,
+        "size": 2,
+        "type": "u"
+       },
+       {
+        "key": "stats_tlm_pipe_depth_stats_current_queue_depth",
+        "offset": 6,
+        "size": 2,
+        "type": "u"
+       },
+       {
+        "key": "stats_tlm_pipe_depth_stats_peak_queue_depth",
+        "offset": 8,
+        "size": 2,
+        "type": "u"
+       },
+       {
+        "key": "stats_tlm_pipe_depth_stats_spare",
+        "offset": 10,
+        "size": 2,
+        "type": "u"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "kind": "all_subscriptions_tlm",
+    "struct": "CFE_SB_AllSubscriptionsTlm_t",
+    "mid": 2061,
+    "mid_name": "CFE_SB_ALLSUBS_TLM_MID",
+    "cc": null,
+    "cc_name": null,
+    "cmd": false,
+    "size": 268,
+    "body": [
+     {
+      "key": "all_subscriptions_tlm_pkt_segment",
+      "offset": 16,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "all_subscriptions_tlm_total_segments",
+      "offset": 20,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "all_subscriptions_tlm_entries",
+      "offset": 24,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "group": "all_subscriptions_tlm_entry",
+      "offset": 28,
+      "item_size": 12,
+      "count": 20,
+      "body": [
+       {
+        "key": "all_subscriptions_tlm_entry_msg_id_value",
+        "offset": 0,
+        "size": 4,
+        "type": "u"
+       },
+       {
+        "key": "all_subscriptions_tlm_entry_qos_priority",
+        "offset": 4,
+        "size": 1,
+        "type": "u"
+       },
+       {
+        "key": "all_subscriptions_tlm_entry_qos_reliability",
+        "offset": 5,
+        "size": 1,
+        "type": "u"
+       },
+       {
+        "key": "all_subscriptions_tlm_entry_pipe",
+        "offset": 8,
+        "size": 4,
+        "type": "u"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "kind": "single_subscription_tlm",
+    "struct": "CFE_SB_SingleSubscriptionTlm_t",
+    "mid": 2062,
+    "mid_name": "CFE_SB_ONESUB_TLM_MID",
+    "cc": null,
+    "cc_name": null,
+    "cmd": false,
+    "size": 32,
+    "body": [
+     {
+      "key": "single_subscription_tlm_sub_type",
+      "offset": 16,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "single_subscription_tlm_msg_id_value",
+      "offset": 20,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "single_subscription_tlm_qos_priority",
+      "offset": 24,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "single_subscription_tlm_qos_reliability",
+      "offset": 25,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "single_subscription_tlm_pipe",
+      "offset": 28,
+      "size": 4,
+      "type": "u"
+     }
+    ]
+   }
+  ],
+  "cfe-tbl": [
+   {
+    "kind": "send_hk_cmd",
+    "struct": "CFE_TBL_SendHkCmd_t",
+    "mid": 6156,
+    "mid_name": "CFE_TBL_SEND_HK_MID",
+    "cc": null,
+    "cc_name": null,
+    "cmd": true,
+    "size": 8,
+    "body": []
+   },
+   {
+    "kind": "noop_cmd",
+    "struct": "CFE_TBL_NoopCmd_t",
+    "mid": 6148,
+    "mid_name": "CFE_TBL_CMD_MID",
+    "cc": 0,
+    "cc_name": "CFE_TBL_NOOP_CC",
+    "cmd": true,
+    "size": 8,
+    "body": []
+   },
+   {
+    "kind": "reset_counters_cmd",
+    "struct": "CFE_TBL_ResetCountersCmd_t",
+    "mid": 6148,
+    "mid_name": "CFE_TBL_CMD_MID",
+    "cc": 1,
+    "cc_name": "CFE_TBL_RESET_COUNTERS_CC",
+    "cmd": true,
+    "size": 8,
+    "body": []
+   },
+   {
+    "kind": "load_cmd",
+    "struct": "CFE_TBL_LoadCmd_t",
+    "mid": 6148,
+    "mid_name": "CFE_TBL_CMD_MID",
+    "cc": 2,
+    "cc_name": "CFE_TBL_LOAD_CC",
+    "cmd": true,
+    "size": 72,
+    "body": [
+     {
+      "key": "load_cmd_load_filename",
+      "offset": 8,
+      "size": 64,
+      "type": "a"
+     }
+    ]
+   },
+   {
+    "kind": "dump_cmd",
+    "struct": "CFE_TBL_DumpCmd_t",
+    "mid": 6148,
+    "mid_name": "CFE_TBL_CMD_MID",
+    "cc": 3,
+    "cc_name": "CFE_TBL_DUMP_CC",
+    "cmd": true,
+    "size": 114,
+    "body": [
+     {
+      "key": "dump_cmd_active_table_flag",
+      "offset": 8,
+      "size": 2,
+      "type": "u"
+     },
+     {
+      "key": "dump_cmd_table_name",
+      "offset": 10,
+      "size": 40,
+      "type": "a"
+     },
+     {
+      "key": "dump_cmd_dump_filename",
+      "offset": 50,
+      "size": 64,
+      "type": "a"
+     }
+    ]
+   },
+   {
+    "kind": "validate_cmd",
+    "struct": "CFE_TBL_ValidateCmd_t",
+    "mid": 6148,
+    "mid_name": "CFE_TBL_CMD_MID",
+    "cc": 4,
+    "cc_name": "CFE_TBL_VALIDATE_CC",
+    "cmd": true,
+    "size": 50,
+    "body": [
+     {
+      "key": "validate_cmd_active_table_flag",
+      "offset": 8,
+      "size": 2,
+      "type": "u"
+     },
+     {
+      "key": "validate_cmd_table_name",
+      "offset": 10,
+      "size": 40,
+      "type": "a"
+     }
+    ]
+   },
+   {
+    "kind": "activate_cmd",
+    "struct": "CFE_TBL_ActivateCmd_t",
+    "mid": 6148,
+    "mid_name": "CFE_TBL_CMD_MID",
+    "cc": 5,
+    "cc_name": "CFE_TBL_ACTIVATE_CC",
+    "cmd": true,
+    "size": 48,
+    "body": [
+     {
+      "key": "activate_cmd_table_name",
+      "offset": 8,
+      "size": 40,
+      "type": "a"
+     }
+    ]
+   },
+   {
+    "kind": "dump_registry_cmd",
+    "struct": "CFE_TBL_DumpRegistryCmd_t",
+    "mid": 6148,
+    "mid_name": "CFE_TBL_CMD_MID",
+    "cc": 6,
+    "cc_name": "CFE_TBL_DUMP_REGISTRY_CC",
+    "cmd": true,
+    "size": 72,
+    "body": [
+     {
+      "key": "dump_registry_cmd_dump_filename",
+      "offset": 8,
+      "size": 64,
+      "type": "a"
+     }
+    ]
+   },
+   {
+    "kind": "send_registry_cmd",
+    "struct": "CFE_TBL_SendRegistryCmd_t",
+    "mid": 6148,
+    "mid_name": "CFE_TBL_CMD_MID",
+    "cc": 7,
+    "cc_name": "CFE_TBL_SEND_REGISTRY_CC",
+    "cmd": true,
+    "size": 48,
+    "body": [
+     {
+      "key": "send_registry_cmd_table_name",
+      "offset": 8,
+      "size": 40,
+      "type": "a"
+     }
+    ]
+   },
+   {
+    "kind": "delete_cds_cmd",
+    "struct": "CFE_TBL_DeleteCDSCmd_t",
+    "mid": 6148,
+    "mid_name": "CFE_TBL_CMD_MID",
+    "cc": 8,
+    "cc_name": "CFE_TBL_DELETE_CDS_CC",
+    "cmd": true,
+    "size": 48,
+    "body": [
+     {
+      "key": "del_cds_cmd_table_name",
+      "offset": 8,
+      "size": 40,
+      "type": "a"
+     }
+    ]
+   },
+   {
+    "kind": "abort_load_cmd",
+    "struct": "CFE_TBL_AbortLoadCmd_t",
+    "mid": 6148,
+    "mid_name": "CFE_TBL_CMD_MID",
+    "cc": 9,
+    "cc_name": "CFE_TBL_ABORT_LOAD_CC",
+    "cmd": true,
+    "size": 48,
+    "body": [
+     {
+      "key": "abort_load_cmd_table_name",
+      "offset": 8,
+      "size": 40,
+      "type": "a"
+     }
+    ]
+   },
+   {
+    "kind": "housekeeping_tlm",
+    "struct": "CFE_TBL_HousekeepingTlm_t",
+    "mid": 2052,
+    "mid_name": "CFE_TBL_HK_TLM_MID",
+    "cc": null,
+    "cc_name": null,
+    "cmd": false,
+    "size": 300,
+    "body": [
+     {
+      "key": "housekeeping_tlm_command_counter",
+      "offset": 16,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_command_error_counter",
+      "offset": 17,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_num_tables",
+      "offset": 18,
+      "size": 2,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_num_load_pending",
+      "offset": 20,
+      "size": 2,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_validation_counter",
+      "offset": 22,
+      "size": 2,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_last_val_crc",
+      "offset": 24,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_last_val_status",
+      "offset": 28,
+      "size": 4,
+      "type": "s"
+     },
+     {
+      "key": "housekeeping_tlm_active_buffer",
+      "offset": 32,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_last_val_table_name",
+      "offset": 33,
+      "size": 40,
+      "type": "a"
+     },
+     {
+      "key": "housekeeping_tlm_success_val_counter",
+      "offset": 73,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_failed_val_counter",
+      "offset": 74,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_num_val_requests",
+      "offset": 75,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_num_free_shared_bufs",
+      "offset": 76,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_byte_align_pad1",
+      "offset": 77,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_mem_pool_handle",
+      "offset": 80,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_last_update_time_seconds",
+      "offset": 84,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_last_update_time_subseconds",
+      "offset": 88,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_last_updated_table",
+      "offset": 92,
+      "size": 40,
+      "type": "a"
+     },
+     {
+      "key": "housekeeping_tlm_last_file_loaded",
+      "offset": 132,
+      "size": 64,
+      "type": "a"
+     },
+     {
+      "key": "housekeeping_tlm_last_file_dumped",
+      "offset": 196,
+      "size": 64,
+      "type": "a"
+     },
+     {
+      "key": "housekeeping_tlm_last_table_loaded",
+      "offset": 260,
+      "size": 40,
+      "type": "a"
+     }
+    ]
+   },
+   {
+    "kind": "table_registry_tlm",
+    "struct": "CFE_TBL_TableRegistryTlm_t",
+    "mid": 2060,
+    "mid_name": "CFE_TBL_REG_TLM_MID",
+    "cc": null,
+    "cc_name": null,
+    "cmd": false,
+    "size": 208,
+    "body": [
+     {
+      "key": "tbl_reg_packet_size",
+      "offset": 16,
+      "size": 8,
+      "type": "u"
+     },
+     {
+      "key": "tbl_reg_packet_crc",
+      "offset": 24,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "tbl_reg_packet_padding1_0",
+      "offset": 28,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "tbl_reg_packet_padding1_1",
+      "offset": 29,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "tbl_reg_packet_padding1_2",
+      "offset": 30,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "tbl_reg_packet_padding1_3",
+      "offset": 31,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "tbl_reg_packet_active_buffer_addr",
+      "offset": 32,
+      "size": 8,
+      "type": "u"
+     },
+     {
+      "key": "tbl_reg_packet_inactive_buffer_addr",
+      "offset": 40,
+      "size": 8,
+      "type": "u"
+     },
+     {
+      "key": "tbl_reg_packet_validation_func_ptr",
+      "offset": 48,
+      "size": 8,
+      "type": "u"
+     },
+     {
+      "key": "tbl_reg_packet_time_of_last_update_seconds",
+      "offset": 56,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "tbl_reg_packet_time_of_last_update_subseconds",
+      "offset": 60,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "tbl_reg_packet_file_time_seconds",
+      "offset": 64,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "tbl_reg_packet_file_time_subseconds",
+      "offset": 68,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "tbl_reg_packet_table_loaded_once",
+      "offset": 72,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "tbl_reg_packet_load_pending",
+      "offset": 73,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "tbl_reg_packet_dump_only",
+      "offset": 74,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "tbl_reg_packet_double_buffered",
+      "offset": 75,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "tbl_reg_packet_name",
+      "offset": 76,
+      "size": 40,
+      "type": "a"
+     },
+     {
+      "key": "tbl_reg_packet_last_file_loaded",
+      "offset": 116,
+      "size": 64,
+      "type": "a"
+     },
+     {
+      "key": "tbl_reg_packet_owner_app_name",
+      "offset": 180,
+      "size": 20,
+      "type": "a"
+     },
+     {
+      "key": "tbl_reg_packet_critical",
+      "offset": 200,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "tbl_reg_packet_padding2_0",
+      "offset": 201,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "tbl_reg_packet_padding2_1",
+      "offset": 202,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "tbl_reg_packet_padding2_2",
+      "offset": 203,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "tbl_reg_packet_padding2_3",
+      "offset": 204,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "tbl_reg_packet_padding2_4",
+      "offset": 205,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "tbl_reg_packet_padding2_5",
+      "offset": 206,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "tbl_reg_packet_padding2_6",
+      "offset": 207,
+      "size": 1,
+      "type": "u"
+     }
+    ]
+   }
+  ],
+  "cfe-time": [
+   {
+    "kind": "noop_cmd",
+    "struct": "CFE_TIME_NoopCmd_t",
+    "mid": 6149,
+    "mid_name": "CFE_TIME_CMD_MID",
+    "cc": 0,
+    "cc_name": "CFE_TIME_NOOP_CC",
+    "cmd": true,
+    "size": 8,
+    "body": []
+   },
+   {
+    "kind": "reset_counters_cmd",
+    "struct": "CFE_TIME_ResetCountersCmd_t",
+    "mid": 6149,
+    "mid_name": "CFE_TIME_CMD_MID",
+    "cc": 1,
+    "cc_name": "CFE_TIME_RESET_COUNTERS_CC",
+    "cmd": true,
+    "size": 8,
+    "body": []
+   },
+   {
+    "kind": "send_diagnostic_cmd",
+    "struct": "CFE_TIME_SendDiagnosticCmd_t",
+    "mid": 6149,
+    "mid_name": "CFE_TIME_CMD_MID",
+    "cc": 2,
+    "cc_name": "CFE_TIME_SEND_DIAGNOSTIC_CC",
+    "cmd": true,
+    "size": 8,
+    "body": []
+   },
+   {
+    "kind": "set_state_cmd",
+    "struct": "CFE_TIME_SetStateCmd_t",
+    "mid": 6149,
+    "mid_name": "CFE_TIME_CMD_MID",
+    "cc": 4,
+    "cc_name": "CFE_TIME_SET_STATE_CC",
+    "cmd": true,
+    "size": 10,
+    "body": [
+     {
+      "key": "state_cmd_clock_state",
+      "offset": 8,
+      "size": 2,
+      "type": "s"
+     }
+    ]
+   },
+   {
+    "kind": "set_source_cmd",
+    "struct": "CFE_TIME_SetSourceCmd_t",
+    "mid": 6149,
+    "mid_name": "CFE_TIME_CMD_MID",
+    "cc": 3,
+    "cc_name": "CFE_TIME_SET_SOURCE_CC",
+    "cmd": true,
+    "size": 9,
+    "body": [
+     {
+      "key": "source_cmd_time_source",
+      "offset": 8,
+      "size": 1,
+      "type": "u"
+     }
+    ]
+   },
+   {
+    "kind": "set_signal_cmd",
+    "struct": "CFE_TIME_SetSignalCmd_t",
+    "mid": 6149,
+    "mid_name": "CFE_TIME_CMD_MID",
+    "cc": 15,
+    "cc_name": "CFE_TIME_SET_SIGNAL_CC",
+    "cmd": true,
+    "size": 10,
+    "body": [
+     {
+      "key": "signal_cmd_tone_source",
+      "offset": 8,
+      "size": 2,
+      "type": "s"
+     }
+    ]
+   },
+   {
+    "kind": "add_delay_cmd",
+    "struct": "CFE_TIME_AddDelayCmd_t",
+    "mid": 6149,
+    "mid_name": "CFE_TIME_CMD_MID",
+    "cc": 5,
+    "cc_name": "CFE_TIME_ADD_DELAY_CC",
+    "cmd": true,
+    "size": 16,
+    "body": [
+     {
+      "key": "time_cmd_seconds",
+      "offset": 8,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "time_cmd_micro_seconds",
+      "offset": 12,
+      "size": 4,
+      "type": "u"
+     }
+    ]
+   },
+   {
+    "kind": "sub_delay_cmd",
+    "struct": "CFE_TIME_SubDelayCmd_t",
+    "mid": 6149,
+    "mid_name": "CFE_TIME_CMD_MID",
+    "cc": 6,
+    "cc_name": "CFE_TIME_SUB_DELAY_CC",
+    "cmd": true,
+    "size": 16,
+    "body": [
+     {
+      "key": "time_cmd_seconds",
+      "offset": 8,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "time_cmd_micro_seconds",
+      "offset": 12,
+      "size": 4,
+      "type": "u"
+     }
+    ]
+   },
+   {
+    "kind": "set_time_cmd",
+    "struct": "CFE_TIME_SetTimeCmd_t",
+    "mid": 6149,
+    "mid_name": "CFE_TIME_CMD_MID",
+    "cc": 7,
+    "cc_name": "CFE_TIME_SET_TIME_CC",
+    "cmd": true,
+    "size": 16,
+    "body": [
+     {
+      "key": "time_cmd_seconds",
+      "offset": 8,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "time_cmd_micro_seconds",
+      "offset": 12,
+      "size": 4,
+      "type": "u"
+     }
+    ]
+   },
+   {
+    "kind": "set_met_cmd",
+    "struct": "CFE_TIME_SetMETCmd_t",
+    "mid": 6149,
+    "mid_name": "CFE_TIME_CMD_MID",
+    "cc": 8,
+    "cc_name": "CFE_TIME_SET_MET_CC",
+    "cmd": true,
+    "size": 16,
+    "body": [
+     {
+      "key": "time_cmd_seconds",
+      "offset": 8,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "time_cmd_micro_seconds",
+      "offset": 12,
+      "size": 4,
+      "type": "u"
+     }
+    ]
+   },
+   {
+    "kind": "set_stcf_cmd",
+    "struct": "CFE_TIME_SetSTCFCmd_t",
+    "mid": 6149,
+    "mid_name": "CFE_TIME_CMD_MID",
+    "cc": 9,
+    "cc_name": "CFE_TIME_SET_STCF_CC",
+    "cmd": true,
+    "size": 16,
+    "body": [
+     {
+      "key": "time_cmd_seconds",
+      "offset": 8,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "time_cmd_micro_seconds",
+      "offset": 12,
+      "size": 4,
+      "type": "u"
+     }
+    ]
+   },
+   {
+    "kind": "set_leap_seconds_cmd",
+    "struct": "CFE_TIME_SetLeapSecondsCmd_t",
+    "mid": 6149,
+    "mid_name": "CFE_TIME_CMD_MID",
+    "cc": 10,
+    "cc_name": "CFE_TIME_SET_LEAP_SECONDS_CC",
+    "cmd": true,
+    "size": 10,
+    "body": [
+     {
+      "key": "leaps_cmd_leap_seconds",
+      "offset": 8,
+      "size": 2,
+      "type": "s"
+     }
+    ]
+   },
+   {
+    "kind": "add_adjust_cmd",
+    "struct": "CFE_TIME_AddAdjustCmd_t",
+    "mid": 6149,
+    "mid_name": "CFE_TIME_CMD_MID",
+    "cc": 11,
+    "cc_name": "CFE_TIME_ADD_ADJUST_CC",
+    "cmd": true,
+    "size": 16,
+    "body": [
+     {
+      "key": "time_cmd_seconds",
+      "offset": 8,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "time_cmd_micro_seconds",
+      "offset": 12,
+      "size": 4,
+      "type": "u"
+     }
+    ]
+   },
+   {
+    "kind": "sub_adjust_cmd",
+    "struct": "CFE_TIME_SubAdjustCmd_t",
+    "mid": 6149,
+    "mid_name": "CFE_TIME_CMD_MID",
+    "cc": 12,
+    "cc_name": "CFE_TIME_SUB_ADJUST_CC",
+    "cmd": true,
+    "size": 16,
+    "body": [
+     {
+      "key": "time_cmd_seconds",
+      "offset": 8,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "time_cmd_micro_seconds",
+      "offset": 12,
+      "size": 4,
+      "type": "u"
+     }
+    ]
+   },
+   {
+    "kind": "add_one_hz_adjustment_cmd",
+    "struct": "CFE_TIME_AddOneHzAdjustmentCmd_t",
+    "mid": 6149,
+    "mid_name": "CFE_TIME_CMD_MID",
+    "cc": 13,
+    "cc_name": "CFE_TIME_ADD_ONE_HZ_ADJUSTMENT_CC",
+    "cmd": true,
+    "size": 16,
+    "body": [
+     {
+      "key": "one_hz_adjustment_cmd_seconds",
+      "offset": 8,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "one_hz_adjustment_cmd_subseconds",
+      "offset": 12,
+      "size": 4,
+      "type": "u"
+     }
+    ]
+   },
+   {
+    "kind": "sub_one_hz_adjustment_cmd",
+    "struct": "CFE_TIME_SubOneHzAdjustmentCmd_t",
+    "mid": 6149,
+    "mid_name": "CFE_TIME_CMD_MID",
+    "cc": 14,
+    "cc_name": "CFE_TIME_SUB_ONE_HZ_ADJUSTMENT_CC",
+    "cmd": true,
+    "size": 16,
+    "body": [
+     {
+      "key": "one_hz_adjustment_cmd_seconds",
+      "offset": 8,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "one_hz_adjustment_cmd_subseconds",
+      "offset": 12,
+      "size": 4,
+      "type": "u"
+     }
+    ]
+   },
+   {
+    "kind": "one_hz_cmd",
+    "struct": "CFE_TIME_OneHzCmd_t",
+    "mid": 6161,
+    "mid_name": "CFE_TIME_ONEHZ_CMD_MID",
+    "cc": null,
+    "cc_name": null,
+    "cmd": true,
+    "size": 8,
+    "body": []
+   },
+   {
+    "kind": "send_hk_cmd",
+    "struct": "CFE_TIME_SendHkCmd_t",
+    "mid": 6157,
+    "mid_name": "CFE_TIME_SEND_HK_MID",
+    "cc": null,
+    "cc_name": null,
+    "cmd": true,
+    "size": 8,
+    "body": []
+   },
+   {
+    "kind": "tone_data_cmd",
+    "struct": "CFE_TIME_ToneDataCmd_t",
+    "mid": 6240,
+    "mid_name": "CFE_TIME_DATA_CMD_MID",
+    "cc": null,
+    "cc_name": null,
+    "cmd": true,
+    "size": 28,
+    "body": [
+     {
+      "key": "tone_data_cmd_at_tone_met_seconds",
+      "offset": 8,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "tone_data_cmd_at_tone_met_subseconds",
+      "offset": 12,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "tone_data_cmd_at_tone_stcf_seconds",
+      "offset": 16,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "tone_data_cmd_at_tone_stcf_subseconds",
+      "offset": 20,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "tone_data_cmd_at_tone_leap_seconds",
+      "offset": 24,
+      "size": 2,
+      "type": "s"
+     },
+     {
+      "key": "tone_data_cmd_at_tone_state",
+      "offset": 26,
+      "size": 2,
+      "type": "s"
+     }
+    ]
+   },
+   {
+    "kind": "tone_signal_cmd",
+    "struct": "CFE_TIME_ToneSignalCmd_t",
+    "mid": 6160,
+    "mid_name": "CFE_TIME_TONE_CMD_MID",
+    "cc": null,
+    "cc_name": null,
+    "cmd": true,
+    "size": 8,
+    "body": []
+   },
+   {
+    "kind": "fake_tone_cmd",
+    "struct": "CFE_TIME_FakeToneCmd_t",
+    "mid": 6242,
+    "mid_name": "CFE_TIME_SEND_CMD_MID",
+    "cc": null,
+    "cc_name": null,
+    "cmd": true,
+    "size": 8,
+    "body": []
+   },
+   {
+    "kind": "housekeeping_tlm",
+    "struct": "CFE_TIME_HousekeepingTlm_t",
+    "mid": 2053,
+    "mid_name": "CFE_TIME_HK_TLM_MID",
+    "cc": null,
+    "cc_name": null,
+    "cmd": false,
+    "size": 48,
+    "body": [
+     {
+      "key": "housekeeping_tlm_command_counter",
+      "offset": 16,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_command_error_counter",
+      "offset": 17,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_clock_state_flags",
+      "offset": 18,
+      "size": 2,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_clock_state_api",
+      "offset": 20,
+      "size": 2,
+      "type": "s"
+     },
+     {
+      "key": "housekeeping_tlm_leap_seconds",
+      "offset": 22,
+      "size": 2,
+      "type": "s"
+     },
+     {
+      "key": "housekeeping_tlm_met_seconds",
+      "offset": 24,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_met_subseconds",
+      "offset": 28,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_stcf_seconds",
+      "offset": 32,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_stcf_subseconds",
+      "offset": 36,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_adjustment_factor_seconds",
+      "offset": 40,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "housekeeping_tlm_adjustment_factor_subseconds",
+      "offset": 44,
+      "size": 4,
+      "type": "u"
+     }
+    ]
+   },
+   {
+    "kind": "diagnostic_tlm",
+    "struct": "CFE_TIME_DiagnosticTlm_t",
+    "mid": 2054,
+    "mid_name": "CFE_TIME_DIAG_TLM_MID",
+    "cc": null,
+    "cc_name": null,
+    "cmd": false,
+    "size": 216,
+    "body": [
+     {
+      "key": "diagnostic_tlm_at_tone_met_seconds",
+      "offset": 16,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "diagnostic_tlm_at_tone_met_subseconds",
+      "offset": 20,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "diagnostic_tlm_at_tone_stcf_seconds",
+      "offset": 24,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "diagnostic_tlm_at_tone_stcf_subseconds",
+      "offset": 28,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "diagnostic_tlm_at_tone_delay_seconds",
+      "offset": 32,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "diagnostic_tlm_at_tone_delay_subseconds",
+      "offset": 36,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "diagnostic_tlm_at_tone_latch_seconds",
+      "offset": 40,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "diagnostic_tlm_at_tone_latch_subseconds",
+      "offset": 44,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "diagnostic_tlm_at_tone_leap_seconds",
+      "offset": 48,
+      "size": 2,
+      "type": "s"
+     },
+     {
+      "key": "diagnostic_tlm_clock_state_api",
+      "offset": 50,
+      "size": 2,
+      "type": "s"
+     },
+     {
+      "key": "diagnostic_tlm_time_since_tone_seconds",
+      "offset": 52,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "diagnostic_tlm_time_since_tone_subseconds",
+      "offset": 56,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "diagnostic_tlm_current_latch_seconds",
+      "offset": 60,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "diagnostic_tlm_current_latch_subseconds",
+      "offset": 64,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "diagnostic_tlm_current_met_seconds",
+      "offset": 68,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "diagnostic_tlm_current_met_subseconds",
+      "offset": 72,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "diagnostic_tlm_current_tai_seconds",
+      "offset": 76,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "diagnostic_tlm_current_tai_subseconds",
+      "offset": 80,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "diagnostic_tlm_current_utc_seconds",
+      "offset": 84,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "diagnostic_tlm_current_utc_subseconds",
+      "offset": 88,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "diagnostic_tlm_clock_set_state",
+      "offset": 92,
+      "size": 2,
+      "type": "s"
+     },
+     {
+      "key": "diagnostic_tlm_clock_fly_state",
+      "offset": 94,
+      "size": 2,
+      "type": "s"
+     },
+     {
+      "key": "diagnostic_tlm_clock_source",
+      "offset": 96,
+      "size": 1,
+      "type": "u"
+     },
+     {
+      "key": "diagnostic_tlm_clock_signal",
+      "offset": 98,
+      "size": 2,
+      "type": "s"
+     },
+     {
+      "key": "diagnostic_tlm_server_fly_state",
+      "offset": 100,
+      "size": 2,
+      "type": "s"
+     },
+     {
+      "key": "diagnostic_tlm_forced2_fly",
+      "offset": 102,
+      "size": 2,
+      "type": "s"
+     },
+     {
+      "key": "diagnostic_tlm_clock_state_flags",
+      "offset": 104,
+      "size": 2,
+      "type": "u"
+     },
+     {
+      "key": "diagnostic_tlm_one_time_direction",
+      "offset": 106,
+      "size": 2,
+      "type": "s"
+     },
+     {
+      "key": "diagnostic_tlm_one_hz_direction",
+      "offset": 108,
+      "size": 2,
+      "type": "s"
+     },
+     {
+      "key": "diagnostic_tlm_delay_direction",
+      "offset": 110,
+      "size": 2,
+      "type": "s"
+     },
+     {
+      "key": "diagnostic_tlm_one_time_adjust_seconds",
+      "offset": 112,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "diagnostic_tlm_one_time_adjust_subseconds",
+      "offset": 116,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "diagnostic_tlm_one_hz_adjust_seconds",
+      "offset": 120,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "diagnostic_tlm_one_hz_adjust_subseconds",
+      "offset": 124,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "diagnostic_tlm_tone_signal_latch_seconds",
+      "offset": 128,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "diagnostic_tlm_tone_signal_latch_subseconds",
+      "offset": 132,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "diagnostic_tlm_tone_data_latch_seconds",
+      "offset": 136,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "diagnostic_tlm_tone_data_latch_subseconds",
+      "offset": 140,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "diagnostic_tlm_tone_match_counter",
+      "offset": 144,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "diagnostic_tlm_tone_match_error_counter",
+      "offset": 148,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "diagnostic_tlm_tone_signal_counter",
+      "offset": 152,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "diagnostic_tlm_tone_data_counter",
+      "offset": 156,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "diagnostic_tlm_tone_int_counter",
+      "offset": 160,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "diagnostic_tlm_tone_int_error_counter",
+      "offset": 164,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "diagnostic_tlm_tone_task_counter",
+      "offset": 168,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "diagnostic_tlm_version_counter",
+      "offset": 172,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "diagnostic_tlm_local_int_counter",
+      "offset": 176,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "diagnostic_tlm_local_task_counter",
+      "offset": 180,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "diagnostic_tlm_virtual_met",
+      "offset": 184,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "diagnostic_tlm_min_elapsed",
+      "offset": 188,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "diagnostic_tlm_max_elapsed",
+      "offset": 192,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "diagnostic_tlm_max_local_clock_seconds",
+      "offset": 196,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "diagnostic_tlm_max_local_clock_subseconds",
+      "offset": 200,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "diagnostic_tlm_tone_over_limit",
+      "offset": 204,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "diagnostic_tlm_tone_under_limit",
+      "offset": 208,
+      "size": 4,
+      "type": "u"
+     },
+     {
+      "key": "diagnostic_tlm_data_store_status",
+      "offset": 212,
+      "size": 4,
+      "type": "u"
+     }
+    ]
+   }
+  ]
+ }
+}
