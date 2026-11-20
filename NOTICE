@@ -736,3 +736,7 @@ Pack gmti-segment (observed vectors)
   https://github.com/pentlandedge/s4607 commit be131209. Copyright 2016-2018
   Pentland Edge Ltd. Apache License 2.0. Segment bodies only, used as test
   inputs; no code copied or run.
+
+Packs goat-processors-report, goat-processors-system-track
+  goat-processors, https://github.com/USAREUR-AF/goat-processors
+  Apache License, Version 2.0.

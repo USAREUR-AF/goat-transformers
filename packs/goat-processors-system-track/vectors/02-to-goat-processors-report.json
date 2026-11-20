@@ -1,0 +1,7 @@
+{
+ "name": "02-to-goat-processors-report",
+ "from": "goat-processors-system-track",
+ "to": "goat-processors-report",
+ "input": "{\"group\":\"s1\",\"track_number\":1,\"now_ms\":1795000060000,\"lat\":1.0001,\"lon\":1.0539,\"hae\":1500,\"course\":90,\"speed_ms\":100}",
+ "expect": "{\"uid\":\"s1\",\"time_ms\":1795000060000,\"lat\":1.0001,\"lon\":1.0539,\"hae\":1500,\"course\":90,\"speed_ms\":100}"
+}

@@ -1,0 +1,21 @@
+# One system track as the goat-processors runner publishes it: one JSON
+# object per line of its tracks output (goat-processors runner/README.md,
+# "What the runner publishes"). Public, no external standard. `system` is
+# the system track's identifier when correlate makes the tracks, `group` when
+# fuse does (the runner writes one of them), `track_number` its number 1 to
+# 65535 held while the track lives, and `now_ms` the tick it describes.
+format  goat-processors-system-track
+version 0.1.0
+distribution public
+source  "USAREUR-AF/goat-processors runner/README.md, section What the runner publishes (Apache-2.0)"
+uses    track
+uses    cat062
+wire    json
+field   uid       group     string
+field   cat062.track_number  track_number  int
+field   time_ms   now_ms    int
+field   lat       lat       float
+field   lon       lon       float
+field   hae       hae       float
+field   course    course    float
+field   speed_ms  speed_ms  float
