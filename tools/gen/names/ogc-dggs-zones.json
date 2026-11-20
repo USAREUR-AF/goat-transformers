@@ -1,0 +1,19 @@
+{
+ "keys": {
+  "links|hreflang|string": "links_hreflang",
+  "links|href|string": "links_href",
+  "links|length|int": "links_length",
+  "links|rel|string": "links_rel",
+  "links|title|string": "links_title",
+  "links|type|string": "links_type",
+  "zones|.|string": "zones_value",
+  "|returnedAreaMetersSquare|float": "returned_area_meters_square",
+  "|returnedHyperVolumeMetersCubeSeconds|float": "returned_hyper_volume_meters_cube_seconds",
+  "|returnedVolumeMetersCube|float": "returned_volume_meters_cube",
+  "|returnedVolumeMetersSquareSeconds|float": "returned_volume_meters_square_seconds"
+ },
+ "lists": {
+  "|links": "links",
+  "|zones": "zones"
+ }
+}

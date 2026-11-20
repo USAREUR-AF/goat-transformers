@@ -1,0 +1,8 @@
+{
+  "name": "OGC JSON encodings",
+  "domain": "maps",
+  "prefixes": [
+    "ogc-"
+  ],
+  "detail": "JSON-FG, GeoPose, Routes, DGGS, Joins"
+}

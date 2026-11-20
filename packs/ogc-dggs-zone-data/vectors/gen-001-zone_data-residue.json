@@ -1,0 +1,7 @@
+{
+ "name": "gen-zone_data-residue",
+ "from": "ogc-dggs-zone-data",
+ "to": "ogc-dggs-zone-data",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"dggrs\":\"https://example.org/931\",\"zoneId\":\"s69434\",\"depths\":[36712,72066],\"schema\":{\"type\":\"object\",\"required\":[\"s70163\",\"s47641\"]},\"dimensions\":[{\"name\":\"s90790\",\"definition\":\"https://example.org/532\",\"unit\":\"s16169\",\"unitLang\":\"https://example.org/640\",\"grid\":{\"cellsCount\":27429}},{\"name\":\"s27719\",\"definition\":\"https://example.org/961\",\"unit\":\"s96315\",\"unitLang\":\"https://example.org/376\",\"grid\":{\"cellsCount\":29215}}]}",
+ "expect": "{\"dggrs\":\"https://example.org/931\",\"zoneId\":\"s69434\",\"depths\":[36712,72066],\"schema\":{\"type\":\"object\",\"required\":[\"s70163\",\"s47641\"]},\"dimensions\":[{\"name\":\"s90790\",\"definition\":\"https://example.org/532\",\"unit\":\"s16169\",\"unitLang\":\"https://example.org/640\",\"grid\":{\"cellsCount\":27429}},{\"name\":\"s27719\",\"definition\":\"https://example.org/961\",\"unit\":\"s96315\",\"unitLang\":\"https://example.org/376\",\"grid\":{\"cellsCount\":29215}}],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

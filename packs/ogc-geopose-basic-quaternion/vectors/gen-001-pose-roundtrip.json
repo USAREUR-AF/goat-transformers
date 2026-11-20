@@ -1,0 +1,17 @@
+{
+ "name": "gen-pose-roundtrip",
+ "from": "ogc-geopose-basic-quaternion",
+ "to": "ogc-geopose-basic-quaternion",
+ "input": "{\"position\":{\"lat\":51.4775,\"lon\":-77.0365,\"h\":12.5},\"quaternion\":{\"x\":101.125,\"y\":-0.5,\"z\":1.5,\"w\":1.5}}",
+ "expect": "{\"position\":{\"lat\":51.4775,\"lon\":-77.0365,\"h\":12.5},\"quaternion\":{\"x\":101.125,\"y\":-0.5,\"z\":1.5,\"w\":1.5}}",
+ "model": {
+  "lat": "51.4775",
+  "lon": "-77.0365",
+  "hae": "12.5",
+  "ogcgpq.position_lat": "51.4775",
+  "ogcgpq.position_lon": "-77.0365",
+  "ogcgpq.position_h": "12.5",
+  "ogcgpq.quaternion_x": "101.125",
+  "ogcgpq.quaternion_y": "-0.5"
+ }
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-pose-residue",
+ "from": "ogc-geopose-basic-quaternion",
+ "to": "ogc-geopose-basic-quaternion",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"position\":{\"lat\":51.4775,\"lon\":-77.0365,\"h\":12.5},\"quaternion\":{\"x\":101.125,\"y\":-0.5,\"z\":1.5,\"w\":1.5}}",
+ "expect": "{\"position\":{\"lat\":51.4775,\"lon\":-77.0365,\"h\":12.5},\"quaternion\":{\"x\":101.125,\"y\":-0.5,\"z\":1.5,\"w\":1.5},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

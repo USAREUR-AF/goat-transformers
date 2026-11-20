@@ -1,0 +1,7 @@
+{
+ "name": "gen-pose-residue",
+ "from": "ogc-geopose-advanced",
+ "to": "ogc-geopose-advanced",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"frameSpecification\":{\"authority\":\"s39927\",\"id\":\"s47498\",\"parameters\":\"s21962\"},\"quaternion\":{\"x\":101.125,\"y\":-0.5,\"z\":1.5,\"w\":1.5},\"validTime\":1726809181764}",
+ "expect": "{\"frameSpecification\":{\"authority\":\"s39927\",\"id\":\"s47498\",\"parameters\":\"s21962\"},\"quaternion\":{\"x\":101.125,\"y\":-0.5,\"z\":1.5,\"w\":1.5},\"validTime\":1726809181764,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

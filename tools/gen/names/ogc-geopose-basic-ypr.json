@@ -1,0 +1,11 @@
+{
+ "keys": {
+  "|angles.pitch|float": "angles_pitch",
+  "|angles.roll|float": "angles_roll",
+  "|angles.yaw|float": "angles_yaw",
+  "|position.h|float": "position_h",
+  "|position.lat|float": "position_lat",
+  "|position.lon|float": "position_lon"
+ },
+ "lists": {}
+}

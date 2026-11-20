@@ -1,0 +1,12 @@
+{
+ "name": "gen-feature-roundtrip",
+ "from": "ogc-jsonfg-feature",
+ "to": "ogc-jsonfg-feature",
+ "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977,12.5]},\"properties\":{}}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977,12.5]},\"properties\":{}}",
+ "model": {
+  "lon": "-77.0365",
+  "lat": "38.8977",
+  "hae": "12.5"
+ }
+}

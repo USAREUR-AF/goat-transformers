@@ -1,0 +1,12 @@
+{
+ "keys": {
+  "|position.h|float": "position_h",
+  "|position.lat|float": "position_lat",
+  "|position.lon|float": "position_lon",
+  "|quaternion.w|float": "quaternion_w",
+  "|quaternion.x|float": "quaternion_x",
+  "|quaternion.y|float": "quaternion_y",
+  "|quaternion.z|float": "quaternion_z"
+ },
+ "lists": {}
+}

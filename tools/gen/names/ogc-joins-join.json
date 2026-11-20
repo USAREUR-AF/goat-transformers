@@ -1,0 +1,42 @@
+{
+ "keys": {
+  "join_inputs_collection|hreflang|string": "join_inputs_collection_hreflang",
+  "join_inputs_collection|href|string": "join_inputs_collection_href",
+  "join_inputs_collection|length|int": "join_inputs_collection_length",
+  "join_inputs_collection|rel|string": "join_inputs_collection_rel",
+  "join_inputs_collection|title|string": "join_inputs_collection_title",
+  "join_inputs_collection|type|string": "join_inputs_collection_type",
+  "join_join_information_additional_attribute_keys|.|string": "join_join_information_additional_attribute_keys_value",
+  "join_join_information_duplicate_attribute_keys|.|string": "join_join_information_duplicate_attribute_keys_value",
+  "join_join_information_matched_collection_keys|.|string": "join_join_information_matched_collection_keys_value",
+  "join_join_information_unmatched_collection_keys|.|string": "join_join_information_unmatched_collection_keys_value",
+  "join_outputs|hreflang|string": "join_outputs_hreflang",
+  "join_outputs|href|string": "join_outputs_href",
+  "join_outputs|length|int": "join_outputs_length",
+  "join_outputs|rel|string": "join_outputs_rel",
+  "join_outputs|title|string": "join_outputs_title",
+  "join_outputs|type|string": "join_outputs_type",
+  "links|hreflang|string": "links_hreflang",
+  "links|href|string": "links_href",
+  "links|length|int": "links_length",
+  "links|rel|string": "links_rel",
+  "links|title|string": "links_title",
+  "links|type|string": "links_type",
+  "|join.id|string": "join_id",
+  "|join.inputs.attributeDataset|string": "join_inputs_attribute_dataset",
+  "|join.joinInformation.numberOfAdditionalAttributeKeys|int": "join_join_information_number_of_additional_attribute_keys",
+  "|join.joinInformation.numberOfDuplicateAttributeKeys|int": "join_join_information_number_of_duplicate_attribute_keys",
+  "|join.joinInformation.numberOfMatchedCollectionKeys|int": "join_join_information_number_of_matched_collection_keys",
+  "|join.joinInformation.numberOfUnmatchedCollectionKeys|int": "join_join_information_number_of_unmatched_collection_keys",
+  "|join.timeStamp|string": "join_time_stamp"
+ },
+ "lists": {
+  "|join.inputs.collection": "join_inputs_collection",
+  "|join.joinInformation.additionalAttributeKeys": "join_join_information_additional_attribute_keys",
+  "|join.joinInformation.duplicateAttributeKeys": "join_join_information_duplicate_attribute_keys",
+  "|join.joinInformation.matchedCollectionKeys": "join_join_information_matched_collection_keys",
+  "|join.joinInformation.unmatchedCollectionKeys": "join_join_information_unmatched_collection_keys",
+  "|join.outputs": "join_outputs",
+  "|links": "links"
+ }
+}

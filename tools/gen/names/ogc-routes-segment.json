@@ -1,0 +1,9 @@
+{
+ "keys": {
+  "|properties.duration_s|float": "properties_duration_s",
+  "|properties.featureType|string": "properties_feature_type",
+  "|properties.instructions|string": "properties_instructions",
+  "|properties.length|float": "properties_length"
+ },
+ "lists": {}
+}

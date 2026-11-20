@@ -1,0 +1,17 @@
+{
+ "name": "gen-pose-roundtrip",
+ "from": "ogc-geopose-basic-ypr",
+ "to": "ogc-geopose-basic-ypr",
+ "input": "{\"position\":{\"lat\":51.4775,\"lon\":-77.0365,\"h\":12.5},\"angles\":{\"yaw\":7.0625,\"pitch\":0.75,\"roll\":42.375}}",
+ "expect": "{\"position\":{\"lat\":51.4775,\"lon\":-77.0365,\"h\":12.5},\"angles\":{\"yaw\":7.0625,\"pitch\":0.75,\"roll\":42.375}}",
+ "model": {
+  "lat": "51.4775",
+  "lon": "-77.0365",
+  "hae": "12.5",
+  "ogcgpypr.position_lat": "51.4775",
+  "ogcgpypr.position_lon": "-77.0365",
+  "ogcgpypr.position_h": "12.5",
+  "ogcgpypr.angles_yaw": "7.0625",
+  "ogcgpypr.angles_pitch": "0.75"
+ }
+}
