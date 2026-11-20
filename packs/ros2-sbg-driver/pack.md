@@ -70,7 +70,7 @@ position from another format becomes an `sbg_ekf_nav`.
 
 Not bound: `altitude` is over mean sea level, not the ellipsoid; the height over the
 ellipsoid is altitude plus undulation, which no transform adds. Velocities and
-accuracies are raw keys. The time fields (`time_stamp`, the GPS time of week) are
+accuracies are raw keys. The time fields (`time_stamp`, the time of week of the satellite clock) are
 not UTC epoch times.
 
 ## Kinds
