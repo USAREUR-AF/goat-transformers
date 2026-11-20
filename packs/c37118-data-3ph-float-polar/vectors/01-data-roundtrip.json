@@ -1,0 +1,27 @@
+{
+  "name": "data-roundtrip",
+  "from": "c37118-data-3ph-float-polar",
+  "to": "c37118-data-3ph-float-polar",
+  "input": "aa0100380582691f02c10903d0900000436680003f00000043664000bfc000004365c000402800004247f800bd000000414800000001441c",
+  "expect": "aa0100380582691f02c10903d0900000436680003f00000043664000bfc000004365c000402800004247f800bd000000414800000001441c",
+  "model": {
+    "c37118.version": "1",
+    "c37118.idcode": "1410",
+    "c37118.soc": "1763640001",
+    "c37118.leap_direction": "0",
+    "c37118.leap_occurred": "0",
+    "c37118.leap_pending": "0",
+    "c37118.time_quality": "9",
+    "c37118.fracsec": "250000",
+    "@kind": "data",
+    "c37118.phasors.#": "3",
+    "c37118.phasors[2].c37118.phasor_magnitude": "229.75",
+    "c37118.phasors[2].c37118.phasor_angle": "2.625",
+    "c37118.freq_hz": "49.9921875",
+    "c37118.rocof_hzs": "-0.03125",
+    "c37118.analogs[0].c37118.analog_value": "12.5",
+    "c37118.digital": "1"
+  },
+  "source": "derived by tools/gen/c37118-vectors.py from the layout pypmu writes; no engine run",
+  "reference": "pypmu commit 66e6c495a91e synchrophasor/frame.py (CommonFrame, DataFrame, ConfigFrame1/2, CommandFrame); 3 floating-point polar phasors (magnitude, angle in radians), frequency and rate of change in floating point, one analog, one digital word; time quality 9 as a raw code"
+}

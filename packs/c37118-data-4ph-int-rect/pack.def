@@ -1,0 +1,49 @@
+# IEEE C37.118.2 data frame of one PMU whose configuration states 4 phasors in 16-bit integer
+# rectangular form, 3 analog values in floating point, frequency in 16-bit integer form and 1 digital
+# word (the configuration of pypmu's examples pyPMU.py and tinyPMU.py): 52 bytes. Big-endian.
+# Licence: Apache-2.0 (a restatement; its source, pypmu, is BSD-3-Clause and implements IEEE C37.118.2-2011).
+format  c37118-data-4ph-int-rect
+version 0.1.0
+distribution public
+source  "iicsys/pypmu, https://github.com/iicsys/pypmu commit 66e6c495a91efb8a6018061ff7955a6654b1404d, synchrophasor/frame.py and examples/: an implementation of IEEE Std C37.118.2-2011; BSD 3-Clause License, Copyright (c) 2016 Tomo Popovic, Stevan Sandi and Bozo Krstajic. The IEEE standard is not used"
+uses    c37118
+wire    bits
+word_bytes 1
+bit_order  msb
+# Common header: SYNC (0xAA, a reserved bit, frame type, version), FRAMESIZE, IDCODE, SOC, FRACSEC.
+when    0:0:8    170
+when    0:8:1    0
+field   c37118.version         0:12:4   uint
+field   c37118.idcode          0:32:16  uint
+field   c37118.soc             0:48:32  uint
+field   c37118.leap_direction  0:81:1   uint
+field   c37118.leap_occurred   0:82:1   uint
+field   c37118.leap_pending    0:83:1   uint
+field   c37118.time_quality    0:84:4   uint
+# The time quality code stays raw (c37118.time_quality): it is a worst-case bound on the
+# offset from UTC, which matches neither core time_error_ms (internal coherence) nor
+# time_utc_error_ms (one sigma). pack.md says why.
+field   c37118.fracsec         0:88:24  uint
+kind    data
+when    0:9:3    0
+when    0:16:16  52
+field   c37118.stat_data_error      0:112:2  uint
+field   c37118.stat_sync_lost       0:114:1  uint
+field   c37118.stat_sorted_arrival  0:115:1  uint
+field   c37118.stat_trigger         0:116:1  uint
+field   c37118.stat_config_change   0:117:1  uint
+field   c37118.stat_data_modified   0:118:1  uint
+field   c37118.stat_time_quality    0:119:3  uint
+field   c37118.stat_unlocked_time   0:122:2  uint
+field   c37118.stat_trigger_reason  0:124:4  uint
+group   c37118.phasors  0:128  item 32  count 4
+  field c37118.phasor_real  0:0:16   twos
+  field c37118.phasor_imag  0:16:16  twos
+end
+field   c37118.freq_dev_mhz  0:256:16  twos
+field   c37118.rocof_hzs     0:272:16  sscale:1/100
+group   c37118.analogs  0:288  item 32  count 3
+  field c37118.analog_value  0:0:32  f32
+end
+field   c37118.digital  0:384:16  uint
+field   c37118.chk      0:400:16  uint

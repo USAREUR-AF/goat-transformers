@@ -1,0 +1,29 @@
+# IEEE C37.118.2 command frame without extended data: 18 bytes. Big-endian.
+# Licence: Apache-2.0 (a restatement; its source, pypmu, is BSD-3-Clause and implements IEEE C37.118.2-2011).
+format  c37118-command
+version 0.1.0
+distribution public
+source  "iicsys/pypmu, https://github.com/iicsys/pypmu commit 66e6c495a91efb8a6018061ff7955a6654b1404d, synchrophasor/frame.py and examples/: an implementation of IEEE Std C37.118.2-2011; BSD 3-Clause License, Copyright (c) 2016 Tomo Popovic, Stevan Sandi and Bozo Krstajic. The IEEE standard is not used"
+uses    c37118
+wire    bits
+word_bytes 1
+bit_order  msb
+# Common header: SYNC (0xAA, a reserved bit, frame type, version), FRAMESIZE, IDCODE, SOC, FRACSEC.
+when    0:0:8    170
+when    0:8:1    0
+field   c37118.version         0:12:4   uint
+field   c37118.idcode          0:32:16  uint
+field   c37118.soc             0:48:32  uint
+field   c37118.leap_direction  0:81:1   uint
+field   c37118.leap_occurred   0:82:1   uint
+field   c37118.leap_pending    0:83:1   uint
+field   c37118.time_quality    0:84:4   uint
+# The time quality code stays raw (c37118.time_quality): it is a worst-case bound on the
+# offset from UTC, which matches neither core time_error_ms (internal coherence) nor
+# time_utc_error_ms (one sigma). pack.md says why.
+field   c37118.fracsec         0:88:24  uint
+kind    command
+when    0:9:3    4
+when    0:16:16  18
+field   c37118.command  0:112:16  uint
+field   c37118.chk      0:128:16  uint

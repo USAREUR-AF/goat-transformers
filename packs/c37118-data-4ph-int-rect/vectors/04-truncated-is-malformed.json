@@ -1,0 +1,9 @@
+{
+  "name": "truncated-is-malformed",
+  "from": "c37118-data-4ph-int-rect",
+  "to": "c37118-data-4ph-int-rect",
+  "input": "aa01003410e1691f02c00507a12000002ee00000e890d768e89028980384ffcefff100193fc00000",
+  "expect_error": "malformed-wire",
+  "source": "derived by tools/gen/c37118-vectors.py from the layout pypmu writes; no engine run",
+  "reference": "pypmu commit 66e6c495a91e synchrophasor/frame.py (CommonFrame, DataFrame, ConfigFrame1/2, CommandFrame); the frame cut inside its analog values"
+}

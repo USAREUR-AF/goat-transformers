@@ -1,0 +1,21 @@
+{
+  "name": "command-5-roundtrip",
+  "from": "c37118-command",
+  "to": "c37118-command",
+  "input": "aa41001210e1691f02c0040000000005ef1c",
+  "expect": "aa41001210e1691f02c0040000000005ef1c",
+  "model": {
+    "c37118.version": "1",
+    "c37118.idcode": "4321",
+    "c37118.soc": "1763640000",
+    "c37118.leap_direction": "0",
+    "c37118.leap_occurred": "0",
+    "c37118.leap_pending": "0",
+    "c37118.time_quality": "4",
+    "c37118.fracsec": "0",
+    "@kind": "command",
+    "c37118.command": "5"
+  },
+  "source": "derived by tools/gen/c37118-vectors.py from the layout pypmu writes; no engine run",
+  "reference": "pypmu commit 66e6c495a91e synchrophasor/frame.py (CommonFrame, DataFrame, ConfigFrame1/2, CommandFrame); command 5, no extended data: 18 bytes"
+}

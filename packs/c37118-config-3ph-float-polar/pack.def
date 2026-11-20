@@ -1,0 +1,85 @@
+# IEEE C37.118.2 configuration frame 1 or 2 of one PMU with 3 phasors, 1 analog value and 1 digital
+# word (the configuration of pypmu's example randomPMU.py): 394 bytes. Big-endian.
+# Licence: Apache-2.0 (a restatement; its source, pypmu, is BSD-3-Clause and implements IEEE C37.118.2-2011).
+format  c37118-config-3ph-float-polar
+version 0.1.0
+distribution public
+source  "iicsys/pypmu, https://github.com/iicsys/pypmu commit 66e6c495a91efb8a6018061ff7955a6654b1404d, synchrophasor/frame.py and examples/: an implementation of IEEE Std C37.118.2-2011; BSD 3-Clause License, Copyright (c) 2016 Tomo Popovic, Stevan Sandi and Bozo Krstajic. The IEEE standard is not used"
+uses    c37118
+wire    bits
+word_bytes 1
+bit_order  msb
+# Common header: SYNC (0xAA, a reserved bit, frame type, version), FRAMESIZE, IDCODE, SOC, FRACSEC.
+when    0:0:8    170
+when    0:8:1    0
+field   c37118.version         0:12:4   uint
+field   c37118.idcode          0:32:16  uint
+field   c37118.soc             0:48:32  uint
+field   c37118.leap_direction  0:81:1   uint
+field   c37118.leap_occurred   0:82:1   uint
+field   c37118.leap_pending    0:83:1   uint
+field   c37118.time_quality    0:84:4   uint
+# The time quality code stays raw (c37118.time_quality): it is a worst-case bound on the
+# offset from UTC, which matches neither core time_error_ms (internal coherence) nor
+# time_utc_error_ms (one sigma). pack.md says why.
+field   c37118.fracsec         0:88:24  uint
+kind    cfg1
+when    0:9:3    2
+when    0:16:16  394
+field   c37118.time_base    0:112:32  uint
+when    0:144:16  1
+field   c37118.station_name  0:160:128  ascii
+field   c37118.pmu_idcode   0:288:16  uint
+field   c37118.data_format  0:304:16  uint
+when    0:320:16  3
+when    0:336:16  1
+when    0:352:16  1
+group   c37118.channel_names  0:368  item 128  count 20
+  field c37118.channel_name  0:0:128  ascii
+end
+group   c37118.phasor_units  0:2928  item 32  count 3
+  field c37118.phasor_unit_type   0:0:8   uint
+  field c37118.phasor_unit_scale  0:8:24  uint
+end
+group   c37118.analog_units  0:3024  item 32  count 1
+  field c37118.analog_unit_type   0:0:8   uint
+  field c37118.analog_unit_scale  0:8:24  twos
+end
+group   c37118.digital_units  0:3056  item 32  count 1
+  field c37118.digital_normal_mask  0:0:16   uint
+  field c37118.digital_valid_mask   0:16:16  uint
+end
+field   c37118.fnom_50hz      0:3103:1   uint
+field   c37118.config_count  0:3104:16  uint
+field   c37118.data_rate     0:3120:16  twos
+field   c37118.chk           0:3136:16  uint
+kind    cfg2
+when    0:9:3    3
+when    0:16:16  394
+field   c37118.time_base    0:112:32  uint
+when    0:144:16  1
+field   c37118.station_name  0:160:128  ascii
+field   c37118.pmu_idcode   0:288:16  uint
+field   c37118.data_format  0:304:16  uint
+when    0:320:16  3
+when    0:336:16  1
+when    0:352:16  1
+group   c37118.channel_names  0:368  item 128  count 20
+  field c37118.channel_name  0:0:128  ascii
+end
+group   c37118.phasor_units  0:2928  item 32  count 3
+  field c37118.phasor_unit_type   0:0:8   uint
+  field c37118.phasor_unit_scale  0:8:24  uint
+end
+group   c37118.analog_units  0:3024  item 32  count 1
+  field c37118.analog_unit_type   0:0:8   uint
+  field c37118.analog_unit_scale  0:8:24  twos
+end
+group   c37118.digital_units  0:3056  item 32  count 1
+  field c37118.digital_normal_mask  0:0:16   uint
+  field c37118.digital_valid_mask   0:16:16  uint
+end
+field   c37118.fnom_50hz      0:3103:1   uint
+field   c37118.config_count  0:3104:16  uint
+field   c37118.data_rate     0:3120:16  twos
+field   c37118.chk           0:3136:16  uint
