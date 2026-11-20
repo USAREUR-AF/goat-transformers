@@ -81,6 +81,10 @@ ALLOWED_EXT = {
 # format they are written in. Allowed under this path only.
 FIXTURE_DIR = "tools/gen/tests/fixtures/"
 FIXTURE_EXT = {"proto", "xsd", "xml"}
+# The landing page (site/, published by .github/workflows/pages.yml) is a web
+# page and its stylesheet. Allowed under this path only.
+SITE_DIR = "site/"
+SITE_EXT = {"html", "css"}
 ALLOWED_BARE = {
     "LICENSE", "NOTICE", "README", "Makefile", "CMakeLists.txt", "goat-pkg", "goat-options",
     "boundary-gate", "repo-stats", "run_tests", "pre-push", "CODEOWNERS", "CODE_OF_CONDUCT",
@@ -323,6 +327,8 @@ def check_filetype(path):
     if os.path.basename(path) in ALLOWED_BARE or ext in ALLOWED_EXT:
         return []
     if ext in FIXTURE_EXT and path.startswith(FIXTURE_DIR):
+        return []
+    if ext in SITE_EXT and path.startswith(SITE_DIR):
         return []
     return [Finding("filetype", path, 0, "file type not on the allowlist (%s)" % (ext or "no extension"))]
 

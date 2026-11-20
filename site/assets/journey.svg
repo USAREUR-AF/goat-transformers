@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1232 318" width="1232" height="318" role="img">
+  <title>Three values of a Remote ID Location message pass through the shared model into a Cursor on Target event</title>
+  <style>
+    :root { --ink:#0f1c26; --quiet:#47575f; --rule:#c3ccd2; --panel:#fbfcfc; --accent:#0a55b3; --soft:#d9e6f6; }
+    @media (prefers-color-scheme: dark) { :root { --ink:#e2e9ee; --quiet:#9fb0bb; --rule:#2b3a46; --panel:#101b24; --accent:#74b2ff; --soft:#14304f; } }
+    text { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size: 13px; fill: var(--ink); }
+    .s { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+    .h { font-size: 11px; letter-spacing: 0.08em; fill: var(--quiet); }
+    .q { fill: var(--quiet); }
+    .a { fill: var(--accent); }
+    .b { font-weight: 600; }
+    .box { fill: var(--panel); stroke: var(--rule); }
+    .key { fill: var(--soft); stroke: var(--accent); }
+    .ln { stroke: var(--ink); stroke-width: 1; fill: none; }
+    .lq { stroke: var(--quiet); stroke-width: 1; fill: none; }
+    .la { stroke: var(--accent); stroke-width: 1; fill: none; }
+    .dash { stroke-dasharray: 5 4; }
+    .head { fill: var(--ink); }
+    .bus { fill: var(--soft); stroke: var(--accent); }
+  </style>
+  <defs><marker id="ar" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="8" markerHeight="8" orient="auto"><path class="head" d="M0 0.5 8 4 0 7.5z"/></marker></defs>
+  <text class="h" x="16" y="26">BYTES ON THE WIRE</text>
+  <text class="h" x="172" y="26">packs/remote-id/pack.def</text>
+  <text class="h" x="534" y="26">SHARED MODEL</text>
+  <text class="h" x="770" y="26">packs/cot-xml/pack.def</text>
+  <text class="h" x="1056" y="26">COT EVENT XML</text>
+  <line class="lq" x1="16" y1="38" x2="1216" y2="38"/>
+  <rect class="box" x="16" y="62" width="116" height="44" rx="2"/>
+  <text x="28" y="88">42 bf 24 1b</text>
+  <line class="ln" x1="137" y1="84" x2="166" y2="84" marker-end="url(#ar)"/>
+  <rect class="box" x="172" y="62" width="322" height="44" rx="2"/>
+  <text x="184" y="88">field lat 0:40:32 sscale:1/10000000</text>
+  <line class="ln" x1="499" y1="84" x2="528" y2="84" marker-end="url(#ar)"/>
+  <rect class="key" x="534" y="62" width="196" height="44" rx="2"/>
+  <text class="b" x="546" y="88">lat</text>
+  <text x="718" y="88" text-anchor="end">45.539309 <tspan class="q">deg</tspan></text>
+  <line class="ln" x1="735" y1="84" x2="764" y2="84" marker-end="url(#ar)"/>
+  <rect class="box" x="770" y="62" width="246" height="44" rx="2"/>
+  <text x="782" y="88">field lat point/@lat float</text>
+  <line class="ln" x1="1021" y1="84" x2="1050" y2="84" marker-end="url(#ar)"/>
+  <rect class="box" x="1056" y="62" width="160" height="44" rx="2"/>
+  <text x="1068" y="88">lat=&quot;45.539309&quot;</text>
+  <rect class="box" x="16" y="126" width="116" height="44" rx="2"/>
+  <text x="28" y="152">6e d1 b4 b6</text>
+  <line class="ln" x1="137" y1="148" x2="166" y2="148" marker-end="url(#ar)"/>
+  <rect class="box" x="172" y="126" width="322" height="44" rx="2"/>
+  <text x="184" y="152">field lon 0:72:32 sscale:1/10000000</text>
+  <line class="ln" x1="499" y1="148" x2="528" y2="148" marker-end="url(#ar)"/>
+  <rect class="key" x="534" y="126" width="196" height="44" rx="2"/>
+  <text class="b" x="546" y="152">lon</text>
+  <text x="718" y="152" text-anchor="end">-122.966389 <tspan class="q">deg</tspan></text>
+  <line class="ln" x1="735" y1="148" x2="764" y2="148" marker-end="url(#ar)"/>
+  <rect class="box" x="770" y="126" width="246" height="44" rx="2"/>
+  <text x="782" y="152">field lon point/@lon float</text>
+  <line class="ln" x1="1021" y1="148" x2="1050" y2="148" marker-end="url(#ar)"/>
+  <rect class="box" x="1056" y="126" width="160" height="44" rx="2"/>
+  <text x="1068" y="152">lon=&quot;-122.966389&quot;</text>
+  <rect class="box" x="16" y="190" width="116" height="44" rx="2"/>
+  <text x="28" y="216">ac 08</text>
+  <line class="ln" x1="137" y1="212" x2="166" y2="212" marker-end="url(#ar)"/>
+  <rect class="box" x="172" y="190" width="322" height="44" rx="2"/>
+  <text x="184" y="216">field hae 0:120:16 uscale:1/2:-1000</text>
+  <line class="ln" x1="499" y1="212" x2="528" y2="212" marker-end="url(#ar)"/>
+  <rect class="key" x="534" y="190" width="196" height="44" rx="2"/>
+  <text class="b" x="546" y="216">hae</text>
+  <text x="718" y="216" text-anchor="end">110 <tspan class="q">m</tspan></text>
+  <line class="ln" x1="735" y1="212" x2="764" y2="212" marker-end="url(#ar)"/>
+  <rect class="box" x="770" y="190" width="246" height="44" rx="2"/>
+  <text x="782" y="208">field hae point/@hae float</text>
+  <text class="q" x="782" y="225" style="font-size:11.5px">absent 9999999,9999999.0</text>
+  <line class="ln" x1="1021" y1="212" x2="1050" y2="212" marker-end="url(#ar)"/>
+  <rect class="box" x="1056" y="190" width="160" height="44" rx="2"/>
+  <text x="1068" y="216">hae=&quot;110&quot;</text>
+  <path class="la" d="M16 258 v8 H494 v-8"/>
+  <text class="s a" x="255.0" y="286" text-anchor="middle">decode: the remote-id pack states where each value sits and how it is scaled</text>
+  <path class="la" d="M534 258 v8 H730 v-8"/>
+  <text class="s a" x="632.0" y="286" text-anchor="middle">typed keys, fixed units</text>
+  <path class="la" d="M770 258 v8 H1216 v-8"/>
+  <text class="s a" x="993.0" y="286" text-anchor="middle">encode: the cot-xml pack states where each key is written</text>
+</svg>

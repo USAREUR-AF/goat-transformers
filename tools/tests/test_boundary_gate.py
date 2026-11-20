@@ -194,6 +194,16 @@ class Checks(GateCase):
                 self.assert_findings([("filetype", name)])
                 self.tree.remove(name)
 
+    def test_filetype_allows_the_web_page_and_its_stylesheet_under_site_only(self):
+        for name in ("site/index.html", "site/assets/site.css"):
+            self.tree.write(name, "text\n")
+        self.assert_ok()
+        for name in ("docs/page.html", "bindings/wasm/style.css", "tools/site/index.html", "site/page.htm"):
+            with self.subTest(name):
+                self.tree.write(name, "text\n")
+                self.assert_findings([("filetype", name)])
+                self.tree.remove(name)
+
     def test_filetype_refuses_a_file_that_is_not_utf8(self):
         self.tree.write("docs/notes.md", b"caf\xe9\n")
         found = self.assert_findings([("filetype", "docs/notes.md")])
