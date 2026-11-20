@@ -1,5 +1,5 @@
 {
-  "name": "gen-ccsds-space-packet-to-send_hk_cmd",
+  "name": "to-cfe-es-be-gen-send-hk-cmd",
   "from": "ccsds-space-packet",
   "to": "cfe-es-be",
   "input": "1808c02a0001",

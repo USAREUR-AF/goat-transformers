@@ -1,5 +1,5 @@
 {
-  "name": "gen-ccsds-space-packet-to-housekeeping_tlm-needs-its-arrays",
+  "name": "to-cfe-evs-be-gen-housekeeping-tlm-needs-its-arrays",
   "from": "ccsds-space-packet",
   "to": "cfe-evs-be",
   "input": "0801c07b0099",

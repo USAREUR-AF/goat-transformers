@@ -173,10 +173,13 @@ def build(out):
                 rel = own
             else:
                 # a vector lives under the pack that owns its input: packs/<from>/vectors,
-                # named to-<this pack>-<name>; the file an earlier run wrote under this
+                # file and `name` to-<this pack>-<name>; the file an earlier run wrote under this
                 # pack is removed (only that file)
                 short = name.replace("gen-%s-to-" % v["from"], "gen-", 1)
                 rel = "packs/%s/vectors/to-%s-%s.json" % (v["from"], fmt, short)
+                # its name names the target pack too, as the file does: names are unique
+                # within packs/<from>/vectors, where every cfe pack writes one
+                v = dict(v, name="to-%s-%s" % (fmt, short))
                 out.remove(own)
             out.write(rel, json.dumps(v, indent=2) + "\n")
             written[v["from"]] = written.get(v["from"], 0) + 1

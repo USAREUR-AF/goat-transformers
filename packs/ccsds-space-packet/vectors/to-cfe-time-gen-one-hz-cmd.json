@@ -1,5 +1,5 @@
 {
-  "name": "gen-ccsds-space-packet-to-one_hz_cmd",
+  "name": "to-cfe-time-gen-one-hz-cmd",
   "from": "ccsds-space-packet",
   "to": "cfe-time",
   "input": "1811c02a0001",
