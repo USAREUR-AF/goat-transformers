@@ -1,0 +1,9 @@
+{
+  "name": "to-until-rest-ruling-04-eight-empty-items",
+  "from": "conformance-long-json",
+  "to": "conformance-long-until-rest",
+  "input": "{\"names\": [\"\", \"\", \"\", \"\", \"\", \"\", \"\", \"\"]}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 15, with 0.21 A list to the end of its extent; eight items of 7 bits: the last starts at bit 49 of 56, 7 bits before the end (0.21 ruling 4)"
+}

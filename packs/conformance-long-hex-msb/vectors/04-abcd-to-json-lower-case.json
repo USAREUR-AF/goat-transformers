@@ -1,0 +1,9 @@
+{
+  "name": "abcd-to-json-lower-case",
+  "from": "conformance-long-hex-msb",
+  "to": "conformance-long-json",
+  "input": "abcd0000",
+  "expect": "{\"label\":\"abcd\",\"tag\":\"00\"}",
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 14: decode writes lowercase digits"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "high-nibble-low-bit-first",
+  "from": "conformance-long-mlsb-uint",
+  "to": "conformance-long-json",
+  "input": "8f01",
+  "expect": "{\"x\":1,\"y\":15,\"z\":128}",
+  "model": {
+    "probe.x": "1",
+    "probe.y": "15",
+    "probe.z": "128"
+  },
+  "source": "constructed",
+  "reference": "spec 0.22, A bit order with high-bit-first positions and low-bit-first values; 0:0:4 is the high four bits of the first byte read with the highest of them as the value's bit 0"
+}

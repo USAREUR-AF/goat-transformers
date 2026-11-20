@@ -1,0 +1,9 @@
+{
+  "name": "ruling-11-absent-comes-back-as-a-terminator",
+  "from": "conformance-long-until-length",
+  "to": "conformance-long-until-length",
+  "input": "010509",
+  "expect": "02050009",
+  "source": "constructed",
+  "reference": "spec 0.22 rulings 4 and 12; encode writes the terminator alone for the absent key; the length counts it"
+}

@@ -350,6 +350,12 @@ class Pack:
         if self.wire != "bits":
             refuse("wire-not-bits", "format `%s` is on the `%s` wire; the device profile compiles the `bits` wire only"
                    % (self.format, self.wire))
+        for t in rows:      # spec 0.22: long and terminated fields are not in the device profile
+            if ((t[0] == "bit_order" and t[1:] == ["msb-lsb"])
+                    or (t[0] in ("field", "also") and len(t) > 3
+                        and (t[2].startswith("until:") or t[3] in ("hex", "chars:ascii8") or "stop" in t[4:]))):
+                refuse("unsupported-feature", "%s: `bit_order msb-lsb`, `hex` on `bits`, `chars:ascii8`, `stop` "
+                       "and `until:` (spec 0.22) are not in the device profile" % self.format)
         for t in rows:      # spec 0.21: sequential extents and counts are not in the device profile
             if t[0] == "count" or (t[0] == "group" and len(t) > 2
                                    and (t[2] in ("rest", "last") or (t[2] == "count" and len(t) > 3

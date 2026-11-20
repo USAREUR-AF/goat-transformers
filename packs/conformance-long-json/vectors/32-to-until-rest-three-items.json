@@ -1,0 +1,9 @@
+{
+  "name": "to-until-rest-three-items",
+  "from": "conformance-long-json",
+  "to": "conformance-long-until-rest",
+  "input": "{\"names\":[\"A\",\"\",\"B\"]}",
+  "expect": "8200042000",
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 15, with 0.21 A list to the end of its extent; the items back to back"
+}

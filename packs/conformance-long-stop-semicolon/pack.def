@@ -1,0 +1,14 @@
+# Conformance probe pack for `stop 59` on a 48-bit `ascii8` field (spec 0.22,
+# ruling 21): the text ends at the first `;`; NUL before it is an ordinary
+# character. Public. No kinds. Most significant bit first.
+#
+#   bytes 0..5    label  up to 5 characters, `;`, then NUL padding
+format     conformance-long-stop-semicolon
+version    0.22.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+word_bytes 1
+bit_order  msb
+field   probe.label  0:0:48  chars:ascii8  stop 59

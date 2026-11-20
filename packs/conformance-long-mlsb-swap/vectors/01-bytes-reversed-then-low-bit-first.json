@@ -1,0 +1,12 @@
+{
+  "name": "bytes-reversed-then-low-bit-first",
+  "from": "conformance-long-mlsb-swap",
+  "to": "conformance-long-json",
+  "input": "0102",
+  "expect": "{\"x\":32832}",
+  "model": {
+    "probe.x": "32832"
+  },
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 13: swap reverses 8-bit chunks of the field taken from its first bit; 02 01 read from bit 0 up"
+}

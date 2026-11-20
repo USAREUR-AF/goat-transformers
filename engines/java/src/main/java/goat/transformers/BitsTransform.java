@@ -13,10 +13,14 @@ import java.nio.charset.StandardCharsets;
 public final class BitsTransform {
     enum Kind { UINT, TWOS, LINSCALE, USCALE, SSCALE, F32, F64, ASCII, SIXBIT,
         // engine-spec 0.15
-        UISCALE, SISCALE, SMAG, SMSCALE, F32SCALE, F64SCALE, CHARS, OCTAL }
+        UISCALE, SISCALE, SMAG, SMSCALE, F32SCALE, F64SCALE, CHARS, OCTAL,
+        // engine-spec 0.22
+        HEX }
 
     /** The character sets of {@code chars:<set>}. */
-    enum CharSet { ICAO6, AIS6, ASCII7 }
+    enum CharSet { ICAO6, AIS6, ASCII7, ASCII8,
+        /** {@code hex} (engine-spec 0.22): 4-bit digits, read and written as the characters of a set are. */
+        HEX }
 
     private final Kind kind;
     private final String name;
@@ -50,6 +54,7 @@ public final class BitsTransform {
             case ASCII:
             case SIXBIT:
             case CHARS:
+            case HEX:
             case OCTAL: return "string";
             default: return "float";
         }
@@ -63,13 +68,29 @@ public final class BitsTransform {
     /** {@code ascii} or {@code sixbit}: the transforms that take the field option {@code trim}. */
     boolean takesTrim() { return kind == Kind.ASCII || kind == Kind.SIXBIT; }
 
-    /** {@code chars:<set>}: read and written as characters of {@link #charWidth} bits. */
-    boolean isChars() { return kind == Kind.CHARS; }
+    /**
+     * {@code chars:<set>}, and {@code hex} (engine-spec 0.22): read and written as characters of {@link #charWidth}
+     * bits, each as {@code uint} reads a field of that width at its place.
+     */
+    boolean isChars() { return kind == Kind.CHARS || kind == Kind.HEX; }
 
-    /** {@code chars} and {@code octal} take no {@code swap} (engine-spec 0.15, Load errors). */
-    boolean refusesSwap() { return kind == Kind.CHARS || kind == Kind.OCTAL; }
+    /** {@code chars:<set>} only: the transform that takes {@code until:} and {@code stop} (engine-spec 0.22). */
+    boolean isCharSet() { return kind == Kind.CHARS; }
 
-    int charWidth() { return set == CharSet.ASCII7 ? 7 : 6; }
+    /** {@code chars}, {@code octal} and {@code hex} take no {@code swap} (engine-spec 0.15, Load errors; 0.22). */
+    boolean refusesSwap() { return kind == Kind.CHARS || kind == Kind.OCTAL || kind == Kind.HEX; }
+
+    int charWidth() {
+        switch (set) {
+            case HEX: return 4;
+            case ASCII7: return 7;
+            case ASCII8: return 8;
+            default: return 6;
+        }
+    }
+
+    /** {@code stop <code>} (engine-spec 0.22): the code that ends the text of a fixed-size {@code chars} field, or -1. */
+    int stop = -1;
 
     /** True when {@code head} is the name of a {@code bits} transform of engine-spec 0.15. */
     static boolean isV015(String head) {
@@ -117,6 +138,7 @@ public final class BitsTransform {
             case "f64":
             case "ascii":
             case "sixbit":
+            case "hex":   // engine-spec 0.22
                 return n.indexOf(':') < 0;
             default:
                 return false;
@@ -160,6 +182,11 @@ public final class BitsTransform {
             case "f64": return new BitsTransform(Kind.F64, name);
             case "ascii": return new BitsTransform(Kind.ASCII, name);
             case "sixbit": return new BitsTransform(Kind.SIXBIT, name);
+            case "hex": {
+                BitsTransform t = new BitsTransform(Kind.HEX, name);
+                t.set = CharSet.HEX;
+                return t;
+            }
             case "linscale": {
                 if (p.length != 3) throw bad(format, where, "linscale takes linscale:<maxpos>:<range>, got \"" + name + "\"");
                 BitsTransform t = new BitsTransform(Kind.LINSCALE, name);
@@ -221,6 +248,7 @@ public final class BitsTransform {
                     case "icao6": t.set = CharSet.ICAO6; break;
                     case "ais6": t.set = CharSet.AIS6; break;
                     case "ascii7": t.set = CharSet.ASCII7; break;
+                    case "ascii8": t.set = CharSet.ASCII8; break;   // engine-spec 0.22
                     default: throw new IllegalArgumentException("unknown character set \"" + params[0] + "\"");
                 }
                 return t;
@@ -244,6 +272,9 @@ public final class BitsTransform {
                 return (len % w == 0 && len >= w && len <= 2040) ? null
                         : name + " needs a length that is a multiple of " + w + " from " + w + " to 2040, got " + len;
             }
+            case HEX:
+                return (len % 4 == 0 && len >= 4 && len <= 2040) ? null
+                        : "hex needs a length that is a multiple of 4 from 4 to 2040, got " + len;
             case OCTAL:
                 return (len % 3 == 0 && len >= 3 && len <= 63) ? null
                         : "octal needs a length that is a multiple of 3 from 3 to 63, got " + len;
@@ -571,8 +602,21 @@ public final class BitsTransform {
         return out;
     }
 
-    /** {@code chars}: the codes of the field's characters, first character first, to text. */
+    /**
+     * {@code chars}: the codes of the field's characters, first character first, to text. With {@code stop}, the
+     * text ends at the first terminator code and is exact; with none found, the 0.15 rules (rulings 18 and 19 of 0.22).
+     */
     String decodeChars(int[] codes) {
+        if (set == CharSet.HEX) {
+            StringBuilder b = new StringBuilder(codes.length);
+            for (int c : codes) b.append(Character.forDigit(c, 16));
+            return b.toString();
+        }
+        if (stop >= 0) {
+            for (int i = 0; i < codes.length; i++) {
+                if (codes[i] == stop) return decodeExact(java.util.Arrays.copyOf(codes, i));
+            }
+        }
         char[] out = new char[codes.length];
         for (int i = 0; i < codes.length; i++) {
             int c = codes[i];
@@ -590,7 +634,7 @@ public final class BitsTransform {
                 default:
                     if (c == 0) ch = 0;
                     else if (c >= 32 && c <= 126) ch = (char) c;
-                    else throw new IllegalArgumentException("code " + c + " of character " + i + " is not in ascii7");
+                    else throw new IllegalArgumentException("code " + c + " of character " + i + " is not in " + setName());
                     if (c != 0 && i > 0 && out[i - 1] == 0) {
                         throw new IllegalArgumentException("a NUL is followed by a character that is not NUL at character " + i);
                     }
@@ -611,9 +655,95 @@ public final class BitsTransform {
         return new String(out, 0, n);
     }
 
+    String setName() { return set.name().toLowerCase(java.util.Locale.ROOT); }
+
+    /** The character a code of the set stands for, or -1 for a code the set does not give a character. */
+    private int charOf(int c) {
+        switch (set) {
+            case ICAO6:
+                if (c >= 1 && c <= 26) return 'A' + c - 1;
+                if (c == 32 || (c >= 48 && c <= 57)) return c;
+                return -1;
+            case AIS6:
+                return c < 32 ? c + 64 : c;
+            default:
+                return c == 0 || (c >= 32 && c <= 126) ? c : -1;
+        }
+    }
+
+    /** The code of a character in the set, or -1 (NUL is code 0 in ascii7 and ascii8). */
+    private int codeOf(char ch) {
+        switch (set) {
+            case ICAO6:
+                if (ch >= 'A' && ch <= 'Z') return ch - 'A' + 1;
+                return ch == ' ' || (ch >= '0' && ch <= '9') ? ch : -1;
+            case AIS6:
+                if (ch >= 64 && ch <= 95) return ch - 64;
+                return ch >= 32 && ch <= 63 ? ch : -1;
+            default:
+                return ch == 0 || (ch >= 32 && ch <= 126) ? ch : -1;
+        }
+    }
+
+    /**
+     * Codes to text exactly: nothing removed, and NUL an ordinary character (the text before a terminator,
+     * rulings 6, 7, 18, 20 and 21 of 0.22). A code the set does not hold is transform-decode.
+     */
+    String decodeExact(int[] codes) {
+        StringBuilder b = new StringBuilder(codes.length);
+        for (int i = 0; i < codes.length; i++) {
+            int ch = charOf(codes[i]);
+            if (ch < 0) throw new IllegalArgumentException("code " + codes[i] + " of character " + i + " is not in " + setName());
+            b.append((char) ch);
+        }
+        return b.toString();
+    }
+
+    /**
+     * Text to its codes before a terminator {@code term} (engine-spec 0.22): a character the set cannot hold, or one
+     * whose code is the terminator's, is transform-encode; NUL is an ordinary character (ruling 20).
+     */
+    int[] encodeExact(String s, int term) {
+        int[] codes = new int[s.length()];
+        for (int i = 0; i < s.length(); i++) {
+            char ch = s.charAt(i);
+            int c = codeOf(ch);
+            if (c < 0) throw new IllegalArgumentException(String.format("character U+%04X at %d is not in %s", (int) ch, i, setName()));
+            if (c == term) throw new IllegalArgumentException(String.format("character U+%04X at %d is the terminator", (int) ch, i));
+            codes[i] = c;
+        }
+        return codes;
+    }
+
     /** {@code chars}: text to the codes of {@code count} characters, padded with the set's padding. */
     int[] encodeChars(Object value, int count) {
         String s = value instanceof Double ? Transform.formatDouble((Double) value) : String.valueOf(value);
+        if (set == CharSet.HEX) {
+            // each digit, either case, as a 4-bit field; text of another length is transform-encode (engine-spec 0.22)
+            if (s.length() != count) {
+                throw new IllegalArgumentException("hex text of " + s.length() + " digits, the field holds exactly " + count);
+            }
+            int[] codes = new int[count];
+            for (int i = 0; i < count; i++) {
+                int d = Character.digit(s.charAt(i), 16);
+                if (d < 0 || s.charAt(i) > 'f') throw new IllegalArgumentException("character \"" + s.charAt(i) + "\" at " + i + " is not a hex digit");
+                codes[i] = d;
+            }
+            return codes;
+        }
+        if (stop >= 0) {
+            // the text, the terminator, then padding to the field's size (engine-spec 0.22, stop)
+            int[] text = encodeExact(s, stop);
+            if (text.length + 1 > count) {
+                throw new IllegalArgumentException("text of " + text.length + " characters leaves no room for the terminator in " + count + " characters");
+            }
+            int[] codes = new int[count];
+            int pad = set == CharSet.ICAO6 ? 32 : 0;
+            java.util.Arrays.fill(codes, pad);
+            System.arraycopy(text, 0, codes, 0, text.length);
+            codes[text.length] = stop;
+            return codes;
+        }
         if (s.length() > count) {
             throw new IllegalArgumentException("text of " + s.length() + " characters does not fit " + count + " characters");
         }

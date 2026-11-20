@@ -1137,7 +1137,7 @@ def build(sink):
        BITS + "field probe.a 0:0:8 smscale:0.5:0.25\nfield probe.a 0:8:32 f32scale:0.5:0.25\n"
        "field probe.a 0:40:64 f64scale:1/3:-2.5\n")
     # character sets, swap, trim, absent
-    L("unknown-character-set", BITS + "field probe.s1 0:0:48 chars:ascii8\n")
+    L("unknown-character-set", BITS + "field probe.s1 0:0:48 chars:ascii9\n")
     L("character-set-missing", BITS + "field probe.s1 0:0:48 chars\n")
     L("character-set-empty", BITS + "field probe.s1 0:0:48 chars:\n")
     L("swap-with-chars", BITS + "field probe.s1 0:0:48 chars:ais6 swap\n")

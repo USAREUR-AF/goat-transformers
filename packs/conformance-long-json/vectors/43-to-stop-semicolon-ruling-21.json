@@ -1,0 +1,9 @@
+{
+  "name": "to-stop-semicolon-ruling-21",
+  "from": "conformance-long-json",
+  "to": "conformance-long-stop-semicolon",
+  "input": "{\"label\":\"A\\u0000\"}",
+  "expect": "41003b000000",
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 21: with a terminator other than 0, NUL in a stop field is an ordinary character; A, NUL, ;, then NUL padding"
+}

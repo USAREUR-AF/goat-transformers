@@ -268,13 +268,23 @@ std::string armor_to_bytes(const Pack& p, const std::string& text, std::uint64_t
 // as armored text. Bits of `data` past its end read as zero.
 std::string bytes_to_armor(const std::string& data, std::uint64_t bits);
 
+// bits: how a pack's bit order places bits. `pos_msb`: bit i of the message is
+// bit 7 - (i mod 8) of byte i div 8 (else bit i mod 8). `val_msb`: a field's
+// first bit is its value's most significant (else its least). `msb` is both,
+// `lsb` neither, and `msb-lsb` (v0.22) positions as `msb`, values as `lsb`.
+struct BitMode {
+    bool pos_msb = false;
+    bool val_msb = false;
+};
+inline BitMode bit_mode(BitOrder o) { return BitMode{o != BitOrder::Lsb, o == BitOrder::Msb}; }
+
 // bits: one field's message text, read from or written to `len` bits at
 // `start`, for `ascii`, `sixbit` and the `chars` sets of 0.15. False for any
 // other transform.
-bool decode_bits_text(const FieldLine& f, const std::string& data, std::uint64_t start, std::uint32_t len, bool msb,
+bool decode_bits_text(const FieldLine& f, const std::string& data, std::uint64_t start, std::uint32_t len, BitMode msb,
                       Value& out);
 bool encode_bits_text(const FieldLine& f, const Value& v, std::string& data, std::uint64_t start, std::uint32_t len,
-                      bool msb);
+                      BitMode msb);
 
 // json and geojson: the items of a group, from the array `arr` (an item per
 // element), and back to the JSON text of an array. `geo` selects the geojson
@@ -282,10 +292,11 @@ bool encode_bits_text(const FieldLine& f, const Value& v, std::string& data, std
 std::vector<Item> json_decode_items(const Pack& p, const GroupLine& g, const json::Value& arr, bool geo);
 std::string json_encode_items(const Pack& p, const GroupLine& g, const std::vector<Item>& items, bool geo);
 
+
 // bits: `len` bits (1 to 64) from bit `start` of `data`, in the pack's bit
 // order, and back; `swap_bytes` reverses the bytes of a `len`-bit value.
-std::uint64_t read_bits(const std::string& data, std::uint64_t start, std::uint32_t len, bool msb);
-void write_bits(std::string& data, std::uint64_t start, std::uint32_t len, std::uint64_t raw, bool msb);
+std::uint64_t read_bits(const std::string& data, std::uint64_t start, std::uint32_t len, BitMode msb);
+void write_bits(std::string& data, std::uint64_t start, std::uint32_t len, std::uint64_t raw, BitMode msb);
 std::uint64_t swap_bytes(std::uint64_t raw, std::uint32_t len);
 
 Entity decode_xml(const Pack& p, const std::string& bytes);

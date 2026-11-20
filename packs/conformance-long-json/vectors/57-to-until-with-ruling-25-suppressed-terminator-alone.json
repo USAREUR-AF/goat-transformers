@@ -1,0 +1,9 @@
+{
+  "name": "to-until-with-ruling-25-suppressed-terminator-alone",
+  "from": "conformance-long-json",
+  "to": "conformance-long-until-with",
+  "input": "{\"s1\":\"AB\",\"y\":9}",
+  "expect": "0009",
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 25: a suppressed until: line writes the terminator alone, as an absent key does; x not held: the terminator alone, then y at the next bit"
+}

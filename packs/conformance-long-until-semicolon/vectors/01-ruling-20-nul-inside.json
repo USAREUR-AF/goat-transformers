@@ -1,0 +1,12 @@
+{
+  "name": "ruling-20-nul-inside",
+  "from": "conformance-long-until-semicolon",
+  "to": "conformance-long-until-semicolon",
+  "input": "4100423b",
+  "expect": "4100423b",
+  "model": {
+    "probe.label": "A\u0000B"
+  },
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 20: NUL under until:N with N not 0 is an ordinary character on decode and on encode; 41 00 42, then ; (3b)"
+}

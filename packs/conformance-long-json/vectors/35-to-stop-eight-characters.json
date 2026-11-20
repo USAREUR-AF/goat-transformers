@@ -1,0 +1,9 @@
+{
+  "name": "to-stop-eight-characters",
+  "from": "conformance-long-json",
+  "to": "conformance-long-stop",
+  "input": "{\"label\":\"ABCDEFGH\"}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.22, the field option stop <code>; a text that does not leave room for the terminator is transform-encode"
+}

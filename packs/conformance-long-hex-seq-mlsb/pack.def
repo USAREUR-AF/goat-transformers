@@ -1,0 +1,16 @@
+# Conformance probe pack for `hex` in a sequential layout with bit_order
+# msb-lsb, at an offset that is not a multiple of 4 (spec 0.22). Public. No
+# kinds.
+#
+#   3 bits        x      unsigned
+#   8 bits        label  two hex digits from bit 3; 5 bits of padding follow
+format     conformance-long-hex-seq-mlsb
+version    0.22.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb-lsb
+field   probe.x      3  uint
+field   probe.label  8  hex

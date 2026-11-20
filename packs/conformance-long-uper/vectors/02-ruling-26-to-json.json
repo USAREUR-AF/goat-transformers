@@ -1,0 +1,9 @@
+{
+  "name": "ruling-26-to-json",
+  "from": "conformance-long-uper",
+  "to": "conformance-long-json",
+  "input": "a82010",
+  "expect": "{\"label\":\"A\",\"x\":5,\"y\":12}",
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 26: until: in a uper pack is read at the cursor with no alignment; decode"
+}

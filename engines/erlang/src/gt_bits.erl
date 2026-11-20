@@ -67,7 +67,7 @@ hexdig(N) -> $a + N - 10.
 
 %% A message opened for reading: {Order, BitSize, Bytes}. A read takes the
 %% bytes its range covers, so its cost does not grow with the message.
-open(Bin, Order) when Order =:= lsb; Order =:= msb ->
+open(Bin, Order) when Order =:= lsb; Order =:= msb; Order =:= msblsb ->
     {Order, erlang:bit_size(Bin), Bin}.
 
 bit_size({_, Size, _}) -> Size.
@@ -79,6 +79,11 @@ read({_, Size, _}, Off, Len) when Off < 0; Len < 0; Off + Len > Size -> beyond;
 read({msb, _, Bin}, Off, Len) ->
     <<_:Off/bits, V:Len, _/bits>> = Bin,
     V;
+%% msb-lsb (Version 0.22): positions as msb, the value with its first bit
+%% least significant, as lsb
+read({msblsb, _, Bin}, Off, Len) ->
+    <<_:Off/bits, V:Len, _/bits>> = Bin,
+    rev(V, Len);
 read({lsb, _, Bin}, Off, Len) ->
     First = Off div 8,
     Bits = ((Off + Len + 7) div 8 - First) * 8,
@@ -94,6 +99,8 @@ new(Bytes, Order) -> {Order, Bytes * 8, 0, 0}.
 new_bits(Bits, Order) -> {Order, Bits, 0, 0}.
 
 %% Write a field. Bits an earlier field already wrote keep that field's value.
+%% msb-lsb writes as msb, with the value's bits in reverse order
+write({msblsb, _, _, _} = M, Off, Len, U) -> as_msblsb(write(as_msb(M), Off, Len, rev(U, Len)));
 write({Order, Size, Val, Written}, Off, Len, U) ->
     Shift = shift(Order, Size, Off, Len),
     Range = mask(Len) bsl Shift,
@@ -102,6 +109,8 @@ write({Order, Size, Val, Written}, Off, Len, U) ->
 
 %% Write a field only on the bits another message of the same size has
 %% written, and that this one has not.
+write_within({msblsb, _, _, _} = M, Off, Len, U, A) ->
+    as_msblsb(write_within(as_msb(M), Off, Len, rev(U, Len), as_msb(A)));
 write_within({Order, Size, Val, Written}, Off, Len, U, {_, _, _, Allowed}) ->
     Shift = shift(Order, Size, Off, Len),
     Range = mask(Len) bsl Shift,
@@ -109,6 +118,7 @@ write_within({Order, Size, Val, Written}, Off, Len, U, {_, _, _, Allowed}) ->
     {Order, Size, Val bor (((U band mask(Len)) bsl Shift) band Free), Written bor Free}.
 
 %% Write a `when` value over whatever is there.
+overwrite({msblsb, _, _, _} = M, Off, Len, U) -> as_msblsb(overwrite(as_msb(M), Off, Len, rev(U, Len)));
 overwrite({Order, Size, Val, Written}, Off, Len, U) ->
     Shift = shift(Order, Size, Off, Len),
     Range = mask(Len) bsl Shift,
@@ -118,6 +128,11 @@ overwrite({Order, Size, Val, Written}, Off, Len, U) ->
 %% The Len bits from Off of a message being written, or `beyond` when the
 %% range runs past its end. Bits nothing wrote read as 0.
 peek({_, Size, _, _}, Off, Len) when Off + Len > Size -> beyond;
+peek({msblsb, _, _, _} = M, Off, Len) ->
+    case peek(as_msb(M), Off, Len) of
+        beyond -> beyond;
+        V -> rev(V, Len)
+    end;
 peek({Order, Size, Val, _}, Off, Len) ->
     (Val bsr shift(Order, Size, Off, Len)) band mask(Len).
 
@@ -125,10 +140,20 @@ peek({Order, Size, Val, _}, Off, Len) ->
 written_any({Order, Size, _, Written}, Off, Len) ->
     (Written band (mask(Len) bsl shift(Order, Size, Off, Len))) =/= 0.
 
+shift(msblsb, Size, Off, Len) -> Size - Off - Len;
 shift(lsb, _Size, Off, _Len) -> Off;
 shift(msb, Size, Off, Len) -> Size - Off - Len.
 
 to_bytes({lsb, Size, Val, _}) -> <<Val:Size/little>>;
-to_bytes({msb, Size, Val, _}) -> <<Val:Size/big>>.
+to_bytes({_, Size, Val, _}) -> <<Val:Size/big>>.      % msb, msb-lsb
+
+as_msb({_, Size, Val, Written}) -> {msb, Size, Val, Written}.
+as_msblsb({msb, Size, Val, Written}) -> {msblsb, Size, Val, Written}.
+
+%% The Len bits of V in reverse order.
+rev(V, Len) ->
+    Bits = list_to_bitstring(lists:reverse([<<B:1>> || <<B:1>> <= <<V:Len>>])),
+    <<R:Len>> = Bits,
+    R.
 
 mask(L) -> (1 bsl L) - 1.

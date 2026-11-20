@@ -1,0 +1,9 @@
+{
+  "name": "to-mlsb-signed",
+  "from": "conformance-long-json",
+  "to": "conformance-long-mlsb-signed",
+  "input": "{\"z\":-1,\"w\":-2}",
+  "expect": "ff41",
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 3: under msb-lsb the sign of twos and smag is the last bit read; the sign is written last"
+}

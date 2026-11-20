@@ -1,0 +1,12 @@
+{
+  "name": "one",
+  "from": "conformance-long-mlsb-float",
+  "to": "conformance-long-json",
+  "input": "000001fc",
+  "expect": "{\"a\":1}",
+  "model": {
+    "probe.a": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 3: the bit pattern of a float is read as uint reads 32 bits: f32 1.0 is 000001fc"
+}

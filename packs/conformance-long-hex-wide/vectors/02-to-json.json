@@ -1,0 +1,9 @@
+{
+  "name": "to-json",
+  "from": "conformance-long-hex-wide",
+  "to": "conformance-long-json",
+  "input": "07fedcba9876543210ff",
+  "expect": "{\"label\":\"fedcba9876543210ff\",\"x\":7}",
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 1 and Fields longer than 64 bits; json writes the members in the json pack's line order: label, then x"
+}

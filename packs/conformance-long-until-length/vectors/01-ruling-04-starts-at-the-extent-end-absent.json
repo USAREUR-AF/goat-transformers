@@ -1,0 +1,16 @@
+{
+  "name": "ruling-04-starts-at-the-extent-end-absent",
+  "from": "conformance-long-until-length",
+  "to": "conformance-long-json",
+  "input": "010509",
+  "expect": "{\"x\":5,\"y\":9}",
+  "model": {
+    "probe.x": "5",
+    "@absent": [
+      "probe.label"
+    ],
+    "probe.y": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.22 rulings 4 and 12; a field starting at or after the end of a length extent is absent (ruling 7 of 0.8)"
+}

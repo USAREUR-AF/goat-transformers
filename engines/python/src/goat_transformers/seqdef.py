@@ -11,7 +11,8 @@ from .errors import (
     BadDirective, BadLocator, DuplicateKind, MissingDistribution, MissingFormat, MissingSource, MissingVersion,
 )
 from .transforms import (
-    bits_len_allowed, build_bits_transform, read_int_text, read_uint_text, transform_valid_on, v15_family,
+    UntilCharsT, bits_len_allowed, build_bits_transform, read_int_text, read_uint_text, terminator_code,
+    transform_valid_on, v15_family,
 )
 from . import uper
 
@@ -46,7 +47,8 @@ class Node:
     alt       `value` (its index), `body`
     switch    `key`, `cases` (Case), `other` (the `else` Case or None), `key_type`, `key_lines`: the
               field nodes of the scope that map the key before the switch, in reading order (0.20)
-    A field with a UPER locator has `uper` (a uper.Loc) and `length` None; a
+    A field with a UPER locator has `uper` (a uper.Loc) and `length` None, as one with
+    the locator `until:<code>` has `until` (its UntilCharsT, 0.22); a
     `size` group has `lb` and `ub` (both None with no size constraint). A
     `when` has `ranges` (0.20); a presence `named_static`, the bits named by an
     `if` outside any case that does not also hold the presence, and `chain`,
@@ -56,7 +58,7 @@ class Node:
     __slots__ = ("t", "lineno", "length", "value", "bindings", "name", "named", "conds", "body", "list", "mode",
                  "scope", "parts", "ends_fx", "unit", "plus", "locator", "uper", "n", "ext", "alts", "index",
                  "lb", "ub", "key", "cases", "other", "key_type", "ranges", "named_static", "chain", "key_lines",
-                 "count_node", "tail_rest")
+                 "count_node", "tail_rest", "until")
 
     is_field = False
     is_const = False
@@ -68,6 +70,7 @@ class Node:
         self.length = None
         self.locator = None
         self.uper = None
+        self.until = None
         self.count_node = None
         self.tail_rest = False
         for k, v in kw.items():
@@ -302,6 +305,7 @@ def parse_seq_pack_text(text, *, source="pack.def"):
     `missing-distribution`, `missing-source`."""
     from .packdef import (
         BIT_ORDERS, HEADER_ONCE, NEEDS_WIRE, TEXT_DIRECTIVES, Default, Field, Pack, _check_transform, _Deferred,
+        set_stop,
         _LineBad, armor_line, check_armor, check_encoding, line_head, parse_absent, set_bit_order,
         ValueCheck, requires_term, split_list, when_values,
     )
@@ -424,14 +428,15 @@ def parse_seq_pack_text(text, *, source="pack.def"):
             opt = options[i]
             if opt == "optional":
                 raise bad("the field option 'optional' in a sequential pack", lineno, len_text)
-            if opt not in ("via", "swap", "trim", "absent", "with"):
+            if opt not in ("via", "swap", "trim", "absent", "with", "stop"):
                 raise line_bad("unknown field option %r" % opt, lineno, len_text)
             if opt in opts:
                 raise line_bad("field option %r is given twice" % opt, lineno, len_text)
-            if opt in ("via", "absent", "with"):  # the token after `absent` is its argument (ruling 11 of 0.9)
+            if opt in ("via", "absent", "with", "stop"):  # the token after `absent` is its argument (ruling 11 of 0.9)
                 if i + 1 >= len(options):
                     raise line_bad("field option %r takes %s" % (
-                        opt, "a table name" if opt == "via" else "a model key" if opt == "with" else "a value"),
+                        opt, "a table name" if opt == "via" else "a model key" if opt == "with" else
+                        "a terminator code" if opt == "stop" else "a value"),
                         lineno, len_text)
                 opts[opt] = options[i + 1]
                 i += 2
@@ -487,6 +492,42 @@ def parse_seq_pack_text(text, *, source="pack.def"):
             via_fields.append(f)
         return f, loc
 
+    def make_until_field(key, len_text, tname, options, lineno, also=False):
+        """A field with the locator `until:<code>` (0.22) -> Field, or None.
+        As the line is read: the transform's name and parameters (step 7) and
+        the syntax of the options (step 9). After the file is read: the
+        transform (`chars:<set>` only), the code, and the options refused with
+        `until:` (`absent`, `swap`, `trim`, `stop`)."""
+        where = "%s:%d" % (source, lineno)
+        if not also:
+            _check_transform(seen.get("format"), tname, len_text, where)
+        opts = read_options(options, lineno, len_text)
+        failed = False
+        for opt in ("absent", "swap", "trim", "stop"):
+            if opt in opts:
+                deferred.append((lineno, bad("field option %r with the locator 'until:'" % opt, lineno, len_text)))
+                failed = True
+        if v15_family(tname) != "chars":
+            deferred.append((lineno, bad("the locator 'until:' takes a 'chars:<set>' transform, got %r" % tname,
+                                         lineno, len_text)))
+            return None
+        charset = tname.split(":", 1)[1]
+        try:
+            code = terminator_code(len_text[len("until:"):], charset)
+        except ValueError as e:
+            deferred.append((lineno, bad("the locator %r: %s" % (len_text, e), lineno, len_text)))
+            return None
+        if failed:
+            return None
+        f = Field(key, len_text, UntilCharsT(tname, charset, code), (0, 0, 0), lineno, via=opts.get("via"))
+        key_refs.append((key, f))
+        if "with" in opts:  # 0.18: checked as a `requires` key is
+            f.with_key = opts["with"]
+            key_refs.append((f.with_key, None))
+        if f.via is not None:
+            via_fields.append(f)
+        return f
+
     def make_field(key, len_text, tname, options, lineno, also=False):
         """The line checks of ruling 5b of 0.11 in their order (the
         transform, the locator, the options, the values of `absent`), then the
@@ -515,8 +556,8 @@ def parse_seq_pack_text(text, *, source="pack.def"):
             if length > 64:  # the values of `absent` are not checked as the line is read (ruling 4d of 0.11)
                 return None
         transform = build_bits_transform(tname, length)
-        if "swap" in opts and tname == "sixbit":  # 0.14
-            deferred.append((lineno, bad("field option 'swap' does not apply to the 'sixbit' transform",
+        if "swap" in opts and tname in ("sixbit", "hex"):  # 0.14, 0.22
+            deferred.append((lineno, bad("field option 'swap' does not apply to the '%s' transform" % tname,
                                          lineno, len_text)))
         elif "swap" in opts and v15_family(tname) in ("chars", "octal"):  # 0.15
             deferred.append((lineno, bad("field option 'swap' does not apply to the '%s' transform"
@@ -531,6 +572,10 @@ def parse_seq_pack_text(text, *, source="pack.def"):
                                              "transforms only", lineno, len_text)))
             else:
                 transform.trim = True
+        if "stop" in opts:  # 0.22
+            why = set_stop(transform, tname, opts["stop"])
+            if why is not None:
+                deferred.append((lineno, bad(why, lineno, len_text)))
         f = Field(key, len_text, transform, (0, 0, length), lineno, via=opts.get("via"), swap="swap" in opts)
         if "absent" in opts:
             try:
@@ -820,13 +865,18 @@ def parse_seq_pack_text(text, *, source="pack.def"):
                 else:
                     body.cur.whens.append(nd)
             elif kw == "field":
+                until = None
                 if args[1].startswith(uper.PREFIXES):  # 0.19
                     f, loc = make_uper_field(args[0], args[1], args[2], args[3:], lineno)
+                elif args[1].startswith("until:"):  # 0.22
+                    f, loc = make_until_field(args[0], args[1], args[2], args[3:], lineno), None
+                    if f is not None:
+                        until = f.transform
                 else:
                     f, loc = make_field(args[0], args[1], args[2], args[3:], lineno), None
                 if f is not None:
-                    nd = Node(T_FIELD, lineno, length=None if loc is not None else f.loc[2], bindings=[f],
-                              locator=args[1], uper=loc)
+                    nd = Node(T_FIELD, lineno, length=None if loc is not None or until is not None else f.loc[2],
+                              bindings=[f], locator=args[1], uper=loc, until=until)
                     target(body).append(nd)
                     last_field = (nd, args[2], args[3:])
                     mapped(body, f, nd)
@@ -851,6 +901,8 @@ def parse_seq_pack_text(text, *, source="pack.def"):
                     raise bad("an 'also' line is: also <key> [via <table>]", lineno)
                 if nd.uper is not None:  # the `also` key shares the UPER locator and its transform
                     f = make_uper_field(args[0], nd.locator, tname, carried + extra, lineno, also=True)[0]
+                elif nd.until is not None:  # 0.22: the `also` key shares the terminated characters
+                    f = make_until_field(args[0], nd.locator, tname, carried + extra, lineno, also=True)
                 else:
                     f = make_field(args[0], nd.locator, tname, carried + extra, lineno, also=True)
                 if f is not None:

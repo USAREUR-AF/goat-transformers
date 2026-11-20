@@ -1,0 +1,9 @@
+{
+  "name": "to-hex-msb-a-sign",
+  "from": "conformance-long-json",
+  "to": "conformance-long-hex-msb",
+  "input": "{\"label\":\"-abc\"}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.22, Fields longer than 64 bits; a character that is not a hex digit is transform-encode"
+}

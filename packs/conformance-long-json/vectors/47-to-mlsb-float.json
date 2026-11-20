@@ -1,0 +1,9 @@
+{
+  "name": "to-mlsb-float",
+  "from": "conformance-long-json",
+  "to": "conformance-long-mlsb-float",
+  "input": "{\"a\":-2.5}",
+  "expect": "00000403",
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 3: f32 -2.5 is c0200000, written from bit 0 up"
+}

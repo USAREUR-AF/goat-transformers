@@ -1,0 +1,12 @@
+{
+  "name": "ruling-09-terminator-without-a-character",
+  "from": "conformance-long-until-del",
+  "to": "conformance-long-until-del",
+  "input": "83fc",
+  "expect": "83fc",
+  "model": {
+    "probe.label": "A"
+  },
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 9: the terminator 127 is a code the set gives no character; it is compared first"
+}

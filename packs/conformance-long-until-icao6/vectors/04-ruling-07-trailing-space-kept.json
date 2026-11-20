@@ -1,0 +1,12 @@
+{
+  "name": "ruling-07-trailing-space-kept",
+  "from": "conformance-long-until-icao6",
+  "to": "conformance-long-json",
+  "input": "06000240",
+  "expect": "{\"label\":\"A \",\"y\":9}",
+  "model": {
+    "probe.label": "A "
+  },
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 7: nothing is removed under until:, neither padding nor trailing spaces"
+}

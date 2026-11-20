@@ -1,0 +1,9 @@
+{
+  "name": "to-until-ascii8-ruling-10-default",
+  "from": "conformance-long-json",
+  "to": "conformance-long-until-ascii8",
+  "input": "{\"label\":\"AB\"}",
+  "expect": "4142007a7a00",
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 10: default applies to an absent key first (zz = 7a 7a, then NUL)"
+}

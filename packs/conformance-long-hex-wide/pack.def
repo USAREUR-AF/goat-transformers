@@ -1,0 +1,16 @@
+# Conformance probe pack for a `hex` field longer than 64 bits (spec 0.22,
+# ruling 1: a block of bits kept as it is). Public. No kinds. Most significant
+# bit first.
+#
+#   byte 0        x      unsigned
+#   bytes 1..9    label  72 bits as 18 hex digits
+format     conformance-long-hex-wide
+version    0.22.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+word_bytes 1
+bit_order  msb
+field   probe.x      0:0:8   uint
+field   probe.label  0:8:72  hex

@@ -297,7 +297,7 @@ abstract class Codec<W> {
         }
         long bits = 6L * n;
         byte[] b = new byte[(int) ((bits + 7) >>> 3)];
-        for (int i = 0; i < n; i++) BitsCodec.writeBits(b, 6L * i, 6, armorValue(text.charAt(i)), true);
+        for (int i = 0; i < n; i++) BitsCodec.writeBits(b, 6L * i, 6, armorValue(text.charAt(i)), BitsCodec.MSB);
         return new BitMsg(b, bits);
     }
 

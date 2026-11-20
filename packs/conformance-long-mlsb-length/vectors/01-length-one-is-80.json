@@ -1,0 +1,12 @@
+{
+  "name": "length-one-is-80",
+  "from": "conformance-long-mlsb-length",
+  "to": "conformance-long-mlsb-length",
+  "input": "80ff",
+  "expect": "80ff",
+  "model": {
+    "probe.x": "255"
+  },
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 2: a length value uses the pack's bit order; 80 is a length of 1 byte"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "01-is-128-bytes",
+  "from": "conformance-long-mlsb-length",
+  "to": "conformance-long-mlsb-length",
+  "input": "01ff",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 2: 01 is a length of 128 bytes, past the input"
+}

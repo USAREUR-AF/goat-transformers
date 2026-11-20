@@ -1,0 +1,12 @@
+{
+  "name": "raw-value-240-is-the-text-0f",
+  "from": "conformance-long-hex-absent",
+  "to": "conformance-long-json",
+  "input": "f0",
+  "expect": "{\"label\":\"0f\"}",
+  "model": {
+    "probe.label": "0f"
+  },
+  "source": "constructed",
+  "reference": "spec 0.22: on a shorter one the sentinel is the field's uint raw value, not its hex text; the text 0f is not the sentinel; the raw value 240 is not 15"
+}

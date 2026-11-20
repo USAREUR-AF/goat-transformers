@@ -1,0 +1,9 @@
+{
+  "name": "to-stop-seven-characters",
+  "from": "conformance-long-json",
+  "to": "conformance-long-stop",
+  "input": "{\"label\":\"ABCDEFG\"}",
+  "expect": "4142434445464700",
+  "source": "constructed",
+  "reference": "spec 0.22, the field option stop <code>; 7 characters leave room for the terminator"
+}

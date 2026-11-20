@@ -1,0 +1,9 @@
+{
+  "name": "to-until-ascii8-text-holding-nul",
+  "from": "conformance-long-json",
+  "to": "conformance-long-until-ascii8",
+  "input": "{\"label\":\"A\\u0000\"}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.22, Character fields that end at a code; a character whose code equals <code> is transform-encode"
+}

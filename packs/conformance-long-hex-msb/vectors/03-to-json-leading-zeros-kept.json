@@ -1,0 +1,9 @@
+{
+  "name": "to-json-leading-zeros-kept",
+  "from": "conformance-long-hex-msb",
+  "to": "conformance-long-json",
+  "input": "00ff0000",
+  "expect": "{\"label\":\"00ff\",\"tag\":\"00\"}",
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 14: on json hex is a string of len / 4 digits, leading zeros kept"
+}

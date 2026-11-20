@@ -1,0 +1,9 @@
+{
+  "name": "to-json-nul-escaped",
+  "from": "conformance-long-until-ascii7",
+  "to": "conformance-long-json",
+  "input": "82021030",
+  "expect": "{\"label\":\"A\\u0000B\"}",
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 6, and 0.5 Canonical output: control characters as \\u00XX, lowercase hex"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "to-mlsb-uint",
+  "from": "conformance-long-json",
+  "to": "conformance-long-mlsb-uint",
+  "input": "{\"x\":3,\"y\":4,\"z\":1}",
+  "expect": "c280",
+  "source": "constructed",
+  "reference": "spec 0.22, A bit order with high-bit-first positions and low-bit-first values; each value written from its bit 0 at the field's first position"
+}

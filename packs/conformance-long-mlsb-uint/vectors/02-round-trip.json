@@ -1,0 +1,9 @@
+{
+  "name": "round-trip",
+  "from": "conformance-long-mlsb-uint",
+  "to": "conformance-long-mlsb-uint",
+  "input": "8f01",
+  "expect": "8f01",
+  "source": "constructed",
+  "reference": "spec 0.22, A bit order with high-bit-first positions and low-bit-first values; the same bits"
+}

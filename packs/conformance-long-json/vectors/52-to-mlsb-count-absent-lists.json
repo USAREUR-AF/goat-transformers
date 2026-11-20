@@ -1,0 +1,9 @@
+{
+  "name": "to-mlsb-count-absent-lists",
+  "from": "conformance-long-json",
+  "to": "conformance-long-mlsb-count",
+  "input": "{\"x\":3}",
+  "expect": "0c00",
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 2 and 0.21: an absent list writes the count 0"
+}

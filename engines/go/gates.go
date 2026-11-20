@@ -107,7 +107,7 @@ func (g *Gate) value() (uint64, bool) {
 // scope starting at message bit base, as decode does: a gate any of whose
 // bits lies beyond the nbits bits of the input does not hold, in either form.
 // Under six-bit armor nbits is the bits the text carries (0.17 ruling 14).
-func (g *Gate) holdsOn(data []byte, nbits, base int, msb bool) bool {
+func (g *Gate) holdsOn(data []byte, nbits, base int, msb bitOrder) bool {
 	at := base + g.loc.bit
 	if at+g.loc.blen > nbits || at+g.loc.blen > len(data)*8 {
 		return false
@@ -117,7 +117,7 @@ func (g *Gate) holdsOn(data []byte, nbits, base int, msb bool) bool {
 
 // gateEval evaluates the blocks of one scope on data, a nested block only
 // when the block enclosing it holds.
-func gateEval(data []byte, nbits, base int, msb bool) func(*Gate) bool {
+func gateEval(data []byte, nbits, base int, msb bitOrder) func(*Gate) bool {
 	cache := map[*Gate]bool{}
 	var holds func(g *Gate) bool
 	holds = func(g *Gate) bool {
@@ -358,7 +358,7 @@ func writeBitsLines(p *Pack, lay *layout, rec *Item, data []byte, base int, acti
 					continue
 				}
 				var bit uint64
-				if p.msb {
+				if p.msb == msbOrder {
 					bit = v >> uint(g.loc.blen-1-k) & 1
 				} else {
 					bit = v >> uint(k) & 1

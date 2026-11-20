@@ -1,0 +1,12 @@
+{
+  "name": "ruling-20-trailing-nul-kept",
+  "from": "conformance-long-until-semicolon",
+  "to": "conformance-long-json",
+  "input": "41003b",
+  "expect": "{\"label\":\"A\\u0000\"}",
+  "model": {
+    "probe.label": "A\u0000"
+  },
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 20: NUL under until:N with N not 0 is an ordinary character on decode and on encode; and ruling 7: nothing is removed under until:"
+}

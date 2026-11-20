@@ -1,0 +1,9 @@
+{
+  "name": "to-mlsb-presence",
+  "from": "conformance-long-json",
+  "to": "conformance-long-mlsb-presence",
+  "input": "{\"x\":5,\"y\":9}",
+  "expect": "e890",
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 2: presence bits keep their reading-order numbering; both bits set, then x and y"
+}

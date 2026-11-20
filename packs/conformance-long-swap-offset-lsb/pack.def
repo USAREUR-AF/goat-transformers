@@ -1,0 +1,13 @@
+# Conformance probe pack for `swap` on a field that is not byte-aligned (spec
+# 0.22, ruling 13), least significant bit first. Public. No kinds.
+#
+#   bits 4..19    x      16 bits in two chunks of 8, taken in reverse order
+format     conformance-long-swap-offset-lsb
+version    0.22.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+word_bytes 1
+bit_order  lsb
+field   probe.x  0:4:16  uint  swap

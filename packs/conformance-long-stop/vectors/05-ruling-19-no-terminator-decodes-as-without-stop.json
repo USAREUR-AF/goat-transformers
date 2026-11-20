@@ -1,0 +1,12 @@
+{
+  "name": "ruling-19-no-terminator-decodes-as-without-stop",
+  "from": "conformance-long-stop",
+  "to": "conformance-long-json",
+  "input": "4142434445464748",
+  "expect": "{\"label\":\"ABCDEFGH\"}",
+  "model": {
+    "probe.label": "ABCDEFGH"
+  },
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 19: a stop field with no terminator decodes as the field without stop would"
+}

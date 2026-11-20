@@ -1,0 +1,9 @@
+{
+  "name": "to-mlsb-kinds-b",
+  "from": "conformance-long-json",
+  "to": "conformance-long-mlsb-kinds",
+  "input": "{\"y\":3}",
+  "expect": "84c0",
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 2: when and const read and write in the pack's bit order; requires y selects kind b"
+}

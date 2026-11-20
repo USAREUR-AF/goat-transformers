@@ -1,0 +1,9 @@
+{
+  "name": "to-mlsb-absent-writes-80",
+  "from": "conformance-long-json",
+  "to": "conformance-long-mlsb-absent",
+  "input": "{}",
+  "expect": "80",
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 2: the raw values sentinels compare use the pack's bit order; the sentinel 1 is written as 80"
+}

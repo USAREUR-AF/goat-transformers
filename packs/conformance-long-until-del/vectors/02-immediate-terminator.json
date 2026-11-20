@@ -1,0 +1,12 @@
+{
+  "name": "immediate-terminator",
+  "from": "conformance-long-until-del",
+  "to": "conformance-long-json",
+  "input": "fe",
+  "expect": "{\"label\":\"\"}",
+  "model": {
+    "probe.label": ""
+  },
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 11"
+}

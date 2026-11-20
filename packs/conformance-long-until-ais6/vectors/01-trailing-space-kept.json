@@ -1,0 +1,12 @@
+{
+  "name": "trailing-space-kept",
+  "from": "conformance-long-until-ais6",
+  "to": "conformance-long-until-ais6",
+  "input": "04283f",
+  "expect": "04283f",
+  "model": {
+    "probe.label": "AB "
+  },
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 7: the trailing space is part of the text"
+}

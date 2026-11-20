@@ -1,0 +1,27 @@
+# Conformance probe pack: the `json` mirror of the `conformance-long-*` packs
+# (spec 0.22). Public. No kinds. Every key and list those packs map, each at a
+# member of its own name, so a vector can hand a binary pack any entity and
+# read back what one decodes. `hex` text and terminated text are strings.
+format     conformance-long-json
+version    0.22.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       json
+field   probe.label  label  string
+field   probe.tag    tag    string
+field   probe.x      x      int
+field   probe.y      y      int
+field   probe.z      z      int
+field   probe.w      w      int
+field   probe.a      a      float
+group   probe.names  names
+  field  probe.tag  .  string
+end
+group   probe.nums   nums
+  field  probe.val  .  int
+end
+group   probe.recs   recs
+  field  probe.y  y  int
+end
+field   probe.s1     s1     string

@@ -1,0 +1,15 @@
+# Conformance probe pack for `absent` on a `hex` field of at most 64 bits
+# (spec 0.22: the sentinel is the field's `uint` raw value, not its hex text).
+# Public. No kinds. Least significant bit first, where the hex text is not the
+# wire's hex: raw value 15 (wire 0f) is the text "f0".
+#
+#   byte 0        label  two hex digits; raw value 15 means absent
+format     conformance-long-hex-absent
+version    0.22.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+word_bytes 1
+bit_order  lsb
+field   probe.label  0:0:8  hex  absent 15

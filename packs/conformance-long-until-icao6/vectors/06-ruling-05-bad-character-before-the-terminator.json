@@ -1,0 +1,9 @@
+{
+  "name": "ruling-05-bad-character-before-the-terminator",
+  "from": "conformance-long-until-icao6",
+  "to": "conformance-long-until-icao6",
+  "input": "6c0090",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 5: a bad character is transform-decode and the cursor resumes after the terminator, so y still decodes and the input is not malformed"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "to-hex-absent-absent-key",
+  "from": "conformance-long-json",
+  "to": "conformance-long-hex-absent",
+  "input": "{}",
+  "expect": "0f",
+  "source": "constructed",
+  "reference": "spec 0.22: on a shorter one the sentinel is the field's uint raw value, not its hex text; the sentinel 15 under lsb is 0f"
+}

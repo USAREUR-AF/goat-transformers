@@ -1,0 +1,9 @@
+{
+  "name": "to-hex-seq-mlsb",
+  "from": "conformance-long-json",
+  "to": "conformance-long-hex-seq-mlsb",
+  "input": "{\"x\":5,\"label\":\"A3\"}",
+  "expect": "ab80",
+  "source": "constructed",
+  "reference": "spec 0.22: hex is valid in fixed and sequential layouts; either case"
+}

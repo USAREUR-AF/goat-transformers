@@ -1,0 +1,15 @@
+{
+  "name": "first-bit-is-p1",
+  "from": "conformance-long-mlsb-presence",
+  "to": "conformance-long-mlsb-presence",
+  "input": "80",
+  "expect": "80",
+  "model": {
+    "probe.x": "0",
+    "@absent": [
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 2: presence bits keep their reading-order numbering; 80: the first bit read is p.1; x is 0"
+}

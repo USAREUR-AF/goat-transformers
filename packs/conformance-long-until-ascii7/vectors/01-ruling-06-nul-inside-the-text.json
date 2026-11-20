@@ -1,0 +1,12 @@
+{
+  "name": "ruling-06-nul-inside-the-text",
+  "from": "conformance-long-until-ascii7",
+  "to": "conformance-long-until-ascii7",
+  "input": "82021030",
+  "expect": "82021030",
+  "model": {
+    "probe.label": "A\u0000B"
+  },
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 6: the ascii7 NUL rules of 0.15 do not apply unless NUL is the terminator"
+}

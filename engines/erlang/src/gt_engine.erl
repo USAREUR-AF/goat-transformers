@@ -35,6 +35,8 @@
 -export([decode/2, decode/3, encode/2, encode/3, complete/2, complete/3,
          convert/4, convert/5]).
 %% for gt_seq (sequential layouts)
+%% for gt_seq: characters ending at a terminator (Version 0.22)
+-export([chars_width/1, until_text/2, until_codes/3]).
 -export([conv_error/4, item_source/2, bits_decode/4, bits_encode/4, swap_bytes/2, strip_trailing/2,
          bits_sentinel/3, items_reserve/2, items_release/1, items_held/1, record_failure/3,
          record_failure_msg/1,
@@ -2444,6 +2446,10 @@ iscale_encode(X, N, D, Off) ->
 %% ===================================================================
 %% transforms (bits wire)
 %% ===================================================================
+%% Under msb-lsb a field's value is read as under lsb, each character and
+%% digit as `uint` reads a field of its width at its place (ruling 3 of
+%% 0.22), so the transforms take it as lsb.
+bits_decode(Tr, U, L, msblsb) -> bits_decode(Tr, U, L, lsb);
 bits_decode(uint, U, 64, _) -> gt_num:wrap64(U);
 bits_decode(uint, U, _L, _) -> U;
 bits_decode(twos, U, L, _) -> to_signed(U, L);
@@ -2483,6 +2489,20 @@ bits_decode({chars, Set}, U, L, Order) ->
     Codes = [char_code(U, L, W, I, Order) || I <- lists:seq(0, L div W - 1)],
     Text = list_to_binary([chars_char(Set, C) || C <- Codes]),
     chars_strip(Set, Text);
+%% `stop <code>` (0.22): the text ends at the first terminator; the rest of
+%% the field is ignored and nothing is removed (ruling 18). With no
+%% terminator the field reads as without `stop` (ruling 19).
+bits_decode({chars_stop, Set, Stop}, U, L, Order) ->
+    W = chars_width(Set),
+    Codes = [char_code(U, L, W, I, Order) || I <- lists:seq(0, L div W - 1)],
+    case lists:splitwith(fun(C) -> C =/= Stop end, Codes) of
+        {Before, [_ | _]} -> until_text(Set, Before);
+        {_, []} -> bits_decode({chars, Set}, U, L, Order)
+    end;
+%% `hex` (0.22): len / 4 lowercase digits, digit k the 4-bit field at bit 4k
+%% read as uint reads it in the pack's bit order
+bits_decode(hex, U, L, Order) ->
+    << <<(hexdigit(char_code(U, L, 4, I, Order)))>> || I <- lists:seq(0, L div 4 - 1) >>;
 bits_decode(octal, U, L, _) ->
     N = L div 3,
     list_to_binary(io_lib:format("~*.8.0b", [N, U])).
@@ -2531,6 +2551,7 @@ strip_trailing(Bin, C) when is_binary(Bin) ->
 %% A value that does not fit the field fails; nothing is wrapped or clamped
 %% (ruling 4b of 0.11). `round` is to the nearest integer, a half away from
 %% zero (4a); an infinite or NaN quotient raises in the arithmetic.
+bits_encode(Tr, V, L, msblsb) -> bits_encode(Tr, V, L, lsb);
 bits_encode(uint, V, 64, _) when is_integer(V) -> V band mask(64);
 bits_encode(uint, V, L, _) when is_integer(V), V >= 0, V =< (1 bsl L) - 1 -> V;
 bits_encode(twos, V, L, _) when is_integer(V) -> signed_fit(V, L);
@@ -2593,6 +2614,17 @@ bits_encode({chars, Set}, V, L, Order) when is_binary(V) ->
                        {Acc bor (C bsl Shift), I + 1}
                end, {0, 0}, Codes),
     U;
+bits_encode({chars_stop, Set, Stop}, V, L, Order) when is_binary(V) ->
+    W = chars_width(Set),
+    N = L div W,
+    %% the text, its terminator, then padding; no room for the terminator
+    %% fails
+    true = byte_size(V) + 1 =< N,
+    Codes = until_codes(Set, Stop, V) ++ lists:duplicate(N - byte_size(V) - 1, chars_pad(Set)),
+    pack_codes(Codes, L, W, Order);
+bits_encode(hex, V, L, Order) when is_binary(V) ->
+    true = byte_size(V) =:= L div 4,
+    pack_codes([binary_to_integer(<<C>>, 16) || <<C>> <= V], L, 4, Order);
 bits_encode(octal, V, L, _) when is_binary(V) ->
     true = byte_size(V) =:= L div 3,
     true = lists:all(fun(C) -> C >= $0 andalso C =< $7 end, binary_to_list(V)),
@@ -2623,7 +2655,41 @@ smag_encode(V, L) ->
     end.
 
 chars_width(ascii7) -> 7;
+chars_width(ascii8) -> 8;
 chars_width(_) -> 6.
+
+%% Codes written W bits each from the field's first bit, as uint writes a
+%% W-bit field at its place.
+pack_codes(Codes, L, W, Order) ->
+    {U, _} = lists:foldl(
+               fun(C, {Acc, I}) ->
+                       Shift = case Order of
+                                   msb -> L - (I + 1) * W;
+                                   lsb -> I * W
+                               end,
+                       {Acc bor (C bsl Shift), I + 1}
+               end, {0, 0}, Codes),
+    U.
+
+hexdigit(D) when D < 10 -> $0 + D;
+hexdigit(D) -> $a + D - 10.
+
+%% The text of the codes before a terminator (`until:`, `stop`): each
+%% character as its set reads it; nothing is removed (rulings 7 and 18 of
+%% 0.22). A code the set does not hold raises.
+until_text(Set, Codes) -> list_to_binary([chars_char(Set, C) || C <- Codes]).
+
+%% The codes of a text, then the terminator. A character the set cannot
+%% hold, or the terminator's own character, raises. NUL is an ordinary
+%% character when the terminator is not 0 (rulings 6, 20 and 21 of 0.22).
+until_codes(Set, Term, Text) ->
+    Codes = [case {C, Set} of
+                 {0, ascii7} when Term =/= 0 -> 0;
+                 {0, ascii8} when Term =/= 0 -> 0;
+                 _ -> chars_code(Set, C)
+             end || <<C>> <= Text],
+    false = lists:member(Term, Codes),
+    Codes ++ [Term].
 
 %% character I of a field: the W bits at bit I * W of the field, read as
 %% uint reads a W-bit field there in the pack's bit order
@@ -2636,22 +2702,26 @@ chars_char(icao6, C) when C >= 48, C =< 57 -> C;
 chars_char(ais6, C) when C < 32 -> C + 64;
 chars_char(ais6, C) -> C;
 chars_char(ascii7, 0) -> 0;
-chars_char(ascii7, C) when C >= 32, C =< 126 -> C.
+chars_char(ascii7, C) when C >= 32, C =< 126 -> C;
+chars_char(ascii8, 0) -> 0;
+chars_char(ascii8, C) when C >= 32, C =< 126 -> C.
 
 chars_code(icao6, C) when C >= $A, C =< $Z -> C - $A + 1;
 chars_code(icao6, $\s) -> 32;
 chars_code(icao6, C) when C >= $0, C =< $9 -> C;
 chars_code(ais6, C) when C >= 64, C =< 95 -> C - 64;
 chars_code(ais6, C) when C >= 32, C =< 63 -> C;
-chars_code(ascii7, C) when C >= 32, C =< 126 -> C.
+chars_code(ascii7, C) when C >= 32, C =< 126 -> C;
+chars_code(ascii8, C) when C >= 32, C =< 126 -> C.
 
 chars_pad(icao6) -> 32;
 chars_pad(ais6) -> 0;
-chars_pad(ascii7) -> 0.
+chars_pad(ascii7) -> 0;
+chars_pad(ascii8) -> 0.
 
 %% trailing padding removed, with icao6 and ais6 trailing spaces too in any
 %% mix; with ascii7 a NUL before a character that is not NUL fails
-chars_strip(ascii7, Text) ->
+chars_strip(Set, Text) when Set =:= ascii7; Set =:= ascii8 ->
     T = strip_trailing(Text, 0),
     nomatch = binary:match(T, <<0>>),
     T;

@@ -1,0 +1,12 @@
+{
+  "name": "three-digits",
+  "from": "conformance-long-hex-seq",
+  "to": "conformance-long-json",
+  "input": "abc0",
+  "expect": "{\"label\":\"abc\"}",
+  "model": {
+    "probe.label": "abc"
+  },
+  "source": "constructed",
+  "reference": "spec 0.22: hex is valid in fixed and sequential layouts; 12 bits are three digits; the last 4 bits of the byte are ignored (0.8)"
+}

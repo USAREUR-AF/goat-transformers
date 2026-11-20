@@ -1,0 +1,21 @@
+# Conformance probe pack for `until:` with `with` (spec 0.22, ruling 25;
+# spec 0.18). Public. No kinds. Most significant bit first.
+#
+#   s1   8-bit characters up to NUL, written only when the entity holds x;
+#        default "zz". Suppressed, it writes the terminator alone: neither
+#        its text nor its default (ruling 1 of 0.18)
+#   y    8 bits after it
+#
+# x is mapped by no line of this pack: an entity that holds it comes from
+# `conformance-long-json`.
+format     conformance-long-until-with
+version    0.22.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field   probe.s1  until:0  chars:ascii8  with probe.x
+default probe.s1  zz
+field   probe.y   8        uint

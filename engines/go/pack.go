@@ -87,6 +87,8 @@ type Field struct {
 	Absent    []string // `absent <value>[,<value>…]`: the values as written, nil when the line has none
 	With      string   // `with <other-key>` (0.18): the line writes only when the entity or item holds the key; "" when the line has none
 	WithLine  bool     // the line has `with`
+	Stop      string   // `stop <code>` (0.22): the code as written; "" when the line has none
+	StopLine  bool     // the line has `stop`
 
 	absent  *sentinels // the sentinels read for the pack's wire; nil when the line has no `absent`
 	loc     locator
@@ -99,6 +101,8 @@ type Field struct {
 	xtf     *tlvTf  // tlv wire transform
 	btf     *bitsTransform
 	uper    *uperLoc // a UPER locator (spec 0.19), nil for a bit length
+	until   bool     // the locator is `until:<code>` (0.22): characters up to a terminator
+	untilC  uint64   // the terminator code of `until:`
 	pbf     *pbTransform
 	jbool   bool // json `bool`
 	yields  Kind // the type the transform yields
@@ -424,10 +428,10 @@ type Pack struct {
 	modelKeys      []string
 	elements       []*Element   // xml: every `element` line, in file order (0.18)
 	valueChecks    []valueCheck // requires lines with `=` and case lines, in file order (0.20)
-	msb            bool
-	seq            bool     // bits: `layout sequential` (spec 0.8)
-	gates          []*Gate  // every gate block, in file order (0.17)
-	sbody          *seqBody // sequential layouts: the lines of a message
+	msb            bitOrder     // the pack's bit order (spec 0.2; msb-lsb, 0.22)
+	seq            bool         // bits: `layout sequential` (spec 0.8)
+	gates          []*Gate      // every gate block, in file order (0.17)
+	sbody          *seqBody     // sequential layouts: the lines of a message
 
 	// text wire (spec 0.10)
 	delim     byte           // the delimiter, ',' by default
@@ -588,6 +592,15 @@ func parseFieldOptions(f *Field, opts []string) error {
 				return fmt.Errorf("`with` needs a model key")
 			}
 			f.With, f.WithLine = opts[i], true
+		case "stop":
+			// stop <code> (0.22): the token after `stop` is its code. A
+			// missing code is a line check; the code's form and range are
+			// checked after the file (rulings 23 and 28).
+			i++
+			if i >= len(opts) {
+				return fmt.Errorf("`stop` needs a code")
+			}
+			f.Stop, f.StopLine = opts[i], true
 		case "swap":
 			f.Swap = true
 		case "trim":
@@ -595,7 +608,7 @@ func parseFieldOptions(f *Field, opts []string) error {
 		case "optional":
 			f.Optional = true
 		default:
-			return fmt.Errorf("unknown field option %q (via <table>, swap, trim, optional, absent <values>, with <key>)", o)
+			return fmt.Errorf("unknown field option %q (via <table>, swap, trim, optional, absent <values>, with <key>, stop <code>)", o)
 		}
 	}
 	return nil
@@ -604,6 +617,21 @@ func parseFieldOptions(f *Field, opts []string) error {
 // checkFieldOptions refuses an option on a wire or a transform it does not
 // apply to.
 func checkFieldOptions(wire string, f *Field) error {
+	// `stop` is an option of a fixed-size `chars` field; `until:` takes no
+	// `stop`, `absent`, `swap` or `trim` (0.22, ruling 16).
+	if f.StopLine && (wire != WireBits || !strings.HasPrefix(f.Transform, "chars:")) {
+		return fmt.Errorf("`stop` is valid only with a chars transform on wire bits, not %s", f.Transform)
+	}
+	if f.until {
+		for _, o := range []struct {
+			set  bool
+			name string
+		}{{f.StopLine, "stop"}, {f.Absent != nil, "absent"}, {f.Swap, "swap"}, {f.Trim, "trim"}} {
+			if o.set {
+				return fmt.Errorf("field option `%s` is not valid with an until: locator", o.name)
+			}
+		}
+	}
 	if wire != WireBits {
 		for _, o := range []struct {
 			set  bool
@@ -944,8 +972,8 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 				}
 				p.WordBytes = wb
 			case "bit_order":
-				if args[0] != "lsb" && args[0] != "msb" {
-					return nil, perr(ErrBadDirective, n, "", "bit_order must be lsb or msb, got %q", args[0])
+				if args[0] != "lsb" && args[0] != "msb" && args[0] != "msb-lsb" {
+					return nil, perr(ErrBadDirective, n, "", "bit_order must be lsb, msb or msb-lsb, got %q", args[0])
 				}
 				p.BitOrder = args[0]
 			case "distribution":
@@ -1150,7 +1178,14 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 	if p.Wire == WireBits && p.BitOrder == "" {
 		p.BitOrder = "lsb"
 	}
-	p.msb = p.BitOrder == "msb"
+	switch p.BitOrder {
+	case "msb":
+		p.msb = msbOrder
+	case "msb-lsb":
+		p.msb = msbLsbOrder
+	default:
+		p.msb = lsbOrder
+	}
 	// `armor` (spec 0.14): on the bits wire, at most once, before the first
 	// kind, hex or sixbit; sixbit needs bit_order msb and refuses
 	// `length … whole`.
@@ -1278,7 +1313,20 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 					}
 					continue
 				}
-				if p.seq {
+				if p.Wire == WireBits && strings.HasPrefix(f.Locator, "until:") {
+					// until:<code> (0.22): characters up to a terminator, in a
+					// sequential layout only; the code is plain digits.
+					code := f.Locator[len("until:"):]
+					if !p.seq {
+						return nil, perr(ErrBadDirective, f.Line, f.Locator, "an until: locator is valid only in a pack with `layout sequential`")
+					}
+					c, cerr := strconv.ParseUint(code, 10, 64)
+					if !isDigits(code) || cerr != nil {
+						return nil, perr(ErrBadDirective, f.Line, f.Locator, "until: takes a code of plain decimal digits, got %q", code)
+					}
+					f.until, f.untilC = true, c
+					loc = locator{raw: f.Locator, kind: locBits}
+				} else if p.seq {
 					// A sequential locator is a bit length; a positional locator
 					// is bad-directive.
 					if strings.Contains(f.Locator, ":") {

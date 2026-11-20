@@ -1,0 +1,12 @@
+{
+  "name": "terminator-low-bit-first",
+  "from": "conformance-long-mlsb-until",
+  "to": "conformance-long-mlsb-until",
+  "input": "c380",
+  "expect": "c380",
+  "model": {
+    "probe.label": "C"
+  },
+  "source": "constructed",
+  "reference": "spec 0.22, A bit order with high-bit-first positions and low-bit-first values; each code, the terminator included, is read as uint reads 7 bits"
+}

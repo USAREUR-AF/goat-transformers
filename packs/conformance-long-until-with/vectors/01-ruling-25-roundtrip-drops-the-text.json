@@ -1,0 +1,13 @@
+{
+  "name": "ruling-25-roundtrip-drops-the-text",
+  "from": "conformance-long-until-with",
+  "to": "conformance-long-until-with",
+  "input": "41420009",
+  "expect": "0009",
+  "model": {
+    "probe.s1": "AB",
+    "probe.y": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 25: a suppressed until: line writes the terminator alone, as an absent key does; ruling 6 of 0.18: decode is unchanged; x is mapped by no line, so s1 is written as the terminator alone"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "01-is-128",
+  "from": "conformance-long-mlsb-absent",
+  "to": "conformance-long-json",
+  "input": "01",
+  "expect": "{\"x\":128}",
+  "model": {
+    "probe.x": "128"
+  },
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 2: the raw values sentinels compare use the pack's bit order; 01 is 128, not the sentinel"
+}

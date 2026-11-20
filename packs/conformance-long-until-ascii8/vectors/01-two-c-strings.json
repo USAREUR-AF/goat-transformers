@@ -1,0 +1,13 @@
+{
+  "name": "two-c-strings",
+  "from": "conformance-long-until-ascii8",
+  "to": "conformance-long-until-ascii8",
+  "input": "4142004300",
+  "expect": "4142004300",
+  "model": {
+    "probe.label": "AB",
+    "probe.tag": "C"
+  },
+  "source": "constructed",
+  "reference": "spec 0.22: an 8-bit text that ends at NUL is until:0 chars:ascii8; 41 42 00, then 43 00"
+}

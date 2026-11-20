@@ -1,0 +1,9 @@
+{
+  "name": "to-mlsb-text-nul-padding",
+  "from": "conformance-long-json",
+  "to": "conformance-long-mlsb-text",
+  "input": "{\"label\":\"A\"}",
+  "expect": "820000",
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 3; ascii pads with NUL (0.5) and an absent chars key writes zero bits (0.15)"
+}

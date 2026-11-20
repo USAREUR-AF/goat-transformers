@@ -1,0 +1,13 @@
+{
+  "name": "digits-at-bit-3",
+  "from": "conformance-long-hex-seq-mlsb",
+  "to": "conformance-long-json",
+  "input": "ab80",
+  "expect": "{\"label\":\"a3\",\"x\":5}",
+  "model": {
+    "probe.x": "5",
+    "probe.label": "a3"
+  },
+  "source": "constructed",
+  "reference": "spec 0.22: hex is valid in fixed and sequential layouts; under msb-lsb each digit is read as uint reads 4 bits at bit 3 + 4k, from its first bit up"
+}

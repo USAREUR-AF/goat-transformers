@@ -197,6 +197,8 @@ pub(crate) fn check_transform(wire: Wire, f: &FieldDef) -> Result<(), Error> {
     match wire {
         Wire::Tlv if !ok_on_tlv => bad(f.line, format!("the transform of `{}` is not valid on the tlv wire", f.model_key)),
         Wire::Tlv => Ok(()),
+        // `hex` is also a `bits` transform (engine-spec v0.22)
+        Wire::Bits if *t == Transform::Hex => Ok(()),
         _ if tlv_only(t) => bad(f.line, format!("the transform of `{}` is valid only on the tlv wire", f.model_key)),
         _ => Ok(()),
     }

@@ -1,0 +1,9 @@
+{
+  "name": "to-stop-seq-three-characters",
+  "from": "conformance-long-json",
+  "to": "conformance-long-stop-seq",
+  "input": "{\"label\":\"ABC\",\"y\":9}",
+  "expect": "0420c009",
+  "source": "constructed",
+  "reference": "spec 0.22, the field option stop <code>; 3 characters and the terminator fill 24 bits"
+}

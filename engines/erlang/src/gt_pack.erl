@@ -290,6 +290,7 @@ yields({f32scale, _, _}) -> float;
 yields({f64scale, _, _}) -> float;
 yields({scale, _, _}) -> float;
 yields({chars, _}) -> string;
+yields({chars_stop, _, _}) -> string;
 yields(octal) -> string;
 yields(f64)     -> float;
 yields(utf8)    -> string;
@@ -628,7 +629,9 @@ apply_line([<<"bit_order">>, O], #{wire := Wire} = P0) ->
     case O of
         <<"lsb">> -> P#{bit_order => lsb};
         <<"msb">> -> P#{bit_order => msb};
-        _ -> load_error('bad-directive', "bit_order ~s is neither lsb nor msb", [O])
+        %% msb positions, lsb values (Version 0.22)
+        <<"msb-lsb">> -> P#{bit_order => msblsb};
+        _ -> load_error('bad-directive', "bit_order ~s is not lsb, msb or msb-lsb", [O])
     end;
 apply_line([<<"distribution">>, D], P) -> P#{distribution => distribution_atom(D)};
 apply_line([<<"source">>, S], P)   -> P#{sources := [S | maps:get(sources, P)]};
@@ -772,9 +775,16 @@ apply_line([<<"element">>, PathS], P) ->
         false -> ok
     end,
     add_line({element, Steps, PathS}, P);
-apply_line([<<"field">>, Key, LocS, TrS | OptToks], P0) ->
+apply_line([<<"field">>, Key, LocS, TrS | OptToks0], P0) ->
     Wire = need_wire(P0),
-    {Tr, TrChecks} = parse_transform(Wire, TrS),
+    {Tr0, TrChecks} = parse_transform(Wire, TrS),
+    %% `stop <code>` (0.22) is part of the field's transform
+    {Stop, OptToks} = take_stop(OptToks0),
+    {Tr, StopChecks} = stop_checked(Stop, Tr0, TrS),
+    case Wire =:= bits andalso binary:match(LocS, <<"until:">>) =:= {0, 6} of
+        true -> load_error('bad-directive', "until: is a locator of sequential layouts only", []);
+        false -> ok
+    end,
     Loc = try parse_loc(Wire, LocS, P0)
           catch error:{load_error, _, _} = UperLoc ->
                   %% a UPER locator in a fixed-layout pack is refused after the
@@ -789,7 +799,7 @@ apply_line([<<"field">>, Key, LocS, TrS | OptToks], P0) ->
           end,
     {Opts, AbsentChecks} = sentinels(Wire, Tr, Len, Opts0),
     IsPair = case Loc of {pair, _, _} -> true; _ -> false end,
-    Checks = TrChecks ++
+    Checks = TrChecks ++ StopChecks ++
         [{bad, "~s on ~s: a pair is only for dm and hms_dmy, and they only take a pair",
           [TrS, LocS]}
          || Wire =:= text, IsPair =/= gt_text:pair_transform(Tr)] ++
@@ -1437,18 +1447,23 @@ len_ok(bits, Tr, {_Off, Len}) ->
         {chars, Set} ->
             W = chars_width(Set),
             Len rem W =:= 0 andalso Len >= W andalso Len =< 2040;
+        {chars_stop, Set, _} -> len_ok(bits, {chars, Set}, {0, Len});
+        hex -> Len rem 4 =:= 0 andalso Len >= 4 andalso Len =< 2040;
         octal -> Len rem 3 =:= 0 andalso Len >= 3 andalso Len =< 63;
         _ -> Len >= 1 andalso Len =< 64
     end;
 len_ok(_Wire, _Tr, _Loc) -> true.
 
 chars_width(ascii7) -> 7;
+chars_width(ascii8) -> 8;
 chars_width(_) -> 6.
 
 %% `swap` reverses bytes, which a character or digit sequence does not have
 %% (sixbit: Version 0.14; chars and octal: Version 0.15).
 swap_ok(sixbit) -> false;
 swap_ok({chars, _}) -> false;
+swap_ok({chars_stop, _, _}) -> false;
+swap_ok(hex) -> false;
 swap_ok(octal) -> false;
 swap_ok(_) -> true.
 
@@ -1651,6 +1666,8 @@ parse_transform1(Wire, S) ->
              {sixbit, _} -> late;
              {protobuf, protobuf} -> true;
              {tlvonly, tlv} -> true;
+             %% `hex` on bits (Version 0.22)
+             {tlvonly, bits} when Tr =:= hex -> true;
              {tlvonly, _} -> late;
              {bits, tlv} ->
                  case tlv_transform(Tr) of
@@ -1711,14 +1728,16 @@ transform(<<"scale:", Rest/binary>> = S) -> {text15, float_scale(scale, Rest, S)
 transform(<<"chars:icao6">>) -> {bits15, {chars, icao6}};
 transform(<<"chars:ais6">>) -> {bits15, {chars, ais6}};
 transform(<<"chars:ascii7">>) -> {bits15, {chars, ascii7}};
+transform(<<"chars:ascii8">>) -> {bits15, {chars, ascii8}};     % 0.22
 transform(<<"chars", _/binary>> = S) ->
-    load_error('bad-directive', "~s names no character set (icao6, ais6, ascii7)", [S]);
+    load_error('bad-directive', "~s names no character set (icao6, ais6, ascii7, ascii8)", [S]);
 transform(T) when T =:= <<"uiscale">>; T =:= <<"siscale">>; T =:= <<"iscale">>;
                   T =:= <<"smscale">>; T =:= <<"f32scale">>; T =:= <<"f64scale">>;
                   T =:= <<"scale">> ->
     load_error('bad-directive', "~s needs a factor", [T]);
 transform(<<"smag:", _/binary>> = S) -> load_error('bad-directive', "smag takes no parameter: ~s", [S]);
 transform(<<"octal:", _/binary>> = S) -> load_error('bad-directive', "octal takes no parameter: ~s", [S]);
+transform(<<"hex:", _/binary>> = S) -> load_error('bad-directive', "hex takes no parameter: ~s", [S]);
 transform(<<"pstring">>)    -> {protobuf, pstring};
 transform(<<"pvarint">>)    -> {protobuf, pvarint};
 transform(<<"psint">>)      -> {protobuf, psint};
@@ -1980,8 +1999,12 @@ seq_line([Dir | _] = Tokens, #{sstack := Stack} = P) ->
 
 seq_apply([<<"field">>, Key, LocS, TrS | OptToks], P0) when ?UPER_LOC(LocS) ->
     uper_field(Key, LocS, TrS, OptToks, P0);
-seq_apply([<<"field">>, Key, LenS, TrS | OptToks], P0) ->
-    {Tr, TrChecks} = parse_transform(bits, TrS),
+seq_apply([<<"field">>, Key, <<"until:", CodeS/binary>> = LocS, TrS | OptToks0], P0) ->
+    until_field(Key, LocS, CodeS, TrS, OptToks0, P0);
+seq_apply([<<"field">>, Key, LenS, TrS | OptToks0], P0) ->
+    {Tr0, TrChecks} = parse_transform(bits, TrS),
+    {Stop, OptToks} = take_stop(OptToks0),
+    {Tr, StopChecks} = stop_checked(Stop, Tr0, TrS),
     Len = seq_loc(LenS, infinity),
     {Via, Swap, Trim, Optional, _, With} = Opts0 = parse_opts(OptToks, {none, false, false, false, none, none}),
     {Opts, AbsentChecks} = sentinels(bits, Tr, Len, Opts0),
@@ -1990,7 +2013,7 @@ seq_apply([<<"field">>, Key, LenS, TrS | OptToks], P0) ->
         true -> load_error('bad-directive', "optional is not a field option of a sequential pack", []);
         false -> ok
     end,
-    Checks = TrChecks ++
+    Checks = TrChecks ++ StopChecks ++
         [{bad, "~s does not allow the bit length ~s", [TrS, LenS]}
          || not len_ok(bits, Tr, {0, Len})] ++
         [{bad, "swap on a field of ~s bits: the length is not a multiple of 8", [LenS]}
@@ -3216,3 +3239,67 @@ wire_line({chain, First, Parts, EndsFx}) -> Parts =/= [] orelse EndsFx orelse wi
 wire_line({uchoice, N, IsExt, Alts}) ->
     IsExt orelse N > 1 orelse lists:any(fun({_, B}) -> wire_any(B) end, Alts);
 wire_line(_) -> true.
+
+%% ===================================================================
+%% long and terminated fields (Version 0.22)
+%% ===================================================================
+%% `field <key> until:<code> chars:<set>` (0.22): characters up to a
+%% terminator code; no `absent`, `swap`, `trim` or `stop`
+until_field(Key, LocS, CodeS, TrS, OptToks0, P0) ->
+    {Tr, TrChecks} = parse_transform(bits, TrS),
+    {Stop, OptToks} = take_stop(OptToks0),
+    {Via, Swap, Trim, Optional, Absent, With} =
+        parse_opts(OptToks, {none, false, false, false, none, none}),
+    Set = case Tr of
+              {chars, S} -> S;
+              _ -> load_error('bad-directive', "~s: until: takes chars:<set> only, not ~s", [LocS, TrS])
+          end,
+    Code = case uint(CodeS) of
+               N when is_integer(N) -> N;
+               error -> load_error('bad-directive', "~s: the terminator is not plain digits", [LocS])
+           end,
+    case Code < (1 bsl chars_width(Set)) of
+        true -> ok;
+        false -> load_error('bad-directive', "~s: the terminator does not fit the set's width", [LocS])
+    end,
+    [load_error('bad-directive', "~s with ~s", [LocS, What])
+     || {What, true} <- [{"stop", Stop =/= none}, {"absent", Absent =/= none}, {"swap", Swap},
+                         {"trim", Trim}, {"optional", Optional}]],
+    Checks = TrChecks ++ [{via, Via} || Via =/= none],
+    P1 = lists:foldl(fun late/2, P0, Checks),
+    seq_add({sfield, [{Key, Via}], {until, Code}, Tr, LocS, false, false, none, With}, P1).
+
+%% `stop <code>` among a field's options -> {none | CodeText, OtherOptions}.
+%% Given twice, or with no code, it is bad-directive as the line is read
+%% (ruling 28 of 0.22).
+take_stop(Toks) -> take_stop(Toks, none, []).
+take_stop([], Stop, Acc) -> {Stop, lists:reverse(Acc)};
+take_stop([<<"stop">>], _, _) -> line_error('bad-directive', "stop names no code", []);
+take_stop([<<"stop">>, C | Rest], none, Acc) -> take_stop(Rest, C, Acc);
+take_stop([<<"stop">> | _], _, _) -> line_error('bad-directive', "field option stop is given twice", []);
+%% the token after `absent` and `via` is their argument
+take_stop([O, A | Rest], Stop, Acc) when O =:= <<"absent">>; O =:= <<"via">>; O =:= <<"with">> ->
+    take_stop(Rest, Stop, [A, O | Acc]);
+take_stop([T | Rest], Stop, Acc) -> take_stop(Rest, Stop, [T | Acc]).
+
+%% A `chars` transform with `stop`: the code is plain digits below 2^w
+%% (rulings 16 and 23 of 0.22); `stop` on another transform is bad-directive,
+%% all of them checks after the file (ruling 28).
+with_stop(none, Tr, _TrS) -> Tr;
+with_stop(CodeS, {chars, Set}, _TrS) ->
+    case uint(CodeS) of
+        N when is_integer(N) ->
+            case N < (1 bsl chars_width(Set)) of
+                true -> {chars_stop, Set, N};
+                false -> load_error('bad-directive', "stop ~s does not fit the set's width", [CodeS])
+            end;
+        _ -> load_error('bad-directive', "stop ~s is not plain digits", [CodeS])
+    end;
+with_stop(_CodeS, _Tr, TrS) -> load_error('bad-directive', "stop on ~s: valid only on chars:<set>", [TrS]).
+
+%% with_stop/3 as a check after the file (ruling 28 of 0.22): the transform
+%% stays as written when `stop` does not fit it -> {Tr, Checks}.
+stop_checked(Stop, Tr0, TrS) ->
+    try {with_stop(Stop, Tr0, TrS), []}
+    catch error:{load_error, _, Msg} -> {Tr0, [{bad, "~s", [Msg]}]}
+    end.

@@ -1,0 +1,15 @@
+# Conformance probe pack for the field option `stop <code>` on a fixed-size
+# `chars` field (spec 0.22): 64 bits of `ascii8` whose text ends at the first
+# NUL; the bytes after it are ignored. Public. No kinds. Most significant bit
+# first.
+#
+#   bytes 0..7    label  up to 7 characters, NUL, then NUL padding
+format     conformance-long-stop
+version    0.22.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+word_bytes 1
+bit_order  msb
+field   probe.label  0:0:64  chars:ascii8  stop 0

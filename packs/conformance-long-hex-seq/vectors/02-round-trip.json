@@ -1,0 +1,9 @@
+{
+  "name": "round-trip",
+  "from": "conformance-long-hex-seq",
+  "to": "conformance-long-hex-seq",
+  "input": "abc0",
+  "expect": "abc0",
+  "source": "constructed",
+  "reference": "spec 0.22: hex is valid in fixed and sequential layouts; 12 bits, then 4 zero bits"
+}

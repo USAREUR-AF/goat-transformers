@@ -1,0 +1,17 @@
+{
+  "name": "counts-low-bit-first",
+  "from": "conformance-long-mlsb-count",
+  "to": "conformance-long-mlsb-count",
+  "input": "4ca06088",
+  "expect": "4ca06088",
+  "model": {
+    "probe.x": "3",
+    "probe.nums.#": "2",
+    "probe.nums[0].probe.val": "5",
+    "probe.nums[1].probe.val": "6",
+    "probe.recs.#": "1",
+    "probe.recs[0].probe.y": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 2: 0.21 count lines and 0.8 group counts read in the pack's bit order"
+}

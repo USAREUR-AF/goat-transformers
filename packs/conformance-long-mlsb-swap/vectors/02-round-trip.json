@@ -1,0 +1,9 @@
+{
+  "name": "round-trip",
+  "from": "conformance-long-mlsb-swap",
+  "to": "conformance-long-mlsb-swap",
+  "input": "0102",
+  "expect": "0102",
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 13: swap reverses 8-bit chunks of the field taken from its first bit; the same bits"
+}

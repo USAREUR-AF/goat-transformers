@@ -1,0 +1,9 @@
+{
+  "name": "when-0001-is-8",
+  "from": "conformance-long-mlsb-kinds",
+  "to": "conformance-long-mlsb-kinds",
+  "input": "81c0",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 2: when and const read and write in the pack's bit order; 0001 is 8, neither 1 nor 2"
+}

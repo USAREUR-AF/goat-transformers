@@ -1,0 +1,15 @@
+# Conformance probe pack for `stop 0` on an `icao6` field (spec 0.22,
+# rulings 18 and 19): the text before the code 0 is exact, trailing spaces
+# kept; a field with no code 0 decodes as without `stop` (0.15: trailing
+# spaces removed). Public. No kinds. Most significant bit first.
+#
+#   bits 0..35    label  6 characters of 6 bits; bits 36..39 are mapped by no line
+format     conformance-long-stop-icao6
+version    0.22.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+word_bytes 1
+bit_order  msb
+field   probe.label  0:0:36  chars:icao6  stop 0

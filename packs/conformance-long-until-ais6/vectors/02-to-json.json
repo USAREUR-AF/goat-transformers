@@ -1,0 +1,9 @@
+{
+  "name": "to-json",
+  "from": "conformance-long-until-ais6",
+  "to": "conformance-long-json",
+  "input": "04283f",
+  "expect": "{\"label\":\"AB \"}",
+  "source": "constructed",
+  "reference": "spec 0.22, Character fields that end at a code; AB and a space"
+}

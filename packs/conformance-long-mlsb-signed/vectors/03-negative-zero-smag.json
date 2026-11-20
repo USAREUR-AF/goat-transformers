@@ -1,0 +1,13 @@
+{
+  "name": "negative-zero-smag",
+  "from": "conformance-long-mlsb-signed",
+  "to": "conformance-long-mlsb-signed",
+  "input": "0001",
+  "expect": "0000",
+  "model": {
+    "probe.z": "0",
+    "probe.w": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 3: under msb-lsb the sign of twos and smag is the last bit read; sign 1 with magnitude 0 decodes as 0; 0 encodes with sign 0 (0.15)"
+}

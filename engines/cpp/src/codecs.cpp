@@ -871,7 +871,7 @@ std::string armor_to_bytes(const Pack& p, const std::string& text, std::uint64_t
             throw Error(ErrorKind::MalformedWire, p.format, "",
                         "character " + std::to_string(k) + " (0x" + bytes_to_hex(std::string(1, static_cast<char>(c))) +
                             ") is not a six-bit armor character");
-        write_bits(data, 6ull * k, 6, v, true);
+        write_bits(data, 6ull * k, 6, v, BitMode{true, true});
     }
     bits = 6ull * text.size();
     return data;
@@ -894,7 +894,7 @@ std::string bytes_to_armor(const std::string& data, std::uint64_t bits) {
     return out;
 }
 
-bool decode_bits_text(const FieldLine& f, const std::string& data, std::uint64_t start, std::uint32_t len, bool msb,
+bool decode_bits_text(const FieldLine& f, const std::string& data, std::uint64_t start, std::uint32_t len, BitMode msb,
                       Value& out) {
     if (f.transform == Transform::Ascii) {
         std::string text;
@@ -917,14 +917,32 @@ bool decode_bits_text(const FieldLine& f, const std::string& data, std::uint64_t
         std::vector<std::uint8_t> codes(len / w);
         for (std::uint32_t k = 0; k < codes.size(); ++k)
             codes[k] = static_cast<std::uint8_t>(read_bits(data, start + std::uint64_t{w} * k, w, msb));
+        if (f.has_stop) {
+            // v0.22: the text ends at the first terminator, exactly; the rest of
+            // the field is ignored. With none, the 0.15 rules (ruling 19).
+            for (std::size_t k = 0; k < codes.size(); ++k)
+                if (codes[k] == f.stop_code) {
+                    codes.resize(k);
+                    out = decode_chars_exact(f.transform, codes);
+                    return true;
+                }
+        }
         out = decode_chars(f.transform, codes);
+        return true;
+    }
+    if (f.transform == Transform::Hex) {
+        // v0.22: digit k is the 4-bit field at bit 4k, read as `uint` reads it.
+        static const char* kHex = "0123456789abcdef";
+        std::string text(len / 4, '0');
+        for (std::uint32_t k = 0; k < len / 4; ++k) text[k] = kHex[read_bits(data, start + 4ull * k, 4, msb) & 0xFu];
+        out = Value::of_string(std::move(text));
         return true;
     }
     return false;
 }
 
 bool encode_bits_text(const FieldLine& f, const Value& v, std::string& data, std::uint64_t start, std::uint32_t len,
-                      bool msb) {
+                      BitMode msb) {
     if (f.transform == Transform::Ascii) {
         std::string text = encode_ascii(v, len / 8);
         if (f.swap) std::reverse(text.begin(), text.end());
@@ -939,8 +957,36 @@ bool encode_bits_text(const FieldLine& f, const Value& v, std::string& data, std
         return true;
     }
     if (const unsigned w = chars_width(f.transform)) {
-        const std::vector<std::uint8_t> codes = encode_chars(f.transform, v, len / w);
+        std::vector<std::uint8_t> codes;
+        if (f.has_stop) {
+            // v0.22: the text, the terminator, then padding; the text leaves room
+            // for the terminator and does not hold its character.
+            const std::size_t count = len / w;
+            codes = encode_chars_until(f.transform, v, count - 1, f.stop_code);
+            codes.push_back(static_cast<std::uint8_t>(f.stop_code));
+            codes.resize(count, chars_padding(f.transform));
+        } else {
+            codes = encode_chars(f.transform, v, len / w);
+        }
         for (std::uint32_t k = 0; k < codes.size(); ++k) write_bits(data, start + std::uint64_t{w} * k, w, codes[k], msb);
+        return true;
+    }
+    if (f.transform == Transform::Hex) {
+        // v0.22: exactly `len / 4` hex digits, either case, each written as `uint`.
+        FieldLine as_string;
+        as_string.transform = Transform::String;
+        const std::string text = encode_value(as_string, v);
+        if (text.size() != len / 4)
+            throw std::invalid_argument("hex text \"" + text + "\" is not exactly " + std::to_string(len / 4) + " digits");
+        for (std::uint32_t k = 0; k < len / 4; ++k) {
+            const char c = text[k];
+            unsigned d;
+            if (c >= '0' && c <= '9') d = static_cast<unsigned>(c - '0');
+            else if (c >= 'a' && c <= 'f') d = static_cast<unsigned>(c - 'a' + 10);
+            else if (c >= 'A' && c <= 'F') d = static_cast<unsigned>(c - 'A' + 10);
+            else throw std::invalid_argument("hex text \"" + text + "\" has a character that is not a hex digit");
+            write_bits(data, start + 4ull * k, 4, d, msb);
+        }
         return true;
     }
     return false;
@@ -1569,24 +1615,24 @@ BitRange bit_range(const Pack& p, const std::string& locator) {
 
 // lsb: bit i is bit (i mod 8) of byte (i div 8), a value's low bit first.
 // msb: bit i is bit 7 - (i mod 8) of byte (i div 8), a value's high bit first.
-std::uint64_t read_bits(const std::string& data, std::uint64_t start, std::uint32_t len, bool msb) {
+std::uint64_t read_bits(const std::string& data, std::uint64_t start, std::uint32_t len, BitMode msb) {
     std::uint64_t raw = 0;
     for (std::uint32_t k = 0; k < len; ++k) {
         const std::uint64_t g = start + k;
         const std::uint8_t byte = static_cast<std::uint8_t>(data[static_cast<std::size_t>(g / 8)]);
-        const std::uint64_t bit = (byte >> (msb ? 7 - g % 8 : g % 8)) & 1u;
-        if (msb) raw = (raw << 1) | bit;
+        const std::uint64_t bit = (byte >> (msb.pos_msb ? 7 - g % 8 : g % 8)) & 1u;
+        if (msb.val_msb) raw = (raw << 1) | bit;
         else raw |= bit << k;
     }
     return raw;
 }
 
-void write_bits(std::string& data, std::uint64_t start, std::uint32_t len, std::uint64_t raw, bool msb) {
+void write_bits(std::string& data, std::uint64_t start, std::uint32_t len, std::uint64_t raw, BitMode msb) {
     for (std::uint32_t k = 0; k < len; ++k) {
         const std::uint64_t g = start + k;
         char& byte = data[static_cast<std::size_t>(g / 8)];
-        const std::uint8_t mask = static_cast<std::uint8_t>(1u << (msb ? 7 - g % 8 : g % 8));
-        const bool bit = ((raw >> (msb ? len - 1 - k : k)) & 1u) != 0;
+        const std::uint8_t mask = static_cast<std::uint8_t>(1u << (msb.pos_msb ? 7 - g % 8 : g % 8));
+        const bool bit = ((raw >> (msb.val_msb ? len - 1 - k : k)) & 1u) != 0;
         byte = static_cast<char>(bit ? (static_cast<std::uint8_t>(byte) | mask)
                                      : (static_cast<std::uint8_t>(byte) & static_cast<std::uint8_t>(~mask)));
     }
@@ -1648,7 +1694,7 @@ std::size_t whole_words(const Pack& p, std::uint64_t bits) {
 // block holds only when its enclosing block does. A gate any of whose bits lies
 // beyond `data` does not hold, or, with `beyond_zero` (encode, step 4), reads
 // those bits as 0.
-void eval_gates(const Pack& p, const std::string& data, bool msb, std::uint64_t base, const std::vector<int>& gates,
+void eval_gates(const Pack& p, const std::string& data, BitMode msb, std::uint64_t base, const std::vector<int>& gates,
                 bool beyond_zero, std::vector<char>& held, std::uint64_t have_bits = ~std::uint64_t{0}) {
     // The input's bits: the whole bytes, or under armor (0.14) the 6 bits a character.
     const std::uint64_t have = std::min<std::uint64_t>(static_cast<std::uint64_t>(data.size()) * 8, have_bits);
@@ -1666,8 +1712,8 @@ void eval_gates(const Pack& p, const std::string& data, bool msb, std::uint64_t 
             for (std::uint32_t k = 0; k < b.len; ++k) {
                 const std::uint64_t g = start + k;
                 std::uint64_t bit = 0;
-                if (g < have) bit = (static_cast<std::uint8_t>(data[static_cast<std::size_t>(g / 8)]) >> (msb ? 7 - g % 8 : g % 8)) & 1u;
-                if (msb) raw = (raw << 1) | bit;
+                if (g < have) bit = (static_cast<std::uint8_t>(data[static_cast<std::size_t>(g / 8)]) >> (msb.pos_msb ? 7 - g % 8 : g % 8)) & 1u;
+                if (msb.val_msb) raw = (raw << 1) | bit;
                 else raw |= bit << k;
             }
         }
@@ -1678,7 +1724,7 @@ void eval_gates(const Pack& p, const std::string& data, bool msb, std::uint64_t 
 struct BitsIn {
     const Pack& p;
     const std::string& data;
-    bool msb;
+    BitMode msb;
     std::uint64_t have;  // bits of input
     // The first transform failure. It is kept until the whole message has been
     // walked, so that input too short for its items is malformed-wire first.
@@ -1779,7 +1825,7 @@ struct GateCheck {
 struct BitsOut {
     const Pack& p;
     std::string data;
-    bool msb;
+    BitMode msb;
     // v0.14: the length L of armored output, one more than the highest bit of
     // any line written, an `optional` field with no value aside.
     std::uint64_t armor_end = 0;
@@ -1800,7 +1846,7 @@ bool overlaps(const std::vector<BitRange>& ranges, std::uint64_t start, std::uin
 // The sentinels and the `field` lines of a scope written into `data` from bit
 // `base`; a line of a gate block is written when `held` says the block holds.
 // `present`, when given, receives the ranges of the lines whose key is present.
-void write_field_lines(const Pack& p, std::string& data, bool msb, const std::vector<LineRef>& lines,
+void write_field_lines(const Pack& p, std::string& data, BitMode msb, const std::vector<LineRef>& lines,
                        std::uint64_t base, const EncodeSource& src, const std::vector<char>* held,
                        std::vector<BitRange>* present) {
     // An absent key with `absent` writes its first sentinel; a line whose key is
@@ -1844,7 +1890,7 @@ void write_field_lines(const Pack& p, std::string& data, bool msb, const std::ve
 // v0.20 ruling 3: a `when` keeps the value of a field line with a present key
 // that covers exactly its bits when that value matches it; otherwise its first
 // value is written.
-void write_fixed_lines(const Pack& p, std::string& data, bool msb, const std::vector<LineRef>& lines,
+void write_fixed_lines(const Pack& p, std::string& data, BitMode msb, const std::vector<LineRef>& lines,
                        std::uint64_t base, const std::vector<char>* held, std::vector<BitRange>* written,
                        const EncodeSource& src) {
     for (const auto& line : lines) {
@@ -2015,7 +2061,7 @@ std::uint64_t bits_encode_scope(BitsOut& out, const std::vector<LineRef>& lines,
             for (std::uint32_t k = 0; k < b.len; ++k) {
                 const std::uint64_t bit = base + b.start + k;
                 if (overlaps(present, bit, 1)) continue;
-                const std::uint64_t one = (gv[i] >> (out.msb ? b.len - 1 - k : k)) & 1u;
+                const std::uint64_t one = (gv[i] >> (out.msb.val_msb ? b.len - 1 - k : k)) & 1u;
                 write_bits(out.data, bit, 1, one, out.msb);
             }
         }
@@ -2075,7 +2121,7 @@ Entity decode_bits(const Pack& p, const std::string& bytes) {
     // or, under `armor sixbit`, six bits a character (0.14), every one checked here.
     std::uint64_t armored = 0;
     const std::string data = p.armor_sixbit ? armor_to_bytes(p, bytes, armored) : hex_to_bytes(p, bytes);
-    BitsIn in{p, data, p.bit_order == BitOrder::Msb,
+    BitsIn in{p, data, bit_mode(p.bit_order),
               p.armor_sixbit ? armored : static_cast<std::uint64_t>(data.size()) * 8, false, {}, {}};
 
     // A `when` any of whose bits lies beyond the input does not hold.
@@ -2102,7 +2148,7 @@ Entity decode_bits(const Pack& p, const std::string& bytes) {
 
 std::string encode_bits(const Pack& p, const Entity& e) {
     const Kind* kind = select_encode_kind(p, e);
-    BitsOut out{p, std::string(), p.bit_order == BitOrder::Msb, 0, {}};
+    BitsOut out{p, std::string(), bit_mode(p.bit_order), 0, {}};
     const std::vector<int> gates = message_gates(p, kind);
     const std::uint64_t end = bits_encode_scope(out, active_lines(p, kind), gates, 0, EncodeSource(p, kind, e));
     // Under armor (0.14) the output is the first L bits; step 6 reads it as decode

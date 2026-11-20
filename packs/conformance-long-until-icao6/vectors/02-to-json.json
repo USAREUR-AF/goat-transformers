@@ -1,0 +1,9 @@
+{
+  "name": "to-json",
+  "from": "conformance-long-until-icao6",
+  "to": "conformance-long-json",
+  "input": "04200240",
+  "expect": "{\"label\":\"AB\",\"y\":9}",
+  "source": "constructed",
+  "reference": "spec 0.22, Character fields that end at a code; the text before it"
+}

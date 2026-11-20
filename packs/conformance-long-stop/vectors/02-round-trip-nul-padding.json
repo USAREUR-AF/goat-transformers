@@ -1,0 +1,9 @@
+{
+  "name": "round-trip-nul-padding",
+  "from": "conformance-long-stop",
+  "to": "conformance-long-stop",
+  "input": "414200ff017a7a7a",
+  "expect": "4142000000000000",
+  "source": "constructed",
+  "reference": "spec 0.22, the field option stop <code>; encode writes the text, the terminator, then padding (NUL) to the field's size"
+}

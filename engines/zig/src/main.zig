@@ -289,7 +289,7 @@ fn isValueTransform(k: TKind) bool {
     };
 }
 
-const CharSet = enum { icao6, ais6, ascii7 };
+const CharSet = enum { icao6, ais6, ascii7, ascii8 };
 
 // `rec`: the transforms valid on the `text` wire only; `tlv`: on the `tlv`
 // wire only
@@ -484,6 +484,12 @@ const Line = struct {
     // `absent <value>[,<value>…]` (Version 0.9): the argument as written,
     // then, once the line is resolved against its wire, the sentinels
     absent_raw: ?[]const u8 = null,
+    // Version 0.22: `stop <code>` as written, and the code once checked; a
+    // sequential `until:<code>` locator's code (the text after `until:`)
+    stop_raw: ?[]const u8 = null,
+    stop_code: ?u64 = null,
+    until_raw: ?[]const u8 = null,
+    until_code: ?u64 = null,
     abs_set: bool = false,
     // the `absent` values were checked as the line was read
     abs_checked: bool = false,
@@ -753,7 +759,8 @@ const Pack = struct {
     wire: Wire,
     root: []const u8 = "",
     word_bytes: usize = 0,
-    msb: bool = false,
+    // the bit order (`lsb`, `msb`, and `msb-lsb` of Version 0.22)
+    msb: BitOrd = .lsb,
     bit_order_set: bool = false,
     common: std.ArrayList(Line),
     kinds: std.ArrayList(Kind),
@@ -1348,6 +1355,11 @@ fn parseTransform(alloc: std.mem.Allocator, s: []const u8) !Transform {
 
     var it = std.mem.splitScalar(u8, s, ':');
     const head = it.next() orelse return E.@"unknown-transform";
+    // A parameter on a transform that takes none is `bad-directive` (ruling
+    // 27 of 0.22). `int:<w>` is the transform of the `text` wire.
+    for (simple) |e| {
+        if (std.mem.eql(u8, head, e.n) and !std.mem.eql(u8, head, "int")) return E.@"bad-directive";
+    }
     // the parameters of the scaled transforms (ruling 4d of 0.11): each
     // failure is `bad-directive`
     if (std.mem.eql(u8, head, "linscale")) {
@@ -1802,6 +1814,10 @@ fn checkDerives(alloc: std.mem.Allocator, m: *Module, mods: *const ModuleMap, di
 fn finalizeLine(alloc: std.mem.Allocator, p: *Pack, ln: *Line, in_group: bool, diag: *Diag) anyerror!void {
     // a UPER locator outside a UPER pack (ruling 9 of 0.19); on another
     // wire such a locator is a path as before (ruling 19)
+    // `until:` is a locator of sequential layouts only (Version 0.22)
+    if (p.wire == .bits and ln.isField() and std.mem.startsWith(u8, ln.locator, "until:")) {
+        return bad(diag, alloc, E.@"bad-directive", "line {d}: the locator {s} is for a sequential layout", .{ ln.lineno, ln.locator });
+    }
     if (p.wire == .bits and isUperLocator(ln.locator)) {
         return bad(diag, alloc, E.@"bad-directive", "line {d}: the locator {s} is for a pack with `encoding uper`", .{ ln.lineno, ln.locator });
     }
@@ -1823,6 +1839,8 @@ fn finalizeLine(alloc: std.mem.Allocator, p: *Pack, ln: *Line, in_group: bool, d
             .uint, .twos, .uscale, .sscale, .f32_, .f64_, .utf8, .hex => {},
             else => return bad(diag, alloc, E.@"bad-directive", "line {d}: the transform of {s} is not valid on the tlv wire", .{ ln.lineno, ln.key }),
         }
+    } else if (ln.isField() and ln.transform.kind == .hex and p.wire == .bits) {
+        // `hex` on bits (Version 0.22)
     } else if (ln.isField() and kindCategory(ln.transform.kind) == .tlv) {
         return bad(diag, alloc, E.@"bad-directive", "line {d}: the transform of {s} is valid only on the tlv wire", .{ ln.lineno, ln.key });
     } else if (ln.isField() and p.wire == .text) {
@@ -1866,6 +1884,13 @@ fn finalizeLine(alloc: std.mem.Allocator, p: *Pack, ln: *Line, in_group: bool, d
     if (ln.swap and ln.transform.kind == .sixbit) {
         return bad(diag, alloc, E.@"bad-directive", "line {d}: swap on sixbit", .{ln.lineno});
     }
+    if (ln.swap and ln.transform.kind == .hex) {
+        return bad(diag, alloc, E.@"bad-directive", "line {d}: swap on hex", .{ln.lineno});
+    }
+    if (ln.stop_raw != null and p.wire != .bits) {
+        return bad(diag, alloc, E.@"bad-directive", "line {d}: stop is for a chars field of the bits wire", .{ln.lineno});
+    }
+    if (p.wire == .bits and ln.isField()) try stopCheck(alloc, ln, ln.lineno, diag);
     if (ln.via_name.len > 0) {
         ln.via = p.tables.get(ln.via_name) orelse
             return bad(diag, alloc, E.@"bad-directive", "line {d}: via {s} names a table with no map line", .{ ln.lineno, ln.via_name });
@@ -2499,6 +2524,9 @@ fn locatorFormOk(wire: Wire, sequential: bool, loc: []const u8, in_group: bool) 
             return true;
         },
         .bits => {
+            // `until:<code>` (Version 0.22): refused after the file is read
+            // on a fixed layout, its code checked then on a sequential one
+            if (std.mem.startsWith(u8, loc, "until:")) return true;
             if (sequential) {
                 if (std.mem.indexOfScalar(u8, loc, ':') != null) return true;
                 if (!allDigits(loc)) return false;
@@ -2783,11 +2811,8 @@ fn fixedLine(st: *FState, toks: []const []const u8) anyerror!void {
         p.word_bytes = @intCast(n);
     } else if (is(kw, "bit_order")) {
         if (toks.len != 2) return bad(diag, alloc, E.@"bad-directive", "line {d}: bit_order takes one argument", .{lineno});
-        if (is(toks[1], "msb")) {
-            p.msb = true;
-        } else if (is(toks[1], "lsb")) {
-            p.msb = false;
-        } else return bad(diag, alloc, E.@"bad-directive", "line {d}: bit_order {s} is not lsb or msb", .{ lineno, toks[1] });
+        p.msb = bitOrdOf(toks[1]) orelse
+            return bad(diag, alloc, E.@"bad-directive", "line {d}: bit_order {s} is not lsb, msb or msb-lsb", .{ lineno, toks[1] });
         p.bit_order_set = true;
     } else if (is(kw, "armor")) {
         // armor <hex | sixbit> (Version 0.14): its argument count, wire,
@@ -2967,6 +2992,12 @@ fn fixedLine(st: *FState, toks: []const []const u8) anyerror!void {
                 if (oi >= toks.len) return lineBad(diag, alloc, E.@"bad-directive", "line {d}: absent takes one or more values", .{lineno});
                 again = ln.absent_raw != null;
                 ln.absent_raw = toks[oi];
+            } else if (is(o, "stop")) {
+                // stop <code> (Version 0.22), checked after the file is read
+                oi += 1;
+                if (oi >= toks.len) return lineBad(diag, alloc, E.@"bad-directive", "line {d}: stop takes a code", .{lineno});
+                again = ln.stop_raw != null;
+                ln.stop_raw = toks[oi];
             } else if (is(o, "with")) {
                 // with <other-key> (Version 0.18)
                 oi += 1;
@@ -3183,7 +3214,7 @@ fn armorCheck(alloc: std.mem.Allocator, p: *Pack, diag: *Diag) anyerror!void {
     if (p.armor_bad != 0) return bad(diag, alloc, bd, "line {d}: armor is repeated, given after a kind, or not given one value", .{p.armor_bad});
     if (p.wire != .bits) return bad(diag, alloc, bd, "armor on wire {s}; it is for the bits wire only", .{@tagName(p.wire)});
     if (std.mem.eql(u8, raw, "sixbit")) {
-        if (!p.bit_order_set or !p.msb) return bad(diag, alloc, bd, "armor sixbit needs bit_order msb", .{});
+        if (!p.bit_order_set or p.msb != .msb) return bad(diag, alloc, bd, "armor sixbit needs bit_order msb", .{});
         p.armor = true;
     } else if (!std.mem.eql(u8, raw, "hex")) {
         return bad(diag, alloc, bd, "armor {s} is not hex or sixbit", .{raw});
@@ -5117,20 +5148,41 @@ fn jsonLookup(obj: std.json.ObjectMap, segs: []const []const u8) ?JValue {
 // bits helpers
 // ---------------------------------------------------------------------------
 
-// `len` bits (1..64) from absolute bit `start` of the message. lsb: bit i is
-// bit (i mod 8) of byte (i div 8), low bit first. msb: bit i is bit
-// 7 - (i mod 8) of byte (i div 8), first bit most significant.
-fn getBits(buf: []const u8, msb: bool, start: usize, len: usize) u64 {
+// The bit order of a `bits` pack. lsb: bit i is bit (i mod 8) of byte
+// (i div 8), and a field's first bit is its value's least significant. msb:
+// bit i is bit 7 - (i mod 8) of byte (i div 8), and a field's first bit is
+// its value's most significant. msb-lsb (Version 0.22): positions as msb,
+// values as lsb.
+const BitOrd = enum {
+    lsb,
+    msb,
+    msb_lsb,
+
+    // Is bit i of a word bit 7 - (i mod 8) of its byte?
+    fn highFirst(self: BitOrd) bool {
+        return self != .lsb;
+    }
+};
+
+fn bitOrdOf(text: []const u8) ?BitOrd {
+    if (std.mem.eql(u8, text, "lsb")) return .lsb;
+    if (std.mem.eql(u8, text, "msb")) return .msb;
+    if (std.mem.eql(u8, text, "msb-lsb")) return .msb_lsb;
+    return null;
+}
+
+// `len` bits (1..64) from absolute bit `start` of the message, in the bit
+// order `ord`.
+fn getBits(buf: []const u8, ord: BitOrd, start: usize, len: usize) u64 {
     var v: u64 = 0;
     var k: usize = 0;
     while (k < len) : (k += 1) {
         const a = start + k;
         const byte = buf[a / 8];
-        if (msb) {
-            const bit: u64 = (byte >> @as(u3, @intCast(7 - (a % 8)))) & 1;
+        const bit: u64 = (byte >> @as(u3, @intCast(if (ord.highFirst()) 7 - (a % 8) else a % 8))) & 1;
+        if (ord == .msb) {
             v = (v << 1) | bit;
         } else {
-            const bit: u64 = (byte >> @as(u3, @intCast(a % 8))) & 1;
             v |= bit << @as(u6, @intCast(k));
         }
     }
@@ -5138,15 +5190,15 @@ fn getBits(buf: []const u8, msb: bool, start: usize, len: usize) u64 {
 }
 
 // Write the low `len` bits of `value` over the range (set and clear).
-fn setBits(buf: []u8, msb: bool, start: usize, len: usize, value: u64) void {
+fn setBits(buf: []u8, ord: BitOrd, start: usize, len: usize, value: u64) void {
     var k: usize = 0;
     while (k < len) : (k += 1) {
         const a = start + k;
-        const vbit: u64 = if (msb)
+        const vbit: u64 = if (ord == .msb)
             (value >> @as(u6, @intCast(len - 1 - k))) & 1
         else
             (value >> @as(u6, @intCast(k))) & 1;
-        const mask: u8 = @as(u8, 1) << @as(u3, @intCast(if (msb) 7 - (a % 8) else a % 8));
+        const mask: u8 = @as(u8, 1) << @as(u3, @intCast(if (ord.highFirst()) 7 - (a % 8) else a % 8));
         if (vbit != 0) {
             buf[a / 8] |= mask;
         } else {
@@ -5205,7 +5257,7 @@ fn armorDecode(alloc: std.mem.Allocator, s: []const u8) !BitsIn {
     @memset(out, 0);
     for (s, 0..) |c, j| {
         const v: u64 = if (c <= 0x57) c - 0x30 else c - 0x38;
-        setBits(out, true, 6 * j, 6, v);
+        setBits(out, .msb, 6 * j, 6, v);
     }
     return .{ .buf = out, .nbits = nbits };
 }
@@ -5252,12 +5304,22 @@ fn bitsDecodeField(alloc: std.mem.Allocator, p: *const Pack, buf_in: []const u8,
     if (ln.swap) {
         const n = ln.blen / 8;
         const tmp = try alloc.alloc(u8, n);
-        for (0..n) |j| tmp[n - 1 - j] = @intCast(getBits(buf_in, p.msb, base + ln.bstart + 8 * j, 8));
+        // each 8-bit chunk from the field's first bit, in reverse order, as
+        // its value reads in the pack's bit order (ruling 13 of 0.22)
+        for (0..n) |j| setBits(tmp, p.msb, 8 * (n - 1 - j), 8, getBits(buf_in, p.msb, base + ln.bstart + 8 * j, 8));
         buf = tmp;
         start = 0;
     }
     const t = ln.transform;
-    if (t.kind == .chars) return MV{ .str = try charsDecode(alloc, t.cset, buf, p.msb, start, ln.blen) };
+    if (t.kind == .chars) return MV{ .str = try charsDecode(alloc, t.cset, buf, p.msb, start, ln.blen, ln.stop_code) };
+    if (t.kind == .hex) {
+        // Version 0.22: digit k is the 4-bit field at bit 4k, as `uint`
+        // reads it in the pack's bit order
+        const nd = ln.blen / 4;
+        const out = try alloc.alloc(u8, nd);
+        for (0..nd) |k| out[k] = "0123456789abcdef"[@intCast(getBits(buf, p.msb, start + 4 * k, 4))];
+        return MV{ .str = out };
+    }
     if (t.kind == .ascii) {
         const n = ln.blen / 8;
         const bytes = try alloc.alloc(u8, n);
@@ -5338,14 +5400,50 @@ fn bitsDecodeField(alloc: std.mem.Allocator, p: *const Pack, buf_in: []const u8,
 // ---------------------------------------------------------------------------
 
 fn charWidth(c: CharSet) usize {
-    return if (c == .ascii7) 7 else 6;
+    return switch (c) {
+        .ascii7 => 7,
+        .ascii8 => 8,
+        .icao6, .ais6 => 6,
+    };
+}
+
+// `ascii7` and `ascii8` (Version 0.22): NUL is code 0, codes 32 to 126 are
+// themselves.
+fn isAsciiSet(c: CharSet) bool {
+    return c == .ascii7 or c == .ascii8;
+}
+
+// The code of a `stop` or `until:` parameter: plain decimal digits (leading
+// zeros allowed) of a value below 2^w (rulings 16 and 23 of 0.22).
+fn charCodeParam(raw: []const u8, c: CharSet) ?u64 {
+    if (!allDigits(raw)) return null;
+    const v = parseUnsigned(raw) orelse return null;
+    if (v >= (@as(u64, 1) << @as(u6, @intCast(charWidth(c))))) return null;
+    return v;
+}
+
+// `stop <code>` (Version 0.22): on a fixed-size `chars` field only, with a
+// code of the set's width.
+fn stopCheck(alloc: std.mem.Allocator, ln: *Line, lineno: usize, diag: *Diag) anyerror!void {
+    const raw = ln.stop_raw orelse return;
+    const bd = E.@"bad-directive";
+    if (ln.transform.kind != .chars) return bad(diag, alloc, bd, "line {d}: stop is for a chars field", .{lineno});
+    ln.stop_code = charCodeParam(raw, ln.transform.cset) orelse return bad(diag, alloc, bd, "line {d}: stop {s} is not a code of the set", .{ lineno, raw });
+}
+
+// The code of a character in a terminated field: as `codeOf`, and with a
+// terminator other than 0 NUL is an ordinary character of `ascii7` and
+// `ascii8` (rulings 20 and 21 of 0.22).
+fn codeOfTerm(c: CharSet, ch: u8, term: u64) ?u8 {
+    if (ch == 0 and term != 0 and isAsciiSet(c)) return 0;
+    return codeOf(c, ch);
 }
 
 // The code a set writes as padding.
 fn charPadCode(c: CharSet) u8 {
     return switch (c) {
         .icao6 => 32,
-        .ais6, .ascii7 => 0,
+        .ais6, .ascii7, .ascii8 => 0,
     };
 }
 
@@ -5354,7 +5452,7 @@ fn charOf(c: CharSet, code: u8) ?u8 {
     return switch (c) {
         .icao6 => if (code >= 1 and code <= 26) 'A' + code - 1 else if (code == 32) ' ' else if (code >= 48 and code <= 57) code else null,
         .ais6 => if (code < 32) code + 64 else code,
-        .ascii7 => if (code == 0 or (code >= 32 and code <= 126)) code else null,
+        .ascii7, .ascii8 => if (code == 0 or (code >= 32 and code <= 126)) code else null,
     };
 }
 
@@ -5364,34 +5462,59 @@ fn codeOf(c: CharSet, ch: u8) ?u8 {
     return switch (c) {
         .icao6 => if (ch >= 'A' and ch <= 'Z') ch - 'A' + 1 else if (ch == ' ' or (ch >= '0' and ch <= '9')) ch else null,
         .ais6 => if (ch >= 64 and ch <= 95) ch - 64 else if (ch >= 32 and ch <= 63) ch else null,
-        .ascii7 => if (ch >= 32 and ch <= 126) ch else null,
+        .ascii7, .ascii8 => if (ch >= 32 and ch <= 126) ch else null,
     };
 }
 
 // `chars:<set>` decode: character i is the `w` bits at bit `i * w` of the
 // field, read as `uint` reads them; trailing padding (and with `icao6` and
 // `ais6` trailing spaces) removed.
-fn charsDecode(alloc: std.mem.Allocator, c: CharSet, buf: []const u8, msb: bool, start: usize, blen: usize) ![]const u8 {
+fn charsDecode(alloc: std.mem.Allocator, c: CharSet, buf: []const u8, msb: BitOrd, start: usize, blen: usize, stop: ?u64) ![]const u8 {
     const w = charWidth(c);
     const n = blen / w;
     const out = try alloc.alloc(u8, n);
+    // `stop` (Version 0.22): the characters before the first terminator,
+    // exactly (ruling 18); with none, the field decodes as without `stop`
+    if (stop) |term| {
+        for (0..n) |i| {
+            if (getBits(buf, msb, start + i * w, w) != term) continue;
+            for (0..i) |k| {
+                const code: u8 = @intCast(getBits(buf, msb, start + k * w, w));
+                out[k] = charOf(c, code) orelse return E.@"transform-decode";
+            }
+            return out[0..i];
+        }
+    }
     for (0..n) |i| {
         const code: u8 = @intCast(getBits(buf, msb, start + i * w, w));
         out[i] = charOf(c, code) orelse return E.@"transform-decode";
     }
     const pad: u8 = charOf(c, charPadCode(c)).?;
     var end = n;
-    while (end > 0 and (out[end - 1] == pad or (c != .ascii7 and out[end - 1] == ' '))) end -= 1;
-    // ascii7: a NUL before a character that is not NUL
-    if (c == .ascii7) {
+    while (end > 0 and (out[end - 1] == pad or (!isAsciiSet(c) and out[end - 1] == ' '))) end -= 1;
+    // ascii7 and ascii8: a NUL before a character that is not NUL
+    if (isAsciiSet(c)) {
         for (out[0..end]) |ch| if (ch == 0) return E.@"transform-decode";
     }
     return out[0..end];
 }
 
-fn charsEncode(c: CharSet, out: []u8, msb: bool, start: usize, blen: usize, mv: MV) !void {
+fn charsEncode(c: CharSet, out: []u8, msb: BitOrd, start: usize, blen: usize, mv: MV, stop: ?u64) !void {
     const w = charWidth(c);
     const n = blen / w;
+    if (stop) |term| {
+        // the text, the terminator, then padding (Version 0.22)
+        if (mv != .str or mv.str.len + 1 > n) return E.@"transform-encode";
+        for (mv.str) |ch| {
+            const code = codeOfTerm(c, ch, term) orelse return E.@"transform-encode";
+            if (code == term) return E.@"transform-encode";
+        }
+        for (0..n) |i| {
+            const code: u64 = if (i < mv.str.len) codeOfTerm(c, mv.str[i], term).? else if (i == mv.str.len) term else charPadCode(c);
+            setBits(out, msb, start + i * w, w, code);
+        }
+        return;
+    }
     if (mv != .str or mv.str.len > n) return E.@"transform-encode";
     for (mv.str) |ch| _ = codeOf(c, ch) orelse return E.@"transform-encode";
     for (0..n) |i| {
@@ -5448,7 +5571,7 @@ fn bitsRaw(p: *const Pack, buf: []const u8, base: usize, ln: *const Line) u64 {
     if (!ln.swap) return getBits(buf, p.msb, base + ln.bstart, ln.blen);
     const n = ln.blen / 8;
     var tmp: [8]u8 = undefined;
-    for (0..n) |j| tmp[n - 1 - j] = @intCast(getBits(buf, p.msb, base + ln.bstart + 8 * j, 8));
+    for (0..n) |j| setBits(tmp[0..n], p.msb, 8 * (n - 1 - j), 8, getBits(buf, p.msb, base + ln.bstart + 8 * j, 8));
     return getBits(tmp[0..n], p.msb, 0, ln.blen);
 }
 
@@ -5459,7 +5582,7 @@ fn bitsWriteRaw(p: *const Pack, out: []u8, base: usize, ln: *const Line, v: u64)
     const n = ln.blen / 8;
     var tmp = [_]u8{0} ** 8;
     setBits(tmp[0..n], p.msb, 0, ln.blen, v);
-    for (0..n) |j| setBits(out, p.msb, base + ln.bstart + 8 * j, 8, tmp[n - 1 - j]);
+    for (0..n) |j| setBits(out, p.msb, base + ln.bstart + 8 * j, 8, getBits(tmp[0..n], p.msb, 8 * (n - 1 - j), 8));
 }
 
 fn mvFloat(mv: MV) !f64 {
@@ -5568,8 +5691,16 @@ fn bitsEncodeField(ln: *const Line, mv: MV) !u64 {
 }
 
 // Write one field's `blen` bits at absolute bit `start` of `out`.
-fn bitsPutField(out: []u8, msb: bool, start: usize, ln: *const Line, mv: MV) !void {
-    if (ln.transform.kind == .chars) return charsEncode(ln.transform.cset, out, msb, start, ln.blen, mv);
+fn bitsPutField(out: []u8, msb: BitOrd, start: usize, ln: *const Line, mv: MV) !void {
+    if (ln.transform.kind == .chars) return charsEncode(ln.transform.cset, out, msb, start, ln.blen, mv, ln.stop_code);
+    if (ln.transform.kind == .hex) {
+        // Version 0.22: `len / 4` hex digits, either case, each as a 4-bit field
+        const nd = ln.blen / 4;
+        if (mv != .str or mv.str.len != nd) return E.@"transform-encode";
+        for (mv.str) |ch| _ = std.fmt.charToDigit(ch, 16) catch return E.@"transform-encode";
+        for (mv.str, 0..) |ch, k| setBits(out, msb, start + 4 * k, 4, std.fmt.charToDigit(ch, 16) catch unreachable);
+        return;
+    }
     if (ln.transform.kind == .ascii) {
         const n = ln.blen / 8;
         if (mv != .str or mv.str.len > n) return E.@"transform-encode"; // longer text
@@ -5602,7 +5733,7 @@ fn bitsWriteField(alloc: std.mem.Allocator, p: *const Pack, out: []u8, base: usi
     const tmp = try alloc.alloc(u8, n);
     @memset(tmp, 0);
     try bitsPutField(tmp, p.msb, 0, ln, mv);
-    for (0..n) |j| setBits(out, p.msb, base + ln.bstart + 8 * j, 8, tmp[n - 1 - j]);
+    for (0..n) |j| setBits(out, p.msb, base + ln.bstart + 8 * j, 8, getBits(tmp, p.msb, 8 * (n - 1 - j), 8));
 }
 
 // The message being written: it grows as items are added, zero-filled.
@@ -7555,7 +7686,7 @@ fn bitsEncodeScope(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, o
             const v = gval[gt.idx] orelse continue;
             for (0..gt.blen) |k| {
                 if (strong[gt.bstart + k]) continue;
-                const bit = if (p.msb) (v >> @as(u6, @intCast(gt.blen - 1 - k))) & 1 else (v >> @as(u6, @intCast(k))) & 1;
+                const bit = if (p.msb == .msb) (v >> @as(u6, @intCast(gt.blen - 1 - k))) & 1 else (v >> @as(u6, @intCast(k))) & 1;
                 setBits(out.buf.items, p.msb, base + gt.bstart + k, 1, bit);
             }
         }
@@ -9217,6 +9348,7 @@ fn bitsLenOk(t: Transform, blen: usize) bool {
             break :blk blen >= w and blen <= 2040 and blen % w == 0;
         },
         .octal => blen >= 3 and blen <= 63 and blen % 3 == 0,
+        .hex => blen >= 4 and blen <= 2040 and blen % 4 == 0, // Version 0.22
         else => blen >= 1 and blen <= 64,
     };
 }
@@ -9470,11 +9602,7 @@ const SParser = struct {
             try p.uses.append(toks[1]);
         } else if (is(kw, "bit_order")) {
             if (toks.len != 2) return self.err(bd, "bit_order takes one argument", .{});
-            if (is(toks[1], "msb")) {
-                p.msb = true;
-            } else if (is(toks[1], "lsb")) {
-                p.msb = false;
-            } else return self.err(bd, "bit_order {s} is not lsb or msb", .{toks[1]});
+            p.msb = bitOrdOf(toks[1]) orelse return self.err(bd, "bit_order {s} is not lsb, msb or msb-lsb", .{toks[1]});
             p.bit_order_set = true;
         } else if (is(kw, "armor")) {
             // armor <hex | sixbit>, checked after the file is read
@@ -9648,16 +9776,20 @@ const SParser = struct {
                 pending = self.err(e, "field {s}: the locator {s} is not a UPER locator of 0.19", .{ toks[1], toks[2] });
                 break :blk null;
             };
+            // `until:<code>` (Version 0.22): its code and transform are
+            // checked after the file is read
+            const until = std.mem.startsWith(u8, toks[2], "until:");
             if (uloc != null) {
                 self.uperLine();
-            } else if (pending == null and !allDigits(toks[2])) {
+            } else if (pending == null and !until and !allDigits(toks[2])) {
                 pending = self.err(bd, "field {s}: {s} is not a bit length (a sequential pack takes no positional locator)", .{ toks[1], toks[2] });
             }
             // the transform against the wire or the UPER locator, and the
             // bit length against the transform, are checked after the file
             // (ruling 5b of 0.11)
-            const blen: usize = if (uloc != null or pending != null) 0 else @intCast(@min(parseUnsigned(toks[2]) orelse (1 << 20), 1 << 20));
+            const blen: usize = if (uloc != null or pending != null or until) 0 else @intCast(@min(parseUnsigned(toks[2]) orelse (1 << 20), 1 << 20));
             var ln = Line{ .key = toks[1], .locator = toks[2], .transform = t, .lineno = self.lineno, .blen = blen };
+            if (until) ln.until_raw = toks[2]["until:".len..];
             var oi: usize = 4;
             while (oi < toks.len) : (oi += 1) {
                 const o = toks[oi];
@@ -9680,6 +9812,12 @@ const SParser = struct {
                     if (oi >= toks.len) return self.lineErr(bd, "absent takes one or more values", .{});
                     again = ln.absent_raw != null;
                     ln.absent_raw = toks[oi];
+                } else if (is(o, "stop")) {
+                    // stop <code> (Version 0.22), checked after the file is read
+                    oi += 1;
+                    if (oi >= toks.len) return self.lineErr(bd, "stop takes a code", .{});
+                    again = ln.stop_raw != null;
+                    ln.stop_raw = toks[oi];
                 } else if (is(o, "with")) {
                     // with <other-key> (Version 0.18)
                     oi += 1;
@@ -9693,7 +9831,7 @@ const SParser = struct {
             // the values of `absent` are a line check, except above 64 bits
             // (ruling 4d of 0.11) and on a UPER locator, which takes no
             // `absent` (ruling 22 of 0.19, checked after the file is read)
-            if (blen <= 64 and uloc == null) {
+            if (blen <= 64 and uloc == null and !until) {
                 try parseAbsent(alloc, .bits, &ln, false, self.diag);
                 ln.abs_checked = true;
             }
@@ -9968,9 +10106,17 @@ fn seqResolveVia(alloc: std.mem.Allocator, p: *Pack, nodes: []SNode, diag: *Diag
                 if (!uperTakes(u.form, t.kind)) return bad(diag, alloc, bd, "line {d}: the locator {s} does not take the transform of {s}", .{ n.lineno, n.ln.locator, n.ln.key });
                 if (n.ln.swap or n.ln.trim) return bad(diag, alloc, bd, "line {d}: swap and trim are not options of a UPER locator", .{n.lineno});
                 if (n.ln.absent_raw != null) return bad(diag, alloc, bd, "line {d}: absent is not an option of a UPER locator", .{n.lineno});
+            } else if (n.ln.until_raw) |raw| {
+                // Version 0.22: `until:<code>` with `chars:<set>` only; no
+                // `absent`, `swap`, `trim` or `stop` (ruling 16)
+                if (t.kind != .chars) return bad(diag, alloc, bd, "line {d}: until: takes chars:<set>, not the transform of {s}", .{ n.lineno, n.ln.key });
+                if (n.ln.swap or n.ln.trim or n.ln.absent_raw != null or n.ln.stop_raw != null) return bad(diag, alloc, bd, "line {d}: until: takes no absent, swap, trim or stop", .{n.lineno});
+                n.ln.until_code = charCodeParam(raw, t.cset) orelse return bad(diag, alloc, bd, "line {d}: until:{s} is not a code of the set", .{ n.lineno, raw });
             } else {
-                if (kindCategory(t.kind) != .bits) return bad(diag, alloc, bd, "line {d}: the transform of {s} does not belong to wire bits", .{ n.lineno, n.ln.key });
+                if (kindCategory(t.kind) != .bits and t.kind != .hex) return bad(diag, alloc, bd, "line {d}: the transform of {s} does not belong to wire bits", .{ n.lineno, n.ln.key });
                 if (!bitsLenOk(t, n.ln.blen)) return bad(diag, alloc, bd, "line {d}: bit length {d} is not allowed for the transform of {s}", .{ n.lineno, n.ln.blen, n.ln.key });
+                try stopCheck(alloc, &n.ln, n.lineno, diag);
+                if (n.ln.swap and t.kind == .hex) return bad(diag, alloc, bd, "line {d}: swap on hex", .{n.lineno});
                 if (n.ln.trim and t.kind != .ascii and t.kind != .sixbit) return bad(diag, alloc, bd, "line {d}: trim is for the ascii and sixbit transforms", .{n.lineno});
                 if (n.ln.swap and t.kind == .sixbit) return bad(diag, alloc, bd, "line {d}: swap on sixbit", .{n.lineno});
                 if (n.ln.swap and n.ln.blen % 8 != 0) return bad(diag, alloc, bd, "line {d}: swap needs a bit length that is a multiple of 8, not {d}", .{ n.lineno, n.ln.blen });
@@ -10239,7 +10385,7 @@ fn parseSeqPack(alloc: std.mem.Allocator, def_text: []const u8, diag: *Diag) any
     if (p.enc_raw) |raw| {
         if (p.enc_bad != 0) return bad(diag, alloc, E.@"bad-directive", "line {d}: encoding is repeated, given after a kind, or not given one value", .{p.enc_bad});
         if (std.mem.eql(u8, raw, "uper")) {
-            if (!p.bit_order_set or !p.msb) return bad(diag, alloc, E.@"bad-directive", "encoding uper needs bit_order msb", .{});
+            if (!p.bit_order_set or p.msb != .msb) return bad(diag, alloc, E.@"bad-directive", "encoding uper needs bit_order msb", .{});
             if (p.armor) return bad(diag, alloc, E.@"bad-directive", "encoding uper with armor sixbit", .{});
             p.uper = true;
         } else if (!std.mem.eql(u8, raw, "none")) {
@@ -10418,6 +10564,41 @@ const SDec = struct {
         return v;
     }
 
+    // Version 0.22: a `until:<code> chars:<set>` field. The terminator is
+    // found from the codes alone (ruling 5): none before the extent ends,
+    // or more than floor(2040 / w) characters before it, is
+    // `malformed-wire`. Then the characters decode; a bad one fails the key
+    // and the cursor stays after the terminator. Nothing is removed.
+    fn untilField(self: *SDec, n: *const SNode, se: *SEnt) !void {
+        const alloc = self.alloc;
+        const ln = &n.ln;
+        const c = ln.transform.cset;
+        const w = charWidth(c);
+        const term = ln.until_code.?;
+        // at or past the end of a `length` extent: absent (ruling 4)
+        if (self.in_extent and self.pos >= self.soft_end) return;
+        const at = self.pos;
+        var cnt: usize = 0;
+        while (true) {
+            try self.need(w, ln.key);
+            if (self.take(w) == term) break;
+            cnt += 1;
+            if (cnt > 2040 / w) return bad(self.diag, alloc, mw, "field {s}: no terminator {d} within {d} characters", .{ ln.key, term, 2040 / w });
+        }
+        const out = try alloc.alloc(u8, cnt);
+        for (0..cnt) |k| {
+            const code: u8 = @intCast(getBits(self.buf, self.p.msb, at + k * w, w));
+            out[k] = charOf(c, code) orelse {
+                try se.failed.append(alloc, ln.key);
+                for (n.also.items) |a| try se.failed.append(alloc, a.key);
+                return;
+            };
+        }
+        const raw = MV{ .str = out };
+        try self.setKey(se, ln.key, ln.via, ln.via_name, ln.kty, raw);
+        for (n.also.items) |a| try self.setKey(se, a.key, a.via, a.via_name, a.kty, raw);
+    }
+
     fn setKey(self: *SDec, se: *SEnt, key: []const u8, via: ?*const Table, via_name: []const u8, kty: KeyType, raw: MV) !void {
         if (se.e.fields.contains(key)) return; // the earliest line of a key wins
         var mv = raw;
@@ -10451,6 +10632,7 @@ const SDec = struct {
         switch (n.tag) {
             .field => {
                 if (n.uloc) |u| return self.uperField(n, u, se);
+                if (n.ln.until_code != null) return self.untilField(n, se);
                 const ln = &n.ln;
                 if (try self.avail(ln.blen, ln.key) == .absent) return;
                 const at = self.pos;
@@ -11190,6 +11372,46 @@ const SEnc = struct {
         if (nb > self.out.items.len) try self.out.appendNTimes(0, nb - self.out.items.len);
     }
 
+    // Version 0.22: a `until:<code> chars:<set>` field: the text's
+    // characters, then the terminator; an absent key with no default writes
+    // the terminator alone (ruling 10).
+    fn untilField(self: *SEnc, n: *const SNode, ent: *const Entity, ds: DS) !void {
+        const ln = &n.ln;
+        const c = ln.transform.cset;
+        const w = charWidth(c);
+        const term = ln.until_code.?;
+        const fv = if (self.dry) self.fieldValueQuiet(n, ent, ds) else try self.fieldValue(n, ent, ds);
+        var text: []const u8 = "";
+        if (fv) |mv| {
+            const ok = mv == .str and mv.str.len <= 2040 / w and blk: {
+                for (mv.str) |ch| {
+                    const code = codeOfTerm(c, ch, term) orelse break :blk false;
+                    if (code == term) break :blk false;
+                }
+                break :blk true;
+            };
+            if (!ok) {
+                if (!self.dry) return bad(self.diag, self.alloc, te, "field {s}: the text does not encode before terminator {d}", .{ ln.key, term });
+            } else text = mv.str;
+        }
+        for (text) |ch| try self.put(w, codeOfTerm(c, ch, term).?);
+        try self.put(w, term);
+    }
+
+    // As `readBackR` for a `until:` field: decode its bits `buf[at..end)`.
+    fn untilReadBackR(self: *SEnc, buf: []const u8, at: usize, end: usize, n: *const SNode, j: usize) RB {
+        const save = self.diag.msg;
+        defer self.diag.msg = save;
+        var e = Entity.init(self.alloc);
+        var se = SEnt{ .e = &e };
+        var d = SDec{ .alloc = self.alloc, .p = self.p, .buf = buf, .diag = self.diag, .pos = at, .hard_end = end, .soft_end = end };
+        d.untilField(n, &se) catch return .failed;
+        if (d.failed_msg != null) return .failed;
+        const key = if (j == 0) n.ln.key else n.also.items[j - 1].key;
+        for (se.failed.items) |fk| if (std.mem.eql(u8, fk, key)) return .failed;
+        return if (e.get(key)) |v| .{ .val = v } else .absent;
+    }
+
     fn put(self: *SEnc, len: usize, value: u64) !void {
         try self.ensure(self.pos + len);
         setBits(self.out.items, self.p.msb, self.pos, len, value);
@@ -11394,6 +11616,23 @@ const SEnc = struct {
                             const key = if (j == 0) n.ln.key else n.also.items[j - 1].key;
                             if (m.contains(key)) continue;
                             switch (self.uperReadBackR(self.out.items, at, self.pos, n, u, j)) {
+                                .val => |mv| try m.put(alloc, key, mv),
+                                .failed => try self.kv_failed.?.put(alloc, key, {}),
+                                .absent => {},
+                            }
+                        }
+                    }
+                    return;
+                }
+                if (n.ln.until_code != null) {
+                    const at = self.pos;
+                    try self.untilField(n, ent, ds);
+                    // what decode reads back from these bits, for a switch
+                    if (self.kv) |m| {
+                        for (0..n.also.items.len + 1) |j| {
+                            const key = if (j == 0) n.ln.key else n.also.items[j - 1].key;
+                            if (m.contains(key)) continue;
+                            switch (self.untilReadBackR(self.out.items, at, self.pos, n, j)) {
                                 .val => |mv| try m.put(alloc, key, mv),
                                 .failed => try self.kv_failed.?.put(alloc, key, {}),
                                 .absent => {},

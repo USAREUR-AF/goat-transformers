@@ -1,0 +1,9 @@
+{
+  "name": "to-stop-icao6-ruling-18-trailing-spaces",
+  "from": "conformance-long-json",
+  "to": "conformance-long-stop-icao6",
+  "input": "{\"label\":\"AB  \"}",
+  "expect": "0428200200",
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 18: the text is written as it is, spaces included, then the code 0 and padding"
+}

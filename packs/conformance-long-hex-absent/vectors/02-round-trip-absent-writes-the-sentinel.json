@@ -1,0 +1,9 @@
+{
+  "name": "round-trip-absent-writes-the-sentinel",
+  "from": "conformance-long-hex-absent",
+  "to": "conformance-long-hex-absent",
+  "input": "0f",
+  "expect": "0f",
+  "source": "constructed",
+  "reference": "spec 0.22: on a shorter one the sentinel is the field's uint raw value, not its hex text; an absent key writes its first sentinel (0.9)"
+}

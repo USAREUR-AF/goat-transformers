@@ -1,0 +1,13 @@
+{
+  "name": "round-trip-72-bits",
+  "from": "conformance-long-hex-wide",
+  "to": "conformance-long-hex-wide",
+  "input": "070123456789abcdef01",
+  "expect": "070123456789abcdef01",
+  "model": {
+    "probe.x": "7",
+    "probe.label": "0123456789abcdef01"
+  },
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 1 and Fields longer than 64 bits; a field of 72 bits maps its bits: 18 digits, each 4 bits in msb order, kept through a round trip"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "to-until-ais6-text-holding-the-terminator",
+  "from": "conformance-long-json",
+  "to": "conformance-long-until-ais6",
+  "input": "{\"label\":\"A?\"}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.22, Character fields that end at a code; a character whose code equals <code> (? is 63) is transform-encode"
+}

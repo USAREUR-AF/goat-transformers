@@ -1,0 +1,24 @@
+# Conformance probe pack for count values under `bit_order msb-lsb` (spec
+# 0.22, ruling 2: 0.21 count lines and 0.8 group counts). Public. Bit order msb-lsb (spec 0.22): positions count from the high bit of
+# each byte, a value is assembled from its first bit up. No kinds.
+#
+#   4 bits        count n: the items of nums
+#   4 bits        x
+#   nums          n items of val, 8 bits
+#   recs          a 4-bit count, then that many items of y, 4 bits
+format     conformance-long-mlsb-count
+version    0.22.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb-lsb
+count   n  4
+field   probe.x  4  uint
+group   probe.nums  count @n
+  field  probe.val  8  uint
+end
+group   probe.recs  count 4
+  field  probe.y  4  uint
+end

@@ -1,0 +1,17 @@
+# Conformance probe pack for the locator `until:<code>` (spec 0.22, Character
+# fields that end at a code) with `chars:icao6` and the terminator code 0, a
+# code the set gives no character (ruling 9). Public. No kinds. Most
+# significant bit first.
+#
+#   label  6-bit characters up to the code 0, which is consumed
+#   y      8 bits after the terminator
+format     conformance-long-until-icao6
+version    0.22.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field   probe.label  until:0  chars:icao6
+field   probe.y      8        uint

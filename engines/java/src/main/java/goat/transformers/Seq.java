@@ -93,6 +93,8 @@ final class Seq {
         Body items;
         /** {@code field} with a UPER locator: its form; null for a bit length. */
         Uper u;
+        /** {@code field until:<code> chars:<set>} (engine-spec 0.22): the terminator code; -1 for a bit length. */
+        int until = -1;
         /** {@code group ... size}: the size constraint, when there is one ({@code lb}, {@code ub} below). */
         boolean sized;
         long lb;
@@ -493,6 +495,10 @@ final class Seq {
                         uperField(f, key, locator, tname, args, ln, where, format);
                         break;
                     }
+                    if (locator.startsWith("until:")) {
+                        untilField(f, key, locator, tname, args, ln, where, format);
+                        break;
+                    }
                     if (locator.indexOf(':') < 0 && !Transform.UNSIGNED.matcher(locator).matches()) {
                         throw new GtException(GtException.Code.BAD_LOCATOR, format, locator, where + ": a field takes a bit length, got \"" + locator + "\"");
                     }
@@ -501,11 +507,16 @@ final class Seq {
                     }
                     int len = bitLength(locator, 1, Integer.MAX_VALUE, "a field", where, format);
                     BitsTransform bt = BitsTransform.isBitsName(tname) ? BitsTransform.parse(tname, format, where) : null;
-                    String via = null, absent = null, with = null;
+                    String via = null, absent = null, with = null, stop = null;
                     boolean swap = false, trim = false;
                     for (int i = 3; i < args.size(); i++) {
                         String o = args.get(i);
-                        if (o.equals("with")) {
+                        if (o.equals("stop")) {
+                            // engine-spec 0.22: the code that ends the text of a fixed-size chars field
+                            if (stop != null) throw bad(format, locator, where + ": stop given twice");
+                            if (i + 1 >= args.size()) throw bad(format, locator, where + ": stop takes one code");
+                            stop = args.get(++i);
+                        } else if (o.equals("with")) {
                             // engine-spec 0.18: the line writes only when the entity holds the key
                             if (with != null) throw bad(format, locator, where + ": with given twice");
                             if (i + 1 >= args.size()) throw bad(format, locator, where + ": with takes one key");
@@ -522,6 +533,7 @@ final class Seq {
                         else throw bad(format, locator, where + ": unknown or repeated field option \"" + o + "\"");
                     }
                     Sentinels sentinels = absent != null && len <= 64 ? Sentinels.integers(absent, len, format, locator, where) : null;
+                    if (stop != null) bt.stop = Pack.stopCode(stop, bt, format, locator, where);
                     if (via != null) vias.add(new String[]{via, locator, where});
                     Pack.Field fl = new Pack.Field(key, locator, null, bt, null, via, swap, trim, false, ln);
                     fl.absent = sentinels;
@@ -927,6 +939,44 @@ final class Seq {
                 default:
                     throw new IllegalStateException(kw);
             }
+        }
+
+        /**
+         * A {@code field <key> until:<code> chars:<set>} line (engine-spec 0.22): the characters run to the terminator.
+         * Only {@code chars:<set>} takes it; {@code absent}, {@code swap}, {@code trim} and {@code stop} are refused.
+         */
+        private void untilField(Frame f, String key, String locator, String tname, List<String> args, int ln, String where, String format) {
+            BitsTransform bt = BitsTransform.isBitsName(tname) ? BitsTransform.parse(tname, format, where) : null;
+            if (bt == null || !bt.isCharSet()) {
+                throw bad(format, locator, where + ": until: is for a chars:<set> field, got \"" + tname + "\"");
+            }
+            String via = null, with = null;
+            for (int i = 3; i < args.size(); i++) {
+                String o = args.get(i);
+                if (o.equals("with") && with == null && i + 1 < args.size()) with = args.get(++i);
+                else if (o.equals("via") && via == null && i + 1 < args.size()) via = args.get(++i);
+                else if (o.equals("absent") || o.equals("swap") || o.equals("trim") || o.equals("stop")) {
+                    throw bad(format, locator, where + ": " + o + " is not an option of an until: field (engine-spec 0.22)");
+                } else if (o.equals("optional")) throw bad(format, locator, where + ": optional is not a field option of a sequential pack");
+                else throw bad(format, locator, where + ": unknown or repeated field option \"" + o + "\"");
+            }
+            // the terminator: plain digits that fit the set's width (ruling 23 of 0.22)
+            bt.stop = -1;
+            int code = Pack.stopCode(locator.substring("until:".length()), bt, format, locator, where);
+            if (via != null) vias.add(new String[]{via, locator, where});
+            Pack.Field fl = new Pack.Field(key, locator, null, bt, null, via, false, false, false, ln);
+            fl.with = with;
+            fields.add(fl);
+            typed.add(fl);
+            keyRefs.add(new String[]{key, locator});
+            if (with != null) keyRefs.add(new String[]{with, locator});
+            Node n = new Node(Op.FIELD, ln);
+            mapped(key, n);
+            n.until = code;
+            n.keys = new ArrayList<>();
+            n.keys.add(fl);
+            f.lines.add(n);
+            f.lastField = n;
         }
 
         /** A {@code field} line with a UPER locator (0.19). */

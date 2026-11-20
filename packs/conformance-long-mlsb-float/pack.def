@@ -1,0 +1,14 @@
+# Conformance probe pack for `f32` under `bit_order msb-lsb` (spec 0.22,
+# ruling 3: the bit pattern is read as `uint` reads 32 bits). Public. No kinds. Bit order msb-lsb (spec 0.22): positions count from the
+# high bit of each byte, a value is assembled from its first bit up.
+#
+#   bytes 0..3    a      IEEE-754 single
+format     conformance-long-mlsb-float
+version    0.22.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+word_bytes 1
+bit_order  msb-lsb
+field   probe.a  0:0:32  f32

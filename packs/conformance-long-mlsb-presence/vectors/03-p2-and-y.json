@@ -1,0 +1,15 @@
+{
+  "name": "p2-and-y",
+  "from": "conformance-long-mlsb-presence",
+  "to": "conformance-long-json",
+  "input": "6400",
+  "expect": "{\"y\":9}",
+  "model": {
+    "probe.y": "9",
+    "@absent": [
+      "probe.x"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 2: presence bits keep their reading-order numbering; p.2 is the second bit read"
+}

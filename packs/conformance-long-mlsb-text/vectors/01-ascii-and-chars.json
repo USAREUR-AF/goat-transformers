@@ -1,0 +1,13 @@
+{
+  "name": "ascii-and-chars",
+  "from": "conformance-long-mlsb-text",
+  "to": "conformance-long-json",
+  "input": "82c2c2",
+  "expect": "{\"label\":\"AC\",\"tag\":\"C\"}",
+  "model": {
+    "probe.label": "AC",
+    "probe.tag": "C"
+  },
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 3: each byte of ascii and each character of chars is read as uint reads a field of that width at its place: ascii A is 82, ascii7 C is 1100001"
+}

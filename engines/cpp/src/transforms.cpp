@@ -49,6 +49,7 @@ const char* transform_name(Transform t) {
         case Transform::CharsIcao6: return "chars:icao6";
         case Transform::CharsAis6: return "chars:ais6";
         case Transform::CharsAscii7: return "chars:ascii7";
+        case Transform::CharsAscii8: return "chars:ascii8";
         case Transform::Octal: return "octal";
         case Transform::Scale: return "scale";
         case Transform::Iscale: return "iscale";
@@ -283,6 +284,7 @@ int parse_any_transform(std::string_view token, FieldLine& f, std::string& err) 
                     if (args == "icao6") f.transform = Transform::CharsIcao6;
                     else if (args == "ais6") f.transform = Transform::CharsAis6;
                     else if (args == "ascii7") f.transform = Transform::CharsAscii7;
+                    else if (args == "ascii8") f.transform = Transform::CharsAscii8;  // v0.22
                     else {
                         err = "transform 'chars' needs a character set icao6, ais6 or ascii7, not '" +
                               std::string(args) + "'";
@@ -370,7 +372,8 @@ bool transform_is_text_only(Transform t) {
            t == Transform::HmsDmy;
 }
 
-bool transform_is_tlv_only(Transform t) { return t == Transform::Utf8 || t == Transform::Hex; }
+// `hex` is also a transform of the bits wire from 0.22.
+bool transform_is_tlv_only(Transform t) { return t == Transform::Utf8; }
 
 bool transform_is_textual(Transform t) {
     return t == Transform::String || t == Transform::Iso8601Ms || t == Transform::Iso8601Short;
@@ -396,6 +399,8 @@ bool transform_is_bits(Transform t) {
         case Transform::CharsIcao6:
         case Transform::CharsAis6:
         case Transform::CharsAscii7:
+        case Transform::CharsAscii8:  // v0.22
+        case Transform::Hex:          // v0.22: on bits as on tlv
         case Transform::Octal: return true;
         default: return false;
     }
@@ -412,6 +417,7 @@ bool transform_is_v015(Transform t) {
         case Transform::CharsIcao6:
         case Transform::CharsAis6:
         case Transform::CharsAscii7:
+        case Transform::CharsAscii8:  // v0.22: a set of 0.15's `chars`, bits only as they are
         case Transform::Octal:
         case Transform::Scale:
         case Transform::Iscale: return true;
@@ -426,6 +432,7 @@ unsigned chars_width(Transform t) {
         case Transform::CharsIcao6:
         case Transform::CharsAis6: return 6;
         case Transform::CharsAscii7: return 7;
+        case Transform::CharsAscii8: return 8;  // v0.22
         default: return 0;
     }
 }
@@ -442,6 +449,7 @@ bool bits_len_allowed(Transform t, std::uint32_t len) {
         case Transform::Smag:
         case Transform::Smscale: return len >= 2 && len <= 64;
         case Transform::Octal: return len >= 3 && len <= 63 && len % 3 == 0;
+        case Transform::Hex: return len >= 4 && len <= 2040 && len % 4 == 0;  // v0.22
         default: return len >= 1 && len <= 64;
     }
 }
@@ -651,33 +659,80 @@ std::string model_text(const Value& v) {
 }
 }  // namespace
 
-Value decode_chars(Transform t, const std::vector<std::uint8_t>& codes) {
+namespace {
+// One character of a `chars` set: the code -> the character; false for a code
+// the set does not define. Code 0 of ascii7 and ascii8 is NUL.
+bool chars_decode_one(Transform t, unsigned c, char& ch) {
+    switch (t) {
+        case Transform::CharsIcao6:
+            if (c >= 1 && c <= 26) ch = static_cast<char>('A' + c - 1);
+            else if (c == 32 || (c >= 48 && c <= 57)) ch = static_cast<char>(c);
+            else return false;
+            return true;
+        case Transform::CharsAis6: ch = static_cast<char>(c < 32 ? c + 64 : c); return true;
+        case Transform::CharsAscii7:
+        case Transform::CharsAscii8:
+            if (c == 0 || (c >= 32 && c <= 126)) ch = static_cast<char>(c);
+            else return false;
+            return true;
+        default: return false;
+    }
+}
+
+// The code of a character in a `chars` set; -1 when the set cannot hold it.
+// NUL is held by ascii7 and ascii8 only when `nul` says so (a terminator
+// other than 0, 0.22 rulings 6, 20 and 21).
+int chars_encode_one(Transform t, unsigned c, bool nul) {
+    switch (t) {
+        case Transform::CharsIcao6:
+            if (c >= 'A' && c <= 'Z') return static_cast<int>(c - 'A' + 1);
+            if (c == ' ' || (c >= '0' && c <= '9')) return static_cast<int>(c);
+            return -1;
+        case Transform::CharsAis6:
+            if (c >= 32 && c <= 63) return static_cast<int>(c);
+            if (c >= 64 && c <= 95) return static_cast<int>(c - 64);
+            return -1;
+        case Transform::CharsAscii7:
+        case Transform::CharsAscii8:
+            if (c >= 32 && c <= 126) return static_cast<int>(c);
+            if (c == 0 && nul) return 0;
+            return -1;
+        default: return -1;
+    }
+}
+
+std::string chars_text(Transform t, const std::vector<std::uint8_t>& codes) {
     std::string text;
     text.reserve(codes.size());
     for (std::size_t k = 0; k < codes.size(); ++k) {
-        const unsigned c = codes[k];
         char ch = 0;
-        bool ok = true;
-        switch (t) {
-            case Transform::CharsIcao6:
-                if (c >= 1 && c <= 26) ch = static_cast<char>('A' + c - 1);
-                else if (c == 32 || (c >= 48 && c <= 57)) ch = static_cast<char>(c);
-                else ok = false;
-                break;
-            case Transform::CharsAis6: ch = static_cast<char>(c < 32 ? c + 64 : c); break;
-            case Transform::CharsAscii7:
-                if (c == 0 || (c >= 32 && c <= 126)) ch = static_cast<char>(c);
-                else ok = false;
-                break;
-            default: ok = false; break;
-        }
-        if (!ok)
-            throw std::invalid_argument("character " + std::to_string(k) + " has the code " + std::to_string(c) +
-                                        ", which " + transform_name(t) + " does not define");
+        if (!chars_decode_one(t, codes[k], ch))
+            throw std::invalid_argument("character " + std::to_string(k) + " has the code " +
+                                        std::to_string(codes[k]) + ", which " + transform_name(t) + " does not define");
         text += ch;
     }
+    return text;
+}
+
+std::vector<std::uint8_t> chars_codes(Transform t, const std::string& text, bool nul) {
+    std::vector<std::uint8_t> codes;
+    codes.reserve(text.size());
+    for (std::size_t k = 0; k < text.size(); ++k) {
+        const unsigned c = static_cast<unsigned char>(text[k]);
+        const int code = chars_encode_one(t, c, nul);
+        if (code < 0)
+            throw std::invalid_argument("character " + std::to_string(k) + " (byte " + std::to_string(c) +
+                                        ") is not in " + transform_name(t));
+        codes.push_back(static_cast<std::uint8_t>(code));
+    }
+    return codes;
+}
+}  // namespace
+
+Value decode_chars(Transform t, const std::vector<std::uint8_t>& codes) {
+    std::string text = chars_text(t, codes);
     std::size_t n = text.size();
-    if (t == Transform::CharsAscii7) {
+    if (t == Transform::CharsAscii7 || t == Transform::CharsAscii8) {
         const std::size_t nul = text.find('\0');
         if (nul != std::string::npos) {
             if (text.find_first_not_of('\0', nul) != std::string::npos)
@@ -696,31 +751,38 @@ std::vector<std::uint8_t> encode_chars(Transform t, const Value& v, std::size_t 
     if (text.size() > count)
         throw std::invalid_argument("text of " + std::to_string(text.size()) + " characters does not fit " +
                                     std::to_string(count));
-    std::vector<std::uint8_t> codes;
-    codes.reserve(count);
-    for (std::size_t k = 0; k < text.size(); ++k) {
-        const unsigned c = static_cast<unsigned char>(text[k]);
-        int code = -1;
-        switch (t) {
-            case Transform::CharsIcao6:
-                if (c >= 'A' && c <= 'Z') code = static_cast<int>(c - 'A' + 1);
-                else if (c == ' ' || (c >= '0' && c <= '9')) code = static_cast<int>(c);
-                break;
-            case Transform::CharsAis6:
-                if (c >= 32 && c <= 63) code = static_cast<int>(c);
-                else if (c >= 64 && c <= 95) code = static_cast<int>(c - 64);
-                break;
-            case Transform::CharsAscii7:
-                if (c >= 32 && c <= 126) code = static_cast<int>(c);
-                break;
-            default: break;
-        }
-        if (code < 0)
-            throw std::invalid_argument("character " + std::to_string(k) + " (byte " + std::to_string(c) +
-                                        ") is not in " + transform_name(t));
-        codes.push_back(static_cast<std::uint8_t>(code));
+    std::vector<std::uint8_t> codes = chars_codes(t, text, false);
+    codes.resize(count, chars_padding(t));
+    return codes;
+}
+
+std::uint8_t chars_padding(Transform t) { return t == Transform::CharsIcao6 ? 32 : 0; }
+
+bool parse_term_code(const std::string& s, std::uint64_t& out) {
+    if (s.empty()) return false;
+    out = 0;
+    for (char c : s) {
+        if (c < '0' || c > '9') return false;
+        if (out <= (~std::uint64_t{0} - 9) / 10) out = out * 10 + static_cast<std::uint64_t>(c - '0');
+        else out = ~std::uint64_t{0};
     }
-    codes.resize(count, t == Transform::CharsIcao6 ? 32 : 0);
+    return true;
+}
+
+Value decode_chars_exact(Transform t, const std::vector<std::uint8_t>& codes) {
+    return Value::of_string(chars_text(t, codes));
+}
+
+std::vector<std::uint8_t> encode_chars_until(Transform t, const Value& v, std::size_t max, unsigned code) {
+    const std::string text = model_text(v);
+    if (text.size() > max)
+        throw std::invalid_argument("text of " + std::to_string(text.size()) + " characters is longer than " +
+                                    std::to_string(max));
+    std::vector<std::uint8_t> codes = chars_codes(t, text, code != 0);
+    for (std::size_t k = 0; k < codes.size(); ++k)
+        if (codes[k] == code)
+            throw std::invalid_argument("character " + std::to_string(k) + " is the terminator's character (code " +
+                                        std::to_string(code) + ")");
     return codes;
 }
 

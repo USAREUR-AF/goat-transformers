@@ -1365,6 +1365,9 @@ func (r *seqReader) node(n *seqNode) error {
 		if f.uper != nil {
 			return r.uperField(f)
 		}
+		if f.until {
+			return r.untilField(f)
+		}
 		at, ok, err := r.take(f.loc.blen, "field "+f.Key)
 		if err != nil || !ok {
 			return err
@@ -2211,6 +2214,8 @@ func (s *seqSim) walk(nodes []*seqNode, sc seqScope, written bool) bool {
 			if written {
 				if n.f.uper != nil {
 					uperReadBack(s.w, n.f, sc)
+				} else if n.f.until {
+					untilReadBack(s.w, n.f, sc)
 				} else if buf := s.w.fieldBits(n.f, sc); buf != nil {
 					readBack(s.w.p, n.f, sc, buf, 0)
 				}
@@ -2365,6 +2370,12 @@ func (w *seqWriter) emit(nodes []*seqNode, sc seqScope, chain bool) error {
 			f := n.f
 			if f.uper != nil {
 				if err := w.uperField(f, sc); err != nil {
+					return err
+				}
+				continue
+			}
+			if f.until {
+				if err := w.untilField(f, sc); err != nil {
 					return err
 				}
 				continue
@@ -2649,4 +2660,118 @@ func (w *seqWriter) group(g *Group, sc seqScope) error {
 		}
 	}
 	return nil
+}
+
+// ---- until:<code> (spec 0.22) ----
+
+// untilField reads a field whose locator is `until:<code>`: characters of
+// its set up to the terminator, which is consumed. A field that starts at or
+// after the end of a `length` extent is absent; one that finds no terminator
+// before the end of its extent, or after floor(2040 / w) characters, is
+// malformed-wire (rulings 4, 5 and 8). A character the set does not hold is
+// a failure of the key, and the cursor stays after the terminator.
+func (r *seqReader) untilField(f *Field) error {
+	if r.beyond() {
+		return nil
+	}
+	set := f.btf.charSet
+	w := set.width
+	start := r.pos
+	maxChars := maxBitsLen / w
+	n := 0
+	for {
+		at, ok, err := r.take(w, "field "+f.Key+" (until:)")
+		if err != nil {
+			return r.malformed("field %s: no terminator %d before the end of its extent", f.Key, f.untilC)
+		}
+		if !ok {
+			return r.malformed("field %s: no terminator %d before the end of its extent", f.Key, f.untilC)
+		}
+		if getBits(r.data, at, w, r.p.msb) == f.untilC {
+			break
+		}
+		n++
+		if n > maxChars {
+			return r.malformed("field %s: more than %d characters before the terminator %d", f.Key, maxChars, f.untilC)
+		}
+	}
+	// Nothing is removed, and NUL is an ordinary character (rulings 6, 7
+	// and 20).
+	buf, err := set.decodeChars(r.data, start, n, r.p.msb)
+	if err != nil {
+		r.d.fail(f, err.Error())
+		return nil
+	}
+	v := Value{Kind: KindString, S: string(buf)}
+	r.d.store(f, v)
+	for _, a := range f.also {
+		r.d.store(a, v)
+	}
+	return nil
+}
+
+// untilCodes returns the codes an until: field writes: the text's
+// characters, then the terminator. An absent key with no default writes the
+// terminator alone (ruling 10).
+func untilCodes(p *Pack, f *Field, sc seqScope) ([]uint64, *Field, error) {
+	set := f.btf.charSet
+	v, from, ok, err := seqFieldValue(p, f, sc)
+	if err != nil {
+		return nil, from, err
+	}
+	if !ok {
+		return []uint64{f.untilC}, f, nil
+	}
+	s, err := encString(v)
+	if err != nil {
+		return nil, from, err
+	}
+	if max := maxBitsLen / set.width; len(s) > max {
+		return nil, from, fmt.Errorf("text is %d character(s), an until: field holds at most %d", len(s), max)
+	}
+	term := f.untilC
+	codes, err := set.encodeChars(s, &term)
+	if err != nil {
+		return nil, from, err
+	}
+	return append(codes, term), from, nil
+}
+
+// untilField writes an until: field at the cursor.
+func (w *seqWriter) untilField(f *Field, sc seqScope) error {
+	codes, from, err := untilCodes(w.p, f, sc)
+	if err != nil {
+		return encodeErr(w.p, from, err)
+	}
+	width := f.btf.charSet.width
+	for _, c := range codes {
+		w.put(w.alloc(width), width, c)
+	}
+	return nil
+}
+
+// untilReadBack records what a decode of an until: field's written text
+// would hold, for a switch on its key (0.20): the text as written, which
+// decode yields unchanged (ruling 7), or "" for the terminator alone
+// (ruling 11).
+func untilReadBack(w *seqWriter, f *Field, sc seqScope) {
+	codes, _, err := untilCodes(w.p, f, sc)
+	if err != nil {
+		sc.bad[f.Key] = true
+		for _, a := range f.also {
+			sc.bad[a.Key] = true
+		}
+		return
+	}
+	set := f.btf.charSet
+	buf := make([]byte, 0, len(codes)-1)
+	for _, c := range codes[:len(codes)-1] {
+		b, _ := set.dec(c)
+		buf = append(buf, b)
+	}
+	v := Value{Kind: KindString, S: string(buf)}
+	storeBack(w.p, sc, f, v)
+	for _, a := range f.also {
+		storeBack(w.p, sc, a, v)
+	}
 }

@@ -1,0 +1,9 @@
+{
+  "name": "round-trip",
+  "from": "conformance-long-swap-offset-lsb",
+  "to": "conformance-long-swap-offset-lsb",
+  "input": "a0cb0d",
+  "expect": "a0cb0d",
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 13: swap reverses 8-bit chunks of the field taken from its first bit; the same bits"
+}

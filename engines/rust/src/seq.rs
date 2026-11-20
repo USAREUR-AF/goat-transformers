@@ -354,7 +354,7 @@ struct Parser<'a> {
     format: Option<String>,
     version: Option<String>,
     wire: Option<String>,
-    msb: bool,
+    order: BitOrder,
     distribution: Option<Distribution>,
     sources: Vec<String>,
     uses: Vec<String>,
@@ -437,12 +437,11 @@ impl<'a> Parser<'a> {
             "layout" => {}
             "bit_order" => {
                 if toks.len() != 2 {
-                    return bad(ln, "bit_order needs `lsb` or `msb`");
+                    return bad(ln, "bit_order needs `lsb`, `msb` or `msb-lsb`");
                 }
-                self.msb = match toks[1].as_str() {
-                    "lsb" => false,
-                    "msb" => true,
-                    o => return bad(ln, format!("bit_order is `lsb` or `msb`, got `{}`", o)),
+                self.order = match BitOrder::parse(&toks[1]) {
+                    Some(o) => o,
+                    None => return bad(ln, format!("bit_order is `lsb`, `msb` or `msb-lsb`, got `{}`", toks[1])),
                 };
             }
             "distribution" => {
@@ -783,11 +782,13 @@ impl<'a> Parser<'a> {
                 if toks.len() < 4 {
                     return bad(ln, "field needs <model-key> <len> <transform> [options]");
                 }
-                // a UPER locator (engine-spec v0.19), else a bit length
+                // a UPER locator (engine-spec v0.19), `until:<code>` in place of a
+                // bit length (engine-spec v0.22), else a bit length
                 let uper = crate::uper::parse_loc(&toks[2], ln)?;
-                let len = match uper {
-                    Some(_) => 0,
-                    None => bit_len(&toks[2], ln)?,
+                let until_text = toks[2].strip_prefix("until:");
+                let len = match (&uper, until_text) {
+                    (Some(_), _) | (None, Some(_)) => 0,
+                    (None, None) => bit_len(&toks[2], ln)?,
                 };
                 let mut f = FieldDef {
                     model_key: toks[1].clone(),
@@ -803,9 +804,24 @@ impl<'a> Parser<'a> {
                     absent: Vec::new(),
                     gate: None,
                     with: None,
+                    until: None,
+                    stop: None,
                 };
                 for table in field_options(&mut f, toks, ln, false)? {
                     self.vias.push((table, ln));
+                }
+                if let Some(code) = until_text {
+                    let set = match f.transform {
+                        Transform::Chars(set) => set,
+                        _ => return bad(ln, "`until:` is valid only with `chars:<set>`"),
+                    };
+                    if f.absent_arg.is_some() || f.swap || f.trim {
+                        return bad(ln, "`until:` takes no `absent`, `swap` or `trim`");
+                    }
+                    if f.stop.is_some() {
+                        return bad(ln, "`stop` and `until:` cannot be combined (ruling 16 of 0.22)");
+                    }
+                    f.until = Some(char_code(code, set, ln, "until:")?);
                 }
                 let t = &f.transform;
                 if let Some(loc) = &uper {
@@ -818,7 +834,7 @@ impl<'a> Parser<'a> {
                 } else if !t.is_bits() {
                     return bad(ln, format!("transform of `{}` is not valid on a bits wire", f.model_key));
                 }
-                let ok = uper.is_some() || u32::try_from(len).map_or(false, |l| t.bits_len_ok(l));
+                let ok = uper.is_some() || f.until.is_some() || u32::try_from(len).map_or(false, |l| t.bits_len_ok(l));
                 if !ok {
                     return bad(ln, format!("bit length {} is not allowed for the transform of `{}`", len, f.model_key));
                 }
@@ -832,7 +848,7 @@ impl<'a> Parser<'a> {
                     return bad(ln, "`trim` is valid only with `ascii` or `sixbit`");
                 }
                 if f.swap && t.refuses_swap() {
-                    return bad(ln, "`swap` is not valid with `chars` or `octal`");
+                    return bad(ln, "`swap` is not valid with `chars`, `octal` or `hex`");
                 }
                 resolve_absent(Wire::Bits, &mut f, Some(len as u32))?;
                 // `also <key> [via <table>]` lines directly after the field (ruling 13 of 0.8)
@@ -1442,7 +1458,7 @@ pub fn parse(text: &str) -> Result<Pack, Error> {
         format: None,
         version: None,
         wire: None,
-        msb: false,
+        order: BitOrder::Lsb,
         distribution: None,
         sources: Vec::new(),
         uses: Vec::new(),
@@ -1491,9 +1507,10 @@ pub fn parse(text: &str) -> Result<Pack, Error> {
         Some(_) => return err("bad-directive: `layout` is valid only on a bits wire"),
         None => return err("missing-wire: the pack has no `wire` line"),
     }
-    let armor = p.armor.check(true, p.msb)?;
+    // `armor sixbit` and `encoding uper` need `bit_order msb` (0.14, 0.19); `msb-lsb` is not `msb`
+    let armor = p.armor.check(true, p.order == BitOrder::Msb)?;
     // engine-spec v0.19: `encoding uper`, and the lines only it allows (ruling 9)
-    let uper = p.encoding.check(true, true, p.msb, armor == crate::armor::Armor::Sixbit)?;
+    let uper = p.encoding.check(true, true, p.order == BitOrder::Msb, armor == crate::armor::Armor::Sixbit)?;
     if let (false, Some(ln)) = (uper, p.uper_line) {
         return bad(ln, "a UPER locator, `ext`, `choice` or `group ... size` needs `encoding uper`");
     }
@@ -1517,7 +1534,7 @@ pub fn parse(text: &str) -> Result<Pack, Error> {
         wire: Wire::Bits,
         root: String::new(),
         word_bytes: 1,
-        msb: p.msb,
+        order: p.order,
         distribution,
         sources: p.sources,
         uses: p.uses,
@@ -1589,7 +1606,7 @@ impl<'a> Reader<'a> {
     /// `len` (1..=64) bits at the cursor as an unsigned value.
     pub(crate) fn read(&mut self, len: u32, what: &str) -> Result<u64, Error> {
         self.need(len as u64, what)?;
-        let v = get_bits(self.raw, self.pos, len, self.p.msb).unwrap_or(0);
+        let v = get_bits(self.raw, self.pos, len, self.p.order).unwrap_or(0);
         self.pos += len as u64;
         Ok(v)
     }
@@ -1625,7 +1642,7 @@ fn decode_kind<'a>(body: &'a SeqBody, r: &mut Reader, d: &mut Decoded) -> Result
         let holds = k.whens.iter().all(|(len, _, values)| {
             // a `when` any of whose bits lies beyond the input does not hold
             let ok = r.end.saturating_sub(at) >= *len as u64
-                && get_bits(r.raw, at, *len, r.p.msb).map_or(false, |v| in_list(values, v));
+                && get_bits(r.raw, at, *len, r.p.order).map_or(false, |v| in_list(values, v));
             at += *len as u64;
             ok
         });
@@ -1663,6 +1680,14 @@ fn decode_lines(lines: &[SeqLine], r: &mut Reader, d: &mut Decoded) -> Result<()
             continue;
         }
         match line {
+            SeqLine::Field { f, also, .. } if f.until.is_some() => {
+                let (bits, v) = read_until(r.p, f, r.raw, r.pos, r.end).map_err(|e| r.short(e.msg))?;
+                r.pos += bits;
+                for a in also {
+                    d.put(r.p, a, v.clone());
+                }
+                d.put(r.p, f, v);
+            }
             SeqLine::Field { f, len, also, uper } => {
                 let v = match uper {
                     // engine-spec v0.19: the length follows from the constraint and the value
@@ -2086,6 +2111,21 @@ impl<'p> Look<'p> {
                     read_back_uper(self.p, f, loc, also, &w.buf, 0, &mut back);
                 }
             }
+            // `until:` (engine-spec v0.22): the codes and the terminator
+            None if f.until.is_some() => {
+                if let Ok((codes, width)) = until_codes(self.p, f, also, ent, defs) {
+                    let mut buf = vec![0u8; (codes.len() * width as usize).div_ceil(8)];
+                    for (i, c) in codes.iter().enumerate() {
+                        set_bits(&mut buf, i as u64 * width as u64, width, *c as u64, self.p.order);
+                    }
+                    if let Ok((_, v)) = read_until(self.p, f, &buf, 0, buf.len() as u64 * 8) {
+                        for a in also {
+                            back.put(self.p, a, v.clone());
+                        }
+                        back.put(self.p, f, v);
+                    }
+                }
+            }
             None => {
                 let mut buf = vec![0u8; ((*len as usize) + 7) / 8];
                 if write_line(self.p, f, *len, also, ent, defs, 0, &mut buf).is_ok() {
@@ -2210,6 +2250,82 @@ fn write_line(p: &Pack, f: &FieldDef, len: u32, also: &[FieldDef], ent: &Entity,
     Ok(())
 }
 
+/// The set and terminator of an `until:` field.
+fn until_of(f: &FieldDef) -> (CharSet, u32) {
+    match (f.transform, f.until) {
+        (Transform::Chars(set), Some(code)) => (set, code),
+        _ => unreachable!("an `until:` field is `chars` with a code"),
+    }
+}
+
+/// Read an `until:` field from bit `start` (engine-spec v0.22): the bits it
+/// takes, terminator included, and its value. The terminator is found from
+/// the codes alone first; none before `end`, or more than `2040 / w`
+/// characters before it, is the outer error (`malformed-wire`). A code the
+/// set does not define is then the value's error (ruling 5).
+fn read_until(p: &Pack, f: &FieldDef, raw: &[u8], start: u64, end: u64) -> Result<(u64, Result<Value, Error>), Error> {
+    let (set, term) = until_of(f);
+    let w = set.width();
+    let max = (2040 / w) as usize;
+    let end = end.min(raw.len() as u64 * 8);
+    let mut codes: Vec<u32> = Vec::new();
+    let mut at = start;
+    loop {
+        if end.saturating_sub(at) < w as u64 {
+            return err(format!("`{}` finds no terminator {} before the end of its extent at bit {}", f.model_key, term, at));
+        }
+        let c = get_bits(raw, at, w, p.order).unwrap_or(0) as u32;
+        at += w as u64;
+        if c == term {
+            break;
+        }
+        if codes.len() == max {
+            return err(format!("`{}` reads more than {} characters before its terminator {}", f.model_key, max, term));
+        }
+        codes.push(c);
+    }
+    // nothing is removed, and NUL is a character unless it is the terminator (rulings 6, 7)
+    Ok((at - start, super::bits::chars_text(set, &codes).map(Value::Str)))
+}
+
+/// The codes an `until:` field writes, terminator last, and their width: the
+/// earliest key of the line the entity holds, else the earliest default,
+/// else the terminator alone (ruling 10 of 0.22).
+fn until_codes(p: &Pack, f: &FieldDef, also: &[FieldDef], ent: &Entity, defs: Defaults) -> Result<(Vec<u32>, u32), Error> {
+    let (set, term) = until_of(f);
+    let w = set.width();
+    let keys = || std::iter::once(f).chain(also.iter()).filter(|k| live(ent, k));
+    let value = keys()
+        .find_map(|k| ent.fields.get(&k.model_key).map(|v| (k, v)))
+        .or_else(|| keys().find_map(|k| defs.default(&k.model_key).map(|v| (k, v))));
+    let mut codes = Vec::new();
+    if let Some((k, v)) = value {
+        let fail = |m: String| transform_encode_err(p, k, Error { msg: m });
+        let text = match p.to_wire(k, v).map_err(|e| transform_encode_err(p, k, e))? {
+            Value::Str(s) => s,
+            other => return Err(fail(format!("chars encodes text, got {:?}", other))),
+        };
+        let max = (2040 / w) as usize;
+        for ch in text.chars() {
+            // NUL is a character with code 0 unless it is the terminator (ruling 6)
+            let code = match (ch, set) {
+                ('\0', CharSet::Ascii7 | CharSet::Ascii8) => Some(0),
+                _ => set.code_of(ch),
+            };
+            match code {
+                Some(c) if c == term => return Err(fail(format!("character {:?} is the terminator, code {}", ch, c))),
+                Some(c) => codes.push(c),
+                None => return Err(fail(format!("character {:?} is not in the character set {:?}", ch, set))),
+            }
+        }
+        if codes.len() > max {
+            return Err(fail(format!("text is {} characters, more than the {} before a terminator", codes.len(), max)));
+        }
+    }
+    codes.push(term);
+    Ok((codes, w))
+}
+
 /// What decode reads from the bits of one `field` line: a sentinel gives no
 /// key a value; otherwise every key of the line takes the value.
 fn read_back(p: &Pack, f: &FieldDef, len: u32, also: &[FieldDef], buf: &[u8], at: u64, back: &mut Decoded) {
@@ -2322,7 +2438,7 @@ impl<'a> Writer<'a> {
     pub(crate) fn put(&mut self, len: u32, v: u64) {
         let at = self.pos;
         self.zeros(len as u64);
-        set_bits(&mut self.buf, at, len, v, self.p.msb);
+        set_bits(&mut self.buf, at, len, v, self.p.order);
     }
     pub(crate) fn fail(&self, what: impl AsRef<str>) -> Error {
         Error { msg: format!("transform-encode: format `{}`: {}", self.p.format, what.as_ref()) }
@@ -2356,6 +2472,21 @@ fn encode_lines(lines: &[SeqLine], tail: &[SeqLine], ent: &Entity, defs: Default
     let p = w.p;
     for (i, line) in lines.iter().enumerate() {
         match line {
+            SeqLine::Field { f, also, .. } if f.until.is_some() => {
+                let at = w.pos;
+                let (codes, width) = until_codes(p, f, also, ent, defs)?;
+                w.zeros(codes.len() as u64 * width as u64);
+                for (i, c) in codes.iter().enumerate() {
+                    set_bits(&mut w.buf, at + i as u64 * width as u64, width, *c as u64, p.order);
+                }
+                if let Ok((_, v)) = read_until(p, f, &w.buf, at, w.buf.len() as u64 * 8) {
+                    let back = w.back.last_mut().expect("a scope");
+                    for a in also {
+                        back.put(p, a, v.clone());
+                    }
+                    back.put(p, f, v);
+                }
+            }
             SeqLine::Field { f, len, also, uper } => {
                 // the earliest of the field's keys that the entity holds; when
                 // it holds none, the default of the earliest key that has one
@@ -2448,7 +2579,7 @@ fn encode_lines(lines: &[SeqLine], tail: &[SeqLine], ent: &Entity, defs: Default
                 if stated < 0 || (*len < 64 && stated >> *len != 0) {
                     return Err(w.fail(format!("a length of {} does not fit its {} bits", stated, len)));
                 }
-                set_bits(&mut w.buf, at, *len, stated as u64, p.msb);
+                set_bits(&mut w.buf, at, *len, stated as u64, p.order);
             }
             SeqLine::Whole { len, plus } => {
                 w.wholes.push((w.pos, *len, *plus));
@@ -2554,7 +2685,7 @@ fn encode_lines(lines: &[SeqLine], tail: &[SeqLine], ent: &Entity, defs: Default
                         if v < 0 || (len < 64 && v >> len != 0) || v > u64::MAX as i128 {
                             return Err(w.fail(format!("list `{}`: a count of {} does not fit its {} bits", g.list, v, len)));
                         }
-                        set_bits(&mut w.buf, at, len, v as u64, p.msb);
+                        set_bits(&mut w.buf, at, len, v as u64, p.order);
                     }
                     Rep::Last => {
                         if n == 0 {
@@ -2653,7 +2784,7 @@ pub fn encode_bits(p: &Pack, body: &SeqBody, ent: &Entity) -> Result<(Vec<u8>, u
             if plus < 0 || (len < 64 && (plus as u64) >> len != 0) {
                 return Err(w.fail(format!("an absent list writes a count of {}, which does not fit its {} bits", plus, len)));
             }
-            set_bits(&mut w.buf, at, len, plus as u64, p.msb);
+            set_bits(&mut w.buf, at, len, plus as u64, p.order);
         }
     }
     // an encoding of no bits is one octet `00` (engine-spec v0.19, X.691 10.1.3)
@@ -2667,7 +2798,7 @@ pub fn encode_bits(p: &Pack, body: &SeqBody, ent: &Entity) -> Result<(Vec<u8>, u
         if stated < 0 || (len < 64 && stated >> len != 0) {
             return Err(w.fail(format!("a message length of {} does not fit its {} bits", stated, len)));
         }
-        set_bits(&mut w.buf, at, len, stated as u64, p.msb);
+        set_bits(&mut w.buf, at, len, stated as u64, p.order);
     }
     Ok((w.buf, w.pos))
 }

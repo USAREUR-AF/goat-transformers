@@ -634,6 +634,8 @@ def bits_len_allowed(name, length):
         return 8 <= length <= 2040 and length % 8 == 0
     if name == "sixbit":
         return 6 <= length <= 1530 and length % 6 == 0
+    if name == "hex":  # 0.22
+        return 4 <= length <= 2040 and length % 4 == 0
     if v15_family(name) is not None:
         return v15_len_allowed(name, length)
     return 1 <= length <= 64
@@ -707,6 +709,8 @@ def build_bits_transform(name, length):
         return AsciiT(name, length)
     if name == "sixbit":
         return SixbitT(name, length)
+    if name == "hex":  # 0.22
+        return HexT(name, length)
     if name.startswith(("uscale:", "sscale:")):
         return _build_scale(name, length)
     if name.startswith("linscale:"):
@@ -726,7 +730,7 @@ TRANSFORM_WIRES = {
     "uint": ("bits", "tlv"), "twos": ("bits", "tlv"), "linscale": ("bits",), "uscale": ("bits", "tlv"),
     "sscale": ("bits", "tlv"), "f32": ("bits", "tlv"), "f64": ("bits", "tlv"), "ascii": ("bits",),
     "sixbit": ("bits",),  # 0.14
-    "utf8": ("tlv",), "hex": ("tlv",),  # 0.13
+    "utf8": ("tlv",), "hex": ("tlv", "bits"),  # 0.13; `hex` on `bits` from 0.22
     "pstring": ("protobuf",), "pvarint": ("protobuf",), "psint": ("protobuf",), "pdouble": ("protobuf",),
     "pfloat": ("protobuf",),
     "dec": ("text",), "dm": ("text",), "hms": ("text",), "hms_dmy": ("text",),
@@ -1254,7 +1258,19 @@ _CHARSETS = {
     "icao6": (6, 32, " ", _icao6_char, _icao6_code),
     "ais6": (6, 0, "@", lambda c: chr(c + 64) if c < 32 else chr(c), _ais6_code),
     "ascii7": (7, 0, "\x00", lambda c: "\x00" if c == 0 else chr(c) if 32 <= c <= 126 else None, _ascii7_code),
+    # 0.22: 8 bits, code 0 NUL, 32-126 themselves, padding NUL
+    "ascii8": (8, 0, "\x00", lambda c: "\x00" if c == 0 else chr(c) if 32 <= c <= 126 else None, _ascii7_code),
 }
+_NUL_SETS = ("ascii7", "ascii8")  # the sets whose code 0 is NUL
+
+
+def _code_of(charset, ch, terminated):
+    """The code of character `ch` in `charset`, or None. With a terminator
+    other than 0 (`stop`, `until:`, 0.22 rulings 6, 20, 21) NUL is an
+    ordinary character of the NUL sets."""
+    if terminated and ch == "\x00" and charset in _NUL_SETS:
+        return 0
+    return _CHARSETS[charset][4](ch)
 
 
 class CharsT(BitsTransform):
@@ -1272,6 +1288,7 @@ class CharsT(BitsTransform):
         self.width, self.pad_code, self.pad_char, self.to_char, self.to_code = _CHARSETS[charset]
         self.count = length // self.width
         self.msb = False
+        self.stop = None  # the code of the field option `stop` (0.22)
 
     def _shift(self, i):
         return self.length - (i + 1) * self.width if self.msb else i * self.width
@@ -1279,15 +1296,19 @@ class CharsT(BitsTransform):
     def decode(self, bits):
         w = self.width
         m = (1 << w) - 1
+        codes = [(bits >> self._shift(i)) & m for i in range(self.count)]
+        if self.stop is not None and self.stop in codes:
+            # 0.22: the text is exactly the characters before the first
+            # terminator (rulings 9 and 18); the rest of the field is ignored
+            return chars_text(self.name, self.charset, codes[:codes.index(self.stop)], self.stop != 0)
         chars = []
-        for i in range(self.count):
-            c = (bits >> self._shift(i)) & m
+        for c in codes:
             ch = self.to_char(c)
             if ch is None:
                 raise ValueError("%s: code %d is not a character of the set" % (self.name, c))
             chars.append(ch)
         text = "".join(chars)
-        if self.charset == "ascii7":
+        if self.charset in _NUL_SETS:
             body = text.rstrip("\x00")
             if "\x00" in body:
                 raise ValueError("%s: a NUL is followed by a character that is not NUL" % self.name)
@@ -1297,17 +1318,125 @@ class CharsT(BitsTransform):
     def encode(self, value):
         if not isinstance(value, str):
             raise ValueError("%s needs a str, got %s" % (self.name, type(value).__name__))
-        if len(value) > self.count:
-            raise ValueError("%s: text of %d character(s) does not fit %d" % (self.name, len(value), self.count))
+        stop = self.stop
+        if stop is not None:  # 0.22: the text, the terminator, then padding
+            if len(value) + 1 > self.count:
+                raise ValueError("%s: text of %d character(s) leaves no room for the terminator in %d"
+                                 % (self.name, len(value), self.count))
+            codes = chars_codes(self.name, self.charset, value, stop)
+            codes.append(stop)
+        else:
+            if len(value) > self.count:
+                raise ValueError("%s: text of %d character(s) does not fit %d" % (self.name, len(value), self.count))
+            codes = []
+            for ch in value:
+                c = self.to_code(ch)
+                if c is None:
+                    raise ValueError("%s: character %r is not in the set" % (self.name, ch))
+                codes.append(c)
         out = 0
         for i in range(self.count):
-            if i < len(value):
-                c = self.to_code(value[i])
-                if c is None:
-                    raise ValueError("%s: character %r is not in the set" % (self.name, value[i]))
-            else:
-                c = self.pad_code
+            c = codes[i] if i < len(codes) else self.pad_code
             out |= c << self._shift(i)
+        return out
+
+
+def chars_text(name, charset, codes, terminated):
+    """The exact text of `codes` in `charset`, nothing removed (0.22). With a
+    terminator other than 0, NUL is an ordinary character (rulings 6, 20, 21)."""
+    to_char = _CHARSETS[charset][3]
+    out = []
+    for c in codes:
+        if c == 0 and charset in _NUL_SETS:
+            if not terminated:
+                raise ValueError("%s: NUL inside the text" % name)
+            out.append("\x00")
+            continue
+        ch = to_char(c)
+        if ch is None:
+            raise ValueError("%s: code %d is not a character of the set" % (name, c))
+        out.append(ch)
+    return "".join(out)
+
+
+def chars_codes(name, charset, value, terminator):
+    """The codes of text `value` before a terminator (0.22): a character the
+    set cannot hold, or one whose code is the terminator, is an error."""
+    codes = []
+    for ch in value:
+        c = _code_of(charset, ch, terminator != 0)
+        if c is None:
+            raise ValueError("%s: character %r is not in the set" % (name, ch))
+        if c == terminator:
+            raise ValueError("%s: character %r is the terminator" % (name, ch))
+        codes.append(c)
+    return codes
+
+
+class UntilCharsT(Transform):
+    """`until:<code> chars:<set>` (0.22, sequential layouts): characters of the
+    set up to a terminator. The raw value is the list of codes before the
+    terminator; the wire reads and writes the codes and the terminator."""
+
+    kind = "bits"
+    yields = "string"
+
+    def __init__(self, name, charset, code):
+        self.name = name
+        self.charset = charset
+        self.code = code
+        self.width = _CHARSETS[charset][0]
+        self.most = 2040 // self.width  # ruling 8
+
+    def decode(self, codes):
+        return chars_text(self.name, self.charset, codes, self.code != 0)
+
+    def encode(self, value):
+        if not isinstance(value, str):
+            raise ValueError("%s needs a str, got %s" % (self.name, type(value).__name__))
+        if len(value) > self.most:
+            raise ValueError("%s: text of %d character(s) is more than %d" % (self.name, len(value), self.most))
+        return tuple(chars_codes(self.name, self.charset, value, self.code))
+
+
+def terminator_code(text, charset):
+    """A terminator code of `until:` or `stop` (0.22 ruling 23): plain decimal
+    digits below `2^w`. Raises ValueError."""
+    if not (text.isascii() and text.isdigit()):
+        raise ValueError("a terminator code is an unsigned decimal integer, got %r" % text)
+    n = int(text)
+    w = _CHARSETS[charset][0]
+    if n >= (1 << w):
+        raise ValueError("terminator code %d does not fit %d bit(s)" % (n, w))
+    return n
+
+
+class HexT(BitsTransform):
+    """`hex` on `bits` (0.22): `len / 4` lowercase hex digits; digit `k` is the
+    4-bit field at bit `4k` of the field, as `uint` reads it there."""
+
+    yields = "string"
+    bit_ordered = True
+
+    def __init__(self, name, length):
+        super().__init__(name, length)
+        self.count = length // 4
+        self.msb = False
+
+    def _shift(self, i):
+        return self.length - (i + 1) * 4 if self.msb else i * 4
+
+    def decode(self, bits):
+        return "".join("%x" % ((bits >> self._shift(i)) & 15) for i in range(self.count))
+
+    def encode(self, value):
+        if not isinstance(value, str):
+            raise ValueError("hex needs a str, got %s" % type(value).__name__)
+        if len(value) != self.count or any(c not in "0123456789abcdefABCDEF" for c in value):
+            raise ValueError("hex: %r is not %d hexadecimal digit(s)" % (value[:40], self.count))
+        out = 0
+        for i, c in enumerate(value):
+            out |= int(c, 16) << self._shift(i)
         return out
 
 

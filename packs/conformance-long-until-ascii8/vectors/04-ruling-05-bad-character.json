@@ -1,0 +1,9 @@
+{
+  "name": "ruling-05-bad-character",
+  "from": "conformance-long-until-ascii8",
+  "to": "conformance-long-until-ascii8",
+  "input": "41ff0000",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.22, ascii8: every other code is transform-decode; ruling 5: tag still decodes"
+}

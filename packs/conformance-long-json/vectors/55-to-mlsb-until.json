@@ -1,0 +1,9 @@
+{
+  "name": "to-mlsb-until",
+  "from": "conformance-long-json",
+  "to": "conformance-long-mlsb-until",
+  "input": "{\"label\":\"C\"}",
+  "expect": "c380",
+  "source": "constructed",
+  "reference": "spec 0.22, A bit order with high-bit-first positions and low-bit-first values; C, then the code 3"
+}

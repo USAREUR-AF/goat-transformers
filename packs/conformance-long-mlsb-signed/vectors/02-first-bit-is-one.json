@@ -1,0 +1,13 @@
+{
+  "name": "first-bit-is-one",
+  "from": "conformance-long-mlsb-signed",
+  "to": "conformance-long-json",
+  "input": "8080",
+  "expect": "{\"z\":1,\"w\":1}",
+  "model": {
+    "probe.z": "1",
+    "probe.w": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 3: under msb-lsb the sign of twos and smag is the last bit read; 80 is the value 1"
+}

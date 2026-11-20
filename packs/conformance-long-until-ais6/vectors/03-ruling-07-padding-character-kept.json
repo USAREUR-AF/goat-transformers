@@ -1,0 +1,12 @@
+{
+  "name": "ruling-07-padding-character-kept",
+  "from": "conformance-long-until-ais6",
+  "to": "conformance-long-json",
+  "input": "040fc0",
+  "expect": "{\"label\":\"A@\"}",
+  "model": {
+    "probe.label": "A@"
+  },
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 7: the padding @ is not removed (the field has no fixed length to pad)"
+}

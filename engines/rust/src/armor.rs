@@ -124,7 +124,7 @@ pub(crate) fn read(p: &Pack, text: &str) -> Result<(Vec<u8>, u64), Error> {
                 ))
             }
         };
-        set_bits(&mut raw, at as u64 * 6, 6, v as u64, true);
+        set_bits(&mut raw, at as u64 * 6, 6, v as u64, BitOrder::Msb);
     }
     Ok((raw, total))
 }
@@ -139,7 +139,7 @@ pub(crate) fn write(msg: &[u8], l: u64) -> String {
         for b in 0..6 {
             let i = k * 6 + b;
             v <<= 1;
-            if i < l && get_bits(msg, i, 1, true) == Some(1) {
+            if i < l && get_bits(msg, i, 1, BitOrder::Msb) == Some(1) {
                 v |= 1;
             }
         }
@@ -189,7 +189,7 @@ pub(crate) fn sixbit_len_ok(len: u64) -> bool {
 pub(crate) fn read_sixbit(p: &Pack, f: &FieldDef, raw: &[u8], start: u64, len: u32) -> Result<Value, Error> {
     let mut s: Vec<u8> = (0..len as u64 / 6)
         .map(|k| {
-            let v = get_bits(raw, start + k * 6, 6, p.msb).unwrap_or(0) as u8;
+            let v = get_bits(raw, start + k * 6, 6, p.order).unwrap_or(0) as u8;
             if v < 32 {
                 0x40 + v
             } else {
@@ -222,7 +222,7 @@ pub(crate) fn write_sixbit(p: &Pack, f: &FieldDef, v: &Value, start: u64, len: u
     for k in 0..room {
         let c = text.get(k).copied().unwrap_or(b'@');
         let v = if c >= 0x40 { c - 0x40 } else { c };
-        set_bits(msg, start + k as u64 * 6, 6, v as u64, p.msb);
+        set_bits(msg, start + k as u64 * 6, 6, v as u64, p.order);
     }
     Ok(())
 }

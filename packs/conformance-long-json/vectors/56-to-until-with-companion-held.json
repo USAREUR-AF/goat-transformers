@@ -1,0 +1,9 @@
+{
+  "name": "to-until-with-companion-held",
+  "from": "conformance-long-json",
+  "to": "conformance-long-until-with",
+  "input": "{\"s1\":\"AB\",\"x\":1,\"y\":9}",
+  "expect": "41420009",
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 25: a suppressed until: line writes the terminator alone, as an absent key does; x held: the characters, then the terminator (0.22)"
+}

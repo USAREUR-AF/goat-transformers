@@ -1,0 +1,9 @@
+{
+  "name": "to-hex-wide-absent-writes-zero-bits",
+  "from": "conformance-long-json",
+  "to": "conformance-long-hex-wide",
+  "input": "{\"x\":7}",
+  "expect": "07000000000000000000",
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 1 and Fields longer than 64 bits; an absent key writes zero bits (0.2: bits covered by no written field are zero)"
+}

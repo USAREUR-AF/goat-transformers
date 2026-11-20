@@ -1,0 +1,9 @@
+{
+  "name": "ruling-21-round-trip",
+  "from": "conformance-long-stop-semicolon",
+  "to": "conformance-long-stop-semicolon",
+  "input": "4100423b7a7a",
+  "expect": "4100423b0000",
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 21: with a terminator other than 0, NUL in a stop field is an ordinary character; the bytes after ; are ignored; encode pads with NUL"
+}

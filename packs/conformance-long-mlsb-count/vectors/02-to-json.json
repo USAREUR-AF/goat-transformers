@@ -1,0 +1,9 @@
+{
+  "name": "to-json",
+  "from": "conformance-long-mlsb-count",
+  "to": "conformance-long-json",
+  "input": "4ca06088",
+  "expect": "{\"x\":3,\"nums\":[5,6],\"recs\":[{\"y\":1}]}",
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 2"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "1052-long-until-code-negative",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey label string -\nkey tag string -\nkey x int -\nkey y int -\nlist names \"a list\"\n"
+  ],
+  "pack": "format probe\nversion 0.22.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nlayout sequential\nfield probe.label until:-1 chars:ascii8\n",
+  "expect_error": "bad-directive"
+}

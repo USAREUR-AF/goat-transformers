@@ -1,0 +1,9 @@
+{
+  "name": "round-trip",
+  "from": "conformance-long-mlsb-float",
+  "to": "conformance-long-mlsb-float",
+  "input": "000001fc",
+  "expect": "000001fc",
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 3"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "to-swap-offset",
+  "from": "conformance-long-json",
+  "to": "conformance-long-swap-offset",
+  "input": "{\"x\":1}",
+  "expect": "001000",
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 13: swap reverses 8-bit chunks of the field taken from its first bit; for a field that is not aligned the chunks are not its bytes"
+}

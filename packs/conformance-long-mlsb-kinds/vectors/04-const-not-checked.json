@@ -1,0 +1,12 @@
+{
+  "name": "const-not-checked",
+  "from": "conformance-long-mlsb-kinds",
+  "to": "conformance-long-mlsb-kinds",
+  "input": "08c0",
+  "expect": "88c0",
+  "model": {
+    "@kind": "a"
+  },
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 2: when and const read and write in the pack's bit order; a const is not checked on decode and is written as 1000 (0.6)"
+}
