@@ -1,0 +1,15 @@
+{
+  "name": "ciphertext-16-bit-sequence-no-length-roundtrip",
+  "from": "dtls-record-header",
+  "to": "dtls-record-header",
+  "input": "28ffff",
+  "expect": "28ffff",
+  "model": {
+    "@kind": "ciphertext",
+    "inet.dtls_seq_16bit": "1",
+    "inet.dtls_length_present": "0",
+    "inet.dtls_epoch_low": "0",
+    "inet.dtls_seq_low": "65535"
+  },
+  "source": "built by tools/gen/ietf-headers-4-vectors.py from values chosen there; S 1 and L 0: 16-bit sequence 0xffff, no length"
+}

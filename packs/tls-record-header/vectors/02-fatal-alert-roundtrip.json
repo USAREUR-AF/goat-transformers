@@ -1,0 +1,16 @@
+{
+  "name": "fatal-alert-roundtrip",
+  "from": "tls-record-header",
+  "to": "tls-record-header",
+  "input": "15030300020228",
+  "expect": "15030300020228",
+  "model": {
+    "@kind": "alert",
+    "inet.tls_content_type": "21",
+    "inet.tls_legacy_version": "771",
+    "inet.tls_record_length": "2",
+    "inet.tls_alert_level": "2",
+    "inet.tls_alert_description": "40"
+  },
+  "source": "built by tools/gen/ietf-headers-4-vectors.py from values chosen there; a plaintext alert record: level 2 (fatal), description 40 (handshake_failure)"
+}

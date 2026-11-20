@@ -1,0 +1,8 @@
+{
+  "name": "plaintext-of-12-octets-is-malformed",
+  "from": "dtls-record-header",
+  "to": "dtls-record-header",
+  "input": "16fefd000000000000000500",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/ietf-headers-4-vectors.py from values chosen there; the plaintext handshake header cut to 12 octets"
+}

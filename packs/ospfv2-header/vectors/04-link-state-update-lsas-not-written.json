@@ -1,0 +1,20 @@
+{
+  "name": "link-state-update-lsas-not-written",
+  "from": "ospfv2-header",
+  "to": "ospfv2-header",
+  "input": "02040030c0000201000000003bc900000000000000000000000000010000000000000000000000000000000000000000",
+  "expect": "02040030c0000201000000003bc90000000000000000000000000001",
+  "model": {
+    "@kind": "link-state-update",
+    "inet.ospf_version": "2",
+    "inet.ospf_packet_length": "48",
+    "inet.ospf_router_id": "3221225985",
+    "inet.ospf_area_id": "0",
+    "inet.ospf_checksum": "15305",
+    "inet.ospf_autype": "0",
+    "inet.ospf_auth_hi": "0",
+    "inet.ospf_auth_lo": "0",
+    "inet.ospf_lsa_count": "1"
+  },
+  "source": "built by tools/gen/ietf-headers-4-vectors.py from values chosen there; a Link State Update announcing 1 LSA, 20 octets read over"
+}

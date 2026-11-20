@@ -1,0 +1,14 @@
+{
+  "name": "header-largest-values-roundtrip",
+  "from": "tls-record-header",
+  "to": "tls-record-header",
+  "input": "ffffffffff",
+  "expect": "ffffffffff",
+  "model": {
+    "@kind": "other",
+    "inet.tls_content_type": "255",
+    "inet.tls_legacy_version": "65535",
+    "inet.tls_record_length": "65535"
+  },
+  "source": "built by tools/gen/ietf-headers-4-vectors.py from values chosen there; content type 255, legacy version 0xffff and length 65535: the pack checks neither the version nor the 2^14 limit"
+}

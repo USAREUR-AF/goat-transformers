@@ -1,0 +1,8 @@
+{
+  "name": "three-octets-is-malformed",
+  "from": "ripv2-header",
+  "to": "ripv2-header",
+  "input": "010200",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/ietf-headers-4-vectors.py from values chosen there; the request header cut to 3 octets"
+}

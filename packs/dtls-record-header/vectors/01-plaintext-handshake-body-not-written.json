@@ -1,0 +1,16 @@
+{
+  "name": "plaintext-handshake-body-not-written",
+  "from": "dtls-record-header",
+  "to": "dtls-record-header",
+  "input": "16fefd0000000000000005006400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "expect": "16fefd00000000000000050064",
+  "model": {
+    "@kind": "plaintext",
+    "inet.tls_content_type": "22",
+    "inet.tls_legacy_version": "65277",
+    "inet.dtls_epoch": "0",
+    "inet.dtls_sequence": "5",
+    "inet.tls_record_length": "100"
+  },
+  "source": "built by tools/gen/ietf-headers-4-vectors.py from values chosen there; a plaintext handshake record, version {254, 253}, epoch 0, sequence 5, 100 octets of body read over"
+}

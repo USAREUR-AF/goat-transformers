@@ -1,0 +1,21 @@
+{
+  "name": "one-critical-option-as-words-roundtrip",
+  "from": "geneve-header",
+  "to": "geneve-header",
+  "input": "024008000000070001028001c0ffee00",
+  "expect": "024008000000070001028001c0ffee00",
+  "model": {
+    "inet.geneve_version": "0",
+    "inet.geneve_opt_len": "2",
+    "inet.geneve_control": "0",
+    "inet.geneve_critical": "1",
+    "inet.geneve_reserved1": "0",
+    "inet.geneve_protocol_type": "2048",
+    "inet.geneve_vni": "7",
+    "inet.geneve_reserved2": "0",
+    "inet.geneve_option_words.#": "2",
+    "inet.geneve_option_words[0].inet.geneve_option_word": "16941057",
+    "inet.geneve_option_words[1].inet.geneve_option_word": "3237998080"
+  },
+  "source": "built by tools/gen/ietf-headers-4-vectors.py from values chosen there; C set and one option of class 0x0102, type 0x80 (critical) with 4 octets of data: option length 2, carried as two raw words"
+}

@@ -1,0 +1,8 @@
+{
+  "name": "three-octets-is-malformed",
+  "from": "coap-header",
+  "to": "coap-header",
+  "input": "44017d",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/ietf-headers-4-vectors.py from values chosen there; the GET cut to 3 octets"
+}

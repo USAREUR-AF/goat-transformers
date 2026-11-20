@@ -1,0 +1,16 @@
+{
+  "name": "plaintext-ack-largest-values-roundtrip",
+  "from": "dtls-record-header",
+  "to": "dtls-record-header",
+  "input": "1afefdffffffffffffffffffff",
+  "expect": "1afefdffffffffffffffffffff",
+  "model": {
+    "@kind": "plaintext",
+    "inet.tls_content_type": "26",
+    "inet.tls_legacy_version": "65277",
+    "inet.dtls_epoch": "65535",
+    "inet.dtls_sequence": "281474976710655",
+    "inet.tls_record_length": "65535"
+  },
+  "source": "built by tools/gen/ietf-headers-4-vectors.py from values chosen there; a plaintext record of content type 26 (ack) with the largest epoch, 48-bit sequence number and length"
+}

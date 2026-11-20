@@ -1,14 +1,15 @@
 # The inet module: the fixed header fields of IETF protocols (IPv4, IPv6, UDP,
 # TCP, ICMP, NTP, the DNS message header; RTP and RTCP, ARP, GRE, VXLAN, the
 # MPLS label stack entry, IGMPv2 and IGMPv3, ICMPv6, the SCTP common header,
-# BFD), as the wire
+# BFD; CoAP, the TLS and DTLS record headers, BGP-4, OSPFv2, VRRPv3, RIPv2,
+# Geneve), as the wire
 # integer unless the description says otherwise. A flag is 0 or 1. Keys of one protocol carry its
 # name; the three keys without a protocol name hold the same quantity in more than
 # one header (pack.md of each pack gives the evidence).
 module        inet
-version       0.3.0
+version       0.4.0
 distribution  public
-source        "IETF RFC 791, RFC 8200, RFC 768, RFC 9293, RFC 792, RFC 5905, RFC 1035, RFC 3550, RFC 826, RFC 894, RFC 2784, RFC 2890, RFC 7348, RFC 3032, RFC 5462, RFC 2236, RFC 9260, RFC 5880, RFC 3376, RFC 4443 and RFC 4861, https://www.rfc-editor.org/, IETF Trust (BCP 78); layouts restated"
+source        "IETF RFC 791, RFC 8200, RFC 768, RFC 9293, RFC 792, RFC 5905, RFC 1035, RFC 3550, RFC 826, RFC 894, RFC 2784, RFC 2890, RFC 7348, RFC 3032, RFC 5462, RFC 2236, RFC 9260, RFC 5880, RFC 3376, RFC 4443, RFC 4861, RFC 7252, RFC 8446, RFC 9147, RFC 4271, RFC 2328, RFC 9568, RFC 2453 and RFC 8926, https://www.rfc-editor.org/, IETF Trust (BCP 78); layouts restated"
 
 # Shared between headers
 key  src_port                  int     -     "transport port of the sending process, 0-65535 (UDP, TCP and SCTP)"
@@ -258,3 +259,103 @@ key  icmpv6_ra_reserved        int     -     "router advertisement: the 6 bits a
 key  icmpv6_ra_router_lifetime int     s     "router advertisement: lifetime as a default router, seconds; 0 = not a default router"
 key  icmpv6_ra_reachable_time  int     ms    "router advertisement: time a neighbor is taken as reachable after a confirmation, milliseconds; 0 = not set"
 key  icmpv6_ra_retrans_timer   int     ms    "router advertisement: time between retransmitted neighbor solicitations, milliseconds; 0 = not set"
+
+# CoAP, RFC 7252 section 3
+key  coap_version              int     -     "CoAP version, 1"
+key  coap_type                 int     -     "message type (0 confirmable, 1 non-confirmable, 2 acknowledgement, 3 reset)"
+key  coap_token_length         int     -     "token length in octets, 0-8 (9-15 reserved)"
+key  coap_code_class           int     -     "code class, the high 3 bits of the code (0 request, 2 success, 4 client error, 5 server error)"
+key  coap_code_detail          int     -     "code detail, the low 5 bits of the code"
+key  coap_message_id           int     -     "message ID, to detect duplicates and match acknowledgements and resets"
+list coap_token                        "the token octets, counted by the token length; each item holds inet.coap_token_octet"
+key  coap_token_octet          int     -     "one octet of the token, 0-255"
+
+# TLS record header, RFC 8446 section 5.1, and the DTLS record headers, RFC 9147 section 4
+key  tls_content_type          int     -     "record content type (20 change_cipher_spec, 21 alert, 22 handshake, 23 application_data; DTLS 26 ack)"
+key  tls_legacy_version        int     -     "legacy record version, 16 bits (0x0303 in TLS 1.3, 0xFEFD in DTLS 1.3); ignored by receivers"
+key  tls_record_length         int     -     "length of the record body in octets, after the header"
+key  tls_ccs_value             int     -     "change_cipher_spec record: its one octet, 1"
+key  tls_alert_level           int     -     "plaintext alert record: level (1 warning, 2 fatal)"
+key  tls_alert_description     int     -     "plaintext alert record: alert description code"
+key  tls_handshake_type        int     -     "handshake record: type of the first handshake message (1 client_hello, 2 server_hello, ...)"
+key  tls_handshake_length      int     -     "handshake record: length of the first handshake message body, 24 bits"
+key  dtls_epoch                int     -     "DTLS plaintext record: the low 16 bits of the connection epoch"
+key  dtls_sequence             int     -     "DTLS plaintext record: the low 48 bits of the record sequence number"
+key  dtls_cid_present          int     -     "DTLS unified header: C bit, a connection ID follows the first octet"
+key  dtls_seq_16bit            int     -     "DTLS unified header: S bit, 1 = the sequence number is 16 bits, 0 = 8 bits"
+key  dtls_length_present       int     -     "DTLS unified header: L bit, a 16-bit length follows the sequence number"
+key  dtls_epoch_low            int     -     "DTLS unified header: the low 2 bits of the epoch"
+key  dtls_seq_low              int     -     "DTLS unified header: the low 8 or 16 bits of the record sequence number"
+
+# BGP-4, RFC 4271 section 4
+key  bgp_length                int     -     "total length of the message in octets, header included, 19-4096"
+key  bgp_version               int     -     "OPEN: BGP version, 4"
+key  bgp_my_as                 int     -     "OPEN: autonomous system number of the sender, 16 bits"
+key  bgp_hold_time             int     s     "OPEN: proposed hold time, seconds (0, or at least 3)"
+key  bgp_identifier            int     -     "OPEN: BGP identifier of the sender, a 32-bit IPv4 address as integer"
+key  bgp_opt_param_length      int     -     "OPEN: total length of the optional parameters in octets"
+key  bgp_withdrawn_routes_length int   -     "UPDATE: length of the withdrawn routes field in octets"
+key  bgp_error_code            int     -     "NOTIFICATION: error code"
+key  bgp_error_subcode         int     -     "NOTIFICATION: error subcode"
+
+# OSPFv2, RFC 2328 appendix A.3
+key  ospf_version              int     -     "OSPF version, 2"
+key  ospf_packet_length        int     -     "length of the packet in octets, header included"
+key  ospf_router_id            int     -     "router ID of the source, the 32-bit integer"
+key  ospf_area_id              int     -     "area ID the packet belongs to, the 32-bit integer (0 backbone)"
+key  ospf_checksum             int     -     "ones' complement checksum of the packet, authentication field excluded"
+key  ospf_autype               int     -     "authentication type (0 none, 1 simple password, 2 cryptographic)"
+key  ospf_auth_hi              int     -     "authentication field, first 32 bits"
+key  ospf_auth_lo              int     -     "authentication field, last 32 bits"
+key  ospf_network_mask         int     -     "Hello: network mask of the interface, the 32-bit integer"
+key  ospf_hello_interval       int     s     "Hello: seconds between Hello packets"
+key  ospf_options              int     -     "Hello and Database Description: optional capabilities octet"
+key  ospf_router_priority      int     -     "Hello: router priority, 0 = never designated router"
+key  ospf_router_dead_interval int     s     "Hello: seconds before a silent router is declared down"
+key  ospf_dr                   int     -     "Hello: designated router, the 32-bit integer (0 none)"
+key  ospf_bdr                  int     -     "Hello: backup designated router, the 32-bit integer (0 none)"
+key  ospf_interface_mtu        int     -     "Database Description: largest IP datagram the interface sends unfragmented, octets"
+key  ospf_dd_reserved          int     -     "Database Description: the 5 bits before I, M and MS, 0"
+key  ospf_dd_init              int     -     "Database Description: I bit, the first packet of the sequence"
+key  ospf_dd_more              int     -     "Database Description: M bit, more packets follow"
+key  ospf_dd_master            int     -     "Database Description: MS bit, the sender is the master"
+key  ospf_dd_sequence          int     -     "Database Description: DD sequence number"
+key  ospf_lsa_count            int     -     "Link State Update: number of LSAs in the packet"
+
+# VRRPv3, RFC 9568 section 5
+key  vrrp_version              int     -     "VRRP version, 3"
+key  vrrp_type                 int     -     "packet type, 1 advertisement"
+key  vrrp_vrid                 int     -     "virtual router identifier"
+key  vrrp_priority             int     -     "priority of the sender for the virtual router (255 address owner, 0 the active router stops)"
+key  vrrp_addr_count           int     -     "number of addresses that follow"
+key  vrrp_reserved             int     -     "the 4 reserved bits before the interval, 0"
+key  vrrp_max_adver_int        int     -     "maximum advertisement interval, centiseconds, 12 bits"
+key  vrrp_checksum             int     -     "ones' complement checksum of the VRRP message (with a pseudo header for IPv6)"
+list vrrp_ipv4_addrs                   "the IPv4 addresses of the virtual router, counted by the address count; each item holds inet.vrrp_ipv4_addr"
+key  vrrp_ipv4_addr            int     -     "one IPv4 address, the 32-bit integer"
+list vrrp_ipv6_addrs                   "the IPv6 addresses of the virtual router, counted by the address count; each item holds inet.vrrp_ipv6_g0 to g7"
+key  vrrp_ipv6_g0              int     -     "IPv6 address, 16-bit group 1 of 8 (the first group of the text form)"
+key  vrrp_ipv6_g1              int     -     "IPv6 address, 16-bit group 2 of 8"
+key  vrrp_ipv6_g2              int     -     "IPv6 address, 16-bit group 3 of 8"
+key  vrrp_ipv6_g3              int     -     "IPv6 address, 16-bit group 4 of 8"
+key  vrrp_ipv6_g4              int     -     "IPv6 address, 16-bit group 5 of 8"
+key  vrrp_ipv6_g5              int     -     "IPv6 address, 16-bit group 6 of 8"
+key  vrrp_ipv6_g6              int     -     "IPv6 address, 16-bit group 7 of 8"
+key  vrrp_ipv6_g7              int     -     "IPv6 address, 16-bit group 8 of 8"
+
+# RIPv2, RFC 2453 sections 3.6 and 4
+key  rip_command               int     -     "command (1 request, 2 response)"
+key  rip_version               int     -     "RIP version (1 or 2)"
+key  rip_zero                  int     -     "the 16 bits after the version, 0 (unused)"
+
+# Geneve, RFC 8926 section 3.4
+key  geneve_version            int     -     "Geneve version, 0"
+key  geneve_opt_len            int     -     "length of the options in 4-octet words, 0-63"
+key  geneve_control            int     -     "O bit: the packet carries a control message"
+key  geneve_critical           int     -     "C bit: one or more options are critical"
+key  geneve_reserved1          int     -     "the 6 reserved bits after C, 0"
+key  geneve_protocol_type      int     -     "EtherType of the payload (0x6558 Ethernet)"
+key  geneve_vni                int     -     "virtual network identifier, 24 bits"
+key  geneve_reserved2          int     -     "the 8 reserved bits after the VNI, 0"
+list geneve_option_words               "the options as raw 4-octet words, counted by the option length; each item holds inet.geneve_option_word"
+key  geneve_option_word        int     -     "one 4-octet word of the options, the 32-bit integer"

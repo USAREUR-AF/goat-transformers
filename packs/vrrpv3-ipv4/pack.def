@@ -1,0 +1,27 @@
+# VRRPv3 advertisement for IPv4 (RFC 9568 section 5): the 8-octet fixed part and
+# the counted list of IPv4 addresses. Public.
+#
+# Addressing: word_bytes 1 and bit_order msb; multi-octet fields are big-endian.
+# On encode the address count is written from the number of items, over
+# inet.vrrp_addr_count (ruling 2 of 0.7).
+format        vrrpv3-ipv4
+version       0.1.0
+distribution  public
+source        "IETF RFC 9568, Virtual Router Redundancy Protocol (VRRP) Version 3 for IPv4 and IPv6, April 2024, section 5, https://www.rfc-editor.org/rfc/rfc9568.txt; layout restated"
+uses          inet
+wire          bits
+word_bytes    1
+bit_order     msb
+
+field  inet.vrrp_version            0:0:4      uint
+field  inet.vrrp_type               0:4:4      uint
+field  inet.vrrp_vrid               0:8:8      uint
+field  inet.vrrp_priority           0:16:8     uint
+field  inet.vrrp_addr_count         0:24:8     uint
+field  inet.vrrp_reserved           0:32:4     uint
+field  inet.vrrp_max_adver_int      0:36:12    uint
+field  inet.vrrp_checksum           0:48:16    uint
+
+group  inet.vrrp_ipv4_addrs  0:64  item 32  count 0:24:8
+  field  inet.vrrp_ipv4_addr        0:0:32     uint
+end

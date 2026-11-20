@@ -1,0 +1,8 @@
+{
+  "name": "four-octets-is-malformed",
+  "from": "tls-record-header",
+  "to": "tls-record-header",
+  "input": "17030300",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/ietf-headers-4-vectors.py from values chosen there; the application_data header cut to 4 octets"
+}

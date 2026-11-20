@@ -1,0 +1,21 @@
+{
+  "name": "piggybacked-content-response-roundtrip",
+  "from": "coap-header",
+  "to": "coap-header",
+  "input": "64457d3471625344",
+  "expect": "64457d3471625344",
+  "model": {
+    "inet.coap_version": "1",
+    "inet.coap_type": "2",
+    "inet.coap_token_length": "4",
+    "inet.coap_code_class": "2",
+    "inet.coap_code_detail": "5",
+    "inet.coap_message_id": "32052",
+    "inet.coap_token.#": "4",
+    "inet.coap_token[0].inet.coap_token_octet": "113",
+    "inet.coap_token[1].inet.coap_token_octet": "98",
+    "inet.coap_token[2].inet.coap_token_octet": "83",
+    "inet.coap_token[3].inet.coap_token_octet": "68"
+  },
+  "source": "built by tools/gen/ietf-headers-4-vectors.py from values chosen there; an acknowledgement carrying the response 2.05 Content with the request's token"
+}

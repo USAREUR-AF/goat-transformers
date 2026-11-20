@@ -1,0 +1,13 @@
+{
+  "name": "version-1-response-roundtrip",
+  "from": "ripv2-header",
+  "to": "ripv2-header",
+  "input": "02010000",
+  "expect": "02010000",
+  "model": {
+    "inet.rip_command": "2",
+    "inet.rip_version": "1",
+    "inet.rip_zero": "0"
+  },
+  "source": "built by tools/gen/ietf-headers-4-vectors.py from values chosen there; a version 1 response header"
+}

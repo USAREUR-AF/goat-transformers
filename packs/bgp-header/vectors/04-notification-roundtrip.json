@@ -1,0 +1,14 @@
+{
+  "name": "notification-roundtrip",
+  "from": "bgp-header",
+  "to": "bgp-header",
+  "input": "ffffffffffffffffffffffffffffffff0015030602",
+  "expect": "ffffffffffffffffffffffffffffffff0015030602",
+  "model": {
+    "@kind": "notification",
+    "inet.bgp_length": "21",
+    "inet.bgp_error_code": "6",
+    "inet.bgp_error_subcode": "2"
+  },
+  "source": "built by tools/gen/ietf-headers-4-vectors.py from values chosen there; a NOTIFICATION, error code 6 (Cease) with subcode 2, no data"
+}

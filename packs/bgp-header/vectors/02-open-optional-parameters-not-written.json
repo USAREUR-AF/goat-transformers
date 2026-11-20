@@ -1,0 +1,17 @@
+{
+  "name": "open-optional-parameters-not-written",
+  "from": "bgp-header",
+  "to": "bgp-header",
+  "input": "ffffffffffffffffffffffffffffffff00250104fbf00000c0000201080206010400010001",
+  "expect": "ffffffffffffffffffffffffffffffff00250104fbf00000c000020108",
+  "model": {
+    "@kind": "open",
+    "inet.bgp_length": "37",
+    "inet.bgp_version": "4",
+    "inet.bgp_my_as": "64496",
+    "inet.bgp_hold_time": "0",
+    "inet.bgp_identifier": "3221225985",
+    "inet.bgp_opt_param_length": "8"
+  },
+  "source": "built by tools/gen/ietf-headers-4-vectors.py from values chosen there; an OPEN with hold time 0 and an 8-octet optional parameter (a capabilities parameter), read over; the length 37 and parameter length 8 are kept"
+}

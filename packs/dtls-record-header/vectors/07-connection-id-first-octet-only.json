@@ -1,0 +1,15 @@
+{
+  "name": "connection-id-first-octet-only",
+  "from": "dtls-record-header",
+  "to": "dtls-record-header",
+  "input": "3fabcd00070010",
+  "expect": "3f",
+  "model": {
+    "@kind": "ciphertext-with-cid",
+    "inet.dtls_cid_present": "1",
+    "inet.dtls_seq_16bit": "1",
+    "inet.dtls_length_present": "1",
+    "inet.dtls_epoch_low": "3"
+  },
+  "source": "built by tools/gen/ietf-headers-4-vectors.py from values chosen there; a unified header with C set, followed by a 2-octet connection ID, sequence and length: the CID length is not on the wire, so only the first octet is read"
+}

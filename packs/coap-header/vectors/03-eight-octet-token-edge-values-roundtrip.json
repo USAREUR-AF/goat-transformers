@@ -1,0 +1,25 @@
+{
+  "name": "eight-octet-token-edge-values-roundtrip",
+  "from": "coap-header",
+  "to": "coap-header",
+  "input": "78ffffffffffffffffffffff",
+  "expect": "78ffffffffffffffffffffff",
+  "model": {
+    "inet.coap_version": "1",
+    "inet.coap_type": "3",
+    "inet.coap_token_length": "8",
+    "inet.coap_code_class": "7",
+    "inet.coap_code_detail": "31",
+    "inet.coap_message_id": "65535",
+    "inet.coap_token.#": "8",
+    "inet.coap_token[0].inet.coap_token_octet": "255",
+    "inet.coap_token[1].inet.coap_token_octet": "255",
+    "inet.coap_token[2].inet.coap_token_octet": "255",
+    "inet.coap_token[3].inet.coap_token_octet": "255",
+    "inet.coap_token[4].inet.coap_token_octet": "255",
+    "inet.coap_token[5].inet.coap_token_octet": "255",
+    "inet.coap_token[6].inet.coap_token_octet": "255",
+    "inet.coap_token[7].inet.coap_token_octet": "255"
+  },
+  "source": "built by tools/gen/ietf-headers-4-vectors.py from values chosen there; a reset with code 7.31, the largest message ID and an 8-octet token of 0xff octets: the largest values (the pack does not check the code class)"
+}

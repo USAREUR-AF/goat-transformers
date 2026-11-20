@@ -1,0 +1,13 @@
+{
+  "name": "update-rest-not-written",
+  "from": "bgp-header",
+  "to": "bgp-header",
+  "input": "ffffffffffffffffffffffffffffffff00170200000000",
+  "expect": "ffffffffffffffffffffffffffffffff0017020000",
+  "model": {
+    "@kind": "update",
+    "inet.bgp_length": "23",
+    "inet.bgp_withdrawn_routes_length": "0"
+  },
+  "source": "built by tools/gen/ietf-headers-4-vectors.py from values chosen there; an UPDATE of 23 octets with no withdrawn route and no path attribute (an end-of-RIB marker); the total path attribute length after the first field is read over"
+}

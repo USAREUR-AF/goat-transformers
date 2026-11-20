@@ -1,0 +1,16 @@
+{
+  "name": "ciphertext-8-bit-sequence-with-length-roundtrip",
+  "from": "dtls-record-header",
+  "to": "dtls-record-header",
+  "input": "25ff0030",
+  "expect": "25ff0030",
+  "model": {
+    "@kind": "ciphertext",
+    "inet.dtls_seq_16bit": "0",
+    "inet.dtls_length_present": "1",
+    "inet.dtls_epoch_low": "1",
+    "inet.dtls_seq_low": "255",
+    "inet.tls_record_length": "48"
+  },
+  "source": "built by tools/gen/ietf-headers-4-vectors.py from values chosen there; S 0 and L 1: 8-bit sequence 0xff, length 48"
+}

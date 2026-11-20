@@ -1,0 +1,16 @@
+{
+  "name": "ciphertext-16-bit-sequence-with-length-roundtrip",
+  "from": "dtls-record-header",
+  "to": "dtls-record-header",
+  "input": "2e12340040",
+  "expect": "2e12340040",
+  "model": {
+    "@kind": "ciphertext",
+    "inet.dtls_seq_16bit": "1",
+    "inet.dtls_length_present": "1",
+    "inet.dtls_epoch_low": "2",
+    "inet.dtls_seq_low": "4660",
+    "inet.tls_record_length": "64"
+  },
+  "source": "built by tools/gen/ietf-headers-4-vectors.py from values chosen there; S 1 and L 1: 16-bit sequence 0x1234, length 64"
+}

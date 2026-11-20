@@ -1,0 +1,17 @@
+{
+  "name": "open-roundtrip",
+  "from": "bgp-header",
+  "to": "bgp-header",
+  "input": "ffffffffffffffffffffffffffffffff001d0104fbf0005ac000020100",
+  "expect": "ffffffffffffffffffffffffffffffff001d0104fbf0005ac000020100",
+  "model": {
+    "@kind": "open",
+    "inet.bgp_length": "29",
+    "inet.bgp_version": "4",
+    "inet.bgp_my_as": "64496",
+    "inet.bgp_hold_time": "90",
+    "inet.bgp_identifier": "3221225985",
+    "inet.bgp_opt_param_length": "0"
+  },
+  "source": "built by tools/gen/ietf-headers-4-vectors.py from values chosen there; an OPEN from AS 64496, hold time 90 s, identifier 192.0.2.1, no optional parameter: 29 octets"
+}

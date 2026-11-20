@@ -1,0 +1,12 @@
+{
+  "name": "keepalive-roundtrip",
+  "from": "bgp-header",
+  "to": "bgp-header",
+  "input": "ffffffffffffffffffffffffffffffff001304",
+  "expect": "ffffffffffffffffffffffffffffffff001304",
+  "model": {
+    "@kind": "keepalive",
+    "inet.bgp_length": "19"
+  },
+  "source": "built by tools/gen/ietf-headers-4-vectors.py from values chosen there; a KEEPALIVE: the 19-octet header alone"
+}

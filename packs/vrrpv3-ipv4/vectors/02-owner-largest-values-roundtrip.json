@@ -1,0 +1,20 @@
+{
+  "name": "owner-largest-values-roundtrip",
+  "from": "vrrpv3-ipv4",
+  "to": "vrrpv3-ipv4",
+  "input": "31ffff010fff94cac6336401",
+  "expect": "31ffff010fff94cac6336401",
+  "model": {
+    "inet.vrrp_version": "3",
+    "inet.vrrp_type": "1",
+    "inet.vrrp_vrid": "255",
+    "inet.vrrp_priority": "255",
+    "inet.vrrp_addr_count": "1",
+    "inet.vrrp_reserved": "0",
+    "inet.vrrp_max_adver_int": "4095",
+    "inet.vrrp_checksum": "38090",
+    "inet.vrrp_ipv4_addrs.#": "1",
+    "inet.vrrp_ipv4_addrs[0].inet.vrrp_ipv4_addr": "3325256705"
+  },
+  "source": "built by tools/gen/ietf-headers-4-vectors.py from values chosen there; the address owner (priority 255) of virtual router 255, the largest interval 4095 cs, one address; checksum computed here"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "whole-table-request-entry-not-written",
+  "from": "ripv2-header",
+  "to": "ripv2-header",
+  "input": "010200000000000000000000000000000000000000000010",
+  "expect": "01020000",
+  "model": {
+    "inet.rip_command": "1",
+    "inet.rip_version": "2",
+    "inet.rip_zero": "0"
+  },
+  "source": "built by tools/gen/ietf-headers-4-vectors.py from values chosen there; a version 2 request for the whole table (one entry, family 0, metric 16), the entry read over"
+}

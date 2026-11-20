@@ -1,0 +1,28 @@
+# Geneve header (RFC 8926 section 3.4): the 8-octet base header, and the options
+# as raw 4-octet words counted by the option length. Public. The options are
+# not decoded into their class, type and data (pack.md).
+#
+# Addressing: word_bytes 1 and bit_order msb; multi-octet fields are big-endian.
+# On encode the option length is written from the number of words, over
+# inet.geneve_opt_len (ruling 2 of 0.7).
+format        geneve-header
+version       0.1.0
+distribution  public
+source        "IETF RFC 8926, Geneve: Generic Network Virtualization Encapsulation, November 2020, section 3.4, https://www.rfc-editor.org/rfc/rfc8926.txt; layout restated"
+uses          inet
+wire          bits
+word_bytes    1
+bit_order     msb
+
+field  inet.geneve_version          0:0:2      uint
+field  inet.geneve_opt_len          0:2:6      uint
+field  inet.geneve_control          0:8:1      uint
+field  inet.geneve_critical         0:9:1      uint
+field  inet.geneve_reserved1        0:10:6     uint
+field  inet.geneve_protocol_type    0:16:16    uint
+field  inet.geneve_vni              0:32:24    uint
+field  inet.geneve_reserved2        0:56:8     uint
+
+group  inet.geneve_option_words  0:64  item 32  count 0:2:6
+  field  inet.geneve_option_word    0:0:32     uint
+end

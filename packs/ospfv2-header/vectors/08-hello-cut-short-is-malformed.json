@@ -1,0 +1,8 @@
+{
+  "name": "hello-cut-short-is-malformed",
+  "from": "ospfv2-header",
+  "to": "ospfv2-header",
+  "input": "02010030c000020100000000b69400000000000000000000ffffff00000a020100000028c0000201000000",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/ietf-headers-4-vectors.py from values chosen there; the first Hello cut to 43 octets"
+}

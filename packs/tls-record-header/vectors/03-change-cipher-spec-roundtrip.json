@@ -1,0 +1,15 @@
+{
+  "name": "change-cipher-spec-roundtrip",
+  "from": "tls-record-header",
+  "to": "tls-record-header",
+  "input": "140303000101",
+  "expect": "140303000101",
+  "model": {
+    "@kind": "change-cipher-spec",
+    "inet.tls_content_type": "20",
+    "inet.tls_legacy_version": "771",
+    "inet.tls_record_length": "1",
+    "inet.tls_ccs_value": "1"
+  },
+  "source": "built by tools/gen/ietf-headers-4-vectors.py from values chosen there; the one-octet change_cipher_spec record TLS 1.3 keeps for middlebox compatibility"
+}

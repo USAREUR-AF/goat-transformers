@@ -1,0 +1,19 @@
+{
+  "name": "link-state-request-entries-not-written",
+  "from": "ospfv2-header",
+  "to": "ospfv2-header",
+  "input": "02030024c0000202000000003bd600000000000000000000000000000000000000000000",
+  "expect": "02030024c0000202000000003bd600000000000000000000",
+  "model": {
+    "@kind": "link-state-request",
+    "inet.ospf_version": "2",
+    "inet.ospf_packet_length": "36",
+    "inet.ospf_router_id": "3221225986",
+    "inet.ospf_area_id": "0",
+    "inet.ospf_checksum": "15318",
+    "inet.ospf_autype": "0",
+    "inet.ospf_auth_hi": "0",
+    "inet.ospf_auth_lo": "0"
+  },
+  "source": "built by tools/gen/ietf-headers-4-vectors.py from values chosen there; a Link State Request with one 12-octet request entry, read over"
+}

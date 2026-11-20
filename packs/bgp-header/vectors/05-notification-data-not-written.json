@@ -1,0 +1,14 @@
+{
+  "name": "notification-data-not-written",
+  "from": "bgp-header",
+  "to": "bgp-header",
+  "input": "ffffffffffffffffffffffffffffffff001903060200010203",
+  "expect": "ffffffffffffffffffffffffffffffff0019030602",
+  "model": {
+    "@kind": "notification",
+    "inet.bgp_length": "25",
+    "inet.bgp_error_code": "6",
+    "inet.bgp_error_subcode": "2"
+  },
+  "source": "built by tools/gen/ietf-headers-4-vectors.py from values chosen there; the NOTIFICATION with 4 octets of data, read over"
+}

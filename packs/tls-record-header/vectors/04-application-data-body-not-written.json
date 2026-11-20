@@ -1,0 +1,14 @@
+{
+  "name": "application-data-body-not-written",
+  "from": "tls-record-header",
+  "to": "tls-record-header",
+  "input": "1703030020000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+  "expect": "1703030020",
+  "model": {
+    "@kind": "application-data",
+    "inet.tls_content_type": "23",
+    "inet.tls_legacy_version": "771",
+    "inet.tls_record_length": "32"
+  },
+  "source": "built by tools/gen/ietf-headers-4-vectors.py from values chosen there; an application_data record of 32 octets (a protected record); the 32 octets are read over"
+}

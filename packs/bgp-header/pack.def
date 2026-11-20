@@ -1,0 +1,44 @@
+# BGP-4 message (RFC 4271 section 4): the 19-octet header, the fixed part of
+# OPEN, the first field of UPDATE, the codes of NOTIFICATION, and KEEPALIVE.
+# Public. OPEN optional parameters, UPDATE routes and attributes, and
+# NOTIFICATION data are not mapped (pack.md).
+#
+# Addressing: word_bytes 1 and bit_order msb; multi-octet fields are big-endian.
+format        bgp-header
+version       0.1.0
+distribution  public
+source        "IETF RFC 4271, A Border Gateway Protocol 4 (BGP-4), January 2006, section 4, https://www.rfc-editor.org/rfc/rfc4271.txt; layout restated"
+uses          inet
+wire          bits
+word_bytes    1
+bit_order     msb
+
+# The marker: 16 octets, all ones.
+when   0:0:32    4294967295
+when   0:32:32   4294967295
+when   0:64:32   4294967295
+when   0:96:32   4294967295
+field  inet.bgp_length              0:128:16   uint
+
+kind      open
+when      0:144:8  1
+requires  inet.bgp_identifier
+field  inet.bgp_version             0:152:8    uint
+field  inet.bgp_my_as               0:160:16   uint
+field  inet.bgp_hold_time           0:176:16   uint
+field  inet.bgp_identifier          0:192:32   uint
+field  inet.bgp_opt_param_length    0:224:8    uint
+
+kind      update
+when      0:144:8  2
+requires  inet.bgp_withdrawn_routes_length
+field  inet.bgp_withdrawn_routes_length 0:152:16 uint
+
+kind      notification
+when      0:144:8  3
+requires  inet.bgp_error_code
+field  inet.bgp_error_code          0:152:8    uint
+field  inet.bgp_error_subcode       0:160:8    uint
+
+kind      keepalive
+when      0:144:8  4

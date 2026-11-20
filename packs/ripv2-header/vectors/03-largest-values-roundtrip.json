@@ -1,0 +1,13 @@
+{
+  "name": "largest-values-roundtrip",
+  "from": "ripv2-header",
+  "to": "ripv2-header",
+  "input": "ffffffff",
+  "expect": "ffffffff",
+  "model": {
+    "inet.rip_command": "255",
+    "inet.rip_version": "255",
+    "inet.rip_zero": "65535"
+  },
+  "source": "built by tools/gen/ietf-headers-4-vectors.py from values chosen there; every field at its largest value: the pack checks neither the command nor the zero field"
+}

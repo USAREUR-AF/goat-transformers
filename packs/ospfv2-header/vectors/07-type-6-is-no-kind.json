@@ -1,0 +1,8 @@
+{
+  "name": "type-6-is-no-kind",
+  "from": "ospfv2-header",
+  "to": "ospfv2-header",
+  "input": "020600180000000000000000fde100000000000000000000",
+  "expect_error": "no-kind",
+  "source": "built by tools/gen/ietf-headers-4-vectors.py from values chosen there; a header with type 6, which RFC 2328 does not define"
+}

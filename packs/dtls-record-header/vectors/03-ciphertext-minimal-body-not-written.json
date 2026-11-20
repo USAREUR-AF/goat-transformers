@@ -1,0 +1,15 @@
+{
+  "name": "ciphertext-minimal-body-not-written",
+  "from": "dtls-record-header",
+  "to": "dtls-record-header",
+  "input": "2342000000000000000000000000000000000000000000000000",
+  "expect": "2342",
+  "model": {
+    "@kind": "ciphertext",
+    "inet.dtls_seq_16bit": "0",
+    "inet.dtls_length_present": "0",
+    "inet.dtls_epoch_low": "3",
+    "inet.dtls_seq_low": "66"
+  },
+  "source": "built by tools/gen/ietf-headers-4-vectors.py from values chosen there; a minimal unified header: S 0 and L 0, epoch bits 3, 8-bit sequence 0x42, then 24 octets of encrypted record (to the end of the datagram), read over"
+}

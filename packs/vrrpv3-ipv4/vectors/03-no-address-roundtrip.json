@@ -1,0 +1,19 @@
+{
+  "name": "no-address-roundtrip",
+  "from": "vrrpv3-ipv4",
+  "to": "vrrpv3-ipv4",
+  "input": "310100000064ce9a",
+  "expect": "310100000064ce9a",
+  "model": {
+    "inet.vrrp_version": "3",
+    "inet.vrrp_type": "1",
+    "inet.vrrp_vrid": "1",
+    "inet.vrrp_priority": "0",
+    "inet.vrrp_addr_count": "0",
+    "inet.vrrp_reserved": "0",
+    "inet.vrrp_max_adver_int": "100",
+    "inet.vrrp_checksum": "52890",
+    "inet.vrrp_ipv4_addrs.#": "0"
+  },
+  "source": "built by tools/gen/ietf-headers-4-vectors.py from values chosen there; an advertisement with priority 0 and an address count of 0, which a receiver ignores (the pack does not): the 8-octet fixed part"
+}
