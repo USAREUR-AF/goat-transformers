@@ -1,0 +1,17 @@
+{
+  "name": "aprs-rt-position-ambiguity",
+  "from": "aprs",
+  "to": "aprs",
+  "source": "tools/gen/aprs-vectors.py: position ambiguity: the last two digits of each minutes field are spaces; the dots remain",
+  "input": "N0CALL-7>APZ001,WIDE1-1,WIDE2-1:!3754.  N/12226.  W-",
+  "expect": "N0CALL-7>APZ001,WIDE1-1,WIDE2-1:!3754.  N/12226.  W-",
+  "model": {
+    "@kind": "position",
+    "aprs.lat_text": "3754.",
+    "aprs.lat_hemisphere": "N",
+    "aprs.symbol_table": "/",
+    "aprs.lon_text": "12226.",
+    "aprs.lon_hemisphere": "W",
+    "aprs.symbol_code": "-"
+  }
+}

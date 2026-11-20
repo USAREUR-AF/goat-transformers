@@ -1,0 +1,8 @@
+{
+  "name": "aprs-err-unknown-type",
+  "from": "aprs",
+  "to": "aprs",
+  "source": "tools/gen/aprs-vectors.py: a telemetry report (data type T): no kind of this pack",
+  "input": "N0CALL-7>APZ001,WIDE1-1,WIDE2-1:T#005,123,045,000,255,000,00000000",
+  "expect_error": "no-kind"
+}

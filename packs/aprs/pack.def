@@ -1,0 +1,186 @@
+# APRS packets on the TNC2 monitor line, one packet per record. Hand-written
+# from the APRS Protocol Reference 1.0.1 (APRS101), whose permission statement
+# allows copying for non-commercial purposes only: this pack is labelled
+# LicenseRef-APRS-NC (REUSE.toml, licences.toml). pack.md states the layout,
+# the evidence and what is not mapped.
+#
+# A record is SOURCE>DESTINATION,PATH:INFORMATION. The delimiter is the colon:
+# field 0 is the address part, field 1 the information field up to any later
+# colon (a later colon in a comment or message text starts further fields,
+# which are residue and are written back). The first character of the
+# information field, the data type identifier, selects the kind. Every kind
+# maps field 1 whole (aprs.info) and its parts by column: encode writes the
+# whole field when aprs.info is present, so a record round-trips exactly, and
+# the columns only otherwise (spec 0.10, ruling 3).
+format        aprs
+version       0.1.0
+distribution  public
+source        "APRS Protocol Reference, Protocol Version 1.0, document version 1.0.1 (APRS101.PDF, 29 August 2000), APRS Working Group, edited by Ian Wade: chapters 5 (data type identifiers), 6 (time stamps), 8 (position formats), 9 (compressed position), 11 (objects), 14 (messages), 16 (status); restated, no example copied"
+source        "Copied for non-commercial purposes only, as the document's permission statement allows (pack.md, PROVENANCE.md)"
+uses          aprs
+wire          text
+delimiter     ":"
+
+field  aprs.header  0   string
+
+# ---- Uncompressed position: ddmm.mm, a hemisphere letter, the symbol table,
+# dddmm.mm, a hemisphere letter, the symbol code; the dots at columns 5 and 15
+# (12 and 22 after a time stamp) tell it from the compressed form, which has
+# none there. These kinds stand before the compressed ones.
+
+kind   position
+when   1:0:1   !
+when   1:5:1   .
+when   1:15:1   .
+requires  aprs.info
+field  aprs.info    1   string
+field  aprs.lat_text        1:1:7   string
+field  aprs.lat_hemisphere  1:8:1   string
+field  aprs.symbol_table    1:9:1   string
+field  aprs.lon_text        1:10:8   string
+field  aprs.lon_hemisphere  1:18:1   string
+field  aprs.symbol_code     1:19:1   string
+
+# A `when` value `==` is the text "=": one leading `=` is stripped (spec 0.5).
+kind   position-messaging
+when   1:0:1   ==
+when   1:5:1   .
+when   1:15:1   .
+requires  aprs.info
+field  aprs.info    1   string
+field  aprs.lat_text        1:1:7   string
+field  aprs.lat_hemisphere  1:8:1   string
+field  aprs.symbol_table    1:9:1   string
+field  aprs.lon_text        1:10:8   string
+field  aprs.lon_hemisphere  1:18:1   string
+field  aprs.symbol_code     1:19:1   string
+
+kind   position-time
+when   1:0:1   /
+when   1:12:1   .
+when   1:22:1   .
+requires  aprs.info
+field  aprs.info    1   string
+field  aprs.timestamp     1:1:7   string
+field  aprs.lat_text        1:8:7   string
+field  aprs.lat_hemisphere  1:15:1   string
+field  aprs.symbol_table    1:16:1   string
+field  aprs.lon_text        1:17:8   string
+field  aprs.lon_hemisphere  1:25:1   string
+field  aprs.symbol_code     1:26:1   string
+
+kind   position-time-messaging
+when   1:0:1   @
+when   1:12:1   .
+when   1:22:1   .
+requires  aprs.info
+field  aprs.info    1   string
+field  aprs.timestamp     1:1:7   string
+field  aprs.lat_text        1:8:7   string
+field  aprs.lat_hemisphere  1:15:1   string
+field  aprs.symbol_table    1:16:1   string
+field  aprs.lon_text        1:17:8   string
+field  aprs.lon_hemisphere  1:25:1   string
+field  aprs.symbol_code     1:26:1   string
+
+# ---- Compressed position: the symbol table, four base-91 characters of
+# latitude and of longitude, the symbol code, two characters of course and
+# speed (or range or altitude) and the compression type.
+
+kind   compressed
+when   1:0:1   !
+requires  aprs.info
+field  aprs.info    1   string
+field  aprs.symbol_table    1:1:1   string
+field  aprs.lat_base91      1:2:4   string
+field  aprs.lon_base91      1:6:4   string
+field  aprs.symbol_code     1:10:1   string
+field  aprs.compressed_cs   1:11:2   string
+field  aprs.compression_type 1:13:1  string
+
+kind   compressed-messaging
+when   1:0:1   ==
+requires  aprs.info
+field  aprs.info    1   string
+field  aprs.symbol_table    1:1:1   string
+field  aprs.lat_base91      1:2:4   string
+field  aprs.lon_base91      1:6:4   string
+field  aprs.symbol_code     1:10:1   string
+field  aprs.compressed_cs   1:11:2   string
+field  aprs.compression_type 1:13:1  string
+
+kind   compressed-time
+when   1:0:1   /
+requires  aprs.info
+field  aprs.info    1   string
+field  aprs.timestamp     1:1:7   string
+field  aprs.symbol_table    1:8:1   string
+field  aprs.lat_base91      1:9:4   string
+field  aprs.lon_base91      1:13:4   string
+field  aprs.symbol_code     1:17:1   string
+field  aprs.compressed_cs   1:18:2   string
+field  aprs.compression_type 1:20:1  string
+
+kind   compressed-time-messaging
+when   1:0:1   @
+requires  aprs.info
+field  aprs.info    1   string
+field  aprs.timestamp     1:1:7   string
+field  aprs.symbol_table    1:8:1   string
+field  aprs.lat_base91      1:9:4   string
+field  aprs.lon_base91      1:13:4   string
+field  aprs.symbol_code     1:17:1   string
+field  aprs.compressed_cs   1:18:2   string
+field  aprs.compression_type 1:20:1  string
+
+# ---- Object: a nine-character name, * (live) or _ (killed), a time stamp, then
+# a position, uncompressed (dots at 22 and 32) or compressed.
+
+kind   object
+when   1:0:1   ;
+when   1:22:1   .
+when   1:32:1   .
+requires  aprs.info
+field  aprs.info    1   string
+field  aprs.object_name     1:1:9   string
+field  aprs.object_state    1:10:1  string
+field  aprs.timestamp       1:11:7  string
+field  aprs.lat_text        1:18:7   string
+field  aprs.lat_hemisphere  1:25:1   string
+field  aprs.symbol_table    1:26:1   string
+field  aprs.lon_text        1:27:8   string
+field  aprs.lon_hemisphere  1:35:1   string
+field  aprs.symbol_code     1:36:1   string
+
+kind   object-compressed
+when   1:0:1   ;
+requires  aprs.info
+field  aprs.info    1   string
+field  aprs.object_name     1:1:9   string
+field  aprs.object_state    1:10:1  string
+field  aprs.timestamp       1:11:7  string
+field  aprs.symbol_table    1:18:1   string
+field  aprs.lat_base91      1:19:4   string
+field  aprs.lon_base91      1:23:4   string
+field  aprs.symbol_code     1:27:1   string
+field  aprs.compressed_cs   1:28:2   string
+field  aprs.compression_type 1:30:1  string
+
+# ---- Status: free text after the identifier (aprs.info whole).
+
+kind   status
+when   1:0:1   >
+requires  aprs.info
+field  aprs.info    1   string
+
+# ---- Message: the identifier is the colon itself, so field 1 is empty, field 2
+# is the nine-character addressee and field 3 the text (with any message
+# number). It stands last: any record whose field 1 starts with an identifier
+# above is taken there first.
+
+kind   message
+when   2   present
+requires  aprs.addressee_field
+field  aprs.addressee_field  2       string
+field  aprs.addressee        2:0:9   string
+field  aprs.message_text     3       string

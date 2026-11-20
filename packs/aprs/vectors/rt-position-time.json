@@ -1,0 +1,18 @@
+{
+  "name": "aprs-rt-position-time",
+  "from": "aprs",
+  "to": "aprs",
+  "source": "tools/gen/aprs-vectors.py: a position with a day-hour-minute zulu time stamp, then a course/speed extension kept in aprs.info",
+  "input": "N0CALL-7>APZ001,WIDE1-1,WIDE2-1:/181530z3754.21N/12226.40W>078/012",
+  "expect": "N0CALL-7>APZ001,WIDE1-1,WIDE2-1:/181530z3754.21N/12226.40W>078/012",
+  "model": {
+    "@kind": "position-time",
+    "aprs.timestamp": "181530z",
+    "aprs.lat_text": "3754.21",
+    "aprs.lat_hemisphere": "N",
+    "aprs.symbol_table": "/",
+    "aprs.lon_text": "12226.40",
+    "aprs.lon_hemisphere": "W",
+    "aprs.symbol_code": ">"
+  }
+}

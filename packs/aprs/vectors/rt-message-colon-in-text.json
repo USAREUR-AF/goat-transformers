@@ -1,0 +1,12 @@
+{
+  "name": "aprs-rt-message-colon-in-text",
+  "from": "aprs",
+  "to": "aprs",
+  "source": "tools/gen/aprs-vectors.py: a colon in the message text starts a further field: it is residue, written back unchanged",
+  "input": "N0CALL-7>APZ001,WIDE1-1,WIDE2-1::N0CALL-9 :meet at 10:30",
+  "expect": "N0CALL-7>APZ001,WIDE1-1,WIDE2-1::N0CALL-9 :meet at 10:30",
+  "model": {
+    "@kind": "message",
+    "aprs.message_text": "meet at 10"
+  }
+}
