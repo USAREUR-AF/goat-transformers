@@ -1,0 +1,10 @@
+{
+  "name": "ubx-nav2-roundtrip-nav2_timegal",
+  "from": "ubx-nav2",
+  "to": "ubx-nav2",
+  "input": "b562292514004e63a85725b72c2bfc0ab13ed3de2a050602cb73",
+  "expect": "b562292514004e63a85725b72c2bfc0ab13ed3de2a050602cb73",
+  "model": {
+    "@kind": "nav2_timegal"
+  }
+}

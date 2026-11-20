@@ -1,0 +1,10 @@
+{
+  "name": "ubx-cfg-roundtrip-cfg_sbas",
+  "from": "ubx-cfg",
+  "to": "ubx-cfg",
+  "input": "b5620616080001055655aaaaaaaa",
+  "expect": "b5620616080001055655aaaaaaaa",
+  "model": {
+    "@kind": "cfg_sbas"
+  }
+}

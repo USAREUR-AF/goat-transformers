@@ -1,0 +1,10 @@
+{
+  "name": "ubx-nav-roundtrip-nav_timenavic",
+  "from": "ubx-nav",
+  "to": "ubx-nav",
+  "input": "b56201631400734435394a98b90c21ec3d20f8bf4f022be35755",
+  "expect": "b56201631400734435394a98b90c21ec3d20f8bf4f022be35755",
+  "model": {
+    "@kind": "nav_timenavic"
+  }
+}

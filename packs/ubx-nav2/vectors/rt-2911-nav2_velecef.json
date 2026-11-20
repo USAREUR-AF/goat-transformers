@@ -1,0 +1,10 @@
+{
+  "name": "ubx-nav2-roundtrip-nav2_velecef",
+  "from": "ubx-nav2",
+  "to": "ubx-nav2",
+  "input": "b5622911140027a6da23fef95e37d54de30aaca167de83f5eb71",
+  "expect": "b5622911140027a6da23fef95e37d54de30aaca167de83f5eb71",
+  "model": {
+    "@kind": "nav2_velecef"
+  }
+}

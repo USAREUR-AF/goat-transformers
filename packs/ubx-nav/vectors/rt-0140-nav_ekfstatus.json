@@ -1,0 +1,10 @@
+{
+  "name": "ubx-nav-roundtrip-nav_ekfstatus",
+  "from": "ubx-nav",
+  "to": "ubx-nav",
+  "input": "b56201402a00b78e6ff88ee2f3cb6536785f3c0a93066f2d9214468116e81dd59a3bf4281f0fcb7ca3e2a2d027365531",
+  "expect": "b56201402a00b78e6ff88ee2f3cb6536785f3c0a93066f2d9214468116e81dd59a3bf4281f0fcb7ca3e2a2d027365531",
+  "model": {
+    "@kind": "nav_ekfstatus"
+  }
+}

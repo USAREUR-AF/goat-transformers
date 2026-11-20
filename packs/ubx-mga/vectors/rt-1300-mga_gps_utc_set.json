@@ -1,0 +1,10 @@
+{
+  "name": "ubx-mga-roundtrip-mga_gps_utc_set",
+  "from": "ubx-mga",
+  "to": "ubx-mga",
+  "input": "b5621300140005ebc27e99d2cd14702652e8c71ef5cca3fa5171",
+  "expect": "b5621300140005ebc27e99d2cd14702652e8c71ef5cca3fa5171",
+  "model": {
+    "@kind": "mga_gps_utc_set"
+  }
+}

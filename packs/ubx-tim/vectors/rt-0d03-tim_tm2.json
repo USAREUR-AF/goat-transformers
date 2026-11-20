@@ -1,0 +1,10 @@
+{
+  "name": "ubx-tim-roundtrip-tim_tm2",
+  "from": "ubx-tim",
+  "to": "ubx-tim",
+  "input": "b5620d031c00d2b58ab8610c38600fb4707be607f54ebd5b792294affd756b038249",
+  "expect": "b5620d031c00d2b58ab8610c38600fb4707be607f54ebd5b792294affd756b038249",
+  "model": {
+    "@kind": "tim_tm2"
+  }
+}

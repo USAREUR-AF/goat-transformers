@@ -1,0 +1,10 @@
+{
+  "name": "ubx-cfg-roundtrip-cfg_senif",
+  "from": "ubx-cfg",
+  "to": "ubx-cfg",
+  "input": "b56206880600a47b00002956",
+  "expect": "b56206880600a47b00002956",
+  "model": {
+    "@kind": "cfg_senif"
+  }
+}

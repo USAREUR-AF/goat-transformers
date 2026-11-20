@@ -1,0 +1,10 @@
+{
+  "name": "ubx-rxm-roundtrip-rxm_cor",
+  "from": "ubx-rxm",
+  "to": "ubx-rxm",
+  "input": "b56202340c00ebc299f870eb8f14ff3ed692",
+  "expect": "b56202340c00ebc299f870eb8f14ff3ed692",
+  "model": {
+    "@kind": "rxm_cor"
+  }
+}

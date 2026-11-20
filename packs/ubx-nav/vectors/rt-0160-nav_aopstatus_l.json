@@ -1,0 +1,10 @@
+{
+  "name": "ubx-nav-roundtrip-nav_aopstatus_l",
+  "from": "ubx-nav",
+  "to": "ubx-nav",
+  "input": "b56201601400ec468d1fc39a71481fea2241f63da714cd912b68",
+  "expect": "b56201601400ec468d1fc39a71481fea2241f63da714cd912b68",
+  "model": {
+    "@kind": "nav_aopstatus_l"
+  }
+}

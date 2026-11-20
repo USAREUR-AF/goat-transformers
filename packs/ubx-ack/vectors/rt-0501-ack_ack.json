@@ -1,0 +1,10 @@
+{
+  "name": "ubx-ack-roundtrip-ack_ack",
+  "from": "ubx-ack",
+  "to": "ubx-ack",
+  "input": "b56205010200bb92",
+  "expect": "b56205010200bb92",
+  "model": {
+    "@kind": "ack_ack"
+  }
+}

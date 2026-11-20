@@ -1,0 +1,10 @@
+{
+  "name": "ubx-mga-roundtrip-mga_flash_ack",
+  "from": "ubx-mga",
+  "to": "ubx-mga",
+  "input": "b5621321060003986f461d11",
+  "expect": "b5621321060003986f461d11",
+  "model": {
+    "@kind": "mga_flash_ack"
+  }
+}

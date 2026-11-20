@@ -1,0 +1,10 @@
+{
+  "name": "ubx-rxm-roundtrip-rxm_sfrb",
+  "from": "ubx-rxm",
+  "to": "ubx-rxm",
+  "input": "b56202112a00431af130160bc8849a5e9fd81e32762ca3054d80275924d4ab2cfb273000d27bb453a9cf38278023bd7a",
+  "expect": "b56202112a00431af130160bc8849a5e9fd81e32762ca3054d80275924d4ab2cfb273000d27bb453a9cf38278023bd7a",
+  "model": {
+    "@kind": "rxm_sfrb"
+  }
+}

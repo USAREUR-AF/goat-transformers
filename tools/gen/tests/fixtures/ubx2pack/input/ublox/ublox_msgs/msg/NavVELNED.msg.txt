@@ -1,0 +1,6 @@
+# A stand-in for NavVELNED.msg, for the ubx2pack tests.
+int32 vel_n        # north velocity [cm/s]
+int32 vel_e        # east velocity [cm/s]
+int32 vel_d        # down velocity [cm/s]
+uint32 g_speed     # ground speed (2-d) [cm/s]
+int32 heading      # heading of motion 2-d [deg / 1e-5]

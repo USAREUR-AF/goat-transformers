@@ -1,0 +1,10 @@
+{
+  "name": "ubx-aid-roundtrip-aid_alp",
+  "from": "ubx-aid",
+  "to": "ubx-aid",
+  "input": "b5620b5018004834ab7e1f882f52f6dbb3e5cd2fa4837bd74020522900d7",
+  "expect": "b5620b5018004834ab7e1f882f52f6dbb3e5cd2fa4837bd74020522900d7",
+  "model": {
+    "@kind": "aid_alp"
+  }
+}

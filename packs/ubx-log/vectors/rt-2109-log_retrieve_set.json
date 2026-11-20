@@ -1,0 +1,10 @@
+{
+  "name": "ubx-log-roundtrip-log_retrieve_set",
+  "from": "ubx-log",
+  "to": "ubx-log",
+  "input": "b56221090c00b838a9438f8c2d17663d3436",
+  "expect": "b56221090c00b838a9438f8c2d17663d3436",
+  "model": {
+    "@kind": "log_retrieve_set"
+  }
+}

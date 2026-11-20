@@ -1,0 +1,10 @@
+{
+  "name": "ubx-nav2-roundtrip-nav2_eoe",
+  "from": "ubx-nav2",
+  "to": "ubx-nav2",
+  "input": "b56229610400a7b7de32",
+  "expect": "b56229610400a7b7de32",
+  "model": {
+    "@kind": "nav2_eoe"
+  }
+}

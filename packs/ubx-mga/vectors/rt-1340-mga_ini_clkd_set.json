@@ -1,0 +1,10 @@
+{
+  "name": "ubx-mga-roundtrip-mga_ini_clkd_set",
+  "from": "ubx-mga",
+  "to": "ubx-mga",
+  "input": "b56213400c0020be95076c5b631d43afe730",
+  "expect": "b56213400c0020be95076c5b631d43afe730",
+  "model": {
+    "@kind": "mga_ini_clkd_set"
+  }
+}

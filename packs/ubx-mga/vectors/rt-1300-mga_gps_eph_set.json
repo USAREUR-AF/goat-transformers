@@ -1,0 +1,10 @@
+{
+  "name": "ubx-mga-roundtrip-mga_gps_eph_set",
+  "from": "ubx-mga",
+  "to": "ubx-mga",
+  "input": "b5621300440001b28960370ee53c932e6a824198effdc6d105c89da574f94bcd92c222a1f9f4d0c81f7da71ca4507e7055442c18310b03ecda3fb113be05886742d95fbbc62c368f0d63",
+  "expect": "b5621300440001b28960370ee53c932e6a824198effdc6d105c89da574f94bcd92c222a1f9f4d0c81f7da71ca4507e7055442c18310b03ecda3fb113be05886742d95fbbc62c368f0d63",
+  "model": {
+    "@kind": "mga_gps_eph_set"
+  }
+}

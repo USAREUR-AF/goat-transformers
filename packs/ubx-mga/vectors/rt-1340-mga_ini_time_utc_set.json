@@ -1,0 +1,10 @@
+{
+  "name": "ubx-mga-roundtrip-mga_ini_time_utc_set",
+  "from": "ubx-mga",
+  "to": "ubx-mga",
+  "input": "b562134018001030270c63e53a11e8bf966d443075401b84f2d7c92b023b",
+  "expect": "b562134018001030270c63e53a11e8bf966d443075401b84f2d7c92b023b",
+  "model": {
+    "@kind": "mga_ini_time_utc_set"
+  }
+}

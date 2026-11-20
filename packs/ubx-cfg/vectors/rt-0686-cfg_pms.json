@@ -1,0 +1,10 @@
+{
+  "name": "ubx-cfg-roundtrip-cfg_pms",
+  "from": "ubx-cfg",
+  "to": "ubx-cfg",
+  "input": "b56206860800542b02fbd94eb0a2",
+  "expect": "b56206860800542b02fbd94eb0a2",
+  "model": {
+    "@kind": "cfg_pms"
+  }
+}

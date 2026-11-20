@@ -1,0 +1,10 @@
+{
+  "name": "ubx-esf-roundtrip-esf_ins",
+  "from": "ubx-esf",
+  "to": "ubx-esf",
+  "input": "b562101524007a1500005bcafd54321e82280972063ce0c58a0fb7190fe38e6d933665c1170a3c159cdd",
+  "expect": "b562101524007a1500005bcafd54321e82280972063ce0c58a0fb7190fe38e6d933665c1170a3c159cdd",
+  "model": {
+    "@kind": "esf_ins"
+  }
+}

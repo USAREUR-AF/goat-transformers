@@ -1,0 +1,10 @@
+{
+  "name": "ubx-mon-roundtrip-mon_hw2",
+  "from": "ubx-mon",
+  "to": "ubx-mon",
+  "input": "b5620a0b1c00b70e65bc936a336e4187f24418db761800000080ef2efb6bc6827f3f",
+  "expect": "b5620a0b1c00b70e65bc936a336e4187f24418db761800000080ef2efb6bc6827f3f",
+  "model": {
+    "@kind": "mon_hw2"
+  }
+}

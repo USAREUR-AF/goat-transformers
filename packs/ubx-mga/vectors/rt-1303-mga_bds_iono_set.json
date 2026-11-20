@@ -1,0 +1,10 @@
+{
+  "name": "ubx-mga-roundtrip-mga_bds_iono_set",
+  "from": "ubx-mga",
+  "to": "ubx-mga",
+  "input": "b562130310000608dfe2360de4bb926940176ed5b040",
+  "expect": "b562130310000608dfe2360de4bb926940176ed5b040",
+  "model": {
+    "@kind": "mga_bds_iono_set"
+  }
+}

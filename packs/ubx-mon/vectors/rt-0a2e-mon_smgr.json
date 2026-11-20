@@ -1,0 +1,10 @@
+{
+  "name": "ubx-mon-roundtrip-mon_smgr",
+  "from": "ubx-mon",
+  "to": "ubx-mon",
+  "input": "b5620a2e1000c39ac8bb711c404d18002d0052010205",
+  "expect": "b5620a2e1000c39ac8bb711c404d18002d0052010205",
+  "model": {
+    "@kind": "mon_smgr"
+  }
+}

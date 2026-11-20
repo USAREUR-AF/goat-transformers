@@ -1,0 +1,10 @@
+{
+  "name": "ubx-nav2-roundtrip-nav2_timels",
+  "from": "ubx-nav2",
+  "to": "ubx-nav2",
+  "input": "b56229261800f6665310cda40e5c7bd22980d7b1f118ae0585595cad7e01",
+  "expect": "b56229261800f6665310cda40e5c7bd22980d7b1f118ae0585595cad7e01",
+  "model": {
+    "@kind": "nav2_timels"
+  }
+}

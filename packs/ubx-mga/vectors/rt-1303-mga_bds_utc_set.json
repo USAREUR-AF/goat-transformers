@@ -1,0 +1,10 @@
+{
+  "name": "ubx-mga-roundtrip-mga_bds_utc_set",
+  "from": "ubx-mga",
+  "to": "ubx-mga",
+  "input": "b56213031400051bf24fc9a3343fa0f7b812f74e25fcd32a8142",
+  "expect": "b56213031400051bf24fc9a3343fa0f7b812f74e25fcd32a8142",
+  "model": {
+    "@kind": "mga_bds_utc_set"
+  }
+}

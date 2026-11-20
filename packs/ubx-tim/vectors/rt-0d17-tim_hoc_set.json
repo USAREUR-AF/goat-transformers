@@ -1,0 +1,10 @@
+{
+  "name": "ubx-tim-roundtrip-tim_hoc_set",
+  "from": "ubx-tim",
+  "to": "ubx-tim",
+  "input": "b5620d170800ddb48b6239436de6",
+  "expect": "b5620d170800ddb48b6239436de6",
+  "model": {
+    "@kind": "tim_hoc_set"
+  }
+}

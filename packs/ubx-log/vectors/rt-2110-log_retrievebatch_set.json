@@ -1,0 +1,10 @@
+{
+  "name": "ubx-log-roundtrip-log_retrievebatch_set",
+  "from": "ubx-log",
+  "to": "ubx-log",
+  "input": "b56221100400d4018274",
+  "expect": "b56221100400d4018274",
+  "model": {
+    "@kind": "log_retrievebatch_set"
+  }
+}

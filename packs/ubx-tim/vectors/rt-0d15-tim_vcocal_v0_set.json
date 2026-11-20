@@ -1,0 +1,10 @@
+{
+  "name": "ubx-tim-roundtrip-tim_vcocal_v0_set",
+  "from": "ubx-tim",
+  "to": "ubx-tim",
+  "input": "b5620d15010012",
+  "expect": "b5620d15010012",
+  "model": {
+    "@kind": "tim_vcocal_v0_set"
+  }
+}

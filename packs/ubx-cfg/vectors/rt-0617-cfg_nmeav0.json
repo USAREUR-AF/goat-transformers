@@ -1,0 +1,10 @@
+{
+  "name": "ubx-cfg-roundtrip-cfg_nmeav0",
+  "from": "ubx-cfg",
+  "to": "ubx-cfg",
+  "input": "b56206170c002adeb50a2a000000c9a0774e",
+  "expect": "b56206170c002adeb50a2a000000c9a0774e",
+  "model": {
+    "@kind": "cfg_nmeav0"
+  }
+}

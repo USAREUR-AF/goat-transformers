@@ -1,0 +1,10 @@
+{
+  "name": "ubx-mga-roundtrip-mga_gps_health_set",
+  "from": "ubx-mga",
+  "to": "ubx-mga",
+  "input": "b5621300280004c59ca4734a21f8cfa67d542b02d9b0875e350ce3ba91683f16edc49b724920f7cea57c53730b10",
+  "expect": "b5621300280004c59ca4734a21f8cfa67d542b02d9b0875e350ce3ba91683f16edc49b724920f7cea57c53730b10",
+  "model": {
+    "@kind": "mga_gps_health_set"
+  }
+}

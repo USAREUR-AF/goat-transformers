@@ -1,0 +1,10 @@
+{
+  "name": "ubx-nav-roundtrip-nav_daheadinghp",
+  "from": "ubx-nav",
+  "to": "ubx-nav",
+  "input": "b56201454000966ddcf0443075401b84f9d3f2d77d27c92b02fba07f86ce77d30a224e278f35a57c532a81ca2457581ea92a2f722d7e06c6b151dd193625b46dba78a5020000",
+  "expect": "b56201454000966ddcf0443075401b84f9d3f2d77d27c92b02fba07f86ce77d30a224e278f35a57c532a81ca2457581ea92a2f722d7e06c6b151dd193625b46dba78a5020000",
+  "model": {
+    "@kind": "nav_daheadinghp"
+  }
+}

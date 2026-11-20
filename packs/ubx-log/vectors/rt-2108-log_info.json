@@ -1,0 +1,10 @@
+{
+  "name": "ubx-log-roundtrip-log_info",
+  "from": "ubx-log",
+  "to": "ubx-log",
+  "input": "b56221083000eac1ae359802ba7c6f563e500000000046aac2231dfe4677f451cb4acba5a2795027fed5acf0835a3108dfb615e98a9d",
+  "expect": "b56221083000eac1ae359802ba7c6f563e500000000046aac2231dfe4677f451cb4acba5a2795027fed5acf0835a3108dfb615e98a9d",
+  "model": {
+    "@kind": "log_info"
+  }
+}

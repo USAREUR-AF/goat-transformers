@@ -1,0 +1,10 @@
+{
+  "name": "ubx-nav-roundtrip-nav_odo",
+  "from": "ubx-nav",
+  "to": "ubx-nav",
+  "input": "b562010914003d1488baebdb3e65c22fc3389983470c70d7cb5f",
+  "expect": "b562010914003d1488baebdb3e65c22fc3389983470c70d7cb5f",
+  "model": {
+    "@kind": "nav_odo"
+  }
+}

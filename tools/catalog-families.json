@@ -63,6 +63,7 @@
     {"name": "MISB local sets", "domain": "sensors", "prefixes": ["misb-st"]},
     {"name": "gpsd JSON", "domain": "sensors", "exact": ["gpsd-json"]},
     {"name": "SBP (Swift Navigation)", "domain": "sensors", "prefixes": ["sbp-"], "members": {"pattern": "^sbp-(.+)$", "label": "{n} message packages", "list": false}},
+    {"name": "u-blox UBX", "domain": "sensors", "prefixes": ["ubx-"], "members": {"pattern": "^ubx-(.+)$", "label": "{n} message classes", "list": false}},
 
     {"name": "GBFS", "domain": "transport", "prefixes": ["gbfs-"], "members": {"pattern": "^gbfs-([0-9]+\\.[0-9]+)-", "label": "versions"}},
     {"name": "GTFS Realtime", "domain": "transport", "prefixes": ["gtfs-realtime"]},

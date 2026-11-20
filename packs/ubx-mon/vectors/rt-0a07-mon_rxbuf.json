@@ -1,0 +1,10 @@
+{
+  "name": "ubx-mon-roundtrip-mon_rxbuf",
+  "from": "ubx-mon",
+  "to": "ubx-mon",
+  "input": "b5620a071800b4e58b39628d39e11035e788be956c431af1c89f764d24fb",
+  "expect": "b5620a071800b4e58b39628d39e11035e788be956c431af1c89f764d24fb",
+  "model": {
+    "@kind": "mon_rxbuf"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "ubx-mon-roundtrip-mon_gnss",
+  "from": "ubx-mon",
+  "to": "ubx-mon",
+  "input": "b5620a280800a40505058f66a498",
+  "expect": "b5620a280800a40505058f66a498",
+  "model": {
+    "@kind": "mon_gnss"
+  }
+}

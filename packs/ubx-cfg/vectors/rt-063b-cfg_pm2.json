@@ -1,0 +1,10 @@
+{
+  "name": "ubx-cfg-roundtrip-cfg_pm2",
+  "from": "ubx-cfg",
+  "to": "ubx-cfg",
+  "input": "b562063b3000bc936a41aed6010003430923da968d76b1ea114a883e5f9236e69e44000000800d3a231800000000e48da76bbbe12b3f",
+  "expect": "b562063b3000bc936a41aed6010003430923da968d76b1ea114a883e5f9236e69e44000000800d3a231800000000e48da76bbbe12b3f",
+  "model": {
+    "@kind": "cfg_pm2"
+  }
+}

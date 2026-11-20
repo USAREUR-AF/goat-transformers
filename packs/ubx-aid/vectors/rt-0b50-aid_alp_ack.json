@@ -1,0 +1,10 @@
+{
+  "name": "ubx-aid-roundtrip-aid_alp_ack",
+  "from": "ubx-aid",
+  "to": "ubx-aid",
+  "input": "b5620b50010035",
+  "expect": "b5620b50010035",
+  "model": {
+    "@kind": "aid_alp_ack"
+  }
+}

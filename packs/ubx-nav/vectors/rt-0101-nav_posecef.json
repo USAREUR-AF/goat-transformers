@@ -1,0 +1,10 @@
+{
+  "name": "ubx-nav-roundtrip-nav_posecef",
+  "from": "ubx-nav",
+  "to": "ubx-nav",
+  "input": "b56201011400eb2ac52dc27e49c199d2cd14702652e8477ad67b",
+  "expect": "b56201011400eb2ac52dc27e49c199d2cd14702652e8477ad67b",
+  "model": {
+    "@kind": "nav_posecef"
+  }
+}

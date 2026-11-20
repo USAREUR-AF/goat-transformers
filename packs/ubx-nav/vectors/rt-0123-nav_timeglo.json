@@ -1,0 +1,10 @@
+{
+  "name": "ubx-nav-roundtrip-nav_timeglo",
+  "from": "ubx-nav",
+  "to": "ubx-nav",
+  "input": "b562012314007ae1527b5135d74e28895be2ffdcd6015b2cf143",
+  "expect": "b562012314007ae1527b5135d74e28895be2ffdcd6015b2cf143",
+  "model": {
+    "@kind": "nav_timeglo"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "ubx-nav2-roundtrip-nav2_velned",
+  "from": "ubx-nav2",
+  "to": "ubx-nav2",
+  "input": "b56229122400a9cf38278023bd3a5777410e2ecbc5e1051f4a75dc72ce48b3c652dc8a1ad76f616e5b43",
+  "expect": "b56229122400a9cf38278023bd3a5777410e2ecbc5e1051f4a75dc72ce48b3c652dc8a1ad76f616e5b43",
+  "model": {
+    "@kind": "nav2_velned"
+  }
+}

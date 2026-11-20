@@ -1,0 +1,10 @@
+{
+  "name": "ubx-sec-roundtrip-sec_uniqid",
+  "from": "ubx-sec",
+  "to": "ubx-sec",
+  "input": "b56227030900bf96009f6d54233100",
+  "expect": "b56227030900bf96009f6d54233100",
+  "model": {
+    "@kind": "sec_uniqid"
+  }
+}

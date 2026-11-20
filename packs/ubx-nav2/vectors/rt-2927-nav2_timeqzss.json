@@ -1,0 +1,10 @@
+{
+  "name": "ubx-nav2-roundtrip-nav2_timeqzss",
+  "from": "ubx-nav2",
+  "to": "ubx-nav2",
+  "input": "b562292714008bfd576e6251dc4139a560d510796702439c7a0a",
+  "expect": "b562292714008bfd576e6251dc4139a560d510796702439c7a0a",
+  "model": {
+    "@kind": "nav2_timeqzss"
+  }
+}

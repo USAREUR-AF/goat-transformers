@@ -1,0 +1,10 @@
+{
+  "name": "ubx-cfg-roundtrip-cfg_dgnss",
+  "from": "ubx-cfg",
+  "to": "ubx-cfg",
+  "input": "b5620670040028ff1527",
+  "expect": "b5620670040028ff1527",
+  "model": {
+    "@kind": "cfg_dgnss"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "ubx-cfg-roundtrip-cfg_smgr",
+  "from": "ubx-cfg",
+  "to": "ubx-cfg",
+  "input": "b562066214005027fee3d537000083df5a3305008dd6aad40000",
+  "expect": "b562066214005027fee3d537000083df5a3305008dd6aad40000",
+  "model": {
+    "@kind": "cfg_smgr"
+  }
+}

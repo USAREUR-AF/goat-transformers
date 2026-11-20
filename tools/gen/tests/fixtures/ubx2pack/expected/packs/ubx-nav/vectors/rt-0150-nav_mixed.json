@@ -1,0 +1,10 @@
+{
+  "name": "ubx-nav-roundtrip-nav_mixed",
+  "from": "ubx-nav",
+  "to": "ubx-nav",
+  "input": "b562015026000f5336380000000000a0400000000000000cc0eb4219f0c79edf5e5e000000807533e3311c00",
+  "expect": "b562015026000f5336380000000000a0400000000000000cc0eb4219f0c79edf5e5e000000807533e3311c00",
+  "model": {
+    "@kind": "nav_mixed"
+  }
+}

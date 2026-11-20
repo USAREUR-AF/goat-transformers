@@ -1,0 +1,10 @@
+{
+  "name": "ubx-nav-roundtrip-nav_variantb",
+  "from": "ubx-nav",
+  "to": "ubx-nav",
+  "input": "b56201530500015950b071",
+  "expect": "b56201530500015950b071",
+  "model": {
+    "@kind": "nav_variantb"
+  }
+}
