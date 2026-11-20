@@ -1,0 +1,17 @@
+{
+ "name": "gen-domain_name-roundtrip",
+ "from": "stix-domain-name",
+ "to": "stix-domain-name",
+ "input": "{\"type\":\"domain-name\",\"spec_version\":\"2.0\",\"object_marking_refs\":[\"s86941\",\"s16548\"],\"granular_markings\":[{\"selectors\":[\"s62335\"],\"lang\":\"s92249\",\"marking_ref\":\"s73583\"},{\"selectors\":[\"s51503\"],\"lang\":\"s74160\",\"marking_ref\":\"s63615\"}],\"defanged\":false,\"id\":\"s47693\",\"value\":\"s76052\",\"resolves_to_refs\":[\"s52886\",\"s11240\"]}",
+ "expect": "{\"type\":\"domain-name\",\"spec_version\":\"2.0\",\"object_marking_refs\":[\"s86941\",\"s16548\"],\"granular_markings\":[{\"selectors\":[\"s62335\"],\"lang\":\"s92249\",\"marking_ref\":\"s73583\"},{\"selectors\":[\"s51503\"],\"lang\":\"s74160\",\"marking_ref\":\"s63615\"}],\"defanged\":false,\"id\":\"s47693\",\"value\":\"s76052\",\"resolves_to_refs\":[\"s52886\",\"s11240\"]}",
+ "model": {
+  "@kind": "domain_name",
+  "uid": "s47693",
+  "stixdomainname.type": "domain-name",
+  "stixdomainname.spec_version": "2.0",
+  "stixdomainname.object_marking_refs.#": "2",
+  "stixdomainname.granular_markings.#": "2",
+  "stixdomainname.defanged": "0",
+  "stixdomainname.id": "s47693"
+ }
+}

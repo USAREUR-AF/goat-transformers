@@ -1,0 +1,39 @@
+{
+ "keys": {
+  "bcc_refs|.|string": "bcc_refs_value",
+  "body_multipart|body_raw_ref|string": "body_multipart_body_raw_ref",
+  "body_multipart|body|string": "body_multipart_body",
+  "body_multipart|content_disposition|string": "body_multipart_content_disposition",
+  "body_multipart|content_type|string": "body_multipart_content_type",
+  "cc_refs|.|string": "cc_refs_value",
+  "granular_markings_selectors|.|string": "granular_markings_selectors_value",
+  "granular_markings|lang|string": "granular_markings_lang",
+  "granular_markings|marking_ref|string": "granular_markings_marking_ref",
+  "object_marking_refs|.|string": "object_marking_refs_value",
+  "received_lines|.|string": "received_lines_value",
+  "to_refs|.|string": "to_refs_value",
+  "|body|string": "body",
+  "|content_type|string": "content_type",
+  "|date|string": "date",
+  "|defanged|int": "defanged",
+  "|from_ref|string": "from_ref",
+  "|id|string": "id",
+  "|is_multipart|int": "is_multipart",
+  "|message_id|string": "message_id",
+  "|raw_email_ref|string": "raw_email_ref",
+  "|sender_ref|string": "sender_ref",
+  "|spec_version|string": "spec_version",
+  "|subject|string": "subject",
+  "|type|string": "type"
+ },
+ "lists": {
+  "granular_markings|selectors": "granular_markings_selectors",
+  "|bcc_refs": "bcc_refs",
+  "|body_multipart": "body_multipart",
+  "|cc_refs": "cc_refs",
+  "|granular_markings": "granular_markings",
+  "|object_marking_refs": "object_marking_refs",
+  "|received_lines": "received_lines",
+  "|to_refs": "to_refs"
+ }
+}

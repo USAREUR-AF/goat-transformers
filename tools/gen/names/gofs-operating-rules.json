@@ -1,0 +1,19 @@
+{
+ "keys": {
+  "data_operating_rules_calendars|.|string": "data_operating_rules_calendars_value",
+  "data_operating_rules|brand_id|string": "data_operating_rules_brand_id",
+  "data_operating_rules|end_dropoff_window|string": "data_operating_rules_end_dropoff_window",
+  "data_operating_rules|end_pickup_window|string": "data_operating_rules_end_pickup_window",
+  "data_operating_rules|fare_id|string": "data_operating_rules_fare_id",
+  "data_operating_rules|from_zone_id|string": "data_operating_rules_from_zone_id",
+  "data_operating_rules|start_pickup_window|string": "data_operating_rules_start_pickup_window",
+  "data_operating_rules|to_zone_id|string": "data_operating_rules_to_zone_id",
+  "|last_updated|int": "last_updated",
+  "|ttl|int": "ttl",
+  "|version|string": "version"
+ },
+ "lists": {
+  "data_operating_rules|calendars": "data_operating_rules_calendars",
+  "|data.operating_rules": "data_operating_rules"
+ }
+}

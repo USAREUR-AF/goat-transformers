@@ -1,0 +1,17 @@
+{
+ "name": "gen-ipv4_addr-roundtrip",
+ "from": "stix-ipv4-addr",
+ "to": "stix-ipv4-addr",
+ "input": "{\"type\":\"ipv4-addr\",\"spec_version\":\"2.0\",\"object_marking_refs\":[\"s68375\",\"s84856\"],\"granular_markings\":[{\"selectors\":[\"s9334\"],\"lang\":\"s5726\",\"marking_ref\":\"s67033\"},{\"selectors\":[\"s12056\"],\"lang\":\"s35994\",\"marking_ref\":\"s75098\"}],\"defanged\":true,\"id\":\"s59008\",\"value\":\"s23704\",\"resolves_to_refs\":[\"s17189\",\"s10171\"],\"belongs_to_refs\":[\"s94362\",\"s58225\"]}",
+ "expect": "{\"type\":\"ipv4-addr\",\"spec_version\":\"2.0\",\"object_marking_refs\":[\"s68375\",\"s84856\"],\"granular_markings\":[{\"selectors\":[\"s9334\"],\"lang\":\"s5726\",\"marking_ref\":\"s67033\"},{\"selectors\":[\"s12056\"],\"lang\":\"s35994\",\"marking_ref\":\"s75098\"}],\"defanged\":true,\"id\":\"s59008\",\"value\":\"s23704\",\"resolves_to_refs\":[\"s17189\",\"s10171\"],\"belongs_to_refs\":[\"s94362\",\"s58225\"]}",
+ "model": {
+  "@kind": "ipv4_addr",
+  "uid": "s59008",
+  "stixipv4addr.type": "ipv4-addr",
+  "stixipv4addr.spec_version": "2.0",
+  "stixipv4addr.object_marking_refs.#": "2",
+  "stixipv4addr.granular_markings.#": "2",
+  "stixipv4addr.defanged": "1",
+  "stixipv4addr.id": "s59008"
+ }
+}

@@ -1,0 +1,29 @@
+{
+ "keys": {
+  "contains_refs|.|string": "contains_refs_value",
+  "granular_markings_selectors|.|string": "granular_markings_selectors_value",
+  "granular_markings|lang|string": "granular_markings_lang",
+  "granular_markings|marking_ref|string": "granular_markings_marking_ref",
+  "object_marking_refs|.|string": "object_marking_refs_value",
+  "|atime|string": "atime",
+  "|content_ref|string": "content_ref",
+  "|ctime|string": "ctime",
+  "|defanged|int": "defanged",
+  "|id|string": "id",
+  "|magic_number_hex|string": "magic_number_hex",
+  "|mime_type|string": "mime_type",
+  "|mtime|string": "mtime",
+  "|name_enc|string": "name_enc",
+  "|name|string": "name",
+  "|parent_directory_ref|string": "parent_directory_ref",
+  "|size|int": "size",
+  "|spec_version|string": "spec_version",
+  "|type|string": "type"
+ },
+ "lists": {
+  "granular_markings|selectors": "granular_markings_selectors",
+  "|contains_refs": "contains_refs",
+  "|granular_markings": "granular_markings",
+  "|object_marking_refs": "object_marking_refs"
+ }
+}

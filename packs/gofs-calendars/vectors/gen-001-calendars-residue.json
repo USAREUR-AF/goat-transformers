@@ -1,0 +1,7 @@
+{
+ "name": "gen-calendars-residue",
+ "from": "gofs-calendars",
+ "to": "gofs-calendars",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"last_updated\":1716666350,\"ttl\":87727,\"version\":\"1.0\"}",
+ "expect": "{\"last_updated\":1716666350,\"ttl\":87727,\"version\":\"1.0\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

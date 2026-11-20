@@ -1,0 +1,14 @@
+{
+ "name": "gen-vehicle_types-roundtrip",
+ "from": "gofs-vehicle-types",
+ "to": "gofs-vehicle-types",
+ "input": "{\"last_updated\":1750729481,\"ttl\":38650,\"version\":\"1.0\",\"data\":{\"vehicle_types\":[{\"vehicle_type_id\":\"s32731\",\"max_capacity\":\"s18878\",\"wheelchair_boarding\":\"s79221\"},{\"vehicle_type_id\":\"s84173\",\"max_capacity\":\"s96738\",\"wheelchair_boarding\":\"s30885\"}]}}",
+ "expect": "{\"last_updated\":1750729481,\"ttl\":38650,\"version\":\"1.0\",\"data\":{\"vehicle_types\":[{\"vehicle_type_id\":\"s32731\",\"max_capacity\":\"s18878\",\"wheelchair_boarding\":\"s79221\"},{\"vehicle_type_id\":\"s84173\",\"max_capacity\":\"s96738\",\"wheelchair_boarding\":\"s30885\"}]}}",
+ "model": {
+  "time_ms": "1750729481000",
+  "gofsvehicletypes.last_updated": "1750729481",
+  "gofsvehicletypes.ttl": "38650",
+  "gofsvehicletypes.version": "1.0",
+  "gofsvehicletypes.data_vehicle_types.#": "2"
+ }
+}

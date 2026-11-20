@@ -1,0 +1,13 @@
+{
+ "name": "gen-gofs-roundtrip",
+ "from": "gofs-gofs",
+ "to": "gofs-gofs",
+ "input": "{\"last_updated\":1766684135,\"ttl\":99445,\"version\":\"1.0\"}",
+ "expect": "{\"last_updated\":1766684135,\"ttl\":99445,\"version\":\"1.0\"}",
+ "model": {
+  "time_ms": "1766684135000",
+  "gofsgofs.last_updated": "1766684135",
+  "gofsgofs.ttl": "99445",
+  "gofsgofs.version": "1.0"
+ }
+}

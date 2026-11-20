@@ -1,0 +1,17 @@
+{
+ "name": "gen-mac_addr-roundtrip",
+ "from": "stix-mac-addr",
+ "to": "stix-mac-addr",
+ "input": "{\"type\":\"mac-addr\",\"spec_version\":\"2.0\",\"object_marking_refs\":[\"s23435\",\"s72349\"],\"granular_markings\":[{\"selectors\":[\"s1227\"],\"lang\":\"s93332\",\"marking_ref\":\"s73588\"},{\"selectors\":[\"s73719\"],\"lang\":\"s57754\",\"marking_ref\":\"s64784\"}],\"defanged\":true,\"id\":\"s30170\",\"value\":\"s69643\"}",
+ "expect": "{\"type\":\"mac-addr\",\"spec_version\":\"2.0\",\"object_marking_refs\":[\"s23435\",\"s72349\"],\"granular_markings\":[{\"selectors\":[\"s1227\"],\"lang\":\"s93332\",\"marking_ref\":\"s73588\"},{\"selectors\":[\"s73719\"],\"lang\":\"s57754\",\"marking_ref\":\"s64784\"}],\"defanged\":true,\"id\":\"s30170\",\"value\":\"s69643\"}",
+ "model": {
+  "@kind": "mac_addr",
+  "uid": "s30170",
+  "stixmacaddr.type": "mac-addr",
+  "stixmacaddr.spec_version": "2.0",
+  "stixmacaddr.object_marking_refs.#": "2",
+  "stixmacaddr.granular_markings.#": "2",
+  "stixmacaddr.defanged": "1",
+  "stixmacaddr.id": "s30170"
+ }
+}

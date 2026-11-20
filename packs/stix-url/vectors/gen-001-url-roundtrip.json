@@ -1,0 +1,17 @@
+{
+ "name": "gen-url-roundtrip",
+ "from": "stix-url",
+ "to": "stix-url",
+ "input": "{\"type\":\"url\",\"spec_version\":\"2.1\",\"object_marking_refs\":[\"s52296\",\"s73761\"],\"granular_markings\":[{\"selectors\":[\"s40672\"],\"lang\":\"s35490\",\"marking_ref\":\"s45591\"},{\"selectors\":[\"s56787\"],\"lang\":\"s18275\",\"marking_ref\":\"s19954\"}],\"defanged\":true,\"id\":\"s56108\",\"value\":\"https://example.org/954\"}",
+ "expect": "{\"type\":\"url\",\"spec_version\":\"2.1\",\"object_marking_refs\":[\"s52296\",\"s73761\"],\"granular_markings\":[{\"selectors\":[\"s40672\"],\"lang\":\"s35490\",\"marking_ref\":\"s45591\"},{\"selectors\":[\"s56787\"],\"lang\":\"s18275\",\"marking_ref\":\"s19954\"}],\"defanged\":true,\"id\":\"s56108\",\"value\":\"https://example.org/954\"}",
+ "model": {
+  "@kind": "url",
+  "uid": "s56108",
+  "stixurl.type": "url",
+  "stixurl.spec_version": "2.1",
+  "stixurl.object_marking_refs.#": "2",
+  "stixurl.granular_markings.#": "2",
+  "stixurl.defanged": "1",
+  "stixurl.id": "s56108"
+ }
+}

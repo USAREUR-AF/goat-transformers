@@ -1,0 +1,17 @@
+{
+ "name": "gen-note-roundtrip",
+ "from": "stix-note",
+ "to": "stix-note",
+ "input": "{\"type\":\"note\",\"spec_version\":\"2.1\",\"id\":\"s30077\",\"created_by_ref\":\"s85974\",\"labels\":[\"s76364\",\"s74711\"],\"created\":\"s26417\",\"modified\":\"2026-12-04T07:49:47.835Z\",\"revoked\":true,\"confidence\":12,\"lang\":\"s79600\",\"external_references\":[{\"description\":\"s4712\",\"url\":\"https://example.org/566\",\"source_name\":\"s47172\",\"external_id\":\"s99039\"},{\"description\":\"s70392\",\"url\":\"https://example.org/256\",\"source_name\":\"s34286\",\"external_id\":\"s91314\"}],\"object_marking_refs\":[\"s74514\",\"s95534\"],\"granular_markings\":[{\"selectors\":[\"s59615\"],\"lang\":\"s82404\",\"marking_ref\":\"s3405\"},{\"selectors\":[\"s75283\"],\"lang\":\"s63423\",\"marking_ref\":\"s7643\"}],\"abstract\":\"s36657\",\"content\":\"s57366\",\"authors\":[\"s90953\",\"s59584\"],\"object_refs\":[\"s13447\",\"s54624\"]}",
+ "expect": "{\"type\":\"note\",\"spec_version\":\"2.1\",\"id\":\"s30077\",\"created_by_ref\":\"s85974\",\"labels\":[\"s76364\",\"s74711\"],\"created\":\"s26417\",\"modified\":\"2026-12-04T07:49:47.835Z\",\"revoked\":true,\"confidence\":12,\"lang\":\"s79600\",\"external_references\":[{\"description\":\"s4712\",\"url\":\"https://example.org/566\",\"source_name\":\"s47172\",\"external_id\":\"s99039\"},{\"description\":\"s70392\",\"url\":\"https://example.org/256\",\"source_name\":\"s34286\",\"external_id\":\"s91314\"}],\"object_marking_refs\":[\"s74514\",\"s95534\"],\"granular_markings\":[{\"selectors\":[\"s59615\"],\"lang\":\"s82404\",\"marking_ref\":\"s3405\"},{\"selectors\":[\"s75283\"],\"lang\":\"s63423\",\"marking_ref\":\"s7643\"}],\"abstract\":\"s36657\",\"content\":\"s57366\",\"authors\":[\"s90953\",\"s59584\"],\"object_refs\":[\"s13447\",\"s54624\"]}",
+ "model": {
+  "@kind": "note",
+  "uid": "s30077",
+  "time_ms": "1796370587835",
+  "stixnote.type": "note",
+  "stixnote.spec_version": "2.1",
+  "stixnote.id": "s30077",
+  "stixnote.created_by_ref": "s85974",
+  "stixnote.labels.#": "2"
+ }
+}

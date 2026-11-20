@@ -1,0 +1,7 @@
+{
+ "name": "gen-software-residue",
+ "from": "stix-software",
+ "to": "stix-software",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"type\":\"software\",\"spec_version\":\"2.0\",\"object_marking_refs\":[\"s30866\",\"s93248\"],\"granular_markings\":[{\"selectors\":[\"s54009\"],\"lang\":\"s53854\",\"marking_ref\":\"s59065\"},{\"selectors\":[\"s75929\"],\"lang\":\"s95564\",\"marking_ref\":\"s68322\"}],\"defanged\":false,\"id\":\"s6042\",\"name\":\"s49808\",\"cpe\":\"s53015\",\"swid\":\"s64448\",\"languages\":[\"s28432\",\"s72944\"],\"vendor\":\"s74720\",\"version\":\"s38907\"}",
+ "expect": "{\"type\":\"software\",\"spec_version\":\"2.0\",\"object_marking_refs\":[\"s30866\",\"s93248\"],\"granular_markings\":[{\"selectors\":[\"s54009\"],\"lang\":\"s53854\",\"marking_ref\":\"s59065\"},{\"selectors\":[\"s75929\"],\"lang\":\"s95564\",\"marking_ref\":\"s68322\"}],\"defanged\":false,\"id\":\"s6042\",\"name\":\"s49808\",\"cpe\":\"s53015\",\"swid\":\"s64448\",\"languages\":[\"s28432\",\"s72944\"],\"vendor\":\"s74720\",\"version\":\"s38907\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

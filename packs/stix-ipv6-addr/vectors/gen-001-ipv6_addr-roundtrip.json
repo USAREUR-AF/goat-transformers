@@ -1,0 +1,17 @@
+{
+ "name": "gen-ipv6_addr-roundtrip",
+ "from": "stix-ipv6-addr",
+ "to": "stix-ipv6-addr",
+ "input": "{\"type\":\"ipv6-addr\",\"spec_version\":\"2.0\",\"object_marking_refs\":[\"s81284\",\"s44136\"],\"granular_markings\":[{\"selectors\":[\"s36538\"],\"lang\":\"s27523\",\"marking_ref\":\"s43051\"},{\"selectors\":[\"s40392\"],\"lang\":\"s52277\",\"marking_ref\":\"s89597\"}],\"defanged\":true,\"id\":\"s93971\",\"value\":\"s34985\",\"resolves_to_refs\":[\"s90392\",\"s78905\"],\"belongs_to_refs\":[\"s75065\",\"s56488\"]}",
+ "expect": "{\"type\":\"ipv6-addr\",\"spec_version\":\"2.0\",\"object_marking_refs\":[\"s81284\",\"s44136\"],\"granular_markings\":[{\"selectors\":[\"s36538\"],\"lang\":\"s27523\",\"marking_ref\":\"s43051\"},{\"selectors\":[\"s40392\"],\"lang\":\"s52277\",\"marking_ref\":\"s89597\"}],\"defanged\":true,\"id\":\"s93971\",\"value\":\"s34985\",\"resolves_to_refs\":[\"s90392\",\"s78905\"],\"belongs_to_refs\":[\"s75065\",\"s56488\"]}",
+ "model": {
+  "@kind": "ipv6_addr",
+  "uid": "s93971",
+  "stixipv6addr.type": "ipv6-addr",
+  "stixipv6addr.spec_version": "2.0",
+  "stixipv6addr.object_marking_refs.#": "2",
+  "stixipv6addr.granular_markings.#": "2",
+  "stixipv6addr.defanged": "1",
+  "stixipv6addr.id": "s93971"
+ }
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-windows_registry_key-residue",
+ "from": "stix-windows-registry-key",
+ "to": "stix-windows-registry-key",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"type\":\"windows-registry-key\",\"spec_version\":\"2.0\",\"object_marking_refs\":[\"s3896\",\"s26485\"],\"granular_markings\":[{\"selectors\":[\"s88209\"],\"lang\":\"s21699\",\"marking_ref\":\"s29600\"},{\"selectors\":[\"s89058\"],\"lang\":\"s42641\",\"marking_ref\":\"s36818\"}],\"defanged\":true,\"id\":\"s96844\",\"key\":\"s96123\",\"values\":[{\"name\":\"s27800\",\"data\":\"s63642\",\"data_type\":\"REG_LINK\"},{\"name\":\"s11599\",\"data\":\"s41167\",\"data_type\":\"REG_DWORD_BIG_ENDIAN\"}],\"modified_time\":\"s79858\",\"creator_user_ref\":\"s21050\",\"number_of_subkeys\":74914}",
+ "expect": "{\"type\":\"windows-registry-key\",\"spec_version\":\"2.0\",\"object_marking_refs\":[\"s3896\",\"s26485\"],\"granular_markings\":[{\"selectors\":[\"s88209\"],\"lang\":\"s21699\",\"marking_ref\":\"s29600\"},{\"selectors\":[\"s89058\"],\"lang\":\"s42641\",\"marking_ref\":\"s36818\"}],\"defanged\":true,\"id\":\"s96844\",\"key\":\"s96123\",\"values\":[{\"name\":\"s27800\",\"data\":\"s63642\",\"data_type\":\"REG_LINK\"},{\"name\":\"s11599\",\"data\":\"s41167\",\"data_type\":\"REG_DWORD_BIG_ENDIAN\"}],\"modified_time\":\"s79858\",\"creator_user_ref\":\"s21050\",\"number_of_subkeys\":74914,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

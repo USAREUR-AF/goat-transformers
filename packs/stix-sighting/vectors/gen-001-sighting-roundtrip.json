@@ -1,0 +1,17 @@
+{
+ "name": "gen-sighting-roundtrip",
+ "from": "stix-sighting",
+ "to": "stix-sighting",
+ "input": "{\"type\":\"sighting\",\"spec_version\":\"2.1\",\"id\":\"s79363\",\"created_by_ref\":\"s72153\",\"labels\":[\"s36764\",\"s81102\"],\"created\":\"s92680\",\"modified\":\"2024-10-05T22:57:28.540Z\",\"revoked\":true,\"confidence\":17,\"lang\":\"s61104\",\"external_references\":[{\"description\":\"s67823\",\"url\":\"https://example.org/156\",\"source_name\":\"s3907\",\"external_id\":\"s21220\"},{\"description\":\"s98895\",\"url\":\"https://example.org/65\",\"source_name\":\"s93897\",\"external_id\":\"s59673\"}],\"object_marking_refs\":[\"s89919\",\"s98045\"],\"granular_markings\":[{\"selectors\":[\"s52090\"],\"lang\":\"s81616\",\"marking_ref\":\"s66292\"},{\"selectors\":[\"s36341\"],\"lang\":\"s73474\",\"marking_ref\":\"s50490\"}],\"description\":\"s695\",\"first_seen\":\"s58690\",\"last_seen\":\"s91188\",\"count\":60834761,\"sighting_of_ref\":\"s63303\",\"observed_data_refs\":[\"s88500\",\"s8380\"],\"where_sighted_refs\":[\"s93994\",\"s12635\"],\"summary\":false}",
+ "expect": "{\"type\":\"sighting\",\"spec_version\":\"2.1\",\"id\":\"s79363\",\"created_by_ref\":\"s72153\",\"labels\":[\"s36764\",\"s81102\"],\"created\":\"s92680\",\"modified\":\"2024-10-05T22:57:28.540Z\",\"revoked\":true,\"confidence\":17,\"lang\":\"s61104\",\"external_references\":[{\"description\":\"s67823\",\"url\":\"https://example.org/156\",\"source_name\":\"s3907\",\"external_id\":\"s21220\"},{\"description\":\"s98895\",\"url\":\"https://example.org/65\",\"source_name\":\"s93897\",\"external_id\":\"s59673\"}],\"object_marking_refs\":[\"s89919\",\"s98045\"],\"granular_markings\":[{\"selectors\":[\"s52090\"],\"lang\":\"s81616\",\"marking_ref\":\"s66292\"},{\"selectors\":[\"s36341\"],\"lang\":\"s73474\",\"marking_ref\":\"s50490\"}],\"description\":\"s695\",\"first_seen\":\"s58690\",\"last_seen\":\"s91188\",\"count\":60834761,\"sighting_of_ref\":\"s63303\",\"observed_data_refs\":[\"s88500\",\"s8380\"],\"where_sighted_refs\":[\"s93994\",\"s12635\"],\"summary\":false}",
+ "model": {
+  "@kind": "sighting",
+  "uid": "s79363",
+  "time_ms": "1728169048540",
+  "stixsighting.type": "sighting",
+  "stixsighting.spec_version": "2.1",
+  "stixsighting.id": "s79363",
+  "stixsighting.created_by_ref": "s72153",
+  "stixsighting.labels.#": "2"
+ }
+}

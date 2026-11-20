@@ -1,0 +1,7 @@
+{
+ "name": "gen-gofs-residue",
+ "from": "gofs-gofs",
+ "to": "gofs-gofs",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"last_updated\":1766684135,\"ttl\":99445,\"version\":\"1.0\"}",
+ "expect": "{\"last_updated\":1766684135,\"ttl\":99445,\"version\":\"1.0\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

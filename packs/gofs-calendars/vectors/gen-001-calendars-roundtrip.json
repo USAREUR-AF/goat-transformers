@@ -1,0 +1,13 @@
+{
+ "name": "gen-calendars-roundtrip",
+ "from": "gofs-calendars",
+ "to": "gofs-calendars",
+ "input": "{\"last_updated\":1716666350,\"ttl\":87727,\"version\":\"1.0\"}",
+ "expect": "{\"last_updated\":1716666350,\"ttl\":87727,\"version\":\"1.0\"}",
+ "model": {
+  "time_ms": "1716666350000",
+  "gofscalendars.last_updated": "1716666350",
+  "gofscalendars.ttl": "87727",
+  "gofscalendars.version": "1.0"
+ }
+}

@@ -1,0 +1,17 @@
+{
+ "name": "gen-mutex-roundtrip",
+ "from": "stix-mutex",
+ "to": "stix-mutex",
+ "input": "{\"type\":\"mutex\",\"spec_version\":\"2.0\",\"object_marking_refs\":[\"s43992\",\"s44877\"],\"granular_markings\":[{\"selectors\":[\"s40529\"],\"lang\":\"s36892\",\"marking_ref\":\"s50209\"},{\"selectors\":[\"s91426\"],\"lang\":\"s92697\",\"marking_ref\":\"s35230\"}],\"defanged\":true,\"id\":\"s68390\",\"name\":\"s40595\"}",
+ "expect": "{\"type\":\"mutex\",\"spec_version\":\"2.0\",\"object_marking_refs\":[\"s43992\",\"s44877\"],\"granular_markings\":[{\"selectors\":[\"s40529\"],\"lang\":\"s36892\",\"marking_ref\":\"s50209\"},{\"selectors\":[\"s91426\"],\"lang\":\"s92697\",\"marking_ref\":\"s35230\"}],\"defanged\":true,\"id\":\"s68390\",\"name\":\"s40595\"}",
+ "model": {
+  "@kind": "mutex",
+  "uid": "s68390",
+  "stixmutex.type": "mutex",
+  "stixmutex.spec_version": "2.0",
+  "stixmutex.object_marking_refs.#": "2",
+  "stixmutex.granular_markings.#": "2",
+  "stixmutex.defanged": "1",
+  "stixmutex.id": "s68390"
+ }
+}

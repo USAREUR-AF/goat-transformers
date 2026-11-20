@@ -1,0 +1,17 @@
+{
+ "name": "gen-email_addr-roundtrip",
+ "from": "stix-email-addr",
+ "to": "stix-email-addr",
+ "input": "{\"type\":\"email-addr\",\"spec_version\":\"2.1\",\"object_marking_refs\":[\"s39773\",\"s34984\"],\"granular_markings\":[{\"selectors\":[\"s91519\"],\"lang\":\"s68579\",\"marking_ref\":\"s42018\"},{\"selectors\":[\"s78593\"],\"lang\":\"s91290\",\"marking_ref\":\"s24708\"}],\"defanged\":true,\"id\":\"s9551\",\"value\":\"s76833\",\"display_name\":\"s58256\",\"belongs_to_ref\":\"s30261\"}",
+ "expect": "{\"type\":\"email-addr\",\"spec_version\":\"2.1\",\"object_marking_refs\":[\"s39773\",\"s34984\"],\"granular_markings\":[{\"selectors\":[\"s91519\"],\"lang\":\"s68579\",\"marking_ref\":\"s42018\"},{\"selectors\":[\"s78593\"],\"lang\":\"s91290\",\"marking_ref\":\"s24708\"}],\"defanged\":true,\"id\":\"s9551\",\"value\":\"s76833\",\"display_name\":\"s58256\",\"belongs_to_ref\":\"s30261\"}",
+ "model": {
+  "@kind": "email_addr",
+  "uid": "s9551",
+  "stixemailaddr.type": "email-addr",
+  "stixemailaddr.spec_version": "2.1",
+  "stixemailaddr.object_marking_refs.#": "2",
+  "stixemailaddr.granular_markings.#": "2",
+  "stixemailaddr.defanged": "1",
+  "stixemailaddr.id": "s9551"
+ }
+}

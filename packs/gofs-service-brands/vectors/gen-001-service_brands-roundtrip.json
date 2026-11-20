@@ -1,0 +1,14 @@
+{
+ "name": "gen-service_brands-roundtrip",
+ "from": "gofs-service-brands",
+ "to": "gofs-service-brands",
+ "input": "{\"last_updated\":1703193657,\"ttl\":38687,\"version\":\"1.0\",\"data\":{\"service_brands\":[{\"brand_id\":\"s50969\",\"brand_name\":\"s13017\",\"brand_color\":\"s75425\",\"brand_text_color\":\"s30329\"},{\"brand_id\":\"s66983\",\"brand_name\":\"s5471\",\"brand_color\":\"s34652\",\"brand_text_color\":\"s16377\"}]}}",
+ "expect": "{\"last_updated\":1703193657,\"ttl\":38687,\"version\":\"1.0\",\"data\":{\"service_brands\":[{\"brand_id\":\"s50969\",\"brand_name\":\"s13017\",\"brand_color\":\"s75425\",\"brand_text_color\":\"s30329\"},{\"brand_id\":\"s66983\",\"brand_name\":\"s5471\",\"brand_color\":\"s34652\",\"brand_text_color\":\"s16377\"}]}}",
+ "model": {
+  "time_ms": "1703193657000",
+  "gofsservicebrands.last_updated": "1703193657",
+  "gofsservicebrands.ttl": "38687",
+  "gofsservicebrands.version": "1.0",
+  "gofsservicebrands.data_service_brands.#": "2"
+ }
+}

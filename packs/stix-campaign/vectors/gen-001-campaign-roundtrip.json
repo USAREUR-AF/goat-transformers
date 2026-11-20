@@ -1,0 +1,17 @@
+{
+ "name": "gen-campaign-roundtrip",
+ "from": "stix-campaign",
+ "to": "stix-campaign",
+ "input": "{\"type\":\"campaign\",\"spec_version\":\"2.0\",\"id\":\"s3487\",\"created_by_ref\":\"s74132\",\"labels\":[\"s50340\",\"s22081\"],\"created\":\"s24398\",\"modified\":\"2025-02-23T02:10:16.016Z\",\"revoked\":true,\"confidence\":47,\"lang\":\"s99986\",\"external_references\":[{\"description\":\"s79997\",\"url\":\"https://example.org/994\",\"source_name\":\"s10055\",\"external_id\":\"s41427\"},{\"description\":\"s15684\",\"url\":\"https://example.org/317\",\"source_name\":\"s91943\",\"external_id\":\"s75253\"}],\"object_marking_refs\":[\"s37632\",\"s30155\"],\"granular_markings\":[{\"selectors\":[\"s55617\"],\"lang\":\"s46388\",\"marking_ref\":\"s27561\"},{\"selectors\":[\"s11945\"],\"lang\":\"s42391\",\"marking_ref\":\"s22411\"}],\"name\":\"s8573\",\"description\":\"s45087\",\"aliases\":[\"s63130\",\"s18868\"],\"first_seen\":\"s44175\",\"last_seen\":\"s68245\",\"objective\":\"s83240\"}",
+ "expect": "{\"type\":\"campaign\",\"spec_version\":\"2.0\",\"id\":\"s3487\",\"created_by_ref\":\"s74132\",\"labels\":[\"s50340\",\"s22081\"],\"created\":\"s24398\",\"modified\":\"2025-02-23T02:10:16.016Z\",\"revoked\":true,\"confidence\":47,\"lang\":\"s99986\",\"external_references\":[{\"description\":\"s79997\",\"url\":\"https://example.org/994\",\"source_name\":\"s10055\",\"external_id\":\"s41427\"},{\"description\":\"s15684\",\"url\":\"https://example.org/317\",\"source_name\":\"s91943\",\"external_id\":\"s75253\"}],\"object_marking_refs\":[\"s37632\",\"s30155\"],\"granular_markings\":[{\"selectors\":[\"s55617\"],\"lang\":\"s46388\",\"marking_ref\":\"s27561\"},{\"selectors\":[\"s11945\"],\"lang\":\"s42391\",\"marking_ref\":\"s22411\"}],\"name\":\"s8573\",\"description\":\"s45087\",\"aliases\":[\"s63130\",\"s18868\"],\"first_seen\":\"s44175\",\"last_seen\":\"s68245\",\"objective\":\"s83240\"}",
+ "model": {
+  "@kind": "campaign",
+  "uid": "s3487",
+  "time_ms": "1740276616016",
+  "stixcampaign.type": "campaign",
+  "stixcampaign.spec_version": "2.0",
+  "stixcampaign.id": "s3487",
+  "stixcampaign.created_by_ref": "s74132",
+  "stixcampaign.labels.#": "2"
+ }
+}

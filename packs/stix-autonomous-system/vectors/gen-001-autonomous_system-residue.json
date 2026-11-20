@@ -1,0 +1,7 @@
+{
+ "name": "gen-autonomous_system-residue",
+ "from": "stix-autonomous-system",
+ "to": "stix-autonomous-system",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"type\":\"autonomous-system\",\"spec_version\":\"2.1\",\"object_marking_refs\":[\"s82243\",\"s24834\"],\"granular_markings\":[{\"selectors\":[\"s80700\"],\"lang\":\"s33467\",\"marking_ref\":\"s58576\"},{\"selectors\":[\"s36927\"],\"lang\":\"s43359\",\"marking_ref\":\"s92794\"}],\"defanged\":true,\"id\":\"s55918\",\"number\":55602,\"name\":\"s58428\",\"rir\":\"s88121\"}",
+ "expect": "{\"type\":\"autonomous-system\",\"spec_version\":\"2.1\",\"object_marking_refs\":[\"s82243\",\"s24834\"],\"granular_markings\":[{\"selectors\":[\"s80700\"],\"lang\":\"s33467\",\"marking_ref\":\"s58576\"},{\"selectors\":[\"s36927\"],\"lang\":\"s43359\",\"marking_ref\":\"s92794\"}],\"defanged\":true,\"id\":\"s55918\",\"number\":55602,\"name\":\"s58428\",\"rir\":\"s88121\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

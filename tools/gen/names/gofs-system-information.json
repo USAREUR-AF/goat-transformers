@@ -1,0 +1,19 @@
+{
+ "keys": {
+  "|data.email|string": "data_email",
+  "|data.feed_contact_email|string": "data_feed_contact_email",
+  "|data.language|string": "data_language",
+  "|data.name|string": "data_name",
+  "|data.operator|string": "data_operator",
+  "|data.phone_number|string": "data_phone_number",
+  "|data.short_name|string": "data_short_name",
+  "|data.start_date|string": "data_start_date",
+  "|data.subscribe_url|string": "data_subscribe_url",
+  "|data.timezone|string": "data_timezone",
+  "|data.url|string": "data_url",
+  "|last_updated|int": "last_updated",
+  "|ttl|int": "ttl",
+  "|version|string": "version"
+ },
+ "lists": {}
+}

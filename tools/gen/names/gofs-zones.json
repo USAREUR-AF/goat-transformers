@@ -1,0 +1,24 @@
+{
+ "keys": {
+  "data_zones_bbox|.|float": "data_zones_bbox_value",
+  "data_zones_features_bbox|.|float": "data_zones_features_bbox_value",
+  "data_zones_features_geometry_bbox|.|float": "data_zones_features_geometry_bbox_value",
+  "data_zones_features_geometry_geometries_bbox|.|float": "data_zones_features_geometry_geometries_bbox_value",
+  "data_zones_features_geometry_geometries|type|string": "data_zones_features_geometry_geometries_type",
+  "data_zones_features|geometry.type|string": "data_zones_features_geometry_type",
+  "data_zones_features|type|string": "data_zones_features_type",
+  "data_zones_features|zone_id|string": "data_zones_features_zone_id",
+  "|data.zones.type|string": "data_zones_type",
+  "|last_updated|int": "last_updated",
+  "|ttl|int": "ttl",
+  "|version|string": "version"
+ },
+ "lists": {
+  "data_zones_features_geometry_geometries|bbox": "data_zones_features_geometry_geometries_bbox",
+  "data_zones_features|bbox": "data_zones_features_bbox",
+  "data_zones_features|geometry.bbox": "data_zones_features_geometry_bbox",
+  "data_zones_features|geometry.geometries": "data_zones_features_geometry_geometries",
+  "|data.zones.bbox": "data_zones_bbox",
+  "|data.zones.features": "data_zones_features"
+ }
+}

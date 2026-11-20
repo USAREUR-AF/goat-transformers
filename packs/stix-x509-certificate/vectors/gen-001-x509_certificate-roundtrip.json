@@ -1,0 +1,17 @@
+{
+ "name": "gen-x509_certificate-roundtrip",
+ "from": "stix-x509-certificate",
+ "to": "stix-x509-certificate",
+ "input": "{\"type\":\"x509-certificate\",\"spec_version\":\"2.0\",\"object_marking_refs\":[\"s76919\",\"s87584\"],\"granular_markings\":[{\"selectors\":[\"s76356\"],\"lang\":\"s39213\",\"marking_ref\":\"s57600\"},{\"selectors\":[\"s61697\"],\"lang\":\"s78112\",\"marking_ref\":\"s76199\"}],\"defanged\":true,\"id\":\"s48330\",\"is_self_signed\":false,\"version\":\"s44512\",\"serial_number\":\"s12068\",\"signature_algorithm\":\"s94902\",\"issuer\":\"s86198\",\"validity_not_before\":\"s64929\",\"validity_not_after\":\"s92088\",\"subject\":\"s98026\",\"subject_public_key_algorithm\":\"s32418\",\"subject_public_key_modulus\":\"s73198\",\"subject_public_key_exponent\":31690,\"x509_v3_extensions\":{\"basic_constraints\":\"s47669\",\"name_constraints\":\"s93114\",\"policy_constraints\":\"s670\",\"key_usage\":\"s5876\",\"extended_key_usage\":\"s60822\",\"subject_key_identifier\":\"s85306\",\"authority_key_identifier\":\"s54283\",\"subject_alternative_name\":\"s21431\",\"issuer_alternative_name\":\"s2607\",\"subject_directory_attributes\":\"s99\",\"crl_distribution_points\":\"s55854\",\"inhibit_any_policy\":\"s96401\",\"private_key_usage_period_not_before\":\"s62902\",\"private_key_usage_period_not_after\":\"s66887\",\"certificate_policies\":\"s43564\",\"policy_mappings\":\"s78188\"}}",
+ "expect": "{\"type\":\"x509-certificate\",\"spec_version\":\"2.0\",\"object_marking_refs\":[\"s76919\",\"s87584\"],\"granular_markings\":[{\"selectors\":[\"s76356\"],\"lang\":\"s39213\",\"marking_ref\":\"s57600\"},{\"selectors\":[\"s61697\"],\"lang\":\"s78112\",\"marking_ref\":\"s76199\"}],\"defanged\":true,\"id\":\"s48330\",\"is_self_signed\":false,\"version\":\"s44512\",\"serial_number\":\"s12068\",\"signature_algorithm\":\"s94902\",\"issuer\":\"s86198\",\"validity_not_before\":\"s64929\",\"validity_not_after\":\"s92088\",\"subject\":\"s98026\",\"subject_public_key_algorithm\":\"s32418\",\"subject_public_key_modulus\":\"s73198\",\"subject_public_key_exponent\":31690,\"x509_v3_extensions\":{\"basic_constraints\":\"s47669\",\"name_constraints\":\"s93114\",\"policy_constraints\":\"s670\",\"key_usage\":\"s5876\",\"extended_key_usage\":\"s60822\",\"subject_key_identifier\":\"s85306\",\"authority_key_identifier\":\"s54283\",\"subject_alternative_name\":\"s21431\",\"issuer_alternative_name\":\"s2607\",\"subject_directory_attributes\":\"s99\",\"crl_distribution_points\":\"s55854\",\"inhibit_any_policy\":\"s96401\",\"private_key_usage_period_not_before\":\"s62902\",\"private_key_usage_period_not_after\":\"s66887\",\"certificate_policies\":\"s43564\",\"policy_mappings\":\"s78188\"}}",
+ "model": {
+  "@kind": "x509_certificate",
+  "uid": "s48330",
+  "stixx509certificate.type": "x509-certificate",
+  "stixx509certificate.spec_version": "2.0",
+  "stixx509certificate.object_marking_refs.#": "2",
+  "stixx509certificate.granular_markings.#": "2",
+  "stixx509certificate.defanged": "1",
+  "stixx509certificate.id": "s48330"
+ }
+}

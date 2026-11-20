@@ -1,0 +1,35 @@
+{
+ "keys": {
+  "authors|.|string": "authors_value",
+  "external_references|description|string": "external_references_description",
+  "external_references|external_id|string": "external_references_external_id",
+  "external_references|source_name|string": "external_references_source_name",
+  "external_references|url|string": "external_references_url",
+  "granular_markings_selectors|.|string": "granular_markings_selectors_value",
+  "granular_markings|lang|string": "granular_markings_lang",
+  "granular_markings|marking_ref|string": "granular_markings_marking_ref",
+  "labels|.|string": "labels_value",
+  "object_marking_refs|.|string": "object_marking_refs_value",
+  "object_refs|.|string": "object_refs_value",
+  "|confidence|int": "confidence",
+  "|created_by_ref|string": "created_by_ref",
+  "|created|string": "created",
+  "|explanation|string": "explanation",
+  "|id|string": "id",
+  "|lang|string": "lang",
+  "|modified|string": "modified",
+  "|opinion|string": "opinion",
+  "|revoked|int": "revoked",
+  "|spec_version|string": "spec_version",
+  "|type|string": "type"
+ },
+ "lists": {
+  "granular_markings|selectors": "granular_markings_selectors",
+  "|authors": "authors",
+  "|external_references": "external_references",
+  "|granular_markings": "granular_markings",
+  "|labels": "labels",
+  "|object_marking_refs": "object_marking_refs",
+  "|object_refs": "object_refs"
+ }
+}

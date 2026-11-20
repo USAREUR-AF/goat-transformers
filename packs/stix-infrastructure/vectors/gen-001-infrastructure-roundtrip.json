@@ -1,0 +1,17 @@
+{
+ "name": "gen-infrastructure-roundtrip",
+ "from": "stix-infrastructure",
+ "to": "stix-infrastructure",
+ "input": "{\"type\":\"infrastructure\",\"spec_version\":\"2.0\",\"id\":\"s96208\",\"created_by_ref\":\"s14008\",\"labels\":[\"s54288\",\"s56173\"],\"created\":\"s80431\",\"modified\":\"2025-12-17T18:24:52.944Z\",\"revoked\":false,\"confidence\":39,\"lang\":\"s12324\",\"external_references\":[{\"description\":\"s37279\",\"url\":\"https://example.org/705\",\"source_name\":\"s24672\",\"external_id\":\"s94480\"},{\"description\":\"s79394\",\"url\":\"https://example.org/17\",\"source_name\":\"s40386\",\"external_id\":\"s36029\"}],\"object_marking_refs\":[\"s75200\",\"s90092\"],\"granular_markings\":[{\"selectors\":[\"s47033\"],\"lang\":\"s8838\",\"marking_ref\":\"s72513\"},{\"selectors\":[\"s21750\"],\"lang\":\"s97939\",\"marking_ref\":\"s34938\"}],\"name\":\"s60486\",\"description\":\"s4216\",\"infrastructure_types\":[\"s87849\",\"s97506\"],\"aliases\":[\"s1647\",\"s25800\"],\"kill_chain_phases\":[{\"kill_chain_name\":\"s79418\",\"phase_name\":\"s49737\"},{\"kill_chain_name\":\"s75252\",\"phase_name\":\"s72666\"}],\"first_seen\":\"s25107\",\"last_seen\":\"s78513\"}",
+ "expect": "{\"type\":\"infrastructure\",\"spec_version\":\"2.0\",\"id\":\"s96208\",\"created_by_ref\":\"s14008\",\"labels\":[\"s54288\",\"s56173\"],\"created\":\"s80431\",\"modified\":\"2025-12-17T18:24:52.944Z\",\"revoked\":false,\"confidence\":39,\"lang\":\"s12324\",\"external_references\":[{\"description\":\"s37279\",\"url\":\"https://example.org/705\",\"source_name\":\"s24672\",\"external_id\":\"s94480\"},{\"description\":\"s79394\",\"url\":\"https://example.org/17\",\"source_name\":\"s40386\",\"external_id\":\"s36029\"}],\"object_marking_refs\":[\"s75200\",\"s90092\"],\"granular_markings\":[{\"selectors\":[\"s47033\"],\"lang\":\"s8838\",\"marking_ref\":\"s72513\"},{\"selectors\":[\"s21750\"],\"lang\":\"s97939\",\"marking_ref\":\"s34938\"}],\"name\":\"s60486\",\"description\":\"s4216\",\"infrastructure_types\":[\"s87849\",\"s97506\"],\"aliases\":[\"s1647\",\"s25800\"],\"kill_chain_phases\":[{\"kill_chain_name\":\"s79418\",\"phase_name\":\"s49737\"},{\"kill_chain_name\":\"s75252\",\"phase_name\":\"s72666\"}],\"first_seen\":\"s25107\",\"last_seen\":\"s78513\"}",
+ "model": {
+  "@kind": "infrastructure",
+  "uid": "s96208",
+  "time_ms": "1765995892944",
+  "stixinfrastructure.type": "infrastructure",
+  "stixinfrastructure.spec_version": "2.0",
+  "stixinfrastructure.id": "s96208",
+  "stixinfrastructure.created_by_ref": "s14008",
+  "stixinfrastructure.labels.#": "2"
+ }
+}

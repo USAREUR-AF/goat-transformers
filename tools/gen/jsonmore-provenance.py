@@ -1,0 +1,163 @@
+#!/usr/bin/env python3
+"""jsonmore-provenance: write PROVENANCE.md of the STIX, CloudEvents and GOFS packs.
+
+Usage: python3 -I tools/gen/jsonmore-provenance.py <stix|cloudevents|gofs> [--check] <source checkout> <goat-transformers checkout>
+
+<source checkout> is the checkout the family's run script reads (tools/gen/stix-run.sh,
+cloudevents-run.sh, gofs-run.sh call this script last, with the same checkout). For each
+pack of the family it lists the files the generator reads with their SHA-256, the
+repository and commit, and the license, quoted from the repository's LICENSE. Every file
+goes through tools/gen/genio.py: with --check nothing is written and the exit status is 1
+when a file differs. Python 3 standard library only.
+"""
+import argparse
+import hashlib
+import json
+import os
+import subprocess
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import genio  # noqa: E402
+
+READ_ON = "2026-11-19"
+
+FAMILIES = {
+    "stix": {
+        "repo": "https://github.com/oasis-open/cti-stix2-json-schemas",
+        "raw": "https://raw.githubusercontent.com/oasis-open/cti-stix2-json-schemas",
+        "publisher": "OASIS Cyber Threat Intelligence (CTI) Technical Committee, TC Open Repository",
+        "run": "tools/gen/stix-run.sh",
+        "full_license": True,
+        "license_intro": ("The repository's `LICENSE` is the BSD 3-Clause License with the copyright of "
+                          "OASIS Open. Its README states that the repository is an OASIS TC Open "
+                          "Repository whose contributions are under that license, and that its "
+                          "governance is separate from the OASIS TC Process. The license asks that "
+                          "its notice be kept with redistributions; in full:"),
+        "spec": ("The schemas are not normative; they follow the STIX Version 2.1 OASIS Standard "
+                 "(https://docs.oasis-open.org/cti/stix/v2.1/os/stix-v2.1-os.html). The pack takes "
+                 "no text of the standard; its notes name the section they rely on in this "
+                 "project's words."),
+    },
+    "cloudevents": {
+        "repo": "https://github.com/cloudevents/spec",
+        "raw": "https://raw.githubusercontent.com/cloudevents/spec",
+        "publisher": "CloudEvents project (CNCF)",
+        "run": "tools/gen/cloudevents-run.sh",
+        "full_license": False,
+        "license_intro": "The repository's `LICENSE` is the Apache License, Version 2.0; it opens:",
+        "spec": ("The specification text (`cloudevents/spec.md`, `cloudevents/formats/json-format.md`) "
+                 "is in the same repository under the same license. The pack takes no text of it."),
+    },
+    "gofs": {
+        "repo": "https://github.com/MobilityData/gofs",
+        "raw": "https://raw.githubusercontent.com/MobilityData/gofs",
+        "publisher": "MobilityData",
+        "run": "tools/gen/gofs-run.sh",
+        "full_license": False,
+        "license_intro": "The repository's `LICENSE` is the Apache License, Version 2.0; it opens:",
+        "spec": ("The specification (`reference.md`) is in the same repository under the same "
+                 "license. Its `schema/README.md` calls the schemas partial and a work in "
+                 "progress. The pack takes no text of the specification."),
+    },
+}
+
+
+def sha256(path):
+    with open(path, "rb") as fh:
+        return hashlib.sha256(fh.read()).hexdigest()
+
+
+def closure(path):
+    todo, seen = [os.path.abspath(path)], set()
+    while todo:
+        f = todo.pop()
+        if f in seen:
+            continue
+        seen.add(f)
+        with open(f, encoding="utf-8") as fh:
+            doc = json.load(fh)
+        stack = [doc]
+        while stack:
+            x = stack.pop()
+            if isinstance(x, dict):
+                r = x.get("$ref")
+                if isinstance(r, str) and not r.startswith("#"):
+                    todo.append(os.path.normpath(os.path.join(os.path.dirname(f), r.split("#")[0])))
+                stack.extend(x.values())
+            elif isinstance(x, list):
+                stack.extend(x)
+    return sorted(seen)
+
+
+def packs(family, src):
+    """[(format, title, [relative file], main file)]"""
+    out = []
+    if family == "stix":
+        for d in ("sdos", "sros", "observables"):
+            for f in sorted(os.listdir(os.path.join(src, "schemas", d))):
+                if f.endswith(".json"):
+                    t = f[:-5]
+                    main = os.path.join(src, "schemas", d, f)
+                    files = [os.path.relpath(p, src) for p in closure(main)]
+                    out.append(("stix-" + t, "STIX 2.1 `%s` object, JSON Schema" % t, files,
+                                os.path.relpath(main, src)))
+    elif family == "cloudevents":
+        rel = "cloudevents/formats/cloudevents.json"
+        out.append(("cloudevents", "CloudEvents 1.0.2, JSON Schema of the JSON event format", [rel], rel))
+    else:
+        for f in sorted(os.listdir(os.path.join(src, "schema"))):
+            if f.endswith(".json"):
+                rel = "schema/" + f
+                out.append(("gofs-" + f[:-5].replace("_", "-"),
+                            "General On-demand Feed Specification (GOFS), JSON Schema of `%s`" % f, [rel], rel))
+    return out
+
+
+def text_for(family, fmt, title, files, main, src, commit):
+    c = FAMILIES[family]
+    lic = os.path.join(src, "LICENSE")
+    with open(lic, encoding="utf-8") as fh:
+        lic_text = fh.read().strip("\n")
+    if c["full_license"]:
+        quote = lic_text.split("\n")
+    else:
+        quote = [l.strip() for l in lic_text.split("\n") if l.strip()][:3]
+    w = ["# Provenance of the %s pack\n" % fmt,
+         "`tools/gen/jsonschema2pack.py` (run script `%s`) reads the files below and nothing" % c["run"],
+         "else. They are not kept in this repository. Read on %s.\n" % READ_ON,
+         "| | |\n|---|---|",
+         "| Document | %s |" % title,
+         "| Publisher | %s |" % c["publisher"],
+         "| Repository | %s at commit `%s` |" % (c["repo"], commit),
+         "| Download | `%s/%s/%s` |" % (c["raw"], commit, main), "",
+         "| File | SHA-256 |\n|---|---|"]
+    for f in files:
+        w.append("| `%s` | `%s` |" % (f, sha256(os.path.join(src, f))))
+    w += ["", "## License\n",
+          "%s (SHA-256 of `LICENSE`: `%s`)\n" % (c["license_intro"], sha256(lic)),
+          "\n".join(("> " + l) if l.strip() else ">" for l in quote), "",
+          c["spec"], "",
+          "The pack restates the schema's structure (member names, types, nesting) with keys of this",
+          "project's naming. It is not endorsed by the publisher.", ""]
+    return "\n".join(w)
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser(prog="jsonmore-provenance", description=__doc__.split("\n\n")[0])
+    ap.add_argument("family", choices=sorted(FAMILIES))
+    ap.add_argument("source")
+    ap.add_argument("checkout")
+    ap.add_argument("--check", action="store_true")
+    a = ap.parse_args(argv)
+    src, gt = os.path.abspath(a.source), os.path.abspath(a.checkout)
+    commit = subprocess.run(["git", "-C", src, "rev-parse", "HEAD"], capture_output=True, text=True,
+                            check=True).stdout.strip()
+    out = genio.Output(gt, check=a.check)
+    for fmt, title, files, main_file in packs(a.family, src):
+        out.write("packs/%s/PROVENANCE.md" % fmt, text_for(a.family, fmt, title, files, main_file, src, commit))
+    return out.report("jsonmore-provenance %s" % a.family)
+
+
+if __name__ == "__main__":
+    sys.exit(main())

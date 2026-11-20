@@ -1,0 +1,17 @@
+{
+ "name": "gen-tool-roundtrip",
+ "from": "stix-tool",
+ "to": "stix-tool",
+ "input": "{\"type\":\"tool\",\"spec_version\":\"2.0\",\"id\":\"s92484\",\"created_by_ref\":\"s35027\",\"labels\":[\"s68764\",\"s39385\"],\"created\":\"s37747\",\"modified\":\"2024-12-08T10:11:35.936Z\",\"revoked\":true,\"confidence\":6,\"lang\":\"s18718\",\"external_references\":[{\"description\":\"s28945\",\"url\":\"https://example.org/345\",\"source_name\":\"s23180\",\"external_id\":\"s42000\"},{\"description\":\"s69846\",\"url\":\"https://example.org/69\",\"source_name\":\"s10011\",\"external_id\":\"s47128\"}],\"object_marking_refs\":[\"s45692\",\"s73369\"],\"granular_markings\":[{\"selectors\":[\"s40498\"],\"lang\":\"s42921\",\"marking_ref\":\"s26560\"},{\"selectors\":[\"s56744\"],\"lang\":\"s81649\",\"marking_ref\":\"s6346\"}],\"aliases\":[\"s33513\",\"s53616\"],\"tool_types\":[\"s46852\",\"s38712\"],\"name\":\"s29675\",\"description\":\"s68824\",\"tool_version\":\"s21785\",\"kill_chain_phases\":[{\"kill_chain_name\":\"s11156\",\"phase_name\":\"s94274\"},{\"kill_chain_name\":\"s95929\",\"phase_name\":\"s70188\"}]}",
+ "expect": "{\"type\":\"tool\",\"spec_version\":\"2.0\",\"id\":\"s92484\",\"created_by_ref\":\"s35027\",\"labels\":[\"s68764\",\"s39385\"],\"created\":\"s37747\",\"modified\":\"2024-12-08T10:11:35.936Z\",\"revoked\":true,\"confidence\":6,\"lang\":\"s18718\",\"external_references\":[{\"description\":\"s28945\",\"url\":\"https://example.org/345\",\"source_name\":\"s23180\",\"external_id\":\"s42000\"},{\"description\":\"s69846\",\"url\":\"https://example.org/69\",\"source_name\":\"s10011\",\"external_id\":\"s47128\"}],\"object_marking_refs\":[\"s45692\",\"s73369\"],\"granular_markings\":[{\"selectors\":[\"s40498\"],\"lang\":\"s42921\",\"marking_ref\":\"s26560\"},{\"selectors\":[\"s56744\"],\"lang\":\"s81649\",\"marking_ref\":\"s6346\"}],\"aliases\":[\"s33513\",\"s53616\"],\"tool_types\":[\"s46852\",\"s38712\"],\"name\":\"s29675\",\"description\":\"s68824\",\"tool_version\":\"s21785\",\"kill_chain_phases\":[{\"kill_chain_name\":\"s11156\",\"phase_name\":\"s94274\"},{\"kill_chain_name\":\"s95929\",\"phase_name\":\"s70188\"}]}",
+ "model": {
+  "@kind": "tool",
+  "uid": "s92484",
+  "time_ms": "1733652695936",
+  "stixtool.type": "tool",
+  "stixtool.spec_version": "2.0",
+  "stixtool.id": "s92484",
+  "stixtool.created_by_ref": "s35027",
+  "stixtool.labels.#": "2"
+ }
+}
