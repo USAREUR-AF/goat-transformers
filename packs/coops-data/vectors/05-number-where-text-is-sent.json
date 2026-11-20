@@ -1,0 +1,9 @@
+{
+  "name": "number-where-text-is-sent",
+  "from": "coops-data",
+  "to": "coops-data",
+  "input": "{\"metadata\":{\"id\":\"9999001\",\"name\":\"Example Harbor, ST\",\"lat\":\"36.9461\",\"lon\":\"-122.0158\"},\"data\":[{\"t\":\"2026-11-20 00:00\",\"v\":1.234}]}",
+  "expect_error": "transform-decode",
+  "source": "derived by tools/gen/usgov2-vectors.py from the documented members and spec/engine-spec.md; no engine run",
+  "reference": "NOAA CO-OPS Data Retrieval API and Response Help, api.tidesandcurrents.noaa.gov/api/prod/ (read 2026-11-20); the API sends every value as a JSON string; a number under string is a transform failure (0.5 json transforms)"
+}

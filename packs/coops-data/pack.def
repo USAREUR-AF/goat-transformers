@@ -1,0 +1,42 @@
+# NOAA CO-OPS Data Retrieval API response (format=json): station metadata and a list of
+# observations, or a list of tide predictions, or an error. Public (US Government work).
+# Written by hand from the API's documented response columns; every value is text, as the
+# API sends it. pack.md states what is mapped and why nothing is bound to a shared key.
+format  coops-data
+version 0.1.0
+distribution public
+source  "NOAA CO-OPS Data Retrieval API, https://api.tidesandcurrents.noaa.gov/api/prod/ (page sha256 2f35c273fdb3eeca2aa98111d0ed62998500c2ed9f4c507b0543d919dd6b4da5), and its Response Help page, https://api.tidesandcurrents.noaa.gov/api/prod/responseHelp.html (sha256 c934a7921f56b80bbd5b05701795357a97cb5cb3c692931c3d96e8194976ba69), read 2026-11-20"
+uses    coops
+wire    json
+
+kind    observations
+when    data  present
+requires coops.data
+field   coops.station_id    metadata.id    string
+field   coops.station_name  metadata.name  string
+field   coops.station_lat   metadata.lat   string
+field   coops.station_lon   metadata.lon   string
+group   coops.data  data
+  field  coops.t   t   string
+  field  coops.v   v   string
+  field  coops.s   s   string
+  field  coops.d   d   string
+  field  coops.dr  dr  string
+  field  coops.g   g   string
+  field  coops.ty  ty  string
+  field  coops.f   f   string
+  field  coops.q   q   string
+end
+
+kind    predictions
+when    predictions  present
+requires coops.predictions
+group   coops.predictions  predictions
+  field  coops.t     t     string
+  field  coops.v     v     string
+end
+
+kind    error
+when    error.message  present
+requires coops.error_message
+field   coops.error_message  error.message  string

@@ -1,0 +1,16 @@
+# NASA EONET v3 natural event, GeoJSON form: one Feature of the events/geojson
+# FeatureCollection (one event geometry: a date paired with a location). Public domain
+# (US Government work). Written by hand from the documented member list; pack.md states
+# the evidence and what is not mapped.
+format  eonet-event
+version 0.1.0
+distribution public
+source  "NASA EONET API v3 documentation, Events (GeoJSON): https://eonet.gsfc.nasa.gov/docs/v3 (page sha256 b509a146bc9b10140a5258d2642f707b213e535c562e31a4076e8d0765a7fe5c, read 2026-11-20)"
+uses    eonet
+wire    geojson
+field   lon          geometry.lon      float
+field   lat          geometry.lat      float
+field   uid          properties.id     string
+field   callsign     properties.title  string
+field   eonet.link   properties.link   string
+field   time_ms      properties.date   iso8601_ms

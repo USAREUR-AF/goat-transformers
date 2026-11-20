@@ -1,0 +1,7 @@
+# The eonet module: the members of a NASA EONET v3 event (GeoJSON form) that have no shared
+# key. packs/eonet-event/pack.md states the evidence for the members that are bound.
+module        eonet
+version       0.1.0
+distribution  public
+source        "NASA Earth Observatory Natural Event Tracker (EONET) API v3 documentation, https://eonet.gsfc.nasa.gov/docs/v3 (US Government work)"
+key   link   string  -  "address of the API endpoint for this event"

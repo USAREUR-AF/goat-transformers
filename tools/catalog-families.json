@@ -99,6 +99,8 @@
     {"name": "NWS weather.gov API", "domain": "maps", "prefixes": ["nws-"]},
     {"name": "aviationweather.gov Data API", "domain": "maps", "prefixes": ["awc-"], "detail": "METAR, TAF, PIREP, SIGMET/AIRMET, CWA, TCF, stations and navigational data"},
     {"name": "USGS earthquake feed", "domain": "maps", "prefixes": ["usgs-earthquake"], "detail": "GeoJSON summary feed: one event, the whole feed"},
+    {"name": "NASA EONET events", "domain": "maps", "exact": ["eonet-event"]},
+    {"name": "NOAA CO-OPS tides and currents", "domain": "maps", "exact": ["coops-data"]},
     {"name": "OpenStreetMap PBF", "domain": "maps", "prefixes": ["osm-pbf-"]},
     {"name": "GeoJSON", "domain": "maps", "exact": ["geojson"]},
     {"name": "Geobuf", "domain": "maps", "exact": ["geobuf"]},

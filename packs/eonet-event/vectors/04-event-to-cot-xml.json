@@ -1,0 +1,9 @@
+{
+  "name": "event-to-cot-xml",
+  "from": "eonet-event",
+  "to": "cot-xml",
+  "input": "{\"type\":\"Feature\",\"properties\":{\"id\":\"EONET_90001\",\"title\":\"Wildfire - Example Ridge, Example County\",\"description\":null,\"link\":\"https://eonet.gsfc.nasa.gov/api/v3/events/EONET_90001\",\"closed\":null,\"date\":\"2026-11-12T00:00:00Z\",\"magnitudeValue\":1250.5,\"magnitudeUnit\":\"acres\",\"categories\":[{\"id\":\"wildfires\",\"title\":\"Wildfires\"}],\"sources\":[{\"id\":\"IRWIN\",\"url\":\"https://example.org/incident/90001\"}]},\"geometry\":{\"type\":\"Point\",\"coordinates\":[-120.4375,38.8125]}}",
+  "expect": "<event version=\"2.0\" uid=\"EONET_90001\" type=\"a-u-X\" time=\"2026-11-12T00:00:00.000Z\" start=\"2026-11-12T00:00:00.000Z\"><point lat=\"38.8125\" lon=\"-120.4375\" hae=\"9999999\" ce=\"9999999\" le=\"9999999\"/><detail><contact callsign=\"Wildfire - Example Ridge, Example County\"/></detail></event>",
+  "source": "derived by tools/gen/usgov2-vectors.py from the documented members and spec/engine-spec.md; no engine run",
+  "reference": "NASA EONET API v3 documentation, Events (GeoJSON), eonet.gsfc.nasa.gov/docs/v3 (read 2026-11-20); cot-xml writes its defaults for type, hae, ce and le"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "water-level-roundtrip",
+  "from": "coops-data",
+  "to": "coops-data",
+  "input": "{\"metadata\":{\"id\":\"9999001\",\"name\":\"Example Harbor, ST\",\"lat\":\"36.9461\",\"lon\":\"-122.0158\"},\"data\":[{\"t\":\"2026-11-19 23:54\",\"v\":\"1.234\",\"s\":\"0.012\",\"f\":\"0,0,0,0\",\"q\":\"p\"},{\"t\":\"2026-11-20 00:00\",\"v\":\"1.241\",\"s\":\"0.010\",\"f\":\"0,0,0,0\",\"q\":\"p\"}]}",
+  "expect": "{\"metadata\":{\"id\":\"9999001\",\"name\":\"Example Harbor, ST\",\"lat\":\"36.9461\",\"lon\":\"-122.0158\"},\"data\":[{\"t\":\"2026-11-19 23:54\",\"v\":\"1.234\",\"s\":\"0.012\",\"f\":\"0,0,0,0\",\"q\":\"p\"},{\"t\":\"2026-11-20 00:00\",\"v\":\"1.241\",\"s\":\"0.010\",\"f\":\"0,0,0,0\",\"q\":\"p\"}]}",
+  "model": {
+    "@kind": "observations",
+    "coops.station_id": "9999001",
+    "coops.station_lat": "36.9461",
+    "coops.data.#": "2",
+    "coops.data[0].coops.v": "1.234"
+  },
+  "source": "derived by tools/gen/usgov2-vectors.py from the documented members and spec/engine-spec.md; no engine run",
+  "reference": "NOAA CO-OPS Data Retrieval API and Response Help, api.tidesandcurrents.noaa.gov/api/prod/ (read 2026-11-20); every value is text, as the API sends it; the time is in the zone the request named"
+}

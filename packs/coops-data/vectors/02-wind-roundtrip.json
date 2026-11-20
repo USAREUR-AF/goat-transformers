@@ -1,0 +1,13 @@
+{
+  "name": "wind-roundtrip",
+  "from": "coops-data",
+  "to": "coops-data",
+  "input": "{\"metadata\":{\"id\":\"9999001\",\"name\":\"Example Harbor, ST\",\"lat\":\"36.9461\",\"lon\":\"-122.0158\"},\"data\":[{\"t\":\"2026-11-20 00:00\",\"s\":\"5.4\",\"d\":\"270.0\",\"dr\":\"W\",\"g\":\"7.1\",\"f\":\"0,0\"}]}",
+  "expect": "{\"metadata\":{\"id\":\"9999001\",\"name\":\"Example Harbor, ST\",\"lat\":\"36.9461\",\"lon\":\"-122.0158\"},\"data\":[{\"t\":\"2026-11-20 00:00\",\"s\":\"5.4\",\"d\":\"270.0\",\"dr\":\"W\",\"g\":\"7.1\",\"f\":\"0,0\"}]}",
+  "model": {
+    "@kind": "observations",
+    "coops.data[0].coops.dr": "W"
+  },
+  "source": "derived by tools/gen/usgov2-vectors.py from the documented members and spec/engine-spec.md; no engine run",
+  "reference": "NOAA CO-OPS Data Retrieval API and Response Help, api.tidesandcurrents.noaa.gov/api/prod/ (read 2026-11-20); wind columns: s is the speed, d and dr the direction, g the gust"
+}
