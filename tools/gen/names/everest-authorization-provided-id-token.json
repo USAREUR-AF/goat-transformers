@@ -1,0 +1,28 @@
+{
+ "keys": {
+  "connectors|.|int": "connectors_value",
+  "id_token_additional_info|type|string": "id_token_additional_info_type",
+  "id_token_additional_info|value|string": "id_token_additional_info_value",
+  "iso15118_certificate_hash_data|hashAlgorithm|string": "iso15118_certificate_hash_data_hash_algorithm",
+  "iso15118_certificate_hash_data|issuerKeyHash|string": "iso15118_certificate_hash_data_issuer_key_hash",
+  "iso15118_certificate_hash_data|issuerNameHash|string": "iso15118_certificate_hash_data_issuer_name_hash",
+  "iso15118_certificate_hash_data|responderURL|string": "iso15118_certificate_hash_data_responder_url",
+  "iso15118_certificate_hash_data|serialNumber|string": "iso15118_certificate_hash_data_serial_number",
+  "parent_id_token_additional_info|type|string": "parent_id_token_additional_info_type",
+  "parent_id_token_additional_info|value|string": "parent_id_token_additional_info_value",
+  "|authorization_type|string": "authorization_type",
+  "|certificate|string": "certificate",
+  "|id_token.type|string": "id_token_type",
+  "|id_token.value|string": "id_token_value",
+  "|parent_id_token.type|string": "parent_id_token_type",
+  "|parent_id_token.value|string": "parent_id_token_value",
+  "|prevalidated|int": "prevalidated",
+  "|request_id|int": "request_id"
+ },
+ "lists": {
+  "|connectors": "connectors",
+  "|id_token.additional_info": "id_token_additional_info",
+  "|iso15118CertificateHashData": "iso15118_certificate_hash_data",
+  "|parent_id_token.additional_info": "parent_id_token_additional_info"
+ }
+}

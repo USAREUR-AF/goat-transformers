@@ -1,0 +1,33 @@
+{
+ "keys": {
+  "messages|content|string": "messages_content",
+  "messages|format|string": "messages_format",
+  "messages|language|string": "messages_language",
+  "token_connectors|.|int": "token_connectors_value",
+  "token_id_token_additional_info|type|string": "token_id_token_additional_info_type",
+  "token_id_token_additional_info|value|string": "token_id_token_additional_info_value",
+  "token_iso15118_certificate_hash_data|hashAlgorithm|string": "token_iso15118_certificate_hash_data_hash_algorithm",
+  "token_iso15118_certificate_hash_data|issuerKeyHash|string": "token_iso15118_certificate_hash_data_issuer_key_hash",
+  "token_iso15118_certificate_hash_data|issuerNameHash|string": "token_iso15118_certificate_hash_data_issuer_name_hash",
+  "token_iso15118_certificate_hash_data|responderURL|string": "token_iso15118_certificate_hash_data_responder_url",
+  "token_iso15118_certificate_hash_data|serialNumber|string": "token_iso15118_certificate_hash_data_serial_number",
+  "token_parent_id_token_additional_info|type|string": "token_parent_id_token_additional_info_type",
+  "token_parent_id_token_additional_info|value|string": "token_parent_id_token_additional_info_value",
+  "|status|string": "status",
+  "|token.authorization_type|string": "token_authorization_type",
+  "|token.certificate|string": "token_certificate",
+  "|token.id_token.type|string": "token_id_token_type",
+  "|token.id_token.value|string": "token_id_token_value",
+  "|token.parent_id_token.type|string": "token_parent_id_token_type",
+  "|token.parent_id_token.value|string": "token_parent_id_token_value",
+  "|token.prevalidated|int": "token_prevalidated",
+  "|token.request_id|int": "token_request_id"
+ },
+ "lists": {
+  "|messages": "messages",
+  "|token.connectors": "token_connectors",
+  "|token.id_token.additional_info": "token_id_token_additional_info",
+  "|token.iso15118CertificateHashData": "token_iso15118_certificate_hash_data",
+  "|token.parent_id_token.additional_info": "token_parent_id_token_additional_info"
+ }
+}
