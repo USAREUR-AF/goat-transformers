@@ -293,8 +293,11 @@ def main(argv):
                     if fh.read() != text:
                         bad.append(name)
         for b in bad:
-            print("stale: %s/%s" % (OWNED, b))
-        return 1 if bad else 0
+            print("stale: %s/%s" % (OWNED, b), file=sys.stderr)
+        if bad:
+            return 1
+        print("conformance-tool-vectors.py --check: ok (%d tool vectors)" % len(files), file=sys.stderr)
+        return 0
     os.makedirs(out, exist_ok=True)
     for h in have:
         if h.endswith(".json") and h not in files:
