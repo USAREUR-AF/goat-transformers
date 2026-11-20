@@ -596,12 +596,14 @@ struct Pack {
     std::string start;
     bool checksum_nmea = false;
     std::vector<SeqPresence> seq_presences;
-    // v0.13, the `tlv` wire: `tag`, `length`, `key` and `checksum sum16 <tag>`.
+    // v0.13, the `tlv` wire: `tag`, `length`, `key` and `checksum sum16 <tag>`
+    // (v0.27: or `checksum crc32 <tag>`).
     std::uint32_t tlv_tag_bytes = 0;     // 0: ber-oid; else 1, 2 or 4
     std::uint32_t tlv_length_bytes = 0;  // 0: ber; else 1, 2 or 4
     bool tlv_has_key = false;
     std::string tlv_key;                 // the key's bytes
-    bool tlv_checksum = false;           // `checksum sum16 <tag>`
+    bool tlv_checksum = false;           // `checksum sum16 <tag>` or `checksum crc32 <tag>`
+    bool tlv_checksum_crc32 = false;     // v0.27: the checksum is `crc32`, not `sum16`
     std::uint32_t tlv_checksum_tag = 0;
     std::vector<SeqCaseScope> seq_cases;  // v0.20: every `case` and `else`, file order
     std::size_t seq_count_lines = 0;      // v0.21: the number of `count <name>` lines

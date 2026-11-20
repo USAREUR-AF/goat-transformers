@@ -760,7 +760,7 @@ def parse_seq_pack_text(text, *, source="pack.def"):
                     if wired is not None:  # ruling 5b of 0.11
                         raise bad("'layout sequential' after a %r line" % wired, lineno, "layout")
             elif kw in TEXT_DIRECTIVES or kw == "tag" or kw == "key" or kw == "element":
-                # `delimiter`, `start`, `checksum` (0.10); `tag`, `key`, `checksum sum16` (0.13);
+                # `delimiter`, `start`, `checksum` (0.10); `tag`, `key`, `checksum sum16|crc32` (0.13, 0.27);
                 # `element` (0.18, xml): another wire's
                 text_dirs.append((lineno, bad("%r is a directive of another wire" % kw, lineno, kw)))
             elif kw == "armor":

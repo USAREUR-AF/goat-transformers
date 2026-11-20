@@ -14,7 +14,7 @@ import (
 // The tlv wire (spec/engine-spec.md, "Version 0.13: the `tlv` wire"): a set
 // of items, each a tag, a length and a value; a value may itself be a set.
 // The set may follow a fixed key and a length, and may end with a sum16
-// checksum item. Input and output are hex text.
+// checksum item (0.13) or a CRC-32 item (0.27). Input and output are hex text.
 
 // --- transforms ---
 
@@ -256,6 +256,44 @@ func sum16(b []byte) uint16 {
 	return s
 }
 
+// crc32MPEG is the CRC-32 of ISO/IEC 13818-1 (Annex A) over b: polynomial
+// 0x04C11DB7, register from 0xFFFFFFFF, most significant bit first, no
+// reflection and no final XOR (0.27, "The CRC").
+func crc32MPEG(b []byte) uint32 {
+	r := uint32(0xFFFFFFFF)
+	for _, c := range b {
+		r ^= uint32(c) << 24
+		for i := 0; i < 8; i++ {
+			if r&0x80000000 != 0 {
+				r = r<<1 ^ 0x04C11DB7
+			} else {
+				r <<= 1
+			}
+		}
+	}
+	return r
+}
+
+// sumWidth is the size of the checksum item's value: 4 for crc32, 2 for
+// sum16.
+func (c *tlvConf) sumWidth() int {
+	if c.crc {
+		return 4
+	}
+	return 2
+}
+
+// checksumOf is the value of the checksum item over b, as big-endian bytes
+// of sumWidth.
+func (c *tlvConf) checksumOf(b []byte) []byte {
+	if c.crc {
+		v := crc32MPEG(b)
+		return []byte{byte(v >> 24), byte(v >> 16), byte(v >> 8), byte(v)}
+	}
+	v := sum16(b)
+	return []byte{byte(v >> 8), byte(v)}
+}
+
 // readTLVTop takes the input through steps 1 to 4 of "Reading a message" and
 // returns the items of the top set, the checksum item removed.
 func readTLVTop(p *Pack, b []byte) ([]tlvItem, error) {
@@ -290,8 +328,8 @@ func readTLVTop(p *Pack, b []byte) ([]tlvItem, error) {
 		if last.tag != c.sumTag {
 			return nil, malformedTLV(p, "the last item has tag %d, not the checksum tag %d", last.tag, c.sumTag)
 		}
-		if len(last.val) != 2 {
-			return nil, malformedTLV(p, "the checksum item has a value of %d byte(s), not 2", len(last.val))
+		if len(last.val) != c.sumWidth() {
+			return nil, malformedTLV(p, "the checksum item has a value of %d byte(s), not %d", len(last.val), c.sumWidth())
 		}
 		items = items[:len(items)-1]
 		for _, it := range items {
@@ -299,9 +337,8 @@ func readTLVTop(p *Pack, b []byte) ([]tlvItem, error) {
 				return nil, malformedTLV(p, "an item of the checksum tag %d stands before the last", c.sumTag)
 			}
 		}
-		want := uint16(beUint(last.val))
-		if got := sum16(data[:base+last.at]); got != want {
-			return nil, malformedTLV(p, "checksum %04x does not match the message's %04x", want, got)
+		if got := c.checksumOf(data[:base+last.at]); !bytes.Equal(got, last.val) {
+			return nil, malformedTLV(p, "checksum %x does not match the message's %x", last.val, got)
 		}
 	}
 	return items, nil
@@ -641,7 +678,7 @@ func encodeTLV(p *Pack, lay *layout, ent *Entity, rec *Item) ([]byte, error) {
 	}
 	c := &p.tlv
 	if c.sum {
-		if set, err = w.appendItem(set, c.sumTag, []byte{0, 0}, strconv.FormatUint(c.sumTag, 10)); err != nil {
+		if set, err = w.appendItem(set, c.sumTag, make([]byte, c.sumWidth()), strconv.FormatUint(c.sumTag, 10)); err != nil {
 			return nil, err
 		}
 	}
@@ -654,8 +691,8 @@ func encodeTLV(p *Pack, lay *layout, ent *Entity, rec *Item) ([]byte, error) {
 		out = append(out, set...)
 	}
 	if c.sum {
-		s := sum16(out[:len(out)-2])
-		out[len(out)-2], out[len(out)-1] = byte(s>>8), byte(s)
+		n := c.sumWidth()
+		copy(out[len(out)-n:], c.checksumOf(out[:len(out)-n]))
 	}
 	return []byte(hex.EncodeToString(out)), nil
 }

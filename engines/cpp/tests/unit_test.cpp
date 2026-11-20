@@ -10,6 +10,7 @@
 #include <utility>
 #include <vector>
 
+#include "codecs.hpp"
 #include "goat_transformers/engine.hpp"
 #include "util.hpp"
 
@@ -165,6 +166,11 @@ int main() {
                  "unknown directive");
     expect_error(gt::ErrorKind::UnknownTransform,
                  [] { gt::parse_pack(HDR "format a\nwire xml\nroot r\nfield k @k nosuch\n"); }, "unknown transform");
+    // v0.27: the CRC-32 of ISO/IEC 13818-1, with the two check values of "The CRC".
+    check(detail::crc32_mpeg2("123456789", 9) == 0x0376E6E7u, "crc32 of 123456789 is 0x0376E6E7");
+    check(detail::crc32_mpeg2("", 0) == 0xFFFFFFFFu, "crc32 of no bytes is 0xFFFFFFFF");
+    check(detail::crc32_mpeg2("123456789xyz", 9) == 0x0376E6E7u, "crc32 covers only the first end bytes");
+
     // v0.13: `hex` and `utf8` are transforms of the tlv wire, bad-directive on another.
     expect_error(gt::ErrorKind::BadDirective,
                  [] { gt::parse_pack(HDR "format a\nwire xml\nroot r\nfield k @k hex\n"); }, "hex on xml");

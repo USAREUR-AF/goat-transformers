@@ -609,8 +609,8 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
             if (t[1] != "sequential") throw bad("layout '" + t[1] + "' in a pack that also has 'layout sequential'");
         } else if (kw == "word_bytes") {
             throw bad("'word_bytes' is not used in a sequential pack");
-        } else if (kw == "checksum" && t.size() == 3 && t[1] == "sum16") {
-            throw bad("'checksum sum16' applies to wire tlv only");
+        } else if (kw == "checksum" && t.size() == 3 && (t[1] == "sum16" || t[1] == "crc32")) {
+            throw bad("'checksum " + t[1] + "' applies to wire tlv only");
         } else if (kw == "delimiter" || kw == "start" || kw == "checksum") {
             throw bad("'" + kw + "' applies to wire text only");
         } else if (kw == "tag" || kw == "key") {

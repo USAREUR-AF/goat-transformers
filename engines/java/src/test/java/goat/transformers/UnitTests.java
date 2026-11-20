@@ -29,8 +29,18 @@ final class UnitTests {
         sentinels();
         strictRulings(packs);
         tlv();
+        crc32();
         armor();
         uper();
+    }
+
+    /** Version 0.27: the two check values of the CRC-32 of ISO/IEC 13818-1. */
+    static void crc32() {
+        byte[] digits = "123456789".getBytes(java.nio.charset.StandardCharsets.US_ASCII);
+        int c = TlvCodec.crc32(digits, digits.length);
+        check("crc32 of 123456789 is 0376e6e7", c == 0x0376e6e7, String.format("%08x", c));
+        int z = TlvCodec.crc32(new byte[0], 0);
+        check("crc32 of no bytes is ffffffff", z == 0xffffffff, String.format("%08x", z));
     }
 
     /** Version 0.19, ASN.1 unaligned PER: the points no shared vector pins. */

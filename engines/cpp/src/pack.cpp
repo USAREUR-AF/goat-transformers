@@ -1237,7 +1237,7 @@ Pack parse_pack(const std::string& text, const std::string& source) {
             throw Error(ErrorKind::BadDirective, p.format, "",
                         where + ": '" + kw + "' is a line of a sequential layout, and the pack's layout is fixed");
         } else if (kw == "tag" || kw == "length" || kw == "key" ||
-                   (kw == "checksum" && t.size() == 3 && t[1] == "sum16")) {
+                   (kw == "checksum" && t.size() == 3 && (t[1] == "sum16" || t[1] == "crc32"))) {
             // v0.13: each once, before the first `kind`, with a value of its own;
             // on another wire bad-directive once the file is read. A `length`
             // that is not one of these forms is the block of a sequential
@@ -1245,8 +1245,8 @@ Pack parse_pack(const std::string& text, const std::string& source) {
             auto bad = [&](const std::string& why) {
                 throw Error(ErrorKind::BadDirective, p.format, "", where + ": " + why);
             };
-            const bool sum16 = kw == "checksum";
-            if (!sum16 && t.size() != 2) {
+            const bool is_checksum = kw == "checksum";
+            if (!is_checksum && t.size() != 2) {
                 if (kw == "length")
                     bad("'length' with a block is a line of a sequential layout, and 'length' on wire tlv "
                         "takes one value: ber, 1, 2 or 4");
@@ -1273,9 +1273,10 @@ Pack parse_pack(const std::string& text, const std::string& source) {
                 }
             } else {
                 if (!detail::parse_tlv_tag(t[2], p.tlv_checksum_tag))
-                    bad("'checksum sum16' takes a tag, a decimal integer from 0 to 2^28-1 with no leading zero, not '" +
-                        t[2] + "'");
+                    bad("'checksum " + t[1] +
+                        "' takes a tag, a decimal integer from 0 to 2^28-1 with no leading zero, not '" + t[2] + "'");
                 p.tlv_checksum = true;
+                p.tlv_checksum_crc32 = t[1] == "crc32";  // v0.27
             }
             if (!p.kinds.empty()) bad("'" + kw + "' after the first 'kind'");
             std::size_t& seen = kw == "tag" ? tag_line : kw == "length" ? length_line : kw == "key" ? key_line : checksum_line;
@@ -1635,7 +1636,7 @@ Pack parse_pack(const std::string& text, const std::string& source) {
             if (tlv_directive_line != 0)
                 throw Error(ErrorKind::BadDirective, p.format, "",
                             source + ":" + std::to_string(tlv_directive_line) +
-                                ": 'tag', 'length', 'key' and 'checksum sum16' apply to wire tlv only");
+                                ": 'tag', 'length', 'key', 'checksum sum16' and 'checksum crc32' apply to wire tlv only");
             each_scope(p, [&](std::vector<FieldLine>& fields, std::vector<WhenLine>&, bool) {
                 for (const auto& f : fields)
                     if (detail::transform_is_tlv_only(f.transform))
