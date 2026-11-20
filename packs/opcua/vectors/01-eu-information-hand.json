@@ -1,0 +1,16 @@
+{
+  "name": "opcua-eu-information-hand",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "worked by hand from OPC 10000-6, 5.2 (tools/gen/opcua-vectors.py)",
+  "input": "01007903011000000001000000610500000002010000006d00",
+  "expect": "01007903011000000001000000610500000002010000006d00",
+  "model": {
+    "@kind": "eu_information",
+    "opcua.eu_information_namespace_uri.#": "1",
+    "opcua.eu_information_namespace_uri[0].opcua.eu_information_namespace_uri_byte": "97",
+    "opcua.eu_information_unit_id": "5",
+    "opcua.eu_information_display_name_text.#": "1",
+    "opcua.eu_information_display_name_text[0].opcua.eu_information_display_name_text_byte": "109"
+  }
+}

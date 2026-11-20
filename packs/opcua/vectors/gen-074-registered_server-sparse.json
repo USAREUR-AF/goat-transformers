@@ -1,0 +1,27 @@
+{
+  "name": "gen-opcua-registered_server-sparse",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100b201012500000002000000763102000000763200000000000000000200000076340000000002000000763500",
+  "expect": "0100b201012500000002000000763102000000763200000000000000000200000076340000000002000000763500",
+  "model": {
+    "@kind": "registered_server",
+    "opcua.registered_server_server_type": "0",
+    "opcua.registered_server_is_online": "0",
+    "opcua.registered_server_server_uri.#": "2",
+    "opcua.registered_server_server_uri[0].opcua.registered_server_server_uri_byte": "118",
+    "opcua.registered_server_server_uri[1].opcua.registered_server_server_uri_byte": "49",
+    "opcua.registered_server_product_uri.#": "2",
+    "opcua.registered_server_product_uri[0].opcua.registered_server_product_uri_byte": "118",
+    "opcua.registered_server_product_uri[1].opcua.registered_server_product_uri_byte": "50",
+    "opcua.registered_server_server_names.#": "0",
+    "opcua.registered_server_gateway_server_uri.#": "2",
+    "opcua.registered_server_gateway_server_uri[0].opcua.registered_server_gateway_server_uri_byte": "118",
+    "opcua.registered_server_gateway_server_uri[1].opcua.registered_server_gateway_server_uri_byte": "52",
+    "opcua.registered_server_discovery_urls.#": "0",
+    "opcua.registered_server_semaphore_file_path.#": "2",
+    "opcua.registered_server_semaphore_file_path[0].opcua.registered_server_semaphore_file_path_byte": "118",
+    "opcua.registered_server_semaphore_file_path[1].opcua.registered_server_semaphore_file_path_byte": "53"
+  }
+}

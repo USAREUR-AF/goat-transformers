@@ -1,0 +1,17 @@
+{
+  "name": "gen-opcua-lldp_management_address_type-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100884a0112000000015ed0b202000000763200000000045ed0b2",
+  "expect": "0100884a0112000000015ed0b202000000763200000000045ed0b2",
+  "model": {
+    "@kind": "lldp_management_address_type",
+    "opcua.lldp_management_address_type_address_subtype": "3000000001",
+    "opcua.lldp_management_address_type_if_subtype": "0",
+    "opcua.lldp_management_address_type_if_id": "3000000004",
+    "opcua.lldp_management_address_type_address.#": "2",
+    "opcua.lldp_management_address_type_address[0].opcua.lldp_management_address_type_address_byte": "118",
+    "opcua.lldp_management_address_type_address[1].opcua.lldp_management_address_type_address_byte": "50"
+  }
+}

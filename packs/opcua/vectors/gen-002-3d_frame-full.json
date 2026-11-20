@@ -1,0 +1,17 @@
+{
+  "name": "gen-opcua-3d_frame-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "010087490130000000000000000000f4bf00000000000002c00000000000000ac000000000000011c000000000000015c000000000000019c0",
+  "expect": "010087490130000000000000000000f4bf00000000000002c00000000000000ac000000000000011c000000000000015c000000000000019c0",
+  "model": {
+    "@kind": "3d_frame",
+    "opcua.3d_frame_cartesian_coordinates_x": "-1.25",
+    "opcua.3d_frame_cartesian_coordinates_y": "-2.25",
+    "opcua.3d_frame_cartesian_coordinates_z": "-3.25",
+    "opcua.3d_frame_orientation_a": "-4.25",
+    "opcua.3d_frame_orientation_b": "-5.25",
+    "opcua.3d_frame_orientation_c": "-6.25"
+  }
+}

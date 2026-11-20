@@ -1,0 +1,12 @@
+{
+  "name": "gen-opcua-log_records_data_type-sparse",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100294d010400000000000000",
+  "expect": "0100294d010400000000000000",
+  "model": {
+    "@kind": "log_records_data_type",
+    "opcua.log_records_data_type_log_record_array.#": "0"
+  }
+}

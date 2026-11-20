@@ -1,0 +1,27 @@
+{
+  "name": "gen-opcua-simple_attribute_operand-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "01005b0201220000000102e9030200000002000200000071320300020000007133045ed0b2020000007635",
+  "expect": "01005b0201220000000102e9030200000002000200000071320300020000007133045ed0b2020000007635",
+  "model": {
+    "@kind": "simple_attribute_operand",
+    "opcua.simple_attribute_operand_type_definition_id_encoding": "1",
+    "opcua.simple_attribute_operand_type_definition_id_namespace": "2",
+    "opcua.simple_attribute_operand_type_definition_id_id": "1001",
+    "opcua.simple_attribute_operand_attribute_id": "3000000004",
+    "opcua.simple_attribute_operand_browse_path.#": "2",
+    "opcua.simple_attribute_operand_browse_path[0].opcua.simple_attribute_operand_browse_path_item_namespace_index": "2",
+    "opcua.simple_attribute_operand_browse_path[0].opcua.simple_attribute_operand_browse_path_item_name.#": "2",
+    "opcua.simple_attribute_operand_browse_path[0].opcua.simple_attribute_operand_browse_path_item_name[0].opcua.simple_attribute_operand_browse_path_item_name_byte": "113",
+    "opcua.simple_attribute_operand_browse_path[0].opcua.simple_attribute_operand_browse_path_item_name[1].opcua.simple_attribute_operand_browse_path_item_name_byte": "50",
+    "opcua.simple_attribute_operand_browse_path[1].opcua.simple_attribute_operand_browse_path_item_namespace_index": "3",
+    "opcua.simple_attribute_operand_browse_path[1].opcua.simple_attribute_operand_browse_path_item_name.#": "2",
+    "opcua.simple_attribute_operand_browse_path[1].opcua.simple_attribute_operand_browse_path_item_name[0].opcua.simple_attribute_operand_browse_path_item_name_byte": "113",
+    "opcua.simple_attribute_operand_browse_path[1].opcua.simple_attribute_operand_browse_path_item_name[1].opcua.simple_attribute_operand_browse_path_item_name_byte": "51",
+    "opcua.simple_attribute_operand_index_range.#": "2",
+    "opcua.simple_attribute_operand_index_range[0].opcua.simple_attribute_operand_index_range_byte": "118",
+    "opcua.simple_attribute_operand_index_range[1].opcua.simple_attribute_operand_index_range_byte": "53"
+  }
+}

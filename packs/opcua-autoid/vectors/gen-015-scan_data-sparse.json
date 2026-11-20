@@ -1,0 +1,19 @@
+{
+  "name": "gen-opcua-autoid-scan_data-sparse",
+  "from": "opcua-autoid",
+  "to": "opcua-autoid",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0102a613011000000003000000e903020000007632eb03ec03",
+  "expect": "0102a613011000000003000000e903020000007632eb03ec03",
+  "model": {
+    "@kind": "scan_data",
+    "opcuaautoid.namespace_index": "2",
+    "opcuaautoid.scan_data_switch_field": "3",
+    "opcuaautoid.scan_data_epc_pc": "1001",
+    "opcuaautoid.scan_data_epc_xpc_w1": "1003",
+    "opcuaautoid.scan_data_epc_xpc_w2": "1004",
+    "opcuaautoid.scan_data_epc_u_id.#": "2",
+    "opcuaautoid.scan_data_epc_u_id[0].opcuaautoid.scan_data_epc_u_id_byte": "118",
+    "opcuaautoid.scan_data_epc_u_id[1].opcuaautoid.scan_data_epc_u_id_byte": "50"
+  }
+}

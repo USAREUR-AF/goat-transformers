@@ -1,0 +1,15 @@
+{
+  "name": "gen-opcua-identity_mapping_rule_type-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100783d010a00000001000000020000007632",
+  "expect": "0100783d010a00000001000000020000007632",
+  "model": {
+    "@kind": "identity_mapping_rule_type",
+    "opcua.identity_mapping_rule_type_criteria_type": "1",
+    "opcua.identity_mapping_rule_type_criteria.#": "2",
+    "opcua.identity_mapping_rule_type_criteria[0].opcua.identity_mapping_rule_type_criteria_byte": "118",
+    "opcua.identity_mapping_rule_type_criteria[1].opcua.identity_mapping_rule_type_criteria_byte": "50"
+  }
+}

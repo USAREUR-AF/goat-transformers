@@ -1,0 +1,14 @@
+{
+  "name": "gen-opcua-test-choice-full",
+  "from": "opcua-test",
+  "to": "opcua-test",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "01028c13010800000001000000015ed0b2",
+  "expect": "01028c13010800000001000000015ed0b2",
+  "model": {
+    "@kind": "choice",
+    "opcuatest.namespace_index": "2",
+    "opcuatest.choice_switch_field": "1",
+    "opcuatest.choice_number": "3000000001"
+  }
+}

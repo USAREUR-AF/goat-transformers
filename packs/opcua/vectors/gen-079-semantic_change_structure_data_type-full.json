@@ -1,0 +1,17 @@
+{
+  "name": "gen-opcua-semantic_change_structure_data_type-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "01008303010b0000000102e903022c0172110100",
+  "expect": "01008303010b0000000102e903022c0172110100",
+  "model": {
+    "@kind": "semantic_change_structure_data_type",
+    "opcua.semantic_change_structure_data_type_affected_encoding": "1",
+    "opcua.semantic_change_structure_data_type_affected_namespace": "2",
+    "opcua.semantic_change_structure_data_type_affected_id": "1001",
+    "opcua.semantic_change_structure_data_type_affected_type_encoding": "2",
+    "opcua.semantic_change_structure_data_type_affected_type_namespace": "300",
+    "opcua.semantic_change_structure_data_type_affected_type_id": "70002"
+  }
+}

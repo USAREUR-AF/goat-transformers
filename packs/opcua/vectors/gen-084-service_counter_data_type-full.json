@@ -1,0 +1,13 @@
+{
+  "name": "gen-opcua-service_counter_data_type-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "010069030108000000015ed0b2025ed0b2",
+  "expect": "010069030108000000015ed0b2025ed0b2",
+  "model": {
+    "@kind": "service_counter_data_type",
+    "opcua.service_counter_data_type_total_count": "3000000001",
+    "opcua.service_counter_data_type_error_count": "3000000002"
+  }
+}

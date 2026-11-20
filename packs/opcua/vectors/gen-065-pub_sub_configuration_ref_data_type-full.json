@@ -1,0 +1,15 @@
+{
+  "name": "gen-opcua-pub_sub_configuration_ref_data_type-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100bb63010a000000015ed0b2ea03eb03ec03",
+  "expect": "0100bb63010a000000015ed0b2ea03eb03ec03",
+  "model": {
+    "@kind": "pub_sub_configuration_ref_data_type",
+    "opcua.pub_sub_configuration_ref_data_type_configuration_mask": "3000000001",
+    "opcua.pub_sub_configuration_ref_data_type_element_index": "1002",
+    "opcua.pub_sub_configuration_ref_data_type_connection_index": "1003",
+    "opcua.pub_sub_configuration_ref_data_type_group_index": "1004"
+  }
+}

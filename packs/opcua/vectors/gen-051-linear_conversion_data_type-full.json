@@ -1,0 +1,15 @@
+{
+  "name": "gen-opcua-linear_conversion_data_type-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100317f01100000000000c03f000020400000604000009040",
+  "expect": "0100317f01100000000000c03f000020400000604000009040",
+  "model": {
+    "@kind": "linear_conversion_data_type",
+    "opcua.linear_conversion_data_type_initial_addend": "1.5",
+    "opcua.linear_conversion_data_type_multiplicand": "2.5",
+    "opcua.linear_conversion_data_type_divisor": "3.5",
+    "opcua.linear_conversion_data_type_final_addend": "4.5"
+  }
+}

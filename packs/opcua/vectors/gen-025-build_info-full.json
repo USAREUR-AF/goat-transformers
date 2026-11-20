@@ -1,0 +1,27 @@
+{
+  "name": "gen-opcua-build_info-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "010054010126000000020000007631020000007632020000007633020000007634020000007635606a219bcb82d801",
+  "expect": "010054010126000000020000007631020000007632020000007633020000007634020000007635606a219bcb82d801",
+  "model": {
+    "@kind": "build_info",
+    "opcua.build_info_build_date": "133000000000060000",
+    "opcua.build_info_product_uri.#": "2",
+    "opcua.build_info_product_uri[0].opcua.build_info_product_uri_byte": "118",
+    "opcua.build_info_product_uri[1].opcua.build_info_product_uri_byte": "49",
+    "opcua.build_info_manufacturer_name.#": "2",
+    "opcua.build_info_manufacturer_name[0].opcua.build_info_manufacturer_name_byte": "118",
+    "opcua.build_info_manufacturer_name[1].opcua.build_info_manufacturer_name_byte": "50",
+    "opcua.build_info_product_name.#": "2",
+    "opcua.build_info_product_name[0].opcua.build_info_product_name_byte": "118",
+    "opcua.build_info_product_name[1].opcua.build_info_product_name_byte": "51",
+    "opcua.build_info_software_version.#": "2",
+    "opcua.build_info_software_version[0].opcua.build_info_software_version_byte": "118",
+    "opcua.build_info_software_version[1].opcua.build_info_software_version_byte": "52",
+    "opcua.build_info_build_number.#": "2",
+    "opcua.build_info_build_number[0].opcua.build_info_build_number_byte": "118",
+    "opcua.build_info_build_number[1].opcua.build_info_build_number_byte": "53"
+  }
+}

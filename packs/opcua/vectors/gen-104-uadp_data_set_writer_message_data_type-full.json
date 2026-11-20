@@ -1,0 +1,15 @@
+{
+  "name": "gen-opcua-uadp_data_set_writer_message_data_type-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100653d010a000000015ed0b2ea03eb03ec03",
+  "expect": "0100653d010a000000015ed0b2ea03eb03ec03",
+  "model": {
+    "@kind": "uadp_data_set_writer_message_data_type",
+    "opcua.uadp_data_set_writer_message_data_type_data_set_message_content_mask": "3000000001",
+    "opcua.uadp_data_set_writer_message_data_type_configured_size": "1002",
+    "opcua.uadp_data_set_writer_message_data_type_network_message_number": "1003",
+    "opcua.uadp_data_set_writer_message_data_type_data_set_offset": "1004"
+  }
+}

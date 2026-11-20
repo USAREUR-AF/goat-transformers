@@ -1,0 +1,18 @@
+{
+  "name": "gen-opcua-endpoint_url_list_data_type-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100b52e011000000002000000020000007631020000007632",
+  "expect": "0100b52e011000000002000000020000007631020000007632",
+  "model": {
+    "@kind": "endpoint_url_list_data_type",
+    "opcua.endpoint_url_list_data_type_endpoint_url_list.#": "2",
+    "opcua.endpoint_url_list_data_type_endpoint_url_list[0].opcua.endpoint_url_list_data_type_endpoint_url_list_item.#": "2",
+    "opcua.endpoint_url_list_data_type_endpoint_url_list[0].opcua.endpoint_url_list_data_type_endpoint_url_list_item[0].opcua.endpoint_url_list_data_type_endpoint_url_list_item_byte": "118",
+    "opcua.endpoint_url_list_data_type_endpoint_url_list[0].opcua.endpoint_url_list_data_type_endpoint_url_list_item[1].opcua.endpoint_url_list_data_type_endpoint_url_list_item_byte": "49",
+    "opcua.endpoint_url_list_data_type_endpoint_url_list[1].opcua.endpoint_url_list_data_type_endpoint_url_list_item.#": "2",
+    "opcua.endpoint_url_list_data_type_endpoint_url_list[1].opcua.endpoint_url_list_data_type_endpoint_url_list_item[0].opcua.endpoint_url_list_data_type_endpoint_url_list_item_byte": "118",
+    "opcua.endpoint_url_list_data_type_endpoint_url_list[1].opcua.endpoint_url_list_data_type_endpoint_url_list_item[1].opcua.endpoint_url_list_data_type_endpoint_url_list_item_byte": "50"
+  }
+}

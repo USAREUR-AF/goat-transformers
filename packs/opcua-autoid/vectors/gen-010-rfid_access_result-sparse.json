@@ -1,0 +1,12 @@
+{
+  "name": "gen-opcua-autoid-rfid_access_result-sparse",
+  "from": "opcua-autoid",
+  "to": "opcua-autoid",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0102a013010400000000000000",
+  "expect": "0102a013010400000000000000",
+  "model": {
+    "@kind": "rfid_access_result",
+    "opcuaautoid.namespace_index": "2"
+  }
+}

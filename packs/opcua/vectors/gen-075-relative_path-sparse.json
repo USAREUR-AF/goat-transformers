@@ -1,0 +1,12 @@
+{
+  "name": "gen-opcua-relative_path-sparse",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "01001e02010400000000000000",
+  "expect": "01001e02010400000000000000",
+  "model": {
+    "@kind": "relative_path",
+    "opcua.relative_path_elements.#": "0"
+  }
+}

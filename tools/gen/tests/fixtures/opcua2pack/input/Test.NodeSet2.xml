@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Written for the tests of tools/gen/opcua2pack.py. -->
+<UANodeSet xmlns="http://opcfoundation.org/UA/2011/03/UANodeSet.xsd">
+  <NamespaceUris>
+    <Uri>urn:example:test</Uri>
+  </NamespaceUris>
+  <Models>
+    <Model ModelUri="urn:example:test" Version="1.0.0" PublicationDate="2026-01-01T00:00:00Z" />
+  </Models>
+  <Aliases>
+    <Alias Alias="Int32">i=6</Alias>
+    <Alias Alias="String">i=12</Alias>
+    <Alias Alias="HasSubtype">i=45</Alias>
+    <Alias Alias="HasEncoding">i=38</Alias>
+  </Aliases>
+  <UADataType NodeId="i=12756" BrowseName="Union" IsAbstract="true">
+    <References><Reference ReferenceType="HasSubtype" IsForward="false">i=22</Reference></References>
+  </UADataType>
+  <UADataType NodeId="ns=1;i=3001" BrowseName="1:Colour">
+    <References><Reference ReferenceType="HasSubtype" IsForward="false">i=29</Reference></References>
+    <Definition Name="1:Colour">
+      <Field Name="Red" Value="0" />
+      <Field Name="Green" Value="1" />
+    </Definition>
+  </UADataType>
+  <UADataType NodeId="ns=1;i=3002" BrowseName="1:Base">
+    <References>
+      <Reference ReferenceType="HasSubtype" IsForward="false">i=22</Reference>
+      <Reference ReferenceType="HasEncoding">ns=1;i=5002</Reference>
+    </References>
+    <Definition Name="1:Base">
+      <Field Name="Count" DataType="Int32" />
+      <Field Name="Label" DataType="String" IsOptional="true" />
+    </Definition>
+  </UADataType>
+  <UADataType NodeId="ns=1;i=3003" BrowseName="1:Derived">
+    <References><Reference ReferenceType="HasSubtype" IsForward="false">ns=1;i=3002</Reference></References>
+    <Definition Name="1:Derived">
+      <Field Name="Values" DataType="i=11" ValueRank="1" ArrayDimensions="0" />
+      <Field Name="Colour" DataType="ns=1;i=3001" />
+      <Field Name="Source" DataType="i=17" />
+      <Field Name="Note" DataType="i=21" IsOptional="true" />
+    </Definition>
+  </UADataType>
+  <UADataType NodeId="ns=1;i=3004" BrowseName="1:Choice">
+    <References><Reference ReferenceType="HasSubtype" IsForward="false">i=12756</Reference></References>
+    <Definition Name="1:Choice" IsUnion="true">
+      <Field Name="Number" DataType="i=7" />
+      <Field Name="Anything" DataType="i=24" />
+      <Field Name="Name" DataType="i=20" />
+    </Definition>
+  </UADataType>
+  <UADataType NodeId="ns=1;i=3005" BrowseName="1:Holder">
+    <References><Reference ReferenceType="HasSubtype" IsForward="false">i=22</Reference></References>
+    <Definition Name="1:Holder">
+      <Field Name="Value" DataType="i=24" />
+    </Definition>
+  </UADataType>
+  <UAObject NodeId="ns=1;i=5002" BrowseName="Default Binary"><References /></UAObject>
+  <UAObject NodeId="ns=1;i=5003" BrowseName="Default Binary">
+    <References><Reference ReferenceType="HasEncoding" IsForward="false">ns=1;i=3003</Reference></References>
+  </UAObject>
+  <UAObject NodeId="ns=1;i=5004" BrowseName="Default Binary">
+    <References><Reference ReferenceType="HasEncoding" IsForward="false">ns=1;i=3004</Reference></References>
+  </UAObject>
+  <UAObject NodeId="ns=1;i=5005" BrowseName="Default Binary">
+    <References><Reference ReferenceType="HasEncoding" IsForward="false">ns=1;i=3005</Reference></References>
+  </UAObject>
+</UANodeSet>

@@ -1,0 +1,23 @@
+{
+  "name": "gen-opcua-network_group_data_type-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100b62e011e000000020000007631020000000100000002000000763201000000020000007633",
+  "expect": "0100b62e011e000000020000007631020000000100000002000000763201000000020000007633",
+  "model": {
+    "@kind": "network_group_data_type",
+    "opcua.network_group_data_type_server_uri.#": "2",
+    "opcua.network_group_data_type_server_uri[0].opcua.network_group_data_type_server_uri_byte": "118",
+    "opcua.network_group_data_type_server_uri[1].opcua.network_group_data_type_server_uri_byte": "49",
+    "opcua.network_group_data_type_network_paths.#": "2",
+    "opcua.network_group_data_type_network_paths[0].opcua.network_group_data_type_network_paths_endpoint_url_list.#": "1",
+    "opcua.network_group_data_type_network_paths[0].opcua.network_group_data_type_network_paths_endpoint_url_list[0].opcua.network_group_data_type_network_paths_endpoint_url_list_item.#": "2",
+    "opcua.network_group_data_type_network_paths[0].opcua.network_group_data_type_network_paths_endpoint_url_list[0].opcua.network_group_data_type_network_paths_endpoint_url_list_item[0].opcua.network_group_data_type_network_paths_endpoint_url_list_item_byte": "118",
+    "opcua.network_group_data_type_network_paths[0].opcua.network_group_data_type_network_paths_endpoint_url_list[0].opcua.network_group_data_type_network_paths_endpoint_url_list_item[1].opcua.network_group_data_type_network_paths_endpoint_url_list_item_byte": "50",
+    "opcua.network_group_data_type_network_paths[1].opcua.network_group_data_type_network_paths_endpoint_url_list.#": "1",
+    "opcua.network_group_data_type_network_paths[1].opcua.network_group_data_type_network_paths_endpoint_url_list[0].opcua.network_group_data_type_network_paths_endpoint_url_list_item.#": "2",
+    "opcua.network_group_data_type_network_paths[1].opcua.network_group_data_type_network_paths_endpoint_url_list[0].opcua.network_group_data_type_network_paths_endpoint_url_list_item[0].opcua.network_group_data_type_network_paths_endpoint_url_list_item_byte": "118",
+    "opcua.network_group_data_type_network_paths[1].opcua.network_group_data_type_network_paths_endpoint_url_list[0].opcua.network_group_data_type_network_paths_endpoint_url_list_item[1].opcua.network_group_data_type_network_paths_endpoint_url_list_item_byte": "51"
+  }
+}

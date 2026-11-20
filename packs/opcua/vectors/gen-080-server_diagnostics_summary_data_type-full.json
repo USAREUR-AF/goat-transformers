@@ -1,0 +1,23 @@
+{
+  "name": "gen-opcua-server_diagnostics_summary_data_type-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "01005d030130000000015ed0b2025ed0b2035ed0b2045ed0b2055ed0b2065ed0b2075ed0b2085ed0b2095ed0b20a5ed0b20b5ed0b20c5ed0b2",
+  "expect": "01005d030130000000015ed0b2025ed0b2035ed0b2045ed0b2055ed0b2065ed0b2075ed0b2085ed0b2095ed0b20a5ed0b20b5ed0b20c5ed0b2",
+  "model": {
+    "@kind": "server_diagnostics_summary_data_type",
+    "opcua.server_diagnostics_summary_data_type_server_view_count": "3000000001",
+    "opcua.server_diagnostics_summary_data_type_current_session_count": "3000000002",
+    "opcua.server_diagnostics_summary_data_type_cumulated_session_count": "3000000003",
+    "opcua.server_diagnostics_summary_data_type_security_rejected_session_count": "3000000004",
+    "opcua.server_diagnostics_summary_data_type_rejected_session_count": "3000000005",
+    "opcua.server_diagnostics_summary_data_type_session_timeout_count": "3000000006",
+    "opcua.server_diagnostics_summary_data_type_session_abort_count": "3000000007",
+    "opcua.server_diagnostics_summary_data_type_current_subscription_count": "3000000008",
+    "opcua.server_diagnostics_summary_data_type_cumulated_subscription_count": "3000000009",
+    "opcua.server_diagnostics_summary_data_type_publishing_interval_count": "3000000010",
+    "opcua.server_diagnostics_summary_data_type_security_rejected_requests_count": "3000000011",
+    "opcua.server_diagnostics_summary_data_type_rejected_requests_count": "3000000012"
+  }
+}

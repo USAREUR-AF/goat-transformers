@@ -1,0 +1,17 @@
+{
+  "name": "gen-opcua-portable_node_id-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "01002d5e010d000000020000007631022c0172110100",
+  "expect": "01002d5e010d000000020000007631022c0172110100",
+  "model": {
+    "@kind": "portable_node_id",
+    "opcua.portable_node_id_identifier_encoding": "2",
+    "opcua.portable_node_id_identifier_namespace": "300",
+    "opcua.portable_node_id_identifier_id": "70002",
+    "opcua.portable_node_id_namespace_uri.#": "2",
+    "opcua.portable_node_id_namespace_uri[0].opcua.portable_node_id_namespace_uri_byte": "118",
+    "opcua.portable_node_id_namespace_uri[1].opcua.portable_node_id_namespace_uri_byte": "49"
+  }
+}

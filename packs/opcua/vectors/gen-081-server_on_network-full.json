@@ -1,0 +1,25 @@
+{
+  "name": "gen-opcua-server_on_network-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100af2f0120000000015ed0b202000000763202000000763302000000020000007634020000007635",
+  "expect": "0100af2f0120000000015ed0b202000000763202000000763302000000020000007634020000007635",
+  "model": {
+    "@kind": "server_on_network",
+    "opcua.server_on_network_record_id": "3000000001",
+    "opcua.server_on_network_server_name.#": "2",
+    "opcua.server_on_network_server_name[0].opcua.server_on_network_server_name_byte": "118",
+    "opcua.server_on_network_server_name[1].opcua.server_on_network_server_name_byte": "50",
+    "opcua.server_on_network_discovery_url.#": "2",
+    "opcua.server_on_network_discovery_url[0].opcua.server_on_network_discovery_url_byte": "118",
+    "opcua.server_on_network_discovery_url[1].opcua.server_on_network_discovery_url_byte": "51",
+    "opcua.server_on_network_server_capabilities.#": "2",
+    "opcua.server_on_network_server_capabilities[0].opcua.server_on_network_server_capabilities_item.#": "2",
+    "opcua.server_on_network_server_capabilities[0].opcua.server_on_network_server_capabilities_item[0].opcua.server_on_network_server_capabilities_item_byte": "118",
+    "opcua.server_on_network_server_capabilities[0].opcua.server_on_network_server_capabilities_item[1].opcua.server_on_network_server_capabilities_item_byte": "52",
+    "opcua.server_on_network_server_capabilities[1].opcua.server_on_network_server_capabilities_item.#": "2",
+    "opcua.server_on_network_server_capabilities[1].opcua.server_on_network_server_capabilities_item[0].opcua.server_on_network_server_capabilities_item_byte": "118",
+    "opcua.server_on_network_server_capabilities[1].opcua.server_on_network_server_capabilities_item[1].opcua.server_on_network_server_capabilities_item_byte": "53"
+  }
+}

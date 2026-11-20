@@ -1,0 +1,13 @@
+{
+  "name": "gen-opcua-unsigned_rational_number-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "01002e5e0108000000015ed0b2025ed0b2",
+  "expect": "01002e5e0108000000015ed0b2025ed0b2",
+  "model": {
+    "@kind": "unsigned_rational_number",
+    "opcua.unsigned_rational_number_numerator": "3000000001",
+    "opcua.unsigned_rational_number_denominator": "3000000002"
+  }
+}

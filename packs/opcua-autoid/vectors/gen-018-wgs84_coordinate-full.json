@@ -1,0 +1,25 @@
+{
+  "name": "gen-opcua-autoid-wgs84_coordinate-full",
+  "from": "opcua-autoid",
+  "to": "opcua-autoid",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0102b613013c00000002000000763100000000000002c002000000763300000000000011c000000000000015c0606a219bcb82d8010000000000001dc088eefeff87eefeff",
+  "expect": "0102b613013c00000002000000763100000000000002c002000000763300000000000011c000000000000015c0606a219bcb82d8010000000000001dc088eefeff87eefeff",
+  "model": {
+    "@kind": "wgs84_coordinate",
+    "opcuaautoid.namespace_index": "2",
+    "opcuaautoid.wgs84_coordinate_latitude": "-2.25",
+    "opcuaautoid.wgs84_coordinate_longitude": "-4.25",
+    "opcuaautoid.wgs84_coordinate_altitude": "-5.25",
+    "time_ms": "1655526400006",
+    "opcuaautoid.wgs84_coordinate_dilution_of_precision": "-7.25",
+    "opcuaautoid.wgs84_coordinate_useful_precision_lat_lon": "-70008",
+    "opcuaautoid.wgs84_coordinate_useful_precision_alt": "-70009",
+    "opcuaautoid.wgs84_coordinate_n_s_hemisphere.#": "2",
+    "opcuaautoid.wgs84_coordinate_n_s_hemisphere[0].opcuaautoid.wgs84_coordinate_n_s_hemisphere_byte": "118",
+    "opcuaautoid.wgs84_coordinate_n_s_hemisphere[1].opcuaautoid.wgs84_coordinate_n_s_hemisphere_byte": "49",
+    "opcuaautoid.wgs84_coordinate_e_w_hemisphere.#": "2",
+    "opcuaautoid.wgs84_coordinate_e_w_hemisphere[0].opcuaautoid.wgs84_coordinate_e_w_hemisphere_byte": "118",
+    "opcuaautoid.wgs84_coordinate_e_w_hemisphere[1].opcuaautoid.wgs84_coordinate_e_w_hemisphere_byte": "51"
+  }
+}

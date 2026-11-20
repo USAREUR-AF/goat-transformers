@@ -1,0 +1,20 @@
+{
+  "name": "gen-opcua-alias_name_verbose_data_type-sparse",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100c65e011700000001000200000071310000000000000000022c0172110100",
+  "expect": "0100c65e011700000001000200000071310000000000000000022c0172110100",
+  "model": {
+    "@kind": "alias_name_verbose_data_type",
+    "opcua.alias_name_verbose_data_type_alias_name_namespace_index": "1",
+    "opcua.alias_name_verbose_data_type_alias_name_category_id_encoding": "2",
+    "opcua.alias_name_verbose_data_type_alias_name_category_id_namespace": "300",
+    "opcua.alias_name_verbose_data_type_alias_name_category_id_id": "70002",
+    "opcua.alias_name_verbose_data_type_alias_name_name.#": "2",
+    "opcua.alias_name_verbose_data_type_alias_name_name[0].opcua.alias_name_verbose_data_type_alias_name_name_byte": "113",
+    "opcua.alias_name_verbose_data_type_alias_name_name[1].opcua.alias_name_verbose_data_type_alias_name_name_byte": "49",
+    "opcua.alias_name_verbose_data_type_referenced_nodes.#": "0",
+    "opcua.alias_name_verbose_data_type_server_uris.#": "0"
+  }
+}

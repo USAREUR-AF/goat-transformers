@@ -1,0 +1,23 @@
+{
+  "name": "gen-opcua-span_context_data_type-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "01002a4d011800000005030201060508070102030405060708020084e2506ce67c",
+  "expect": "01002a4d011800000005030201060508070102030405060708020084e2506ce67c",
+  "model": {
+    "@kind": "span_context_data_type",
+    "opcua.span_context_data_type_trace_id_data1": "16909061",
+    "opcua.span_context_data_type_trace_id_data2": "1286",
+    "opcua.span_context_data_type_trace_id_data3": "1800",
+    "opcua.span_context_data_type_trace_id_data4_0": "1",
+    "opcua.span_context_data_type_trace_id_data4_1": "2",
+    "opcua.span_context_data_type_trace_id_data4_2": "3",
+    "opcua.span_context_data_type_trace_id_data4_3": "4",
+    "opcua.span_context_data_type_trace_id_data4_4": "5",
+    "opcua.span_context_data_type_trace_id_data4_5": "6",
+    "opcua.span_context_data_type_trace_id_data4_6": "7",
+    "opcua.span_context_data_type_trace_id_data4_7": "8",
+    "opcua.span_context_data_type_span_id": "9000000000000000002"
+  }
+}

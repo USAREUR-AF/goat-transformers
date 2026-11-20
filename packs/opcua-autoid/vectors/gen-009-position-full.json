@@ -1,0 +1,17 @@
+{
+  "name": "gen-opcua-autoid-position-full",
+  "from": "opcua-autoid",
+  "to": "opcua-autoid",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "01028f1301140000008feefeff8eeefeff8deefeff8ceefeff8beefeff",
+  "expect": "01028f1301140000008feefeff8eeefeff8deefeff8ceefeff8beefeff",
+  "model": {
+    "@kind": "position",
+    "opcuaautoid.namespace_index": "2",
+    "opcuaautoid.position_position_x": "-70001",
+    "opcuaautoid.position_position_y": "-70002",
+    "opcuaautoid.position_size_x": "-70003",
+    "opcuaautoid.position_size_y": "-70004",
+    "opcuaautoid.position_rotation": "-70005"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "gen-opcua-datagram_writer_group_transport_data_type-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100a35201090000000200000000000002c0",
+  "expect": "0100a35201090000000200000000000002c0",
+  "model": {
+    "@kind": "datagram_writer_group_transport_data_type",
+    "opcua.datagram_writer_group_transport_data_type_message_repeat_count": "2",
+    "opcua.datagram_writer_group_transport_data_type_message_repeat_delay": "-2.25"
+  }
+}

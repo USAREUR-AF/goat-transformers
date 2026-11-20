@@ -1,0 +1,16 @@
+{
+  "name": "gen-opcua-aggregate_configuration-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100b60301050000000100040501",
+  "expect": "0100b60301050000000100040501",
+  "model": {
+    "@kind": "aggregate_configuration",
+    "opcua.aggregate_configuration_use_server_capabilities_defaults": "1",
+    "opcua.aggregate_configuration_treat_uncertain_as_bad": "0",
+    "opcua.aggregate_configuration_percent_data_bad": "4",
+    "opcua.aggregate_configuration_percent_data_good": "5",
+    "opcua.aggregate_configuration_use_sloped_extrapolation": "1"
+  }
+}

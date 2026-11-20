@@ -1,0 +1,30 @@
+{
+  "name": "gen-opcua-autoid-rtls_location_result-full",
+  "from": "opcua-autoid",
+  "to": "opcua-autoid",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0102b8130156000000010000000200000076310100000002000000763230f5209bcb82d8010100000002000000763400000000000015c000000000000019c00000000000001dc000000000008020c000000000008022c0a006229bcb82d801",
+  "expect": "0102b8130156000000010000000200000076310100000002000000763230f5209bcb82d8010100000002000000763400000000000015c000000000000019c00000000000001dc000000000008020c000000000008022c0a006229bcb82d801",
+  "model": {
+    "@kind": "rtls_location_result",
+    "opcuaautoid.namespace_index": "2",
+    "opcuaautoid.rtls_location_result_scan_data_switch_field": "1",
+    "time_ms": "1655526400003",
+    "opcuaautoid.rtls_location_result_location_switch_field": "1",
+    "opcuaautoid.rtls_location_result_speed": "-5.25",
+    "opcuaautoid.rtls_location_result_heading": "-6.25",
+    "opcuaautoid.rtls_location_result_rotation_yaw": "-7.25",
+    "opcuaautoid.rtls_location_result_rotation_pitch": "-8.25",
+    "opcuaautoid.rtls_location_result_rotation_roll": "-9.25",
+    "opcuaautoid.rtls_location_result_receive_time": "133000000000100000",
+    "opcuaautoid.rtls_location_result_code_type.#": "2",
+    "opcuaautoid.rtls_location_result_code_type[0].opcuaautoid.rtls_location_result_code_type_byte": "118",
+    "opcuaautoid.rtls_location_result_code_type[1].opcuaautoid.rtls_location_result_code_type_byte": "49",
+    "opcuaautoid.rtls_location_result_scan_data_byte_string.#": "2",
+    "opcuaautoid.rtls_location_result_scan_data_byte_string[0].opcuaautoid.rtls_location_result_scan_data_byte_string_byte": "118",
+    "opcuaautoid.rtls_location_result_scan_data_byte_string[1].opcuaautoid.rtls_location_result_scan_data_byte_string_byte": "50",
+    "opcuaautoid.rtls_location_result_location_nmea.#": "2",
+    "opcuaautoid.rtls_location_result_location_nmea[0].opcuaautoid.rtls_location_result_location_nmea_byte": "118",
+    "opcuaautoid.rtls_location_result_location_nmea[1].opcuaautoid.rtls_location_result_location_nmea_byte": "52"
+  }
+}

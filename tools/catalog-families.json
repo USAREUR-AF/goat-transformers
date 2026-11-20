@@ -93,6 +93,7 @@
     {"name": "Valhalla", "domain": "transport", "exact": ["valhalla"]},
     {"name": "ETSI ITS", "domain": "transport", "prefixes": ["etsi-"]},
 
+    {"name": "OPC UA binary (NodeSet structures)", "domain": "iot", "exact": ["opcua"], "prefixes": ["opcua-"]},
     {"name": "FIWARE Smart Data Models", "domain": "iot", "prefixes": ["sdm-"]},
     {"name": "Meshtastic", "domain": "iot", "prefixes": ["meshtastic"]},
     {"name": "Sparkplug B", "domain": "iot", "exact": ["sparkplug-b"]},

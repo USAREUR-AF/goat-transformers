@@ -1,0 +1,30 @@
+{
+  "name": "gen-opcua-uadp_data_set_reader_message_data_type-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100663d0138000000015ed0b2ea03eb0308030201060508070405060708090a0b055ed0b2065ed0b20000000000001dc000000000008020c000000000008022c0",
+  "expect": "0100663d0138000000015ed0b2ea03eb0308030201060508070405060708090a0b055ed0b2065ed0b20000000000001dc000000000008020c000000000008022c0",
+  "model": {
+    "@kind": "uadp_data_set_reader_message_data_type",
+    "opcua.uadp_data_set_reader_message_data_type_group_version": "3000000001",
+    "opcua.uadp_data_set_reader_message_data_type_network_message_number": "1002",
+    "opcua.uadp_data_set_reader_message_data_type_data_set_offset": "1003",
+    "opcua.uadp_data_set_reader_message_data_type_data_set_class_id_data1": "16909064",
+    "opcua.uadp_data_set_reader_message_data_type_data_set_class_id_data2": "1286",
+    "opcua.uadp_data_set_reader_message_data_type_data_set_class_id_data3": "1800",
+    "opcua.uadp_data_set_reader_message_data_type_data_set_class_id_data4_0": "4",
+    "opcua.uadp_data_set_reader_message_data_type_data_set_class_id_data4_1": "5",
+    "opcua.uadp_data_set_reader_message_data_type_data_set_class_id_data4_2": "6",
+    "opcua.uadp_data_set_reader_message_data_type_data_set_class_id_data4_3": "7",
+    "opcua.uadp_data_set_reader_message_data_type_data_set_class_id_data4_4": "8",
+    "opcua.uadp_data_set_reader_message_data_type_data_set_class_id_data4_5": "9",
+    "opcua.uadp_data_set_reader_message_data_type_data_set_class_id_data4_6": "10",
+    "opcua.uadp_data_set_reader_message_data_type_data_set_class_id_data4_7": "11",
+    "opcua.uadp_data_set_reader_message_data_type_network_message_content_mask": "3000000005",
+    "opcua.uadp_data_set_reader_message_data_type_data_set_message_content_mask": "3000000006",
+    "opcua.uadp_data_set_reader_message_data_type_publishing_interval": "-7.25",
+    "opcua.uadp_data_set_reader_message_data_type_receive_offset": "-8.25",
+    "opcua.uadp_data_set_reader_message_data_type_processing_offset": "-9.25"
+  }
+}

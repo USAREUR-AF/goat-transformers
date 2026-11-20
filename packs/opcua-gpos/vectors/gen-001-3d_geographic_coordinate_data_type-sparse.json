@@ -1,0 +1,14 @@
+{
+  "name": "gen-opcua-gpos-3d_geographic_coordinate_data_type-sparse",
+  "from": "opcua-gpos",
+  "to": "opcua-gpos",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "01029613011400000000000000000000000000f4bf00000000000002c0",
+  "expect": "01029613011400000000000000000000000000f4bf00000000000002c0",
+  "model": {
+    "@kind": "3d_geographic_coordinate_data_type",
+    "opcuagpos.namespace_index": "2",
+    "opcuagpos.3d_geographic_coordinate_data_type_longitude": "-1.25",
+    "opcuagpos.3d_geographic_coordinate_data_type_latitude": "-2.25"
+  }
+}

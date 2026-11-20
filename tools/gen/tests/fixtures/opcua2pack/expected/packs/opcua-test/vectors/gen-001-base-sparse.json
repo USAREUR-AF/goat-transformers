@@ -1,0 +1,13 @@
+{
+  "name": "gen-opcua-test-base-sparse",
+  "from": "opcua-test",
+  "to": "opcua-test",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "01028a130108000000000000008feefeff",
+  "expect": "01028a130108000000000000008feefeff",
+  "model": {
+    "@kind": "base",
+    "opcuatest.namespace_index": "2",
+    "opcuatest.base_count": "-70001"
+  }
+}

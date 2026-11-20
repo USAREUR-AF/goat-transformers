@@ -1,0 +1,15 @@
+{
+  "name": "gen-opcua-sampling_interval_diagnostics_data_type-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "01005a030114000000000000000000f4bf025ed0b2035ed0b2045ed0b2",
+  "expect": "01005a030114000000000000000000f4bf025ed0b2035ed0b2045ed0b2",
+  "model": {
+    "@kind": "sampling_interval_diagnostics_data_type",
+    "opcua.sampling_interval_diagnostics_data_type_sampling_interval": "-1.25",
+    "opcua.sampling_interval_diagnostics_data_type_monitored_item_count": "3000000002",
+    "opcua.sampling_interval_diagnostics_data_type_max_monitored_item_count": "3000000003",
+    "opcua.sampling_interval_diagnostics_data_type_disabled_monitored_item_count": "3000000004"
+  }
+}

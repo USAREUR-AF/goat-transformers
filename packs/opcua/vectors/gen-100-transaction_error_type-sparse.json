@@ -1,0 +1,18 @@
+{
+  "name": "gen-opcua-transaction_error_type-sparse",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "01007e7e010f0000000102e903025ed0b202020000007433",
+  "expect": "01007e7e010f0000000102e903025ed0b202020000007433",
+  "model": {
+    "@kind": "transaction_error_type",
+    "opcua.transaction_error_type_target_id_encoding": "1",
+    "opcua.transaction_error_type_target_id_namespace": "2",
+    "opcua.transaction_error_type_target_id_id": "1001",
+    "opcua.transaction_error_type_error": "3000000002",
+    "opcua.transaction_error_type_message_text.#": "2",
+    "opcua.transaction_error_type_message_text[0].opcua.transaction_error_type_message_text_byte": "116",
+    "opcua.transaction_error_type_message_text[1].opcua.transaction_error_type_message_text_byte": "51"
+  }
+}

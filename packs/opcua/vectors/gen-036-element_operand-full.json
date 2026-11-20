@@ -1,0 +1,12 @@
+{
+  "name": "gen-opcua-element_operand-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "010052020104000000015ed0b2",
+  "expect": "010052020104000000015ed0b2",
+  "model": {
+    "@kind": "element_operand",
+    "opcua.element_operand_index": "3000000001"
+  }
+}

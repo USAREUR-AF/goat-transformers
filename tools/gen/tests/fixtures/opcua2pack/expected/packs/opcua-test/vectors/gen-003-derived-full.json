@@ -1,0 +1,28 @@
+{
+  "name": "gen-opcua-test-derived-full",
+  "from": "opcua-test",
+  "to": "opcua-test",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "01028b130135000000030000008feefeff020000007632020000000000000000000ac000000000000011c00200000000060302000000656e020000007437",
+  "expect": "01028b130135000000030000008feefeff020000007632020000000000000000000ac000000000000011c00200000000060302000000656e020000007437",
+  "model": {
+    "@kind": "derived",
+    "opcuatest.namespace_index": "2",
+    "opcuatest.derived_count": "-70001",
+    "opcuatest.derived_colour": "2",
+    "opcuatest.derived_source_encoding": "0",
+    "opcuatest.derived_source_id": "6",
+    "opcuatest.derived_label.#": "2",
+    "opcuatest.derived_label[0].opcuatest.derived_label_byte": "118",
+    "opcuatest.derived_label[1].opcuatest.derived_label_byte": "50",
+    "opcuatest.derived_values.#": "2",
+    "opcuatest.derived_values[0].opcuatest.derived_values_item": "-3.25",
+    "opcuatest.derived_values[1].opcuatest.derived_values_item": "-4.25",
+    "opcuatest.derived_note_locale.#": "2",
+    "opcuatest.derived_note_locale[0].opcuatest.derived_note_locale_byte": "101",
+    "opcuatest.derived_note_locale[1].opcuatest.derived_note_locale_byte": "110",
+    "opcuatest.derived_note_text.#": "2",
+    "opcuatest.derived_note_text[0].opcuatest.derived_note_text_byte": "116",
+    "opcuatest.derived_note_text[1].opcuatest.derived_note_text_byte": "55"
+  }
+}

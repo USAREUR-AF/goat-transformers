@@ -1,0 +1,17 @@
+{
+  "name": "gen-opcua-action_method_data_type-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100a848010b0000000102e903022c0172110100",
+  "expect": "0100a848010b0000000102e903022c0172110100",
+  "model": {
+    "@kind": "action_method_data_type",
+    "opcua.action_method_data_type_object_id_encoding": "1",
+    "opcua.action_method_data_type_object_id_namespace": "2",
+    "opcua.action_method_data_type_object_id_id": "1001",
+    "opcua.action_method_data_type_method_id_encoding": "2",
+    "opcua.action_method_data_type_method_id_namespace": "300",
+    "opcua.action_method_data_type_method_id_id": "70002"
+  }
+}

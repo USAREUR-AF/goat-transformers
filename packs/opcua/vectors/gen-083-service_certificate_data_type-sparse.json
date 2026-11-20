@@ -1,0 +1,17 @@
+{
+  "name": "gen-opcua-service_certificate_data_type-sparse",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100ad5c011a0000000200000076310000000020ce209bcb82d80130f5209bcb82d801",
+  "expect": "0100ad5c011a0000000200000076310000000020ce209bcb82d80130f5209bcb82d801",
+  "model": {
+    "@kind": "service_certificate_data_type",
+    "opcua.service_certificate_data_type_valid_from": "133000000000020000",
+    "opcua.service_certificate_data_type_valid_to": "133000000000030000",
+    "opcua.service_certificate_data_type_certificate.#": "2",
+    "opcua.service_certificate_data_type_certificate[0].opcua.service_certificate_data_type_certificate_byte": "118",
+    "opcua.service_certificate_data_type_certificate[1].opcua.service_certificate_data_type_certificate_byte": "49",
+    "opcua.service_certificate_data_type_issuers.#": "0"
+  }
+}

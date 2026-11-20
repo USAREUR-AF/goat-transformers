@@ -1,0 +1,14 @@
+{
+  "name": "gen-opcua-3d_orientation-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "010085490118000000000000000000f4bf00000000000002c00000000000000ac0",
+  "expect": "010085490118000000000000000000f4bf00000000000002c00000000000000ac0",
+  "model": {
+    "@kind": "3d_orientation",
+    "opcua.3d_orientation_a": "-1.25",
+    "opcua.3d_orientation_b": "-2.25",
+    "opcua.3d_orientation_c": "-3.25"
+  }
+}

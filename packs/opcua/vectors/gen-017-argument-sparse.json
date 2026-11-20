@@ -1,0 +1,22 @@
+{
+  "name": "gen-opcua-argument-sparse",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "01002a01011c000000020000007631022c01721101008deefeff0000000002020000007434",
+  "expect": "01002a01011c000000020000007631022c01721101008deefeff0000000002020000007434",
+  "model": {
+    "@kind": "argument",
+    "opcua.argument_data_type_encoding": "2",
+    "opcua.argument_data_type_namespace": "300",
+    "opcua.argument_data_type_id": "70002",
+    "opcua.argument_value_rank": "-70003",
+    "opcua.argument_name.#": "2",
+    "opcua.argument_name[0].opcua.argument_name_byte": "118",
+    "opcua.argument_name[1].opcua.argument_name_byte": "49",
+    "opcua.argument_array_dimensions.#": "0",
+    "opcua.argument_description_text.#": "2",
+    "opcua.argument_description_text[0].opcua.argument_description_text_byte": "116",
+    "opcua.argument_description_text[1].opcua.argument_description_text_byte": "52"
+  }
+}

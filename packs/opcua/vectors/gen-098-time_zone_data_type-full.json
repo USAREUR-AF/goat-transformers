@@ -1,0 +1,13 @@
+{
+  "name": "gen-opcua-time_zone_data_type-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100d5220103000000d3fe00",
+  "expect": "0100d5220103000000d3fe00",
+  "model": {
+    "@kind": "time_zone_data_type",
+    "opcua.time_zone_data_type_offset": "-301",
+    "opcua.time_zone_data_type_daylight_saving_in_offset": "0"
+  }
+}

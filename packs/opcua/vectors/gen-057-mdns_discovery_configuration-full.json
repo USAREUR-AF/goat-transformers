@@ -1,0 +1,21 @@
+{
+  "name": "gen-opcua-mdns_discovery_configuration-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "01006532011600000002000000763102000000020000007632020000007633",
+  "expect": "01006532011600000002000000763102000000020000007632020000007633",
+  "model": {
+    "@kind": "mdns_discovery_configuration",
+    "opcua.mdns_discovery_configuration_mdns_server_name.#": "2",
+    "opcua.mdns_discovery_configuration_mdns_server_name[0].opcua.mdns_discovery_configuration_mdns_server_name_byte": "118",
+    "opcua.mdns_discovery_configuration_mdns_server_name[1].opcua.mdns_discovery_configuration_mdns_server_name_byte": "49",
+    "opcua.mdns_discovery_configuration_server_capabilities.#": "2",
+    "opcua.mdns_discovery_configuration_server_capabilities[0].opcua.mdns_discovery_configuration_server_capabilities_item.#": "2",
+    "opcua.mdns_discovery_configuration_server_capabilities[0].opcua.mdns_discovery_configuration_server_capabilities_item[0].opcua.mdns_discovery_configuration_server_capabilities_item_byte": "118",
+    "opcua.mdns_discovery_configuration_server_capabilities[0].opcua.mdns_discovery_configuration_server_capabilities_item[1].opcua.mdns_discovery_configuration_server_capabilities_item_byte": "50",
+    "opcua.mdns_discovery_configuration_server_capabilities[1].opcua.mdns_discovery_configuration_server_capabilities_item.#": "2",
+    "opcua.mdns_discovery_configuration_server_capabilities[1].opcua.mdns_discovery_configuration_server_capabilities_item[0].opcua.mdns_discovery_configuration_server_capabilities_item_byte": "118",
+    "opcua.mdns_discovery_configuration_server_capabilities[1].opcua.mdns_discovery_configuration_server_capabilities_item[1].opcua.mdns_discovery_configuration_server_capabilities_item_byte": "51"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "gen-opcua-network_address_url_data_type-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100a052010c000000020000007631020000007632",
+  "expect": "0100a052010c000000020000007631020000007632",
+  "model": {
+    "@kind": "network_address_url_data_type",
+    "opcua.network_address_url_data_type_network_interface.#": "2",
+    "opcua.network_address_url_data_type_network_interface[0].opcua.network_address_url_data_type_network_interface_byte": "118",
+    "opcua.network_address_url_data_type_network_interface[1].opcua.network_address_url_data_type_network_interface_byte": "49",
+    "opcua.network_address_url_data_type_url.#": "2",
+    "opcua.network_address_url_data_type_url[0].opcua.network_address_url_data_type_url_byte": "118",
+    "opcua.network_address_url_data_type_url[1].opcua.network_address_url_data_type_url_byte": "50"
+  }
+}

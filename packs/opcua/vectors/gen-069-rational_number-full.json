@@ -1,0 +1,13 @@
+{
+  "name": "gen-opcua-rational_number-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "01007f4901080000008feefeff025ed0b2",
+  "expect": "01007f4901080000008feefeff025ed0b2",
+  "model": {
+    "@kind": "rational_number",
+    "opcua.rational_number_numerator": "-70001",
+    "opcua.rational_number_denominator": "3000000002"
+  }
+}

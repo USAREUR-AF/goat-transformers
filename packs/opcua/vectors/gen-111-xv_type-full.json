@@ -1,0 +1,13 @@
+{
+  "name": "gen-opcua-xv_type-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "01003a2f010c000000000000000000f4bf00002040",
+  "expect": "01003a2f010c000000000000000000f4bf00002040",
+  "model": {
+    "@kind": "xv_type",
+    "opcua.xv_type_x": "-1.25",
+    "opcua.xv_type_value": "2.5"
+  }
+}

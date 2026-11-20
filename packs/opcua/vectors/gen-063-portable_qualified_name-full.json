@@ -1,0 +1,17 @@
+{
+  "name": "gen-opcua-portable_qualified_name-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "01002c5e010c000000020000007631020000007632",
+  "expect": "01002c5e010c000000020000007631020000007632",
+  "model": {
+    "@kind": "portable_qualified_name",
+    "opcua.portable_qualified_name_namespace_uri.#": "2",
+    "opcua.portable_qualified_name_namespace_uri[0].opcua.portable_qualified_name_namespace_uri_byte": "118",
+    "opcua.portable_qualified_name_namespace_uri[1].opcua.portable_qualified_name_namespace_uri_byte": "49",
+    "opcua.portable_qualified_name_name.#": "2",
+    "opcua.portable_qualified_name_name[0].opcua.portable_qualified_name_name_byte": "118",
+    "opcua.portable_qualified_name_name[1].opcua.portable_qualified_name_name_byte": "50"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "name": "gen-opcua-autoid-local_coordinate-full",
+  "from": "opcua-autoid",
+  "to": "opcua-autoid",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0102a413012c000000000000000000f4bf00000000000002c00000000000000ac0401c219bcb82d80100000000000015c08aeefeff",
+  "expect": "0102a413012c000000000000000000f4bf00000000000002c00000000000000ac0401c219bcb82d80100000000000015c08aeefeff",
+  "model": {
+    "@kind": "local_coordinate",
+    "opcuaautoid.namespace_index": "2",
+    "opcuaautoid.local_coordinate_x": "-1.25",
+    "opcuaautoid.local_coordinate_y": "-2.25",
+    "opcuaautoid.local_coordinate_z": "-3.25",
+    "time_ms": "1655526400004",
+    "opcuaautoid.local_coordinate_dilution_of_precision": "-5.25",
+    "opcuaautoid.local_coordinate_useful_precision": "-70006"
+  }
+}

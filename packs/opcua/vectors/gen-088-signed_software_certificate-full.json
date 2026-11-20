@@ -1,0 +1,17 @@
+{
+  "name": "gen-opcua-signed_software_certificate-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "01005a01010c000000020000007631020000007632",
+  "expect": "01005a01010c000000020000007631020000007632",
+  "model": {
+    "@kind": "signed_software_certificate",
+    "opcua.signed_software_certificate_certificate_data.#": "2",
+    "opcua.signed_software_certificate_certificate_data[0].opcua.signed_software_certificate_certificate_data_byte": "118",
+    "opcua.signed_software_certificate_certificate_data[1].opcua.signed_software_certificate_certificate_data_byte": "49",
+    "opcua.signed_software_certificate_signature.#": "2",
+    "opcua.signed_software_certificate_signature[0].opcua.signed_software_certificate_signature_byte": "118",
+    "opcua.signed_software_certificate_signature[1].opcua.signed_software_certificate_signature_byte": "50"
+  }
+}

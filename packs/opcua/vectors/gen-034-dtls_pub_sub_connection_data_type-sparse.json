@@ -1,0 +1,22 @@
+{
+  "name": "gen-opcua-dtls_pub_sub_connection_data_type-sparse",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100f24901150000000200000076310000000000032c0102000000733300",
+  "expect": "0100f24901150000000200000076310000000000032c0102000000733300",
+  "model": {
+    "@kind": "dtls_pub_sub_connection_data_type",
+    "opcua.dtls_pub_sub_connection_data_type_zero_rtt": "0",
+    "opcua.dtls_pub_sub_connection_data_type_certificate_group_id_encoding": "3",
+    "opcua.dtls_pub_sub_connection_data_type_certificate_group_id_namespace": "300",
+    "opcua.dtls_pub_sub_connection_data_type_verify_client_certificate": "0",
+    "opcua.dtls_pub_sub_connection_data_type_client_cipher_suite.#": "2",
+    "opcua.dtls_pub_sub_connection_data_type_client_cipher_suite[0].opcua.dtls_pub_sub_connection_data_type_client_cipher_suite_byte": "118",
+    "opcua.dtls_pub_sub_connection_data_type_client_cipher_suite[1].opcua.dtls_pub_sub_connection_data_type_client_cipher_suite_byte": "49",
+    "opcua.dtls_pub_sub_connection_data_type_server_cipher_suites.#": "0",
+    "opcua.dtls_pub_sub_connection_data_type_certificate_group_id_string_id.#": "2",
+    "opcua.dtls_pub_sub_connection_data_type_certificate_group_id_string_id[0].opcua.dtls_pub_sub_connection_data_type_certificate_group_id_string_id_byte": "115",
+    "opcua.dtls_pub_sub_connection_data_type_certificate_group_id_string_id[1].opcua.dtls_pub_sub_connection_data_type_certificate_group_id_string_id_byte": "51"
+  }
+}

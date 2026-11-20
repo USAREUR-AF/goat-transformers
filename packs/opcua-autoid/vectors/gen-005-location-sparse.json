@@ -1,0 +1,16 @@
+{
+  "name": "gen-opcua-autoid-location-sparse",
+  "from": "opcua-autoid",
+  "to": "opcua-autoid",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "01029513010a00000004000000020000007631",
+  "expect": "01029513010a00000004000000020000007631",
+  "model": {
+    "@kind": "location",
+    "opcuaautoid.namespace_index": "2",
+    "opcuaautoid.location_switch_field": "4",
+    "opcuaautoid.location_name.#": "2",
+    "opcuaautoid.location_name[0].opcuaautoid.location_name_byte": "118",
+    "opcuaautoid.location_name[1].opcuaautoid.location_name_byte": "49"
+  }
+}

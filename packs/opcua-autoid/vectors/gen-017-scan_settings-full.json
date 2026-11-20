@@ -1,0 +1,16 @@
+{
+  "name": "gen-opcua-autoid-scan_settings-full",
+  "from": "opcua-autoid",
+  "to": "opcua-autoid",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "01029713011500000001000000000000000000f4bf8eeefeff0101000000",
+  "expect": "01029713011500000001000000000000000000f4bf8eeefeff0101000000",
+  "model": {
+    "@kind": "scan_settings",
+    "opcuaautoid.namespace_index": "2",
+    "opcuaautoid.scan_settings_duration": "-1.25",
+    "opcuaautoid.scan_settings_cycles": "-70002",
+    "opcuaautoid.scan_settings_data_available": "1",
+    "opcuaautoid.scan_settings_location_type": "1"
+  }
+}

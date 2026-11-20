@@ -1,0 +1,27 @@
+{
+  "name": "gen-opcua-reference_list_entry_data_type-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100967f011b0000000102e90300c32c010200000073330500000075726e3a7807000000",
+  "expect": "0100967f011b0000000102e90300c32c010200000073330500000075726e3a7807000000",
+  "model": {
+    "@kind": "reference_list_entry_data_type",
+    "opcua.reference_list_entry_data_type_reference_type_encoding": "1",
+    "opcua.reference_list_entry_data_type_reference_type_namespace": "2",
+    "opcua.reference_list_entry_data_type_reference_type_id": "1001",
+    "opcua.reference_list_entry_data_type_is_forward": "0",
+    "opcua.reference_list_entry_data_type_target_node_encoding": "3",
+    "opcua.reference_list_entry_data_type_target_node_namespace": "300",
+    "opcua.reference_list_entry_data_type_target_node_server_index": "7",
+    "opcua.reference_list_entry_data_type_target_node_string_id.#": "2",
+    "opcua.reference_list_entry_data_type_target_node_string_id[0].opcua.reference_list_entry_data_type_target_node_string_id_byte": "115",
+    "opcua.reference_list_entry_data_type_target_node_string_id[1].opcua.reference_list_entry_data_type_target_node_string_id_byte": "51",
+    "opcua.reference_list_entry_data_type_target_node_namespace_uri.#": "5",
+    "opcua.reference_list_entry_data_type_target_node_namespace_uri[0].opcua.reference_list_entry_data_type_target_node_namespace_uri_byte": "117",
+    "opcua.reference_list_entry_data_type_target_node_namespace_uri[1].opcua.reference_list_entry_data_type_target_node_namespace_uri_byte": "114",
+    "opcua.reference_list_entry_data_type_target_node_namespace_uri[2].opcua.reference_list_entry_data_type_target_node_namespace_uri_byte": "110",
+    "opcua.reference_list_entry_data_type_target_node_namespace_uri[3].opcua.reference_list_entry_data_type_target_node_namespace_uri_byte": "58",
+    "opcua.reference_list_entry_data_type_target_node_namespace_uri[4].opcua.reference_list_entry_data_type_target_node_namespace_uri_byte": "120"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "name": "gen-opcua-autoid-rtls_location_result-sparse",
+  "from": "opcua-autoid",
+  "to": "opcua-autoid",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0102b81301520000000000000002000000763103000000ea03020000007633ec03ed03606a219bcb82d8010000000000001dc000000000008020c000000000008022c000000000008024c000000000008026c0c054229bcb82d801",
+  "expect": "0102b81301520000000000000002000000763103000000ea03020000007633ec03ed03606a219bcb82d8010000000000001dc000000000008020c000000000008022c000000000008024c000000000008026c0c054229bcb82d801",
+  "model": {
+    "@kind": "rtls_location_result",
+    "opcuaautoid.namespace_index": "2",
+    "opcuaautoid.rtls_location_result_scan_data_switch_field": "3",
+    "opcuaautoid.rtls_location_result_scan_data_epc_pc": "1002",
+    "opcuaautoid.rtls_location_result_scan_data_epc_xpc_w1": "1004",
+    "opcuaautoid.rtls_location_result_scan_data_epc_xpc_w2": "1005",
+    "time_ms": "1655526400006",
+    "opcuaautoid.rtls_location_result_speed": "-7.25",
+    "opcuaautoid.rtls_location_result_heading": "-8.25",
+    "opcuaautoid.rtls_location_result_rotation_yaw": "-9.25",
+    "opcuaautoid.rtls_location_result_rotation_pitch": "-10.25",
+    "opcuaautoid.rtls_location_result_rotation_roll": "-11.25",
+    "opcuaautoid.rtls_location_result_receive_time": "133000000000120000",
+    "opcuaautoid.rtls_location_result_code_type.#": "2",
+    "opcuaautoid.rtls_location_result_code_type[0].opcuaautoid.rtls_location_result_code_type_byte": "118",
+    "opcuaautoid.rtls_location_result_code_type[1].opcuaautoid.rtls_location_result_code_type_byte": "49",
+    "opcuaautoid.rtls_location_result_scan_data_epc_u_id.#": "2",
+    "opcuaautoid.rtls_location_result_scan_data_epc_u_id[0].opcuaautoid.rtls_location_result_scan_data_epc_u_id_byte": "118",
+    "opcuaautoid.rtls_location_result_scan_data_epc_u_id[1].opcuaautoid.rtls_location_result_scan_data_epc_u_id_byte": "51"
+  }
+}

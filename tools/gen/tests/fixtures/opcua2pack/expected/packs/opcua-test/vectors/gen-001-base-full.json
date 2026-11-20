@@ -1,0 +1,16 @@
+{
+  "name": "gen-opcua-test-base-full",
+  "from": "opcua-test",
+  "to": "opcua-test",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "01028a13010e000000010000008feefeff020000007632",
+  "expect": "01028a13010e000000010000008feefeff020000007632",
+  "model": {
+    "@kind": "base",
+    "opcuatest.namespace_index": "2",
+    "opcuatest.base_count": "-70001",
+    "opcuatest.base_label.#": "2",
+    "opcuatest.base_label[0].opcuatest.base_label_byte": "118",
+    "opcuatest.base_label[1].opcuatest.base_label_byte": "50"
+  }
+}

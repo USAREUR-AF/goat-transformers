@@ -1,0 +1,20 @@
+{
+  "name": "gen-opcua-relative_path_element-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "01001b02010e0000000102e90300010400020000007134",
+  "expect": "01001b02010e0000000102e90300010400020000007134",
+  "model": {
+    "@kind": "relative_path_element",
+    "opcua.relative_path_element_reference_type_id_encoding": "1",
+    "opcua.relative_path_element_reference_type_id_namespace": "2",
+    "opcua.relative_path_element_reference_type_id_id": "1001",
+    "opcua.relative_path_element_is_inverse": "0",
+    "opcua.relative_path_element_include_subtypes": "1",
+    "opcua.relative_path_element_target_name_namespace_index": "4",
+    "opcua.relative_path_element_target_name_name.#": "2",
+    "opcua.relative_path_element_target_name_name[0].opcua.relative_path_element_target_name_name_byte": "113",
+    "opcua.relative_path_element_target_name_name[1].opcua.relative_path_element_target_name_name_byte": "52"
+  }
+}

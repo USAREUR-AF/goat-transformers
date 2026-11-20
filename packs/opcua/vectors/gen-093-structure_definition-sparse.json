@@ -1,0 +1,19 @@
+{
+  "name": "gen-opcua-structure_definition-sparse",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "007a01130000000102e903022c01721101000000000000000000",
+  "expect": "007a01130000000102e903022c01721101000000000000000000",
+  "model": {
+    "@kind": "structure_definition",
+    "opcua.structure_definition_default_encoding_id_encoding": "1",
+    "opcua.structure_definition_default_encoding_id_namespace": "2",
+    "opcua.structure_definition_default_encoding_id_id": "1001",
+    "opcua.structure_definition_base_data_type_encoding": "2",
+    "opcua.structure_definition_base_data_type_namespace": "300",
+    "opcua.structure_definition_base_data_type_id": "70002",
+    "opcua.structure_definition_structure_type": "0",
+    "opcua.structure_definition_fields.#": "0"
+  }
+}

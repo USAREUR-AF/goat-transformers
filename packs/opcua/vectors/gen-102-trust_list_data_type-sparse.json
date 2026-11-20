@@ -1,0 +1,16 @@
+{
+  "name": "gen-opcua-trust_list_data_type-sparse",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "010088310114000000015ed0b200000000000000000000000000000000",
+  "expect": "010088310114000000015ed0b200000000000000000000000000000000",
+  "model": {
+    "@kind": "trust_list_data_type",
+    "opcua.trust_list_data_type_specified_lists": "3000000001",
+    "opcua.trust_list_data_type_trusted_certificates.#": "0",
+    "opcua.trust_list_data_type_trusted_crls.#": "0",
+    "opcua.trust_list_data_type_issuer_certificates.#": "0",
+    "opcua.trust_list_data_type_issuer_crls.#": "0"
+  }
+}

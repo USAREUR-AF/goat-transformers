@@ -1,0 +1,14 @@
+{
+  "name": "gen-opcua-receive_qos_priority_data_type-full",
+  "from": "opcua",
+  "to": "opcua",
+  "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
+  "input": "0100355d0106000000020000007631",
+  "expect": "0100355d0106000000020000007631",
+  "model": {
+    "@kind": "receive_qos_priority_data_type",
+    "opcua.receive_qos_priority_data_type_priority_label.#": "2",
+    "opcua.receive_qos_priority_data_type_priority_label[0].opcua.receive_qos_priority_data_type_priority_label_byte": "118",
+    "opcua.receive_qos_priority_data_type_priority_label[1].opcua.receive_qos_priority_data_type_priority_label_byte": "49"
+  }
+}
