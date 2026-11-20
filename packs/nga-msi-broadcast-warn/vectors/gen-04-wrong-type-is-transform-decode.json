@@ -1,0 +1,9 @@
+{
+  "name": "wrong-type-is-transform-decode",
+  "from": "nga-msi-broadcast-warn",
+  "to": "nga-msi-broadcast-warn",
+  "input": "{\"msgYear\":\"not a number\",\"msgNumber\":103,\"navArea\":\"NAVAREA B\",\"subregion\":\"SUBREGION B\",\"text\":\"TEXT B\",\"status\":\"STATUS B\",\"issueDate\":\"ISSUEDATE B\",\"authority\":\"AUTHORITY B\",\"cancelDate\":\"CANCELDATE B\",\"cancelNavArea\":\"CANCELNAVARE B\",\"cancelMsgYear\":103,\"cancelMsgNumber\":103,\"number\":103,\"year\":103,\"area\":\"AREA B\"}",
+  "expect_error": "transform-decode",
+  "source": "derived by tools/gen/nga-msi2pack.py from the json wire's canonical output (spec/engine-spec.md 0.5); no engine run",
+  "reference": "NGA MSI /api/publications/broadcast-warn records as archived (broadcast-warn); the record is written for this repository; msgYear is a JSON number in every archived record; a string there fails its int transform"
+}

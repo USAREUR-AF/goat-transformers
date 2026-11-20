@@ -1,0 +1,28 @@
+{
+  "name": "null-and-unknown-members",
+  "from": "nga-msi-broadcast-warn",
+  "to": "nga-msi-broadcast-warn",
+  "input": "{\"msgYear\":101,\"msgNumber\":101,\"navArea\":null,\"subregion\":\"SUBREGION B\",\"text\":\"TEXT B\",\"status\":\"STATUS B\",\"issueDate\":\"ISSUEDATE B\",\"authority\":\"AUTHORITY B\",\"cancelDate\":\"CANCELDATE B\",\"cancelNavArea\":\"CANCELNAVARE B\",\"cancelMsgYear\":101,\"cancelMsgNumber\":101,\"number\":101,\"year\":101,\"area\":\"AREA B\",\"extraMember\":\"kept\",\"extraFlag\":true}",
+  "expect": "{\"msgYear\":101,\"msgNumber\":101,\"subregion\":\"SUBREGION B\",\"text\":\"TEXT B\",\"status\":\"STATUS B\",\"issueDate\":\"ISSUEDATE B\",\"authority\":\"AUTHORITY B\",\"cancelDate\":\"CANCELDATE B\",\"cancelNavArea\":\"CANCELNAVARE B\",\"cancelMsgYear\":101,\"cancelMsgNumber\":101,\"number\":101,\"year\":101,\"area\":\"AREA B\",\"extraMember\":\"kept\",\"extraFlag\":true}",
+  "model": {
+    "ngabwarn.msg_year": "101",
+    "ngabwarn.msg_number": "101",
+    "ngabwarn.subregion": "SUBREGION B",
+    "ngabwarn.text": "TEXT B",
+    "ngabwarn.status": "STATUS B",
+    "ngabwarn.issue_date": "ISSUEDATE B",
+    "ngabwarn.authority": "AUTHORITY B",
+    "ngabwarn.cancel_date": "CANCELDATE B",
+    "ngabwarn.cancel_nav_area": "CANCELNAVARE B",
+    "ngabwarn.cancel_msg_year": "101",
+    "ngabwarn.cancel_msg_number": "101",
+    "ngabwarn.number": "101",
+    "ngabwarn.year": "101",
+    "ngabwarn.area": "AREA B",
+    "@absent": [
+      "ngabwarn.nav_area"
+    ]
+  },
+  "source": "derived by tools/gen/nga-msi2pack.py from the json wire's canonical output (spec/engine-spec.md 0.5); no engine run",
+  "reference": "NGA MSI /api/publications/broadcast-warn records as archived (broadcast-warn); the record is written for this repository; a null member is absent and not written; members the pack does not map (two added here) are residue and are written back after the mapped ones"
+}

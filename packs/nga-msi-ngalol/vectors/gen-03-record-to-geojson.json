@@ -1,0 +1,9 @@
+{
+  "name": "record-to-geojson",
+  "from": "nga-msi-ngalol",
+  "to": "geojson",
+  "input": "{\"volumeNumber\":\"VOLUMENUMBER A\",\"aidType\":\"AIDTYPE A\",\"geopoliticalHeading\":\"GEOPOLITICAL A\",\"regionHeading\":\"REGIONHEADIN A\",\"subregionHeading\":null,\"localHeading\":null,\"precedingNote\":null,\"featureNumber\":\"FEATURENUMBE A\",\"name\":\"NAME A\",\"position\":\"POSITION A\",\"charNo\":102,\"characteristic\":\"CHARACTERIST A\",\"heightFeetMeters\":\"HEIGHTFEETME A\",\"range\":\"RANGE A\",\"structure\":\"STRUCTURE A\",\"remarks\":\"REMARKS A\",\"postNote\":null,\"noticeNumber\":102,\"removeFromList\":\"REMOVEFROMLI A\",\"deleteFlag\":\"DELETEFLAG A\",\"noticeWeek\":\"NOTICEWEEK A\",\"noticeYear\":\"NOTICEYEAR A\"}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{}}",
+  "source": "derived by tools/gen/nga-msi2pack.py from the json wire's canonical output (spec/engine-spec.md 0.5); no engine run",
+  "reference": "NGA MSI /api/publications/ngalol/lights-buoys records as archived (ngalol); the record is written for this repository; no shared key is bound (pack.md), so nothing carries to geojson and geometry is null"
+}

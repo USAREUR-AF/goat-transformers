@@ -50,6 +50,16 @@
       "distribution": "public",
       "profile": "everything"
     },
+    "LicenseRef-NGA-MSI": {
+      "name": "NGA Maritime Safety Information: no copyright claimed; NGA disclaimer required where NGA is named",
+      "url": "https://msi.nga.mil",
+      "commercial": "yes",
+      "share_alike": false,
+      "attribution": true,
+      "field_of_use": [],
+      "distribution": "public",
+      "profile": "open"
+    },
     "LicenseRef-OASIS-Notice": {
       "name": "OASIS copyright notice (implementation works allowed with the notice included)",
       "url": "https://www.oasis-open.org/policies-guidelines/ipr/",
@@ -1335,6 +1345,26 @@
     "mvt": {
       "format": "mvt",
       "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "nga-msi-asam": {
+      "format": "nga-msi-asam",
+      "licence": "LicenseRef-NGA-MSI",
+      "profile": "open"
+    },
+    "nga-msi-broadcast-warn": {
+      "format": "nga-msi-broadcast-warn",
+      "licence": "LicenseRef-NGA-MSI",
+      "profile": "open"
+    },
+    "nga-msi-ngalol": {
+      "format": "nga-msi-ngalol",
+      "licence": "LicenseRef-NGA-MSI",
+      "profile": "open"
+    },
+    "nga-msi-wpi": {
+      "format": "nga-msi-wpi",
+      "licence": "LicenseRef-NGA-MSI",
       "profile": "open"
     },
     "open311-request": {
@@ -4642,6 +4672,26 @@
     "mvt.def": {
       "module": "mvt",
       "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "ngaasam.def": {
+      "module": "ngaasam",
+      "licence": "LicenseRef-NGA-MSI",
+      "profile": "open"
+    },
+    "ngabwarn.def": {
+      "module": "ngabwarn",
+      "licence": "LicenseRef-NGA-MSI",
+      "profile": "open"
+    },
+    "ngalol.def": {
+      "module": "ngalol",
+      "licence": "LicenseRef-NGA-MSI",
+      "profile": "open"
+    },
+    "ngawpi.def": {
+      "module": "ngawpi",
+      "licence": "LicenseRef-NGA-MSI",
       "profile": "open"
     },
     "open311request.def": {

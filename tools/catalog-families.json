@@ -118,6 +118,7 @@
     {"name": "GeoJSON", "domain": "maps", "exact": ["geojson"]},
     {"name": "Geobuf", "domain": "maps", "exact": ["geobuf"]},
     {"name": "GPX", "domain": "maps", "exact": ["gpx"]},
+    {"name": "NGA Maritime Safety Information", "domain": "sea", "prefixes": ["nga-msi-"]},
     {"name": "KML", "domain": "maps", "exact": ["kml"]},
     {"name": "Mapbox Vector Tile", "domain": "maps", "exact": ["mvt"]},
     {"name": "Overture Maps", "domain": "maps", "prefixes": ["overture-"]},

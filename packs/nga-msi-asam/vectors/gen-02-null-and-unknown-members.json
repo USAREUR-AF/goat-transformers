@@ -1,0 +1,23 @@
+{
+  "name": "null-and-unknown-members",
+  "from": "nga-msi-asam",
+  "to": "nga-msi-asam",
+  "input": "{\"reference\":null,\"date\":\"DATE B\",\"latitude\":-45.25,\"longitude\":-45.25,\"position\":\"POSITION B\",\"navArea\":\"NAVAREA B\",\"subreg\":\"SUBREG B\",\"hostility\":\"HOSTILITY B\",\"victim\":\"VICTIM B\",\"description\":\"DESCRIPTION B\",\"extraMember\":\"kept\",\"extraFlag\":true}",
+  "expect": "{\"date\":\"DATE B\",\"latitude\":-45.25,\"longitude\":-45.25,\"position\":\"POSITION B\",\"navArea\":\"NAVAREA B\",\"subreg\":\"SUBREG B\",\"hostility\":\"HOSTILITY B\",\"victim\":\"VICTIM B\",\"description\":\"DESCRIPTION B\",\"extraMember\":\"kept\",\"extraFlag\":true}",
+  "model": {
+    "ngaasam.date": "DATE B",
+    "ngaasam.latitude": "-45.25",
+    "ngaasam.longitude": "-45.25",
+    "ngaasam.position": "POSITION B",
+    "ngaasam.nav_area": "NAVAREA B",
+    "ngaasam.subreg": "SUBREG B",
+    "ngaasam.hostility": "HOSTILITY B",
+    "ngaasam.victim": "VICTIM B",
+    "ngaasam.description": "DESCRIPTION B",
+    "@absent": [
+      "ngaasam.reference"
+    ]
+  },
+  "source": "derived by tools/gen/nga-msi2pack.py from the json wire's canonical output (spec/engine-spec.md 0.5); no engine run",
+  "reference": "NGA MSI /api/publications/asam records as archived (asam); the record is written for this repository; a null member is absent and not written; members the pack does not map (two added here) are residue and are written back after the mapped ones"
+}
