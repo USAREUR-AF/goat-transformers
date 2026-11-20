@@ -1,0 +1,8 @@
+{
+  "name": "truncated-is-malformed",
+  "from": "ipfix-message",
+  "to": "ipfix-message",
+  "input": "000a002269b52a1900000412000000070003001201020002000100950004",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/flows-vectors.py from values chosen there; layouts restated from RFC 7011 sections 3.1 to 3.4; the second message without its last four octets, shorter than its length field; expect derived there, no engine run"
+}

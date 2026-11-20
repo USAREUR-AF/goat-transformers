@@ -432,6 +432,34 @@ Packs openconfig-*; modules openconfig*
   third_party/ietf carry the IETF Trust copyright and the Simplified or Revised
   BSD License as above. Node names, types and value ranges only.
 
+Packs ipfix-*, netflow9-*; modules ipfixmsg, netflow9
+  IETF RFC 7011 (IPFIX protocol), RFC 7012 (IPFIX information model) and
+  RFC 3954 (NetFlow version 9, Informational), https://www.rfc-editor.org/
+  (IETF Trust, BCP 78). Layouts restated.
+
+Module ipfix (used by the ipfix-*, netflow9-* and netflow5 packs)
+  IANA registry IPFIX Information Elements,
+  https://www.iana.org/assignments/ipfix/ (updated 2026-09-11). The IANA and
+  IETF joint statement on the Protocol Registries places any rights in the
+  registries under the Creative Commons CC0 1.0 dedication
+  (https://www.iana.org/help/licensing-terms). Element numbers, names, types,
+  semantics and units only.
+
+Pack netflow5; module netflow5
+  Cisco Systems, NetFlow Export Datagram Format (NetFlow Collection Engine 3.6
+  user guide, updated 2007-09-14),
+  https://www.cisco.com/c/en/us/td/docs/net_mgmt/netflow_collection_engine/3-6/user/guide/format.html.
+  The page states no licence; the pack is labelled LicenseRef-unstated.
+  Field layout restated.
+
+Pack sflow5-datagram; module sflow
+  sFlow.org, sFlow Version 5 (July 2004), https://sflow.org/sflow_version_5.txt.
+  Copyright (C) sFlow.org (2004). All Rights Reserved. sFlow(R) is a trademark
+  of InMon Corp. Used under the sFlow License Agreement of InMon Corp.,
+  http://www.inmon.com/technology/sflowlicense.txt (LICENSES/
+  LicenseRef-sFlow-License.txt). Datagram layout restated; the pack implements
+  part of the specification only (its pack.md lists what).
+
 Pack openxc-vehicle-message; module openxc
   OpenXC message format openxc.proto, https://github.com/openxc/openxc-message-format.
   BSD 3-Clause License, Copyright (c) 2012 Ford Motor Company. Field numbers,

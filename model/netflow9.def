@@ -1,0 +1,25 @@
+# The netflow9 module: the structure of a NetFlow version 9 export packet (RFC 3954):
+# the packet header, the FlowSets, the template records and their field specifiers. The
+# values of the flow records are keys of the ipfix module: the field types of version 9
+# and the IPFIX Information Elements 1 to 127 are the same numbers (RFC 7012 section 4).
+module        netflow9
+version       0.1.0
+distribution  public
+source        "IETF RFC 3954, Cisco Systems NetFlow Services Export Version 9, October 2004 (Informational), https://www.rfc-editor.org/rfc/rfc3954.txt, IETF Trust (BCP 78); layouts restated"
+
+# Packet header, RFC 3954 section 5.1 (version and the time are lines of the packs)
+key  count                   int  -  "number of records (template, options template and data) in the packet, as the exporter states it"
+key  sys_uptime              int  -  "milliseconds since the exporting device booted"
+key  sequence_number         int  -  "count of the export packets the device has sent, incremented with each packet"
+key  source_id               int  -  "identifier of the exporter's observation domain; with the source address it names the stream of packets"
+
+# FlowSets, RFC 3954 sections 5.2 to 5.4
+list flowsets                     "the FlowSets of the packet, in order"
+key  flowset_id              int  -  "0 for a Template FlowSet, 1 for an Options Template FlowSet, 256 and above the template of a Data FlowSet"
+list flowset_octets               "the content of a FlowSet the pack does not lay out, one item per octet"
+key  octet                   int  -  "one octet, 0-255"
+list template_records             "the template records of a Template FlowSet"
+key  template_id             int  -  "number of the template, 256 and above"
+list field_specifiers             "the field type and length pairs of a template record, in order"
+key  field_type              int  -  "field type, the number of the field (the same number as the IPFIX Information Element for 1 to 127)"
+key  field_length            int  -  "length of the field in bytes"

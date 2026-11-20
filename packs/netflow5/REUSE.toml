@@ -1,0 +1,9 @@
+# The licence of this pack: every file of its directory (REUSE 3.3; the
+# flags of the licence are in licences.toml at the repository root).
+version = 1
+
+[[annotations]]
+path = "**"
+precedence = "override"
+SPDX-FileCopyrightText = "Cisco Systems (NetFlow Export Datagram Format)"
+SPDX-License-Identifier = "LicenseRef-unstated"

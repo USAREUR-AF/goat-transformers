@@ -1,0 +1,49 @@
+# IPFIX Message (RFC 7011) holding one Data Set whose records follow the IPv6 flow
+# template of pack.md: addresses, ports, protocol, octet and packet counts, start and end
+# in milliseconds. Public. Layout restated; see pack.md.
+format        ipfix-ipv6-flow
+version       0.1.0
+distribution  public
+source        "IETF RFC 7011, Specification of the IP Flow Information Export (IPFIX) Protocol for the Exchange of Flow Information, September 2013, https://www.rfc-editor.org/rfc/rfc7011.txt, IETF Trust (BCP 78); layout restated"
+source        "IANA registry IPFIX Information Elements, https://www.iana.org/assignments/ipfix/ipfix-information-elements.csv (CC0 1.0); element numbers, names and types"
+uses          ipfixmsg
+uses          ipfix
+wire          bits
+layout        sequential
+bit_order     msb
+
+kind    message
+when    16  10
+length  16  whole
+field   time_ms                         32  uiscale:1000
+field   ipfixmsg.sequence_number        32  uint
+field   ipfixmsg.observation_domain_id  32  uint
+field   ipfixmsg.set_id                 16  uint
+default ipfixmsg.set_id                 256
+length  16  bytes  plus  4
+  group  ipfix.records  rest
+    field  ipfix.source_ipv6_address_g0       16  uint
+    field  ipfix.source_ipv6_address_g1       16  uint
+    field  ipfix.source_ipv6_address_g2       16  uint
+    field  ipfix.source_ipv6_address_g3       16  uint
+    field  ipfix.source_ipv6_address_g4       16  uint
+    field  ipfix.source_ipv6_address_g5       16  uint
+    field  ipfix.source_ipv6_address_g6       16  uint
+    field  ipfix.source_ipv6_address_g7       16  uint
+    field  ipfix.destination_ipv6_address_g0  16  uint
+    field  ipfix.destination_ipv6_address_g1  16  uint
+    field  ipfix.destination_ipv6_address_g2  16  uint
+    field  ipfix.destination_ipv6_address_g3  16  uint
+    field  ipfix.destination_ipv6_address_g4  16  uint
+    field  ipfix.destination_ipv6_address_g5  16  uint
+    field  ipfix.destination_ipv6_address_g6  16  uint
+    field  ipfix.destination_ipv6_address_g7  16  uint
+    field  ipfix.source_transport_port       16  uint
+    field  ipfix.destination_transport_port  16  uint
+    field  ipfix.protocol_identifier          8  uint
+    field  ipfix.octet_delta_count           64  uint
+    field  ipfix.packet_delta_count          64  uint
+    field  ipfix.flow_start_milliseconds     64  uint
+    field  ipfix.flow_end_milliseconds       64  uint
+  end
+end

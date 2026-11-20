@@ -161,3 +161,12 @@ field_of_use = []
 distribution = "public"
 
 # A source that states no licence: kept out of `open` until it is resolved.
+
+[licences."LicenseRef-sFlow-License"]
+name = "sFlow License Agreement of InMon Corp. (free, royalty-free; accepted by use; section 2.3: a licensee's Products that implement the specifications must strictly adhere to and fully comply with them and identify themselves with the sFlow(R) trademark, and their documentation must carry the phrase sFlow(R); section 7: InMon may terminate after three months of uncorrected non-compliance)"
+url = "http://www.inmon.com/technology/sflowlicense.txt"
+commercial = "yes"
+share_alike = false
+attribution = true
+field_of_use = []
+distribution = "public"

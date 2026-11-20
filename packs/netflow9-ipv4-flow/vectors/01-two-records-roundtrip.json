@@ -1,0 +1,32 @@
+{
+  "name": "two-records-roundtrip",
+  "from": "netflow9-ipv4-flow",
+  "to": "netflow9-ipv4-flow",
+  "input": "0009000200371d6069b529dd00000059000000010100003ec000020ac6336414c00001bb060000cc560000003d0036ef7a00371ce3cb007105c0000235cf090035110000008e00000002003711ac003711bb",
+  "expect": "0009000200371d6069b529dd00000059000000010100003ec000020ac6336414c00001bb060000cc560000003d0036ef7a00371ce3cb007105c0000235cf090035110000008e00000002003711ac003711bb",
+  "model": {
+    "@kind": "packet",
+    "time_ms": "1773480413000",
+    "netflow9.flowset_id": "256",
+    "ipfix.records.#": "2",
+    "ipfix.records[0].ipfix.source_ipv4_address": "3221225994",
+    "ipfix.records[0].ipfix.destination_ipv4_address": "3325256724",
+    "ipfix.records[0].ipfix.source_transport_port": "49152",
+    "ipfix.records[0].ipfix.destination_transport_port": "443",
+    "ipfix.records[0].ipfix.protocol_identifier": "6",
+    "ipfix.records[0].ipfix.octet_delta_count": "52310",
+    "ipfix.records[0].ipfix.packet_delta_count": "61",
+    "ipfix.records[0].ipfix.flow_start_sys_up_time": "3600250",
+    "ipfix.records[0].ipfix.flow_end_sys_up_time": "3611875",
+    "ipfix.records[1].ipfix.source_ipv4_address": "3405803781",
+    "ipfix.records[1].ipfix.destination_ipv4_address": "3221226037",
+    "ipfix.records[1].ipfix.source_transport_port": "53001",
+    "ipfix.records[1].ipfix.destination_transport_port": "53",
+    "ipfix.records[1].ipfix.protocol_identifier": "17",
+    "ipfix.records[1].ipfix.octet_delta_count": "142",
+    "ipfix.records[1].ipfix.packet_delta_count": "2",
+    "ipfix.records[1].ipfix.flow_start_sys_up_time": "3609004",
+    "ipfix.records[1].ipfix.flow_end_sys_up_time": "3609019"
+  },
+  "source": "built by tools/gen/flows-vectors.py from values chosen there; layouts restated from RFC 3954 sections 5.1 to 5.3; one Data FlowSet of template 256 with two IPv4 flow records; expect derived there, no engine run"
+}

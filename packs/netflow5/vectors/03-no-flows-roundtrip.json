@@ -1,0 +1,12 @@
+{
+  "name": "no-flows-roundtrip",
+  "from": "netflow5",
+  "to": "netflow5",
+  "input": "000500000000000069b529dd000000000000000000000000",
+  "expect": "000500000000000069b529dd000000000000000000000000",
+  "model": {
+    "ipfix.records.#": "0",
+    "netflow5.unix_secs": "1773480413"
+  },
+  "source": "built by tools/gen/flows-vectors.py from values chosen there; layouts restated from Cisco's NetFlow Export Datagram Format page (version 5); a header that announces no flow; expect derived there, no engine run"
+}

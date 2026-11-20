@@ -1,0 +1,275 @@
+# sFlow(R) version 5 datagram (sflow.org, sflow_version_5.txt): the datagram header, the
+# flow and counter samples (compact and expanded), the raw packet header, IPv4 and IPv6 flow
+# records and the generic and Ethernet interface counters. Public; licensed under the sFlow
+# License Agreement (pack.md, PROVENANCE.md). Not a complete implementation: see pack.md.
+format        sflow5-datagram
+version       0.1.0
+distribution  public
+source        "sFlow.org, sFlow Version 5, July 2004, https://sflow.org/sflow_version_5.txt (sha256 83d4daf46d395733a1daa4eceeb405a7c0adedc2882f5e233e1c22c2a12f4bf1), Copyright (C) sFlow.org (2004); sFlow License Agreement of InMon Corp.; layouts restated"
+uses          sflow
+wire          bits
+layout        sequential
+bit_order     msb
+
+kind    datagram
+when    32  5
+field  sflow.agent_address_type  32  uint
+switch  sflow.agent_address_type
+  case  1
+    field  sflow.agent_ipv4  32  uint
+  case  2
+    field  sflow.agent_ipv6_g0  16  uint
+    field  sflow.agent_ipv6_g1  16  uint
+    field  sflow.agent_ipv6_g2  16  uint
+    field  sflow.agent_ipv6_g3  16  uint
+    field  sflow.agent_ipv6_g4  16  uint
+    field  sflow.agent_ipv6_g5  16  uint
+    field  sflow.agent_ipv6_g6  16  uint
+    field  sflow.agent_ipv6_g7  16  uint
+  else
+end
+field  sflow.sub_agent_id  32  uint
+field  sflow.datagram_sequence  32  uint
+field  sflow.uptime  32  uint
+group  sflow.samples  count  32
+  field  sflow.sample_type  32  uint
+  length  32  bytes
+    switch  sflow.sample_type
+      case  1
+        field  sflow.sample_sequence  32  uint
+        field  sflow.source_id_type  8  uint
+        field  sflow.source_id_index  24  uint
+        field  sflow.sampling_rate  32  uint
+        field  sflow.sample_pool  32  uint
+        field  sflow.drops  32  uint
+        field  sflow.input_format  2  uint
+        field  sflow.input_value  30  uint
+        field  sflow.output_format  2  uint
+        field  sflow.output_value  30  uint
+        group  sflow.flow_records  count  32
+          field  sflow.flow_format  32  uint
+          length  32  bytes
+            switch  sflow.flow_format
+              case  1
+                field  sflow.header_protocol  32  uint
+                field  sflow.frame_length  32  uint
+                field  sflow.stripped  32  uint
+                length  32  bytes
+                  group  sflow.header_octets  rest
+                    field  sflow.octet  8  uint
+                  end
+                end
+                align  32
+              case  3
+                field  sflow.ip_length  32  uint
+                field  sflow.ip_protocol  32  uint
+                field  sflow.src_ipv4  32  uint
+                field  sflow.dst_ipv4  32  uint
+                field  sflow.src_port  32  uint
+                field  sflow.dst_port  32  uint
+                field  sflow.tcp_flags  32  uint
+                field  sflow.tos  32  uint
+              case  4
+                field  sflow.ip_length  32  uint
+                field  sflow.ip_protocol  32  uint
+                field  sflow.src_ipv6_g0  16  uint
+                field  sflow.src_ipv6_g1  16  uint
+                field  sflow.src_ipv6_g2  16  uint
+                field  sflow.src_ipv6_g3  16  uint
+                field  sflow.src_ipv6_g4  16  uint
+                field  sflow.src_ipv6_g5  16  uint
+                field  sflow.src_ipv6_g6  16  uint
+                field  sflow.src_ipv6_g7  16  uint
+                field  sflow.dst_ipv6_g0  16  uint
+                field  sflow.dst_ipv6_g1  16  uint
+                field  sflow.dst_ipv6_g2  16  uint
+                field  sflow.dst_ipv6_g3  16  uint
+                field  sflow.dst_ipv6_g4  16  uint
+                field  sflow.dst_ipv6_g5  16  uint
+                field  sflow.dst_ipv6_g6  16  uint
+                field  sflow.dst_ipv6_g7  16  uint
+                field  sflow.src_port  32  uint
+                field  sflow.dst_port  32  uint
+                field  sflow.tcp_flags  32  uint
+                field  sflow.ipv6_priority  32  uint
+              else
+                group  sflow.record_octets  rest
+                  field  sflow.octet  8  uint
+                end
+            end
+          end
+          align  32
+        end
+      case  2
+        field  sflow.sample_sequence  32  uint
+        field  sflow.source_id_type  8  uint
+        field  sflow.source_id_index  24  uint
+        group  sflow.counter_records  count  32
+          field  sflow.counter_format  32  uint
+          length  32  bytes
+            switch  sflow.counter_format
+              case  1
+                field  sflow.if_index  32  uint
+                field  sflow.if_type  32  uint
+                field  sflow.if_speed  64  uint
+                field  sflow.if_direction  32  uint
+                field  sflow.if_status  32  uint
+                field  sflow.if_in_octets  64  uint
+                field  sflow.if_in_ucast_pkts  32  uint
+                field  sflow.if_in_multicast_pkts  32  uint
+                field  sflow.if_in_broadcast_pkts  32  uint
+                field  sflow.if_in_discards  32  uint
+                field  sflow.if_in_errors  32  uint
+                field  sflow.if_in_unknown_protos  32  uint
+                field  sflow.if_out_octets  64  uint
+                field  sflow.if_out_ucast_pkts  32  uint
+                field  sflow.if_out_multicast_pkts  32  uint
+                field  sflow.if_out_broadcast_pkts  32  uint
+                field  sflow.if_out_discards  32  uint
+                field  sflow.if_out_errors  32  uint
+                field  sflow.if_promiscuous_mode  32  uint
+              case  2
+                field  sflow.dot3_alignment_errors  32  uint
+                field  sflow.dot3_fcs_errors  32  uint
+                field  sflow.dot3_single_collision_frames  32  uint
+                field  sflow.dot3_multiple_collision_frames  32  uint
+                field  sflow.dot3_sqe_test_errors  32  uint
+                field  sflow.dot3_deferred_transmissions  32  uint
+                field  sflow.dot3_late_collisions  32  uint
+                field  sflow.dot3_excessive_collisions  32  uint
+                field  sflow.dot3_internal_mac_transmit_errors  32  uint
+                field  sflow.dot3_carrier_sense_errors  32  uint
+                field  sflow.dot3_frame_too_longs  32  uint
+                field  sflow.dot3_internal_mac_receive_errors  32  uint
+                field  sflow.dot3_symbol_errors  32  uint
+              else
+                group  sflow.record_octets  rest
+                  field  sflow.octet  8  uint
+                end
+            end
+          end
+          align  32
+        end
+      case  3
+        field  sflow.sample_sequence  32  uint
+        field  sflow.source_id_type  32  uint
+        field  sflow.source_id_index  32  uint
+        field  sflow.sampling_rate  32  uint
+        field  sflow.sample_pool  32  uint
+        field  sflow.drops  32  uint
+        field  sflow.input_format  32  uint
+        field  sflow.input_value  32  uint
+        field  sflow.output_format  32  uint
+        field  sflow.output_value  32  uint
+        group  sflow.flow_records  count  32
+          field  sflow.flow_format  32  uint
+          length  32  bytes
+            switch  sflow.flow_format
+              case  1
+                field  sflow.header_protocol  32  uint
+                field  sflow.frame_length  32  uint
+                field  sflow.stripped  32  uint
+                length  32  bytes
+                  group  sflow.header_octets  rest
+                    field  sflow.octet  8  uint
+                  end
+                end
+                align  32
+              case  3
+                field  sflow.ip_length  32  uint
+                field  sflow.ip_protocol  32  uint
+                field  sflow.src_ipv4  32  uint
+                field  sflow.dst_ipv4  32  uint
+                field  sflow.src_port  32  uint
+                field  sflow.dst_port  32  uint
+                field  sflow.tcp_flags  32  uint
+                field  sflow.tos  32  uint
+              case  4
+                field  sflow.ip_length  32  uint
+                field  sflow.ip_protocol  32  uint
+                field  sflow.src_ipv6_g0  16  uint
+                field  sflow.src_ipv6_g1  16  uint
+                field  sflow.src_ipv6_g2  16  uint
+                field  sflow.src_ipv6_g3  16  uint
+                field  sflow.src_ipv6_g4  16  uint
+                field  sflow.src_ipv6_g5  16  uint
+                field  sflow.src_ipv6_g6  16  uint
+                field  sflow.src_ipv6_g7  16  uint
+                field  sflow.dst_ipv6_g0  16  uint
+                field  sflow.dst_ipv6_g1  16  uint
+                field  sflow.dst_ipv6_g2  16  uint
+                field  sflow.dst_ipv6_g3  16  uint
+                field  sflow.dst_ipv6_g4  16  uint
+                field  sflow.dst_ipv6_g5  16  uint
+                field  sflow.dst_ipv6_g6  16  uint
+                field  sflow.dst_ipv6_g7  16  uint
+                field  sflow.src_port  32  uint
+                field  sflow.dst_port  32  uint
+                field  sflow.tcp_flags  32  uint
+                field  sflow.ipv6_priority  32  uint
+              else
+                group  sflow.record_octets  rest
+                  field  sflow.octet  8  uint
+                end
+            end
+          end
+          align  32
+        end
+      case  4
+        field  sflow.sample_sequence  32  uint
+        field  sflow.source_id_type  32  uint
+        field  sflow.source_id_index  32  uint
+        group  sflow.counter_records  count  32
+          field  sflow.counter_format  32  uint
+          length  32  bytes
+            switch  sflow.counter_format
+              case  1
+                field  sflow.if_index  32  uint
+                field  sflow.if_type  32  uint
+                field  sflow.if_speed  64  uint
+                field  sflow.if_direction  32  uint
+                field  sflow.if_status  32  uint
+                field  sflow.if_in_octets  64  uint
+                field  sflow.if_in_ucast_pkts  32  uint
+                field  sflow.if_in_multicast_pkts  32  uint
+                field  sflow.if_in_broadcast_pkts  32  uint
+                field  sflow.if_in_discards  32  uint
+                field  sflow.if_in_errors  32  uint
+                field  sflow.if_in_unknown_protos  32  uint
+                field  sflow.if_out_octets  64  uint
+                field  sflow.if_out_ucast_pkts  32  uint
+                field  sflow.if_out_multicast_pkts  32  uint
+                field  sflow.if_out_broadcast_pkts  32  uint
+                field  sflow.if_out_discards  32  uint
+                field  sflow.if_out_errors  32  uint
+                field  sflow.if_promiscuous_mode  32  uint
+              case  2
+                field  sflow.dot3_alignment_errors  32  uint
+                field  sflow.dot3_fcs_errors  32  uint
+                field  sflow.dot3_single_collision_frames  32  uint
+                field  sflow.dot3_multiple_collision_frames  32  uint
+                field  sflow.dot3_sqe_test_errors  32  uint
+                field  sflow.dot3_deferred_transmissions  32  uint
+                field  sflow.dot3_late_collisions  32  uint
+                field  sflow.dot3_excessive_collisions  32  uint
+                field  sflow.dot3_internal_mac_transmit_errors  32  uint
+                field  sflow.dot3_carrier_sense_errors  32  uint
+                field  sflow.dot3_frame_too_longs  32  uint
+                field  sflow.dot3_internal_mac_receive_errors  32  uint
+                field  sflow.dot3_symbol_errors  32  uint
+              else
+                group  sflow.record_octets  rest
+                  field  sflow.octet  8  uint
+                end
+            end
+          end
+          align  32
+        end
+      else
+        group  sflow.sample_octets  rest
+          field  sflow.octet  8  uint
+        end
+    end
+  end
+  align  32
+end

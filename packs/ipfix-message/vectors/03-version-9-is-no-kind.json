@@ -1,0 +1,8 @@
+{
+  "name": "version-9-is-no-kind",
+  "from": "ipfix-message",
+  "to": "ipfix-message",
+  "input": "0009002269b52a190000041200000007000300120102000200010095000400290008",
+  "expect_error": "no-kind",
+  "source": "built by tools/gen/flows-vectors.py from values chosen there; layouts restated from RFC 7011 sections 3.1 to 3.4; the second message with version 9 in place of 10; expect derived there, no engine run"
+}

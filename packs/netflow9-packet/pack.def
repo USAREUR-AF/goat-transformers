@@ -1,0 +1,41 @@
+# NetFlow version 9 export packet (RFC 3954): the packet header and every FlowSet.
+# Template FlowSets are read in full; Options Template and Data FlowSets are kept as
+# octets. Public. Layouts restated; see pack.md.
+format        netflow9-packet
+version       0.1.0
+distribution  public
+source        "IETF RFC 3954, Cisco Systems NetFlow Services Export Version 9, October 2004 (Informational), https://www.rfc-editor.org/rfc/rfc3954.txt, IETF Trust (BCP 78); layout restated"
+uses          netflow9
+wire          bits
+layout        sequential
+bit_order     msb
+
+kind    packet
+when    16  9
+field   netflow9.count            16  uint
+field   netflow9.sys_uptime       32  uint
+field   time_ms                   32  uiscale:1000
+field   netflow9.sequence_number  32  uint
+field   netflow9.source_id        32  uint
+group  netflow9.flowsets  rest
+  field  netflow9.flowset_id  16  uint
+  switch  netflow9.flowset_id
+    case  0
+      length  16  bytes  plus  4
+        group  netflow9.template_records  rest
+          field  netflow9.template_id  16  uint
+          count  fields  16
+          group  netflow9.field_specifiers  count  @fields
+            field  netflow9.field_type    16  uint
+            field  netflow9.field_length  16  uint
+          end
+        end
+      end
+    else
+      length  16  bytes  plus  4
+        group  netflow9.flowset_octets  rest
+          field  netflow9.octet  8  uint
+        end
+      end
+  end
+end

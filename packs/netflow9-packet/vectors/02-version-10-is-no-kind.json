@@ -1,0 +1,8 @@
+{
+  "name": "version-10-is-no-kind",
+  "from": "netflow9-packet",
+  "to": "netflow9-packet",
+  "input": "000a000200371d6069b529dd00000058000000010000002c0100000900080004000c000400070002000b0002000400010001000400020004001600040015000401000021c000020ac6336414c00001bb060000cc560000003d0036ef7a00371ce3",
+  "expect_error": "no-kind",
+  "source": "built by tools/gen/flows-vectors.py from values chosen there; layouts restated from RFC 3954 sections 5.1 to 5.3; the packet with version 10 in place of 9; expect derived there, no engine run"
+}

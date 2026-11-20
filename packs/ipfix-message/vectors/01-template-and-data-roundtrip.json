@@ -1,0 +1,25 @@
+{
+  "name": "template-and-data-roundtrip",
+  "from": "ipfix-message",
+  "to": "ipfix-message",
+  "input": "000a007d69b529dd00000411000000070002003c0100000900080004000c000400070002000b0002000400010001000800020008009800080099000801010002000800048001000400007ed901000031c000020ac6336414c00001bb06000000000000cc56000000000000003d0000019cebab59620000019cebab86cb",
+  "expect": "000a007d69b529dd00000411000000070002003c0100000900080004000c000400070002000b0002000400010001000800020008009800080099000801010002000800048001000400007ed901000031c000020ac6336414c00001bb06000000000000cc56000000000000003d0000019cebab59620000019cebab86cb",
+  "model": {
+    "@kind": "message",
+    "time_ms": "1773480413000",
+    "ipfixmsg.sequence_number": "1041",
+    "ipfixmsg.observation_domain_id": "7",
+    "ipfixmsg.sets.#": "2",
+    "ipfixmsg.sets[0].ipfixmsg.set_id": "2",
+    "ipfixmsg.sets[0].ipfixmsg.template_records.#": "2",
+    "ipfixmsg.sets[0].ipfixmsg.template_records[0].ipfixmsg.template_id": "256",
+    "ipfixmsg.sets[0].ipfixmsg.template_records[0].ipfixmsg.field_specifiers.#": "9",
+    "ipfixmsg.sets[0].ipfixmsg.template_records[0].ipfixmsg.field_specifiers[8].ipfixmsg.ie_id": "153",
+    "ipfixmsg.sets[0].ipfixmsg.template_records[0].ipfixmsg.field_specifiers[8].ipfixmsg.field_length": "8",
+    "ipfixmsg.sets[0].ipfixmsg.template_records[1].ipfixmsg.field_specifiers[1].ipfixmsg.enterprise_number": "32473",
+    "ipfixmsg.sets[1].ipfixmsg.set_id": "256",
+    "ipfixmsg.sets[1].ipfixmsg.set_octets.#": "45",
+    "ipfixmsg.sets[1].ipfixmsg.set_octets[0].ipfixmsg.octet": "192"
+  },
+  "source": "built by tools/gen/flows-vectors.py from values chosen there; layouts restated from RFC 7011 sections 3.1 to 3.4; a Template Set with the IPv4 flow template (256) and a template with an enterprise-specific element (257), then a Data Set of one record kept as octets; expect derived there, no engine run"
+}
