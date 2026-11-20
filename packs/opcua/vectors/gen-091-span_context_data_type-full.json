@@ -3,8 +3,8 @@
   "from": "opcua",
   "to": "opcua",
   "source": "tools/gen/opcua2pack.py: values made by the generator, bytes by its OPC UA binary encoder",
-  "input": "01002a4d0118000000050302010605080701020304050607080200e8890423c78a",
-  "expect": "01002a4d0118000000050302010605080701020304050607080200e8890423c78a",
+  "input": "01002a4d011800000005030201060508070102030405060708020084e2506ce67c",
+  "expect": "01002a4d011800000005030201060508070102030405060708020084e2506ce67c",
   "model": {
     "@kind": "span_context_data_type",
     "opcua.span_context_data_type_trace_id_data1": "16909061",
@@ -18,6 +18,6 @@
     "opcua.span_context_data_type_trace_id_data4_5": "6",
     "opcua.span_context_data_type_trace_id_data4_6": "7",
     "opcua.span_context_data_type_trace_id_data4_7": "8",
-    "opcua.span_context_data_type_span_id": "10000000000000000002"
+    "opcua.span_context_data_type_span_id": "9000000000000000002"
   }
 }

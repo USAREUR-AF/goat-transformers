@@ -775,7 +775,7 @@ class Sampler:
         if b == "Int64":
             return -5000000000 - n
         if b == "UInt64":
-            return 10000000000000000000 + n
+            return 9000000000000000000 + n   # below 2**63: a top-bit uint decodes to a negative model int (engine-spec, uint at 64 bits)
         if b == "Float":
             return n + 0.5
         if b == "Double":
