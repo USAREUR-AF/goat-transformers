@@ -1,0 +1,13 @@
+{
+  "name": "rt-sys_cmd",
+  "from": "inertialsense-system",
+  "to": "inertialsense-system",
+  "source": "tools/gen/cstruct2pack.py: the inertialsense frame header, then system_command_t with values chosen by the generator, packed by its serializer at the offsets of the layout",
+  "input": "ef4904070800eaa9379e9b236f3c",
+  "expect": "ef4904070800eaa9379e9b236f3c",
+  "model": {
+    "@kind": "sys_cmd",
+    "inertialsense.system_command_t_command": "2654448106",
+    "inertialsense.system_command_t_inv_command": "1013916571"
+  }
+}

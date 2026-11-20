@@ -1,0 +1,15 @@
+{
+  "name": "rt-evb_status",
+  "from": "inertialsense-evb",
+  "to": "inertialsense-evb",
+  "source": "tools/gen/cstruct2pack.py: the inertialsense frame header, then evb_status_t with values chosen by the generator, packed by its serializer at the offsets of the layout",
+  "input": "ef4904502800eaa9379e9b236f3c4cfdae5f10848453c1fdbbf17277f38f23f12a2ed46a62cc5eba490c022b28c0",
+  "expect": "ef4904502800eaa9379e9b236f3c4cfdae5f10848453c1fdbbf17277f38f23f12a2ed46a62cc5eba490c022b28c0",
+  "model": {
+    "@kind": "evb_status",
+    "inertialsense.evb_status_t_week": "2654448106",
+    "inertialsense.evb_status_t_time_of_week_ms": "1013916571",
+    "inertialsense.evb_status_t_firmware_ver_0": "76",
+    "inertialsense.evb_status_t_firmware_ver_1": "253"
+  }
+}

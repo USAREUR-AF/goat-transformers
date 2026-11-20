@@ -1,0 +1,254 @@
+{
+  "family": "inertialsense",
+  "module": "inertialsense",
+  "version": "0.1.0",
+  "headers": [
+    "src/data_sets.h"
+  ],
+  "constant_headers": [
+    "src/ISConstants.h",
+    "src/rtk_defines.h",
+    "src/core/base_port.h"
+  ],
+  "license_files": [
+    "LICENSE",
+    "src/ISComm.h"
+  ],
+  "defines": [],
+  "attributes": [
+    "PACKED"
+  ],
+  "pack_macros": {
+    "PUSH_PACK_1": 1,
+    "PUSH_PACK_4": 4,
+    "PUSH_PACK_8": 8,
+    "POP_PACK": "pop"
+  },
+  "messages": {
+    "file": "src/data_sets.h",
+    "strip_prefix": "DID_",
+    "regex": "^#define (?P<name>DID_\\w+)\\s+\\(eDataIDs\\)(?P<id>\\d+)\\s*/\\*\\*<\\s*\\((?P<type>\\w+)\\)"
+  },
+  "int_bits": 32,
+  "title": "Inertial Sense SDK data sets (src/data_sets.h)",
+  "title_short": "Inertial Sense IMX/GPX data sets",
+  "repository": "https://github.com/inertialsense/inertial-sense-sdk",
+  "raw_url": "https://raw.githubusercontent.com/inertialsense/inertial-sense-sdk/<commit>/<path>",
+  "license_line": "struct member names, types and array sizes only; MIT License",
+  "extra_sources": [
+    "Inertial Sense SDK src/ISComm.h at the same commit: the ISB packet header (preamble, flags, data id, payload size); the frame and its checksum are the framer's"
+  ],
+  "byte_order_statement": "little-endian, as the file header of data_sets.h states for every multi-byte field",
+  "frame": {
+    "name": "ISB packet header",
+    "header_bits": 48,
+    "id_byte": 3,
+    "fields": [
+      {
+        "name": "preamble",
+        "bits": 16,
+        "when": 18927
+      },
+      {
+        "name": "flags, packet type (low nibble)",
+        "bits": 4,
+        "key": "isb_packet_type",
+        "default": 4
+      },
+      {
+        "name": "flags, extended payload and offset bits (high nibble)",
+        "bits": 4,
+        "when": 0
+      },
+      {
+        "name": "id",
+        "bits": 8,
+        "role": "id"
+      },
+      {
+        "name": "payloadSize",
+        "bits": 16,
+        "role": "size"
+      }
+    ],
+    "convention": [
+      "A message of this format is one ISB (Inertial Sense binary) packet without its trailing",
+      "2-byte checksum: the 6-byte packet header of `src/ISComm.h` (`packet_hdr_t`), then the whole",
+      "data set the header's id names. The header starts with the preamble 0x49EF (bytes EF 49),",
+      "then a flags byte whose low nibble is the packet type (4 for a data packet, 5 for a set-data",
+      "packet), the data id (the DID number) and the payload size in bytes. Each DID is a kind,",
+      "selected by its id and by a payload size equal to its struct. The checksum after the payload",
+      "is the framer's: the ISB parser of the SDK (`is_comm_parse` in `src/ISComm.c`, with",
+      "`is_comm_isb_checksum16`) checks and strips it, and writes it when it sends. A packet with",
+      "the offset flag (0x20, a partial data set) or the extended-payload flag (0x10) is not a",
+      "message of this format; the common `when` on the high nibble refuses it."
+    ]
+  },
+  "groups": [
+    {
+      "name": "evb",
+      "match": "^DID_EVB_"
+    },
+    {
+      "name": "gpx",
+      "match": "^DID_GPX_"
+    },
+    {
+      "name": "rtk",
+      "match": "^DID_(GNSS\\d?_RTK|GNSS_RTK_OPT|GNSS_BASE_RAW|GNSS\\d_RAW|SURVEY_IN)"
+    },
+    {
+      "name": "gnss",
+      "match": "^DID_GNSS"
+    },
+    {
+      "name": "ins",
+      "match": "^DID_(INS_|INL2_|ROS_COVARIANCE)"
+    },
+    {
+      "name": "imu",
+      "match": "^DID_(PIMU|IMU|REFERENCE_(IMU|PIMU)|EXT_IMU)"
+    },
+    {
+      "name": "sensors",
+      "match": "^DID_(MAGNETOMETER|REFERENCE_MAGNETOMETER|BAROMETER|MAG_CAL|SYS_SENSORS|WHEEL_ENCODER|STROBE_IN_TIME|INFIELD_CAL|TIMEPULSE)"
+    },
+    {
+      "name": "aiding",
+      "match": "^DID_(EXT_AIDING_|POSITION_MEASUREMENT|GROUND_VEHICLE)"
+    },
+    {
+      "name": "config",
+      "match": "^DID_(FLASH_CONFIG|CANFD_CONFIG|CAN_CONFIG)"
+    },
+    {
+      "name": "system",
+      "match": "^DID_(DEV_INFO|SYS_|BIT|RTOS_INFO|DIAGNOSTIC_MESSAGE|PORT_MONITOR|FIRMWARE_UPDATE|RMC|NMEA_BCAST_PERIOD)"
+    }
+  ],
+  "skip": {
+    "DID_INL2_COVARIANCE_LD": "its payload is named by an array size, not a struct: a bare array of floats the header declares no type for",
+    "DID_INL2_MISC": "the header names `inl2_misc_t` as its payload but declares no such type",
+    "DID_FIRMWARE_UPDATE": "the header names `firmware_payload_t` as its payload but declares no such type",
+    "DID_GNSS_BASE_RAW": "`gnss_raw_t` holds a union (`uGnssRawData`) whose bytes are observations, ephemerides or other records by a type field; one fixed layout cannot state them",
+    "DID_GNSS1_RAW": "as DID_GNSS_BASE_RAW",
+    "DID_GNSS2_RAW": "as DID_GNSS_BASE_RAW",
+    "DID_EVB_FLASH_CFG": "`evb_server_t` holds an anonymous union (an IP address as one word or four bytes), which the strict reader does not lay out"
+  },
+  "bind": {
+    "ins_1_t:lla[0]": {
+      "key": "lat",
+      "type": "float",
+      "evidence": "the struct's comment: element 0 of the WGS84 latitude, longitude, ellipsoidal height triple, in degrees"
+    },
+    "ins_1_t:lla[1]": {
+      "key": "lon",
+      "type": "float",
+      "evidence": "the same comment: element 1, longitude in degrees"
+    },
+    "ins_1_t:lla[2]": {
+      "key": "hae",
+      "type": "float",
+      "evidence": "the same comment: element 2, height over the ellipsoid in metres (not MSL)"
+    },
+    "ins_2_t:lla[0]": {
+      "key": "lat",
+      "type": "float",
+      "evidence": "the struct's comment: element 0 of the WGS84 latitude, longitude, ellipsoidal height triple, in degrees"
+    },
+    "ins_2_t:lla[1]": {
+      "key": "lon",
+      "type": "float",
+      "evidence": "the same comment: element 1, longitude in degrees"
+    },
+    "ins_2_t:lla[2]": {
+      "key": "hae",
+      "type": "float",
+      "evidence": "the same comment: element 2, height over the ellipsoid in metres (not MSL)"
+    },
+    "ins_3_t:lla[0]": {
+      "key": "lat",
+      "type": "float",
+      "evidence": "the struct's comment: element 0 of the WGS84 latitude, longitude, ellipsoidal height triple, in degrees"
+    },
+    "ins_3_t:lla[1]": {
+      "key": "lon",
+      "type": "float",
+      "evidence": "the same comment: element 1, longitude in degrees"
+    },
+    "ins_3_t:lla[2]": {
+      "key": "hae",
+      "type": "float",
+      "evidence": "the same comment: element 2, height over the ellipsoid in metres (not MSL)"
+    },
+    "gnss_pos_t:lla[0]": {
+      "key": "lat",
+      "type": "float",
+      "evidence": "the struct's comment: element 0 of the WGS84 latitude, longitude, ellipsoidal height triple, in degrees"
+    },
+    "gnss_pos_t:lla[1]": {
+      "key": "lon",
+      "type": "float",
+      "evidence": "the same comment: element 1, longitude in degrees"
+    },
+    "gnss_pos_t:lla[2]": {
+      "key": "hae",
+      "type": "float",
+      "evidence": "the same comment: element 2, height over the ellipsoid in metres (not MSL)"
+    }
+  },
+  "from_geojson": [
+    "DID_INS_1",
+    "DID_GNSS1_RCVR_POS"
+  ],
+  "bind_note": [
+    "The three elements of `lla` are bound where the struct's comment states WGS 84 latitude and",
+    "longitude in degrees and the height above the ellipsoid in metres (the file header says the",
+    "same of every LLA). `ins_4_t` (ECEF) and the NED offset of `ins_1_t` are not positions in",
+    "degrees and stay raw keys. No struct states a velocity in NED without a condition: the INS",
+    "`uvw` is in the body frame, and `gnss_vel_t.vel` is ECEF or north-east by a status bit, so",
+    "no velocity is bound. Times are GPS week and time of week, not UTC epoch times, and stay raw."
+  ],
+  "not_mapped": [
+    [
+      "The 2-byte checksum after the payload",
+      "the framer's (see Message convention), not part of the message"
+    ],
+    [
+      "Partial and extended packets (flags 0x20, 0x10)",
+      "the payload starts with an offset or continues in another packet; the common `when` on the flags' high nibble refuses them"
+    ],
+    [
+      "Packet types other than data",
+      "a get-data, ack or stop packet carries another payload; its size differs from the data set's, so no kind's `when` holds"
+    ],
+    [
+      "Enumerations and bit fields",
+      "carried as the integer the struct holds; the pack names no value"
+    ],
+    [
+      "NaN and infinite floats",
+      "the `f32` and `f64` transforms refuse them on decode (`transform-decode`)"
+    ],
+    [
+      "Bytes of a text field after its first NUL",
+      "`ascii` removes trailing NULs and refuses other bytes outside 0x20-0x7E"
+    ]
+  ],
+  "license_statement": [
+    "- `LICENSE` at the root begins \"MIT License\" and \"Copyright (c) 2014-2025 Inertial Sense, Inc. -",
+    "  http://inertialsense.com\", followed by the MIT permission text.",
+    "- `src/data_sets.h` opens with the same MIT licence text (\"MIT LICENSE\", \"Copyright (c)",
+    "  2014-2025 Inertial Sense, Inc.\"), and its file comment gives \"Copyright (c) 2014-2026",
+    "  Inertial Sense, Inc.\". `src/ISConstants.h`, `src/rtk_defines.h` and `src/core/base_port.h`",
+    "  are in the same repository under that licence."
+  ],
+  "license_quote": [
+    "LICENSE"
+  ],
+  "licence_note": [
+    "Licence of this pack: Apache-2.0, the repository's (REUSE.toml). It restates member names,",
+    "types, array sizes and identifiers, with descriptions of its own; the MIT notice above is",
+    "kept with it here and in NOTICE, as the MIT terms ask of a copy or substantial portion."
+  ]
+}

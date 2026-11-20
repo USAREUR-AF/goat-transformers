@@ -1,0 +1,15 @@
+{
+  "name": "rt-barometer",
+  "from": "inertialsense-sensors",
+  "to": "inertialsense-sensors",
+  "source": "tools/gen/cstruct2pack.py: the inertialsense frame header, then barometer_t with values chosen by the generator, packed by its serializer at the offsets of the layout",
+  "input": "ef4904351800e9263108ac1cf03f0000e4c00000dcc00000d4c00000ccc0",
+  "expect": "ef4904351800e9263108ac1cf03f0000e4c00000dcc00000d4c00000ccc0",
+  "model": {
+    "@kind": "barometer",
+    "inertialsense.barometer_t_time": "1.007",
+    "inertialsense.barometer_t_bar": "-7.125",
+    "inertialsense.barometer_t_msl_bar": "-6.875",
+    "inertialsense.barometer_t_bar_temp": "-6.625"
+  }
+}

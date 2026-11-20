@@ -1,0 +1,15 @@
+{
+  "name": "rt-ros_covariance_pose_twist",
+  "from": "inertialsense-ins",
+  "to": "inertialsense-ins",
+  "source": "tools/gen/cstruct2pack.py: the inertialsense frame header, then ros_covariance_pose_twist_t with values chosen by the generator, packed by its serializer at the offsets of the layout",
+  "input": "ef490437b000e9263108ac1cf03f0000e4c00000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0000094c000008cc0000084c0000078c0000068c0000058c0000048c0000038c0000028c0000018c0000008c00000f0bf0000d0bf0000b0bf000090bf000060bf000020bf0000c0be000000be0000003e0000c03e0000203f0000603f0000903f0000b03f0000d03f0000f03f0000084000001840000028400000384000004840",
+  "expect": "ef490437b000e9263108ac1cf03f0000e4c00000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0000094c000008cc0000084c0000078c0000068c0000058c0000048c0000038c0000028c0000018c0000008c00000f0bf0000d0bf0000b0bf000090bf000060bf000020bf0000c0be000000be0000003e0000c03e0000203f0000603f0000903f0000b03f0000d03f0000f03f0000084000001840000028400000384000004840",
+  "model": {
+    "@kind": "ros_covariance_pose_twist",
+    "inertialsense.ros_covariance_pose_twist_t_time_of_week": "1.007",
+    "inertialsense.ros_covariance_pose_twist_t_cov_pose_ld_0": "-7.125",
+    "inertialsense.ros_covariance_pose_twist_t_cov_pose_ld_1": "-6.875",
+    "inertialsense.ros_covariance_pose_twist_t_cov_pose_ld_2": "-6.625"
+  }
+}

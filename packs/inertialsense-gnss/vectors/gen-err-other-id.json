@@ -1,0 +1,8 @@
+{
+  "name": "err-other-id",
+  "from": "inertialsense-gnss",
+  "to": "inertialsense-gnss",
+  "source": "message id 0 is not a kind of this pack",
+  "input": "ef4904005c00eaa9379e9b236f3c4c9da6dae9263108ac1c1040a4703d0ad72314405eba490c022b18c01904560e2d321c40e9263108ac1c2040c74b3789412022c00000a4c000009cc0000094c000008cc0000084c0f6285c8fc2352ec049faab5c",
+  "expect_error": "no-kind"
+}

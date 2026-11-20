@@ -1,0 +1,15 @@
+{
+  "name": "rt-gnss2_rtk_cmp_misc",
+  "from": "inertialsense-rtk",
+  "to": "inertialsense-rtk",
+  "source": "tools/gen/cstruct2pack.py: the inertialsense frame header, then gnss_rtk_misc_t with values chosen by the generator, packed by its serializer at the offsets of the layout",
+  "input": "ef49045cb000eaa9379e0000e4c00000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc05eba490c022b28c03bdf4f8d972e2a401904560e2d322c409851404549cb77e3fa44af81abbee61f5c381ebe0db2555cbe2b8dfa6fa5c498201ffc36d19833d582126b73338ca211e405daaf957f114e46f948ecf772808aa8ecb7285966efc60ae02665bb595e036cd395a11d4dcd3fcec604de7f403c7c30ba731ae133abb892ade256",
+  "expect": "ef49045cb000eaa9379e0000e4c00000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc05eba490c022b28c03bdf4f8d972e2a401904560e2d322c409851404549cb77e3fa44af81abbee61f5c381ebe0db2555cbe2b8dfa6fa5c498201ffc36d19833d582126b73338ca211e405daaf957f114e46f948ecf772808aa8ecb7285966efc60ae02665bb595e036cd395a11d4dcd3fcec604de7f403c7c30ba731ae133abb892ade256",
+  "model": {
+    "@kind": "gnss2_rtk_cmp_misc",
+    "inertialsense.gnss_rtk_misc_t_time_of_week_ms": "2654448106",
+    "inertialsense.gnss_rtk_misc_t_accuracy_pos_0": "-7.125",
+    "inertialsense.gnss_rtk_misc_t_accuracy_pos_1": "-6.875",
+    "inertialsense.gnss_rtk_misc_t_accuracy_pos_2": "-6.625"
+  }
+}

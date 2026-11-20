@@ -1,0 +1,14 @@
+{
+  "name": "rt-mag_cal",
+  "from": "inertialsense-sensors",
+  "to": "inertialsense-sensors",
+  "source": "tools/gen/cstruct2pack.py: the inertialsense frame header, then mag_cal_t with values chosen by the generator, packed by its serializer at the offsets of the layout",
+  "input": "ef4904130c00eaa9379e0000e4c00000dcc0",
+  "expect": "ef4904130c00eaa9379e0000e4c00000dcc0",
+  "model": {
+    "@kind": "mag_cal",
+    "inertialsense.mag_cal_t_state": "2654448106",
+    "inertialsense.mag_cal_t_progress": "-7.125",
+    "inertialsense.mag_cal_t_declination": "-6.875"
+  }
+}

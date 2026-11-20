@@ -1,0 +1,13 @@
+{
+  "name": "x-ins_2-to-geojson",
+  "from": "inertialsense-ins",
+  "to": "geojson",
+  "source": "the bound fields (pack.md) are WGS 84 degrees and metres over the ellipsoid; geojson writes [lon, lat, alt] (RFC 7946, engine-spec 0.1.1 rulings 3 to 5)",
+  "input": "ef4904054800eaa9379ee9263108ac1c00404c9da6dafd16de780000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0dc5fe234e9b24740fdcc0f12581721400000000000847e40",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.5455938,47.3977419,488.25]},\"properties\":{}}",
+  "model": {
+    "lat": "47.3977419",
+    "lon": "8.5455938",
+    "hae": "488.25"
+  }
+}

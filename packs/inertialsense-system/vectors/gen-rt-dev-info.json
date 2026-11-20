@@ -1,0 +1,15 @@
+{
+  "name": "rt-dev_info",
+  "from": "inertialsense-system",
+  "to": "inertialsense-system",
+  "source": "tools/gen/cstruct2pack.py: the inertialsense frame header, then dev_info_t with values chosen by the generator, packed by its serializer at the offsets of the layout",
+  "input": "ef4904015400ea9b4cfdae9015175f10c17223d48536e7d708a79849faab5c381ebe743230000000000000000000000000000000000000000000be6f20d18233e495743239000000000000000000000000000000000000000000",
+  "expect": "ef4904015400ea9b4cfdae9015175f10c17223d48536e7d708a79849faab5c381ebe743230000000000000000000000000000000000000000000be6f20d18233e495743239000000000000000000000000000000000000000000",
+  "model": {
+    "@kind": "dev_info",
+    "inertialsense.dev_info_t_reserved": "234",
+    "inertialsense.dev_info_t_build_flags": "155",
+    "inertialsense.dev_info_t_hardware_type": "76",
+    "inertialsense.dev_info_t_hdw_run_state": "253"
+  }
+}

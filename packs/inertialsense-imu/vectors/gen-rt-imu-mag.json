@@ -1,0 +1,15 @@
+{
+  "name": "rt-imu_mag",
+  "from": "inertialsense-imu",
+  "to": "inertialsense-imu",
+  "source": "tools/gen/cstruct2pack.py: the inertialsense frame header, then imu_mag_t with values chosen by the generator, packed by its serializer at the offsets of the layout",
+  "input": "ef4904553800e9263108ac1cf03f9b236f3c0000dcc00000d4c00000ccc00000c4c00000bcc00000b4c0c74b3789412022c00000a4c000009cc0000094c0",
+  "expect": "ef4904553800e9263108ac1cf03f9b236f3c0000dcc00000d4c00000ccc00000c4c00000bcc00000b4c0c74b3789412022c00000a4c000009cc0000094c0",
+  "model": {
+    "@kind": "imu_mag",
+    "inertialsense.imu_mag_t_imu_time": "1.007",
+    "inertialsense.imu_mag_t_imu_status": "1013916571",
+    "inertialsense.imu_mag_t_imu_i_pqr_0": "-6.875",
+    "inertialsense.imu_mag_t_imu_i_pqr_1": "-6.625"
+  }
+}

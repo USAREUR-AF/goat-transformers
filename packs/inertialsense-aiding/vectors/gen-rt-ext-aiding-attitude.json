@@ -1,0 +1,15 @@
+{
+  "name": "rt-ext_aiding_attitude",
+  "from": "inertialsense-aiding",
+  "to": "inertialsense-aiding",
+  "source": "tools/gen/cstruct2pack.py: the inertialsense frame header, then ext_aiding_attitude_t with values chosen by the generator, packed by its serializer at the offsets of the layout",
+  "input": "ef49046f3c00eaa9379e9b236f3c0000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0000094c000008cc0000084c0000078c0",
+  "expect": "ef49046f3c00eaa9379e9b236f3c0000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc0000094c000008cc0000084c0000078c0",
+  "model": {
+    "@kind": "ext_aiding_attitude",
+    "inertialsense.ext_aiding_attitude_t_time_of_week_ms": "2654448106",
+    "inertialsense.ext_aiding_attitude_t_status": "1013916571",
+    "inertialsense.ext_aiding_attitude_t_att_0": "-6.875",
+    "inertialsense.ext_aiding_attitude_t_att_1": "-6.625"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "name": "err-short",
+  "from": "inertialsense-rtk",
+  "to": "inertialsense-rtk",
+  "source": "one byte short of the 46-byte message of gnss1_rtk_pos_rel (vector-format, malformed input)",
+  "input": "ef4904152800eaa9379e0000e4c00000dcc00000d4c00000ccc00000c4c00000bcc00000b4c00000acc023f12a",
+  "expect_error": "malformed-wire"
+}

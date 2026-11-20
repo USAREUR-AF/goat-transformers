@@ -1,0 +1,13 @@
+{
+  "name": "rt-rmc",
+  "from": "inertialsense-system",
+  "to": "inertialsense-system",
+  "source": "tools/gen/cstruct2pack.py: the inertialsense frame header, then rmc_t with values chosen by the generator, packed by its serializer at the offsets of the layout",
+  "input": "ef4904090c0043336365000000009b236f3c",
+  "expect": "ef4904090c0043336365000000009b236f3c",
+  "model": {
+    "@kind": "rmc",
+    "inertialsense.rmc_t_bits": "1701000003",
+    "inertialsense.rmc_t_options": "1013916571"
+  }
+}

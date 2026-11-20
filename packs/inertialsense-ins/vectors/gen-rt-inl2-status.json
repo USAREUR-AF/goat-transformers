@@ -1,0 +1,15 @@
+{
+  "name": "rt-inl2_status",
+  "from": "inertialsense-ins",
+  "to": "inertialsense-ins",
+  "source": "tools/gen/cstruct2pack.py: the inertialsense frame header, then inl2_status_t with values chosen by the generator, packed by its serializer at the offsets of the layout",
+  "input": "ef4904323c003e9e0080753c0180acda0180e37802801a17038051b50380885304800000b4c0f68f05802d2e068064cc06809b6a0780d208088009a7088040450980",
+  "expect": "ef4904323c003e9e0080753c0180acda0180e37802801a17038051b50380885304800000b4c0f68f05802d2e068064cc06809b6a0780d208088009a7088040450980",
+  "model": {
+    "@kind": "inl2_status",
+    "inertialsense.inl2_status_t_ahrs": "-2147443138",
+    "inertialsense.inl2_status_t_zero_accel": "-2147402635",
+    "inertialsense.inl2_status_t_zero_angrate": "-2147362132",
+    "inertialsense.inl2_status_t_accel_motion": "-2147321629"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "rt-can_config",
+  "from": "inertialsense-config",
+  "to": "inertialsense-config",
+  "source": "tools/gen/cstruct2pack.py: the inertialsense frame header, then can_config_t with values chosen by the generator, packed by its serializer at the offsets of the layout",
+  "input": "ef49045aa800eaa99b234c9dfd16ae905f0a1084c1fd727723f1d46a85e4365ee7d7985149cbfa44abbe5c380db2be2b6fa5201fd1988212338ce405957f114e46f948ecf772808aa8ecb7285966efc60ae02665bb595e036cd395a11d4dcd3fcec604de7f403c7c30ba731ae133abb892ade25643271af5f4a05193a51a89315694c0cf070ef86db8872f0c690167aa1a7b9e48cbf4d5e67c6e0d852de84423de617cc18fdbb35f4055f1ce229c",
+  "expect": "ef49045aa800eaa99b234c9dfd16ae905f0a1084c1fd727723f1d46a85e4365ee7d7985149cbfa44abbe5c380db2be2b6fa5201fd1988212338ce405957f114e46f948ecf772808aa8ecb7285966efc60ae02665bb595e036cd395a11d4dcd3fcec604de7f403c7c30ba731ae133abb892ade25643271af5f4a05193a51a89315694c0cf070ef86db8872f0c690167aa1a7b9e48cbf4d5e67c6e0d852de84423de617cc18fdbb35f4055f1ce229c",
+  "model": {
+    "@kind": "can_config",
+    "inertialsense.can_config_t_can_period_mult_0": "43498",
+    "inertialsense.can_config_t_can_period_mult_1": "9115",
+    "inertialsense.can_config_t_can_period_mult_2": "40268",
+    "inertialsense.can_config_t_can_period_mult_3": "5885"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "rt-gpx_port_monitor",
+  "from": "inertialsense-gpx",
+  "to": "inertialsense-gpx",
+  "source": "tools/gen/cstruct2pack.py: the inertialsense frame header, then port_monitor_t with values chosen by the generator, packed by its serializer at the offsets of the layout",
+  "input": "ef49047fdf00ea9b236f3c4c9da6dafd16de78ae9015175f0a4db510848453c1fdbbf17277f38f23f12a2ed485e4996a365ed108e7d708a79851404549cb77e3fa44af81abbee61f5c381ebe0db2555cbe6fa5c498201ffc36d19833d582126b73338ca211e405daaf957f114e46f948ecf772808aa85966efc60ae02665bb595e036cd395a11d4dcd3fcec604de7f403c7c30ba731ae133abb89243271af5f4a05193a51a89315694c0cf070ef86db8872f0c690167aa1a7b9e48cbf4d5e67c2de84423de617cc18fdbb35f4055ebfdf1ce229ca2485a3a53c291d8043cc976b5b5001566",
+  "expect": "ef49047fdf00ea9b236f3c4c9da6dafd16de78ae9015175f0a4db510848453c1fdbbf17277f38f23f12a2ed485e4996a365ed108e7d708a79851404549cb77e3fa44af81abbee61f5c381ebe0db2555cbe6fa5c498201ffc36d19833d582126b73338ca211e405daaf957f114e46f948ecf772808aa85966efc60ae02665bb595e036cd395a11d4dcd3fcec604de7f403c7c30ba731ae133abb89243271af5f4a05193a51a89315694c0cf070ef86db8872f0c690167aa1a7b9e48cbf4d5e67c2de84423de617cc18fdbb35f4055ebfdf1ce229ca2485a3a53c291d8043cc976b5b5001566",
+  "model": {
+    "@kind": "gpx_port_monitor",
+    "inertialsense.port_monitor_t_port_0_port_info": "234",
+    "inertialsense.port_monitor_t_port_0_status": "1013916571",
+    "inertialsense.port_monitor_t_port_0_tx_bytes_per_sec": "3668352332",
+    "inertialsense.port_monitor_t_port_0_rx_bytes_per_sec": "2027820797"
+  }
+}
