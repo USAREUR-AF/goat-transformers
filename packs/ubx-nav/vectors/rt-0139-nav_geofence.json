@@ -1,0 +1,11 @@
+{
+  "name": "ubx-nav-roundtrip-nav_geofence",
+  "from": "ubx-nav",
+  "to": "ubx-nav",
+  "input": "b56201390c0099a921597047021e077cdc51",
+  "expect": "b56201390c0099a921597047021e077cdc51",
+  "model": {
+    "@kind": "nav_geofence",
+    "ubxnav.nav_geofence_fence.#": "2"
+  }
+}

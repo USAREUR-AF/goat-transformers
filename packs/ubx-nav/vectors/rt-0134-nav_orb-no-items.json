@@ -1,0 +1,11 @@
+{
+  "name": "ubx-nav-roundtrip-nav_orb-no-items",
+  "from": "ubx-nav",
+  "to": "ubx-nav",
+  "input": "b562013408008168316858002f10",
+  "expect": "b562013408008168316858002f10",
+  "model": {
+    "@kind": "nav_orb",
+    "ubxnav.nav_orb_sv.#": "0"
+  }
+}

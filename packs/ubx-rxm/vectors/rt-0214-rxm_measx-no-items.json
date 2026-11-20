@@ -1,0 +1,11 @@
+{
+  "name": "ubx-rxm-roundtrip-rxm_measx-no-items",
+  "from": "ubx-rxm",
+  "to": "ubx-rxm",
+  "input": "b56202142c00c69d877d74db011e4b2f867122830a45f9d68e18d02a136ca77e7ed255262c7a03ce0002b175b13400000000",
+  "expect": "b56202142c00c69d877d74db011e4b2f867122830a45f9d68e18d02a136ca77e7ed255262c7a03ce0002b175b13400000000",
+  "model": {
+    "@kind": "rxm_measx",
+    "ubxrxm.rxm_measx_sv.#": "0"
+  }
+}

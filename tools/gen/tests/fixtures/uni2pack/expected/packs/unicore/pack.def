@@ -50,3 +50,10 @@ when      0:24:16 5
 requires  unicore.quality_gdop unicore.quality_count
 field     unicore.quality_gdop 0:168:32 f32
 field     unicore.quality_count 0:200:8 uint
+
+kind      sats
+when      0:8:16 1042
+field     unicore.payload_length 0:24:16 uint
+group     unicore.sats_sat 0:176 item 8 count 0:168:8
+  field   unicore.sats_sat_prn 0:0:8 uint
+end

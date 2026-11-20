@@ -49,6 +49,12 @@ A definition is the receiver's output (GET), a command to it (SET, kind suffix
 | `mon_smgr` | MON-SMGR | GET | 0x0A 0x2E | 16 |
 | `mon_sys` | MON-SYS | GET | 0x0A 0x39 | 24 |
 | `mon_txbuf` | MON-TXBUF | GET | 0x0A 0x08 | 28 |
+| `mon_comms` | MON-COMMS | GET | 0x0A 0x36 | 8 + 40 per item of `ubxmon.mon_comms_ports` |
+| `mon_hw3` | MON-HW3 | GET | 0x0A 0x37 | 22 + 6 per item of `ubxmon.mon_hw3_pin` |
+| `mon_patch` | MON-PATCH | GET | 0x0A 0x27 | 4 + 16 per item of `ubxmon.mon_patch_entry` |
+| `mon_pmp` | MON-PMP | GET | 0x0A 0x35 | 4 + 20 per item of `ubxmon.mon_pmp_pmp` |
+| `mon_rf` | MON-RF | GET | 0x0A 0x38 | 4 + 24 per item of `ubxmon.mon_rf_block` |
+| `mon_span` | MON-SPAN | GET | 0x0A 0x31 | 4 + 272 per item of `ubxmon.mon_span_rfblock` |
 
 ## What is mapped
 
@@ -63,9 +69,21 @@ A definition is the receiver's output (GET), a command to it (SET, kind suffix
 | a group with a fixed repeat count (`_grp`) | its fields once per repeat, `_01`, `_02`, … appended | as the field |
 | `A<n>` (a byte array) | one `uint` byte per element, `_01` … appended | int |
 | an unsigned integer wider than 8 bytes | 8-byte `uint` parts, `_01` … appended, the last part shorter | int |
+| a group repeated by an unsigned field before it, ending the payload | a `group` of `item` bits counted by that field (`count <locator>`); the field has no key of its own | a list |
+
+A kind with a counted group has no length `when`: encode writes
+`ubxmon.payload_length` as the entity holds it, so a frame encoded from another
+format needs it set (a length derived from the items is not in the pack
+language). Such kinds come after the fixed-length kinds, which select first.
 
 Keys are `ubxmon.<kind>_<field>` in lower case. A scale the source states is
 applied; the source states no unit, so the module declares none (`-`).
+
+Scaled fields:
+
+| Kind | Field | Transform |
+|---|---|---|
+| `mon_pmp` | `cnoFrac` | `uscale:1/256` |
 
 ### Core keys
 
@@ -83,14 +101,8 @@ Definitions with no kind:
 
 | Definition | Mode | Identity | Reason |
 |---|---|---|---|
-| MON-COMMS | GET | 0x0A 0x36 | a group repeated by field `nPorts` |
-| MON-HW3 | GET | 0x0A 0x37 | a group repeated by field `nPins` |
-| MON-PATCH | GET | 0x0A 0x27 | a group repeated by field `nEntries` |
-| MON-PMP | GET | 0x0A 0x35 | a group repeated by field `nEntries` |
 | MON-PT2 | GET | 0x0A 0x2B | a group repeated by field `numRfChn` |
-| MON-RF | GET | 0x0A 0x38 | a group repeated by field `nBlocks` |
-| MON-RF-V0 | GET | 0x0A 0x38 | a group repeated by field `nBlocks` |
-| MON-SPAN | GET | 0x0A 0x31 | a group repeated by field `numRfBlocks` |
+| MON-RF-V0 | GET | 0x0A 0x38 | the same class and id as kind `mon_rf`, both counted groups |
 | MON-SPT | GET | 0x0A 0x2F | a group repeated by field `numSensor` |
 | MON-VER | GET | 0x0A 0x04 | a group repeated to the end of the payload |
 | MON-COMMS | POLL | 0x0A 0x36 | an empty payload: a kind needs at least one field |
@@ -110,9 +122,14 @@ Definitions with no kind:
 | MON-TXBUF | POLL | 0x0A 0x08 | an empty payload: a kind needs at least one field |
 | MON-VER | POLL | 0x0A 0x04 | an empty payload: a kind needs at least one field |
 
-10 of them have a variable part: a group repeated by a count field or to the end
-of the payload, or text that runs to the end. Stating one needs a repeated group
-counted by a field, or a trailing field of the remaining length.
+3 of them have a variable part the pack cannot state: a group that does not
+end the payload or whose items vary, a group repeated to the end of the
+payload, or text that runs to the end. Stating one needs a group counted by a
+field that is not last, or a trailing field of the remaining length.
+
+1 have the class, id and length of a kind above; the source tells the
+variants apart by a version field or by the direction of the message, which a
+`when` on the length alone cannot.
 
 - The checksum (see The message), and frames whose payload length is not the
   definition's fixed length: such a frame selects no kind (`no-kind`).
@@ -122,6 +139,7 @@ counted by a field, or a trailing field of the remaining length.
 ## Vectors
 
 `vectors/rt-<class><id>-<kind>.json`: one same-format round trip per kind, the
-frame written by a UBX serializer in the generator from sample values.
+frame written by a UBX serializer in the generator from sample values; a kind
+with a counted group has one with two items and one with none (`-no-items`).
 
-10 vectors.
+22 vectors.

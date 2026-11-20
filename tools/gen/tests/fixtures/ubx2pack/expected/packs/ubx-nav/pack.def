@@ -115,3 +115,10 @@ field     course 0:360:32 sscale:1/100000
 field     ubxnav.nav_posllh_headveh 0:392:32 sscale:45/4194304
 field     ubxnav.nav_posllh_pdop 0:424:16 uscale:1/100
 field     ubxnav.nav_posllh_reserved1 0:440:24 uint
+
+kind      nav_counted
+when      0:24:8 81
+field     ubxnav.payload_length 0:32:16 uint
+group     ubxnav.nav_counted_ch 0:56 item 8 count 0:48:8
+  field   ubxnav.nav_counted_ch_svid 0:0:8 uint
+end

@@ -1,0 +1,11 @@
+{
+  "name": "ubx-mon-roundtrip-mon_rf",
+  "from": "ubx-mon",
+  "to": "ubx-mon",
+  "input": "b5620a38340075020023460330a51a3f85268f9f9a3d04007960eee3d8cdc237a3451b00057aef41681264a27d29d9024e63c3b8ada2970ca628",
+  "expect": "b5620a38340075020023460330a51a3f85268f9f9a3d04007960eee3d8cdc237a3451b00057aef41681264a27d29d9024e63c3b8ada2970ca628",
+  "model": {
+    "@kind": "mon_rf",
+    "ubxmon.mon_rf_block.#": "2"
+  }
+}

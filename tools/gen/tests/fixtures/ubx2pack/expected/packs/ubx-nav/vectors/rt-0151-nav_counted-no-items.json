@@ -1,0 +1,11 @@
+{
+  "name": "ubx-nav-roundtrip-nav_counted-no-items",
+  "from": "ubx-nav",
+  "to": "ubx-nav",
+  "input": "b5620151010000",
+  "expect": "b5620151010000",
+  "model": {
+    "@kind": "nav_counted",
+    "ubxnav.nav_counted_ch.#": "0"
+  }
+}

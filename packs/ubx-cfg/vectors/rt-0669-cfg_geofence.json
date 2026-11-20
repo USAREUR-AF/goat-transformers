@@ -1,0 +1,11 @@
+{
+  "name": "ubx-cfg-roundtrip-cfg_geofence",
+  "from": "ubx-cfg",
+  "to": "ubx-cfg",
+  "input": "b56206692000ac02835a3108dfb637b6b2dcac16c8f32177dd4a0cb995c88119abdff679c036",
+  "expect": "b56206692000ac02835a3108dfb637b6b2dcac16c8f32177dd4a0cb995c88119abdff679c036",
+  "model": {
+    "@kind": "cfg_geofence",
+    "ubxcfg.cfg_geofence_fence.#": "2"
+  }
+}

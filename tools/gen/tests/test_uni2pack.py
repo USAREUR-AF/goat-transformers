@@ -103,10 +103,14 @@ class Layout(UniCase):
         self.assertIn("datumid", self.md)
 
     def test_what_is_not_built(self):
-        for row in ("| SATS | 1042 | a group repeated by field `numsat` |",
-                    "| INFO | 37 | a field of type CXXX whose length the payload length gives |",
+        for row in (                    "| INFO | 37 | a field of type CXXX whose length the payload length gives |",
                     "| NOID | - | no message ID in UNI_MSGIDS |"):
             self.assertIn(row, self.md)
+
+    def test_a_counted_group_ending_the_payload(self):
+        self.assertIn("kind      sats\nwhen      0:8:16 1042\nfield     unicore.payload_length 0:24:16 uint\n"
+                      "group     unicore.sats_sat 0:176 item 8 count 0:168:8\n"
+                      "  field   unicore.sats_sat_prn 0:0:8 uint\nend\n", self.pdef)
 
     def test_vectors_decode_through_the_pack(self):
         model = gtcheck.Model()
@@ -116,7 +120,7 @@ class Layout(UniCase):
         for name in sorted(os.listdir(os.path.join(self.root, "packs", "unicore", "vectors"))):
             vec = json.loads(self.text(self.root, "packs", "unicore", "vectors", name))
             data = bytes.fromhex(vec["input"])
-            self.assertEqual(int.from_bytes(data[3:5], "little"), len(data) - 21, name)
+            self.assertEqual(int.from_bytes(data[3:5], "little"), len(data) - 21, name)   # payload bytes
             kind, ent = gen.decode(pack, data)
             self.assertEqual(gen.encode(pack, kind, ent).hex(), vec["expect"], name)
 

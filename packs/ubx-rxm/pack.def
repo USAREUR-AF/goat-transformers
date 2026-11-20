@@ -520,3 +520,170 @@ field     ubxrxm.rxm_pmreq_set_extint0 0:149:1 uint
 field     ubxrxm.rxm_pmreq_set_extint1 0:150:1 uint
 field     ubxrxm.rxm_pmreq_set_spics 0:151:1 uint
 const     0:152:24 0
+
+kind      rxm_imes
+when      0:24:8 97
+requires  ubxrxm.rxm_imes_version ubxrxm.rxm_imes_reserved1
+field     ubxrxm.payload_length 0:32:16 uint
+field     ubxrxm.rxm_imes_version 0:56:8 uint
+field     ubxrxm.rxm_imes_reserved1 0:64:16 uint
+group     ubxrxm.rxm_imes_tx 0:80 item 352 count 0:48:8
+  field   ubxrxm.rxm_imes_tx_reserved2 0:0:8 uint
+  field   ubxrxm.rxm_imes_tx_txid 0:8:8 uint
+  field   ubxrxm.rxm_imes_tx_reserved3 0:16:24 uint
+  field   ubxrxm.rxm_imes_tx_cno 0:40:8 uint
+  field   ubxrxm.rxm_imes_tx_reserved4 0:48:16 uint
+  field   ubxrxm.rxm_imes_tx_doppler 0:64:32 sscale:1/4096
+  field   ubxrxm.rxm_imes_tx_pos1floor 0:96:8 uint
+  field   ubxrxm.rxm_imes_tx_pos1lat 0:104:23 uint
+  field   ubxrxm.rxm_imes_tx_pos1lon 0:128:24 uint
+  field   ubxrxm.rxm_imes_tx_pos1valid 0:152:1 uint
+  field   ubxrxm.rxm_imes_tx_pos2floor 0:160:8 uint
+  field   ubxrxm.rxm_imes_tx_pos2alt 0:168:12 uint
+  field   ubxrxm.rxm_imes_tx_pos2acc 0:180:2 uint
+  field   ubxrxm.rxm_imes_tx_pos2valid 0:182:1 uint
+  field   ubxrxm.rxm_imes_tx_lat 0:192:32 sscale:45/4194304
+  field   ubxrxm.rxm_imes_tx_lon 0:224:32 sscale:45/536870912
+  field   ubxrxm.rxm_imes_tx_shortid 0:256:12 uint
+  field   ubxrxm.rxm_imes_tx_shortvalid 0:268:1 uint
+  field   ubxrxm.rxm_imes_tx_shortboundary 0:269:1 uint
+  field   ubxrxm.rxm_imes_tx_mediumidlsb 0:288:32 uint
+  field   ubxrxm.rxm_imes_tx_mediumidmsb 0:320:1 uint
+  field   ubxrxm.rxm_imes_tx_mediumvalid 0:321:1 uint
+  field   ubxrxm.rxm_imes_tx_mediumboundary 0:322:1 uint
+end
+
+kind      rxm_measx
+when      0:24:8 20
+requires  ubxrxm.rxm_measx_version ubxrxm.rxm_measx_reserved0 ubxrxm.rxm_measx_gpstow
+field     ubxrxm.payload_length 0:32:16 uint
+field     ubxrxm.rxm_measx_version 0:48:8 uint
+field     ubxrxm.rxm_measx_reserved0 0:56:24 uint
+field     ubxrxm.rxm_measx_gpstow 0:80:32 uint
+field     ubxrxm.rxm_measx_glotow 0:112:32 uint
+field     ubxrxm.rxm_measx_bdstow 0:144:32 uint
+field     ubxrxm.rxm_measx_reserved1 0:176:32 uint
+field     ubxrxm.rxm_measx_qzsstow 0:208:32 uint
+field     ubxrxm.rxm_measx_gpstowacc 0:240:16 uscale:1/16
+field     ubxrxm.rxm_measx_glotowacc 0:256:16 uscale:1/16
+field     ubxrxm.rxm_measx_bdstowacc 0:272:16 uscale:1/16
+field     ubxrxm.rxm_measx_reserved2 0:288:16 uint
+field     ubxrxm.rxm_measx_qzsstowacc 0:304:16 uscale:1/16
+field     ubxrxm.rxm_measx_towset 0:328:2 uint
+field     ubxrxm.rxm_measx_reserved3 0:336:64 uint
+group     ubxrxm.rxm_measx_sv 0:400 item 192 count 0:320:8
+  field   ubxrxm.rxm_measx_sv_gnssid 0:0:8 uint
+  field   ubxrxm.rxm_measx_sv_svid 0:8:8 uint
+  field   ubxrxm.rxm_measx_sv_cno 0:16:8 uint
+  field   ubxrxm.rxm_measx_sv_mpathindic 0:24:8 uint
+  field   ubxrxm.rxm_measx_sv_dopplerms 0:32:32 sscale:1/25
+  field   ubxrxm.rxm_measx_sv_dopplerhz 0:64:32 sscale:1/5
+  field   ubxrxm.rxm_measx_sv_wholechips 0:96:16 uint
+  field   ubxrxm.rxm_measx_sv_fracchips 0:112:16 uint
+  field   ubxrxm.rxm_measx_sv_codephase 0:128:32 uscale:1/2097152
+  field   ubxrxm.rxm_measx_sv_intcodephase 0:160:8 uint
+  field   ubxrxm.rxm_measx_sv_pseurangermserr 0:168:8 uint
+  field   ubxrxm.rxm_measx_sv_reserved4 0:176:16 uint
+end
+
+kind      rxm_raw
+when      0:24:8 16
+requires  ubxrxm.rxm_raw_itow ubxrxm.rxm_raw_week ubxrxm.rxm_raw_reserved1
+field     ubxrxm.payload_length 0:32:16 uint
+field     ubxrxm.rxm_raw_itow 0:48:32 twos
+field     ubxrxm.rxm_raw_week 0:80:16 twos
+field     ubxrxm.rxm_raw_reserved1 0:104:8 uint
+group     ubxrxm.rxm_raw_sv 0:112 item 192 count 0:96:8
+  field   ubxrxm.rxm_raw_sv_cpmes 0:0:64 f64
+  field   ubxrxm.rxm_raw_sv_prmes 0:64:64 f64
+  field   ubxrxm.rxm_raw_sv_domes 0:128:32 f32
+  field   ubxrxm.rxm_raw_sv_sv 0:160:8 uint
+  field   ubxrxm.rxm_raw_sv_mesqi 0:168:8 twos
+  field   ubxrxm.rxm_raw_sv_cno 0:176:8 twos
+  field   ubxrxm.rxm_raw_sv_lli 0:184:8 uint
+end
+
+kind      rxm_rawx
+when      0:24:8 21
+requires  ubxrxm.rxm_rawx_rcvtow ubxrxm.rxm_rawx_week ubxrxm.rxm_rawx_leaps
+field     ubxrxm.payload_length 0:32:16 uint
+field     ubxrxm.rxm_rawx_rcvtow 0:48:64 f64
+field     ubxrxm.rxm_rawx_week 0:112:16 uint
+field     ubxrxm.rxm_rawx_leaps 0:128:8 twos
+field     ubxrxm.rxm_rawx_leapsec 0:144:1 uint
+field     ubxrxm.rxm_rawx_clkreset 0:145:1 uint
+field     ubxrxm.rxm_rawx_reserved4 0:146:4 uint
+field     ubxrxm.rxm_rawx_msgsource 0:150:2 uint
+field     ubxrxm.rxm_rawx_reserved1 0:152:24 uint
+group     ubxrxm.rxm_rawx_meas 0:176 item 256 count 0:136:8
+  field   ubxrxm.rxm_rawx_meas_prmes 0:0:64 f64
+  field   ubxrxm.rxm_rawx_meas_cpmes 0:64:64 f64
+  field   ubxrxm.rxm_rawx_meas_domes 0:128:32 f32
+  field   ubxrxm.rxm_rawx_meas_gnssid 0:160:8 uint
+  field   ubxrxm.rxm_rawx_meas_svid 0:168:8 uint
+  field   ubxrxm.rxm_rawx_meas_sigid 0:176:8 uint
+  field   ubxrxm.rxm_rawx_meas_freqid 0:184:8 uint
+  field   ubxrxm.rxm_rawx_meas_locktime 0:192:16 uint
+  field   ubxrxm.rxm_rawx_meas_cno 0:208:8 uint
+  field   ubxrxm.rxm_rawx_meas_prstd 0:216:4 uint
+  field   ubxrxm.rxm_rawx_meas_cpstd 0:224:4 uint
+  field   ubxrxm.rxm_rawx_meas_dostd 0:232:4 uint
+  field   ubxrxm.rxm_rawx_meas_prvalid 0:240:1 uint
+  field   ubxrxm.rxm_rawx_meas_cpvalid 0:241:1 uint
+  field   ubxrxm.rxm_rawx_meas_halfcyc 0:242:1 uint
+  field   ubxrxm.rxm_rawx_meas_subhalfcyc 0:243:1 uint
+  field   ubxrxm.rxm_rawx_meas_reserved3 0:248:8 uint
+end
+
+kind      rxm_sfrbx
+when      0:24:8 19
+requires  ubxrxm.rxm_sfrbx_gnssid ubxrxm.rxm_sfrbx_svid ubxrxm.rxm_sfrbx_sigid
+field     ubxrxm.payload_length 0:32:16 uint
+field     ubxrxm.rxm_sfrbx_gnssid 0:48:8 uint
+field     ubxrxm.rxm_sfrbx_svid 0:56:8 uint
+field     ubxrxm.rxm_sfrbx_sigid 0:64:8 uint
+field     ubxrxm.rxm_sfrbx_freqid 0:72:8 uint
+field     ubxrxm.rxm_sfrbx_chn 0:88:8 uint
+field     ubxrxm.rxm_sfrbx_version 0:96:8 uint
+field     ubxrxm.rxm_sfrbx_reserved0 0:104:8 uint
+group     ubxrxm.rxm_sfrbx_navdata 0:112 item 32 count 0:80:8
+  field   ubxrxm.rxm_sfrbx_navdata_dwrd 0:0:32 uint
+end
+
+kind      rxm_svsi
+when      0:24:8 32
+requires  ubxrxm.rxm_svsi_itow ubxrxm.rxm_svsi_week ubxrxm.rxm_svsi_numvis
+field     ubxrxm.payload_length 0:32:16 uint
+field     ubxrxm.rxm_svsi_itow 0:48:32 uint
+field     ubxrxm.rxm_svsi_week 0:80:16 twos
+field     ubxrxm.rxm_svsi_numvis 0:96:8 uint
+group     ubxrxm.rxm_svsi_sv 0:112 item 48 count 0:104:8
+  field   ubxrxm.rxm_svsi_sv_svid 0:0:8 uint
+  field   ubxrxm.rxm_svsi_sv_ura 0:8:4 uint
+  field   ubxrxm.rxm_svsi_sv_healthy 0:12:1 uint
+  field   ubxrxm.rxm_svsi_sv_ephval 0:13:1 uint
+  field   ubxrxm.rxm_svsi_sv_almval 0:14:1 uint
+  field   ubxrxm.rxm_svsi_sv_notavail 0:15:1 uint
+  field   ubxrxm.rxm_svsi_sv_azim 0:16:16 twos
+  field   ubxrxm.rxm_svsi_sv_elev 0:32:8 twos
+  field   ubxrxm.rxm_svsi_sv_almage 0:40:4 uint
+  field   ubxrxm.rxm_svsi_sv_ephage 0:44:4 uint
+end
+
+kind      rxm_tm
+when      0:24:8 116
+requires  ubxrxm.rxm_tm_version ubxrxm.rxm_tm_reserved0 ubxrxm.rxm_tm_reserved1
+field     ubxrxm.payload_length 0:32:16 uint
+field     ubxrxm.rxm_tm_version 0:48:8 uint
+field     ubxrxm.rxm_tm_reserved0 0:64:16 uint
+field     ubxrxm.rxm_tm_reserved1 0:80:32 uint
+group     ubxrxm.rxm_tm_meas 0:112 item 192 count 0:56:8
+  field   ubxrxm.rxm_tm_meas_channel 0:0:4 uint
+  field   ubxrxm.rxm_tm_meas_edgetype 0:4:1 uint
+  field   ubxrxm.rxm_tm_meas_count 0:32:16 uint
+  field   ubxrxm.rxm_tm_meas_wno 0:48:16 uint
+  field   ubxrxm.rxm_tm_meas_towms 0:64:32 uint
+  field   ubxrxm.rxm_tm_meas_towsubmsr 0:96:32 uint
+  field   ubxrxm.rxm_tm_meas_reserved2 0:128:32 uint
+  field   ubxrxm.rxm_tm_meas_reserved3 0:160:32 uint
+end

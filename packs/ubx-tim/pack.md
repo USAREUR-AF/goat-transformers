@@ -49,6 +49,7 @@ A definition is the receiver's output (GET), a command to it (SET, kind suffix
 | `tim_vrfy` | TIM-VRFY | GET | 0x0D 0x06 | 20 |
 | `tim_hoc_set` | TIM-HOC | SET | 0x0D 0x17 | 8 |
 | `tim_vcocal_v0_set` | TIM-VCOCAL-V0 | SET | 0x0D 0x15 | 1 |
+| `tim_smeas` | TIM-SMEAS | GET | 0x0D 0x13 | 12 + 24 per item of `ubxtim.tim_smeas_meas` |
 
 ## What is mapped
 
@@ -63,6 +64,12 @@ A definition is the receiver's output (GET), a command to it (SET, kind suffix
 | a group with a fixed repeat count (`_grp`) | its fields once per repeat, `_01`, `_02`, … appended | as the field |
 | `A<n>` (a byte array) | one `uint` byte per element, `_01` … appended | int |
 | an unsigned integer wider than 8 bytes | 8-byte `uint` parts, `_01` … appended, the last part shorter | int |
+| a group repeated by an unsigned field before it, ending the payload | a `group` of `item` bits counted by that field (`count <locator>`); the field has no key of its own | a list |
+
+A kind with a counted group has no length `when`: encode writes
+`ubxtim.payload_length` as the entity holds it, so a frame encoded from another
+format needs it set (a length derived from the items is not in the pack
+language). Such kinds come after the fixed-length kinds, which select first.
 
 Keys are `ubxtim.<kind>_<field>` in lower case. A scale the source states is
 applied; the source states no unit, so the module declares none (`-`).
@@ -75,6 +82,10 @@ Scaled fields:
 | `tim_fchg` | `intDeltaFreqU` | `uscale:1/256` |
 | `tim_fchg` | `extDeltaFreq` | `sscale:1/256` |
 | `tim_fchg` | `extDeltaFreqU` | `uscale:1/256` |
+| `tim_smeas` | `phaseOffsetFrac` | `sscale:1/256` |
+| `tim_smeas` | `phaseUncFrac` | `uscale:1/256` |
+| `tim_smeas` | `freqOffset` | `sscale:1/256` |
+| `tim_smeas` | `freqUnc` | `uscale:1/256` |
 | `tim_tos` | `intOscOffset` | `sscale:1/256` |
 | `tim_tos` | `intOscUncertainty` | `uscale:1/256` |
 | `tim_tos` | `extOscOffset` | `sscale:1/256` |
@@ -100,8 +111,7 @@ Definitions with no kind:
 
 | Definition | Mode | Identity | Reason |
 |---|---|---|---|
-| TIM-SMEAS | GET | 0x0D 0x13 | a group repeated by field `numMeas` |
-| TIM-SMEAS | SET | 0x0D 0x13 | a group repeated by field `numMeas` |
+| TIM-SMEAS | SET | 0x0D 0x13 | the same class and id as kind `tim_smeas`, both counted groups |
 | TIM-VCOCAL | SET | 0x0D 0x15 | the same class, id and payload length as kind `tim_vcocal` |
 | TIM-DOSC | POLL | 0x0D 0x11 | an empty payload: a kind needs at least one field |
 | TIM-FCHG | POLL | 0x0D 0x16 | an empty payload: a kind needs at least one field |
@@ -113,11 +123,7 @@ Definitions with no kind:
 | TIM-VCOCAL | POLL | 0x0D 0x15 | an empty payload: a kind needs at least one field |
 | TIM-VRFY | POLL | 0x0D 0x06 | an empty payload: a kind needs at least one field |
 
-2 of them have a variable part: a group repeated by a count field or to the end
-of the payload, or text that runs to the end. Stating one needs a repeated group
-counted by a field, or a trailing field of the remaining length.
-
-1 have the class, id and length of a kind above; the source tells the
+2 have the class, id and length of a kind above; the source tells the
 variants apart by a version field or by the direction of the message, which a
 `when` on the length alone cannot.
 
@@ -129,6 +135,7 @@ variants apart by a version field or by the direction of the message, which a
 ## Vectors
 
 `vectors/rt-<class><id>-<kind>.json`: one same-format round trip per kind, the
-frame written by a UBX serializer in the generator from sample values.
+frame written by a UBX serializer in the generator from sample values; a kind
+with a counted group has one with two items and one with none (`-no-items`).
 
-10 vectors.
+12 vectors.

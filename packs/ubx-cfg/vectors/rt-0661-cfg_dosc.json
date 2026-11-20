@@ -1,0 +1,11 @@
+{
+  "name": "ubx-cfg-roundtrip-cfg_dosc",
+  "from": "ubx-cfg",
+  "to": "ubx-cfg",
+  "input": "b56206614400fb02d2652fa41d0003928f6b78f2a4c2ed52ba1962b3cf30d7134c74c1d40f3636ab953a04790600d89472574df5872ec2559d0537b6b21cac16217796d7f2210b80981d",
+  "expect": "b56206614400fb02d2652fa41d0003928f6b78f2a4c2ed52ba1962b3cf30d7134c74c1d40f3636ab953a04790600d89472574df5872ec2559d0537b6b21cac16217796d7f2210b80981d",
+  "model": {
+    "@kind": "cfg_dosc",
+    "ubxcfg.cfg_dosc_osc.#": "2"
+  }
+}

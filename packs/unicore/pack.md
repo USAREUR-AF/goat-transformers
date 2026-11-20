@@ -84,6 +84,13 @@ payload. That is the item "Layered wires and framing" of `docs/roadmap.md`.
 | `bslnenuhd2` | BSLNENUHD2 | 1316 | 60 |
 | `bslnxyzhd2` | BSLNXYZHD2 | 1317 | 60 |
 | `dophd2` | DOPHD2 | 1333 | 32 |
+| `obsvm` | OBSVM | 12 | 4 + 40 per item of `unicore.obsvm_groupobs` |
+| `bestsat` | BESTSAT | 1041 | 4 + 16 per item of `unicore.bestsat_groupsat` |
+| `stadop` | STADOP | 954 | 42 + 2 per item of `unicore.stadop_groupprn` |
+| `satellite` | SATELLITE | 1042 | 16 + 40 per item of `unicore.satellite_groupsat` |
+| `satecef` | SATECEF | 2115 | 4 + 40 per item of `unicore.satecef_groupsat` |
+| `pppb2_binfo3` | PPPB2BINFO3 | 2306 | 8 + 64 per item of `unicore.pppb2_binfo3_groupbias` |
+| `e6_maskblock` | E6MASKBLOCK | 2319 | 12 + 54 per item of `unicore.e6_maskblock_groupsys` |
 
 ## What is mapped
 
@@ -97,9 +104,18 @@ payload. That is the item "Layered wires and framing" of `docs/roadmap.md`.
 | a bit field (`_bit`) | each named bit group as its own field, from the least significant bit | int |
 | a group with a fixed repeat count | its fields once per repeat, `_01`, `_02`, … appended | as the field |
 | an unsigned integer or byte field wider than 8 bytes | 8-byte `uint` parts, `_01` … appended | int |
+| a group repeated by an unsigned field before it, ending the payload | a `group` of `item` bits counted by that field (`count <locator>`); the field has no key of its own | a list |
 
 Keys are `unicore.<message>_<field>` in lower case. A scale the source states is
 applied; the source states no unit, so the module declares none (`-`).
+
+Scaled fields:
+
+| Kind | Field | Transform |
+|---|---|---|
+| `obsvm` | `psrstd` | `uscale:1/100` |
+| `obsvm` | `adrstd` | `uscale:1/10000` |
+| `obsvm` | `cno` | `uscale:1/100` |
 
 ### Core keys
 
@@ -121,27 +137,27 @@ selects a kind only when it holds them.
 
 | Message | ID | Reason |
 |---|---|---|
-| OBSVM | 12 | a group repeated by field `numobs` |
-| OBSVMCMP | 138 | a group repeated by field `numobs` |
+| OBSVMCMP | 138 | pyunigps decodes three of its fields by rules in its code that the definition does not state (a lookup table for psrstd, 1 added to adrstd before its scale, 20 added to cno) |
 | PVTSLN | 1021 | a group repeated to the end of the payload |
-| BESTSAT | 1041 | a group repeated by field `numsat` |
-| STADOP | 954 | a group repeated by field `numprn` |
-| SATSINFO | 2124 | a group repeated by field `numsat` |
-| SATELLITE | 1042 | a group repeated by field `numsat` |
-| SATECEF | 2115 | a group repeated by field `numsat` |
-| INFOPART1 | 1019 | a group repeated by field `nummsg` |
-| PPPB2BINFO3 | 2306 | a group repeated by field `numsat` |
-| E6MASKBLOCK | 2319 | a group repeated by field `numsys` |
-| E6CLOCKSUBBLOCK | 2322 | a group repeated by field `numsys` |
+| SATSINFO | 2124 | a group counted by field `numsat` whose items vary: a group whose count pyunigps computes from other fields |
+| INFOPART1 | 1019 | a group counted by field `nummsg` whose items vary: a group repeated by field `length` |
+| E6CLOCKSUBBLOCK | 2322 | a group counted by `numsys`, which is not one unsigned field before it |
 | UNI-NOMINAL | - | no message ID in UNI_MSGIDS |
 
-- A message whose length varies: a group repeated by a count field or to the
-  end of the payload, or text whose length the payload length gives.
+A kind with a counted group has no length `when`: encode writes
+`unicore.payload_length` as the entity holds it, so a message encoded from
+another format needs it set (a length derived from the items is not in the
+pack language). Such kinds come after the fixed-length kinds.
+
+- A message whose length varies otherwise: a group that does not end the
+  payload, a group whose items vary, a group repeated to the end of the
+  payload, or text whose length the payload length gives.
 - The sync bytes and the CRC (see The message).
 
 ## Vectors
 
 `vectors/rt-<ID>-<kind>.json`: one same-format round trip per kind, the frame
-written by a serializer in the generator from sample values.
+written by a serializer in the generator from sample values; a kind with a
+counted group has one with two items and one with none (`-no-items`).
 
-49 vectors.
+63 vectors.

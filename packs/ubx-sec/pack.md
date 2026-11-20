@@ -43,6 +43,9 @@ A definition is the receiver's output (GET), a command to it (SET, kind suffix
 | `sec_sign` | SEC-SIGN | GET | 0x27 0x01 | 40 |
 | `sec_uniqid` | SEC-UNIQID | GET | 0x27 0x03 | 9 |
 | `sec_uniqid_v2` | SEC-UNIQID-V2 | GET | 0x27 0x03 | 10 |
+| `sec_osnma` | SEC-OSNMA | GET | 0x27 0x0A | 20 + 4 per item of `ubxsec.sec_osnma_authsv` |
+| `sec_sig_v2` | SEC-SIG-V2 | GET | 0x27 0x09 | 4 + 4 per item of `ubxsec.sec_sig_v2_famfreq` |
+| `sec_siglog` | SEC-SIGLOG | GET | 0x27 0x10 | 8 + 8 per item of `ubxsec.sec_siglog_event` |
 
 ## What is mapped
 
@@ -57,6 +60,12 @@ A definition is the receiver's output (GET), a command to it (SET, kind suffix
 | a group with a fixed repeat count (`_grp`) | its fields once per repeat, `_01`, `_02`, … appended | as the field |
 | `A<n>` (a byte array) | one `uint` byte per element, `_01` … appended | int |
 | an unsigned integer wider than 8 bytes | 8-byte `uint` parts, `_01` … appended, the last part shorter | int |
+| a group repeated by an unsigned field before it, ending the payload | a `group` of `item` bits counted by that field (`count <locator>`); the field has no key of its own | a list |
+
+A kind with a counted group has no length `when`: encode writes
+`ubxsec.payload_length` as the entity holds it, so a frame encoded from another
+format needs it set (a length derived from the items is not in the pack
+language). Such kinds come after the fixed-length kinds, which select first.
 
 Keys are `ubxsec.<kind>_<field>` in lower case. A scale the source states is
 applied; the source states no unit, so the module declares none (`-`).
@@ -77,18 +86,11 @@ Definitions with no kind:
 
 | Definition | Mode | Identity | Reason |
 |---|---|---|---|
-| SEC-OSNMA | GET | 0x27 0x0A | a group repeated by field `authSVs` |
-| SEC-SIG-V2 | GET | 0x27 0x09 | a group repeated by field `jamNumCentFreqs` |
-| SEC-SIGLOG | GET | 0x27 0x10 | a group repeated by field `numEvents` |
 | SEC-OSNMA | POLL | 0x27 0x0A | an empty payload: a kind needs at least one field |
 | SEC-SIG | POLL | 0x27 0x09 | an empty payload: a kind needs at least one field |
 | SEC-SIGLOG | POLL | 0x27 0x10 | an empty payload: a kind needs at least one field |
 | SEC-SIGN | POLL | 0x27 0x01 | an empty payload: a kind needs at least one field |
 | SEC-UNIQID | POLL | 0x27 0x03 | an empty payload: a kind needs at least one field |
-
-3 of them have a variable part: a group repeated by a count field or to the end
-of the payload, or text that runs to the end. Stating one needs a repeated group
-counted by a field, or a trailing field of the remaining length.
 
 - The checksum (see The message), and frames whose payload length is not the
   definition's fixed length: such a frame selects no kind (`no-kind`).
@@ -98,6 +100,7 @@ counted by a field, or a trailing field of the remaining length.
 ## Vectors
 
 `vectors/rt-<class><id>-<kind>.json`: one same-format round trip per kind, the
-frame written by a UBX serializer in the generator from sample values.
+frame written by a UBX serializer in the generator from sample values; a kind
+with a counted group has one with two items and one with none (`-no-items`).
 
-4 vectors.
+10 vectors.

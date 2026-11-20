@@ -1,0 +1,11 @@
+{
+  "name": "sbf-other-roundtrip-track",
+  "from": "sbf-other",
+  "to": "sbf-other",
+  "input": "053018004e8f88750225e30cd348bd6ba81d926e",
+  "expect": "053018004e8f88750225e30cd348bd6ba81d926e",
+  "model": {
+    "@kind": "track",
+    "sbfother.track_sv.#": "2"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "ubx-cfg-roundtrip-cfg_esrc-no-items",
+  "from": "ubx-cfg",
+  "to": "ubx-cfg",
+  "input": "b562066004009f007616",
+  "expect": "b562066004009f007616",
+  "model": {
+    "@kind": "cfg_esrc",
+    "ubxcfg.cfg_esrc_source.#": "0"
+  }
+}

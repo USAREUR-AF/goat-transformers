@@ -1,0 +1,11 @@
+{
+  "name": "ubx-cfg-roundtrip-cfg_gnss-no-items",
+  "from": "ubx-cfg",
+  "to": "ubx-cfg",
+  "input": "b562063e04001af1c800",
+  "expect": "b562063e04001af1c800",
+  "model": {
+    "@kind": "cfg_gnss",
+    "ubxcfg.cfg_gnss_block.#": "0"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "ubx-mon-roundtrip-mon_comms-no-items",
+  "from": "ubx-mon",
+  "to": "ubx-mon",
+  "input": "b5620a3608004b0002a77e552c03",
+  "expect": "b5620a3608004b0002a77e552c03",
+  "model": {
+    "@kind": "mon_comms",
+    "ubxmon.mon_comms_ports.#": "0"
+  }
+}

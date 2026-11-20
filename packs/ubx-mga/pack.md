@@ -75,6 +75,7 @@ A definition is the receiver's output (GET), a command to it (SET, kind suffix
 | `mga_qzss_eph_set` | MGA-QZSS-EPH | SET | 0x13 0x05 0x01 | 68 |
 | `mga_qzss_health_set` | MGA-QZSS-HEALTH | SET | 0x13 0x05 0x04 | 12 |
 | `mga_ini_att_set` | MGA-INI-ATT | SET | 0x13 0x40 0x40 | 28 |
+| `mga_flash_data_set` | MGA-FLASH-DATA | SET | 0x13 0x21 0x01 | 6 + 1 per item of `ubxmga.mga_flash_data_set_data` |
 
 ## What is mapped
 
@@ -89,6 +90,12 @@ A definition is the receiver's output (GET), a command to it (SET, kind suffix
 | a group with a fixed repeat count (`_grp`) | its fields once per repeat, `_01`, `_02`, … appended | as the field |
 | `A<n>` (a byte array) | one `uint` byte per element, `_01` … appended | int |
 | an unsigned integer wider than 8 bytes | 8-byte `uint` parts, `_01` … appended, the last part shorter | int |
+| a group repeated by an unsigned field before it, ending the payload | a `group` of `item` bits counted by that field (`count <locator>`); the field has no key of its own | a list |
+
+A kind with a counted group has no length `when`: encode writes
+`ubxmga.payload_length` as the entity holds it, so a frame encoded from another
+format needs it set (a length derived from the items is not in the pack
+language). Such kinds come after the fixed-length kinds, which select first.
 
 Keys are `ubxmga.<kind>_<field>` in lower case. A scale the source states is
 applied; the source states no unit, so the module declares none (`-`).
@@ -306,15 +313,15 @@ Definitions with no kind:
 | MGA-DBD | GET | 0x13 0x80 | a group repeated to the end of the payload |
 | MGA-SF-INI | GET | 0x13 0x10 0x00 | a group repeated by field `nValA` |
 | MGA-DBD | SET | 0x13 0x80 | a group repeated to the end of the payload |
-| MGA-FLASH-DATA | SET | 0x13 0x21 0x01 | a group repeated by field `size` |
 | MGA-SF-INI | SET | 0x13 0x10 0x00 | a group repeated by field `nValA` |
 | MGA-SF-INI2 | SET | 0x13 0x10 0x10 | the same class, id and payload length as kind `mga_sf_ini2` |
 | MGA-DBD | POLL | 0x13 0x80 | an empty payload: a kind needs at least one field |
 | MGA-SF | POLL | 0x13 0x10 | an empty payload: a kind needs at least one field |
 
-5 of them have a variable part: a group repeated by a count field or to the end
-of the payload, or text that runs to the end. Stating one needs a repeated group
-counted by a field, or a trailing field of the remaining length.
+4 of them have a variable part the pack cannot state: a group that does not
+end the payload or whose items vary, a group repeated to the end of the
+payload, or text that runs to the end. Stating one needs a group counted by a
+field that is not last, or a trailing field of the remaining length.
 
 1 have the class, id and length of a kind above; the source tells the
 variants apart by a version field or by the direction of the message, which a
@@ -328,6 +335,7 @@ variants apart by a version field or by the direction of the message, which a
 ## Vectors
 
 `vectors/rt-<class><id>-<kind>.json`: one same-format round trip per kind, the
-frame written by a UBX serializer in the generator from sample values.
+frame written by a UBX serializer in the generator from sample values; a kind
+with a counted group has one with two items and one with none (`-no-items`).
 
-36 vectors.
+38 vectors.

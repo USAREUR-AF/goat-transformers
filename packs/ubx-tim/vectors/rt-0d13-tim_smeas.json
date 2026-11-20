@@ -1,0 +1,11 @@
+{
+  "name": "ubx-tim-roundtrip-tim_smeas",
+  "from": "ubx-tim",
+  "to": "ubx-tim",
+  "input": "b5620d133c001e02f583ccd75665a32bdb3861024035aa9f4c3f1f0062169460772d09c18c047e21a25b3601150a7fa22f2bf402450269635a19dec36ff053248547",
+  "expect": "b5620d133c001e02f583ccd75665a32bdb3861024035aa9f4c3f1f0062169460772d09c18c047e21a25b3601150a7fa22f2bf402450269635a19dec36ff053248547",
+  "model": {
+    "@kind": "tim_smeas",
+    "ubxtim.tim_smeas_meas.#": "2"
+  }
+}

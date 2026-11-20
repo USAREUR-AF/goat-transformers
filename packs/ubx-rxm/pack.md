@@ -51,6 +51,13 @@ A definition is the receiver's output (GET), a command to it (SET, kind suffix
 | `rxm_spartn` | RXM-SPARTN | GET | 0x02 0x33 | 8 |
 | `rxm_pmreq_s_set` | RXM-PMREQ-S | SET | 0x02 0x41 | 8 |
 | `rxm_pmreq_set` | RXM-PMREQ | SET | 0x02 0x41 | 16 |
+| `rxm_imes` | RXM-IMES | GET | 0x02 0x61 | 4 + 44 per item of `ubxrxm.rxm_imes_tx` |
+| `rxm_measx` | RXM-MEASX | GET | 0x02 0x14 | 44 + 24 per item of `ubxrxm.rxm_measx_sv` |
+| `rxm_raw` | RXM-RAW | GET | 0x02 0x10 | 8 + 24 per item of `ubxrxm.rxm_raw_sv` |
+| `rxm_rawx` | RXM-RAWX | GET | 0x02 0x15 | 16 + 32 per item of `ubxrxm.rxm_rawx_meas` |
+| `rxm_sfrbx` | RXM-SFRBX | GET | 0x02 0x13 | 8 + 4 per item of `ubxrxm.rxm_sfrbx_navdata` |
+| `rxm_svsi` | RXM-SVSI | GET | 0x02 0x20 | 8 + 6 per item of `ubxrxm.rxm_svsi_sv` |
+| `rxm_tm` | RXM-TM | GET | 0x02 0x74 | 8 + 24 per item of `ubxrxm.rxm_tm_meas` |
 
 ## What is mapped
 
@@ -65,6 +72,12 @@ A definition is the receiver's output (GET), a command to it (SET, kind suffix
 | a group with a fixed repeat count (`_grp`) | its fields once per repeat, `_01`, `_02`, … appended | as the field |
 | `A<n>` (a byte array) | one `uint` byte per element, `_01` … appended | int |
 | an unsigned integer wider than 8 bytes | 8-byte `uint` parts, `_01` … appended, the last part shorter | int |
+| a group repeated by an unsigned field before it, ending the payload | a `group` of `item` bits counted by that field (`count <locator>`); the field has no key of its own | a list |
+
+A kind with a counted group has no length `when`: encode writes
+`ubxrxm.payload_length` as the entity holds it, so a frame encoded from another
+format needs it set (a length derived from the items is not in the pack
+language). Such kinds come after the fixed-length kinds, which select first.
 
 Keys are `ubxrxm.<kind>_<field>` in lower case. A scale the source states is
 applied; the source states no unit, so the module declares none (`-`).
@@ -74,6 +87,16 @@ Scaled fields:
 | Kind | Field | Transform |
 |---|---|---|
 | `rxm_cor` | `ebno` | `uscale:1/8` |
+| `rxm_imes` | `doppler` | `sscale:1/4096` |
+| `rxm_imes` | `lat` | `sscale:45/4194304` |
+| `rxm_imes` | `lon` | `sscale:45/536870912` |
+| `rxm_measx` | `gpsTOWacc` | `uscale:1/16` |
+| `rxm_measx` | `gloTOWacc` | `uscale:1/16` |
+| `rxm_measx` | `bdsTOWacc` | `uscale:1/16` |
+| `rxm_measx` | `qzssTOWacc` | `uscale:1/16` |
+| `rxm_measx` | `dopplerMS` | `sscale:1/25` |
+| `rxm_measx` | `dopplerHz` | `sscale:1/5` |
+| `rxm_measx` | `codePhase` | `uscale:1/2097152` |
 | `rxm_pmp_v0` | `ebno` | `uscale:1/8` |
 | `rxm_qzssl6` | `cno` | `uscale:1/256` |
 
@@ -93,19 +116,12 @@ Definitions with no kind:
 
 | Definition | Mode | Identity | Reason |
 |---|---|---|---|
-| RXM-IMES | GET | 0x02 0x61 | a group repeated by field `numTx` |
 | RXM-MEAS20 | GET | 0x02 0x84 | a group repeated to the end of the payload |
 | RXM-MEAS50 | GET | 0x02 0x86 | a group repeated to the end of the payload |
 | RXM-MEASC12 | GET | 0x02 0x82 | a group repeated to the end of the payload |
 | RXM-MEASD12 | GET | 0x02 0x80 | a group repeated to the end of the payload |
-| RXM-MEASX | GET | 0x02 0x14 | a group repeated by field `numSv` |
 | RXM-PMP-V1 | GET | 0x02 0x72 | a field of type UPMP whose length the payload length gives |
-| RXM-RAW | GET | 0x02 0x10 | a group repeated by field `numSV` |
-| RXM-RAWX | GET | 0x02 0x15 | a group repeated by field `numMeas` |
-| RXM-SFRBX | GET | 0x02 0x13 | a group repeated by field `numWords` |
 | RXM-SPARTN-KEY | GET | 0x02 0x36 | a group repeated by field `numKeys` |
-| RXM-SVSI | GET | 0x02 0x20 | a group repeated by field `numSV` |
-| RXM-TM | GET | 0x02 0x74 | a group repeated by field `numMeas` |
 | RXM-PMP-V0 | SET | 0x02 0x72 | the same class, id and payload length as kind `rxm_pmp_v0` |
 | RXM-PMP-V1 | SET | 0x02 0x72 | a field of type UPMP whose length the payload length gives |
 | RXM-QZSSL6 | SET | 0x02 0x73 | the same class, id and payload length as kind `rxm_qzssl6` |
@@ -131,9 +147,10 @@ Definitions with no kind:
 | RXM-SVSI | POLL | 0x02 0x20 | an empty payload: a kind needs at least one field |
 | RXM-TM | POLL | 0x02 0x74 | an empty payload: a kind needs at least one field |
 
-15 of them have a variable part: a group repeated by a count field or to the end
-of the payload, or text that runs to the end. Stating one needs a repeated group
-counted by a field, or a trailing field of the remaining length.
+8 of them have a variable part the pack cannot state: a group that does not
+end the payload or whose items vary, a group repeated to the end of the
+payload, or text that runs to the end. Stating one needs a group counted by a
+field that is not last, or a trailing field of the remaining length.
 
 2 have the class, id and length of a kind above; the source tells the
 variants apart by a version field or by the direction of the message, which a
@@ -147,6 +164,7 @@ variants apart by a version field or by the direction of the message, which a
 ## Vectors
 
 `vectors/rt-<class><id>-<kind>.json`: one same-format round trip per kind, the
-frame written by a UBX serializer in the generator from sample values.
+frame written by a UBX serializer in the generator from sample values; a kind
+with a counted group has one with two items and one with none (`-no-items`).
 
-12 vectors.
+26 vectors.

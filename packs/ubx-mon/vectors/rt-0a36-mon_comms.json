@@ -1,0 +1,11 @@
+{
+  "name": "ubx-mon-roundtrip-mon_comms",
+  "from": "ubx-mon",
+  "to": "ubx-mon",
+  "input": "b5620a3658004b0202a77e552c03c49339f4ae54fc7423980d7682d65151f76ce1f75658cbb84019b5792adafc09000000809f3a122199960ef78357df60f86de27857d9343dcc41b6fa2b5ba0bb151c8a7cffdcdf7500000000743df50c",
+  "expect": "b5620a3658004b0202a77e552c03c49339f4ae54fc7423980d7682d65151f76ce1f75658cbb84019b5792adafc09000000809f3a122199960ef78357df60f86de27857d9343dcc41b6fa2b5ba0bb151c8a7cffdcdf7500000000743df50c",
+  "model": {
+    "@kind": "mon_comms",
+    "ubxmon.mon_comms_ports.#": "2"
+  }
+}

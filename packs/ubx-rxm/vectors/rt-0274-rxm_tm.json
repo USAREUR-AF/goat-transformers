@@ -1,0 +1,11 @@
+{
+  "name": "ubx-rxm-roundtrip-rxm_tm",
+  "from": "ubx-rxm",
+  "to": "ubx-rxm",
+  "input": "b56202743800c5029c5273a62828120000006c5be1bb561c8e0bcb7ca32240ddb839b53dce5007000000415eb6be2b1f7177a07f860e15e09b258a40b13c",
+  "expect": "b56202743800c5029c5273a62828120000006c5be1bb561c8e0bcb7ca32240ddb839b53dce5007000000415eb6be2b1f7177a07f860e15e09b258a40b13c",
+  "model": {
+    "@kind": "rxm_tm",
+    "ubxrxm.rxm_tm_meas.#": "2"
+  }
+}

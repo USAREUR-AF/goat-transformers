@@ -33,6 +33,7 @@ this pack is 4 bytes shorter than its length field.
 | Kind | Block | Number | Length in bytes |
 |---|---|---|---|
 | `quality` | Quality | 4001 | 16 |
+| `track` | Track | 4101 | 16 + 4 per item of `sbfother.track_sv` |
 
 ## What is mapped
 
@@ -46,6 +47,7 @@ this pack is 4 bytes shorter than its length field.
 | an integer with an integer scale (1000, 10^9) | `uiscale` / `siscale` | int |
 | a bit field (`_bit`) | each named bit group as its own field, from the least significant bit | int |
 | an unsigned integer wider than 8 bytes | 8-byte `uint` parts, `_01` … appended | int |
+| a group repeated by an unsigned field before it, ending the body, with items and a fixed part that are multiples of 4 bytes | a `group` of `item` bits counted by that field (`count <locator>`); the field has no key of its own | a list |
 
 Keys are `sbfother.<block>_<field>` in lower case with underscores. A scale the
 source states is applied; the source states no unit, so the module declares
@@ -75,15 +77,22 @@ selects a kind only when it holds them.
 
 | Block | Number | Reason |
 |---|---|---|
-| Satellites | 4027 | a group repeated by field `N` |
+| Satellites | 4027 | a group counted by field `N` whose items vary: a sub-block padded to a length the block states |
 | Optional | 4060 | a part present only when field `Mode` is 1 |
 | Blob | 4061 | a field of type V001 whose length the block length gives |
 | Unnumbered | - | no block number in SBF_MSGIDS |
+| Odd | 4102 | a group counted by field `N` whose items or fixed part are not a multiple of 4 bytes, so the padding after the items depends on their number |
 
-- A block whose length varies: a group repeated by a count field, sub-blocks
-  padded to a length the block states, or a part present only for one value of
-  a field. Stating them needs a counted group whose items are padded to a
-  stated sub-block length.
+A kind with a counted group has no length `when`: encode writes `sbf.length`
+as the entity holds it, so a block encoded from another format needs it set
+(a length derived from the items is not in the pack language). Such kinds
+come after the fixed-length kinds.
+
+- A block whose length varies otherwise: sub-blocks padded to a length the
+  block states, a group whose padding depends on its number of items, a group
+  that does not end the body, or a part present only for one value of a field.
+  Stating the first needs a counted group whose items are padded to a stated
+  sub-block length.
 - The block revision does not select a layout: the source gives one definition
   per block.
 - The sync characters and the CRC (see The message).
@@ -91,6 +100,7 @@ selects a kind only when it holds them.
 ## Vectors
 
 `vectors/rt-<number>-<kind>.json`: one same-format round trip per kind, the
-block written by a serializer in the generator from sample values.
+block written by a serializer in the generator from sample values; a kind with
+a counted group has one with two items and one with none (`-no-items`).
 
-1 vectors.
+3 vectors.

@@ -1,0 +1,11 @@
+{
+  "name": "ubx-nav-roundtrip-nav_sbas",
+  "from": "ubx-nav",
+  "to": "ubx-nav",
+  "input": "b56201322400c9c90e4ca077ce1502002f10c035aa1f94097e03f3e368c4950a7ff469de5306c8e63dc7",
+  "expect": "b56201322400c9c90e4ca077ce1502002f10c035aa1f94097e03f3e368c4950a7ff469de5306c8e63dc7",
+  "model": {
+    "@kind": "nav_sbas",
+    "ubxnav.nav_sbas_channel.#": "2"
+  }
+}

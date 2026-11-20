@@ -1,0 +1,11 @@
+{
+  "name": "sbf-other-roundtrip-track-no-items",
+  "from": "sbf-other",
+  "to": "sbf-other",
+  "input": "053010004e8f88750025e30c",
+  "expect": "053010004e8f88750025e30c",
+  "model": {
+    "@kind": "track",
+    "sbfother.track_sv.#": "0"
+  }
+}

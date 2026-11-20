@@ -1,0 +1,11 @@
+{
+  "name": "ubx-mga-roundtrip-mga_flash_data_set-no-items",
+  "from": "ubx-mga",
+  "to": "ubx-mga",
+  "input": "b5621321060001f5cc390000",
+  "expect": "b5621321060001f5cc390000",
+  "model": {
+    "@kind": "mga_flash_data_set",
+    "ubxmga.mga_flash_data_set_data.#": "0"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "ubx-nav-roundtrip-nav_dgps",
+  "from": "ubx-nav",
+  "to": "ubx-nav",
+  "input": "b562013128000e59bd38e5ac41ccbc8093d4026a41fcff145e4d000010c0000080bfd40933500000204000007040",
+  "expect": "b562013128000e59bd38e5ac41ccbc8093d4026a41fcff145e4d000010c0000080bfd40933500000204000007040",
+  "model": {
+    "@kind": "nav_dgps",
+    "ubxnav.nav_dgps_channel.#": "2"
+  }
+}

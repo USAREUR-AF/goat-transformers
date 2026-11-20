@@ -1,0 +1,11 @@
+{
+  "name": "ubx-nav-roundtrip-nav_slas-no-items",
+  "from": "ubx-nav",
+  "to": "ubx-nav",
+  "input": "b56201421400df6ad70cb68d12e0646664c73bbae81a12e90200",
+  "expect": "b56201421400df6ad70cb68d12e0646664c73bbae81a12e90200",
+  "model": {
+    "@kind": "nav_slas",
+    "ubxnav.nav_slas_cnt.#": "0"
+  }
+}

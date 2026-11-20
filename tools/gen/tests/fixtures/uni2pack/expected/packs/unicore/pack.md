@@ -37,6 +37,7 @@ payload. That is the item "Layered wires and framing" of `docs/roadmap.md`.
 |---|---|---|---|
 | `fixnav` | FIXNAV | 2118 | 67 |
 | `quality` | QUALITY | 954 | 5 |
+| `sats` | SATS | 1042 | 1 + 1 per item of `unicore.sats_sat` |
 
 ## What is mapped
 
@@ -50,6 +51,7 @@ payload. That is the item "Layered wires and framing" of `docs/roadmap.md`.
 | a bit field (`_bit`) | each named bit group as its own field, from the least significant bit | int |
 | a group with a fixed repeat count | its fields once per repeat, `_01`, `_02`, … appended | as the field |
 | an unsigned integer or byte field wider than 8 bytes | 8-byte `uint` parts, `_01` … appended | int |
+| a group repeated by an unsigned field before it, ending the payload | a `group` of `item` bits counted by that field (`count <locator>`); the field has no key of its own | a list |
 
 Keys are `unicore.<message>_<field>` in lower case. A scale the source states is
 applied; the source states no unit, so the module declares none (`-`).
@@ -83,17 +85,23 @@ selects a kind only when it holds them.
 
 | Message | ID | Reason |
 |---|---|---|
-| SATS | 1042 | a group repeated by field `numsat` |
 | INFO | 37 | a field of type CXXX whose length the payload length gives |
 | NOID | - | no message ID in UNI_MSGIDS |
 
-- A message whose length varies: a group repeated by a count field or to the
-  end of the payload, or text whose length the payload length gives.
+A kind with a counted group has no length `when`: encode writes
+`unicore.payload_length` as the entity holds it, so a message encoded from
+another format needs it set (a length derived from the items is not in the
+pack language). Such kinds come after the fixed-length kinds.
+
+- A message whose length varies otherwise: a group that does not end the
+  payload, a group whose items vary, a group repeated to the end of the
+  payload, or text whose length the payload length gives.
 - The sync bytes and the CRC (see The message).
 
 ## Vectors
 
 `vectors/rt-<ID>-<kind>.json`: one same-format round trip per kind, the frame
-written by a serializer in the generator from sample values.
+written by a serializer in the generator from sample values; a kind with a
+counted group has one with two items and one with none (`-no-items`).
 
-2 vectors.
+4 vectors.

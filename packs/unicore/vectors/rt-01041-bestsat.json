@@ -1,0 +1,11 @@
+{
+  "name": "unicore-roundtrip-bestsat",
+  "from": "unicore",
+  "to": "unicore",
+  "input": "e4110424003b58753592350000af350000cce9063602000000df97d64454f8eb5bc95801733eb9160ab49ab93029fbce479e5be45e13bcf975",
+  "expect": "e4110424003b58753592350000af350000cce9063602000000df97d64454f8eb5bc95801733eb9160ab49ab93029fbce479e5be45e13bcf975",
+  "model": {
+    "@kind": "bestsat",
+    "unicore.bestsat_groupsat.#": "2"
+  }
+}

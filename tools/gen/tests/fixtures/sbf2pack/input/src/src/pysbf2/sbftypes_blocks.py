@@ -26,6 +26,8 @@ SBF_OTHER_BLOCKS = {
     "Optional": {"Mode": U1, "part_grp": (("Mode", 1), {"Value": U4})},
     "Blob": {"Size": U2, "Data": V1},
     "Unnumbered": {"Value": U4},
+    "Track": {"TOW": U4, "N": U1, "Reserved": U3, "sv_grp": ("N", {"SVID": U1, "Flags": U1, "Level": U2})},
+    "Odd": {"N": U1, "v_grp": ("N", {"V": U1})},
 }
 
 SBF_BLOCKS = {

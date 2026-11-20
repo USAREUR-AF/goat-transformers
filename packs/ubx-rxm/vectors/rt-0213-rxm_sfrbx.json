@@ -1,0 +1,11 @@
+{
+  "name": "ubx-rxm-roundtrip-rxm_sfrbx",
+  "from": "ubx-rxm",
+  "to": "ubx-rxm",
+  "input": "b5620213100090673e1502ecc39a61bde10b36c0c477",
+  "expect": "b5620213100090673e1502ecc39a61bde10b36c0c477",
+  "model": {
+    "@kind": "rxm_sfrbx",
+    "ubxrxm.rxm_sfrbx_navdata.#": "2"
+  }
+}

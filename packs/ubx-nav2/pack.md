@@ -61,6 +61,10 @@ A definition is the receiver's output (GET), a command to it (SET, kind suffix
 | `nav2_timeutc` | NAV2-TIMEUTC | GET | 0x29 0x21 | 20 |
 | `nav2_velecef` | NAV2-VELECEF | GET | 0x29 0x11 | 20 |
 | `nav2_velned` | NAV2-VELNED | GET | 0x29 0x12 | 36 |
+| `nav2_sat` | NAV2-SAT | GET | 0x29 0x35 | 8 + 12 per item of `ubxnav2.nav2_sat_sv` |
+| `nav2_sbas` | NAV2-SBAS | GET | 0x29 0x32 | 12 + 12 per item of `ubxnav2.nav2_sbas_channel` |
+| `nav2_sig` | NAV2-SIG | GET | 0x29 0x43 | 8 + 16 per item of `ubxnav2.nav2_sig_sig` |
+| `nav2_slas` | NAV2-SLAS | GET | 0x29 0x42 | 20 + 8 per item of `ubxnav2.nav2_slas_cnt` |
 
 ## What is mapped
 
@@ -75,6 +79,12 @@ A definition is the receiver's output (GET), a command to it (SET, kind suffix
 | a group with a fixed repeat count (`_grp`) | its fields once per repeat, `_01`, `_02`, … appended | as the field |
 | `A<n>` (a byte array) | one `uint` byte per element, `_01` … appended | int |
 | an unsigned integer wider than 8 bytes | 8-byte `uint` parts, `_01` … appended, the last part shorter | int |
+| a group repeated by an unsigned field before it, ending the payload | a `group` of `item` bits counted by that field (`count <locator>`); the field has no key of its own | a list |
+
+A kind with a counted group has no length `when`: encode writes
+`ubxnav2.payload_length` as the entity holds it, so a frame encoded from another
+format needs it set (a length derived from the items is not in the pack
+language). Such kinds come after the fixed-length kinds, which select first.
 
 Keys are `ubxnav2.<kind>_<field>` in lower case. A scale the source states is
 applied; the source states no unit, so the module declares none (`-`).
@@ -108,6 +118,10 @@ Scaled fields:
 | `nav2_pvt` | `headVeh` | `sscale:1/100000` |
 | `nav2_pvt` | `magDec` | `sscale:1/100` |
 | `nav2_pvt` | `magAcc` | `uscale:1/100` |
+| `nav2_sat` | `prRes` | `sscale:1/10` |
+| `nav2_sig` | `prRes` | `sscale:1/10` |
+| `nav2_slas` | `gmsLon` | `sscale:1/1000` |
+| `nav2_slas` | `gmsLat` | `sscale:1/1000` |
 | `nav2_velned` | `cAcc` | `uscale:1/100000` |
 
 ### Core keys
@@ -167,10 +181,6 @@ Definitions with no kind:
 
 | Definition | Mode | Identity | Reason |
 |---|---|---|---|
-| NAV2-SAT | GET | 0x29 0x35 | a group repeated by field `numSvs` |
-| NAV2-SBAS | GET | 0x29 0x32 | a group repeated by field `cnt` |
-| NAV2-SIG | GET | 0x29 0x43 | a group repeated by field `numSigs` |
-| NAV2-SLAS | GET | 0x29 0x42 | a group repeated by field `cnt` |
 | NAV2-CLOCK | POLL | 0x29 0x22 | an empty payload: a kind needs at least one field |
 | NAV2-COV | POLL | 0x29 0x36 | an empty payload: a kind needs at least one field |
 | NAV2-DOP | POLL | 0x29 0x04 | an empty payload: a kind needs at least one field |
@@ -193,10 +203,6 @@ Definitions with no kind:
 | NAV2-VELECEF | POLL | 0x29 0x11 | an empty payload: a kind needs at least one field |
 | NAV2-VELNED | POLL | 0x29 0x12 | an empty payload: a kind needs at least one field |
 
-4 of them have a variable part: a group repeated by a count field or to the end
-of the payload, or text that runs to the end. Stating one needs a repeated group
-counted by a field, or a trailing field of the remaining length.
-
 - The checksum (see The message), and frames whose payload length is not the
   definition's fixed length: such a frame selects no kind (`no-kind`).
 - Enumerations are carried as integers; the bits of a bit field that the
@@ -205,6 +211,7 @@ counted by a field, or a trailing field of the remaining length.
 ## Vectors
 
 `vectors/rt-<class><id>-<kind>.json`: one same-format round trip per kind, the
-frame written by a UBX serializer in the generator from sample values.
+frame written by a UBX serializer in the generator from sample values; a kind
+with a counted group has one with two items and one with none (`-no-items`).
 
-22 vectors.
+30 vectors.

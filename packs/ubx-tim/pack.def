@@ -162,3 +162,24 @@ when      0:24:8 21
 when      0:32:16 1
 requires  ubxtim.tim_vcocal_v0_set_type
 field     ubxtim.tim_vcocal_v0_set_type 0:48:8 uint
+
+kind      tim_smeas
+when      0:24:8 19
+requires  ubxtim.tim_smeas_version ubxtim.tim_smeas_reserved1 ubxtim.tim_smeas_itow
+field     ubxtim.payload_length 0:32:16 uint
+field     ubxtim.tim_smeas_version 0:48:8 uint
+field     ubxtim.tim_smeas_reserved1 0:64:16 uint
+field     ubxtim.tim_smeas_itow 0:80:32 uint
+field     ubxtim.tim_smeas_reserved2 0:112:32 uint
+group     ubxtim.tim_smeas_meas 0:144 item 192 count 0:56:8
+  field   ubxtim.tim_smeas_meas_sourceid 0:0:8 uint
+  field   ubxtim.tim_smeas_meas_freqvalid 0:8:1 uint
+  field   ubxtim.tim_smeas_meas_phasevalid 0:9:1 uint
+  field   ubxtim.tim_smeas_meas_phaseoffsetfrac 0:16:8 sscale:1/256
+  field   ubxtim.tim_smeas_meas_phaseuncfrac 0:24:8 uscale:1/256
+  field   ubxtim.tim_smeas_meas_phaseoffset 0:32:32 twos
+  field   ubxtim.tim_smeas_meas_phaseunc 0:64:32 uint
+  field   ubxtim.tim_smeas_meas_reserved3 0:96:32 uint
+  field   ubxtim.tim_smeas_meas_freqoffset 0:128:32 sscale:1/256
+  field   ubxtim.tim_smeas_meas_frequnc 0:160:32 uscale:1/256
+end

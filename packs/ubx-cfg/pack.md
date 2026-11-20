@@ -90,6 +90,11 @@ A definition is the receiver's output (GET), a command to it (SET, kind suffix
 | `cfg_msg_poll` | CFG-MSG | POLL | 0x06 0x01 | 2 |
 | `cfg_prt_poll` | CFG-PRT | POLL | 0x06 0x00 | 1 |
 | `cfg_tp5_tpx_poll` | CFG-TP5-TPX | POLL | 0x06 0x31 | 1 |
+| `cfg_dosc` | CFG-DOSC | GET | 0x06 0x61 | 4 + 32 per item of `ubxcfg.cfg_dosc_osc` |
+| `cfg_esrc` | CFG-ESRC | GET | 0x06 0x60 | 4 + 36 per item of `ubxcfg.cfg_esrc_source` |
+| `cfg_fixseed` | CFG-FIXSEED | GET | 0x06 0x84 | 12 + 2 per item of `ubxcfg.cfg_fixseed_seed` |
+| `cfg_geofence` | CFG-GEOFENCE | GET | 0x06 0x69 | 8 + 12 per item of `ubxcfg.cfg_geofence_fence` |
+| `cfg_gnss` | CFG-GNSS | GET | 0x06 0x3E | 4 + 8 per item of `ubxcfg.cfg_gnss_block` |
 
 ## What is mapped
 
@@ -104,6 +109,12 @@ A definition is the receiver's output (GET), a command to it (SET, kind suffix
 | a group with a fixed repeat count (`_grp`) | its fields once per repeat, `_01`, `_02`, … appended | as the field |
 | `A<n>` (a byte array) | one `uint` byte per element, `_01` … appended | int |
 | an unsigned integer wider than 8 bytes | 8-byte `uint` parts, `_01` … appended, the last part shorter | int |
+| a group repeated by an unsigned field before it, ending the payload | a `group` of `item` bits counted by that field (`count <locator>`); the field has no key of its own | a list |
+
+A kind with a counted group has no length `when`: encode writes
+`ubxcfg.payload_length` as the entity holds it, so a frame encoded from another
+format needs it set (a length derived from the items is not in the pack
+language). Such kinds come after the fixed-length kinds, which select first.
 
 Keys are `ubxcfg.<kind>_<field>` in lower case. A scale the source states is
 applied; the source states no unit, so the module declares none (`-`).
@@ -112,6 +123,11 @@ Scaled fields:
 
 | Kind | Field | Transform |
 |---|---|---|
+| `cfg_dosc` | `freq` | `uscale:1/4` |
+| `cfg_dosc` | `withTemp` | `uscale:1/256` |
+| `cfg_dosc` | `withAge` | `uscale:1/256` |
+| `cfg_dosc` | `gainVco` | `sscale:1/65536` |
+| `cfg_dosc` | `gainUncertainty` | `uscale:1/256` |
 | `cfg_ekf` | `rmsTemp` | `uscale:1/10` |
 | `cfg_esfalg` | `yaw` | `uscale:1/100` |
 | `cfg_esfalg` | `pitch` | `sscale:1/100` |
@@ -125,6 +141,12 @@ Scaled fields:
 | `cfg_esfgwt` | `timeTagFactor` | `uscale:1/1000000` |
 | `cfg_esfwt` | `wtFactor` | `uscale:1/1000000` |
 | `cfg_esfwt` | `wtQuantError` | `uscale:1/1000000` |
+| `cfg_esrc` | `freq` | `uscale:1/4` |
+| `cfg_esrc` | `withTemp` | `uscale:1/256` |
+| `cfg_esrc` | `withAge` | `uscale:1/256` |
+| `cfg_geofence` | `lat` | `sscale:1/10000000` |
+| `cfg_geofence` | `lon` | `sscale:1/10000000` |
+| `cfg_geofence` | `radius` | `uscale:1/100` |
 | `cfg_nav5` | `fixedAlt` | `sscale:1/100` |
 | `cfg_nav5` | `fixedAltVar` | `uscale:1/10000` |
 | `cfg_nav5` | `pDop` | `uscale:1/10` |
@@ -147,18 +169,13 @@ Definitions with no kind:
 
 | Definition | Mode | Identity | Reason |
 |---|---|---|---|
-| CFG-DOSC | GET | 0x06 0x61 | a group repeated by field `numOsc` |
-| CFG-ESRC | GET | 0x06 0x60 | a group repeated by field `numSources` |
-| CFG-FIXSEED | GET | 0x06 0x84 | a group repeated by field `length` |
-| CFG-GEOFENCE | GET | 0x06 0x69 | a group repeated by field `numFences` |
-| CFG-GNSS | GET | 0x06 0x3E | a group repeated by field `numConfigBlocks` |
 | CFG-RINV | GET | 0x06 0x34 | a group repeated to the end of the payload |
 | CFG-VALGET | GET | 0x06 0x8B | a group repeated to the end of the payload |
 | CFG-ANT | SET | 0x06 0x13 | the same class, id and payload length as kind `cfg_ant` |
 | CFG-BATCH | SET | 0x06 0x93 | the same class, id and payload length as kind `cfg_batch` |
 | CFG-CFG | SET | 0x06 0x09 | the same class, id and payload length as kind `cfg_cfg` |
 | CFG-DGNSS | SET | 0x06 0x70 | the same class, id and payload length as kind `cfg_dgnss` |
-| CFG-DOSC | SET | 0x06 0x61 | a group repeated by field `numOsc` |
+| CFG-DOSC | SET | 0x06 0x61 | the same class and id as kind `cfg_dosc`, both counted groups |
 | CFG-DYNSEED | SET | 0x06 0x85 | the same class, id and payload length as kind `cfg_dynseed` |
 | CFG-EKF | SET | 0x06 0x12 | the same class, id and payload length as kind `cfg_ekf` |
 | CFG-ESFALG | SET | 0x06 0x56 | the same class, id and payload length as kind `cfg_esfalg` |
@@ -166,11 +183,11 @@ Definitions with no kind:
 | CFG-ESFG | SET | 0x06 0x4D | the same class, id and payload length as kind `cfg_esfg` |
 | CFG-ESFWT | SET | 0x06 0x82 | the same class, id and payload length as kind `cfg_esfwt` |
 | CFG-ESFGWT | SET | 0x06 0x29 | the same class, id and payload length as kind `cfg_esfgwt` |
-| CFG-ESRC | SET | 0x06 0x60 | a group repeated by field `numSources` |
-| CFG-FIXSEED | SET | 0x06 0x84 | a group repeated by field `length` |
+| CFG-ESRC | SET | 0x06 0x60 | the same class and id as kind `cfg_esrc`, both counted groups |
+| CFG-FIXSEED | SET | 0x06 0x84 | the same class and id as kind `cfg_fixseed`, both counted groups |
 | CFG-FXN | SET | 0x06 0x0E | the same class, id and payload length as kind `cfg_fxn` |
-| CFG-GEOFENCE | SET | 0x06 0x69 | a group repeated by field `numFences` |
-| CFG-GNSS | SET | 0x06 0x3E | a group repeated by field `numConfigBlocks` |
+| CFG-GEOFENCE | SET | 0x06 0x69 | the same class and id as kind `cfg_geofence`, both counted groups |
+| CFG-GNSS | SET | 0x06 0x3E | the same class and id as kind `cfg_gnss`, both counted groups |
 | CFG-HNR | SET | 0x06 0x5C | the same class, id and payload length as kind `cfg_hnr` |
 | CFG-INF | SET | 0x06 0x02 | the same class, id and payload length as kind `cfg_inf` |
 | CFG-ITFM | SET | 0x06 0x39 | the same class, id and payload length as kind `cfg_itfm` |
@@ -249,11 +266,12 @@ Definitions with no kind:
 | CFG-USB | POLL | 0x06 0x1B | an empty payload: a kind needs at least one field |
 | CFG-VALGET | POLL | 0x06 0x8B | a group repeated to the end of the payload |
 
-17 of them have a variable part: a group repeated by a count field or to the end
-of the payload, or text that runs to the end. Stating one needs a repeated group
-counted by a field, or a trailing field of the remaining length.
+7 of them have a variable part the pack cannot state: a group that does not
+end the payload or whose items vary, a group repeated to the end of the
+payload, or text that runs to the end. Stating one needs a group counted by a
+field that is not last, or a trailing field of the remaining length.
 
-40 have the class, id and length of a kind above; the source tells the
+45 have the class, id and length of a kind above; the source tells the
 variants apart by a version field or by the direction of the message, which a
 `when` on the length alone cannot.
 
@@ -265,6 +283,7 @@ variants apart by a version field or by the direction of the message, which a
 ## Vectors
 
 `vectors/rt-<class><id>-<kind>.json`: one same-format round trip per kind, the
-frame written by a UBX serializer in the generator from sample values.
+frame written by a UBX serializer in the generator from sample values; a kind
+with a counted group has one with two items and one with none (`-no-items`).
 
-51 vectors.
+61 vectors.

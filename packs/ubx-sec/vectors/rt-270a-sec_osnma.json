@@ -1,0 +1,11 @@
+{
+  "name": "ubx-sec-roundtrip-sec_osnma",
+  "from": "ubx-sec",
+  "to": "ubx-sec",
+  "input": "b562270a1c00c5369eb9029ca146197b0d0f41931f9b424bb3569836f76c6d89cc41",
+  "expect": "b562270a1c00c5369eb9029ca146197b0d0f41931f9b424bb3569836f76c6d89cc41",
+  "model": {
+    "@kind": "sec_osnma",
+    "ubxsec.sec_osnma_authsv.#": "2"
+  }
+}

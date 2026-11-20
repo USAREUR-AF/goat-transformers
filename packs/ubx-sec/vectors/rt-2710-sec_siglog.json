@@ -1,0 +1,11 @@
+{
+  "name": "ubx-sec-roundtrip-sec_siglog",
+  "from": "ubx-sec",
+  "to": "ubx-sec",
+  "input": "b5622710180085025c9a112d00001e7fd40693087da0f381b77268dd52a3",
+  "expect": "b5622710180085025c9a112d00001e7fd40693087da0f381b77268dd52a3",
+  "model": {
+    "@kind": "sec_siglog",
+    "ubxsec.sec_siglog_event.#": "2"
+  }
+}

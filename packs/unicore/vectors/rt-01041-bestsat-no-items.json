@@ -1,0 +1,11 @@
+{
+  "name": "unicore-roundtrip-bestsat-no-items",
+  "from": "unicore",
+  "to": "unicore",
+  "input": "e4110404003b58753592350000af350000cce9063600000000",
+  "expect": "e4110404003b58753592350000af350000cce9063600000000",
+  "model": {
+    "@kind": "bestsat",
+    "unicore.bestsat_groupsat.#": "0"
+  }
+}

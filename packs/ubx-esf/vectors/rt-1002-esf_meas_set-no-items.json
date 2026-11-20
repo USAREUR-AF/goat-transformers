@@ -1,0 +1,11 @@
+{
+  "name": "ubx-esf-roundtrip-esf_meas_set-no-items",
+  "from": "ubx-esf",
+  "to": "ubx-esf",
+  "input": "b562100208003ab18d0f69016d54",
+  "expect": "b562100208003ab18d0f69016d54",
+  "model": {
+    "@kind": "esf_meas_set",
+    "ubxesf.esf_meas_set_meas.#": "0"
+  }
+}

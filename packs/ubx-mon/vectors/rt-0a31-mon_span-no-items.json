@@ -1,0 +1,11 @@
+{
+  "name": "ubx-mon-roundtrip-mon_span-no-items",
+  "from": "ubx-mon",
+  "to": "ubx-mon",
+  "input": "b5620a3104007f00022d",
+  "expect": "b5620a3104007f00022d",
+  "model": {
+    "@kind": "mon_span",
+    "ubxmon.mon_span_rfblock.#": "0"
+  }
+}

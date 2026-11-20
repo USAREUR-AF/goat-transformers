@@ -1,0 +1,11 @@
+{
+  "name": "unicore-roundtrip-satellite-no-items",
+  "from": "unicore",
+  "to": "unicore",
+  "input": "f112041000486582359f350000bc350000d9f61336f1ec076ac8408c3d9f94101100000000",
+  "expect": "f112041000486582359f350000bc350000d9f61336f1ec076ac8408c3d9f94101100000000",
+  "model": {
+    "@kind": "satellite",
+    "unicore.satellite_groupsat.#": "0"
+  }
+}

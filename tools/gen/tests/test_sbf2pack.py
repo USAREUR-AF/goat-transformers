@@ -99,12 +99,21 @@ class Layout(SbfCase):
                      "fix_count 0:504:16 uiscale:1000", "fix_tilt 0:520:16 sscale:1/32", "fix_spin 0:536:32 twos"):
             self.assertIn("field     sbfposition." + line + "\n", self.pdef)
 
+    def test_a_counted_group_ending_the_body(self):
+        other = self.text(self.root, "packs", "sbf-other", "pack.def")
+        self.assertIn("kind      track\nwhen      0:0:13 4101\nrequires", other)
+        self.assertIn("field     sbf.length 0:16:16 uint\n", other)
+        self.assertIn("group     sbfother.track_sv 0:96 item 32 count 0:64:8\n"
+                      "  field   sbfother.track_sv_svid 0:0:8 uint\n", other)
+        self.assertNotIn("track_n ", other)
+
     def test_no_core_key_for_radians(self):
         self.assertNotIn("field     lat ", self.pdef)
         self.assertIn("sbfposition.fix_latitude", self.pdef)
 
     def test_what_is_not_built(self):
-        for row in ("| Satellites | 4027 | a group repeated by field `N` |",
+        for row in ("| Satellites | 4027 | a group counted by field `N` whose items vary: a sub-block padded to a length the block states |",
+                    "| Odd | 4102 | a group counted by field `N` whose items or fixed part are not a multiple of 4 bytes",
                     "| Optional | 4060 | a part present only when field `Mode` is 1 |",
                     "| Blob | 4061 | a field of type V001 whose length the block length gives |",
                     "| Unnumbered | - | no block number in SBF_MSGIDS |"):
