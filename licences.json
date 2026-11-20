@@ -19,8 +19,3555 @@
       "field_of_use": [],
       "distribution": "public",
       "profile": "open"
+    },
+    "CC-BY-3.0": {
+      "name": "Creative Commons Attribution 3.0 Unported",
+      "url": "https://creativecommons.org/licenses/by/3.0/",
+      "commercial": "yes",
+      "share_alike": false,
+      "attribution": true,
+      "field_of_use": [],
+      "distribution": "public",
+      "profile": "open"
+    },
+    "CC-BY-4.0": {
+      "name": "Creative Commons Attribution 4.0 International",
+      "url": "https://creativecommons.org/licenses/by/4.0/",
+      "commercial": "yes",
+      "share_alike": false,
+      "attribution": true,
+      "field_of_use": [],
+      "distribution": "public",
+      "profile": "open"
+    },
+    "CC-BY-NC-SA-4.0": {
+      "name": "Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International",
+      "url": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+      "commercial": "no",
+      "share_alike": true,
+      "attribution": true,
+      "field_of_use": [],
+      "distribution": "public",
+      "profile": "everything"
+    },
+    "LicenseRef-OASIS-Notice": {
+      "name": "OASIS copyright notice (implementation works allowed with the notice included)",
+      "url": "https://www.oasis-open.org/policies-guidelines/ipr/",
+      "commercial": "yes",
+      "share_alike": false,
+      "attribution": true,
+      "field_of_use": [],
+      "distribution": "public",
+      "profile": "open"
+    },
+    "LicenseRef-OGC-Document": {
+      "name": "OGC Document License Agreement (keep the copyright notice; state that modifications are not approved by OGC)",
+      "url": "https://www.ogc.org/about/policies/document-license-agreement/",
+      "commercial": "yes",
+      "share_alike": false,
+      "attribution": true,
+      "field_of_use": [],
+      "distribution": "public",
+      "profile": "open"
+    },
+    "LicenseRef-unstated": {
+      "name": "No licence stated by the source",
+      "commercial": "unknown",
+      "share_alike": false,
+      "attribution": true,
+      "field_of_use": [],
+      "distribution": "public",
+      "profile": "everything"
     }
   },
-  "packs": {},
-  "modules": {}
+  "packs": {
+    "adsb": {
+      "format": "adsb",
+      "licence": "CC-BY-NC-SA-4.0",
+      "profile": "everything"
+    },
+    "adsb-df18": {
+      "format": "adsb-df18",
+      "licence": "Apache-2.0",
+      "profile": "everything",
+      "because": "uses module adsb (CC-BY-NC-SA-4.0)"
+    },
+    "cap": {
+      "format": "cap",
+      "licence": "LicenseRef-OASIS-Notice",
+      "profile": "open"
+    },
+    "gbfs-1.0-free-bike-status": {
+      "format": "gbfs-1.0-free-bike-status",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-1.0-gbfs": {
+      "format": "gbfs-1.0-gbfs",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-1.0-station-information": {
+      "format": "gbfs-1.0-station-information",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-1.0-station-status": {
+      "format": "gbfs-1.0-station-status",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-1.0-system-alerts": {
+      "format": "gbfs-1.0-system-alerts",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-1.0-system-calendar": {
+      "format": "gbfs-1.0-system-calendar",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-1.0-system-hours": {
+      "format": "gbfs-1.0-system-hours",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-1.0-system-information": {
+      "format": "gbfs-1.0-system-information",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-1.0-system-pricing-plans": {
+      "format": "gbfs-1.0-system-pricing-plans",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-1.0-system-regions": {
+      "format": "gbfs-1.0-system-regions",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-1.1-free-bike-status": {
+      "format": "gbfs-1.1-free-bike-status",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-1.1-gbfs": {
+      "format": "gbfs-1.1-gbfs",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-1.1-gbfs-versions": {
+      "format": "gbfs-1.1-gbfs-versions",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-1.1-station-information": {
+      "format": "gbfs-1.1-station-information",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-1.1-station-status": {
+      "format": "gbfs-1.1-station-status",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-1.1-system-alerts": {
+      "format": "gbfs-1.1-system-alerts",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-1.1-system-calendar": {
+      "format": "gbfs-1.1-system-calendar",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-1.1-system-hours": {
+      "format": "gbfs-1.1-system-hours",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-1.1-system-information": {
+      "format": "gbfs-1.1-system-information",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-1.1-system-pricing-plans": {
+      "format": "gbfs-1.1-system-pricing-plans",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-1.1-system-regions": {
+      "format": "gbfs-1.1-system-regions",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.0-free-bike-status": {
+      "format": "gbfs-2.0-free-bike-status",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.0-gbfs": {
+      "format": "gbfs-2.0-gbfs",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.0-gbfs-versions": {
+      "format": "gbfs-2.0-gbfs-versions",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.0-station-information": {
+      "format": "gbfs-2.0-station-information",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.0-station-status": {
+      "format": "gbfs-2.0-station-status",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.0-system-alerts": {
+      "format": "gbfs-2.0-system-alerts",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.0-system-calendar": {
+      "format": "gbfs-2.0-system-calendar",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.0-system-hours": {
+      "format": "gbfs-2.0-system-hours",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.0-system-information": {
+      "format": "gbfs-2.0-system-information",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.0-system-pricing-plans": {
+      "format": "gbfs-2.0-system-pricing-plans",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.0-system-regions": {
+      "format": "gbfs-2.0-system-regions",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.1-free-bike-status": {
+      "format": "gbfs-2.1-free-bike-status",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.1-gbfs": {
+      "format": "gbfs-2.1-gbfs",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.1-gbfs-versions": {
+      "format": "gbfs-2.1-gbfs-versions",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.1-geofencing-zones": {
+      "format": "gbfs-2.1-geofencing-zones",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.1-station-information": {
+      "format": "gbfs-2.1-station-information",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.1-station-status": {
+      "format": "gbfs-2.1-station-status",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.1-system-alerts": {
+      "format": "gbfs-2.1-system-alerts",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.1-system-calendar": {
+      "format": "gbfs-2.1-system-calendar",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.1-system-hours": {
+      "format": "gbfs-2.1-system-hours",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.1-system-information": {
+      "format": "gbfs-2.1-system-information",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.1-system-pricing-plans": {
+      "format": "gbfs-2.1-system-pricing-plans",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.1-system-regions": {
+      "format": "gbfs-2.1-system-regions",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.1-vehicle-types": {
+      "format": "gbfs-2.1-vehicle-types",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.2-free-bike-status": {
+      "format": "gbfs-2.2-free-bike-status",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.2-gbfs": {
+      "format": "gbfs-2.2-gbfs",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.2-gbfs-versions": {
+      "format": "gbfs-2.2-gbfs-versions",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.2-geofencing-zones": {
+      "format": "gbfs-2.2-geofencing-zones",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.2-station-information": {
+      "format": "gbfs-2.2-station-information",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.2-station-status": {
+      "format": "gbfs-2.2-station-status",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.2-system-alerts": {
+      "format": "gbfs-2.2-system-alerts",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.2-system-calendar": {
+      "format": "gbfs-2.2-system-calendar",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.2-system-hours": {
+      "format": "gbfs-2.2-system-hours",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.2-system-information": {
+      "format": "gbfs-2.2-system-information",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.2-system-pricing-plans": {
+      "format": "gbfs-2.2-system-pricing-plans",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.2-system-regions": {
+      "format": "gbfs-2.2-system-regions",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.2-vehicle-types": {
+      "format": "gbfs-2.2-vehicle-types",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.3-free-bike-status": {
+      "format": "gbfs-2.3-free-bike-status",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.3-gbfs": {
+      "format": "gbfs-2.3-gbfs",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.3-gbfs-versions": {
+      "format": "gbfs-2.3-gbfs-versions",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.3-geofencing-zones": {
+      "format": "gbfs-2.3-geofencing-zones",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.3-station-information": {
+      "format": "gbfs-2.3-station-information",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.3-station-status": {
+      "format": "gbfs-2.3-station-status",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.3-system-alerts": {
+      "format": "gbfs-2.3-system-alerts",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.3-system-calendar": {
+      "format": "gbfs-2.3-system-calendar",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.3-system-hours": {
+      "format": "gbfs-2.3-system-hours",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.3-system-information": {
+      "format": "gbfs-2.3-system-information",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.3-system-pricing-plans": {
+      "format": "gbfs-2.3-system-pricing-plans",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.3-system-regions": {
+      "format": "gbfs-2.3-system-regions",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-2.3-vehicle-types": {
+      "format": "gbfs-2.3-vehicle-types",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-3.0-gbfs": {
+      "format": "gbfs-3.0-gbfs",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-3.0-gbfs-versions": {
+      "format": "gbfs-3.0-gbfs-versions",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-3.0-geofencing-zones": {
+      "format": "gbfs-3.0-geofencing-zones",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-3.0-manifest": {
+      "format": "gbfs-3.0-manifest",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-3.0-station-information": {
+      "format": "gbfs-3.0-station-information",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-3.0-station-status": {
+      "format": "gbfs-3.0-station-status",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-3.0-system-alerts": {
+      "format": "gbfs-3.0-system-alerts",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-3.0-system-information": {
+      "format": "gbfs-3.0-system-information",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-3.0-system-pricing-plans": {
+      "format": "gbfs-3.0-system-pricing-plans",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-3.0-system-regions": {
+      "format": "gbfs-3.0-system-regions",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-3.0-vehicle-status": {
+      "format": "gbfs-3.0-vehicle-status",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-3.0-vehicle-types": {
+      "format": "gbfs-3.0-vehicle-types",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs-3.1-rc3-vehicle-availability": {
+      "format": "gbfs-3.1-rc3-vehicle-availability",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gpx": {
+      "format": "gpx",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "kml": {
+      "format": "kml",
+      "licence": "LicenseRef-OGC-Document",
+      "profile": "open"
+    },
+    "mds": {
+      "format": "mds",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "mvt": {
+      "format": "mvt",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "overture-address": {
+      "format": "overture-address",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "overture-bathymetry": {
+      "format": "overture-bathymetry",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "overture-building": {
+      "format": "overture-building",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "overture-building-part": {
+      "format": "overture-building-part",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "overture-connector": {
+      "format": "overture-connector",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "overture-division": {
+      "format": "overture-division",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "overture-division-area": {
+      "format": "overture-division-area",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "overture-division-boundary": {
+      "format": "overture-division-boundary",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "overture-infrastructure": {
+      "format": "overture-infrastructure",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "overture-land": {
+      "format": "overture-land",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "overture-land-cover": {
+      "format": "overture-land-cover",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "overture-land-use": {
+      "format": "overture-land-use",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "overture-place": {
+      "format": "overture-place",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "overture-segment": {
+      "format": "overture-segment",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "overture-water": {
+      "format": "overture-water",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-action-request": {
+      "format": "px4-ulog-action-request",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-actuator-armed": {
+      "format": "px4-ulog-actuator-armed",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-actuator-controls-status-0": {
+      "format": "px4-ulog-actuator-controls-status-0",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-actuator-controls-status-1": {
+      "format": "px4-ulog-actuator-controls-status-1",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-actuator-motors": {
+      "format": "px4-ulog-actuator-motors",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-actuator-outputs": {
+      "format": "px4-ulog-actuator-outputs",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-actuator-outputs-debug": {
+      "format": "px4-ulog-actuator-outputs-debug",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-actuator-outputs-sim": {
+      "format": "px4-ulog-actuator-outputs-sim",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-actuator-servos": {
+      "format": "px4-ulog-actuator-servos",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-actuator-servos-trim": {
+      "format": "px4-ulog-actuator-servos-trim",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-actuator-test": {
+      "format": "px4-ulog-actuator-test",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-adc-report": {
+      "format": "px4-ulog-adc-report",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-airspeed": {
+      "format": "px4-ulog-airspeed",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-airspeed-validated": {
+      "format": "px4-ulog-airspeed-validated",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-airspeed-wind": {
+      "format": "px4-ulog-airspeed-wind",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-arming-check-reply": {
+      "format": "px4-ulog-arming-check-reply",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-arming-check-request": {
+      "format": "px4-ulog-arming-check-request",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-autotune-attitude-control-status": {
+      "format": "px4-ulog-autotune-attitude-control-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-aux-global-position": {
+      "format": "px4-ulog-aux-global-position",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-battery-info": {
+      "format": "px4-ulog-battery-info",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-battery-status": {
+      "format": "px4-ulog-battery-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-button-event": {
+      "format": "px4-ulog-button-event",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-camera-capture": {
+      "format": "px4-ulog-camera-capture",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-camera-status": {
+      "format": "px4-ulog-camera-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-camera-trigger": {
+      "format": "px4-ulog-camera-trigger",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-can-interface-status": {
+      "format": "px4-ulog-can-interface-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-cellular-status": {
+      "format": "px4-ulog-cellular-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-collision-constraints": {
+      "format": "px4-ulog-collision-constraints",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-config-control-setpoints": {
+      "format": "px4-ulog-config-control-setpoints",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-config-overrides": {
+      "format": "px4-ulog-config-overrides",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-config-overrides-request": {
+      "format": "px4-ulog-config-overrides-request",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-control-allocator-status": {
+      "format": "px4-ulog-control-allocator-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-cpuload": {
+      "format": "px4-ulog-cpuload",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-dataman-request": {
+      "format": "px4-ulog-dataman-request",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-dataman-response": {
+      "format": "px4-ulog-dataman-response",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-debug-array": {
+      "format": "px4-ulog-debug-array",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-debug-key-value": {
+      "format": "px4-ulog-debug-key-value",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-debug-value": {
+      "format": "px4-ulog-debug-value",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-debug-vect": {
+      "format": "px4-ulog-debug-vect",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-differential-pressure": {
+      "format": "px4-ulog-differential-pressure",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-distance-sensor": {
+      "format": "px4-ulog-distance-sensor",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-distance-sensor-mode-change-request": {
+      "format": "px4-ulog-distance-sensor-mode-change-request",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-dronecan-node-status": {
+      "format": "px4-ulog-dronecan-node-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-ekf2-timestamps": {
+      "format": "px4-ulog-ekf2-timestamps",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-esc-report": {
+      "format": "px4-ulog-esc-report",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-esc-serial-passthru": {
+      "format": "px4-ulog-esc-serial-passthru",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-esc-status": {
+      "format": "px4-ulog-esc-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-estimator-aid-src-airspeed": {
+      "format": "px4-ulog-estimator-aid-src-airspeed",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-estimator-aid-src-aux-global-position": {
+      "format": "px4-ulog-estimator-aid-src-aux-global-position",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-estimator-aid-src-aux-vel": {
+      "format": "px4-ulog-estimator-aid-src-aux-vel",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-estimator-aid-src-baro-hgt": {
+      "format": "px4-ulog-estimator-aid-src-baro-hgt",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-estimator-aid-src-drag": {
+      "format": "px4-ulog-estimator-aid-src-drag",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-estimator-aid-src-ev-hgt": {
+      "format": "px4-ulog-estimator-aid-src-ev-hgt",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-estimator-aid-src-ev-pos": {
+      "format": "px4-ulog-estimator-aid-src-ev-pos",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-estimator-aid-src-ev-vel": {
+      "format": "px4-ulog-estimator-aid-src-ev-vel",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-estimator-aid-src-ev-yaw": {
+      "format": "px4-ulog-estimator-aid-src-ev-yaw",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-estimator-aid-src-fake-hgt": {
+      "format": "px4-ulog-estimator-aid-src-fake-hgt",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-estimator-aid-src-fake-pos": {
+      "format": "px4-ulog-estimator-aid-src-fake-pos",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-estimator-aid-src-gnss-hgt": {
+      "format": "px4-ulog-estimator-aid-src-gnss-hgt",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-estimator-aid-src-gnss-pos": {
+      "format": "px4-ulog-estimator-aid-src-gnss-pos",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-estimator-aid-src-gnss-vel": {
+      "format": "px4-ulog-estimator-aid-src-gnss-vel",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-estimator-aid-src-gnss-yaw": {
+      "format": "px4-ulog-estimator-aid-src-gnss-yaw",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-estimator-aid-src-gravity": {
+      "format": "px4-ulog-estimator-aid-src-gravity",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-estimator-aid-src-mag": {
+      "format": "px4-ulog-estimator-aid-src-mag",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-estimator-aid-src-optical-flow": {
+      "format": "px4-ulog-estimator-aid-src-optical-flow",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-estimator-aid-src-rng-hgt": {
+      "format": "px4-ulog-estimator-aid-src-rng-hgt",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-estimator-aid-src-sideslip": {
+      "format": "px4-ulog-estimator-aid-src-sideslip",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-estimator-attitude": {
+      "format": "px4-ulog-estimator-attitude",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-estimator-baro-bias": {
+      "format": "px4-ulog-estimator-baro-bias",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-estimator-bias3d": {
+      "format": "px4-ulog-estimator-bias3d",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-estimator-ev-pos-bias": {
+      "format": "px4-ulog-estimator-ev-pos-bias",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-estimator-event-flags": {
+      "format": "px4-ulog-estimator-event-flags",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-estimator-global-position": {
+      "format": "px4-ulog-estimator-global-position",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-estimator-gnss-hgt-bias": {
+      "format": "px4-ulog-estimator-gnss-hgt-bias",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-estimator-gps-status": {
+      "format": "px4-ulog-estimator-gps-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-estimator-innovation-test-ratios": {
+      "format": "px4-ulog-estimator-innovation-test-ratios",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-estimator-innovation-variances": {
+      "format": "px4-ulog-estimator-innovation-variances",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-estimator-innovations": {
+      "format": "px4-ulog-estimator-innovations",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-estimator-local-position": {
+      "format": "px4-ulog-estimator-local-position",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-estimator-odometry": {
+      "format": "px4-ulog-estimator-odometry",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-estimator-optical-flow-vel": {
+      "format": "px4-ulog-estimator-optical-flow-vel",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-estimator-selector-status": {
+      "format": "px4-ulog-estimator-selector-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-estimator-sensor-bias": {
+      "format": "px4-ulog-estimator-sensor-bias",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-estimator-states": {
+      "format": "px4-ulog-estimator-states",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-estimator-status": {
+      "format": "px4-ulog-estimator-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-estimator-status-flags": {
+      "format": "px4-ulog-estimator-status-flags",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-estimator-wind": {
+      "format": "px4-ulog-estimator-wind",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-event": {
+      "format": "px4-ulog-event",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-external-ins-attitude": {
+      "format": "px4-ulog-external-ins-attitude",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-external-ins-global-position": {
+      "format": "px4-ulog-external-ins-global-position",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-external-ins-local-position": {
+      "format": "px4-ulog-external-ins-local-position",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-failsafe-flags": {
+      "format": "px4-ulog-failsafe-flags",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-failure-detector-status": {
+      "format": "px4-ulog-failure-detector-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-figure-eight-status": {
+      "format": "px4-ulog-figure-eight-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-fixed-wing-lateral-guidance-status": {
+      "format": "px4-ulog-fixed-wing-lateral-guidance-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-fixed-wing-lateral-setpoint": {
+      "format": "px4-ulog-fixed-wing-lateral-setpoint",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-fixed-wing-lateral-status": {
+      "format": "px4-ulog-fixed-wing-lateral-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-fixed-wing-longitudinal-setpoint": {
+      "format": "px4-ulog-fixed-wing-longitudinal-setpoint",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-fixed-wing-runway-control": {
+      "format": "px4-ulog-fixed-wing-runway-control",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-flaps-setpoint": {
+      "format": "px4-ulog-flaps-setpoint",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-flight-phase-estimation": {
+      "format": "px4-ulog-flight-phase-estimation",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-follow-target": {
+      "format": "px4-ulog-follow-target",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-follow-target-estimator": {
+      "format": "px4-ulog-follow-target-estimator",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-follow-target-status": {
+      "format": "px4-ulog-follow-target-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-fuel-tank-status": {
+      "format": "px4-ulog-fuel-tank-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-fw-virtual-attitude-setpoint": {
+      "format": "px4-ulog-fw-virtual-attitude-setpoint",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-generator-status": {
+      "format": "px4-ulog-generator-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-geofence-result": {
+      "format": "px4-ulog-geofence-result",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-geofence-status": {
+      "format": "px4-ulog-geofence-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-gimbal-controls": {
+      "format": "px4-ulog-gimbal-controls",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-gimbal-device-attitude-status": {
+      "format": "px4-ulog-gimbal-device-attitude-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-gimbal-device-information": {
+      "format": "px4-ulog-gimbal-device-information",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-gimbal-device-set-attitude": {
+      "format": "px4-ulog-gimbal-device-set-attitude",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-gimbal-manager-information": {
+      "format": "px4-ulog-gimbal-manager-information",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-gimbal-manager-set-attitude": {
+      "format": "px4-ulog-gimbal-manager-set-attitude",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-gimbal-manager-set-manual-control": {
+      "format": "px4-ulog-gimbal-manager-set-manual-control",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-gimbal-manager-status": {
+      "format": "px4-ulog-gimbal-manager-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-gimbal-v1-command": {
+      "format": "px4-ulog-gimbal-v1-command",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-goto-setpoint": {
+      "format": "px4-ulog-goto-setpoint",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-gpio-config": {
+      "format": "px4-ulog-gpio-config",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-gpio-in": {
+      "format": "px4-ulog-gpio-in",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-gpio-out": {
+      "format": "px4-ulog-gpio-out",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-gpio-request": {
+      "format": "px4-ulog-gpio-request",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-gps-dump": {
+      "format": "px4-ulog-gps-dump",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-gps-inject-data": {
+      "format": "px4-ulog-gps-inject-data",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-gripper": {
+      "format": "px4-ulog-gripper",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-health-report": {
+      "format": "px4-ulog-health-report",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-heater-status": {
+      "format": "px4-ulog-heater-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-home-position": {
+      "format": "px4-ulog-home-position",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-hover-thrust-estimate": {
+      "format": "px4-ulog-hover-thrust-estimate",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-input-rc": {
+      "format": "px4-ulog-input-rc",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-internal-combustion-engine-control": {
+      "format": "px4-ulog-internal-combustion-engine-control",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-internal-combustion-engine-status": {
+      "format": "px4-ulog-internal-combustion-engine-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-iridiumsbd-status": {
+      "format": "px4-ulog-iridiumsbd-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-irlock-report": {
+      "format": "px4-ulog-irlock-report",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-landing-gear": {
+      "format": "px4-ulog-landing-gear",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-landing-gear-wheel": {
+      "format": "px4-ulog-landing-gear-wheel",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-landing-target-innovations": {
+      "format": "px4-ulog-landing-target-innovations",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-landing-target-pose": {
+      "format": "px4-ulog-landing-target-pose",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-lateral-control-configuration": {
+      "format": "px4-ulog-lateral-control-configuration",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-launch-detection-status": {
+      "format": "px4-ulog-launch-detection-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-led-control": {
+      "format": "px4-ulog-led-control",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-log-message": {
+      "format": "px4-ulog-log-message",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-logger-status": {
+      "format": "px4-ulog-logger-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-longitudinal-control-configuration": {
+      "format": "px4-ulog-longitudinal-control-configuration",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-mag-worker-data": {
+      "format": "px4-ulog-mag-worker-data",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-magnetometer-bias-estimate": {
+      "format": "px4-ulog-magnetometer-bias-estimate",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-manual-control-input": {
+      "format": "px4-ulog-manual-control-input",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-manual-control-setpoint": {
+      "format": "px4-ulog-manual-control-setpoint",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-manual-control-switches": {
+      "format": "px4-ulog-manual-control-switches",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-mavlink-log": {
+      "format": "px4-ulog-mavlink-log",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-mavlink-tunnel": {
+      "format": "px4-ulog-mavlink-tunnel",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-mc-virtual-attitude-setpoint": {
+      "format": "px4-ulog-mc-virtual-attitude-setpoint",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-message-format-request": {
+      "format": "px4-ulog-message-format-request",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-message-format-response": {
+      "format": "px4-ulog-message-format-response",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-mission": {
+      "format": "px4-ulog-mission",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-mission-result": {
+      "format": "px4-ulog-mission-result",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-mode-completed": {
+      "format": "px4-ulog-mode-completed",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-mount-orientation": {
+      "format": "px4-ulog-mount-orientation",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-navigator-mission-item": {
+      "format": "px4-ulog-navigator-mission-item",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-navigator-status": {
+      "format": "px4-ulog-navigator-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-neural-control": {
+      "format": "px4-ulog-neural-control",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-obstacle-distance": {
+      "format": "px4-ulog-obstacle-distance",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-obstacle-distance-fused": {
+      "format": "px4-ulog-obstacle-distance-fused",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-offboard-control-mode": {
+      "format": "px4-ulog-offboard-control-mode",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-onboard-computer-status": {
+      "format": "px4-ulog-onboard-computer-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-open-drone-id-arm-status": {
+      "format": "px4-ulog-open-drone-id-arm-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-open-drone-id-operator-id": {
+      "format": "px4-ulog-open-drone-id-operator-id",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-open-drone-id-self-id": {
+      "format": "px4-ulog-open-drone-id-self-id",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-open-drone-id-system": {
+      "format": "px4-ulog-open-drone-id-system",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-orb-multitest": {
+      "format": "px4-ulog-orb-multitest",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-orb-test": {
+      "format": "px4-ulog-orb-test",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-orb-test-large": {
+      "format": "px4-ulog-orb-test-large",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-orb-test-medium": {
+      "format": "px4-ulog-orb-test-medium",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-orb-test-medium-multi": {
+      "format": "px4-ulog-orb-test-medium-multi",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-orb-test-medium-queue": {
+      "format": "px4-ulog-orb-test-medium-queue",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-orb-test-medium-queue-poll": {
+      "format": "px4-ulog-orb-test-medium-queue-poll",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-orb-test-medium-wrap-around": {
+      "format": "px4-ulog-orb-test-medium-wrap-around",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-orbit-status": {
+      "format": "px4-ulog-orbit-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-parameter-primary-set-value-request": {
+      "format": "px4-ulog-parameter-primary-set-value-request",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-parameter-primary-set-value-response": {
+      "format": "px4-ulog-parameter-primary-set-value-response",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-parameter-remote-set-value-request": {
+      "format": "px4-ulog-parameter-remote-set-value-request",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-parameter-remote-set-value-response": {
+      "format": "px4-ulog-parameter-remote-set-value-response",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-parameter-reset-request": {
+      "format": "px4-ulog-parameter-reset-request",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-parameter-set-used-request": {
+      "format": "px4-ulog-parameter-set-used-request",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-parameter-set-value-request": {
+      "format": "px4-ulog-parameter-set-value-request",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-parameter-set-value-response": {
+      "format": "px4-ulog-parameter-set-value-response",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-parameter-update": {
+      "format": "px4-ulog-parameter-update",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-ping": {
+      "format": "px4-ulog-ping",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-position-controller-landing-status": {
+      "format": "px4-ulog-position-controller-landing-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-position-controller-status": {
+      "format": "px4-ulog-position-controller-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-position-setpoint": {
+      "format": "px4-ulog-position-setpoint",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-position-setpoint-triplet": {
+      "format": "px4-ulog-position-setpoint-triplet",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-power-button-state": {
+      "format": "px4-ulog-power-button-state",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-power-monitor": {
+      "format": "px4-ulog-power-monitor",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-pps-capture": {
+      "format": "px4-ulog-pps-capture",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-pure-pursuit-status": {
+      "format": "px4-ulog-pure-pursuit-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-pwm-input": {
+      "format": "px4-ulog-pwm-input",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-px4io-status": {
+      "format": "px4-ulog-px4io-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-qshell-req": {
+      "format": "px4-ulog-qshell-req",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-qshell-retval": {
+      "format": "px4-ulog-qshell-retval",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-radio-status": {
+      "format": "px4-ulog-radio-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-rate-ctrl-status": {
+      "format": "px4-ulog-rate-ctrl-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-rc-channels": {
+      "format": "px4-ulog-rc-channels",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-rc-parameter-map": {
+      "format": "px4-ulog-rc-parameter-map",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-register-ext-component-reply": {
+      "format": "px4-ulog-register-ext-component-reply",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-register-ext-component-request": {
+      "format": "px4-ulog-register-ext-component-request",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-rover-attitude-setpoint": {
+      "format": "px4-ulog-rover-attitude-setpoint",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-rover-attitude-status": {
+      "format": "px4-ulog-rover-attitude-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-rover-position-setpoint": {
+      "format": "px4-ulog-rover-position-setpoint",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-rover-rate-setpoint": {
+      "format": "px4-ulog-rover-rate-setpoint",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-rover-rate-status": {
+      "format": "px4-ulog-rover-rate-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-rover-speed-setpoint": {
+      "format": "px4-ulog-rover-speed-setpoint",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-rover-speed-status": {
+      "format": "px4-ulog-rover-speed-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-rover-steering-setpoint": {
+      "format": "px4-ulog-rover-steering-setpoint",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-rover-throttle-setpoint": {
+      "format": "px4-ulog-rover-throttle-setpoint",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-rpm": {
+      "format": "px4-ulog-rpm",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-rtl-status": {
+      "format": "px4-ulog-rtl-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-rtl-time-estimate": {
+      "format": "px4-ulog-rtl-time-estimate",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-safety-button": {
+      "format": "px4-ulog-safety-button",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-satellite-info": {
+      "format": "px4-ulog-satellite-info",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-sensor-accel": {
+      "format": "px4-ulog-sensor-accel",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-sensor-accel-fifo": {
+      "format": "px4-ulog-sensor-accel-fifo",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-sensor-airflow": {
+      "format": "px4-ulog-sensor-airflow",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-sensor-baro": {
+      "format": "px4-ulog-sensor-baro",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-sensor-combined": {
+      "format": "px4-ulog-sensor-combined",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-sensor-correction": {
+      "format": "px4-ulog-sensor-correction",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-sensor-gnss-relative": {
+      "format": "px4-ulog-sensor-gnss-relative",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-sensor-gnss-status": {
+      "format": "px4-ulog-sensor-gnss-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-sensor-gps": {
+      "format": "px4-ulog-sensor-gps",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-sensor-gyro": {
+      "format": "px4-ulog-sensor-gyro",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-sensor-gyro-fft": {
+      "format": "px4-ulog-sensor-gyro-fft",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-sensor-gyro-fifo": {
+      "format": "px4-ulog-sensor-gyro-fifo",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-sensor-hygrometer": {
+      "format": "px4-ulog-sensor-hygrometer",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-sensor-mag": {
+      "format": "px4-ulog-sensor-mag",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-sensor-optical-flow": {
+      "format": "px4-ulog-sensor-optical-flow",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-sensor-preflight-mag": {
+      "format": "px4-ulog-sensor-preflight-mag",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-sensor-selection": {
+      "format": "px4-ulog-sensor-selection",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-sensor-uwb": {
+      "format": "px4-ulog-sensor-uwb",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-sensors-status-baro": {
+      "format": "px4-ulog-sensors-status-baro",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-sensors-status-imu": {
+      "format": "px4-ulog-sensors-status-imu",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-sensors-status-mag": {
+      "format": "px4-ulog-sensors-status-mag",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-spoilers-setpoint": {
+      "format": "px4-ulog-spoilers-setpoint",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-system-power": {
+      "format": "px4-ulog-system-power",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-takeoff-status": {
+      "format": "px4-ulog-takeoff-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-task-stack-info": {
+      "format": "px4-ulog-task-stack-info",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-tecs-status": {
+      "format": "px4-ulog-tecs-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-telemetry-status": {
+      "format": "px4-ulog-telemetry-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-tiltrotor-extra-controls": {
+      "format": "px4-ulog-tiltrotor-extra-controls",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-timesync-status": {
+      "format": "px4-ulog-timesync-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-trajectory-setpoint": {
+      "format": "px4-ulog-trajectory-setpoint",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-trajectory-setpoint6dof": {
+      "format": "px4-ulog-trajectory-setpoint6dof",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-transponder-report": {
+      "format": "px4-ulog-transponder-report",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-tune-control": {
+      "format": "px4-ulog-tune-control",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-uavcan-parameter-request": {
+      "format": "px4-ulog-uavcan-parameter-request",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-uavcan-parameter-value": {
+      "format": "px4-ulog-uavcan-parameter-value",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-ulog-stream": {
+      "format": "px4-ulog-ulog-stream",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-ulog-stream-ack": {
+      "format": "px4-ulog-ulog-stream-ack",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-unregister-ext-component": {
+      "format": "px4-ulog-unregister-ext-component",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-vehicle-acceleration": {
+      "format": "px4-ulog-vehicle-acceleration",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-vehicle-air-data": {
+      "format": "px4-ulog-vehicle-air-data",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-vehicle-angular-acceleration-setpoint": {
+      "format": "px4-ulog-vehicle-angular-acceleration-setpoint",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-vehicle-angular-velocity": {
+      "format": "px4-ulog-vehicle-angular-velocity",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-vehicle-angular-velocity-groundtruth": {
+      "format": "px4-ulog-vehicle-angular-velocity-groundtruth",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-vehicle-attitude": {
+      "format": "px4-ulog-vehicle-attitude",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-vehicle-attitude-groundtruth": {
+      "format": "px4-ulog-vehicle-attitude-groundtruth",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-vehicle-attitude-setpoint": {
+      "format": "px4-ulog-vehicle-attitude-setpoint",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-vehicle-command": {
+      "format": "px4-ulog-vehicle-command",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-vehicle-command-ack": {
+      "format": "px4-ulog-vehicle-command-ack",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-vehicle-command-mode-executor": {
+      "format": "px4-ulog-vehicle-command-mode-executor",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-vehicle-constraints": {
+      "format": "px4-ulog-vehicle-constraints",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-vehicle-control-mode": {
+      "format": "px4-ulog-vehicle-control-mode",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-vehicle-global-position": {
+      "format": "px4-ulog-vehicle-global-position",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-vehicle-global-position-groundtruth": {
+      "format": "px4-ulog-vehicle-global-position-groundtruth",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-vehicle-gps-position": {
+      "format": "px4-ulog-vehicle-gps-position",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-vehicle-imu": {
+      "format": "px4-ulog-vehicle-imu",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-vehicle-imu-status": {
+      "format": "px4-ulog-vehicle-imu-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-vehicle-land-detected": {
+      "format": "px4-ulog-vehicle-land-detected",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-vehicle-local-position": {
+      "format": "px4-ulog-vehicle-local-position",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-vehicle-local-position-groundtruth": {
+      "format": "px4-ulog-vehicle-local-position-groundtruth",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-vehicle-local-position-setpoint": {
+      "format": "px4-ulog-vehicle-local-position-setpoint",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-vehicle-magnetometer": {
+      "format": "px4-ulog-vehicle-magnetometer",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-vehicle-mocap-odometry": {
+      "format": "px4-ulog-vehicle-mocap-odometry",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-vehicle-odometry": {
+      "format": "px4-ulog-vehicle-odometry",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-vehicle-optical-flow": {
+      "format": "px4-ulog-vehicle-optical-flow",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-vehicle-optical-flow-vel": {
+      "format": "px4-ulog-vehicle-optical-flow-vel",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-vehicle-rates-setpoint": {
+      "format": "px4-ulog-vehicle-rates-setpoint",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-vehicle-roi": {
+      "format": "px4-ulog-vehicle-roi",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-vehicle-status": {
+      "format": "px4-ulog-vehicle-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-vehicle-thrust-setpoint": {
+      "format": "px4-ulog-vehicle-thrust-setpoint",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-vehicle-thrust-setpoint-virtual-fw": {
+      "format": "px4-ulog-vehicle-thrust-setpoint-virtual-fw",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-vehicle-thrust-setpoint-virtual-mc": {
+      "format": "px4-ulog-vehicle-thrust-setpoint-virtual-mc",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-vehicle-torque-setpoint": {
+      "format": "px4-ulog-vehicle-torque-setpoint",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-vehicle-torque-setpoint-virtual-fw": {
+      "format": "px4-ulog-vehicle-torque-setpoint-virtual-fw",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-vehicle-torque-setpoint-virtual-mc": {
+      "format": "px4-ulog-vehicle-torque-setpoint-virtual-mc",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-vehicle-visual-odometry": {
+      "format": "px4-ulog-vehicle-visual-odometry",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-velocity-limits": {
+      "format": "px4-ulog-velocity-limits",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-vtol-vehicle-status": {
+      "format": "px4-ulog-vtol-vehicle-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-wheel-encoders": {
+      "format": "px4-ulog-wheel-encoders",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-wind": {
+      "format": "px4-ulog-wind",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4-ulog-yaw-estimator-status": {
+      "format": "px4-ulog-yaw-estimator-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-aeronautics-aircraft": {
+      "format": "sdm-aeronautics-aircraft",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-aeronautics-aircraft-model": {
+      "format": "sdm-aeronautics-aircraft-model",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-aeronautics-airline": {
+      "format": "sdm-aeronautics-airline",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-aeronautics-airport": {
+      "format": "sdm-aeronautics-airport",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-aeronautics-flight": {
+      "format": "sdm-aeronautics-flight",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-aeronautics-flight-notification": {
+      "format": "sdm-aeronautics-flight-notification",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-device-camera": {
+      "format": "sdm-device-camera",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-device-device": {
+      "format": "sdm-device-device",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-device-device-measurement": {
+      "format": "sdm-device-device-measurement",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-device-device-model": {
+      "format": "sdm-device-device-model",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-device-device-operation": {
+      "format": "sdm-device-device-operation",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-device-modbus": {
+      "format": "sdm-device-modbus",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-device-polar-h10": {
+      "format": "sdm-device-polar-h10",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-device-privacy-object": {
+      "format": "sdm-device-privacy-object",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-device-sense-hat": {
+      "format": "sdm-device-sense-hat",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-device-smart-metering-observation": {
+      "format": "sdm-device-smart-metering-observation",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-device-uwb-anchor": {
+      "format": "sdm-device-uwb-anchor",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-environment-aero-allergen-observed": {
+      "format": "sdm-environment-aero-allergen-observed",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-environment-air-quality-forecast": {
+      "format": "sdm-environment-air-quality-forecast",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-environment-air-quality-monitoring": {
+      "format": "sdm-environment-air-quality-monitoring",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-environment-air-quality-observed": {
+      "format": "sdm-environment-air-quality-observed",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-environment-carbon-footprint": {
+      "format": "sdm-environment-carbon-footprint",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-environment-electro-magnetic-observed": {
+      "format": "sdm-environment-electro-magnetic-observed",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-environment-environment-observed": {
+      "format": "sdm-environment-environment-observed",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-environment-flood-monitoring": {
+      "format": "sdm-environment-flood-monitoring",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-environment-indoor-environment-observed": {
+      "format": "sdm-environment-indoor-environment-observed",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-environment-mosquito-density": {
+      "format": "sdm-environment-mosquito-density",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-environment-night-sky-quality": {
+      "format": "sdm-environment-night-sky-quality",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-environment-noise-level-observed": {
+      "format": "sdm-environment-noise-level-observed",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-environment-noise-pollution": {
+      "format": "sdm-environment-noise-pollution",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-environment-noise-pollution-forecast": {
+      "format": "sdm-environment-noise-pollution-forecast",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-environment-phreatic-observed": {
+      "format": "sdm-environment-phreatic-observed",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-environment-rain-fall-radar-observed": {
+      "format": "sdm-environment-rain-fall-radar-observed",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-environment-traffic-environment-impact": {
+      "format": "sdm-environment-traffic-environment-impact",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-environment-traffic-environment-impact-forecast": {
+      "format": "sdm-environment-traffic-environment-impact-forecast",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-environment-water-observed": {
+      "format": "sdm-environment-water-observed",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-marinetransport-berth": {
+      "format": "sdm-marinetransport-berth",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-marinetransport-booking": {
+      "format": "sdm-marinetransport-booking",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-marinetransport-edi-codeco": {
+      "format": "sdm-marinetransport-edi-codeco",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-marinetransport-port": {
+      "format": "sdm-marinetransport-port",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-marinetransport-port-authority": {
+      "format": "sdm-marinetransport-port-authority",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-marinetransport-port-call": {
+      "format": "sdm-marinetransport-port-call",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-marinetransport-vessel": {
+      "format": "sdm-marinetransport-vessel",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-pointofinterest-beach": {
+      "format": "sdm-pointofinterest-beach",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-pointofinterest-museum": {
+      "format": "sdm-pointofinterest-museum",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-pointofinterest-point-of-interest": {
+      "format": "sdm-pointofinterest-point-of-interest",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-pointofinterest-store": {
+      "format": "sdm-pointofinterest-store",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-transportation-anonymous-commuter-id": {
+      "format": "sdm-transportation-anonymous-commuter-id",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-transportation-anpr-flow-observed": {
+      "format": "sdm-transportation-anpr-flow-observed",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-transportation-bike-hire-docking-station": {
+      "format": "sdm-transportation-bike-hire-docking-station",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-transportation-bike-lane": {
+      "format": "sdm-transportation-bike-lane",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-transportation-city-work": {
+      "format": "sdm-transportation-city-work",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-transportation-crowd-flow-observed": {
+      "format": "sdm-transportation-crowd-flow-observed",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-transportation-ev-charging-station": {
+      "format": "sdm-transportation-ev-charging-station",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-transportation-fare-collection-system": {
+      "format": "sdm-transportation-fare-collection-system",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-transportation-fleet-vehicle": {
+      "format": "sdm-transportation-fleet-vehicle",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-transportation-fleet-vehicle-operation": {
+      "format": "sdm-transportation-fleet-vehicle-operation",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-transportation-fleet-vehicle-status": {
+      "format": "sdm-transportation-fleet-vehicle-status",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-transportation-item-flow-observed": {
+      "format": "sdm-transportation-item-flow-observed",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-transportation-restricted-traffic-area": {
+      "format": "sdm-transportation-restricted-traffic-area",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-transportation-restriction-exception": {
+      "format": "sdm-transportation-restriction-exception",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-transportation-road": {
+      "format": "sdm-transportation-road",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-transportation-road-accident": {
+      "format": "sdm-transportation-road-accident",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-transportation-road-segment": {
+      "format": "sdm-transportation-road-segment",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-transportation-special-restriction": {
+      "format": "sdm-transportation-special-restriction",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-transportation-traffic-flow-observed": {
+      "format": "sdm-transportation-traffic-flow-observed",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-transportation-traffic-violation": {
+      "format": "sdm-transportation-traffic-violation",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-transportation-transport-station": {
+      "format": "sdm-transportation-transport-station",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-transportation-vehicle": {
+      "format": "sdm-transportation-vehicle",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-transportation-vehicle-fault": {
+      "format": "sdm-transportation-vehicle-fault",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-transportation-vehicle-model": {
+      "format": "sdm-transportation-vehicle-model",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-urbanmobility-arrival-estimation": {
+      "format": "sdm-urbanmobility-arrival-estimation",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-urbanmobility-gtfs-access-point": {
+      "format": "sdm-urbanmobility-gtfs-access-point",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-urbanmobility-gtfs-agency": {
+      "format": "sdm-urbanmobility-gtfs-agency",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-urbanmobility-gtfs-calendar-date-rule": {
+      "format": "sdm-urbanmobility-gtfs-calendar-date-rule",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-urbanmobility-gtfs-calendar-rule": {
+      "format": "sdm-urbanmobility-gtfs-calendar-rule",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-urbanmobility-gtfs-frequency": {
+      "format": "sdm-urbanmobility-gtfs-frequency",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-urbanmobility-gtfs-route": {
+      "format": "sdm-urbanmobility-gtfs-route",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-urbanmobility-gtfs-service": {
+      "format": "sdm-urbanmobility-gtfs-service",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-urbanmobility-gtfs-shape": {
+      "format": "sdm-urbanmobility-gtfs-shape",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-urbanmobility-gtfs-station": {
+      "format": "sdm-urbanmobility-gtfs-station",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-urbanmobility-gtfs-stop": {
+      "format": "sdm-urbanmobility-gtfs-stop",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-urbanmobility-gtfs-stop-time": {
+      "format": "sdm-urbanmobility-gtfs-stop-time",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-urbanmobility-gtfs-transfer-rule": {
+      "format": "sdm-urbanmobility-gtfs-transfer-rule",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-urbanmobility-gtfs-trip": {
+      "format": "sdm-urbanmobility-gtfs-trip",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-urbanmobility-public-transport-route": {
+      "format": "sdm-urbanmobility-public-transport-route",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-urbanmobility-public-transport-stop": {
+      "format": "sdm-urbanmobility-public-transport-stop",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-urbanmobility-transit-management": {
+      "format": "sdm-urbanmobility-transit-management",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-weather-sea-conditions": {
+      "format": "sdm-weather-sea-conditions",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-weather-weather-alert": {
+      "format": "sdm-weather-weather-alert",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-weather-weather-forecast": {
+      "format": "sdm-weather-weather-forecast",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdm-weather-weather-observed": {
+      "format": "sdm-weather-weather-observed",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    }
+  },
+  "modules": {
+    "adsb.def": {
+      "module": "adsb",
+      "licence": "CC-BY-NC-SA-4.0",
+      "profile": "everything"
+    },
+    "cap.def": {
+      "module": "cap",
+      "licence": "LicenseRef-OASIS-Notice",
+      "profile": "open"
+    },
+    "gbfs10freebikestatus.def": {
+      "module": "gbfs10freebikestatus",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs10gbfs.def": {
+      "module": "gbfs10gbfs",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs10stationinformation.def": {
+      "module": "gbfs10stationinformation",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs10stationstatus.def": {
+      "module": "gbfs10stationstatus",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs10systemalerts.def": {
+      "module": "gbfs10systemalerts",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs10systemcalendar.def": {
+      "module": "gbfs10systemcalendar",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs10systemhours.def": {
+      "module": "gbfs10systemhours",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs10systeminformation.def": {
+      "module": "gbfs10systeminformation",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs10systempricingplans.def": {
+      "module": "gbfs10systempricingplans",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs10systemregions.def": {
+      "module": "gbfs10systemregions",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs11freebikestatus.def": {
+      "module": "gbfs11freebikestatus",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs11gbfs.def": {
+      "module": "gbfs11gbfs",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs11gbfsversions.def": {
+      "module": "gbfs11gbfsversions",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs11stationinformation.def": {
+      "module": "gbfs11stationinformation",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs11stationstatus.def": {
+      "module": "gbfs11stationstatus",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs11systemalerts.def": {
+      "module": "gbfs11systemalerts",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs11systemcalendar.def": {
+      "module": "gbfs11systemcalendar",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs11systemhours.def": {
+      "module": "gbfs11systemhours",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs11systeminformation.def": {
+      "module": "gbfs11systeminformation",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs11systempricingplans.def": {
+      "module": "gbfs11systempricingplans",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs11systemregions.def": {
+      "module": "gbfs11systemregions",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs20freebikestatus.def": {
+      "module": "gbfs20freebikestatus",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs20gbfs.def": {
+      "module": "gbfs20gbfs",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs20gbfsversions.def": {
+      "module": "gbfs20gbfsversions",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs20stationinformation.def": {
+      "module": "gbfs20stationinformation",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs20stationstatus.def": {
+      "module": "gbfs20stationstatus",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs20systemalerts.def": {
+      "module": "gbfs20systemalerts",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs20systemcalendar.def": {
+      "module": "gbfs20systemcalendar",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs20systemhours.def": {
+      "module": "gbfs20systemhours",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs20systeminformation.def": {
+      "module": "gbfs20systeminformation",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs20systempricingplans.def": {
+      "module": "gbfs20systempricingplans",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs20systemregions.def": {
+      "module": "gbfs20systemregions",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs21freebikestatus.def": {
+      "module": "gbfs21freebikestatus",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs21gbfs.def": {
+      "module": "gbfs21gbfs",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs21gbfsversions.def": {
+      "module": "gbfs21gbfsversions",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs21geofencingzones.def": {
+      "module": "gbfs21geofencingzones",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs21stationinformation.def": {
+      "module": "gbfs21stationinformation",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs21stationstatus.def": {
+      "module": "gbfs21stationstatus",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs21systemalerts.def": {
+      "module": "gbfs21systemalerts",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs21systemcalendar.def": {
+      "module": "gbfs21systemcalendar",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs21systemhours.def": {
+      "module": "gbfs21systemhours",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs21systeminformation.def": {
+      "module": "gbfs21systeminformation",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs21systempricingplans.def": {
+      "module": "gbfs21systempricingplans",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs21systemregions.def": {
+      "module": "gbfs21systemregions",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs21vehicletypes.def": {
+      "module": "gbfs21vehicletypes",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs22freebikestatus.def": {
+      "module": "gbfs22freebikestatus",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs22gbfs.def": {
+      "module": "gbfs22gbfs",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs22gbfsversions.def": {
+      "module": "gbfs22gbfsversions",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs22geofencingzones.def": {
+      "module": "gbfs22geofencingzones",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs22stationinformation.def": {
+      "module": "gbfs22stationinformation",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs22stationstatus.def": {
+      "module": "gbfs22stationstatus",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs22systemalerts.def": {
+      "module": "gbfs22systemalerts",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs22systemcalendar.def": {
+      "module": "gbfs22systemcalendar",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs22systemhours.def": {
+      "module": "gbfs22systemhours",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs22systeminformation.def": {
+      "module": "gbfs22systeminformation",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs22systempricingplans.def": {
+      "module": "gbfs22systempricingplans",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs22systemregions.def": {
+      "module": "gbfs22systemregions",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs22vehicletypes.def": {
+      "module": "gbfs22vehicletypes",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs23freebikestatus.def": {
+      "module": "gbfs23freebikestatus",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs23gbfs.def": {
+      "module": "gbfs23gbfs",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs23gbfsversions.def": {
+      "module": "gbfs23gbfsversions",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs23geofencingzones.def": {
+      "module": "gbfs23geofencingzones",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs23stationinformation.def": {
+      "module": "gbfs23stationinformation",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs23stationstatus.def": {
+      "module": "gbfs23stationstatus",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs23systemalerts.def": {
+      "module": "gbfs23systemalerts",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs23systemcalendar.def": {
+      "module": "gbfs23systemcalendar",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs23systemhours.def": {
+      "module": "gbfs23systemhours",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs23systeminformation.def": {
+      "module": "gbfs23systeminformation",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs23systempricingplans.def": {
+      "module": "gbfs23systempricingplans",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs23systemregions.def": {
+      "module": "gbfs23systemregions",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs23vehicletypes.def": {
+      "module": "gbfs23vehicletypes",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs30gbfs.def": {
+      "module": "gbfs30gbfs",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs30gbfsversions.def": {
+      "module": "gbfs30gbfsversions",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs30geofencingzones.def": {
+      "module": "gbfs30geofencingzones",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs30manifest.def": {
+      "module": "gbfs30manifest",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs30stationinformation.def": {
+      "module": "gbfs30stationinformation",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs30stationstatus.def": {
+      "module": "gbfs30stationstatus",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs30systemalerts.def": {
+      "module": "gbfs30systemalerts",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs30systeminformation.def": {
+      "module": "gbfs30systeminformation",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs30systempricingplans.def": {
+      "module": "gbfs30systempricingplans",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs30systemregions.def": {
+      "module": "gbfs30systemregions",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs30vehiclestatus.def": {
+      "module": "gbfs30vehiclestatus",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs30vehicletypes.def": {
+      "module": "gbfs30vehicletypes",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gbfs31rc3vehicleavailability.def": {
+      "module": "gbfs31rc3vehicleavailability",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "gpx.def": {
+      "module": "gpx",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "kml.def": {
+      "module": "kml",
+      "licence": "LicenseRef-OGC-Document",
+      "profile": "open"
+    },
+    "mds.def": {
+      "module": "mds",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "mvt.def": {
+      "module": "mvt",
+      "licence": "CC-BY-3.0",
+      "profile": "open"
+    },
+    "overtureaddress.def": {
+      "module": "overtureaddress",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "overturebathymetry.def": {
+      "module": "overturebathymetry",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "overturebuilding.def": {
+      "module": "overturebuilding",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "overturebuildingpart.def": {
+      "module": "overturebuildingpart",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "overtureconnector.def": {
+      "module": "overtureconnector",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "overturedivision.def": {
+      "module": "overturedivision",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "overturedivisionarea.def": {
+      "module": "overturedivisionarea",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "overturedivisionboundary.def": {
+      "module": "overturedivisionboundary",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "overtureinfrastructure.def": {
+      "module": "overtureinfrastructure",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "overtureland.def": {
+      "module": "overtureland",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "overturelandcover.def": {
+      "module": "overturelandcover",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "overturelanduse.def": {
+      "module": "overturelanduse",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "overtureplace.def": {
+      "module": "overtureplace",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "overturesegment.def": {
+      "module": "overturesegment",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "overturewater.def": {
+      "module": "overturewater",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "px4ulog.def": {
+      "module": "px4ulog",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmaeroallergenobserved.def": {
+      "module": "sdmaeroallergenobserved",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmaircraft.def": {
+      "module": "sdmaircraft",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmaircraftmodel.def": {
+      "module": "sdmaircraftmodel",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmairline.def": {
+      "module": "sdmairline",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmairport.def": {
+      "module": "sdmairport",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmairqualityforecast.def": {
+      "module": "sdmairqualityforecast",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmairqualitymonitoring.def": {
+      "module": "sdmairqualitymonitoring",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmairqualityobserved.def": {
+      "module": "sdmairqualityobserved",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmanonymouscommuterid.def": {
+      "module": "sdmanonymouscommuterid",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmanprflowobserved.def": {
+      "module": "sdmanprflowobserved",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmarrivalestimation.def": {
+      "module": "sdmarrivalestimation",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmbeach.def": {
+      "module": "sdmbeach",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmberth.def": {
+      "module": "sdmberth",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmbikehiredockingstation.def": {
+      "module": "sdmbikehiredockingstation",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmbikelane.def": {
+      "module": "sdmbikelane",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmbooking.def": {
+      "module": "sdmbooking",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmcamera.def": {
+      "module": "sdmcamera",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmcarbonfootprint.def": {
+      "module": "sdmcarbonfootprint",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmcitywork.def": {
+      "module": "sdmcitywork",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmcrowdflowobserved.def": {
+      "module": "sdmcrowdflowobserved",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmdevice.def": {
+      "module": "sdmdevice",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmdevicemeasurement.def": {
+      "module": "sdmdevicemeasurement",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmdevicemodel.def": {
+      "module": "sdmdevicemodel",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmdeviceoperation.def": {
+      "module": "sdmdeviceoperation",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmedicodeco.def": {
+      "module": "sdmedicodeco",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmelectromagneticobserved.def": {
+      "module": "sdmelectromagneticobserved",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmenvironmentobserved.def": {
+      "module": "sdmenvironmentobserved",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmevchargingstation.def": {
+      "module": "sdmevchargingstation",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmfarecollectionsystem.def": {
+      "module": "sdmfarecollectionsystem",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmfleetvehicle.def": {
+      "module": "sdmfleetvehicle",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmfleetvehicleoperation.def": {
+      "module": "sdmfleetvehicleoperation",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmfleetvehiclestatus.def": {
+      "module": "sdmfleetvehiclestatus",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmflight.def": {
+      "module": "sdmflight",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmflightnotification.def": {
+      "module": "sdmflightnotification",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmfloodmonitoring.def": {
+      "module": "sdmfloodmonitoring",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmgtfsaccesspoint.def": {
+      "module": "sdmgtfsaccesspoint",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmgtfsagency.def": {
+      "module": "sdmgtfsagency",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmgtfscalendardaterule.def": {
+      "module": "sdmgtfscalendardaterule",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmgtfscalendarrule.def": {
+      "module": "sdmgtfscalendarrule",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmgtfsfrequency.def": {
+      "module": "sdmgtfsfrequency",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmgtfsroute.def": {
+      "module": "sdmgtfsroute",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmgtfsservice.def": {
+      "module": "sdmgtfsservice",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmgtfsshape.def": {
+      "module": "sdmgtfsshape",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmgtfsstation.def": {
+      "module": "sdmgtfsstation",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmgtfsstop.def": {
+      "module": "sdmgtfsstop",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmgtfsstoptime.def": {
+      "module": "sdmgtfsstoptime",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmgtfstransferrule.def": {
+      "module": "sdmgtfstransferrule",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmgtfstrip.def": {
+      "module": "sdmgtfstrip",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmindoorenvironmentobserved.def": {
+      "module": "sdmindoorenvironmentobserved",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmitemflowobserved.def": {
+      "module": "sdmitemflowobserved",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmmodbus.def": {
+      "module": "sdmmodbus",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmmosquitodensity.def": {
+      "module": "sdmmosquitodensity",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmmuseum.def": {
+      "module": "sdmmuseum",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmnightskyquality.def": {
+      "module": "sdmnightskyquality",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmnoiselevelobserved.def": {
+      "module": "sdmnoiselevelobserved",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmnoisepollution.def": {
+      "module": "sdmnoisepollution",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmnoisepollutionforecast.def": {
+      "module": "sdmnoisepollutionforecast",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmphreaticobserved.def": {
+      "module": "sdmphreaticobserved",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmpointofinterest.def": {
+      "module": "sdmpointofinterest",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmpolarh10.def": {
+      "module": "sdmpolarh10",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmport.def": {
+      "module": "sdmport",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmportauthority.def": {
+      "module": "sdmportauthority",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmportcall.def": {
+      "module": "sdmportcall",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmprivacyobject.def": {
+      "module": "sdmprivacyobject",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmpublictransportroute.def": {
+      "module": "sdmpublictransportroute",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmpublictransportstop.def": {
+      "module": "sdmpublictransportstop",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmrainfallradarobserved.def": {
+      "module": "sdmrainfallradarobserved",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmrestrictedtrafficarea.def": {
+      "module": "sdmrestrictedtrafficarea",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmrestrictionexception.def": {
+      "module": "sdmrestrictionexception",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmroad.def": {
+      "module": "sdmroad",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmroadaccident.def": {
+      "module": "sdmroadaccident",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmroadsegment.def": {
+      "module": "sdmroadsegment",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmseaconditions.def": {
+      "module": "sdmseaconditions",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmsensehat.def": {
+      "module": "sdmsensehat",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmsmartmeteringobservation.def": {
+      "module": "sdmsmartmeteringobservation",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmspecialrestriction.def": {
+      "module": "sdmspecialrestriction",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmstore.def": {
+      "module": "sdmstore",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmtrafficenvironmentimpact.def": {
+      "module": "sdmtrafficenvironmentimpact",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmtrafficenvironmentimpactforecast.def": {
+      "module": "sdmtrafficenvironmentimpactforecast",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmtrafficflowobserved.def": {
+      "module": "sdmtrafficflowobserved",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmtrafficviolation.def": {
+      "module": "sdmtrafficviolation",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmtransitmanagement.def": {
+      "module": "sdmtransitmanagement",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmtransportstation.def": {
+      "module": "sdmtransportstation",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmuwbanchor.def": {
+      "module": "sdmuwbanchor",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmvehicle.def": {
+      "module": "sdmvehicle",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmvehiclefault.def": {
+      "module": "sdmvehiclefault",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmvehiclemodel.def": {
+      "module": "sdmvehiclemodel",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmvessel.def": {
+      "module": "sdmvessel",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmwaterobserved.def": {
+      "module": "sdmwaterobserved",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmweatheralert.def": {
+      "module": "sdmweatheralert",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmweatherforecast.def": {
+      "module": "sdmweatherforecast",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "sdmweatherobserved.def": {
+      "module": "sdmweatherobserved",
+      "licence": "CC-BY-4.0",
+      "profile": "open"
+    }
+  }
 }
