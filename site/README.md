@@ -58,10 +58,11 @@ it is done.
   counted from the tree (`formats`, `message_kinds`, `conversion_vectors`,
   `pair_converters`), from `tools/repo-stats`, the counter of the top-level
   README; the footnotes of the page give the command behind each number. The
-  counts move with every pack, so a difference is printed as a note, and the
-  counts pull request after each merge wave updates them with the README's:
-  `python3 -I site/bundle.py --counts-only --write`, then `--counts-only`,
-  which fails while one differs (it needs no module built);
+  counts move with every merged pack, so `build.sh` writes the tree's counts
+  into the page before it checks it (`python3 -I site/bundle.py --counts-only
+  --write`): the deployed page is never behind the tree it was built from,
+  and a committed page that is behind is a note, not a failure. The counts
+  pull request after each merge wave commits them with the README's;
 - the two outputs shown near the top of the page must be what `goat-xf` prints
   for the same input;
 - the hub figure is copied from `docs/figures/` on every build, so it is the

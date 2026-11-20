@@ -5,8 +5,8 @@
 # packs. Nothing under site/assets/engine/ is written by hand and none of it is
 # kept in git: this script builds the module, copies the packs and model
 # modules, records what goat-xf prints for each sample, writes a manifest with
-# the commit and SHA-256 of every file, and checks that site/index.html states
-# the same numbers and outputs as the tree.
+# the commit and SHA-256 of every file, writes the tree's counts into
+# site/index.html, and checks that the page shows the outputs the tree gives.
 #
 # Needs: a Rust toolchain with the wasm32-unknown-unknown target, python3, git.
 #
@@ -24,6 +24,11 @@ echo "build.sh: the WebAssembly module (bindings/wasm, profile small)"
 
 echo "build.sh: the command-line tool (engines/rust, release)"
 ( cd "$repo/engines/rust" && cargo build --release )
+
+# The counts move with every merged pack: the page is given the tree's counts
+# at build time, so a deployed page is never behind the tree it was built from.
+echo "build.sh: the page's counts, from the tree"
+python3 -I "$here/bundle.py" --counts-only --write
 
 python3 -I "$here/bundle.py" \
   --wasm "$repo/bindings/wasm/target/wasm32-unknown-unknown/small/goat_transformers_wasm.wasm" \
