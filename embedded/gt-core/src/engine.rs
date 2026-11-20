@@ -35,6 +35,17 @@ const XF_F32: u8 = 5;
 const XF_F64: u8 = 6;
 const XF_ASCII: u8 = 7;
 const XF_SIXBIT: u8 = 8;
+// 8 is `sixbit` (spec 0.14); the value transforms of spec 0.15 from 9
+const XF_UISCALE: u8 = 9;
+const XF_SISCALE: u8 = 10;
+const XF_SMAG: u8 = 11;
+const XF_SMSCALE: u8 = 12;
+const XF_F32SCALE: u8 = 13;
+const XF_F64SCALE: u8 = 14;
+const XF_ICAO6: u8 = 15;
+const XF_AIS6: u8 = 16;
+const XF_ASCII7: u8 = 17;
+const XF_OCTAL: u8 = 18;
 
 const F_SWAP: u8 = 1;
 const F_TRIM: u8 = 2;
@@ -114,6 +125,77 @@ fn armor_out(out: &mut [u8], l: u64) -> Result<usize, Error> {
         }
     }
     Ok(n)
+}
+
+/// `chars:icao6`, `chars:ais6`, `chars:ascii7` (spec 0.15): characters of 6
+/// or 7 bits read from the input, the first at bit `off`
+const SRC_ICAO6: u8 = 10;
+const SRC_AIS6: u8 = 11;
+const SRC_ASCII7: u8 = 12;
+/// `octal` (spec 0.15): the `3 * room` bits at `off` as `room` octal digits
+const SRC_OCTAL: u8 = 13;
+
+/// The character of code `c` in a set of `chars` (spec 0.15), None for a
+/// code the set does not define. `ascii7` code 0 is NUL.
+fn char_of(src: u8, c: u8) -> Option<u8> {
+    match src {
+        SRC_ICAO6 => match c {
+            1..=26 => Some(b'A' + c - 1),
+            32 => Some(b' '),
+            48..=57 => Some(c),
+            _ => None,
+        },
+        SRC_AIS6 => Some(if c < 32 { c + 64 } else { c }),
+        _ => match c {
+            0 => Some(0),
+            32..=126 => Some(c),
+            _ => None,
+        },
+    }
+}
+
+/// The code of a character in a set of `chars`, None for one the set cannot
+/// hold (NUL included, ruling 17 of 0.15).
+fn code_of(xf: u8, ch: u8) -> Option<u8> {
+    match xf {
+        XF_ICAO6 => match ch {
+            b'A'..=b'Z' => Some(ch - b'A' + 1),
+            b' ' => Some(32),
+            b'0'..=b'9' => Some(ch),
+            _ => None,
+        },
+        XF_AIS6 => match ch {
+            64..=95 => Some(ch - 64),
+            32..=63 => Some(ch),
+            _ => None,
+        },
+        _ => match ch {
+            32..=126 => Some(ch),
+            _ => None,
+        },
+    }
+}
+
+/// `round(n / d)`, half away from zero, of the exact quotient (spec 0.15).
+fn div_round(n: i128, d: i128) -> Option<i128> {
+    if d == 0 {
+        return None;
+    }
+    let (n, d) = if d < 0 { (n.checked_neg()?, -d) } else { (n, d) };
+    let q = n / d;
+    let r = n % d;
+    Some(if 2 * r.abs() >= d { q + n.signum() } else { q })
+}
+
+/// Sign and magnitude (`smag`, spec 0.15): the highest of the `len` bits is
+/// the sign, 1 negative.
+fn smag(raw: u64, len: u32) -> i64 {
+    let mag = (raw & (mask(len) >> 1)) as i64;
+    if len >= 1 && (raw >> (len - 1)) & 1 == 1 {
+        -mag
+    } else {
+        mag
+    }
 }
 
 /// Text is never copied: a value holds where its bytes are.
@@ -547,6 +629,19 @@ impl<'a, 's> Session<'a, 's> {
                     v
                 }
             }
+            SRC_ICAO6 | SRC_AIS6 => {
+                let c = self.bits(r.off as u64 + 6 * i as u64, 6).unwrap_or(0) as u8;
+                char_of(r.src, c).unwrap_or(0)
+            }
+            SRC_ASCII7 => {
+                let c = self.bits(r.off as u64 + 7 * i as u64, 7).unwrap_or(0) as u8;
+                char_of(r.src, c).unwrap_or(0)
+            }
+            SRC_OCTAL => {
+                let raw = self.bits(r.off as u64, 3 * r.room as u32).unwrap_or(0);
+                let shift = 3 * (r.room as u32).saturating_sub(1).saturating_sub(i as u32);
+                b'0' + (raw.checked_shr(shift).unwrap_or(0) & 7) as u8
+            }
             SRC_PLAN => self.plan.byte(r.off as u64 + i as u64).unwrap_or(0),
             SRC_TEXT => self.texts.get(r.off as usize).and_then(|t| t.get(i as usize)).copied().unwrap_or(0),
             _ => match self.context.get(r.off as usize) {
@@ -637,7 +732,11 @@ impl<'a, 's> Session<'a, 's> {
     /// The pool index of a field's first sentinel: after its scale, when it
     /// has one (FORMAT.md, FIELD).
     fn sentinels(o: &Op) -> u32 {
-        o.b as u32 + if matches!(o.xf, XF_LINSCALE | XF_USCALE | XF_SSCALE) { 3 } else { 0 }
+        let scaled = matches!(
+            o.xf,
+            XF_LINSCALE | XF_USCALE | XF_SSCALE | XF_UISCALE | XF_SISCALE | XF_SMSCALE | XF_F32SCALE | XF_F64SCALE
+        );
+        o.b as u32 + if scaled { 3 } else { 0 }
     }
 
     /// Do the field's bits at `start` hold one of its sentinels? The bits
@@ -678,6 +777,55 @@ impl<'a, 's> Session<'a, 's> {
         Ok(())
     }
 
+    /// The exact factor `num / den` and offset of an integer scale (spec 0.15).
+    fn exact(&self, o: &Op) -> Result<(i64, i64, i64), Error> {
+        let b = o.b as u32;
+        Ok((self.plan.pool(b)? as i64, self.plan.pool(b + 1)? as i64, self.plan.pool(b + 2)? as i64))
+    }
+
+    /// `chars:<set>` (spec 0.15): `len / w` characters of `w` bits, each read
+    /// as `uint` reads it. A code the set does not define, or with `ascii7`
+    /// a NUL followed by a character that is not NUL, fails the field. The
+    /// trailing padding is dropped: NUL for `ascii7`, spaces for `icao6`,
+    /// `@` and spaces for `ais6`.
+    fn read_chars(&self, o: &Op, start: u64) -> Result<Option<Val>, Error> {
+        let len = o.len as u32;
+        let (src, w) = match o.xf {
+            XF_ICAO6 => (SRC_ICAO6, 6),
+            XF_AIS6 => (SRC_AIS6, 6),
+            _ => (SRC_ASCII7, 7),
+        };
+        if len % w != 0 || !(w..=2040).contains(&len) || start > u32::MAX as u64 {
+            return Err(Error::BadPlan);
+        }
+        let room = (len / w) as u16;
+        let mut t = TextRef { src, len: room, room, off: start as u32 };
+        let mut nul = None;
+        for i in 0..room {
+            let c = self.bits(start + i as u64 * w as u64, w).unwrap_or(0) as u8;
+            match char_of(src, c) {
+                None => return Ok(None),
+                Some(0) if nul.is_none() => nul = Some(i),
+                Some(0) => {}
+                // ascii7: a character after a NUL
+                Some(_) if nul.is_some() => return Ok(None),
+                Some(_) => {}
+            }
+        }
+        if let Some(i) = nul {
+            t.len = i;
+        }
+        while t.len > 0 {
+            let c = self.text_at(t, t.len - 1);
+            if c == b' ' && src != SRC_ASCII7 || c == b'@' && src == SRC_AIS6 {
+                t.len -= 1;
+            } else {
+                break;
+            }
+        }
+        Ok(Some(Val::Str(t)))
+    }
+
     /// The value of a field whose bits start at `start`. None: the transform
     /// refuses the bits. The caller has checked the bits are in the input.
     fn read_field(&self, o: &Op, start: u64) -> Result<Option<Val>, Error> {
@@ -715,6 +863,17 @@ impl<'a, 's> Session<'a, 's> {
                 }
             }
             return Ok(Some(Val::Str(t)));
+}
+        if matches!(o.xf, XF_ICAO6 | XF_AIS6 | XF_ASCII7) {
+            return self.read_chars(o, start);
+        }
+        if o.xf == XF_OCTAL {
+            // `len / 3` octal digits with leading zeros (spec 0.15)
+            if len % 3 != 0 || !(3..=63).contains(&len) || start > u32::MAX as u64 {
+                return Err(Error::BadPlan);
+            }
+            let room = (len / 3) as u16;
+            return Ok(Some(Val::Str(TextRef { src: SRC_OCTAL, len: room, room, off: start as u32 })));
         }
         if len == 0 || len > 64 {
             return Err(Error::BadPlan);
@@ -738,6 +897,29 @@ impl<'a, 's> Session<'a, 's> {
             }
             XF_F32 => {
                 let x = f32::from_bits(raw as u32) as f64;
+                if num::is_finite(x) {
+                    Some(Val::Float(x))
+                } else {
+                    None
+                }
+            }
+            // spec 0.15: round(v * factor) + offset, exactly; outside 64 bits fails
+            XF_UISCALE | XF_SISCALE => {
+                let (n, d, off) = self.exact(o)?;
+                let v = if o.xf == XF_UISCALE { raw as i128 } else { signed(raw, len) as i128 };
+                let r = div_round(v * n as i128, d as i128).ok_or(Error::BadPlan)? + off as i128;
+                i64::try_from(r).ok().map(Val::Int)
+            }
+            XF_SMAG => Some(Val::Int(smag(raw, len))),
+            XF_SMSCALE | XF_F32SCALE | XF_F64SCALE => {
+                let v = match o.xf {
+                    XF_SMSCALE => smag(raw, len) as f64,
+                    XF_F32SCALE => f32::from_bits(raw as u32) as f64,
+                    _ => f64::from_bits(raw),
+                };
+                // ruling 1 of 0.5: v * num / den, then + offset; not finite fails
+                let (n, d, off) = self.scale(o)?;
+                let x = if d != 0.0 { v * n / d + off } else { v * n + off };
                 if num::is_finite(x) {
                     Some(Val::Float(x))
                 } else {
@@ -795,6 +977,54 @@ impl<'a, 's> Session<'a, 's> {
                 let v = if c >= 0x40 { c - 0x40 } else { c };
                 set_bits(out, start + k as u64 * 6, 6, v as u64, msb);
             }
+            return Ok(());
+        }
+        if matches!(o.xf, XF_ICAO6 | XF_AIS6 | XF_ASCII7) {
+            let t = match v {
+                Val::Str(t) => t,
+                _ => return Err(fail),
+            };
+            // spec 0.15: each character's code, then the padding; a character
+            // the set cannot hold, or more than fit, fails
+            let (w, pad) = match o.xf {
+                XF_ICAO6 => (6u32, 32u8),
+                XF_AIS6 => (6, 0),
+                _ => (7, 0),
+            };
+            if len % w != 0 || !(w..=2040).contains(&len) {
+                return Err(Error::BadPlan);
+            }
+            let room = (len / w) as u16;
+            if t.len > room {
+                return Err(fail);
+            }
+            for k in 0..room {
+                let code = if k < t.len { code_of(o.xf, self.text_at(t, k)).ok_or(fail)? } else { pad };
+                set_bits(out, start + k as u64 * w as u64, w, code as u64, msb);
+            }
+            return Ok(());
+        }
+        if o.xf == XF_OCTAL {
+            let t = match v {
+                Val::Str(t) => t,
+                _ => return Err(fail),
+            };
+            // exactly `len / 3` digits `0` to `7` (spec 0.15)
+            if len % 3 != 0 || !(3..=63).contains(&len) {
+                return Err(Error::BadPlan);
+            }
+            if t.len as u32 != len / 3 {
+                return Err(fail);
+            }
+            let mut raw = 0u64;
+            for k in 0..t.len {
+                let c = self.text_at(t, k);
+                if !(b'0'..=b'7').contains(&c) {
+                    return Err(fail);
+                }
+                raw = raw << 3 | (c - b'0') as u64;
+            }
+            set_bits(out, start, len, raw, msb);
             return Ok(());
         }
         if len == 0 || len > 64 {
@@ -858,6 +1088,78 @@ impl<'a, 's> Session<'a, 's> {
                 }
                 x.to_bits()
             }
+            // spec 0.15: round((x - offset) / factor), exactly; it must fit the field
+            (XF_UISCALE | XF_SISCALE, Val::Int(x)) => {
+                let (n, d, off) = self.exact(o)?;
+                let r = div_round((x as i128 - off as i128) * d as i128, n as i128).ok_or(Error::BadPlan)?;
+                if o.xf == XF_UISCALE {
+                    if !(r >= 0 && r <= m as i128) {
+                        return Err(fail);
+                    }
+                    r as u64
+                } else {
+                    let half = 1i128 << (len - 1);
+                    if !(r >= -half && r < half) {
+                        return Err(fail);
+                    }
+                    (r as i64) as u64 & m
+                }
+            }
+            (XF_SMAG, Val::Int(x)) => {
+                if len < 2 {
+                    return Err(Error::BadPlan);
+                }
+                let room = 1u64 << (len - 1);
+                let mag = x.unsigned_abs();
+                // as the reference engine compares: the magnitude, and the
+                // magnitude as a double (which rounds up near 2^63)
+                if mag >= room || mag as f64 >= room as f64 {
+                    return Err(fail);
+                }
+                // 0 is written with sign 0
+                if x < 0 {
+                    room | mag
+                } else {
+                    mag
+                }
+            }
+            (XF_SMSCALE, Val::Float(x)) => {
+                if len < 2 {
+                    return Err(Error::BadPlan);
+                }
+                let (n, d, off) = self.scale(o)?;
+                let r = num::round(if d != 0.0 { (x - off) * d / n } else { (x - off) / n });
+                // NaN and the infinities fail the comparison
+                let half = num::two_pow(len - 1);
+                if !(r > -half && r < half) {
+                    return Err(fail);
+                }
+                let room = 1u64 << (len - 1);
+                let mag = if r < 0.0 { (-r) as u64 } else { r as u64 };
+                // the sign of the integer after rounding: -0 writes sign 0 (ruling 15)
+                if r < 0.0 && mag != 0 {
+                    room | mag
+                } else {
+                    mag
+                }
+            }
+            (XF_F32SCALE | XF_F64SCALE, Val::Float(x)) => {
+                let (n, d, off) = self.scale(o)?;
+                let q = if d != 0.0 { (x - off) * d / n } else { (x - off) / n };
+                if o.xf == XF_F32SCALE {
+                    let y = q as f32;
+                    if !num::is_finite(y as f64) {
+                        return Err(fail);
+                    }
+                    y.to_bits() as u64
+                } else {
+                    if !num::is_finite(q) {
+                        return Err(fail);
+                    }
+                    q.to_bits()
+                }
+            }
+            (XF_UISCALE..=XF_F64SCALE, _) => return Err(fail),
             (XF_UINT..=XF_F64, _) => return Err(fail),
             _ => return Err(Error::BadPlan),
         };
