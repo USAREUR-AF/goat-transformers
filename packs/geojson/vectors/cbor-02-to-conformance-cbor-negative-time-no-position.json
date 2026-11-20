@@ -1,0 +1,12 @@
+{
+  "name": "cbor-02-to-conformance-cbor-negative-time-no-position",
+  "from": "geojson",
+  "to": "conformance-cbor",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"time_ms\":-1500}}",
+  "expect": "a200010521",
+  "model": {
+    "time_ms": "-1500"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): epoch_s: -1.5 rounds half away from zero to -2 (21); Writing step 2: no line writes into 7, so no map is written there. Derived without an engine by a standalone RFC 8949 codec."
+}

@@ -1,0 +1,12 @@
+{
+  "name": "to-kinds-two-step-when-written",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor-kinds",
+  "input": "a2000102182a",
+  "expect": "a503a2010502182a61736231326174743138343436373434303733373039353531363136617626626f6bf5",
+  "model": {
+    "probe.val": "42"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Encode selects deep (requires probe.val); the when value 5 is written at 3.1 and probe.val 42 at 3.2, in one map at 3 (a3... keys 01 < 02). Derived without an engine by a standalone RFC 8949 codec."
+}

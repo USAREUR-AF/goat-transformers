@@ -1,0 +1,16 @@
+{
+  "name": "null-and-undefined-are-absent",
+  "from": "conformance-cbor",
+  "to": "geojson",
+  "input": "a4000101f605f707a201f951b002f9d5a4",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-90.25,45.5]},\"properties\":{}}",
+  "model": {
+    "@absent": [
+      "uid",
+      "time_ms"
+    ],
+    "lat": "45.5"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Transforms for cbor: the simple values 22 (null, at 1) and 23 (undefined, at 5) are absent; geojson then writes no id and an empty properties object. Derived without an engine by a standalone RFC 8949 codec."
+}

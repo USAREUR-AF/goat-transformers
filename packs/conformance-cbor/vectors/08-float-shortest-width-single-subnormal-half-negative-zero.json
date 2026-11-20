@@ -1,0 +1,14 @@
+{
+  "name": "float-shortest-width-single-subnormal-half-negative-zero",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor",
+  "input": "ac00010163552d3102182a03fb40f86a000000000004420aff051a603aa4c0060207a201fb3e7000000000000002fb80000000000000000882617861540981a2646e616d65626161616e03202664666c6167f5",
+  "expect": "ac00010163552d3102182a03fa47c3500004420aff051a603aa4c0060207a201f9000102f980000882617861540981a2616e03646e616d65626161202664666c6167f5",
+  "model": {
+    "probe.a": "100000",
+    "lat": "0.000000059604644775390625",
+    "lon": "-0"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): float encode: the shortest of half, single and double that holds the value exactly, subnormal halves included: 100000.0 -> fa47c35000 (no half holds it), 2^-24 -> f90001 (the smallest subnormal half), -0.0 -> f98000; inputs given as doubles. Derived without an engine by a standalone RFC 8949 codec."
+}

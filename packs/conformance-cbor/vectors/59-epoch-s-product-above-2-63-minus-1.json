@@ -1,0 +1,9 @@
+{
+  "name": "epoch-s-product-above-2-63-minus-1",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor",
+  "input": "a20001051b0020c49ba5e353f8",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Ruling 7: 9223372036854776 s is a valid integer item, but its time_ms 9223372036854776000 lies above 2^63-1: transform-decode. Derived without an engine by a standalone RFC 8949 codec."
+}

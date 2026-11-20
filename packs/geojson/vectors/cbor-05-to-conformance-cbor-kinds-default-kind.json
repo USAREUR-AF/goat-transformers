@@ -1,0 +1,12 @@
+{
+  "name": "cbor-05-to-conformance-cbor-kinds-default-kind",
+  "from": "geojson",
+  "to": "conformance-cbor-kinds",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{},\"id\":\"G-2\"}",
+  "expect": "a60163472d32616b65747261636b61736231326174743138343436373434303733373039353531363136617626626f6bf5",
+  "model": {
+    "uid": "G-2"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): No kind with requires qualifies before text, which has none: text is selected and its when value is written as the text track at k. Derived without an engine by a standalone RFC 8949 codec."
+}

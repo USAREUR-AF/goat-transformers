@@ -1,0 +1,12 @@
+{
+  "name": "hex-with-whitespace",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor",
+  "input": "a1 00\t0\n1\r",
+  "expect": "a10001",
+  "model": {
+    "@kind": "plain"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Ruling 11: space, tab, line feed and carriage return in hex text are whitespace and are read past. Derived without an engine by a standalone RFC 8949 codec."
+}

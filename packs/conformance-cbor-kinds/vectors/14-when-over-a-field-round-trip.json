@@ -1,0 +1,13 @@
+{
+  "name": "when-over-a-field-round-trip",
+  "from": "conformance-cbor-kinds",
+  "to": "conformance-cbor-kinds",
+  "input": "a1616d656669786564",
+  "expect": "a5616d65666978656461736231326174743138343436373434303733373039353531363136617626626f6bf5",
+  "model": {
+    "@kind": "overlay",
+    "probe.s1": "fixed"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Kinds: when m fixed holds; probe.s1 reads the same member; encode writes the when value at m. Derived without an engine by a standalone RFC 8949 codec."
+}

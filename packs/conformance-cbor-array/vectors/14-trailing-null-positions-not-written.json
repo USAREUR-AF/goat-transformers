@@ -1,0 +1,17 @@
+{
+  "name": "trailing-null-positions-not-written",
+  "from": "conformance-cbor-array",
+  "to": "conformance-cbor-array",
+  "input": "d2844101a10105f6f6",
+  "expect": "d2824101a10105",
+  "model": {
+    "probe.s1": "01",
+    "probe.n": "5",
+    "@absent": [
+      "probe.s2",
+      "probe.tag"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Ruling 6 and Writing step 3: null at the mapped positions [2] and [3] is absent and not written back; the array is written up to [1]. Derived without an engine by a standalone RFC 8949 codec."
+}

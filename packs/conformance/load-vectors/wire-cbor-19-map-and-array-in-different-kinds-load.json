@@ -1,0 +1,8 @@
+{
+  "name": "wire-cbor-19-map-and-array-in-different-kinds-load",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey lat float deg\nkey lon float deg\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey n int -\nkey val int -\nkey s1 string -\nkey s2 string -\nkey x int -\nkey label string -\nkey qty int -\nlist items \"a list\"\nlist nums \"scalar items\"\n"
+  ],
+  "pack": "format probe\nversion 0.28.0\ndistribution public\nsource \"probe\"\nuses probe\nwire cbor\nkind a\nwhen 0 1\nfield probe.n 7.1 int\nkind b\nwhen 0 2\nfield probe.val 7.[0] int\n"
+}

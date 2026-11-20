@@ -1,0 +1,12 @@
+{
+  "name": "to-kinds-when-present-writes-nothing",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor-kinds",
+  "input": "a200012005",
+  "expect": "a5020561736231326174743138343436373434303733373039353531363136617626626f6bf5",
+  "model": {
+    "probe.n": "5"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Encode selects marked (requires probe.n; located, overlay, deep and big do not qualify); when 8 present writes nothing, so nothing stands at 8. Derived without an engine by a standalone RFC 8949 codec."
+}

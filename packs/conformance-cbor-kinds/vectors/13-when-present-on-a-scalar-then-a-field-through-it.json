@@ -1,0 +1,9 @@
+{
+  "name": "when-present-on-a-scalar-then-a-field-through-it",
+  "from": "conformance-cbor-kinds",
+  "to": "conformance-cbor-kinds",
+  "input": "a10705",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Kinds: when 7 present holds on the integer 5; Reading step 8: lat (7.1) of the selected kind needs a map at 7: malformed-wire. Derived without an engine by a standalone RFC 8949 codec."
+}

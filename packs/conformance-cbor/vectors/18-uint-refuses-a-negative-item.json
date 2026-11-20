@@ -1,0 +1,9 @@
+{
+  "name": "uint-refuses-a-negative-item",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor",
+  "input": "ac00010163552d31022003f93e0004420aff051a603aa4c0060207a201f951b002f9d5a40882617861540981a2616e03646e616d65626161202664666c6167f5",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): uint takes major type 0; an item of another type than its transform takes is transform-decode: 2 holds 20 (-1). Derived without an engine by a standalone RFC 8949 codec."
+}

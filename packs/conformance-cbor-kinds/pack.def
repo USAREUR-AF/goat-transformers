@@ -1,0 +1,66 @@
+# Conformance probe pack for the `cbor` wire (spec 0.28): constants of the
+# three types, and kinds chosen by a `when` on text, on a bool, on a two-step
+# path, on an integer above 2^63-1, and by `when ... present`. One kind writes
+# a `when` value at a path a `field` also names, and a common `const` stands
+# at a path a common `field` names. A `const` beyond 2^64-1 is text (ruling
+# 19), and a group with a `.` body reads scalar elements (ruling 14). No
+# line's path but a `when ... present` is a proper prefix of another's in
+# one scope (ruling 13).
+format        conformance-cbor-kinds
+version       0.28.0
+distribution  public
+source        "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses          probe
+wire          cbor
+
+field    uid        1     text
+field    probe.y    v     int
+const    v          -0007
+const    s          =12
+const    ok         true
+const    t          18446744073709551616
+group    probe.nums 9
+  field  probe.val  .     int
+end
+
+# chosen on encode when lat is present; the fields walk into 7 (ruling 13
+# lets a `when ... present` name a prefix of another line's path)
+kind     located
+when     7          present
+requires lat
+field    lat        7.1   float
+field    lon        7.2   float
+
+# the when value is written over the field at m
+kind     overlay
+when     m          fixed
+requires probe.s1
+field    probe.s1   m     text
+
+# a when on a two-step path
+kind     deep
+when     3.1        5
+requires probe.val
+field    probe.val  3.2   uint
+
+# an integer when above 2^63-1
+kind     big
+when     0          18446744073709551615
+requires probe.x
+field    probe.x    4     int
+
+# when ... present on an item no other line walks into: residue whole
+kind     marked
+when     8          present
+requires probe.n
+field    probe.n    2     int
+
+# a text when; the first kind with no requires, so the encode default
+kind     text
+when     k          track
+field    probe.n    2     int
+
+# a bool when
+kind     flagged
+when     b          true
+field    probe.n    2     int

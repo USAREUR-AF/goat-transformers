@@ -1,0 +1,12 @@
+{
+  "name": "two-step-when-through-an-array-does-not-hold",
+  "from": "conformance-cbor-kinds",
+  "to": "conformance-cbor-kinds",
+  "input": "a2038105616b65747261636b",
+  "expect": "a6038105616b65747261636b61736231326174743138343436373434303733373039353531363136617626626f6bf5",
+  "model": {
+    "@kind": "text"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Reading step 7: when 3.1 needs a map at 3 and 3 holds an array: it does not hold; text is selected and 3 is residue. Derived without an engine by a standalone RFC 8949 codec."
+}

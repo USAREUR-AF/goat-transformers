@@ -1,0 +1,9 @@
+{
+  "name": "tag-different",
+  "from": "conformance-cbor-array",
+  "to": "conformance-cbor-array",
+  "input": "d3844101a201050443616263420aff41ff",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Tags: the outermost tag is 19 (d3), not 18. Derived without an engine by a standalone RFC 8949 codec."
+}

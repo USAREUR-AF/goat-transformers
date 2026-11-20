@@ -1,0 +1,13 @@
+{
+  "name": "residue-unaddressable-keys",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor",
+  "input": "b200010163552d3102182a03f93e0004420aff051a603aa4c0060207a201f951b002f9d5a40882617861540981a2646e616d65626161616e03202664666c6167f561340163612e6202410103f93c0004f505f606",
+  "expect": "b200010163552d3102182a03f93e0004420aff051a603aa4c0060207a201f951b002f9d5a40882617861540981a2616e03646e616d65626161202641010361340163612e620264666c6167f5f505f606f93c0004",
+  "model": {
+    "@kind": "plain",
+    "uid": "U-1"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Paths: keys of another type (byte string 4101, float f93c00 = 1.0, true f5, null f6) and text keys the step grammar cannot write (\"4\" = 6134, \"a.b\" = 63612e62) are not addressable: residue keyed #<hex> (#6134, #63612e62, #4101, #f93c00, #f5, #f6) and written back in key order 4101 < 6134 < 63612e62 < 64666c6167 (flag) < f5 < f6 < f93c00. Reading step 4: 1, 1.0 and true are three keys, so uid still reads 1. Derived without an engine by a standalone RFC 8949 codec."
+}

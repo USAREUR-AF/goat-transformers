@@ -62,7 +62,7 @@ The methods of `Engine`:
 | `try_capability(from, to)`, `try_model_keys(format)` | the same, `unknown-format` for a format that is not loaded |
 | `key_type(key)` | the declared type of a model key |
 
-A message of a binary wire (`bits`, `protobuf`) is hex text. A decode, a
+A message of a binary wire (`bits`, `protobuf`, `tlv`, `cbor`) is hex text. A decode, a
 context and an encode by hand:
 
 ```rust

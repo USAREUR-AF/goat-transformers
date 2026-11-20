@@ -72,6 +72,32 @@ impl TlvLines {
         self.lines.iter().flatten().map(|(ln, _)| *ln).chain(self.misplaced).min()
     }
 
+    /// On the `cbor` wire (engine-spec v0.28): `tag <n>`, `n` a decimal
+    /// integer from 0 to 2^64-1 with no leading zero, at most once and before
+    /// the first `kind`; `length`, `key` and `checksum sum16` are lines of the
+    /// tlv wire only.
+    pub(crate) fn cbor_tag(&self) -> Result<Option<u64>, Error> {
+        if let Some(ln) = self.misplaced {
+            return bad(ln, "`tag` stands once, before the first `kind`");
+        }
+        if let Some(ln) = self.lines[1..].iter().flatten().map(|(ln, _)| *ln).min() {
+            return bad(ln, "`length`, `key` and `checksum sum16` are valid only on the tlv wire");
+        }
+        let (ln, t) = match &self.lines[0] {
+            Some((ln, t)) => (*ln, t),
+            None => return Ok(None),
+        };
+        let v = match t.as_slice() {
+            [_, v] => v,
+            _ => return bad(ln, "`tag` takes one value"),
+        };
+        let digits = !v.is_empty() && v.bytes().all(|b| b.is_ascii_digit());
+        match v.parse::<u64>() {
+            Ok(n) if digits && (v.len() == 1 || !v.starts_with('0')) => Ok(Some(n)),
+            _ => bad(ln, format!("`tag {}`: a tag is a decimal integer from 0 to 2^64-1 with no leading zero", v)),
+        }
+    }
+
     fn conf(&self) -> Result<TlvConf, Error> {
         if let Some(ln) = self.misplaced {
             return bad(ln, "`tag`, `length`, `key` and `checksum` stand once each, before the first `kind`");

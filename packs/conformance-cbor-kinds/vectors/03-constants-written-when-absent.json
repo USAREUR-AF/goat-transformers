@@ -1,0 +1,15 @@
+{
+  "name": "constants-written-when-absent",
+  "from": "conformance-cbor-kinds",
+  "to": "conformance-cbor-kinds",
+  "input": "a201634b2d31616b65747261636b",
+  "expect": "a601634b2d31616b65747261636b61736231326174743138343436373434303733373039353531363136617626626f6bf5",
+  "model": {
+    "@kind": "text",
+    "@absent": [
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Constants are written on encode whether or not the input held them: v -7, s 12, ok true. Derived without an engine by a standalone RFC 8949 codec."
+}

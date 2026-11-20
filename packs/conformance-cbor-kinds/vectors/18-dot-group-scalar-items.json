@@ -1,0 +1,15 @@
+{
+  "name": "dot-group-scalar-items",
+  "from": "conformance-cbor-kinds",
+  "to": "conformance-cbor-kinds",
+  "input": "a2098301f621616b65747261636b",
+  "expect": "a6098301f621616b65747261636b61736231326174743138343436373434303733373039353531363136617626626f6bf5",
+  "model": {
+    "@kind": "text",
+    "probe.nums.#": "3",
+    "probe.nums[0].probe.val": "1",
+    "probe.nums[2].probe.val": "-2"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Groups with a . body: each element is read by int; null is an item with no value, written f6 (Writing step 4). Derived without an engine by a standalone RFC 8949 codec."
+}

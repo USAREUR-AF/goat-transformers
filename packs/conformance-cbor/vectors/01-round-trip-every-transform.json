@@ -1,0 +1,26 @@
+{
+  "name": "round-trip-every-transform",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor",
+  "input": "ac00010163552d3102182a03f93e0004420aff051a603aa4c0060207a201f951b002f9d5a40882617861540981a2616e03646e616d65626161202664666c6167f5",
+  "expect": "ac00010163552d3102182a03f93e0004420aff051a603aa4c0060207a201f951b002f9d5a40882617861540981a2616e03646e616d65626161202664666c6167f5",
+  "model": {
+    "@kind": "plain",
+    "uid": "U-1",
+    "probe.n": "-7",
+    "probe.val": "42",
+    "probe.a": "1.5",
+    "probe.s2": "0aff",
+    "probe.x": "1",
+    "time_ms": "1614456000000",
+    "probe.s1": "high",
+    "lat": "45.5",
+    "lon": "-90.25",
+    "probe.tag": "T",
+    "probe.items.#": "1",
+    "probe.items[0].probe.label": "aa",
+    "probe.items[0].probe.qty": "3"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): every transform of the table once: text 1, int -1, uint 2, float 3 (1.5 = f93e00), bytes 4 (0aff), bool flag (f5 -> 1), epoch_s 5 (1614456000 s -> 1614456000000 ms), uint via levels 6 (2 -> high), floats 7.1/7.2 (45.5 = f951b0, -90.25 = f9d5a4), text at 8.[1] (8.[0] is residue), the group 9 of maps; when 0 1 selects plain. Input is canonical, so output equals input. Derived without an engine by a standalone RFC 8949 codec."
+}

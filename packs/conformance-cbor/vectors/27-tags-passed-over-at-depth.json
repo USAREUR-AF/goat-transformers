@@ -1,0 +1,26 @@
+{
+  "name": "tags-passed-over-at-depth",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor",
+  "input": "d9d9f7ad00c60101d82063552d3102182a03d864f93e0004420aff051a603aa4c0060207d90064a201f951b002f9d5a408826178c1615409c181d9ffffa2616e03646e616d656261610ac105202664666c6167f5",
+  "expect": "ad00010163552d3102182a03f93e0004420aff051a603aa4c0060207a201f951b002f9d5a40882617861540981a2616e03646e616d656261610ac105202664666c6167f5",
+  "model": {
+    "@kind": "plain",
+    "uid": "U-1",
+    "probe.n": "-7",
+    "probe.val": "42",
+    "probe.a": "1.5",
+    "probe.s2": "0aff",
+    "probe.x": "1",
+    "time_ms": "1614456000000",
+    "probe.s1": "high",
+    "lat": "45.5",
+    "lon": "-90.25",
+    "probe.tag": "T",
+    "probe.items.#": "1",
+    "probe.items[0].probe.label": "aa",
+    "probe.items[0].probe.qty": "3"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Tags: every tag on an item a line reads or walks into is passed over and not written: 55799 on the top map, 6 on the when value at 0 (the when still holds), 32 on uid, 100 in a one-byte head on probe.a, 100 in a two-byte head on map 7, 1 on the T at 8.[1], 1 on the group array, 65535 on its item; residue keeps its tag: 10 holds c105 and is written c105. Derived without an engine by a standalone RFC 8949 codec."
+}

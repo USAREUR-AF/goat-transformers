@@ -1,0 +1,9 @@
+{
+  "name": "text-when-does-not-hold-on-bytes",
+  "from": "conformance-cbor-kinds",
+  "to": "conformance-cbor-kinds",
+  "input": "a1616b45747261636b",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Kinds: a when never holds on a byte string; k holds h'747261636b'. Derived without an engine by a standalone RFC 8949 codec."
+}

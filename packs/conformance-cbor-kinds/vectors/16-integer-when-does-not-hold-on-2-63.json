@@ -1,0 +1,9 @@
+{
+  "name": "integer-when-does-not-hold-on-2-63",
+  "from": "conformance-cbor-kinds",
+  "to": "conformance-cbor-kinds",
+  "input": "a1001b8000000000000000",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Kinds: when 0 18446744073709551615 holds only on that integer; 0 holds 2^63, and no other kind holds. Derived without an engine by a standalone RFC 8949 codec."
+}

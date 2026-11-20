@@ -519,6 +519,14 @@ V011_TLV = {"wire-tlv-68", "wire-tlv-69", "wire-tlv-71", "wire-tlv-72", "wire-tl
 V011_TLV |= {"wire-armor-18", "wire-armor-19"}
 # And the 0.27 vectors that pin the 0.11 order of a checksum line.
 V011_TLV |= {"wire-crc32-03", "wire-crc32-05"}
+# Likewise the cbor vectors of 0.28 whose only point is that a cbor check
+# (the top item type, a transform outside the cbor table, `swap` and `absent`
+# on cbor, the `tag` value, a value path that is also a container path) runs
+# after the file, so a later `bogus` line gives `unknown-directive`; gtcheck
+# refuses `bogus` as `bad-directive`. The bad-locator vectors 03 to 14 are
+# compared: the path form is a line check, which gtcheck makes as the line is read.
+V011_TLV |= {"wire-cbor-16", "wire-cbor-25", "wire-cbor-28", "wire-cbor-35", "wire-cbor-42",
+             "wire-cbor-45"}
 # Ruling 28 of 0.15 pins the same order for a 0.15 transform on tlv.
 V011_ORDER = {"580", "667", "668", "1003", "1004", "1077", "1078", "1079"}  # ruling 13 of 0.17, ruling 44 of 0.21 (bad-locator), ruling 28 of 0.22
 # And the UPER vectors of rulings 23-26 of 0.19 that pin the 0.11 order.
@@ -546,6 +554,66 @@ class TlvWireTest(Refusals):
         # before `missing-distribution`
         no_distribution = 'format demo\nversion 0.1.0\nsource "test"\nuses probe\nwire json\n'
         self.refuse_pack(no_distribution + "tag 1\nfield uid id string\n", "bad-directive", 6)
+
+
+class CborWireTest(Refusals):
+    CBOR = HEAD + "wire cbor\n"
+
+    def test_cbor_paths_give_steps_and_the_top_type(self):
+        pack = gtcheck.load_pack(self.CBOR + "tag 18\nfield probe.qty -1 int\nfield uid a_b-c.[2].d text\n"
+                                 "field probe.ratio 18446744073709551615 float\n"
+                                 "group probe.items 9\n  field probe.label . bytes\nend\n", model())
+        neg, deep, big, group = pack.common
+        self.assertEqual((pack.cbor_tag, pack.cbor_top), (18, "map"))
+        self.assertEqual(neg.path, (("int", -1),))
+        self.assertEqual(deep.path, (("text", "a_b-c"), ("pos", 2), ("text", "d")))
+        self.assertEqual(big.path, (("int", (1 << 64) - 1),))
+        self.assertEqual((group.path, group.body[0].path), ((("int", 9),), ()))
+        pack = gtcheck.load_pack(self.CBOR + "group probe.items .\n  field probe.qty [0] uint\nend\n", model())
+        self.assertEqual(pack.cbor_top, "array")
+
+    def test_when_and_const_values(self):
+        self.assertEqual([gtcheck.cbor_value(v) for v in ("-0005", "00", "18446744073709551615", "true", "=7",
+                                                          "18446744073709551616", "+1")],
+                         [-5, 0, (1 << 64) - 1, True, "7", "18446744073709551616", "+1"])
+        gtcheck.load_pack(self.CBOR + "field uid 1 text\nconst 2 -0005\nconst 3 =x\nkind a\nwhen 0 false\n",
+                          model())
+
+    def test_a_malformed_path_is_a_bad_locator_as_the_line_is_read(self):
+        for path in ("a[0]", "[01]", "-0", "+1", "a..b", "01", "-a", "[65536]", "a:b", ".",
+                     "18446744073709551616", "-9223372036854775809"):
+            self.refuse_pack(self.CBOR + "field probe.qty %s int\nbogus\n" % path, "bad-locator", 7)
+        self.refuse_pack(self.CBOR + "group probe.items 9\n  group probe.subs .\n    field probe.qty . int\n"
+                         "  end\nend\n", "bad-locator", 8)
+
+    def test_cbor_rules_are_refused_with_their_line(self):
+        c = self.CBOR
+        self.refuse_pack(c + "field uid 1 text\nfield probe.qty [0] int\n", "bad-directive", 8)
+        self.refuse_pack(c + "field probe.qty 7.1 int\nfield uid 7.[0] text\n", "bad-directive", 8)
+        self.refuse_pack(c + "group probe.items 9\n  field uid n text\nend\nfield probe.qty 9.1 int\n",
+                         "bad-directive", 10)
+        self.refuse_pack(c + "group probe.items 9\n  field uid n text\nend\ngroup probe.subs 9\n"
+                         "  field probe.qty . int\nend\n", "bad-directive", 10)
+        self.refuse_pack(c + "group probe.items 9\n  field uid . text\n  field probe.qty n uint\nend\n",
+                         "bad-directive", 9)
+        self.refuse_pack(c + "group probe.items 9\n  field uid [0] text\n  field probe.qty n uint\nend\n",
+                         "bad-directive", 9)
+        self.refuse_pack(c + "field probe.qty 2 int\nfield probe.ratio 2.1 float\n", "bad-directive", 8)
+        self.refuse_pack(c + "field probe.qty 1 string\n", "bad-directive", 7)
+        for option in ("swap", "trim", "optional", "absent 5"):
+            self.refuse_pack(c + "field probe.qty 1 int %s\n" % option, "bad-directive", 7)
+        self.refuse_pack(c + "tag 018\n", "bad-directive", 7)
+        self.refuse_pack(c + "tag 18446744073709551616\n", "bad-directive", 7)
+        self.refuse_pack(c + "tag ber-oid\n", "bad-directive", 7)
+        self.refuse_pack(c + "tag 1\ntag 1\n", "bad-directive", 8)
+        self.refuse_pack(c + "field uid 1 text\nkind k\nwhen 0 1\ntag 1\n", "bad-directive", 10)
+        self.refuse_pack(c + "tag 1 2\nbogus\n", "bad-directive", 7)
+        self.refuse_pack(c + "field uid 1 bool\n", "key-type-mismatch", 7)
+        # a `when … present` may name a prefix of another line's path; the
+        # same paths in two kinds are two scopes
+        gtcheck.load_pack(c + "field uid 1 text\nkind a\nwhen 7 present\nfield lat 7.1 float\n", model())
+        gtcheck.load_pack(c + "kind a\nwhen 0 1\nfield probe.qty 2 int\nkind b\nwhen 0 2\n"
+                          "field probe.ratio 2.[0] float\n", model())
 
 
 class ArmorTest(Refusals):

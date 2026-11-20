@@ -1,0 +1,9 @@
+{
+  "name": "duplicate-float-key-half-and-double",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor",
+  "input": "a30001f93e0001fb3ff800000000000002",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Reading step 4: other keys are equal when their core deterministic encodings are: f93e00 and fb3ff8000000000000 both encode as f93e00. Derived without an engine by a standalone RFC 8949 codec."
+}

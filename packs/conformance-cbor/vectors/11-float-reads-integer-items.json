@@ -1,0 +1,14 @@
+{
+  "name": "float-reads-integer-items",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor",
+  "input": "ac00010163552d3102182a030304420aff051a603aa4c0060207a20121021b00200000000000010882617861540981a2616e03646e616d65626161202664666c6167f5",
+  "expect": "ac00010163552d3102182a03f9420004420aff051a603aa4c0060207a201f9c00002fa5a0000000882617861540981a2616e03646e616d65626161202664666c6167f5",
+  "model": {
+    "probe.a": "3",
+    "lat": "-2",
+    "lon": "9007199254740992"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): float decode and ruling 3: an integer item reads as the nearest double, ties to even: 3 -> 3.0, -2 -> -2.0, 2^53+1 (1b0020000000000001) -> 2^53; float always writes a float: f94200, f9c000, fa5a000000. Derived without an engine by a standalone RFC 8949 codec."
+}

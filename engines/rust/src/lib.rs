@@ -160,6 +160,13 @@ pub enum Transform {
     TextScale(Scale),
     /// xml, json, geojson: `iscale:<factor>[:<offset>]`, an exact decimal scaled to an int
     TextIscale(Exact),
+    // engine-spec v0.28: the cbor wire
+    /// cbor: a text string (major type 3)
+    CborText,
+    /// cbor: a byte string (major type 2) as lowercase hex text
+    CborBytes,
+    /// cbor: an integer of seconds since 1970 as `time_ms`
+    EpochS,
 }
 
 /// The character set of `chars:<set>` (engine-spec v0.15).
@@ -291,6 +298,8 @@ impl Transform {
             "pfloat", "bool", "uscale", "sscale", "f32", "f64", "ascii", "sixbit", "dec", "dm", "hms", "hms_dmy", "utf8", "hex",
             // engine-spec v0.15
             "uiscale", "siscale", "smag", "smscale", "f32scale", "f64scale", "chars", "octal", "scale", "iscale",
+            // engine-spec v0.28
+            "text", "bytes", "epoch_s",
         ];
         if !NAMES.contains(&head) {
             return err(format!("unknown-transform: `{}` is not a transform", head));
@@ -382,6 +391,9 @@ impl Transform {
             "pdouble" => Ok(Transform::Pdouble),
             "pfloat" => Ok(Transform::Pfloat),
             "utf8" => Ok(Transform::Utf8),
+            "text" => Ok(Transform::CborText),
+            "bytes" => Ok(Transform::CborBytes),
+            "epoch_s" => Ok(Transform::EpochS),
             other => err(format!("unknown-transform: `{}` is not a transform", other)),
         }
     }
@@ -432,7 +444,9 @@ impl Transform {
             | Transform::Utf8
             | Transform::Hex
             | Transform::Chars(_)
-            | Transform::Octal => KeyType::Str,
+            | Transform::Octal
+            | Transform::CborText
+            | Transform::CborBytes => KeyType::Str,
             Transform::Dec(_, _) | Transform::Dm(..) | Transform::Hms(_) => KeyType::Float,
             Transform::IntW(_) | Transform::HmsDmy(_) => KeyType::Int,
             Transform::Float
@@ -459,7 +473,8 @@ impl Transform {
             | Transform::Uiscale(_)
             | Transform::Siscale(_)
             | Transform::Smag
-            | Transform::TextIscale(_) => KeyType::Int,
+            | Transform::TextIscale(_)
+            | Transform::EpochS => KeyType::Int,
         }
     }
 
@@ -724,7 +739,9 @@ impl Transform {
             | Transform::Utf8
             | Transform::Hex
             | Transform::Chars(_)
-            | Transform::Octal => JsonKind::StringK,
+            | Transform::Octal
+            | Transform::CborText
+            | Transform::CborBytes => JsonKind::StringK,
             Transform::TextIscale(_) => JsonKind::ExactK,
             Transform::Float
             | Transform::TextScale(_)
@@ -746,7 +763,8 @@ impl Transform {
             | Transform::Psint
             | Transform::Uiscale(_)
             | Transform::Siscale(_)
-            | Transform::Smag => JsonKind::IntK,
+            | Transform::Smag
+            | Transform::EpochS => JsonKind::IntK,
             Transform::Dec(_, _) | Transform::Dm(..) | Transform::Hms(_) => JsonKind::NumK,
             Transform::IntW(_) | Transform::HmsDmy(_) => JsonKind::IntK,
         }
@@ -1616,6 +1634,8 @@ pub enum Wire {
     Text,
     /// a set of tag-length-value items, sets nested in values (engine-spec v0.13)
     Tlv,
+    /// one CBOR data item, a map or an array (engine-spec v0.28)
+    Cbor,
 }
 
 impl Wire {
@@ -1629,11 +1649,12 @@ impl Wire {
             Wire::Json => "json",
             Wire::Text => "text",
             Wire::Tlv => "tlv",
+            Wire::Cbor => "cbor",
         }
     }
 
     /// The seven wires of the specification, in the order of ruling 1a of 0.24.
-    pub const ALL: [Wire; 7] = [Wire::Xml, Wire::GeoJson, Wire::Json, Wire::Bits, Wire::Protobuf, Wire::Text, Wire::Tlv];
+    pub const ALL: [Wire; 8] = [Wire::Xml, Wire::GeoJson, Wire::Json, Wire::Bits, Wire::Protobuf, Wire::Text, Wire::Tlv, Wire::Cbor];
 
     /// The wire a `wire` line names, built or not; None: no wire of the specification.
     pub fn from_name(name: &str) -> Option<Wire> {
@@ -1651,6 +1672,7 @@ impl Wire {
             Wire::Json => cfg!(feature = "json"),
             Wire::Text => cfg!(feature = "text"),
             Wire::Tlv => cfg!(feature = "tlv"),
+            Wire::Cbor => cfg!(feature = "cbor"),
         }
     }
 }
@@ -1868,6 +1890,10 @@ fn resolve_absent(wire: Wire, f: &mut FieldDef, bits_len: Option<u32>) -> Result
     if wire == Wire::Tlv {
         return bad(ln, "`absent` is not valid on the tlv wire in 0.13");
     }
+    // engine-spec v0.28: on cbor the only field option is `via`
+    if wire == Wire::Cbor {
+        return bad(ln, "`absent` is not valid on the cbor wire");
+    }
     // the quoted empty token `""` is the one value "the empty text"
     let values: Vec<&str> = if arg.is_empty() { vec![""] } else { arg.split(',').collect() };
     if arg.contains('"') || (values.len() > 1 && values.iter().any(|v| v.is_empty())) {
@@ -1938,7 +1964,7 @@ fn resolve_absent(wire: Wire, f: &mut FieldDef, bits_len: Option<u32>) -> Result
                 };
                 Sentinel::Text(text, json)
             }
-            Wire::Text | Wire::Tlv => unreachable!("rejected above"),
+            Wire::Text | Wire::Tlv | Wire::Cbor => unreachable!("rejected above"),
         });
     }
     f.absent = out;
@@ -2378,6 +2404,8 @@ pub struct Pack {
     pub text: text::TextConf,
     /// tlv only: the tag and length encodings, the key and the checksum
     pub tlv: tlv::TlvConf,
+    /// cbor only: the enclosing tag and the type of the top item
+    pub cbor: cbor::CborConf,
     /// bits only: how the message travels as text (engine-spec v0.14)
     pub armor: armor::Armor,
     /// fixed `bits` layout: the gate blocks of common lines and of every kind
@@ -2565,6 +2593,7 @@ impl Pack {
                         "json" => Wire::Json,
                         "text" => Wire::Text,
                         "tlv" => Wire::Tlv,
+                        "cbor" => Wire::Cbor,
                         o => return err(format!("unknown-wire: line {}: unknown wire `{}`", ln, o)),
                     })
                 }
@@ -3030,8 +3059,14 @@ impl Pack {
         let format = format.expect("checked above");
         let tlv_conf = match (wire, tlv_lines.first_line()) {
             (Wire::Tlv, _) => tlv::check_pack(&tlv_lines, &fields, &whens, &consts, &groups, &kinds)?,
+            // engine-spec v0.28: `tag <n>` on cbor, checked below
+            (Wire::Cbor, _) => tlv::TlvConf::default(),
             (_, Some(ln)) => return bad(ln, "`tag`, `length`, `key` and `checksum sum16` or `crc32` are valid only on the tlv wire"),
             _ => tlv::TlvConf::default(),
+        };
+        let cbor_conf = match wire {
+            Wire::Cbor => cbor::check_pack(&tlv_lines, &fields, &whens, &consts, &groups, &kinds)?,
+            _ => cbor::CborConf::default(),
         };
         // `armor sixbit` and `encoding uper` need `bit_order msb` (0.14, 0.19); `msb-lsb` is not `msb`
         let msb = bit_order.map_or(false, |(o, _)| o == BitOrder::Msb);
@@ -3068,6 +3103,7 @@ impl Pack {
             seq: None,
             text: text_conf,
             tlv: tlv_conf,
+            cbor: cbor_conf,
             armor,
             gates,
             elements,
@@ -3565,8 +3601,12 @@ fn check_field_for_wire(wire: Wire, f: &FieldDef, in_group: bool) -> Result<(), 
     if *t == Transform::Sixbit && wire != Wire::Bits {
         return bad(f.line, "`sixbit` is valid only on a bits wire");
     }
-    if *t == Transform::Bool && wire != Wire::Json {
-        return bad(f.line, "`bool` is valid only on the json wire");
+    if *t == Transform::Bool && !matches!(wire, Wire::Json | Wire::Cbor) {
+        return bad(f.line, "`bool` is valid only on the json and cbor wires");
+    }
+    // engine-spec v0.28: the transforms of the cbor table, and only those on cbor
+    if cbor::cbor_only(t) && wire != Wire::Cbor {
+        return bad(f.line, format!("the transform of `{}` is valid only on the cbor wire", f.model_key));
     }
     // engine-spec v0.15: each value transform on the wires it lists
     let v015_bits = t.is_bits()
@@ -3612,6 +3652,7 @@ fn check_field_for_wire(wire: Wire, f: &FieldDef, in_group: bool) -> Result<(), 
         Wire::Protobuf => t.is_protobuf(),
         // text and tlv: checked above, against their own tables
         Wire::Json | Wire::Text | Wire::Tlv => true,
+        Wire::Cbor => cbor::valid_transform(t),
     };
     if !valid {
         return bad(f.line, format!("the transform of `{}` is not valid on this wire", f.model_key));
@@ -3717,6 +3758,8 @@ fn check_group_for_wire(wire: Wire, g: &GroupDef) -> Result<(), Error> {
     }
     let ok = match wire {
         Wire::Tlv => return bad(g.line, "`group` is not valid on the tlv wire in 0.13"),
+        // engine-spec v0.28: a path, or `.` for the top item or the element
+        Wire::Cbor => cbor::group_locator_ok(&g.locator),
         Wire::Xml => names('/') && !g.locator.contains('@') && !g.locator.contains('#'),
         Wire::Json => names('.'),
         // engine-spec v0.10: `group <list> <i> item <n>`
@@ -3820,7 +3863,8 @@ fn check_scope(
     let sep = match wire {
         Wire::Xml => Some('/'),
         Wire::Json | Wire::GeoJson | Wire::Protobuf => Some('.'),
-        Wire::Bits | Wire::Text | Wire::Tlv => None,
+        // cbor: the group paths are checked with the other checks of 0.28
+        Wire::Bits | Wire::Text | Wire::Tlv | Wire::Cbor => None,
     };
     if let Some(sep) = sep {
         // group path -> the first group of the scope with that path
@@ -3985,6 +4029,7 @@ fn resolve_when(wire: Wire, w: &mut WhenDef, in_group: bool, list: bool) -> Resu
             }
         }
         Wire::Tlv => tlv::resolve_when(w)?,
+        Wire::Cbor => cbor::resolve_when(w)?,
         Wire::Text => {
             text::check_when_locator(w)?;
             if w.value == "present" {
@@ -4488,6 +4533,8 @@ impl Engine {
             Wire::Text => text::decode_in(p, lay, bytes),
             #[cfg(feature = "tlv")]
             Wire::Tlv => tlv::decode_in(p, lay, bytes),
+            #[cfg(feature = "cbor")]
+            Wire::Cbor => cbor::decode(p, bytes),
             #[allow(unreachable_patterns)]
             w => {
                 let _ = bytes;
@@ -4514,6 +4561,8 @@ impl Engine {
             Wire::Text => text::encode_in(p, lay, ent),
             #[cfg(feature = "tlv")]
             Wire::Tlv => tlv::encode_in(p, lay, ent),
+            #[cfg(feature = "cbor")]
+            Wire::Cbor => cbor::encode(p, ent),
             #[allow(unreachable_patterns)]
             w => {
                 let _ = ent;
@@ -7685,7 +7734,7 @@ pub mod bits {
 
     /// Hex text to bytes: whitespace ignored, an even number of hex digits.
     /// Anything else is `malformed-wire`.
-    #[cfg(any(feature = "bits", feature = "protobuf", feature = "tlv"))]
+    #[allow(dead_code)] // cbor (0.28) reads its const and when values as hex in every build
     pub fn from_hex(s: &str) -> Result<Vec<u8>, Error> {
         let nibble = |c: u8| match c {
             b'0'..=b'9' => Some(c - b'0'),
@@ -7717,7 +7766,7 @@ pub mod bits {
         Ok(out)
     }
 
-    #[cfg(any(feature = "bits", feature = "protobuf", feature = "tlv"))]
+    #[allow(dead_code)]
     pub fn to_hex(b: &[u8]) -> String {
         let mut s = String::with_capacity(b.len() * 2);
         for byte in b {
@@ -7728,6 +7777,8 @@ pub mod bits {
 }
 
 pub mod armor;
+#[cfg_attr(not(feature = "cbor"), allow(dead_code))]
+pub mod cbor;
 pub mod seq;
 pub mod text;
 pub mod tlv;
@@ -8393,7 +8444,8 @@ const PACK_DIRECTIVES: &[(&str, usize, usize)] = &[
     ("checksum", 1, 2),
     // the tlv wire (engine-spec v0.13): the form of these lines is checked
     // after the file is read, with the other checks of that version
-    ("tag", 1, usize::MAX),
+    // `tag` takes exactly one argument, a line check (engine-spec v0.28)
+    ("tag", 1, 1),
     ("key", 1, usize::MAX),
     // six-bit armor (engine-spec v0.14, ruling 13): exactly one argument, a
     // line check; the rest of the line is checked after the file is read, and
@@ -8440,6 +8492,8 @@ fn pack_line_checks(text: &str) -> Result<(), Error> {
     // the first line that must stand after `layout sequential`
     let mut first_after_wire: Option<usize> = None;
     let mut sequential = false;
+    // `group` blocks open at this line (ruling 22 of 0.28: where `.` is a path)
+    let mut depth = 0usize;
     for (lineno, raw) in text.lines().enumerate() {
         let ln = lineno + 1;
         let toks = tokenize_at(raw, ln)?;
@@ -8474,6 +8528,24 @@ fn pack_line_checks(text: &str) -> Result<(), Error> {
                 return err(format!("missing-wire: line {}: `{}` stands before the `wire` line", ln, name));
             }
             first_after_wire.get_or_insert(ln);
+        }
+        // ruling 22 of 0.28: on cbor `.` is a path only on a `field` in a
+        // group body and on a `group` outside one; elsewhere it is `bad-locator`
+        if wire == Some(Wire::Cbor) && matches!(name, "field" | "when" | "const" | "group") {
+            let loc = if name == "field" || name == "group" { &toks[2] } else { &toks[1] };
+            let allowed = match name {
+                "field" => depth > 0,
+                "group" => depth == 0,
+                _ => false,
+            };
+            if loc == "." && !allowed {
+                return err(format!("bad-locator: line {}: `.` is a path only on a `field` in a group body and on a `group` outside one", ln));
+            }
+        }
+        match name {
+            "group" => depth += 1,
+            "end" => depth = depth.saturating_sub(1),
+            _ => {}
         }
         // the line's own content
         if matches!(name, "format" | "version" | "wire" | "distribution") && !seen_header.insert(name) {
@@ -8536,9 +8608,9 @@ fn pack_line_checks(text: &str) -> Result<(), Error> {
                         _ => None,
                     };
                     let decided = w != Wire::Bits || bits_len.map_or(false, |len| len <= 64);
-                    // text (ruling 16 of 0.10) and tlv (ruling 10 of 0.13):
-                    // `absent` does not fit the wire, checked after the file
-                    if decided && !matches!(w, Wire::Text | Wire::Tlv) {
+                    // text (ruling 16 of 0.10), tlv (ruling 10 of 0.13) and
+                    // cbor (0.28): `absent` does not fit the wire, checked after the file
+                    if decided && !matches!(w, Wire::Text | Wire::Tlv | Wire::Cbor) {
                         resolve_absent(w, &mut f, bits_len)?;
                     }
                 }
@@ -8558,6 +8630,8 @@ fn pack_line_checks(text: &str) -> Result<(), Error> {
             {
                 return err(format!("bad-locator: line {}: `{}`: a step is a field number, digits only", ln, toks[2]));
             }
+            // engine-spec v0.28: the path of a cbor group is a line check too
+            "group" if wire == Some(Wire::Cbor) => check_locator(wire, sequential, &toks[2], ln)?,
             _ => {}
         }
     }
@@ -8647,6 +8721,13 @@ fn check_locator(wire: Option<Wire>, sequential: bool, loc: &str, ln: usize) -> 
             } else if !digits(loc) {
                 // a bit length alone stays `bad-directive`; other text is no locator
                 return bad_loc("a bits locator is <word>:<pos>:<len>, digits only");
+            }
+        }
+        // engine-spec v0.28: a path of integer keys, positions and text keys;
+        // `.` (the item of a group) is checked after the file is read
+        Some(Wire::Cbor) => {
+            if let Err(why) = cbor::parse_path(loc) {
+                return bad_loc(&why);
             }
         }
         // tlv (engine-spec v0.13): a path is checked after the file is read,

@@ -1,0 +1,16 @@
+{
+  "name": "null-walked-into-is-not-written-back",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor",
+  "input": "a2000107f6",
+  "expect": "a10001",
+  "model": {
+    "@kind": "plain",
+    "@absent": [
+      "lat",
+      "lon"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Ruling 12: lat (7.1) and lon (7.2) pass through null at 7: they are absent, and the null is walked into, not residue, so 07f6 is not written back. Derived without an engine by a standalone RFC 8949 codec."
+}

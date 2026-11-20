@@ -1,0 +1,18 @@
+{
+  "name": "null-position-written-null",
+  "from": "conformance-cbor-array",
+  "to": "conformance-cbor-array",
+  "input": "d282f6a10105",
+  "expect": "d282f6a10105",
+  "model": {
+    "probe.n": "5",
+    "@absent": [
+      "probe.s1",
+      "uid",
+      "probe.s2",
+      "probe.tag"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): null at [0] is absent; Writing step 3: the array is written up to [1], the highest present position, and [0] is f6. Derived without an engine by a standalone RFC 8949 codec."
+}

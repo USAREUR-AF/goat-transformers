@@ -1,0 +1,12 @@
+{
+  "name": "two-step-when-through-a-scalar-does-not-hold",
+  "from": "conformance-cbor-kinds",
+  "to": "conformance-cbor-kinds",
+  "input": "a20309616b65747261636b",
+  "expect": "a60309616b65747261636b61736231326174743138343436373434303733373039353531363136617626626f6bf5",
+  "model": {
+    "@kind": "text"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Reading step 7: when 3.1 passes through the integer at 3 and does not hold (no error); kind text is selected; 3 is mapped by no line of text and is residue, written back 0309. Derived without an engine by a standalone RFC 8949 codec."
+}

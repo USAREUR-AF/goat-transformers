@@ -1,0 +1,12 @@
+{
+  "name": "bool-encode-of-2",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor",
+  "input": "a10001",
+  "expect_error": "transform-encode",
+  "context": {
+    "probe.x": "2"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): bool encode: 21 for 1, 20 for 0, another value is transform-encode; probe.x 2 comes from the context. Derived without an engine by a standalone RFC 8949 codec."
+}

@@ -1,0 +1,13 @@
+{
+  "name": "cbor-04-to-conformance-cbor-kinds-located",
+  "from": "geojson",
+  "to": "conformance-cbor-kinds",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-90.25,45.5]},\"properties\":{},\"id\":\"G-1\"}",
+  "expect": "a60163472d3107a201f951b002f9d5a461736231326174743138343436373434303733373039353531363136617626626f6bf5",
+  "model": {
+    "lat": "45.5",
+    "lon": "-90.25"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Encode selects located (requires lat); when 7 present writes nothing, lat and lon write the map at 7; constants written. Derived without an engine by a standalone RFC 8949 codec."
+}

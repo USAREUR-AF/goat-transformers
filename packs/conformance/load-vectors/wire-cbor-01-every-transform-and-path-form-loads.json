@@ -1,0 +1,8 @@
+{
+  "name": "wire-cbor-01-every-transform-and-path-form-loads",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey lat float deg\nkey lon float deg\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey n int -\nkey val int -\nkey s1 string -\nkey s2 string -\nkey x int -\nkey label string -\nkey qty int -\nlist items \"a list\"\nlist nums \"scalar items\"\n"
+  ],
+  "pack": "format probe\nversion 0.28.0\ndistribution public\nsource \"probe\"\nuses probe\nwire cbor\ntag 18\nfield uid 1 text\nfield probe.n -1 int\nfield probe.val 2 uint\nfield lat 3 float\nfield probe.s2 4 bytes\nfield probe.x flag bool\nfield time_ms 5 epoch_s\nfield probe.s1 a_b-c.[0].d text\ngroup probe.items 9\n  field probe.label name text\n  field probe.qty n uint\nend\ngroup probe.nums 10\n  field probe.val . int\nend\n"
+}

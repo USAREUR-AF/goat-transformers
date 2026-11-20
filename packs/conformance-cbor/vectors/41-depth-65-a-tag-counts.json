@@ -1,0 +1,9 @@
+{
+  "name": "depth-65-a-tag-counts",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor",
+  "input": "a200010a818181818181818181818181818181818181818181818181818181818181818181818181818181818181818181818181818181818181818181818181818181c100",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Reading step 5: tags count one level each: the top map, 63 arrays and a tag are 65 levels. Derived without an engine by a standalone RFC 8949 codec."
+}

@@ -1,0 +1,15 @@
+{
+  "name": "text-kind-and-constants",
+  "from": "conformance-cbor-kinds",
+  "to": "conformance-cbor-kinds",
+  "input": "a701634b2d310207616b65747261636b61736231326174743138343436373434303733373039353531363136617626626f6bf5",
+  "expect": "a701634b2d310207616b65747261636b61736231326174743138343436373434303733373039353531363136617626626f6bf5",
+  "model": {
+    "@kind": "text",
+    "uid": "K-1",
+    "probe.n": "7",
+    "probe.y": "-7"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Kinds: when k track holds on the text track (6574726163 6b); const -0007 is the integer -7 (26), const =12 the text 12 (623132, = stripped), const true the bool (f5); ruling 19: const 18446744073709551616 lies beyond 2^64-1 and is the text 7431383434...; key order 01 < 02 < 616b < 6173 < 6174 < 6176 < 626f6b. Derived without an engine by a standalone RFC 8949 codec."
+}

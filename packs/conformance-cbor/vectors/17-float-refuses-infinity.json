@@ -1,0 +1,9 @@
+{
+  "name": "float-refuses-infinity",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor",
+  "input": "ac00010163552d3102182a03f93e0004420aff051a603aa4c0060207a201f97c0002f9d5a40882617861540981a2616e03646e616d65626161202664666c6167f5",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): float decode: an infinity (f97c00 at 7.1) is transform-decode. Derived without an engine by a standalone RFC 8949 codec."
+}

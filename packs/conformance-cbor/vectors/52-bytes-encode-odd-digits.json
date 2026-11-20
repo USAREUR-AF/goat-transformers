@@ -1,0 +1,12 @@
+{
+  "name": "bytes-encode-odd-digits",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor",
+  "input": "a10001",
+  "expect_error": "transform-encode",
+  "context": {
+    "probe.s2": "abc"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): bytes encode: an odd number of hex digits is transform-encode. Derived without an engine by a standalone RFC 8949 codec."
+}

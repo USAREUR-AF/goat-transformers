@@ -1,0 +1,13 @@
+{
+  "name": "when-present-leaves-its-item-residue-whole",
+  "from": "conformance-cbor-kinds",
+  "to": "conformance-cbor-kinds",
+  "input": "a2020508a10182026161",
+  "expect": "a6020508a1018202616161736231326174743138343436373434303733373039353531363136617626626f6bf5",
+  "model": {
+    "@kind": "marked",
+    "probe.n": "5"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Ruling 15: when 8 present holds and does not walk into its last item; no other line walks into 8, so the map at 8 is residue whole and is written back. Derived without an engine by a standalone RFC 8949 codec."
+}

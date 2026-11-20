@@ -1,0 +1,9 @@
+{
+  "name": "text-length-past-input",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor",
+  "input": "a20001017bffffffffffffffff6162",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Reading step 1: uid declares 2^64-1 bytes (7bffffffffffffffff) and two remain. Derived without an engine by a standalone RFC 8949 codec."
+}

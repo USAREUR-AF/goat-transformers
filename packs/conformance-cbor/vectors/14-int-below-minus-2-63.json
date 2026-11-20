@@ -1,0 +1,9 @@
+{
+  "name": "int-below-minus-2-63",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor",
+  "input": "ac00010163552d3102182a03f93e0004420aff051a603aa4c0060207a201f951b002f9d5a40882617861540981a2616e03646e616d65626161203b800000000000000064666c6167f5",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): int decode: outside -2^63 to 2^63-1 is transform-decode: -1 holds 3b8000000000000000 (-2^63-1). Derived without an engine by a standalone RFC 8949 codec."
+}

@@ -82,9 +82,13 @@ TLV_FLOAT_SIZE = {"f32": 4, "f64": 8}                  # `:<n>` optional, and th
 UPER_TRANSFORMS = {"int": {"uint": "int", "twos": "int", "uscale": "float", "sscale": "float"},
                    "enum": {"uint": "int"}, "chars": {"ascii": "string"},
                    "octets": {"hex": "string", "utf8": "string"}}
+# 0.28 "Transforms for `cbor`": these are valid on this wire and every other
+# name is `bad-directive` on it, after the file is read.
+CBOR_TRANSFORMS = {"uint": "int", "int": "int", "float": "float", "text": "string",
+                   "bytes": "string", "bool": "int", "epoch_s": "int"}
 TRANSFORMS = {"xml": TEXT_TRANSFORMS, "geojson": TEXT_TRANSFORMS, "json": JSON_TRANSFORMS,
               "bits": BITS_TRANSFORMS, "protobuf": PROTOBUF_TRANSFORMS, "text": RECORD_TRANSFORMS,
-              "tlv": TLV_TRANSFORMS}
+              "tlv": TLV_TRANSFORMS, "cbor": CBOR_TRANSFORMS}
 WIRES = tuple(TRANSFORMS)
 
 # the directives of the text wire (0.10): at most once, before the first `kind`
@@ -140,6 +144,48 @@ _COUNT_NAME = re.compile(r"[^.!@]+\Z")
 # spec 0.20: the lines a `case` or `else` body may hold
 CASE_BODY = ("field", "also", "const", "pad", "align", "default", "presence", "if", "opt", "chain",
              "length", "group", "switch", "count")
+# the steps of a cbor path (0.28 "Paths")
+_CBOR_INT_KEY = re.compile(r"-?(?:0|[1-9][0-9]*)\Z")
+_CBOR_POSITION = re.compile(r"\[(0|[1-9][0-9]*)\]\Z")
+_CBOR_TEXT_KEY = re.compile(r"[A-Za-z_][A-Za-z0-9_-]*\Z")
+CBOR_INT_MIN, CBOR_UINT_MAX = -(1 << 63), (1 << 64) - 1
+
+
+def cbor_path(text, dot=False):
+    """The steps of a cbor path (0.28 "Paths") as a tuple of (kind, value):
+    ("int", n) for an integer key, ("pos", i) for an array position `[i]`,
+    ("text", s) for a text key; `()` for `.` when `dot` allows it (a field of
+    a group body, or a `group` outside one). None for text that is not a path."""
+    if text == ".":
+        return () if dot else None
+    steps = []
+    for step in text.split("."):
+        position = _CBOR_POSITION.match(step)
+        if _CBOR_INT_KEY.match(step) and step != "-0":
+            value = int(step)
+            if not CBOR_INT_MIN <= value <= CBOR_UINT_MAX:
+                return None
+            steps.append(("int", value))
+        elif position:
+            if int(position.group(1)) > 65535:
+                return None
+            steps.append(("pos", int(position.group(1))))
+        elif _CBOR_TEXT_KEY.match(step):
+            steps.append(("text", step))
+        else:
+            return None
+    return tuple(steps)
+
+
+def cbor_value(text):
+    """A `when` or `const` value of the cbor wire (0.28 "Kinds", rulings 8 and
+    19): an int when 2a of 0.11 reads it as one in -2^63 to 2^64-1, a bool for
+    `true` and `false`, else a text string with one leading `=` stripped."""
+    if _INT.match(text) and CBOR_INT_MIN <= int(text) <= CBOR_UINT_MAX:
+        return int(text)
+    if text in ("true", "false"):
+        return text == "true"
+    return text[1:] if text.startswith("=") else text
 
 
 def printable(text, low=0x20):
@@ -685,6 +731,8 @@ class Pack:
         self.delimiter = self.start = self.checksum = None      # text wire, as written
         self.tag, self.length, self.key = "ber-oid", "ber", None  # tlv wire
         self.sum16 = None                                        # tlv: the checksum tag, an int
+        self.cbor_tag = None        # cbor: the `tag <n>` the message is enclosed in, an int (0.28)
+        self.cbor_top = "map"       # cbor: the type of the top item, "map" or "array" (0.28)
         self.sources, self.uses = [], ["core"]
         self.tables, self.typemap = {}, []
         self.common, self.kinds = [], []
@@ -764,6 +812,11 @@ class _Loader:
                 self.bad(no, "`%s` is not a directive" % d)
             if open_blocks and d in HEADER + TABLES + ("tag", "key"):
                 self.bad(no, "`%s` inside a `%s` block" % (d, open_blocks[-1].d))
+            if d == "tag" and len(a) != 1:
+                # 0.28: one argument, a line check (step 3 of 5b of 0.11) on any wire
+                self.bad(no, "`tag` takes one argument, has %d" % len(a))
+            if pack.wire == "cbor":
+                self._cbor_line_locator(no, d, a, any(b.d == "group" for b in open_blocks))
             # the forms of 0.13 are recorded here and checked in `lines`, after
             # the file is read; `length` is one of them on the tlv wire only, and
             # `checksum` when it is not the one-word form of 0.10
@@ -884,6 +937,28 @@ class _Loader:
         node.body = []
         arms.append(node)
 
+    def _cbor_line_locator(self, no, d, a, in_group):
+        """0.28 "Paths": the path form is a line check (step 8 of 5b of 0.11),
+        after the argument count, so a line with too few arguments is left to
+        the checks after the file."""
+        if d in ("field", "group") and len(a) >= (3 if d == "field" else 2):
+            text = a[1]
+        elif d in ("when", "const") and len(a) == 2:
+            text = a[0]
+        else:
+            return
+        self._cbor_path(no, text, d, in_group)
+
+    def _cbor_path(self, at, text, d, in_group):
+        """The steps of one cbor path, or `bad-locator`. `.` is a path for a
+        `field` of a group body (the element) and a `group` outside one (the
+        top item)."""
+        path = cbor_path(text, dot=(d == "field" and in_group) or (d == "group" and not in_group))
+        if path is None:
+            self.fail("bad-locator", "`%s` is not a cbor path of integer keys, `[i]` positions "
+                                     "and text keys" % text, at if isinstance(at, int) else at.line)
+        return path
+
     def _header(self, no, d, value):
         pack = self.pack
         if d == "source":
@@ -1000,6 +1075,9 @@ class _Loader:
         if pack.wire == "bits" and pack.sequential:
             self._count_paths(pack.common, pack.kinds)
             self._rest_extents(pack.common, pack.kinds, None)
+
+        if pack.wire == "cbor":
+            self._cbor_top()
         if pack.wire == "bits" and not pack.sequential:
             for _, lines in pack.scopes():
                 self._fixed_extents(lines, item=None)
@@ -1051,6 +1129,9 @@ class _Loader:
         pack = self.pack
         seen = set()
         for no, d, a, after_kind in self.tlv_lines:
+            if pack.wire == "cbor" and d == "tag":
+                self._cbor_tag(no, a, after_kind, seen)
+                continue
             if pack.wire != "tlv":
                 self.bad(no, "`%s %s` on the %s wire" % (d, " ".join(a), pack.wire))
             if d in seen:
@@ -1072,6 +1153,18 @@ class _Loader:
         for no, d, a, _ in self.tlv_lines:      # the tag is checked against the final `tag` form
             if d == "checksum":
                 pack.sum16 = self._tlv_tag(no, a[1])
+
+    def _cbor_tag(self, no, a, after_kind, seen):
+        """0.28 and its ruling 5: `tag <n>` on cbor, once, before the first
+        `kind`, n a decimal from 0 to 2^64-1 with no leading zero."""
+        if "tag" in seen:
+            self.bad(no, "a second `tag` line")
+        seen.add("tag")
+        if after_kind:
+            self.bad(no, "`tag` after the first `kind`")
+        if not _TLV_TAG.match(a[0]) or int(a[0]) > CBOR_UINT_MAX:
+            self.bad(no, "`tag %s` on cbor is not a decimal from 0 to 2^64-1 with no leading zero" % a[0])
+        self.pack.cbor_tag = int(a[0])
 
     def _tlv_tag(self, node, text):
         """One tag of the tlv wire as an int: decimal, no leading zero, 0 to
@@ -1109,6 +1202,9 @@ class _Loader:
                 self._text_group_last(lines)
             elif self.pack.wire == "tlv":
                 self._tlv_paths(lines)
+            elif self.pack.wire == "cbor":
+                self._one_group_per_list(lines)
+                self._cbor_scope(lines, body=group is not None)
             else:
                 self._one_group_per_list(lines)
                 self._paths_through_groups(lines)
@@ -1389,6 +1485,8 @@ class _Loader:
         node.loc = text
         if pack.wire == "text":
             self._text_locator(node, text, group, what)
+        elif pack.wire == "cbor":
+            node.path = self._cbor_path(node, text, what, group is not None)
         elif pack.wire == "tlv":
             m = _TLV_LOCATOR.match(text)
             if not m:
@@ -1463,6 +1561,9 @@ class _Loader:
             i += 1
         bits_wire = self.pack.wire == "bits"
         self._terminated(node, bits_wire)
+        if self.pack.wire == "cbor" and (node.opts or node.absent is not None):
+            self.bad(node, "`%s` on the cbor wire, whose only field option is `via`"
+                     % ("absent" if node.absent is not None else sorted(node.opts)[0]))
         if node.absent is not None:
             self._absent(node, group)
         bits_wire = self.pack.wire == "bits"
@@ -1855,6 +1956,8 @@ class _Loader:
                     for x in node.body:
                         if "with" in x.args[3:]:
                             self.bad(x, "`with` on a `.` field of a packed protobuf group (0.18 ruling 4)")
+            elif pack.wire == "cbor":
+                node.path = self._cbor_path(node, node.loc, "group", group is not None)
             elif not node.loc or node.loc == ".":
                 self.bad(node, "`%s` is not a group locator" % node.loc)
             elif pack.wire == "xml" and (any(not step for step in node.loc.split("/"))
@@ -2016,6 +2119,61 @@ class _Loader:
                     later = node if node.line > other.line else other
                     self.bad(later, "`%s` and `%s` read one item both as a value and as a set"
                              % (other.loc, node.loc))
+
+    def _cbor_scope(self, lines, body):
+        """0.28 "Types" and rulings 13, over one scope (the common lines with
+        one kind's, or one group body): no step used both as a map and as an
+        array; no `field`, `when` or `const` at or under a group's path; no
+        line at a proper prefix of another line's path, a `when … present`
+        excepted as the prefix; no group at or under another group's path; and
+        in a group body, `.` alone or not at all."""
+        placed = [n for n in lines if n.d in ("field", "when", "const", "group")]
+        groups = [n for n in placed if n.d == "group"]
+        if body:
+            dotted = [n for n in placed if n.path == ()]
+            if dotted and len(dotted) != len(placed):
+                self.bad(next(n for n in placed if n.path != ()), "a group body mixes `.` with other paths")
+        used = {}                   # prefix -> (container type, the line that uses it so)
+        for node in placed:
+            steps = node.path + ((("pos", 0),) if node.d == "group" else ())   # a group's item is an array
+            for i in range(0 if body else 1, len(steps)):
+                kind = "array" if steps[i][0] == "pos" else "map"
+                prefix = steps[:i]
+                seen = used.setdefault(prefix, (kind, node))
+                if seen[0] != kind:
+                    self.bad(node, "`%s` and `%s` use one item both as a map and as an array"
+                             % (seen[1].loc, node.loc))
+        for g in groups:
+            for node in placed:
+                if node is not g and node.path[:len(g.path)] == g.path:
+                    self.bad(max(g, node, key=lambda n: n.line),
+                             "the %s at `%s` is at or under the path of the group at `%s`"
+                             % (node.d, node.loc, g.loc))
+        for short in placed:
+            if short.d == "when" and short.value == "present":
+                continue
+            for node in placed:
+                if len(short.path) < len(node.path) and node.path[:len(short.path)] == short.path:
+                    self.bad(max(short, node, key=lambda n: n.line),
+                             "`%s` is a value and a container of `%s` in one scope" % (short.loc, node.loc))
+
+    def _cbor_top(self):
+        """0.28 "Types": the first step of every path outside a group body,
+        and `group <list> .`, decide one type for the top item."""
+        pack, first = self.pack, None
+        for lines in [pack.common] + [k.lines for k in pack.kinds]:
+            for node in lines:
+                if node.d not in ("field", "when", "const", "group"):
+                    continue
+                kind = "array" if node.path == () or node.path[0][0] == "pos" else "map"
+                if first is None:
+                    first = (kind, node)
+                elif first[0] != kind:
+                    self.bad(node, "`%s` makes the top item %s, `%s` %s"
+                             % (node.loc, "an array" if kind == "array" else "a map",
+                                first[1].loc, "an array" if first[0] == "array" else "a map"))
+        if first is not None:
+            pack.cbor_top = first[0]
 
     def _sequential_lists(self, lines):
         """0.8 rulings 23 and 33, with 0.19 ruling 20: two groups of one list in
