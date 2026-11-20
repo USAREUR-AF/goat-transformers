@@ -1,0 +1,15 @@
+{
+ "1": "list_entities_water_heater_response_object_id",
+ "10": "list_entities_water_heater_response_target_temperature_step",
+ "11[]": "list_entities_water_heater_response_supported_modes",
+ "12": "list_entities_water_heater_response_supported_features",
+ "13": "list_entities_water_heater_response_temperature_unit",
+ "3": "list_entities_water_heater_response_name",
+ "4": "list_entities_water_heater_response_icon",
+ "5": "list_entities_water_heater_response_disabled_by_default",
+ "6": "list_entities_water_heater_response_entity_category",
+ "7": "list_entities_water_heater_response_device_id",
+ "8": "list_entities_water_heater_response_min_temperature",
+ "9": "list_entities_water_heater_response_max_temperature",
+ "ListEntitiesWaterHeaterResponse:11[]item": "list_entities_water_heater_response_supported_modes_item"
+}

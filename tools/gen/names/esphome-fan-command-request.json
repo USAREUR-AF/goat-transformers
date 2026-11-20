@@ -1,0 +1,15 @@
+{
+ "10": "fan_command_request_has_speed_level",
+ "11": "fan_command_request_speed_level",
+ "12": "fan_command_request_has_preset_mode",
+ "13": "fan_command_request_preset_mode",
+ "14": "fan_command_request_device_id",
+ "2": "fan_command_request_has_state",
+ "3": "fan_command_request_state",
+ "4": "fan_command_request_has_speed",
+ "5": "fan_command_request_speed",
+ "6": "fan_command_request_has_oscillating",
+ "7": "fan_command_request_oscillating",
+ "8": "fan_command_request_has_direction",
+ "9": "fan_command_request_direction"
+}

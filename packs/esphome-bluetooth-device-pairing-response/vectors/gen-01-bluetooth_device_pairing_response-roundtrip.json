@@ -1,0 +1,13 @@
+{
+  "name": "gen-bluetooth_device_pairing_response-roundtrip",
+  "from": "esphome-bluetooth-device-pairing-response",
+  "to": "esphome-bluetooth-device-pairing-response",
+  "input": "0864100118ae01",
+  "expect": "0864100118ae01",
+  "model": {
+    "@kind": "bluetooth_device_pairing_response",
+    "esphomebluetoothdevicepairingresponse.bluetooth_device_pairing_response_address": "100",
+    "esphomebluetoothdevicepairingresponse.bluetooth_device_pairing_response_paired": "1",
+    "esphomebluetoothdevicepairingresponse.bluetooth_device_pairing_response_error": "174"
+  }
+}

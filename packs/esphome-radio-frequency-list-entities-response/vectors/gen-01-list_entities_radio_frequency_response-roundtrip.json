@@ -1,0 +1,20 @@
+{
+  "name": "gen-list_entities_radio_frequency_response-roundtrip",
+  "from": "esphome-radio-frequency-list-entities-response",
+  "to": "esphome-radio-frequency-list-entities-response",
+  "input": "0a0b6f626a6563745f69642d301a066e616d652d31220669636f6e2d3228013001389d0240c20248e702508c0358b103",
+  "expect": "0a0b6f626a6563745f69642d301a066e616d652d31220669636f6e2d3228013001389d0240c20248e702508c0358b103",
+  "model": {
+    "@kind": "list_entities_radio_frequency_response",
+    "esphomeradiofrequencylistentitiesresponse.list_entities_radio_frequency_response_object_id": "object_id-0",
+    "esphomeradiofrequencylistentitiesresponse.list_entities_radio_frequency_response_name": "name-1",
+    "esphomeradiofrequencylistentitiesresponse.list_entities_radio_frequency_response_icon": "icon-2",
+    "esphomeradiofrequencylistentitiesresponse.list_entities_radio_frequency_response_disabled_by_default": "1",
+    "esphomeradiofrequencylistentitiesresponse.list_entities_radio_frequency_response_entity_category": "1",
+    "esphomeradiofrequencylistentitiesresponse.list_entities_radio_frequency_response_device_id": "285",
+    "esphomeradiofrequencylistentitiesresponse.list_entities_radio_frequency_response_capabilities": "322",
+    "esphomeradiofrequencylistentitiesresponse.list_entities_radio_frequency_response_frequency_min": "359",
+    "esphomeradiofrequencylistentitiesresponse.list_entities_radio_frequency_response_frequency_max": "396",
+    "esphomeradiofrequencylistentitiesresponse.list_entities_radio_frequency_response_supported_modulations": "433"
+  }
+}

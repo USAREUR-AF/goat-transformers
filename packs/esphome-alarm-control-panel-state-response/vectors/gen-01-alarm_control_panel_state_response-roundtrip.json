@@ -1,0 +1,12 @@
+{
+  "name": "gen-alarm_control_panel_state_response-roundtrip",
+  "from": "esphome-alarm-control-panel-state-response",
+  "to": "esphome-alarm-control-panel-state-response",
+  "input": "1001188901",
+  "expect": "1001188901",
+  "model": {
+    "@kind": "alarm_control_panel_state_response",
+    "esphomealarmcontrolpanelstateresponse.alarm_control_panel_state_response_state": "1",
+    "esphomealarmcontrolpanelstateresponse.alarm_control_panel_state_response_device_id": "137"
+  }
+}

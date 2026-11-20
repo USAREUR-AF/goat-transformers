@@ -1,0 +1,13 @@
+{
+  "name": "gen-switch_state_response-roundtrip",
+  "from": "esphome-switch-state-response",
+  "to": "esphome-switch-state-response",
+  "input": "10011889012001",
+  "expect": "10011889012001",
+  "model": {
+    "@kind": "switch_state_response",
+    "esphomeswitchstateresponse.switch_state_response_state": "1",
+    "esphomeswitchstateresponse.switch_state_response_device_id": "137",
+    "esphomeswitchstateresponse.switch_state_response_missing_state": "1"
+  }
+}

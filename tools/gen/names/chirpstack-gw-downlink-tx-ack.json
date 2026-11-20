@@ -1,0 +1,6 @@
+{
+ "2": "downlink_tx_ack_downlink_id",
+ "5[]": "downlink_tx_ack_items",
+ "6": "downlink_tx_ack_gateway_id",
+ "gw.DownlinkTxAckItem:1": "downlink_tx_ack_item_status"
+}

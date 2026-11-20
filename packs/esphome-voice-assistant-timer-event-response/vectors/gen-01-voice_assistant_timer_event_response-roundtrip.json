@@ -1,0 +1,16 @@
+{
+  "name": "gen-voice_assistant_timer_event_response-roundtrip",
+  "from": "esphome-voice-assistant-timer-event-response",
+  "to": "esphome-voice-assistant-timer-event-response",
+  "input": "0801120a74696d65725f69642d311a066e616d652d3220d30128f8013001",
+  "expect": "0801120a74696d65725f69642d311a066e616d652d3220d30128f8013001",
+  "model": {
+    "@kind": "voice_assistant_timer_event_response",
+    "esphomevoiceassistanttimereventresponse.voice_assistant_timer_event_response_event_type": "1",
+    "esphomevoiceassistanttimereventresponse.voice_assistant_timer_event_response_timer_id": "timer_id-1",
+    "esphomevoiceassistanttimereventresponse.voice_assistant_timer_event_response_name": "name-2",
+    "esphomevoiceassistanttimereventresponse.voice_assistant_timer_event_response_total_seconds": "211",
+    "esphomevoiceassistanttimereventresponse.voice_assistant_timer_event_response_seconds_left": "248",
+    "esphomevoiceassistanttimereventresponse.voice_assistant_timer_event_response_is_active": "1"
+  }
+}

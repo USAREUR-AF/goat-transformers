@@ -1,0 +1,7 @@
+{
+ "2": "cover_state_response_legacy_state",
+ "3": "cover_state_response_position",
+ "4": "cover_state_response_tilt",
+ "5": "cover_state_response_current_operation",
+ "6": "cover_state_response_device_id"
+}

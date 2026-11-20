@@ -1,0 +1,13 @@
+{
+  "name": "gen-execute_service_response-roundtrip",
+  "from": "esphome-execute-service-response",
+  "to": "esphome-execute-service-response",
+  "input": "086410011a0f6572726f725f6d6573736167652d32",
+  "expect": "086410011a0f6572726f725f6d6573736167652d32",
+  "model": {
+    "@kind": "execute_service_response",
+    "esphomeexecuteserviceresponse.execute_service_response_call_id": "100",
+    "esphomeexecuteserviceresponse.execute_service_response_success": "1",
+    "esphomeexecuteserviceresponse.execute_service_response_error_message": "error_message-2"
+  }
+}

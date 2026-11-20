@@ -1,0 +1,12 @@
+{
+  "name": "gen-zwave_proxy_request_response-roundtrip",
+  "from": "esphome-z-wave-proxy-request-response",
+  "to": "esphome-z-wave-proxy-request-response",
+  "input": "08011001",
+  "expect": "08011001",
+  "model": {
+    "@kind": "zwave_proxy_request_response",
+    "esphomezwaveproxyrequestresponse.zwave_proxy_request_response_type": "1",
+    "esphomezwaveproxyrequestresponse.zwave_proxy_request_response_status": "1"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "name": "gen-uplink_frame_log-roundtrip",
+  "from": "chirpstack-stream-uplink-frame-log",
+  "to": "chirpstack-stream-uplink-frame-log",
+  "input": "1229086412251a2308890110ae011a12636f64655f726174655f6c65676163792d332001280130c20238011a6e0a0d676174657761795f69642d32311092071a0608b70710dc07220608cb0810f0082a0608950910ba0930df093d0000844040a90a48ce0a50f30a58980b6222090000000000003940110000000000c03a40190000000000803c4020012d0000e03f8001018a010608810810a6081a6e0a0d676174657761795f69642d343310c00d1a0608e50d108a0e220608f90e109e0f2a0608c30f10e80f308d103d0000f03f40d71048fc1050a11158c6116222090000000000803740110000000000403940190000000000003b4020012d0000f0408001018a010608af0e10d40e20012a0b6465765f616464722d3135320a6465765f6575692d31363a0608d90510fe0540014801",
+  "expect": "1229086412251a2308890110ae011a12636f64655f726174655f6c65676163792d332001280130c20238011a6e0a0d676174657761795f69642d32311092071a0608b70710dc07220608cb0810f0082a0608950910ba0930df093d0000844040a90a48ce0a50f30a58980b6222090000000000003940110000000000c03a40190000000000803c4020012d0000e03f8001018a010608810810a6081a6e0a0d676174657761795f69642d343310c00d1a0608e50d108a0e220608f90e109e0f2a0608c30f10e80f308d103d0000f03f40d71048fc1050a11158c6116222090000000000803740110000000000403940190000000000003b4020012d0000f0408001018a010608af0e10d40e20012a0b6465765f616464722d3135320a6465765f6575692d31363a0608d90510fe0540014801",
+  "model": {
+    "@kind": "uplink_frame_log",
+    "chirpstackstreamuplinkframelog.tx_info_frequency": "100",
+    "chirpstackstreamuplinkframelog.tx_info_lora_bandwidth": "137",
+    "chirpstackstreamuplinkframelog.tx_info_lora_spreading_factor": "174",
+    "chirpstackstreamuplinkframelog.tx_info_lora_code_rate_legacy": "code_rate_legacy-3",
+    "chirpstackstreamuplinkframelog.tx_info_lora_code_rate": "1",
+    "chirpstackstreamuplinkframelog.tx_info_lora_polarization_inversion": "1",
+    "chirpstackstreamuplinkframelog.tx_info_lora_preamble": "322",
+    "chirpstackstreamuplinkframelog.tx_info_lora_no_crc": "1",
+    "chirpstackstreamuplinkframelog.uplink_frame_log_f_type": "1",
+    "chirpstackstreamuplinkframelog.uplink_frame_log_dev_addr": "dev_addr-15",
+    "chirpstackstreamuplinkframelog.uplink_frame_log_dev_eui": "dev_eui-16",
+    "chirpstackstreamuplinkframelog.time_seconds": "729",
+    "chirpstackstreamuplinkframelog.time_nanos": "766",
+    "chirpstackstreamuplinkframelog.uplink_frame_log_plaintext_f_opts": "1",
+    "chirpstackstreamuplinkframelog.uplink_frame_log_plaintext_frm_payload": "1",
+    "chirpstackstreamuplinkframelog.uplink_frame_log_rx_info.#": "2",
+    "chirpstackstreamuplinkframelog.uplink_frame_log_rx_info[0].chirpstackstreamuplinkframelog.uplink_rx_info_gateway_id": "gateway_id-21",
+    "chirpstackstreamuplinkframelog.uplink_frame_log_rx_info[0].chirpstackstreamuplinkframelog.uplink_rx_info_uplink_id": "914",
+    "chirpstackstreamuplinkframelog.uplink_frame_log_rx_info[1].chirpstackstreamuplinkframelog.uplink_rx_info_gateway_id": "gateway_id-43",
+    "chirpstackstreamuplinkframelog.uplink_frame_log_rx_info[1].chirpstackstreamuplinkframelog.uplink_rx_info_uplink_id": "1728"
+  }
+}

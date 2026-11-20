@@ -1,0 +1,23 @@
+{
+  "name": "gen-gateway_configuration-roundtrip",
+  "from": "chirpstack-gw-gateway-configuration",
+  "to": "chirpstack-gw-gateway-configuration",
+  "input": "120976657273696f6e2d311a1708f80110011a0a08c2021202c50418e70228fb0330a0041a1708ea0410011a0a08b4051202b70718d90528ed06309207220608ae0110d3012a0c676174657761795f69642d30",
+  "expect": "120976657273696f6e2d311a1708f80110011a0a08c2021202c50418e70228fb0330a0041a1708ea0410011a0a08b4051202b70718d90528ed06309207220608ae0110d3012a0c676174657761795f69642d30",
+  "model": {
+    "@kind": "gateway_configuration",
+    "chirpstackgwgatewayconfiguration.gateway_configuration_gateway_id": "gateway_id-0",
+    "chirpstackgwgatewayconfiguration.gateway_configuration_version": "version-1",
+    "chirpstackgwgatewayconfiguration.stats_interval_seconds": "174",
+    "chirpstackgwgatewayconfiguration.stats_interval_nanos": "211",
+    "chirpstackgwgatewayconfiguration.gateway_configuration_channels.#": "2",
+    "chirpstackgwgatewayconfiguration.gateway_configuration_channels[0].chirpstackgwgatewayconfiguration.channel_configuration_frequency": "248",
+    "chirpstackgwgatewayconfiguration.gateway_configuration_channels[0].chirpstackgwgatewayconfiguration.channel_configuration_modulation_legacy": "1",
+    "chirpstackgwgatewayconfiguration.gateway_configuration_channels[0].chirpstackgwgatewayconfiguration.channel_configuration_lora_modulation_config_spreading_factors.#": "1",
+    "chirpstackgwgatewayconfiguration.gateway_configuration_channels[0].chirpstackgwgatewayconfiguration.channel_configuration_lora_modulation_config_spreading_factors[0].chirpstackgwgatewayconfiguration.lora_modulation_config_spreading_factors_item": "581",
+    "chirpstackgwgatewayconfiguration.gateway_configuration_channels[1].chirpstackgwgatewayconfiguration.channel_configuration_frequency": "618",
+    "chirpstackgwgatewayconfiguration.gateway_configuration_channels[1].chirpstackgwgatewayconfiguration.channel_configuration_modulation_legacy": "1",
+    "chirpstackgwgatewayconfiguration.gateway_configuration_channels[1].chirpstackgwgatewayconfiguration.channel_configuration_lora_modulation_config_spreading_factors.#": "1",
+    "chirpstackgwgatewayconfiguration.gateway_configuration_channels[1].chirpstackgwgatewayconfiguration.channel_configuration_lora_modulation_config_spreading_factors[0].chirpstackgwgatewayconfiguration.lora_modulation_config_spreading_factors_item": "951"
+  }
+}

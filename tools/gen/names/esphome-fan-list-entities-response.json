@@ -1,0 +1,14 @@
+{
+ "1": "list_entities_fan_response_object_id",
+ "10": "list_entities_fan_response_icon",
+ "11": "list_entities_fan_response_entity_category",
+ "12[]": "list_entities_fan_response_supported_preset_modes",
+ "13": "list_entities_fan_response_device_id",
+ "3": "list_entities_fan_response_name",
+ "5": "list_entities_fan_response_supports_oscillation",
+ "6": "list_entities_fan_response_supports_speed",
+ "7": "list_entities_fan_response_supports_direction",
+ "8": "list_entities_fan_response_supported_speed_count",
+ "9": "list_entities_fan_response_disabled_by_default",
+ "ListEntitiesFanResponse:12[]item": "list_entities_fan_response_supported_preset_modes_item"
+}

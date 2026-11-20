@@ -1,0 +1,13 @@
+{
+  "name": "gen-homeassistant_action_response-roundtrip",
+  "from": "esphome-homeassistant-action-response",
+  "to": "esphome-homeassistant-action-response",
+  "input": "086410011a0f6572726f725f6d6573736167652d32",
+  "expect": "086410011a0f6572726f725f6d6573736167652d32",
+  "model": {
+    "@kind": "homeassistant_action_response",
+    "esphomehomeassistantactionresponse.homeassistant_action_response_call_id": "100",
+    "esphomehomeassistantactionresponse.homeassistant_action_response_success": "1",
+    "esphomehomeassistantactionresponse.homeassistant_action_response_error_message": "error_message-2"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "name": "gen-join_event-roundtrip",
+  "from": "chirpstack-integration-join-event",
+  "to": "chirpstack-integration-join-event",
+  "input": "0a1264656475706c69636174696f6e5f69642d30120608890110ae011a8b010a0b74656e616e745f69642d33120d74656e616e745f6e616d652d341a106170706c69636174696f6e5f69642d3522126170706c69636174696f6e5f6e616d652d362a136465766963655f70726f66696c655f69642d3732156465766963655f70726f66696c655f6e616d652d383a0d6465766963655f6e616d652d39420a6465765f6575692d31305001220b6465765f616464722d31322a1b0a0a6465765f6575692d313310ea04188f0520b40528d90530fe0532230a1173657373696f6e5f6b65795f69642d3139120e0a0c6b656b5f6c6162656c2d32303a13726567696f6e5f636f6e6669675f69642d3231",
+  "expect": "0a1264656475706c69636174696f6e5f69642d30120608890110ae011a8b010a0b74656e616e745f69642d33120d74656e616e745f6e616d652d341a106170706c69636174696f6e5f69642d3522126170706c69636174696f6e5f6e616d652d362a136465766963655f70726f66696c655f69642d3732156465766963655f70726f66696c655f6e616d652d383a0d6465766963655f6e616d652d39420a6465765f6575692d31305001220b6465765f616464722d31322a1b0a0a6465765f6575692d313310ea04188f0520b40528d90530fe0532230a1173657373696f6e5f6b65795f69642d3139120e0a0c6b656b5f6c6162656c2d32303a13726567696f6e5f636f6e6669675f69642d3231",
+  "model": {
+    "@kind": "join_event",
+    "chirpstackintegrationjoinevent.join_event_deduplication_id": "deduplication_id-0",
+    "chirpstackintegrationjoinevent.time_seconds": "137",
+    "chirpstackintegrationjoinevent.time_nanos": "174",
+    "chirpstackintegrationjoinevent.device_info_tenant_id": "tenant_id-3",
+    "chirpstackintegrationjoinevent.device_info_tenant_name": "tenant_name-4",
+    "chirpstackintegrationjoinevent.device_info_application_id": "application_id-5",
+    "chirpstackintegrationjoinevent.device_info_application_name": "application_name-6",
+    "chirpstackintegrationjoinevent.device_info_device_profile_id": "device_profile_id-7",
+    "chirpstackintegrationjoinevent.device_info_device_profile_name": "device_profile_name-8",
+    "chirpstackintegrationjoinevent.device_info_device_name": "device_name-9",
+    "chirpstackintegrationjoinevent.device_info_dev_eui": "dev_eui-10",
+    "chirpstackintegrationjoinevent.device_info_device_class_enabled": "1",
+    "chirpstackintegrationjoinevent.join_event_dev_addr": "dev_addr-12",
+    "chirpstackintegrationjoinevent.relay_rx_info_dev_eui": "dev_eui-13",
+    "chirpstackintegrationjoinevent.relay_rx_info_frequency": "618",
+    "chirpstackintegrationjoinevent.relay_rx_info_dr": "655",
+    "chirpstackintegrationjoinevent.relay_rx_info_snr": "692",
+    "chirpstackintegrationjoinevent.relay_rx_info_rssi": "729",
+    "chirpstackintegrationjoinevent.relay_rx_info_wor_channel": "766",
+    "chirpstackintegrationjoinevent.join_server_context_session_key_id": "session_key_id-19",
+    "chirpstackintegrationjoinevent.join_server_context_app_s_key_kek_label": "kek_label-20",
+    "chirpstackintegrationjoinevent.join_event_region_config_id": "region_config_id-21"
+  }
+}

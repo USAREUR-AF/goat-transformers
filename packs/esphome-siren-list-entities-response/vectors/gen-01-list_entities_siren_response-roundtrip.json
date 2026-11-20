@@ -1,0 +1,21 @@
+{
+  "name": "gen-list_entities_siren_response-roundtrip",
+  "from": "esphome-siren-list-entities-response",
+  "to": "esphome-siren-list-entities-response",
+  "input": "0a0b6f626a6563745f69642d301a066e616d652d312a0669636f6e2d3230013a07746f6e65732d383a07746f6e65732d3940014801500158e702",
+  "expect": "0a0b6f626a6563745f69642d301a066e616d652d312a0669636f6e2d3230013a07746f6e65732d383a07746f6e65732d3940014801500158e702",
+  "model": {
+    "@kind": "list_entities_siren_response",
+    "esphomesirenlistentitiesresponse.list_entities_siren_response_object_id": "object_id-0",
+    "esphomesirenlistentitiesresponse.list_entities_siren_response_name": "name-1",
+    "esphomesirenlistentitiesresponse.list_entities_siren_response_icon": "icon-2",
+    "esphomesirenlistentitiesresponse.list_entities_siren_response_disabled_by_default": "1",
+    "esphomesirenlistentitiesresponse.list_entities_siren_response_supports_duration": "1",
+    "esphomesirenlistentitiesresponse.list_entities_siren_response_supports_volume": "1",
+    "esphomesirenlistentitiesresponse.list_entities_siren_response_entity_category": "1",
+    "esphomesirenlistentitiesresponse.list_entities_siren_response_device_id": "359",
+    "esphomesirenlistentitiesresponse.list_entities_siren_response_tones.#": "2",
+    "esphomesirenlistentitiesresponse.list_entities_siren_response_tones[0].esphomesirenlistentitiesresponse.list_entities_siren_response_tones_item": "tones-8",
+    "esphomesirenlistentitiesresponse.list_entities_siren_response_tones[1].esphomesirenlistentitiesresponse.list_entities_siren_response_tones_item": "tones-9"
+  }
+}

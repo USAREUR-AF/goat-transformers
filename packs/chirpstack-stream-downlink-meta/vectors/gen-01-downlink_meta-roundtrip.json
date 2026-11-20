@@ -1,0 +1,30 @@
+{
+  "name": "gen-downlink_meta-roundtrip",
+  "from": "chirpstack-stream-downlink-meta",
+  "to": "chirpstack-stream-downlink-meta",
+  "input": "0a096465765f6575692d3012146d756c7469636173745f67726f75705f69642d311a3f08ae0110d3011a251a2308f801109d021a12636f64655f726174655f6c65676163792d362001280130b103380120d90528fe05320a12080a0608a30610c80620b70728dc073081083801420d676174657761795f69642d3237",
+  "expect": "0a096465765f6575692d3012146d756c7469636173745f67726f75705f69642d311a3f08ae0110d3011a251a2308f801109d021a12636f64655f726174655f6c65676163792d362001280130b103380120d90528fe05320a12080a0608a30610c80620b70728dc073081083801420d676174657761795f69642d3237",
+  "model": {
+    "@kind": "downlink_meta",
+    "chirpstackstreamdownlinkmeta.downlink_meta_dev_eui": "dev_eui-0",
+    "chirpstackstreamdownlinkmeta.downlink_meta_multicast_group_id": "multicast_group_id-1",
+    "chirpstackstreamdownlinkmeta.tx_info_frequency": "174",
+    "chirpstackstreamdownlinkmeta.tx_info_power": "211",
+    "chirpstackstreamdownlinkmeta.tx_info_lora_bandwidth": "248",
+    "chirpstackstreamdownlinkmeta.tx_info_lora_spreading_factor": "285",
+    "chirpstackstreamdownlinkmeta.tx_info_lora_code_rate_legacy": "code_rate_legacy-6",
+    "chirpstackstreamdownlinkmeta.tx_info_lora_code_rate": "1",
+    "chirpstackstreamdownlinkmeta.tx_info_lora_polarization_inversion": "1",
+    "chirpstackstreamdownlinkmeta.tx_info_lora_preamble": "433",
+    "chirpstackstreamdownlinkmeta.tx_info_lora_no_crc": "1",
+    "chirpstackstreamdownlinkmeta.tx_info_board": "729",
+    "chirpstackstreamdownlinkmeta.tx_info_antenna": "766",
+    "chirpstackstreamdownlinkmeta.tx_info_delay_seconds": "803",
+    "chirpstackstreamdownlinkmeta.tx_info_delay_nanos": "840",
+    "chirpstackstreamdownlinkmeta.downlink_meta_phy_payload_byte_count": "951",
+    "chirpstackstreamdownlinkmeta.downlink_meta_mac_command_byte_count": "988",
+    "chirpstackstreamdownlinkmeta.downlink_meta_application_payload_byte_count": "1025",
+    "chirpstackstreamdownlinkmeta.downlink_meta_frame_type": "1",
+    "chirpstackstreamdownlinkmeta.downlink_meta_gateway_id": "gateway_id-27"
+  }
+}

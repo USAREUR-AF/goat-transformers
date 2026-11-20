@@ -1,0 +1,17 @@
+{
+  "name": "gen-mesh_event-roundtrip",
+  "from": "chirpstack-gw-mesh-event",
+  "to": "chirpstack-gw-mesh-event",
+  "input": "0a0c676174657761795f69642d30120a72656c61795f69642d311a0608ae0110d30122050a0308f80122050a03089d02",
+  "expect": "0a0c676174657761795f69642d30120a72656c61795f69642d311a0608ae0110d30122050a0308f80122050a03089d02",
+  "model": {
+    "@kind": "mesh_event",
+    "chirpstackgwmeshevent.mesh_event_gateway_id": "gateway_id-0",
+    "chirpstackgwmeshevent.mesh_event_relay_id": "relay_id-1",
+    "chirpstackgwmeshevent.time_seconds": "174",
+    "chirpstackgwmeshevent.time_nanos": "211",
+    "chirpstackgwmeshevent.mesh_event_events.#": "2",
+    "chirpstackgwmeshevent.mesh_event_events[0].chirpstackgwmeshevent.mesh_event_item_proprietary_event_type": "248",
+    "chirpstackgwmeshevent.mesh_event_events[1].chirpstackgwmeshevent.mesh_event_item_proprietary_event_type": "285"
+  }
+}

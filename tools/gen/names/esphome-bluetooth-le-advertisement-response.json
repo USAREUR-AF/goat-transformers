@@ -1,0 +1,12 @@
+{
+ "1": "bluetooth_leadvertisement_response_address",
+ "3": "bluetooth_leadvertisement_response_rssi",
+ "4[]": "bluetooth_leadvertisement_response_service_uuids",
+ "5[]": "bluetooth_leadvertisement_response_service_data",
+ "6[]": "bluetooth_leadvertisement_response_manufacturer_data",
+ "7": "bluetooth_leadvertisement_response_address_type",
+ "BluetoothLEAdvertisementResponse:4[]item": "bluetooth_leadvertisement_response_service_uuids_item",
+ "BluetoothServiceData:1": "bluetooth_service_data_uuid",
+ "BluetoothServiceData:2[]": "bluetooth_service_data_legacy_data",
+ "BluetoothServiceData:2[]item": "bluetooth_service_data_legacy_data_item"
+}

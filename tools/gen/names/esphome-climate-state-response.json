@@ -1,0 +1,18 @@
+{
+ "10": "climate_state_response_swing_mode",
+ "11": "climate_state_response_custom_fan_mode",
+ "12": "climate_state_response_preset",
+ "13": "climate_state_response_custom_preset",
+ "14": "climate_state_response_current_humidity",
+ "15": "climate_state_response_target_humidity",
+ "16": "climate_state_response_device_id",
+ "17": "climate_state_response_missing_state",
+ "2": "climate_state_response_mode",
+ "3": "climate_state_response_current_temperature",
+ "4": "climate_state_response_target_temperature",
+ "5": "climate_state_response_target_temperature_low",
+ "6": "climate_state_response_target_temperature_high",
+ "7": "climate_state_response_unused_legacy_away",
+ "8": "climate_state_response_action",
+ "9": "climate_state_response_fan_mode"
+}

@@ -1,0 +1,32 @@
+{
+  "name": "gen-downlink_frame_log-roundtrip",
+  "from": "chirpstack-stream-downlink-frame-log",
+  "to": "chirpstack-stream-downlink-frame-log",
+  "input": "0a0508641089011a3f08ae0110d3011a251a2308f801109d021a12636f64655f726174655f6c65676163792d362001280130b103380120d90528fe05320a12080a0608a30610c80620b7072a0d676174657761795f69642d323430013a0b6465765f616464722d3236420a6465765f6575692d323748015001",
+  "expect": "0a0508641089011a3f08ae0110d3011a251a2308f801109d021a12636f64655f726174655f6c65676163792d362001280130b103380120d90528fe05320a12080a0608a30610c80620b7072a0d676174657761795f69642d323430013a0b6465765f616464722d3236420a6465765f6575692d323748015001",
+  "model": {
+    "@kind": "downlink_frame_log",
+    "chirpstackstreamdownlinkframelog.time_seconds": "100",
+    "chirpstackstreamdownlinkframelog.time_nanos": "137",
+    "chirpstackstreamdownlinkframelog.tx_info_frequency": "174",
+    "chirpstackstreamdownlinkframelog.tx_info_power": "211",
+    "chirpstackstreamdownlinkframelog.tx_info_lora_bandwidth": "248",
+    "chirpstackstreamdownlinkframelog.tx_info_lora_spreading_factor": "285",
+    "chirpstackstreamdownlinkframelog.tx_info_lora_code_rate_legacy": "code_rate_legacy-6",
+    "chirpstackstreamdownlinkframelog.tx_info_lora_code_rate": "1",
+    "chirpstackstreamdownlinkframelog.tx_info_lora_polarization_inversion": "1",
+    "chirpstackstreamdownlinkframelog.tx_info_lora_preamble": "433",
+    "chirpstackstreamdownlinkframelog.tx_info_lora_no_crc": "1",
+    "chirpstackstreamdownlinkframelog.tx_info_board": "729",
+    "chirpstackstreamdownlinkframelog.tx_info_antenna": "766",
+    "chirpstackstreamdownlinkframelog.tx_info_delay_seconds": "803",
+    "chirpstackstreamdownlinkframelog.tx_info_delay_nanos": "840",
+    "chirpstackstreamdownlinkframelog.downlink_frame_log_downlink_id": "951",
+    "chirpstackstreamdownlinkframelog.downlink_frame_log_gateway_id": "gateway_id-24",
+    "chirpstackstreamdownlinkframelog.downlink_frame_log_f_type": "1",
+    "chirpstackstreamdownlinkframelog.downlink_frame_log_dev_addr": "dev_addr-26",
+    "chirpstackstreamdownlinkframelog.downlink_frame_log_dev_eui": "dev_eui-27",
+    "chirpstackstreamdownlinkframelog.downlink_frame_log_plaintext_f_opts": "1",
+    "chirpstackstreamdownlinkframelog.downlink_frame_log_plaintext_frm_payload": "1"
+  }
+}

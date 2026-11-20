@@ -1,0 +1,8 @@
+{
+ "1": "downlink_command_id",
+ "2": "downlink_command_dev_eui",
+ "3": "downlink_command_confirmed",
+ "4": "downlink_command_f_port",
+ "7.1": "expires_at_seconds",
+ "7.2": "expires_at_nanos"
+}

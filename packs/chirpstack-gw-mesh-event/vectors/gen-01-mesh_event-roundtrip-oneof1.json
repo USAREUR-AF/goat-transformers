@@ -1,0 +1,21 @@
+{
+  "name": "gen-mesh_event-roundtrip-oneof1",
+  "from": "chirpstack-gw-mesh-event",
+  "to": "chirpstack-gw-mesh-event",
+  "input": "0a0c676174657761795f69642d30120a72656c61795f69642d311a0608ae0110d3012216121422120a0a72656c61795f69642d3510c20218e7022216121422120a0a72656c61795f69642d3910d60318fb03",
+  "expect": "0a0c676174657761795f69642d30120a72656c61795f69642d311a0608ae0110d3012216121422120a0a72656c61795f69642d3510c20218e7022216121422120a0a72656c61795f69642d3910d60318fb03",
+  "model": {
+    "@kind": "mesh_event",
+    "chirpstackgwmeshevent.mesh_event_gateway_id": "gateway_id-0",
+    "chirpstackgwmeshevent.mesh_event_relay_id": "relay_id-1",
+    "chirpstackgwmeshevent.time_seconds": "174",
+    "chirpstackgwmeshevent.time_nanos": "211",
+    "chirpstackgwmeshevent.mesh_event_events.#": "2",
+    "chirpstackgwmeshevent.mesh_event_events[0].chirpstackgwmeshevent.mesh_event_item_heartbeat_relay_path.#": "1",
+    "chirpstackgwmeshevent.mesh_event_events[0].chirpstackgwmeshevent.mesh_event_item_heartbeat_relay_path[0].chirpstackgwmeshevent.mesh_event_heartbeat_relay_path_relay_id": "relay_id-5",
+    "chirpstackgwmeshevent.mesh_event_events[0].chirpstackgwmeshevent.mesh_event_item_heartbeat_relay_path[0].chirpstackgwmeshevent.mesh_event_heartbeat_relay_path_rssi": "322",
+    "chirpstackgwmeshevent.mesh_event_events[1].chirpstackgwmeshevent.mesh_event_item_heartbeat_relay_path.#": "1",
+    "chirpstackgwmeshevent.mesh_event_events[1].chirpstackgwmeshevent.mesh_event_item_heartbeat_relay_path[0].chirpstackgwmeshevent.mesh_event_heartbeat_relay_path_relay_id": "relay_id-9",
+    "chirpstackgwmeshevent.mesh_event_events[1].chirpstackgwmeshevent.mesh_event_item_heartbeat_relay_path[0].chirpstackgwmeshevent.mesh_event_heartbeat_relay_path_rssi": "470"
+  }
+}

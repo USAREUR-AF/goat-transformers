@@ -1,0 +1,20 @@
+{
+  "name": "gen-list_entities_text_response-roundtrip",
+  "from": "esphome-text-list-entities-response",
+  "to": "esphome-text-list-entities-response",
+  "input": "0a0b6f626a6563745f69642d301a066e616d652d312a0669636f6e2d3230013801409d0248c20252097061747465726e2d37580160b103",
+  "expect": "0a0b6f626a6563745f69642d301a066e616d652d312a0669636f6e2d3230013801409d0248c20252097061747465726e2d37580160b103",
+  "model": {
+    "@kind": "list_entities_text_response",
+    "esphometextlistentitiesresponse.list_entities_text_response_object_id": "object_id-0",
+    "esphometextlistentitiesresponse.list_entities_text_response_name": "name-1",
+    "esphometextlistentitiesresponse.list_entities_text_response_icon": "icon-2",
+    "esphometextlistentitiesresponse.list_entities_text_response_disabled_by_default": "1",
+    "esphometextlistentitiesresponse.list_entities_text_response_entity_category": "1",
+    "esphometextlistentitiesresponse.list_entities_text_response_min_length": "285",
+    "esphometextlistentitiesresponse.list_entities_text_response_max_length": "322",
+    "esphometextlistentitiesresponse.list_entities_text_response_pattern": "pattern-7",
+    "esphometextlistentitiesresponse.list_entities_text_response_mode": "1",
+    "esphometextlistentitiesresponse.list_entities_text_response_device_id": "433"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "gen-subscribe_bluetooth_leadvertisements_request-roundtrip",
+  "from": "esphome-subscribe-bluetooth-le-advertisements-request",
+  "to": "esphome-subscribe-bluetooth-le-advertisements-request",
+  "input": "0864",
+  "expect": "0864",
+  "model": {
+    "@kind": "subscribe_bluetooth_leadvertisements_request",
+    "esphomesubscribebluetoothleadvertisementsrequest.subscribe_bluetooth_leadvertisements_request_flags": "100"
+  }
+}

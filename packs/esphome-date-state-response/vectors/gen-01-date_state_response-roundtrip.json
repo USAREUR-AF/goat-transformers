@@ -1,0 +1,15 @@
+{
+  "name": "gen-date_state_response-roundtrip",
+  "from": "esphome-date-state-response",
+  "to": "esphome-date-state-response",
+  "input": "100118890120ae0128d30130f801",
+  "expect": "100118890120ae0128d30130f801",
+  "model": {
+    "@kind": "date_state_response",
+    "esphomedatestateresponse.date_state_response_missing_state": "1",
+    "esphomedatestateresponse.date_state_response_year": "137",
+    "esphomedatestateresponse.date_state_response_month": "174",
+    "esphomedatestateresponse.date_state_response_day": "211",
+    "esphomedatestateresponse.date_state_response_device_id": "248"
+  }
+}

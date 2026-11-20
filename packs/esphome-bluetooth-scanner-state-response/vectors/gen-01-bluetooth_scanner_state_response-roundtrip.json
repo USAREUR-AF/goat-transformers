@@ -1,0 +1,13 @@
+{
+  "name": "gen-bluetooth_scanner_state_response-roundtrip",
+  "from": "esphome-bluetooth-scanner-state-response",
+  "to": "esphome-bluetooth-scanner-state-response",
+  "input": "080110011801",
+  "expect": "080110011801",
+  "model": {
+    "@kind": "bluetooth_scanner_state_response",
+    "esphomebluetoothscannerstateresponse.bluetooth_scanner_state_response_state": "1",
+    "esphomebluetoothscannerstateresponse.bluetooth_scanner_state_response_mode": "1",
+    "esphomebluetoothscannerstateresponse.bluetooth_scanner_state_response_configured_mode": "1"
+  }
+}

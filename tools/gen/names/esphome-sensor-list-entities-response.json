@@ -1,0 +1,14 @@
+{
+ "1": "list_entities_sensor_response_object_id",
+ "10": "list_entities_sensor_response_state_class",
+ "11": "list_entities_sensor_response_legacy_last_reset_type",
+ "12": "list_entities_sensor_response_disabled_by_default",
+ "13": "list_entities_sensor_response_entity_category",
+ "14": "list_entities_sensor_response_device_id",
+ "3": "list_entities_sensor_response_name",
+ "5": "list_entities_sensor_response_icon",
+ "6": "list_entities_sensor_response_unit_of_measurement",
+ "7": "list_entities_sensor_response_accuracy_decimals",
+ "8": "list_entities_sensor_response_force_update",
+ "9": "list_entities_sensor_response_device_class"
+}

@@ -1,0 +1,22 @@
+{
+  "name": "gen-list_entities_number_response-roundtrip",
+  "from": "esphome-number-list-entities-response",
+  "to": "esphome-number-list-entities-response",
+  "input": "0a0b6f626a6563745f69642d301a066e616d652d312a0669636f6e2d3235000000403d000028404500005040480150015a15756e69745f6f665f6d6561737572656d656e742d3860016a0f6465766963655f636c6173732d313070fb03",
+  "expect": "0a0b6f626a6563745f69642d301a066e616d652d312a0669636f6e2d3235000000403d000028404500005040480150015a15756e69745f6f665f6d6561737572656d656e742d3860016a0f6465766963655f636c6173732d313070fb03",
+  "model": {
+    "@kind": "list_entities_number_response",
+    "esphomenumberlistentitiesresponse.list_entities_number_response_object_id": "object_id-0",
+    "esphomenumberlistentitiesresponse.list_entities_number_response_name": "name-1",
+    "esphomenumberlistentitiesresponse.list_entities_number_response_icon": "icon-2",
+    "esphomenumberlistentitiesresponse.list_entities_number_response_min_value": "2",
+    "esphomenumberlistentitiesresponse.list_entities_number_response_max_value": "2.625",
+    "esphomenumberlistentitiesresponse.list_entities_number_response_step": "3.25",
+    "esphomenumberlistentitiesresponse.list_entities_number_response_disabled_by_default": "1",
+    "esphomenumberlistentitiesresponse.list_entities_number_response_entity_category": "1",
+    "esphomenumberlistentitiesresponse.list_entities_number_response_unit_of_measurement": "unit_of_measurement-8",
+    "esphomenumberlistentitiesresponse.list_entities_number_response_mode": "1",
+    "esphomenumberlistentitiesresponse.list_entities_number_response_device_class": "device_class-10",
+    "esphomenumberlistentitiesresponse.list_entities_number_response_device_id": "507"
+  }
+}

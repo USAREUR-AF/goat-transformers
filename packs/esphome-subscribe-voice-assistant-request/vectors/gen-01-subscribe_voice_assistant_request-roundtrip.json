@@ -1,0 +1,12 @@
+{
+  "name": "gen-subscribe_voice_assistant_request-roundtrip",
+  "from": "esphome-subscribe-voice-assistant-request",
+  "to": "esphome-subscribe-voice-assistant-request",
+  "input": "0801108901",
+  "expect": "0801108901",
+  "model": {
+    "@kind": "subscribe_voice_assistant_request",
+    "esphomesubscribevoiceassistantrequest.subscribe_voice_assistant_request_subscribe": "1",
+    "esphomesubscribevoiceassistantrequest.subscribe_voice_assistant_request_flags": "137"
+  }
+}

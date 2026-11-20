@@ -1,0 +1,19 @@
+{
+  "name": "gen-command-roundtrip-oneof1",
+  "from": "chirpstack-gw-command",
+  "to": "chirpstack-gw-command",
+  "input": "1251120976657273696f6e2d331a16088c031001220908a00410ea0418c504288f0530b4051a1608d9051001220908ed0610b70718920728dc07308108220608f801109d022a0c676174657761795f69642d32",
+  "expect": "1251120976657273696f6e2d331a16088c031001220908a00410ea0418c504288f0530b4051a1608d9051001220908ed0610b70718920728dc07308108220608f801109d022a0c676174657761795f69642d32",
+  "model": {
+    "@kind": "command",
+    "chirpstackgwcommand.set_gateway_configuration_gateway_id": "gateway_id-2",
+    "chirpstackgwcommand.set_gateway_configuration_version": "version-3",
+    "chirpstackgwcommand.set_gateway_configuration_stats_interval_seconds": "248",
+    "chirpstackgwcommand.set_gateway_configuration_stats_interval_nanos": "285",
+    "chirpstackgwcommand.set_gateway_configuration_channels.#": "2",
+    "chirpstackgwcommand.set_gateway_configuration_channels[0].chirpstackgwcommand.channel_configuration_frequency": "396",
+    "chirpstackgwcommand.set_gateway_configuration_channels[0].chirpstackgwcommand.channel_configuration_modulation_legacy": "1",
+    "chirpstackgwcommand.set_gateway_configuration_channels[1].chirpstackgwcommand.channel_configuration_frequency": "729",
+    "chirpstackgwcommand.set_gateway_configuration_channels[1].chirpstackgwcommand.channel_configuration_modulation_legacy": "1"
+  }
+}

@@ -1,0 +1,5 @@
+{
+ "1": "bluetooth_gattnotify_request_address",
+ "2": "bluetooth_gattnotify_request_handle",
+ "3": "bluetooth_gattnotify_request_enable"
+}

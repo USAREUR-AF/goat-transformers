@@ -1,0 +1,17 @@
+{
+  "name": "gen-list_entities_update_response-roundtrip",
+  "from": "esphome-update-list-entities-response",
+  "to": "esphome-update-list-entities-response",
+  "input": "0a0b6f626a6563745f69642d301a066e616d652d312a0669636f6e2d3230013801420e6465766963655f636c6173732d3548c202",
+  "expect": "0a0b6f626a6563745f69642d301a066e616d652d312a0669636f6e2d3230013801420e6465766963655f636c6173732d3548c202",
+  "model": {
+    "@kind": "list_entities_update_response",
+    "esphomeupdatelistentitiesresponse.list_entities_update_response_object_id": "object_id-0",
+    "esphomeupdatelistentitiesresponse.list_entities_update_response_name": "name-1",
+    "esphomeupdatelistentitiesresponse.list_entities_update_response_icon": "icon-2",
+    "esphomeupdatelistentitiesresponse.list_entities_update_response_disabled_by_default": "1",
+    "esphomeupdatelistentitiesresponse.list_entities_update_response_entity_category": "1",
+    "esphomeupdatelistentitiesresponse.list_entities_update_response_device_class": "device_class-5",
+    "esphomeupdatelistentitiesresponse.list_entities_update_response_device_id": "322"
+  }
+}

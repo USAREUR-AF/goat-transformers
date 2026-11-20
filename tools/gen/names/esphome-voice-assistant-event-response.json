@@ -1,0 +1,6 @@
+{
+ "1": "voice_assistant_event_response_event_type",
+ "2[]": "voice_assistant_event_response_data",
+ "VoiceAssistantEventData:1": "voice_assistant_event_data_name",
+ "VoiceAssistantEventData:2": "voice_assistant_event_data_value"
+}

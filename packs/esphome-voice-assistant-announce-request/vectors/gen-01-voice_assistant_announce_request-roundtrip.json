@@ -1,0 +1,14 @@
+{
+  "name": "gen-voice_assistant_announce_request-roundtrip",
+  "from": "esphome-voice-assistant-announce-request",
+  "to": "esphome-voice-assistant-announce-request",
+  "input": "0a0a6d656469615f69642d301206746578742d311a16707265616e6e6f756e63655f6d656469615f69642d322001",
+  "expect": "0a0a6d656469615f69642d301206746578742d311a16707265616e6e6f756e63655f6d656469615f69642d322001",
+  "model": {
+    "@kind": "voice_assistant_announce_request",
+    "esphomevoiceassistantannouncerequest.voice_assistant_announce_request_media_id": "media_id-0",
+    "esphomevoiceassistantannouncerequest.voice_assistant_announce_request_text": "text-1",
+    "esphomevoiceassistantannouncerequest.voice_assistant_announce_request_preannounce_media_id": "preannounce_media_id-2",
+    "esphomevoiceassistantannouncerequest.voice_assistant_announce_request_start_conversation": "1"
+  }
+}

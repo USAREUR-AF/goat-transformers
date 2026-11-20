@@ -1,0 +1,27 @@
+{
+  "name": "gen-location_event-roundtrip",
+  "from": "chirpstack-integration-location-event",
+  "to": "chirpstack-integration-location-event",
+  "input": "0a1264656475706c69636174696f6e5f69642d30120608890110ae011a8b010a0b74656e616e745f69642d33120d74656e616e745f6e616d652d341a106170706c69636174696f6e5f69642d3522126170706c69636174696f6e5f6e616d652d362a136465766963655f70726f66696c655f69642d3732156465766963655f70726f66696c655f6e616d652d383a0d6465766963655f6e616d652d39420a6465765f6575692d313050012222090000000000403540110000000000003740190000000000c0384020012d00000840",
+  "expect": "0a1264656475706c69636174696f6e5f69642d30120608890110ae011a8b010a0b74656e616e745f69642d33120d74656e616e745f6e616d652d341a106170706c69636174696f6e5f69642d3522126170706c69636174696f6e5f6e616d652d362a136465766963655f70726f66696c655f69642d3732156465766963655f70726f66696c655f6e616d652d383a0d6465766963655f6e616d652d39420a6465765f6575692d313050012222090000000000403540110000000000003740190000000000c0384020012d00000840",
+  "model": {
+    "@kind": "location_event",
+    "chirpstackintegrationlocationevent.location_event_deduplication_id": "deduplication_id-0",
+    "chirpstackintegrationlocationevent.time_seconds": "137",
+    "chirpstackintegrationlocationevent.time_nanos": "174",
+    "chirpstackintegrationlocationevent.device_info_tenant_id": "tenant_id-3",
+    "chirpstackintegrationlocationevent.device_info_tenant_name": "tenant_name-4",
+    "chirpstackintegrationlocationevent.device_info_application_id": "application_id-5",
+    "chirpstackintegrationlocationevent.device_info_application_name": "application_name-6",
+    "chirpstackintegrationlocationevent.device_info_device_profile_id": "device_profile_id-7",
+    "chirpstackintegrationlocationevent.device_info_device_profile_name": "device_profile_name-8",
+    "chirpstackintegrationlocationevent.device_info_device_name": "device_name-9",
+    "chirpstackintegrationlocationevent.device_info_dev_eui": "dev_eui-10",
+    "chirpstackintegrationlocationevent.device_info_device_class_enabled": "1",
+    "chirpstackintegrationlocationevent.location_latitude": "21.25",
+    "chirpstackintegrationlocationevent.location_longitude": "23",
+    "chirpstackintegrationlocationevent.location_altitude": "24.75",
+    "chirpstackintegrationlocationevent.location_source": "1",
+    "chirpstackintegrationlocationevent.location_accuracy": "2.125"
+  }
+}

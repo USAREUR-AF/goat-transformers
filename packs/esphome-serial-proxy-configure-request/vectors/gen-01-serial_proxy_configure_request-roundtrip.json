@@ -1,0 +1,16 @@
+{
+  "name": "gen-serial_proxy_configure_request-roundtrip",
+  "from": "esphome-serial-proxy-configure-request",
+  "to": "esphome-serial-proxy-configure-request",
+  "input": "08641089011801200128f801309d02",
+  "expect": "08641089011801200128f801309d02",
+  "model": {
+    "@kind": "serial_proxy_configure_request",
+    "esphomeserialproxyconfigurerequest.serial_proxy_configure_request_instance": "100",
+    "esphomeserialproxyconfigurerequest.serial_proxy_configure_request_baudrate": "137",
+    "esphomeserialproxyconfigurerequest.serial_proxy_configure_request_flow_control": "1",
+    "esphomeserialproxyconfigurerequest.serial_proxy_configure_request_parity": "1",
+    "esphomeserialproxyconfigurerequest.serial_proxy_configure_request_stop_bits": "248",
+    "esphomeserialproxyconfigurerequest.serial_proxy_configure_request_data_size": "285"
+  }
+}

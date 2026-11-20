@@ -1,0 +1,10 @@
+{
+ "1": "list_entities_select_response_object_id",
+ "3": "list_entities_select_response_name",
+ "5": "list_entities_select_response_icon",
+ "6[]": "list_entities_select_response_options",
+ "7": "list_entities_select_response_disabled_by_default",
+ "8": "list_entities_select_response_entity_category",
+ "9": "list_entities_select_response_device_id",
+ "ListEntitiesSelectResponse:6[]item": "list_entities_select_response_options_item"
+}

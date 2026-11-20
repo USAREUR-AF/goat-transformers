@@ -1,0 +1,7 @@
+{
+ "2": "time_state_response_missing_state",
+ "3": "time_state_response_hour",
+ "4": "time_state_response_minute",
+ "5": "time_state_response_second",
+ "6": "time_state_response_device_id"
+}

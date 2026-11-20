@@ -1,0 +1,12 @@
+{
+  "name": "gen-bluetooth_gattwrite_response-roundtrip",
+  "from": "esphome-bluetooth-gatt-write-response",
+  "to": "esphome-bluetooth-gatt-write-response",
+  "input": "0864108901",
+  "expect": "0864108901",
+  "model": {
+    "@kind": "bluetooth_gattwrite_response",
+    "esphomebluetoothgattwriteresponse.bluetooth_gattwrite_response_address": "100",
+    "esphomebluetoothgattwriteresponse.bluetooth_gattwrite_response_handle": "137"
+  }
+}

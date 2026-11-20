@@ -1,0 +1,13 @@
+{
+  "name": "gen-alarm_control_panel_command_request-roundtrip",
+  "from": "esphome-alarm-control-panel-command-request",
+  "to": "esphome-alarm-control-panel-command-request",
+  "input": "10011a06636f64652d3120ae01",
+  "expect": "10011a06636f64652d3120ae01",
+  "model": {
+    "@kind": "alarm_control_panel_command_request",
+    "esphomealarmcontrolpanelcommandrequest.alarm_control_panel_command_request_command": "1",
+    "esphomealarmcontrolpanelcommandrequest.alarm_control_panel_command_request_code": "code-1",
+    "esphomealarmcontrolpanelcommandrequest.alarm_control_panel_command_request_device_id": "174"
+  }
+}

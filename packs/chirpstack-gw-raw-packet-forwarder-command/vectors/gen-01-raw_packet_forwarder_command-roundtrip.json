@@ -1,0 +1,11 @@
+{
+  "name": "gen-raw_packet_forwarder_command-roundtrip",
+  "from": "chirpstack-gw-raw-packet-forwarder-command",
+  "to": "chirpstack-gw-raw-packet-forwarder-command",
+  "input": "220c676174657761795f69642d30",
+  "expect": "220c676174657761795f69642d30",
+  "model": {
+    "@kind": "raw_packet_forwarder_command",
+    "chirpstackgwrawpacketforwardercommand.raw_packet_forwarder_command_gateway_id": "gateway_id-0"
+  }
+}

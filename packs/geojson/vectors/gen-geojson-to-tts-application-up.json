@@ -1,0 +1,11 @@
+{
+  "name": "gen-geojson-to-tts-application-up",
+  "from": "geojson",
+  "to": "tts-application-up",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[12.5,10.75]},\"properties\":{}}",
+  "expect": "5a141212090000000000802540110000000000002940",
+  "model": {
+    "lat": "10.75",
+    "lon": "12.5"
+  }
+}

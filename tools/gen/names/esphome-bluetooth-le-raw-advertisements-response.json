@@ -1,0 +1,6 @@
+{
+ "1[]": "bluetooth_leraw_advertisements_response_advertisements",
+ "BluetoothLERawAdvertisement:1": "bluetooth_leraw_advertisement_address",
+ "BluetoothLERawAdvertisement:2": "bluetooth_leraw_advertisement_rssi",
+ "BluetoothLERawAdvertisement:3": "bluetooth_leraw_advertisement_address_type"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "gen-binary_sensor_state_response-roundtrip",
+  "from": "esphome-binary-sensor-state-response",
+  "to": "esphome-binary-sensor-state-response",
+  "input": "1001180120ae01",
+  "expect": "1001180120ae01",
+  "model": {
+    "@kind": "binary_sensor_state_response",
+    "esphomebinarysensorstateresponse.binary_sensor_state_response_state": "1",
+    "esphomebinarysensorstateresponse.binary_sensor_state_response_missing_state": "1",
+    "esphomebinarysensorstateresponse.binary_sensor_state_response_device_id": "174"
+  }
+}

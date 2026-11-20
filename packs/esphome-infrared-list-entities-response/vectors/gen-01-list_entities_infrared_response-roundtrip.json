@@ -1,0 +1,18 @@
+{
+  "name": "gen-list_entities_infrared_response-roundtrip",
+  "from": "esphome-infrared-list-entities-response",
+  "to": "esphome-infrared-list-entities-response",
+  "input": "0a0b6f626a6563745f69642d301a066e616d652d31220669636f6e2d3228013001389d0240c20248e702",
+  "expect": "0a0b6f626a6563745f69642d301a066e616d652d31220669636f6e2d3228013001389d0240c20248e702",
+  "model": {
+    "@kind": "list_entities_infrared_response",
+    "esphomeinfraredlistentitiesresponse.list_entities_infrared_response_object_id": "object_id-0",
+    "esphomeinfraredlistentitiesresponse.list_entities_infrared_response_name": "name-1",
+    "esphomeinfraredlistentitiesresponse.list_entities_infrared_response_icon": "icon-2",
+    "esphomeinfraredlistentitiesresponse.list_entities_infrared_response_disabled_by_default": "1",
+    "esphomeinfraredlistentitiesresponse.list_entities_infrared_response_entity_category": "1",
+    "esphomeinfraredlistentitiesresponse.list_entities_infrared_response_device_id": "285",
+    "esphomeinfraredlistentitiesresponse.list_entities_infrared_response_capabilities": "322",
+    "esphomeinfraredlistentitiesresponse.list_entities_infrared_response_receiver_frequency": "359"
+  }
+}

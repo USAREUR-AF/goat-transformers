@@ -1,0 +1,14 @@
+{
+  "name": "gen-bluetooth_device_request-roundtrip",
+  "from": "esphome-bluetooth-device-request",
+  "to": "esphome-bluetooth-device-request",
+  "input": "08641001180120d301",
+  "expect": "08641001180120d301",
+  "model": {
+    "@kind": "bluetooth_device_request",
+    "esphomebluetoothdevicerequest.bluetooth_device_request_address": "100",
+    "esphomebluetoothdevicerequest.bluetooth_device_request_request_type": "1",
+    "esphomebluetoothdevicerequest.bluetooth_device_request_has_address_type": "1",
+    "esphomebluetoothdevicerequest.bluetooth_device_request_address_type": "211"
+  }
+}

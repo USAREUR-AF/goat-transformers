@@ -1,0 +1,12 @@
+{
+ "1": "backend_interfaces_request_sender_id",
+ "2": "backend_interfaces_request_receiver_id",
+ "3.1": "time_seconds",
+ "3.2": "time_nanos",
+ "4": "backend_interfaces_request_transaction_id",
+ "5": "backend_interfaces_request_message_type",
+ "6": "backend_interfaces_request_result_code",
+ "7": "backend_interfaces_request_request_body",
+ "8": "backend_interfaces_request_request_error",
+ "9": "backend_interfaces_request_response_body"
+}

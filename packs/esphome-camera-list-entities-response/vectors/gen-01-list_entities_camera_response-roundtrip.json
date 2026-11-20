@@ -1,0 +1,16 @@
+{
+  "name": "gen-list_entities_camera_response-roundtrip",
+  "from": "esphome-camera-list-entities-response",
+  "to": "esphome-camera-list-entities-response",
+  "input": "0a0b6f626a6563745f69642d301a066e616d652d312801320669636f6e2d333801409d02",
+  "expect": "0a0b6f626a6563745f69642d301a066e616d652d312801320669636f6e2d333801409d02",
+  "model": {
+    "@kind": "list_entities_camera_response",
+    "esphomecameralistentitiesresponse.list_entities_camera_response_object_id": "object_id-0",
+    "esphomecameralistentitiesresponse.list_entities_camera_response_name": "name-1",
+    "esphomecameralistentitiesresponse.list_entities_camera_response_disabled_by_default": "1",
+    "esphomecameralistentitiesresponse.list_entities_camera_response_icon": "icon-3",
+    "esphomecameralistentitiesresponse.list_entities_camera_response_entity_category": "1",
+    "esphomecameralistentitiesresponse.list_entities_camera_response_device_id": "285"
+  }
+}

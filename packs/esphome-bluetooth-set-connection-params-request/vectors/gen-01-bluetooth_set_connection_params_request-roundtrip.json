@@ -1,0 +1,15 @@
+{
+  "name": "gen-bluetooth_set_connection_params_request-roundtrip",
+  "from": "esphome-bluetooth-set-connection-params-request",
+  "to": "esphome-bluetooth-set-connection-params-request",
+  "input": "086410890118ae0120d30128f801",
+  "expect": "086410890118ae0120d30128f801",
+  "model": {
+    "@kind": "bluetooth_set_connection_params_request",
+    "esphomebluetoothsetconnectionparamsrequest.bluetooth_set_connection_params_request_address": "100",
+    "esphomebluetoothsetconnectionparamsrequest.bluetooth_set_connection_params_request_min_interval": "137",
+    "esphomebluetoothsetconnectionparamsrequest.bluetooth_set_connection_params_request_max_interval": "174",
+    "esphomebluetoothsetconnectionparamsrequest.bluetooth_set_connection_params_request_latency": "211",
+    "esphomebluetoothsetconnectionparamsrequest.bluetooth_set_connection_params_request_timeout": "248"
+  }
+}

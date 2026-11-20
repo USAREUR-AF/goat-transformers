@@ -1,0 +1,14 @@
+{
+  "name": "gen-time_command_request-roundtrip",
+  "from": "esphome-time-command-request",
+  "to": "esphome-time-command-request",
+  "input": "106418890120ae0128d301",
+  "expect": "106418890120ae0128d301",
+  "model": {
+    "@kind": "time_command_request",
+    "esphometimecommandrequest.time_command_request_hour": "100",
+    "esphometimecommandrequest.time_command_request_minute": "137",
+    "esphometimecommandrequest.time_command_request_second": "174",
+    "esphometimecommandrequest.time_command_request_device_id": "211"
+  }
+}

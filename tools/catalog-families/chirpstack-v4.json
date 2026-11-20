@@ -1,0 +1,8 @@
+{
+  "name": "ChirpStack v4",
+  "domain": "iot",
+  "prefixes": [
+    "chirpstack-"
+  ],
+  "detail": "gateway, integration and stream messages"
+}

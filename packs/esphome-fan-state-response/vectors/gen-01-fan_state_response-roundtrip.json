@@ -1,0 +1,17 @@
+{
+  "name": "gen-fan_state_response-roundtrip",
+  "from": "esphome-fan-state-response",
+  "to": "esphome-fan-state-response",
+  "input": "100118012001280130f8013a0d7072657365745f6d6f64652d3540c202",
+  "expect": "100118012001280130f8013a0d7072657365745f6d6f64652d3540c202",
+  "model": {
+    "@kind": "fan_state_response",
+    "esphomefanstateresponse.fan_state_response_state": "1",
+    "esphomefanstateresponse.fan_state_response_oscillating": "1",
+    "esphomefanstateresponse.fan_state_response_speed": "1",
+    "esphomefanstateresponse.fan_state_response_direction": "1",
+    "esphomefanstateresponse.fan_state_response_speed_level": "248",
+    "esphomefanstateresponse.fan_state_response_preset_mode": "preset_mode-5",
+    "esphomefanstateresponse.fan_state_response_device_id": "322"
+  }
+}

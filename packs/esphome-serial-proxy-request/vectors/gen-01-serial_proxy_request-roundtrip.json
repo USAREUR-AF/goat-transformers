@@ -1,0 +1,12 @@
+{
+  "name": "gen-serial_proxy_request-roundtrip",
+  "from": "esphome-serial-proxy-request",
+  "to": "esphome-serial-proxy-request",
+  "input": "08641001",
+  "expect": "08641001",
+  "model": {
+    "@kind": "serial_proxy_request",
+    "esphomeserialproxyrequest.serial_proxy_request_instance": "100",
+    "esphomeserialproxyrequest.serial_proxy_request_type": "1"
+  }
+}

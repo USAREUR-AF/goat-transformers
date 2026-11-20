@@ -1,0 +1,12 @@
+{
+  "name": "gen-event_response-roundtrip",
+  "from": "esphome-event-response",
+  "to": "esphome-event-response",
+  "input": "120c6576656e745f747970652d30188901",
+  "expect": "120c6576656e745f747970652d30188901",
+  "model": {
+    "@kind": "event_response",
+    "esphomeeventresponse.event_response_event_type": "event_type-0",
+    "esphomeeventresponse.event_response_device_id": "137"
+  }
+}

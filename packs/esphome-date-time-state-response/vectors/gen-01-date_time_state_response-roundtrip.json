@@ -1,0 +1,12 @@
+{
+  "name": "gen-date_time_state_response-roundtrip",
+  "from": "esphome-date-time-state-response",
+  "to": "esphome-date-time-state-response",
+  "input": "1001208901",
+  "expect": "1001208901",
+  "model": {
+    "@kind": "date_time_state_response",
+    "esphomedatetimestateresponse.date_time_state_response_missing_state": "1",
+    "esphomedatetimestateresponse.date_time_state_response_device_id": "137"
+  }
+}

@@ -1,0 +1,19 @@
+{
+ "1": "bluetooth_gattget_services_response_address",
+ "2[]": "bluetooth_gattget_services_response_services",
+ "BluetoothGATTCharacteristic:1[]": "bluetooth_gattcharacteristic_uuid",
+ "BluetoothGATTCharacteristic:1[]item": "bluetooth_gattcharacteristic_uuid_item",
+ "BluetoothGATTCharacteristic:2": "bluetooth_gattcharacteristic_handle",
+ "BluetoothGATTCharacteristic:3": "bluetooth_gattcharacteristic_properties",
+ "BluetoothGATTCharacteristic:4[]": "bluetooth_gattcharacteristic_descriptors",
+ "BluetoothGATTCharacteristic:5": "bluetooth_gattcharacteristic_short_uuid",
+ "BluetoothGATTDescriptor:1[]": "bluetooth_gattdescriptor_uuid",
+ "BluetoothGATTDescriptor:1[]item": "bluetooth_gattdescriptor_uuid_item",
+ "BluetoothGATTDescriptor:2": "bluetooth_gattdescriptor_handle",
+ "BluetoothGATTDescriptor:3": "bluetooth_gattdescriptor_short_uuid",
+ "BluetoothGATTService:1[]": "bluetooth_gattservice_uuid",
+ "BluetoothGATTService:1[]item": "bluetooth_gattservice_uuid_item",
+ "BluetoothGATTService:2": "bluetooth_gattservice_handle",
+ "BluetoothGATTService:3[]": "bluetooth_gattservice_characteristics",
+ "BluetoothGATTService:4": "bluetooth_gattservice_short_uuid"
+}

@@ -1,0 +1,28 @@
+{
+  "name": "gen-service_data-roundtrip",
+  "from": "tts-application-up",
+  "to": "tts-application-up",
+  "input": "0a210a0b6465766963655f69642d3012120a106170706c69636174696f6e5f69642d311212636f7272656c6174696f6e5f6964732d31351212636f7272656c6174696f6e5f6964732d3136620608ae0110d3016a9f010a09736572766963652d35224c0a0a6272616e645f69642d36120a6d6f64656c5f69642d371a1268617264776172655f76657273696f6e2d3822126669726d776172655f76657273696f6e2d392a0a62616e645f69642d31302a44120c74656e616e745f69642d31311a0d636c75737465725f69642d31322212636c75737465725f616464726573732d31332a1174656e616e745f616464726573732d31347001",
+  "expect": "0a210a0b6465766963655f69642d3012120a106170706c69636174696f6e5f69642d311212636f7272656c6174696f6e5f6964732d31351212636f7272656c6174696f6e5f6964732d3136620608ae0110d3016a9f010a09736572766963652d35224c0a0a6272616e645f69642d36120a6d6f64656c5f69642d371a1268617264776172655f76657273696f6e2d3822126669726d776172655f76657273696f6e2d392a0a62616e645f69642d31302a44120c74656e616e745f69642d31311a0d636c75737465725f69642d31322212636c75737465725f616464726573732d31332a1174656e616e745f616464726573732d31347001",
+  "model": {
+    "@kind": "service_data",
+    "ttsapplicationup.end_device_ids_device_id": "device_id-0",
+    "ttsapplicationup.end_device_ids_application_ids_application_id": "application_id-1",
+    "ttsapplicationup.received_at_seconds": "174",
+    "ttsapplicationup.received_at_nanos": "211",
+    "ttsapplicationup.simulated": "1",
+    "ttsapplicationup.service_data_service": "service-5",
+    "ttsapplicationup.version_ids_brand_id": "brand_id-6",
+    "ttsapplicationup.version_ids_model_id": "model_id-7",
+    "ttsapplicationup.version_ids_hardware_version": "hardware_version-8",
+    "ttsapplicationup.version_ids_firmware_version": "firmware_version-9",
+    "ttsapplicationup.version_ids_band_id": "band_id-10",
+    "ttsapplicationup.network_ids_tenant_id": "tenant_id-11",
+    "ttsapplicationup.network_ids_cluster_id": "cluster_id-12",
+    "ttsapplicationup.network_ids_cluster_address": "cluster_address-13",
+    "ttsapplicationup.network_ids_tenant_address": "tenant_address-14",
+    "ttsapplicationup.correlation_ids.#": "2",
+    "ttsapplicationup.correlation_ids[0].ttsapplicationup.application_up_correlation_ids_item": "correlation_ids-15",
+    "ttsapplicationup.correlation_ids[1].ttsapplicationup.application_up_correlation_ids_item": "correlation_ids-16"
+  }
+}

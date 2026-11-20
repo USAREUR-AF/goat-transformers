@@ -1,0 +1,12 @@
+{
+  "name": "gen-camera_image_request-roundtrip",
+  "from": "esphome-camera-image-request",
+  "to": "esphome-camera-image-request",
+  "input": "08011001",
+  "expect": "08011001",
+  "model": {
+    "@kind": "camera_image_request",
+    "esphomecameraimagerequest.camera_image_request_single": "1",
+    "esphomecameraimagerequest.camera_image_request_stream": "1"
+  }
+}

@@ -1,0 +1,14 @@
+{
+ "1": "voice_assistant_request_start",
+ "10": "voice_assistant_request_wake_word_audio_bytes2",
+ "2": "voice_assistant_request_conversation_id",
+ "3": "voice_assistant_request_flags",
+ "4.1": "audio_settings_noise_suppression_level",
+ "4.2": "audio_settings_auto_gain",
+ "4.3": "audio_settings_volume_multiplier",
+ "5": "voice_assistant_request_wake_word_phrase",
+ "6": "voice_assistant_request_wake_word_id",
+ "7": "voice_assistant_request_wake_word_audio_bytes",
+ "8": "voice_assistant_request_wake_word_probability",
+ "9": "voice_assistant_request_wake_word_probability_cutoff"
+}

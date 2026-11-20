@@ -1,0 +1,8 @@
+{
+  "name": "ESPHome native API",
+  "domain": "iot",
+  "prefixes": [
+    "esphome-"
+  ],
+  "detail": "messages by entity type"
+}

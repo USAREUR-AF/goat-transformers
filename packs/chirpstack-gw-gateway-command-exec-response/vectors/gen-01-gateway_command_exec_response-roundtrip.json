@@ -1,0 +1,13 @@
+{
+  "name": "gen-gateway_command_exec_response-roundtrip",
+  "from": "chirpstack-gw-gateway-command-exec-response",
+  "to": "chirpstack-gw-gateway-command-exec-response",
+  "input": "2a076572726f722d32320c676174657761795f69642d30388901",
+  "expect": "2a076572726f722d32320c676174657761795f69642d30388901",
+  "model": {
+    "@kind": "gateway_command_exec_response",
+    "chirpstackgwgatewaycommandexecresponse.gateway_command_exec_response_gateway_id": "gateway_id-0",
+    "chirpstackgwgatewaycommandexecresponse.gateway_command_exec_response_exec_id": "137",
+    "chirpstackgwgatewaycommandexecresponse.gateway_command_exec_response_error": "error-2"
+  }
+}

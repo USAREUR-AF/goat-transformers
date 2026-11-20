@@ -1,0 +1,23 @@
+{
+  "name": "gen-uplink_frame_set-roundtrip",
+  "from": "chirpstack-gw-uplink-frame-set",
+  "to": "chirpstack-gw-uplink-frame-set",
+  "input": "1229086412251a2308890110ae011a12636f64655f726174655f6c65676163792d332001280130c20238011a6e0a0d676174657761795f69642d3134108f051a0608b40510d905220608c80610ed062a0608920710b70730dc073d0000f84040a60848cb0850f0085895096222090000000000802940110000000000002d4019000000000040304020012d0000ac408001018a010608fe0510a3061a6e0a0d676174657761795f69642d333610bd0b1a0608e20b10870c220608f60c109b0d2a0608c00d10e50d308a0e3d0000b04040d40e48f90e509e0f58c30f6222090000000000802640110000000000002a40190000000000802d4020012d000048408001018a010608ac0c10d10c",
+  "expect": "1229086412251a2308890110ae011a12636f64655f726174655f6c65676163792d332001280130c20238011a6e0a0d676174657761795f69642d3134108f051a0608b40510d905220608c80610ed062a0608920710b70730dc073d0000f84040a60848cb0850f0085895096222090000000000802940110000000000002d4019000000000040304020012d0000ac408001018a010608fe0510a3061a6e0a0d676174657761795f69642d333610bd0b1a0608e20b10870c220608f60c109b0d2a0608c00d10e50d308a0e3d0000b04040d40e48f90e509e0f58c30f6222090000000000802640110000000000002a40190000000000802d4020012d000048408001018a010608ac0c10d10c",
+  "model": {
+    "@kind": "uplink_frame_set",
+    "chirpstackgwuplinkframeset.tx_info_frequency": "100",
+    "chirpstackgwuplinkframeset.tx_info_lora_bandwidth": "137",
+    "chirpstackgwuplinkframeset.tx_info_lora_spreading_factor": "174",
+    "chirpstackgwuplinkframeset.tx_info_lora_code_rate_legacy": "code_rate_legacy-3",
+    "chirpstackgwuplinkframeset.tx_info_lora_code_rate": "1",
+    "chirpstackgwuplinkframeset.tx_info_lora_polarization_inversion": "1",
+    "chirpstackgwuplinkframeset.tx_info_lora_preamble": "322",
+    "chirpstackgwuplinkframeset.tx_info_lora_no_crc": "1",
+    "chirpstackgwuplinkframeset.uplink_frame_set_rx_info.#": "2",
+    "chirpstackgwuplinkframeset.uplink_frame_set_rx_info[0].chirpstackgwuplinkframeset.uplink_rx_info_gateway_id": "gateway_id-14",
+    "chirpstackgwuplinkframeset.uplink_frame_set_rx_info[0].chirpstackgwuplinkframeset.uplink_rx_info_uplink_id": "655",
+    "chirpstackgwuplinkframeset.uplink_frame_set_rx_info[1].chirpstackgwuplinkframeset.uplink_rx_info_gateway_id": "gateway_id-36",
+    "chirpstackgwuplinkframeset.uplink_frame_set_rx_info[1].chirpstackgwuplinkframeset.uplink_rx_info_uplink_id": "1469"
+  }
+}

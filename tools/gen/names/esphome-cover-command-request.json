@@ -1,0 +1,12 @@
+{
+ "10": "cover_command_request_stop_tilt",
+ "11": "cover_command_request_toggle",
+ "2": "cover_command_request_has_legacy_command",
+ "3": "cover_command_request_legacy_command",
+ "4": "cover_command_request_has_position",
+ "5": "cover_command_request_position",
+ "6": "cover_command_request_has_tilt",
+ "7": "cover_command_request_tilt",
+ "8": "cover_command_request_stop",
+ "9": "cover_command_request_device_id"
+}

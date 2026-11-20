@@ -1,0 +1,12 @@
+{
+  "name": "gen-subscribe_logs_request-roundtrip",
+  "from": "esphome-subscribe-logs-request",
+  "to": "esphome-subscribe-logs-request",
+  "input": "08011001",
+  "expect": "08011001",
+  "model": {
+    "@kind": "subscribe_logs_request",
+    "esphomesubscribelogsrequest.subscribe_logs_request_level": "1",
+    "esphomesubscribelogsrequest.subscribe_logs_request_dump_config": "1"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "gen-api_request_log-roundtrip",
+  "from": "chirpstack-stream-api-request-log",
+  "to": "chirpstack-stream-api-request-log",
+  "input": "0a09736572766963652d3012086d6574686f642d31",
+  "expect": "0a09736572766963652d3012086d6574686f642d31",
+  "model": {
+    "@kind": "api_request_log",
+    "chirpstackstreamapirequestlog.api_request_log_service": "service-0",
+    "chirpstackstreamapirequestlog.api_request_log_method": "method-1"
+  }
+}

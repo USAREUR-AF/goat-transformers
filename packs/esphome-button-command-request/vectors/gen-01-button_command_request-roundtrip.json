@@ -1,0 +1,11 @@
+{
+  "name": "gen-button_command_request-roundtrip",
+  "from": "esphome-button-command-request",
+  "to": "esphome-button-command-request",
+  "input": "1064",
+  "expect": "1064",
+  "model": {
+    "@kind": "button_command_request",
+    "esphomebuttoncommandrequest.button_command_request_device_id": "100"
+  }
+}

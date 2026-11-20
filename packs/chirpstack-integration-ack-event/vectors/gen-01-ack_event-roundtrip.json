@@ -1,0 +1,25 @@
+{
+  "name": "gen-ack_event-roundtrip",
+  "from": "chirpstack-integration-ack-event",
+  "to": "chirpstack-integration-ack-event",
+  "input": "0a1264656475706c69636174696f6e5f69642d30120608890110ae011a8b010a0b74656e616e745f69642d33120d74656e616e745f6e616d652d341a106170706c69636174696f6e5f69642d3522126170706c69636174696f6e5f6e616d652d362a136465766963655f70726f66696c655f69642d3732156465766963655f70726f66696c655f6e616d652d383a0d6465766963655f6e616d652d39420a6465765f6575692d31305001221071756575655f6974656d5f69642d3132280130ea04",
+  "expect": "0a1264656475706c69636174696f6e5f69642d30120608890110ae011a8b010a0b74656e616e745f69642d33120d74656e616e745f6e616d652d341a106170706c69636174696f6e5f69642d3522126170706c69636174696f6e5f6e616d652d362a136465766963655f70726f66696c655f69642d3732156465766963655f70726f66696c655f6e616d652d383a0d6465766963655f6e616d652d39420a6465765f6575692d31305001221071756575655f6974656d5f69642d3132280130ea04",
+  "model": {
+    "@kind": "ack_event",
+    "chirpstackintegrationackevent.ack_event_deduplication_id": "deduplication_id-0",
+    "chirpstackintegrationackevent.time_seconds": "137",
+    "chirpstackintegrationackevent.time_nanos": "174",
+    "chirpstackintegrationackevent.device_info_tenant_id": "tenant_id-3",
+    "chirpstackintegrationackevent.device_info_tenant_name": "tenant_name-4",
+    "chirpstackintegrationackevent.device_info_application_id": "application_id-5",
+    "chirpstackintegrationackevent.device_info_application_name": "application_name-6",
+    "chirpstackintegrationackevent.device_info_device_profile_id": "device_profile_id-7",
+    "chirpstackintegrationackevent.device_info_device_profile_name": "device_profile_name-8",
+    "chirpstackintegrationackevent.device_info_device_name": "device_name-9",
+    "chirpstackintegrationackevent.device_info_dev_eui": "dev_eui-10",
+    "chirpstackintegrationackevent.device_info_device_class_enabled": "1",
+    "chirpstackintegrationackevent.ack_event_queue_item_id": "queue_item_id-12",
+    "chirpstackintegrationackevent.ack_event_acknowledged": "1",
+    "chirpstackintegrationackevent.ack_event_f_cnt_down": "618"
+  }
+}

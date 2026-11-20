@@ -1,0 +1,12 @@
+{
+ "1": "list_entities_radio_frequency_response_object_id",
+ "10": "list_entities_radio_frequency_response_frequency_max",
+ "11": "list_entities_radio_frequency_response_supported_modulations",
+ "3": "list_entities_radio_frequency_response_name",
+ "4": "list_entities_radio_frequency_response_icon",
+ "5": "list_entities_radio_frequency_response_disabled_by_default",
+ "6": "list_entities_radio_frequency_response_entity_category",
+ "7": "list_entities_radio_frequency_response_device_id",
+ "8": "list_entities_radio_frequency_response_capabilities",
+ "9": "list_entities_radio_frequency_response_frequency_min"
+}

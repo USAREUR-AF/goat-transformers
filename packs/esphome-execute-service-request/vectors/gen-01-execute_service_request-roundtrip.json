@@ -1,0 +1,33 @@
+{
+  "name": "gen-execute_service_request-roundtrip",
+  "from": "esphome-execute-service-request",
+  "to": "esphome-execute-service-request",
+  "input": "1234080110d3011d000028402209737472696e675f2d3528413201013a015542040000b8404a0f737472696e675f61727261792d31301237080110a0041d0000803e220a737472696e675f2d3134289b013201013a02af014204000058404a0f737472696e675f61727261792d313918642001",
+  "expect": "1234080110d3011d000028402209737472696e675f2d3528413201013a015542040000b8404a0f737472696e675f61727261792d31301237080110a0041d0000803e220a737472696e675f2d3134289b013201013a02af014204000058404a0f737472696e675f61727261792d313918642001",
+  "model": {
+    "@kind": "execute_service_request",
+    "esphomeexecuteservicerequest.execute_service_request_call_id": "100",
+    "esphomeexecuteservicerequest.execute_service_request_return_response": "1",
+    "esphomeexecuteservicerequest.execute_service_request_args.#": "2",
+    "esphomeexecuteservicerequest.execute_service_request_args[0].esphomeexecuteservicerequest.execute_service_argument_bool_": "1",
+    "esphomeexecuteservicerequest.execute_service_request_args[0].esphomeexecuteservicerequest.execute_service_argument_legacy_int": "211",
+    "esphomeexecuteservicerequest.execute_service_request_args[0].esphomeexecuteservicerequest.execute_service_argument_bool_array.#": "1",
+    "esphomeexecuteservicerequest.execute_service_request_args[0].esphomeexecuteservicerequest.execute_service_argument_bool_array[0].esphomeexecuteservicerequest.execute_service_argument_bool_array_item": "1",
+    "esphomeexecuteservicerequest.execute_service_request_args[0].esphomeexecuteservicerequest.execute_service_argument_int_array.#": "1",
+    "esphomeexecuteservicerequest.execute_service_request_args[0].esphomeexecuteservicerequest.execute_service_argument_int_array[0].esphomeexecuteservicerequest.execute_service_argument_int_array_item": "-43",
+    "esphomeexecuteservicerequest.execute_service_request_args[0].esphomeexecuteservicerequest.execute_service_argument_float_array.#": "1",
+    "esphomeexecuteservicerequest.execute_service_request_args[0].esphomeexecuteservicerequest.execute_service_argument_float_array[0].esphomeexecuteservicerequest.execute_service_argument_float_array_item": "5.75",
+    "esphomeexecuteservicerequest.execute_service_request_args[0].esphomeexecuteservicerequest.execute_service_argument_string_array.#": "1",
+    "esphomeexecuteservicerequest.execute_service_request_args[0].esphomeexecuteservicerequest.execute_service_argument_string_array[0].esphomeexecuteservicerequest.execute_service_argument_string_array_item": "string_array-10",
+    "esphomeexecuteservicerequest.execute_service_request_args[1].esphomeexecuteservicerequest.execute_service_argument_bool_": "1",
+    "esphomeexecuteservicerequest.execute_service_request_args[1].esphomeexecuteservicerequest.execute_service_argument_legacy_int": "544",
+    "esphomeexecuteservicerequest.execute_service_request_args[1].esphomeexecuteservicerequest.execute_service_argument_bool_array.#": "1",
+    "esphomeexecuteservicerequest.execute_service_request_args[1].esphomeexecuteservicerequest.execute_service_argument_bool_array[0].esphomeexecuteservicerequest.execute_service_argument_bool_array_item": "1",
+    "esphomeexecuteservicerequest.execute_service_request_args[1].esphomeexecuteservicerequest.execute_service_argument_int_array.#": "1",
+    "esphomeexecuteservicerequest.execute_service_request_args[1].esphomeexecuteservicerequest.execute_service_argument_int_array[0].esphomeexecuteservicerequest.execute_service_argument_int_array_item": "-88",
+    "esphomeexecuteservicerequest.execute_service_request_args[1].esphomeexecuteservicerequest.execute_service_argument_float_array.#": "1",
+    "esphomeexecuteservicerequest.execute_service_request_args[1].esphomeexecuteservicerequest.execute_service_argument_float_array[0].esphomeexecuteservicerequest.execute_service_argument_float_array_item": "3.375",
+    "esphomeexecuteservicerequest.execute_service_request_args[1].esphomeexecuteservicerequest.execute_service_argument_string_array.#": "1",
+    "esphomeexecuteservicerequest.execute_service_request_args[1].esphomeexecuteservicerequest.execute_service_argument_string_array[0].esphomeexecuteservicerequest.execute_service_argument_string_array_item": "string_array-19"
+  }
+}

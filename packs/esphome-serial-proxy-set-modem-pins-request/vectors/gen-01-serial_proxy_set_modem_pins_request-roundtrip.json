@@ -1,0 +1,12 @@
+{
+  "name": "gen-serial_proxy_set_modem_pins_request-roundtrip",
+  "from": "esphome-serial-proxy-set-modem-pins-request",
+  "to": "esphome-serial-proxy-set-modem-pins-request",
+  "input": "0864108901",
+  "expect": "0864108901",
+  "model": {
+    "@kind": "serial_proxy_set_modem_pins_request",
+    "esphomeserialproxysetmodempinsrequest.serial_proxy_set_modem_pins_request_instance": "100",
+    "esphomeserialproxysetmodempinsrequest.serial_proxy_set_modem_pins_request_line_states": "137"
+  }
+}

@@ -1,0 +1,8 @@
+{
+ "1": "serial_proxy_configure_request_instance",
+ "2": "serial_proxy_configure_request_baudrate",
+ "3": "serial_proxy_configure_request_flow_control",
+ "4": "serial_proxy_configure_request_parity",
+ "5": "serial_proxy_configure_request_stop_bits",
+ "6": "serial_proxy_configure_request_data_size"
+}

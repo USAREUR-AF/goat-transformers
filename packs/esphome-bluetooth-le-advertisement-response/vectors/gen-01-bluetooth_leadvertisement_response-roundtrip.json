@@ -1,0 +1,30 @@
+{
+  "name": "gen-bluetooth_leadvertisement_response-roundtrip",
+  "from": "esphome-bluetooth-le-advertisement-response",
+  "to": "esphome-bluetooth-le-advertisement-response",
+  "input": "0864180f220f736572766963655f75756964732d33220f736572766963655f75756964732d342a0c0a06757569642d351202c2022a0c0a06757569642d3712028c03320c0a06757569642d391202d603320d0a07757569642d31311202a00438ae01",
+  "expect": "0864180f220f736572766963655f75756964732d33220f736572766963655f75756964732d342a0c0a06757569642d351202c2022a0c0a06757569642d3712028c03320c0a06757569642d391202d603320d0a07757569642d31311202a00438ae01",
+  "model": {
+    "@kind": "bluetooth_leadvertisement_response",
+    "esphomebluetoothleadvertisementresponse.bluetooth_leadvertisement_response_address": "100",
+    "esphomebluetoothleadvertisementresponse.bluetooth_leadvertisement_response_rssi": "-8",
+    "esphomebluetoothleadvertisementresponse.bluetooth_leadvertisement_response_address_type": "174",
+    "esphomebluetoothleadvertisementresponse.bluetooth_leadvertisement_response_service_uuids.#": "2",
+    "esphomebluetoothleadvertisementresponse.bluetooth_leadvertisement_response_service_uuids[0].esphomebluetoothleadvertisementresponse.bluetooth_leadvertisement_response_service_uuids_item": "service_uuids-3",
+    "esphomebluetoothleadvertisementresponse.bluetooth_leadvertisement_response_service_uuids[1].esphomebluetoothleadvertisementresponse.bluetooth_leadvertisement_response_service_uuids_item": "service_uuids-4",
+    "esphomebluetoothleadvertisementresponse.bluetooth_leadvertisement_response_service_data.#": "2",
+    "esphomebluetoothleadvertisementresponse.bluetooth_leadvertisement_response_service_data[0].esphomebluetoothleadvertisementresponse.bluetooth_service_data_uuid": "uuid-5",
+    "esphomebluetoothleadvertisementresponse.bluetooth_leadvertisement_response_service_data[0].esphomebluetoothleadvertisementresponse.bluetooth_service_data_legacy_data.#": "1",
+    "esphomebluetoothleadvertisementresponse.bluetooth_leadvertisement_response_service_data[0].esphomebluetoothleadvertisementresponse.bluetooth_service_data_legacy_data[0].esphomebluetoothleadvertisementresponse.bluetooth_service_data_legacy_data_item": "322",
+    "esphomebluetoothleadvertisementresponse.bluetooth_leadvertisement_response_service_data[1].esphomebluetoothleadvertisementresponse.bluetooth_service_data_uuid": "uuid-7",
+    "esphomebluetoothleadvertisementresponse.bluetooth_leadvertisement_response_service_data[1].esphomebluetoothleadvertisementresponse.bluetooth_service_data_legacy_data.#": "1",
+    "esphomebluetoothleadvertisementresponse.bluetooth_leadvertisement_response_service_data[1].esphomebluetoothleadvertisementresponse.bluetooth_service_data_legacy_data[0].esphomebluetoothleadvertisementresponse.bluetooth_service_data_legacy_data_item": "396",
+    "esphomebluetoothleadvertisementresponse.bluetooth_leadvertisement_response_manufacturer_data.#": "2",
+    "esphomebluetoothleadvertisementresponse.bluetooth_leadvertisement_response_manufacturer_data[0].esphomebluetoothleadvertisementresponse.bluetooth_service_data_uuid": "uuid-9",
+    "esphomebluetoothleadvertisementresponse.bluetooth_leadvertisement_response_manufacturer_data[0].esphomebluetoothleadvertisementresponse.bluetooth_service_data_legacy_data.#": "1",
+    "esphomebluetoothleadvertisementresponse.bluetooth_leadvertisement_response_manufacturer_data[0].esphomebluetoothleadvertisementresponse.bluetooth_service_data_legacy_data[0].esphomebluetoothleadvertisementresponse.bluetooth_service_data_legacy_data_item": "470",
+    "esphomebluetoothleadvertisementresponse.bluetooth_leadvertisement_response_manufacturer_data[1].esphomebluetoothleadvertisementresponse.bluetooth_service_data_uuid": "uuid-11",
+    "esphomebluetoothleadvertisementresponse.bluetooth_leadvertisement_response_manufacturer_data[1].esphomebluetoothleadvertisementresponse.bluetooth_service_data_legacy_data.#": "1",
+    "esphomebluetoothleadvertisementresponse.bluetooth_leadvertisement_response_manufacturer_data[1].esphomebluetoothleadvertisementresponse.bluetooth_service_data_legacy_data[0].esphomebluetoothleadvertisementresponse.bluetooth_service_data_legacy_data_item": "544"
+  }
+}

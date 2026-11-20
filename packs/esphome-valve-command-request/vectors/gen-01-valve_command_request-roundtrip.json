@@ -1,0 +1,14 @@
+{
+  "name": "gen-valve_command_request-roundtrip",
+  "from": "esphome-valve-command-request",
+  "to": "esphome-valve-command-request",
+  "input": "10011d0000403f200128d301",
+  "expect": "10011d0000403f200128d301",
+  "model": {
+    "@kind": "valve_command_request",
+    "esphomevalvecommandrequest.valve_command_request_has_position": "1",
+    "esphomevalvecommandrequest.valve_command_request_position": "0.75",
+    "esphomevalvecommandrequest.valve_command_request_stop": "1",
+    "esphomevalvecommandrequest.valve_command_request_device_id": "211"
+  }
+}

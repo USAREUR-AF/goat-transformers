@@ -1,0 +1,15 @@
+{
+  "name": "gen-bluetooth_connections_free_response-roundtrip",
+  "from": "esphome-bluetooth-connections-free-response",
+  "to": "esphome-bluetooth-connections-free-response",
+  "input": "08641089011a04ae01d301",
+  "expect": "08641089011a04ae01d301",
+  "model": {
+    "@kind": "bluetooth_connections_free_response",
+    "esphomebluetoothconnectionsfreeresponse.bluetooth_connections_free_response_free": "100",
+    "esphomebluetoothconnectionsfreeresponse.bluetooth_connections_free_response_limit": "137",
+    "esphomebluetoothconnectionsfreeresponse.bluetooth_connections_free_response_allocated.#": "2",
+    "esphomebluetoothconnectionsfreeresponse.bluetooth_connections_free_response_allocated[0].esphomebluetoothconnectionsfreeresponse.bluetooth_connections_free_response_allocated_item": "174",
+    "esphomebluetoothconnectionsfreeresponse.bluetooth_connections_free_response_allocated[1].esphomebluetoothconnectionsfreeresponse.bluetooth_connections_free_response_allocated_item": "211"
+  }
+}

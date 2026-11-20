@@ -1,0 +1,26 @@
+{
+  "name": "gen-location_solved-roundtrip",
+  "from": "tts-application-up",
+  "to": "tts-application-up",
+  "input": "0a210a0b6465766963655f69642d3012120a106170706c69636174696f6e5f69642d311212636f7272656c6174696f6e5f6964732d31311212636f7272656c6174696f6e5f6964732d31325a270a09736572766963652d35121a090000000000802540110000000000002940188c0320b1032801620608ae0110d3017001",
+  "expect": "0a210a0b6465766963655f69642d3012120a106170706c69636174696f6e5f69642d311212636f7272656c6174696f6e5f6964732d31311212636f7272656c6174696f6e5f6964732d31325a270a09736572766963652d35121a090000000000802540110000000000002940188c0320b1032801620608ae0110d3017001",
+  "model": {
+    "@kind": "location_solved",
+    "ttsapplicationup.end_device_ids_device_id": "device_id-0",
+    "ttsapplicationup.end_device_ids_application_ids_application_id": "application_id-1",
+    "ttsapplicationup.received_at_seconds": "174",
+    "ttsapplicationup.received_at_nanos": "211",
+    "ttsapplicationup.simulated": "1",
+    "ttsapplicationup.location_solved_service": "service-5",
+    "ttsapplicationup.location_latitude": "10.75",
+    "lat": "10.75",
+    "ttsapplicationup.location_longitude": "12.5",
+    "lon": "12.5",
+    "ttsapplicationup.location_altitude": "396",
+    "ttsapplicationup.location_accuracy": "433",
+    "ttsapplicationup.location_source": "1",
+    "ttsapplicationup.correlation_ids.#": "2",
+    "ttsapplicationup.correlation_ids[0].ttsapplicationup.application_up_correlation_ids_item": "correlation_ids-11",
+    "ttsapplicationup.correlation_ids[1].ttsapplicationup.application_up_correlation_ids_item": "correlation_ids-12"
+  }
+}

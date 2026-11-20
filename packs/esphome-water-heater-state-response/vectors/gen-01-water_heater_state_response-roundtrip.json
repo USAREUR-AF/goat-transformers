@@ -1,0 +1,18 @@
+{
+  "name": "gen-water_heater_state_response-roundtrip",
+  "from": "esphome-water-heater-state-response",
+  "to": "esphome-water-heater-state-response",
+  "input": "150000003e1d0000403f200128d30130f8013d0000504045000078404801",
+  "expect": "150000003e1d0000403f200128d30130f8013d0000504045000078404801",
+  "model": {
+    "@kind": "water_heater_state_response",
+    "esphomewaterheaterstateresponse.water_heater_state_response_current_temperature": "0.125",
+    "esphomewaterheaterstateresponse.water_heater_state_response_target_temperature": "0.75",
+    "esphomewaterheaterstateresponse.water_heater_state_response_mode": "1",
+    "esphomewaterheaterstateresponse.water_heater_state_response_device_id": "211",
+    "esphomewaterheaterstateresponse.water_heater_state_response_state": "248",
+    "esphomewaterheaterstateresponse.water_heater_state_response_target_temperature_low": "3.25",
+    "esphomewaterheaterstateresponse.water_heater_state_response_target_temperature_high": "3.875",
+    "esphomewaterheaterstateresponse.water_heater_state_response_missing_state": "1"
+  }
+}

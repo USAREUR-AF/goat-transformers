@@ -1,0 +1,11 @@
+{
+  "name": "gen-bluetooth_scanner_set_mode_request-roundtrip",
+  "from": "esphome-bluetooth-scanner-set-mode-request",
+  "to": "esphome-bluetooth-scanner-set-mode-request",
+  "input": "0801",
+  "expect": "0801",
+  "model": {
+    "@kind": "bluetooth_scanner_set_mode_request",
+    "esphomebluetoothscannersetmoderequest.bluetooth_scanner_set_mode_request_mode": "1"
+  }
+}

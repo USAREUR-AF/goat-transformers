@@ -1,0 +1,23 @@
+{
+  "name": "gen-fan_command_request-roundtrip",
+  "from": "esphome-fan-command-request",
+  "to": "esphome-fan-command-request",
+  "input": "10011801200128013001380140014801500158b10360016a0e7072657365745f6d6f64652d313170a004",
+  "expect": "10011801200128013001380140014801500158b10360016a0e7072657365745f6d6f64652d313170a004",
+  "model": {
+    "@kind": "fan_command_request",
+    "esphomefancommandrequest.fan_command_request_has_state": "1",
+    "esphomefancommandrequest.fan_command_request_state": "1",
+    "esphomefancommandrequest.fan_command_request_has_speed": "1",
+    "esphomefancommandrequest.fan_command_request_speed": "1",
+    "esphomefancommandrequest.fan_command_request_has_oscillating": "1",
+    "esphomefancommandrequest.fan_command_request_oscillating": "1",
+    "esphomefancommandrequest.fan_command_request_has_direction": "1",
+    "esphomefancommandrequest.fan_command_request_direction": "1",
+    "esphomefancommandrequest.fan_command_request_has_speed_level": "1",
+    "esphomefancommandrequest.fan_command_request_speed_level": "433",
+    "esphomefancommandrequest.fan_command_request_has_preset_mode": "1",
+    "esphomefancommandrequest.fan_command_request_preset_mode": "preset_mode-11",
+    "esphomefancommandrequest.fan_command_request_device_id": "544"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "gen-serial_proxy_request_response-roundtrip",
+  "from": "esphome-serial-proxy-request-response",
+  "to": "esphome-serial-proxy-request-response",
+  "input": "086410011801220f6572726f725f6d6573736167652d33",
+  "expect": "086410011801220f6572726f725f6d6573736167652d33",
+  "model": {
+    "@kind": "serial_proxy_request_response",
+    "esphomeserialproxyrequestresponse.serial_proxy_request_response_instance": "100",
+    "esphomeserialproxyrequestresponse.serial_proxy_request_response_type": "1",
+    "esphomeserialproxyrequestresponse.serial_proxy_request_response_status": "1",
+    "esphomeserialproxyrequestresponse.serial_proxy_request_response_error_message": "error_message-3"
+  }
+}

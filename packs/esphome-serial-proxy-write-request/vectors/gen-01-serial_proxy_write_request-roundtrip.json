@@ -1,0 +1,11 @@
+{
+  "name": "gen-serial_proxy_write_request-roundtrip",
+  "from": "esphome-serial-proxy-write-request",
+  "to": "esphome-serial-proxy-write-request",
+  "input": "0864",
+  "expect": "0864",
+  "model": {
+    "@kind": "serial_proxy_write_request",
+    "esphomeserialproxywriterequest.serial_proxy_write_request_instance": "100"
+  }
+}

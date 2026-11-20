@@ -1,0 +1,13 @@
+{
+  "name": "gen-subscribe_home_assistant_state_response-roundtrip",
+  "from": "esphome-subscribe-home-assistant-state-response",
+  "to": "esphome-subscribe-home-assistant-state-response",
+  "input": "0a0b656e746974795f69642d30120b6174747269627574652d311801",
+  "expect": "0a0b656e746974795f69642d30120b6174747269627574652d311801",
+  "model": {
+    "@kind": "subscribe_home_assistant_state_response",
+    "esphomesubscribehomeassistantstateresponse.subscribe_home_assistant_state_response_entity_id": "entity_id-0",
+    "esphomesubscribehomeassistantstateresponse.subscribe_home_assistant_state_response_attribute": "attribute-1",
+    "esphomesubscribehomeassistantstateresponse.subscribe_home_assistant_state_response_once": "1"
+  }
+}

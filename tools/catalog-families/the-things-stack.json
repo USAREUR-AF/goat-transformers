@@ -1,0 +1,8 @@
+{
+  "name": "The Things Stack",
+  "domain": "iot",
+  "prefixes": [
+    "tts-"
+  ],
+  "detail": "application uplinks and downlinks"
+}

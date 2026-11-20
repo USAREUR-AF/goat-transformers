@@ -1,0 +1,25 @@
+{
+  "name": "gen-get_time_response-roundtrip",
+  "from": "esphome-get-time-response",
+  "to": "esphome-get-time-response",
+  "input": "120a74696d657a6f6e652d301a28080f10191a10082310f801180120c20228e702308c032210085f10d603180120a00428c50430ea04",
+  "expect": "120a74696d657a6f6e652d301a28080f10191a10082310f801180120c20228e702308c032210085f10d603180120a00428c50430ea04",
+  "model": {
+    "@kind": "get_time_response",
+    "esphomegettimeresponse.get_time_response_timezone": "timezone-0",
+    "esphomegettimeresponse.parsed_timezone_std_offset_seconds": "-8",
+    "esphomegettimeresponse.parsed_timezone_dst_offset_seconds": "-13",
+    "esphomegettimeresponse.parsed_timezone_dst_start_time_seconds": "-18",
+    "esphomegettimeresponse.parsed_timezone_dst_start_day": "248",
+    "esphomegettimeresponse.parsed_timezone_dst_start_type": "1",
+    "esphomegettimeresponse.parsed_timezone_dst_start_month": "322",
+    "esphomegettimeresponse.parsed_timezone_dst_start_week": "359",
+    "esphomegettimeresponse.parsed_timezone_dst_start_day_of_week": "396",
+    "esphomegettimeresponse.parsed_timezone_dst_end_time_seconds": "-48",
+    "esphomegettimeresponse.parsed_timezone_dst_end_day": "470",
+    "esphomegettimeresponse.parsed_timezone_dst_end_type": "1",
+    "esphomegettimeresponse.parsed_timezone_dst_end_month": "544",
+    "esphomegettimeresponse.parsed_timezone_dst_end_week": "581",
+    "esphomegettimeresponse.parsed_timezone_dst_end_day_of_week": "618"
+  }
+}

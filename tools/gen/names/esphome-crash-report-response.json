@@ -1,0 +1,13 @@
+{
+ "1": "crash_report_response_flags",
+ "2": "crash_report_response_reason",
+ "3": "crash_report_response_pc",
+ "4": "crash_report_response_cause",
+ "5": "crash_report_response_fault_address",
+ "6": "crash_report_response_build_time",
+ "7": "crash_report_response_crashed_core",
+ "8[]": "crash_report_response_cores",
+ "CrashReportCore:1": "crash_report_core_core",
+ "CrashReportCore:2[]": "crash_report_core_backtrace",
+ "CrashReportCore:2[]item": "crash_report_core_backtrace_item"
+}

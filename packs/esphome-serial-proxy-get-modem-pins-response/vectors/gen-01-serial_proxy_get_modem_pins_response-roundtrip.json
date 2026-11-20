@@ -1,0 +1,13 @@
+{
+  "name": "gen-serial_proxy_get_modem_pins_response-roundtrip",
+  "from": "esphome-serial-proxy-get-modem-pins-response",
+  "to": "esphome-serial-proxy-get-modem-pins-response",
+  "input": "08641089011801",
+  "expect": "08641089011801",
+  "model": {
+    "@kind": "serial_proxy_get_modem_pins_response",
+    "esphomeserialproxygetmodempinsresponse.serial_proxy_get_modem_pins_response_instance": "100",
+    "esphomeserialproxygetmodempinsresponse.serial_proxy_get_modem_pins_response_line_states": "137",
+    "esphomeserialproxygetmodempinsresponse.serial_proxy_get_modem_pins_response_status": "1"
+  }
+}

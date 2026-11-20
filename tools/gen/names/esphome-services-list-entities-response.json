@@ -1,0 +1,12 @@
+{
+ "1": "list_entities_services_response_name",
+ "3[]": "list_entities_services_response_args",
+ "4": "list_entities_services_response_supports_response",
+ "5": "list_entities_services_response_description",
+ "ListEntitiesServicesArgument:1": "list_entities_services_argument_name",
+ "ListEntitiesServicesArgument:2": "list_entities_services_argument_type",
+ "ListEntitiesServicesArgument:3": "list_entities_services_argument_description",
+ "ListEntitiesServicesArgument:4": "list_entities_services_argument_example",
+ "ListEntitiesServicesArgument:5": "list_entities_services_argument_optional",
+ "ListEntitiesServicesArgument:6": "list_entities_services_argument_default_value"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "gen-infrared_rftransmit_complete_response-roundtrip",
+  "from": "esphome-infrared-rf-transmit-complete-response",
+  "to": "esphome-infrared-rf-transmit-complete-response",
+  "input": "08641801",
+  "expect": "08641801",
+  "model": {
+    "@kind": "infrared_rftransmit_complete_response",
+    "esphomeinfraredrftransmitcompleteresponse.infrared_rftransmit_complete_response_device_id": "100",
+    "esphomeinfraredrftransmitcompleteresponse.infrared_rftransmit_complete_response_success": "1"
+  }
+}

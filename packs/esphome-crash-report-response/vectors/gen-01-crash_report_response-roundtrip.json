@@ -1,0 +1,24 @@
+{
+  "name": "gen-crash_report_response-roundtrip",
+  "from": "esphome-crash-report-response",
+  "to": "esphome-crash-report-response",
+  "input": "086410890118ae0120d30128f801309d0238c202420708e70212028c03420708b1031202d603",
+  "expect": "086410890118ae0120d30128f801309d0238c202420708e70212028c03420708b1031202d603",
+  "model": {
+    "@kind": "crash_report_response",
+    "esphomecrashreportresponse.crash_report_response_flags": "100",
+    "esphomecrashreportresponse.crash_report_response_reason": "137",
+    "esphomecrashreportresponse.crash_report_response_pc": "174",
+    "esphomecrashreportresponse.crash_report_response_cause": "211",
+    "esphomecrashreportresponse.crash_report_response_fault_address": "248",
+    "esphomecrashreportresponse.crash_report_response_build_time": "285",
+    "esphomecrashreportresponse.crash_report_response_crashed_core": "322",
+    "esphomecrashreportresponse.crash_report_response_cores.#": "2",
+    "esphomecrashreportresponse.crash_report_response_cores[0].esphomecrashreportresponse.crash_report_core_core": "359",
+    "esphomecrashreportresponse.crash_report_response_cores[0].esphomecrashreportresponse.crash_report_core_backtrace.#": "1",
+    "esphomecrashreportresponse.crash_report_response_cores[0].esphomecrashreportresponse.crash_report_core_backtrace[0].esphomecrashreportresponse.crash_report_core_backtrace_item": "396",
+    "esphomecrashreportresponse.crash_report_response_cores[1].esphomecrashreportresponse.crash_report_core_core": "433",
+    "esphomecrashreportresponse.crash_report_response_cores[1].esphomecrashreportresponse.crash_report_core_backtrace.#": "1",
+    "esphomecrashreportresponse.crash_report_response_cores[1].esphomecrashreportresponse.crash_report_core_backtrace[0].esphomecrashreportresponse.crash_report_core_backtrace_item": "470"
+  }
+}

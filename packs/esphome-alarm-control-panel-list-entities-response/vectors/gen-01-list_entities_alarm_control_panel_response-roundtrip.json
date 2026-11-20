@@ -1,0 +1,19 @@
+{
+  "name": "gen-list_entities_alarm_control_panel_response-roundtrip",
+  "from": "esphome-alarm-control-panel-list-entities-response",
+  "to": "esphome-alarm-control-panel-list-entities-response",
+  "input": "0a0b6f626a6563745f69642d301a066e616d652d312a0669636f6e2d3230013801409d0248015001588c03",
+  "expect": "0a0b6f626a6563745f69642d301a066e616d652d312a0669636f6e2d3230013801409d0248015001588c03",
+  "model": {
+    "@kind": "list_entities_alarm_control_panel_response",
+    "esphomealarmcontrolpanellistentitiesresponse.list_entities_alarm_control_panel_response_object_id": "object_id-0",
+    "esphomealarmcontrolpanellistentitiesresponse.list_entities_alarm_control_panel_response_name": "name-1",
+    "esphomealarmcontrolpanellistentitiesresponse.list_entities_alarm_control_panel_response_icon": "icon-2",
+    "esphomealarmcontrolpanellistentitiesresponse.list_entities_alarm_control_panel_response_disabled_by_default": "1",
+    "esphomealarmcontrolpanellistentitiesresponse.list_entities_alarm_control_panel_response_entity_category": "1",
+    "esphomealarmcontrolpanellistentitiesresponse.list_entities_alarm_control_panel_response_supported_features": "285",
+    "esphomealarmcontrolpanellistentitiesresponse.list_entities_alarm_control_panel_response_requires_code": "1",
+    "esphomealarmcontrolpanellistentitiesresponse.list_entities_alarm_control_panel_response_requires_code_to_arm": "1",
+    "esphomealarmcontrolpanellistentitiesresponse.list_entities_alarm_control_panel_response_device_id": "396"
+  }
+}

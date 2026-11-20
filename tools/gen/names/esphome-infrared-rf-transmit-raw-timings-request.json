@@ -1,0 +1,8 @@
+{
+ "1": "infrared_rftransmit_raw_timings_request_device_id",
+ "3": "infrared_rftransmit_raw_timings_request_carrier_frequency",
+ "4": "infrared_rftransmit_raw_timings_request_repeat_count",
+ "5[]": "infrared_rftransmit_raw_timings_request_timings",
+ "6": "infrared_rftransmit_raw_timings_request_modulation",
+ "InfraredRFTransmitRawTimingsRequest:5[]item": "infrared_rftransmit_raw_timings_request_timings_item"
+}

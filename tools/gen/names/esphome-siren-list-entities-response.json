@@ -1,0 +1,12 @@
+{
+ "1": "list_entities_siren_response_object_id",
+ "10": "list_entities_siren_response_entity_category",
+ "11": "list_entities_siren_response_device_id",
+ "3": "list_entities_siren_response_name",
+ "5": "list_entities_siren_response_icon",
+ "6": "list_entities_siren_response_disabled_by_default",
+ "7[]": "list_entities_siren_response_tones",
+ "8": "list_entities_siren_response_supports_duration",
+ "9": "list_entities_siren_response_supports_volume",
+ "ListEntitiesSirenResponse:7[]item": "list_entities_siren_response_tones_item"
+}

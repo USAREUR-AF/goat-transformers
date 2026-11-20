@@ -1,0 +1,16 @@
+{
+  "name": "gen-downlink_command-roundtrip",
+  "from": "chirpstack-integration-downlink-command",
+  "to": "chirpstack-integration-downlink-command",
+  "input": "0a0469642d3012096465765f6575692d31180120d3013a0608f801109d02",
+  "expect": "0a0469642d3012096465765f6575692d31180120d3013a0608f801109d02",
+  "model": {
+    "@kind": "downlink_command",
+    "chirpstackintegrationdownlinkcommand.downlink_command_id": "id-0",
+    "chirpstackintegrationdownlinkcommand.downlink_command_dev_eui": "dev_eui-1",
+    "chirpstackintegrationdownlinkcommand.downlink_command_confirmed": "1",
+    "chirpstackintegrationdownlinkcommand.downlink_command_f_port": "211",
+    "chirpstackintegrationdownlinkcommand.expires_at_seconds": "248",
+    "chirpstackintegrationdownlinkcommand.expires_at_nanos": "285"
+  }
+}

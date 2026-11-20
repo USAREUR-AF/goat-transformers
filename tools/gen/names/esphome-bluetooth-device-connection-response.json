@@ -1,0 +1,6 @@
+{
+ "1": "bluetooth_device_connection_response_address",
+ "2": "bluetooth_device_connection_response_connected",
+ "3": "bluetooth_device_connection_response_mtu",
+ "4": "bluetooth_device_connection_response_error"
+}

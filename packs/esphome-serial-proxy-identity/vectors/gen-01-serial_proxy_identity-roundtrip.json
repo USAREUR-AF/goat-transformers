@@ -1,0 +1,23 @@
+{
+  "name": "gen-serial_proxy_identity-roundtrip",
+  "from": "esphome-serial-proxy-identity",
+  "to": "esphome-serial-proxy-identity",
+  "input": "0864100118ae01220e6d616e7566616374757265722d332a0970726f647563742d34320f73657269616c5f6e756d6265722d353a2c08c20210e702188c0320b10328d60330fb033a18696e746572666163655f6465736372697074696f6e2d3132",
+  "expect": "0864100118ae01220e6d616e7566616374757265722d332a0970726f647563742d34320f73657269616c5f6e756d6265722d353a2c08c20210e702188c0320b10328d60330fb033a18696e746572666163655f6465736372697074696f6e2d3132",
+  "model": {
+    "@kind": "serial_proxy_identity",
+    "esphomeserialproxyidentity.serial_proxy_identity_instance": "100",
+    "esphomeserialproxyidentity.serial_proxy_identity_source": "1",
+    "esphomeserialproxyidentity.serial_proxy_identity_flags": "174",
+    "esphomeserialproxyidentity.serial_proxy_identity_manufacturer": "manufacturer-3",
+    "esphomeserialproxyidentity.serial_proxy_identity_product": "product-4",
+    "esphomeserialproxyidentity.serial_proxy_identity_serial_number": "serial_number-5",
+    "esphomeserialproxyidentity.usb_vendor_id": "322",
+    "esphomeserialproxyidentity.usb_product_id": "359",
+    "esphomeserialproxyidentity.usb_bcd_device": "396",
+    "esphomeserialproxyidentity.usb_interface_number": "433",
+    "esphomeserialproxyidentity.usb_interface_class": "470",
+    "esphomeserialproxyidentity.usb_port_number": "507",
+    "esphomeserialproxyidentity.usb_interface_description": "interface_description-12"
+  }
+}

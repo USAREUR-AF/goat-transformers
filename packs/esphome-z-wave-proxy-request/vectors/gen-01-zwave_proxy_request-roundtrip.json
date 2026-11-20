@@ -1,0 +1,11 @@
+{
+  "name": "gen-zwave_proxy_request-roundtrip",
+  "from": "esphome-z-wave-proxy-request",
+  "to": "esphome-z-wave-proxy-request",
+  "input": "0801",
+  "expect": "0801",
+  "model": {
+    "@kind": "zwave_proxy_request",
+    "esphomezwaveproxyrequest.zwave_proxy_request_type": "1"
+  }
+}

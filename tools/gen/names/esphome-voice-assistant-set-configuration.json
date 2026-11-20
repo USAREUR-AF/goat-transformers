@@ -1,0 +1,4 @@
+{
+ "1[]": "voice_assistant_set_configuration_active_wake_words",
+ "VoiceAssistantSetConfiguration:1[]item": "voice_assistant_set_configuration_active_wake_words_item"
+}

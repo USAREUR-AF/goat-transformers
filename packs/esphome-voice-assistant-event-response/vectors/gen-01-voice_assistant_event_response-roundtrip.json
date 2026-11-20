@@ -1,0 +1,16 @@
+{
+  "name": "gen-voice_assistant_event_response-roundtrip",
+  "from": "esphome-voice-assistant-event-response",
+  "to": "esphome-voice-assistant-event-response",
+  "input": "080112110a066e616d652d31120776616c75652d3212110a066e616d652d33120776616c75652d34",
+  "expect": "080112110a066e616d652d31120776616c75652d3212110a066e616d652d33120776616c75652d34",
+  "model": {
+    "@kind": "voice_assistant_event_response",
+    "esphomevoiceassistanteventresponse.voice_assistant_event_response_event_type": "1",
+    "esphomevoiceassistanteventresponse.voice_assistant_event_response_data.#": "2",
+    "esphomevoiceassistanteventresponse.voice_assistant_event_response_data[0].esphomevoiceassistanteventresponse.voice_assistant_event_data_name": "name-1",
+    "esphomevoiceassistanteventresponse.voice_assistant_event_response_data[0].esphomevoiceassistanteventresponse.voice_assistant_event_data_value": "value-2",
+    "esphomevoiceassistanteventresponse.voice_assistant_event_response_data[1].esphomevoiceassistanteventresponse.voice_assistant_event_data_name": "name-3",
+    "esphomevoiceassistanteventresponse.voice_assistant_event_response_data[1].esphomevoiceassistanteventresponse.voice_assistant_event_data_value": "value-4"
+  }
+}

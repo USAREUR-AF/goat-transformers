@@ -1,0 +1,11 @@
+{
+  "name": "gen-authentication_request-roundtrip",
+  "from": "esphome-authentication-request",
+  "to": "esphome-authentication-request",
+  "input": "0a0a70617373776f72642d30",
+  "expect": "0a0a70617373776f72642d30",
+  "model": {
+    "@kind": "authentication_request",
+    "esphomeauthenticationrequest.authentication_request_password": "password-0"
+  }
+}

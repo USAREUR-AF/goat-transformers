@@ -1,0 +1,11 @@
+{
+  "name": "gen-voice_assistant_audio-roundtrip",
+  "from": "esphome-voice-assistant-audio",
+  "to": "esphome-voice-assistant-audio",
+  "input": "1001",
+  "expect": "1001",
+  "model": {
+    "@kind": "voice_assistant_audio",
+    "esphomevoiceassistantaudio.voice_assistant_audio_end": "1"
+  }
+}

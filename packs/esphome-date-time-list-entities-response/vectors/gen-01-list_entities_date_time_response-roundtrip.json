@@ -1,0 +1,16 @@
+{
+  "name": "gen-list_entities_date_time_response-roundtrip",
+  "from": "esphome-date-time-list-entities-response",
+  "to": "esphome-date-time-list-entities-response",
+  "input": "0a0b6f626a6563745f69642d301a066e616d652d312a0669636f6e2d3230013801409d02",
+  "expect": "0a0b6f626a6563745f69642d301a066e616d652d312a0669636f6e2d3230013801409d02",
+  "model": {
+    "@kind": "list_entities_date_time_response",
+    "esphomedatetimelistentitiesresponse.list_entities_date_time_response_object_id": "object_id-0",
+    "esphomedatetimelistentitiesresponse.list_entities_date_time_response_name": "name-1",
+    "esphomedatetimelistentitiesresponse.list_entities_date_time_response_icon": "icon-2",
+    "esphomedatetimelistentitiesresponse.list_entities_date_time_response_disabled_by_default": "1",
+    "esphomedatetimelistentitiesresponse.list_entities_date_time_response_entity_category": "1",
+    "esphomedatetimelistentitiesresponse.list_entities_date_time_response_device_id": "285"
+  }
+}
