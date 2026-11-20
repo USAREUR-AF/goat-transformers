@@ -1,0 +1,15 @@
+{
+  "name": "message-2-octet-as-path-roundtrip",
+  "from": "mrt",
+  "to": "mrt",
+  "input": "691f02c50010000100000038fbf4fbf000000001c6336401c63364feffffffffffffffffffffffffffffffff0028020000000d400101004002060202fbf4fbf018c00002",
+  "expect": "691f02c50010000100000038fbf4fbf000000001c6336401c63364feffffffffffffffffffffffffffffffff0028020000000d400101004002060202fbf4fbf018c00002",
+  "model": {
+    "@kind": "bgp4mp-message",
+    "mrt.withdrawn_routes.#": "0",
+    "mrt.attributes[1].mrt.as_path_segments[0].mrt.segment_asns.#": "2",
+    "mrt.attributes[1].mrt.as_path_segments[0].mrt.segment_asns[1].mrt.asn": "64496"
+  },
+  "source": "derived by tools/gen/logs-vectors.py from records written for it and spec/engine-spec.md; no engine run",
+  "reference": "IETF RFC 6396 (MRT) and RFC 8050 (additional paths); RFC 4271 section 4 (BGP messages); BGP4MP_MESSAGE: the AS_PATH holds 2-octet AS numbers; no prefix is withdrawn, so the list is present and empty"
+}

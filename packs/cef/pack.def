@@ -1,0 +1,22 @@
+# ArcSight Common Event Format (CEF) record, without a syslog prefix: CEF:Version|Device
+# Vendor|Device Product|Device Version|Device Event Class ID|Name|Severity|Extension.
+# Public; licensed LicenseRef-unstated (the format guide states copyright and no licence).
+# Written by hand from the format guide. pack.md states why the extension's keys stay text.
+format     cef
+version    0.1.0
+distribution public
+source     "Implementing ArcSight Common Event Format (CEF), Version 26, OpenText ArcSight SmartConnectors 8.4.3 documentation, October 2023, https://www.microfocus.com/documentation/arcsight/arcsight-smartconnectors-8.4/pdfdoc/cef-implementation-standard/cef-implementation-standard.pdf (sha256 974fd57dcdf5d3723b4d53e5cd3d7d92f98b5f680070eaac3efbae2d7cda1e12)"
+uses       cef
+wire       text
+start      "CEF:"
+delimiter  "|"
+field  cef.version                0  int
+field  cef.device_vendor          1  string
+field  cef.device_product         2  string
+field  cef.device_version         3  string
+field  cef.device_event_class_id  4  string
+field  cef.name                   5  string
+field  cef.severity               6  string
+group  cef.extension  7  item 1
+  field  cef.extension_part  0  string
+end

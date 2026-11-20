@@ -1,0 +1,9 @@
+{
+  "name": "leef-1-tab-is-not-text",
+  "from": "leef",
+  "to": "leef",
+  "input": "LEEF:1.0|Example|Gateway|3.2|logout|usrName=alice\tsrc=192.0.2.10",
+  "expect_error": "malformed-wire",
+  "source": "derived by tools/gen/logs-vectors.py from records written for it and spec/engine-spec.md; no engine run",
+  "reference": "IBM QRadar DSM documentation, LEEF event components; LEEF 1.0 separates attributes with a tab, which the text wire does not read (0x20 to 0x7E only)"
+}

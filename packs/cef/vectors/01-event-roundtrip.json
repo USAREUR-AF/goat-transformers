@@ -1,0 +1,17 @@
+{
+  "name": "event-roundtrip",
+  "from": "cef",
+  "to": "cef",
+  "input": "CEF:0|Example Security|ThreatSensor|2.1|100|port scan|7|src=192.0.2.10 dst=198.51.100.5 spt=40000 act=blocked",
+  "expect": "CEF:0|Example Security|ThreatSensor|2.1|100|port scan|7|src=192.0.2.10 dst=198.51.100.5 spt=40000 act=blocked",
+  "model": {
+    "cef.version": "0",
+    "cef.device_vendor": "Example Security",
+    "cef.name": "port scan",
+    "cef.severity": "7",
+    "cef.extension.#": "1",
+    "cef.extension[0].cef.extension_part": "src=192.0.2.10 dst=198.51.100.5 spt=40000 act=blocked"
+  },
+  "source": "derived by tools/gen/logs-vectors.py from records written for it and spec/engine-spec.md; no engine run",
+  "reference": "Implementing ArcSight Common Event Format (CEF), Version 26 (OpenText, 2023), section CEF Implementation; a CEF 0 record without a syslog prefix; the extension is one text"
+}

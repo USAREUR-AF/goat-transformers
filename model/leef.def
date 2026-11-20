@@ -1,0 +1,14 @@
+# The leef module: the header of an IBM QRadar Log Event Extended Format (LEEF) record, and its
+# attributes as text. packs/leef/pack.md says why the attributes are not separate keys and why
+# LEEF 1.0 attributes cannot be read.
+module        leef
+version       0.1.0
+distribution  public
+source        "IBM QRadar DSM documentation, LEEF event components, https://www.ibm.com/docs/en/dsm?topic=overview-leef-event-components; restated by goat-transformers"
+key   vendor               string  -  "vendor of the product that sent the event"
+key   product              string  -  "product that sent the event"
+key   product_version      string  -  "version of that product"
+key   event_id             string  -  "identifier of the event type, unique within the product"
+key   attribute_delimiter  string  -  "LEEF 2.0: the character that separates the attributes, as written (a character such as ^, or x or 0x and 1 to 4 hex digits)"
+list  attributes                   "the attributes: key=value pairs separated by the attribute delimiter, as text; an item per part between pipes"
+key   attribute_part       string  -  "one part of the attribute text"

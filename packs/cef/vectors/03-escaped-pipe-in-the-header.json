@@ -1,0 +1,14 @@
+{
+  "name": "escaped-pipe-in-the-header",
+  "from": "cef",
+  "to": "cef",
+  "input": "CEF:0|Example Security|ThreatSensor|2.1|200|a \\| b|3|x=1",
+  "expect": "CEF:0|Example Security|ThreatSensor|2.1|200|a \\| b|3|x=1",
+  "model": {
+    "cef.name": "a \\",
+    "cef.severity": " b",
+    "cef.extension.#": "2"
+  },
+  "source": "derived by tools/gen/logs-vectors.py from records written for it and spec/engine-spec.md; no engine run",
+  "reference": "Implementing ArcSight Common Event Format (CEF), Version 26 (OpenText, 2023), section CEF Implementation; an escaped pipe in a header field is still a delimiter to the text wire: the fields after it shift by one, and the record comes back unchanged"
+}

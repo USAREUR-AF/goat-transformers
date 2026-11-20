@@ -1,0 +1,22 @@
+{
+  "name": "peer-index-table-roundtrip",
+  "from": "mrt",
+  "to": "mrt",
+  "input": "691f02c0000d00010000002ec000020100027276000200c6336401c6336401fbf403c633640220010db8000000000000000000000001fa56ea01",
+  "expect": "691f02c0000d00010000002ec000020100027276000200c6336401c6336401fbf403c633640220010db8000000000000000000000001fa56ea01",
+  "model": {
+    "@kind": "table-dump-v2-peer-index-table",
+    "time_ms": "1763640000000",
+    "mrt.collector_bgp_id": "3221225985",
+    "mrt.view_name.#": "2",
+    "mrt.view_name[0].mrt.view_name_octet": "114",
+    "mrt.peers.#": "2",
+    "mrt.peers[0].mrt.peer_as": "64500",
+    "mrt.peers[1].mrt.peer_type": "3",
+    "mrt.peers[1].mrt.peer_ipv6_high": "2306139568115548160",
+    "mrt.peers[1].mrt.peer_ipv6_low": "1",
+    "mrt.peers[1].mrt.peer_as": "4200000001"
+  },
+  "source": "derived by tools/gen/logs-vectors.py from records written for it and spec/engine-spec.md; no engine run",
+  "reference": "IETF RFC 6396 (MRT) and RFC 8050 (additional paths); RFC 4271 section 4 (BGP messages); a collector with the view name rv and two peers: IPv4 with a 2-octet AS, IPv6 with a 4-octet AS"
+}

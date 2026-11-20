@@ -1,0 +1,9 @@
+{
+  "name": "state-change-to-geojson",
+  "from": "mrt",
+  "to": "geojson",
+  "input": "691f02c10010000500000018fa56ea010000fbf000000001c6336401c63364fe00040006",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"time_ms\":1763640001000}}",
+  "source": "derived by tools/gen/logs-vectors.py from records written for it and spec/engine-spec.md; no engine run",
+  "reference": "IETF RFC 6396 (MRT) and RFC 8050 (additional paths); RFC 4271 section 4 (BGP messages); the record time is time_ms, which the GeoJSON Feature carries; nothing else of the record is a shared key"
+}

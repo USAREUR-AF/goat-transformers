@@ -1,0 +1,8 @@
+{
+  "name": "BGP MRT",
+  "domain": "networks",
+  "exact": [
+    "mrt"
+  ],
+  "detail": "RFC 6396 and 8050: table dumps and BGP4MP records"
+}

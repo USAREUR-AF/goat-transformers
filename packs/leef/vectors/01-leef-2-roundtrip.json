@@ -1,0 +1,17 @@
+{
+  "name": "leef-2-roundtrip",
+  "from": "leef",
+  "to": "leef",
+  "input": "LEEF:2.0|Example|Gateway|3.2|login|^|src=192.0.2.10^dst=198.51.100.5^usrName=alice",
+  "expect": "LEEF:2.0|Example|Gateway|3.2|login|^|src=192.0.2.10^dst=198.51.100.5^usrName=alice",
+  "model": {
+    "@kind": "leef-2",
+    "leef.vendor": "Example",
+    "leef.event_id": "login",
+    "leef.attribute_delimiter": "^",
+    "leef.attributes.#": "1",
+    "leef.attributes[0].leef.attribute_part": "src=192.0.2.10^dst=198.51.100.5^usrName=alice"
+  },
+  "source": "derived by tools/gen/logs-vectors.py from records written for it and spec/engine-spec.md; no engine run",
+  "reference": "IBM QRadar DSM documentation, LEEF event components; LEEF 2.0 with ^ separating the attributes; the attributes are one text"
+}

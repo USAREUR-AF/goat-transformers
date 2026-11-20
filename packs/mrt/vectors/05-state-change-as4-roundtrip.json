@@ -1,0 +1,19 @@
+{
+  "name": "state-change-as4-roundtrip",
+  "from": "mrt",
+  "to": "mrt",
+  "input": "691f02c10010000500000018fa56ea010000fbf000000001c6336401c63364fe00040006",
+  "expect": "691f02c10010000500000018fa56ea010000fbf000000001c6336401c63364fe00040006",
+  "model": {
+    "@kind": "bgp4mp-state-change-as4",
+    "time_ms": "1763640001000",
+    "mrt.peer_as": "4200000001",
+    "mrt.local_as": "64496",
+    "mrt.address_family": "1",
+    "mrt.peer_ipv4": "3325256705",
+    "mrt.old_state": "4",
+    "mrt.new_state": "6"
+  },
+  "source": "derived by tools/gen/logs-vectors.py from records written for it and spec/engine-spec.md; no engine run",
+  "reference": "IETF RFC 6396 (MRT) and RFC 8050 (additional paths); RFC 4271 section 4 (BGP messages); a session from OpenConfirm (4) to Established (6)"
+}

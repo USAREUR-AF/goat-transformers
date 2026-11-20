@@ -1,0 +1,14 @@
+{
+  "name": "leef-1-one-attribute-roundtrip",
+  "from": "leef",
+  "to": "leef",
+  "input": "LEEF:1.0|Example|Gateway|3.2|logout|usrName=alice",
+  "expect": "LEEF:1.0|Example|Gateway|3.2|logout|usrName=alice",
+  "model": {
+    "@kind": "leef-1",
+    "leef.product": "Gateway",
+    "leef.attributes[0].leef.attribute_part": "usrName=alice"
+  },
+  "source": "derived by tools/gen/logs-vectors.py from records written for it and spec/engine-spec.md; no engine run",
+  "reference": "IBM QRadar DSM documentation, LEEF event components; LEEF 1.0 with a single attribute, so no tab"
+}

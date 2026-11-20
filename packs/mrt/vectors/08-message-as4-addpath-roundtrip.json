@@ -1,0 +1,17 @@
+{
+  "name": "message-as4-addpath-roundtrip",
+  "from": "mrt",
+  "to": "mrt",
+  "input": "691f02c4001000090000005a0000fbff0000fbf000000001c6336409c63364feffffffffffffffffffffffffffffffff0046020009000000031ac000020000144001010140020602010000fbff400304c6336409000000071ac0000240000000081ac0000240",
+  "expect": "691f02c4001000090000005a0000fbff0000fbf000000001c6336409c63364feffffffffffffffffffffffffffffffff0046020009000000031ac000020000144001010140020602010000fbff400304c6336409000000071ac0000240000000081ac0000240",
+  "model": {
+    "@kind": "bgp4mp-message-as4-addpath",
+    "mrt.withdrawn_routes[0].mrt.path_identifier": "3",
+    "mrt.nlri.#": "2",
+    "mrt.nlri[0].mrt.path_identifier": "7",
+    "mrt.nlri[1].mrt.path_identifier": "8",
+    "mrt.nlri[1].mrt.prefix_octet_4": "64"
+  },
+  "source": "derived by tools/gen/logs-vectors.py from records written for it and spec/engine-spec.md; no engine run",
+  "reference": "IETF RFC 6396 (MRT) and RFC 8050 (additional paths); RFC 4271 section 4 (BGP messages); RFC 8050: every withdrawn and announced prefix is preceded by a 4-octet path identifier"
+}

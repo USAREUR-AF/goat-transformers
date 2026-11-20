@@ -1,0 +1,22 @@
+{
+  "name": "rib-ipv6-unicast-roundtrip",
+  "from": "mrt",
+  "to": "mrt",
+  "input": "691f02c0000d000400000057000000082020010db800020000691f0284002f4001010240021002010000fbf401020000fbfe0000fbff800e150002011020010db80000000000000000000000ff000001691f0284000d400101004002060201fa56ea01",
+  "expect": "691f02c0000d000400000057000000082020010db800020000691f0284002f4001010240021002010000fbf401020000fbfe0000fbff800e150002011020010db80000000000000000000000ff000001691f0284000d400101004002060201fa56ea01",
+  "model": {
+    "@kind": "table-dump-v2-rib-ipv6-unicast",
+    "mrt.prefix_length": "32",
+    "mrt.prefix_octet_1": "32",
+    "mrt.prefix_octet_4": "184",
+    "mrt.rib_entries.#": "2",
+    "mrt.rib_entries[0].mrt.attributes[0].mrt.origin": "2",
+    "mrt.rib_entries[0].mrt.attributes[1].mrt.as_path_segments.#": "2",
+    "mrt.rib_entries[0].mrt.attributes[1].mrt.as_path_segments[1].mrt.segment_type": "1",
+    "mrt.rib_entries[0].mrt.attributes[2].mrt.attr_value.#": "21",
+    "mrt.rib_entries[1].mrt.peer_index": "1",
+    "mrt.rib_entries[1].mrt.attributes[1].mrt.as_path_segments[0].mrt.segment_asns[0].mrt.asn": "4200000001"
+  },
+  "source": "derived by tools/gen/logs-vectors.py from records written for it and spec/engine-spec.md; no engine run",
+  "reference": "IETF RFC 6396 (MRT) and RFC 8050 (additional paths); RFC 4271 section 4 (BGP messages); 2001:db8::/32 with two entries; an AS_SET segment; MP_REACH_NLRI is kept as octets"
+}
