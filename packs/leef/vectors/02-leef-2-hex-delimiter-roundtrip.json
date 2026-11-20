@@ -1,0 +1,13 @@
+{
+  "name": "leef-2-hex-delimiter-roundtrip",
+  "from": "leef",
+  "to": "leef",
+  "input": "LEEF:2.0|Example|Gateway|3.2|login|x5E|src=192.0.2.10^usrName=alice",
+  "expect": "LEEF:2.0|Example|Gateway|3.2|login|x5E|src=192.0.2.10^usrName=alice",
+  "model": {
+    "@kind": "leef-2",
+    "leef.attribute_delimiter": "x5E"
+  },
+  "source": "derived by tools/gen/logs-vectors.py from records written for it and spec/engine-spec.md; no engine run",
+  "reference": "IBM QRadar DSM documentation, LEEF event components; the delimiter written as x and hex digits is kept as written"
+}

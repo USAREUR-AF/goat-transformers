@@ -1,0 +1,13 @@
+{
+  "name": "message-keepalive-roundtrip",
+  "from": "mrt",
+  "to": "mrt",
+  "input": "691f02c60010000100000023fbf4fbf000000001c6336401c63364feffffffffffffffffffffffffffffffff001304",
+  "expect": "691f02c60010000100000023fbf4fbf000000001c6336401c63364feffffffffffffffffffffffffffffffff001304",
+  "model": {
+    "@kind": "bgp4mp-message",
+    "mrt.bgp_type": "4"
+  },
+  "source": "derived by tools/gen/logs-vectors.py from records written for it and spec/engine-spec.md; no engine run",
+  "reference": "IETF RFC 6396 (MRT) and RFC 8050 (additional paths); RFC 4271 section 4 (BGP messages); a KEEPALIVE: a BGP header and no body"
+}

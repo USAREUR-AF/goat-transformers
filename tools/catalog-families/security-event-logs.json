@@ -1,0 +1,9 @@
+{
+  "name": "Security event logs",
+  "domain": "networks",
+  "exact": [
+    "cef",
+    "leef"
+  ],
+  "detail": "ArcSight CEF and QRadar LEEF headers"
+}

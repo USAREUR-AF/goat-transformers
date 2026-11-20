@@ -1,0 +1,15 @@
+{
+  "name": "message-notification-roundtrip",
+  "from": "mrt",
+  "to": "mrt",
+  "input": "691f02c70010000100000026fbf4fbf000000001c6336401c63364feffffffffffffffffffffffffffffffff001603060200",
+  "expect": "691f02c70010000100000026fbf4fbf000000001c6336401c63364feffffffffffffffffffffffffffffffff001603060200",
+  "model": {
+    "@kind": "bgp4mp-message",
+    "mrt.error_code": "6",
+    "mrt.error_subcode": "2",
+    "mrt.notification_data.#": "1"
+  },
+  "source": "derived by tools/gen/logs-vectors.py from records written for it and spec/engine-spec.md; no engine run",
+  "reference": "IETF RFC 6396 (MRT) and RFC 8050 (additional paths); RFC 4271 section 4 (BGP messages); a NOTIFICATION: Cease (6), administrative shutdown (2), one octet of data"
+}

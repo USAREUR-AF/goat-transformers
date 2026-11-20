@@ -1,0 +1,35 @@
+# IBM QRadar Log Event Extended Format (LEEF) record, without a syslog prefix:
+# LEEF:1.0|Vendor|Product|Version|EventID|attributes, or LEEF:2.0 with the attribute delimiter
+# as a sixth header field. Public; licensed LicenseRef-unstated. Written by hand from IBM's
+# documentation. pack.md states why the attributes stay text and why tab-separated attributes
+# (the LEEF 1.0 form) cannot be read.
+format     leef
+version    0.1.0
+distribution public
+source     "IBM QRadar DSM documentation, LEEF event components, https://www.ibm.com/docs/en/dsm?topic=overview-leef-event-components (read 2026-11-20)"
+uses       leef
+wire       text
+start      "LEEF:"
+delimiter  "|"
+
+kind    leef-2
+when    0  2.0
+requires leef.attribute_delimiter
+field  leef.vendor               1  string
+field  leef.product              2  string
+field  leef.product_version      3  string
+field  leef.event_id             4  string
+field  leef.attribute_delimiter  5  string
+group  leef.attributes  6  item 1
+  field  leef.attribute_part  0  string
+end
+
+kind    leef-1
+when    0  1.0
+field  leef.vendor               1  string
+field  leef.product              2  string
+field  leef.product_version      3  string
+field  leef.event_id             4  string
+group  leef.attributes  5  item 1
+  field  leef.attribute_part  0  string
+end

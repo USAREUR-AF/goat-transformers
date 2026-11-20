@@ -1,0 +1,16 @@
+{
+  "name": "rib-ipv4-unicast-addpath-roundtrip",
+  "from": "mrt",
+  "to": "mrt",
+  "input": "691f02c0000d00080000002b0000000919cb00718000020000691f02bb000000010004400101000000691f02bc00000002000440010100",
+  "expect": "691f02c0000d00080000002b0000000919cb00718000020000691f02bb000000010004400101000000691f02bc00000002000440010100",
+  "model": {
+    "@kind": "table-dump-v2-rib-ipv4-unicast-addpath",
+    "mrt.prefix_length": "25",
+    "mrt.prefix_octet_4": "128",
+    "mrt.rib_entries[0].mrt.path_identifier": "1",
+    "mrt.rib_entries[1].mrt.path_identifier": "2"
+  },
+  "source": "derived by tools/gen/logs-vectors.py from records written for it and spec/engine-spec.md; no engine run",
+  "reference": "IETF RFC 6396 (MRT) and RFC 8050 (additional paths); RFC 4271 section 4 (BGP messages); RFC 8050: one prefix, two paths from one peer told apart by their path identifiers; a /25 takes four octets"
+}

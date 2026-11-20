@@ -1,0 +1,9 @@
+{
+  "name": "syslog-prefix-is-not-read",
+  "from": "cef",
+  "to": "cef",
+  "input": "Jan 18 11:07:53 host CEF:0|Example Security|ThreatSensor|2.1|100|port scan|7|src=192.0.2.10",
+  "expect_error": "malformed-wire",
+  "source": "derived by tools/gen/logs-vectors.py from records written for it and spec/engine-spec.md; no engine run",
+  "reference": "Implementing ArcSight Common Event Format (CEF), Version 26 (OpenText, 2023), section CEF Implementation; the pack reads CEF without its syslog prefix: a record must begin with CEF:"
+}

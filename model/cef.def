@@ -1,0 +1,16 @@
+# The cef module: the header of an ArcSight Common Event Format (CEF) record, and its extension
+# as the pipe-separated text it holds. packs/cef/pack.md says why the extension's keys are not
+# separate keys.
+module        cef
+version       0.1.0
+distribution  public
+source        "Implementing ArcSight Common Event Format (CEF), Version 26 (OpenText, October 2023), section CEF Implementation; restated by goat-transformers"
+key   version                 int     -  "CEF format version: 0 for CEF 0.1, 1 for CEF 1.x"
+key   device_vendor           string  -  "vendor of the device that sent the event"
+key   device_product          string  -  "product that sent the event; with the vendor it names the kind of device"
+key   device_version          string  -  "version of that product"
+key   device_event_class_id   string  -  "identifier of the event type (signature ID)"
+key   name                    string  -  "short readable description of the event"
+key   severity                string  -  "importance of the event: an integer 0 to 10, or Unknown, Low, Medium, High, Very-High"
+list  extension                       "the extension: key=value pairs separated by spaces, as text; an item per part between pipes, as the extension may hold pipes unescaped"
+key   extension_part          string  -  "one part of the extension text"

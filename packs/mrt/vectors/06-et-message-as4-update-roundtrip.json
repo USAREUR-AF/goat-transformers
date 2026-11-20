@@ -1,0 +1,25 @@
+{
+  "name": "et-message-as4-update-roundtrip",
+  "from": "mrt",
+  "to": "mrt",
+  "input": "691f02c200110004000000520003d090fa56ea010000fbf000030001c6336401c63364feffffffffffffffffffffffffffffffff003a02000418c6336400184001010040020a0202fa56ea010000fbf4400304c633640118cb0071080a00",
+  "expect": "691f02c200110004000000520003d090fa56ea010000fbf000030001c6336401c63364feffffffffffffffffffffffffffffffff003a02000418c6336400184001010040020a0202fa56ea010000fbf4400304c633640118cb0071080a00",
+  "model": {
+    "@kind": "bgp4mp-et-message-as4",
+    "time_ms": "1763640002000",
+    "mrt.microseconds": "250000",
+    "mrt.interface_index": "3",
+    "mrt.bgp_marker_high": "-1",
+    "mrt.bgp_type": "2",
+    "mrt.withdrawn_routes.#": "1",
+    "mrt.withdrawn_routes[0].mrt.prefix_octet_2": "51",
+    "mrt.attributes.#": "3",
+    "mrt.attributes[1].mrt.as_path_segments[0].mrt.segment_asns[0].mrt.asn": "4200000001",
+    "mrt.nlri.#": "3",
+    "mrt.nlri[1].mrt.prefix_length": "8",
+    "mrt.nlri[1].mrt.prefix_octet_1": "10",
+    "mrt.nlri[2].mrt.prefix_length": "0"
+  },
+  "source": "derived by tools/gen/logs-vectors.py from records written for it and spec/engine-spec.md; no engine run",
+  "reference": "IETF RFC 6396 (MRT) and RFC 8050 (additional paths); RFC 4271 section 4 (BGP messages); BGP4MP_ET with 250000 microseconds: time_ms holds the header's whole seconds and the microseconds stay a raw key; an UPDATE withdrawing one prefix and announcing three, the default route among them"
+}

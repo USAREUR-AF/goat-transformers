@@ -1,0 +1,17 @@
+{
+  "name": "message-open-roundtrip",
+  "from": "mrt",
+  "to": "mrt",
+  "input": "691f02c30010000100000035fbf4fbf000000001c6336401c63364feffffffffffffffffffffffffffffffff00250104fbf400b4c6336401080206010400010001",
+  "expect": "691f02c30010000100000035fbf4fbf000000001c6336401c63364feffffffffffffffffffffffffffffffff00250104fbf400b4c6336401080206010400010001",
+  "model": {
+    "@kind": "bgp4mp-message",
+    "mrt.peer_as": "64500",
+    "mrt.bgp_type": "1",
+    "mrt.open_version": "4",
+    "mrt.open_hold_time": "180",
+    "mrt.open_parameters.#": "8"
+  },
+  "source": "derived by tools/gen/logs-vectors.py from records written for it and spec/engine-spec.md; no engine run",
+  "reference": "IETF RFC 6396 (MRT) and RFC 8050 (additional paths); RFC 4271 section 4 (BGP messages); an OPEN with one optional parameter (a capability), kept as its octets"
+}

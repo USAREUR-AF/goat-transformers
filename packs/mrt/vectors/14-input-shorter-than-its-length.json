@@ -1,0 +1,9 @@
+{
+  "name": "input-shorter-than-its-length",
+  "from": "mrt",
+  "to": "mrt",
+  "input": "691f02c00010000500000018fa56ea010000fbf000000001c6336401c63364fe0004",
+  "expect_error": "malformed-wire",
+  "source": "derived by tools/gen/logs-vectors.py from records written for it and spec/engine-spec.md; no engine run",
+  "reference": "IETF RFC 6396 (MRT) and RFC 8050 (additional paths); RFC 4271 section 4 (BGP messages); a state change whose last two octets are missing: the length states more than the input holds"
+}
