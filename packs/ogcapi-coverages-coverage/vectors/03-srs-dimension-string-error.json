@@ -1,0 +1,9 @@
+{
+  "name": "srs-dimension-string-error",
+  "from": "ogcapi-coverages-coverage",
+  "to": "ogcapi-coverages-coverage",
+  "input": "{\"type\":\"CoverageByDomainAndRangeType\",\"id\":\"cube-3\",\"domainSet\":{\"type\":\"DomainSetType\",\"generalGrid\":{\"type\":\"GeneralGridCoverageType\",\"srsName\":\"http://www.opengis.net/def/crs/OGC/0/Index3D\",\"axisLabels\":[\"i\",\"j\",\"k\"],\"axis\":[{\"type\":\"IndexAxisType\",\"axisLabel\":\"i\",\"lowerBound\":0,\"upperBound\":1},{\"type\":\"IndexAxisType\",\"axisLabel\":\"j\",\"lowerBound\":0,\"upperBound\":0},{\"type\":\"IndexAxisType\",\"axisLabel\":\"k\",\"lowerBound\":5,\"upperBound\":6}]}},\"rangeSet\":{\"type\":\"RangeSetType\",\"dataBlock\":{\"type\":\"VDataBlockType\",\"values\":[1,2,3,4]}},\"rangeType\":{\"type\":\"DataRecordType\",\"field\":[{\"type\":\"QuantityType\",\"name\":\"count\",\"definition\":\"https://example.org/def/count\",\"uom\":{\"type\":\"UnitReference\",\"code\":\"1\"}}]},\"envelope\":{\"type\":\"EnvelopeByAxisType\",\"srsName\":\"http://www.opengis.net/def/crs/OGC/0/Index3D\",\"srsDimension\":\"3\"}}",
+  "expect_error": "transform-decode",
+  "source": "derived by tools/gen/ogcapi-coverages-vectors.py from the pack's member list and spec/engine-spec.md; no engine run",
+  "reference": "OGC CIS 1.1.1 (OGC 09-146r8), structure tables of clauses 6 to 8 and the JSON encoding of clause 13; srsDimension is a positive integer; a JSON string there is the wrong type for `int`"
+}

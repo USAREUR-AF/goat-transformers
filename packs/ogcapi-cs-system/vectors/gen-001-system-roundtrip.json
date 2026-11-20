@@ -1,0 +1,17 @@
+{
+ "name": "gen-system-roundtrip",
+ "from": "ogcapi-cs-system",
+ "to": "ogcapi-cs-system",
+ "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977,12.5]},\"properties\":{\"featureType\":\"sosa:Sampler\",\"uid\":\"https://example.org/169\",\"name\":\"s97219\",\"description\":\"s24214\",\"assetType\":\"Human\"}}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977,12.5]},\"properties\":{\"featureType\":\"sosa:Sampler\",\"uid\":\"https://example.org/169\",\"name\":\"s97219\",\"description\":\"s24214\",\"assetType\":\"Human\"}}",
+ "model": {
+  "uid": "https://example.org/169",
+  "callsign": "s97219",
+  "lon": "-77.0365",
+  "lat": "38.8977",
+  "hae": "12.5",
+  "ogccssys.properties_feature_type": "sosa:Sampler",
+  "ogccssys.properties_uid": "https://example.org/169",
+  "ogccssys.properties_name": "s97219"
+ }
+}

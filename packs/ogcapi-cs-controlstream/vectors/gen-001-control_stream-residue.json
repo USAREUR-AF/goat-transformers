@@ -1,0 +1,7 @@
+{
+ "name": "gen-control_stream-residue",
+ "from": "ogcapi-cs-controlstream",
+ "to": "ogcapi-cs-controlstream",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"id\":\"s37850\",\"name\":\"s24513\",\"description\":\"s4315\",\"validTime\":[\"now\",\"now\"],\"formats\":[\"s58107\",\"s94978\"],\"inputName\":\"s10764\",\"issueTime\":[\"now\",\"now\"],\"executionTime\":[\"now\",\"now\"],\"live\":false,\"async\":false}",
+ "expect": "{\"id\":\"s37850\",\"name\":\"s24513\",\"description\":\"s4315\",\"validTime\":[\"now\",\"now\"],\"formats\":[\"s58107\",\"s94978\"],\"inputName\":\"s10764\",\"issueTime\":[\"now\",\"now\"],\"executionTime\":[\"now\",\"now\"],\"live\":false,\"async\":false,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

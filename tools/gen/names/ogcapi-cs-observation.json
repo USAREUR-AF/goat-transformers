@@ -1,0 +1,10 @@
+{
+ "keys": {
+  "|datastream@id|string": "datastream_id",
+  "|id|string": "id",
+  "|phenomenonTime|string": "phenomenon_time",
+  "|resultTime|string": "result_time",
+  "|samplingFeature@id|string": "sampling_feature_id"
+ },
+ "lists": {}
+}

@@ -1,0 +1,23 @@
+{
+ "keys": {
+  "crs|.|string": "crs_value",
+  "links|hreflang|string": "links_hreflang",
+  "links|href|string": "links_href",
+  "links|length|int": "links_length",
+  "links|rel|string": "links_rel",
+  "links|title|string": "links_title",
+  "links|type|string": "links_type",
+  "|description|string": "description",
+  "|extent.spatial.crs|string": "extent_spatial_crs",
+  "|extent.temporal.trs|string": "extent_temporal_trs",
+  "|id|string": "id",
+  "|itemType|string": "item_type",
+  "|storageCrsCoordinateEpoch|float": "storage_crs_coordinate_epoch",
+  "|storageCrs|string": "storage_crs",
+  "|title|string": "title"
+ },
+ "lists": {
+  "|crs": "crs",
+  "|links": "links"
+ }
+}

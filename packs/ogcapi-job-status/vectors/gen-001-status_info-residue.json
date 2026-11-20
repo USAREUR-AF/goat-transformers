@@ -1,0 +1,7 @@
+{
+ "name": "gen-status_info-residue",
+ "from": "ogcapi-job-status",
+ "to": "ogcapi-job-status",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"processID\":\"s51644\",\"type\":\"process\",\"jobID\":\"s60487\",\"status\":\"accepted\",\"message\":\"s64182\",\"created\":\"2025-06-04T09:50:25.020Z\",\"started\":\"2024-04-12T22:25:07.627Z\",\"finished\":\"2026-09-01T04:02:33.877Z\",\"updated\":\"2025-11-15T12:21:23.601Z\",\"progress\":64,\"links\":[{\"href\":\"s26843\",\"rel\":\"s68662\",\"type\":\"s40627\",\"hreflang\":\"s54330\",\"title\":\"s30986\"},{\"href\":\"s7304\",\"rel\":\"s67919\",\"type\":\"s55739\",\"hreflang\":\"s73181\",\"title\":\"s1737\"}]}",
+ "expect": "{\"processID\":\"s51644\",\"type\":\"process\",\"jobID\":\"s60487\",\"status\":\"accepted\",\"message\":\"s64182\",\"created\":\"2025-06-04T09:50:25.020Z\",\"started\":\"2024-04-12T22:25:07.627Z\",\"finished\":\"2026-09-01T04:02:33.877Z\",\"updated\":\"2025-11-15T12:21:23.601Z\",\"progress\":64,\"links\":[{\"href\":\"s26843\",\"rel\":\"s68662\",\"type\":\"s40627\",\"hreflang\":\"s54330\",\"title\":\"s30986\"},{\"href\":\"s7304\",\"rel\":\"s67919\",\"type\":\"s55739\",\"hreflang\":\"s73181\",\"title\":\"s1737\"}],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

@@ -1,0 +1,13 @@
+{
+ "name": "gen-temporal_properties-roundtrip",
+ "from": "ogcapi-mf-api-tproperties",
+ "to": "ogcapi-mf-api-tproperties",
+ "input": "{\"links\":[{\"href\":\"s23964\",\"rel\":\"s16020\",\"type\":\"s46732\",\"hreflang\":\"s22360\",\"title\":\"s24840\",\"length\":31932},{\"href\":\"s22125\",\"rel\":\"s94689\",\"type\":\"s25375\",\"hreflang\":\"s56628\",\"title\":\"s54459\",\"length\":56078}],\"timeStamp\":\"2027-01-01T23:55:25.225Z\",\"numberMatched\":23758,\"numberReturned\":26297}",
+ "expect": "{\"links\":[{\"href\":\"s23964\",\"rel\":\"s16020\",\"type\":\"s46732\",\"hreflang\":\"s22360\",\"title\":\"s24840\",\"length\":31932},{\"href\":\"s22125\",\"rel\":\"s94689\",\"type\":\"s25375\",\"hreflang\":\"s56628\",\"title\":\"s54459\",\"length\":56078}],\"timeStamp\":\"2027-01-01T23:55:25.225Z\",\"numberMatched\":23758,\"numberReturned\":26297}",
+ "model": {
+  "ogcmfapitps.links.#": "2",
+  "ogcmfapitps.time_stamp": "2027-01-01T23:55:25.225Z",
+  "ogcmfapitps.number_matched": "23758",
+  "ogcmfapitps.number_returned": "26297"
+ }
+}

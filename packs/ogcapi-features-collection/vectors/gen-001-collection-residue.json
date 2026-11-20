@@ -1,0 +1,7 @@
+{
+ "name": "gen-collection-residue",
+ "from": "ogcapi-features-collection",
+ "to": "ogcapi-features-collection",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"id\":\"s14392\",\"title\":\"s15842\",\"description\":\"s35180\",\"links\":[{\"href\":\"s35700\",\"rel\":\"s12404\",\"type\":\"s48959\",\"hreflang\":\"s91660\",\"title\":\"s1065\",\"length\":29823},{\"href\":\"s88490\",\"rel\":\"s4286\",\"type\":\"s41166\",\"hreflang\":\"s88078\",\"title\":\"s22414\",\"length\":85011}],\"extent\":{\"spatial\":{\"crs\":\"http://www.opengis.net/def/crs/OGC/0/CRS84h\"},\"temporal\":{\"trs\":\"http://www.opengis.net/def/uom/ISO-8601/0/Gregorian\"}},\"itemType\":\"s35277\",\"crs\":[\"s38645\",\"s51041\"],\"storageCrs\":\"https://example.org/526\",\"storageCrsCoordinateEpoch\":-3.25}",
+ "expect": "{\"id\":\"s14392\",\"title\":\"s15842\",\"description\":\"s35180\",\"links\":[{\"href\":\"s35700\",\"rel\":\"s12404\",\"type\":\"s48959\",\"hreflang\":\"s91660\",\"title\":\"s1065\",\"length\":29823},{\"href\":\"s88490\",\"rel\":\"s4286\",\"type\":\"s41166\",\"hreflang\":\"s88078\",\"title\":\"s22414\",\"length\":85011}],\"extent\":{\"spatial\":{\"crs\":\"http://www.opengis.net/def/crs/OGC/0/CRS84h\"},\"temporal\":{\"trs\":\"http://www.opengis.net/def/uom/ISO-8601/0/Gregorian\"}},\"itemType\":\"s35277\",\"crs\":[\"s38645\",\"s51041\"],\"storageCrs\":\"https://example.org/526\",\"storageCrsCoordinateEpoch\":-3.25,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

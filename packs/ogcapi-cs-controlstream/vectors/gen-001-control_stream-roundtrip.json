@@ -1,0 +1,17 @@
+{
+ "name": "gen-control_stream-roundtrip",
+ "from": "ogcapi-cs-controlstream",
+ "to": "ogcapi-cs-controlstream",
+ "input": "{\"id\":\"s37850\",\"name\":\"s24513\",\"description\":\"s4315\",\"validTime\":[\"now\",\"now\"],\"formats\":[\"s58107\",\"s94978\"],\"inputName\":\"s10764\",\"issueTime\":[\"now\",\"now\"],\"executionTime\":[\"now\",\"now\"],\"live\":false,\"async\":false}",
+ "expect": "{\"id\":\"s37850\",\"name\":\"s24513\",\"description\":\"s4315\",\"validTime\":[\"now\",\"now\"],\"formats\":[\"s58107\",\"s94978\"],\"inputName\":\"s10764\",\"issueTime\":[\"now\",\"now\"],\"executionTime\":[\"now\",\"now\"],\"live\":false,\"async\":false}",
+ "model": {
+  "ogccscs.id": "s37850",
+  "ogccscs.name": "s24513",
+  "ogccscs.description": "s4315",
+  "ogccscs.valid_time.#": "2",
+  "ogccscs.formats.#": "2",
+  "ogccscs.input_name": "s10764",
+  "ogccscs.issue_time.#": "2",
+  "ogccscs.execution_time.#": "2"
+ }
+}

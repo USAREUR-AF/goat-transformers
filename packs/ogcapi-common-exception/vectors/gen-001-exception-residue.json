@@ -1,0 +1,7 @@
+{
+ "name": "gen-exception-residue",
+ "from": "ogcapi-common-exception",
+ "to": "ogcapi-common-exception",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"type\":\"s93485\",\"title\":\"s31699\",\"status\":15497,\"detail\":\"s91007\",\"instance\":\"s64035\"}",
+ "expect": "{\"type\":\"s93485\",\"title\":\"s31699\",\"status\":15497,\"detail\":\"s91007\",\"instance\":\"s64035\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

@@ -1,0 +1,13 @@
+{
+ "keys": {
+  "|id|string": "id",
+  "|properties.created|string": "properties_created",
+  "|properties.description|string": "properties_description",
+  "|properties.license|string": "properties_license",
+  "|properties.rights|string": "properties_rights",
+  "|properties.title|string": "properties_title",
+  "|properties.type|string": "properties_type",
+  "|properties.updated|string": "properties_updated"
+ },
+ "lists": {}
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-sampling_feature-residue",
+ "from": "ogcapi-cs-sampling-feature",
+ "to": "ogcapi-cs-sampling-feature",
+ "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977,12.5]},\"properties\":{\"featureType\":\"s77863\",\"uid\":\"https://example.org/103\",\"name\":\"s54767\",\"description\":\"s2410\",\"validTime\":[\"r1\",\"r2\"],\"sampledFeature@link\":{\"r\":\"1\"}}}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977,12.5]},\"properties\":{\"featureType\":\"s77863\",\"uid\":\"https://example.org/103\",\"name\":\"s54767\",\"description\":\"s2410\",\"validTime\":[\"r1\",\"r2\"],\"sampledFeature@link\":{\"r\":\"1\"}}}"
+}

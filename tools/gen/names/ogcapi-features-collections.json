@@ -1,0 +1,31 @@
+{
+ "keys": {
+  "collections_crs|.|string": "collections_crs_value",
+  "collections_links|hreflang|string": "collections_links_hreflang",
+  "collections_links|href|string": "collections_links_href",
+  "collections_links|length|int": "collections_links_length",
+  "collections_links|rel|string": "collections_links_rel",
+  "collections_links|title|string": "collections_links_title",
+  "collections_links|type|string": "collections_links_type",
+  "collections|description|string": "collections_description",
+  "collections|extent.spatial.crs|string": "collections_extent_spatial_crs",
+  "collections|extent.temporal.trs|string": "collections_extent_temporal_trs",
+  "collections|id|string": "collections_id",
+  "collections|itemType|string": "collections_item_type",
+  "collections|title|string": "collections_title",
+  "crs|.|string": "crs_value",
+  "links|hreflang|string": "links_hreflang",
+  "links|href|string": "links_href",
+  "links|length|int": "links_length",
+  "links|rel|string": "links_rel",
+  "links|title|string": "links_title",
+  "links|type|string": "links_type"
+ },
+ "lists": {
+  "collections|crs": "collections_crs",
+  "collections|links": "collections_links",
+  "|collections": "collections",
+  "|crs": "crs",
+  "|links": "links"
+ }
+}

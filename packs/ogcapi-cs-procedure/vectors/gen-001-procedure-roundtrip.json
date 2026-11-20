@@ -1,0 +1,15 @@
+{
+ "name": "gen-procedure-roundtrip",
+ "from": "ogcapi-cs-procedure",
+ "to": "ogcapi-cs-procedure",
+ "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"featureType\":\"http://www.w3.org/ns/sosa/System\",\"uid\":\"https://example.org/589\",\"name\":\"s84315\",\"description\":\"s78650\"}}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"featureType\":\"http://www.w3.org/ns/sosa/System\",\"uid\":\"https://example.org/589\",\"name\":\"s84315\",\"description\":\"s78650\"}}",
+ "model": {
+  "uid": "https://example.org/589",
+  "callsign": "s84315",
+  "ogccsproc.properties_feature_type": "http://www.w3.org/ns/sosa/System",
+  "ogccsproc.properties_uid": "https://example.org/589",
+  "ogccsproc.properties_name": "s84315",
+  "ogccsproc.properties_description": "s78650"
+ }
+}

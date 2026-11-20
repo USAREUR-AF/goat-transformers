@@ -1,0 +1,23 @@
+{
+ "keys": {
+  "formats|.|string": "formats_value",
+  "phenomenon_time|.|string": "phenomenon_time_value",
+  "result_time|.|string": "result_time_value",
+  "valid_time|.|string": "valid_time_value",
+  "|description|string": "description",
+  "|id|string": "id",
+  "|live|int": "live",
+  "|name|string": "name",
+  "|outputName|string": "output_name",
+  "|phenomenonTimeInterval|string": "phenomenon_time_interval",
+  "|resultTimeInterval|string": "result_time_interval",
+  "|resultType|string": "result_type",
+  "|type|string": "type"
+ },
+ "lists": {
+  "|formats": "formats",
+  "|phenomenonTime": "phenomenon_time",
+  "|resultTime": "result_time",
+  "|validTime": "valid_time"
+ }
+}

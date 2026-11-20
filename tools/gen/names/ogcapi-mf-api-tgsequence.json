@@ -1,0 +1,37 @@
+{
+ "keys": {
+  "geometry_sequence_datetimes|.|string": "geometry_sequence_datetimes_value",
+  "geometry_sequence_orientations_angles|.|float": "geometry_sequence_orientations_angles_value",
+  "geometry_sequence_orientations_scales|.|float": "geometry_sequence_orientations_scales_value",
+  "geometry_sequence|base.href|string": "geometry_sequence_base_href",
+  "geometry_sequence|base.type|string": "geometry_sequence_base_type",
+  "geometry_sequence|crs.properties.href|string": "geometry_sequence_crs_properties_href",
+  "geometry_sequence|crs.properties.name|string": "geometry_sequence_crs_properties_name",
+  "geometry_sequence|crs.properties.type|string": "geometry_sequence_crs_properties_type",
+  "geometry_sequence|crs.type|string": "geometry_sequence_crs_type",
+  "geometry_sequence|interpolation|string": "geometry_sequence_interpolation",
+  "geometry_sequence|trs.properties.href|string": "geometry_sequence_trs_properties_href",
+  "geometry_sequence|trs.properties.name|string": "geometry_sequence_trs_properties_name",
+  "geometry_sequence|trs.properties.type|string": "geometry_sequence_trs_properties_type",
+  "geometry_sequence|trs.type|string": "geometry_sequence_trs_type",
+  "geometry_sequence|type|string": "geometry_sequence_type",
+  "links|hreflang|string": "links_hreflang",
+  "links|href|string": "links_href",
+  "links|length|int": "links_length",
+  "links|rel|string": "links_rel",
+  "links|title|string": "links_title",
+  "links|type|string": "links_type",
+  "|numberMatched|int": "number_matched",
+  "|numberReturned|int": "number_returned",
+  "|timeStamp|string": "time_stamp",
+  "|type|string": "type"
+ },
+ "lists": {
+  "geometry_sequence_orientations|angles": "geometry_sequence_orientations_angles",
+  "geometry_sequence_orientations|scales": "geometry_sequence_orientations_scales",
+  "geometry_sequence|datetimes": "geometry_sequence_datetimes",
+  "geometry_sequence|orientations": "geometry_sequence_orientations",
+  "|geometrySequence": "geometry_sequence",
+  "|links": "links"
+ }
+}

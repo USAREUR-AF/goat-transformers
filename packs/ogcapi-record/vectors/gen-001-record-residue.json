@@ -1,0 +1,7 @@
+{
+ "name": "gen-record-residue",
+ "from": "ogcapi-record",
+ "to": "ogcapi-record",
+ "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977,12.5]},\"properties\":{\"created\":\"2026-08-08T15:23:45.800Z\",\"updated\":\"2024-01-21T19:39:48.556Z\",\"type\":\"s17364\",\"title\":\"s86982\",\"description\":\"s41156\",\"license\":\"s21514\",\"rights\":\"s41795\",\"keywords\":[\"r1\",\"r2\"],\"themes\":[\"r1\",\"r2\"],\"language\":{\"r\":\"1\"},\"languages\":[\"r1\",\"r2\"],\"resourceLanguages\":[\"r1\",\"r2\"],\"externalIds\":[\"r1\",\"r2\"],\"formats\":[\"r1\",\"r2\"],\"contacts\":[\"r1\",\"r2\"]},\"id\":\"s98283\"}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977,12.5]},\"properties\":{\"created\":\"2026-08-08T15:23:45.800Z\",\"updated\":\"2024-01-21T19:39:48.556Z\",\"type\":\"s17364\",\"title\":\"s86982\",\"description\":\"s41156\",\"license\":\"s21514\",\"rights\":\"s41795\",\"keywords\":[\"r1\",\"r2\"],\"themes\":[\"r1\",\"r2\"],\"language\":{\"r\":\"1\"},\"languages\":[\"r1\",\"r2\"],\"resourceLanguages\":[\"r1\",\"r2\"],\"externalIds\":[\"r1\",\"r2\"],\"formats\":[\"r1\",\"r2\"],\"contacts\":[\"r1\",\"r2\"]},\"id\":\"s98283\"}"
+}

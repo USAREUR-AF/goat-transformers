@@ -1,0 +1,17 @@
+{
+ "name": "gen-record-roundtrip",
+ "from": "ogcapi-record",
+ "to": "ogcapi-record",
+ "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977,12.5]},\"properties\":{\"created\":\"2026-08-08T15:23:45.800Z\",\"updated\":\"2024-01-21T19:39:48.556Z\",\"type\":\"s17364\",\"title\":\"s86982\",\"description\":\"s41156\",\"license\":\"s21514\",\"rights\":\"s41795\"},\"id\":\"s98283\"}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977,12.5]},\"properties\":{\"created\":\"2026-08-08T15:23:45.800Z\",\"updated\":\"2024-01-21T19:39:48.556Z\",\"type\":\"s17364\",\"title\":\"s86982\",\"description\":\"s41156\",\"license\":\"s21514\",\"rights\":\"s41795\"},\"id\":\"s98283\"}",
+ "model": {
+  "uid": "s98283",
+  "lon": "-77.0365",
+  "lat": "38.8977",
+  "hae": "12.5",
+  "ogcrec.id": "s98283",
+  "ogcrec.properties_created": "2026-08-08T15:23:45.800Z",
+  "ogcrec.properties_updated": "2024-01-21T19:39:48.556Z",
+  "ogcrec.properties_type": "s17364"
+ }
+}

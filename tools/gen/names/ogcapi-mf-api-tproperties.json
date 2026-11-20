@@ -1,0 +1,16 @@
+{
+ "keys": {
+  "links|hreflang|string": "links_hreflang",
+  "links|href|string": "links_href",
+  "links|length|int": "links_length",
+  "links|rel|string": "links_rel",
+  "links|title|string": "links_title",
+  "links|type|string": "links_type",
+  "|numberMatched|int": "number_matched",
+  "|numberReturned|int": "number_returned",
+  "|timeStamp|string": "time_stamp"
+ },
+ "lists": {
+  "|links": "links"
+ }
+}

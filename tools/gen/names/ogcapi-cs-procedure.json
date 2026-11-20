@@ -1,0 +1,9 @@
+{
+ "keys": {
+  "|properties.description|string": "properties_description",
+  "|properties.featureType|string": "properties_feature_type",
+  "|properties.name|string": "properties_name",
+  "|properties.uid|string": "properties_uid"
+ },
+ "lists": {}
+}

@@ -1,0 +1,20 @@
+{
+ "keys": {
+  "execution_time|.|string": "execution_time_value",
+  "formats|.|string": "formats_value",
+  "issue_time|.|string": "issue_time_value",
+  "valid_time|.|string": "valid_time_value",
+  "|async|int": "async",
+  "|description|string": "description",
+  "|id|string": "id",
+  "|inputName|string": "input_name",
+  "|live|int": "live",
+  "|name|string": "name"
+ },
+ "lists": {
+  "|executionTime": "execution_time",
+  "|formats": "formats",
+  "|issueTime": "issue_time",
+  "|validTime": "valid_time"
+ }
+}

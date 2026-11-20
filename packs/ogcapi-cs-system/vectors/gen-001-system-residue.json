@@ -1,0 +1,7 @@
+{
+ "name": "gen-system-residue",
+ "from": "ogcapi-cs-system",
+ "to": "ogcapi-cs-system",
+ "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977,12.5]},\"properties\":{\"featureType\":\"sosa:Sampler\",\"uid\":\"https://example.org/169\",\"name\":\"s97219\",\"description\":\"s24214\",\"assetType\":\"Human\",\"validTime\":[\"r1\",\"r2\"],\"systemKind@link\":{\"r\":\"1\"}}}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977,12.5]},\"properties\":{\"featureType\":\"sosa:Sampler\",\"uid\":\"https://example.org/169\",\"name\":\"s97219\",\"description\":\"s24214\",\"assetType\":\"Human\",\"validTime\":[\"r1\",\"r2\"],\"systemKind@link\":{\"r\":\"1\"}}}"
+}

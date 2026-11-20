@@ -1,0 +1,14 @@
+{
+ "keys": {
+  "execution_time|.|string": "execution_time_value",
+  "|command@id|string": "command_id",
+  "|id|string": "id",
+  "|message|string": "message",
+  "|percentCompletion|float": "percent_completion",
+  "|reportTime|string": "report_time",
+  "|statusCode|string": "status_code"
+ },
+ "lists": {
+  "|executionTime": "execution_time"
+ }
+}

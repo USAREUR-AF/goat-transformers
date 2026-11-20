@@ -1,0 +1,15 @@
+{
+ "name": "gen-temporal_geometry_sequence-roundtrip",
+ "from": "ogcapi-mf-api-tgsequence",
+ "to": "ogcapi-mf-api-tgsequence",
+ "input": "{\"type\":\"TemporalGeometrySequence\",\"geometrySequence\":[{\"type\":\"MovingLineString\",\"datetimes\":[\"s3719\"],\"interpolation\":\"Linear\",\"base\":{\"href\":\"https://example.org/241\",\"type\":\"s75701\"},\"orientations\":[{\"scales\":[-3.25],\"angles\":[7.0625]}],\"crs\":{\"type\":\"Link\",\"properties\":{\"name\":\"s77571\",\"href\":\"https://example.org/687\",\"type\":\"s47473\"}},\"trs\":{\"type\":\"Link\",\"properties\":{\"name\":\"s20632\",\"href\":\"https://example.org/525\",\"type\":\"s73794\"}}},{\"type\":\"MovingPoint\",\"datetimes\":[\"s57440\"],\"interpolation\":\"Step\",\"base\":{\"href\":\"https://example.org/664\",\"type\":\"s5292\"},\"orientations\":[{\"scales\":[7.0625],\"angles\":[7.0625]}],\"crs\":{\"type\":\"Name\",\"properties\":{\"name\":\"s59988\",\"href\":\"https://example.org/814\",\"type\":\"s34799\"}},\"trs\":{\"type\":\"Name\",\"properties\":{\"name\":\"s2914\",\"href\":\"https://example.org/491\",\"type\":\"s57782\"}}}],\"links\":[{\"href\":\"s15331\",\"rel\":\"s69928\",\"type\":\"s88541\",\"hreflang\":\"s80628\",\"title\":\"s84252\",\"length\":35782},{\"href\":\"s79469\",\"rel\":\"s68905\",\"type\":\"s15409\",\"hreflang\":\"s34712\",\"title\":\"s72661\",\"length\":61821}],\"timeStamp\":\"2025-06-21T12:24:05.835Z\",\"numberMatched\":36929,\"numberReturned\":18192}",
+ "expect": "{\"type\":\"TemporalGeometrySequence\",\"geometrySequence\":[{\"type\":\"MovingLineString\",\"datetimes\":[\"s3719\"],\"interpolation\":\"Linear\",\"base\":{\"href\":\"https://example.org/241\",\"type\":\"s75701\"},\"orientations\":[{\"scales\":[-3.25],\"angles\":[7.0625]}],\"crs\":{\"type\":\"Link\",\"properties\":{\"name\":\"s77571\",\"href\":\"https://example.org/687\",\"type\":\"s47473\"}},\"trs\":{\"type\":\"Link\",\"properties\":{\"name\":\"s20632\",\"href\":\"https://example.org/525\",\"type\":\"s73794\"}}},{\"type\":\"MovingPoint\",\"datetimes\":[\"s57440\"],\"interpolation\":\"Step\",\"base\":{\"href\":\"https://example.org/664\",\"type\":\"s5292\"},\"orientations\":[{\"scales\":[7.0625],\"angles\":[7.0625]}],\"crs\":{\"type\":\"Name\",\"properties\":{\"name\":\"s59988\",\"href\":\"https://example.org/814\",\"type\":\"s34799\"}},\"trs\":{\"type\":\"Name\",\"properties\":{\"name\":\"s2914\",\"href\":\"https://example.org/491\",\"type\":\"s57782\"}}}],\"links\":[{\"href\":\"s15331\",\"rel\":\"s69928\",\"type\":\"s88541\",\"hreflang\":\"s80628\",\"title\":\"s84252\",\"length\":35782},{\"href\":\"s79469\",\"rel\":\"s68905\",\"type\":\"s15409\",\"hreflang\":\"s34712\",\"title\":\"s72661\",\"length\":61821}],\"timeStamp\":\"2025-06-21T12:24:05.835Z\",\"numberMatched\":36929,\"numberReturned\":18192}",
+ "model": {
+  "ogcmfapitg.type": "TemporalGeometrySequence",
+  "ogcmfapitg.geometry_sequence.#": "2",
+  "ogcmfapitg.links.#": "2",
+  "ogcmfapitg.time_stamp": "2025-06-21T12:24:05.835Z",
+  "ogcmfapitg.number_matched": "36929",
+  "ogcmfapitg.number_returned": "18192"
+ }
+}

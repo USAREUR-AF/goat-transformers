@@ -1,0 +1,8 @@
+{
+  "name": "OGC API",
+  "domain": "maps",
+  "prefixes": [
+    "ogcapi-"
+  ],
+  "detail": "Features, Records, Processes, EDR, Tiles, Styles, Moving Features, Connected Systems, Common"
+}

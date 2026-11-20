@@ -1,0 +1,17 @@
+{
+ "name": "gen-sampling_feature-roundtrip",
+ "from": "ogcapi-cs-sampling-feature",
+ "to": "ogcapi-cs-sampling-feature",
+ "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977,12.5]},\"properties\":{\"featureType\":\"s77863\",\"uid\":\"https://example.org/103\",\"name\":\"s54767\",\"description\":\"s2410\"}}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977,12.5]},\"properties\":{\"featureType\":\"s77863\",\"uid\":\"https://example.org/103\",\"name\":\"s54767\",\"description\":\"s2410\"}}",
+ "model": {
+  "uid": "https://example.org/103",
+  "callsign": "s54767",
+  "lon": "-77.0365",
+  "lat": "38.8977",
+  "hae": "12.5",
+  "ogccssf.properties_feature_type": "s77863",
+  "ogccssf.properties_uid": "https://example.org/103",
+  "ogccssf.properties_name": "s54767"
+ }
+}

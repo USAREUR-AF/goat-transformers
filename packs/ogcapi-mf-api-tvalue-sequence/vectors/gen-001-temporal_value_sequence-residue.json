@@ -1,0 +1,7 @@
+{
+ "name": "gen-temporal_value_sequence-residue",
+ "from": "ogcapi-mf-api-tvalue-sequence",
+ "to": "ogcapi-mf-api-tvalue-sequence",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"temporalProperties\":[{\"datetimes\":[\"2024-08-17T18:44:01.215Z\"],\"interpolation\":\"Linear\"},{\"datetimes\":[\"2026-12-22T02:52:16.418Z\"],\"interpolation\":\"Discrete\"}],\"links\":[{\"href\":\"s98977\",\"rel\":\"s17574\",\"type\":\"s79261\",\"hreflang\":\"s5837\",\"title\":\"s38652\",\"length\":51993},{\"href\":\"s82385\",\"rel\":\"s41997\",\"type\":\"s47886\",\"hreflang\":\"s93516\",\"title\":\"s74532\",\"length\":95745}],\"timeStamp\":\"2026-02-16T23:36:55.201Z\",\"numberMatched\":36636,\"numberReturned\":64}",
+ "expect": "{\"temporalProperties\":[{\"datetimes\":[\"2024-08-17T18:44:01.215Z\"],\"interpolation\":\"Linear\"},{\"datetimes\":[\"2026-12-22T02:52:16.418Z\"],\"interpolation\":\"Discrete\"}],\"links\":[{\"href\":\"s98977\",\"rel\":\"s17574\",\"type\":\"s79261\",\"hreflang\":\"s5837\",\"title\":\"s38652\",\"length\":51993},{\"href\":\"s82385\",\"rel\":\"s41997\",\"type\":\"s47886\",\"hreflang\":\"s93516\",\"title\":\"s74532\",\"length\":95745}],\"timeStamp\":\"2026-02-16T23:36:55.201Z\",\"numberMatched\":36636,\"numberReturned\":64,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

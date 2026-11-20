@@ -1,0 +1,16 @@
+{
+ "name": "gen-observation-roundtrip",
+ "from": "ogcapi-cs-observation",
+ "to": "ogcapi-cs-observation",
+ "input": "{\"id\":\"s78317\",\"datastream@id\":\"s67743\",\"samplingFeature@id\":\"s15550\",\"phenomenonTime\":\"2026-09-29T03:01:17.018Z\",\"resultTime\":\"2026-05-30T00:51:48.913Z\"}",
+ "expect": "{\"id\":\"s78317\",\"datastream@id\":\"s67743\",\"samplingFeature@id\":\"s15550\",\"phenomenonTime\":\"2026-09-29T03:01:17.018Z\",\"resultTime\":\"2026-05-30T00:51:48.913Z\"}",
+ "model": {
+  "uid": "s78317",
+  "time_ms": "1790650877018",
+  "ogccsobs.id": "s78317",
+  "ogccsobs.datastream_id": "s67743",
+  "ogccsobs.sampling_feature_id": "s15550",
+  "ogccsobs.phenomenon_time": "2026-09-29T03:01:17.018Z",
+  "ogccsobs.result_time": "2026-05-30T00:51:48.913Z"
+ }
+}
