@@ -1,0 +1,17 @@
+{
+  "name": "level-2-largest-picoseconds",
+  "from": "ccsds-cds-time",
+  "to": "ccsds-cds-time",
+  "input": "4effffffffffffffffffffff",
+  "expect": "4effffffffffffffffffffff",
+  "model": {
+    "@kind": "level-2",
+    "ccsdstime.cds_day_segment_24": "1",
+    "ccsdstime.cds_submillisecond_length": "2",
+    "ccsdstime.cds_day": "16777215",
+    "ccsdstime.cds_ms_of_day": "4294967295",
+    "ccsdstime.cds_submillisecond": "4294967295"
+  },
+  "source": "constructed",
+  "reference": "level 2 (agency epoch), every segment at its largest value with a 32-bit picosecond segment: 12 octets; no day start, no time_ms"
+}

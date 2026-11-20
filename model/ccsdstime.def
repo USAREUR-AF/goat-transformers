@@ -1,0 +1,35 @@
+# The ccsdstime module: the fields of the CCSDS binary time codes CUC, CDS and CCS
+# with an explicit P-field, each as the wire integer. The packs ccsds-cuc-time,
+# ccsds-cds-time and ccsds-ccs-time map them. Bit numbers count from 0 at the
+# first transmitted bit of the P-field.
+module        ccsdstime
+version       0.1.0
+distribution  public
+source        "CCSDS 301.0-B-4 Time Code Formats, Blue Book, November 2010 (Editorial Change 1), https://ccsds.org/Pubs/301x0b4e1.pdf, sections 3.1 to 3.4; reuse with attribution under the CCSDS reproduction permission statement"
+
+# CUC, section 3.2
+key  cuc_coarse_octets           int  -  "P-field bits 4-5: octets of the basic time unit count, minus one (0-3)"
+key  cuc_fine_octets             int  -  "P-field bits 6-7: octets of the binary fraction of the basic time unit (0-3)"
+key  cuc_coarse                  int  -  "basic time units (seconds, unless the metadata says otherwise) since the code's epoch, 1 to 4 octets"
+key  cuc_fine                    int  -  "binary fraction of the basic time unit, 1 to 3 octets: the value over 2^(8 x octets)"
+
+# CDS, section 3.3
+key  cds_day_segment_24          int  -  "P-field bit 5: 1 = 24-bit day segment, 0 = 16-bit"
+key  cds_submillisecond_length   int  -  "P-field bits 6-7: 0 no submillisecond segment, 1 = 16 bits (microseconds), 2 = 32 bits (picoseconds), 3 reserved"
+key  cds_day                     int  -  "days since the code's epoch, starting at 0 (16 or 24 bits)"
+key  cds_ms_of_day               int  ms "milliseconds of the day, UTC (86400000 to 86400999 during a positive leap second)"
+key  cds_submillisecond          int  -  "fraction of the millisecond: microseconds (16 bits) or picoseconds (32 bits)"
+key  cds_day_unix_ms             int  ms "level 1 code only: the start of the day in milliseconds since 1970-01-01 00:00 UTC, the day count times 86400000 less 378691200000"
+derive  time_ms  add  ccsdstime.cds_day_unix_ms  ccsdstime.cds_ms_of_day
+
+# CCS, section 3.4; every segment is binary coded decimal, two digits an octet
+key  ccs_resolution              int  -  "P-field bits 5-7: number of subsecond octets after the seconds (0-6; 7 not used)"
+key  ccs_year                    int  -  "year A.D., 4 BCD digits (0x2026 = 8230 is 2026)"
+key  ccs_month                   int  -  "month of year, 2 BCD digits (month/day variation)"
+key  ccs_day_of_month            int  -  "day of month, 2 BCD digits (month/day variation)"
+key  ccs_day_of_year             int  -  "day of year, 3 BCD digits in 16 bits, the top 4 bits 0 (day-of-year variation)"
+key  ccs_hour                    int  -  "hour, 2 BCD digits"
+key  ccs_minute                  int  -  "minute, 2 BCD digits"
+key  ccs_second                  int  -  "second, 2 BCD digits (60 in a leap second)"
+list ccs_subseconds                    "the subsecond octets, counted by the resolution; each item holds ccsdstime.ccs_subsecond_digits"
+key  ccs_subsecond_digits        int  -  "one subsecond octet: 2 BCD digits, the next two decimal places of the second"

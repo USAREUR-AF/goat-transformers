@@ -1,0 +1,9 @@
+{
+  "name": "cut-inside-subseconds-is-malformed",
+  "from": "ccsds-ccs-time",
+  "to": "ccsds-ccs-time",
+  "input": "53202611191234567890",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "the first code cut to 10 octets, inside its subsecond octets"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "cut-inside-ms-is-malformed",
+  "from": "ccsds-cds-time",
+  "to": "ccsds-cds-time",
+  "input": "4062470038",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "the first code cut to 5 octets, inside its milliseconds of day"
+}

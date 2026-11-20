@@ -1,0 +1,19 @@
+{
+  "name": "day-of-year-seconds",
+  "from": "ccsds-ccs-time",
+  "to": "ccsds-ccs-time",
+  "input": "5820260323000000",
+  "expect": "5820260323000000",
+  "model": {
+    "@kind": "day-of-year",
+    "ccsdstime.ccs_resolution": "0",
+    "ccsdstime.ccs_year": "8230",
+    "ccsdstime.ccs_hour": "0",
+    "ccsdstime.ccs_minute": "0",
+    "ccsdstime.ccs_second": "0",
+    "ccsdstime.ccs_day_of_year": "803",
+    "ccsdstime.ccs_subseconds.#": "0"
+  },
+  "source": "constructed",
+  "reference": "day-of-year variation, resolution 0: 2026 day 323 (19 November) 00:00:00, 8 octets"
+}

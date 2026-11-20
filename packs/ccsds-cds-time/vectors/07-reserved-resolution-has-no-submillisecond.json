@@ -1,0 +1,17 @@
+{
+  "name": "reserved-resolution-has-no-submillisecond",
+  "from": "ccsds-cds-time",
+  "to": "ccsds-cds-time",
+  "input": "4362470038d0c00000",
+  "expect": "4362470038d0c0",
+  "model": {
+    "@kind": "level-1",
+    "ccsdstime.cds_day_segment_24": "0",
+    "ccsdstime.cds_submillisecond_length": "3",
+    "ccsdstime.cds_day": "25159",
+    "ccsdstime.cds_ms_of_day": "3723456",
+    "ccsdstime.cds_day_unix_ms": "1795046400000"
+  },
+  "source": "constructed",
+  "reference": "submillisecond length code 3 (reserved): no segment is read, the 2 octets after the milliseconds are read over"
+}

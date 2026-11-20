@@ -1,0 +1,36 @@
+# CCSDS Calendar Segmented Time Code (CCS, 301.0-B-4 section 3.4) with an explicit
+# P-field: year, month and day of month or day of year, hour, minute, second, and
+# 0 to 6 subsecond octets, every segment in binary coded decimal. Public (CCSDS
+# Blue Book). The BCD octets are carried as integers (pack.md).
+# Bits are numbered from 0 at the first transmitted bit, most significant bit first.
+format     ccsds-ccs-time
+version    0.1.0
+distribution public
+source     "CCSDS 301.0-B-4 Time Code Formats, Blue Book, November 2010 (Editorial Change 1), https://ccsds.org/Pubs/301x0b4e1.pdf, sections 3.1 and 3.4; reuse with attribution under the CCSDS reproduction permission statement"
+uses       ccsdstime
+wire       bits
+word_bytes 1
+bit_order  msb
+when   0:0:1  0                                       # P-field extension: none
+when   0:1:3  5                                       # time code ID 101
+field  ccsdstime.ccs_resolution       0:5:3   uint
+field  ccsdstime.ccs_year             0:8:16  uint
+field  ccsdstime.ccs_hour             0:40:8  uint
+field  ccsdstime.ccs_minute           0:48:8  uint
+field  ccsdstime.ccs_second           0:56:8  uint
+
+# The subsecond octets: the resolution is their count (ruling 2 of 0.7).
+group  ccsdstime.ccs_subseconds  0:64  item 8  count 0:5:3
+  field  ccsdstime.ccs_subsecond_digits  0:0:8  uint
+end
+
+kind     month-day                                    # P-field bit 4 = 0
+when     0:4:1  0
+requires ccsdstime.ccs_month
+field  ccsdstime.ccs_month            0:24:8  uint
+field  ccsdstime.ccs_day_of_month     0:32:8  uint
+
+kind     day-of-year                                  # P-field bit 4 = 1
+when     0:4:1  1
+requires ccsdstime.ccs_day_of_year
+field  ccsdstime.ccs_day_of_year      0:24:16 uint

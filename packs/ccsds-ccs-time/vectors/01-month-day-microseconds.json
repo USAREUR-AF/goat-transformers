@@ -1,0 +1,23 @@
+{
+  "name": "month-day-microseconds",
+  "from": "ccsds-ccs-time",
+  "to": "ccsds-ccs-time",
+  "input": "5320261119123456789012",
+  "expect": "5320261119123456789012",
+  "model": {
+    "@kind": "month-day",
+    "ccsdstime.ccs_resolution": "3",
+    "ccsdstime.ccs_year": "8230",
+    "ccsdstime.ccs_hour": "18",
+    "ccsdstime.ccs_minute": "52",
+    "ccsdstime.ccs_second": "86",
+    "ccsdstime.ccs_month": "17",
+    "ccsdstime.ccs_day_of_month": "25",
+    "ccsdstime.ccs_subseconds.#": "3",
+    "ccsdstime.ccs_subseconds[0].ccsdstime.ccs_subsecond_digits": "120",
+    "ccsdstime.ccs_subseconds[1].ccsdstime.ccs_subsecond_digits": "144",
+    "ccsdstime.ccs_subseconds[2].ccsdstime.ccs_subsecond_digits": "18"
+  },
+  "source": "constructed",
+  "reference": "month/day variation, resolution 3: 2026-11-19 12:34:56.789012 in BCD (year 0x2026), 11 octets"
+}

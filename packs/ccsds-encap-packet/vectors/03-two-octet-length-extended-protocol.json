@@ -1,0 +1,16 @@
+{
+  "name": "two-octet-length-extended-protocol",
+  "from": "ccsds-encap-packet",
+  "to": "ccsds-encap-packet",
+  "input": "fa5105dc",
+  "expect": "fa5105dc",
+  "model": {
+    "@kind": "length-2-octets",
+    "ccsdsep.protocol_id": "6",
+    "ccsdsep.user_defined": "5",
+    "ccsdsep.protocol_id_extension": "1",
+    "ccsdsep.packet_length": "1500"
+  },
+  "source": "constructed",
+  "reference": "a 4-octet header, protocol ID 6 with extension 1, user defined bits 5, packet length 1500"
+}

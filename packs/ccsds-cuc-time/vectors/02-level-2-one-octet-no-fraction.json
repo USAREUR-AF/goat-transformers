@@ -1,0 +1,15 @@
+{
+  "name": "level-2-one-octet-no-fraction",
+  "from": "ccsds-cuc-time",
+  "to": "ccsds-cuc-time",
+  "input": "20c8000000",
+  "expect": "20c8",
+  "model": {
+    "@kind": "level-2",
+    "ccsdstime.cuc_coarse_octets": "0",
+    "ccsdstime.cuc_fine_octets": "0",
+    "ccsdstime.cuc_coarse": "200"
+  },
+  "source": "constructed",
+  "reference": "level 2 (agency epoch), one octet of time units, no fraction; the 3 octets after the code are read over"
+}

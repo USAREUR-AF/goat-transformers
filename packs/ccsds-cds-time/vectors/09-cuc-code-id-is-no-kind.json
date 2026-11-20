@@ -1,0 +1,9 @@
+{
+  "name": "cuc-code-id-is-no-kind",
+  "from": "ccsds-cds-time",
+  "to": "ccsds-cds-time",
+  "input": "1c00000000",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "a P-field with time code ID 001 (CUC)"
+}

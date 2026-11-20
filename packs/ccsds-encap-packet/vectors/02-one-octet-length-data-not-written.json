@@ -1,0 +1,14 @@
+{
+  "name": "one-octet-length-data-not-written",
+  "from": "ccsds-encap-packet",
+  "to": "ccsds-encap-packet",
+  "input": "e90c00000000000000000000",
+  "expect": "e90c",
+  "model": {
+    "@kind": "length-1-octet",
+    "ccsdsep.protocol_id": "2",
+    "ccsdsep.packet_length": "12"
+  },
+  "source": "constructed",
+  "reference": "a 2-octet header, protocol ID 2, packet length 12 (header included); the 10 data octets are read over"
+}

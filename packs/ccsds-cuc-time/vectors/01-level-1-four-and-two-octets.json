@@ -1,0 +1,16 @@
+{
+  "name": "level-1-four-and-two-octets",
+  "from": "ccsds-cuc-time",
+  "to": "ccsds-cuc-time",
+  "input": "1e807e62808000",
+  "expect": "1e807e62808000",
+  "model": {
+    "@kind": "level-1",
+    "ccsdstime.cuc_coarse_octets": "3",
+    "ccsdstime.cuc_fine_octets": "2",
+    "ccsdstime.cuc_coarse": "2155766400",
+    "ccsdstime.cuc_fine": "32768"
+  },
+  "source": "constructed",
+  "reference": "level 1 (1958 TAI epoch), 4 octets of seconds (2155766400) and 2 of fraction (0x8000, a half second): P-field 0x2e and 6 octets"
+}

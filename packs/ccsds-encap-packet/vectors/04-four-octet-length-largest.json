@@ -1,0 +1,17 @@
+{
+  "name": "four-octet-length-largest",
+  "from": "ccsds-encap-packet",
+  "to": "ccsds-encap-packet",
+  "input": "ffffffffffffffff",
+  "expect": "ffffffffffffffff",
+  "model": {
+    "@kind": "length-4-octets",
+    "ccsdsep.protocol_id": "7",
+    "ccsdsep.user_defined": "15",
+    "ccsdsep.protocol_id_extension": "15",
+    "ccsdsep.ccsds_defined": "65535",
+    "ccsdsep.packet_length": "4294967295"
+  },
+  "source": "constructed",
+  "reference": "an 8-octet header with every field at its largest value, the CCSDS defined field included (the pack does not check it)"
+}

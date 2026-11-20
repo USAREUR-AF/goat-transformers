@@ -1,0 +1,38 @@
+# CCSDS Encapsulation Packet header (133.1-B-3 section 4.1.2): 1, 2, 4 or 8 octets
+# as the length of length field (bits 6-7) says, one kind per form. Public (CCSDS
+# Blue Book). A message is the whole packet; decode ignores the encapsulated data
+# field and encode writes the header only (pack.md).
+# Bits are numbered from 0 at the first transmitted bit, most significant bit first.
+format     ccsds-encap-packet
+version    0.1.0
+distribution public
+source     "CCSDS 133.1-B-3 Encapsulation Packet Protocol, Blue Book, May 2020 (Editorial Change 1), https://ccsds.org/Pubs/133x1b3e1.pdf, section 4.1.2; reuse with attribution under the CCSDS reproduction permission statement"
+uses       ccsdsep
+wire       bits
+word_bytes 1
+bit_order  msb
+when   0:0:3  7                                       # packet version number: 111 (version 8)
+field  ccsdsep.protocol_id            0:3:3   uint
+
+kind     length-4-octets                              # length of length 11: 8-octet header
+when     0:6:2  3
+requires ccsdsep.ccsds_defined
+field  ccsdsep.user_defined           0:8:4   uint
+field  ccsdsep.protocol_id_extension  0:12:4  uint
+field  ccsdsep.ccsds_defined          0:16:16 uint
+field  ccsdsep.packet_length          0:32:32 uint
+
+kind     length-2-octets                              # length of length 10: 4-octet header
+when     0:6:2  2
+requires ccsdsep.user_defined
+field  ccsdsep.user_defined           0:8:4   uint
+field  ccsdsep.protocol_id_extension  0:12:4  uint
+field  ccsdsep.packet_length          0:16:16 uint
+
+kind     length-1-octet                               # length of length 01: 2-octet header
+when     0:6:2  1
+requires ccsdsep.packet_length
+field  ccsdsep.packet_length          0:8:8   uint
+
+kind     idle                                         # length of length 00: the 1-octet idle packet
+when     0:6:2  0

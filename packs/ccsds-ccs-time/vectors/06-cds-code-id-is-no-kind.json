@@ -1,0 +1,9 @@
+{
+  "name": "cds-code-id-is-no-kind",
+  "from": "ccsds-ccs-time",
+  "to": "ccsds-ccs-time",
+  "input": "4000000000000000",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "a P-field with time code ID 100 (CDS)"
+}

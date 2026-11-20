@@ -1,0 +1,17 @@
+{
+  "name": "leap-second-to-geojson-time",
+  "from": "ccsds-cds-time",
+  "to": "geojson",
+  "input": "40624705265df4",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"time_ms\":1795132800500}}",
+  "model": {
+    "@kind": "level-1",
+    "ccsdstime.cds_day_segment_24": "0",
+    "ccsdstime.cds_submillisecond_length": "0",
+    "ccsdstime.cds_day": "25159",
+    "ccsdstime.cds_ms_of_day": "86400500",
+    "ccsdstime.cds_day_unix_ms": "1795046400000"
+  },
+  "source": "constructed",
+  "reference": "500 ms into a positive leap second (ms of day 86400500): time_ms 1795132800500, which is also the time_ms of 00:00:00.500 of the next day; milliseconds since 1970 have no leap second"
+}

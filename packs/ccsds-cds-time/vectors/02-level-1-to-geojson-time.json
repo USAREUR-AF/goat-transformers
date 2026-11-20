@@ -1,0 +1,17 @@
+{
+  "name": "level-1-to-geojson-time",
+  "from": "ccsds-cds-time",
+  "to": "geojson",
+  "input": "4062470038d0c0",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"time_ms\":1795050123456}}",
+  "model": {
+    "@kind": "level-1",
+    "ccsdstime.cds_day_segment_24": "0",
+    "ccsdstime.cds_submillisecond_length": "0",
+    "ccsdstime.cds_day": "25159",
+    "ccsdstime.cds_ms_of_day": "3723456",
+    "ccsdstime.cds_day_unix_ms": "1795046400000"
+  },
+  "source": "constructed",
+  "reference": "the first code to GeoJSON: the day count gives the day's start, 1795046400000 ms since 1970, and the derivation adds the milliseconds of day: time_ms 1795050123456, 2026-11-19 01:02:03.456 UTC"
+}

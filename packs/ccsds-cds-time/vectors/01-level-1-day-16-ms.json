@@ -1,0 +1,17 @@
+{
+  "name": "level-1-day-16-ms",
+  "from": "ccsds-cds-time",
+  "to": "ccsds-cds-time",
+  "input": "4062470038d0c0",
+  "expect": "4062470038d0c0",
+  "model": {
+    "@kind": "level-1",
+    "ccsdstime.cds_day_segment_24": "0",
+    "ccsdstime.cds_submillisecond_length": "0",
+    "ccsdstime.cds_day": "25159",
+    "ccsdstime.cds_ms_of_day": "3723456",
+    "ccsdstime.cds_day_unix_ms": "1795046400000"
+  },
+  "source": "constructed",
+  "reference": "level 1, 16-bit day 25159 (2026-11-19, counted from 1958-01-01 as day 0), 3723456 ms of day (01:02:03.456), no submillisecond segment: 7 octets"
+}

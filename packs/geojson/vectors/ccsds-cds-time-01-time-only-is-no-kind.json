@@ -1,0 +1,9 @@
+{
+  "name": "time-only-is-no-kind",
+  "from": "geojson",
+  "to": "ccsds-cds-time",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"time_ms\":1795568400000}}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "a GeoJSON Feature with time_ms only: both CDS kinds require the day count, which no derivation gives from time_ms (there is no integer division by 86400000), so no kind is chosen"
+}
