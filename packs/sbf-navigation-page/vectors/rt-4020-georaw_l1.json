@@ -1,0 +1,10 @@
+{
+  "name": "sbf-navigation-page-roundtrip-georaw_l1",
+  "from": "sbf-navigation-page",
+  "to": "sbf-navigation-page",
+  "input": "b40f3400589ce13f2ff006ddb44b3910e78e882f00000000bee20c030000008095369156000000006c8a152a00000080",
+  "expect": "b40f3400589ce13f2ff006ddb44b3910e78e882f00000000bee20c030000008095369156000000006c8a152a00000080",
+  "model": {
+    "@kind": "georaw_l1"
+  }
+}

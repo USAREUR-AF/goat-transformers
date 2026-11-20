@@ -1,0 +1,10 @@
+{
+  "name": "sbf-receiver-time-roundtrip-receiver_time",
+  "from": "sbf-receiver-time",
+  "to": "sbf-receiver-time",
+  "input": "1a17180092b93d7f690dc0976e451cf3ca210000",
+  "expect": "1a17180092b93d7f690dc0976e451cf3ca210000",
+  "model": {
+    "@kind": "receiver_time"
+  }
+}

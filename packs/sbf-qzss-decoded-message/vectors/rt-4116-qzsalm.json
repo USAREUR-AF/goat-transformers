@@ -1,0 +1,10 @@
+{
+  "name": "sbf-qzss-decoded-message-roundtrip-qzsalm",
+  "from": "sbf-qzss-decoded-message",
+  "to": "sbf-qzss-decoded-message",
+  "input": "14303c00f845c804cf99a67d000070402be95d26000040c00000a0bf0000003f0000104000008040000090c0000030c0000080bfba91683f",
+  "expect": "14303c00f845c804cf99a67d000070402be95d26000040c00000a0bf0000003f0000104000008040000090c0000030c0000080bfba91683f",
+  "model": {
+    "@kind": "qzsalm"
+  }
+}

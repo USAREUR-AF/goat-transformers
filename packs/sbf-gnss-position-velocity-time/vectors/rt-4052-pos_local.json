@@ -1,0 +1,10 @@
+{
+  "name": "sbf-gnss-position-velocity-time-roundtrip-pos_local",
+  "from": "sbf-gnss-position-velocity-time",
+  "to": "sbf-gnss-position-velocity-time",
+  "input": "d40f2c00382ad9560f7e964200000000000014400000000000000cc0000000000000fcbf9e000000",
+  "expect": "d40f2c00382ad9560f7e964200000000000014400000000000000cc0000000000000fcbf9e000000",
+  "model": {
+    "@kind": "pos_local"
+  }
+}

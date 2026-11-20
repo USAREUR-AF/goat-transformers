@@ -1,0 +1,10 @@
+{
+  "name": "sbf-sbas-l1-decoded-message-roundtrip-geonetwork_time",
+  "from": "sbf-sbas-l1-decoded-message",
+  "to": "sbf-sbas-l1-decoded-message",
+  "input": "1eb730004eab1c2225fffcd30000c0bf000000000000d03f58a236172f86ddb40b6239ed10415933e7000000",
+  "expect": "1eb730004eab1c2225fffcd30000c0bf000000000000d03f58a236172f86ddb40b6239ed10415933e7000000",
+  "model": {
+    "@kind": "geonetwork_time"
+  }
+}

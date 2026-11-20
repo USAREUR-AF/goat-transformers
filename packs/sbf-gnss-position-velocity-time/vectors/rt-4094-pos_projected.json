@@ -1,0 +1,10 @@
+{
+  "name": "sbf-gnss-position-velocity-time-roundtrip-pos_projected",
+  "from": "sbf-gnss-position-velocity-time",
+  "to": "sbf-gnss-position-velocity-time",
+  "input": "fe2f2c006e14fe044568bc780000000000000440000000000000114000000000000011c0d4000000",
+  "expect": "fe2f2c006e14fe044568bc780000000000000440000000000000114000000000000011c0d4000000",
+  "model": {
+    "@kind": "pos_projected"
+  }
+}

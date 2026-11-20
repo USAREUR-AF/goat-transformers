@@ -1,0 +1,10 @@
+{
+  "name": "sbf-gps-decoded-message-roundtrip-gpsion",
+  "from": "sbf-gps-decoded-message",
+  "to": "sbf-gps-decoded-message",
+  "input": "0557300077442b284e98253c0000a03f0000404000009840000070c0000000c0000080be0000c03f00005040",
+  "expect": "0557300077442b284e98253c0000a03f0000404000009840000070c0000000c0000080be0000c03f00005040",
+  "model": {
+    "@kind": "gpsion"
+  }
+}

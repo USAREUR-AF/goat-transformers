@@ -1,0 +1,10 @@
+{
+  "name": "sbf-external-event-roundtrip-ext_event_att_euler",
+  "from": "sbf-external-event",
+  "to": "sbf-external-event",
+  "input": "8d702c006f56a04346aa1df4cba5a2f90000004000007040000098c0000040c00000a0bf0000003f",
+  "expect": "8d702c006f56a04346aa1df4cba5a2f90000004000007040000098c0000040c00000a0bf0000003f",
+  "model": {
+    "@kind": "ext_event_att_euler"
+  }
+}

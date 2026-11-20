@@ -1,0 +1,10 @@
+{
+  "name": "sbf-galileo-decoded-message-roundtrip-galalm",
+  "from": "sbf-galileo-decoded-message",
+  "to": "sbf-galileo-decoded-message",
+  "input": "a32f4000f918ae0bd06ca77e000040bf2cbc432d0000304000009040000080c0000010c0000000bf0000a03f0000404000009840bb9269e64a000000",
+  "expect": "a32f4000f918ae0bd06ca77e000040bf2cbc432d0000304000009040000080c0000010c0000000bf0000a03f0000404000009840bb9269e64a000000",
+  "model": {
+    "@kind": "galalm"
+  }
+}

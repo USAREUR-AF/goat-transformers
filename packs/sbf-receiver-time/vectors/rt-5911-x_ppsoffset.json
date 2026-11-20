@@ -1,0 +1,10 @@
+{
+  "name": "sbf-receiver-time-roundtrip-x_ppsoffset",
+  "from": "sbf-receiver-time",
+  "to": "sbf-receiver-time",
+  "input": "17371400458416051cd8f3ca000090c0",
+  "expect": "17371400458416051cd8f3ca000090c0",
+  "model": {
+    "@kind": "x_ppsoffset"
+  }
+}

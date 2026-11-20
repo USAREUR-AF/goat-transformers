@@ -1,0 +1,10 @@
+{
+  "name": "sbf-gnss-position-velocity-time-roundtrip-dop",
+  "from": "sbf-gnss-position-velocity-time",
+  "to": "sbf-gnss-position-velocity-time",
+  "input": "a1cf20001ba03e3af2f3c9a077ef4e432597fcea0000803f00003040",
+  "expect": "a1cf20001ba03e3af2f3c9a077ef4e432597fcea0000803f00003040",
+  "model": {
+    "@kind": "dop"
+  }
+}

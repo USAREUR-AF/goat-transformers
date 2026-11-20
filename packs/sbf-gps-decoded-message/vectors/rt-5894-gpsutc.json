@@ -1,0 +1,10 @@
+{
+  "name": "sbf-gps-decoded-message-roundtrip-gpsutc",
+  "from": "sbf-gps-decoded-message",
+  "to": "sbf-gps-decoded-message",
+  "input": "06772800e600e350bd54946b000040c0000000000000f4bff0f7fc45c71e754ca3000000",
+  "expect": "06772800e600e350bd54946b000040c0000000000000f4bff0f7fc45c71e754ca3000000",
+  "model": {
+    "@kind": "gpsutc"
+  }
+}

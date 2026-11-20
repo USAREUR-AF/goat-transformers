@@ -1,0 +1,10 @@
+{
+  "name": "sbf-navigation-page-roundtrip-bdsraw",
+  "from": "sbf-navigation-page",
+  "to": "sbf-navigation-page",
+  "input": "cf4f3c000d7c420be4cfbb92694017eec51a6527000000009c6ee97a0000008073c26d4e000000004a16f22100000080216a767500000000",
+  "expect": "cf4f3c000d7c420be4cfbb92694017eec51a6527000000009c6ee97a0000008073c26d4e000000004a16f22100000080216a767500000000",
+  "model": {
+    "@kind": "bdsraw"
+  }
+}

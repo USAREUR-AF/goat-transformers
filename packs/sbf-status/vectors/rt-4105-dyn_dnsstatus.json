@@ -1,0 +1,10 @@
+{
+  "name": "sbf-status-roundtrip-dyn_dnsstatus",
+  "from": "sbf-status",
+  "to": "sbf-status",
+  "input": "09302000332de3440a81e1b88f7cf4120000000066d0786600000080",
+  "expect": "09302000332de3440a81e1b88f7cf4120000000066d0786600000080",
+  "model": {
+    "@kind": "dyn_dnsstatus"
+  }
+}

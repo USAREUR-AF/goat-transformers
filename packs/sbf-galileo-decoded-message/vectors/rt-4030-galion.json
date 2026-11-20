@@ -1,0 +1,10 @@
+{
+  "name": "sbf-galileo-decoded-message-roundtrip-galion",
+  "from": "sbf-galileo-decoded-message",
+  "to": "sbf-galileo-decoded-message",
+  "input": "be4f2000aef80e57854c5c33000060400000a0c0000050c055000000",
+  "expect": "be4f2000aef80e57854c5c33000060400000a0c0000050c055000000",
+  "model": {
+    "@kind": "galion"
+  }
+}

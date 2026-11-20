@@ -1,0 +1,10 @@
+{
+  "name": "sbf-navigation-page-roundtrip-navicraw",
+  "from": "sbf-navigation-page",
+  "to": "sbf-navigation-page",
+  "input": "fdcf3c00ff57465cd6abad845b3209e0b7f66878000000008e4aed4b00000080659e711f000000003cf2f5720000008013467a4600000000",
+  "expect": "fdcf3c00ff57465cd6abad845b3209e0b7f66878000000008e4aed4b00000080659e711f000000003cf2f5720000008013467a4600000000",
+  "model": {
+    "@kind": "navicraw"
+  }
+}

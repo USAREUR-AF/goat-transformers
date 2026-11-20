@@ -1,0 +1,10 @@
+{
+  "name": "sbf-lband-demodulator-roundtrip-fugro_status",
+  "from": "sbf-lband-demodulator",
+  "to": "sbf-lband-demodulator",
+  "input": "7610380076681e1b4dbc2410fb63ab15d2b72f29a90bb4fc805f38d057b3bc632e074137055bc50adcae495eb302ce318a560000",
+  "expect": "7610380076681e1b4dbc2410fb63ab15d2b72f29a90bb4fc805f38d057b3bc632e074137055bc50adcae495eb302ce318a560000",
+  "model": {
+    "@kind": "fugro_status"
+  }
+}

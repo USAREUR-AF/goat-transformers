@@ -1,0 +1,10 @@
+{
+  "name": "sbf-navigation-page-roundtrip-gpsraw_l2_c",
+  "from": "sbf-navigation-page",
+  "to": "sbf-navigation-page",
+  "input": "b24f3c007a23726e517728ffd68d5b320916195e00000000e0699d3100000080b7bd2105000000008e11a6580000008065652a2c00000000",
+  "expect": "b24f3c007a23726e517728ffd68d5b320916195e00000000e0699d3100000080b7bd2105000000008e11a6580000008065652a2c00000000",
+  "model": {
+    "@kind": "gpsraw_l2_c"
+  }
+}

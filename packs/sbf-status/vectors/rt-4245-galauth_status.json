@@ -1,0 +1,10 @@
+{
+  "name": "sbf-status-roundtrip-galauth_status",
+  "from": "sbf-status",
+  "to": "sbf-status",
+  "input": "95503400e7395e09be8d659b000088409fd8802500000000762c0579000000804d80894c0000000024d40d2000000080",
+  "expect": "95503400e7395e09be8d659b000088409fd8802500000000762c0579000000804d80894c0000000024d40d2000000080",
+  "model": {
+    "@kind": "galauth_status"
+  }
+}

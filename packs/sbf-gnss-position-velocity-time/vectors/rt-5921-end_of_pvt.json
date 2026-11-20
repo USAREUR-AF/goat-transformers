@@ -1,0 +1,10 @@
+{
+  "name": "sbf-gnss-position-velocity-time-roundtrip-end_of_pvt",
+  "from": "sbf-gnss-position-velocity-time",
+  "to": "sbf-gnss-position-velocity-time",
+  "input": "215710009be0431c72340000",
+  "expect": "215710009be0431c72340000",
+  "model": {
+    "@kind": "end_of_pvt"
+  }
+}

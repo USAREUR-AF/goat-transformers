@@ -1,0 +1,10 @@
+{
+  "name": "sbf-sbas-l1-decoded-message-roundtrip-geointegrity",
+  "from": "sbf-sbas-l1-decoded-message",
+  "to": "sbf-sbas-l1-decoded-message",
+  "input": "28374800a4074a397b5b522900d7ae855c330ae1b88f663d14ebc29970471ef5cca37a5128ffd6ad845b3209e0b78e653c13eac1986f461df4cba2795027fed5ac835a00",
+  "expect": "28374800a4074a397b5b522900d7ae855c330ae1b88f663d14ebc29970471ef5cca37a5128ffd6ad845b3209e0b78e653c13eac1986f461df4cba2795027fed5ac835a00",
+  "model": {
+    "@kind": "geointegrity"
+  }
+}

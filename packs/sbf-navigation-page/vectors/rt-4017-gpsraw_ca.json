@@ -1,0 +1,10 @@
+{
+  "name": "sbf-navigation-page-roundtrip-gpsraw_ca",
+  "from": "sbf-navigation-page",
+  "to": "sbf-navigation-page",
+  "input": "b10f3c000b67ba45e2bab99067beecc39a5961350000008071ade5080000000048016a5c000000801f55ee2f00000000f6a8720300000080",
+  "expect": "b10f3c000b67ba45e2bab99067beecc39a5961350000008071ade5080000000048016a5c000000801f55ee2f00000000f6a8720300000080",
+  "model": {
+    "@kind": "gpsraw_ca"
+  }
+}
