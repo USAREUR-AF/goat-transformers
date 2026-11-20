@@ -1,0 +1,13 @@
+{
+  "name": "rt-msop",
+  "from": "robosense-rsa",
+  "to": "robosense-rsa",
+  "source": "tools/gen/robosense2pack.py: the identity bytes of getConstParam, then every field of RSAMsopPkt set to a value chosen by the generator, big-endian at its place",
+  "input": "55aa050a5203b46516c77829da8bc63c3fed9e334f0026b1a0621393c4758726",
+  "expect": "55aa050a5203b46516c77829da8bc63c3fed9e334f0026b1a0621393c4758726",
+  "model": {
+    "@kind": "msop",
+    "robosense.rsa_msop_header_timestamp_sec_0": "82",
+    "robosense.rsa_msop_header_timestamp_sec_1": "3"
+  }
+}

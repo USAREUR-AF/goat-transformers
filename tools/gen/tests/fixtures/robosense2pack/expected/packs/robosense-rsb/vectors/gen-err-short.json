@@ -1,0 +1,8 @@
+{
+  "name": "err-short",
+  "from": "robosense-rsb",
+  "to": "robosense-rsb",
+  "source": "one byte short of the 4-byte msop packet",
+  "input": "1234fd",
+  "expect_error": "malformed-wire"
+}

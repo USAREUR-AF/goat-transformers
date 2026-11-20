@@ -1,0 +1,12 @@
+{
+  "name": "rt-difop",
+  "from": "robosense-rsa",
+  "to": "robosense-rsa",
+  "source": "tools/gen/robosense2pack.py: the identity bytes of getConstParam, then every field of RSADifopPkt set to a value chosen by the generator, big-endian at its place",
+  "input": "a5ff005a8e7627d8893aeb9c4dfeaf601142c2733624",
+  "expect": "a5ff005a8e7627d8893aeb9c4dfeaf601142c2733624",
+  "model": {
+    "@kind": "difop",
+    "robosense.rsa_difop_rpm": "36470"
+  }
+}

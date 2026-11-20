@@ -1,0 +1,12 @@
+{
+  "name": "rt-msop",
+  "from": "robosense-rsb",
+  "to": "robosense-rsb",
+  "source": "tools/gen/robosense2pack.py: the identity bytes of getConstParam, then every field of RSBMsopPkt set to a value chosen by the generator, big-endian at its place",
+  "input": "1234bc22",
+  "expect": "1234bc22",
+  "model": {
+    "@kind": "msop",
+    "robosense.rsb_msop_value": "48162"
+  }
+}

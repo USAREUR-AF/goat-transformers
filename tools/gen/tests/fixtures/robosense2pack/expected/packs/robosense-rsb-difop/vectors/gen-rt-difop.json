@@ -1,0 +1,12 @@
+{
+  "name": "rt-difop",
+  "from": "robosense-rsb-difop",
+  "to": "robosense-rsb-difop",
+  "source": "tools/gen/robosense2pack.py: the identity bytes of getConstParam, then every field of XRSBDifopPkt set to a value chosen by the generator, big-endian at its place",
+  "input": "1234af9e60ba",
+  "expect": "1234af9e60ba",
+  "model": {
+    "@kind": "difop",
+    "robosense.rsb_difop_value": "2946392250"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "rt-difop",
+  "from": "robosense-rsm1",
+  "to": "robosense-rsm1",
+  "source": "tools/gen/robosense2pack.py: the identity bytes of getConstParam, then every field of RSM1DifopPkt set to a value chosen by the generator, big-endian at its place",
+  "input": "a5ff005a111155555607b8691acb7c2dde8f40f1a25304b56617c8792adb8c3dee9f5001b26314c57627d8893aeb9c4dfeaf6011c27324d58637e8994afbacfc5d760ebf7021d28334e59647f8a95a0bbc6d1ecf8031e29344f5a65708b96a1bcc7d2edf9041f2a35405b66718c97a2bdc8d3eefa0512e02b321641514c6770828d9fb8a3beeec9de24effd5b061c912c3bc7425afd687a338e9969a4b89fcad7d5e0f70c0716422d35784354ae6973e48f9aa5b0cbd6e1fd08132e39445f6a75809ba6b1ccd7e2fe09142f3a45506b76819ca7b2cdd8e3ff0a15203b46516c77829da8b3ced9e4f00b16213c47526d78839ea9b4cfdae5f10c17223d48536e7",
+  "expect": "a5ff005a111155555607b8691acb7c2dde8f40f1a25304b56617c8792adb8c3dee9f5001b26314c57627d8893aeb9c4dfeaf6011c27324d58637e8994afbacfc5d760ebf7021d28334e59647f8a95a0bbc6d1ecf8031e29344f5a65708b96a1bcc7d2edf9041f2a35405b66718c97a2bdc8d3eefa0512e02b321641514c6770828d9fb8a3beeec9de24effd5b061c912c3bc7425afd687a338e9969a4b89fcad7d5e0f70c0716422d35784354ae6973e48f9aa5b0cbd6e1fd08132e39445f6a75809ba6b1ccd7e2fe09142f3a45506b76819ca7b2cdd8e3ff0a15203b46516c77829da8b3ced9e4f00b16213c47526d78839ea9b4cfdae5f10c17223d48536e7",
+  "model": {
+    "@kind": "difop",
+    "robosense.rsm1_difop_reserved1_0": "86",
+    "robosense.rsm1_difop_frame_rate": "7"
+  }
+}
