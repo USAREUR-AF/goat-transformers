@@ -26,7 +26,7 @@ packs. `site/build.sh` writes everything it needs into `assets/engine/`:
 | `goat_transformers.mjs` | `bindings/wasm/goat_transformers.mjs`, copied |
 | `packs/<format>.def` | `packs/<format>/pack.def`, copied |
 | `model/<module>.def` | `model/<module>.def`, copied, for the modules those packs use |
-| `bundle.json` | the sample of each format (the `input` of a named vector), what carries between each pair (`goat-xf matrix --detail`), and what `goat-xf convert` prints for each sample |
+| `bundle.json` | the sample of each format (the `input` of a named vector), what carries between each pair (`goat-xf matrix`), and what `goat-xf convert` prints for each sample |
 | `manifest.json` | the library commit, and the size and SHA-256 of every file above |
 
 The module is a binary, so it is not committed: the workflow builds it. To

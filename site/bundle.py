@@ -254,31 +254,28 @@ def main():
     for m in modules:
         put("model/%s.def" % m, "model/%s.def" % m)
 
-    # What carries between each pair: `goat-xf matrix --detail`.
-    code, out, err = xf("matrix", "--detail")
+    # What carries between each pair: `goat-xf matrix`, one tab-separated line
+    # per ordered pair after a header (spec 0.23): from, to, grade, carried,
+    # dropped, each list joined by spaces.
+    code, out, err = xf("matrix")
     if code != 0:
         die("goat-xf matrix failed: " + err)
-    line_rx = re.compile(r"^\s*(\S+) -> (\S+)\s+(FULL|PARTIAL|NONE)\s+carries: \[(.*?)\](?:\s+dropped: (.*?) \(target .*\))?\s*$")
     capability = {}
-    for line in out.split("\n"):
-        m = line_rx.match(line)
-        if not m:
+    for line in out.split("\n")[1:]:
+        if not line:
             continue
-        src, dst, grade, carried, dropped = m.groups()
-        carried = [k for k in carried.split(", ") if k]
-        dropped = [k for k in (dropped or "").split(", ") if k]
-        seen, uniq = set(), []
-        for k in dropped:
-            if k not in seen:
-                seen.add(k)
-                uniq.append(k)
-        entry = {"grade": grade.lower(), "carried": carried, "dropped_count": len(uniq)}
+        src, dst, grade, carried, dropped = line.split("\t")
+        if src == dst:
+            continue
+        carried = carried.split(" ") if carried else []
+        uniq = list(dict.fromkeys(dropped.split(" "))) if dropped else []
+        entry = {"grade": grade, "carried": carried, "dropped_count": len(uniq)}
         if len(uniq) <= MAX_DROPPED:
             entry["dropped"] = uniq
         capability["%s>%s" % (src, dst)] = entry
     want = len(names) * (len(names) - 1)
     if len(capability) != want:
-        die("read %d pairs from `goat-xf matrix --detail`, expected %d" % (len(capability), want))
+        die("read %d pairs from `goat-xf matrix`, expected %d" % (len(capability), want))
 
     # The output goat-xf gives for each sample and each target. A pair is
     # offered by the page when this conversion succeeds.

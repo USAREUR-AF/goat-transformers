@@ -111,7 +111,7 @@ jobs:
           if-no-files-found: error
   go:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
@@ -120,9 +120,21 @@ jobs:
           cache: false
       - run: go test -v ./...
         working-directory: engines/go
+      # The command-line contract of spec 0.23, and the capability matrix of the
+      # formats of tools/matrix-formats.txt, which every engine must write alike.
+      - name: Tool vectors and the capability matrix
+        run: |
+          (cd engines/go && go build -o goat-xf ./cmd/goat-xf)
+          python3 -I tools/tool-vectors.py -- engines/go/goat-xf
+          engines/go/goat-xf matrix --packs packs --packs-only "$(grep -v '^#' tools/matrix-formats.txt | paste -sd, -)" > capability-matrix-go.tsv
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: capability-matrix-go
+          path: capability-matrix-go.tsv
+          if-no-files-found: error
   python:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
@@ -137,6 +149,17 @@ jobs:
           cd "$RUNNER_TEMP"
           python -c 'from goat_transformers import Engine; print(Engine.from_dir("goat/packs", packs_only=["cot-xml", "geojson"]).formats())' | grep -q "cot-xml"
           goat-xf-py list-formats --packs goat/packs --packs-only geojson | grep -q geojson
+      # The command-line contract of spec 0.23, and the capability matrix of the
+      # formats of tools/matrix-formats.txt, which every engine must write alike.
+      - name: Tool vectors and the capability matrix
+        run: |
+          python3 -I tools/tool-vectors.py -- engines/python/goat-xf-py.py
+          engines/python/goat-xf-py.py matrix --packs packs --packs-only "$(grep -v '^#' tools/matrix-formats.txt | paste -sd, -)" > capability-matrix-python.tsv
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: capability-matrix-python
+          path: capability-matrix-python.tsv
+          if-no-files-found: error
   java:
     runs-on: ubuntu-latest
     # The malformed-input sweep grows with every pack; it is bounded per vector
@@ -150,6 +173,17 @@ jobs:
           java-version: "17"
       - run: ./build.sh
         working-directory: engines/java
+      # The command-line contract of spec 0.23, and the capability matrix of the
+      # formats of tools/matrix-formats.txt, which every engine must write alike.
+      - name: Tool vectors and the capability matrix
+        run: |
+          python3 -I tools/tool-vectors.py -- engines/java/goat-xf-java.sh
+          engines/java/goat-xf-java.sh matrix --packs packs --packs-only "$(grep -v '^#' tools/matrix-formats.txt | paste -sd, -)" > capability-matrix-java.tsv
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: capability-matrix-java
+          path: capability-matrix-java.tsv
+          if-no-files-found: error
   cpp:
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -160,11 +194,22 @@ jobs:
           cmake -S engines/cpp -B "$RUNNER_TEMP/cpp" -DCMAKE_CXX_FLAGS=-O2
           cmake --build "$RUNNER_TEMP/cpp" --parallel
           ctest --test-dir "$RUNNER_TEMP/cpp" --output-on-failure
+      # The command-line contract of spec 0.23, and the capability matrix of the
+      # formats of tools/matrix-formats.txt, which every engine must write alike.
+      - name: Tool vectors and the capability matrix
+        run: |
+          python3 -I tools/tool-vectors.py -- "$RUNNER_TEMP/cpp/goat-xf"
+          "$RUNNER_TEMP/cpp/goat-xf" matrix --packs packs --packs-only "$(grep -v '^#' tools/matrix-formats.txt | paste -sd, -)" > capability-matrix-cpp.tsv
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: capability-matrix-cpp
+          path: capability-matrix-cpp.tsv
+          if-no-files-found: error
   erlang:
     runs-on: ubuntu-latest
     # The suite runs every vector of every pack; it took 7 to 9 minutes before
     # the UBX packs and reached the old 10-minute limit with them.
-    timeout-minutes: 20
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - uses: erlef/setup-beam@54075bcc5e249e4758d363f27d099f55d843f124 # v1
@@ -176,9 +221,20 @@ jobs:
       - name: The engine as a rebar3 application
         run: rebar3 compile
         working-directory: engines/erlang
+      # The command-line contract of spec 0.23, and the capability matrix of the
+      # formats of tools/matrix-formats.txt, which every engine must write alike.
+      - name: Tool vectors and the capability matrix
+        run: |
+          python3 -I tools/tool-vectors.py -- engines/erlang/goat-xf.sh
+          engines/erlang/goat-xf.sh matrix --packs packs --packs-only "$(grep -v '^#' tools/matrix-formats.txt | paste -sd, -)" > capability-matrix-erlang.tsv
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: capability-matrix-erlang
+          path: capability-matrix-erlang.tsv
+          if-no-files-found: error
   zig:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - uses: mlugg/setup-zig@d1434d08867e3ee9daa34448df10607b98908d29 # v2
@@ -189,6 +245,41 @@ jobs:
       - name: The module another program imports
         run: zig build module-test
         working-directory: engines/zig
+      # The command-line contract of spec 0.23, and the capability matrix of the
+      # formats of tools/matrix-formats.txt, which every engine must write alike.
+      - name: Tool vectors and the capability matrix
+        run: |
+          (cd engines/zig && zig build cli -Doptimize=ReleaseSafe)
+          python3 -I tools/tool-vectors.py -- engines/zig/zig-out/bin/goat-xf
+          engines/zig/zig-out/bin/goat-xf matrix --packs packs --packs-only "$(grep -v '^#' tools/matrix-formats.txt | paste -sd, -)" > capability-matrix-zig.tsv
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: capability-matrix-zig
+          path: capability-matrix-zig.tsv
+          if-no-files-found: error
+  # The capability matrix as a checked artifact (spec 0.23): the seven engines
+  # wrote it from the same packs; it must be the same bytes from all seven.
+  capability-matrix:
+    needs: [rust, go, python, java, cpp, erlang, zig]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          pattern: capability-matrix-*
+          merge-multiple: true
+      - name: The seven matrices are the same bytes
+        run: |
+          ls -l capability-matrix-*.tsv
+          sha256sum capability-matrix-*.tsv
+          test "$(ls capability-matrix-*.tsv | wc -l)" = 7
+          test "$(sha256sum capability-matrix-*.tsv | cut -d' ' -f1 | sort -u | wc -l)" = 1
+          cp capability-matrix-rust.tsv capability-matrix.tsv
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: capability-matrix
+          path: capability-matrix.tsv
+          if-no-files-found: error
   bindings:
     runs-on: ubuntu-latest
     timeout-minutes: 30

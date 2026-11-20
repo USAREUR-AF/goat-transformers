@@ -87,7 +87,7 @@ has a pack:
 | A C-ABI library and a WebAssembly module of the Rust engine, in `bindings/`, for hosts in languages with no native engine | Built |
 | An embedded profile in `embedded/`: `tools/gen/packc.py` compiles `bits` packs to a binary plan, and `gt-core` (no standard library, no heap) runs it on a microcontroller; equivalence with the Rust engine and the image sizes for `thumbv7em-none-eabihf` in `docs/embedded.md` | Measured |
 | Per-wire feature gates in each engine, so that a package for `xml` formats only does not compile the binary codecs | Designed |
-| The capability matrix as a checked CI artifact: one command-line contract for all seven engines' tools (spec 0.23), pinned by tool vectors, and the matrix of the formats in `tools/matrix-formats.txt` produced by every engine's tool and compared byte for byte | Spec written; Rust built (95 tool vectors); six engines to do |
+| The capability matrix as a checked CI artifact: one command-line contract for all seven engines' tools (spec 0.23), pinned by tool vectors, and the matrix of the formats in `tools/matrix-formats.txt` produced by every engine's tool and compared byte for byte | Built, seven engines (spec 0.23): 97 tool vectors; the matrix is a CI artifact all seven write alike |
 | Parse-once caching for packs and protobuf submessages; a benchmark for each engine | Designed |
 | An HTTP front end over the package planner (`tools/goat-pkg serve`) | Built |
 | Transport adapters in `adapters/`: stdin, files, directories, TCP, UDP, serial and MQTT 3.1.1 through `goat-xf-pipe`, standard library only (`docs/adapters.md`) | Built |
