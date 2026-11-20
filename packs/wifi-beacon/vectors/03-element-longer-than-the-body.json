@@ -1,0 +1,9 @@
+{
+  "name": "element-longer-than-the-body",
+  "from": "wifi-beacon",
+  "to": "wifi-beacon",
+  "input": "8967452301000000640021040009554153",
+  "expect_error": "malformed-wire",
+  "source": "derived by tools/gen/beacons-vectors.py from payloads written for it and spec/engine-spec.md; no engine run",
+  "reference": "google/gopacket layers/dot11.go (beacon body, information element); opendroneid-core-c wifi.c (Remote ID vendor element); an SSID element that states 9 octets and has 3"
+}

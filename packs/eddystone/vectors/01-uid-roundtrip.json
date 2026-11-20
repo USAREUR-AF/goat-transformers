@@ -1,0 +1,21 @@
+{
+  "name": "uid-roundtrip",
+  "from": "eddystone",
+  "to": "eddystone",
+  "input": "0201060303aafe1716aafe00ec8b0ca750e7a74e14bd990000000a0b0c0000",
+  "expect": "0201060303aafe1716aafe00ec8b0ca750e7a74e14bd990000000a0b0c0000",
+  "model": {
+    "ble.ad_structures.#": "3",
+    "ble.ad_structures[0].ble.flags": "6",
+    "ble.ad_structures[1].ble.service_uuids16[0].ble.service_uuid16": "65194",
+    "ble.ad_structures[2].ble.service_data_uuid16": "65194",
+    "ble.ad_structures[2].eddystone.frame_type": "0",
+    "ble.ad_structures[2].eddystone.tx_power_0m": "-20",
+    "ble.ad_structures[2].eddystone.namespace_high": "35596",
+    "ble.ad_structures[2].eddystone.namespace_low": "-6390353165483197031",
+    "ble.ad_structures[2].eddystone.instance": "658188",
+    "ble.ad_structures[2].eddystone.uid_rfu": "0"
+  },
+  "source": "derived by tools/gen/beacons-vectors.py from payloads written for it and spec/engine-spec.md; no engine run",
+  "reference": "google/eddystone protocol-specification.md and the frame documents (UID, URL, TLM, EID); Flags, the UUID list with 0xFEAA, and a UID frame with its two reserved octets (service data length 0x17)"
+}

@@ -1,0 +1,9 @@
+# The ridble module: the ASTM Remote ID service data over Bluetooth. Written by tools/gen/beacons-pack.py.
+module        ridble
+version       0.1.0
+distribution  public
+source        "opendroneid/transmitter-linux, https://github.com/opendroneid/transmitter-linux commit 6852afd0d4bed0d139b9dac3cd3a45eb595e30f0, bluetooth.c (Apache-2.0): the Bluetooth 4 and 5 advertising data of ASTM F3411 broadcast Remote ID; restated by goat-transformers"
+key   application_code  int     -     "application code in the ASTM Remote ID service data: 0x0D Open Drone ID"
+key   message_counter   int     -     "message counter, 0 to 255, wrapping"
+list  message           "the Remote ID message (25 octets) or message pack, as octets; the remote-id pack reads it"
+key   message_octet     int     -     "one octet of the message"

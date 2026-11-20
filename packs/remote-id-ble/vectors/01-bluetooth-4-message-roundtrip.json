@@ -1,0 +1,17 @@
+{
+  "name": "bluetooth-4-message-roundtrip",
+  "from": "remote-id-ble",
+  "to": "remote-id-ble",
+  "input": "1e16faff0d0502123135383146344142434431323334353637383930000000",
+  "expect": "1e16faff0d0502123135383146344142434431323334353637383930000000",
+  "model": {
+    "ble.ad_structures.#": "1",
+    "ble.ad_structures[0].ble.service_data_uuid16": "65530",
+    "ble.ad_structures[0].ridble.application_code": "13",
+    "ble.ad_structures[0].ridble.message_counter": "5",
+    "ble.ad_structures[0].ridble.message.#": "25",
+    "ble.ad_structures[0].ridble.message[0].ridble.message_octet": "2"
+  },
+  "source": "derived by tools/gen/beacons-vectors.py from payloads written for it and spec/engine-spec.md; no engine run",
+  "reference": "opendroneid/transmitter-linux bluetooth.c: the ASTM Remote ID service data of Bluetooth 4 and 5 advertising; Bluetooth 4 legacy advertising: one structure of 30 octets, a Basic ID message after the counter"
+}

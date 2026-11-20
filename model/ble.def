@@ -1,0 +1,20 @@
+# The ble module: the AD structures of a Bluetooth LE advertising payload, shared by the
+# eddystone, altbeacon and remote-id-ble packs. Written by tools/gen/beacons-pack.py.
+module        ble
+version       0.1.0
+distribution  public
+source        "AD structure framing (length, AD type, data) as google/eddystone protocol-specification.md and opendroneid/transmitter-linux bluetooth.c write it (Apache-2.0); restated by goat-transformers"
+list  ad_structures            "AD structures of the advertising payload, in order"
+key   ad_type                  int     -     "AD type of a structure: 1 Flags, 2 and 3 16-bit service UUID lists, 10 Tx Power Level, 22 Service Data (16-bit UUID), 255 Manufacturer Specific Data, ..."
+key   flags                    int     -     "Flags: discoverable modes and BR/EDR support bits"
+list  service_uuids16          "16-bit service UUIDs of a UUID list structure"
+key   service_uuid16           int     -     "one 16-bit service UUID (little-endian on the wire)"
+key   tx_power_level           int     dBm   "Tx Power Level structure"
+key   service_data_uuid16      int     -     "16-bit UUID of a Service Data structure (little-endian on the wire)"
+list  service_data             "data of a Service Data structure the pack does not read, as octets"
+key   service_data_octet       int     -     "one octet of that data"
+key   company_id               int     -     "company identifier of a Manufacturer Specific Data structure (little-endian on the wire), as the Bluetooth SIG assigns it"
+list  manufacturer_data        "manufacturer data after the company identifier that the pack does not read, as octets"
+key   manufacturer_data_octet  int     -     "one octet of that data"
+list  ad_data                  "data of an AD structure of another type, as octets"
+key   ad_data_octet            int     -     "one octet of that data"

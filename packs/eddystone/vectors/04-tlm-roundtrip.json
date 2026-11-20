@@ -1,0 +1,16 @@
+{
+  "name": "tlm-roundtrip",
+  "from": "eddystone",
+  "to": "eddystone",
+  "input": "0201060303aafe1116aafe20000bb81880000003e800008ca0",
+  "expect": "0201060303aafe1116aafe20000bb81880000003e800008ca0",
+  "model": {
+    "ble.ad_structures[2].eddystone.tlm_version": "0",
+    "ble.ad_structures[2].eddystone.battery_voltage": "3000",
+    "ble.ad_structures[2].eddystone.temperature": "24.5",
+    "ble.ad_structures[2].eddystone.adv_count": "1000",
+    "ble.ad_structures[2].eddystone.sec_count": "36000"
+  },
+  "source": "derived by tools/gen/beacons-vectors.py from payloads written for it and spec/engine-spec.md; no engine run",
+  "reference": "google/eddystone protocol-specification.md and the frame documents (UID, URL, TLM, EID); plain TLM: 3000 mV, 24.5 degrees C (0x1880 in 8.8 fixed point), 1000 PDUs, an hour in tenths of a second"
+}

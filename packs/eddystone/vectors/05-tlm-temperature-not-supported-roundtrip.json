@@ -1,0 +1,12 @@
+{
+  "name": "tlm-temperature-not-supported-roundtrip",
+  "from": "eddystone",
+  "to": "eddystone",
+  "input": "0201060303aafe1116aafe20000b8680000000000500000032",
+  "expect": "0201060303aafe1116aafe20000b8680000000000500000032",
+  "model": {
+    "ble.ad_structures[2].eddystone.battery_voltage": "2950"
+  },
+  "source": "derived by tools/gen/beacons-vectors.py from payloads written for it and spec/engine-spec.md; no engine run",
+  "reference": "google/eddystone protocol-specification.md and the frame documents (UID, URL, TLM, EID); 0x8000 means the beacon has no temperature: the key is absent (absent 32768), and the value is written back"
+}

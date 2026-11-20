@@ -1,0 +1,14 @@
+{
+  "name": "eid-roundtrip",
+  "from": "eddystone",
+  "to": "eddystone",
+  "input": "0201060303aafe0d16aafe30e21122334455667788",
+  "expect": "0201060303aafe0d16aafe30e21122334455667788",
+  "model": {
+    "ble.ad_structures[2].eddystone.frame_type": "48",
+    "ble.ad_structures[2].eddystone.tx_power_0m": "-30",
+    "ble.ad_structures[2].eddystone.eid": "1234605616436508552"
+  },
+  "source": "derived by tools/gen/beacons-vectors.py from payloads written for it and spec/engine-spec.md; no engine run",
+  "reference": "google/eddystone protocol-specification.md and the frame documents (UID, URL, TLM, EID); an ephemeral identifier of 8 octets"
+}

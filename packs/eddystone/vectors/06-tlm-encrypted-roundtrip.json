@@ -1,0 +1,16 @@
+{
+  "name": "tlm-encrypted-roundtrip",
+  "from": "eddystone",
+  "to": "eddystone",
+  "input": "0201060303aafe1516aafe20010102030405060708090a0b0cabcd1234",
+  "expect": "0201060303aafe1516aafe20010102030405060708090a0b0cabcd1234",
+  "model": {
+    "ble.ad_structures[2].eddystone.tlm_version": "1",
+    "ble.ad_structures[2].eddystone.etlm_high": "72623859790382856",
+    "ble.ad_structures[2].eddystone.etlm_low": "151653132",
+    "ble.ad_structures[2].eddystone.salt": "43981",
+    "ble.ad_structures[2].eddystone.mic": "4660"
+  },
+  "source": "derived by tools/gen/beacons-vectors.py from payloads written for it and spec/engine-spec.md; no engine run",
+  "reference": "google/eddystone protocol-specification.md and the frame documents (UID, URL, TLM, EID); encrypted TLM: 12 octets of encrypted data, salt and check"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "other-manufacturer-data-roundtrip",
+  "from": "altbeacon",
+  "to": "altbeacon",
+  "input": "02010606ff5900010203",
+  "expect": "02010606ff5900010203",
+  "model": {
+    "ble.ad_structures[1].ble.company_id": "89",
+    "ble.ad_structures[1].altbeacon.beacon_code": "258",
+    "ble.ad_structures[1].ble.manufacturer_data.#": "1"
+  },
+  "source": "derived by tools/gen/beacons-vectors.py from payloads written for it and spec/engine-spec.md; no engine run",
+  "reference": "AltBeacon Protocol Specification v1.0 (altbeacon/spec); manufacturer data that is not an AltBeacon: its first two octets are read as the beacon code, which is not 0xBEAC, and the rest is kept as octets"
+}

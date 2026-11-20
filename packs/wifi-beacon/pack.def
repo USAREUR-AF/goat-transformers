@@ -1,0 +1,65 @@
+# IEEE 802.11 beacon frame body: the fixed fields (timestamp, beacon interval, capability
+# information, little-endian) and the information elements (ID, length, value) to the end.
+# Public. Written by tools/gen/beacons-pack.py from google/gopacket's decoder (BSD-3-Clause) and
+# opendroneid-core-c's Remote ID beacon (Apache-2.0); the IEEE standard was not used. See pack.md.
+format     wifi-beacon
+version    0.1.0
+distribution public
+source     "google/gopacket, https://github.com/google/gopacket commit b7d9dbd15ae4c4621a62119b0c682dc23061a8bc, layers/dot11.go (BSD-3-Clause): the beacon frame body and the information element"
+source     "opendroneid/opendroneid-core-c, https://github.com/opendroneid/opendroneid-core-c commit a92bd5ffe113edd076c159a06799152aed3b1fb0, libopendroneid/wifi.c and odid_wifi.h (Apache-2.0): the ASTM Remote ID vendor element of a Wi-Fi beacon"
+uses       wifi
+wire       bits
+layout     sequential
+bit_order  msb
+field  wifi.timestamp          64  uint  swap   # microseconds of the transmitter's timer
+field  wifi.beacon_interval    16  uint  swap   # time units of 1024 microseconds
+field  wifi.capability         16  uint  swap
+group  wifi.elements  rest
+  field  wifi.element_id  8  uint
+  length 8 bytes
+    switch wifi.element_id
+      case 0                               # SSID
+        group  wifi.ssid  rest
+          field  wifi.ssid_octet  8  uint
+        end
+      case 1                               # Supported Rates
+        group  wifi.rates  rest
+          field  wifi.rate  8  uint
+        end
+      case 3                               # DS Parameter Set
+        field  wifi.channel  8  uint
+      case 5                               # TIM
+        field  wifi.dtim_count      8  uint
+        field  wifi.dtim_period     8  uint
+        field  wifi.bitmap_control  8  uint
+        group  wifi.partial_virtual_bitmap  rest
+          field  wifi.bitmap_octet  8  uint
+        end
+      case 221                             # Vendor Specific
+        field  wifi.oui  24  uint
+        switch wifi.oui
+          case 16387004                        # 0xFA0BBC, ASTM
+            field  wifi.oui_type  8  uint
+            switch wifi.oui_type
+              case 13                              # ASTM Remote ID
+                field  wifi.rid_message_counter  8  uint
+                group  wifi.rid_message_pack  rest
+                  field  wifi.rid_message_pack_octet  8  uint
+                end
+              else
+                group  wifi.vendor_data  rest
+                  field  wifi.vendor_octet  8  uint
+                end
+            end
+          else
+            group  wifi.vendor_data  rest
+              field  wifi.vendor_octet  8  uint
+            end
+        end
+      else
+        group  wifi.element_data  rest
+          field  wifi.element_octet  8  uint
+        end
+    end
+  end
+end

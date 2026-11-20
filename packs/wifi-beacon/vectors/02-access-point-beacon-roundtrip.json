@@ -1,0 +1,20 @@
+{
+  "name": "access-point-beacon-roundtrip",
+  "from": "wifi-beacon",
+  "to": "wifi-beacon",
+  "input": "0100000000000080660011000000050400030000dd060050f202010130020100",
+  "expect": "0100000000000080660011000000050400030000dd060050f202010130020100",
+  "model": {
+    "wifi.timestamp": "-9223372036854775807",
+    "wifi.elements.#": "4",
+    "wifi.elements[0].wifi.ssid.#": "0",
+    "wifi.elements[1].wifi.dtim_period": "3",
+    "wifi.elements[1].wifi.partial_virtual_bitmap.#": "1",
+    "wifi.elements[2].wifi.oui": "20722",
+    "wifi.elements[2].wifi.vendor_data.#": "3",
+    "wifi.elements[3].wifi.element_id": "48",
+    "wifi.elements[3].wifi.element_data.#": "2"
+  },
+  "source": "derived by tools/gen/beacons-vectors.py from payloads written for it and spec/engine-spec.md; no engine run",
+  "reference": "google/gopacket layers/dot11.go (beacon body, information element); opendroneid-core-c wifi.c (Remote ID vendor element); a hidden SSID (length 0), a TIM, a vendor element of another OUI and an element the pack does not read; a timestamp with its top bit set reads as a negative integer (ruling 2 of 0.5)"
+}

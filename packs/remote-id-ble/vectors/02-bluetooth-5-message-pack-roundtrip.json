@@ -1,0 +1,14 @@
+{
+  "name": "bluetooth-5-message-pack-roundtrip",
+  "from": "remote-id-ble",
+  "to": "remote-id-ble",
+  "input": "3a16faff0dfef219020212313538314634414243443132333435363738393000000052000000000000000000000000000000000000000000000000",
+  "expect": "3a16faff0dfef219020212313538314634414243443132333435363738393000000052000000000000000000000000000000000000000000000000",
+  "model": {
+    "ble.ad_structures[0].ridble.message_counter": "254",
+    "ble.ad_structures[0].ridble.message.#": "53",
+    "ble.ad_structures[0].ridble.message[0].ridble.message_octet": "242"
+  },
+  "source": "derived by tools/gen/beacons-vectors.py from payloads written for it and spec/engine-spec.md; no engine run",
+  "reference": "opendroneid/transmitter-linux bluetooth.c: the ASTM Remote ID service data of Bluetooth 4 and 5 advertising; Bluetooth 5 extended advertising: the message pack (type 0xF, size 25, two messages) after the counter"
+}

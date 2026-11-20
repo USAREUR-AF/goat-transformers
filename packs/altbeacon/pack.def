@@ -1,0 +1,56 @@
+# AltBeacon BLE beacon: one advertising payload, its AD structures, and the AltBeacon
+# advertisement in the Manufacturer Specific Data (beacon code 0xBEAC). Public. Written by
+# tools/gen/beacons-pack.py from altbeacon/spec (CC BY-SA 4.0, as altbeacon.org states). See pack.md.
+format     altbeacon
+version    0.1.0
+distribution public
+source     "AltBeacon Protocol Specification v1.0, https://github.com/altbeacon/spec commit d5c7f6da1192313d28222f9da2e0251074153252, README.md; altbeacon.org states CC BY-SA 4.0"
+uses       ble
+uses       altbeacon
+wire       bits
+layout     sequential
+bit_order  msb
+
+group  ble.ad_structures  rest
+  length 8 bytes                       # the length counts the AD type and the data
+    field  ble.ad_type  8  uint
+    switch ble.ad_type
+      case 1                               # Flags
+        field  ble.flags  8  uint
+      case 2,3                             # Incomplete and complete list of 16-bit service UUIDs
+        group  ble.service_uuids16  rest
+          field  ble.service_uuid16  16  uint  swap
+        end
+      case 10                              # Tx Power Level
+        field  ble.tx_power_level  8  twos
+      case 22                              # Service Data, 16-bit UUID
+        field  ble.service_data_uuid16  16  uint  swap
+        switch ble.service_data_uuid16
+          case 0                               # (none: every UUID is the else case)
+          else
+            group  ble.service_data  rest
+              field  ble.service_data_octet  8  uint
+            end
+        end
+      case 255                             # Manufacturer Specific Data
+        field  ble.company_id  16  uint  swap
+        field  altbeacon.beacon_code  16  uint
+        switch altbeacon.beacon_code
+          case 48812                           # 0xBEAC
+            field  altbeacon.beacon_id_1    64  uint
+            field  altbeacon.beacon_id_2    64  uint
+            field  altbeacon.beacon_id_3    32  uint
+            field  altbeacon.reference_rssi  8  twos
+            field  altbeacon.mfg_reserved    8  uint
+          else
+            group  ble.manufacturer_data  rest
+              field  ble.manufacturer_data_octet  8  uint
+            end
+        end
+      else
+        group  ble.ad_data  rest
+          field  ble.ad_data_octet  8  uint
+        end
+    end
+  end
+end
