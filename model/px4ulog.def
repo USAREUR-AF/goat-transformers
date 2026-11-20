@@ -3847,7 +3847,7 @@ key  vehicle_control_mode_source_id                                         int 
 key  vehicle_global_position_timestamp                                      int     -  "VehicleGlobalPosition.timestamp (uint64)"
 key  vehicle_global_position_timestamp_sample                               int     -  "VehicleGlobalPosition.timestamp_sample (uint64)"
 key  vehicle_global_position_alt                                            float   -  "VehicleGlobalPosition.alt (float32)"
-key  vehicle_global_position_alt_ellipsoid                                  float   -  "VehicleGlobalPosition.alt_ellipsoid (float32)"
+key  vehicle_global_position_alt_ellipsoid                                  float   -  "VehicleGlobalPosition.alt_ellipsoid (float32); bound to `hae` in the packs"
 key  vehicle_global_position_delta_alt                                      float   -  "VehicleGlobalPosition.delta_alt (float32)"
 key  vehicle_global_position_delta_terrain                                  float   -  "VehicleGlobalPosition.delta_terrain (float32)"
 key  vehicle_global_position_eph                                            float   -  "VehicleGlobalPosition.eph (float32)"

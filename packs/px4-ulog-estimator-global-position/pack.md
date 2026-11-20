@@ -33,7 +33,7 @@ the ROS 2 copy of the same messages.
 | 16 | 64 | `lat` | float64 | `lat` f64 |
 | 24 | 64 | `lon` | float64 | `lon` f64 |
 | 32 | 32 | `alt` | float32 | `px4ulog.vehicle_global_position_alt` f32 |
-| 36 | 32 | `alt_ellipsoid` | float32 | `px4ulog.vehicle_global_position_alt_ellipsoid` f32 |
+| 36 | 32 | `alt_ellipsoid` | float32 | `hae` f32 |
 | 40 | 32 | `delta_alt` | float32 | `px4ulog.vehicle_global_position_delta_alt` f32 |
 | 44 | 32 | `delta_terrain` | float32 | `px4ulog.vehicle_global_position_delta_terrain` f32 |
 | 48 | 32 | `eph` | float32 | `px4ulog.vehicle_global_position_eph` f32 |
@@ -57,9 +57,11 @@ with a fixed count. A `char` array is `ascii` text.
 |---|---|---|
 | `lat` | `lat` | file header: fused global position in WGS84; field: latitude in degrees, float64 |
 | `lon` | `lon` | as lat; longitude in degrees |
+| `alt_ellipsoid` | `hae` | file header: fused global position in WGS84; field: the ellipsoidal altitude in metres, float32. The altitude over mean sea level is a separate field |
 
-Altitude, velocity and time are not bound: this pack binds latitude and
-longitude only, and `timestamp` is microseconds since the system started, not UTC.
+`timestamp` is microseconds since the system started, not UTC, and stays a raw
+key. A bound field's earlier raw key stays declared in `model/px4ulog.def`; the
+packs map the field to the shared key only.
 
 ## Not mapped, and why
 

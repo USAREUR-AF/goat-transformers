@@ -15,5 +15,6 @@ field  px4ulog.vehicle_global_position_timestamp  0:0:64  uint
 field  lat  0:64:64  f64
 field  lon  0:128:64  f64
 field  px4ulog.vehicle_global_position_alt  0:192:32  f32
-field  px4ulog.vehicle_global_position_lat_lon_valid  0:224:8  uint
-field  px4ulog.vehicle_global_position_reset_counter  0:232:8  uint
+field  hae  0:224:32  f32
+field  px4ulog.vehicle_global_position_lat_lon_valid  0:256:8  uint
+field  px4ulog.vehicle_global_position_reset_counter  0:264:8  uint

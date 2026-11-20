@@ -2,7 +2,7 @@
   "name": "edge-with-closing-padding",
   "from": "px4-ulog-vehicle-global-position",
   "to": "px4-ulog-vehicle-global-position",
-  "source": "ULog lets a writer include or leave out the padding after the last field; input longer than the message is accepted and the extra bytes are ignored (engine-spec 0.5), and the encoder writes 30 bytes",
-  "input": "43822d18240a0600e9263108ac1c00405eba490c022b08c00000d4c0015f0000",
-  "expect": "43822d18240a0600e9263108ac1c00405eba490c022b08c00000d4c0015f"
+  "source": "ULog lets a writer include or leave out the padding after the last field; input longer than the message is accepted and the extra bytes are ignored (engine-spec 0.5), and the encoder writes 34 bytes",
+  "input": "43822d18240a0600e9263108ac1c00405eba490c022b08c00000d4c00000ccc00010000000000000",
+  "expect": "43822d18240a0600e9263108ac1c00405eba490c022b08c00000d4c00000ccc00010"
 }

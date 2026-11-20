@@ -4,6 +4,7 @@ uint64 timestamp
 float64 lat
 float64 lon
 float32 alt
+float32 alt_ellipsoid	# test field: ellipsoidal altitude in metres
 bool lat_lon_valid
 uint8 reset_counter
 # TOPICS vehicle_global_position estimator_global_position

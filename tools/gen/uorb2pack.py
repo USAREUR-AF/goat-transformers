@@ -91,6 +91,9 @@ BUILTIN = {          # .msg type -> (bytes, transform, key type)
 CORE = {
     ("VehicleGlobalPosition", "lat"): ("lat", "file header: fused global position in WGS84; field: latitude in degrees, float64"),
     ("VehicleGlobalPosition", "lon"): ("lon", "as lat; longitude in degrees"),
+    ("VehicleGlobalPosition", "alt_ellipsoid"): (
+        "hae", "file header: fused global position in WGS84; field: the ellipsoidal altitude in "
+        "metres, float32. The altitude over mean sea level is a separate field"),
     ("SensorGps", "latitude_deg"): ("lat", "file header: GPS position in WGS84 coordinates; field: latitude in degrees, float64"),
     ("SensorGps", "longitude_deg"): ("lon", "as latitude_deg; longitude in degrees"),
     ("HomePosition", "lat"): ("lat", "file header: GPS home position in WGS84 coordinates; field: latitude in degrees, float64"),
@@ -816,9 +819,11 @@ def emit_pack_md(topic, msg, items, lay, deps, n_vec, cross_to, cross_from, msgs
         if any(x.key in ("time_ms", "hae") for x in bound):
             a += ["", "`timestamp` is microseconds since the system started, not UTC, and stays a raw",
                   "key. A bound field's earlier raw key stays declared in `model/px4ulog.def`; the",
-                  "packs map the field to the shared key only. A UTC time in microseconds that is",
-                  "not a whole millisecond decodes to the nearest millisecond (half away from zero)",
-                  "and re-encodes as that millisecond times 1000."]
+                  "packs map the field to the shared key only."]
+            if any(x.key == "time_ms" for x in bound):
+                a[-1] += " A UTC time in microseconds that is"
+                a += ["not a whole millisecond decodes to the nearest millisecond (half away from zero)",
+                      "and re-encodes as that millisecond times 1000."]
         else:
             a += ["", "Altitude, velocity and time are not bound: this pack binds latitude and",
                   "longitude only, and `timestamp` is microseconds since the system started, not UTC."]
@@ -966,7 +971,8 @@ def time_vectors(topic, fmt, buf, lay, bound):
                 if raw != 0:
                     ent[k] = decode_value(raw, y.length, y.transform)
             else:
-                ent[k] = struct.unpack("<d", b[y.bit // 8:y.bit // 8 + 8])[0]
+                n = y.length // 8
+                ent[k] = struct.unpack("<d" if n == 8 else "<f", b[y.bit // 8:y.bit // 8 + n])[0]
         return ent
     t_ms = utc_ms(2026, 11, 19, 6, 30, 15, 250)
     out = []
@@ -1139,17 +1145,23 @@ def build(args, out):
                 if k in bound:
                     x = bound[k]
                     raw = (encode_value(value, x.length, x.transform) if x.transform.startswith("uiscale:")
-                           else int.from_bytes(struct.pack("<d", value), "little"))
+                           else int.from_bytes(struct.pack("<d" if x.length == 64 else "<f", value), "little"))
                     b3[x.bit // 8:x.bit // 8 + x.length // 8] = raw.to_bytes(x.length // 8, "little")
+            timed = "time_ms" in bound
+            model = {"lat": "47.25", "lon": "8.5", "hae": "410.5"}
+            if timed:
+                model["time_ms"] = str(t_ms)
             gv = vec("gen-geojson-to-%s" % fmt, "geojson", fmt,
                      '{"type":"Feature","geometry":{"type":"Point","coordinates":[8.5,47.25,410.5]},'
-                     '"properties":{"time_ms":%d,"callsign":"UAV1"},"id":"u-1"}' % t_ms,
-                     bytes(b3[:lay.logged_size]).hex(),
-                     {"lat": "47.25", "lon": "8.5", "hae": "410.5", "time_ms": str(t_ms)},
-                     source="tools/gen/uorb2pack.py: time_ms is 2026-11-19T06:30:15.250Z counted from the "
-                            "Unix epoch by date arithmetic (no engine); it is written as microseconds, "
-                            "time_ms times 1000 (uiscale:1/1000); lat, lon and hae as float64; every other "
-                            "byte is zero (no value, and 0 is also the absent sentinel of the time)")
+                     '"properties":{%s"callsign":"UAV1"},"id":"u-1"}' % ('"time_ms":%d,' % t_ms if timed else ""),
+                     bytes(b3[:lay.logged_size]).hex(), model,
+                     source=("tools/gen/uorb2pack.py: time_ms is 2026-11-19T06:30:15.250Z counted from the "
+                             "Unix epoch by date arithmetic (no engine); it is written as microseconds, "
+                             "time_ms times 1000 (uiscale:1/1000); lat, lon and hae as float64; every other "
+                             "byte is zero (no value, and 0 is also the absent sentinel of the time)") if timed else
+                            ("tools/gen/uorb2pack.py: lat and lon as float64 degrees, hae as the float32 "
+                             "ellipsoidal altitude in metres (410.5 is exact in float32); every other byte is "
+                             "zero (absent fields write nothing); uid and callsign have no line"))
         if cross_from:
             out.write("packs/geojson/vectors/gen-geojson-to-%s.json" % fmt, dump_json(gv))
             vectors.append(("packs/geojson/vectors/gen-geojson-to-%s.json" % fmt, gv))
