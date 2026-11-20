@@ -1,0 +1,8 @@
+{
+  "name": "hardware-type-6-is-no-kind",
+  "from": "arp-ipv4-ethernet",
+  "to": "arp-ipv4-ethernet",
+  "input": "000608000604000100005e005301c0000201000000000000c0000202",
+  "expect_error": "no-kind",
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; the request with hardware type 6, not Ethernet"
+}

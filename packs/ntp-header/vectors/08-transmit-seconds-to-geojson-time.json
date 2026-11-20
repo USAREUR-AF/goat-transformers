@@ -1,0 +1,29 @@
+{
+  "name": "transmit-seconds-to-geojson-time",
+  "from": "ntp-header",
+  "to": "geojson",
+  "input": "240106e900000000000003e847505300eea8c88fc0000000eea8c89080000000eea8c89080418937eea8c8908041ca2b",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"time_ms\":1795050000000}}",
+  "model": {
+    "@kind": "primary",
+    "inet.ntp_leap": "0",
+    "inet.ntp_version": "4",
+    "inet.ntp_mode": "4",
+    "inet.ntp_stratum": "1",
+    "inet.ntp_poll": "6",
+    "inet.ntp_precision": "-23",
+    "inet.ntp_ref_ts_sec": "4004038799",
+    "inet.ntp_ref_ts_frac": "3221225472",
+    "inet.ntp_org_ts_sec": "4004038800",
+    "inet.ntp_org_ts_frac": "2147483648",
+    "inet.ntp_rec_ts_sec": "4004038800",
+    "inet.ntp_rec_ts_frac": "2151778615",
+    "inet.ntp_xmt_ts_sec": "4004038800",
+    "inet.ntp_xmt_ts_frac": "2151795243",
+    "time_ms": "1795050000000",
+    "inet.ntp_root_delay": "0",
+    "inet.ntp_root_dispersion": "0.0152587890625",
+    "inet.ntp_ref_clock": "GPS"
+  },
+  "source": "built by tools/gen/ietf-headers-vectors.py from values chosen there; the primary server reply to GeoJSON: GeoJSON maps time_ms only; the transmit seconds times 1000 less 2208988800000 give 2026-11-19 01:00:00 UTC, and the fraction (about 0.501 s) is not added"
+}

@@ -1,0 +1,19 @@
+{
+  "name": "csrc-list-and-payload-are-not-written",
+  "from": "rtp-header",
+  "to": "rtp-header",
+  "input": "82001234000271005eed1234111111112222222200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "expect": "82001234000271005eed1234",
+  "model": {
+    "inet.rtp_version": "2",
+    "inet.rtp_padding": "0",
+    "inet.rtp_extension": "0",
+    "inet.rtp_csrc_count": "2",
+    "inet.rtp_marker": "0",
+    "inet.rtp_payload_type": "0",
+    "inet.rtp_sequence": "4660",
+    "inet.rtp_timestamp": "160000",
+    "inet.rtp_ssrc": "1592594996"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; payload type 0 with two CSRC identifiers and 160 payload octets of zeros; the count is kept, the identifiers and payload are read over"
+}

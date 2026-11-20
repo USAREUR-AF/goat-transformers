@@ -1,0 +1,14 @@
+{
+  "name": "zero-tag-roundtrip",
+  "from": "sctp-common-header",
+  "to": "sctp-common-header",
+  "input": "138813890000000000000000",
+  "expect": "138813890000000000000000",
+  "model": {
+    "inet.src_port": "5000",
+    "inet.dst_port": "5001",
+    "inet.sctp_verification_tag": "0",
+    "inet.sctp_checksum": "0"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; verification tag 0, as in a packet carrying an INIT chunk, checksum 0"
+}

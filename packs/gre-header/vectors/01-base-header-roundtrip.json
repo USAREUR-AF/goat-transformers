@@ -1,0 +1,14 @@
+{
+  "name": "base-header-roundtrip",
+  "from": "gre-header",
+  "to": "gre-header",
+  "input": "00000800",
+  "expect": "00000800",
+  "model": {
+    "inet.gre_bit1": "0",
+    "inet.gre_reserved0": "0",
+    "inet.gre_version": "0",
+    "inet.gre_protocol_type": "2048"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; the four-octet header, no optional word, carrying IPv4 (EtherType 0x0800)"
+}

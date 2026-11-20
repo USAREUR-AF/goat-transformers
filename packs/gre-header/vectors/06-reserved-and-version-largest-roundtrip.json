@@ -1,0 +1,14 @@
+{
+  "name": "reserved-and-version-largest-roundtrip",
+  "from": "gre-header",
+  "to": "gre-header",
+  "input": "0fffffff",
+  "expect": "0fffffff",
+  "model": {
+    "inet.gre_bit1": "0",
+    "inet.gre_reserved0": "511",
+    "inet.gre_version": "7",
+    "inet.gre_protocol_type": "65535"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; reserved0 bits all set and version 7: the pack does not check them"
+}

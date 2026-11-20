@@ -1,0 +1,33 @@
+# RTCP sender report and receiver report (RFC 3550 sections 6.4.1 and 6.4.2):
+# the header and, in a sender report, the sender information. Public. Report
+# blocks and profile-specific extensions are not mapped (pack.md).
+#
+# Addressing: word_bytes 1 and bit_order msb; multi-octet fields are big-endian.
+format        rtcp-header
+version       0.1.0
+distribution  public
+source        "IETF RFC 3550, RTP: A Transport Protocol for Real-Time Applications, July 2003, sections 6.4.1 and 6.4.2, https://www.rfc-editor.org/rfc/rfc3550.txt; layout restated"
+uses          inet
+wire          bits
+word_bytes    1
+bit_order     msb
+
+field  inet.rtcp_version            0:0:2      uint
+field  inet.rtcp_padding            0:2:1      uint
+field  inet.rtcp_report_count       0:3:5      uint
+field  inet.rtcp_length             0:16:16    uint
+field  inet.rtcp_ssrc               0:32:32    uint
+
+# Packet type 200: sender information follows the header (octets 8-27).
+kind      sender-report
+when      0:8:8  200
+requires  inet.rtcp_packet_count
+field  inet.rtcp_ntp_ts_sec         0:64:32    uint
+field  inet.rtcp_ntp_ts_frac        0:96:32    uint
+field  inet.rtcp_rtp_timestamp      0:128:32   uint
+field  inet.rtcp_packet_count       0:160:32   uint
+field  inet.rtcp_octet_count        0:192:32   uint
+
+# Packet type 201: the header alone.
+kind      receiver-report
+when      0:8:8  201

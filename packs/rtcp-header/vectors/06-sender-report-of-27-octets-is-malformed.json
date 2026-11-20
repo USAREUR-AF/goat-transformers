@@ -1,0 +1,8 @@
+{
+  "name": "sender-report-of-27-octets-is-malformed",
+  "from": "rtcp-header",
+  "to": "rtcp-header",
+  "input": "80c800065eed1234eeb0b1904000000000027100000003e8000271",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; the first sender report cut to 27 octets"
+}

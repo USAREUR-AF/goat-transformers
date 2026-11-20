@@ -1,0 +1,14 @@
+{
+  "name": "ipv4-explicit-null-roundtrip",
+  "from": "mpls-label-entry",
+  "to": "mpls-label-entry",
+  "input": "00000101",
+  "expect": "00000101",
+  "model": {
+    "inet.mpls_label": "0",
+    "inet.mpls_tc": "0",
+    "inet.mpls_bottom_of_stack": "1",
+    "inet.mpls_ttl": "1"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; the reserved label 0 (IPv4 explicit null) at the bottom of the stack, TTL 1"
+}

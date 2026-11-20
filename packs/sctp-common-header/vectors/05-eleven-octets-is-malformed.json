@@ -1,0 +1,8 @@
+{
+  "name": "eleven-octets-is-malformed",
+  "from": "sctp-common-header",
+  "to": "sctp-common-header",
+  "input": "13888e3c2f6b19a00a0b0c",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; the first header cut to 11 octets"
+}

@@ -1,0 +1,33 @@
+# GRE header (RFC 2784) with the key and sequence number of RFC 2890: four
+# octets, then the checksum word when C is 1, the key when K is 1 and the
+# sequence number when S is 1. Public. The payload is not mapped (pack.md).
+#
+# Sequential layout, bit_order msb; multi-octet fields are big-endian. Bit 0
+# is the presence bit C (checksum word), bit 1 a plain field (routing present
+# in RFC 1701, reserved in RFC 2784), bits 2 and 3 the presence bits K (key)
+# and S (sequence number).
+format        gre-header
+version       0.1.0
+distribution  public
+source        "IETF RFC 2784, Generic Routing Encapsulation (GRE), March 2000, https://www.rfc-editor.org/rfc/rfc2784.txt; IETF RFC 2890, Key and Sequence Number Extensions to GRE, September 2000, https://www.rfc-editor.org/rfc/rfc2890.txt; layout restated"
+uses          inet
+wire          bits
+layout        sequential
+bit_order     msb
+
+presence c 1
+field  inet.gre_bit1                1    uint
+presence ks 2
+field  inet.gre_reserved0           9    uint
+field  inet.gre_version             3    uint
+field  inet.gre_protocol_type       16   uint
+if c.1
+  field  inet.gre_checksum          16   uint
+  field  inet.gre_reserved1         16   uint
+end
+if ks.1
+  field  inet.gre_key               32   uint
+end
+if ks.2
+  field  inet.gre_sequence          32   uint
+end

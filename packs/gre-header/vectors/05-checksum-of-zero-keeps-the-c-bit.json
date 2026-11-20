@@ -1,0 +1,16 @@
+{
+  "name": "checksum-of-zero-keeps-the-c-bit",
+  "from": "gre-header",
+  "to": "gre-header",
+  "input": "8000080000000000",
+  "expect": "8000080000000000",
+  "model": {
+    "inet.gre_bit1": "0",
+    "inet.gre_reserved0": "0",
+    "inet.gre_version": "0",
+    "inet.gre_protocol_type": "2048",
+    "inet.gre_checksum": "0",
+    "inet.gre_reserved1": "0"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; C set with checksum 0 and reserved1 0: the keys are present, so the bit is written 1"
+}

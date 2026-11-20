@@ -1,0 +1,19 @@
+{
+  "name": "every-field-at-its-largest-roundtrip",
+  "from": "rtp-header",
+  "to": "rtp-header",
+  "input": "ffffffffffffffffffffffff",
+  "expect": "ffffffffffffffffffffffff",
+  "model": {
+    "inet.rtp_version": "3",
+    "inet.rtp_padding": "1",
+    "inet.rtp_extension": "1",
+    "inet.rtp_csrc_count": "15",
+    "inet.rtp_marker": "1",
+    "inet.rtp_payload_type": "127",
+    "inet.rtp_sequence": "65535",
+    "inet.rtp_timestamp": "4294967295",
+    "inet.rtp_ssrc": "4294967295"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; every field at its largest value, version 3 included: the pack does not check the version"
+}

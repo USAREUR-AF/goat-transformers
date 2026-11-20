@@ -1,0 +1,14 @@
+{
+  "name": "general-query-roundtrip",
+  "from": "igmpv2",
+  "to": "igmpv2",
+  "input": "1164ee9b00000000",
+  "expect": "1164ee9b00000000",
+  "model": {
+    "@kind": "membership-query",
+    "inet.igmp_max_resp_time": "100",
+    "inet.igmp_checksum": "61083",
+    "inet.igmp_group_addr": "0"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; a general query: group 0, max response time 100 (10 s); checksum 0xee9b computed here"
+}

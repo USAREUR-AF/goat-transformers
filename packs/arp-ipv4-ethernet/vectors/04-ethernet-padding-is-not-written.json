@@ -1,0 +1,15 @@
+{
+  "name": "ethernet-padding-is-not-written",
+  "from": "arp-ipv4-ethernet",
+  "to": "arp-ipv4-ethernet",
+  "input": "000108000604000100005e005301c0000201000000000000c0000202000000000000000000000000000000000000",
+  "expect": "000108000604000100005e005301c0000201000000000000c0000202",
+  "model": {
+    "@kind": "request",
+    "inet.arp_sender_hw_addr": "1577079553",
+    "inet.arp_sender_ip_addr": "3221225985",
+    "inet.arp_target_hw_addr": "0",
+    "inet.arp_target_ip_addr": "3221225986"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; the request followed by 18 zero octets, the padding that brings an Ethernet frame to its least size"
+}

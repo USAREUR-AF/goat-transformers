@@ -1,0 +1,32 @@
+# IGMP version 2 message (RFC 2236 section 2): 8 octets. Public. Kinds by the
+# type octet; a type RFC 2236 does not name is kind other (pack.md).
+#
+# Addressing: word_bytes 1 and bit_order msb; multi-octet fields are big-endian.
+format        igmpv2
+version       0.1.0
+distribution  public
+source        "IETF RFC 2236, Internet Group Management Protocol, Version 2, November 1997, section 2, https://www.rfc-editor.org/rfc/rfc2236.txt; layout restated"
+uses          inet
+wire          bits
+word_bytes    1
+bit_order     msb
+
+field  inet.igmp_max_resp_time      0:8:8      uint
+field  inet.igmp_checksum           0:16:16    uint
+field  inet.igmp_group_addr         0:32:32    uint
+
+kind      membership-query
+when      0:0:8  17
+
+kind      v2-membership-report
+when      0:0:8  22
+
+kind      leave-group
+when      0:0:8  23
+
+kind      v1-membership-report
+when      0:0:8  18
+
+kind      other
+requires  inet.igmp_type
+field  inet.igmp_type               0:0:8      uint

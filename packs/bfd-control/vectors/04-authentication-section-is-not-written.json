@@ -1,0 +1,26 @@
+{
+  "name": "authentication-section-is-not-written",
+  "from": "bfd-control",
+  "to": "bfd-control",
+  "input": "20c403201122334455667788000493e0000493e0000000000108017073776400",
+  "expect": "20c403201122334455667788000493e0000493e000000000",
+  "model": {
+    "inet.bfd_version": "1",
+    "inet.bfd_diag": "0",
+    "inet.bfd_state": "3",
+    "inet.bfd_poll": "0",
+    "inet.bfd_final": "0",
+    "inet.bfd_cpi": "0",
+    "inet.bfd_auth_present": "1",
+    "inet.bfd_demand": "0",
+    "inet.bfd_multipoint": "0",
+    "inet.bfd_detect_mult": "3",
+    "inet.bfd_length": "32",
+    "inet.bfd_my_disc": "287454020",
+    "inet.bfd_your_disc": "1432778632",
+    "inet.bfd_desired_min_tx": "300000",
+    "inet.bfd_required_min_rx": "300000",
+    "inet.bfd_required_min_echo_rx": "0"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; the Up packet with A set and an 8-octet simple password section (type 1, length 8, key ID 1, a 5-octet password); length 32 is kept, the section is read over"
+}

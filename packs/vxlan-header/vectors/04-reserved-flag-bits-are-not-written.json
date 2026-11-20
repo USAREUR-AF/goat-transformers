@@ -1,0 +1,14 @@
+{
+  "name": "reserved-flag-bits-are-not-written",
+  "from": "vxlan-header",
+  "to": "vxlan-header",
+  "input": "ff00000012345600",
+  "expect": "0800000012345600",
+  "model": {
+    "inet.vxlan_i_flag": "1",
+    "inet.vxlan_reserved1": "0",
+    "inet.vxlan_vni": "1193046",
+    "inet.vxlan_reserved2": "0"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; the first header with the seven reserved flag bits set: they are ignored on decode and written 0"
+}

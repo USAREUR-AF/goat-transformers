@@ -1,0 +1,8 @@
+{
+  "name": "time-ntp-epoch",
+  "from": "geojson",
+  "to": "ntp-header",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"time_ms\":-2208988800000}}",
+  "expect": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "source": "built by tools/gen/ietf-headers-vectors.py from values chosen there; a GeoJSON Feature with time_ms -2208988800000 only: 1900-01-01 00:00:00 UTC gives seconds 0; transmit seconds 0, every other octet zero (kind secondary)"
+}

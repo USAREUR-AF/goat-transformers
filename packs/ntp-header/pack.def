@@ -4,10 +4,10 @@
 #
 # Addressing: word_bytes 1 and bit_order msb; multi-octet fields are big-endian.
 # A 64-bit timestamp is two fields: whole seconds since 1900 and the fraction in
-# units of 2^-32 s. They stay raw: no transform turns 32.32 fixed seconds since
-# 1900 into the integer milliseconds of core time_ms (pack.md).
+# units of 2^-32 s. The transmit timestamp's seconds also give core time_ms
+# (uiscale, engine-spec 0.15); its fraction stays raw (pack.md, Shared keys).
 format        ntp-header
-version       0.1.0
+version       0.2.0
 distribution  public
 source        "IETF RFC 5905, Network Time Protocol Version 4: Protocol and Algorithms Specification, June 2010, sections 6 and 7.3, https://www.rfc-editor.org/rfc/rfc5905.txt; layout restated"
 uses          inet
@@ -29,6 +29,7 @@ field  inet.ntp_org_ts_sec          0:192:32   uint
 field  inet.ntp_org_ts_frac         0:224:32   uint
 field  inet.ntp_rec_ts_sec          0:256:32   uint
 field  inet.ntp_rec_ts_frac         0:288:32   uint
+field  time_ms                     0:320:32   uiscale:1000:-2208988800000
 field  inet.ntp_xmt_ts_sec          0:320:32   uint
 field  inet.ntp_xmt_ts_frac         0:352:32   uint
 

@@ -1,0 +1,21 @@
+{
+  "name": "report-block-is-not-written",
+  "from": "rtcp-header",
+  "to": "rtcp-header",
+  "input": "81c8000c5eed1234eeb0b1904000000000027100000003e8000271000badcafe19000003000111700000000c1c7d400000008000",
+  "expect": "81c8000c5eed1234eeb0b1904000000000027100000003e800027100",
+  "model": {
+    "@kind": "sender-report",
+    "inet.rtcp_version": "2",
+    "inet.rtcp_padding": "0",
+    "inet.rtcp_report_count": "1",
+    "inet.rtcp_length": "12",
+    "inet.rtcp_ssrc": "1592594996",
+    "inet.rtcp_ntp_ts_sec": "4004557200",
+    "inet.rtcp_ntp_ts_frac": "1073741824",
+    "inet.rtcp_rtp_timestamp": "160000",
+    "inet.rtcp_packet_count": "1000",
+    "inet.rtcp_octet_count": "160000"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; the sender report with one report block (count 1, length 12); the 24-octet block is read over and not written"
+}

@@ -1,0 +1,18 @@
+# VXLAN header (RFC 7348 section 5): the 8 octets after the outer UDP header.
+# Public. The seven reserved flag bits are not mapped: ignored on decode,
+# written 0. The inner Ethernet frame is not mapped (pack.md).
+#
+# Addressing: word_bytes 1 and bit_order msb; multi-octet fields are big-endian.
+format        vxlan-header
+version       0.1.0
+distribution  public
+source        "IETF RFC 7348, Virtual eXtensible Local Area Network (VXLAN), August 2014, section 5, https://www.rfc-editor.org/rfc/rfc7348.txt; layout restated"
+uses          inet
+wire          bits
+word_bytes    1
+bit_order     msb
+
+field  inet.vxlan_i_flag            0:4:1      uint
+field  inet.vxlan_reserved1         0:8:24     uint
+field  inet.vxlan_vni               0:32:24    uint
+field  inet.vxlan_reserved2         0:56:8     uint

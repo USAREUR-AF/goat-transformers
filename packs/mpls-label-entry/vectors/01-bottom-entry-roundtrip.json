@@ -1,0 +1,14 @@
+{
+  "name": "bottom-entry-roundtrip",
+  "from": "mpls-label-entry",
+  "to": "mpls-label-entry",
+  "input": "00010b40",
+  "expect": "00010b40",
+  "model": {
+    "inet.mpls_label": "16",
+    "inet.mpls_tc": "5",
+    "inet.mpls_bottom_of_stack": "1",
+    "inet.mpls_ttl": "64"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; label 16 (the first one not reserved), traffic class 5, bottom of stack, TTL 64"
+}

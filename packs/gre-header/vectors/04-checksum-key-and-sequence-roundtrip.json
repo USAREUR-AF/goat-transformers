@@ -1,0 +1,18 @@
+{
+  "name": "checksum-key-and-sequence-roundtrip",
+  "from": "gre-header",
+  "to": "gre-header",
+  "input": "b000655812340000000000070000002a",
+  "expect": "b000655812340000000000070000002a",
+  "model": {
+    "inet.gre_bit1": "0",
+    "inet.gre_reserved0": "0",
+    "inet.gre_version": "0",
+    "inet.gre_protocol_type": "25944",
+    "inet.gre_checksum": "4660",
+    "inet.gre_reserved1": "0",
+    "inet.gre_key": "7",
+    "inet.gre_sequence": "42"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; C, K and S set, carrying an Ethernet frame (EtherType 0x6558): checksum 0x1234 (a chosen value), key 7, sequence 42, 16 octets in the order checksum word, key, sequence"
+}

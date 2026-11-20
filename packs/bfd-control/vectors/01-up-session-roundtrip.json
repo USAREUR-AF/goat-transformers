@@ -1,0 +1,26 @@
+{
+  "name": "up-session-roundtrip",
+  "from": "bfd-control",
+  "to": "bfd-control",
+  "input": "20c003181122334455667788000493e0000493e000000000",
+  "expect": "20c003181122334455667788000493e0000493e000000000",
+  "model": {
+    "inet.bfd_version": "1",
+    "inet.bfd_diag": "0",
+    "inet.bfd_state": "3",
+    "inet.bfd_poll": "0",
+    "inet.bfd_final": "0",
+    "inet.bfd_cpi": "0",
+    "inet.bfd_auth_present": "0",
+    "inet.bfd_demand": "0",
+    "inet.bfd_multipoint": "0",
+    "inet.bfd_detect_mult": "3",
+    "inet.bfd_length": "24",
+    "inet.bfd_my_disc": "287454020",
+    "inet.bfd_your_disc": "1432778632",
+    "inet.bfd_desired_min_tx": "300000",
+    "inet.bfd_required_min_rx": "300000",
+    "inet.bfd_required_min_echo_rx": "0"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; an Up session: detect multiplier 3, intervals of 300000 us (0.3 s), no echo"
+}

@@ -1,0 +1,17 @@
+# SCTP common header (RFC 9260 section 3.1): the first 12 octets of an SCTP
+# packet. Public. The chunks are not mapped (pack.md).
+#
+# Addressing: word_bytes 1 and bit_order msb; multi-octet fields are big-endian.
+format        sctp-common-header
+version       0.1.0
+distribution  public
+source        "IETF RFC 9260, Stream Control Transmission Protocol, June 2022, section 3.1, https://www.rfc-editor.org/rfc/rfc9260.txt; layout restated"
+uses          inet
+wire          bits
+word_bytes    1
+bit_order     msb
+
+field  inet.src_port                0:0:16     uint
+field  inet.dst_port                0:16:16    uint
+field  inet.sctp_verification_tag   0:32:32    uint
+field  inet.sctp_checksum           0:64:32    uint

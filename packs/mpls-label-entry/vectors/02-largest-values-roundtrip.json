@@ -1,0 +1,14 @@
+{
+  "name": "largest-values-roundtrip",
+  "from": "mpls-label-entry",
+  "to": "mpls-label-entry",
+  "input": "ffffffff",
+  "expect": "ffffffff",
+  "model": {
+    "inet.mpls_label": "1048575",
+    "inet.mpls_tc": "7",
+    "inet.mpls_bottom_of_stack": "1",
+    "inet.mpls_ttl": "255"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; every field at its largest value, label 1048575"
+}

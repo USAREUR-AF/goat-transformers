@@ -1,0 +1,26 @@
+{
+  "name": "largest-values-roundtrip",
+  "from": "bfd-control",
+  "to": "bfd-control",
+  "input": "ffffffffffffffffffffffffffffffffffffffffffffffff",
+  "expect": "ffffffffffffffffffffffffffffffffffffffffffffffff",
+  "model": {
+    "inet.bfd_version": "7",
+    "inet.bfd_diag": "31",
+    "inet.bfd_state": "3",
+    "inet.bfd_poll": "1",
+    "inet.bfd_final": "1",
+    "inet.bfd_cpi": "1",
+    "inet.bfd_auth_present": "1",
+    "inet.bfd_demand": "1",
+    "inet.bfd_multipoint": "1",
+    "inet.bfd_detect_mult": "255",
+    "inet.bfd_length": "255",
+    "inet.bfd_my_disc": "4294967295",
+    "inet.bfd_your_disc": "4294967295",
+    "inet.bfd_desired_min_tx": "4294967295",
+    "inet.bfd_required_min_rx": "4294967295",
+    "inet.bfd_required_min_echo_rx": "4294967295"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; every field at its largest value, the multipoint bit included: the pack does not check it"
+}

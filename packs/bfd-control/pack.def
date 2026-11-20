@@ -1,0 +1,29 @@
+# BFD control packet, mandatory section (RFC 5880 section 4.1): 24 octets.
+# Public. The authentication section is not mapped (pack.md).
+#
+# Addressing: word_bytes 1 and bit_order msb; multi-octet fields are big-endian.
+format        bfd-control
+version       0.1.0
+distribution  public
+source        "IETF RFC 5880, Bidirectional Forwarding Detection (BFD), June 2010, section 4.1, https://www.rfc-editor.org/rfc/rfc5880.txt; layout restated"
+uses          inet
+wire          bits
+word_bytes    1
+bit_order     msb
+
+field  inet.bfd_version             0:0:3      uint
+field  inet.bfd_diag                0:3:5      uint
+field  inet.bfd_state               0:8:2      uint
+field  inet.bfd_poll                0:10:1     uint
+field  inet.bfd_final               0:11:1     uint
+field  inet.bfd_cpi                 0:12:1     uint
+field  inet.bfd_auth_present        0:13:1     uint
+field  inet.bfd_demand              0:14:1     uint
+field  inet.bfd_multipoint          0:15:1     uint
+field  inet.bfd_detect_mult         0:16:8     uint
+field  inet.bfd_length              0:24:8     uint
+field  inet.bfd_my_disc             0:32:32    uint
+field  inet.bfd_your_disc           0:64:32    uint
+field  inet.bfd_desired_min_tx      0:96:32    uint
+field  inet.bfd_required_min_rx     0:128:32   uint
+field  inet.bfd_required_min_echo_rx 0:160:32  uint

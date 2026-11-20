@@ -1,0 +1,8 @@
+{
+  "name": "time-below-half-second-rounds-down",
+  "from": "geojson",
+  "to": "ntp-header",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"time_ms\":1795050000499}}",
+  "expect": "00000000000000000000000000000000000000000000000000000000000000000000000000000000eea8c89000000000",
+  "source": "built by tools/gen/ietf-headers-vectors.py from values chosen there; a GeoJSON Feature with time_ms 1795050000499 only: 499 ms past the second rounds down; transmit seconds 4004038800, every other octet zero (kind secondary)"
+}

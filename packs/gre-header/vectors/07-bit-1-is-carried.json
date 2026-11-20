@@ -1,0 +1,14 @@
+{
+  "name": "bit-1-is-carried",
+  "from": "gre-header",
+  "to": "gre-header",
+  "input": "40000800",
+  "expect": "40000800",
+  "model": {
+    "inet.gre_bit1": "1",
+    "inet.gre_reserved0": "0",
+    "inet.gre_version": "0",
+    "inet.gre_protocol_type": "2048"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; the base header with bit 1 set (routing present in RFC 1701; RFC 2784 reserves it): a plain field, so it comes back; no routing field is read"
+}

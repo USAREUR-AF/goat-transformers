@@ -20,7 +20,12 @@ Checksums are computed here by the ones' complement sum the RFCs define
 message), so each built header is one a host could send.
 
 Every `expect` is this program's packing of the header; every `model` value is
-the field value that was packed. Bytes after the fixed header (options, data)
+the field value that was packed. The NTP transmit timestamp's whole seconds
+also give `time_ms`: seconds times 1000 less 2208988800000, the milliseconds
+from 1900-01-01 to 1970-01-01 (RFC 5905 section 6 counts from 1900). Encode
+from GeoJSON rounds (time_ms + 2208988800000) / 1000 half away from zero.
+Vectors from GeoJSON to ntp-header go in packs/geojson/vectors as
+ntp-header-NN-*.json. Bytes after the fixed header (options, data)
 are read over by the packs and not written back: those vectors expect the
 fixed header alone.
 
@@ -384,6 +389,7 @@ def ntp_model(v, kind):
     m = {"@kind": kind}
     for k in ("ntp_leap", "ntp_version", "ntp_mode", "ntp_stratum", "ntp_poll", "ntp_precision") + tuple(TS_FIELDS):
         m["inet." + k] = str(v.get(k, 0))
+    m["time_ms"] = str(v.get("ntp_xmt_ts_sec", 0) * 1000 - NTP_UNIX_MS)
     m["inet.ntp_root_delay"] = plain(v.get("root_delay_raw", 0) / 65536)
     m["inet.ntp_root_dispersion"] = plain(v.get("root_disp_raw", 0) / 65536)
     refid = v.get("refid", 0)
@@ -402,6 +408,20 @@ def ascii4(s):
 # 2026-11-19 00:00:00 UTC in NTP era 0 seconds: Unix seconds + 2208988800 (the
 # seconds from 1900-01-01 to 1970-01-01).
 NTP_DAY = calendar.timegm((2026, 11, 19, 0, 0, 0)) + 2208988800
+NTP_UNIX_MS = 2208988800000     # 70 years and 17 leap days, in ms
+
+
+def round_half_away(num, den):
+    """num / den rounded to the nearest integer, halves away from zero."""
+    q, r = divmod(abs(num), den)
+    if 2 * r >= den:
+        q += 1
+    return q if num >= 0 else -q
+
+
+def geojson_time(ms):
+    return json.dumps({"type": "Feature", "geometry": None, "properties": {"time_ms": ms}},
+                      separators=(",", ":"))
 
 
 def ntp_vectors():
@@ -448,6 +468,40 @@ def ntp_vectors():
                    ref=SRC + "the kiss reply with octet 0x01 in its reference ID, which `ascii` does not read"))
     out.append(vec(P, "forty-seven-octets-is-malformed", hs[:47].hex(), error="malformed-wire",
                    ref=SRC + "the primary server reply cut to 47 octets"))
+    t = (NTP_DAY + 3600) * 1000 - NTP_UNIX_MS
+    out.append(vec(P, "transmit-seconds-to-geojson-time", hs.hex(), geojson_time(t),
+                   model=ntp_model(server, "primary"), to="geojson",
+                   ref=SRC + "the primary server reply to GeoJSON: GeoJSON maps time_ms only; the transmit "
+                       "seconds times 1000 less 2208988800000 give 2026-11-19 01:00:00 UTC, and the fraction "
+                       "(about 0.501 s) is not added"))
+    return out
+
+
+def ntp_from_geojson():
+    """Vectors from GeoJSON to ntp-header. The entity has no kind, so encode takes
+    the first kind whose requires hold: secondary, which has none and no `when`;
+    every field but the transmit seconds is absent and written zero."""
+    out = []
+    P = "ntp-header"
+    base = (NTP_DAY + 3600) * 1000 - NTP_UNIX_MS
+    for name, ms, what in (
+            ("time-half-second-rounds-up", base + 500, "500 ms past the second, a half, rounds away from zero"),
+            ("time-below-half-second-rounds-down", base + 499, "499 ms past the second rounds down"),
+            ("time-last-second-of-era-0", (1 << 32) * 1000 - 1000 - NTP_UNIX_MS,
+             "2036-02-07 06:28:15 UTC, the last whole second of era 0, gives seconds 0xFFFFFFFF"),
+            ("time-ntp-epoch", -NTP_UNIX_MS, "1900-01-01 00:00:00 UTC gives seconds 0")):
+        sec = round_half_away(ms + NTP_UNIX_MS, 1000)
+        h = pack(NTP, {"ntp_xmt_ts_sec": sec})
+        out.append(vec("geojson", name, geojson_time(ms), h.hex(), to=P,
+                       ref=SRC + "a GeoJSON Feature with time_ms %d only: %s; transmit seconds %d, every other "
+                           "octet zero (kind secondary)" % (ms, what, sec)))
+    for name, ms, what in (
+            ("time-after-era-0-is-transform-encode", (1 << 32) * 1000 - NTP_UNIX_MS,
+             "2036-02-07 06:28:16 UTC needs seconds 2^32, which does not fit 32 bits"),
+            ("time-before-1900-is-transform-encode", -NTP_UNIX_MS - 1000,
+             "one second before 1900-01-01 needs seconds -1, which is not unsigned")):
+        out.append(vec("geojson", name, geojson_time(ms), error="transform-encode", to=P,
+                       ref=SRC + "a GeoJSON Feature with time_ms %d: %s" % (ms, what)))
     return out
 
 
@@ -500,6 +554,9 @@ PACKS = {
     "dns-header": dns_vectors,
 }
 
+# Vectors whose input is another format: (pack holding them, file prefix, builder).
+CROSS = [("geojson", "ntp-header", ntp_from_geojson)]
+
 
 def build_files(out):
     written = {}
@@ -516,6 +573,19 @@ def build_files(out):
             if old.endswith(".json") and old not in keep:
                 out.remove(d + "/" + old)
         written[pack_name] = len(vecs)
+    for holder, prefix, fn in CROSS:
+        vecs = fn()
+        assert len({v["name"] for v in vecs}) == len(vecs)
+        d = "packs/%s/vectors" % holder
+        keep = set()
+        for i, v in enumerate(vecs, 1):
+            name = "%s-%02d-%s.json" % (prefix, i, v["name"])
+            out.write(d + "/" + name, json.dumps(v, indent=2, ensure_ascii=False) + "\n")
+            keep.add(name)
+        for old in out.listdir(d):
+            if old.startswith(prefix + "-") and old.endswith(".json") and old not in keep:
+                out.remove(d + "/" + old)
+        written[holder + "/" + prefix] = len(vecs)
     return written
 
 

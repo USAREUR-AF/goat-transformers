@@ -20,6 +20,7 @@
     "inet.ntp_rec_ts_frac": "2151778615",
     "inet.ntp_xmt_ts_sec": "4004038800",
     "inet.ntp_xmt_ts_frac": "2151795243",
+    "time_ms": "1795050000000",
     "inet.ntp_root_delay": "0",
     "inet.ntp_root_dispersion": "0.0152587890625",
     "inet.ntp_ref_clock": "GPS"

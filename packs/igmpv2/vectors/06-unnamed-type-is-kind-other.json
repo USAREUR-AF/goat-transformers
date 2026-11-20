@@ -1,0 +1,15 @@
+{
+  "name": "unnamed-type-is-kind-other",
+  "from": "igmpv2",
+  "to": "igmpv2",
+  "input": "3005e5fae9fc0003",
+  "expect": "3005e5fae9fc0003",
+  "model": {
+    "@kind": "other",
+    "inet.igmp_max_resp_time": "5",
+    "inet.igmp_checksum": "58874",
+    "inet.igmp_group_addr": "3925606403",
+    "inet.igmp_type": "48"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; type 0x30, which RFC 2236 does not name, read with the version 2 layout; checksum 0xe5fa computed here"
+}

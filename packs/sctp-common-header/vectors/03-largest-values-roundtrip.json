@@ -1,0 +1,14 @@
+{
+  "name": "largest-values-roundtrip",
+  "from": "sctp-common-header",
+  "to": "sctp-common-header",
+  "input": "ffffffffffffffffffffffff",
+  "expect": "ffffffffffffffffffffffff",
+  "model": {
+    "inet.src_port": "65535",
+    "inet.dst_port": "65535",
+    "inet.sctp_verification_tag": "4294967295",
+    "inet.sctp_checksum": "4294967295"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; every field at its largest value"
+}
