@@ -1,0 +1,10 @@
+{
+  "name": "unicore-roundtrip-freqjamstatus",
+  "from": "unicore",
+  "to": "unicore",
+  "input": "6207020c00b9d6f31a101b00002d1b00004a67841b55a225672c03dab1885f360d",
+  "expect": "6207020c00b9d6f31a101b00002d1b00004a67841b55a225672c03dab1885f360d",
+  "model": {
+    "@kind": "freqjamstatus"
+  }
+}

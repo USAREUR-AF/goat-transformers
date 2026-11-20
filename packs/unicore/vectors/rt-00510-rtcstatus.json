@@ -1,0 +1,10 @@
+{
+  "name": "unicore-roundtrip-rtcstatus",
+  "from": "unicore",
+  "to": "unicore",
+  "input": "edfe01180044617e1a9b1a0000b81a0000d5f20f1b6e451cf3ca51c106a1a5451a78f9c96d4f4d4e4126a1d214",
+  "expect": "edfe01180044617e1a9b1a0000b81a0000d5f20f1b6e451cf3ca51c106a1a5451a78f9c96d4f4d4e4126a1d214",
+  "model": {
+    "@kind": "rtcstatus"
+  }
+}

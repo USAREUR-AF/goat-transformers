@@ -1,0 +1,10 @@
+{
+  "name": "unicore-roundtrip-quality",
+  "from": "unicore",
+  "to": "unicore",
+  "input": "79ba030500d0ed0a312731000044310000617e9b31000080bfc9",
+  "expect": "79ba030500d0ed0a312731000044310000617e9b31000080bfc9",
+  "model": {
+    "@kind": "quality"
+  }
+}

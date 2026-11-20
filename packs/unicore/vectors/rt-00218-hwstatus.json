@@ -1,0 +1,10 @@
+{
+  "name": "unicore-roundtrip-hwstatus",
+  "from": "unicore",
+  "to": "unicore",
+  "input": "19da002800708daa0bc70b0000e40b0000011e3b0cd2131dc7000088c0000020c0000040bf2e632e550000304000009040b38a6106385a484a0faecc1d",
+  "expect": "19da002800708daa0bc70b0000e40b0000011e3b0cd2131dc7000088c0000020c0000040bf2e632e550000304000009040b38a6106385a484a0faecc1d",
+  "model": {
+    "@kind": "hwstatus"
+  }
+}
