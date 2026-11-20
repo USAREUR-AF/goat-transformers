@@ -43,6 +43,14 @@ below, and every vector of another pack that converts from or to one of them.
 | `packs/adsb` | `adsb` | CC-BY-NC-SA-4.0 | `everything` | its own licence |
 | `packs/adsb-df18` | `adsb-df18` | Apache-2.0 | `everything` | uses module adsb (CC-BY-NC-SA-4.0) |
 | `packs/cap` | `cap` | LicenseRef-OASIS-Notice | `open` | its own licence |
+| `packs/cds-aggregate` | `cds-aggregate` | CC-BY-4.0 | `open` | its own licence |
+| `packs/cds-curb-area` | `cds-curb-area` | CC-BY-4.0 | `open` | its own licence |
+| `packs/cds-curb-event` | `cds-curb-event` | CC-BY-4.0 | `open` | its own licence |
+| `packs/cds-curb-object` | `cds-curb-object` | CC-BY-4.0 | `open` | its own licence |
+| `packs/cds-curb-space` | `cds-curb-space` | CC-BY-4.0 | `open` | its own licence |
+| `packs/cds-curb-status` | `cds-curb-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/cds-curb-zone` | `cds-curb-zone` | CC-BY-4.0 | `open` | its own licence |
+| `packs/cds-session` | `cds-session` | CC-BY-4.0 | `open` | its own licence |
 | `packs/gbfs-1.0-free-bike-status` | `gbfs-1.0-free-bike-status` | CC-BY-3.0 | `open` | its own licence |
 | `packs/gbfs-1.0-gbfs` | `gbfs-1.0-gbfs` | CC-BY-3.0 | `open` | its own licence |
 | `packs/gbfs-1.0-station-information` | `gbfs-1.0-station-information` | CC-BY-3.0 | `open` | its own licence |
@@ -131,6 +139,9 @@ below, and every vector of another pack that converts from or to one of them.
 | `packs/kml` | `kml` | LicenseRef-OGC-Document | `open` | its own licence |
 | `packs/mds` | `mds` | CC-BY-4.0 | `open` | its own licence |
 | `packs/mvt` | `mvt` | CC-BY-3.0 | `open` | its own licence |
+| `packs/open311-request` | `open311-request` | CC-BY-3.0 | `open` | its own licence |
+| `packs/open311-request-response` | `open311-request-response` | CC-BY-3.0 | `open` | its own licence |
+| `packs/open311-service` | `open311-service` | CC-BY-3.0 | `open` | its own licence |
 | `packs/overture-address` | `overture-address` | CC-BY-4.0 | `open` | its own licence |
 | `packs/overture-bathymetry` | `overture-bathymetry` | CC-BY-4.0 | `open` | its own licence |
 | `packs/overture-building` | `overture-building` | CC-BY-4.0 | `open` | its own licence |
@@ -546,6 +557,14 @@ below, and every vector of another pack that converts from or to one of them.
 |---|---|---|---|
 | `model/adsb.def` | CC-BY-NC-SA-4.0 | `everything` | its own licence |
 | `model/cap.def` | LicenseRef-OASIS-Notice | `open` | its own licence |
+| `model/cdsaggregate.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/cdscurbarea.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/cdscurbevent.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/cdscurbobject.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/cdscurbspace.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/cdscurbstatus.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/cdscurbzone.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/cdssession.def` | CC-BY-4.0 | `open` | its own licence |
 | `model/gbfs10freebikestatus.def` | CC-BY-3.0 | `open` | its own licence |
 | `model/gbfs10gbfs.def` | CC-BY-3.0 | `open` | its own licence |
 | `model/gbfs10stationinformation.def` | CC-BY-3.0 | `open` | its own licence |
@@ -634,6 +653,9 @@ below, and every vector of another pack that converts from or to one of them.
 | `model/kml.def` | LicenseRef-OGC-Document | `open` | its own licence |
 | `model/mds.def` | CC-BY-4.0 | `open` | its own licence |
 | `model/mvt.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/open311request.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/open311requestresponse.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/open311service.def` | CC-BY-3.0 | `open` | its own licence |
 | `model/overtureaddress.def` | CC-BY-4.0 | `open` | its own licence |
 | `model/overturebathymetry.def` | CC-BY-4.0 | `open` | its own licence |
 | `model/overturebuilding.def` | CC-BY-4.0 | `open` | its own licence |

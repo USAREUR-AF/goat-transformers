@@ -162,3 +162,15 @@ path = "model/gpx.def"
 precedence = "override"
 SPDX-FileCopyrightText = "TopoGrafix (GPX 1.1 schema)"
 SPDX-License-Identifier = "LicenseRef-unstated"
+
+[[annotations]]
+path = ["packs/cds-*/**", "model/cds*.def"]
+precedence = "override"
+SPDX-FileCopyrightText = "Open Mobility Foundation (Curb Data Specification)"
+SPDX-License-Identifier = "CC-BY-4.0"
+
+[[annotations]]
+path = ["packs/open311-*/**", "model/open311*.def"]
+precedence = "override"
+SPDX-FileCopyrightText = "Open311 (GeoReport v2 specification)"
+SPDX-License-Identifier = "CC-BY-3.0"
