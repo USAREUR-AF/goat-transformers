@@ -15,7 +15,7 @@ no engine holds code for any of the three formats.
 [![REUSE](https://img.shields.io/badge/REUSE-compliant-green.svg)](LICENSING.md)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 
-**2,531 formats · 13,663 message kinds · 17,628 conversion vectors · 7 engines**, counted
+**2,560 formats · 14,013 message kinds · 18,442 conversion vectors · 7 engines**, counted
 by [`tools/repo-stats`](tools/repo-stats).
 
 ```console
@@ -59,13 +59,14 @@ Counted from the tree by `python3 -I tools/repo-stats`.
 
 | | Count |
 |---|---:|
-| Formats | 2,531 |
-| Message kinds (one message layout of a format, such as one MAVLink message or one NMEA 2000 parameter group) | 13,663 |
-| Typed keys in the shared model, in 1,531 modules | 249,773 |
-| Lists in the shared model (parts of a message that repeat) | 26,619 |
-| Conversion vectors (an input message and the exact expected output) | 17,628 |
-| Load vectors (a pack that must load, or must be refused with a named error) | 862 |
-| Synthetic formats that exercise each rule of the specification | 156 |
+| Formats | 2,560 |
+| Message kinds (one message layout of a format, such as one MAVLink message or one NMEA 2000 parameter group) | 14,013 |
+| Typed keys in the shared model, in 1,558 modules | 254,353 |
+| Lists in the shared model (parts of a message that repeat) | 26,770 |
+| Conversion vectors (an input message and the exact expected output) | 18,442 |
+| Load vectors (a pack that must load, or must be refused with a named error) | 1,095 |
+| Synthetic formats that exercise each rule of the specification | 211 |
+| Packs in each licence profile, `open` / `open+copyleft` / `everything` ([LICENSING.md](LICENSING.md)) | 2,768 / 2,768 / 2,771 |
 | Wire types (an engine's codec for a family of encodings): `xml`, `json`, `geojson`, `protobuf`, `bits`, `text`, `tlv` | 7 |
 | Engines, each using only its language's standard library | 7 |
 | WebAssembly module of the Rust engine, small build, no imports | 376,470 bytes |
