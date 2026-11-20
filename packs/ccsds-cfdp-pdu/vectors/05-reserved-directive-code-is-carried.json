@@ -1,0 +1,25 @@
+{
+  "name": "reserved-directive-code-is-carried",
+  "from": "ccsds-cfdp-pdu",
+  "to": "ccsds-cfdp-pdu",
+  "input": "20000a36000000050000000000000600000007ff",
+  "expect": "20000a36000000050000000000000600000007ff",
+  "model": {
+    "@kind": "file-directive",
+    "ccsdscfdp.direction": "0",
+    "ccsdscfdp.transmission_mode": "0",
+    "ccsdscfdp.crc_flag": "0",
+    "ccsdscfdp.large_file_flag": "0",
+    "ccsdscfdp.data_field_length": "10",
+    "ccsdscfdp.segmentation_control": "0",
+    "ccsdscfdp.entity_id_length": "3",
+    "ccsdscfdp.segment_metadata_flag": "0",
+    "ccsdscfdp.tsn_length": "6",
+    "ccsdscfdp.source_entity_id": "5",
+    "ccsdscfdp.transaction_seq_num": "6",
+    "ccsdscfdp.dest_entity_id": "7",
+    "ccsdscfdp.directive_code": "255"
+  },
+  "source": "constructed",
+  "reference": "directive code 0xff, reserved: the pack carries the code and does not check it; 4-octet IDs and a 7-octet sequence number"
+}

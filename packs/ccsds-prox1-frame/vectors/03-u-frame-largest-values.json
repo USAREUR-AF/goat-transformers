@@ -1,0 +1,20 @@
+{
+  "name": "u-frame-largest-values",
+  "from": "ccsds-prox1-frame",
+  "to": "ccsds-prox1-frame",
+  "input": "afffffffff",
+  "expect": "afffffffff",
+  "model": {
+    "@kind": "u-frame",
+    "ccsdsprox1.qos_indicator": "1",
+    "ccsdsprox1.dfc_id": "3",
+    "ccsdsprox1.spacecraft_id": "1023",
+    "ccsdsprox1.physical_channel_id": "1",
+    "ccsdsprox1.port_id": "7",
+    "ccsdsprox1.source_dest_id": "1",
+    "ccsdsprox1.frame_length": "2047",
+    "ccsdsprox1.frame_seq_number": "255"
+  },
+  "source": "constructed",
+  "reference": "a U-frame of user defined data (DFC 3) with every field at its largest value"
+}

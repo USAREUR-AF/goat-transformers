@@ -1,0 +1,9 @@
+{
+  "name": "four-octets-is-malformed",
+  "from": "ccsds-prox1-frame",
+  "to": "ccsds-prox1-frame",
+  "input": "82aa3018",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "the U-frame cut to 4 octets"
+}

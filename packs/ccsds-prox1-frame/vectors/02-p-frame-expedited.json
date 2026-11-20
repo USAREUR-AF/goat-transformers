@@ -1,0 +1,20 @@
+{
+  "name": "p-frame-expedited",
+  "from": "ccsds-prox1-frame",
+  "to": "ccsds-prox1-frame",
+  "input": "b2aa880600",
+  "expect": "b2aa880600",
+  "model": {
+    "@kind": "p-frame",
+    "ccsdsprox1.qos_indicator": "1",
+    "ccsdsprox1.dfc_id": "0",
+    "ccsdsprox1.spacecraft_id": "682",
+    "ccsdsprox1.physical_channel_id": "1",
+    "ccsdsprox1.port_id": "0",
+    "ccsdsprox1.source_dest_id": "1",
+    "ccsdsprox1.frame_length": "6",
+    "ccsdsprox1.frame_seq_number": "0"
+  },
+  "source": "constructed",
+  "reference": "an expedited P-frame on physical channel 1, spacecraft ID naming the receiver, DFC and port 0 as for a P-frame"
+}

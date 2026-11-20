@@ -1,0 +1,9 @@
+{
+  "name": "cut-inside-destination-id-is-malformed",
+  "from": "ccsds-cfdp-pdu",
+  "to": "ccsds-cfdp-pdu",
+  "input": "3402089b01010001000202",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "the file data header cut to 11 octets, inside its destination entity ID"
+}

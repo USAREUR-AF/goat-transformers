@@ -1,0 +1,523 @@
+# CCSDS File Delivery Protocol PDU, the fixed PDU header (727.0-B-5 section 5.1)
+# with its three variable-length fields, and the directive code of a file
+# directive PDU (5.2.1). Public (CCSDS Blue Book). Decode ignores the rest of the
+# data field and the CRC; encode writes the mapped octets only (pack.md).
+# Bits are numbered from 0 at the first transmitted bit, most significant bit first.
+# Each entity ID takes (bits 25-27) + 1 octets and the transaction's count
+# takes (bits 29-31) + 1 octets, from 1 up to 8. Their places follow from
+# both lengths: gate blocks (engine-spec 0.17), one per source ID length, and
+# within it one per sequence number length. The header is 4 + 2(a+1) + (b+1)
+# octets for a = bits 25-27 and b = bits 29-31.
+format     ccsds-cfdp-pdu
+version    0.1.0
+distribution public
+source     "CCSDS 727.0-B-5 CCSDS File Delivery Protocol (CFDP), Blue Book, July 2020 (Editorial Change 1), https://ccsds.org/Pubs/727x0b5e1.pdf, sections 5.1 and 5.2.1; reuse with attribution under the CCSDS reproduction permission statement"
+uses       ccsdscfdp
+wire       bits
+word_bytes 1
+bit_order  msb
+when   0:0:3  1                                       # version: 001 (the second version of the protocol)
+field  ccsdscfdp.direction             0:4:1    uint
+field  ccsdscfdp.transmission_mode     0:5:1    uint
+field  ccsdscfdp.crc_flag              0:6:1    uint
+field  ccsdscfdp.large_file_flag       0:7:1    uint
+field  ccsdscfdp.data_field_length     0:8:16   uint
+field  ccsdscfdp.segmentation_control  0:24:1   uint
+field  ccsdscfdp.entity_id_length      0:25:3   uint
+field  ccsdscfdp.segment_metadata_flag 0:28:1   uint
+field  ccsdscfdp.tsn_length            0:29:3   uint
+if  0:25:3  0
+  field  ccsdscfdp.source_entity_id     0:32:8  uint
+  if  0:29:3  0
+    field  ccsdscfdp.transaction_seq_num  0:40:8  uint
+    field  ccsdscfdp.dest_entity_id       0:48:8  uint
+  end
+  if  0:29:3  1
+    field  ccsdscfdp.transaction_seq_num  0:40:16  uint
+    field  ccsdscfdp.dest_entity_id       0:56:8  uint
+  end
+  if  0:29:3  2
+    field  ccsdscfdp.transaction_seq_num  0:40:24  uint
+    field  ccsdscfdp.dest_entity_id       0:64:8  uint
+  end
+  if  0:29:3  3
+    field  ccsdscfdp.transaction_seq_num  0:40:32  uint
+    field  ccsdscfdp.dest_entity_id       0:72:8  uint
+  end
+  if  0:29:3  4
+    field  ccsdscfdp.transaction_seq_num  0:40:40  uint
+    field  ccsdscfdp.dest_entity_id       0:80:8  uint
+  end
+  if  0:29:3  5
+    field  ccsdscfdp.transaction_seq_num  0:40:48  uint
+    field  ccsdscfdp.dest_entity_id       0:88:8  uint
+  end
+  if  0:29:3  6
+    field  ccsdscfdp.transaction_seq_num  0:40:56  uint
+    field  ccsdscfdp.dest_entity_id       0:96:8  uint
+  end
+  if  0:29:3  7
+    field  ccsdscfdp.transaction_seq_num  0:40:64  uint
+    field  ccsdscfdp.dest_entity_id       0:104:8  uint
+  end
+end
+if  0:25:3  1
+  field  ccsdscfdp.source_entity_id     0:32:16  uint
+  if  0:29:3  0
+    field  ccsdscfdp.transaction_seq_num  0:48:8  uint
+    field  ccsdscfdp.dest_entity_id       0:56:16  uint
+  end
+  if  0:29:3  1
+    field  ccsdscfdp.transaction_seq_num  0:48:16  uint
+    field  ccsdscfdp.dest_entity_id       0:64:16  uint
+  end
+  if  0:29:3  2
+    field  ccsdscfdp.transaction_seq_num  0:48:24  uint
+    field  ccsdscfdp.dest_entity_id       0:72:16  uint
+  end
+  if  0:29:3  3
+    field  ccsdscfdp.transaction_seq_num  0:48:32  uint
+    field  ccsdscfdp.dest_entity_id       0:80:16  uint
+  end
+  if  0:29:3  4
+    field  ccsdscfdp.transaction_seq_num  0:48:40  uint
+    field  ccsdscfdp.dest_entity_id       0:88:16  uint
+  end
+  if  0:29:3  5
+    field  ccsdscfdp.transaction_seq_num  0:48:48  uint
+    field  ccsdscfdp.dest_entity_id       0:96:16  uint
+  end
+  if  0:29:3  6
+    field  ccsdscfdp.transaction_seq_num  0:48:56  uint
+    field  ccsdscfdp.dest_entity_id       0:104:16  uint
+  end
+  if  0:29:3  7
+    field  ccsdscfdp.transaction_seq_num  0:48:64  uint
+    field  ccsdscfdp.dest_entity_id       0:112:16  uint
+  end
+end
+if  0:25:3  2
+  field  ccsdscfdp.source_entity_id     0:32:24  uint
+  if  0:29:3  0
+    field  ccsdscfdp.transaction_seq_num  0:56:8  uint
+    field  ccsdscfdp.dest_entity_id       0:64:24  uint
+  end
+  if  0:29:3  1
+    field  ccsdscfdp.transaction_seq_num  0:56:16  uint
+    field  ccsdscfdp.dest_entity_id       0:72:24  uint
+  end
+  if  0:29:3  2
+    field  ccsdscfdp.transaction_seq_num  0:56:24  uint
+    field  ccsdscfdp.dest_entity_id       0:80:24  uint
+  end
+  if  0:29:3  3
+    field  ccsdscfdp.transaction_seq_num  0:56:32  uint
+    field  ccsdscfdp.dest_entity_id       0:88:24  uint
+  end
+  if  0:29:3  4
+    field  ccsdscfdp.transaction_seq_num  0:56:40  uint
+    field  ccsdscfdp.dest_entity_id       0:96:24  uint
+  end
+  if  0:29:3  5
+    field  ccsdscfdp.transaction_seq_num  0:56:48  uint
+    field  ccsdscfdp.dest_entity_id       0:104:24  uint
+  end
+  if  0:29:3  6
+    field  ccsdscfdp.transaction_seq_num  0:56:56  uint
+    field  ccsdscfdp.dest_entity_id       0:112:24  uint
+  end
+  if  0:29:3  7
+    field  ccsdscfdp.transaction_seq_num  0:56:64  uint
+    field  ccsdscfdp.dest_entity_id       0:120:24  uint
+  end
+end
+if  0:25:3  3
+  field  ccsdscfdp.source_entity_id     0:32:32  uint
+  if  0:29:3  0
+    field  ccsdscfdp.transaction_seq_num  0:64:8  uint
+    field  ccsdscfdp.dest_entity_id       0:72:32  uint
+  end
+  if  0:29:3  1
+    field  ccsdscfdp.transaction_seq_num  0:64:16  uint
+    field  ccsdscfdp.dest_entity_id       0:80:32  uint
+  end
+  if  0:29:3  2
+    field  ccsdscfdp.transaction_seq_num  0:64:24  uint
+    field  ccsdscfdp.dest_entity_id       0:88:32  uint
+  end
+  if  0:29:3  3
+    field  ccsdscfdp.transaction_seq_num  0:64:32  uint
+    field  ccsdscfdp.dest_entity_id       0:96:32  uint
+  end
+  if  0:29:3  4
+    field  ccsdscfdp.transaction_seq_num  0:64:40  uint
+    field  ccsdscfdp.dest_entity_id       0:104:32  uint
+  end
+  if  0:29:3  5
+    field  ccsdscfdp.transaction_seq_num  0:64:48  uint
+    field  ccsdscfdp.dest_entity_id       0:112:32  uint
+  end
+  if  0:29:3  6
+    field  ccsdscfdp.transaction_seq_num  0:64:56  uint
+    field  ccsdscfdp.dest_entity_id       0:120:32  uint
+  end
+  if  0:29:3  7
+    field  ccsdscfdp.transaction_seq_num  0:64:64  uint
+    field  ccsdscfdp.dest_entity_id       0:128:32  uint
+  end
+end
+if  0:25:3  4
+  field  ccsdscfdp.source_entity_id     0:32:40  uint
+  if  0:29:3  0
+    field  ccsdscfdp.transaction_seq_num  0:72:8  uint
+    field  ccsdscfdp.dest_entity_id       0:80:40  uint
+  end
+  if  0:29:3  1
+    field  ccsdscfdp.transaction_seq_num  0:72:16  uint
+    field  ccsdscfdp.dest_entity_id       0:88:40  uint
+  end
+  if  0:29:3  2
+    field  ccsdscfdp.transaction_seq_num  0:72:24  uint
+    field  ccsdscfdp.dest_entity_id       0:96:40  uint
+  end
+  if  0:29:3  3
+    field  ccsdscfdp.transaction_seq_num  0:72:32  uint
+    field  ccsdscfdp.dest_entity_id       0:104:40  uint
+  end
+  if  0:29:3  4
+    field  ccsdscfdp.transaction_seq_num  0:72:40  uint
+    field  ccsdscfdp.dest_entity_id       0:112:40  uint
+  end
+  if  0:29:3  5
+    field  ccsdscfdp.transaction_seq_num  0:72:48  uint
+    field  ccsdscfdp.dest_entity_id       0:120:40  uint
+  end
+  if  0:29:3  6
+    field  ccsdscfdp.transaction_seq_num  0:72:56  uint
+    field  ccsdscfdp.dest_entity_id       0:128:40  uint
+  end
+  if  0:29:3  7
+    field  ccsdscfdp.transaction_seq_num  0:72:64  uint
+    field  ccsdscfdp.dest_entity_id       0:136:40  uint
+  end
+end
+if  0:25:3  5
+  field  ccsdscfdp.source_entity_id     0:32:48  uint
+  if  0:29:3  0
+    field  ccsdscfdp.transaction_seq_num  0:80:8  uint
+    field  ccsdscfdp.dest_entity_id       0:88:48  uint
+  end
+  if  0:29:3  1
+    field  ccsdscfdp.transaction_seq_num  0:80:16  uint
+    field  ccsdscfdp.dest_entity_id       0:96:48  uint
+  end
+  if  0:29:3  2
+    field  ccsdscfdp.transaction_seq_num  0:80:24  uint
+    field  ccsdscfdp.dest_entity_id       0:104:48  uint
+  end
+  if  0:29:3  3
+    field  ccsdscfdp.transaction_seq_num  0:80:32  uint
+    field  ccsdscfdp.dest_entity_id       0:112:48  uint
+  end
+  if  0:29:3  4
+    field  ccsdscfdp.transaction_seq_num  0:80:40  uint
+    field  ccsdscfdp.dest_entity_id       0:120:48  uint
+  end
+  if  0:29:3  5
+    field  ccsdscfdp.transaction_seq_num  0:80:48  uint
+    field  ccsdscfdp.dest_entity_id       0:128:48  uint
+  end
+  if  0:29:3  6
+    field  ccsdscfdp.transaction_seq_num  0:80:56  uint
+    field  ccsdscfdp.dest_entity_id       0:136:48  uint
+  end
+  if  0:29:3  7
+    field  ccsdscfdp.transaction_seq_num  0:80:64  uint
+    field  ccsdscfdp.dest_entity_id       0:144:48  uint
+  end
+end
+if  0:25:3  6
+  field  ccsdscfdp.source_entity_id     0:32:56  uint
+  if  0:29:3  0
+    field  ccsdscfdp.transaction_seq_num  0:88:8  uint
+    field  ccsdscfdp.dest_entity_id       0:96:56  uint
+  end
+  if  0:29:3  1
+    field  ccsdscfdp.transaction_seq_num  0:88:16  uint
+    field  ccsdscfdp.dest_entity_id       0:104:56  uint
+  end
+  if  0:29:3  2
+    field  ccsdscfdp.transaction_seq_num  0:88:24  uint
+    field  ccsdscfdp.dest_entity_id       0:112:56  uint
+  end
+  if  0:29:3  3
+    field  ccsdscfdp.transaction_seq_num  0:88:32  uint
+    field  ccsdscfdp.dest_entity_id       0:120:56  uint
+  end
+  if  0:29:3  4
+    field  ccsdscfdp.transaction_seq_num  0:88:40  uint
+    field  ccsdscfdp.dest_entity_id       0:128:56  uint
+  end
+  if  0:29:3  5
+    field  ccsdscfdp.transaction_seq_num  0:88:48  uint
+    field  ccsdscfdp.dest_entity_id       0:136:56  uint
+  end
+  if  0:29:3  6
+    field  ccsdscfdp.transaction_seq_num  0:88:56  uint
+    field  ccsdscfdp.dest_entity_id       0:144:56  uint
+  end
+  if  0:29:3  7
+    field  ccsdscfdp.transaction_seq_num  0:88:64  uint
+    field  ccsdscfdp.dest_entity_id       0:152:56  uint
+  end
+end
+if  0:25:3  7
+  field  ccsdscfdp.source_entity_id     0:32:64  uint
+  if  0:29:3  0
+    field  ccsdscfdp.transaction_seq_num  0:96:8  uint
+    field  ccsdscfdp.dest_entity_id       0:104:64  uint
+  end
+  if  0:29:3  1
+    field  ccsdscfdp.transaction_seq_num  0:96:16  uint
+    field  ccsdscfdp.dest_entity_id       0:112:64  uint
+  end
+  if  0:29:3  2
+    field  ccsdscfdp.transaction_seq_num  0:96:24  uint
+    field  ccsdscfdp.dest_entity_id       0:120:64  uint
+  end
+  if  0:29:3  3
+    field  ccsdscfdp.transaction_seq_num  0:96:32  uint
+    field  ccsdscfdp.dest_entity_id       0:128:64  uint
+  end
+  if  0:29:3  4
+    field  ccsdscfdp.transaction_seq_num  0:96:40  uint
+    field  ccsdscfdp.dest_entity_id       0:136:64  uint
+  end
+  if  0:29:3  5
+    field  ccsdscfdp.transaction_seq_num  0:96:48  uint
+    field  ccsdscfdp.dest_entity_id       0:144:64  uint
+  end
+  if  0:29:3  6
+    field  ccsdscfdp.transaction_seq_num  0:96:56  uint
+    field  ccsdscfdp.dest_entity_id       0:152:64  uint
+  end
+  if  0:29:3  7
+    field  ccsdscfdp.transaction_seq_num  0:96:64  uint
+    field  ccsdscfdp.dest_entity_id       0:160:64  uint
+  end
+end
+
+kind     file-directive                               # PDU type 0
+when     0:3:1  0
+requires ccsdscfdp.directive_code
+if  0:25:3  0
+  if  0:29:3  0
+    field  ccsdscfdp.directive_code  0:56:8  uint
+  end
+  if  0:29:3  1
+    field  ccsdscfdp.directive_code  0:64:8  uint
+  end
+  if  0:29:3  2
+    field  ccsdscfdp.directive_code  0:72:8  uint
+  end
+  if  0:29:3  3
+    field  ccsdscfdp.directive_code  0:80:8  uint
+  end
+  if  0:29:3  4
+    field  ccsdscfdp.directive_code  0:88:8  uint
+  end
+  if  0:29:3  5
+    field  ccsdscfdp.directive_code  0:96:8  uint
+  end
+  if  0:29:3  6
+    field  ccsdscfdp.directive_code  0:104:8  uint
+  end
+  if  0:29:3  7
+    field  ccsdscfdp.directive_code  0:112:8  uint
+  end
+end
+if  0:25:3  1
+  if  0:29:3  0
+    field  ccsdscfdp.directive_code  0:72:8  uint
+  end
+  if  0:29:3  1
+    field  ccsdscfdp.directive_code  0:80:8  uint
+  end
+  if  0:29:3  2
+    field  ccsdscfdp.directive_code  0:88:8  uint
+  end
+  if  0:29:3  3
+    field  ccsdscfdp.directive_code  0:96:8  uint
+  end
+  if  0:29:3  4
+    field  ccsdscfdp.directive_code  0:104:8  uint
+  end
+  if  0:29:3  5
+    field  ccsdscfdp.directive_code  0:112:8  uint
+  end
+  if  0:29:3  6
+    field  ccsdscfdp.directive_code  0:120:8  uint
+  end
+  if  0:29:3  7
+    field  ccsdscfdp.directive_code  0:128:8  uint
+  end
+end
+if  0:25:3  2
+  if  0:29:3  0
+    field  ccsdscfdp.directive_code  0:88:8  uint
+  end
+  if  0:29:3  1
+    field  ccsdscfdp.directive_code  0:96:8  uint
+  end
+  if  0:29:3  2
+    field  ccsdscfdp.directive_code  0:104:8  uint
+  end
+  if  0:29:3  3
+    field  ccsdscfdp.directive_code  0:112:8  uint
+  end
+  if  0:29:3  4
+    field  ccsdscfdp.directive_code  0:120:8  uint
+  end
+  if  0:29:3  5
+    field  ccsdscfdp.directive_code  0:128:8  uint
+  end
+  if  0:29:3  6
+    field  ccsdscfdp.directive_code  0:136:8  uint
+  end
+  if  0:29:3  7
+    field  ccsdscfdp.directive_code  0:144:8  uint
+  end
+end
+if  0:25:3  3
+  if  0:29:3  0
+    field  ccsdscfdp.directive_code  0:104:8  uint
+  end
+  if  0:29:3  1
+    field  ccsdscfdp.directive_code  0:112:8  uint
+  end
+  if  0:29:3  2
+    field  ccsdscfdp.directive_code  0:120:8  uint
+  end
+  if  0:29:3  3
+    field  ccsdscfdp.directive_code  0:128:8  uint
+  end
+  if  0:29:3  4
+    field  ccsdscfdp.directive_code  0:136:8  uint
+  end
+  if  0:29:3  5
+    field  ccsdscfdp.directive_code  0:144:8  uint
+  end
+  if  0:29:3  6
+    field  ccsdscfdp.directive_code  0:152:8  uint
+  end
+  if  0:29:3  7
+    field  ccsdscfdp.directive_code  0:160:8  uint
+  end
+end
+if  0:25:3  4
+  if  0:29:3  0
+    field  ccsdscfdp.directive_code  0:120:8  uint
+  end
+  if  0:29:3  1
+    field  ccsdscfdp.directive_code  0:128:8  uint
+  end
+  if  0:29:3  2
+    field  ccsdscfdp.directive_code  0:136:8  uint
+  end
+  if  0:29:3  3
+    field  ccsdscfdp.directive_code  0:144:8  uint
+  end
+  if  0:29:3  4
+    field  ccsdscfdp.directive_code  0:152:8  uint
+  end
+  if  0:29:3  5
+    field  ccsdscfdp.directive_code  0:160:8  uint
+  end
+  if  0:29:3  6
+    field  ccsdscfdp.directive_code  0:168:8  uint
+  end
+  if  0:29:3  7
+    field  ccsdscfdp.directive_code  0:176:8  uint
+  end
+end
+if  0:25:3  5
+  if  0:29:3  0
+    field  ccsdscfdp.directive_code  0:136:8  uint
+  end
+  if  0:29:3  1
+    field  ccsdscfdp.directive_code  0:144:8  uint
+  end
+  if  0:29:3  2
+    field  ccsdscfdp.directive_code  0:152:8  uint
+  end
+  if  0:29:3  3
+    field  ccsdscfdp.directive_code  0:160:8  uint
+  end
+  if  0:29:3  4
+    field  ccsdscfdp.directive_code  0:168:8  uint
+  end
+  if  0:29:3  5
+    field  ccsdscfdp.directive_code  0:176:8  uint
+  end
+  if  0:29:3  6
+    field  ccsdscfdp.directive_code  0:184:8  uint
+  end
+  if  0:29:3  7
+    field  ccsdscfdp.directive_code  0:192:8  uint
+  end
+end
+if  0:25:3  6
+  if  0:29:3  0
+    field  ccsdscfdp.directive_code  0:152:8  uint
+  end
+  if  0:29:3  1
+    field  ccsdscfdp.directive_code  0:160:8  uint
+  end
+  if  0:29:3  2
+    field  ccsdscfdp.directive_code  0:168:8  uint
+  end
+  if  0:29:3  3
+    field  ccsdscfdp.directive_code  0:176:8  uint
+  end
+  if  0:29:3  4
+    field  ccsdscfdp.directive_code  0:184:8  uint
+  end
+  if  0:29:3  5
+    field  ccsdscfdp.directive_code  0:192:8  uint
+  end
+  if  0:29:3  6
+    field  ccsdscfdp.directive_code  0:200:8  uint
+  end
+  if  0:29:3  7
+    field  ccsdscfdp.directive_code  0:208:8  uint
+  end
+end
+if  0:25:3  7
+  if  0:29:3  0
+    field  ccsdscfdp.directive_code  0:168:8  uint
+  end
+  if  0:29:3  1
+    field  ccsdscfdp.directive_code  0:176:8  uint
+  end
+  if  0:29:3  2
+    field  ccsdscfdp.directive_code  0:184:8  uint
+  end
+  if  0:29:3  3
+    field  ccsdscfdp.directive_code  0:192:8  uint
+  end
+  if  0:29:3  4
+    field  ccsdscfdp.directive_code  0:200:8  uint
+  end
+  if  0:29:3  5
+    field  ccsdscfdp.directive_code  0:208:8  uint
+  end
+  if  0:29:3  6
+    field  ccsdscfdp.directive_code  0:216:8  uint
+  end
+  if  0:29:3  7
+    field  ccsdscfdp.directive_code  0:224:8  uint
+  end
+end
+
+kind     file-data                                    # PDU type 1
+when     0:3:1  1

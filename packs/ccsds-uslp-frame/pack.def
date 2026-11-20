@@ -1,0 +1,55 @@
+# CCSDS USLP Transfer Frame primary header (732.1-B-3 section 4.1.2), non-truncated
+# (7 to 14 octets) and truncated (4 octets, annex D). Public (CCSDS Blue Book).
+# A message of this pack is a whole frame. Decode ignores everything after the
+# mapped octets (insert zone, data field header, data field, OCF, FECF); encode
+# writes the mapped octets only (pack.md, "Not mapped").
+# Bits are numbered from 0 at the first transmitted bit, most significant bit first.
+# The VC frame count is 0 to 7 octets long as bits 53-55 say: gate blocks
+# (engine-spec 0.17), one per length.
+format     ccsds-uslp-frame
+version    0.1.0
+distribution public
+source     "CCSDS 732.1-B-3 Unified Space Data Link Protocol, Blue Book, June 2024 (Editorial Change 1), https://ccsds.org/Pubs/732x1b3e1.pdf, section 4.1.2 and annex D; reuse with attribution under the CCSDS reproduction permission statement"
+uses       ccsdsuslp
+wire       bits
+word_bytes 1
+bit_order  msb
+when   0:0:4  12                                      # transfer frame version number: 1100 (version 4)
+field  ccsdsuslp.spacecraft_id        0:4:16   uint
+field  ccsdsuslp.source_dest_id       0:20:1   uint
+field  ccsdsuslp.virtual_channel_id   0:21:6   uint
+field  ccsdsuslp.map_id               0:27:4   uint
+
+kind     non-truncated                                # end of frame primary header flag 0
+when     0:31:1  0
+requires ccsdsuslp.frame_length
+field  ccsdsuslp.frame_length                 0:32:16  uint
+field  ccsdsuslp.bypass_flag                  0:48:1   uint
+field  ccsdsuslp.protocol_control_command_flag 0:49:1  uint
+field  ccsdsuslp.reserve_spares               0:50:2   uint
+field  ccsdsuslp.ocf_flag                     0:52:1   uint
+field  ccsdsuslp.vcf_count_length             0:53:3   uint
+if  0:53:3  1
+  field  ccsdsuslp.vcf_count  0:56:8  uint
+end
+if  0:53:3  2
+  field  ccsdsuslp.vcf_count  0:56:16  uint
+end
+if  0:53:3  3
+  field  ccsdsuslp.vcf_count  0:56:24  uint
+end
+if  0:53:3  4
+  field  ccsdsuslp.vcf_count  0:56:32  uint
+end
+if  0:53:3  5
+  field  ccsdsuslp.vcf_count  0:56:40  uint
+end
+if  0:53:3  6
+  field  ccsdsuslp.vcf_count  0:56:48  uint
+end
+if  0:53:3  7
+  field  ccsdsuslp.vcf_count  0:56:56  uint
+end
+
+kind     truncated                                    # end of frame primary header flag 1: 4 octets
+when     0:31:1  1

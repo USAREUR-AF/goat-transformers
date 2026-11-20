@@ -1,0 +1,9 @@
+{
+  "name": "version-0-is-no-kind",
+  "from": "ccsds-cfdp-pdu",
+  "to": "ccsds-cfdp-pdu",
+  "input": "00000a00012a0204",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "the EOF PDU with version 000 (the first version of the protocol), not 001"
+}

@@ -1,0 +1,15 @@
+# The ccsdsprox1 module: the fields of the CCSDS Proximity-1 Version-3 Transfer
+# Frame header, each as the wire integer. The pack ccsds-prox1-frame maps them.
+# Bit numbers count from 0 at the first transmitted bit.
+module        ccsdsprox1
+version       0.1.0
+distribution  public
+source        "CCSDS 211.0-B-6 Proximity-1 Space Link Protocol, Data Link Layer, Blue Book, July 2020 (Editorial Change 1), https://ccsds.org/Pubs/211x0b6e1.pdf, section 3.2.2; reuse with attribution under the CCSDS reproduction permission statement"
+key  qos_indicator               int  -  "bit 2: 0 = sequence controlled service, 1 = expedited service"
+key  dfc_id                      int  -  "bits 4-5: data field construction (U-frame: 0 packets, 1 segment data, 2 reserved, 3 user defined; P-frame: 0)"
+key  spacecraft_id               int  -  "bits 6-15: spacecraft identifier, 10 bits"
+key  physical_channel_id         int  -  "bit 16: physical channel identifier"
+key  port_id                     int  -  "bits 17-19: output port of the user data, 0-7 (P-frame: 0)"
+key  source_dest_id              int  -  "bit 20: 0 = the spacecraft identifier names the sender, 1 = the intended receiver"
+key  frame_length                int  -  "bits 21-31: total octets of the frame, minus one (4 to 2047)"
+key  frame_seq_number            int  -  "bits 32-39: frame sequence number, modulo 256"

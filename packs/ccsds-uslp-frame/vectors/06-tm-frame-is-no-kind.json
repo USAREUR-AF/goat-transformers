@@ -1,0 +1,9 @@
+{
+  "name": "tm-frame-is-no-kind",
+  "from": "ccsds-uslp-frame",
+  "to": "ccsds-uslp-frame",
+  "input": "0abc000000001800",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "8 octets whose first four bits are 0000, the version of a TM frame, not 1100"
+}

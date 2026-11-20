@@ -1,0 +1,20 @@
+{
+  "name": "u-frame-packets",
+  "from": "ccsds-prox1-frame",
+  "to": "ccsds-prox1-frame",
+  "input": "82aa3018110000000000000000000000000000000000000000",
+  "expect": "82aa301811",
+  "model": {
+    "@kind": "u-frame",
+    "ccsdsprox1.qos_indicator": "0",
+    "ccsdsprox1.dfc_id": "0",
+    "ccsdsprox1.spacecraft_id": "682",
+    "ccsdsprox1.physical_channel_id": "0",
+    "ccsdsprox1.port_id": "3",
+    "ccsdsprox1.source_dest_id": "0",
+    "ccsdsprox1.frame_length": "24",
+    "ccsdsprox1.frame_seq_number": "17"
+  },
+  "source": "constructed",
+  "reference": "a sequence-controlled U-frame of packets (DFC 0) to port 3, spacecraft 0x2aa as source, frame length 24 (25 octets), sequence 17; the 20 data octets read over"
+}

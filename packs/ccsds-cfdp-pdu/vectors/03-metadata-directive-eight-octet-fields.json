@@ -1,0 +1,25 @@
+{
+  "name": "metadata-directive-eight-octet-fields",
+  "from": "ccsds-cfdp-pdu",
+  "to": "ccsds-cfdp-pdu",
+  "input": "2bffff77ffffffffffffffff80000000000000010123456789abcdef07",
+  "expect": "2bffff77ffffffffffffffff80000000000000010123456789abcdef07",
+  "model": {
+    "@kind": "file-directive",
+    "ccsdscfdp.direction": "1",
+    "ccsdscfdp.transmission_mode": "0",
+    "ccsdscfdp.crc_flag": "1",
+    "ccsdscfdp.large_file_flag": "1",
+    "ccsdscfdp.data_field_length": "65535",
+    "ccsdscfdp.segmentation_control": "0",
+    "ccsdscfdp.entity_id_length": "7",
+    "ccsdscfdp.segment_metadata_flag": "0",
+    "ccsdscfdp.tsn_length": "7",
+    "ccsdscfdp.source_entity_id": "-1",
+    "ccsdscfdp.transaction_seq_num": "-9223372036854775807",
+    "ccsdscfdp.dest_entity_id": "81985529216486895",
+    "ccsdscfdp.directive_code": "7"
+  },
+  "source": "constructed",
+  "reference": "a Metadata directive (code 7) toward the sender, CRC and large file flags set, 8-octet entity IDs and sequence number: a 28-octet header and the code. A 64-bit value with its top bit set is the negative model integer with the same bits"
+}

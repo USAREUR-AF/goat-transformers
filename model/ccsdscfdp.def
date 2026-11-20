@@ -1,0 +1,21 @@
+# The ccsdscfdp module: the fields of the CCSDS File Delivery Protocol fixed PDU
+# header and the directive code of a file directive PDU, each as the wire integer.
+# The pack ccsds-cfdp-pdu maps them. Bit numbers count from 0 at the first
+# transmitted bit.
+module        ccsdscfdp
+version       0.1.0
+distribution  public
+source        "CCSDS 727.0-B-5 CCSDS File Delivery Protocol (CFDP), Blue Book, July 2020 (Editorial Change 1), https://ccsds.org/Pubs/727x0b5e1.pdf, sections 5.1 and 5.2.1; reuse with attribution under the CCSDS reproduction permission statement"
+key  direction                   int  -  "bit 4: 0 = toward the file receiver, 1 = toward the file sender"
+key  transmission_mode           int  -  "bit 5: 0 = acknowledged, 1 = unacknowledged"
+key  crc_flag                    int  -  "bit 6: 1 = a CRC ends the PDU"
+key  large_file_flag             int  -  "bit 7: 1 = file sizes and offsets in the data field are 64 bits, 0 = 32 bits"
+key  data_field_length           int  -  "bits 8-23: length of the PDU data field in octets"
+key  segmentation_control        int  -  "bit 24: 1 = record boundaries are kept in file data segmentation (file data PDUs)"
+key  entity_id_length            int  -  "bits 25-27: octets in each entity ID, minus one (0 = 1 octet)"
+key  segment_metadata_flag       int  -  "bit 28: 1 = segment metadata is present (file data PDUs)"
+key  tsn_length                  int  -  "bits 29-31: octets in the transaction sequence number, minus one"
+key  source_entity_id            int  -  "the entity that started the transaction, 1 to 8 octets"
+key  transaction_seq_num         int  -  "the transaction's number among those of its source entity, 1 to 8 octets"
+key  dest_entity_id              int  -  "the entity the metadata and file data are for, 1 to 8 octets"
+key  directive_code              int  -  "file directive PDU: the first octet of the data field (4 EOF, 5 Finished, 6 ACK, 7 Metadata, 8 NAK, 9 Prompt, 12 Keep Alive)"

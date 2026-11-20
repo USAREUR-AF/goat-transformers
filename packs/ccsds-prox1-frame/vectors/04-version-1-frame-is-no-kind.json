@@ -1,0 +1,9 @@
+{
+  "name": "version-1-frame-is-no-kind",
+  "from": "ccsds-prox1-frame",
+  "to": "ccsds-prox1-frame",
+  "input": "02aa301811",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "the U-frame with version bits 00 (a TM frame's), not 10"
+}
