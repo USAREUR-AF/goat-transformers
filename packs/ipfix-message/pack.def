@@ -1,0 +1,60 @@
+# IPFIX Message (RFC 7011): the message header and every set. Template and Options
+# Template Sets are read in full; the records of a Data Set depend on a template sent
+# earlier, so its content is kept as octets. Public. Layouts restated; see pack.md.
+format        ipfix-message
+version       0.1.0
+distribution  public
+source        "IETF RFC 7011, Specification of the IP Flow Information Export (IPFIX) Protocol for the Exchange of Flow Information, September 2013, https://www.rfc-editor.org/rfc/rfc7011.txt, IETF Trust (BCP 78); layout restated"
+uses          ipfixmsg
+wire          bits
+layout        sequential
+bit_order     msb
+
+kind    message
+when    16  10
+length  16  whole
+field   time_ms                         32  uiscale:1000
+field   ipfixmsg.sequence_number        32  uint
+field   ipfixmsg.observation_domain_id  32  uint
+group  ipfixmsg.sets  rest
+  field  ipfixmsg.set_id  16  uint
+  switch  ipfixmsg.set_id
+    case  2
+      length  16  bytes  plus  4
+        group  ipfixmsg.template_records  rest
+          field  ipfixmsg.template_id  16  uint
+          count  fields  16
+          group  ipfixmsg.field_specifiers  count  @fields
+            presence  e  1
+    field  ipfixmsg.ie_id  15  uint
+    field  ipfixmsg.field_length  16  uint
+    if  e.1
+      field  ipfixmsg.enterprise_number  32  uint
+    end
+          end
+        end
+      end
+    case  3
+      length  16  bytes  plus  4
+        group  ipfixmsg.template_records  rest
+          field  ipfixmsg.template_id  16  uint
+          count  fields  16
+          field  ipfixmsg.scope_field_count  16  uint
+          group  ipfixmsg.field_specifiers  count  @fields
+            presence  e  1
+    field  ipfixmsg.ie_id  15  uint
+    field  ipfixmsg.field_length  16  uint
+    if  e.1
+      field  ipfixmsg.enterprise_number  32  uint
+    end
+          end
+        end
+      end
+    else
+      length  16  bytes  plus  4
+        group  ipfixmsg.set_octets  rest
+          field  ipfixmsg.octet  8  uint
+        end
+      end
+  end
+end

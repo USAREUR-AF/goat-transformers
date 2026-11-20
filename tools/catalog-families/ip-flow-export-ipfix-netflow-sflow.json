@@ -1,0 +1,10 @@
+{
+  "name": "IP flow export (IPFIX, NetFlow, sFlow)",
+  "domain": "networks",
+  "prefixes": [
+    "ipfix-",
+    "netflow",
+    "sflow"
+  ],
+  "detail": "IPFIX messages, NetFlow version 9 and version 5 packets, sFlow version 5 datagrams"
+}

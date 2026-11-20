@@ -1,0 +1,32 @@
+{
+  "name": "two-records-roundtrip",
+  "from": "ipfix-ipv4-flow",
+  "to": "ipfix-ipv4-flow",
+  "input": "000a006e69b529dd000007d2000000070100005ec000020ac6336414c00001bb06000000000000cc56000000000000003d0000019cebab59620000019cebab86cbcb007105c0000235cf09003511000000000000008e00000000000000020000019cebab7b940000019cebab7ba3",
+  "expect": "000a006e69b529dd000007d2000000070100005ec000020ac6336414c00001bb06000000000000cc56000000000000003d0000019cebab59620000019cebab86cbcb007105c0000235cf09003511000000000000008e00000000000000020000019cebab7b940000019cebab7ba3",
+  "model": {
+    "@kind": "message",
+    "time_ms": "1773480413000",
+    "ipfixmsg.set_id": "256",
+    "ipfix.records.#": "2",
+    "ipfix.records[0].ipfix.source_ipv4_address": "3221225994",
+    "ipfix.records[0].ipfix.destination_ipv4_address": "3325256724",
+    "ipfix.records[0].ipfix.source_transport_port": "49152",
+    "ipfix.records[0].ipfix.destination_transport_port": "443",
+    "ipfix.records[0].ipfix.protocol_identifier": "6",
+    "ipfix.records[0].ipfix.octet_delta_count": "52310",
+    "ipfix.records[0].ipfix.packet_delta_count": "61",
+    "ipfix.records[0].ipfix.flow_start_milliseconds": "1773480401250",
+    "ipfix.records[0].ipfix.flow_end_milliseconds": "1773480412875",
+    "ipfix.records[1].ipfix.source_ipv4_address": "3405803781",
+    "ipfix.records[1].ipfix.destination_ipv4_address": "3221226037",
+    "ipfix.records[1].ipfix.source_transport_port": "53001",
+    "ipfix.records[1].ipfix.destination_transport_port": "53",
+    "ipfix.records[1].ipfix.protocol_identifier": "17",
+    "ipfix.records[1].ipfix.octet_delta_count": "142",
+    "ipfix.records[1].ipfix.packet_delta_count": "2",
+    "ipfix.records[1].ipfix.flow_start_milliseconds": "1773480410004",
+    "ipfix.records[1].ipfix.flow_end_milliseconds": "1773480410019"
+  },
+  "source": "built by tools/gen/flows-vectors.py from values chosen there; layouts restated from RFC 7011 sections 3.1 to 3.4; one Data Set of template 256 with two IPv4 flow records; expect derived there, no engine run"
+}

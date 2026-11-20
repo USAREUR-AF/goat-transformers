@@ -1,0 +1,23 @@
+{
+  "name": "template-and-data-roundtrip",
+  "from": "netflow9-packet",
+  "to": "netflow9-packet",
+  "input": "0009000200371d6069b529dd00000058000000010000002c0100000900080004000c000400070002000b0002000400010001000400020004001600040015000401000021c000020ac6336414c00001bb060000cc560000003d0036ef7a00371ce3",
+  "expect": "0009000200371d6069b529dd00000058000000010000002c0100000900080004000c000400070002000b0002000400010001000400020004001600040015000401000021c000020ac6336414c00001bb060000cc560000003d0036ef7a00371ce3",
+  "model": {
+    "@kind": "packet",
+    "netflow9.count": "2",
+    "netflow9.sys_uptime": "3612000",
+    "time_ms": "1773480413000",
+    "netflow9.sequence_number": "88",
+    "netflow9.source_id": "1",
+    "netflow9.flowsets.#": "2",
+    "netflow9.flowsets[0].netflow9.flowset_id": "0",
+    "netflow9.flowsets[0].netflow9.template_records[0].netflow9.template_id": "256",
+    "netflow9.flowsets[0].netflow9.template_records[0].netflow9.field_specifiers.#": "9",
+    "netflow9.flowsets[0].netflow9.template_records[0].netflow9.field_specifiers[5].netflow9.field_type": "1",
+    "netflow9.flowsets[1].netflow9.flowset_id": "256",
+    "netflow9.flowsets[1].netflow9.flowset_octets.#": "29"
+  },
+  "source": "built by tools/gen/flows-vectors.py from values chosen there; layouts restated from RFC 3954 sections 5.1 to 5.3; a Template FlowSet with the IPv4 flow template (256), then a Data FlowSet of one record kept as octets; expect derived there, no engine run"
+}

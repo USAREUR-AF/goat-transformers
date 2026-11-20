@@ -1,0 +1,8 @@
+{
+  "name": "to-ipfix-ipv4-flow",
+  "from": "netflow5",
+  "to": "ipfix-ipv4-flow",
+  "input": "0005000200371d6069b529dd0ee6b280000004b000024064c000020ac6336414c0000201000300070000003d0000cc560036ef7a00371ce3c00001bb001b0600fbf0fbff18180000cb007105c0000235c000020100070003000000020000008e003711ac003711bbcf09003500001100fbfffbf018180000",
+  "expect": "000a006e69b529dd00000000000000000100005ec000020ac6336414c00001bb06000000000000cc56000000000000003d00000000000000000000000000000000cb007105c0000235cf09003511000000000000008e000000000000000200000000000000000000000000000000",
+  "source": "built by tools/gen/flows-vectors.py from values chosen there; layouts restated from Cisco's NetFlow Export Datagram Format page (version 5) and RFC 7011 sections 3.1 to 3.4; time_ms from unix_secs and unix_nsecs (ms_of), written as the export time in seconds; the records carry the keys both packs map; expect derived there, no engine run"
+}

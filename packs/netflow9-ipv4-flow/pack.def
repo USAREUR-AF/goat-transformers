@@ -1,0 +1,35 @@
+# NetFlow version 9 export packet (RFC 3954) holding one Data FlowSet whose records
+# follow the IPv4 flow template of pack.md. Public. Layout restated; see pack.md.
+format        netflow9-ipv4-flow
+version       0.1.0
+distribution  public
+source        "IETF RFC 3954, Cisco Systems NetFlow Services Export Version 9, October 2004 (Informational), https://www.rfc-editor.org/rfc/rfc3954.txt, IETF Trust (BCP 78); layout restated"
+source        "IANA registry IPFIX Information Elements, https://www.iana.org/assignments/ipfix/ipfix-information-elements.csv (CC0 1.0); element numbers, names and types"
+uses          netflow9
+uses          ipfix
+wire          bits
+layout        sequential
+bit_order     msb
+
+kind    packet
+when    16  9
+field   netflow9.count            16  uint
+field   netflow9.sys_uptime       32  uint
+field   time_ms                   32  uiscale:1000
+field   netflow9.sequence_number  32  uint
+field   netflow9.source_id        32  uint
+field   netflow9.flowset_id       16  uint
+default netflow9.flowset_id       256
+length  16  bytes  plus  4
+  group  ipfix.records  rest
+    field  ipfix.source_ipv4_address         32  uint
+    field  ipfix.destination_ipv4_address    32  uint
+    field  ipfix.source_transport_port       16  uint
+    field  ipfix.destination_transport_port  16  uint
+    field  ipfix.protocol_identifier          8  uint
+    field  ipfix.octet_delta_count           32  uint
+    field  ipfix.packet_delta_count          32  uint
+    field  ipfix.flow_start_sys_up_time      32  uint
+    field  ipfix.flow_end_sys_up_time        32  uint
+  end
+end

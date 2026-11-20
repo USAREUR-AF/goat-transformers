@@ -1,0 +1,11 @@
+ElementID,Name,Abstract Data Type,Data Type Semantics,Status,Description,Units,Range,Additional Information,Reference,Revision,Date
+0,Reserved,,,,,,,,[a test],,2026-01-01
+1,exampleOctetCount,unsigned64,totalCounter,current,"Written for the ipfix2def tests,
+over two lines.",octets,,,[a test],0,2026-01-01
+2,exampleIPv4Address,ipv4Address,default,current,A test row.,,,,[a test],0,2026-01-01
+3,exampleIPv6Address,ipv6Address,default,current,A test row.,,,,[a test],0,2026-01-01
+4,exampleName,string,,deprecated,A test row.,,,,[a test],0,2026-01-01
+5,exampleOctets,octetArray,,current,A test row.,,,,[a test],0,2026-01-01
+6,exampleRatio,float64,,current,A test row.,,,,[a test],0,2026-01-01
+7,exampleStartMilliseconds,dateTimeMilliseconds,,current,A test row.,milliseconds,,,[a test],0,2026-01-01
+8-99,Unassigned,,,,,,,,,,

@@ -1,0 +1,26 @@
+# The ipfixmsg module: the structure of an IPFIX Message (RFC 7011): the message header,
+# the sets, the template records and their field specifiers. The values of the flow
+# records are keys of the ipfix module.
+module        ipfixmsg
+version       0.1.0
+distribution  public
+source        "IETF RFC 7011, Specification of the IP Flow Information Export (IPFIX) Protocol for the Exchange of Flow Information, September 2013, https://www.rfc-editor.org/rfc/rfc7011.txt, IETF Trust (BCP 78); layouts restated"
+
+# Message header, RFC 7011 section 3.1 (version, length and export time are lines of the packs)
+key  sequence_number         int  -  "count, modulo 2^32, of the Data Records the Observation Domain sent before this message"
+key  observation_domain_id   int  -  "identifier, unique to the exporting process, of the Observation Domain the records come from"
+
+# Sets, RFC 7011 section 3.3
+list sets                         "the sets of the message, in order"
+key  set_id                  int  -  "2 for a Template Set, 3 for an Options Template Set, 256 and above the Template ID of the records of a Data Set"
+list set_octets                   "the content of a Data Set the pack does not lay out, one item per octet"
+key  octet                   int  -  "one octet, 0-255"
+
+# Template records, RFC 7011 sections 3.4.1 and 3.4.2
+list template_records             "the Template Records (or Options Template Records) of a set"
+key  template_id             int  -  "number of the template, 256-65535, unique within the Transport Session and Observation Domain"
+key  scope_field_count       int  -  "Options Template Record: how many of its field specifiers are scope fields, at least 1"
+list field_specifiers             "the field specifiers of a template record, in order"
+key  ie_id                   int  -  "Information Element identifier, 15 bits"
+key  field_length            int  -  "length of the field in octets; 65535 for a variable-length field"
+key  enterprise_number       int  -  "IANA enterprise number of an enterprise-specific element; absent for an IANA element"

@@ -1,0 +1,16 @@
+{
+  "name": "options-template-roundtrip",
+  "from": "ipfix-message",
+  "to": "ipfix-message",
+  "input": "000a002269b52a190000041200000007000300120102000200010095000400290008",
+  "expect": "000a002269b52a190000041200000007000300120102000200010095000400290008",
+  "model": {
+    "ipfixmsg.sets.#": "1",
+    "ipfixmsg.sets[0].ipfixmsg.set_id": "3",
+    "ipfixmsg.sets[0].ipfixmsg.template_records[0].ipfixmsg.template_id": "258",
+    "ipfixmsg.sets[0].ipfixmsg.template_records[0].ipfixmsg.scope_field_count": "1",
+    "ipfixmsg.sets[0].ipfixmsg.template_records[0].ipfixmsg.field_specifiers.#": "2",
+    "ipfixmsg.sets[0].ipfixmsg.template_records[0].ipfixmsg.field_specifiers[0].ipfixmsg.ie_id": "149"
+  },
+  "source": "built by tools/gen/flows-vectors.py from values chosen there; layouts restated from RFC 7011 sections 3.1 to 3.4; an Options Template Set: scope observationDomainId, then exportedMessageTotalCount; expect derived there, no engine run"
+}

@@ -1,0 +1,46 @@
+# NetFlow version 5 export packet: the 24-octet header and its 48-octet flow records, as
+# Cisco documents them. Public; the source states no licence (pack.md). Layout restated.
+format        netflow5
+version       0.1.0
+distribution  public
+source        "Cisco Systems, NetFlow Export Datagram Format (NetFlow Collection Engine 3.6 user guide), https://www.cisco.com/c/en/us/td/docs/net_mgmt/netflow_collection_engine/3-6/user/guide/format.html, updated 2007-09-14; no licence stated; layout restated"
+source        "IANA registry IPFIX Information Elements, https://www.iana.org/assignments/ipfix/ipfix-information-elements.csv (CC0 1.0); the elements the record fields are bound to"
+uses          netflow5
+uses          ipfix
+wire          bits
+layout        sequential
+bit_order     msb
+
+kind    packet
+when    16  5
+count   flows  16
+field   netflow5.sys_uptime         32  uint
+field   netflow5.unix_secs          32  uint
+field   netflow5.unix_nsecs         32  uint
+field   netflow5.flow_sequence      32  uint
+field   netflow5.engine_type         8  uint
+field   netflow5.engine_id           8  uint
+field   netflow5.sampling_mode       2  uint
+field   netflow5.sampling_interval  14  uint
+group  ipfix.records  count  @flows
+  field  ipfix.source_ipv4_address            32  uint
+  field  ipfix.destination_ipv4_address       32  uint
+  field  ipfix.ip_next_hop_ipv4_address       32  uint
+  field  ipfix.ingress_interface              16  uint
+  field  ipfix.egress_interface               16  uint
+  field  ipfix.packet_delta_count             32  uint
+  field  ipfix.octet_delta_count              32  uint
+  field  ipfix.flow_start_sys_up_time         32  uint
+  field  ipfix.flow_end_sys_up_time           32  uint
+  field  ipfix.source_transport_port          16  uint
+  field  ipfix.destination_transport_port     16  uint
+  pad    8
+  field  ipfix.tcp_control_bits                8  uint
+  field  ipfix.protocol_identifier             8  uint
+  field  ipfix.ip_class_of_service             8  uint
+  field  ipfix.bgp_source_as_number           16  uint
+  field  ipfix.bgp_destination_as_number      16  uint
+  field  ipfix.source_ipv4_prefix_length       8  uint
+  field  ipfix.destination_ipv4_prefix_length  8  uint
+  pad    16
+end

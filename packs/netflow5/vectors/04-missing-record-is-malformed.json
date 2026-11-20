@@ -1,0 +1,8 @@
+{
+  "name": "missing-record-is-malformed",
+  "from": "netflow5",
+  "to": "netflow5",
+  "input": "0005000200371d6069b529dd0ee6b280000004b000024064c000020ac6336414c0000201000300070000003d0000cc560036ef7a00371ce3c00001bb001b0600fbf0fbff18180000",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/flows-vectors.py from values chosen there; layouts restated from Cisco's NetFlow Export Datagram Format page (version 5); the first packet without its second record, so the count of 2 runs past the input; expect derived there, no engine run"
+}

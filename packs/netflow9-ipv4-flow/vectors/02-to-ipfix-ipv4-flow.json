@@ -1,0 +1,8 @@
+{
+  "name": "to-ipfix-ipv4-flow",
+  "from": "netflow9-ipv4-flow",
+  "to": "ipfix-ipv4-flow",
+  "input": "0009000200371d6069b529dd00000059000000010100003ec000020ac6336414c00001bb060000cc560000003d0036ef7a00371ce3cb007105c0000235cf090035110000008e00000002003711ac003711bb",
+  "expect": "000a006e69b529dd00000000000000000100005ec000020ac6336414c00001bb06000000000000cc56000000000000003d00000000000000000000000000000000cb007105c0000235cf09003511000000000000008e000000000000000200000000000000000000000000000000",
+  "source": "built by tools/gen/flows-vectors.py from values chosen there; layouts restated from RFC 3954 sections 5.1 to 5.3 and RFC 7011 sections 3.1 to 3.4; the records carry the keys both packs map, the export time carries as time_ms; expect derived there, no engine run"
+}
