@@ -1,0 +1,7 @@
+{
+  "name": "hafas-client",
+  "domain": "transport",
+  "prefixes": [
+    "hafas-"
+  ]
+}

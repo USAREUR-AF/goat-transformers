@@ -1,0 +1,7 @@
+{
+ "name": "gen-vehicle_position-residue",
+ "from": "otp-vehicle-position",
+ "to": "otp-vehicle-position",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"vehicleId\":\"s3816\",\"label\":\"s63169\",\"lat\":38.8977,\"lon\":151.2094,\"speed\":42.375,\"heading\":0.75,\"lastUpdate\":\"2025-10-25T15:13:42.761Z\",\"lastUpdated\":22664,\"stopRelationship\":{\"status\":\"s25617\",\"stop\":{\"gtfsId\":\"s73886\",\"name\":\"s60481\",\"lat\":12.5,\"lon\":101.125,\"code\":\"s47699\",\"platformCode\":\"s14769\"}},\"trip\":{\"gtfsId\":\"s43707\",\"tripShortName\":\"s42024\",\"routeShortName\":\"s70385\",\"directionId\":\"s70806\"}}",
+ "expect": "{\"vehicleId\":\"s3816\",\"label\":\"s63169\",\"lat\":38.8977,\"lon\":151.2094,\"speed\":42.375,\"heading\":0.75,\"lastUpdate\":\"2025-10-25T15:13:42.761Z\",\"lastUpdated\":22664,\"stopRelationship\":{\"status\":\"s25617\",\"stop\":{\"gtfsId\":\"s73886\",\"name\":\"s60481\",\"lat\":12.5,\"lon\":101.125,\"code\":\"s47699\",\"platformCode\":\"s14769\"}},\"trip\":{\"gtfsId\":\"s43707\",\"tripShortName\":\"s42024\",\"routeShortName\":\"s70385\",\"directionId\":\"s70806\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

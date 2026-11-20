@@ -1,0 +1,331 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "urn:goat-transformers:otp-2.10-objects",
+ "title": "OpenTripPlanner 2.10 GTFS GraphQL API objects, restated by goat-transformers",
+ "description": "Member names and JSON types of the OpenTripPlanner 2.10 GTFS GraphQL API objects the otp-* packs read, restated by this project from the API's schema (schema.graphqls). A GraphQL response holds the fields a query selects; these objects are the selection stated in each pack's pack.md. Not a copy of the schema; no description text is taken from it.",
+ "$defs": {
+  "StopRef": {
+   "type": "object",
+   "properties": {
+    "gtfsId": {
+     "type": "string"
+    },
+    "name": {
+     "type": "string"
+    },
+    "lat": {
+     "type": "number"
+    },
+    "lon": {
+     "type": "number"
+    },
+    "code": {
+     "type": "string"
+    },
+    "platformCode": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "gtfsId"
+   ]
+  },
+  "TripRef": {
+   "type": "object",
+   "properties": {
+    "gtfsId": {
+     "type": "string"
+    },
+    "tripShortName": {
+     "type": "string"
+    },
+    "routeShortName": {
+     "type": "string"
+    },
+    "directionId": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "gtfsId"
+   ]
+  },
+  "RouteRef": {
+   "type": "object",
+   "properties": {
+    "gtfsId": {
+     "type": "string"
+    },
+    "shortName": {
+     "type": "string"
+    },
+    "mode": {
+     "type": "string"
+    },
+    "color": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "gtfsId"
+   ]
+  },
+  "AgencyRef": {
+   "type": "object",
+   "properties": {
+    "gtfsId": {
+     "type": "string"
+    },
+    "name": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "gtfsId",
+    "name"
+   ]
+  },
+  "StopRelationship": {
+   "type": "object",
+   "properties": {
+    "status": {
+     "type": "string"
+    },
+    "stop": {
+     "$ref": "#/$defs/StopRef"
+    }
+   },
+   "required": [
+    "status",
+    "stop"
+   ]
+  },
+  "VehiclePosition": {
+   "type": "object",
+   "properties": {
+    "vehicleId": {
+     "type": "string"
+    },
+    "label": {
+     "type": "string"
+    },
+    "lat": {
+     "type": "number"
+    },
+    "lon": {
+     "type": "number"
+    },
+    "speed": {
+     "type": "number"
+    },
+    "heading": {
+     "type": "number"
+    },
+    "lastUpdate": {
+     "type": "string",
+     "format": "date-time"
+    },
+    "lastUpdated": {
+     "type": "integer"
+    },
+    "stopRelationship": {
+     "$ref": "#/$defs/StopRelationship"
+    },
+    "trip": {
+     "$ref": "#/$defs/TripRef"
+    }
+   },
+   "required": [
+    "trip"
+   ]
+  },
+  "RealTimeEstimate": {
+   "type": "object",
+   "properties": {
+    "time": {
+     "type": "string",
+     "format": "date-time"
+    },
+    "delay": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "time",
+    "delay"
+   ]
+  },
+  "LegTime": {
+   "type": "object",
+   "properties": {
+    "scheduledTime": {
+     "type": "string",
+     "format": "date-time"
+    },
+    "estimated": {
+     "$ref": "#/$defs/RealTimeEstimate"
+    }
+   },
+   "required": [
+    "scheduledTime"
+   ]
+  },
+  "Place": {
+   "type": "object",
+   "properties": {
+    "name": {
+     "type": "string"
+    },
+    "lat": {
+     "type": "number"
+    },
+    "lon": {
+     "type": "number"
+    },
+    "vertexType": {
+     "type": "string"
+    },
+    "arrival": {
+     "$ref": "#/$defs/LegTime"
+    },
+    "departure": {
+     "$ref": "#/$defs/LegTime"
+    },
+    "stop": {
+     "$ref": "#/$defs/StopRef"
+    }
+   },
+   "required": [
+    "lat",
+    "lon"
+   ]
+  },
+  "Leg": {
+   "type": "object",
+   "properties": {
+    "id": {
+     "type": "string"
+    },
+    "mode": {
+     "type": "string"
+    },
+    "transitLeg": {
+     "type": "boolean"
+    },
+    "realTime": {
+     "type": "boolean"
+    },
+    "realtimeState": {
+     "type": "string"
+    },
+    "distance": {
+     "type": "number"
+    },
+    "duration": {
+     "type": "number"
+    },
+    "headsign": {
+     "type": "string"
+    },
+    "serviceDate": {
+     "type": "string"
+    },
+    "start": {
+     "$ref": "#/$defs/LegTime"
+    },
+    "end": {
+     "$ref": "#/$defs/LegTime"
+    },
+    "from": {
+     "$ref": "#/$defs/Place"
+    },
+    "to": {
+     "$ref": "#/$defs/Place"
+    },
+    "intermediatePlaces": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/Place"
+     }
+    },
+    "route": {
+     "$ref": "#/$defs/RouteRef"
+    },
+    "agency": {
+     "$ref": "#/$defs/AgencyRef"
+    },
+    "trip": {
+     "$ref": "#/$defs/TripRef"
+    },
+    "legGeometry": {
+     "type": "object",
+     "properties": {
+      "length": {
+       "type": "integer"
+      },
+      "points": {
+       "type": "string"
+      }
+     },
+     "required": []
+    }
+   },
+   "required": [
+    "start",
+    "end",
+    "from",
+    "to"
+   ]
+  },
+  "Itinerary": {
+   "type": "object",
+   "properties": {
+    "start": {
+     "type": "string",
+     "format": "date-time"
+    },
+    "end": {
+     "type": "string",
+     "format": "date-time"
+    },
+    "duration": {
+     "type": "integer"
+    },
+    "generalizedCost": {
+     "type": "integer"
+    },
+    "numberOfTransfers": {
+     "type": "integer"
+    },
+    "waitingTime": {
+     "type": "integer"
+    },
+    "walkTime": {
+     "type": "integer"
+    },
+    "walkDistance": {
+     "type": "number"
+    },
+    "elevationGained": {
+     "type": "number"
+    },
+    "elevationLost": {
+     "type": "number"
+    },
+    "accessibilityScore": {
+     "type": "number"
+    },
+    "legs": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/Leg"
+     }
+    }
+   },
+   "required": [
+    "legs",
+    "numberOfTransfers"
+   ]
+  }
+ }
+}
