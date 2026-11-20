@@ -4,9 +4,9 @@
 # Usage: tools/run-gmti.sh
 #
 # Inputs, all in this repository (layouts and the data model restated in its own words):
-#   tools/gmti/segments.tsv kinds.tsv tables.tsv profiles.tsv   AEDP-4607 Ed A V1 and AEDP-4607.1
-#   tools/isr-tracking/model.tsv kinds.tsv                       AEDP-12 Ed B V2
-# model.tsv was listed from the document's class tables by tools/isr-tracking/uml2tsv.py;
+#   tools/gmti/segments.tsv.txt kinds.tsv.txt tables.tsv.txt profiles.tsv.txt   AEDP-4607 Ed A V1 and AEDP-4607.1
+#   tools/isr-tracking/model.tsv.txt kinds.tsv.txt                       AEDP-12 Ed B V2
+# model.tsv.txt was listed from the document's class tables by tools/isr-tracking/uml2tsv.py;
 # rerun that only when the document changes (it needs pdftotext and a copy of the document; neither is in this repository).
 # Writes:
 #   model/gmti.def, packs/gmti, packs/gmti-segment, packs/gmti-records, packs/gmti-segment-records

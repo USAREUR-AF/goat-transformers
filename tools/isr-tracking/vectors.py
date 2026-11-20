@@ -2,7 +2,7 @@
 """vectors.py: conversion vectors of the isr-tracking pack.
 
 Writes, for each kind, one XML document that holds every element the data model
-gives that object (model.tsv), with made-up values, in the canonical form of the
+gives that object (model.tsv.txt), with made-up values, in the canonical form of the
 xml wire: so a round trip returns it unchanged. The documents follow the rules
 pack.md states (elements in model order, `type` as an XML attribute, UUID text
 with an optional `gidp` attribute, Shape with `xsi:type`). This program reads the
@@ -27,7 +27,7 @@ TIME_MS = int(datetime.datetime(2026, 11, 19, 10, 15, 30, 250000, tzinfo=datetim
 
 def load():
     m = {}
-    with open(os.path.join(HERE, "model.tsv"), newline="", encoding="utf-8") as f:
+    with open(os.path.join(HERE, "model.tsv.txt"), newline="", encoding="utf-8") as f:
         for r in csv.DictReader([l for l in f if not l.startswith("#")], delimiter="\t"):
             m.setdefault(r["class"], []).append(r)
     return m

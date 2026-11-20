@@ -3,7 +3,7 @@
 
 Reads the text of the document (pdftotext -layout) and prints class, attribute,
 type and multiplicity, one per line, from the class attribute tables of sections
-2.5 and 2.6. The output, with a header, is tools/isr-tracking/model.tsv.
+2.5 and 2.6. The output, with a header, is tools/isr-tracking/model.tsv.txt.
 
 Usage: pdftotext -layout NATO_AEDP-12_EdB_V2.pdf t.txt; python3 -I uml2tsv.py t.txt
 """

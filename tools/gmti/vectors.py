@@ -2,7 +2,7 @@
 """vectors.py: conversion vectors of the gmti pack, packed with struct.
 
 This program states the GMTI layouts again, field by field as struct codes, from
-AEDP-4607 Edition A Version 1. It does not read tools/gmti/*.tsv and does not
+AEDP-4607 Edition A Version 1. It does not read tools/gmti/*.tsv.txt and does not
 import an engine, so a mistake in the tables shows as a failing vector. Expected
 model values are computed here with the arithmetic the pack's transforms state
 (engine-spec 0.5 ruling 1: v * num / den on decode, x * den / num rounded half
