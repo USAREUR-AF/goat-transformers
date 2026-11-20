@@ -1,0 +1,13 @@
+{
+  "name": "minimal-round-trip",
+  "from": "misb-st0102",
+  "to": "misb-st0102",
+  "input": "060e2b34020301010e01030302000000070101051602000c",
+  "expect": "060e2b34020301010e01030302000000070101051602000c",
+  "model": {
+    "misb0102.security_classification": "TOP SECRET//",
+    "misb0102.version": "12"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): key, set length 7, tag 1 = 05 read via classification as TOP SECRET//, tag 22 = 000c is 12; written back in line order, unchanged. Input values chosen for this vector; derived without an engine by a standalone program."
+}

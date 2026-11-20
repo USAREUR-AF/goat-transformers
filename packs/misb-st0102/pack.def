@@ -1,0 +1,38 @@
+# MISB ST 0102 Security Metadata Local Set: the 16-byte key, a BER length,
+# items with one-byte tags and BER lengths, no checksum. Public.
+format        misb-st0102
+version       0.1.0
+distribution  public
+source        "MISB ST 0102.12 Security Metadata Universal and Local Sets for Motion Imagery Data (22 June 2017), Motion Imagery Standards Board"
+source        "NSG Registry public document store, doc/view?i=4422; the registry states its public portions are public domain, released for public use, or fair use"
+uses          misb0102
+wire          tlv
+tag           1
+length        ber
+key           060e2b34020301010e01030302000000
+
+map      classification  1  UNCLASSIFIED//
+map      classification  2  RESTRICTED//
+map      classification  3  CONFIDENTIAL//
+map      classification  4  SECRET//
+map      classification  5  "TOP SECRET//"
+
+default  misb0102.version  12
+
+field    misb0102.security_classification        1:1    uint  via classification
+field    misb0102.country_coding_method          2:1    uint
+field    misb0102.classifying_country            3      utf8
+field    misb0102.sci_shi_info                   4      utf8
+field    misb0102.caveats                        5      utf8
+field    misb0102.releasing_instructions         6      utf8
+field    misb0102.classified_by                  7      utf8
+field    misb0102.derived_from                   8      utf8
+field    misb0102.classification_reason          9      utf8
+field    misb0102.declassification_date          10     utf8
+field    misb0102.marking_system                 11     utf8
+field    misb0102.object_country_coding_method   12:1   uint
+field    misb0102.object_country_codes           13     hex
+field    misb0102.classification_comments        14     utf8
+field    misb0102.version                        22:2   uint
+field    misb0102.country_coding_method_date     23     utf8
+field    misb0102.object_country_coding_method_date  24  utf8

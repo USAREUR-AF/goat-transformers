@@ -1,0 +1,13 @@
+{
+  "name": "to-geojson",
+  "from": "misb-st0903",
+  "to": "geojson",
+  "input": "060e2b34020b01010e010303060000005c020800060a24181e4000030b564543544f5220544553540402000605030000030603000002080300050009030002d00a07454f20544553540b020a000c0208000d100102030405060708090a0b0c0d0e0f1065040a0b0c0d0102373d",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{}}",
+  "model": {
+    "misb0903.frame_width": "1280",
+    "misb0903.vmti_source_sensor": "EO TEST"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): no misb0903 key has a geojson line and residue (11, 12, 101) is written only into its own format; geometry null (rulings 4, 5 of 0.1.1). Input: the input of all-items-and-residue. Input values chosen for this vector; derived without an engine by a standalone program."
+}

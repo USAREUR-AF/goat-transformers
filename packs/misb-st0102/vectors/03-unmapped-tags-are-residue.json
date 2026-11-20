@@ -1,0 +1,14 @@
+{
+  "name": "unmapped-tags-are-residue",
+  "from": "misb-st0102",
+  "to": "misb-st0102",
+  "input": "060e2b34020301010e01030302000000110101011402aabb05024331c8001602000c",
+  "expect": "060e2b34020301010e0103030200000011010101050243311602000c1402aabbc800",
+  "model": {
+    "misb0102.security_classification": "UNCLASSIFIED//",
+    "misb0102.caveats": "C1",
+    "misb0102.version": "12"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): tag 20 (aabb) and tag 200 (one byte c8 under `tag 1`, empty) are named by no line: residue, written after the mapped items 1, 5, 22 in input order (Residue; Writing a message step 1). The set length 11 is unchanged. Input values chosen for this vector; derived without an engine by a standalone program."
+}

@@ -60,7 +60,7 @@
     {"name": "NITF 2.1", "domain": "sensors", "prefixes": ["nitf-"], "members": {"pattern": "^nitf-tre-(.+)$", "label": "two headers and {n} TREs", "list": false}},
     {"name": "ISA", "domain": "sensors", "exact": ["isa", "isa-message", "isa-ipl1", "isa-xml"], "detail": "IPL 1.6, 3.7, 4.7"},
     {"name": "SAPIENT", "domain": "sensors", "exact": ["sapient", "sapient-v1"], "detail": "v1, v2"},
-    {"name": "MISB ST 0601", "domain": "sensors", "exact": ["misb-st0601"]},
+    {"name": "MISB local sets", "domain": "sensors", "prefixes": ["misb-st"]},
     {"name": "gpsd JSON", "domain": "sensors", "exact": ["gpsd-json"]},
     {"name": "SBP (Swift Navigation)", "domain": "sensors", "prefixes": ["sbp-"], "members": {"pattern": "^sbp-(.+)$", "label": "{n} message packages", "list": false}},
 

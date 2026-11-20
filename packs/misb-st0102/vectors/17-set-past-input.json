@@ -1,0 +1,9 @@
+{
+  "name": "set-past-input",
+  "from": "misb-st0102",
+  "to": "misb-st0102",
+  "input": "060e2b34020301010e01030302000000080101041602000c",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): set length 08 with 7 bytes after it: the set runs past the input (step 2). Input values chosen for this vector; derived without an engine by a standalone program."
+}

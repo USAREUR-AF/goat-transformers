@@ -1,0 +1,12 @@
+{
+  "name": "object-country-codes-odd-hex",
+  "from": "misb-st0102",
+  "to": "misb-st0102",
+  "input": "060e2b34020301010e01030302000000070101011602000c",
+  "expect_error": "transform-encode",
+  "context": {
+    "misb0102.object_country_codes": "005a0"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): context misb0102.object_country_codes = 005a0 (five digits) under hex: not an even number of digits, transform-encode. Input values chosen for this vector; derived without an engine by a standalone program."
+}

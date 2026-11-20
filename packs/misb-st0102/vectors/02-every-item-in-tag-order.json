@@ -1,0 +1,28 @@
+{
+  "name": "every-item-in-tag-order",
+  "from": "misb-st0102",
+  "to": "misb-st0102",
+  "input": "060e2b34020301010e0103030200000081b101010202010d03042f2f5a5a040758582f59592f2f050b544553542043415645415406055a5a205959070d566563746f7220417574686f720812436f6e737472756374656420536f75726365090d5465737420526561736f6e20310a0832303939313233310b0b544553542053595354454d0c010e0d0a005a005a003b0059005a0e12636f6e737472756374656420766563746f721602000c170a323039392d30312d3031180a323039392d30312d3032",
+  "expect": "060e2b34020301010e0103030200000081b101010202010d03042f2f5a5a040758582f59592f2f050b544553542043415645415406055a5a205959070d566563746f7220417574686f720812436f6e737472756374656420536f75726365090d5465737420526561736f6e20310a0832303939313233310b0b544553542053595354454d0c010e0d0a005a005a003b0059005a0e12636f6e737472756374656420766563746f721602000c170a323039392d30312d3031180a323039392d30312d3032",
+  "model": {
+    "misb0102.security_classification": "RESTRICTED//",
+    "misb0102.country_coding_method": "13",
+    "misb0102.classifying_country": "//ZZ",
+    "misb0102.sci_shi_info": "XX/YY//",
+    "misb0102.caveats": "TEST CAVEAT",
+    "misb0102.releasing_instructions": "ZZ YY",
+    "misb0102.classified_by": "Vector Author",
+    "misb0102.derived_from": "Constructed Source",
+    "misb0102.classification_reason": "Test Reason 1",
+    "misb0102.declassification_date": "20991231",
+    "misb0102.marking_system": "TEST SYSTEM",
+    "misb0102.object_country_coding_method": "14",
+    "misb0102.object_country_codes": "005a005a003b0059005a",
+    "misb0102.classification_comments": "constructed vector",
+    "misb0102.version": "12",
+    "misb0102.country_coding_method_date": "2099-01-01",
+    "misb0102.object_country_coding_method_date": "2099-01-02"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): every mapped tag once, in field-line order (= tag order), each value at its line's size; tag 13 is the item's bytes as lowercase hex (UTF-16BE of ZZ;YZ chosen here). Items are in the order the pack writes them, so the round trip is exact. Input values chosen for this vector; derived without an engine by a standalone program."
+}

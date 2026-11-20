@@ -1,0 +1,9 @@
+{
+  "name": "integer-of-9-bytes",
+  "from": "misb-st0903",
+  "to": "misb-st0903",
+  "input": "060e2b34020b01010e0103030600000022020800060a24181e400004020006050900000000000000000106030000020102d8c4",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): item 5 has a 9-byte value (000000000000000001) under uint: longer than 8 bytes is transform-decode (Transforms for tlv), whatever its numeric value. Input values chosen for this vector; derived without an engine by a standalone program."
+}

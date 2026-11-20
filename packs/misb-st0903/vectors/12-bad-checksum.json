@@ -1,0 +1,9 @@
+{
+  "name": "bad-checksum",
+  "from": "misb-st0903",
+  "to": "misb-st0903",
+  "input": "060e2b34020b01010e0103030600000017020800060a24181e40000402000606030000020102bec5",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.13 (the tlv wire): the bytes of minimal-round-trip with the checksum value one more than the sum16: malformed-wire (Reading a message step 4). Input values chosen for this vector; derived without an engine by a standalone program."
+}

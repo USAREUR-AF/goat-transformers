@@ -1,0 +1,25 @@
+# The misb0102 module: the items of the MISB ST 0102 Security Metadata Local
+# Set. The core and track modules have no key for any of them. Text items are
+# held as the document's text; coding methods are the Local Set's one-byte
+# codes (packs/misb-st0102/pack.md lists them).
+module        misb0102
+version       0.1.0
+distribution  public
+source        "MISB ST 0102.12 Security Metadata Universal and Local Sets for Motion Imagery Data, Motion Imagery Standards Board, NSG Registry public document store (doc/view?i=4422)"
+key  security_classification        string  -  "tag 1: overall classification level of the motion imagery data, as the Universal Set text form (a level name followed by two slashes)"
+key  country_coding_method          int     -  "tag 2: code of the country coding method used by tags 3 and 6"
+key  classifying_country            string  -  "tag 3: country code of the classifying country, after two slashes"
+key  sci_shi_info                   string  -  "tag 4: compartment or special handling digraphs, trigraphs or names, slash-separated, ending with two slashes"
+key  caveats                        string  -  "tag 5: caveats or code words, free text"
+key  releasing_instructions         string  -  "tag 6: country codes the data may be released to, separated by single spaces"
+key  classified_by                  string  -  "tag 7: name and kind of the classifying authority, free text"
+key  derived_from                   string  -  "tag 8: original source from which the classification was derived, free text"
+key  classification_reason          string  -  "tag 9: reason or citation for the classification, free text"
+key  declassification_date          string  -  "tag 10: date of automatic declassification, eight characters YYYYMMDD"
+key  marking_system                 string  -  "tag 11: classification or marking system in use, free text"
+key  object_country_coding_method   int     -  "tag 12: code of the country coding method used by tag 13"
+key  object_country_codes           string  -  "tag 13: the item's bytes as lowercase hex; the document gives the value as UTF-16 text (RFC 2781), codes separated by semicolons"
+key  classification_comments        string  -  "tag 14: non-essential security-related comments, free text"
+key  version                        int     -  "tag 22: the ST 0102 version number the set follows (12 for ST 0102.12)"
+key  country_coding_method_date     string  -  "tag 23: effective date of the source of the tag 2 coding method, YYYY-MM-DD"
+key  object_country_coding_method_date  string  -  "tag 24: effective date of the source of the tag 12 coding method, YYYY-MM-DD"

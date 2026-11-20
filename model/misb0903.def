@@ -1,0 +1,17 @@
+# The misb0903 module: top-level items of the MISB ST 0903 VMTI Local Set
+# that the core and track modules have no key for. A VMTI Local Set describes
+# one video frame and the targets detected in it; these keys describe the
+# frame and the detecting system, not a target (packs/misb-st0903/pack.md).
+module        misb0903
+version       0.1.0
+distribution  public
+source        "MISB ST 0903.6 Video Moving Target Indicator Metadata, Motion Imagery Standards Board, NSG Registry public document store (doc/view?i=5310)"
+key  precision_time_us           int     us   "item 2: microseconds since 1970-01-01T00:00:00 counted without leap seconds (MISP time, not UTC); the time of the source video frame"
+key  vmti_system_name            string  -    "item 3: free-text name or description of the system that produced the target list"
+key  ls_version                  int     -    "item 4: revision of ST 0903 the set was written to, 1 to 65535 (6 for ST 0903.6)"
+key  total_num_targets_detected  int     -    "item 5: number of targets in the producing system's target list for the frame, 0 for none"
+key  num_targets_reported        int     -    "item 6: number of targets reported in this set after culling"
+key  frame_width                 int     pix  "item 8: width of the source video frame, pixels per row, not 0"
+key  frame_height                int     pix  "item 9: height of the source video frame, rows of pixels, not 0"
+key  vmti_source_sensor          string  -    "item 10: free-text name of the sensor whose video the targets were detected in"
+key  miis_id                     string  -    "item 13: MISB ST 1204 Motion Imagery Identification System core identifier of the source video, as lowercase hex"
