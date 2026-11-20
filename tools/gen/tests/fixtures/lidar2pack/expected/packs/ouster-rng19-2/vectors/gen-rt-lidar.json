@@ -1,0 +1,14 @@
+{
+  "name": "rt-lidar",
+  "from": "ouster-rng19-2",
+  "to": "ouster-rng19-2",
+  "source": "tools/gen/lidar2pack.py: every field set to a value chosen by the generator, little-endian at its place in the layout",
+  "input": "01ba6b5c21e4f3f50615b8681982567b2cdf3f5c83a152c919b46536",
+  "expect": "01ba6b5c21e4f3f50615b8681982567b2cdf3f5c83a152c919b46536",
+  "model": {
+    "@kind": "lidar",
+    "ouster.rng19_hdr_frame_id": "186",
+    "ouster.rng19_hdr_init_id": "107",
+    "ouster.rng19_hdr_prod_sn": "12"
+  }
+}

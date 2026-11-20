@@ -1,0 +1,8 @@
+{
+  "name": "err-short",
+  "from": "velodyne-data",
+  "to": "velodyne-data",
+  "source": "one byte short of the 26-byte packet",
+  "input": "8a173b91ec0a9d4efeffb0f1616b12e5c374d825d6cb9e2b87",
+  "expect_error": "malformed-wire"
+}

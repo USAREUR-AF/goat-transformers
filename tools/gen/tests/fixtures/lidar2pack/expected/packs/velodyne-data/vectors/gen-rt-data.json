@@ -1,0 +1,14 @@
+{
+  "name": "rt-data",
+  "from": "velodyne-data",
+  "to": "velodyne-data",
+  "source": "tools/gen/lidar2pack.py: every field set to a value chosen by the generator, little-endian at its place in the layout",
+  "input": "8a173b91ec0a9d4efeffb0f1616b12e5c374d825d6cb9e2b8738",
+  "expect": "8a173b91ec0a9d4efeffb0f1616b12e5c374d825d6cb9e2b8738",
+  "model": {
+    "@kind": "data",
+    "velodyne.data_timestamp_us": "731827158",
+    "velodyne.data_return_mode": "135",
+    "velodyne.data_product_id": "56"
+  }
+}

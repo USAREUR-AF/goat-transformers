@@ -1,0 +1,11 @@
+{
+  "name": "rt-lidar",
+  "from": "ouster-legacy-2",
+  "to": "ouster-legacy-2",
+  "source": "tools/gen/lidar2pack.py: every field set to a value chosen by the generator, little-endian at its place in the layout",
+  "input": "5203b465163c2959da32ed3f9e4f00b162134a2687d740ea6d9b",
+  "expect": "5203b465163c2959da32ed3f9e4f00b162134a2687d740ea6d9b",
+  "model": {
+    "@kind": "lidar"
+  }
+}

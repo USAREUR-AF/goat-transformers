@@ -1,0 +1,8 @@
+{
+  "name": "Ouster lidar",
+  "domain": "sensors",
+  "prefixes": [
+    "ouster-"
+  ],
+  "detail": "legacy and RNG19 lidar packets, IMU packet"
+}
