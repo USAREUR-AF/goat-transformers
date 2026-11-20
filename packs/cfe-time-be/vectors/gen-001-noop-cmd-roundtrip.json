@@ -1,0 +1,19 @@
+{
+  "name": "gen-noop_cmd-roundtrip",
+  "from": "cfe-time-be",
+  "to": "cfe-time-be",
+  "input": "1805c06500010046",
+  "expect": "1805c06500010046",
+  "model": {
+    "@kind": "noop_cmd",
+    "ccsdssp.packet_type": "1",
+    "ccsdssp.apid": "5",
+    "ccsdssp.sequence_flags": "3",
+    "ccsdssp.data_length": "1",
+    "ccsdssp.sequence_count_or_name": "101",
+    "cfemsg.checksum": "70",
+    "cfemsg.function_code": "0"
+  },
+  "source": "written by tools/gen/cfe-vectors.py: the packet is serialized from tools/gen/cfe/layout.json (the C layout cfe2pack.py reads from nasa/cFE); no engine run",
+  "reference": "https://github.com/nasa/cFE at tag v7.0.2-rc1, commit 73f6fe102eae7949fc5f550e6818fec60319ddea; Apache-2.0, modules/time/config/default_cfe_time_msgstruct.h and default_cfe_time_msgdefs.h; struct CFE_TIME_NoopCmd_t, message ID CFE_TIME_CMD_MID = 0x1805, function code CFE_TIME_NOOP_CC = 0; 8 octets"
+}

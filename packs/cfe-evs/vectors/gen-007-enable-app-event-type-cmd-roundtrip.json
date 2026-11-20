@@ -1,0 +1,22 @@
+{
+  "name": "gen-enable_app_event_type_cmd-roundtrip",
+  "from": "cfe-evs",
+  "to": "cfe-evs",
+  "input": "1801c06b0017050154310000000000000000000000000000000000004f74",
+  "expect": "1801c06b0017050154310000000000000000000000000000000000004f74",
+  "model": {
+    "@kind": "enable_app_event_type_cmd",
+    "ccsdssp.packet_type": "1",
+    "ccsdssp.apid": "1",
+    "ccsdssp.sequence_flags": "3",
+    "ccsdssp.data_length": "23",
+    "ccsdssp.sequence_count_or_name": "107",
+    "cfeevs.app_name_bit_mask_cmd_app_name": "T1",
+    "cfeevs.app_name_bit_mask_cmd_bit_mask": "79",
+    "cfeevs.app_name_bit_mask_cmd_spare": "116",
+    "cfemsg.checksum": "1",
+    "cfemsg.function_code": "5"
+  },
+  "source": "written by tools/gen/cfe-vectors.py: the packet is serialized from tools/gen/cfe/layout.json (the C layout cfe2pack.py reads from nasa/cFE); no engine run",
+  "reference": "https://github.com/nasa/cFE at tag v7.0.2-rc1, commit 73f6fe102eae7949fc5f550e6818fec60319ddea; Apache-2.0, modules/evs/config/default_cfe_evs_msgstruct.h and default_cfe_evs_msgdefs.h; struct CFE_EVS_EnableAppEventTypeCmd_t, message ID CFE_EVS_CMD_MID = 0x1801, function code CFE_EVS_ENABLE_APP_EVENT_TYPE_CC = 5; 30 octets"
+}

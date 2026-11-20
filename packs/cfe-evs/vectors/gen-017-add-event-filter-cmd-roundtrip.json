@@ -1,0 +1,22 @@
+{
+  "name": "gen-add_event_filter_cmd-roundtrip",
+  "from": "cfe-evs",
+  "to": "cfe-evs",
+  "input": "1801c07500190f1b54310000000000000000000000000000000000004f007400",
+  "expect": "1801c07500190f1b54310000000000000000000000000000000000004f007400",
+  "model": {
+    "@kind": "add_event_filter_cmd",
+    "ccsdssp.packet_type": "1",
+    "ccsdssp.apid": "1",
+    "ccsdssp.sequence_flags": "3",
+    "ccsdssp.data_length": "25",
+    "ccsdssp.sequence_count_or_name": "117",
+    "cfeevs.app_name_event_id_mask_cmd_app_name": "T1",
+    "cfeevs.app_name_event_id_mask_cmd_event_id": "79",
+    "cfeevs.app_name_event_id_mask_cmd_mask": "116",
+    "cfemsg.checksum": "27",
+    "cfemsg.function_code": "15"
+  },
+  "source": "written by tools/gen/cfe-vectors.py: the packet is serialized from tools/gen/cfe/layout.json (the C layout cfe2pack.py reads from nasa/cFE); no engine run",
+  "reference": "https://github.com/nasa/cFE at tag v7.0.2-rc1, commit 73f6fe102eae7949fc5f550e6818fec60319ddea; Apache-2.0, modules/evs/config/default_cfe_evs_msgstruct.h and default_cfe_evs_msgdefs.h; struct CFE_EVS_AddEventFilterCmd_t, message ID CFE_EVS_CMD_MID = 0x1801, function code CFE_EVS_ADD_EVENT_FILTER_CC = 15; 32 octets"
+}

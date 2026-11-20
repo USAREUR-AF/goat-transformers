@@ -1,0 +1,24 @@
+{
+  "name": "gen-single_subscription_tlm-roundtrip",
+  "from": "cfe-sb",
+  "to": "cfe-sb",
+  "input": "080ec0740019000f42b48000000000002a0000004f00000074990000be000000",
+  "expect": "080ec0740019000f42b48000000000002a0000004f00000074990000be000000",
+  "model": {
+    "@kind": "single_subscription_tlm",
+    "ccsdssp.packet_type": "0",
+    "ccsdssp.apid": "14",
+    "ccsdssp.sequence_flags": "3",
+    "ccsdssp.data_length": "25",
+    "ccsdssp.sequence_count": "116",
+    "cfemsg.time_seconds": "1000116",
+    "cfemsg.time_subseconds": "32768",
+    "cfesb.single_subscription_tlm_sub_type": "42",
+    "cfesb.single_subscription_tlm_msg_id_value": "79",
+    "cfesb.single_subscription_tlm_qos_priority": "116",
+    "cfesb.single_subscription_tlm_qos_reliability": "153",
+    "cfesb.single_subscription_tlm_pipe": "190"
+  },
+  "source": "written by tools/gen/cfe-vectors.py: the packet is serialized from tools/gen/cfe/layout.json (the C layout cfe2pack.py reads from nasa/cFE); no engine run",
+  "reference": "https://github.com/nasa/cFE at tag v7.0.2-rc1, commit 73f6fe102eae7949fc5f550e6818fec60319ddea; Apache-2.0, modules/sb/config/default_cfe_sb_msgstruct.h and default_cfe_sb_msgdefs.h; struct CFE_SB_SingleSubscriptionTlm_t, message ID CFE_SB_ONESUB_TLM_MID = 0x080e; 32 octets"
+}

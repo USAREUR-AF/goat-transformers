@@ -1,0 +1,24 @@
+{
+  "name": "gen-short_event_tlm-roundtrip",
+  "from": "cfe-evs",
+  "to": "cfe-evs",
+  "input": "0809c07d0029000f42bd80000000000054310000000000000000000000000000000000004f00740099000000be000000",
+  "expect": "0809c07d0029000f42bd80000000000054310000000000000000000000000000000000004f00740099000000be000000",
+  "model": {
+    "@kind": "short_event_tlm",
+    "ccsdssp.packet_type": "0",
+    "ccsdssp.apid": "9",
+    "ccsdssp.sequence_flags": "3",
+    "ccsdssp.data_length": "41",
+    "ccsdssp.sequence_count": "125",
+    "cfemsg.time_seconds": "1000125",
+    "cfemsg.time_subseconds": "32768",
+    "cfeevs.short_event_tlm_packet_id_app_name": "T1",
+    "cfeevs.short_event_tlm_packet_id_event_id": "79",
+    "cfeevs.short_event_tlm_packet_id_event_type": "116",
+    "cfeevs.short_event_tlm_packet_id_spacecraft_id": "153",
+    "cfeevs.short_event_tlm_packet_id_processor_id": "190"
+  },
+  "source": "written by tools/gen/cfe-vectors.py: the packet is serialized from tools/gen/cfe/layout.json (the C layout cfe2pack.py reads from nasa/cFE); no engine run",
+  "reference": "https://github.com/nasa/cFE at tag v7.0.2-rc1, commit 73f6fe102eae7949fc5f550e6818fec60319ddea; Apache-2.0, modules/evs/config/default_cfe_evs_msgstruct.h and default_cfe_evs_msgdefs.h; struct CFE_EVS_ShortEventTlm_t, message ID CFE_EVS_SHORT_EVENT_MSG_MID = 0x0809; 48 octets"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "gen-housekeeping_tlm-to-ccsds-space-packet",
+  "from": "cfe-sb-be",
+  "to": "ccsds-space-packet",
+  "input": "0803c0710025000f42b18000000000002a4f7499bee3082d52779cc101e6020b00000230000002550000027a",
+  "expect": "0803c0710025",
+  "source": "written by tools/gen/cfe-vectors.py: the packet is serialized from tools/gen/cfe/layout.json (the C layout cfe2pack.py reads from nasa/cFE); no engine run",
+  "reference": "the primary header carries through the ccsdssp keys; ccsds-space-packet writes the 6 header octets only"
+}

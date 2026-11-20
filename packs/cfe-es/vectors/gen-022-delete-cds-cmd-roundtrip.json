@@ -1,0 +1,20 @@
+{
+  "name": "gen-delete_cds_cmd-roundtrip",
+  "from": "cfe-es",
+  "to": "cfe-es",
+  "input": "1806c07a0029150254310000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "expect": "1806c07a0029150254310000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "model": {
+    "@kind": "delete_cds_cmd",
+    "ccsdssp.packet_type": "1",
+    "ccsdssp.apid": "6",
+    "ccsdssp.sequence_flags": "3",
+    "ccsdssp.data_length": "41",
+    "ccsdssp.sequence_count_or_name": "122",
+    "cfees.delete_cds_cmd_cds_name": "T1",
+    "cfemsg.checksum": "2",
+    "cfemsg.function_code": "21"
+  },
+  "source": "written by tools/gen/cfe-vectors.py: the packet is serialized from tools/gen/cfe/layout.json (the C layout cfe2pack.py reads from nasa/cFE); no engine run",
+  "reference": "https://github.com/nasa/cFE at tag v7.0.2-rc1, commit 73f6fe102eae7949fc5f550e6818fec60319ddea; Apache-2.0, modules/es/config/default_cfe_es_msgstruct.h and default_cfe_es_msgdefs.h; struct CFE_ES_DeleteCDSCmd_t, message ID CFE_ES_CMD_MID = 0x1806, function code CFE_ES_DELETE_CDS_CC = 21; 48 octets"
+}

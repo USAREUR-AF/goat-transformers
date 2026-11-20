@@ -1,0 +1,30 @@
+{
+  "name": "gen-housekeeping_tlm-roundtrip",
+  "from": "cfe-time-be",
+  "to": "cfe-time-be",
+  "input": "0805c07a0029000f42ba8000000000002a4f0074fffbfffa000000e3000001080000012d00000152000001770000019c",
+  "expect": "0805c07a0029000f42ba8000000000002a4f0074fffbfffa000000e3000001080000012d00000152000001770000019c",
+  "model": {
+    "@kind": "housekeeping_tlm",
+    "ccsdssp.packet_type": "0",
+    "ccsdssp.apid": "5",
+    "ccsdssp.sequence_flags": "3",
+    "ccsdssp.data_length": "41",
+    "ccsdssp.sequence_count": "122",
+    "cfemsg.time_seconds": "1000122",
+    "cfemsg.time_subseconds": "32768",
+    "cfetime.housekeeping_tlm_command_counter": "42",
+    "cfetime.housekeeping_tlm_command_error_counter": "79",
+    "cfetime.housekeeping_tlm_clock_state_flags": "116",
+    "cfetime.housekeeping_tlm_clock_state_api": "-5",
+    "cfetime.housekeeping_tlm_leap_seconds": "-6",
+    "cfetime.housekeeping_tlm_met_seconds": "227",
+    "cfetime.housekeeping_tlm_met_subseconds": "264",
+    "cfetime.housekeeping_tlm_stcf_seconds": "301",
+    "cfetime.housekeeping_tlm_stcf_subseconds": "338",
+    "cfetime.housekeeping_tlm_adjustment_factor_seconds": "375",
+    "cfetime.housekeeping_tlm_adjustment_factor_subseconds": "412"
+  },
+  "source": "written by tools/gen/cfe-vectors.py: the packet is serialized from tools/gen/cfe/layout.json (the C layout cfe2pack.py reads from nasa/cFE); no engine run",
+  "reference": "https://github.com/nasa/cFE at tag v7.0.2-rc1, commit 73f6fe102eae7949fc5f550e6818fec60319ddea; Apache-2.0, modules/time/config/default_cfe_time_msgstruct.h and default_cfe_time_msgdefs.h; struct CFE_TIME_HousekeepingTlm_t, message ID CFE_TIME_HK_TLM_MID = 0x0805; 48 octets"
+}

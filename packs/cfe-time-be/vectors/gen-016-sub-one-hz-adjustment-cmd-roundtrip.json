@@ -1,0 +1,21 @@
+{
+  "name": "gen-sub_one_hz_adjustment_cmd-roundtrip",
+  "from": "cfe-time-be",
+  "to": "cfe-time-be",
+  "input": "1805c07400090e340000002a0000004f",
+  "expect": "1805c07400090e340000002a0000004f",
+  "model": {
+    "@kind": "sub_one_hz_adjustment_cmd",
+    "ccsdssp.packet_type": "1",
+    "ccsdssp.apid": "5",
+    "ccsdssp.sequence_flags": "3",
+    "ccsdssp.data_length": "9",
+    "ccsdssp.sequence_count_or_name": "116",
+    "cfetime.one_hz_adjustment_cmd_seconds": "42",
+    "cfetime.one_hz_adjustment_cmd_subseconds": "79",
+    "cfemsg.checksum": "52",
+    "cfemsg.function_code": "14"
+  },
+  "source": "written by tools/gen/cfe-vectors.py: the packet is serialized from tools/gen/cfe/layout.json (the C layout cfe2pack.py reads from nasa/cFE); no engine run",
+  "reference": "https://github.com/nasa/cFE at tag v7.0.2-rc1, commit 73f6fe102eae7949fc5f550e6818fec60319ddea; Apache-2.0, modules/time/config/default_cfe_time_msgstruct.h and default_cfe_time_msgdefs.h; struct CFE_TIME_SubOneHzAdjustmentCmd_t, message ID CFE_TIME_CMD_MID = 0x1805, function code CFE_TIME_SUB_ONE_HZ_ADJUSTMENT_CC = 14; 16 octets"
+}

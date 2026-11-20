@@ -1,0 +1,20 @@
+{
+  "name": "gen-query_all_tasks_cmd-roundtrip",
+  "from": "cfe-es",
+  "to": "cfe-es",
+  "input": "1806c06e0041187354310000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "expect": "1806c06e0041187354310000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "model": {
+    "@kind": "query_all_tasks_cmd",
+    "ccsdssp.packet_type": "1",
+    "ccsdssp.apid": "6",
+    "ccsdssp.sequence_flags": "3",
+    "ccsdssp.data_length": "65",
+    "ccsdssp.sequence_count_or_name": "110",
+    "cfees.file_name_cmd_file_name": "T1",
+    "cfemsg.checksum": "115",
+    "cfemsg.function_code": "24"
+  },
+  "source": "written by tools/gen/cfe-vectors.py: the packet is serialized from tools/gen/cfe/layout.json (the C layout cfe2pack.py reads from nasa/cFE); no engine run",
+  "reference": "https://github.com/nasa/cFE at tag v7.0.2-rc1, commit 73f6fe102eae7949fc5f550e6818fec60319ddea; Apache-2.0, modules/es/config/default_cfe_es_msgstruct.h and default_cfe_es_msgdefs.h; struct CFE_ES_QueryAllTasksCmd_t, message ID CFE_ES_CMD_MID = 0x1806, function code CFE_ES_QUERY_ALL_TASKS_CC = 24; 72 octets"
+}

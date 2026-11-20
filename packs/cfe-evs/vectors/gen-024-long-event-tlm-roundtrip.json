@@ -1,0 +1,27 @@
+{
+  "name": "gen-long_event_tlm-roundtrip",
+  "from": "cfe-evs",
+  "to": "cfe-evs",
+  "input": "0808c07c00a5000f42bc80000000000054310000000000000000000000000000000000004f00740099000000be0000005436000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000082d",
+  "expect": "0808c07c00a5000f42bc80000000000054310000000000000000000000000000000000004f00740099000000be0000005436000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000082d",
+  "model": {
+    "@kind": "long_event_tlm",
+    "ccsdssp.packet_type": "0",
+    "ccsdssp.apid": "8",
+    "ccsdssp.sequence_flags": "3",
+    "ccsdssp.data_length": "165",
+    "ccsdssp.sequence_count": "124",
+    "cfemsg.time_seconds": "1000124",
+    "cfemsg.time_subseconds": "32768",
+    "cfeevs.long_event_tlm_packet_id_app_name": "T1",
+    "cfeevs.long_event_tlm_packet_id_event_id": "79",
+    "cfeevs.long_event_tlm_packet_id_event_type": "116",
+    "cfeevs.long_event_tlm_packet_id_spacecraft_id": "153",
+    "cfeevs.long_event_tlm_packet_id_processor_id": "190",
+    "cfeevs.long_event_tlm_message": "T6",
+    "cfeevs.long_event_tlm_padding_0": "8",
+    "cfeevs.long_event_tlm_padding_1": "45"
+  },
+  "source": "written by tools/gen/cfe-vectors.py: the packet is serialized from tools/gen/cfe/layout.json (the C layout cfe2pack.py reads from nasa/cFE); no engine run",
+  "reference": "https://github.com/nasa/cFE at tag v7.0.2-rc1, commit 73f6fe102eae7949fc5f550e6818fec60319ddea; Apache-2.0, modules/evs/config/default_cfe_evs_msgstruct.h and default_cfe_evs_msgdefs.h; struct CFE_EVS_LongEventTlm_t, message ID CFE_EVS_LONG_EVENT_MSG_MID = 0x0808; 172 octets"
+}
