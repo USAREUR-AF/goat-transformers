@@ -1546,3 +1546,41 @@ class OneLayoutTest(TempDirCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class DeriveTest(unittest.TestCase):
+    """--derive: the module's derive lines and the exact 0.16 time split the
+    codec computes for a cross vector."""
+
+    def opts(self, *derive):
+        return type("Opts", (), {"module": "depot", "derive": list(derive)})()
+
+    def test_a_derive_from_another_module_adds_its_uses_line(self):
+        opts = self.opts("depot.a sec_of time_ms", "depot.b deg_lat_of track.sigma_north_m lat")
+        self.assertEqual(p2p.derive_uses(opts), ["track"])
+
+    def test_the_target_must_be_a_key_of_the_module(self):
+        p2p.check_derive(self.opts("depot.a sec_of time_ms"), {"a"})
+        with self.assertRaises(p2p.GenError):
+            p2p.check_derive(self.opts("track.a sec_of time_ms"), {"a"})
+        with self.assertRaises(p2p.GenError):
+            p2p.check_derive(self.opts("depot.zz sec_of time_ms"), {"a"})
+        with self.assertRaises(p2p.GenError):
+            p2p.check_derive(self.opts("depot.a sec_of"), {"a"})
+
+    def test_sec_of_and_nsec_of_floor_toward_negative_infinity(self):
+        self.assertEqual(p2p.EXACT_DERIVES["sec_of"](-1), -1)
+        self.assertEqual(p2p.EXACT_DERIVES["nsec_of"](-1), 999000000)
+        self.assertEqual(p2p.EXACT_DERIVES["sec_of"](1614456000250), 1614456000)
+        self.assertEqual(p2p.EXACT_DERIVES["nsec_of"](1614456000250), 250000000)
+
+    def test_a_derive_the_codec_cannot_compute_is_returned_not_guessed(self):
+        model = gtcheck.Model()
+        model.add(CORE, "core.def")
+        model.add("module depot\nversion 0.1.0\ndistribution public\nsource \"t\"\n"
+                  "key s int -\nkey e float -\nkey sig float -\n"
+                  "derive depot.s sec_of time_ms\nderive depot.e deg_lat_of depot.sig lat\n", "depot.def")
+        ent, skipped = p2p.apply_derives(model, {"time_ms": 2500, "depot.sig": 1.0, "lat": 0.0})
+        self.assertEqual(ent["depot.s"], 2)
+        self.assertNotIn("depot.e", ent)
+        self.assertEqual(skipped, {"depot.e"})

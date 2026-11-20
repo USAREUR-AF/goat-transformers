@@ -1516,6 +1516,40 @@ def would_derive(model, keys):
     return added
 
 
+# Derive functions this codec computes, exactly as engine-spec 0.16 states them:
+# integer arithmetic, floor toward negative infinity, no float step.
+EXACT_DERIVES = {
+    "sec_of": lambda ms: ms // 1000,
+    "nsec_of": lambda ms: (ms - 1000 * (ms // 1000)) * 1000000,
+}
+
+
+def apply_derives(model, ent):
+    """The entity `convert` would make of `ent` (engine-spec 0.6): the modules in
+    byte order of name, each module's derive lines in order, a line setting its
+    target when the target is absent and every argument present, repeated until
+    a pass sets nothing (at most 8). Only the functions of EXACT_DERIVES are
+    computed; the targets of lines with another function that would fire are
+    returned, and the caller refuses a vector that depends on one, as
+    would_derive does. -> (entity, set of targets not computed)."""
+    out, skipped = dict(ent), set()
+    for _ in range(8):
+        progressed = False
+        for name in sorted(model.modules):
+            for derive in model.modules[name].derives:
+                if derive.target in out or not all(k in out for k in derive.arguments):
+                    continue
+                fn = EXACT_DERIVES.get(derive.function)
+                if fn is None or derive.parameter is not None:
+                    skipped.add(derive.target)
+                    continue
+                out[derive.target] = fn(*[out[k] for k in derive.arguments])
+                progressed = True
+        if not progressed:
+            break
+    return out, skipped
+
+
 def within(part, whole):
     """True when `part` is `whole` as far as it goes: equal scalars; for a list,
     as many items, each item's keys and lists within the other's (a list
@@ -2439,7 +2473,12 @@ def cross_in(out, plan, checked, spec):
     src_vec = read_json(vfile, "--cross vector")
     if src_vec["to" if vfield == "expect" else "from"] != other.format:
         raise GenError("--cross %s: that text is not %s" % (spec, other.format))
-    ent = other.decode(src_vec[vfield])
+    decoded = other.decode(src_vec[vfield])
+    ent, skipped = apply_derives(checked.model, decoded)
+    if skipped & pack.names():
+        raise GenError("--cross %s: the engine would derive %s, which this pack writes" % (
+            spec, " ".join(sorted(skipped & pack.names()))))
+    ent = {k: v for k, v in ent.items() if k in decoded or k in pack.names()}
     b, chosen = engine_encode(pack, ent, None)
     if opts.default_kind and chosen != opts.default_kind:
         raise GenError("--cross %s: encoded as kind %s, not the default kind" % (spec, chosen))
@@ -2450,18 +2489,18 @@ def cross_in(out, plan, checked, spec):
     back, back_kind = engine_decode(pack, b)
     if back_kind != chosen:
         raise GenError("--cross %s: output decodes as kind %s" % (spec, back_kind))
-    carried = sorted(k for k in ent if k in back)
-    for k in carried:
+    for k in sorted(k for k in ent if k in back):
         if back[k] != ent[k]:
             raise GenError("--cross %s: key %s does not survive" % (spec, k))
+    carried = sorted(k for k in decoded if k in back)
     if vfield == "expect" and src_vec["from"] == opts.format and "".join(src_vec["input"].split()) != b.hex():
         raise GenError("--cross %s: does not return the bytes that vector started from" % spec)
     vec = {"name": "gen-%s-to-%s" % (other.format, opts.format), "from": other.format, "to": opts.format,
            "input": src_vec[vfield], "expect": b.hex(),
-           "model": flat_model(ent, values=2)}
+           "model": flat_model(decoded, values=2)}
     rel = cross_vector_path(other.format, opts.format)
     out.write(rel, dump_vector(vec))
-    return CrossIn(other.format, chosen, carried, [k for k in ent if k not in back], rel)
+    return CrossIn(other.format, chosen, carried, [k for k in decoded if k not in back], rel)
 
 
 def omit_paths(pack, kname, ent, cross_omit):

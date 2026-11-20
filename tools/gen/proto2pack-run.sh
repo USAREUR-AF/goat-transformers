@@ -123,6 +123,10 @@ DETECTION=(
   --default-kind detection_report --default-requires lat lon
 )
 
+# The message timestamp (1) is time_ms split into seconds and nanoseconds, and the
+# detection report's x and y error (7.6.4, 7.6.5) are the east and north sigma in
+# degrees at the report's latitude (engine-spec 0.16), as the open-billie translator
+# writes them; each is set only when the entity does not already hold it.
 python3 -I "$GEN/proto2pack.py" \
   --proto "$SRC"/sapient/bsi_flex_335_v2_0/*.proto "$SRC/sapient/proto_options.proto" \
   --envelope SapientMessage --format sapient --module sapient --out "$ROOT" \
@@ -130,7 +134,11 @@ python3 -I "$GEN/proto2pack.py" \
   --source "BSI Flex 335 v2.0 protobuf definitions: github.com/dstl/SAPIENT-Proto-Files commit $SHA, directory bsi_flex_335_v2_0 (16 .proto files) and proto_options.proto" \
   --source "$LICENCE" \
   "${DETECTION[@]}" \
-  --pack-version 0.3.0 \
+  --pack-version 0.3.0 --module-version 0.2.0 \
+  --derive "sapient.timestamp_seconds sec_of time_ms" \
+  --derive "sapient.timestamp_nanos nsec_of time_ms" \
+  --derive "sapient.location_x_error deg_lon_of track.sigma_east_m lat" \
+  --derive "sapient.location_y_error deg_lat_of track.sigma_north_m lat" \
   --names-file "$NAMES/sapient.json" \
   --cross "$ROOT/packs/cot-xml/pack.def=$ROOT/packs/cot-xml/vectors/02-cot-roundtrip.json:input" \
   --cross "$ROOT/packs/geojson/pack.def=$ROOT/packs/sapient/vectors/01-sapient-to-geojson.json:expect" \
