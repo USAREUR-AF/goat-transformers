@@ -1,0 +1,7 @@
+{
+ "name": "gen-segment-residue",
+ "from": "overture-segment",
+ "to": "overture-segment",
+ "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"theme\":\"transportation\",\"type\":\"segment\",\"subtype\":\"water\",\"version\":91207,\"class\":\"standard_gauge\",\"subclass\":\"driveway\",\"connectors\":[\"r1\",\"r2\"],\"access_restrictions\":[\"r1\",\"r2\"],\"level_rules\":[\"r1\",\"r2\"],\"sources\":[\"r1\",\"r2\"],\"names\":{\"r\":\"1\"},\"destinations\":[\"r1\",\"r2\"],\"prohibited_transitions\":[\"r1\",\"r2\"],\"road_surface\":[\"r1\",\"r2\"],\"road_flags\":[\"r1\",\"r2\"],\"speed_limits\":[\"r1\",\"r2\"],\"width_rules\":[\"r1\",\"r2\"],\"subclass_rules\":[\"r1\",\"r2\"],\"routes\":[\"r1\",\"r2\"],\"rail_flags\":[\"r1\",\"r2\"]},\"id\":\"s7282\"}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"theme\":\"transportation\",\"type\":\"segment\",\"subtype\":\"water\",\"version\":91207,\"class\":\"standard_gauge\",\"subclass\":\"driveway\",\"connectors\":[\"r1\",\"r2\"],\"access_restrictions\":[\"r1\",\"r2\"],\"level_rules\":[\"r1\",\"r2\"],\"sources\":[\"r1\",\"r2\"],\"names\":{\"r\":\"1\"},\"destinations\":[\"r1\",\"r2\"],\"prohibited_transitions\":[\"r1\",\"r2\"],\"road_surface\":[\"r1\",\"r2\"],\"road_flags\":[\"r1\",\"r2\"],\"speed_limits\":[\"r1\",\"r2\"],\"width_rules\":[\"r1\",\"r2\"],\"subclass_rules\":[\"r1\",\"r2\"],\"routes\":[\"r1\",\"r2\"],\"rail_flags\":[\"r1\",\"r2\"]},\"id\":\"s7282\"}"
+}

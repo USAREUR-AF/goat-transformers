@@ -1,0 +1,17 @@
+{
+ "name": "gen-division-roundtrip",
+ "from": "overture-division",
+ "to": "overture-division",
+ "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"theme\":\"divisions\",\"type\":\"division\",\"subtype\":\"country\",\"class\":\"city\",\"country\":\"s36192\",\"region\":\"s27717\",\"parent_division_id\":\"s11549\",\"admin_level\":71426,\"population\":38157,\"wikidata\":\"s53294\",\"version\":58257},\"id\":\"s84242\"}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"theme\":\"divisions\",\"type\":\"division\",\"subtype\":\"country\",\"class\":\"city\",\"country\":\"s36192\",\"region\":\"s27717\",\"parent_division_id\":\"s11549\",\"admin_level\":71426,\"population\":38157,\"wikidata\":\"s53294\",\"version\":58257},\"id\":\"s84242\"}",
+ "model": {
+  "@kind": "division",
+  "uid": "s84242",
+  "lon": "-77.0365",
+  "lat": "38.8977",
+  "overturedivision.id": "s84242",
+  "overturedivision.properties_subtype": "country",
+  "overturedivision.properties_class": "city",
+  "overturedivision.properties_country": "s36192"
+ }
+}

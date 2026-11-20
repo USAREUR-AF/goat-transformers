@@ -1,0 +1,17 @@
+{
+ "name": "gen-place-roundtrip",
+ "from": "overture-place",
+ "to": "overture-place",
+ "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"theme\":\"places\",\"type\":\"place\",\"basic_category\":\"s68806\",\"confidence\":0.75,\"operating_status\":\"temporarily_closed\",\"version\":83695},\"id\":\"s16568\"}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"theme\":\"places\",\"type\":\"place\",\"basic_category\":\"s68806\",\"confidence\":0.75,\"operating_status\":\"temporarily_closed\",\"version\":83695},\"id\":\"s16568\"}",
+ "model": {
+  "@kind": "place",
+  "uid": "s16568",
+  "lon": "-77.0365",
+  "lat": "38.8977",
+  "overtureplace.id": "s16568",
+  "overtureplace.properties_basic_category": "s68806",
+  "overtureplace.properties_confidence": "0.75",
+  "overtureplace.properties_operating_status": "temporarily_closed"
+ }
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-address-residue",
+ "from": "overture-address",
+ "to": "overture-address",
+ "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"theme\":\"addresses\",\"type\":\"address\",\"country\":\"s63040\",\"postcode\":\"s89163\",\"street\":\"s93888\",\"number\":\"s71083\",\"unit\":\"s21862\",\"postal_city\":\"s32944\",\"version\":67193,\"address_levels\":[\"r1\",\"r2\"],\"sources\":[\"r1\",\"r2\"]},\"id\":\"s17300\"}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"theme\":\"addresses\",\"type\":\"address\",\"country\":\"s63040\",\"postcode\":\"s89163\",\"street\":\"s93888\",\"number\":\"s71083\",\"unit\":\"s21862\",\"postal_city\":\"s32944\",\"version\":67193,\"address_levels\":[\"r1\",\"r2\"],\"sources\":[\"r1\",\"r2\"]},\"id\":\"s17300\"}"
+}

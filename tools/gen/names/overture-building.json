@@ -1,0 +1,25 @@
+{
+ "keys": {
+  "|id|string": "id",
+  "|properties.class|string": "properties_class",
+  "|properties.facade_color|string": "properties_facade_color",
+  "|properties.facade_material|string": "properties_facade_material",
+  "|properties.height|float": "properties_height",
+  "|properties.level|int": "properties_level",
+  "|properties.min_floor|int": "properties_min_floor",
+  "|properties.min_height|float": "properties_min_height",
+  "|properties.num_floors_underground|int": "properties_num_floors_underground",
+  "|properties.num_floors|int": "properties_num_floors",
+  "|properties.roof_color|string": "properties_roof_color",
+  "|properties.roof_direction|float": "properties_roof_direction",
+  "|properties.roof_height|float": "properties_roof_height",
+  "|properties.roof_material|string": "properties_roof_material",
+  "|properties.roof_orientation|string": "properties_roof_orientation",
+  "|properties.roof_shape|string": "properties_roof_shape",
+  "|properties.subtype|string": "properties_subtype",
+  "|properties.theme|string": "properties_theme",
+  "|properties.type|string": "properties_type",
+  "|properties.version|int": "properties_version"
+ },
+ "lists": {}
+}

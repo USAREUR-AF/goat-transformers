@@ -1,0 +1,15 @@
+{
+ "keys": {
+  "|id|string": "id",
+  "|properties.country|string": "properties_country",
+  "|properties.number|string": "properties_number",
+  "|properties.postal_city|string": "properties_postal_city",
+  "|properties.postcode|string": "properties_postcode",
+  "|properties.street|string": "properties_street",
+  "|properties.theme|string": "properties_theme",
+  "|properties.type|string": "properties_type",
+  "|properties.unit|string": "properties_unit",
+  "|properties.version|int": "properties_version"
+ },
+ "lists": {}
+}

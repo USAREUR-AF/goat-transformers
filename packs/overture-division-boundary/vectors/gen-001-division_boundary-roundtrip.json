@@ -1,0 +1,17 @@
+{
+ "name": "gen-division_boundary-roundtrip",
+ "from": "overture-division-boundary",
+ "to": "overture-division-boundary",
+ "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"theme\":\"divisions\",\"type\":\"division_boundary\",\"subtype\":\"dependency\",\"class\":\"land\",\"country\":\"s75516\",\"region\":\"s89182\",\"admin_level\":37518,\"version\":23565},\"id\":\"s41493\"}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"theme\":\"divisions\",\"type\":\"division_boundary\",\"subtype\":\"dependency\",\"class\":\"land\",\"country\":\"s75516\",\"region\":\"s89182\",\"admin_level\":37518,\"version\":23565},\"id\":\"s41493\"}",
+ "model": {
+  "@kind": "division_boundary",
+  "uid": "s41493",
+  "overturedivisionboundary.id": "s41493",
+  "overturedivisionboundary.properties_subtype": "dependency",
+  "overturedivisionboundary.properties_class": "land",
+  "overturedivisionboundary.properties_country": "s75516",
+  "overturedivisionboundary.properties_region": "s89182",
+  "overturedivisionboundary.properties_admin_level": "37518"
+ }
+}

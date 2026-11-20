@@ -1,0 +1,17 @@
+{
+ "name": "gen-connector-roundtrip",
+ "from": "overture-connector",
+ "to": "overture-connector",
+ "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"theme\":\"transportation\",\"type\":\"connector\",\"version\":73929},\"id\":\"s26055\"}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"theme\":\"transportation\",\"type\":\"connector\",\"version\":73929},\"id\":\"s26055\"}",
+ "model": {
+  "@kind": "connector",
+  "uid": "s26055",
+  "lon": "-77.0365",
+  "lat": "38.8977",
+  "overtureconnector.id": "s26055",
+  "overtureconnector.properties_theme": "transportation",
+  "overtureconnector.properties_type": "connector",
+  "overtureconnector.properties_version": "73929"
+ }
+}

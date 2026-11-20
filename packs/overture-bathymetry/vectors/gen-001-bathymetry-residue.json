@@ -1,0 +1,7 @@
+{
+ "name": "gen-bathymetry-residue",
+ "from": "overture-bathymetry",
+ "to": "overture-bathymetry",
+ "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"theme\":\"base\",\"type\":\"bathymetry\",\"depth\":13047,\"version\":71601,\"level\":39159,\"sources\":[\"r1\",\"r2\"],\"cartography\":{\"r\":\"1\"}},\"id\":\"s19009\"}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"theme\":\"base\",\"type\":\"bathymetry\",\"depth\":13047,\"version\":71601,\"level\":39159,\"sources\":[\"r1\",\"r2\"],\"cartography\":{\"r\":\"1\"}},\"id\":\"s19009\"}"
+}

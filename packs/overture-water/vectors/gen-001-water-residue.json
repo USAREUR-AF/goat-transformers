@@ -1,0 +1,7 @@
+{
+ "name": "gen-water-residue",
+ "from": "overture-water",
+ "to": "overture-water",
+ "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"theme\":\"base\",\"type\":\"water\",\"subtype\":\"stream\",\"class\":\"lagoon\",\"version\":98839,\"level\":55554,\"wikidata\":\"s23921\",\"sources\":[\"r1\",\"r2\"],\"names\":{\"r\":\"1\"},\"source_tags\":{\"r\":\"1\"}},\"id\":\"s83081\"}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"theme\":\"base\",\"type\":\"water\",\"subtype\":\"stream\",\"class\":\"lagoon\",\"version\":98839,\"level\":55554,\"wikidata\":\"s23921\",\"sources\":[\"r1\",\"r2\"],\"names\":{\"r\":\"1\"},\"source_tags\":{\"r\":\"1\"}},\"id\":\"s83081\"}"
+}

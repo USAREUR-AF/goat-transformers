@@ -1,0 +1,7 @@
+{
+ "name": "gen-land_cover-residue",
+ "from": "overture-land-cover",
+ "to": "overture-land-cover",
+ "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"theme\":\"base\",\"type\":\"land_cover\",\"subtype\":\"urban\",\"version\":69674,\"level\":79628,\"sources\":[\"r1\",\"r2\"],\"cartography\":{\"r\":\"1\"}},\"id\":\"s82071\"}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"theme\":\"base\",\"type\":\"land_cover\",\"subtype\":\"urban\",\"version\":69674,\"level\":79628,\"sources\":[\"r1\",\"r2\"],\"cartography\":{\"r\":\"1\"}},\"id\":\"s82071\"}"
+}

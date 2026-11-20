@@ -1,0 +1,17 @@
+{
+ "name": "gen-bathymetry-roundtrip",
+ "from": "overture-bathymetry",
+ "to": "overture-bathymetry",
+ "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"theme\":\"base\",\"type\":\"bathymetry\",\"depth\":13047,\"version\":71601,\"level\":39159},\"id\":\"s19009\"}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"theme\":\"base\",\"type\":\"bathymetry\",\"depth\":13047,\"version\":71601,\"level\":39159},\"id\":\"s19009\"}",
+ "model": {
+  "@kind": "bathymetry",
+  "uid": "s19009",
+  "overturebathymetry.id": "s19009",
+  "overturebathymetry.properties_depth": "13047",
+  "overturebathymetry.properties_theme": "base",
+  "overturebathymetry.properties_type": "bathymetry",
+  "overturebathymetry.properties_version": "71601",
+  "overturebathymetry.properties_level": "39159"
+ }
+}

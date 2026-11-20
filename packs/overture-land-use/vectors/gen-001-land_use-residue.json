@@ -1,0 +1,7 @@
+{
+ "name": "gen-land_use-residue",
+ "from": "overture-land-use",
+ "to": "overture-land-use",
+ "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"theme\":\"base\",\"type\":\"land_use\",\"subtype\":\"managed\",\"class\":\"forest\",\"elevation\":5357,\"surface\":\"concrete_plates\",\"version\":70475,\"level\":48341,\"wikidata\":\"s16533\",\"sources\":[\"r1\",\"r2\"],\"names\":{\"r\":\"1\"},\"source_tags\":{\"r\":\"1\"}},\"id\":\"s23564\"}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"theme\":\"base\",\"type\":\"land_use\",\"subtype\":\"managed\",\"class\":\"forest\",\"elevation\":5357,\"surface\":\"concrete_plates\",\"version\":70475,\"level\":48341,\"wikidata\":\"s16533\",\"sources\":[\"r1\",\"r2\"],\"names\":{\"r\":\"1\"},\"source_tags\":{\"r\":\"1\"}},\"id\":\"s23564\"}"
+}

@@ -1,0 +1,17 @@
+{
+ "name": "gen-segment-roundtrip",
+ "from": "overture-segment",
+ "to": "overture-segment",
+ "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"theme\":\"transportation\",\"type\":\"segment\",\"subtype\":\"water\",\"version\":91207,\"class\":\"standard_gauge\",\"subclass\":\"driveway\"},\"id\":\"s7282\"}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"theme\":\"transportation\",\"type\":\"segment\",\"subtype\":\"water\",\"version\":91207,\"class\":\"standard_gauge\",\"subclass\":\"driveway\"},\"id\":\"s7282\"}",
+ "model": {
+  "@kind": "segment",
+  "uid": "s7282",
+  "overturesegment.id": "s7282",
+  "overturesegment.properties_subtype": "water",
+  "overturesegment.properties_theme": "transportation",
+  "overturesegment.properties_type": "segment",
+  "overturesegment.properties_version": "91207",
+  "overturesegment.properties_class": "standard_gauge"
+ }
+}

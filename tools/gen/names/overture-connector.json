@@ -1,0 +1,9 @@
+{
+ "keys": {
+  "|id|string": "id",
+  "|properties.theme|string": "properties_theme",
+  "|properties.type|string": "properties_type",
+  "|properties.version|int": "properties_version"
+ },
+ "lists": {}
+}

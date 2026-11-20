@@ -1,0 +1,7 @@
+{
+ "name": "gen-connector-residue",
+ "from": "overture-connector",
+ "to": "overture-connector",
+ "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"theme\":\"transportation\",\"type\":\"connector\",\"version\":73929,\"sources\":[\"r1\",\"r2\"]},\"id\":\"s26055\"}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"theme\":\"transportation\",\"type\":\"connector\",\"version\":73929,\"sources\":[\"r1\",\"r2\"]},\"id\":\"s26055\"}"
+}
