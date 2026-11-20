@@ -106,7 +106,7 @@ context) supplies; an entity that has the keys of no kind ends in `no-kind`.
 
 | From | Encodes as | Keys carried | Keys the pack has no place for | Vector |
 |---|---|---|---|---|
-| `cot-xml` | `cot_event` | `callsign` `ce` `hae` `how` `lat` `le` `lon` `time_ms` `track.scoped_id` `type` `uid` | none | `packs/cot-xml/vectors/gen-cot-xml-to-cot-protobuf.json` |
+| `cot-xml` | `cot_event` | `callsign` `ce` `hae` `how` `lat` `le` `lon` `time_ms` `track.scoped_id` `type` `uid` | `time_text` | `packs/cot-xml/vectors/gen-cot-xml-to-cot-protobuf.json` |
 | `geojson` | `cot_event` | `callsign` `ce` `course` `hae` `how` `lat` `le` `lon` `speed_ms` `time_ms` `type` `uid` | none | `packs/geojson/vectors/gen-geojson-to-cot-protobuf.json` |
 
 ## Encoding into another format
