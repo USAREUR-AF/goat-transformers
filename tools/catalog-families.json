@@ -26,6 +26,7 @@
     {"name": "Autoware (ROS 2)", "domain": "land", "prefixes": ["ros2-autoware-"]},
     {"name": "Tier IV (ROS 2)", "domain": "land", "prefixes": ["ros2-tier4-"]},
     {"name": "Eclipse KUKSA.val", "domain": "land", "prefixes": ["kuksa-"]},
+    {"name": "COVESA VSS", "domain": "land", "exact": ["vss-vehicle"]},
     {"name": "Tesla Fleet Telemetry", "domain": "land", "prefixes": ["tesla-fleet-"]},
     {"name": "Waymo Open Dataset", "domain": "land", "prefixes": ["waymo-"]},
     {"name": "OpenXC", "domain": "land", "exact": ["openxc-vehicle-message"]},
