@@ -1,0 +1,14 @@
+{
+  "name": "gmti-segment-freetext-text-not-read",
+  "from": "gmti-segment",
+  "to": "gmti-segment",
+  "input": "060000002747532d4e4f5254482020414c4c20202020202020434845434b204752494420333255",
+  "expect": "060000001947532d4e4f5254482020414c4c20202020202020",
+  "model": {
+    "@kind": "freetext",
+    "gmti.originator_id": "GS-NORTH  ",
+    "gmti.recipient_id": "ALL       "
+  },
+  "source": "synthetic",
+  "reference": "the text runs to the end of the segment and is not read"
+}

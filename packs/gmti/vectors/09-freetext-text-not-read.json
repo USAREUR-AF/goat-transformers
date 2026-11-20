@@ -1,0 +1,14 @@
+{
+  "name": "gmti-freetext-text-not-read",
+  "from": "gmti",
+  "to": "gmti",
+  "input": "343100000047584e05584e0000804e313233343520202020000003e900000000060000002747532d4e4f5254482020414c4c20202020202020434845434b204752494420333255",
+  "expect": "343100000039584e05584e0000804e313233343520202020000003e900000000060000001947532d4e4f5254482020414c4c20202020202020",
+  "model": {
+    "@kind": "freetext",
+    "gmti.originator_id": "GS-NORTH  ",
+    "gmti.recipient_id": "ALL       "
+  },
+  "source": "synthetic",
+  "reference": "the text runs to the end of the segment and is not read"
+}

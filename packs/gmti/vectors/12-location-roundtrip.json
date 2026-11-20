@@ -1,0 +1,28 @@
+{
+  "name": "gmti-location-roundtrip",
+  "from": "gmti",
+  "to": "gmti",
+  "input": "34310000003c584e05584e0000804e313233343520202020000003e9000000000d0000001c02aea54045000000f8e38e390010473040000002bf20fd",
+  "expect": "34310000003c584e05584e0000804e313233343520202020000003e9000000000d0000001c02aea54045000000f8e38e390010473040000002bf20fd",
+  "model": {
+    "gmti.version_id": "41",
+    "gmti.nationality": "XN",
+    "gmti.classification": "5",
+    "gmti.class_system": "XN",
+    "gmti.security_code": "0",
+    "gmti.exercise": "128",
+    "gmti.platform_id": "N12345    ",
+    "gmti.mission_id": "1001",
+    "gmti.job_id": "0",
+    "gmti.location_time_ms": "45000000",
+    "lat": "48.515625",
+    "lon": "-9.999999990686774",
+    "hae": "10668.0",
+    "course": "90.0",
+    "speed_ms": "180.0",
+    "track.vel_up_ms": "-0.3",
+    "@kind": "location"
+  },
+  "source": "synthetic",
+  "reference": "platform location segment: position, track, speed and vertical velocity are shared keys"
+}

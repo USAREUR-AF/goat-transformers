@@ -1,0 +1,214 @@
+# GMTI packet layout (AEDP-4607 Ed A V1), stated in this repository's own words and names.
+# One row per field, in wire order. Byte sizes; every field is byte aligned, most significant bit first.
+# kind: header (common to every packet) or a segment kind of tools/gmti/kinds.tsv.
+# bit: the field's position in the segment's existence mask, counted from 1 in reading order; empty when the segment has no mask.
+# form: A text | I unsigned | S two's complement | E enumeration | FL flags | SA signed binary angle (180/2^n deg)
+#       | BA binary angle (360/2^n deg) | BP sign-magnitude fixed point of a non-negative quantity (B16: 7 fraction bits, B32: 23)
+#       | SM sign-magnitude fixed point of a signed quantity (B16: 7 fraction bits, B32: 16), read with `smscale` | skip (mask bit named, nothing read) | rest (the remainder of the segment, not read)
+# bind: a shared key and its transform, written in place of a raw key.  also: further keys on the same bits (`key via table`, `;` between).
+kind	ref	bit	key	bytes	form	unit	bind	also	meaning
+header	P1		version_id	2	A	-			edition and version of the format the packet follows, two digits
+header	P2			4	LENWHOLE	bytes			size of the whole packet; written by the encoder
+header	P3		nationality	2	A	-			two-letter code of the nation of the platform
+header	P4		classification	1	E	-			security classification of the packet (enumeration)
+header	P5		class_system	2	A	-			two-letter code of the security system the classification belongs to
+header	P6		security_code	2	FL	-			handling-code flags
+header	P7		exercise	1	E	-			operation or exercise, and real, simulated or synthesized data (enumeration)
+header	P8		platform_id	10	A	-			identifier of the platform (for an aircraft its tail number), space padded
+header	P9		mission_id	4	I	-			mission number the platform assigns
+header	P10		job_id	4	I	-			job number the dwell and HRR segments of the packet belong to; 0 when there are none
+mission	M1		mission_plan	12	A	-			mission plan identifier
+mission	M2		flight_plan	12	A	-			flight plan identifier
+mission	M3		platform_type	1	E	-			platform type (enumeration)
+mission	M4		platform_config	10	A	-			variant or configuration of the platform
+mission	M5		reference_year	2	I	-			year of the mission reference day
+mission	M6		reference_month	1	I	-			month of the mission reference day
+mission	M7		reference_day	1	I	-			day of month of the mission reference day (UTC)
+dwell	D2	1	dwell_revisit_index	2	I	-			revisit count of the job's bounding area
+dwell	D3	2	dwell_index	2	I	-			dwell count within the revisit
+dwell	D4	3	dwell_last_of_revisit	1	FL	-			1 when this is the last dwell of the revisit
+dwell	D5	4	dwell_target_count	2	I	-			number of target reports in the dwell
+dwell	D6	5	dwell_time_ms	4	I	ms			time of the dwell centre after midnight UTC of the mission reference day
+dwell	D7	6	sensor_lat	4	SA	deg			sensor latitude
+dwell	D8	7	sensor_lon	4	BA	deg			sensor longitude, 0 to 360 east
+dwell	D9	8	sensor_alt_cm	4	S	cm			sensor height above the WGS 84 ellipsoid
+dwell	D10	9	lat_scale	4	SA	deg			factor for the reduced-size target latitude
+dwell	D11	10	lon_scale	4	BA	deg			factor for the reduced-size target longitude
+dwell	D12	11	sensor_unc_along_cm	4	I	cm			one-sigma sensor position error along track
+dwell	D13	12	sensor_unc_cross_cm	4	I	cm			one-sigma sensor position error across track
+dwell	D14	13	sensor_unc_alt_cm	2	I	cm			one-sigma sensor height error
+dwell	D15	14	sensor_track	2	BA	deg			sensor ground track, clockwise from true north
+dwell	D16	15	sensor_speed_mms	4	I	mm/s			sensor ground speed
+dwell	D17	16	sensor_vvel_dms	1	S	dm/s			sensor vertical velocity
+dwell	D18	17	sensor_track_unc_deg	1	I	deg			one-sigma error of the sensor track
+dwell	D19	18	sensor_speed_unc_mms	2	I	mm/s			one-sigma error of the sensor speed
+dwell	D20	19	sensor_vvel_unc_cms	2	I	cm/s			one-sigma error of the sensor vertical velocity
+dwell	D21	20	platform_heading	2	BA	deg			platform heading
+dwell	D22	21	platform_pitch	2	SA	deg			platform pitch, nose up positive
+dwell	D23	22	platform_roll	2	SA	deg			platform roll, right wing down positive
+dwell	D24	23	dwell_center_lat	4	SA	deg			latitude of the centre of the dwell area
+dwell	D25	24	dwell_center_lon	4	BA	deg			longitude of the centre of the dwell area, 0 to 360 east
+dwell	D26	25	dwell_range_half_km	2	BP	km			half the range depth of the dwell area
+dwell	D27	26	dwell_angle_half	2	BA	deg			half the angular width of the dwell area
+dwell	D28	27	sensor_heading	2	BA	deg			sensor face rotation about the platform vertical
+dwell	D29	28	sensor_pitch	2	SA	deg			sensor face elevation
+dwell	D30	29	sensor_roll	2	SA	deg			sensor face roll
+dwell	D31	30	mdv_dms	1	I	dm/s			smallest line-of-sight speed the sensor detects
+dwell	D32.1	31	mti_report_index	2	I	-			index of the first target report within the dwell
+dwell	D32.2	32		4	SA	deg	lat sscale:180/4294967296		latitude of the first target report
+dwell	D32.3	33		4	BA	deg	lon sscale:360/4294967296		longitude of the first target report; the 32 bits read as two's complement give -180 to 180
+dwell	D32.4	34	target_delta_lat	2	S	-			reduced-size latitude of the first target, in units of the latitude factor from the dwell centre
+dwell	D32.5	35	target_delta_lon	2	S	-			reduced-size longitude of the first target, in units of the longitude factor from the dwell centre
+dwell	D32.6	36		2	S	m	hae sscale:1		height of the first target above the WGS 84 ellipsoid
+dwell	D32.7	37	target_los_vel_cms	2	S	cm/s			line-of-sight speed of the first target, away from the sensor positive
+dwell	D32.8	38	target_wrap_vel_cms	2	I	cm/s			half the velocity ambiguity of the first target
+dwell	D32.9	39	target_snr_db	1	S	dB			signal-to-noise ratio of the first target
+dwell	D32.10	40	target_class	1	E	-		track.class via target_class; track.simulated via target_simulated	classification of the first target (enumeration; 128 and above: simulated)
+dwell	D32.11	41	target_class_prob	1	I	%			probability of that classification
+dwell	D32.12	42	target_unc_slant_cm	2	I	cm			one-sigma slant range error of the first target
+dwell	D32.13	43	target_unc_cross_dm	2	I	dm			one-sigma cross range error of the first target
+dwell	D32.14	44	target_unc_height_m	1	I	m			one-sigma height error of the first target
+dwell	D32.15	45	target_unc_los_vel_cms	2	I	cm/s			one-sigma line-of-sight speed error of the first target
+dwell	D32.16	46	truth_tag_app	1	I	-			simulation application number of the first target
+dwell	D32.17	47	truth_tag_entity	4	I	-			simulation entity number of the first target
+dwell	D32.18	48	target_rcs_halfdb	1	S	dB/2			radar cross section of the first target
+hrr	H2	1	hrr_revisit_index	2	I	-			revisit count
+hrr	H3	2	hrr_dwell_index	2	I	-			dwell count within the revisit
+hrr	H4	3	hrr_last_of_revisit	1	FL	-			1 when this is the last dwell of the revisit
+hrr	H5	4	hrr_mti_report_index	2	I	-			index of the target report the chip belongs to
+hrr	H6	5	hrr_target_scatterers	2	I	-			number of pixels above the scatterer threshold
+hrr	H7	6	hrr_range_samples	2	I	-			number of range samples, or total scatterer records of a sparse chip
+hrr	H8	7	hrr_doppler_samples	2	I	-			number of doppler samples
+hrr	H9	8	hrr_clutter_power_qdb	1	I	dB/4			mean clutter power below the peak scatterer
+hrr	H10	9	hrr_threshold_qdb	1	I	-dB/4			detection threshold below the peak scatterer
+hrr	H11	10	hrr_range_resolution_cm	2	BP	cm			range resolution
+hrr	H12	11	hrr_range_bin_spacing_cm	2	BP	cm			range sample spacing
+hrr	H13	12	hrr_doppler_resolution_hz	4	SM	Hz			doppler resolution in Hz (sign, 15 integer bits, 16 fraction bits)
+hrr	H14	13	hrr_doppler_spacing_hz	4	SM	Hz			doppler sample spacing in Hz (same coding)
+hrr	H15	14	hrr_center_freq_ghz	4	BP	GHz			centre frequency
+hrr	H16	15	hrr_compression	1	E	-			compression used (enumeration)
+hrr	H17	16	hrr_range_weighting	1	E	-			range weighting (enumeration)
+hrr	H18	17	hrr_doppler_weighting	1	E	-			doppler weighting (enumeration)
+hrr	H19	18	hrr_max_pixel_power_db	2	SM	dB			peak scatterer power in dB (sign, 8 integer bits, 7 fraction bits)
+hrr	H20	19	hrr_max_rcs_halfdb	1	S	dB/2			radar cross section of the peak scatterer
+hrr	H21	20	hrr_range_origin_m	2	S	m			range offset of the first scatterer from the dwell centre
+hrr	H22	21	hrr_doppler_origin_hz	4	SM	Hz			doppler of the first scatterer in Hz (sign, 15 integer bits, 16 fraction bits)
+hrr	H23	22	hrr_type	1	E	-			kind of chip or map (enumeration)
+hrr	H24	23	hrr_processing_mask	1	FL	-			processing applied (flags)
+hrr	H25	24	hrr_magnitude_bytes	1	I	-			bytes of magnitude in each scatterer record
+hrr	H26	25	hrr_phase_bytes	1	I	-			bytes of phase in each scatterer record
+hrr	H27	26	hrr_range_extent_px	1	I	px			range extent of the chip
+hrr	H28	27	hrr_range_to_edge_cm	4	I	cm			distance from the range bin to the nearest chip edge
+hrr	H29	28	hrr_zero_velocity_bin	1	I	-			index of the zero-velocity bin
+hrr	H30	29	hrr_electrical_length_m	4	BP	m			radial electrical length of the object
+hrr	H31	30	hrr_electrical_length_unc_m	4	BP	m			one-sigma error of that length
+hrr	H32.1	31		0	skip				scatterer magnitude: its size is the value of hrr_magnitude_bytes
+hrr	H32.2	32		0	skip				scatterer phase: its size is the value of hrr_phase_bytes
+hrr	H32.3	33		0	skip				scatterer range index
+hrr	H32.4	34		0	skip				scatterer doppler index
+jobdef	J1		jobdef_job_id	4	I	-			job number being defined
+jobdef	J2		sensor_type	1	E	-			sensor type (enumeration)
+jobdef	J3		sensor_model	6	A	-			sensor variant
+jobdef	J4		target_filtering	1	FL	-			filtering applied to the targets (flags)
+jobdef	J5		radar_priority	1	I	-			priority of the job on the platform; 255 ends the job
+jobdef	J6		area_a_lat	4	SA	deg			bounding area, corner A latitude
+jobdef	J7		area_a_lon	4	BA	deg			bounding area, corner A longitude
+jobdef	J8		area_b_lat	4	SA	deg			bounding area, corner B latitude
+jobdef	J9		area_b_lon	4	BA	deg			bounding area, corner B longitude
+jobdef	J10		area_c_lat	4	SA	deg			bounding area, corner C latitude
+jobdef	J11		area_c_lon	4	BA	deg			bounding area, corner C longitude
+jobdef	J12		area_d_lat	4	SA	deg			bounding area, corner D latitude
+jobdef	J13		area_d_lon	4	BA	deg			bounding area, corner D longitude
+jobdef	J14		radar_mode	1	E	-			radar mode (enumeration)
+jobdef	J15		revisit_interval_ds	2	I	ds			nominal revisit interval
+jobdef	J16		nom_unc_along_dm	2	I	dm			nominal one-sigma sensor position error along track
+jobdef	J17		nom_unc_cross_dm	2	I	dm			nominal one-sigma sensor position error across track
+jobdef	J18		nom_unc_alt_dm	2	I	dm			nominal one-sigma sensor height error
+jobdef	J19		nom_unc_heading_deg	1	I	deg			nominal one-sigma track heading error
+jobdef	J20		nom_unc_speed_mms	2	I	mm/s			nominal one-sigma sensor speed error
+jobdef	J21		nom_slant_range_sd_cm	2	I	cm			nominal one-sigma target slant range error
+jobdef	J22		nom_cross_range_sd	2	BA	deg			nominal one-sigma target cross angle error
+jobdef	J23		nom_los_vel_sd_cms	2	I	cm/s			nominal one-sigma target line-of-sight speed error
+jobdef	J24		nom_mdv_dms	1	I	dm/s			nominal minimum detectable line-of-sight speed
+jobdef	J25		nom_detection_prob	1	I	%			nominal probability of detection
+jobdef	J26		nom_false_alarm_db	1	I	-dB			nominal false alarm density
+jobdef	J27		terrain_model	1	E	-			terrain elevation model used (enumeration)
+jobdef	J28		geoid_model	1	E	-			geoid model used (enumeration)
+freetext	F1		originator_id	10	A	-			sender of the text
+freetext	F2		recipient_id	10	A	-			intended recipient of the text
+freetext	F3			0	rest				the text itself, to the end of the segment
+teststatus	T1		ts_job_id	4	I	-			job number
+teststatus	T2		ts_revisit_index	2	I	-			revisit count
+teststatus	T3		ts_dwell_index	2	I	-			dwell count
+teststatus	T4		ts_dwell_time_ms	4	I	ms			time of the dwell after midnight UTC of the mission reference day
+teststatus	T5		hardware_status	1	FL	-			hardware fail flags
+teststatus	T6		mode_status	1	FL	-			operating-limit flags
+prochist	C1		history_count	1	I	-			number of processing records
+prochist	C2		based_on_nationality	2	A	-			nation of the original job
+prochist	C3		based_on_platform_id	10	A	-			platform of the original job
+prochist	C4		based_on_mission_id	4	I	-			mission of the original job
+prochist	C5		based_on_job_id	4	I	-			original job number
+prochist	C6.1		record_sequence	1	I	-			first processing record: its sequence number
+prochist	C6.2		record_nationality	2	A	-			first processing record: nation of the processing system
+prochist	C6.3		record_platform_id	10	A	-			first processing record: platform of the processing system
+prochist	C6.4		record_mission_id	4	I	-			first processing record: mission of the processing system
+prochist	C6.5		record_job_id	4	I	-			first processing record: job of the processing system
+prochist	C6.6		processing_performed	2	FL	-			first processing record: processing applied (flags)
+location	L1		location_time_ms	4	I	ms			time of the report after midnight UTC of the mission reference day
+location	L2			4	SA	deg	lat sscale:180/4294967296		platform latitude
+location	L3			4	BA	deg	lon sscale:360/4294967296		platform longitude; the 32 bits read as two's complement give -180 to 180
+location	L4			4	S	cm	hae sscale:1/100		platform height above the WGS 84 ellipsoid
+location	L5			2	BA	deg	course uscale:360/65536		platform ground track, clockwise from true north
+location	L6			4	I	mm/s	speed_ms uscale:1/1000		platform ground speed
+location	L7			1	S	dm/s	track.vel_up_ms sscale:1/10		platform vertical velocity
+jobreq	R1		requestor_id	10	A	-			requesting station
+jobreq	R2		requestor_task_id	10	A	-			identifier of the request at the requesting station
+jobreq	R3		requestor_priority	1	I	-			priority among the requestor's requests; 0 is the default
+jobreq	R4		area_a_lat	4	SA	deg			bounding area, corner A latitude
+jobreq	R5		area_a_lon	4	BA	deg			bounding area, corner A longitude
+jobreq	R6		area_b_lat	4	SA	deg			bounding area, corner B latitude
+jobreq	R7		area_b_lon	4	BA	deg			bounding area, corner B longitude
+jobreq	R8		area_c_lat	4	SA	deg			bounding area, corner C latitude
+jobreq	R9		area_c_lon	4	BA	deg			bounding area, corner C longitude
+jobreq	R10		area_d_lat	4	SA	deg			bounding area, corner D latitude
+jobreq	R11		area_d_lon	4	BA	deg			bounding area, corner D longitude
+jobreq	R12		radar_mode	1	E	-			radar mode requested (enumeration)
+jobreq	R13		range_resolution_cm	2	I	cm			range resolution requested; 0 for no preference
+jobreq	R14		cross_range_resolution_dm	2	I	dm			cross-range resolution requested; 0 for no preference
+jobreq	R15		start_year	2	I	-			earliest start: year
+jobreq	R16		start_month	1	I	-			earliest start: month
+jobreq	R17		start_day	1	I	-			earliest start: day
+jobreq	R18		start_hour	1	I	-			earliest start: hour
+jobreq	R19		start_minute	1	I	-			earliest start: minute
+jobreq	R20		start_second	1	I	-			earliest start: second
+jobreq	R21		allowed_delay_s	2	I	s			delay after the earliest start after which the request lapses
+jobreq	R22		duration_s	2	I	s			duration of the job; 0 for continuous
+jobreq	R23		revisit_interval_ds	2	I	ds			revisit interval; 0 for the default
+jobreq	R24		sensor_type	1	E	-			sensor type (enumeration)
+jobreq	R25		sensor_model	6	A	-			sensor variant
+jobreq	R26		request_type	1	FL	-			0 for a new request, 1 to cancel
+joback	A1		ack_job_id	4	I	-			job number created for the request
+joback	A2		requestor_id	10	A	-			requesting station
+joback	A3		requestor_task_id	10	A	-			identifier of the request at the requesting station
+joback	A4		sensor_type	1	E	-			sensor type (enumeration)
+joback	A5		sensor_model	6	A	-			sensor variant
+joback	A6		radar_priority	1	I	-			priority of the job on the platform
+joback	A7		area_a_lat	4	SA	deg			bounding area, corner A latitude
+joback	A8		area_a_lon	4	BA	deg			bounding area, corner A longitude
+joback	A9		area_b_lat	4	SA	deg			bounding area, corner B latitude
+joback	A10		area_b_lon	4	BA	deg			bounding area, corner B longitude
+joback	A11		area_c_lat	4	SA	deg			bounding area, corner C latitude
+joback	A12		area_c_lon	4	BA	deg			bounding area, corner C longitude
+joback	A13		area_d_lat	4	SA	deg			bounding area, corner D latitude
+joback	A14		area_d_lon	4	BA	deg			bounding area, corner D longitude
+joback	A15		radar_mode	1	E	-			radar mode of the job (enumeration)
+joback	A16		duration_s	2	I	s			duration of the job; 0 for continuous
+joback	A17		revisit_interval_ds	2	I	ds			revisit interval; 0 for the default
+joback	A18		request_status	1	E	-			approved, modified or the reason for denial (enumeration)
+joback	A19		job_start_year	2	I	-			job start: year
+joback	A20		job_start_month	1	I	-			job start: month
+joback	A21		job_start_day	1	I	-			job start: day
+joback	A22		job_start_hour	1	I	-			job start: hour
+joback	A23		job_start_minute	1	I	-			job start: minute
+joback	A24		job_start_second	1	I	-			job start: second
+joback	A25		requestor_nationality	2	A	-			nation of the requestor

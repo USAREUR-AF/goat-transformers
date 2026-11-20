@@ -1,0 +1,16 @@
+{
+  "name": "gmti-segment-records-hrr-m2p1",
+  "from": "gmti-segment-records",
+  "to": "gmti-segment-records",
+  "input": "0300000039fbffc783000003000c00000000030020733c19000c80006400008032000005000000000101818002800201c8000ab400005a0003",
+  "expect": "0300000039fbffc783000003000c00000000030020733c19000c80006400008032000005000000000101818002800201c8000ab400005a0003",
+  "model": {
+    "@kind": "hrr-m2p1",
+    "gmti.scatterers.#": "3",
+    "gmti.hrr_target_scatterers": "3",
+    "gmti.scatterers[1].gmti.scatterer_magnitude": "46080",
+    "gmti.scatterers[1].gmti.scatterer_phase": "0"
+  },
+  "source": "synthetic",
+  "reference": "HRR field set of the targeting-with-HRR class, 2-byte magnitude, 1-byte phase, three records"
+}

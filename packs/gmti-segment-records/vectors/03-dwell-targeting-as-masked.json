@@ -1,0 +1,25 @@
+{
+  "name": "gmti-segment-records-dwell-targeting-as-masked",
+  "from": "gmti-segment-records",
+  "to": "gmti-segment-records",
+  "input": "0200000078ffc71ffa7f8000000003000c00000302b0b59244400000f800000000104730000010000000200040000002bf20fd40000200fc0045000000f90000000a00016cc000f80000000000febf028e0098fb1e0fa01102500001fed402bc00a003840fa00c82370002000affec008c00000fa0090446",
+  "expect": "0200000078ffc71ffa7f8000000003000c00000302b0b59244400000f800000000104730000010000000200040000002bf20fd40000200fc0045000000f90000000a00016cc000f80000000000febf028e0098fb1e0fa01102500001fed402bc00a003840fa00c82370002000affec008c00000fa0090446",
+  "model": {
+    "@kind": "dwell-targeting-as-masked",
+    "gmti.dwell_target_count": "3",
+    "gmti.targets.#": "3",
+    "gmti.dwell_index": "12",
+    "gmti.targets[0].gmti.mti_report_index": "0",
+    "gmti.targets[0].gmti.target_delta_lat": "-321",
+    "gmti.targets[0].track.simulated": "0",
+    "gmti.targets[1].gmti.mti_report_index": "1",
+    "gmti.targets[1].gmti.target_delta_lat": "-300",
+    "gmti.targets[1].track.simulated": "1",
+    "gmti.targets[2].gmti.mti_report_index": "2",
+    "gmti.targets[2].gmti.target_delta_lat": "10",
+    "gmti.targets[2].track.simulated": "0",
+    "gmti.targets[0].track.class": "vehicle"
+  },
+  "source": "synthetic",
+  "reference": "dwell-targeting-as-masked: a dwell of three target reports, mask ffc71ffa7f800000"
+}

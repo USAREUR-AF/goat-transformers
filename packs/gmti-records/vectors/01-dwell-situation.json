@@ -1,0 +1,30 @@
+{
+  "name": "gmti-records-dwell-situation",
+  "from": "gmti-records",
+  "to": "gmti-records",
+  "input": "343100000077584e05584e0000804e313233343520202020000003e9000000070200000057ffc71fc2600000000003000c00000302b0b59244400000f800000000104730000010000000200040000002bf20fd40000200fc0045000000f90000000a00016c0000febf028e0001fed402bc0002000affec",
+  "expect": "343100000077584e05584e0000804e313233343520202020000003e9000000070200000057ffc71fc2600000000003000c00000302b0b59244400000f800000000104730000010000000200040000002bf20fd40000200fc0045000000f90000000a00016c0000febf028e0001fed402bc0002000affec",
+  "model": {
+    "gmti.version_id": "41",
+    "gmti.nationality": "XN",
+    "gmti.classification": "5",
+    "gmti.class_system": "XN",
+    "gmti.security_code": "0",
+    "gmti.exercise": "128",
+    "gmti.platform_id": "N12345    ",
+    "gmti.mission_id": "1001",
+    "gmti.job_id": "7",
+    "@kind": "dwell-situation",
+    "gmti.dwell_target_count": "3",
+    "gmti.targets.#": "3",
+    "gmti.dwell_index": "12",
+    "gmti.targets[0].gmti.mti_report_index": "0",
+    "gmti.targets[0].gmti.target_delta_lat": "-321",
+    "gmti.targets[1].gmti.mti_report_index": "1",
+    "gmti.targets[1].gmti.target_delta_lat": "-300",
+    "gmti.targets[2].gmti.mti_report_index": "2",
+    "gmti.targets[2].gmti.target_delta_lat": "10"
+  },
+  "source": "synthetic",
+  "reference": "dwell-situation: a dwell of three target reports, mask ffc71fc260000000"
+}

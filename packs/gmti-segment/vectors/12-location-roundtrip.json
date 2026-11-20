@@ -1,0 +1,19 @@
+{
+  "name": "gmti-segment-location-roundtrip",
+  "from": "gmti-segment",
+  "to": "gmti-segment",
+  "input": "0d0000001c02aea54045000000f8e38e390010473040000002bf20fd",
+  "expect": "0d0000001c02aea54045000000f8e38e390010473040000002bf20fd",
+  "model": {
+    "gmti.location_time_ms": "45000000",
+    "lat": "48.515625",
+    "lon": "-9.999999990686774",
+    "hae": "10668.0",
+    "course": "90.0",
+    "speed_ms": "180.0",
+    "track.vel_up_ms": "-0.3",
+    "@kind": "location"
+  },
+  "source": "synthetic",
+  "reference": "platform location segment: position, track, speed and vertical velocity are shared keys"
+}

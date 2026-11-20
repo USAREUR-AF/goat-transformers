@@ -1,0 +1,13 @@
+# Segment kinds of the gmti pack. type: the segment type code; mask: bits of the existence mask (0: none).
+# requires: the keys an entity from another format must hold for encode to choose the kind (first match in this order).
+kind	type	mask	requires	meaning
+mission	1	0	gmti.mission_plan	mission and flight plan, platform type, reference day of the mission times
+dwell	2	64	gmti.dwell_index	one dwell: sensor position and motion, dwell area, and its first target report
+hrr	3	40	gmti.hrr_dwell_index	high range resolution chip or range-doppler map, header part
+jobdef	5	0	gmti.jobdef_job_id	the radar job: sensor, bounding area, mode, nominal accuracies, earth models
+freetext	6	0	gmti.originator_id	free text, sender and recipient
+teststatus	10	0	gmti.ts_job_id	sensor health and operating-limit flags for one dwell
+prochist	12	0	gmti.history_count	the original job and the first processing record
+location	13	0	lat lon	platform position and motion while the sensor is not collecting
+jobreq	101	0	gmti.requestor_task_id gmti.requestor_priority	a request for radar service
+joback	102	0	gmti.ack_job_id	the platform's answer to a request

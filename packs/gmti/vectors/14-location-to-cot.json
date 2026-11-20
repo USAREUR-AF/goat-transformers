@@ -1,0 +1,18 @@
+{
+  "name": "gmti-location-to-cot",
+  "from": "gmti",
+  "to": "cot-xml",
+  "input": "34310000003c584e05584e0000804e313233343520202020000003e9000000000d0000001c02aea54045000000f8e38e390010473040000002bf20fd",
+  "expect": "<event version=\"2.0\" uid=\"N12345    \" type=\"a-u-X\"><point lat=\"48.515625\" lon=\"-9.999999990686774\" hae=\"10668\" ce=\"9999999\" le=\"9999999\"/><detail><track course=\"90\" speed=\"180\"/></detail></event>",
+  "model": {
+    "uid": "N12345    ",
+    "lat": "48.515625",
+    "lon": "-9.999999990686774",
+    "hae": "10668.0",
+    "course": "90.0",
+    "speed_ms": "180.0",
+    "@complete": true
+  },
+  "source": "synthetic",
+  "reference": "platform location to a CoT event; uid is the platform id of the packet header (space padded as sent)"
+}

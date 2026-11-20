@@ -1,0 +1,13 @@
+{
+  "name": "isr-tracking-product-roundtrip",
+  "from": "isr-tracking",
+  "to": "isr-tracking",
+  "input": "<product><uid gidp=\"1\">6f1c2e8a-0b4d-4c3e-9a7f-000000000001</uid><lid>2</lid><id>STRING-3</id><name>STRING-4</name><shortName>STRING-5</shortName><effectivity>STRING-6</effectivity></product>",
+  "expect": "<product><uid gidp=\"1\">6f1c2e8a-0b4d-4c3e-9a7f-000000000001</uid><lid>2</lid><id>STRING-3</id><name>STRING-4</name><shortName>STRING-5</shortName><effectivity>STRING-6</effectivity></product>",
+  "model": {
+    "@kind": "product",
+    "uid": "6f1c2e8a-0b4d-4c3e-9a7f-000000000001"
+  },
+  "source": "synthetic",
+  "reference": "every element the data model gives a ProductIdentification, values made up"
+}

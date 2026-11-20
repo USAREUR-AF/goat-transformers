@@ -1,0 +1,13 @@
+{
+  "name": "isr-tracking-motionEvent-roundtrip",
+  "from": "isr-tracking",
+  "to": "isr-tracking",
+  "input": "<motionEvent type=\"MOTION-1\"><uid>6f1c2e8a-0b4d-4c3e-9a7f-000000000002</uid><lid>3</lid><trackUID>6f1c2e8a-0b4d-4c3e-9a7f-000000000004</trackUID><trackUID gidp=\"5\">6f1c2e8a-0b4d-4c3e-9a7f-000000000005</trackUID><trackLID>6</trackLID><trackLID>7</trackLID><startRelTime>8</startRelTime><endRelTime>9</endRelTime><confidence type=\"CERTAI-10\"><value>11</value><sourceReliability>12</sourceReliability><valid>true</valid></confidence><region xsi:type=\"Polygon\"><dims>DIMENS-14</dims><cs>COORDI-15</cs><cftUID>6f1c2e8a-0b4d-4c3e-9a7f-000000000016</cftUID><cftLID>17</cftLID><nRings>18</nRings><vertices>19.5 20.25 21</vertices></region><tripwire><dims>DIMENS-20</dims><cs>COORDI-21</cs><points>22.5 23.25 24</points><cftUID gidp=\"23\">6f1c2e8a-0b4d-4c3e-9a7f-000000000023</cftUID><cftLID>24</cftLID></tripwire></motionEvent>",
+  "expect": "<motionEvent type=\"MOTION-1\"><uid>6f1c2e8a-0b4d-4c3e-9a7f-000000000002</uid><lid>3</lid><trackUID>6f1c2e8a-0b4d-4c3e-9a7f-000000000004</trackUID><trackUID gidp=\"5\">6f1c2e8a-0b4d-4c3e-9a7f-000000000005</trackUID><trackLID>6</trackLID><trackLID>7</trackLID><startRelTime>8</startRelTime><endRelTime>9</endRelTime><confidence type=\"CERTAI-10\"><value>11</value><sourceReliability>12</sourceReliability><valid>true</valid></confidence><region xsi:type=\"Polygon\"><dims>DIMENS-14</dims><cs>COORDI-15</cs><cftUID>6f1c2e8a-0b4d-4c3e-9a7f-000000000016</cftUID><cftLID>17</cftLID><nRings>18</nRings><vertices>19.5 20.25 21</vertices></region><tripwire><dims>DIMENS-20</dims><cs>COORDI-21</cs><points>22.5 23.25 24</points><cftUID gidp=\"23\">6f1c2e8a-0b4d-4c3e-9a7f-000000000023</cftUID><cftLID>24</cftLID></tripwire></motionEvent>",
+  "model": {
+    "@kind": "motionEvent",
+    "uid": "6f1c2e8a-0b4d-4c3e-9a7f-000000000002"
+  },
+  "source": "synthetic",
+  "reference": "every element the data model gives a MotionEvent, values made up"
+}

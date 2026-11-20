@@ -1,0 +1,13 @@
+{
+  "name": "isr-tracking-sensor-roundtrip",
+  "from": "isr-tracking",
+  "to": "isr-tracking",
+  "input": "<sensor><uid gidp=\"1\">6f1c2e8a-0b4d-4c3e-9a7f-000000000001</uid><lid>2</lid><sensorID><stationID>STRING-3</stationID><nationality>NATION-4</nationality></sensorID><name>STRING-5</name><description>STRING-6</description><modality>MODALI-7</modality><url>STRING-8</url><collectionMode>STRING-9</collectionMode><absTimeUncertainty>10.5</absTimeUncertainty><relTimeUncertainty>11.5</relTimeUncertainty><comment>STRING-12</comment><esmSensor>ESMSEN-13</esmSensor><imagingSensor><motionImageryCoreID>MIISCO-14</motionImageryCoreID><frameHeight>15</frameHeight><frameWidth>16</frameWidth><fpaIndex>17</fpaIndex><filter>18.5 19.25 20</filter><filter>19.5 20.25 21</filter><phenomenology>SYMBOL-20</phenomenology><band>STRING-21</band></imagingSensor><radarSensor><platformID>STRING-22</platformID><missionID>23</missionID><jobID>24</jobID></radarSensor></sensor>",
+  "expect": "<sensor><uid gidp=\"1\">6f1c2e8a-0b4d-4c3e-9a7f-000000000001</uid><lid>2</lid><sensorID><stationID>STRING-3</stationID><nationality>NATION-4</nationality></sensorID><name>STRING-5</name><description>STRING-6</description><modality>MODALI-7</modality><url>STRING-8</url><collectionMode>STRING-9</collectionMode><absTimeUncertainty>10.5</absTimeUncertainty><relTimeUncertainty>11.5</relTimeUncertainty><comment>STRING-12</comment><esmSensor>ESMSEN-13</esmSensor><imagingSensor><motionImageryCoreID>MIISCO-14</motionImageryCoreID><frameHeight>15</frameHeight><frameWidth>16</frameWidth><fpaIndex>17</fpaIndex><filter>18.5 19.25 20</filter><filter>19.5 20.25 21</filter><phenomenology>SYMBOL-20</phenomenology><band>STRING-21</band></imagingSensor><radarSensor><platformID>STRING-22</platformID><missionID>23</missionID><jobID>24</jobID></radarSensor></sensor>",
+  "model": {
+    "@kind": "sensor",
+    "uid": "6f1c2e8a-0b4d-4c3e-9a7f-000000000001"
+  },
+  "source": "synthetic",
+  "reference": "every element the data model gives a SensorInformation, values made up"
+}

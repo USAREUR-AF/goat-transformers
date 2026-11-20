@@ -1,0 +1,25 @@
+{
+  "name": "gmti-records-prochist",
+  "from": "gmti-records",
+  "to": "gmti-records",
+  "input": "34310000007f584e05584e0000804e313233343520202020000003e9000000070c0000005f03584e4e313233343520202020000003e90000000701444547532d4e4f525448202000000005000000460081024e4c47532d574553542020200000000600000047000803584e43414f4320202020202000000009000000482000",
+  "expect": "34310000007f584e05584e0000804e313233343520202020000003e9000000070c0000005f03584e4e313233343520202020000003e90000000701444547532d4e4f525448202000000005000000460081024e4c47532d574553542020200000000600000047000803584e43414f4320202020202000000009000000482000",
+  "model": {
+    "gmti.version_id": "41",
+    "gmti.nationality": "XN",
+    "gmti.classification": "5",
+    "gmti.class_system": "XN",
+    "gmti.security_code": "0",
+    "gmti.exercise": "128",
+    "gmti.platform_id": "N12345    ",
+    "gmti.mission_id": "1001",
+    "gmti.job_id": "7",
+    "@kind": "prochist",
+    "gmti.records.#": "3",
+    "gmti.records[2].gmti.record_platform_id": "CAOC      ",
+    "gmti.records[1].gmti.processing_performed": "8",
+    "gmti.history_count": "3"
+  },
+  "source": "synthetic",
+  "reference": "processing history of three records"
+}

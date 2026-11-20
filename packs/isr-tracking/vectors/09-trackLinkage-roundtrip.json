@@ -1,0 +1,13 @@
+{
+  "name": "isr-tracking-trackLinkage-roundtrip",
+  "from": "isr-tracking",
+  "to": "isr-tracking",
+  "input": "<trackLinkage type=\"TRACKL-1\"><uid>6f1c2e8a-0b4d-4c3e-9a7f-000000000002</uid><lid>3</lid><relTime>4</relTime><confidence type=\"CERTAI-5\"><value>6</value><sourceReliability>7</sourceReliability><valid>true</valid></confidence><preUID gidp=\"9\">6f1c2e8a-0b4d-4c3e-9a7f-000000000009</preUID><preUID>6f1c2e8a-0b4d-4c3e-9a7f-000000000010</preUID><postUID gidp=\"11\">6f1c2e8a-0b4d-4c3e-9a7f-000000000011</postUID><postUID>6f1c2e8a-0b4d-4c3e-9a7f-000000000012</postUID><preLID>13</preLID><preLID>14</preLID><postLID>15</postLID><postLID>16</postLID></trackLinkage>",
+  "expect": "<trackLinkage type=\"TRACKL-1\"><uid>6f1c2e8a-0b4d-4c3e-9a7f-000000000002</uid><lid>3</lid><relTime>4</relTime><confidence type=\"CERTAI-5\"><value>6</value><sourceReliability>7</sourceReliability><valid>true</valid></confidence><preUID gidp=\"9\">6f1c2e8a-0b4d-4c3e-9a7f-000000000009</preUID><preUID>6f1c2e8a-0b4d-4c3e-9a7f-000000000010</preUID><postUID gidp=\"11\">6f1c2e8a-0b4d-4c3e-9a7f-000000000011</postUID><postUID>6f1c2e8a-0b4d-4c3e-9a7f-000000000012</postUID><preLID>13</preLID><preLID>14</preLID><postLID>15</postLID><postLID>16</postLID></trackLinkage>",
+  "model": {
+    "@kind": "trackLinkage",
+    "uid": "6f1c2e8a-0b4d-4c3e-9a7f-000000000002"
+  },
+  "source": "synthetic",
+  "reference": "every element the data model gives a TrackLinkage, values made up"
+}

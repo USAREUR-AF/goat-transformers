@@ -1,0 +1,16 @@
+{
+  "name": "gmti-geojson-to-location",
+  "from": "geojson",
+  "to": "gmti",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-10.25,48.515625,10668.5]},\"properties\":{\"course\":135,\"speed_ms\":61.75},\"id\":\"trk-9\"}",
+  "expect": "34310000003c00000000000000000000000000000000000000000000000000000d0000001c0000000045000000f8b60b610010476260000000f13600",
+  "model": {
+    "lat": "48.515625",
+    "lon": "-10.25",
+    "hae": "10668.5",
+    "course": "135.0",
+    "speed_ms": "61.75"
+  },
+  "source": "synthetic",
+  "reference": "an entity from another format encodes as a platform location; the version defaults to 41, the other header fields are zero"
+}
