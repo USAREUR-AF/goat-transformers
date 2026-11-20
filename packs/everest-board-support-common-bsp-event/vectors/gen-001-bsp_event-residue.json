@@ -1,0 +1,7 @@
+{
+ "name": "gen-bsp_event-residue",
+ "from": "everest-board-support-common-bsp-event",
+ "to": "everest-board-support-common-bsp-event",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"event\":\"E\"}",
+ "expect": "{\"event\":\"E\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

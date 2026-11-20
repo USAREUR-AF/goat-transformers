@@ -1,0 +1,10 @@
+{
+ "keys": {
+  "messages|content|string": "messages_content",
+  "messages|format|string": "messages_format",
+  "messages|language|string": "messages_language"
+ },
+ "lists": {
+  "|messages": "messages"
+ }
+}

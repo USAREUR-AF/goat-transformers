@@ -1,0 +1,17 @@
+{
+ "name": "gen-evinfo-roundtrip",
+ "from": "everest-evse-manager-ev-info",
+ "to": "everest-evse-manager-ev-info",
+ "input": "{\"soc\":1.5,\"present_voltage\":7.0625,\"present_current\":12.5,\"target_voltage\":42.375,\"target_current\":101.125,\"maximum_current_limit\":1.5,\"minimum_current_limit\":12.5,\"maximum_voltage_limit\":1.5,\"maximum_power_limit\":-3.25,\"estimated_time_full\":\"2026-08-09T11:03:38.764Z\",\"departure_time\":\"2026-04-13T10:20:58.225Z\",\"estimated_time_bulk\":\"2026-10-11T18:29:09.862Z\",\"evcc_id\":\"s11853\",\"remaining_energy_needed\":42.375,\"battery_capacity\":1.5,\"battery_full_soc\":1.5,\"battery_bulk_soc\":1.5,\"target_energy_request\":1.5,\"max_energy_request\":-3.25,\"min_energy_request\":-3.25,\"ac_max_charge_power\":42.375,\"ac_min_charge_power\":-3.25,\"ac_max_discharge_power\":101.125,\"ac_min_discharge_power\":-3.25,\"ac_present_active_power\":42.375,\"ac_present_reactive_power\":-3.25}",
+ "expect": "{\"soc\":1.5,\"present_voltage\":7.0625,\"present_current\":12.5,\"target_voltage\":42.375,\"target_current\":101.125,\"maximum_current_limit\":1.5,\"minimum_current_limit\":12.5,\"maximum_voltage_limit\":1.5,\"maximum_power_limit\":-3.25,\"estimated_time_full\":\"2026-08-09T11:03:38.764Z\",\"departure_time\":\"2026-04-13T10:20:58.225Z\",\"estimated_time_bulk\":\"2026-10-11T18:29:09.862Z\",\"evcc_id\":\"s11853\",\"remaining_energy_needed\":42.375,\"battery_capacity\":1.5,\"battery_full_soc\":1.5,\"battery_bulk_soc\":1.5,\"target_energy_request\":1.5,\"max_energy_request\":-3.25,\"min_energy_request\":-3.25,\"ac_max_charge_power\":42.375,\"ac_min_charge_power\":-3.25,\"ac_max_discharge_power\":101.125,\"ac_min_discharge_power\":-3.25,\"ac_present_active_power\":42.375,\"ac_present_reactive_power\":-3.25}",
+ "model": {
+  "everestevsemanagerevinfo.soc": "1.5",
+  "everestevsemanagerevinfo.present_voltage": "7.0625",
+  "everestevsemanagerevinfo.present_current": "12.5",
+  "everestevsemanagerevinfo.target_voltage": "42.375",
+  "everestevsemanagerevinfo.target_current": "101.125",
+  "everestevsemanagerevinfo.maximum_current_limit": "1.5",
+  "everestevsemanagerevinfo.minimum_current_limit": "12.5",
+  "everestevsemanagerevinfo.maximum_voltage_limit": "1.5"
+ }
+}

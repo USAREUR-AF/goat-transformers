@@ -1,0 +1,8 @@
+{
+ "keys": {
+  "|dc_ev_maximum_current_limit|float": "dc_ev_maximum_current_limit",
+  "|dc_ev_maximum_power_limit|float": "dc_ev_maximum_power_limit",
+  "|dc_ev_maximum_voltage_limit|float": "dc_ev_maximum_voltage_limit"
+ },
+ "lists": {}
+}

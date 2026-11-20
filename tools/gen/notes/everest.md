@@ -7,9 +7,10 @@ message is one var's JSON value. The types used only as command arguments or res
 only inside other types, are not packs of their own (they appear nested where they are
 used). The bus topic and its envelope are not part of the pack.
 
-`tools/gen/everest2pack.py` reads the types files with the generators' YAML reader (it
-gives the same structure as a full YAML parser on every types and interface file of this
-release), points their references (`/<file>#/<Type>`) at the converted documents and
+`tools/gen/everest2pack.py` reads the types files with the generators' YAML reader. On
+every types and interface file of this release it gives the same structure as a full YAML
+parser; the two differ only in how line breaks inside some `description` texts are folded,
+and no description text reaches a pack. It then points their references (`/<file>#/<Type>`) at the converted documents and
 passes the type to `tools/gen/jsonschema2pack.py`.
 
 ## Evidence for the shared keys

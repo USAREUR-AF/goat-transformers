@@ -1,0 +1,10 @@
+{
+ "name": "gen-default_price-roundtrip",
+ "from": "everest-session-cost-default-price",
+ "to": "everest-session-cost-default-price",
+ "input": "{\"messages\":[{\"format\":\"ASCII\",\"language\":\"s14889\",\"content\":\"s24194\"},{\"format\":\"ASCII\",\"language\":\"s59953\",\"content\":\"s75154\"}]}",
+ "expect": "{\"messages\":[{\"format\":\"ASCII\",\"language\":\"s14889\",\"content\":\"s24194\"},{\"format\":\"ASCII\",\"language\":\"s59953\",\"content\":\"s75154\"}]}",
+ "model": {
+  "everestsessioncostdefaultprice.messages.#": "2"
+ }
+}

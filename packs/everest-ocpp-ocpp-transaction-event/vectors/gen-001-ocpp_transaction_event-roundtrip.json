@@ -1,0 +1,14 @@
+{
+ "name": "gen-ocpp_transaction_event-roundtrip",
+ "from": "everest-ocpp-ocpp-transaction-event",
+ "to": "everest-ocpp-ocpp-transaction-event",
+ "input": "{\"transaction_event\":\"Started\",\"evse\":{\"id\":26574,\"connector_id\":75050},\"session_id\":\"s50911\",\"transaction_id\":\"s64375\"}",
+ "expect": "{\"transaction_event\":\"Started\",\"evse\":{\"id\":26574,\"connector_id\":75050},\"session_id\":\"s50911\",\"transaction_id\":\"s64375\"}",
+ "model": {
+  "everestocppocpptransactionevent.transaction_event": "Started",
+  "everestocppocpptransactionevent.evse_id": "26574",
+  "everestocppocpptransactionevent.evse_connector_id": "75050",
+  "everestocppocpptransactionevent.session_id": "s50911",
+  "everestocppocpptransactionevent.transaction_id": "s64375"
+ }
+}

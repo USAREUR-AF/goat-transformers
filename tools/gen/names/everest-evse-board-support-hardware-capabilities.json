@@ -1,0 +1,17 @@
+{
+ "keys": {
+  "|connector_type|string": "connector_type",
+  "|max_current_A_export|float": "max_current_a_export",
+  "|max_current_A_import|float": "max_current_a_import",
+  "|max_phase_count_export|int": "max_phase_count_export",
+  "|max_phase_count_import|int": "max_phase_count_import",
+  "|max_plug_temperature_C|float": "max_plug_temperature_c",
+  "|min_current_A_export|float": "min_current_a_export",
+  "|min_current_A_import|float": "min_current_a_import",
+  "|min_phase_count_export|int": "min_phase_count_export",
+  "|min_phase_count_import|int": "min_phase_count_import",
+  "|supports_changing_phases_during_charging|int": "supports_changing_phases_during_charging",
+  "|supports_cp_state_E|int": "supports_cp_state_e"
+ },
+ "lists": {}
+}

@@ -1,0 +1,12 @@
+{
+ "name": "gen-request_exi_stream_schema-roundtrip",
+ "from": "everest-iso15118-request-exi-stream-schema",
+ "to": "everest-iso15118-request-exi-stream-schema",
+ "input": "{\"exi_request\":\"s69654\",\"iso15118_schema_version\":\"s41824\",\"certificate_action\":\"Update\"}",
+ "expect": "{\"exi_request\":\"s69654\",\"iso15118_schema_version\":\"s41824\",\"certificate_action\":\"Update\"}",
+ "model": {
+  "everestiso15118requestexistreamschema.exi_request": "s69654",
+  "everestiso15118requestexistreamschema.iso15118_schema_version": "s41824",
+  "everestiso15118requestexistreamschema.certificate_action": "Update"
+ }
+}

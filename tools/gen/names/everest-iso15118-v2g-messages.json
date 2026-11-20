@@ -1,0 +1,10 @@
+{
+ "keys": {
+  "|exi_base64|string": "exi_base64",
+  "|exi|string": "exi",
+  "|id|string": "id",
+  "|v2g_json|string": "v2g_json",
+  "|xml|string": "xml"
+ },
+ "lists": {}
+}

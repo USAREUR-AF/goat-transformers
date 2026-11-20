@@ -1,0 +1,9 @@
+{
+ "keys": {
+  "|critical|int": "critical",
+  "|info|string": "info",
+  "|timestamp|string": "timestamp",
+  "|type|string": "type"
+ },
+ "lists": {}
+}

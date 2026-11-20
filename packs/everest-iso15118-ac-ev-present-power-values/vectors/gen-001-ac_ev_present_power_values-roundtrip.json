@@ -1,0 +1,17 @@
+{
+ "name": "gen-ac_ev_present_power_values-roundtrip",
+ "from": "everest-iso15118-ac-ev-present-power-values",
+ "to": "everest-iso15118-ac-ev-present-power-values",
+ "input": "{\"present_active_power\":{\"total\":1.5,\"L1\":-3.25,\"L2\":42.375,\"L3\":-0.5},\"present_reactive_power\":{\"total\":42.375,\"L1\":7.0625,\"L2\":12.5,\"L3\":-3.25}}",
+ "expect": "{\"present_active_power\":{\"total\":1.5,\"L1\":-3.25,\"L2\":42.375,\"L3\":-0.5},\"present_reactive_power\":{\"total\":42.375,\"L1\":7.0625,\"L2\":12.5,\"L3\":-3.25}}",
+ "model": {
+  "everestiso15118acevpresentpowervalues.present_active_power_total": "1.5",
+  "everestiso15118acevpresentpowervalues.present_active_power_l1": "-3.25",
+  "everestiso15118acevpresentpowervalues.present_active_power_l2": "42.375",
+  "everestiso15118acevpresentpowervalues.present_active_power_l3": "-0.5",
+  "everestiso15118acevpresentpowervalues.present_reactive_power_total": "42.375",
+  "everestiso15118acevpresentpowervalues.present_reactive_power_l1": "7.0625",
+  "everestiso15118acevpresentpowervalues.present_reactive_power_l2": "12.5",
+  "everestiso15118acevpresentpowervalues.present_reactive_power_l3": "-3.25"
+ }
+}

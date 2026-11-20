@@ -1,0 +1,7 @@
+{
+ "name": "gen-default_price-residue",
+ "from": "everest-session-cost-default-price",
+ "to": "everest-session-cost-default-price",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"messages\":[{\"format\":\"ASCII\",\"language\":\"s14889\",\"content\":\"s24194\"},{\"format\":\"ASCII\",\"language\":\"s59953\",\"content\":\"s75154\"}]}",
+ "expect": "{\"messages\":[{\"format\":\"ASCII\",\"language\":\"s14889\",\"content\":\"s24194\"},{\"format\":\"ASCII\",\"language\":\"s59953\",\"content\":\"s75154\"}],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

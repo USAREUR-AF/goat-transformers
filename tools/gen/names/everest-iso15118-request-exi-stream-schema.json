@@ -1,0 +1,8 @@
+{
+ "keys": {
+  "|certificate_action|string": "certificate_action",
+  "|exi_request|string": "exi_request",
+  "|iso15118_schema_version|string": "iso15118_schema_version"
+ },
+ "lists": {}
+}

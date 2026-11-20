@@ -1,0 +1,11 @@
+{
+ "name": "gen-energy_price_schedule-roundtrip",
+ "from": "everest-energy-price-information-energy-price-schedule",
+ "to": "everest-energy-price-information-energy-price-schedule",
+ "input": "{\"schedule_import\":[{\"timestamp\":\"2026-08-09T06:42:06.654Z\",\"value\":12.5,\"currency\":\"s3930\"},{\"timestamp\":\"2024-10-16T14:47:24.249Z\",\"value\":7.0625,\"currency\":\"s61056\"}],\"schedule_export\":[{\"timestamp\":\"2024-04-30T11:43:46.703Z\",\"value\":42.375,\"currency\":\"s12322\"},{\"timestamp\":\"2025-10-29T23:35:51.141Z\",\"value\":42.375,\"currency\":\"s86652\"}]}",
+ "expect": "{\"schedule_import\":[{\"timestamp\":\"2026-08-09T06:42:06.654Z\",\"value\":12.5,\"currency\":\"s3930\"},{\"timestamp\":\"2024-10-16T14:47:24.249Z\",\"value\":7.0625,\"currency\":\"s61056\"}],\"schedule_export\":[{\"timestamp\":\"2024-04-30T11:43:46.703Z\",\"value\":42.375,\"currency\":\"s12322\"},{\"timestamp\":\"2025-10-29T23:35:51.141Z\",\"value\":42.375,\"currency\":\"s86652\"}]}",
+ "model": {
+  "everestenergypriceinformationenergypriceschedule.schedule_import.#": "2",
+  "everestenergypriceinformationenergypriceschedule.schedule_export.#": "2"
+ }
+}

@@ -1,0 +1,11 @@
+{
+ "keys": {
+  "|target_active_power_L2|float": "target_active_power_l2",
+  "|target_active_power_L3|float": "target_active_power_l3",
+  "|target_active_power|float": "target_active_power",
+  "|target_reactive_power_L2|float": "target_reactive_power_l2",
+  "|target_reactive_power_L3|float": "target_reactive_power_l3",
+  "|target_reactive_power|float": "target_reactive_power"
+ },
+ "lists": {}
+}

@@ -1,0 +1,13 @@
+{
+ "keys": {
+  "|present_active_power.L1|float": "present_active_power_l1",
+  "|present_active_power.L2|float": "present_active_power_l2",
+  "|present_active_power.L3|float": "present_active_power_l3",
+  "|present_active_power.total|float": "present_active_power_total",
+  "|present_reactive_power.L1|float": "present_reactive_power_l1",
+  "|present_reactive_power.L2|float": "present_reactive_power_l2",
+  "|present_reactive_power.L3|float": "present_reactive_power_l3",
+  "|present_reactive_power.total|float": "present_reactive_power_total"
+ },
+ "lists": {}
+}

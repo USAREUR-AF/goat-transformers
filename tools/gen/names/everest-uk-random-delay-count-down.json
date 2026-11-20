@@ -1,0 +1,9 @@
+{
+ "keys": {
+  "|countdown_s|int": "countdown_s",
+  "|current_limit_after_delay_A|float": "current_limit_after_delay_a",
+  "|current_limit_during_delay_A|float": "current_limit_during_delay_a",
+  "|start_time|string": "start_time"
+ },
+ "lists": {}
+}

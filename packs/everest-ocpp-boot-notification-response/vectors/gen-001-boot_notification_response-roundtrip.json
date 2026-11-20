@@ -1,0 +1,14 @@
+{
+ "name": "gen-boot_notification_response-roundtrip",
+ "from": "everest-ocpp-boot-notification-response",
+ "to": "everest-ocpp-boot-notification-response",
+ "input": "{\"status\":\"Rejected\",\"current_time\":\"2026-05-25T23:11:11.466Z\",\"interval\":34638,\"status_info\":{\"reason_code\":\"s45965\",\"additional_info\":\"s27960\"}}",
+ "expect": "{\"status\":\"Rejected\",\"current_time\":\"2026-05-25T23:11:11.466Z\",\"interval\":34638,\"status_info\":{\"reason_code\":\"s45965\",\"additional_info\":\"s27960\"}}",
+ "model": {
+  "everestocppbootnotificationresponse.status": "Rejected",
+  "everestocppbootnotificationresponse.current_time": "2026-05-25T23:11:11.466Z",
+  "everestocppbootnotificationresponse.interval": "34638",
+  "everestocppbootnotificationresponse.status_info_reason_code": "s45965",
+  "everestocppbootnotificationresponse.status_info_additional_info": "s27960"
+ }
+}

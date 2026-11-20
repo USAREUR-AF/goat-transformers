@@ -1,0 +1,7 @@
+{
+ "name": "gen-bank_transaction_summary-residue",
+ "from": "everest-payment-terminal-bank-transaction-summary",
+ "to": "everest-payment-terminal-bank-transaction-summary",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"session_token\":{\"token\":\"s5477\"},\"transaction_data\":\"s94146\"}",
+ "expect": "{\"session_token\":{\"token\":\"s5477\"},\"transaction_data\":\"s94146\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

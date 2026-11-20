@@ -1,0 +1,7 @@
+{
+ "name": "gen-voltage_current-residue",
+ "from": "everest-power-supply-dc-voltage-current",
+ "to": "everest-power-supply-dc-voltage-current",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"voltage_V\":-3.25,\"current_A\":1.5}",
+ "expect": "{\"voltage_V\":-3.25,\"current_A\":1.5,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

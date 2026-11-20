@@ -1,0 +1,11 @@
+{
+ "keys": {
+  "|evse_temperature_C|float": "evse_temperature_c",
+  "|fan_rpm|float": "fan_rpm",
+  "|plug_temperature_C|float": "plug_temperature_c",
+  "|relais_on|int": "relais_on",
+  "|supply_voltage_12V|float": "supply_voltage_12_v",
+  "|supply_voltage_minus_12V|float": "supply_voltage_minus_12_v"
+ },
+ "lists": {}
+}

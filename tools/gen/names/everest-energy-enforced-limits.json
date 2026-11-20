@@ -1,0 +1,25 @@
+{
+ "keys": {
+  "schedule|limits_to_root.ac_max_current_A.source|string": "schedule_limits_to_root_ac_max_current_a_source",
+  "schedule|limits_to_root.ac_max_current_A.value|float": "schedule_limits_to_root_ac_max_current_a_value",
+  "schedule|limits_to_root.ac_max_phase_count.source|string": "schedule_limits_to_root_ac_max_phase_count_source",
+  "schedule|limits_to_root.ac_max_phase_count.value|int": "schedule_limits_to_root_ac_max_phase_count_value",
+  "schedule|limits_to_root.total_power_W.source|string": "schedule_limits_to_root_total_power_w_source",
+  "schedule|limits_to_root.total_power_W.value|float": "schedule_limits_to_root_total_power_w_value",
+  "schedule|price_per_kwh.currency|string": "schedule_price_per_kwh_currency",
+  "schedule|price_per_kwh.timestamp|string": "schedule_price_per_kwh_timestamp",
+  "schedule|price_per_kwh.value|float": "schedule_price_per_kwh_value",
+  "schedule|timestamp|string": "schedule_timestamp",
+  "|limits_root_side.ac_max_current_A.source|string": "limits_root_side_ac_max_current_a_source",
+  "|limits_root_side.ac_max_current_A.value|float": "limits_root_side_ac_max_current_a_value",
+  "|limits_root_side.ac_max_phase_count.source|string": "limits_root_side_ac_max_phase_count_source",
+  "|limits_root_side.ac_max_phase_count.value|int": "limits_root_side_ac_max_phase_count_value",
+  "|limits_root_side.total_power_W.source|string": "limits_root_side_total_power_w_source",
+  "|limits_root_side.total_power_W.value|float": "limits_root_side_total_power_w_value",
+  "|uuid|string": "uuid",
+  "|valid_for|int": "valid_for"
+ },
+ "lists": {
+  "|schedule": "schedule"
+ }
+}

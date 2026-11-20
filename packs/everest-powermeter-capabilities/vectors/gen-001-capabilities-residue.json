@@ -1,0 +1,7 @@
+{
+ "name": "gen-capabilities-residue",
+ "from": "everest-powermeter-capabilities",
+ "to": "everest-powermeter-capabilities",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"min_import_current_A\":1.5,\"min_export_current_A\":12.5}",
+ "expect": "{\"min_import_current_A\":1.5,\"min_export_current_A\":12.5,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

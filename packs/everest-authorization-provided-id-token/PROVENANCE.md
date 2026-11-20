@@ -1,3 +1,5 @@
+SPDX licence: Apache-2.0
+
 # Provenance of the everest-authorization-provided-id-token pack
 
 `tools/gen/everest2pack.py` reads the types files below, turns their references into

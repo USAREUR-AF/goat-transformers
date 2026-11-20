@@ -1,0 +1,21 @@
+{
+ "keys": {
+  "|max_charge_power.L1|float": "max_charge_power_l1",
+  "|max_charge_power.L2|float": "max_charge_power_l2",
+  "|max_charge_power.L3|float": "max_charge_power_l3",
+  "|max_charge_power.total|float": "max_charge_power_total",
+  "|max_discharge_power.L1|float": "max_discharge_power_l1",
+  "|max_discharge_power.L2|float": "max_discharge_power_l2",
+  "|max_discharge_power.L3|float": "max_discharge_power_l3",
+  "|max_discharge_power.total|float": "max_discharge_power_total",
+  "|min_charge_power.L1|float": "min_charge_power_l1",
+  "|min_charge_power.L2|float": "min_charge_power_l2",
+  "|min_charge_power.L3|float": "min_charge_power_l3",
+  "|min_charge_power.total|float": "min_charge_power_total",
+  "|min_discharge_power.L1|float": "min_discharge_power_l1",
+  "|min_discharge_power.L2|float": "min_discharge_power_l2",
+  "|min_discharge_power.L3|float": "min_discharge_power_l3",
+  "|min_discharge_power.total|float": "min_discharge_power_total"
+ },
+ "lists": {}
+}

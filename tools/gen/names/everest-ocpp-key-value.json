@@ -1,0 +1,8 @@
+{
+ "keys": {
+  "|key|string": "key",
+  "|read_only|int": "read_only",
+  "|value|string": "value"
+ },
+ "lists": {}
+}

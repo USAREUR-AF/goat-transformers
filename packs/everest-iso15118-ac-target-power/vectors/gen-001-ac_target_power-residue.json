@@ -1,0 +1,7 @@
+{
+ "name": "gen-ac_target_power-residue",
+ "from": "everest-iso15118-ac-target-power",
+ "to": "everest-iso15118-ac-target-power",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"target_active_power\":101.125,\"target_active_power_L2\":-3.25,\"target_active_power_L3\":-0.5,\"target_reactive_power\":-0.5,\"target_reactive_power_L2\":12.5,\"target_reactive_power_L3\":42.375}",
+ "expect": "{\"target_active_power\":101.125,\"target_active_power_L2\":-3.25,\"target_active_power_L3\":-0.5,\"target_reactive_power\":-0.5,\"target_reactive_power_L2\":12.5,\"target_reactive_power_L3\":42.375,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

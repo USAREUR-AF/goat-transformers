@@ -1,0 +1,7 @@
+{
+ "name": "gen-key_value-residue",
+ "from": "everest-ocpp-key-value",
+ "to": "everest-ocpp-key-value",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"key\":\"s79525\",\"read_only\":false,\"value\":\"s23220\"}",
+ "expect": "{\"key\":\"s79525\",\"read_only\":false,\"value\":\"s23220\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

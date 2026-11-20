@@ -1,0 +1,8 @@
+{
+ "keys": {
+  "|max_current|float": "max_current",
+  "|nr_of_phases_available|int": "nr_of_phases_available",
+  "|uuid|string": "uuid"
+ },
+ "lists": {}
+}

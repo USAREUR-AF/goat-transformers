@@ -1,0 +1,39 @@
+{
+ "keys": {
+  "schedules_charging_schedule_period_v2x_freq_watt_curve|frequency|float": "schedules_charging_schedule_period_v2x_freq_watt_curve_frequency",
+  "schedules_charging_schedule_period_v2x_freq_watt_curve|power|float": "schedules_charging_schedule_period_v2x_freq_watt_curve_power",
+  "schedules_charging_schedule_period_v2x_signal_watt_curve|power|float": "schedules_charging_schedule_period_v2x_signal_watt_curve_power",
+  "schedules_charging_schedule_period_v2x_signal_watt_curve|signal|int": "schedules_charging_schedule_period_v2x_signal_watt_curve_signal",
+  "schedules_charging_schedule_period|discharge_limit_L2|float": "schedules_charging_schedule_period_discharge_limit_l2",
+  "schedules_charging_schedule_period|discharge_limit_L3|float": "schedules_charging_schedule_period_discharge_limit_l3",
+  "schedules_charging_schedule_period|discharge_limit|float": "schedules_charging_schedule_period_discharge_limit",
+  "schedules_charging_schedule_period|evse_sleep|int": "schedules_charging_schedule_period_evse_sleep",
+  "schedules_charging_schedule_period|limit_L2|float": "schedules_charging_schedule_period_limit_l2",
+  "schedules_charging_schedule_period|limit_L3|float": "schedules_charging_schedule_period_limit_l3",
+  "schedules_charging_schedule_period|limit|float": "schedules_charging_schedule_period_limit",
+  "schedules_charging_schedule_period|number_phases|int": "schedules_charging_schedule_period_number_phases",
+  "schedules_charging_schedule_period|operation_mode|string": "schedules_charging_schedule_period_operation_mode",
+  "schedules_charging_schedule_period|phase_to_use|int": "schedules_charging_schedule_period_phase_to_use",
+  "schedules_charging_schedule_period|preconditioning_request|float": "schedules_charging_schedule_period_preconditioning_request",
+  "schedules_charging_schedule_period|setpoint_L2|float": "schedules_charging_schedule_period_setpoint_l2",
+  "schedules_charging_schedule_period|setpoint_L3|float": "schedules_charging_schedule_period_setpoint_l3",
+  "schedules_charging_schedule_period|setpoint_reactive_L2|float": "schedules_charging_schedule_period_setpoint_reactive_l2",
+  "schedules_charging_schedule_period|setpoint_reactive_L3|float": "schedules_charging_schedule_period_setpoint_reactive_l3",
+  "schedules_charging_schedule_period|setpoint_reactive|float": "schedules_charging_schedule_period_setpoint_reactive",
+  "schedules_charging_schedule_period|setpoint|float": "schedules_charging_schedule_period_setpoint",
+  "schedules_charging_schedule_period|stack_level|int": "schedules_charging_schedule_period_stack_level",
+  "schedules_charging_schedule_period|start_period|int": "schedules_charging_schedule_period_start_period",
+  "schedules_charging_schedule_period|v2x_baseline|float": "schedules_charging_schedule_period_v2x_baseline",
+  "schedules|charging_rate_unit|string": "schedules_charging_rate_unit",
+  "schedules|duration|int": "schedules_duration",
+  "schedules|evse|int": "schedules_evse",
+  "schedules|min_charging_rate|float": "schedules_min_charging_rate",
+  "schedules|start_schedule|string": "schedules_start_schedule"
+ },
+ "lists": {
+  "schedules_charging_schedule_period|v2x_freq_watt_curve": "schedules_charging_schedule_period_v2x_freq_watt_curve",
+  "schedules_charging_schedule_period|v2x_signal_watt_curve": "schedules_charging_schedule_period_v2x_signal_watt_curve",
+  "schedules|charging_schedule_period": "schedules_charging_schedule_period",
+  "|schedules": "schedules"
+ }
+}

@@ -1,0 +1,17 @@
+{
+ "name": "gen-ocpp_transaction_event_response-roundtrip",
+ "from": "everest-ocpp-ocpp-transaction-event-response",
+ "to": "everest-ocpp-ocpp-transaction-event-response",
+ "input": "{\"original_transaction_event\":{\"transaction_event\":\"Ended\",\"evse\":{\"id\":84166,\"connector_id\":58531},\"session_id\":\"s13635\",\"transaction_id\":\"s52035\"},\"total_cost\":0.75,\"charging_priority\":44388,\"personal_message\":{\"format\":\"HTML\",\"language\":\"s67686\",\"content\":\"s19500\"}}",
+ "expect": "{\"original_transaction_event\":{\"transaction_event\":\"Ended\",\"evse\":{\"id\":84166,\"connector_id\":58531},\"session_id\":\"s13635\",\"transaction_id\":\"s52035\"},\"total_cost\":0.75,\"charging_priority\":44388,\"personal_message\":{\"format\":\"HTML\",\"language\":\"s67686\",\"content\":\"s19500\"}}",
+ "model": {
+  "everestocppocpptransactioneventresponse.original_transaction_event_transaction_event": "Ended",
+  "everestocppocpptransactioneventresponse.original_transaction_event_evse_id": "84166",
+  "everestocppocpptransactioneventresponse.original_transaction_event_evse_connector_id": "58531",
+  "everestocppocpptransactioneventresponse.original_transaction_event_session_id": "s13635",
+  "everestocppocpptransactioneventresponse.original_transaction_event_transaction_id": "s52035",
+  "everestocppocpptransactioneventresponse.total_cost": "0.75",
+  "everestocppocpptransactioneventresponse.charging_priority": "44388",
+  "everestocppocpptransactioneventresponse.personal_message_format": "HTML"
+ }
+}

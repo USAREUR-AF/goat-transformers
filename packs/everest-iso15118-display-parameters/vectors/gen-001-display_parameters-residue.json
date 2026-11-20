@@ -1,0 +1,7 @@
+{
+ "name": "gen-display_parameters-residue",
+ "from": "everest-iso15118-display-parameters",
+ "to": "everest-iso15118-display-parameters",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"present_soc\":12.5,\"minimum_soc\":0.75,\"target_soc\":7.0625,\"maximum_soc\":7.0625,\"remaining_time_to_minimum_soc\":1.5,\"remaining_time_to_target_soc\":12.5,\"remaining_time_to_maximum_soc\":0.75,\"charging_complete\":false,\"battery_energy_capacity\":0.75,\"inlet_hot\":true}",
+ "expect": "{\"present_soc\":12.5,\"minimum_soc\":0.75,\"target_soc\":7.0625,\"maximum_soc\":7.0625,\"remaining_time_to_minimum_soc\":1.5,\"remaining_time_to_target_soc\":12.5,\"remaining_time_to_maximum_soc\":0.75,\"charging_complete\":false,\"battery_energy_capacity\":0.75,\"inlet_hot\":true,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

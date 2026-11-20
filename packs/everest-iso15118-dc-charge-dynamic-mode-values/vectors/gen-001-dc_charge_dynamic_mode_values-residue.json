@@ -1,0 +1,7 @@
+{
+ "name": "gen-dc_charge_dynamic_mode_values-residue",
+ "from": "everest-iso15118-dc-charge-dynamic-mode-values",
+ "to": "everest-iso15118-dc-charge-dynamic-mode-values",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"departure_time\":0.75,\"target_energy_request\":0.75,\"max_energy_request\":0.75,\"min_energy_request\":7.0625,\"max_charge_power\":42.375,\"min_charge_power\":42.375,\"max_charge_current\":0.75,\"max_voltage\":0.75,\"min_voltage\":7.0625,\"max_discharge_power\":0.75,\"min_discharge_power\":101.125,\"max_discharge_current\":12.5,\"max_v2x_energy_request\":0.75,\"min_v2x_energy_request\":0.75}",
+ "expect": "{\"departure_time\":0.75,\"target_energy_request\":0.75,\"max_energy_request\":0.75,\"min_energy_request\":7.0625,\"max_charge_power\":42.375,\"min_charge_power\":42.375,\"max_charge_current\":0.75,\"max_voltage\":0.75,\"min_voltage\":7.0625,\"max_discharge_power\":0.75,\"min_discharge_power\":101.125,\"max_discharge_current\":12.5,\"max_v2x_energy_request\":0.75,\"min_v2x_energy_request\":0.75,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

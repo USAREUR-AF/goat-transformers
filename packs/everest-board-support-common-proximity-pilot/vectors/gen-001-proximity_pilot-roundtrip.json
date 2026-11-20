@@ -1,0 +1,10 @@
+{
+ "name": "gen-proximity_pilot-roundtrip",
+ "from": "everest-board-support-common-proximity-pilot",
+ "to": "everest-board-support-common-proximity-pilot",
+ "input": "{\"ampacity\":\"A_13\"}",
+ "expect": "{\"ampacity\":\"A_13\"}",
+ "model": {
+  "everestboardsupportcommonproximitypilot.ampacity": "A_13"
+ }
+}

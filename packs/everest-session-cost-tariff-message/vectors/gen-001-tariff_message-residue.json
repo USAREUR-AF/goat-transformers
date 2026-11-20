@@ -1,0 +1,7 @@
+{
+ "name": "gen-tariff_message-residue",
+ "from": "everest-session-cost-tariff-message",
+ "to": "everest-session-cost-tariff-message",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"ocpp_transaction_id\":\"s5875\",\"identifier_id\":\"s39279\",\"identifier_type\":\"IdToken\",\"messages\":[{\"format\":\"QRCODE\",\"language\":\"s22142\",\"content\":\"s25598\"},{\"format\":\"ASCII\",\"language\":\"s82561\",\"content\":\"s28633\"}]}",
+ "expect": "{\"ocpp_transaction_id\":\"s5875\",\"identifier_id\":\"s39279\",\"identifier_type\":\"IdToken\",\"messages\":[{\"format\":\"QRCODE\",\"language\":\"s22142\",\"content\":\"s25598\"},{\"format\":\"ASCII\",\"language\":\"s82561\",\"content\":\"s28633\"}],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

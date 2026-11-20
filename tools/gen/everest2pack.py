@@ -129,7 +129,7 @@ def sha256(path):
 
 def provenance(src, fmt, file_, type_, tread, iread):
     lic = os.path.join(src, "LICENSE")
-    w = ["# Provenance of the %s pack\n" % fmt,
+    w = ["SPDX licence: Apache-2.0\n", "# Provenance of the %s pack\n" % fmt,
          "`tools/gen/everest2pack.py` reads the types files below, turns their references into",
          "references between JSON documents and passes `%s` of `types/%s.yaml` to" % (type_, file_),
          "`tools/gen/jsonschema2pack.py`; from the interface files it reads only which types they",

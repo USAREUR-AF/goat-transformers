@@ -1,0 +1,11 @@
+{
+ "name": "gen-reservation_update_status-roundtrip",
+ "from": "everest-reservation-reservation-update-status",
+ "to": "everest-reservation-reservation-update-status",
+ "input": "{\"reservation_id\":85470,\"reservation_status\":\"Removed\"}",
+ "expect": "{\"reservation_id\":85470,\"reservation_status\":\"Removed\"}",
+ "model": {
+  "everestreservationreservationupdatestatus.reservation_id": "85470",
+  "everestreservationreservationupdatestatus.reservation_status": "Removed"
+ }
+}

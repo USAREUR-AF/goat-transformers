@@ -1,0 +1,12 @@
+{
+ "keys": {
+  "protocols|priority|int": "protocols_priority",
+  "protocols|protocol_namespace|string": "protocols_protocol_namespace",
+  "protocols|schema_id|int": "protocols_schema_id",
+  "protocols|version_number_major|int": "protocols_version_number_major",
+  "protocols|version_number_minor|int": "protocols_version_number_minor"
+ },
+ "lists": {
+  "|Protocols": "protocols"
+ }
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-ocpp_transaction_event_response-residue",
+ "from": "everest-ocpp-ocpp-transaction-event-response",
+ "to": "everest-ocpp-ocpp-transaction-event-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"original_transaction_event\":{\"transaction_event\":\"Ended\",\"evse\":{\"id\":84166,\"connector_id\":58531},\"session_id\":\"s13635\",\"transaction_id\":\"s52035\"},\"total_cost\":0.75,\"charging_priority\":44388,\"personal_message\":{\"format\":\"HTML\",\"language\":\"s67686\",\"content\":\"s19500\"}}",
+ "expect": "{\"original_transaction_event\":{\"transaction_event\":\"Ended\",\"evse\":{\"id\":84166,\"connector_id\":58531},\"session_id\":\"s13635\",\"transaction_id\":\"s52035\"},\"total_cost\":0.75,\"charging_priority\":44388,\"personal_message\":{\"format\":\"HTML\",\"language\":\"s67686\",\"content\":\"s19500\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

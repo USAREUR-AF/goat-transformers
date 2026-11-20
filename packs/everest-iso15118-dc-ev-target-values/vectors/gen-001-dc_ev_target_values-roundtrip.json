@@ -1,0 +1,11 @@
+{
+ "name": "gen-dc_ev_target_values-roundtrip",
+ "from": "everest-iso15118-dc-ev-target-values",
+ "to": "everest-iso15118-dc-ev-target-values",
+ "input": "{\"dc_ev_target_voltage\":12.5,\"dc_ev_target_current\":101.125}",
+ "expect": "{\"dc_ev_target_voltage\":12.5,\"dc_ev_target_current\":101.125}",
+ "model": {
+  "everestiso15118dcevtargetvalues.dc_ev_target_voltage": "12.5",
+  "everestiso15118dcevtargetvalues.dc_ev_target_current": "101.125"
+ }
+}

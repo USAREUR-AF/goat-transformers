@@ -1,0 +1,7 @@
+{
+ "name": "gen-bsp_measurement-residue",
+ "from": "everest-board-support-common-bsp-measurement",
+ "to": "everest-board-support-common-bsp-measurement",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"proximity_pilot\":{\"ampacity\":\"A_63_3ph_70_1ph\"},\"rcd_current_mA\":-3.25,\"cp_pwm_duty_cycle\":-3.25}",
+ "expect": "{\"proximity_pilot\":{\"ampacity\":\"A_63_3ph_70_1ph\"},\"rcd_current_mA\":-3.25,\"cp_pwm_duty_cycle\":-3.25,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

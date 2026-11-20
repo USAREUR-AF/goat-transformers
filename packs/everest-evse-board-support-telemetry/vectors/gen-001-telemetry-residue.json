@@ -1,0 +1,7 @@
+{
+ "name": "gen-telemetry-residue",
+ "from": "everest-evse-board-support-telemetry",
+ "to": "everest-evse-board-support-telemetry",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"evse_temperature_C\":12.5,\"plug_temperature_C\":-3.25,\"fan_rpm\":42.375,\"supply_voltage_12V\":1.5,\"supply_voltage_minus_12V\":1.5,\"relais_on\":true}",
+ "expect": "{\"evse_temperature_C\":12.5,\"plug_temperature_C\":-3.25,\"fan_rpm\":42.375,\"supply_voltage_12V\":1.5,\"supply_voltage_minus_12V\":1.5,\"relais_on\":true,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-ocpp_transaction_event-residue",
+ "from": "everest-ocpp-ocpp-transaction-event",
+ "to": "everest-ocpp-ocpp-transaction-event",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"transaction_event\":\"Started\",\"evse\":{\"id\":26574,\"connector_id\":75050},\"session_id\":\"s50911\",\"transaction_id\":\"s64375\"}",
+ "expect": "{\"transaction_event\":\"Started\",\"evse\":{\"id\":26574,\"connector_id\":75050},\"session_id\":\"s50911\",\"transaction_id\":\"s64375\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

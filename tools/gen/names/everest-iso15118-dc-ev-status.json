@@ -1,0 +1,10 @@
+{
+ "keys": {
+  "|dc_ev_cabin_conditioning|int": "dc_ev_cabin_conditioning",
+  "|dc_ev_error_code|string": "dc_ev_error_code",
+  "|dc_ev_ready|int": "dc_ev_ready",
+  "|dc_ev_ress_conditioning|int": "dc_ev_ress_conditioning",
+  "|dc_ev_ress_soc|float": "dc_ev_ress_soc"
+ },
+ "lists": {}
+}

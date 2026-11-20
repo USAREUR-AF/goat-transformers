@@ -1,0 +1,7 @@
+{
+ "name": "gen-selected_service_parameters-residue",
+ "from": "everest-iso15118-selected-service-parameters",
+ "to": "everest-iso15118-selected-service-parameters",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"energy_transfer\":\"DC_ACDP\",\"connector\":\"Extended\",\"control_mode\":\"DynamicControl\",\"mobility_needs_mode\":\"EVCC\",\"pricing\":\"AbsolutePricing\",\"bpt_channel\":\"Unified\",\"generator_mode\":\"GridFollowing\"}",
+ "expect": "{\"energy_transfer\":\"DC_ACDP\",\"connector\":\"Extended\",\"control_mode\":\"DynamicControl\",\"mobility_needs_mode\":\"EVCC\",\"pricing\":\"AbsolutePricing\",\"bpt_channel\":\"Unified\",\"generator_mode\":\"GridFollowing\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

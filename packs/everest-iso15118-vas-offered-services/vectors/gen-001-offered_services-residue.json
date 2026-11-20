@@ -1,0 +1,7 @@
+{
+ "name": "gen-offered_services-residue",
+ "from": "everest-iso15118-vas-offered-services",
+ "to": "everest-iso15118-vas-offered-services",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"services\":[{\"service_id\":83493,\"service_name\":\"s68801\",\"service_scope\":\"s94281\",\"free_service\":false},{\"service_id\":48630,\"service_name\":\"s67075\",\"service_scope\":\"s56399\",\"free_service\":true}]}",
+ "expect": "{\"services\":[{\"service_id\":83493,\"service_name\":\"s68801\",\"service_scope\":\"s94281\",\"free_service\":false},{\"service_id\":48630,\"service_name\":\"s67075\",\"service_scope\":\"s56399\",\"free_service\":true}],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-firmware_update_status-residue",
+ "from": "everest-system-firmware-update-status",
+ "to": "everest-system-firmware-update-status",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"firmware_update_status\":\"Idle\",\"request_id\":99977}",
+ "expect": "{\"firmware_update_status\":\"Idle\",\"request_id\":99977,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

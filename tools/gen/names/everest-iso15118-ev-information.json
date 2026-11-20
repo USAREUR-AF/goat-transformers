@@ -1,0 +1,22 @@
+{
+ "keys": {
+  "supported_protocols_protocols|priority|int": "supported_protocols_protocols_priority",
+  "supported_protocols_protocols|protocol_namespace|string": "supported_protocols_protocols_protocol_namespace",
+  "supported_protocols_protocols|schema_id|int": "supported_protocols_protocols_schema_id",
+  "supported_protocols_protocols|version_number_major|int": "supported_protocols_protocols_version_number_major",
+  "supported_protocols_protocols|version_number_minor|int": "supported_protocols_protocols_version_number_minor",
+  "|evcc_id|string": "evcc_id",
+  "|selected_protocol.priority|int": "selected_protocol_priority",
+  "|selected_protocol.protocol_namespace|string": "selected_protocol_protocol_namespace",
+  "|selected_protocol.schema_id|int": "selected_protocol_schema_id",
+  "|selected_protocol.version_number_major|int": "selected_protocol_version_number_major",
+  "|selected_protocol.version_number_minor|int": "selected_protocol_version_number_minor",
+  "|tls_leaf_certificate|string": "tls_leaf_certificate",
+  "|tls_root_certificate|string": "tls_root_certificate",
+  "|tls_sub_ca_1_certificate|string": "tls_sub_ca_1_certificate",
+  "|tls_sub_ca_2_certificate|string": "tls_sub_ca_2_certificate"
+ },
+ "lists": {
+  "|supported_protocols.Protocols": "supported_protocols_protocols"
+ }
+}

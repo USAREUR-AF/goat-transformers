@@ -1,0 +1,11 @@
+{
+ "name": "gen-firmware_update_status-roundtrip",
+ "from": "everest-system-firmware-update-status",
+ "to": "everest-system-firmware-update-status",
+ "input": "{\"firmware_update_status\":\"Idle\",\"request_id\":99977}",
+ "expect": "{\"firmware_update_status\":\"Idle\",\"request_id\":99977}",
+ "model": {
+  "everestsystemfirmwareupdatestatus.firmware_update_status": "Idle",
+  "everestsystemfirmwareupdatestatus.request_id": "99977"
+ }
+}

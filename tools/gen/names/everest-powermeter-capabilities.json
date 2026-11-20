@@ -1,0 +1,7 @@
+{
+ "keys": {
+  "|min_export_current_A|float": "min_export_current_a",
+  "|min_import_current_A|float": "min_import_current_a"
+ },
+ "lists": {}
+}

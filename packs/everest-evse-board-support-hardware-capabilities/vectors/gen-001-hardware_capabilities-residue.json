@@ -1,0 +1,7 @@
+{
+ "name": "gen-hardware_capabilities-residue",
+ "from": "everest-evse-board-support-hardware-capabilities",
+ "to": "everest-evse-board-support-hardware-capabilities",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"max_current_A_import\":1.5,\"min_current_A_import\":12.5,\"max_phase_count_import\":2,\"min_phase_count_import\":3,\"max_current_A_export\":-0.5,\"min_current_A_export\":12.5,\"max_phase_count_export\":3,\"min_phase_count_export\":3,\"supports_changing_phases_during_charging\":true,\"supports_cp_state_E\":true,\"max_plug_temperature_C\":0.75,\"connector_type\":\"IEC62196Type2Cable\"}",
+ "expect": "{\"max_current_A_import\":1.5,\"min_current_A_import\":12.5,\"max_phase_count_import\":2,\"min_phase_count_import\":3,\"max_current_A_export\":-0.5,\"min_current_A_export\":12.5,\"max_phase_count_export\":3,\"min_phase_count_export\":3,\"supports_changing_phases_during_charging\":true,\"supports_cp_state_E\":true,\"max_plug_temperature_C\":0.75,\"connector_type\":\"IEC62196Type2Cable\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

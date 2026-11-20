@@ -1,0 +1,10 @@
+{
+ "name": "gen-app_protocols-roundtrip",
+ "from": "everest-iso15118-app-protocols",
+ "to": "everest-iso15118-app-protocols",
+ "input": "{\"Protocols\":[{\"protocol_namespace\":\"s19826\",\"version_number_major\":9772,\"version_number_minor\":89234,\"schema_id\":145,\"priority\":7},{\"protocol_namespace\":\"s61214\",\"version_number_major\":57982,\"version_number_minor\":6763,\"schema_id\":204,\"priority\":7}]}",
+ "expect": "{\"Protocols\":[{\"protocol_namespace\":\"s19826\",\"version_number_major\":9772,\"version_number_minor\":89234,\"schema_id\":145,\"priority\":7},{\"protocol_namespace\":\"s61214\",\"version_number_major\":57982,\"version_number_minor\":6763,\"schema_id\":204,\"priority\":7}]}",
+ "model": {
+  "everestiso15118appprotocols.protocols.#": "2"
+ }
+}
