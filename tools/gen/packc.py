@@ -350,6 +350,12 @@ class Pack:
         if self.wire != "bits":
             refuse("wire-not-bits", "format `%s` is on the `%s` wire; the device profile compiles the `bits` wire only"
                    % (self.format, self.wire))
+        for t in rows:      # spec 0.21: sequential extents and counts are not in the device profile
+            if t[0] == "count" or (t[0] == "group" and len(t) > 2
+                                   and (t[2] in ("rest", "last") or (t[2] == "count" and len(t) > 3
+                                                                     and t[3].startswith("@")))):
+                refuse("unsupported-feature", "%s: `group … rest`, `group … last`, `count` lines and "
+                       "`group … count @<name>` (spec 0.21) are not in the device profile" % self.format)
         for t in rows:      # spec 0.20: kind selection beyond one value is not in the device profile
             if (t[0] in ("switch", "case", "else")
                     or (t[0] == "when" and len(t) > 2 and ("," in t[2] or ".." in t[2]))
