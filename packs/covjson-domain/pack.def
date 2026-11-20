@@ -1,0 +1,62 @@
+# OGC CoverageJSON: a Domain document, the set of positions of a coverage on its axes and
+# the reference systems that give the axis values a meaning. Public. Written by hand from the
+# text of the standard; pack.md states what is mapped and why no axis is bound to lat or lon.
+format  covjson-domain
+version 0.1.0
+distribution public
+source  "OGC CoverageJSON Community Standard 1.0 (OGC 21-069r2), https://github.com/opengeospatial/CoverageJSON tag V1.0.0, commit 5e9b6f5e8eec77d60d6338b3d4d9a152f98429c0, standard/clause_specification_text.adoc; Apache-2.0. Written from the text of the standard; not approved by OGC"
+uses    covjson
+wire    json
+
+kind    domain
+when    type  Domain
+field  covjson.domain_type                  domainType                         string
+group  covjson.axis_x_values  axes.x.values
+  field  covjson.axis_x_value                 .                                  float
+end
+field  covjson.axis_x_start                 axes.x.start                       float
+field  covjson.axis_x_stop                  axes.x.stop                        float
+field  covjson.axis_x_num                   axes.x.num                         int
+group  covjson.axis_x_bounds  axes.x.bounds
+  field  covjson.axis_x_bound                 .                                  float
+end
+group  covjson.axis_y_values  axes.y.values
+  field  covjson.axis_y_value                 .                                  float
+end
+field  covjson.axis_y_start                 axes.y.start                       float
+field  covjson.axis_y_stop                  axes.y.stop                        float
+field  covjson.axis_y_num                   axes.y.num                         int
+group  covjson.axis_y_bounds  axes.y.bounds
+  field  covjson.axis_y_bound                 .                                  float
+end
+group  covjson.axis_z_values  axes.z.values
+  field  covjson.axis_z_value                 .                                  float
+end
+field  covjson.axis_z_start                 axes.z.start                       float
+field  covjson.axis_z_stop                  axes.z.stop                        float
+field  covjson.axis_z_num                   axes.z.num                         int
+group  covjson.axis_z_bounds  axes.z.bounds
+  field  covjson.axis_z_bound                 .                                  float
+end
+group  covjson.axis_t_values  axes.t.values
+  field  covjson.axis_t_value                 .                                  string
+end
+field  covjson.axis_t_start                 axes.t.start                       float
+field  covjson.axis_t_stop                  axes.t.stop                        float
+field  covjson.axis_t_num                   axes.t.num                         int
+group  covjson.axis_t_bounds  axes.t.bounds
+  field  covjson.axis_t_bound                 .                                  string
+end
+field  covjson.axis_composite_data_type     axes.composite.dataType            string
+group  covjson.axis_composite_coordinates  axes.composite.coordinates
+  field  covjson.axis_composite_coordinate    .                                  string
+end
+group  covjson.referencing  referencing
+  group  covjson.ref_coordinates  coordinates
+    field  covjson.ref_coordinate               .                                  string
+  end
+  field  covjson.ref_system_type              system.type                        string
+  field  covjson.ref_system_id                system.id                          string
+  field  covjson.ref_system_calendar          system.calendar                    string
+  field  covjson.ref_system_time_scale        system.timeScale                   string
+end

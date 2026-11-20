@@ -1,0 +1,88 @@
+# OGC CoverageJSON: a Coverage document, a domain with the parameters and ranges of the values
+# over it. Public. Written by hand from the text of the standard. Two kinds: the domain written
+# inline, or named by a URL. pack.md states what is mapped, and that range values are not carried.
+format  covjson-coverage
+version 0.1.0
+distribution public
+source  "OGC CoverageJSON Community Standard 1.0 (OGC 21-069r2), https://github.com/opengeospatial/CoverageJSON tag V1.0.0, commit 5e9b6f5e8eec77d60d6338b3d4d9a152f98429c0, standard/clause_specification_text.adoc; Apache-2.0. Written from the text of the standard; not approved by OGC"
+uses    covjson
+wire    json
+
+kind    inline-domain
+when    type  Coverage
+when    domain.type  Domain
+requires covjson.domain_object
+field  covjson.id                           id                                 string
+field  covjson.coverage_domain_type         domainType                         string
+field  covjson.domain_object                domain.type                        string
+field  covjson.domain_type                  domain.domainType                  string
+group  covjson.axis_x_values  domain.axes.x.values
+  field  covjson.axis_x_value                 .                                  float
+end
+field  covjson.axis_x_start                 domain.axes.x.start                float
+field  covjson.axis_x_stop                  domain.axes.x.stop                 float
+field  covjson.axis_x_num                   domain.axes.x.num                  int
+group  covjson.axis_x_bounds  domain.axes.x.bounds
+  field  covjson.axis_x_bound                 .                                  float
+end
+group  covjson.axis_y_values  domain.axes.y.values
+  field  covjson.axis_y_value                 .                                  float
+end
+field  covjson.axis_y_start                 domain.axes.y.start                float
+field  covjson.axis_y_stop                  domain.axes.y.stop                 float
+field  covjson.axis_y_num                   domain.axes.y.num                  int
+group  covjson.axis_y_bounds  domain.axes.y.bounds
+  field  covjson.axis_y_bound                 .                                  float
+end
+group  covjson.axis_z_values  domain.axes.z.values
+  field  covjson.axis_z_value                 .                                  float
+end
+field  covjson.axis_z_start                 domain.axes.z.start                float
+field  covjson.axis_z_stop                  domain.axes.z.stop                 float
+field  covjson.axis_z_num                   domain.axes.z.num                  int
+group  covjson.axis_z_bounds  domain.axes.z.bounds
+  field  covjson.axis_z_bound                 .                                  float
+end
+group  covjson.axis_t_values  domain.axes.t.values
+  field  covjson.axis_t_value                 .                                  string
+end
+field  covjson.axis_t_start                 domain.axes.t.start                float
+field  covjson.axis_t_stop                  domain.axes.t.stop                 float
+field  covjson.axis_t_num                   domain.axes.t.num                  int
+group  covjson.axis_t_bounds  domain.axes.t.bounds
+  field  covjson.axis_t_bound                 .                                  string
+end
+field  covjson.axis_composite_data_type     domain.axes.composite.dataType     string
+group  covjson.axis_composite_coordinates  domain.axes.composite.coordinates
+  field  covjson.axis_composite_coordinate    .                                  string
+end
+group  covjson.referencing  domain.referencing
+  group  covjson.ref_coordinates  coordinates
+    field  covjson.ref_coordinate               .                                  string
+  end
+  field  covjson.ref_system_type              system.type                        string
+  field  covjson.ref_system_id                system.id                          string
+  field  covjson.ref_system_calendar          system.calendar                    string
+  field  covjson.ref_system_time_scale        system.timeScale                   string
+end
+group  covjson.parameter_groups  parameterGroups
+  field  covjson.parameter_group_type         type                               string
+  field  covjson.parameter_group_id           id                                 string
+  group  covjson.parameter_group_members  members
+    field  covjson.parameter_group_member       .                                  string
+  end
+end
+
+kind    domain-url
+when    type  Coverage
+requires covjson.domain_url
+field  covjson.id                           id                                 string
+field  covjson.coverage_domain_type         domainType                         string
+field  covjson.domain_url                   domain                             string
+group  covjson.parameter_groups  parameterGroups
+  field  covjson.parameter_group_type         type                               string
+  field  covjson.parameter_group_id           id                                 string
+  group  covjson.parameter_group_members  members
+    field  covjson.parameter_group_member       .                                  string
+  end
+end

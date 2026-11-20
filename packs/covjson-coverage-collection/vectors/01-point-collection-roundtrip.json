@@ -1,0 +1,17 @@
+{
+  "name": "point-collection-roundtrip",
+  "from": "covjson-coverage-collection",
+  "to": "covjson-coverage-collection",
+  "input": "{\"type\":\"CoverageCollection\",\"domainType\":\"Point\",\"parameters\":{\"temperature\":{\"type\":\"Parameter\",\"unit\":{\"symbol\":{\"value\":\"K\",\"type\":\"http://www.opengis.net/def/uom/UCUM/\"}},\"observedProperty\":{\"id\":\"http://vocab.nerc.ac.uk/standard_name/air_temperature/\",\"label\":{\"en\":\"Air temperature\"}}}},\"referencing\":[{\"coordinates\":[\"x\",\"y\"],\"system\":{\"type\":\"GeographicCRS\",\"id\":\"http://www.opengis.net/def/crs/OGC/1.3/CRS84\"}},{\"coordinates\":[\"t\"],\"system\":{\"type\":\"TemporalRS\",\"calendar\":\"Gregorian\"}}],\"coverages\":[{\"type\":\"Coverage\",\"id\":\"station-0042\",\"domain\":{\"type\":\"Domain\",\"domainType\":\"Point\",\"axes\":{\"x\":{\"values\":[-3.5]},\"y\":{\"values\":[50.25]},\"z\":{\"values\":[5]},\"t\":{\"values\":[\"2026-11-20T06:00:00Z\"]}}},\"ranges\":{\"temperature\":{\"type\":\"NdArray\",\"dataType\":\"float\",\"values\":[281.25]}}},{\"type\":\"Coverage\",\"id\":\"station-0043\",\"domain\":{\"type\":\"Domain\",\"domainType\":\"Point\",\"axes\":{\"x\":{\"values\":[-3.25]},\"y\":{\"values\":[50.5]},\"z\":{\"values\":[5]},\"t\":{\"values\":[\"2026-11-20T06:00:00Z\"]}}},\"ranges\":{\"temperature\":{\"type\":\"NdArray\",\"dataType\":\"float\",\"values\":[280.5]}}}]}",
+  "expect": "{\"type\":\"CoverageCollection\",\"domainType\":\"Point\",\"referencing\":[{\"coordinates\":[\"x\",\"y\"],\"system\":{\"type\":\"GeographicCRS\",\"id\":\"http://www.opengis.net/def/crs/OGC/1.3/CRS84\"}},{\"coordinates\":[\"t\"],\"system\":{\"type\":\"TemporalRS\",\"calendar\":\"Gregorian\"}}],\"coverages\":[{\"type\":\"Coverage\",\"id\":\"station-0042\",\"domain\":{\"type\":\"Domain\",\"domainType\":\"Point\",\"axes\":{\"x\":{\"values\":[-3.5]},\"y\":{\"values\":[50.25]},\"z\":{\"values\":[5]},\"t\":{\"values\":[\"2026-11-20T06:00:00Z\"]}}}},{\"type\":\"Coverage\",\"id\":\"station-0043\",\"domain\":{\"type\":\"Domain\",\"domainType\":\"Point\",\"axes\":{\"x\":{\"values\":[-3.25]},\"y\":{\"values\":[50.5]},\"z\":{\"values\":[5]},\"t\":{\"values\":[\"2026-11-20T06:00:00Z\"]}}}}],\"parameters\":{\"temperature\":{\"type\":\"Parameter\",\"unit\":{\"symbol\":{\"value\":\"K\",\"type\":\"http://www.opengis.net/def/uom/UCUM/\"}},\"observedProperty\":{\"id\":\"http://vocab.nerc.ac.uk/standard_name/air_temperature/\",\"label\":{\"en\":\"Air temperature\"}}}}}",
+  "model": {
+    "@kind": "collection",
+    "covjson.collection_domain_type": "Point",
+    "covjson.referencing.#": "2",
+    "covjson.coverages.#": "2",
+    "covjson.coverages[1].covjson.id": "station-0043",
+    "covjson.coverages[1].covjson.axis_y_values[0].covjson.axis_y_value": "50.5"
+  },
+  "source": "derived by tools/gen/covjson-vectors.py from the members of the standard and spec/engine-spec.md; no engine run",
+  "reference": "OGC CoverageJSON Community Standard 1.0 (OGC 21-069r2), clauses on domain, axis, reference system connection, coverage and coverage collection objects; two Point coverages sharing the collection's parameters and referencing; each coverage is a list item, which carries no residue, so its ranges are dropped"
+}

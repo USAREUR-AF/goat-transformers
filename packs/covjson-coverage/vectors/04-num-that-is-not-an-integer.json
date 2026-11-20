@@ -1,0 +1,9 @@
+{
+  "name": "num-that-is-not-an-integer",
+  "from": "covjson-coverage",
+  "to": "covjson-coverage",
+  "input": "{\"type\":\"Coverage\",\"id\":\"station-0042\",\"domain\":{\"type\":\"Domain\",\"axes\":{\"x\":{\"start\":0,\"stop\":1,\"num\":2.5}},\"referencing\":[]},\"parameters\":{\"temperature\":{\"type\":\"Parameter\",\"unit\":{\"symbol\":{\"value\":\"K\",\"type\":\"http://www.opengis.net/def/uom/UCUM/\"}},\"observedProperty\":{\"id\":\"http://vocab.nerc.ac.uk/standard_name/air_temperature/\",\"label\":{\"en\":\"Air temperature\"}}}},\"parameterGroups\":[{\"type\":\"ParameterGroup\",\"id\":\"air\",\"label\":{\"en\":\"Air\"},\"members\":[\"temperature\"]}],\"ranges\":{\"temperature\":{\"type\":\"NdArray\",\"dataType\":\"float\",\"values\":[281.25]}}}",
+  "expect_error": "transform-decode",
+  "source": "derived by tools/gen/covjson-vectors.py from the members of the standard and spec/engine-spec.md; no engine run",
+  "reference": "OGC CoverageJSON Community Standard 1.0 (OGC 21-069r2), clauses on domain, axis, reference system connection, coverage and coverage collection objects; num is an integer; 2.5 is a transform failure"
+}
