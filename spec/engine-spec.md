@@ -3312,4 +3312,6 @@ never hold (`if !0:0:1 0,1`) loads.
     field counted only when it is written; lines of a block that does not
     hold do not count. On decode, "beyond the input" is measured in the bits
     the armored text carries. Step 6 decodes the output as it will be read:
-    `L` rounded up to a multiple of 6 bits, padded with zeros.
+    `L` rounded up to a multiple of 6 bits, padded with zeros. Without armor
+    the encoded length is unchanged: every line of a held block counts, an
+    `optional` one included (`conformance-gates-edge` vector 05).

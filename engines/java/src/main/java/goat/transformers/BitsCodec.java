@@ -732,11 +732,18 @@ final class BitsCodec extends Codec<Codec.BitMsg> {
             Pack.Line l = part.get(i);
             boolean isOutside = o < outside.size() && outside.get(o) == l;
             if (isOutside) o++;
-            else far = Math.max(far, base + ((Loc) l.loc).end());   // a held block's lines count toward the length
-            if (!(l instanceof Pack.Field)) continue;
+            if (!(l instanceof Pack.Field)) {
+                if (!isOutside) far = Math.max(far, base + ((Loc) l.loc).end());   // a held block's const counts
+                continue;
+            }
             Pack.Field f = (Pack.Field) l;
             // Lines of blocks that are not held are never valued: they raise no encode error (ruling 10 of 0.17).
             partValues[i] = isOutside ? outValues[o - 1] : valueToEncode(f, e, partDefaults.get(i));
+            // a held block's field counts toward the length; under armor sixbit an optional one only when it is
+            // written, by a value, a default or a sentinel (ruling 14 of 0.17)
+            if (!isOutside && !(pack.armorSixbit && f.optional && partValues[i] == null && f.absent == null)) {
+                far = Math.max(far, base + ((Loc) f.loc).end());
+            }
             if (e.get(f.key) != null) mark(present, (Loc) f.loc);
             mapped.add(f.key);
         }

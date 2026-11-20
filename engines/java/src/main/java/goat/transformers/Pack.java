@@ -544,6 +544,7 @@ public final class Pack {
             case "map": ok = n == 3; break;
             case "requires": ok = n >= 1; break;
             case "group": ok = n >= 2; break;
+            case "if": ok = n >= 1; break;   // ruling 13 of 0.17: an if with no argument is a line check
             case "end": ok = n == 0; break;
             // 0.13 adds `checksum sum16 <tag>`, the tlv form, beside the one-argument form of 5e
             case "checksum": ok = n == 1 || (n == 2 && args.get(0).equals("sum16")); break;
