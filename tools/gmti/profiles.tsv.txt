@@ -1,0 +1,16 @@
+# Fixed layouts of the gmti-records packs: one kind per existence-mask profile, so every field has a fixed place
+# and the repeated records are a group counted by a field of the segment (engine-spec 0.7, fixed `bits` layout).
+# body: the segment fields present, in wire order.  items: the fields of one record (ref/bits when the size is fixed by the kind).
+# count: the field that counts the records.  when: further field values that select the kind (ref=value).
+# The dwell and HRR field sets are the exploitation classes of AEDP-4607.1 Annex C. The masks are computed from them.
+kind	segment	body	items	count	list	when	basis
+dwell-situation	dwell	D2,D3,D4,D5,D6,D7,D8,D9,D10,D11,D15,D16,D17,D21,D22,D23,D24,D25,D26,D27	D32.1,D32.4,D32.5	D5	targets		situation class field table; its stated mask agrees
+dwell-targeting	dwell	D2,D3,D4,D5,D6,D7,D8,D9,D15,D16,D17,D21,D22,D23,D24,D25,D26,D27,D28,D29,D30	D32.1,D32.2,D32.3,D32.6,D32.7,D32.8,D32.9,D32.10,D32.11	D5	targets		targeting class field table (62-byte body, 19-byte report); the guide's stated mask disagrees, see the next kind
+dwell-targeting-as-masked	dwell	D2,D3,D4,D5,D6,D7,D8,D9,D10,D11,D15,D16,D17,D21,D22,D23,D24,D25,D26,D27,D28,D29,D30	D32.1,D32.4,D32.5,D32.6,D32.7,D32.8,D32.9,D32.10,D32.11	D5	targets		the targeting class mask as the guide states it (ff c7 1f fa 7f 80 00 00): scale factors and reduced-size positions
+hrr-m1p0	hrr	H2,H3,H4,H5,H6,H8,H9,H10,H11,H12,H13,H14,H15,H16,H17,H18,H19,H23,H24,H25,H26	H32.1/8	H6	scatterers	H25=1,H26=0	HRR field table of the targeting-with-HRR class; one-byte magnitude, no phase
+hrr-m1p1	hrr	H2,H3,H4,H5,H6,H8,H9,H10,H11,H12,H13,H14,H15,H16,H17,H18,H19,H23,H24,H25,H26	H32.1/8,H32.2/8	H6	scatterers	H25=1,H26=1	as above; one-byte magnitude and phase
+hrr-m1p2	hrr	H2,H3,H4,H5,H6,H8,H9,H10,H11,H12,H13,H14,H15,H16,H17,H18,H19,H23,H24,H25,H26	H32.1/8,H32.2/16	H6	scatterers	H25=1,H26=2	as above; one-byte magnitude, two-byte phase
+hrr-m2p0	hrr	H2,H3,H4,H5,H6,H8,H9,H10,H11,H12,H13,H14,H15,H16,H17,H18,H19,H23,H24,H25,H26	H32.1/16	H6	scatterers	H25=2,H26=0	as above; two-byte magnitude, no phase
+hrr-m2p1	hrr	H2,H3,H4,H5,H6,H8,H9,H10,H11,H12,H13,H14,H15,H16,H17,H18,H19,H23,H24,H25,H26	H32.1/16,H32.2/8	H6	scatterers	H25=2,H26=1	as above; two-byte magnitude, one-byte phase
+hrr-m2p2	hrr	H2,H3,H4,H5,H6,H8,H9,H10,H11,H12,H13,H14,H15,H16,H17,H18,H19,H23,H24,H25,H26	H32.1/16,H32.2/16	H6	scatterers	H25=2,H26=2	as above; two-byte magnitude and phase
+prochist	prochist	C1,C2,C3,C4,C5	C6.1,C6.2,C6.3,C6.4,C6.5,C6.6	C1	records		processing history has no mask: every field is mandatory

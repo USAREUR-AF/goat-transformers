@@ -1,0 +1,28 @@
+{
+  "name": "gmti-mission-roundtrip",
+  "from": "gmti",
+  "to": "gmti",
+  "input": "34310000004c584e05584e0000804e313233343520202020000003e900000000010000002c41544f2d343437312020202046502d32322020202020202022424c4b3430205357372007ea0b13",
+  "expect": "34310000004c584e05584e0000804e313233343520202020000003e900000000010000002c41544f2d343437312020202046502d32322020202020202022424c4b3430205357372007ea0b13",
+  "model": {
+    "gmti.version_id": "41",
+    "gmti.nationality": "XN",
+    "gmti.classification": "5",
+    "gmti.class_system": "XN",
+    "gmti.security_code": "0",
+    "gmti.exercise": "128",
+    "gmti.platform_id": "N12345    ",
+    "gmti.mission_id": "1001",
+    "gmti.job_id": "0",
+    "@kind": "mission",
+    "gmti.mission_plan": "ATO-4471    ",
+    "gmti.flight_plan": "FP-22       ",
+    "gmti.platform_type": "34",
+    "gmti.platform_config": "BLK40 SW7 ",
+    "gmti.reference_year": "2026",
+    "gmti.reference_month": "11",
+    "gmti.reference_day": "19"
+  },
+  "source": "synthetic",
+  "reference": "packet header and mission segment, every field"
+}

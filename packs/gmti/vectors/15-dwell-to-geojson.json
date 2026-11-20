@@ -1,0 +1,16 @@
+{
+  "name": "gmti-dwell-to-geojson",
+  "from": "gmti",
+  "to": "geojson",
+  "input": "343100000076584e05584e0000804e313233343520202020000003e9000000070200000056ff071ffb9f8000000003000c00000102b0b59244400000f80000000010473040000002bf20fd40000200fc0045000000f90000000a00016cc000f8000000000045000000f8e38e390098fb1e0fa0110250",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-9.999999990686774,48.515625,152]},\"properties\":{},\"id\":\"N12345    /1001/7/3/12/0\"}",
+  "model": {
+    "uid": "N12345    /1001/7/3/12/0",
+    "lat": "48.515625",
+    "lon": "-9.999999990686774",
+    "hae": "152.0",
+    "@complete": true
+  },
+  "source": "synthetic",
+  "reference": "the first target report of a dwell as a Feature; uid is platform/mission/job/revisit/dwell/target index"
+}

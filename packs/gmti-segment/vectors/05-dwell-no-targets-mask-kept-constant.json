@@ -1,0 +1,14 @@
+{
+  "name": "gmti-segment-dwell-no-targets-mask-kept-constant",
+  "from": "gmti-segment",
+  "to": "gmti-segment",
+  "input": "0200000045ffc71fc2600000000003000d01000002b0b88044400000f800000000104730000010000000200040000002bf200040000000000045000000f90000000a00016c",
+  "expect": "0200000045ffc71fc0000000000003000d01000002b0b88044400000f800000000104730000010000000200040000002bf200040000000000045000000f90000000a00016c",
+  "model": {
+    "@kind": "dwell",
+    "gmti.dwell_target_count": "0",
+    "gmti.dwell_index": "13"
+  },
+  "source": "synthetic",
+  "reference": "a producer may leave the target bits of the mask set when the count is 0; decode reads no target and encode writes those bits 0"
+}

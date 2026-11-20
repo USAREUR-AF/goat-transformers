@@ -1,0 +1,16 @@
+{
+  "name": "gmti-segment-records-prochist",
+  "from": "gmti-segment-records",
+  "to": "gmti-segment-records",
+  "input": "0c0000005f03584e4e313233343520202020000003e90000000701444547532d4e4f525448202000000005000000460081024e4c47532d574553542020200000000600000047000803584e43414f4320202020202000000009000000482000",
+  "expect": "0c0000005f03584e4e313233343520202020000003e90000000701444547532d4e4f525448202000000005000000460081024e4c47532d574553542020200000000600000047000803584e43414f4320202020202000000009000000482000",
+  "model": {
+    "@kind": "prochist",
+    "gmti.records.#": "3",
+    "gmti.records[2].gmti.record_platform_id": "CAOC      ",
+    "gmti.records[1].gmti.processing_performed": "8",
+    "gmti.history_count": "3"
+  },
+  "source": "synthetic",
+  "reference": "processing history of three records"
+}

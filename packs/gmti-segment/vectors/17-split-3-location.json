@@ -1,0 +1,13 @@
+{
+  "name": "gmti-split-3-location",
+  "from": "gmti-segment",
+  "to": "gmti-segment",
+  "input": "0d0000001c02aea54045000000f8e38e390010473040000002bf20fd",
+  "expect": "0d0000001c02aea54045000000f8e38e390010473040000002bf20fd",
+  "model": {
+    "lat": "48.515625",
+    "@kind": "location"
+  },
+  "source": "synthetic",
+  "reference": "segment 3 of the packet of split-0, cut at its stated size"
+}

@@ -1,0 +1,25 @@
+{
+  "name": "gmti-records-hrr-m2p2",
+  "from": "gmti-records",
+  "to": "gmti-records",
+  "input": "34310000005c584e05584e0000804e313233343520202020000003e900000007030000003cfbffc783000003000c00000000030020733c19000c80006400008032000005000000000101818002800202c800000ab400fa005a000003",
+  "expect": "34310000005c584e05584e0000804e313233343520202020000003e900000007030000003cfbffc783000003000c00000000030020733c19000c80006400008032000005000000000101818002800202c800000ab400fa005a000003",
+  "model": {
+    "gmti.version_id": "41",
+    "gmti.nationality": "XN",
+    "gmti.classification": "5",
+    "gmti.class_system": "XN",
+    "gmti.security_code": "0",
+    "gmti.exercise": "128",
+    "gmti.platform_id": "N12345    ",
+    "gmti.mission_id": "1001",
+    "gmti.job_id": "7",
+    "@kind": "hrr-m2p2",
+    "gmti.scatterers.#": "3",
+    "gmti.hrr_target_scatterers": "3",
+    "gmti.scatterers[1].gmti.scatterer_magnitude": "46080",
+    "gmti.scatterers[1].gmti.scatterer_phase": "64000"
+  },
+  "source": "synthetic",
+  "reference": "HRR field set of the targeting-with-HRR class, 2-byte magnitude, 2-byte phase, three records"
+}

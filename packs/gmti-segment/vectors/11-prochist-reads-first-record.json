@@ -1,0 +1,21 @@
+{
+  "name": "gmti-segment-prochist-reads-first-record",
+  "from": "gmti-segment",
+  "to": "gmti-segment",
+  "input": "0c0000004802584e4e313233343520202020000003e90000000701444547532d4e4f525448202000000005000000460081024e4c47532d5745535420202000000006000000470008",
+  "expect": "0c0000003102584e4e313233343520202020000003e90000000701444547532d4e4f525448202000000005000000460081",
+  "model": {
+    "@kind": "prochist",
+    "gmti.history_count": "2",
+    "gmti.based_on_platform_id": "N12345    ",
+    "gmti.based_on_job_id": "7",
+    "gmti.record_sequence": "1",
+    "gmti.record_nationality": "DE",
+    "gmti.record_platform_id": "GS-NORTH  ",
+    "gmti.record_mission_id": "5",
+    "gmti.record_job_id": "70",
+    "gmti.processing_performed": "129"
+  },
+  "source": "synthetic",
+  "reference": "two processing records; the second is skipped by the segment length"
+}

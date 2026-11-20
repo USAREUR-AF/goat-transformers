@@ -1,0 +1,13 @@
+{
+  "name": "isr-tracking-tracker-roundtrip",
+  "from": "isr-tracking",
+  "to": "isr-tracking",
+  "input": "<tracker type=\"TRACKE-1\"><uid>6f1c2e8a-0b4d-4c3e-9a7f-000000000002</uid><lid>3</lid><trackerID><stationID>STRING-4</stationID><nationality>NATION-5</nationality></trackerID><name>STRING-6</name><description>STRING-7</description><version>STRING-8</version><supplementaryData type=\"SUPPLE-9\"><name>STRING-10</name><version>STRING-11</version><description>STRING-12</description></supplementaryData><supplementaryData type=\"SUPPLE-13\"><name>STRING-14</name><version>STRING-15</version><description>STRING-16</description></supplementaryData></tracker>",
+  "expect": "<tracker type=\"TRACKE-1\"><uid>6f1c2e8a-0b4d-4c3e-9a7f-000000000002</uid><lid>3</lid><trackerID><stationID>STRING-4</stationID><nationality>NATION-5</nationality></trackerID><name>STRING-6</name><description>STRING-7</description><version>STRING-8</version><supplementaryData type=\"SUPPLE-9\"><name>STRING-10</name><version>STRING-11</version><description>STRING-12</description></supplementaryData><supplementaryData type=\"SUPPLE-13\"><name>STRING-14</name><version>STRING-15</version><description>STRING-16</description></supplementaryData></tracker>",
+  "model": {
+    "@kind": "tracker",
+    "uid": "6f1c2e8a-0b4d-4c3e-9a7f-000000000002"
+  },
+  "source": "synthetic",
+  "reference": "every element the data model gives a TrackerInformation, values made up"
+}

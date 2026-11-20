@@ -1,0 +1,13 @@
+{
+  "name": "isr-tracking-processedTrack-roundtrip",
+  "from": "isr-tracking",
+  "to": "isr-tracking",
+  "input": "<processedTrack type=\"PROCES-1\"><uid>6f1c2e8a-0b4d-4c3e-9a7f-000000000002</uid><lid>3</lid><confidence type=\"CERTAI-4\"><value>5</value><sourceReliability>6</sourceReliability><valid>true</valid></confidence><inputUID>6f1c2e8a-0b4d-4c3e-9a7f-000000000008</inputUID><inputUID gidp=\"9\">6f1c2e8a-0b4d-4c3e-9a7f-000000000009</inputUID><inputLID>10</inputLID><inputLID>11</inputLID><outputUID>6f1c2e8a-0b4d-4c3e-9a7f-000000000012</outputUID><outputLID>13</outputLID></processedTrack>",
+  "expect": "<processedTrack type=\"PROCES-1\"><uid>6f1c2e8a-0b4d-4c3e-9a7f-000000000002</uid><lid>3</lid><confidence type=\"CERTAI-4\"><value>5</value><sourceReliability>6</sourceReliability><valid>true</valid></confidence><inputUID>6f1c2e8a-0b4d-4c3e-9a7f-000000000008</inputUID><inputUID gidp=\"9\">6f1c2e8a-0b4d-4c3e-9a7f-000000000009</inputUID><inputLID>10</inputLID><inputLID>11</inputLID><outputUID>6f1c2e8a-0b4d-4c3e-9a7f-000000000012</outputUID><outputLID>13</outputLID></processedTrack>",
+  "model": {
+    "@kind": "processedTrack",
+    "uid": "6f1c2e8a-0b4d-4c3e-9a7f-000000000002"
+  },
+  "source": "synthetic",
+  "reference": "every element the data model gives a ProcessedTrack, values made up"
+}

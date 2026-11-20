@@ -1,0 +1,28 @@
+{
+  "name": "gmti-segment-records-dwell-targeting",
+  "from": "gmti-segment-records",
+  "to": "gmti-segment-records",
+  "input": "020000007cff071ffb9f8000000003000c00000302b0b59244400000f80000000010473040000002bf20fd40000200fc0045000000f90000000a00016cc000f8000000000045000000f8e38e390098fb1e0fa0110250000145010000f8e48e3900a003840fa00c8237000245020000f8e58e39008c00000fa0090446",
+  "expect": "020000007cff071ffb9f8000000003000c00000302b0b59244400000f80000000010473040000002bf20fd40000200fc0045000000f90000000a00016cc000f8000000000045000000f8e38e390098fb1e0fa0110250000145010000f8e48e3900a003840fa00c8237000245020000f8e58e39008c00000fa0090446",
+  "model": {
+    "@kind": "dwell-targeting",
+    "gmti.dwell_target_count": "3",
+    "gmti.targets.#": "3",
+    "gmti.dwell_index": "12",
+    "gmti.targets[0].gmti.mti_report_index": "0",
+    "gmti.targets[0].lat": "48.515625",
+    "gmti.targets[0].lon": "-9.999999990686774",
+    "gmti.targets[0].track.simulated": "0",
+    "gmti.targets[1].gmti.mti_report_index": "1",
+    "gmti.targets[1].lat": "48.51837158203125",
+    "gmti.targets[1].lon": "-9.994506826624274",
+    "gmti.targets[1].track.simulated": "1",
+    "gmti.targets[2].gmti.mti_report_index": "2",
+    "gmti.targets[2].lat": "48.5211181640625",
+    "gmti.targets[2].lon": "-9.989013662561774",
+    "gmti.targets[2].track.simulated": "0",
+    "gmti.targets[0].track.class": "vehicle"
+  },
+  "source": "synthetic",
+  "reference": "dwell-targeting: a dwell of three target reports, mask ff071ffb9f800000"
+}

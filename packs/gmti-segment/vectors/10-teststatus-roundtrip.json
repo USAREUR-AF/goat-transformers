@@ -1,0 +1,18 @@
+{
+  "name": "gmti-segment-teststatus-roundtrip",
+  "from": "gmti-segment",
+  "to": "gmti-segment",
+  "input": "0a00000013000000070003000c02b0b5921080",
+  "expect": "0a00000013000000070003000c02b0b5921080",
+  "model": {
+    "@kind": "teststatus",
+    "gmti.ts_job_id": "7",
+    "gmti.ts_revisit_index": "3",
+    "gmti.ts_dwell_index": "12",
+    "gmti.ts_dwell_time_ms": "45135250",
+    "gmti.hardware_status": "16",
+    "gmti.mode_status": "128"
+  },
+  "source": "synthetic",
+  "reference": "test and status segment, every field"
+}

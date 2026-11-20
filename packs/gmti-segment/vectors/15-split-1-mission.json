@@ -1,0 +1,13 @@
+{
+  "name": "gmti-split-1-mission",
+  "from": "gmti-segment",
+  "to": "gmti-segment",
+  "input": "010000002c41544f2d343437312020202046502d32322020202020202022424c4b3430205357372007ea0b13",
+  "expect": "010000002c41544f2d343437312020202046502d32322020202020202022424c4b3430205357372007ea0b13",
+  "model": {
+    "gmti.reference_year": "2026",
+    "@kind": "mission"
+  },
+  "source": "synthetic",
+  "reference": "segment 1 of the packet of split-0, cut at its stated size"
+}

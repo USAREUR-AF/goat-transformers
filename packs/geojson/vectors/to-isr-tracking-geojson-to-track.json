@@ -1,0 +1,12 @@
+{
+  "name": "isr-tracking-geojson-to-track",
+  "from": "geojson",
+  "to": "isr-tracking",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[11.5,48.25,520]},\"properties\":{},\"id\":\"0f8fad5b-d9cb-469f-a165-70867728950e\"}",
+  "expect": "<track><uid>0f8fad5b-d9cb-469f-a165-70867728950e</uid></track>",
+  "model": {
+    "uid": "0f8fad5b-d9cb-469f-a165-70867728950e"
+  },
+  "source": "synthetic",
+  "reference": "an entity of another format with a uid encodes as a track; its position has no element to go to"
+}

@@ -1,0 +1,20 @@
+# Kinds of the isr-tracking pack: the root element of a conformant document, and the objects of the model
+# that a system may exchange on their own, rooted at the element name their parent gives them.
+# requires: what an entity from another format must hold for encode to choose the kind (first match in order).
+# binds: <element> <shared key> <transform or - for a UUID>; ';' between.
+kind	root	class	requires	binds
+nits	NITSRoot	NITSRoot	isrtrack.nitsroot_nitsversion	msgCreatedTime time_ms iso8601_ms
+message	message	TrackMessage	isrtrack.trackmessage_reltimeincrement	baseTime time_ms iso8601_ms
+track	track	TrackData	uid	uid uid -
+segment	segment	TrackSegment	uid isrtrack.tracksegment_tp	uid uid -
+tp	tp	TrackPoint	uid isrtrack.trackpoint_dynamics	uid uid -
+detection	detection	Detection	uid isrtrack.detection_centroid	uid uid -
+object	object	TrackedObject	uid isrtrack.trackedobject_objectclass	uid uid -
+processedTrack	processedTrack	ProcessedTrack	uid isrtrack.processedtrack_type	uid uid -
+trackLinkage	trackLinkage	TrackLinkage	uid isrtrack.tracklinkage_type	uid uid -
+motionEvent	motionEvent	MotionEvent	uid isrtrack.motionevent_type	uid uid -
+dynSrcInfo	dynSrcInfo	DynamicSourceInformation	uid isrtrack.dynamicsourceinformation_reltime	uid uid -
+sensor	sensor	SensorInformation	uid isrtrack.sensorinformation_name	uid uid -
+tracker	tracker	TrackerInformation	uid isrtrack.trackerinformation_name	uid uid -
+collection	collection	CollectionInformation	uid isrtrack.collectioninformation_intent	uid uid -
+product	product	ProductIdentification	uid isrtrack.productidentification_id	uid uid -

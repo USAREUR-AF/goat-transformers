@@ -1,0 +1,43 @@
+# Value tables of the gmti pack: table, native code (a range lo-hi expands to each code), model value.
+# Decode uses the first row of a native code, encode the first row of a model value; so a row that
+# repeats a native code only adds an encode choice for a model value with no code of its own.
+# target_class: the target classification enumeration onto the shared track.class vocabulary;
+# codes 128 to 255 repeat 0 to 127 for simulated targets. Reserved codes read as unknown.
+table	native	model
+target_class	127	unknown
+target_class	126	other
+target_class	10	vehicle
+target_class	4	fixed-wing-aircraft
+target_class	3	rotary-wing-aircraft
+target_class	14	clutter
+target_class	0	unknown
+target_class	1-2	vehicle
+target_class	5-9	other
+target_class	11-13	other
+target_class	15-16	other
+target_class	17	vehicle
+target_class	18	other
+target_class	19-125	unknown
+target_class	128	unknown
+target_class	129-130	vehicle
+target_class	131	rotary-wing-aircraft
+target_class	132	fixed-wing-aircraft
+target_class	133-137	other
+target_class	138	vehicle
+target_class	139-141	other
+target_class	142	other
+target_class	143	unknown
+target_class	144	clutter
+target_class	145-146	other
+target_class	147	vehicle
+target_class	148	other
+target_class	149-253	unknown
+target_class	254	other
+target_class	255	unknown
+target_class	18	uas
+target_class	18	balloon
+target_class	11	bird
+target_simulated	0	0
+target_simulated	128	1
+target_simulated	1-127	0
+target_simulated	129-255	1

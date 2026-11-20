@@ -1,0 +1,13 @@
+{
+  "name": "isr-tracking-collection-roundtrip",
+  "from": "isr-tracking",
+  "to": "isr-tracking",
+  "input": "<collection><uid gidp=\"1\">6f1c2e8a-0b4d-4c3e-9a7f-000000000001</uid><lid>2</lid><intent>COLLEC-3</intent><essence>COLLEC-4</essence><targetID>STRING-5</targetID></collection>",
+  "expect": "<collection><uid gidp=\"1\">6f1c2e8a-0b4d-4c3e-9a7f-000000000001</uid><lid>2</lid><intent>COLLEC-3</intent><essence>COLLEC-4</essence><targetID>STRING-5</targetID></collection>",
+  "model": {
+    "@kind": "collection",
+    "uid": "6f1c2e8a-0b4d-4c3e-9a7f-000000000001"
+  },
+  "source": "synthetic",
+  "reference": "every element the data model gives a CollectionInformation, values made up"
+}
