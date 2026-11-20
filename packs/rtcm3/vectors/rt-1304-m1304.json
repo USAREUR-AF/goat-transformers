@@ -1,0 +1,11 @@
+{
+  "name": "rtcm3-roundtrip-m1304",
+  "from": "rtcm3",
+  "to": "rtcm3",
+  "input": "51809fd6dd3a02362b0e2702bf40bb5a5f545440",
+  "expect": "51809fd6dd3a02362b0e2702bf40bb5a5f545440",
+  "model": {
+    "@kind": "m1304",
+    "rtcm3.m1304_group_df574.#": "2"
+  }
+}

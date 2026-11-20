@@ -1,0 +1,11 @@
+{
+  "name": "rtcm3-roundtrip-m1249",
+  "from": "rtcm3",
+  "to": "rtcm3",
+  "input": "4e129ca52a60a58c22df5f13723cb668835969da71f342d566fdb195006c70c26988b6466c57f035679a54818a98c851abea0cfb274a3534e59225c0",
+  "expect": "4e129ca52a60a58c22df5f13723cb668835969da71f342d566fdb195006c70c26988b6466c57f035679a54818a98c851abea0cfb274a3534e59225c0",
+  "model": {
+    "@kind": "m1249",
+    "rtcm3.m1249_group.#": "2"
+  }
+}

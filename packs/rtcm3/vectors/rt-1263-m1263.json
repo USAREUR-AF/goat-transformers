@@ -1,0 +1,11 @@
+{
+  "name": "rtcm3-roundtrip-m1263",
+  "from": "rtcm3",
+  "to": "rtcm3",
+  "input": "4eff32674f752dc042ecda84c57022a0",
+  "expect": "4eff32674f752dc042ecda84c57022a0",
+  "model": {
+    "@kind": "m1263",
+    "rtcm3.m1263_group.#": "2"
+  }
+}

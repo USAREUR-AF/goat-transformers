@@ -1,0 +1,12 @@
+{
+  "name": "rtcm3-roundtrip-m1301",
+  "from": "rtcm3",
+  "to": "rtcm3",
+  "input": "515129290949492e485c45531485eae0fe5f31e268e8a1caaf7211b2f5fb819e4278c3985afa2a1413d58910843b21e806c0",
+  "expect": "515129290949492e485c45531485eae0fe5f31e268e8a1caaf7211b2f5fb819e4278c3985afa2a1413d58910843b21e806c0",
+  "model": {
+    "@kind": "m1301",
+    "rtcm3.m1301_group_df143.#": "2",
+    "rtcm3.m1301_group_df145.#": "2"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "rtcm3-roundtrip-m1022-no-items",
+  "from": "rtcm3",
+  "to": "rtcm3",
+  "input": "3fe003eaf7a0d21bad6d3a22e5438ac9f6faa6cdcf735b2f99991ac0b3beda61cde49a14052cd0402301940a38abb1c18d9ee62428560d58e2f89d9aedf1297150",
+  "expect": "3fe003eaf7a0d21bad6d3a22e5438ac9f6faa6cdcf735b2f99991ac0b3beda61cde49a14052cd0402301940a38abb1c18d9ee62428560d58e2f89d9aedf1297150",
+  "model": {
+    "@kind": "m1022",
+    "rtcm3.m1022_group1.#": "0",
+    "rtcm3.m1022_group2.#": "0"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "rtcm3-roundtrip-m1252",
+  "from": "rtcm3",
+  "to": "rtcm3",
+  "input": "4e4f982a779f86e021705654afe1e9be280bcb17bb5d75cc45b81b96d62abcf72a5c73a7d0aa65a1a4b1c51acfa1ecd400",
+  "expect": "4e4f982a779f86e021705654afe1e9be280bcb17bb5d75cc45b81b96d62abcf72a5c73a7d0aa65a1a4b1c51acfa1ecd400",
+  "model": {
+    "@kind": "m1252",
+    "rtcm3.m1252_group.#": "2"
+  }
+}
