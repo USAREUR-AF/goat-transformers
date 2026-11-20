@@ -1,0 +1,16 @@
+{
+  "name": "gen-metadata-roundtrip",
+  "from": "waymo-metadata",
+  "to": "waymo-metadata",
+  "input": "0a0364890112080000b03f00000040",
+  "expect": "0a0364890112080000b03f00000040",
+  "model": {
+    "@kind": "metadata",
+    "waymometadata.metadata_shape.#": "2",
+    "waymometadata.metadata_shape[0].waymometadata.metadata_shape_item": "100",
+    "waymometadata.metadata_shape[1].waymometadata.metadata_shape_item": "137",
+    "waymometadata.metadata_quant_precision.#": "2",
+    "waymometadata.metadata_quant_precision[0].waymometadata.metadata_quant_precision_item": "1.375",
+    "waymometadata.metadata_quant_precision[1].waymometadata.metadata_quant_precision_item": "2"
+  }
+}

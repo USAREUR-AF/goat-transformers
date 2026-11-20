@@ -1,0 +1,17 @@
+{
+  "name": "gen-object_trajectory-roundtrip",
+  "from": "waymo-object-trajectory",
+  "to": "waymo-object-trajectory",
+  "input": "0864121412080000403f0000b03f1a080000004000002840",
+  "expect": "0864121412080000403f0000b03f1a080000004000002840",
+  "model": {
+    "@kind": "object_trajectory",
+    "waymoobjecttrajectory.object_trajectory_object_id": "100",
+    "waymoobjecttrajectory.trajectory_center_x.#": "2",
+    "waymoobjecttrajectory.trajectory_center_x[0].waymoobjecttrajectory.trajectory_center_x_item": "0.75",
+    "waymoobjecttrajectory.trajectory_center_x[1].waymoobjecttrajectory.trajectory_center_x_item": "1.375",
+    "waymoobjecttrajectory.trajectory_center_y.#": "2",
+    "waymoobjecttrajectory.trajectory_center_y[0].waymoobjecttrajectory.trajectory_center_y_item": "2",
+    "waymoobjecttrajectory.trajectory_center_y[1].waymoobjecttrajectory.trajectory_center_y_item": "2.625"
+  }
+}

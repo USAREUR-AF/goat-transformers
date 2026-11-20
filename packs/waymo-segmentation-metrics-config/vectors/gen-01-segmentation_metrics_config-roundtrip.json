@@ -1,0 +1,13 @@
+{
+  "name": "gen-segmentation_metrics_config-roundtrip",
+  "from": "waymo-segmentation-metrics-config",
+  "to": "waymo-segmentation-metrics-config",
+  "input": "0a020101",
+  "expect": "0a020101",
+  "model": {
+    "@kind": "segmentation_metrics_config",
+    "waymosegmentationmetricsconfig.segmentation_metrics_config_segmentation_types.#": "2",
+    "waymosegmentationmetricsconfig.segmentation_metrics_config_segmentation_types[0].waymosegmentationmetricsconfig.segmentation_metrics_config_segmentation_types_item": "1",
+    "waymosegmentationmetricsconfig.segmentation_metrics_config_segmentation_types[1].waymosegmentationmetricsconfig.segmentation_metrics_config_segmentation_types_item": "1"
+  }
+}

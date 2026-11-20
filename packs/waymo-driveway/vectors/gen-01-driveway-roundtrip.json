@@ -1,0 +1,15 @@
+{
+  "name": "gen-driveway-roundtrip",
+  "from": "waymo-driveway",
+  "to": "waymo-driveway",
+  "input": "0a1b09000000000000d03f110000000000000040190000000000000e400a1b090000000000001640110000000000001d40190000000000002240",
+  "expect": "0a1b09000000000000d03f110000000000000040190000000000000e400a1b090000000000001640110000000000001d40190000000000002240",
+  "model": {
+    "@kind": "driveway",
+    "waymodriveway.driveway_polygon.#": "2",
+    "waymodriveway.driveway_polygon[0].waymodriveway.map_point_x": "0.25",
+    "waymodriveway.driveway_polygon[0].waymodriveway.map_point_y": "2",
+    "waymodriveway.driveway_polygon[1].waymodriveway.map_point_x": "5.5",
+    "waymodriveway.driveway_polygon[1].waymodriveway.map_point_y": "7.25"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "gen-scored_joint_trajectory-roundtrip",
+  "from": "waymo-scored-joint-trajectory",
+  "to": "waymo-scored-joint-trajectory",
+  "input": "1211088901120c12040000b03f1a0400000040121108f801120c1204000050401a04000078401d0000003e",
+  "expect": "1211088901120c12040000b03f1a0400000040121108f801120c1204000050401a04000078401d0000003e",
+  "model": {
+    "@kind": "scored_joint_trajectory",
+    "waymoscoredjointtrajectory.scored_joint_trajectory_confidence": "0.125",
+    "waymoscoredjointtrajectory.scored_joint_trajectory_trajectories.#": "2",
+    "waymoscoredjointtrajectory.scored_joint_trajectory_trajectories[0].waymoscoredjointtrajectory.object_trajectory_object_id": "137",
+    "waymoscoredjointtrajectory.scored_joint_trajectory_trajectories[0].waymoscoredjointtrajectory.object_trajectory_trajectory_center_x.#": "1",
+    "waymoscoredjointtrajectory.scored_joint_trajectory_trajectories[0].waymoscoredjointtrajectory.object_trajectory_trajectory_center_x[0].waymoscoredjointtrajectory.trajectory_center_x_item": "1.375",
+    "waymoscoredjointtrajectory.scored_joint_trajectory_trajectories[0].waymoscoredjointtrajectory.object_trajectory_trajectory_center_y.#": "1",
+    "waymoscoredjointtrajectory.scored_joint_trajectory_trajectories[0].waymoscoredjointtrajectory.object_trajectory_trajectory_center_y[0].waymoscoredjointtrajectory.trajectory_center_y_item": "2",
+    "waymoscoredjointtrajectory.scored_joint_trajectory_trajectories[1].waymoscoredjointtrajectory.object_trajectory_object_id": "248",
+    "waymoscoredjointtrajectory.scored_joint_trajectory_trajectories[1].waymoscoredjointtrajectory.object_trajectory_trajectory_center_x.#": "1",
+    "waymoscoredjointtrajectory.scored_joint_trajectory_trajectories[1].waymoscoredjointtrajectory.object_trajectory_trajectory_center_x[0].waymoscoredjointtrajectory.trajectory_center_x_item": "3.25",
+    "waymoscoredjointtrajectory.scored_joint_trajectory_trajectories[1].waymoscoredjointtrajectory.object_trajectory_trajectory_center_y.#": "1",
+    "waymoscoredjointtrajectory.scored_joint_trajectory_trajectories[1].waymoscoredjointtrajectory.object_trajectory_trajectory_center_y[0].waymoscoredjointtrajectory.trajectory_center_y_item": "3.875"
+  }
+}

@@ -1,0 +1,12 @@
+{
+ "1": "scenario_predictions_scenario_id",
+ "2[]": "scenario_predictions_multi_modal_predictions",
+ "waymo.open_dataset.JointTrajectories:2[]": "joint_trajectories_trajectories",
+ "waymo.open_dataset.JointTrajectories:3": "joint_trajectories_confidence",
+ "waymo.open_dataset.MultimodalPrediction:1[]": "multimodal_prediction_joint_predictions",
+ "waymo.open_dataset.SingleTrajectory:1": "single_trajectory_object_id",
+ "waymo.open_dataset.SingleTrajectory:2[]": "single_trajectory_center_x",
+ "waymo.open_dataset.SingleTrajectory:2[]item": "single_trajectory_center_x_item",
+ "waymo.open_dataset.SingleTrajectory:3[]": "single_trajectory_center_y",
+ "waymo.open_dataset.SingleTrajectory:3[]item": "single_trajectory_center_y_item"
+}

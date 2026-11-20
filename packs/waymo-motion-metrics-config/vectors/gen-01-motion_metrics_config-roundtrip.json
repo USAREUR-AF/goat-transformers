@@ -1,0 +1,24 @@
+{
+  "name": "gen-motion_metrics_config-roundtrip",
+  "from": "waymo-motion-metrics-config",
+  "to": "waymo-motion-metrics-config",
+  "input": "086410890118ae0120d3012d0000284035000050403d0000784045000090404a0d08b103150000cc401d0000e0404a0d08a004150000803e1d0000603f508c03",
+  "expect": "086410890118ae0120d3012d0000284035000050403d0000784045000090404a0d08b103150000cc401d0000e0404a0d08a004150000803e1d0000603f508c03",
+  "model": {
+    "@kind": "motion_metrics_config",
+    "waymomotionmetricsconfig.motion_metrics_config_track_steps_per_second": "100",
+    "waymomotionmetricsconfig.motion_metrics_config_prediction_steps_per_second": "137",
+    "waymomotionmetricsconfig.motion_metrics_config_track_history_samples": "174",
+    "waymomotionmetricsconfig.motion_metrics_config_track_future_samples": "211",
+    "waymomotionmetricsconfig.motion_metrics_config_speed_lower_bound": "2.625",
+    "waymomotionmetricsconfig.motion_metrics_config_speed_upper_bound": "3.25",
+    "waymomotionmetricsconfig.motion_metrics_config_speed_scale_lower": "3.875",
+    "waymomotionmetricsconfig.motion_metrics_config_speed_scale_upper": "4.5",
+    "waymomotionmetricsconfig.motion_metrics_config_max_predictions": "396",
+    "waymomotionmetricsconfig.motion_metrics_config_step_configurations.#": "2",
+    "waymomotionmetricsconfig.motion_metrics_config_step_configurations[0].waymomotionmetricsconfig.measurement_step_config_measurement_step": "433",
+    "waymomotionmetricsconfig.motion_metrics_config_step_configurations[0].waymomotionmetricsconfig.measurement_step_config_lateral_miss_threshold": "6.375",
+    "waymomotionmetricsconfig.motion_metrics_config_step_configurations[1].waymomotionmetricsconfig.measurement_step_config_measurement_step": "544",
+    "waymomotionmetricsconfig.motion_metrics_config_step_configurations[1].waymomotionmetricsconfig.measurement_step_config_lateral_miss_threshold": "0.25"
+  }
+}

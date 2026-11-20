@@ -1,0 +1,12 @@
+{
+ "1[]": "segmentation_frame_segmentation_labels",
+ "2": "segmentation_frame_context_name",
+ "3": "segmentation_frame_frame_timestamp_micros",
+ "waymo.open_dataset.Laser:1": "laser_name",
+ "waymo.open_dataset.Laser:2.1.1[]": "laser_ri_return1_range_image_data",
+ "waymo.open_dataset.Laser:2.1.2.1[]": "laser_ri_return1_range_image_shape_dims",
+ "waymo.open_dataset.Laser:3.1.1[]": "laser_ri_return2_range_image_data",
+ "waymo.open_dataset.Laser:3.1.2.1[]": "laser_ri_return2_range_image_shape_dims",
+ "waymo.open_dataset.MatrixFloat:1[]item": "matrix_float_data_item",
+ "waymo.open_dataset.MatrixShape:1[]item": "matrix_shape_dims_item"
+}

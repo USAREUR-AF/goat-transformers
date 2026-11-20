@@ -1,0 +1,16 @@
+{
+  "name": "gen-road_line-roundtrip",
+  "from": "waymo-road-line",
+  "to": "waymo-road-line",
+  "input": "0801121b090000000000000040110000000000000e40190000000000001640121b090000000000001d40110000000000002240190000000000802540",
+  "expect": "0801121b090000000000000040110000000000000e40190000000000001640121b090000000000001d40110000000000002240190000000000802540",
+  "model": {
+    "@kind": "road_line",
+    "waymoroadline.road_line_type": "1",
+    "waymoroadline.road_line_polyline.#": "2",
+    "waymoroadline.road_line_polyline[0].waymoroadline.map_point_x": "2",
+    "waymoroadline.road_line_polyline[0].waymoroadline.map_point_y": "3.75",
+    "waymoroadline.road_line_polyline[1].waymoroadline.map_point_x": "7.25",
+    "waymoroadline.road_line_polyline[1].waymoroadline.map_point_y": "9"
+  }
+}

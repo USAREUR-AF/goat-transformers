@@ -1,0 +1,4 @@
+{
+ "1[]": "segmentation_metrics_config_segmentation_types",
+ "waymo.open_dataset.SegmentationMetricsConfig:1[]item": "segmentation_metrics_config_segmentation_types_item"
+}

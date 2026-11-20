@@ -1,0 +1,7 @@
+{
+ "1[]": "polygon2d_proto_x",
+ "2[]": "polygon2d_proto_y",
+ "3": "polygon2d_proto_id",
+ "waymo.open_dataset.Polygon2dProto:1[]item": "polygon2d_proto_x_item",
+ "waymo.open_dataset.Polygon2dProto:2[]item": "polygon2d_proto_y_item"
+}

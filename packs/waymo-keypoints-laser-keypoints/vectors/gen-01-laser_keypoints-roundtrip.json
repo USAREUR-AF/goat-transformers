@@ -1,0 +1,15 @@
+{
+  "name": "gen-laser_keypoints-roundtrip",
+  "from": "waymo-keypoints-laser-keypoints",
+  "to": "waymo-keypoints-laser-keypoints",
+  "input": "0a25080112210a1b090000000000000040110000000000000e40190000000000001640120208010a25080112210a1b090000000000802540110000000000002940190000000000802c4012020801",
+  "expect": "0a25080112210a1b090000000000000040110000000000000e40190000000000001640120208010a25080112210a1b090000000000802540110000000000002940190000000000802c4012020801",
+  "model": {
+    "@kind": "laser_keypoints",
+    "waymokeypointslaserkeypoints.laser_keypoints_keypoint.#": "2",
+    "waymokeypointslaserkeypoints.laser_keypoints_keypoint[0].waymokeypointslaserkeypoints.laser_keypoint_type": "1",
+    "waymokeypointslaserkeypoints.laser_keypoints_keypoint[0].waymokeypointslaserkeypoints.laser_keypoint_keypoint_3d_location_m_x": "2",
+    "waymokeypointslaserkeypoints.laser_keypoints_keypoint[1].waymokeypointslaserkeypoints.laser_keypoint_type": "1",
+    "waymokeypointslaserkeypoints.laser_keypoints_keypoint[1].waymokeypointslaserkeypoints.laser_keypoint_keypoint_3d_location_m_x": "10.75"
+  }
+}

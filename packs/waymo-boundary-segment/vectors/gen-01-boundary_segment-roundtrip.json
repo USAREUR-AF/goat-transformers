@@ -1,0 +1,14 @@
+{
+  "name": "gen-boundary_segment-roundtrip",
+  "from": "waymo-boundary-segment",
+  "to": "waymo-boundary-segment",
+  "input": "086410890118ae012001",
+  "expect": "086410890118ae012001",
+  "model": {
+    "@kind": "boundary_segment",
+    "waymoboundarysegment.boundary_segment_lane_start_index": "100",
+    "waymoboundarysegment.boundary_segment_lane_end_index": "137",
+    "waymoboundarysegment.boundary_segment_boundary_feature_id": "174",
+    "waymoboundarysegment.boundary_segment_boundary_type": "1"
+  }
+}

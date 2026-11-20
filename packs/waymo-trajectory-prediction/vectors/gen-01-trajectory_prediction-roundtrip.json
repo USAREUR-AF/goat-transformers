@@ -1,0 +1,16 @@
+{
+  "name": "gen-trajectory_prediction-roundtrip",
+  "from": "waymo-trajectory-prediction",
+  "to": "waymo-trajectory-prediction",
+  "input": "0a080000003e0000403f12080000b03f00000040",
+  "expect": "0a080000003e0000403f12080000b03f00000040",
+  "model": {
+    "@kind": "trajectory_prediction",
+    "waymotrajectoryprediction.trajectory_prediction_pos_x.#": "2",
+    "waymotrajectoryprediction.trajectory_prediction_pos_x[0].waymotrajectoryprediction.trajectory_prediction_pos_x_item": "0.125",
+    "waymotrajectoryprediction.trajectory_prediction_pos_x[1].waymotrajectoryprediction.trajectory_prediction_pos_x_item": "0.75",
+    "waymotrajectoryprediction.trajectory_prediction_pos_y.#": "2",
+    "waymotrajectoryprediction.trajectory_prediction_pos_y[0].waymotrajectoryprediction.trajectory_prediction_pos_y_item": "1.375",
+    "waymotrajectoryprediction.trajectory_prediction_pos_y[1].waymotrajectoryprediction.trajectory_prediction_pos_y_item": "2"
+  }
+}

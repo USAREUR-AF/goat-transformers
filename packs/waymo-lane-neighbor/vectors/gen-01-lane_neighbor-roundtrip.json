@@ -1,0 +1,20 @@
+{
+  "name": "gen-lane_neighbor-roundtrip",
+  "from": "waymo-lane-neighbor",
+  "to": "waymo-lane-neighbor",
+  "input": "086410890118ae0120d30128f801320b089d0210c20218e7022001320b08b10310d60318fb032001",
+  "expect": "086410890118ae0120d30128f801320b089d0210c20218e7022001320b08b10310d60318fb032001",
+  "model": {
+    "@kind": "lane_neighbor",
+    "waymolaneneighbor.lane_neighbor_feature_id": "100",
+    "waymolaneneighbor.lane_neighbor_self_start_index": "137",
+    "waymolaneneighbor.lane_neighbor_self_end_index": "174",
+    "waymolaneneighbor.lane_neighbor_neighbor_start_index": "211",
+    "waymolaneneighbor.lane_neighbor_neighbor_end_index": "248",
+    "waymolaneneighbor.lane_neighbor_boundaries.#": "2",
+    "waymolaneneighbor.lane_neighbor_boundaries[0].waymolaneneighbor.boundary_segment_lane_start_index": "285",
+    "waymolaneneighbor.lane_neighbor_boundaries[0].waymolaneneighbor.boundary_segment_lane_end_index": "322",
+    "waymolaneneighbor.lane_neighbor_boundaries[1].waymolaneneighbor.boundary_segment_lane_start_index": "433",
+    "waymolaneneighbor.lane_neighbor_boundaries[1].waymolaneneighbor.boundary_segment_lane_end_index": "470"
+  }
+}

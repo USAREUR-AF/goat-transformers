@@ -1,0 +1,13 @@
+{
+  "name": "gen-breakdown-roundtrip",
+  "from": "waymo-breakdown",
+  "to": "waymo-breakdown",
+  "input": "08011089011801",
+  "expect": "08011089011801",
+  "model": {
+    "@kind": "breakdown",
+    "waymobreakdown.breakdown_generator_id": "1",
+    "waymobreakdown.breakdown_shard": "137",
+    "waymobreakdown.breakdown_difficulty_level": "1"
+  }
+}

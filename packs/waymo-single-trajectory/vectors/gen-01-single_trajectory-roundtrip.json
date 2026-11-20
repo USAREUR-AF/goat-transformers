@@ -1,0 +1,17 @@
+{
+  "name": "gen-single_trajectory-roundtrip",
+  "from": "waymo-single-trajectory",
+  "to": "waymo-single-trajectory",
+  "input": "086412080000403f0000b03f1a080000004000002840",
+  "expect": "086412080000403f0000b03f1a080000004000002840",
+  "model": {
+    "@kind": "single_trajectory",
+    "waymosingletrajectory.single_trajectory_object_id": "100",
+    "waymosingletrajectory.single_trajectory_center_x.#": "2",
+    "waymosingletrajectory.single_trajectory_center_x[0].waymosingletrajectory.single_trajectory_center_x_item": "0.75",
+    "waymosingletrajectory.single_trajectory_center_x[1].waymosingletrajectory.single_trajectory_center_x_item": "1.375",
+    "waymosingletrajectory.single_trajectory_center_y.#": "2",
+    "waymosingletrajectory.single_trajectory_center_y[0].waymosingletrajectory.single_trajectory_center_y_item": "2",
+    "waymosingletrajectory.single_trajectory_center_y[1].waymosingletrajectory.single_trajectory_center_y_item": "2.625"
+  }
+}

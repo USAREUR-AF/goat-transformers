@@ -1,0 +1,20 @@
+{
+  "name": "gen-occupancy_flow_metrics-roundtrip",
+  "from": "waymo-occupancy-flow-metrics",
+  "to": "waymo-occupancy-flow-metrics",
+  "input": "0d0000004015000028401d0000504025000078402d00009040350000a4403d0000b840406448890150ae01",
+  "expect": "0d0000004015000028401d0000504025000078402d00009040350000a4403d0000b840406448890150ae01",
+  "model": {
+    "@kind": "occupancy_flow_metrics",
+    "waymooccupancyflowmetrics.occupancy_flow_metrics_num_waypoints_with_observed_occupancy": "100",
+    "waymooccupancyflowmetrics.occupancy_flow_metrics_num_waypoints_with_occluded_occupancy": "137",
+    "waymooccupancyflowmetrics.occupancy_flow_metrics_num_waypoints_with_flow": "174",
+    "waymooccupancyflowmetrics.occupancy_flow_metrics_vehicles_observed_auc": "2",
+    "waymooccupancyflowmetrics.occupancy_flow_metrics_vehicles_observed_iou": "2.625",
+    "waymooccupancyflowmetrics.occupancy_flow_metrics_vehicles_occluded_auc": "3.25",
+    "waymooccupancyflowmetrics.occupancy_flow_metrics_vehicles_occluded_iou": "3.875",
+    "waymooccupancyflowmetrics.occupancy_flow_metrics_vehicles_flow_epe": "4.5",
+    "waymooccupancyflowmetrics.occupancy_flow_metrics_vehicles_flow_warped_occupancy_auc": "5.125",
+    "waymooccupancyflowmetrics.occupancy_flow_metrics_vehicles_flow_warped_occupancy_iou": "5.75"
+  }
+}

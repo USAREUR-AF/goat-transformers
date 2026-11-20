@@ -1,0 +1,24 @@
+{
+  "name": "gen-pose_estimation-roundtrip",
+  "from": "waymo-keypoints-pose-estimation",
+  "to": "waymo-keypoints-pose-estimation",
+  "input": "0a130a0e636f6e746578745f6e616d652d30108901124e0a25080112210a1b090000000000c03140110000000000803340190000000000403540120208010a25080112210a1b090000000000803a40110000000000403c40190000000000003e40120208011a430a1b090000000000000e40110000000000001640190000000000001d40121b090000000000002240110000000000802540190000000000002940190000000000802c40",
+  "expect": "0a130a0e636f6e746578745f6e616d652d30108901124e0a25080112210a1b090000000000c03140110000000000803340190000000000403540120208010a25080112210a1b090000000000803a40110000000000403c40190000000000003e40120208011a430a1b090000000000000e40110000000000001640190000000000001d40121b090000000000002240110000000000802540190000000000002940190000000000802c40",
+  "model": {
+    "@kind": "pose_estimation",
+    "waymokeypointsposeestimation.key_context_name": "context_name-0",
+    "waymokeypointsposeestimation.key_frame_timestamp_micros": "137",
+    "waymokeypointsposeestimation.box_center_x": "3.75",
+    "waymokeypointsposeestimation.box_center_y": "5.5",
+    "waymokeypointsposeestimation.box_center_z": "7.25",
+    "waymokeypointsposeestimation.box_size_x": "9",
+    "waymokeypointsposeestimation.box_size_y": "10.75",
+    "waymokeypointsposeestimation.box_size_z": "12.5",
+    "waymokeypointsposeestimation.box_heading": "14.25",
+    "waymokeypointsposeestimation.laser_keypoints_keypoint.#": "2",
+    "waymokeypointsposeestimation.laser_keypoints_keypoint[0].waymokeypointsposeestimation.laser_keypoint_type": "1",
+    "waymokeypointsposeestimation.laser_keypoints_keypoint[0].waymokeypointsposeestimation.laser_keypoint_keypoint_3d_location_m_x": "17.75",
+    "waymokeypointsposeestimation.laser_keypoints_keypoint[1].waymokeypointsposeestimation.laser_keypoint_type": "1",
+    "waymokeypointsposeestimation.laser_keypoints_keypoint[1].waymokeypointsposeestimation.laser_keypoint_keypoint_3d_location_m_x": "26.5"
+  }
+}

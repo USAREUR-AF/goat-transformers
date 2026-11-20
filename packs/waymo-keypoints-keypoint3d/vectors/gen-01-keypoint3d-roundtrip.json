@@ -1,0 +1,14 @@
+{
+  "name": "gen-keypoint3d-roundtrip",
+  "from": "waymo-keypoints-keypoint3d",
+  "to": "waymo-keypoints-keypoint3d",
+  "input": "0a1b09000000000000d03f110000000000000040190000000000000e4012020801",
+  "expect": "0a1b09000000000000d03f110000000000000040190000000000000e4012020801",
+  "model": {
+    "@kind": "keypoint3d",
+    "waymokeypointskeypoint3d.location_m_x": "0.25",
+    "waymokeypointskeypoint3d.location_m_y": "2",
+    "waymokeypointskeypoint3d.location_m_z": "3.75",
+    "waymokeypointskeypoint3d.visibility_is_occluded": "1"
+  }
+}

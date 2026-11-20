@@ -1,0 +1,23 @@
+{
+  "name": "gen-laser-roundtrip",
+  "from": "waymo-laser",
+  "to": "waymo-laser",
+  "input": "080112140a120a080000403f0000b03f12060a04d301f8011a140a120a08000050400000784012060a04e7028c03",
+  "expect": "080112140a120a080000403f0000b03f12060a04d301f8011a140a120a08000050400000784012060a04e7028c03",
+  "model": {
+    "@kind": "laser",
+    "waymolaser.laser_name": "1",
+    "waymolaser.ri_return1_range_image_data.#": "2",
+    "waymolaser.ri_return1_range_image_data[0].waymolaser.matrix_float_data_item": "0.75",
+    "waymolaser.ri_return1_range_image_data[1].waymolaser.matrix_float_data_item": "1.375",
+    "waymolaser.ri_return1_shape_dims.#": "2",
+    "waymolaser.ri_return1_shape_dims[0].waymolaser.matrix_shape_dims_item": "211",
+    "waymolaser.ri_return1_shape_dims[1].waymolaser.matrix_shape_dims_item": "248",
+    "waymolaser.ri_return2_range_image_data.#": "2",
+    "waymolaser.ri_return2_range_image_data[0].waymolaser.matrix_float_data_item": "3.25",
+    "waymolaser.ri_return2_range_image_data[1].waymolaser.matrix_float_data_item": "3.875",
+    "waymolaser.ri_return2_shape_dims.#": "2",
+    "waymolaser.ri_return2_shape_dims[0].waymolaser.matrix_shape_dims_item": "359",
+    "waymolaser.ri_return2_shape_dims[1].waymolaser.matrix_shape_dims_item": "396"
+  }
+}

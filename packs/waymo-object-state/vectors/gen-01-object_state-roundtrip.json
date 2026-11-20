@@ -1,0 +1,20 @@
+{
+  "name": "gen-object_state-roundtrip",
+  "from": "waymo-object-state",
+  "to": "waymo-object-state",
+  "input": "11000000000000d03f190000000000000040210000000000000e402d0000004035000028403d0000504045000078404d00009040550000a4405801",
+  "expect": "11000000000000d03f190000000000000040210000000000000e402d0000004035000028403d0000504045000078404d00009040550000a4405801",
+  "model": {
+    "@kind": "object_state",
+    "waymoobjectstate.object_state_center_x": "0.25",
+    "waymoobjectstate.object_state_center_y": "2",
+    "waymoobjectstate.object_state_center_z": "3.75",
+    "waymoobjectstate.object_state_length": "2",
+    "waymoobjectstate.object_state_width": "2.625",
+    "waymoobjectstate.object_state_height": "3.25",
+    "waymoobjectstate.object_state_heading": "3.875",
+    "waymoobjectstate.object_state_velocity_x": "4.5",
+    "waymoobjectstate.object_state_velocity_y": "5.125",
+    "waymoobjectstate.object_state_valid": "1"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "gen-scenario_prediction-roundtrip",
+  "from": "waymo-occupancy-flow-scenario-prediction",
+  "to": "waymo-occupancy-flow-scenario-prediction",
+  "input": "0a0d7363656e6172696f5f69642d30",
+  "expect": "0a0d7363656e6172696f5f69642d30",
+  "model": {
+    "@kind": "scenario_prediction",
+    "waymooccupancyflowscenarioprediction.scenario_prediction_scenario_id": "scenario_id-0"
+  }
+}

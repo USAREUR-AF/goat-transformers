@@ -1,0 +1,6 @@
+{
+ "1[]": "crosswalk_polygon",
+ "waymo.open_dataset.MapPoint:1": "map_point_x",
+ "waymo.open_dataset.MapPoint:2": "map_point_y",
+ "waymo.open_dataset.MapPoint:3": "map_point_z"
+}

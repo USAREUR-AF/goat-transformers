@@ -1,0 +1,10 @@
+{
+ "1": "motion_metrics_bundle_min_ade",
+ "2": "motion_metrics_bundle_min_fde",
+ "3": "motion_metrics_bundle_miss_rate",
+ "4": "motion_metrics_bundle_overlap_rate",
+ "5": "motion_metrics_bundle_mean_average_precision",
+ "6": "motion_metrics_bundle_measurement_step",
+ "7": "motion_metrics_bundle_object_filter",
+ "8": "motion_metrics_bundle_soft_mean_average_precision"
+}

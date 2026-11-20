@@ -1,0 +1,4 @@
+{
+ "1[]": "matrix_shape_dims",
+ "waymo.open_dataset.MatrixShape:1[]item": "matrix_shape_dims_item"
+}

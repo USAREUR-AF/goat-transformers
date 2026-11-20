@@ -1,0 +1,16 @@
+{
+  "name": "gen-matrix_float-roundtrip",
+  "from": "waymo-matrix-float",
+  "to": "waymo-matrix-float",
+  "input": "0a080000003e0000403f12060a04ae01d301",
+  "expect": "0a080000003e0000403f12060a04ae01d301",
+  "model": {
+    "@kind": "matrix_float",
+    "waymomatrixfloat.matrix_float_data.#": "2",
+    "waymomatrixfloat.matrix_float_data[0].waymomatrixfloat.matrix_float_data_item": "0.125",
+    "waymomatrixfloat.matrix_float_data[1].waymomatrixfloat.matrix_float_data_item": "0.75",
+    "waymomatrixfloat.shape_dims.#": "2",
+    "waymomatrixfloat.shape_dims[0].waymomatrixfloat.matrix_shape_dims_item": "174",
+    "waymomatrixfloat.shape_dims[1].waymomatrixfloat.matrix_shape_dims_item": "211"
+  }
+}

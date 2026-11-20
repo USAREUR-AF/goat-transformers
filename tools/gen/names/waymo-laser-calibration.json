@@ -1,0 +1,9 @@
+{
+ "1": "laser_calibration_name",
+ "2[]": "laser_calibration_beam_inclinations",
+ "3": "laser_calibration_beam_inclination_min",
+ "4": "laser_calibration_beam_inclination_max",
+ "5.1[]": "extrinsic_transform",
+ "waymo.open_dataset.LaserCalibration:2[]item": "laser_calibration_beam_inclinations_item",
+ "waymo.open_dataset.Transform:1[]item": "transform_transform_item"
+}

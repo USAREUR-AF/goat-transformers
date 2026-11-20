@@ -1,0 +1,17 @@
+{
+  "name": "gen-track-roundtrip",
+  "from": "waymo-track",
+  "to": "waymo-track",
+  "input": "086410011a3b110000000000000e40190000000000001640210000000000001d402d0000504035000078403d00009040450000a4404d0000b840550000cc4058011a3b110000000000403540190000000000003740210000000000c038402d0000c03f35000008403d0000304045000058404d0000804055000094405801",
+  "expect": "086410011a3b110000000000000e40190000000000001640210000000000001d402d0000504035000078403d00009040450000a4404d0000b840550000cc4058011a3b110000000000403540190000000000003740210000000000c038402d0000c03f35000008403d0000304045000058404d0000804055000094405801",
+  "model": {
+    "@kind": "track",
+    "waymotrack.track_id": "100",
+    "waymotrack.track_object_type": "1",
+    "waymotrack.track_states.#": "2",
+    "waymotrack.track_states[0].waymotrack.object_state_center_x": "3.75",
+    "waymotrack.track_states[0].waymotrack.object_state_center_y": "5.5",
+    "waymotrack.track_states[1].waymotrack.object_state_center_x": "21.25",
+    "waymotrack.track_states[1].waymotrack.object_state_center_y": "23"
+  }
+}

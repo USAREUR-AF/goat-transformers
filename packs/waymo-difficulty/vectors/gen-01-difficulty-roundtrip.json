@@ -1,0 +1,13 @@
+{
+  "name": "gen-difficulty-roundtrip",
+  "from": "waymo-difficulty",
+  "to": "waymo-difficulty",
+  "input": "0a020101",
+  "expect": "0a020101",
+  "model": {
+    "@kind": "difficulty",
+    "waymodifficulty.difficulty_levels.#": "2",
+    "waymodifficulty.difficulty_levels[0].waymodifficulty.difficulty_levels_item": "1",
+    "waymodifficulty.difficulty_levels[1].waymodifficulty.difficulty_levels_item": "1"
+  }
+}

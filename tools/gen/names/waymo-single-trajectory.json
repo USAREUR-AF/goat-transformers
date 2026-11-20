@@ -1,0 +1,7 @@
+{
+ "1": "single_trajectory_object_id",
+ "2[]": "single_trajectory_center_x",
+ "3[]": "single_trajectory_center_y",
+ "waymo.open_dataset.SingleTrajectory:2[]item": "single_trajectory_center_x_item",
+ "waymo.open_dataset.SingleTrajectory:3[]item": "single_trajectory_center_y_item"
+}

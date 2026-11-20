@@ -1,0 +1,14 @@
+{
+ "1[]": "keypoint_metrics_mpjpe",
+ "2[]": "keypoint_metrics_oks",
+ "3[]": "keypoint_metrics_pck",
+ "4[]": "keypoint_metrics_pem",
+ "5[]": "keypoint_metrics_precision",
+ "6[]": "keypoint_metrics_recall",
+ "7[]": "keypoint_metrics_oks_ap",
+ "waymo.open_dataset.keypoints.KeypointGroupMetric:1": "keypoint_group_metric_value",
+ "waymo.open_dataset.keypoints.KeypointGroupMetric:2": "keypoint_group_metric_group_name",
+ "waymo.open_dataset.keypoints.KeypointThresholdMetric:1": "keypoint_threshold_metric_value",
+ "waymo.open_dataset.keypoints.KeypointThresholdMetric:2": "keypoint_threshold_metric_group_name",
+ "waymo.open_dataset.keypoints.KeypointThresholdMetric:3": "keypoint_threshold_metric_threshold"
+}

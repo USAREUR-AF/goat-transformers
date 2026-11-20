@@ -1,0 +1,8 @@
+{
+ "1[]": "laser_keypoints_keypoint",
+ "waymo.open_dataset.keypoints.LaserKeypoint:1": "laser_keypoint_type",
+ "waymo.open_dataset.keypoints.LaserKeypoint:2.1.1": "laser_keypoint_keypoint_3d_location_m_x",
+ "waymo.open_dataset.keypoints.LaserKeypoint:2.1.2": "laser_keypoint_keypoint_3d_location_m_y",
+ "waymo.open_dataset.keypoints.LaserKeypoint:2.1.3": "laser_keypoint_keypoint_3d_location_m_z",
+ "waymo.open_dataset.keypoints.LaserKeypoint:2.2.1": "laser_keypoint_keypoint_3d_visibility_is_occluded"
+}

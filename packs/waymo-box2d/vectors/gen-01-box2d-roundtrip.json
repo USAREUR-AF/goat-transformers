@@ -1,0 +1,15 @@
+{
+  "name": "gen-box2d-roundtrip",
+  "from": "waymo-box2d",
+  "to": "waymo-box2d",
+  "input": "0a1209000000000000d03f1100000000000000401212090000000000000e40110000000000001640190000000000001d40",
+  "expect": "0a1209000000000000d03f1100000000000000401212090000000000000e40110000000000001640190000000000001d40",
+  "model": {
+    "@kind": "box2d",
+    "waymobox2d.center_x": "0.25",
+    "waymobox2d.center_y": "2",
+    "waymobox2d.size_x": "3.75",
+    "waymobox2d.size_y": "5.5",
+    "waymobox2d.box2d_heading": "7.25"
+  }
+}

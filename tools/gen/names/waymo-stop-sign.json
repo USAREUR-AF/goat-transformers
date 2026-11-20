@@ -1,0 +1,7 @@
+{
+ "1[]": "stop_sign_lane",
+ "2.1": "position_x",
+ "2.2": "position_y",
+ "2.3": "position_z",
+ "waymo.open_dataset.StopSign:1[]item": "stop_sign_lane_item"
+}

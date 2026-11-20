@@ -1,0 +1,6 @@
+{
+ "1[]": "frame_camera_tokens_camera_tokens",
+ "waymo.open_dataset.CameraTokens:1": "camera_tokens_camera_name",
+ "waymo.open_dataset.CameraTokens:2[]": "camera_tokens_tokens",
+ "waymo.open_dataset.CameraTokens:2[]item": "camera_tokens_tokens_item"
+}

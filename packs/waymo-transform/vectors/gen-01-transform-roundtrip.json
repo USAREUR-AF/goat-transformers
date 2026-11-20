@@ -1,0 +1,13 @@
+{
+  "name": "gen-transform-roundtrip",
+  "from": "waymo-transform",
+  "to": "waymo-transform",
+  "input": "0a10000000000000d03f0000000000000040",
+  "expect": "0a10000000000000d03f0000000000000040",
+  "model": {
+    "@kind": "transform",
+    "waymotransform.transform_transform.#": "2",
+    "waymotransform.transform_transform[0].waymotransform.transform_transform_item": "0.25",
+    "waymotransform.transform_transform[1].waymotransform.transform_transform_item": "2"
+  }
+}

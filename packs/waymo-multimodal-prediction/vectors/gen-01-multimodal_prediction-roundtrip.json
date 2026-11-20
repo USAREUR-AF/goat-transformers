@@ -1,0 +1,25 @@
+{
+  "name": "gen-multimodal_prediction-roundtrip",
+  "from": "waymo-multimodal-prediction",
+  "to": "waymo-multimodal-prediction",
+  "input": "0a16120f08890112040000b03f1a04000000401d0000003e0a16120f089d021204000078401a04000090401d00002840",
+  "expect": "0a16120f08890112040000b03f1a04000000401d0000003e0a16120f089d021204000078401a04000090401d00002840",
+  "model": {
+    "@kind": "multimodal_prediction",
+    "waymomultimodalprediction.multimodal_prediction_joint_predictions.#": "2",
+    "waymomultimodalprediction.multimodal_prediction_joint_predictions[0].waymomultimodalprediction.joint_trajectories_confidence": "0.125",
+    "waymomultimodalprediction.multimodal_prediction_joint_predictions[0].waymomultimodalprediction.joint_trajectories_trajectories.#": "1",
+    "waymomultimodalprediction.multimodal_prediction_joint_predictions[0].waymomultimodalprediction.joint_trajectories_trajectories[0].waymomultimodalprediction.single_trajectory_object_id": "137",
+    "waymomultimodalprediction.multimodal_prediction_joint_predictions[0].waymomultimodalprediction.joint_trajectories_trajectories[0].waymomultimodalprediction.single_trajectory_center_x.#": "1",
+    "waymomultimodalprediction.multimodal_prediction_joint_predictions[0].waymomultimodalprediction.joint_trajectories_trajectories[0].waymomultimodalprediction.single_trajectory_center_x[0].waymomultimodalprediction.single_trajectory_center_x_item": "1.375",
+    "waymomultimodalprediction.multimodal_prediction_joint_predictions[0].waymomultimodalprediction.joint_trajectories_trajectories[0].waymomultimodalprediction.single_trajectory_center_y.#": "1",
+    "waymomultimodalprediction.multimodal_prediction_joint_predictions[0].waymomultimodalprediction.joint_trajectories_trajectories[0].waymomultimodalprediction.single_trajectory_center_y[0].waymomultimodalprediction.single_trajectory_center_y_item": "2",
+    "waymomultimodalprediction.multimodal_prediction_joint_predictions[1].waymomultimodalprediction.joint_trajectories_confidence": "2.625",
+    "waymomultimodalprediction.multimodal_prediction_joint_predictions[1].waymomultimodalprediction.joint_trajectories_trajectories.#": "1",
+    "waymomultimodalprediction.multimodal_prediction_joint_predictions[1].waymomultimodalprediction.joint_trajectories_trajectories[0].waymomultimodalprediction.single_trajectory_object_id": "285",
+    "waymomultimodalprediction.multimodal_prediction_joint_predictions[1].waymomultimodalprediction.joint_trajectories_trajectories[0].waymomultimodalprediction.single_trajectory_center_x.#": "1",
+    "waymomultimodalprediction.multimodal_prediction_joint_predictions[1].waymomultimodalprediction.joint_trajectories_trajectories[0].waymomultimodalprediction.single_trajectory_center_x[0].waymomultimodalprediction.single_trajectory_center_x_item": "3.875",
+    "waymomultimodalprediction.multimodal_prediction_joint_predictions[1].waymomultimodalprediction.joint_trajectories_trajectories[0].waymomultimodalprediction.single_trajectory_center_y.#": "1",
+    "waymomultimodalprediction.multimodal_prediction_joint_predictions[1].waymomultimodalprediction.joint_trajectories_trajectories[0].waymomultimodalprediction.single_trajectory_center_y[0].waymomultimodalprediction.single_trajectory_center_y_item": "4.5"
+  }
+}

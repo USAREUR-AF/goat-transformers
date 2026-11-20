@@ -1,0 +1,14 @@
+{
+ "1": "occupancy_flow_task_config_num_past_steps",
+ "10": "occupancy_flow_task_config_agent_points_per_side_length",
+ "11": "occupancy_flow_task_config_agent_points_per_side_width",
+ "12": "occupancy_flow_task_config_normalize_sdc_yaw",
+ "2": "occupancy_flow_task_config_num_future_steps",
+ "3": "occupancy_flow_task_config_num_waypoints",
+ "4": "occupancy_flow_task_config_cumulative_waypoints",
+ "5": "occupancy_flow_task_config_grid_height_cells",
+ "6": "occupancy_flow_task_config_grid_width_cells",
+ "7": "occupancy_flow_task_config_sdc_y_in_grid",
+ "8": "occupancy_flow_task_config_sdc_x_in_grid",
+ "9": "occupancy_flow_task_config_pixels_per_meter"
+}

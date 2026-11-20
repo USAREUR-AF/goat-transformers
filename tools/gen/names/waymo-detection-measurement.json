@@ -1,0 +1,23 @@
+{
+ "1": "detection_measurement_num_fps",
+ "2": "detection_measurement_num_tps",
+ "3": "detection_measurement_num_fns",
+ "4": "detection_measurement_sum_ha",
+ "5": "detection_measurement_score_cutoff",
+ "6[]": "detection_measurement_details",
+ "7": "detection_measurement_sum_longitudinal_affinity",
+ "waymo.open_dataset.DetectionMeasurement.Details:1[]": "details_fp_ids",
+ "waymo.open_dataset.DetectionMeasurement.Details:1[]item": "details_fp_ids_item",
+ "waymo.open_dataset.DetectionMeasurement.Details:2[]": "details_fn_ids",
+ "waymo.open_dataset.DetectionMeasurement.Details:2[]item": "details_fn_ids_item",
+ "waymo.open_dataset.DetectionMeasurement.Details:3[]": "details_tp_gt_ids",
+ "waymo.open_dataset.DetectionMeasurement.Details:3[]item": "details_tp_gt_ids_item",
+ "waymo.open_dataset.DetectionMeasurement.Details:4[]": "details_tp_pr_ids",
+ "waymo.open_dataset.DetectionMeasurement.Details:4[]item": "details_tp_pr_ids_item",
+ "waymo.open_dataset.DetectionMeasurement.Details:5[]": "details_tp_ious",
+ "waymo.open_dataset.DetectionMeasurement.Details:5[]item": "details_tp_ious_item",
+ "waymo.open_dataset.DetectionMeasurement.Details:6[]": "details_tp_heading_accuracies",
+ "waymo.open_dataset.DetectionMeasurement.Details:6[]item": "details_tp_heading_accuracies_item",
+ "waymo.open_dataset.DetectionMeasurement.Details:7[]": "details_tp_longitudinal_affinities",
+ "waymo.open_dataset.DetectionMeasurement.Details:7[]item": "details_tp_longitudinal_affinities_item"
+}

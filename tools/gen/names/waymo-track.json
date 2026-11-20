@@ -1,0 +1,15 @@
+{
+ "1": "track_id",
+ "2": "track_object_type",
+ "3[]": "track_states",
+ "waymo.open_dataset.ObjectState:10": "object_state_velocity_y",
+ "waymo.open_dataset.ObjectState:11": "object_state_valid",
+ "waymo.open_dataset.ObjectState:2": "object_state_center_x",
+ "waymo.open_dataset.ObjectState:3": "object_state_center_y",
+ "waymo.open_dataset.ObjectState:4": "object_state_center_z",
+ "waymo.open_dataset.ObjectState:5": "object_state_length",
+ "waymo.open_dataset.ObjectState:6": "object_state_width",
+ "waymo.open_dataset.ObjectState:7": "object_state_height",
+ "waymo.open_dataset.ObjectState:8": "object_state_heading",
+ "waymo.open_dataset.ObjectState:9": "object_state_velocity_x"
+}

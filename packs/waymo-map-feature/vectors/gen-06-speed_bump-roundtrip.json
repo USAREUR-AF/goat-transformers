@@ -1,0 +1,16 @@
+{
+  "name": "gen-speed_bump-roundtrip",
+  "from": "waymo-map-feature",
+  "to": "waymo-map-feature",
+  "input": "08644a3a0a1b090000000000000040110000000000000e401900000000000016400a1b090000000000001d40110000000000002240190000000000802540",
+  "expect": "08644a3a0a1b090000000000000040110000000000000e401900000000000016400a1b090000000000001d40110000000000002240190000000000802540",
+  "model": {
+    "@kind": "speed_bump",
+    "waymomapfeature.id": "100",
+    "waymomapfeature.speed_bump_polygon.#": "2",
+    "waymomapfeature.speed_bump_polygon[0].waymomapfeature.map_point_x": "2",
+    "waymomapfeature.speed_bump_polygon[0].waymomapfeature.map_point_y": "3.75",
+    "waymomapfeature.speed_bump_polygon[1].waymomapfeature.map_point_x": "7.25",
+    "waymomapfeature.speed_bump_polygon[1].waymomapfeature.map_point_y": "9"
+  }
+}

@@ -1,0 +1,20 @@
+{
+ "10": "simulated_trajectory_object_type",
+ "11[]": "simulated_trajectory_valid",
+ "2[]": "simulated_trajectory_center_x",
+ "3[]": "simulated_trajectory_center_y",
+ "4[]": "simulated_trajectory_center_z",
+ "5[]": "simulated_trajectory_heading",
+ "6": "simulated_trajectory_object_id",
+ "7[]": "simulated_trajectory_width",
+ "8[]": "simulated_trajectory_length",
+ "9[]": "simulated_trajectory_height",
+ "waymo.open_dataset.SimulatedTrajectory:11[]item": "simulated_trajectory_valid_item",
+ "waymo.open_dataset.SimulatedTrajectory:2[]item": "simulated_trajectory_center_x_item",
+ "waymo.open_dataset.SimulatedTrajectory:3[]item": "simulated_trajectory_center_y_item",
+ "waymo.open_dataset.SimulatedTrajectory:4[]item": "simulated_trajectory_center_z_item",
+ "waymo.open_dataset.SimulatedTrajectory:5[]item": "simulated_trajectory_heading_item",
+ "waymo.open_dataset.SimulatedTrajectory:7[]item": "simulated_trajectory_width_item",
+ "waymo.open_dataset.SimulatedTrajectory:8[]item": "simulated_trajectory_length_item",
+ "waymo.open_dataset.SimulatedTrajectory:9[]item": "simulated_trajectory_height_item"
+}

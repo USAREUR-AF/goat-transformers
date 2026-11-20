@@ -1,0 +1,17 @@
+{
+ "1": "scenario_id",
+ "2.1[]": "single_predictions_predictions",
+ "3.1[]": "joint_prediction_joint_trajectories",
+ "waymo.open_dataset.ObjectTrajectory:1": "object_trajectory_object_id",
+ "waymo.open_dataset.ObjectTrajectory:2.2[]": "object_trajectory_trajectory_center_x",
+ "waymo.open_dataset.ObjectTrajectory:2.3[]": "object_trajectory_trajectory_center_y",
+ "waymo.open_dataset.ScoredJointTrajectory:2[]": "scored_joint_trajectory_trajectories",
+ "waymo.open_dataset.ScoredJointTrajectory:3": "scored_joint_trajectory_confidence",
+ "waymo.open_dataset.ScoredTrajectory:1.2[]": "scored_trajectory_trajectory_center_x",
+ "waymo.open_dataset.ScoredTrajectory:1.3[]": "scored_trajectory_trajectory_center_y",
+ "waymo.open_dataset.ScoredTrajectory:2": "scored_trajectory_confidence",
+ "waymo.open_dataset.SingleObjectPrediction:1": "single_object_prediction_object_id",
+ "waymo.open_dataset.SingleObjectPrediction:2[]": "single_object_prediction_trajectories",
+ "waymo.open_dataset.Trajectory:2[]item": "trajectory_center_x_item",
+ "waymo.open_dataset.Trajectory:3[]item": "trajectory_center_y_item"
+}

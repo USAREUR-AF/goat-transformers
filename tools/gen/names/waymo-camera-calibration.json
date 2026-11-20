@@ -1,0 +1,10 @@
+{
+ "1": "camera_calibration_name",
+ "2[]": "camera_calibration_intrinsic",
+ "3.1[]": "extrinsic_transform",
+ "4": "camera_calibration_width",
+ "5": "camera_calibration_height",
+ "6": "camera_calibration_rolling_shutter_direction",
+ "waymo.open_dataset.CameraCalibration:2[]item": "camera_calibration_intrinsic_item",
+ "waymo.open_dataset.Transform:1[]item": "transform_transform_item"
+}

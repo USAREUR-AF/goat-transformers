@@ -1,0 +1,18 @@
+{
+  "name": "gen-sim_agents_bucketed_metrics-roundtrip",
+  "from": "waymo-sim-agents-bucketed-metrics",
+  "to": "waymo-sim-agents-bucketed-metrics",
+  "input": "0d0000003e150000403f2d0000b03f35000000403d0000284045000050404d000078405500009040",
+  "expect": "0d0000003e150000403f2d0000b03f35000000403d0000284045000050404d000078405500009040",
+  "model": {
+    "@kind": "sim_agents_bucketed_metrics",
+    "waymosimagentsbucketedmetrics.sim_agents_bucketed_metrics_realism_meta_metric": "0.125",
+    "waymosimagentsbucketedmetrics.sim_agents_bucketed_metrics_kinematic_metrics": "0.75",
+    "waymosimagentsbucketedmetrics.sim_agents_bucketed_metrics_interactive_metrics": "1.375",
+    "waymosimagentsbucketedmetrics.sim_agents_bucketed_metrics_map_based_metrics": "2",
+    "waymosimagentsbucketedmetrics.sim_agents_bucketed_metrics_min_ade": "2.625",
+    "waymosimagentsbucketedmetrics.sim_agents_bucketed_metrics_simulated_collision_rate": "3.25",
+    "waymosimagentsbucketedmetrics.sim_agents_bucketed_metrics_simulated_offroad_rate": "3.875",
+    "waymosimagentsbucketedmetrics.sim_agents_bucketed_metrics_simulated_traffic_light_violation_rate": "4.5"
+  }
+}

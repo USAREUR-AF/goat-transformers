@@ -1,0 +1,17 @@
+{
+  "name": "gen-box3d-roundtrip",
+  "from": "waymo-box3d",
+  "to": "waymo-box3d",
+  "input": "0a1b09000000000000d03f110000000000000040190000000000000e40121b090000000000001640110000000000001d40190000000000002240190000000000802540",
+  "expect": "0a1b09000000000000d03f110000000000000040190000000000000e40121b090000000000001640110000000000001d40190000000000002240190000000000802540",
+  "model": {
+    "@kind": "box3d",
+    "waymobox3d.center_x": "0.25",
+    "waymobox3d.center_y": "2",
+    "waymobox3d.center_z": "3.75",
+    "waymobox3d.size_x": "5.5",
+    "waymobox3d.size_y": "7.25",
+    "waymobox3d.size_z": "9",
+    "waymobox3d.box3d_heading": "10.75"
+  }
+}

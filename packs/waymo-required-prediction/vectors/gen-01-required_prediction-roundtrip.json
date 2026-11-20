@@ -1,0 +1,12 @@
+{
+  "name": "gen-required_prediction-roundtrip",
+  "from": "waymo-required-prediction",
+  "to": "waymo-required-prediction",
+  "input": "08641001",
+  "expect": "08641001",
+  "model": {
+    "@kind": "required_prediction",
+    "waymorequiredprediction.required_prediction_track_index": "100",
+    "waymorequiredprediction.required_prediction_difficulty": "1"
+  }
+}

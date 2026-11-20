@@ -1,0 +1,19 @@
+{
+  "name": "gen-motion_example_conversion_config-roundtrip",
+  "from": "waymo-motion-example-conversion-config",
+  "to": "waymo-motion-example-conversion-config",
+  "input": "086410ae0118d30128f801310000000000002240390000000000802540410000000000002940488c03508901",
+  "expect": "086410ae0118d30128f801310000000000002240390000000000802540410000000000002940488c03508901",
+  "model": {
+    "@kind": "motion_example_conversion_config",
+    "waymomotionexampleconversionconfig.motion_example_conversion_config_max_num_agents": "100",
+    "waymomotionexampleconversionconfig.motion_example_conversion_config_max_num_modeled_agents": "137",
+    "waymomotionexampleconversionconfig.motion_example_conversion_config_num_past_steps": "174",
+    "waymomotionexampleconversionconfig.motion_example_conversion_config_num_future_steps": "211",
+    "waymomotionexampleconversionconfig.motion_example_conversion_config_max_roadgraph_samples": "248",
+    "waymomotionexampleconversionconfig.motion_example_conversion_config_source_polyline_spacing": "9",
+    "waymomotionexampleconversionconfig.motion_example_conversion_config_polyline_sample_spacing": "10.75",
+    "waymomotionexampleconversionconfig.motion_example_conversion_config_polygon_sample_spacing": "12.5",
+    "waymomotionexampleconversionconfig.motion_example_conversion_config_max_traffic_light_control_points_per_step": "396"
+  }
+}

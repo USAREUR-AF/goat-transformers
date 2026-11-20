@@ -1,0 +1,25 @@
+{
+  "name": "gen-joint_prediction-roundtrip",
+  "from": "waymo-joint-prediction",
+  "to": "waymo-joint-prediction",
+  "input": "0a181211088901120c12040000b03f1a04000000401d0000003e0a181211089d02120c1204000078401a04000090401d00002840",
+  "expect": "0a181211088901120c12040000b03f1a04000000401d0000003e0a181211089d02120c1204000078401a04000090401d00002840",
+  "model": {
+    "@kind": "joint_prediction",
+    "waymojointprediction.joint_prediction_joint_trajectories.#": "2",
+    "waymojointprediction.joint_prediction_joint_trajectories[0].waymojointprediction.scored_joint_trajectory_confidence": "0.125",
+    "waymojointprediction.joint_prediction_joint_trajectories[0].waymojointprediction.scored_joint_trajectory_trajectories.#": "1",
+    "waymojointprediction.joint_prediction_joint_trajectories[0].waymojointprediction.scored_joint_trajectory_trajectories[0].waymojointprediction.object_trajectory_object_id": "137",
+    "waymojointprediction.joint_prediction_joint_trajectories[0].waymojointprediction.scored_joint_trajectory_trajectories[0].waymojointprediction.object_trajectory_trajectory_center_x.#": "1",
+    "waymojointprediction.joint_prediction_joint_trajectories[0].waymojointprediction.scored_joint_trajectory_trajectories[0].waymojointprediction.object_trajectory_trajectory_center_x[0].waymojointprediction.trajectory_center_x_item": "1.375",
+    "waymojointprediction.joint_prediction_joint_trajectories[0].waymojointprediction.scored_joint_trajectory_trajectories[0].waymojointprediction.object_trajectory_trajectory_center_y.#": "1",
+    "waymojointprediction.joint_prediction_joint_trajectories[0].waymojointprediction.scored_joint_trajectory_trajectories[0].waymojointprediction.object_trajectory_trajectory_center_y[0].waymojointprediction.trajectory_center_y_item": "2",
+    "waymojointprediction.joint_prediction_joint_trajectories[1].waymojointprediction.scored_joint_trajectory_confidence": "2.625",
+    "waymojointprediction.joint_prediction_joint_trajectories[1].waymojointprediction.scored_joint_trajectory_trajectories.#": "1",
+    "waymojointprediction.joint_prediction_joint_trajectories[1].waymojointprediction.scored_joint_trajectory_trajectories[0].waymojointprediction.object_trajectory_object_id": "285",
+    "waymojointprediction.joint_prediction_joint_trajectories[1].waymojointprediction.scored_joint_trajectory_trajectories[0].waymojointprediction.object_trajectory_trajectory_center_x.#": "1",
+    "waymojointprediction.joint_prediction_joint_trajectories[1].waymojointprediction.scored_joint_trajectory_trajectories[0].waymojointprediction.object_trajectory_trajectory_center_x[0].waymojointprediction.trajectory_center_x_item": "3.875",
+    "waymojointprediction.joint_prediction_joint_trajectories[1].waymojointprediction.scored_joint_trajectory_trajectories[0].waymojointprediction.object_trajectory_trajectory_center_y.#": "1",
+    "waymojointprediction.joint_prediction_joint_trajectories[1].waymojointprediction.scored_joint_trajectory_trajectories[0].waymojointprediction.object_trajectory_trajectory_center_y[0].waymojointprediction.trajectory_center_y_item": "4.5"
+  }
+}

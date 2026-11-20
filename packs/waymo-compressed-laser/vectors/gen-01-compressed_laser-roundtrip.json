@@ -1,0 +1,11 @@
+{
+  "name": "gen-compressed_laser-roundtrip",
+  "from": "waymo-compressed-laser",
+  "to": "waymo-compressed-laser",
+  "input": "0801",
+  "expect": "0801",
+  "model": {
+    "@kind": "compressed_laser",
+    "waymocompressedlaser.compressed_laser_name": "1"
+  }
+}

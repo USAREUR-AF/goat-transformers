@@ -1,0 +1,10 @@
+{
+ "1[]": "joint_prediction_joint_trajectories",
+ "waymo.open_dataset.ObjectTrajectory:1": "object_trajectory_object_id",
+ "waymo.open_dataset.ObjectTrajectory:2.2[]": "object_trajectory_trajectory_center_x",
+ "waymo.open_dataset.ObjectTrajectory:2.3[]": "object_trajectory_trajectory_center_y",
+ "waymo.open_dataset.ScoredJointTrajectory:2[]": "scored_joint_trajectory_trajectories",
+ "waymo.open_dataset.ScoredJointTrajectory:3": "scored_joint_trajectory_confidence",
+ "waymo.open_dataset.Trajectory:2[]item": "trajectory_center_x_item",
+ "waymo.open_dataset.Trajectory:3[]item": "trajectory_center_y_item"
+}

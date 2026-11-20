@@ -1,0 +1,17 @@
+{
+  "name": "gen-frame_trajectory_predictions-roundtrip",
+  "from": "waymo-frame-trajectory-predictions",
+  "to": "waymo-frame-trajectory-predictions",
+  "input": "0a0c6672616d655f6e616d652d3012140a080000403f0000b03f12080000004000002840",
+  "expect": "0a0c6672616d655f6e616d652d3012140a080000403f0000b03f12080000004000002840",
+  "model": {
+    "@kind": "frame_trajectory_predictions",
+    "waymoframetrajectorypredictions.frame_trajectory_predictions_frame_name": "frame_name-0",
+    "waymoframetrajectorypredictions.trajectory_pos_x.#": "2",
+    "waymoframetrajectorypredictions.trajectory_pos_x[0].waymoframetrajectorypredictions.trajectory_prediction_pos_x_item": "0.75",
+    "waymoframetrajectorypredictions.trajectory_pos_x[1].waymoframetrajectorypredictions.trajectory_prediction_pos_x_item": "1.375",
+    "waymoframetrajectorypredictions.trajectory_pos_y.#": "2",
+    "waymoframetrajectorypredictions.trajectory_pos_y[0].waymoframetrajectorypredictions.trajectory_prediction_pos_y_item": "2",
+    "waymoframetrajectorypredictions.trajectory_pos_y[1].waymoframetrajectorypredictions.trajectory_prediction_pos_y_item": "2.625"
+  }
+}
