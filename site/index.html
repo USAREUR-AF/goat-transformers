@@ -8,19 +8,19 @@
 <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/site.css">
 <script type="module" src="assets/demo.mjs"></script>
+<script type="module" src="assets/hero.mjs"></script>
 </head>
 <body>
 <a class="skip" href="#content">Skip to the content</a>
 <header class="top">
   <div class="wrap">
-    <a class="brand" href="#content">goat-transformers</a>
+    <a class="brand" href="#content"><img src="assets/icon.svg" width="22" height="22" alt=""><span>goat-transformers</span></a>
     <nav aria-label="Page">
       <ul>
-        <li><a href="#demo">Demo</a></li>
-        <li><a href="#how">How it works</a></li>
-        <li><a href="#checked">Checks</a></li>
-        <li><a href="#add">Add a format</a></li>
-        <li><a href="#use">Use it</a></li>
+        <li class="wide"><a href="#demo">Demo</a></li>
+        <li class="wide"><a href="#how">How it works</a></li>
+        <li class="wide"><a href="#checked">Checks</a></li>
+        <li class="wide"><a href="#use">Install</a></li>
         <li><a href="https://github.com/USAREUR-AF/goat-transformers">GitHub</a></li>
       </ul>
     </nav>
@@ -30,14 +30,92 @@
 <main id="content">
 
 <section class="hero" aria-labelledby="h-hero">
+  <pre class="hero-code" aria-hidden="true">kind      location
+when      0:4:4  1
+requires  lat lon rid.status rid.direction_raw rid.speed_h_raw rid.timestamp_ds
+field  rid.speed_mult              0:8:1      uint
+field  rid.ew_direction            0:9:1      uint
+field  rid.height_type             0:10:1     uint
+field  rid.status                  0:12:4     uint
+field  rid.direction_raw           0:16:8     uint
+field  rid.speed_h_raw             0:24:8     uint
+field  rid.speed_v                 0:32:8     sscale:1/2
+field  lat                         0:40:32    sscale:1/10000000
+field  lon                         0:72:32    sscale:1/10000000
+field  rid.alt_baro                0:104:16   uscale:1/2:-1000
+field  hae                         0:120:16   uscale:1/2:-1000
+field  rid.height                  0:136:16   uscale:1/2:-1000
+field  rid.horiz_acc               0:152:4    uint
+field  rid.vert_acc                0:156:4    uint
+field  rid.speed_acc               0:160:4    uint
+field  rid.baro_acc                0:164:4    uint
+field  rid.timestamp_ds            0:168:16   uint
+field  rid.ts_acc                  0:184:4    uint
+field  rid.reserved                0:192:8    uint
+field   lat       point/@lat                  float
+field   lon       point/@lon                  float
+field   hae       point/@hae                  float  absent 9999999,9999999.0
+field   ce        point/@ce                   float  absent 9999999,9999999.0
+field   le        point/@le                   float  absent 9999999,9999999.0
+default type      a-u-X
+default hae       9999999
+default ce        9999999
+default le        9999999</pre>
+  <div class="wrap hero-grid">
+    <div class="hero-text">
+      <p class="prompt-line" aria-hidden="true"><span class="pr">&gt;_</span> goat-xf convert --from remote-id --to cot-xml<span class="cursor"></span></p>
+      <h1 id="h-hero" class="wordmark">goat-transformers</h1>
+      <p class="tagline">Any message format to any other. Every format is a data file.</p>
+      <p class="sentence">A drone's 25-byte Remote ID broadcast becomes a Cursor on Target event for a tactical map. No engine holds code for either format: each is a <em>pack</em>, a text file with one line for each field, and seven engines in seven languages read the same packs and must agree byte for byte.</p>
+      <p class="actions">
+        <a class="button star" href="https://github.com/USAREUR-AF/goat-transformers"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M8 1.2l2.1 4.3 4.7.7-3.4 3.3.8 4.7L8 12 3.8 14.2l.8-4.7L1.2 6.2l4.7-.7z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>Star on GitHub</a>
+        <a class="button" href="#demo">Run it in this page</a>
+        <a class="button" href="https://github.com/USAREUR-AF/goat-transformers/tree/main/docs">Docs</a>
+        <a class="button" href="#use">Install</a>
+      </p>
+      <div class="cmdbox">
+        <pre id="install">git clone https://github.com/USAREUR-AF/goat-transformers
+cd goat-transformers/engines/rust
+cargo build --release</pre>
+        <button class="copy js-only" type="button" data-copy="install">Copy</button>
+      </div>
+    </div>
+
+    <figure class="sig" id="sig" aria-labelledby="sig-cap">
+      <div class="sig-head"><span><b>IN</b> remote-id, kind location, 25 bytes</span><span class="sig-src">02-location-roundtrip.json</span></div>
+      <div class="sig-bytes" role="img" aria-label="The 25 bytes in hexadecimal: 12 26 24 16 0b 42 bf 24 1b 6e d1 b4 b6 98 08 ac 08 70 08 6b 53 15 0e 02 00. The high half of byte 0 selects the kind, bytes 5 to 8 hold the latitude, bytes 9 to 12 the longitude, bytes 15 and 16 the height.">
+        <span class="off">0</span><span class="off"></span><span class="off"></span><span class="off"></span><span class="off"></span><span class="off">5</span><span class="off"></span><span class="off"></span><span class="off"></span><span class="off"></span><span class="off">10</span><span class="off"></span><span class="off"></span><span class="off"></span><span class="off"></span><span class="off">15</span><span class="off"></span><span class="off"></span><span class="off"></span><span class="off"></span><span class="off">20</span><span class="off"></span><span class="off"></span><span class="off"></span><span class="off"></span>
+        <span class="hb" data-i="0">12</span><span class="hb" data-i="1">26</span><span class="hb" data-i="2">24</span><span class="hb" data-i="3">16</span><span class="hb" data-i="4">0b</span><span class="hb" data-i="5">42</span><span class="hb" data-i="6">bf</span><span class="hb" data-i="7">24</span><span class="hb" data-i="8">1b</span><span class="hb" data-i="9">6e</span><span class="hb" data-i="10">d1</span><span class="hb" data-i="11">b4</span><span class="hb" data-i="12">b6</span><span class="hb" data-i="13">98</span><span class="hb" data-i="14">08</span><span class="hb" data-i="15">ac</span><span class="hb" data-i="16">08</span><span class="hb" data-i="17">70</span><span class="hb" data-i="18">08</span><span class="hb" data-i="19">6b</span><span class="hb" data-i="20">53</span><span class="hb" data-i="21">15</span><span class="hb" data-i="22">0e</span><span class="hb" data-i="23">02</span><span class="hb" data-i="24">00</span>
+      </div>
+      <ol class="sig-steps">
+        <li data-step="kind" data-pack="remote-id" data-loc="0:4:4" data-line="when      0:4:4  1" data-raw="1" data-key="@kind" data-value="location"><code class="ln">when 0:4:4 1</code><span class="rd">byte 0, high half: 1</span><span class="to">kind <b>location</b></span></li>
+        <li data-step="lat" data-pack="remote-id" data-loc="0:40:32" data-line="field  lat                         0:40:32    sscale:1/10000000" data-raw="455393090" data-key="lat" data-value="45.539309"><code class="ln">field lat 0:40:32 sscale:1/10000000</code><span class="rd">bytes 5&ndash;8: 455393090</span><span class="to">lat <b>45.539309</b></span></li>
+        <li data-step="lon" data-pack="remote-id" data-loc="0:72:32" data-line="field  lon                         0:72:32    sscale:1/10000000" data-raw="-1229663890" data-key="lon" data-value="-122.966389"><code class="ln">field lon 0:72:32 sscale:1/10000000</code><span class="rd">bytes 9&ndash;12: -1229663890</span><span class="to">lon <b>-122.966389</b></span></li>
+        <li data-step="hae" data-pack="remote-id" data-loc="0:120:16" data-line="field  hae                         0:120:16   uscale:1/2:-1000" data-raw="2220" data-key="hae" data-value="110"><code class="ln">field hae 0:120:16 uscale:1/2:-1000</code><span class="rd">bytes 15&ndash;16: 2220</span><span class="to">hae <b>110</b></span></li>
+        <li data-step="def" data-pack="cot-xml" data-line="default type      a-u-X"><code class="ln">default type a-u-X, ce 9999999, le 9999999</code><span class="rd">from the cot-xml pack</span><span class="to">not known</span></li>
+      </ol>
+      <div class="sig-head out"><span><b>OUT</b> cot-xml, what goat-xf prints</span></div>
+<pre class="sig-xml">&lt;event version="2.0" type="<span data-out="def">a-u-X</span>"&gt;&lt;point
+  lat="<span data-out="lat">45.539309</span>" lon="<span data-out="lon">-122.966389</span>"
+  hae="<span data-out="hae">110</span>" ce="<span data-out="def">9999999</span>" le="<span data-out="def">9999999</span>"/&gt;&lt;detail/&gt;&lt;/event&gt;</pre>
+      <figcaption id="sig-cap" class="sr">One Remote ID Location message converted to Cursor on Target. Each step is one line of a pack: the bytes it reads, the integer they hold, and the model value written into the output.</figcaption>
+    </figure>
+  </div>
+
   <div class="wrap">
-    <p class="tag">Open source, Apache-2.0, pre-1.0</p>
-    <h1 id="h-hero"><span class="name">goat-transformers</span> converts a message from any supported format to any other, and every format is a data file, not code.</h1>
-    <p class="lead">A drone's 25-byte Remote ID broadcast becomes a Cursor on Target event for a tactical map and an NMEA 2000 position message for a ship's instrument network. No engine holds code for any of the three formats: each one is a <em>pack</em>, a text file with one line for each field.</p>
-    <p class="actions">
-      <a class="button primary" href="https://github.com/USAREUR-AF/goat-transformers">View on GitHub</a>
-      <a class="button" href="#demo">Run it in this page</a>
-    </p>
+    <ul class="numbers strip" aria-label="Counted from the tree">
+      <li><b data-stat="formats">2,531</b><span class="unit">formats<sup><a href="#fn-formats">1</a></sup></span><span class="d">each one a pack from a public source</span></li>
+      <li><b data-stat="message_kinds">13,663</b><span class="unit">message kinds<sup><a href="#fn-kinds">2</a></sup></span><span class="d">message layouts across those formats</span></li>
+      <li><b data-stat="conversion_vectors">17,628</b><span class="unit">conversion vectors<sup><a href="#fn-vectors">3</a></sup></span><span class="d">all seven engines match every one</span></li>
+      <li><b data-stat="wasm_bytes">569,285</b><span class="unit">bytes<sup><a href="#fn-wasm">4</a></sup></span><span class="d">the engine as WebAssembly, in this page</span></li>
+    </ul>
+  </div>
+</section>
+
+<section id="capture" aria-labelledby="h-capture">
+  <div class="wrap">
+    <p class="tag">One message, two targets</p>
+    <h2 id="h-capture">The same 25 bytes, written for a map and for a ship</h2>
 
     <div class="term">
       <div class="term-head"><span>Quick start: needs a Rust toolchain and nothing else</span><button class="copy js-only" type="button" data-copy="quickstart">Copy</button></div>
@@ -85,7 +163,7 @@ echo 122624160b42bf241b6ed1b4b69808ac0870086b53150e0200 \
   <div class="wrap">
     <p class="tag">Live</p>
     <h2 id="h-demo">The engine runs in this page</h2>
-    <p class="lead">This is the engine itself: the Rust reference engine compiled to WebAssembly, <span data-stat="wasm_bytes">569,301</span> bytes, with nine packs. Choose two formats, edit the message and read the result. The page sends nothing anywhere.</p>
+    <p class="lead">This is the engine itself: the Rust reference engine compiled to WebAssembly, <span data-stat="wasm_bytes">569,285</span> bytes, with nine packs. Choose two formats, edit the message and read the result. The page sends nothing anywhere.</p>
 
     <div class="demo" id="demo-box">
       <form class="demo-bar js-only" id="demo-form" aria-label="Formats">
@@ -134,13 +212,7 @@ echo 122624160b42bf241b6ed1b4b69808ac0870086b53150e0200 \
 <section id="numbers" aria-labelledby="h-numbers">
   <div class="wrap">
     <p class="tag">Counted from the tree</p>
-    <h2 id="h-numbers">What the repository holds</h2>
-    <ul class="numbers">
-      <li><b data-stat="formats">2,531</b><span class="unit">formats<sup><a href="#fn-formats">1</a></sup></span><span class="d">Each one a pack written from a public source, from GeoJSON to ASTERIX radar categories.</span></li>
-      <li><b data-stat="message_kinds">13,663</b><span class="unit">message kinds<sup><a href="#fn-kinds">2</a></sup></span><span class="d">A message kind is one message layout of a format, such as one MAVLink message or one NMEA 2000 parameter group.</span></li>
-      <li><b data-stat="conversion_vectors">17,628</b><span class="unit">conversion vectors<sup><a href="#fn-vectors">3</a></sup></span><span class="d">A vector is an input message and its exact expected output. All seven engines reproduce every one, byte for byte.</span></li>
-      <li><b data-stat="wasm_bytes">569,301</b><span class="unit">bytes<sup><a href="#fn-wasm">4</a></sup></span><span class="d">The engine as a WebAssembly module with no imports. 223,393 bytes after <code>gzip -9</code>.</span></li>
-    </ul>
+    <h2 id="h-numbers">How the four numbers are counted</h2>
     <ol class="footnotes">
       <li id="fn-formats">Directories of <code>packs/</code> that hold a <code>pack.def</code>, without the 156 synthetic formats whose names start with <code>conformance</code> or <code>demo-</code> and that only exercise the specification. Printed by <code>python3 -I tools/repo-stats</code>, the counter the top-level README is tested against; its docstring states how each number is counted.</li>
       <li id="fn-kinds">Lines that start with <code>kind</code> in each of those packs; a pack with none describes one layout and counts as one. <code>python3 -I tools/repo-stats</code>, line <code>message kinds</code>.</li>
@@ -148,7 +220,7 @@ echo 122624160b42bf241b6ed1b4b69808ac0870086b53150e0200 \
       <li id="fn-wasm"><code>cd bindings/wasm &amp;&amp; cargo build --profile small --target wasm32-unknown-unknown &amp;&amp; wc -c target/wasm32-unknown-unknown/small/goat_transformers_wasm.wasm</code>, with rustc 1.97.1. The size depends on the compiler version; the figure in the demo is read from the file this page loads.</li>
       <li id="fn-capture">From <code>engines/rust</code> after <code>cargo build --release</code>: <code>echo 122624160b42bf241b6ed1b4b69808ac0870086b53150e0200 | ./target/release/goat-xf convert --from remote-id --to nmea2000</code>, and the same with <code>--to cot-xml</code>.</li>
     </ol>
-    <p class="note">Counted at commit <code>7fb46b8</code>. <code>site/build.sh</code> counts again on every build and fails when this page states a different number.</p>
+    <p class="note">Counted at commit <code>6c6f9db</code>. <code>site/build.sh</code> counts again on every build and fails when this page states a different number.</p>
   </div>
 </section>
 
@@ -273,11 +345,11 @@ build:       cargo build --release --lib --target wasm32-unknown-unknown</span><
     <p class="note">To choose which formats a deployment needs, <code>tools/goat-options</code> lists every way data can get from a system that produces it to a system that needs it, from plain-text system records and the packs, with the status of each step (<a href="https://github.com/USAREUR-AF/goat-transformers/blob/main/docs/system-records.md">docs/system-records.md</a>).</p>
     <div class="table-scroll">
       <table>
-        <caption>Measured sizes, at commit 7fb46b8</caption>
+        <caption>Measured sizes, at commit 6c6f9db</caption>
         <thead><tr><th>What</th><th class="n">Bytes</th><th>Measured with</th></tr></thead>
         <tbody>
-          <tr><td>WebAssembly module, small build</td><td class="n" data-stat="wasm_bytes">569,301</td><td class="cmd">footnote 4</td></tr>
-          <tr><td>The same module after <code>gzip -9</code></td><td class="n">223,393</td><td class="cmd"><code>gzip -9 -c goat_transformers_wasm.wasm | wc -c</code></td></tr>
+          <tr><td>WebAssembly module, small build</td><td class="n" data-stat="wasm_bytes">569,285</td><td class="cmd">footnote 4</td></tr>
+          <tr><td>The same module after <code>gzip -9</code></td><td class="n">223,380</td><td class="cmd"><code>gzip -9 -c goat_transformers_wasm.wasm | wc -c</code></td></tr>
           <tr><td>Command-line tool <code>goat-xf</code>, release build, macOS arm64</td><td class="n">1,592,112</td><td class="cmd"><code>wc -c engines/rust/target/release/goat-xf</code></td></tr>
           <tr><td>The two packs of the conversion at the top of this page</td><td class="n">8,712</td><td class="cmd"><code>cat packs/remote-id/pack.def packs/cot-xml/pack.def | wc -c</code></td></tr>
           <tr><td>The three model modules those packs use</td><td class="n">13,014</td><td class="cmd"><code>cat model/core.def model/rid.def model/track.def | wc -c</code></td></tr>
