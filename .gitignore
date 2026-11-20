@@ -1,3 +1,10 @@
 /build/
 engines/cpp/build/
 __pycache__/
+# Upstream source files of the generated packs, kept for tools/gen and for the
+# needle gate's waiver (tools/boundary-gate); never committed. The provenance
+# records kept in that directory stay tracked: name a new one here.
+/tools/gen/sources/*
+!/tools/gen/sources/*-PROVENANCE.md
+!/tools/gen/sources/netex-xsd.txt
+!/tools/gen/sources/sds-sha256.txt
