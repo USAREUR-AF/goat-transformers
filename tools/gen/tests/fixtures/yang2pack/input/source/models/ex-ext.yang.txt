@@ -1,0 +1,25 @@
+module ex-ext {
+  yang-version 1.1;
+  namespace "urn:example:ex-ext";
+  prefix exx;
+  import ex-device { prefix exd; }
+  import ex-other { prefix exo; }
+  description "Augments ex-device; written for the yang2pack tests.";
+  augment "/exd:device/exd:port/exd:state" {
+    container optics {
+      leaf power {
+        type decimal64 { fraction-digits 2; }
+      }
+      leaf lanes { type uint8; }
+    }
+  }
+  augment "/exd:device/exd:power/exd:mains" {
+    leaf hertz { type uint8; }
+  }
+  augment "/exd:device/exo:added" {
+    leaf more { type string; }
+  }
+  augment "/exd:reboot/exd:input" {
+    leaf force { type boolean; }
+  }
+}
