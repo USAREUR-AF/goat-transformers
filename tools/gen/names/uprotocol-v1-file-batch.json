@@ -1,0 +1,6 @@
+{
+ "1[]": "file_batch_files",
+ "uprotocol.v1.File:1": "file_name",
+ "uprotocol.v1.File:2": "file_size",
+ "uprotocol.v1.File:3.1": "file_checksum_type"
+}

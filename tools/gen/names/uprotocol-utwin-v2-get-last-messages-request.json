@@ -1,0 +1,7 @@
+{
+ "1.1[]": "topics_uris",
+ "uprotocol.v1.UUri:1": "uuri_authority_name",
+ "uprotocol.v1.UUri:2": "uuri_ue_id",
+ "uprotocol.v1.UUri:3": "uuri_ue_version_major",
+ "uprotocol.v1.UUri:4": "uuri_resource_id"
+}

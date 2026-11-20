@@ -1,0 +1,15 @@
+{
+  "name": "gen-get_service_topics_request-roundtrip",
+  "from": "uprotocol-udiscovery-v3-get-service-topics-request",
+  "to": "uprotocol-udiscovery-v3-get-service-topics-request",
+  "input": "0a1b0a10617574686f726974795f6e616d652d3010890118ae0120d3011001",
+  "expect": "0a1b0a10617574686f726974795f6e616d652d3010890118ae0120d3011001",
+  "model": {
+    "@kind": "get_service_topics_request",
+    "uprotocoludiscoveryv3getservicetopicsrequest.topic_authority_name": "authority_name-0",
+    "uprotocoludiscoveryv3getservicetopicsrequest.topic_ue_id": "137",
+    "uprotocoludiscoveryv3getservicetopicsrequest.topic_ue_version_major": "174",
+    "uprotocoludiscoveryv3getservicetopicsrequest.topic_resource_id": "211",
+    "uprotocoludiscoveryv3getservicetopicsrequest.get_service_topics_request_recursive": "1"
+  }
+}

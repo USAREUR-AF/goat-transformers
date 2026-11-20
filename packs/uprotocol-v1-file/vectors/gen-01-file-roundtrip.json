@@ -1,0 +1,13 @@
+{
+  "name": "gen-file-roundtrip",
+  "from": "uprotocol-v1-file",
+  "to": "uprotocol-v1-file",
+  "input": "0a066e616d652d301089011a020801",
+  "expect": "0a066e616d652d301089011a020801",
+  "model": {
+    "@kind": "file",
+    "uprotocolv1file.file_name": "name-0",
+    "uprotocolv1file.file_size": "137",
+    "uprotocolv1file.checksum_type": "1"
+  }
+}

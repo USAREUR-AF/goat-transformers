@@ -1,0 +1,15 @@
+{
+  "name": "gen-file_batch-roundtrip",
+  "from": "uprotocol-v1-file-batch",
+  "to": "uprotocol-v1-file-batch",
+  "input": "0a0f0a066e616d652d301089011a0208010a0f0a066e616d652d3310f8011a020801",
+  "expect": "0a0f0a066e616d652d301089011a0208010a0f0a066e616d652d3310f8011a020801",
+  "model": {
+    "@kind": "file_batch",
+    "uprotocolv1filebatch.file_batch_files.#": "2",
+    "uprotocolv1filebatch.file_batch_files[0].uprotocolv1filebatch.file_name": "name-0",
+    "uprotocolv1filebatch.file_batch_files[0].uprotocolv1filebatch.file_size": "137",
+    "uprotocolv1filebatch.file_batch_files[1].uprotocolv1filebatch.file_name": "name-3",
+    "uprotocolv1filebatch.file_batch_files[1].uprotocolv1filebatch.file_size": "248"
+  }
+}

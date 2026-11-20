@@ -1,0 +1,12 @@
+{
+  "name": "gen-subscription_status-roundtrip",
+  "from": "uprotocol-usubscription-v3-subscription-status",
+  "to": "uprotocol-usubscription-v3-subscription-status",
+  "input": "08011a096d6573736167652d31",
+  "expect": "08011a096d6573736167652d31",
+  "model": {
+    "@kind": "subscription_status",
+    "uprotocolusubscriptionv3subscriptionstatus.subscription_status_state": "1",
+    "uprotocolusubscriptionv3subscriptionstatus.subscription_status_message": "message-1"
+  }
+}

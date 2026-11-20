@@ -1,0 +1,19 @@
+{
+  "name": "gen-get_service_topics_response-roundtrip",
+  "from": "uprotocol-udiscovery-v3-get-service-topics-response",
+  "to": "uprotocol-udiscovery-v3-get-service-topics-response",
+  "input": "0a480a1b0a10617574686f726974795f6e616d652d3010890118ae0120d301122608f80112066e616d652d351a096d6573736167652d36220b7265736f75726365732d3928e702188c030a4c0a1c0a11617574686f726974795f6e616d652d313010fb0318a00420c504122908ea0412076e616d652d31351a0a6d6573736167652d3136220c7265736f75726365732d313928d90518fe05",
+  "expect": "0a480a1b0a10617574686f726974795f6e616d652d3010890118ae0120d301122608f80112066e616d652d351a096d6573736167652d36220b7265736f75726365732d3928e702188c030a4c0a1c0a11617574686f726974795f6e616d652d313010fb0318a00420c504122908ea0412076e616d652d31351a0a6d6573736167652d3136220c7265736f75726365732d313928d90518fe05",
+  "model": {
+    "@kind": "get_service_topics_response",
+    "uprotocoludiscoveryv3getservicetopicsresponse.get_service_topics_response_topics.#": "2",
+    "uprotocoludiscoveryv3getservicetopicsresponse.get_service_topics_response_topics[0].uprotocoludiscoveryv3getservicetopicsresponse.service_topic_info_topic_authority_name": "authority_name-0",
+    "uprotocoludiscoveryv3getservicetopicsresponse.get_service_topics_response_topics[0].uprotocoludiscoveryv3getservicetopicsresponse.service_topic_info_topic_ue_id": "137",
+    "uprotocoludiscoveryv3getservicetopicsresponse.get_service_topics_response_topics[0].uprotocoludiscoveryv3getservicetopicsresponse.service_topic_info_info_resources.#": "1",
+    "uprotocoludiscoveryv3getservicetopicsresponse.get_service_topics_response_topics[0].uprotocoludiscoveryv3getservicetopicsresponse.service_topic_info_info_resources[0].uprotocoludiscoveryv3getservicetopicsresponse.uservice_topic_resources_item": "resources-9",
+    "uprotocoludiscoveryv3getservicetopicsresponse.get_service_topics_response_topics[1].uprotocoludiscoveryv3getservicetopicsresponse.service_topic_info_topic_authority_name": "authority_name-10",
+    "uprotocoludiscoveryv3getservicetopicsresponse.get_service_topics_response_topics[1].uprotocoludiscoveryv3getservicetopicsresponse.service_topic_info_topic_ue_id": "507",
+    "uprotocoludiscoveryv3getservicetopicsresponse.get_service_topics_response_topics[1].uprotocoludiscoveryv3getservicetopicsresponse.service_topic_info_info_resources.#": "1",
+    "uprotocoludiscoveryv3getservicetopicsresponse.get_service_topics_response_topics[1].uprotocoludiscoveryv3getservicetopicsresponse.service_topic_info_info_resources[0].uprotocoludiscoveryv3getservicetopicsresponse.uservice_topic_resources_item": "resources-19"
+  }
+}

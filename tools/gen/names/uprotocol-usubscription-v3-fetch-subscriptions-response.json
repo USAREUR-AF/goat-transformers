@@ -1,0 +1,20 @@
+{
+ "1[]": "fetch_subscriptions_response_subscriptions",
+ "google.protobuf.Any:1": "any_type_url",
+ "uprotocol.core.usubscription.v3.Subscription:1.1": "subscription_topic_authority_name",
+ "uprotocol.core.usubscription.v3.Subscription:1.2": "subscription_topic_ue_id",
+ "uprotocol.core.usubscription.v3.Subscription:1.3": "subscription_topic_ue_version_major",
+ "uprotocol.core.usubscription.v3.Subscription:1.4": "subscription_topic_resource_id",
+ "uprotocol.core.usubscription.v3.Subscription:2.1.1": "subscription_subscriber_uri_authority_name",
+ "uprotocol.core.usubscription.v3.Subscription:2.1.2": "subscription_subscriber_uri_ue_id",
+ "uprotocol.core.usubscription.v3.Subscription:2.1.3": "subscription_subscriber_uri_ue_version_major",
+ "uprotocol.core.usubscription.v3.Subscription:2.1.4": "subscription_subscriber_uri_resource_id",
+ "uprotocol.core.usubscription.v3.Subscription:3.1": "subscription_status_state",
+ "uprotocol.core.usubscription.v3.Subscription:3.3": "subscription_status_message",
+ "uprotocol.core.usubscription.v3.Subscription:4.1.1": "subscription_attributes_expire_seconds",
+ "uprotocol.core.usubscription.v3.Subscription:4.1.2": "subscription_attributes_expire_nanos",
+ "uprotocol.core.usubscription.v3.Subscription:4.2[]": "subscription_attributes_details",
+ "uprotocol.core.usubscription.v3.Subscription:4.3": "subscription_attributes_sample_period_ms",
+ "uprotocol.core.usubscription.v3.Subscription:5.1": "subscription_config_id",
+ "uprotocol.core.usubscription.v3.Subscription:5.2": "subscription_config_type"
+}

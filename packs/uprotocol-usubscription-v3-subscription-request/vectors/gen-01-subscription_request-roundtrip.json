@@ -1,0 +1,20 @@
+{
+  "name": "gen-subscription_request-roundtrip",
+  "from": "uprotocol-usubscription-v3-subscription-request",
+  "to": "uprotocol-usubscription-v3-subscription-request",
+  "input": "0a1b0a10617574686f726974795f6e616d652d3010890118ae0120d3011a270a0608f801109d02120c0a0a747970655f75726c2d37120c0a0a747970655f75726c2d3818c202",
+  "expect": "0a1b0a10617574686f726974795f6e616d652d3010890118ae0120d3011a270a0608f801109d02120c0a0a747970655f75726c2d37120c0a0a747970655f75726c2d3818c202",
+  "model": {
+    "@kind": "subscription_request",
+    "uprotocolusubscriptionv3subscriptionrequest.topic_authority_name": "authority_name-0",
+    "uprotocolusubscriptionv3subscriptionrequest.topic_ue_id": "137",
+    "uprotocolusubscriptionv3subscriptionrequest.topic_ue_version_major": "174",
+    "uprotocolusubscriptionv3subscriptionrequest.topic_resource_id": "211",
+    "uprotocolusubscriptionv3subscriptionrequest.attributes_expire_seconds": "248",
+    "uprotocolusubscriptionv3subscriptionrequest.attributes_expire_nanos": "285",
+    "uprotocolusubscriptionv3subscriptionrequest.attributes_sample_period_ms": "322",
+    "uprotocolusubscriptionv3subscriptionrequest.attributes_details.#": "2",
+    "uprotocolusubscriptionv3subscriptionrequest.attributes_details[0].uprotocolusubscriptionv3subscriptionrequest.any_type_url": "type_url-7",
+    "uprotocolusubscriptionv3subscriptionrequest.attributes_details[1].uprotocolusubscriptionv3subscriptionrequest.any_type_url": "type_url-8"
+  }
+}

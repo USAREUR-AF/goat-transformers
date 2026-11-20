@@ -1,0 +1,7 @@
+{
+ "1.1": "expire_seconds",
+ "1.2": "expire_nanos",
+ "2[]": "subscribe_attributes_details",
+ "3": "subscribe_attributes_sample_period_ms",
+ "google.protobuf.Any:1": "any_type_url"
+}

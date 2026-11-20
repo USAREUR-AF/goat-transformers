@@ -1,0 +1,14 @@
+{
+  "name": "gen-reset_request-roundtrip",
+  "from": "uprotocol-usubscription-v3-reset-request",
+  "to": "uprotocol-usubscription-v3-reset-request",
+  "input": "0a0d080112096d6573736167652d31120608ae0110d301",
+  "expect": "0a0d080112096d6573736167652d31120608ae0110d301",
+  "model": {
+    "@kind": "reset_request",
+    "uprotocolusubscriptionv3resetrequest.reason_code": "1",
+    "uprotocolusubscriptionv3resetrequest.reason_message": "message-1",
+    "uprotocolusubscriptionv3resetrequest.before_seconds": "174",
+    "uprotocolusubscriptionv3resetrequest.before_nanos": "211"
+  }
+}

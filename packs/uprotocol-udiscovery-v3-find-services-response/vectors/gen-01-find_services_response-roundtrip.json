@@ -1,0 +1,15 @@
+{
+  "name": "gen-find_services_response-roundtrip",
+  "from": "uprotocol-udiscovery-v3-find-services-response",
+  "to": "uprotocol-udiscovery-v3-find-services-response",
+  "input": "0a3a0a1b0a10617574686f726974795f6e616d652d3010890118ae0120d3010a1b0a10617574686f726974795f6e616d652d34109d0218c20220e702",
+  "expect": "0a3a0a1b0a10617574686f726974795f6e616d652d3010890118ae0120d3010a1b0a10617574686f726974795f6e616d652d34109d0218c20220e702",
+  "model": {
+    "@kind": "find_services_response",
+    "uprotocoludiscoveryv3findservicesresponse.uris_uris.#": "2",
+    "uprotocoludiscoveryv3findservicesresponse.uris_uris[0].uprotocoludiscoveryv3findservicesresponse.uuri_authority_name": "authority_name-0",
+    "uprotocoludiscoveryv3findservicesresponse.uris_uris[0].uprotocoludiscoveryv3findservicesresponse.uuri_ue_id": "137",
+    "uprotocoludiscoveryv3findservicesresponse.uris_uris[1].uprotocoludiscoveryv3findservicesresponse.uuri_authority_name": "authority_name-4",
+    "uprotocoludiscoveryv3findservicesresponse.uris_uris[1].uprotocoludiscoveryv3findservicesresponse.uuri_ue_id": "285"
+  }
+}

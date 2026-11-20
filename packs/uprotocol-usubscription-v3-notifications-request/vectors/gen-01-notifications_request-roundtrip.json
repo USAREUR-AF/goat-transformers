@@ -1,0 +1,14 @@
+{
+  "name": "gen-notifications_request-roundtrip",
+  "from": "uprotocol-usubscription-v3-notifications-request",
+  "to": "uprotocol-usubscription-v3-notifications-request",
+  "input": "0a1b0a10617574686f726974795f6e616d652d3010890118ae0120d301",
+  "expect": "0a1b0a10617574686f726974795f6e616d652d3010890118ae0120d301",
+  "model": {
+    "@kind": "notifications_request",
+    "uprotocolusubscriptionv3notificationsrequest.topic_authority_name": "authority_name-0",
+    "uprotocolusubscriptionv3notificationsrequest.topic_ue_id": "137",
+    "uprotocolusubscriptionv3notificationsrequest.topic_ue_version_major": "174",
+    "uprotocolusubscriptionv3notificationsrequest.topic_resource_id": "211"
+  }
+}

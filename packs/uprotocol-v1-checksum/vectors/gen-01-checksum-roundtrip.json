@@ -1,0 +1,11 @@
+{
+  "name": "gen-checksum-roundtrip",
+  "from": "uprotocol-v1-checksum",
+  "to": "uprotocol-v1-checksum",
+  "input": "0801",
+  "expect": "0801",
+  "model": {
+    "@kind": "checksum",
+    "uprotocolv1checksum.checksum_type": "1"
+  }
+}

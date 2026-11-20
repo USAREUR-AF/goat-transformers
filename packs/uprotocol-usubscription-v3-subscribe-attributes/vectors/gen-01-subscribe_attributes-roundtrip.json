@@ -1,0 +1,16 @@
+{
+  "name": "gen-subscribe_attributes-roundtrip",
+  "from": "uprotocol-usubscription-v3-subscribe-attributes",
+  "to": "uprotocol-usubscription-v3-subscribe-attributes",
+  "input": "0a050864108901120c0a0a747970655f75726c2d33120c0a0a747970655f75726c2d3418ae01",
+  "expect": "0a050864108901120c0a0a747970655f75726c2d33120c0a0a747970655f75726c2d3418ae01",
+  "model": {
+    "@kind": "subscribe_attributes",
+    "uprotocolusubscriptionv3subscribeattributes.expire_seconds": "100",
+    "uprotocolusubscriptionv3subscribeattributes.expire_nanos": "137",
+    "uprotocolusubscriptionv3subscribeattributes.subscribe_attributes_sample_period_ms": "174",
+    "uprotocolusubscriptionv3subscribeattributes.subscribe_attributes_details.#": "2",
+    "uprotocolusubscriptionv3subscribeattributes.subscribe_attributes_details[0].uprotocolusubscriptionv3subscribeattributes.any_type_url": "type_url-3",
+    "uprotocolusubscriptionv3subscribeattributes.subscribe_attributes_details[1].uprotocolusubscriptionv3subscribeattributes.any_type_url": "type_url-4"
+  }
+}

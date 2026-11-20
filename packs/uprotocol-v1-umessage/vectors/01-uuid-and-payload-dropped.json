@@ -1,0 +1,12 @@
+{
+  "name": "01-uuid-and-payload-dropped",
+  "from": "uprotocol-v1-umessage",
+  "to": "uprotocol-v1-umessage",
+  "input": "0a310a12090070d4c3b2a1900111010000000000008010011a140a0976656869636c652d3110ab21180120818002280230e80712040a026869",
+  "expect": "0a1d10011a140a0976656869636c652d3110ab21180120818002280230e807",
+  "model": {
+    "uprotocolv1umessage.attributes_type": "1",
+    "uprotocolv1umessage.attributes_source_authority_name": "vehicle-1",
+    "uprotocolv1umessage.attributes_ttl": "1000"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "gen-service_topic_info-roundtrip",
+  "from": "uprotocol-udiscovery-v3-service-topic-info",
+  "to": "uprotocol-udiscovery-v3-service-topic-info",
+  "input": "0a1b0a10617574686f726974795f6e616d652d3010890118ae0120d301123408f80112066e616d652d351a096d6573736167652d36220b7265736f75726365732d39220c7265736f75726365732d313028e702188c03",
+  "expect": "0a1b0a10617574686f726974795f6e616d652d3010890118ae0120d301123408f80112066e616d652d351a096d6573736167652d36220b7265736f75726365732d39220c7265736f75726365732d313028e702188c03",
+  "model": {
+    "@kind": "service_topic_info",
+    "uprotocoludiscoveryv3servicetopicinfo.topic_authority_name": "authority_name-0",
+    "uprotocoludiscoveryv3servicetopicinfo.topic_ue_id": "137",
+    "uprotocoludiscoveryv3servicetopicinfo.topic_ue_version_major": "174",
+    "uprotocoludiscoveryv3servicetopicinfo.topic_resource_id": "211",
+    "uprotocoludiscoveryv3servicetopicinfo.info_id": "248",
+    "uprotocoludiscoveryv3servicetopicinfo.info_name": "name-5",
+    "uprotocoludiscoveryv3servicetopicinfo.info_message": "message-6",
+    "uprotocoludiscoveryv3servicetopicinfo.info_permission_level": "359",
+    "uprotocoludiscoveryv3servicetopicinfo.service_topic_info_ttl": "396",
+    "uprotocoludiscoveryv3servicetopicinfo.info_resources.#": "2",
+    "uprotocoludiscoveryv3servicetopicinfo.info_resources[0].uprotocoludiscoveryv3servicetopicinfo.uservice_topic_resources_item": "resources-9",
+    "uprotocoludiscoveryv3servicetopicinfo.info_resources[1].uprotocoludiscoveryv3servicetopicinfo.uservice_topic_resources_item": "resources-10"
+  }
+}
