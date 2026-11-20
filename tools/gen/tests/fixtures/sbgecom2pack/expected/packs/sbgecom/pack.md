@@ -60,8 +60,8 @@ way, so a message encoded from `hae` alone leaves altitude and undulation zero.
 position aiding source, with no datum conversion. With GNSS aiding that is WGS 84, the datum
 of the shared `lat`, `lon` and `hae`. With aiding in a local frame, such as an RTK base whose
 coordinates are given in ETRS89, the position is in that frame, which differs from WGS 84 by
-up to about a metre; the pack cannot tell the two apart. Times are microseconds since
-power-up or GPS time of week, and stay raw.
+up to about a metre; the pack cannot tell the two apart. Times are microseconds since the
+unit started, or the time into the GPS week, and stay raw.
 
 ## Not mapped, and why
 
