@@ -1,0 +1,20 @@
+{
+  "name": "gen-write_app_data_file_cmd-roundtrip",
+  "from": "cfe-evs-be",
+  "to": "cfe-evs-be",
+  "input": "1801c0770041116454310000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "expect": "1801c0770041116454310000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "model": {
+    "@kind": "write_app_data_file_cmd",
+    "ccsdssp.packet_type": "1",
+    "ccsdssp.apid": "1",
+    "ccsdssp.sequence_flags": "3",
+    "ccsdssp.data_length": "65",
+    "ccsdssp.sequence_count_or_name": "119",
+    "cfeevs.app_data_cmd_app_data_filename": "T1",
+    "cfemsg.checksum": "100",
+    "cfemsg.function_code": "17"
+  },
+  "source": "written by tools/gen/cfe-vectors.py: the packet is serialized from tools/gen/cfe/layout.json (the C layout cfe2pack.py reads from nasa/cFE); no engine run",
+  "reference": "https://github.com/nasa/cFE at tag v7.0.2-rc1, commit 73f6fe102eae7949fc5f550e6818fec60319ddea; Apache-2.0, modules/evs/config/default_cfe_evs_msgstruct.h and default_cfe_evs_msgdefs.h; struct CFE_EVS_WriteAppDataFileCmd_t, message ID CFE_EVS_CMD_MID = 0x1801, function code CFE_EVS_WRITE_APP_DATA_FILE_CC = 17; 72 octets"
+}

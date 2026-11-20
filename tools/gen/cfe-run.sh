@@ -1,5 +1,6 @@
 #!/bin/bash
-# Regenerate the NASA cFE packs: cfe-es, cfe-evs, cfe-sb, cfe-tbl, cfe-time.
+# Regenerate the NASA cFE packs: cfe-es, cfe-evs, cfe-sb, cfe-tbl, cfe-time (payload
+# little-endian) and cfe-es-be, cfe-evs-be, cfe-sb-be, cfe-tbl-be, cfe-time-be (big-endian).
 # Usage: tools/gen/cfe-run.sh [--check] <cFE checkout> <goat-transformers checkout>
 #
 # <cFE checkout>: https://github.com/nasa/cFE at tag v7.0.2-rc1,
@@ -9,10 +10,10 @@
 #   Each pack's pack.md lists every file read with its size and SHA-256.
 #
 # Step 1 (needs the checkout): cfe2pack.py writes model/cfemsg.def, model/cfe<m>.def,
-#   packs/cfe-<m>/pack.def and pack.md, tools/gen/names/cfe.json and
+#   packs/cfe-<m>[-be]/pack.def and pack.md, tools/gen/names/cfe.json and
 #   tools/gen/cfe/layout.json. PROVENANCE.md is not generated.
 # Step 2 (needs no checkout; CI runs it with --check): cfe-vectors.py writes
-#   packs/cfe-<m>/vectors/gen-*.json from layout.json.
+#   packs/cfe-<m>[-be]/vectors/gen-*.json from layout.json.
 set -euo pipefail
 CHECK=""
 if [ "${1:-}" = "--check" ]; then

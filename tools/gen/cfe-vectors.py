@@ -4,10 +4,11 @@
 Reads   tools/gen/cfe/layout.json, which tools/gen/cfe2pack.py writes from the C headers
         of nasa/cFE: for every kind its message ID, function code, C size and the
         offset, size and type of every payload member (and the raw key it has).
-Writes  packs/cfe-<m>/vectors/gen-*.json:
+Writes  packs/cfe-<m>/vectors/gen-*.json and packs/cfe-<m>-be/vectors/gen-*.json:
           a round trip per kind: a packet serialized here, octet by octet, from the
             layout with values of this script's own (the primary header big-endian,
-            the payload little-endian, implicit padding zero, a command's checksum
+            the payload in the pack's byte order (little-endian for cfe-<m>,
+            big-endian for cfe-<m>-be), implicit padding zero, a command's checksum
             chosen so that the XOR of every octet is 0xFF);
           the housekeeping telemetry packet to ccsds-space-packet (its 6 header octets);
           a bare primary header from ccsds-space-packet to the module's
@@ -48,12 +49,12 @@ def num_text(v):
     return str(int(v)) if v == int(v) else repr(v)
 
 
-def fill(buf, body, base, counter, model, mod):
+def fill(buf, body, base, counter, model, mod, order="little"):
     """Write every member of `body` at `base`; top-level values go into `model`."""
     for it in body:
         if "group" in it:
             for i in range(it["count"]):
-                fill(buf, it["body"], base + it["offset"] + i * it["item_size"], counter, None, mod)
+                fill(buf, it["body"], base + it["offset"] + i * it["item_size"], counter, None, mod, order)
             if model is not None:
                 model[mod + "." + it["group"] + ".#"] = str(it["count"])
             continue
@@ -65,16 +66,16 @@ def fill(buf, body, base, counter, model, mod):
             buf[o:o + len(b)] = b
             mv = v
         elif it["type"] == "f":
-            buf[o:o + size] = struct.pack("<f" if size == 4 else "<d", v)
+            buf[o:o + size] = struct.pack(("<" if order == "little" else ">") + ("f" if size == 4 else "d"), v)
             mv = num_text(v)
         else:
-            buf[o:o + size] = v.to_bytes(size, "little", signed=it["type"] == "s")
+            buf[o:o + size] = v.to_bytes(size, order, signed=it["type"] == "s")
             mv = str(v)
         if model is not None:
             model[mod + "." + it["key"]] = mv
 
 
-def packet(msg, seq, mod):
+def packet(msg, seq, mod, order="little"):
     size = msg["size"]
     buf = bytearray(size)
     buf[0:2] = msg["mid"].to_bytes(2, "big")
@@ -92,7 +93,7 @@ def packet(msg, seq, mod):
         model["ccsdssp.sequence_count"] = str(seq)
         model["cfemsg.time_seconds"] = str(1000000 + seq)
         model["cfemsg.time_subseconds"] = str(0x8000)
-    fill(buf, msg["body"], 0, [0], model, mod)
+    fill(buf, msg["body"], 0, [0], model, mod, order)
     if msg["cmd"]:
         x = 0
         for j, b in enumerate(buf):
@@ -104,14 +105,14 @@ def packet(msg, seq, mod):
     return buf, model
 
 
-def vectors(fmt, msgs, source):
-    mod = fmt.replace("-", "")
+def vectors(fmt, msgs, source, order):
     m = fmt.split("-")[1]
+    mod = "cfe" + m
     ref = "%s, modules/%s/config/default_cfe_%s_msgstruct.h and default_cfe_%s_msgdefs.h" % (source, m, m, m)
     V = {}
     rt = {}
     for i, msg in enumerate(msgs, 1):
-        buf, model = packet(msg, 100 + i, mod)
+        buf, model = packet(msg, 100 + i, mod, order)
         name = "gen-%03d-%s-roundtrip" % (i, msg["kind"].replace("_", "-"))
         rt[msg["kind"]] = buf
         V[name] = {"name": "gen-%s-roundtrip" % msg["kind"], "from": fmt, "to": fmt,
@@ -162,8 +163,8 @@ def vectors(fmt, msgs, source):
 def build(out):
     layout = json.loads(out.read("tools/gen/cfe/layout.json"))
     written = {}
-    for fmt, msgs in sorted(layout["packs"].items()):
-        V = vectors(fmt, msgs, layout["source"])
+    for fmt, p in sorted(layout["packs"].items()):
+        V = vectors(fmt, p["messages"], layout["source"], p["endian"])
         for name, v in V.items():
             out.write("packs/%s/vectors/%s.json" % (fmt, name), json.dumps(v, indent=2) + "\n")
         written[fmt] = len(V)

@@ -1,0 +1,19 @@
+{
+  "name": "gen-send_hk_cmd-roundtrip",
+  "from": "cfe-tbl-be",
+  "to": "cfe-tbl-be",
+  "input": "180cc0650001004f",
+  "expect": "180cc0650001004f",
+  "model": {
+    "@kind": "send_hk_cmd",
+    "ccsdssp.packet_type": "1",
+    "ccsdssp.apid": "12",
+    "ccsdssp.sequence_flags": "3",
+    "ccsdssp.data_length": "1",
+    "ccsdssp.sequence_count_or_name": "101",
+    "cfemsg.checksum": "79",
+    "cfemsg.function_code": "0"
+  },
+  "source": "written by tools/gen/cfe-vectors.py: the packet is serialized from tools/gen/cfe/layout.json (the C layout cfe2pack.py reads from nasa/cFE); no engine run",
+  "reference": "https://github.com/nasa/cFE at tag v7.0.2-rc1, commit 73f6fe102eae7949fc5f550e6818fec60319ddea; Apache-2.0, modules/tbl/config/default_cfe_tbl_msgstruct.h and default_cfe_tbl_msgdefs.h; struct CFE_TBL_SendHkCmd_t, message ID CFE_TBL_SEND_HK_MID = 0x180c; 8 octets"
+}

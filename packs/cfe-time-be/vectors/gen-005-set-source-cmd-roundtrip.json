@@ -1,0 +1,20 @@
+{
+  "name": "gen-set_source_cmd-roundtrip",
+  "from": "cfe-time-be",
+  "to": "cfe-time-be",
+  "input": "1805c069000203602a",
+  "expect": "1805c069000203602a",
+  "model": {
+    "@kind": "set_source_cmd",
+    "ccsdssp.packet_type": "1",
+    "ccsdssp.apid": "5",
+    "ccsdssp.sequence_flags": "3",
+    "ccsdssp.data_length": "2",
+    "ccsdssp.sequence_count_or_name": "105",
+    "cfetime.source_cmd_time_source": "42",
+    "cfemsg.checksum": "96",
+    "cfemsg.function_code": "3"
+  },
+  "source": "written by tools/gen/cfe-vectors.py: the packet is serialized from tools/gen/cfe/layout.json (the C layout cfe2pack.py reads from nasa/cFE); no engine run",
+  "reference": "https://github.com/nasa/cFE at tag v7.0.2-rc1, commit 73f6fe102eae7949fc5f550e6818fec60319ddea; Apache-2.0, modules/time/config/default_cfe_time_msgstruct.h and default_cfe_time_msgdefs.h; struct CFE_TIME_SetSourceCmd_t, message ID CFE_TIME_CMD_MID = 0x1805, function code CFE_TIME_SET_SOURCE_CC = 3; 9 octets"
+}

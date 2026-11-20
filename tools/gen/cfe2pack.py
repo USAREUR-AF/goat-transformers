@@ -12,7 +12,8 @@ Reads   a checkout of github.com/nasa/cFE (the default, non-EDS headers):
           modules/msg/option_inc/default_cfe_msg_*.h header layout (checked, see below)
 Writes  <out>/model/cfemsg.def                    keys of the cFE secondary headers
         <out>/model/cfe<m>.def                    raw keys of the payloads of module m
-        <out>/packs/cfe-<m>/pack.def, pack.md     one `bits` pack per module
+        <out>/packs/cfe-<m>/pack.def, pack.md     one `bits` pack per module, payload little-endian
+        <out>/packs/cfe-<m>-be/pack.def, pack.md  the same layout, payload big-endian
         <out>/tools/gen/cfe/layout.json           every kind's message ID, function code,
                                                   size and payload layout; the input of
                                                   tools/gen/cfe-vectors.py, which writes the
@@ -40,11 +41,11 @@ its members, an array to its element's; a struct's size rounds up to its
 alignment. The payload member follows the 8-octet command header or the 16-octet
 telemetry header at the next multiple of its alignment (the headers are octet
 arrays, alignment 1; the telemetry header's 4 spare octets exist so that a payload
-of 8-octet alignment needs no padding). Payload integers and floats are
-little-endian (cFE leaves them in the processor's order; the packs state the
-little-endian processors cFE commonly runs on), written as msb `bits` fields with
-`swap`. Implicit padding is not mapped; when it ends the struct a `const` of 0 on
-its last octet keeps the message its C size.
+of 8-octet alignment needs no padding). Payload integers and floats
+are in the sending processor's byte order (cFE does not convert them): cfe-<m> states
+little-endian and its lines carry `swap`; cfe-<m>-be states big-endian, with no `swap`.
+Both use the same keys and modules. Implicit padding is not mapped; when it ends
+the struct a `const` of 0 on its last octet keeps the message its C size.
 
 Reader. Strict and small: comments; `#define` object and function-like macros
 (with `##`), `#if`/`#ifdef`/`#ifndef`/`#elif`/`#else`/`#endif` over the macros
@@ -495,7 +496,7 @@ class Names:
         return json.dumps(dict(sorted(self.map.items())), indent=1) + "\n"
 
 
-def transform(leaf):
+def transform(leaf, big=False):
     if leaf.kind == "a":
         return "ascii"
     if leaf.kind == "f":
@@ -504,7 +505,7 @@ def transform(leaf):
         t = "twos"
     else:
         t = "uint"
-    return t + (" swap" if leaf.size > 1 else "")
+    return t + (" swap" if leaf.size > 1 and not big else "")
 
 
 def ptype_short(m, ptype):
@@ -515,7 +516,7 @@ def ptype_short(m, ptype):
     return snake(s)
 
 
-def emit_body(lines, keys, names, mod, scope, prefix, items, base_bits, indent):
+def emit_body(lines, keys, names, mod, scope, prefix, items, base_bits, indent, big=False):
     """`scope` names the payload type (and list) for the names file; `prefix` starts each key."""
     for it in items:
         rel = "_".join(snake(p) for p in it.path)
@@ -526,7 +527,7 @@ def emit_body(lines, keys, names, mod, scope, prefix, items, base_bits, indent):
             keys.append(("list", lname, "%s: %d items of %d octets" % (".".join(it.path), it.count, it.item_size)))
             lines.append("%sgroup  %s.%s  0:%d  item %d  count %d" % (indent, mod, lname, base_bits + it.offset * 8,
                                                                      it.item_size * 8, it.count))
-            emit_body(lines, keys, names, mod, ident, lname, it.body, 0, indent + "  ")
+            emit_body(lines, keys, names, mod, ident, lname, it.body, 0, indent + "  ", big)
             lines.append(indent + "end")
         else:
             k = names.key(mod, ident, prefix + "_" + rel if rel else prefix + "_value")
@@ -534,7 +535,7 @@ def emit_body(lines, keys, names, mod, scope, prefix, items, base_bits, indent):
             typ = "string" if it.kind == "a" else ("float" if it.kind == "f" else "int")
             keys.append(("key", k, typ, ".".join(it.path) or "(item)", it.size))
             lines.append("%sfield  %s.%s  0:%d:%d  %s" % (indent, mod, k, base_bits + it.offset * 8, it.size * 8,
-                                                         transform(it)))
+                                                         transform(it, big)))
 
 
 def build(c, src, out, names):
@@ -559,16 +560,17 @@ def build(c, src, out, names):
         "key  time_subseconds  int  -  \"telemetry: octets 10-11, big-endian: fraction of a second in units of 2^-16 s\"",
         "key  spare          int  -  \"telemetry: octets 12-15, padding so that a payload of 8-octet alignment needs none\"",
         ""]))
-    for m in MODULES:
+    for m, big in [(m, b) for m in MODULES for b in (False, True)]:
         msgs, skipped = plans[m]
         mod = "cfe" + m
-        fmt = "cfe-" + m
+        fmt = "cfe-" + m + ("-be" if big else "")
+        order = "big-endian" if big else "little-endian (swap)"
         lines, keys = [], []
         head = [
             "# NASA cFE %s (%s) command and telemetry packets: one whole Software Bus" % (m.upper(), TITLES[m]),
             "# packet, CCSDS primary header, cFE secondary header and payload. Generated by",
             "# tools/gen/cfe2pack.py from the default headers of nasa/cFE; do not edit by hand.",
-            "# Payload integers and floats are little-endian (swap); pack.md states the layout rule.",
+            "# Payload integers and floats are %s; pack.md states the layout rule." % order,
             "format     %s" % fmt,
             "version    0.1.0",
             "distribution public",
@@ -610,7 +612,7 @@ def build(c, src, out, names):
                 lines.append("field  cfemsg.time_subseconds  0:80:16  uint")
                 lines.append("field  cfemsg.spare            0:96:32  uint")
             if msg["body"]:
-                emit_body(lines, keys, names, mod, ptype_short(m, msg["ptype"]), ptype_short(m, msg["ptype"]), msg["body"], 0, "")
+                emit_body(lines, keys, names, mod, ptype_short(m, msg["ptype"]), ptype_short(m, msg["ptype"]), msg["body"], 0, "", big)
             end = end_of(msg["body"], 8 if msg["cmd"] else 16)
             if end < msg["size"]:
                 lines.append("const  0:%d:8  0" % ((msg["size"] - 1) * 8))
@@ -627,16 +629,16 @@ def build(c, src, out, names):
             else:
                 kl.append("key   %s  %s  -  \"payload member %s, %d octet%s%s\"" % (
                     k[1], k[2], k[3], k[4], "s" if k[4] > 1 else "",
-                    ", text NUL-padded" if k[2] == "string" else (", little-endian" if k[4] > 1 else "")))
+                    ", text NUL-padded" if k[2] == "string" else (", in the packet's byte order" if k[4] > 1 else "")))
         out.write("model/%s.def" % mod, "\n".join([
             "# The %s module: the payload members of the NASA cFE %s packets, one raw key per" % (mod, m.upper()),
             "# member path of each payload struct. Generated by tools/gen/cfe2pack.py.",
             "module        %s" % mod, "version       0.1.0", "distribution  public",
             "source        \"%s, modules/%s/config\"" % (SOURCE, m)] + kl) + "\n")
-        out.write("packs/%s/pack.md" % fmt, pack_md(m, fmt, msgs, skipped, sources(c, src, m)))
-        layout[fmt] = [dict(kind=x["kind"], struct=x["struct"], mid=x["mid"], mid_name=x["mid_name"], cc=x["cc"],
+        out.write("packs/%s/pack.md" % fmt, pack_md(m, fmt, msgs, skipped, sources(c, src, m), big))
+        layout[fmt] = {"endian": "big" if big else "little", "messages": [dict(kind=x["kind"], struct=x["struct"], mid=x["mid"], mid_name=x["mid_name"], cc=x["cc"],
                             cc_name=x["cc_name"], cmd=x["cmd"], size=x["size"], body=to_json(x["body"]))
-                       for x in msgs]
+                       for x in msgs]}
         written[fmt] = len(msgs)
     out.write("tools/gen/names/cfe.json", names.text())
     out.write("tools/gen/cfe/layout.json", json.dumps({"source": SOURCE, "packs": layout}, indent=1) + "\n")
@@ -683,9 +685,11 @@ def sources(c, src, m):
     return rows
 
 
-def pack_md(m, fmt, msgs, skipped, srcs):
+def pack_md(m, fmt, msgs, skipped, srcs, big=False):
+    other = "cfe-%s" % m if big else "cfe-%s-be" % m
     w = ["# Pack: %s" % fmt, "",
          "NASA core Flight Executive (cFE) %s (%s): the command and telemetry packets of the module" % (m.upper(), TITLES[m]),
+         "from a %s processor," % ("big-endian" if big else "little-endian"),
          "as they travel on the Software Bus. Generated by `tools/gen/cfe2pack.py` from %s at tag `%s`." % (REPO, TAG),
          "Wire `bits`, most significant bit first. Edit the generator, not this file.", "",
          "## Message convention", "",
@@ -694,14 +698,19 @@ def pack_md(m, fmt, msgs, skipped, srcs):
          "6) and a checksum (octet 7); a telemetry packet's is a 6-octet time (4 octets of seconds, 2 of",
          "subseconds, big-endian) and 4 spare octets, so its payload starts at octet 16.", "",
          "The primary header fields are the keys of module `ccsdssp`, which the pack `ccsds-space-packet`",
-         "maps: a cFE packet converts to a bare space packet header, and a space packet header with the",
-         "APID of a telemetry packet converts to that packet with a zero payload.", "",
+         "maps: a cFE packet converts to a bare space packet header, and a bare header converts to the",
+         "packet its packet type and APID name, with the rest written as zero octets (a payload that holds",
+         "a fixed-count array cannot be written from a bare header: `transform-encode`).", "",
          "## Layout rule", "",
          "The payload structs are laid out with natural C alignment: a scalar at a multiple of its size,",
          "a struct at the largest alignment of its members, a struct's size rounded up to that alignment.",
-         "Payload integers and floats are little-endian: cFE does not convert the payload's byte order,",
-         "and these packs state the little-endian processors it commonly runs on (the lines carry `swap`).",
-         "A packet from a big-endian processor needs the same pack without `swap`. A char array is",
+         ("Byte order: payload integers and floats are **big-endian**, as a big-endian processor writes"
+          if big else "Byte order: payload integers and floats are **little-endian** (the lines carry `swap`), as"),
+         ("them (no `swap`). cFE does not convert the payload's byte order, so the processor that sends a"
+          if big else "a little-endian processor writes them. cFE does not convert the payload's byte order, so the"),
+         ("packet decides it; `%s` is the same layout for little-endian processors. The headers are" % other
+          if big else "processor that sends a packet decides it; `%s` is the same layout for big-endian processors." % other),
+         ("big-endian in both. A char array is" if big else "The headers are big-endian in both. A char array is"),
          "`ascii`: printable text, NUL-padded; a NUL followed by other octets fails the decode.",
          "Implicit padding is not mapped and is written as zero; a `const` of 0 on the last octet keeps a",
          "packet whose struct ends in padding its C size.", "",

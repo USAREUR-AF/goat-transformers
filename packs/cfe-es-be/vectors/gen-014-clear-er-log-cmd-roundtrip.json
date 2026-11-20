@@ -1,0 +1,19 @@
+{
+  "name": "gen-clear_er_log_cmd-roundtrip",
+  "from": "cfe-es-be",
+  "to": "cfe-es-be",
+  "input": "1806c07200010c5e",
+  "expect": "1806c07200010c5e",
+  "model": {
+    "@kind": "clear_er_log_cmd",
+    "ccsdssp.packet_type": "1",
+    "ccsdssp.apid": "6",
+    "ccsdssp.sequence_flags": "3",
+    "ccsdssp.data_length": "1",
+    "ccsdssp.sequence_count_or_name": "114",
+    "cfemsg.checksum": "94",
+    "cfemsg.function_code": "12"
+  },
+  "source": "written by tools/gen/cfe-vectors.py: the packet is serialized from tools/gen/cfe/layout.json (the C layout cfe2pack.py reads from nasa/cFE); no engine run",
+  "reference": "https://github.com/nasa/cFE at tag v7.0.2-rc1, commit 73f6fe102eae7949fc5f550e6818fec60319ddea; Apache-2.0, modules/es/config/default_cfe_es_msgstruct.h and default_cfe_es_msgdefs.h; struct CFE_ES_ClearERLogCmd_t, message ID CFE_ES_CMD_MID = 0x1806, function code CFE_ES_CLEAR_ER_LOG_CC = 12; 8 octets"
+}
