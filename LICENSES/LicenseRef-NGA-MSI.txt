@@ -1,0 +1,29 @@
+LicenseRef-NGA-MSI: NGA Maritime Safety Information, terms for products derived from it
+
+Source: National Geospatial-Intelligence Agency (NGA), page "Commercial Use
+Warning" of https://msi.nga.mil, served by
+https://msi.nga.mil/api/pageContent/getByTitle?pageTitle=Commercial%20Use%20Warning
+(Internet Archive capture 20260811181659; read on 2026-11-20).
+
+Terms, as that page states them (summarised here; the disclaimer is quoted):
+
+1. NGA claims no copyright or other intellectual property right in the
+   nautical products it posts on https://msi.nga.mil for public use.
+2. Under 10 U.S.C. 425, the name, seal or initials of NGA (or of NIMA or DMA)
+   may not be used to imply or suggest approval or commercial endorsement by
+   NGA without written permission from the Secretary of Defense and the
+   Director of National Intelligence.
+3. Every product, information or data not published by the Agency that
+   includes the NGA, NIMA or DMA name, seal or initials, or otherwise expresses
+   or implies an association with NGA, NIMA or DMA, shall contain the
+   following disclaimer:
+
+Disclaimer
+This reproduction, partial or complete, of any National Geospatial-Intelligence Agency (NGA), National Imagery and Mapping Agency (NIMA) or Defense Mapping Agency (DMA) product, information or data is not approved, authorized or endorsed by the Secretary of Defense, the Director of National Intelligence, the Director, NGA or any other element of the US Government. The US Government and NGA accept no liability for the accuracy or quality of this reproduction or the use of any NGA, NIMA or DMA products, information or data.
+
+4. The page asks that the disclaimer be displayed prominently on the products
+   it lists (publications, charts, media, and the start-up screen and "About"
+   window of software) and that distributed media carry it in a file named
+   disclaimer.txt in the root directory.
+5. NGA is not liable for the accuracy or quality of any user product,
+   regardless of the amount or complexity of NGA information or data used.

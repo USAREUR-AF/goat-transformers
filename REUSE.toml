@@ -2000,3 +2000,9 @@ path = "model/mavsdkwinchstatus.def"
 precedence = "override"
 SPDX-FileCopyrightText = "MAVSDK-Proto authors, MAVLink project (holder not stated)"
 SPDX-License-Identifier = "LicenseRef-unstated"
+
+[[annotations]]
+path = ["packs/nga-msi-*/**", "model/ngaasam.def", "model/ngabwarn.def", "model/ngalol.def", "model/ngawpi.def"]
+precedence = "override"
+SPDX-FileCopyrightText = "National Geospatial-Intelligence Agency (no copyright claimed; see LICENSES/LicenseRef-NGA-MSI.txt)"
+SPDX-License-Identifier = "LicenseRef-NGA-MSI"

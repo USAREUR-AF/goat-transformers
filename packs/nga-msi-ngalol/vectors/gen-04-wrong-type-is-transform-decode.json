@@ -1,0 +1,9 @@
+{
+  "name": "wrong-type-is-transform-decode",
+  "from": "nga-msi-ngalol",
+  "to": "nga-msi-ngalol",
+  "input": "{\"volumeNumber\":\"VOLUMENUMBER B\",\"aidType\":\"AIDTYPE B\",\"geopoliticalHeading\":\"GEOPOLITICAL B\",\"regionHeading\":\"REGIONHEADIN B\",\"subregionHeading\":null,\"localHeading\":null,\"precedingNote\":null,\"featureNumber\":\"FEATURENUMBE B\",\"name\":\"NAME B\",\"position\":\"POSITION B\",\"charNo\":\"not a number\",\"characteristic\":\"CHARACTERIST B\",\"heightFeetMeters\":\"HEIGHTFEETME B\",\"range\":\"RANGE B\",\"structure\":\"STRUCTURE B\",\"remarks\":\"REMARKS B\",\"postNote\":null,\"noticeNumber\":103,\"removeFromList\":\"REMOVEFROMLI B\",\"deleteFlag\":\"DELETEFLAG B\",\"noticeWeek\":\"NOTICEWEEK B\",\"noticeYear\":\"NOTICEYEAR B\"}",
+  "expect_error": "transform-decode",
+  "source": "derived by tools/gen/nga-msi2pack.py from the json wire's canonical output (spec/engine-spec.md 0.5); no engine run",
+  "reference": "NGA MSI /api/publications/ngalol/lights-buoys records as archived (ngalol); the record is written for this repository; charNo is a JSON number in every archived record; a string there fails its int transform"
+}

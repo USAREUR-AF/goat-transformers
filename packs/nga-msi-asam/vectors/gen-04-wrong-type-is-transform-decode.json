@@ -1,0 +1,9 @@
+{
+  "name": "wrong-type-is-transform-decode",
+  "from": "nga-msi-asam",
+  "to": "nga-msi-asam",
+  "input": "{\"reference\":\"REFERENCE B\",\"date\":\"DATE B\",\"latitude\":\"not a number\",\"longitude\":-0.5,\"position\":\"POSITION B\",\"navArea\":\"NAVAREA B\",\"subreg\":\"SUBREG B\",\"hostility\":\"HOSTILITY B\",\"victim\":\"VICTIM B\",\"description\":\"DESCRIPTION B\"}",
+  "expect_error": "transform-decode",
+  "source": "derived by tools/gen/nga-msi2pack.py from the json wire's canonical output (spec/engine-spec.md 0.5); no engine run",
+  "reference": "NGA MSI /api/publications/asam records as archived (asam); the record is written for this repository; latitude is a JSON number in every archived record; a string there fails its float transform"
+}

@@ -32,6 +32,7 @@ below, and every vector of another pack that converts from or to one of them.
 | [CC-BY-3.0](https://creativecommons.org/licenses/by/3.0/) | yes | no | yes | none | `open` |
 | [CC-BY-4.0](https://creativecommons.org/licenses/by/4.0/) | yes | no | yes | none | `open` |
 | [CC-BY-NC-SA-4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) | no | yes | yes | none | `everything` |
+| [LicenseRef-NGA-MSI](https://msi.nga.mil) | yes | no | yes | none | `open` |
 | [LicenseRef-OASIS-Notice](https://www.oasis-open.org/policies-guidelines/ipr/) | yes | no | yes | none | `open` |
 | [LicenseRef-OGC-Document](https://www.ogc.org/about/policies/document-license-agreement/) | yes | no | yes | none | `open` |
 | LicenseRef-unstated | unknown | no | yes | none | `everything` |
@@ -291,6 +292,10 @@ below, and every vector of another pack that converts from or to one of them.
 | `packs/mavsdk-winch-status` | `mavsdk-winch-status` | LicenseRef-unstated | `everything` | its own licence |
 | `packs/mds` | `mds` | CC-BY-4.0 | `open` | its own licence |
 | `packs/mvt` | `mvt` | CC-BY-3.0 | `open` | its own licence |
+| `packs/nga-msi-asam` | `nga-msi-asam` | LicenseRef-NGA-MSI | `open` | its own licence |
+| `packs/nga-msi-broadcast-warn` | `nga-msi-broadcast-warn` | LicenseRef-NGA-MSI | `open` | its own licence |
+| `packs/nga-msi-ngalol` | `nga-msi-ngalol` | LicenseRef-NGA-MSI | `open` | its own licence |
+| `packs/nga-msi-wpi` | `nga-msi-wpi` | LicenseRef-NGA-MSI | `open` | its own licence |
 | `packs/open311-request` | `open311-request` | CC-BY-3.0 | `open` | its own licence |
 | `packs/open311-request-response` | `open311-request-response` | CC-BY-3.0 | `open` | its own licence |
 | `packs/open311-service` | `open311-service` | CC-BY-3.0 | `open` | its own licence |
@@ -957,6 +962,10 @@ below, and every vector of another pack that converts from or to one of them.
 | `model/mavsdkwinchstatus.def` | LicenseRef-unstated | `everything` | its own licence |
 | `model/mds.def` | CC-BY-4.0 | `open` | its own licence |
 | `model/mvt.def` | CC-BY-3.0 | `open` | its own licence |
+| `model/ngaasam.def` | LicenseRef-NGA-MSI | `open` | its own licence |
+| `model/ngabwarn.def` | LicenseRef-NGA-MSI | `open` | its own licence |
+| `model/ngalol.def` | LicenseRef-NGA-MSI | `open` | its own licence |
+| `model/ngawpi.def` | LicenseRef-NGA-MSI | `open` | its own licence |
 | `model/open311request.def` | CC-BY-3.0 | `open` | its own licence |
 | `model/open311requestresponse.def` | CC-BY-3.0 | `open` | its own licence |
 | `model/open311service.def` | CC-BY-3.0 | `open` | its own licence |
