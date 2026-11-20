@@ -2525,7 +2525,7 @@ impl Pack {
                 }
                 "end" if open.is_empty() && uper_open > 0 => uper_open -= 1,
                 "tag" | "length" | "key" => tlv_lines.record(&toks, ln, !kinds.is_empty())?,
-                "checksum" if toks.get(1).map(|s| s.as_str()) == Some("sum16") => tlv_lines.record(&toks, ln, !kinds.is_empty())?,
+                "checksum" if matches!(toks.get(1).map(|s| s.as_str()), Some("sum16") | Some("crc32")) => tlv_lines.record(&toks, ln, !kinds.is_empty())?,
                 d @ ("delimiter" | "start" | "checksum") => {
                     let slot = match d {
                         "delimiter" => 0,
@@ -3030,7 +3030,7 @@ impl Pack {
         let format = format.expect("checked above");
         let tlv_conf = match (wire, tlv_lines.first_line()) {
             (Wire::Tlv, _) => tlv::check_pack(&tlv_lines, &fields, &whens, &consts, &groups, &kinds)?,
-            (_, Some(ln)) => return bad(ln, "`tag`, `length`, `key` and `checksum sum16` are valid only on the tlv wire"),
+            (_, Some(ln)) => return bad(ln, "`tag`, `length`, `key` and `checksum sum16` or `crc32` are valid only on the tlv wire"),
             _ => tlv::TlvConf::default(),
         };
         // `armor sixbit` and `encoding uper` need `bit_order msb` (0.14, 0.19); `msb-lsb` is not `msb`
@@ -8458,8 +8458,9 @@ fn pack_line_checks(text: &str) -> Result<(), Error> {
         if name == "key" && n != 1 {
             return err(format!("unknown-directive: line {}: `key` with {} arguments is a line of a module, not of a pack", ln, n));
         }
-        // 5e: `checksum` takes one argument; `checksum sum16 <tag>` (0.13) two
-        let most = if name == "checksum" && toks[1] != "sum16" { 1 } else { most };
+        // 5e: `checksum` takes one argument; `checksum sum16 <tag>` (0.13) and
+        // `checksum crc32 <tag>` (0.27) two
+        let most = if name == "checksum" && toks[1] != "sum16" && toks[1] != "crc32" { 1 } else { most };
         if n < least || n > most {
             let takes = match (least, most) {
                 (l, m) if l == m => l.to_string(),

@@ -1,0 +1,8 @@
+Pack misb-st0806; module misb0806
+  MISB ST 0806.4, Remote Video Terminal Metadata Set, Motion Imagery
+  Standards Board. NSG Registry public document store (the file
+  ST0806.4.pdf; its registry page number was not found). The registry states
+  that materials in its public portions are in the public domain, released
+  for public use, or fair use of copyright material; the document carries no
+  distribution statement and no license text. Item tags, types and sizes and
+  the CRC parameters only; no text, table, figure, example or code.

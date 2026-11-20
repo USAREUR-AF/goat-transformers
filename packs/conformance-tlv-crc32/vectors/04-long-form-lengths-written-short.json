@@ -1,0 +1,14 @@
+{
+  "name": "long-form-lengths-written-short",
+  "from": "conformance-tlv-crc32",
+  "to": "conformance-tlv-crc32",
+  "input": "060e2b34020b01010e0103010200000082002b020800000177e5138e000381054352432d310402ffd60d042000000030830000040281010501046fc9265f",
+  "expect": "060e2b34020b01010e0103010200000026020800000177e5138e0003054352432d310402ffd60d042000000030030201050104420a6d5e",
+  "model": {
+    "uid": "CRC-1",
+    "probe.n": "-42",
+    "probe.x": "5"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.27 (a CRC-32 checksum on the tlv wire) with Version 0.13 (the tlv wire): Input uses long-form BER lengths (set 82 002b, uid 81 05, item 48 83 000004, 48.2 81 01) with a correct CRC 6fc9265f over those bytes; decode accepts a long form with more bytes than needed, encode writes the short form, so the output is the message of all-fields-round-trip with its own CRC 420a6d5e computed over the new bytes. CRC-32 of ISO/IEC 13818-1 (poly 04c11db7, init ffffffff, MSB first, no reflection, no final XOR) over the key through the checksum item's tag and length (ruling 1 of 0.27). Derived without an engine by a standalone reference program, checked against the check values 123456789 -> 0376e6e7 and empty -> ffffffff."
+}

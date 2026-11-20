@@ -29,8 +29,10 @@ pub struct TlvConf {
     pub length: Enc,
     /// `key <hex>`: the bytes the message begins with (empty: no key)
     pub key: Vec<u8>,
-    /// `checksum sum16 <tag>`
+    /// `checksum sum16 <tag>` or `checksum crc32 <tag>` (0.27): the tag
     pub checksum: Option<u32>,
+    /// the checksum is CRC-32 (0.27), not sum16
+    pub crc32: bool,
 }
 
 /// The largest tag: 2^28-1, four bytes of BER-OID.
@@ -72,7 +74,7 @@ impl TlvLines {
 
     fn conf(&self) -> Result<TlvConf, Error> {
         if let Some(ln) = self.misplaced {
-            return bad(ln, "`tag`, `length`, `key` and `checksum sum16` stand once each, before the first `kind`");
+            return bad(ln, "`tag`, `length`, `key` and `checksum` stand once each, before the first `kind`");
         }
         let mut c = TlvConf::default();
         let one = |slot: usize| -> Option<(usize, &[String])> { self.lines[slot].as_ref().map(|(ln, t)| (*ln, t.as_slice())) };
@@ -109,8 +111,11 @@ impl TlvLines {
         }
         if let Some((ln, t)) = one(3) {
             c.checksum = match t {
-                [_, s, tag] if s == "sum16" => Some(tag_number(tag, c.tag).or_else(|m| bad(ln, m))?),
-                _ => return bad(ln, "`checksum` on the tlv wire is `sum16 <tag>`"),
+                [_, s, tag] if s == "sum16" || s == "crc32" => {
+                    c.crc32 = s == "crc32";
+                    Some(tag_number(tag, c.tag).or_else(|m| bad(ln, m))?)
+                }
+                _ => return bad(ln, "`checksum` on the tlv wire is `sum16 <tag>` or `crc32 <tag>`"),
             };
         }
         Ok(c)
@@ -557,17 +562,18 @@ pub(crate) fn decode_in(p: &Pack, lay: &Layout, input: &str) -> Result<Entity, E
     let mut top = read_set(c, &b, start, end).map_err(|m| malformed(p, m))?;
     // step 4: the checksum item
     if let Some(t) = c.checksum {
+        let w = if c.crc32 { 4 } else { 2 };
         let last = match top.pop() {
-            Some(last) if last.tag == t && last.end - last.val == 2 => last,
-            _ => return Err(malformed(p, format!("the last item is not a checksum of tag {} and two bytes", t))),
+            Some(last) if last.tag == t && last.end - last.val == w => last,
+            _ => return Err(malformed(p, format!("the last item is not a checksum of tag {} and {} bytes", t, w))),
         };
         if top.iter().any(|i| i.tag == t) {
             return Err(malformed(p, format!("an item of the checksum tag {} before the last", t)));
         }
-        let stated = be(&b[last.val..last.end]) as u16;
-        let sum = sum16(&b[..last.val]);
+        let stated = be(&b[last.val..last.end]);
+        let sum = if c.crc32 { crc32(&b[..last.val]) as u64 } else { sum16(&b[..last.val]) as u64 };
         if sum != stated {
-            return Err(malformed(p, format!("the checksum is {:04x}, the message states {:04x}", sum, stated)));
+            return Err(malformed(p, format!("the checksum is {:0w$x}, the message states {:0w$x}", sum, stated, w = 2 * w)));
         }
     }
     let sel = p.select_decode(None, |w| when_holds(p, lay, &b, &top, w))?;
@@ -605,6 +611,20 @@ pub(crate) fn decode_in(p: &Pack, lay: &Layout, input: &str) -> Result<Entity, E
 #[cfg(feature = "tlv")]
 fn sum16(b: &[u8]) -> u16 {
     b.iter().enumerate().fold(0u16, |a, (i, c)| a.wrapping_add(if i % 2 == 0 { (*c as u16) << 8 } else { *c as u16 }))
+}
+
+/// CRC-32 of ISO/IEC 13818-1 (0.27): polynomial 0x04C11DB7, register
+/// starting at 0xFFFFFFFF, each byte taken most significant bit first, no
+/// reflection and no final XOR.
+fn crc32(b: &[u8]) -> u32 {
+    let mut r = 0xFFFF_FFFFu32;
+    for &x in b {
+        r ^= (x as u32) << 24;
+        for _ in 0..8 {
+            r = if r & 0x8000_0000 != 0 { (r << 1) ^ 0x04C1_1DB7 } else { r << 1 };
+        }
+    }
+    r
 }
 
 // ---------------------------------------------------------------------------
@@ -912,7 +932,7 @@ pub(crate) fn encode_in(p: &Pack, lay: &Layout, ent: &Entity) -> Result<String, 
     let mut set = Vec::new();
     write_node(p, lay, &sel, ent, &root, &mut set)?;
     if let Some(t) = c.checksum {
-        put_item(p, t, &[0, 0], &mut set)?;
+        put_item(p, t, if c.crc32 { &[0, 0, 0, 0] } else { &[0, 0] }, &mut set)?;
     }
     let mut out = Vec::with_capacity(set.len() + c.key.len() + 9);
     if !c.key.is_empty() {
@@ -922,8 +942,22 @@ pub(crate) fn encode_in(p: &Pack, lay: &Layout, ent: &Entity) -> Result<String, 
     out.extend_from_slice(&set);
     if c.checksum.is_some() {
         let n = out.len();
-        let sum = sum16(&out[..n - 2]);
-        out[n - 2..].copy_from_slice(&sum.to_be_bytes());
+        if c.crc32 {
+            let sum = crc32(&out[..n - 4]);
+            out[n - 4..].copy_from_slice(&sum.to_be_bytes());
+        } else {
+            let sum = sum16(&out[..n - 2]);
+            out[n - 2..].copy_from_slice(&sum.to_be_bytes());
+        }
     }
     Ok(bits::to_hex(&out))
+}
+
+#[cfg(test)]
+mod crc32_tests {
+    #[test]
+    fn check_value() {
+        // the check value of CRC-32/MPEG-2 over the ASCII digits 1 to 9
+        assert_eq!(super::crc32(b"123456789"), 0x0376_E6E7);
+    }
 }

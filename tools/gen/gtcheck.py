@@ -1066,8 +1066,9 @@ class _Loader:
                 if len(a) != 1 or not _TLV_KEY.match(a[0]):
                     self.bad(no, "`key %s` is not 1 to 64 bytes of lowercase hex" % " ".join(a))
                 pack.key = a[0]
-            elif len(a) != 2 or a[0] != "sum16" or not _TLV_TAG.match(a[1]):
-                self.bad(no, "`checksum %s` is not `checksum sum16 <tag>` on the tlv wire" % " ".join(a))
+            elif len(a) != 2 or a[0] not in ("sum16", "crc32") or not _TLV_TAG.match(a[1]):
+                self.bad(no, "`checksum %s` is not `checksum sum16 <tag>` or `checksum crc32 <tag>` on the tlv wire"
+                         % " ".join(a))
         for no, d, a, _ in self.tlv_lines:      # the tag is checked against the final `tag` form
             if d == "checksum":
                 pack.sum16 = self._tlv_tag(no, a[1])

@@ -1,0 +1,13 @@
+{
+  "name": "residue-in-top-and-nested-set",
+  "from": "conformance-tlv-crc32",
+  "to": "conformance-tlv-crc32",
+  "input": "060e2b34020b01010e0103010200000023020800000177e5138e0003054352432d3130060201050701aa3202cafe0104cb20b277",
+  "expect": "060e2b34020b01010e0103010200000023020800000177e5138e0003054352432d3130060201050701aa3202cafe0104cb20b277",
+  "model": {
+    "uid": "CRC-1",
+    "probe.x": "5"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.27 (a CRC-32 checksum on the tlv wire) with Version 0.13 (the tlv wire): Top item 50 (cafe) is residue, written after the mapped items and before the checksum item; nested item 48.7 (aa) is residue of the set 48 walks into, written after 48.2. Input order equals written order, so the output is the input with the same CRC cb20b277. CRC-32 of ISO/IEC 13818-1 (poly 04c11db7, init ffffffff, MSB first, no reflection, no final XOR) over the key through the checksum item's tag and length (ruling 1 of 0.27). Derived without an engine by a standalone reference program, checked against the check values 123456789 -> 0376e6e7 and empty -> ffffffff."
+}

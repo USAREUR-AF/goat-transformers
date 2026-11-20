@@ -1,0 +1,33 @@
+# MISB ST 0806 Remote Video Terminal (RVT) Local Set, standalone form: the
+# 16-byte key, a BER length, items with BER-OID tags and BER lengths, and the
+# CRC-32 item 1 last. Public. Top-level items only; the subordinate sets
+# (items 11, 12 and 13) are residue.
+format        misb-st0806
+version       0.1.0
+distribution  public
+source        "MISB ST 0806.4 Remote Video Terminal Metadata Set (27 February 2014), Motion Imagery Standards Board"
+source        "NSG Registry public document store, file ST0806.4.pdf, through an Internet Archive capture; the registry states its public portions are public domain, released for public use, or fair use"
+uses          misb0806
+wire          tlv
+tag           ber-oid
+length        ber
+key           060e2b34020b01010e01030102000000
+checksum      crc32 1
+
+field    misb0806.precision_time_us              2:8   uint
+field    misb0806.platform_true_airspeed         3:2   uint
+field    misb0806.platform_indicated_airspeed    4:2   uint
+field    misb0806.telemetry_accuracy_indicator   5:1   uint
+field    misb0806.frag_circle_radius             6:2   uint
+field    misb0806.frame_code                     7:4   uint
+field    misb0806.ls_version                     8:1   uint
+field    misb0806.video_data_rate                9:4   uint
+field    misb0806.video_format                   10    utf8
+field    misb0806.mgrs_zone                      14:1  uint
+field    misb0806.mgrs_band_square               15    utf8
+field    misb0806.mgrs_easting                   16:3  uint
+field    misb0806.mgrs_northing                  17:3  uint
+field    misb0806.frame_center_mgrs_zone         18:1  uint
+field    misb0806.frame_center_mgrs_band_square  19    utf8
+field    misb0806.frame_center_mgrs_easting      20:3  uint
+field    misb0806.frame_center_mgrs_northing     21:3  uint

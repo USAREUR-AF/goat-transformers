@@ -1,0 +1,12 @@
+{
+  "name": "bytes-after-the-set-ignored",
+  "from": "misb-st0806",
+  "to": "misb-st0806",
+  "input": "060e2b34020b01010e0103010200000013020800065772b2ee7240080104010447c728cddeadbeef",
+  "expect": "060e2b34020b01010e0103010200000013020800065772b2ee7240080104010447c728cd",
+  "model": {
+    "misb0806.ls_version": "4"
+  },
+  "source": "constructed: values chosen for this vector; packet built from the item layouts of packs/misb-st0806/pack.def; no ST 0806 example or example value used",
+  "reference": "spec/engine-spec.md Version 0.13 (tlv wire) with Version 0.27 (crc32: poly 04c11db7, init ffffffff, MSB first, no reflection, no final XOR, over key through the checksum item's tag and length, ruling 1); derived without an engine by a standalone program (Python standard library), CRC routine checked against 123456789 -> 0376e6e7 and empty -> ffffffff; four bytes after the set the outer length states are ignored (0.13 Reading step 2); the CRC covers the input from the key through the checksum item's length, not the trailing bytes"
+}

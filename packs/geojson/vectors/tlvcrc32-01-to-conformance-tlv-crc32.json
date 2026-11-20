@@ -1,0 +1,14 @@
+{
+  "name": "to-conformance-tlv-crc32",
+  "from": "geojson",
+  "to": "conformance-tlv-crc32",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[10,30,100]},\"properties\":{\"time_ms\":1614456000000,\"extra\":\"x\"},\"id\":\"G-1\"}",
+  "expect": "060e2b34020b01010e010301020000001b020800000177e5138e000303472d310d042aaaaaaa010483dfb6c3",
+  "model": {
+    "uid": "G-1",
+    "time_ms": "1614456000000",
+    "lat": "30"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.27 (a CRC-32 checksum on the tlv wire) with Version 0.13 (the tlv wire): geojson uid G-1, time_ms 1614456000000, lat 30 (lon, hae and the residue member extra have no line in the target and are not written). Output: the 16-byte key, the set length 0x1b, item 2 (00000177e5138e00), item 3 (G-1), item 13 lat 30 * 2147483647 / 90 = 715827882.333 rounds to 715827882 = 2aaaaaaa; probe.n and probe.x are absent (no item 4, and the nested set 48 with no items is not written); then the checksum item 01 04 83dfb6c3 last, counted in the set length. CRC-32 of ISO/IEC 13818-1 (poly 04c11db7, init ffffffff, MSB first, no reflection, no final XOR) over the key through the checksum item's tag and length (ruling 1 of 0.27). Derived without an engine by a standalone reference program, checked against the check values 123456789 -> 0376e6e7 and empty -> ffffffff."
+}

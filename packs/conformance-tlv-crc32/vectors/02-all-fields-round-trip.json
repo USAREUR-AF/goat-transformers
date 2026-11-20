@@ -1,0 +1,16 @@
+{
+  "name": "all-fields-round-trip",
+  "from": "conformance-tlv-crc32",
+  "to": "conformance-tlv-crc32",
+  "input": "060e2b34020b01010e0103010200000026020800000177e5138e0003054352432d310402ffd60d042000000030030201050104420a6d5e",
+  "expect": "060e2b34020b01010e0103010200000026020800000177e5138e0003054352432d310402ffd60d042000000030030201050104420a6d5e",
+  "model": {
+    "time_ms": "1614456000000",
+    "uid": "CRC-1",
+    "probe.n": "-42",
+    "lat": "22.50000001047738",
+    "probe.x": "5"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.27 (a CRC-32 checksum on the tlv wire) with Version 0.13 (the tlv wire): Every line: 2 time_ms, 3 uid CRC-1, 4 probe.n -42 as twos:2 ffd6, 13 lat 0x20000000 * 90 / 2147483647 = 22.50000001047738 (encode 22.50000001047738 * 2147483647 / 90 rounds back to 536870912), 48 a nested set holding 2 (probe.x 5); items in line order, shortest lengths, CRC 420a6d5e last. CRC-32 of ISO/IEC 13818-1 (poly 04c11db7, init ffffffff, MSB first, no reflection, no final XOR) over the key through the checksum item's tag and length (ruling 1 of 0.27). Derived without an engine by a standalone reference program, checked against the check values 123456789 -> 0376e6e7 and empty -> ffffffff."
+}
