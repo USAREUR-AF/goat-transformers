@@ -128,7 +128,6 @@ The figure is drawn from `packs/` by `python3 -I tools/catalog-figure.py`; `tool
 | `nmea0183` | NMEA 0183 sentences: 23 standard, any talker, and 21 proprietary sentences that gpsd parses | `text` | 45 |
 | `gpx` | GPX 1.1, the first waypoint, route point or track point | `xml` | 3 |
 | `kml` | KML 2.2 Placemark | `xml` | 2 |
-
 | `sparkplug-b` | MQTT Sparkplug B payload | `protobuf` | 1 |
 | `gtfs-realtime` | GTFS Realtime feed message | `protobuf` | 1 |
 | `gtfs-realtime-entity` | GTFS Realtime feed entity (vehicle position, trip update, alert, …) | `protobuf` | 6 |
