@@ -1,0 +1,11 @@
+{
+  "name": "01-proj-string-carried-as-text",
+  "from": "osi-ground-truth",
+  "to": "osi-ground-truth",
+  "input": "0a060803100818001205080c10fa0172312b70726f6a3d75746d202b7a6f6e653d3332202b656c6c70733d5747533834202b756e6974733d6d202b6e6f5f64656673",
+  "expect": "0a060803100818001205080c10fa0172312b70726f6a3d75746d202b7a6f6e653d3332202b656c6c70733d5747533834202b756e6974733d6d202b6e6f5f64656673",
+  "model": {
+    "osigroundtruth.ground_truth_proj_string": "+proj=utm +zone=32 +ellps=WGS84 +units=m +no_defs",
+    "osigroundtruth.timestamp_seconds": "12"
+  }
+}

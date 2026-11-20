@@ -1,0 +1,14 @@
+{
+  "name": "01-geodetic-position-roundtrip",
+  "from": "osi-host-vehicle-data",
+  "to": "osi-host-vehicle-data",
+  "input": "421d1a1b0900000000002027401100000000001848401900000000003a80404a06080310081800520c0880e2cfaa061080cab5ee01",
+  "expect": "421d1a1b0900000000002027401100000000001848401900000000003a80404a06080310081800520c0880e2cfaa061080cab5ee01",
+  "model": {
+    "lat": "48.1875",
+    "lon": "11.5625",
+    "osihostvehicledata.vehicle_localization_geodetic_position_altitude": "519.25",
+    "osihostvehicledata.version_version_minor": "8",
+    "osihostvehicledata.timestamp_nanos": "500000000"
+  }
+}

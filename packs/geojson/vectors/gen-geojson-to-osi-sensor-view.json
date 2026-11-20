@@ -1,0 +1,11 @@
+{
+  "name": "gen-geojson-to-osi-sensor-view",
+  "from": "geojson",
+  "to": "osi-sensor-view",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[22,23.75]},\"properties\":{}}",
+  "expect": "321642141a12090000000000003640110000000000c03740",
+  "model": {
+    "lat": "23.75",
+    "lon": "22"
+  }
+}
