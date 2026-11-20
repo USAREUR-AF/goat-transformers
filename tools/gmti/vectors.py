@@ -503,6 +503,18 @@ def write(pack, vectors):
         if old.endswith(".json"):
             os.remove(os.path.join(d, old))
     pfx = len(pack) + 1
+    # A vector lives under the pack that owns its input (its "from"); one whose
+    # input is another pack's goes to that pack's vectors/ as to-<pack>-<name>,
+    # removing only this script's own earlier copies there.
+    cross = [v for v in vectors if v["from"] != pack]
+    vectors = [v for v in vectors if v["from"] == pack]
+    for v in cross:
+        cd = os.path.join(os.path.dirname(OUT), "..", v["from"], "vectors")
+        os.makedirs(cd, exist_ok=True)
+        name = v["name"][pfx:] if v["name"].startswith(pack + "-") else v["name"][5:]
+        with open(os.path.join(cd, "to-%s-%s.json" % (pack, name)), "w", encoding="utf-8") as fh:
+            json.dump(v, fh, indent=2)
+            fh.write("\n")
     for i, v in enumerate(vectors, 1):
         with open(os.path.join(d, "%02d-%s.json" % (i, v["name"][pfx:] if v["name"].startswith(pack + "-") else v["name"][5:])),
                   "w", encoding="utf-8") as fh:

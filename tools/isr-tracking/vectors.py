@@ -146,6 +146,14 @@ def main():
     for old in os.listdir(OUT):
         if old.endswith(".json"):
             os.remove(os.path.join(OUT, old))
+    # A vector lives under the pack that owns its input (its "from"); one whose
+    # input is another pack's goes to that pack's vectors/ as to-isr-tracking-<name>.
+    for v in [v for v in out if v["from"] != "isr-tracking"]:
+        cd = os.path.join(REPO, "packs", v["from"], "vectors")
+        with open(os.path.join(cd, "to-isr-tracking-%s.json" % v["name"][13:]), "w", encoding="utf-8") as fh:
+            json.dump(v, fh, indent=2)
+            fh.write("\n")
+    out = [v for v in out if v["from"] == "isr-tracking"]
     for i, v in enumerate(out, 1):
         with open(os.path.join(OUT, "%02d-%s.json" % (i, v["name"][13:])), "w", encoding="utf-8") as fh:
             json.dump(v, fh, indent=2)
