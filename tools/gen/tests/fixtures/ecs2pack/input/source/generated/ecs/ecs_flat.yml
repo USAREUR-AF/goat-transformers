@@ -1,0 +1,53 @@
+'@timestamp':
+  dashed_name: timestamp
+  description: 'A time written for the tests.
+
+    A second paragraph, continued
+
+    on more lines.'
+  level: core
+  normalize: []
+  otel:
+  - otlp_field: a
+    relation: otlp
+  - note: 'A note written for the tests: it spans
+      two lines.
+
+      '
+    otlp_field: b
+  type: date
+event.id:
+  description: An id written for the tests.
+  normalize: []
+  type: keyword
+event.sequence:
+  normalize: []
+  type: long
+host.geo.location:
+  example: '{ "lon": 1, "lat": 2 }'
+  normalize: []
+  type: geo_point
+host.ip:
+  normalize:
+  - array
+  type: ip
+host.uptime_ratio:
+  normalize: []
+  type: scaled_float
+labels:
+  normalize: []
+  object_type: keyword
+  type: object
+threat.enrichments:
+  normalize:
+  - array
+  type: nested
+threat.enrichments.indicator.name:
+  normalize: []
+  type: keyword
+threat.enrichments.matched.occurred:
+  normalize: []
+  type: date
+user.changes.active:
+  normalize: []
+  type: boolean

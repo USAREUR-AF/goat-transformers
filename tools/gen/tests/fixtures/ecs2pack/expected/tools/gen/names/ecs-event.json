@@ -1,0 +1,18 @@
+{
+ "keys": {
+  "host_ip|.|string": "host_ip_value",
+  "threat_enrichments|indicator.name|string": "threat_enrichments_indicator_name",
+  "threat_enrichments|matched.occurred|string": "threat_enrichments_matched_occurred",
+  "|@timestamp|string": "timestamp",
+  "|event.id|string": "event_id",
+  "|event.sequence|int": "event_sequence",
+  "|host.geo.location.lat|float": "host_geo_location_lat",
+  "|host.geo.location.lon|float": "host_geo_location_lon",
+  "|host.uptime_ratio|float": "host_uptime_ratio",
+  "|user.changes.active|int": "user_changes_active"
+ },
+ "lists": {
+  "|host.ip": "host_ip",
+  "|threat.enrichments": "threat_enrichments"
+ }
+}
