@@ -1,0 +1,17 @@
+{
+ "name": "gen-place-roundtrip",
+ "from": "osdm-place",
+ "to": "osdm-place",
+ "input": "{\"objectType\":\"s40681\",\"id\":\"s16568\",\"alternativeIds\":[\"s77055\",\"s7747\"],\"geoPosition\":{\"longitude\":151.2094,\"latitude\":21.3069},\"modes\":[{\"ptMode\":\"s31158\",\"name\":\"s21034\",\"shortName\":\"s79786\",\"description\":\"s2625\"},{\"ptMode\":\"s67654\",\"name\":\"s46934\",\"shortName\":\"s21801\",\"description\":\"s477\"}],\"ref\":{\"objectType\":\"s19121\"},\"_links\":[{\"rel\":\"s69860\",\"href\":\"https://example.org/599\",\"type\":\"s41641\",\"value\":\"s43784\"},{\"rel\":\"s90014\",\"href\":\"https://example.org/2\",\"type\":\"s68311\",\"value\":\"s42940\"}]}",
+ "expect": "{\"objectType\":\"s40681\",\"id\":\"s16568\",\"alternativeIds\":[\"s77055\",\"s7747\"],\"geoPosition\":{\"longitude\":151.2094,\"latitude\":21.3069},\"modes\":[{\"ptMode\":\"s31158\",\"name\":\"s21034\",\"shortName\":\"s79786\",\"description\":\"s2625\"},{\"ptMode\":\"s67654\",\"name\":\"s46934\",\"shortName\":\"s21801\",\"description\":\"s477\"}],\"ref\":{\"objectType\":\"s19121\"},\"_links\":[{\"rel\":\"s69860\",\"href\":\"https://example.org/599\",\"type\":\"s41641\",\"value\":\"s43784\"},{\"rel\":\"s90014\",\"href\":\"https://example.org/2\",\"type\":\"s68311\",\"value\":\"s42940\"}]}",
+ "model": {
+  "uid": "s16568",
+  "lat": "21.3069",
+  "lon": "151.2094",
+  "osdmplace.object_type": "s40681",
+  "osdmplace.id": "s16568",
+  "osdmplace.alternative_ids.#": "2",
+  "osdmplace.geo_position_longitude": "151.2094",
+  "osdmplace.geo_position_latitude": "21.3069"
+ }
+}

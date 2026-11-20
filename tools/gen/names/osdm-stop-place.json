@@ -1,0 +1,28 @@
+{
+ "keys": {
+  "alternative_ids|.|string": "alternative_ids_value",
+  "links|href|string": "links_href",
+  "links|rel|string": "links_rel",
+  "links|type|string": "links_type",
+  "links|value|string": "links_value",
+  "modes|description|string": "modes_description",
+  "modes|name|string": "modes_name",
+  "modes|ptMode|string": "modes_pt_mode",
+  "modes|shortName|string": "modes_short_name",
+  "name_translations|language|string": "name_translations_language",
+  "name_translations|shortText|string": "name_translations_short_text",
+  "name_translations|text|string": "name_translations_text",
+  "|geoPosition.latitude|float": "geo_position_latitude",
+  "|geoPosition.longitude|float": "geo_position_longitude",
+  "|id|string": "id",
+  "|name|string": "name",
+  "|objectType|string": "object_type",
+  "|ref.objectType|string": "ref_object_type"
+ },
+ "lists": {
+  "|_links": "links",
+  "|alternativeIds": "alternative_ids",
+  "|modes": "modes",
+  "|nameTranslations": "name_translations"
+ }
+}
