@@ -12,12 +12,16 @@ on:
   pull_request:
     paths:
       - 'site/**'
+      - 'docs/figures/hub-*.svg'
+      - 'README.md'
       - 'tools/repo-stats'
       - '.github/workflows/pages.yml'
   push:
     branches: [main]
     paths:
       - 'site/**'
+      - 'docs/figures/hub-*.svg'
+      - 'README.md'
       - 'packs/**'
       - 'model/**'
       - 'engines/rust/**'

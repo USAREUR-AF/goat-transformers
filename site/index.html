@@ -106,9 +106,23 @@ cargo build --release</pre>
     <ul class="numbers strip" aria-label="Counted from the tree">
       <li><b data-stat="formats">2,531</b><span class="unit">formats<sup><a href="#fn-formats">1</a></sup></span><span class="d">each one a pack from a public source</span></li>
       <li><b data-stat="message_kinds">13,663</b><span class="unit">message kinds<sup><a href="#fn-kinds">2</a></sup></span><span class="d">message layouts across those formats</span></li>
-      <li><b data-stat="conversion_vectors">17,628</b><span class="unit">conversion vectors<sup><a href="#fn-vectors">3</a></sup></span><span class="d">all seven engines match every one</span></li>
-      <li><b data-stat="wasm_bytes">569,285</b><span class="unit">bytes<sup><a href="#fn-wasm">4</a></sup></span><span class="d">the engine as WebAssembly, in this page</span></li>
+      <li><b data-stat="conversion_vectors">17,832</b><span class="unit">conversion vectors<sup><a href="#fn-vectors">3</a></sup></span><span class="d">all seven engines match every one</span></li>
+      <li><b data-stat="wasm_bytes">605,983</b><span class="unit">bytes<sup><a href="#fn-wasm">4</a></sup></span><span class="d">the engine as WebAssembly, in this page</span></li>
     </ul>
+  </div>
+</section>
+
+<section id="hub" class="hub" aria-labelledby="h-hub">
+  <div class="wrap">
+    <p class="tag">Every format, one model</p>
+    <h2 id="h-hub">Every format maps to one shared model</h2>
+    <figure>
+      <div class="scroll"><picture>
+        <source media="(prefers-color-scheme: dark)" srcset="assets/figures/hub-dark.svg">
+        <img src="assets/figures/hub-light.svg" width="1000" height="560" alt="Public formats, among them Cursor on Target, GeoJSON, SAPIENT, MAVLink 2, NMEA 2000, ADS-B, Remote ID and 27 ASTERIX categories, each connect to one shared model in the center. A dashed outer ring holds formats kept in a private overlay, which connect to the same shared model.">
+      </picture></div>
+      <figcaption>Public formats sit around the shared model, each connected to it and to nothing else. The dashed outer ring is formats kept in a private overlay: they connect to the same model and convert to and from every public format, and their packs never enter this repository. <a href="https://github.com/USAREUR-AF/goat-transformers/blob/main/docs/boundary.md">docs/boundary.md</a> states the rules. The figure is the one at the top of the <a href="https://github.com/USAREUR-AF/goat-transformers#readme">README</a>, copied from <code>docs/figures/</code> when the page is built.</figcaption>
+    </figure>
   </div>
 </section>
 
@@ -163,7 +177,7 @@ echo 122624160b42bf241b6ed1b4b69808ac0870086b53150e0200 \
   <div class="wrap">
     <p class="tag">Live</p>
     <h2 id="h-demo">The engine runs in this page</h2>
-    <p class="lead">This is the engine itself: the Rust reference engine compiled to WebAssembly, <span data-stat="wasm_bytes">569,285</span> bytes, with nine packs. Choose two formats, edit the message and read the result. The page sends nothing anywhere.</p>
+    <p class="lead">This is the engine itself: the Rust reference engine compiled to WebAssembly, <span data-stat="wasm_bytes">605,983</span> bytes, with nine packs. Choose two formats, edit the message and read the result. The page sends nothing anywhere.</p>
 
     <div class="demo" id="demo-box">
       <form class="demo-bar js-only" id="demo-form" aria-label="Formats">
@@ -220,7 +234,7 @@ echo 122624160b42bf241b6ed1b4b69808ac0870086b53150e0200 \
       <li id="fn-wasm"><code>cd bindings/wasm &amp;&amp; cargo build --profile small --target wasm32-unknown-unknown &amp;&amp; wc -c target/wasm32-unknown-unknown/small/goat_transformers_wasm.wasm</code>, with rustc 1.97.1. The size depends on the compiler version; the figure in the demo is read from the file this page loads.</li>
       <li id="fn-capture">From <code>engines/rust</code> after <code>cargo build --release</code>: <code>echo 122624160b42bf241b6ed1b4b69808ac0870086b53150e0200 | ./target/release/goat-xf convert --from remote-id --to nmea2000</code>, and the same with <code>--to cot-xml</code>.</li>
     </ol>
-    <p class="note">Counted at commit <code>6c6f9db</code>. <code>site/build.sh</code> counts again on every build and fails when this page states a different number.</p>
+    <p class="note">Counted at commit <code>7597d81</code>. <code>site/build.sh</code> counts again on every build and fails when this page states a different number.</p>
   </div>
 </section>
 
@@ -345,12 +359,12 @@ build:       cargo build --release --lib --target wasm32-unknown-unknown</span><
     <p class="note">To choose which formats a deployment needs, <code>tools/goat-options</code> lists every way data can get from a system that produces it to a system that needs it, from plain-text system records and the packs, with the status of each step (<a href="https://github.com/USAREUR-AF/goat-transformers/blob/main/docs/system-records.md">docs/system-records.md</a>).</p>
     <div class="table-scroll">
       <table>
-        <caption>Measured sizes, at commit 6c6f9db</caption>
+        <caption>Measured sizes, at commit 7597d81</caption>
         <thead><tr><th>What</th><th class="n">Bytes</th><th>Measured with</th></tr></thead>
         <tbody>
-          <tr><td>WebAssembly module, small build</td><td class="n" data-stat="wasm_bytes">569,285</td><td class="cmd">footnote 4</td></tr>
-          <tr><td>The same module after <code>gzip -9</code></td><td class="n">223,380</td><td class="cmd"><code>gzip -9 -c goat_transformers_wasm.wasm | wc -c</code></td></tr>
-          <tr><td>Command-line tool <code>goat-xf</code>, release build, macOS arm64</td><td class="n">1,592,112</td><td class="cmd"><code>wc -c engines/rust/target/release/goat-xf</code></td></tr>
+          <tr><td>WebAssembly module, small build</td><td class="n" data-stat="wasm_bytes">605,983</td><td class="cmd">footnote 4</td></tr>
+          <tr><td>The same module after <code>gzip -9</code></td><td class="n">235,164</td><td class="cmd"><code>gzip -9 -c goat_transformers_wasm.wasm | wc -c</code></td></tr>
+          <tr><td>Command-line tool <code>goat-xf</code>, release build, macOS arm64</td><td class="n">1,657,776</td><td class="cmd"><code>wc -c engines/rust/target/release/goat-xf</code></td></tr>
           <tr><td>The two packs of the conversion at the top of this page</td><td class="n">8,712</td><td class="cmd"><code>cat packs/remote-id/pack.def packs/cot-xml/pack.def | wc -c</code></td></tr>
           <tr><td>The three model modules those packs use</td><td class="n">13,014</td><td class="cmd"><code>cat model/core.def model/rid.def model/track.def | wc -c</code></td></tr>
         </tbody>
