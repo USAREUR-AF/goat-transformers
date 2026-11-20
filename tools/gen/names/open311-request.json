@@ -1,0 +1,22 @@
+{
+ "keys": {
+  "|address_id|string": "address_id",
+  "|address|string": "address",
+  "|agency_responsible|string": "agency_responsible",
+  "|description|string": "description",
+  "|expected_datetime|string": "expected_datetime",
+  "|lat|float": "lat",
+  "|long|float": "long",
+  "|media_url|string": "media_url",
+  "|requested_datetime|string": "requested_datetime",
+  "|service_code|string": "service_code",
+  "|service_name|string": "service_name",
+  "|service_notice|string": "service_notice",
+  "|service_request_id|string": "service_request_id",
+  "|status_notes|string": "status_notes",
+  "|status|string": "status",
+  "|updated_datetime|string": "updated_datetime",
+  "|zipcode|string": "zipcode"
+ },
+ "lists": {}
+}

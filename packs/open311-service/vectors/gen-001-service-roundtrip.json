@@ -1,0 +1,16 @@
+{
+ "name": "gen-service-roundtrip",
+ "from": "open311-service",
+ "to": "open311-service",
+ "input": "{\"service_code\":\"s18660\",\"service_name\":\"s77251\",\"description\":\"s58774\",\"metadata\":true,\"type\":\"realtime\",\"keywords\":\"s45518\",\"group\":\"s91652\"}",
+ "expect": "{\"service_code\":\"s18660\",\"service_name\":\"s77251\",\"description\":\"s58774\",\"metadata\":true,\"type\":\"realtime\",\"keywords\":\"s45518\",\"group\":\"s91652\"}",
+ "model": {
+  "open311service.service_code": "s18660",
+  "open311service.service_name": "s77251",
+  "open311service.description": "s58774",
+  "open311service.metadata": "1",
+  "open311service.type": "realtime",
+  "open311service.keywords": "s45518",
+  "open311service.group": "s91652"
+ }
+}

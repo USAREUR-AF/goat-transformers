@@ -1,0 +1,7 @@
+{
+ "name": "gen-request-residue",
+ "from": "open311-request",
+ "to": "open311-request",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"service_request_id\":\"s15441\",\"status\":\"open\",\"status_notes\":\"s76234\",\"service_name\":\"s82918\",\"service_code\":\"s40648\",\"description\":\"s51623\",\"agency_responsible\":\"s76965\",\"service_notice\":\"s3455\",\"requested_datetime\":\"2026-10-13T18:18:53.701Z\",\"updated_datetime\":\"2026-06-04T19:06:01.430Z\",\"expected_datetime\":\"2026-11-09T08:57:26.384Z\",\"address\":\"s96563\",\"address_id\":\"s67480\",\"zipcode\":\"s49752\",\"lat\":38.8977,\"long\":-157.8583,\"media_url\":\"https://example.org/252\"}",
+ "expect": "{\"service_request_id\":\"s15441\",\"status\":\"open\",\"status_notes\":\"s76234\",\"service_name\":\"s82918\",\"service_code\":\"s40648\",\"description\":\"s51623\",\"agency_responsible\":\"s76965\",\"service_notice\":\"s3455\",\"requested_datetime\":\"2026-10-13T18:18:53.701Z\",\"updated_datetime\":\"2026-06-04T19:06:01.430Z\",\"expected_datetime\":\"2026-11-09T08:57:26.384Z\",\"address\":\"s96563\",\"address_id\":\"s67480\",\"zipcode\":\"s49752\",\"lat\":38.8977,\"long\":-157.8583,\"media_url\":\"https://example.org/252\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}
