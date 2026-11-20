@@ -1,0 +1,10 @@
+{
+  "name": "members-not-mapped",
+  "from": "i3s-building-statistics",
+  "to": "i3s-building-statistics",
+  "input": "{\"summary\":[{\"fieldName\":\"fieldName-1\",\"label\":\"label-2\",\"modelName\":\"modelName-3\",\"min\":4.25,\"max\":5.25,\"subLayerIds\":[6,7]},{\"fieldName\":\"fieldName-8\",\"label\":\"label-9\",\"modelName\":\"modelName-10\",\"min\":11.25,\"max\":12.25,\"subLayerIds\":[13,14]}],\"x-vendor\":{\"note\":\"kept\",\"tags\":[\"dropped\"]}}",
+  "expect": "{\"summary\":[{\"fieldName\":\"fieldName-1\",\"label\":\"label-2\",\"modelName\":\"modelName-3\",\"min\":4.25,\"max\":5.25,\"subLayerIds\":[6,7]},{\"fieldName\":\"fieldName-8\",\"label\":\"label-9\",\"modelName\":\"modelName-10\",\"min\":11.25,\"max\":12.25,\"subLayerIds\":[13,14]}],\"x-vendor\":{\"note\":\"kept\"}}",
+  "model": {},
+  "source": "derived by tools/gen/i3s2pack.py from the member layouts it holds and spec/engine-spec.md; no engine run",
+  "reference": "members the pack does not map: their scalar members come back as residue after the mapped ones, arrays among them are not carried (0.5 json residue)"
+}

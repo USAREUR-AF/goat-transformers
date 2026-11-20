@@ -1,0 +1,9 @@
+{
+  "name": "wrong-json-type",
+  "from": "i3s-statistics",
+  "to": "i3s-statistics",
+  "input": "{\"stats\":{\"totalValuesCount\":\"x\",\"min\":2.25,\"max\":3.25,\"minTimeStr\":\"minTimeStr-4\",\"maxTimeStr\":\"maxTimeStr-5\",\"count\":6.25,\"sum\":7.25,\"avg\":8.25,\"stddev\":9.25,\"variance\":10.25,\"histogram\":{\"minimum\":11.25,\"maximum\":12.25,\"counts\":[13.25,14.25]},\"mostFrequentValues\":[{\"count\":15.25},{\"count\":16.25}]}}",
+  "expect_error": "transform-decode",
+  "source": "derived by tools/gen/i3s2pack.py from the member layouts it holds and spec/engine-spec.md; no engine run",
+  "reference": "stats.totalValuesCount holds a value of the wrong JSON type: transform-decode"
+}

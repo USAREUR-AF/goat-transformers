@@ -1,0 +1,9 @@
+{
+  "name": "wrong-json-type",
+  "from": "i3s-point-cloud-statistics",
+  "to": "i3s-point-cloud-statistics",
+  "input": "{\"attribute\":1,\"stats\":{\"min\":2.25,\"max\":3.25,\"count\":4.25,\"sum\":5.25,\"avg\":6.25,\"stddev\":7.25,\"variance\":8.25,\"histogram\":{\"minimum\":9.25,\"maximum\":10.25,\"counts\":[11.25,12.25]},\"mostFrequentValues\":[{\"value\":13.25,\"count\":14.25},{\"value\":15.25,\"count\":16.25}]},\"labels\":{\"labels\":[{\"value\":17.25,\"label\":\"label-18\"},{\"value\":19.25,\"label\":\"label-20\"}],\"bitfieldLabels\":[{\"bitNumber\":21,\"label\":\"label-22\"},{\"bitNumber\":23,\"label\":\"label-24\"}]}}",
+  "expect_error": "transform-decode",
+  "source": "derived by tools/gen/i3s2pack.py from the member layouts it holds and spec/engine-spec.md; no engine run",
+  "reference": "attribute holds a value of the wrong JSON type: transform-decode"
+}

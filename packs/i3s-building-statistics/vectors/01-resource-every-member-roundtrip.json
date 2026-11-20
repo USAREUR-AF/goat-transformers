@@ -1,0 +1,13 @@
+{
+  "name": "resource-every-member-roundtrip",
+  "from": "i3s-building-statistics",
+  "to": "i3s-building-statistics",
+  "input": "{\"summary\":[{\"fieldName\":\"fieldName-1\",\"label\":\"label-2\",\"modelName\":\"modelName-3\",\"min\":4.25,\"max\":5.25,\"subLayerIds\":[6,7]},{\"fieldName\":\"fieldName-8\",\"label\":\"label-9\",\"modelName\":\"modelName-10\",\"min\":11.25,\"max\":12.25,\"subLayerIds\":[13,14]}]}",
+  "expect": "{\"summary\":[{\"fieldName\":\"fieldName-1\",\"label\":\"label-2\",\"modelName\":\"modelName-3\",\"min\":4.25,\"max\":5.25,\"subLayerIds\":[6,7]},{\"fieldName\":\"fieldName-8\",\"label\":\"label-9\",\"modelName\":\"modelName-10\",\"min\":11.25,\"max\":12.25,\"subLayerIds\":[13,14]}]}",
+  "model": {
+    "i3s.summary.#": "2",
+    "i3s.summary[1].i3s.summary_field_name": "fieldName-8"
+  },
+  "source": "derived by tools/gen/i3s2pack.py from the member layouts it holds and spec/engine-spec.md; no engine run",
+  "reference": "every member the pack maps is set, two items in every array (the fixed size where the specification gives one); the output is the input"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "wrong-json-type",
+  "from": "i3s-building-statistics",
+  "to": "i3s-building-statistics",
+  "input": "{\"summary\":[{\"fieldName\":1,\"label\":\"label-2\",\"modelName\":\"modelName-3\",\"min\":4.25,\"max\":5.25,\"subLayerIds\":[6,7]},{\"fieldName\":\"fieldName-8\",\"label\":\"label-9\",\"modelName\":\"modelName-10\",\"min\":11.25,\"max\":12.25,\"subLayerIds\":[13,14]}]}",
+  "expect_error": "transform-decode",
+  "source": "derived by tools/gen/i3s2pack.py from the member layouts it holds and spec/engine-spec.md; no engine run",
+  "reference": "an item of summary holds a value of the wrong JSON type: transform-decode"
+}

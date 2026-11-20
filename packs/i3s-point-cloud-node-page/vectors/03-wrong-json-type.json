@@ -1,0 +1,9 @@
+{
+  "name": "wrong-json-type",
+  "from": "i3s-point-cloud-node-page",
+  "to": "i3s-point-cloud-node-page",
+  "input": "{\"nodes\":[{\"resourceId\":\"x\",\"firstChild\":2,\"childCount\":3,\"vertexCount\":4,\"obb\":{\"center\":[5.25,6.25,7.25],\"halfSize\":[8.25,9.25,10.25],\"quaternion\":[11.25,12.25,13.25,14.25]},\"lodThreshold\":15.25},{\"resourceId\":16,\"firstChild\":17,\"childCount\":18,\"vertexCount\":19,\"obb\":{\"center\":[20.25,21.25,22.25],\"halfSize\":[23.25,24.25,25.25],\"quaternion\":[26.25,27.25,28.25,29.25]},\"lodThreshold\":30.25}]}",
+  "expect_error": "transform-decode",
+  "source": "derived by tools/gen/i3s2pack.py from the member layouts it holds and spec/engine-spec.md; no engine run",
+  "reference": "an item of nodes holds a value of the wrong JSON type: transform-decode"
+}
