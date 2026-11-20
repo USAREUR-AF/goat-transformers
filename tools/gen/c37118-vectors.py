@@ -53,15 +53,10 @@ def num(x):
     return repr(x)
 
 
-TQ_MS = {n: 10.0 ** (n - 7) for n in range(1, 12)}
-
-
 def header_model(idcode, soc, frac, tq, version=1, leap=(0, 0, 0)):
     m = {"c37118.version": str(version), "c37118.idcode": str(idcode), "c37118.soc": str(soc),
          "c37118.leap_direction": str(leap[0]), "c37118.leap_occurred": str(leap[1]),
          "c37118.leap_pending": str(leap[2]), "c37118.time_quality": str(tq), "c37118.fracsec": str(frac)}
-    if tq in TQ_MS:
-        m["time_error_ms"] = repr(TQ_MS[tq])
     return m
 
 
@@ -100,10 +95,10 @@ def data_a():
               "c37118.phasors[1].c37118.phasor_imag": "-10392", "c37118.freq_dev_mhz": "-15",
               "c37118.rocof_hzs": "0.25", "c37118.analogs.#": "3", "c37118.analogs[1].c37118.analog_value": "230.25",
               "c37118.digital": "240", "c37118.stat_data_error": "0", "c37118.chk": str(struct.unpack(">H", fr[-2:])[0]),
-              "@absent": ["time_ms", "lat", "lon"]})
+              "@absent": ["time_ms", "lat", "lon", "time_error_ms"]})
     out = {"01-data-roundtrip": vec("data-roundtrip", p, fr, fr, model=m,
                                     ref="4 integer rectangular phasors, 3 floating-point analogs, integer frequency and "
-                                        "rate of change (100 times Hz/s), one digital word; time quality 5 is a 0.01 ms bound")}
+                                        "rate of change (100 times Hz/s), one digital word; time quality 5 stays a raw code")}
     st2 = stat(err=2, sync_lost=1, arrival=1, trig=1, cfgchg=1, mod=1, tq=7, unl=3, reason=15)
     body2 = struct.pack(">H", st2) + body[2:]
     fr2 = frame(0, 65535, 0, 16777215, 0, body2, version=2, leap=(1, 1, 1))
@@ -111,10 +106,10 @@ def data_a():
     m2.update({"@kind": "data", "c37118.stat_data_error": "2", "c37118.stat_sync_lost": "1",
                "c37118.stat_sorted_arrival": "1", "c37118.stat_trigger": "1", "c37118.stat_config_change": "1",
                "c37118.stat_data_modified": "1", "c37118.stat_time_quality": "7", "c37118.stat_unlocked_time": "3",
-               "c37118.stat_trigger_reason": "15", "@absent": ["time_error_ms"]})
+               "c37118.stat_trigger_reason": "15", "@absent": ["time_error_ms", "time_utc_error_ms"]})
     out["02-data-every-flag-roundtrip"] = vec("data-every-flag-roundtrip", p, fr2, fr2, model=m2,
                                               ref="version 2, every STAT and leap flag set, the largest fraction; "
-                                                  "time quality 0 (locked) states no bound")
+                                                  "time quality 0 (locked) as a raw code")
     out["03-other-config-size-is-no-kind"] = vec(
         "other-config-size-is-no-kind", p, frame(0, 4321, SOC, 0, 0, body + b"\0\0\0\0"), error="no-kind",
         ref="a data frame of another configuration (56 bytes) is not this pack's")
@@ -139,7 +134,7 @@ def data_b():
     return p, {"01-data-roundtrip": vec("data-roundtrip", p, fr, fr, model=m,
                                         ref="3 floating-point polar phasors (magnitude, angle in radians), frequency "
                                             "and rate of change in floating point, one analog, one digital word; "
-                                            "time quality 9 is a 100 ms bound")}
+                                            "time quality 9 as a raw code")}
 
 
 def command():

@@ -10,17 +10,6 @@ uses    c37118
 wire    bits
 word_bytes 1
 bit_order  msb
-map  tq_bound  1  0.000001
-map  tq_bound  2  0.00001
-map  tq_bound  3  0.0001
-map  tq_bound  4  0.001
-map  tq_bound  5  0.01
-map  tq_bound  6  0.1
-map  tq_bound  7  1
-map  tq_bound  8  10
-map  tq_bound  9  100
-map  tq_bound  10  1000
-map  tq_bound  11  10000
 # Common header: SYNC (0xAA, a reserved bit, frame type, version), FRAMESIZE, IDCODE, SOC, FRACSEC.
 when    0:0:8    170
 when    0:8:1    0
@@ -31,9 +20,9 @@ field   c37118.leap_direction  0:81:1   uint
 field   c37118.leap_occurred   0:82:1   uint
 field   c37118.leap_pending    0:83:1   uint
 field   c37118.time_quality    0:84:4   uint
-# The time quality code as an error bound: code n (1 to 11) is within 10^(n-10) s of UTC.
-# Code 0 (locked) states no bound and 15 is a clock failure: no key.
-field   time_error_ms          0:84:4   uint  via tq_bound  absent 0,12,13,14,15
+# The time quality code stays raw (c37118.time_quality): it is a worst-case bound on the
+# offset from UTC, which matches neither core time_error_ms (internal coherence) nor
+# time_utc_error_ms (one sigma). pack.md says why.
 field   c37118.fracsec         0:88:24  uint
 kind    data
 when    0:9:3    0

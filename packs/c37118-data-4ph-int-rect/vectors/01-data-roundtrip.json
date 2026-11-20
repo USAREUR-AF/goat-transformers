@@ -13,7 +13,6 @@
     "c37118.leap_pending": "0",
     "c37118.time_quality": "5",
     "c37118.fracsec": "500000",
-    "time_error_ms": "0.01",
     "@kind": "data",
     "c37118.phasors.#": "4",
     "c37118.phasors[1].c37118.phasor_real": "-6000",
@@ -28,9 +27,10 @@
     "@absent": [
       "time_ms",
       "lat",
-      "lon"
+      "lon",
+      "time_error_ms"
     ]
   },
   "source": "derived by tools/gen/c37118-vectors.py from the layout pypmu writes; no engine run",
-  "reference": "pypmu commit 66e6c495a91e synchrophasor/frame.py (CommonFrame, DataFrame, ConfigFrame1/2, CommandFrame); 4 integer rectangular phasors, 3 floating-point analogs, integer frequency and rate of change (100 times Hz/s), one digital word; time quality 5 is a 0.01 ms bound"
+  "reference": "pypmu commit 66e6c495a91e synchrophasor/frame.py (CommonFrame, DataFrame, ConfigFrame1/2, CommandFrame); 4 integer rectangular phasors, 3 floating-point analogs, integer frequency and rate of change (100 times Hz/s), one digital word; time quality 5 stays a raw code"
 }

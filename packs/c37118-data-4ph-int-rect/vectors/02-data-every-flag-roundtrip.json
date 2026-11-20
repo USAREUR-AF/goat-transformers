@@ -24,9 +24,10 @@
     "c37118.stat_unlocked_time": "3",
     "c37118.stat_trigger_reason": "15",
     "@absent": [
-      "time_error_ms"
+      "time_error_ms",
+      "time_utc_error_ms"
     ]
   },
   "source": "derived by tools/gen/c37118-vectors.py from the layout pypmu writes; no engine run",
-  "reference": "pypmu commit 66e6c495a91e synchrophasor/frame.py (CommonFrame, DataFrame, ConfigFrame1/2, CommandFrame); version 2, every STAT and leap flag set, the largest fraction; time quality 0 (locked) states no bound"
+  "reference": "pypmu commit 66e6c495a91e synchrophasor/frame.py (CommonFrame, DataFrame, ConfigFrame1/2, CommandFrame); version 2, every STAT and leap flag set, the largest fraction; time quality 0 (locked) as a raw code"
 }

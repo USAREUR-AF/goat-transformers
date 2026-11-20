@@ -13,7 +13,6 @@
     "c37118.leap_pending": "0",
     "c37118.time_quality": "4",
     "c37118.fracsec": "0",
-    "time_error_ms": "0.001",
     "@kind": "cfg1",
     "c37118.time_base": "1000000",
     "c37118.station_name": "Grid West       ",
