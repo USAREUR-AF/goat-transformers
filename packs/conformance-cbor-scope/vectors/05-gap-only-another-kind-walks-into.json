@@ -1,0 +1,18 @@
+{
+  "name": "gap-only-another-kind-walks-into",
+  "from": "conformance-cbor-scope",
+  "to": "conformance-cbor-scope",
+  "input": "80",
+  "expect": "84f605f6420aff",
+  "model": {
+    "@kind": "bare",
+    "@absent": [
+      "probe.s2"
+    ]
+  },
+  "context": {
+    "probe.s2": "0aff"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): packs/conformance-cbor-scope/pack.def (group probe.items [0] with probe.qty a.b int; probe.val [1] uint under const [1] 5; probe.s2 [3] bytes; kind located: when [4] 1, lat [2].1 float; kind bare: no when); Ruling 30: kind bare is selected (located's when [4] 1 fails on 80) and kept; [2] is walked into as a map only by located's lat line, which is not of the selected scope, so the gap at [2] is f6, not a0. [0] is f6 (group path, list absent), [1] the const 5, [3] from the context: 84 f6 05 f6 420aff. Derived without an engine by a standalone RFC 8949 codec."
+}

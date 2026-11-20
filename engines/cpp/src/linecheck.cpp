@@ -72,9 +72,10 @@ const std::set<std::string>& one_argument() {
                                          "element",
                                          // v0.19: a pack directive of one value, as `armor`
                                          "encoding",
-
                                          // v0.20 ruling 39
-                                         "switch", "case"};
+                                         "switch", "case",
+                                         // v0.28: `tag <n>` on cbor, and the `tag` of tlv (0.13)
+                                         "tag"};
     return s;
 }
 
@@ -158,6 +159,16 @@ void check_locator(const LineChecker& c, Wire wire, bool sequential, bool in_gro
         case Wire::Tlv:
             // 0.13: a path and its size are checked after the file is read (bad-directive).
             return;
+        case Wire::Cbor:
+            // 0.28 Paths and ruling 22: `.` is a path only on a `field` in a group body.
+            if (loc == ".") {
+                if (!is_field || !in_group) bad("'.' is a cbor path only on a field in a group body");
+                return;
+            }
+#if GT_WIRE_CBOR
+            if (!cbor_path_valid(loc)) bad("not a cbor path of integer keys, text keys and [i] positions");
+#endif
+            return;
         case Wire::Text: {
 #if GT_WIRE_TEXT
             TextLocator t;
@@ -174,7 +185,7 @@ void check_locator(const LineChecker& c, Wire wire, bool sequential, bool in_gro
 // geojson, and the steps of protobuf. The forms a group locator may end in
 // are not ruled and are left to the checks after the file, as is the bits
 // `<word>:<pos>` and the text index.
-void check_group_locator(const LineChecker& c, Wire wire, const std::string& loc) {
+void check_group_locator(const LineChecker& c, Wire wire, bool in_group, const std::string& loc) {
     auto bad = [&](const std::string& why) { c.fail(ErrorKind::BadLocator, why, loc); };
     auto empty_step = [&](char sep) {
         if (loc.empty()) return true;
@@ -202,6 +213,16 @@ void check_group_locator(const LineChecker& c, Wire wire, const std::string& loc
             if (!parse_protobuf_locator(loc, pb)) bad("not a protobuf locator");
             return;
         }
+        case Wire::Cbor:
+            // 0.28 ruling 22: `group <list> .` names the top item, outside a body only.
+            if (loc == ".") {
+                if (in_group) bad("'.' is a cbor group path only outside a group body");
+                return;
+            }
+#if GT_WIRE_CBOR
+            if (!cbor_path_valid(loc)) bad("not a cbor path of integer keys, text keys and [i] positions");
+#endif
+            return;
         default: return;
     }
 }
@@ -300,7 +321,7 @@ void check_pack_lines(const std::string& text, const std::string& source) {
 
         if (kw == "group") {
             // 8. the locator form
-            if (!sequential && nargs >= 2) check_group_locator(c, wire, t[2]);
+            if (!sequential && nargs >= 2) check_group_locator(c, wire, group_depth > 0, t[2]);
             if (!sequential) {
                 ++group_depth;
                 blocks.push_back(true);
@@ -333,7 +354,8 @@ void check_pack_lines(const std::string& text, const std::string& source) {
         const int tf = parse_any_transform(t[3], f, err);
         // On tlv a transform that does not parse is bad-directive, checked
         // after the file is read (0.13 ruling 8): not a line check there.
-        if (wire != Wire::Tlv) {
+        // 0.28 rulings 25 and 34: on cbor, as on tlv, the whole transform check is after the file.
+        if (wire != Wire::Tlv && wire != Wire::Cbor) {
             if (tf == -2) c.fail(ErrorKind::UnknownTransform, err + " for field '" + f.key + "'", f.locator);
             if (tf == -1) c.fail(ErrorKind::BadDirective, err + " for field '" + f.key + "'", f.locator);
         }
@@ -380,6 +402,8 @@ void check_pack_lines(const std::string& text, const std::string& source) {
         if (!f.has_absent) continue;
         // 0.13 ruling 14: `absent` does not fit the tlv wire, which is checked after the file.
         if (wire == Wire::Tlv) continue;
+        // 0.28 ruling 10: nor the cbor wire; its values are not checked there.
+        if (wire == Wire::Cbor) continue;
         // 0.19 ruling 22: `absent` on a UPER locator, whose bits depend on its
         // value, is bad-directive after the file; it has no raw value to check here.
         if (wire == Wire::Bits && uper_locator_form(f.locator)) continue;

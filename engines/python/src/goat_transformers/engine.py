@@ -505,7 +505,7 @@ class Engine:
         0.15)."""
         if isinstance(raw, _Num) and not getattr(transform, "exact", False) and math.isinf(float(raw)):
             raise ValueError("number %s is outside the double range" % (raw[:40],))
-        if wire in ("bits", "protobuf", "text", "tlv"):
+        if wire in ("bits", "protobuf", "text", "tlv", "cbor"):
             return transform.decode(raw)
         if wire == "xml":
             return transform.decode(raw)
@@ -565,8 +565,10 @@ class Engine:
         plan = pack.plan(kind)
         if wire == "bits":
             codec.check_length(pack, msg, plan)
-        elif wire == "tlv":
-            codec.walk(pack, msg, plan)  # the nested sets of the selected scope, after the kind (0.13)
+        elif wire == "tlv" or wire == "cbor":
+            # tlv: the nested sets of the selected scope, after the kind (0.13);
+            # cbor: Reading step 8 for every line of the selected scope (0.28)
+            codec.walk(pack, msg, plan)
 
         failures = []  # (key, locator, reason) of every field that could not be decoded
         budget = [limit]  # the items this decode may still hold (ruling 7 of 0.11)
@@ -583,6 +585,8 @@ class Engine:
             res = codec.residue(pack, msg, mapped)
         elif wire == "text" or wire == "tlv":
             res = codec.residue(pack, msg, plan)
+        elif wire == "cbor":
+            res = codec.residue(pack, msg, plan, mapped)
         elif wire == "geojson":
             res = {}
             for loc, val in obs:
@@ -831,7 +835,7 @@ class Engine:
         residue = entity.residue.get(pack.name, {})
         if wire == "json":
             return codec.encode(pack, enc, residue).encode("utf-8")
-        if wire == "text" or wire == "tlv":
+        if wire == "text" or wire == "tlv" or wire == "cbor":
             return codec.write(pack, enc, residue).encode("utf-8")
         if wire == "xml":
             return codec.write(pack, enc, residue.items(), plan.root).encode("utf-8")
@@ -848,7 +852,7 @@ class Engine:
         defaults = plan.defaults
         c2n = pack.cot_to_native
         values = enc.values
-        skip = _CODECS["tlv"].overridden(plan) if pack.wire == "tlv" else ()
+        skip = _CODECS[pack.wire].overridden(plan) if pack.wire in ("tlv", "cbor") else ()
         for i, f in plan.ifields:
             if i in skip:
                 continue  # its item holds a `when` or `const` value (ruling 9 of 0.13)

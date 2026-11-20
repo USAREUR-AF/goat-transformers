@@ -328,7 +328,7 @@ void header_values(const std::string& text, std::string& format, std::vector<std
     }
 }
 
-const std::vector<std::string> kSpecWires = {"xml", "geojson", "json", "bits", "protobuf", "text", "tlv"};
+const std::vector<std::string> kSpecWires = {"xml", "geojson", "json", "bits", "protobuf", "text", "tlv", "cbor"};
 
 // A wire of the specification that this build lacks, or an empty string.
 std::string lacked_wire(const std::vector<std::string>& wires, const std::vector<std::string>& built) {

@@ -6,10 +6,10 @@ pub fn build(b: *std.Build) void {
 
     // Spec Version 0.24: the wires of the build. `-Dwires=xml,json,geojson`
     // builds the codecs of those wires only; the codec of every other wire is
-    // left out of the build. No `-Dwires`: all seven.
-    const wire_names = [_][]const u8{ "xml", "geojson", "json", "bits", "protobuf", "text", "tlv" };
+    // left out of the build. No `-Dwires`: all eight.
+    const wire_names = [_][]const u8{ "xml", "geojson", "json", "bits", "protobuf", "text", "tlv", "cbor" };
     var have = [_]bool{false} ** wire_names.len;
-    if (b.option([]const u8, "wires", "The wires to build, comma-separated: xml,geojson,json,bits,protobuf,text,tlv (default all seven)")) |list| {
+    if (b.option([]const u8, "wires", "The wires to build, comma-separated: xml,geojson,json,bits,protobuf,text,tlv,cbor (default all eight)")) |list| {
         var parts = std.mem.splitScalar(u8, list, ',');
         while (parts.next()) |part| {
             const name = std.mem.trim(u8, part, " ");
@@ -20,7 +20,7 @@ pub fn build(b: *std.Build) void {
                     break;
                 }
             } else {
-                std.log.err("-Dwires: {s} is not a wire (xml, geojson, json, bits, protobuf, text, tlv)", .{name});
+                std.log.err("-Dwires: {s} is not a wire (xml, geojson, json, bits, protobuf, text, tlv, cbor)", .{name});
                 std.process.exit(1);
             }
         }

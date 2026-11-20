@@ -751,6 +751,8 @@ void resolve_absent(const Pack& p, Wire wire, FieldLine& f, std::uint32_t bits_l
     if (wire == Wire::Text) bad("'absent' is not available on the text wire");
     // 0.13 ruling 10: nor on the `tlv` wire, where an empty value is already absent.
     if (wire == Wire::Tlv) bad("'absent' is not available on the tlv wire");
+    // 0.28 ruling 10: nor on the `cbor` wire, checked after the file is read.
+    if (wire == Wire::Cbor) bad("'absent' is not available on the cbor wire");
     // The values: the quoted empty token is the one value "the empty text".
     std::vector<std::string> values;
     const bool empty_text = f.absent_arg.empty();
@@ -2466,6 +2468,7 @@ std::shared_ptr<const PackPlan> build_plan(const Pack& p) {
             break;
         case Wire::Text:  // locators parsed when the pack was read (parse_text_locators)
         case Wire::Tlv:   // likewise (check_tlv_pack)
+        case Wire::Cbor:  // paths checked when the pack was read (check_cbor_pack)
             break;
     }
     return plan;

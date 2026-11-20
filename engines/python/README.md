@@ -176,13 +176,13 @@ of every wire not named, so the reduced package does not carry their code.
 From the repository root:
 
 ```
-python3 -I engines/python/build.py                            # all seven wires
+python3 -I engines/python/build.py                            # all eight wires
 python3 -I engines/python/build.py --wires xml,json,geojson   # only these
 python3 -I engines/python/build.py --wires bits --out /tmp/gx # elsewhere
 ```
 
 `--wires` takes a comma-separated set from `xml`, `geojson`, `json`, `bits`,
-`protobuf`, `text`, `tlv`; without it the build has all seven, as the source
+`protobuf`, `text`, `tlv`, `cbor`; without it the build has all eight, as the source
 tree and `pip install` from the repository have. The build writes
 `<out>/src/goat_transformers/` (put `<out>/src` on the import path) and a
 wheel, `<out>/dist/goat_transformers-<version>-py3-none-any.whl`, for
@@ -198,8 +198,9 @@ copy's `_build.py` names the set; `goat_transformers._build.WIRES` reads it.
 | `protobuf` | `wire_protobuf` |
 | `text` | `wire_text` |
 | `tlv` | `wire_tlv` |
+| `cbor` | `wire_cbor` (Version 0.28, ruling 38) |
 | `json` and `geojson` both | `jsonio`, the JSON reader and writer they share; `geojson` needs nothing of `wire_json` |
-| `bits`, `protobuf` and `tlv` all | `octets`, hex input and the `utf8` and `hex` octet transforms |
+| `bits`, `protobuf`, `tlv` and `cbor` all | `octets`, hex input and the `utf8` and `hex` octet transforms |
 
 Everything else (the pack and module parsers, the transforms, the engine, the
 tool) is in every build. A reduced build behaves for a pack on a wire it has
@@ -219,28 +220,28 @@ Status: Measured. From the repository root:
 python3 -I engines/python/reduced-build-check.py
 ```
 
-It builds the engine with all seven wires and with `xml`, `json` and
+It builds the engine with all eight wires and with `xml`, `json` and
 `geojson`, then, in a fresh interpreter on the reduced package: checks that
 the left-out modules are absent and never imported; loads every model module
 and every pack on the three wires; runs every conversion vector whose `from`
 and `to` packs are on them, and every load vector whose packs name no other
 wire of the specification; loads one pack on `bits` (and one sequential
-`bits` pack), `protobuf`, `text` and `tlv`, each of which must be
+`bits` pack), `protobuf`, `text`, `tlv` and `cbor`, each of which must be
 `unknown-wire` naming the wire and saying this build does not have it; and
 compares `model_keys` of every loaded format and the capability report of
 every converted pair with the full build. It prints the sizes and exits 1 on
 any failure. `--wires <set>` checks another set the same way.
 
-One run on 2026-11-21: 1624 packs loaded; 8164 of the 22258 conversion
-vectors run, 8164 passed; 382 load vectors run, 382 passed; the five
+One run on 2026-11-21: 1646 packs loaded; 8208 of the 22496 conversion
+vectors run, 8208 passed; 383 load vectors run, 383 passed; the six
 `unknown-wire` loads and the load of `wire morse` as specified; `model_keys`
-of 1624 formats and the capability report of 180 pairs the same in both
+of 1646 formats and the capability report of 180 pairs the same in both
 builds. Sizes:
 
 | Build | Wheel | Package source |
 |---|---|---|
-| all seven wires | 148402 bytes | 523777 bytes, 24 modules |
-| `xml`, `json`, `geojson` | 88186 bytes (59%) | 303896 bytes, 16 modules |
+| all eight wires | 154970 bytes | 550220 bytes, 24 modules |
+| `xml`, `json`, `geojson` | 83879 bytes (54%) | 292176 bytes, 15 modules |
 
 ## Parse once, and the benchmark
 
@@ -283,8 +284,8 @@ It loads every pack and model module. One run on 2026-11-21 gave
 
 | Test file | Covers |
 |---|---|
-| `test_vectors.py` | every conversion vector of every pack (22258, all passed), with its `max_items` and its `model` values read by the grammar of their key's type; every load vector, with `pack` or `packs` (1172, all passed); every capability vector (18, all passed) |
-| `test_malformed.py` | the input of every conversion vector cut and changed (131652 damaged inputs from 22255 vectors over 4289 packs, none raised anything but a named error); rulings 35 to 39 |
+| `test_vectors.py` | every conversion vector of every pack (22496, all passed), with its `max_items` and its `model` values read by the grammar of their key's type; every load vector, with `pack` or `packs` (1235, all passed); every capability vector (18, all passed) |
+| `test_malformed.py` | the input of every conversion vector cut and changed (132956 damaged inputs from 22493 vectors over 4320 packs, none raised anything but a named error); rulings 35 to 39; on the `cbor` wire (0.28) random bytes, deep nesting through arrays, maps and tags, huge declared lengths, unending indefinite items and hostile residue on encode |
 | `test_bits.py`, `test_kinds.py`, `test_rules.py`, `test_groups.py`, `test_seq.py`, `test_rulings08.py`, `test_engine.py` | the bits wire, kinds and the json wire, mapping rules, groups, sequential layouts, rulings 16 to 30 of 0.8, `packs_only`, grammar and residue, the exit status of the tool; the `iso8601_s` transform of Version 0.26 (whole seconds written, milliseconds dropped; valid on `xml`, `geojson`, `json` and `text` only, no parameter, an `int` key only) |
 | `test_licences.py` | Version 0.29: `Engine.from_dir` with each profile on the fixture trees of `packs/conformance/tool-fixtures/licences-*`, a profile not one of the three, and the line forms of ruling 1 (`REUSE.toml`, `.def.license`, `licences.toml`) and the profiles of ruling 2 on temporary trees |
 | `test_parse_once.py` | Version 0.25, ruling 1: the cases of `bench/set.json` (each input whole, cut and changed, `expect` converted back, decodes) give a new engine's result on an engine that converted the others, and from eight threads at once on one new engine; a load opens each file once |

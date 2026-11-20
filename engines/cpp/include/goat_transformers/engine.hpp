@@ -213,9 +213,10 @@ enum class Transform { String, Float, Int, Iso8601Ms, Uint, Twos, Linscale,
                        Scale, Iscale,                    // v0.15, xml, json and geojson
                        Iso8601Short,                     // v0.18, xml, json and geojson
                        CharsAscii8,                      // v0.22, bits wire
-                       Iso8601S                          // v0.26, xml, json, geojson and text
+                       Iso8601S,                         // v0.26, xml, json, geojson and text
+                       CborText, CborBytes, EpochS       // v0.28, cbor wire only: `text`, `bytes`, `epoch_s`
 };
-enum class Wire { Xml, GeoJson, Bits, Protobuf, Json, Text, Tlv };
+enum class Wire { Xml, GeoJson, Bits, Protobuf, Json, Text, Tlv, Cbor };
 
 // A locator of the `text` wire (v0.10): a field, a column of a field, or a pair
 // of fields. Inside a group the indexes count from the item's first field.
@@ -314,6 +315,13 @@ struct WhenLine {
     TextLocator text_loc;         // text wire: the parsed locator
     std::vector<std::uint32_t> tlv_path;  // tlv wire: the path of tags, outermost first
     std::uint32_t tlv_size = 0;           // tlv wire: `:<n>`, 0 when none
+    // cbor wire (v0.28): the value's type, set at load. An integer is
+    // `number` as the argument of major type 0, or of major type 1 when
+    // `cbor_negative` (the value -1 - number); a bool is `number` 0 or 1; a
+    // text string is `text`.
+    enum class CborType { Int, Bool, Text };
+    CborType cbor_type = CborType::Text;
+    bool cbor_negative = false;
     std::size_t line = 0;         // line number in pack.def
     int gate = -1;                // v0.17, a `const` only: the innermost gate block holding it
     // v0.20, a `when` only: the values it holds for. bits and the integer form
@@ -607,6 +615,11 @@ struct Pack {
     std::uint32_t tlv_checksum_tag = 0;
     std::vector<SeqCaseScope> seq_cases;  // v0.20: every `case` and `else`, file order
     std::size_t seq_count_lines = 0;      // v0.21: the number of `count <name>` lines
+    // v0.28, the `cbor` wire: `tag <n>`, and whether the paths decide an array
+    // as the top item (else a map).
+    bool cbor_tag = false;
+    std::uint64_t cbor_tag_value = 0;
+    bool cbor_top_array = false;
 };
 
 // Parse the text of a pack.def. `source` names the file in error messages.

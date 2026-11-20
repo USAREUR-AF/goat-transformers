@@ -25,6 +25,7 @@ var noParamTransforms = map[string]bool{
 	"uint": true, "twos": true, "f32": true, "f64": true, "ascii": true, "sixbit": true,
 	"pstring": true, "pvarint": true, "psint": true, "pdouble": true, "pfloat": true,
 	"utf8": true, "hex": true, // tlv (0.13); their wire is checked after the file
+	"text": true, "bytes": true, "epoch_s": true, // cbor (0.28); likewise
 }
 
 // checkTransformName checks the transform of a field line whatever the wire:
@@ -91,6 +92,18 @@ func (p *Pack) lineWire(inGroup bool) string {
 func (p *Pack) checkLocatorForm(s string, inGroup bool) (locator, bool, ErrorKind, error) {
 	wire := p.lineWire(inGroup)
 	switch {
+	case wire == WireCBOR:
+		// A path of integer, text and position steps (0.28, Paths); `.` is
+		// checked by the line that holds it. The values of an `absent`
+		// option are not read on cbor (0.28 ruling 10), so ok is false.
+		if s == "." {
+			return locator{}, false, "", nil
+		}
+		steps, err := parseCBORPath(s)
+		if err != nil {
+			return locator{}, false, ErrBadLocator, err
+		}
+		return locator{raw: s, cpath: steps}, false, "", nil
 	case wire == WireTLV:
 		// Every tag of a tlv path is checked after the file, against the
 		// `tag` line (0.13, "every check in this paragraph ... runs after
@@ -142,10 +155,16 @@ func (p *Pack) checkLocatorForm(s string, inGroup bool) (locator, bool, ErrorKin
 func (p *Pack) checkFieldLine(f *Field, opts []string, inGroup bool) (ErrorKind, error) {
 	// On tlv a transform not in its table, and uscale or sscale parameters
 	// that do not parse, are bad-directive after the file (0.13 ruling 8).
-	if p.Wire != WireTLV {
+	// On cbor every transform not in its table is bad-directive after the
+	// file (0.28, Transforms for `cbor`).
+	if p.Wire != WireTLV && p.Wire != WireCBOR {
 		if kind, err := checkTransformName(f.Transform); err != nil {
 			return kind, err
 		}
+	}
+	// `.` is a path only on a field in a group body (0.28 ruling 22).
+	if p.Wire == WireCBOR && f.Locator == "." && !inGroup {
+		return ErrBadLocator, fmt.Errorf("`.` is a path only on a field in a group body")
 	}
 	loc, ok, kind, err := p.checkLocatorForm(f.Locator, inGroup)
 	if err != nil {
@@ -177,6 +196,16 @@ func (p *Pack) checkGroupLocator(s string, inGroup bool) error {
 		return nil
 	}
 	switch p.lineWire(inGroup) {
+	case WireCBOR:
+		// `.` is a path on a group outside a body only (0.28 ruling 22).
+		if s == "." {
+			if inGroup {
+				return fmt.Errorf("`.` is not a group path inside a group body")
+			}
+			return nil
+		}
+		_, err := parseCBORPath(s)
+		return err
 	case WireXML:
 		for _, e := range strings.Split(s, "/") {
 			if e == "" {
@@ -201,6 +230,10 @@ func (p *Pack) checkGroupLocator(s string, inGroup bool) error {
 func (p *Pack) checkWhenLine(s string, inGroup bool) (ErrorKind, error) {
 	if p.seq {
 		return "", nil
+	}
+	// `const .` and `when .` are bad-locator on cbor (0.28 ruling 22).
+	if p.Wire == WireCBOR && s == "." {
+		return ErrBadLocator, fmt.Errorf("`.` is not a path of a when or const line")
 	}
 	_, _, kind, err := p.checkLocatorForm(s, inGroup)
 	if err != nil {

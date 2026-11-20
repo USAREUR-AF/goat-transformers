@@ -529,6 +529,7 @@ vec(DC, "73-null-walked-into-is-not-written-back.json", "null-walked-into-is-not
 exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "ruling23_cose.py")).read())
 exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "ruling23_group.py")).read())
 exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "bpv7.py")).read())
+exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "rulings27_31.py")).read())
 
 for p, o in OUT:
     os.makedirs(os.path.dirname(p), exist_ok=True)

@@ -2805,7 +2805,9 @@ impl Pack {
                         locator: toks[2].clone(),
                         transform: match Transform::parse(&toks[3]) {
                             Ok(t) => t,
-                            Err(e) if wire == Some(Wire::Tlv) => {
+                            Err(e)
+                                if wire == Some(Wire::Tlv) || wire == Some(Wire::Cbor) =>
+                            {
                                 bad_transform.get_or_insert((ln, e));
                                 Transform::Hex
                             }
@@ -2879,6 +2881,8 @@ impl Pack {
         if let Some((ln, e)) = bad_transform {
             return match wire {
                 Wire::Tlv => bad(ln, format!("the transform is not one of the tlv wire: {}", e.msg)),
+                // ruling 25 of 0.28
+                Wire::Cbor => bad(ln, format!("the transform is not one of the cbor wire: {}", e.msg)),
                 _ => Err(e),
             };
         }
@@ -8579,6 +8583,9 @@ fn pack_line_checks(text: &str) -> Result<(), Error> {
                 // `bad-directive`, checked after the file is read
                 let transform = match Transform::parse(&toks[3]) {
                     Err(_) if wire == Some(Wire::Tlv) => Transform::Hex,
+                    // rulings 25 and 34 of 0.28: on cbor the whole transform
+                    // check, parameters included, is after the file
+                    Err(_) if wire == Some(Wire::Cbor) => Transform::CborText,
                     t => t.map_err(|e| Error { msg: e.msg.replacen(": ", &format!(": line {}: ", ln), 1) })?,
                 };
                 // the options and the values of an `absent` option are line

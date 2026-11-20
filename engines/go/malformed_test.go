@@ -81,7 +81,7 @@ func TestMalformedInputNeverPanics(t *testing.T) {
 		}
 		in := bytesOf(t, v.Input, v.InputB64, "input")
 		armored := p.sixbitArmor
-		hexWire := !armored && (p.Wire == WireBits || p.Wire == WireProtobuf || p.Wire == WireTLV)
+		hexWire := !armored && (p.Wire == WireBits || p.Wire == WireProtobuf || p.Wire == WireTLV || p.Wire == WireCBOR)
 		jsonWire := p.Wire == WireJSON || p.Wire == WireGeoJSON
 		try := func(what string, b []byte) {
 			inputs++

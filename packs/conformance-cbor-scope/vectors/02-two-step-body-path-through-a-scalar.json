@@ -1,0 +1,9 @@
+{
+  "name": "two-step-body-path-through-a-scalar",
+  "from": "conformance-cbor-scope",
+  "to": "conformance-cbor-scope",
+  "input": "8281a161610505",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): packs/conformance-cbor-scope/pack.def (group probe.items [0] with probe.qty a.b int; probe.val [1] uint under const [1] 5; probe.s2 [3] bytes; kind located: when [4] 1, lat [2].1 float; kind bare: no when); Ruling 27: the element {\"a\": 5} is a map, the type the body needs; the step a reaches the integer 5, and the next step b needs a map there: Reading step 8, malformed-wire, not an item with no keys. Derived without an engine by a standalone RFC 8949 codec."
+}

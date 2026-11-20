@@ -5084,7 +5084,7 @@ group  <list> <path>                        # 0.7 groups: each element of the ar
 from 0 to 2^64-1 with no leading zero. On `cbor` it has the meaning of this
 section and on `tlv` that of 0.13; elsewhere, more than once, after the first
 `kind`, or with another value it is `bad-directive`, checked after the file
-is read. On `cbor` the only field option is `via`; `absent`, `swap`, `trim`
+is read. On `cbor` the field options are `via` and the `with` of 0.18; `absent`, `swap`, `trim`
 and `optional` are `bad-directive`, checked after the file.
 
 ## Paths
@@ -5303,3 +5303,54 @@ that path.
     residue: `null` or `undefined` there is an absent list and is not written
     back, so `81f6` through `conformance-cbor-group` is `80`. (A gap at that
     position below a present one is still `f6`, by ruling 23.)
+25. **A transform name no wire has** on a `cbor` field is `bad-directive`
+    after the file, as ruling 8 of 0.13 states for `tlv`, not
+    `unknown-transform` as the line is read.
+26. **`with` (0.18)** is a field option on `cbor` as on every wire; a
+    suppressed line writes nothing, as a line whose key is absent.
+27. **A deeper step of a group-body path** that meets an item of the wrong
+    type for its next step is `malformed-wire` (Reading step 8); only the
+    element itself being of the wrong type for the body makes an item with
+    no keys.
+28. **A NaN carried as residue** keeps its sign and payload, written at the
+    shortest width that holds them exactly.
+29. **A `field` at a path a `when` value or a `const` names** is not
+    encoded (ruling 16 of 0.5, ruling 9 of 0.13): its value is never
+    converted, so a value it could not encode raises no error.
+30. **The lines of ruling 23** are those of the selected scope: the common
+    lines and the chosen kind's. A position only another kind walks into is
+    `f6`.
+31. **Residue under ruling 21.** A line writes at a place only when it writes
+    a value there; a container the selected lines walk into but leave empty
+    takes its residue back whole.
+32. **Step 8 covers `const` lines** as every line of the selected scope: a
+    `const` whose path passes through an item of the wrong type for its next
+    step is `malformed-wire` on decode.
+33. **Residue through a written value.** Residue whose path passes through a
+    place a line wrote a value at, or through a container of the other type,
+    has nowhere to go and is dropped.
+34. **The whole transform check on `cbor` is after the file**, as ruling 8
+    of 0.13 states for `tlv`: no transform of the table takes parameters, so
+    a transform with parameters (`uscale:x`, `uscale:1/4`) is one the table
+    does not hold, and its name and parameters are checked together after
+    the file is read (`bad-directive`); a later line's error comes first.
+35. **Step 8 before any decode.** The type checks of Reading step 8, for
+    every line of the selected scope and every group element, come before
+    any value is decoded, so `malformed-wire` from step 8 wins over a
+    `transform-decode` of an earlier line.
+36. **No `when` lists on `cbor`.** The lists and ranges of 0.20 apply on
+    the wires its ruling 38 names; `cbor` is not one of them, so a comma in
+    a `when` value is part of a text string: `when 4 1,2` holds on the text
+    "1,2", and `when 4 a,,b` and `when 4 present,1` load. Rulings 16 and 25
+    of 0.20 govern lists and do not reach these values.
+37. **0.22's `until:` on `cbor`** is not a path of 0.28 (`:` is not a
+    path character), so it is `bad-locator` as the line is read (Paths),
+    before 0.22's after-file check could apply.
+38. **`cbor` and Versions 0.24 and 0.25.** `cbor` is a wire of ruling 1a of
+    0.24: a build may leave it out, a build that names no set has all eight
+    wires (the seven 0.24 lists and `cbor`), and a pack on `cbor` in a build
+    without it is `unknown-wire` with the message 1c states. An engine names
+    the switch for `cbor` the way it names the others, in its README. The
+    reduced-build check of 0.24 also loads a pack on `cbor` and expects that
+    error. The benchmark set of 0.25 (ruling 2a, every wire) holds a `cbor`
+    vector, `packs/dtn-bpv7/vectors/01-ipn-round-trip.json`.

@@ -681,7 +681,8 @@ self_contained(Pack, PackFiles) ->
 %% ===================================================================
 %% The input of the first ?PER_PACK conversion vectors of each pack, and of
 %% every vector of the packs `conformance-malformed-*`, `conformance-tlv*`,
-%% `conformance-armor*`, `conformance-sixbit*` and `conformance-uper*` (0.19),
+%% `conformance-armor*`, `conformance-sixbit*`, `conformance-uper*` (0.19)
+%% and `conformance-cbor*` (0.28),
 %% is cut short at prefixes and has
 %% single bytes replaced, and each result is converted as the vector
 %% converts. A case passes when convert returns bytes or fails with a
@@ -708,7 +709,8 @@ run_malformed(Engine, PacksDir) ->
                                      orelse lists:prefix("conformance-tlv", Pack)
                                      orelse lists:prefix("conformance-armor", Pack)
                                      orelse lists:prefix("conformance-sixbit", Pack)
-                                     orelse lists:prefix("conformance-uper", Pack) of
+                                     orelse lists:prefix("conformance-uper", Pack)
+                                     orelse lists:prefix("conformance-cbor", Pack) of
                                  true -> malformed_vector(Engine, Pack, File, Index);
                                  false -> {0, 0}
                              end,
@@ -765,6 +767,8 @@ ruling_cases() ->
     F = <<"conformance-tlv-fixed">>,
     A = <<"conformance-armor">>,
     S = <<"conformance-armor-seq">>,
+    C = <<"conformance-cbor">>,
+    CA = <<"conformance-cbor-array">>,
     [{J, refused, <<"{\"id\":\"u1\",\"n\":01}">>},
      {J, refused, <<"{\"id\":\"u1\",\"n\":-01}">>},
      {J, refused, <<"{\"id\":\"u1\",\"n\":+1}">>},
@@ -870,7 +874,58 @@ ruling_cases() ->
      {S, refused, <<"9D24">>},
      {S, refused, <<"9D24 6">>},
      {S, refused, <<"9D246\n">>},
-     {S, refused, <<>>}].
+     {S, refused, <<>>}] ++ cbor_cases(C, CA).
+
+%% Hostile CBOR (0.28): nesting through arrays, maps and tags far past the
+%% depth limit, declared lengths far past the input, indefinite items that
+%% never end, and chunks and breaks where they cannot stand. Each must be
+%% refused, at once and without taking memory for what the heads declare.
+cbor_cases(C, CA) ->
+    Rep = fun(Hex, N) -> binary:copy(Hex, N) end,
+    %% a head of major type MT declaring the largest length of each width
+    Huge = [gt_hex:bytes_to_hex(<<((MT bsl 5) bor AI), Arg/binary>>)
+            || MT <- [2, 3, 4, 5],
+               {AI, Arg} <- [{27, <<-1:64>>}, {26, <<-1:32>>}, {25, <<-1:16>>}, {24, <<255>>}]],
+    [{C, refused, <<"a200010a", (Rep(<<"81">>, 100000))/binary, "00">>},       % arrays
+     {C, refused, <<"a200010a", (Rep(<<"a101">>, 100000))/binary, "00">>},     % maps
+     {C, refused, <<"a200010a", (Rep(<<"c1">>, 100000))/binary, "00">>},       % tags
+     {C, refused, <<"a200010a", (Rep(<<"9f">>, 100000))/binary>>},             % indefinite arrays
+     {C, refused, <<"a200010a", (Rep(<<"bf01">>, 100000))/binary>>},           % indefinite maps
+     {C, refused, <<"a200010a", (Rep(<<"d9ffff">>, 70))/binary, "00">>},       % long tag heads
+     {C, refused, <<(Rep(<<"c1">>, 64))/binary, "a10001">>},                   % the top under 64 tags
+     {C, read, <<(Rep(<<"c1">>, 63))/binary, "a10001">>},                      % 63 tags and the map: 64
+     {C, refused, <<"a200010a9f", (Rep(<<"00">>, 5000))/binary>>},             % no break
+     {C, refused, <<"a200010a5f", (Rep(<<"4100">>, 5000))/binary>>},           % byte chunks, no break
+     {C, refused, <<"a200010a7f", (Rep(<<"6161">>, 5000))/binary>>},           % text chunks, no break
+     {C, refused, <<"a200010a5f6161ff">>},                                     % a text chunk in bytes
+     {C, refused, <<"a200010a5f5fffff">>},                                     % an indefinite chunk
+     {C, refused, <<"a200010a7f7fffff">>},
+     {C, refused, <<"a200010abf01ff">>},                                       % a break where a value stands
+     {C, refused, <<"a200010abf0101">>},                                       % a map with no break
+     {C, read, <<"a200010abf0101ff">>},
+     {C, refused, <<"a200010a1f">>},                                           % ai 31 on major 0
+     {C, refused, <<"a200010a3f">>},                                           % ai 31 on major 1
+     {C, refused, <<"a200010adf00">>},                                         % ai 31 on a tag
+     {C, refused, <<"a200010afc">>}, {C, refused, <<"a200010afd">>}, {C, refused, <<"a200010afe">>},
+     {C, refused, <<"a200010af8">>},                                           % a simple value cut short
+     {C, read, <<"a200010af820">>},
+     {C, refused, <<"a200010af9">>}, {C, refused, <<"a200010afa0000">>}, {C, refused, <<"a200010afb00">>},
+     {C, read, <<"a200010afb7ff8000000000001">>},                              % a NaN with a payload as residue
+     {C, refused, <<"a200010a62c328">>},                                       % invalid UTF-8
+     {C, refused, <<"a200010a63eda080">>},                                     % a surrogate
+     {C, refused, <<"a200010a62c080">>},                                       % an overlong form
+     {C, refused, <<"a200010a64f4908080">>},                                   % above U+10FFFF
+     {C, read, <<"a200010a64f09f9880">>},
+     {C, refused, <<"a20a000a01">>},                                       % a key twice
+     {C, refused, <<"a2f97e0000fb7ff800000000000001">>},                   % NaN keys equal
+     {C, refused, <<"a281000081000001">>},                                 % array keys equal
+     {C, read, <<"a30001810000820000 01">>},                                   % [0] and [0,0]: two keys
+     {C, refused, <<"">>},
+     {CA, refused, <<"d2">>},                                              % a tag and nothing
+     {CA, refused, <<"db">>},
+     {CA, refused, <<"dbffffffffffffffff">>}] ++
+        [{C, refused, <<"a200010a", H/binary>>} || H <- Huge] ++
+        [{C, refused, <<"a200010a5f", H/binary, "ff">>} || <<"5", _/binary>> = H <- Huge].
 
 %% The check values of the CRC-32 of 0.27 ("The CRC").
 run_unit_checks() ->
@@ -964,7 +1019,7 @@ malformed_case(Engine, From, To, Input, Context) ->
 run_reduced(PacksDir, ModelsDir, Wires0) ->
     Wires = [list_to_binary(W) || W <- Wires0],
     SpecWires = [<<"xml">>, <<"geojson">>, <<"json">>, <<"bits">>, <<"protobuf">>,
-                 <<"text">>, <<"tlv">>],
+                 <<"text">>, <<"tlv">>, <<"cbor">>],
     Models = lists:foldl(fun({_F, Bin}, E) -> gt_engine:load_model(E, Bin) end,
                          gt_engine:new(), gt_engine:model_texts(ModelsDir)),
     {ok, Entries} = file:list_dir(PacksDir),

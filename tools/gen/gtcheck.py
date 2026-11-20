@@ -1711,6 +1711,10 @@ class _Loader:
         elif self.pack.wire == "tlv":
             self._tlv_value(node, "when")
         wire = self.pack.wire
+        if wire == "cbor":
+            # 0.28 ruling 36: no `when` lists on cbor; a comma is part of a text
+            node.values = [node.value]
+            return
         node.values = [""] if node.value == "" else node.value.split(",")
         if any(v == "" for v in node.values) and node.value != "":
             self.bad(node, "an empty value in the list of a `when`")

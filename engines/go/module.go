@@ -85,11 +85,11 @@ func kindName(k Kind) string {
 // type a transform yields").
 func transformYields(name string) (Kind, bool) {
 	switch name {
-	case "string", "pstring", "ascii", "sixbit", "utf8", "hex":
+	case "string", "pstring", "ascii", "sixbit", "utf8", "hex", "text", "bytes":
 		return KindString, true
 	case "float", "pdouble", "pfloat", "f32", "f64":
 		return KindFloat, true
-	case "int", "iso8601_ms", "iso8601_s", "iso8601_short", "uint", "twos", "pvarint", "psint", "bool":
+	case "int", "iso8601_ms", "iso8601_s", "iso8601_short", "uint", "twos", "pvarint", "psint", "bool", "epoch_s":
 		return KindInt, true
 	}
 	if strings.HasPrefix(name, "linscale:") || strings.HasPrefix(name, "uscale:") || strings.HasPrefix(name, "sscale:") {

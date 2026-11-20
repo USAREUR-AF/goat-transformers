@@ -21,6 +21,8 @@ PATHS = {
    "cose.iv": ([("pos", 1), 5], "bytes"), "cose.partial_iv": ([("pos", 1), 6], "bytes"),
    "cose.payload": ([("pos", 2)], "bytes"), "cose.signature": ([("pos", 3)], "bytes")},
  "conformance-cbor-group": {"probe.s2": ([("pos", 1)], "bytes")},
+ "conformance-cbor-scope": {"probe.val": ([("pos", 1)], "uint"), "lat": ([("pos", 2), 1], "float"),
+   "probe.s2": ([("pos", 3)], "bytes")},
  "dtn-bpv7": {"bpv7.version": ([P(0), P(0)], "uint"), "bpv7.bundle_flags": ([P(0), P(1)], "uint"),
    "bpv7.primary_crc_type": ([P(0), P(2)], "uint"), "bpv7.dst_scheme": ([P(0), P(3), P(0)], "uint"),
    "bpv7.src_scheme": ([P(0), P(4), P(0)], "uint"), "bpv7.rpt_scheme": ([P(0), P(5), P(0)], "uint"),

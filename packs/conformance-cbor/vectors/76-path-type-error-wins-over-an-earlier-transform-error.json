@@ -1,0 +1,9 @@
+{
+  "name": "76-path-type-error-wins-over-an-earlier-transform-error",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor",
+  "input": "a3000101050703",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "{0: 1, 1: 5, 7: 3}: uid at 1 holds an integer where text is taken (transform-decode), and 7 is a scalar where lat at 7.1 needs a map (Reading step 8, malformed-wire); ruling 35 makes the step 8 check first."
+}

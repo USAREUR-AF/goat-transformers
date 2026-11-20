@@ -24,6 +24,7 @@ type tlvConf struct {
 	crc     bool   // the checksum is crc32 (0.27), else sum16
 	sumText string // the tag of the checksum, as written
 	sumTag  uint64
+	tagText string // the value of the `tag` line, read after the file against the wire (tlv 0.13, cbor 0.28)
 
 	lines map[string]int // the line of each tlv directive the pack has: tag, length, key, checksum
 	err   error          // the first failure of a tlv directive, reported after the file is read
@@ -57,24 +58,18 @@ func (p *Pack) tlvDirective(kw string, args []string, line int) {
 		return
 	}
 	switch kw {
-	case "tag", "length":
-		other := "ber-oid"
-		if kw == "length" {
-			other = "ber"
-		}
-		n := 0
+	case "tag":
+		// `tag` names two forms, 0.13's on tlv and 0.28's on cbor (0.28
+		// ruling 5): its value is read after the file, against the wire.
+		c.tagText = args[0]
+	case "length":
 		switch args[0] {
-		case other:
+		case "ber":
 		case "1", "2", "4":
-			n = int(args[0][0] - '0')
+			c.lenN = int(args[0][0] - '0')
 		default:
-			fail("%s is %s, 1, 2 or 4, got %q", kw, other, args[0])
+			fail("length is ber, 1, 2 or 4, got %q", args[0])
 			return
-		}
-		if kw == "tag" {
-			c.tagN = n
-		} else {
-			c.lenN = n
 		}
 	case "key":
 		k := args[0]
@@ -112,13 +107,40 @@ func (p *Pack) checkTLVDirectives() (int, error) {
 		e := c.err.(*Error)
 		return e.Line, fmt.Errorf("%s", e.Detail)
 	}
-	if p.Wire != WireTLV {
-		for _, kw := range []string{"tag", "length", "key", "checksum"} {
+	if p.Wire == WireCBOR {
+		for _, kw := range []string{"length", "key", "checksum"} {
 			if ln, has := c.lines[kw]; has {
 				return ln, fmt.Errorf("%s is valid only on wire tlv", kw)
 			}
 		}
+		if ln, has := c.lines["tag"]; has {
+			t, ok := parseCBORTagValue(c.tagText)
+			if !ok {
+				return ln, fmt.Errorf("on cbor, tag is a decimal integer from 0 to 2^64-1 with no leading zero, got %q", c.tagText)
+			}
+			p.cbor.hasTag, p.cbor.tag = true, t
+		}
 		return 0, nil
+	}
+	if p.Wire != WireTLV {
+		for _, kw := range []string{"tag", "length", "key", "checksum"} {
+			if ln, has := c.lines[kw]; has {
+				if kw == "tag" {
+					return ln, fmt.Errorf("tag is valid only on wire tlv or cbor")
+				}
+				return ln, fmt.Errorf("%s is valid only on wire tlv", kw)
+			}
+		}
+		return 0, nil
+	}
+	if ln, has := c.lines["tag"]; has {
+		switch c.tagText {
+		case "ber-oid":
+		case "1", "2", "4":
+			c.tagN = int(c.tagText[0] - '0')
+		default:
+			return ln, fmt.Errorf("tag is ber-oid, 1, 2 or 4, got %q", c.tagText)
+		}
 	}
 	if c.sum {
 		t, ok := parseTLVTag(c.sumText, c.tagN)

@@ -526,7 +526,7 @@ V011_TLV |= {"wire-crc32-03", "wire-crc32-05"}
 # refuses `bogus` as `bad-directive`. The bad-locator vectors 03 to 14 are
 # compared: the path form is a line check, which gtcheck makes as the line is read.
 V011_TLV |= {"wire-cbor-16", "wire-cbor-25", "wire-cbor-28", "wire-cbor-35", "wire-cbor-42",
-             "wire-cbor-45"}
+             "wire-cbor-45", "wire-cbor-57", "wire-cbor-60"}
 # Ruling 28 of 0.15 pins the same order for a 0.15 transform on tlv.
 V011_ORDER = {"580", "667", "668", "1003", "1004", "1077", "1078", "1079"}  # ruling 13 of 0.17, ruling 44 of 0.21 (bad-locator), ruling 28 of 0.22
 # And the UPER vectors of rulings 23-26 of 0.19 that pin the 0.11 order.

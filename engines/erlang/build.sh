@@ -5,13 +5,13 @@
 #   ./build.sh --wires xml,json,geojson         only those wires (Version 0.24)
 #   ./build.sh --wires xml --out <dir>          into <dir> instead of ebin/
 #
-# The wires are xml, geojson, json, bits, protobuf, text and tlv. A wire not
+# The wires are xml, geojson, json, bits, protobuf, text, tlv and cbor. A wire not
 # named is left out: its modules are not compiled, and the code of gt_engine
 # and gt_pack that only it needs is compiled out with -Dno_wire_<wire>
 # (src/gt_wires.hrl). A pack on such a wire is unknown-wire at load.
 set -eu
 cd "$(dirname "$0")"
-all="xml geojson json bits protobuf text tlv"
+all="xml geojson json bits protobuf text tlv cbor"
 wires=$all
 out=ebin
 while [ $# -gt 0 ]; do
@@ -42,7 +42,8 @@ has bits && mods="$mods gt_bits gt_seq"
 has protobuf && mods="$mods gt_protobuf"
 has text && mods="$mods gt_text"
 has tlv && mods="$mods gt_tlv"
-if has bits || has protobuf || has tlv; then mods="$mods gt_hex"; fi
+has cbor && mods="$mods gt_cbor"
+if has bits || has protobuf || has tlv || has cbor; then mods="$mods gt_hex"; fi
 
 srcs=""
 for m in $mods; do srcs="$srcs src/$m.erl"; done

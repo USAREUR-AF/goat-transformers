@@ -1,0 +1,18 @@
+{
+  "name": "const-over-a-field-that-could-not-encode",
+  "from": "conformance-cbor-scope",
+  "to": "conformance-cbor-scope",
+  "input": "80",
+  "expect": "82f605",
+  "model": {
+    "@kind": "bare",
+    "@absent": [
+      "probe.val"
+    ]
+  },
+  "context": {
+    "probe.val": "-3"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): packs/conformance-cbor-scope/pack.def (group probe.items [0] with probe.qty a.b int; probe.val [1] uint under const [1] 5; probe.s2 [3] bytes; kind located: when [4] 1, lat [2].1 float; kind bare: no when); Ruling 29: the context gives probe.val -3, which uint would refuse on encode (transform-encode); the line at [1] is under const [1] 5, so it is not encoded and raises no error; the const is written. [0], the group's path with the list absent, is f6 (ruling 23): 82 f6 05. Derived without an engine by a standalone RFC 8949 codec."
+}

@@ -103,7 +103,7 @@ locale's character set and the contract's command line is UTF-8.
 
 | Subcommand | Does |
 |---|---|
-| `convert --from F --to T [--set KEY=VALUE]...` | reads standard input to its end, writes the converted message with nothing added (hex text for the `bits`, `protobuf` and `tlv` wires) |
+| `convert --from F --to T [--set KEY=VALUE]...` | reads standard input to its end, writes the converted message with nothing added (hex text for the `bits`, `protobuf`, `tlv` and `cbor` wires) |
 | `list-formats` | one `<format> TAB <version> TAB <wire>` line per loaded pack, in byte order of format |
 | `capability --from F --to T` | the capability report of the pair as one matrix line |
 | `matrix` | the header `from TAB to TAB grade TAB carried TAB dropped`, then one line per ordered pair of loaded formats |
@@ -142,10 +142,11 @@ zz-first-by-format	lic-aa	Apache-2.0	open
 
 A build can carry the codecs of only some wires (spec Version 0.24). Name the
 set with `--wires`, a comma-separated subset of `xml`, `geojson`, `json`,
-`bits`, `protobuf`, `text` and `tlv`:
+`bits`, `protobuf`, `text`, `tlv` and `cbor` (`cbor` is a wire of this switch
+like the others, spec 0.28 ruling 38):
 
 ```bash
-./build.sh --wires xml,json,geojson     # no --wires (or --wires all): all seven
+./build.sh --wires xml,json,geojson     # no --wires (or --wires all): all eight
 ```
 
 The core sources (`src/main/java`: the pack language, the model, the engine,
@@ -162,7 +163,7 @@ In a reduced build a pack whose `wire` is a wire the build lacks does not load:
 this build does not have it (`wire "bits" is a wire of the specification, but
 this build does not have it (this build has xml, geojson, json)`). A `wire`
 value that is no wire stays `unknown wire "..."`. `Engine.wires()` returns the
-set of the build. A build with fewer than seven wires does not run the test
+set of the build. A build with fewer than eight wires does not run the test
 suite, whose unit checks need every wire; the reduced-build check is its test.
 `--out DIR` writes the build somewhere other than `build/`; `--no-test` skips
 the test suite of a full build.
@@ -177,7 +178,7 @@ engines/java/reduced-check.sh            # optional argument: a packs directory
 
 It builds the full jar and the jar with `xml`, `json` and `geojson` under
 `build/reduced-check/`, checks that the reduced jar holds no class of the
-`bits`, `protobuf`, `text` or `tlv` codecs, and runs
+`bits`, `protobuf`, `text`, `tlv` or `cbor` codecs, and runs
 `goat.transformers.ReducedCheck` (compiled against the reduced build only) on
 the reduced jar:
 
@@ -185,7 +186,7 @@ the reduced jar:
   with every pack on those wires loaded;
 - the capability vectors between formats on the three wires, and the load
   vectors none of whose packs is on another wire of the specification;
-- one pack each on `bits`, `protobuf`, `text` and `tlv`: `unknown-wire`, the
+- one pack each on `bits`, `protobuf`, `text`, `tlv` and `cbor`: `unknown-wire`, the
   wire named in the message, and the format then `unknown-format`; and a
   `wire` value that is no wire, plain `unknown-wire`.
 
@@ -193,7 +194,7 @@ It prints the size of both jars and exits non-zero on any failure. Measured
 with `nice -n 10` on this tree on 2026-11-21:
 
 ```
-reduced jar: no class of the bits, protobuf, text or tlv codecs
+reduced jar: no class of the bits, protobuf, text, tlv or cbor codecs
 build wires: xml, geojson, json
 conversion vectors: 8164/8164 passed (1624 packs on xml, geojson, json; 14094 vectors on other wires not run)
 capability vectors: 16/16 passed (those between formats on wires of the build)
@@ -202,11 +203,12 @@ unknown-wire: bits (pack adsb): unknown-wire: .../packs/adsb/pack.def:18: wire "
 unknown-wire: protobuf (pack apollo-ch): ...
 unknown-wire: text (pack argo-index-meta): ...
 unknown-wire: tlv (pack conformance-cond-tlv): ...
-unknown-wire loads: 4/4 passed
+unknown-wire: cbor (pack conformance-cbor): ...
+unknown-wire loads: 5/5 passed
 unknown-wire: nowire (no wire of the specification): unknown-wire: nowire-check:3: unknown wire "nowire" [format=nowire-check locator=-]
 OK
-jar size, all seven wires:       318329 bytes
-jar size, xml, json and geojson: 245560 bytes, 77% of the full jar
+jar size, all eight wires:       334301 bytes
+jar size, xml, json and geojson: 243712 bytes, 72% of the full jar
 ```
 
 The jar shrinks by a quarter, not more, because the pack reader stays whole:

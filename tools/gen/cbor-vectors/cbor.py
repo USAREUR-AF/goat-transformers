@@ -51,6 +51,26 @@ def enc_float(x):
         pass
     return b"\xfb" + struct.pack(">d", x)
 
+def nan_parts(raw):
+    """(sign, 52-bit mantissa) of a NaN given as the 2, 4 or 8 bytes of a
+    half, single or double; the mantissa aligned to the double's (a half's 10
+    bits shifted left 42, a single's 23 bits shifted left 29)."""
+    v = int.from_bytes(raw, "big")
+    if len(raw) == 2: return v >> 15, (v & 0x3ff) << 42
+    if len(raw) == 4: return v >> 31, (v & 0x7fffff) << 29
+    return v >> 63, v & ((1 << 52) - 1)
+
+def enc_nan(sign, m52):
+    """Ruling 28 of 0.28: a NaN keeps its sign and payload, at the shortest
+    width that holds them exactly: half when the low 42 mantissa bits are 0,
+    else single when the low 29 are 0, else double."""
+    assert m52 != 0
+    if m52 & ((1 << 42) - 1) == 0:
+        return b"\xf9" + ((sign << 15) | 0x7c00 | (m52 >> 42)).to_bytes(2, "big")
+    if m52 & ((1 << 29) - 1) == 0:
+        return b"\xfa" + ((sign << 31) | 0x7f800000 | (m52 >> 29)).to_bytes(4, "big")
+    return b"\xfb" + ((sign << 63) | (0x7ff << 52) | m52).to_bytes(8, "big")
+
 def enc(item, canonical=True):
     if isinstance(item, Raw): return item.b
     if item is True: return b"\xf5"
@@ -190,9 +210,11 @@ def decode(data, max_depth=64):
             v = rd(1)[0]
             if v < 32: raise Malformed("two-byte simple below 32")
             return fin("simple", v)
-        if ai == 25: return fin("float", struct.unpack(">e", rd(2))[0])
-        if ai == 26: return fin("float", struct.unpack(">f", rd(4))[0])
-        if ai == 27: return fin("float", struct.unpack(">d", rd(8))[0])
+        if ai in (25, 26, 27):
+            fb = rd({25: 2, 26: 4, 27: 8}[ai])
+            nd = fin("float", struct.unpack({25: ">e", 26: ">f", 27: ">d"}[ai], fb)[0])
+            if math.isnan(nd.value): nd.nan = nan_parts(fb)   # sign and payload as they stood
+            return nd
         raise Malformed("reserved major 7 additional information %d" % ai)
     top = item(0)
     if top == "BREAK": raise Malformed("break")
@@ -205,7 +227,7 @@ def canon(node):
     if k in ("uint", "nint"): b = enc(v)
     elif k == "bytes": b = enc(bytes(v))
     elif k == "text": b = enc(v)
-    elif k == "float": b = enc_float(v)
+    elif k == "float": b = enc_nan(*node.nan) if getattr(node, "nan", None) else enc_float(v)
     elif k == "simple": b = head(7, v) if v < 24 else bytes([0xf8, v])
     elif k == "array": b = head(4, len(v)) + b"".join(canon(i) for i in v)
     elif k == "map":

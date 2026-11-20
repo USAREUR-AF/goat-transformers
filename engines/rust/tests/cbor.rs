@@ -183,6 +183,17 @@ fn residue_keeps_unmapped_items_and_unaddressable_keys() {
     // a residue item read with a longer head and an indefinite length is re-encoded
     let ent = e.decode("t", "a2010518039f1801ff").unwrap();
     assert_eq!(e.encode("t", &ent).unwrap(), "a20105038101");
+    // ruling 28: a NaN residue keeps its sign and payload, at the shortest exact width
+    for (input, want) in [
+        ("a20105f97e01", "a20105f97e01"),
+        ("a20105f9fe00", "a20105f9fe00"),
+        ("a20105fb7ff8000000000000", "a20105f97e00"),
+        ("a20105fa7f800001", "a20105fa7f800001"),
+        ("a20105fbfff0000000000001", "a20105fbfff0000000000001"),
+    ] {
+        let ent = e.decode("t", &input.replacen("a20105", "a2010502", 1)).unwrap();
+        assert_eq!(e.encode("t", &ent).unwrap(), want.replacen("a20105", "a2010502", 1), "{}", input);
+    }
     // a key in a nested map no line walks into stays inside its item
     let ent = e.decode("t", "a2010508a16134f6").unwrap();
     assert_eq!(ent.residue.iter().map(|(_, k, v)| (k.as_str(), v.as_str())).collect::<Vec<_>>(), vec![("8", "a16134f6")]);
@@ -270,6 +281,17 @@ fn positions_and_groups() {
     assert_eq!(items.len(), 3);
     assert_eq!(items[0].fields.get("probe.qty"), Some(&Value::I64(1)));
     assert!(items[1].fields.is_empty() && items[2].fields.is_empty());
+    // ruling 27: a deeper step of a body path meeting the wrong type is malformed-wire
+    let d = engine("group probe.items 9\n  field probe.qty a.n uint\nend\n");
+    assert_eq!(kind_of(d.decode("t", "a10981a1616101")), "malformed-wire");
+    assert!(d.decode("t", "a10981a16161f6").unwrap().lists["probe.items"][0].fields.is_empty());
+    // ruling 26: a line suppressed by `with` writes nothing
+    let w = engine("field probe.n 1 int with uid\nfield probe.val 2 uint\n");
+    assert_eq!(w.encode("t", &entity(&[("probe.n", Value::I64(1)), ("probe.val", Value::I64(2))])).unwrap(), "a10202");
+    assert_eq!(
+        w.encode("t", &entity(&[("probe.n", Value::I64(1)), ("probe.val", Value::I64(2)), ("uid", Value::Str("u".into()))])).unwrap(),
+        "a201010202"
+    );
     // a group path at an item that is not an array
     assert_eq!(kind_of(e.decode("t", "a109a0")), "malformed-wire");
     // the item limit
@@ -333,6 +355,13 @@ fn load_checks() {
     assert_eq!(load_error("field probe.n 1 int swap\n"), "bad-directive");
     assert_eq!(load_error("field probe.n 1 twos\n"), "bad-directive");
     assert_eq!(load_error("field probe.n 1 string\n"), "bad-directive");
+    // ruling 25: a transform name no wire has is `bad-directive` after the file
+    assert_eq!(load_error("field probe.n 1 nosuch\n"), "bad-directive");
+    assert_eq!(load_error("field probe.n 1 nosuch\nbogus\n"), "unknown-directive");
+    // ruling 34: parameters too are checked after the file on cbor
+    assert_eq!(load_error("field probe.a 1 uscale:0\nbogus\n"), "unknown-directive");
+    assert_eq!(load_error("field probe.a 3 uscale:x\nbogus\n"), "unknown-directive");
+    assert_eq!(load_error("field probe.a 3 uscale:x\n"), "bad-directive");
     // ruling 22: `.` is a path only on a `field` in a group body and on a `group` outside one
     assert_eq!(load_error("field probe.n . int\nbogus\n"), "bad-locator");
     assert_eq!(load_error("group probe.items 9\n  field probe.label name text\n  const . 1\nend\nbogus\n"), "bad-locator");
@@ -382,4 +411,58 @@ fn load_checks() {
     e.load_model_dir(&root.join("model")).unwrap();
     let json = HEAD.replace("wire cbor", "wire json");
     assert!(e.load_def(&format!("{}field uid a text\n", json)).unwrap_err().msg.starts_with("bad-directive"));
+}
+
+#[test]
+fn rulings_29_to_31() {
+    // 29: a field at a path a `when` value names is not encoded, nor converted
+    let e = engine("field probe.n 0 bool\nkind a\nwhen 0 1\n");
+    let mut ent = entity(&[("probe.n", Value::I64(5))]);
+    ent.kind = Some(("t".into(), "a".into()));
+    assert_eq!(e.encode("t", &ent).unwrap(), "a10001");
+    let c = engine("field probe.n 0 bool\nconst 0 7\n");
+    assert_eq!(c.encode("t", &entity(&[("probe.n", Value::I64(5))])).unwrap(), "a10007");
+
+    // 30: gaps follow the selected scope's lines only
+    let k = engine("field uid [0] text\nkind a\nfield probe.n [1].1 int\nkind b\nfield probe.s1 [2] bytes\n");
+    let mut ent = entity(&[("probe.s1", Value::Str("01".into()))]);
+    ent.kind = Some(("t".into(), "b".into()));
+    assert_eq!(k.encode("t", &ent).unwrap(), "83f6f64101");
+    ent.kind = Some(("t".into(), "a".into()));
+    ent.fields.insert("probe.n".into(), Value::I64(2));
+    ent.fields.insert("uid".into(), Value::Str("u".into()));
+    assert_eq!(k.encode("t", &ent).unwrap(), "826175a10102");
+
+    // 31: residue at a container the selected lines walk into but leave empty is written whole
+    let r = engine("field uid 1 text\nkind a\nwhen 0 1\nfield probe.n 7.1 int\nkind b\n");
+    let mut ent = r.decode("t", "a201617507a10203").unwrap();
+    assert_eq!(ent.kind.as_ref().unwrap().1, "b");
+    assert_eq!(ent.residue.iter().map(|(_, k, v)| (k.as_str(), v.as_str())).collect::<Vec<_>>(), vec![("7", "a10203")]);
+    ent.kind = Some(("t".into(), "a".into()));
+    assert_eq!(r.encode("t", &ent).unwrap(), "a3000101617507a10203");
+    // a line that writes a value there still wins over residue
+    ent.fields.insert("probe.n".into(), Value::I64(4));
+    assert_eq!(r.encode("t", &ent).unwrap(), "a3000101617507a10104");
+}
+
+#[test]
+fn rulings_32_and_33() {
+    // 32: a `const` path through an item of the wrong type is malformed-wire
+    let c = engine("field probe.n 1 int\nconst 7.1 5\n");
+    assert_eq!(kind_of(c.decode("t", "a201050701")), "malformed-wire");
+    assert!(c.decode("t", "a2010507a10105").is_ok());
+    // ... and through `null` the const's item is absent (ruling 12)
+    assert!(c.decode("t", "a2010507f6").is_ok());
+
+    // 33: residue through a place a line wrote a value at is dropped
+    let v = engine("field probe.n 7 int\n");
+    let mut ent = entity(&[("probe.n", Value::I64(1))]);
+    ent.residue.push(("t".into(), "7.2".into(), "05".into()));
+    assert_eq!(v.encode("t", &ent).unwrap(), "a10701");
+    // ... and through a container of the other type
+    let m = engine("field probe.n 7.1 int\n");
+    let mut ent = entity(&[("probe.n", Value::I64(1))]);
+    ent.residue.push(("t".into(), "7.[0]".into(), "05".into()));
+    ent.residue.push(("t".into(), "8".into(), "06".into()));
+    assert_eq!(m.encode("t", &ent).unwrap(), "a207a101010806");
 }

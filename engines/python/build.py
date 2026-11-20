@@ -2,7 +2,7 @@
 """Build the Python engine with a set of wires (spec/engine-spec.md, Version
 0.24, ruling 1).
 
-    python3 -I engines/python/build.py                          # all seven wires
+    python3 -I engines/python/build.py                          # all eight wires
     python3 -I engines/python/build.py --wires xml,json,geojson  # three
 
 The build copies the package `src/goat_transformers` and leaves out the codec
@@ -13,7 +13,7 @@ that code; `_build.py` in the copy names the set it kept. It writes
     <out>/dist/goat_transformers-<v>-py3-none-any.whl   the wheel, for pip
 
 `<out>` defaults to `engines/python/build/wires-<set>` (`wires-all` for all
-seven). Standard library only; the wheel is written byte for byte the same
+eight). Standard library only; the wheel is written byte for byte the same
 for the same sources (fixed timestamps, sorted entries)."""
 
 import argparse
@@ -29,7 +29,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 PACKAGE = os.path.join(HERE, "src", "goat_transformers")
 
 # The wires of the specification, in its order (ruling 1a).
-WIRES = ("xml", "geojson", "json", "bits", "protobuf", "text", "tlv")
+WIRES = ("xml", "geojson", "json", "bits", "protobuf", "text", "tlv", "cbor")
 
 # The modules that are the codec of one wire. Ruling 1d: the sequential
 # layout (`seqdef`, `wire_seq`), six-bit armor (in `wire_bits`) and
@@ -42,15 +42,16 @@ WIRE_MODULES = {
     "protobuf": ("wire_protobuf",),
     "text": ("wire_text",),
     "tlv": ("wire_tlv",),
+    "cbor": ("wire_cbor",),
 }
 
 # Modules shared by some wires: carried when the build has any of them.
 # `jsonio` is the JSON reader and writer of `json` and `geojson` (ruling 1d:
-# `geojson` needs nothing of `json`); `octets` is hex input and the `utf8`
+# `geojson` needs nothing of `json`); `octets` is hex input (also of `cbor`) and the `utf8`
 # and `hex` octet transforms of `bits` (UPER `octets:`), `protobuf` and `tlv`.
 SHARED_MODULES = {
     "jsonio": ("json", "geojson"),
-    "octets": ("bits", "protobuf", "tlv"),
+    "octets": ("bits", "protobuf", "tlv", "cbor"),
 }
 
 
@@ -126,7 +127,7 @@ def write_wheel(files, wires, dist):
     """A pure-Python wheel of the package files (PEP 427). -> its path."""
     v = version()
     info = "goat_transformers-%s.dist-info" % v
-    note = "all seven wires" if wires == WIRES else "wires: " + (", ".join(wires) or "none")
+    note = "all eight wires" if wires == WIRES else "wires: " + (", ".join(wires) or "none")
     entries = [("goat_transformers/" + name, data) for name, data in files]
     entries.append((info + "/METADATA", (
         "Metadata-Version: 2.1\nName: goat-transformers\nVersion: %s\n"
@@ -169,7 +170,7 @@ def build(wires, out):
 def main(argv=None):
     ap = argparse.ArgumentParser(description="Build the Python engine with a set of wires (spec 0.24).")
     ap.add_argument("--wires", default=None,
-                    help="the wires to build, comma-separated, from: %s (default: all seven)" % ",".join(WIRES))
+                    help="the wires to build, comma-separated, from: %s (default: all eight)" % ",".join(WIRES))
     ap.add_argument("--out", default=None, help="the output directory (default: engines/python/build/wires-<set>)")
     args = ap.parse_args(argv)
     try:

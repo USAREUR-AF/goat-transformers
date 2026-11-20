@@ -25,8 +25,10 @@ if "text" in BUILD_WIRES:
     from . import wire_text
 if "tlv" in BUILD_WIRES:
     from . import wire_tlv
+if "cbor" in BUILD_WIRES:
+    from . import wire_cbor
 
-WIRES = ("xml", "geojson", "json", "bits", "protobuf", "text", "tlv")  # the wires of the specification
+WIRES = ("xml", "geojson", "json", "bits", "protobuf", "text", "tlv", "cbor")  # the wires of the specification
 # The checksum names of `checksum <name> <tag>` (0.13 and 0.27). The line
 # check reads them on every wire (ruling 2 of 0.27), so they live here and not
 # only in `wire_tlv`, which a build without the tlv wire leaves out (0.24).
@@ -65,7 +67,8 @@ ARG_COUNTS = dict({kw: (1, 1) for kw in _ONE_ARG}, **{
     # 0.13 adds `checksum sum16 <tag>` (two arguments) to the one of 5e (0.27
     # adds `checksum crc32 <tag>`), and
     # the `tlv` lines `tag` and `key`, whose form is checked after the file.
-    "checksum": (1, 2), "tag": (1, None), "key": (1, None),
+    # 0.28: `tag <n>` takes exactly one argument, checked as the line is read.
+    "checksum": (1, 2), "tag": (1, 1), "key": (1, None),
     # 0.14: `armor <hex | sixbit>`, exactly one argument, checked as the line
     # is read (ruling 13 of 0.14)
     "armor": (1, 1),
@@ -461,6 +464,8 @@ class Pack:
     tlv_key: bytes = None      # tlv: the bytes the message begins with
     tlv_checksum: int = None   # tlv: the tag of the checksum item
     tlv_checksum_alg: str = None  # tlv: `sum16` (0.13) or `crc32` (0.27)
+    cbor_tag: int = None       # cbor: the tag `tag <n>` encloses the message in (0.28)
+    cbor_top: str = "map"      # cbor: the type of the top item the paths decide, "map" or "array"
     armor: str = "hex"         # bits: `hex` or `sixbit` (0.14)
     gates: list = dc_field(default_factory=list)     # the common gate blocks, at any depth, in line order (0.17)
     uper: bool = False         # bits, sequential: `encoding uper` (0.19)
@@ -937,6 +942,8 @@ def _resolve_field(wire, name, key, locator, tname, options, source, lineno, def
     where = "%s:%d" % (source, lineno)
     if wire == "tlv":  # 0.13: every transform check of the tlv wire is made after the file (ruling 8)
         return _resolve_tlv_field(name, key, locator, tname, options, where, lineno, deferred)
+    if wire == "cbor":
+        return _resolve_cbor_field(name, key, locator, tname, options, where, lineno, deferred, in_group)
     _check_transform(name, tname, locator, where)
     valid = transform_valid_on(tname, wire)
     later = []
@@ -1098,6 +1105,44 @@ def _resolve_tlv_field(name, key, locator, tname, options, where, lineno, deferr
     return Field(key, locator, transform, loc, lineno, via=opts.get("via"), with_key=opts.get("with"))
 
 
+def _cbor_path(name, locator, where, dot_ok):
+    """A path of the `cbor` wire (0.28, "Paths"), a line check (step 8 of 5b
+    of 0.11): text that is not a path is `bad-locator`, and so is `.` where it
+    is not a path (ruling 22). -> tuple of steps, () for `.`."""
+    if locator == ".":
+        if dot_ok:
+            return ()
+        raise _bad_locator("cbor", where, name, locator, "'.' is a path only on a field in a group body and on a"
+                           " group outside one (ruling 22 of 0.28)")
+    try:
+        return wire_cbor.parse_path(locator)
+    except ValueError as e:
+        raise _bad_locator("cbor", where, name, locator, e)
+
+
+def _resolve_cbor_field(name, key, locator, tname, options, where, lineno, deferred, in_group):
+    """-> Field for one `field` line of a `cbor` pack (0.28), or None when it
+    fails a check made after the file is read (added to `deferred`). Line
+    checks: the path (step 8) and the syntax of the field options (step 9);
+    the values of `absent` are not checked (ruling 10). After the file: the
+    transform, a name no wire has included (ruling 25, as ruling 8 of 0.13
+    for `tlv`), and the options `absent`, `swap`, `trim` and `optional`.
+    `via` and `with` (ruling 26) are the options of the cbor wire."""
+    loc = _cbor_path(name, locator, where, in_group)
+    opts = _parse_options(options, name, locator, where)
+    later = []
+    if tname not in wire_cbor.TRANSFORMS:
+        later.append("transform %r is not a transform of the cbor wire" % tname)
+    for opt in opts:
+        if opt not in ("via", "with"):
+            later.append("field option %r is not an option of the cbor wire" % opt)
+    if later:
+        deferred.append((lineno, BadDirective("%s, at %s" % (later[0], where), format=name, locator=locator)))
+        return None
+    return Field(key, locator, wire_cbor.TRANSFORMS[tname], loc, lineno, via=opts.get("via"),
+                 with_key=opts.get("with"))
+
+
 def _resolve_tlv_when(name, locator, value, where, lineno, const):
     """-> When or Const for one line of a `tlv` pack (0.13, "`when` and
     `const`"); every failure is `bad-directive` after the file is read."""
@@ -1155,6 +1200,8 @@ def _resolve_group(wire, name, list_name, locator, options, source, lineno, in_g
             loc = (wire_text._index(locator),)
         except ValueError as e:
             raise _LineBad("bad text group locator at %s: %s" % (where, e), format=name, locator=locator)
+    elif wire == "cbor":
+        loc = _cbor_path(name, locator, where, not in_group)
     elif wire == "bits":
         parts = locator.split(":")
         if len(parts) != 2 or not all(p.isascii() and p.isdigit() for p in parts):
@@ -1267,6 +1314,19 @@ def _resolve_when(wire, name, locator, value, source, lineno, deferred, directiv
     const = directive == "const"
     if wire == "tlv":
         return _resolve_tlv_when(name, locator, value, where, lineno, const)
+    if wire == "cbor":  # 0.28, "Kinds": the path is a line check, `const <path> present` after the file
+        loc = _cbor_path(name, locator, where, False)
+        if value == "present":
+            if const:
+                deferred.append((lineno, BadDirective(
+                    "a 'const' value is written, so cannot be 'present', at %s" % where, format=name, locator=locator
+                )))
+                return None
+            return When(locator, loc, present=True, lineno=lineno)
+        v = wire_cbor.read_value(value)
+        if const:
+            return Const(locator, loc, value=v, lineno=lineno)
+        return When(locator, loc, value=v, lineno=lineno)
 
     def make(val, forced=False):
         if const:
@@ -1537,8 +1597,8 @@ def _check_tlv_lines(lines, wire, deferred, source, fmt):
         def bad(msg):
             deferred.append((lineno, BadDirective("%s, at %s" % (msg, where), format=fmt, locator=kw)))
 
-        if wire != "tlv":
-            bad("%r is a directive of the tlv wire" % kw)
+        if wire != "tlv" and not (wire == "cbor" and kw == "tag"):
+            bad("%r is a directive of the tlv wire%s" % (kw, " or, for 'tag', of the cbor wire" if kw == "tag" else ""))
             continue
         if kw in seen:
             bad("%r is given twice" % kw)
@@ -1551,7 +1611,9 @@ def _check_tlv_lines(lines, wire, deferred, source, fmt):
             bad("%r after the first 'kind'" % kw)
             continue
         value = None
-        if kw == "checksum":
+        if wire == "cbor":  # 0.28: `tag <n>`, n from 0 to 2^64-1, no leading zero
+            value = wire_cbor.read_tag_value(args[0]) if len(args) == 1 else None
+        elif kw == "checksum":
             if len(args) == 2 and args[0] in wire_tlv.CHECKSUMS:
                 tag = wire_tlv.read_tag(args[1])
                 value = None if tag is None else (args[0], tag)
@@ -2090,6 +2152,9 @@ def parse_pack_text(text, *, source="pack.def"):
             tlv.get("tag", ("ber-oid",))[0], tlv.get("checksum", ((None, None),))[0][1], tlv.get("checksum", (None, 0))[1],
             common, kinds, deferred, source, name,
         )
+    cbor_top = None
+    if wire == "cbor":
+        cbor_top = wire_cbor.check_pack(common, kinds, deferred, source, name)
     for el, k in elements:  # 0.18: `element` is xml only; ruling 12
         if wire != "xml":
             deferred.append((el.lineno, BadDirective(
@@ -2147,6 +2212,9 @@ def parse_pack_text(text, *, source="pack.def"):
         pack.tlv_length = tlv.get("length", ("ber",))[0]
         pack.tlv_key = tlv.get("key", (None,))[0]
         pack.tlv_checksum_alg, pack.tlv_checksum = tlv.get("checksum", ((None, None),))[0]
+    if wire == "cbor":
+        pack.cbor_tag = tlv.get("tag", (None,))[0]
+        pack.cbor_top = cbor_top
     for lineno, (native, cot) in typemap:
         if native in pack.native_to_cot or cot in pack.cot_to_native:
             raise BadDirective(

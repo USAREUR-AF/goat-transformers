@@ -1118,26 +1118,30 @@ fn put(cur: &mut Out, path: &[Place], val: Vec<u8>) -> Result<bool, ()> {
     let slot: &mut Out = match (cur, first) {
         (Out::Map(m), Place::Key(k)) => {
             if rest.is_empty() {
+                // ruling 31 of 0.28: a container the lines walk into but
+                // leave empty takes a value (residue) whole
                 return match m.get(k) {
-                    None => {
+                    Some(Out::Val(_)) => Ok(false),
+                    Some(o) if !empty(o) => Err(()),
+                    _ => {
                         m.insert(k.clone(), Out::Val(val));
                         Ok(true)
                     }
-                    Some(Out::Val(_)) => Ok(false),
-                    Some(_) => Err(()),
                 };
             }
             m.entry(k.clone()).or_insert_with(|| Out::container(&rest[0]))
         }
         (Out::Arr(a), Place::Pos(i)) => {
             if rest.is_empty() {
+                // ruling 31 of 0.28: a container the lines walk into but
+                // leave empty takes a value (residue) whole
                 return match a.get(i) {
-                    None => {
+                    Some(Out::Val(_)) => Ok(false),
+                    Some(o) if !empty(o) => Err(()),
+                    _ => {
                         a.insert(*i, Out::Val(val));
                         Ok(true)
                     }
-                    Some(Out::Val(_)) => Ok(false),
-                    Some(_) => Err(()),
                 };
             }
             a.entry(*i).or_insert_with(|| Out::container(&rest[0]))
@@ -1145,6 +1149,15 @@ fn put(cur: &mut Out, path: &[Place], val: Vec<u8>) -> Result<bool, ()> {
         _ => return Err(()),
     };
     put(slot, rest, val)
+}
+
+/// A map or array with no value anywhere in it.
+fn empty(o: &Out) -> bool {
+    match o {
+        Out::Val(_) => false,
+        Out::Map(m) => m.values().all(empty),
+        Out::Arr(a) => a.values().all(empty),
+    }
 }
 
 /// The containers on the way to the last step of `path`, created empty
@@ -1284,7 +1297,13 @@ fn build(p: &Pack, sel: &Sel, ent: &Entity, array: bool) -> Result<Out, Error> {
     }
     let mut fields: Vec<&&FieldDef> = sel.fields.iter().filter(|f| f.locator != ".").collect();
     fields.sort_by_key(|f| f.line);
+    // ruling 29 of 0.28: a field at a path a `when` value or `const` names
+    // is not encoded, so its value is never converted
+    let fixed_paths: Vec<Vec<Step>> = sel.fixed().map(|w| path(&w.locator)).collect();
     for f in fields {
+        if fixed_paths.contains(&path(&f.locator)) {
+            continue;
+        }
         if let Some(v) = sel.value_of(ent, f) {
             let bytes = p.to_wire(f, v).and_then(|w| encode_value(&f.transform, &w)).map_err(|e| transform_encode_err(p, f, e))?;
             put(&mut root, &places(&path(&f.locator)), bytes).map_err(|_| conflict(p, &f.locator))?;

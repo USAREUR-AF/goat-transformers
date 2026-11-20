@@ -698,6 +698,10 @@ func resolveFieldTransform(wire string, f *Field) (ErrorKind, error) {
 	if isTextOnlyTransform(name) {
 		return ErrBadDirective, fmt.Errorf("transform %q is valid only on wire text", name)
 	}
+	// text, bytes and epoch_s are valid only on the cbor wire (spec 0.28).
+	if isCBOROnlyTransform(name) {
+		return ErrBadDirective, fmt.Errorf("transform %q is valid only on wire cbor", name)
+	}
 	// An until: locator takes only chars:<set> (0.22).
 	if f.until && !strings.HasPrefix(name, "chars:") {
 		return ErrBadDirective, fmt.Errorf("an until: locator takes a chars:<set> transform, not %s", name)

@@ -30,7 +30,7 @@ func TestReducedBuild(t *testing.T) {
 		built[w] = true
 	}
 	if len(built) == len(allWires) {
-		t.Fatalf("this build has all seven wires; build with -tags goat_wires,goat_wire_<wire>,...")
+		t.Fatalf("this build has all eight wires; build with -tags goat_wires,goat_wire_<wire>,...")
 	}
 	fmt.Printf("reduced build: wires %s\n", strings.Join(BuiltWires(), ", "))
 
