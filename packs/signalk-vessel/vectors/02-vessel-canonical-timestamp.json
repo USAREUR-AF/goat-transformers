@@ -1,0 +1,9 @@
+{
+  "name": "signalk-vessel-canonical-timestamp",
+  "from": "signalk-vessel",
+  "to": "signalk-vessel",
+  "input": "{\n \"name\": \"Seabird\",\n \"navigation\": {\n  \"position\": {\n   \"value\": {\n    \"latitude\": 52.5,\n    \"longitude\": -3.25\n   },\n   \"timestamp\": \"2026-11-20T10:15:30Z\"\n  }\n }\n}",
+  "expect": "{\"name\":\"Seabird\",\"navigation\":{\"position\":{\"value\":{\"latitude\":52.5,\"longitude\":-3.25},\"timestamp\":\"2026-11-20T10:15:30.000Z\"}}}",
+  "source": "constructed",
+  "reference": "Signal K specification c6130b2a; text by tools/gen/signalk-vectors.py; the position timestamp is time_ms, written back with three fraction digits"
+}

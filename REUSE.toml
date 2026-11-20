@@ -2006,3 +2006,21 @@ path = ["packs/nga-msi-*/**", "model/ngaasam.def", "model/ngabwarn.def", "model/
 precedence = "override"
 SPDX-FileCopyrightText = "National Geospatial-Intelligence Agency (no copyright claimed; see LICENSES/LicenseRef-NGA-MSI.txt)"
 SPDX-License-Identifier = "LicenseRef-NGA-MSI"
+
+[[annotations]]
+path = "packs/signalk-vessel/**"
+precedence = "override"
+SPDX-FileCopyrightText = "The Signal K project (Signal K specification, signalk.org)"
+SPDX-License-Identifier = "CC-BY-SA-2.0"
+
+[[annotations]]
+path = "packs/signalk-delta/**"
+precedence = "override"
+SPDX-FileCopyrightText = "The Signal K project (Signal K specification, signalk.org)"
+SPDX-License-Identifier = "CC-BY-SA-2.0"
+
+[[annotations]]
+path = "model/signalk.def"
+precedence = "override"
+SPDX-FileCopyrightText = "The Signal K project (Signal K specification, signalk.org)"
+SPDX-License-Identifier = "CC-BY-SA-2.0"

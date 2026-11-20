@@ -1,0 +1,26 @@
+# A Signal K delta message: a context and a list of updates, each with its source,
+# its timestamp and a list of path/value pairs. Public.
+# The value of a pair is not carried (pack.md): its JSON type depends on the path.
+format        signalk-delta
+version       0.1.0
+distribution  public
+source        "Signal K specification, https://github.com/SignalK/specification commit c6130b2a5e1a1700b25760dc86b2076d37277700 (v1.8.6 and 7 commits): schemas/vessel.json, schemas/groups/navigation.json, schemas/definitions.json, schemas/delta.json; CC BY-SA 2.0"
+uses          signalk
+wire          json
+field  signalk.delta_context                 context        string
+group  signalk.delta_updates                 updates
+  field  signalk.delta_update_source_ref     $source        string
+  field  signalk.delta_update_source_label   source.label   string
+  field  signalk.delta_update_source_type    source.type    string
+  field  signalk.delta_update_source_src     source.src     string
+  field  signalk.delta_update_source_pgn     source.pgn     int
+  field  signalk.delta_update_source_sentence source.sentence string
+  field  signalk.delta_update_source_talker  source.talker  string
+  field  signalk.delta_update_timestamp      timestamp      string
+  group  signalk.delta_values                values
+    field  signalk.delta_value_path          path           string
+  end
+  group  signalk.delta_meta                  meta
+    field  signalk.delta_meta_path           path           string
+  end
+end

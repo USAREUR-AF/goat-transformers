@@ -1,0 +1,9 @@
+{
+  "name": "signalk-vessel-latitude-text",
+  "from": "signalk-vessel",
+  "to": "signalk-vessel",
+  "input": "{\"navigation\":{\"position\":{\"value\":{\"latitude\":\"52.5\",\"longitude\":4.0}}}}",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "Signal K specification c6130b2a; text by tools/gen/signalk-vectors.py; the schema's latitude is a number"
+}

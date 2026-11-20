@@ -50,6 +50,16 @@
       "distribution": "public",
       "profile": "everything"
     },
+    "CC-BY-SA-2.0": {
+      "name": "Creative Commons Attribution-ShareAlike 2.0 Generic",
+      "url": "https://creativecommons.org/licenses/by-sa/2.0/",
+      "commercial": "yes",
+      "share_alike": true,
+      "attribution": true,
+      "field_of_use": [],
+      "distribution": "public",
+      "profile": "open+copyleft"
+    },
     "LicenseRef-NGA-MSI": {
       "name": "NGA Maritime Safety Information: no copyright claimed; NGA disclaimer required where NGA is named",
       "url": "https://msi.nga.mil",
@@ -3421,6 +3431,16 @@
       "format": "sdm-weather-weather-observed",
       "licence": "CC-BY-4.0",
       "profile": "open"
+    },
+    "signalk-delta": {
+      "format": "signalk-delta",
+      "licence": "CC-BY-SA-2.0",
+      "profile": "open+copyleft"
+    },
+    "signalk-vessel": {
+      "format": "signalk-vessel",
+      "licence": "CC-BY-SA-2.0",
+      "profile": "open+copyleft"
     }
   },
   "modules": {
@@ -5248,6 +5268,11 @@
       "module": "sdmweatherobserved",
       "licence": "CC-BY-4.0",
       "profile": "open"
+    },
+    "signalk.def": {
+      "module": "signalk",
+      "licence": "CC-BY-SA-2.0",
+      "profile": "open+copyleft"
     }
   }
 }

@@ -1,0 +1,20 @@
+{
+  "name": "signalk-delta-paths",
+  "from": "signalk-delta",
+  "to": "signalk-delta",
+  "input": "{\"context\":\"vessels.urn:mrn:signalk:uuid:6b0e776f-811a-4b35-980e-b93405371bc5\",\"updates\":[{\"source\":{\"label\":\"N2K-1\",\"type\":\"NMEA2000\",\"src\":\"36\",\"pgn\":129025},\"timestamp\":\"2026-11-20T10:15:30.250Z\",\"values\":[{\"path\":\"navigation.position\",\"value\":{\"latitude\":52.0987654,\"longitude\":4.98765245}}]},{\"$source\":\"nmea0183.GP\",\"timestamp\":\"2026-11-20T10:15:30.250Z\",\"values\":[{\"path\":\"navigation.speedOverGround\",\"value\":3.5},{\"path\":\"navigation.state\",\"value\":\"motoring\"}],\"meta\":[{\"path\":\"navigation.speedOverGround\",\"value\":{\"units\":\"m/s\"}}]}]}",
+  "expect": "{\"context\":\"vessels.urn:mrn:signalk:uuid:6b0e776f-811a-4b35-980e-b93405371bc5\",\"updates\":[{\"source\":{\"label\":\"N2K-1\",\"type\":\"NMEA2000\",\"src\":\"36\",\"pgn\":129025},\"timestamp\":\"2026-11-20T10:15:30.250Z\",\"values\":[{\"path\":\"navigation.position\"}]},{\"$source\":\"nmea0183.GP\",\"timestamp\":\"2026-11-20T10:15:30.250Z\",\"values\":[{\"path\":\"navigation.speedOverGround\"},{\"path\":\"navigation.state\"}],\"meta\":[{\"path\":\"navigation.speedOverGround\"}]}]}",
+  "model": {
+    "signalk.delta_context": "vessels.urn:mrn:signalk:uuid:6b0e776f-811a-4b35-980e-b93405371bc5",
+    "signalk.delta_updates.#": "2",
+    "signalk.delta_updates[0].signalk.delta_update_source_label": "N2K-1",
+    "signalk.delta_updates[0].signalk.delta_update_source_pgn": "129025",
+    "signalk.delta_updates[0].signalk.delta_values.#": "1",
+    "signalk.delta_updates[0].signalk.delta_values[0].signalk.delta_value_path": "navigation.position",
+    "signalk.delta_updates[1].signalk.delta_update_source_ref": "nmea0183.GP",
+    "signalk.delta_updates[1].signalk.delta_values.#": "2",
+    "signalk.delta_updates[1].signalk.delta_meta.#": "1"
+  },
+  "source": "constructed",
+  "reference": "Signal K specification c6130b2a; text by tools/gen/signalk-vectors.py; the value of each pair is not carried: items keep only mapped members (engine-spec 0.7)"
+}

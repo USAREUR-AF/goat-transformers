@@ -1,0 +1,9 @@
+{
+  "name": "signalk-vessel-to-geojson",
+  "from": "signalk-vessel",
+  "to": "geojson",
+  "input": "{\"uuid\":\"urn:mrn:signalk:uuid:6b0e776f-811a-4b35-980e-b93405371bc5\",\"name\":\"Seabird\",\"mmsi\":\"230099999\",\"navigation\":{\"position\":{\"value\":{\"latitude\":52.0987654,\"longitude\":4.98765245,\"altitude\":12.5},\"timestamp\":\"2026-11-20T10:15:30.250Z\",\"$source\":\"nmea0183.GP\"},\"courseOverGroundTrue\":{\"value\":0.7853981633974483,\"timestamp\":\"2026-11-20T10:15:30.250Z\",\"$source\":\"nmea0183.GP\"},\"speedOverGround\":{\"value\":3.5,\"timestamp\":\"2026-11-20T10:15:30.250Z\",\"$source\":\"nmea0183.GP\"},\"headingTrue\":{\"value\":0.5},\"state\":{\"value\":\"motoring\"}},\"design\":{\"length\":{\"value\":{\"overall\":12.3}}}}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[4.98765245,52.0987654]},\"properties\":{\"time_ms\":1795169730250,\"callsign\":\"Seabird\",\"course\":45,\"speed_ms\":3.5}}",
+  "source": "constructed",
+  "reference": "Signal K specification c6130b2a; text by tools/gen/signalk-vectors.py; course 45 degrees derived from 0.7853981633974483 rad; altitude has no stated reference, not hae"
+}

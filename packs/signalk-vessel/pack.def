@@ -1,0 +1,31 @@
+# A Signal K vessel object: the value of vessels.<id> in the full data model, as a
+# server returns it for /signalk/v1/api/vessels/<id>. The navigation group is mapped;
+# every other scalar member is residue. Public.
+format        signalk-vessel
+version       0.1.0
+distribution  public
+source        "Signal K specification, https://github.com/SignalK/specification commit c6130b2a5e1a1700b25760dc86b2076d37277700 (v1.8.6 and 7 commits): schemas/vessel.json, schemas/groups/navigation.json, schemas/definitions.json, schemas/delta.json; CC BY-SA 2.0"
+uses          signalk
+wire          json
+field  signalk.vessel_uuid             uuid                                          string
+field  callsign                        name                                          string
+field  signalk.vessel_mmsi             mmsi                                          string
+field  lat                             navigation.position.value.latitude            float
+field  lon                             navigation.position.value.longitude           float
+field  signalk.position_altitude_m     navigation.position.value.altitude            float
+field  time_ms                         navigation.position.timestamp                 iso8601_ms
+field  signalk.position_source         navigation.position.$source                  string
+field  signalk.cog_true_rad            navigation.courseOverGroundTrue.value         float
+field  signalk.cog_true_timestamp      navigation.courseOverGroundTrue.timestamp     string
+field  signalk.cog_true_source         navigation.courseOverGroundTrue.$source      string
+field  speed_ms                        navigation.speedOverGround.value              float
+field  signalk.sog_timestamp           navigation.speedOverGround.timestamp          string
+field  signalk.sog_source              navigation.speedOverGround.$source           string
+field  signalk.cog_magnetic_rad        navigation.courseOverGroundMagnetic.value     float
+field  signalk.heading_true_rad        navigation.headingTrue.value                  float
+field  signalk.heading_magnetic_rad    navigation.headingMagnetic.value              float
+field  signalk.rate_of_turn_rad_s      navigation.rateOfTurn.value                   float
+field  signalk.speed_through_water_ms  navigation.speedThroughWater.value            float
+field  signalk.magnetic_variation_rad  navigation.magneticVariation.value             float
+field  signalk.gnss_datetime           navigation.datetime.value                     string
+field  signalk.navigation_state        navigation.state.value                        string

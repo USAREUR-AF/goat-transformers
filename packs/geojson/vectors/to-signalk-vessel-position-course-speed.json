@@ -1,0 +1,9 @@
+{
+  "name": "geojson-to-signalk-vessel",
+  "from": "geojson",
+  "to": "signalk-vessel",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-3.25,52.5]},\"properties\":{\"time_ms\":1795169730250,\"callsign\":\"Seabird\",\"course\":90,\"speed_ms\":2.5}}",
+  "expect": "{\"name\":\"Seabird\",\"navigation\":{\"position\":{\"value\":{\"latitude\":52.5,\"longitude\":-3.25},\"timestamp\":\"2026-11-20T10:15:30.250Z\"},\"courseOverGroundTrue\":{\"value\":1.5707963267948966},\"speedOverGround\":{\"value\":2.5}}}",
+  "source": "constructed",
+  "reference": "Signal K specification c6130b2a; text by tools/gen/signalk-vectors.py; course 90 degrees becomes 1.5707963267948966 rad through rad"
+}

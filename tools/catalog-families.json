@@ -33,6 +33,7 @@
     {"name": "OpenXC", "domain": "land", "exact": ["openxc-vehicle-message"]},
 
     {"name": "NMEA 2000", "domain": "sea", "exact": ["nmea2000", "nmea2000-seq"]},
+    {"name": "Signal K", "domain": "sea", "prefixes": ["signalk-"]},
     {"name": "NMEA 0183", "domain": "sea", "exact": ["nmea0183"]},
     {"name": "AIS", "domain": "sea", "exact": ["ais", "ais-binary"]},
 

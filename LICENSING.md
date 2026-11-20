@@ -32,6 +32,7 @@ below, and every vector of another pack that converts from or to one of them.
 | [CC-BY-3.0](https://creativecommons.org/licenses/by/3.0/) | yes | no | yes | none | `open` |
 | [CC-BY-4.0](https://creativecommons.org/licenses/by/4.0/) | yes | no | yes | none | `open` |
 | [CC-BY-NC-SA-4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) | no | yes | yes | none | `everything` |
+| [CC-BY-SA-2.0](https://creativecommons.org/licenses/by-sa/2.0/) | yes | yes | yes | none | `open+copyleft` |
 | [LicenseRef-NGA-MSI](https://msi.nga.mil) | yes | no | yes | none | `open` |
 | [LicenseRef-OASIS-Notice](https://www.oasis-open.org/policies-guidelines/ipr/) | yes | no | yes | none | `open` |
 | [LicenseRef-OGC-Document](https://www.ogc.org/about/policies/document-license-agreement/) | yes | no | yes | none | `open` |
@@ -707,6 +708,8 @@ below, and every vector of another pack that converts from or to one of them.
 | `packs/sdm-weather-weather-alert` | `sdm-weather-weather-alert` | CC-BY-4.0 | `open` | its own licence |
 | `packs/sdm-weather-weather-forecast` | `sdm-weather-weather-forecast` | CC-BY-4.0 | `open` | its own licence |
 | `packs/sdm-weather-weather-observed` | `sdm-weather-weather-observed` | CC-BY-4.0 | `open` | its own licence |
+| `packs/signalk-delta` | `signalk-delta` | CC-BY-SA-2.0 | `open+copyleft` | its own licence |
+| `packs/signalk-vessel` | `signalk-vessel` | CC-BY-SA-2.0 | `open+copyleft` | its own licence |
 
 ## Model modules outside `open`, or not under Apache-2.0
 
@@ -1077,6 +1080,7 @@ below, and every vector of another pack that converts from or to one of them.
 | `model/sdmweatheralert.def` | CC-BY-4.0 | `open` | its own licence |
 | `model/sdmweatherforecast.def` | CC-BY-4.0 | `open` | its own licence |
 | `model/sdmweatherobserved.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/signalk.def` | CC-BY-SA-2.0 | `open+copyleft` | its own licence |
 
 Every pack and module not listed here is Apache-2.0, profile `open`.
 [NOTICE](NOTICE) carries the attribution each licence asks for.

@@ -1,0 +1,44 @@
+# The signalk module: members of a Signal K vessel object and of a Signal K delta
+# message that the packs signalk-vessel and signalk-delta map to no shared key.
+# Units are those the schema states (rad, m/s, m); times are the schema's RFC 3339
+# text unless the key says otherwise.
+module        signalk
+version       0.1.0
+distribution  public
+source        "Signal K specification, https://github.com/SignalK/specification commit c6130b2a5e1a1700b25760dc86b2076d37277700 (v1.8.6 and 7 commits): schemas/vessel.json, schemas/groups/navigation.json, schemas/definitions.json, schemas/delta.json; CC BY-SA 2.0"
+# vessel object
+key  vessel_uuid               string  -     "uuid of the vessel (urn:mrn:signalk:uuid:...)"
+key  vessel_mmsi               string  -     "MMSI of the vessel, nine digits, as text"
+key  position_altitude_m       float   m     "navigation.position altitude; the schema gives metres and no height reference"
+key  position_source           string  -     "navigation.position $source: the source reference"
+key  cog_true_rad              float   rad   "navigation.courseOverGroundTrue: course over ground, true, radians"
+key  cog_true_timestamp        string  -     "navigation.courseOverGroundTrue timestamp, RFC 3339 text"
+key  cog_true_source           string  -     "navigation.courseOverGroundTrue $source"
+key  sog_timestamp             string  -     "navigation.speedOverGround timestamp, RFC 3339 text"
+key  sog_source                string  -     "navigation.speedOverGround $source"
+key  cog_magnetic_rad          float   rad   "navigation.courseOverGroundMagnetic, radians"
+key  heading_true_rad          float   rad   "navigation.headingTrue: heading relative to true north, radians"
+key  heading_magnetic_rad      float   rad   "navigation.headingMagnetic, radians"
+key  rate_of_turn_rad_s        float   rad/s "navigation.rateOfTurn, radians per second"
+key  speed_through_water_ms    float   m/s   "navigation.speedThroughWater, metres per second"
+key  magnetic_variation_rad    float   rad   "navigation.magneticVariation, radians"
+key  gnss_datetime             string  -     "navigation.datetime value: GNSS date and time, RFC 3339 text"
+key  navigation_state          string  -     "navigation.state value (moored, sailing, motoring, ...)"
+# delta message
+key  delta_context             string  -     "context: the path of the object the updates belong to (vessels.urn:...)"
+list delta_updates                           "the updates of a delta, one item per update"
+key  delta_update_source_ref   string  -     "$source of an update"
+key  delta_update_source_label string  -     "source.label of an update"
+key  delta_update_source_type  string  -     "source.type of an update (NMEA0183, NMEA2000, ...)"
+key  delta_update_source_src   string  -     "source.src of an update"
+key  delta_update_source_pgn   int     -     "source.pgn of an update"
+key  delta_update_source_sentence string -   "source.sentence of an update"
+key  delta_update_source_talker string  -    "source.talker of an update"
+key  delta_update_timestamp    string  -     "timestamp of an update, RFC 3339 text"
+list delta_values                            "the values of an update, one item per path"
+key  delta_value_path          string  -     "path of a value (navigation.speedOverGround)"
+list delta_meta                              "the meta entries of an update, one item per path"
+key  delta_meta_path           string  -     "path of a meta entry"
+# course in degrees from the course in radians, and back (engine-spec 0.16)
+derive  course                  deg   signalk.cog_true_rad
+derive  signalk.cog_true_rad    rad   course
