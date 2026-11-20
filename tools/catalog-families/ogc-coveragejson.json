@@ -1,0 +1,8 @@
+{
+  "name": "OGC CoverageJSON",
+  "domain": "maps",
+  "prefixes": [
+    "covjson-"
+  ],
+  "detail": "Domain, Coverage and CoverageCollection documents"
+}

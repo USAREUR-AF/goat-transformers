@@ -1,0 +1,14 @@
+{
+  "name": "domain-url-in-an-item-is-dropped",
+  "from": "covjson-coverage-collection",
+  "to": "covjson-coverage-collection",
+  "input": "{\"type\":\"CoverageCollection\",\"coverages\":[{\"type\":\"Coverage\",\"domain\":\"https://example.org/d/1\",\"parameters\":{\"temperature\":{\"type\":\"Parameter\",\"unit\":{\"symbol\":{\"value\":\"K\",\"type\":\"http://www.opengis.net/def/uom/UCUM/\"}},\"observedProperty\":{\"id\":\"http://vocab.nerc.ac.uk/standard_name/air_temperature/\",\"label\":{\"en\":\"Air temperature\"}}}},\"ranges\":{}}]}",
+  "expect": "{\"type\":\"CoverageCollection\",\"coverages\":[{\"type\":\"Coverage\"}]}",
+  "model": {
+    "@kind": "collection",
+    "covjson.coverages.#": "1",
+    "covjson.coverages[0].covjson.coverage_type": "Coverage"
+  },
+  "source": "derived by tools/gen/covjson-vectors.py from the members of the standard and spec/engine-spec.md; no engine run",
+  "reference": "OGC CoverageJSON Community Standard 1.0 (OGC 21-069r2), clauses on domain, axis, reference system connection, coverage and coverage collection objects; a coverage of a collection whose domain is a URL: an item has no kinds, so only the inline form is mapped and the URL is dropped"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "domain-url-roundtrip",
+  "from": "covjson-coverage",
+  "to": "covjson-coverage",
+  "input": "{\"type\":\"Coverage\",\"domainType\":\"Grid\",\"domain\":\"https://example.org/coverages/run-7/domain\",\"parameters\":{\"temperature\":{\"type\":\"Parameter\",\"unit\":{\"symbol\":{\"value\":\"K\",\"type\":\"http://www.opengis.net/def/uom/UCUM/\"}},\"observedProperty\":{\"id\":\"http://vocab.nerc.ac.uk/standard_name/air_temperature/\",\"label\":{\"en\":\"Air temperature\"}}}},\"ranges\":{\"temperature\":\"https://example.org/coverages/run-7/temperature\"}}",
+  "expect": "{\"type\":\"Coverage\",\"domainType\":\"Grid\",\"domain\":\"https://example.org/coverages/run-7/domain\",\"parameters\":{\"temperature\":{\"type\":\"Parameter\",\"unit\":{\"symbol\":{\"value\":\"K\",\"type\":\"http://www.opengis.net/def/uom/UCUM/\"}},\"observedProperty\":{\"id\":\"http://vocab.nerc.ac.uk/standard_name/air_temperature/\",\"label\":{\"en\":\"Air temperature\"}}}},\"ranges\":{\"temperature\":\"https://example.org/coverages/run-7/temperature\"}}",
+  "model": {
+    "@kind": "domain-url",
+    "covjson.domain_url": "https://example.org/coverages/run-7/domain",
+    "covjson.coverage_domain_type": "Grid"
+  },
+  "source": "derived by tools/gen/covjson-vectors.py from the members of the standard and spec/engine-spec.md; no engine run",
+  "reference": "OGC CoverageJSON Community Standard 1.0 (OGC 21-069r2), clauses on domain, axis, reference system connection, coverage and coverage collection objects; the domain named by a URL, with domainType at the coverage; the range is a URL too, a scalar, residue"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "trajectory-tuples-are-not-carried",
+  "from": "covjson-domain",
+  "to": "covjson-domain",
+  "input": "{\"type\":\"Domain\",\"domainType\":\"Trajectory\",\"dct:license\":\"https://creativecommons.org/licenses/by/4.0/\",\"axes\":{\"composite\":{\"dataType\":\"tuple\",\"coordinates\":[\"t\",\"x\",\"y\"],\"values\":[[\"2026-11-20T00:00:00Z\",1.5,50.0],[\"2026-11-20T00:10:00Z\",1.75,50.125]]},\"z\":{\"values\":[100]}},\"referencing\":[{\"coordinates\":[\"x\",\"y\"],\"system\":{\"type\":\"GeographicCRS\",\"id\":\"http://www.opengis.net/def/crs/OGC/1.3/CRS84\",\"description\":{\"en\":\"longitude and latitude\"}}},{\"coordinates\":[\"t\"],\"system\":{\"type\":\"TemporalRS\",\"calendar\":\"Gregorian\"}}]}",
+  "expect": "{\"type\":\"Domain\",\"domainType\":\"Trajectory\",\"axes\":{\"z\":{\"values\":[100]},\"composite\":{\"dataType\":\"tuple\",\"coordinates\":[\"t\",\"x\",\"y\"]}},\"referencing\":[{\"coordinates\":[\"x\",\"y\"],\"system\":{\"type\":\"GeographicCRS\",\"id\":\"http://www.opengis.net/def/crs/OGC/1.3/CRS84\"}},{\"coordinates\":[\"t\"],\"system\":{\"type\":\"TemporalRS\",\"calendar\":\"Gregorian\"}}],\"dct:license\":\"https://creativecommons.org/licenses/by/4.0/\"}",
+  "model": {
+    "@kind": "domain",
+    "covjson.axis_composite_data_type": "tuple",
+    "covjson.axis_composite_coordinates.#": "3",
+    "covjson.axis_composite_coordinates[0].covjson.axis_composite_coordinate": "t"
+  },
+  "source": "derived by tools/gen/covjson-vectors.py from the members of the standard and spec/engine-spec.md; no engine run",
+  "reference": "OGC CoverageJSON Community Standard 1.0 (OGC 21-069r2), clauses on domain, axis, reference system connection, coverage and coverage collection objects; the composite axis keeps dataType and coordinates; its tuple values (an array of arrays) are not carried, and the i18n description of a reference system, inside a list item, is dropped; the custom member dct:license is residue and comes back after the mapped members"
+}

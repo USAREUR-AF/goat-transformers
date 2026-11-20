@@ -1,0 +1,19 @@
+{
+  "name": "grid-regular-axes-roundtrip",
+  "from": "covjson-domain",
+  "to": "covjson-domain",
+  "input": "{\"type\":\"Domain\",\"domainType\":\"Grid\",\"axes\":{\"x\":{\"start\":-10.0,\"stop\":10.0,\"num\":81},\"y\":{\"start\":60.0,\"stop\":40.0,\"num\":81},\"t\":{\"values\":[\"2026-11-20T00:00:00Z\",\"2026-11-20T06:00:00Z\"],\"bounds\":[\"2026-11-19T21:00:00Z\",\"2026-11-20T03:00:00Z\",\"2026-11-20T03:00:00Z\",\"2026-11-20T09:00:00Z\"]}},\"referencing\":[{\"coordinates\":[\"x\",\"y\"],\"system\":{\"type\":\"GeographicCRS\",\"id\":\"http://www.opengis.net/def/crs/OGC/1.3/CRS84\"}},{\"coordinates\":[\"t\"],\"system\":{\"type\":\"TemporalRS\",\"calendar\":\"Gregorian\"}}]}",
+  "expect": "{\"type\":\"Domain\",\"domainType\":\"Grid\",\"axes\":{\"x\":{\"start\":-10,\"stop\":10,\"num\":81},\"y\":{\"start\":60,\"stop\":40,\"num\":81},\"t\":{\"values\":[\"2026-11-20T00:00:00Z\",\"2026-11-20T06:00:00Z\"],\"bounds\":[\"2026-11-19T21:00:00Z\",\"2026-11-20T03:00:00Z\",\"2026-11-20T03:00:00Z\",\"2026-11-20T09:00:00Z\"]}},\"referencing\":[{\"coordinates\":[\"x\",\"y\"],\"system\":{\"type\":\"GeographicCRS\",\"id\":\"http://www.opengis.net/def/crs/OGC/1.3/CRS84\"}},{\"coordinates\":[\"t\"],\"system\":{\"type\":\"TemporalRS\",\"calendar\":\"Gregorian\"}}]}",
+  "model": {
+    "@kind": "domain",
+    "covjson.axis_x_start": "-10",
+    "covjson.axis_x_stop": "10",
+    "covjson.axis_x_num": "81",
+    "covjson.axis_y_start": "60",
+    "covjson.axis_t_values.#": "2",
+    "covjson.axis_t_bounds.#": "4",
+    "covjson.axis_t_bounds[3].covjson.axis_t_bound": "2026-11-20T09:00:00Z"
+  },
+  "source": "derived by tools/gen/covjson-vectors.py from the members of the standard and spec/engine-spec.md; no engine run",
+  "reference": "OGC CoverageJSON Community Standard 1.0 (OGC 21-069r2), clauses on domain, axis, reference system connection, coverage and coverage collection objects; regularly spaced x and y (start, stop, num; y descends), two time steps with bounds; -10.0 is written -10"
+}
