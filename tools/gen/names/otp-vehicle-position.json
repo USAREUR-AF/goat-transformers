@@ -1,0 +1,24 @@
+{
+ "keys": {
+  "|heading|float": "heading",
+  "|label|string": "label",
+  "|lastUpdated|int": "last_updated",
+  "|lastUpdate|string": "last_update",
+  "|lat|float": "lat",
+  "|lon|float": "lon",
+  "|speed|float": "speed",
+  "|stopRelationship.status|string": "stop_relationship_status",
+  "|stopRelationship.stop.code|string": "stop_relationship_stop_code",
+  "|stopRelationship.stop.gtfsId|string": "stop_relationship_stop_gtfs_id",
+  "|stopRelationship.stop.lat|float": "stop_relationship_stop_lat",
+  "|stopRelationship.stop.lon|float": "stop_relationship_stop_lon",
+  "|stopRelationship.stop.name|string": "stop_relationship_stop_name",
+  "|stopRelationship.stop.platformCode|string": "stop_relationship_stop_platform_code",
+  "|trip.directionId|string": "trip_direction_id",
+  "|trip.gtfsId|string": "trip_gtfs_id",
+  "|trip.routeShortName|string": "trip_route_short_name",
+  "|trip.tripShortName|string": "trip_trip_short_name",
+  "|vehicleId|string": "vehicle_id"
+ },
+ "lists": {}
+}

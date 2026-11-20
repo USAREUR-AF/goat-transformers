@@ -1,0 +1,7 @@
+{
+  "name": "OpenTripPlanner GraphQL",
+  "domain": "transport",
+  "prefixes": [
+    "otp-"
+  ]
+}

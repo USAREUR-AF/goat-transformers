@@ -1,0 +1,234 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "urn:goat-transformers:hafas-client-6-objects",
+ "title": "hafas-client 6 radar() results, restated by goat-transformers",
+ "description": "Member names and JSON types of the results of hafas-client 6 radar() (movements), restated by this project from the library's documentation (docs/radar.md). A date-time is an ISO 8601 text with an offset; null members are absent. Not a copy of the documentation.",
+ "$defs": {
+  "Location": {
+   "type": "object",
+   "properties": {
+    "type": {
+     "type": "string"
+    },
+    "id": {
+     "type": "string"
+    },
+    "address": {
+     "type": "string"
+    },
+    "latitude": {
+     "type": "number"
+    },
+    "longitude": {
+     "type": "number"
+    },
+    "altitude": {
+     "type": "number"
+    }
+   },
+   "required": [
+    "type"
+   ]
+  },
+  "StopRef": {
+   "type": "object",
+   "properties": {
+    "type": {
+     "type": "string"
+    },
+    "id": {
+     "type": "string"
+    },
+    "name": {
+     "type": "string"
+    },
+    "location": {
+     "$ref": "#/$defs/Location"
+    }
+   },
+   "required": [
+    "type",
+    "id"
+   ]
+  },
+  "Operator": {
+   "type": "object",
+   "properties": {
+    "type": {
+     "type": "string"
+    },
+    "id": {
+     "type": "string"
+    },
+    "name": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "type",
+    "id"
+   ]
+  },
+  "Line": {
+   "type": "object",
+   "properties": {
+    "type": {
+     "type": "string"
+    },
+    "id": {
+     "type": "string"
+    },
+    "fahrtNr": {
+     "type": "string"
+    },
+    "name": {
+     "type": "string"
+    },
+    "public": {
+     "type": "boolean"
+    },
+    "mode": {
+     "type": "string"
+    },
+    "product": {
+     "type": "string"
+    },
+    "symbol": {
+     "type": "string"
+    },
+    "nr": {
+     "type": "integer"
+    },
+    "metro": {
+     "type": "boolean"
+    },
+    "express": {
+     "type": "boolean"
+    },
+    "night": {
+     "type": "boolean"
+    },
+    "operator": {
+     "$ref": "#/$defs/Operator"
+    }
+   },
+   "required": [
+    "type",
+    "id"
+   ]
+  },
+  "Stopover": {
+   "type": "object",
+   "properties": {
+    "stop": {
+     "$ref": "#/$defs/StopRef"
+    },
+    "arrival": {
+     "type": "string",
+     "format": "date-time"
+    },
+    "plannedArrival": {
+     "type": "string",
+     "format": "date-time"
+    },
+    "arrivalDelay": {
+     "type": "integer"
+    },
+    "arrivalPlatform": {
+     "type": "string"
+    },
+    "plannedArrivalPlatform": {
+     "type": "string"
+    },
+    "departure": {
+     "type": "string",
+     "format": "date-time"
+    },
+    "plannedDeparture": {
+     "type": "string",
+     "format": "date-time"
+    },
+    "departureDelay": {
+     "type": "integer"
+    },
+    "departurePlatform": {
+     "type": "string"
+    },
+    "plannedDeparturePlatform": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "stop"
+   ]
+  },
+  "Frame": {
+   "type": "object",
+   "properties": {
+    "origin": {
+     "$ref": "#/$defs/StopRef"
+    },
+    "destination": {
+     "$ref": "#/$defs/StopRef"
+    },
+    "t": {
+     "type": "integer"
+    }
+   },
+   "required": [
+    "origin",
+    "destination",
+    "t"
+   ]
+  },
+  "Movement": {
+   "type": "object",
+   "properties": {
+    "direction": {
+     "type": "string"
+    },
+    "tripId": {
+     "type": "string"
+    },
+    "line": {
+     "$ref": "#/$defs/Line"
+    },
+    "location": {
+     "$ref": "#/$defs/Location"
+    },
+    "nextStopovers": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/Stopover"
+     }
+    },
+    "frames": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/Frame"
+     }
+    }
+   },
+   "required": [
+    "location"
+   ]
+  },
+  "Radar": {
+   "type": "object",
+   "properties": {
+    "movements": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/Movement"
+     }
+    },
+    "realtimeDataUpdatedAt": {
+     "type": "integer"
+    }
+   },
+   "required": [
+    "movements"
+   ]
+  }
+ }
+}
