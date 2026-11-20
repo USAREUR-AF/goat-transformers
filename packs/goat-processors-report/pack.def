@@ -1,0 +1,23 @@
+# The report that the goat-processors runner reads: one JSON object whose
+# keys are the shared-model keys themselves (goat-processors spec/correlate.md,
+# Reports). Public, no external standard. `time_ms` is an integer, epoch ms.
+format  goat-processors-report
+version 0.1.0
+distribution public
+source  "USAREUR-AF/goat-processors spec/correlate.md, section Reports (Apache-2.0)"
+uses    track
+wire    json
+field   track.source_id  track.source_id  string
+field   uid       uid       string
+field   time_ms   time_ms   int
+field   lat       lat       float
+field   lon       lon       float
+field   hae       hae       float
+field   ce        ce        float
+field   course    course    float
+field   speed_ms  speed_ms  float
+field   type      type      string
+field   stale_ms  stale_ms  int
+field   callsign  callsign  string
+field   time_error_ms  time_error_ms  float
+field   time_state     time_state     string

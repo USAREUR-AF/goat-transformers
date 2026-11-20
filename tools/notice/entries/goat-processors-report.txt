@@ -1,0 +1,5 @@
+Packs goat-processors-report, goat-processors-system-track
+  goat-processors, https://github.com/USAREUR-AF/goat-processors (files
+  spec/correlate.md at commit 5e63cee0 and runner/README.md at commit
+  072001ee). Apache License, Version 2.0. Member names and types restated;
+  no text copied.
