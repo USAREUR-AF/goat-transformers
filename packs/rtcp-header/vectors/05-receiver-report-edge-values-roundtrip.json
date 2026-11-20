@@ -1,0 +1,24 @@
+{
+  "name": "receiver-report-edge-values-roundtrip",
+  "from": "rtcp-header",
+  "to": "rtcp-header",
+  "input": "e1c9ffffffffffffffffffffff800000ffffffffffffffffffffffffffffffff",
+  "expect": "e1c9ffffffffffffffffffffff800000ffffffffffffffffffffffffffffffff",
+  "model": {
+    "@kind": "receiver-report",
+    "inet.rtcp_version": "3",
+    "inet.rtcp_padding": "1",
+    "inet.rtcp_length": "65535",
+    "inet.rtcp_report_count": "1",
+    "inet.rtcp_ssrc": "4294967295",
+    "inet.rtcp_report_blocks.#": "1",
+    "inet.rtcp_report_blocks[0].inet.rtcp_rb_ssrc": "4294967295",
+    "inet.rtcp_report_blocks[0].inet.rtcp_rb_fraction_lost": "255",
+    "inet.rtcp_report_blocks[0].inet.rtcp_rb_cumulative_lost": "-8388608",
+    "inet.rtcp_report_blocks[0].inet.rtcp_rb_ext_highest_seq": "4294967295",
+    "inet.rtcp_report_blocks[0].inet.rtcp_rb_jitter": "4294967295",
+    "inet.rtcp_report_blocks[0].inet.rtcp_rb_lsr": "4294967295",
+    "inet.rtcp_report_blocks[0].inet.rtcp_rb_dlsr": "4294967295"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; a receiver report with every header field at its largest (version 3 included) and one block at its edges: fraction 255, cumulative loss -8388608, the rest all ones; the length is carried, not checked"
+}

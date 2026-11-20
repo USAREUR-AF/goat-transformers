@@ -1,0 +1,8 @@
+{
+  "name": "csrc-cut-short-is-malformed",
+  "from": "rtp-header",
+  "to": "rtp-header",
+  "input": "82001234000271005eed123411111111222222",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; the two-CSRC header cut to 19 octets: the second identifier does not fit"
+}

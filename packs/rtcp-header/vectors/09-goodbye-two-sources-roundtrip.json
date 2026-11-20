@@ -1,0 +1,18 @@
+{
+  "name": "goodbye-two-sources-roundtrip",
+  "from": "rtcp-header",
+  "to": "rtcp-header",
+  "input": "82cb00025eed123411111111",
+  "expect": "82cb00025eed123411111111",
+  "model": {
+    "@kind": "goodbye",
+    "inet.rtcp_version": "2",
+    "inet.rtcp_padding": "0",
+    "inet.rtcp_length": "2",
+    "inet.rtcp_source_count": "2",
+    "inet.rtcp_bye_sources.#": "2",
+    "inet.rtcp_bye_sources[0].inet.rtcp_bye_ssrc": "1592594996",
+    "inet.rtcp_bye_sources[1].inet.rtcp_bye_ssrc": "286331153"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; a goodbye for an SSRC and one CSRC (count 2, length 2), no reason"
+}

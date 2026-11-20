@@ -43,9 +43,9 @@ None.
 
 ## Not mapped, and why
 
-- IGMPv3 (RFC 3376): a longer query and a report with group records; not in
-  this pack. A version 3 query has type 0x11 and decodes here by its first 8
-  octets.
+- IGMPv3 (RFC 3376): a longer query and a report with group records, mapped
+  by the pack `igmpv3`. A version 3 query has type 0x11 and decodes here by its
+  first 8 octets; a version 3 report (type 0x22) is kind `other` here.
 
 ## Vectors
 

@@ -1,0 +1,22 @@
+{
+  "name": "additional-octets-are-not-written",
+  "from": "igmpv3",
+  "to": "igmpv3",
+  "input": "110a0e26e9fc00010a7d0002c000020ac633641400000000",
+  "expect": "110a0e26e9fc00010a7d0002c000020ac6336414",
+  "model": {
+    "@kind": "membership-query",
+    "inet.igmp3_max_resp_code": "10",
+    "inet.igmp_checksum": "3622",
+    "inet.igmp_group_addr": "3925606401",
+    "inet.igmp3_reserved": "0",
+    "inet.igmp3_suppress": "1",
+    "inet.igmp3_qrv": "2",
+    "inet.igmp3_qqic": "125",
+    "inet.igmp3_num_sources": "2",
+    "inet.igmp3_query_sources.#": "2",
+    "inet.igmp3_query_sources[0].inet.igmp3_source_addr": "3221225994",
+    "inet.igmp3_query_sources[1].inet.igmp3_source_addr": "3325256724"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; the two-source query followed by 4 octets RFC 3376 tells a receiver to ignore"
+}

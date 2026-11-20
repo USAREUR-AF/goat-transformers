@@ -1,0 +1,15 @@
+{
+  "name": "hop-limit-exceeded-roundtrip",
+  "from": "icmpv6-header",
+  "to": "icmpv6-header",
+  "input": "0300030400000000",
+  "expect": "0300030400000000",
+  "model": {
+    "@kind": "time-exceeded",
+    "inet.icmpv6_type": "3",
+    "inet.icmpv6_code": "0",
+    "inet.icmpv6_checksum": "772",
+    "inet.icmpv6_unused": "0"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; a time exceeded, hop limit exceeded in transit; checksum a chosen value"
+}

@@ -2,8 +2,8 @@
   "name": "every-field-at-its-largest-roundtrip",
   "from": "rtp-header",
   "to": "rtp-header",
-  "input": "ffffffffffffffffffffffff",
-  "expect": "ffffffffffffffffffffffff",
+  "input": "fffffffffffffffffffffffffffffffffffffffefffffffdfffffffcfffffffbfffffffafffffff9fffffff8fffffff7fffffff6fffffff5fffffff4fffffff3fffffff2fffffff1",
+  "expect": "fffffffffffffffffffffffffffffffffffffffefffffffdfffffffcfffffffbfffffffafffffff9fffffff8fffffff7fffffff6fffffff5fffffff4fffffff3fffffff2fffffff1",
   "model": {
     "inet.rtp_version": "3",
     "inet.rtp_padding": "1",
@@ -13,7 +13,23 @@
     "inet.rtp_payload_type": "127",
     "inet.rtp_sequence": "65535",
     "inet.rtp_timestamp": "4294967295",
-    "inet.rtp_ssrc": "4294967295"
+    "inet.rtp_ssrc": "4294967295",
+    "inet.rtp_csrcs.#": "15",
+    "inet.rtp_csrcs[0].inet.rtp_csrc": "4294967295",
+    "inet.rtp_csrcs[1].inet.rtp_csrc": "4294967294",
+    "inet.rtp_csrcs[2].inet.rtp_csrc": "4294967293",
+    "inet.rtp_csrcs[3].inet.rtp_csrc": "4294967292",
+    "inet.rtp_csrcs[4].inet.rtp_csrc": "4294967291",
+    "inet.rtp_csrcs[5].inet.rtp_csrc": "4294967290",
+    "inet.rtp_csrcs[6].inet.rtp_csrc": "4294967289",
+    "inet.rtp_csrcs[7].inet.rtp_csrc": "4294967288",
+    "inet.rtp_csrcs[8].inet.rtp_csrc": "4294967287",
+    "inet.rtp_csrcs[9].inet.rtp_csrc": "4294967286",
+    "inet.rtp_csrcs[10].inet.rtp_csrc": "4294967285",
+    "inet.rtp_csrcs[11].inet.rtp_csrc": "4294967284",
+    "inet.rtp_csrcs[12].inet.rtp_csrc": "4294967283",
+    "inet.rtp_csrcs[13].inet.rtp_csrc": "4294967282",
+    "inet.rtp_csrcs[14].inet.rtp_csrc": "4294967281"
   },
-  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; every field at its largest value, version 3 included: the pack does not check the version"
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; every field at its largest value, version 3 included (the pack does not check it), with the 15 CSRC identifiers a count of 15 calls for: 72 octets"
 }

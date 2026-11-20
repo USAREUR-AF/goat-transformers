@@ -1,10 +1,10 @@
-# RTP fixed header (RFC 3550 section 5.1): the first 12 octets of an RTP data
-# packet. Public. The CSRC list, the header extension and the payload are not
-# mapped (pack.md).
+# RTP header (RFC 3550 section 5.1): the 12 fixed octets of an RTP data packet
+# and the CSRC list after them. Public. The header extension and the payload
+# are not mapped (pack.md).
 #
 # Addressing: word_bytes 1 and bit_order msb; multi-octet fields are big-endian.
 format        rtp-header
-version       0.1.0
+version       0.2.0
 distribution  public
 source        "IETF RFC 3550, RTP: A Transport Protocol for Real-Time Applications, July 2003, section 5.1, https://www.rfc-editor.org/rfc/rfc3550.txt; layout restated"
 uses          inet
@@ -21,3 +21,9 @@ field  inet.rtp_payload_type        0:9:7      uint
 field  inet.rtp_sequence            0:16:16    uint
 field  inet.rtp_timestamp           0:32:32    uint
 field  inet.rtp_ssrc                0:64:32    uint
+
+# The CSRC list: CSRC count items of 32 bits. On encode the count is written
+# from the number of items, over inet.rtp_csrc_count (ruling 2 of 0.7).
+group  inet.rtp_csrcs  0:96  item 32  count 0:4:4
+  field  inet.rtp_csrc              0:0:32     uint
+end

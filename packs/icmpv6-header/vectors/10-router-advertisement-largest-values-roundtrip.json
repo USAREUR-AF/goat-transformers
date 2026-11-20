@@ -1,0 +1,21 @@
+{
+  "name": "router-advertisement-largest-values-roundtrip",
+  "from": "icmpv6-header",
+  "to": "icmpv6-header",
+  "input": "86ffffffffffffffffffffffffffffff",
+  "expect": "86ffffffffffffffffffffffffffffff",
+  "model": {
+    "@kind": "router-advertisement",
+    "inet.icmpv6_type": "134",
+    "inet.icmpv6_code": "255",
+    "inet.icmpv6_checksum": "65535",
+    "inet.icmpv6_ra_cur_hop_limit": "255",
+    "inet.icmpv6_ra_managed": "1",
+    "inet.icmpv6_ra_other": "1",
+    "inet.icmpv6_ra_reserved": "63",
+    "inet.icmpv6_ra_router_lifetime": "65535",
+    "inet.icmpv6_ra_reachable_time": "4294967295",
+    "inet.icmpv6_ra_retrans_timer": "4294967295"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; a router advertisement with every field at its largest value, the reserved bits included (the pack does not check them)"
+}

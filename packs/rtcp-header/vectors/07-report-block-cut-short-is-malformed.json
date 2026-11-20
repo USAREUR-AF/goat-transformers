@@ -1,0 +1,8 @@
+{
+  "name": "report-block-cut-short-is-malformed",
+  "from": "rtcp-header",
+  "to": "rtcp-header",
+  "input": "82c800125eed1234eeb0b1904000000000027100000003e8000271000badcafe19000003000111700000000c1c7d4000000080",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; the two-block sender report cut to 51 octets: the second block does not fit"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "router-solicitation-options-not-written",
+  "from": "icmpv6-header",
+  "to": "icmpv6-header",
+  "input": "8500070800000000010100005e005301",
+  "expect": "8500070800000000",
+  "model": {
+    "@kind": "router-solicitation",
+    "inet.icmpv6_type": "133",
+    "inet.icmpv6_code": "0",
+    "inet.icmpv6_checksum": "1800",
+    "inet.icmpv6_reserved": "0"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; a router solicitation with a source link-layer address option, read over; checksum a chosen value"
+}

@@ -2,13 +2,15 @@
 """ietf-headers-2-vectors: write the vectors of the second set of IETF header packs.
 
 Packs: rtp-header, rtcp-header, arp-ipv4-ethernet, gre-header, vxlan-header,
-mpls-label-entry, igmpv2, sctp-common-header, bfd-control.
+mpls-label-entry, igmpv2, sctp-common-header, bfd-control, igmpv3,
+icmpv6-header.
 
 Python 3 standard library only; imports no engine and reads no pack.def. The
 layouts below are this program's own restatement of RFC 3550 sections 5.1,
-6.4.1 and 6.4.2, RFC 826 (with the IPv4 type of RFC 894), RFC 2784 with RFC
+6.4 to 6.7, RFC 826 (with the IPv4 type of RFC 894), RFC 2784 with RFC
 2890, RFC 7348 section 5, RFC 3032 section 2.1, RFC 2236 section 2, RFC 9260
-section 3.1 and RFC 5880 section 4.1: each header is a list of (field, bits) in
+section 3.1, RFC 5880 section 4.1, RFC 3376 sections 4.1 and 4.2, RFC 4443
+and RFC 4861 sections 4.1 and 4.2: each header is a list of (field, bits) in
 wire order, most significant bit first, multi-octet fields in network
 (big-endian) order.
 
@@ -16,15 +18,18 @@ Inputs: headers built here field by field, from values chosen here. No message
 is taken from a document. Addresses are from the documentation ranges
 (192.0.2.0/24, 198.51.100.0/24 and 203.0.113.0/24 of RFC 5737; the multicast
 block 233.252.0.0/24 of RFC 5771; Ethernet addresses 00-00-5E-00-53-00 to
-00-00-5E-00-53-FF of RFC 7042). The IGMP checksum is computed here by the ones'
-complement sum RFC 2236 defines; the GRE, SCTP and other checksums are values
+00-00-5E-00-53-FF of RFC 7042). The IGMP checksums are computed here by the
+ones' complement sum RFC 2236 and RFC 3376 define; the GRE, SCTP, ICMPv6 and
+other checksums are values
 chosen here and say nothing of the content (the packs carry them, they do not
 compute or check them).
 
 Every `expect` is this program's packing of the header; every `model` value is
-the field value that was packed. Bytes after the fixed part (CSRC list, report
-blocks, payload, chunks, authentication, further stack entries) are read over
-and not written back: those vectors expect the fixed part alone.
+the field value that was packed; a list is given by `<list>.#` and its items'
+values. Bytes after the mapped part (payload, SDES chunks, the goodbye reason,
+application data, Neighbor Discovery options, chunks, authentication, further
+stack entries) are read over and not written back: those vectors expect the
+mapped part alone.
 
 Usage: python3 -I tools/gen/ietf-headers-2-vectors.py [--out DIR] [--check]
 With --check nothing is written and the exit status is 1 when a committed file
@@ -96,11 +101,31 @@ SRC = "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; "
 
 
 # ---------------------------------------------------------------------------
-# RTP fixed header, RFC 3550 section 5.1: 12 octets.
+# RTP header, RFC 3550 section 5.1: 12 octets, then CSRC count identifiers of
+# 32 bits each.
 RTP = [("rtp_version", 2), ("rtp_padding", 1), ("rtp_extension", 1), ("rtp_csrc_count", 4),
        ("rtp_marker", 1), ("rtp_payload_type", 7), ("rtp_sequence", 16), ("rtp_timestamp", 32),
        ("rtp_ssrc", 32)]
 RTP_KEYS = [k for k, _ in RTP]
+
+
+def add_list(m, name, items, keys=None):
+    """Add `<list>.#` and `<list>[i].<key>` entries for items (dicts of ints)."""
+    m["inet.%s.#" % name] = str(len(items))
+    for i, it in enumerate(items):
+        for k in (keys or sorted(it)):
+            v = it[k]
+            if isinstance(v, list):
+                continue
+            m["inet.%s[%d].inet.%s" % (name, i, k)] = str(v)
+    return m
+
+
+def rtp(values, csrcs):
+    v = dict(values, rtp_csrc_count=len(csrcs))
+    b = pack(RTP, v) + b"".join(c.to_bytes(4, "big") for c in csrcs)
+    m = add_list(model_of(v, RTP_KEYS), "rtp_csrcs", [{"rtp_csrc": c} for c in csrcs])
+    return b, m
 
 
 def rtp_vectors():
@@ -108,75 +133,144 @@ def rtp_vectors():
     P = "rtp-header"
     a = {"rtp_version": 2, "rtp_marker": 1, "rtp_payload_type": 96, "rtp_sequence": 4660,
          "rtp_timestamp": 160000, "rtp_ssrc": 0x5EED1234}
-    h = pack(RTP, a)
-    out.append(vec(P, "dynamic-payload-roundtrip", h.hex(), h.hex(), model_of(a, RTP_KEYS),
+    h, m = rtp(a, [])
+    out.append(vec(P, "dynamic-payload-roundtrip", h.hex(), h.hex(), m,
                    SRC + "version 2, marker set, dynamic payload type 96, sequence 4660, timestamp 160000, "
-                         "no CSRC"))
-    e = {"rtp_version": 3, "rtp_padding": 1, "rtp_extension": 1, "rtp_csrc_count": 15, "rtp_marker": 1,
+                         "no CSRC: the list is present and empty"))
+    e = {"rtp_version": 3, "rtp_padding": 1, "rtp_extension": 1, "rtp_marker": 1,
          "rtp_payload_type": 127, "rtp_sequence": 65535, "rtp_timestamp": 0xFFFFFFFF,
          "rtp_ssrc": 0xFFFFFFFF}
-    he = pack(RTP, e)
-    out.append(vec(P, "every-field-at-its-largest-roundtrip", he.hex(), he.hex(), model_of(e, RTP_KEYS),
-                   SRC + "every field at its largest value, version 3 included: the pack does not check "
-                         "the version"))
-    c = dict(a, rtp_csrc_count=2, rtp_marker=0, rtp_payload_type=0)
-    hc = pack(RTP, c)
-    tail = (0x11111111).to_bytes(4, "big") + (0x22222222).to_bytes(4, "big") + bytes(160)
-    out.append(vec(P, "csrc-list-and-payload-are-not-written", (hc + tail).hex(), hc.hex(),
-                   model_of(c, RTP_KEYS),
+    he, me = rtp(e, [0xFFFFFFFF - i for i in range(15)])
+    out.append(vec(P, "every-field-at-its-largest-roundtrip", he.hex(), he.hex(), me,
+                   SRC + "every field at its largest value, version 3 included (the pack does not check "
+                         "it), with the 15 CSRC identifiers a count of 15 calls for: 72 octets"))
+    c = dict(a, rtp_marker=0, rtp_payload_type=0)
+    hc, mc = rtp(c, [0x11111111, 0x22222222])
+    out.append(vec(P, "csrc-list-roundtrip-payload-not-written", (hc + bytes(160)).hex(), hc.hex(), mc,
                    SRC + "payload type 0 with two CSRC identifiers and 160 payload octets of zeros; the "
-                         "count is kept, the identifiers and payload are read over"))
+                         "identifiers come back, the payload is read over"))
+    out.append(vec(P, "csrc-cut-short-is-malformed", hc[:19].hex(), error="malformed-wire",
+                   ref=SRC + "the two-CSRC header cut to 19 octets: the second identifier does not fit"))
     out.append(vec(P, "eleven-octets-is-malformed", h[:11].hex(), error="malformed-wire",
                    ref=SRC + "the first vector's header cut to 11 octets"))
     return out
 
 
 # ---------------------------------------------------------------------------
-# RTCP SR and RR, RFC 3550 sections 6.4.1 and 6.4.2.
-RTCP_HEAD = [("rtcp_version", 2), ("rtcp_padding", 1), ("rtcp_report_count", 5), ("pt", 8),
-             ("rtcp_length", 16), ("rtcp_ssrc", 32)]
+# RTCP, RFC 3550 sections 6.4 to 6.7. The first word: version 2, padding 1,
+# a 5-bit count or subtype, packet type 8, length 16.
+RTCP_WORD0 = [("rtcp_version", 2), ("rtcp_padding", 1), ("count5", 5), ("pt", 8), ("rtcp_length", 16)]
 RTCP_SENDER = [("rtcp_ntp_ts_sec", 32), ("rtcp_ntp_ts_frac", 32), ("rtcp_rtp_timestamp", 32),
                ("rtcp_packet_count", 32), ("rtcp_octet_count", 32)]
-RTCP_HEAD_KEYS = [k for k, _ in RTCP_HEAD if k != "pt"]
-RTCP_SR_KEYS = RTCP_HEAD_KEYS + [k for k, _ in RTCP_SENDER]
-REPORT_BLOCK = [("ssrc", 32), ("fraction_lost", 8), ("cumulative_lost", 24), ("ext_highest_seq", 32),
-                ("jitter", 32), ("lsr", 32), ("dlsr", 32)]
+RB = [("rtcp_rb_ssrc", 32), ("rtcp_rb_fraction_lost", 8), ("rtcp_rb_cumulative_lost", 24),
+      ("rtcp_rb_ext_highest_seq", 32), ("rtcp_rb_jitter", 32), ("rtcp_rb_lsr", 32), ("rtcp_rb_dlsr", 32)]
+RB_KEYS = [k for k, _ in RB]
+WORD0_KEYS = ["rtcp_version", "rtcp_padding", "rtcp_length"]
+
+
+def rb_bytes(b):
+    v = dict(b)
+    if v["rtcp_rb_cumulative_lost"] < 0:
+        v["rtcp_rb_cumulative_lost"] += 1 << 24
+    return pack(RB, v)
+
+
+def report(pt, head, blocks):
+    """A sender (200) or receiver (201) report; head holds the word-0 values, the
+    SSRC and, for 200, the sender information."""
+    w0 = dict(head, count5=len(blocks), pt=pt)
+    b = pack(RTCP_WORD0, w0) + head["rtcp_ssrc"].to_bytes(4, "big")
+    keys = WORD0_KEYS + ["rtcp_report_count", "rtcp_ssrc"]
+    if pt == 200:
+        b += pack(RTCP_SENDER, head)
+        keys += [k for k, _ in RTCP_SENDER]
+    b += b"".join(rb_bytes(x) for x in blocks)
+    m = model_of(dict(head, rtcp_report_count=len(blocks)), keys,
+                 "sender-report" if pt == 200 else "receiver-report")
+    return b, add_list(m, "rtcp_report_blocks", blocks, RB_KEYS)
+
+
+BLOCK_A = {"rtcp_rb_ssrc": 0x0BADCAFE, "rtcp_rb_fraction_lost": 25, "rtcp_rb_cumulative_lost": 3,
+           "rtcp_rb_ext_highest_seq": 70000, "rtcp_rb_jitter": 12, "rtcp_rb_lsr": 0x1C7D4000,
+           "rtcp_rb_dlsr": 0x8000}
+BLOCK_B = {"rtcp_rb_ssrc": 0x0C0FFEE0, "rtcp_rb_fraction_lost": 0, "rtcp_rb_cumulative_lost": -2,
+           "rtcp_rb_ext_highest_seq": 0x0001FFFF, "rtcp_rb_jitter": 0, "rtcp_rb_lsr": 0, "rtcp_rb_dlsr": 0}
+BLOCK_EDGE = {"rtcp_rb_ssrc": 0xFFFFFFFF, "rtcp_rb_fraction_lost": 255, "rtcp_rb_cumulative_lost": -(1 << 23),
+              "rtcp_rb_ext_highest_seq": 0xFFFFFFFF, "rtcp_rb_jitter": 0xFFFFFFFF,
+              "rtcp_rb_lsr": 0xFFFFFFFF, "rtcp_rb_dlsr": 0xFFFFFFFF}
 
 
 def rtcp_vectors():
     out = []
     P = "rtcp-header"
-    sr = {"rtcp_version": 2, "pt": 200, "rtcp_length": 6, "rtcp_ssrc": 0x5EED1234,
+    sr = {"rtcp_version": 2, "rtcp_length": 6, "rtcp_ssrc": 0x5EED1234,
           "rtcp_ntp_ts_sec": 4004557200, "rtcp_ntp_ts_frac": 0x40000000, "rtcp_rtp_timestamp": 160000,
           "rtcp_packet_count": 1000, "rtcp_octet_count": 160000}
-    h = pack(RTCP_HEAD + RTCP_SENDER, sr)
-    out.append(vec(P, "sender-report-roundtrip", h.hex(), h.hex(), model_of(sr, RTCP_SR_KEYS, "sender-report"),
+    h, m = report(200, sr, [])
+    out.append(vec(P, "sender-report-roundtrip", h.hex(), h.hex(), m,
                    SRC + "a sender report with no report block (length 6: seven words less one), sent at "
                          "NTP time 4004557200.25 s, after 1000 packets and 160000 payload octets"))
-    sr1 = dict(sr, rtcp_report_count=1, rtcp_length=12)
-    h1 = pack(RTCP_HEAD + RTCP_SENDER, sr1)
-    blk = pack(REPORT_BLOCK, {"ssrc": 0x0BADCAFE, "fraction_lost": 25, "cumulative_lost": 3,
-                              "ext_highest_seq": 70000, "jitter": 12, "lsr": 0x1C7D4000, "dlsr": 0x8000})
-    out.append(vec(P, "report-block-is-not-written", (h1 + blk).hex(), h1.hex(),
-                   model_of(sr1, RTCP_SR_KEYS, "sender-report"),
-                   SRC + "the sender report with one report block (count 1, length 12); the 24-octet block "
-                         "is read over and not written"))
-    rr = {"rtcp_version": 2, "pt": 201, "rtcp_length": 1, "rtcp_ssrc": 0x0BADCAFE}
-    hr = pack(RTCP_HEAD, rr)
-    out.append(vec(P, "receiver-report-roundtrip", hr.hex(), hr.hex(),
-                   model_of(rr, RTCP_HEAD_KEYS, "receiver-report"),
+    h2, m2 = report(200, dict(sr, rtcp_length=18), [BLOCK_A, BLOCK_B])
+    out.append(vec(P, "sender-report-two-blocks-roundtrip", h2.hex(), h2.hex(), m2,
+                   SRC + "the sender report with two report blocks (count 2, length 18); the second "
+                         "reports a cumulative loss of -2 (duplicates) and an extended highest sequence "
+                         "of one wrap and 65535"))
+    rr = {"rtcp_version": 2, "rtcp_length": 1, "rtcp_ssrc": 0x0BADCAFE}
+    hr, mr = report(201, rr, [])
+    out.append(vec(P, "receiver-report-roundtrip", hr.hex(), hr.hex(), mr,
                    SRC + "an empty receiver report: count 0, length 1, the header alone"))
-    e = {"rtcp_version": 3, "rtcp_padding": 1, "rtcp_report_count": 31, "pt": 201, "rtcp_length": 65535,
-         "rtcp_ssrc": 0xFFFFFFFF}
-    he = pack(RTCP_HEAD, e)
-    out.append(vec(P, "receiver-report-largest-values-roundtrip", he.hex(), he.hex(),
-                   model_of(e, RTCP_HEAD_KEYS, "receiver-report"),
-                   SRC + "a receiver report header with every field at its largest value, version 3 "
-                         "included"))
-    sdes = pack(RTCP_HEAD, dict(rr, pt=202))
-    out.append(vec(P, "source-description-is-no-kind", sdes.hex(), error="no-kind",
-                   ref=SRC + "the receiver report header with packet type 202 (source description), which "
-                             "the pack does not map"))
+    h1, m1 = report(201, dict(rr, rtcp_length=7), [BLOCK_A])
+    out.append(vec(P, "receiver-report-one-block-roundtrip", h1.hex(), h1.hex(), m1,
+                   SRC + "a receiver report with one report block (count 1, length 7)"))
+    he, me = report(201, {"rtcp_version": 3, "rtcp_padding": 1, "rtcp_length": 65535,
+                          "rtcp_ssrc": 0xFFFFFFFF}, [BLOCK_EDGE])
+    out.append(vec(P, "receiver-report-edge-values-roundtrip", he.hex(), he.hex(), me,
+                   SRC + "a receiver report with every header field at its largest (version 3 included) "
+                         "and one block at its edges: fraction 255, cumulative loss -8388608, the rest all "
+                         "ones; the length is carried, not checked"))
+    ext = bytes(range(1, 9))
+    out.append(vec(P, "profile-extension-is-not-written", (h1 + ext).hex(), h1.hex(), m1,
+                   SRC + "the one-block receiver report followed by 8 octets of profile-specific "
+                         "extension, read over"))
+    out.append(vec(P, "report-block-cut-short-is-malformed", h2[:51].hex(), error="malformed-wire",
+                   ref=SRC + "the two-block sender report cut to 51 octets: the second block does not fit"))
+    # SDES: the header only.
+    sd = {"rtcp_version": 2, "count5": 1, "pt": 202, "rtcp_length": 3}
+    hs = pack(RTCP_WORD0, sd)
+    chunk = (0x5EED1234).to_bytes(4, "big") + bytes([1, 3]) + b"a@b" + bytes(3)
+    ms = model_of(sd, WORD0_KEYS, "source-description")
+    ms["inet.rtcp_source_count"] = "1"
+    out.append(vec(P, "source-description-header-only", (hs + chunk).hex(), hs.hex(), ms,
+                   SRC + "a source description with one chunk (SSRC and a CNAME item of 3 octets, ended "
+                         "and padded): the header comes back, the chunk is read over"))
+    # BYE: the source list.
+    by = {"rtcp_version": 2, "count5": 2, "pt": 203, "rtcp_length": 2}
+    srcs = [0x5EED1234, 0x11111111]
+    hb = pack(RTCP_WORD0, by) + b"".join(x.to_bytes(4, "big") for x in srcs)
+    mb = model_of(by, WORD0_KEYS, "goodbye")
+    mb["inet.rtcp_source_count"] = "2"
+    add_list(mb, "rtcp_bye_sources", [{"rtcp_bye_ssrc": x} for x in srcs])
+    out.append(vec(P, "goodbye-two-sources-roundtrip", hb.hex(), hb.hex(), mb,
+                   SRC + "a goodbye for an SSRC and one CSRC (count 2, length 2), no reason"))
+    reason = bytes([4]) + b"done" + bytes(3)
+    hb2 = pack(RTCP_WORD0, dict(by, rtcp_length=4)) + b"".join(x.to_bytes(4, "big") for x in srcs)
+    mb2 = model_of(dict(by, rtcp_length=4), WORD0_KEYS, "goodbye")
+    mb2["inet.rtcp_source_count"] = "2"
+    add_list(mb2, "rtcp_bye_sources", [{"rtcp_bye_ssrc": x} for x in srcs])
+    out.append(vec(P, "goodbye-reason-is-not-written", (hb2 + reason).hex(), hb2.hex(), mb2,
+                   SRC + "the goodbye with a 4-octet reason, its length octet and padding (length 4): the "
+                         "sources come back, the reason is read over"))
+    # APP: subtype, SSRC, name.
+    ap = {"rtcp_version": 2, "count5": 5, "pt": 204, "rtcp_length": 3}
+    ha = pack(RTCP_WORD0, ap) + (0x5EED1234).to_bytes(4, "big") + b"TEST"
+    ma = model_of(ap, WORD0_KEYS, "application")
+    ma.update({"inet.rtcp_app_subtype": "5", "inet.rtcp_ssrc": str(0x5EED1234), "inet.rtcp_app_name": "TEST"})
+    out.append(vec(P, "application-roundtrip-data-not-written", (ha + bytes(4)).hex(), ha.hex(), ma,
+                   SRC + "an application-defined packet, subtype 5, name TEST, 4 octets of application "
+                         "data read over (length 3)"))
+    out.append(vec(P, "packet-type-205-is-no-kind", pack(RTCP_WORD0, dict(ap, pt=205)).hex() + "00000000",
+                   error="no-kind",
+                   ref=SRC + "packet type 205 (a feedback message of a later RFC), which the pack does not map"))
     out.append(vec(P, "sender-report-of-27-octets-is-malformed", h[:27].hex(), error="malformed-wire",
                    ref=SRC + "the first sender report cut to 27 octets"))
     return out
@@ -500,6 +594,170 @@ def bfd_vectors():
     return out
 
 
+# ---------------------------------------------------------------------------
+# IGMPv3, RFC 3376 sections 4.1 and 4.2.
+IGMP3_Q = [("type", 8), ("igmp3_max_resp_code", 8), ("igmp_checksum", 16), ("igmp_group_addr", 32),
+           ("igmp3_reserved", 4), ("igmp3_suppress", 1), ("igmp3_qrv", 3), ("igmp3_qqic", 8),
+           ("igmp3_num_sources", 16)]
+IGMP3_Q_KEYS = [k for k, _ in IGMP3_Q if k != "type"]
+IGMP3_R = [("type", 8), ("igmp3_report_reserved1", 8), ("igmp_checksum", 16), ("igmp3_report_reserved2", 16),
+           ("igmp3_num_records", 16)]
+IGMP3_R_KEYS = [k for k, _ in IGMP3_R if k != "type"]
+IGMP3_REC = [("igmp3_record_type", 8), ("igmp3_aux_data_len", 8), ("igmp3_num_sources", 16),
+             ("igmp3_multicast_addr", 32)]
+IGMP3_REC_KEYS = [k for k, _ in IGMP3_REC]
+
+
+def with_checksum(build):
+    """build(checksum) -> bytes; returns (checksum, bytes) with the ones' complement
+    checksum over the whole message."""
+    c = checksum(build(0))
+    return c, build(c)
+
+
+def igmp3_query(v, sources):
+    v = dict(v, type=0x11, igmp3_num_sources=len(sources))
+    body = b"".join(s.to_bytes(4, "big") for s in sources)
+    c, b = with_checksum(lambda c: pack(IGMP3_Q, dict(v, igmp_checksum=c)) + body)
+    v["igmp_checksum"] = c
+    m = add_list(model_of(v, IGMP3_Q_KEYS, "membership-query"), "igmp3_query_sources",
+                 [{"igmp3_source_addr": s} for s in sources])
+    return b, m
+
+
+def igmp3_report(records):
+    """records: [(record type, multicast address, [sources])]."""
+    v = {"type": 0x22, "igmp3_num_records": len(records)}
+    body = b""
+    for rt, addr, srcs in records:
+        body += pack(IGMP3_REC, {"igmp3_record_type": rt, "igmp3_num_sources": len(srcs),
+                                 "igmp3_multicast_addr": addr})
+        body += b"".join(s.to_bytes(4, "big") for s in srcs)
+    c, b = with_checksum(lambda c: pack(IGMP3_R, dict(v, igmp_checksum=c)) + body)
+    v["igmp_checksum"] = c
+    m = model_of(v, IGMP3_R_KEYS, "v3-membership-report")
+    m["inet.igmp3_group_records.#"] = str(len(records))
+    for i, (rt, addr, srcs) in enumerate(records):
+        r = {"igmp3_record_type": rt, "igmp3_aux_data_len": 0, "igmp3_num_sources": len(srcs),
+             "igmp3_multicast_addr": addr}
+        pre = "inet.igmp3_group_records[%d]." % i
+        for k in IGMP3_REC_KEYS:
+            m[pre + "inet." + k] = str(r[k])
+        m[pre + "inet.igmp3_record_sources.#"] = str(len(srcs))
+        for j, s in enumerate(srcs):
+            m[pre + "inet.igmp3_record_sources[%d].inet.igmp3_source_addr" % j] = str(s)
+    return b, m
+
+
+def igmpv3_vectors():
+    out = []
+    P = "igmpv3"
+    g = ip4("233.252.0.1")
+    s1, s2, s3 = ip4("192.0.2.10"), ip4("198.51.100.20"), ip4("203.0.113.30")
+    h, m = igmp3_query({"igmp3_max_resp_code": 100, "igmp3_qrv": 2, "igmp3_qqic": 125}, [])
+    out.append(vec(P, "general-query-roundtrip", h.hex(), h.hex(), m,
+                   SRC + "a general query: group 0, max response code 100 (10 s), robustness 2, query "
+                         "interval code 125 (s), no source: 12 octets; checksum computed here"))
+    h2, m2 = igmp3_query({"igmp3_max_resp_code": 10, "igmp_group_addr": g, "igmp3_suppress": 1,
+                          "igmp3_qrv": 2, "igmp3_qqic": 125}, [s1, s2])
+    out.append(vec(P, "group-and-source-query-roundtrip", h2.hex(), h2.hex(), m2,
+                   SRC + "a group-and-source-specific query for 233.252.0.1 and two sources, S flag set; "
+                         "checksum computed here"))
+    he, me = igmp3_query({"igmp3_max_resp_code": 255, "igmp_group_addr": 0xFFFFFFFF, "igmp3_reserved": 15,
+                          "igmp3_suppress": 1, "igmp3_qrv": 7, "igmp3_qqic": 255}, [0xFFFFFFFF])
+    out.append(vec(P, "query-edge-values-roundtrip", he.hex(), he.hex(), me,
+                   SRC + "a query with every field at its largest value (floating-point codes 255, the "
+                         "reserved bits set) and one source; checksum computed here"))
+    hr, mr = igmp3_report([(4, g, []), (1, ip4("233.252.0.2"), [s1, s2, s3]), (6, ip4("233.252.0.3"), [s3])])
+    out.append(vec(P, "report-three-records-roundtrip", hr.hex(), hr.hex(), mr,
+                   SRC + "a report of three group records: change to exclude with no source (a join), "
+                         "mode is include with three sources, block old sources with one; checksum "
+                         "computed here"))
+    h0, m0 = igmp3_report([])
+    out.append(vec(P, "report-no-record-roundtrip", h0.hex(), h0.hex(), m0,
+                   SRC + "a report with no group record: 8 octets; checksum computed here"))
+    out.append(vec(P, "additional-octets-are-not-written", (h2 + bytes(4)).hex(), h2.hex(), m2,
+                   SRC + "the two-source query followed by 4 octets RFC 3376 tells a receiver to ignore"))
+    out.append(vec(P, "record-source-cut-short-is-malformed", hr[:30].hex(), error="malformed-wire",
+                   ref=SRC + "the three-record report cut to 30 octets, inside the second record's sources"))
+    out.append(vec(P, "version-2-query-is-malformed", h[:8].hex(), error="malformed-wire",
+                   ref=SRC + "the general query cut to its first 8 octets, the size of a version 2 query: "
+                             "the version 3 fields do not fit"))
+    out.append(vec(P, "version-2-report-is-no-kind", pack(IGMP, {"type": 0x16, "igmp_group_addr": g}).hex(),
+                   error="no-kind",
+                   ref=SRC + "a version 2 membership report (type 0x16), which the igmpv2 pack maps"))
+    return out
+
+
+# ---------------------------------------------------------------------------
+# ICMPv6, RFC 4443 and RFC 4861 sections 4.1 and 4.2.
+ICMP6 = [("icmpv6_type", 8), ("icmpv6_code", 8), ("icmpv6_checksum", 16)]
+ICMP6_KEYS = ["icmpv6_type", "icmpv6_code", "icmpv6_checksum"]
+RA = [("icmpv6_ra_cur_hop_limit", 8), ("icmpv6_ra_managed", 1), ("icmpv6_ra_other", 1),
+      ("icmpv6_ra_reserved", 6), ("icmpv6_ra_router_lifetime", 16), ("icmpv6_ra_reachable_time", 32),
+      ("icmpv6_ra_retrans_timer", 32)]
+
+
+def icmpv6_vectors():
+    out = []
+    P = "icmpv6-header"
+    rows = [
+        ("echo-request-roundtrip", "echo-request", {"icmpv6_type": 128, "icmpv6_checksum": 0x1F2E},
+         [("icmpv6_identifier", 16), ("icmpv6_sequence", 16)], {"icmpv6_identifier": 0x4242, "icmpv6_sequence": 1},
+         b"", "an echo request, identifier 0x4242, sequence 1"),
+        ("echo-reply-data-not-written", "echo-reply", {"icmpv6_type": 129, "icmpv6_checksum": 0x1E2E},
+         [("icmpv6_identifier", 16), ("icmpv6_sequence", 16)], {"icmpv6_identifier": 0x4242, "icmpv6_sequence": 1},
+         bytes(range(32)), "the echo reply with 32 octets of data, read over"),
+        ("port-unreachable-invoking-packet-not-written", "destination-unreachable",
+         {"icmpv6_type": 1, "icmpv6_code": 4, "icmpv6_checksum": 0xA0B0},
+         [("icmpv6_unused", 32)], {"icmpv6_unused": 0}, bytes([0x60]) + bytes(47),
+         "a port unreachable (code 4) followed by 48 octets standing for the invoking packet, read over"),
+        ("packet-too-big-roundtrip", "packet-too-big", {"icmpv6_type": 2, "icmpv6_checksum": 0x0102},
+         [("icmpv6_mtu", 32)], {"icmpv6_mtu": 1280}, b"", "a packet too big naming an MTU of 1280"),
+        ("hop-limit-exceeded-roundtrip", "time-exceeded", {"icmpv6_type": 3, "icmpv6_code": 0,
+                                                          "icmpv6_checksum": 0x0304},
+         [("icmpv6_unused", 32)], {"icmpv6_unused": 0}, b"", "a time exceeded, hop limit exceeded in transit"),
+        ("parameter-problem-roundtrip", "parameter-problem", {"icmpv6_type": 4, "icmpv6_code": 1,
+                                                             "icmpv6_checksum": 0x0506},
+         [("icmpv6_pointer", 32)], {"icmpv6_pointer": 40}, b"",
+         "a parameter problem (unrecognized next header) pointing at octet 40"),
+        ("router-solicitation-options-not-written", "router-solicitation",
+         {"icmpv6_type": 133, "icmpv6_checksum": 0x0708}, [("icmpv6_reserved", 32)], {"icmpv6_reserved": 0},
+         bytes([1, 1, 0, 0, 0x5E, 0, 0x53, 1]),
+         "a router solicitation with a source link-layer address option, read over"),
+        ("unnamed-type-is-other-roundtrip", "other", {"icmpv6_type": 200, "icmpv6_code": 7,
+                                                     "icmpv6_checksum": 0xFFFF},
+         [("icmpv6_rest", 32)], {"icmpv6_rest": 0xDEADBEEF}, b"",
+         "type 200 (private experimentation in RFC 4443): the 32 bits after the checksum as one integer"),
+    ]
+    for name, kind, head, tail_layout, tail, extra, what in rows:
+        v = dict(head, **tail)
+        h = pack(ICMP6 + tail_layout, v)
+        m = model_of(v, ICMP6_KEYS + [k for k, _ in tail_layout], kind)
+        out.append(vec(P, name, (h + extra).hex(), h.hex(), m, SRC + what + "; checksum a chosen value"))
+    ra = {"icmpv6_type": 134, "icmpv6_checksum": 0x090A, "icmpv6_ra_cur_hop_limit": 64, "icmpv6_ra_managed": 1,
+          "icmpv6_ra_router_lifetime": 1800, "icmpv6_ra_reachable_time": 30000, "icmpv6_ra_retrans_timer": 1000}
+    hr = pack(ICMP6 + RA, ra)
+    mr = model_of(ra, ICMP6_KEYS + [k for k, _ in RA], "router-advertisement")
+    prefix_opt = bytes([3, 4, 64, 0xC0]) + bytes(28)
+    out.append(vec(P, "router-advertisement-options-not-written", (hr + prefix_opt).hex(), hr.hex(), mr,
+                   SRC + "a router advertisement: hop limit 64, M set, lifetime 1800 s, reachable time "
+                         "30000 ms, retransmit timer 1000 ms, followed by a 32-octet prefix information "
+                         "option, read over; checksum a chosen value"))
+    re_ = {"icmpv6_type": 134, "icmpv6_code": 255, "icmpv6_checksum": 0xFFFF, "icmpv6_ra_cur_hop_limit": 255,
+           "icmpv6_ra_managed": 1, "icmpv6_ra_other": 1, "icmpv6_ra_reserved": 63,
+           "icmpv6_ra_router_lifetime": 65535, "icmpv6_ra_reachable_time": 0xFFFFFFFF,
+           "icmpv6_ra_retrans_timer": 0xFFFFFFFF}
+    he = pack(ICMP6 + RA, re_)
+    out.append(vec(P, "router-advertisement-largest-values-roundtrip", he.hex(), he.hex(),
+                   model_of(re_, ICMP6_KEYS + [k for k, _ in RA], "router-advertisement"),
+                   SRC + "a router advertisement with every field at its largest value, the reserved bits "
+                         "included (the pack does not check them)"))
+    out.append(vec(P, "router-advertisement-cut-short-is-malformed", hr[:15].hex(), error="malformed-wire",
+                   ref=SRC + "the router advertisement cut to 15 octets"))
+    return out
+
+
 PACKS = {
     "rtp-header": rtp_vectors,
     "rtcp-header": rtcp_vectors,
@@ -510,6 +768,8 @@ PACKS = {
     "igmpv2": igmp_vectors,
     "sctp-common-header": sctp_vectors,
     "bfd-control": bfd_vectors,
+    "igmpv3": igmpv3_vectors,
+    "icmpv6-header": icmpv6_vectors,
 }
 
 

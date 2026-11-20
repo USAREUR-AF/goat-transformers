@@ -1,0 +1,16 @@
+{
+  "name": "echo-request-roundtrip",
+  "from": "icmpv6-header",
+  "to": "icmpv6-header",
+  "input": "80001f2e42420001",
+  "expect": "80001f2e42420001",
+  "model": {
+    "@kind": "echo-request",
+    "inet.icmpv6_type": "128",
+    "inet.icmpv6_code": "0",
+    "inet.icmpv6_checksum": "7982",
+    "inet.icmpv6_identifier": "16962",
+    "inet.icmpv6_sequence": "1"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; an echo request, identifier 0x4242, sequence 1; checksum a chosen value"
+}

@@ -1,0 +1,20 @@
+{
+  "name": "general-query-roundtrip",
+  "from": "igmpv3",
+  "to": "igmpv3",
+  "input": "1164ec1e00000000027d0000",
+  "expect": "1164ec1e00000000027d0000",
+  "model": {
+    "@kind": "membership-query",
+    "inet.igmp3_max_resp_code": "100",
+    "inet.igmp_checksum": "60446",
+    "inet.igmp_group_addr": "0",
+    "inet.igmp3_reserved": "0",
+    "inet.igmp3_suppress": "0",
+    "inet.igmp3_qrv": "2",
+    "inet.igmp3_qqic": "125",
+    "inet.igmp3_num_sources": "0",
+    "inet.igmp3_query_sources.#": "0"
+  },
+  "source": "built by tools/gen/ietf-headers-2-vectors.py from values chosen there; a general query: group 0, max response code 100 (10 s), robustness 2, query interval code 125 (s), no source: 12 octets; checksum computed here"
+}
