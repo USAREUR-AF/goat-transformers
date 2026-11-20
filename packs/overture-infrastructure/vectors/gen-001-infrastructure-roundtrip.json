@@ -1,0 +1,17 @@
+{
+ "name": "gen-infrastructure-roundtrip",
+ "from": "overture-infrastructure",
+ "to": "overture-infrastructure",
+ "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"theme\":\"base\",\"type\":\"infrastructure\",\"subtype\":\"transit\",\"class\":\"recycling\",\"height\":101.125,\"surface\":\"gravel\",\"version\":44070,\"level\":37488,\"wikidata\":\"s47572\"},\"id\":\"s96208\"}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"theme\":\"base\",\"type\":\"infrastructure\",\"subtype\":\"transit\",\"class\":\"recycling\",\"height\":101.125,\"surface\":\"gravel\",\"version\":44070,\"level\":37488,\"wikidata\":\"s47572\"},\"id\":\"s96208\"}",
+ "model": {
+  "@kind": "infrastructure",
+  "uid": "s96208",
+  "overtureinfrastructure.id": "s96208",
+  "overtureinfrastructure.properties_subtype": "transit",
+  "overtureinfrastructure.properties_class": "recycling",
+  "overtureinfrastructure.properties_height": "101.125",
+  "overtureinfrastructure.properties_surface": "gravel",
+  "overtureinfrastructure.properties_theme": "base"
+ }
+}

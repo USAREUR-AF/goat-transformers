@@ -1,0 +1,7 @@
+{
+ "name": "gen-division_area-residue",
+ "from": "overture-division-area",
+ "to": "overture-division-area",
+ "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"theme\":\"divisions\",\"type\":\"division_area\",\"subtype\":\"neighborhood\",\"class\":\"maritime\",\"division_id\":\"s81285\",\"country\":\"s18430\",\"region\":\"s71049\",\"admin_level\":93039,\"version\":68081,\"sources\":[\"r1\",\"r2\"],\"names\":{\"r\":\"1\"}},\"id\":\"s33927\"}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"theme\":\"divisions\",\"type\":\"division_area\",\"subtype\":\"neighborhood\",\"class\":\"maritime\",\"division_id\":\"s81285\",\"country\":\"s18430\",\"region\":\"s71049\",\"admin_level\":93039,\"version\":68081,\"sources\":[\"r1\",\"r2\"],\"names\":{\"r\":\"1\"}},\"id\":\"s33927\"}"
+}

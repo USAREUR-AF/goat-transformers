@@ -1,0 +1,17 @@
+{
+ "name": "gen-land_use-roundtrip",
+ "from": "overture-land-use",
+ "to": "overture-land-use",
+ "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"theme\":\"base\",\"type\":\"land_use\",\"subtype\":\"managed\",\"class\":\"forest\",\"elevation\":5357,\"surface\":\"concrete_plates\",\"version\":70475,\"level\":48341,\"wikidata\":\"s16533\"},\"id\":\"s23564\"}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"theme\":\"base\",\"type\":\"land_use\",\"subtype\":\"managed\",\"class\":\"forest\",\"elevation\":5357,\"surface\":\"concrete_plates\",\"version\":70475,\"level\":48341,\"wikidata\":\"s16533\"},\"id\":\"s23564\"}",
+ "model": {
+  "@kind": "land_use",
+  "uid": "s23564",
+  "overturelanduse.id": "s23564",
+  "overturelanduse.properties_subtype": "managed",
+  "overturelanduse.properties_class": "forest",
+  "overturelanduse.properties_elevation": "5357",
+  "overturelanduse.properties_surface": "concrete_plates",
+  "overturelanduse.properties_theme": "base"
+ }
+}

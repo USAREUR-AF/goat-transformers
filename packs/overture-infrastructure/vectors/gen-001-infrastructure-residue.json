@@ -1,0 +1,7 @@
+{
+ "name": "gen-infrastructure-residue",
+ "from": "overture-infrastructure",
+ "to": "overture-infrastructure",
+ "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"theme\":\"base\",\"type\":\"infrastructure\",\"subtype\":\"transit\",\"class\":\"recycling\",\"height\":101.125,\"surface\":\"gravel\",\"version\":44070,\"level\":37488,\"wikidata\":\"s47572\",\"sources\":[\"r1\",\"r2\"],\"names\":{\"r\":\"1\"},\"source_tags\":{\"r\":\"1\"}},\"id\":\"s96208\"}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"theme\":\"base\",\"type\":\"infrastructure\",\"subtype\":\"transit\",\"class\":\"recycling\",\"height\":101.125,\"surface\":\"gravel\",\"version\":44070,\"level\":37488,\"wikidata\":\"s47572\",\"sources\":[\"r1\",\"r2\"],\"names\":{\"r\":\"1\"},\"source_tags\":{\"r\":\"1\"}},\"id\":\"s96208\"}"
+}

@@ -100,6 +100,7 @@
     {"name": "GPX", "domain": "maps", "exact": ["gpx"]},
     {"name": "KML", "domain": "maps", "exact": ["kml"]},
     {"name": "Mapbox Vector Tile", "domain": "maps", "exact": ["mvt"]},
+    {"name": "Overture Maps", "domain": "maps", "prefixes": ["overture-"]},
     {"name": "STAC Item", "domain": "maps", "exact": ["stac-item"]},
     {"name": "CAP alerts", "domain": "maps", "exact": ["cap"]}
   ]

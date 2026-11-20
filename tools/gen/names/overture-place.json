@@ -1,0 +1,12 @@
+{
+ "keys": {
+  "|id|string": "id",
+  "|properties.basic_category|string": "properties_basic_category",
+  "|properties.confidence|float": "properties_confidence",
+  "|properties.operating_status|string": "properties_operating_status",
+  "|properties.theme|string": "properties_theme",
+  "|properties.type|string": "properties_type",
+  "|properties.version|int": "properties_version"
+ },
+ "lists": {}
+}

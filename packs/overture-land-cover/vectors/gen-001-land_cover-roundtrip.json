@@ -1,0 +1,17 @@
+{
+ "name": "gen-land_cover-roundtrip",
+ "from": "overture-land-cover",
+ "to": "overture-land-cover",
+ "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"theme\":\"base\",\"type\":\"land_cover\",\"subtype\":\"urban\",\"version\":69674,\"level\":79628},\"id\":\"s82071\"}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"theme\":\"base\",\"type\":\"land_cover\",\"subtype\":\"urban\",\"version\":69674,\"level\":79628},\"id\":\"s82071\"}",
+ "model": {
+  "@kind": "land_cover",
+  "uid": "s82071",
+  "overturelandcover.id": "s82071",
+  "overturelandcover.properties_subtype": "urban",
+  "overturelandcover.properties_theme": "base",
+  "overturelandcover.properties_type": "land_cover",
+  "overturelandcover.properties_version": "69674",
+  "overturelandcover.properties_level": "79628"
+ }
+}

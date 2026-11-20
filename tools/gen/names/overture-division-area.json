@@ -1,0 +1,15 @@
+{
+ "keys": {
+  "|id|string": "id",
+  "|properties.admin_level|int": "properties_admin_level",
+  "|properties.class|string": "properties_class",
+  "|properties.country|string": "properties_country",
+  "|properties.division_id|string": "properties_division_id",
+  "|properties.region|string": "properties_region",
+  "|properties.subtype|string": "properties_subtype",
+  "|properties.theme|string": "properties_theme",
+  "|properties.type|string": "properties_type",
+  "|properties.version|int": "properties_version"
+ },
+ "lists": {}
+}

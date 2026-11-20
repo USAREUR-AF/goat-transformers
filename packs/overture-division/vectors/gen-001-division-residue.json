@@ -1,0 +1,7 @@
+{
+ "name": "gen-division-residue",
+ "from": "overture-division",
+ "to": "overture-division",
+ "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"theme\":\"divisions\",\"type\":\"division\",\"subtype\":\"country\",\"class\":\"city\",\"country\":\"s36192\",\"region\":\"s27717\",\"parent_division_id\":\"s11549\",\"admin_level\":71426,\"population\":38157,\"wikidata\":\"s53294\",\"version\":58257,\"local_type\":{\"r\":\"1\"},\"hierarchies\":[\"r1\",\"r2\"],\"perspectives\":{\"r\":\"1\"},\"norms\":{\"r\":\"1\"},\"capital_division_ids\":[\"r1\",\"r2\"],\"capital_of_divisions\":[\"r1\",\"r2\"],\"sources\":[\"r1\",\"r2\"],\"names\":{\"r\":\"1\"},\"cartography\":{\"r\":\"1\"}},\"id\":\"s84242\"}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"theme\":\"divisions\",\"type\":\"division\",\"subtype\":\"country\",\"class\":\"city\",\"country\":\"s36192\",\"region\":\"s27717\",\"parent_division_id\":\"s11549\",\"admin_level\":71426,\"population\":38157,\"wikidata\":\"s53294\",\"version\":58257,\"local_type\":{\"r\":\"1\"},\"hierarchies\":[\"r1\",\"r2\"],\"perspectives\":{\"r\":\"1\"},\"norms\":{\"r\":\"1\"},\"capital_division_ids\":[\"r1\",\"r2\"],\"capital_of_divisions\":[\"r1\",\"r2\"],\"sources\":[\"r1\",\"r2\"],\"names\":{\"r\":\"1\"},\"cartography\":{\"r\":\"1\"}},\"id\":\"s84242\"}"
+}

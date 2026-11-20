@@ -1,0 +1,7 @@
+{
+ "name": "gen-building-residue",
+ "from": "overture-building",
+ "to": "overture-building",
+ "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"theme\":\"buildings\",\"type\":\"building\",\"subtype\":\"religious\",\"class\":\"shelter\",\"version\":91717,\"level\":7529,\"height\":0.75,\"num_floors\":5649,\"num_floors_underground\":42411,\"min_height\":7.0625,\"min_floor\":80432,\"facade_color\":\"s98715\",\"facade_material\":\"brick\",\"roof_material\":\"metal\",\"roof_shape\":\"skillion\",\"roof_direction\":0.75,\"roof_orientation\":\"along\",\"roof_color\":\"s94110\",\"roof_height\":7.0625,\"sources\":[\"r1\",\"r2\"],\"names\":{\"r\":\"1\"}},\"id\":\"s93764\"}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"theme\":\"buildings\",\"type\":\"building\",\"subtype\":\"religious\",\"class\":\"shelter\",\"version\":91717,\"level\":7529,\"height\":0.75,\"num_floors\":5649,\"num_floors_underground\":42411,\"min_height\":7.0625,\"min_floor\":80432,\"facade_color\":\"s98715\",\"facade_material\":\"brick\",\"roof_material\":\"metal\",\"roof_shape\":\"skillion\",\"roof_direction\":0.75,\"roof_orientation\":\"along\",\"roof_color\":\"s94110\",\"roof_height\":7.0625,\"sources\":[\"r1\",\"r2\"],\"names\":{\"r\":\"1\"}},\"id\":\"s93764\"}"
+}

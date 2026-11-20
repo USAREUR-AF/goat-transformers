@@ -1,0 +1,13 @@
+{
+ "keys": {
+  "|id|string": "id",
+  "|properties.class|string": "properties_class",
+  "|properties.level|int": "properties_level",
+  "|properties.subtype|string": "properties_subtype",
+  "|properties.theme|string": "properties_theme",
+  "|properties.type|string": "properties_type",
+  "|properties.version|int": "properties_version",
+  "|properties.wikidata|string": "properties_wikidata"
+ },
+ "lists": {}
+}

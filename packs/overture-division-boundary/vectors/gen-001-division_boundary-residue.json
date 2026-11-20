@@ -1,0 +1,7 @@
+{
+ "name": "gen-division_boundary-residue",
+ "from": "overture-division-boundary",
+ "to": "overture-division-boundary",
+ "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"theme\":\"divisions\",\"type\":\"division_boundary\",\"subtype\":\"dependency\",\"class\":\"land\",\"country\":\"s75516\",\"region\":\"s89182\",\"admin_level\":37518,\"version\":23565,\"division_ids\":[\"r1\",\"r2\"],\"perspectives\":{\"r\":\"1\"},\"sources\":[\"r1\",\"r2\"]},\"id\":\"s41493\"}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"theme\":\"divisions\",\"type\":\"division_boundary\",\"subtype\":\"dependency\",\"class\":\"land\",\"country\":\"s75516\",\"region\":\"s89182\",\"admin_level\":37518,\"version\":23565,\"division_ids\":[\"r1\",\"r2\"],\"perspectives\":{\"r\":\"1\"},\"sources\":[\"r1\",\"r2\"]},\"id\":\"s41493\"}"
+}

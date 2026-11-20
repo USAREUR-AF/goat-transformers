@@ -1,0 +1,17 @@
+{
+ "name": "gen-land-roundtrip",
+ "from": "overture-land",
+ "to": "overture-land",
+ "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"theme\":\"base\",\"type\":\"land\",\"subtype\":\"land\",\"class\":\"cliff\",\"elevation\":4126,\"surface\":\"earth\",\"version\":43394,\"level\":35523,\"wikidata\":\"s54447\"},\"id\":\"s88068\"}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"theme\":\"base\",\"type\":\"land\",\"subtype\":\"land\",\"class\":\"cliff\",\"elevation\":4126,\"surface\":\"earth\",\"version\":43394,\"level\":35523,\"wikidata\":\"s54447\"},\"id\":\"s88068\"}",
+ "model": {
+  "@kind": "land",
+  "uid": "s88068",
+  "overtureland.id": "s88068",
+  "overtureland.properties_subtype": "land",
+  "overtureland.properties_class": "cliff",
+  "overtureland.properties_elevation": "4126",
+  "overtureland.properties_surface": "earth",
+  "overtureland.properties_theme": "base"
+ }
+}

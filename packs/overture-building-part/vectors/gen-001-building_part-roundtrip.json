@@ -1,0 +1,17 @@
+{
+ "name": "gen-building_part-roundtrip",
+ "from": "overture-building-part",
+ "to": "overture-building-part",
+ "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"theme\":\"buildings\",\"type\":\"building_part\",\"building_id\":\"s26587\",\"version\":99012,\"level\":71291,\"height\":1.5,\"num_floors\":20130,\"num_floors_underground\":74440,\"min_height\":7.0625,\"min_floor\":77479,\"facade_color\":\"s30126\",\"facade_material\":\"clay\",\"roof_material\":\"slate\",\"roof_shape\":\"saltbox\",\"roof_direction\":101.125,\"roof_orientation\":\"along\",\"roof_color\":\"s32048\",\"roof_height\":7.0625}}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"theme\":\"buildings\",\"type\":\"building_part\",\"building_id\":\"s26587\",\"version\":99012,\"level\":71291,\"height\":1.5,\"num_floors\":20130,\"num_floors_underground\":74440,\"min_height\":7.0625,\"min_floor\":77479,\"facade_color\":\"s30126\",\"facade_material\":\"clay\",\"roof_material\":\"slate\",\"roof_shape\":\"saltbox\",\"roof_direction\":101.125,\"roof_orientation\":\"along\",\"roof_color\":\"s32048\",\"roof_height\":7.0625}}",
+ "model": {
+  "@kind": "building_part",
+  "overturebuildingpart.properties_building_id": "s26587",
+  "overturebuildingpart.properties_theme": "buildings",
+  "overturebuildingpart.properties_type": "building_part",
+  "overturebuildingpart.properties_version": "99012",
+  "overturebuildingpart.properties_level": "71291",
+  "overturebuildingpart.properties_height": "1.5",
+  "overturebuildingpart.properties_num_floors": "20130"
+ }
+}
