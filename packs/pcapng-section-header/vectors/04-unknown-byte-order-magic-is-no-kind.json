@@ -1,0 +1,8 @@
+{
+  "name": "unknown-byte-order-magic-is-no-kind",
+  "from": "pcapng-section-header",
+  "to": "pcapng-section-header",
+  "input": "0a0d0d0a0000001c01020304000000000000000000000000",
+  "expect_error": "no-kind",
+  "source": "built by tools/gen/link-headers-vectors.py from values chosen there; a section header block whose byte-order magic is 01 02 03 04"
+}

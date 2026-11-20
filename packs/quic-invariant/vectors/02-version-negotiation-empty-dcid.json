@@ -1,0 +1,16 @@
+{
+  "name": "version-negotiation-empty-dcid",
+  "from": "quic-invariant",
+  "to": "quic-invariant",
+  "input": "aa0000000000011100000001",
+  "expect": "aa00000000000111",
+  "model": {
+    "@kind": "long-header",
+    "inet.quic_version_specific": "42",
+    "inet.quic_version": "0",
+    "inet.quic_dcid.#": "0",
+    "inet.quic_scid.#": "1",
+    "inet.quic_scid[0].inet.quic_cid_octet": "17"
+  },
+  "source": "built by tools/gen/link-headers-vectors.py from values chosen there; version 0 (version negotiation): an empty destination connection ID and a 1-octet source; the supported-version list after it read over"
+}

@@ -1,0 +1,18 @@
+{
+  "name": "control-message",
+  "from": "l2tpv3-udp",
+  "to": "l2tpv3-udp",
+  "input": "c803000c0000000700000000",
+  "expect": "c803000c0000000700000000",
+  "model": {
+    "@kind": "control",
+    "inet.l2tp_length_bit": "1",
+    "inet.l2tp_sequence_bit": "1",
+    "inet.l2tp_version": "3",
+    "inet.l2tp_length": "12",
+    "inet.l2tp_control_connection_id": "7",
+    "inet.l2tp_ns": "0",
+    "inet.l2tp_nr": "0"
+  },
+  "source": "built by tools/gen/link-headers-vectors.py from values chosen there; a control header over UDP: T, L and S set, version 3, length 12 (a zero-length body), connection 7"
+}

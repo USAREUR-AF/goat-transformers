@@ -1,0 +1,31 @@
+# The pcap module: the fixed fields of the pcap and pcapng capture file formats,
+# each as the integer the file holds in its own byte order. The packs pcap-*
+# and pcapng-* map them.
+module        pcap
+version       0.1.0
+distribution  public
+source        "IETF Internet-Drafts draft-ietf-opsawg-pcap-09 and draft-ietf-opsawg-pcapng-06, September 2026, https://datatracker.ietf.org/doc/draft-ietf-opsawg-pcap/ and https://datatracker.ietf.org/doc/draft-ietf-opsawg-pcapng/, IETF Trust (BCP 78); layouts restated"
+
+# pcap file header and packet record, draft-ietf-opsawg-pcap sections 4 and 5
+key  pcap_version_major        int  -  "file header: major version, 2"
+key  pcap_version_minor        int  -  "file header: minor version, 4"
+key  pcap_reserved1            int  -  "file header: reserved, 0 (older writers: a time zone offset)"
+key  pcap_reserved2            int  -  "file header: reserved, 0 (older writers: timestamp accuracy)"
+key  pcap_snaplen              int  -  "file header: largest number of octets captured from a packet"
+key  pcap_fcs_len              int  -  "file header: FCS length in 16-bit words, when the P bit is 1"
+key  pcap_r_bit                int  -  "file header: R bit, 0"
+key  pcap_p_bit                int  -  "file header: P bit, 1 = the FCS length is given"
+key  pcap_linktype             int  -  "file header: link-layer type of the packets (1 Ethernet, ...), 16 bits"
+key  pcap_ts_sec               int  s  "packet record: timestamp, whole seconds"
+key  pcap_ts_frac              int  -  "packet record: timestamp, microseconds or nanoseconds as the file header's magic number says"
+key  pcap_caplen               int  -  "captured packet length in octets (pcap record, pcapng enhanced packet block)"
+key  pcap_origlen              int  -  "original packet length on the wire in octets (pcap record, pcapng enhanced packet block)"
+
+# pcapng blocks, draft-ietf-opsawg-pcapng sections 3.1, 4.1 and 4.3
+key  pcapng_block_total_length int  -  "total length of the block in octets, header and trailer included"
+key  pcapng_version_major      int  -  "section header block: major version, 1"
+key  pcapng_version_minor      int  -  "section header block: minor version, 0"
+key  pcapng_section_length     int  -  "section header block: octets of the section after this block, signed 64 bits (-1 = not stated)"
+key  pcapng_interface_id       int  -  "enhanced packet block: the interface the packet came from, the index of its interface description block"
+key  pcapng_ts_high            int  -  "enhanced packet block: upper 32 bits of the 64-bit timestamp, in the interface's units"
+key  pcapng_ts_low             int  -  "enhanced packet block: lower 32 bits of the timestamp"

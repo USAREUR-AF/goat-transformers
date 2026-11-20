@@ -1,0 +1,15 @@
+{
+  "name": "big-endian-length-not-stated",
+  "from": "pcapng-section-header",
+  "to": "pcapng-section-header",
+  "input": "0a0d0d0a0000001c1a2b3c4d00010000ffffffffffffffff0000001c",
+  "expect": "0a0d0d0a0000001c1a2b3c4d00010000ffffffffffffffff",
+  "model": {
+    "@kind": "big-endian",
+    "pcap.pcapng_block_total_length": "28",
+    "pcap.pcapng_version_major": "1",
+    "pcap.pcapng_version_minor": "0",
+    "pcap.pcapng_section_length": "-1"
+  },
+  "source": "built by tools/gen/link-headers-vectors.py from values chosen there; a big endian section header block, version 1.0, section length -1 (not stated), no option; its trailing block total length read over"
+}

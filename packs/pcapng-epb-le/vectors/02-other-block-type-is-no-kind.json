@@ -1,0 +1,8 @@
+{
+  "name": "other-block-type-is-no-kind",
+  "from": "pcapng-epb-le",
+  "to": "pcapng-epb-le",
+  "input": "01000000000000000000000000000000000000000000000000000000",
+  "expect_error": "no-kind",
+  "source": "built by tools/gen/link-headers-vectors.py from values chosen there; block type 1 (interface description)"
+}

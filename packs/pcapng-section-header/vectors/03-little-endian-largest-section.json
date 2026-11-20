@@ -1,0 +1,15 @@
+{
+  "name": "little-endian-largest-section",
+  "from": "pcapng-section-header",
+  "to": "pcapng-section-header",
+  "input": "0a0d0d0afcffffff4d3c2b1afffffffffcffffffffffff7f",
+  "expect": "0a0d0d0afcffffff4d3c2b1afffffffffcffffffffffff7f",
+  "model": {
+    "@kind": "little-endian",
+    "pcap.pcapng_block_total_length": "4294967292",
+    "pcap.pcapng_version_major": "65535",
+    "pcap.pcapng_version_minor": "65535",
+    "pcap.pcapng_section_length": "9223372036854775804"
+  },
+  "source": "built by tools/gen/link-headers-vectors.py from values chosen there; the largest values, a section length of 2^63 - 4 (a multiple of 4): the pack checks neither the version nor the alignment"
+}

@@ -1,0 +1,26 @@
+# pcapng Enhanced Packet Block (draft-ietf-opsawg-pcapng section 4.3), big-endian:
+# the 28 octets before the packet data. Public. A block does not state its byte
+# order; its section header block does, so the caller picks this pack or
+# pcapng-epb-le (pack.md). Packet data, padding, options and the
+# trailing length are not mapped.
+#
+# Addressing: word_bytes 1 and bit_order msb.
+format        pcapng-epb-be
+version       0.1.0
+distribution  public
+source        "IETF Internet-Draft draft-ietf-opsawg-pcapng-06, PCAP Now Generic (pcapng) Capture File Format, September 2026, sections 3.1, 4.1 and 4.3, https://www.ietf.org/archive/id/draft-ietf-opsawg-pcapng-06.txt; layout restated"
+uses          pcap
+wire          bits
+word_bytes    1
+bit_order     msb
+
+
+when   0:0:32  6                    # block type 6
+field  pcap.pcapng_block_total_length 0:32:32  uint
+field  pcap.pcapng_interface_id     0:64:32    uint
+field  pcap.pcapng_ts_high          0:96:32    uint
+field  pcap.pcapng_ts_low           0:128:32   uint
+field  pcap.pcap_caplen             0:160:32   uint
+field  pcap.pcap_origlen            0:192:32   uint
+
+kind      enhanced-packet

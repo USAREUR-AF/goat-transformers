@@ -1,0 +1,8 @@
+{
+  "name": "twenty-three-octets-is-malformed",
+  "from": "pcapng-section-header",
+  "to": "pcapng-section-header",
+  "input": "0a0d0d0a0000001c1a2b3c4d00010000ffffffffffffff",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/link-headers-vectors.py from values chosen there; the big-endian block cut to 23 octets"
+}

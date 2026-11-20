@@ -1,0 +1,32 @@
+# pcapng Section Header Block (draft-ietf-opsawg-pcapng section 4.1): the 24
+# octets before its options, in the byte order of the section, which the
+# byte-order magic shows. Public. Options and the trailing length are not mapped
+# (pack.md).
+#
+# Addressing: word_bytes 1 and bit_order msb; the little-endian kind's fields
+# have the option swap. The block type 0x0A0D0D0A reads the same in both orders.
+format        pcapng-section-header
+version       0.1.0
+distribution  public
+source        "IETF Internet-Draft draft-ietf-opsawg-pcapng-06, PCAP Now Generic (pcapng) Capture File Format, September 2026, sections 3.1, 4.1 and 4.3, https://www.ietf.org/archive/id/draft-ietf-opsawg-pcapng-06.txt; layout restated"
+uses          pcap
+wire          bits
+word_bytes    1
+bit_order     msb
+
+
+when   0:0:32  168627466                              # block type 0x0A0D0D0A
+
+kind      big-endian
+when      0:64:32  439041101
+field  pcap.pcapng_block_total_length 0:32:32  uint
+field  pcap.pcapng_version_major    0:96:16    uint
+field  pcap.pcapng_version_minor    0:112:16   uint
+field  pcap.pcapng_section_length   0:128:64   twos
+
+kind      little-endian
+when      0:64:32  1295788826
+field  pcap.pcapng_block_total_length 0:32:32  uint  swap
+field  pcap.pcapng_version_major    0:96:16    uint  swap
+field  pcap.pcapng_version_minor    0:112:16   uint  swap
+field  pcap.pcapng_section_length   0:128:64   twos  swap

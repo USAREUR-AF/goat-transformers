@@ -1,0 +1,18 @@
+{
+  "name": "control-message-avps-not-written",
+  "from": "l2tpv3-ip",
+  "to": "l2tpv3-ip",
+  "input": "00000000c80300140000abcd000100028008000000000001",
+  "expect": "00000000c80300140000abcd00010002",
+  "model": {
+    "@kind": "control",
+    "inet.l2tp_length_bit": "1",
+    "inet.l2tp_sequence_bit": "1",
+    "inet.l2tp_version": "3",
+    "inet.l2tp_length": "20",
+    "inet.l2tp_control_connection_id": "43981",
+    "inet.l2tp_ns": "1",
+    "inet.l2tp_nr": "2"
+  },
+  "source": "built by tools/gen/link-headers-vectors.py from values chosen there; session ID 0, then a control header (L and S set, version 3, length 20, connection 0xabcd, Ns 1, Nr 2) and an 8-octet AVP, read over"
+}

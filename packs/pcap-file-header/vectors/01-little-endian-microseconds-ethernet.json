@@ -1,0 +1,20 @@
+{
+  "name": "little-endian-microseconds-ethernet",
+  "from": "pcap-file-header",
+  "to": "pcap-file-header",
+  "input": "d4c3b2a10200040000000000000000000000040001000000",
+  "expect": "d4c3b2a10200040000000000000000000000040001000000",
+  "model": {
+    "@kind": "little-endian-microseconds",
+    "pcap.pcap_version_major": "2",
+    "pcap.pcap_version_minor": "4",
+    "pcap.pcap_reserved1": "0",
+    "pcap.pcap_reserved2": "0",
+    "pcap.pcap_snaplen": "262144",
+    "pcap.pcap_fcs_len": "0",
+    "pcap.pcap_r_bit": "0",
+    "pcap.pcap_p_bit": "0",
+    "pcap.pcap_linktype": "1"
+  },
+  "source": "built by tools/gen/link-headers-vectors.py from values chosen there; a little-endian file (magic octets d4 c3 b2 a1), version 2.4, snap length 262144, link type 1 (Ethernet)"
+}

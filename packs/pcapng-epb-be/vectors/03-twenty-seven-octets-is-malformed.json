@@ -1,0 +1,8 @@
+{
+  "name": "twenty-seven-octets-is-malformed",
+  "from": "pcapng-epb-be",
+  "to": "pcapng-epb-be",
+  "input": "0000000600000060000000000006610f58a8c6400000003c000000",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/link-headers-vectors.py from values chosen there; the block cut to 27 octets"
+}

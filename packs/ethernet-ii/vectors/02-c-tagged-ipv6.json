@@ -1,0 +1,15 @@
+{
+  "name": "c-tagged-ipv6",
+  "from": "ethernet-ii",
+  "to": "ethernet-ii",
+  "input": "00005e00530100005e0053028100a06486dd",
+  "expect": "00005e00530100005e0053028100a06486dd",
+  "model": {
+    "@kind": "c-tagged",
+    "inet.eth_dst_addr": "1577079553",
+    "inet.eth_src_addr": "1577079554",
+    "inet.vlan_tag_info": "41060",
+    "inet.eth_type": "34525"
+  },
+  "source": "built by tools/gen/link-headers-vectors.py from values chosen there; a frame with a C-tag (EtherType 0x8100), tag information 0xa064, carrying IPv6 (0x86DD)"
+}

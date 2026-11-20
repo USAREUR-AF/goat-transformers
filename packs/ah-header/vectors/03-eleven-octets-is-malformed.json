@@ -1,0 +1,8 @@
+{
+  "name": "eleven-octets-is-malformed",
+  "from": "ah-header",
+  "to": "ah-header",
+  "input": "0604000000002002000000",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/link-headers-vectors.py from values chosen there; the fixed part cut to 11 octets"
+}

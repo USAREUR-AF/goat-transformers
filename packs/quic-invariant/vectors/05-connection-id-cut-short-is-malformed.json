@@ -1,0 +1,8 @@
+{
+  "name": "connection-id-cut-short-is-malformed",
+  "from": "quic-invariant",
+  "to": "quic-invariant",
+  "input": "c0000000010801020304",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/link-headers-vectors.py from values chosen there; the first long header cut to 10 octets, inside its destination connection ID"
+}

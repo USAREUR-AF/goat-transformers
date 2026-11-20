@@ -1,0 +1,17 @@
+{
+  "name": "packet-data-not-written",
+  "from": "pcapng-epb-be",
+  "to": "pcapng-epb-be",
+  "input": "0000000600000060000000000006610f58a8c6400000003c0000003c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000060",
+  "expect": "0000000600000060000000000006610f58a8c6400000003c0000003c",
+  "model": {
+    "@kind": "enhanced-packet",
+    "pcap.pcapng_block_total_length": "96",
+    "pcap.pcapng_interface_id": "0",
+    "pcap.pcapng_ts_high": "418063",
+    "pcap.pcapng_ts_low": "1487455808",
+    "pcap.pcap_caplen": "60",
+    "pcap.pcap_origlen": "60"
+  },
+  "source": "built by tools/gen/link-headers-vectors.py from values chosen there; an enhanced packet block on interface 0 at 1795568400123456 microseconds (in the default resolution), 60 octets of 60; data and the trailing length read over"
+}

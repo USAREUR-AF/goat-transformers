@@ -1,0 +1,18 @@
+# IPsec AH header (RFC 4302 section 2): the 12 fixed octets before the ICV.
+# Public. The ICV and the payload are not mapped (pack.md).
+#
+# Addressing: word_bytes 1 and bit_order msb; multi-octet fields are big-endian.
+format        ah-header
+version       0.1.0
+distribution  public
+source        "IETF RFC 4302, IP Authentication Header, December 2005, section 2, https://www.rfc-editor.org/rfc/rfc4302.txt; layout restated"
+uses          inet
+wire          bits
+word_bytes    1
+bit_order     msb
+
+field  inet.ip_protocol             0:0:8      uint
+field  inet.ah_payload_len          0:8:8      uint
+field  inet.ah_reserved             0:16:16    uint
+field  inet.ipsec_spi               0:32:32    uint
+field  inet.ipsec_seq               0:64:32    uint

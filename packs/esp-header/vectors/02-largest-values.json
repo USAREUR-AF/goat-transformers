@@ -1,0 +1,12 @@
+{
+  "name": "largest-values",
+  "from": "esp-header",
+  "to": "esp-header",
+  "input": "ffffffffffffffff",
+  "expect": "ffffffffffffffff",
+  "model": {
+    "inet.ipsec_spi": "4294967295",
+    "inet.ipsec_seq": "4294967295"
+  },
+  "source": "built by tools/gen/link-headers-vectors.py from values chosen there; the largest SPI and sequence number"
+}

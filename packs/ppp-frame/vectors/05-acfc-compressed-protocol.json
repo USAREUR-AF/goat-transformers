@@ -1,0 +1,12 @@
+{
+  "name": "acfc-compressed-protocol",
+  "from": "ppp-frame",
+  "to": "ppp-frame",
+  "input": "2100000000",
+  "expect": "21",
+  "model": {
+    "@kind": "protocol-8",
+    "inet.ppp_protocol": "33"
+  },
+  "source": "built by tools/gen/link-headers-vectors.py from values chosen there; both compressions: the 1-octet protocol 0x21, then 4 octets read over"
+}

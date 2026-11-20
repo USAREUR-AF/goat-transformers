@@ -1,0 +1,41 @@
+# PPP frame (RFC 1661 section 2, RFC 1662 section 3): the address and control
+# octets of HDLC-like framing when present, and the 1- or 2-octet protocol field.
+# Public. A message is a frame between its flag sequences, after octet
+# transparency is undone; the information field, padding and FCS are not mapped.
+#
+# Addressing: word_bytes 1 and bit_order msb.
+format        ppp-frame
+version       0.1.0
+distribution  public
+source        "IETF RFC 1661, The Point-to-Point Protocol (PPP), July 1994, section 2; IETF RFC 1662, PPP in HDLC-like Framing, July 1994, section 3; https://www.rfc-editor.org/; layout restated"
+uses          inet
+wire          bits
+word_bytes    1
+bit_order     msb
+
+# Address 0xFF and control 0x03, then the protocol: 2 octets when its first
+# octet is even, 1 octet (protocol field compression) when it is odd.
+kind      hdlc-protocol-16
+when      0:0:8   255
+when      0:8:8   3
+when      0:23:1  0
+requires  inet.ppp_protocol
+field  inet.ppp_protocol            0:16:16    uint
+
+kind      hdlc-protocol-8
+when      0:0:8   255
+when      0:8:8   3
+when      0:23:1  1
+requires  inet.ppp_protocol
+field  inet.ppp_protocol            0:16:8     uint
+
+# Address and control field compression: the frame starts with the protocol.
+kind      protocol-16
+when      0:7:1   0
+requires  inet.ppp_protocol
+field  inet.ppp_protocol            0:0:16     uint
+
+kind      protocol-8
+when      0:7:1   1
+requires  inet.ppp_protocol
+field  inet.ppp_protocol            0:0:8      uint

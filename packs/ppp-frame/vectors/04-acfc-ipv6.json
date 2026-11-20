@@ -1,0 +1,12 @@
+{
+  "name": "acfc-ipv6",
+  "from": "ppp-frame",
+  "to": "ppp-frame",
+  "input": "0057",
+  "expect": "0057",
+  "model": {
+    "@kind": "protocol-16",
+    "inet.ppp_protocol": "87"
+  },
+  "source": "built by tools/gen/link-headers-vectors.py from values chosen there; address and control field compression: the frame starts with protocol 0x0057 (IPv6)"
+}

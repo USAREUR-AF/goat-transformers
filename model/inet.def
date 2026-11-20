@@ -2,14 +2,15 @@
 # TCP, ICMP, NTP, the DNS message header; RTP and RTCP, ARP, GRE, VXLAN, the
 # MPLS label stack entry, IGMPv2 and IGMPv3, ICMPv6, the SCTP common header,
 # BFD; CoAP, the TLS and DTLS record headers, BGP-4, OSPFv2, VRRPv3, RIPv2,
-# Geneve), as the wire
+# Geneve; Ethernet II with the 802.1Q tag, PPP, L2TPv3, IPsec ESP and AH, the QUIC
+# invariants), as the wire
 # integer unless the description says otherwise. A flag is 0 or 1. Keys of one protocol carry its
 # name; the three keys without a protocol name hold the same quantity in more than
 # one header (pack.md of each pack gives the evidence).
 module        inet
-version       0.4.0
+version       0.5.0
 distribution  public
-source        "IETF RFC 791, RFC 8200, RFC 768, RFC 9293, RFC 792, RFC 5905, RFC 1035, RFC 3550, RFC 826, RFC 894, RFC 2784, RFC 2890, RFC 7348, RFC 3032, RFC 5462, RFC 2236, RFC 9260, RFC 5880, RFC 3376, RFC 4443, RFC 4861, RFC 7252, RFC 8446, RFC 9147, RFC 4271, RFC 2328, RFC 9568, RFC 2453 and RFC 8926, https://www.rfc-editor.org/, IETF Trust (BCP 78); layouts restated"
+source        "IETF RFC 791, RFC 8200, RFC 768, RFC 9293, RFC 792, RFC 5905, RFC 1035, RFC 3550, RFC 826, RFC 894, RFC 2784, RFC 2890, RFC 7348, RFC 3032, RFC 5462, RFC 2236, RFC 9260, RFC 5880, RFC 3376, RFC 4443, RFC 4861, RFC 7252, RFC 8446, RFC 9147, RFC 4271, RFC 2328, RFC 9568, RFC 2453, RFC 8926, RFC 7042, RFC 1661, RFC 1662, RFC 3931, RFC 4303, RFC 4302 and RFC 8999, https://www.rfc-editor.org/, IETF Trust (BCP 78); layouts restated"
 
 # Shared between headers
 key  src_port                  int     -     "transport port of the sending process, 0-65535 (UDP, TCP and SCTP)"
@@ -359,3 +360,36 @@ key  geneve_vni                int     -     "virtual network identifier, 24 bit
 key  geneve_reserved2          int     -     "the 8 reserved bits after the VNI, 0"
 list geneve_option_words               "the options as raw 4-octet words, counted by the option length; each item holds inet.geneve_option_word"
 key  geneve_option_word        int     -     "one 4-octet word of the options, the 32-bit integer"
+
+# Ethernet II and the 802.1Q C-tag, RFC 894, RFC 7042 section 3 and RFC 7348 section 5
+key  eth_dst_addr              int     -     "destination MAC address, the 48-bit integer"
+key  eth_src_addr              int     -     "source MAC address, the 48-bit integer"
+key  eth_type                  int     -     "EtherType of the payload, 0x0600 and above (below 0x0600 the field is an IEEE 802.3 length)"
+key  vlan_tag_info             int     -     "C-tag: the 16 bits of VLAN tag information after the 0x8100 EtherType (priority and VLAN ID, as IEEE 802.1Q divides them), as one integer"
+
+# PPP, RFC 1661 section 2 and RFC 1662 section 3
+key  ppp_protocol              int     -     "protocol field: the protocol of the information field (0x0021 IPv4, 0x0057 IPv6, 0xC021 LCP, ...), 1 or 2 octets"
+
+# L2TPv3, RFC 3931 sections 3.2.1, 4.1.1 and 4.1.2
+key  l2tp_session_id           int     -     "session ID, 32 bits (over IP, 0 marks a control message)"
+key  l2tp_length_bit           int     -     "control message: L bit, 1 = the length field is present"
+key  l2tp_sequence_bit         int     -     "control message: S bit, 1 = Ns and Nr are present"
+key  l2tp_version              int     -     "version of the header, 3"
+key  l2tp_length               int     -     "control message: length of the message in octets from the T bit"
+key  l2tp_control_connection_id int    -     "control message: control connection ID of the intended recipient"
+key  l2tp_ns                   int     -     "control message: sequence number of this message"
+key  l2tp_nr                   int     -     "control message: sequence number expected in the next message received"
+key  l2tp_reserved             int     -     "data message over UDP: the 16 reserved bits, 0"
+
+# IPsec ESP and AH, RFC 4303 section 2 and RFC 4302 section 2
+key  ipsec_spi                 int     -     "security parameters index: identifies the security association of the packet, 32 bits (ESP and AH)"
+key  ipsec_seq                 int     -     "sequence number: the low 32 bits of the anti-replay counter (ESP and AH)"
+key  ah_payload_len            int     -     "AH: length of the header in 32-bit words, minus 2"
+key  ah_reserved               int     -     "AH: the 16 reserved bits, 0"
+
+# QUIC invariants, RFC 8999 section 5
+key  quic_version_specific     int     -     "the 7 bits after the header form bit, version specific"
+key  quic_version              int     -     "long header: the 32-bit version (0 = version negotiation)"
+list quic_dcid                         "long header: the destination connection ID, counted by its length octet; each item holds inet.quic_cid_octet"
+list quic_scid                         "long header: the source connection ID, counted by its length octet; each item holds inet.quic_cid_octet"
+key  quic_cid_octet            int     -     "one octet of a connection ID, 0-255"

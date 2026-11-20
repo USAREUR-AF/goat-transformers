@@ -1,0 +1,8 @@
+{
+  "name": "seven-octets-is-malformed",
+  "from": "esp-header",
+  "to": "esp-header",
+  "input": "00001001000000",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/link-headers-vectors.py from values chosen there; the header cut to 7 octets"
+}

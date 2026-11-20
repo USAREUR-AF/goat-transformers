@@ -1,0 +1,12 @@
+{
+  "name": "first-packet-payload-not-written",
+  "from": "esp-header",
+  "to": "esp-header",
+  "input": "00001001000000010000000000000000000000000000000000000000000000000000000000000000",
+  "expect": "0000100100000001",
+  "model": {
+    "inet.ipsec_spi": "4097",
+    "inet.ipsec_seq": "1"
+  },
+  "source": "built by tools/gen/link-headers-vectors.py from values chosen there; SPI 0x1001 and the first value of the counter, 1 (the first packet of an SA), then 32 octets of encrypted payload and ICV, read over"
+}

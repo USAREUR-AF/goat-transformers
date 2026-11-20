@@ -1,0 +1,8 @@
+{
+  "name": "control-cut-short-is-malformed",
+  "from": "l2tpv3-ip",
+  "to": "l2tpv3-ip",
+  "input": "00000000c80300140000abcd0001",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/link-headers-vectors.py from values chosen there; the control message cut to 14 octets"
+}

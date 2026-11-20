@@ -1,0 +1,12 @@
+{
+  "name": "hdlc-lcp",
+  "from": "ppp-frame",
+  "to": "ppp-frame",
+  "input": "ff03c021",
+  "expect": "ff03c021",
+  "model": {
+    "@kind": "hdlc-protocol-16",
+    "inet.ppp_protocol": "49185"
+  },
+  "source": "built by tools/gen/link-headers-vectors.py from values chosen there; an LCP frame (protocol 0xc021) with address and control fields"
+}

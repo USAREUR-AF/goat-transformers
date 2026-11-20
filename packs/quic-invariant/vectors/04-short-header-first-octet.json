@@ -1,0 +1,12 @@
+{
+  "name": "short-header-first-octet",
+  "from": "quic-invariant",
+  "to": "quic-invariant",
+  "input": "4100000000000000000000000000000000",
+  "expect": "41",
+  "model": {
+    "@kind": "short-header",
+    "inet.quic_version_specific": "65"
+  },
+  "source": "built by tools/gen/link-headers-vectors.py from values chosen there; a short header (form bit 0): its connection ID length is not on the wire, so only the first octet is read"
+}
