@@ -1,0 +1,9 @@
+{
+  "name": "other-config-size-is-no-kind",
+  "from": "c37118-data-4ph-int-rect",
+  "to": "c37118-data-4ph-int-rect",
+  "input": "aa01003810e1691f02c00000000000002ee00000e890d768e89028980384ffcefff100193fc0000043664000be00000000f0000000009aad",
+  "expect_error": "no-kind",
+  "source": "derived by tools/gen/c37118-vectors.py from the layout pypmu writes; no engine run",
+  "reference": "pypmu commit 66e6c495a91e synchrophasor/frame.py (CommonFrame, DataFrame, ConfigFrame1/2, CommandFrame); a data frame of another configuration (56 bytes) is not this pack's"
+}

@@ -1,0 +1,60 @@
+# IEEE C37.118.2 data frame of one PMU whose configuration states 3 phasors in floating-point polar
+# form, 1 analog value and the frequency in floating point and 1 digital word (the configuration of
+# pypmu's example randomPMU.py): 56 bytes. Big-endian.
+# Licence: Apache-2.0 (a restatement; its source, pypmu, is BSD-3-Clause and implements IEEE C37.118.2-2011).
+format  c37118-data-3ph-float-polar
+version 0.1.0
+distribution public
+source  "iicsys/pypmu, https://github.com/iicsys/pypmu commit 66e6c495a91efb8a6018061ff7955a6654b1404d, synchrophasor/frame.py and examples/: an implementation of IEEE Std C37.118.2-2011; BSD 3-Clause License, Copyright (c) 2016 Tomo Popovic, Stevan Sandi and Bozo Krstajic. The IEEE standard is not used"
+uses    c37118
+wire    bits
+word_bytes 1
+bit_order  msb
+map  tq_bound  1  0.000001
+map  tq_bound  2  0.00001
+map  tq_bound  3  0.0001
+map  tq_bound  4  0.001
+map  tq_bound  5  0.01
+map  tq_bound  6  0.1
+map  tq_bound  7  1
+map  tq_bound  8  10
+map  tq_bound  9  100
+map  tq_bound  10  1000
+map  tq_bound  11  10000
+# Common header: SYNC (0xAA, a reserved bit, frame type, version), FRAMESIZE, IDCODE, SOC, FRACSEC.
+when    0:0:8    170
+when    0:8:1    0
+field   c37118.version         0:12:4   uint
+field   c37118.idcode          0:32:16  uint
+field   c37118.soc             0:48:32  uint
+field   c37118.leap_direction  0:81:1   uint
+field   c37118.leap_occurred   0:82:1   uint
+field   c37118.leap_pending    0:83:1   uint
+field   c37118.time_quality    0:84:4   uint
+# The time quality code as an error bound: code n (1 to 11) is within 10^(n-10) s of UTC.
+# Code 0 (locked) states no bound and 15 is a clock failure: no key.
+field   time_error_ms          0:84:4   uint  via tq_bound  absent 0,12,13,14,15
+field   c37118.fracsec         0:88:24  uint
+kind    data
+when    0:9:3    0
+when    0:16:16  56
+field   c37118.stat_data_error      0:112:2  uint
+field   c37118.stat_sync_lost       0:114:1  uint
+field   c37118.stat_sorted_arrival  0:115:1  uint
+field   c37118.stat_trigger         0:116:1  uint
+field   c37118.stat_config_change   0:117:1  uint
+field   c37118.stat_data_modified   0:118:1  uint
+field   c37118.stat_time_quality    0:119:3  uint
+field   c37118.stat_unlocked_time   0:122:2  uint
+field   c37118.stat_trigger_reason  0:124:4  uint
+group   c37118.phasors  0:128  item 64  count 3
+  field c37118.phasor_magnitude  0:0:32   f32
+  field c37118.phasor_angle      0:32:32  f32
+end
+field   c37118.freq_hz    0:320:32  f32
+field   c37118.rocof_hzs  0:352:32  f32
+group   c37118.analogs  0:384  item 32  count 1
+  field c37118.analog_value  0:0:32  f32
+end
+field   c37118.digital  0:416:16  uint
+field   c37118.chk      0:432:16  uint

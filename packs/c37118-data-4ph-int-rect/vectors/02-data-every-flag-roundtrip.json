@@ -1,0 +1,32 @@
+{
+  "name": "data-every-flag-roundtrip",
+  "from": "c37118-data-4ph-int-rect",
+  "to": "c37118-data-4ph-int-rect",
+  "input": "aa020034ffff0000000070ffffffbfff2ee00000e890d768e89028980384ffcefff100193fc0000043664000be00000000f0651d",
+  "expect": "aa020034ffff0000000070ffffffbfff2ee00000e890d768e89028980384ffcefff100193fc0000043664000be00000000f0651d",
+  "model": {
+    "c37118.version": "2",
+    "c37118.idcode": "65535",
+    "c37118.soc": "0",
+    "c37118.leap_direction": "1",
+    "c37118.leap_occurred": "1",
+    "c37118.leap_pending": "1",
+    "c37118.time_quality": "0",
+    "c37118.fracsec": "16777215",
+    "@kind": "data",
+    "c37118.stat_data_error": "2",
+    "c37118.stat_sync_lost": "1",
+    "c37118.stat_sorted_arrival": "1",
+    "c37118.stat_trigger": "1",
+    "c37118.stat_config_change": "1",
+    "c37118.stat_data_modified": "1",
+    "c37118.stat_time_quality": "7",
+    "c37118.stat_unlocked_time": "3",
+    "c37118.stat_trigger_reason": "15",
+    "@absent": [
+      "time_error_ms"
+    ]
+  },
+  "source": "derived by tools/gen/c37118-vectors.py from the layout pypmu writes; no engine run",
+  "reference": "pypmu commit 66e6c495a91e synchrophasor/frame.py (CommonFrame, DataFrame, ConfigFrame1/2, CommandFrame); version 2, every STAT and leap flag set, the largest fraction; time quality 0 (locked) states no bound"
+}

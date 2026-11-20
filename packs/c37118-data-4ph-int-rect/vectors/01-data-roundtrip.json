@@ -1,0 +1,36 @@
+{
+  "name": "data-roundtrip",
+  "from": "c37118-data-4ph-int-rect",
+  "to": "c37118-data-4ph-int-rect",
+  "input": "aa01003410e1691f02c00507a12000002ee00000e890d768e89028980384ffcefff100193fc0000043664000be00000000f029ec",
+  "expect": "aa01003410e1691f02c00507a12000002ee00000e890d768e89028980384ffcefff100193fc0000043664000be00000000f029ec",
+  "model": {
+    "c37118.version": "1",
+    "c37118.idcode": "4321",
+    "c37118.soc": "1763640000",
+    "c37118.leap_direction": "0",
+    "c37118.leap_occurred": "0",
+    "c37118.leap_pending": "0",
+    "c37118.time_quality": "5",
+    "c37118.fracsec": "500000",
+    "time_error_ms": "0.01",
+    "@kind": "data",
+    "c37118.phasors.#": "4",
+    "c37118.phasors[1].c37118.phasor_real": "-6000",
+    "c37118.phasors[1].c37118.phasor_imag": "-10392",
+    "c37118.freq_dev_mhz": "-15",
+    "c37118.rocof_hzs": "0.25",
+    "c37118.analogs.#": "3",
+    "c37118.analogs[1].c37118.analog_value": "230.25",
+    "c37118.digital": "240",
+    "c37118.stat_data_error": "0",
+    "c37118.chk": "10732",
+    "@absent": [
+      "time_ms",
+      "lat",
+      "lon"
+    ]
+  },
+  "source": "derived by tools/gen/c37118-vectors.py from the layout pypmu writes; no engine run",
+  "reference": "pypmu commit 66e6c495a91e synchrophasor/frame.py (CommonFrame, DataFrame, ConfigFrame1/2, CommandFrame); 4 integer rectangular phasors, 3 floating-point analogs, integer frequency and rate of change (100 times Hz/s), one digital word; time quality 5 is a 0.01 ms bound"
+}

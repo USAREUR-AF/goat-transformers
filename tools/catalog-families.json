@@ -103,6 +103,7 @@
     {"name": "EVerest charging stack", "domain": "iot", "prefixes": ["everest-"]},
     {"name": "SunSpec Modbus", "domain": "iot", "prefixes": ["sunspec-"], "members": {"pattern": "^sunspec-([0-9]+)$", "label": "{n} information models", "list": false}},
     {"name": "OMA LwM2M", "domain": "iot", "exact": ["lwm2m-json"], "detail": "LwM2M 1.0 JSON content format"},
+    {"name": "IEEE C37.118 synchrophasor (pypmu)", "domain": "iot", "prefixes": ["c37118-"]},
 
     {"name": "OpenTelemetry OTLP", "domain": "networks", "prefixes": ["otlp-"]},
     {"name": "gNMI", "domain": "networks", "prefixes": ["gnmi-"]},
