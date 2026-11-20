@@ -1,0 +1,37 @@
+# The detection module: one dwell or scan of a sensor and the detections it
+# holds, with no track identity (a radar scan of plots, a moving-target dwell of
+# target reports). spec/shared-model.md, "The detection module".
+#
+# The keys of the dwell are written detection.<key> at the top of the entity.
+# Each detection is one item of the list detection.items; an item holds the core
+# keys of its position and errors (lat, lon, hae, ce, le) and, where the sensor
+# states its own time for it, time_ms, beside the item keys of this module.
+# Absent means "not stated", never 0: no conversion invents a value.
+module        detection
+version       0.1.0
+distribution  public
+source        "goat-transformers spec/shared-model.md; the key table agreed with goat-processors (track function), 20 Nov"
+
+# The dwell (scan).
+key  dwell_id                    string  -    "identifier of the dwell, scan or revisit, as the sensor numbers it"
+key  time_ms                     int     ms   "time of the dwell, epoch milliseconds UTC"
+key  time_error_ms               float   ms   "coherence error bound of the clock that stamped time_ms, >= 0: the bound, not the offset (as core time_error_ms)"
+key  time_state                  string  -    "state of the clock that stamped time_ms: coherent, drifting or free-running (as core time_state)"
+key  sensor_id                   string  -    "identifier of the sensor or data source that made the dwell (a platform id, or SAC/SIC as text)"
+key  sensor_lat                  float   deg  "latitude of the sensor at the dwell, WGS84"
+key  sensor_lon                  float   deg  "longitude of the sensor at the dwell, WGS84"
+key  sensor_hae                  float   m    "height of the sensor at the dwell above the WGS84 ellipsoid"
+key  coverage_wkt                string  -    "the area the dwell covers, as WKT (a POLYGON in lon lat order, WGS84), where the sensor states it"
+key  revisit_ms                  int     ms   "time between successive dwells of the same area, where the sensor states it"
+
+# The detections of the dwell (engine-spec 0.7, lists). A present, empty list is
+# a dwell that detected nothing, distinct from an absent list.
+list items                       "the detections of the dwell, one item per detection"
+key  item_id                     string  -    "item of items: the detection's identifier or report index within the dwell"
+key  range_error_m               float   m    "item of items: one-sigma error of the slant range, where the sensor states it instead of ce"
+key  cross_range_error_m         float   m    "item of items: one-sigma error across the line of sight, horizontal, where the sensor states it instead of ce"
+key  radial_velocity_ms          float   m/s  "item of items: line-of-sight (radial) velocity relative to the sensor; positive when the range increases (moving away)"
+key  radial_velocity_error_ms    float   m/s  "item of items: one-sigma error of radial_velocity_ms"
+key  snr_db                      float   dB   "item of items: signal-to-noise ratio of the detection"
+key  classification              string  -    "item of items: class of the detected object as the sensor states it (for example wheeled, tracked, rotary-wing, fixed-wing, person)"
+key  classification_probability  float   -    "item of items: probability in [0,1] that classification is right"

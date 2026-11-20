@@ -18,6 +18,7 @@ share, the more of a message carries between them.
 |---|---|---|
 | `core` | identity, type, time, position, error, name, course and speed of one reported thing | `model/core.def` |
 | `track` | sensor-track facts: source, velocity vector, class, confidence, uncertainty, status flags, and the list of identifiers | `model/track.def` |
+| `detection` | one dwell or scan of a sensor (time and its quality, the sensor and its position, the coverage) and the list of its detections, with no track identity: position and errors, radial velocity, signal to noise, classification | `model/detection.def` |
 | `cat062` | values of ASTERIX Category 062 as the category holds them: SAC, SIC, time of day, track number, the status bits MON, CNF, SIM, TSE and CST. Uses `track`: it derives the time of day from `time_ms`, the track number from `uid`, and SIM from the three flags of `track` that say the data is not live | `model/cat062.def` |
 | `probe` | synthetic keys and lists for the conformance vectors of derived keys, of groups and of sequential layouts; no real format maps them | `model/probe.def` |
 
@@ -128,6 +129,31 @@ holds two keys:
 |---|---|---|
 | `track.id_scheme` | string | the scheme the identifier belongs to (for example `icao24`) |
 | `track.id_value` | string | the identifier in that scheme |
+
+## The `detection` module
+
+One dwell or scan of a sensor and the detections it holds, with no track
+identity: a radar scan of plots, a moving-target dwell of target reports.
+
+The dwell's keys are written `detection.<key>` at the top of the entity:
+`dwell_id`, `time_ms` (the dwell time), `time_error_ms` and `time_state` (as
+the core keys of the same names), `sensor_id`, `sensor_lat`, `sensor_lon`,
+`sensor_hae`, and, where the sensor states them, `coverage_wkt` (the covered
+area as WKT) and `revisit_ms`.
+
+Each detection is one item of the list `detection.items`. An item holds the
+core keys `lat`, `lon`, `hae`, `ce`, `le` and, where the sensor gives a
+detection its own time, `time_ms`; and the item keys of the module:
+`item_id`, `range_error_m` and `cross_range_error_m` (where the sensor states
+those in place of `ce`), `radial_velocity_ms` (positive when the range
+increases) and `radial_velocity_error_ms`, `snr_db`, `classification` and
+`classification_probability`. A present, empty `items` is a dwell that detected
+nothing, which is not the same as an absent list. A pack whose wire gives the
+radial velocity with the opposite sign states it with a negative scale.
+
+Absent means "not stated", never 0. Types, units and meanings are in
+`model/detection.def`. The key set was agreed with goat-processors, whose
+`track` function reads it.
 
 ## Residue
 
