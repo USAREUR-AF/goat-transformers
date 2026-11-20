@@ -315,7 +315,7 @@ def build_pack(suffix, module, title, endpoint, member, files, recs, out):
     if bound:
         lat, lon = 48.125, -0.5
         out.write(cross, json.dumps({
-            "name": "geojson-to-record", "from": "geojson", "to": fmt,
+            "name": "%s-geojson-to-record" % fmt, "from": "geojson", "to": fmt,
             "input": canon({"type": "Feature", "geometry": {"type": "Point", "coordinates": [lon, lat]},
                             "properties": {"callsign": "NOT CARRIED"}, "id": "x-1"}),
             "expect": canon({inv["lat"]: lat, inv["lon"]: lon}),

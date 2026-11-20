@@ -1,5 +1,5 @@
 {
-  "name": "geojson-to-record",
+  "name": "nga-msi-asam-geojson-to-record",
   "from": "geojson",
   "to": "nga-msi-asam",
   "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-0.5,48.125]},\"properties\":{\"callsign\":\"NOT CARRIED\"},\"id\":\"x-1\"}",
