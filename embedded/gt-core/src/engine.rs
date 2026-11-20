@@ -2421,6 +2421,34 @@ impl<'a, 's> Session<'a, 's> {
             // present (spec 0.12): 1 when the argument is held, whatever its
             // value; an absent argument returned above and left the target absent
             13 => return Ok(Some(Val::Int(1))),
+            // spec 0.16, ruling 3: exact integers, only the result range-checked
+            14..=16 => {
+                let i = |k: usize| int(k).map(|n| n as i128);
+                let r = match d.func {
+                    14 => i(0).map(|ms| ms.div_euclid(1000)),
+                    15 => i(0).map(|ms| ms.rem_euclid(1000) * 1_000_000),
+                    _ => i(0).zip(i(1)).map(|(sec, nsec)| sec * 1000 + nsec.div_euclid(1_000_000)),
+                };
+                return Ok(r.and_then(|r| i64::try_from(r).ok()).map(Val::Int));
+            }
+            // radians to degrees and back, the quotient first (ruling 8)
+            17 => f(0) * (180.0 / core::f64::consts::PI),
+            18 => f(0) * (core::f64::consts::PI / 180.0),
+            // `add` and `sub` on `int`: an overflow leaves the target absent
+            19 => return Ok(int(0).zip(int(1)).and_then(|(p, q)| p.checked_add(q)).map(Val::Int)),
+            20 => f(0) + f(1),
+            21 => return Ok(int(0).zip(int(1)).and_then(|(p, q)| p.checked_sub(q)).map(Val::Int)),
+            22 => f(0) - f(1),
+            #[cfg(all(feature = "sqrt", feature = "trig"))]
+            23..=27 => match wgs84(d.func, f(0), f(1), f(2)) {
+                Some(v) => v,
+                None => return Ok(None),
+            },
+            #[cfg(feature = "trig")]
+            28 => match lon_of_ecef(f(0), f(1), f(2)) {
+                Some(v) => v,
+                None => return Ok(None),
+            },
             // a function this build of the engine leaves out, or does not know
             _ => return Err(Error::BadPlan),
         };
@@ -2701,4 +2729,69 @@ impl<'a, 's> Session<'a, 's> {
             }
         }
     }
+}
+
+/// WGS 84 (spec 0.16): `deg_lon_of`, `m_lon_of` and `ecef_x`, `ecef_y`,
+/// `ecef_z`, in the reference engine's order of operations. None leaves the
+/// target absent: a latitude outside [-90, 90], an intermediate that is not
+/// finite (rulings 1 and 6), or, on the device, a longitude whose sine or
+/// cosine the engine does not compute (beyond +-1647099 radians).
+#[cfg(all(feature = "sqrt", feature = "trig"))]
+fn wgs84(func: u8, x0: f64, x1: f64, x2: f64) -> Option<f64> {
+    use core::f64::consts::PI;
+    const A: f64 = 6378137.0;
+    const FL: f64 = 1.0 / 298.257223563;
+    let e2 = FL * (2.0 - FL);
+    let to_rad = PI / 180.0;
+    let to_deg = 180.0 / PI;
+    let fin = |v: f64| if num::is_finite(v) { Some(v) } else { None };
+    let lat_arg = |lat: f64| if (-90.0..=90.0).contains(&lat) { Some(lat * to_rad) } else { None };
+    // the prime vertical radius; the meridional radius these functions do
+    // not use is finite for every latitude, so it cannot leave them absent
+    let radius = |phi: f64| -> Option<f64> {
+        let s = num::sin(phi)?;
+        let w = fin(1.0 - e2 * s * s)?;
+        fin(A / fin(num::sqrt(w))?)
+    };
+    let v = match func {
+        23 | 24 => {
+            let phi = lat_arg(x1)?;
+            let n = radius(phi)?;
+            let c = num::cos(phi)?.abs();
+            if func == 23 {
+                if c <= 1e-12 {
+                    return None;
+                }
+                fin(x0 / fin(n * c)?)? * to_deg
+            } else {
+                fin(fin(fin(x0 * to_rad)? * n)? * c)?
+            }
+        }
+        _ => {
+            let phi = lat_arg(x0)?;
+            let lam = fin(x1 * to_rad)?;
+            let n = radius(phi)?;
+            let hae = fin(x2)?;
+            match func {
+                25 => fin(n + hae)? * num::cos(phi)? * num::cos(lam)?,
+                26 => fin(n + hae)? * num::cos(phi)? * num::sin(lam)?,
+                _ => fin(n * (1.0 - e2) + hae)? * num::sin(phi)?,
+            }
+        }
+    };
+    fin(v)
+}
+
+/// `lon_of_ecef` (spec 0.16): `atan2(y, x)` in degrees, in (-180, 180]
+/// (ruling 5); absent when x and y are both 0.
+#[cfg(feature = "trig")]
+fn lon_of_ecef(x: f64, y: f64, z: f64) -> Option<f64> {
+    if !num::is_finite(x) || !num::is_finite(y) || !num::is_finite(z) {
+        return None;
+    }
+    if x == 0.0 && y == 0.0 {
+        return None;
+    }
+    let d = num::atan2(y, x) * (180.0 / core::f64::consts::PI);
+    Some(if d <= -180.0 { d + 360.0 } else { d })
 }

@@ -119,6 +119,9 @@ The blob layout, the operation table and the full list are in
 | Derivations `copy`, `neg`, `scale`, `offset`, `day_seconds`, `any`, `not`, `parse_int`, `present` | Built |
 | Derivation `hypot` (gt-core feature `sqrt`) | Built |
 | Derivations `bearing`, `east_of`, `north_of` (gt-core feature `trig`) | Built |
+| Derivations of spec 0.16: `sec_of`, `nsec_of`, `ms_of`, `deg`, `rad`, `add`, `sub` | Built |
+| Derivations of spec 0.16: `deg_lon_of`, `m_lon_of`, `ecef_x`, `ecef_y`, `ecef_z` (features `sqrt` and `trig`), `lon_of_ecef` (feature `trig`) | Built |
+| Derivations of spec 0.16: `deg_lat_of`, `m_lat_of` (a power, x^1.5), `lat_of_ecef`, `hae_of_ecef` (a cube root) | Not built; refused as `unsupported-feature` when a conversion needs them |
 | Text wires `xml`, `geojson`, `json`, `protobuf` | Not built; out of scope |
 | Derivations `join`, `text_of` | Not built; refused when a conversion needs them |
 | Residue | Not built; a `bits` format has none |
@@ -222,6 +225,16 @@ Plans compiled for one kind of a format, over nine formats (`remote-id`,
 compiled kind converted to the vector's bytes; 11,630 messages of other kinds
 were refused with `no-kind`. The compiler refused no kind. Measured.
 
+No pack of the repository runs a derive function of spec 0.16 on a `bits`
+side, so `gt-proof/tests/derives016.rs` writes two synthetic `bits` packs over
+the keys of `model/probe.def`, one with the arguments and one with the
+results, and converts 20,000 seeded random and edge inputs on both engines:
+278,695 results are equal to the bit (every integer function, `deg`, `rad`,
+`add` and `sub` among them), 5,923 results of the WGS 84 and ECEF functions
+are within the comparison of 0.16 (1e-9 relative or 1e-7 absolute) without
+being equal to the bit, because gt-core's sine, cosine and arctangent are its
+own, 55,382 are absent on both, and 0 differ. Measured.
+
 The example plan of `embedded/example-bare`, with its `Scratch<12>`, gives the
 reference engine's bytes on the four Remote ID Location vectors. Measured.
 
@@ -235,7 +248,7 @@ so that they reach the lines:
 | Random bytes, and vector inputs with bits flipped, bytes replaced, tails cut or extended | 14,399,000 | no panic: 7,146,994 converted, 7,252,006 refused with a named error |
 | The same kinds of input, device against reference engine | 1,963,500 | 975,792 equal outputs, 987,610 equal error kinds, 98 beyond the device's buffers, 0 differences |
 | Every proper prefix of every same-format vector input | 197,318 | 195,836 refused with the reference engine's error kind; 1,482 accepted with the reference engine's bytes (the prefix is itself a message of the format); 0 differences |
-| Plan blobs with one to four bytes changed | 2,618,000 | no panic; 1,650,239 still parsed and were run |
+| Plan blobs with one to four bytes changed | 2,618,000 | no panic; 1,650,118 still parsed and were run |
 
 Measured in a build with overflow checks and debug assertions on.
 
@@ -254,11 +267,11 @@ workflow above: 68 operations, 14 keys, nesting 3.
 | | Bytes |
 |---|---|
 | Plan blob (in `.rodata`, 1,817 bytes in all) | 1,752 |
-| Code (`.text`), no derive features | 35,180 |
-| Code (`.text`), with `sqrt` and `trig` | 39,396 |
+| Code (`.text`), no derive features | 35,996 |
+| Code (`.text`), with `sqrt` and `trig` | 41,588 |
 | Zero-initialised data of the measurement image (`.bss`) | 81 |
 
-Of the 35,180 bytes of code, about 28,500 are the engine and the C wrapper
+Of the 35,996 bytes of code, about 29,300 are the engine and the C wrapper
 (1,266 of them the 128-bit rounded division of the integer scales),
 and about 6,600 are support routines the compiler adds for this target:
 double-precision arithmetic in software, 64-bit division and memory copy. The
@@ -289,8 +302,14 @@ Stack. `embedded/elfsize.py` bounds the stack from the disassembly of the
 linked image: the bytes each function pushes and reserves, added along the
 deepest chain of calls, with the functions that walk nested blocks counted
 once per level of nesting. For this plan (nesting 3, counted as 4) the bound
-is 3,476 bytes from the entry of `gt_rid_location_to_cat062`; for the deepest
-plan the compiler accepts (nesting 12) it is 6,420 bytes. This is a bound
+is 3,492 bytes from the entry of `gt_rid_location_to_cat062`; for the deepest
+plan the compiler accepts (nesting 12) it is 6,436 bytes, and 6,468 bytes
+in the image with `sqrt` and `trig`. A call through a register is followed
+only when an unconditional load from the literal pool put a function's
+address in it within one straight-line run of instructions: no branch, no
+write to pc and no branch target (the targets of `tbb` and `tbh` tables
+included) between the load and the call, and no other write to the register.
+Any other call through a register stops the bound. This is a bound
 computed from the image, not a measurement on a running device.
 `elfsize.py` needs a disassembler that reads ARM images: LLVM's
 `llvm-objdump`, or the one `rustup component add llvm-tools` installs.
@@ -310,8 +329,12 @@ armor) 10,352 bytes. `mavlink2` compiled for the one kind
   Equivalence is measured on the host, where the same source runs.
 - Other targets. `thumbv6m-none-eabi` and `riscv32imc-unknown-none-elf` were
   not built.
-- `east_of` and `north_of` for a course beyond ±94 million degrees leave the
-  target absent, where the reference engine computes a value.
+- `east_of` and `north_of` for a course beyond ±94 million degrees, and
+  `ecef_x` and `ecef_y` for a longitude beyond it, leave the target absent,
+  where the reference engine computes a value.
+- `deg_lat_of`, `m_lat_of`, `lat_of_ecef` and `hae_of_ecef` (spec 0.16) are
+  not compiled: they need a power or a cube root, which gt-core does not
+  carry.
 - A message with more values or list items than the caller's `Scratch` holds
   is `scratch-full`. The reference engine has no such limit. The limit on
   list items of engine-spec ruling 7 of 0.11 is the same on both

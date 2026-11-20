@@ -326,6 +326,28 @@ Derivations (section 7):
 | `not` | 11 | |
 | `parse_int` | 12 | |
 | `present` | 13 | |
+| `sec_of` (0.16) | 14 | |
+| `nsec_of` | 15 | |
+| `ms_of` | 16 | |
+| `deg` | 17 | |
+| `rad` | 18 | |
+| `add` on integers | 19 | |
+| `add` on floats | 20 | |
+| `sub` on integers | 21 | |
+| `sub` on floats | 22 | |
+| `deg_lon_of` | 23 | `sqrt` and `trig` |
+| `m_lon_of` | 24 | `sqrt` and `trig` |
+| `ecef_x` | 25 | `sqrt` and `trig` |
+| `ecef_y` | 26 | `sqrt` and `trig` |
+| `ecef_z` | 27 | `sqrt` and `trig` |
+| `lon_of_ecef` | 28 | `trig` |
+
+The integer functions of 0.16 (`sec_of`, `nsec_of`, `ms_of`, and `add` and
+`sub` on integers) are exact, in 128-bit integers where a step needs it;
+`deg`, `rad`, and `add` and `sub` on floats take one IEEE operation, as the
+reference engine does. The WGS 84 functions follow the reference engine's
+order of operations with gt-core's square root (the host's bits) and its
+sine, cosine and arctangent (within 2.3e-16 relative of the host's).
 
 The compiler prints which features a plan needs. An engine built without a
 feature refuses a plan that uses it (`bad-plan`).
@@ -367,7 +389,7 @@ feature refuses a plan that uses it (`bad-plan`).
 | `length-plus-range` | a `plus` outside 32 bits |
 | `value-range`, `table-overflow` | an offset, count or table index beyond what an entry holds; more than 255 sentinels on one field |
 | `unknown-format`, `unknown-kind`, `unknown-key`, `bad-arguments` | a name the inputs do not have |
-| `unsupported-feature` | a pack line of the specification that the device profile does not implement. Refused this way: the derive functions of spec 0.16 (`sec_of`, `ms_of`, `deg`, `add`, the distance and ECEF functions and the others of its table) when a conversion needs one |
+| `unsupported-feature` | a pack line of the specification that the device profile does not implement. Refused this way, when a conversion needs one: the derive functions of spec 0.16 `deg_lat_of` and `m_lat_of` (the meridional radius takes the power x^1.5) and `lat_of_ecef` and `hae_of_ecef` (Heikkinen's closed form takes a cube root). gt-core has neither function, and an approximation would not give the platform library's results bit for bit |
 | `bad-pack`, `bad-model` | text the compiler cannot read; it compiles packs the reference engine loads and does not repeat that engine's load checks |
 
 The text wires are out of scope for the device profile. A text format needs a
