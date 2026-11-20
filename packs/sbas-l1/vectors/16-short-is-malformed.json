@@ -1,0 +1,9 @@
+{
+  "name": "short-is-malformed",
+  "from": "sbas-l1",
+  "to": "sbas-l1",
+  "input": "9a06aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "expect_error": "malformed-wire",
+  "source": "derived by tools/gen/sbas2pack.py; no engine run",
+  "reference": "a message is 32 bytes; 28 are too few for the CRC field"
+}

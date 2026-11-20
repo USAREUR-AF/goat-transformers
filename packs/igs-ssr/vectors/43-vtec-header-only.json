@@ -1,0 +1,20 @@
+{
+  "name": "vtec-header-only",
+  "from": "igs-ssr",
+  "to": "igs-ssr",
+  "input": "fec39200202c00169ab305a0000c9ffd8003c000e0",
+  "expect": "fec39200202c00169ab300",
+  "model": {
+    "@kind": "vtec",
+    "igsssr.epoch_s": "257",
+    "igsssr.update_interval": "6",
+    "igsssr.multiple_message": "0",
+    "igsssr.iod_ssr": "0",
+    "igsssr.provider_id": "361",
+    "igsssr.solution_id": "10",
+    "igsssr.vtec_quality": "17.9",
+    "igsssr.layer_count": "0"
+  },
+  "source": "derived by tools/gen/igsssr2pack.py; no engine run",
+  "reference": "IGS State Space Representation (SSR) Format, Version 1.00, International GNSS Service, 2020-10-05, section 8.4: the VTEC header is read; the layer after it is not written"
+}

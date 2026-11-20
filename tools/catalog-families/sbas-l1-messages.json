@@ -1,0 +1,7 @@
+{
+  "name": "SBAS L1 messages",
+  "domain": "sensors",
+  "exact": [
+    "sbas-l1"
+  ]
+}

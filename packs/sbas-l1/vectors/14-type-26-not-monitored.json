@@ -1,0 +1,15 @@
+{
+  "name": "type-26-not-monitored",
+  "from": "sbas-l1",
+  "to": "sbas-l1",
+  "input": "5368c7ffe08208106084042821810e088044822811608c046823814000000000",
+  "expect": "5368c7ffe08208106084042821810e088044822811608c046823814000000000",
+  "model": {
+    "@kind": "type-26",
+    "sbas.grid_points.#": "15",
+    "sbas.grid_points[0].sbas.givei": "15",
+    "sbas.grid_points[1].sbas.giv_delay_m": "1.0"
+  },
+  "source": "derived by tools/gen/sbas2pack.py; no engine run",
+  "reference": "RTKLIB src/sbas.c reads a vertical delay of 0x1FF as not monitored: the first grid point has no giv_delay_m (absent 511) and writes 511 back"
+}
