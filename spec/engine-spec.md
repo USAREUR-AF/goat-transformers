@@ -4670,10 +4670,10 @@ repository.
 
 # Version 0.43: the `cdr` wire
 
-Status: Draft. A `cdr` format is one value of a final IDL struct encoded in
-OMG Common Data Representation as DDS writes it into an RTPS serialized
-payload: a 4-byte encapsulation header, then the members in declaration
-order, each aligned. XCDR version 1 (DDS-XTypes clause 7.4.1.1) and version 2
+Status: Draft. A `cdr` format is one value of a final IDL struct in the OMG
+CDR encoding, as a DDS writer sends it in the data of an RTPS message: a
+4-byte encapsulation header, then the members in declaration order, each
+aligned. XCDR version 1 (DDS-XTypes clause 7.4.1.1) and version 2
 (clause 7.4.3.4) are both stated. Input and output are hex text. Mutable and
 appendable types, optional members, unions and maps are not in this version.
 
