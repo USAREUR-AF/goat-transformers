@@ -1,0 +1,12 @@
+{
+  "name": "no-active-storms",
+  "from": "nhc-current-storms",
+  "to": "nhc-current-storms",
+  "input": "{\"activeStorms\":[]}",
+  "expect": "{\"activeStorms\":[]}",
+  "model": {
+    "nhc.storms.#": "0"
+  },
+  "source": "derived by tools/gen/nhc-vectors.py from the NHC JSON file reference and spec/engine-spec.md; no engine run",
+  "reference": "NHC Tropical Cyclone Status JSON File Reference (2019-04-08), www.nhc.noaa.gov/productexamples/ (read 2026-11-20); no active storm: the reference gives the file as an empty activeStorms array"
+}

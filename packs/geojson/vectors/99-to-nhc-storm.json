@@ -1,0 +1,13 @@
+{
+  "name": "to-nhc-storm",
+  "from": "geojson",
+  "to": "nhc-storm",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-71.25,24.5,0]},\"properties\":{\"time_ms\":1789419600000,\"callsign\":\"Example\",\"course\":315,\"speed_ms\":5.36448},\"id\":\"al992026\"}",
+  "expect": "{\"id\":\"al992026\",\"name\":\"Example\",\"latitudeNumeric\":24.5,\"longitudeNumeric\":-71.25,\"movementDir\":315,\"movementSpeed\":12,\"lastUpdate\":\"2026-09-14T21:00:00.000Z\"}",
+  "model": {
+    "@complete": true,
+    "nhc.movement_speed_mph": "12"
+  },
+  "source": "derived by tools/gen/nhc-vectors.py from the NHC JSON file reference and spec/engine-spec.md; no engine run",
+  "reference": "NHC Tropical Cyclone Status JSON File Reference (2019-04-08), www.nhc.noaa.gov/productexamples/ (read 2026-11-20); speed_ms 5.36448 is movementSpeed 5.36448 * 3600000 / 1609344 = 12 mph; hae has no nhc line"
+}
