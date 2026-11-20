@@ -1,0 +1,11 @@
+{
+ "keys": {
+  "|curb_place_id|string": "curb_place_id",
+  "|curb_place_type|string": "curb_place_type",
+  "|date|string": "date",
+  "|hour|int": "hour",
+  "|metric_type|string": "metric_type",
+  "|value|float": "value"
+ },
+ "lists": {}
+}

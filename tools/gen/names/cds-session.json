@@ -1,0 +1,23 @@
+{
+ "keys": {
+  "curb_area_ids|.|string": "curb_area_ids_value",
+  "|curb_object_id|string": "curb_object_id",
+  "|curb_space_id|string": "curb_space_id",
+  "|curb_zone_id|string": "curb_zone_id",
+  "|event_id_end|string": "event_id_end",
+  "|event_id_start|string": "event_id_start",
+  "|event_location_end_latitude|float": "event_location_end_latitude",
+  "|event_location_end_longitude|float": "event_location_end_longitude",
+  "|event_location_start_latitude|float": "event_location_start_latitude",
+  "|event_location_start_longitude|float": "event_location_start_longitude",
+  "|event_session_id|string": "event_session_id",
+  "|event_time_end|int": "event_time_end",
+  "|event_time_start|int": "event_time_start",
+  "|session_type|string": "session_type",
+  "|vehicle_length|int": "vehicle_length",
+  "|vehicle_type|string": "vehicle_type"
+ },
+ "lists": {
+  "|curb_area_ids": "curb_area_ids"
+ }
+}

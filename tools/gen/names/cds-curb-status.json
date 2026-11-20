@@ -1,0 +1,10 @@
+{
+ "keys": {
+  "|data_source_device_id|string": "data_source_device_id",
+  "|data_source_operator_id|string": "data_source_operator_id",
+  "|data_source_type|string": "data_source_type",
+  "|sensor_status_is_commissioned|int": "sensor_status_is_commissioned",
+  "|sensor_status_is_online|int": "sensor_status_is_online"
+ },
+ "lists": {}
+}

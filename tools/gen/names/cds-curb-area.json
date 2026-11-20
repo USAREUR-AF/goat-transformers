@@ -1,0 +1,20 @@
+{
+ "keys": {
+  "curb_zone_ids|.|string": "curb_zone_ids_value",
+  "external_references_ids|.|string": "external_references_ids_value",
+  "external_references|identifier_name|string": "external_references_identifier_name",
+  "external_references|name|string": "external_references_name",
+  "external_references|public|int": "external_references_public",
+  "external_references|reference_url|string": "external_references_reference_url",
+  "|curb_area_id|string": "curb_area_id",
+  "|geometry.type|string": "geometry_type",
+  "|last_updated_date|int": "last_updated_date",
+  "|name|string": "name",
+  "|published_date|int": "published_date"
+ },
+ "lists": {
+  "external_references|ids": "external_references_ids",
+  "|curb_zone_ids": "curb_zone_ids",
+  "|external_references": "external_references"
+ }
+}

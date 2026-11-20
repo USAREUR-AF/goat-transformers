@@ -1,0 +1,26 @@
+{
+ "keys": {
+  "curb_object_ids|.|string": "curb_object_ids_value",
+  "external_references_ids|.|string": "external_references_ids_value",
+  "external_references|identifier_name|string": "external_references_identifier_name",
+  "external_references|name|string": "external_references_name",
+  "external_references|public|int": "external_references_public",
+  "external_references|reference_url|string": "external_references_reference_url",
+  "|availability_time|int": "availability_time",
+  "|available|int": "available",
+  "|curb_space_id|string": "curb_space_id",
+  "|curb_zone_id|string": "curb_zone_id",
+  "|geometry.type|string": "geometry_type",
+  "|last_updated_date|int": "last_updated_date",
+  "|length|int": "length",
+  "|name|string": "name",
+  "|published_date|int": "published_date",
+  "|space_number|int": "space_number",
+  "|width|int": "width"
+ },
+ "lists": {
+  "external_references|ids": "external_references_ids",
+  "|curb_object_ids": "curb_object_ids",
+  "|external_references": "external_references"
+ }
+}

@@ -1,0 +1,17 @@
+{
+ "name": "gen-session-roundtrip",
+ "from": "cds-session",
+ "to": "cds-session",
+ "input": "{\"session_type\":\"area\",\"event_session_id\":\"df7ba739-68d4-4b0d-88ab-ac1e073b454b\",\"event_id_start\":\"1685b00b-196f-4a9a-8740-3cc6ff943e29\",\"event_id_end\":\"65c5be45-32e5-4a38-8178-fcbfd8c19b26\",\"event_location_start_latitude\":101.125,\"event_location_start_longitude\":-3.25,\"event_location_end_latitude\":101.125,\"event_location_end_longitude\":1.5,\"event_time_start\":5376,\"event_time_end\":11144,\"curb_zone_id\":\"f057a809-789a-404f-8ef2-617717a1fca9\",\"curb_area_ids\":[\"331ce5bf-6cc8-4c69-83ed-6275d873d53a\",\"d5d07e2f-02bb-46ce-882f-5425fa44746e\"],\"curb_space_id\":\"251650e9-43a5-451d-8c5f-84cef5f28d4b\",\"curb_object_id\":\"093cc02e-d3d5-483a-87bd-38e661247660\",\"vehicle_length\":99288,\"vehicle_type\":\"moped\"}",
+ "expect": "{\"session_type\":\"area\",\"event_session_id\":\"df7ba739-68d4-4b0d-88ab-ac1e073b454b\",\"event_id_start\":\"1685b00b-196f-4a9a-8740-3cc6ff943e29\",\"event_id_end\":\"65c5be45-32e5-4a38-8178-fcbfd8c19b26\",\"event_location_start_latitude\":101.125,\"event_location_start_longitude\":-3.25,\"event_location_end_latitude\":101.125,\"event_location_end_longitude\":1.5,\"event_time_start\":5376,\"event_time_end\":11144,\"curb_zone_id\":\"f057a809-789a-404f-8ef2-617717a1fca9\",\"curb_area_ids\":[\"331ce5bf-6cc8-4c69-83ed-6275d873d53a\",\"d5d07e2f-02bb-46ce-882f-5425fa44746e\"],\"curb_space_id\":\"251650e9-43a5-451d-8c5f-84cef5f28d4b\",\"curb_object_id\":\"093cc02e-d3d5-483a-87bd-38e661247660\",\"vehicle_length\":99288,\"vehicle_type\":\"moped\"}",
+ "model": {
+  "cdssession.session_type": "area",
+  "cdssession.event_session_id": "df7ba739-68d4-4b0d-88ab-ac1e073b454b",
+  "cdssession.event_id_start": "1685b00b-196f-4a9a-8740-3cc6ff943e29",
+  "cdssession.event_id_end": "65c5be45-32e5-4a38-8178-fcbfd8c19b26",
+  "cdssession.event_location_start_latitude": "101.125",
+  "cdssession.event_location_start_longitude": "-3.25",
+  "cdssession.event_location_end_latitude": "101.125",
+  "cdssession.event_location_end_longitude": "1.5"
+ }
+}
