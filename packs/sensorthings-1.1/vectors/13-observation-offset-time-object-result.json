@@ -1,0 +1,14 @@
+{
+  "name": "observation-offset-time-object-result",
+  "from": "sensorthings-1.1",
+  "to": "sensorthings-1.1",
+  "input": "{\"phenomenonTime\":\"2026-04-05T08:07:00+02:00\",\"resultTime\":\"2026-04-05T08:07:01.250+02:00\",\"result\":{\"speed\":4.5,\"direction\":270}}",
+  "expect": "{\"phenomenonTime\":\"2026-04-05T08:07:00+02:00\",\"resultTime\":\"2026-04-05T06:07:01.25Z\",\"result\":{\"speed\":4.5,\"direction\":270}}",
+  "model": {
+    "@kind": "Observation",
+    "sensorthings.phenomenon_time": "2026-04-05T08:07:00+02:00",
+    "time_ms": "1775369221250"
+  },
+  "source": "derived by tools/gen/sensorthings-vectors.py from the entity tables of the standard and spec/engine-spec.md; no engine run",
+  "reference": "OGC SensorThings API Part 1: Sensing 1.1 (OGC 18-088), clause 8.2; resultTime is read with its offset and written in UTC with Z (iso8601_short); phenomenonTime is raw text and keeps its offset; an object result is carried member by member as residue"
+}

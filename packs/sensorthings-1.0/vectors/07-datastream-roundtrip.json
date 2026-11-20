@@ -1,0 +1,20 @@
+{
+  "name": "datastream-roundtrip",
+  "from": "sensorthings-1.0",
+  "to": "sensorthings-1.0",
+  "input": "{\"@iot.id\":2,\"@iot.selfLink\":\"https://sta.example.org/v1.0/Datastreams(2)\",\"name\":\"Air temperature\",\"description\":\"Two-metre air temperature, one-minute means\",\"unitOfMeasurement\":{\"name\":\"degree Celsius\",\"symbol\":\"Cel\",\"definition\":\"http://unitsofmeasure.org/ucum.html\"},\"observationType\":\"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement\",\"observedArea\":{\"type\":\"Polygon\",\"coordinates\":[[[8.68,50.11],[8.69,50.11],[8.68,50.11]]]},\"phenomenonTime\":\"2026-01-01T00:00:00Z/2026-04-05T06:07:00Z\",\"resultTime\":\"2026-01-01T00:00:10Z/2026-04-05T06:07:10Z\"}",
+  "expect": "{\"name\":\"Air temperature\",\"description\":\"Two-metre air temperature, one-minute means\",\"unitOfMeasurement\":{\"name\":\"degree Celsius\",\"symbol\":\"Cel\",\"definition\":\"http://unitsofmeasure.org/ucum.html\"},\"observationType\":\"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement\",\"phenomenonTime\":\"2026-01-01T00:00:00Z/2026-04-05T06:07:00Z\",\"resultTime\":\"2026-01-01T00:00:10Z/2026-04-05T06:07:10Z\",\"observedArea\":{\"type\":\"Polygon\"}}",
+  "model": {
+    "@kind": "Datastream",
+    "sensorthings.name": "Air temperature",
+    "sensorthings.description": "Two-metre air temperature, one-minute means",
+    "sensorthings.unit_name": "degree Celsius",
+    "sensorthings.unit_symbol": "Cel",
+    "sensorthings.unit_definition": "http://unitsofmeasure.org/ucum.html",
+    "sensorthings.observation_type": "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
+    "sensorthings.phenomenon_time": "2026-01-01T00:00:00Z/2026-04-05T06:07:00Z",
+    "sensorthings.result_time_period": "2026-01-01T00:00:10Z/2026-04-05T06:07:10Z"
+  },
+  "source": "derived by tools/gen/sensorthings-vectors.py from the entity tables of the standard and spec/engine-spec.md; no engine run",
+  "reference": "OGC SensorThings API Part 1: Sensing 1.0 (OGC 15-078r6), clauses 8.2 and 12; phenomenonTime and resultTime of a Datastream are intervals: raw text; observedArea keeps its type, its coordinates are not carried"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "observation-roundtrip",
+  "from": "sensorthings-1.1",
+  "to": "sensorthings-1.1",
+  "input": "{\"@iot.id\":1001,\"@iot.selfLink\":\"https://sta.example.org/v1.1/Observations(1001)\",\"phenomenonTime\":\"2026-04-05T06:06:00Z/2026-04-05T06:07:00Z\",\"result\":14.25,\"resultTime\":\"2026-04-05T06:07:01.5Z\",\"validTime\":\"2026-04-05T06:07:00Z/2026-04-05T07:07:00Z\",\"parameters\":{\"samples\":60,\"qc\":\"passed\"}}",
+  "expect": "{\"phenomenonTime\":\"2026-04-05T06:06:00Z/2026-04-05T06:07:00Z\",\"resultTime\":\"2026-04-05T06:07:01.5Z\",\"validTime\":\"2026-04-05T06:07:00Z/2026-04-05T07:07:00Z\",\"result\":14.25,\"parameters\":{\"samples\":60,\"qc\":\"passed\"}}",
+  "model": {
+    "@kind": "Observation",
+    "sensorthings.phenomenon_time": "2026-04-05T06:06:00Z/2026-04-05T06:07:00Z",
+    "time_ms": "1775369221500",
+    "sensorthings.valid_time": "2026-04-05T06:07:00Z/2026-04-05T07:07:00Z"
+  },
+  "source": "derived by tools/gen/sensorthings-vectors.py from the entity tables of the standard and spec/engine-spec.md; no engine run",
+  "reference": "OGC SensorThings API Part 1: Sensing 1.1 (OGC 18-088), clause 8.2; resultTime is time_ms; result is residue (the when on result does not map it) and is written after the mapped members"
+}

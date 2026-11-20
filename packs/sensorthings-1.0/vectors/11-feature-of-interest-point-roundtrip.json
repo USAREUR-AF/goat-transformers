@@ -1,0 +1,18 @@
+{
+  "name": "feature-of-interest-point-roundtrip",
+  "from": "sensorthings-1.0",
+  "to": "sensorthings-1.0",
+  "input": "{\"@iot.id\":8,\"@iot.selfLink\":\"https://sta.example.org/v1.0/FeaturesOfInterest(8)\",\"name\":\"Mast 3 air\",\"description\":\"Air at the mast\",\"encodingType\":\"application/geo+json\",\"feature\":{\"type\":\"Point\",\"coordinates\":[8.6821,50.1109]}}",
+  "expect": "{\"name\":\"Mast 3 air\",\"description\":\"Air at the mast\",\"encodingType\":\"application/geo+json\",\"feature\":{\"type\":\"Point\",\"coordinates\":[8.6821,50.1109]}}",
+  "model": {
+    "@kind": "FeatureOfInterestPoint",
+    "sensorthings.name": "Mast 3 air",
+    "sensorthings.description": "Air at the mast",
+    "sensorthings.encoding_type": "application/geo+json",
+    "sensorthings.feature_coordinates.#": "2",
+    "sensorthings.feature_coordinates[0].sensorthings.coordinate": "8.6821",
+    "sensorthings.feature_coordinates[1].sensorthings.coordinate": "50.1109"
+  },
+  "source": "derived by tools/gen/sensorthings-vectors.py from the entity tables of the standard and spec/engine-spec.md; no engine run",
+  "reference": "OGC SensorThings API Part 1: Sensing 1.0 (OGC 15-078r6), clauses 8.2 and 12"
+}

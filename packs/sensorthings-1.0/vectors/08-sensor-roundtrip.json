@@ -1,0 +1,15 @@
+{
+  "name": "sensor-roundtrip",
+  "from": "sensorthings-1.0",
+  "to": "sensorthings-1.0",
+  "input": "{\"@iot.id\":4,\"@iot.selfLink\":\"https://sta.example.org/v1.0/Sensors(4)\",\"name\":\"PT100 probe\",\"description\":\"Platinum resistance thermometer in a radiation shield\",\"encodingType\":\"application/pdf\",\"metadata\":\"https://sensors.example.org/pt100.pdf\"}",
+  "expect": "{\"name\":\"PT100 probe\",\"description\":\"Platinum resistance thermometer in a radiation shield\",\"encodingType\":\"application/pdf\",\"metadata\":\"https://sensors.example.org/pt100.pdf\"}",
+  "model": {
+    "@kind": "Sensor",
+    "sensorthings.name": "PT100 probe",
+    "sensorthings.description": "Platinum resistance thermometer in a radiation shield",
+    "sensorthings.encoding_type": "application/pdf"
+  },
+  "source": "derived by tools/gen/sensorthings-vectors.py from the entity tables of the standard and spec/engine-spec.md; no engine run",
+  "reference": "OGC SensorThings API Part 1: Sensing 1.0 (OGC 15-078r6), clauses 8.2 and 12; metadata is any JSON value: not mapped, a string is residue"
+}

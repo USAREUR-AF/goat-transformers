@@ -1,0 +1,17 @@
+{
+ "name": "gen-boolean-roundtrip",
+ "from": "swe-common-3-json",
+ "to": "swe-common-3-json",
+ "input": "{\"type\":\"Boolean\",\"id\":\"s3239\",\"label\":\"s50004\",\"description\":\"s34193\",\"updatable\":false,\"optional\":false,\"definition\":\"https://example.org/828\",\"referenceFrame\":\"https://example.org/393\",\"axisID\":\"s8475\",\"value\":false}",
+ "expect": "{\"type\":\"Boolean\",\"id\":\"s3239\",\"label\":\"s50004\",\"description\":\"s34193\",\"updatable\":false,\"optional\":false,\"definition\":\"https://example.org/828\",\"referenceFrame\":\"https://example.org/393\",\"axisID\":\"s8475\",\"value\":false}",
+ "model": {
+  "@kind": "boolean",
+  "swecommon3.id": "s3239",
+  "swecommon3.label": "s50004",
+  "swecommon3.description": "s34193",
+  "swecommon3.type": "Boolean",
+  "swecommon3.updatable": "0",
+  "swecommon3.optional": "0",
+  "swecommon3.definition": "https://example.org/828"
+ }
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-count_range-residue",
+ "from": "swe-common-3-json",
+ "to": "swe-common-3-json",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"type\":\"CountRange\",\"id\":\"s89444\",\"label\":\"s55022\",\"description\":\"s27691\",\"updatable\":false,\"optional\":false,\"definition\":\"https://example.org/906\",\"referenceFrame\":\"https://example.org/99\",\"axisID\":\"s89716\",\"nilValues\":[{\"reason\":\"https://example.org/113\",\"value\":\"s72411\"},{\"reason\":\"https://example.org/873\",\"value\":\"s66838\"}],\"constraint\":{\"type\":\"AllowedValues\",\"significantFigures\":6},\"value\":[77592,51524]}",
+ "expect": "{\"type\":\"CountRange\",\"id\":\"s89444\",\"label\":\"s55022\",\"description\":\"s27691\",\"updatable\":false,\"optional\":false,\"definition\":\"https://example.org/906\",\"referenceFrame\":\"https://example.org/99\",\"axisID\":\"s89716\",\"nilValues\":[{\"reason\":\"https://example.org/113\",\"value\":\"s72411\"},{\"reason\":\"https://example.org/873\",\"value\":\"s66838\"}],\"constraint\":{\"type\":\"AllowedValues\",\"significantFigures\":6},\"value\":[77592,51524],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

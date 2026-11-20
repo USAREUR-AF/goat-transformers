@@ -1,0 +1,17 @@
+{
+ "name": "gen-quantity-roundtrip",
+ "from": "swe-common-3-json",
+ "to": "swe-common-3-json",
+ "input": "{\"type\":\"Quantity\",\"id\":\"s37373\",\"label\":\"s28744\",\"description\":\"s83411\",\"updatable\":false,\"optional\":false,\"definition\":\"https://example.org/820\",\"referenceFrame\":\"https://example.org/979\",\"axisID\":\"s98775\",\"nilValues\":[{\"reason\":\"https://example.org/911\"},{\"reason\":\"https://example.org/483\"}],\"constraint\":{\"type\":\"AllowedValues\",\"significantFigures\":38},\"uom\":{\"label\":\"s79962\",\"symbol\":\"s3516\",\"code\":\"s92741\",\"href\":\"https://example.org/573\"}}",
+ "expect": "{\"type\":\"Quantity\",\"id\":\"s37373\",\"label\":\"s28744\",\"description\":\"s83411\",\"updatable\":false,\"optional\":false,\"definition\":\"https://example.org/820\",\"referenceFrame\":\"https://example.org/979\",\"axisID\":\"s98775\",\"nilValues\":[{\"reason\":\"https://example.org/911\"},{\"reason\":\"https://example.org/483\"}],\"constraint\":{\"type\":\"AllowedValues\",\"significantFigures\":38},\"uom\":{\"label\":\"s79962\",\"symbol\":\"s3516\",\"code\":\"s92741\",\"href\":\"https://example.org/573\"}}",
+ "model": {
+  "@kind": "quantity",
+  "swecommon3.id": "s37373",
+  "swecommon3.label": "s28744",
+  "swecommon3.description": "s83411",
+  "swecommon3.type": "Quantity",
+  "swecommon3.updatable": "0",
+  "swecommon3.optional": "0",
+  "swecommon3.definition": "https://example.org/820"
+ }
+}

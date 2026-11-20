@@ -1,0 +1,9 @@
+{
+  "name": "no-entity-member-is-no-kind",
+  "from": "sensorthings-1.1",
+  "to": "sensorthings-1.1",
+  "input": "{\"@iot.id\":1,\"value\":3}",
+  "expect_error": "no-kind",
+  "source": "derived by tools/gen/sensorthings-vectors.py from the entity tables of the standard and spec/engine-spec.md; no engine run",
+  "reference": "OGC SensorThings API Part 1: Sensing 1.1 (OGC 18-088), clause 8.2; an object with none of the members that select a kind"
+}

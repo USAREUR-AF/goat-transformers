@@ -1,0 +1,30 @@
+{
+ "keys": {
+  "|properties.featureType|string": "properties_feature_type",
+  "|properties.metadataReference|string": "properties_metadata_reference",
+  "|properties.observedPropertyTitle|string": "properties_observed_property_title",
+  "|properties.observedProperty|string": "properties_observed_property",
+  "|properties.observerName|string": "properties_observer_name",
+  "|properties.observerReference|string": "properties_observer_reference",
+  "|properties.phenomenonTimeEnd|string": "properties_phenomenon_time_end",
+  "|properties.phenomenonTimeStart|string": "properties_phenomenon_time_start",
+  "|properties.phenomenonTime|string": "properties_phenomenon_time",
+  "|properties.platformName|string": "properties_platform_name",
+  "|properties.platformReference|string": "properties_platform_reference",
+  "|properties.procedureName|string": "properties_procedure_name",
+  "|properties.procedureReference|string": "properties_procedure_reference",
+  "|properties.proximateFeatureOfInterestName|string": "properties_proximate_feature_of_interest_name",
+  "|properties.proximateFeatureOfInterestReference|string": "properties_proximate_feature_of_interest_reference",
+  "|properties.resultReference|string": "properties_result_reference",
+  "|properties.resultTime|string": "properties_result_time",
+  "|properties.stimulusTime|string": "properties_stimulus_time",
+  "|properties.ultimateFeatureOfInterestName|string": "properties_ultimate_feature_of_interest_name",
+  "|properties.ultimateFeatureOfInterestReference|string": "properties_ultimate_feature_of_interest_reference",
+  "|properties.unitOfMeasureTitle|string": "properties_unit_of_measure_title",
+  "|properties.unitOfMeasuretitle|string": "properties_unit_of_measuretitle",
+  "|properties.unitOfMeasure|string": "properties_unit_of_measure",
+  "|properties.validTimeEnd|string": "properties_valid_time_end",
+  "|properties.validTimeStart|string": "properties_valid_time_start"
+ },
+ "lists": {}
+}

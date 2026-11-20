@@ -1,0 +1,15 @@
+{
+  "name": "moving-point-temporal-properties-not-carried",
+  "from": "mf-json",
+  "to": "mf-json",
+  "input": "{\"type\":\"Feature\",\"temporalGeometry\":{\"type\":\"MovingPoint\",\"datetimes\":[\"2026-05-01T08:00:00Z\"],\"coordinates\":[[0,0]],\"base\":{\"type\":\"glTF\",\"href\":\"https://models.example.org/bus.glb\"}},\"temporalProperties\":[{\"datetimes\":[\"2026-05-01T08:00:00Z\"],\"speed\":{\"type\":\"Measure\",\"form\":\"KMH\",\"values\":[32.5]}}],\"id\":\"bus-18\"}",
+  "expect": "{\"type\":\"Feature\",\"temporalGeometry\":{\"type\":\"MovingPoint\",\"datetimes\":[\"2026-05-01T08:00:00Z\"],\"base\":{\"type\":\"glTF\",\"href\":\"https://models.example.org/bus.glb\"}},\"id\":\"bus-18\"}",
+  "model": {
+    "@kind": "MovingPoint",
+    "mfjson.datetimes.#": "1",
+    "mfjson.datetimes[0].mfjson.datetime_ms": "1777622400000",
+    "uid": "bus-18"
+  },
+  "source": "derived by tools/gen/mf-json-vectors.py from the text of OGC 19-045r3 and spec/engine-spec.md; no engine run",
+  "reference": "OGC Moving Features Encoding Extension - JSON (MF-JSON) 1.0, OGC 19-045r3; temporalProperties is an array of objects whose member names are the property names: not carried; the base object's members are residue"
+}

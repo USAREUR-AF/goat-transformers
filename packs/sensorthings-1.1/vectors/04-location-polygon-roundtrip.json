@@ -1,0 +1,16 @@
+{
+  "name": "location-polygon-roundtrip",
+  "from": "sensorthings-1.1",
+  "to": "sensorthings-1.1",
+  "input": "{\"name\":\"Yard\",\"description\":\"Storage yard outline\",\"encodingType\":\"application/geo+json\",\"location\":{\"type\":\"Polygon\",\"coordinates\":[[[0,0],[1,0],[1,1],[0,0]]]}}",
+  "expect": "{\"name\":\"Yard\",\"description\":\"Storage yard outline\",\"encodingType\":\"application/geo+json\",\"location\":{\"type\":\"Polygon\"}}",
+  "model": {
+    "@kind": "Location",
+    "sensorthings.name": "Yard",
+    "sensorthings.description": "Storage yard outline",
+    "sensorthings.encoding_type": "application/geo+json",
+    "sensorthings.location_type": "Polygon"
+  },
+  "source": "derived by tools/gen/sensorthings-vectors.py from the entity tables of the standard and spec/engine-spec.md; no engine run",
+  "reference": "OGC SensorThings API Part 1: Sensing 1.1 (OGC 18-088), clause 8.2; a geometry other than a Point: its type is kept, its coordinates (an array of arrays) are not carried"
+}

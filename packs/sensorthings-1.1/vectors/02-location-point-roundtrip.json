@@ -1,0 +1,19 @@
+{
+  "name": "location-point-roundtrip",
+  "from": "sensorthings-1.1",
+  "to": "sensorthings-1.1",
+  "input": "{\"@iot.id\":5,\"@iot.selfLink\":\"https://sta.example.org/v1.1/Locations(5)\",\"name\":\"North field\",\"description\":\"Mast foundation\",\"encodingType\":\"application/geo+json\",\"location\":{\"type\":\"Point\",\"coordinates\":[8.6821,50.1109,112.5]},\"properties\":{\"surveyed\":\"2025\"}}",
+  "expect": "{\"name\":\"North field\",\"description\":\"Mast foundation\",\"encodingType\":\"application/geo+json\",\"location\":{\"type\":\"Point\",\"coordinates\":[8.6821,50.1109,112.5]},\"properties\":{\"surveyed\":\"2025\"}}",
+  "model": {
+    "@kind": "LocationPoint",
+    "sensorthings.name": "North field",
+    "sensorthings.description": "Mast foundation",
+    "sensorthings.encoding_type": "application/geo+json",
+    "sensorthings.location_coordinates.#": "3",
+    "sensorthings.location_coordinates[0].sensorthings.coordinate": "8.6821",
+    "sensorthings.location_coordinates[1].sensorthings.coordinate": "50.1109",
+    "sensorthings.location_coordinates[2].sensorthings.coordinate": "112.5"
+  },
+  "source": "derived by tools/gen/sensorthings-vectors.py from the entity tables of the standard and spec/engine-spec.md; no engine run",
+  "reference": "OGC SensorThings API Part 1: Sensing 1.1 (OGC 18-088), clause 8.2; location is a GeoJSON Point: its coordinates are a list of three numbers"
+}

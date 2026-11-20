@@ -1,0 +1,9 @@
+{
+  "name": "moving-polygon-is-no-kind",
+  "from": "mf-json",
+  "to": "mf-json",
+  "input": "{\"type\":\"Feature\",\"temporalGeometry\":{\"type\":\"MovingPolygon\",\"datetimes\":[\"2026-05-01T08:00:00Z\"],\"coordinates\":[[[[0,0],[1,0],[1,1],[0,0]]]]}}",
+  "expect_error": "no-kind",
+  "source": "derived by tools/gen/mf-json-vectors.py from the text of OGC 19-045r3 and spec/engine-spec.md; no engine run",
+  "reference": "OGC Moving Features Encoding Extension - JSON (MF-JSON) 1.0, OGC 19-045r3; only MovingPoint and the Trajectory encoding are kinds of this pack"
+}

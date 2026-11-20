@@ -1,0 +1,17 @@
+{
+ "name": "gen-category_observation-roundtrip",
+ "from": "omsf-json",
+ "to": "omsf-json",
+ "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977,12.5]},\"properties\":{\"featureType\":\"CategoryObservation\",\"resultReference\":\"https://example.org/79\",\"metadataReference\":\"https://example.org/281\",\"resultTime\":\"2024-10-17T04:29:33.284Z\",\"stimulusTime\":\"2024-07-18T22:07:17.294Z\",\"phenomenonTime\":\"2025-01-05T06:37:50.729Z\",\"phenomenonTimeStart\":\"2026-09-23T17:18:58.197Z\",\"phenomenonTimeEnd\":\"2025-10-14T17:27:19.725Z\",\"validTimeStart\":\"2027-01-07T12:00:00.351Z\",\"validTimeEnd\":\"2026-10-12T10:33:27.368Z\",\"observerName\":\"s9596\",\"observerReference\":\"https://example.org/143\",\"platformName\":\"s25658\",\"platformReference\":\"https://example.org/843\",\"procedureName\":\"s27780\",\"procedureReference\":\"https://example.org/67\",\"observedPropertyTitle\":\"s29853\",\"observedProperty\":\"https://example.org/838\",\"ultimateFeatureOfInterestName\":\"s97509\",\"ultimateFeatureOfInterestReference\":\"https://example.org/587\",\"proximateFeatureOfInterestName\":\"s62528\",\"proximateFeatureOfInterestReference\":\"https://example.org/898\",\"unitOfMeasuretitle\":\"s83567\",\"unitOfMeasure\":\"https://example.org/337\",\"unitOfMeasureTitle\":\"s66288\"}}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977,12.5]},\"properties\":{\"featureType\":\"CategoryObservation\",\"resultReference\":\"https://example.org/79\",\"metadataReference\":\"https://example.org/281\",\"resultTime\":\"2024-10-17T04:29:33.284Z\",\"stimulusTime\":\"2024-07-18T22:07:17.294Z\",\"phenomenonTime\":\"2025-01-05T06:37:50.729Z\",\"phenomenonTimeStart\":\"2026-09-23T17:18:58.197Z\",\"phenomenonTimeEnd\":\"2025-10-14T17:27:19.725Z\",\"validTimeStart\":\"2027-01-07T12:00:00.351Z\",\"validTimeEnd\":\"2026-10-12T10:33:27.368Z\",\"observerName\":\"s9596\",\"observerReference\":\"https://example.org/143\",\"platformName\":\"s25658\",\"platformReference\":\"https://example.org/843\",\"procedureName\":\"s27780\",\"procedureReference\":\"https://example.org/67\",\"observedPropertyTitle\":\"s29853\",\"observedProperty\":\"https://example.org/838\",\"ultimateFeatureOfInterestName\":\"s97509\",\"ultimateFeatureOfInterestReference\":\"https://example.org/587\",\"proximateFeatureOfInterestName\":\"s62528\",\"proximateFeatureOfInterestReference\":\"https://example.org/898\",\"unitOfMeasuretitle\":\"s83567\",\"unitOfMeasure\":\"https://example.org/337\",\"unitOfMeasureTitle\":\"s66288\"}}",
+ "model": {
+  "@kind": "category_observation",
+  "lon": "-77.0365",
+  "lat": "38.8977",
+  "hae": "12.5",
+  "time_ms": "1736059070729",
+  "omsf.properties_feature_type": "CategoryObservation",
+  "omsf.properties_result_reference": "https://example.org/79",
+  "omsf.properties_metadata_reference": "https://example.org/281"
+ }
+}

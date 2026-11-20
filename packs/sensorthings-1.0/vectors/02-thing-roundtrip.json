@@ -1,0 +1,14 @@
+{
+  "name": "thing-roundtrip",
+  "from": "sensorthings-1.0",
+  "to": "sensorthings-1.0",
+  "input": "{\"@iot.id\":3,\"@iot.selfLink\":\"https://sta.example.org/v1.0/Things(3)\",\"name\":\"Weather mast 3\",\"description\":\"Ten-metre mast on the north field\",\"properties\":{\"operator\":\"Field station\",\"serial\":4417,\"heated\":true}}",
+  "expect": "{\"name\":\"Weather mast 3\",\"description\":\"Ten-metre mast on the north field\",\"properties\":{\"operator\":\"Field station\",\"serial\":4417,\"heated\":true}}",
+  "model": {
+    "@kind": "Thing",
+    "callsign": "Weather mast 3",
+    "sensorthings.description": "Ten-metre mast on the north field"
+  },
+  "source": "derived by tools/gen/sensorthings-vectors.py from the entity tables of the standard and spec/engine-spec.md; no engine run",
+  "reference": "OGC SensorThings API Part 1: Sensing 1.0 (OGC 15-078r6), clauses 8.2 and 12; the @iot annotations hold a dot in their names and are dropped (engine-spec 0.5 ruling 12); name is callsign; properties are residue and keep their JSON types"
+}

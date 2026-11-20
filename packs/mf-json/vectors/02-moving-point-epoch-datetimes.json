@@ -1,0 +1,16 @@
+{
+  "name": "moving-point-epoch-datetimes",
+  "from": "mf-json",
+  "to": "mf-json",
+  "input": "{\"type\":\"Feature\",\"temporalGeometry\":{\"type\":\"MovingPoint\",\"datetimes\":[1777622400000,1777622430250],\"coordinates\":[[2.35,48.85],[2.36,48.86]]},\"id\":\"walker-2\"}",
+  "expect": "{\"type\":\"Feature\",\"temporalGeometry\":{\"type\":\"MovingPoint\",\"datetimes\":[\"2026-05-01T08:00:00Z\",\"2026-05-01T08:00:30.25Z\"]},\"id\":\"walker-2\"}",
+  "model": {
+    "@kind": "MovingPoint",
+    "mfjson.datetimes.#": "2",
+    "mfjson.datetimes[0].mfjson.datetime_ms": "1777622400000",
+    "mfjson.datetimes[1].mfjson.datetime_ms": "1777622430250",
+    "uid": "walker-2"
+  },
+  "source": "derived by tools/gen/mf-json-vectors.py from the text of OGC 19-045r3 and spec/engine-spec.md; no engine run",
+  "reference": "OGC Moving Features Encoding Extension - JSON (MF-JSON) 1.0, OGC 19-045r3; datetimes given as epoch milliseconds (clause 7.2.1.1 allows them) are read by the int line and written as RFC 3339 instants by the first line (iso8601_short); no interpolation member is written when absent"
+}

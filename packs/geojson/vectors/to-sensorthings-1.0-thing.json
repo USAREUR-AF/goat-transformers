@@ -1,0 +1,12 @@
+{
+  "name": "to-sensorthings-1.0-thing",
+  "from": "geojson",
+  "to": "sensorthings-1.0",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.6821,50.1109]},\"properties\":{\"callsign\":\"Mast 3\"}}",
+  "expect": "{\"name\":\"Mast 3\"}",
+  "model": {
+    "callsign": "Mast 3"
+  },
+  "source": "derived by tools/gen/sensorthings-vectors.py from the entity tables of the standard and spec/engine-spec.md; no engine run",
+  "reference": "OGC SensorThings API Part 1: Sensing 1.0 (OGC 15-078r6), clauses 8.2 and 12; with no time_ms the entity qualifies for Thing only (callsign)"
+}

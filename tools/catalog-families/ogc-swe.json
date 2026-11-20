@@ -1,0 +1,9 @@
+{
+  "name": "OGC SWE",
+  "domain": "sensors",
+  "exact": [
+    "swe-common-3-json",
+    "sensorml-3-json"
+  ],
+  "detail": "SWE Common 3.0, SensorML 3.0 JSON"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "OGC SensorThings",
+  "domain": "sensors",
+  "exact": [
+    "sensorthings-1.0",
+    "sensorthings-1.1"
+  ],
+  "detail": "1.0, 1.1 entities"
+}

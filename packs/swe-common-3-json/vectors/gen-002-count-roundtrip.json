@@ -1,0 +1,17 @@
+{
+ "name": "gen-count-roundtrip",
+ "from": "swe-common-3-json",
+ "to": "swe-common-3-json",
+ "input": "{\"type\":\"Count\",\"id\":\"s79528\",\"label\":\"s599\",\"description\":\"s30083\",\"updatable\":true,\"optional\":true,\"definition\":\"https://example.org/428\",\"referenceFrame\":\"https://example.org/691\",\"axisID\":\"s79458\",\"nilValues\":[{\"reason\":\"https://example.org/582\",\"value\":39449},{\"reason\":\"https://example.org/852\",\"value\":78511}],\"constraint\":{\"type\":\"AllowedValues\",\"significantFigures\":12},\"value\":87380}",
+ "expect": "{\"type\":\"Count\",\"id\":\"s79528\",\"label\":\"s599\",\"description\":\"s30083\",\"updatable\":true,\"optional\":true,\"definition\":\"https://example.org/428\",\"referenceFrame\":\"https://example.org/691\",\"axisID\":\"s79458\",\"nilValues\":[{\"reason\":\"https://example.org/582\",\"value\":39449},{\"reason\":\"https://example.org/852\",\"value\":78511}],\"constraint\":{\"type\":\"AllowedValues\",\"significantFigures\":12},\"value\":87380}",
+ "model": {
+  "@kind": "count",
+  "swecommon3.id": "s79528",
+  "swecommon3.label": "s599",
+  "swecommon3.description": "s30083",
+  "swecommon3.type": "Count",
+  "swecommon3.updatable": "1",
+  "swecommon3.optional": "1",
+  "swecommon3.definition": "https://example.org/428"
+ }
+}
