@@ -70,9 +70,9 @@
       "distribution": "public",
       "profile": "open"
     },
-    "LicenseRef-OGC-Document": {
-      "name": "OGC Document License Agreement (keep the copyright notice; state that modifications are not approved by OGC)",
-      "url": "https://www.ogc.org/about/policies/document-license-agreement/",
+    "LicenseRef-OGC-Software": {
+      "name": "OGC Software License (Open Geospatial Consortium)",
+      "url": "https://www.ogc.org/legal/",
       "commercial": "yes",
       "share_alike": false,
       "attribution": true,
@@ -779,7 +779,7 @@
     },
     "kml": {
       "format": "kml",
-      "licence": "LicenseRef-OGC-Document",
+      "licence": "LicenseRef-OGC-Software",
       "profile": "open"
     },
     "lwm2m-json": {
@@ -4116,7 +4116,7 @@
     },
     "kml.def": {
       "module": "kml",
-      "licence": "LicenseRef-OGC-Document",
+      "licence": "LicenseRef-OGC-Software",
       "profile": "open"
     },
     "lwm2m.def": {

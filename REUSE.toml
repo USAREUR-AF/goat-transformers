@@ -2030,3 +2030,9 @@ path = "model/tcx.def"
 precedence = "override"
 SPDX-FileCopyrightText = "Garmin (Training Center Database v2 schema)"
 SPDX-License-Identifier = "LicenseRef-unstated"
+
+[[annotations]]
+path = ["packs/kml/**", "model/kml.def"]
+precedence = "override"
+SPDX-FileCopyrightText = "2007-2015 Open Geospatial Consortium"
+SPDX-License-Identifier = "LicenseRef-OGC-Software"

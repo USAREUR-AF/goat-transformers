@@ -88,6 +88,7 @@ field_of_use = []
 distribution = "public"
 
 # A source that states no licence: kept out of `open` until it is resolved.
+
 [licences."LicenseRef-unstated"]
 name = "No licence stated by the source"
 commercial = "unknown"
@@ -127,6 +128,15 @@ distribution = "public"
 name = "OMA specification use terms (internal or educational use of the document only)"
 url = "http://www.openmobilealliance.org/UseAgreement.html"
 commercial = "no"
+share_alike = false
+attribution = true
+field_of_use = []
+distribution = "public"
+
+[licences."LicenseRef-OGC-Software"]
+name = "OGC Software License (Open Geospatial Consortium)"
+url = "https://www.ogc.org/legal/"
+commercial = "yes"
 share_alike = false
 attribution = true
 field_of_use = []
