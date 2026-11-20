@@ -1,0 +1,13 @@
+{
+  "name": "resource-every-member-roundtrip",
+  "from": "i3s-node-page",
+  "to": "i3s-node-page",
+  "input": "{\"nodes\":[{\"index\":1,\"parentIndex\":2,\"lodThreshold\":3.25,\"obb\":{\"center\":[4.25,5.25,6.25],\"halfSize\":[7.25,8.25,9.25],\"quaternion\":[10.25,11.25,12.25,13.25]},\"children\":[14,15],\"mesh\":{\"material\":{\"definition\":16,\"resource\":17,\"texelCountHint\":18},\"geometry\":{\"definition\":19,\"resource\":20,\"vertexCount\":21,\"featureCount\":22},\"attribute\":{\"resource\":23}}},{\"index\":24,\"parentIndex\":25,\"lodThreshold\":26.25,\"obb\":{\"center\":[27.25,28.25,29.25],\"halfSize\":[30.25,31.25,32.25],\"quaternion\":[33.25,34.25,35.25,36.25]},\"children\":[37,38],\"mesh\":{\"material\":{\"definition\":39,\"resource\":40,\"texelCountHint\":41},\"geometry\":{\"definition\":42,\"resource\":43,\"vertexCount\":44,\"featureCount\":45},\"attribute\":{\"resource\":46}}}]}",
+  "expect": "{\"nodes\":[{\"index\":1,\"parentIndex\":2,\"lodThreshold\":3.25,\"obb\":{\"center\":[4.25,5.25,6.25],\"halfSize\":[7.25,8.25,9.25],\"quaternion\":[10.25,11.25,12.25,13.25]},\"children\":[14,15],\"mesh\":{\"material\":{\"definition\":16,\"resource\":17,\"texelCountHint\":18},\"geometry\":{\"definition\":19,\"resource\":20,\"vertexCount\":21,\"featureCount\":22},\"attribute\":{\"resource\":23}}},{\"index\":24,\"parentIndex\":25,\"lodThreshold\":26.25,\"obb\":{\"center\":[27.25,28.25,29.25],\"halfSize\":[30.25,31.25,32.25],\"quaternion\":[33.25,34.25,35.25,36.25]},\"children\":[37,38],\"mesh\":{\"material\":{\"definition\":39,\"resource\":40,\"texelCountHint\":41},\"geometry\":{\"definition\":42,\"resource\":43,\"vertexCount\":44,\"featureCount\":45},\"attribute\":{\"resource\":46}}}]}",
+  "model": {
+    "i3s.nodes.#": "2",
+    "i3s.nodes[1].i3s.nodes_index": "24"
+  },
+  "source": "derived by tools/gen/i3s2pack.py from the member layouts it holds and spec/engine-spec.md; no engine run",
+  "reference": "every member the pack maps is set, two items in every array (the fixed size where the specification gives one); the output is the input"
+}

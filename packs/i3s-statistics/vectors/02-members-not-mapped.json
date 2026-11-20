@@ -1,0 +1,10 @@
+{
+  "name": "members-not-mapped",
+  "from": "i3s-statistics",
+  "to": "i3s-statistics",
+  "input": "{\"stats\":{\"totalValuesCount\":1.25,\"min\":2.25,\"max\":3.25,\"minTimeStr\":\"minTimeStr-4\",\"maxTimeStr\":\"maxTimeStr-5\",\"count\":6.25,\"sum\":7.25,\"avg\":8.25,\"stddev\":9.25,\"variance\":10.25,\"histogram\":{\"minimum\":11.25,\"maximum\":12.25,\"counts\":[13.25,14.25]},\"mostFrequentValues\":[{\"count\":15.25},{\"count\":16.25}]},\"x-vendor\":{\"note\":\"kept\",\"tags\":[\"dropped\"]}}",
+  "expect": "{\"stats\":{\"totalValuesCount\":1.25,\"min\":2.25,\"max\":3.25,\"minTimeStr\":\"minTimeStr-4\",\"maxTimeStr\":\"maxTimeStr-5\",\"count\":6.25,\"sum\":7.25,\"avg\":8.25,\"stddev\":9.25,\"variance\":10.25,\"histogram\":{\"minimum\":11.25,\"maximum\":12.25,\"counts\":[13.25,14.25]},\"mostFrequentValues\":[{\"count\":15.25},{\"count\":16.25}]},\"x-vendor\":{\"note\":\"kept\"}}",
+  "model": {},
+  "source": "derived by tools/gen/i3s2pack.py from the member layouts it holds and spec/engine-spec.md; no engine run",
+  "reference": "members the pack does not map: their scalar members come back as residue after the mapped ones, arrays among them are not carried (0.5 json residue)"
+}
