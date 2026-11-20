@@ -1,0 +1,16 @@
+{
+  "name": "attitude-roundtrip",
+  "from": "msp-v2",
+  "to": "msp-v2",
+  "input": "24583e006c000600ddff78000f01",
+  "expect": "24583e006c000600ddff78000f01",
+  "model": {
+    "@kind": "attitude",
+    "msp2.flag": "0",
+    "msp2.attitude_roll": "-35",
+    "msp2.attitude_pitch": "120",
+    "msp2.attitude_yaw": "271"
+  },
+  "source": "derived by tools/gen/rc-telemetry-vectors.py from the frame layouts and spec/engine-spec.md; no engine run",
+  "reference": "INAV msp_messages.json and docs/development/msp at 21adf64 (MSP v2 reply frame); the v1 command 108 carried in a v2 frame: command and size as 16-bit values"
+}

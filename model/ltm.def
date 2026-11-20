@@ -1,0 +1,24 @@
+# The ltm module: values of LTM (Lightweight Telemetry) frames that have no shared-model key,
+# in the units INAV writes them. packs/ltm/pack.md says why each is or is not bound.
+module        ltm
+version       0.1.0
+distribution  public
+source        "INAV LTM telemetry, https://github.com/iNavFlight/inav commit 21adf64440bb0d9f0bdc56569098fbaa0e39d24d, src/main/telemetry/ltm.c (sha256 d5bc43754709f522e7a03ab52762c3123b9c7661e80c0171eb817fe593a315e1); GPL-3.0-or-later, the INAV project"
+key   g_altitude        int  cm   "G frame: estimated altitude, relative to the home position"
+key   g_fix_type        int  -    "G frame: fix type, 1 none, 2 2D, 3 3D (0 no GPS)"
+key   g_satellites      int  -    "G frame: satellites used"
+key   a_pitch           int  deg  "A frame: pitch, degrees"
+key   a_roll            int  deg  "A frame: roll, degrees"
+key   a_heading         int  deg  "A frame: heading (yaw), degrees"
+key   s_vbat            int  -    "S frame: battery voltage, millivolts"
+key   s_mah_drawn       int  -    "S frame: consumed capacity, mAh"
+key   s_rssi            int  -    "S frame: RSSI scaled to 0 to 254"
+key   s_airspeed        int  m/s  "S frame: airspeed, whole metres per second"
+key   s_armed           int  -    "S frame: armed flag"
+key   s_failsafe        int  -    "S frame: failsafe flag"
+key   s_flight_mode     int  -    "S frame: flight mode code, 0 to 19"
+key   o_home_lat        int  -    "O frame: home latitude, degrees times 1e7"
+key   o_home_lon        int  -    "O frame: home longitude, degrees times 1e7"
+key   o_home_alt        int  -    "O frame: home altitude, as the firmware holds it"
+key   o_osd_on          int  -    "O frame: OSD on flag"
+key   o_home_fix        int  -    "O frame: home position fixed flag"

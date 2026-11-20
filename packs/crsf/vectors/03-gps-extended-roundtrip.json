@@ -1,0 +1,24 @@
+{
+  "name": "gps-extended-roundtrip",
+  "from": "crsf",
+  "to": "crsf",
+  "input": "c8160603ff830154ffce0023000c020000b4010400090e",
+  "expect": "c8160603ff830154ffce0023000c020000b4010400090e",
+  "model": {
+    "@kind": "gps_extended",
+    "crsf.gpsx_fix_type": "3",
+    "track.vel_north_ms": "-1.25",
+    "track.vel_east_ms": "3.4",
+    "track.vel_up_ms": "-0.5",
+    "crsf.gpsx_h_speed_acc": "35",
+    "crsf.gpsx_track_acc": "12",
+    "hae": "512",
+    "crsf.gpsx_h_acc": "180",
+    "crsf.gpsx_v_acc": "260",
+    "crsf.gpsx_reserved": "0",
+    "crsf.gpsx_hdop": "9",
+    "crsf.gpsx_vdop": "14"
+  },
+  "source": "derived by tools/gen/rc-telemetry-vectors.py from the frame layouts and spec/engine-spec.md; no engine run",
+  "reference": "TBS CRSF specification (CRSFv3), crsf.md at a73f7dc, sections Frame Construction and Broadcast Frame Types; 20-byte payload, length byte 22; velocities in cm/s, height above the ellipsoid in metres"
+}

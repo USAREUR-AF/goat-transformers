@@ -1,0 +1,9 @@
+{
+  "name": "request-is-no-kind",
+  "from": "msp",
+  "to": "msp",
+  "input": "244d3c006a",
+  "expect_error": "no-kind",
+  "source": "derived by tools/gen/rc-telemetry-vectors.py from the frame layouts and spec/engine-spec.md; no engine run",
+  "reference": "INAV msp_messages.json at 21adf64 (MSP v1 reply frame)"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "attitude-roundtrip",
+  "from": "crsf",
+  "to": "crsf",
+  "input": "ea081e06d1fc977918",
+  "expect": "ea081e06d1fc977918",
+  "model": {
+    "@kind": "attitude",
+    "crsf.sync": "234",
+    "crsf.attitude_pitch": "1745",
+    "crsf.attitude_roll": "-873",
+    "crsf.attitude_yaw": "31000"
+  },
+  "source": "derived by tools/gen/rc-telemetry-vectors.py from the frame layouts and spec/engine-spec.md; no engine run",
+  "reference": "TBS CRSF specification (CRSFv3), crsf.md at a73f7dc, sections Frame Construction and Broadcast Frame Types; angles in units of 100 microradians; the first byte a device address (0xEA)"
+}

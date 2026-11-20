@@ -1,0 +1,18 @@
+{
+  "name": "g-roundtrip",
+  "from": "ltm",
+  "to": "ltm",
+  "input": "245447074be51a4ee84f0411a811000033",
+  "expect": "245447074be51a4ee84f0411a811000033",
+  "model": {
+    "@kind": "g",
+    "lat": "45.1234567",
+    "lon": "7.2345678",
+    "speed_ms": "17",
+    "ltm.g_altitude": "4520",
+    "ltm.g_fix_type": "3",
+    "ltm.g_satellites": "12"
+  },
+  "source": "derived by tools/gen/rc-telemetry-vectors.py from the frame layouts and spec/engine-spec.md; no engine run",
+  "reference": "INAV src/main/telemetry/ltm.c at 21adf64; satellites in the top six bits and the fix type in the low two bits of the last byte"
+}

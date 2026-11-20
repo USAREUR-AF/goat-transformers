@@ -1,0 +1,71 @@
+# MSP v2 (MultiWii Serial Protocol version 2, INAV): replies of the flight controller in the
+# v2 frame, one kind per message. Written by hand from INAV's message definitions and its
+# description of the v2 frame; pack.md has the layout, the evidence for every shared key
+# and what is not mapped.
+# The message is one v2 reply frame without its CRC byte: '$', 'X', '>', flag, command
+# (u16), payload size (u16), payload. Little-endian. Command and size are each kind's when.
+format        msp-v2
+version       0.1.0
+distribution  public
+source        "INAV MSP message definitions, https://github.com/iNavFlight/inav commit 21adf64440bb0d9f0bdc56569098fbaa0e39d24d, docs/development/msp/msp_messages.json (sha256 07bf2f771aea96c3c362dcd6493bad78607f3f52f4205317fb3d95985c483c77) and docs/development/msp/README.md (sha256 7d868df6a5202d7d1f8f8dd202755045e4993fd8e97322e1bb12e92d4549cee3); GPL-3.0-or-later, the INAV project"
+source        "INAV MSP framing, https://github.com/iNavFlight/inav commit 21adf64440bb0d9f0bdc56569098fbaa0e39d24d, src/main/msp/msp_serial.c (sha256 e477c00add0bf86d6f2eed4fd7f9d304b1e621daa54eb2b133a7e70434a6fec8) and msp_serial.h (sha256 250b547dd7ddfce1a0d2242b37f45942344e313a52b531f3094e93799884c031); GPL-3.0-or-later, the INAV project"
+uses          msp2
+wire          bits
+bit_order     lsb
+word_bytes    1
+when      0:0:8 36
+when      0:8:8 88
+when      0:16:8 62
+field     msp2.flag 0:24:8 uint
+
+kind      raw_gps
+when      0:32:16 106
+when      0:48:16 18
+requires  lat lon
+field     msp2.raw_gps_fix_type 0:64:8 uint
+field     msp2.raw_gps_num_sat 0:72:8 uint
+field     lat 0:80:32 sscale:1/10000000
+field     lon 0:112:32 sscale:1/10000000
+field     msp2.raw_gps_altitude 0:144:16 twos
+field     speed_ms 0:160:16 sscale:1/100
+field     course 0:176:16 sscale:1/10
+field     msp2.raw_gps_hdop 0:192:16 uint
+
+kind      attitude
+when      0:32:16 108
+when      0:48:16 6
+requires  msp2.attitude_roll
+field     msp2.attitude_roll 0:64:16 twos
+field     msp2.attitude_pitch 0:80:16 twos
+field     msp2.attitude_yaw 0:96:16 twos
+
+kind      altitude
+when      0:32:16 109
+when      0:48:16 10
+requires  msp2.altitude_estimated
+field     msp2.altitude_estimated 0:64:32 twos
+field     msp2.altitude_variometer 0:96:16 twos
+field     msp2.altitude_baro 0:112:32 twos
+
+kind      analog
+when      0:32:16 110
+when      0:48:16 7
+requires  msp2.analog_vbat
+field     msp2.analog_vbat 0:64:8 uint
+field     msp2.analog_mah_drawn 0:72:16 uint
+field     msp2.analog_rssi 0:88:16 uint
+field     msp2.analog_amperage 0:104:16 twos
+
+kind      inav_analog
+when      0:32:16 8194
+when      0:48:16 24
+requires  msp2.inav_analog_battery_flags
+field     msp2.inav_analog_battery_flags 0:64:8 uint
+field     msp2.inav_analog_vbat 0:72:16 uint
+field     msp2.inav_analog_amperage 0:88:16 twos
+field     msp2.inav_analog_power_draw 0:104:32 uint
+field     msp2.inav_analog_mah_drawn 0:136:32 uint
+field     msp2.inav_analog_mwh_drawn 0:168:32 uint
+field     msp2.inav_analog_remaining_capacity 0:200:32 uint
+field     msp2.inav_analog_percentage_remaining 0:232:8 uint
+field     msp2.inav_analog_rssi 0:240:16 uint

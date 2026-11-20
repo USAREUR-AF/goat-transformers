@@ -1,0 +1,21 @@
+{
+  "name": "raw_gps-roundtrip",
+  "from": "msp-v2",
+  "to": "msp-v2",
+  "input": "24583e006a001200020bf976b21e7929edff57000e06910a7800",
+  "expect": "24583e006a001200020bf976b21e7929edff57000e06910a7800",
+  "model": {
+    "@kind": "raw_gps",
+    "msp2.flag": "0",
+    "lat": "51.5012345",
+    "lon": "-0.1234567",
+    "speed_ms": "15.5",
+    "course": "270.5",
+    "msp2.raw_gps_fix_type": "2",
+    "msp2.raw_gps_num_sat": "11",
+    "msp2.raw_gps_altitude": "87",
+    "msp2.raw_gps_hdop": "120"
+  },
+  "source": "derived by tools/gen/rc-telemetry-vectors.py from the frame layouts and spec/engine-spec.md; no engine run",
+  "reference": "INAV msp_messages.json and docs/development/msp at 21adf64 (MSP v2 reply frame); the v1 command 106 carried in a v2 frame: command and size as 16-bit values"
+}

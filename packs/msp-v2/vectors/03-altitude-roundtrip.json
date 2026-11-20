@@ -1,0 +1,16 @@
+{
+  "name": "altitude-roundtrip",
+  "from": "msp-v2",
+  "to": "msp-v2",
+  "input": "24583e006d000a0039300000c4ffea2e0000",
+  "expect": "24583e006d000a0039300000c4ffea2e0000",
+  "model": {
+    "@kind": "altitude",
+    "msp2.flag": "0",
+    "msp2.altitude_estimated": "12345",
+    "msp2.altitude_variometer": "-60",
+    "msp2.altitude_baro": "12010"
+  },
+  "source": "derived by tools/gen/rc-telemetry-vectors.py from the frame layouts and spec/engine-spec.md; no engine run",
+  "reference": "INAV msp_messages.json and docs/development/msp at 21adf64 (MSP v2 reply frame); the v1 command 109 carried in a v2 frame: command and size as 16-bit values"
+}

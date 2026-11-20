@@ -1,0 +1,11 @@
+{
+  "name": "RC and small-UAS telemetry",
+  "domain": "uncrewed",
+  "exact": [
+    "crsf",
+    "msp",
+    "msp-v2",
+    "ltm"
+  ],
+  "detail": "CRSF, MSP v1 and v2, LTM"
+}

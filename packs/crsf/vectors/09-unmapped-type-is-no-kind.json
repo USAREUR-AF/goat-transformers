@@ -1,0 +1,9 @@
+{
+  "name": "unmapped-type-is-no-kind",
+  "from": "crsf",
+  "to": "crsf",
+  "input": "c807090000000000",
+  "expect_error": "no-kind",
+  "source": "derived by tools/gen/rc-telemetry-vectors.py from the frame layouts and spec/engine-spec.md; no engine run",
+  "reference": "TBS CRSF specification (CRSFv3), crsf.md at a73f7dc, sections Frame Construction and Broadcast Frame Types"
+}

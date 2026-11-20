@@ -1,0 +1,9 @@
+{
+  "name": "g-to-geojson",
+  "from": "ltm",
+  "to": "geojson",
+  "input": "245447074be51a4ee84f0411a811000033",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[7.2345678,45.1234567]},\"properties\":{\"speed_ms\":17}}",
+  "source": "derived by tools/gen/rc-telemetry-vectors.py from the frame layouts and spec/engine-spec.md; no engine run",
+  "reference": "INAV src/main/telemetry/ltm.c at 21adf64"
+}

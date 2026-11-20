@@ -1,0 +1,16 @@
+{
+  "name": "battery-roundtrip",
+  "from": "crsf",
+  "to": "crsf",
+  "input": "c80a0800a8007b0010e139",
+  "expect": "c80a0800a8007b0010e139",
+  "model": {
+    "@kind": "battery",
+    "crsf.battery_voltage": "168",
+    "crsf.battery_current": "123",
+    "crsf.battery_capacity_used": "4321",
+    "crsf.battery_remaining": "57"
+  },
+  "source": "derived by tools/gen/rc-telemetry-vectors.py from the frame layouts and spec/engine-spec.md; no engine run",
+  "reference": "TBS CRSF specification (CRSFv3), crsf.md at a73f7dc, sections Frame Construction and Broadcast Frame Types; 8-byte payload, the capacity a 24-bit value"
+}

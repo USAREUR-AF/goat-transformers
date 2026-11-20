@@ -1,0 +1,17 @@
+{
+  "name": "o-roundtrip",
+  "from": "ltm",
+  "to": "ltm",
+  "input": "24544f00c4e41ae0354f04345300000101",
+  "expect": "24544f00c4e41ae0354f04345300000101",
+  "model": {
+    "@kind": "o",
+    "ltm.o_home_lat": "451200000",
+    "ltm.o_home_lon": "72300000",
+    "ltm.o_home_alt": "21300",
+    "ltm.o_osd_on": "1",
+    "ltm.o_home_fix": "1"
+  },
+  "source": "derived by tools/gen/rc-telemetry-vectors.py from the frame layouts and spec/engine-spec.md; no engine run",
+  "reference": "INAV src/main/telemetry/ltm.c at 21adf64; the home position stays raw: it is not the vehicle's position"
+}

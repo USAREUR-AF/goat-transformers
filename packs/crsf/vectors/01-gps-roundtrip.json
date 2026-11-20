@@ -1,0 +1,19 @@
+{
+  "name": "gps-roundtrip",
+  "from": "crsf",
+  "to": "crsf",
+  "input": "c811021c40524b0517f44304d46a0e05980e",
+  "expect": "c811021c40524b0517f44304d46a0e05980e",
+  "model": {
+    "@kind": "gps",
+    "crsf.sync": "200",
+    "lat": "47.3977419",
+    "lon": "8.5455939",
+    "speed_ms": "34.333333333333336",
+    "crsf.gps_heading": "27150",
+    "crsf.gps_altitude": "1432",
+    "crsf.gps_satellites": "14"
+  },
+  "source": "derived by tools/gen/rc-telemetry-vectors.py from the frame layouts and spec/engine-spec.md; no engine run",
+  "reference": "TBS CRSF specification (CRSFv3), crsf.md at a73f7dc, sections Frame Construction and Broadcast Frame Types; 15-byte payload, length byte 17; latitude and longitude in 1e-7 degrees, ground speed in tenths of km/h"
+}

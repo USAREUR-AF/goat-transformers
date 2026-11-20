@@ -1,0 +1,21 @@
+# The msp module: values of MSP v1 replies that have no shared-model key, in the units
+# INAV states. packs/msp/pack.md says why each is or is not bound.
+module        msp
+version       0.1.0
+distribution  public
+source        "INAV MSP message definitions, https://github.com/iNavFlight/inav commit 21adf64440bb0d9f0bdc56569098fbaa0e39d24d, docs/development/msp/msp_messages.json (sha256 07bf2f771aea96c3c362dcd6493bad78607f3f52f4205317fb3d95985c483c77) and docs/development/msp/README.md (sha256 7d868df6a5202d7d1f8f8dd202755045e4993fd8e97322e1bb12e92d4549cee3); GPL-3.0-or-later, the INAV project"
+source        "INAV MSP framing, https://github.com/iNavFlight/inav commit 21adf64440bb0d9f0bdc56569098fbaa0e39d24d, src/main/msp/msp_serial.c (sha256 e477c00add0bf86d6f2eed4fd7f9d304b1e621daa54eb2b133a7e70434a6fec8) and msp_serial.h (sha256 250b547dd7ddfce1a0d2242b37f45942344e313a52b531f3094e93799884c031); GPL-3.0-or-later, the INAV project"
+key   raw_gps_fix_type                   int  -  "GPS fix type code"
+key   raw_gps_num_sat                    int  -  "satellites used in the solution"
+key   raw_gps_altitude                   int  -  "altitude above mean sea level (the document gives centimetres in the unit column and whole metres in its note)"
+key   raw_gps_hdop                       int  -  "horizontal dilution of precision, hundredths"
+key   attitude_roll                      int  -  "roll, tenths of a degree"
+key   attitude_pitch                     int  -  "pitch, tenths of a degree"
+key   attitude_yaw                       int  -  "yaw or heading, degrees"
+key   altitude_estimated                 int  -  "estimated altitude above home or sea level, cm"
+key   altitude_variometer                int  -  "estimated vertical speed, cm/s"
+key   altitude_baro                      int  -  "latest barometric altitude, cm"
+key   analog_vbat                        int  -  "battery voltage, tenths of a volt"
+key   analog_mah_drawn                   int  -  "consumed capacity, mAh"
+key   analog_rssi                        int  -  "RSSI, 0 to 1023 or percent by source"
+key   analog_amperage                    int  -  "current, hundredths of an ampere"

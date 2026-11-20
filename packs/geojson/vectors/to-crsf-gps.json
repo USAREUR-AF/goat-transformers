@@ -1,0 +1,9 @@
+{
+  "name": "geojson-to-crsf-gps",
+  "from": "geojson",
+  "to": "crsf",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.5455939,47.3977419,450.5]},\"properties\":{\"speed_ms\":12.5},\"id\":\"rc-1\"}",
+  "expect": "c811021c40524b0517f44301c20000000000",
+  "source": "derived by tools/gen/rc-telemetry-vectors.py from the frame layouts and spec/engine-spec.md; no engine run",
+  "reference": "TBS CRSF specification (CRSFv3), crsf.md at a73f7dc, sections Frame Construction and Broadcast Frame Types; gps is the first kind whose requires (lat, lon) hold; sync takes its default 0xC8; fields with no value are zero; hae has no line in the gps kind"
+}
