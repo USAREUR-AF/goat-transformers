@@ -17,9 +17,11 @@ from those tables by `pack()` and the expected hex of every vector is that resul
 Usage: python3 -I tools/gen/ccsds-vectors.py [--out DIR] [--check]
 With --check nothing is written and the exit status is 1 when a committed file
 differs from what this script writes.
-Every *.json in those five vectors directories is rewritten.
+Every NN-<name>.json in those five vectors directories is rewritten; other files there
+(vectors of other packs whose input is one of these formats) are left alone.
 """
 import json
+import re
 import os
 import sys
 
@@ -387,8 +389,10 @@ def build(out):
             rel = "%s/%02d-%s.json" % (vdir, i, v["name"])
             names.add(rel.rsplit("/", 1)[1])
             out.write(rel, json.dumps(v, indent=2, ensure_ascii=False) + "\n")
+        # remove only this script's own earlier files (NN-<name>.json): other scripts write
+        # vectors whose input is this format into the same directory (to-<pack>-*.json)
         for old in out.listdir(vdir):
-            if old.endswith(".json") and old not in names:
+            if re.fullmatch(r"\d{2}-.+\.json", old) and old not in names:
                 out.remove(vdir + "/" + old)
         written[fmt] = len(vecs)
     return written

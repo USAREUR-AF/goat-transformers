@@ -4,7 +4,9 @@
 Reads   tools/gen/cfe/layout.json, which tools/gen/cfe2pack.py writes from the C headers
         of nasa/cFE: for every kind its message ID, function code, C size and the
         offset, size and type of every payload member (and the raw key it has).
-Writes  packs/cfe-<m>/vectors/gen-*.json and packs/cfe-<m>-be/vectors/gen-*.json:
+Writes  packs/cfe-<m>/vectors/gen-*.json and packs/cfe-<m>-be/vectors/gen-*.json, and the
+        vectors whose input is a ccsds-space-packet message as
+        packs/ccsds-space-packet/vectors/to-<pack>-gen-*.json:
           a round trip per kind: a packet serialized here, octet by octet, from the
             layout with values of this script's own (the primary header big-endian,
             the payload in the pack's byte order (little-endian for cfe-<m>,
@@ -166,8 +168,18 @@ def build(out):
     for fmt, p in sorted(layout["packs"].items()):
         V = vectors(fmt, p["messages"], layout["source"], p["endian"])
         for name, v in V.items():
-            out.write("packs/%s/vectors/%s.json" % (fmt, name), json.dumps(v, indent=2) + "\n")
-        written[fmt] = len(V)
+            own = "packs/%s/vectors/%s.json" % (fmt, name)
+            if v["from"] == fmt:
+                rel = own
+            else:
+                # a vector lives under the pack that owns its input: packs/<from>/vectors,
+                # named to-<this pack>-<name>; the file an earlier run wrote under this
+                # pack is removed (only that file)
+                short = name.replace("gen-%s-to-" % v["from"], "gen-", 1)
+                rel = "packs/%s/vectors/to-%s-%s.json" % (v["from"], fmt, short)
+                out.remove(own)
+            out.write(rel, json.dumps(v, indent=2) + "\n")
+            written[v["from"]] = written.get(v["from"], 0) + 1
     return written
 
 
