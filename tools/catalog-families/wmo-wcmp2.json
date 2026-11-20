@@ -1,0 +1,8 @@
+{
+  "name": "WMO WCMP2",
+  "domain": "maps",
+  "exact": [
+    "wcmp2-record"
+  ],
+  "detail": "WMO Core Metadata Profile 2 discovery metadata records"
+}

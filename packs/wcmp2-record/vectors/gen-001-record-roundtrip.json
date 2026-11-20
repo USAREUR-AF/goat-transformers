@@ -1,0 +1,17 @@
+{
+ "name": "gen-record-roundtrip",
+ "from": "wcmp2-record",
+ "to": "wcmp2-record",
+ "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"type\":\"s17364\",\"title\":\"s86982\",\"description\":\"s41156\",\"version\":\"s94499\",\"created\":\"2026-08-08T15:23:45.800Z\",\"updated\":\"2024-01-21T19:39:48.556Z\",\"wmo:dataPolicy\":\"recommended\",\"rights\":\"s41795\"}}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"type\":\"s17364\",\"title\":\"s86982\",\"description\":\"s41156\",\"version\":\"s94499\",\"created\":\"2026-08-08T15:23:45.800Z\",\"updated\":\"2024-01-21T19:39:48.556Z\",\"wmo:dataPolicy\":\"recommended\",\"rights\":\"s41795\"}}",
+ "model": {
+  "wcmp2.properties_type": "s17364",
+  "wcmp2.properties_title": "s86982",
+  "wcmp2.properties_description": "s41156",
+  "wcmp2.properties_version": "s94499",
+  "wcmp2.properties_created": "2026-08-08T15:23:45.800Z",
+  "wcmp2.properties_updated": "2024-01-21T19:39:48.556Z",
+  "wcmp2.properties_wmo_data_policy": "recommended",
+  "wcmp2.properties_rights": "s41795"
+ }
+}

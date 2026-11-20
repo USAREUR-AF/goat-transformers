@@ -1,0 +1,19 @@
+{
+  "name": "309052-missing-values-roundtrip",
+  "from": "bufr4-temp-309052",
+  "to": "bufr4-temp-309052",
+  "input": "4255465200005b04000016000062000000000000ff260007ea0b1406000000000900000180c934000030000d311010101010101010107ffffffbf55a8500068614d23a80d422ceffffffffffffffffffffffffc000000037373737",
+  "expect": "4255465200005b04000016000062000000000000ff260007ea0b1406000000000900000180c934000030000d311010101010101010107ffffffbf55a8500068614d23a80d422ceffffffffffffffffffffffffc000000037373737",
+  "model": {
+    "bufrtemp.wmo_block_number": "6",
+    "bufrtemp.wmo_station_number": "610",
+    "bufrtemp.ship_or_mobile_land_station_identifier": "         ",
+    "bufrtemp.year_2": "2026",
+    "bufrtemp.month_2": "11",
+    "bufrtemp.day_2": "20",
+    "bufrtemp.hour_2": "5",
+    "bufrtemp.minute_2": "0"
+  },
+  "source": "derived by tools/gen/bufr-sequence2pack.py from raw values written for it and WMO BUFR Table B; no engine run",
+  "reference": "WMO BUFR edition 4 Table D 309052 and Table B; every numeric element other than the station's position, time and identity missing (all bits set): the keys are absent (absent sentinel) and the missing value is written back; every delayed replication empty"
+}

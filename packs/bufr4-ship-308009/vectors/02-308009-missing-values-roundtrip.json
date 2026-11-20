@@ -1,0 +1,19 @@
+{
+  "name": "308009-missing-values-roundtrip",
+  "from": "bufr4-ship-308009",
+  "to": "bufr4-ship-308009",
+  "input": "425546520000b004000016000062000000000000ff260007ea0b1406000000000900000180c80900008500534849503120202020fffffbf55a8601c392528fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff00fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffc37373737",
+  "expect": "425546520000b004000016000062000000000000ff260007ea0b1406000000000900000180c80900008500534849503120202020fffffbf55a8601c392528fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff00fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffc37373737",
+  "model": {
+    "bufrship.ship_or_mobile_land_station_identifier": "SHIP1    ",
+    "bufrship.year_2": "2026",
+    "bufrship.month_2": "11",
+    "bufrship.day_2": "20",
+    "bufrship.hour_2": "6",
+    "bufrship.minute_2": "0",
+    "bufrship.latitude": "54.5",
+    "bufrship.longitude": "10.25"
+  },
+  "source": "derived by tools/gen/bufr-sequence2pack.py from raw values written for it and WMO BUFR Table B; no engine run",
+  "reference": "WMO BUFR edition 4 Table D 308009 and Table B; every numeric element other than the station's position, time and identity missing (all bits set): the keys are absent (absent sentinel) and the missing value is written back; every delayed replication empty"
+}

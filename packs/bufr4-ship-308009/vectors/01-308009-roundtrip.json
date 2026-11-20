@@ -1,0 +1,27 @@
+{
+  "name": "308009-roundtrip",
+  "from": "bufr4-ship-308009",
+  "to": "bufr4-ship-308009",
+  "input": "425546520000b704000016000062000000000000ff260007ea0b1406000000000900000180c80900008c0053484950312020202041aacbf55a8601c392528b07b3a053c77b9603f31bdb2943c974caa39fe3fd559a12c909ff262cc5969a294edf131b704002538d3b6f7221cee0d0e8023a3b8d3a8c4dcf17c13c82e188d7a49d09bb28ce265372fc2c0ea116ed98543e4c133a499434de377434875730dcc29a9a2e38516414edeac710e5413b8ea4ef477037373737",
+  "expect": "425546520000b704000016000062000000000000ff260007ea0b1406000000000900000180c80900008c0053484950312020202041aacbf55a8601c392528b07b3a053c77b9603f31bdb2943c974caa39fe3fd559a12c909ff262cc5969a294edf131b704002538d3b6f7221cee0d0e8023a3b8d3a8c4dcf17c13c82e188d7a49d09bb28ce265372fc2c0ea116ed98543e4c133a499434de377434875730dcc29a9a2e38516414edeac710e5413b8ea4ef477037373737",
+  "model": {
+    "@kind": "message",
+    "bufrship.descriptor": "51209",
+    "bufrship.number_of_subsets": "1",
+    "bufrship.ship_or_mobile_land_station_identifier": "SHIP1    ",
+    "bufrship.direction_of_motion_of_moving_observing": "131",
+    "bufrship.speed_of_motion_of_moving_observing_plat": "342",
+    "bufrship.type_of_station": "1",
+    "bufrship.year_2": "2026",
+    "bufrship.month_2": "11",
+    "bufrship.day_2": "20",
+    "bufrship.hour_2": "6",
+    "bufrship.minute_2": "0",
+    "bufrship.latitude": "54.5",
+    "bufrship.longitude": "10.25",
+    "bufrship.height_of_station_ground_above_mean_sea": "4564.4",
+    "bufrship.repl_vertical_significance.#": "2"
+  },
+  "source": "derived by tools/gen/bufr-sequence2pack.py from raw values written for it and WMO BUFR Table B; no engine run",
+  "reference": "WMO BUFR edition 4 Table D 308009 and Table B; every element present: the chosen station values and deterministic values elsewhere, two items in every delayed replication (one where its count is a single bit)"
+}

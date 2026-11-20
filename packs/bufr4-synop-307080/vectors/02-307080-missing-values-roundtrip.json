@@ -1,0 +1,19 @@
+{
+  "name": "307080-missing-values-roundtrip",
+  "from": "bufr4-synop-307080",
+  "to": "bufr4-synop-307080",
+  "input": "425546520000e004000016000062000000000000ff260007ea0b1406000000000900000180c7500000b5000d3ba122a92716ad27a62624a5a7a322a710101010102fd56a180688405a3c1862253afffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff80007fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff837373737",
+  "expect": "425546520000e004000016000062000000000000ff260007ea0b1406000000000900000180c7500000b5000d3ba122a92716ad27a62624a5a7a322a710101010102fd56a180688405a3c1862253afffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff80007fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff837373737",
+  "model": {
+    "bufrsynop.wmo_block_number": "6",
+    "bufrsynop.wmo_station_number": "631",
+    "bufrsynop.station_or_site_name": "BERN-ZOLLIKOFEN     ",
+    "bufrsynop.type_of_station": "1",
+    "bufrsynop.year_2": "2026",
+    "bufrsynop.month_2": "11",
+    "bufrsynop.day_2": "20",
+    "bufrsynop.hour_2": "6"
+  },
+  "source": "derived by tools/gen/bufr-sequence2pack.py from raw values written for it and WMO BUFR Table B; no engine run",
+  "reference": "WMO BUFR edition 4 Table D 307080 and Table B; every numeric element other than the station's position, time and identity missing (all bits set): the keys are absent (absent sentinel) and the missing value is written back; every delayed replication empty"
+}

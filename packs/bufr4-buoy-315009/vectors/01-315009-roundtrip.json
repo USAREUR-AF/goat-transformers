@@ -1,0 +1,31 @@
+{
+  "name": "315009-roundtrip",
+  "from": "bufr4-buoy-315009",
+  "to": "bufr4-buoy-315009",
+  "input": "425546520000aa04000016000062000000000000ff260007ea0b1406000000000900000180cf0900007f00bd5080a88aa6a84084aa9eb24040404040404040404040404040404040404040404041b05faad4300794eb03920060ccc0c0c8ccd0c0c4c4c8ccd0d4d8c08251d5dd34fe0e2260037a4edc74d38f2148589b74f367ac04ce9d961e4ff09c7a78d0cd2899978d53391694db0f9eba6bff44ef1d159e6f94d5967c8037373737",
+  "expect": "425546520000aa04000016000062000000000000ff260007ea0b1406000000000900000180cf0900007f00bd5080a88aa6a84084aa9eb24040404040404040404040404040404040404040404041b05faad4300794eb03920060ccc0c0c8ccd0c0c4c4c8ccd0d4d8c08251d5dd34fe0e2260037a4edc74d38f2148589b74f367ac04ce9d961e4ff09c7a78d0cd2899978d53391694db0f9eba6bff44ef1d159e6f94d5967c8037373737",
+  "model": {
+    "@kind": "message",
+    "bufrbuoy.descriptor": "53001",
+    "bufrbuoy.number_of_subsets": "1",
+    "bufrbuoy.wmo_marine_observing_platform_extended_i": "6203456",
+    "bufrbuoy.long_station_or_site_name": "TEST BUOY                       ",
+    "bufrbuoy.type_of_data_buoy": "54",
+    "bufrbuoy.time_significance": "1",
+    "bufrbuoy.year_2": "2026",
+    "bufrbuoy.month_2": "11",
+    "bufrbuoy.day_2": "20",
+    "bufrbuoy.hour_2": "6",
+    "bufrbuoy.minute_2": "0",
+    "bufrbuoy.latitude": "-10.5",
+    "bufrbuoy.longitude": "-30.25",
+    "bufrbuoy.platform_transmitter_id_number": "300234011234560 ",
+    "bufrbuoy.repl_precision_of_temperature_observation.#": "1",
+    "bufrbuoy.repl_precision_of_temperature_observation[0].bufrbuoy.repl_depth_below_sea_water_surface.#": "2",
+    "bufrbuoy.repl_height_of_sensor_above_water_surface.#": "1",
+    "bufrbuoy.repl_anemometer_type.#": "1",
+    "bufrbuoy.repl_duration_of_wave_record.#": "1"
+  },
+  "source": "derived by tools/gen/bufr-sequence2pack.py from raw values written for it and WMO BUFR Table B; no engine run",
+  "reference": "WMO BUFR edition 4 Table D 315009 and Table B; every element present: the chosen station values and deterministic values elsewhere, two items in every delayed replication (one where its count is a single bit)"
+}

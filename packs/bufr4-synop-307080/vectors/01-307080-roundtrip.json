@@ -1,0 +1,28 @@
+{
+  "name": "307080-roundtrip",
+  "from": "bufr4-synop-307080",
+  "to": "bufr4-synop-307080",
+  "input": "425546520000ef04000016000062000000000000ff260007ea0b1406000000000900000180c7500000c4000d3ba122a92716ad27a62624a5a7a322a710101010102fd56a180688405a3c1862253a3db55131d52fa404f9cb0938b1afe9bdb29fbb2477771ecff1fc05559b93422c12c1d815f1d96006548e40469bcdbe2f18fb11d4ff21a84fa62403e800bc9346e3209d106e50f21360435f4bd61f446c574bb362a0676cc2a310ab1bafd55c25bc6ee8690fad074e6ff6e305b20a76f5635885be90d190ea455abe4eb9483c2354c3b4d3603aa82333087e46e207e343e53d23ca9f51ec14535a6b8c8037373737",
+  "expect": "425546520000ef04000016000062000000000000ff260007ea0b1406000000000900000180c7500000c4000d3ba122a92716ad27a62624a5a7a322a710101010102fd56a180688405a3c1862253a3db55131d52fa404f9cb0938b1afe9bdb29fbb2477771ecff1fc05559b93422c12c1d815f1d96006548e40469bcdbe2f18fb11d4ff21a84fa62403e800bc9346e3209d106e50f21360435f4bd61f446c574bb362a0676cc2a310ab1bafd55c25bc6ee8690fad074e6ff6e305b20a76f5635885be90d190ea455abe4eb9483c2354c3b4d3603aa82333087e46e207e343e53d23ca9f51ec14535a6b8c8037373737",
+  "model": {
+    "@kind": "message",
+    "bufrsynop.descriptor": "51024",
+    "bufrsynop.number_of_subsets": "1",
+    "bufrsynop.wmo_block_number": "6",
+    "bufrsynop.wmo_station_number": "631",
+    "bufrsynop.station_or_site_name": "BERN-ZOLLIKOFEN     ",
+    "bufrsynop.type_of_station": "1",
+    "bufrsynop.year_2": "2026",
+    "bufrsynop.month_2": "11",
+    "bufrsynop.day_2": "20",
+    "bufrsynop.hour_2": "6",
+    "bufrsynop.minute_2": "0",
+    "bufrsynop.latitude": "46.99082999999999",
+    "bufrsynop.longitude": "7.464169999999996",
+    "bufrsynop.height_of_station_ground_above_mean_sea": "553",
+    "bufrsynop.repl_vertical_significance.#": "2",
+    "bufrsynop.repl_vertical_significance_2.#": "2"
+  },
+  "source": "derived by tools/gen/bufr-sequence2pack.py from raw values written for it and WMO BUFR Table B; no engine run",
+  "reference": "WMO BUFR edition 4 Table D 307080 and Table B; every element present: the chosen station values and deterministic values elsewhere, two items in every delayed replication (one where its count is a single bit)"
+}
