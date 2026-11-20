@@ -10,6 +10,9 @@
 %%          | deg_lat_of | deg_lon_of | m_lat_of | m_lon_of
 %%          | ecef_x | ecef_y | ecef_z
 %%          | lat_of_ecef | lon_of_ecef | hae_of_ecef            (Version 0.16)
+%%          | {tokens, Sep, [Token]} | {has_token, Sep, Token}
+%%          | {text_if, Text}                                    (Version 0.18)
+%% Sep, Token and Text are binaries (UTF-8).
 %% `add` and `sub` are resolved by check_types to {add | sub, int | float}.
 -module(gt_derive).
 -export([parse_function/2, check_types/3, apply_all/2]).
@@ -56,7 +59,73 @@ function(<<"lon_of_ecef">>) -> {lon_of_ecef, 3};
 function(<<"hae_of_ecef">>) -> {hae_of_ecef, 3};
 function(<<"scale:", F/binary>>) -> {{scale, gt_pack:factor(F)}, 1};
 function(<<"offset:", N/binary>>) -> _ = gt_pack:number(N), {{offset, N}, 1};
-function(<<"join:", Sep/binary>>) -> {{join, Sep}, any}.
+function(<<"join:", Sep/binary>>) -> {{join, Sep}, any};
+%% Version 0.18
+function(<<"tokens:", Rest/binary>> = S) ->
+    {Sep, List} = sep_and_rest(Rest, S),
+    Tokens = binary:split(List, <<",">>, [global]),
+    [token(T, Sep, S) || T <- Tokens],
+    case length(lists:usort(Tokens)) =:= length(Tokens) of
+        true -> ok;
+        false -> bad("~s names a token twice", [S])
+    end,
+    {{tokens, Sep, Tokens}, length(Tokens)};
+function(<<"has_token:", Rest/binary>> = S) ->
+    {Sep, T} = sep_and_rest(Rest, S),
+    token(T, Sep, S),
+    {{has_token, Sep, T}, 1};
+function(<<"text_if:", Text/binary>> = S) ->
+    case Text =/= <<>> andalso not lists:any(fun is_ws/1, chars(Text, S)) of
+        true -> {{text_if, Text}, 1};
+        false -> bad("~s: the text is empty or holds whitespace", [S])
+    end.
+
+bad(Fmt, Args) -> gt_pack:load_error('bad-directive', Fmt, Args).
+
+%% Space, tab, line feed and carriage return.
+is_ws(C) -> C =:= $\s orelse C =:= $\t orelse C =:= $\n orelse C =:= $\r.
+
+%% A text as its code points.
+chars(Bin, S) ->
+    case unicode:characters_to_list(Bin) of
+        L when is_list(L) -> L;
+        _ -> bad("~s is not UTF-8 text", [S])
+    end.
+
+%% `<sep>:<rest>`: the separator ends at the first `:`, which it cannot hold.
+%% One code point other than `:`, `,` or whitespace, or one of the names
+%% `space`, `comma`, `colon` (ruling 9: lowercase and exact).
+sep_and_rest(Bin, S) ->
+    {SepT, Rest} = case binary:split(Bin, <<":">>) of
+                       [A, B] -> {A, B};
+                       [_] -> bad("~s names no token after the separator", [S])
+                   end,
+    Sep = case SepT of
+              <<"space">> -> <<" ">>;
+              <<"comma">> -> <<",">>;
+              <<"colon">> -> <<":">>;
+              _ ->
+                  case chars(SepT, S) of
+                      [C] when C =/= $,, C =/= $: ->
+                          case is_ws(C) of
+                              true -> bad("~s: the separator is whitespace", [S]);
+                              false -> SepT
+                          end;
+                      _ -> bad("~s: the separator is not one character or a name", [S])
+                  end
+          end,
+    {Sep, Rest}.
+
+%% A token: one or more characters other than `:`, `,`, whitespace and the
+%% separator character.
+token(T, Sep, S) ->
+    [SepC] = chars(Sep, S),
+    case T =/= <<>> andalso
+        lists:all(fun(C) -> C =/= $: andalso C =/= $, andalso C =/= SepC andalso not is_ws(C) end,
+                  chars(T, S)) of
+        true -> ok;
+        false -> bad("~s: the token ~s is empty or holds a character it cannot", [S, T])
+    end.
 
 %% Do the declared types fit the function? -> {ok, Function} | {error, Why}.
 %% `offset` is resolved to integer or float addition here.
@@ -73,6 +142,13 @@ check_types(text_of, string, [int]) -> {ok, text_of};
 %% `present` takes an argument of any scalar type (a list is refused where the
 %% argument key is resolved) and gives an int.
 check_types(present, int, [_]) -> {ok, present};
+check_types({tokens, _, _} = F, string, Args) ->
+    case lists:all(fun(A) -> A =:= int end, Args) of
+        true -> {ok, F};
+        false -> {error, "tokens takes int arguments"}
+    end;
+check_types({has_token, _, _} = F, int, [string]) -> {ok, F};
+check_types({text_if, _} = F, string, [int]) -> {ok, F};
 %% the parameter is integer text (2a of 0.11) on an int key, number text
 %% (2b) on a float key
 check_types({offset, Text}, int, [int]) ->
@@ -134,8 +210,13 @@ one({Target, Fun, Args}, Model) ->
             end
     end.
 
-%% `any` is the one function whose target is set when only some arguments
-%% are present: it needs at least one.
+%% `any` and `tokens` (ruling 7 of 0.18) are the functions whose target is
+%% set when only some arguments are present: they need at least one.
+fun_args({tokens, _, _}, Args, Model) ->
+    case [K || K <- Args, maps:is_key(K, Model)] of
+        [] -> absent;
+        _ -> [maps:get(K, Model, absent) || K <- Args]
+    end;
 fun_args(any, Args, Model) ->
     case [V || K <- Args, {ok, V} <- [maps:find(K, Model)]] of
         [] -> absent;
@@ -190,6 +271,20 @@ eval(parse_int, [Text]) ->
 eval(text_of, [N]) -> integer_to_binary(N);
 %% 1 when the argument is held, whatever its value (Version 0.12)
 eval(present, [_]) -> 1;
+%% Version 0.18. With only some arguments present, the tokens of the present
+%% ones count (ruling 7); none present and not 0 leaves the target absent.
+eval({tokens, Sep, Tokens}, Vals) ->
+    case [T || {T, V} <- lists:zip(Tokens, Vals), V =/= absent, V =/= 0] of
+        [] -> absent;
+        Set -> iolist_to_binary(lists:join(Sep, Set))
+    end;
+eval({has_token, Sep, T}, [A]) ->
+    case lists:member(T, binary:split(A, Sep, [global])) of
+        true -> 1;
+        false -> 0
+    end;
+eval({text_if, _}, [0]) -> absent;
+eval({text_if, Text}, [_]) -> Text;
 eval({scale, {dec, F}}, [A]) -> A * F;
 eval({scale, {frac, Num, Den}}, [A]) -> A * Num / Den;
 eval({offset, N}, [A]) when is_integer(N), is_integer(A) ->

@@ -1,0 +1,15 @@
+{
+  "name": "ruling-07-value-fixed-in-the-first-pass-with-an-argument",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"flp\":1,\"flsrc\":0}",
+  "context": {},
+  "expect": "{\"flp\":1,\"flsrc\":0,\"fllate\":1,\"ptok\":\"p\"}",
+  "model": {
+    "@complete": true,
+    "probe.ptok": "p",
+    "probe.fl_late": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, Derive functions; ruling 7: fl_p is present in pass 1, fl_late is set later in that pass; ptok is not changed in pass 2"
+}

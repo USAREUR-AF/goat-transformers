@@ -41,7 +41,7 @@ vectors, and the same change in the other six engines.
 | Derive functions for time, distance and frames | an instant split into seconds and nanoseconds, meters to degrees at a latitude, radians, sums and differences (mean sea level from a geoid separation), ECEF | Built, seven engines (spec 0.16) |
 | Gated fields on a fixed layout | a field that exists only when other bits of the message hold a value: validity bits, multi-bit modes, one bit choosing between two meanings of the same bits | Built, seven engines (spec 0.17) |
 | Encode selection by value | choosing the target message kind from the value of a key, not only from which keys are present | Designed |
-| Conditional output and flag tokens | a value written only when another exists; several flags joined into one token list | Designed |
+| Conditional output and flag tokens | a value written only when another exists; several flags joined into one token list | Built, seven engines (spec 0.18) |
 | XML namespaces and prefixes | documents whose elements carry a prefix | Designed |
 
 The Designed rows come from generating packs for whole public catalogs

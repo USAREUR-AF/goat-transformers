@@ -1,0 +1,17 @@
+# Conformance probe pack for ruling 19 of spec 0.18: `element` placement does
+# not count `when <locator> present` lines, which name no position (ruling
+# 23 of 0.9). Public. One kind, selected when b/@a is present. The `when`
+# line for b comes before the lines of a, so a is placed first.
+format  conformance-cond-element-when
+version 0.18.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses    probe
+wire    xml
+root    msg
+kind    k
+when    b/@a  present
+element a
+field   probe.x  a/@x  int
+element b
+field   probe.y  b/@y  int

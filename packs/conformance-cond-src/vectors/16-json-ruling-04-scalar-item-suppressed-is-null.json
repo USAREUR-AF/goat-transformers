@@ -1,0 +1,9 @@
+{
+  "name": "json-ruling-04-scalar-item-suppressed-is-null",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-json",
+  "input": "{\"nums\":[{\"v\":1,\"t\":\"a\"},{\"v\":2}]}",
+  "expect": "{\"n\":3,\"nums\":[1,null]}",
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; ruling 4: a `.` field suppressed by `with` writes its item as an item without the value (null on json)"
+}

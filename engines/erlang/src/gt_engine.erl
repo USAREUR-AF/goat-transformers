@@ -39,7 +39,7 @@
          bits_sentinel/3, items_reserve/2, items_release/1, items_held/1, record_failure/3,
          record_failure_msg/1,
          via_decode/6, typemap_decode/3, wire_value/5, guard_encode/4, unhex/2,
-         unwire/2, trim/2, armor_out/3]).
+         unwire/2, trim/2, armor_out/3, holds/3, line_value/3]).
 
 -define(M64, 16#FFFFFFFFFFFFFFFF).
 
@@ -1008,7 +1008,7 @@ whole_words(EndBit, WB) ->
 %% every `field` that is not `optional`, every `when` and `const`, and the
 %% count locator of every group.
 static_end(bits, Lines) ->
-    lists:foldl(fun({field, _, _, _, _, {_, _, _, true, _}}, Max) -> Max;
+    lists:foldl(fun({field, _, _, _, _, {_, _, _, true, _, _}}, Max) -> Max;
                    ({field, _, {Off, Len}, _, _, _}, Max) -> max(Max, Off + Len);
                    ({wh, {Off, Len}, _, _}, Max) -> max(Max, Off + Len);
                    ({const, {Off, Len}, _, _}, Max) -> max(Max, Off + Len);
@@ -1020,7 +1020,9 @@ static_end(_Wire, _Lines) -> 0.
 line_loc({field, _, Loc, _, _, _}) -> Loc;
 line_loc({wh, Loc, _, _}) -> Loc;
 line_loc({const, Loc, _, _}) -> Loc;
-line_loc({group, _, Loc, _, _, _}) -> Loc.
+line_loc({group, _, Loc, _, _, _}) -> Loc;
+line_loc({sup, Loc, _}) -> Loc;
+line_loc({element, Path, _}) -> {element, Path}.
 
 %% The locators the selected lines map: every `field`, `const` and `group`,
 %% and every `when` that holds a value. `when <locator> present` does not
@@ -1050,7 +1052,7 @@ raw(xml, Tree, {Path, Last}, _Opts, C) ->
     {R, C};
 raw(Wire, Json, Loc, _Opts, C) when Wire =:= geojson; Wire =:= json; Wire =:= gjitem ->
     {member(Wire, Json, Loc), C};
-raw(bits, {Msg, Base}, {Off, Len}, {_, Swap, _, _, _}, C) ->
+raw(bits, {Msg, Base}, {Off, Len}, {_, Swap, _, _, _, _}, C) ->
     case gt_bits:read(Msg, Base + Off, Len) of
         beyond -> {absent, C};             % an `optional` field past the input
         U when Swap -> {{ok, swap_bytes(U, Len)}, C};
@@ -1130,7 +1132,7 @@ field_decode(Wire, {iscale, N, D, Off}, Raw, _Loc, _Opts, _Pack)
 field_decode(geojson, Tr, Raw, _Loc, _Opts, _Pack) -> geojson_decode(Tr, Raw);
 field_decode(gjitem, Tr, Raw, _Loc, _Opts, _Pack) -> geojson_decode(Tr, Raw);
 field_decode(json, Tr, Raw, _Loc, _Opts, _Pack) -> json_decode(Tr, Raw);
-field_decode(bits, Tr, U, {_Off, Len}, {_, _, Trim, _, _}, Pack) ->
+field_decode(bits, Tr, U, {_Off, Len}, {_, _, Trim, _, _, _}, Pack) ->
     V = bits_decode(Tr, U, Len, maps:get(bit_order, Pack)),
     case Trim of
         true -> trim(Tr, V);
@@ -1263,7 +1265,8 @@ encode(#{wire := Wire} = Pack, Entity) ->
     Src = source(maps:get(model, Entity), maps:get(lists, Entity, #{}), Defaults),
     iolist_to_binary(encode_wire(Wire, Pack#{root := Root}, Lines, Src, Residue)).
 
-%% What the lines of a scope are encoded from -> {Value, Lists}. Value(Key)
+%% What the lines of a scope are encoded from -> {Value, Lists, Held}.
+%% Held(Key) tells whether the scope holds Key (`with`, 0.18). Value(Key)
 %% is the scope's value for a `field`: the entity's (or the item's), else
 %% the `default` of the scope. A default of the message does not reach into
 %% items; a default of a group body applies to its items.
@@ -1273,7 +1276,49 @@ source(Model, Lists, Defaults) ->
                  {ok, _} = Found -> Found;
                  error -> maps:find(Key, Defaults)
              end
-     end, Lists}.
+     end, Lists, fun(Key) -> holds(Key, Model, Lists) end}.
+
+%% Does a scope (the entity, or an item) hold a key (0.18, ruling 2)? A
+%% scalar when it is present, whatever its value; a list when it is present
+%% with at least one item. A default is never looked at.
+holds(Key, Model, Lists) ->
+    maps:is_key(Key, Model) orelse
+        case maps:find(Key, Lists) of
+            {ok, [_ | _]} -> true;
+            _ -> false
+        end.
+
+%% The lines of one scope with every `field ... with <key>` whose key the
+%% scope does not hold replaced by {sup, Loc, LocText}: a line that writes
+%% nothing, has no default and no sentinel, opens no gate block and maps no
+%% key, but still names its locator (0.18, ruling 1). The bodies of gate
+%% blocks belong to the scope; the bodies of groups are items, done per
+%% item.
+suppress(Lines, Held) ->
+    [case L of
+         {field, _, Loc, _, LocT, Opts} when element(6, Opts) =/= none ->
+             case Held(element(6, Opts)) of
+                 true -> L;
+                 false -> {sup, Loc, LocT}
+             end;
+         {gate, GLoc, Neg, Vals, #{lines := Ls} = Body, LocT} ->
+             {gate, GLoc, Neg, Vals, Body#{lines := suppress(Ls, Held)}, LocT};
+         _ -> L
+     end || L <- Lines].
+
+%% The value a `field` line writes from, in a scope Src of source/3: the
+%% scope's value of its key (or default), or error when the line is
+%% suppressed by `with` (0.18). For the wires whose encoders read line by
+%% line (text, tlv).
+line_value({Value, _Lists, Held}, Key, Opts) ->
+    case element(6, Opts) of
+        none -> Value(Key);
+        With ->
+            case Held(With) of
+                true -> Value(Key);
+                false -> error
+            end
+    end.
 
 item_source(Item, #{defaults := Defaults}) ->
     source(maps:get(model, Item), maps:get(lists, Item, #{}), Defaults).
@@ -1338,13 +1383,48 @@ encode_wire(protobuf, Pack, Lines, Src, _Residue) ->
 xml_build(Elem, Lines, Src, Pack) ->
     Ops = text_plan(Lines, Src, Pack, fun xml_render/1, fun({text, T, _}) -> T end,
                     fun(Group, Items) -> xml_items(Group, Items, Pack) end),
+    Ensure = xml_ensure(Lines),
+    {R9, _} =
+        lists:foldl(
+          fun(Op, {R0, I}) ->
+                  R = lists:foldl(fun(Path, Acc) -> gt_xml:ensure(Acc, Path) end,
+                                  R0, maps:get(I, Ensure, [])),
+                  {case Op of
+                       {_Loc, none} -> R;
+                       {{Path, {attr, A}}, {value, S}} -> gt_xml:set_attr(R, Path, {A, S});
+                       {{Path, text}, {value, S}} -> gt_xml:set_text(R, Path, S);
+                       {Path, {value, {items, Elems}}} ->
+                           gt_xml:append_children(R, lists:droplast(Path), Elems)
+                   end, I + 1}
+          end, {Elem, 1}, Ops),
+    R9.
+
+%% `element <path>` lines (0.18) -> #{LineIndex => [Path]}: each element
+%% path of an `element` line, and each element on the way to it, is made at
+%% the first line, of any kind, that addresses it or a path under it
+%% (ruling 13), shorter paths first.
+xml_ensure(Lines) ->
+    Targets = lists:usort([lists:sublist(Path, N)
+                           || {element, Path, _} <- Lines, N <- lists:seq(1, length(Path))]),
+    Indexed = lists:zip(lists:seq(1, length(Lines)), [xml_addressed(L) || L <- Lines]),
     lists:foldl(
-      fun({_Loc, none}, R) -> R;
-         ({{Path, {attr, A}}, {value, S}}, R) -> gt_xml:set_attr(R, Path, {A, S});
-         ({{Path, text}, {value, S}}, R) -> gt_xml:set_text(R, Path, S);
-         ({Path, {value, {items, Elems}}}, R) ->
-              gt_xml:append_children(R, lists:droplast(Path), Elems)
-      end, Elem, Ops).
+      fun(T, Acc) ->
+              N = length(T),
+              case [I || {I, A} <- Indexed, A =/= none, lists:sublist(A, N) =:= T] of
+                  [I | _] -> maps:update_with(I, fun(Ps) -> Ps ++ [T] end, [T], Acc);
+                  [] -> Acc
+              end
+      end, #{}, lists:sort(fun(A, B) -> length(A) =< length(B) end, Targets)).
+
+%% The element path an xml line addresses.
+xml_addressed({field, _, {Path, _}, _, _, _}) -> Path;
+xml_addressed({sup, {Path, _}, _}) -> Path;
+xml_addressed({wh, _, present, _}) -> none;     % no position (ruling 19)
+xml_addressed({wh, {Path, _}, _, _}) -> Path;
+xml_addressed({const, {Path, _}, _, _}) -> Path;
+xml_addressed({group, _, Path, _, _, _}) -> Path;
+xml_addressed({element, Path, _}) -> Path;
+xml_addressed(_) -> none.
 
 xml_items(_Group, [], _Pack) -> none;
 xml_items({group, _, Path, _, #{lines := Ls} = Body, _}, Items, Pack) ->
@@ -1442,11 +1522,32 @@ compose(M0, Writes, Overs) ->
 
 %% One scope -> {Writes, Overs, End, Checks}, offsets from the message's
 %% first bit.
-bits_scope(Pack, Lines, {Model, _, Defaults} = Src, Base) ->
+bits_scope(Pack, Lines0, {Model, Lists, Defaults} = Src, Base) ->
+    Held = fun(K) -> holds(K, Model, Lists) end,
+    Lines = suppress(armor_unwritten(Pack, Lines0, Held), Held),
     case lists:any(fun(L) -> element(1, L) =:= gate end, Lines) of
         false -> bits_lines(Pack, Lines, Src, Defaults, Base, true);
         true -> bits_gated(Pack, Lines, Src, Model, Defaults, Base)
     end.
+
+%% Under `armor sixbit` an `optional` field that `with` suppresses is not
+%% written, and so does not count toward the length L (0.14, ruling 14 of
+%% 0.17): the line is dropped. Elsewhere it is a suppressed line, which
+%% writes zero bits and counts (0.18).
+armor_unwritten(#{armor := sixbit}, Lines, Held) ->
+    lists:append(
+      [case L of
+           {field, _, _, _, _, {_, _, _, true, _, With}} when With =/= none ->
+               case Held(With) of
+                   true -> [L];
+                   false -> []
+               end;
+           {gate, GLoc, Neg, Vals, #{lines := Ls} = Body, LocT} ->
+               [{gate, GLoc, Neg, Vals, Body#{lines := armor_unwritten(#{armor => sixbit}, Ls, Held)},
+                 LocT}];
+           _ -> [L]
+       end || L <- Lines]);
+armor_unwritten(_Pack, Lines, _Held) -> Lines.
 
 %% A scope with gate blocks (Version 0.17, Encode steps 1 to 6).
 bits_gated(Pack, Lines, Src, Model, Defaults, Base) ->
@@ -1619,6 +1720,7 @@ gated_keys(Gates) ->
 %% count locator of the scope covers.
 scope_extent(Lines) ->
     lists:foldl(fun({field, _, {Off, Len}, _, _, _}, M) -> max(M, Off + Len);
+                   ({sup, {Off, Len}, _}, M) -> max(M, Off + Len);
                    ({wh, {Off, Len}, _, _}, M) -> max(M, Off + Len);
                    ({const, {Off, Len}, _, _}, M) -> max(M, Off + Len);
                    ({group, _, _, {_, {loc, {Off, Len}}}, _, _}, M) -> max(M, Off + Len);
@@ -1634,7 +1736,7 @@ bits_lines(Pack, Lines, {Model, Lists, _}, Defaults, Base, WithItems) ->
     Order = maps:get(bit_order, Pack),
     Armor = maps:get(armor, Pack, hex),
     {Ws9, Os9, End9, Cs9} = lists:foldl(
-      fun({field, Key, {Off, Len}, Tr, LocT, {_, Swap, _, Optional, Absent} = Opts}, {Ws, Os, End, Cs}) ->
+      fun({field, Key, {Off, Len}, Tr, LocT, {_, Swap, _, Optional, Absent, _} = Opts}, {Ws, Os, End, Cs}) ->
               End1 = max(End, Base + Off + Len),
               Found = case maps:find(Key, Model) of
                           {ok, V} -> {1, V};
@@ -1666,6 +1768,9 @@ bits_lines(Pack, Lines, {Model, Lists, _}, Defaults, Base, WithItems) ->
                             end),
                       {[{Tier, Base + Off, Len, U} | Ws], Os, End1, Cs}
               end;
+         ({sup, {Off, Len}, _}, {Ws, Os, End, Cs}) ->
+              %% suppressed by `with`: zero bits, no default, no sentinel
+              {Ws, Os, max(End, Base + Off + Len), Cs};
          ({const, {Off, Len}, Val, _}, {Ws, Os, End, Cs}) ->
               {Ws, [{1, Base + Off, Len, Val} | Os], max(End, Base + Off + Len), Cs};
          ({wh, {Off, Len}, Val, _}, {Ws, Os, End, Cs}) ->
@@ -1721,7 +1826,8 @@ bits_lines(Pack, Lines, {Model, Lists, _}, Defaults, Base, WithItems) ->
     {lists:reverse(Ws9), lists:reverse(Os9), End9, lists:reverse(Cs9)}.
 
 %% ---- protobuf: the lines of a scope as a writer tree ----
-pb_tree(Pack, Lines, {Value, Lists}) ->
+pb_tree(Pack, Lines0, {Value, Lists, Held}) ->
+    Lines = suppress(Lines0, Held),
     %% the earliest line that has a value writes a locator; a group writes
     %% one occurrence per item, and nothing for an empty list
     T1 = lists:foldl(
@@ -1750,7 +1856,7 @@ pb_tree(Pack, Lines, {Value, Lists}) ->
     %% the sentinel of an absent key, where no line with a value wrote
     %% (ruling 16 of 0.9)
     T1s = lists:foldl(
-            fun({field, Key, Path, Tr, _LocT, {_, _, _, _, [_ | _] = Absent}}, T) ->
+            fun({field, Key, Path, Tr, _LocT, {_, _, _, _, [_ | _] = Absent, _}}, T) ->
                     case Value(Key) of
                         error -> pb_put(T, Path, pb_sentinel(Tr, Absent), keep);
                         {ok, _} -> T
@@ -1796,11 +1902,12 @@ pb_group(Pack, #{lines := Ls} = Body, Items) ->
 
 %% An item without the value writes the sentinel of the first line that has
 %% one (ruling 5 of 0.9).
-pb_scalar_item(Pack, Lines, {Value, _} = Src) ->
+pb_scalar_item(Pack, Lines0, {Value, _, Held} = Src) ->
+    Lines = suppress(Lines0, Held),
     case pb_scalar_value(Pack, Lines, Src) of
         none ->
             case [pb_sentinel(Tr, Absent)
-                  || {field, Key, _, Tr, _, {_, _, _, _, [_ | _] = Absent}} <- Lines,
+                  || {field, Key, _, Tr, _, {_, _, _, _, [_ | _] = Absent, _}} <- Lines,
                      Value(Key) =:= error] of
                 [Leaf | _] -> Leaf;
                 [] -> none
@@ -1809,7 +1916,8 @@ pb_scalar_item(Pack, Lines, {Value, _} = Src) ->
     end.
 
 pb_scalar_value(_Pack, [], _Src) -> none;
-pb_scalar_value(Pack, [{field, Key, _, Tr, LocT, Opts} | Rest], {Value, _} = Src) ->
+pb_scalar_value(Pack, [{sup, _, _} | Rest], Src) -> pb_scalar_value(Pack, Rest, Src);
+pb_scalar_value(Pack, [{field, Key, _, Tr, LocT, Opts} | Rest], {Value, _, _} = Src) ->
     case Value(Key) of
         error -> pb_scalar_value(Pack, Rest, Src);
         {ok, Val} ->
@@ -1831,7 +1939,8 @@ guard_encode(Pack, Key, LocT, Fun) ->
 %% line's position. A `group` whose list the scope has writes what
 %% RenderGroup makes of the items. A line that writes nothing still holds
 %% its place (`none`).
-text_plan(Lines, {Value, Lists}, Pack, RenderField, RenderFixed, RenderGroup) ->
+text_plan(Lines0, {Value, Lists, Held}, Pack, RenderField, RenderFixed, RenderGroup) ->
+    Lines = suppress(Lines0, Held),
     Consts = maps:from_list([{Loc, V} || {const, Loc, V, _} <- Lines]),
     Fixed = maps:merge(Consts,
                        maps:from_list([{Loc, V} || {wh, Loc, {text, _, _} = V, _} <- Lines])),
@@ -1896,6 +2005,7 @@ text_plan(Lines, {Value, Lists}, Pack, RenderField, RenderFixed, RenderGroup) ->
     %% are not moved.
     InOrder = lists:reverse(Ops),
     Names = fun({field, _, _, _, _, _}) -> true;
+               ({sup, _, _}) -> true;
                ({const, _, _, _}) -> true;
                ({wh, _, {text, _, _}, _}) -> true;
                (_) -> false
@@ -1969,8 +2079,8 @@ text_sentinel({str, T}) -> [$", gt_json:escape(T), $"].
 %% text, the entries canonicalised as a value of its type is; the result is
 %% read as the key's declared type. A value with no entry passes through
 %% when the transform yields the key's type, and fails the decode otherwise.
-via_decode({none, _, _, _, _}, V, _Tr, _Key, _LocT, _Pack) -> V;
-via_decode({Table, _, _, _, _}, V, Tr, Key, LocT, #{tables := Tables, key_types := KeyTypes} = Pack) ->
+via_decode({none, _, _, _, _, _}, V, _Tr, _Key, _LocT, _Pack) -> V;
+via_decode({Table, _, _, _, _, _}, V, Tr, Key, LocT, #{tables := Tables, key_types := KeyTypes} = Pack) ->
     KeyType = maps:get(Key, KeyTypes),
     #{dec := Dec} = maps:get(Table, Tables),
     Found = case maps:find(gt_num:canon(V), maps:get(type_of(V), Dec)) of
@@ -1993,8 +2103,8 @@ via_decode({Table, _, _, _, _}, V, Tr, Key, LocT, #{tables := Tables, key_types 
 
 %% Encode: before the transform; the result is read as the type the
 %% transform yields.
-via_encode({none, _, _, _, _}, V, _Tr, _Key, _Pack) -> V;
-via_encode({Table, _, _, _, _}, V, Tr, Key, #{tables := Tables, key_types := KeyTypes}) ->
+via_encode({none, _, _, _, _, _}, V, _Tr, _Key, _Pack) -> V;
+via_encode({Table, _, _, _, _, _}, V, Tr, Key, #{tables := Tables, key_types := KeyTypes}) ->
     WireType = gt_pack:yields(Tr),
     #{enc := Enc} = maps:get(Table, Tables),
     case maps:find(gt_num:canon(V), maps:get(type_of(V), Enc)) of
@@ -2028,15 +2138,17 @@ xml_decode({scale, F, O}, S) -> scale_decode(xml_decode(float, S), F, O);
 xml_decode(string, S) -> S;
 xml_decode(float, S) -> {ok, F} = gt_num:num_text(S), F;
 xml_decode(int, S) -> {ok, I} = gt_num:int_text(S), I;
-xml_decode(iso8601_ms, S) -> gt_iso:decode(S).
+xml_decode(iso8601_ms, S) -> gt_iso:decode(S);
+xml_decode(iso8601_short, S) -> gt_iso:decode(S).
 
 %% geojson (Version 0.1): the wire value is a JSON value; a string member is
 %% read as xml text is, a number member as ruling 2d of 0.11 states. scale
 %% refuses a string member, as on json (ruling 23 of 0.15).
 geojson_decode({scale, _, _} = Tr, V) -> json_decode(Tr, V);
 geojson_decode(string, V) when is_binary(V) -> V;
-geojson_decode(Tr, V) when is_binary(V), Tr =/= iso8601_ms -> xml_decode(Tr, V);
+geojson_decode(Tr, V) when is_binary(V), Tr =/= iso8601_ms, Tr =/= iso8601_short -> xml_decode(Tr, V);
 geojson_decode(iso8601_ms, V) when is_binary(V) -> gt_iso:decode(V);
+geojson_decode(iso8601_short, V) when is_binary(V) -> gt_iso:decode(V);
 geojson_decode(string, V) ->
     true = gt_json:is_num(V),
     list_to_binary(gt_json:number_text(V));
@@ -2048,6 +2160,7 @@ json_decode(string, V) when is_binary(V) -> V;
 json_decode(float, V) -> {ok, F} = gt_json:num_float(V), F;
 json_decode(int, V) -> {ok, I} = gt_json:num_int(V), I;
 json_decode(iso8601_ms, V) when is_binary(V) -> gt_iso:decode(V);
+json_decode(iso8601_short, V) when is_binary(V) -> gt_iso:decode(V);
 json_decode(bool, true) -> 1;
 json_decode(bool, false) -> 0.
 
@@ -2058,6 +2171,7 @@ text_encode(string, V) -> {str, to_str(V)};
 text_encode(float, V) when is_number(V) -> {float, float(V)};
 text_encode(int, V) when is_integer(V) -> {int, V};
 text_encode(iso8601_ms, V) when is_integer(V) -> {str, gt_iso:encode(V)};
+text_encode(iso8601_short, V) when is_integer(V) -> {str, gt_iso:encode_short(V)};
 text_encode(bool, 1) -> {bool, <<"true">>};
 text_encode(bool, 0) -> {bool, <<"false">>}.
 

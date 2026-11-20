@@ -1,0 +1,13 @@
+{
+  "name": "ruling-04-scalar-items-without-the-key-roundtrip",
+  "from": "conformance-cond-json",
+  "to": "conformance-cond-json",
+  "input": "{\"nums\":[1,2]}",
+  "expect": "{\"n\":3,\"nums\":[null,null]}",
+  "model": {
+    "probe.nums.#": "2",
+    "probe.nums[0].probe.val": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; rulings 4 and 6: the items hold val only, not tag"
+}

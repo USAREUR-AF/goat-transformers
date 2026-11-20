@@ -168,7 +168,7 @@ func encodeGatedScope(p *Pack, lay *layout, rec *Item, buf *bitBuf, base int) (i
 	open := map[*Gate]bool{}
 	for _, ln := range lay.lines {
 		if f := ln.f; f != nil && f.gate != nil {
-			if _, has := rec.Fields[f.Key]; has {
+			if f.has(rec) {
 				for g := f.gate; g != nil; g = g.parent {
 					open[g] = true
 				}
@@ -225,16 +225,18 @@ func encodeGatedScope(p *Pack, lay *layout, rec *Item, buf *bitBuf, base int) (i
 		return 0, nil, err
 	}
 
-	// A key the record holds that only lines of blocks not held map.
+	// A key the record holds that only lines of blocks not held map. A line
+	// suppressed by `with` counts neither as mapping its key nor as a line of
+	// a block not held that maps it (0.18 ruling 1).
 	mapped := map[string]bool{}
 	for _, ln := range lay.lines {
-		if f := ln.f; f != nil && active(ln) {
+		if f := ln.f; f != nil && active(ln) && !f.suppressed(rec) {
 			mapped[f.Key] = true
 		}
 	}
 	for _, ln := range lay.lines {
 		f := ln.f
-		if f == nil || mapped[f.Key] {
+		if f == nil || mapped[f.Key] || active(ln) || f.suppressed(rec) {
 			continue
 		}
 		if _, has := rec.Fields[f.Key]; has {
@@ -300,7 +302,7 @@ func markStrong(lay *layout, rec *Item, active func(line) bool, mask []bool, wit
 		}
 		switch {
 		case ln.f != nil:
-			if _, has := rec.Fields[ln.f.Key]; has {
+			if ln.f.has(rec) {
 				mark(ln.f.loc.bit, ln.f.loc.blen)
 			}
 		case ln.w != nil && withConst:

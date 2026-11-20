@@ -108,7 +108,8 @@ const Kind* select_encode_kind(const Pack& p, const Entity& e);
 // ---- value tables (Version 0.6)
 
 // `text` read as a model type. Throws std::invalid_argument.
-Value read_as(const std::string& text, KeyType type);
+// `as_written`: text of a pack or module, read without trimming (0.18 ruling 18).
+Value read_as(const std::string& text, KeyType type, bool as_written = false);
 // The type of a table's <model> side: string unless every <model> value is an
 // integer (int) or every one is a number (float).
 KeyType table_model_type(const MapTable& table);
@@ -192,6 +193,13 @@ struct EncodeSource {
         : p(pack), e(item), defaults{&g.defaults, nullptr} {}
     // False when the field has no value. Throws transform-encode.
     bool value(const FieldLine& f, Value& out) const;
+    // v0.18: does the entity (or the item) hold a key or list? A scalar holds
+    // when present, a list when present with at least one item; a `default`
+    // never holds (ruling 2).
+    bool holds(const std::string& key) const;
+    // v0.18: a line with `with <other-key>` whose key is not held: it writes
+    // nothing, its default and its sentinel included (ruling 1).
+    bool suppressed(const FieldLine& f) const { return !f.with.empty() && !holds(f.with); }
     // The items of a group's list; null when the item has no such list.
     const std::vector<Item>* list(const GroupLine& g) const;
 };

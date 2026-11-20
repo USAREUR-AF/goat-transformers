@@ -1,12 +1,15 @@
 # Conformance probe pack for the derive functions added in spec 0.8:
 # `day_seconds`, `any`, `not`, `parse_int` and `text_of`, and in spec 0.16:
-# time, distance and frames. Public. No kinds.
+# time, distance and frames, and in spec 0.18: `tokens`, `has_token` and
+# `text_if`. Public. No kinds.
 # The first six members are inputs; the next five are the keys the `derive`
 # lines of model/probe.def set from them. From `tms` on, the members of 0.16:
 # the inputs, and the integer targets. The float targets of 0.16 are not
 # members: a vector states them in `model` with "@complete": true.
+# From `fla` on, the members of 0.18: inputs and targets alike, every one
+# exact (integers and texts).
 format  conformance-derive-functions
-version 0.16.0
+version 0.18.0
 distribution public
 source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
 uses    probe
@@ -45,3 +48,23 @@ field   probe.t_nsec  tnsec   int
 field   probe.u_ms    ums     int
 field   probe.isum    isum    int
 field   probe.idiff   idiff   int
+field   probe.fl_a     fla     int
+field   probe.fl_b     flb     int
+field   probe.fl_c     flc     int
+field   probe.flags    flags   string
+field   probe.fl_p     flp     int
+field   probe.fl_src   flsrc   int
+field   probe.fl_late  fllate  int
+field   probe.ptok     ptok    string
+field   probe.sp1      sp1     int
+field   probe.sp2      sp2     int
+field   probe.spt      spt     string
+field   probe.ut       ut      string
+field   probe.w1       w1      string
+field   probe.w2       w2      string
+field   probe.wj       wj      string
+field   probe.wtxt     wtxt    string
+field   probe.wsp      wsp     int
+field   probe.wcol     wcol    int
+field   probe.tif_in   tifin   int
+field   probe.tif      tif     string

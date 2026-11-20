@@ -1,0 +1,12 @@
+{
+  "name": "decode-offset",
+  "from": "conformance-cond-time",
+  "to": "conformance-cond-time",
+  "input": "{\"t\":\"1970-01-01T01:00:00.500+01:00\"}",
+  "expect": "{\"ms\":500,\"t\":\"1970-01-01T00:00:00.5Z\"}",
+  "model": {
+    "time_ms": "500"
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, A time without a zero fraction; decode is that of iso8601_ms: fraction digits beyond the third are truncated"
+}

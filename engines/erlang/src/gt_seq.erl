@@ -93,7 +93,7 @@ limit(End, _D) -> End.
 
 lines(Lines, Ext, D) -> lists:foldl(fun(L, Acc) -> line(L, Ext, Acc) end, D, Lines).
 
-line({sfield, Keys, Len, Tr, LenT, Swap, Trim, Absent}, Ext, #d{pos = Pos} = D) ->
+line({sfield, Keys, Len, Tr, LenT, Swap, Trim, Absent, _With}, Ext, #d{pos = Pos} = D) ->
     case need(Pos, Len, Ext, D) of
         absent -> D;
         ok ->
@@ -226,7 +226,7 @@ set_key({Key, Via}, U, Len, Tr, LenT, Trim, #d{model = Model, pack = Pack} = D) 
                     %% a value with no table entry fails the decode when it
                     %% ends, so that the limit on list items read later still
                     %% wins (ruling 7f of 0.11)
-                    try gt_engine:via_decode({Via, false, false, false, none}, V0, Tr, Key, LenT, Pack) of
+                    try gt_engine:via_decode({Via, false, false, false, none, none}, V0, Tr, Key, LenT, Pack) of
                         V1 -> D#d{model = Model#{Key => gt_engine:typemap_decode(Key, V1, Pack)}}
                     catch
                         error:{convert_error, 'transform-decode', Msg} ->
@@ -401,17 +401,21 @@ emit(Len, Val, #e{pos = Pos, segs = Segs} = E) ->
 elines([], _Src, E) -> E;
 elines([L | Rest], Src, E) -> elines(Rest, Src, eline(L, Rest, Src, E)).
 
-eline({sfield, Keys, Len, Tr, LenT, Swap, _Trim, Absent}, _Rest, Src, #e{pack = Pack} = E) ->
-    case pick(Keys, Src) of
+eline({sfield, Keys, Len, Tr, LenT, Swap, _Trim, Absent, With}, _Rest, Src, #e{pack = Pack} = E) ->
+    Cands = candidates(Keys, With, Src),
+    case pick(Cands, Src) of
         %% an absent key writes zero bits, or its first sentinel; neither is
-        %% content for a presence, opt or fx bit (ruling 4 of 0.9)
+        %% content for a presence, opt or fx bit (ruling 4 of 0.9). A line
+        %% suppressed by `with` whose `also` keys give no value writes zero
+        %% bits, not its sentinel (ruling 20 of 0.18)
         none when Absent =:= none -> emit(Len, 0, E);
+        none when length(Cands) < length(Keys) -> emit(Len, 0, E);
         none -> emit(Len, gt_engine:bits_sentinel(Absent, Len, Swap), E);
         {Key, Via, Val} ->
             U = gt_engine:guard_encode(
                   Pack, Key, LenT,
                   fun() ->
-                          W = gt_engine:wire_value(Pack, Key, Tr, {Via, false, false, false, none}, Val),
+                          W = gt_engine:wire_value(Pack, Key, Tr, {Via, false, false, false, none, none}, Val),
                           U0 = gt_engine:bits_encode(Tr, W, Len, maps:get(bit_order, Pack)),
                           case Swap of
                               true -> gt_engine:swap_bytes(U0, Len);
@@ -557,11 +561,22 @@ pick(Keys, #{model := Model, defaults := Defaults}) ->
             end
     end.
 
+%% The keys a field line may write from (0.18): a line `with` a key the
+%% scope does not hold drops its own key, value and default alike; its
+%% `also` keys stay candidates (ruling 5).
+candidates(Keys, none, _Src) -> Keys;
+candidates([_Own | Also] = Keys, With, #{model := Model, lists := Lists}) ->
+    case gt_engine:holds(With, Model, Lists) of
+        true -> Keys;
+        false -> Also
+    end.
+
 %% Would these lines write a present key (a key with a default counts), or a
 %% list that is not empty?
 has(Lines, Src, Pack) -> lists:any(fun(L) -> has1(L, Src, Pack) end, Lines).
 
-has1({sfield, Keys, _, _, _, _, _, _}, Src, _Pack) -> pick(Keys, Src) =/= none;
+has1({sfield, Keys, _, _, _, _, _, _, With}, Src, _Pack) ->
+    pick(candidates(Keys, With, Src), Src) =/= none;
 has1({sgroup, List, _, _}, #{lists := Lists}, _Pack) ->
     case maps:find(List, Lists) of
         {ok, [_ | _]} -> true;

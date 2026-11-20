@@ -20,6 +20,60 @@ constexpr double kPi = 3.14159265358979323846;
     throw Error(ErrorKind::BadDirective, "", "", where + ": " + what);
 }
 
+bool is_ws(char c) { return c == ' ' || c == '\t' || c == '\n' || c == '\r'; }
+
+// The length of the UTF-8 sequence that starts with `c`; 1 for a byte that
+// starts none, so that such a byte counts as one character.
+std::size_t utf8_len(unsigned char c) {
+    if (c >= 0xF0 && c < 0xF8) return 4;
+    if (c >= 0xE0) return c < 0xF0 ? 3 : 1;
+    if (c >= 0xC0) return 2;
+    return 1;
+}
+
+// `<sep>:<t1>,<t2>,...` of `tokens`, or `<sep>:<t>` of `has_token` (0.18).
+void parse_token_param(const std::string& param, bool many, DeriveLine& d, const std::string& where) {
+    const std::string fn = many ? "tokens" : "has_token";
+    const std::size_t colon = param.find(':');
+    if (colon == std::string::npos) bad(where, "derive function '" + fn + "' needs a separator, ':' and tokens");
+    const std::string sep = param.substr(0, colon), list = param.substr(colon + 1);
+    if (sep == "space") d.sep = " ";
+    else if (sep == "comma") d.sep = ",";
+    else if (sep == "colon") d.sep = ":";
+    else {
+        if (sep.empty() || utf8_len(static_cast<unsigned char>(sep[0])) != sep.size())
+            bad(where, "the separator of '" + fn + "' is not one character or a separator name");
+        if (sep == "," || is_ws(sep[0])) bad(where, "the separator of '" + fn + "' is not allowed");
+        d.sep = sep;
+    }
+    std::vector<std::string> toks;
+    std::size_t start = 0;
+    while (true) {
+        const std::size_t comma = list.find(',', start);
+        toks.push_back(list.substr(start, comma == std::string::npos ? std::string::npos : comma - start));
+        if (comma == std::string::npos) break;
+        start = comma + 1;
+    }
+    for (std::size_t k = 0; k < toks.size(); ++k) {
+        const std::string& t = toks[k];
+        if (t.empty()) bad(where, "an empty token in '" + fn + "'");
+        if (t.find(':') != std::string::npos || t.find(d.sep) != std::string::npos)
+            bad(where, "the token '" + t + "' of '" + fn + "' holds ':' or the separator");
+        for (char c : t)
+            if (is_ws(c)) bad(where, "a token of '" + fn + "' holds whitespace");
+        for (std::size_t j = 0; j < k; ++j)
+            if (toks[j] == t) bad(where, "the token '" + t + "' of '" + fn + "' is given twice");
+    }
+    if (many) {
+        if (toks.size() != d.args.size())
+            bad(where, "derive function 'tokens' has " + std::to_string(toks.size()) + " token(s) and " +
+                           std::to_string(d.args.size()) + " argument key(s)");
+    } else if (toks.size() != 1) {
+        bad(where, "derive function 'has_token' takes one token");
+    }
+    d.tokens = std::move(toks);
+}
+
 }  // namespace
 
 DeriveLine parse_derive(const std::vector<std::string>& t, const std::string& where) {
@@ -73,6 +127,10 @@ DeriveLine parse_derive(const std::vector<std::string>& t, const std::string& wh
     else if (name == "lat_of_ecef") { d.fn = DeriveFn::LatOfEcef; min_args = max_args = 3; }
     else if (name == "lon_of_ecef") { d.fn = DeriveFn::LonOfEcef; min_args = max_args = 3; }
     else if (name == "hae_of_ecef") { d.fn = DeriveFn::HaeOfEcef; min_args = max_args = 3; }
+    // Version 0.18: flag tokens and conditional text.
+    else if (name == "tokens") { d.fn = DeriveFn::Tokens; takes_param = true; max_args = static_cast<std::size_t>(-1); }
+    else if (name == "has_token") { d.fn = DeriveFn::HasToken; takes_param = true; }
+    else if (name == "text_if") { d.fn = DeriveFn::TextIf; takes_param = true; }
     else bad(where, "derive function '" + d.function + "' is not in the function table");
 
     if (takes_param != have_param)
@@ -95,6 +153,13 @@ DeriveLine parse_derive(const std::vector<std::string>& t, const std::string& wh
         }
     } else if (d.fn == DeriveFn::Join) {
         d.sep = param;
+    } else if (d.fn == DeriveFn::Tokens || d.fn == DeriveFn::HasToken) {
+        parse_token_param(param, d.fn == DeriveFn::Tokens, d, where);
+    } else if (d.fn == DeriveFn::TextIf) {
+        if (param.empty()) bad(where, "derive function 'text_if' needs a text");
+        for (char c : param)
+            if (is_ws(c)) bad(where, "the text of 'text_if' holds whitespace");
+        d.text = param;
     }
     return d;
 }
@@ -173,6 +238,12 @@ void check_derives(Module& m, const ModuleLookup& loaded, bool require_core) {
             case DeriveFn::ParseInt: fits = target == KeyType::Int && args[0] == KeyType::String; break;
             case DeriveFn::TextOf: fits = target == KeyType::String && args[0] == KeyType::Int; break;
             case DeriveFn::Present: fits = target == KeyType::Int; break;  // any scalar argument (0.12)
+            case DeriveFn::Tokens:
+                fits = target == KeyType::String &&
+                       std::all_of(args.begin(), args.end(), [](KeyType a) { return a == KeyType::Int; });
+                break;
+            case DeriveFn::HasToken: fits = target == KeyType::Int && args[0] == KeyType::String; break;
+            case DeriveFn::TextIf: fits = target == KeyType::String && args[0] == KeyType::Int; break;
             // 0.16 ruling 4: no promotion.
             case DeriveFn::SecOf:
             case DeriveFn::NsecOf:
@@ -391,6 +462,29 @@ bool apply_derive(const DeriveLine& d, Entity& e) {
         e.fields[d.target] = Value::of_int(any ? 1 : 0);
         return true;
     }
+    if (d.fn == DeriveFn::Tokens) {
+        // Set when only some arguments are present (0.18 ruling 7): the tokens
+        // whose argument is present and not 0; absent when there is none.
+        std::string s;
+        bool one = false;
+        for (std::size_t k = 0; k < d.args.size(); ++k) {
+            auto it = e.fields.find(d.args[k]);
+            if (it == e.fields.end()) continue;
+            std::int64_t n = 0;
+            try {
+                n = int_arg(it->second);
+            } catch (const std::invalid_argument&) {
+                return false;
+            }
+            if (n == 0) continue;
+            if (one) s += d.sep;
+            s += d.tokens[k];
+            one = true;
+        }
+        if (!one) return false;
+        e.fields[d.target] = Value::of_string(std::move(s));
+        return true;
+    }
     std::vector<const Value*> a;
     a.reserve(d.args.size());
     for (const auto& key : d.args) {
@@ -486,7 +580,29 @@ bool apply_derive(const DeriveLine& d, Entity& e) {
                 // Presence, not value: any value the entity holds gives 1 (0.12 ruling 1).
                 e.fields[d.target] = Value::of_int(1);
                 return true;
-            case DeriveFn::Any: return false;  // handled above
+            case DeriveFn::Any:
+            case DeriveFn::Tokens: return false;  // handled above
+            case DeriveFn::HasToken: {
+                if (a[0]->kind != Value::Kind::String) return false;
+                const std::string& s = a[0]->s;
+                bool hit = false;
+                std::size_t start = 0;
+                while (!hit) {
+                    const std::size_t at = s.find(d.sep, start);
+                    const std::string part = s.substr(start, at == std::string::npos ? std::string::npos : at - start);
+                    if (!part.empty() && part == d.tokens[0]) hit = true;
+                    if (at == std::string::npos) break;
+                    start = at + d.sep.size();
+                }
+                e.fields[d.target] = Value::of_int(hit ? 1 : 0);
+                return true;
+            }
+            case DeriveFn::TextIf: {
+                const std::int64_t n = int_arg(*a[0]);
+                if (n == 0) return false;
+                e.fields[d.target] = Value::of_string(d.text);
+                return true;
+            }
             case DeriveFn::SecOf:
             case DeriveFn::NsecOf:
             case DeriveFn::MsOf:

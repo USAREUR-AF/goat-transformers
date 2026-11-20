@@ -1,0 +1,9 @@
+{
+  "name": "json-ruling-02-scalar-0-holds",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-json",
+  "input": "{\"x\":0,\"y\":2}",
+  "expect": "{\"x\":0,\"y\":2,\"n\":3}",
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; ruling 2: a scalar holds when present, whatever its value (0)"
+}

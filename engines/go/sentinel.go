@@ -227,7 +227,7 @@ func (f *Field) sentinelJSON(v *jval) bool {
 // the line has `absent`, and the record has no value for the key and no
 // default (d) applies.
 func (f *Field) writesSentinel(rec *Item, d *Default) bool {
-	if f.absent == nil {
+	if f.absent == nil || f.suppressed(rec) {
 		return false
 	}
 	if _, has := rec.Fields[f.Key]; has {

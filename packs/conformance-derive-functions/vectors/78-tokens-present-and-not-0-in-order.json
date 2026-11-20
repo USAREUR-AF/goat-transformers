@@ -1,0 +1,15 @@
+{
+  "name": "tokens-present-and-not-0-in-order",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"fla\":1,\"flc\":2}",
+  "context": {},
+  "expect": "{\"fla\":1,\"flb\":0,\"flc\":2,\"flags\":\"alpha,gamma\"}",
+  "model": {
+    "@complete": true,
+    "probe.flags": "alpha,gamma",
+    "probe.fl_b": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, Derive functions; tokens: the tokens whose argument is present and not 0, in order, joined by the separator; ruling 8"
+}

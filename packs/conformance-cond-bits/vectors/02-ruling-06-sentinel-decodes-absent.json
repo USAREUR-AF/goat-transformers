@@ -1,0 +1,16 @@
+{
+  "name": "ruling-06-sentinel-decodes-absent",
+  "from": "conformance-cond-bits",
+  "to": "conformance-cond-bits",
+  "input": "05ff00",
+  "expect": "050000",
+  "model": {
+    "probe.x": "5",
+    "probe.c1": "0",
+    "@absent": [
+      "probe.w"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; decode unchanged: 255 is w's sentinel (0.9)"
+}

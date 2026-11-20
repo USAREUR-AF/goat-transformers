@@ -1,0 +1,22 @@
+# Conformance probe pack for `with` (spec 0.18) on the fixed `bits` layout,
+# least significant bit first. Public. No kinds. One byte per word.
+#
+#   byte 0   x with y, then z: two lines on one place; when y is not held
+#            the first is not a candidate and z is written (ruling 1)
+#   byte 1   w with y, sentinel 255: suppressed, zero bits, not the sentinel
+#   byte 2   c1 with y, default 7: suppressed, zero bits, not the default
+#
+# y is mapped by no line of this pack: an entity that holds it comes from
+# `conformance-cond-src`.
+format  conformance-cond-bits
+version 0.18.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses    probe
+wire    bits
+word_bytes 1
+field   probe.x   0:0:8   uint  with probe.y
+field   probe.z   0:0:8   uint
+field   probe.w   0:8:8   uint  absent 255  with probe.y
+field   probe.c1  0:16:8  uint  with probe.y
+default probe.c1  7

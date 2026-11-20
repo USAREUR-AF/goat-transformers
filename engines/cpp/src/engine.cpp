@@ -269,7 +269,11 @@ void Engine::add_pack(Pack pack) {
     struct Collect {
         std::vector<Mapped>& mapped;
         void fields(const std::vector<FieldLine>& fs) {
-            for (const auto& f : fs) mapped.push_back({&f.key, &f.locator, &f, What::Field});
+            for (const auto& f : fs) {
+                mapped.push_back({&f.key, &f.locator, &f, What::Field});
+                // v0.18: a `with` key is checked as a `requires` key is.
+                if (!f.with.empty()) mapped.push_back({&f.with, &f.locator, nullptr, What::Requires});
+            }
         }
         void defaults(const std::vector<DefaultLine>& ds) {
             for (const auto& d : ds) mapped.push_back({&d.key, &no_locator, nullptr, What::Default});
@@ -297,7 +301,10 @@ void Engine::add_pack(Pack pack) {
     if (pack.sequential) {
         std::vector<Mapped> defaults;
         detail::SeqVisitor v;
-        v.field = [&](FieldLine& f) { mapped.push_back({&f.key, &f.locator, &f, What::Field}); };
+        v.field = [&](FieldLine& f) {
+            mapped.push_back({&f.key, &f.locator, &f, What::Field});
+            if (!f.with.empty()) mapped.push_back({&f.with, &f.locator, nullptr, What::Requires});
+        };
         v.group = [&](SeqNode& g) { mapped.push_back({&g.list, &no_locator, nullptr, What::Group}); };
         v.requires_key = [&](std::string& r) { mapped.push_back({&r, &no_locator, nullptr, What::Requires}); };
         v.default_line = [&](DefaultLine& d) { defaults.push_back({&d.key, &no_locator, nullptr, What::Default}); };
@@ -376,7 +383,7 @@ void Engine::add_pack(Pack pack) {
             split_model_key(d.key, mod, name);
             const KeyType type = modules_.at(mod).find(name)->type;
             try {
-                d.value = detail::read_as(d.text, type);
+                d.value = detail::read_as(d.text, type, true);
             } catch (const std::invalid_argument&) {
                 throw Error(ErrorKind::KeyTypeMismatch, pack.format, "",
                             "default '" + d.text + "' cannot be read as key '" + d.key + "', which is " +

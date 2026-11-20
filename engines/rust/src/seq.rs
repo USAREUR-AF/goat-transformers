@@ -491,6 +491,7 @@ impl<'a> Parser<'a> {
                     absent_arg: None,
                     absent: Vec::new(),
                     gate: None,
+                    with: None,
                 };
                 for table in field_options(&mut f, toks, ln, false)? {
                     self.vias.push((table, ln));
@@ -529,7 +530,7 @@ impl<'a> Parser<'a> {
                         }
                         _ => return bad(*l, "also needs <model-key> [via <table>]"),
                     };
-                    also.push(FieldDef { model_key: t[1].clone(), via, line: *l, key_type: None, ..f.clone() });
+                    also.push(FieldDef { model_key: t[1].clone(), via, line: *l, key_type: None, with: None, ..f.clone() });
                     self.i += 1;
                 }
                 SeqLine::Field { f, len: len as u32, also }
@@ -711,6 +712,8 @@ impl<'a> Parser<'a> {
                 return bad(ln, format!("`{}` is not allowed inside an `if`, `opt`, `chain` or `length` block", d));
             }
             d if HEADER.contains(&d) => return bad(ln, format!("`{}` is not allowed inside a block", d)),
+            // engine-spec v0.18: `element` is a line of an `xml` pack
+            "element" => return bad(ln, "`element` is valid only on the xml wire"),
             other => return err(format!("unknown-directive: line {}: `{}` is not a directive of a pack", ln, other)),
         }))
     }
@@ -872,6 +875,7 @@ pub fn parse(text: &str) -> Result<Pack, Error> {
         tlv: crate::tlv::TlvConf::default(),
         armor,
         gates: Vec::new(),
+        elements: Vec::new(),
     })
 }
 
@@ -1193,7 +1197,10 @@ impl<'a> Defaults<'a> {
 /// `default` in scope counts as present (ruling 2 of 0.8).
 fn content(lines: &[SeqLine], ent: &Entity, defs: Defaults) -> bool {
     lines.iter().any(|l| match l {
-        SeqLine::Field { f, also, .. } => std::iter::once(f).chain(also.iter()).any(|k| defs.value(ent, &k.model_key).is_some()),
+        // a line suppressed by `with` is not content, nor is its default (ruling 1 of 0.18)
+        SeqLine::Field { f, also, .. } => {
+            std::iter::once(f).chain(also.iter()).any(|k| live(ent, k) && defs.value(ent, &k.model_key).is_some())
+        }
         SeqLine::Group(g) => ent.lists.get(&g.list).map_or(false, |l| !l.is_empty()),
         SeqLine::If { body, .. } | SeqLine::Opt { body } | SeqLine::Length { body, .. } => content(body, ent, defs),
         SeqLine::Chain { parts, .. } => parts.iter().any(|p| content(p, ent, defs)),
@@ -1292,7 +1299,8 @@ fn encode_lines(lines: &[SeqLine], tail: &[SeqLine], ent: &Entity, defs: Default
                 // the earliest of the field's keys that the entity holds; when
                 // it holds none, the default of the earliest key that has one
                 // (rulings 13 and 16 of 0.8)
-                let keys = || std::iter::once(f).chain(also.iter());
+                // (a line suppressed by `with` is none of them: engine-spec v0.18)
+                let keys = || std::iter::once(f).chain(also.iter()).filter(|k| live(ent, k));
                 let value = keys()
                     .find_map(|k| ent.fields.get(&k.model_key).map(|v| (k, v)))
                     .or_else(|| keys().find_map(|k| defs.default(&k.model_key).map(|v| (k, v))));
@@ -1305,9 +1313,10 @@ fn encode_lines(lines: &[SeqLine], tail: &[SeqLine], ent: &Entity, defs: Default
                         write_field(p, k, &v, at, *len, &mut w.buf)?;
                     }
                     // with `absent`, the first sentinel in place of the zero bits (engine-spec v0.9)
-                    None => {
+                    None if live(ent, f) => {
                         write_sentinel(p, f, at, *len, &mut w.buf);
                     }
+                    None => {}
                 }
             }
             SeqLine::Const { len, value } | SeqLine::When { len, value } => w.put(*len, *value),

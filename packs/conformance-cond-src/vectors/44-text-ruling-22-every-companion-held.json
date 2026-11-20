@@ -1,0 +1,9 @@
+{
+  "name": "text-ruling-22-every-companion-held",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-text",
+  "input": "{\"x\":1,\"y\":2,\"z\":3}",
+  "expect": "1,2,3",
+  "source": "constructed",
+  "reference": "spec 0.18 ruling 22 (`with` on text and tlv); 0.10 Writing a record steps 1 and 6"
+}

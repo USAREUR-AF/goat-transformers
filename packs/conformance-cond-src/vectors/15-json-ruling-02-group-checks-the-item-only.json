@@ -1,0 +1,9 @@
+{
+  "name": "json-ruling-02-group-checks-the-item-only",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-json",
+  "input": "{\"x\":1,\"items\":[{\"label\":\"a\",\"qty\":1,\"val\":2,\"x\":1},{\"qty\":3,\"val\":4}]}",
+  "expect": "{\"x\":1,\"n\":3,\"items\":[{\"label\":\"a\",\"qty\":1,\"val\":2},{}]}",
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; ruling 2: inside a group only the item is checked; the key must be declared, not necessarily mapped by the group"
+}

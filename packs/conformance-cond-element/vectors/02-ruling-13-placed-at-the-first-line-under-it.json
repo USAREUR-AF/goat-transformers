@@ -1,0 +1,12 @@
+{
+  "name": "ruling-13-placed-at-the-first-line-under-it",
+  "from": "conformance-cond-element",
+  "to": "conformance-cond-element",
+  "input": "<msg><a x=\"1\"/></msg>",
+  "expect": "<msg><d/><a x=\"1\"/><e/><g><h/></g></msg>",
+  "model": {
+    "probe.x": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, xml: an element written when empty; ruling 13: d is placed at the first line that addresses a path under it (d/@cs), before a"
+}

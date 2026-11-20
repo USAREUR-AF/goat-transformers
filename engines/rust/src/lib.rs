@@ -89,6 +89,8 @@ pub enum Transform {
     Float,
     Int,
     Iso8601Ms,
+    /// xml, json, geojson (engine-spec v0.18): `iso8601_ms` without a zero fraction
+    Iso8601Short,
     // bits-wire transforms (raw integer <-> model value, bit length from the locator)
     Uint,
     Twos,
@@ -270,7 +272,7 @@ impl Transform {
         // ruling 5 of 0.11: the name is the text before the first `:`
         let head = name.split(':').next().unwrap_or("");
         const NAMES: &[&str] = &[
-            "string", "float", "int", "iso8601_ms", "uint", "twos", "linscale", "pstring", "pvarint", "psint", "pdouble",
+            "string", "float", "int", "iso8601_ms", "iso8601_short", "uint", "twos", "linscale", "pstring", "pvarint", "psint", "pdouble",
             "pfloat", "bool", "uscale", "sscale", "f32", "f64", "ascii", "sixbit", "dec", "dm", "hms", "hms_dmy", "utf8", "hex",
             // engine-spec v0.15
             "uiscale", "siscale", "smag", "smscale", "f32scale", "f64scale", "chars", "octal", "scale", "iscale",
@@ -353,6 +355,7 @@ impl Transform {
             "float" => Ok(Transform::Float),
             "int" => Ok(Transform::Int),
             "iso8601_ms" => Ok(Transform::Iso8601Ms),
+            "iso8601_short" => Ok(Transform::Iso8601Short),
             "uint" => Ok(Transform::Uint),
             "twos" => Ok(Transform::Twos),
             "pstring" => Ok(Transform::Pstring),
@@ -430,6 +433,7 @@ impl Transform {
             Transform::Int
             | Transform::Bool
             | Transform::Iso8601Ms
+            | Transform::Iso8601Short
             | Transform::Uint
             | Transform::Twos
             | Transform::Pvarint
@@ -622,7 +626,7 @@ impl Transform {
             Transform::Int => int_text(raw)
                 .map(Value::I64)
                 .ok_or(Error { msg: format!("int decode failed: `{}` is not integer text", raw) }),
-            Transform::Iso8601Ms => iso8601_to_ms(raw).map(Value::I64),
+            Transform::Iso8601Ms | Transform::Iso8601Short => iso8601_to_ms(raw).map(Value::I64),
             Transform::TextScale(sc) => match Transform::Float.decode(raw)? {
                 Value::F64(v) => finite(sc.decode(v)),
                 other => err(format!("scale decode failed: {:?}", other)),
@@ -644,6 +648,7 @@ impl Transform {
             (Transform::Float, Value::F64(x)) => Ok(fmt_f64(*x)),
             (Transform::Int, Value::I64(n)) => Ok(n.to_string()),
             (Transform::Iso8601Ms, Value::I64(ms)) => ms_to_iso8601_checked(*ms),
+            (Transform::Iso8601Short, Value::I64(ms)) => ms_to_iso8601_short(*ms),
             (Transform::TextScale(sc), Value::F64(x)) => Ok(fmt_f64(text_unscale(sc, *x)?)),
             (Transform::TextIscale(ex), Value::I64(x)) => ex
                 .encode_decimal(*x)
@@ -683,6 +688,7 @@ impl Transform {
         match self {
             Transform::StringT
             | Transform::Iso8601Ms
+            | Transform::Iso8601Short
             | Transform::Pstring
             | Transform::Ascii
             | Transform::Sixbit
@@ -957,6 +963,40 @@ pub enum DeriveFn {
     LatOfEcef,
     LonOfEcef,
     HaeOfEcef,
+    /// engine-spec v0.18: the tokens whose argument is present and not 0, joined
+    Tokens(char, Vec<String>),
+    /// engine-spec v0.18: 1 when the token is one of the parts of the text
+    HasToken(char, String),
+    /// engine-spec v0.18: the text when the argument is not 0
+    TextIf(String),
+}
+
+/// Whitespace in a derive parameter (engine-spec v0.18): space, tab, line
+/// feed and carriage return only.
+fn pack_space(c: char) -> bool {
+    matches!(c, ' ' | '\t' | '\n' | '\r')
+}
+
+/// The `<sep>` of `tokens` and `has_token` (engine-spec v0.18): one
+/// character other than `:`, `,` or whitespace, or `space`, `comma`, `colon`.
+fn token_sep(text: &str) -> Option<char> {
+    match text {
+        "space" => return Some(' '),
+        "comma" => return Some(','),
+        "colon" => return Some(':'),
+        _ => {}
+    }
+    let mut cs = text.chars();
+    match (cs.next(), cs.next()) {
+        (Some(c), None) if c != ':' && c != ',' && !pack_space(c) => Some(c),
+        _ => None,
+    }
+}
+
+/// A token of `tokens` and `has_token`: one or more characters other than
+/// `:`, `,`, whitespace and the separator.
+fn token_ok(t: &str, sep: char) -> bool {
+    !t.is_empty() && t.chars().all(|c| c != ':' && c != ',' && c != sep && !pack_space(c))
 }
 
 /// One `derive` line: the target key follows from the argument keys.
@@ -993,6 +1033,31 @@ impl DeriveFn {
         }
         if let Some(a) = name.strip_prefix("join:") {
             return Some(DeriveFn::Join(a.to_string()));
+        }
+        // engine-spec v0.18: a malformed parameter is `bad-directive`, as an unknown function is
+        if let Some(a) = name.strip_prefix("tokens:") {
+            let (sep, list) = a.split_once(':')?;
+            let sep = token_sep(sep)?;
+            let toks: Vec<String> = list.split(',').map(|t| t.to_string()).collect();
+            if !toks.iter().all(|t| token_ok(t, sep)) {
+                return None;
+            }
+            if toks.iter().enumerate().any(|(i, t)| toks[..i].contains(t)) {
+                return None;
+            }
+            return Some(DeriveFn::Tokens(sep, toks));
+        }
+        if let Some(a) = name.strip_prefix("has_token:") {
+            let (sep, t) = a.split_once(':')?;
+            let sep = token_sep(sep)?;
+            return if token_ok(t, sep) { Some(DeriveFn::HasToken(sep, t.to_string())) } else { None };
+        }
+        if let Some(a) = name.strip_prefix("text_if:") {
+            return if !a.is_empty() && !a.chars().any(|c| pack_space(c)) {
+                Some(DeriveFn::TextIf(a.to_string()))
+            } else {
+                None
+            };
         }
         Some(match name {
             "copy" => DeriveFn::Copy,
@@ -1062,6 +1127,11 @@ impl DeriveFn {
             | DeriveFn::LatOfEcef
             | DeriveFn::LonOfEcef
             | DeriveFn::HaeOfEcef => floats(3),
+            DeriveFn::Tokens(_, toks) => {
+                args.len() == toks.len() && target == KeyType::Str && args.iter().all(|t| *t == KeyType::Int)
+            }
+            DeriveFn::HasToken(_, _) => args.len() == 1 && args[0] == KeyType::Str && target == KeyType::Int,
+            DeriveFn::TextIf(_) => args.len() == 1 && args[0] == KeyType::Int && target == KeyType::Str,
         }
     }
 
@@ -1092,6 +1162,19 @@ impl DeriveFn {
             },
             DeriveFn::TextOf => return Some(Value::Str(a[0].as_display())),
             DeriveFn::Present => return Some(Value::I64(1)),
+            // `Engine::complete` computes `tokens`, whose arguments may be partly absent
+            DeriveFn::Tokens(_, _) => return None,
+            DeriveFn::HasToken(sep, t) => match a[0] {
+                Value::Str(text) => {
+                    return Some(Value::I64(text.split(*sep).any(|part| !part.is_empty() && part == t) as i64))
+                }
+                _ => return None,
+            },
+            DeriveFn::TextIf(text) => match a[0] {
+                Value::I64(0) => return None,
+                Value::I64(_) => return Some(Value::Str(text.clone())),
+                _ => return None,
+            },
             // engine-spec v0.16, ruling 3: exact integers, only the result range-checked
             DeriveFn::SecOf | DeriveFn::NsecOf | DeriveFn::MsOf => {
                 let int = |i: usize| match a[i] {
@@ -1524,6 +1607,9 @@ pub struct FieldDef {
     /// fixed `bits` layout (engine-spec v0.17): the innermost gate block the
     /// line is in, an index into the gate table of its scope
     pub gate: Option<usize>,
+    /// `with <other-key>` (engine-spec v0.18): encode writes the line only
+    /// when the entity (inside a group, the item) holds that key
+    pub with: Option<(String, usize)>,
 }
 
 /// One gate block `if [!]<locator> <value>[,…]` … `end` of a fixed-layout
@@ -1594,6 +1680,16 @@ fn field_options(f: &mut FieldDef, toks: &[String], ln: usize, allow_optional: b
                     None => return bad(ln, "`via` needs <table>"),
                 }
                 vias.push(toks[i].clone());
+                i += 1;
+                continue;
+            }
+            "with" => {
+                i += 1;
+                match toks.get(i) {
+                    Some(t) if f.with.is_none() => f.with = Some((t.clone(), ln)),
+                    Some(_) => return bad(ln, "`with` given twice"),
+                    None => return bad(ln, "`with` needs <other-key>"),
+                }
                 i += 1;
                 continue;
             }
@@ -1758,9 +1854,28 @@ fn sentinel_lines<'a>(sel: &Sel<'a>, ent: &Entity, skip: impl Fn(&FieldDef) -> b
         sel.fields.iter().filter(|f| !skip(f) && sel.value_of(ent, f).is_some()).map(|f| f.locator.as_str()).collect();
     sel.fields
         .iter()
-        .filter(|f| !skip(f) && sel.value_of(ent, f).is_none() && !written.contains(&f.locator.as_str()))
+        .filter(|f| !skip(f) && live(ent, f) && sel.value_of(ent, f).is_none() && !written.contains(&f.locator.as_str()))
         .filter_map(|f| f.sentinel().map(|s| (*f, s)))
         .collect()
+}
+
+/// Does the entity (inside a group, the item) hold `key`? A scalar when it
+/// is present, whatever its value; a list when it has at least one item
+/// (ruling 2 of 0.18).
+pub(crate) fn holds(ent: &Entity, key: &str) -> bool {
+    ent.fields.contains_key(key) || ent.lists.get(key).map_or(false, |l| !l.is_empty())
+}
+
+/// Is the line in force on encode? False when its `with` key is not held:
+/// the line is then a line whose key is absent and that has neither a
+/// `default` nor a sentinel (engine-spec v0.18).
+pub(crate) fn live(ent: &Entity, f: &FieldDef) -> bool {
+    f.with.as_ref().map_or(true, |(k, _)| holds(ent, k))
+}
+
+/// Does the entity hold the field's key, on a line that is in force?
+pub(crate) fn has_key(ent: &Entity, f: &FieldDef) -> bool {
+    live(ent, f) && ent.fields.contains_key(&f.model_key)
 }
 
 /// One `default` line: the value encode uses for a key the entity lacks.
@@ -1833,6 +1948,7 @@ impl GroupDef {
             groups: self.groups.iter().collect(),
             root: "",
             gates: &self.gates,
+            elements: Vec::new(),
         }
     }
     /// This group and every group nested in it.
@@ -1869,6 +1985,8 @@ pub struct KindDef {
     pub root: Option<String>,
     /// `group` blocks of this kind
     pub groups: Vec<GroupDef>,
+    /// xml only: `element <path>` lines of this kind (engine-spec v0.18)
+    pub elements: Vec<(String, usize)>,
 }
 
 /// The lines in force for one message: common plus the selected kind.
@@ -1885,6 +2003,8 @@ pub struct Sel<'a> {
     pub root: &'a str,
     /// the gate table the lines' `gate` indices refer to (engine-spec v0.17)
     pub gates: &'a [GateDef],
+    /// xml only: the `element` lines in force, common first (engine-spec v0.18)
+    pub elements: Vec<&'a (String, usize)>,
 }
 
 impl<'a> Sel<'a> {
@@ -1892,6 +2012,10 @@ impl<'a> Sel<'a> {
     /// A default in a gate block applies to the fields of that block and of
     /// the blocks nested in it; the innermost wins (ruling 5 of 0.17).
     fn value_of(&self, ent: &'a Entity, f: &FieldDef) -> Option<&'a Value> {
+        // a line suppressed by `with` has no value, its default included (engine-spec v0.18)
+        if !live(ent, f) {
+            return None;
+        }
         ent.fields.get(&f.model_key).or_else(|| {
             let mut at = f.gate;
             loop {
@@ -1959,6 +2083,8 @@ pub struct Pack {
     /// fixed `bits` layout: the gate blocks of common lines and of every kind
     /// (engine-spec v0.17)
     pub gates: Vec<GateDef>,
+    /// xml only: common `element <path>` lines, (path, line) (engine-spec v0.18)
+    pub elements: Vec<(String, usize)>,
 }
 
 fn bad<T>(ln: usize, m: impl AsRef<str>) -> Result<T, Error> {
@@ -2001,6 +2127,8 @@ impl Pack {
         // the gate table of the innermost open group, else into `gates` (a
         // gate block holds no `group`, so every open block is in that scope)
         let mut gate_stack: Vec<usize> = Vec::new();
+        // common `element` lines (engine-spec v0.18)
+        let mut elements: Vec<(String, usize)> = Vec::new();
         let mut maps: Vec<(String, Vec<(String, String)>)> = Vec::new();
         // table name -> its place in `maps`
         let mut map_index: HashMap<String, usize> = HashMap::new();
@@ -2058,6 +2186,25 @@ impl Pack {
                     };
                     table.push(g);
                     gate_stack.push(table.len() - 1);
+                }
+                // engine-spec v0.18: an element written when empty (xml)
+                "element" => {
+                    if toks.len() != 2 {
+                        return bad(ln, "element needs <path>");
+                    }
+                    let path = &toks[1];
+                    if path.is_empty() || path.split('/').any(|s| s.is_empty()) {
+                        return bad(ln, format!("`element {}`: an empty path or an empty step", path));
+                    }
+                    // ruling 16 of 0.18: a step holding `@` or `#` anywhere
+                    if path.contains('@') || path.contains('#') {
+                        return bad(ln, format!("`element {}`: a path of element names takes no `@` or `#`", path));
+                    }
+                    let e = (path.clone(), ln);
+                    match kinds.last_mut() {
+                        Some(k) => k.elements.push(e),
+                        None => elements.push(e),
+                    }
                 }
                 "format" => format = Some(req_arg(&toks, 1, ln)?),
                 "armor" => armor_lines.record(&toks, ln, !kinds.is_empty()),
@@ -2269,6 +2416,7 @@ impl Pack {
                         defaults: Vec::new(),
                         root: None,
                         groups: Vec::new(),
+                        elements: Vec::new(),
                     });
                 }
                 "when" => {
@@ -2326,6 +2474,7 @@ impl Pack {
                         absent_arg: None,
                         absent: Vec::new(),
                         gate: gate_stack.last().copied(),
+                        with: None,
                     };
                     // options after the transform, in any order (engine-spec v0.6)
                     field_options(&mut f, &toks, ln, true)?;
@@ -2389,6 +2538,33 @@ impl Pack {
         // xml: a pack-level root, unless every kind has its own (engine-spec v0.6)
         if wire == Wire::Xml && root.is_empty() && (kinds.is_empty() || kinds.iter().any(|k| k.root.is_none())) {
             return err("missing-root: an xml pack has no `root` for the pack or for one of its kinds");
+        }
+        // engine-spec v0.18: `element` on the xml wire only, never on or through
+        // a group's path (ruling 12); a strict prefix of one is allowed
+        {
+            let every = elements.iter().chain(kinds.iter().flat_map(|k| k.elements.iter()));
+            if let Some((_, ln)) = every.clone().min_by_key(|e| e.1) {
+                if wire != Wire::Xml {
+                    return bad(*ln, "`element` is valid only on the xml wire");
+                }
+            }
+            let through = |path: &str, g: &GroupDef| path == g.locator || path.starts_with(&format!("{}/", g.locator));
+            let mut clash: Option<usize> = None;
+            for (path, ln) in &elements {
+                if groups.iter().chain(kinds.iter().flat_map(|k| k.groups.iter())).any(|g| through(path, g)) {
+                    clash = Some(clash.map_or(*ln, |c| c.min(*ln)));
+                }
+            }
+            for k in &kinds {
+                for (path, ln) in &k.elements {
+                    if groups.iter().chain(k.groups.iter()).any(|g| through(path, g)) {
+                        clash = Some(clash.map_or(*ln, |c| c.min(*ln)));
+                    }
+                }
+            }
+            if let Some(ln) = clash {
+                return bad(ln, "an `element` path equals or passes through a group's path");
+            }
         }
         if let Some(ln) = kind_root_line {
             if wire != Wire::Xml {
@@ -2565,6 +2741,7 @@ impl Pack {
             tlv: tlv_conf,
             armor,
             gates,
+            elements,
         })
     }
 
@@ -2575,9 +2752,11 @@ impl Pack {
         let mut consts: Vec<&WhenDef> = self.consts.iter().collect();
         let mut defaults: Vec<&DefaultDef> = Vec::new();
         let mut groups: Vec<&GroupDef> = self.groups.iter().collect();
+        let mut elements: Vec<&(String, usize)> = self.elements.iter().collect();
         let mut root = self.root.as_str();
         if let Some(k) = kind {
             groups.extend(k.groups.iter());
+            elements.extend(k.elements.iter());
             fields.extend(k.fields.iter());
             whens.extend(k.whens.iter());
             consts.extend(k.consts.iter());
@@ -2587,7 +2766,7 @@ impl Pack {
             }
         }
         defaults.extend(self.defaults.iter());
-        Sel { kind, fields, whens, consts, defaults, groups, root, gates: &self.gates }
+        Sel { kind, fields, whens, consts, defaults, groups, root, gates: &self.gates, elements }
     }
 
     /// Decode-side kind selection: `holds` says whether a `when` matches the
@@ -3067,6 +3246,7 @@ fn check_field_for_wire(wire: Wire, f: &FieldDef, in_group: bool) -> Result<(), 
                     | Transform::Float
                     | Transform::Int
                     | Transform::Iso8601Ms
+                    | Transform::Iso8601Short
                     | Transform::TextScale(_)
                     | Transform::TextIscale(_)
             )
@@ -3079,6 +3259,10 @@ fn check_field_for_wire(wire: Wire, f: &FieldDef, in_group: bool) -> Result<(), 
     if !valid {
         return bad(f.line, format!("the transform of `{}` is not valid on this wire", f.model_key));
     }
+    // ruling 11 of 0.18: `iso8601_short` on xml, json and geojson only
+    if *t == Transform::Iso8601Short && !matches!(wire, Wire::Xml | Wire::Json | Wire::GeoJson) {
+        return bad(f.line, format!("`iso8601_short` of `{}` is valid only on xml, json and geojson", f.model_key));
+    }
     // inside a group `.` is the item itself (json, geojson, protobuf)
     let item_itself = in_group && f.locator == ".";
     match wire {
@@ -3089,6 +3273,7 @@ fn check_field_for_wire(wire: Wire, f: &FieldDef, in_group: bool) -> Result<(), 
                     | Transform::Float
                     | Transform::Int
                     | Transform::Iso8601Ms
+                    | Transform::Iso8601Short
                     | Transform::Bool
                     | Transform::TextScale(_)
                     | Transform::TextIscale(_)
@@ -3192,6 +3377,12 @@ fn check_group_for_wire(wire: Wire, g: &GroupDef) -> Result<(), Error> {
             if g.scalar().is_some() && (g.fields.iter().any(|f| f.locator != ".") || !g.consts.is_empty() || !g.groups.is_empty())
             {
                 return bad(g.line, format!("the body of group `{}` mixes `.` with paths", g.list));
+            }
+            // ruling 4 of 0.18: `with` on the `.` field of a packed group
+            // (ruling 17: a packed group's body is `.` fields with a numeric transform only)
+            let packed = !g.fields.is_empty() && g.fields.iter().all(|f| f.locator == "." && protobuf::numeric(&f.transform));
+            if let Some(f) = g.fields.iter().find(|f| packed && f.with.is_some()) {
+                return bad(f.line, format!("`with` on the `.` field of packed group `{}`", g.list));
             }
             protobuf::parse_path(&g.locator).is_ok()
         }
@@ -3523,6 +3714,10 @@ impl Engine {
         let mut keys: Vec<(usize, &str, Option<&Transform>)> = Vec::new();
         for f in p.every_field() {
             keys.push((f.line, &f.model_key, Some(&f.transform)));
+            // `with <other-key>` is checked like a `requires` key (engine-spec v0.18)
+            if let Some((key, _)) = &f.with {
+                keys.push((f.line, key, None));
+            }
         }
         for (line, key) in p.every_requires() {
             keys.push((line, key, None));
@@ -3927,6 +4122,29 @@ impl Engine {
                     if ent.fields.contains_key(&d.target) {
                         continue;
                     }
+                    // `tokens` too (ruling 7 of 0.18): the tokens whose argument is
+                    // present and not 0; absent when there is none. A present
+                    // argument that is not an int skips the line.
+                    if let DeriveFn::Tokens(sep, toks) = &d.func {
+                        let vals: Vec<Option<&Value>> = d.args.iter().map(|a| ent.fields.get(a)).collect();
+                        if vals.iter().all(|v| v.is_none())
+                            || vals.iter().flatten().any(|v| !matches!(v, Value::I64(_)))
+                            || self.key_def(&d.target).map(|k| k.ty) != Some(KeyType::Str)
+                        {
+                            continue;
+                        }
+                        let on: Vec<&str> = toks
+                            .iter()
+                            .zip(&vals)
+                            .filter(|(_, v)| matches!(v, Some(Value::I64(n)) if *n != 0))
+                            .map(|(t, _)| t.as_str())
+                            .collect();
+                        if !on.is_empty() {
+                            ent.fields.insert(d.target.clone(), Value::Str(on.join(&sep.to_string())));
+                            set = true;
+                        }
+                        continue;
+                    }
                     // `any` is set when only some of its arguments are present
                     let args: Option<Vec<&Value>> = if d.func == DeriveFn::Any {
                         Some(d.args.iter().filter_map(|a| ent.fields.get(a)).collect::<Vec<_>>()).filter(|v| !v.is_empty())
@@ -4204,6 +4422,8 @@ pub mod xml {
         enum Line<'a> {
             Value(&'a str, String, bool),
             Group(&'a GroupDef, &'a [Entity]),
+            /// `element <path>` (engine-spec v0.18): the path, written even when empty
+            Element(&'a str),
         }
         let mut lines: Vec<(usize, Line)> = Vec::new();
         for f in &sel.fields {
@@ -4233,15 +4453,52 @@ pub mod xml {
                 _ => {}
             }
         }
+        // `element` lines: one per path (a second line adds nothing, ruling 13
+        // of 0.18), each placed at the first line of any kind that addresses
+        // the element or a path under it
+        let mut element_lines: Vec<(usize, &str)> = Vec::new();
+        for (path, ln) in &sel.elements {
+            // the element and each element on the way to it
+            let ends = path.match_indices('/').map(|(i, _)| i).chain(std::iter::once(path.len()));
+            for end in ends {
+                let prefix = &path[..end];
+                if !element_lines.iter().any(|(_, q)| *q == prefix) {
+                    element_lines.push((*ln, prefix));
+                }
+            }
+        }
+        if !element_lines.is_empty() {
+            let addressed: Vec<(usize, &str)> = sel
+                .fields
+                .iter()
+                .map(|f| (f.line, f.locator.as_str()))
+                // a `when <locator> present` line names no position (ruling 19 of 0.18)
+                .chain(sel.whens.iter().filter(|w| !w.present).chain(sel.consts.iter()).map(|w| (w.line, w.locator.as_str())))
+                .chain(sel.groups.iter().map(|g| (g.line, g.locator.as_str())))
+                .chain(sel.elements.iter().map(|(p, n)| (*n, p.as_str())))
+                .collect();
+            for (ln, path) in element_lines {
+                let under = |loc: &str| loc == path || loc.starts_with(path) && loc[path.len()..].starts_with('/');
+                let at = addressed.iter().filter(|(_, loc)| under(loc)).map(|(n, _)| *n).min().unwrap_or(ln);
+                lines.push((at, Line::Element(path)));
+            }
+        }
+        fn loc_of<'b>(l: &Line<'b>) -> &'b str {
+            match l {
+                Line::Value(loc, _, _) => loc,
+                Line::Group(g, _) => g.locator.as_str(),
+                Line::Element(path) => path,
+            }
+        }
         // a place several lines name is written at the position of the first
         // of them, whichever line's value or sentinel is written (ruling 23 of 0.9)
         let firsts = first_lines(
-            sel.fields
-                .iter()
-                .map(|f| (f.line, f.locator.as_str()))
-                .chain(lines.iter().map(|(n, l)| (*n, match l { Line::Value(loc, _, _) => *loc, Line::Group(g, _) => g.locator.as_str() }))),
+            sel.fields.iter().map(|f| (f.line, f.locator.as_str())).chain(lines.iter().map(|(n, l)| (*n, loc_of(l)))),
         );
-        lines.sort_by_key(|(n, l)| (firsts[match l { Line::Value(loc, _, _) => *loc, Line::Group(g, _) => g.locator.as_str() }], *n));
+        lines.sort_by_key(|(n, l)| match l {
+            Line::Element(_) => (*n, *n),
+            _ => (firsts[loc_of(l)], *n),
+        });
         for (_, line) in &lines {
             match line {
                 Line::Value(locator, raw, is_when) => {
@@ -4249,6 +4506,12 @@ pub mod xml {
                         msg: format!("transform-encode: format `{}`: `{}`: {}", p.format, locator, e.msg),
                     })?;
                     place(node, locator, raw, *is_when)?
+                }
+                Line::Element(path) => {
+                    let mut at = &mut *node;
+                    for step in path.split('/') {
+                        at = child_mut(at, step);
+                    }
                 }
                 Line::Group(g, items) => {
                     let (path, name) = match g.locator.rsplit_once('/') {
@@ -5553,7 +5816,7 @@ pub mod jsonwire {
             (Transform::Int, Json::Int(n)) => Ok(Value::I64(*n)),
             // an integer within i64 was read as `Int`; negative zero is 0 (ruling 2d of 0.11)
             (Transform::Int, Json::Num(x)) if *x == 0.0 => Ok(Value::I64(0)),
-            (Transform::Iso8601Ms, Json::Str(s)) => iso8601_to_ms(s).map(Value::I64),
+            (Transform::Iso8601Ms | Transform::Iso8601Short, Json::Str(s)) => iso8601_to_ms(s).map(Value::I64),
             (Transform::Bool, Json::Bool(b)) => Ok(Value::I64(*b as i64)),
             _ => err(format!("JSON value `{}` has the wrong type for the transform", json::serialize(j))),
         }
@@ -5565,6 +5828,7 @@ pub mod jsonwire {
             (Transform::Float, Value::F64(x)) if x.is_finite() => Ok(Json::Num(*x)),
             (Transform::Int, Value::I64(n)) => Ok(Json::Int(*n)),
             (Transform::Iso8601Ms, Value::I64(ms)) => Ok(Json::Str(ms_to_iso8601_checked(*ms)?)),
+            (Transform::Iso8601Short, Value::I64(ms)) => Ok(Json::Str(ms_to_iso8601_short(*ms)?)),
             (Transform::Bool, Value::I64(1)) => Ok(Json::Bool(true)),
             (Transform::Bool, Value::I64(0)) => Ok(Json::Bool(false)),
             (Transform::Bool, other) => err(format!("bool encodes 1 or 0, got {}", other.as_display())),
@@ -5772,7 +6036,8 @@ pub mod jsonwire {
                     // a scalar (`.`) item with no value is `null` (ruling 11 of 0.7),
                     // or the sentinel of its field (ruling 5 of 0.9)
                     if members.is_empty() && g.scalar().is_some() {
-                        match body.fields.iter().filter(|f| f.locator == ".").find_map(|f| f.sentinel()) {
+                        // a `.` line suppressed by `with` writes no sentinel (ruling 4 of 0.18)
+                        match body.fields.iter().filter(|f| f.locator == "." && live(item, f)).find_map(|f| f.sentinel()) {
                             Some(s) => sentinel_json(s),
                             None => Json::Null,
                         }
@@ -6193,6 +6458,7 @@ pub mod bits {
             groups: sel.groups.clone(),
             root: sel.root,
             gates: sel.gates,
+            elements: sel.elements.clone(),
         }
     }
 
@@ -6212,7 +6478,7 @@ pub mod bits {
         // block, maps a key the entity holds
         let mut open = vec![false; gates.len()];
         for f in &sel.fields {
-            if f.gate.is_some() && ent.fields.contains_key(&f.model_key) {
+            if f.gate.is_some() && has_key(ent, f) {
                 let mut at = f.gate;
                 while let Some(i) = at {
                     open[i] = true;
@@ -6251,7 +6517,7 @@ pub mod bits {
         // value replaces them) but are not written. Sentinels first, then
         // later lines first: the earlier line's value stays.
         let outside = || sel.fields.iter().rev().filter(|f| f.gate.is_none());
-        for f in outside().filter(|f| sel.value_of(ent, f).is_none()) {
+        for f in outside().filter(|f| live(ent, f) && sel.value_of(ent, f).is_none()) {
             let (off, len) = span(p, &f.locator)?;
             write_sentinel(p, f, off, len, &mut work);
         }
@@ -6262,7 +6528,7 @@ pub mod bits {
                 if let Ok(w) = p.to_wire(f, v) {
                     let _ = write_field(p, f, &w, off, len, &mut work);
                 }
-                if ent.fields.contains_key(&f.model_key) {
+                if has_key(ent, f) {
                     mark(&mut written, off, len);
                 }
             }
@@ -6501,7 +6767,7 @@ pub mod bits {
         // an absent key whose field has `absent` writes its first sentinel,
         // first: a line with a value wins over it whatever their order (ruling
         // 16 of 0.9); of two sentinels the earlier line's stays
-        for f in sel.fields.iter().rev().filter(|f| sel.value_of(ent, f).is_none()) {
+        for f in sel.fields.iter().rev().filter(|f| live(ent, f) && sel.value_of(ent, f).is_none()) {
             let (off, len) = span(p, &f.locator)?;
             write_sentinel(p, f, base + off, len, msg);
         }
@@ -6520,7 +6786,7 @@ pub mod bits {
         // sentinel, under those of a line with a present key (step 5 of 0.17)
         if plan.values.iter().any(|v| v.is_some()) {
             let mut present: Vec<(u64, u64)> = Vec::new();
-            for f in sel.fields.iter().filter(|f| ent.fields.contains_key(&f.model_key)) {
+            for f in sel.fields.iter().filter(|f| has_key(ent, f)) {
                 let (off, len) = span(p, &f.locator)?;
                 present.push((off, off + len as u64));
             }
@@ -6595,8 +6861,9 @@ pub mod bits {
         // force, and the output decodes to the same choice of blocks
         if !all.gates.is_empty() {
             let fail = |m: String| Error { msg: format!("transform-encode: format `{}`: {}", p.format, m) };
-            for f in all.fields.iter().filter(|f| f.gate.is_some() && ent.fields.contains_key(&f.model_key)) {
-                if !sel.fields.iter().any(|h| h.model_key == f.model_key) {
+            // a line suppressed by `with` does not count as mapped (ruling 1 of 0.18)
+            for f in all.fields.iter().filter(|f| f.gate.is_some() && has_key(ent, f)) {
+                if !sel.fields.iter().any(|h| h.model_key == f.model_key && live(ent, h)) {
                     return Err(fail(format!(
                         "`{}` is mapped only by lines of gate blocks that do not hold",
                         f.model_key
@@ -6924,7 +7191,7 @@ pub mod protobuf {
         }
     }
 
-    fn numeric(t: &Transform) -> bool {
+    pub(crate) fn numeric(t: &Transform) -> bool {
         matches!(t, Transform::Pvarint | Transform::Psint | Transform::Pdouble | Transform::Pfloat)
     }
 
@@ -7129,7 +7396,8 @@ pub mod protobuf {
                 // a `.` line: the occurrence is the scalar itself
                 let scalar = body.fields.iter().filter(|f| f.locator == ".").find_map(|f| body.value_of(item, f).map(|v| (f, v)));
                 // an item that lacks the value: the sentinel of a `.` line (ruling 5 of 0.9)
-                let sentinel = body.fields.iter().filter(|f| f.locator == ".").find_map(|f| f.sentinel().map(|s| (*f, s)));
+                // (not of one suppressed by `with`: ruling 4 of 0.18)
+                let sentinel = body.fields.iter().filter(|f| f.locator == "." && live(item, f)).find_map(|f| f.sentinel().map(|s| (*f, s)));
                 match (scalar, sentinel) {
                     (Some((f, v)), _) => {
                         let wv = p
@@ -7222,7 +7490,9 @@ fn tokenize(line: &str) -> Result<Vec<String>, Error> {
         } else if c == '"' {
             in_q = true;
             started = true;
-        } else if c.is_whitespace() {
+        // whitespace between tokens: space, tab, line feed and carriage
+        // return; any other character, U+00A0 included, is part of a token
+        } else if pack_space(c) {
             if started {
                 toks.push(std::mem::take(&mut cur));
                 started = false;
@@ -7300,6 +7570,9 @@ const PACK_DIRECTIVES: &[(&str, usize, usize)] = &[
     // line check; the rest of the line is checked after the file is read, and
     // it may stand before the `wire` line
     ("armor", 1, 1),
+    // engine-spec v0.18: `element <path>`; its wire and its path are checked
+    // after the file is read
+    ("element", 1, 1),
 ];
 
 /// The lines that stand after the `wire` line (ruling 5b of 0.11).
@@ -7401,6 +7674,7 @@ fn pack_line_checks(text: &str) -> Result<(), Error> {
                     absent_arg: None,
                     absent: Vec::new(),
                     gate: None,
+                    with: None,
                 };
                 field_options(&mut f, &toks, ln, true)?;
                 if let Some(w) = wire {
@@ -7628,6 +7902,27 @@ pub fn ms_to_iso8601_checked(ms: i64) -> Result<String, Error> {
         return err(format!("{} ms is outside years 0001 to 9999", ms));
     }
     Ok(ms_to_iso8601(ms))
+}
+
+/// `iso8601_short` (engine-spec v0.18): `YYYY-MM-DDTHH:MM:SSZ` when the
+/// milliseconds are 0, else the milliseconds with trailing zeros removed. An
+/// instant outside the years 0000 to 9999 is an error (ruling 11).
+pub fn ms_to_iso8601_short(ms: i64) -> Result<String, Error> {
+    let secs = ms.div_euclid(1000);
+    let frac = ms.rem_euclid(1000);
+    let (y, m, d) = civil_from_days(secs.div_euclid(86400));
+    if !(0..=9999).contains(&y) {
+        return err(format!("{} ms is outside the years 0000 to 9999", ms));
+    }
+    let rem = secs.rem_euclid(86400);
+    let mut out = format!("{:04}-{:02}-{:02}T{:02}:{:02}:{:02}", y, m, d, rem / 3600, (rem % 3600) / 60, rem % 60);
+    if frac != 0 {
+        let digits = format!("{:03}", frac);
+        out.push('.');
+        out.push_str(digits.trim_end_matches('0'));
+    }
+    out.push('Z');
+    Ok(out)
 }
 
 pub fn ms_to_iso8601(ms: i64) -> String {

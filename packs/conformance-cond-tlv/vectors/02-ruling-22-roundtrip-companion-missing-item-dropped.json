@@ -1,0 +1,16 @@
+{
+  "name": "ruling-22-roundtrip-companion-missing-item-dropped",
+  "from": "conformance-cond-tlv",
+  "to": "conformance-cond-tlv",
+  "input": "02010203020003040161",
+  "expect": "03020003040161",
+  "model": {
+    "probe.y": "2",
+    "probe.z": "3",
+    "@absent": [
+      "probe.x"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.18 ruling 22 (`with` on text and tlv); ruling 6: decoded, then dropped on re-encode"
+}

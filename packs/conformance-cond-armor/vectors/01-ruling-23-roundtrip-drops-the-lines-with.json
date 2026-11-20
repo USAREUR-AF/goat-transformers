@@ -1,0 +1,14 @@
+{
+  "name": "ruling-23-roundtrip-drops-the-lines-with",
+  "from": "conformance-cond-armor",
+  "to": "conformance-cond-armor",
+  "input": "132",
+  "expect": "10",
+  "model": {
+    "probe.x": "1",
+    "probe.w": "3",
+    "probe.z": "2"
+  },
+  "source": "constructed",
+  "reference": "spec 0.18 ruling 23 (`with` under six-bit armor); ruling 6: decode is unchanged; on re-encode w writes zero bits and counts, z does not count"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "encode-ruling-11-last-instant-of-9999",
+  "from": "conformance-cond-time",
+  "to": "conformance-cond-time",
+  "input": "{\"ms\":253402300799999}",
+  "expect": "{\"ms\":253402300799999,\"t\":\"9999-12-31T23:59:59.999Z\"}",
+  "model": {
+    "time_ms": "253402300799999"
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, A time without a zero fraction; encode; ruling 11: ms - 1000 x floor(ms / 1000)"
+}

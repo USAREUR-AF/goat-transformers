@@ -1,0 +1,9 @@
+{
+  "name": "json-with-key-not-held-writes-nothing",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-json",
+  "input": "{\"y\":2}",
+  "expect": "{\"n\":3}",
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; x is not held: the line of y is treated as a line whose key is absent"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "roundtrip-no-fraction",
+  "from": "conformance-cond-time-xml",
+  "to": "conformance-cond-time-xml",
+  "input": "<msg t=\"1969-12-31T23:59:59Z\"/>",
+  "expect": "<msg t=\"1969-12-31T23:59:59Z\"/>",
+  "model": {
+    "time_ms": "-1000"
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, A time without a zero fraction; on xml"
+}

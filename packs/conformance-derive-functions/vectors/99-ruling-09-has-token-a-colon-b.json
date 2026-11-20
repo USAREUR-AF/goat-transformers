@@ -1,0 +1,15 @@
+{
+  "name": "ruling-09-has-token-a-colon-b",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"wtxt\": \"a:b\"}",
+  "context": {},
+  "expect": "{\"wtxt\":\"a:b\",\"wsp\":0,\"wcol\":1}",
+  "model": {
+    "@complete": true,
+    "probe.wsp": "0",
+    "probe.wcol": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, Derive functions; ruling 9: space and colon name U+0020 and :"
+}

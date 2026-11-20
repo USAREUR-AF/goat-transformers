@@ -191,7 +191,7 @@ residue({Fields, _Base}, Lines) ->
 %% present` addresses nothing; a group addresses its index and beyond.
 addressed(Lines) ->
     lists:foldl(
-      fun({field, _, Loc, _, _, {_, _, _, Opt, _}}, {M, G}) -> {mark(Loc, Opt, M), G};
+      fun({field, _, Loc, _, _, {_, _, _, Opt, _, _}}, {M, G}) -> {mark(Loc, Opt, M), G};
          ({wh, _, present, _}, Acc) -> Acc;
          ({wh, Loc, _, _}, {M, G}) -> {mark(Loc, false, M), G};
          ({const, Loc, _, _}, {M, G}) -> {mark(Loc, false, M), G};
@@ -433,17 +433,19 @@ drop_optional(Fields, _I, _Addressed) -> lists:reverse(Fields).
 %% The writes of the lines of one scope from field Base -> {Writes, GroupEnd}:
 %% Writes #{Index => [Write]} latest first; GroupEnd the last field a
 %% group's items write (-1 when none).
-plan(Pack, Lines, {Value, Lists}, Base, Writes0, End0) ->
+plan(Pack, Lines, {_, Lists, _} = Src, Base, Writes0, End0) ->
+    %% a line suppressed by `with` is a line whose key is absent (0.18)
+    Value = fun(K, Opts) -> gt_engine:line_value(Src, K, Opts) end,
     %% a field written whole by a line whose key has a value: its columns
     %% are not written (ruling 3)
     Whole = lists:foldl(
-              fun({field, K, {fld, I}, _, _, _}, S) ->
-                      case Value(K) of
+              fun({field, K, {fld, I}, _, _, Opts}, S) ->
+                      case Value(K, Opts) of
                           error -> S;
                           _ -> S#{I => true}
                       end;
-                 ({field, K, {pair, I, J}, _, _, _}, S) ->
-                      case Value(K) of
+                 ({field, K, {pair, I, J}, _, _, Opts}, S) ->
+                      case Value(K, Opts) of
                           error -> S;
                           _ -> S#{I => true, J => true}
                       end;
@@ -457,7 +459,7 @@ plan(Pack, Lines, {Value, Lists}, Base, Writes0, End0) ->
                          {col, I, _, _} -> maps:is_key(I, Whole);
                          _ -> false
                      end,
-              case {Skip, Value(Key)} of
+              case {Skip, Value(Key, Opts)} of
                   {true, _} -> {W, E};
                   {_, error} -> {W, E};
                   {false, {ok, Val}} ->

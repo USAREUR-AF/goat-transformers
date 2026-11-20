@@ -1,0 +1,9 @@
+{
+  "name": "json-ruling-03-own-key-not-held-default-not-written",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-json",
+  "input": "{}",
+  "expect": "{\"n\":3}",
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; ruling 3: `with` on its own key; when the entity does not hold it the line writes nothing, its default included"
+}

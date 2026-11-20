@@ -1,0 +1,12 @@
+# Conformance probe pack for the transform `iso8601_short` (spec 0.18) on
+# the `json` wire. Public. No kinds. One key, time_ms, at two members: `ms`
+# as the integer, so an instant is given exactly, and `t` through
+# `iso8601_short`. Decode takes the earliest line whose member is present
+# (Version 0.6, One key at several locators); encode writes both.
+format  conformance-cond-time
+version 0.18.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+wire    json
+field   time_ms  ms  int
+field   time_ms  t   iso8601_short

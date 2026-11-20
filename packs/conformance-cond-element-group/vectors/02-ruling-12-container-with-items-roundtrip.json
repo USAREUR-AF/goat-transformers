@@ -1,0 +1,13 @@
+{
+  "name": "ruling-12-container-with-items-roundtrip",
+  "from": "conformance-cond-element-group",
+  "to": "conformance-cond-element-group",
+  "input": "<msg><body><item name=\"a\"/><item name=\"b\"/></body><tail cs=\"C\"/></msg>",
+  "expect": "<msg><body><item name=\"a\"/><item name=\"b\"/></body><tail cs=\"C\"/></msg>",
+  "model": {
+    "probe.items.#": "2",
+    "probe.items[1].probe.label": "b"
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, xml: an element written when empty; ruling 12"
+}

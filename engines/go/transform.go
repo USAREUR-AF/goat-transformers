@@ -25,11 +25,13 @@ var transforms = map[string]*transform{
 	"float":      {name: "float", number: true, decode: decFloat, encode: encFloat},
 	"int":        {name: "int", number: true, decode: decInt, encode: encInt},
 	"iso8601_ms": {name: "iso8601_ms", decode: decISO, encode: encISO},
+	// spec 0.18, "A time without a zero fraction".
+	"iso8601_short": {name: "iso8601_short", decode: decISO, encode: encISOShort},
 }
 
 // TransformNames lists the transforms this engine implements.
 func TransformNames() []string {
-	return []string{"float", "int", "iso8601_ms", "string"}
+	return []string{"float", "int", "iso8601_ms", "iso8601_short", "string"}
 }
 
 func decString(s string) (Value, error) { return Value{Kind: KindString, S: s}, nil }
@@ -302,6 +304,48 @@ func encISO(v Value) (string, error) {
 		return "", fmt.Errorf("no value")
 	}
 	return formatISO(ms)
+}
+
+// The instants iso8601_short writes: 0000-01-01T00:00:00Z to
+// 9999-12-31T23:59:59.999Z (0.18 ruling 11).
+const (
+	isoShortMin = -62167219200000
+	isoShortMax = 253402300799999
+)
+
+// encISOShort writes epoch milliseconds as YYYY-MM-DDTHH:MM:SS, then the
+// milliseconds with trailing zeros removed when they are not 0, then Z
+// (0.18). The milliseconds are ms - 1000*floor(ms/1000) (ruling 11).
+func encISOShort(v Value) (string, error) {
+	var ms int64
+	switch v.Kind {
+	case KindInt:
+		ms = v.I
+	case KindFloat:
+		i, err := floatToInt(v.F)
+		if err != nil {
+			return "", err
+		}
+		ms = i
+	default:
+		return "", fmt.Errorf("no value")
+	}
+	if ms < isoShortMin || ms > isoShortMax {
+		return "", fmt.Errorf("instant %d ms is outside 0000-01-01 to 9999-12-31", ms)
+	}
+	// The calendar of formatISO (proleptic Gregorian, year 0 included).
+	days := ms / 86400000
+	rem := ms % 86400000
+	if rem < 0 {
+		rem += 86400000
+		days--
+	}
+	y, m, d := civilFromDays(days)
+	s := fmt.Sprintf("%04d-%02d-%02dT%02d:%02d:%02d", y, m, d, rem/3600000, rem/60000%60, rem/1000%60)
+	if frac := rem % 1000; frac != 0 {
+		s += "." + strings.TrimRight(fmt.Sprintf("%03d", frac), "0")
+	}
+	return s + "Z", nil
 }
 
 // --- bits wire transforms (spec/engine-spec.md, "Version 0.2: the bits wire") ---
@@ -651,6 +695,10 @@ func resolveFieldTransform(wire string, f *Field) (ErrorKind, error) {
 			return ErrBadDirective, err
 		}
 		return "", nil
+	}
+	if name == "iso8601_short" && (wire == WireBits || wire == WireProtobuf) {
+		// 0.18 ruling 11.
+		return ErrBadDirective, fmt.Errorf("iso8601_short is valid only on xml, json and geojson")
 	}
 	switch wire {
 	case WireBits:

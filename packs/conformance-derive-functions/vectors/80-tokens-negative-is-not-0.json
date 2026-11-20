@@ -1,0 +1,16 @@
+{
+  "name": "tokens-negative-is-not-0",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"fla\":-1}",
+  "context": {},
+  "expect": "{\"fla\":-1,\"flb\":0,\"flc\":0,\"flags\":\"alpha\"}",
+  "model": {
+    "@complete": true,
+    "probe.flags": "alpha",
+    "probe.fl_b": "0",
+    "probe.fl_c": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, Derive functions; tokens: not 0"
+}

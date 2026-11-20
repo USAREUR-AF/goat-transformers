@@ -321,6 +321,7 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 		}
 		p.Fields = append(p.Fields, f)
 		p.keyRefs = append(p.keyRefs, keyRef{key: f.Key, locator: f.Locator, line: n, field: f})
+		p.addWithRef(f)
 		add(&seqNode{op: seqField, f: f})
 		top.last = f
 	case "also":
@@ -1129,7 +1130,9 @@ func fieldPresent(f *Field, sc seqScope) bool {
 		}
 		return sc.defs[key] != nil
 	}
-	if has(f.Key) {
+	// A line suppressed by `with` is not content, its default included; its
+	// `also` keys still are (0.18 rulings 1 and 5).
+	if !f.suppressed(sc.rec) && has(f.Key) {
 		return true
 	}
 	for _, a := range f.also {
@@ -1224,7 +1227,13 @@ func (w *seqWriter) presenceBits(pr *seqPresenceDef, rest []*seqNode, sc seqScop
 // else the default of the earliest key that has one (0.8 ruling 13); the
 // `type` key mapped back to the native code; then the line's value table.
 func seqFieldValue(p *Pack, f *Field, sc seqScope) (Value, *Field, bool, error) {
-	cands := append([]*Field{f}, f.also...)
+	// A line suppressed by `with` is no candidate; its `also` keys stay
+	// candidates (0.18 ruling 5).
+	var cands []*Field
+	if !f.suppressed(sc.rec) {
+		cands = append(cands, f)
+	}
+	cands = append(cands, f.also...)
 	var from *Field
 	var v Value
 	for _, c := range cands {
@@ -1274,7 +1283,8 @@ func (w *seqWriter) emit(nodes []*seqNode, sc seqScope, chain bool) error {
 			at := w.alloc(f.loc.blen)
 			if !ok {
 				// An absent key writes the sentinel in place of zero bits.
-				if f.absent != nil {
+				// A line suppressed by `with` has no sentinel (0.18).
+				if f.absent != nil && !f.suppressed(sc.rec) {
 					w.put(at, f.loc.blen, f.sentinelBits())
 				}
 				continue

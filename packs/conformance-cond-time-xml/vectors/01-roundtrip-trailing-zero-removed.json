@@ -1,0 +1,12 @@
+{
+  "name": "roundtrip-trailing-zero-removed",
+  "from": "conformance-cond-time-xml",
+  "to": "conformance-cond-time-xml",
+  "input": "<msg t=\"2025-10-29T12:00:00.120Z\"/>",
+  "expect": "<msg t=\"2025-10-29T12:00:00.12Z\"/>",
+  "model": {
+    "time_ms": "1761739200120"
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, A time without a zero fraction; on xml"
+}

@@ -498,7 +498,9 @@ struct Writer {
         address(base + l.i, f.optional);
         if (l.kind == Loc::Kind::Pair) address(base + l.j, f.optional);
         Value v;
-        if (!src.value(f, v)) return;
+        // A line suppressed by `with` is a line whose key is absent, with no
+        // default (0.18 ruling 1).
+        if (src.suppressed(f) || !src.value(f, v)) return;
         std::string a, b;
         try {
             text_encode(f, v, a, b);

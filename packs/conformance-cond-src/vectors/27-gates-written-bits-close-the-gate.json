@@ -1,0 +1,9 @@
+{
+  "name": "gates-written-bits-close-the-gate",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-gates",
+  "input": "{\"w\":254,\"x\":5,\"y\":1}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; with Version 0.17 Encode; w written in step 2: bit 0 is 0; x is mapped only in a block that is not held (step 6)"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "json-ruling-02-list-of-one-empty-item-holds",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-json",
+  "input": "{\"w\":5,\"items\":[{}]}",
+  "expect": "{\"w\":5,\"n\":3,\"items\":[{}]}",
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; ruling 2: present with one item (an item with no keys)"
+}

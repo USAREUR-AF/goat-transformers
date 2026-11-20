@@ -182,3 +182,40 @@ derive  probe.g_rhae     hae_of_ecef  probe.g_x  probe.g_y  probe.g_z
 derive  probe.e_lat      lat_of_ecef  probe.e_x  probe.e_y  probe.e_z
 derive  probe.e_lon      lon_of_ecef  probe.e_x  probe.e_y  probe.e_z
 derive  probe.e_hae      hae_of_ecef  probe.e_x  probe.e_y  probe.e_z
+# Keys and `derive` lines of the derive functions added in engine-spec 0.18:
+# `tokens`, `has_token` and `text_if`. Every argument here is a key no other
+# probe pack maps, so these lines set nothing in the vectors of earlier
+# versions. The first four lines go both ways: flags from fl_a, fl_b and
+# fl_c, and each flag from flags (ruling 8: an absent flag becomes 0).
+key  fl_a     int     -  "a flag: token alpha of flags"
+key  fl_b     int     -  "a flag: token beta of flags"
+key  fl_c     int     -  "a flag: token gamma of flags"
+key  flags    string  -  "derived: tokens alpha, beta, gamma of fl_a, fl_b, fl_c, joined by a comma"
+key  fl_p     int     -  "a flag: token p of ptok"
+key  fl_src   int     -  "an input integer: fl_late is not of it"
+key  fl_late  int     -  "derived: not fl_src, by a line after the one that reads it (ruling 7)"
+key  ptok     string  -  "derived: tokens p, q of fl_p and fl_late, joined by /"
+key  sp1      int     -  "a flag: token x of spt and a of ut"
+key  sp2      int     -  "a flag: token y of spt and b of ut"
+key  spt      string  -  "derived: tokens x, y of sp1, sp2, joined by the separator named space"
+key  ut       string  -  "derived: tokens a, b of sp1, sp2, joined by U+00E9 (one code point)"
+key  w1       string  -  "an input text"
+key  w2       string  -  "an input text"
+key  wj       string  -  "derived: join:space of w1 and w2, joined by the text space (ruling 9)"
+key  wtxt     string  -  "an input text of tokens"
+key  wsp      int     -  "derived: 1 when b is a part of wtxt split at U+0020"
+key  wcol     int     -  "derived: 1 when b is a part of wtxt split at a colon"
+key  tif_in   int     -  "an input integer"
+key  tif      string  -  "derived: the text a:b when tif_in is not 0"
+derive  probe.flags    tokens:comma:alpha,beta,gamma  probe.fl_a  probe.fl_b  probe.fl_c
+derive  probe.fl_a     has_token:comma:alpha  probe.flags
+derive  probe.fl_b     has_token:comma:beta   probe.flags
+derive  probe.fl_c     has_token:comma:gamma  probe.flags
+derive  probe.ptok     tokens:/:p,q           probe.fl_p  probe.fl_late
+derive  probe.fl_late  not                    probe.fl_src
+derive  probe.spt      tokens:space:x,y       probe.sp1  probe.sp2
+derive  probe.ut       tokens:é:a,b           probe.sp1  probe.sp2
+derive  probe.wj       join:space             probe.w1  probe.w2
+derive  probe.wsp      has_token:space:b      probe.wtxt
+derive  probe.wcol     has_token:colon:b      probe.wtxt
+derive  probe.tif      text_if:a:b            probe.tif_in

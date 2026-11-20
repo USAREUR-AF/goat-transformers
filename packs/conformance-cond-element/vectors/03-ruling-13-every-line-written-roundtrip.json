@@ -1,0 +1,14 @@
+{
+  "name": "ruling-13-every-line-written-roundtrip",
+  "from": "conformance-cond-element",
+  "to": "conformance-cond-element",
+  "input": "<msg id=\"u\"><d cs=\"L\"/><a x=\"1\"/><e><f y=\"2\"/></e><b z=\"3\"/><g><h/></g></msg>",
+  "expect": "<msg id=\"u\"><d cs=\"L\"/><a x=\"1\"/><e><f y=\"2\"/></e><b z=\"3\"/><g><h/></g></msg>",
+  "model": {
+    "probe.label": "L",
+    "probe.y": "2",
+    "probe.z": "3"
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, xml: an element written when empty; ruling 13: e at its element line, before b; e holds f"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "element-group-ruling-12-empty-list",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-element-group",
+  "input": "{\"items\":[],\"cs\":\"C\"}",
+  "expect": "<msg><body/><tail cs=\"C\"/></msg>",
+  "source": "constructed",
+  "reference": "spec 0.18, xml: an element written when empty; ruling 12 and ruling 20 of 0.7: an empty list writes no item, the element is written"
+}

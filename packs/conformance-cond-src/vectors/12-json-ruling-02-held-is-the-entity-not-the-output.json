@@ -1,0 +1,9 @@
+{
+  "name": "json-ruling-02-held-is-the-entity-not-the-output",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-json",
+  "input": "{\"y\":1,\"s2\":\"a\",\"cs\":\"b\"}",
+  "expect": "{\"n\":3,\"s\":\"a\"}",
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; y is not written (x is not held) but the entity holds y, so s2 is written"
+}

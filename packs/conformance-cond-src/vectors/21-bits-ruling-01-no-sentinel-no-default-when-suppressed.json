@@ -1,0 +1,9 @@
+{
+  "name": "bits-ruling-01-no-sentinel-no-default-when-suppressed",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-bits",
+  "input": "{\"x\":1,\"z\":2}",
+  "expect": "020000",
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; suppressed: neither a default nor a sentinel"
+}

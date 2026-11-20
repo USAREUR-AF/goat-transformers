@@ -3315,3 +3315,158 @@ never hold (`if !0:0:1 0,1`) loads.
     `L` rounded up to a multiple of 6 bits, padded with zeros. Without armor
     the encoded length is unchanged: every line of a held block counts, an
     `optional` one included (`conformance-gates-edge` vector 05).
+
+---
+
+# Version 0.18: conditional output and flag tokens
+
+Status: Written. Encoders often write a value only when another exists (a
+confidence only beside a classification), build one text from several flags
+(a status list of tokens), write a time without a zero fraction, or write an
+element that has no content (an always-present empty `detail`). Version 0.18
+adds a field option, three derive functions, a transform and an `xml`
+directive for these.
+
+## Written only with another key
+
+```
+field  <model-key> <locator> <transform> [options] with <other-key>
+```
+
+`with` is a field option (Version 0.6, Field options) on every wire. On
+encode, the line writes only when the entity (inside a group, the item) holds
+`<other-key>`; otherwise the line is treated as a line whose key is absent and
+that has neither a `default` nor a sentinel: nothing on text wires and
+`protobuf`, zero bits on `bits`. Decode is unchanged. `<other-key>` must be
+declared (`undeclared-key`) and is checked like a `requires` key
+(`module-not-used`). `with` given twice on one line is `bad-directive`.
+
+## Derive functions
+
+| Function | Arguments | Result |
+|---|---|---|
+| `tokens:<sep>:<t1>,<t2>,…` | a1 a2 … (`int`), one per token | `string`: the tokens whose argument is present and not 0, in order, joined by `<sep>`; absent when no argument is present and not 0 |
+| `has_token:<sep>:<t>` | a (`string`) | `int`: 1 when `<t>` is one of the parts of `a` split at `<sep>` (empty parts ignored), else 0 |
+| `text_if:<text>` | a (`int`) | `string`: `<text>` when a is not 0; absent when a is 0 or absent |
+
+Whitespace here is space, tab, line feed and carriage return. `<sep>` is one
+character other than `:`, `,` or whitespace, or one of the
+names `space` (U+0020), `comma` and `colon`. A token is one or more characters
+other than `:`, `,`, whitespace and the separator character. `<text>` is one
+or more characters other than whitespace, and may contain `:`. The number of
+arguments of `tokens` must equal the number of tokens; a duplicate token, an
+empty token, a wrong argument count or type is `bad-directive`.
+
+## A time without a zero fraction
+
+| Name | Wires | Decode | Encode |
+|---|---|---|---|
+| `iso8601_short` | `xml`, `json`, `geojson` | that of `iso8601_ms`: fraction digits beyond the third are truncated; the designator is as Version 0.6 states | `YYYY-MM-DDTHH:MM:SSZ` when the milliseconds are 0; otherwise `YYYY-MM-DDTHH:MM:SS.` and the three digits of the milliseconds with trailing zeros removed (`.5`, `.12`, `.123`), then `Z` |
+
+It yields `int` (epoch milliseconds), as `iso8601_ms` does.
+
+## `xml`: an element written when empty
+
+```
+element  <path>
+```
+
+A line of an `xml` pack, common or in a kind. `<path>` is a path of element
+names under the root (`detail`, `a/b`). On encode the element at `<path>`, and
+each element on the way to it, is written even when nothing inside it is
+written: `<detail/>`. Its position is that of the line, as for a field (ruling
+10 of 0.5). Decode ignores the line. `element` on another wire, or a path with
+`@` or `#text`, is `bad-directive`.
+
+## Rulings for 0.18
+
+1. **A line suppressed by `with` is absent everywhere.** It is not content
+   for a presence, `opt`, `fx` or chain bit (Version 0.8), and neither is its
+   default; it does not open a gate block, its bits are not written, and its
+   key does not count as mapped for step 6 (Version 0.17); it is not a
+   candidate for ruling 16 of 0.5 or ruling 16 of 0.9, so a later line on the
+   same locator whose key is present is written. It still names its locator
+   for ruling 23 of 0.9: the member is written at the position of the first
+   line naming the locator, suppressed or not.
+2. **Holding.** `<other-key>` is checked on the entity (or the item) only,
+   never on a `default`: a scalar holds when it is present, whatever its
+   value (0 and the empty text included); a list holds when it is present
+   with at least one item. Inside a group only the item is checked; the key
+   must be declared, not necessarily mapped by the group.
+3. **`with` on its own key** (`field a … with a`) has no effect when the
+   entity holds `a`; when it does not, the line writes nothing, its default
+   included.
+4. **Scalar items.** A `.` field suppressed by `with` writes its item as an
+   item without the value (ruling 11 of 0.7: `null` on `json`, an empty
+   element on `xml`). `with` on a `.` field of a packed `protobuf` group is
+   `bad-directive`.
+5. **Other lines.** `with` on a `const`, `group` or `also` line is
+   `bad-directive`. When a sequential `field` line is suppressed, its `also`
+   keys stay candidates for the bits (ruling 13 of 0.8). An undeclared `<other-key>` is checked as a `requires`
+   key is, in the same order of errors.
+6. **Round trips.** Decode is unchanged, so a wire value whose companion key
+   is missing decodes and is dropped on re-encode: a same-format round trip
+   is byte-exact only when every `with` key is held.
+7. **`tokens` and partial arguments.** With `any` (Version 0.8), `tokens` is
+   a function whose target is set when only some of its arguments are
+   present; its target is set in the first derive pass in which one of them
+   is present and not 0, and stays absent until then. The 0.8 sentence that
+   names `any` alone is amended.
+8. **Lossy flags.** `has_token` gives 0 or 1, so a round trip through
+   `tokens` and `has_token` turns an absent flag into a present 0, and a
+   token not listed is dropped.
+9. **Separators.** The names `space`, `comma` and `colon` are lowercase and
+   exact, and apply to `tokens` and `has_token` only; `join:space` still
+   joins with the text `space`. A character is one Unicode code point.
+10. **`has_token` compares exactly**: case-sensitive, no trimming. `a, b`
+    split at `comma` has the parts `a` and ` b`.
+11. **Negative and far instants.** `iso8601_short` takes the milliseconds as
+    `ms − 1000 × floor(ms / 1000)`: −1 is `1969-12-31T23:59:59.999Z`. An
+    instant before 0000-01-01 or after 9999-12-31 is `transform-encode`.
+    `iso8601_short` on `bits` or `protobuf` is `bad-directive`.
+12. **`element` and groups.** `element` inside a group, or whose path
+    equals or passes through a group's path, is `bad-directive` (rulings 18
+    and 21 of 0.7). A path that is a strict prefix of a group's path is
+    allowed and writes the container even when the list is absent.
+13. **`element` position and duplicates.** An element is placed at the
+    first line, of any kind, that addresses it or a path under it (ruling 10
+    of 0.5). A second `element` line for the same path loads and adds
+    nothing. An empty path, an empty step (`a//b`), or a leading or
+    trailing `/` is `bad-directive`.
+14. **Context and derivations** fill keys before encode (Version 0.6, Order
+    inside `convert`), so `with` sees context and derived keys.
+15. **Whitespace between tokens.** On every line of a pack or a model
+    module, the whitespace that separates tokens (Version 0.1, "a keyword
+    then whitespace-separated arguments") is space, tab, line feed and
+    carriage return only; any other character, U+00A0 included, is part of
+    a token.
+16. **`element` path steps** are element names: a step that contains `@` or
+    `#` anywhere (`a#b`, `x@y`) is `bad-directive`.
+17. **A packed `protobuf` group** (ruling 4) is a group whose body is `.`
+    fields with `pvarint`, `psint`, `pdouble` or `pfloat` only; `default`
+    lines in the body do not change that.
+18. **Numbers written in a pack or module** (`default`, the model side of
+    `map`, `requires =`, `case`) are read as written, without trimming: a
+    quoted `"5 "` on an `int` key is `key-type-mismatch`.
+19. **`element` placement** (ruling 13) does not count `when <locator>
+    present` lines, which name no position (ruling 23 of 0.9).
+20. **A suppressed sequential line** whose `also` keys give no value writes
+    zero bits, not its sentinel (ruling 1).
+21. **`iso8601_short` on `text` and `tlv`** (Versions 0.10 and 0.13) is
+    `bad-directive`, as on `bits` and `protobuf`: it is valid on `xml`,
+    `json` and `geojson` only.
+22. **`with` on `text` and `tlv`.** A line that `with` suppresses writes what
+    a line whose key is absent writes on that wire: on `text` an empty field
+    (Version 0.10), on `tlv` no item (Version 0.13).
+23. **`with` under six-bit armor** (Version 0.14, ruling 14 of 0.17). A
+    suppressed line writes zero bits, so it counts toward `L` as any line of
+    the scope does; an `optional` field that `with` suppresses is not written
+    and does not count.
+24. **Year 0000.** `iso8601_short` writes the instants of year 0000
+    (ruling 11), and its decode is that of `iso8601_ms`, which refuses them
+    (ruling 3d of 0.11). A round trip of such an instant fails with
+    `transform-decode`; this is accepted.
+25. **`element` with a wrong number of arguments** is refused by the line
+    check as the line is read (ruling 5b of 0.11, step 3); its other errors
+    are checks after the file. So `element a b` followed by a line `bogus`
+    is `bad-directive`.

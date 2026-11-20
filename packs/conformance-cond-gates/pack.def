@@ -1,0 +1,25 @@
+# Conformance probe pack for `with` (spec 0.18) with the gate blocks of 0.17
+# on the fixed `bits` layout, least significant bit first. Public. No kinds.
+# One byte per word. y is mapped by no line of this pack.
+#
+#   byte 0   w with y, outside any block; bit 0 is also the gate of x
+#   byte 1   x, in the block of bit 0
+#   byte 3   z with y, in the block of bit 16
+#
+# When y is not held, w's bits are not written (ruling 1), so the gate of x
+# gets its value; z's line opens no block and does not count as mapping z
+# for step 6 of 0.17.
+format  conformance-cond-gates
+version 0.18.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses    probe
+wire    bits
+word_bytes 1
+field   probe.w   0:0:8   uint  with probe.y
+if 0:0:1 1
+  field probe.x   0:8:8   uint
+end
+if 0:16:1 1
+  field probe.z   0:24:8  uint  with probe.y
+end

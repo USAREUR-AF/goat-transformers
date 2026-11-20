@@ -1,0 +1,9 @@
+{
+  "name": "xml-ruling-04-one-item-suppressed",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-xml",
+  "input": "{\"names\":[{\"t\":\"a\",\"v\":1},{\"t\":\"b\"}]}",
+  "expect": "<msg><names><name>a</name><name/></names></msg>",
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; ruling 4"
+}

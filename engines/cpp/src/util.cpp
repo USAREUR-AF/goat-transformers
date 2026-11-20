@@ -341,8 +341,9 @@ bool parse_iso8601_ms(std::string_view s, std::int64_t& out) {
     return true;
 }
 
-std::string format_iso8601_ms(std::int64_t ms) {
-    if (ms < kMinIsoMs || ms > kMaxIsoMs) throw std::domain_error("an instant outside years 0001 to 9999");
+namespace {
+// YYYY-MM-DDTHH:MM:SS.mmmZ of an instant in years 0000 to 9999.
+std::string format_iso_civil(std::int64_t ms) {
     // floor division so negative epochs land on the right civil second
     std::int64_t days = ms / 86400000;
     std::int64_t rem = ms % 86400000;
@@ -379,6 +380,21 @@ std::string format_iso8601_ms(std::int64_t ms) {
     put(20, msec, 3);
     buf[23] = 'Z';
     return std::string(buf, 24);
+}
+}  // namespace
+
+std::string format_iso8601_ms(std::int64_t ms) {
+    if (ms < kMinIsoMs || ms > kMaxIsoMs) throw std::domain_error("an instant outside years 0001 to 9999");
+    return format_iso_civil(ms);
+}
+
+std::string format_iso8601_short(std::int64_t ms) {
+    // 0.18 ruling 11: from 0000-01-01, one year earlier than iso8601_ms writes.
+    if (ms < kMinIsoShortMs || ms > kMaxIsoMs) throw std::domain_error("an instant outside years 0000 to 9999");
+    std::string s = format_iso_civil(ms);  // YYYY-MM-DDTHH:MM:SS.mmmZ
+    std::string frac = s.substr(20, 3);
+    while (!frac.empty() && frac.back() == '0') frac.pop_back();
+    return s.substr(0, 19) + (frac.empty() ? "" : "." + frac) + "Z";
 }
 
 void append_utf8(std::string& out, std::uint32_t cp) {

@@ -1,0 +1,13 @@
+{
+  "name": "companion-missing-nothing-written",
+  "from": "conformance-cond-protobuf",
+  "to": "conformance-cond-protobuf",
+  "input": "08011002",
+  "expect": "0801",
+  "model": {
+    "probe.x": "1",
+    "probe.y": "2"
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; nothing on protobuf; ruling 6"
+}

@@ -120,6 +120,7 @@ KeyType transform_yields(Transform t) {
         case Transform::Bool:
         case Transform::Int:
         case Transform::Iso8601Ms:
+        case Transform::Iso8601Short:
         case Transform::Uint:
         case Transform::Twos:
         case Transform::Pvarint:
@@ -450,6 +451,11 @@ void resolve_when(const Pack& p, WhenLine& w, const std::string& word) {
 
 // v0.15: a transform of this version on a wire it does not list (bad-directive).
 void check_v015_wire(const Pack& p, const FieldLine& f) {
+    // v0.18 ruling 11: iso8601_short on bits or protobuf.
+    if (f.transform == Transform::Iso8601Short && (p.wire == Wire::Bits || p.wire == Wire::Protobuf))
+        throw Error(ErrorKind::BadDirective, p.format, f.locator,
+                    p.source + ":" + std::to_string(f.line) + ": transform 'iso8601_short' is not valid on wire " +
+                        wire_name(p.wire));
     if (!detail::transform_is_v015(f.transform)) return;
     const bool ok = detail::transform_is_text_scale(f.transform)
                         ? p.wire == Wire::Xml || p.wire == Wire::Json || p.wire == Wire::GeoJson
@@ -506,6 +512,17 @@ void settle_group(const Pack& p, GroupLine& g) {
         if (mixed)
             throw Error(ErrorKind::BadDirective, p.format, g.locator,
                         where + ": the body of the group '" + g.list + "' mixes '.' with paths");
+        // 0.18 rulings 4 and 17: an item of the packed form cannot be left out.
+        // A group is packed when every `.` field of its body is numeric.
+        bool packed = true, with = false;
+        for (const auto& f : g.fields) {
+            packed = packed && (f.transform == Transform::Pvarint || f.transform == Transform::Psint ||
+                                f.transform == Transform::Pdouble || f.transform == Transform::Pfloat);
+            with = with || !f.with.empty();
+        }
+        if (packed && with)
+                throw Error(ErrorKind::BadDirective, p.format, g.locator,
+                            where + ": 'with' on the '.' field of a packed group '" + g.list + "'");
     }
     if (p.wire == Wire::Tlv)
         throw Error(ErrorKind::BadDirective, p.format, g.locator, where + ": 'group' on wire tlv is not defined in 0.13");
@@ -881,6 +898,29 @@ void check_group_locators(const Pack& p, const GroupLine& g, bool in_group) {
 
 }  // namespace
 
+// v0.18 ruling 12: an `element` whose path equals or passes through the item
+// path of a group the same message may write.
+void check_elements_vs_groups(const Pack& p) {
+    auto check = [&](const std::vector<ElementLine>& els, const std::vector<GroupLine>& groups) {
+        for (const auto& el : els)
+            for (const auto& g : groups) {
+                detail::XmlLocator loc;
+                if (!detail::parse_xml_locator(g.locator, loc)) continue;  // reported elsewhere
+                if (loc.path.empty() || loc.path.size() > el.steps.size()) continue;
+                if (!std::equal(loc.path.begin(), loc.path.end(), el.steps.begin())) continue;
+                throw Error(ErrorKind::BadDirective, p.format, el.path,
+                            p.source + ":" + std::to_string(el.line) + ": 'element " + el.path +
+                                "' equals or passes through the path of the group '" + g.list + "'");
+            }
+    };
+    check(p.elements, p.groups);
+    for (const auto& k : p.kinds) {
+        check(p.elements, k.groups);
+        check(k.elements, p.groups);
+        check(k.elements, k.groups);
+    }
+}
+
 Pack parse_pack(const std::string& text, const std::string& source) {
     // 0.11 ruling 5b: the line checks of every line, then missing-format,
     // missing-version and missing-wire, before any other check of the file.
@@ -916,6 +956,7 @@ Pack parse_pack(const std::string& text, const std::string& source) {
     // The first 0.17 error of a gate line or of a line inside a block, raised
     // after the file is read (0.17 ruling 13).
     std::string gate_error, gate_error_locator;
+    std::size_t first_element_line = 0;  // v0.18
     auto cur_gate = [&]() -> int {
         return !gate_open.empty() && gate_open.back().second == open.size() ? gate_open.back().first : -1;
     };
@@ -1232,6 +1273,8 @@ Pack parse_pack(const std::string& text, const std::string& source) {
             arity(0);
             open.pop_back();
         } else if (kw == "const") {
+            if (t.size() > 3 && t[3] == "with")
+                throw Error(ErrorKind::BadDirective, p.format, t[1], where + ": 'with' applies to a 'field' line only");
             arity(2);
             WhenLine w;
             w.locator = t[1];
@@ -1247,6 +1290,29 @@ Pack parse_pack(const std::string& text, const std::string& source) {
             d.line = lineno;
             d.gate = cur_gate();
             cur_defaults().push_back(std::move(d));
+        } else if (kw == "element") {
+            // v0.18: `element <path>`, common or in a kind (ruling 12: not in a group).
+            not_in_group();
+            if (t.size() != 2)
+                throw Error(ErrorKind::BadDirective, p.format, "",
+                            where + ": 'element' takes one path, got " + std::to_string(t.size() - 1) + " argument(s)");
+            ElementLine el;
+            el.path = t[1];
+            el.line = lineno;
+            if (first_element_line == 0) first_element_line = lineno;
+            std::size_t st = 0;
+            for (;;) {
+                const std::size_t slash = el.path.find('/', st);
+                el.steps.push_back(el.path.substr(st, slash == std::string::npos ? std::string::npos : slash - st));
+                if (slash == std::string::npos) break;
+                st = slash + 1;
+            }
+            for (const auto& s : el.steps)
+                if (s.empty() || s.find_first_of("@#") != std::string::npos)  // rulings 13 and 16
+                    throw Error(ErrorKind::BadDirective, p.format, el.path,
+                                where + ": 'element " + el.path +
+                                    "' is not a path of element names (an empty step, '@' or '#text')");
+            (p.kinds.empty() ? p.elements : p.kinds.back().elements).push_back(std::move(el));
         } else if (kw == "map") {
             not_in_group();  // tables are pack-wide and are written outside groups (0.7 ruling 9)
             arity(3);
@@ -1320,6 +1386,14 @@ Pack parse_pack(const std::string& text, const std::string& source) {
                     f.absent_arg = t[++k];
                     continue;
                 }
+                // v0.18: `with <other-key>`, once.
+                if (t[k] == "with") {
+                    if (k + 1 >= t.size() || t[k + 1].empty() || !f.with.empty())
+                        throw Error(ErrorKind::BadDirective, p.format, f.locator,
+                                    where + ": 'with' takes one key, once");
+                    f.with = t[++k];
+                    continue;
+                }
                 if (t[k] == "swap") flag = &f.swap;
                 else if (t[k] == "trim") flag = &f.trim;
                 else if (t[k] == "optional") flag = &f.optional;
@@ -1367,6 +1441,10 @@ Pack parse_pack(const std::string& text, const std::string& source) {
     if (p.armor_sixbit && p.bit_order != BitOrder::Msb)
         throw Error(ErrorKind::BadDirective, p.format, "",
                     source + ":" + std::to_string(armor_line) + ": 'armor sixbit' needs 'bit_order msb'");
+    if (first_element_line != 0 && have_wire && p.wire != Wire::Xml)
+        throw Error(ErrorKind::BadDirective, p.format, "",
+                    source + ":" + std::to_string(first_element_line) + ": 'element' applies to wire xml only");
+    if (have_wire && p.wire == Wire::Xml) check_elements_vs_groups(p);
     if (have_bit_order && have_wire && p.wire != Wire::Bits)
         throw Error(ErrorKind::BadDirective, p.format, "",
                     source + ":" + std::to_string(bit_order_line) + ": 'bit_order' applies to wire bits only");

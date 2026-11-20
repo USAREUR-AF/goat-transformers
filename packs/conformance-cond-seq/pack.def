@@ -1,0 +1,29 @@
+# Conformance probe pack for `with` (spec 0.18) on a sequential `bits`
+# layout, most significant bit first. Public. No kinds. y is mapped by no
+# line of this pack.
+#
+#   presence p 2   p.1: x with y; p.2: z
+#   opt            w with y; w has a default, which is content for the opt
+#                  bit (ruling 2 of 0.8) only when the line is not suppressed
+#
+# A suppressed line is not content for a presence or opt bit, and neither is
+# its default (ruling 1).
+format     conformance-cond-seq
+version    0.18.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+default probe.w  9
+presence p 2
+if p.1
+  field probe.x  8  uint  with probe.y
+end
+if p.2
+  field probe.z  8  uint
+end
+opt
+  field probe.w  8  uint  with probe.y
+end

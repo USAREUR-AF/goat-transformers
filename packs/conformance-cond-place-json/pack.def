@@ -1,0 +1,15 @@
+# Conformance probe pack for ruling 1 of spec 0.18 with ruling 23 of 0.9 on
+# the `json` wire. Public. No kinds. Two lines name the member `s`: the
+# first, s2 with y, and the third, callsign; the line of x lies between
+# them. A suppressed line still names its locator, so when y is not held the
+# value of callsign is written at the position of the first line, before x.
+# y is mapped by no line of this pack.
+format  conformance-cond-place-json
+version 0.18.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses    probe
+wire    json
+field   probe.s2  s  string  with probe.y
+field   probe.x   x  int
+field   callsign  s  string

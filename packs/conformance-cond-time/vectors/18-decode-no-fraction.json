@@ -1,0 +1,12 @@
+{
+  "name": "decode-no-fraction",
+  "from": "conformance-cond-time",
+  "to": "conformance-cond-time",
+  "input": "{\"t\":\"2025-10-29T12:00:00Z\"}",
+  "expect": "{\"ms\":1761739200000,\"t\":\"2025-10-29T12:00:00Z\"}",
+  "model": {
+    "time_ms": "1761739200000"
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, A time without a zero fraction; decode is that of iso8601_ms: fraction digits beyond the third are truncated"
+}

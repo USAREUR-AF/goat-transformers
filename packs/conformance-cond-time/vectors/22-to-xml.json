@@ -1,0 +1,9 @@
+{
+  "name": "to-xml",
+  "from": "conformance-cond-time",
+  "to": "conformance-cond-time-xml",
+  "input": "{\"ms\":1761739200010}",
+  "expect": "<msg t=\"2025-10-29T12:00:00.01Z\"/>",
+  "source": "constructed",
+  "reference": "spec 0.18, A time without a zero fraction; json to xml"
+}

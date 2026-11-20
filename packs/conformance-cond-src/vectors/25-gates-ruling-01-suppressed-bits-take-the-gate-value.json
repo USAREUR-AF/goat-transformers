@@ -1,0 +1,9 @@
+{
+  "name": "gates-ruling-01-suppressed-bits-take-the-gate-value",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-gates",
+  "input": "{\"w\":255,\"x\":5}",
+  "expect": "0105",
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; with Version 0.17 Encode; ruling 1: its bits are not written; step 3 gives bit 0 the gate value 1"
+}

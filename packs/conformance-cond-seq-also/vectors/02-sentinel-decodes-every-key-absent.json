@@ -1,0 +1,15 @@
+{
+  "name": "sentinel-decodes-every-key-absent",
+  "from": "conformance-cond-seq-also",
+  "to": "conformance-cond-seq-also",
+  "input": "ff",
+  "expect": "00",
+  "model": {
+    "@absent": [
+      "probe.x",
+      "probe.z"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; with Version 0.8 Presence; ruling 24 of 0.9; on re-encode y is not held: ruling 20"
+}

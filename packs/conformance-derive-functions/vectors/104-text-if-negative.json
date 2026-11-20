@@ -1,0 +1,14 @@
+{
+  "name": "text-if-negative",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"tifin\":-3}",
+  "context": {},
+  "expect": "{\"tifin\":-3,\"tif\":\"a:b\"}",
+  "model": {
+    "@complete": true,
+    "probe.tif": "a:b"
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, Derive functions; text_if"
+}

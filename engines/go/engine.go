@@ -804,6 +804,9 @@ func (f *Field) viaEncode(v Value) (Value, error) {
 // format's native code; then the field's value table. ok is false when there
 // is neither a value nor a default.
 func fieldValue(p *Pack, lay *layout, f *Field, rec *Item) (Value, bool, error) {
+	if f.suppressed(rec) {
+		return Value{}, false, nil
+	}
 	v, ok := rec.Fields[f.Key]
 	if !ok {
 		d := fieldDefault(lay, f)

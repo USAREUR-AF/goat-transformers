@@ -1,0 +1,9 @@
+{
+  "name": "ruling-11-before-0000-01-01",
+  "from": "conformance-cond-time",
+  "to": "conformance-cond-time",
+  "input": "{\"ms\":-62167219200001}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.18, A time without a zero fraction; ruling 11: an instant before 0000-01-01 is transform-encode"
+}

@@ -259,6 +259,8 @@ def parse_exact(args, what):
 # form of `lat_of_ecef` and `hae_of_ecef` a cube root, which gt-core does not
 # carry and could not give the reference engine's platform results bit for bit.
 V016_DERIVES = ("deg_lat_of", "m_lat_of", "lat_of_ecef", "hae_of_ecef")
+# The derive functions of spec 0.18; the device profile does not carry them.
+V018_DERIVES = ("tokens", "has_token", "text_if")
 V016_REASON = ("the derive function `%s` (spec 0.16) is not in the device profile: it needs a power or a cube "
                "root, which gt-core does not compute as the platform library does")
 
@@ -411,6 +413,9 @@ class Pack:
                 f["absent"] = self._sentinels(t[i + 1], length)
                 i += 2
                 continue
+            if t[i] == "with":
+                refuse("unsupported-feature", "%s: the field option `with` (spec 0.18) is not in the device profile"
+                       % self.format)
             refuse("bad-pack", "%s: unknown field option `%s`" % (self.format, t[i]))
         ok = {"f32": length == 32, "f64": length == 64, "ascii": length % 8 == 0 and 8 <= length <= 2040,
               "sixbit": length % 6 == 0 and 6 <= length <= 1530,
@@ -1146,6 +1151,8 @@ class Compiler:
             return text + ("_i" if tty == T_INT else "_f"), ()
         if text in DERIVE:
             return text, ()
+        if text.split(":", 1)[0] in V018_DERIVES:
+            return None, "the derive function `%s` (spec 0.18) is not in the device profile" % text.split(":", 1)[0]
         if text in V016_DERIVES:
             return None, V016_REASON % text
         return None, "unknown function `%s`" % text
@@ -1188,7 +1195,7 @@ class Compiler:
             name, extra = self.derive_fn(fn, target, args)
             if name is None or len(args) > MAX_DERIVE_ARGS:
                 why = extra if name is None else "more than %d arguments" % MAX_DERIVE_ARGS
-                if strict and fn in V016_DERIVES:
+                if strict and (fn in V016_DERIVES or fn.split(":", 1)[0] in V018_DERIVES):
                     refuse("unsupported-feature", "`derive %s %s ...` is needed by this conversion: %s" % (target, fn, why))
                 if strict:
                     refuse("derive-function", "`derive %s %s ...` is needed by this conversion: %s" % (target, fn, why))

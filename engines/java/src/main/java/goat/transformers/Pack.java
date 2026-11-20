@@ -56,6 +56,23 @@ public final class Pack {
         /** {@code via}: canonical native text to model value, and canonical model text to native value. */
         Map<String, Object> viaDecode;
         Map<String, Object> viaEncode;
+        /** The key of the {@code with} option (engine-spec 0.18), or null: encode writes the line only when it is held. */
+        String with;
+
+        /**
+         * True when the line has {@code with} and the entity (inside a group, the item) does not hold its key: a
+         * scalar holds when present, a list when present with at least one item (ruling 2 of 0.18). The line is then
+         * a line whose key is absent and that has neither a default nor a sentinel.
+         */
+        boolean suppressed(Entity e) {
+            return with != null && !holds(e, with);
+        }
+
+        static boolean holds(Entity e, String key) {
+            if (e.get(key) != null) return true;
+            List<Entity> items = e.list(key);
+            return items != null && !items.isEmpty();
+        }
 
         Field(String key, String locator, Transform transform, BitsTransform bits, PbTransform pb,
               String via, boolean swap, boolean trim, boolean optional, int line) {
@@ -104,11 +121,29 @@ public final class Pack {
         }
     }
 
+    /**
+     * One {@code element <path>} line of an {@code xml} pack (engine-spec 0.18): encode writes the element at
+     * {@code locator}, and each element on the way to it, even when nothing inside it is written. Decode ignores it.
+     */
+    public static final class Element extends Line {
+        Element(String path, int line) { super(path, line); }
+    }
+
     /** A table value that cannot be read as the type its side needs. */
     static final Object UNREADABLE = new Object();
 
-    /** {@code text} read as {@code type} ({@code string}, {@code int} or {@code float}), or {@link #UNREADABLE}. */
+    /**
+     * {@code text} written in a pack or a module ({@code default}, the model side of {@code map}) read as
+     * {@code type} ({@code string}, {@code int} or {@code float}), or {@link #UNREADABLE}. A number is read as
+     * written, without trimming (ruling 18 of 0.18).
+     */
     static Object read(String text, String type) {
+        if (!type.equals("string") && !text.equals(text.trim())) return UNREADABLE;
+        return readTrimmed(text, type);
+    }
+
+    /** As {@link #read}, the number trimmed first: a value from a message or a caller, not from a pack. */
+    static Object readTrimmed(String text, String type) {
         try {
             switch (type) {
                 case "int": return Transform.parseInt(text);
@@ -122,7 +157,7 @@ public final class Pack {
 
     /** The canonical text of {@code text} read as {@code type}; the text itself when it cannot be read. */
     static String canon(String text, String type) {
-        Object v = read(text, type);
+        Object v = readTrimmed(text, type);
         return v == UNREADABLE ? text : canonText(v);
     }
 
@@ -308,6 +343,8 @@ public final class Pack {
         /** An {@code if} gate line of a fixed layout: {@code locator} without its {@code !}, {@code arg} the value list. */
         boolean gate;
         boolean not;
+        /** An {@code element} line of an xml pack: {@code locator} is its path. */
+        boolean element;
 
         LineSpec(String key, String locator, String arg, List<String> opts, boolean isConst, int line) {
             this.key = key;
@@ -513,19 +550,21 @@ public final class Pack {
     static final Set<String> DIRECTIVES = Set.of("format", "version", "distribution", "source", "uses", "wire", "root",
             "field", "when", "const", "kind", "requires", "default", "map", "typemap", "group", "end", "word_bytes",
             "bit_order", "layout", "also", "pad", "align", "presence", "if", "opt", "chain", "fx", "length",
-            "delimiter", "start", "checksum", "tag", "key", "armor");
+            "delimiter", "start", "checksum", "tag", "key", "armor",
+            "element");   // engine-spec 0.18
 
     /** The directives that take exactly one argument (ruling 5e of 0.11). */
     private static final Set<String> ONE_ARGUMENT = Set.of("format", "version", "distribution", "source", "uses", "wire",
             "root", "kind", "word_bytes", "bit_order", "layout", "pad", "align", "delimiter", "start", "checksum",
-            "armor");   // armor: ruling 13 of 0.14
+            "armor",    // armor: ruling 13 of 0.14
+            "element"); // element (0.18): its count does not depend on the layout (step 3 of 5b of 0.11)
 
     /** The lines that stand after the {@code wire} line (ruling 5b of 0.11); one before it is {@code missing-wire}. */
     private static final Set<String> AFTER_WIRE = Set.of("root", "field", "when", "const", "group", "end", "word_bytes",
             "bit_order", "layout", "also", "pad", "align", "presence", "if", "opt", "chain", "fx", "length");
 
     /** Every transform of the specification, by the text before its first {@code :}. */
-    private static final Set<String> TRANSFORMS = Set.of("string", "float", "int", "iso8601_ms", "bool", "uint", "twos",
+    private static final Set<String> TRANSFORMS = Set.of("string", "float", "int", "iso8601_ms", "iso8601_short", "bool", "uint", "twos",
             "linscale", "uscale", "sscale", "f32", "f64", "ascii", "pstring", "pvarint", "psint", "pdouble", "pfloat",
             "dec", "dm", "hms", "hms_dmy", "utf8", "hex", "sixbit",
             // engine-spec 0.15
@@ -654,6 +693,7 @@ public final class Pack {
             switch (o) {
                 case "absent":
                 case "via":
+                case "with":   // engine-spec 0.18
                     if (!seen.add(o)) throw badDirective(format, loc, where + ": " + o + " given twice");
                     if (i + 1 >= args.size()) throw badDirective(format, loc, where + ": " + o + " takes an argument");
                     String a = args.get(++i);
@@ -810,6 +850,7 @@ public final class Pack {
         // a later line's own line check wins over it. The lines after it are still read, their failures dropped.
         RuntimeException deferred = null;
         int firstGate = 0;   // the line of the first gate block, 0 when there is none
+        int firstElement = 0;   // the line of the first element line, 0 when there is none
         for (int i = 0; i < lines.length; i++) {
             int ln = i + 1;
             String where = source + ":" + ln;
@@ -1005,6 +1046,7 @@ public final class Pack {
                     root = args.get(0);
                     break;
                 case "const":
+                    if (args.contains("with")) throw badDirective(format, null, where + ": with is not an option of a const line");
                     arity(kw, args, 2, where, format);
                     body.lines.add(new LineSpec(null, args.get(0), args.get(1), null, true, ln));
                     break;
@@ -1037,6 +1079,23 @@ public final class Pack {
                         keyRefs.add(new String[]{k, null});
                     }
                     break;
+                case "element": {
+                    // engine-spec 0.18: one path of element names under the root (ruling 13)
+                    if (!open.isEmpty()) throw badDirective(format, null, where + ": element is not allowed inside a group");
+                    if (args.size() != 1) throw badDirective(format, null, where + ": element takes one path, got " + args.size());
+                    String path = args.get(0);
+                    for (String step : path.split("/", -1)) {
+                        // a step is an element name: no `@` or `#` anywhere in it (ruling 16 of 0.18)
+                        if (step.isEmpty() || step.indexOf('@') >= 0 || step.indexOf('#') >= 0) {
+                            throw badDirective(format, path, where + ": element takes a path of element names, got \"" + path + "\"");
+                        }
+                    }
+                    LineSpec el = new LineSpec(null, path, null, null, false, ln);
+                    el.element = true;
+                    body.lines.add(el);
+                    if (firstElement == 0) firstElement = ln;
+                    break;
+                }
                 case "when":
                     arity(kw, args, 2, where, format);
                     body.lines.add(new LineSpec(null, args.get(0), args.get(1), null, false, ln));
@@ -1048,6 +1107,8 @@ public final class Pack {
                     if (!tlvWire && TextTransform.isTextOnlyName(args.get(2))) TextTransform.parseTextOnly(args.get(2), format, args.get(1), where);
                     body.lines.add(new LineSpec(key, args.get(1), args.get(2), new ArrayList<>(args.subList(3, args.size())), false, ln));
                     keyRefs.add(new String[]{key, args.get(1)});
+                    String with = withKey(args.subList(3, args.size()), args.get(1), where, format);
+                    if (with != null) keyRefs.add(new String[]{with, args.get(1)});
                     break;
                 }
                 case "group": {
@@ -1110,10 +1171,13 @@ public final class Pack {
         boolean hasKinds = seqRoot != null ? seqRoot.hasKinds : !kindSpecs.isEmpty();
         if (!hasKinds) {
             for (LineSpec s : common.lines) {
-                if (s.key == null && !s.isConst && !s.gate) {
+                if (s.key == null && !s.isConst && !s.gate && !s.element) {
                     throw badDirective(format, s.locator, source + ":" + s.line + ": when line in a pack with no kind line");
                 }
             }
+        }
+        if (firstElement != 0 && wire != null && wire != Wire.XML) {
+            throw badDirective(format, null, source + ":" + firstElement + ": element is for the xml wire only");
         }
         if (firstGate != 0 && wire != null && wire != Wire.BITS) {
             throw badDirective(format, null, source + ":" + firstGate + ": an if block of a fixed layout is for the bits wire only");
@@ -1322,6 +1386,26 @@ public final class Pack {
     }
 
     /**
+     * The key of the {@code with} option among a field line's options, or null. The token after {@code absent} or
+     * {@code via} is that option's argument, never an option. {@code with} given twice, or with no key after it, is
+     * {@code bad-directive} (engine-spec 0.18).
+     */
+    static String withKey(List<String> opts, String locator, String where, String format) {
+        String with = null;
+        for (int i = 0; i < opts.size(); i++) {
+            String o = opts.get(i);
+            if (o.equals("absent") || o.equals("via")) {
+                i++;
+            } else if (o.equals("with")) {
+                if (with != null) throw badDirective(format, locator, where + ": with given twice");
+                if (i + 1 >= opts.size()) throw badDirective(format, locator, where + ": with takes one key");
+                with = opts.get(++i);
+            }
+        }
+        return with;
+    }
+
+    /**
      * A {@code field} whose locator passes through the path of a {@code group} of the same scope is
      * {@code bad-directive} (ruling 21 of 0.7; {@code field} lines only, ruling 15 of 0.8).
      */
@@ -1336,6 +1420,16 @@ public final class Pack {
         if (paths == null) return;
         char sep = ctx.wire == Wire.XML ? '/' : '.';
         for (Line l : lines) {
+            if (l instanceof Element) {
+                // an element path that equals or passes through a group's path (ruling 12 of 0.18)
+                for (Group g : paths.values()) {
+                    if (l.locator.equals(g.locator) || l.locator.startsWith(g.locator + "/")) {
+                        throw badDirective(ctx.format, l.locator, ctx.source + ":" + l.line + ": element " + l.locator
+                                + " is on or under the path of group " + g.list + " (" + g.locator + ")");
+                    }
+                }
+                continue;
+            }
             if (!(l instanceof Field) || l.locator.equals(".")) continue;
             // Every proper prefix of the locator that ends before a separator. On xml the last part is @name or
             // #text on the element the parts before it reach, so a field on an item element itself is among them.
@@ -1508,6 +1602,14 @@ public final class Pack {
             if (itself && other) {
                 throw badDirective(format, s.locator, where + ": a protobuf group body mixes . with other lines");
             }
+            // packed: every line of the body is a . field with a numeric transform (ruling 17 of 0.18)
+            boolean packed = itself && !other;
+            for (Line l : lines) if (l instanceof Field && ((Field) l).pb.wireType() == 2) packed = false;
+            for (Line l : lines) {
+                if (packed && ((Field) l).with != null) {
+                    throw badDirective(format, s.locator, ctx.source + ":" + l.line + ": with on a . field of a packed protobuf group");
+                }
+            }
         }
         Scope body = new Scope(lines, s.body.defaults);
         Group g = new Group(s.key, s.locator, body, itemBits, countLocator, countFixed, s.line);
@@ -1528,6 +1630,7 @@ public final class Pack {
         Map<String, List<String[]>> tables = ctx.tables;
         String where = ctx.source + ":" + s.line;
         if (s.gate) return resolveGate(s, ctx, inGroup);
+        if (s.element) return new Element(s.locator, s.line);
         if (s.body != null) return resolveGroup(s, ctx, inGroup);
         // `.` is the item itself as a scalar: a field of a group body on json, geojson and protobuf.
         boolean dot = s.locator.equals(".") && wire != Wire.XML && wire != Wire.BITS && wire != Wire.TEXT && wire != Wire.TLV;
@@ -1535,11 +1638,16 @@ public final class Pack {
             throw badDirective(format, s.locator, where + ": the locator . is for a field inside a group");
         }
         if (s.key == null) return resolveWhen(s, ctx, where, inGroup);
-        String via = null, absent = null;
+        String via = null, absent = null, with = null;
         boolean swap = false, trim = false, optional = false;
         for (int i = 0; i < s.opts.size(); i++) {
             String o = s.opts.get(i);
             switch (o) {
+                case "with":
+                    if (with != null) throw badDirective(format, s.locator, where + ": with given twice");
+                    if (i + 1 >= s.opts.size()) throw badDirective(format, s.locator, where + ": with takes one key");
+                    with = s.opts.get(++i);
+                    break;
                 case "absent":
                     // the token after `absent` is always its argument, even an option name (ruling 11 of 0.9)
                     if (absent != null) throw badDirective(format, s.locator, where + ": absent given twice");
@@ -1589,7 +1697,9 @@ public final class Pack {
         // The transforms of 0.15 on a wire they do not list are bad-directive (engine-spec 0.15, Load errors).
         String head = BitsTransform.headOf(s.arg);
         boolean textWire = wire == Wire.XML || wire == Wire.JSON || wire == Wire.GEOJSON;
-        if ((BitsTransform.isV015(head) && wire != Wire.BITS) || (TextScale.isName(head) && !textWire)) {
+        // so is iso8601_short on bits or protobuf (ruling 11 of 0.18)
+        if ((BitsTransform.isV015(head) && wire != Wire.BITS) || (TextScale.isName(head) && !textWire)
+                || (s.arg.equals("iso8601_short") && !textWire)) {
             throw badDirective(format, s.locator, where + ": transform \"" + s.arg + "\" is not valid on wire " + wire.name().toLowerCase());
         }
         if (wire == Wire.TLV) {
@@ -1696,6 +1806,7 @@ public final class Pack {
                 }
             }
         }
+        f.with = with;
         ctx.fields.add(f);
         ctx.typed.add(f);
         return f;
@@ -1831,25 +1942,28 @@ public final class Pack {
      * {@code path/#text} is kept, and it is literal inside double quotes. Double quotes wrap a token containing
      * whitespace; there is no escape, so a quoted value cannot contain a double quote.
      */
+    /** The whitespace between tokens: space, tab, line feed and carriage return only (ruling 15 of 0.18). */
+    static boolean isSpace(char c) { return c == ' ' || c == '\t' || c == '\n' || c == '\r'; }
+
     static List<String> tokenize(String line, String where) {
         List<String> out = new ArrayList<>();
         int i = 0, n = line.length();
         while (i < n) {
             char c = line.charAt(i);
-            if (Character.isWhitespace(c)) { i++; continue; }
+            if (isSpace(c)) { i++; continue; }
             if (c == '#') break;
             if (c == '"') {
                 int close = line.indexOf('"', i + 1);
                 if (close < 0) throw new GtException(GtException.Code.UNTERMINATED_QUOTE, null, null, where + ": unterminated quote");
                 out.add(line.substring(i + 1, close));
                 i = close + 1;
-                if (i < n && !Character.isWhitespace(line.charAt(i))) {
+                if (i < n && !isSpace(line.charAt(i))) {
                     // a quoted token is a whole token: `"",0` is not a value list (ruling 11 of 0.9)
                     throw badDirective(null, null, where + ": text directly after closing quote");
                 }
             } else {
                 int start = i;
-                while (i < n && !Character.isWhitespace(line.charAt(i))) i++;
+                while (i < n && !isSpace(line.charAt(i))) i++;
                 out.add(line.substring(start, i));
             }
         }

@@ -1,0 +1,14 @@
+{
+  "name": "decode-ignores-the-line",
+  "from": "conformance-cond-element",
+  "to": "conformance-cond-element",
+  "input": "<msg><e><k/></e><g/></msg>",
+  "expect": "<msg><d/><e/><g><h/></g></msg>",
+  "model": {
+    "@absent": [
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, xml: an element written when empty; decode ignores the line; unmapped child elements are dropped (ruling 6 of 0.1.1)"
+}

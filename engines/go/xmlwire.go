@@ -212,7 +212,18 @@ func encodeXML(p *Pack, lay *layout, ent *Entity, rec *Item) ([]byte, error) {
 // position in line order; an empty or absent list writes nothing.
 func encodeXMLScope(p *Pack, lay *layout, rec *Item, root *xnode, written map[string]bool) error {
 	weak := map[string]bool{} // the locators that hold a sentinel, which a value replaces (0.9 ruling 16)
-	for _, ln := range lay.lines {
+	for i, ln := range lay.lines {
+		// The elements of `element` lines are created at the first line that
+		// addresses them or a path under them (0.18 ruling 13).
+		for _, path := range lay.elemAt[i] {
+			n := root
+			for _, seg := range path {
+				n = n.child(seg)
+			}
+		}
+		if ln.el != nil {
+			continue
+		}
 		if g := ln.g; g != nil {
 			items := rec.Lists[g.List]
 			if len(items) == 0 {
@@ -251,7 +262,7 @@ func encodeXMLScope(p *Pack, lay *layout, rec *Item, root *xnode, written map[st
 		}
 		if !ok {
 			// A sentinel is written where no line has written (0.9).
-			if f.absent != nil && !written[f.Locator] {
+			if f.absent != nil && !f.suppressed(rec) && !written[f.Locator] {
 				place(root, f.loc, f.absent.texts[0], false)
 				written[f.Locator], weak[f.Locator] = true, true
 			}

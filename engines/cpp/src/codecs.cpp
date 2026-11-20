@@ -246,7 +246,10 @@ std::string canonical_entry(const std::string& text, KeyType type) {
 
 }  // namespace
 
-Value read_as(const std::string& text, KeyType type) {
+Value read_as(const std::string& text, KeyType type, bool as_written) {
+    auto ws = [](char c) { return c == ' ' || c == '\t' || c == '\n' || c == '\r'; };
+    if (as_written && type != KeyType::String && !text.empty() && (ws(text.front()) || ws(text.back())))
+        throw std::invalid_argument("a number with whitespace around it: \"" + text + "\"");
     switch (type) {
         case KeyType::String: return Value::of_string(text);
         // 0.11 ruling 2c: integer text (2a) and number text (2b).
@@ -279,7 +282,7 @@ Value table_decode(const Pack& p, const FieldLine& f, const Value& native) {
     const KeyType wire_type = transform_yields(f.transform);
     const std::string text = canonical_text(native);
     for (const auto& entry : table.entries)  // several entries share a <native> value: the first
-        if (canonical_entry(entry.first, wire_type) == text) return read_as(entry.second, f.key_type);
+        if (canonical_entry(entry.first, wire_type) == text) return read_as(entry.second, f.key_type, true);
     if (wire_type == f.key_type) return native;
     throw std::invalid_argument("table '" + table.name + "' has no entry for the wire value " + text);
 }
@@ -459,6 +462,12 @@ bool EncodeSource::value(const FieldLine& f, Value& out) const {
         }
     }
     return true;
+}
+
+bool EncodeSource::holds(const std::string& key) const {
+    if (e.fields.count(key)) return true;
+    auto it = e.lists.find(key);
+    return it != e.lists.end() && !it->second.empty();
 }
 
 const std::vector<Item>* EncodeSource::list(const GroupLine& g) const {
@@ -1007,10 +1016,51 @@ void place_xml(xml::Node& root, const XmlLocator& loc, const std::string& value)
 
 // One scope's lines written into `node`: the root element, or an item element.
 // `out` keeps the slots, so the caller can tell which locators were written.
+// v0.18 `element` lines: each path once, at the first line of any kind that
+// addresses it or a path under it (ruling 13), in that order.
+struct ElementAt {
+    const ElementLine* el;
+    std::size_t line;
+};
+std::vector<ElementAt> place_elements(const std::vector<LineRef>& lines, const std::vector<const ElementLine*>& els) {
+    auto under = [](const std::vector<std::string>& path, const ElementLine& el) {
+        return path.size() >= el.steps.size() && std::equal(el.steps.begin(), el.steps.end(), path.begin());
+    };
+    std::vector<ElementAt> out;
+    for (const ElementLine* el : els) {
+        bool seen = false;
+        for (const auto& o : out) seen = seen || o.el->path == el->path;
+        if (seen) continue;  // a second line for the same path adds nothing
+        std::size_t at = el->line;
+        for (const ElementLine* other : els)
+            if (other->line < at && under(other->steps, *el)) at = other->line;
+        for (const auto& line : lines) {
+            const std::size_t ln = line.field ? line.field->line : line.group ? line.group->line : line.fixed()->line;
+            if (ln >= at) continue;
+            if (line.fixed() && line.fixed()->present) continue;  // names no position (ruling 19)
+            XmlLocator loc;
+            if (parse_xml_locator(line.locator(), loc) && under(loc.path, *el)) at = ln;
+        }
+        out.push_back({el, at});
+    }
+    std::stable_sort(out.begin(), out.end(), [](const ElementAt& a, const ElementAt& b) { return a.line < b.line; });
+    return out;
+}
+
 void xml_encode_scope(const Pack& p, const std::vector<LineRef>& lines, const EncodeSource& src, xml::Node& node,
-                      TextSlots& out) {
+                      TextSlots& out, const std::vector<const ElementLine*>* elements = nullptr) {
     Value v;
+    std::vector<ElementAt> els;
+    if (elements && !elements->empty()) els = place_elements(lines, *elements);
+    std::size_t next_el = 0;
+    auto elements_before = [&](std::size_t ln) {
+        for (; next_el < els.size() && els[next_el].line <= ln; ++next_el) {
+            auto& slot = out.at(els[next_el].el->path);
+            slot.has = true;  // written even when nothing inside it is
+        }
+    };
     for (const auto& line : lines) {
+        elements_before(line.field ? line.field->line : line.group ? line.group->line : line.fixed()->line);
         if (line.group) {
             // The group takes its place in line order; an absent or empty list writes nothing.
             const std::vector<Item>* items = src.list(*line.group);
@@ -1031,6 +1081,7 @@ void xml_encode_scope(const Pack& p, const std::vector<LineRef>& lines, const En
         const FieldLine& f = *line.field;
         auto& slot = out.at(f.locator);
         if (slot.has && !slot.sentinel) continue;
+        if (src.suppressed(f)) continue;  // the slot keeps its place (0.18 ruling 1)
         if (src.value(f, v)) {
             slot.value = field_text(p, f, v);
             slot.has = true;
@@ -1042,6 +1093,7 @@ void xml_encode_scope(const Pack& p, const std::vector<LineRef>& lines, const En
             slot.sentinel = true;
         }
     }
+    elements_before(static_cast<std::size_t>(-1));
     for (const auto& slot : out.slots) {
         if (slot.group) {
             const GroupLine& g = *slot.group;
@@ -1074,7 +1126,11 @@ std::string encode_xml(const Pack& p, const Entity& e) {
     TextSlots out;
     xml::Node root;
     root.name = kind && !kind->root.empty() ? kind->root : p.root;
-    xml_encode_scope(p, active_lines(p, kind), EncodeSource(p, kind, e), root, out);
+    std::vector<const ElementLine*> elements;
+    for (const auto& el : p.elements) elements.push_back(&el);
+    if (kind)
+        for (const auto& el : kind->elements) elements.push_back(&el);
+    xml_encode_scope(p, active_lines(p, kind), EncodeSource(p, kind, e), root, out, &elements);
     std::unordered_set<std::string> residue_seen;
     for (const auto& r : e.residue) {
         if (r.format != p.format) continue;
@@ -1258,6 +1314,7 @@ std::string encode_geojson(const Pack& p, const Entity& e) {
             case GeoLocator::Kind::Member: slot = &members.at(f.locator); taken = slot->has; sentinel = slot->sentinel; break;
         }
         if (taken && !sentinel) continue;
+        if (src.suppressed(f)) continue;  // the member keeps its place (0.18 ruling 1)
         std::string jv;
         bool writes_sentinel = false;
         if (src.value(f, v)) {
@@ -1598,7 +1655,7 @@ void write_field_lines(const Pack& p, std::string& data, bool msb, const std::ve
     for (auto it = lines.rbegin(); it != lines.rend(); ++it) {
         if (!it->field || !it->field->has_absent || !gate_on(it->field->gate, held)) continue;
         const FieldLine& f = *it->field;
-        if (src.value(f, mv)) continue;
+        if (src.suppressed(f) || src.value(f, mv)) continue;
         BitRange r = bit_range(p, f.locator);
         r.start += base;
         std::uint64_t raw = f.absent_num.front();
@@ -1611,8 +1668,7 @@ void write_field_lines(const Pack& p, std::string& data, bool msb, const std::ve
     for (auto it = lines.rbegin(); it != lines.rend(); ++it) {
         if (!it->field || !gate_on(it->field->gate, held)) continue;
         const FieldLine& f = *it->field;
-        const bool has = src.value(f, mv);
-        if (!has) continue;
+        if (src.suppressed(f) || !src.value(f, mv)) continue;  // zero bits (0.18 ruling 1)
         BitRange r = bit_range(p, f.locator);
         r.start += base;
         if (present && src.e.fields.count(f.key)) present->push_back(r);
@@ -1675,7 +1731,11 @@ std::uint64_t armor_extent(const Pack& p, const std::vector<LineRef>& lines, con
             continue;
         }
         if (!gate_on(line_gate(line), held)) continue;
-        if (line.field && line.field->optional && !line.field->has_absent && !src.value(*line.field, mv)) continue;
+        // An `optional` field counts only when it is written (0.17 ruling 14); one
+        // suppressed by `with` writes nothing, not even its sentinel (0.18 ruling 1).
+        if (line.field && line.field->optional &&
+            (src.suppressed(*line.field) || (!line.field->has_absent && !src.value(*line.field, mv))))
+            continue;
         end = std::max(end, base + bit_range(p, line.locator()).end());
     }
     if (held)
@@ -1703,7 +1763,8 @@ std::uint64_t bits_encode_scope(BitsOut& out, const std::vector<LineRef>& lines,
         // nested open block, maps a key the entity (or the item) holds.
         std::vector<char> open(n, 0);
         for (const auto& line : lines)
-            if (line.field && line.field->gate >= 0 && src.e.fields.count(line.field->key))
+            if (line.field && line.field->gate >= 0 && src.e.fields.count(line.field->key) &&
+                !src.suppressed(*line.field))
                 for (int g = line.field->gate; g >= 0 && !open[static_cast<std::size_t>(g)];
                      g = p.gates[static_cast<std::size_t>(g)].parent)
                     open[static_cast<std::size_t>(g)] = 1;
@@ -1746,10 +1807,12 @@ std::uint64_t bits_encode_scope(BitsOut& out, const std::vector<LineRef>& lines,
         // Step 6, second half: a key the entity holds mapped only by lines of
         // blocks that are not held.
         for (const auto& line : lines) {
-            if (!line.field || !src.e.fields.count(line.field->key)) continue;
+            // A line suppressed by `with` does not map its key (0.18 ruling 1).
+            if (!line.field || !src.e.fields.count(line.field->key) || src.suppressed(*line.field)) continue;
             bool mapped = false;
             for (const auto& other : lines)
-                if (other.field && other.field->key == line.field->key && gate_on(other.field->gate, held)) {
+                if (other.field && other.field->key == line.field->key && gate_on(other.field->gate, held) &&
+                    !src.suppressed(*other.field)) {
                     mapped = true;
                     break;
                 }

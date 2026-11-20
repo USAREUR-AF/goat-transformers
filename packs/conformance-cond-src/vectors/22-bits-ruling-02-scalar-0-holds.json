@@ -1,0 +1,9 @@
+{
+  "name": "bits-ruling-02-scalar-0-holds",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-bits",
+  "input": "{\"x\":1,\"z\":2,\"y\":0}",
+  "expect": "01ff07",
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; ruling 2: y = 0 holds: x wins byte 0 (ruling 5 of 0.5), w writes its sentinel 255, c1 its default 7"
+}

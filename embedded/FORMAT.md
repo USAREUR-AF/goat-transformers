@@ -389,7 +389,7 @@ feature refuses a plan that uses it (`bad-plan`).
 | `length-plus-range` | a `plus` outside 32 bits |
 | `value-range`, `table-overflow` | an offset, count or table index beyond what an entry holds; more than 255 sentinels on one field |
 | `unknown-format`, `unknown-kind`, `unknown-key`, `bad-arguments` | a name the inputs do not have |
-| `unsupported-feature` | a pack line of the specification that the device profile does not implement. Refused this way, when a conversion needs one: the derive functions of spec 0.16 `deg_lat_of` and `m_lat_of` (the meridional radius takes the power x^1.5) and `lat_of_ecef` and `hae_of_ecef` (Heikkinen's closed form takes a cube root). gt-core has neither function, and an approximation would not give the platform library's results bit for bit. Refused this way too: gate blocks on a fixed layout (`if`, spec 0.17) |
+| `unsupported-feature` | a pack line of the specification that the device profile does not implement. Refused this way, when a conversion needs one: the derive functions of spec 0.16 `deg_lat_of` and `m_lat_of` (the meridional radius takes the power x^1.5) and `lat_of_ecef` and `hae_of_ecef` (Heikkinen's closed form takes a cube root). gt-core has neither function, and an approximation would not give the platform library's results bit for bit. Refused this way too: gate blocks on a fixed layout (`if`, spec 0.17), and the field option `with` and the derive functions `tokens`, `has_token` and `text_if` of spec 0.18 |
 | `bad-pack`, `bad-model` | text the compiler cannot read; it compiles packs the reference engine loads and does not repeat that engine's load checks |
 
 The text wires are out of scope for the device profile. A text format needs a

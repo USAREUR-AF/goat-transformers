@@ -156,7 +156,11 @@ pub(crate) fn write(msg: &[u8], l: u64) -> String {
 pub(crate) fn fixed_len(p: &Pack, sel: &Sel, ent: &Entity) -> Result<u64, Error> {
     let mut end = bits::group_reach(p, sel, ent, 0)?;
     for f in &sel.fields {
-        if f.optional && f.absent.is_empty() && sel.value_of(ent, f).is_none() {
+        // an `optional` field that writes nothing: its key absent with no
+        // default and no sentinel, or the line suppressed by `with`, which
+        // writes no sentinel either (ruling 23 of 0.18)
+        let suppressed = !crate::live(ent, f);
+        if f.optional && (suppressed || (f.absent.is_empty() && sel.value_of(ent, f).is_none())) {
             continue;
         }
         let (start, len) = span(p, &f.locator)?;

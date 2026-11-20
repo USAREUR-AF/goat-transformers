@@ -190,6 +190,7 @@ std::string member_text(const Pack& p, const FieldLine& f, const Value& v) {
 // earlier line wrote (ruling 16).
 void write_field(const Pack& p, const EncodeSource& src, const FieldLine& f, OutNode& slot) {
     if (slot.has_value && !slot.sentinel) return;
+    if (src.suppressed(f)) return;  // the member keeps its place (0.18 ruling 1)
     Value v;
     if (src.value(f, v)) {
         slot.text = member_text(p, f, v);

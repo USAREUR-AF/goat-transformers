@@ -1,0 +1,30 @@
+# Conformance probe pack for `with` (spec 0.18, ruling 23) under six-bit
+# armor (spec 0.14; ruling 14 of 0.17). Public. No kinds. Fixed layout, one
+# byte per word, most significant bit first: six bits per character.
+#
+#   bits 0-5     x                    character 1
+#   bits 6-11    w with y             character 2: suppressed, it writes zero
+#                                     bits and counts toward L
+#   bits 12-17   z with s1, optional  character 3: suppressed, it is not
+#                                     written and does not count toward L
+#   bits 18-23   c2 with c1, optional, character 4: suppressed, it writes no
+#                absent 63            sentinel (ruling 1) and does not count;
+#                                     with c1 held and c2 absent, the
+#                                     sentinel is written and counts
+#                                     (ruling 12 of 0.14)
+#
+# None of y, s1 and c1 is mapped by a line of this pack: an entity that holds
+# them comes from `conformance-cond-src`.
+format  conformance-cond-armor
+version 0.18.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses    probe
+wire    bits
+bit_order msb
+armor   sixbit
+word_bytes 1
+field   probe.x   0:0:6   uint
+field   probe.w   0:6:6   uint  with probe.y
+field   probe.z   1:4:6   uint  optional  with probe.s1
+field   probe.c2  2:2:6   uint  optional  absent 63  with probe.c1

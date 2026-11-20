@@ -1,0 +1,9 @@
+{
+  "name": "place-json-ruling-01-suppressed-line-still-places-the-member",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-place-json",
+  "input": "{\"x\":1,\"s2\":\"a\",\"cs\":\"b\"}",
+  "expect": "{\"s\":\"b\",\"x\":1}",
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; ruling 1: it still names its locator for ruling 23 of 0.9: the member is written at the position of the first line naming the locator, suppressed or not"
+}

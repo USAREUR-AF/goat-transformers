@@ -1,0 +1,15 @@
+{
+  "name": "ruling-07-stays-absent-until-an-argument-is-not-0",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"flp\":0,\"flsrc\":0}",
+  "context": {},
+  "expect": "{\"flp\":0,\"flsrc\":0,\"fllate\":1,\"ptok\":\"q\"}",
+  "model": {
+    "@complete": true,
+    "probe.ptok": "q",
+    "probe.fl_late": "1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, Derive functions; ruling 7: fl_p = 0 in pass 1 leaves ptok absent; fl_late = 1 sets it in pass 2"
+}

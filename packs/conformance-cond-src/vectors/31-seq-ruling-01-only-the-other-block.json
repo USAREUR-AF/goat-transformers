@@ -1,0 +1,9 @@
+{
+  "name": "seq-ruling-01-only-the-other-block",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-seq",
+  "input": "{\"x\":5,\"z\":6}",
+  "expect": "4180",
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; with Version 0.8 Presence; ruling 1: p.1 = 0, p.2 = 1"
+}

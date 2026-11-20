@@ -1,0 +1,13 @@
+{
+  "name": "ruling-06-roundtrip",
+  "from": "conformance-cond-seq",
+  "to": "conformance-cond-seq",
+  "input": "816120",
+  "expect": "00",
+  "model": {
+    "probe.x": "5",
+    "probe.w": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; with Version 0.8 Presence; ruling 6: y is mapped by no line"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "tlv-ruling-22-empty-text-holds-other-suppressed",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-tlv",
+  "input": "{\"y\":2,\"z\":3,\"s1\":\"\"}",
+  "expect": "030200030400",
+  "source": "constructed",
+  "reference": "spec 0.18 ruling 22 (`with` on text and tlv); y suppressed writes no item; ruling 2: the empty text holds; 0.13: a key holding the empty string writes an item of length 0"
+}

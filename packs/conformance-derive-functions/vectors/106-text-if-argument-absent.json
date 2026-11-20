@@ -1,0 +1,17 @@
+{
+  "name": "text-if-argument-absent",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"w1\":\"x\"}",
+  "context": {},
+  "expect": "{\"w1\":\"x\"}",
+  "model": {
+    "@complete": true,
+    "@absent": [
+      "probe.tif",
+      "probe.wj"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, Derive functions; text_if: absent when a is absent"
+}

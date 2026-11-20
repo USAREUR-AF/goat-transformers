@@ -1,0 +1,9 @@
+{
+  "name": "seq-also-sentinel-when-not-suppressed",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-seq-also",
+  "input": "{\"y\":1}",
+  "expect": "ff",
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; with Version 0.8 Presence; y held, no key of the line has a value: the sentinel (ruling 24 of 0.9)"
+}

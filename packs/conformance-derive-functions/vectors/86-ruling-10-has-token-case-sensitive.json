@@ -1,0 +1,15 @@
+{
+  "name": "ruling-10-has-token-case-sensitive",
+  "from": "conformance-derive-functions",
+  "to": "conformance-derive-functions",
+  "input": "{\"flags\":\"Alpha,BETA\"}",
+  "context": {},
+  "expect": "{\"fla\":0,\"flb\":0,\"flc\":0,\"flags\":\"Alpha,BETA\"}",
+  "model": {
+    "@complete": true,
+    "probe.fl_a": "0",
+    "probe.fl_b": "0"
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, Derive functions; ruling 10: case-sensitive"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "ruling-22-roundtrip-every-companion-held",
+  "from": "conformance-cond-text",
+  "to": "conformance-cond-text",
+  "input": "1,2,3",
+  "expect": "1,2,3",
+  "model": {
+    "probe.x": "1",
+    "probe.y": "2",
+    "probe.z": "3"
+  },
+  "source": "constructed",
+  "reference": "spec 0.18 ruling 22 (`with` on text and tlv); ruling 6: byte-exact when every `with` key is held"
+}

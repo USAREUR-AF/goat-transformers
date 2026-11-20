@@ -77,7 +77,7 @@ class _Enc:
     encoded scope of each item of its list (absent when the entity has no such
     list)."""
 
-    __slots__ = ("plan", "values", "groups", "sentinels", "defaulted", "errors", "have")
+    __slots__ = ("plan", "values", "groups", "sentinels", "defaulted", "errors", "have", "suppressed")
 
     def __init__(self, plan, have=None):
         self.plan = plan
@@ -87,6 +87,7 @@ class _Enc:
         self.defaulted = set()  # the indices in `values` that hold a `default`, not the scope's value
         self.errors = {}        # index of a line of a gate block -> its encode error, raised if the block is held
         self.have = have        # the scope's keys (bits: whether a gate block is open, 0.17)
+        self.suppressed = set() # the indices of field lines whose `with` key the scope does not hold (0.18)
 
 
 def _check_unread_numbers(doc, read, fmt):
@@ -663,6 +664,8 @@ class Engine:
                         if not present:
                             continue
                         value = d.fn(*present)
+                    elif d.positional:  # `tokens` (0.18 ruling 7): set when one argument is present and not 0
+                        value = d.fn(*[fields.get(a) for a in d.args])
                     else:
                         value = d.fn(*[fields[a] for a in d.args])
                 except KeyError:
@@ -738,6 +741,10 @@ class Engine:
             if i in skip:
                 continue  # its item holds a `when` or `const` value (ruling 9 of 0.13)
             key = f.key
+            w = f.with_key
+            if w is not None and w not in have and not lists.get(w):
+                enc.suppressed.add(i)
+                continue  # 0.18: as a line whose key is absent, with no default and no sentinel
             if key in have:
                 value = have[key]
             else:

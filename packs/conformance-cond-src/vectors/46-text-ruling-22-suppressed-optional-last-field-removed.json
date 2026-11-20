@@ -1,0 +1,9 @@
+{
+  "name": "text-ruling-22-suppressed-optional-last-field-removed",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-text",
+  "input": "{\"x\":1,\"z\":3}",
+  "expect": "1,",
+  "source": "constructed",
+  "reference": "spec 0.18 ruling 22 (`with` on text and tlv); the suppressed line writes an empty field, which step 5 of 0.10 removes as for an absent key: it is last and optional"
+}

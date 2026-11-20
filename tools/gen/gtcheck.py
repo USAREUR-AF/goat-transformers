@@ -3,7 +3,9 @@
 
 Every generator in this directory reads its own output back through this
 module before it reports success. The module is written from
-spec/engine-spec.md (Versions 0.1 to 0.10, 0.13, 0.14 and the gate blocks of 0.17) and imports no engine, so a generator
+spec/engine-spec.md (Versions 0.1 to 0.10, 0.13, 0.14, the gate blocks of 0.17, and the
+`with` option, `element`, `iso8601_short` and derive functions of 0.18) and
+imports no engine, so a generator
 stays independent of the engines it writes packs for.
 
 What it checks is what an engine checks when it loads a file: the line grammar,
@@ -42,7 +44,9 @@ DISTRIBUTIONS = ("public", "controlled")
 # The type a transform yields (engine-spec 0.4 "The type a transform yields",
 # with the additions of 0.5), by the wires it is valid on.
 TEXT_TRANSFORMS = {"string": "string", "float": "float", "int": "int", "iso8601_ms": "int",
-                   "scale": "float", "iscale": "int"}
+                   "scale": "float", "iscale": "int",
+                   # engine-spec 0.18: xml, json and geojson only (ruling 11)
+                   "iso8601_short": "int"}
 JSON_TRANSFORMS = dict(TEXT_TRANSFORMS, bool="int")
 BITS_TRANSFORMS = {"uint": "int", "twos": "int", "linscale": "float", "uscale": "float",
                    "sscale": "float", "f32": "float", "f64": "float", "ascii": "string",
@@ -56,6 +60,7 @@ PROTOBUF_TRANSFORMS = {"pstring": "string", "pvarint": "int", "psint": "int",
 # 0.10 "Transforms for `text`": `int:<w>` is `int` with a parameter; `dec`,
 # `dm`, `hms` and `hms_dmy` are valid on this wire only.
 RECORD_TRANSFORMS = dict(TEXT_TRANSFORMS, dec="float", dm="float", hms="float", hms_dmy="int")
+del RECORD_TRANSFORMS["iso8601_short"]   # 0.18 ruling 21: xml, json and geojson only
 PAIR_TRANSFORMS = ("dm", "hms_dmy")
 NUMERIC_TEXT = ("int", "float", "dec")
 # 0.13 "Transforms for `tlv`": `utf8` and `hex` are valid on this wire only;
@@ -85,7 +90,9 @@ SEQUENTIAL_ONLY = ("pad", "align", "presence", "opt", "chain", "fx", "length", "
 # spec 0.17: the lines a gate block of a fixed layout may hold
 GATE_BODY = ("field", "const", "default", "if")
 DIRECTIVES = HEADER + TABLES + BLOCKS + SEQUENTIAL_ONLY + (
-    "root", "kind", "when", "requires", "field", "const", "default", "end", "tag", "key")
+    "root", "kind", "when", "requires", "field", "const", "default", "end", "tag", "key",
+    # spec 0.18: an xml element written when empty
+    "element")
 
 _INT = re.compile(r"-?[0-9]+\Z")
 _UINT = re.compile(r"[0-9]+\Z")
@@ -249,6 +256,8 @@ _DERIVE_SHAPE = {
     "m_lat_of": (2, 2, False), "m_lon_of": (2, 2, False),
     "ecef_x": (3, 3, False), "ecef_y": (3, 3, False), "ecef_z": (3, 3, False),
     "lat_of_ecef": (3, 3, False), "lon_of_ecef": (3, 3, False), "hae_of_ecef": (3, 3, False),
+    # Version 0.18
+    "tokens": (1, None, True), "has_token": (1, 1, True), "text_if": (1, 1, True),
 }
 # function -> (type of every argument, type of the target); `copy`, `offset`,
 # `present`, `add` and `sub` are checked apart because they take more than one type.
@@ -264,7 +273,57 @@ _DERIVE_TYPES = {
     "m_lat_of": ("float", "float"), "m_lon_of": ("float", "float"),
     "ecef_x": ("float", "float"), "ecef_y": ("float", "float"), "ecef_z": ("float", "float"),
     "lat_of_ecef": ("float", "float"), "lon_of_ecef": ("float", "float"), "hae_of_ecef": ("float", "float"),
+    # Version 0.18
+    "tokens": ("int", "string"), "has_token": ("string", "int"), "text_if": ("int", "string"),
 }
+
+# spec 0.18: the separator names of `tokens` and `has_token` (ruling 9:
+# lowercase and exact)
+_SEPARATOR_NAMES = {"space": " ", "comma": ",", "colon": ":"}
+
+
+# spec 0.18: whitespace in separators, tokens and texts is these four only
+_WS = " \t\n\r"
+
+
+def _separator(text):
+    """The separator character of `tokens` and `has_token`, or None when the
+    text is neither a name nor one character other than `:`, `,` and
+    whitespace (a character is one code point)."""
+    if text in _SEPARATOR_NAMES:
+        return _SEPARATOR_NAMES[text]
+    if len(text) == 1 and text not in ":," + _WS:
+        return text
+    return None
+
+
+def _token_ok(token, sep):
+    """A token: one or more characters other than `:`, `,`, whitespace and
+    the separator character."""
+    return bool(token) and not any(c in ":," + _WS or c == sep for c in token)
+
+
+def token_parameter_error(function, parameter, count):
+    """Why the parameter of a 0.18 derive function does not load, or None.
+    `count` is the number of argument keys of the line."""
+    if function == "text_if":
+        # one or more characters other than whitespace; `:` allowed
+        return None if parameter and not any(c in _WS for c in parameter) else \
+            "`text_if` takes a text of one or more characters other than whitespace"
+    sep_text, colon, rest = parameter.partition(":")
+    sep = _separator(sep_text)
+    if sep is None or not colon:
+        return "`%s` takes a separator (one character, or space, comma or colon) and then `:`" % function
+    if function == "has_token":
+        return None if _token_ok(rest, sep) else "`has_token` takes one token after the separator"
+    tokens = rest.split(",")
+    if not all(_token_ok(t, sep) for t in tokens):
+        return "`tokens`: an empty token, or a token holding `:`, `,`, whitespace or the separator"
+    if len(set(tokens)) != len(tokens):
+        return "`tokens`: a token listed twice"
+    if len(tokens) != count:
+        return "`tokens` lists %d token(s) and has %d argument(s)" % (len(tokens), count)
+    return None
 
 
 class Derive:
@@ -361,6 +420,10 @@ def parse_module(text, label=None):
             args = a[2:]
             if len(args) < least or (most is not None and len(args) > most):
                 bad("derive function `%s` has %d argument(s)" % (function, len(args)))
+            if function in ("tokens", "has_token", "text_if"):
+                why = token_parameter_error(function, parameter, len(args))
+                if why:
+                    bad(why)
             mod.derives.append(Derive(no, a[0], function, parameter if colon else None, args))
         else:
             bad("`%s` is not a directive of a model module" % d)
@@ -521,14 +584,14 @@ class Node:
     None when the locator has none."""
     __slots__ = ("d", "line", "args", "body", "kinds", "key", "loc", "tr", "targs", "via",
                  "opts", "also", "value", "mode", "count", "item", "conds", "name", "bits",
-                 "unit", "plus", "whole", "start", "path", "absent", "fields", "col", "size", "gate")
+                 "unit", "plus", "whole", "start", "path", "absent", "fields", "col", "size", "gate", "with_")
 
     def __init__(self, d, line, args):
         self.d, self.line, self.args = d, line, args
         self.body = self.kinds = self.key = self.loc = self.tr = self.targs = self.via = None
         self.opts = self.also = self.value = self.mode = self.count = self.item = None
         self.conds = self.name = self.bits = self.unit = self.plus = self.whole = None
-        self.start = self.path = self.absent = self.fields = self.col = self.size = self.gate = None
+        self.start = self.path = self.absent = self.fields = self.col = self.size = self.gate = self.with_ = None
 
     def __repr__(self):
         return "<%s line %d: %s>" % (self.d, self.line, " ".join(self.args))
@@ -918,6 +981,8 @@ class _Loader:
             elif d == "fx":
                 if node.args or not chain:
                     self.bad(node, "`fx` outside a chain, or with an argument")
+            elif d == "element":
+                self._element(node, group)
             elif d == "group":
                 self._group(node, group)
                 inner = visible + [{}]
@@ -1119,6 +1184,10 @@ class _Loader:
                 # spec 0.9: the token after `absent` is always its argument
                 node.absent = a[i + 1]
                 i += 1
+            elif opt == "with" and node.with_ is None and i + 1 < len(a):
+                # spec 0.18: written only when the entity (the item) holds the key
+                node.with_ = a[i + 1]
+                i += 1
             else:
                 self.bad(node, "field option `%s` is unknown, repeated or incomplete" % opt)
             i += 1
@@ -1143,6 +1212,9 @@ class _Loader:
             self._tlv_size(node)
         self._via(node, node.via)
         self.key_uses.append((node, node.key, "field"))
+        if node.with_ is not None:
+            # 0.18 ruling 5: checked as a `requires` key is
+            self.key_uses.append((node.line, node.with_, "requires"))
 
     def _absent(self, node, group):
         """The load checks of `absent <value>[,<value>...]` (spec 0.9)."""
@@ -1309,6 +1381,22 @@ class _Loader:
             self.bad(node, "a gate lists a value twice")
         node.gate = (m.group(1) == "!", tuple(int(v) for v in values))
 
+    def _element(self, node, group):
+        """`element <path>` (spec 0.18): xml only, not inside a group, a path
+        of element names (no `@` or `#` in a step, no empty step: rulings 13
+        and 16)."""
+        if self.pack.wire != "xml":
+            self.bad(node, "`element` on the %s wire" % self.pack.wire)
+        if group is not None:
+            self.bad(node, "`element` inside a group (0.18 ruling 12)")
+        if len(node.args) != 1:
+            self.bad(node, "`element` takes one path")
+        path = node.args[0]
+        names = path.split("/")
+        if not path or any(not n for n in names) or "@" in path or "#" in path:
+            self.bad(node, "`%s` is not a path of element names" % path)
+        node.loc = path
+
     def _length(self, node):
         a = node.args
         if not a or not _UINT.match(a[0]) or not 1 <= int(a[0]) <= 64:
@@ -1371,6 +1459,15 @@ class _Loader:
                 dotted = [f.args[1] == "." for f in node.body if f.d == "field" and len(f.args) > 1]
                 if any(dotted) and (not all(dotted) or any(x.d not in ("field", "default") for x in node.body)):
                     self.bad(node, "a protobuf group body mixes `.` with paths")
+                # 0.18 rulings 4 and 17: a packed group is a body of `.` fields
+                # with numeric transforms only; `with` is refused there
+                numeric = ("pvarint", "psint", "pdouble", "pfloat")
+                packed = node.body and all(x.d == "field" and len(x.args) > 2 and x.args[1] == "."
+                                           and x.args[2] in numeric for x in node.body)
+                if packed:
+                    for x in node.body:
+                        if "with" in x.args[3:]:
+                            self.bad(x, "`with` on a `.` field of a packed protobuf group (0.18 ruling 4)")
             elif not node.loc or node.loc == ".":
                 self.bad(node, "`%s` is not a group locator" % node.loc)
             return
@@ -1467,6 +1564,11 @@ class _Loader:
         below = tuple(g.loc + ("/" if xml else ".") for g in groups)
         exact = {g.loc for g in groups} if xml else ()
         for node in lines:
+            if node.d == "element":
+                # 0.18 ruling 12: equal to a group's path, or through it
+                if node.loc in exact or (node.loc + "/").startswith(below):
+                    self.bad(node, "element `%s` is or passes through the path of a group" % node.loc)
+                continue
             if node.d != "field":
                 continue
             # on xml the last step names an attribute or the text, not an element

@@ -1,0 +1,9 @@
+{
+  "name": "gates-written-bits-hold-the-gate",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-gates",
+  "input": "{\"w\":255,\"x\":5,\"y\":1}",
+  "expect": "ff05",
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; with Version 0.17 Encode; w written in step 2: bit 0 is 1 and the block holds"
+}

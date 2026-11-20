@@ -1,0 +1,9 @@
+{
+  "name": "gates-ruling-01-suppressed-key-not-mapped-for-step-6",
+  "from": "conformance-cond-src",
+  "to": "conformance-cond-gates",
+  "input": "{\"x\":5,\"z\":6}",
+  "expect": "0105",
+  "source": "constructed",
+  "reference": "spec 0.18, Written only with another key; with Version 0.17 Encode; ruling 1: z's block is not held and its line does not count as mapping z"
+}

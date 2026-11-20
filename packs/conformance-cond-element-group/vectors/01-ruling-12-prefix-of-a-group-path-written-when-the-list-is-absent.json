@@ -1,0 +1,12 @@
+{
+  "name": "ruling-12-prefix-of-a-group-path-written-when-the-list-is-absent",
+  "from": "conformance-cond-element-group",
+  "to": "conformance-cond-element-group",
+  "input": "<msg id=\"u\"/>",
+  "expect": "<msg id=\"u\"><body/></msg>",
+  "model": {
+    "probe.items.#": "absent"
+  },
+  "source": "constructed",
+  "reference": "spec 0.18, xml: an element written when empty; ruling 12: a path that is a strict prefix of a group's path writes the container even when the list is absent"
+}

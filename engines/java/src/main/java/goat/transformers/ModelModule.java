@@ -33,7 +33,9 @@ public final class ModelModule {
             PRESENT,
             // engine-spec 0.16
             SEC_OF, NSEC_OF, MS_OF, DEG, RAD, ADD, SUB, DEG_LAT_OF, DEG_LON_OF, M_LAT_OF, M_LON_OF,
-            ECEF_X, ECEF_Y, ECEF_Z, LAT_OF_ECEF, LON_OF_ECEF, HAE_OF_ECEF
+            ECEF_X, ECEF_Y, ECEF_Z, LAT_OF_ECEF, LON_OF_ECEF, HAE_OF_ECEF,
+            // engine-spec 0.18
+            TOKENS, HAS_TOKEN, TEXT_IF
         }
 
         /** Target and argument keys as a pack writes them: bare for {@code core}, {@code <module>.<key>} otherwise. */
@@ -49,7 +51,9 @@ public final class ModelModule {
         double den;
         double addFloat;         // offset on floats
         long addInt;             // offset on ints
-        String sep;              // join
+        String sep;              // join; tokens and has_token: the separator character
+        List<String> tokens;     // tokens: the tokens, one per argument; has_token: the one token
+        String text;             // text_if
 
         Derive(String target, List<String> args, String function, Fn fn, String type) {
             this.target = target;
@@ -131,6 +135,31 @@ public final class ModelModule {
                 }
                 case TEXT_OF:
                     return Long.toString(Transform.asLong(v[0]));
+                case TOKENS: {
+                    // v holds one entry per argument, null for an absent one (ruling 7 of 0.18)
+                    StringBuilder b = new StringBuilder();
+                    boolean any = false;
+                    for (int i = 0; i < v.length; i++) {
+                        if (v[i] == null || Transform.asLong(v[i]) == 0) continue;
+                        if (any) b.append(sep);
+                        b.append(tokens.get(i));
+                        any = true;
+                    }
+                    return any ? b.toString() : null;
+                }
+                case HAS_TOKEN: {
+                    String a = String.valueOf(v[0]), t = tokens.get(0);
+                    int from = 0;
+                    while (true) {
+                        int at = a.indexOf(sep, from);
+                        String part = at < 0 ? a.substring(from) : a.substring(from, at);
+                        if (part.equals(t)) return 1L;   // exact: no trimming, case-sensitive (ruling 10)
+                        if (at < 0) return 0L;
+                        from = at + sep.length();
+                    }
+                }
+                case TEXT_IF:
+                    return Transform.asLong(v[0]) != 0 ? text : null;
                 case JOIN: {
                     StringBuilder b = new StringBuilder();
                     for (int i = 0; i < v.length; i++) {
@@ -554,20 +583,44 @@ public final class ModelModule {
             case "lat_of_ecef": fn = Derive.Fn.LAT_OF_ECEF; argc = 3; break;
             case "lon_of_ecef": fn = Derive.Fn.LON_OF_ECEF; argc = 3; break;
             case "hae_of_ecef": fn = Derive.Fn.HAE_OF_ECEF; argc = 3; break;
+            case "tokens": fn = Derive.Fn.TOKENS; argc = -1; break;
+            case "has_token": fn = Derive.Fn.HAS_TOKEN; argc = 1; break;
+            case "text_if": fn = Derive.Fn.TEXT_IF; argc = 1; break;
             default: throw badDerive(module, where, "unknown function \"" + function + "\"");
         }
-        boolean takesParam = fn == Derive.Fn.SCALE || fn == Derive.Fn.OFFSET || fn == Derive.Fn.JOIN;
+        boolean takesParam = fn == Derive.Fn.SCALE || fn == Derive.Fn.OFFSET || fn == Derive.Fn.JOIN
+                || fn == Derive.Fn.TOKENS || fn == Derive.Fn.HAS_TOKEN || fn == Derive.Fn.TEXT_IF;
         if (takesParam != (param != null)) {
             throw badDerive(module, where, takesParam ? head + " needs a parameter, as " + head + ":<value>" : head + " takes no parameter");
         }
         if (argc >= 0 && args.size() != argc) {
             throw badDerive(module, where, head + " takes " + argc + " argument key(s), got " + args.size());
         }
+        String[] sepTokens = null;   // tokens and has_token: {separator, token, token, ...}
+        if (fn == Derive.Fn.TOKENS || fn == Derive.Fn.HAS_TOKEN) {
+            sepTokens = sepAndTokens(head, param, module, where);
+            int n = sepTokens.length - 1;
+            if (fn == Derive.Fn.HAS_TOKEN && n != 1) throw badDerive(module, where, "has_token takes one token, got " + n);
+            if (fn == Derive.Fn.TOKENS && n != args.size()) {
+                throw badDerive(module, where, "tokens has " + n + " token(s) and " + args.size() + " argument key(s)");
+            }
+        }
+        if (fn == Derive.Fn.TEXT_IF) {
+            if (param.isEmpty()) throw badDerive(module, where, "text_if needs a text");
+            for (int i = 0; i < param.length(); i++) {
+                if (isSpecWhitespace(param.charAt(i))) throw badDerive(module, where, "the text of text_if holds whitespace");
+            }
+        }
         if (shapeOnly) return null;
         String type = deriveKeyType(target, module, keys, uses, loaded, true, where);
         List<String> argTypes = new ArrayList<>();
         for (String a : args) argTypes.add(deriveKeyType(a, module, keys, uses, loaded, false, where));
         Derive out = new Derive(target, args, function, fn, type);
+        if (sepTokens != null) {
+            out.sep = sepTokens[0];
+            out.tokens = java.util.Arrays.asList(sepTokens).subList(1, sepTokens.length);
+        }
+        if (fn == Derive.Fn.TEXT_IF) out.text = param;
         String need; // the type the target and every argument must have
         String needArg = null; // the type every argument must have, when it differs from the target's
         switch (fn) {
@@ -588,8 +641,14 @@ public final class ModelModule {
                 needArg = "string";
                 break;
             case TEXT_OF:
+            case TOKENS:
+            case TEXT_IF:
                 need = "string";
                 needArg = "int";
+                break;
+            case HAS_TOKEN:
+                need = "int";
+                needArg = "string";
                 break;
             case COPY:
                 need = type;
@@ -654,6 +713,54 @@ public final class ModelModule {
             if (!argTypes.get(i).equals(needArg)) {
                 throw badDerive(module, where, "argument " + args.get(i) + " is " + argTypes.get(i) + ", " + head + " takes " + needArg);
             }
+        }
+        return out;
+    }
+
+    /** Whitespace as engine-spec 0.18 names it for the derive functions: space, tab, line feed and carriage return. */
+    private static boolean isSpecWhitespace(int c) { return c == ' ' || c == '\t' || c == '\n' || c == '\r'; }
+
+    /**
+     * The separator and the tokens of {@code tokens:<sep>:<t1>,…} or {@code has_token:<sep>:<t>} ({@code param} is
+     * the text after the first colon). The separator is one code point other than {@code :}, {@code ,} and
+     * whitespace, or one of the exact names {@code space}, {@code comma} and {@code colon} (ruling 9 of 0.18). A token
+     * is one or more code points other than {@code :}, {@code ,}, whitespace and the separator; tokens are distinct.
+     */
+    private static String[] sepAndTokens(String head, String param, String module, String where) {
+        int colon = param.indexOf(':');
+        if (colon < 0) throw badDerive(module, where, head + " is " + head + ":<sep>:<token>[,<token>...]");
+        String s = param.substring(0, colon), list = param.substring(colon + 1);
+        String sep;
+        switch (s) {
+            case "space": sep = " "; break;
+            case "comma": sep = ","; break;
+            case "colon": sep = ":"; break;
+            default:
+                if (s.codePointCount(0, s.length()) != 1) {
+                    throw badDerive(module, where, "the separator of " + head + " is one character or space, comma or colon, got \"" + s + "\"");
+                }
+                int c = s.codePointAt(0);
+                if (c == ':' || c == ',' || isSpecWhitespace(c)) {
+                    throw badDerive(module, where, "the separator of " + head + " cannot be \"" + s + "\"");
+                }
+                sep = s;
+        }
+        String[] parts = list.split(",", -1);
+        String[] out = new String[parts.length + 1];
+        out[0] = sep;
+        java.util.Set<String> seen = new java.util.HashSet<>();
+        for (int i = 0; i < parts.length; i++) {
+            String t = parts[i];
+            if (t.isEmpty()) throw badDerive(module, where, head + " has an empty token");
+            for (int k = 0; k < t.length(); ) {
+                int c = t.codePointAt(k);
+                if (c == ':' || isSpecWhitespace(c) || sep.equals(new String(Character.toChars(c)))) {
+                    throw badDerive(module, where, "token \"" + t + "\" holds a character a token cannot hold");
+                }
+                k += Character.charCount(c);
+            }
+            if (!seen.add(t)) throw badDerive(module, where, "token " + t + " is listed twice");
+            out[i + 1] = t;
         }
         return out;
     }
