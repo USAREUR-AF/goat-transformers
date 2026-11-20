@@ -60,7 +60,7 @@ def vectors():
     ms2 = iso_ms("2026-03-14T09:30:00.250Z")
     feat = ('{"type":"Feature","geometry":{"type":"Point","coordinates":[8.6821,50.1109]},'
             '"properties":{"time_ms":%d},"id":"AMR-0042"}' % ms2)
-    out.append(("02-from-geojson.json", {
+    out.append(("02-point-feature.json", {
         "name": "geojson-to-vda5050-connection",
         "from": "geojson", "to": "vda5050-connection",
         "input": feat,
@@ -74,11 +74,25 @@ def dump(v):
     return json.dumps(v, indent=1, ensure_ascii=False) + "\n"
 
 
+PACK = "vda5050-connection"
+# Files of earlier runs that this script no longer writes (it removes only these).
+STALE = ["%s/02-from-geojson.json" % DIR]
+
+
 def build(out):
-    files = vectors()
-    for fn, v in files:
-        out.write("%s/%s" % (DIR, fn), dump(v))
-    return {"vda5050-connection": len(files)}
+    """A vector lives under the pack that owns its input (`from`): one whose `from` is
+    another pack goes to packs/<from>/vectors as to-<this pack>-<name>.json."""
+    written = {}
+    for rel in STALE:
+        out.remove(rel)
+    for fn, v in vectors():
+        if v["from"] == PACK:
+            rel = "%s/%s" % (DIR, fn)
+        else:
+            rel = "packs/%s/vectors/to-%s-%s" % (v["from"], PACK, fn)
+        out.write(rel, dump(v))
+        written[v["from"]] = written.get(v["from"], 0) + 1
+    return written
 
 
 def main(argv=None):
