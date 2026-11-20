@@ -60,7 +60,7 @@ conversion that would drop a field the caller requires, are being added.
 | A key changes meaning under its users | Keys are never renamed and never change type. A new meaning is a new key. |
 | A pack writes a value of the wrong type | Every engine checks each pack against the model when it loads, and refuses a mismatch. |
 | One implementation reads the model differently | Seven engines, written independently from the specification, must give the same bytes on every conformance vector. |
-| All engines agree on a wrong value | Values are compared with the projects' own encoders and decoders on their own inputs ([docs/consumer-proofs.md](docs/consumer-proofs.md)). Checks against each format's reference implementation and range checks on every key are being added. |
+| All engines agree on a wrong value | Values are compared with the projects' own encoders and decoders on their own inputs ([docs/consumer-proofs.md](docs/consumer-proofs.md)). Every conversion vector's decoded values are checked against a plausible range or set for their key (latitude, longitude, height, errors, course, speed, times, confidence, class, flags), and every pack that maps a height must name its vertical datum (`tools/model-checks.py`, rules in `tools/model-ranges.json`). Checks against each format's reference implementation are being added. |
 | A change to the model breaks a user | Each project pins a library commit, so a change reaches no one until they move. A change to `core` or `track` needs a written decision record ([docs/adr/](docs/adr/INDEX.md)) and is measured against every known user before it merges. |
 
 ### Time quality
