@@ -80,6 +80,16 @@
       "distribution": "public",
       "profile": "open"
     },
+    "LicenseRef-OMA-Internal": {
+      "name": "OMA specification use terms (internal or educational use of the document only)",
+      "url": "http://www.openmobilealliance.org/UseAgreement.html",
+      "commercial": "no",
+      "share_alike": false,
+      "attribution": true,
+      "field_of_use": [],
+      "distribution": "public",
+      "profile": "everything"
+    },
     "LicenseRef-unstated": {
       "name": "No licence stated by the source",
       "commercial": "unknown",
@@ -771,6 +781,11 @@
       "format": "kml",
       "licence": "LicenseRef-OGC-Document",
       "profile": "open"
+    },
+    "lwm2m-json": {
+      "format": "lwm2m-json",
+      "licence": "LicenseRef-OMA-Internal",
+      "profile": "everything"
     },
     "mavsdk-action-server-arm-disarm": {
       "format": "mavsdk-action-server-arm-disarm",
@@ -3421,6 +3436,11 @@
       "format": "sdm-weather-weather-observed",
       "licence": "CC-BY-4.0",
       "profile": "open"
+    },
+    "tcx": {
+      "format": "tcx",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
     }
   },
   "modules": {
@@ -4098,6 +4118,11 @@
       "module": "kml",
       "licence": "LicenseRef-OGC-Document",
       "profile": "open"
+    },
+    "lwm2m.def": {
+      "module": "lwm2m",
+      "licence": "LicenseRef-OMA-Internal",
+      "profile": "everything"
     },
     "mavsdkactionserverarmdisarm.def": {
       "module": "mavsdkactionserverarmdisarm",
@@ -5248,6 +5273,11 @@
       "module": "sdmweatherobserved",
       "licence": "CC-BY-4.0",
       "profile": "open"
+    },
+    "tcx.def": {
+      "module": "tcx",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
     }
   }
 }

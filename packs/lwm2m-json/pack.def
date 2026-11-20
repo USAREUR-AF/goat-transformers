@@ -1,0 +1,23 @@
+# OMA LwM2M JSON payload (content format 11543, application/vnd.oma.lwm2m+json), LwM2M 1.0:
+# a base name, a base time and a list of resource entries. Public; licensed
+# LicenseRef-OMA-Internal (see PROVENANCE.md). Written by hand from section 6.4.4 of the
+# LwM2M 1.0.2 technical specification. pack.md states why no resource is bound to a shared
+# key and how the OMA object registry tells what an entry is.
+format  lwm2m-json
+version 0.1.0
+distribution public
+source  "OMA Lightweight M2M Technical Specification, Approved Version 1.0.2, OMA-TS-LightweightM2M-V1_0_2-20180209-A, section 6.4.4 JSON (sha256 79061ccd170d288b3051b54605b43e5b905b34e0e61a6f8905161cca389bab82); restated by goat-transformers"
+source  "Object and resource IDs in pack.md: OMA LwM2M registry, https://github.com/OpenMobileAlliance/lwm2m-registry commit a763bb5414099844fadf0797b2c8223d169d0c7e (BSD-3-Clause)"
+uses    lwm2m
+wire    json
+
+field  lwm2m.base_name  bn  string
+field  lwm2m.base_time  bt  float
+group  lwm2m.entries  e
+  field  lwm2m.name           n   string
+  field  lwm2m.time           t   float
+  field  lwm2m.value          v   float
+  field  lwm2m.boolean_value  bv  bool
+  field  lwm2m.objlnk_value   ov  string
+  field  lwm2m.string_value   sv  string
+end

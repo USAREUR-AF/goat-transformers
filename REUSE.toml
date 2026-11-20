@@ -2006,3 +2006,27 @@ path = ["packs/nga-msi-*/**", "model/ngaasam.def", "model/ngabwarn.def", "model/
 precedence = "override"
 SPDX-FileCopyrightText = "National Geospatial-Intelligence Agency (no copyright claimed; see LICENSES/LicenseRef-NGA-MSI.txt)"
 SPDX-License-Identifier = "LicenseRef-NGA-MSI"
+
+[[annotations]]
+path = "packs/lwm2m-json/**"
+precedence = "override"
+SPDX-FileCopyrightText = "2018 Open Mobile Alliance (LwM2M 1.0.2 technical specification)"
+SPDX-License-Identifier = "LicenseRef-OMA-Internal"
+
+[[annotations]]
+path = "model/lwm2m.def"
+precedence = "override"
+SPDX-FileCopyrightText = "2018 Open Mobile Alliance (LwM2M 1.0.2 technical specification)"
+SPDX-License-Identifier = "LicenseRef-OMA-Internal"
+
+[[annotations]]
+path = "packs/tcx/**"
+precedence = "override"
+SPDX-FileCopyrightText = "Garmin (Training Center Database v2 schema)"
+SPDX-License-Identifier = "LicenseRef-unstated"
+
+[[annotations]]
+path = "model/tcx.def"
+precedence = "override"
+SPDX-FileCopyrightText = "Garmin (Training Center Database v2 schema)"
+SPDX-License-Identifier = "LicenseRef-unstated"

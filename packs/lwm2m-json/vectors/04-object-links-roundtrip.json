@@ -1,0 +1,12 @@
+{
+  "name": "object-links-roundtrip",
+  "from": "lwm2m-json",
+  "to": "lwm2m-json",
+  "input": "{\"bn\":\"/\",\"e\":[{\"n\":\"65/0/0/0\",\"ov\":\"66:0\"},{\"n\":\"65/0/0/1\",\"ov\":\"66:1\"},{\"n\":\"66/0/0\",\"sv\":\"a\"}]}",
+  "expect": "{\"bn\":\"/\",\"e\":[{\"n\":\"65/0/0/0\",\"ov\":\"66:0\"},{\"n\":\"65/0/0/1\",\"ov\":\"66:1\"},{\"n\":\"66/0/0\",\"sv\":\"a\"}]}",
+  "model": {
+    "lwm2m.entries[1].lwm2m.objlnk_value": "66:1"
+  },
+  "source": "derived by tools/gen/lwm2m-tcx-vectors.py from the members the pack maps and spec/engine-spec.md; no engine run",
+  "reference": "OMA LwM2M 1.0.2 technical specification, section 6.4.4 JSON; resource IDs from the OMA LwM2M registry; a base name of / and object link values, written object:instance"
+}

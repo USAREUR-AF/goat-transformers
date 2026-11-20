@@ -1,0 +1,9 @@
+{
+  "name": "value-as-text",
+  "from": "lwm2m-json",
+  "to": "lwm2m-json",
+  "input": "{\"bn\":\"/6/0/\",\"e\":[{\"n\":\"0\",\"v\":\"47.6205\"}]}",
+  "expect_error": "transform-decode",
+  "source": "derived by tools/gen/lwm2m-tcx-vectors.py from the members the pack maps and spec/engine-spec.md; no engine run",
+  "reference": "OMA LwM2M 1.0.2 technical specification, section 6.4.4 JSON; resource IDs from the OMA LwM2M registry; v is a JSON number; a string there is a transform failure"
+}

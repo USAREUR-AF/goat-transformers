@@ -1,0 +1,15 @@
+{
+  "name": "location-notification-reordered",
+  "from": "lwm2m-json",
+  "to": "lwm2m-json",
+  "input": "{\"bn\":\"/6/0/\",\"e\":[{\"n\":\"0\",\"v\":47.6205,\"t\":-10},{\"n\":\"1\",\"v\":-122.3493,\"t\":-10},{\"n\":\"2\",\"v\":56.5,\"t\":-10},{\"n\":\"5\",\"v\":1763639990,\"t\":-10},{\"n\":\"6\",\"v\":1.25,\"t\":-10}],\"bt\":1763640000}",
+  "expect": "{\"bn\":\"/6/0/\",\"bt\":1763640000,\"e\":[{\"n\":\"0\",\"t\":-10,\"v\":47.6205},{\"n\":\"1\",\"t\":-10,\"v\":-122.3493},{\"n\":\"2\",\"t\":-10,\"v\":56.5},{\"n\":\"5\",\"t\":-10,\"v\":1763639990},{\"n\":\"6\",\"t\":-10,\"v\":1.25}]}",
+  "model": {
+    "lwm2m.base_time": "1763640000",
+    "lwm2m.entries[0].lwm2m.value": "47.6205",
+    "lwm2m.entries[1].lwm2m.value": "-122.3493",
+    "lwm2m.entries[0].lwm2m.time": "-10"
+  },
+  "source": "derived by tools/gen/lwm2m-tcx-vectors.py from the members the pack maps and spec/engine-spec.md; no engine run",
+  "reference": "OMA LwM2M 1.0.2 technical specification, section 6.4.4 JSON; resource IDs from the OMA LwM2M registry; a notification of the Location object (6): latitude, longitude, altitude, timestamp and speed, ten seconds before the base time; bt is written before e, and t before v"
+}

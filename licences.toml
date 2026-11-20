@@ -122,3 +122,12 @@ share_alike = false
 attribution = true
 field_of_use = []
 distribution = "public"
+
+[licences."LicenseRef-OMA-Internal"]
+name = "OMA specification use terms (internal or educational use of the document only)"
+url = "http://www.openmobilealliance.org/UseAgreement.html"
+commercial = "no"
+share_alike = false
+attribution = true
+field_of_use = []
+distribution = "public"
