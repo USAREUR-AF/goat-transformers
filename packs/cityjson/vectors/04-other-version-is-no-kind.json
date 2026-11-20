@@ -1,0 +1,9 @@
+{
+  "name": "other-version-is-no-kind",
+  "from": "cityjson",
+  "to": "cityjson",
+  "input": "{\"type\":\"CityJSON\",\"version\":\"1.1\",\"transform\":{\"scale\":[1,1,1],\"translate\":[0,0,0]},\"CityObjects\":{},\"vertices\":[]}",
+  "expect_error": "no-kind",
+  "source": "derived by tools/gen/ogc-geo-vectors.py from the standard and spec/engine-spec.md; no engine run",
+  "reference": "CityJSON Specifications 2.0.1, sections 1 CityJSON Object, 4 Transform Object, 5 Metadata, 7.2 CityJSONFeature; section 1: version holds the minor version; this pack reads 2.0"
+}

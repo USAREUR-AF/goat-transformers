@@ -1,0 +1,26 @@
+{
+  "name": "city-model-roundtrip",
+  "from": "cityjson",
+  "to": "cityjson",
+  "input": "{\"type\":\"CityJSON\",\"version\":\"2.0\",\"transform\":{\"scale\":[0.001,0.001,0.001],\"translate\":[84710.1,446846,-5.3]},\"metadata\":{\"identifier\":\"b6a1c0de-0000-4000-8000-000000000001\",\"referenceSystem\":\"https://www.opengis.net/def/crs/EPSG/0/7415\",\"title\":\"Two buildings\",\"referenceDate\":\"2024-03-01\",\"geographicalExtent\":[84710.1,446846,-5.3,84757.1,446944,40.9],\"pointOfContact\":{\"contactName\":\"Survey Office\",\"emailAddress\":\"survey at example dot org\",\"contactType\":\"organization\",\"role\":\"custodian\",\"website\":\"https://survey.example.org\",\"address\":{\"locality\":\"Delft\"}}},\"CityObjects\":{\"b1\":{\"type\":\"Building\",\"attributes\":{\"storeys\":3,\"roofType\":\"flat\"},\"geometry\":[{\"type\":\"Solid\",\"lod\":\"1\",\"boundaries\":[[[[0,1,2,3]]]]}]}},\"vertices\":[[0,0,0],[1000,0,0],[1000,1000,0],[0,1000,0]]}",
+  "expect": "{\"type\":\"CityJSON\",\"version\":\"2.0\",\"transform\":{\"scale\":[0.001,0.001,0.001],\"translate\":[84710.1,446846,-5.3]},\"metadata\":{\"title\":\"Two buildings\",\"identifier\":\"b6a1c0de-0000-4000-8000-000000000001\",\"referenceDate\":\"2024-03-01\",\"referenceSystem\":\"https://www.opengis.net/def/crs/EPSG/0/7415\",\"geographicalExtent\":[84710.1,446846,-5.3,84757.1,446944,40.9],\"pointOfContact\":{\"contactName\":\"Survey Office\",\"emailAddress\":\"survey at example dot org\",\"role\":\"custodian\",\"website\":\"https://survey.example.org\",\"contactType\":\"organization\",\"address\":{\"locality\":\"Delft\"}}},\"CityObjects\":{\"b1\":{\"type\":\"Building\",\"attributes\":{\"storeys\":3,\"roofType\":\"flat\"}}}}",
+  "model": {
+    "@kind": "city-model",
+    "cityjson.scale.#": "3",
+    "cityjson.scale[0].cityjson.component": "0.001",
+    "cityjson.translate[2].cityjson.component": "-5.3",
+    "cityjson.title": "Two buildings",
+    "cityjson.reference_system": "https://www.opengis.net/def/crs/EPSG/0/7415",
+    "cityjson.extent.#": "6",
+    "cityjson.extent[5].cityjson.component": "40.9",
+    "cityjson.contact_name": "Survey Office",
+    "cityjson.contact_role": "custodian",
+    "@absent": [
+      "lat",
+      "lon",
+      "uid"
+    ]
+  },
+  "source": "derived by tools/gen/ogc-geo-vectors.py from the standard and spec/engine-spec.md; no engine run",
+  "reference": "CityJSON Specifications 2.0.1, sections 1 CityJSON Object, 4 Transform Object, 5 Metadata, 7.2 CityJSONFeature; scalar members of CityObjects are residue; the geometry array and the vertices array are not carried (arrays outside a group, Version 0.5)"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "CityJSON",
+  "domain": "maps",
+  "exact": [
+    "cityjson"
+  ]
+}

@@ -1,0 +1,80 @@
+# OGC Web Map Service 1.3.0 capabilities document (WMS_Capabilities), XML.
+# Public OGC standard (OGC 06-042). One message is one capabilities document
+# in the default namespace http://www.opengis.net/wms, as WMS 1.3.0 servers
+# write it. The pack reads the service metadata, the GetMap and
+# GetFeatureInfo formats, the exception formats, the top-level Layer and the
+# layers directly inside it. Lines follow the element order of the schema.
+# No value is a position: pack.md says what is not mapped and why.
+# This pack is a change of the OGC text the OGC has not approved or adopted.
+format  wms-capabilities
+version 0.1.0
+distribution public
+source  "OGC Web Map Server Implementation Specification 1.3.0, OGC 06-042 (2006-03-15), https://docs.ogc.org/is/06-042/06-042.pdf, clause 7.2.4 and Annex E (OGC Document License Agreement)"
+uses    wms
+wire    xml
+root    WMS_Capabilities
+# The default namespace and version of WMS 1.3.0; the encoder writes both.
+when    @xmlns    http://www.opengis.net/wms
+when    @version  1.3.0
+
+# The pack language allows `when` only in a pack with kinds: one kind, every document.
+kind    capabilities
+when    Service/Name/#text  WMS
+field   wms.update_sequence       @updateSequence                                          string
+field   wms.title                 Service/Title/#text                                      string
+field   wms.abstract              Service/Abstract/#text                                   string
+group   wms.keywords              Service/KeywordList/Keyword
+  field wms.keyword               "#text"                                                  string
+end
+field   wms.contact_person        Service/ContactInformation/ContactPersonPrimary/ContactPerson/#text        string
+field   wms.contact_organization  Service/ContactInformation/ContactPersonPrimary/ContactOrganization/#text  string
+field   wms.contact_position      Service/ContactInformation/ContactPosition/#text                          string
+field   wms.contact_address_type  Service/ContactInformation/ContactAddress/AddressType/#text               string
+field   wms.contact_address       Service/ContactInformation/ContactAddress/Address/#text                   string
+field   wms.contact_city          Service/ContactInformation/ContactAddress/City/#text                      string
+field   wms.contact_state         Service/ContactInformation/ContactAddress/StateOrProvince/#text           string
+field   wms.contact_post_code     Service/ContactInformation/ContactAddress/PostCode/#text                  string
+field   wms.contact_country       Service/ContactInformation/ContactAddress/Country/#text                   string
+field   wms.contact_phone         Service/ContactInformation/ContactVoiceTelephone/#text                    string
+field   wms.contact_fax           Service/ContactInformation/ContactFacsimileTelephone/#text                string
+field   wms.contact_email         Service/ContactInformation/ContactElectronicMailAddress/#text             string
+field   wms.fees                  Service/Fees/#text                                       string
+field   wms.access_constraints    Service/AccessConstraints/#text                          string
+field   wms.layer_limit           Service/LayerLimit/#text                                 int
+field   wms.max_width             Service/MaxWidth/#text                                   int
+field   wms.max_height            Service/MaxHeight/#text                                  int
+group   wms.getmap_formats        Capability/Request/GetMap/Format
+  field wms.format                "#text"                                                  string
+end
+group   wms.featureinfo_formats   Capability/Request/GetFeatureInfo/Format
+  field wms.format                "#text"                                                  string
+end
+group   wms.exception_formats     Capability/Exception/Format
+  field wms.format                "#text"                                                  string
+end
+field   wms.layer_queryable       Capability/Layer/@queryable                              string
+field   wms.layer_name            Capability/Layer/Name/#text                              string
+field   wms.layer_title           Capability/Layer/Title/#text                             string
+field   wms.layer_abstract        Capability/Layer/Abstract/#text                          string
+group   wms.layer_crs             Capability/Layer/CRS
+  field wms.crs                   "#text"                                                  string
+end
+field   wms.layer_west            Capability/Layer/EX_GeographicBoundingBox/westBoundLongitude/#text  float
+field   wms.layer_east            Capability/Layer/EX_GeographicBoundingBox/eastBoundLongitude/#text  float
+field   wms.layer_south           Capability/Layer/EX_GeographicBoundingBox/southBoundLatitude/#text  float
+field   wms.layer_north           Capability/Layer/EX_GeographicBoundingBox/northBoundLatitude/#text  float
+field   wms.layer_min_scale       Capability/Layer/MinScaleDenominator/#text               float
+field   wms.layer_max_scale       Capability/Layer/MaxScaleDenominator/#text               float
+group   wms.layers                Capability/Layer/Layer
+  field wms.queryable             @queryable                                               string
+  field wms.opaque                @opaque                                                  string
+  field wms.name                  Name/#text                                               string
+  field wms.layer_item_title      Title/#text                                              string
+  field wms.layer_item_abstract   Abstract/#text                                           string
+  field wms.west                  EX_GeographicBoundingBox/westBoundLongitude/#text        float
+  field wms.east                  EX_GeographicBoundingBox/eastBoundLongitude/#text        float
+  field wms.south                 EX_GeographicBoundingBox/southBoundLatitude/#text        float
+  field wms.north                 EX_GeographicBoundingBox/northBoundLatitude/#text        float
+  field wms.min_scale             MinScaleDenominator/#text                                float
+  field wms.max_scale             MaxScaleDenominator/#text                                float
+end

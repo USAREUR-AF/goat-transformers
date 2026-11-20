@@ -1,0 +1,12 @@
+{
+  "name": "cityjson-from-geojson-feature",
+  "from": "geojson",
+  "to": "cityjson",
+  "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{},\"id\":\"b7\"}",
+  "expect": "{\"type\":\"CityJSONFeature\",\"id\":\"b7\"}",
+  "model": {
+    "uid": "b7"
+  },
+  "source": "derived by tools/gen/ogc-geo-vectors.py from the standard and spec/engine-spec.md; no engine run",
+  "reference": "CityJSON Specifications 2.0.1, sections 1 CityJSON Object, 4 Transform Object, 5 Metadata, 7.2 CityJSONFeature; the kind is chosen by `requires uid`; CityObjects and vertices cannot be written (pack.md)"
+}

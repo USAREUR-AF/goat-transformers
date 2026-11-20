@@ -1,0 +1,43 @@
+# CityJSON 2.0 object and CityJSONFeature, JSON. Public (CC0 1.0); an OGC
+# Community Standard. One message is one CityJSON object (a .city.json file)
+# or one CityJSONFeature (a line of a .city.jsonl file). The pack reads the
+# version, the transform, the metadata and a feature's id. Vertices are an
+# array of arrays and geometries refer to them by array index, which the json
+# wire cannot address: no position is read or written. pack.md has the
+# evidence and what is not mapped.
+format  cityjson
+version 0.1.0
+distribution public
+source  "CityJSON Specifications 2.0.1 (2024-04-11), https://www.cityjson.org/specs/2.0.1/, repository https://github.com/cityjson/specs tag 2.0.1 (CC0 1.0 Universal)"
+uses    cityjson
+wire    json
+
+kind    city-model
+when    type  CityJSON
+when    version  =2.0
+requires cityjson.scale
+group   cityjson.scale       transform.scale
+  field cityjson.component   .   float
+end
+group   cityjson.translate   transform.translate
+  field cityjson.component   .   float
+end
+field   cityjson.title             metadata.title             string
+field   cityjson.identifier        metadata.identifier        string
+field   cityjson.reference_date    metadata.referenceDate     string
+field   cityjson.reference_system  metadata.referenceSystem   string
+group   cityjson.extent      metadata.geographicalExtent
+  field cityjson.component   .   float
+end
+field   cityjson.contact_name          metadata.pointOfContact.contactName    string
+field   cityjson.contact_email         metadata.pointOfContact.emailAddress   string
+field   cityjson.contact_role          metadata.pointOfContact.role           string
+field   cityjson.contact_website       metadata.pointOfContact.website        string
+field   cityjson.contact_type          metadata.pointOfContact.contactType    string
+field   cityjson.contact_phone         metadata.pointOfContact.phone          string
+field   cityjson.contact_organization  metadata.pointOfContact.organization   string
+
+kind    feature
+when    type  CityJSONFeature
+requires uid
+field   uid   id   string

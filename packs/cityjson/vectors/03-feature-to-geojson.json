@@ -1,0 +1,13 @@
+{
+  "name": "feature-to-geojson",
+  "from": "cityjson",
+  "to": "geojson",
+  "input": "{\"type\":\"CityJSONFeature\",\"id\":\"b1\",\"CityObjects\":{\"b1\":{\"type\":\"Building\",\"attributes\":{\"storeys\":3}}},\"vertices\":[[0,0,0],[1000,0,0]]}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{},\"id\":\"b1\"}",
+  "model": {
+    "@kind": "feature",
+    "uid": "b1"
+  },
+  "source": "derived by tools/gen/ogc-geo-vectors.py from the standard and spec/engine-spec.md; no engine run",
+  "reference": "CityJSON Specifications 2.0.1, sections 1 CityJSON Object, 4 Transform Object, 5 Metadata, 7.2 CityJSONFeature; the id carries as uid; no position is bound, so the geometry is null (packs/geojson/pack.def)"
+}

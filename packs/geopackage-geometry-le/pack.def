@@ -1,0 +1,95 @@
+# OGC GeoPackage geometry blob (GeoPackageBinary), little-endian header (flag B 1).
+# Public OGC standard (OGC 12-128r19). One message is the bytes of one geometry
+# column value: an 8-byte header, an envelope whose size flag E chooses, then a
+# WKB geometry. The header is read in full; of the WKB only a two-dimensional
+# Point written little-endian is read. Its x and y bind to lon and lat when the
+# srs_id is 4326. A blob whose flag B is 0 is the pack geopackage-geometry-be:
+# the pack language has one byte order per pack. pack.md has the evidence.
+# This pack is a change of the OGC text the OGC has not approved or adopted.
+format  geopackage-geometry-le
+version 0.1.0
+distribution public
+source  "OGC GeoPackage Encoding Standard 1.4.0, OGC 12-128r19 (2024-02-06), https://docs.ogc.org/is/12-128r19/12-128r19.html, clause 2.1.3 Geometry Encoding (OGC Document License Agreement)"
+source  "OGC Simple Feature Access Part 1: Common Architecture 1.2.1, OGC 06-103r4, https://docs.ogc.org/is/06-103r4/06-103r4.pdf, clause 8.2 Well-known Binary (OGC Document License Agreement)"
+uses    gpkg
+wire    bits
+word_bytes 1
+bit_order  lsb
+# Bytes 0 and 1: the magic, ASCII G and P. Byte 2: version 0 (GeoPackage 1).
+when    0:0:8    71
+when    0:8:8    80
+when    0:16:8   0
+# Byte 3, flags, least significant bit first: B, E (3 bits), Y, X, two reserved bits.
+when    0:24:1   1
+# The pack language allows `when` only in a pack with kinds: one kind, every blob.
+kind    geometry
+field   gpkg.extended  0:29:1   uint
+field   gpkg.empty     0:28:1   uint
+field   gpkg.envelope  0:25:3   uint
+# Bytes 4 to 7: srs_id, a signed 32-bit integer, low byte first.
+field   gpkg.srs_id    0:32:32  twos
+# The envelope, IEEE doubles (low byte first) from byte 8, in the order the code E lists them.
+if 0:25:3 1,2,3,4
+  field gpkg.min_x  0:64:64   f64
+  field gpkg.max_x  0:128:64  f64
+  field gpkg.min_y  0:192:64  f64
+  field gpkg.max_y  0:256:64  f64
+end
+if 0:25:3 2,4
+  field gpkg.min_z  0:320:64  f64
+  field gpkg.max_z  0:384:64  f64
+end
+if 0:25:3 3
+  field gpkg.min_m  0:320:64  f64
+  field gpkg.max_m  0:384:64  f64
+end
+if 0:25:3 4
+  field gpkg.min_m  0:448:64  f64
+  field gpkg.max_m  0:512:64  f64
+end
+# A standard (X 0), non-empty (Y 0) blob: the WKB starts after the envelope
+# (byte 8, 40, 56 or 72). Its first 5 bytes, byte order 1 (little-endian) and
+# type 1 (Point, 01 00 00 00), read as one 40-bit value low byte first, are
+# 257. Then x and y as doubles.
+if 0:28:2 0
+  if 0:25:3 0
+    if 0:64:40 257
+      field gpkg.x  0:104:64  f64
+      field gpkg.y  0:168:64  f64
+      if 0:32:32 4326
+        field lon  0:104:64  f64
+        field lat  0:168:64  f64
+      end
+    end
+  end
+  if 0:25:3 1
+    if 0:320:40 257
+      field gpkg.x  0:360:64  f64
+      field gpkg.y  0:424:64  f64
+      if 0:32:32 4326
+        field lon  0:360:64  f64
+        field lat  0:424:64  f64
+      end
+    end
+  end
+  if 0:25:3 2,3
+    if 0:448:40 257
+      field gpkg.x  0:488:64  f64
+      field gpkg.y  0:552:64  f64
+      if 0:32:32 4326
+        field lon  0:488:64  f64
+        field lat  0:552:64  f64
+      end
+    end
+  end
+  if 0:25:3 4
+    if 0:576:40 257
+      field gpkg.x  0:616:64  f64
+      field gpkg.y  0:680:64  f64
+      if 0:32:32 4326
+        field lon  0:616:64  f64
+        field lat  0:680:64  f64
+      end
+    end
+  end
+end
