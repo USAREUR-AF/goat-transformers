@@ -1,0 +1,16 @@
+{
+  "name": "c-tag-split-largest-values",
+  "from": "ethernet-ii",
+  "to": "ethernet-ii",
+  "input": "00005e00530100005e0053028100ffff0800",
+  "expect": "00005e00530100005e0053028100ffff0800",
+  "model": {
+    "@kind": "c-tagged",
+    "inet.vlan_tag_info": "65535",
+    "inet.eth_type": "2048",
+    "inet.vlan_pcp": "7",
+    "inet.vlan_dei": "1",
+    "inet.vlan_vid": "4095"
+  },
+  "source": "built by tools/gen/link-headers-vectors.py from values chosen there; a C-tagged frame whose tag information is priority 7, C bit 1, VLAN ID 4095 (RFC 6325 section 4.1.1, Figure 8); vlan_tag_info holds the same 16 bits"
+}

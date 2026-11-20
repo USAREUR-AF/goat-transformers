@@ -20,6 +20,7 @@ the payload, padding and FCS are read over and not written (vector 01).
 | 6-11 | source address | `inet.eth_src_addr` | `uint` |
 | 12-13 | EtherType, or 0x8100 for a C-tag | `inet.eth_type`, or the `when` of kind `c-tagged` | `uint` |
 | 14-15 (C-tag) | VLAN tag information | `inet.vlan_tag_info` | `uint`, one 16-bit integer |
+| 14-15 (C-tag), the same bits | priority (3 bits), C bit (1), VLAN ID (12), RFC 6325 section 4.1.1 Figure 8 | `inet.vlan_pcp`, `inet.vlan_dei`, `inet.vlan_vid` | `uint` each |
 | 16-17 (C-tag) | inner EtherType | `inet.eth_type` | `uint` |
 
 `word_bytes 1`, `bit_order msb`; the fields are big-endian. RFC 7042 gives
@@ -43,11 +44,6 @@ None. The EtherType has the meaning of `inet.gre_protocol_type` and
 
 ## Not mapped, and why
 
-- The priority, the drop-eligible bit and the VLAN ID inside the tag
-  information. IEEE 802.1Q, which defines them, is not public. RFC 6325
-  restates them but carries a notice that its pre-2008 material may not be
-  modified or used for derivative works outside the IETF Standards Process,
-  so it is not used; the 16 bits are one key. Open question for the operator.
 - S-tags (802.1ad) and stacked tags; IEEE 802.3 LLC/SNAP after a length.
 - The payload, padding and the FCS.
 
@@ -57,3 +53,12 @@ None. The EtherType has the meaning of `inet.gre_protocol_type` and
 RFC 7042's documentation block): an untagged IPv4 frame with payload, a
 C-tagged IPv6 frame, a C-tagged frame at its largest values, an 802.3 length,
 a C-tagged header cut short and 13 octets (both `malformed-wire`).
+Vectors 07 and 08 check the split of the tag information (priority 5, VLAN ID
+100; and every bit set) against `inet.vlan_tag_info`.
+
+The tag information is mapped twice: as one 16-bit key, and split into
+priority, the C bit (IEEE 802.1Q's later editions call it the drop eligible
+indicator) and the VLAN ID, as RFC 6325 section 4.1.1 draws it. Both are
+decoded. On encode the whole-word line comes first and wins where both are
+present; an entity with only the split keys selects kind `c-tagged` only if
+it also has `inet.vlan_tag_info` (the kind's `requires`, unchanged).

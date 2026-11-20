@@ -8,6 +8,7 @@ format        ethernet-ii
 version       0.1.0
 distribution  public
 source        "IETF RFC 894, A Standard for the Transmission of IP Datagrams over Ethernet Networks, April 1984; IETF RFC 7042, IANA Considerations and IETF Protocol and Documentation Usage for IEEE 802 Parameters, October 2013, section 3; IETF RFC 7348, Virtual eXtensible Local Area Network (VXLAN), August 2014, section 5; https://www.rfc-editor.org/; layout restated"
+source        "IETF RFC 6325, Routing Bridges (RBridges): Base Protocol Specification, July 2011, section 4.1.1 Figure 8 (priority, C bit, VLAN ID); https://www.rfc-editor.org/rfc/rfc6325; layout restated"
 uses          inet
 wire          bits
 word_bytes    1
@@ -20,6 +21,12 @@ kind      c-tagged                                    # EtherType 0x8100: a C-ta
 when      0:96:16  33024
 requires  inet.vlan_tag_info
 field  inet.vlan_tag_info           0:112:16   uint
+# The same 16 bits split as RFC 6325 section 4.1.1 (Figure 8) draws them:
+# priority, the C bit, VLAN ID. On encode the earlier line, vlan_tag_info,
+# wins where both are present (ruling 5 of 0.5).
+field  inet.vlan_pcp                0:112:3    uint
+field  inet.vlan_dei                0:115:1    uint
+field  inet.vlan_vid                0:116:12   uint
 field  inet.eth_type                0:128:16   uint
 
 kind      untagged

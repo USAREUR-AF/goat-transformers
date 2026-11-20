@@ -10,7 +10,7 @@
 module        inet
 version       0.5.0
 distribution  public
-source        "IETF RFC 791, RFC 8200, RFC 768, RFC 9293, RFC 792, RFC 5905, RFC 1035, RFC 3550, RFC 826, RFC 894, RFC 2784, RFC 2890, RFC 7348, RFC 3032, RFC 5462, RFC 2236, RFC 9260, RFC 5880, RFC 3376, RFC 4443, RFC 4861, RFC 7252, RFC 8446, RFC 9147, RFC 4271, RFC 2328, RFC 9568, RFC 2453, RFC 8926, RFC 7042, RFC 1661, RFC 1662, RFC 3931, RFC 4303, RFC 4302 and RFC 8999, https://www.rfc-editor.org/, IETF Trust (BCP 78); layouts restated"
+source        "IETF RFC 791, RFC 8200, RFC 768, RFC 9293, RFC 792, RFC 5905, RFC 1035, RFC 3550, RFC 826, RFC 894, RFC 2784, RFC 2890, RFC 7348, RFC 3032, RFC 5462, RFC 2236, RFC 9260, RFC 5880, RFC 3376, RFC 4443, RFC 4861, RFC 7252, RFC 8446, RFC 9147, RFC 4271, RFC 2328, RFC 9568, RFC 2453, RFC 8926, RFC 7042, RFC 1661, RFC 1662, RFC 3931, RFC 4303, RFC 4302, RFC 8999 and RFC 6325, https://www.rfc-editor.org/, IETF Trust (BCP 78); layouts restated"
 
 # Shared between headers
 key  src_port                  int     -     "transport port of the sending process, 0-65535 (UDP, TCP and SCTP)"
@@ -366,6 +366,10 @@ key  eth_dst_addr              int     -     "destination MAC address, the 48-bi
 key  eth_src_addr              int     -     "source MAC address, the 48-bit integer"
 key  eth_type                  int     -     "EtherType of the payload, 0x0600 and above (below 0x0600 the field is an IEEE 802.3 length)"
 key  vlan_tag_info             int     -     "C-tag: the 16 bits of VLAN tag information after the 0x8100 EtherType (priority and VLAN ID, as IEEE 802.1Q divides them), as one integer"
+# The C-tag information split, RFC 6325 section 4.1.1 (Figure 8)
+key  vlan_pcp                  int     -     "C-tag: priority, the 3 most significant bits of the tag information, 0 to 7 (1 lowest, 7 highest, 0 the default between 1 and 2)"
+key  vlan_dei                  int     -     "C-tag: the bit after the priority, drawn as C in RFC 6325 Figure 8 (the drop eligible indicator of later IEEE 802.1Q editions)"
+key  vlan_vid                  int     -     "C-tag: VLAN ID, the 12 least significant bits; 0 no VLAN (a priority-tagged frame), 0xFFF reserved"
 
 # PPP, RFC 1661 section 2 and RFC 1662 section 3
 key  ppp_protocol              int     -     "protocol field: the protocol of the information field (0x0021 IPv4, 0x0057 IPv6, 0xC021 LCP, ...), 1 or 2 octets"
