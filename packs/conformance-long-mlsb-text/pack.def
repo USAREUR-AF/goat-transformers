@@ -1,0 +1,17 @@
+# Conformance probe pack for `ascii` and `chars` under `bit_order msb-lsb`
+# (spec 0.22, ruling 3: each byte or character is read as `uint` reads a field
+# of its width at its place). Public. No kinds. Bit order msb-lsb (spec 0.22): positions count from the
+# high bit of each byte, a value is assembled from its first bit up.
+#
+#   bytes 0..1    label  ascii, two characters
+#   bits 16..22   tag    chars:ascii7, one character
+format     conformance-long-mlsb-text
+version    0.22.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+word_bytes 1
+bit_order  msb-lsb
+field   probe.label  0:0:16  ascii
+field   probe.tag    0:16:7  chars:ascii7

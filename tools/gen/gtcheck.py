@@ -8,7 +8,9 @@ spec/engine-spec.md (Versions 0.1 to 0.10, 0.13, 0.14, the gate blocks of 0.17, 
 the kind selection of 0.20: `when` lists and ranges, `requires <key>=<value>`
 and `switch` blocks, and the sequential extents and counts of 0.21: `group
 <list> rest`, `group <list> last`, `count <name> <len> [plus <n>]` with
-`group <list> count @<name>`) and imports no engine, so a generator
+`group <list> count @<name>`, and the long and terminated fields of 0.22:
+the `hex` transform, the set `ascii8`, the locator `until:<code>`, the field
+option `stop <code>` and `bit_order msb-lsb`) and imports no engine, so a generator
 stays independent of the engines it writes packs for.
 
 What it checks is what an engine checks when it loads a file: the line grammar,
@@ -56,8 +58,11 @@ BITS_TRANSFORMS = {"uint": "int", "twos": "int", "linscale": "float", "uscale": 
                    "sixbit": "string",      # `sixbit`: 0.14, either layout and either armor
                    # engine-spec 0.15
                    "uiscale": "int", "siscale": "int", "smag": "int", "smscale": "float",
-                   "f32scale": "float", "f64scale": "float", "chars": "string", "octal": "string"}
-CHAR_SETS = {"icao6": 6, "ais6": 6, "ascii7": 7}
+                   "f32scale": "float", "f64scale": "float", "chars": "string", "octal": "string",
+                   # engine-spec 0.22
+                   "hex": "string"}
+CHAR_SETS = {"icao6": 6, "ais6": 6, "ascii7": 7, "ascii8": 8}
+BIT_ORDERS = ("lsb", "msb", "msb-lsb")      # msb-lsb: engine-spec 0.22
 PROTOBUF_TRANSFORMS = {"pstring": "string", "pvarint": "int", "psint": "int",
                        "pdouble": "float", "pfloat": "float"}
 # 0.10 "Transforms for `text`": `int:<w>` is `int` with a parameter; `dec`,
@@ -638,7 +643,7 @@ class Node:
     __slots__ = ("d", "line", "args", "body", "kinds", "key", "loc", "tr", "targs", "via",
                  "opts", "also", "value", "mode", "count", "item", "conds", "name", "bits",
                  "unit", "plus", "whole", "start", "path", "absent", "fields", "col", "size", "gate", "with_", "uper",
-                 "values", "ranges")
+                 "values", "ranges", "until", "stop")
 
     def __init__(self, d, line, args):
         self.d, self.line, self.args = d, line, args
@@ -647,6 +652,7 @@ class Node:
         self.conds = self.name = self.bits = self.unit = self.plus = self.whole = None
         self.start = self.path = self.absent = self.fields = self.col = self.size = self.gate = self.with_ = self.uper = None
         self.values = self.ranges = None
+        self.until = self.stop = None
 
     def __repr__(self):
         return "<%s line %d: %s>" % (self.d, self.line, " ".join(self.args))
@@ -897,8 +903,8 @@ class _Loader:
                 self.bad(no, "layout `%s` is not fixed or sequential" % value)
             pack.layout = value
         elif d == "bit_order":
-            if value not in ("lsb", "msb"):
-                self.bad(no, "bit_order `%s` is not lsb or msb" % value)
+            if value not in BIT_ORDERS:
+                self.bad(no, "bit_order `%s` is not lsb, msb or msb-lsb" % value)
             pack.bit_order = value
         elif d == "word_bytes":
             if not _UINT.match(value) or int(value) < 1:
@@ -1307,6 +1313,9 @@ class _Loader:
                 ok = bits % w == 0 and w <= bits <= 2040
             elif name == "octal":
                 ok = bits % 3 == 0 and 3 <= bits <= 63
+            elif name == "hex":
+                # engine-spec 0.22: a multiple of 4, from 4 to 2040
+                ok = bits % 4 == 0 and 4 <= bits <= 2040
             else:
                 ok = 1 <= bits <= 64
             if not ok:
@@ -1389,7 +1398,13 @@ class _Loader:
                     self.bad(node, "the size `:%s` is not one digit from 1 to 8" % m.group(2))
                 node.size = int(m.group(2))
         elif pack.wire == "bits":
-            if pack.sequential:
+            if pack.sequential and what == "field" and text.startswith("until:"):
+                # engine-spec 0.22: characters up to a terminator code, plain digits
+                code = text[len("until:"):]
+                if not _UINT.match(code):
+                    self.bad(node, "`%s`: the terminator code is not plain digits" % text)
+                node.until = int(code)
+            elif pack.sequential:
                 uper = _UPER_LOCATOR.match(text)
                 if pack.uper and what == "field" and uper:
                     self._uper_locator(node, *uper.groups())
@@ -1420,7 +1435,7 @@ class _Loader:
             self.bad(node, "`field` takes a key, a locator and a transform")
         node.key = a[0]
         self._locator(node, a[1], group, "field")
-        self._transform(node, a[2], node.bits if self.pack.wire == "bits" else None)
+        self._transform(node, a[2], node.bits if self.pack.wire == "bits" and node.until is None else None)
         node.opts, node.also = set(), []
         i = 3
         while i < len(a):
@@ -1434,6 +1449,10 @@ class _Loader:
                 # spec 0.9: the token after `absent` is always its argument
                 node.absent = a[i + 1]
                 i += 1
+            elif opt == "stop" and node.stop is None and i + 1 < len(a):
+                # engine-spec 0.22: a fixed-size `chars` field whose text ends at a code
+                node.stop = a[i + 1]
+                i += 1
             elif opt == "with" and node.with_ is None and i + 1 < len(a):
                 # spec 0.18: written only when the entity (the item) holds the key
                 node.with_ = a[i + 1]
@@ -1441,6 +1460,8 @@ class _Loader:
             else:
                 self.bad(node, "field option `%s` is unknown, repeated or incomplete" % opt)
             i += 1
+        bits_wire = self.pack.wire == "bits"
+        self._terminated(node, bits_wire)
         if node.absent is not None:
             self._absent(node, group)
         bits_wire = self.pack.wire == "bits"
@@ -1448,7 +1469,7 @@ class _Loader:
             self.bad(node, "`%s` on a UPER locator (ruling 10 of 0.19)" % " ".join(sorted(node.opts & {"swap", "trim"})))
         if "swap" in node.opts and not (bits_wire and node.bits % 8 == 0):
             self.bad(node, "`swap` needs the bits wire and a length that is a multiple of 8")
-        if "swap" in node.opts and node.tr in ("sixbit", "chars", "octal"):
+        if "swap" in node.opts and node.tr in ("sixbit", "chars", "octal", "hex"):
             self.bad(node, "`swap` with `%s`" % node.tr)
         if "trim" in node.opts and not (bits_wire and node.tr in ("ascii", "sixbit")):
             self.bad(node, "`trim` needs the bits wire and the `ascii` or `sixbit` transform")
@@ -1467,6 +1488,24 @@ class _Loader:
         if node.with_ is not None:
             # 0.18 ruling 5: checked as a `requires` key is
             self.key_uses.append((node.line, node.with_, "requires"))
+
+    def _terminated(self, node, bits_wire):
+        """engine-spec 0.22: `until:<code>` and `stop <code>` (rulings 9 and 16)."""
+        if node.until is not None:
+            if node.tr != "chars":
+                self.bad(node, "`until:` is valid only with `chars:<set>`")
+            if node.until >> CHAR_SETS[node.targs[0]]:
+                self.bad(node, "`until:%d` does not fit the set's width" % node.until)
+            if node.absent is not None or node.opts & {"swap", "trim"}:
+                self.bad(node, "`until:` takes no `absent`, `swap` or `trim`")
+            if node.stop is not None:
+                self.bad(node, "`stop` and `until:` on one line")
+        if node.stop is not None:
+            if not bits_wire or node.tr != "chars":
+                self.bad(node, "`stop` needs a `chars` field of the bits wire")
+            if not _UINT.match(node.stop) or int(node.stop) >> CHAR_SETS[node.targs[0]]:
+                self.bad(node, "`stop %s` is not a code below 2^w" % node.stop)
+            node.stop = int(node.stop)
 
     def _absent(self, node, group):
         """The load checks of `absent <value>[,<value>...]` (spec 0.9)."""

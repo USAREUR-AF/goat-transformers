@@ -1,0 +1,8 @@
+{
+  "name": "1059-long-ruling-15-until-in-a-group-and-a-kind-loads",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey label string -\nkey tag string -\nkey x int -\nkey y int -\nlist names \"a list\"\n"
+  ],
+  "pack": "format probe\nversion 0.22.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nlayout sequential\nkind a\nwhen 8 1\nfield probe.label until:0 chars:ascii8\ngroup probe.names rest\n  field probe.tag until:0 chars:ascii7\nend\n"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "ruling-04-no-terminator-in-the-extent",
+  "from": "conformance-long-until-length",
+  "to": "conformance-long-until-length",
+  "input": "02054100",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.22 rulings 4 and 12; one that starts before the end and finds no terminator is malformed-wire"
+}

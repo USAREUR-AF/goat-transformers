@@ -1,0 +1,9 @@
+{
+  "name": "to-mlsb-swap",
+  "from": "conformance-long-json",
+  "to": "conformance-long-mlsb-swap",
+  "input": "{\"x\":1}",
+  "expect": "0080",
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 13: swap reverses 8-bit chunks of the field taken from its first bit; the value 1, then the chunks reversed"
+}

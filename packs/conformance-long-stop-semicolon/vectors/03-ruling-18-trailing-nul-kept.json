@@ -1,0 +1,12 @@
+{
+  "name": "ruling-18-trailing-nul-kept",
+  "from": "conformance-long-stop-semicolon",
+  "to": "conformance-long-json",
+  "input": "41003b000000",
+  "expect": "{\"label\":\"A\\u0000\"}",
+  "model": {
+    "probe.label": "A\u0000"
+  },
+  "source": "constructed",
+  "reference": "spec 0.22 rulings 18 and 21: the NUL before ; is part of the text"
+}

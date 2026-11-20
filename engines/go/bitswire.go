@@ -45,7 +45,7 @@ func parseSixbitArmor(format string, b []byte) ([]byte, int, error) {
 		default:
 			return nil, 0, &Error{Kind: ErrMalformedWire, Format: format, Detail: fmt.Sprintf("character %d (byte 0x%02x) is not a six-bit armor character", i, c)}
 		}
-		putBits(data, 6*i, 6, uint64(v), true)
+		putBits(data, 6*i, 6, uint64(v), msbOrder)
 	}
 	return data, nbits, nil
 }
@@ -60,7 +60,7 @@ func sixbitArmorText(data []byte, nbits int) []byte {
 		for k := 0; k < 6; k++ {
 			v <<= 1
 			if i := at + k; i < nbits && i/8 < len(data) {
-				v |= byte(bitAt(data, i, true))
+				v |= byte(bitAt(data, i, msbOrder))
 			}
 		}
 		if v < 40 {
@@ -76,7 +76,7 @@ func sixbitArmorText(data []byte, nbits int) []byte {
 // 0.14): its six-bit characters first to last, each in the pack's bit order,
 // values 0..31 as `@`.._ and 32..63 as space..`?`; trailing `@` removed, and
 // with `trim` the whole trailing run of `@` and space.
-func decodeSixbit(data []byte, f *Field, base int, msb bool) Value {
+func decodeSixbit(data []byte, f *Field, base int, msb bitOrder) Value {
 	buf := make([]byte, f.loc.blen/6)
 	for k := range buf {
 		v := byte(getBits(data, base+f.loc.bit+6*k, 6, msb))
@@ -127,21 +127,36 @@ func encodeSixbit(p *Pack, f *Field, v Value, data []byte, at int) error {
 // is bit 7-i%8 of byte i/8 and a field's first bit is its most significant.
 
 // bitAt reads message bit i.
-func bitAt(data []byte, i int, msb bool) uint64 {
-	if msb {
+func bitAt(data []byte, i int, o bitOrder) uint64 {
+	if o != lsbOrder {
 		return uint64(data[i/8]>>uint(7-i%8)) & 1
 	}
 	return uint64(data[i/8]>>uint(i%8)) & 1
 }
 
+// bitOrder is the bit order of a bits pack: where bit i of a word lies, and
+// in which order a field's bits make its value.
+type bitOrder uint8
+
+const (
+	// lsbOrder: bit i is bit i mod 8 of its byte; the first bit is the
+	// value's least significant.
+	lsbOrder bitOrder = iota
+	// msbOrder: bit i is bit 7 - i mod 8 of its byte; the first bit is the
+	// value's most significant.
+	msbOrder
+	// msbLsbOrder: positions as msb, values as lsb (spec 0.22).
+	msbLsbOrder
+)
+
 // getBits reads length (1..64) bits from message bit start.
-func getBits(data []byte, start, length int, msb bool) uint64 {
+func getBits(data []byte, start, length int, o bitOrder) uint64 {
 	var v uint64
 	for k := 0; k < length; k++ {
-		if msb {
-			v = v<<1 | bitAt(data, start+k, true)
+		if o == msbOrder {
+			v = v<<1 | bitAt(data, start+k, o)
 		} else {
-			v |= bitAt(data, start+k, false) << uint(k)
+			v |= bitAt(data, start+k, o) << uint(k)
 		}
 	}
 	return v
@@ -149,14 +164,18 @@ func getBits(data []byte, start, length int, msb bool) uint64 {
 
 // putBits writes the low length (1..64) bits of v at message bit start,
 // replacing what is there.
-func putBits(data []byte, start, length int, v uint64, msb bool) {
+func putBits(data []byte, start, length int, v uint64, o bitOrder) {
 	for k := 0; k < length; k++ {
 		i := start + k
-		var bit, mask byte
-		if msb {
-			bit, mask = byte(v>>uint(length-1-k))&1, 1<<uint(7-i%8)
+		var bit byte
+		if o == msbOrder {
+			bit = byte(v>>uint(length-1-k)) & 1
 		} else {
-			bit, mask = byte(v>>uint(k))&1, 1<<uint(i%8)
+			bit = byte(v>>uint(k)) & 1
+		}
+		mask := byte(1) << uint(i%8)
+		if o != lsbOrder {
+			mask = 1 << uint(7-i%8)
 		}
 		if bit == 1 {
 			data[i/8] |= mask
@@ -185,7 +204,7 @@ func reverseBytes(b []byte) {
 // first to last (last to first with `swap`), trailing NUL bytes removed, then
 // with `trim` trailing spaces removed. A remaining byte below 0x20 or above
 // 0x7E is an error.
-func decodeASCII(data []byte, f *Field, base int, msb bool) (Value, error) {
+func decodeASCII(data []byte, f *Field, base int, msb bitOrder) (Value, error) {
 	buf := make([]byte, f.loc.blen/8)
 	for k := range buf {
 		buf[k] = byte(getBits(data, base+f.loc.bit+8*k, 8, msb))
@@ -478,7 +497,7 @@ func encodeBits(p *Pack, lay *layout, rec *Item) ([]byte, error) {
 			nb := (l + 5) / 6 * 6
 			out := make([]byte, (nb+7)/8)
 			for i := 0; i < l; i++ {
-				if bitAt(buf.data, i, true) != 0 {
+				if bitAt(buf.data, i, msbOrder) != 0 {
 					out[i/8] |= 0x80 >> uint(i%8)
 				}
 			}
@@ -616,7 +635,7 @@ func encodeBitsScope(p *Pack, lay *layout, rec *Item, buf *bitBuf, base int) (in
 // bitsSentinel reports whether the field at message bit at holds one of its
 // sentinels: its len bits read as an unsigned integer, after `swap`, before
 // `trim` and the transform (0.9 ruling 2).
-func (f *Field) bitsSentinel(data []byte, at int, msb bool) bool {
+func (f *Field) bitsSentinel(data []byte, at int, msb bitOrder) bool {
 	if f.absent == nil {
 		return false
 	}

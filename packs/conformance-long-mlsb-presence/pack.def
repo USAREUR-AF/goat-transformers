@@ -1,0 +1,23 @@
+# Conformance probe pack for presence bits under `bit_order msb-lsb` (spec
+# 0.22, ruling 2: presence bits keep their reading-order numbering). Public. Bit order msb-lsb (spec 0.22): positions count from the high bit of
+# each byte, a value is assembled from its first bit up. No
+# kinds.
+#
+#   2 bits        presence p: p.1 is the first bit read
+#   if p.1        x, 6 bits
+#   if p.2        y, 8 bits
+format     conformance-long-mlsb-presence
+version    0.22.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb-lsb
+presence p 2
+if p.1
+  field  probe.x  6  uint
+end
+if p.2
+  field  probe.y  8  uint
+end

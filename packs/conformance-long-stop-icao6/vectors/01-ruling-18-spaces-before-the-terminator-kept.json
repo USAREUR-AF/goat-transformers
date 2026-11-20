@@ -1,0 +1,12 @@
+{
+  "name": "ruling-18-spaces-before-the-terminator-kept",
+  "from": "conformance-long-stop-icao6",
+  "to": "conformance-long-json",
+  "input": "0428200200",
+  "expect": "{\"label\":\"AB  \"}",
+  "model": {
+    "probe.label": "AB  "
+  },
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 18: decode yields exactly the characters before the terminator; the 0.15 removal of padding and spaces does not apply"
+}

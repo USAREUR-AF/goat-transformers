@@ -1,0 +1,13 @@
+{
+  "name": "digits-of-0102-and-an-odd-offset",
+  "from": "conformance-long-hex-lsb",
+  "to": "conformance-long-json",
+  "input": "01021234",
+  "expect": "{\"label\":\"1020\",\"tag\":\"40\"}",
+  "model": {
+    "probe.label": "1020",
+    "probe.tag": "40"
+  },
+  "source": "constructed",
+  "reference": "spec 0.22, Fields longer than 64 bits; digit k is the 4-bit field at bit 4k of the field, read as uint reads a 4-bit field there in the pack's bit order (lsb); under lsb and msb-lsb the digits are not the wire's hex"
+}

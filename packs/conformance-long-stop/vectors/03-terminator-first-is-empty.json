@@ -1,0 +1,12 @@
+{
+  "name": "terminator-first-is-empty",
+  "from": "conformance-long-stop",
+  "to": "conformance-long-json",
+  "input": "00ff000000000000",
+  "expect": "{\"label\":\"\"}",
+  "model": {
+    "probe.label": ""
+  },
+  "source": "constructed",
+  "reference": "spec 0.22, the field option stop <code>; no characters before the first NUL: the empty text, present"
+}

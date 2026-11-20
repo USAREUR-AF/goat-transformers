@@ -1,0 +1,13 @@
+{
+  "name": "one-item",
+  "from": "conformance-long-until-rest",
+  "to": "conformance-long-until-rest",
+  "input": "8200",
+  "expect": "8200",
+  "model": {
+    "probe.names.#": "1",
+    "probe.names[0].probe.tag": "A"
+  },
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 15, with 0.21 A list to the end of its extent; after the item 2 bits remain: padding"
+}

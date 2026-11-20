@@ -518,7 +518,7 @@ V011_TLV = {"wire-tlv-68", "wire-tlv-69", "wire-tlv-71", "wire-tlv-72", "wire-tl
 # Likewise rulings 13 and 14 of 0.14 and the second-armor vector.
 V011_TLV |= {"wire-armor-18", "wire-armor-19"}
 # Ruling 28 of 0.15 pins the same order for a 0.15 transform on tlv.
-V011_ORDER = {"580", "667", "668", "1003", "1004"}  # ruling 13 of 0.17, ruling 44 of 0.21 (bad-locator)
+V011_ORDER = {"580", "667", "668", "1003", "1004", "1077", "1078", "1079"}  # ruling 13 of 0.17, ruling 44 of 0.21 (bad-locator), ruling 28 of 0.22
 # And the UPER vectors of rulings 23-26 of 0.19 that pin the 0.11 order.
 V011_TLV |= {"wire-uper-58", "wire-uper-61", "wire-uper-48", "wire-uper-50", "wire-uper-52", "wire-uper-53", "wire-uper-54", "wire-uper-55", "wire-uper-56", "wire-uper-57"}
 
@@ -665,7 +665,7 @@ class UperTest(Refusals):
     def test_transforms_options_and_lines_on_uper_locators(self):
         for line in ("field probe.ratio int:0:3 f32", "field probe.qty enum:3 twos",
                      "field probe.label chars:1:8 utf8", "field probe.label octets: ascii",
-                     "field probe.label chars: sixbit", "field probe.label 8 hex",
+                     "field probe.label chars: sixbit", "field probe.label 6 hex",
                      "field probe.qty int:0:65535 uint swap", "field probe.label chars:1:8 ascii trim",
                      "field probe.qty int:0:3 uint:2", "const int:0:3 1"):
             self.refuse_pack(self.UPER + line + "\n", "bad-directive", 10)

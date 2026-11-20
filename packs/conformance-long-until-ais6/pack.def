@@ -1,0 +1,14 @@
+# Conformance probe pack for `until:63 chars:ais6` (spec 0.22): the
+# terminator is the code of `?`. Nothing is removed: neither the padding `@`
+# nor trailing spaces (ruling 7). Public. No kinds. Most significant bit first.
+#
+#   label  6-bit characters up to the code 63
+format     conformance-long-until-ais6
+version    0.22.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field   probe.label  until:63  chars:ais6

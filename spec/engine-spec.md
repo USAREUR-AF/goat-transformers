@@ -4205,3 +4205,161 @@ rulings 2, 9, 12 and 15; two modes on one group (`rest last`).
     `unknown-directive`); any other step
     that is not digits only stays `bad-locator` (5a of 0.11), and the group
     locators of `xml` and `json` keep 5a (load vector 456).
+
+---
+
+# Version 0.22: long and terminated fields
+
+Status: Written. Three things binary messages carry that earlier versions
+cannot state: a field longer than 64 bits that is not text (a key, a hash, a
+block of reserved bits kept as it is), a character field whose length is not
+fixed but ends at a terminator code, and a bit numbering that counts
+positions from the high bit of each byte while assembling a field's value
+from its low bit up.
+
+## Fields longer than 64 bits
+
+| Name | Wire | Yields | Decode | Encode |
+|---|---|---|---|---|
+| `hex` | `bits` | string | `len / 4` lowercase hexadecimal digits; digit `k` is the 4-bit field at bit `4k` of the field, read as `uint` reads a 4-bit field there in the pack's bit order | each digit (either case) written as `uint` writes a 4-bit field at its place; text of another length or with a character that is not a hex digit is `transform-encode` |
+
+`len` is a multiple of 4, from 4 to 2040; another `len` is `bad-directive`.
+Valid in fixed and sequential layouts; takes no `swap`. Unlike `octal`, the
+digits are not those of the field's `uint` value, and under `lsb` and
+`msb-lsb` they are not the wire's hex either: `0102` in an `lsb` pack is
+`"1020"`. This is accepted: `hex` keeps bits through a round trip; it does not
+give a value that compares across bit orders. `absent` on a `hex` field of
+more than 64 bits is `bad-directive` (Version 0.9, Load errors); on a shorter
+one the sentinel is the field's `uint` raw value, not its hex text.
+
+## Character fields that end at a code
+
+```
+field  <key> until:<code> chars:<set>     # sequential layouts only
+field  <key> <locator> chars:<set> stop <code>   # a fixed-size field whose text ends early
+```
+
+Version 0.22 also adds the set `ascii8` to `chars` (Version 0.15): width 8,
+code 0 is NUL, codes 32–126 are themselves, every other code is
+`transform-decode`, padding NUL. So an 8-bit text that ends at NUL is
+`until:0 chars:ascii8`.
+
+In a `layout sequential` pack the locator `until:<code>` in place of a bit
+length reads characters of the set (Version 0.15, `chars`) one after another
+until it reads the character whose code is `<code>`, an unsigned decimal
+integer that fits the set's width. The terminator is consumed and is not part
+of the text. Decode yields the text read before it; trailing padding is not
+removed (the field has no fixed length to pad). Reading past the end of the
+enclosing extent before the terminator is `malformed-wire`. At most 2040 bits
+of characters are read before the terminator; more is `malformed-wire`.
+
+Encode writes the text's characters, then the terminator. A character the set
+cannot hold, a character whose code equals `<code>`, or text longer than
+`2040 / w` characters is `transform-encode`. An absent key writes the
+terminator alone.
+
+`until:` is valid only with `chars:<set>`, only in sequential layouts, and
+takes no `absent`, `swap` or `trim`; anything else is `bad-directive`. A
+`<code>` that is not plain digits or is `2^w` or more is `bad-directive`.
+
+The field option `stop <code>` on a fixed-size `chars` field (either layout)
+makes the text end at the first character whose code is `<code>`: decode
+yields the characters before it and ignores the rest of the field; encode
+writes the text, the terminator, then padding to the field's size. A text
+that does not leave room for the terminator, or holds the terminator's
+character, is `transform-encode`; without `stop` the 0.15 rules apply.
+
+## A bit order with high-bit-first positions and low-bit-first values
+
+```
+bit_order  msb-lsb
+```
+
+Bit `i` of a word is bit `7 − (i mod 8)` of byte `i div 8`, as with `msb`;
+a field's value is its `len` bits from `pos` with the first bit least
+significant, as with `lsb`. So `0:0:4` is the high four bits of the first byte
+read with the highest of them as the value's bit 0. `when`, `const`, gate,
+count and presence values read and write in this order. Valid on `bits`, in
+fixed and sequential layouts.
+
+## Rulings for 0.22
+
+1. **`hex` and residue.** A `hex` field maps its bits; it keeps reserved or
+   unknown bits through a round trip.
+2. **Every integer** the pack reads or writes uses the pack's bit order:
+   fields, `when`, `const`, gate, `length`, group counts (0.7 and 0.8),
+   0.21 count lines, and the raw values sentinels compare. Presence bits
+   keep their reading-order numbering.
+3. **`ascii`, `chars`, `f32`, `f64` and the scaled floats under `msb-lsb`.**
+   Each byte of `ascii`, each character of `chars`, and the bit pattern of
+   a float is read as `uint` reads a field of that width at its place, so
+   under `msb-lsb` an `ascii` "A" is `82` on the wire and an `f32` 1.0 is
+   `000001fc`. Under `msb-lsb` the sign of `twos` and `smag` is the last
+   bit read.
+4. **`until:` at an extent's end.** A field starting at or after the end of
+   a `length` extent is absent (ruling 7 of 0.8); one that starts before it
+   and finds no terminator is `malformed-wire`; at message level, starting
+   at the end of the input is `malformed-wire`.
+5. **Errors under `until:`.** The terminator is found first, from the codes
+   alone; none is `malformed-wire`, and that wins. Then the characters are
+   decoded; a bad one is `transform-decode`, and the cursor resumes after
+   the terminator so later fields still decode.
+6. **NUL under `until:`.** The `ascii7` NUL rules of 0.15 (rulings on
+   trailing NUL and ruling 17) do not apply unless NUL is the terminator.
+7. **Nothing is removed under `until:`**: neither padding nor trailing
+   spaces.
+8. **The 2040 limit** counts only the characters before the terminator,
+   `floor(2040 / w)` of them.
+9. **A terminator code** may be any code below `2^w`, whether or not the set
+   gives it a character; it is compared before the set's validity check.
+10. **`default`** applies to an absent key first; the terminator alone is
+    written only when no default applies.
+11. **An immediate terminator** decodes as `""`, present; an absent key does
+    not survive a round trip (it comes back as `""`).
+12. **Extents** for `until:` are those of Version 0.21: the innermost
+    `length` block, else the message; a group item is not an extent.
+13. **`swap`** reverses 8-bit chunks of the field taken from its first bit,
+    whatever its alignment; for an aligned field this is its bytes.
+14. **`hex` text** compares exactly (`case`, `requires =`, `via`): packs
+    write lowercase. On `json` and `geojson` it is a string of `len / 4`
+    digits, leading zeros kept.
+15. **`until:` in groups and kinds** follows these rules inside the scope.
+16. **`stop` and `until:`** cannot be combined on one line
+    (`bad-directive`); `stop` with a code of `2^w` or more is
+    `bad-directive`.
+17. **Load vector 559** (`transforms-unknown-character-set`) used `chars:ascii8` as its unknown set; with
+    `ascii8` defined it now uses `chars:ascii9`.
+18. **`stop` text is exact.** Decode yields exactly the characters before the
+    terminator; the 0.15 removal of padding and spaces does not apply.
+19. **A `stop` field with no terminator** decodes as the same field without
+    `stop` would (Version 0.15 rules).
+20. **NUL under `until:N`** with `N` not 0 is an ordinary character on decode
+    and on encode (ruling 6).
+21. **NUL in a `stop` field** follows ruling 6 as well: with a terminator
+    other than 0, NUL is an ordinary character.
+22. **`until:` with `via`** loads: the options refused with `until:` are
+    `absent`, `swap` and `trim` only.
+23. **Terminator codes** are plain decimal digits (`until:00` is 0); a
+    `stop` code that is not plain digits (`stop x`) is `bad-directive`, as
+    for `until:`.
+24. **`msb-lsb` is not `msb`.** `armor sixbit` (Version 0.14) and `encoding
+    uper` (Version 0.19) need `bit_order msb`; with `msb-lsb` they are
+    `bad-directive`.
+25. **`until:` and `with`** (Version 0.18). A suppressed `until:` line writes
+    the terminator alone; it has no fixed width to fill with zero bits, and,
+    as ruling 1 of 0.18 states, it has no default (a `default` of its key is
+    not written; vector `conformance-long-json` 59).
+26. **`until:` in a `uper` pack** (Version 0.19) is allowed: it is not a UPER
+    locator, and it is read at the cursor with no alignment.
+27. **A parameter on a transform that takes none** (`hex:4`, `ascii:8`) is
+    `bad-directive`: the name before the first `:` is a transform of this
+    specification, so it is not `unknown-transform` (0.11, Load errors), and
+    the parameter fails 4d of 0.11.
+28. **When `stop` is checked** (0.11, 5b). Its syntax is a line check (step
+    9): `stop` without a code, or given twice. Everything else is checked after
+    the file is read, as `until:` is: `stop` on a transform other than
+    `chars:<set>`, on a wire other than `bits`, with `until:`, and a code that
+    is not plain digits or not below `2^w` (step 10 names the values of
+    `absent` only). So `field … uint stop 0` followed by a line `bogus` is
+    `unknown-directive`, and `field … chars:ascii8 stop` followed by `bogus`
+    is `bad-directive`.

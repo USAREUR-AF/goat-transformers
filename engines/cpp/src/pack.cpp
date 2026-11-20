@@ -110,6 +110,7 @@ KeyType transform_yields(Transform t) {
         case Transform::CharsIcao6:
         case Transform::CharsAis6:
         case Transform::CharsAscii7:
+        case Transform::CharsAscii8:
         case Transform::Octal: return KeyType::String;
         case Transform::IntW:
         case Transform::HmsDmy:
@@ -512,6 +513,17 @@ void check_field_options(const Pack& p, const std::unordered_map<std::string, in
                         where + ": 'via " + f.via + "' names a table with no 'map' line");
         f.table = it->second;
     }
+    // v0.22: `stop` on a `chars` field, with a code its width holds (ruling 16).
+    if (f.has_stop) {
+        const unsigned w = detail::chars_width(f.transform);
+        if (!w)
+            throw Error(ErrorKind::BadDirective, p.format, f.locator,
+                        where + ": option 'stop' applies to a 'chars' transform only");
+        if (f.stop_code >> w)
+            throw Error(ErrorKind::BadDirective, p.format, f.locator,
+                        where + ": the 'stop' code " + std::to_string(f.stop_code) + " does not fit " +
+                            std::to_string(w) + " bits");
+    }
     if (!f.swap && !f.trim && !f.optional) return;
     // v0.10: `optional` on text marks a trailing field encode may remove.
     if (p.wire == Wire::Text && !f.swap && !f.trim) return;
@@ -522,7 +534,8 @@ void check_field_options(const Pack& p, const std::unordered_map<std::string, in
     if (f.trim && f.transform != Transform::Ascii && f.transform != Transform::Sixbit)
         throw Error(ErrorKind::BadDirective, p.format, f.locator,
                     where + ": option 'trim' applies to transforms ascii and sixbit only");
-    if (f.swap && (f.transform == Transform::Sixbit || detail::chars_width(f.transform) || f.transform == Transform::Octal))
+    if (f.swap && (f.transform == Transform::Sixbit || detail::chars_width(f.transform) || f.transform == Transform::Octal ||
+                   f.transform == Transform::Hex))
         throw Error(ErrorKind::BadDirective, p.format, f.locator,
                     where + ": option 'swap' does not apply to transform " + transform_name(f.transform));
     detail::BitsLocator loc;
@@ -1296,7 +1309,8 @@ Pack parse_pack(const std::string& text, const std::string& source) {
             bit_order_line = lineno;
             if (t[1] == "lsb") p.bit_order = BitOrder::Lsb;
             else if (t[1] == "msb") p.bit_order = BitOrder::Msb;
-            else throw Error(ErrorKind::BadDirective, p.format, "", where + ": bit_order '" + t[1] + "' is not lsb or msb");
+            else if (t[1] == "msb-lsb") p.bit_order = BitOrder::MsbLsb;  // v0.22
+            else throw Error(ErrorKind::BadDirective, p.format, "", where + ": bit_order '" + t[1] + "' is not lsb, msb or msb-lsb");
         } else if (kw == "kind") {
             not_in_group();
             arity(1);
@@ -1469,6 +1483,16 @@ Pack parse_pack(const std::string& text, const std::string& source) {
                     f.with = t[++k];
                     continue;
                 }
+                // v0.22: `stop <code>`, once; whether it fits the transform is
+                // checked with the other field options.
+                if (t[k] == "stop") {
+                    if (k + 1 >= t.size() || f.has_stop || !detail::parse_term_code(t[k + 1], f.stop_code))
+                        throw Error(ErrorKind::BadDirective, p.format, f.locator,
+                                    where + ": 'stop' takes one code of plain decimal digits, once");
+                    f.has_stop = true;
+                    ++k;
+                    continue;
+                }
                 if (t[k] == "swap") flag = &f.swap;
                 else if (t[k] == "trim") flag = &f.trim;
                 else if (t[k] == "optional") flag = &f.optional;
@@ -1582,6 +1606,14 @@ Pack parse_pack(const std::string& text, const std::string& source) {
                                         transform_name(f.transform) + "' applies to wire tlv only");
             });
         }
+        // v0.22: `hex` is a transform of the bits and tlv wires.
+        if (p.wire != Wire::Bits && p.wire != Wire::Tlv)
+            each_scope(p, [&](std::vector<FieldLine>& fields, std::vector<WhenLine>&, bool) {
+                for (const auto& f : fields)
+                    if (f.transform == Transform::Hex)
+                        throw Error(ErrorKind::BadDirective, p.format, f.locator,
+                                    source + ":" + std::to_string(f.line) + ": transform 'hex' applies to wires bits and tlv only");
+            });
         // v0.14: `sixbit` is a transform of the bits wire only.
         if (p.wire != Wire::Bits)
             each_scope(p, [&](std::vector<FieldLine>& fields, std::vector<WhenLine>&, bool) {
@@ -1606,9 +1638,11 @@ Pack parse_pack(const std::string& text, const std::string& source) {
                     throw Error(ErrorKind::BadDirective, p.format, f.locator,
                                 source + ":" + std::to_string(f.line) + ": the locator '" + f.locator +
                                     "' needs 'encoding uper'");
-                // A bit length for a locator is a line of a sequential layout (0.8).
+                // A bit length for a locator is a line of a sequential layout (0.8),
+                // and so is `until:<code>` (0.22).
                 if (p.wire == Wire::Bits && !f.locator.empty() &&
-                    f.locator.find_first_not_of("0123456789") == std::string::npos)
+                    (f.locator.find_first_not_of("0123456789") == std::string::npos ||
+                     f.locator.compare(0, 6, "until:") == 0))
                     throw Error(ErrorKind::BadDirective, p.format, f.locator,
                                 source + ":" + std::to_string(f.line) +
                                     ": a field with a bit length for a locator is a line of a sequential layout");

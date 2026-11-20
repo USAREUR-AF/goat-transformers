@@ -1,0 +1,17 @@
+# Conformance probe pack for a `length` value under `bit_order msb-lsb` (spec
+# 0.22, ruling 2). Public. Bit order msb-lsb (spec 0.22): positions count from the high bit of
+# each byte, a value is assembled from its first bit up. No kinds.
+#
+#   8 bits        the length of the block in bytes
+#     x           8 bits
+format     conformance-long-mlsb-length
+version    0.22.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb-lsb
+length  8
+  field  probe.x  8  uint
+end

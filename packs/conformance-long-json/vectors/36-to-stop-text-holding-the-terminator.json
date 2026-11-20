@@ -1,0 +1,9 @@
+{
+  "name": "to-stop-text-holding-the-terminator",
+  "from": "conformance-long-json",
+  "to": "conformance-long-stop",
+  "input": "{\"label\":\"A\\u0000B\"}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.22, the field option stop <code>; a text that holds the terminator's character is transform-encode"
+}

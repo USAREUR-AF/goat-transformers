@@ -1,0 +1,13 @@
+{
+  "name": "two-characters-then-the-terminator",
+  "from": "conformance-long-until-icao6",
+  "to": "conformance-long-until-icao6",
+  "input": "04200240",
+  "expect": "04200240",
+  "model": {
+    "probe.label": "AB",
+    "probe.y": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.22, Character fields that end at a code; characters are read until the code 0; the terminator is consumed and is not part of the text"
+}

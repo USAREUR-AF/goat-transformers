@@ -1,0 +1,14 @@
+# Conformance probe pack for `until:127 chars:ascii7` (spec 0.22, ruling 9:
+# the terminator 127 is a code the set gives no character). Public. No kinds.
+# Most significant bit first.
+#
+#   label  7-bit characters up to the code 127
+format     conformance-long-until-del
+version    0.22.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field   probe.label  until:127  chars:ascii7

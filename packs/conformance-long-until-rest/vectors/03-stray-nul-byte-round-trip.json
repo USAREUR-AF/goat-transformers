@@ -1,0 +1,9 @@
+{
+  "name": "stray-nul-byte-round-trip",
+  "from": "conformance-long-until-rest",
+  "to": "conformance-long-until-rest",
+  "input": "820000",
+  "expect": "820000",
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 15, with 0.21 A list to the end of its extent; A, NUL, NUL: 21 bits, padded to 24"
+}

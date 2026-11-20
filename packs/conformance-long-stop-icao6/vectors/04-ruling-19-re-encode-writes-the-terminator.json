@@ -1,0 +1,9 @@
+{
+  "name": "ruling-19-re-encode-writes-the-terminator",
+  "from": "conformance-long-stop-icao6",
+  "to": "conformance-long-stop-icao6",
+  "input": "0428208200",
+  "expect": "0420208200",
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 19 and stop: encode writes the text, the terminator, then padding"
+}

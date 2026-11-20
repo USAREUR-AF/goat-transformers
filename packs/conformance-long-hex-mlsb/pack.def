@@ -1,0 +1,18 @@
+# Conformance probe pack for the `hex` transform (spec 0.22, Fields longer
+# than 64 bits) on a fixed layout, bit order msb-lsb, high-bit-first positions and low-bit-first values (0.22).
+# Public. No kinds. The same lines as the packs `conformance-long-hex-lsb`,
+# `-msb` and `-mlsb`, so one input shows the digits each order gives.
+#
+#   bits 0..15    label  four hex digits; digit k is the 4-bit field at bit 4k
+#   bits 18..25   tag    two hex digits at an offset that is not a multiple of 4
+#                        (bits 16, 17 and 26 to 31 are mapped by no line)
+format     conformance-long-hex-mlsb
+version    0.22.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+word_bytes 1
+bit_order  msb-lsb
+field   probe.label  0:0:16  hex
+field   probe.tag    0:18:8  hex

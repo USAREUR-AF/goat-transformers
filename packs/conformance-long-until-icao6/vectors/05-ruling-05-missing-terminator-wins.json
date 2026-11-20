@@ -1,0 +1,9 @@
+{
+  "name": "ruling-05-missing-terminator-wins",
+  "from": "conformance-long-until-icao6",
+  "to": "conformance-long-until-icao6",
+  "input": "fc",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 5: the terminator is found first, from the codes alone; none is malformed-wire, and that wins over the code 63, which icao6 gives no character"
+}

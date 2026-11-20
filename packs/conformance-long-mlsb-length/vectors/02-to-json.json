@@ -1,0 +1,9 @@
+{
+  "name": "to-json",
+  "from": "conformance-long-mlsb-length",
+  "to": "conformance-long-json",
+  "input": "80ff",
+  "expect": "{\"x\":255}",
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 2"
+}

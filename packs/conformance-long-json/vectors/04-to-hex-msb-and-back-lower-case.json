@@ -1,0 +1,9 @@
+{
+  "name": "to-hex-msb-and-back-lower-case",
+  "from": "conformance-long-json",
+  "to": "conformance-long-hex-msb",
+  "input": "{\"label\":\"ABCD\"}",
+  "expect": "abcd0000",
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 14: packs write lowercase; the model text ABCD is the bits abcd"
+}

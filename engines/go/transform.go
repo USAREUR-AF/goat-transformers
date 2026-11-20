@@ -356,14 +356,15 @@ func encISOShort(v Value) (string, error) {
 // whose field may be longer than 64 bits; the bits wire reads and writes their
 // characters itself.
 type bitsTransform struct {
-	name   string
-	ascii  bool
-	sixbit bool // spec 0.14: six-bit characters
-	noSwap bool // `swap` is bad-directive with this transform (0.15)
+	name    string
+	ascii   bool
+	sixbit  bool // spec 0.14: six-bit characters
+	noSwap  bool
+	charSet *charSet // chars:<set>: its set (an until: locator reads it, 0.22) // `swap` is bad-directive with this transform (0.15)
 	// decodeAt and encodeAt, when set, read and write the field's bits
 	// themselves (0.15 `chars`, which may be longer than 64 bits).
-	decodeAt func(data []byte, at, length int, msb bool) (Value, error)
-	encodeAt func(v Value, data []byte, at, length int, msb bool) error
+	decodeAt func(data []byte, at, length int, msb bitOrder) (Value, error)
+	encodeAt func(v Value, data []byte, at, length int, msb bitOrder) error
 	decode   func(raw uint64, length int) (Value, error)
 	encode   func(v Value, length int) (uint64, error)
 }
@@ -681,7 +682,20 @@ func resolveFieldTransform(wire string, f *Field) (ErrorKind, error) {
 	if isTextOnlyTransform(name) {
 		return ErrBadDirective, fmt.Errorf("transform %q is valid only on wire text", name)
 	}
-	// utf8 and hex are valid only on the tlv wire (spec 0.13).
+	// An until: locator takes only chars:<set> (0.22).
+	if f.until && !strings.HasPrefix(name, "chars:") {
+		return ErrBadDirective, fmt.Errorf("an until: locator takes a chars:<set> transform, not %s", name)
+	}
+	// hex on bits (0.22): len a multiple of 4 from 4 to 2040.
+	if name == "hex" && wire == WireBits {
+		if n := f.loc.blen; n%4 != 0 || n < 4 || n > maxBitsLen {
+			return ErrBadDirective, fmt.Errorf("hex needs a multiple of 4 bits from 4 to %d, got %d", maxBitsLen, n)
+		}
+		f.btf = bitsHex
+		return "", nil
+	}
+	// utf8 is valid only on the tlv wire, hex on tlv and bits (spec 0.13,
+	// 0.22).
 	if isTLVOnlyTransform(name) {
 		return ErrBadDirective, fmt.Errorf("transform %q is valid only on wire tlv", name)
 	}

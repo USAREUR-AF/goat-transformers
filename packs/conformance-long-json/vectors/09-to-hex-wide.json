@@ -1,0 +1,9 @@
+{
+  "name": "to-hex-wide",
+  "from": "conformance-long-json",
+  "to": "conformance-long-hex-wide",
+  "input": "{\"x\":7,\"label\":\"0123456789ABCDEF01\"}",
+  "expect": "070123456789abcdef01",
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 1 and Fields longer than 64 bits; either case encodes"
+}

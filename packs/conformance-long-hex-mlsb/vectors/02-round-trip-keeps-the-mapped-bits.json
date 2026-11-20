@@ -1,0 +1,9 @@
+{
+  "name": "round-trip-keeps-the-mapped-bits",
+  "from": "conformance-long-hex-mlsb",
+  "to": "conformance-long-hex-mlsb",
+  "input": "01021234",
+  "expect": "01021200",
+  "source": "constructed",
+  "reference": "spec 0.22, Fields longer than 64 bits; hex keeps bits through a round trip; bits no line maps are written zero (0.2)"
+}

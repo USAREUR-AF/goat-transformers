@@ -1,0 +1,14 @@
+# Conformance probe pack for a `hex` field of the largest length, 2040 bits
+# (spec 0.22, Fields longer than 64 bits). Public. No kinds. Most significant
+# bit first.
+#
+#   bytes 0..254  label  510 hex digits
+format     conformance-long-hex-max
+version    0.22.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+word_bytes 1
+bit_order  msb
+field   probe.label  0:0:2040  hex

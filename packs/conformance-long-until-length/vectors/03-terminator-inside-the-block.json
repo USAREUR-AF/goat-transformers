@@ -1,0 +1,14 @@
+{
+  "name": "terminator-inside-the-block",
+  "from": "conformance-long-until-length",
+  "to": "conformance-long-until-length",
+  "input": "0305410009",
+  "expect": "0305410009",
+  "model": {
+    "probe.x": "5",
+    "probe.label": "A",
+    "probe.y": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.22 rulings 4 and 12; the innermost length block is the extent"
+}

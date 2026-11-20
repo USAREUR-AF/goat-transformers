@@ -1,0 +1,9 @@
+{
+  "name": "to-stop-empty-text",
+  "from": "conformance-long-json",
+  "to": "conformance-long-stop",
+  "input": "{\"label\":\"\"}",
+  "expect": "0000000000000000",
+  "source": "constructed",
+  "reference": "spec 0.22, the field option stop <code>; the terminator, then padding"
+}

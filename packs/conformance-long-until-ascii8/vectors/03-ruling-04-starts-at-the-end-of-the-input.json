@@ -1,0 +1,9 @@
+{
+  "name": "ruling-04-starts-at-the-end-of-the-input",
+  "from": "conformance-long-until-ascii8",
+  "to": "conformance-long-until-ascii8",
+  "input": "414200",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 4: at message level, starting at the end of the input is malformed-wire"
+}

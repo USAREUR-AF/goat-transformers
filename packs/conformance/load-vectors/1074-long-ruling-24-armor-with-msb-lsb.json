@@ -1,0 +1,9 @@
+{
+  "name": "1074-long-ruling-24-armor-with-msb-lsb",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey label string -\nkey tag string -\nkey x int -\nkey y int -\nlist names \"a list\"\n"
+  ],
+  "pack": "format probe\nversion 0.22.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nword_bytes 1\nbit_order msb-lsb\narmor sixbit\nfield probe.x 0:0:8 uint\n",
+  "expect_error": "bad-directive"
+}

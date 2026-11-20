@@ -28,7 +28,7 @@ from .seqdef import (
 )
 from .transforms import value_canon
 from .uper import INT64_MAX, twos_octets, uint_octets
-from .wire_bits import Message, _hex_to_bytes, _swap_int, armored_message, armored_text, raw_int, sixbit_values
+from .wire_bits import reverse_bits, Message, _hex_to_bytes, _swap_int, armored_message, armored_text, raw_int, sixbit_values
 
 _NONE = frozenset()
 
@@ -42,6 +42,16 @@ class _UperValue:
     def __init__(self, v, f):
         self.v = v
         self.f = f
+
+
+class _UntilCodes:
+    """What a field line with the locator `until:<code>` writes (0.22): the
+    codes of its characters; `_Writer.field` adds the terminator."""
+
+    __slots__ = ("codes",)
+
+    def __init__(self, codes):
+        self.codes = codes
 
 
 _UPER_ABSENT = object()  # a UPER locator whose key is absent: the value of ruling 1 of 0.19
@@ -367,6 +377,9 @@ class _Reader:
                 return
             self.values(nd, sc, raw)
             return
+        if nd.until is not None:
+            self.until(nd, sc)
+            return
         length = nd.length
         start = self.take(length, "a field of %d bit(s)" % length)
         if start is None:
@@ -388,6 +401,35 @@ class _Reader:
             if raw_int(raw, msg.msb) in first.absent:  # `sixbit` too (ruling 12 of 0.14)
                 return
         self.values(nd, sc, raw)
+
+    def until(self, nd, sc):
+        """`until:<code> chars:<set>` (0.22): characters up to the terminator,
+        which is consumed. A field that starts at the end of a `length` extent
+        is absent; reaching the end of the extent, or more than `2040 / w`
+        characters, before the terminator is `malformed-wire` (rulings 4 and
+        8). The terminator is found from the codes alone; the characters are
+        decoded after it, so a bad one is `transform-decode` and the cursor
+        stands after the terminator (ruling 5)."""
+        if self.at_soft_end():
+            return
+        t = nd.until
+        w = t.width
+        msg = self.msg
+        end = self.limit()
+        codes = []
+        what = "the terminator %d of field %s" % (t.code, nd.bindings[0].key)
+        while True:
+            if self.pos + w > end:
+                raise self.short(what)
+            c = msg.uint(self.pos, w)
+            self.pos += w
+            if c == t.code:
+                break
+            if len(codes) == t.most:
+                raise MalformedWire("%s: more than %d character(s) before it" % (what, t.most),
+                                    format=self.pack.name)
+            codes.append(c)
+        self.values(nd, sc, codes)
 
     def values(self, nd, sc, raw):
         """Decode the raw value of a field line into each of its keys."""
@@ -1096,6 +1138,11 @@ class _Writer:
             self.uper_absent(nd)
         elif isinstance(out, _UperValue):
             self.uper_put(nd, out.v, out.f)
+        elif isinstance(out, _UntilCodes):  # 0.22: the characters, then the terminator
+            t = nd.until
+            for c in out.codes:
+                self.put(t.width, c)
+            self.put(t.width, t.code)
         elif out is None:
             self.pos += length
         elif isinstance(out, (bytes, bytearray)):
@@ -1165,6 +1212,8 @@ class _Writer:
                 first = nd.bindings[0]
                 if nd.uper is not None:  # never a sentinel (ruling 22 of 0.19)
                     return _UPER_ABSENT, _uper_absent_raw(nd.uper)
+                if nd.until is not None:  # the terminator alone (0.22, ruling 10)
+                    return _UntilCodes(()), []
                 if first.absent_out is None or not bindings or bindings[0] is not first:  # ruling 20 of 0.18
                     if getattr(first.transform, "as_bytes", False):
                         return None, bytes(length // 8)
@@ -1185,6 +1234,8 @@ class _Writer:
             raise TransformEncodeFailure(str(e), format=self.pack.name, locator=f.locator)
         if nd.uper is not None:  # the value as the UPER locator reads it back (0.19)
             return _UperValue(v, f), v
+        if nd.until is not None:  # the codes, then the terminator (0.22)
+            return _UntilCodes(v), list(v)
         if isinstance(v, (bytes, bytearray)):
             written = bytes(v[::-1] if f.swap else v)
             n = length // 8
@@ -1301,10 +1352,14 @@ class _Writer:
                 raise self.fail("the message length %d does not fit its %d bit(s)" % (stated, nd.length), nd)
             self.ops.append((at, nd.length, stated))
         nbits = nbytes * 8
-        msb = self.pack.bit_order == "msb"
+        msb = self.pack.bit_order != "lsb"
+        rev = self.pack.bit_order == "msb-lsb"  # 0.22: placed as `msb`, valued as `lsb`
         acc = 0
         for start, length, v in self.ops:
-            acc |= (v & ((1 << length) - 1)) << (nbits - start - length if msb else start)
+            v &= (1 << length) - 1
+            if rev:
+                v = reverse_bits(v, length)
+            acc |= v << (nbits - start - length if msb else start)
         return acc.to_bytes(nbytes, "big" if msb else "little").hex()
 
 

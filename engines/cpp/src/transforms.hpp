@@ -68,6 +68,20 @@ bool bits_len_allowed(Transform t, std::uint32_t len);
 Value decode_chars(Transform t, const std::vector<std::uint8_t>& codes);
 // `chars`: text -> `count` codes, padded. Throws std::invalid_argument.
 std::vector<std::uint8_t> encode_chars(Transform t, const Value& v, std::size_t count);
+// v0.22: a terminator code of `until:` or `stop`: plain decimal digits,
+// leading zeros allowed (ruling 23). A value too large for 64 bits reads as
+// the largest, which no character width holds.
+bool parse_term_code(const std::string& s, std::uint64_t& out);
+// v0.22: the code a `chars` set pads with (space for icao6, else 0).
+std::uint8_t chars_padding(Transform t);
+// v0.22, `stop` and `until:`: the codes before the terminator -> exactly their
+// text, nothing removed; NUL is an ordinary character. Throws std::invalid_argument
+// on a code the set does not define.
+Value decode_chars_exact(Transform t, const std::vector<std::uint8_t>& codes);
+// v0.22: text -> its codes, without the terminator or padding; at most `max`
+// characters, none of them the terminator's `code`, NUL allowed only when the
+// terminator is not 0. Throws std::invalid_argument.
+std::vector<std::uint8_t> encode_chars_until(Transform t, const Value& v, std::size_t max, unsigned code);
 
 // Bit-field value -> typed model value, for every bits transform but `ascii`.
 // `raw` holds the field's `len` bits as an unsigned integer. Throws

@@ -1,0 +1,9 @@
+{
+  "name": "round-trip",
+  "from": "conformance-long-hex-seq-mlsb",
+  "to": "conformance-long-hex-seq-mlsb",
+  "input": "ab80",
+  "expect": "ab80",
+  "source": "constructed",
+  "reference": "spec 0.22: hex is valid in fixed and sequential layouts; the same bits"
+}

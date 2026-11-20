@@ -1,0 +1,9 @@
+{
+  "name": "to-stop-seq-four-characters",
+  "from": "conformance-long-json",
+  "to": "conformance-long-stop-seq",
+  "input": "{\"label\":\"ABCD\",\"y\":9}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.22, the field option stop <code>; 4 characters leave no room for the terminator"
+}

@@ -203,7 +203,8 @@ enum class Transform { String, Float, Int, Iso8601Ms, Uint, Twos, Linscale,
                        Uiscale, Siscale, Smag, Smscale, F32scale, F64scale,
                        CharsIcao6, CharsAis6, CharsAscii7, Octal,
                        Scale, Iscale,                    // v0.15, xml, json and geojson
-                       Iso8601Short                      // v0.18, xml, json and geojson
+                       Iso8601Short,                     // v0.18, xml, json and geojson
+                       CharsAscii8                       // v0.22, bits wire
 };
 enum class Wire { Xml, GeoJson, Bits, Protobuf, Json, Text, Tlv };
 
@@ -217,7 +218,9 @@ struct TextLocator {
     std::uint32_t from = 0;  // column: the first character, from 0
     std::uint32_t len = 0;   // column: the number of characters, from 1
 };
-enum class BitOrder { Lsb, Msb };
+// v0.22: MsbLsb, bit positions as `msb` counts them and a value's bits from
+// its low bit up, as `lsb` assembles them.
+enum class BitOrder { Lsb, Msb, MsbLsb };
 
 const char* transform_name(Transform t);
 KeyType transform_yields(Transform t);  // the model type a transform produces
@@ -258,6 +261,13 @@ struct FieldLine {
     bool swap = false;          // bits: the field's bytes are taken in reverse order
     bool trim = false;          // bits + ascii or sixbit: decode also removes trailing spaces (sixbit: and '@')
     bool optional = false;      // bits: absent when any of its bits lies beyond the input
+    // v0.22. `stop <code>` on a fixed-size `chars` field: the text ends at the
+    // first character of that code. `until:<code>` (sequential locator): the
+    // field is the characters up to that code, which is consumed.
+    bool has_stop = false;
+    std::uint64_t stop_code = 0;
+    bool until = false;
+    std::uint64_t until_code = 0;
     // v0.9 `absent <value>[,<value>…]`: the raw wire values that mean "no value".
     bool has_absent = false;
     std::string absent_arg;                 // the argument as written ("" for the quoted empty token)

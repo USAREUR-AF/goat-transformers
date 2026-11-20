@@ -27,8 +27,10 @@ is held (`with`), builds and reads token lists (`tokens`, `has_token`,
 unaligned PER (`encoding uper`, spec Version 0.19), reads and writes
 sequential lists that run to the end of their extent, counts that sit before
 other fields and last-item flags (`group … rest`, `count <name>` with
-`group … count @<name>`, `group … last`, spec Version 0.21), and converts
-between formats via the shared model.
+`group … count @<name>`, `group … last`, spec Version 0.21), reads and writes
+long and terminated fields (`hex` on `bits` up to 2040 bits, `chars:ascii8`,
+`until:<code>`, the field option `stop <code>`, and `bit_order msb-lsb`, spec
+Version 0.22), and converts between formats via the shared model.
 
 ## Build and run the conformance harness
 

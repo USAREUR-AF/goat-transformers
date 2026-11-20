@@ -1,0 +1,9 @@
+{
+  "name": "ruling-19-no-terminator-does-not-re-encode",
+  "from": "conformance-long-stop",
+  "to": "conformance-long-stop",
+  "input": "4142434445464748",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 19 and stop: 8 characters leave no room for the terminator on encode"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "text-ends-at-nul-rest-ignored",
+  "from": "conformance-long-stop",
+  "to": "conformance-long-json",
+  "input": "414200ff017a7a7a",
+  "expect": "{\"label\":\"AB\"}",
+  "model": {
+    "probe.label": "AB"
+  },
+  "source": "constructed",
+  "reference": "spec 0.22, the field option stop <code>; decode yields the characters before the first NUL and ignores the rest of the field (ff included)"
+}

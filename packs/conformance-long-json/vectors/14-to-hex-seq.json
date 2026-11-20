@@ -1,0 +1,9 @@
+{
+  "name": "to-hex-seq",
+  "from": "conformance-long-json",
+  "to": "conformance-long-hex-seq",
+  "input": "{\"label\":\"ABC\"}",
+  "expect": "abc0",
+  "source": "constructed",
+  "reference": "spec 0.22: hex is valid in fixed and sequential layouts; either case"
+}

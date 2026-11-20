@@ -1,0 +1,9 @@
+{
+  "name": "to-json",
+  "from": "conformance-long-until-ascii8",
+  "to": "conformance-long-json",
+  "input": "4142004300",
+  "expect": "{\"label\":\"AB\",\"tag\":\"C\"}",
+  "source": "constructed",
+  "reference": "spec 0.22: an 8-bit text that ends at NUL is until:0 chars:ascii8; AB and C"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "raw-value-15-is-absent",
+  "from": "conformance-long-hex-absent",
+  "to": "conformance-long-json",
+  "input": "0f",
+  "expect": "{}",
+  "model": {
+    "@absent": [
+      "probe.label"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.22: on a shorter one the sentinel is the field's uint raw value, not its hex text; wire 0f is the raw value 15"
+}

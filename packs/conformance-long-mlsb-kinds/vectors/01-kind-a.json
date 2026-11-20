@@ -1,0 +1,13 @@
+{
+  "name": "kind-a",
+  "from": "conformance-long-mlsb-kinds",
+  "to": "conformance-long-mlsb-kinds",
+  "input": "88c0",
+  "expect": "88c0",
+  "model": {
+    "@kind": "a",
+    "probe.x": "3"
+  },
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 2: when and const read and write in the pack's bit order; when 4 1 is 1000"
+}

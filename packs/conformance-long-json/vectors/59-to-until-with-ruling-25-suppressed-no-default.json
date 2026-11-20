@@ -1,0 +1,9 @@
+{
+  "name": "to-until-with-ruling-25-suppressed-no-default",
+  "from": "conformance-long-json",
+  "to": "conformance-long-until-with",
+  "input": "{\"y\":9}",
+  "expect": "0009",
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 25: a suppressed until: line writes the terminator alone, as an absent key does; a suppressed line has neither a default nor a sentinel (ruling 1 of 0.18): the terminator alone, not zz"
+}

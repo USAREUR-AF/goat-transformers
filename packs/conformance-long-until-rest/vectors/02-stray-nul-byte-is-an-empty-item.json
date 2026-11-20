@@ -1,0 +1,14 @@
+{
+  "name": "stray-nul-byte-is-an-empty-item",
+  "from": "conformance-long-until-rest",
+  "to": "conformance-long-json",
+  "input": "820000",
+  "expect": "{\"names\":[\"A\",\"\"]}",
+  "model": {
+    "probe.names.#": "2",
+    "probe.names[0].probe.tag": "A",
+    "probe.names[1].probe.tag": ""
+  },
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 15, with 0.21 A list to the end of its extent; 10 bits remain after item 0, so item 1 is read: an immediate terminator, \"\" present"
+}

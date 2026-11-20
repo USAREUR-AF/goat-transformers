@@ -1,0 +1,13 @@
+{
+  "name": "seven-empty-items-in-seven-bytes",
+  "from": "conformance-long-until-rest",
+  "to": "conformance-long-until-rest",
+  "input": "00000000000000",
+  "expect": "00000000000000",
+  "model": {
+    "probe.names.#": "7",
+    "probe.names[6].probe.tag": ""
+  },
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 15, with 0.21 A list to the end of its extent; an item is read while at least 8 bits remain: 7 items, then 7 bits of padding"
+}

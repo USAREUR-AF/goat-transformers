@@ -1,0 +1,9 @@
+{
+  "name": "to-hex-absent-text-f0-writes-the-sentinel-bits",
+  "from": "conformance-long-json",
+  "to": "conformance-long-hex-absent",
+  "input": "{\"label\":\"f0\"}",
+  "expect": "0f",
+  "source": "constructed",
+  "reference": "spec 0.22: on a shorter one the sentinel is the field's uint raw value, not its hex text; a present value is written as before, even when the result equals a sentinel (0.9)"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "round-trip",
+  "from": "conformance-long-stop-seq",
+  "to": "conformance-long-stop-seq",
+  "input": "04200009",
+  "expect": "04200009",
+  "model": {
+    "probe.label": "AB",
+    "probe.y": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.22, the field option stop <code>; either layout: ais6 code 0 (@) ends the text"
+}

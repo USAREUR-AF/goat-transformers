@@ -1,0 +1,9 @@
+{
+  "name": "to-until-ascii8-both-absent",
+  "from": "conformance-long-json",
+  "to": "conformance-long-until-ascii8",
+  "input": "{}",
+  "expect": "007a7a00",
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 10: the terminator alone only when no default applies"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "ruling-26-text-at-the-cursor",
+  "from": "conformance-long-uper",
+  "to": "conformance-long-uper",
+  "input": "a82010",
+  "expect": "a82010",
+  "model": {
+    "probe.x": "5",
+    "probe.label": "A",
+    "probe.y": "12"
+  },
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 26: until: in a uper pack is read at the cursor with no alignment; the characters start at bit 3, after a 3-bit constrained whole number; y follows the terminator at bit 19"
+}

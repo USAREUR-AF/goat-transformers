@@ -18,12 +18,13 @@ import java.util.Map;
  * strings, extensible SEQUENCEs ({@code ext}), CHOICE and SEQUENCE OF ({@code group ... size}).
  */
 final class SeqCodec extends Codec<byte[]> {
-    private final boolean msb;
+    /** The pack's bit order (BitsCodec.LSB, MSB or MSB_LSB). */
+    private final int msb;
     private final Seq.Body root;
 
     SeqCodec(Pack pack) {
         super(pack);
-        this.msb = pack.msbFirst;
+        this.msb = pack.bitOrder;
         this.root = pack.seq;
     }
 
@@ -249,6 +250,22 @@ final class SeqCodec extends Codec<byte[]> {
             switch (n.op) {
                 case FIELD: {
                     Pack.Field f = n.keys.get(0);
+                    if (n.until >= 0) {
+                        // 0.22: at or after a length extent's end the field is absent; at the end of the input it is
+                        // malformed (ruling 4)
+                        if (!r.line(1, f.key)) break;
+                        List<Integer> codes = untilCodes(n, f, r.msg, r.pos, r.limit(), r.soft >= 0);
+                        r.pos += (long) (codes.size() + 1) * f.bits.charWidth();   // past the terminator (ruling 5)
+                        Object v;
+                        try {
+                            v = untilText(f, codes);
+                        } catch (IllegalArgumentException ex) {
+                            for (Pack.Field k : n.keys) r.fails.add(k, ex.getMessage(), e);
+                            break;
+                        }
+                        for (Pack.Field k : n.keys) putDecoded(k, v, e, r.fails);
+                        break;
+                    }
                     if (!r.line(n.len, f.key)) break;
                     if (f.absent != null) {
                         // the raw value after swap; a sentinel gives no key of the line a value (Version 0.9)
@@ -478,6 +495,33 @@ final class SeqCodec extends Codec<byte[]> {
         if (f.bits.isSixbit()) return BitsTransform.decodeSixbit(BitsCodec.readSixbit(msg, at, len, msb), f.trim);
         long raw = BitsCodec.readBits(msg, at, len, msb);
         return f.bits.decode(f.swap ? BitsCodec.swapBytes(raw, len) : raw, len);
+    }
+
+    /**
+     * The codes of an {@code until:} field from bit {@code at} up to its terminator, which is not included
+     * (engine-spec 0.22). The terminator is found from the codes alone: none before {@code limit}, or more than
+     * {@code floor(2040 / w)} characters before it, is malformed-wire (rulings 5 and 8).
+     */
+    private List<Integer> untilCodes(Seq.Node n, Pack.Field f, byte[] msg, long at, long limit, boolean inExtent) {
+        int w = f.bits.charWidth();
+        int max = 2040 / w;
+        List<Integer> codes = new ArrayList<>();
+        for (long p = at; ; p += w) {
+            if (p + w > limit) {
+                throw malformed((inExtent ? "the length extent" : "the input") + " ends before the terminator " + n.until + " of " + f.key);
+            }
+            int c = (int) BitsCodec.readBits(msg, p, w, msb);
+            if (c == n.until) return codes;
+            if (codes.size() == max) throw malformed(f.key + " has more than " + max + " characters before its terminator " + n.until);
+            codes.add(c);
+        }
+    }
+
+    /** The text before an {@code until:} terminator, exactly; a code the set does not hold is transform-decode. */
+    private static Object untilText(Pack.Field f, List<Integer> codes) {
+        int[] c = new int[codes.size()];
+        for (int i = 0; i < c.length; i++) c[i] = codes.get(i);
+        return f.bits.decodeExact(c);
     }
 
     /** The bits of the block a length field of value {@code units} counts; malformed when it is not within {@code left} bits. */
@@ -1084,6 +1128,19 @@ final class SeqCodec extends Codec<byte[]> {
     /** Decode the bits a field line just wrote into {@code shadow}, as decode would read them. */
     private void readBack(Seq.Node n, Writer w, long at, Entity shadow) {
         Pack.Field f = n.keys.get(0);
+        if (n.until >= 0) {
+            Object v;
+            try {
+                v = untilText(f, untilCodes(n, f, w.b, at, w.pos, false));
+            } catch (IllegalArgumentException ex) {
+                for (Pack.Field k : n.keys) if (shadow.get(k.key) == null) w.failed.computeIfAbsent(shadow, x -> new java.util.HashSet<>()).add(k.key);
+                return;
+            }
+            Failures fails = new Failures();
+            for (Pack.Field k : n.keys) putDecoded(k, v, shadow, fails);
+            for (Pack.Field k : fails.fields) w.failed.computeIfAbsent(shadow, x -> new java.util.HashSet<>()).add(k.key);
+            return;
+        }
         if (n.u != null) {
             // a UPER field (0.19): read back from the bits it wrote, at its variable length
             Reader rr = new Reader(new BitMsg(w.b, w.pos));
@@ -1133,6 +1190,26 @@ final class SeqCodec extends Codec<byte[]> {
             }
         }
         Object v = f == null ? null : valueToEncode(f, e, defs);
+        if (n.until >= 0) {
+            // 0.22: the text's characters, then the terminator; an absent key (no default) the terminator alone
+            Pack.Field k = f == null ? n.keys.get(0) : f;
+            int cw = k.bits.charWidth();
+            if (v != null) {
+                String text = v instanceof Double ? Transform.formatDouble((Double) v) : String.valueOf(v);
+                int[] codes;
+                try {
+                    codes = k.bits.encodeExact(text, n.until);
+                    if (codes.length > 2040 / cw) {
+                        throw new IllegalArgumentException("text of " + codes.length + " characters is longer than " + (2040 / cw));
+                    }
+                } catch (IllegalArgumentException ex) {
+                    throw encodeFailure(k, ex);
+                }
+                for (int c : codes) w.put(cw, c);
+            }
+            w.put(cw, n.until);
+            return;
+        }
         if (n.u != null) {
             Pack.Field k = f == null ? n.keys.get(0) : f;
             try {

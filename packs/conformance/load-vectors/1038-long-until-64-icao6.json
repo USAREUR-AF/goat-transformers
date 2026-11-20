@@ -1,0 +1,9 @@
+{
+  "name": "1038-long-until-64-icao6",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey label string -\nkey tag string -\nkey x int -\nkey y int -\nlist names \"a list\"\n"
+  ],
+  "pack": "format probe\nversion 0.22.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nlayout sequential\nfield probe.label until:64 chars:icao6\n",
+  "expect_error": "bad-directive"
+}

@@ -11,12 +11,12 @@ from .errors import (
 from .transforms import (
     TRANSFORMS, JSON_TRANSFORMS, build_bits_transform, bits_len_allowed, format_float,
     PROTOBUF_TRANSFORMS, UnknownTransformName, check_transform_text, read_uint_text, transform_valid_on,
-    build_v15_text, v15_family,
+    build_v15_text, v15_family, terminator_code,
 )
 from . import uper, wire_text, wire_tlv
 
 WIRES = ("xml", "geojson", "json", "bits", "protobuf", "text", "tlv")
-BIT_ORDERS = ("lsb", "msb")
+BIT_ORDERS = ("lsb", "msb", "msb-lsb")  # `msb-lsb`: 0.22
 DISTRIBUTIONS = ("public", "controlled")  # public is below controlled
 CORE = "core"
 # Ruling 5 of 0.11. The directives of a pack, in the order the table states them.
@@ -73,7 +73,7 @@ _SEQ_ONLY = ("pad", "align", "presence", "opt", "chain", "fx", "length", "also",
 _GROUP_LINES = ("field", "const", "default", "group", "if", "end")
 # The lines of a gate block (0.17).
 _GATE_LINES = ("field", "const", "default", "if", "end")
-FIELD_OPTIONS = ("via", "swap", "trim", "optional", "absent", "with")
+FIELD_OPTIONS = ("via", "swap", "trim", "optional", "absent", "with", "stop")  # `stop`: 0.22
 _JSON_NUMBER = re.compile(r"-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?\Z")
 TEXT_DIRECTIVES = ("delimiter", "start", "checksum")  # the `text` wire (0.10)
 ARMORS = ("hex", "sixbit")  # the `bits` wire (0.14)
@@ -730,6 +730,18 @@ class _Deferred(Exception):
         self.err = err
 
 
+def set_stop(transform, tname, text):
+    """The field option `stop <code>` (0.22) on a fixed-size `chars` field:
+    -> why it is refused (`bad-directive` after the file), or None."""
+    if v15_family(tname) != "chars":
+        return "field option 'stop' applies to a 'chars' field only"
+    try:
+        transform.stop = terminator_code(text, transform.charset)
+    except ValueError as e:
+        return "field option 'stop': %s" % e
+    return None
+
+
 def _parse_options(tokens, fmt, locator, where):
     """-> {option: value} for the tokens after a `field` line's transform."""
     out = {}
@@ -740,12 +752,13 @@ def _parse_options(tokens, fmt, locator, where):
             raise _LineBad("unknown field option %r at %s" % (opt, where), format=fmt, locator=locator)
         if opt in out:
             raise _LineBad("field option %r is given twice at %s" % (opt, where), format=fmt, locator=locator)
-        if opt == "via" or opt == "absent" or opt == "with":
+        if opt in ("via", "absent", "with", "stop"):
             # The token after `absent` is always its argument (ruling 11 of 0.9).
             if i + 1 >= len(tokens):
                 raise _LineBad(
                     "field option %r takes %s at %s" % (
-                        opt, "a table name" if opt == "via" else "a model key" if opt == "with" else "a value", where),
+                        opt, "a table name" if opt == "via" else "a model key" if opt == "with" else
+                        "a terminator code" if opt == "stop" else "a value", where),
                     format=fmt, locator=locator,
                 )
             out[opt] = tokens[i + 1]
@@ -925,6 +938,14 @@ def _resolve_field(wire, name, key, locator, tname, options, source, lineno, def
                 % (locator, where), format=name, locator=locator,
             )))
             return None
+        if locator.startswith("until:"):
+            # 0.22: `until:<code>` is a locator of sequential layouts only,
+            # `bad-directive` after the file; the options are still a line check
+            _parse_options(options, name, locator, where)
+            deferred.append((lineno, BadDirective(
+                "the locator %r is for sequential layouts only, at %s" % (locator, where), format=name, locator=locator,
+            )))
+            return None
         loc = _fixed_bits_locator(name, locator, where)
     elif _item_locator(wire, name, locator, in_group, where):
         loc = ()
@@ -943,8 +964,8 @@ def _resolve_field(wire, name, key, locator, tname, options, source, lineno, def
     opts = _parse_options(options, name, locator, where)
     via = opts.get("via")
     if wire == "bits":
-        if "swap" in opts and tname == "sixbit":  # 0.14
-            defer("field option 'swap' does not apply to the 'sixbit' transform")
+        if "swap" in opts and tname in ("sixbit", "hex"):  # 0.14, 0.22
+            defer("field option 'swap' does not apply to the '%s' transform" % tname)
         elif "swap" in opts and loc[2] % 8 != 0:
             defer("field option 'swap' needs a bit length that is a multiple of 8, got %d" % loc[2])
         if "trim" in opts and tname not in ("ascii", "sixbit"):  # ruling 5 of 0.14
@@ -957,6 +978,8 @@ def _resolve_field(wire, name, key, locator, tname, options, source, lineno, def
                 defer("field option %r applies to the bits wire only" % opt)
         if wire == "text" and "absent" in opts:  # ruling 16 of 0.10
             defer("field option 'absent' is not a field option of the text wire")
+        if "stop" in opts:  # 0.22: a `chars` field of the bits wire
+            defer("field option 'stop' applies to a 'chars' field of the bits wire only")
 
     transform = None
     if valid:
@@ -967,6 +990,10 @@ def _resolve_field(wire, name, key, locator, tname, options, source, lineno, def
             transform = build_bits_transform(tname, length)
             if "trim" in opts and tname in ("ascii", "sixbit"):
                 transform.trim = True
+            if "stop" in opts:  # 0.22
+                why = set_stop(transform, tname, opts["stop"])
+                if why is not None:
+                    defer(why)
         elif wire == "protobuf":
             transform = PROTOBUF_TRANSFORMS[tname]
         elif wire == "text":
@@ -1032,7 +1059,7 @@ def _resolve_tlv_field(name, key, locator, tname, options, where, lineno, deferr
             bad("transform %r: parameters that do not parse: %s" % (tname, e))
         except ValueError as e:
             bad(str(e))
-    for opt in ("swap", "trim", "optional"):
+    for opt in ("swap", "trim", "optional", "stop"):
         if opt in opts:
             bad("field option %r is not an option of the tlv wire" % opt)
     if "absent" in opts:  # ruling 10 of 0.13: an empty value is already absent on tlv

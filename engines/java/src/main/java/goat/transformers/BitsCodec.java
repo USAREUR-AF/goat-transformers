@@ -18,7 +18,8 @@ import java.util.Set;
  */
 final class BitsCodec extends Codec<Codec.BitMsg> {
     private final int wordBytes;
-    private final boolean msb;
+    /** The pack's bit order: {@link #LSB}, {@link #MSB} or {@link #MSB_LSB} (engine-spec 0.22). */
+    private final int msb;
 
     /** A parsed locator: first bit, counted from the start of its scope (the message, or one item), and bit length. */
     private static final class Loc {
@@ -51,7 +52,7 @@ final class BitsCodec extends Codec<Codec.BitMsg> {
     BitsCodec(Pack pack) {
         super(pack);
         this.wordBytes = pack.wordBytes;
-        this.msb = pack.msbFirst;
+        this.msb = pack.bitOrder;
         // Pack.parse has prepared every scope: the bits checks are load checks.
     }
 
@@ -614,7 +615,7 @@ final class BitsCodec extends Codec<Codec.BitMsg> {
                 for (int k = 0; k < len; k++) {
                     long rel = gv[0] + k;
                     if (present.get((int) rel)) continue;
-                    long bit = msb ? (gv[2] >>> (len - 1 - k)) & 1L : (gv[2] >>> k) & 1L;
+                    long bit = msb == MSB ? (gv[2] >>> (len - 1 - k)) & 1L : (gv[2] >>> k) & 1L;   // msb-lsb: values from the low bit
                     writeBits(b, base + rel, 1, bit);
                 }
             }
@@ -801,8 +802,21 @@ final class BitsCodec extends Codec<Codec.BitMsg> {
 
     private void writeBits(byte[] msg, long start, int len, long value) { writeBits(msg, start, len, value, msb); }
 
-    /** The {@code len} bits from bit {@code start} of the message, in the bit order {@code msb} names. */
-    static long readBits(byte[] msg, long start, int len, boolean msb) {
+    /** Bit orders: positions and values from the low bit, from the high bit, or high-bit positions with low-bit values. */
+    static final int LSB = 0, MSB = 1, MSB_LSB = 2;
+
+    /** The low {@code len} bits of {@code v} in reverse order. */
+    static long reverseBits(long v, int len) {
+        return len == 0 ? 0 : Long.reverse(v) >>> (64 - len);
+    }
+
+    /**
+     * The {@code len} bits from bit {@code start} of the message, in bit order {@code order}. Under {@code msb-lsb}
+     * the positions are those of {@code msb} and the first bit is the value's least significant (engine-spec 0.22).
+     */
+    static long readBits(byte[] msg, long start, int len, int order) {
+        if (order == MSB_LSB) return reverseBits(readBits(msg, start, len, MSB), len);
+        boolean msb = order == MSB;
         long v = 0;
         for (int k = 0; k < len; k++) {
             long j = start + k;
@@ -816,7 +830,12 @@ final class BitsCodec extends Codec<Codec.BitMsg> {
         return v;
     }
 
-    static void writeBits(byte[] msg, long start, int len, long value, boolean msb) {
+    static void writeBits(byte[] msg, long start, int len, long value, int order) {
+        if (order == MSB_LSB) {
+            writeBits(msg, start, len, reverseBits(value, len), MSB);
+            return;
+        }
+        boolean msb = order == MSB;
         for (int k = 0; k < len; k++) {
             long j = start + k;
             int idx = (int) (j >>> 3);
@@ -837,14 +856,14 @@ final class BitsCodec extends Codec<Codec.BitMsg> {
     static void reverseBytes(byte[] b) { reverse(b); }
 
     /** The {@code len / 6} six-bit values of a {@code sixbit} field, first character first, each in the pack's bit order. */
-    static int[] readSixbit(byte[] msg, long start, int len, boolean msb) {
+    static int[] readSixbit(byte[] msg, long start, int len, int msb) {
         int[] v = new int[len / 6];
         for (int i = 0; i < v.length; i++) v[i] = (int) readBits(msg, start + 6L * i, 6, msb);
         return v;
     }
 
     /** Write the six-bit values of a {@code sixbit} field, first character first, each in the pack's bit order. */
-    static void writeSixbit(byte[] msg, long start, int[] values, boolean msb) {
+    static void writeSixbit(byte[] msg, long start, int[] values, int msb) {
         for (int i = 0; i < values.length; i++) writeBits(msg, start + 6L * i, 6, values[i], msb);
     }
 }

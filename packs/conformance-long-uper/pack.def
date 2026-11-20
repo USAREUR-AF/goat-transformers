@@ -1,0 +1,21 @@
+# Conformance probe pack for `until:` in a UPER pack (spec 0.22, ruling 26;
+# spec 0.19). Public. No kinds. The terminated text is read at the cursor,
+# with no alignment, between two constrained whole numbers.
+#
+#   x      INTEGER (0..5): 3 bits
+#   label  8-bit characters up to NUL, from bit 3
+#   y      INTEGER (10..13): 2 bits, the value minus 10
+#
+# The message is padded with zero bits to a whole octet (0.19, Encode).
+format     conformance-long-uper
+version    0.22.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+encoding   uper
+field   probe.x      int:0:5    uint
+field   probe.label  until:0    chars:ascii8
+field   probe.y      int:10:13  uint

@@ -147,6 +147,22 @@ line({uchoice, N, IsExt, Alts}, Ext, D) ->
                     end
             end
     end;
+%% `until:<code>` (0.22): characters of the set up to the terminator, which
+%% is consumed. A field starting at the end of a `length` extent is absent;
+%% no terminator before the end of the extent or input, or more than
+%% 2040 / w characters, is malformed-wire, and wins over a bad character
+%% (rulings 4, 5 and 8 of 0.22).
+line({sfield, Keys, {until, Code}, {chars, Set} = Tr, LenT, _, _, _, _With}, Ext, D) ->
+    case at_end(Ext, D) of
+        true -> D;
+        false ->
+            W = gt_engine:chars_width(Set),
+            {Codes, D1} = until_scan(Code, W, 2040 div W, limit(Ext, D), D, []),
+            lists:foldl(fun(KV, Acc) ->
+                                set_key_with(KV, fun() -> gt_engine:until_text(Set, Codes) end,
+                                             Tr, LenT, Acc)
+                        end, D1, Keys)
+    end;
 line({sfield, Keys, Len, Tr, LenT, Swap, Trim, Absent, _With}, Ext, #d{pos = Pos} = D) ->
     case need(Pos, Len, Ext, D) of
         absent -> D;
@@ -294,17 +310,21 @@ bit(Ext, #d{pos = Pos} = D) ->
         ok -> {gt_bits:read(D#d.msg, Pos, 1), D#d{pos = Pos + 1}}
     end.
 
-set_key({Key, Via}, U, Len, Tr, LenT, Trim, #d{model = Model, pack = Pack} = D) ->
+set_key(KV, U, Len, Tr, LenT, Trim, #d{pack = Pack} = D) ->
+    set_key_with(KV, fun() ->
+                             V = gt_engine:bits_decode(Tr, U, Len, maps:get(bit_order, Pack)),
+                             case Trim of
+                                 true -> gt_engine:trim(Tr, V);
+                                 false -> V
+                             end
+                     end, Tr, LenT, D).
+
+%% Set a key from the value Decode() gives, through `via` and `typemap`.
+set_key_with({Key, Via}, Decode, Tr, LenT, #d{model = Model, pack = Pack} = D) ->
     case maps:is_key(Key, Model) of
         true -> D;
         false ->
-            try
-                V = gt_engine:bits_decode(Tr, U, Len, maps:get(bit_order, Pack)),
-                case Trim of
-                    true -> gt_engine:trim(Tr, V);
-                    false -> V
-                end
-            of
+            try Decode() of
                 V0 ->
                     %% a value with no table entry fails the decode when it
                     %% ends, so that the limit on list items read later still
@@ -318,6 +338,20 @@ set_key({Key, Via}, U, Len, Tr, LenT, Trim, #d{model = Model, pack = Pack} = D) 
                     end
             catch
                 _:_ -> D#d{failed = [{Key, LenT} | D#d.failed]}
+            end
+    end.
+
+%% The codes before an `until:` terminator -> {Codes, D after the
+%% terminator}.
+until_scan(Code, W, Max, Limit, #d{pos = Pos} = D, Acc) ->
+    case Pos + W =< Limit of
+        false -> malformed(D, "an until: field finds no terminator before the end of its extent", []);
+        true ->
+            case gt_bits:read(D#d.msg, Pos, W) of
+                Code -> {lists:reverse(Acc), D#d{pos = Pos + W}};
+                _ when length(Acc) >= Max ->
+                    malformed(D, "an until: field reads more than 2040 bits before its terminator", []);
+                C -> until_scan(Code, W, Max, Limit, D#d{pos = Pos + W}, [C | Acc])
             end
     end.
 
@@ -897,6 +931,17 @@ eline({sgroup, List, {size, unc}, Body}, _Rest, Src, #e{pack = Pack} = E) ->
                                       "list ~s has ~p items: a fragmented length", [List, C])
     end,
     lists:foldl(fun(I, Acc) -> eitem(I, List, Body, Acc) end, epieces(ld(C), E), Items);
+%% `until:` (0.22): the text's codes, then the terminator; an absent key
+%% (no default) writes the terminator alone
+eline({sfield, _, {until, _}, {chars, Set}, _, _, _, _, _} = L, _Rest, Src,
+      #e{pack = Pack, wrote = W} = E) ->
+    Codes = until_out(L, Src, Pack),
+    Width = gt_engine:chars_width(Set),
+    E1 = lists:foldl(fun(C, Acc) -> emit(Width, C, Acc) end, E, Codes),
+    case maps:get(has_switch, Pack, false) of
+        true -> E1#e{wrote = until_read_back(L, Codes, W, Pack)};
+        false -> E1
+    end;
 eline({sfield, _, Len, _, _, _, _, _, _} = L, _Rest, Src, #e{pack = Pack, wrote = W} = E) ->
     {Bits, Raw} = field_bits(L, Src, Pack),
     E1 = emit(Len, Bits, E),
@@ -1212,6 +1257,42 @@ read_back({sfield, Keys, Len, Tr, _LenT, _Swap, Trim, Absent, _With}, Raw, Wrote
               end, Wrote, Keys)
     end.
 
+%% The codes an `until:` line writes, its terminator last. More than
+%% 2040 / w characters is transform-encode.
+until_out({sfield, Keys, {until, Code}, {chars, Set} = Tr, LenT, _, _, _, With}, Src, Pack) ->
+    case pick(candidates(Keys, With, Src), Src) of
+        none -> [Code];
+        {Key, Via, Val} ->
+            gt_engine:guard_encode(
+              Pack, Key, LenT,
+              fun() ->
+                      Text = gt_engine:wire_value(Pack, Key, Tr, {Via, false, false, false, none, none}, Val),
+                      true = is_binary(Text),
+                      true = byte_size(Text) =< 2040 div gt_engine:chars_width(Set),
+                      gt_engine:until_codes(Set, Code, Text)
+              end)
+    end.
+
+%% As read_back/4 for an `until:` field: the text decode reads from Codes.
+until_read_back({sfield, Keys, {until, _}, {chars, Set} = Tr, LenT, _, _, _, _}, Codes, Wrote, Pack) ->
+    lists:foldl(
+      fun({Key, Via}, W) ->
+              case maps:is_key(Key, W) of
+                  true -> W;
+                  false ->
+                      try
+                          V0 = gt_engine:until_text(Set, lists:droplast(Codes)),
+                          V1 = gt_engine:via_decode({Via, false, false, false, none, none},
+                                                    V0, Tr, Key, LenT, Pack),
+                          gt_engine:typemap_decode(Key, V1, Pack)
+                      of
+                          V -> W#{Key => V}
+                      catch
+                          _:_ -> W#{Key => readback_failed}
+                      end
+              end
+      end, Wrote, Keys).
+
 %% As read_back/4 for a field on a UPER locator (0.19): the pieces written
 %% are read as decode reads them.
 uread_back({sfield, Keys, {uper, Loc}, Tr, LenT, _, _, _, _}, Pieces, Wrote, Pack) ->
@@ -1349,6 +1430,12 @@ sim1(L, Src, Pack) ->
 
 sims(Lines, Src, Pack) -> lists:foldl(fun(L, S) -> sim(L, S, Pack) end, Src, Lines).
 
+sim({sfield, _, {until, _}, _, _, _, _, _, _} = L, Src, Pack) ->
+    try until_out(L, Src, Pack) of
+        Codes -> Src#{wrote => until_read_back(L, Codes, maps:get(wrote, Src, #{}), Pack)}
+    catch
+        _:_ -> Src
+    end;
 sim({sfield, _, _, _, _, _, _, _, _} = L, Src, Pack) ->
     try field_bits(L, Src, Pack) of
         {_, Raw} -> Src#{wrote => read_back(L, Raw, maps:get(wrote, Src, #{}), Pack)}

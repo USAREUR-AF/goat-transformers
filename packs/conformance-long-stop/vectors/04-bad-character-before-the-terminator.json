@@ -1,0 +1,9 @@
+{
+  "name": "bad-character-before-the-terminator",
+  "from": "conformance-long-stop",
+  "to": "conformance-long-stop",
+  "input": "41ff000000000000",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.22, the field option stop <code>; the characters before it are decoded; ff is not a character of ascii8 (transform-decode)"
+}

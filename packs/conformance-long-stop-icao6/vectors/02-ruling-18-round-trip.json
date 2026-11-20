@@ -1,0 +1,9 @@
+{
+  "name": "ruling-18-round-trip",
+  "from": "conformance-long-stop-icao6",
+  "to": "conformance-long-stop-icao6",
+  "input": "0428200200",
+  "expect": "0428200200",
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 18: AB, two spaces, the code 0, then space padding"
+}

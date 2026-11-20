@@ -650,7 +650,8 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
             once(have_bit_order);
             if (t[1] == "lsb") p.bit_order = BitOrder::Lsb;
             else if (t[1] == "msb") p.bit_order = BitOrder::Msb;
-            else throw bad("bit_order '" + t[1] + "' is not lsb or msb");
+            else if (t[1] == "msb-lsb") p.bit_order = BitOrder::MsbLsb;  // v0.22
+            else throw bad("bit_order '" + t[1] + "' is not lsb, msb or msb-lsb");
         } else if (kw == "map") {
             arity(3);
             auto it = table_index.find(t[1]);
@@ -795,9 +796,17 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
                 also_target = &add(std::move(n));
                 continue;
             }
-            if (f.locator.find(':') != std::string::npos)
-                throw bad("a positional <word>:<pos>:<len> locator in a sequential pack: '" + f.locator + "'");
-            if (!parse_u32(f.locator, n.len)) throw bad("the locator of a sequential field is a bit length, not '" + f.locator + "'");
+            if (f.locator.compare(0, 6, "until:") == 0) {
+                // v0.22: the characters up to a terminator code.
+                f.until = true;
+                if (!parse_term_code(f.locator.substr(6), f.until_code))
+                    throw bad("the code of '" + f.locator + "' is not plain decimal digits");
+            } else {
+                if (f.locator.find(':') != std::string::npos)
+                    throw bad("a positional <word>:<pos>:<len> locator in a sequential pack: '" + f.locator + "'");
+                if (!parse_u32(f.locator, n.len))
+                    throw bad("the locator of a sequential field is a bit length, not '" + f.locator + "'");
+            }
             std::string terr;
             const int tf = parse_any_transform(t[3], f, terr);
             if (tf == -2)
@@ -833,18 +842,44 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
                     f.with = t[++k];
                     continue;
                 }
+                // v0.22: `stop <code>`, once.
+                if (t[k] == "stop") {
+                    if (k + 1 >= t.size() || f.has_stop || !parse_term_code(t[k + 1], f.stop_code))
+                        throw bad("'stop' takes one code of plain decimal digits, once");
+                    f.has_stop = true;
+                    ++k;
+                    continue;
+                }
                 bool* flag = t[k] == "swap" ? &f.swap : t[k] == "trim" ? &f.trim : nullptr;
                 if (t[k] == "optional") throw bad("the field option 'optional' is not allowed in a sequential pack");
                 if (!flag || *flag) throw bad("'" + t[k] + "' is not a field option, or is given twice");
                 *flag = true;
             }
+            // v0.22: `until:` takes `chars:<set>` and a code its width holds, and
+            // no `absent`, `swap`, `trim` or `stop`; `stop` takes a `chars` field.
+            if (f.until) {
+                const unsigned w = chars_width(f.transform);
+                if (!w) throw bad("the locator '" + f.locator + "' takes a 'chars:<set>' transform only");
+                if (f.until_code >> w)
+                    throw bad("the code of '" + f.locator + "' does not fit " + std::to_string(w) + " bits");
+                if (f.has_absent || f.swap || f.trim || f.has_stop)
+                    throw bad("the locator '" + f.locator + "' takes no 'absent', 'swap', 'trim' or 'stop'");
+                n.len = w;  // its shortest form: the terminator alone
+            }
+            if (f.has_stop) {
+                const unsigned w = chars_width(f.transform);
+                if (!w) throw bad("option 'stop' applies to a 'chars' transform only");
+                if (f.stop_code >> w)
+                    throw bad("the 'stop' code " + std::to_string(f.stop_code) + " does not fit " + std::to_string(w) + " bits");
+            }
             // The bit lengths a transform allows, and what `swap` and `trim` need.
-            if (!bits_len_allowed(f.transform, n.len))
+            if (!f.until && !bits_len_allowed(f.transform, n.len))
                 throw bad("transform '" + std::string(transform_name(f.transform)) + "' does not allow a length of " +
                           std::to_string(n.len) + " bits");
             if (f.trim && f.transform != Transform::Ascii && f.transform != Transform::Sixbit)
                 throw bad("option 'trim' applies to transforms ascii and sixbit only");
-            if (f.swap && (f.transform == Transform::Sixbit || chars_width(f.transform) || f.transform == Transform::Octal))
+            if (f.swap && (f.transform == Transform::Sixbit || chars_width(f.transform) || f.transform == Transform::Octal ||
+                           f.transform == Transform::Hex))
                 throw bad("option 'swap' does not apply to transform " + std::string(transform_name(f.transform)));
             if (f.swap && n.len % 8 != 0)
                 throw bad("option 'swap' needs a length that is a multiple of 8 bits, not " + std::to_string(n.len));
@@ -1323,7 +1358,7 @@ const std::uint64_t kNoExtent = ~std::uint64_t{0};
 struct SeqIn {
     const Pack& p;
     const std::string& data;
-    bool msb;
+    BitMode msb;
     std::uint64_t have;                // bits of input, or of the message a `length ... whole` states
     std::uint64_t ext = kNoExtent;     // where the innermost `length` block ends
     std::uint64_t cur = 0;             // the cursor
@@ -1570,7 +1605,7 @@ void decode_body(SeqIn& in, const SeqBody& body, Item& out);
 
 // The value of a `field` line's bits at `start`, into every key bound to them,
 // each through its own table; nothing for a sentinel (0.9).
-void read_field(const std::string& data, std::uint64_t start, const SeqNode& n, bool msb, Decoder& d) {
+void read_field(const std::string& data, std::uint64_t start, const SeqNode& n, BitMode msb, Decoder& d) {
     const FieldLine& f = n.field;
     if (f.has_absent) {
         // The raw value after `swap` (0.9 ruling 2); every key bound to the bits is absent.
@@ -1597,15 +1632,43 @@ void read_field(const std::string& data, std::uint64_t start, const SeqNode& n, 
 // v0.20: a line's written bits, from `start` to `end`, read back as decode
 // reads them, for the switches. A UPER locator (0.19) is read by its own
 // reader, whose length follows from the value.
+// v0.22: an `until:<code>` field at the cursor. A field that starts at the end
+// of a `length` extent is absent; the terminator is found first, from the codes
+// alone (no terminator within 2040 bits, or before the extent or input ends, is
+// malformed-wire); then the characters are decoded (rulings 4, 5 and 8).
+void decode_until_field(SeqIn& in, const SeqNode& n, Decoder& d) {
+    const FieldLine& f = n.field;
+    if (in.at_extent_end()) return;
+    const unsigned w = chars_width(f.transform);
+    const std::size_t max = 2040 / w;
+    std::vector<std::uint8_t> codes;
+    for (;;) {
+        const std::uint64_t c = in.must(w, "a field that ends at a terminator");
+        if (c == f.until_code) break;
+        if (codes.size() == max) in.malformed("no terminator " + std::to_string(f.until_code) + " within 2040 bits");
+        codes.push_back(static_cast<std::uint8_t>(c));
+    }
+    try {
+        const Value v = decode_chars_exact(f.transform, codes);
+        d.put(f, v);
+        for (const auto& a : n.also) d.put(a, v);
+    } catch (const std::invalid_argument& ex) {
+        d.fail(f, ex.what());
+        for (const auto& a : n.also) d.fail(a, ex.what());
+    }
+}
+
 void read_back(const Pack& p, const std::string& data, std::uint64_t start, std::uint64_t end, const SeqNode& n,
-               bool msb, Decoder& d) {
-    if (n.uper == SeqNode::Uper::None) {
+               BitMode msb, Decoder& d) {
+    if (n.uper == SeqNode::Uper::None && !n.field.until) {
         read_field(data, start, n, msb, d);
         return;
     }
+    // A UPER locator (0.19) and `until:` (0.22): their length follows from the value.
     SeqIn in{p, data, msb, end, kNoExtent, start, std::vector<std::vector<bool>>(p.seq_presences.size()),
              false, {}, {}, {}, {}, {}, 0};
-    decode_uper_field(in, n, d);
+    if (n.field.until) decode_until_field(in, n, d);
+    else decode_uper_field(in, n, d);
 }
 
 // v0.20: the case a switch selects from the value its key holds in `item`
@@ -1775,6 +1838,10 @@ void decode_node(SeqIn& in, const SeqNode& n, Item& out, Decoder& d) {
         case Type::Field: {
             if (n.uper != SeqNode::Uper::None) {
                 decode_uper_field(in, n, d);
+                return;
+            }
+            if (n.field.until) {
+                decode_until_field(in, n, d);
                 return;
             }
             if (!in.need(n.len, "a field")) return;
@@ -2022,7 +2089,7 @@ Entity decode_seq(const Pack& p, const std::string& bytes) {
     // before any line is read (0.14). The armored message is any number of bits.
     std::uint64_t armored = 0;
     const std::string data = p.armor_sixbit ? armor_to_bytes(p, bytes, armored) : hex_to_bytes(p, bytes);
-    SeqIn in{p, data, p.bit_order == BitOrder::Msb,
+    SeqIn in{p, data, bit_mode(p.bit_order),
              p.armor_sixbit ? armored : static_cast<std::uint64_t>(data.size()) * 8, kNoExtent, 0,
              std::vector<std::vector<bool>>(p.seq_presences.size()), false, {}, {}, {}, {}, {}, 0};
     in.case_read.assign(p.seq_cases.size(), 0);
@@ -2181,7 +2248,7 @@ bool content(const SeqNode& n, const Scope& s) {
 struct SeqOut {
     const Pack& p;
     std::string data;
-    bool msb;
+    BitMode msb;
     std::uint64_t cur = 0;
     std::vector<std::vector<bool>> presence;  // by SeqPresence index: the bits last computed
     struct Whole {
@@ -2443,6 +2510,24 @@ void encode_field(SeqOut& out, const SeqNode& n, const Scope& s) {
     const Pack& p = out.p;
     if (n.uper != SeqNode::Uper::None) {
         encode_uper_field(out, n, s);
+        return;
+    }
+    if (n.field.until) {
+        // v0.22: the text's characters, then the terminator; an absent key (no
+        // default applying, ruling 10) writes the terminator alone.
+        const unsigned w = chars_width(n.field.transform);
+        Value mv;
+        const FieldLine* f = field_value(n, s, mv);
+        std::vector<std::uint8_t> codes;
+        if (f) {
+            try {
+                codes = encode_chars_until(f->transform, mv, 2040 / w, static_cast<unsigned>(f->until_code));
+            } catch (const std::invalid_argument& ex) {
+                throw Error(ErrorKind::TransformEncode, p.format, f->locator, f->key + ": " + ex.what());
+            }
+        }
+        for (std::uint8_t c : codes) out.put(c, w);
+        out.put(n.field.until_code, w);
         return;
     }
     // No key and no default: zero bits.
@@ -2747,7 +2832,7 @@ int predicted_case(const SeqNode& n, const Scope& s) {
         if (!line && s.kind) find(s.kind->lines);
         Item back;
         if (line) {
-            SeqOut tmp{s.p, std::string(), s.p.bit_order == BitOrder::Msb, 0, {}, {}, s.sw};
+            SeqOut tmp{s.p, std::string(), bit_mode(s.p.bit_order), 0, {}, {}, s.sw};
             try {
                 encode_field(tmp, *line, s);
                 Decoder d(s.p, back);
@@ -2795,7 +2880,7 @@ std::string encode_seq(const Pack& p, const Entity& e) {
     // The encode is repeated while a switch selects another case than the one
     // its presence, `opt` and `fx` bits were computed from (a few passes at most).
     for (int pass = 0;; ++pass) {
-        SeqOut out{p, std::string(), p.bit_order == BitOrder::Msb, 0,
+        SeqOut out{p, std::string(), bit_mode(p.bit_order), 0,
                    std::vector<std::vector<bool>>(p.seq_presences.size()), {}, &state};
         state.used.clear();
         state.actual.clear();
@@ -2850,7 +2935,7 @@ std::string finish_seq(const Pack& p, SeqOut& out) {
             throw Error(ErrorKind::TransformEncode, p.format, "",
                         "the count '" + n.count_name + "' of " + std::to_string(c.items) + " items plus " +
                             std::to_string(n.plus) + " does not fit 0 to 2^" + std::to_string(n.len) + " - 1");
-        write_bits(out.data, c.at, n.len, value, p.bit_order == BitOrder::Msb);
+        write_bits(out.data, c.at, n.len, value, bit_mode(p.bit_order));
     }
     // Under armor, L is the cursor after the last line, not rounded to a byte
     // (0.14), once the counts are filled in (0.21); `length ... whole` is
@@ -2863,7 +2948,7 @@ std::string finish_seq(const Pack& p, SeqOut& out) {
             throw Error(ErrorKind::TransformEncode, p.format, "",
                         "the length " + std::to_string(stated) + " of the whole message does not fit the " +
                             std::to_string(w.node->len) + " bits of its field");
-        write_bits(out.data, w.at, w.node->len, static_cast<std::uint64_t>(stated), p.bit_order == BitOrder::Msb);
+        write_bits(out.data, w.at, w.node->len, static_cast<std::uint64_t>(stated), bit_mode(p.bit_order));
     }
     return bytes_to_hex(out.data);
 }

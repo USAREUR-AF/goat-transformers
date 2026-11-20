@@ -1,0 +1,15 @@
+# Conformance probe pack for `absent` under `bit_order msb-lsb` (spec 0.22,
+# ruling 2: the raw value a sentinel compares is read in the pack's bit
+# order). Public. No kinds. Bit order msb-lsb (spec 0.22): positions count from the
+# high bit of each byte, a value is assembled from its first bit up.
+#
+#   byte 0        x      raw value 1 (wire 80) means absent
+format     conformance-long-mlsb-absent
+version    0.22.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+word_bytes 1
+bit_order  msb-lsb
+field   probe.x  0:0:8  uint  absent 1

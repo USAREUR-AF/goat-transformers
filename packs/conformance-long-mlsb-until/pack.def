@@ -1,0 +1,15 @@
+# Conformance probe pack for `until:3 chars:ascii7` under `bit_order msb-lsb`
+# (spec 0.22: the terminator is compared as `uint` reads each 7-bit code).
+# Public. Bit order msb-lsb (spec 0.22): positions count from the high bit of
+# each byte, a value is assembled from its first bit up. No kinds.
+#
+#   label  7-bit characters up to the code 3
+format     conformance-long-mlsb-until
+version    0.22.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb-lsb
+field   probe.label  until:3  chars:ascii7

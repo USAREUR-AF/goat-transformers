@@ -130,7 +130,8 @@ pub enum Transform {
     HmsDmy(u32),
     /// tlv: the value bytes as UTF-8 text
     Utf8,
-    /// tlv: the value bytes as lowercase hex text
+    /// tlv: the value bytes as lowercase hex text; bits: `len / 4` lowercase
+    /// hex digits, digit k the 4-bit field at bit 4k (engine-spec v0.13, v0.22)
     Hex,
     // engine-spec v0.15: value transforms
     /// bits: unsigned v, then `round(v × factor) + offset`, exactly
@@ -161,6 +162,8 @@ pub enum CharSet {
     Icao6,
     Ais6,
     Ascii7,
+    /// engine-spec v0.22: 8 bits, NUL and 32–126
+    Ascii8,
 }
 
 impl CharSet {
@@ -169,13 +172,14 @@ impl CharSet {
         match self {
             CharSet::Icao6 | CharSet::Ais6 => 6,
             CharSet::Ascii7 => 7,
+            CharSet::Ascii8 => 8,
         }
     }
     /// the code of the padding character
     fn pad(&self) -> u32 {
         match self {
             CharSet::Icao6 => 32,
-            CharSet::Ais6 | CharSet::Ascii7 => 0,
+            CharSet::Ais6 | CharSet::Ascii7 | CharSet::Ascii8 => 0,
         }
     }
     /// code -> character; None for a code the set does not define. `ascii7`
@@ -189,7 +193,7 @@ impl CharSet {
                 _ => None,
             },
             CharSet::Ais6 => Some(if c < 32 { (c + 64) as u8 as char } else { c as u8 as char }),
-            CharSet::Ascii7 => match c {
+            CharSet::Ascii7 | CharSet::Ascii8 => match c {
                 0 => Some('\0'),
                 32..=126 => Some(c as u8 as char),
                 _ => None,
@@ -212,7 +216,7 @@ impl CharSet {
                 32..=63 => Some(c),
                 _ => None,
             },
-            CharSet::Ascii7 => match c {
+            CharSet::Ascii7 | CharSet::Ascii8 => match c {
                 32..=126 => Some(c),
                 _ => None,
             },
@@ -336,6 +340,7 @@ impl Transform {
                 Some("icao6") => Ok(Transform::Chars(CharSet::Icao6)),
                 Some("ais6") => Ok(Transform::Chars(CharSet::Ais6)),
                 Some("ascii7") => Ok(Transform::Chars(CharSet::Ascii7)),
+                Some("ascii8") => Ok(Transform::Chars(CharSet::Ascii8)),
                 Some(other) => err(format!("bad-directive: unknown character set `{}`", other)),
                 None => err(format!("bad-directive: `{}` needs a parameter", name)),
             };
@@ -346,6 +351,7 @@ impl Transform {
         match name {
             "smag" => Ok(Transform::Smag),
             "octal" => Ok(Transform::Octal),
+            "hex" => Ok(Transform::Hex),
             "bool" => Ok(Transform::Bool),
             "f32" => Ok(Transform::F32),
             "f64" => Ok(Transform::F64),
@@ -364,7 +370,6 @@ impl Transform {
             "pdouble" => Ok(Transform::Pdouble),
             "pfloat" => Ok(Transform::Pfloat),
             "utf8" => Ok(Transform::Utf8),
-            "hex" => Ok(Transform::Hex),
             other => err(format!("unknown-transform: `{}` is not a transform", other)),
         }
     }
@@ -466,6 +471,7 @@ impl Transform {
                 | Transform::F64scale(_)
                 | Transform::Chars(_)
                 | Transform::Octal
+                | Transform::Hex
         )
     }
 
@@ -483,6 +489,7 @@ impl Transform {
             Transform::Sixbit => armor::sixbit_len_ok(len as u64),
             Transform::Chars(set) => len % set.width() == 0 && (set.width()..=2040).contains(&len),
             Transform::Octal => len % 3 == 0 && (3..=63).contains(&len),
+            Transform::Hex => len % 4 == 0 && (4..=2040).contains(&len),
             Transform::Smag | Transform::Smscale(_) => (2..=64).contains(&len),
             _ => (1..=64).contains(&len),
         }
@@ -490,7 +497,7 @@ impl Transform {
 
     /// True for the transforms that take no `swap` (ruling 0.15).
     fn refuses_swap(&self) -> bool {
-        matches!(self, Transform::Chars(_) | Transform::Octal)
+        matches!(self, Transform::Chars(_) | Transform::Octal | Transform::Hex)
     }
 
     fn is_protobuf(&self) -> bool {
@@ -1610,6 +1617,12 @@ pub struct FieldDef {
     /// `with <other-key>` (engine-spec v0.18): encode writes the line only
     /// when the entity (inside a group, the item) holds that key
     pub with: Option<(String, usize)>,
+    /// `until:<code>` (sequential, engine-spec v0.22): the field is characters
+    /// up to this terminator code
+    pub until: Option<u32>,
+    /// `stop <code>` (engine-spec v0.22): the text of a fixed-size `chars`
+    /// field ends at the first character of this code
+    pub stop: Option<u32>,
 }
 
 /// One gate block `if [!]<locator> <value>[,…]` … `end` of a fixed-layout
@@ -1668,7 +1681,15 @@ impl FieldDef {
 /// sequential pack). The token after `absent` is always its argument (ruling
 /// 11 of 0.9).
 fn field_options(f: &mut FieldDef, toks: &[String], ln: usize, allow_optional: bool) -> Result<Vec<String>, Error> {
+    field_options_at(f, toks, ln, allow_optional, true)
+}
+
+/// `resolve` false: the line check of 5b of 0.11, as the line is read. Of
+/// `stop` only its syntax is checked there (a code given, not twice); its
+/// transform and its code are checks after the file (ruling 28 of 0.22).
+fn field_options_at(f: &mut FieldDef, toks: &[String], ln: usize, allow_optional: bool, resolve: bool) -> Result<Vec<String>, Error> {
     let mut vias = Vec::new();
+    let mut stop_seen = false;
     let mut i = 4;
     while i < toks.len() {
         let flag = match toks[i].as_str() {
@@ -1703,6 +1724,26 @@ fn field_options(f: &mut FieldDef, toks: &[String], ln: usize, allow_optional: b
                 i += 1;
                 continue;
             }
+            "stop" => {
+                i += 1;
+                let text = match toks.get(i) {
+                    Some(t) if !stop_seen => t,
+                    Some(_) => return bad(ln, "`stop` given twice"),
+                    None => return bad(ln, "`stop` needs <code>"),
+                };
+                stop_seen = true;
+                if !resolve {
+                    i += 1;
+                    continue;
+                }
+                let set = match f.transform {
+                    Transform::Chars(set) => set,
+                    _ => return bad(ln, "`stop` is valid only on a `chars` field"),
+                };
+                f.stop = Some(char_code(text, set, ln, "stop")?);
+                i += 1;
+                continue;
+            }
             "swap" => &mut f.swap,
             "trim" => &mut f.trim,
             "optional" if allow_optional => &mut f.optional,
@@ -1716,6 +1757,19 @@ fn field_options(f: &mut FieldDef, toks: &[String], ln: usize, allow_optional: b
         i += 1;
     }
     Ok(vias)
+}
+
+/// A terminator code of `until:<code>` or `stop <code>` (engine-spec v0.22):
+/// plain digits, below `2^w`.
+pub(crate) fn char_code(text: &str, set: CharSet, ln: usize, what: &str) -> Result<u32, Error> {
+    let w = set.width();
+    if text.is_empty() || !text.bytes().all(|b| b.is_ascii_digit()) {
+        return bad(ln, format!("`{} {}`: the code is not plain digits", what, text));
+    }
+    match text.parse::<u64>() {
+        Ok(c) if c < 1u64 << w => Ok(c as u32),
+        _ => bad(ln, format!("`{} {}`: the code is 2^{} or more", what, text, w)),
+    }
 }
 
 /// Resolve the `absent` argument of a field for its wire (engine-spec v0.9,
@@ -2170,6 +2224,28 @@ impl<'a> Sel<'a> {
     }
 }
 
+/// The bit order of a `bits` pack (engine-spec v0.5, v0.22).
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum BitOrder {
+    /// bit i is bit `i mod 8` of byte `i div 8`; a field's first bit is least significant
+    Lsb,
+    /// bit i is bit `7 - (i mod 8)` of byte `i div 8`; a field's first bit is most significant
+    Msb,
+    /// positions as `msb`, values as `lsb`: a field's first bit is least significant
+    MsbLsb,
+}
+
+impl BitOrder {
+    fn parse(s: &str) -> Option<BitOrder> {
+        match s {
+            "lsb" => Some(BitOrder::Lsb),
+            "msb" => Some(BitOrder::Msb),
+            "msb-lsb" => Some(BitOrder::MsbLsb),
+            _ => None,
+        }
+    }
+}
+
 #[derive(Clone, Debug)]
 pub struct Pack {
     pub format: String,
@@ -2177,8 +2253,8 @@ pub struct Pack {
     pub wire: Wire,
     pub root: String,       // xml only
     pub word_bytes: usize,  // bits only
-    /// bits only: most-significant-bit-first order (`bit_order msb`)
-    pub msb: bool,
+    /// bits only: the bit order (`bit_order lsb`, `msb` or `msb-lsb`)
+    pub order: BitOrder,
     pub distribution: Distribution,
     pub sources: Vec<String>,
     /// model modules this pack uses besides `core`
@@ -2239,7 +2315,7 @@ impl Pack {
         let mut wire = None;
         let mut root = String::new();
         let mut word_bytes = 0usize;
-        let mut bit_order: Option<(bool, usize)> = None;
+        let mut bit_order: Option<(BitOrder, usize)> = None;
         let mut distribution = None;
         let mut sources = Vec::new();
         let mut uses: Vec<String> = Vec::new();
@@ -2538,12 +2614,11 @@ impl Pack {
                 }
                 "bit_order" => {
                     if toks.len() != 2 {
-                        return bad(ln, "bit_order needs `lsb` or `msb`");
+                        return bad(ln, "bit_order needs `lsb`, `msb` or `msb-lsb`");
                     }
-                    bit_order = Some(match toks[1].as_str() {
-                        "lsb" => (false, ln),
-                        "msb" => (true, ln),
-                        o => return bad(ln, format!("bit_order is `lsb` or `msb`, got `{}`", o)),
+                    bit_order = Some(match BitOrder::parse(&toks[1]) {
+                        Some(o) => (o, ln),
+                        None => return bad(ln, format!("bit_order is `lsb`, `msb` or `msb-lsb`, got `{}`", toks[1])),
                     });
                 }
                 "kind" => {
@@ -2621,6 +2696,8 @@ impl Pack {
                         absent: Vec::new(),
                         gate: gate_stack.last().copied(),
                         with: None,
+                        until: None,
+                        stop: None,
                     };
                     // options after the transform, in any order (engine-spec v0.6)
                     field_options(&mut f, &toks, ln, true)?;
@@ -2860,8 +2937,10 @@ impl Pack {
             (_, Some(ln)) => return bad(ln, "`tag`, `length`, `key` and `checksum sum16` are valid only on the tlv wire"),
             _ => tlv::TlvConf::default(),
         };
-        let armor = armor_lines.check(wire == Wire::Bits, bit_order.map_or(false, |(m, _)| m))?;
-        encoding_lines.check(wire == Wire::Bits, false, bit_order.map_or(false, |(m, _)| m), armor == armor::Armor::Sixbit)?;
+        // `armor sixbit` and `encoding uper` need `bit_order msb` (0.14, 0.19); `msb-lsb` is not `msb`
+        let msb = bit_order.map_or(false, |(o, _)| o == BitOrder::Msb);
+        let armor = armor_lines.check(wire == Wire::Bits, msb)?;
+        encoding_lines.check(wire == Wire::Bits, false, msb, armor == armor::Armor::Sixbit)?;
         if let Some(ln) = uper_line {
             return bad(ln, "`ext`, `choice` and `alt` are lines of a pack with `encoding uper`");
         }
@@ -2877,7 +2956,7 @@ impl Pack {
             wire,
             root,
             word_bytes,
-            msb: bit_order.map(|(m, _)| m).unwrap_or(false),
+            order: bit_order.map(|(m, _)| m).unwrap_or(BitOrder::Lsb),
             distribution,
             sources,
             uses,
@@ -3384,6 +3463,8 @@ fn check_field_for_wire(wire: Wire, f: &FieldDef, in_group: bool) -> Result<(), 
                 | Transform::F64
                 | Transform::Ascii
                 | Transform::Sixbit
+                // `hex` is a tlv transform too (engine-spec v0.13, v0.22)
+                | Transform::Hex
         );
     if v015_bits && wire != Wire::Bits {
         return bad(f.line, format!("the transform of `{}` is valid only on a bits wire", f.model_key));
@@ -3392,7 +3473,7 @@ fn check_field_for_wire(wire: Wire, f: &FieldDef, in_group: bool) -> Result<(), 
         return bad(f.line, format!("the transform of `{}` is valid only on xml, json and geojson", f.model_key));
     }
     if f.swap && t.refuses_swap() {
-        return bad(f.line, "`swap` is not valid with `chars` or `octal`");
+        return bad(f.line, "`swap` is not valid with `chars`, `octal` or `hex`");
     }
     // ruling 5 of 0.11: a transform on a wire it is not valid for
     let valid = match wire {
@@ -6479,8 +6560,9 @@ pub mod bits {
     /// Read `len` (1..=64) bits from message bit `start`. None when the range
     /// runs past the input. lsb: bit i is bit `i mod 8` of byte `i div 8`, first
     /// bit least significant. msb: bit i is bit `7 - (i mod 8)`, first bit most
-    /// significant.
-    pub(crate) fn get_bits(msg: &[u8], start: u64, len: u32, msb: bool) -> Option<u64> {
+    /// significant. msb-lsb: bit i as with msb, first bit least significant
+    /// (engine-spec v0.22).
+    pub(crate) fn get_bits(msg: &[u8], start: u64, len: u32, order: BitOrder) -> Option<u64> {
         match start.checked_add(len as u64) {
             Some(end) if end <= msg.len() as u64 * 8 => {}
             _ => return None,
@@ -6489,28 +6571,34 @@ pub mod bits {
         for k in 0..len as u64 {
             let bit = start + k;
             let byte = msg[(bit / 8) as usize];
-            if msb {
-                if byte & (0x80 >> (bit % 8)) != 0 {
-                    v |= 1u64 << (len as u64 - 1 - k);
-                }
-            } else if byte & (1 << (bit % 8)) != 0 {
-                v |= 1u64 << k;
+            let on = match order {
+                BitOrder::Lsb => byte & (1 << (bit % 8)) != 0,
+                BitOrder::Msb | BitOrder::MsbLsb => byte & (0x80 >> (bit % 8)) != 0,
+            };
+            if on {
+                v |= match order {
+                    BitOrder::Msb => 1u64 << (len as u64 - 1 - k),
+                    BitOrder::Lsb | BitOrder::MsbLsb => 1u64 << k,
+                };
             }
         }
         Some(v)
     }
 
-    pub(crate) fn set_bits(msg: &mut [u8], start: u64, len: u32, raw: u64, msb: bool) {
+    pub(crate) fn set_bits(msg: &mut [u8], start: u64, len: u32, raw: u64, order: BitOrder) {
         for k in 0..len as u64 {
             let bit = start + k;
             let idx = (bit / 8) as usize;
             if idx >= msg.len() {
                 continue;
             }
-            let (on, mask) = if msb {
-                (raw & (1u64 << (len as u64 - 1 - k)) != 0, 0x80u8 >> (bit % 8))
-            } else {
-                (raw & (1u64 << k) != 0, 1u8 << (bit % 8))
+            let on = match order {
+                BitOrder::Msb => raw & (1u64 << (len as u64 - 1 - k)) != 0,
+                BitOrder::Lsb | BitOrder::MsbLsb => raw & (1u64 << k) != 0,
+            };
+            let mask = match order {
+                BitOrder::Lsb => 1u8 << (bit % 8),
+                BitOrder::Msb | BitOrder::MsbLsb => 0x80u8 >> (bit % 8),
             };
             if on {
                 msg[idx] |= mask;
@@ -6551,6 +6639,18 @@ pub mod bits {
         raw.swap_bytes() >> (64 - len)
     }
 
+    /// The characters of a list of codes; a code the set does not define is an error.
+    pub(crate) fn chars_text(set: CharSet, codes: &[u32]) -> Result<String, Error> {
+        let mut text = String::with_capacity(codes.len());
+        for c in codes {
+            match set.char_of(*c) {
+                Some(ch) => text.push(ch),
+                None => return err(format!("code {} is not in the character set {:?}", c, set)),
+            }
+        }
+        Ok(text)
+    }
+
     /// The value of a field whose `len` bits start at message bit `start`,
     /// through its transform. The caller has checked the bits are in the input.
     pub(crate) fn read_field(p: &Pack, f: &FieldDef, raw: &[u8], start: u64, len: u32) -> Result<Value, Error> {
@@ -6560,7 +6660,7 @@ pub mod bits {
         if f.transform == Transform::Ascii {
             // bytes first to last, each byte's bits in the pack's bit order
             let mut bytes: Vec<u8> =
-                (0..len as u64 / 8).map(|k| get_bits(raw, start + k * 8, 8, p.msb).unwrap_or(0) as u8).collect();
+                (0..len as u64 / 8).map(|k| get_bits(raw, start + k * 8, 8, p.order).unwrap_or(0) as u8).collect();
             if f.swap {
                 bytes.reverse();
             }
@@ -6574,19 +6674,30 @@ pub mod bits {
                 Some(b) => err(format!("byte 0x{:02x} is not printable ASCII", b)),
                 None => Ok(Value::Str(bytes.iter().map(|b| *b as char).collect())),
             }
+        } else if f.transform == Transform::Hex {
+            // digit k: the 4-bit field at bit 4k, as `uint` reads it (engine-spec v0.22)
+            let text: String = (0..len as u64 / 4)
+                .map(|k| {
+                    let d = get_bits(raw, start + k * 4, 4, p.order).unwrap_or(0) as u32;
+                    char::from_digit(d, 16).unwrap_or('0')
+                })
+                .collect();
+            Ok(Value::Str(text))
         } else if let Transform::Chars(set) = f.transform {
             // character i: the w bits from bit i × w of the field, as `uint` reads them (engine-spec v0.15)
             let w = set.width();
-            let mut text: Vec<char> = Vec::new();
-            for i in 0..(len / w) as u64 {
-                let c = get_bits(raw, start + i * w as u64, w, p.msb).unwrap_or(0) as u32;
-                match set.char_of(c) {
-                    Some(ch) => text.push(ch),
-                    None => return err(format!("code {} is not in the character set {:?}", c, set)),
+            let codes: Vec<u32> =
+                (0..(len / w) as u64).map(|i| get_bits(raw, start + i * w as u64, w, p.order).unwrap_or(0) as u32).collect();
+            // `stop <code>` (engine-spec v0.22): the text is the characters before
+            // the first terminator, compared before the set's check (ruling 9)
+            if let Some(stop) = f.stop {
+                if let Some(at) = codes.iter().position(|c| *c == stop) {
+                    return chars_text(set, &codes[..at]).map(Value::Str);
                 }
             }
+            let mut text: Vec<char> = chars_text(set, &codes)?.chars().collect();
             match set {
-                CharSet::Ascii7 => {
+                CharSet::Ascii7 | CharSet::Ascii8 => {
                     // NUL is padding: a NUL followed by a character that is not NUL fails
                     if let Some(i) = text.iter().position(|c| *c == '\0') {
                         if text[i..].iter().any(|c| *c != '\0') {
@@ -6608,7 +6719,7 @@ pub mod bits {
             }
             Ok(Value::Str(text.into_iter().collect()))
         } else {
-            let mut rawv = get_bits(raw, start, len, p.msb).unwrap_or(0);
+            let mut rawv = get_bits(raw, start, len, p.order).unwrap_or(0);
             if f.swap {
                 rawv = swap_bytes(rawv, len);
             }
@@ -6640,7 +6751,7 @@ pub mod bits {
                 bytes.reverse();
             }
             for (k, b) in bytes.iter().enumerate() {
-                set_bits(msg, start + k as u64 * 8, 8, *b as u64, p.msb);
+                set_bits(msg, start + k as u64 * 8, 8, *b as u64, p.order);
             }
         } else if let Transform::Chars(set) = f.transform {
             let fail = |m: String| transform_encode_err(p, f, Error { msg: m });
@@ -6651,26 +6762,59 @@ pub mod bits {
             let w = set.width();
             let room = (len / w) as usize;
             let n = text.chars().count();
-            if n > room {
-                return Err(fail(format!("text is {} characters, the field holds {}", n, room)));
+            // `stop` (engine-spec v0.22): the terminator needs a character of its own
+            let need = n + f.stop.is_some() as usize;
+            if need > room {
+                return Err(fail(match f.stop {
+                    Some(_) => format!("text is {} characters and its terminator, the field holds {}", n, room),
+                    None => format!("text is {} characters, the field holds {}", n, room),
+                }));
             }
             let mut codes = Vec::with_capacity(room);
             for ch in text.chars() {
-                match set.code_of(ch) {
+                // with `stop`, NUL is a character with code 0 (rulings 6 and 21 of 0.22)
+                let code = match (ch, set, f.stop) {
+                    ('\0', CharSet::Ascii7 | CharSet::Ascii8, Some(_)) => Some(0),
+                    _ => set.code_of(ch),
+                };
+                match code {
+                    Some(c) if Some(c) == f.stop => {
+                        return Err(fail(format!("character {:?} is the terminator, code {}", ch, c)))
+                    }
                     Some(c) => codes.push(c),
                     None => return Err(fail(format!("character {:?} is not in the character set {:?}", ch, set))),
                 }
             }
+            if let Some(stop) = f.stop {
+                codes.push(stop);
+            }
             codes.resize(room, set.pad());
             for (i, c) in codes.iter().enumerate() {
-                set_bits(msg, start + i as u64 * w as u64, w, *c as u64, p.msb);
+                set_bits(msg, start + i as u64 * w as u64, w, *c as u64, p.order);
+            }
+        } else if f.transform == Transform::Hex {
+            let fail = |m: String| transform_encode_err(p, f, Error { msg: m });
+            let text = match v {
+                Value::Str(s) => s,
+                other => return Err(fail(format!("hex encodes text, got {:?}", other))),
+            };
+            let digits = (len / 4) as usize;
+            // either case is read (engine-spec v0.22)
+            let ds: Option<Vec<u32>> = text.chars().map(|c| c.to_digit(16)).collect();
+            match ds {
+                Some(ds) if ds.len() == digits => {
+                    for (k, d) in ds.iter().enumerate() {
+                        set_bits(msg, start + k as u64 * 4, 4, *d as u64, p.order);
+                    }
+                }
+                _ => return Err(fail(format!("`{}` is not {} hex digits", text, digits))),
             }
         } else {
             let mut rawv = f.transform.encode_bits(v, len).map_err(|e| transform_encode_err(p, f, e))?;
             if f.swap {
                 rawv = swap_bytes(rawv, len);
             }
-            set_bits(msg, start, len, rawv, p.msb);
+            set_bits(msg, start, len, rawv, p.order);
         }
         Ok(())
     }
@@ -6682,7 +6826,7 @@ pub mod bits {
         if f.absent.is_empty() || len > 64 {
             return false;
         }
-        let mut v = get_bits(raw, start, len, p.msb).unwrap_or(0);
+        let mut v = get_bits(raw, start, len, p.order).unwrap_or(0);
         if f.swap {
             v = swap_bytes(v, len);
         }
@@ -6699,7 +6843,7 @@ pub mod bits {
                 if f.swap {
                     v = swap_bytes(v, len);
                 }
-                set_bits(msg, start, len, v, p.msb);
+                set_bits(msg, start, len, v, p.order);
                 true
             }
             _ => false,
@@ -6714,7 +6858,7 @@ pub mod bits {
             // `total`: the bits of the input, which six-bit armor does not
             // round to a byte (engine-spec v0.14)
             Ok((off, len)) if base + off + len as u64 > total => false,
-            Ok((off, len)) => match get_bits(raw, base + off, len, p.msb) {
+            Ok((off, len)) => match get_bits(raw, base + off, len, p.order) {
                 Some(v) => g.values.contains(&v) != g.negate,
                 None => false,
             },
@@ -6767,7 +6911,7 @@ pub mod bits {
         let (off, len) = span(p, &w.locator)?;
         for f in sel.fields.iter().filter(|f| has_key(ent, f)) {
             if span(p, &f.locator)? == (off, len) {
-                return Ok(get_bits(msg, base + off, len, p.msb).map_or(false, |v| w.holds_num(v)));
+                return Ok(get_bits(msg, base + off, len, p.order).map_or(false, |v| w.holds_num(v)));
             }
         }
         Ok(false)
@@ -6840,14 +6984,14 @@ pub mod bits {
         for w in sel.consts.iter().filter(|c| c.gate.is_none()).chain(sel.whens.iter().filter(|w| !w.present)) {
             let (off, len) = span(p, &w.locator)?;
             if !keeps_field(p, sel, ent, w, &work, 0)? {
-                set_bits(&mut work, off, len, w.num, p.msb);
+                set_bits(&mut work, off, len, w.num, p.order);
             }
             mark(&mut written, off, len);
         }
         for (l, g) in counts {
             let (off, len) = span(p, l)?;
             let n = ent.lists.get(&g.list).map_or(0, |items| items.len() as u64);
-            set_bits(&mut work, off, len, low(n, len), p.msb);
+            set_bits(&mut work, off, len, low(n, len), p.order);
             mark(&mut written, off, len);
         }
         // step 3: in line order, outer blocks first, each open block none of
@@ -6869,7 +7013,7 @@ pub mod bits {
                 g.values.first().copied()
             };
             if let Some(v) = v {
-                set_bits(&mut work, off, len, v, p.msb);
+                set_bits(&mut work, off, len, v, p.order);
                 mark(&mut written, off, len);
                 values[i] = Some(v);
             }
@@ -6936,7 +7080,7 @@ pub mod bits {
                 Some(Count::Locator(l)) => {
                     let (off, len) = span(p, l)?;
                     *reach = (*reach).max(base + off + len as u64);
-                    get_bits(raw, base + off, len, p.msb)
+                    get_bits(raw, base + off, len, p.order)
                         .filter(|_| base + off + len as u64 <= total)
                         .ok_or_else(|| short(p, format!("the input ends before the count of list `{}`", g.list)))?
                 }
@@ -6990,7 +7134,7 @@ pub mod bits {
         }
         // a `when` whose bits lie beyond the input does not hold
         let sel = p.select_decode(None, |w| match span(p, &w.locator) {
-            Ok((start, len)) => start + len as u64 <= total && get_bits(&raw, start, len, p.msb).map_or(false, |v| w.holds_num(v)),
+            Ok((start, len)) => start + len as u64 <= total && get_bits(&raw, start, len, p.order).map_or(false, |v| w.holds_num(v)),
             Err(_) => false,
         })?;
         // the lines of the gate blocks that hold (engine-spec v0.17)
@@ -7108,8 +7252,8 @@ pub mod bits {
                         continue;
                     }
                     // bit k of the field: the k-th from the low end (lsb) or the high end (msb)
-                    let bit = if p.msb { (v >> (len - 1 - k)) & 1 } else { (v >> k) & 1 };
-                    set_bits(msg, base + at, 1, bit, p.msb);
+                    let bit = if p.order == BitOrder::Msb { (v >> (len - 1 - k)) & 1 } else { (v >> k) & 1 };
+                    set_bits(msg, base + at, 1, bit, p.order);
                 }
             }
         }
@@ -7150,7 +7294,7 @@ pub mod bits {
         for w in sel.consts.iter().chain(sel.whens.iter().filter(|w| !w.present)) {
             let (off, len) = span(p, &w.locator)?;
             if !keeps_field(p, sel, ent, w, msg, base)? {
-                set_bits(msg, base + off, len, w.num, p.msb);
+                set_bits(msg, base + off, len, w.num, p.order);
             }
         }
         for (l, n, g) in counts {
@@ -7163,7 +7307,7 @@ pub mod bits {
                     ),
                 });
             }
-            set_bits(msg, base + coff, len, n, p.msb);
+            set_bits(msg, base + coff, len, n, p.order);
         }
         // step 6 of 0.17: every key the entity holds is written by a line in
         // force, and the output decodes to the same choice of blocks
@@ -8019,8 +8163,10 @@ fn pack_line_checks(text: &str) -> Result<(), Error> {
                     absent: Vec::new(),
                     gate: None,
                     with: None,
+                    until: None,
+                    stop: None,
                 };
-                field_options(&mut f, &toks, ln, true)?;
+                field_options_at(&mut f, &toks, ln, true, false)?;
                 if let Some(w) = wire {
                     let bits_len = match (w, sequential) {
                         (Wire::Bits, true) => toks[2].parse::<u32>().ok(),
@@ -8124,7 +8270,9 @@ fn check_locator(wire: Option<Wire>, sequential: bool, loc: &str, ln: usize) -> 
         // ruling 9 of 0.19: a UPER locator in a pack that is not a UPER pack
         // (a fixed-layout one included, ruling 19) is `bad-directive`,
         // checked after the file is read, not a 5a form error
-        Some(Wire::Bits) if ["int:", "enum:", "chars:", "octets:"].iter().any(|p| loc.starts_with(p)) => {}
+        // and `until:<code>` (engine-spec v0.22) outside a sequential layout
+        // is `bad-directive` as well, as the UPER locators are
+        Some(Wire::Bits) if ["int:", "enum:", "chars:", "octets:", "until:"].iter().any(|p| loc.starts_with(p)) => {}
         Some(Wire::Bits) => {
             if loc.contains(':') {
                 let parts: Vec<&str> = loc.split(':').collect();

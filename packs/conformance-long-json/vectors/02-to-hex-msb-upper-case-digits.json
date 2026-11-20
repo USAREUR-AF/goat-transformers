@@ -1,0 +1,9 @@
+{
+  "name": "to-hex-msb-upper-case-digits",
+  "from": "conformance-long-json",
+  "to": "conformance-long-hex-msb",
+  "input": "{\"label\":\"ABCD\",\"tag\":\"5e\"}",
+  "expect": "abcd1780",
+  "source": "constructed",
+  "reference": "spec 0.22, Fields longer than 64 bits; encode writes each digit (either case) as uint writes a 4-bit field at its place"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "ruling-11-immediate-terminator-is-empty",
+  "from": "conformance-long-until-icao6",
+  "to": "conformance-long-json",
+  "input": "0024",
+  "expect": "{\"label\":\"\",\"y\":9}",
+  "model": {
+    "probe.label": "",
+    "probe.y": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 11: an immediate terminator decodes as \"\", present"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "to-until-semicolon-ruling-20",
+  "from": "conformance-long-json",
+  "to": "conformance-long-until-semicolon",
+  "input": "{\"label\":\"A\\u0000B\"}",
+  "expect": "4100423b",
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 20: NUL under until:N with N not 0 is an ordinary character on decode and on encode; 0.15 ruling 17 does not apply"
+}

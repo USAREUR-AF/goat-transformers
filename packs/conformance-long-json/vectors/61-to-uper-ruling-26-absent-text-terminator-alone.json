@@ -1,0 +1,9 @@
+{
+  "name": "to-uper-ruling-26-absent-text-terminator-alone",
+  "from": "conformance-long-json",
+  "to": "conformance-long-uper",
+  "input": "{\"x\":1,\"y\":13}",
+  "expect": "2018",
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 26: until: in a uper pack is read at the cursor with no alignment; an absent key writes the terminator alone (0.22), at bit 3"
+}

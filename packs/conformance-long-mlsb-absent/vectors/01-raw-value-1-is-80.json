@@ -1,0 +1,14 @@
+{
+  "name": "raw-value-1-is-80",
+  "from": "conformance-long-mlsb-absent",
+  "to": "conformance-long-json",
+  "input": "80",
+  "expect": "{}",
+  "model": {
+    "@absent": [
+      "probe.x"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 2: the raw values sentinels compare use the pack's bit order; 80 is the raw value 1"
+}

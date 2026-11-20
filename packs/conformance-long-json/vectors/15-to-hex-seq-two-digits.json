@@ -1,0 +1,9 @@
+{
+  "name": "to-hex-seq-two-digits",
+  "from": "conformance-long-json",
+  "to": "conformance-long-hex-seq",
+  "input": "{\"label\":\"ab\"}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.22: hex is valid in fixed and sequential layouts; text of another length is transform-encode"
+}

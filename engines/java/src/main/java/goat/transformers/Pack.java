@@ -541,6 +541,8 @@ public final class Pack {
     public final int wordBytes;
     /** bits wire: true for {@code bit_order msb}. */
     public final boolean msbFirst;
+    /** bits wire: the bit order as BitsCodec.LSB, MSB or MSB_LSB ({@code bit_order msb-lsb}, engine-spec 0.22). */
+    int bitOrder;
     /** True when the pack has at least one {@code kind} line. */
     public final boolean hasKinds;
     /** {@code when} lines before the first {@code kind}. */
@@ -798,6 +800,7 @@ public final class Pack {
                 // a bit length as the locator of a fixed-layout pack stays bad-directive (resolved after the file);
                 // so does a UPER locator outside a UPER pack (ruling 9 of 0.19, checked after the file)
                 if (Seq.isUperLocator(loc)) return;
+                if (loc.startsWith("until:")) return;   // a sequential locator (0.22): refused after the file here
                 why = Transform.UNSIGNED.matcher(loc).matches() ? null : BitsCodec.checkLocator(loc);
                 break;
             default:
@@ -833,6 +836,24 @@ public final class Pack {
         if (why != null) throw badLocator(format, loc, where + ": " + why);
     }
 
+    /**
+     * The code of a {@code stop} option or an {@code until:} locator (engine-spec 0.22): plain decimal digits, below
+     * {@code 2^w} of the {@code chars} set; only {@code chars:<set>} takes one. Anything else is bad-directive.
+     */
+    static int stopCode(String code, BitsTransform bt, String format, String locator, String where) {
+        if (bt == null || !bt.isCharSet()) {
+            throw badDirective(format, locator, where + ": a terminator code is for a chars:<set> field only");
+        }
+        if (!Transform.UNSIGNED.matcher(code).matches()) {
+            throw badDirective(format, locator, where + ": a terminator code is plain decimal digits, got \"" + code + "\"");
+        }
+        java.math.BigInteger n = new java.math.BigInteger(code);
+        if (n.bitLength() > bt.charWidth()) {
+            throw badDirective(format, locator, where + ": terminator code " + code + " does not fit " + bt.charWidth() + " bits");
+        }
+        return n.intValue();
+    }
+
     /** The 5a forms of an xml locator on a {@code group} line, or null. */
     private static String xmlGroupForm(String loc) {
         boolean after = false;
@@ -864,6 +885,11 @@ public final class Pack {
     private static void lineCheckSeqField(List<String> args, String format, String where) {
         String loc = args.get(1);
         checkTransformName(args.get(2), format, loc, where);
+        if (loc.startsWith("until:")) {
+            // 0.22: the code, the transform it needs and the options it refuses are checked after the file
+            optionSyntax(args, format, loc, where);
+            return;
+        }
         if (Seq.isUperLocator(loc)) {
             // 0.19: the form of a UPER locator, whether its transform and options fit it, and whether the pack has
             // encoding uper (ruling 9) are checked after the file; only the option syntax is a line check here
@@ -888,6 +914,7 @@ public final class Pack {
                 case "absent":
                 case "via":
                 case "with":   // engine-spec 0.18
+                case "stop":   // engine-spec 0.22
                     if (!seen.add(o)) throw badDirective(format, loc, where + ": " + o + " given twice");
                     if (i + 1 >= args.size()) throw badDirective(format, loc, where + ": " + o + " takes an argument");
                     String a = args.get(++i);
@@ -925,7 +952,7 @@ public final class Pack {
         if (absent == null) return;
         switch (wire) {
             case BITS: {
-                if (!loc.contains(":") || Seq.isUperLocator(loc)) return;   // refused after the file
+                if (!loc.contains(":") || Seq.isUperLocator(loc) || loc.startsWith("until:")) return;   // refused after the file
                 int len = BitsCodec.parseLoc(loc)[2];
                 if (len > 64) return;                         // ruling 4d: the length check after the file reports it
                 Sentinels.integers(absent, len, format, loc, where);
@@ -1251,8 +1278,8 @@ public final class Pack {
                 case "bit_order":
                     arity(kw, args, 1, where, format);
                     if (bitOrder != null) throw dup(kw, where, format);
-                    if (!args.get(0).equals("lsb") && !args.get(0).equals("msb")) {
-                        throw badDirective(format, null, where + ": bit_order must be lsb or msb, got \"" + args.get(0) + "\"");
+                    if (!args.get(0).equals("lsb") && !args.get(0).equals("msb") && !args.get(0).equals("msb-lsb")) {
+                        throw badDirective(format, null, where + ": bit_order must be lsb, msb or msb-lsb, got \"" + args.get(0) + "\"");
                     }
                     bitOrder = args.get(0);
                     bitOrderLine = ln;
@@ -1566,6 +1593,7 @@ public final class Pack {
                 commonWhens, kinds, ctx.fields, ctx.typed, ctx.bodies, keyRefs, tables, kindRoots, n2c, c2n,
                 seqRoot, seq == null ? 0 : seq.presences);
         pack.armorSixbit = armorSixbit;
+        pack.bitOrder = "msb".equals(bitOrder) ? BitsCodec.MSB : "msb-lsb".equals(bitOrder) ? BitsCodec.MSB_LSB : BitsCodec.LSB;
         pack.uper = uper;
         pack.valueLists = valueLists;
         if (wire == Wire.TEXT) {
@@ -1899,11 +1927,17 @@ public final class Pack {
             throw badDirective(format, s.locator, where + ": the locator . is for a field inside a group");
         }
         if (s.key == null) return resolveWhen(s, ctx, where, inGroup);
-        String via = null, absent = null, with = null;
+        String via = null, absent = null, with = null, stop = null;
         boolean swap = false, trim = false, optional = false;
         for (int i = 0; i < s.opts.size(); i++) {
             String o = s.opts.get(i);
             switch (o) {
+                case "stop":
+                    // engine-spec 0.22: the code that ends the text of a fixed-size chars field
+                    if (stop != null) throw badDirective(format, s.locator, where + ": stop given twice");
+                    if (i + 1 >= s.opts.size()) throw badDirective(format, s.locator, where + ": stop takes one code");
+                    stop = s.opts.get(++i);
+                    break;
                 case "with":
                     if (with != null) throw badDirective(format, s.locator, where + ": with given twice");
                     if (i + 1 >= s.opts.size()) throw badDirective(format, s.locator, where + ": with takes one key");
@@ -1941,8 +1975,8 @@ public final class Pack {
         if (wire == Wire.TEXT && optional && inGroup) {
             throw badDirective(format, s.locator, where + ": optional is not allowed inside a text group");
         }
-        if (wire != Wire.BITS && (swap || trim || (optional && wire != Wire.TEXT))) {
-            throw badDirective(format, s.locator, where + ": " + (swap ? "swap" : trim ? "trim" : "optional") + " is for the bits wire only");
+        if (wire != Wire.BITS && (swap || trim || stop != null || (optional && wire != Wire.TEXT))) {
+            throw badDirective(format, s.locator, where + ": " + (swap ? "swap" : trim ? "trim" : stop != null ? "stop" : "optional") + " is for the bits wire only");
         }
         if (wire != Wire.TEXT && TextTransform.isTextOnlyName(s.arg)) {
             throw badDirective(format, s.locator, where + ": transform \"" + s.arg + "\" is valid on the text wire only");
@@ -1950,7 +1984,8 @@ public final class Pack {
         if (wire != Wire.BITS && s.arg.equals("sixbit")) {
             throw badDirective(format, s.locator, where + ": transform \"sixbit\" is valid on the bits wire only");
         }
-        if (wire != Wire.TLV && TlvTransform.isTlvOnlyName(s.arg)) {
+        // `hex` is also a bits transform (engine-spec 0.22)
+        if (wire != Wire.TLV && TlvTransform.isTlvOnlyName(s.arg) && !(wire == Wire.BITS && s.arg.equals("hex"))) {
             throw badDirective(format, s.locator, where + ": transform \"" + s.arg + "\" is valid on the tlv wire only");
         }
         String why;
@@ -2012,7 +2047,11 @@ public final class Pack {
             if (Seq.isUperLocator(s.locator)) {
                 throw badDirective(format, s.locator, where + ": a UPER locator is for a pack with encoding uper");
             }
+            if (s.locator.startsWith("until:")) {
+                throw badDirective(format, s.locator, where + ": until: is a locator of a pack with layout sequential (engine-spec 0.22)");
+            }
             BitsTransform bt = BitsTransform.parse(s.arg, format, where);
+            if (stop != null) bt.stop = stopCode(stop, bt, format, s.locator, where);
             f = new Field(s.key, s.locator, null, bt, null, via, swap, trim, optional, s.line);
             why = BitsCodec.checkLocator(s.locator);
             if (trim && !bt.takesTrim()) throw badDirective(format, s.locator, where + ": trim is for the ascii and sixbit transforms only");

@@ -1,0 +1,13 @@
+# Conformance probe pack for `hex` in a sequential layout (spec 0.22). Public.
+# No kinds. Most significant bit first.
+#
+#   12 bits       label  three hex digits; the message is padded to 16 bits
+format     conformance-long-hex-seq
+version    0.22.0
+distribution public
+source  "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses       probe
+wire       bits
+layout     sequential
+bit_order  msb
+field   probe.label  12  hex

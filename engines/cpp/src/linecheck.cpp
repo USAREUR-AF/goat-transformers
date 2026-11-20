@@ -146,8 +146,9 @@ void check_locator(const LineChecker& c, Wire wire, bool sequential, bool in_gro
                 if (parse_unsigned_text(loc, n) && n == 0) bad("a bit length of 0");
                 return;
             }
-            // A bit length for a locator is a line of a sequential layout: bad-directive later.
-            if (digits_only(loc)) return;
+            // A bit length for a locator is a line of a sequential layout: bad-directive
+            // later; so is `until:<code>` (0.22).
+            if (digits_only(loc) || loc.compare(0, 6, "until:") == 0) return;
             BitsLocator b;
             if (!parse_bits_locator(loc, b)) bad("not <word>:<pos>:<len> of three unsigned decimal integers");
             if (b.len == 0) bad("a bit length of 0");
@@ -346,6 +347,15 @@ void check_pack_lines(const std::string& text, const std::string& source) {
                 if (k + 1 >= t.size() || t[k + 1].empty() || !f.via.empty())
                     c.fail(ErrorKind::BadDirective, "'via' takes one table name, once", f.locator);
                 f.via = t[++k];
+                continue;
+            }
+            // v0.22: `stop <code>`, once; its code and its transform are checked
+            // with the pack.
+            if (t[k] == "stop") {
+                if (k + 1 >= t.size() || f.has_stop)
+                    c.fail(ErrorKind::BadDirective, "'stop' takes one code, once", f.locator);
+                f.has_stop = true;
+                ++k;
                 continue;
             }
             // v0.18: `with <other-key>`, once.

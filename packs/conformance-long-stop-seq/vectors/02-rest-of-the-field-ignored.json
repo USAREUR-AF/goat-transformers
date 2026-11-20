@@ -1,0 +1,13 @@
+{
+  "name": "rest-of-the-field-ignored",
+  "from": "conformance-long-stop-seq",
+  "to": "conformance-long-stop-seq",
+  "input": "040fea09",
+  "expect": "04000009",
+  "model": {
+    "probe.label": "A",
+    "probe.y": "9"
+  },
+  "source": "constructed",
+  "reference": "spec 0.22, the field option stop <code>; decode ignores the rest of the field; encode writes A, @, then @ padding"
+}

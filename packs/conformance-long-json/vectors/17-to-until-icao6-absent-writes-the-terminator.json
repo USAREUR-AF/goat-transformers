@@ -1,0 +1,9 @@
+{
+  "name": "to-until-icao6-absent-writes-the-terminator",
+  "from": "conformance-long-json",
+  "to": "conformance-long-until-icao6",
+  "input": "{\"y\":9}",
+  "expect": "0024",
+  "source": "constructed",
+  "reference": "spec 0.22, Character fields that end at a code; an absent key writes the terminator alone; ruling 11: it comes back as \"\""
+}

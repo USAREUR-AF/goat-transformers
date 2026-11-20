@@ -1,0 +1,12 @@
+{
+  "name": "ruling-19-no-terminator-trailing-spaces-removed",
+  "from": "conformance-long-stop-icao6",
+  "to": "conformance-long-json",
+  "input": "0428208200",
+  "expect": "{\"label\":\"AB\"}",
+  "model": {
+    "probe.label": "AB"
+  },
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 19: with no code 0 the field decodes as without stop: icao6 removes trailing spaces"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "to-hex-msb-five-digits",
+  "from": "conformance-long-json",
+  "to": "conformance-long-hex-msb",
+  "input": "{\"label\":\"abcde\"}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.22, Fields longer than 64 bits; text of another length is transform-encode"
+}

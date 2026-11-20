@@ -640,8 +640,9 @@ func (p *Pack) resolveText(whens []*When, perr perrFunc, note func(error) error)
 			return perr(ErrBadDirective, f.Line, f.Locator, "%s takes a pair <i>+<j>", f.Transform)
 		case loc.kind == locTPair && loc.ti == loc.tj:
 			return perr(ErrBadDirective, f.Line, f.Locator, "the two fields of a pair are different")
-		case f.Swap || f.Trim:
-			return perr(ErrBadDirective, f.Line, f.Locator, "field options swap and trim are not valid on wire text")
+		case f.Swap || f.Trim || f.StopLine:
+			// `stop` is an option of a chars field on bits (0.22).
+			return perr(ErrBadDirective, f.Line, f.Locator, "field options swap, trim and stop are not valid on wire text")
 		case f.Absent != nil:
 			// `absent` (0.9) on text is bad-directive (0.10 ruling 16).
 			return perr(ErrBadDirective, f.Line, f.Locator, "field option `absent` is not valid on wire text")

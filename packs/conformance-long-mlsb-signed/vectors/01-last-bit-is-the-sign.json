@@ -1,0 +1,13 @@
+{
+  "name": "last-bit-is-the-sign",
+  "from": "conformance-long-mlsb-signed",
+  "to": "conformance-long-json",
+  "input": "0181",
+  "expect": "{\"z\":-128,\"w\":-1}",
+  "model": {
+    "probe.z": "-128",
+    "probe.w": "-1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 3: under msb-lsb the sign of twos and smag is the last bit read; 01 is -128 in twos; 81 is -1 in smag"
+}

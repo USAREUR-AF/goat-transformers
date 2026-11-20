@@ -1,0 +1,9 @@
+{
+  "name": "to-until-icao6-character-the-set-cannot-hold",
+  "from": "conformance-long-json",
+  "to": "conformance-long-until-icao6",
+  "input": "{\"label\":\"A@\",\"y\":9}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.22, Character fields that end at a code; a character the set cannot hold is transform-encode"
+}

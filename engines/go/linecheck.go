@@ -102,6 +102,9 @@ func (p *Pack) checkLocatorForm(s string, inGroup bool) (locator, bool, ErrorKin
 			return l, false, ErrBadDirective, err
 		}
 		return l, true, "", nil
+	case wire == WireBits && strings.HasPrefix(s, "until:"):
+		// An until: locator (0.22) is checked after the file.
+		return locator{}, false, "", nil
 	case p.seq:
 		if strings.Contains(s, ":") {
 			// A positional locator in a sequential pack is bad-directive,

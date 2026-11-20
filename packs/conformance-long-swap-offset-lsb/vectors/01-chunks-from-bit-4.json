@@ -1,0 +1,12 @@
+{
+  "name": "chunks-from-bit-4",
+  "from": "conformance-long-swap-offset-lsb",
+  "to": "conformance-long-json",
+  "input": "a0cb0d",
+  "expect": "{\"x\":47836}",
+  "model": {
+    "probe.x": "47836"
+  },
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 13: swap reverses 8-bit chunks of the field taken from its first bit; under lsb, chunks of the field's bits 4..11 and 12..19"
+}

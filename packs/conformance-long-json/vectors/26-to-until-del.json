@@ -1,0 +1,9 @@
+{
+  "name": "to-until-del",
+  "from": "conformance-long-json",
+  "to": "conformance-long-until-del",
+  "input": "{\"label\":\"A\"}",
+  "expect": "83fc",
+  "source": "constructed",
+  "reference": "spec 0.22, Character fields that end at a code; A, then 127"
+}

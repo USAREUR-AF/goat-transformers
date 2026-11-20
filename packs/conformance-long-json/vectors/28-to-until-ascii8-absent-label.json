@@ -1,0 +1,9 @@
+{
+  "name": "to-until-ascii8-absent-label",
+  "from": "conformance-long-json",
+  "to": "conformance-long-until-ascii8",
+  "input": "{\"tag\":\"C\"}",
+  "expect": "004300",
+  "source": "constructed",
+  "reference": "spec 0.22, Character fields that end at a code; an absent key with no default writes the terminator alone"
+}

@@ -236,7 +236,7 @@ func (r *seqReader) u(n int, what string) (uint64, error) {
 	if n == 0 {
 		return 0, nil
 	}
-	return getBits(r.data, at, n, true), nil
+	return getBits(r.data, at, n, msbOrder), nil
 }
 
 // lenDet reads a length determinant (X.691): 0 and 7 bits, or 10 and 14
@@ -265,7 +265,7 @@ func (r *seqReader) octets(c uint64, what string) ([]byte, error) {
 	}
 	out := make([]byte, c)
 	for i := range out {
-		out[i] = byte(getBits(r.data, r.pos, 8, true))
+		out[i] = byte(getBits(r.data, r.pos, 8, msbOrder))
 		r.pos += 8
 	}
 	return out, nil
@@ -442,7 +442,7 @@ func (r *seqReader) uperField(f *Field) error {
 			}
 			buf := make([]byte, count)
 			for i := range buf {
-				buf[i] = byte(getBits(r.data, r.pos, 7, true))
+				buf[i] = byte(getBits(r.data, r.pos, 7, msbOrder))
 				r.pos += 7
 			}
 			v = Value{Kind: KindString, S: string(buf)}
@@ -509,7 +509,7 @@ func (r *seqReader) extBlock(n *seqNode) error {
 	}
 	present := 0
 	for i := uint64(0); i < m; i++ {
-		if bitAt(r.data, r.pos, true) == 1 {
+		if bitAt(r.data, r.pos, msbOrder) == 1 {
 			present++
 		}
 		r.pos++

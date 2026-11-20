@@ -416,7 +416,7 @@ func (p *Pack) resolveTLV(whens []*When, perr perrFunc) error {
 		for _, o := range []struct {
 			set  bool
 			name string
-		}{{f.Swap, "swap"}, {f.Trim, "trim"}, {f.Optional, "optional"}, {f.Absent != nil, "absent"}} {
+		}{{f.Swap, "swap"}, {f.Trim, "trim"}, {f.Optional, "optional"}, {f.Absent != nil, "absent"}, {f.StopLine, "stop"}} {
 			if o.set {
 				// `absent` (0.9) on tlv is bad-directive (0.13 ruling 10).
 				return perr(ErrBadDirective, f.Line, f.Locator, "field option `%s` is not valid on wire tlv", o.name)

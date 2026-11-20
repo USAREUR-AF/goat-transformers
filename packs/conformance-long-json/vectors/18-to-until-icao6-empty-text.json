@@ -1,0 +1,9 @@
+{
+  "name": "to-until-icao6-empty-text",
+  "from": "conformance-long-json",
+  "to": "conformance-long-until-icao6",
+  "input": "{\"label\":\"\",\"y\":9}",
+  "expect": "0024",
+  "source": "constructed",
+  "reference": "spec 0.22, Character fields that end at a code; the empty text writes the terminator alone"
+}

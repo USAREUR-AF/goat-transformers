@@ -1,0 +1,9 @@
+{
+  "name": "to-until-ascii8-character-the-set-cannot-hold",
+  "from": "conformance-long-json",
+  "to": "conformance-long-until-ascii8",
+  "input": "{\"label\":\"é\"}",
+  "expect_error": "transform-encode",
+  "source": "constructed",
+  "reference": "spec 0.22, Character fields that end at a code; a character the set cannot hold is transform-encode"
+}

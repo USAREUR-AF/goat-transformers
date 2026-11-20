@@ -1,0 +1,9 @@
+{
+  "name": "item-without-a-terminator",
+  "from": "conformance-long-until-rest",
+  "to": "conformance-long-until-rest",
+  "input": "83",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 15, with 0.21 A list to the end of its extent; reading past the end of the enclosing extent before the terminator is malformed-wire"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "to-until-ascii7-nul-inside-the-text",
+  "from": "conformance-long-json",
+  "to": "conformance-long-until-ascii7",
+  "input": "{\"label\":\"A\\u0000B\"}",
+  "expect": "82021030",
+  "source": "constructed",
+  "reference": "spec 0.22 ruling 6: ruling 17 of 0.15 does not apply under until:3"
+}

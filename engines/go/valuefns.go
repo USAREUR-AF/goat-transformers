@@ -532,6 +532,22 @@ var charSets = map[string]*charSet{
 			return 0, false
 		},
 	},
+	// ascii8 (0.22): as ascii7, eight bits wide.
+	"ascii8": {
+		width: 8, pad: 0, nul: true,
+		dec: func(c uint64) (byte, bool) {
+			if c == 0 || (c >= 32 && c <= 126) {
+				return byte(c), true
+			}
+			return 0, false
+		},
+		enc: func(b byte) (uint64, bool) {
+			if b >= 32 && b <= 126 {
+				return uint64(b), true
+			}
+			return 0, false
+		},
+	},
 	"ascii7": {
 		width: 7, pad: 0, nul: true,
 		dec: func(c uint64) (byte, bool) {
@@ -549,22 +565,76 @@ var charSets = map[string]*charSet{
 	},
 }
 
-func newChars(set *charSet) *bitsTransform {
+// encChar is the code of one character of text in the set. With
+// nulOrdinary NUL is an ordinary character of a set that has it (0.22
+// rulings 6, 20 and 21: a terminator other than 0).
+func (set *charSet) encChar(b byte, nulOrdinary bool) (uint64, bool) {
+	if b == 0 && nulOrdinary && set.nul {
+		return 0, true
+	}
+	return set.enc(b)
+}
+
+// decodeChars reads n characters of the set at bit at, each as `uint` reads
+// a field of the set's width there (0.22 ruling 3).
+func (set *charSet) decodeChars(data []byte, at, n int, o bitOrder) ([]byte, error) {
+	buf := make([]byte, n)
+	for i := 0; i < n; i++ {
+		c := getBits(data, at+i*set.width, set.width, o)
+		b, ok := set.dec(c)
+		if !ok {
+			return nil, fmt.Errorf("character %d has code %d, which the set does not hold", i, c)
+		}
+		buf[i] = b
+	}
+	return buf, nil
+}
+
+// encodeChars returns the codes of text in the set, refusing a character
+// whose code is the terminator term (when term is not nil).
+func (set *charSet) encodeChars(s string, term *uint64) ([]uint64, error) {
+	codes := make([]uint64, len(s))
+	for i := 0; i < len(s); i++ {
+		c, ok := set.encChar(s[i], term != nil && *term != 0)
+		if !ok {
+			return nil, fmt.Errorf("byte 0x%02x is not a character of the set", s[i])
+		}
+		if term != nil && c == *term {
+			return nil, fmt.Errorf("character %d has the terminator's code %d", i, c)
+		}
+		codes[i] = c
+	}
+	return codes, nil
+}
+
+// newChars builds `chars:<set>`; with stop, the field option `stop <code>`
+// (0.22): the text ends at the first character with that code.
+func newChars(set *charSet, stop *uint64) *bitsTransform {
 	w := set.width
 	padChar, _ := set.dec(uint64(set.pad))
 	return &bitsTransform{
-		name:   "chars",
-		noSwap: true,
-		decodeAt: func(data []byte, at, length int, msb bool) (Value, error) {
+		name:    "chars",
+		noSwap:  true,
+		charSet: set,
+		decodeAt: func(data []byte, at, length int, o bitOrder) (Value, error) {
 			n := length / w
-			buf := make([]byte, n)
-			for i := 0; i < n; i++ {
-				c := getBits(data, at+i*w, w, msb)
-				b, ok := set.dec(c)
-				if !ok {
-					return Value{}, fmt.Errorf("character %d has code %d, which the set does not hold", i, c)
+			if stop != nil {
+				// The text is exactly the characters before the first
+				// terminator (rulings 18 and 21); with none the field
+				// decodes as without `stop` (ruling 19).
+				for i := 0; i < n; i++ {
+					if getBits(data, at+i*w, w, o) == *stop {
+						buf, err := set.decodeChars(data, at, i, o)
+						if err != nil {
+							return Value{}, err
+						}
+						return Value{Kind: KindString, S: string(buf)}, nil
+					}
 				}
-				buf[i] = b
+			}
+			buf, err := set.decodeChars(data, at, n, o)
+			if err != nil {
+				return Value{}, err
 			}
 			if set.nul {
 				for i := 1; i < n; i++ {
@@ -578,28 +648,31 @@ func newChars(set *charSet) *bitsTransform {
 			}
 			return Value{Kind: KindString, S: string(buf[:n])}, nil
 		},
-		encodeAt: func(v Value, data []byte, at, length int, msb bool) error {
+		encodeAt: func(v Value, data []byte, at, length int, o bitOrder) error {
 			s, err := encString(v)
 			if err != nil {
 				return err
 			}
 			n := length / w
-			if len(s) > n {
+			text, err := set.encodeChars(s, stop)
+			if err != nil {
+				return err
+			}
+			if stop != nil {
+				// The text, the terminator, then padding (0.22).
+				if len(text)+1 > n {
+					return fmt.Errorf("text is %d character(s), and the field holds %d with its terminator", len(text), n)
+				}
+				text = append(text, *stop)
+			} else if len(text) > n {
 				return fmt.Errorf("text is %d character(s), the field holds %d", len(s), n)
 			}
-			codes := make([]uint64, n)
-			for i := range codes {
-				codes[i] = uint64(set.pad)
-			}
-			for i := 0; i < len(s); i++ {
-				c, ok := set.enc(s[i])
-				if !ok {
-					return fmt.Errorf("byte 0x%02x is not a character of the set", s[i])
+			for i := 0; i < n; i++ {
+				c := uint64(set.pad)
+				if i < len(text) {
+					c = text[i]
 				}
-				codes[i] = c
-			}
-			for i, c := range codes {
-				putBits(data, at+i*w, w, c, msb)
+				putBits(data, at+i*w, w, c, o)
 			}
 			return nil
 		},
@@ -747,9 +820,25 @@ func resolveV015(wire, base string, f *Field) error {
 	case "chars":
 		set := charSets[strings.TrimPrefix(name, "chars:")]
 		if !strings.HasPrefix(name, "chars:") || set == nil {
-			return fmt.Errorf("chars needs a character set icao6, ais6 or ascii7, got %q", name)
+			return fmt.Errorf("chars needs a character set icao6, ais6, ascii7 or ascii8, got %q", name)
 		}
-		f.btf = newChars(set)
+		var stop *uint64
+		if f.StopLine {
+			c, err := strconv.ParseUint(f.Stop, 10, 64)
+			if !isDigits(f.Stop) || err != nil || (set.width < 64 && c>>uint(set.width) != 0) {
+				return fmt.Errorf("stop %s: the code must be below 2^%d", f.Stop, set.width)
+			}
+			stop = &c
+		}
+		f.btf = newChars(set, stop)
+		if f.until {
+			// until:<code> (0.22): the code fits the set's width; the field
+			// has no fixed length.
+			if set.width < 64 && f.untilC>>uint(set.width) != 0 {
+				return fmt.Errorf("until:%d: the code must be below 2^%d", f.untilC, set.width)
+			}
+			return nil
+		}
 		if n%set.width != 0 || n < set.width || n > maxBitsLen {
 			return fmt.Errorf("%s needs a multiple of %d bits from %d to %d, got %d", name, set.width, set.width, maxBitsLen, n)
 		}
@@ -789,8 +878,47 @@ func checkV015Params(base, name string) error {
 		}
 	case "chars":
 		if !strings.HasPrefix(name, "chars:") || charSets[name[len("chars:"):]] == nil {
-			err = fmt.Errorf("chars needs a character set icao6, ais6 or ascii7, got %q", name)
+			err = fmt.Errorf("chars needs a character set icao6, ais6, ascii7 or ascii8, got %q", name)
 		}
 	}
 	return err
+}
+
+// bitsHex is `hex` on the bits wire (0.22): len / 4 lowercase hex digits,
+// digit k the 4-bit field at bit 4k of the field read as `uint` reads it.
+var bitsHex = &bitsTransform{
+	name:   "hex",
+	noSwap: true,
+	decodeAt: func(data []byte, at, length int, o bitOrder) (Value, error) {
+		const digits = "0123456789abcdef"
+		buf := make([]byte, length/4)
+		for k := range buf {
+			buf[k] = digits[getBits(data, at+4*k, 4, o)]
+		}
+		return Value{Kind: KindString, S: string(buf)}, nil
+	},
+	encodeAt: func(v Value, data []byte, at, length int, o bitOrder) error {
+		s, err := encString(v)
+		if err != nil {
+			return err
+		}
+		if len(s) != length/4 {
+			return fmt.Errorf("hex text %q must be exactly %d digits", s, length/4)
+		}
+		for k := 0; k < len(s); k++ {
+			var d uint64
+			switch c := s[k]; {
+			case c >= '0' && c <= '9':
+				d = uint64(c - '0')
+			case c >= 'a' && c <= 'f':
+				d = uint64(c-'a') + 10
+			case c >= 'A' && c <= 'F':
+				d = uint64(c-'A') + 10
+			default:
+				return fmt.Errorf("hex text %q holds a character that is not a hex digit", s)
+			}
+			putBits(data, at+4*k, 4, d, o)
+		}
+		return nil
+	},
 }
