@@ -1,0 +1,17 @@
+{
+ "name": "gen-start_session-roundtrip",
+ "from": "ocpi-start-session",
+ "to": "ocpi-start-session",
+ "input": "{\"response_url\":\"s46783\",\"token\":{\"country_code\":\"s94124\",\"party_id\":\"s29274\",\"uid\":\"s6563\",\"type\":\"s47833\",\"contract_id\":\"s79767\",\"visual_number\":\"s92034\",\"issuer\":\"s49103\",\"group_id\":\"s10293\",\"valid\":true,\"whitelist\":\"s14134\",\"language\":\"s98124\",\"default_profile_type\":\"s96368\",\"energy_contract\":{\"supplier_name\":\"s41222\",\"contract_id\":\"s53450\"},\"last_updated\":\"2024-09-06T21:04:16.495Z\"},\"location_id\":\"s95719\",\"evse_uid\":\"s278\",\"connector_id\":\"s18083\",\"authorization_reference\":\"s65783\"}",
+ "expect": "{\"response_url\":\"s46783\",\"token\":{\"country_code\":\"s94124\",\"party_id\":\"s29274\",\"uid\":\"s6563\",\"type\":\"s47833\",\"contract_id\":\"s79767\",\"visual_number\":\"s92034\",\"issuer\":\"s49103\",\"group_id\":\"s10293\",\"valid\":true,\"whitelist\":\"s14134\",\"language\":\"s98124\",\"default_profile_type\":\"s96368\",\"energy_contract\":{\"supplier_name\":\"s41222\",\"contract_id\":\"s53450\"},\"last_updated\":\"2024-09-06T21:04:16.495Z\"},\"location_id\":\"s95719\",\"evse_uid\":\"s278\",\"connector_id\":\"s18083\",\"authorization_reference\":\"s65783\"}",
+ "model": {
+  "ocpicmdstart.response_url": "s46783",
+  "ocpicmdstart.token_country_code": "s94124",
+  "ocpicmdstart.token_party_id": "s29274",
+  "ocpicmdstart.token_uid": "s6563",
+  "ocpicmdstart.token_type": "s47833",
+  "ocpicmdstart.token_contract_id": "s79767",
+  "ocpicmdstart.token_visual_number": "s92034",
+  "ocpicmdstart.token_issuer": "s49103"
+ }
+}

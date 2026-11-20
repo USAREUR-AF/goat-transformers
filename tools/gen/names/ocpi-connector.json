@@ -1,0 +1,17 @@
+{
+ "keys": {
+  "tariff_ids|.|string": "tariff_ids_value",
+  "|format|string": "format",
+  "|id|string": "id",
+  "|last_updated|string": "last_updated",
+  "|max_amperage|int": "max_amperage",
+  "|max_electric_power|int": "max_electric_power",
+  "|max_voltage|int": "max_voltage",
+  "|power_type|string": "power_type",
+  "|standard|string": "standard",
+  "|terms_and_conditions|string": "terms_and_conditions"
+ },
+ "lists": {
+  "|tariff_ids": "tariff_ids"
+ }
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-command_result-residue",
+ "from": "ocpi-command-result",
+ "to": "ocpi-command-result",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"result\":\"s47481\",\"message\":[{\"language\":\"s72822\",\"text\":\"s42892\"},{\"language\":\"s60554\",\"text\":\"s12417\"}]}",
+ "expect": "{\"result\":\"s47481\",\"message\":[{\"language\":\"s72822\",\"text\":\"s42892\"},{\"language\":\"s60554\",\"text\":\"s12417\"}],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

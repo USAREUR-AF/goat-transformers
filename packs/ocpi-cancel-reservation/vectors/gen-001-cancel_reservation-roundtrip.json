@@ -1,0 +1,11 @@
+{
+ "name": "gen-cancel_reservation-roundtrip",
+ "from": "ocpi-cancel-reservation",
+ "to": "ocpi-cancel-reservation",
+ "input": "{\"response_url\":\"s12757\",\"reservation_id\":\"s47647\"}",
+ "expect": "{\"response_url\":\"s12757\",\"reservation_id\":\"s47647\"}",
+ "model": {
+  "ocpicmdcancel.response_url": "s12757",
+  "ocpicmdcancel.reservation_id": "s47647"
+ }
+}

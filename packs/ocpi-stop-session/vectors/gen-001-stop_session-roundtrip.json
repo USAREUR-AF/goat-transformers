@@ -1,0 +1,11 @@
+{
+ "name": "gen-stop_session-roundtrip",
+ "from": "ocpi-stop-session",
+ "to": "ocpi-stop-session",
+ "input": "{\"response_url\":\"s19355\",\"session_id\":\"s14564\"}",
+ "expect": "{\"response_url\":\"s19355\",\"session_id\":\"s14564\"}",
+ "model": {
+  "ocpicmdstop.response_url": "s19355",
+  "ocpicmdstop.session_id": "s14564"
+ }
+}

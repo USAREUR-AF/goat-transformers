@@ -1,0 +1,12 @@
+{
+ "name": "gen-response-roundtrip",
+ "from": "ocpi-response",
+ "to": "ocpi-response",
+ "input": "{\"status_code\":95195,\"status_message\":\"s95070\",\"timestamp\":\"2026-11-30T07:22:21.113Z\"}",
+ "expect": "{\"status_code\":95195,\"status_message\":\"s95070\",\"timestamp\":\"2026-11-30T07:22:21.113Z\"}",
+ "model": {
+  "ocpiresp.status_code": "95195",
+  "ocpiresp.status_message": "s95070",
+  "ocpiresp.timestamp": "2026-11-30T07:22:21.113Z"
+ }
+}

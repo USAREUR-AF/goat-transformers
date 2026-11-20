@@ -1,0 +1,7 @@
+{
+ "keys": {
+  "|reservation_id|string": "reservation_id",
+  "|response_url|string": "response_url"
+ },
+ "lists": {}
+}

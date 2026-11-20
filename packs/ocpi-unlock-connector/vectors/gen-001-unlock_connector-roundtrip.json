@@ -1,0 +1,13 @@
+{
+ "name": "gen-unlock_connector-roundtrip",
+ "from": "ocpi-unlock-connector",
+ "to": "ocpi-unlock-connector",
+ "input": "{\"response_url\":\"s9416\",\"location_id\":\"s47487\",\"evse_uid\":\"s31410\",\"connector_id\":\"s99050\"}",
+ "expect": "{\"response_url\":\"s9416\",\"location_id\":\"s47487\",\"evse_uid\":\"s31410\",\"connector_id\":\"s99050\"}",
+ "model": {
+  "ocpicmdunlock.response_url": "s9416",
+  "ocpicmdunlock.location_id": "s47487",
+  "ocpicmdunlock.evse_uid": "s31410",
+  "ocpicmdunlock.connector_id": "s99050"
+ }
+}

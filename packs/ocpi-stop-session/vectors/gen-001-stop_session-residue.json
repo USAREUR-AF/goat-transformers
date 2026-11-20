@@ -1,0 +1,7 @@
+{
+ "name": "gen-stop_session-residue",
+ "from": "ocpi-stop-session",
+ "to": "ocpi-stop-session",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"response_url\":\"s19355\",\"session_id\":\"s14564\"}",
+ "expect": "{\"response_url\":\"s19355\",\"session_id\":\"s14564\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

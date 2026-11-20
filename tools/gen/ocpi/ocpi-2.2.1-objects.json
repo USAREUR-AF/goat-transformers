@@ -1,0 +1,1345 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "urn:goat-transformers:ocpi-2.2.1-objects",
+ "title": "OCPI 2.2.1 objects, restated by goat-transformers",
+ "description": "Member names, JSON types and required members of the OCPI 2.2.1 objects, restated by this project from the object tables of the OCPI 2.2.1 document (EVRoaming Foundation) for the packs ocpi-*. Not a copy of the document; no description text is taken from it. Enumerations are strings; DateTime is an RFC 3339 instant in UTC.",
+ "$defs": {
+  "DisplayText": {
+   "type": "object",
+   "properties": {
+    "language": {
+     "type": "string"
+    },
+    "text": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "language",
+    "text"
+   ]
+  },
+  "Price": {
+   "type": "object",
+   "properties": {
+    "excl_vat": {
+     "type": "number"
+    },
+    "incl_vat": {
+     "type": "number"
+    }
+   },
+   "required": [
+    "excl_vat"
+   ]
+  },
+  "GeoLocation": {
+   "type": "object",
+   "properties": {
+    "latitude": {
+     "type": "string"
+    },
+    "longitude": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "latitude",
+    "longitude"
+   ]
+  },
+  "AdditionalGeoLocation": {
+   "type": "object",
+   "properties": {
+    "latitude": {
+     "type": "string"
+    },
+    "longitude": {
+     "type": "string"
+    },
+    "name": {
+     "$ref": "#/$defs/DisplayText"
+    }
+   },
+   "required": [
+    "latitude",
+    "longitude"
+   ]
+  },
+  "Image": {
+   "type": "object",
+   "properties": {
+    "url": {
+     "type": "string"
+    },
+    "thumbnail": {
+     "type": "string"
+    },
+    "category": {
+     "type": "string"
+    },
+    "type": {
+     "type": "string"
+    },
+    "width": {
+     "type": "integer"
+    },
+    "height": {
+     "type": "integer"
+    }
+   },
+   "required": [
+    "url",
+    "category",
+    "type"
+   ]
+  },
+  "BusinessDetails": {
+   "type": "object",
+   "properties": {
+    "name": {
+     "type": "string"
+    },
+    "website": {
+     "type": "string"
+    },
+    "logo": {
+     "$ref": "#/$defs/Image"
+    }
+   },
+   "required": [
+    "name"
+   ]
+  },
+  "EnergySource": {
+   "type": "object",
+   "properties": {
+    "source": {
+     "type": "string"
+    },
+    "percentage": {
+     "type": "number"
+    }
+   },
+   "required": [
+    "source",
+    "percentage"
+   ]
+  },
+  "EnvironmentalImpact": {
+   "type": "object",
+   "properties": {
+    "category": {
+     "type": "string"
+    },
+    "amount": {
+     "type": "number"
+    }
+   },
+   "required": [
+    "category",
+    "amount"
+   ]
+  },
+  "EnergyMix": {
+   "type": "object",
+   "properties": {
+    "is_green_energy": {
+     "type": "boolean"
+    },
+    "energy_sources": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/EnergySource"
+     }
+    },
+    "environ_impact": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/EnvironmentalImpact"
+     }
+    },
+    "supplier_name": {
+     "type": "string"
+    },
+    "energy_product_name": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "is_green_energy"
+   ]
+  },
+  "RegularHours": {
+   "type": "object",
+   "properties": {
+    "weekday": {
+     "type": "integer"
+    },
+    "period_begin": {
+     "type": "string"
+    },
+    "period_end": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "weekday",
+    "period_begin",
+    "period_end"
+   ]
+  },
+  "ExceptionalPeriod": {
+   "type": "object",
+   "properties": {
+    "period_begin": {
+     "type": "string",
+     "format": "date-time"
+    },
+    "period_end": {
+     "type": "string",
+     "format": "date-time"
+    }
+   },
+   "required": [
+    "period_begin",
+    "period_end"
+   ]
+  },
+  "Hours": {
+   "type": "object",
+   "properties": {
+    "twentyfourseven": {
+     "type": "boolean"
+    },
+    "regular_hours": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/RegularHours"
+     }
+    },
+    "exceptional_openings": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/ExceptionalPeriod"
+     }
+    },
+    "exceptional_closings": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/ExceptionalPeriod"
+     }
+    }
+   },
+   "required": [
+    "twentyfourseven"
+   ]
+  },
+  "PublishTokenType": {
+   "type": "object",
+   "properties": {
+    "uid": {
+     "type": "string"
+    },
+    "type": {
+     "type": "string"
+    },
+    "visual_number": {
+     "type": "string"
+    },
+    "issuer": {
+     "type": "string"
+    },
+    "group_id": {
+     "type": "string"
+    }
+   },
+   "required": []
+  },
+  "StatusSchedule": {
+   "type": "object",
+   "properties": {
+    "period_begin": {
+     "type": "string",
+     "format": "date-time"
+    },
+    "period_end": {
+     "type": "string",
+     "format": "date-time"
+    },
+    "status": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "period_begin",
+    "status"
+   ]
+  },
+  "Connector": {
+   "type": "object",
+   "properties": {
+    "id": {
+     "type": "string"
+    },
+    "standard": {
+     "type": "string"
+    },
+    "format": {
+     "type": "string"
+    },
+    "power_type": {
+     "type": "string"
+    },
+    "max_voltage": {
+     "type": "integer"
+    },
+    "max_amperage": {
+     "type": "integer"
+    },
+    "max_electric_power": {
+     "type": "integer"
+    },
+    "tariff_ids": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "terms_and_conditions": {
+     "type": "string"
+    },
+    "last_updated": {
+     "type": "string",
+     "format": "date-time"
+    }
+   },
+   "required": [
+    "id",
+    "standard",
+    "format",
+    "power_type",
+    "max_voltage",
+    "max_amperage",
+    "last_updated"
+   ]
+  },
+  "EVSE": {
+   "type": "object",
+   "properties": {
+    "uid": {
+     "type": "string"
+    },
+    "evse_id": {
+     "type": "string"
+    },
+    "status": {
+     "type": "string"
+    },
+    "status_schedule": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/StatusSchedule"
+     }
+    },
+    "capabilities": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "connectors": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/Connector"
+     }
+    },
+    "floor_level": {
+     "type": "string"
+    },
+    "coordinates": {
+     "$ref": "#/$defs/GeoLocation"
+    },
+    "physical_reference": {
+     "type": "string"
+    },
+    "directions": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/DisplayText"
+     }
+    },
+    "parking_restrictions": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "images": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/Image"
+     }
+    },
+    "last_updated": {
+     "type": "string",
+     "format": "date-time"
+    }
+   },
+   "required": [
+    "uid",
+    "status",
+    "connectors",
+    "last_updated"
+   ]
+  },
+  "Location": {
+   "type": "object",
+   "properties": {
+    "country_code": {
+     "type": "string"
+    },
+    "party_id": {
+     "type": "string"
+    },
+    "id": {
+     "type": "string"
+    },
+    "publish": {
+     "type": "boolean"
+    },
+    "publish_allowed_to": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/PublishTokenType"
+     }
+    },
+    "name": {
+     "type": "string"
+    },
+    "address": {
+     "type": "string"
+    },
+    "city": {
+     "type": "string"
+    },
+    "postal_code": {
+     "type": "string"
+    },
+    "state": {
+     "type": "string"
+    },
+    "country": {
+     "type": "string"
+    },
+    "coordinates": {
+     "$ref": "#/$defs/GeoLocation"
+    },
+    "related_locations": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/AdditionalGeoLocation"
+     }
+    },
+    "parking_type": {
+     "type": "string"
+    },
+    "evses": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/EVSE"
+     }
+    },
+    "directions": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/DisplayText"
+     }
+    },
+    "operator": {
+     "$ref": "#/$defs/BusinessDetails"
+    },
+    "suboperator": {
+     "$ref": "#/$defs/BusinessDetails"
+    },
+    "owner": {
+     "$ref": "#/$defs/BusinessDetails"
+    },
+    "facilities": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "time_zone": {
+     "type": "string"
+    },
+    "opening_times": {
+     "$ref": "#/$defs/Hours"
+    },
+    "charging_when_closed": {
+     "type": "boolean"
+    },
+    "images": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/Image"
+     }
+    },
+    "energy_mix": {
+     "$ref": "#/$defs/EnergyMix"
+    },
+    "last_updated": {
+     "type": "string",
+     "format": "date-time"
+    }
+   },
+   "required": [
+    "country_code",
+    "party_id",
+    "id",
+    "publish",
+    "address",
+    "city",
+    "country",
+    "coordinates",
+    "time_zone",
+    "last_updated"
+   ]
+  },
+  "CdrToken": {
+   "type": "object",
+   "properties": {
+    "country_code": {
+     "type": "string"
+    },
+    "party_id": {
+     "type": "string"
+    },
+    "uid": {
+     "type": "string"
+    },
+    "type": {
+     "type": "string"
+    },
+    "contract_id": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "country_code",
+    "party_id",
+    "uid",
+    "type",
+    "contract_id"
+   ]
+  },
+  "CdrDimension": {
+   "type": "object",
+   "properties": {
+    "type": {
+     "type": "string"
+    },
+    "volume": {
+     "type": "number"
+    }
+   },
+   "required": [
+    "type",
+    "volume"
+   ]
+  },
+  "ChargingPeriod": {
+   "type": "object",
+   "properties": {
+    "start_date_time": {
+     "type": "string",
+     "format": "date-time"
+    },
+    "dimensions": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/CdrDimension"
+     }
+    },
+    "tariff_id": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "start_date_time",
+    "dimensions"
+   ]
+  },
+  "Session": {
+   "type": "object",
+   "properties": {
+    "country_code": {
+     "type": "string"
+    },
+    "party_id": {
+     "type": "string"
+    },
+    "id": {
+     "type": "string"
+    },
+    "start_date_time": {
+     "type": "string",
+     "format": "date-time"
+    },
+    "end_date_time": {
+     "type": "string",
+     "format": "date-time"
+    },
+    "kwh": {
+     "type": "number"
+    },
+    "cdr_token": {
+     "$ref": "#/$defs/CdrToken"
+    },
+    "auth_method": {
+     "type": "string"
+    },
+    "authorization_reference": {
+     "type": "string"
+    },
+    "location_id": {
+     "type": "string"
+    },
+    "evse_uid": {
+     "type": "string"
+    },
+    "connector_id": {
+     "type": "string"
+    },
+    "meter_id": {
+     "type": "string"
+    },
+    "currency": {
+     "type": "string"
+    },
+    "charging_periods": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/ChargingPeriod"
+     }
+    },
+    "total_cost": {
+     "$ref": "#/$defs/Price"
+    },
+    "status": {
+     "type": "string"
+    },
+    "last_updated": {
+     "type": "string",
+     "format": "date-time"
+    }
+   },
+   "required": [
+    "country_code",
+    "party_id",
+    "id",
+    "start_date_time",
+    "kwh",
+    "cdr_token",
+    "auth_method",
+    "location_id",
+    "evse_uid",
+    "connector_id",
+    "currency",
+    "status",
+    "last_updated"
+   ]
+  },
+  "ChargingPreferences": {
+   "type": "object",
+   "properties": {
+    "profile_type": {
+     "type": "string"
+    },
+    "departure_time": {
+     "type": "string",
+     "format": "date-time"
+    },
+    "energy_need": {
+     "type": "number"
+    },
+    "discharge_allowed": {
+     "type": "boolean"
+    }
+   },
+   "required": [
+    "profile_type"
+   ]
+  },
+  "CdrLocation": {
+   "type": "object",
+   "properties": {
+    "id": {
+     "type": "string"
+    },
+    "name": {
+     "type": "string"
+    },
+    "address": {
+     "type": "string"
+    },
+    "city": {
+     "type": "string"
+    },
+    "postal_code": {
+     "type": "string"
+    },
+    "state": {
+     "type": "string"
+    },
+    "country": {
+     "type": "string"
+    },
+    "coordinates": {
+     "$ref": "#/$defs/GeoLocation"
+    },
+    "evse_uid": {
+     "type": "string"
+    },
+    "evse_id": {
+     "type": "string"
+    },
+    "connector_id": {
+     "type": "string"
+    },
+    "connector_standard": {
+     "type": "string"
+    },
+    "connector_format": {
+     "type": "string"
+    },
+    "connector_power_type": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "id",
+    "address",
+    "city",
+    "country",
+    "coordinates",
+    "evse_uid",
+    "evse_id",
+    "connector_id",
+    "connector_standard",
+    "connector_format",
+    "connector_power_type"
+   ]
+  },
+  "SignedValue": {
+   "type": "object",
+   "properties": {
+    "nature": {
+     "type": "string"
+    },
+    "plain_data": {
+     "type": "string"
+    },
+    "signed_data": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "nature",
+    "plain_data",
+    "signed_data"
+   ]
+  },
+  "SignedData": {
+   "type": "object",
+   "properties": {
+    "encoding_method": {
+     "type": "string"
+    },
+    "encoding_method_version": {
+     "type": "integer"
+    },
+    "public_key": {
+     "type": "string"
+    },
+    "signed_values": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/SignedValue"
+     }
+    },
+    "url": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "encoding_method",
+    "signed_values"
+   ]
+  },
+  "TariffRestrictions": {
+   "type": "object",
+   "properties": {
+    "start_time": {
+     "type": "string"
+    },
+    "end_time": {
+     "type": "string"
+    },
+    "start_date": {
+     "type": "string"
+    },
+    "end_date": {
+     "type": "string"
+    },
+    "min_kwh": {
+     "type": "number"
+    },
+    "max_kwh": {
+     "type": "number"
+    },
+    "min_current": {
+     "type": "number"
+    },
+    "max_current": {
+     "type": "number"
+    },
+    "min_power": {
+     "type": "number"
+    },
+    "max_power": {
+     "type": "number"
+    },
+    "min_duration": {
+     "type": "integer"
+    },
+    "max_duration": {
+     "type": "integer"
+    },
+    "day_of_week": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    },
+    "reservation": {
+     "type": "string"
+    }
+   },
+   "required": []
+  },
+  "PriceComponent": {
+   "type": "object",
+   "properties": {
+    "type": {
+     "type": "string"
+    },
+    "price": {
+     "type": "number"
+    },
+    "vat": {
+     "type": "number"
+    },
+    "step_size": {
+     "type": "integer"
+    }
+   },
+   "required": [
+    "type",
+    "price",
+    "step_size"
+   ]
+  },
+  "TariffElement": {
+   "type": "object",
+   "properties": {
+    "price_components": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/PriceComponent"
+     }
+    },
+    "restrictions": {
+     "$ref": "#/$defs/TariffRestrictions"
+    }
+   },
+   "required": [
+    "price_components"
+   ]
+  },
+  "Tariff": {
+   "type": "object",
+   "properties": {
+    "country_code": {
+     "type": "string"
+    },
+    "party_id": {
+     "type": "string"
+    },
+    "id": {
+     "type": "string"
+    },
+    "currency": {
+     "type": "string"
+    },
+    "type": {
+     "type": "string"
+    },
+    "tariff_alt_text": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/DisplayText"
+     }
+    },
+    "tariff_alt_url": {
+     "type": "string"
+    },
+    "min_price": {
+     "$ref": "#/$defs/Price"
+    },
+    "max_price": {
+     "$ref": "#/$defs/Price"
+    },
+    "elements": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/TariffElement"
+     }
+    },
+    "start_date_time": {
+     "type": "string",
+     "format": "date-time"
+    },
+    "end_date_time": {
+     "type": "string",
+     "format": "date-time"
+    },
+    "energy_mix": {
+     "$ref": "#/$defs/EnergyMix"
+    },
+    "last_updated": {
+     "type": "string",
+     "format": "date-time"
+    }
+   },
+   "required": [
+    "country_code",
+    "party_id",
+    "id",
+    "currency",
+    "elements",
+    "last_updated"
+   ]
+  },
+  "CDR": {
+   "type": "object",
+   "properties": {
+    "country_code": {
+     "type": "string"
+    },
+    "party_id": {
+     "type": "string"
+    },
+    "id": {
+     "type": "string"
+    },
+    "start_date_time": {
+     "type": "string",
+     "format": "date-time"
+    },
+    "end_date_time": {
+     "type": "string",
+     "format": "date-time"
+    },
+    "session_id": {
+     "type": "string"
+    },
+    "cdr_token": {
+     "$ref": "#/$defs/CdrToken"
+    },
+    "auth_method": {
+     "type": "string"
+    },
+    "authorization_reference": {
+     "type": "string"
+    },
+    "cdr_location": {
+     "$ref": "#/$defs/CdrLocation"
+    },
+    "meter_id": {
+     "type": "string"
+    },
+    "currency": {
+     "type": "string"
+    },
+    "tariffs": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/Tariff"
+     }
+    },
+    "charging_periods": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/ChargingPeriod"
+     }
+    },
+    "signed_data": {
+     "$ref": "#/$defs/SignedData"
+    },
+    "total_cost": {
+     "$ref": "#/$defs/Price"
+    },
+    "total_fixed_cost": {
+     "$ref": "#/$defs/Price"
+    },
+    "total_energy": {
+     "type": "number"
+    },
+    "total_energy_cost": {
+     "$ref": "#/$defs/Price"
+    },
+    "total_time": {
+     "type": "number"
+    },
+    "total_time_cost": {
+     "$ref": "#/$defs/Price"
+    },
+    "total_parking_time": {
+     "type": "number"
+    },
+    "total_parking_cost": {
+     "$ref": "#/$defs/Price"
+    },
+    "total_reservation_cost": {
+     "$ref": "#/$defs/Price"
+    },
+    "remark": {
+     "type": "string"
+    },
+    "invoice_reference_id": {
+     "type": "string"
+    },
+    "credit": {
+     "type": "boolean"
+    },
+    "credit_reference_id": {
+     "type": "string"
+    },
+    "home_charging_compensation": {
+     "type": "boolean"
+    },
+    "last_updated": {
+     "type": "string",
+     "format": "date-time"
+    }
+   },
+   "required": [
+    "country_code",
+    "party_id",
+    "id",
+    "start_date_time",
+    "end_date_time",
+    "cdr_token",
+    "auth_method",
+    "cdr_location",
+    "currency",
+    "charging_periods",
+    "total_cost",
+    "total_energy",
+    "total_time",
+    "last_updated"
+   ]
+  },
+  "EnergyContract": {
+   "type": "object",
+   "properties": {
+    "supplier_name": {
+     "type": "string"
+    },
+    "contract_id": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "supplier_name"
+   ]
+  },
+  "Token": {
+   "type": "object",
+   "properties": {
+    "country_code": {
+     "type": "string"
+    },
+    "party_id": {
+     "type": "string"
+    },
+    "uid": {
+     "type": "string"
+    },
+    "type": {
+     "type": "string"
+    },
+    "contract_id": {
+     "type": "string"
+    },
+    "visual_number": {
+     "type": "string"
+    },
+    "issuer": {
+     "type": "string"
+    },
+    "group_id": {
+     "type": "string"
+    },
+    "valid": {
+     "type": "boolean"
+    },
+    "whitelist": {
+     "type": "string"
+    },
+    "language": {
+     "type": "string"
+    },
+    "default_profile_type": {
+     "type": "string"
+    },
+    "energy_contract": {
+     "$ref": "#/$defs/EnergyContract"
+    },
+    "last_updated": {
+     "type": "string",
+     "format": "date-time"
+    }
+   },
+   "required": [
+    "country_code",
+    "party_id",
+    "uid",
+    "type",
+    "contract_id",
+    "issuer",
+    "valid",
+    "whitelist",
+    "last_updated"
+   ]
+  },
+  "LocationReferences": {
+   "type": "object",
+   "properties": {
+    "location_id": {
+     "type": "string"
+    },
+    "evse_uids": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   },
+   "required": [
+    "location_id"
+   ]
+  },
+  "AuthorizationInfo": {
+   "type": "object",
+   "properties": {
+    "allowed": {
+     "type": "string"
+    },
+    "token": {
+     "$ref": "#/$defs/Token"
+    },
+    "location": {
+     "$ref": "#/$defs/LocationReferences"
+    },
+    "authorization_reference": {
+     "type": "string"
+    },
+    "info": {
+     "$ref": "#/$defs/DisplayText"
+    }
+   },
+   "required": [
+    "allowed",
+    "token"
+   ]
+  },
+  "CancelReservation": {
+   "type": "object",
+   "properties": {
+    "response_url": {
+     "type": "string"
+    },
+    "reservation_id": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "response_url",
+    "reservation_id"
+   ]
+  },
+  "CommandResponse": {
+   "type": "object",
+   "properties": {
+    "result": {
+     "type": "string"
+    },
+    "timeout": {
+     "type": "integer"
+    },
+    "message": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/DisplayText"
+     }
+    }
+   },
+   "required": [
+    "result",
+    "timeout"
+   ]
+  },
+  "CommandResult": {
+   "type": "object",
+   "properties": {
+    "result": {
+     "type": "string"
+    },
+    "message": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/DisplayText"
+     }
+    }
+   },
+   "required": [
+    "result"
+   ]
+  },
+  "ReserveNow": {
+   "type": "object",
+   "properties": {
+    "response_url": {
+     "type": "string"
+    },
+    "token": {
+     "$ref": "#/$defs/Token"
+    },
+    "expiry_date": {
+     "type": "string",
+     "format": "date-time"
+    },
+    "reservation_id": {
+     "type": "string"
+    },
+    "location_id": {
+     "type": "string"
+    },
+    "evse_uid": {
+     "type": "string"
+    },
+    "authorization_reference": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "response_url",
+    "token",
+    "expiry_date",
+    "reservation_id",
+    "location_id"
+   ]
+  },
+  "StartSession": {
+   "type": "object",
+   "properties": {
+    "response_url": {
+     "type": "string"
+    },
+    "token": {
+     "$ref": "#/$defs/Token"
+    },
+    "location_id": {
+     "type": "string"
+    },
+    "evse_uid": {
+     "type": "string"
+    },
+    "connector_id": {
+     "type": "string"
+    },
+    "authorization_reference": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "response_url",
+    "token",
+    "location_id"
+   ]
+  },
+  "StopSession": {
+   "type": "object",
+   "properties": {
+    "response_url": {
+     "type": "string"
+    },
+    "session_id": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "response_url",
+    "session_id"
+   ]
+  },
+  "UnlockConnector": {
+   "type": "object",
+   "properties": {
+    "response_url": {
+     "type": "string"
+    },
+    "location_id": {
+     "type": "string"
+    },
+    "evse_uid": {
+     "type": "string"
+    },
+    "connector_id": {
+     "type": "string"
+    }
+   },
+   "required": [
+    "response_url",
+    "location_id",
+    "evse_uid",
+    "connector_id"
+   ]
+  },
+  "Response": {
+   "type": "object",
+   "properties": {
+    "data": {
+     "description": "an object, a list or a string, by endpoint"
+    },
+    "status_code": {
+     "type": "integer"
+    },
+    "status_message": {
+     "type": "string"
+    },
+    "timestamp": {
+     "type": "string",
+     "format": "date-time"
+    }
+   },
+   "required": [
+    "status_code",
+    "timestamp"
+   ]
+  }
+ }
+}

@@ -94,6 +94,7 @@
     {"name": "GOFS", "domain": "transport", "prefixes": ["gofs-"]},
     {"name": "Valhalla", "domain": "transport", "exact": ["valhalla"]},
     {"name": "ETSI ITS", "domain": "transport", "prefixes": ["etsi-"]},
+    {"name": "OCPI", "domain": "transport", "prefixes": ["ocpi-"], "detail": "2.2.1: Locations, Sessions, CDRs, Tariffs, Tokens, Commands"},
 
     {"name": "OPC UA binary (NodeSet structures)", "domain": "iot", "exact": ["opcua"], "prefixes": ["opcua-"]},
     {"name": "FIWARE Smart Data Models", "domain": "iot", "prefixes": ["sdm-"]},

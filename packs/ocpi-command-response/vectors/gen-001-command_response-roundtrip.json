@@ -1,0 +1,12 @@
+{
+ "name": "gen-command_response-roundtrip",
+ "from": "ocpi-command-response",
+ "to": "ocpi-command-response",
+ "input": "{\"result\":\"s77415\",\"timeout\":19602,\"message\":[{\"language\":\"s65\",\"text\":\"s84135\"},{\"language\":\"s24223\",\"text\":\"s52453\"}]}",
+ "expect": "{\"result\":\"s77415\",\"timeout\":19602,\"message\":[{\"language\":\"s65\",\"text\":\"s84135\"},{\"language\":\"s24223\",\"text\":\"s52453\"}]}",
+ "model": {
+  "ocpicmdresp.result": "s77415",
+  "ocpicmdresp.timeout": "19602",
+  "ocpicmdresp.message.#": "2"
+ }
+}

@@ -1,0 +1,11 @@
+{
+ "keys": {
+  "message|language|string": "message_language",
+  "message|text|string": "message_text",
+  "|result|string": "result",
+  "|timeout|int": "timeout"
+ },
+ "lists": {
+  "|message": "message"
+ }
+}
