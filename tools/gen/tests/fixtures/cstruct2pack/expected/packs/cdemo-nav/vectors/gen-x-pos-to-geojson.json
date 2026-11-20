@@ -1,0 +1,13 @@
+{
+  "name": "x-pos-to-geojson",
+  "from": "cdemo-nav",
+  "to": "geojson",
+  "source": "the bound fields (pack.md) are WGS 84 degrees and metres over the ellipsoid; geojson writes [lon, lat, alt] (RFC 7946, engine-spec 0.1.1 rulings 3 to 5)",
+  "input": "a5013900eaa9379ee9263108ac1c0040dc5fe234e9b24740fdcc0f12581721400000000000847e400000dcc00000d4c00000ccc0743600000000000010",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.5455938,47.3977419,488.25]},\"properties\":{}}",
+  "model": {
+    "lat": "47.3977419",
+    "lon": "8.5455938",
+    "hae": "488.25"
+  }
+}

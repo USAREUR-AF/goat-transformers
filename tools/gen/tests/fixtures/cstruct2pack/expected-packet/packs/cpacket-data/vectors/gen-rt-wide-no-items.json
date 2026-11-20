@@ -1,0 +1,11 @@
+{
+  "name": "rt-wide-no-items",
+  "from": "cpacket-data",
+  "to": "cpacket-data",
+  "source": "as gen-rt-wide, with count = 0 and no items",
+  "input": "be08000000018233",
+  "expect": "be08000000018233",
+  "model": {
+    "@kind": "wide"
+  }
+}

@@ -1,0 +1,14 @@
+{
+ "DemoPacket:count": "demo_packet_count",
+ "DemoPacket:item_type": "demo_packet_item_type",
+ "DemoPacket:length": "demo_packet_length",
+ "DemoPacket:narrow[]": "demo_packet_narrow",
+ "DemoPacket:rsvd[0]": "demo_packet_rsvd_0",
+ "DemoPacket:rsvd[1]": "demo_packet_rsvd_1",
+ "DemoPacket:version": "demo_packet_version",
+ "DemoPacket:wide[]": "demo_packet_wide",
+ "NarrowItem:label": "narrow_item_label",
+ "NarrowItem:x": "narrow_item_x",
+ "WideItem:flag": "wide_item_flag",
+ "WideItem:x": "wide_item_x"
+}

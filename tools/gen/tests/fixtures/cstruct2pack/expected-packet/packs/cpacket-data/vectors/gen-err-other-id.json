@@ -1,0 +1,8 @@
+{
+  "name": "err-other-id",
+  "from": "cpacket-data",
+  "to": "cpacket-data",
+  "source": "item_type = 0 names no item struct of this pack",
+  "input": "ce08000000009243",
+  "expect_error": "no-kind"
+}

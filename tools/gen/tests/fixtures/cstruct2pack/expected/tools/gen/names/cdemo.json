@@ -1,0 +1,19 @@
+{
+ "pos_t:mode": "pos_t_mode",
+ "pos_t:name": "pos_t_name",
+ "pos_t:time.tow": "pos_t_time_tow",
+ "pos_t:time.week": "pos_t_time_week",
+ "pos_t:vel[0]": "pos_t_vel_0",
+ "pos_t:vel[1]": "pos_t_vel_1",
+ "pos_t:vel[2]": "pos_t_vel_2",
+ "stat_t:big": "stat_t_big",
+ "stat_t:count": "stat_t_count",
+ "stat_t:flags[0][0]": "stat_t_flags_0_0",
+ "stat_t:flags[0][1]": "stat_t_flags_0_1",
+ "stat_t:flags[0][2]": "stat_t_flags_0_2",
+ "stat_t:flags[1][0]": "stat_t_flags_1_0",
+ "stat_t:flags[1][1]": "stat_t_flags_1_1",
+ "stat_t:flags[1][2]": "stat_t_flags_1_2",
+ "stat_t:samples[]": "stat_t_samples",
+ "stat_t:samples[].": "stat_t_samples_value"
+}

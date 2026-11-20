@@ -1,0 +1,14 @@
+{
+  "name": "rt-imu",
+  "from": "livox-point",
+  "to": "livox-point",
+  "source": "tools/gen/cstruct2pack.py: LivoxLidarEthernetPacket with values chosen by the generator, data_type = 0, dot_num = 2, then two LivoxLidarImuRawPoint items, packed by its serializer at the offsets of the layouts",
+  "input": "ea54004c9d0200ae905f00c17223d48536e79849faab5c0dbe2b8dfa6f20d18233e49546000000be0000003e0000c03e0000203f0000603f0000903f0000b03f0000d03f0000f03f000008400000184000002840",
+  "expect": "ea54004c9d0200ae905f00c17223d48536e79849faab5c0dbe2b8dfa6f20d18233e49546000000be0000003e0000c03e0000203f0000603f0000903f0000b03f0000d03f0000f03f000008400000184000002840",
+  "model": {
+    "@kind": "imu",
+    "livox.livox_lidar_ethernet_packet_version": "234",
+    "livox.livox_lidar_ethernet_packet_length": "84",
+    "livox.livox_lidar_ethernet_packet_time_interval": "40268"
+  }
+}

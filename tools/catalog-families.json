@@ -71,6 +71,7 @@
     {"name": "gpsd JSON", "domain": "sensors", "exact": ["gpsd-json"]},
     {"name": "Septentrio SBF", "domain": "sensors", "prefixes": ["sbf-"], "members": {"pattern": "^sbf-(.+)$", "label": "{n} block groups", "list": false}},
     {"name": "RTCM 3", "domain": "sensors", "exact": ["rtcm3"], "detail": "10403.x message bodies"},
+    {"name": "Livox SDK2", "domain": "sensors", "exact": ["livox-point"], "detail": "point cloud and IMU data packet"},
     {"name": "Unicore UNI", "domain": "sensors", "exact": ["unicore"], "detail": "binary messages"},
     {"name": "SBP (Swift Navigation)", "domain": "sensors", "prefixes": ["sbp-"], "members": {"pattern": "^sbp-(.+)$", "label": "{n} message packages", "list": false}},
     {"name": "u-blox UBX", "domain": "sensors", "prefixes": ["ubx-"], "members": {"pattern": "^ubx-(.+)$", "label": "{n} message classes", "list": false}},

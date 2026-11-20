@@ -1,0 +1,8 @@
+{
+  "name": "err-other-id",
+  "from": "livox-point",
+  "to": "livox-point",
+  "source": "data_type = 4 names no item struct of this pack",
+  "input": "8e2400f0fe000052f203046516c77829da8b3ced9e4f00b1628df5e313c47526d78839ea",
+  "expect_error": "no-kind"
+}
