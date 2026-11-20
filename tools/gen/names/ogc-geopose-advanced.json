@@ -1,0 +1,13 @@
+{
+ "keys": {
+  "|frameSpecification.authority|string": "frame_specification_authority",
+  "|frameSpecification.id|string": "frame_specification_id",
+  "|frameSpecification.parameters|string": "frame_specification_parameters",
+  "|quaternion.w|float": "quaternion_w",
+  "|quaternion.x|float": "quaternion_x",
+  "|quaternion.y|float": "quaternion_y",
+  "|quaternion.z|float": "quaternion_z",
+  "|validTime|int": "valid_time"
+ },
+ "lists": {}
+}

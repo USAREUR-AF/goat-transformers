@@ -1,0 +1,17 @@
+{
+ "name": "gen-pose-roundtrip",
+ "from": "ogc-geopose-advanced",
+ "to": "ogc-geopose-advanced",
+ "input": "{\"frameSpecification\":{\"authority\":\"s39927\",\"id\":\"s47498\",\"parameters\":\"s21962\"},\"quaternion\":{\"x\":101.125,\"y\":-0.5,\"z\":1.5,\"w\":1.5},\"validTime\":1726809181764}",
+ "expect": "{\"frameSpecification\":{\"authority\":\"s39927\",\"id\":\"s47498\",\"parameters\":\"s21962\"},\"quaternion\":{\"x\":101.125,\"y\":-0.5,\"z\":1.5,\"w\":1.5},\"validTime\":1726809181764}",
+ "model": {
+  "time_ms": "1726809181764",
+  "ogcgpadv.frame_specification_authority": "s39927",
+  "ogcgpadv.frame_specification_id": "s47498",
+  "ogcgpadv.frame_specification_parameters": "s21962",
+  "ogcgpadv.quaternion_x": "101.125",
+  "ogcgpadv.quaternion_y": "-0.5",
+  "ogcgpadv.quaternion_z": "1.5",
+  "ogcgpadv.quaternion_w": "1.5"
+ }
+}

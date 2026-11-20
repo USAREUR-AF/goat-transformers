@@ -1,0 +1,7 @@
+{
+ "name": "gen-element-residue",
+ "from": "ogc-geopose-stream-element",
+ "to": "ogc-geopose-stream-element",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"streamElement\":{\"frame\":{\"authority\":\"s98185\",\"id\":\"s5978\",\"parameters\":\"s32824\"},\"validTime\":1720345430932}}",
+ "expect": "{\"streamElement\":{\"frame\":{\"authority\":\"s98185\",\"id\":\"s5978\",\"parameters\":\"s32824\"},\"validTime\":1720345430932},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

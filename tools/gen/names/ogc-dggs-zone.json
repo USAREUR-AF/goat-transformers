@@ -1,0 +1,32 @@
+{
+ "keys": {
+  "bbox|.|float": "bbox_value",
+  "centroid|.|float": "centroid_value",
+  "geometry_bbox|.|float": "geometry_bbox_value",
+  "geometry_geometry_bbox|.|float": "geometry_geometry_bbox_value",
+  "links|hreflang|string": "links_hreflang",
+  "links|href|string": "links_href",
+  "links|length|int": "links_length",
+  "links|rel|string": "links_rel",
+  "links|title|string": "links_title",
+  "links|type|string": "links_type",
+  "temporal_interval|.|string": "temporal_interval_value",
+  "|areaMetersSquare|float": "area_meters_square",
+  "|crs|string": "crs",
+  "|geometry.geometry.type|string": "geometry_geometry_type",
+  "|geometry.type|string": "geometry_type",
+  "|id|string": "id",
+  "|level|int": "level",
+  "|shapeType|string": "shape_type",
+  "|temporalDurationSeconds|float": "temporal_duration_seconds",
+  "|volumeMetersCube|float": "volume_meters_cube"
+ },
+ "lists": {
+  "|bbox": "bbox",
+  "|centroid": "centroid",
+  "|geometry.bbox": "geometry_bbox",
+  "|geometry.geometry.bbox": "geometry_geometry_bbox",
+  "|links": "links",
+  "|temporalInterval": "temporal_interval"
+ }
+}

@@ -1,0 +1,14 @@
+{
+ "name": "gen-element-roundtrip",
+ "from": "ogc-geopose-stream-element",
+ "to": "ogc-geopose-stream-element",
+ "input": "{\"streamElement\":{\"frame\":{\"authority\":\"s98185\",\"id\":\"s5978\",\"parameters\":\"s32824\"},\"validTime\":1720345430932}}",
+ "expect": "{\"streamElement\":{\"frame\":{\"authority\":\"s98185\",\"id\":\"s5978\",\"parameters\":\"s32824\"},\"validTime\":1720345430932}}",
+ "model": {
+  "time_ms": "1720345430932",
+  "ogcgpse.stream_element_frame_authority": "s98185",
+  "ogcgpse.stream_element_frame_id": "s5978",
+  "ogcgpse.stream_element_frame_parameters": "s32824",
+  "ogcgpse.stream_element_valid_time": "1720345430932"
+ }
+}

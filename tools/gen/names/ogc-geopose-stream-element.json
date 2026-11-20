@@ -1,0 +1,9 @@
+{
+ "keys": {
+  "|streamElement.frame.authority|string": "stream_element_frame_authority",
+  "|streamElement.frame.id|string": "stream_element_frame_id",
+  "|streamElement.frame.parameters|string": "stream_element_frame_parameters",
+  "|streamElement.validTime|int": "stream_element_valid_time"
+ },
+ "lists": {}
+}

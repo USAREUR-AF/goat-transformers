@@ -1,0 +1,15 @@
+{
+ "name": "gen-zones-roundtrip",
+ "from": "ogc-dggs-zones",
+ "to": "ogc-dggs-zones",
+ "input": "{\"zones\":[\"s58557\",\"s14390\"],\"returnedAreaMetersSquare\":1.5,\"returnedVolumeMetersCube\":101.125,\"returnedVolumeMetersSquareSeconds\":101.125,\"returnedHyperVolumeMetersCubeSeconds\":0.75,\"links\":[{\"href\":\"s55551\",\"rel\":\"s17334\",\"type\":\"s86941\",\"hreflang\":\"s46020\",\"title\":\"s44109\",\"length\":48027},{\"href\":\"s46724\",\"rel\":\"s70318\",\"type\":\"s98080\",\"hreflang\":\"s94089\",\"title\":\"s23122\",\"length\":29298}]}",
+ "expect": "{\"zones\":[\"s58557\",\"s14390\"],\"returnedAreaMetersSquare\":1.5,\"returnedVolumeMetersCube\":101.125,\"returnedVolumeMetersSquareSeconds\":101.125,\"returnedHyperVolumeMetersCubeSeconds\":0.75,\"links\":[{\"href\":\"s55551\",\"rel\":\"s17334\",\"type\":\"s86941\",\"hreflang\":\"s46020\",\"title\":\"s44109\",\"length\":48027},{\"href\":\"s46724\",\"rel\":\"s70318\",\"type\":\"s98080\",\"hreflang\":\"s94089\",\"title\":\"s23122\",\"length\":29298}]}",
+ "model": {
+  "ogcdggszl.zones.#": "2",
+  "ogcdggszl.returned_area_meters_square": "1.5",
+  "ogcdggszl.returned_volume_meters_cube": "101.125",
+  "ogcdggszl.returned_volume_meters_square_seconds": "101.125",
+  "ogcdggszl.returned_hyper_volume_meters_cube_seconds": "0.75",
+  "ogcdggszl.links.#": "2"
+ }
+}

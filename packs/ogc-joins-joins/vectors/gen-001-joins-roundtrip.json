@@ -1,0 +1,14 @@
+{
+ "name": "gen-joins-roundtrip",
+ "from": "ogc-joins-joins",
+ "to": "ogc-joins-joins",
+ "input": "{\"links\":[{\"href\":\"s3826\",\"rel\":\"s73316\",\"type\":\"s69542\",\"hreflang\":\"s88637\",\"title\":\"s14451\",\"length\":89044},{\"href\":\"s57956\",\"rel\":\"s9401\",\"type\":\"s13781\",\"hreflang\":\"s38786\",\"title\":\"s31299\",\"length\":23648}],\"joins\":[{\"id\":\"s37186\",\"timeStamp\":\"2024-09-28T19:16:54.192Z\",\"links\":[{\"href\":\"s55623\",\"rel\":\"s29113\",\"type\":\"s89824\",\"hreflang\":\"s24067\",\"title\":\"s4888\",\"length\":63327}]},{\"id\":\"s36841\",\"timeStamp\":\"2024-12-06T07:51:12.115Z\",\"links\":[{\"href\":\"s40906\",\"rel\":\"s97129\",\"type\":\"s43444\",\"hreflang\":\"s60063\",\"title\":\"s84579\",\"length\":15679}]}],\"numberMatched\":44126,\"numberReturned\":42309,\"timeStamp\":\"2024-11-15T19:41:52.268Z\"}",
+ "expect": "{\"links\":[{\"href\":\"s3826\",\"rel\":\"s73316\",\"type\":\"s69542\",\"hreflang\":\"s88637\",\"title\":\"s14451\",\"length\":89044},{\"href\":\"s57956\",\"rel\":\"s9401\",\"type\":\"s13781\",\"hreflang\":\"s38786\",\"title\":\"s31299\",\"length\":23648}],\"joins\":[{\"id\":\"s37186\",\"timeStamp\":\"2024-09-28T19:16:54.192Z\",\"links\":[{\"href\":\"s55623\",\"rel\":\"s29113\",\"type\":\"s89824\",\"hreflang\":\"s24067\",\"title\":\"s4888\",\"length\":63327}]},{\"id\":\"s36841\",\"timeStamp\":\"2024-12-06T07:51:12.115Z\",\"links\":[{\"href\":\"s40906\",\"rel\":\"s97129\",\"type\":\"s43444\",\"hreflang\":\"s60063\",\"title\":\"s84579\",\"length\":15679}]}],\"numberMatched\":44126,\"numberReturned\":42309,\"timeStamp\":\"2024-11-15T19:41:52.268Z\"}",
+ "model": {
+  "ogcjoins.links.#": "2",
+  "ogcjoins.joins.#": "2",
+  "ogcjoins.number_matched": "44126",
+  "ogcjoins.number_returned": "42309",
+  "ogcjoins.time_stamp": "2024-11-15T19:41:52.268Z"
+ }
+}

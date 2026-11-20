@@ -1,0 +1,26 @@
+{
+ "keys": {
+  "joins_links|hreflang|string": "joins_links_hreflang",
+  "joins_links|href|string": "joins_links_href",
+  "joins_links|length|int": "joins_links_length",
+  "joins_links|rel|string": "joins_links_rel",
+  "joins_links|title|string": "joins_links_title",
+  "joins_links|type|string": "joins_links_type",
+  "joins|id|string": "joins_id",
+  "joins|timeStamp|string": "joins_time_stamp",
+  "links|hreflang|string": "links_hreflang",
+  "links|href|string": "links_href",
+  "links|length|int": "links_length",
+  "links|rel|string": "links_rel",
+  "links|title|string": "links_title",
+  "links|type|string": "links_type",
+  "|numberMatched|int": "number_matched",
+  "|numberReturned|int": "number_returned",
+  "|timeStamp|string": "time_stamp"
+ },
+ "lists": {
+  "joins|links": "joins_links",
+  "|joins": "joins",
+  "|links": "links"
+ }
+}

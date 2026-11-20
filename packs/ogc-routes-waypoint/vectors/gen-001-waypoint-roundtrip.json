@@ -1,0 +1,12 @@
+{
+ "name": "gen-waypoint-roundtrip",
+ "from": "ogc-routes-waypoint",
+ "to": "ogc-routes-waypoint",
+ "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"featureType\":\"waypoint\"}}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"featureType\":\"waypoint\"}}",
+ "model": {
+  "lon": "-77.0365",
+  "lat": "38.8977",
+  "ogcremwp.properties_feature_type": "waypoint"
+ }
+}

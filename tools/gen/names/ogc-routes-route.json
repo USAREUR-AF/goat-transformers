@@ -1,0 +1,28 @@
+{
+ "keys": {
+  "bbox|.|float": "bbox_value",
+  "features|geometry.type|string": "features_geometry_type",
+  "features|properties.comment|string": "features_properties_comment",
+  "features|properties.duration_s|float": "features_properties_duration_s",
+  "features|properties.featureType|string": "features_properties_feature_type",
+  "features|properties.instructions|string": "features_properties_instructions",
+  "features|properties.length|float": "features_properties_length",
+  "features|properties.name|string": "features_properties_name",
+  "features|properties.processingTime|string": "features_properties_processing_time",
+  "features|type|string": "features_type",
+  "links|anchor|string": "links_anchor",
+  "links|hreflang|string": "links_hreflang",
+  "links|href|string": "links_href",
+  "links|length|string": "links_length",
+  "links|rel|string": "links_rel",
+  "links|title|string": "links_title",
+  "links|type|string": "links_type",
+  "|name|string": "name",
+  "|type|string": "type"
+ },
+ "lists": {
+  "|bbox": "bbox",
+  "|features": "features",
+  "|links": "links"
+ }
+}

@@ -1,0 +1,19 @@
+{
+ "keys": {
+  "depths|.|int": "depths_value",
+  "dimensions|definition|string": "dimensions_definition",
+  "dimensions|grid.cellsCount|int": "dimensions_grid_cells_count",
+  "dimensions|name|string": "dimensions_name",
+  "dimensions|unitLang|string": "dimensions_unit_lang",
+  "dimensions|unit|string": "dimensions_unit",
+  "schema_required|.|string": "schema_required_value",
+  "|dggrs|string": "dggrs",
+  "|schema.type|string": "schema_type",
+  "|zoneId|string": "zone_id"
+ },
+ "lists": {
+  "|depths": "depths",
+  "|dimensions": "dimensions",
+  "|schema.required": "schema_required"
+ }
+}

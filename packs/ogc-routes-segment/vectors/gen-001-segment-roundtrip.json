@@ -1,0 +1,15 @@
+{
+ "name": "gen-segment-roundtrip",
+ "from": "ogc-routes-segment",
+ "to": "ogc-routes-segment",
+ "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"featureType\":\"segment\",\"length\":-0.5,\"duration_s\":7.0625,\"instructions\":\"continue\"}}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"featureType\":\"segment\",\"length\":-0.5,\"duration_s\":7.0625,\"instructions\":\"continue\"}}",
+ "model": {
+  "lon": "-77.0365",
+  "lat": "38.8977",
+  "ogcremseg.properties_feature_type": "segment",
+  "ogcremseg.properties_length": "-0.5",
+  "ogcremseg.properties_duration_s": "7.0625",
+  "ogcremseg.properties_instructions": "continue"
+ }
+}
