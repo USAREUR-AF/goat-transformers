@@ -7,7 +7,7 @@ edit by hand.
 ## Message convention
 
 A message of this format is the `data` of one ULog 'D' message: the bytes after
-its two-byte `msg_id`, 30 bytes. ULog gives a topic its `msg_id` in an 'A'
+its two-byte `msg_id`, 34 bytes. ULog gives a topic its `msg_id` in an 'A'
 (subscription) message of the same log, so the id has no meaning outside that log
 and the data holds nothing that names the topic. There is no value on the wire a
 `when` line could select by, so each topic is a format of its own and the caller
@@ -32,8 +32,9 @@ the ROS 2 copy of the same messages.
 | 8 | 64 | `lat` | float64 | `lat` f64 |
 | 16 | 64 | `lon` | float64 | `lon` f64 |
 | 24 | 32 | `alt` | float32 | `px4ulog.vehicle_global_position_alt` f32 |
-| 28 | 8 | `lat_lon_valid` | bool | `px4ulog.vehicle_global_position_lat_lon_valid` uint |
-| 29 | 8 | `reset_counter` | uint8 | `px4ulog.vehicle_global_position_reset_counter` uint |
+| 28 | 32 | `alt_ellipsoid` | float32 | `hae` f32 |
+| 32 | 8 | `lat_lon_valid` | bool | `px4ulog.vehicle_global_position_lat_lon_valid` uint |
+| 33 | 8 | `reset_counter` | uint8 | `px4ulog.vehicle_global_position_reset_counter` uint |
 
 Padding bytes are not in the table: no line maps them. A numeric array of up
 to 64 elements is one key per element (`_0`, `_1`, ...); a longer one is a `group`
@@ -45,9 +46,11 @@ with a fixed count. A `char` array is `ascii` text.
 |---|---|---|
 | `lat` | `lat` | file header: fused global position in WGS84; field: latitude in degrees, float64 |
 | `lon` | `lon` | as lat; longitude in degrees |
+| `alt_ellipsoid` | `hae` | file header: fused global position in WGS84; field: the ellipsoidal altitude in metres, float32. The altitude over mean sea level is a separate field |
 
-Altitude, velocity and time are not bound: this pack binds latitude and
-longitude only, and `timestamp` is microseconds since the system started, not UTC.
+`timestamp` is microseconds since the system started, not UTC, and stays a raw
+key. A bound field's earlier raw key stays declared in `model/px4ulog.def`; the
+packs map the field to the shared key only.
 
 ## Not mapped, and why
 

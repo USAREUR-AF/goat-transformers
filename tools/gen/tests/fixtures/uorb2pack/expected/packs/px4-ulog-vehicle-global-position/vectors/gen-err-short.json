@@ -2,7 +2,7 @@
   "name": "err-short",
   "from": "px4-ulog-vehicle-global-position",
   "to": "px4-ulog-vehicle-global-position",
-  "source": "one byte short of the 30-byte message (vector-format, malformed input)",
-  "input": "43822d18240a0600e9263108ac1c00405eba490c022b08c00000d4c001",
+  "source": "one byte short of the 34-byte message (vector-format, malformed input)",
+  "input": "43822d18240a0600e9263108ac1c00405eba490c022b08c00000d4c00000ccc000",
   "expect_error": "malformed-wire"
 }

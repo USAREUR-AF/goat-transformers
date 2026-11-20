@@ -2,11 +2,12 @@
   "name": "x-vehicle_global_position_groundtruth-to-geojson",
   "from": "px4-ulog-vehicle-global-position-groundtruth",
   "to": "geojson",
-  "source": "the bound fields lat and lon (pack.md) are float64 degrees; geojson writes [lon, lat] (RFC 7946, engine-spec 0.1.1 ruling 4); no other key of this format is a geojson key",
+  "source": "the bound fields (pack.md): lat, lon and hae float64 degrees and metres, time_ms the UTC microseconds divided by 1000; geojson writes [lon, lat, alt] and properties.time_ms (RFC 7946, engine-spec 0.1.1 rulings 3 to 5)",
   "input": "43822d18240a060086c43c18240a0600dc5fe234e9b24740fdcc0f12581721400000ccc00000c4c00000bcc00000b4c00000acc00000a4c000009cc00001e798490100",
-  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.5455938,47.3977419]},\"properties\":{}}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.5455938,47.3977419,-6.125]},\"properties\":{}}",
   "model": {
     "lat": "47.3977419",
-    "lon": "8.5455938"
+    "lon": "8.5455938",
+    "hae": "-6.125"
   }
 }

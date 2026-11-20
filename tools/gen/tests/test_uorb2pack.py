@@ -87,7 +87,7 @@ class Case(unittest.TestCase):
                          [("timestamp", 0), ("value", 8), ("delta", 12), ("mode", 14), ("pad", 15)])
         self.assertEqual((item.size, item.logged_size), (16, 15))
         vgp = gen.layout(msgs, "VehicleGlobalPosition")
-        self.assertEqual((vgp.size, vgp.logged_size), (32, 30))
+        self.assertEqual((vgp.size, vgp.logged_size), (40, 34))
 
     def test_pack_lines(self):
         self.first_run()
