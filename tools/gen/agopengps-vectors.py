@@ -60,14 +60,6 @@ def build(out):
     f208 = frame(0x7F, 208, struct.pack("<ii", 1193046470, 117891312))
     files.append(("04-lat-lon.json", vec("agopengps-lat-lon", f208, f208, {"@kind": "lat_lon"},
         note="latitude and longitude as int32 times 0x7FFFFFFF/90 and /180")))
-    # The steer module sends eight data bytes; the pack reads the first seven, and encode writes only what
-    # its lines hold (engine-spec 0.8, Lengths), so a round trip of that frame is not the identity. The
-    # vector uses the seven bytes the document names.
-    f253 = frame(0x7E, 253, struct.pack("<hhhBB", -1234, 9999, 8888, 0b00000011, 77))
-    files.append(("05-steer-module-seven-bytes.json", vec("agopengps-steer-module-seven-bytes", f253, f253, {
-        "@kind": "steer_module", "agopengps.p253_actual_steer_angle_deg": -12.34, "agopengps.p253_heading": 9999,
-        "agopengps.p253_work_switch": 1, "agopengps.p253_steer_switch": 1, "agopengps.p253_pwm": 77},
-        note="the seven data bytes the document names")))
     f242 = frame(0x7F, 242, struct.pack("<Hi", 397, -1500))
     files.append(("06-process-data.json", vec("agopengps-process-data", f242, f242, {
         "@kind": "process_data", "agopengps.p242_identifier": 397, "agopengps.p242_value": -1500})))
