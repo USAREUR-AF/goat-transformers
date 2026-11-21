@@ -40,7 +40,7 @@
          items_reserve/2, items_release/1, items_held/1, record_failure/3,
          record_failure_msg/1,
          via_decode/6, typemap_decode/3, wire_value/5, guard_encode/4,
-         holds/3, line_value/3, req_holds/3]).
+         holds/3, line_value/3, req_holds/3, range_sentinel/2]).
 %% the transforms of the bits wire, which the tlv wire uses too
 -if(?W_BITS orelse ?W_TLV).
 -export([bits_decode/4, bits_encode/4]).
@@ -205,7 +205,8 @@ load_pack(#{modules := Modules, packs := Packs} = Engine, Text) ->
          (_) -> ok
       end, Typed),
     lists:foreach(
-      fun({_Key, _Type, requires}) -> ok;
+      fun({Key, Type, {range, Min, Max}}) -> range_type_check(Name, Key, Type, Min, Max);
+         ({_Key, _Type, requires}) -> ok;
          ({_Key, _Type, requires_eq}) -> ok;
          ({_Key, list, list}) -> ok;
          ({Key, Type, list}) ->
@@ -269,6 +270,69 @@ load_pack(#{modules := Modules, packs := Packs} = Engine, Text) ->
         false -> ok
     end,
     Engine#{packs := maps:put(Name, P1, Packs)}.
+
+%% `range <min> <max>` (0.56) read as its key's type: an `int` key takes
+%% integer text (2a), a `float` key number text (2b); <min> < <max>.
+range_type_check(Name, Key, Type, Min, Max) ->
+    Bad = fun(Fmt, Args) ->
+                  gt_pack:load_error('bad-directive', "pack ~s range ~s ~s on ~s: " ++ Fmt,
+                                     [Name, Min, Max, Key | Args])
+          end,
+    Read = case Type of
+               int -> fun gt_num:int_text/1;
+               float -> fun gt_num:num_text/1;
+               _ -> Bad("the key is of type ~s, not int or float", [Type])
+           end,
+    case {Read(Min), Read(Max)} of
+        {{ok, A}, {ok, B}} when A < B -> ok;
+        {{ok, _}, {ok, _}} -> Bad("<min> is not less than <max>", []);
+        _ -> Bad("an argument is not the text an ~s key takes", [Type])
+    end.
+
+%% The range of a field line, read as its key's type -> none | {Min, Max,
+%% Wrap}; the texts were checked at load.
+range_of(Opts, Key, #{key_types := KeyTypes}) when tuple_size(Opts) >= 7 ->
+    case element(7, Opts) of
+        #{range := {MinT, MaxT, Wrap}} ->
+            Type = maps:get(Key, KeyTypes),
+            {gt_num:read_as(Type, MinT), gt_num:read_as(Type, MaxT), Wrap};
+        _ -> none
+    end;
+range_of(_, _, _) -> none.
+
+%% A held value through the field's `range` (0.56), before `via` and the
+%% transform: refused outside [min, max], or wrapped into [min, max).
+range_value(none, V, _Pack, _Key) -> V;
+range_value({Min, Max, false}, V, Pack, Key) ->
+    case V < Min orelse V > Max of
+        true -> conv_error('transform-encode', Pack, "~s: the value ~s lies outside range ~s ~s",
+                           [Key, gt_num:canon(V), gt_num:canon(Min), gt_num:canon(Max)]);
+        false -> V
+    end;
+range_value({Min, Max, true}, V, _Pack, _Key) when is_integer(V) ->
+    case V >= Min andalso V < Max of
+        true -> V;
+        false ->
+            W = Max - Min,
+            V - W * floor_div(V - Min, W)
+    end;
+range_value({Min, Max, true}, V, _Pack, _Key) ->
+    case V >= Min andalso V < Max of
+        true -> V;
+        false ->
+            W = Max - Min,
+            R = V - W * math:floor((V - Min) / W),
+            case R >= Max orelse R < Min of
+                true -> Min;
+                false -> R
+            end
+    end.
+
+floor_div(A, B) when B > 0 ->
+    case A rem B of
+        R when R < 0 -> A div B - 1;
+        _ -> A div B
+    end.
 
 %% A value of a `requires =` term or a `case` read as the key's type
 %% -> its canonical text (ruling 1 of 0.20); raises when it cannot be read.
@@ -831,7 +895,8 @@ decode_scope(Wire, Ctx, Lines, Pack) ->
                               {{ok, Raw}, C1} ->
                                   %% a sentinel: the line yields no value and
                                   %% the next line of the key is read
-                                  case is_sentinel(Wire, Tr, Raw, element(5, Opts)) of
+                                  case is_sentinel(Wire, Tr, Raw, element(5, Opts))
+                                      orelse range_raw(Wire, Tr, Raw, Opts) of
                                       true -> {M, Ls, F, C1, E};
                                       false ->
                                           try field_decode(Wire, Tr, Raw, Loc, Opts, Pack) of
@@ -1206,7 +1271,7 @@ static_end(_Wire, _Lines) -> 0.
 
 -if(?W_BITS).
 bits_static_end(Lines) ->
-    lists:foldl(fun({field, _, _, _, _, {_, _, _, true, _, _}}, Max) -> Max;
+    lists:foldl(fun({field, _, _, _, _, {_, _, _, true, _, _, _}}, Max) -> Max;
                    ({field, _, {Off, Len}, _, _, _}, Max) -> max(Max, Off + Len);
                    ({wh, {Off, Len}, _, _}, Max) -> max(Max, Off + Len);
                    ({const, {Off, Len}, _, _}, Max) -> max(Max, Off + Len);
@@ -1248,7 +1313,7 @@ raw(Wire, Msg, Path, _Opts, C) when Wire =:= protobuf; Wire =:= pbitem ->
     ?PROTOBUF(pb_raw(Msg, Path, C)).
 
 -if(?W_BITS).
-bits_raw({Msg, Base}, {Off, Len}, {_, Swap, _, _, _, _}, C) ->
+bits_raw({Msg, Base}, {Off, Len}, {_, Swap, _, _, _, _, _}, C) ->
     case gt_bits:read(Msg, Base + Off, Len) of
         beyond -> {absent, C};             % an `optional` field past the input
         U when Swap -> {{ok, swap_bytes(U, Len)}, C};
@@ -1336,7 +1401,7 @@ field_decode(Wire, Tr, {WT, V}, _Loc, _Opts, _Pack) when Wire =:= protobuf; Wire
     ?PROTOBUF(pb_decode(Tr, WT, V)).
 
 -if(?W_BITS).
-bits_field_decode(Tr, U, {_Off, Len}, {_, _, Trim, _, _, _}, Pack) ->
+bits_field_decode(Tr, U, {_Off, Len}, {_, _, Trim, _, _, _, _}, Pack) ->
     V = bits_decode(Tr, U, Len, maps:get(bit_order, Pack)),
     case Trim of
         true -> trim(Tr, V);
@@ -1543,7 +1608,8 @@ item_source(Item, #{defaults := Defaults}) ->
 %% The value a field's transform is given: the model value through the
 %% typemap (key `type`) and the field's value table.
 wire_value(Pack, Key, Tr, Opts, Val) ->
-    via_encode(Opts, typemap_encode(Key, Val, Pack), Tr, Key, Pack).
+    Val1 = range_value(range_of(Opts, Key, Pack), Val, Pack, Key),
+    via_encode(Opts, typemap_encode(Key, Val1, Pack), Tr, Key, Pack).
 
 encode_wire(xml, Pack, Lines, Src, Residue) -> ?XML(xml_encode(Pack, Lines, Src, Residue));
 encode_wire(geojson, Pack, Lines, Src, Residue) -> ?GEOJSON(geojson_encode(Pack, Lines, Src, Residue));
@@ -1773,7 +1839,7 @@ bits_scope(Pack, Lines0, {Model, Lists, Defaults} = Src, Base) ->
 armor_unwritten(#{armor := sixbit}, Lines, Held) ->
     lists:append(
       [case L of
-           {field, _, _, _, _, {_, _, _, true, _, With}} when With =/= none ->
+           {field, _, _, _, _, {_, _, _, true, _, With, _}} when With =/= none ->
                case Held(With) of
                    true -> [L];
                    false -> []
@@ -1972,7 +2038,7 @@ bits_lines(Pack, Lines, {Model, Lists, _}, Defaults, Base, WithItems) ->
     Order = maps:get(bit_order, Pack),
     Armor = maps:get(armor, Pack, hex),
     {Ws9, Os9, End9, Cs9} = lists:foldl(
-      fun({field, Key, {Off, Len}, Tr, LocT, {_, Swap, _, Optional, Absent, _} = Opts}, {Ws, Os, End, Cs}) ->
+      fun({field, Key, {Off, Len}, Tr, LocT, {_, Swap, _, Optional, Absent, _, _} = Opts}, {Ws, Os, End, Cs}) ->
               End1 = max(End, Base + Off + Len),
               Found = case maps:find(Key, Model) of
                           {ok, V} -> {1, V};
@@ -2092,7 +2158,7 @@ pb_tree(Pack, Lines0, {Value, Lists, Held}) ->
                            Leaf = guard_encode(
                                     Pack, Key, LocT,
                                     fun() -> pb_encode(Tr, wire_value(Pack, Key, Tr, Opts, Val)) end),
-                           pb_put(T, Path, Leaf, keep)
+                           pb_put(T, Path, pb_implicit(Opts, Leaf), keep)
                    end;
               ({group, List, Path, _, Body, _}, T) ->
                    case maps:find(List, Lists) of
@@ -2110,9 +2176,9 @@ pb_tree(Pack, Lines0, {Value, Lists, Held}) ->
     %% the sentinel of an absent key, where no line with a value wrote
     %% (ruling 16 of 0.9)
     T1s = lists:foldl(
-            fun({field, Key, Path, Tr, _LocT, {_, _, _, _, [_ | _] = Absent, _}}, T) ->
+            fun({field, Key, Path, Tr, _LocT, {_, _, _, _, [_ | _] = Absent, _, _} = Opts}, T) ->
                     case Value(Key) of
-                        error -> pb_put(T, Path, pb_sentinel(Tr, Absent), keep);
+                        error -> pb_put(T, Path, pb_implicit(Opts, pb_sentinel(Tr, Absent)), keep);
                         {ok, _} -> T
                     end;
                (_, T) -> T
@@ -2132,11 +2198,38 @@ pb_tree(Pack, Lines0, {Value, Lists, Held}) ->
               (_, T) -> T
            end, T2, Lines),
     %% `when <path> present` with nothing written under the path: an empty
-    %% length-delimited field, so the output decodes as the same kind
+    %% length-delimited field, so the output decodes as the same kind. A
+    %% field that `implicit` left out counts as not written (0.56).
     lists:foldl(
       fun({wh, Path, present, _}, T) -> pb_put(T, Path, {leaf, 2, <<>>}, keep);
          (_, T) -> T
-      end, T3, Lines).
+      end, pb_prune(T3), Lines).
+
+%% `implicit` (0.56): a leaf that holds the proto3 default of its wire type
+%% (after `via` and `pfloat` narrowing) is not written, but holds its place
+%% (ruling 16 of 0.5) as a hole that pb_prune/1 removes.
+pb_implicit(Opts, Leaf) ->
+    case maps:is_key(implicit, element(7, Opts)) andalso pb_default(Leaf) of
+        true -> hole;
+        false -> Leaf
+    end.
+
+pb_default({leaf, 0, <<0>>}) -> true;
+pb_default({leaf, 1, <<0:64>>}) -> true;
+pb_default({leaf, 5, <<0:32>>}) -> true;
+pb_default({leaf, 2, <<>>}) -> true;
+pb_default(_) -> false.
+
+%% The tree without its holes; a submessage left with nothing is removed.
+pb_prune(Tree) ->
+    maps:fold(fun(_N, hole, Acc) -> Acc;
+                 (N, {msg, Sub}, Acc) ->
+                      case pb_prune(Sub) of
+                          Empty when map_size(Empty) =:= 0, map_size(Sub) > 0 -> Acc;
+                          Sub1 -> Acc#{N => {msg, Sub1}}
+                      end;
+                 (N, Node, Acc) -> Acc#{N => Node}
+              end, #{}, Tree).
 
 %% A protobuf `when` with a list or a range (rulings 3 and 15 of 0.20): the
 %% varint the earliest field line with a value writes on the same path,
@@ -2191,7 +2284,7 @@ pb_scalar_item(Pack, Lines0, {Value, _, Held} = Src) ->
     case pb_scalar_value(Pack, Lines, Src) of
         none ->
             case [pb_sentinel(Tr, Absent)
-                  || {field, Key, _, Tr, _, {_, _, _, _, [_ | _] = Absent, _}} <- Lines,
+                  || {field, Key, _, Tr, _, {_, _, _, _, [_ | _] = Absent, _, _}} <- Lines,
                      Value(Key) =:= error] of
                 [Leaf | _] -> Leaf;
                 [] -> none
@@ -2237,6 +2330,14 @@ text_plan(Lines0, {Value, Lists, Held}, Pack, RenderField, RenderFixed, RenderGr
     %% (ruling 16 of 0.9)
     Valued = maps:from_list([{Loc, true} || {field, K, Loc, _, _, _} <- Lines,
                                             Value(K) =/= error]),
+    %% `null` (0.56) is written only where no line on the member writes a
+    %% value: a held key, a default or a sentinel (ruling 1)
+    Sentineled = maps:from_list([{Loc, true} || {field, K, Loc, _, _, {_, _, _, _, [_ | _], _, _}} <- Lines,
+                                                Value(K) =:= error]),
+    NullOk = fun(Loc, Opts) ->
+                     maps:is_key(null, element(7, Opts)) andalso not maps:is_key(Loc, Valued)
+                         andalso not maps:is_key(Loc, Sentineled)
+             end,
     {Ops, _} =
         lists:foldl(
           fun(Line, {Acc, Placed}) ->
@@ -2253,7 +2354,11 @@ text_plan(Lines0, {Value, Lists, Held}, Pack, RenderField, RenderFixed, RenderGr
                                                   true -> none;
                                                   false -> {sentinel, S0}
                                               end;
-                                          {error, _} -> none;
+                                          {error, _} ->
+                                              case NullOk(Loc, Opts) of
+                                                  true -> null;
+                                                  false -> none
+                                              end;
                                           {{ok, Val}, _} -> {field, K, Tr, Val, LocT, Opts}
                                       end;
                                   {group, List, _, _, _, _} ->
@@ -2273,6 +2378,7 @@ text_plan(Lines0, {Value, Lists, Held}, Pack, RenderField, RenderFixed, RenderGr
                       false ->
                           R = case Cand of
                                   {fixed, W} -> RenderFixed(W);
+                                  null -> "null";
                                   {sentinel, S} -> text_sentinel(S);
                                   {group, G} -> G;
                                   {field, Key, Tr1, Val1, LocT1, Opts1} ->
@@ -2338,7 +2444,50 @@ is_sentinel(Wire, Tr, {WT, V}, Sentinels) when Wire =:= protobuf; Wire =:= pbite
 is_sentinel(xml, _Tr, Text, Sentinels) -> lists:member(Text, Sentinels);
 is_sentinel(_Json, _Tr, V, Sentinels) -> ?JSONTEXT(json_is_sentinel(V, Sentinels)).
 
+%% Does the raw value match a range sentinel (0.56)? On bits and the
+%% protobuf integer forms the raw unsigned integer is compared; on xml,
+%% json, geojson and pstring the raw text, when it is number text (2b), by
+%% its nearest double (on json and geojson a string's text, or a number's
+%% canonical text).
+range_raw(Wire, Tr, Raw, Opts) ->
+    case maps:get(absent_ranges, element(7, Opts), []) of
+        [] -> false;
+        Ranges ->
+            N = case Wire of
+                    bits -> Raw;
+                    _ when Wire =:= protobuf; Wire =:= pbitem ->
+                        case {Tr, Raw} of
+                            {pvarint, {0, V}} -> V;
+                            {psint, {0, V}} -> V;
+                            {pstring, {2, T}} -> text_number(T);
+                            _ -> none
+                        end;
+                    xml -> text_number(Raw);
+                    _ -> ?JSONTEXT(json_number(Raw))
+                end,
+            range_sentinel(N, Ranges)
+    end.
+
+text_number(T) when is_binary(T) ->
+    case gt_num:num_text(T) of
+        {ok, F} -> F;
+        error -> none
+    end;
+text_number(_) -> none.
+
+range_sentinel(N, Ranges) when is_number(N) ->
+    lists:any(fun({ge, B}) -> N >= B;
+                 ({le, B}) -> N =< B
+              end, Ranges);
+range_sentinel(_, _) -> false.
+
 -if(?W_JSON orelse ?W_GEOJSON).
+json_number(V) ->
+    case gt_json:canonical_text(V) of
+        none -> none;
+        Text -> text_number(Text)
+    end.
+
 json_is_sentinel(V, Sentinels) ->
     case gt_json:canonical_text(V) of
         none -> false;
@@ -2382,8 +2531,10 @@ text_sentinel({str, T}) -> ?JSONTEXT([$", gt_json:escape(T), $"]).
 %% text, the entries canonicalised as a value of its type is; the result is
 %% read as the key's declared type. A value with no entry passes through
 %% when the transform yields the key's type, and fails the decode otherwise.
-via_decode({none, _, _, _, _, _}, V, _Tr, _Key, _LocT, _Pack) -> V;
-via_decode({Table, _, _, _, _, _}, V, Tr, Key, LocT, #{tables := Tables, key_types := KeyTypes} = Pack) ->
+via_decode(Opts, V, Tr, Key, LocT, Pack) -> via_decode1(element(1, Opts), V, Tr, Key, LocT, Pack).
+
+via_decode1(none, V, _Tr, _Key, _LocT, _Pack) -> V;
+via_decode1(Table, V, Tr, Key, LocT, #{tables := Tables, key_types := KeyTypes} = Pack) ->
     KeyType = maps:get(Key, KeyTypes),
     #{dec := Dec} = maps:get(Table, Tables),
     Found = case maps:find(gt_num:canon(V), maps:get(type_of(V), Dec)) of
@@ -2406,8 +2557,10 @@ via_decode({Table, _, _, _, _, _}, V, Tr, Key, LocT, #{tables := Tables, key_typ
 
 %% Encode: before the transform; the result is read as the type the
 %% transform yields.
-via_encode({none, _, _, _, _, _}, V, _Tr, _Key, _Pack) -> V;
-via_encode({Table, _, _, _, _, _}, V, Tr, Key, #{tables := Tables, key_types := KeyTypes}) ->
+via_encode(Opts, V, Tr, Key, Pack) -> via_encode1(element(1, Opts), V, Tr, Key, Pack).
+
+via_encode1(none, V, _Tr, _Key, _Pack) -> V;
+via_encode1(Table, V, Tr, Key, #{tables := Tables, key_types := KeyTypes}) ->
     WireType = gt_pack:yields(Tr),
     #{enc := Enc} = maps:get(Table, Tables),
     case maps:find(gt_num:canon(V), maps:get(type_of(V), Enc)) of
@@ -2997,6 +3150,7 @@ pb_put(Tree, [N | Rest], Leaf, Mode) ->
         {msg, Sub} -> Tree#{N => {msg, pb_put(Sub, Rest, Leaf, Mode)}};
         {leaf, 2, <<>>} -> Tree#{N => {msg, pb_put(#{}, Rest, Leaf, Mode)}};
         {leaf, _, _} -> Tree;
+        hole -> Tree;
         {rep, _} -> Tree
     end.
 

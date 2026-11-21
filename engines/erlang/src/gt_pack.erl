@@ -28,7 +28,10 @@
 %%     bits     BitOffset of the first item in its scope
 %%     text     the index of the item's first field; Spec {text_item, N}
 %%   Key, LocText :: binary()
-%%   Opts = {Via :: none | TableName, Swap, Trim, Optional, Absent, With}
+%%   Opts = {Via :: none | TableName, Swap, Trim, Optional, Absent, With, Ext}
+%%   Ext = #{null => true, implicit => true, range => {MinText, MaxText, Wrap},
+%%           absent_ranges => [{ge | le, N}]}: the options of Version 0.56;
+%%     Absent then holds the exact sentinels only (none when there is none)
 %%   With = none | Key: the line writes only when the scope holds Key (0.18)
 %%   Absent = none | [Sentinel] (Version 0.9), the first is the one written:
 %%     bits, and protobuf pvarint psint pdouble pfloat: the raw unsigned integer
@@ -58,6 +61,7 @@
 %% defaults and adds the lookup indexes (index/1).
 -module(gt_pack).
 -include("gt_wires.hrl").
+-define(NO_OPTS, {none, false, false, false, none, none, #{}}).
 -define(UPER_LOC(S), (binary_part(S, 0, min(4, byte_size(S))) =:= <<"int:">> orelse
                       binary_part(S, 0, min(5, byte_size(S))) =:= <<"enum:">> orelse
                       binary_part(S, 0, min(6, byte_size(S))) =:= <<"chars:">> orelse
@@ -334,12 +338,14 @@ named_scope(Lines, Defaults) ->
     lists:append(
       [case L of
            {field, K, _, Tr, _, Opts} ->
-               [{K, {field, Tr, element(1, Opts)}} | with_named(element(6, Opts))];
+               [{K, {field, Tr, element(1, Opts)}} | range_named(K, element(7, Opts))]
+                   ++ with_named(element(6, Opts));
            {group, List, _, _, #{lines := Ls, defaults := Ds}, _} ->
                [{List, list} | named_scope(Ls, Ds)];
            {gate, _, _, _, #{lines := Ls, defaults := Ds}, _} -> named_scope(Ls, Ds);
-           {sfield, Keys, _, Tr, _, _, _, _, With} ->
-               [{K, {field, Tr, Via}} || {K, Via} <- Keys] ++ with_named(With);
+           {sfield, [{K1, Via1} | Also], _, Tr, _, _, _, _, With, SExt} ->
+               [{K1, {field, Tr, Via1}} | range_named(K1, SExt)]
+                   ++ [{K, {field, Tr, Via}} || {K, Via} <- Also] ++ with_named(With);
            {sgroup, List, _, #{lines := Ls, defaults := Ds, kinds := Ks}} ->
                [{List, list} | named_scope(Ls, Ds)] ++
                    lists:append([named_scope(maps:get(lines, K), maps:get(defaults, K))
@@ -354,6 +360,11 @@ named_scope(Lines, Defaults) ->
                    Bodies -> named_scope(lists:append(Bodies), [])
                end
        end || L <- Lines]) ++ [{K, default} || {K, _} <- Defaults].
+
+%% A `range` (0.56) is checked against its key's type right after the
+%% key-type-mismatch check of its line (the order of 0.4).
+range_named(K, #{range := {Min, Max, _}}) -> [{K, {range, Min, Max}}];
+range_named(_, _) -> [].
 
 %% The key of a `with` option is checked as a `requires` key is (0.18).
 with_named(none) -> [];
@@ -395,7 +406,7 @@ key_names(Lines, Prefix) ->
                Name = <<Prefix/binary, List/binary, "[]">>,
                [Name | key_names(Ls, <<Name/binary, ".">>)];
            {gate, _, _, _, #{lines := Ls}, _} -> key_names(Ls, Prefix);
-           {sfield, Keys, _, _, _, _, _, _, _} -> [<<Prefix/binary, K/binary>> || {K, _} <- Keys];
+           {sfield, Keys, _, _, _, _, _, _, _, _SExt} -> [<<Prefix/binary, K/binary>> || {K, _} <- Keys];
            {sgroup, List, _, #{lines := Ls, kinds := Ks}} ->
                Name = <<Prefix/binary, List/binary, "[]">>,
                [Name | key_names(Ls ++ lists:append([maps:get(lines, K) || K <- Ks]),
@@ -795,10 +806,10 @@ apply_line([<<"field">>, Key, LocS, TrS | OptToks0], P0) ->
           catch error:{load_error, _, _} = UperLoc ->
                   %% a UPER locator in a fixed-layout pack is refused after the
                   %% file (ruling 24 of 0.19); the options are still line checks
-                  _ = parse_opts(OptToks, {none, false, false, false, none, none}),
+                  _ = parse_opts(OptToks, ?NO_OPTS),
                   erlang:error(UperLoc)
           end,
-    {_Via, Swap, Trim, Optional, _, _With} = Opts0 = parse_opts(OptToks, {none, false, false, false, none, none}),
+    {_Via, Swap, Trim, Optional, _, _With, _} = Opts0 = parse_opts(OptToks, ?NO_OPTS),
     Len = case Wire of
               bits -> element(2, Loc);
               _ -> Loc                            % a geojson coordinate (ruling 25 of 0.9)
@@ -823,7 +834,9 @@ apply_line([<<"field">>, Key, LocS, TrS | OptToks0], P0) ->
         [{via, T} || T <- [element(1, Opts)], T =/= none] ++
         AbsentChecks ++
         [{bad, "~s on ~s: ~s", [TrS, LocS, Why]}
-         || Wire =:= tlv, Why <- [tlv_size_check(Tr, Loc)], Why =/= ok],
+         || Wire =:= tlv, Why <- [tlv_size_check(Tr, Loc)], Why =/= ok] ++
+        ext_checks(Wire, Tr, Loc, in_group(P0) andalso (Loc =:= [] orelse LocS =:= <<".">>),
+                   LocS, element(7, Opts)),
     P1 = lists:foldl(fun late/2, P0, Checks),
     add_line({field, Key, Loc, Tr, LocS, Opts}, P1);
 apply_line([Dir | Args], _P) ->
@@ -873,6 +886,23 @@ parse_opts([<<"absent">>, Arg | Rest], Opts) ->
     parse_opts(Rest, set_opt(5, none, {arg, Arg}, <<"absent">>, Opts));
 parse_opts([<<"with">>, Key | Rest], Opts) ->
     parse_opts(Rest, set_opt(6, none, Key, <<"with">>, Opts));
+%% the options of Version 0.56: `null`, `implicit`, `range <min> <max>
+%% [wrap]`; the form is a line check (step 9 of 5b of 0.11), where <min> and
+%% <max> must be number text (2b); `wrap` stands only directly after them
+parse_opts([<<"null">> | Rest], Opts) -> parse_opts(Rest, set_ext(null, true, <<"null">>, Opts));
+parse_opts([<<"implicit">> | Rest], Opts) ->
+    parse_opts(Rest, set_ext(implicit, true, <<"implicit">>, Opts));
+parse_opts([<<"range">>, Min, Max | Rest0], Opts) ->
+    [line_error('bad-directive', "range ~s ~s: ~s is not number text", [Min, Max, A])
+     || A <- [Min, Max], gt_num:num_text(A) =:= error],
+    {Wrap, Rest} = case Rest0 of
+                       [<<"wrap">> | R] -> {true, R};
+                       _ -> {false, Rest0}
+                   end,
+    parse_opts(Rest, set_ext(range, {Min, Max, Wrap}, <<"range">>, Opts));
+parse_opts([<<"range">> | _], _) -> line_error('bad-directive', "range takes <min> <max>", []);
+parse_opts([<<"wrap">> | _], _) ->
+    line_error('bad-directive', "wrap does not stand directly after range <min> <max>", []);
 parse_opts([<<"with">>], _) -> line_error('bad-directive', "with names no key", []);
 parse_opts([<<"absent">>], _) -> line_error('bad-directive', "absent names no value", []);
 parse_opts([<<"via">>], _) -> line_error('bad-directive', "via names no table", []);
@@ -883,6 +913,30 @@ set_opt(I, Unset, Value, Name, Opts) ->
         Unset -> setelement(I, Opts, Value);
         _ -> line_error('bad-directive', "field option ~s is given twice", [Name])
     end.
+
+set_ext(K, Value, Name, Opts) ->
+    Ext = element(7, Opts),
+    case maps:is_key(K, Ext) of
+        false -> setelement(7, Opts, Ext#{K => Value});
+        true -> line_error('bad-directive', "field option ~s is given twice", [Name])
+    end.
+
+%% The checks of the 0.56 options that need the wire, the transform or the
+%% group, made after the file with the other wire checks (ruling 10 of 0.10)
+%% -> [{bad, Fmt, Args}]. ScalarItem: a `.` field inside a group.
+ext_checks(Wire, Tr, Loc, ScalarItem, LocS, Ext) ->
+    Null = maps:is_key(null, Ext),
+    Implicit = maps:is_key(implicit, Ext),
+    [{bad, "null on ~s: valid only on json and geojson", [LocS]}
+     || Null, Wire =/= json, Wire =/= geojson] ++
+    [{bad, "null on the geojson geometry locator ~s", [LocS]}
+     || Null, Wire =:= geojson, is_tuple(Loc), element(1, Loc) =:= geom] ++
+    [{bad, "implicit on ~s: valid only on protobuf", [LocS]} || Implicit, Wire =/= protobuf] ++
+    [{bad, "implicit on ~s: valid only with pvarint, psint, pdouble, pfloat and pstring", [LocS]}
+     || Implicit, Wire =:= protobuf,
+        not lists:member(Tr, [pvarint, psint, pdouble, pfloat, pstring])] ++
+    [{bad, "implicit on ~s: not on a scalar item", [LocS]}
+     || Implicit, Wire =:= protobuf, ScalarItem].
 
 need_wire(#{wire := undefined}) ->
     load_error('bad-directive', "the pack has no wire line", []);
@@ -952,7 +1006,18 @@ sentinels(Wire, Tr, Len, Opts) ->
             %% 64 bits, which the check of its length after the file refuses
             %% (rulings 4d and 5b of 0.11)
             try absent_values(Wire, Tr, Len, Arg) of
-                Values -> {setelement(5, Opts, Values), []}
+                {Exact, Ranges} ->
+                    %% Absent holds the exact sentinels; a range is never
+                    %% written (0.56)
+                    O1 = setelement(5, Opts, case Exact of
+                                                 [] -> none;
+                                                 _ -> Exact
+                                             end),
+                    O2 = case Ranges of
+                             [] -> O1;
+                             _ -> setelement(7, O1, (element(7, O1))#{absent_ranges => Ranges})
+                         end,
+                    {O2, []}
             catch
                 throw:{absent_bad, Fmt, Args} ->
                     %% `absent` on tlv is whether an option fits its wire,
@@ -981,6 +1046,41 @@ absent_values(Wire, Tr, Len, Arg) ->
              end,
     [absent_bad("absent ~s: a value holds a double quote", [Arg])
      || V <- Values, binary:match(V, <<"\"">>) =/= nomatch],
+    %% a value that begins with `>=` or `<=` as written is a range sentinel
+    %% (0.56): the prefix is looked for before a leading `=` is stripped
+    {RangeVs, ExactVs} = lists:partition(fun is_range_value/1, Values),
+    Exact = exact_values(Wire, Tr, Len, Arg, ExactVs),
+    {Exact, [range_sentinel(Wire, Tr, Len, V) || V <- RangeVs]}.
+
+is_range_value(<<">=", _/binary>>) -> true;
+is_range_value(<<"<=", _/binary>>) -> true;
+is_range_value(_) -> false.
+
+%% A range sentinel -> {ge | le, N}: N an unsigned integer on bits and on
+%% the protobuf integer forms, else the nearest double of number text (2b).
+range_sentinel(Wire, Tr, Len, <<Op:2/binary, N/binary>> = V) ->
+    Dir = case Op of
+              <<">=">> -> ge;
+              <<"<=">> -> le
+          end,
+    case Wire of
+        bits -> {Dir, absent_int(N, Len)};
+        protobuf when Tr =:= pdouble; Tr =:= pfloat ->
+            absent_bad("absent ~s: no range sentinel on ~p", [V, Tr]);
+        protobuf when Tr =:= pstring -> {Dir, range_num(V, N)};
+        protobuf -> {Dir, absent_int(N, 64)};
+        _ when Tr =:= bool -> absent_bad("absent ~s: no range sentinel on bool", [V]);
+        _ -> {Dir, range_num(V, N)}
+    end.
+
+range_num(V, N) ->
+    case gt_num:num_text(N) of
+        {ok, F} -> F;
+        error -> absent_bad("absent ~s: ~s is not number text", [V, N])
+    end.
+
+%% The exact sentinels of an `absent` option, read for the wire.
+exact_values(Wire, Tr, Len, Arg, Values) ->
     case Wire of
         bits when Len > 64 ->
             absent_bad("absent on a bits field of ~p bits, longer than 64", [Len]);
@@ -1994,7 +2094,8 @@ scan_bare(Bin, 0) ->
 %% ===================================================================
 %% In a `layout sequential` pack a locator is a bit length and the lines are
 %% read in file order from a cursor. Lines:
-%%   {sfield, [{Key, Via}], Len, Transform, LenText, Swap, Trim, Absent, With}
+%%   {sfield, [{Key, Via}], Len, Transform, LenText, Swap, Trim, Absent, With, Ext}
+%%   (Ext: the 0.56 options of the field line, as in a fixed layout)
 %%     With (0.18) applies to the first key only: the `also` keys stay
 %%     candidates when the line is suppressed
 %%        the first key is the `field` line's, the others those of the `also`
@@ -2045,7 +2146,7 @@ seq_apply([<<"field">>, Key, LenS, TrS | OptToks0], P0) ->
     {Stop, OptToks} = take_stop(OptToks0),
     {Tr, StopChecks} = stop_checked(Stop, Tr0, TrS),
     Len = seq_loc(LenS, infinity),
-    {Via, Swap, Trim, Optional, _, With} = Opts0 = parse_opts(OptToks, {none, false, false, false, none, none}),
+    {Via, Swap, Trim, Optional, _, With, _} = Opts0 = parse_opts(OptToks, ?NO_OPTS),
     {Opts, AbsentChecks} = sentinels(bits, Tr, Len, Opts0),
     Absent = element(5, Opts),
     case Optional of
@@ -2061,9 +2162,10 @@ seq_apply([<<"field">>, Key, LenS, TrS | OptToks0], P0) ->
         [{bad, "trim on a field of ~s bits: valid only with ascii, utf8 or sixbit", [LenS]}
          || Trim, Tr =/= ascii, Tr =/= utf8, Tr =/= sixbit] ++
         [{via, Via} || Via =/= none] ++
-        AbsentChecks,
+        AbsentChecks ++
+        ext_checks(bits, Tr, none, false, LenS, element(7, Opts)),
     P1 = lists:foldl(fun late/2, P0, Checks),
-    seq_add({sfield, [{Key, Via}], Len, Tr, LenS, Swap, Trim, Absent, With}, P1);
+    seq_add({sfield, [{Key, Via}], Len, Tr, LenS, Swap, Trim, Absent, With, element(7, Opts)}, P1);
 seq_apply([<<"also">>, Key | Rest], P0) ->
     Via = case Rest of
               [] -> none;
@@ -2075,8 +2177,8 @@ seq_apply([<<"also">>, Key | Rest], P0) ->
             _ -> late({via, Via}, P0)
         end,
     case seq_lines(P) of
-        [{sfield, Keys, Len, Tr, LenS, Swap, Trim, Absent, With} | Before] ->
-            seq_set_lines([{sfield, Keys ++ [{Key, Via}], Len, Tr, LenS, Swap, Trim, Absent, With}
+        [{sfield, Keys, Len, Tr, LenS, Swap, Trim, Absent, With, SExt} | Before] ->
+            seq_set_lines([{sfield, Keys ++ [{Key, Via}], Len, Tr, LenS, Swap, Trim, Absent, With, SExt}
                            | Before], P);
         _ -> load_error('bad-directive', "also ~s does not follow a field line", [Key])
     end;
@@ -2491,7 +2593,7 @@ scope_keys(#{sstack := Stack} = P) ->
 
 deep_keys(Lines) ->
     lists:append([case L of
-                      {sfield, Keys, _, _, _, _, _, _, _} -> [K || {K, _} <- Keys];
+                      {sfield, Keys, _, _, _, _, _, _, _, _SExt} -> [K || {K, _} <- Keys];
                       {sgroup, _, _, _} -> [];
                       _ when is_tuple(L) -> deep_keys(lists:append(seq_bodies(L)));
                       _ -> []
@@ -2720,7 +2822,7 @@ uper_field(Key, LocS, TrS, OptToks, P0) ->
     %% bad-locator for it; its form, like every other refusal of 0.19, is
     %% bad-directive after the file is read.
     {_Class, Tr} = transform(TrS),
-    {Via, Swap, Trim, Optional, Absent, With} = parse_opts(OptToks, {none, false, false, false, none, none}),
+    {Via, Swap, Trim, Optional, Absent, With, SExt} = parse_opts(OptToks, ?NO_OPTS),
     {Loc, LocChecks} = try {uper_loc(LocS), []}
                        catch error:{load_error, K, M} -> {{int, 0, 0, false}, [{raw, K, M}]}
                        end,
@@ -2733,9 +2835,10 @@ uper_field(Key, LocS, TrS, OptToks, P0) ->
         [{bad, "trim on the UPER locator ~s", [LocS]} || Trim] ++
         %% ruling 22 of 0.19: no raw value is stated for a UPER locator
         [{bad, "absent on the UPER locator ~s", [LocS]} || Absent =/= none] ++
-        [{via, Via} || Via =/= none],
+        [{via, Via} || Via =/= none] ++
+        ext_checks(bits, Tr, none, false, LocS, SExt),
     P1 = lists:foldl(fun late/2, P0, Checks),
-    seq_add({sfield, [{Key, Via}], {uper, Loc}, Tr, LocS, false, false, none, With}, P1).
+    seq_add({sfield, [{Key, Via}], {uper, Loc}, Tr, LocS, false, false, none, With, SExt}, P1).
 
 uper_transform_ok(Loc, Tr) ->
     case {Loc, Tr} of
@@ -3287,8 +3390,8 @@ wire_line(_) -> true.
 until_field(Key, LocS, CodeS, TrS, OptToks0, P0) ->
     {Tr, TrChecks} = parse_transform(bits, TrS),
     {Stop, OptToks} = take_stop(OptToks0),
-    {Via, Swap, Trim, Optional, Absent, With} =
-        parse_opts(OptToks, {none, false, false, false, none, none}),
+    {Via, Swap, Trim, Optional, Absent, With, SExt} =
+        parse_opts(OptToks, ?NO_OPTS),
     Set = case Tr of
               {chars, S} -> S;
               _ -> load_error('bad-directive', "~s: until: takes chars:<set> only, not ~s", [LocS, TrS])
@@ -3304,9 +3407,10 @@ until_field(Key, LocS, CodeS, TrS, OptToks0, P0) ->
     [load_error('bad-directive', "~s with ~s", [LocS, What])
      || {What, true} <- [{"stop", Stop =/= none}, {"absent", Absent =/= none}, {"swap", Swap},
                          {"trim", Trim}, {"optional", Optional}]],
-    Checks = TrChecks ++ [{via, Via} || Via =/= none],
+    Checks = TrChecks ++ [{via, Via} || Via =/= none] ++
+        ext_checks(bits, Tr, none, false, LocS, SExt),
     P1 = lists:foldl(fun late/2, P0, Checks),
-    seq_add({sfield, [{Key, Via}], {until, Code}, Tr, LocS, false, false, none, With}, P1).
+    seq_add({sfield, [{Key, Via}], {until, Code}, Tr, LocS, false, false, none, With, SExt}, P1).
 
 %% `stop <code>` among a field's options -> {none | CodeText, OtherOptions}.
 %% Given twice, or with no code, it is bad-directive as the line is read
