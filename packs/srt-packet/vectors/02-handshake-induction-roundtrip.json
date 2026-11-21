@@ -1,0 +1,18 @@
+{
+  "name": "handshake-induction-roundtrip",
+  "from": "srt-packet",
+  "to": "srt-packet",
+  "input": "80000000000000000000006400000000000000040000000200001388000005dc00002000000000011111111100000000c000020a000000000000000000000000",
+  "expect": "80000000000000000000006400000000000000040000000200001388000005dc00002000000000011111111100000000c000020a000000000000000000000000",
+  "model": {
+    "@kind": "control",
+    "srt.control_type": "0",
+    "srt.hs_version": "4",
+    "srt.handshake_type": "1",
+    "srt.initial_seq": "5000",
+    "srt.mtu": "1500",
+    "srt.peer_ip": "c000020a000000000000000000000000",
+    "srt.extensions.#": "0"
+  },
+  "source": "built by tools/gen/media-vectors.py from values chosen there; layout restated from draft-sharabayko-srt-01 section 3; an induction handshake (version 4) without extensions; expect derived there, no engine run"
+}

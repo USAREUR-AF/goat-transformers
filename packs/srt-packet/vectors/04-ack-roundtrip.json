@@ -1,0 +1,14 @@
+{
+  "name": "ack-roundtrip",
+  "from": "srt-packet",
+  "to": "srt-packet",
+  "input": "80020000000000090000012c22222222000003e9000061a80000138800001f40000003e80000c3500001d4c0",
+  "expect": "80020000000000090000012c22222222000003e9000061a80000138800001f40000003e80000c3500001d4c0",
+  "model": {
+    "srt.control_type": "2",
+    "srt.type_specific": "9",
+    "srt.cif_words.#": "7",
+    "srt.cif_words[0].srt.word": "1001"
+  },
+  "source": "built by tools/gen/media-vectors.py from values chosen there; layout restated from draft-sharabayko-srt-01 section 3; a full ACK of seven words; expect derived there, no engine run"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "open-timed-unordered-roundtrip",
+  "from": "dcep",
+  "to": "dcep",
+  "input": "038202000000009600000005766964656f",
+  "expect": "038202000000009600000005766964656f",
+  "model": {
+    "dcep.channel_type": "130",
+    "dcep.reliability": "150",
+    "dcep.label.#": "0",
+    "dcep.protocol.#": "5"
+  },
+  "source": "built by tools/gen/media-vectors.py from values chosen there; layout restated from RFC 8832 section 5; DATA_CHANNEL_OPEN for a partially reliable, unordered channel with a lifetime of 150 ms; expect derived there, no engine run"
+}

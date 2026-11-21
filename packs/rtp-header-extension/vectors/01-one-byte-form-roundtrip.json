@@ -1,0 +1,21 @@
+{
+  "name": "one-byte-form-roundtrip",
+  "from": "rtp-header-extension",
+  "to": "rtp-header-extension",
+  "input": "bede000310aa21bbcc0033d1d2d3d400",
+  "expect": "bede000310aa21bbcc0033d1d2d3d400",
+  "model": {
+    "rtpx.profile": "48862",
+    "rtpx.ext_length": "3",
+    "rtpx.elements.#": "5",
+    "rtpx.elements[0].rtpx.id": "1",
+    "rtpx.elements[0].rtpx.len": "0",
+    "rtpx.elements[0].rtpx.data": "aa",
+    "rtpx.elements[1].rtpx.data": "bbcc",
+    "rtpx.elements[2].rtpx.id": "0",
+    "rtpx.elements[3].rtpx.id": "3",
+    "rtpx.elements[3].rtpx.data": "d1d2d3d4",
+    "rtpx.elements[4].rtpx.id": "0"
+  },
+  "source": "built by tools/gen/media-vectors.py from values chosen there; layout restated from RFC 8285 section 4; the one-byte form: elements of 1, 2 and 4 octets with padding octets between and after; expect derived there, no engine run"
+}

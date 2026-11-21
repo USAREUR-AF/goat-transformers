@@ -1,0 +1,11 @@
+{
+  "name": "ack-roundtrip",
+  "from": "dcep",
+  "to": "dcep",
+  "input": "02",
+  "expect": "02",
+  "model": {
+    "@kind": "ack"
+  },
+  "source": "built by tools/gen/media-vectors.py from values chosen there; layout restated from RFC 8832 section 5; DATA_CHANNEL_ACK; expect derived there, no engine run"
+}

@@ -1,0 +1,17 @@
+{
+  "name": "data-roundtrip",
+  "from": "srt-packet",
+  "to": "srt-packet",
+  "input": "000003e8c000004d0001e2402a3b4c5d7061796c6f616421",
+  "expect": "000003e8c000004d0001e2402a3b4c5d7061796c6f616421",
+  "model": {
+    "@kind": "data",
+    "srt.packet_seq": "1000",
+    "srt.position": "3",
+    "srt.message_number": "77",
+    "srt.timestamp": "123456",
+    "srt.dest_socket_id": "708529245",
+    "srt.payload.#": "8"
+  },
+  "source": "built by tools/gen/media-vectors.py from values chosen there; layout restated from draft-sharabayko-srt-01 section 3; a data packet holding a whole message; expect derived there, no engine run"
+}

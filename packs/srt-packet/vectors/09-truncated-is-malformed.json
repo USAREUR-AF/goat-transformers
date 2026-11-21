@@ -1,0 +1,8 @@
+{
+  "name": "truncated-is-malformed",
+  "from": "srt-packet",
+  "to": "srt-packet",
+  "input": "8000000000000000000000c811111111000000050000000500001388000005dc00002000ffffffff2222222299887766c63364140000000000000000000000000001000300010500000000bf00780078000500022321",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/media-vectors.py from values chosen there; layout restated from draft-sharabayko-srt-01 section 3; the conclusion handshake cut inside its stream ID extension; expect derived there, no engine run"
+}

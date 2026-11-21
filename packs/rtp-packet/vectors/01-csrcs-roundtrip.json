@@ -1,0 +1,20 @@
+{
+  "name": "csrcs-roundtrip",
+  "from": "rtp-packet",
+  "to": "rtp-packet",
+  "input": "82e003e800015f900a0b0c0d11111111222222226672616d65",
+  "expect": "82e003e800015f900a0b0c0d11111111222222226672616d65",
+  "model": {
+    "inet.rtp_version": "2",
+    "inet.rtp_marker": "1",
+    "inet.rtp_payload_type": "96",
+    "inet.rtp_sequence": "1000",
+    "inet.rtp_csrcs.#": "2",
+    "inet.rtp_csrcs[1].inet.rtp_csrc": "572662306",
+    "rtpx.payload.#": "5",
+    "@absent": [
+      "rtpx.profile"
+    ]
+  },
+  "source": "built by tools/gen/media-vectors.py from values chosen there; layout restated from RFC 3550 sections 5.1 and 5.3.1; an RTP packet with two CSRCs and a marker, no extension; expect derived there, no engine run"
+}

@@ -1,0 +1,18 @@
+{
+  "name": "stuffing-only-roundtrip",
+  "from": "mpegts-packet",
+  "to": "mpegts-packet",
+  "input": "471fff20b700ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "expect": "471fff20b700ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "model": {
+    "mpegts.pid": "8191",
+    "mpegts.adaptation_field_control": "2",
+    "mpegts.pcr_flag": "0",
+    "mpegts.stuffing.#": "182",
+    "mpegts.stuffing[0].mpegts.octet": "255",
+    "@absent": [
+      "mpegts.payload"
+    ]
+  },
+  "source": "built by tools/gen/media-vectors.py from values chosen there; layout restated from FFmpeg libavformat/mpegts.c and GStreamer mpegtspacketizer.c (the transport stream packet and adaptation field); an adaptation field of 183 octets, no flag set, all stuffing, and no payload; expect derived there, no engine run"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "keepalive-roundtrip",
+  "from": "srt-packet",
+  "to": "srt-packet",
+  "input": "80010000000000000000015422222222",
+  "expect": "80010000000000000000015422222222",
+  "model": {
+    "srt.control_type": "1",
+    "srt.cif.#": "0"
+  },
+  "source": "built by tools/gen/media-vectors.py from values chosen there; layout restated from draft-sharabayko-srt-01 section 3; a keep-alive; expect derived there, no engine run"
+}

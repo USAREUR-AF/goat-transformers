@@ -1,0 +1,13 @@
+{
+  "name": "drop-request-roundtrip",
+  "from": "srt-packet",
+  "to": "srt-packet",
+  "input": "800700000000004d0000014a22222222000003de000003e3",
+  "expect": "800700000000004d0000014a22222222000003de000003e3",
+  "model": {
+    "srt.control_type": "7",
+    "srt.first_seq": "990",
+    "srt.last_seq": "995"
+  },
+  "source": "built by tools/gen/media-vectors.py from values chosen there; layout restated from draft-sharabayko-srt-01 section 3; a message drop request; expect derived there, no engine run"
+}

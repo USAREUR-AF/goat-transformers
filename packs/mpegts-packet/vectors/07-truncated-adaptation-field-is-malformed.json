@@ -1,0 +1,8 @@
+{
+  "name": "truncated-adaptation-field-is-malformed",
+  "from": "mpegts-packet",
+  "to": "mpegts-packet",
+  "input": "4701013607500000",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/media-vectors.py from values chosen there; layout restated from FFmpeg libavformat/mpegts.c and GStreamer mpegtspacketizer.c (the transport stream packet and adaptation field); the PCR packet cut inside its adaptation field; expect derived there, no engine run"
+}

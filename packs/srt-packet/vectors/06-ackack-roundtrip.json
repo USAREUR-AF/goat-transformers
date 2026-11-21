@@ -1,0 +1,12 @@
+{
+  "name": "ackack-roundtrip",
+  "from": "srt-packet",
+  "to": "srt-packet",
+  "input": "80060000000000090000014011111111",
+  "expect": "80060000000000090000014011111111",
+  "model": {
+    "srt.control_type": "6",
+    "srt.type_specific": "9"
+  },
+  "source": "built by tools/gen/media-vectors.py from values chosen there; layout restated from draft-sharabayko-srt-01 section 3; an ACKACK; expect derived there, no engine run"
+}

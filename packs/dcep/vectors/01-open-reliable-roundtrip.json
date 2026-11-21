@@ -1,0 +1,16 @@
+{
+  "name": "open-reliable-roundtrip",
+  "from": "dcep",
+  "to": "dcep",
+  "input": "03000100000000000004000063686174",
+  "expect": "03000100000000000004000063686174",
+  "model": {
+    "@kind": "open",
+    "dcep.channel_type": "0",
+    "dcep.priority": "256",
+    "dcep.label.#": "4",
+    "dcep.label[0].dcep.octet": "99",
+    "dcep.protocol.#": "0"
+  },
+  "source": "built by tools/gen/media-vectors.py from values chosen there; layout restated from RFC 8832 section 5; DATA_CHANNEL_OPEN for a reliable channel labelled chat, no subprotocol; expect derived there, no engine run"
+}

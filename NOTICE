@@ -787,3 +787,24 @@ Packs opamp-* (generated)
   https://github.com/open-telemetry/opamp-spec tag v0.20.0 commit b0862415.
   Copyright OpenTelemetry Authors. Apache License 2.0. No code or comments
   copied.
+
+Pack mpegts-packet
+  Transport stream packet header and adaptation field restated from FFmpeg
+  libavformat/mpegts.c, https://github.com/FFmpeg/FFmpeg tag n7.1 commit
+  b08d7969 (Copyright (c) 2002-2003 Fabrice Bellard, LGPL 2.1 or later), and
+  GStreamer mpegtspacketizer.c, https://github.com/GStreamer/gstreamer tag
+  1.26.9 commit f313fae1 (Copyright (C) 2007, 2008 Alessandro Decina, Zaheer
+  Merali, LGPL 2 or later). No code or comments copied.
+
+Pack rist-main
+  From VSF TR-06-2:2024, RIST Protocol Specification, Main Profile, Video
+  Services Forum. Copyright 2024 Video Services Forum. Licensed under the
+  Creative Commons Attribution-NoDerivatives 4.0 International License,
+  https://creativecommons.org/licenses/by-nd/4.0/. The document is
+  implemented, not modified or redistributed. The document notes a patent
+  claim by VIDEO-FLOW LTD on its sections 5, 6 and 7.
+
+Packs srt-packet, dcep, rtp-packet, rtp-header-extension
+  From draft-sharabayko-srt-01, RFC 8832, RFC 3550 and RFC 8285. Copyright
+  IETF Trust and the persons identified as the document authors; BCP 78 and
+  the IETF Trust's Legal Provisions Relating to IETF Documents.

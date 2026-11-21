@@ -1,0 +1,13 @@
+{
+  "name": "nak-roundtrip",
+  "from": "srt-packet",
+  "to": "srt-packet",
+  "input": "800300000000000000000136222222228000001000000014",
+  "expect": "800300000000000000000136222222228000001000000014",
+  "model": {
+    "srt.control_type": "3",
+    "srt.cif_words.#": "2",
+    "srt.cif_words[0].srt.word": "2147483664"
+  },
+  "source": "built by tools/gen/media-vectors.py from values chosen there; layout restated from draft-sharabayko-srt-01 section 3; a NAK reporting the loss of a range of sequence numbers; expect derived there, no engine run"
+}

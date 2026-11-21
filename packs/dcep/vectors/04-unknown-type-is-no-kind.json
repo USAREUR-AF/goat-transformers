@@ -1,0 +1,8 @@
+{
+  "name": "unknown-type-is-no-kind",
+  "from": "dcep",
+  "to": "dcep",
+  "input": "04",
+  "expect_error": "no-kind",
+  "source": "built by tools/gen/media-vectors.py from values chosen there; layout restated from RFC 8832 section 5; a message of type 4, which RFC 8832 does not define; expect derived there, no engine run"
+}
