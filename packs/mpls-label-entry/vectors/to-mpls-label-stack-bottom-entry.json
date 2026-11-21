@@ -1,5 +1,5 @@
 {
-  "name": "to-mpls-label-stack",
+  "name": "to-mpls-label-stack-bottom-entry",
   "from": "mpls-label-entry",
   "to": "mpls-label-stack",
   "input": "00064f01",

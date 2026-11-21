@@ -1,5 +1,5 @@
 {
-  "name": "to-vxlan-gpe-header",
+  "name": "to-vxlan-gpe-header-i-flag-and-vni",
   "from": "vxlan-header",
   "to": "vxlan-gpe-header",
   "input": "0800000000138800",

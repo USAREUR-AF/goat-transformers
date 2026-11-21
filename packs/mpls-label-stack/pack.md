@@ -26,5 +26,5 @@ convert: to `mpls-label-entry` keeps the top entry; from it gives a stack of one
 ## Vectors
 
 `tools/gen/tunnels-vectors.py`, without an engine: three entries; one entry; to `mpls-label-entry`;
-`mpls-label-entry` to the stack (in `packs/mpls-label-entry/vectors/`); a second entry cut in half
+`mpls-label-entry` to the stack (`packs/mpls-label-entry/vectors/to-mpls-label-stack-bottom-entry.json`); a second entry cut in half
 (`malformed-wire`).

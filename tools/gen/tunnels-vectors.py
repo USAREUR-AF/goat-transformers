@@ -104,8 +104,8 @@ def gpe_vectors():
     out.append((p, "03-to-vxlan-header.json", vec(p, "to-vxlan-header", c, to="vxlan-header", expect=vxlan(5000),
                 ref=R_GPE + " and " + R_VX + "; the I bit and the VNI carry over, the next protocol and P are dropped")))
     d = vxlan(5000)
-    out.append(("vxlan-header", "08-to-vxlan-gpe-header.json",
-                {**vec("vxlan-header", "to-vxlan-gpe-header", d, to=p, expect=gpe(5000, 0, p=0),
+    out.append(("vxlan-header", "to-vxlan-gpe-header-i-flag-and-vni.json",
+                {**vec("vxlan-header", "to-vxlan-gpe-header-i-flag-and-vni", d, to=p, expect=gpe(5000, 0, p=0),
                        ref=R_VX + " and " + R_GPE + "; a VXLAN header read as VXLAN-GPE: the I bit and VNI, P and the "
                            "next protocol 0")}))
     out.append((p, "04-seven-octets-is-malformed.json", vec(p, "seven-octets-is-malformed", a[:7], error="malformed-wire",
@@ -175,8 +175,8 @@ def mpls_vectors():
                 ref=R_MPLS + "; a stack of one entry")))
     out.append((p, "03-to-mpls-label-entry.json", vec(p, "to-mpls-label-entry", three, to="mpls-label-entry",
                 expect=entry(16000, 0, 0, 64), ref=R_MPLS + "; the top entry carries over, the entries below it are dropped")))
-    out.append(("mpls-label-entry", "06-to-mpls-label-stack.json",
-                vec("mpls-label-entry", "to-mpls-label-stack", one, to=p, expect=one,
+    out.append(("mpls-label-entry", "to-mpls-label-stack-bottom-entry.json",
+                vec("mpls-label-entry", "to-mpls-label-stack-bottom-entry", one, to=p, expect=one,
                     ref=R_MPLS + "; one bottom entry read as a stack of one")))
     out.append((p, "04-cut-second-entry-is-malformed.json", vec(p, "cut-second-entry-is-malformed", three[:6],
                 error="malformed-wire", ref=R_MPLS + "; a top entry that is not the bottom, then half an entry")))

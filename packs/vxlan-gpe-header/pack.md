@@ -1,6 +1,6 @@
 # Pack: vxlan-gpe-header
 
-The VXLAN-GPE header (draft-ietf-nvo3-vxlan-gpe-13 section 3.1): the 8 octets after the outer UDP
+The VXLAN-GPE header (draft-ietf-nvo3-vxlan-gpe-13 section 3.1; the source is an expired Internet-Draft, not an RFC): the 8 octets after the outer UDP
 header (port 4790). Wire `bits`, `layout sequential`, most significant bit first. No kind. Input and
 output are hex. Written by `tools/gen/tunnels-pack.py`.
 
@@ -30,5 +30,5 @@ P = 0 and next protocol 0; a GPE header converted to VXLAN loses the next protoc
 ## Vectors
 
 `tools/gen/tunnels-vectors.py`, without an engine: next protocol IPv4; B and O set with NSH; GPE to
-`vxlan-header`; `vxlan-header` to GPE (in `packs/vxlan-header/vectors/`); a header of 7 octets
+`vxlan-header`; `vxlan-header` to GPE (`packs/vxlan-header/vectors/to-vxlan-gpe-header-i-flag-and-vni.json`); a header of 7 octets
 (`malformed-wire`).
