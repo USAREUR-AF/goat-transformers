@@ -1,0 +1,7 @@
+{
+  "name": "OSV vulnerability entry",
+  "domain": "networks",
+  "exact": [
+    "osv-record"
+  ]
+}

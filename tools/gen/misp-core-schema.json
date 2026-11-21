@@ -1,0 +1,471 @@
+{
+ "$schema": "http://json-schema.org/draft-07/schema#",
+ "title": "MISP core format event, restated",
+ "description": "This repository's restatement of the MISP core format (draft-dulaunoy-misp-core-format) event: the members it names, in its own words.",
+ "type": "object",
+ "properties": {
+  "Event": {
+   "type": "object",
+   "properties": {
+    "id": {
+     "type": "string",
+     "description": "identifier the instance gives the event, an unsigned integer as text"
+    },
+    "uuid": {
+     "type": "string",
+     "description": "UUID of the event, kept for every update or transfer"
+    },
+    "published": {
+     "type": "boolean",
+     "description": "true when the event is published"
+    },
+    "info": {
+     "type": "string",
+     "description": "short human-readable summary of the event"
+    },
+    "threat_level_id": {
+     "type": "string",
+     "description": "threat level: 1 high, 2 medium, 3 low, 4 undefined"
+    },
+    "analysis": {
+     "type": "string",
+     "description": "analysis level: 0 initial, 1 ongoing, 2 complete"
+    },
+    "date": {
+     "type": "string",
+     "description": "reference date of the event, YYYY-MM-DD"
+    },
+    "timestamp": {
+     "type": "string",
+     "description": "creation or last change of the event or its attributes, epoch seconds as text"
+    },
+    "publish_timestamp": {
+     "type": "string",
+     "description": "time the event was published on the instance, epoch seconds as text"
+    },
+    "first_publication": {
+     "type": "string",
+     "description": "time the event was first published by its creator, epoch seconds as text"
+    },
+    "org_id": {
+     "type": "string",
+     "description": "identifier of the organisation that generated the event"
+    },
+    "orgc_id": {
+     "type": "string",
+     "description": "identifier of the organisation that created the event"
+    },
+    "attribute_count": {
+     "type": "string",
+     "description": "number of attributes, decimal as text"
+    },
+    "distribution": {
+     "type": "string",
+     "description": "distribution level: 0 organisation, 1 community, 2 connected communities, 3 all, 4 sharing group"
+    },
+    "sharing_group_id": {
+     "type": "string",
+     "description": "sharing group, when distribution is 4"
+    },
+    "extends_uuid": {
+     "type": "string",
+     "description": "UUID of the event this event extends"
+    },
+    "locked": {
+     "type": "boolean",
+     "description": "true when remote edits by synchronisation are blocked"
+    },
+    "Org": {
+     "type": "object",
+     "properties": {
+      "id": {
+       "type": "string",
+       "description": "identifier the instance gives the organisation, an unsigned integer as text"
+      },
+      "name": {
+       "type": "string",
+       "description": "name of the organisation"
+      },
+      "uuid": {
+       "type": "string",
+       "description": "UUID of the organisation, kept over time"
+      }
+     }
+    },
+    "Orgc": {
+     "type": "object",
+     "properties": {
+      "id": {
+       "type": "string",
+       "description": "identifier the instance gives the organisation, an unsigned integer as text"
+      },
+      "name": {
+       "type": "string",
+       "description": "name of the organisation"
+      },
+      "uuid": {
+       "type": "string",
+       "description": "UUID of the organisation, kept over time"
+      }
+     }
+    },
+    "Attribute": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "id": {
+        "type": "string",
+        "description": "identifier the instance gives the attribute, an unsigned integer as text"
+       },
+       "uuid": {
+        "type": "string",
+        "description": "UUID of the attribute"
+       },
+       "event_id": {
+        "type": "string",
+        "description": "identifier of the event holding the attribute"
+       },
+       "object_id": {
+        "type": "string",
+        "description": "identifier of the object holding the attribute, 0 when none"
+       },
+       "object_relation": {
+        "type": "string",
+        "description": "the attribute's relation within its object"
+       },
+       "type": {
+        "type": "string",
+        "description": "attribute type, a value of the MISP type list"
+       },
+       "category": {
+        "type": "string",
+        "description": "attribute category, a value of the MISP category list"
+       },
+       "to_ids": {
+        "type": "boolean",
+        "description": "true when the attribute is meant for detection"
+       },
+       "distribution": {
+        "type": "string",
+        "description": "distribution level: 0 organisation, 1 community, 2 connected communities, 3 all, 4 sharing group, 5 inherit from the event"
+       },
+       "sharing_group_id": {
+        "type": "string",
+        "description": "sharing group, when distribution is 4"
+       },
+       "timestamp": {
+        "type": "string",
+        "description": "creation or last change, seconds since 1970-01-01 UTC as text"
+       },
+       "comment": {
+        "type": "string",
+        "description": "free-text comment"
+       },
+       "deleted": {
+        "type": "boolean",
+        "description": "true when the attribute is soft-deleted"
+       },
+       "disable_correlation": {
+        "type": "boolean",
+        "description": "true when correlation is turned off"
+       },
+       "value": {
+        "type": "string",
+        "description": "the attribute's value"
+       },
+       "data": {
+        "type": "string",
+        "description": "base64 content, for malware samples and attachments"
+       },
+       "first_seen": {
+        "type": "string",
+        "description": "first time the value was seen, ISO 8601"
+       },
+       "last_seen": {
+        "type": "string",
+        "description": "last time the value was seen, ISO 8601"
+       },
+       "Tag": {
+        "type": "array",
+        "items": {
+         "type": "object",
+         "properties": {
+          "id": {
+           "type": "string",
+           "description": "identifier of the tag"
+          },
+          "name": {
+           "type": "string",
+           "description": "tag name, usually a taxonomy machine tag"
+          },
+          "colour": {
+           "type": "string",
+           "description": "display colour"
+          },
+          "exportable": {
+           "type": "boolean",
+           "description": "true when the tag is exported"
+          }
+         }
+        }
+       }
+      }
+     }
+    },
+    "Object": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "id": {
+        "type": "string",
+        "description": "identifier of the object"
+       },
+       "uuid": {
+        "type": "string",
+        "description": "UUID of the object"
+       },
+       "name": {
+        "type": "string",
+        "description": "object template name"
+       },
+       "meta-category": {
+        "type": "string",
+        "description": "meta category of the object template"
+       },
+       "description": {
+        "type": "string",
+        "description": "description of the object template"
+       },
+       "template_uuid": {
+        "type": "string",
+        "description": "UUID of the object template"
+       },
+       "template_version": {
+        "type": "string",
+        "description": "version of the object template"
+       },
+       "event_id": {
+        "type": "string",
+        "description": "identifier of the event"
+       },
+       "timestamp": {
+        "type": "string",
+        "description": "creation or last change, epoch seconds as text"
+       },
+       "distribution": {
+        "type": "string",
+        "description": "distribution level, as for an attribute"
+       },
+       "sharing_group_id": {
+        "type": "string",
+        "description": "sharing group, when distribution is 4"
+       },
+       "comment": {
+        "type": "string",
+        "description": "free-text comment"
+       },
+       "deleted": {
+        "type": "boolean",
+        "description": "true when soft-deleted"
+       },
+       "first_seen": {
+        "type": "string",
+        "description": "first time seen, ISO 8601"
+       },
+       "last_seen": {
+        "type": "string",
+        "description": "last time seen, ISO 8601"
+       },
+       "Attribute": {
+        "type": "array",
+        "items": {
+         "type": "object",
+         "properties": {
+          "id": {
+           "type": "string",
+           "description": "identifier the instance gives the attribute, an unsigned integer as text"
+          },
+          "uuid": {
+           "type": "string",
+           "description": "UUID of the attribute"
+          },
+          "event_id": {
+           "type": "string",
+           "description": "identifier of the event holding the attribute"
+          },
+          "object_id": {
+           "type": "string",
+           "description": "identifier of the object holding the attribute, 0 when none"
+          },
+          "object_relation": {
+           "type": "string",
+           "description": "the attribute's relation within its object"
+          },
+          "type": {
+           "type": "string",
+           "description": "attribute type, a value of the MISP type list"
+          },
+          "category": {
+           "type": "string",
+           "description": "attribute category, a value of the MISP category list"
+          },
+          "to_ids": {
+           "type": "boolean",
+           "description": "true when the attribute is meant for detection"
+          },
+          "distribution": {
+           "type": "string",
+           "description": "distribution level: 0 organisation, 1 community, 2 connected communities, 3 all, 4 sharing group, 5 inherit from the event"
+          },
+          "sharing_group_id": {
+           "type": "string",
+           "description": "sharing group, when distribution is 4"
+          },
+          "timestamp": {
+           "type": "string",
+           "description": "creation or last change, seconds since 1970-01-01 UTC as text"
+          },
+          "comment": {
+           "type": "string",
+           "description": "free-text comment"
+          },
+          "deleted": {
+           "type": "boolean",
+           "description": "true when the attribute is soft-deleted"
+          },
+          "disable_correlation": {
+           "type": "boolean",
+           "description": "true when correlation is turned off"
+          },
+          "value": {
+           "type": "string",
+           "description": "the attribute's value"
+          },
+          "data": {
+           "type": "string",
+           "description": "base64 content, for malware samples and attachments"
+          },
+          "first_seen": {
+           "type": "string",
+           "description": "first time the value was seen, ISO 8601"
+          },
+          "last_seen": {
+           "type": "string",
+           "description": "last time the value was seen, ISO 8601"
+          },
+          "Tag": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "id": {
+              "type": "string",
+              "description": "identifier of the tag"
+             },
+             "name": {
+              "type": "string",
+              "description": "tag name, usually a taxonomy machine tag"
+             },
+             "colour": {
+              "type": "string",
+              "description": "display colour"
+             },
+             "exportable": {
+              "type": "boolean",
+              "description": "true when the tag is exported"
+             }
+            }
+           }
+          }
+         }
+        }
+       },
+       "ObjectReference": {
+        "type": "array",
+        "items": {
+         "type": "object",
+         "properties": {
+          "id": {
+           "type": "string",
+           "description": "identifier of the reference"
+          },
+          "uuid": {
+           "type": "string",
+           "description": "UUID of the reference"
+          },
+          "timestamp": {
+           "type": "string",
+           "description": "creation or last change, epoch seconds as text"
+          },
+          "object_id": {
+           "type": "string",
+           "description": "identifier of the referring object"
+          },
+          "event_id": {
+           "type": "string",
+           "description": "identifier of the event"
+          },
+          "object_uuid": {
+           "type": "string",
+           "description": "UUID of the referring object"
+          },
+          "referenced_id": {
+           "type": "string",
+           "description": "identifier of the referenced object or attribute"
+          },
+          "referenced_uuid": {
+           "type": "string",
+           "description": "UUID of the referenced object or attribute"
+          },
+          "referenced_type": {
+           "type": "string",
+           "description": "0 attribute, 1 object"
+          },
+          "relationship_type": {
+           "type": "string",
+           "description": "relationship of the reference"
+          },
+          "comment": {
+           "type": "string",
+           "description": "free-text comment"
+          },
+          "deleted": {
+           "type": "boolean",
+           "description": "true when soft-deleted"
+          }
+         }
+        }
+       }
+      }
+     }
+    },
+    "Tag": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "properties": {
+       "id": {
+        "type": "string",
+        "description": "identifier of the tag"
+       },
+       "name": {
+        "type": "string",
+        "description": "tag name, usually a taxonomy machine tag"
+       },
+       "colour": {
+        "type": "string",
+        "description": "display colour"
+       },
+       "exportable": {
+        "type": "boolean",
+        "description": "true when the tag is exported"
+       }
+      }
+     }
+    }
+   }
+  }
+ }
+}

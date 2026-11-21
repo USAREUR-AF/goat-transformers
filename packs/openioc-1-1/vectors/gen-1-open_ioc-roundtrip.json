@@ -1,0 +1,21 @@
+{
+  "name": "gen-open_ioc-roundtrip",
+  "from": "openioc-1-1",
+  "to": "openioc-1-1",
+  "input": "<OpenIOC id=\"s0\" last-modified=\"2026-01-02T03:04:05Z\" published-date=\"2026-01-02T03:04:05Z\" xmlns=\"http://openioc.org/schemas/OpenIOC_1.1\"><metadata><short_description>s3</short_description><description>s4</description><keywords>s5</keywords><authored_by>s6</authored_by><authored_date>2026-01-02T03:04:05Z</authored_date><links><link href=\"s8\" rel=\"s9\" title=\"s10\" type=\"s11\"/><link href=\"s12\" rel=\"s13\" title=\"s14\" type=\"s15\"/></links></metadata><criteria><Indicator operator=\"OR\" id=\"s17\" node-context=\"s18\"><IndicatorItem id=\"s19\" condition=\"less-than\" preserve-case=\"false\" negate=\"true\"><Context document=\"s23\" search=\"s24\" type=\"s25\"/><Content type=\"s26\">s27</Content></IndicatorItem></Indicator><Indicator operator=\"OR\" id=\"s29\" node-context=\"s30\"><IndicatorItem id=\"s31\" condition=\"ends-with\" preserve-case=\"false\" negate=\"true\"><Context document=\"s35\" search=\"s36\" type=\"s37\"/><Content type=\"s38\">s39</Content></IndicatorItem></Indicator></criteria><parameters><param id=\"s40\" ref-id=\"s41\" name=\"s42\"><value type=\"s43\">s44</value></param><param id=\"s45\" ref-id=\"s46\" name=\"s47\"><value type=\"s48\">s49</value></param></parameters></OpenIOC>",
+  "expect": "<OpenIOC id=\"s0\" last-modified=\"2026-01-02T03:04:05Z\" published-date=\"2026-01-02T03:04:05Z\" xmlns=\"http://openioc.org/schemas/OpenIOC_1.1\"><metadata><short_description>s3</short_description><description>s4</description><keywords>s5</keywords><authored_by>s6</authored_by><authored_date>2026-01-02T03:04:05Z</authored_date><links><link href=\"s8\" rel=\"s9\" title=\"s10\" type=\"s11\"/><link href=\"s12\" rel=\"s13\" title=\"s14\" type=\"s15\"/></links></metadata><criteria><Indicator operator=\"OR\" id=\"s17\" node-context=\"s18\"><IndicatorItem id=\"s19\" condition=\"less-than\" preserve-case=\"false\" negate=\"true\"><Context document=\"s23\" search=\"s24\" type=\"s25\"/><Content type=\"s26\">s27</Content></IndicatorItem></Indicator><Indicator operator=\"OR\" id=\"s29\" node-context=\"s30\"><IndicatorItem id=\"s31\" condition=\"ends-with\" preserve-case=\"false\" negate=\"true\"><Context document=\"s35\" search=\"s36\" type=\"s37\"/><Content type=\"s38\">s39</Content></IndicatorItem></Indicator></criteria><parameters><param id=\"s40\" ref-id=\"s41\" name=\"s42\"><value type=\"s43\">s44</value></param><param id=\"s45\" ref-id=\"s46\" name=\"s47\"><value type=\"s48\">s49</value></param></parameters></OpenIOC>",
+  "model": {
+    "@kind": "open_ioc",
+    "uid": "s0",
+    "openioc.id": "s0",
+    "openioc.last_modified": "2026-01-02T03:04:05Z",
+    "openioc.published_date": "2026-01-02T03:04:05Z",
+    "openioc.metadata_links_link.#": "2",
+    "openioc.metadata_links_link[1].openioc.href": "s12",
+    "openioc.criteria_indicator[0].openioc.indicator_item.#": "1",
+    "openioc.criteria_indicator.#": "2",
+    "openioc.criteria_indicator[1].openioc.operator": "OR",
+    "openioc.parameters_param.#": "2",
+    "openioc.parameters_param[1].openioc.id": "s45"
+  }
+}

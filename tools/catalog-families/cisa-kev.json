@@ -1,0 +1,8 @@
+{
+  "name": "CISA KEV catalog",
+  "domain": "networks",
+  "prefixes": [
+    "cisa-kev-"
+  ],
+  "detail": "the catalog and one entry"
+}
