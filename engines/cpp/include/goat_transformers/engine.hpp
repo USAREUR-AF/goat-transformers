@@ -4,6 +4,7 @@
 
 #include <cstdint>
 #include <map>
+#include <memory>
 #include <stdexcept>
 #include <string>
 #include <unordered_map>
@@ -11,6 +12,10 @@
 #include <vector>
 
 namespace goat_transformers {
+
+namespace detail {
+struct PackPlan;  // codecs.hpp: what is computed once from a loaded pack (0.25)
+}
 
 // ---------------------------------------------------------------- errors
 
@@ -568,6 +573,13 @@ struct Pack {
     // root, in pack order (a kind with no `root` is listed under the pack's).
     // Engine::add_pack builds it, so kind selection does not scan every kind.
     std::unordered_map<std::string, std::vector<std::size_t>> kinds_by_root;
+    // v0.25 ruling 1: the layouts computed from this pack once, when an engine
+    // adds it (the lines of each kind and group body in line order, each
+    // locator parsed, the placement of `element` lines, ...), so a conversion
+    // reads them instead of recomputing them. Never written after the engine
+    // has added the pack, so any number of threads may read it. It describes
+    // the Pack it was built for only: a copy of the Pack does not use it.
+    std::shared_ptr<const detail::PackPlan> plan;
     // v0.8, `layout sequential` (bits only): the message as lines read from a
     // cursor. `fields`, `whens`, `consts`, `groups`, `kinds` and `defaults`
     // above are then empty.
@@ -728,7 +740,9 @@ public:
     bool is_list(const std::string& list) const;
 
 private:
-    std::map<std::string, Pack> packs_;
+    // Each pack is immutable once added (0.25 ruling 1): a copy of the engine
+    // shares it, and its plan stays valid wherever the engine is copied or moved.
+    std::map<std::string, std::shared_ptr<const Pack>> packs_;
     std::map<std::string, Module> modules_;  // ordered by name, bytewise: the order derivations run in
     std::string convert_impl(const std::string& from, const std::string& to, const std::string& bytes,
                              const Context* context, const std::map<std::string, std::string>* text,

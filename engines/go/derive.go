@@ -491,27 +491,27 @@ func (d *Derive) apply(args []Value) (Value, bool) {
 	return Value{Kind: KindFloat, F: r}, true
 }
 
-// deriveLines returns every `derive` line of the loaded modules: the modules
-// in byte order of name, each module's lines in file order.
-func (e *Engine) deriveLines() []*Derive {
-	if e.derives != nil {
-		return e.derives
-	}
-	names := make([]string, 0, len(e.modules))
-	for name := range e.modules {
-		names = append(names, name)
-	}
-	sort.Strings(names)
+// addDerives records a loaded module's `derive` lines: the lines of every
+// loaded module that has some, the modules in byte order of name, each
+// module's lines in file order. It runs when the module loads, so a
+// conversion only reads the list.
+func (e *Engine) addDerives(m *Module) {
+	i := sort.Search(len(e.deriveMods), func(i int) bool { return e.deriveMods[i].Name >= m.Name })
+	e.deriveMods = append(e.deriveMods, nil)
+	copy(e.deriveMods[i+1:], e.deriveMods[i:])
+	e.deriveMods[i] = m
 	out := []*Derive{}
-	for _, name := range names {
-		m := e.modules[name]
-		for i := range m.Derives {
-			out = append(out, &m.Derives[i])
+	for _, dm := range e.deriveMods {
+		for j := range dm.Derives {
+			out = append(out, &dm.Derives[j])
 		}
 	}
 	e.derives = out
-	return out
 }
+
+// deriveLines returns every `derive` line of the loaded modules in
+// application order (addDerives).
+func (e *Engine) deriveLines() []*Derive { return e.derives }
 
 // Complete applies the derivations to an entity: a line whose target key is
 // absent and whose argument keys are all present sets the target. The pass

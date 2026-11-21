@@ -308,13 +308,9 @@ func parseModule(text []byte, source string) (*Module, error) {
 	return m, nil
 }
 
-// moduleHeader reads the `module` line and the `uses` lines of a module file
-// without checking anything else. A file that does not read gives "".
-func moduleHeader(path string) (name string, uses []string) {
-	text, err := os.ReadFile(path)
-	if err != nil {
-		return "", nil
-	}
+// moduleHeader reads the `module` line and the `uses` lines of a module's
+// text without checking anything else.
+func moduleHeader(text []byte) (name string, uses []string) {
 	for _, ln := range strings.Split(string(text), "\n") {
 		toks, err := tokenize(ln)
 		if err != nil || len(toks) != 2 {
@@ -330,6 +326,26 @@ func moduleHeader(path string) (name string, uses []string) {
 		}
 	}
 	return name, uses
+}
+
+// moduleFile is one module file of a models directory, read once (spec
+// 0.25, ruling 1d): its text, or the failure to read it, and its `module`
+// and `uses` lines. A file that does not read has no name and fails with
+// bad-directive when it is loaded.
+type moduleFile struct {
+	path string
+	text []byte
+	err  error
+	name string
+	uses []string
+}
+
+// load parses the file's text and loads it into e.
+func (f *moduleFile) load(e *Engine) error {
+	if f.err != nil {
+		return &Error{Kind: ErrBadDirective, Source: f.path, Detail: f.err.Error()}
+	}
+	return e.LoadModel(f.text, f.path)
 }
 
 // defFiles lists the files directly in dir whose names end in .def, a
@@ -355,12 +371,25 @@ func defFiles(dir string) []string {
 	return out
 }
 
-// moduleFiles lists every *.def under dir in loading order: core.def first
-// whatever its name sorts as (0.6 ruling 9), then each module after the
-// modules it uses (spec 0.8), ties in byte order of file name. A cycle of
-// `uses` lines is bad-directive. A used module no file declares is left to
-// the load, which reports unknown-module.
+// moduleFiles lists every *.def under dir in loading order (readModuleFiles).
 func moduleFiles(dir string) ([]string, error) {
+	files, err := readModuleFiles(dir)
+	if err != nil {
+		return nil, err
+	}
+	out := make([]string, len(files))
+	for i, f := range files {
+		out[i] = f.path
+	}
+	return out, nil
+}
+
+// readModuleFiles reads every *.def under dir, each file once, and returns
+// them in loading order: core.def first whatever its name sorts as (0.6
+// ruling 9), then each module after the modules it uses (spec 0.8), ties in
+// byte order of file name. A cycle of `uses` lines is bad-directive. A used
+// module no file declares is left to the load, which reports unknown-module.
+func readModuleFiles(dir string) ([]*moduleFile, error) {
 	matches := defFiles(dir)
 	isCore := func(path string) bool { return filepath.Base(path) == CoreModule+".def" }
 	sort.SliceStable(matches, func(i, j int) bool {
@@ -369,16 +398,20 @@ func moduleFiles(dir string) ([]string, error) {
 		}
 		return filepath.Base(matches[i]) < filepath.Base(matches[j])
 	})
-	// Read the `module` and `uses` lines of each file; a file that does not
+	// Read each file and its `module` and `uses` lines; a file that does not
 	// read keeps its place and fails when it is loaded.
-	names := make([]string, len(matches))
-	uses := make([][]string, len(matches))
+	files := make([]*moduleFile, len(matches))
 	fileOf := map[string]int{}
-	for i, f := range matches {
-		names[i], uses[i] = moduleHeader(f)
-		if names[i] != "" {
-			if _, dup := fileOf[names[i]]; !dup {
-				fileOf[names[i]] = i
+	for i, path := range matches {
+		f := &moduleFile{path: path}
+		f.text, f.err = os.ReadFile(path)
+		if f.err == nil {
+			f.name, f.uses = moduleHeader(f.text)
+		}
+		files[i] = f
+		if f.name != "" {
+			if _, dup := fileOf[f.name]; !dup {
+				fileOf[f.name] = i
 			}
 		}
 	}
@@ -387,18 +420,18 @@ func moduleFiles(dir string) ([]string, error) {
 		visiting
 		done
 	)
-	state := make([]int, len(matches))
-	out := make([]string, 0, len(matches))
+	state := make([]int, len(files))
+	out := make([]*moduleFile, 0, len(files))
 	var visit func(i int) error
 	visit = func(i int) error {
 		switch state[i] {
 		case done:
 			return nil
 		case visiting:
-			return &Error{Kind: ErrBadDirective, Module: names[i], Source: matches[i], Detail: fmt.Sprintf("module %s is in a cycle of uses lines", names[i])}
+			return &Error{Kind: ErrBadDirective, Module: files[i].name, Source: files[i].path, Detail: fmt.Sprintf("module %s is in a cycle of uses lines", files[i].name)}
 		}
 		state[i] = visiting
-		for _, u := range uses[i] {
+		for _, u := range files[i].uses {
 			if j, ok := fileOf[u]; ok {
 				if err := visit(j); err != nil {
 					return err
@@ -406,10 +439,10 @@ func moduleFiles(dir string) ([]string, error) {
 			}
 		}
 		state[i] = done
-		out = append(out, matches[i])
+		out = append(out, files[i])
 		return nil
 	}
-	for i := range matches {
+	for i := range files {
 		if err := visit(i); err != nil {
 			return nil, err
 		}
@@ -420,13 +453,16 @@ func moduleFiles(dir string) ([]string, error) {
 // LoadModules parses every *.def under dir: core.def first, then the others
 // in byte order of file name.
 func LoadModules(dir string) ([]*Module, error) {
-	matches, err := moduleFiles(dir)
+	files, err := readModuleFiles(dir)
 	if err != nil {
 		return nil, err
 	}
 	var mods []*Module
-	for _, f := range matches {
-		m, err := ParseModuleFile(f)
+	for _, f := range files {
+		if f.err != nil {
+			return nil, &Error{Kind: ErrBadDirective, Source: f.path, Detail: f.err.Error()}
+		}
+		m, err := ParseModule(f.text, f.path)
 		if err != nil {
 			return nil, err
 		}

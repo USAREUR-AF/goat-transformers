@@ -2,7 +2,10 @@
 #pragma once
 
 #include <cstdint>
+#include <memory>
 #include <string>
+#include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 #include "goat_transformers/engine.hpp"
@@ -71,6 +74,60 @@ struct LineRef {
 std::vector<LineRef> active_lines(const Pack& p, const Kind* kind);
 // The lines of a group body, in line order.
 std::vector<LineRef> group_lines(const GroupLine& g);
+
+// ---- Version 0.25 ruling 1: what an engine keeps
+
+// xml encode, v0.18: an `element` line and the line number it is placed at.
+struct ElementAt {
+    const ElementLine* el;
+    std::size_t line;
+};
+
+// What Engine::add_pack computes once from a pack, after the pack has reached
+// the place it keeps for the life of the engine: every pointer and key below
+// points into that Pack. Nothing here is written after build_plan returns, so
+// conversions on several threads read it without a lock. A locator is found by
+// the address of its text in the pack (a line's `locator`, an element line's
+// `path`), so text that is not the pack's (a residue locator) is not found and
+// is parsed as before.
+struct PackPlan {
+    const Pack* owner = nullptr;
+    std::vector<LineRef> common;                // active_lines(p, nullptr)
+    std::vector<std::vector<LineRef>> kinds;    // active_lines(p, &p.kinds[k])
+    std::unordered_map<const GroupLine*, std::vector<LineRef>> bodies;  // group_lines(g), every group
+    std::unordered_map<std::string, std::size_t> kind_by_name;          // the first kind of each name
+    std::vector<std::vector<int>> gates;        // bits: the message's gate blocks; [0] no kind, [k + 1] kind k
+    std::vector<std::vector<ElementAt>> elements;  // xml: the placed `element` lines; [0] no kind, [k + 1] kind k
+    std::vector<const SeqCase*> seq_cases;      // `layout sequential`: every case by id
+    // xml and json: the locators the message's lines map (LineRef::maps), for
+    // residue; [0] no kind, [k + 1] kind k.
+    std::vector<std::unordered_set<std::string>> mapped;
+    std::unordered_map<const std::string*, XmlLocator> xml;
+    std::unordered_map<const std::string*, GeoLocator> geo;
+    std::unordered_map<const std::string*, BitsLocator> bits;
+    std::unordered_map<const std::string*, ProtobufLocator> protobuf;
+    std::unordered_map<const std::string*, std::vector<std::string>> json;
+};
+std::shared_ptr<const PackPlan> build_plan(const Pack& p);
+// The plan of `p`, or null when `p` has none (a pack no engine has added, or
+// a copy of one): every reader below then computes what it needs as before.
+inline const PackPlan* plan_of(const Pack& p) {
+    return p.plan && p.plan->owner == &p ? p.plan.get() : nullptr;
+}
+inline std::size_t kind_slot(const Pack& p, const Kind* kind) {
+    return kind ? static_cast<std::size_t>(kind - p.kinds.data()) + 1 : 0;
+}
+// active_lines and group_lines from the plan; `tmp` holds them when there is none.
+const std::vector<LineRef>& scope_lines(const Pack& p, const Kind* kind, std::vector<LineRef>& tmp);
+const std::vector<LineRef>& body_lines(const Pack& p, const GroupLine& g, std::vector<LineRef>& tmp);
+// A locator of the pack as parsed when it was loaded. Text the plan does not
+// hold is parsed into `tmp` (false when it does not parse).
+bool xml_locator(const Pack& p, const std::string& loc, const XmlLocator*& out, XmlLocator& tmp);
+bool geo_locator(const Pack& p, const std::string& loc, const GeoLocator*& out, GeoLocator& tmp);
+bool bits_locator(const Pack& p, const std::string& loc, const BitsLocator*& out, BitsLocator& tmp);
+bool protobuf_locator(const Pack& p, const std::string& loc, const ProtobufLocator*& out, ProtobufLocator& tmp);
+bool json_locator(const Pack& p, const std::string& loc, const std::vector<std::string>*& out,
+                  std::vector<std::string>& tmp);
 
 // What a scope's lines are read into and written from: the `default` lines in
 // scope. An item sees the defaults of its group body only (0.7): a common or

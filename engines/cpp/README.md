@@ -2,8 +2,8 @@
 
 A C++17 implementation of the engine specification (`spec/engine-spec.md`),
 written from the specification and the conformance vectors. It builds a static
-library (`goat_transformers`), the command-line tool `goat-xf` and three test
-programs.
+library (`goat_transformers`), the command-line tool `goat-xf`, the benchmark
+`goat-bench` and four test programs.
 
 ## Requirements
 
@@ -139,11 +139,63 @@ cd build && ctest --output-on-failure
 | `vectors` | `goat_transformers_vectors` | every conversion vector under `packs/*/vectors` (each with its `max_items`; a `model` value its grammar refuses makes the vector invalid), every load vector under `packs/conformance/load-vectors` (with `pack` or `packs`) and every capability vector under `packs/conformance/capability-vectors` (`spec/vector-format.md`) |
 | `unit` | `goat_transformers_unit` | number formatting, dates, pack grammar errors, residue, and the malformed-input rulings no vector reaches |
 | `malformed_input` | `goat_transformers_fuzz` | the malformed-input test, below |
+| `parse_once` | `goat_transformers_parse_once` | what an instance keeps (0.25 ruling 1), below: every vector gives the same output, error and decoded entity on a new instance (the benchmark set's vectors), in reverse order after failing conversions, and from eight threads at once |
 | `cli_list_formats`, `cli_packs_only` | `goat-xf` | the command-line tool loads the packs |
 | `tool_vectors` | `goat-xf`, through `tools/tool-vectors.py` | the tool vectors under `packs/conformance/tool-vectors` (the command-line contract, 0.23): 97/97 pass. The entry exists when CMake finds a Python 3 interpreter |
 
 Each program prints its counts on the last line and exits non-zero on any
 failure. A program can be run by itself: `./build/goat_transformers_vectors`.
+
+## What an instance keeps
+
+An `Engine` keeps, for its life, every pack and module it loaded in parsed
+form (engine-spec.md 0.25, ruling 1a). When it adds a pack it also computes,
+once, the layouts conversions read (`detail::PackPlan`, `src/codecs.hpp`,
+held by `Pack::plan`):
+
+- the lines of the message and of each kind, and of every group body, in line
+  order;
+- every locator parsed by the grammar of its wire: xml paths, geojson members,
+  bits ranges, protobuf field numbers, json member paths (the text and tlv
+  wires already keep theirs in the lines);
+- the kinds by name, the gate blocks of each kind (bits), the placement of the
+  `element` lines of each kind (xml), the locators each kind maps (xml and
+  json residue), and every `case` by id (`layout sequential`).
+
+None of it is written after the pack is added, and a conversion keeps its own
+state on its stack (the list-item count of 0.11 ruling 7 is per thread), so a
+`const Engine` may be used from several threads at once (ruling 1c). The
+setters (`set_max_items`, `set_max_distribution`) and the loading functions
+change the instance and are not to be called while another thread converts.
+Packs are shared by copies of an `Engine`. Loading reads each file once (1d).
+
+## Benchmark
+
+`goat-bench` runs the benchmark set `bench/set.json` (engine-spec.md 0.25,
+ruling 2). From the repository root:
+
+```sh
+cmake -S engines/cpp -B engines/cpp/build-release -DCMAKE_BUILD_TYPE=Release
+cmake --build engines/cpp/build-release --target goat-bench -j
+engines/cpp/build-release/goat-bench bench/set.json
+```
+
+It loads into one instance the packs the set's vectors name (each vector's
+`from` and `to`, a format's pack being the directory of that name in
+`packs`) with the modules they use (`Engine::load_packs`), and times the
+load. For each vector in order it converts the input once and compares the
+output with `expect`, then converts it `iterations` times and times that.
+Standard output holds one line per vector,
+`{"vector": "<path>", "iterations": <n>, "ns_per_op": <integer>}`, then
+`{"load": <packs>, "ns": <integer>}`, and nothing else; the lines are written
+when every vector has run. A vector whose output differs, or whose conversion
+fails, ends the run with exit status 1, nothing on standard output and the
+reason on standard error. `--packs <dir>` and `--models <dir>` name other
+directories; the set's paths are read from the current directory. Build it
+with `-DCMAKE_BUILD_TYPE=Release` and all seven wires: the set covers every
+wire, so a build with fewer fails at the load, and the numbers of a build
+without optimisation say little. The numbers are measurements of one machine at one
+time, and no check fails on them (ruling 2d).
 
 ## Malformed-input test
 

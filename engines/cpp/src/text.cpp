@@ -422,7 +422,8 @@ std::vector<Item> decode_items(const Pack& p, const GroupLine& g, const Record& 
     const std::uint64_t count = (rec.size() - i + n - 1) / n;
     // 0.11 ruling 7d: compared with the limit before any field is read.
     take_items(p, g.list, count);
-    const std::vector<LineRef> lines = group_lines(g);
+    std::vector<LineRef> lines_tmp;
+    const std::vector<LineRef>& lines = body_lines(p, g, lines_tmp);
     items.reserve(static_cast<std::size_t>(count));
     for (std::uint64_t t = 0; t < count; ++t) {
         items.emplace_back();
@@ -567,7 +568,8 @@ struct Writer {
     void group(const EncodeSource& src, const GroupLine& g) {
         const std::vector<Item>* items = src.list(g);
         if (!items || items->empty()) return;
-        const std::vector<LineRef> lines = group_lines(g);
+        std::vector<LineRef> lines_tmp;
+        const std::vector<LineRef>& lines = body_lines(p, g, lines_tmp);
         const std::uint64_t n = g.text_item;
         for (std::size_t t = 0; t < items->size(); ++t) {
             const std::uint64_t base = g.text_index + t * n;
@@ -762,7 +764,8 @@ Entity decode_text(const Pack& p, const std::string& bytes) {
     Entity e;
     Decoder d(p, e);
     std::set<std::uint64_t> addressed;
-    const std::vector<LineRef> lines = active_lines(p, kind);
+    std::vector<LineRef> lines_tmp;
+    const std::vector<LineRef>& lines = scope_lines(p, kind, lines_tmp);
     const GroupLine* group = scope_group(lines);
     for (const auto& line : lines) {
         if (line.group) {
@@ -789,7 +792,8 @@ Entity decode_text(const Pack& p, const std::string& bytes) {
 std::string encode_text(const Pack& p, const Entity& e) {
     const Kind* kind = select_encode_kind(p, e);
     const EncodeSource src(p, kind, e);
-    const std::vector<LineRef> lines = active_lines(p, kind);
+    std::vector<LineRef> lines_tmp;
+    const std::vector<LineRef>& lines = scope_lines(p, kind, lines_tmp);
     const GroupLine* group = scope_group(lines);
     Writer w(p);
     std::set<std::uint64_t> addressed;  // by a line of the scope other than a group

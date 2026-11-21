@@ -115,6 +115,18 @@ if(GT_BUILD_CLI)
   add_executable(goat-xf cli/main.cpp)
   target_link_libraries(goat-xf PRIVATE goat_transformers)
   target_compile_options(goat-xf PRIVATE ${GT_WARNINGS})
+
+  # The benchmark (engine-spec.md 0.25, ruling 2), run from the repository
+  # root: goat-bench bench/set.json. It reads the set with the library's JSON
+  # reader, which a build without json and geojson does not have.
+  set(GT_BENCH_JSON "")
+  if(NOT (GT_HAS_JSON OR GT_HAS_GEOJSON))
+    set(GT_BENCH_JSON src/json.cpp)
+  endif()
+  add_executable(goat-bench cli/bench.cpp ${GT_BENCH_JSON})
+  target_link_libraries(goat-bench PRIVATE goat_transformers)
+  target_include_directories(goat-bench PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+  target_compile_options(goat-bench PRIVATE ${GT_WARNINGS})
 endif()
 
 if(GT_INSTALL)
@@ -177,6 +189,17 @@ if(GT_BUILD_TESTS AND GT_ALL_WIRES_BUILT)
   target_include_directories(goat_transformers_unit PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
   target_compile_options(goat_transformers_unit PRIVATE ${GT_WARNINGS})
   add_test(NAME unit COMMAND goat_transformers_unit)
+
+  # What an engine keeps (engine-spec.md 0.25, ruling 1): results on a used
+  # instance, after failures, and from eight threads at once.
+  find_package(Threads REQUIRED)
+  add_executable(goat_transformers_parse_once tests/parse_once_test.cpp)
+  target_link_libraries(goat_transformers_parse_once PRIVATE goat_transformers Threads::Threads)
+  target_include_directories(goat_transformers_parse_once PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+  target_compile_definitions(goat_transformers_parse_once PRIVATE GT_PACKS_DIR="${GT_PACKS_DIR}"
+                             GT_REPO_ROOT="${GT_REPO_ROOT}")
+  target_compile_options(goat_transformers_parse_once PRIVATE ${GT_WARNINGS})
+  add_test(NAME parse_once COMMAND goat_transformers_parse_once)
 
   if(GT_BUILD_CLI)
     add_test(NAME cli_list_formats COMMAND goat-xf list-formats --packs ${GT_PACKS_DIR})

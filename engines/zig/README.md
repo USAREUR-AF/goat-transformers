@@ -56,9 +56,64 @@ value its grammar refuses makes the vector fail as invalid. Stdlib only.
 | Command (from `engines/zig`) | What it runs | Result |
 |---|---|---|
 | `zig build test` | conversion, load and capability vectors, then the malformed-input run | `vectors`, `load vectors`, `capability vectors`, `malformed inputs` lines |
-| `zig build module-test` | the module another program imports | passes |
+| `zig build module-test` | the module another program imports, and one engine converting on eight threads at once (spec Version 0.25, below) | `2/2 tests passed` |
+| `engines/zig/bench.sh` (from the repository root) | the benchmark of spec Version 0.25 (below) | one JSON line per vector, then the load line |
 | `engines/zig/reduced-check.sh` (from the repository root) | the reduced-build check of spec Version 0.24 (below) | `reduced-build check: passed` |
 | `zig build cli -Doptimize=ReleaseSafe`, then from the repository root `python3 -I tools/tool-vectors.py -- engines/zig/zig-out/bin/goat-xf` | the tool vectors of spec Version 0.23 | `tool vectors: 95/95 passed` |
+
+## Parse once, and the benchmark (spec Version 0.25)
+
+What the engine keeps (ruling 1a). An `Engine` parses each model module and
+pack once, when it is loaded, and keeps the result for its life: the
+`Module` (keys, lists, resolved `derive` lines), and the `Pack` with every
+line already resolved against its wire and its modules (bit offsets and
+lengths, protobuf field-number paths, json member paths, xml root index by
+element name, `when` value lists and ranges, transforms and their factors,
+value tables, gate blocks, each kind's scope with its defaults, the plan of a
+sequential layout with its switches and cases, and, new in 0.25, the JSON
+text a `when` or `const` value is written as). `convert`, `decode` and
+`encode` take the pack as `*const Pack` and only read it: a conversion
+parses its input and nothing else, and allocates only from the engine's
+`scratch` allocator, so a conversion (failed or not) leaves nothing that a
+later one sees (ruling 1b). Loading reads each `pack.def` and each module
+file once (ruling 1d); the harness runs every vector on the one engine that
+loaded every pack.
+
+Threads (ruling 1c). `convert` writes the engine's `last_error` and
+allocates from `scratch`, so it is for one thread at a time. For an engine
+shared between threads, `Engine.convertIn(&call, from, to, bytes, context)`
+takes an `Engine.Call` holding the call's allocator (and optionally its
+`max_items`) and returns the failure message in `call.last_error`; it reads
+the engine and writes nothing in it. Load first; do not load while
+conversions run. `zig build module-test` checks it: it loads the 13 packs
+of the benchmark set other than `uci` and `a-gra` (every wire), runs every
+conversion vector of those packs once in order (1377 vectors, failures
+included, each checked against its vector), then runs them all again on
+eight threads at once, each thread in its own order and three times over,
+and requires every output, and every failure message, to be byte-equal to
+the first run.
+
+The benchmark (ruling 2), from the repository root:
+
+```
+engines/zig/bench.sh                       # bench/set.json, packs, model
+engines/zig/bench.sh <set.json> [--packs <dir>] [--models <dir>]
+```
+
+`bench.sh` builds `zig-out/bin/gt-bench-zig` (`zig build bench`, always
+`ReleaseFast`; the build's output goes to standard error) and runs it in
+the current directory. It reads the set and every vector first, then loads
+the packs the vectors name in `from` and `to` and the modules they use into
+one engine and times that load (reading the files included). For each
+vector in order it converts once and compares with `expect`, then converts
+`iterations` times, each conversion allocating from one arena that is reset
+(capacity kept) after it, and times the loop. Standard output holds one line
+per vector, then the load line, as ruling 2c writes them, and nothing else.
+A vector whose output differs, or a conversion that fails, ends the run with
+exit status 1 and the reason on standard error; the lines are written only
+at the end, so a failed run writes nothing on standard output.
+
+BENCH_NUMBERS
 
 ## Builds with fewer wires (spec Version 0.24)
 
@@ -399,6 +454,14 @@ the end of the record. `--convert` does not trim the input of a `text` format.
   field that fails once the whole message has been read.
 
 ## Readings where the specification leaves a choice
+
+- Version 0.25: the benchmark's load time includes reading the files and
+  the scan of the model directory (every module file is read once to learn
+  its name and `uses`, only the needed ones are parsed). The packs loaded are
+  the formats named by the vectors' `from` and `to`, taken as directory
+  names under `--packs`. A failed run prints no result line at all.
+- Version 0.25: a `Call`'s `max_items` overrides the engine's for that call
+  only; `convertIn` is the thread-safe entry, `convert` stays as it was.
 
 - Version 0.24: the set is named by `-Dwires`, a comma-separated list; a
   name that is not a wire stops the build. An empty set is allowed and has no

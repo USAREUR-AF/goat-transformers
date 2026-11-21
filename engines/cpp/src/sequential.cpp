@@ -2123,7 +2123,8 @@ namespace {
 // case selected.
 struct SwitchState {
     using Key = std::pair<const Item*, const SeqNode*>;
-    std::vector<const SeqCase*> cases;  // by id
+    const std::vector<const SeqCase*>* cases = nullptr;  // by id: the plan's, or own_cases
+    std::vector<const SeqCase*> own_cases;
     std::map<Key, int> guess;           // the predicted case index; -1: none
     std::map<Key, int> used;            // the predictions this pass relied on
     std::map<Key, int> actual;          // the cases this pass selected
@@ -2151,7 +2152,7 @@ struct Scope {
     // (rulings 7 and 22); null when none.
     const DefaultLine* case_default(const FieldLine& f) const {
         for (int c = f.scase; c >= 0; c = p.seq_cases[static_cast<std::size_t>(c)].parent)
-            for (const auto& d : sw->cases[static_cast<std::size_t>(c)]->body.defaults)
+            for (const auto& d : (*sw->cases)[static_cast<std::size_t>(c)]->body.defaults)
                 if (d.key == f.key) return &d;
         return nullptr;
     }
@@ -2860,22 +2861,30 @@ namespace {
 std::string finish_seq(const Pack& p, SeqOut& out);
 }
 
+std::vector<const SeqCase*> seq_cases_by_id(const Pack& p) {
+    std::vector<const SeqCase*> cases(p.seq_cases.size(), nullptr);
+    std::function<void(const std::vector<SeqNode>&)> walk = [&](const std::vector<SeqNode>& lines) {
+        for (const auto& n : lines) {
+            walk(n.inner.lines);
+            for (const auto& k : n.inner.kinds) walk(k.lines);
+            for (const auto& c : n.cases) {
+                cases[static_cast<std::size_t>(c.id)] = &c;
+                walk(c.body.lines);
+            }
+        }
+    };
+    walk(p.seq.lines);
+    for (const auto& k : p.seq.kinds) walk(k.lines);
+    return cases;
+}
+
 std::string encode_seq(const Pack& p, const Entity& e) {
     SwitchState state;
-    state.cases.assign(p.seq_cases.size(), nullptr);
-    {
-        std::function<void(const std::vector<SeqNode>&)> walk = [&](const std::vector<SeqNode>& lines) {
-            for (const auto& n : lines) {
-                walk(n.inner.lines);
-                for (const auto& k : n.inner.kinds) walk(k.lines);
-                for (const auto& c : n.cases) {
-                    state.cases[static_cast<std::size_t>(c.id)] = &c;
-                    walk(c.body.lines);
-                }
-            }
-        };
-        walk(p.seq.lines);
-        for (const auto& k : p.seq.kinds) walk(k.lines);
+    if (const PackPlan* plan = plan_of(p)) {
+        state.cases = &plan->seq_cases;
+    } else {
+        state.own_cases = seq_cases_by_id(p);
+        state.cases = &state.own_cases;
     }
     // The encode is repeated while a switch selects another case than the one
     // its presence, `opt` and `fx` bits were computed from (a few passes at most).

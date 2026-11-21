@@ -26,6 +26,12 @@ type Gate struct {
 	group    *Group // the innermost group the block is in, nil outside a group
 	defs     map[string]*Default
 	defaults []*Default
+
+	// The gate value encode step 3 gives the open block, computed when the
+	// line is read and kept (spec 0.25, ruling 1): openVal, and openOK false
+	// when a `!` list names every value.
+	openVal uint64
+	openOK  bool
 }
 
 // parseGate reads the arguments of a fixed-layout `if` line. Every fault is
@@ -68,7 +74,32 @@ func parseGate(args []string, n int) (*Gate, error) {
 		seen[v] = true
 		g.vals = append(g.vals, v)
 	}
+	g.openVal, g.openOK = g.computeValue()
 	return g, nil
+}
+
+// computeValue is the gate value encode step 3 gives an open block: the
+// first listed value, or for `!` the smallest value not listed; ok is false
+// when a `!` list names every value.
+func (g *Gate) computeValue() (uint64, bool) {
+	if !g.not {
+		return g.vals[0], true
+	}
+	listed := map[uint64]bool{}
+	for _, x := range g.vals {
+		listed[x] = true
+	}
+	// A list of k values leaves a value below k+1 unlisted, unless the
+	// list names every value of a narrow gate.
+	for v := uint64(0); v <= uint64(len(g.vals)); v++ {
+		if g.loc.blen < 64 && v>>uint(g.loc.blen) != 0 {
+			break
+		}
+		if !listed[v] {
+			return v, true
+		}
+	}
+	return 0, false
 }
 
 // fieldDefault is the default that applies to a field: the innermost block's

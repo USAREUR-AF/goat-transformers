@@ -479,7 +479,7 @@ def _named(plan):
     present` does not name the last tag of its path (ruling 7)."""
     named = plan.cache.get("tlv")
     if named is None:
-        named = plan.cache["tlv"] = {}
+        named = {}  # built whole, then kept with the plan (spec 0.25, rulings 1a and 1c)
         for ln in plan.lines:
             if ln.is_group:
                 continue
@@ -489,6 +489,7 @@ def _named(plan):
                 if d == last and not ln.is_field and ln.present:
                     continue
                 named.setdefault(tags[:d], set()).add(t)
+        plan.cache["tlv"] = named
     return named
 
 

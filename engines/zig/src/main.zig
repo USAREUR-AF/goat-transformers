@@ -571,6 +571,9 @@ const Line = struct {
     wtext: []const u8 = "", // text value, a leading `=` stripped
     wpresent: bool = false,
     wforced: bool = false, // written with a leading `=`
+    // json, geojson: the JSON text the `when` or `const` value is written
+    // as, computed once as the pack loads (Version 0.25); "" until then
+    wjson: []const u8 = "",
     wint: u64 = 0, // bits / protobuf integer value
     // text: a field `<i>`, a column `<i>:<from>:<len>` or a pair `<i>+<j>`
     tloc: TLoc = .whole,
@@ -2034,6 +2037,8 @@ fn finalizeLine(alloc: std.mem.Allocator, p: *Pack, ln: *Line, in_group: bool, d
                 } else {
                     ln.wtext = ln.wraw;
                 }
+                // the text encode writes, kept with the line (Version 0.25)
+                if (p.wire != .xml and !ln.wpresent) ln.wjson = try whenJsonRaw(alloc, ln.*);
             }
             // json, and geojson inside an item: a member path
             if ((p.wire == .json or (p.wire == .geojson and in_group)) and !ln.dot) {
@@ -3928,6 +3933,32 @@ pub const Engine = struct {
         }
         return self.encode(to, &e);
     }
+
+    // What one conversion of `convertIn` uses and leaves: its allocator, its
+    // limit on list items (null: the engine's), and after a failure its
+    // message "<kind>: <detail>", allocated from `alloc`.
+    pub const Call = struct {
+        alloc: std.mem.Allocator,
+        max_items: ?usize = null,
+        last_error: []const u8 = "",
+    };
+
+    // convert, for an engine shared between threads (Version 0.25, ruling
+    // 1c). What was loaded is only read: the engine's `scratch`, `last_error`
+    // and `max_items` are not touched, the call's own are used, so any
+    // number of threads may call it at once on one loaded engine, each with
+    // its own `Call` and an allocator no other thread uses at that moment.
+    // Loading is not to run at the same time.
+    pub fn convertIn(self: *const Engine, call: *Call, from: []const u8, to: []const u8, bytes: []const u8, context: ?[]const KV) ![]u8 {
+        // A copy of the engine's header: its maps and lists share the loaded
+        // modules and packs, which a conversion never changes.
+        var view = self.*;
+        view.scratch = call.alloc;
+        view.last_error = "";
+        if (call.max_items) |n| view.max_items = n;
+        defer call.last_error = view.last_error;
+        return view.convert(from, to, bytes, context);
+    }
 };
 
 const deg_to_rad: f64 = std.math.pi / 180.0;
@@ -5139,6 +5170,7 @@ fn isCanonNumber(alloc: std.mem.Allocator, s: []const u8) bool {
 
 // The JSON text a `when` value is written as (ruling 11).
 fn whenJsonRaw(alloc: std.mem.Allocator, ln: Line) ![]const u8 {
+    if (ln.wjson.len > 0) return ln.wjson; // computed as the pack loaded
     if (!ln.wforced) {
         if (std.mem.eql(u8, ln.wtext, "true") or std.mem.eql(u8, ln.wtext, "false")) return ln.wtext;
         if (isCanonNumber(alloc, ln.wtext)) return ln.wtext;

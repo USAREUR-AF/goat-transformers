@@ -306,9 +306,19 @@ writable(Bin) ->
         _ -> erlang:error({xml_unwritable, Bin})
     end.
 
+%% The pattern is compiled once per node and kept (it depends on nothing
+%% loaded); compiling it for every attribute and text was most of the time
+%% of writing a catalog message.
 unwritable() ->
-    [<<C>> || C <- lists:seq(0, 16#1F), C =/= $\t, C =/= $\n, C =/= $\r]
-        ++ [<<16#FFFE/utf8>>, <<16#FFFF/utf8>>].
+    case persistent_term:get({?MODULE, unwritable}, undefined) of
+        undefined ->
+            P = binary:compile_pattern(
+                  [<<C>> || C <- lists:seq(0, 16#1F), C =/= $\t, C =/= $\n, C =/= $\r]
+                  ++ [<<16#FFFE/utf8>>, <<16#FFFF/utf8>>]),
+            persistent_term:put({?MODULE, unwritable}, P),
+            P;
+        P -> P
+    end.
 
 %% Attribute values (1a): & < > " tab LF CR as references.
 escape_attr(Bin) ->

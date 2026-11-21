@@ -169,9 +169,9 @@ load(Opts) ->
     Models = maps:get(<<"--models">>, Opts, <<Packs/binary, "/../model">>),
     E0 = gt_engine:set_max_distribution(gt_engine:new(),
                                         maps:get(<<"--max-distribution">>, Opts, controlled)),
-    E1 = lists:foldl(fun(F, E) ->
-                             gt_engine:load_model(E, read(filename:join(Models, F)))
-                     end, E0, gt_engine:model_files(Models)),
+    %% each module file read once (ruling 1d of 0.25)
+    E1 = lists:foldl(fun({_F, Text}, E) -> gt_engine:load_model(E, Text) end,
+                     E0, gt_engine:model_texts(Models)),
     E2 = case maps:find(<<"--packs-only">>, Opts) of
              {ok, Names} -> lists:foldl(fun(N, E) -> load_named(E, Packs, N) end, E1, Names);
              error -> load_every(E1, Packs)

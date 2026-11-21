@@ -24,6 +24,8 @@ final class TextTransform {
     final int d;
     /** {@code dm}: the letters of the positive and the negative side. */
     final char pos, neg;
+    /** {@code dm}: the pattern of the degrees and minutes part, built once at load (ruling 1a of 0.25). */
+    private final Pattern dmPattern;
 
     private TextTransform(Kind kind, String name, int w, int f, int d, char pos, char neg) {
         this.kind = kind;
@@ -33,6 +35,7 @@ final class TextTransform {
         this.d = d;
         this.pos = pos;
         this.neg = neg;
+        this.dmPattern = kind == Kind.DM ? Pattern.compile("([0-9]{" + d + "})([0-9]{2})(?:\\.([0-9]+))?") : null;
     }
 
     /** The transform of the 0.1 set read on this wire; null for {@code bool}. */
@@ -187,7 +190,7 @@ final class TextTransform {
     /** A pair's two texts, in the order of the locator, to the model value. */
     Object decode(String a, String b) {
         if (kind == Kind.DM) {
-            Matcher m = Pattern.compile("([0-9]{" + d + "})([0-9]{2})(?:\\.([0-9]+))?").matcher(a);
+            Matcher m = dmPattern.matcher(a);
             if (!m.matches()) throw new IllegalArgumentException("not " + d + " digits of degrees and mm[.m]: \"" + a + "\"");
             if (Integer.parseInt(m.group(2)) >= 60) throw new IllegalArgumentException("minutes of 60 or more: \"" + a + "\"");
             double minutes = Double.parseDouble(m.group(3) == null ? m.group(2) : m.group(2) + "." + m.group(3));

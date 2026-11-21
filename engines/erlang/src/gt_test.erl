@@ -20,9 +20,13 @@
 %%   - the named loader: one pack loaded alone with the modules it needs.
 %%   - malformed inputs: every vector input cut short and with single bytes
 %%     replaced converts or fails with a named conversion error.
+%%   - one instance used by several processes at once: each conversion gives
+%%     what it gives alone (rulings 1b and 1c of 0.25).
 %% Every failure is printed as "FAIL <pack>/<vector>: <why>"; then the counts
 %% "vectors: N/M passed", "load vectors: N/M passed", "capability vectors:
-%% N/M passed" and "malformed inputs: N/M passed". Exits non-zero on any
+%% N/M passed", "malformed inputs: N/M passed" and "concurrent conversions:
+%% N/M passed" (one instance converting in several processes at once,
+%% rulings 1b and 1c of 0.25: run_concurrent/2). Exits non-zero on any
 %% failure.
 -module(gt_test).
 -export([main/1, run/1, run/2, run_reduced/3]).
@@ -51,12 +55,14 @@ run(PacksDir, ModelsDir) ->
     {MPass0, MFail0} = run_malformed(Engine, PacksDir),
     {RPass, RFail} = run_ruling_cases(Engine),
     {MPass, MFail} = {MPass0 + RPass, MFail0 + RFail},
+    {KPass, KFail} = run_concurrent(PacksDir, ModelsDir),
     io:format("vectors: ~p/~p passed~n", [Pass, Pass + Fail]),
     io:format("load vectors: ~p/~p passed~n", [LPass, LPass + LFail]),
     io:format("capability vectors: ~p/~p passed~n", [CPass, CPass + CFail]),
     io:format("malformed inputs: ~p/~p passed~n", [MPass, MPass + MFail]),
+    io:format("concurrent conversions: ~p/~p passed~n", [KPass, KPass + KFail]),
     io:format("elapsed: ~.1f s~n", [(erlang:monotonic_time(millisecond) - T0) / 1000]),
-    case Fail + LFail + CFail + NFail + MFail of
+    case Fail + LFail + CFail + NFail + MFail + KFail of
         0 -> halt(0);
         N ->
             io:format("FAILED: ~p vector(s)~n", [N]),
@@ -81,14 +87,13 @@ run_conversion(Engine, PacksDir) ->
 %% pack that does not load fails its own vectors and no others.
 load_packs(PacksDir, ModelsDir) ->
     E1 = lists:foldl(
-           fun(F, E) ->
-                   {ok, Bin} = file:read_file(filename:join(ModelsDir, F)),
+           fun({F, Bin}, E) ->
                    try gt_engine:load_model(E, Bin)
                    catch C:R ->
                        io:format("FAIL loading model ~s: ~ts~n", [F, why({exception, C, R})]),
                        E
                    end
-           end, gt_engine:new(), gt_engine:model_files(ModelsDir)),
+           end, gt_engine:new(), gt_engine:model_texts(ModelsDir)),
     {ok, Entries} = file:list_dir(PacksDir),
     lists:foldl(
       fun(Entry, E) ->
@@ -515,6 +520,145 @@ run_named_load(PacksDir, ModelsDir) ->
             end
     end.
 
+%% ===================================================================
+%% one instance, several processes (rulings 1b and 1c of 0.25)
+%% ===================================================================
+%% The cases are the first ?CONC_PER_PACK conversion vectors of each pack
+%% whose directory name begins with `conformance-` (every wire), with any
+%% context and `max_items`, those that convert and those that fail alike.
+%% One instance is loaded with the packs the cases name that the directory
+%% holds, with the modules they need (a pack that does not load is left
+%% out, and its cases are `unknown-format` alike everywhere), and kept in a
+%% persistent term, so that every process reads that one instance and none
+%% copies it. The reference result of each case is its conversion alone, in
+%% a new process. Then ?CONC_WORKERS processes, started together, each
+%% convert every case on that instance, each in its own order (the case list
+%% rotated), so that every conversion follows conversions of other
+%% messages, failed ones included, while other processes convert at the
+%% same time. A case passes when every worker's result (the bytes, or the
+%% error kind and message) equals its reference. Prints "FAIL concurrent
+%% <pack>/<file>: ..." for a case that does not.
+-define(CONC_PER_PACK, 2).
+-define(CONC_WORKERS, 4).
+-define(CONC_ENGINE, {gt_test, concurrent_engine}).
+
+run_concurrent(PacksDir, ModelsDir) ->
+    ByPack = lists:foldl(fun({P, F}, M) ->
+                                 case lists:prefix("conformance-", P) of
+                                     true -> M#{P => [F | maps:get(P, M, [])]};
+                                     false -> M
+                                 end
+                         end, #{}, vector_files(PacksDir)),
+    Cases = list_to_tuple(
+              [{P, filename:basename(F), Conv}
+               || P <- lists:sort(maps:keys(ByPack)),
+                  F <- lists:sublist(lists:sort(maps:get(P, ByPack)), ?CONC_PER_PACK),
+                  Conv <- [concurrent_case(F)], Conv =/= skip]),
+    N = tuple_size(Cases),
+    Names = lists:usort([Name || {_, _, {_, From, To, _, _}} <- tuple_to_list(Cases),
+                                 Name <- [From, To],
+                                 filelib:is_regular(filename:join([PacksDir, Name, "pack.def"]))]),
+    %% one load (the model directory is read once); only when a pack does not
+    %% load, one load per pack
+    Engine = try gt_engine:load_packs(gt_engine:new(), PacksDir, Names, ModelsDir)
+             catch _:_ ->
+                 lists:foldl(fun(Name, E) ->
+                                     try gt_engine:load_packs(E, PacksDir, [Name], ModelsDir)
+                                     catch _:_ -> E
+                                     end
+                             end, gt_engine:new(), Names)
+             end,
+    persistent_term:put(?CONC_ENGINE, Engine),
+    try run_concurrent_cases(Cases, N)
+    after persistent_term:erase(?CONC_ENGINE)
+    end.
+
+run_concurrent_cases(Cases, N) ->
+    Ref = [isolated(fun() -> conc_result(element(3, element(I, Cases))) end)
+           || I <- lists:seq(1, N)],
+    Parent = self(),
+    Workers = [spawn_monitor(
+                 fun() ->
+                         receive go -> ok end,
+                         Start = (W - 1) * N div ?CONC_WORKERS,
+                         Order = [(Start + J) rem N + 1 || J <- lists:seq(0, N - 1)],
+                         Results = maps:from_list(
+                                     [{I, conc_result(element(3, element(I, Cases)))}
+                                      || I <- Order]),
+                         Parent ! {self(), [maps:get(I, Results) || I <- lists:seq(1, N)]}
+                 end) || W <- lists:seq(1, ?CONC_WORKERS)],
+    [Pid ! go || {Pid, _} <- Workers],
+    Got = [receive
+               {Pid, Rs} -> erlang:demonitor(MRef, [flush]), Rs;
+               {'DOWN', MRef, process, Pid, Why} -> {down, Why}
+           end || {Pid, MRef} <- Workers],
+    lists:foldl(
+      fun({I, R}, {P, F}) ->
+              Bad = [{W, G} || {W, Rs} <- lists:zip(lists:seq(1, ?CONC_WORKERS), Got),
+                               G <- [case Rs of
+                                         {down, Why} -> {down, Why};
+                                         _ -> lists:nth(I, Rs)
+                                     end],
+                               G =/= R],
+              case Bad of
+                  [] -> {P + 1, F};
+                  [{W, G} | _] ->
+                      {Pack, File, _} = element(I, Cases),
+                      io:format("FAIL concurrent ~s/~s: alone ~0P, worker ~p ~0P~n",
+                                [Pack, File, R, 12, W, G, 12]),
+                      {P, F + 1}
+              end
+      end, {0, 0}, lists:zip(lists:seq(1, N), Ref)).
+
+%% A vector file -> {MaxItems, From, To, Input, Context} | skip (unreadable,
+%% or a field of the wrong type: the conversion vectors report those).
+concurrent_case(File) ->
+    try
+        {ok, Bin} = file:read_file(File),
+        Obj = gt_json:parse(Bin),
+        G = fun(K) ->
+                    case gt_json:get(Obj, K) of
+                        {ok, V} -> V;
+                        absent -> undefined
+                    end
+            end,
+        From = G(<<"from">>),
+        To = G(<<"to">>),
+        Input = G(<<"input">>),
+        true = is_binary(From) andalso is_binary(To) andalso is_binary(Input),
+        Context = case G(<<"context">>) of
+                      undefined -> none;
+                      {object, Pairs} -> Pairs
+                  end,
+        Max = case G(<<"max_items">>) of
+                  undefined -> default;
+                  M when is_integer(M), M >= 0 -> M
+              end,
+        {Max, From, To, Input, Context}
+    catch _:_ -> skip
+    end.
+
+conc_result({Max, From, To, Input, Context}) ->
+    E0 = persistent_term:get(?CONC_ENGINE),
+    E = case Max of
+            default -> E0;
+            _ -> gt_engine:set_max_items(E0, Max)
+        end,
+    try gt_engine:convert(E, From, To, Input, Context) of
+        Out -> {ok, Out}
+    catch
+        error:{convert_error, Kind, Msg} -> {error, Kind, Msg};
+        Class:Reason -> {crash, Class, Reason}
+    end.
+
+%% The value of F in a new process.
+isolated(F) ->
+    {Pid, MRef} = spawn_monitor(fun() -> exit({result, F()}) end),
+    receive
+        {'DOWN', MRef, process, Pid, {result, R}} -> R;
+        {'DOWN', MRef, process, Pid, Why} -> {down, Why}
+    end.
+
 %% Does every vector of the pack (its vector files) convert from and to the
 %% pack itself?
 self_contained(Pack, PackFiles) ->
@@ -805,10 +949,8 @@ run_reduced(PacksDir, ModelsDir, Wires0) ->
     Wires = [list_to_binary(W) || W <- Wires0],
     SpecWires = [<<"xml">>, <<"geojson">>, <<"json">>, <<"bits">>, <<"protobuf">>,
                  <<"text">>, <<"tlv">>],
-    Models = lists:foldl(fun(F, E) ->
-                                 {ok, Bin} = file:read_file(filename:join(ModelsDir, F)),
-                                 gt_engine:load_model(E, Bin)
-                         end, gt_engine:new(), gt_engine:model_files(ModelsDir)),
+    Models = lists:foldl(fun({_F, Bin}, E) -> gt_engine:load_model(E, Bin) end,
+                         gt_engine:new(), gt_engine:model_texts(ModelsDir)),
     {ok, Entries} = file:list_dir(PacksDir),
     Packs = [{Dir, Text, pack_head(Text)}
              || Dir <- lists:sort(Entries),

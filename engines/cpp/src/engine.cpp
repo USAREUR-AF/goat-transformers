@@ -566,8 +566,12 @@ void Engine::add_pack(Pack pack) {
     if (packs_.count(pack.format))
         throw Error(ErrorKind::DuplicateFormat, pack.format, "",
                     "a pack of this format name is already loaded (" + pack.source + ")");
-    std::string format = pack.format;
-    packs_.emplace(std::move(format), std::move(pack));
+    // 0.25 ruling 1: the pack goes to the place it keeps for the life of the
+    // engine, then its layouts are computed once, against that place.
+    auto kept = std::make_shared<Pack>(std::move(pack));
+    kept->plan = detail::build_plan(*kept);
+    std::string format = kept->format;
+    packs_.emplace(std::move(format), std::move(kept));
 }
 
 bool Engine::has_format(const std::string& format) const { return packs_.count(format) != 0; }
@@ -575,7 +579,7 @@ bool Engine::has_format(const std::string& format) const { return packs_.count(f
 const Pack& Engine::pack(const std::string& format) const {
     auto it = packs_.find(format);
     if (it == packs_.end()) throw Error(ErrorKind::UnknownFormat, format, "", "no loaded pack defines this format");
-    return it->second;
+    return *it->second;
 }
 
 std::vector<std::string> Engine::formats() const {

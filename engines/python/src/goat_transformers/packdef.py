@@ -410,14 +410,18 @@ class Plan:
             ]
             return value
         if name == "order" or name == "mapped":
-            order = self.order = []
-            mapped = self.mapped = set()
+            # Built whole, then published (spec 0.25, ruling 1c): a thread
+            # never sees a half-built value of another.
+            order = []
+            mapped = set()
             for ln in self.lines:
                 if not ln.is_field and ln.present:
                     continue
                 if ln.locator not in mapped:
                     mapped.add(ln.locator)
                     order.append(ln.locator)
+            self.mapped = mapped
+            self.order = order
             return order if name == "order" else mapped
         raise AttributeError(name)
 

@@ -6,11 +6,13 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <memory>
 #include <stdexcept>
 #include <unordered_map>
 #include <unordered_set>
 
 #include "json.hpp"
+#include "sequential.hpp"
 #include "transforms.hpp"
 #include "util.hpp"
 #include "wires.hpp"
@@ -227,8 +229,13 @@ std::vector<LineRef> group_lines(const GroupLine& g) {
 const Kind* select_encode_kind(const Pack& p, const Entity& e) {
     if (p.kinds.empty()) return nullptr;
     if (e.kind.first == p.format) {
-        for (const auto& k : p.kinds)
-            if (k.name == e.kind.second) return &k;
+        if (const PackPlan* plan = plan_of(p)) {
+            auto it = plan->kind_by_name.find(e.kind.second);
+            if (it != plan->kind_by_name.end()) return &p.kinds[it->second];
+        } else {
+            for (const auto& k : p.kinds)
+                if (k.name == e.kind.second) return &k;
+        }
         throw Error(ErrorKind::NoKind, p.format, "", "the entity names kind '" + e.kind.second +
                                                          "', which the format does not define");
     }
@@ -1149,9 +1156,11 @@ struct TextSlots {
 namespace {
 
 // The element at `path` under the root; a name binds to its first sibling.
-const xml::Node* xml_find(const xml::Node& root, const std::vector<std::string>& path) {
+// Only the first `depth` names of `path` are followed.
+const xml::Node* xml_find(const xml::Node& root, const std::vector<std::string>& path, std::size_t depth) {
     const xml::Node* n = &root;
-    for (const auto& seg : path) {
+    for (std::size_t k = 0; k < depth; ++k) {
+        const std::string& seg = path[k];
         const xml::Node* next = nullptr;
         for (const auto& c : n->children)
             if (c.name == seg) {
@@ -1162,6 +1171,9 @@ const xml::Node* xml_find(const xml::Node& root, const std::vector<std::string>&
         n = next;
     }
     return n;
+}
+const xml::Node* xml_find(const xml::Node& root, const std::vector<std::string>& path) {
+    return xml_find(root, path, path.size());
 }
 
 // The wire text at an attribute or #text locator; false when absent.
@@ -1209,22 +1221,23 @@ void xml_decode_scope(const Pack& p, const std::vector<LineRef>& lines, const xm
             // Each child element named by the last name, under the first element
             // matched by the names before it. The list is present when an item occurs.
             const GroupLine& g = *line.group;
-            XmlLocator loc;
-            parse_xml_locator(g.locator, loc);  // validated at pack load
-            const std::string name = loc.path.back();
-            loc.path.pop_back();
-            const xml::Node* parent = xml_find(node, loc.path);
+            XmlLocator tmp;
+            const XmlLocator* loc = nullptr;
+            xml_locator(p, g.locator, loc, tmp);  // validated at pack load
+            const std::string& name = loc->path.back();
+            const xml::Node* parent = xml_find(node, loc->path, loc->path.size() - 1);
             if (!parent) continue;
             std::uint64_t count = 0;
             for (const auto& c : parent->children) count += c.name == name ? 1 : 0;
             take_items(p, g.list, count);  // 0.11 ruling 7a
             std::vector<Item> items;
-            std::vector<LineRef> body;
+            std::vector<LineRef> body_tmp;
+            const std::vector<LineRef>* body = nullptr;
             for (const auto& c : parent->children) {
                 if (c.name != name) continue;
-                if (items.empty()) body = group_lines(g);
+                if (items.empty()) body = &body_lines(p, g, body_tmp);
                 items.emplace_back();
-                xml_decode_scope(p, body, c, items.back(), nullptr);
+                xml_decode_scope(p, *body, c, items.back(), nullptr);
             }
             if (!items.empty()) out.lists[g.list] = std::move(items);
             continue;
@@ -1232,9 +1245,10 @@ void xml_decode_scope(const Pack& p, const std::vector<LineRef>& lines, const xm
         if (!line.field) continue;
         const FieldLine& f = *line.field;
         if (!d.wants(f)) continue;
-        XmlLocator loc;
-        parse_xml_locator(f.locator, loc);
-        if (!xml_value(node, loc, text)) continue;
+        XmlLocator tmp;
+        const XmlLocator* loc = nullptr;
+        xml_locator(p, f.locator, loc, tmp);
+        if (!xml_value(node, *loc, text)) continue;
         // A sentinel is compared with the text as resolved, not trimmed (0.9 ruling 14).
         if (f.has_absent && sentinel_text(f, text)) continue;
         d.set(f, text);
@@ -1270,17 +1284,21 @@ Entity decode_xml(const Pack& p, const std::string& bytes) {
     const Kind* kind = select_decode_kind(
         p,
         [&](const WhenLine& w) {
-            XmlLocator loc;
-            parse_xml_locator(w.locator, loc);  // validated at pack load
-            if (w.present) return xml_exists(root, loc);
+            XmlLocator tmp;
+            const XmlLocator* loc = nullptr;
+            xml_locator(p, w.locator, loc, tmp);  // validated at pack load
+            if (w.present) return xml_exists(root, *loc);
             std::string text;
-            return xml_value(root, loc, text) && w.holds_text(text);
+            return xml_value(root, *loc, text) && w.holds_text(text);
         },
         candidates);
 
     Entity e;
-    std::unordered_set<std::string> mapped;
-    xml_decode_scope(p, active_lines(p, kind), root, e, &mapped);
+    std::unordered_set<std::string> mapped_tmp;
+    std::vector<LineRef> lines_tmp;
+    const PackPlan* plan = plan_of(p);
+    xml_decode_scope(p, scope_lines(p, kind, lines_tmp), root, e, plan ? nullptr : &mapped_tmp);
+    const std::unordered_set<std::string>& mapped = plan ? plan->mapped[kind_slot(p, kind)] : mapped_tmp;
     // Residue: unmapped attributes of the root element (0.1.1 ruling 6). Unmapped
     // child elements, and what they hold, are not carried.
     for (const auto& a : root.attrs)
@@ -1290,9 +1308,10 @@ Entity decode_xml(const Pack& p, const std::string& bytes) {
 }
 
 namespace {
-xml::Node& ensure_path(xml::Node& root, const std::vector<std::string>& path) {
+xml::Node& ensure_path(xml::Node& root, const std::vector<std::string>& path, std::size_t depth) {
     xml::Node* n = &root;
-    for (const auto& seg : path) {
+    for (std::size_t k = 0; k < depth; ++k) {
+        const std::string& seg = path[k];
         xml::Node* next = nullptr;
         for (auto& c : n->children)
             if (c.name == seg) {
@@ -1310,7 +1329,7 @@ xml::Node& ensure_path(xml::Node& root, const std::vector<std::string>& path) {
 }
 
 void place_xml(xml::Node& root, const XmlLocator& loc, const std::string& value) {
-    xml::Node& n = ensure_path(root, loc.path);
+    xml::Node& n = ensure_path(root, loc.path, loc.path.size());
     switch (loc.kind) {
         case XmlLocator::Kind::Attr:
             for (auto& a : n.attrs)
@@ -1330,11 +1349,16 @@ void place_xml(xml::Node& root, const XmlLocator& loc, const std::string& value)
 // `out` keeps the slots, so the caller can tell which locators were written.
 // v0.18 `element` lines: each path once, at the first line of any kind that
 // addresses it or a path under it (ruling 13), in that order.
-struct ElementAt {
-    const ElementLine* el;
-    std::size_t line;
-};
+// The `element` lines of a message: the common ones, then the kind's.
+std::vector<const ElementLine*> message_elements(const Pack& p, const Kind* kind) {
+    std::vector<const ElementLine*> elements;
+    for (const auto& el : p.elements) elements.push_back(&el);
+    if (kind)
+        for (const auto& el : kind->elements) elements.push_back(&el);
+    return elements;
+}
 std::vector<ElementAt> place_elements(const std::vector<LineRef>& lines, const std::vector<const ElementLine*>& els) {
+    if (els.empty()) return {};
     auto under = [](const std::vector<std::string>& path, const ElementLine& el) {
         return path.size() >= el.steps.size() && std::equal(el.steps.begin(), el.steps.end(), path.begin());
     };
@@ -1359,11 +1383,12 @@ std::vector<ElementAt> place_elements(const std::vector<LineRef>& lines, const s
     return out;
 }
 
+// `placed`: the `element` lines of the message, placed (place_elements).
 void xml_encode_scope(const Pack& p, const std::vector<LineRef>& lines, const EncodeSource& src, xml::Node& node,
-                      TextSlots& out, const std::vector<const ElementLine*>* elements = nullptr) {
+                      TextSlots& out, const std::vector<ElementAt>* placed = nullptr) {
     Value v;
-    std::vector<ElementAt> els;
-    if (elements && !elements->empty()) els = place_elements(lines, *elements);
+    static const std::vector<ElementAt> no_elements;
+    const std::vector<ElementAt>& els = placed ? *placed : no_elements;
     std::size_t next_el = 0;
     auto elements_before = [&](std::size_t ln) {
         for (; next_el < els.size() && els[next_el].line <= ln; ++next_el) {
@@ -1409,12 +1434,13 @@ void xml_encode_scope(const Pack& p, const std::vector<LineRef>& lines, const En
     for (const auto& slot : out.slots) {
         if (slot.group) {
             const GroupLine& g = *slot.group;
-            XmlLocator loc;
-            parse_xml_locator(g.locator, loc);  // validated at pack load
-            const std::string name = loc.path.back();
-            loc.path.pop_back();
-            xml::Node& parent = ensure_path(node, loc.path);
-            const std::vector<LineRef> body = group_lines(g);
+            XmlLocator tmp;
+            const XmlLocator* loc = nullptr;
+            xml_locator(p, g.locator, loc, tmp);  // validated at pack load
+            const std::string& name = loc->path.back();
+            xml::Node& parent = ensure_path(node, loc->path, loc->path.size() - 1);
+            std::vector<LineRef> body_tmp;
+            const std::vector<LineRef>& body = body_lines(p, g, body_tmp);
             parent.children.reserve(parent.children.size() + slot.items->size());
             for (const Item& item : *slot.items) {
                 parent.children.emplace_back();
@@ -1426,9 +1452,10 @@ void xml_encode_scope(const Pack& p, const std::vector<LineRef>& lines, const En
             continue;
         }
         if (!slot.has) continue;
-        XmlLocator loc;
-        parse_xml_locator(*slot.locator, loc);  // validated at pack load
-        place_xml(node, loc, slot.value);
+        XmlLocator tmp;
+        const XmlLocator* loc = nullptr;
+        xml_locator(p, *slot.locator, loc, tmp);  // validated at pack load
+        place_xml(node, *loc, slot.value);
     }
 }
 }  // namespace
@@ -1438,11 +1465,17 @@ std::string encode_xml(const Pack& p, const Entity& e) {
     TextSlots out;
     xml::Node root;
     root.name = kind && !kind->root.empty() ? kind->root : p.root;
-    std::vector<const ElementLine*> elements;
-    for (const auto& el : p.elements) elements.push_back(&el);
-    if (kind)
-        for (const auto& el : kind->elements) elements.push_back(&el);
-    xml_encode_scope(p, active_lines(p, kind), EncodeSource(p, kind, e), root, out, &elements);
+    std::vector<LineRef> lines_tmp;
+    const std::vector<LineRef>& lines = scope_lines(p, kind, lines_tmp);
+    std::vector<ElementAt> placed_tmp;
+    const std::vector<ElementAt>* placed = nullptr;
+    if (const PackPlan* plan = plan_of(p)) {
+        placed = &plan->elements[kind_slot(p, kind)];
+    } else {
+        placed_tmp = place_elements(lines, message_elements(p, kind));
+        placed = &placed_tmp;
+    }
+    xml_encode_scope(p, lines, EncodeSource(p, kind, e), root, out, placed);
     std::unordered_set<std::string> residue_seen;
     for (const auto& r : e.residue) {
         if (r.format != p.format) continue;
@@ -1458,6 +1491,14 @@ std::string encode_xml(const Pack& p, const Entity& e) {
     } catch (const xml::WriteError& ex) {
         throw Error(ErrorKind::TransformEncode, p.format, "", ex.what());
     }
+}
+
+// 0.25: the placed `element` lines of every kind, for the plan.
+void plan_xml_elements(const Pack& p, PackPlan& plan) {
+    plan.elements.resize(p.kinds.size() + 1);
+    plan.elements[0] = place_elements(plan.common, message_elements(p, nullptr));
+    for (std::size_t k = 0; k < p.kinds.size(); ++k)
+        plan.elements[k + 1] = place_elements(plan.kinds[k], message_elements(p, &p.kinds[k]));
 }
 
 #endif  // GT_WIRE_XML
@@ -1521,9 +1562,10 @@ Entity decode_geojson(const Pack& p, const std::string& bytes) {
     };
 
     const Kind* kind = select_decode_kind(p, [&](const WhenLine& w) {
-        GeoLocator loc;
-        parse_geo_locator(w.locator, loc);  // validated at pack load
-        const json::Value* v = lookup(loc);
+        GeoLocator tmp;
+        const GeoLocator* loc = nullptr;
+        geo_locator(p, w.locator, loc, tmp);  // validated at pack load
+        const json::Value* v = lookup(*loc);
         if (!v || v->is(json::Value::Kind::Null)) return false;
         return w.present || json_when_matches(w, *v);
     });
@@ -1531,9 +1573,12 @@ Entity decode_geojson(const Pack& p, const std::string& bytes) {
     Entity e;
     Decoder d(p, e);
     std::unordered_set<std::string> mapped_props, mapped_members;
-    for (const auto& line : active_lines(p, kind)) {
-        GeoLocator loc;
-        parse_geo_locator(line.locator(), loc);
+    std::vector<LineRef> lines_tmp;
+    for (const auto& line : scope_lines(p, kind, lines_tmp)) {
+        GeoLocator tmp;
+        const GeoLocator* locp = nullptr;
+        geo_locator(p, line.locator(), locp, tmp);
+        const GeoLocator& loc = *locp;
         if (line.maps()) {
             if (loc.kind == GeoLocator::Kind::Property) mapped_props.insert(loc.name);
             else if (loc.kind == GeoLocator::Kind::Member) mapped_members.insert(loc.name);
@@ -1597,9 +1642,12 @@ std::string encode_geojson(const Pack& p, const Entity& e) {
     TextSlots props, members;  // locator -> JSON text
     Value v;
 
-    for (const auto& line : active_lines(p, kind)) {
-        GeoLocator loc;
-        parse_geo_locator(line.locator(), loc);  // validated at pack load
+    std::vector<LineRef> lines_tmp;
+    for (const auto& line : scope_lines(p, kind, lines_tmp)) {
+        GeoLocator tmp;
+        const GeoLocator* locp = nullptr;
+        geo_locator(p, line.locator(), locp, tmp);  // validated at pack load
+        const GeoLocator& loc = *locp;
         if (const WhenLine* w = line.fixed()) {
             if (w->present) continue;  // a property or a member, checked at load
             auto& slot = (loc.kind == GeoLocator::Kind::Property ? props : members).at(w->locator);
@@ -1669,10 +1717,11 @@ std::string encode_geojson(const Pack& p, const Entity& e) {
         (loc.kind == GeoLocator::Kind::Property ? rprops : rmembers)
             .emplace_back(loc.name, r.structured ? r.value : json::quote(r.value));
     }
-    auto name_of = [](const std::string& locator) {
-        GeoLocator loc;
-        parse_geo_locator(locator, loc);
-        return loc.name;
+    auto name_of = [&p](const std::string& locator) {
+        GeoLocator tmp;
+        const GeoLocator* loc = nullptr;
+        geo_locator(p, locator, loc, tmp);
+        return loc->name;
     };
 
     std::string out = "{\"type\":\"Feature\",\"geometry\":";
@@ -1720,11 +1769,12 @@ struct BitRange {
 // <word>:<pos>:<len> addresses `len` bits from bit word * word_bytes * 8 + pos of
 // the message; the field may run past its word (0.5).
 BitRange bit_range(const Pack& p, const std::string& locator) {
-    BitsLocator loc;
-    parse_bits_locator(locator, loc);  // validated at pack load
+    BitsLocator tmp;
+    const BitsLocator* loc = nullptr;
+    bits_locator(p, locator, loc, tmp);  // validated at pack load
     BitRange r;
-    r.start = static_cast<std::uint64_t>(loc.word) * p.word_bytes * 8 + loc.pos;
-    r.len = loc.len;
+    r.start = static_cast<std::uint64_t>(loc->word) * p.word_bytes * 8 + loc->pos;
+    r.len = loc->len;
     return r;
 }
 
@@ -1908,7 +1958,8 @@ std::uint64_t bits_decode_scope(BitsIn& in, const std::vector<LineRef>& lines, c
         items.clear();
         // 0.11 ruling 7d: the count is compared with the limit before any item is read.
         take_items(p, g.list, count);
-        const std::vector<LineRef> body = group_lines(g);
+        std::vector<LineRef> body_tmp;
+        const std::vector<LineRef>& body = body_lines(p, g, body_tmp);
         const std::string item_what = "an item of the group '" + g.list + "'";
         std::uint64_t at = base + g.bits_start;
         for (std::uint64_t k = 0; k < count; ++k) {
@@ -2210,7 +2261,8 @@ std::uint64_t bits_encode_scope(BitsOut& out, const std::vector<LineRef>& lines,
         }
         std::uint64_t at = base + g.bits_start;
         if (items) {
-            const std::vector<LineRef> body = group_lines(g);
+            std::vector<LineRef> body_tmp;
+            const std::vector<LineRef>& body = body_lines(p, g, body_tmp);
             for (const Item& item : *items) {
                 out.reach(at + g.item_bits);
                 out.armor_end = std::max(out.armor_end, at + g.item_bits);
@@ -2224,6 +2276,8 @@ std::uint64_t bits_encode_scope(BitsOut& out, const std::vector<LineRef>& lines,
     return end;
 }
 
+}  // namespace
+
 // The gate blocks of the message: the common ones, then the selected kind's.
 std::vector<int> message_gates(const Pack& p, const Kind* kind) {
     std::vector<int> out = p.common_gates;
@@ -2231,6 +2285,13 @@ std::vector<int> message_gates(const Pack& p, const Kind* kind) {
     return out;
 }
 
+namespace {
+// message_gates from the plan; `tmp` holds them when there is none.
+const std::vector<int>& plan_gates(const Pack& p, const Kind* kind, std::vector<int>& tmp) {
+    if (const PackPlan* plan = plan_of(p)) return plan->gates[kind_slot(p, kind)];
+    tmp = message_gates(p, kind);
+    return tmp;
+}
 }  // namespace
 
 Entity decode_bits(const Pack& p, const std::string& bytes) {
@@ -2252,7 +2313,10 @@ Entity decode_bits(const Pack& p, const std::string& bytes) {
     // bytes ignored; shorter is malformed.
     const std::string what = "the message" + (kind ? " of kind '" + kind->name + "'" : std::string());
     Entity e;
-    const std::uint64_t end = bits_decode_scope(in, active_lines(p, kind), message_gates(p, kind), 0, e, what);
+    std::vector<LineRef> lines_tmp;
+    std::vector<int> gates_tmp;
+    const std::uint64_t end =
+        bits_decode_scope(in, scope_lines(p, kind, lines_tmp), plan_gates(p, kind, gates_tmp), 0, e, what);
     // Under armor the message is any number of bits: whole words are not required.
     const std::size_t need = p.armor_sixbit ? 0 : whole_words(p, end);
     if (data.size() < need)
@@ -2266,8 +2330,10 @@ Entity decode_bits(const Pack& p, const std::string& bytes) {
 std::string encode_bits(const Pack& p, const Entity& e) {
     const Kind* kind = select_encode_kind(p, e);
     BitsOut out{p, std::string(), bit_mode(p.bit_order), 0, {}};
-    const std::vector<int> gates = message_gates(p, kind);
-    const std::uint64_t end = bits_encode_scope(out, active_lines(p, kind), gates, 0, EncodeSource(p, kind, e));
+    std::vector<LineRef> lines_tmp;
+    std::vector<int> gates_tmp;
+    const std::vector<int>& gates = plan_gates(p, kind, gates_tmp);
+    const std::uint64_t end = bits_encode_scope(out, scope_lines(p, kind, lines_tmp), gates, 0, EncodeSource(p, kind, e));
     // Under armor (0.14) the output is the first L bits; step 6 reads it as decode
     // would, so a gate past L does not hold.
     std::string armored;
@@ -2296,5 +2362,145 @@ std::string encode_bits(const Pack& p, const Entity& e) {
 }
 
 #endif  // GT_WIRE_BITS
+
+// ---------------------------------------------------------------- the plan (0.25)
+
+#if GT_WIRE_XML
+void plan_xml_elements(const Pack& p, PackPlan& plan);
+#endif
+
+namespace {
+void plan_bodies(PackPlan& plan, const std::vector<LineRef>& lines) {
+    for (const auto& line : lines) {
+        if (!line.group || plan.bodies.count(line.group)) continue;
+        std::vector<LineRef>& body = plan.bodies[line.group];
+        body = group_lines(*line.group);
+        plan_bodies(plan, body);  // `body` stays where it is: the map's nodes do not move
+    }
+}
+
+// Each locator text of the lines, parsed once by the grammar of the wire. A
+// text that does not parse is left out, so its readers parse it, and fail, as
+// before.
+template <class Loc, class Parse>
+void plan_locator(std::unordered_map<const std::string*, Loc>& into, const std::string& text, Parse parse) {
+    if (into.count(&text)) return;
+    Loc loc;
+    if (parse(text, loc)) into.emplace(&text, std::move(loc));
+}
+
+template <class Loc>
+bool find_locator(const PackPlan* plan, const std::unordered_map<const std::string*, Loc> PackPlan::*map,
+                  const std::string& text, const Loc*& out, Loc& tmp, bool (*parse)(const std::string&, Loc&)) {
+    if (plan) {
+        const auto& m = plan->*map;
+        auto it = m.find(&text);
+        if (it != m.end()) {
+            out = &it->second;
+            return true;
+        }
+    }
+    out = &tmp;
+    return parse(text, tmp);
+}
+}  // namespace
+
+std::shared_ptr<const PackPlan> build_plan(const Pack& p) {
+    auto plan = std::make_shared<PackPlan>();
+    plan->owner = &p;
+    if (p.sequential) {
+#if GT_WIRE_BITS
+        plan->seq_cases = seq_cases_by_id(p);
+#endif
+        return plan;
+    }
+    plan->common = active_lines(p, nullptr);
+    plan->kinds.reserve(p.kinds.size());
+    for (const auto& k : p.kinds) plan->kinds.push_back(active_lines(p, &k));
+    for (std::size_t k = 0; k < p.kinds.size(); ++k) plan->kind_by_name.emplace(p.kinds[k].name, k);
+    plan_bodies(*plan, plan->common);
+    for (const auto& lines : plan->kinds) plan_bodies(*plan, lines);
+
+    // Every line of every scope, each text once.
+    std::vector<const std::vector<LineRef>*> scopes{&plan->common};
+    for (const auto& lines : plan->kinds) scopes.push_back(&lines);
+    for (const auto& kv : plan->bodies) scopes.push_back(&kv.second);
+    auto each_locator = [&](auto add) {
+        for (const auto* lines : scopes)
+            for (const auto& line : *lines) add(line.locator());
+    };
+    if (p.wire == Wire::Xml || p.wire == Wire::Json) {
+        plan->mapped.resize(p.kinds.size() + 1);
+        for (std::size_t k = 0; k <= p.kinds.size(); ++k)
+            for (const auto& line : k == 0 ? plan->common : plan->kinds[k - 1])
+                if (line.maps()) plan->mapped[k].insert(line.locator());
+    }
+    switch (p.wire) {
+        case Wire::Xml:
+            each_locator([&](const std::string& t) { plan_locator(plan->xml, t, parse_xml_locator); });
+            for (const auto& el : p.elements) plan_locator(plan->xml, el.path, parse_xml_locator);
+            for (const auto& k : p.kinds)
+                for (const auto& el : k.elements) plan_locator(plan->xml, el.path, parse_xml_locator);
+#if GT_WIRE_XML
+            plan_xml_elements(p, *plan);
+#endif
+            break;
+        case Wire::GeoJson:
+            each_locator([&](const std::string& t) { plan_locator(plan->geo, t, parse_geo_locator); });
+            break;
+        case Wire::Bits:
+            each_locator([&](const std::string& t) { plan_locator(plan->bits, t, parse_bits_locator); });
+            plan->gates.reserve(p.kinds.size() + 1);
+            plan->gates.push_back(p.common_gates);
+            for (const auto& k : p.kinds) {
+                std::vector<int> g = p.common_gates;
+                g.insert(g.end(), k.gates.begin(), k.gates.end());
+                plan->gates.push_back(std::move(g));
+            }
+            break;
+        case Wire::Protobuf:
+            each_locator([&](const std::string& t) { plan_locator(plan->protobuf, t, parse_protobuf_locator); });
+            break;
+        case Wire::Json:
+            each_locator([&](const std::string& t) { plan_locator(plan->json, t, parse_json_locator); });
+            break;
+        case Wire::Text:  // locators parsed when the pack was read (parse_text_locators)
+        case Wire::Tlv:   // likewise (check_tlv_pack)
+            break;
+    }
+    return plan;
+}
+
+const std::vector<LineRef>& scope_lines(const Pack& p, const Kind* kind, std::vector<LineRef>& tmp) {
+    if (const PackPlan* plan = plan_of(p)) return kind ? plan->kinds[kind_slot(p, kind) - 1] : plan->common;
+    tmp = active_lines(p, kind);
+    return tmp;
+}
+
+const std::vector<LineRef>& body_lines(const Pack& p, const GroupLine& g, std::vector<LineRef>& tmp) {
+    if (const PackPlan* plan = plan_of(p)) {
+        auto it = plan->bodies.find(&g);
+        if (it != plan->bodies.end()) return it->second;
+    }
+    tmp = group_lines(g);
+    return tmp;
+}
+
+bool xml_locator(const Pack& p, const std::string& loc, const XmlLocator*& out, XmlLocator& tmp) {
+    return find_locator(plan_of(p), &PackPlan::xml, loc, out, tmp, parse_xml_locator);
+}
+bool geo_locator(const Pack& p, const std::string& loc, const GeoLocator*& out, GeoLocator& tmp) {
+    return find_locator(plan_of(p), &PackPlan::geo, loc, out, tmp, parse_geo_locator);
+}
+bool bits_locator(const Pack& p, const std::string& loc, const BitsLocator*& out, BitsLocator& tmp) {
+    return find_locator(plan_of(p), &PackPlan::bits, loc, out, tmp, parse_bits_locator);
+}
+bool protobuf_locator(const Pack& p, const std::string& loc, const ProtobufLocator*& out, ProtobufLocator& tmp) {
+    return find_locator(plan_of(p), &PackPlan::protobuf, loc, out, tmp, parse_protobuf_locator);
+}
+bool json_locator(const Pack& p, const std::string& loc, const std::vector<std::string>*& out,
+                  std::vector<std::string>& tmp) {
+    return find_locator(plan_of(p), &PackPlan::json, loc, out, tmp, parse_json_locator);
+}
 
 }  // namespace goat_transformers::detail

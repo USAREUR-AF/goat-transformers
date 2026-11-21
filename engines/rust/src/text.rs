@@ -90,6 +90,16 @@ fn loc(s: &str) -> Option<Loc> {
     Loc::parse(s).ok()
 }
 
+/// The locator of a line as the layout the engine keeps for the pack holds
+/// it (engine-spec 0.25), else read now.
+#[cfg(feature = "text")]
+fn kept(lay: &Layout, s: &str) -> Option<Loc> {
+    match lay.text_locs.get(&layout::line_key(s)) {
+        Some(l) => *l,
+        None => loc(s),
+    }
+}
+
 /// The field a group's items start at, and the fields of one item.
 fn group_span(g: &GroupDef) -> (usize, usize) {
     (g.locator.parse::<usize>().unwrap_or(usize::MAX), g.item_bits.unwrap_or(1).max(1) as usize)
@@ -616,8 +626,8 @@ fn column<'a>(rec: &[&'a str], i: usize, from: usize, len: usize, numeric: bool)
 }
 
 #[cfg(feature = "text")]
-fn when_holds(rec: &[&str], w: &WhenDef) -> bool {
-    let text = match loc(&w.locator) {
+fn when_holds(lay: &Layout, rec: &[&str], w: &WhenDef) -> bool {
+    let text = match kept(lay, &w.locator) {
         Some(Loc::Field(i)) => whole(rec, i),
         Some(Loc::Col(i, from, len)) => column(rec, i, from, len, false),
         _ => None,
@@ -631,9 +641,9 @@ fn when_holds(rec: &[&str], w: &WhenDef) -> bool {
 
 /// Decode the field lines of one scope, their locators counted from `base`.
 #[cfg(feature = "text")]
-fn decode_fields(p: &Pack, fields: &[&FieldDef], rec: &[&str], base: usize, d: &mut Decoded) {
+fn decode_fields(p: &Pack, lay: &Layout, fields: &[&FieldDef], rec: &[&str], base: usize, d: &mut Decoded) {
     for f in fields {
-        let l = match loc(&f.locator) {
+        let l = match kept(lay, &f.locator) {
             Some(l) => l.shift(base),
             None => continue,
         };
@@ -660,11 +670,17 @@ fn decode_fields(p: &Pack, fields: &[&FieldDef], rec: &[&str], base: usize, d: &
 
 #[cfg(feature = "text")]
 pub fn decode(p: &Pack, input: &str) -> Result<Entity, Error> {
+    decode_in(p, &Layout::default(), input)
+}
+
+/// `decode` with the layout the engine keeps for the pack (engine-spec 0.25).
+#[cfg(feature = "text")]
+pub(crate) fn decode_in(p: &Pack, lay: &Layout, input: &str) -> Result<Entity, Error> {
     let _scope = limit::scope();
     let rec = record(p, input)?;
-    let sel = p.select_decode(None, |w| when_holds(&rec, w))?;
+    let sel = p.select_decode(None, |w| when_holds(lay, &rec, w))?;
     let mut d = Decoded::new();
-    decode_fields(p, &sel.fields, &rec, 0, &mut d);
+    decode_fields(p, lay, &sel.fields, &rec, 0, &mut d);
     let mut group_start = usize::MAX;
     if let Some(g) = sel.groups.first() {
         let (start, n) = group_span(g);
@@ -679,7 +695,7 @@ pub fn decode(p: &Pack, input: &str) -> Result<Entity, Error> {
             let mut items = Vec::with_capacity(count);
             for j in 0..count {
                 let mut di = Decoded::new();
-                decode_fields(p, &body.fields, &rec, start + j * n, &mut di);
+                decode_fields(p, lay, &body.fields, &rec, start + j * n, &mut di);
                 items.push(di);
             }
             d.put_list(&g.list, items);
@@ -698,10 +714,10 @@ pub fn decode(p: &Pack, input: &str) -> Result<Entity, Error> {
         }
     };
     for f in &sel.fields {
-        mark(loc(&f.locator));
+        mark(kept(lay, &f.locator));
     }
     for w in sel.fixed() {
-        mark(loc(&w.locator));
+        mark(kept(lay, &w.locator));
     }
     for (i, s) in rec.iter().enumerate() {
         if i >= group_start {
@@ -844,6 +860,7 @@ fn pad(s: &str, len: usize, numeric: bool) -> Result<Vec<u8>, String> {
 #[cfg(feature = "text")]
 fn write_scope(
     p: &Pack,
+    lay: &Layout,
     sel: &Sel,
     fixed: &[&WhenDef],
     ent: &Entity,
@@ -856,7 +873,7 @@ fn write_scope(
             Some(v) => v,
             None => continue,
         };
-        let l = match loc(&f.locator) {
+        let l = match kept(lay, &f.locator) {
             Some(l) => l.shift(base),
             None => continue,
         };
@@ -887,7 +904,7 @@ fn write_scope(
     let mut fixed: Vec<&WhenDef> = fixed.to_vec();
     fixed.sort_by_key(|w| w.line);
     for w in fixed {
-        let l = loc(&w.locator).map(|l| l.shift(base));
+        let l = kept(lay, &w.locator).map(|l| l.shift(base));
         if let Some(l) = l {
             reach = reach.max(l.highest() + 1);
         }
@@ -907,16 +924,22 @@ fn write_scope(
 
 #[cfg(feature = "text")]
 pub fn encode(p: &Pack, ent: &Entity) -> Result<String, Error> {
+    encode_in(p, &Layout::default(), ent)
+}
+
+/// `encode` with the layout the engine keeps for the pack (engine-spec 0.25).
+#[cfg(feature = "text")]
+pub(crate) fn encode_in(p: &Pack, lay: &Layout, ent: &Entity) -> Result<String, Error> {
     let sel = p.select_encode(ent)?;
     let mut rec = Record { fields: Vec::new() };
     let fixed: Vec<&WhenDef> = sel.fixed().collect();
-    write_scope(p, &sel, &fixed, ent, 0, &mut rec)?;
+    write_scope(p, lay, &sel, &fixed, ent, 0, &mut rec)?;
     // step 4: one more than the highest field a line (not a group) addresses
     let lines: Vec<(Loc, bool)> = sel
         .fields
         .iter()
-        .filter_map(|f| loc(&f.locator).map(|l| (l, f.optional)))
-        .chain(fixed.iter().filter_map(|w| loc(&w.locator).map(|l| (l, false))))
+        .filter_map(|f| kept(lay, &f.locator).map(|l| (l, f.optional)))
+        .chain(fixed.iter().filter_map(|w| kept(lay, &w.locator).map(|l| (l, false))))
         .collect();
     let mut count = lines.iter().map(|(l, _)| l.highest() + 1).max().unwrap_or(0);
     // the group's items, back to back from its field
@@ -929,7 +952,7 @@ pub fn encode(p: &Pack, ent: &Entity) -> Result<String, Error> {
             let consts: Vec<&WhenDef> = body.consts.clone();
             // each item is `n` fields long, whether or not its keys are present
             for (j, item) in items.iter().enumerate() {
-                write_scope(p, &body, &consts, item, start + j * n, &mut rec)?;
+                write_scope(p, lay, &body, &consts, item, start + j * n, &mut rec)?;
             }
             let end = start + items.len() * n;
             group = Some((start, end));

@@ -9,6 +9,13 @@
 //! The engine keeps what it loads for its whole life and frees nothing on its
 //! own: give it an arena. A failure is a Zig error named as the specification
 //! names it, and `engine.last_error` holds `<kind>: <detail>`.
+//!
+//! One loaded engine may convert on several threads at once through
+//! `convertIn`, each call with its own `Engine.Call` (its allocator, and its
+//! own failure message); `convert` itself is for one thread at a time.
+//!
+//!     var call = gt.Engine.Call{ .alloc = per_thread_allocator };
+//!     const out = engine.convertIn(&call, "cot-xml", "geojson", input, null) catch |err| ...; // call.last_error
 
 const std = @import("std");
 const engine_zig = @import("main.zig");
@@ -35,4 +42,145 @@ test "the module loads two packs and converts" {
     const loaded = try engine.loadPacksOnly("../../packs", "../../model", &.{ "cot-xml", "geojson" });
     try std.testing.expectEqual(@as(usize, 2), loaded.packs.len);
     try std.testing.expectEqualStrings(geojson_feature, try engine.convert("cot-xml", "geojson", cot_event, null));
+}
+
+// Version 0.25, ruling 1c: one instance used from several threads at once
+// gives each conversion the result it gives alone. The packs of the
+// benchmark set on every wire (the two catalog packs left out, for the time
+// a Debug load of them takes); every conversion vector of those packs, failed
+// conversions included, first once in order on the engine, then by eight
+// threads at once, each in its own order and three times over. Each result,
+// the output bytes or the failure's whole message, must equal the first one,
+// which must agree with the vector.
+const thread_packs = [_][]const u8{
+    "adsb",           "asterix-cat062", "canonical-track-v2", "cot-protobuf", "cot-xml",
+    "dhcpv6-options", "geojson",        "isa",                "mavlink2",     "nmea0183",
+    "nmea2000",       "remote-id",      "sapient",
+};
+
+const TVec = struct {
+    name: []const u8,
+    from: []const u8,
+    to: []const u8,
+    input: []const u8,
+    context: ?[]const KV,
+    max_items: ?usize,
+    // the result of the first, single-threaded run
+    ok: bool = false,
+    result: []const u8 = "",
+};
+
+fn runOne(engine: *const Engine, alloc: std.mem.Allocator, v: *const TVec) !struct { ok: bool, text: []const u8 } {
+    var call = Engine.Call{ .alloc = alloc, .max_items = v.max_items };
+    if (engine.convertIn(&call, v.from, v.to, v.input, v.context)) |out| {
+        return .{ .ok = true, .text = out };
+    } else |err| {
+        if (err == error.OutOfMemory) return err;
+        return .{ .ok = false, .text = call.last_error };
+    }
+}
+
+const Worker = struct {
+    engine: *const Engine,
+    vecs: []const TVec,
+    start: usize,
+    differ: *std.atomic.Value(usize),
+    done: *std.atomic.Value(usize),
+
+    fn run(self: *const Worker) void {
+        var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
+        defer arena.deinit();
+        const n = self.vecs.len;
+        for (0..3) |round| {
+            for (0..n) |i| {
+                // each thread its own order: a start and a direction
+                const j = if ((self.start + round) % 2 == 0) (self.start + i) % n else (self.start + n - i) % n;
+                const v = &self.vecs[j];
+                const got = runOne(self.engine, arena.allocator(), v) catch {
+                    _ = self.differ.fetchAdd(1, .monotonic);
+                    continue;
+                };
+                if (got.ok != v.ok or !std.mem.eql(u8, got.text, v.result)) {
+                    std.debug.print("thread {d}: {s}: differs from the single-threaded run\n", .{ self.start, v.name });
+                    _ = self.differ.fetchAdd(1, .monotonic);
+                }
+                _ = self.done.fetchAdd(1, .monotonic);
+                _ = arena.reset(.retain_capacity);
+            }
+        }
+    }
+};
+
+test "one engine converts on eight threads at once as it does alone" {
+    var arena = std.heap.ArenaAllocator.init(std.heap.page_allocator);
+    defer arena.deinit();
+    const alloc = arena.allocator();
+    var engine = Engine.init(alloc);
+    _ = try engine.loadPacksOnly("../../packs", "../../model", &thread_packs);
+
+    var vecs = std.ArrayList(TVec).init(alloc);
+    for (thread_packs) |pk| {
+        const vdir_path = try std.fmt.allocPrint(alloc, "../../packs/{s}/vectors", .{pk});
+        var dir = std.fs.cwd().openDir(vdir_path, .{ .iterate = true }) catch continue;
+        defer dir.close();
+        var it = dir.iterate();
+        while (try it.next()) |entry| {
+            if (entry.kind != .file or !std.mem.endsWith(u8, entry.name, ".json")) continue;
+            const text = try dir.readFileAlloc(alloc, entry.name, 64 << 20);
+            const parsed = try std.json.parseFromSliceLeaky(std.json.Value, alloc, text, .{});
+            const o = parsed.object;
+            const from = (o.get("from") orelse continue).string;
+            const to = (o.get("to") orelse continue).string;
+            if (engine.findPack(from) == null or engine.findPack(to) == null) continue;
+            var context: ?[]const KV = null;
+            if (o.get("context")) |cv| {
+                var kvs = std.ArrayList(KV).init(alloc);
+                var cit = cv.object.iterator();
+                while (cit.next()) |ce| try kvs.append(.{ .key = ce.key_ptr.*, .value = ce.value_ptr.*.string });
+                context = kvs.items;
+            }
+            const max_items: ?usize = if (o.get("max_items")) |mi| @intCast(mi.integer) else null;
+            var v = TVec{
+                .name = try std.fmt.allocPrint(alloc, "{s}/{s}", .{ pk, entry.name }),
+                .from = from,
+                .to = to,
+                .input = (o.get("input") orelse continue).string,
+                .context = context,
+                .max_items = max_items,
+            };
+            // the single-threaded run, checked against the vector
+            const got = try runOne(&engine, alloc, &v);
+            v.ok = got.ok;
+            v.result = got.text;
+            if (o.get("expect")) |want| {
+                try std.testing.expect(got.ok);
+                try std.testing.expectEqualStrings(want.string, got.text);
+            } else if (o.get("expect_error")) |want| {
+                try std.testing.expect(!got.ok);
+                try std.testing.expect(std.mem.startsWith(u8, got.text, want.string));
+                try std.testing.expectEqual(@as(u8, ':'), got.text[want.string.len]);
+            }
+            try vecs.append(v);
+        }
+    }
+    var failed: usize = 0;
+    for (vecs.items) |v| {
+        if (!v.ok) failed += 1;
+    }
+    // both kinds of result are exercised
+    try std.testing.expect(vecs.items.len > 100);
+    try std.testing.expect(failed > 0);
+
+    var differ = std.atomic.Value(usize).init(0);
+    var done = std.atomic.Value(usize).init(0);
+    const n_threads = 8;
+    var workers: [n_threads]Worker = undefined;
+    var threads: [n_threads]std.Thread = undefined;
+    for (0..n_threads) |t| {
+        workers[t] = .{ .engine = &engine, .vecs = vecs.items, .start = t * vecs.items.len / n_threads, .differ = &differ, .done = &done };
+        threads[t] = try std.Thread.spawn(.{}, Worker.run, .{&workers[t]});
+    }
+    for (threads) |th| th.join();
+    try std.testing.expectEqual(@as(usize, 0), differ.load(.monotonic));
+    try std.testing.expectEqual(n_threads * 3 * vecs.items.len, done.load(.monotonic));
 }

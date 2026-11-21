@@ -234,13 +234,15 @@ void decode_scalar_items(const Pack& p, const GroupLine& g, const Message& m, co
 // One scope's lines read from `msg`: the message, or an item's submessage.
 void decode_scope(const Pack& p, const std::vector<LineRef>& lines, Message& msg, Item& out) {
     Decoder d(p, out);
-    ProtobufLocator loc;
+    ProtobufLocator tmp;
+    const ProtobufLocator* locp = &tmp;
     for (const auto& line : lines) {
         if (line.group) {
             // Each occurrence of the last field number, in wire order. The list is
             // present when at least one item occurs.
             const GroupLine& g = *line.group;
-            parse_protobuf_locator(g.locator, loc);  // validated at pack load
+            protobuf_locator(p, g.locator, locp, tmp);  // validated at pack load
+            const ProtobufLocator& loc = *locp;
             Message* m = find_message(p, msg, loc.path, loc.path.size() - 1);
             if (!m) continue;
             auto it = m->occ.find(loc.path.back());
@@ -249,7 +251,8 @@ void decode_scope(const Pack& p, const std::vector<LineRef>& lines, Message& msg
             if (g.scalar) {
                 decode_scalar_items(p, g, *m, it->second, items);
             } else {
-                const std::vector<LineRef> body = group_lines(g);
+                std::vector<LineRef> body_tmp;
+                const std::vector<LineRef>& body = body_lines(p, g, body_tmp);
                 take_items(p, g.list, it->second.size());  // 0.11 ruling 7a
                 items.reserve(it->second.size());
                 for (std::size_t index : it->second) {
@@ -268,8 +271,8 @@ void decode_scope(const Pack& p, const std::vector<LineRef>& lines, Message& msg
         if (!line.field) continue;
         const FieldLine& f = *line.field;
         if (!d.wants(f) || f.locator == ".") continue;
-        parse_protobuf_locator(f.locator, loc);  // validated at pack load
-        if (const WireField* wf = find_leaf(p, msg, loc.path)) decode_leaf(d, f, *wf);
+        protobuf_locator(p, f.locator, locp, tmp);  // validated at pack load
+        if (const WireField* wf = find_leaf(p, msg, locp->path)) decode_leaf(d, f, *wf);
     }
     d.finish();
 }
@@ -398,7 +401,8 @@ void build_scope(const Pack& p, const std::vector<LineRef>& lines, const EncodeS
 std::string group_bytes(const Pack& p, const GroupLine& g, std::uint32_t num, const std::vector<Item>& items) {
     std::string out;
     if (!g.scalar) {
-        const std::vector<LineRef> body = group_lines(g);
+        std::vector<LineRef> body_tmp;
+        const std::vector<LineRef>& body = body_lines(p, g, body_tmp);
         for (const Item& item : items) {
             // An item with nothing written is an empty length-delimited occurrence.
             Node sub;
@@ -445,7 +449,8 @@ std::string group_bytes(const Pack& p, const GroupLine& g, std::uint32_t num, co
 
 // One scope's lines written into the encoding tree of the message, or of one item.
 void build_scope(const Pack& p, const std::vector<LineRef>& lines, const EncodeSource& src, Node& root) {
-    ProtobufLocator loc;
+    ProtobufLocator tmp;
+    const ProtobufLocator* locp = &tmp;
     Value v;
     // Groups first, in line order: an absent or empty list writes nothing.
     for (const auto& line : lines) {
@@ -453,7 +458,8 @@ void build_scope(const Pack& p, const std::vector<LineRef>& lines, const EncodeS
         const GroupLine& g = *line.group;
         const std::vector<Item>* items = src.list(g);
         if (!items || items->empty()) continue;
-        parse_protobuf_locator(g.locator, loc);  // validated at pack load
+        protobuf_locator(p, g.locator, locp, tmp);  // validated at pack load
+        const ProtobufLocator& loc = *locp;
         // A packed list with no value to write does not create its container either.
         std::string raw = group_bytes(p, g, loc.path.back(), *items);
         if (raw.empty()) continue;
@@ -475,8 +481,8 @@ void build_scope(const Pack& p, const std::vector<LineRef>& lines, const EncodeS
         // Only mapped fields that have a value are written, and the sentinel of an absent key (0.9).
         const bool present = src.value(f, v);
         if (!present && !f.has_absent) continue;
-        parse_protobuf_locator(f.locator, loc);  // validated at pack load
-        insert_field(p, root, loc.path, 0, f, present ? v : Value(), !present);
+        protobuf_locator(p, f.locator, locp, tmp);  // validated at pack load
+        insert_field(p, root, locp->path, 0, f, present ? v : Value(), !present);
     }
     // `when` and `const` values, so the output decodes as the same kind: an integer
     // is written as a varint over any field; `present` writes an empty
@@ -484,7 +490,8 @@ void build_scope(const Pack& p, const std::vector<LineRef>& lines, const EncodeS
     for (const auto& line : lines) {
         const WhenLine* w = line.fixed();
         if (!w) continue;
-        parse_protobuf_locator(w->locator, loc);
+        protobuf_locator(p, w->locator, locp, tmp);
+        const ProtobufLocator& loc = *locp;
         Node* n = &root;
         bool blocked = false;
         for (std::size_t k = 0; k < loc.path.size(); ++k) {
@@ -522,15 +529,17 @@ Entity decode_protobuf(const Pack& p, const std::string& bytes) {
     Message msg = parse_tree(p, hex_to_bytes(p, bytes));
 
     const Kind* kind = select_decode_kind(p, [&](const WhenLine& w) {
-        ProtobufLocator loc;
-        parse_protobuf_locator(w.locator, loc);  // validated at pack load
-        const WireField* wf = find_leaf(p, msg, loc.path, true);
+        ProtobufLocator tmp;
+        const ProtobufLocator* loc = nullptr;
+        protobuf_locator(p, w.locator, loc, tmp);  // validated at pack load
+        const WireField* wf = find_leaf(p, msg, loc->path, true);
         if (!wf) return false;
         return w.present || (wf->wt == 0 && w.holds_number(wf->scalar));
     });
 
     Entity e;
-    decode_scope(p, active_lines(p, kind), msg, e);
+    std::vector<LineRef> lines_tmp;
+    decode_scope(p, scope_lines(p, kind, lines_tmp), msg, e);
     if (kind) e.kind = {p.format, kind->name};
     return e;
 }
@@ -538,7 +547,8 @@ Entity decode_protobuf(const Pack& p, const std::string& bytes) {
 std::string encode_protobuf(const Pack& p, const Entity& e) {
     const Kind* kind = select_encode_kind(p, e);
     Node root;
-    build_scope(p, active_lines(p, kind), EncodeSource(p, kind, e), root);
+    std::vector<LineRef> lines_tmp;
+    build_scope(p, scope_lines(p, kind, lines_tmp), EncodeSource(p, kind, e), root);
     return bytes_to_hex(serialize(p, root));
 }
 

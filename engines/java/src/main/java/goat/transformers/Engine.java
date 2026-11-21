@@ -90,52 +90,111 @@ public final class Engine {
      * their {@code uses} lines name, and the modules those use in turn. A name is the pack's directory name, or
      * the format of a pack in the directory. A name that is neither is {@code unknown-format}; a module no file
      * of {@code modelsDir} declares is left to the pack's load, which reports {@code unknown-module}.
+     *
+     * <p>Each file is read once and each pack parsed once (ruling 1d of 0.25). A module is looked for first in
+     * {@code <modelsDir>/<module>.def}, the file shared-model.md names for it, so only the files of the modules
+     * needed are read. When one of them is missing, does not declare that module, or cannot be read as a module
+     * head, every file of {@code modelsDir} is read instead, as a directory loader does.
      */
     public static Engine loadOnly(Path packsDir, Path modelsDir, Distribution limit, Collection<String> names) {
-        Map<String, Path> byFormat = null;
-        List<String[]> packs = new ArrayList<>();   // {path, text}, in the order named, each once
-        List<String> seen = new ArrayList<>();
+        Map<String, String[]> byFormat = null;   // format to {path, text}, for the names that are no directory
+        List<Object[]> packs = new ArrayList<>();   // {path, Pack or the exception of its parse}, in the order named, each once
+        java.util.Set<String> seen = new java.util.HashSet<>();
         java.util.LinkedHashSet<String> needed = new java.util.LinkedHashSet<>();
         needed.add(ModelModule.CORE);
         for (String name : names) {
             Path def = name.isEmpty() || name.indexOf('/') >= 0 || name.indexOf('\\') >= 0 || name.startsWith(".")
                     ? null : packsDir.resolve(name).resolve("pack.def");
+            String text = null;
             if (def == null || !Files.isRegularFile(def)) {
-                if (byFormat == null) byFormat = packFormats(packsDir);
-                def = byFormat.get(name);
+                if (byFormat == null) byFormat = packFormats(packsDir, names);
+                String[] hit = byFormat.get(name);
+                def = hit == null ? null : Path.of(hit[0]);
+                text = hit == null ? null : hit[1];
             }
             if (def == null) {
                 throw new GtException(GtException.Code.UNKNOWN_FORMAT, name, null, "no pack named " + name + " in " + packsDir);
             }
-            if (seen.contains(def.toString())) continue;
-            seen.add(def.toString());
-            String text = read(def);
-            packs.add(new String[]{def.toString(), text});
-            needed.addAll(headValues(text, def.toString(), "uses"));
+            if (!seen.add(def.toString())) continue;
+            if (text == null) text = read(def);
+            // Parsed now, once; a parse failure is raised where the pack is loaded, after the modules, as before.
+            Object parsed;
+            try {
+                Pack p = Pack.parse(text, def.toString());
+                needed.addAll(p.uses);
+                parsed = p;
+            } catch (RuntimeException ex) {
+                needed.addAll(headValues(text, def.toString(), "uses"));
+                parsed = ex;
+            }
+            packs.add(new Object[]{def.toString(), parsed});
         }
         Engine e = new Engine();
         e.setMaxDistribution(limit);
         if (Files.isDirectory(modelsDir)) {
-            List<String[]> models = modelsInLoadOrder(modelsDir);
-            Map<String, List<String>> usesOf = new HashMap<>();
-            List<String> moduleOf = new ArrayList<>();
-            for (String[] m : models) {
-                List<String> head = ModelModule.nameAndUses(m[1], m[0]);
-                moduleOf.add(head.get(0));
-                if (head.get(0) != null) usesOf.putIfAbsent(head.get(0), head.subList(1, head.size()));
-            }
-            List<String> queue = new ArrayList<>(needed);
-            for (int i = 0; i < queue.size(); i++) {
-                for (String u : usesOf.getOrDefault(queue.get(i), Collections.emptyList())) {
-                    if (needed.add(u)) queue.add(u);
-                }
-            }
-            for (int i = 0; i < models.size(); i++) {
-                if (moduleOf.get(i) != null && needed.contains(moduleOf.get(i))) e.loadModel(models.get(i)[1], models.get(i)[0]);
-            }
+            for (String[] m : neededModels(modelsDir, needed)) e.loadModel(m[1], m[0]);
         }
-        for (String[] p : packs) e.loadPack(p[1], p[0]);
+        for (Object[] p : packs) {
+            if (p[1] instanceof RuntimeException) throw (RuntimeException) p[1];
+            e.add((Pack) p[1]);
+        }
         return e;
+    }
+
+    /**
+     * The module files that declare {@code needed} and the modules those use, as {@code {path, text}} in load order.
+     * Each module is read from {@code <modelsDir>/<module>.def}; when that fails for one of them, the files of the
+     * whole directory, in the order of {@link #modelsInLoadOrder}, restricted to the modules needed.
+     */
+    private static List<String[]> neededModels(Path modelsDir, java.util.Set<String> needed) {
+        Map<String, String> read = new HashMap<>();   // path to text: no file is read twice
+        List<String[]> files = new ArrayList<>();
+        List<List<String>> heads = new ArrayList<>();
+        java.util.LinkedHashSet<String> closure = new java.util.LinkedHashSet<>(needed);
+        List<String> queue = new ArrayList<>(closure);
+        boolean direct = true;
+        for (int i = 0; i < queue.size() && direct; i++) {
+            String module = queue.get(i);
+            Path def = module.isEmpty() || module.indexOf('/') >= 0 || module.indexOf('\\') >= 0 || module.startsWith(".")
+                    ? null : modelsDir.resolve(module + ".def");
+            if (def == null || !Files.isRegularFile(def)) {
+                direct = false;
+                break;
+            }
+            String text = read(def);
+            read.put(def.toString(), text);
+            List<String> head;
+            try {
+                head = ModelModule.nameAndUses(text, def.toString());
+            } catch (GtException ex) {
+                direct = false;   // the directory loader reports it, in its order
+                break;
+            }
+            if (!module.equals(head.get(0))) {
+                direct = false;
+                break;
+            }
+            files.add(new String[]{def.toString(), text});
+            heads.add(head);
+            for (String u : head.subList(1, head.size())) if (closure.add(u)) queue.add(u);
+        }
+        if (direct) return inLoadOrder(files, heads);
+        List<String[]> all = modelsInLoadOrder(modelsDir, read);
+        Map<String, List<String>> usesOf = new HashMap<>();
+        List<String> moduleOf = new ArrayList<>();
+        for (String[] m : all) {
+            List<String> head = ModelModule.nameAndUses(m[1], m[0]);
+            moduleOf.add(head.get(0));
+            if (head.get(0) != null) usesOf.putIfAbsent(head.get(0), head.subList(1, head.size()));
+        }
+        java.util.LinkedHashSet<String> want = new java.util.LinkedHashSet<>(needed);
+        List<String> q = new ArrayList<>(want);
+        for (int i = 0; i < q.size(); i++) {
+            for (String u : usesOf.getOrDefault(q.get(i), Collections.emptyList())) if (want.add(u)) q.add(u);
+        }
+        List<String[]> out = new ArrayList<>();
+        for (int i = 0; i < all.size(); i++) if (moduleOf.get(i) != null && want.contains(moduleOf.get(i))) out.add(all.get(i));
+        return out;
     }
 
     private static String read(Path file) {
@@ -162,9 +221,13 @@ public final class Engine {
         return out;
     }
 
-    /** The {@code pack.def} of each format under {@code packsDir}; the first in byte order of path wins a repeated format. */
-    private static Map<String, Path> packFormats(Path packsDir) {
-        Map<String, Path> out = new HashMap<>();
+    /**
+     * The {@code pack.def} of each format of {@code wanted} under {@code packsDir}, as {@code {path, text}}; the first
+     * in byte order of path wins a repeated format. Every pack is read once; only the texts of formats wanted are kept.
+     */
+    private static Map<String, String[]> packFormats(Path packsDir, Collection<String> wanted) {
+        java.util.Set<String> want = new java.util.HashSet<>(wanted);
+        Map<String, String[]> out = new HashMap<>();
         List<Path> dirs = new ArrayList<>();
         try (Stream<Path> s = Files.list(packsDir)) {
             s.sorted().forEach(dirs::add);
@@ -174,8 +237,9 @@ public final class Engine {
         for (Path d : dirs) {
             Path def = d.resolve("pack.def");
             if (!Files.isRegularFile(def)) continue;
-            List<String> f = headValues(read(def), def.toString(), "format");
-            if (!f.isEmpty()) out.putIfAbsent(f.get(0), def);
+            String text = read(def);
+            List<String> f = headValues(text, def.toString(), "format");
+            if (!f.isEmpty() && want.contains(f.get(0))) out.putIfAbsent(f.get(0), new String[]{def.toString(), text});
         }
         return out;
     }
@@ -183,35 +247,52 @@ public final class Engine {
     /**
      * The module files of {@code modelsDir} as {@code {path, text}}, in the order a directory loader loads them:
      * {@code core.def} first, then byte order of file name, each module after the modules its {@code uses} lines
-     * name. A cycle of {@code uses} lines is {@code bad-directive}.
+     * name. A cycle of {@code uses} lines is {@code bad-directive}. Each file is read once.
      */
-    public static List<String[]> modelsInLoadOrder(Path modelsDir) {
+    public static List<String[]> modelsInLoadOrder(Path modelsDir) { return modelsInLoadOrder(modelsDir, Collections.emptyMap()); }
+
+    /** As {@link #modelsInLoadOrder(Path)}; a file whose path {@code read} holds is not read again. */
+    private static List<String[]> modelsInLoadOrder(Path modelsDir, Map<String, String> read) {
         List<Path> files = new ArrayList<>();
         try (Stream<Path> s = Files.list(modelsDir)) {
             s.filter(p -> p.getFileName().toString().endsWith(".def") && Files.isRegularFile(p)).forEach(files::add);
         } catch (IOException ex) {
             throw new UncheckedIOException("cannot list model modules in " + modelsDir, ex);
         }
-        files.sort((a, b) -> Arrays.compareUnsigned(
-                a.getFileName().toString().getBytes(StandardCharsets.UTF_8),
-                b.getFileName().toString().getBytes(StandardCharsets.UTF_8)));
-        // core.def is loaded first whatever its name sorts as (ruling 9 of 0.6): other modules derive from its keys.
-        for (int i = 1; i < files.size(); i++) {
-            if (files.get(i).getFileName().toString().equals("core.def")) files.add(0, files.remove(i));
-        }
         List<String[]> texts = new ArrayList<>();
         List<List<String>> heads = new ArrayList<>();
-        Map<String, Integer> byModule = new HashMap<>();
         for (Path def : files) {
-            String text;
-            try {
-                text = Files.readString(def, StandardCharsets.UTF_8);
-            } catch (IOException ex) {
-                throw new UncheckedIOException("cannot read " + def, ex);
-            }
-            List<String> head = ModelModule.nameAndUses(text, def.toString());
-            if (head.get(0) != null) byModule.putIfAbsent(head.get(0), texts.size());
+            String text = read.get(def.toString());
+            if (text == null) text = read(def);
             texts.add(new String[]{def.toString(), text});
+        }
+        sortModelFiles(texts);
+        for (String[] t : texts) heads.add(ModelModule.nameAndUses(t[1], t[0]));
+        return inLoadOrder(texts, heads);
+    }
+
+    /** Byte order of file name, then {@code core.def} first whatever its name sorts as (ruling 9 of 0.6). */
+    private static void sortModelFiles(List<String[]> texts) {
+        texts.sort((a, b) -> Arrays.compareUnsigned(
+                Path.of(a[0]).getFileName().toString().getBytes(StandardCharsets.UTF_8),
+                Path.of(b[0]).getFileName().toString().getBytes(StandardCharsets.UTF_8)));
+        for (int i = 1; i < texts.size(); i++) {
+            if (Path.of(texts.get(i)[0]).getFileName().toString().equals("core.def")) texts.add(0, texts.remove(i));
+        }
+    }
+
+    /** Module files {@code {path, text}} with their heads, placed each after the modules its uses lines name. */
+    private static List<String[]> inLoadOrder(List<String[]> unsorted, List<List<String>> unsortedHeads) {
+        // the heads follow their files through the sort
+        Map<String[], List<String>> headOf = new java.util.IdentityHashMap<>();
+        for (int i = 0; i < unsorted.size(); i++) headOf.put(unsorted.get(i), unsortedHeads.get(i));
+        List<String[]> texts = new ArrayList<>(unsorted);
+        sortModelFiles(texts);
+        List<List<String>> heads = new ArrayList<>();
+        Map<String, Integer> byModule = new HashMap<>();
+        for (String[] t : texts) {
+            List<String> head = headOf.get(t);
+            if (head.get(0) != null) byModule.putIfAbsent(head.get(0), heads.size());
             heads.add(head);
         }
         List<String[]> out = new ArrayList<>();

@@ -158,8 +158,8 @@ pub(crate) fn write(msg: &[u8], l: u64) -> String {
 /// field with `absent` whose key is absent writes its first sentinel, so it
 /// counts, optional or not (ruling 12 of 0.14).
 #[cfg(feature = "bits")]
-pub(crate) fn fixed_len(p: &Pack, sel: &Sel, ent: &Entity) -> Result<u64, Error> {
-    let mut end = bits::group_reach(p, sel, ent, 0)?;
+pub(crate) fn fixed_len(p: &Pack, lay: &Layout, sel: &Sel, ent: &Entity) -> Result<u64, Error> {
+    let mut end = bits::group_reach(p, lay, sel, ent, 0)?;
     for f in &sel.fields {
         // an `optional` field that writes nothing: its key absent with no
         // default and no sentinel, or the line suppressed by `with`, which
@@ -168,11 +168,11 @@ pub(crate) fn fixed_len(p: &Pack, sel: &Sel, ent: &Entity) -> Result<u64, Error>
         if f.optional && (suppressed || (f.absent.is_empty() && sel.value_of(ent, f).is_none())) {
             continue;
         }
-        let (start, len) = span(p, &f.locator)?;
+        let (start, len) = span(p, lay, &f.locator)?;
         end = end.max(start + len as u64);
     }
     for w in sel.fixed() {
-        let (start, len) = span(p, &w.locator)?;
+        let (start, len) = span(p, lay, &w.locator)?;
         end = end.max(start + len as u64);
     }
     Ok(end)
