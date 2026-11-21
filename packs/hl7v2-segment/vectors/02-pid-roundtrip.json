@@ -1,0 +1,16 @@
+{
+  "name": "pid-roundtrip",
+  "from": "hl7v2-segment",
+  "to": "hl7v2-segment",
+  "input": "PID|1||12345^^^HOSP^MR||DOE^JOHN||19700101|M",
+  "expect": "PID|1||12345^^^HOSP^MR||DOE^JOHN||19700101|M",
+  "model": {
+    "@kind": "pid",
+    "hl7v2.pid_1_set_id_pid": "1",
+    "hl7v2.pid_3_patient_identifier_list": "12345^^^HOSP^MR",
+    "hl7v2.pid_5_patient_name": "DOE^JOHN",
+    "hl7v2.pid_7_date_time_of_birth": "19700101",
+    "hl7v2.pid_8_administrative_sex": "M"
+  },
+  "source": "built by tools/gen/health-vectors.py from values chosen there; layout restated from hl7apy v2_5 fields.py and segments.py; an invented patient; expect derived there, no engine run"
+}

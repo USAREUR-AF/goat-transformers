@@ -1,0 +1,5 @@
+Packs dicom-part10; module dicom
+  pydicom, https://github.com/pydicom/pydicom at commit
+  6c8881341bee6b438b4cbd0e1a5391774d7919e6, src/pydicom/filereader.py and
+  valuerep.py. MIT License, Copyright (c) 2008-2020 Darcy Mason and pydicom
+  contributors. Layouts restated; no text copied.

@@ -1,0 +1,8 @@
+{
+  "name": "Health data (HL7 v2 segments, DICOM files)",
+  "domain": "networks",
+  "exact": [
+    "hl7v2-segment",
+    "dicom-part10"
+  ]
+}
