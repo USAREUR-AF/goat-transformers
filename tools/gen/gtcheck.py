@@ -8,7 +8,8 @@ spec/engine-spec.md (Versions 0.1 to 0.10, 0.13, 0.14, the gate blocks of 0.17, 
 the kind selection of 0.20: `when` lists and ranges, `requires <key>=<value>`
 and `switch` blocks, and the sequential extents and counts of 0.21: `group
 <list> rest`, `group <list> last`, `count <name> <len> [plus <n>]` with
-`group <list> count @<name>`, and the long and terminated fields of 0.22:
+`group <list> count @<name>` (two names, `count @<a> @<b>`, from 0.31), and
+the long and terminated fields of 0.22:
 the `hex` transform, the set `ascii8`, the locator `until:<code>`, the field
 option `stop <code>` and `bit_order msb-lsb`) and imports no engine, so a generator
 stays independent of the engines it writes packs for.
@@ -689,7 +690,7 @@ class Node:
     __slots__ = ("d", "line", "args", "body", "kinds", "key", "loc", "tr", "targs", "via",
                  "opts", "also", "value", "mode", "count", "item", "conds", "name", "bits",
                  "unit", "plus", "whole", "start", "path", "absent", "fields", "col", "size", "gate", "with_", "uper",
-                 "values", "ranges", "until", "stop", "as_key")
+                 "values", "ranges", "until", "stop", "as_key", "names")
 
     def __init__(self, d, line, args):
         self.d, self.line, self.args = d, line, args
@@ -700,6 +701,7 @@ class Node:
         self.values = self.ranges = None
         self.until = self.stop = None
         self.as_key = None          # spec 0.30: the key of `when ... as <key>`
+        self.names = None           # spec 0.31: the count names of `group <list> count @<a> [@<b>]`
 
     def __repr__(self):
         return "<%s line %d: %s>" % (self.d, self.line, " ".join(self.args))
@@ -1806,13 +1808,14 @@ class _Loader:
     def _count_ref(self, node, visible):
         """`group <list> count @<name>` (spec 0.21): the name is a count
         visible here, declared in the same group body (ruling 9), not a
-        presence (ruling 15)."""
+        presence (ruling 15). With two names (spec 0.31) each is checked so."""
         frames = visible[self._body_base:]
-        size = next((frame[node.name] for frame in reversed(frames) if node.name in frame), None)
-        if size is None:
-            self.bad(node, "`count @%s`: no count of that name is visible in this group body" % node.name)
-        if size != "count":
-            self.bad(node, "`count @%s` names a presence (0.21 ruling 15)" % node.name)
+        for name in node.names:
+            size = next((frame[name] for frame in reversed(frames) if name in frame), None)
+            if size is None:
+                self.bad(node, "`count @%s`: no count of that name is visible in this group body" % name)
+            if size != "count":
+                self.bad(node, "`count @%s` names a presence (0.21 ruling 15)" % name)
 
     def _if(self, node, visible):
         if not node.args:
@@ -1936,10 +1939,15 @@ class _Loader:
                             or int(rest[1]) > int(rest[2]):
                         self.bad(node, "`size <lb> <ub>` needs 0 <= lb <= ub < 65536")
                     node.count = (int(rest[1]), int(rest[2]))
-            elif len(rest) == 2 and rest[0] == "count" and rest[1].startswith("@") \
-                    and _COUNT_NAME.match(rest[1][1:]):
-                # spec 0.21: the items a count line of the same body names
-                node.mode, node.name = "ref", rest[1][1:]
+            elif len(rest) in (2, 3) and rest[0] == "count" \
+                    and all(t.startswith("@") and _COUNT_NAME.match(t[1:]) for t in rest[1:]) \
+                    and len(set(rest[1:])) == len(rest) - 1:
+                # spec 0.21: the items a count line of the same body names;
+                # spec 0.31: or two count lines, which must agree (the same
+                # name twice, a third name or a token that is not `@<name>`
+                # is `bad-directive`)
+                node.names = tuple(t[1:] for t in rest[1:])
+                node.mode, node.name = "ref", node.names[0]
             else:
                 self.bad(node, "a sequential group is `count <len>` (1 to 64 bits), `count @<name>`, `while`, "
                                "`more`, `fx`, `rest` or `last`, one of them%s" % (" or `size [<lb> <ub>]`" if pack.uper else ""))
@@ -2033,13 +2041,14 @@ class _Loader:
     def _refs(self, lines, name):
         """The numbers of `count @<name>` groups over the reading paths of
         `lines` (2 standing for two or more); a group body is not entered and a
-        nested block that declares the name again hides it to its end."""
+        nested block that declares the name again hides it to its end. A group
+        with two names (spec 0.31 ruling 3) is one reference to each."""
         got = {0}
         for node in lines:
             if node.d in ("count", "presence") and node.name == name:
                 break
             if node.d == "group":
-                add = {1} if node.mode == "ref" and node.name == name else {0}
+                add = {1} if node.mode == "ref" and name in node.names else {0}
             elif node.d == "switch":
                 add = set().union(*(self._refs(arm.body, name) for arm in node.body))
             elif node.body:

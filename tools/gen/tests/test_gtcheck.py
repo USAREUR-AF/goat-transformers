@@ -532,6 +532,11 @@ V011_ORDER = {"580", "667", "668", "1003", "1004", "1077", "1078", "1079"}  # ru
 # Ruling 16 of 0.30: the syntax of `when ... as` is checked after the file, so a
 # later `bogus` line gives `unknown-directive`; gtcheck refuses `bogus` as `bad-directive`.
 V011_ORDER |= {"3050", "3051", "3052", "3053"}
+# Ruling 7 of 0.31: the 0.31 load errors are checked after the file, so a later
+# `bogus` line gives `unknown-directive` (3132-3138); on protobuf the group step
+# `count` stays `bad-locator` at its own line (3128, 3131, as ruling 44 of 0.21).
+# gtcheck names neither kind and gives `bad-directive`.
+V011_ORDER |= {"3128", "3131", "3132", "3133", "3134", "3135", "3136", "3137", "3138"}
 # And the UPER vectors of rulings 23-26 of 0.19 that pin the 0.11 order.
 V011_TLV |= {"wire-uper-58", "wire-uper-61", "wire-uper-48", "wire-uper-50", "wire-uper-52", "wire-uper-53", "wire-uper-54", "wire-uper-55", "wire-uper-56", "wire-uper-57"}
 
