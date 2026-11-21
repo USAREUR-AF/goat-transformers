@@ -1,0 +1,15 @@
+{
+  "name": "read-write-multiple-registers",
+  "from": "modbus-tcp-request",
+  "to": "modbus-tcp-request",
+  "input": "000800000011011700030006000e00030600ff00ff00ff",
+  "expect": "000800000011011700030006000e00030600ff00ff00ff",
+  "model": {
+    "modbus.read_start": "3",
+    "modbus.read_quantity": "6",
+    "modbus.write_start": "14",
+    "modbus.write_quantity": "3",
+    "modbus.write_registers.#": "3"
+  },
+  "source": "built by tools/gen/modbus-vectors.py from values chosen there; layout restated from the MODBUS Application Protocol V1.1b3 section 6 and the MODBUS Messaging on TCP/IP Implementation Guide V1.0b section 3.1; expect derived there, no engine run; read 6 and write 3 registers"
+}

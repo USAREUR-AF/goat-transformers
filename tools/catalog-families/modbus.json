@@ -1,0 +1,8 @@
+{
+  "name": "Modbus",
+  "domain": "iot",
+  "prefixes": [
+    "modbus-"
+  ],
+  "detail": "TCP and RTU, requests and responses"
+}

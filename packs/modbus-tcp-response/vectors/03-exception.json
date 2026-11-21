@@ -1,0 +1,12 @@
+{
+  "name": "exception",
+  "from": "modbus-tcp-response",
+  "to": "modbus-tcp-response",
+  "input": "000300000003018302",
+  "expect": "000300000003018302",
+  "model": {
+    "modbus.function_code": "131",
+    "modbus.exception_code": "2"
+  },
+  "source": "built by tools/gen/modbus-vectors.py from values chosen there; layout restated from the MODBUS Application Protocol V1.1b3 section 6 and the MODBUS Messaging on TCP/IP Implementation Guide V1.0b section 3.1; expect derived there, no engine run; exception response to function 3: illegal data address"
+}

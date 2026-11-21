@@ -1,0 +1,13 @@
+{
+  "name": "mask-write-register",
+  "from": "modbus-tcp-request",
+  "to": "modbus-tcp-request",
+  "input": "0007000000080116000400f20025",
+  "expect": "0007000000080116000400f20025",
+  "model": {
+    "modbus.register_address": "4",
+    "modbus.and_mask": "242",
+    "modbus.or_mask": "37"
+  },
+  "source": "built by tools/gen/modbus-vectors.py from values chosen there; layout restated from the MODBUS Application Protocol V1.1b3 section 6 and the MODBUS Messaging on TCP/IP Implementation Guide V1.0b section 3.1; expect derived there, no engine run; mask write register 4"
+}

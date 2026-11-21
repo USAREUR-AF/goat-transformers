@@ -1,0 +1,12 @@
+{
+  "name": "user-function-code",
+  "from": "modbus-tcp-request",
+  "to": "modbus-tcp-request",
+  "input": "000b000000050141010203",
+  "expect": "000b000000050141010203",
+  "model": {
+    "modbus.function_code": "65",
+    "modbus.pdu_data.#": "3"
+  },
+  "source": "built by tools/gen/modbus-vectors.py from values chosen there; layout restated from the MODBUS Application Protocol V1.1b3 section 6 and the MODBUS Messaging on TCP/IP Implementation Guide V1.0b section 3.1; expect derived there, no engine run; function code 65 (user defined), its data as octets"
+}

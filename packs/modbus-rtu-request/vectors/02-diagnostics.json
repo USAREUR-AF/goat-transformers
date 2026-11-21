@@ -1,0 +1,12 @@
+{
+  "name": "diagnostics",
+  "from": "modbus-rtu-request",
+  "to": "modbus-rtu-request",
+  "input": "01080000a537da8d",
+  "expect": "01080000a537da8d",
+  "model": {
+    "modbus.sub_function": "0",
+    "modbus.diagnostic_data": "42295"
+  },
+  "source": "built by tools/gen/modbus-vectors.py from values chosen there; layout restated from the MODBUS Application Protocol V1.1b3 section 6 and MODBUS over Serial Line V1.02 section 2.5 and Appendix B; expect derived there, no engine run; diagnostics, return query data"
+}

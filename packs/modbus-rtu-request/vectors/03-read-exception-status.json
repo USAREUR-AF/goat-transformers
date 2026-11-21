@@ -1,0 +1,11 @@
+{
+  "name": "read-exception-status",
+  "from": "modbus-rtu-request",
+  "to": "modbus-rtu-request",
+  "input": "010741e2",
+  "expect": "010741e2",
+  "model": {
+    "modbus.function_code": "7"
+  },
+  "source": "built by tools/gen/modbus-vectors.py from values chosen there; layout restated from the MODBUS Application Protocol V1.1b3 section 6 and MODBUS over Serial Line V1.02 section 2.5 and Appendix B; expect derived there, no engine run; read exception status, no data"
+}
