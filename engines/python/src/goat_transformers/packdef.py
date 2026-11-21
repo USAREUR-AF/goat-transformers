@@ -27,6 +27,10 @@ if "tlv" in BUILD_WIRES:
     from . import wire_tlv
 
 WIRES = ("xml", "geojson", "json", "bits", "protobuf", "text", "tlv")  # the wires of the specification
+# The checksum names of `checksum <name> <tag>` (0.13 and 0.27). The line
+# check reads them on every wire (ruling 2 of 0.27), so they live here and not
+# only in `wire_tlv`, which a build without the tlv wire leaves out (0.24).
+CHECKSUMS = ("sum16", "crc32")
 BIT_ORDERS = ("lsb", "msb", "msb-lsb")  # `msb-lsb`: 0.22
 DISTRIBUTIONS = ("public", "controlled")  # public is below controlled
 CORE = "core"
@@ -609,7 +613,7 @@ def line_head(raw, source, lineno, seen, directives=PACK_DIRECTIVES, arg_counts=
         raise UnknownDirective("unknown directive %r at %s" % (kw, where), format=fmt)
     lo, hi = arg_counts[kw]
     if (len(args) < lo or (hi is not None and len(args) > hi)
-            or (kw == "checksum" and len(args) == 2 and args[0] not in wire_tlv.CHECKSUMS)):
+            or (kw == "checksum" and len(args) == 2 and args[0] not in CHECKSUMS)):
         # ruling 12 of 0.13, ruling 2 of 0.27
         want = "%d" % lo if lo == hi else "%d or more" % lo if hi is None else "%d to %d" % (lo, hi)
         raise BadDirective(
