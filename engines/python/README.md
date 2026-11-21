@@ -233,15 +233,15 @@ every converted pair with the full build. It prints the sizes and exits 1 on
 any failure. `--wires <set>` checks another set the same way.
 
 One run on 2026-11-21: 1713 packs loaded; 8374 of the 23610 conversion
-vectors run, 8374 passed; 393 load vectors run, 393 passed; the six
+vectors run, 8374 passed; 394 load vectors run, 394 passed; the six
 `unknown-wire` loads and the load of `wire morse` as specified; `model_keys`
 of 1713 formats and the capability report of 192 pairs the same in both
 builds. Sizes:
 
 | Build | Wheel | Package source |
 |---|---|---|
-| all eight wires | 166119 bytes | 587918 bytes, 25 modules |
-| `xml`, `json`, `geojson` | 89698 bytes (54%) | 310236 bytes, 16 modules |
+| all eight wires | 166235 bytes | 588298 bytes, 25 modules |
+| `xml`, `json`, `geojson` | 89815 bytes (54%) | 310616 bytes, 16 modules |
 
 ## Parse once, and the benchmark
 
@@ -284,7 +284,7 @@ It loads every pack and model module. One run on 2026-11-21 gave
 
 | Test file | Covers |
 |---|---|
-| `test_vectors.py` | every conversion vector of every pack (23610, all passed), with its `max_items` and its `model` values read by the grammar of their key's type; every load vector, with `pack` or `packs` (1399, all passed); every capability vector (18, all passed) |
+| `test_vectors.py` | every conversion vector of every pack (23610, all passed), with its `max_items` and its `model` values read by the grammar of their key's type; every load vector, with `pack` or `packs` (1402, all passed); every capability vector (18, all passed) |
 | `test_malformed.py` | the input of every conversion vector cut and changed (139556 damaged inputs from 23607 vectors over 4528 packs, none raised anything but a named error); rulings 35 to 39; on the `cbor` wire (0.28) random bytes, deep nesting through arrays, maps and tags, huge declared lengths, unending indefinite items and hostile residue on encode |
 | `test_bits.py`, `test_kinds.py`, `test_rules.py`, `test_groups.py`, `test_seq.py`, `test_rulings08.py`, `test_engine.py` | the bits wire, kinds and the json wire, mapping rules, groups, sequential layouts, rulings 16 to 30 of 0.8, `packs_only`, grammar and residue, the exit status of the tool; the `iso8601_s` transform of Version 0.26 (whole seconds written, milliseconds dropped; valid on `xml`, `geojson`, `json` and `text` only, no parameter, an `int` key only) |
 | `test_whenas30.py` | Version 0.30, what `convert` cannot reach: a kind or item kind recorded on the entity skips the implicit term, writes the held value or the first listed value, and is `transform-encode` for a held value its `when` does not match (ruling 25); a 64-bit label with the top bit set decodes negative and encodes back (ruling 7); `when 8 1 as as` is `bad-directive` (ruling 31) |

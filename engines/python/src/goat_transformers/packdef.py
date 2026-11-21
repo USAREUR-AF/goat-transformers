@@ -1843,6 +1843,7 @@ def parse_pack_text(text, *, source="pack.def"):
     value_checks = []
     via_fields = []
     deferred = []        # (lineno, BadDirective)
+    late_errors = []     # 0.33 ruling 30: `at` on a pack that is not sequential, in line order
     elements = []        # (Element, the Kind holding it or None) (0.18)
     root = None
     current = None       # the Kind being read, None before the first `kind`
@@ -2072,10 +2073,14 @@ def parse_pack_text(text, *, source="pack.def"):
                 (current.lines if current is not None else common).append(el)
                 elements.append((el, current))
             elif kw == "when" or kw == "const":
-                if len(args) > 2:  # 0.30: `as` (let through by `line_head`) needs `layout sequential`
-                    deferred.append((lineno, BadDirective(
-                        "'%s' on a 'when' of a pack that is not 'layout sequential', at %s" % (args[2], where), format=fmt,
-                        locator=args[0])))
+                if len(args) > 2:  # 0.30 `as`, 0.33 `at` (let through by `line_head`) need `layout sequential`
+                    err = BadDirective(
+                        "'%s' on a 'when' of a pack that is not 'layout sequential', at %s"
+                        % ("at" if "at" in args[2:] else "as", where), format=fmt, locator=args[0])
+                    if "at" in args[2:]:  # 0.33 ruling 30: an `at` error, raised by `Engine.add` (rulings 10, 14)
+                        late_errors.append(err)
+                    else:
+                        deferred.append((lineno, err))
                 if kw == "when" and first_when is None:
                     first_when = (lineno, args[0])
                 w = _resolve_when(wire, fmt, args[0], args[1], source, lineno, deferred, directive=kw,
@@ -2217,7 +2222,7 @@ def parse_pack_text(text, *, source="pack.def"):
         distribution=distribution, sources=sources, uses=uses, defaults=defaults, tables=tables,
         delimiter=delimiter, start=text_values.get("start"), checksum=text_values.get("checksum", "none"),
         armor=armor_value,
-        gates=common_gates, value_checks=value_checks,
+        gates=common_gates, value_checks=value_checks, late_errors=late_errors,
     )
     if wire == "tlv":
         pack.tlv_tag = tlv.get("tag", ("ber-oid",))[0]
