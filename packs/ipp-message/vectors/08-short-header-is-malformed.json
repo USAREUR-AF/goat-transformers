@@ -1,0 +1,8 @@
+{
+  "name": "short-header-is-malformed",
+  "from": "ipp-message",
+  "to": "ipp-message",
+  "input": "010100",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/printing-vectors.py from values chosen there; layout restated from RFC 8010 section 3; three octets, the header has eight; expect derived there, no engine run"
+}

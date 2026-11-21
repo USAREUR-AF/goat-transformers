@@ -1,0 +1,8 @@
+{
+  "name": "integer-without-value-gains-four-zero-octets",
+  "from": "ipp-message",
+  "to": "ipp-message",
+  "input": "0101000b000000040121000161000003",
+  "expect": "0101000b00000004012100016100040000000003",
+  "source": "built by tools/gen/printing-vectors.py from values chosen there; layout restated from RFC 8010 section 3; an integer tag with value length 0 (the encoding requires 4): the absent value is written as four zero octets (ruling 7 of 0.8); expect derived there, no engine run"
+}

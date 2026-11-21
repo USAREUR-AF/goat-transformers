@@ -1,0 +1,14 @@
+{
+  "name": "parameters-roundtrip",
+  "from": "lpd-control-file",
+  "to": "lpd-control-file",
+  "input": "48680a50700a49380a573133320a54517561727465726c7920666967757265730a4d616c6963650a532032303439203133313037340a6f66696c652e70730a",
+  "expect": "48680a50700a49380a573133320a54517561727465726c7920666967757265730a4d616c6963650a532032303439203133313037340a6f66696c652e70730a",
+  "model": {
+    "lpd.lines[2].lpd.indent": "8",
+    "lpd.lines[3].lpd.width": "132",
+    "lpd.lines[4].lpd.title": "Quarterly figures",
+    "lpd.lines[6].lpd.symlink_data": " 2049 131074"
+  },
+  "source": "built by tools/gen/printing-vectors.py from values chosen there; layout restated from RFC 1179 section 7; indent, width, title with a space, mail, symbolic link data, a PostScript file; expect derived there, no engine run"
+}

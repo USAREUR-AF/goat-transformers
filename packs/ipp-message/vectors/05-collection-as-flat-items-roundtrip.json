@@ -1,0 +1,13 @@
+{
+  "name": "collection-as-flat-items-roundtrip",
+  "from": "ipp-message",
+  "to": "ipp-message",
+  "input": "0101000000000003023400096d656469612d636f6c00004a0000000f6d656469612d73697a652d6e616d65440000001069736f5f61345f323130783239376d6d370000000003",
+  "expect": "0101000000000003023400096d656469612d636f6c00004a0000000f6d656469612d73697a652d6e616d65440000001069736f5f61345f323130783239376d6d370000000003",
+  "model": {
+    "ipp.items[1].ipp.tag": "52",
+    "ipp.items[2].ipp.tag": "74",
+    "ipp.items[4].ipp.tag": "55"
+  },
+  "source": "built by tools/gen/printing-vectors.py from values chosen there; layout restated from RFC 8010 section 3.1.6; a collection: begCollection, a member name and value, endCollection, each one item; expect derived there, no engine run"
+}

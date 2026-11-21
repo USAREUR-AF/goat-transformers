@@ -1,0 +1,15 @@
+{
+  "name": "fonts-reserved-and-other-roundtrip",
+  "from": "lpd-control-file",
+  "to": "lpd-control-file",
+  "input": "3174696d65732e720a3274696d65732e690a3374696d65732e620a347370656369616c0a74646641303031680a6b7469636b65740a7a780a586f746865720a",
+  "expect": "3174696d65732e720a3274696d65732e690a3374696d65732e620a347370656369616c0a74646641303031680a6b7469636b65740a7a780a586f746865720a",
+  "model": {
+    "lpd.lines[0].lpd.font_file": "times.r",
+    "lpd.lines[4].lpd.print_file": "dfA001h",
+    "lpd.lines[5].lpd.operand": "ticket",
+    "lpd.lines[7].lpd.command": "88",
+    "lpd.lines[7].lpd.operand": "other"
+  },
+  "source": "built by tools/gen/printing-vectors.py from values chosen there; layout restated from RFC 1179 section 7; the four troff font lines, a troff file, the reserved k and z, and a character the RFC does not define; expect derived there, no engine run"
+}

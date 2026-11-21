@@ -1,0 +1,8 @@
+{
+  "name": "control-file-without-name-is-malformed",
+  "from": "lpd-subcommand",
+  "to": "lpd-subcommand",
+  "input": "0234370a",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/printing-vectors.py from values chosen there; layout restated from RFC 1179 section 6; the count is not followed by a space and a name; expect derived there, no engine run"
+}

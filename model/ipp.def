@@ -1,0 +1,24 @@
+# The ipp module: IPP/1.1 binary encoding fields (RFC 8010). Written by tools/gen/printing-pack.py.
+module        ipp
+version       0.1.0
+distribution  public
+source        "IETF RFC 8010, Internet Printing Protocol/1.1: Encoding and Transport, January 2017, sections 3.1-3.10, https://www.rfc-editor.org/rfc/rfc8010.txt; RFC 8011 section 5.1.16 for the resolution units, https://www.rfc-editor.org/rfc/rfc8011.txt; layout restated"
+key   version_major          int     -  "major version number (1 for IPP/1.1)"
+key   version_minor          int     -  "minor version number"
+key   operation_or_status    int     -  "a request's operation-id or a response's status-code (the encoding does not say which; the transport does)"
+key   request_id             int     -  "request-id, chosen by the client and echoed in the response"
+list  items                  "the delimiter tags and attributes in message order"
+key   tag                    int     -  "the item's first octet: 0x00-0x0f a delimiter tag (1 operation, 2 job, 3 end of attributes, 4 printer, 5 unsupported attributes), 0x10-0xff an attribute's value tag"
+list  name                   "the attribute name, as octets (empty for an additional value of the attribute before it)"
+key   integer                int     -  "value of an integer (0x21) or enum (0x23) attribute"
+key   boolean                int     -  "value of a boolean attribute (0x22): 0 false, 1 true"
+key   cross_feed_resolution  int     -  "resolution (0x32): cross-feed direction resolution"
+key   feed_resolution        int     -  "resolution (0x32): feed direction resolution"
+key   resolution_units       int     -  "resolution (0x32): the units value (3 dots per inch, 4 dots per centimetre, RFC 8011 section 5.1.16)"
+key   range_lower            int     -  "rangeOfInteger (0x33): lower bound"
+key   range_upper            int     -  "rangeOfInteger (0x33): upper bound"
+list  language               "textWithLanguage or nameWithLanguage (0x35, 0x36): the natural language, as octets"
+list  text                   "textWithLanguage or nameWithLanguage (0x35, 0x36): the text or name, as octets"
+list  value                  "any other attribute value (strings, keyword, uri, charset, octetString, dateTime, collection delimiters, out-of-band tags), as octets"
+list  data                   "the document data after the end-of-attributes tag, as octets"
+key   octet                  int     -  "one octet"

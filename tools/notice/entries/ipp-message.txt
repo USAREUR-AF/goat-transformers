@@ -1,0 +1,8 @@
+Packs ipp-message; module ipp
+  IETF RFC 8010, Internet Printing Protocol/1.1: Encoding and Transport
+  (January 2017), section 3, and RFC 8011, Internet Printing Protocol/1.1:
+  Model and Semantics (January 2017), section 5.1.16,
+  https://www.rfc-editor.org/rfc/rfc8010.txt and
+  https://www.rfc-editor.org/rfc/rfc8011.txt. Copyright (c) 2017 IETF Trust
+  and the persons identified as the document authors; BCP 78 and the IETF
+  Trust Legal Provisions. Layouts restated; no text copied.

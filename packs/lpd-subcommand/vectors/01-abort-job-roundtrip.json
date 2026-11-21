@@ -1,0 +1,8 @@
+{
+  "name": "abort-job-roundtrip",
+  "from": "lpd-subcommand",
+  "to": "lpd-subcommand",
+  "input": "010a",
+  "expect": "010a",
+  "source": "built by tools/gen/printing-vectors.py from values chosen there; layout restated from RFC 1179 section 6; expect derived there, no engine run"
+}

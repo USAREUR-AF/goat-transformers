@@ -1,0 +1,16 @@
+{
+  "name": "print-job-roundtrip",
+  "from": "lpd-control-file",
+  "to": "lpd-control-file",
+  "input": "48686f73742e6578616d706c652e636f6d0a50616c6963650a4a7265706f72742e7478740a43410a4c616c6963650a6c646641303132686f73742e6578616d706c652e636f6d0a55646641303132686f73742e6578616d706c652e636f6d0a4e7265706f72742e7478740a",
+  "expect": "48686f73742e6578616d706c652e636f6d0a50616c6963650a4a7265706f72742e7478740a43410a4c616c6963650a6c646641303132686f73742e6578616d706c652e636f6d0a55646641303132686f73742e6578616d706c652e636f6d0a4e7265706f72742e7478740a",
+  "model": {
+    "lpd.lines.#": "8",
+    "lpd.lines[0].lpd.command": "72",
+    "lpd.lines[0].lpd.host": "host.example.com",
+    "lpd.lines[1].lpd.user": "alice",
+    "lpd.lines[5].lpd.command": "108",
+    "lpd.lines[5].lpd.print_file": "dfA012host.example.com"
+  },
+  "source": "built by tools/gen/printing-vectors.py from values chosen there; layout restated from RFC 1179 section 7; host, user, banner lines, one file printed with control characters, unlink and source name; expect derived there, no engine run"
+}

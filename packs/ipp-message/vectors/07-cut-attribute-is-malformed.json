@@ -1,0 +1,8 @@
+{
+  "name": "cut-attribute-is-malformed",
+  "from": "ipp-message",
+  "to": "ipp-message",
+  "input": "0101000b0000000501470012617474726962757465732d63686172",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/printing-vectors.py from values chosen there; layout restated from RFC 8010 section 3; the name length states 18 octets and fewer follow; expect derived there, no engine run"
+}
