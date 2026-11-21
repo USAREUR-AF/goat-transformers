@@ -1,0 +1,14 @@
+{
+ "keys": {
+  "execution_time|.|string": "execution_time_value",
+  "|controlstream@id|string": "controlstream_id",
+  "|currentStatus|string": "current_status",
+  "|id|string": "id",
+  "|issueTime|string": "issue_time",
+  "|samplingFeature@id|string": "sampling_feature_id",
+  "|sender|string": "sender"
+ },
+ "lists": {
+  "|executionTime": "execution_time"
+ }
+}

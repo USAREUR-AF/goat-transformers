@@ -1,0 +1,17 @@
+{
+ "name": "gen-status_info-roundtrip",
+ "from": "ogcapi-job-status",
+ "to": "ogcapi-job-status",
+ "input": "{\"processID\":\"s51644\",\"type\":\"process\",\"jobID\":\"s60487\",\"status\":\"accepted\",\"message\":\"s64182\",\"created\":\"2025-06-04T09:50:25.020Z\",\"started\":\"2024-04-12T22:25:07.627Z\",\"finished\":\"2026-09-01T04:02:33.877Z\",\"updated\":\"2025-11-15T12:21:23.601Z\",\"progress\":64,\"links\":[{\"href\":\"s26843\",\"rel\":\"s68662\",\"type\":\"s40627\",\"hreflang\":\"s54330\",\"title\":\"s30986\"},{\"href\":\"s7304\",\"rel\":\"s67919\",\"type\":\"s55739\",\"hreflang\":\"s73181\",\"title\":\"s1737\"}]}",
+ "expect": "{\"processID\":\"s51644\",\"type\":\"process\",\"jobID\":\"s60487\",\"status\":\"accepted\",\"message\":\"s64182\",\"created\":\"2025-06-04T09:50:25.020Z\",\"started\":\"2024-04-12T22:25:07.627Z\",\"finished\":\"2026-09-01T04:02:33.877Z\",\"updated\":\"2025-11-15T12:21:23.601Z\",\"progress\":64,\"links\":[{\"href\":\"s26843\",\"rel\":\"s68662\",\"type\":\"s40627\",\"hreflang\":\"s54330\",\"title\":\"s30986\"},{\"href\":\"s7304\",\"rel\":\"s67919\",\"type\":\"s55739\",\"hreflang\":\"s73181\",\"title\":\"s1737\"}]}",
+ "model": {
+  "uid": "s60487",
+  "time_ms": "1763209283601",
+  "ogcjob.process_id": "s51644",
+  "ogcjob.type": "process",
+  "ogcjob.job_id": "s60487",
+  "ogcjob.status": "accepted",
+  "ogcjob.message": "s64182",
+  "ogcjob.created": "2025-06-04T09:50:25.020Z"
+ }
+}

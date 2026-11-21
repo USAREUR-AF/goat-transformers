@@ -1,0 +1,40 @@
+{
+  "name": "index-grid-roundtrip",
+  "from": "ogcapi-coverages-coverage",
+  "to": "ogcapi-coverages-coverage",
+  "input": "{\"type\":\"CoverageByDomainAndRangeType\",\"id\":\"cube-3\",\"domainSet\":{\"type\":\"DomainSetType\",\"generalGrid\":{\"type\":\"GeneralGridCoverageType\",\"srsName\":\"http://www.opengis.net/def/crs/OGC/0/Index3D\",\"axisLabels\":[\"i\",\"j\",\"k\"],\"axis\":[{\"type\":\"IndexAxisType\",\"axisLabel\":\"i\",\"lowerBound\":0,\"upperBound\":1},{\"type\":\"IndexAxisType\",\"axisLabel\":\"j\",\"lowerBound\":0,\"upperBound\":0},{\"type\":\"IndexAxisType\",\"axisLabel\":\"k\",\"lowerBound\":5,\"upperBound\":6}]}},\"rangeSet\":{\"type\":\"RangeSetType\",\"dataBlock\":{\"type\":\"VDataBlockType\",\"values\":[1,2,3,4]}},\"rangeType\":{\"type\":\"DataRecordType\",\"field\":[{\"type\":\"QuantityType\",\"name\":\"count\",\"definition\":\"https://example.org/def/count\",\"uom\":{\"type\":\"UnitReference\",\"code\":\"1\"}}]}}",
+  "expect": "{\"type\":\"CoverageByDomainAndRangeType\",\"id\":\"cube-3\",\"domainSet\":{\"type\":\"DomainSetType\",\"generalGrid\":{\"type\":\"GeneralGridCoverageType\",\"srsName\":\"http://www.opengis.net/def/crs/OGC/0/Index3D\",\"axisLabels\":[\"i\",\"j\",\"k\"],\"axis\":[{\"type\":\"IndexAxisType\",\"axisLabel\":\"i\"},{\"type\":\"IndexAxisType\",\"axisLabel\":\"j\"},{\"type\":\"IndexAxisType\",\"axisLabel\":\"k\"}]}},\"rangeSet\":{\"type\":\"RangeSetType\",\"dataBlock\":{\"type\":\"VDataBlockType\"}},\"rangeType\":{\"type\":\"DataRecordType\",\"field\":[{\"type\":\"QuantityType\",\"name\":\"count\",\"definition\":\"https://example.org/def/count\",\"uom\":{\"type\":\"UnitReference\",\"code\":\"1\"}}]}}",
+  "model": {
+    "ogccovcis.type": "CoverageByDomainAndRangeType",
+    "ogccovcis.id": "cube-3",
+    "ogccovcis.domain_set_type": "DomainSetType",
+    "ogccovcis.grid_type": "GeneralGridCoverageType",
+    "ogccovcis.grid_srs_name": "http://www.opengis.net/def/crs/OGC/0/Index3D",
+    "ogccovcis.grid_axis_labels[0].ogccovcis.grid_axis_labels_value": "i",
+    "ogccovcis.grid_axis_labels[1].ogccovcis.grid_axis_labels_value": "j",
+    "ogccovcis.grid_axis_labels[2].ogccovcis.grid_axis_labels_value": "k",
+    "ogccovcis.grid_axis_labels.#": "3",
+    "ogccovcis.grid_axis[0].ogccovcis.grid_axis_type": "IndexAxisType",
+    "ogccovcis.grid_axis[0].ogccovcis.grid_axis_axis_label": "i",
+    "ogccovcis.grid_axis[1].ogccovcis.grid_axis_type": "IndexAxisType",
+    "ogccovcis.grid_axis[1].ogccovcis.grid_axis_axis_label": "j",
+    "ogccovcis.grid_axis[2].ogccovcis.grid_axis_type": "IndexAxisType",
+    "ogccovcis.grid_axis[2].ogccovcis.grid_axis_axis_label": "k",
+    "ogccovcis.grid_axis.#": "3",
+    "ogccovcis.range_set_type": "RangeSetType",
+    "ogccovcis.data_block_type": "VDataBlockType",
+    "ogccovcis.range_type_type": "DataRecordType",
+    "ogccovcis.range_type_field[0].ogccovcis.range_type_field_type": "QuantityType",
+    "ogccovcis.range_type_field[0].ogccovcis.range_type_field_name": "count",
+    "ogccovcis.range_type_field[0].ogccovcis.range_type_field_definition": "https://example.org/def/count",
+    "ogccovcis.range_type_field[0].ogccovcis.range_type_field_uom_type": "UnitReference",
+    "ogccovcis.range_type_field[0].ogccovcis.range_type_field_uom_code": "1",
+    "ogccovcis.range_type_field.#": "1",
+    "@absent": [
+      "ogccovcis.envelope_srs_name",
+      "ogccovcis.grid_limits_srs_name"
+    ]
+  },
+  "source": "derived by tools/gen/ogcapi-coverages-vectors.py from the pack's member list and spec/engine-spec.md; no engine run",
+  "reference": "OGC CIS 1.1.1 (OGC 09-146r8), structure tables of clauses 6 to 8 and the JSON encoding of clause 13; no envelope and no grid limits: those objects are not written; an index axis's integer bounds sit inside the axis array, where no line maps them, and are not carried"
+}

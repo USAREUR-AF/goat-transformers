@@ -1,0 +1,15 @@
+{
+ "name": "gen-temporal_property-roundtrip",
+ "from": "ogcapi-mf-api-tproperty",
+ "to": "ogcapi-mf-api-tproperty",
+ "input": "{\"name\":\"s88063\",\"type\":\"TText\",\"form\":\"https://example.org/972\",\"valueSequence\":[{\"datetimes\":[\"2025-12-16T16:44:21.885Z\"],\"interpolation\":\"Linear\"},{\"datetimes\":[\"2024-11-07T20:36:56.043Z\"],\"interpolation\":\"Regression\"}],\"description\":\"s3312\",\"links\":[{\"href\":\"s41815\",\"rel\":\"s84766\",\"type\":\"s62139\",\"hreflang\":\"s1471\",\"title\":\"s5685\",\"length\":24993},{\"href\":\"s12125\",\"rel\":\"s39824\",\"type\":\"s28750\",\"hreflang\":\"s18059\",\"title\":\"s7224\",\"length\":23585}]}",
+ "expect": "{\"name\":\"s88063\",\"type\":\"TText\",\"form\":\"https://example.org/972\",\"valueSequence\":[{\"datetimes\":[\"2025-12-16T16:44:21.885Z\"],\"interpolation\":\"Linear\"},{\"datetimes\":[\"2024-11-07T20:36:56.043Z\"],\"interpolation\":\"Regression\"}],\"description\":\"s3312\",\"links\":[{\"href\":\"s41815\",\"rel\":\"s84766\",\"type\":\"s62139\",\"hreflang\":\"s1471\",\"title\":\"s5685\",\"length\":24993},{\"href\":\"s12125\",\"rel\":\"s39824\",\"type\":\"s28750\",\"hreflang\":\"s18059\",\"title\":\"s7224\",\"length\":23585}]}",
+ "model": {
+  "ogcmfapitp.name": "s88063",
+  "ogcmfapitp.type": "TText",
+  "ogcmfapitp.form": "https://example.org/972",
+  "ogcmfapitp.value_sequence.#": "2",
+  "ogcmfapitp.description": "s3312",
+  "ogcmfapitp.links.#": "2"
+ }
+}

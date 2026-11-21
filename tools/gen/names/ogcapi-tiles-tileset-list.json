@@ -1,0 +1,28 @@
+{
+ "keys": {
+  "links|hreflang|string": "links_hreflang",
+  "links|href|string": "links_href",
+  "links|length|int": "links_length",
+  "links|rel|string": "links_rel",
+  "links|templated|int": "links_templated",
+  "links|title|string": "links_title",
+  "links|type|string": "links_type",
+  "links|varBase|string": "links_var_base",
+  "tilesets_links|hreflang|string": "tilesets_links_hreflang",
+  "tilesets_links|href|string": "tilesets_links_href",
+  "tilesets_links|length|int": "tilesets_links_length",
+  "tilesets_links|rel|string": "tilesets_links_rel",
+  "tilesets_links|templated|int": "tilesets_links_templated",
+  "tilesets_links|title|string": "tilesets_links_title",
+  "tilesets_links|type|string": "tilesets_links_type",
+  "tilesets_links|varBase|string": "tilesets_links_var_base",
+  "tilesets|dataType|string": "tilesets_data_type",
+  "tilesets|tileMatrixSetURI|string": "tilesets_tile_matrix_set_uri",
+  "tilesets|title|string": "tilesets_title"
+ },
+ "lists": {
+  "tilesets|links": "tilesets_links",
+  "|links": "links",
+  "|tilesets": "tilesets"
+ }
+}

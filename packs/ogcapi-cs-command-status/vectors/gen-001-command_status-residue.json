@@ -1,0 +1,7 @@
+{
+ "name": "gen-command_status-residue",
+ "from": "ogcapi-cs-command-status",
+ "to": "ogcapi-cs-command-status",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"id\":\"s30693\",\"command@id\":\"s21996\",\"reportTime\":\"2025-09-22T01:49:54.429Z\",\"statusCode\":\"FAILED\",\"percentCompletion\":7.0625,\"executionTime\":[\"now\",\"now\"],\"message\":\"s96236\"}",
+ "expect": "{\"id\":\"s30693\",\"command@id\":\"s21996\",\"reportTime\":\"2025-09-22T01:49:54.429Z\",\"statusCode\":\"FAILED\",\"percentCompletion\":7.0625,\"executionTime\":[\"now\",\"now\"],\"message\":\"s96236\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

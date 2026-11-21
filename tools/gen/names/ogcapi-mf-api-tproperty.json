@@ -1,0 +1,21 @@
+{
+ "keys": {
+  "links|hreflang|string": "links_hreflang",
+  "links|href|string": "links_href",
+  "links|length|int": "links_length",
+  "links|rel|string": "links_rel",
+  "links|title|string": "links_title",
+  "links|type|string": "links_type",
+  "value_sequence_datetimes|.|string": "value_sequence_datetimes_value",
+  "value_sequence|interpolation|string": "value_sequence_interpolation",
+  "|description|string": "description",
+  "|form|string": "form",
+  "|name|string": "name",
+  "|type|string": "type"
+ },
+ "lists": {
+  "value_sequence|datetimes": "value_sequence_datetimes",
+  "|links": "links",
+  "|valueSequence": "value_sequence"
+ }
+}

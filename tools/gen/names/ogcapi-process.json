@@ -1,0 +1,31 @@
+{
+ "keys": {
+  "additional_parameters_parameters|name|string": "additional_parameters_parameters_name",
+  "job_control_options|.|string": "job_control_options_value",
+  "keywords|.|string": "keywords_value",
+  "links|hreflang|string": "links_hreflang",
+  "links|href|string": "links_href",
+  "links|rel|string": "links_rel",
+  "links|title|string": "links_title",
+  "links|type|string": "links_type",
+  "metadata|href|string": "metadata_href",
+  "metadata|role|string": "metadata_role",
+  "metadata|title|string": "metadata_title",
+  "output_transmission|.|string": "output_transmission_value",
+  "|additionalParameters.href|string": "additional_parameters_href",
+  "|additionalParameters.role|string": "additional_parameters_role",
+  "|additionalParameters.title|string": "additional_parameters_title",
+  "|description|string": "description",
+  "|id|string": "id",
+  "|title|string": "title",
+  "|version|string": "version"
+ },
+ "lists": {
+  "|additionalParameters.parameters": "additional_parameters_parameters",
+  "|jobControlOptions": "job_control_options",
+  "|keywords": "keywords",
+  "|links": "links",
+  "|metadata": "metadata",
+  "|outputTransmission": "output_transmission"
+ }
+}

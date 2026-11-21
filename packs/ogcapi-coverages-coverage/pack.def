@@ -1,0 +1,57 @@
+# OGC Coverage Implementation Schema (CIS) 1.1.1, JSON encoding of a coverage: the coverage
+# document that OGC API - Coverages returns. Written by hand from the standard's text (its
+# structure tables and its clause 13 example); the CIS JSON Schema files, headed "All
+# Rights Reserved", were not read. Lines follow the order of the coverage components
+# (envelope, domain set, range set, range type). pack.md states what is mapped, how each
+# member name was taken from the text, and what is not mapped and why.
+format        ogcapi-coverages-coverage
+version       0.1.0
+distribution  public
+source        "OGC Coverage Implementation Schema (CIS) 1.1.1, OGC 09-146r8, https://docs.ogc.org/is/09-146r8/09-146r8.html (sha256 031d61c079c865a9b8b3957b9453f9660749729b85f067edd5e77092f3b48b4d), clauses 6 to 8 and 13; OGC standard document, free to implement"
+uses          ogccovcis
+wire          json
+field  ogccovcis.type  type  string
+field  ogccovcis.id  id  string
+field  ogccovcis.envelope_type  envelope.type  string
+field  ogccovcis.envelope_srs_name  envelope.srsName  string
+field  ogccovcis.envelope_srs_dimension  envelope.srsDimension  int
+group  ogccovcis.envelope_axis_labels  envelope.axisLabels
+  field  ogccovcis.envelope_axis_labels_value  .  string
+end
+group  ogccovcis.envelope_axis_extent  envelope.axisExtent
+  field  ogccovcis.envelope_axis_extent_type  type  string
+  field  ogccovcis.envelope_axis_extent_axis_label  axisLabel  string
+  field  ogccovcis.envelope_axis_extent_uom_label  uomLabel  string
+  field  ogccovcis.envelope_axis_extent_lower_bound  lowerBound  string
+  field  ogccovcis.envelope_axis_extent_upper_bound  upperBound  string
+end
+field  ogccovcis.domain_set_type  domainSet.type  string
+field  ogccovcis.grid_type  domainSet.generalGrid.type  string
+field  ogccovcis.grid_srs_name  domainSet.generalGrid.srsName  string
+group  ogccovcis.grid_axis_labels  domainSet.generalGrid.axisLabels
+  field  ogccovcis.grid_axis_labels_value  .  string
+end
+group  ogccovcis.grid_axis  domainSet.generalGrid.axis
+  field  ogccovcis.grid_axis_type  type  string
+  field  ogccovcis.grid_axis_axis_label  axisLabel  string
+  field  ogccovcis.grid_axis_uom_label  uomLabel  string
+  field  ogccovcis.grid_axis_resolution  resolution  string
+end
+field  ogccovcis.grid_limits_type  domainSet.generalGrid.gridLimits.type  string
+field  ogccovcis.grid_limits_srs_name  domainSet.generalGrid.gridLimits.srsName  string
+group  ogccovcis.grid_limits_index_axis  domainSet.generalGrid.gridLimits.indexAxis
+  field  ogccovcis.grid_limits_index_axis_type  type  string
+  field  ogccovcis.grid_limits_index_axis_axis_label  axisLabel  string
+  field  ogccovcis.grid_limits_index_axis_lower_bound  lowerBound  int
+  field  ogccovcis.grid_limits_index_axis_upper_bound  upperBound  int
+end
+field  ogccovcis.range_set_type  rangeSet.type  string
+field  ogccovcis.data_block_type  rangeSet.dataBlock.type  string
+field  ogccovcis.range_type_type  rangeType.type  string
+group  ogccovcis.range_type_field  rangeType.field
+  field  ogccovcis.range_type_field_type  type  string
+  field  ogccovcis.range_type_field_name  name  string
+  field  ogccovcis.range_type_field_definition  definition  string
+  field  ogccovcis.range_type_field_uom_type  uom.type  string
+  field  ogccovcis.range_type_field_uom_code  uom.code  string
+end

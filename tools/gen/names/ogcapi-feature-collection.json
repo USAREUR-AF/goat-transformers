@@ -1,0 +1,29 @@
+{
+ "keys": {
+  "features_geometry_geometries|type|string": "features_geometry_geometries_type",
+  "features_links|hreflang|string": "features_links_hreflang",
+  "features_links|href|string": "features_links_href",
+  "features_links|length|int": "features_links_length",
+  "features_links|rel|string": "features_links_rel",
+  "features_links|title|string": "features_links_title",
+  "features_links|type|string": "features_links_type",
+  "features|geometry.type|string": "features_geometry_type",
+  "features|type|string": "features_type",
+  "links|hreflang|string": "links_hreflang",
+  "links|href|string": "links_href",
+  "links|length|int": "links_length",
+  "links|rel|string": "links_rel",
+  "links|title|string": "links_title",
+  "links|type|string": "links_type",
+  "|numberMatched|int": "number_matched",
+  "|numberReturned|int": "number_returned",
+  "|timeStamp|string": "time_stamp",
+  "|type|string": "type"
+ },
+ "lists": {
+  "features|geometry.geometries": "features_geometry_geometries",
+  "features|links": "features_links",
+  "|features": "features",
+  "|links": "links"
+ }
+}

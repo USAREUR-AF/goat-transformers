@@ -1,0 +1,43 @@
+{
+ "keys": {
+  "features_geometry_geometries|type|string": "features_geometry_geometries_type",
+  "features_links|hreflang|string": "features_links_hreflang",
+  "features_links|href|string": "features_links_href",
+  "features_links|length|int": "features_links_length",
+  "features_links|rel|string": "features_links_rel",
+  "features_links|templated|int": "features_links_templated",
+  "features_links|title|string": "features_links_title",
+  "features_links|type|string": "features_links_type",
+  "features_properties_parameter_name|.|string": "features_properties_parameter_name_value",
+  "features|geometry.type|string": "features_geometry_type",
+  "features|properties.datetime|string": "features_properties_datetime",
+  "features|properties.edrqueryendpoint|string": "features_properties_edrqueryendpoint",
+  "features|properties.label|string": "features_properties_label",
+  "features|type|string": "features_type",
+  "links|hreflang|string": "links_hreflang",
+  "links|href|string": "links_href",
+  "links|length|int": "links_length",
+  "links|rel|string": "links_rel",
+  "links|templated|int": "links_templated",
+  "links|title|string": "links_title",
+  "links|type|string": "links_type",
+  "parameters_observed_property_categories|id|string": "parameters_observed_property_categories_id",
+  "parameters|id|string": "parameters_id",
+  "parameters|observedProperty.id|string": "parameters_observed_property_id",
+  "parameters|type|string": "parameters_type",
+  "parameters|unit.id|string": "parameters_unit_id",
+  "|numberMatched|int": "number_matched",
+  "|numberReturned|int": "number_returned",
+  "|timeStamp|string": "time_stamp",
+  "|type|string": "type"
+ },
+ "lists": {
+  "features|geometry.geometries": "features_geometry_geometries",
+  "features|links": "features_links",
+  "features|properties.parameter-name": "features_properties_parameter_name",
+  "parameters|observedProperty.categories": "parameters_observed_property_categories",
+  "|features": "features",
+  "|links": "links",
+  "|parameters": "parameters"
+ }
+}

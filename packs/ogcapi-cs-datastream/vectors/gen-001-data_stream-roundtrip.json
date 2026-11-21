@@ -1,0 +1,17 @@
+{
+ "name": "gen-data_stream-roundtrip",
+ "from": "ogcapi-cs-datastream",
+ "to": "ogcapi-cs-datastream",
+ "input": "{\"id\":\"s33479\",\"name\":\"s74965\",\"description\":\"s68055\",\"validTime\":[\"now\",\"now\"],\"formats\":[\"s34574\",\"s70936\"],\"outputName\":\"s18497\",\"phenomenonTime\":[\"now\",\"now\"],\"phenomenonTimeInterval\":\"s31878\",\"resultTime\":[\"now\",\"now\"],\"resultTimeInterval\":\"s16494\",\"type\":\"observation\",\"resultType\":\"complex\",\"live\":false}",
+ "expect": "{\"id\":\"s33479\",\"name\":\"s74965\",\"description\":\"s68055\",\"validTime\":[\"now\",\"now\"],\"formats\":[\"s34574\",\"s70936\"],\"outputName\":\"s18497\",\"phenomenonTime\":[\"now\",\"now\"],\"phenomenonTimeInterval\":\"s31878\",\"resultTime\":[\"now\",\"now\"],\"resultTimeInterval\":\"s16494\",\"type\":\"observation\",\"resultType\":\"complex\",\"live\":false}",
+ "model": {
+  "ogccsds.id": "s33479",
+  "ogccsds.name": "s74965",
+  "ogccsds.description": "s68055",
+  "ogccsds.valid_time.#": "2",
+  "ogccsds.formats.#": "2",
+  "ogccsds.output_name": "s18497",
+  "ogccsds.phenomenon_time.#": "2",
+  "ogccsds.phenomenon_time_interval": "s31878"
+ }
+}

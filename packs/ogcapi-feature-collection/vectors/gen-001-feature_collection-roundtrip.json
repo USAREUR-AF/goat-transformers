@@ -1,0 +1,15 @@
+{
+ "name": "gen-feature_collection-roundtrip",
+ "from": "ogcapi-feature-collection",
+ "to": "ogcapi-feature-collection",
+ "input": "{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"geometry\":{\"type\":\"GeometryCollection\",\"geometries\":[{\"type\":\"GeometryCollection\"}]},\"links\":[{\"href\":\"s47765\",\"rel\":\"s51720\",\"type\":\"s94692\",\"hreflang\":\"s86418\",\"title\":\"s24037\",\"length\":90120}]},{\"type\":\"Feature\",\"geometry\":{\"type\":\"GeometryCollection\",\"geometries\":[{\"type\":\"GeometryCollection\"}]},\"links\":[{\"href\":\"s79581\",\"rel\":\"s73320\",\"type\":\"s48030\",\"hreflang\":\"s86851\",\"title\":\"s71175\",\"length\":89975}]}],\"links\":[{\"href\":\"s56164\",\"rel\":\"s63182\",\"type\":\"s24726\",\"hreflang\":\"s58186\",\"title\":\"s58007\",\"length\":17630},{\"href\":\"s33890\",\"rel\":\"s16965\",\"type\":\"s13493\",\"hreflang\":\"s93972\",\"title\":\"s28213\",\"length\":92023}],\"timeStamp\":\"2025-06-28T09:40:28.051Z\",\"numberMatched\":51877,\"numberReturned\":73439}",
+ "expect": "{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"geometry\":{\"type\":\"GeometryCollection\",\"geometries\":[{\"type\":\"GeometryCollection\"}]},\"links\":[{\"href\":\"s47765\",\"rel\":\"s51720\",\"type\":\"s94692\",\"hreflang\":\"s86418\",\"title\":\"s24037\",\"length\":90120}]},{\"type\":\"Feature\",\"geometry\":{\"type\":\"GeometryCollection\",\"geometries\":[{\"type\":\"GeometryCollection\"}]},\"links\":[{\"href\":\"s79581\",\"rel\":\"s73320\",\"type\":\"s48030\",\"hreflang\":\"s86851\",\"title\":\"s71175\",\"length\":89975}]}],\"links\":[{\"href\":\"s56164\",\"rel\":\"s63182\",\"type\":\"s24726\",\"hreflang\":\"s58186\",\"title\":\"s58007\",\"length\":17630},{\"href\":\"s33890\",\"rel\":\"s16965\",\"type\":\"s13493\",\"hreflang\":\"s93972\",\"title\":\"s28213\",\"length\":92023}],\"timeStamp\":\"2025-06-28T09:40:28.051Z\",\"numberMatched\":51877,\"numberReturned\":73439}",
+ "model": {
+  "ogcfeatfc.type": "FeatureCollection",
+  "ogcfeatfc.features.#": "2",
+  "ogcfeatfc.links.#": "2",
+  "ogcfeatfc.time_stamp": "2025-06-28T09:40:28.051Z",
+  "ogcfeatfc.number_matched": "51877",
+  "ogcfeatfc.number_returned": "73439"
+ }
+}

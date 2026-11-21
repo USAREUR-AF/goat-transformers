@@ -1,0 +1,10 @@
+{
+ "keys": {
+  "|detail|string": "detail",
+  "|instance|string": "instance",
+  "|status|int": "status",
+  "|title|string": "title",
+  "|type|string": "type"
+ },
+ "lists": {}
+}

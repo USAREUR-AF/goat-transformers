@@ -1,0 +1,40 @@
+{
+ "keys": {
+  "bounding_box_lower_left|.|float": "bounding_box_lower_left_value",
+  "bounding_box_ordered_axes|.|string": "bounding_box_ordered_axes_value",
+  "bounding_box_upper_right|.|float": "bounding_box_upper_right_value",
+  "keywords|.|string": "keywords_value",
+  "ordered_axes|.|string": "ordered_axes_value",
+  "tile_matrices_keywords|.|string": "tile_matrices_keywords_value",
+  "tile_matrices_point_of_origin|.|float": "tile_matrices_point_of_origin_value",
+  "tile_matrices_variable_matrix_widths|coalesce|int": "tile_matrices_variable_matrix_widths_coalesce",
+  "tile_matrices_variable_matrix_widths|maxTileRow|int": "tile_matrices_variable_matrix_widths_max_tile_row",
+  "tile_matrices_variable_matrix_widths|minTileRow|int": "tile_matrices_variable_matrix_widths_min_tile_row",
+  "tile_matrices|cellSize|float": "tile_matrices_cell_size",
+  "tile_matrices|cornerOfOrigin|string": "tile_matrices_corner_of_origin",
+  "tile_matrices|description|string": "tile_matrices_description",
+  "tile_matrices|id|string": "tile_matrices_id",
+  "tile_matrices|matrixHeight|int": "tile_matrices_matrix_height",
+  "tile_matrices|matrixWidth|int": "tile_matrices_matrix_width",
+  "tile_matrices|scaleDenominator|float": "tile_matrices_scale_denominator",
+  "tile_matrices|tileHeight|int": "tile_matrices_tile_height",
+  "tile_matrices|tileWidth|int": "tile_matrices_tile_width",
+  "tile_matrices|title|string": "tile_matrices_title",
+  "|description|string": "description",
+  "|id|string": "id",
+  "|title|string": "title",
+  "|uri|string": "uri",
+  "|wellKnownScaleSet|string": "well_known_scale_set"
+ },
+ "lists": {
+  "tile_matrices|keywords": "tile_matrices_keywords",
+  "tile_matrices|pointOfOrigin": "tile_matrices_point_of_origin",
+  "tile_matrices|variableMatrixWidths": "tile_matrices_variable_matrix_widths",
+  "|boundingBox.lowerLeft": "bounding_box_lower_left",
+  "|boundingBox.orderedAxes": "bounding_box_ordered_axes",
+  "|boundingBox.upperRight": "bounding_box_upper_right",
+  "|keywords": "keywords",
+  "|orderedAxes": "ordered_axes",
+  "|tileMatrices": "tile_matrices"
+ }
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-data_stream-residue",
+ "from": "ogcapi-cs-datastream",
+ "to": "ogcapi-cs-datastream",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"id\":\"s33479\",\"name\":\"s74965\",\"description\":\"s68055\",\"validTime\":[\"now\",\"now\"],\"formats\":[\"s34574\",\"s70936\"],\"outputName\":\"s18497\",\"phenomenonTime\":[\"now\",\"now\"],\"phenomenonTimeInterval\":\"s31878\",\"resultTime\":[\"now\",\"now\"],\"resultTimeInterval\":\"s16494\",\"type\":\"observation\",\"resultType\":\"complex\",\"live\":false}",
+ "expect": "{\"id\":\"s33479\",\"name\":\"s74965\",\"description\":\"s68055\",\"validTime\":[\"now\",\"now\"],\"formats\":[\"s34574\",\"s70936\"],\"outputName\":\"s18497\",\"phenomenonTime\":[\"now\",\"now\"],\"phenomenonTimeInterval\":\"s31878\",\"resultTime\":[\"now\",\"now\"],\"resultTimeInterval\":\"s16494\",\"type\":\"observation\",\"resultType\":\"complex\",\"live\":false,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

@@ -1,0 +1,17 @@
+{
+ "name": "gen-process-roundtrip",
+ "from": "ogcapi-process",
+ "to": "ogcapi-process",
+ "input": "{\"title\":\"s80168\",\"description\":\"s77743\",\"keywords\":[\"s14636\",\"s43626\"],\"metadata\":[{\"title\":\"s74927\",\"role\":\"s24531\",\"href\":\"s16283\"},{\"title\":\"s4447\",\"role\":\"s38611\",\"href\":\"s56174\"}],\"additionalParameters\":{\"title\":\"s18685\",\"role\":\"s99704\",\"href\":\"s91193\",\"parameters\":[{\"name\":\"s26411\"},{\"name\":\"s8712\"}]},\"id\":\"s77247\",\"version\":\"s58953\",\"jobControlOptions\":[\"dismiss\",\"sync-execute\"],\"outputTransmission\":[\"reference\",\"reference\"],\"links\":[{\"href\":\"s95465\",\"rel\":\"s26852\",\"type\":\"s74943\",\"hreflang\":\"s32882\",\"title\":\"s69225\"},{\"href\":\"s57977\",\"rel\":\"s58404\",\"type\":\"s84247\",\"hreflang\":\"s79682\",\"title\":\"s17940\"}]}",
+ "expect": "{\"title\":\"s80168\",\"description\":\"s77743\",\"keywords\":[\"s14636\",\"s43626\"],\"metadata\":[{\"title\":\"s74927\",\"role\":\"s24531\",\"href\":\"s16283\"},{\"title\":\"s4447\",\"role\":\"s38611\",\"href\":\"s56174\"}],\"additionalParameters\":{\"title\":\"s18685\",\"role\":\"s99704\",\"href\":\"s91193\",\"parameters\":[{\"name\":\"s26411\"},{\"name\":\"s8712\"}]},\"id\":\"s77247\",\"version\":\"s58953\",\"jobControlOptions\":[\"dismiss\",\"sync-execute\"],\"outputTransmission\":[\"reference\",\"reference\"],\"links\":[{\"href\":\"s95465\",\"rel\":\"s26852\",\"type\":\"s74943\",\"hreflang\":\"s32882\",\"title\":\"s69225\"},{\"href\":\"s57977\",\"rel\":\"s58404\",\"type\":\"s84247\",\"hreflang\":\"s79682\",\"title\":\"s17940\"}]}",
+ "model": {
+  "ogcproc.title": "s80168",
+  "ogcproc.description": "s77743",
+  "ogcproc.keywords.#": "2",
+  "ogcproc.metadata.#": "2",
+  "ogcproc.additional_parameters_title": "s18685",
+  "ogcproc.additional_parameters_role": "s99704",
+  "ogcproc.additional_parameters_href": "s91193",
+  "ogcproc.additional_parameters_parameters.#": "2"
+ }
+}

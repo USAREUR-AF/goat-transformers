@@ -1,0 +1,16 @@
+{
+ "name": "gen-command-roundtrip",
+ "from": "ogcapi-cs-command",
+ "to": "ogcapi-cs-command",
+ "input": "{\"id\":\"s82338\",\"controlstream@id\":\"s46370\",\"samplingFeature@id\":\"s46919\",\"issueTime\":\"2024-07-09T16:06:03.138Z\",\"executionTime\":[\"now\",\"now\"],\"sender\":\"s12070\",\"currentStatus\":\"ACCEPTED\"}",
+ "expect": "{\"id\":\"s82338\",\"controlstream@id\":\"s46370\",\"samplingFeature@id\":\"s46919\",\"issueTime\":\"2024-07-09T16:06:03.138Z\",\"executionTime\":[\"now\",\"now\"],\"sender\":\"s12070\",\"currentStatus\":\"ACCEPTED\"}",
+ "model": {
+  "ogccscmd.id": "s82338",
+  "ogccscmd.controlstream_id": "s46370",
+  "ogccscmd.sampling_feature_id": "s46919",
+  "ogccscmd.issue_time": "2024-07-09T16:06:03.138Z",
+  "ogccscmd.execution_time.#": "2",
+  "ogccscmd.sender": "s12070",
+  "ogccscmd.current_status": "ACCEPTED"
+ }
+}

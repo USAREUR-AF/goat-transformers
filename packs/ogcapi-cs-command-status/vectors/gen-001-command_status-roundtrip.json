@@ -1,0 +1,16 @@
+{
+ "name": "gen-command_status-roundtrip",
+ "from": "ogcapi-cs-command-status",
+ "to": "ogcapi-cs-command-status",
+ "input": "{\"id\":\"s30693\",\"command@id\":\"s21996\",\"reportTime\":\"2025-09-22T01:49:54.429Z\",\"statusCode\":\"FAILED\",\"percentCompletion\":7.0625,\"executionTime\":[\"now\",\"now\"],\"message\":\"s96236\"}",
+ "expect": "{\"id\":\"s30693\",\"command@id\":\"s21996\",\"reportTime\":\"2025-09-22T01:49:54.429Z\",\"statusCode\":\"FAILED\",\"percentCompletion\":7.0625,\"executionTime\":[\"now\",\"now\"],\"message\":\"s96236\"}",
+ "model": {
+  "ogccscst.id": "s30693",
+  "ogccscst.command_id": "s21996",
+  "ogccscst.report_time": "2025-09-22T01:49:54.429Z",
+  "ogccscst.status_code": "FAILED",
+  "ogccscst.percent_completion": "7.0625",
+  "ogccscst.execution_time.#": "2",
+  "ogccscst.message": "s96236"
+ }
+}

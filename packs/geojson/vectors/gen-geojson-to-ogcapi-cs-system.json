@@ -1,0 +1,14 @@
+{
+ "name": "gen-geojson-to-ogcapi-cs-system",
+ "from": "geojson",
+ "to": "ogcapi-cs-system",
+ "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-85.9578182,30.0090027,-42.6]},\"properties\":{\"type\":\"a-f-G-U-C\",\"time_ms\":1614456000000,\"how\":\"m-g\",\"ce\":45.3,\"le\":99.5,\"callsign\":\"GATOR\"},\"id\":\"J-01334\"}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-85.9578182,30.0090027,-42.6]},\"properties\":{\"uid\":\"J-01334\",\"name\":\"GATOR\"}}",
+ "model": {
+  "uid": "J-01334",
+  "lat": "30.0090027",
+  "lon": "-85.9578182",
+  "hae": "-42.6",
+  "callsign": "GATOR"
+ }
+}

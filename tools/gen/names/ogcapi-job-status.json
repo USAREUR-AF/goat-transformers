@@ -1,0 +1,22 @@
+{
+ "keys": {
+  "links|hreflang|string": "links_hreflang",
+  "links|href|string": "links_href",
+  "links|rel|string": "links_rel",
+  "links|title|string": "links_title",
+  "links|type|string": "links_type",
+  "|created|string": "created",
+  "|finished|string": "finished",
+  "|jobID|string": "job_id",
+  "|message|string": "message",
+  "|processID|string": "process_id",
+  "|progress|int": "progress",
+  "|started|string": "started",
+  "|status|string": "status",
+  "|type|string": "type",
+  "|updated|string": "updated"
+ },
+ "lists": {
+  "|links": "links"
+ }
+}

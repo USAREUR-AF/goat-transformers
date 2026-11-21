@@ -1,0 +1,8 @@
+{
+ "keys": {
+  "|properties.datetime|string": "properties_datetime",
+  "|properties.edrqueryendpoint|string": "properties_edrqueryendpoint",
+  "|properties.label|string": "properties_label"
+ },
+ "lists": {}
+}

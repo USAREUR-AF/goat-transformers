@@ -1,0 +1,29 @@
+{
+ "keys": {
+  "jobs_links|hreflang|string": "jobs_links_hreflang",
+  "jobs_links|href|string": "jobs_links_href",
+  "jobs_links|rel|string": "jobs_links_rel",
+  "jobs_links|title|string": "jobs_links_title",
+  "jobs_links|type|string": "jobs_links_type",
+  "jobs|created|string": "jobs_created",
+  "jobs|finished|string": "jobs_finished",
+  "jobs|jobID|string": "jobs_job_id",
+  "jobs|message|string": "jobs_message",
+  "jobs|processID|string": "jobs_process_id",
+  "jobs|progress|int": "jobs_progress",
+  "jobs|started|string": "jobs_started",
+  "jobs|status|string": "jobs_status",
+  "jobs|type|string": "jobs_type",
+  "jobs|updated|string": "jobs_updated",
+  "links|hreflang|string": "links_hreflang",
+  "links|href|string": "links_href",
+  "links|rel|string": "links_rel",
+  "links|title|string": "links_title",
+  "links|type|string": "links_type"
+ },
+ "lists": {
+  "jobs|links": "jobs_links",
+  "|jobs": "jobs",
+  "|links": "links"
+ }
+}

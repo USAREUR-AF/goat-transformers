@@ -1,0 +1,38 @@
+{
+ "keys": {
+  "links|hreflang|string": "links_hreflang",
+  "links|href|string": "links_href",
+  "links|rel|string": "links_rel",
+  "links|title|string": "links_title",
+  "links|type|string": "links_type",
+  "processes_additional_parameters_parameters|name|string": "processes_additional_parameters_parameters_name",
+  "processes_job_control_options|.|string": "processes_job_control_options_value",
+  "processes_keywords|.|string": "processes_keywords_value",
+  "processes_links|hreflang|string": "processes_links_hreflang",
+  "processes_links|href|string": "processes_links_href",
+  "processes_links|rel|string": "processes_links_rel",
+  "processes_links|title|string": "processes_links_title",
+  "processes_links|type|string": "processes_links_type",
+  "processes_metadata|href|string": "processes_metadata_href",
+  "processes_metadata|role|string": "processes_metadata_role",
+  "processes_metadata|title|string": "processes_metadata_title",
+  "processes_output_transmission|.|string": "processes_output_transmission_value",
+  "processes|additionalParameters.href|string": "processes_additional_parameters_href",
+  "processes|additionalParameters.role|string": "processes_additional_parameters_role",
+  "processes|additionalParameters.title|string": "processes_additional_parameters_title",
+  "processes|description|string": "processes_description",
+  "processes|id|string": "processes_id",
+  "processes|title|string": "processes_title",
+  "processes|version|string": "processes_version"
+ },
+ "lists": {
+  "processes|additionalParameters.parameters": "processes_additional_parameters_parameters",
+  "processes|jobControlOptions": "processes_job_control_options",
+  "processes|keywords": "processes_keywords",
+  "processes|links": "processes_links",
+  "processes|metadata": "processes_metadata",
+  "processes|outputTransmission": "processes_output_transmission",
+  "|links": "links",
+  "|processes": "processes"
+ }
+}

@@ -1,0 +1,15 @@
+{
+ "name": "gen-feature-roundtrip",
+ "from": "ogcapi-edr-feature",
+ "to": "ogcapi-edr-feature",
+ "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"datetime\":\"s7410\",\"label\":\"s97295\",\"edrqueryendpoint\":\"s29766\"}}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"datetime\":\"s7410\",\"label\":\"s97295\",\"edrqueryendpoint\":\"s29766\"}}",
+ "model": {
+  "lon": "-77.0365",
+  "lat": "38.8977",
+  "callsign": "s97295",
+  "ogcedrf.properties_datetime": "s7410",
+  "ogcedrf.properties_label": "s97295",
+  "ogcedrf.properties_edrqueryendpoint": "s29766"
+ }
+}

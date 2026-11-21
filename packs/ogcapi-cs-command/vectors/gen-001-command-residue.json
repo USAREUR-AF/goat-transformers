@@ -1,0 +1,7 @@
+{
+ "name": "gen-command-residue",
+ "from": "ogcapi-cs-command",
+ "to": "ogcapi-cs-command",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"id\":\"s82338\",\"controlstream@id\":\"s46370\",\"samplingFeature@id\":\"s46919\",\"issueTime\":\"2024-07-09T16:06:03.138Z\",\"executionTime\":[\"now\",\"now\"],\"sender\":\"s12070\",\"currentStatus\":\"ACCEPTED\"}",
+ "expect": "{\"id\":\"s82338\",\"controlstream@id\":\"s46370\",\"samplingFeature@id\":\"s46919\",\"issueTime\":\"2024-07-09T16:06:03.138Z\",\"executionTime\":[\"now\",\"now\"],\"sender\":\"s12070\",\"currentStatus\":\"ACCEPTED\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}
