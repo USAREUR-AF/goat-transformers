@@ -19,6 +19,34 @@ type sentinels struct {
 	// json and geojson: how the first sentinel is written, 'n' a number, 'b' a
 	// boolean, 's' a string (0.5 ruling 11, 0.9 ruling 9).
 	jtype byte
+	// Range sentinels (0.56): `>=<n>` and `<=<n>`, never written.
+	ranges []sentRange
+}
+
+// sentRange is one range sentinel: the raw value matches when it is at least
+// (ge) or at most n, an unsigned integer (u) or a double (f).
+type sentRange struct {
+	ge bool
+	u  uint64
+	f  float64
+}
+
+// hasExact reports whether the field has an exact sentinel, the one an
+// absent key writes (0.56: a range is never written).
+func (f *Field) hasExact() bool {
+	return f.absent != nil && (len(f.absent.nums) > 0 || len(f.absent.texts) > 0)
+}
+
+// rangePrefix splits a range sentinel as written: ge, the text after `>=` or
+// `<=`, and ok when the value is one.
+func rangePrefix(v string) (bool, string, bool) {
+	switch {
+	case strings.HasPrefix(v, ">="):
+		return true, v[2:], true
+	case strings.HasPrefix(v, "<="):
+		return false, v[2:], true
+	}
+	return false, "", false
 }
 
 // splitAbsent splits the argument of `absent` on commas. The quoted empty
@@ -94,8 +122,32 @@ func jsonNumberCanon(lit string) (string, bool) {
 // read on (a geojson group item reads json locators).
 func resolveSentinels(wire string, f *Field) error {
 	s := &sentinels{}
+	// numRange reads a range sentinel whose <n> is number text (2b).
+	numRange := func(v string) (bool, error) {
+		ge, t, ok := rangePrefix(v)
+		if !ok {
+			return false, nil
+		}
+		x, err := parseNumberText(t)
+		if err != nil || !isNumberText(t) {
+			return true, fmt.Errorf("`absent %s`: a range sentinel takes number text", v)
+		}
+		s.ranges = append(s.ranges, sentRange{ge: ge, f: x})
+		return true, nil
+	}
 	unsigned := func(bits int) error {
 		for _, v := range f.Absent {
+			if ge, t, ok := rangePrefix(v); ok {
+				n, err := strconv.ParseUint(t, 10, 64)
+				if err != nil || !isDigits(t) {
+					return fmt.Errorf("`absent %s`: a range sentinel takes an unsigned decimal integer", v)
+				}
+				if bits < 64 && n>>uint(bits) != 0 {
+					return fmt.Errorf("`absent %s`: %s does not fit the %d-bit raw value", v, t, bits)
+				}
+				s.ranges = append(s.ranges, sentRange{ge: ge, u: n})
+				continue
+			}
 			n, err := strconv.ParseUint(v, 10, 64)
 			if err != nil || !isDigits(v) {
 				return fmt.Errorf("`absent`: %q is not an unsigned decimal integer", v)
@@ -104,6 +156,14 @@ func resolveSentinels(wire string, f *Field) error {
 				return fmt.Errorf("`absent`: %s does not fit the %d-bit raw value", v, bits)
 			}
 			s.nums = append(s.nums, n)
+		}
+		return nil
+	}
+	noRange := func() error {
+		for _, v := range f.Absent {
+			if _, _, ok := rangePrefix(v); ok {
+				return fmt.Errorf("`absent %s`: a range sentinel is not valid with the %s transform", v, f.Transform)
+			}
 		}
 		return nil
 	}
@@ -119,10 +179,26 @@ func resolveSentinels(wire string, f *Field) error {
 		switch f.pbf.wire {
 		case pbLenDelim:
 			// On pstring the text is as written: `=` is part of it (0.9
-			// ruling 12).
-			s.texts = append(s.texts, f.Absent...)
+			// ruling 12); a value that begins with >= or <= is a range.
+			for _, v := range f.Absent {
+				if isRange, err := numRange(v); err != nil {
+					return err
+				} else if !isRange {
+					s.texts = append(s.texts, v)
+				}
+			}
 		case pbFixed32:
+			if err := noRange(); err != nil {
+				return err
+			}
 			if err := unsigned(32); err != nil {
+				return err
+			}
+		case pbFixed64:
+			if err := noRange(); err != nil {
+				return err
+			}
+			if err := unsigned(64); err != nil {
 				return err
 			}
 		default:
@@ -132,6 +208,11 @@ func resolveSentinels(wire string, f *Field) error {
 		}
 	case WireXML:
 		for _, v := range f.Absent {
+			if isRange, err := numRange(v); err != nil {
+				return err
+			} else if isRange {
+				continue
+			}
 			t := strings.TrimPrefix(v, "=")
 			if t == "" && v != "" {
 				return fmt.Errorf("`absent`: %q is empty once `=` is stripped; only \"\" names the empty text", v)
@@ -139,7 +220,18 @@ func resolveSentinels(wire string, f *Field) error {
 			s.texts = append(s.texts, t)
 		}
 	default: // json, geojson
-		for i, v := range f.Absent {
+		if f.jbool {
+			if err := noRange(); err != nil {
+				return err
+			}
+		}
+		first := true
+		for _, v := range f.Absent {
+			if isRange, err := numRange(v); err != nil {
+				return err
+			} else if isRange {
+				continue
+			}
 			forced := strings.HasPrefix(v, "=")
 			t := v
 			if forced {
@@ -170,8 +262,8 @@ func resolveSentinels(wire string, f *Field) error {
 			if f.loc.kind == locCoord && typ != 'n' {
 				return fmt.Errorf("`absent` on a geometry locator takes number text, got %q", v)
 			}
-			if i == 0 {
-				s.jtype = typ
+			if first {
+				s.jtype, first = typ, false
 			}
 			s.texts = append(s.texts, t)
 		}
@@ -190,7 +282,33 @@ func (f *Field) sentinelNum(raw uint64) bool {
 			return true
 		}
 	}
+	for _, r := range f.absent.ranges {
+		if (r.ge && raw >= r.u) || (!r.ge && raw <= r.u) {
+			return true
+		}
+	}
 	return false
+}
+
+// sentinelRangeNum reports whether a double matches a range sentinel of the
+// field read as number text (0.56).
+func (f *Field) sentinelRangeNum(x float64) bool {
+	for _, r := range f.absent.ranges {
+		if (r.ge && x >= r.f) || (!r.ge && x <= r.f) {
+			return true
+		}
+	}
+	return false
+}
+
+// sentinelRangeText reports whether a raw text is number text (2b) whose
+// nearest double matches a range sentinel.
+func (f *Field) sentinelRangeText(raw string) bool {
+	if len(f.absent.ranges) == 0 || !isNumberText(raw) {
+		return false
+	}
+	x, err := parseNumberText(raw)
+	return err == nil && f.sentinelRangeNum(x)
 }
 
 // sentinelText reports whether a raw text is one of the field's sentinels.
@@ -203,7 +321,7 @@ func (f *Field) sentinelText(raw string) bool {
 			return true
 		}
 	}
-	return false
+	return f.sentinelRangeText(raw)
 }
 
 // sentinelJSON reports whether a json or geojson member holds one of the
@@ -227,7 +345,7 @@ func (f *Field) sentinelJSON(v *jval) bool {
 // the line has `absent`, and the record has no value for the key and no
 // default (d) applies.
 func (f *Field) writesSentinel(rec *Item, d *Default) bool {
-	if f.absent == nil || f.suppressed(rec) {
+	if !f.hasExact() || f.suppressed(rec) {
 		return false
 	}
 	if _, has := rec.Fields[f.Key]; has {

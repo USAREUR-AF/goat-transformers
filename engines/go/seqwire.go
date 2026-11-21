@@ -699,7 +699,7 @@ func (w *seqWriter) fieldBits(f *Field, sc seqScope) []byte {
 		return nil
 	}
 	if !ok {
-		if f.absent != nil && !f.suppressed(sc.rec) {
+		if f.hasExact() && !f.suppressed(sc.rec) {
 			putBits(buf, 0, f.loc.blen, f.sentinelBits(), w.p.msb)
 		}
 		return buf
@@ -1163,6 +1163,10 @@ func seqFieldValue(p *Pack, f *Field, sc seqScope) (Value, *Field, bool, error) 
 	if from == nil {
 		return Value{}, nil, false, nil
 	}
+	v, err := from.applyRange(v)
+	if err != nil {
+		return Value{}, nil, false, encodeErr(p, from, err)
+	}
 	if from.Key == "type" && p.TypeMapped() && v.Kind == KindString {
 		if native, ok := p.cotToNative[v.S]; ok {
 			v.S = native
@@ -1206,7 +1210,7 @@ func (w *seqWriter) emit(nodes []*seqNode, sc seqScope, chain bool) error {
 			if !ok {
 				// An absent key writes the sentinel in place of zero bits.
 				// A line suppressed by `with` has no sentinel (0.18).
-				if f.absent != nil && !f.suppressed(sc.rec) {
+				if f.hasExact() && !f.suppressed(sc.rec) {
 					w.put(at, f.loc.blen, f.sentinelBits())
 				}
 			} else if err := putBitsField(p, from, v, w.buf.data, at); err != nil {

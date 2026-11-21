@@ -260,7 +260,7 @@ func encodeXMLScope(p *Pack, lay *layout, rec *Item, root *xnode, written map[st
 		}
 		if !ok {
 			// A sentinel is written where no line has written (0.9).
-			if f.absent != nil && !f.suppressed(rec) && !written[f.Locator] {
+			if f.hasExact() && !f.suppressed(rec) && !written[f.Locator] {
 				place(root, f.loc, f.absent.texts[0], false)
 				written[f.Locator], weak[f.Locator] = true, true
 			}

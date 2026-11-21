@@ -181,7 +181,8 @@ func encodeGeoJSON(p *Pack, lay *layout, ent *Entity, rec *Item) ([]byte, error)
 	var coords [3]*string
 	var props, top []jmember
 	written := map[string]bool{}
-	weak := map[string]bool{} // the locators that hold a sentinel, which a value replaces (0.9 ruling 16)
+	weak := map[string]bool{}  // the locators that hold a sentinel, which a value replaces (0.9 ruling 16)
+	nulls := map[string]bool{} // the locators that hold the null of a `null` option (0.56)
 	put := func(l locator, raw string, force bool) {
 		switch l.kind {
 		case locCoord:
@@ -228,9 +229,15 @@ func encodeGeoJSON(p *Pack, lay *layout, ent *Entity, rec *Item) ([]byte, error)
 		if !ok {
 			// A sentinel is written where no line has written; one for lon or
 			// lat counts as a value, so geometry is written (0.9 ruling 10).
-			if f.absent != nil && !f.suppressed(rec) && !written[f.Locator] {
-				put(f.loc, f.sentinelJSONText(true), false)
+			if f.hasExact() && !f.suppressed(rec) && (!written[f.Locator] || nulls[f.Locator]) {
+				put(f.loc, f.sentinelJSONText(true), nulls[f.Locator])
 				written[f.Locator], weak[f.Locator] = true, true
+				delete(nulls, f.Locator)
+			} else if f.Null && !f.suppressed(rec) && !written[f.Locator] {
+				// No line on the member writes a value: the member is null
+				// (0.56).
+				put(f.loc, "null", false)
+				written[f.Locator], weak[f.Locator], nulls[f.Locator] = true, true, true
 			}
 			continue
 		}
@@ -243,6 +250,7 @@ func encodeGeoJSON(p *Pack, lay *layout, ent *Entity, rec *Item) ([]byte, error)
 		}
 		put(f.loc, raw, weak[f.Locator])
 		delete(weak, f.Locator)
+		delete(nulls, f.Locator)
 		written[f.Locator] = true
 	}
 	for _, r := range residueFor(p, ent, written) {

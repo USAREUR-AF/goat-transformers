@@ -84,11 +84,14 @@ type Field struct {
 	Swap      bool
 	Trim      bool
 	Optional  bool
-	Absent    []string // `absent <value>[,<value>…]`: the values as written, nil when the line has none
-	With      string   // `with <other-key>` (0.18): the line writes only when the entity or item holds the key; "" when the line has none
-	WithLine  bool     // the line has `with`
-	Stop      string   // `stop <code>` (0.22): the code as written; "" when the line has none
-	StopLine  bool     // the line has `stop`
+	Absent    []string    // `absent <value>[,<value>…]`: the values as written, nil when the line has none
+	With      string      // `with <other-key>` (0.18): the line writes only when the entity or item holds the key; "" when the line has none
+	WithLine  bool        // the line has `with`
+	Stop      string      // `stop <code>` (0.22): the code as written; "" when the line has none
+	StopLine  bool        // the line has `stop`
+	Null      bool        // `null` (0.56): an absent key writes the json member null
+	Implicit  bool        // `implicit` (0.56): a protobuf scalar at its proto3 default is not written
+	Range     *fieldRange // `range <min> <max> [wrap]` (0.56); nil when the line has none
 
 	absent  *sentinels // the sentinels read for the pack's wire; nil when the line has no `absent`
 	loc     locator
@@ -601,6 +604,29 @@ func parseFieldOptions(f *Field, opts []string) error {
 				return fmt.Errorf("`stop` needs a code")
 			}
 			f.Stop, f.StopLine = opts[i], true
+		case "null":
+			f.Null = true
+		case "implicit":
+			f.Implicit = true
+		case "range":
+			// range <min> <max> [wrap] (0.56): both arguments are number
+			// text as the line is read; their type is checked after the file.
+			if i+2 >= len(opts) {
+				return fmt.Errorf("`range` needs <min> and <max>")
+			}
+			r := &fieldRange{minT: opts[i+1], maxT: opts[i+2]}
+			i += 2
+			if !isNumberText(r.minT) || !isNumberText(r.maxT) {
+				return fmt.Errorf("`range %s %s`: <min> and <max> are number text", r.minT, r.maxT)
+			}
+			if i+1 < len(opts) && opts[i+1] == "wrap" {
+				r.wrap = true
+				seen["wrap"] = true
+				i++
+			}
+			f.Range = r
+		case "wrap":
+			return fmt.Errorf("`wrap` is valid only directly after `range <min> <max>`")
 		case "swap":
 			f.Swap = true
 		case "trim":
@@ -608,7 +634,7 @@ func parseFieldOptions(f *Field, opts []string) error {
 		case "optional":
 			f.Optional = true
 		default:
-			return fmt.Errorf("unknown field option %q (via <table>, swap, trim, optional, absent <values>, with <key>, stop <code>)", o)
+			return fmt.Errorf("unknown field option %q (via <table>, swap, trim, optional, absent <values>, with <key>, stop <code>, null, implicit, range <min> <max> [wrap])", o)
 		}
 	}
 	return nil
@@ -1249,6 +1275,12 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 				if k.Root != "" {
 					return nil, perr(ErrBadDirective, k.rootLine, "", "root in a kind is xml only")
 				}
+			}
+		}
+		// `null` and `implicit` on their wires, after the file (0.56).
+		for _, f := range p.Fields {
+			if err := checkOutputOptions(p.Wire, f); err != nil {
+				return nil, perr(ErrBadDirective, f.Line, f.Locator, "%v", err)
 			}
 		}
 		if p.Wire == WireText {
