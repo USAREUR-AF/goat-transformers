@@ -1,0 +1,6 @@
+Pack uat; module uat
+  dump978, https://github.com/flightaware/dump978 at commit
+  f40aa9a0d2d0a0067c0c628b44ba316f7049b8ce (files uat_message.cc,
+  uat_message.h and uat_protocol.h). Copyright 2015, Oliver Jowett;
+  Copyright (c) 2019, FlightAware LLC. BSD-2-Clause (dump978 LICENSE). Bit
+  positions, widths, code meanings and scaling restated; no code copied.

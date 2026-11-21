@@ -1,0 +1,9 @@
+{
+  "name": "uat-basic-short",
+  "from": "uat",
+  "to": "uat",
+  "input": "00a1b2c3000000000000",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "a basic payload is 18 bytes; 10 given"
+}
