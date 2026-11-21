@@ -102,6 +102,7 @@ Run from the repository root unless a directory is named.
 | Boundary gate | `python3 -I tools/boundary-gate` |
 | Counts for `README.md` | `python3 -I tools/repo-stats` |
 | Catalog figure (`docs/figures/catalog-*.svg`) | `python3 -I tools/catalog-figure.py` writes it; `--check-families` (CI) fails when a pack has no family in `tools/catalog-families/` (one file per family); `--check` (the counts PR) fails when the figure is stale |
+| Catalog chart (the site's first section, `docs/figures/catalog-radial-*.svg`) | `python3 -I tools/catalog-radial.py` writes it from the same family table; `site/build.sh` runs `--site` on every build; `--check` (the counts PR) fails when it is stale |
 | Rust engine and CLI | `cd engines/rust && cargo build --release` gives `target/release/goat-xf` |
 | Rust, every vector | `cd engines/rust && cargo test --release` |
 | Decoded values are plausible; heights name a datum | `python3 -I tools/model-checks.py --check` (CI); without `--check` it lists every failure, allowed or not. Rules: `tools/model-ranges.json`; today's failures: `tools/model-checks-allow.txt`, burned down, never grown without a reason |
