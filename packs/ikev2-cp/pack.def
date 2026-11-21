@@ -1,0 +1,27 @@
+# IKEv2 Configuration payload (type 47, section 3.15). The message is one payload, its generic header included, as
+# ikev2-message holds it. Public. Written by tools/gen/tunnels-pack.py; do not edit by hand.
+format        ikev2-cp
+version       0.1.0
+distribution  public
+source        "IETF RFC 7296, Internet Key Exchange Protocol Version 2 (IKEv2), October 2014, section 3, https://www.rfc-editor.org/rfc/rfc7296.txt (sha256 b6c1bf3921e85dd3674f427ffcaded0209e1f9718e8d601e2f918371f46329a1); layout restated"
+uses          ikev2
+wire          bits
+layout        sequential
+bit_order     msb
+
+field  ikev2.next_payload  8  uint
+field  ikev2.critical  1  uint
+field  ikev2.payload_reserved  7  uint
+length  16  bytes  plus  4
+  field  ikev2.cfg_type  8  uint
+  field  ikev2.cfg_reserved  24  uint
+  group  ikev2.cfg_attributes  rest
+    field  ikev2.cfg_attr_reserved  1  uint
+    field  ikev2.cfg_attr_type  15  uint
+    length  16  bytes
+      group  ikev2.attr_octets  rest
+        field  ikev2.octet  8  uint
+      end
+    end
+  end
+end

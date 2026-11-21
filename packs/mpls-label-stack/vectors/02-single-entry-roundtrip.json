@@ -1,0 +1,14 @@
+{
+  "name": "single-entry-roundtrip",
+  "from": "mpls-label-stack",
+  "to": "mpls-label-stack",
+  "input": "00064f01",
+  "expect": "00064f01",
+  "model": {
+    "inet.mpls_label": "100",
+    "inet.mpls_tc": "7",
+    "inet.mpls_bottom_of_stack": "1",
+    "inet.mpls_ttl": "1"
+  },
+  "source": "built by tools/gen/tunnels-vectors.py from values chosen there; layout restated from RFC 3032 section 2.1; a stack of one entry; expect derived there, no engine run"
+}

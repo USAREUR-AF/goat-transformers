@@ -1,0 +1,8 @@
+{
+  "name": "to-geneve-header",
+  "from": "geneve-options",
+  "to": "geneve-header",
+  "input": "03406558abcdef0001028001deadbeefffff0100",
+  "expect": "00406558abcdef00",
+  "source": "built by tools/gen/tunnels-vectors.py from values chosen there; layout restated from RFC 8926 sections 3.4 and 3.5; the base header carries over; the options are not the raw words of geneve-header, so the option length is written 0; expect derived there, no engine run"
+}

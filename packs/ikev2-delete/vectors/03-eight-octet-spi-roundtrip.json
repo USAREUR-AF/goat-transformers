@@ -1,0 +1,13 @@
+{
+  "name": "eight-octet-spi-roundtrip",
+  "from": "ikev2-delete",
+  "to": "ikev2-delete",
+  "input": "2a000010010800011122334455667788",
+  "expect": "2a000010010800011122334455667788",
+  "model": {
+    "ikev2.spi_size_field": "8",
+    "ikev2.spis.#": "1",
+    "ikev2.spis[0].ikev2.spi": "1122334455667788"
+  },
+  "source": "built by tools/gen/tunnels-vectors.py from values chosen there; layout restated from RFC 7296 section 3.11; one SPI of 8 octets; expect derived there, no engine run"
+}

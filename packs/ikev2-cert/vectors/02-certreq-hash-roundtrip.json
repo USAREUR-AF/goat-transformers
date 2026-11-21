@@ -1,0 +1,13 @@
+{
+  "name": "certreq-hash-roundtrip",
+  "from": "ikev2-cert",
+  "to": "ikev2-cert",
+  "input": "2300001904aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "expect": "2300001904aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "model": {
+    "ikev2.next_payload": "35",
+    "ikev2.cert_encoding": "4",
+    "ikev2.cert_data.#": "20"
+  },
+  "source": "built by tools/gen/tunnels-vectors.py from values chosen there; layout restated from RFC 7296 section 3.7; a certificate request naming one certification authority by a 20-octet hash; expect derived there, no engine run"
+}

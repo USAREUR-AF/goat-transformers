@@ -1,0 +1,16 @@
+{
+  "name": "esp-two-proposals-roundtrip",
+  "from": "ikev2-sa",
+  "to": "ikev2-sa",
+  "input": "0000004c0200002801030403112233440300000c0100000c800e0080030000080300000c00000008050000000000002002030402112233440300000c01000014800e01000000000805000000",
+  "expect": "0000004c0200002801030403112233440300000c0100000c800e0080030000080300000c00000008050000000000002002030402112233440300000c01000014800e01000000000805000000",
+  "model": {
+    "ikev2.proposals.#": "2",
+    "ikev2.proposals[0].ikev2.last_substruc": "2",
+    "ikev2.proposals[0].ikev2.proposal_spi.#": "4",
+    "ikev2.proposals[0].ikev2.transforms.#": "3",
+    "ikev2.proposals[1].ikev2.proposal_num": "2",
+    "ikev2.proposals[1].ikev2.transforms.#": "2"
+  },
+  "source": "built by tools/gen/tunnels-vectors.py from values chosen there; layout restated from RFC 7296 section 3.3; two ESP proposals with a 4-octet SPI: AES-CBC with HMAC-SHA-256-128, and AES-GCM; no ESN; expect derived there, no engine run"
+}

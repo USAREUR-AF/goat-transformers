@@ -1,0 +1,12 @@
+{
+  "name": "fqdn-roundtrip",
+  "from": "ikev2-id",
+  "to": "ikev2-id",
+  "input": "270000170200000076706e2e6578616d706c652e6e6574",
+  "expect": "270000170200000076706e2e6578616d706c652e6e6574",
+  "model": {
+    "ikev2.id_type": "2",
+    "ikev2.id_data.#": "15"
+  },
+  "source": "built by tools/gen/tunnels-vectors.py from values chosen there; layout restated from RFC 7296 section 3.5; a fully qualified domain name identity, kept as octets; expect derived there, no engine run"
+}

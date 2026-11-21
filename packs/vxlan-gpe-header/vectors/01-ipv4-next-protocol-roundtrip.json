@@ -1,0 +1,14 @@
+{
+  "name": "ipv4-next-protocol-roundtrip",
+  "from": "vxlan-gpe-header",
+  "to": "vxlan-gpe-header",
+  "input": "0c00000112345600",
+  "expect": "0c00000112345600",
+  "model": {
+    "inet.vxlan_i_flag": "1",
+    "vxlangpe.p_flag": "1",
+    "vxlangpe.next_protocol": "1",
+    "inet.vxlan_vni": "1193046"
+  },
+  "source": "built by tools/gen/tunnels-vectors.py from values chosen there; layout restated from draft-ietf-nvo3-vxlan-gpe-13 section 3.1; I and P set, next protocol 1 (IPv4); expect derived there, no engine run"
+}

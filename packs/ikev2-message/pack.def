@@ -1,0 +1,35 @@
+# IKEv2 message (RFC 7296 sections 3.1 and 3.2): the IKE header and the chain of payloads, each
+# read as its generic header and its body octets. The bodies are laid out by the ikev2-*
+# payload packs. Public. Written by tools/gen/tunnels-pack.py; do not edit by hand.
+format        ikev2-message
+version       0.1.0
+distribution  public
+source        "IETF RFC 7296, Internet Key Exchange Protocol Version 2 (IKEv2), October 2014, section 3, https://www.rfc-editor.org/rfc/rfc7296.txt (sha256 b6c1bf3921e85dd3674f427ffcaded0209e1f9718e8d601e2f918371f46329a1); layout restated"
+uses          ikev2
+wire          bits
+layout        sequential
+bit_order     msb
+
+field  ikev2.spi_i  64  hex
+field  ikev2.spi_r  64  hex
+field  ikev2.first_payload  8  uint
+field  ikev2.major_version  4  uint
+field  ikev2.minor_version  4  uint
+field  ikev2.exchange_type  8  uint
+field  ikev2.flags_reserved_high  2  uint
+field  ikev2.response  1  uint
+field  ikev2.higher_version  1  uint
+field  ikev2.initiator  1  uint
+field  ikev2.flags_reserved_low  3  uint
+field  ikev2.message_id  32  uint
+length  32  whole
+group  ikev2.payloads  rest
+  field  ikev2.next_payload  8  uint
+  field  ikev2.critical  1  uint
+  field  ikev2.payload_reserved  7  uint
+  length  16  bytes  plus  4
+    group  ikev2.body  rest
+      field  ikev2.octet  8  uint
+    end
+  end
+end

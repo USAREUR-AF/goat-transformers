@@ -1,0 +1,12 @@
+{
+  "name": "ipv6-roundtrip",
+  "from": "ikev2-id",
+  "to": "ikev2-id",
+  "input": "000000180500000020010db8000000000000000000000001",
+  "expect": "000000180500000020010db8000000000000000000000001",
+  "model": {
+    "ikev2.id_type": "5",
+    "ikev2.id_ipv6": "20010db8000000000000000000000001"
+  },
+  "source": "built by tools/gen/tunnels-vectors.py from values chosen there; layout restated from RFC 7296 section 3.5; an IPv6 address identity; expect derived there, no engine run"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "reply-roundtrip",
+  "from": "ikev2-cp",
+  "to": "ikev2-cp",
+  "input": "000000180200000000010004c633640700030004c6336435",
+  "expect": "000000180200000000010004c633640700030004c6336435",
+  "model": {
+    "ikev2.cfg_type": "2",
+    "ikev2.cfg_attributes[0].ikev2.attr_octets.#": "4"
+  },
+  "source": "built by tools/gen/tunnels-vectors.py from values chosen there; layout restated from RFC 7296 section 3.15; CFG_REPLY with an internal IPv4 address and DNS server; expect derived there, no engine run"
+}

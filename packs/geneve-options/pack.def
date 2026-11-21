@@ -1,0 +1,92 @@
+# Geneve header (RFC 8926 section 3.4) and its options as type-length-value records (section 3.5).
+# The message is the base header and the options, the payload excluded. Public. Written by
+# tools/gen/tunnels-pack.py; do not edit by hand.
+format        geneve-options
+version       0.1.0
+distribution  public
+source        "IETF RFC 8926, Geneve: Generic Network Virtualization Encapsulation, November 2020, sections 3.4 and 3.5, https://www.rfc-editor.org/rfc/rfc8926.txt (sha256 23a9fcd3c23b93a103c0228128b2dce808323a7a9d15ea9cbb395fdb9f67e37d); layout restated"
+uses          inet
+uses          geneve
+wire          bits
+layout        sequential
+bit_order     msb
+
+field  inet.geneve_version  2  uint
+field  geneve.opt_len  6  uint
+field  inet.geneve_control  1  uint
+field  inet.geneve_critical  1  uint
+field  inet.geneve_reserved1  6  uint
+field  inet.geneve_protocol_type  16  uint
+field  inet.geneve_vni  24  uint
+field  inet.geneve_reserved2  8  uint
+group  geneve.options  rest
+  field  geneve.option_class  16  uint
+  field  geneve.option_type  8  uint
+  field  geneve.option_reserved  3  uint
+  field  geneve.length  5  uint
+  switch  geneve.length
+    case  0
+    case  1
+      field  geneve.data  32  hex
+    case  2
+      field  geneve.data  64  hex
+    case  3
+      field  geneve.data  96  hex
+    case  4
+      field  geneve.data  128  hex
+    case  5
+      field  geneve.data  160  hex
+    case  6
+      field  geneve.data  192  hex
+    case  7
+      field  geneve.data  224  hex
+    case  8
+      field  geneve.data  256  hex
+    case  9
+      field  geneve.data  288  hex
+    case  10
+      field  geneve.data  320  hex
+    case  11
+      field  geneve.data  352  hex
+    case  12
+      field  geneve.data  384  hex
+    case  13
+      field  geneve.data  416  hex
+    case  14
+      field  geneve.data  448  hex
+    case  15
+      field  geneve.data  480  hex
+    case  16
+      field  geneve.data  512  hex
+    case  17
+      field  geneve.data  544  hex
+    case  18
+      field  geneve.data  576  hex
+    case  19
+      field  geneve.data  608  hex
+    case  20
+      field  geneve.data  640  hex
+    case  21
+      field  geneve.data  672  hex
+    case  22
+      field  geneve.data  704  hex
+    case  23
+      field  geneve.data  736  hex
+    case  24
+      field  geneve.data  768  hex
+    case  25
+      field  geneve.data  800  hex
+    case  26
+      field  geneve.data  832  hex
+    case  27
+      field  geneve.data  864  hex
+    case  28
+      field  geneve.data  896  hex
+    case  29
+      field  geneve.data  928  hex
+    case  30
+      field  geneve.data  960  hex
+    case  31
+      field  geneve.data  992  hex
+  end
+end

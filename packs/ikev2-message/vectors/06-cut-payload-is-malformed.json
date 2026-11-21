@@ -1,0 +1,8 @@
+{
+  "name": "cut-payload-is-malformed",
+  "from": "ikev2-message",
+  "to": "ikev2-message",
+  "input": "0102030405060708000000000000000028202208000000000000002600000014646566676869",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/tunnels-vectors.py from values chosen there; layout restated from RFC 7296 section 3; a payload whose length runs past the end of the message; expect derived there, no engine run"
+}

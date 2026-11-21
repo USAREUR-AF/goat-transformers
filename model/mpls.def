@@ -1,0 +1,10 @@
+# The mpls module: the MPLS label stack entries below the top entry (RFC 3032). Written by tools/gen/tunnels-pack.py.
+module        mpls
+version       0.1.0
+distribution  public
+source        "IETF RFC 3032; restated by goat-transformers"
+list  entries          "the label stack entries below the top entry, in order"
+key   label            int     -  "label value, 20 bits (0-15 reserved)"
+key   tc               int     -  "traffic class, 3 bits"
+key   bottom_of_stack  int     -  "1 for the last entry of the stack"
+key   ttl              int     -  "time to live"

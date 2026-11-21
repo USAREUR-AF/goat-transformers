@@ -1,0 +1,12 @@
+{
+  "name": "success-roundtrip",
+  "from": "ikev2-eap",
+  "to": "ikev2-eap",
+  "input": "2700000803070004",
+  "expect": "2700000803070004",
+  "model": {
+    "ikev2.eap_code": "3",
+    "ikev2.eap_length": "4"
+  },
+  "source": "built by tools/gen/tunnels-vectors.py from values chosen there; layout restated from RFC 7296 section 3.16; an EAP success, which has no type; expect derived there, no engine run"
+}

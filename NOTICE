@@ -808,3 +808,10 @@ Packs srt-packet, dcep, rtp-packet, rtp-header-extension
   From draft-sharabayko-srt-01, RFC 8832, RFC 3550 and RFC 8285. Copyright
   IETF Trust and the persons identified as the document authors; BCP 78 and
   the IETF Trust's Legal Provisions Relating to IETF Documents.
+
+Packs vxlan-gpe-header, geneve-options, mpls-label-stack, ikev2-*
+  From draft-ietf-nvo3-vxlan-gpe-13, RFC 8926, RFC 3032, RFC 5462, RFC 7510
+  and RFC 7296. Copyright IETF Trust and the persons identified as the
+  document authors (RFC 3032: The Internet Society); BCP 78 and the IETF
+  Trust's Legal Provisions Relating to IETF Documents. Layouts restated, no
+  text copied.

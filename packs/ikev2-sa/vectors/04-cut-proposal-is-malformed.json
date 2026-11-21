@@ -1,0 +1,8 @@
+{
+  "name": "cut-proposal-is-malformed",
+  "from": "ikev2-sa",
+  "to": "ikev2-sa",
+  "input": "2200002800000024010100030300000c01000014",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/tunnels-vectors.py from values chosen there; layout restated from RFC 7296 section 3.3; the first SA payload cut inside its proposal; expect derived there, no engine run"
+}

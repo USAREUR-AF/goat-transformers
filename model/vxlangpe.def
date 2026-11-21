@@ -1,0 +1,12 @@
+# The vxlangpe module: the VXLAN-GPE header fields not shared with VXLAN. Written by tools/gen/tunnels-pack.py.
+module        vxlangpe
+version       0.1.0
+distribution  public
+source        "IETF draft-ietf-nvo3-vxlan-gpe-13; restated by goat-transformers"
+key   reserved_flags  int     -  "the two reserved flag bits before the version, 0"
+key   version         int     -  "VXLAN-GPE version, 0"
+key   p_flag          int     -  "P bit: the next protocol field is present"
+key   b_flag          int     -  "B bit: ingress-replicated broadcast, unknown unicast or multicast traffic"
+key   o_flag          int     -  "O bit: an OAM packet"
+key   reserved        int     -  "the 16 reserved bits after the flags, 0"
+key   next_protocol   int     -  "the header after VXLAN-GPE, from the LISP-GPE next protocol registry (1 IPv4, 2 IPv6, 3 Ethernet, 4 NSH, 5 MPLS)"

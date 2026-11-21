@@ -1,0 +1,14 @@
+{
+  "name": "esp-spi-roundtrip",
+  "from": "ikev2-notify",
+  "to": "ikev2-notify",
+  "input": "0000000c0304000b0a0b0c0d",
+  "expect": "0000000c0304000b0a0b0c0d",
+  "model": {
+    "ikev2.protocol_id": "3",
+    "ikev2.notify_type": "11",
+    "ikev2.spi_bytes.#": "4",
+    "ikev2.notify_data.#": "0"
+  },
+  "source": "built by tools/gen/tunnels-vectors.py from values chosen there; layout restated from RFC 7296 section 3.10; a notification of type 11 about an ESP SPI of 4 octets, no data; expect derived there, no engine run"
+}

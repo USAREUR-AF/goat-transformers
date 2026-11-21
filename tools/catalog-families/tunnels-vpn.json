@@ -1,0 +1,20 @@
+{
+  "name": "Tunnelling and VPN (VXLAN-GPE, Geneve options, MPLS stack, IKEv2)",
+  "domain": "networks",
+  "exact": [
+    "vxlan-gpe-header",
+    "geneve-options",
+    "mpls-label-stack",
+    "ikev2-message",
+    "ikev2-sa",
+    "ikev2-ke",
+    "ikev2-id",
+    "ikev2-cert",
+    "ikev2-auth",
+    "ikev2-notify",
+    "ikev2-delete",
+    "ikev2-ts",
+    "ikev2-cp",
+    "ikev2-eap"
+  ]
+}

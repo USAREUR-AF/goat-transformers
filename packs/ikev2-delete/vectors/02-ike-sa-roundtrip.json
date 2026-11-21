@@ -1,0 +1,14 @@
+{
+  "name": "ike-sa-roundtrip",
+  "from": "ikev2-delete",
+  "to": "ikev2-delete",
+  "input": "0000000801000000",
+  "expect": "0000000801000000",
+  "model": {
+    "ikev2.protocol_id": "1",
+    "ikev2.spi_size_field": "0",
+    "ikev2.num_spis_field": "0",
+    "ikev2.spi_octets.#": "0"
+  },
+  "source": "built by tools/gen/tunnels-vectors.py from values chosen there; layout restated from RFC 7296 section 3.11; the deletion of the IKE SA: SPI size 0 and no SPIs; expect derived there, no engine run"
+}

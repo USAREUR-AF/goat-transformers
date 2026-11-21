@@ -1,0 +1,14 @@
+{
+  "name": "control-no-options-roundtrip",
+  "from": "geneve-options",
+  "to": "geneve-options",
+  "input": "0080080000000700",
+  "expect": "0080080000000700",
+  "model": {
+    "geneve.opt_len": "0",
+    "inet.geneve_control": "1",
+    "inet.geneve_protocol_type": "2048",
+    "geneve.options.#": "0"
+  },
+  "source": "built by tools/gen/tunnels-vectors.py from values chosen there; layout restated from RFC 8926 sections 3.4 and 3.5; a control message with no options; expect derived there, no engine run"
+}

@@ -1,0 +1,27 @@
+# MPLS label stack (RFC 3032 section 2.1; RFC 7510 carries the same stack in UDP): the top entry
+# on the inet keys of mpls-label-entry, then the entries below it. The message is the stack alone.
+# Public. Written by tools/gen/tunnels-pack.py; do not edit by hand.
+format        mpls-label-stack
+version       0.1.0
+distribution  public
+source        "IETF RFC 3032, MPLS Label Stack Encoding, January 2001, section 2.1, https://www.rfc-editor.org/rfc/rfc3032.txt (sha256 c611103bf720c643a40e128159aabb1607eab97977d0f3483d468a620cd86180); IETF RFC 7510, Encapsulating MPLS in UDP, April 2015, section 3, https://www.rfc-editor.org/rfc/rfc7510.txt (sha256 c22acef088d16e298e47bf58366be413c06f71db84f009e40cf102d1cb25fa25); layout restated"
+uses          inet
+uses          mpls
+wire          bits
+layout        sequential
+bit_order     msb
+
+field  inet.mpls_label  20  uint
+field  inet.mpls_tc  3  uint
+field  inet.mpls_bottom_of_stack  1  uint
+field  inet.mpls_ttl  8  uint
+switch  inet.mpls_bottom_of_stack
+  case  0
+    group  mpls.entries  rest
+      field  mpls.label  20  uint
+      field  mpls.tc  3  uint
+      field  mpls.bottom_of_stack  1  uint
+      field  mpls.ttl  8  uint
+    end
+  else
+end

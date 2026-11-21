@@ -1,0 +1,23 @@
+# VXLAN-GPE header (draft-ietf-nvo3-vxlan-gpe-13 section 3.1): the 8 octets after the outer UDP
+# header. The I bit, the VNI and the last reserved octet are the inet keys of vxlan-header.
+# Public. Written by tools/gen/tunnels-pack.py; do not edit by hand.
+format        vxlan-gpe-header
+version       0.1.0
+distribution  public
+source        "IETF Internet-Draft draft-ietf-nvo3-vxlan-gpe-13, Generic Protocol Extension for VXLAN (VXLAN-GPE), November 2023, section 3.1, https://www.ietf.org/archive/id/draft-ietf-nvo3-vxlan-gpe-13.txt (sha256 02928ea03d3f99b33ef6107ccef28a30ce580ace676d94de494804fd80a49d65), IETF Trust (BCP 78); layout restated"
+uses          inet
+uses          vxlangpe
+wire          bits
+layout        sequential
+bit_order     msb
+
+field  vxlangpe.reserved_flags  2  uint
+field  vxlangpe.version  2  uint
+field  inet.vxlan_i_flag  1  uint
+field  vxlangpe.p_flag  1  uint
+field  vxlangpe.b_flag  1  uint
+field  vxlangpe.o_flag  1  uint
+field  vxlangpe.reserved  16  uint
+field  vxlangpe.next_protocol  8  uint
+field  inet.vxlan_vni  24  uint
+field  inet.vxlan_reserved2  8  uint

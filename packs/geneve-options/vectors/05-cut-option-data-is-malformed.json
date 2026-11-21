@@ -1,0 +1,8 @@
+{
+  "name": "cut-option-data-is-malformed",
+  "from": "geneve-options",
+  "to": "geneve-options",
+  "input": "03006558000002000102030201020304",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/tunnels-vectors.py from values chosen there; layout restated from RFC 8926 sections 3.4 and 3.5; an option of length 2 with only one word of data; expect derived there, no engine run"
+}

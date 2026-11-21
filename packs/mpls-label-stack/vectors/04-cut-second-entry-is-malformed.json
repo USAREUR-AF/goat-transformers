@@ -1,0 +1,8 @@
+{
+  "name": "cut-second-entry-is-malformed",
+  "from": "mpls-label-stack",
+  "to": "mpls-label-stack",
+  "input": "03e800400426",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/tunnels-vectors.py from values chosen there; layout restated from RFC 3032 section 2.1; a top entry that is not the bottom, then half an entry; expect derived there, no engine run"
+}

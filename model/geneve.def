@@ -1,0 +1,12 @@
+# The geneve module: Geneve options (RFC 8926 section 3.5). Written by tools/gen/tunnels-pack.py.
+module        geneve
+version       0.1.0
+distribution  public
+source        "IETF RFC 8926; restated by goat-transformers"
+key   opt_len          int     -  "length of the options in 4-octet words, as on the wire (not computed from the options)"
+list  options          "the options, in order"
+key   option_class     int     -  "option class: the namespace of the type (IANA Geneve option class registry)"
+key   option_type      int     -  "option type; its high bit is the critical bit"
+key   option_reserved  int     -  "the three reserved bits of the option header, 0"
+key   length           int     -  "length of the option data in 4-octet words, 0 to 31"
+key   data             string  -  "the option data, 4 to 124 octets, as hexadecimal digits"

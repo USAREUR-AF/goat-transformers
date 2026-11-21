@@ -1,0 +1,12 @@
+{
+  "name": "x509-signature-roundtrip",
+  "from": "ikev2-cert",
+  "to": "ikev2-cert",
+  "input": "27000019040102030405060708090a0b0c0d0e0f1011121314",
+  "expect": "27000019040102030405060708090a0b0c0d0e0f1011121314",
+  "model": {
+    "ikev2.cert_encoding": "4",
+    "ikev2.cert_data.#": "20"
+  },
+  "source": "built by tools/gen/tunnels-vectors.py from values chosen there; layout restated from RFC 7296 section 3.6; encoding 4 with 20 octets of data (not a real certificate); expect derived there, no engine run"
+}

@@ -1,0 +1,52 @@
+# IKEv2 Security Association payload (type 33, section 3.3): proposals, their transforms and the transform attributes. The message is one payload, its generic header included, as
+# ikev2-message holds it. Public. Written by tools/gen/tunnels-pack.py; do not edit by hand.
+format        ikev2-sa
+version       0.1.0
+distribution  public
+source        "IETF RFC 7296, Internet Key Exchange Protocol Version 2 (IKEv2), October 2014, section 3, https://www.rfc-editor.org/rfc/rfc7296.txt (sha256 b6c1bf3921e85dd3674f427ffcaded0209e1f9718e8d601e2f918371f46329a1); layout restated"
+uses          ikev2
+wire          bits
+layout        sequential
+bit_order     msb
+
+field  ikev2.next_payload  8  uint
+field  ikev2.critical  1  uint
+field  ikev2.payload_reserved  7  uint
+length  16  bytes  plus  4
+  group  ikev2.proposals  rest
+    field  ikev2.last_substruc  8  uint
+    field  ikev2.substruc_reserved  8  uint
+    length  16  bytes  plus  4
+      field  ikev2.proposal_num  8  uint
+      field  ikev2.protocol_id  8  uint
+      count  spi_size  8
+      count  num_transforms  8
+      group  ikev2.proposal_spi  count  @spi_size
+        field  ikev2.octet  8  uint
+      end
+      group  ikev2.transforms  count  @num_transforms
+        field  ikev2.last_substruc  8  uint
+        field  ikev2.substruc_reserved  8  uint
+        length  16  bytes  plus  4
+          field  ikev2.transform_type  8  uint
+          field  ikev2.transform_reserved  8  uint
+          field  ikev2.transform_id  16  uint
+          group  ikev2.attributes  rest
+            field  ikev2.af  1  uint
+            field  ikev2.attr_type  15  uint
+            switch  ikev2.af
+              case  1
+                field  ikev2.attr_value  16  uint
+              else
+                length  16  bytes
+                  group  ikev2.attr_octets  rest
+                    field  ikev2.octet  8  uint
+                  end
+                end
+            end
+          end
+        end
+      end
+    end
+  end
+end

@@ -1,0 +1,29 @@
+# IKEv2 EAP payload (type 48, section 3.16): the EAP message header. The message is one payload, its generic header included, as
+# ikev2-message holds it. Public. Written by tools/gen/tunnels-pack.py; do not edit by hand.
+format        ikev2-eap
+version       0.1.0
+distribution  public
+source        "IETF RFC 7296, Internet Key Exchange Protocol Version 2 (IKEv2), October 2014, section 3, https://www.rfc-editor.org/rfc/rfc7296.txt (sha256 b6c1bf3921e85dd3674f427ffcaded0209e1f9718e8d601e2f918371f46329a1); layout restated"
+uses          ikev2
+wire          bits
+layout        sequential
+bit_order     msb
+
+field  ikev2.next_payload  8  uint
+field  ikev2.critical  1  uint
+field  ikev2.payload_reserved  7  uint
+length  16  bytes  plus  4
+  field  ikev2.eap_code  8  uint
+  field  ikev2.eap_identifier  8  uint
+  switch  ikev2.eap_code
+    case  1,2
+      length  16  bytes  plus  4
+        field  ikev2.eap_type  8  uint
+        group  ikev2.eap_data  rest
+          field  ikev2.octet  8  uint
+        end
+      end
+    else
+      field  ikev2.eap_length  16  uint
+  end
+end

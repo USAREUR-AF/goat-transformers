@@ -1,0 +1,13 @@
+{
+  "name": "shared-key-roundtrip",
+  "from": "ikev2-auth",
+  "to": "ikev2-auth",
+  "input": "2c00002802000000000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+  "expect": "2c00002802000000000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+  "model": {
+    "ikev2.next_payload": "44",
+    "ikev2.auth_method": "2",
+    "ikev2.auth_data.#": "32"
+  },
+  "source": "built by tools/gen/tunnels-vectors.py from values chosen there; layout restated from RFC 7296 section 3.8; shared key message integrity code, 32 octets; expect derived there, no engine run"
+}
