@@ -1,0 +1,17 @@
+{
+ "name": "gen-record-roundtrip",
+ "from": "zeek-files-scope-underscore",
+ "to": "zeek-files-scope-underscore",
+ "input": "{\"ts\":42.375,\"fuid\":\"s24356\",\"uid\":\"s94552\",\"id_orig_h\":\"s65159\",\"id_orig_p\":68909,\"id_resp_h\":\"s48288\",\"id_resp_p\":58406,\"source\":\"s49348\",\"depth\":55391,\"analyzers\":[\"s39664\",\"s40868\"],\"mime_type\":\"s41421\",\"filename\":\"s95878\",\"duration\":-0.5,\"local_orig\":false,\"is_orig\":false,\"seen_bytes\":44377,\"total_bytes\":15943,\"missing_bytes\":95945,\"overflow_bytes\":78365,\"timedout\":false,\"parent_fuid\":\"s9439\"}",
+ "expect": "{\"ts\":42.375,\"fuid\":\"s24356\",\"uid\":\"s94552\",\"id_orig_h\":\"s65159\",\"id_orig_p\":68909,\"id_resp_h\":\"s48288\",\"id_resp_p\":58406,\"source\":\"s49348\",\"depth\":55391,\"analyzers\":[\"s39664\",\"s40868\"],\"mime_type\":\"s41421\",\"filename\":\"s95878\",\"duration\":-0.5,\"local_orig\":false,\"is_orig\":false,\"seen_bytes\":44377,\"total_bytes\":15943,\"missing_bytes\":95945,\"overflow_bytes\":78365,\"timedout\":false,\"parent_fuid\":\"s9439\"}",
+ "model": {
+  "uid": "s24356",
+  "zeekfiles.ts": "42.375",
+  "zeekfiles.fuid": "s24356",
+  "zeekfiles.uid": "s94552",
+  "zeekfiles.id_orig_h": "s65159",
+  "zeekfiles.id_orig_p": "68909",
+  "zeekfiles.id_resp_h": "s48288",
+  "zeekfiles.id_resp_p": "58406"
+ }
+}

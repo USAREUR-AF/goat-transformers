@@ -1,0 +1,8 @@
+{
+  "name": "Zeek JSON logs (scope separator _)",
+  "domain": "networks",
+  "prefixes": [
+    "zeek-"
+  ],
+  "detail": "conn, dns, http, ssl, files, notice, weird, x509, dhcp; written with Log::default_scope_sep = \"_\""
+}

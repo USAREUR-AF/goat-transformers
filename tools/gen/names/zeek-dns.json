@@ -1,0 +1,32 @@
+{
+ "keys": {
+  "answers|.|string": "answers_value",
+  "ttls|.|float": "ttls_value",
+  "|AA|int": "aa",
+  "|RA|int": "ra",
+  "|RD|int": "rd",
+  "|TC|int": "tc",
+  "|Z|int": "z",
+  "|id_orig_h|string": "id_orig_h",
+  "|id_orig_p|int": "id_orig_p",
+  "|id_resp_h|string": "id_resp_h",
+  "|id_resp_p|int": "id_resp_p",
+  "|proto|string": "proto",
+  "|qclass_name|string": "qclass_name",
+  "|qclass|int": "qclass",
+  "|qtype_name|string": "qtype_name",
+  "|qtype|int": "qtype",
+  "|query|string": "query",
+  "|rcode_name|string": "rcode_name",
+  "|rcode|int": "rcode",
+  "|rejected|int": "rejected",
+  "|rtt|float": "rtt",
+  "|trans_id|int": "trans_id",
+  "|ts|float": "ts",
+  "|uid|string": "uid"
+ },
+ "lists": {
+  "|TTLs": "ttls",
+  "|answers": "answers"
+ }
+}

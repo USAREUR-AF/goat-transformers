@@ -1,0 +1,32 @@
+{
+ "keys": {
+  "san_dns|.|string": "san_dns_value",
+  "san_email|.|string": "san_email_value",
+  "san_ip|.|string": "san_ip_value",
+  "san_uri|.|string": "san_uri_value",
+  "|basic_constraints_ca|int": "basic_constraints_ca",
+  "|basic_constraints_path_len|int": "basic_constraints_path_len",
+  "|certificate_curve|string": "certificate_curve",
+  "|certificate_exponent|string": "certificate_exponent",
+  "|certificate_issuer|string": "certificate_issuer",
+  "|certificate_key_alg|string": "certificate_key_alg",
+  "|certificate_key_length|int": "certificate_key_length",
+  "|certificate_key_type|string": "certificate_key_type",
+  "|certificate_not_valid_after|float": "certificate_not_valid_after",
+  "|certificate_not_valid_before|float": "certificate_not_valid_before",
+  "|certificate_serial|string": "certificate_serial",
+  "|certificate_sig_alg|string": "certificate_sig_alg",
+  "|certificate_subject|string": "certificate_subject",
+  "|certificate_version|int": "certificate_version",
+  "|client_cert|int": "client_cert",
+  "|fingerprint|string": "fingerprint",
+  "|host_cert|int": "host_cert",
+  "|ts|float": "ts"
+ },
+ "lists": {
+  "|san_dns": "san_dns",
+  "|san_email": "san_email",
+  "|san_ip": "san_ip",
+  "|san_uri": "san_uri"
+ }
+}

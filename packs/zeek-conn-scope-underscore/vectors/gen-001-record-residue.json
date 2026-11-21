@@ -1,0 +1,7 @@
+{
+ "name": "gen-record-residue",
+ "from": "zeek-conn-scope-underscore",
+ "to": "zeek-conn-scope-underscore",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"ts\":42.375,\"uid\":\"s94552\",\"id_orig_h\":\"s65159\",\"id_orig_p\":68909,\"id_resp_h\":\"s48288\",\"id_resp_p\":58406,\"proto\":\"s31950\",\"service\":\"s31664\",\"duration\":-0.5,\"orig_bytes\":33556,\"resp_bytes\":11812,\"conn_state\":\"s13746\",\"local_orig\":false,\"local_resp\":false,\"missed_bytes\":4906,\"history\":\"s77750\",\"orig_pkts\":41920,\"orig_ip_bytes\":68034,\"resp_pkts\":73784,\"resp_ip_bytes\":70725,\"tunnel_parents\":[\"s25574\",\"s28232\"],\"ip_proto\":25554}",
+ "expect": "{\"ts\":42.375,\"uid\":\"s94552\",\"id_orig_h\":\"s65159\",\"id_orig_p\":68909,\"id_resp_h\":\"s48288\",\"id_resp_p\":58406,\"proto\":\"s31950\",\"service\":\"s31664\",\"duration\":-0.5,\"orig_bytes\":33556,\"resp_bytes\":11812,\"conn_state\":\"s13746\",\"local_orig\":false,\"local_resp\":false,\"missed_bytes\":4906,\"history\":\"s77750\",\"orig_pkts\":41920,\"orig_ip_bytes\":68034,\"resp_pkts\":73784,\"resp_ip_bytes\":70725,\"tunnel_parents\":[\"s25574\",\"s28232\"],\"ip_proto\":25554,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

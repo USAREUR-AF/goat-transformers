@@ -1,0 +1,7 @@
+{
+ "name": "gen-record-residue",
+ "from": "zeek-dhcp-scope-underscore",
+ "to": "zeek-dhcp-scope-underscore",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"ts\":42.375,\"uids\":[\"s14001\",\"s4979\"],\"client_addr\":\"s58533\",\"server_addr\":\"s55053\",\"mac\":\"s57423\",\"host_name\":\"s3671\",\"client_fqdn\":\"s83106\",\"domain\":\"s19849\",\"requested_addr\":\"s86434\",\"assigned_addr\":\"s81235\",\"lease_time\":-3.25,\"client_message\":\"s42840\",\"server_message\":\"s8133\",\"msg_types\":[\"s22725\",\"s10582\"],\"duration\":-0.5}",
+ "expect": "{\"ts\":42.375,\"uids\":[\"s14001\",\"s4979\"],\"client_addr\":\"s58533\",\"server_addr\":\"s55053\",\"mac\":\"s57423\",\"host_name\":\"s3671\",\"client_fqdn\":\"s83106\",\"domain\":\"s19849\",\"requested_addr\":\"s86434\",\"assigned_addr\":\"s81235\",\"lease_time\":-3.25,\"client_message\":\"s42840\",\"server_message\":\"s8133\",\"msg_types\":[\"s22725\",\"s10582\"],\"duration\":-0.5,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

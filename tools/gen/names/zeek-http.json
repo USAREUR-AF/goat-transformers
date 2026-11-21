@@ -1,0 +1,32 @@
+{
+ "keys": {
+  "proxied|.|string": "proxied_value",
+  "tags|.|string": "tags_value",
+  "|host|string": "host",
+  "|id_orig_h|string": "id_orig_h",
+  "|id_orig_p|int": "id_orig_p",
+  "|id_resp_h|string": "id_resp_h",
+  "|id_resp_p|int": "id_resp_p",
+  "|info_code|int": "info_code",
+  "|info_msg|string": "info_msg",
+  "|method|string": "method",
+  "|origin|string": "origin",
+  "|password|string": "password",
+  "|referrer|string": "referrer",
+  "|request_body_len|int": "request_body_len",
+  "|response_body_len|int": "response_body_len",
+  "|status_code|int": "status_code",
+  "|status_msg|string": "status_msg",
+  "|trans_depth|int": "trans_depth",
+  "|ts|float": "ts",
+  "|uid|string": "uid",
+  "|uri|string": "uri",
+  "|user_agent|string": "user_agent",
+  "|username|string": "username",
+  "|version|string": "version"
+ },
+ "lists": {
+  "|proxied": "proxied",
+  "|tags": "tags"
+ }
+}
