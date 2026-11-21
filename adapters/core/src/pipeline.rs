@@ -158,16 +158,33 @@ pub enum OnError {
 
 /// The counters. `received` counts messages from the source. `converted`
 /// and `failed` count per output: with two outputs one message adds two.
+///
+/// The same counts are kept by format for `/metrics`: messages delivered by
+/// target format, and failures by stage, format and error name. The stages:
+/// `decode` (the input did not decode: the format is the input's), `encode`
+/// (it decoded, and the rest of the conversion to the target failed: filling
+/// the context, a derivation or the encoder; the format is the target's),
+/// `deliver` (a sink refused the converted message; the target's format) and
+/// `source` (the source failed; the input's format).
 pub struct Stats {
     pub received: AtomicU64,
     pub converted: AtomicU64,
     failed: Mutex<BTreeMap<String, u64>>,
+    delivered_by: Mutex<BTreeMap<String, u64>>,
+    failed_by: Mutex<BTreeMap<(String, String, String), u64>>,
     started: Instant,
 }
 
 impl Default for Stats {
     fn default() -> Stats {
-        Stats { received: AtomicU64::new(0), converted: AtomicU64::new(0), failed: Mutex::new(BTreeMap::new()), started: Instant::now() }
+        Stats {
+            received: AtomicU64::new(0),
+            converted: AtomicU64::new(0),
+            failed: Mutex::new(BTreeMap::new()),
+            delivered_by: Mutex::new(BTreeMap::new()),
+            failed_by: Mutex::new(BTreeMap::new()),
+            started: Instant::now(),
+        }
     }
 }
 
@@ -184,6 +201,31 @@ impl Stats {
         let n = m.entry(kind.to_string()).or_insert(0);
         *n += 1;
         *n
+    }
+    /// Count a failure under its error name, and by stage and format.
+    pub fn fail_at(&self, stage: &str, format: &str, kind: &str) -> u64 {
+        let mut m = self.failed_by.lock().unwrap_or_else(|p| p.into_inner());
+        *m.entry((stage.to_string(), format.to_string(), kind.to_string())).or_insert(0) += 1;
+        drop(m);
+        self.fail(kind)
+    }
+    /// Count one message delivered in `format`.
+    pub fn delivered(&self, format: &str) {
+        self.converted.fetch_add(1, Ordering::Relaxed);
+        let mut m = self.delivered_by.lock().unwrap_or_else(|p| p.into_inner());
+        *m.entry(format.to_string()).or_insert(0) += 1;
+    }
+    /// Messages delivered, by target format.
+    pub fn delivered_by(&self) -> BTreeMap<String, u64> {
+        self.delivered_by.lock().map(|m| m.clone()).unwrap_or_default()
+    }
+    /// Failures by (stage, format, error name).
+    pub fn failed_by(&self) -> BTreeMap<(String, String, String), u64> {
+        self.failed_by.lock().map(|m| m.clone()).unwrap_or_default()
+    }
+    /// Seconds since the counters started.
+    pub fn uptime_secs(&self) -> f64 {
+        self.started.elapsed().as_secs_f64()
     }
     /// The one-line status: `in=12 converted=11 failed=1 [malformed-wire=1] 4s`.
     pub fn line(&self) -> String {
@@ -301,8 +343,8 @@ impl<'a> Pipeline<'a> {
         Ok(())
     }
 
-    fn report(&self, kind: &str, line: String) {
-        let n = self.stats.fail(kind);
+    fn report(&self, stage: &str, format: &str, kind: &str, line: String) {
+        let n = self.stats.fail_at(stage, format, kind);
         if n <= PRINTED_PER_KIND {
             eprintln!("{}: FAILED {}", self.name, line);
         }
@@ -335,7 +377,7 @@ impl<'a> Pipeline<'a> {
             Ok(t) => t,
             Err(e) => {
                 let from = origin.map(|o| format!(" from {}", o)).unwrap_or_default();
-                self.report(&e.kind, format!("message {}{}: {}", seq, from, e));
+                self.report("decode", &self.from, &e.kind, format!("message {}{}: {}", seq, from, e));
                 return if stop { Err(e.to_string()) } else { Ok(()) };
             }
         };
@@ -355,28 +397,34 @@ impl<'a> Pipeline<'a> {
                 done.push((to.clone(), engine.convert_text(&self.from, &to, &text, context)));
             }
             let result = &done.iter().find(|(t, _)| *t == to).unwrap().1;
+            // (stage, error name, text, fatal)
             let delivered = match result {
-                Err(e) => Err((error_kind(&e.msg).to_string(), e.msg.clone(), false)),
+                Err(e) => {
+                    // which side failed: decode the input alone (only on a failure)
+                    let stage = if engine.decode(&self.from, &text).is_err() { "decode" } else { "encode" };
+                    Err((stage, error_kind(&e.msg).to_string(), e.msg.clone(), false))
+                }
                 Ok(out) => {
                     let binary = self.formats.is_binary(&to).unwrap_or(false);
                     let bytes = if binary && !self.outputs[i].hex {
-                        bits::from_hex(out).map_err(|e| (error_kind(&e.msg).to_string(), e.msg, false))
+                        bits::from_hex(out).map_err(|e| ("encode", error_kind(&e.msg).to_string(), e.msg, false))
                     } else {
                         Ok(out.clone().into_bytes())
                     };
                     bytes.and_then(|b| {
                         self.outputs[i].sink.send(&b, &Meta { seq, origin }).map_err(|e| {
-                            (e.kind.clone(), format!("{} at {}", e, self.outputs[i].sink.describe()), e.fatal)
+                            ("deliver", e.kind.clone(), format!("{} at {}", e, self.outputs[i].sink.describe()), e.fatal)
                         })
                     })
                 }
             };
             match delivered {
                 Ok(()) => {
-                    self.stats.converted.fetch_add(1, Ordering::Relaxed);
+                    self.stats.delivered(&to);
                 }
-                Err((kind, text, fatal)) => {
-                    self.report(&kind, format!("{}: {}", at(&to), text));
+                Err((stage, kind, text, fatal)) => {
+                    let format = if stage == "decode" { self.from.clone() } else { to.clone() };
+                    self.report(stage, &format, &kind, format!("{}: {}", at(&to), text));
                     if stop || fatal {
                         return Err(text);
                     }
@@ -403,7 +451,7 @@ impl<'a> Pipeline<'a> {
                     }
                 }
                 Err(e) => {
-                    self.report(&e.kind, format!("source {}: {}", self.source.describe(), e));
+                    self.report("source", &self.from, &e.kind, format!("source {}: {}", self.source.describe(), e));
                     if e.fatal || self.on_error == OnError::Stop {
                         return Outcome::Stopped(e.to_string());
                     }
@@ -446,7 +494,7 @@ impl<'a> Pipeline<'a> {
         });
         for o in &mut self.outputs {
             if let Err(e) = o.sink.flush() {
-                self.stats.fail(&e.kind);
+                self.stats.fail_at("deliver", &o.to, &e.kind);
                 eprintln!("{}: FAILED flush of {}: {}", self.name, o.sink.describe(), e);
                 if !matches!(outcome, Outcome::Stopped(_)) {
                     outcome = Outcome::Stopped(e.to_string());
@@ -478,5 +526,22 @@ mod tests {
         s.fail("malformed-wire");
         s.fail("no-kind");
         assert!(s.line().starts_with("in=3 converted=1 failed=3 [malformed-wire=1 no-kind=2] "), "{}", s.line());
+    }
+
+    #[test]
+    fn stats_by_format_and_stage() {
+        let s = Stats::default();
+        s.delivered("geojson");
+        s.delivered("geojson");
+        s.delivered("cot-xml");
+        s.fail_at("decode", "nmea0183", "malformed-wire");
+        s.fail_at("encode", "geojson", "transform-encode");
+        s.fail_at("decode", "nmea0183", "malformed-wire");
+        assert_eq!(s.converted.load(Ordering::Relaxed), 3);
+        assert_eq!(s.delivered_by().into_iter().collect::<Vec<_>>(), vec![("cot-xml".to_string(), 1), ("geojson".to_string(), 2)]);
+        let f = s.failed_by();
+        assert_eq!(f[&("decode".to_string(), "nmea0183".to_string(), "malformed-wire".to_string())], 2);
+        assert_eq!(f[&("encode".to_string(), "geojson".to_string(), "transform-encode".to_string())], 1);
+        assert_eq!(s.failed_total(), 3);
     }
 }
