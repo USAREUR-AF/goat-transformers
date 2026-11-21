@@ -1,0 +1,10 @@
+# The zwave module: Z-Wave Serial API frame fields. Written by tools/gen/smarthome-pack.py.
+module        zwave
+version       0.1.0
+distribution  public
+source        "zwave-js, https://github.com/zwave-js/zwave-js at commit 03756e4f179a4461f85822d2e5c71b1089667a22, packages/serial/src/message/Message.ts, MessageHeaders.ts and Constants.ts (MIT License, Copyright (c) 2018-2024 AlCalzone); layout restated, no code copied; the Silicon Labs Z-Wave Host API specification not used"
+key   message_type  int     -  "0 request, 1 response"
+key   function_id   int     -  "Serial API function (0x02 GetSerialApiInitData, 0x04 ApplicationCommand, 0x13 SendData, 0x15 GetControllerVersion, 0x20 GetControllerId, 0x49 ApplicationUpdateRequest, 0xA8 BridgeApplicationCommand ...)"
+list  payload       "the function's payload, as octets"
+key   checksum      int     -  "the checksum, as sent (0xFF XOR every octet from the length to the last payload octet; not computed)"
+key   octet         int     -  "one octet"

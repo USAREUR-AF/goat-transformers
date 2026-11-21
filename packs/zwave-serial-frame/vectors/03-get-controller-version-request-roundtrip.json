@@ -1,0 +1,15 @@
+{
+  "name": "get-controller-version-request-roundtrip",
+  "from": "zwave-serial-frame",
+  "to": "zwave-serial-frame",
+  "input": "01030015e9",
+  "expect": "01030015e9",
+  "model": {
+    "@kind": "data-frame",
+    "zwave.message_type": "0",
+    "zwave.function_id": "21",
+    "zwave.payload.#": "0",
+    "zwave.checksum": "233"
+  },
+  "source": "built by tools/gen/smarthome-vectors.py from values chosen there; layout restated from zwave-js packages/serial/src/message/Message.ts; GetControllerVersion request, no payload; expect derived there, no engine run"
+}

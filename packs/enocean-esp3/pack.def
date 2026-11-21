@@ -1,0 +1,24 @@
+# EnOcean Serial Protocol 3 packet: sync, lengths, packet type, header CRC, data, optional data, data CRC.
+# Written by tools/gen/smarthome-pack.py; do not edit by hand.
+format        enocean-esp3
+version       0.1.0
+distribution  public
+source        "kipe/enocean, https://github.com/kipe/enocean at commit 80a253bcea1e3cb99295f53f04c0558190dca5f3, enocean/protocol/packet.py and constants.py (MIT License, Copyright (c) 2014-2016 Kimmo Huoman); layout restated, no code copied; the EnOcean ESP3 specification not used"
+uses          esp3
+wire          bits
+layout        sequential
+bit_order     msb
+
+kind  esp3
+when  8  85
+count  data_length  16
+count  optional_length  8
+field  esp3.packet_type  8  uint
+field  esp3.header_crc  8  uint
+group  esp3.data  count  @data_length
+  field  esp3.octet  8  uint
+end
+group  esp3.optional_data  count  @optional_length
+  field  esp3.octet  8  uint
+end
+field  esp3.data_crc  8  uint

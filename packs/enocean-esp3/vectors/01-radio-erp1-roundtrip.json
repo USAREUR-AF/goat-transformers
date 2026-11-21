@@ -1,0 +1,15 @@
+{
+  "name": "radio-erp1-roundtrip",
+  "from": "enocean-esp3",
+  "to": "enocean-esp3",
+  "input": "55000707017af6500029a1b23001ffffffff45001b",
+  "expect": "55000707017af6500029a1b23001ffffffff45001b",
+  "model": {
+    "esp3.packet_type": "1",
+    "esp3.header_crc": "122",
+    "esp3.data.#": "7",
+    "esp3.optional_data.#": "7",
+    "esp3.data_crc": "27"
+  },
+  "source": "built by tools/gen/smarthome-vectors.py from values chosen there; layout restated from kipe/enocean protocol/packet.py and crc8.py; an RPS (F6) rocker telegram with the usual 7 optional octets; expect derived there, no engine run"
+}

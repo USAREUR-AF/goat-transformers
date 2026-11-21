@@ -1,0 +1,11 @@
+{
+  "name": "nak-roundtrip",
+  "from": "zwave-serial-frame",
+  "to": "zwave-serial-frame",
+  "input": "15",
+  "expect": "15",
+  "model": {
+    "@kind": "nak"
+  },
+  "source": "built by tools/gen/smarthome-vectors.py from values chosen there; layout restated from zwave-js packages/serial/src/message/Message.ts; expect derived there, no engine run"
+}
