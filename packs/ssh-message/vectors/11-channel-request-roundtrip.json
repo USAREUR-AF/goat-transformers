@@ -1,0 +1,13 @@
+{
+  "name": "channel-request-roundtrip",
+  "from": "ssh-message",
+  "to": "ssh-message",
+  "input": "620000000300000004657865630100000006757074696d65",
+  "expect": "620000000300000004657865630100000006757074696d65",
+  "model": {
+    "sshmsg.request_name.#": "4",
+    "sshmsg.want_reply": "1",
+    "sshmsg.request_data.#": "10"
+  },
+  "source": "built by tools/gen/remote-vectors.py from values chosen there; layout restated from RFC 4254 section 6.5; an exec CHANNEL_REQUEST; expect derived there, no engine run"
+}

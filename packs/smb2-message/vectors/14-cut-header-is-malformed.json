@@ -1,0 +1,8 @@
+{
+  "name": "cut-header-is-malformed",
+  "from": "smb2-message",
+  "to": "smb2-message",
+  "input": "fe534d4240000000000000000000010000000000000000000000000000000000fffe000000000000",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/remote-vectors.py from values chosen there; layout restated from [MS-SMB2] 2.2.1.2; the NEGOTIATE request of vector 01 cut inside its header; expect derived there, no engine run"
+}

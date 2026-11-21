@@ -1,0 +1,12 @@
+{
+  "name": "channel-data-roundtrip",
+  "from": "ssh-message",
+  "to": "ssh-message",
+  "input": "5e00000003000000036c730a",
+  "expect": "5e00000003000000036c730a",
+  "model": {
+    "sshmsg.recipient_channel": "3",
+    "sshmsg.data.#": "3"
+  },
+  "source": "built by tools/gen/remote-vectors.py from values chosen there; layout restated from RFC 4254 section 5.2; CHANNEL_DATA; expect derived there, no engine run"
+}

@@ -1,0 +1,201 @@
+# SMB2/3 message ([MS-SMB2]): the 64-octet header (sync or async by the flag), and the fixed part of the
+# NEGOTIATE, SESSION_SETUP, LOGOFF, TREE_CONNECT, TREE_DISCONNECT and CREATE requests and responses and the
+# error response; the SMB3 transform and compression transform headers. Little-endian. Written by
+# tools/gen/remote-pack.py; do not edit by hand.
+format        smb2-message
+version       0.1.0
+distribution  public
+source        "Microsoft, [MS-SMB2]: Server Message Block (SMB) Protocol Versions 2 and 3, revision 88.0, 2026-09-28, sections 2.2.1, 2.2.2-2.2.14, 2.2.41 and 2.2.42, https://winprotocoldocs-bhdugrdyduf5h2e4.b02.azurefd.net/MS-SMB2/%5bMS-SMB2%5d.pdf (sha256 fef3a06507679130a8cfdcaeaed581482d7f235435dd904f6c794f113ff04bd1), Microsoft Open Specifications copyright permission; layout restated"
+uses          smb2
+wire          bits
+layout        sequential
+bit_order     lsb
+
+kind  smb2
+when  32  1112364030
+field  smb2.structure_size_header  16  uint
+field  smb2.credit_charge  16  uint
+field  smb2.status  32  uint
+field  smb2.command  16  uint
+field  smb2.credits  16  uint
+field  smb2.response  1  uint
+field  smb2.async  1  uint
+field  smb2.related  1  uint
+field  smb2.signed  1  uint
+field  smb2.priority  3  uint
+field  smb2.flags_bits7_27  21  uint
+field  smb2.dfs_operation  1  uint
+field  smb2.replay_operation  1  uint
+field  smb2.flags_bits30_31  2  uint
+field  smb2.next_command  32  uint
+field  smb2.message_id  64  uint
+switch  smb2.async
+  case  1
+    field  smb2.async_id  64  uint
+  else
+    field  smb2.reserved_sync  32  uint
+    field  smb2.tree_id  32  uint
+end
+field  smb2.session_id  64  uint
+field  smb2.signature  128  hex
+switch  smb2.response
+  case  0
+    switch  smb2.command
+      case  0
+        field  smb2.structure_size  16  uint
+        count  dialect_count  16
+        field  smb2.security_mode  16  uint
+        field  smb2.reserved16  16  uint
+        field  smb2.capabilities  32  uint
+        field  smb2.client_guid  128  hex
+        field  smb2.negotiate_context_or_start_time  64  uint
+        group  smb2.dialects  count  @dialect_count
+          field  smb2.dialect  16  uint
+        end
+        group  smb2.buffer  rest
+          field  smb2.octet  8  uint
+        end
+      case  1
+        field  smb2.structure_size  16  uint
+        field  smb2.session_setup_flags  8  uint
+        field  smb2.security_mode8  8  uint
+        field  smb2.capabilities  32  uint
+        field  smb2.channel  32  uint
+        field  smb2.security_buffer_offset  16  uint
+        field  smb2.security_buffer_length  16  uint
+        field  smb2.previous_session_id  64  uint
+        group  smb2.buffer  rest
+          field  smb2.octet  8  uint
+        end
+      case  2,4
+        field  smb2.structure_size  16  uint
+        field  smb2.reserved16  16  uint
+      case  3
+        field  smb2.structure_size  16  uint
+        field  smb2.tree_connect_flags  16  uint
+        field  smb2.path_offset  16  uint
+        field  smb2.path_length  16  uint
+        group  smb2.buffer  rest
+          field  smb2.octet  8  uint
+        end
+      case  5
+        field  smb2.structure_size  16  uint
+        field  smb2.security_flags  8  uint
+        field  smb2.requested_oplock_level  8  uint
+        field  smb2.impersonation_level  32  uint
+        field  smb2.smb_create_flags  64  uint
+        field  smb2.reserved64  64  uint
+        field  smb2.desired_access  32  uint
+        field  smb2.file_attributes  32  uint
+        field  smb2.share_access  32  uint
+        field  smb2.create_disposition  32  uint
+        field  smb2.create_options  32  uint
+        field  smb2.name_offset  16  uint
+        field  smb2.name_length  16  uint
+        field  smb2.create_contexts_offset  32  uint
+        field  smb2.create_contexts_length  32  uint
+        group  smb2.buffer  rest
+          field  smb2.octet  8  uint
+        end
+      else
+        group  smb2.body  rest
+          field  smb2.octet  8  uint
+        end
+    end
+  case  1
+    switch  smb2.status
+      case  0,3221225494
+        switch  smb2.command
+          case  0
+            field  smb2.structure_size  16  uint
+            field  smb2.security_mode  16  uint
+            field  smb2.dialect_revision  16  uint
+            field  smb2.negotiate_context_count  16  uint
+            field  smb2.server_guid  128  hex
+            field  smb2.capabilities  32  uint
+            field  smb2.max_transact_size  32  uint
+            field  smb2.max_read_size  32  uint
+            field  smb2.max_write_size  32  uint
+            field  smb2.system_time  64  uint
+            field  smb2.server_start_time  64  uint
+            field  smb2.security_buffer_offset  16  uint
+            field  smb2.security_buffer_length  16  uint
+            field  smb2.negotiate_context_offset  32  uint
+            group  smb2.buffer  rest
+              field  smb2.octet  8  uint
+            end
+          case  1
+            field  smb2.structure_size  16  uint
+            field  smb2.session_flags  16  uint
+            field  smb2.security_buffer_offset  16  uint
+            field  smb2.security_buffer_length  16  uint
+            group  smb2.buffer  rest
+              field  smb2.octet  8  uint
+            end
+          case  2,4
+            field  smb2.structure_size  16  uint
+            field  smb2.reserved16  16  uint
+          case  3
+            field  smb2.structure_size  16  uint
+            field  smb2.share_type  8  uint
+            field  smb2.reserved8  8  uint
+            field  smb2.share_flags  32  uint
+            field  smb2.share_capabilities  32  uint
+            field  smb2.maximal_access  32  uint
+          case  5
+            field  smb2.structure_size  16  uint
+            field  smb2.oplock_level  8  uint
+            field  smb2.create_response_flags  8  uint
+            field  smb2.create_action  32  uint
+            field  smb2.creation_time  64  uint
+            field  smb2.last_access_time  64  uint
+            field  smb2.last_write_time  64  uint
+            field  smb2.change_time  64  uint
+            field  smb2.allocation_size  64  uint
+            field  smb2.end_of_file  64  uint
+            field  smb2.file_attributes  32  uint
+            field  smb2.reserved32  32  uint
+            field  smb2.file_id_persistent  64  uint
+            field  smb2.file_id_volatile  64  uint
+            field  smb2.create_contexts_offset  32  uint
+            field  smb2.create_contexts_length  32  uint
+            group  smb2.buffer  rest
+              field  smb2.octet  8  uint
+            end
+          else
+            group  smb2.body  rest
+              field  smb2.octet  8  uint
+            end
+        end
+      else
+        field  smb2.structure_size  16  uint
+        field  smb2.error_context_count  8  uint
+        field  smb2.reserved8  8  uint
+        field  smb2.byte_count  32  uint
+        group  smb2.buffer  rest
+          field  smb2.octet  8  uint
+        end
+    end
+end
+
+kind  transform
+when  32  1112364029
+field  smb2.signature  128  hex
+field  smb2.nonce  128  hex
+field  smb2.original_message_size  32  uint
+field  smb2.reserved16  16  uint
+field  smb2.encryption_flags  16  uint
+field  smb2.session_id  64  uint
+group  smb2.body  rest
+  field  smb2.octet  8  uint
+end
+
+kind  compression-transform
+when  32  1112364028
+field  smb2.original_compressed_segment_size  32  uint
+field  smb2.compression_algorithm  16  uint
+field  smb2.compression_flags  16  uint
+field  smb2.offset_or_length  32  uint
+group  smb2.body  rest
+  field  smb2.octet  8  uint
+end

@@ -1,0 +1,11 @@
+{
+  "name": "with-mac-roundtrip",
+  "from": "ssh-packet",
+  "to": "ssh-packet",
+  "input": "0000001c0a050000000c7373682d7573657261757468000102030405060708096465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f80818283",
+  "expect": "0000001c0a050000000c7373682d7573657261757468000102030405060708096465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f80818283",
+  "model": {
+    "sshpkt.mac.#": "32"
+  },
+  "source": "built by tools/gen/remote-vectors.py from values chosen there; layout restated from RFC 4253 section 6; the same packet followed by a 32-octet MAC; expect derived there, no engine run"
+}

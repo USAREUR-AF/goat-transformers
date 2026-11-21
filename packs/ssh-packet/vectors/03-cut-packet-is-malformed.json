@@ -1,0 +1,8 @@
+{
+  "name": "cut-packet-is-malformed",
+  "from": "ssh-packet",
+  "to": "ssh-packet",
+  "input": "0000001c0a050000000c7373682d757365726175",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/remote-vectors.py from values chosen there; layout restated from RFC 4253 section 6; the packet of vector 01 cut before its length; expect derived there, no engine run"
+}

@@ -1,0 +1,236 @@
+# SSH message (the payload of an SSH packet): the message number and its fields for the transport (RFC 4253,
+# RFC 8308), authentication (RFC 4252) and connection (RFC 4254) messages. Written by tools/gen/remote-pack.py.
+format        ssh-message
+version       0.1.0
+distribution  public
+source        "IETF RFC 4253 sections 7, 11, 12 and 10; RFC 4251 section 5 (data types); RFC 4252 sections 5, 5.1 and 5.4; RFC 4254 sections 4, 5 and 6; RFC 8308 section 2.3; https://www.rfc-editor.org/; layout restated"
+uses          sshmsg
+wire          bits
+layout        sequential
+bit_order     msb
+
+field  sshmsg.message_number  8  uint
+switch  sshmsg.message_number
+  case  1
+    field  sshmsg.reason_code  32  uint
+    length  32  bytes
+      group  sshmsg.description  rest
+        field  sshmsg.octet  8  uint
+      end
+    end
+    length  32  bytes
+      group  sshmsg.language_tag  rest
+        field  sshmsg.octet  8  uint
+      end
+    end
+  case  2
+    length  32  bytes
+      group  sshmsg.data  rest
+        field  sshmsg.octet  8  uint
+      end
+    end
+  case  3
+    field  sshmsg.rejected_sequence  32  uint
+  case  4
+    field  sshmsg.always_display  8  uint
+    length  32  bytes
+      group  sshmsg.description  rest
+        field  sshmsg.octet  8  uint
+      end
+    end
+    length  32  bytes
+      group  sshmsg.language_tag  rest
+        field  sshmsg.octet  8  uint
+      end
+    end
+  case  5,6
+    length  32  bytes
+      group  sshmsg.service_name  rest
+        field  sshmsg.octet  8  uint
+      end
+    end
+  case  7
+    count  extension_count  32
+    group  sshmsg.extensions  count  @extension_count
+      length  32  bytes
+        group  sshmsg.extension_name  rest
+          field  sshmsg.octet  8  uint
+        end
+      end
+      length  32  bytes
+        group  sshmsg.extension_value  rest
+          field  sshmsg.octet  8  uint
+        end
+      end
+    end
+  case  20
+    field  sshmsg.cookie  128  hex
+    length  32  bytes
+      group  sshmsg.kex_algorithms  rest
+        field  sshmsg.octet  8  uint
+      end
+    end
+    length  32  bytes
+      group  sshmsg.server_host_key_algorithms  rest
+        field  sshmsg.octet  8  uint
+      end
+    end
+    length  32  bytes
+      group  sshmsg.encryption_c2s  rest
+        field  sshmsg.octet  8  uint
+      end
+    end
+    length  32  bytes
+      group  sshmsg.encryption_s2c  rest
+        field  sshmsg.octet  8  uint
+      end
+    end
+    length  32  bytes
+      group  sshmsg.mac_c2s  rest
+        field  sshmsg.octet  8  uint
+      end
+    end
+    length  32  bytes
+      group  sshmsg.mac_s2c  rest
+        field  sshmsg.octet  8  uint
+      end
+    end
+    length  32  bytes
+      group  sshmsg.compression_c2s  rest
+        field  sshmsg.octet  8  uint
+      end
+    end
+    length  32  bytes
+      group  sshmsg.compression_s2c  rest
+        field  sshmsg.octet  8  uint
+      end
+    end
+    length  32  bytes
+      group  sshmsg.languages_c2s  rest
+        field  sshmsg.octet  8  uint
+      end
+    end
+    length  32  bytes
+      group  sshmsg.languages_s2c  rest
+        field  sshmsg.octet  8  uint
+      end
+    end
+    field  sshmsg.first_kex_packet_follows  8  uint
+    field  sshmsg.kexinit_reserved  32  uint
+  case  21,52,81,82
+  case  50
+    length  32  bytes
+      group  sshmsg.user_name  rest
+        field  sshmsg.octet  8  uint
+      end
+    end
+    length  32  bytes
+      group  sshmsg.service_name  rest
+        field  sshmsg.octet  8  uint
+      end
+    end
+    length  32  bytes
+      group  sshmsg.method_name  rest
+        field  sshmsg.octet  8  uint
+      end
+    end
+    group  sshmsg.method_data  rest
+      field  sshmsg.octet  8  uint
+    end
+  case  51
+    length  32  bytes
+      group  sshmsg.authentications  rest
+        field  sshmsg.octet  8  uint
+      end
+    end
+    field  sshmsg.partial_success  8  uint
+  case  53
+    length  32  bytes
+      group  sshmsg.description  rest
+        field  sshmsg.octet  8  uint
+      end
+    end
+    length  32  bytes
+      group  sshmsg.language_tag  rest
+        field  sshmsg.octet  8  uint
+      end
+    end
+  case  80
+    length  32  bytes
+      group  sshmsg.request_name  rest
+        field  sshmsg.octet  8  uint
+      end
+    end
+    field  sshmsg.want_reply  8  uint
+    group  sshmsg.request_data  rest
+      field  sshmsg.octet  8  uint
+    end
+  case  90
+    length  32  bytes
+      group  sshmsg.channel_type  rest
+        field  sshmsg.octet  8  uint
+      end
+    end
+    field  sshmsg.sender_channel  32  uint
+    field  sshmsg.initial_window_size  32  uint
+    field  sshmsg.maximum_packet_size  32  uint
+    group  sshmsg.request_data  rest
+      field  sshmsg.octet  8  uint
+    end
+  case  91
+    field  sshmsg.recipient_channel  32  uint
+    field  sshmsg.sender_channel  32  uint
+    field  sshmsg.initial_window_size  32  uint
+    field  sshmsg.maximum_packet_size  32  uint
+    group  sshmsg.request_data  rest
+      field  sshmsg.octet  8  uint
+    end
+  case  92
+    field  sshmsg.recipient_channel  32  uint
+    field  sshmsg.reason_code  32  uint
+    length  32  bytes
+      group  sshmsg.description  rest
+        field  sshmsg.octet  8  uint
+      end
+    end
+    length  32  bytes
+      group  sshmsg.language_tag  rest
+        field  sshmsg.octet  8  uint
+      end
+    end
+  case  93
+    field  sshmsg.recipient_channel  32  uint
+    field  sshmsg.bytes_to_add  32  uint
+  case  94
+    field  sshmsg.recipient_channel  32  uint
+    length  32  bytes
+      group  sshmsg.data  rest
+        field  sshmsg.octet  8  uint
+      end
+    end
+  case  95
+    field  sshmsg.recipient_channel  32  uint
+    field  sshmsg.data_type_code  32  uint
+    length  32  bytes
+      group  sshmsg.data  rest
+        field  sshmsg.octet  8  uint
+      end
+    end
+  case  96,97,99,100
+    field  sshmsg.recipient_channel  32  uint
+  case  98
+    field  sshmsg.recipient_channel  32  uint
+    length  32  bytes
+      group  sshmsg.request_name  rest
+        field  sshmsg.octet  8  uint
+      end
+    end
+    field  sshmsg.want_reply  8  uint
+    group  sshmsg.request_data  rest
+      field  sshmsg.octet  8  uint
+    end
+  else
+    group  sshmsg.message_data  rest
+      field  sshmsg.octet  8  uint
+    end
+end

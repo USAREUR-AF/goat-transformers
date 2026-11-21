@@ -1,0 +1,9 @@
+# The sshpkt module: the SSH binary packet (RFC 4253 section 6). Written by tools/gen/remote-pack.py.
+module        sshpkt
+version       0.1.0
+distribution  public
+source        "IETF RFC 4253, The Secure Shell (SSH) Transport Layer Protocol, January 2006, section 6, https://www.rfc-editor.org/rfc/rfc4253.txt; layout restated"
+key   padding_length       int     -  "padding length, octets (4 to 255)"
+list  payload_and_padding  "the payload followed by the random padding (the last padding_length octets), as octets"
+list  mac                  "the MAC after the packet (empty before keys are exchanged), as octets"
+key   octet                int     -  "one octet"

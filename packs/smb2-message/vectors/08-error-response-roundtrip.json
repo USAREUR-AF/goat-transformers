@@ -1,0 +1,14 @@
+{
+  "name": "error-response-roundtrip",
+  "from": "smb2-message",
+  "to": "smb2-message",
+  "input": "fe534d4240000000340000c00500010001000000000000000600000000000000fffe000005000000000000000000000000000000000000000000000000000000090000000000000000",
+  "expect": "fe534d4240000000340000c00500010001000000000000000600000000000000fffe000005000000000000000000000000000000000000000000000000000000090000000000000000",
+  "model": {
+    "smb2.status": "3221225524",
+    "smb2.structure_size": "9",
+    "smb2.byte_count": "0",
+    "smb2.buffer.#": "1"
+  },
+  "source": "built by tools/gen/remote-vectors.py from values chosen there; layout restated from [MS-SMB2] 2.2.2; an error response (object name not found) to a CREATE; expect derived there, no engine run"
+}

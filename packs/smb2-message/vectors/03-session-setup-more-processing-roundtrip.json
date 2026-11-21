@@ -1,0 +1,14 @@
+{
+  "name": "session-setup-more-processing-roundtrip",
+  "from": "smb2-message",
+  "to": "smb2-message",
+  "input": "fe534d4240000000160000c00100010001000000000000000200000000000000fffe00000000000001000000001000000000000000000000000000000000000009000000480006006004a1023000",
+  "expect": "fe534d4240000000160000c00100010001000000000000000200000000000000fffe00000000000001000000001000000000000000000000000000000000000009000000480006006004a1023000",
+  "model": {
+    "smb2.command": "1",
+    "smb2.status": "3221225494",
+    "smb2.session_id": "17592186044417",
+    "smb2.security_buffer_length": "6"
+  },
+  "source": "built by tools/gen/remote-vectors.py from values chosen there; layout restated from [MS-SMB2] 2.2.6; a SESSION_SETUP response with STATUS_MORE_PROCESSING_REQUIRED, laid out as a success; expect derived there, no engine run"
+}

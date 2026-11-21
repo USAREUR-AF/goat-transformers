@@ -1,0 +1,11 @@
+{
+  "name": "service-accept-roundtrip",
+  "from": "ssh-message",
+  "to": "ssh-message",
+  "input": "060000000c7373682d7573657261757468",
+  "expect": "060000000c7373682d7573657261757468",
+  "model": {
+    "sshmsg.service_name.#": "12"
+  },
+  "source": "built by tools/gen/remote-vectors.py from values chosen there; layout restated from RFC 4253 section 10; SERVICE_ACCEPT; expect derived there, no engine run"
+}

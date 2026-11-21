@@ -1,0 +1,13 @@
+{
+  "name": "userauth-request-roundtrip",
+  "from": "ssh-message",
+  "to": "ssh-message",
+  "input": "3200000005616c6963650000000e7373682d636f6e6e656374696f6e0000000870617373776f72640000000006736563726574",
+  "expect": "3200000005616c6963650000000e7373682d636f6e6e656374696f6e0000000870617373776f72640000000006736563726574",
+  "model": {
+    "sshmsg.user_name.#": "5",
+    "sshmsg.method_name.#": "8",
+    "sshmsg.method_data.#": "11"
+  },
+  "source": "built by tools/gen/remote-vectors.py from values chosen there; layout restated from RFC 4252 section 5; a password USERAUTH_REQUEST, the method fields as octets; expect derived there, no engine run"
+}

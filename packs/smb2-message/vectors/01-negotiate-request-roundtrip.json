@@ -1,0 +1,20 @@
+{
+  "name": "negotiate-request-roundtrip",
+  "from": "smb2-message",
+  "to": "smb2-message",
+  "input": "fe534d4240000000000000000000010000000000000000000000000000000000fffe00000000000000000000000000000000000000000000000000000000000024000500010000007f000000000102030405060708090a0b0c0d0e0f7000000001000000020210020003020311030001020304050607",
+  "expect": "fe534d4240000000000000000000010000000000000000000000000000000000fffe00000000000000000000000000000000000000000000000000000000000024000500010000007f000000000102030405060708090a0b0c0d0e0f7000000001000000020210020003020311030001020304050607",
+  "model": {
+    "smb2.command": "0",
+    "smb2.response": "0",
+    "smb2.async": "0",
+    "smb2.structure_size": "36",
+    "smb2.dialects.#": "5",
+    "smb2.dialects[4].smb2.dialect": "785",
+    "smb2.security_mode": "1",
+    "smb2.capabilities": "127",
+    "smb2.client_guid": "00102030405060708090a0b0c0d0e0f0",
+    "smb2.buffer.#": "8"
+  },
+  "source": "built by tools/gen/remote-vectors.py from values chosen there; layout restated from [MS-SMB2] 2.2.1.2 and 2.2.3; a NEGOTIATE request offering five dialects, the negotiate contexts as octets; expect derived there, no engine run"
+}

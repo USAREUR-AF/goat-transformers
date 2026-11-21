@@ -1,0 +1,14 @@
+{
+  "name": "transform-header-roundtrip",
+  "from": "smb2-message",
+  "to": "smb2-message",
+  "input": "fd534d42000102030405060708090a0b0c0d0e0f202122232425262728292a2b2c2d2e2f64000000000001000100000000100000000102030405060708090a0b0c0d0e0f10111213",
+  "expect": "fd534d42000102030405060708090a0b0c0d0e0f202122232425262728292a2b2c2d2e2f64000000000001000100000000100000000102030405060708090a0b0c0d0e0f10111213",
+  "model": {
+    "smb2.original_message_size": "100",
+    "smb2.encryption_flags": "1",
+    "smb2.nonce": "02122232425262728292a2b2c2d2e2f2",
+    "smb2.body.#": "20"
+  },
+  "source": "built by tools/gen/remote-vectors.py from values chosen there; layout restated from [MS-SMB2] 2.2.41; an encrypted message's transform header; expect derived there, no engine run"
+}

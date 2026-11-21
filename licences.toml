@@ -97,6 +97,19 @@ attribution = true
 field_of_use = []
 distribution = "public"
 
+# Microsoft Open Specifications: the documentation's copyright notice lets anyone copy it to develop
+# implementations and to document them; it grants no patent licence, and most protocol documents are not
+# on the Open Specifications Promise's list. Kept out of `open` until the operator decides.
+
+[licences."LicenseRef-MS-OpenSpec"]
+name = "Microsoft Open Specifications copyright permission (implementations and their documentation; no patent licence granted)"
+url = "https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-smb2/5606ad47-5ee0-437a-817e-70c366052962"
+commercial = "unknown"
+share_alike = false
+attribution = true
+field_of_use = []
+distribution = "public"
+
 [licences."CC-BY-3.0"]
 name = "Creative Commons Attribution 3.0 Unported"
 url = "https://creativecommons.org/licenses/by/3.0/"

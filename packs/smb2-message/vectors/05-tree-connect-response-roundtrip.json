@@ -1,0 +1,14 @@
+{
+  "name": "tree-connect-response-roundtrip",
+  "from": "smb2-message",
+  "to": "smb2-message",
+  "input": "fe534d4240000000000000000300010001000000000000000400000000000000fffe000005000000010000000010000000000000000000000000000000000000100001000008000000000000ff011f00",
+  "expect": "fe534d4240000000000000000300010001000000000000000400000000000000fffe000005000000010000000010000000000000000000000000000000000000100001000008000000000000ff011f00",
+  "model": {
+    "smb2.tree_id": "5",
+    "smb2.share_type": "1",
+    "smb2.share_flags": "2048",
+    "smb2.maximal_access": "2032127"
+  },
+  "source": "built by tools/gen/remote-vectors.py from values chosen there; layout restated from [MS-SMB2] 2.2.10; a TREE_CONNECT response for a disk share; expect derived there, no engine run"
+}

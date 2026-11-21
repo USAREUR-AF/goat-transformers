@@ -1,0 +1,11 @@
+{
+  "name": "newkeys-roundtrip",
+  "from": "ssh-message",
+  "to": "ssh-message",
+  "input": "15",
+  "expect": "15",
+  "model": {
+    "sshmsg.message_number": "21"
+  },
+  "source": "built by tools/gen/remote-vectors.py from values chosen there; layout restated from RFC 4253 section 7.3; NEWKEYS; expect derived there, no engine run"
+}

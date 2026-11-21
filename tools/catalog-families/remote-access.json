@@ -1,0 +1,9 @@
+{
+  "name": "Remote access and file sharing (SSH, SMB2/3)",
+  "domain": "networks",
+  "exact": [
+    "ssh-packet",
+    "ssh-message",
+    "smb2-message"
+  ]
+}
