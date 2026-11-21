@@ -1,0 +1,18 @@
+{
+  "name": "stream-frames-roundtrip",
+  "from": "quic-frames",
+  "to": "quic-frames",
+  "input": "0e0443e80568656c6c6f0908656e64",
+  "expect": "0e0443e80568656c6c6f0908656e64",
+  "model": {
+    "quicfr.frames.#": "2",
+    "quicfr.frames[0].quicfr.frame_type": "14",
+    "quicfr.frames[0].quicfr.stream_id": "4",
+    "quicfr.frames[0].quicfr.offset": "1000",
+    "quicfr.frames[0].quicfr.stream_data.#": "5",
+    "quicfr.frames[1].quicfr.frame_type": "9",
+    "quicfr.frames[1].quicfr.stream_id": "8",
+    "quicfr.frames[1].quicfr.stream_data.#": "3"
+  },
+  "source": "built by tools/gen/quic-vectors.py from values chosen there; layout restated from RFC 9000 sections 16 and 19; a STREAM frame with OFF and LEN, then one with FIN whose data runs to the end; expect derived there, no engine run"
+}

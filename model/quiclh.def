@@ -1,0 +1,15 @@
+# The quiclh module: QUIC long-header packet fields beyond the invariants. Written by tools/gen/quic-pack.py.
+module        quiclh
+version       0.1.0
+distribution  public
+source        "IETF RFC 9000, QUIC: A UDP-Based Multiplexed and Secure Transport, May 2021, sections 16, 17.2 and 17.2.1-17.2.5, https://www.rfc-editor.org/rfc/rfc9000.txt; IETF RFC 9369, QUIC Version 2, May 2023, section 3.2, https://www.rfc-editor.org/rfc/rfc9369.txt; layout restated"
+list  supported_versions     "Version Negotiation: the versions the server supports"
+key   supported_version      int     -  "one supported version"
+key   token_length_size      int     -  "Initial: the token length's size code"
+list  token                  "Initial: the token, as octets (its length is written from the list)"
+key   length_size            int     -  "Initial, 0-RTT, Handshake: the length of the packet number and payload, octets (carried, not computed): the variable-length integer's size code (0 one octet, 1 two, 2 four, 3 eight)"
+key   length                 int     -  "Initial, 0-RTT, Handshake: the length of the packet number and payload, octets (carried, not computed)"
+list  protected              "Initial, 0-RTT, Handshake: the protected packet number and payload (and any coalesced packets after them), as octets"
+list  retry_token_and_tag    "Retry: the retry token and the 16-octet integrity tag, as octets"
+list  version_specific_data  "a version this pack does not lay out: the rest of the packet, as octets"
+key   octet                  int     -  "one octet"

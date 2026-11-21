@@ -1,0 +1,17 @@
+{
+  "name": "flow-control-and-reset-roundtrip",
+  "from": "quic-frames",
+  "to": "quic-frames",
+  "input": "108010000011048001000012406414801000001640640404410c05050800",
+  "expect": "108010000011048001000012406414801000001640640404410c05050800",
+  "model": {
+    "quicfr.frames.#": "7",
+    "quicfr.frames[0].quicfr.maximum_data": "1048576",
+    "quicfr.frames[1].quicfr.maximum_data": "65536",
+    "quicfr.frames[2].quicfr.maximum_streams": "100",
+    "quicfr.frames[5].quicfr.error_code": "268",
+    "quicfr.frames[5].quicfr.final_size": "5",
+    "quicfr.frames[6].quicfr.frame_type": "5"
+  },
+  "source": "built by tools/gen/quic-vectors.py from values chosen there; layout restated from RFC 9000 sections 16 and 19; MAX_DATA, MAX_STREAM_DATA, MAX_STREAMS, DATA_BLOCKED, STREAMS_BLOCKED, RESET_STREAM and STOP_SENDING; expect derived there, no engine run"
+}

@@ -1,0 +1,938 @@
+# QUIC frames (RFC 9000 section 19): the decrypted payload of a packet, the frames to the end, each by its
+# variable-length type. Written by tools/gen/quic-pack.py; do not edit by hand.
+format        quic-frames
+version       0.1.0
+distribution  public
+source        "IETF RFC 9000 sections 16 and 19, https://www.rfc-editor.org/rfc/rfc9000.txt; layout restated"
+uses          quicfr
+wire          bits
+layout        sequential
+bit_order     msb
+
+group  quicfr.frames  rest
+  field  quicfr.frame_type_size  2  uint
+  switch  quicfr.frame_type_size
+    case  0
+      field  quicfr.frame_type  6  uint
+    case  1
+      field  quicfr.frame_type  14  uint
+    case  2
+      field  quicfr.frame_type  30  uint
+    case  3
+      field  quicfr.frame_type  62  uint
+  end
+  switch  quicfr.frame_type
+    case  0,1,30
+    case  2
+      field  quicfr.largest_acknowledged_size  2  uint
+      switch  quicfr.largest_acknowledged_size
+        case  0
+          field  quicfr.largest_acknowledged  6  uint
+        case  1
+          field  quicfr.largest_acknowledged  14  uint
+        case  2
+          field  quicfr.largest_acknowledged  30  uint
+        case  3
+          field  quicfr.largest_acknowledged  62  uint
+      end
+      field  quicfr.ack_delay_size  2  uint
+      switch  quicfr.ack_delay_size
+        case  0
+          field  quicfr.ack_delay  6  uint
+        case  1
+          field  quicfr.ack_delay  14  uint
+        case  2
+          field  quicfr.ack_delay  30  uint
+        case  3
+          field  quicfr.ack_delay  62  uint
+      end
+      field  quicfr.ack_range_count_size  2  uint
+      switch  quicfr.ack_range_count_size
+        case  0
+          count  ack_range_count  6
+          field  quicfr.first_ack_range_size  2  uint
+          switch  quicfr.first_ack_range_size
+            case  0
+              field  quicfr.first_ack_range  6  uint
+            case  1
+              field  quicfr.first_ack_range  14  uint
+            case  2
+              field  quicfr.first_ack_range  30  uint
+            case  3
+              field  quicfr.first_ack_range  62  uint
+          end
+          group  quicfr.ack_ranges  count  @ack_range_count
+            field  quicfr.gap_size  2  uint
+            switch  quicfr.gap_size
+              case  0
+                field  quicfr.gap  6  uint
+              case  1
+                field  quicfr.gap  14  uint
+              case  2
+                field  quicfr.gap  30  uint
+              case  3
+                field  quicfr.gap  62  uint
+            end
+            field  quicfr.ack_range_length_size  2  uint
+            switch  quicfr.ack_range_length_size
+              case  0
+                field  quicfr.ack_range_length  6  uint
+              case  1
+                field  quicfr.ack_range_length  14  uint
+              case  2
+                field  quicfr.ack_range_length  30  uint
+              case  3
+                field  quicfr.ack_range_length  62  uint
+            end
+          end
+        case  1
+          count  ack_range_count  14
+          field  quicfr.first_ack_range_size  2  uint
+          switch  quicfr.first_ack_range_size
+            case  0
+              field  quicfr.first_ack_range  6  uint
+            case  1
+              field  quicfr.first_ack_range  14  uint
+            case  2
+              field  quicfr.first_ack_range  30  uint
+            case  3
+              field  quicfr.first_ack_range  62  uint
+          end
+          group  quicfr.ack_ranges  count  @ack_range_count
+            field  quicfr.gap_size  2  uint
+            switch  quicfr.gap_size
+              case  0
+                field  quicfr.gap  6  uint
+              case  1
+                field  quicfr.gap  14  uint
+              case  2
+                field  quicfr.gap  30  uint
+              case  3
+                field  quicfr.gap  62  uint
+            end
+            field  quicfr.ack_range_length_size  2  uint
+            switch  quicfr.ack_range_length_size
+              case  0
+                field  quicfr.ack_range_length  6  uint
+              case  1
+                field  quicfr.ack_range_length  14  uint
+              case  2
+                field  quicfr.ack_range_length  30  uint
+              case  3
+                field  quicfr.ack_range_length  62  uint
+            end
+          end
+        case  2
+          count  ack_range_count  30
+          field  quicfr.first_ack_range_size  2  uint
+          switch  quicfr.first_ack_range_size
+            case  0
+              field  quicfr.first_ack_range  6  uint
+            case  1
+              field  quicfr.first_ack_range  14  uint
+            case  2
+              field  quicfr.first_ack_range  30  uint
+            case  3
+              field  quicfr.first_ack_range  62  uint
+          end
+          group  quicfr.ack_ranges  count  @ack_range_count
+            field  quicfr.gap_size  2  uint
+            switch  quicfr.gap_size
+              case  0
+                field  quicfr.gap  6  uint
+              case  1
+                field  quicfr.gap  14  uint
+              case  2
+                field  quicfr.gap  30  uint
+              case  3
+                field  quicfr.gap  62  uint
+            end
+            field  quicfr.ack_range_length_size  2  uint
+            switch  quicfr.ack_range_length_size
+              case  0
+                field  quicfr.ack_range_length  6  uint
+              case  1
+                field  quicfr.ack_range_length  14  uint
+              case  2
+                field  quicfr.ack_range_length  30  uint
+              case  3
+                field  quicfr.ack_range_length  62  uint
+            end
+          end
+        case  3
+          count  ack_range_count  62
+          field  quicfr.first_ack_range_size  2  uint
+          switch  quicfr.first_ack_range_size
+            case  0
+              field  quicfr.first_ack_range  6  uint
+            case  1
+              field  quicfr.first_ack_range  14  uint
+            case  2
+              field  quicfr.first_ack_range  30  uint
+            case  3
+              field  quicfr.first_ack_range  62  uint
+          end
+          group  quicfr.ack_ranges  count  @ack_range_count
+            field  quicfr.gap_size  2  uint
+            switch  quicfr.gap_size
+              case  0
+                field  quicfr.gap  6  uint
+              case  1
+                field  quicfr.gap  14  uint
+              case  2
+                field  quicfr.gap  30  uint
+              case  3
+                field  quicfr.gap  62  uint
+            end
+            field  quicfr.ack_range_length_size  2  uint
+            switch  quicfr.ack_range_length_size
+              case  0
+                field  quicfr.ack_range_length  6  uint
+              case  1
+                field  quicfr.ack_range_length  14  uint
+              case  2
+                field  quicfr.ack_range_length  30  uint
+              case  3
+                field  quicfr.ack_range_length  62  uint
+            end
+          end
+      end
+    case  3
+      field  quicfr.largest_acknowledged_size  2  uint
+      switch  quicfr.largest_acknowledged_size
+        case  0
+          field  quicfr.largest_acknowledged  6  uint
+        case  1
+          field  quicfr.largest_acknowledged  14  uint
+        case  2
+          field  quicfr.largest_acknowledged  30  uint
+        case  3
+          field  quicfr.largest_acknowledged  62  uint
+      end
+      field  quicfr.ack_delay_size  2  uint
+      switch  quicfr.ack_delay_size
+        case  0
+          field  quicfr.ack_delay  6  uint
+        case  1
+          field  quicfr.ack_delay  14  uint
+        case  2
+          field  quicfr.ack_delay  30  uint
+        case  3
+          field  quicfr.ack_delay  62  uint
+      end
+      field  quicfr.ack_range_count_size  2  uint
+      switch  quicfr.ack_range_count_size
+        case  0
+          count  ack_range_count  6
+          field  quicfr.first_ack_range_size  2  uint
+          switch  quicfr.first_ack_range_size
+            case  0
+              field  quicfr.first_ack_range  6  uint
+            case  1
+              field  quicfr.first_ack_range  14  uint
+            case  2
+              field  quicfr.first_ack_range  30  uint
+            case  3
+              field  quicfr.first_ack_range  62  uint
+          end
+          group  quicfr.ack_ranges  count  @ack_range_count
+            field  quicfr.gap_size  2  uint
+            switch  quicfr.gap_size
+              case  0
+                field  quicfr.gap  6  uint
+              case  1
+                field  quicfr.gap  14  uint
+              case  2
+                field  quicfr.gap  30  uint
+              case  3
+                field  quicfr.gap  62  uint
+            end
+            field  quicfr.ack_range_length_size  2  uint
+            switch  quicfr.ack_range_length_size
+              case  0
+                field  quicfr.ack_range_length  6  uint
+              case  1
+                field  quicfr.ack_range_length  14  uint
+              case  2
+                field  quicfr.ack_range_length  30  uint
+              case  3
+                field  quicfr.ack_range_length  62  uint
+            end
+          end
+        case  1
+          count  ack_range_count  14
+          field  quicfr.first_ack_range_size  2  uint
+          switch  quicfr.first_ack_range_size
+            case  0
+              field  quicfr.first_ack_range  6  uint
+            case  1
+              field  quicfr.first_ack_range  14  uint
+            case  2
+              field  quicfr.first_ack_range  30  uint
+            case  3
+              field  quicfr.first_ack_range  62  uint
+          end
+          group  quicfr.ack_ranges  count  @ack_range_count
+            field  quicfr.gap_size  2  uint
+            switch  quicfr.gap_size
+              case  0
+                field  quicfr.gap  6  uint
+              case  1
+                field  quicfr.gap  14  uint
+              case  2
+                field  quicfr.gap  30  uint
+              case  3
+                field  quicfr.gap  62  uint
+            end
+            field  quicfr.ack_range_length_size  2  uint
+            switch  quicfr.ack_range_length_size
+              case  0
+                field  quicfr.ack_range_length  6  uint
+              case  1
+                field  quicfr.ack_range_length  14  uint
+              case  2
+                field  quicfr.ack_range_length  30  uint
+              case  3
+                field  quicfr.ack_range_length  62  uint
+            end
+          end
+        case  2
+          count  ack_range_count  30
+          field  quicfr.first_ack_range_size  2  uint
+          switch  quicfr.first_ack_range_size
+            case  0
+              field  quicfr.first_ack_range  6  uint
+            case  1
+              field  quicfr.first_ack_range  14  uint
+            case  2
+              field  quicfr.first_ack_range  30  uint
+            case  3
+              field  quicfr.first_ack_range  62  uint
+          end
+          group  quicfr.ack_ranges  count  @ack_range_count
+            field  quicfr.gap_size  2  uint
+            switch  quicfr.gap_size
+              case  0
+                field  quicfr.gap  6  uint
+              case  1
+                field  quicfr.gap  14  uint
+              case  2
+                field  quicfr.gap  30  uint
+              case  3
+                field  quicfr.gap  62  uint
+            end
+            field  quicfr.ack_range_length_size  2  uint
+            switch  quicfr.ack_range_length_size
+              case  0
+                field  quicfr.ack_range_length  6  uint
+              case  1
+                field  quicfr.ack_range_length  14  uint
+              case  2
+                field  quicfr.ack_range_length  30  uint
+              case  3
+                field  quicfr.ack_range_length  62  uint
+            end
+          end
+        case  3
+          count  ack_range_count  62
+          field  quicfr.first_ack_range_size  2  uint
+          switch  quicfr.first_ack_range_size
+            case  0
+              field  quicfr.first_ack_range  6  uint
+            case  1
+              field  quicfr.first_ack_range  14  uint
+            case  2
+              field  quicfr.first_ack_range  30  uint
+            case  3
+              field  quicfr.first_ack_range  62  uint
+          end
+          group  quicfr.ack_ranges  count  @ack_range_count
+            field  quicfr.gap_size  2  uint
+            switch  quicfr.gap_size
+              case  0
+                field  quicfr.gap  6  uint
+              case  1
+                field  quicfr.gap  14  uint
+              case  2
+                field  quicfr.gap  30  uint
+              case  3
+                field  quicfr.gap  62  uint
+            end
+            field  quicfr.ack_range_length_size  2  uint
+            switch  quicfr.ack_range_length_size
+              case  0
+                field  quicfr.ack_range_length  6  uint
+              case  1
+                field  quicfr.ack_range_length  14  uint
+              case  2
+                field  quicfr.ack_range_length  30  uint
+              case  3
+                field  quicfr.ack_range_length  62  uint
+            end
+          end
+      end
+      field  quicfr.ect0_count_size  2  uint
+      switch  quicfr.ect0_count_size
+        case  0
+          field  quicfr.ect0_count  6  uint
+        case  1
+          field  quicfr.ect0_count  14  uint
+        case  2
+          field  quicfr.ect0_count  30  uint
+        case  3
+          field  quicfr.ect0_count  62  uint
+      end
+      field  quicfr.ect1_count_size  2  uint
+      switch  quicfr.ect1_count_size
+        case  0
+          field  quicfr.ect1_count  6  uint
+        case  1
+          field  quicfr.ect1_count  14  uint
+        case  2
+          field  quicfr.ect1_count  30  uint
+        case  3
+          field  quicfr.ect1_count  62  uint
+      end
+      field  quicfr.ecn_ce_count_size  2  uint
+      switch  quicfr.ecn_ce_count_size
+        case  0
+          field  quicfr.ecn_ce_count  6  uint
+        case  1
+          field  quicfr.ecn_ce_count  14  uint
+        case  2
+          field  quicfr.ecn_ce_count  30  uint
+        case  3
+          field  quicfr.ecn_ce_count  62  uint
+      end
+    case  4
+      field  quicfr.stream_id_size  2  uint
+      switch  quicfr.stream_id_size
+        case  0
+          field  quicfr.stream_id  6  uint
+        case  1
+          field  quicfr.stream_id  14  uint
+        case  2
+          field  quicfr.stream_id  30  uint
+        case  3
+          field  quicfr.stream_id  62  uint
+      end
+      field  quicfr.error_code_size  2  uint
+      switch  quicfr.error_code_size
+        case  0
+          field  quicfr.error_code  6  uint
+        case  1
+          field  quicfr.error_code  14  uint
+        case  2
+          field  quicfr.error_code  30  uint
+        case  3
+          field  quicfr.error_code  62  uint
+      end
+      field  quicfr.final_size_size  2  uint
+      switch  quicfr.final_size_size
+        case  0
+          field  quicfr.final_size  6  uint
+        case  1
+          field  quicfr.final_size  14  uint
+        case  2
+          field  quicfr.final_size  30  uint
+        case  3
+          field  quicfr.final_size  62  uint
+      end
+    case  5
+      field  quicfr.stream_id_size  2  uint
+      switch  quicfr.stream_id_size
+        case  0
+          field  quicfr.stream_id  6  uint
+        case  1
+          field  quicfr.stream_id  14  uint
+        case  2
+          field  quicfr.stream_id  30  uint
+        case  3
+          field  quicfr.stream_id  62  uint
+      end
+      field  quicfr.error_code_size  2  uint
+      switch  quicfr.error_code_size
+        case  0
+          field  quicfr.error_code  6  uint
+        case  1
+          field  quicfr.error_code  14  uint
+        case  2
+          field  quicfr.error_code  30  uint
+        case  3
+          field  quicfr.error_code  62  uint
+      end
+    case  6
+      field  quicfr.offset_size  2  uint
+      switch  quicfr.offset_size
+        case  0
+          field  quicfr.offset  6  uint
+        case  1
+          field  quicfr.offset  14  uint
+        case  2
+          field  quicfr.offset  30  uint
+        case  3
+          field  quicfr.offset  62  uint
+      end
+      field  quicfr.data_length_size  2  uint
+      switch  quicfr.data_length_size
+        case  0
+          count  data_length  6
+          group  quicfr.crypto_data  count  @data_length
+            field  quicfr.octet  8  uint
+          end
+        case  1
+          count  data_length  14
+          group  quicfr.crypto_data  count  @data_length
+            field  quicfr.octet  8  uint
+          end
+        case  2
+          count  data_length  30
+          group  quicfr.crypto_data  count  @data_length
+            field  quicfr.octet  8  uint
+          end
+        case  3
+          count  data_length  62
+          group  quicfr.crypto_data  count  @data_length
+            field  quicfr.octet  8  uint
+          end
+      end
+    case  7
+      field  quicfr.token_length_size  2  uint
+      switch  quicfr.token_length_size
+        case  0
+          count  token_length  6
+          group  quicfr.token  count  @token_length
+            field  quicfr.octet  8  uint
+          end
+        case  1
+          count  token_length  14
+          group  quicfr.token  count  @token_length
+            field  quicfr.octet  8  uint
+          end
+        case  2
+          count  token_length  30
+          group  quicfr.token  count  @token_length
+            field  quicfr.octet  8  uint
+          end
+        case  3
+          count  token_length  62
+          group  quicfr.token  count  @token_length
+            field  quicfr.octet  8  uint
+          end
+      end
+    case  8
+      field  quicfr.stream_id_size  2  uint
+      switch  quicfr.stream_id_size
+        case  0
+          field  quicfr.stream_id  6  uint
+        case  1
+          field  quicfr.stream_id  14  uint
+        case  2
+          field  quicfr.stream_id  30  uint
+        case  3
+          field  quicfr.stream_id  62  uint
+      end
+      group  quicfr.stream_data  rest
+        field  quicfr.octet  8  uint
+      end
+    case  9
+      field  quicfr.stream_id_size  2  uint
+      switch  quicfr.stream_id_size
+        case  0
+          field  quicfr.stream_id  6  uint
+        case  1
+          field  quicfr.stream_id  14  uint
+        case  2
+          field  quicfr.stream_id  30  uint
+        case  3
+          field  quicfr.stream_id  62  uint
+      end
+      group  quicfr.stream_data  rest
+        field  quicfr.octet  8  uint
+      end
+    case  10
+      field  quicfr.stream_id_size  2  uint
+      switch  quicfr.stream_id_size
+        case  0
+          field  quicfr.stream_id  6  uint
+        case  1
+          field  quicfr.stream_id  14  uint
+        case  2
+          field  quicfr.stream_id  30  uint
+        case  3
+          field  quicfr.stream_id  62  uint
+      end
+      field  quicfr.data_length_size  2  uint
+      switch  quicfr.data_length_size
+        case  0
+          count  data_length  6
+          group  quicfr.stream_data  count  @data_length
+            field  quicfr.octet  8  uint
+          end
+        case  1
+          count  data_length  14
+          group  quicfr.stream_data  count  @data_length
+            field  quicfr.octet  8  uint
+          end
+        case  2
+          count  data_length  30
+          group  quicfr.stream_data  count  @data_length
+            field  quicfr.octet  8  uint
+          end
+        case  3
+          count  data_length  62
+          group  quicfr.stream_data  count  @data_length
+            field  quicfr.octet  8  uint
+          end
+      end
+    case  11
+      field  quicfr.stream_id_size  2  uint
+      switch  quicfr.stream_id_size
+        case  0
+          field  quicfr.stream_id  6  uint
+        case  1
+          field  quicfr.stream_id  14  uint
+        case  2
+          field  quicfr.stream_id  30  uint
+        case  3
+          field  quicfr.stream_id  62  uint
+      end
+      field  quicfr.data_length_size  2  uint
+      switch  quicfr.data_length_size
+        case  0
+          count  data_length  6
+          group  quicfr.stream_data  count  @data_length
+            field  quicfr.octet  8  uint
+          end
+        case  1
+          count  data_length  14
+          group  quicfr.stream_data  count  @data_length
+            field  quicfr.octet  8  uint
+          end
+        case  2
+          count  data_length  30
+          group  quicfr.stream_data  count  @data_length
+            field  quicfr.octet  8  uint
+          end
+        case  3
+          count  data_length  62
+          group  quicfr.stream_data  count  @data_length
+            field  quicfr.octet  8  uint
+          end
+      end
+    case  12
+      field  quicfr.stream_id_size  2  uint
+      switch  quicfr.stream_id_size
+        case  0
+          field  quicfr.stream_id  6  uint
+        case  1
+          field  quicfr.stream_id  14  uint
+        case  2
+          field  quicfr.stream_id  30  uint
+        case  3
+          field  quicfr.stream_id  62  uint
+      end
+      field  quicfr.offset_size  2  uint
+      switch  quicfr.offset_size
+        case  0
+          field  quicfr.offset  6  uint
+        case  1
+          field  quicfr.offset  14  uint
+        case  2
+          field  quicfr.offset  30  uint
+        case  3
+          field  quicfr.offset  62  uint
+      end
+      group  quicfr.stream_data  rest
+        field  quicfr.octet  8  uint
+      end
+    case  13
+      field  quicfr.stream_id_size  2  uint
+      switch  quicfr.stream_id_size
+        case  0
+          field  quicfr.stream_id  6  uint
+        case  1
+          field  quicfr.stream_id  14  uint
+        case  2
+          field  quicfr.stream_id  30  uint
+        case  3
+          field  quicfr.stream_id  62  uint
+      end
+      field  quicfr.offset_size  2  uint
+      switch  quicfr.offset_size
+        case  0
+          field  quicfr.offset  6  uint
+        case  1
+          field  quicfr.offset  14  uint
+        case  2
+          field  quicfr.offset  30  uint
+        case  3
+          field  quicfr.offset  62  uint
+      end
+      group  quicfr.stream_data  rest
+        field  quicfr.octet  8  uint
+      end
+    case  14
+      field  quicfr.stream_id_size  2  uint
+      switch  quicfr.stream_id_size
+        case  0
+          field  quicfr.stream_id  6  uint
+        case  1
+          field  quicfr.stream_id  14  uint
+        case  2
+          field  quicfr.stream_id  30  uint
+        case  3
+          field  quicfr.stream_id  62  uint
+      end
+      field  quicfr.offset_size  2  uint
+      switch  quicfr.offset_size
+        case  0
+          field  quicfr.offset  6  uint
+        case  1
+          field  quicfr.offset  14  uint
+        case  2
+          field  quicfr.offset  30  uint
+        case  3
+          field  quicfr.offset  62  uint
+      end
+      field  quicfr.data_length_size  2  uint
+      switch  quicfr.data_length_size
+        case  0
+          count  data_length  6
+          group  quicfr.stream_data  count  @data_length
+            field  quicfr.octet  8  uint
+          end
+        case  1
+          count  data_length  14
+          group  quicfr.stream_data  count  @data_length
+            field  quicfr.octet  8  uint
+          end
+        case  2
+          count  data_length  30
+          group  quicfr.stream_data  count  @data_length
+            field  quicfr.octet  8  uint
+          end
+        case  3
+          count  data_length  62
+          group  quicfr.stream_data  count  @data_length
+            field  quicfr.octet  8  uint
+          end
+      end
+    case  15
+      field  quicfr.stream_id_size  2  uint
+      switch  quicfr.stream_id_size
+        case  0
+          field  quicfr.stream_id  6  uint
+        case  1
+          field  quicfr.stream_id  14  uint
+        case  2
+          field  quicfr.stream_id  30  uint
+        case  3
+          field  quicfr.stream_id  62  uint
+      end
+      field  quicfr.offset_size  2  uint
+      switch  quicfr.offset_size
+        case  0
+          field  quicfr.offset  6  uint
+        case  1
+          field  quicfr.offset  14  uint
+        case  2
+          field  quicfr.offset  30  uint
+        case  3
+          field  quicfr.offset  62  uint
+      end
+      field  quicfr.data_length_size  2  uint
+      switch  quicfr.data_length_size
+        case  0
+          count  data_length  6
+          group  quicfr.stream_data  count  @data_length
+            field  quicfr.octet  8  uint
+          end
+        case  1
+          count  data_length  14
+          group  quicfr.stream_data  count  @data_length
+            field  quicfr.octet  8  uint
+          end
+        case  2
+          count  data_length  30
+          group  quicfr.stream_data  count  @data_length
+            field  quicfr.octet  8  uint
+          end
+        case  3
+          count  data_length  62
+          group  quicfr.stream_data  count  @data_length
+            field  quicfr.octet  8  uint
+          end
+      end
+    case  16,20
+      field  quicfr.maximum_data_size  2  uint
+      switch  quicfr.maximum_data_size
+        case  0
+          field  quicfr.maximum_data  6  uint
+        case  1
+          field  quicfr.maximum_data  14  uint
+        case  2
+          field  quicfr.maximum_data  30  uint
+        case  3
+          field  quicfr.maximum_data  62  uint
+      end
+    case  17,21
+      field  quicfr.stream_id_size  2  uint
+      switch  quicfr.stream_id_size
+        case  0
+          field  quicfr.stream_id  6  uint
+        case  1
+          field  quicfr.stream_id  14  uint
+        case  2
+          field  quicfr.stream_id  30  uint
+        case  3
+          field  quicfr.stream_id  62  uint
+      end
+      field  quicfr.maximum_data_size  2  uint
+      switch  quicfr.maximum_data_size
+        case  0
+          field  quicfr.maximum_data  6  uint
+        case  1
+          field  quicfr.maximum_data  14  uint
+        case  2
+          field  quicfr.maximum_data  30  uint
+        case  3
+          field  quicfr.maximum_data  62  uint
+      end
+    case  18,19,22,23
+      field  quicfr.maximum_streams_size  2  uint
+      switch  quicfr.maximum_streams_size
+        case  0
+          field  quicfr.maximum_streams  6  uint
+        case  1
+          field  quicfr.maximum_streams  14  uint
+        case  2
+          field  quicfr.maximum_streams  30  uint
+        case  3
+          field  quicfr.maximum_streams  62  uint
+      end
+    case  24
+      field  quicfr.sequence_number_size  2  uint
+      switch  quicfr.sequence_number_size
+        case  0
+          field  quicfr.sequence_number  6  uint
+        case  1
+          field  quicfr.sequence_number  14  uint
+        case  2
+          field  quicfr.sequence_number  30  uint
+        case  3
+          field  quicfr.sequence_number  62  uint
+      end
+      field  quicfr.retire_prior_to_size  2  uint
+      switch  quicfr.retire_prior_to_size
+        case  0
+          field  quicfr.retire_prior_to  6  uint
+        case  1
+          field  quicfr.retire_prior_to  14  uint
+        case  2
+          field  quicfr.retire_prior_to  30  uint
+        case  3
+          field  quicfr.retire_prior_to  62  uint
+      end
+      count  cid_length  8
+      group  quicfr.connection_id  count  @cid_length
+        field  quicfr.octet  8  uint
+      end
+      field  quicfr.stateless_reset_token  128  hex
+    case  25
+      field  quicfr.sequence_number_size  2  uint
+      switch  quicfr.sequence_number_size
+        case  0
+          field  quicfr.sequence_number  6  uint
+        case  1
+          field  quicfr.sequence_number  14  uint
+        case  2
+          field  quicfr.sequence_number  30  uint
+        case  3
+          field  quicfr.sequence_number  62  uint
+      end
+    case  26,27
+      field  quicfr.path_data  64  hex
+    case  28
+      field  quicfr.error_code_size  2  uint
+      switch  quicfr.error_code_size
+        case  0
+          field  quicfr.error_code  6  uint
+        case  1
+          field  quicfr.error_code  14  uint
+        case  2
+          field  quicfr.error_code  30  uint
+        case  3
+          field  quicfr.error_code  62  uint
+      end
+      field  quicfr.frame_type_in_error_size  2  uint
+      switch  quicfr.frame_type_in_error_size
+        case  0
+          field  quicfr.frame_type_in_error  6  uint
+        case  1
+          field  quicfr.frame_type_in_error  14  uint
+        case  2
+          field  quicfr.frame_type_in_error  30  uint
+        case  3
+          field  quicfr.frame_type_in_error  62  uint
+      end
+      field  quicfr.reason_length_size  2  uint
+      switch  quicfr.reason_length_size
+        case  0
+          count  reason_length  6
+          group  quicfr.reason_phrase  count  @reason_length
+            field  quicfr.octet  8  uint
+          end
+        case  1
+          count  reason_length  14
+          group  quicfr.reason_phrase  count  @reason_length
+            field  quicfr.octet  8  uint
+          end
+        case  2
+          count  reason_length  30
+          group  quicfr.reason_phrase  count  @reason_length
+            field  quicfr.octet  8  uint
+          end
+        case  3
+          count  reason_length  62
+          group  quicfr.reason_phrase  count  @reason_length
+            field  quicfr.octet  8  uint
+          end
+      end
+    case  29
+      field  quicfr.error_code_size  2  uint
+      switch  quicfr.error_code_size
+        case  0
+          field  quicfr.error_code  6  uint
+        case  1
+          field  quicfr.error_code  14  uint
+        case  2
+          field  quicfr.error_code  30  uint
+        case  3
+          field  quicfr.error_code  62  uint
+      end
+      field  quicfr.reason_length_size  2  uint
+      switch  quicfr.reason_length_size
+        case  0
+          count  reason_length  6
+          group  quicfr.reason_phrase  count  @reason_length
+            field  quicfr.octet  8  uint
+          end
+        case  1
+          count  reason_length  14
+          group  quicfr.reason_phrase  count  @reason_length
+            field  quicfr.octet  8  uint
+          end
+        case  2
+          count  reason_length  30
+          group  quicfr.reason_phrase  count  @reason_length
+            field  quicfr.octet  8  uint
+          end
+        case  3
+          count  reason_length  62
+          group  quicfr.reason_phrase  count  @reason_length
+            field  quicfr.octet  8  uint
+          end
+      end
+  end
+end

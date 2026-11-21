@@ -1,0 +1,13 @@
+{
+  "name": "v2-initial-roundtrip",
+  "from": "quic-long-header",
+  "to": "quic-long-header",
+  "input": "d36b3343cf088394c8f03e515708000044b0000102030405060708090a0b0c0d0e0f10111213",
+  "expect": "d36b3343cf088394c8f03e515708000044b0000102030405060708090a0b0c0d0e0f10111213",
+  "model": {
+    "inet.quic_version": "1798521807",
+    "inet.quic_version_specific": "83",
+    "quiclh.length": "1200"
+  },
+  "source": "built by tools/gen/quic-vectors.py from values chosen there; layout restated from RFC 9000 sections 16 and 17.2 and RFC 9369 section 3.2; a version 2 Initial, whose type code is 01; expect derived there, no engine run"
+}

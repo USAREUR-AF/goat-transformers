@@ -1,0 +1,18 @@
+{
+  "name": "ack-roundtrip",
+  "from": "quic-frames",
+  "to": "quic-frames",
+  "input": "0240641901030205",
+  "expect": "0240641901030205",
+  "model": {
+    "quicfr.frames[0].quicfr.frame_type": "2",
+    "quicfr.frames[0].quicfr.largest_acknowledged_size": "1",
+    "quicfr.frames[0].quicfr.largest_acknowledged": "100",
+    "quicfr.frames[0].quicfr.ack_delay": "25",
+    "quicfr.frames[0].quicfr.first_ack_range": "3",
+    "quicfr.frames[0].quicfr.ack_ranges.#": "1",
+    "quicfr.frames[0].quicfr.ack_ranges[0].quicfr.gap": "2",
+    "quicfr.frames[0].quicfr.ack_ranges[0].quicfr.ack_range_length": "5"
+  },
+  "source": "built by tools/gen/quic-vectors.py from values chosen there; layout restated from RFC 9000 sections 16 and 19; an ACK with a first range and one further range; expect derived there, no engine run"
+}

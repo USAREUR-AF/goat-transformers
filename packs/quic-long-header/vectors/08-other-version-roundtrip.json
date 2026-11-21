@@ -1,0 +1,12 @@
+{
+  "name": "other-version-roundtrip",
+  "from": "quic-long-header",
+  "to": "quic-long-header",
+  "input": "c0ff00001d088394c8f03e51570808f067a5502a4262b500010203040506070809",
+  "expect": "c0ff00001d088394c8f03e51570808f067a5502a4262b500010203040506070809",
+  "model": {
+    "inet.quic_version": "4278190109",
+    "quiclh.version_specific_data.#": "10"
+  },
+  "source": "built by tools/gen/quic-vectors.py from values chosen there; layout restated from RFC 9000 sections 16 and 17.2 and RFC 9369 section 3.2; a draft version this pack does not lay out, its rest as octets; expect derived there, no engine run"
+}

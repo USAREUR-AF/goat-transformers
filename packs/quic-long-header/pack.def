@@ -1,0 +1,185 @@
+# QUIC long-header packet (RFC 9000 section 17.2; version 2 types of RFC 9369): the invariant fields on
+# the inet keys of quic-invariant, then by version and long packet type the Version Negotiation list,
+# the Initial token and length, the 0-RTT and Handshake length, or the Retry token. The packet number and
+# payload are header- and packet-protected, so they are octets. Written by tools/gen/quic-pack.py.
+format        quic-long-header
+version       0.1.0
+distribution  public
+source        "IETF RFC 9000, QUIC: A UDP-Based Multiplexed and Secure Transport, May 2021, sections 16, 17.2 and 17.2.1-17.2.5, https://www.rfc-editor.org/rfc/rfc9000.txt; IETF RFC 9369, QUIC Version 2, May 2023, section 3.2, https://www.rfc-editor.org/rfc/rfc9369.txt; layout restated"
+uses          inet
+uses          quiclh
+wire          bits
+layout        sequential
+bit_order     msb
+
+kind      long-header
+when      1  1
+requires  inet.quic_version
+field  inet.quic_version_specific   7    uint
+field  inet.quic_version            32   uint
+group  inet.quic_dcid count 8
+  field  inet.quic_cid_octet        8    uint
+end
+group  inet.quic_scid count 8
+  field  inet.quic_cid_octet        8    uint
+end
+switch  inet.quic_version
+  case  0
+    group  quiclh.supported_versions  rest
+      field  quiclh.supported_version  32  uint
+    end
+  case  1
+    switch  inet.quic_version_specific
+      case  0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79
+        field  quiclh.token_length_size  2  uint
+        switch  quiclh.token_length_size
+          case  0
+            count  token_length  6
+            group  quiclh.token  count  @token_length
+              field  quiclh.octet  8  uint
+            end
+          case  1
+            count  token_length  14
+            group  quiclh.token  count  @token_length
+              field  quiclh.octet  8  uint
+            end
+          case  2
+            count  token_length  30
+            group  quiclh.token  count  @token_length
+              field  quiclh.octet  8  uint
+            end
+          case  3
+            count  token_length  62
+            group  quiclh.token  count  @token_length
+              field  quiclh.octet  8  uint
+            end
+        end
+        field  quiclh.length_size  2  uint
+        switch  quiclh.length_size
+          case  0
+            field  quiclh.length  6  uint
+          case  1
+            field  quiclh.length  14  uint
+          case  2
+            field  quiclh.length  30  uint
+          case  3
+            field  quiclh.length  62  uint
+        end
+        group  quiclh.protected  rest
+          field  quiclh.octet  8  uint
+        end
+      case  16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95
+        field  quiclh.length_size  2  uint
+        switch  quiclh.length_size
+          case  0
+            field  quiclh.length  6  uint
+          case  1
+            field  quiclh.length  14  uint
+          case  2
+            field  quiclh.length  30  uint
+          case  3
+            field  quiclh.length  62  uint
+        end
+        group  quiclh.protected  rest
+          field  quiclh.octet  8  uint
+        end
+      case  32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111
+        field  quiclh.length_size  2  uint
+        switch  quiclh.length_size
+          case  0
+            field  quiclh.length  6  uint
+          case  1
+            field  quiclh.length  14  uint
+          case  2
+            field  quiclh.length  30  uint
+          case  3
+            field  quiclh.length  62  uint
+        end
+        group  quiclh.protected  rest
+          field  quiclh.octet  8  uint
+        end
+      case  48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127
+        group  quiclh.retry_token_and_tag  rest
+          field  quiclh.octet  8  uint
+        end
+    end
+  case  1798521807
+    switch  inet.quic_version_specific
+      case  16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95
+        field  quiclh.token_length_size  2  uint
+        switch  quiclh.token_length_size
+          case  0
+            count  token_length  6
+            group  quiclh.token  count  @token_length
+              field  quiclh.octet  8  uint
+            end
+          case  1
+            count  token_length  14
+            group  quiclh.token  count  @token_length
+              field  quiclh.octet  8  uint
+            end
+          case  2
+            count  token_length  30
+            group  quiclh.token  count  @token_length
+              field  quiclh.octet  8  uint
+            end
+          case  3
+            count  token_length  62
+            group  quiclh.token  count  @token_length
+              field  quiclh.octet  8  uint
+            end
+        end
+        field  quiclh.length_size  2  uint
+        switch  quiclh.length_size
+          case  0
+            field  quiclh.length  6  uint
+          case  1
+            field  quiclh.length  14  uint
+          case  2
+            field  quiclh.length  30  uint
+          case  3
+            field  quiclh.length  62  uint
+        end
+        group  quiclh.protected  rest
+          field  quiclh.octet  8  uint
+        end
+      case  32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111
+        field  quiclh.length_size  2  uint
+        switch  quiclh.length_size
+          case  0
+            field  quiclh.length  6  uint
+          case  1
+            field  quiclh.length  14  uint
+          case  2
+            field  quiclh.length  30  uint
+          case  3
+            field  quiclh.length  62  uint
+        end
+        group  quiclh.protected  rest
+          field  quiclh.octet  8  uint
+        end
+      case  48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127
+        field  quiclh.length_size  2  uint
+        switch  quiclh.length_size
+          case  0
+            field  quiclh.length  6  uint
+          case  1
+            field  quiclh.length  14  uint
+          case  2
+            field  quiclh.length  30  uint
+          case  3
+            field  quiclh.length  62  uint
+        end
+        group  quiclh.protected  rest
+          field  quiclh.octet  8  uint
+        end
+      case  0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79
+        group  quiclh.retry_token_and_tag  rest
+          field  quiclh.octet  8  uint
+        end
+    end
+  else
+    group  quiclh.version_specific_data  rest
+      field  quiclh.octet  8  uint
+    end
+end
