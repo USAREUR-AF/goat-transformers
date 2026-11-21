@@ -1,0 +1,5 @@
+Packs novatel-oem-binary; module novatel
+  swri-robotics/novatel_gps_driver, https://github.com/swri-robotics/novatel_gps_driver
+  at commit 63e19e2e3088e80ecceaa18d86022afffb3ccaf3 (binary_header.h,
+  parsers/bestpos.cpp, parsers/bestpos.h). BSD-3-Clause, Copyright (c) 2017
+  Southwest Research Institute. Layouts restated; no text copied.

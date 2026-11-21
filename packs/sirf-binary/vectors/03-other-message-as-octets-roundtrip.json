@@ -1,0 +1,13 @@
+{
+  "name": "other-message-as-octets-roundtrip",
+  "from": "sirf-binary",
+  "to": "sirf-binary",
+  "input": "a0a200020b84008fb0b3",
+  "expect": "a0a200020b84008fb0b3",
+  "model": {
+    "sirf.message_id": "11",
+    "sirf.payload.#": "1",
+    "sirf.checksum": "143"
+  },
+  "source": "built by tools/gen/gnssbin-vectors.py from values chosen there; layout restated from gpsd drivers/driver_sirf.c; MID 11 (command acknowledgement) with one octet; expect derived there, no engine run"
+}

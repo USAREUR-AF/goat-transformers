@@ -1,0 +1,14 @@
+{
+  "name": "geodetic-southern-western-roundtrip",
+  "from": "sirf-binary",
+  "to": "sirf-binary",
+  "input": "a0a2005b2900000004092e1499700007e9010f0c1eb1bc00000000ebced988d5fa8dc0fffffb1e000005dc15007b23280000fffb0000000000fa0000019000000000000a00000000000000000000000000000000000000000000000000050012b5b0b3",
+  "expect": "a0a2005b2900000004092e1499700007e9010f0c1eb1bc00000000ebced988d5fa8dc0fffffb1e000005dc15007b23280000fffb0000000000fa0000019000000000000a00000000000000000000000000000000000000000000000000050012b5b0b3",
+  "model": {
+    "lat": "-33.8765432",
+    "lon": "-70.5",
+    "hae": "-12.5",
+    "sirf.altitude_msl": "15"
+  },
+  "source": "built by tools/gen/gnssbin-vectors.py from values chosen there; layout restated from gpsd drivers/driver_sirf.c; negative latitude, longitude and ellipsoidal height; expect derived there, no engine run"
+}

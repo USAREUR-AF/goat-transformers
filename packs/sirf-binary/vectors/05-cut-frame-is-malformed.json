@@ -1,0 +1,8 @@
+{
+  "name": "cut-frame-is-malformed",
+  "from": "sirf-binary",
+  "to": "sirf-binary",
+  "input": "a0a2005b2900000004092e1499700007e9010f0c1eb1bc000000001caf0e8706e51eb50000ddd50000cb2015007b23280000",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/gnssbin-vectors.py from values chosen there; layout restated from gpsd drivers/driver_sirf.c; the payload is cut; expect derived there, no engine run"
+}

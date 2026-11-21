@@ -1,0 +1,5 @@
+Packs sirf-binary; module sirf
+  gpsd, https://gitlab.com/gpsd/gpsd at commit
+  edd38e78a875062f53add5c1ade745761240fffb, drivers/driver_sirf.c.
+  BSD-2-Clause; compilation copyright the GPSD project. Layouts restated; no
+  text copied.

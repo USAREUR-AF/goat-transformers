@@ -1,0 +1,57 @@
+# NovAtel OEM binary log: the 28-octet header and, for BESTPOS, its fields and the CRC. Written by
+# tools/gen/gnssbin-pack.py; do not edit by hand.
+format        novatel-oem-binary
+version       0.1.0
+distribution  public
+source        "swri-robotics/novatel_gps_driver, https://github.com/swri-robotics/novatel_gps_driver at commit 63e19e2e3088e80ecceaa18d86022afffb3ccaf3, novatel_gps_driver/include/novatel_gps_driver/binary_header.h, src/parsers/bestpos.cpp, include/.../parsers/bestpos.h (BSD-3-Clause, Copyright (c) 2017 Southwest Research Institute); layout restated, no code copied; NovAtel documentation not used"
+uses          novatel
+wire          bits
+layout        sequential
+bit_order     lsb
+
+kind  oem-binary
+when  8  170
+const  8  68
+const  8  18
+field  novatel.header_length  8  uint
+field  novatel.message_id  16  uint
+field  novatel.message_type  8  uint
+field  novatel.port_address  8  uint
+field  novatel.message_length  16  uint
+field  novatel.sequence  16  uint
+field  novatel.idle_time  8  uint
+field  novatel.time_status  8  uint
+field  novatel.week  16  uint
+field  novatel.gps_milliseconds  32  uint
+field  novatel.receiver_status  32  uint
+field  novatel.reserved  16  uint
+field  novatel.software_version  16  uint
+switch  novatel.message_id
+  case  42
+    field  novatel.solution_status  32  uint
+    field  novatel.position_type  32  uint
+    field  novatel.latitude  64  f64
+    field  novatel.longitude  64  f64
+    field  novatel.height  64  f64
+    field  novatel.undulation  32  f32
+    field  novatel.datum_id  32  uint
+    field  novatel.latitude_sigma  32  f32
+    field  novatel.longitude_sigma  32  f32
+    field  novatel.height_sigma  32  f32
+    field  novatel.base_station_id  32  chars:ascii8
+    field  novatel.differential_age  32  f32
+    field  novatel.solution_age  32  f32
+    field  novatel.satellites_tracked  8  uint
+    field  novatel.satellites_in_solution  8  uint
+    field  novatel.satellites_l1  8  uint
+    field  novatel.satellites_multi_frequency  8  uint
+    field  novatel.reserved_68  8  uint
+    field  novatel.extended_solution_status  8  uint
+    field  novatel.signals_used  8  uint
+    field  novatel.reserved_71  8  uint
+    field  novatel.crc  32  uint
+  else
+    group  novatel.data_and_crc  rest
+      field  novatel.octet  8  uint
+    end
+end
