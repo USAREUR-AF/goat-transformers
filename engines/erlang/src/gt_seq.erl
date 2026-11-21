@@ -475,6 +475,19 @@ group({countref, Id}, Body, Ext, #d{pos = Pos} = D, Release) ->
             end,
             lists:mapfoldl(fun(_, Acc) -> item_lines(Body, Ext, Acc) end, D, lists:seq(1, N))
     end;
+%% two counts on one list (0.31): absent when the group is not reached or
+%% either count was not read; else the two numbers must be equal (exact
+%% integers), then the agreed number is checked as one count's is (ruling 4)
+group({countref2, IdA, IdB}, Body, Ext, #d{pos = Pos} = D, Release) ->
+    Cs = D#d.counts,
+    case {avail(Pos, 0, Ext, D), maps:get(IdA, Cs, absent), maps:get(IdB, Cs, absent)} of
+        {absent, _, _} -> absent;
+        {_, absent, _} -> absent;
+        {_, _, absent} -> absent;
+        {_, N, N} -> group({countref, IdA}, Body, Ext, D, Release);
+        {_, Na, Nb} ->
+            malformed(D, "the two counts of the group at bit ~p disagree: ~p and ~p items", [Pos, Na, Nb])
+    end;
 %% items while at least 8 bits remain in a byte-counted extent, 1 in a
 %% bit-counted one; fewer are padding. At the end of the extent the list is
 %% present and empty (ruling 3 of 0.21).
@@ -1052,6 +1065,12 @@ eline({sgroup, List, Mode, Body}, _Rest, Src, #e{pack = Pack} = E) ->
         {countref, Id} ->
             #e{counts = Cs, cvals = CV} = E,
             E1 = E#e{cvals = CV#{maps:get(Id, Cs) => length(Items)}},
+            lists:foldl(Item, E1, Items);
+        %% 0.31: each count holds the items plus its own plus
+        {countref2, IdA, IdB} ->
+            #e{counts = Cs, cvals = CV} = E,
+            N = length(Items),
+            E1 = E#e{cvals = CV#{maps:get(IdA, Cs) => N, maps:get(IdB, Cs) => N}},
             lists:foldl(Item, E1, Items);
         rest ->
             %% ruling 10, judged by what is written (ruling 35): an item before
