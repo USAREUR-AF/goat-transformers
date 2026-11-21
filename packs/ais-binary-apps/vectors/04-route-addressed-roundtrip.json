@@ -1,0 +1,18 @@
+{
+  "name": "route-addressed-roundtrip",
+  "from": "ais-binary-apps",
+  "to": "ais-binary-apps",
+  "input": "639>Jh@jCVd805h1j9Pd001p62F9H1s=@@1;5bPuVgtOpGf1v5sP0",
+  "expect": "639>Jh@jCVd805h1j9Pd001p62F9H1s=@@1;5bPuVgtOpGf1v5sP0",
+  "model": {
+    "aisbin.fid": "28",
+    "aisapp.linkage": "7",
+    "aisapp.sender": "1",
+    "aisapp.route_type": "2",
+    "aisapp.duration": "120",
+    "aisapp.waypoints.#": "3",
+    "aisapp.waypoints[2].aisapp.wp_lon": "-1000000",
+    "aisapp.waypoints[2].aisapp.wp_lat": "-2000000"
+  },
+  "source": "built by tools/gen/ais-apps-vectors.py from values chosen there; layout restated from gpsd AIVDM.adoc, IMO289 Route Information (addressed); three waypoints; expect derived there, no engine run"
+}

@@ -1,0 +1,18 @@
+{
+  "name": "vts-targets-roundtrip",
+  "from": "ais-binary-apps",
+  "to": "ais-binary-apps",
+  "input": "839>Jh@0D@00jCVdT358J0?0t0eN0j123ijkl3v`701HHAJ?3w",
+  "expect": "839>Jh@0D@00jCVdT358J0?0t0eN0j123ijkl3v`701HHAJ?3w",
+  "model": {
+    "aisbin.fid": "17",
+    "aisapp.targets.#": "2",
+    "aisapp.targets[0].aisapp.idtype": "0",
+    "aisapp.targets[0].aisapp.target_id": "211000009",
+    "aisapp.targets[0].aisapp.speed": "12",
+    "aisapp.targets[1].aisapp.idtype": "2",
+    "aisapp.targets[1].aisapp.target_name": "ABC1234",
+    "aisapp.targets[1].aisapp.target_lat": "-90000"
+  },
+  "source": "built by tools/gen/ais-apps-vectors.py from values chosen there; layout restated from gpsd AIVDM.adoc, VTS-Generated/Synthetic targets; one by MMSI, one by call sign; expect derived there, no engine run"
+}

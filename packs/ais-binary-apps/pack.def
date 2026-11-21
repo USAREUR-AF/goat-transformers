@@ -1,0 +1,247 @@
+# AIS binary application messages of variable length (gpsd AIVDM/AIVDO protocol decoding): type 6 DAC 1
+# FI 14 and 32 (tidal window), 25 (dangerous cargo), 28 (route); type 8 DAC 1 FI 17 (VTS targets),
+# 26 (environmental), 27 (route). The input is the armored payload. Written by
+# tools/gen/ais-apps-pack.py; do not edit by hand.
+format        ais-binary-apps
+version       0.1.0
+distribution  public
+source        "gpsd, AIVDM/AIVDO protocol decoding, sections IMO236 Tidal Window, IMO289 Dangerous Cargo Indication, IMO289 Route Information (addressed, broadcast), Tidal Window (IMO289), VTS-Generated/Synthetic targets and IMO289 Environmental, www/AIVDM.adoc (sha256 a55511139751f5b9385166143443c0353f64fc77155b4ef4026f4ab03e3dffbd) at https://gitlab.com/gpsd/gpsd commit c59fc6de479d06620c8b2ba395b728e10a71527b, BSD-2-Clause (gpsd COPYING); layout restated"
+uses          ais
+uses          aisbin
+uses          aisapp
+wire          bits
+layout        sequential
+bit_order     msb
+armor         sixbit
+
+field  ais.msg_type  6  uint
+field  ais.repeat  2  uint
+field  ais.mmsi  30  uint
+switch  ais.msg_type
+  case  6
+    field  aisbin.seqno  2  uint
+    field  ais.dest_mmsi  30  uint
+    field  aisbin.retransmit  1  uint
+    field  ais.spare  1  uint
+    field  aisbin.dac  10  uint
+    field  aisbin.fid  6  uint
+    switch  aisbin.dac
+      case  1
+        switch  aisbin.fid
+          case  14
+            field  aisapp.month  4  uint
+            field  aisapp.day  5  uint
+            group  aisapp.tidals  rest
+              field  aisapp.tw_lat  27  twos
+              field  aisapp.tw_lon  28  twos
+              field  aisapp.from_hour  5  uint
+              field  aisapp.from_min  6  uint
+              field  aisapp.to_hour  5  uint
+              field  aisapp.to_min  6  uint
+              field  aisapp.cdir  9  uint
+              field  aisapp.cspeed  7  uint
+            end
+          case  25
+            field  aisapp.cargo_unit  2  uint
+            field  aisapp.cargo_amount  10  uint
+            group  aisapp.cargos  rest
+              field  aisapp.cargo_code  4  uint
+              field  aisapp.cargo_subtype  13  uint
+            end
+          case  28
+            field  aisapp.linkage  10  uint
+            field  aisapp.sender  3  uint
+            field  aisapp.route_type  5  uint
+            field  aisapp.month  4  uint
+            field  aisapp.day  5  uint
+            field  aisapp.hour  5  uint
+            field  aisapp.minute  6  uint
+            field  aisapp.duration  18  uint
+            count  waycount  5
+            group  aisapp.waypoints  count  @waycount
+              field  aisapp.wp_lon  28  twos
+              field  aisapp.wp_lat  27  twos
+            end
+          case  32
+            field  aisapp.month  4  uint
+            field  aisapp.day  5  uint
+            group  aisapp.tidals  rest
+              field  aisapp.tw_lon  25  twos
+              field  aisapp.tw_lat  24  twos
+              field  aisapp.from_hour  5  uint
+              field  aisapp.from_min  6  uint
+              field  aisapp.to_hour  5  uint
+              field  aisapp.to_min  6  uint
+              field  aisapp.cdir  9  uint
+              field  aisapp.cspeed  8  uint
+            end
+        end
+    end
+  case  8
+    field  ais.spare  2  uint
+    field  aisbin.dac  10  uint
+    field  aisbin.fid  6  uint
+    switch  aisbin.dac
+      case  1
+        switch  aisbin.fid
+          case  17
+            group  aisapp.targets  rest
+              field  aisapp.idtype  2  uint
+              switch  aisapp.idtype
+                case  0,1
+                  field  aisapp.target_id  42  uint
+                case  2,3
+                  field  aisapp.target_name  42  sixbit
+              end
+              field  aisapp.target_spare  4  uint
+              field  aisapp.target_lat  24  twos
+              field  aisapp.target_lon  25  twos
+              field  aisapp.course  9  uint
+              field  aisapp.second  6  uint
+              field  aisapp.speed  10  uint
+            end
+          case  26
+            group  aisapp.reports  rest
+              field  aisapp.sensor  4  uint
+              field  aisapp.day  5  uint
+              field  aisapp.hour  5  uint
+              field  aisapp.minute  6  uint
+              field  aisapp.site  7  uint
+              switch  aisapp.sensor
+                case  0
+                  field  aisapp.site_lon  28  twos
+                  field  aisapp.site_lat  27  twos
+                  field  aisapp.site_alt  11  uint
+                  field  aisapp.owner  4  uint
+                  field  aisapp.timeout  3  uint
+                  field  aisapp.payload_spare  12  uint
+                case  1
+                  field  aisapp.station_name  84  sixbit
+                  field  aisapp.payload_spare  1  uint
+                case  2
+                  field  aisapp.wind_speed  7  uint
+                  field  aisapp.wind_gust  7  uint
+                  field  aisapp.wind_dir  9  uint
+                  field  aisapp.wind_gust_dir  9  uint
+                  field  aisapp.sensor_type  3  uint
+                  field  aisapp.fc_wind_speed  7  uint
+                  field  aisapp.fc_wind_gust  7  uint
+                  field  aisapp.fc_wind_dir  9  uint
+                  field  aisapp.fc_day  5  uint
+                  field  aisapp.fc_hour  5  uint
+                  field  aisapp.fc_minute  6  uint
+                  field  aisapp.fc_duration  8  uint
+                  field  aisapp.payload_spare  3  uint
+                case  3
+                  field  aisapp.level_absolute  1  uint
+                  field  aisapp.level  16  twos
+                  field  aisapp.level_trend  2  uint
+                  field  aisapp.level_datum  5  uint
+                  field  aisapp.sensor_type  3  uint
+                  field  aisapp.fc_level_absolute  1  uint
+                  field  aisapp.fc_level  16  twos
+                  field  aisapp.fc_day  5  uint
+                  field  aisapp.fc_hour  5  uint
+                  field  aisapp.fc_minute  6  uint
+                  field  aisapp.fc_duration  8  uint
+                  field  aisapp.payload_spare  17  uint
+                case  4
+                  field  aisapp.cspeed1  8  uint
+                  field  aisapp.cdir1  9  uint
+                  field  aisapp.cdepth1  9  uint
+                  field  aisapp.cspeed2  8  uint
+                  field  aisapp.cdir2  9  uint
+                  field  aisapp.cdepth2  9  uint
+                  field  aisapp.cspeed3  8  uint
+                  field  aisapp.cdir3  9  uint
+                  field  aisapp.cdepth3  9  uint
+                  field  aisapp.sensor_type  3  uint
+                  field  aisapp.payload_spare  4  uint
+                case  5
+                  field  aisapp.cnorth1  8  uint
+                  field  aisapp.ceast1  8  uint
+                  field  aisapp.cup1  8  uint
+                  field  aisapp.cdepth1  9  uint
+                  field  aisapp.cnorth2  8  uint
+                  field  aisapp.ceast2  8  uint
+                  field  aisapp.cup2  8  uint
+                  field  aisapp.cdepth2  9  uint
+                  field  aisapp.sensor_type  3  uint
+                  field  aisapp.payload_spare  16  uint
+                case  6
+                  field  aisapp.hbearing1  9  uint
+                  field  aisapp.hdistance1  7  uint
+                  field  aisapp.cspeed1  8  uint
+                  field  aisapp.cdir1  9  uint
+                  field  aisapp.cdepth1  9  uint
+                  field  aisapp.hbearing2  9  uint
+                  field  aisapp.hdistance2  7  uint
+                  field  aisapp.cspeed2  8  uint
+                  field  aisapp.cdir2  9  uint
+                  field  aisapp.cdepth2  9  uint
+                  field  aisapp.payload_spare  1  uint
+                case  7
+                  field  aisapp.swell_height  8  uint
+                  field  aisapp.swell_period  6  uint
+                  field  aisapp.swell_dir  9  uint
+                  field  aisapp.sea_state  4  uint
+                  field  aisapp.swell_type  3  uint
+                  field  aisapp.water_temp  10  uint
+                  field  aisapp.water_temp_depth  7  uint
+                  field  aisapp.depth_type  3  uint
+                  field  aisapp.wave_height  8  uint
+                  field  aisapp.wave_period  6  uint
+                  field  aisapp.wave_dir  9  uint
+                  field  aisapp.wave_type  3  uint
+                  field  aisapp.salinity  9  uint
+                case  8
+                  field  aisapp.water_temp  10  uint
+                  field  aisapp.conductivity  10  uint
+                  field  aisapp.water_pressure  16  uint
+                  field  aisapp.salinity  9  uint
+                  field  aisapp.salinity_type  2  uint
+                  field  aisapp.sensor_type  3  uint
+                  field  aisapp.payload_spare  35  uint
+                case  9
+                  field  aisapp.air_temp  11  twos
+                  field  aisapp.sensor_type  3  uint
+                  field  aisapp.precip_type  2  uint
+                  field  aisapp.visibility  8  uint
+                  field  aisapp.dew_point  10  twos
+                  field  aisapp.dew_type  3  uint
+                  field  aisapp.air_pressure  9  uint
+                  field  aisapp.pressure_tendency  2  uint
+                  field  aisapp.pressure_type  3  uint
+                  field  aisapp.salinity  9  uint
+                  field  aisapp.payload_spare  25  uint
+                case  10
+                  field  aisapp.air_draught  13  uint
+                  field  aisapp.air_gap  13  uint
+                  field  aisapp.air_gap_trend  2  uint
+                  field  aisapp.fc_air_gap  13  uint
+                  field  aisapp.fc_day  5  uint
+                  field  aisapp.fc_hour  5  uint
+                  field  aisapp.fc_minute  6  uint
+                  field  aisapp.payload_spare  28  uint
+                else
+                  field  aisapp.reserved_payload  84  hex
+                  field  aisapp.payload_spare  1  uint
+              end
+            end
+          case  27
+            field  aisapp.linkage  10  uint
+            field  aisapp.sender  3  uint
+            field  aisapp.route_type  5  uint
+            field  aisapp.month  4  uint
+            field  aisapp.day  5  uint
+            field  aisapp.hour  5  uint
+            field  aisapp.minute  6  uint
+            field  aisapp.duration  18  uint
+            count  waycount  5
+            group  aisapp.waypoints  count  @waycount
+              field  aisapp.wp_lon  28  twos
+              field  aisapp.wp_lat  27  twos
+            end
+        end
+    end
+end

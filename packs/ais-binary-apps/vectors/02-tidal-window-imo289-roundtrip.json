@@ -1,0 +1,16 @@
+{
+  "name": "tidal-window-imo289-roundtrip",
+  "from": "ais-binary-apps",
+  "to": "ais-binary-apps",
+  "input": "639>Jh@jCVd806000N1p358J<NHte7l1p94<DS<iqSjlOH2hhP1HoS7V?;AwP",
+  "expect": "639>Jh@jCVd806000N1p358J<NHte7l1p94<DS<iqSjlOH2hhP1HoS7V?;AwP",
+  "model": {
+    "aisbin.fid": "32",
+    "aisapp.tidals.#": "3",
+    "aisapp.tidals[0].aisapp.tw_lon": "492000",
+    "aisapp.tidals[1].aisapp.cspeed": "251",
+    "aisapp.tidals[2].aisapp.tw_lat": "91000",
+    "aisapp.tidals[2].aisapp.cdir": "360"
+  },
+  "source": "built by tools/gen/ais-apps-vectors.py from values chosen there; layout restated from gpsd AIVDM.adoc, Tidal Window (IMO289); three predictions, the last not available; expect derived there, no engine run"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "route-broadcast-roundtrip",
+  "from": "ais-binary-apps",
+  "to": "ais-binary-apps",
+  "input": "839>Jh@0Fh91@1Skwwt89HUP7dm10",
+  "expect": "839>Jh@0Fh91@1Skwwt89HUP7dm10",
+  "model": {
+    "aisbin.fid": "27",
+    "aisapp.route_type": "5",
+    "aisapp.duration": "262143",
+    "aisapp.waypoints.#": "1"
+  },
+  "source": "built by tools/gen/ais-apps-vectors.py from values chosen there; layout restated from gpsd AIVDM.adoc, IMO289 Route Information (broadcast); one waypoint, no start time; expect derived there, no engine run"
+}
