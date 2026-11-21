@@ -1,0 +1,17 @@
+{
+  "name": "aprs-rt-compressed",
+  "from": "aprs",
+  "to": "aprs",
+  "source": "tools/gen/aprs-vectors.py: a compressed position: table, four base-91 characters each of latitude and longitude, code, cs, type",
+  "input": "N0CALL-7>APZ001,WIDE1-1,WIDE2-1:!/4Jq9Rs(T>C1G mobile",
+  "expect": "N0CALL-7>APZ001,WIDE1-1,WIDE2-1:!/4Jq9Rs(T>C1G mobile",
+  "model": {
+    "@kind": "compressed",
+    "aprs.symbol_table": "/",
+    "aprs.lat_base91": "4Jq9",
+    "aprs.lon_base91": "Rs(T",
+    "aprs.symbol_code": ">",
+    "aprs.compressed_cs": "C1",
+    "aprs.compression_type": "G"
+  }
+}

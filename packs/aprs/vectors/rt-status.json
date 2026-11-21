@@ -1,0 +1,12 @@
+{
+  "name": "aprs-rt-status",
+  "from": "aprs",
+  "to": "aprs",
+  "source": "tools/gen/aprs-vectors.py: a status report",
+  "input": "N0CALL-7>APZ001,WIDE1-1,WIDE2-1:>net control on air",
+  "expect": "N0CALL-7>APZ001,WIDE1-1,WIDE2-1:>net control on air",
+  "model": {
+    "@kind": "status",
+    "aprs.info": ">net control on air"
+  }
+}

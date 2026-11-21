@@ -1,0 +1,11 @@
+LicenseRef-APRS-NC: the permission statement of the APRS Protocol Reference
+
+The packs under this label restate the APRS Protocol Reference, Protocol
+Version 1.0, document version 1.0.1 (APRS101.PDF, 29 August 2000), by the APRS
+Working Group. Its permission statement reads:
+
+  This document may be copied for non-commercial purposes only, and must
+  include the above copyright statement and trademark statements in full.
+
+The copyright and trademark statements it refers to are quoted in the
+PROVENANCE.md of the pack.
