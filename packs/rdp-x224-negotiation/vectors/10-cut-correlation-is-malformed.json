@@ -1,0 +1,8 @@
+{
+  "name": "cut-correlation-is-malformed",
+  "from": "rdp-x224-negotiation",
+  "to": "rdp-x224-negotiation",
+  "input": "030000332ee000000000000108080003000000060024005a1c33e07b9d4f2a8611c2d4e6f80917000000000000000000000000",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/rdp-neg-vectors.py from values chosen there; layout restated from [MS-RDPBCGR] 2.2.1.1 to 2.2.1.2.2 with RFC 1006 section 6 and RFC 905 section 13; the correlation flag set but the length indicator ends four octets into the reserved field; expect derived there, no engine run"
+}

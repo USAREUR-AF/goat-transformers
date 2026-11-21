@@ -1,0 +1,8 @@
+{
+  "name": "tpkt-version-2-is-no-kind",
+  "from": "rdp-x224-negotiation",
+  "to": "rdp-x224-negotiation",
+  "input": "020000312ce00000000000436f6f6b69653a206d737473686173683d6578616d706c65757365720d0a0100080003000000",
+  "expect_error": "no-kind",
+  "source": "built by tools/gen/rdp-neg-vectors.py from values chosen there; layout restated from [MS-RDPBCGR] 2.2.1.1 to 2.2.1.2.2 with RFC 1006 section 6 and RFC 905 section 13; the first octet is not the TPKT version 3; expect derived there, no engine run"
+}

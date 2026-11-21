@@ -1,0 +1,13 @@
+{
+  "name": "error-roundtrip",
+  "from": "tpkt-x224",
+  "to": "tpkt-x224",
+  "input": "0300000d0870123402c102f080",
+  "expect": "0300000d0870123402c102f080",
+  "model": {
+    "tpkt.tpdu_code": "7",
+    "tpkt.dst_ref": "4660",
+    "tpkt.reject_cause": "2"
+  },
+  "source": "built by tools/gen/rdp-neg-vectors.py from values chosen there; layout restated from RFC 1006 section 6 and RFC 905 section 13; an ER with reject cause 2 and the invalid-TPDU parameter (code 0xC1); expect derived there, no engine run"
+}

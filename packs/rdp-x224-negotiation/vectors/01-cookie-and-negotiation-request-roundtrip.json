@@ -1,0 +1,17 @@
+{
+  "name": "cookie-and-negotiation-request-roundtrip",
+  "from": "rdp-x224-negotiation",
+  "to": "rdp-x224-negotiation",
+  "input": "030000312ce00000000000436f6f6b69653a206d737473686173683d6578616d706c65757365720d0a0100080003000000",
+  "expect": "030000312ce00000000000436f6f6b69653a206d737473686173683d6578616d706c65757365720d0a0100080003000000",
+  "model": {
+    "tpkt.tpdu_code": "14",
+    "rdpneg.first_octet": "67",
+    "rdpneg.token_line": "ookie: mstshash=exampleuser",
+    "rdpneg.neg_type": "1",
+    "rdpneg.neg_flags": "0",
+    "rdpneg.neg_length": "8",
+    "rdpneg.requested_protocols": "3"
+  },
+  "source": "built by tools/gen/rdp-neg-vectors.py from values chosen there; layout restated from [MS-RDPBCGR] 2.2.1.1 to 2.2.1.2.2 with RFC 1006 section 6 and RFC 905 section 13; a CR with a cookie line and RDP_NEG_REQ asking for TLS and CredSSP; expect derived there, no engine run"
+}

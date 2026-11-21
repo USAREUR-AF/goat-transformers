@@ -1,0 +1,12 @@
+{
+  "name": "other-code-as-octets-roundtrip",
+  "from": "tpkt-x224",
+  "to": "tpkt-x224",
+  "input": "030000090460123405",
+  "expect": "030000090460123405",
+  "model": {
+    "tpkt.tpdu_code": "6",
+    "tpkt.credit": "0"
+  },
+  "source": "built by tools/gen/rdp-neg-vectors.py from values chosen there; layout restated from RFC 1006 section 6 and RFC 905 section 13; an AK (code 6), not given a fixed part here: the rest of the header is kept as octets; expect derived there, no engine run"
+}

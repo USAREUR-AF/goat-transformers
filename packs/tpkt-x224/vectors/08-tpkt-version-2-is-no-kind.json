@@ -1,0 +1,8 @@
+{
+  "name": "tpkt-version-2-is-no-kind",
+  "from": "tpkt-x224",
+  "to": "tpkt-x224",
+  "input": "0200000a02f0807f6582",
+  "expect_error": "no-kind",
+  "source": "built by tools/gen/rdp-neg-vectors.py from values chosen there; layout restated from RFC 1006 section 6 and RFC 905 section 13; the first octet is not the TPKT version 3; expect derived there, no engine run"
+}

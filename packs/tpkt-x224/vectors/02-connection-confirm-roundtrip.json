@@ -1,0 +1,13 @@
+{
+  "name": "connection-confirm-roundtrip",
+  "from": "tpkt-x224",
+  "to": "tpkt-x224",
+  "input": "0300000e09d01234567800c0010b",
+  "expect": "0300000e09d01234567800c0010b",
+  "model": {
+    "tpkt.tpdu_code": "13",
+    "tpkt.dst_ref": "4660",
+    "tpkt.src_ref": "22136"
+  },
+  "source": "built by tools/gen/rdp-neg-vectors.py from values chosen there; layout restated from RFC 1006 section 6 and RFC 905 section 13; a CC with one TPDU-size parameter (code 0xC0, length 1, value 11) in its variable part; expect derived there, no engine run"
+}

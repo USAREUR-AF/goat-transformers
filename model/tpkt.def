@@ -1,0 +1,19 @@
+# The tpkt module: TPKT and X.224 TPDU fields (RFC 1006, RFC 905). Written by tools/gen/rdp-neg-pack.py.
+module        tpkt
+version       0.1.0
+distribution  public
+source        "IETF RFC 1006, ISO Transport Service on top of the TCP, May 1987, section 6 (TPKT), https://www.rfc-editor.org/rfc/rfc1006.txt; IETF RFC 905, ISO Transport Protocol Specification ISO DP 8073, April 1984, sections 13.2-13.7 and 13.12 (the TPDU structure), https://www.rfc-editor.org/rfc/rfc905.txt; layout restated"
+key   reserved       int     -  "TPKT: the reserved octet, 0"
+key   tpdu_code      int     -  "TPDU code, the high four bits: 14 CR connection request, 13 CC connection confirm, 15 DT data, 8 DR disconnect request, 7 ER error (other codes as octets)"
+key   credit         int     -  "CR, CC: credit (CDT); other TPDUs: the low four bits of the code octet"
+key   dst_ref        int     -  "destination reference"
+key   src_ref        int     -  "source reference"
+key   class          int     -  "CR, CC: protocol class (0 for TP0)"
+key   options        int     -  "CR, CC: options (extended formats, explicit flow control)"
+key   eot            int     -  "DT: end of TSDU mark"
+key   tpdu_nr        int     -  "DT: TPDU send sequence number (0 in class 0)"
+key   reason         int     -  "DR: disconnect reason"
+key   reject_cause   int     -  "ER: reject cause"
+list  variable_part  "the TPDU's variable part (parameters), as octets"
+list  user_data      "the user data after the TPDU header (for RDP, the MCS PDUs), as octets"
+key   octet          int     -  "one octet"

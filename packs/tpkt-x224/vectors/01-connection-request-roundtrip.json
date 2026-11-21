@@ -1,0 +1,15 @@
+{
+  "name": "connection-request-roundtrip",
+  "from": "tpkt-x224",
+  "to": "tpkt-x224",
+  "input": "0300002924e00000123400436f6f6b69653a206d737473686173683d6578616d706c65757365720d0a",
+  "expect": "0300002924e00000123400436f6f6b69653a206d737473686173683d6578616d706c65757365720d0a",
+  "model": {
+    "tpkt.tpdu_code": "14",
+    "tpkt.credit": "0",
+    "tpkt.dst_ref": "0",
+    "tpkt.src_ref": "4660",
+    "tpkt.class": "0"
+  },
+  "source": "built by tools/gen/rdp-neg-vectors.py from values chosen there; layout restated from RFC 1006 section 6 and RFC 905 section 13; a CR of class 0 whose variable part is a cookie line, kept as octets; expect derived there, no engine run"
+}
