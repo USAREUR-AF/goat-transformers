@@ -3,8 +3,11 @@
 package goatxf
 
 import (
+	"bytes"
 	"encoding/hex"
 	"fmt"
+	"strings"
+	"unicode/utf8"
 )
 
 // parseSixbitArmor reads armored text (spec 0.14): each character stands for
@@ -132,6 +135,16 @@ func decodeASCII(data []byte, f *Field, base int, msb bitOrder) (Value, error) {
 		for n > 0 && buf[n-1] == 0x20 {
 			n--
 		}
+	}
+	if f.btf.utf8 {
+		// UTF-8 of RFC 3629 with no NUL inside the text (0.55).
+		if !utf8.Valid(buf[:n]) {
+			return Value{}, fmt.Errorf("bytes are not valid UTF-8")
+		}
+		if bytes.IndexByte(buf[:n], 0) >= 0 {
+			return Value{}, fmt.Errorf("a NUL byte lies inside the text")
+		}
+		return Value{Kind: KindString, S: string(buf[:n])}, nil
 	}
 	for _, c := range buf[:n] {
 		if c < 0x20 || c > 0x7e {
@@ -340,7 +353,20 @@ func putBitsField(p *Pack, f *Field, v Value, data []byte, at int) error {
 			return encodeErr(p, f, fmt.Errorf("text is %d byte(s), the field holds %d", len(s), n))
 		}
 		b := make([]byte, n)
+		if f.btf.utf8 {
+			// 0.55: no U+0000, nothing UTF-8 cannot carry.
+			if !utf8.ValidString(s) {
+				return encodeErr(p, f, fmt.Errorf("text is not valid UTF-8"))
+			}
+			if strings.IndexByte(s, 0) >= 0 {
+				return encodeErr(p, f, fmt.Errorf("text holds U+0000"))
+			}
+		}
 		for k := 0; k < len(s); k++ {
+			if f.btf.utf8 {
+				b[k] = s[k]
+				continue
+			}
 			if s[k] < 0x20 || s[k] > 0x7e {
 				return encodeErr(p, f, fmt.Errorf("byte 0x%02x is not printable ASCII", s[k]))
 			}

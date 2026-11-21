@@ -122,7 +122,7 @@ func decodeJSONValue(f *Field, v *jval) (Value, error) {
 		return Value{Kind: KindInt, I: 0}, nil
 	}
 	switch f.Transform {
-	case "string", "iso8601_ms", "iso8601_short":
+	case "string", "iso8601_ms", "iso8601_short", "iso8601_si":
 		if v.k != jStr {
 			return wrong("string")
 		}

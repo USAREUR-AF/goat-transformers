@@ -27,11 +27,13 @@ var transforms = map[string]*transform{
 	"iso8601_ms": {name: "iso8601_ms", decode: decISO, encode: encISO},
 	// spec 0.18, "A time without a zero fraction".
 	"iso8601_short": {name: "iso8601_short", decode: decISO, encode: encISOShort},
+	// spec 0.55, "A time with three fraction digits or none".
+	"iso8601_si": {name: "iso8601_si", decode: decISO, encode: encISOSI},
 }
 
 // TransformNames lists the transforms this engine implements.
 func TransformNames() []string {
-	return []string{"float", "int", "iso8601_ms", "iso8601_short", "string"}
+	return []string{"float", "int", "iso8601_ms", "iso8601_short", "iso8601_si", "string"}
 }
 
 func decString(s string) (Value, error) { return Value{Kind: KindString, S: s}, nil }
@@ -348,6 +350,35 @@ func encISOShort(v Value) (string, error) {
 	return s + "Z", nil
 }
 
+// encISOSI writes epoch milliseconds as YYYY-MM-DDTHH:MM:SS, then `.` and
+// the three digits of the milliseconds when they are not 0, then Z (0.55).
+// The milliseconds are ms - 1000*floor(ms/1000) (ruling 1); the years are
+// 0001 to 9999 (ruling 2).
+func encISOSI(v Value) (string, error) {
+	var ms int64
+	switch v.Kind {
+	case KindInt:
+		ms = v.I
+	case KindFloat:
+		i, err := floatToInt(v.F)
+		if err != nil {
+			return "", err
+		}
+		ms = i
+	default:
+		return "", fmt.Errorf("no value")
+	}
+	s, err := formatISO(ms)
+	if err != nil {
+		return "", err
+	}
+	// formatISO writes ".fffZ" last.
+	if strings.HasSuffix(s, ".000Z") {
+		s = strings.TrimSuffix(s, ".000Z") + "Z"
+	}
+	return s, nil
+}
+
 // --- bits wire transforms (spec/engine-spec.md, "Version 0.2: the bits wire") ---
 
 // bitsTransform is a reversible pair between an unsigned field of `length` bits
@@ -358,6 +389,7 @@ func encISOShort(v Value) (string, error) {
 type bitsTransform struct {
 	name    string
 	ascii   bool
+	utf8    bool // with ascii: the bytes are UTF-8 text (0.55)
 	sixbit  bool // spec 0.14: six-bit characters
 	noSwap  bool
 	charSet *charSet // chars:<set>: its set (an until: locator reads it, 0.22) // `swap` is bad-directive with this transform (0.15)
@@ -520,14 +552,17 @@ type scale struct {
 	factor   float64
 	num, den float64
 	offset   float64
+	// places is the third argument of 0.55 (-1 when it is not given): decode
+	// rounds the value to that many decimal places.
+	places int
 }
 
 func parseScale(spec string) (*scale, error) {
 	parts := strings.Split(spec, ":")
-	if len(parts) != 2 && len(parts) != 3 {
-		return nil, fmt.Errorf("%s needs <factor>[:<offset>], got %q", parts[0], spec)
+	if len(parts) < 2 || len(parts) > 4 {
+		return nil, fmt.Errorf("%s needs <factor>[:<offset>[:<places>]], got %q", parts[0], spec)
 	}
-	sc := &scale{}
+	sc := &scale{places: -1}
 	// The factor is number text that does not read as zero, or <num>/<den>
 	// of two unsigned decimal integers, neither zero; the offset is number
 	// text (ruling 4d of 0.11).
@@ -545,14 +580,56 @@ func parseScale(spec string) (*scale, error) {
 		}
 		sc.factor = f
 	}
-	if len(parts) == 3 {
+	if len(parts) >= 3 {
 		o, err := parseNumberText(parts[2])
 		if err != nil {
 			return nil, fmt.Errorf("%s offset must be a decimal number, got %q", parts[0], parts[2])
 		}
 		sc.offset = o
 	}
+	// <places> (0.55): an unsigned decimal integer from 0 to 15, leading
+	// zeros allowed.
+	if len(parts) == 4 {
+		n, err := parseUintText(parts[3], 15)
+		if err != nil {
+			return nil, fmt.Errorf("%s places must be a decimal integer from 0 to 15, got %q", parts[0], parts[3])
+		}
+		sc.places = int(n)
+	}
 	return sc, nil
+}
+
+// scaleHasPlaces reports a uscale or sscale written with a third argument.
+func scaleHasPlaces(name string) bool { return strings.Count(name, ":") == 3 }
+
+// pow10 holds 10^0 to 10^15, each exact as a double.
+var pow10 = [16]float64{1, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9, 1e10, 1e11, 1e12, 1e13, 1e14, 1e15}
+
+// round rounds the decoded value x to sc.places decimal places (0.55,
+// Rounding a scale to decimal places): y = x * 10^places; when y is finite
+// and |round(y)| < 10^15 the value is round(y) / 10^places, else x. A value
+// x that is not finite is an error (ruling 5).
+func (sc *scale) round(x float64) (float64, error) {
+	if sc.places < 0 {
+		return x, nil
+	}
+	if math.IsNaN(x) || math.IsInf(x, 0) {
+		return 0, fmt.Errorf("scaled value %v is not a finite number", x)
+	}
+	p := pow10[sc.places]
+	y := x * p
+	if math.IsNaN(y) || math.IsInf(y, 0) {
+		return x, nil
+	}
+	r := math.Round(y)
+	if math.Abs(r) >= 1e15 {
+		return x, nil
+	}
+	v := r / p
+	if v == 0 {
+		v = 0 // +0
+	}
+	return v, nil
 }
 
 // up is the decode direction: v * factor (or v * num / den), then + offset.
@@ -581,10 +658,17 @@ func newScale(spec string, signed bool) (*bitsTransform, error) {
 	return &bitsTransform{
 		name: spec,
 		decode: func(raw uint64, length int) (Value, error) {
+			var x float64
 			if signed {
-				return Value{Kind: KindFloat, F: sc.up(float64(signExtend(raw, length)))}, nil
+				x = sc.up(float64(signExtend(raw, length)))
+			} else {
+				x = sc.up(float64(maskBits(raw, length)))
 			}
-			return Value{Kind: KindFloat, F: sc.up(float64(maskBits(raw, length)))}, nil
+			x, err := sc.round(x)
+			if err != nil {
+				return Value{}, err
+			}
+			return Value{Kind: KindFloat, F: x}, nil
 		},
 		encode: func(v Value, length int) (uint64, error) {
 			x, err := valueToFloat(v)
@@ -655,6 +739,9 @@ func narrowToSingle(x float64) (float32, error) {
 
 var bitsASCII = &bitsTransform{name: "ascii", ascii: true}
 
+// bitsUTF8 is `utf8` on bits (0.55): its bytes are taken as ascii's are.
+var bitsUTF8 = &bitsTransform{name: "utf8", ascii: true, utf8: true}
+
 var bitsSixbit = &bitsTransform{name: "sixbit", sixbit: true}
 
 // maxSixbitLen is the longest `sixbit` field: 255 characters (spec 0.14).
@@ -694,8 +781,17 @@ func resolveFieldTransform(wire string, f *Field) (ErrorKind, error) {
 		f.btf = bitsHex
 		return "", nil
 	}
-	// utf8 is valid only on the tlv wire, hex on tlv and bits (spec 0.13,
-	// 0.22).
+	// utf8 on bits (0.55): len a multiple of 8 from 8 to 2040, at a bit
+	// position or a bit length, as ascii.
+	if name == "utf8" && wire == WireBits {
+		if n := f.loc.blen; n%8 != 0 || n < 8 || n > maxBitsLen {
+			return ErrBadDirective, fmt.Errorf("utf8 needs a multiple of 8 bits from 8 to %d, got %d", maxBitsLen, n)
+		}
+		f.btf = bitsUTF8
+		return "", nil
+	}
+	// utf8 is valid only on the tlv wire and bits, hex on tlv and bits (spec
+	// 0.13, 0.22, 0.55).
 	if isTLVOnlyTransform(name) {
 		return ErrBadDirective, fmt.Errorf("transform %q is valid only on wire tlv", name)
 	}
@@ -710,9 +806,9 @@ func resolveFieldTransform(wire string, f *Field) (ErrorKind, error) {
 		}
 		return "", nil
 	}
-	if name == "iso8601_short" && (wire == WireBits || wire == WireProtobuf) {
-		// 0.18 ruling 11.
-		return ErrBadDirective, fmt.Errorf("iso8601_short is valid only on xml, json and geojson")
+	if (name == "iso8601_short" || name == "iso8601_si") && (wire == WireBits || wire == WireProtobuf) {
+		// 0.18 ruling 11; 0.55.
+		return ErrBadDirective, fmt.Errorf("%s is valid only on xml, json and geojson", name)
 	}
 	switch wire {
 	case WireBits:

@@ -220,6 +220,9 @@ func resolveTLVTransform(name string, size int) (*tlvTf, error) {
 		if err := checkUnsignedFraction(name); err != nil {
 			return nil, err
 		}
+		if scaleHasPlaces(name) {
+			return nil, fmt.Errorf("%s: <places> is valid only on wire bits (0.55)", name)
+		}
 		bt, err := newScale(name, signed)
 		if err != nil {
 			return nil, err
