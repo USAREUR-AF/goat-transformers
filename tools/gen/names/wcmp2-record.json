@@ -1,0 +1,13 @@
+{
+ "keys": {
+  "|properties.created|string": "properties_created",
+  "|properties.description|string": "properties_description",
+  "|properties.rights|string": "properties_rights",
+  "|properties.title|string": "properties_title",
+  "|properties.type|string": "properties_type",
+  "|properties.updated|string": "properties_updated",
+  "|properties.version|string": "properties_version",
+  "|properties.wmo:dataPolicy|string": "properties_wmo_data_policy"
+ },
+ "lists": {}
+}

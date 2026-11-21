@@ -1,0 +1,13 @@
+{
+  "name": "other-sequence-is-octets-roundtrip",
+  "from": "bufr4-temp-309052",
+  "to": "bufr4-temp-309052",
+  "input": "4255465200003304000016000062000000000000ff260007ea0b1406000000000900000180c75b000008000102030437373737",
+  "expect": "4255465200003304000016000062000000000000ff260007ea0b1406000000000900000180c75b000008000102030437373737",
+  "model": {
+    "bufrtemp.descriptor": "51035",
+    "bufrtemp.data.#": "4"
+  },
+  "source": "derived by tools/gen/bufr-sequence2pack.py from raw values written for it and WMO BUFR Table B; no engine run",
+  "reference": "WMO BUFR edition 4 Table D 309052 and Table B; a message of another sequence: section 4 is kept as octets"
+}

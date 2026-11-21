@@ -1,0 +1,13 @@
+{
+  "name": "two-subsets-is-octets-roundtrip",
+  "from": "bufr4-synop-307080",
+  "to": "bufr4-synop-307080",
+  "input": "4255465200003104000016000062000000000000ff260007ea0b1406000000000900000280c75000000600090937373737",
+  "expect": "4255465200003104000016000062000000000000ff260007ea0b1406000000000900000280c75000000600090937373737",
+  "model": {
+    "bufrsynop.number_of_subsets": "2",
+    "bufrsynop.data.#": "2"
+  },
+  "source": "derived by tools/gen/bufr-sequence2pack.py from raw values written for it and WMO BUFR Table B; no engine run",
+  "reference": "WMO BUFR edition 4 Table D 307080 and Table B; two subsets: the layout differs, so section 4 is kept as octets"
+}

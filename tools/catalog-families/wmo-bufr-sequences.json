@@ -1,0 +1,11 @@
+{
+  "name": "WMO BUFR sequences",
+  "domain": "maps",
+  "prefixes": [
+    "bufr4-synop-",
+    "bufr4-temp-",
+    "bufr4-ship-",
+    "bufr4-buoy-"
+  ],
+  "detail": "BUFR edition 4 messages of one expanded Table D sequence: SYNOP, TEMP, ship, drifting buoy"
+}

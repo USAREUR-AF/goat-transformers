@@ -1,0 +1,7 @@
+{
+ "name": "gen-record-residue",
+ "from": "wcmp2-record",
+ "to": "wcmp2-record",
+ "input": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"type\":\"s17364\",\"title\":\"s86982\",\"description\":\"s41156\",\"version\":\"s94499\",\"created\":\"2026-08-08T15:23:45.800Z\",\"updated\":\"2024-01-21T19:39:48.556Z\",\"wmo:dataPolicy\":\"recommended\",\"rights\":\"s41795\",\"keywords\":[\"r1\",\"r2\"],\"themes\":[\"r1\",\"r2\"],\"contacts\":[\"r1\",\"r2\"],\"externalIds\":[\"r1\",\"r2\"],\"wmo:status\":{\"r\":\"1\"}}}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"type\":\"s17364\",\"title\":\"s86982\",\"description\":\"s41156\",\"version\":\"s94499\",\"created\":\"2026-08-08T15:23:45.800Z\",\"updated\":\"2024-01-21T19:39:48.556Z\",\"wmo:dataPolicy\":\"recommended\",\"rights\":\"s41795\",\"keywords\":[\"r1\",\"r2\"],\"themes\":[\"r1\",\"r2\"],\"contacts\":[\"r1\",\"r2\"],\"externalIds\":[\"r1\",\"r2\"],\"wmo:status\":{\"r\":\"1\"}}}"
+}
