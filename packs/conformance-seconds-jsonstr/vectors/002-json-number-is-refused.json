@@ -1,0 +1,7 @@
+{
+  "name": "json-number-is-refused",
+  "from": "conformance-seconds-jsonstr",
+  "to": "conformance-seconds-jsonstr",
+  "input": "{\"t\":0}",
+  "expect_error": "transform-decode"
+}

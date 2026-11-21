@@ -8,7 +8,6 @@
     "@kind": "position-report",
     "uid": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
     "time_ms": "1714566600000",
-    "c2sim.time_of_observation": "2024-05-01T12:30:00Z",
     "lat": "48.137154",
     "lon": "11.576124",
     "speed_ms": "12.5",

@@ -1,0 +1,10 @@
+{
+  "name": "epoch",
+  "from": "conformance-seconds",
+  "to": "conformance-seconds-json",
+  "input": "<e t=\"1970-01-01T00:00:00Z\"/>",
+  "expect": "{\"t\":0}",
+  "model": {
+    "time_ms": "0"
+  }
+}

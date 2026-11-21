@@ -123,16 +123,17 @@ cot-xml	geojson	partial	uid type time_ms how lat lon hae ce le callsign course s
 ## Test
 
 `cargo test --release` in `engines/rust` (CI runs `cargo test` there, in the
-`rust` job of `.github/workflows/conformance.yml`). Measured with rustc 1.99.1:
+`rust` job of `.github/workflows/conformance.yml`). Measured on 2026-11-21 with rustc 1.99.1:
 
 | Test | Covers | Measured |
 |---|---|---|
-| `tests/vectors.rs` | every conversion vector under `packs/*/vectors/`, with every pack loaded; every load vector under `packs/conformance/load-vectors/` | 20307 conversion vectors, 1166 load vectors, 18 capability vectors, 0 failed |
+| `tests/vectors.rs` | every conversion vector under `packs/*/vectors/`, with every pack loaded; every load vector under `packs/conformance/load-vectors/` | 22252 conversion vectors, 1172 load vectors, 18 capability vectors, 0 failed |
 | `tests/api.rs` | what a vector cannot reach: `fill` and `complete` on their own, lists, item kinds, `model_keys`, `capability`, the directory loaders, `load_pack_dir_only` | 15 tests |
-| `tests/fuzz.rs` | random, cut and mutated input and hostile shapes for every pack: never a panic, only a named error | 4591856 inputs over 3477 packs and 20304 vectors |
+| `tests/fuzz.rs` | random, cut and mutated input and hostile shapes for every pack: never a panic, only a named error | 5530551 inputs over 4287 packs and 22249 vectors |
 | `tests/embed.rs` | packs compiled into the binary with `include_str!` | 1 test |
 | `tests/uper.rs` | ASN.1 unaligned PER checks derived by hand (spec 0.19) | 9 tests |
 | `tests/parse_once.rs` | spec 0.25, ruling 1: every conversion vector, failing ones included, gives the same output or error on one instance in line order, in reverse order and on four threads at once; the benchmark set and one failing vector of each wire give the same on a new instance; a second load is still a duplicate (the debug build runs the reverse order and the threads on every eighth vector and every failing one, and the new instance for the failing vectors only) | 3 tests |
+| `tests/seconds.rs` | spec 0.26, ruling 1: the transform `iso8601_s` loads on the xml, geojson, json and text wires; it is `bad-directive` on another wire and with a parameter; it gives an integer, so on a key of another type it is `key-type-mismatch`; writing drops the milliseconds and keeps to the years 0001 to 9999 | 5 tests |
 | `tests/reduced.rs` | spec 0.24: a pack on a wire the build lacks is `unknown-wire`; a value that is no wire keeps its message (run in a reduced build by `reduced-build-check.sh`) | 2 tests |
 | `python3 -I tools/tool-vectors.py -- engines/rust/target/release/goat-xf` (from the repository root; CI runs it on the debug build) | the command-line contract of spec 0.23: every tool vector under `packs/conformance/tool-vectors/` | 97 tool vectors, 0 failed |
 
@@ -212,19 +213,19 @@ conversion, load and capability vector whose packs are on them, and
 `bits`, `protobuf`, `text` and `tlv` and requires `unknown-wire` with the
 wire named in the message. It then builds `goat-xf` both ways and prints the
 sizes. It exits non-zero on any failure. `GOAT_WIRES=<w>,<w>...` checks
-another set. Measured with rustc 1.99.1 on x86_64 Linux:
+another set. Measured on 2026-11-21 with rustc 1.99.1 on x86_64 Linux:
 
 | Reduced build (`xml,json,geojson`) | Measured |
 |---|---|
-| conversion vectors | 6852 run, 0 failed (13455 on other wires left out) |
-| load vectors | 378 run, 0 failed (788 left out) |
+| conversion vectors | 8167 run, 0 failed (14085 on other wires left out) |
+| load vectors | 382 run, 0 failed (790 left out) |
 | capability vectors | 16 run, 0 failed (2 left out) |
-| `unknown-wire` loads | 4 of 4: `adsb` (bits), `apollo-ch` (protobuf), `conformance-cond-text` (text), `conformance-cond-tlv` (tlv) |
+| `unknown-wire` loads | 4 of 4: `adsb` (bits), `apollo-ch` (protobuf), `argo-index-meta` (text), `conformance-cond-tlv` (tlv) |
 
 | Release artifact | All seven wires | `xml,json,geojson` |
 |---|---|---|
-| `goat-xf` | 1992936 bytes | 1612888 bytes |
-| `libgoat_transformers.rlib` | 4468372 bytes | 3336570 bytes |
+| `goat-xf` | 2074312 bytes | 1633920 bytes |
+| `libgoat_transformers.rlib` | 4744366 bytes | 3437832 bytes |
 
 ## Static and WebAssembly builds
 

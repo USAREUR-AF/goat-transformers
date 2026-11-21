@@ -388,6 +388,11 @@ std::string format_iso8601_ms(std::int64_t ms) {
     return format_iso_civil(ms);
 }
 
+std::string format_iso8601_s(std::int64_t ms) {
+    // 0.26 ruling 3: the iso8601_ms text less ".fff"; the milliseconds dropped, never rounded.
+    return format_iso8601_ms(ms).substr(0, 19) + "Z";
+}
+
 std::string format_iso8601_short(std::int64_t ms) {
     // 0.18 ruling 11: from 0000-01-01, one year earlier than iso8601_ms writes.
     if (ms < kMinIsoShortMs || ms > kMaxIsoMs) throw std::domain_error("an instant outside years 0000 to 9999");

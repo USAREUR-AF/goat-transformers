@@ -312,6 +312,18 @@ class Iso8601ShortT(Iso8601MsT):
         return out + "Z"
 
 
+class Iso8601ST(Iso8601MsT):
+    """`iso8601_s` (0.26): decoded as `iso8601_ms` (ruling 2); encoded as the
+    `iso8601_ms` text less its `.fff`, YYYY-MM-DDTHH:MM:SSZ: the second that
+    holds the instant, the milliseconds dropped, never rounded (ruling 3)."""
+
+    name = "iso8601_s"
+
+    def encode(self, value):
+        text = Iso8601MsT.encode(self, value)
+        return text[:19] + "Z"
+
+
 class BoolT(Transform):
     """`bool` (version 0.5, `json` wire only): JSON `true` / `false` <-> int 1 / 0.
     `decode` takes the parsed JSON boolean; `encode` returns the JSON text."""
@@ -338,7 +350,7 @@ class BoolT(Transform):
         raise ValueError("bool transform encodes 1 or 0, got %r" % (value,))
 
 
-TRANSFORMS = {t.name: t for t in (StringT(), FloatT(), IntT(), Iso8601MsT(), Iso8601ShortT())}
+TRANSFORMS = {t.name: t for t in (StringT(), FloatT(), IntT(), Iso8601MsT(), Iso8601ShortT(), Iso8601ST())}
 TEXT_TRANSFORM_NAMES = frozenset(TRANSFORMS) | {"bool"}
 JSON_TRANSFORMS = dict(TRANSFORMS, bool=BoolT())  # `bool` is valid only on the `json` wire
 
@@ -726,6 +738,7 @@ def build_bits_transform(name, length):
 _TEXTUAL = ("xml", "geojson", "json", "text")
 TRANSFORM_WIRES = {
     "string": _TEXTUAL, "float": _TEXTUAL, "int": _TEXTUAL, "iso8601_ms": _TEXTUAL, "bool": ("json",),
+    "iso8601_s": _TEXTUAL,  # 0.26 (ruling 1)
     "iso8601_short": ("xml", "geojson", "json"),  # 0.18 (ruling 11: bad-directive elsewhere)
     "uint": ("bits", "tlv"), "twos": ("bits", "tlv"), "linscale": ("bits",), "uscale": ("bits", "tlv"),
     "sscale": ("bits", "tlv"), "f32": ("bits", "tlv"), "f64": ("bits", "tlv"), "ascii": ("bits",),

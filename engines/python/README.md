@@ -202,16 +202,16 @@ compares `model_keys` of every loaded format and the capability report of
 every converted pair with the full build. It prints the sizes and exits 1 on
 any failure. `--wires <set>` checks another set the same way.
 
-One run on 2026-11-20: 1070 packs loaded; 6849 of the 20307 conversion
-vectors run, 6849 passed; 378 load vectors run, 378 passed; the five
+One run on 2026-11-21: 1624 packs loaded; 8164 of the 22252 conversion
+vectors run, 8164 passed; 382 load vectors run, 382 passed; the five
 `unknown-wire` loads and the load of `wire morse` as specified; `model_keys`
-of 1070 formats and the capability report of 145 pairs the same in both
+of 1624 formats and the capability report of 180 pairs the same in both
 builds. Sizes:
 
 | Build | Wheel | Package source |
 |---|---|---|
-| all seven wires | 142760 bytes | 506532 bytes, 23 modules |
-| `xml`, `json`, `geojson` | 82612 bytes (58%) | 286851 bytes, 15 modules |
+| all seven wires | 143233 bytes | 508029 bytes, 23 modules |
+| `xml`, `json`, `geojson` | 83023 bytes (58%) | 288148 bytes, 15 modules |
 
 ## Parse once, and the benchmark
 
@@ -249,17 +249,14 @@ in `engines/python`:
 PYTHONPATH=src python -m unittest discover -s tests
 ```
 
-It loads every pack and model module. One run on 2026-11-20 gave
-`Ran 242 tests … FAILED (failures=1)`: the one failure is the conversion
-vector `usgs-earthquake/vectors/04-event-to-cot-xml.json` (the engine writes
-an empty `<detail/>` the vector does not hold), which fails in the library and
-not in the tool.
+It loads every pack and model module. One run on 2026-11-21 gave
+`Ran 253 tests … OK`.
 
 | Test file | Covers |
 |---|---|
-| `test_vectors.py` | every conversion vector of every pack (17628 of 2687 packs, 17627 passed), with its `max_items` and its `model` values read by the grammar of their key's type; every load vector, with `pack` or `packs` (862, all passed); every capability vector (18, all passed) |
-| `test_malformed.py` | the input of every conversion vector cut and changed (103161 damaged inputs, none raised anything but a named error); rulings 35 to 39 |
-| `test_bits.py`, `test_kinds.py`, `test_rules.py`, `test_groups.py`, `test_seq.py`, `test_rulings08.py`, `test_engine.py` | the bits wire, kinds and the json wire, mapping rules, groups, sequential layouts, rulings 16 to 30 of 0.8, `packs_only`, grammar and residue, the exit status of the tool |
+| `test_vectors.py` | every conversion vector of every pack (22252, all passed), with its `max_items` and its `model` values read by the grammar of their key's type; every load vector, with `pack` or `packs` (1172, all passed); every capability vector (18, all passed) |
+| `test_malformed.py` | the input of every conversion vector cut and changed (131614 damaged inputs from 22249 vectors over 4287 packs, none raised anything but a named error); rulings 35 to 39 |
+| `test_bits.py`, `test_kinds.py`, `test_rules.py`, `test_groups.py`, `test_seq.py`, `test_rulings08.py`, `test_engine.py` | the bits wire, kinds and the json wire, mapping rules, groups, sequential layouts, rulings 16 to 30 of 0.8, `packs_only`, grammar and residue, the exit status of the tool; the `iso8601_s` transform of Version 0.26 (whole seconds written, milliseconds dropped; valid on `xml`, `geojson`, `json` and `text` only, no parameter, an `int` key only) |
 | `test_parse_once.py` | Version 0.25, ruling 1: the cases of `bench/set.json` (each input whole, cut and changed, `expect` converted back, decodes) give a new engine's result on an engine that converted the others, and from eight threads at once on one new engine; a load opens each file once |
 | `reduced-build-check.py`, run from the repository root as `python3 -I engines/python/reduced-build-check.py` | a build with `xml`, `json` and `geojson` only (Version 0.24; "Builds with fewer wires" above) |
 | `tools/tool-vectors.py`, run from the repository root as `python3 -I tools/tool-vectors.py -- engines/python/goat-xf-py.py` | every tool vector of `packs/conformance/tool-vectors` (97, all passed): the command-line contract of Version 0.23 |

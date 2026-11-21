@@ -1,0 +1,7 @@
+{
+  "name": "before-1970-half-second-rewritten",
+  "from": "conformance-seconds",
+  "to": "conformance-seconds",
+  "input": "<e t=\"1969-12-31T23:59:59.5Z\"/>",
+  "expect": "<e t=\"1969-12-31T23:59:59Z\"/>"
+}

@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
  * decode and encode throw IllegalArgumentException with a reason; the codec turns it into the error kind.
  */
 final class TextTransform {
-    enum Kind { STRING, INT, FLOAT, ISO, INTW, DEC, DM, HMS, HMS_DMY }
+    enum Kind { STRING, INT, FLOAT, ISO, ISOS, INTW, DEC, DM, HMS, HMS_DMY }
 
     final Kind kind;
     final String name;
@@ -45,6 +45,7 @@ final class TextTransform {
             case INT: return new TextTransform(Kind.INT, "int", 0, 0, 0, ' ', ' ');
             case FLOAT: return new TextTransform(Kind.FLOAT, "float", 0, 0, 0, ' ', ' ');
             case ISO8601_MS: return new TextTransform(Kind.ISO, "iso8601_ms", 0, 0, 0, ' ', ' ');
+            case ISO8601_S: return new TextTransform(Kind.ISOS, "iso8601_s", 0, 0, 0, ' ', ' ');
             default: return null;
         }
     }
@@ -165,7 +166,7 @@ final class TextTransform {
             case STRING: return s;
             case INT: case INTW: return readInt(s);
             case FLOAT: case DEC: return readFloat(s);
-            case ISO: return Transform.parseIso(s);
+            case ISO: case ISOS: return Transform.parseIso(s);
             case HMS: {
                 Matcher m = hms(s);
                 return (double) (Integer.parseInt(m.group(1)) * 3600 + Integer.parseInt(m.group(2)) * 60) + seconds(m);
@@ -245,6 +246,7 @@ final class TextTransform {
             case INT: return Transform.INT.encode(v);
             case FLOAT: return Transform.FLOAT.encode(v);
             case ISO: return Transform.ISO8601_MS.encode(v);
+            case ISOS: return Transform.ISO8601_S.encode(v);
             case INTW: {
                 String s = Long.toString(Transform.asLong(v));
                 return s.startsWith("-") ? "-" + zeros(s.substring(1), w) : zeros(s, w);

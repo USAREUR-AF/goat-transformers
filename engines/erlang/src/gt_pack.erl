@@ -303,6 +303,7 @@ yields(pfloat)  -> float;
 yields(int)        -> int;
 yields(iso8601_ms) -> int;
 yields(iso8601_short) -> int;
+yields(iso8601_s) -> int;
 yields(bool)       -> int;
 yields(uint)       -> int;
 yields(twos)       -> int;
@@ -1669,14 +1670,18 @@ parse_transform1(Wire, S) ->
     case {Class, Wire} of
         {bits15, bits} -> ok;
         {text15, W} when W =:= xml; W =:= json; W =:= geojson -> ok;
+        %% iso8601_s is valid where iso8601_ms is, and bad-directive on
+        %% another wire (ruling 1 of 0.26)
+        {text26, W} when W =:= xml; W =:= json; W =:= geojson; W =:= text -> ok;
         {_, tlv} -> ok;
-        {C, _} when C =:= bits15; C =:= text15 ->
+        {C, _} when C =:= bits15; C =:= text15; C =:= text26 ->
             load_error('bad-directive', "transform ~s is not valid on a ~s wire", [S, Wire]);
         _ -> ok
     end,
     Ok = case {Class, Wire} of
              {bits15, bits} -> true;
              {text15, Tw} when Tw =/= tlv -> true;
+             {text26, Tw} when Tw =/= tlv -> true;
              {text, xml} -> true;
              {text, geojson} -> true;
              {text, json} -> true;
@@ -1714,6 +1719,7 @@ transform(<<"float">>)      -> {text, float};
 transform(<<"int">>)        -> {text, int};
 transform(<<"iso8601_ms">>) -> {text, iso8601_ms};
 transform(<<"iso8601_short">>) -> {text15, iso8601_short};     % 0.18
+transform(<<"iso8601_s">>) -> {text26, iso8601_s};             % 0.26
 transform(<<"bool">>)       -> {json, bool};
 transform(<<"uint">>)       -> {bits, uint};
 transform(<<"twos">>)       -> {bits, twos};
@@ -1784,7 +1790,7 @@ transform(<<"hms_dmy:", F/binary>> = S) -> {textonly, {hms_dmy, tparam(F, 0, 3, 
 transform(T) ->
     %% a transform's name is the text before its first `:`
     [Name | _] = binary:split(T, <<":">>),
-    Known = [<<"string">>, <<"float">>, <<"int">>, <<"iso8601_ms">>, <<"bool">>, <<"uint">>,
+    Known = [<<"string">>, <<"float">>, <<"int">>, <<"iso8601_ms">>, <<"iso8601_s">>, <<"bool">>, <<"uint">>,
              <<"twos">>, <<"f32">>, <<"f64">>, <<"ascii">>, <<"linscale">>, <<"uscale">>,
              <<"sscale">>, <<"pstring">>, <<"pvarint">>, <<"psint">>, <<"pdouble">>,
              <<"pfloat">>, <<"dec">>, <<"dm">>, <<"hms">>, <<"hms_dmy">>,

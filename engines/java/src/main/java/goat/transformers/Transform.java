@@ -15,6 +15,8 @@ public enum Transform {
     ISO8601_MS("iso8601_ms"),
     /** engine-spec 0.18: decode as {@code iso8601_ms}; encode without a zero fraction, trailing zeros removed. */
     ISO8601_SHORT("iso8601_short"),
+    /** engine-spec 0.26: decode as {@code iso8601_ms}; encode to the whole second, the milliseconds dropped. */
+    ISO8601_S("iso8601_s"),
     /** {@code json} wire only: JSON {@code true}/{@code false} to int 1/0. The text forms are "true" and "false". */
     BOOL("bool");
 
@@ -53,6 +55,7 @@ public enum Transform {
                 return parseInt(text);
             case ISO8601_MS:
             case ISO8601_SHORT:
+            case ISO8601_S:
                 return parseIso(text);
             case BOOL:
                 if (text.equals("true")) return 1L;
@@ -77,6 +80,8 @@ public enum Transform {
                 return formatIso(asLong(value));
             case ISO8601_SHORT:
                 return formatIsoShort(asLong(value));
+            case ISO8601_S:
+                return formatIsoSeconds(asLong(value));
             case BOOL: {
                 long b = asLong(value);
                 if (b == 1) return "true";
@@ -233,6 +238,15 @@ public enum Transform {
         return String.format("%04d-%02d-%02dT%02d:%02d:%02d.%03dZ",
                 t.getYear(), t.getMonthValue(), t.getDayOfMonth(),
                 t.getHour(), t.getMinute(), t.getSecond(), ms);
+    }
+
+    /**
+     * {@code iso8601_s} (engine-spec 0.26, ruling 3): the text of {@code iso8601_ms} less its {@code .fff}, so the
+     * second that holds the instant, never rounded; the range is that of {@code iso8601_ms}.
+     */
+    static String formatIsoSeconds(long epochMs) {
+        String full = formatIso(epochMs);
+        return full.substring(0, 19) + "Z";
     }
 
     /**

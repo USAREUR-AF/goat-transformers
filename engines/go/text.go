@@ -126,7 +126,7 @@ func (t *textTf) decode(a, b string) (Value, error) {
 			return Value{}, err
 		}
 		return Value{Kind: KindFloat, F: f}, nil
-	case ttISO:
+	case ttISO, ttISOS:
 		return decISO(a)
 	case ttDM:
 		d := t.d
@@ -209,6 +209,9 @@ func (t *textTf) encode(v Value) (string, string, error) {
 		return s, "", err
 	case ttISO:
 		s, err := encISO(v)
+		return s, "", err
+	case ttISOS:
+		s, err := encISOSeconds(v)
 		return s, "", err
 	case ttIntW:
 		n, err := valueToInt(v)

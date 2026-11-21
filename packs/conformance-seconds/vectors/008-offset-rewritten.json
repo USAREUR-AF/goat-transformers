@@ -1,0 +1,7 @@
+{
+  "name": "offset-rewritten",
+  "from": "conformance-seconds",
+  "to": "conformance-seconds",
+  "input": "<e t=\"2024-01-01T00:00:00.250-05:30\"/>",
+  "expect": "<e t=\"2024-01-01T05:30:00Z\"/>"
+}

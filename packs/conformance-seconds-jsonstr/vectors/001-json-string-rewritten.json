@@ -1,0 +1,10 @@
+{
+  "name": "json-string-rewritten",
+  "from": "conformance-seconds-jsonstr",
+  "to": "conformance-seconds-jsonstr",
+  "input": "{\"t\":\"2024-02-29T12:34:56.789Z\"}",
+  "expect": "{\"t\":\"2024-02-29T12:34:56Z\"}",
+  "model": {
+    "time_ms": "1709210096789"
+  }
+}

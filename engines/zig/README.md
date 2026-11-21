@@ -30,7 +30,8 @@ other fields and last-item flags (`group … rest`, `count <name>` with
 `group … count @<name>`, `group … last`, spec Version 0.21), reads and writes
 long and terminated fields (`hex` on `bits` up to 2040 bits, `chars:ascii8`,
 `until:<code>`, the field option `stop <code>`, and `bit_order msb-lsb`, spec
-Version 0.22), and converts between formats via the shared model.
+Version 0.22), writes a time to the whole second (`iso8601_s`, spec Version
+0.26), and converts between formats via the shared model.
 
 ## Build and run the conformance harness
 
@@ -59,7 +60,7 @@ value its grammar refuses makes the vector fail as invalid. Stdlib only.
 | `zig build module-test` | the module another program imports, and one engine converting on eight threads at once (spec Version 0.25, below) | `2/2 tests passed` |
 | `engines/zig/bench.sh` (from the repository root) | the benchmark of spec Version 0.25 (below) | one JSON line per vector, then the load line |
 | `engines/zig/reduced-check.sh` (from the repository root) | the reduced-build check of spec Version 0.24 (below) | `reduced-build check: passed` |
-| `zig build cli -Doptimize=ReleaseSafe`, then from the repository root `python3 -I tools/tool-vectors.py -- engines/zig/zig-out/bin/goat-xf` | the tool vectors of spec Version 0.23 | `tool vectors: 95/95 passed` |
+| `zig build cli -Doptimize=ReleaseSafe`, then from the repository root `python3 -I tools/tool-vectors.py -- engines/zig/zig-out/bin/goat-xf` | the tool vectors of spec Version 0.23 | `tool vectors: 97/97 passed` |
 
 ## Parse once, and the benchmark (spec Version 0.25)
 
@@ -156,18 +157,18 @@ builds the engine with all seven wires and with `xml`, `json` and `geojson`
 of the packs on those three wires through the reduced harness, loads a pack
 on `bits` (fixed and sequential), `protobuf`, `text` and `tlv`, each of which
 must be `unknown-wire` naming its wire, and prints the sizes of both builds.
-It exits non-zero on any failure. Measured (Zig 0.13.0, x86_64 Linux,
-`ReleaseSmall`):
+It exits non-zero on any failure. Measured on 2026-11-21 (Zig 0.13.0, x86_64
+Linux, `ReleaseSmall`):
 
 | Binary | All seven wires | `xml`, `json`, `geojson` | Reduced / full |
 |---|---|---|---|
 | `gt-engine-zig` (harness) | 713 368 bytes | 434 840 bytes | 60 % |
 | `goat-xf` (command-line tool) | 676 504 bytes | 397 976 bytes | 58 % |
 
-The reduced harness loaded 1070 packs and left out 2407; it ran 6852
-conversion vectors (6852 passed), 378 load vectors (378 passed) and 16
-capability vectors (16 passed), and did not run 618 vectors that name a pack
-it left out nor 788 load vectors with such a pack.
+The reduced harness loaded 1624 packs and left out 2663; it ran 8167
+conversion vectors (8167 passed), 382 load vectors (382 passed) and 16
+capability vectors (16 passed), and did not run 626 vectors that name a pack
+it left out nor 790 load vectors with such a pack.
 
 `goat-xf` of a reduced build loads a whole packs directory as Version 0.23
 says, so a directory holding a pack on a wire the build lacks fails with that
@@ -415,7 +416,7 @@ another after the file is read, before `missing-distribution`. Decode removes
 one line terminator, checks every byte is 0x20 to 0x7E, removes the start text
 and the `nmea` checksum (`malformed-wire` for each failure, before any `when`),
 then splits the body into fields. Locators `<i>`, `<i>:<from>:<len>` and
-`<i>+<j>`; transforms `string`, `int`, `float`, `iso8601_ms`, `int:<w>`,
+`<i>+<j>`; transforms `string`, `int`, `float`, `iso8601_ms`, `iso8601_s`, `int:<w>`,
 `dec:<f>[:<w>]`, `dm:<d>:<f>:<PN>`, `hms:<f>`, `hms_dmy:<f>`. A pair is absent
 when either field is absent. Encode writes field lines, then `when` and
 `const` over them (the earlier line's characters stand), residue at fields no
@@ -442,6 +443,11 @@ the end of the record. `--convert` does not trim the input of a `text` format.
   keeps the grammar of Version 0.10.
 - `iso8601_ms` (ruling 3): real calendar days, no leap second, the instant
   from year 0001 to 9999 on decode and on encode.
+- `iso8601_s` (Version 0.26): read exactly as `iso8601_ms`, fraction
+  included; written as `YYYY-MM-DDTHH:MM:SSZ`, the second that holds the
+  instant (the milliseconds are dropped, not rounded), over the range of
+  `iso8601_ms`. Valid on `xml`, `geojson`, `json` and `text`, with no
+  parameter, on an `int` key.
 - `bits` (ruling 4): a value outside its field's range is `transform-encode`;
   the parameters of `linscale`, `uscale` and `sscale` are checked at load.
 - Load (ruling 5): every failure has a kind, and each line is checked in the

@@ -120,12 +120,12 @@ x86_64, 36 top-level tests and examples, none failing:
 
 | Test | Covers | Measured |
 |---|---|---|
-| `TestVectors` | every conversion vector of every pack under `../../packs`: output byte-for-byte, `expect_error`, `context`, `model` values | 3299 run, 3299 passed (96 packs loaded) |
-| `TestLoadVectors` | every load vector in `packs/conformance/load-vectors`: loads, or fails with the named error | 314 run, 314 passed |
+| `TestVectors` | every conversion vector of every pack under `../../packs`: output byte-for-byte, `expect_error`, `context`, `model` values | 22252 run, 22252 passed (4287 packs loaded; 2026-11-21) |
+| `TestLoadVectors` | every load vector in `packs/conformance/load-vectors`: loads, or fails with the named error | 1172 run, 1172 passed |
 | `TestMalformedInputNeverPanics` | the input of every conversion vector cut at prefixes and with single bytes changed, with a fixed seed: no panic, every error begins with a named kind | 13180 inputs fed, 0 failed |
-| `TestParseOnceConcurrent` | spec 0.25, rulings 1b and 1c: every conversion vector on one instance, then on a second from four goroutines at once; bytes, decoded entity and errors compared | 21553 vectors (1174 failing conversions), 0 outcomes differ |
+| `TestParseOnceConcurrent` | spec 0.25, rulings 1b and 1c: every conversion vector on one instance, then on a second from four goroutines at once; bytes, decoded entity and errors compared | 22222 vectors (1213 failing conversions), 0 outcomes differ |
 | `TestMalformedRulings` | the malformed-input rulings of the specification, such as nesting depth and bytes that are not UTF-8 | pass |
-| tool vectors | `python3 -I tools/tool-vectors.py -- engines/go/goat-xf`, from the repository root after the build above: every vector in `packs/conformance/tool-vectors` | 95 run, 95 passed |
+| tool vectors | `python3 -I tools/tool-vectors.py -- engines/go/goat-xf`, from the repository root after the build above: every vector in `packs/conformance/tool-vectors` | 97 run, 97 passed |
 | `TestHeapPerListItem` | the heap a decode takes per item of a long list; runs only with `GOAT_XF_HEAP=1` | skipped in CI |
 | the other tests and `ExampleLoadPacksOnly`, `ExampleEngine_LoadFS` | the tokenizer, float and time formatting, wire errors, kinds, groups, sequential wires, derive functions, the directory and `fs.FS` loaders | pass |
 

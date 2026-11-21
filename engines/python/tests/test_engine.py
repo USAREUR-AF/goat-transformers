@@ -11,7 +11,7 @@ sys.path.insert(0, SRC)
 PACKS = os.path.normpath(os.path.join(HERE, "..", "..", "..", "packs"))
 
 from goat_transformers import (  # noqa: E402
-    DistributionRefused, DuplicateKey, InvalidModel, MissingDistribution, MissingSource,
+    BadDirective, KeyTypeMismatch, DistributionRefused, DuplicateKey, InvalidModel, MissingDistribution, MissingSource,
     Engine, InvalidPack, MalformedWire, MissingRoot, TransformDecodeFailure,
     UnknownDirective, UnknownFormat, UnknownTransform, parse_model_text, parse_pack_text,
 )
@@ -129,6 +129,46 @@ class TestTransforms(unittest.TestCase):
                     "2021-02-27T20:00:00+01", "2021-02-27T20:00:00+24:00", "2021-02-27T20:00:00Z+01:00"):
             with self.assertRaises(ValueError, msg=bad):
                 t.decode(bad)
+
+
+class TestIso8601S(unittest.TestCase):
+    """Version 0.26: `iso8601_s`."""
+
+    def test_decode_and_encode(self):
+        t = TRANSFORMS["iso8601_s"]
+        self.assertEqual(t.decode("2024-02-29T12:34:56.789Z"), 1709210096789)  # ruling 2: the fraction is read
+        self.assertEqual(t.decode("2021-02-27T21:00:00+01:00"), 1614456000000)
+        self.assertEqual(t.encode(1709210096789), "2024-02-29T12:34:56Z")  # ruling 4
+        self.assertEqual(t.encode(999), "1970-01-01T00:00:00Z")  # ruling 3: dropped, never rounded
+        self.assertEqual(t.encode(-1), "1969-12-31T23:59:59Z")
+        self.assertEqual(t.encode(-62135596800000), "0001-01-01T00:00:00Z")
+        self.assertEqual(t.encode(253402300799999), "9999-12-31T23:59:59Z")
+        for bad in (-62135596800001, 253402300800000, "1", 1.5, True):
+            with self.assertRaises(ValueError, msg=repr(bad)):
+                t.encode(bad)
+        for bad in ("2021-02-30T00:00:00Z", "2021-02-27T20:00:00", " 2021-02-27T20:00:00Z"):
+            with self.assertRaises(ValueError, msg=bad):
+                t.decode(bad)
+
+    def _pack(self, wire, line, root=""):
+        return ('format t-s\nversion 0.1.0\ndistribution public\nsource "unit tests"\nwire %s\n%s%s\n'
+                % (wire, root, line))
+
+    def _load(self, text):
+        return Engine([parse_pack_text(text)], models=[parse_model_text(CORE)])
+
+    def test_line_checks(self):
+        # ruling 1: valid on xml, geojson, json and text
+        self._load(self._pack("xml", "field when @t iso8601_s", "root ev\n"))
+        self._load(self._pack("geojson", "field when properties.t iso8601_s"))
+        self._load(self._pack("json", "field when t iso8601_s"))
+        # another wire, a parameter, a key of another type
+        with self.assertRaises(BadDirective):
+            self._load(self._pack("protobuf", "field when 1 iso8601_s"))
+        with self.assertRaises(BadDirective):
+            self._load(self._pack("json", "field when t iso8601_s:3"))
+        with self.assertRaises(KeyTypeMismatch):
+            self._load(self._pack("json", "field note t iso8601_s"))
 
 
 class TestWires(unittest.TestCase):

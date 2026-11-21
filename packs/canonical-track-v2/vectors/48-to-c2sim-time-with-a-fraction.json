@@ -1,0 +1,22 @@
+{
+  "name": "to-c2sim-time-with-a-fraction",
+  "from": "canonical-track-v2",
+  "to": "c2sim",
+  "input": "{\"apiVersion\":\"billie.dev/track-v2\",\"kind\":\"Track\",\"trackId\":\"a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d\",\"sourceId\":\"sim-a\",\"trackGeneration\":\"1\",\"observedAt\":\"2024-05-01T12:30:00.750Z\",\"position\":{\"latitudeDeg\":48.137154,\"longitudeDeg\":11.576124,\"altitudeM\":610.25},\"velocity\":{\"eastMps\":3,\"northMps\":4},\"classification\":\"vehicle\"}",
+  "context": {
+    "c2sim.communicative_act": "Inform",
+    "c2sim.conversation_id": "6f1c2a9e-3b4d-4e5f-8a7b-1c2d3e4f5a6b",
+    "c2sim.from_sending_system": "GATEWAY",
+    "c2sim.message_id": "0b7e1d2c-9f8a-4b6c-a5d4-e3f2a1b0c9d8",
+    "c2sim.protocol": "SISO-STD-C2SIM",
+    "c2sim.protocol_version": "1.0.2",
+    "c2sim.to_receiving_system": "ALL",
+    "c2sim.from_sender": "11111111-2222-4333-8444-555555555555",
+    "c2sim.to_receiver": "66666666-7777-4888-9999-aaaaaaaaaaaa",
+    "c2sim.report_id": "f0e1d2c3-b4a5-4968-8776-655443322110",
+    "c2sim.reporting_entity": "11111111-2222-4333-8444-555555555555"
+  },
+  "expect": "<Message xmlns=\"http://www.sisostds.org/schemas/C2SIM/1.1\"><C2SIMHeader><CommunicativeActTypeCode>Inform</CommunicativeActTypeCode><ConversationID>6f1c2a9e-3b4d-4e5f-8a7b-1c2d3e4f5a6b</ConversationID><FromSendingSystem>GATEWAY</FromSendingSystem><MessageID>0b7e1d2c-9f8a-4b6c-a5d4-e3f2a1b0c9d8</MessageID><Protocol>SISO-STD-C2SIM</Protocol><ProtocolVersion>1.0.2</ProtocolVersion><ToReceivingSystem>ALL</ToReceivingSystem></C2SIMHeader><MessageBody><DomainMessageBody><ReportBody><FromSender>11111111-2222-4333-8444-555555555555</FromSender><ToReceiver>66666666-7777-4888-9999-aaaaaaaaaaaa</ToReceiver><ReportContent><PositionReportContent><TimeOfObservation><DateTime><IsoDateTime>2024-05-01T12:30:00Z</IsoDateTime></DateTime></TimeOfObservation><Location><GeodeticCoordinate><Latitude>48.137154</Latitude><Longitude>11.576124</Longitude></GeodeticCoordinate></Location><Speed>5</Speed><SubjectEntity>a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d</SubjectEntity></PositionReportContent></ReportContent><ReportID>f0e1d2c3-b4a5-4968-8776-655443322110</ReportID><ReportingEntity>11111111-2222-4333-8444-555555555555</ReportingEntity></ReportBody></DomainMessageBody></MessageBody></Message>",
+  "source": "written for this repository from the schema; every C2SIM input and expected message validates against the schema (xmllint); expected output computed by the Python engine and reproduced by every engine",
+  "reference": "C2SIM_SMX_LOX.xsd (OpenC2SIM/C2SIMArtifacts commit 947d8b5, Derived products/), MessageType, C2SIMHeaderType, ReportBodyType, PositionReportContentType, GeodeticCoordinateType, IsoDateTimeBaseType; the header and report identifiers come from the caller and the time of observation from observedAt, written to the whole second (iso8601_s); speed is derived from the velocity (hypot 3 4 = 5); altitudeM is height above the ellipsoid and is not written as AltitudeMSL; observedAt 12:30:00.750 is written 12:30:00Z, the second that holds it"
+}

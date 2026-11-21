@@ -209,7 +209,8 @@ enum class Transform { String, Float, Int, Iso8601Ms, Uint, Twos, Linscale,
                        CharsIcao6, CharsAis6, CharsAscii7, Octal,
                        Scale, Iscale,                    // v0.15, xml, json and geojson
                        Iso8601Short,                     // v0.18, xml, json and geojson
-                       CharsAscii8                       // v0.22, bits wire
+                       CharsAscii8,                      // v0.22, bits wire
+                       Iso8601S                          // v0.26, xml, json, geojson and text
 };
 enum class Wire { Xml, GeoJson, Bits, Protobuf, Json, Text, Tlv };
 

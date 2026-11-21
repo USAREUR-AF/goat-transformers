@@ -19,7 +19,7 @@ from datetime import date
 
 from .errors import BadDirective, MalformedWire, TransformEncodeFailure
 from .transforms import (
-    Iso8601MsT, StringT, Transform, format_float, format_int, is_text_only_name, round_half_away, text_params,
+    Iso8601MsT, Iso8601ST, StringT, Transform, format_float, format_int, is_text_only_name, round_half_away, text_params,
 )
 
 _HEX = "0123456789abcdefABCDEF"
@@ -324,7 +324,15 @@ class _TextIso(Iso8601MsT):
     pair = False
 
 
-_BASE = {"string": _TextString(), "int": TextIntT("int"), "float": TextFloatT(), "iso8601_ms": _TextIso()}
+class _TextIsoS(Iso8601ST):
+    numeric = False
+    pair = False
+
+
+_BASE = {
+    "string": _TextString(), "int": TextIntT("int"), "float": TextFloatT(), "iso8601_ms": _TextIso(),
+    "iso8601_s": _TextIsoS(),
+}
 def build_transform(name):
     """-> the transform of `name` on the `text` wire, or None when the name is
     not a transform of this wire. A text-only name with bad parameters raises

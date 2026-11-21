@@ -1,0 +1,7 @@
+{
+  "name": "first-instant-of-year-0001-rewritten",
+  "from": "conformance-seconds",
+  "to": "conformance-seconds",
+  "input": "<e t=\"0001-01-01T00:00:00Z\"/>",
+  "expect": "<e t=\"0001-01-01T00:00:00Z\"/>"
+}
