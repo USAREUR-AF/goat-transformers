@@ -1,0 +1,12 @@
+{
+  "name": "pdelay-req-roundtrip",
+  "from": "ptp-message",
+  "to": "ptp-message",
+  "input": "0202003600000008000000000000000000000000001b21fffe1234560001006405fd00006553f1020000000000000000000000000000",
+  "expect": "0202003600000008000000000000000000000000001b21fffe1234560001006405fd00006553f1020000000000000000000000000000",
+  "model": {
+    "ptp.message_type": "2",
+    "ptp.origin_seconds": "1700000002"
+  },
+  "source": "built by tools/gen/gnss-time-vectors.py from values chosen there; layout restated from IEEE 1588 as linuxptp msg.h, ddt.h and tlv.h lay it out; a Pdelay_Req; expect derived there, no engine run"
+}

@@ -1,0 +1,58 @@
+# NTRIP source-table record, one line per message: STR (data stream), CAS (caster), NET (network) or
+# ENDSOURCETABLE. Written by tools/gen/gnss-time-pack.py; do not edit by hand.
+format        ntrip-sourcetable-line
+version       0.1.0
+distribution  public
+source        "BKG, Networked Transport of RTCM via Internet Protocol (Ntrip) Version 1.0 (documentation excerpt, not the official RTCM document), section 6 and Appendix A, https://igs.bkg.bund.de/root_ftp/NTRIP/documentation/NtripDocumentation.pdf (sha256 d2399f37643acec3bff35b26cfc873613048a5f65bf4ccb66032eae708d44977), no licence stated; record layouts restated"
+uses          ntrip
+wire          text
+delimiter     ";"
+
+kind  str
+when  0  STR
+field  ntrip.mountpoint  1  string
+field  ntrip.str_identifier  2  string
+field  ntrip.format  3  string
+field  ntrip.format_details  4  string
+field  ntrip.carrier  5  int
+field  ntrip.nav_system  6  string
+field  ntrip.network  7  string
+field  ntrip.str_country  8  string
+field  ntrip.str_latitude  9  string
+field  ntrip.str_longitude  10  string
+field  ntrip.str_nmea  11  int
+field  ntrip.solution  12  int
+field  ntrip.generator  13  string
+field  ntrip.compr_encryp  14  string
+field  ntrip.str_authentication  15  string
+field  ntrip.str_fee  16  string
+field  ntrip.bitrate  17  int
+field  ntrip.str_misc  18  string
+
+kind  cas
+when  0  CAS
+field  ntrip.host  1  string
+field  ntrip.port  2  int
+field  ntrip.cas_identifier  3  string
+field  ntrip.cas_operator  4  string
+field  ntrip.cas_nmea  5  int
+field  ntrip.cas_country  6  string
+field  ntrip.cas_latitude  7  string
+field  ntrip.cas_longitude  8  string
+field  ntrip.fallback_host  9  string
+field  ntrip.fallback_port  10  int
+field  ntrip.cas_misc  11  string
+
+kind  net
+when  0  NET
+field  ntrip.net_identifier  1  string
+field  ntrip.net_operator  2  string
+field  ntrip.net_authentication  3  string
+field  ntrip.net_fee  4  string
+field  ntrip.web_net  5  string
+field  ntrip.web_str  6  string
+field  ntrip.web_reg  7  string
+field  ntrip.net_misc  8  string
+
+kind  end
+when  0  ENDSOURCETABLE

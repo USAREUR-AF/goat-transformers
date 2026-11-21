@@ -1,0 +1,19 @@
+# The ntske module: NTS Key Establishment records (RFC 8915). Written by tools/gen/gnss-time-pack.py.
+module        ntske
+version       0.1.0
+distribution  public
+source        "IETF RFC 8915, Network Time Security for the Network Time Protocol, September 2020, section 4, https://www.rfc-editor.org/rfc/rfc8915.txt; layout restated"
+list  records          "the records, in order (the last is End of Message)"
+key   critical         int     -  "C bit: an unrecognized record of this type is an error"
+key   record_type      int     -  "record type: 0 end of message, 1 next protocol negotiation, 2 error, 3 warning, 4 AEAD algorithm negotiation, 5 new cookie for NTPv4, 6 NTPv4 server negotiation, 7 NTPv4 port negotiation"
+list  protocols        "next protocol negotiation: the protocol IDs (0 NTPv4)"
+key   protocol_id      int     -  "one protocol ID"
+key   error_code       int     -  "error code: 0 unrecognized critical record, 1 bad request, 2 internal server error"
+key   warning_code     int     -  "warning code"
+list  aead_algorithms  "AEAD algorithm negotiation: the IANA AEAD numeric identifiers (15 AEAD_AES_SIV_CMAC_256)"
+key   aead_id          int     -  "one AEAD algorithm identifier"
+list  cookie           "new cookie: its body, as octets"
+list  server           "NTPv4 server negotiation: the server's address or name, as its ASCII octets"
+key   port             int     -  "NTPv4 port negotiation: the UDP port"
+list  body             "a record of another type: its body, as octets"
+key   octet            int     -  "one octet"

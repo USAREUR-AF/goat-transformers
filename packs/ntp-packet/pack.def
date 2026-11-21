@@ -1,0 +1,65 @@
+# NTP packet (RFC 5905 section 7.3) with its extension fields (RFC 7822), the NTS fields of RFC 8915
+# section 5 laid out. The header is on the inet keys of ntp-header. Written by tools/gen/gnss-time-pack.py.
+format        ntp-packet
+version       0.1.0
+distribution  public
+source        "IETF RFC 5905 section 7.3, RFC 7822 section 3 and RFC 8915 section 5, https://www.rfc-editor.org/rfc/rfc8915.txt; layout restated"
+uses          inet
+uses          ntpext
+wire          bits
+layout        sequential
+bit_order     msb
+
+field  inet.ntp_leap  2  uint
+field  inet.ntp_version  3  uint
+field  inet.ntp_mode  3  uint
+field  inet.ntp_stratum  8  uint
+field  inet.ntp_poll  8  twos
+field  inet.ntp_precision  8  twos
+field  inet.ntp_root_delay  32  uscale:1/65536
+field  inet.ntp_root_dispersion  32  uscale:1/65536
+switch  inet.ntp_stratum
+  case  0
+    field  inet.ntp_kiss_code  32  ascii
+  case  1
+    field  inet.ntp_ref_clock  32  ascii
+  else
+    field  inet.ntp_ref_id  32  uint
+end
+field  inet.ntp_ref_ts_sec  32  uint
+field  inet.ntp_ref_ts_frac  32  uint
+field  inet.ntp_org_ts_sec  32  uint
+field  inet.ntp_org_ts_frac  32  uint
+field  inet.ntp_rec_ts_sec  32  uint
+field  inet.ntp_rec_ts_frac  32  uint
+field  inet.ntp_xmt_ts_sec  32  uint
+field  inet.ntp_xmt_ts_frac  32  uint
+group  ntpext.extensions  rest
+  field  ntpext.field_type  16  uint
+  length  16  bytes  plus  4
+    switch  ntpext.field_type
+      case  260
+        group  ntpext.unique_identifier  rest
+          field  ntpext.octet  8  uint
+        end
+      case  516
+        group  ntpext.cookie  rest
+          field  ntpext.octet  8  uint
+        end
+      case  772
+        group  ntpext.cookie_placeholder  rest
+          field  ntpext.octet  8  uint
+        end
+      case  1028
+        field  ntpext.nonce_length  16  uint
+        field  ntpext.ciphertext_length  16  uint
+        group  ntpext.authenticator  rest
+          field  ntpext.octet  8  uint
+        end
+      else
+        group  ntpext.value  rest
+          field  ntpext.octet  8  uint
+        end
+    end
+  end
+end

@@ -1,0 +1,14 @@
+{
+  "name": "str-network-nmea-roundtrip",
+  "from": "ntrip-sourcetable-line",
+  "to": "ntrip-sourcetable-line",
+  "input": "STR;VRS1;Network VRS;RTCM 3;1004(1),1012(1);2;GPS+GLO;EXNET;FRA;48.85;2.35;1;1;Network SW;none;D;Y;5000;none",
+  "expect": "STR;VRS1;Network VRS;RTCM 3;1004(1),1012(1);2;GPS+GLO;EXNET;FRA;48.85;2.35;1;1;Network SW;none;D;Y;5000;none",
+  "model": {
+    "ntrip.str_nmea": "1",
+    "ntrip.solution": "1",
+    "ntrip.str_fee": "Y",
+    "ntrip.str_authentication": "D"
+  },
+  "source": "built by tools/gen/gnss-time-vectors.py from values chosen there; layout restated from the BKG NTRIP 1.0 documentation, section 6; a network stream that needs the client's NMEA position; expect derived there, no engine run"
+}

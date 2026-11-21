@@ -1,0 +1,10 @@
+{
+  "name": "GNSS correction transport and network timing (NTRIP, NTP/NTS, PTP)",
+  "domain": "sensors",
+  "exact": [
+    "ntrip-sourcetable-line",
+    "ntp-packet",
+    "nts-ke-records",
+    "ptp-message"
+  ]
+}

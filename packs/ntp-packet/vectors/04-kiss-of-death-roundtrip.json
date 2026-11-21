@@ -1,0 +1,13 @@
+{
+  "name": "kiss-of-death-roundtrip",
+  "from": "ntp-packet",
+  "to": "ntp-packet",
+  "input": "e40006ec0000080000001000524154450000000040000000000000004000000000000000400000000000000040000000",
+  "expect": "e40006ec0000080000001000524154450000000040000000000000004000000000000000400000000000000040000000",
+  "model": {
+    "inet.ntp_leap": "3",
+    "inet.ntp_stratum": "0",
+    "inet.ntp_kiss_code": "RATE"
+  },
+  "source": "built by tools/gen/gnss-time-vectors.py from values chosen there; layout restated from RFC 5905 section 7.3, RFC 7822 section 3 and RFC 8915 section 5; a kiss-o'-death RATE packet; expect derived there, no engine run"
+}

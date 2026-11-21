@@ -1,0 +1,20 @@
+{
+  "name": "str-roundtrip",
+  "from": "ntrip-sourcetable-line",
+  "to": "ntrip-sourcetable-line",
+  "input": "STR;TEST0;Testtown;RTCM 3.2;1004(1),1006(10),1033(10);2;GPS+GLO;Misc;DEU;50.10;8.66;0;0;Generic RX;none;B;N;2400;demo stream",
+  "expect": "STR;TEST0;Testtown;RTCM 3.2;1004(1),1006(10),1033(10);2;GPS+GLO;Misc;DEU;50.10;8.66;0;0;Generic RX;none;B;N;2400;demo stream",
+  "model": {
+    "ntrip.mountpoint": "TEST0",
+    "ntrip.format": "RTCM 3.2",
+    "ntrip.format_details": "1004(1),1006(10),1033(10)",
+    "ntrip.carrier": "2",
+    "ntrip.nav_system": "GPS+GLO",
+    "ntrip.str_latitude": "50.10",
+    "ntrip.str_nmea": "0",
+    "ntrip.str_authentication": "B",
+    "ntrip.bitrate": "2400",
+    "ntrip.str_misc": "demo stream"
+  },
+  "source": "built by tools/gen/gnss-time-vectors.py from values chosen there; layout restated from the BKG NTRIP 1.0 documentation, section 6; a stream record; expect derived there, no engine run"
+}

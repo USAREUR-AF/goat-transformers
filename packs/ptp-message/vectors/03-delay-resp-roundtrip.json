@@ -1,0 +1,14 @@
+{
+  "name": "delay-resp-roundtrip",
+  "from": "ptp-message",
+  "to": "ptp-message",
+  "input": "0902003600000008000000000000000000000000001b21fffe12345600010064030000006553f101000013880050c2fffe0000010002",
+  "expect": "0902003600000008000000000000000000000000001b21fffe12345600010064030000006553f101000013880050c2fffe0000010002",
+  "model": {
+    "ptp.message_type": "9",
+    "ptp.receive_seconds": "1700000001",
+    "ptp.requesting_clock_identity": "0050c2fffe000001",
+    "ptp.requesting_port_number": "2"
+  },
+  "source": "built by tools/gen/gnss-time-vectors.py from values chosen there; layout restated from IEEE 1588 as linuxptp msg.h, ddt.h and tlv.h lay it out; a Delay_Resp; expect derived there, no engine run"
+}

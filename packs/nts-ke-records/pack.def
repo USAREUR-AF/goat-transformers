@@ -1,0 +1,46 @@
+# NTS Key Establishment records (RFC 8915 section 4): a request or response, the records to the end.
+# Written by tools/gen/gnss-time-pack.py; do not edit by hand.
+format        nts-ke-records
+version       0.1.0
+distribution  public
+source        "IETF RFC 8915, Network Time Security for the Network Time Protocol, September 2020, section 4, https://www.rfc-editor.org/rfc/rfc8915.txt; layout restated"
+uses          ntske
+wire          bits
+layout        sequential
+bit_order     msb
+
+group  ntske.records  rest
+  field  ntske.critical  1  uint
+  field  ntske.record_type  15  uint
+  length  16  bytes
+    switch  ntske.record_type
+      case  0
+      case  1
+        group  ntske.protocols  rest
+          field  ntske.protocol_id  16  uint
+        end
+      case  2
+        field  ntske.error_code  16  uint
+      case  3
+        field  ntske.warning_code  16  uint
+      case  4
+        group  ntske.aead_algorithms  rest
+          field  ntske.aead_id  16  uint
+        end
+      case  5
+        group  ntske.cookie  rest
+          field  ntske.octet  8  uint
+        end
+      case  6
+        group  ntske.server  rest
+          field  ntske.octet  8  uint
+        end
+      case  7
+        field  ntske.port  16  uint
+      else
+        group  ntske.body  rest
+          field  ntske.octet  8  uint
+        end
+    end
+  end
+end

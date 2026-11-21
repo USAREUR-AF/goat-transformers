@@ -1,0 +1,16 @@
+{
+  "name": "management-get-roundtrip",
+  "from": "ptp-message",
+  "to": "ptp-message",
+  "input": "0d02003600000008000000000000000000000000001b21fffe1234560001006404fd001b21fffe123456ffff01010000000100022000",
+  "expect": "0d02003600000008000000000000000000000000001b21fffe1234560001006404fd001b21fffe123456ffff01010000000100022000",
+  "model": {
+    "ptp.message_type": "13",
+    "ptp.target_port_number": "65535",
+    "ptp.action": "0",
+    "ptp.tlvs[0].ptp.tlv_type": "1",
+    "ptp.tlvs[0].ptp.management_id": "8192",
+    "ptp.tlvs[0].ptp.tlv_data.#": "0"
+  },
+  "source": "built by tools/gen/gnss-time-vectors.py from values chosen there; layout restated from IEEE 1588 as linuxptp msg.h, ddt.h and tlv.h lay it out; a Management GET with a management TLV and no data; expect derived there, no engine run"
+}

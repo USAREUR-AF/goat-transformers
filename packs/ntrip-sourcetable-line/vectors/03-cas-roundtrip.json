@@ -1,0 +1,16 @@
+{
+  "name": "cas-roundtrip",
+  "from": "ntrip-sourcetable-line",
+  "to": "ntrip-sourcetable-line",
+  "input": "CAS;caster.example.org;2101;Example Caster;Example Org;1;DEU;50.10;8.66;0.0.0.0;0;none",
+  "expect": "CAS;caster.example.org;2101;Example Caster;Example Org;1;DEU;50.10;8.66;0.0.0.0;0;none",
+  "model": {
+    "ntrip.host": "caster.example.org",
+    "ntrip.port": "2101",
+    "ntrip.cas_operator": "Example Org",
+    "ntrip.cas_nmea": "1",
+    "ntrip.fallback_host": "0.0.0.0",
+    "ntrip.fallback_port": "0"
+  },
+  "source": "built by tools/gen/gnss-time-vectors.py from values chosen there; layout restated from the BKG NTRIP 1.0 documentation, section 6; a caster record with no fallback; expect derived there, no engine run"
+}

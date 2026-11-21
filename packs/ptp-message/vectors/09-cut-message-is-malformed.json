@@ -1,0 +1,8 @@
+{
+  "name": "cut-message-is-malformed",
+  "from": "ptp-message",
+  "to": "ptp-message",
+  "input": "0002002c00000208000000000000000000000000001b21fffe1234560001",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/gnss-time-vectors.py from values chosen there; layout restated from IEEE 1588 as linuxptp msg.h, ddt.h and tlv.h lay it out; the Sync of vector 01 cut before its message length; expect derived there, no engine run"
+}

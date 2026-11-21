@@ -1,0 +1,13 @@
+{
+  "name": "net-roundtrip",
+  "from": "ntrip-sourcetable-line",
+  "to": "ntrip-sourcetable-line",
+  "input": "NET;EXNET;Example Org;B;N;https://example.org/net;none;https://example.org/register;none",
+  "expect": "NET;EXNET;Example Org;B;N;https://example.org/net;none;https://example.org/register;none",
+  "model": {
+    "ntrip.net_identifier": "EXNET",
+    "ntrip.web_net": "https://example.org/net",
+    "ntrip.web_str": "none"
+  },
+  "source": "built by tools/gen/gnss-time-vectors.py from values chosen there; layout restated from the BKG NTRIP 1.0 documentation, section 6; a network record; expect derived there, no engine run"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "signaling-organization-tlv-roundtrip",
+  "from": "ptp-message",
+  "to": "ptp-message",
+  "input": "0c02003800000008000000000000000000000000001b21fffe1234560001006405fd001b21fffe123456ffff000300080080c20000010a0b",
+  "expect": "0c02003800000008000000000000000000000000001b21fffe1234560001006405fd001b21fffe123456ffff000300080080c20000010a0b",
+  "model": {
+    "ptp.message_type": "12",
+    "ptp.tlvs[0].ptp.tlv_type": "3",
+    "ptp.tlvs[0].ptp.organization_id": "0080c2",
+    "ptp.tlvs[0].ptp.organization_subtype": "000001",
+    "ptp.tlvs[0].ptp.tlv_data.#": "2"
+  },
+  "source": "built by tools/gen/gnss-time-vectors.py from values chosen there; layout restated from IEEE 1588 as linuxptp msg.h, ddt.h and tlv.h lay it out; a Signaling message with an organization extension TLV; expect derived there, no engine run"
+}

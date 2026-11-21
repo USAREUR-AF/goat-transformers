@@ -1,0 +1,8 @@
+{
+  "name": "cut-extension-is-malformed",
+  "from": "ntp-packet",
+  "to": "ntp-packet",
+  "input": "240206ec0000080000001000c0000201ecfcf20040000000ecfcf26440000000ecfcf2c840000000ecfcf32c4000000001040024000102030405060708090a0b0c0d0e0f",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/gnss-time-vectors.py from values chosen there; layout restated from RFC 5905 section 7.3, RFC 7822 section 3 and RFC 8915 section 5; the packet of vector 01 cut inside its first extension field; expect derived there, no engine run"
+}
