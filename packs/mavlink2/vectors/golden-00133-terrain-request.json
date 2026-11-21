@@ -2,13 +2,13 @@
  "name": "golden-00133-terrain-request",
  "from": "mavlink2",
  "to": "mavlink2",
- "input": "fd1200002a0709850000112233445566770922334455334455664455",
- "expect": "fd1200002a0709850000112233445566770922334455334455664455",
+ "input": "fd1200002a07098500001122334455667709803879ec0071f2d84455",
+ "expect": "fd1200002a07098500001122334455667709803879ec0071f2d84455",
  "model": {
   "@kind": "terrain_request",
   "mavlink.mask": "682126384972374545",
-  "lat": "143.0532898",
-  "lon": "171.6864051",
+  "lat": "-32.76",
+  "lon": "-65.52",
   "mavlink.grid_spacing_m": "21828"
  },
  "source": "pymavlink 2.4.50, dialect v20.common: TERRAIN_REQUEST(lat, lon, grid_spacing, mask) packed by MAVLink.pack with sysid 7, compid 9, seq 42; the two CRC bytes are left off (the pack maps no CRC). Written by tools/gen/golden-pymavlink.py; no engine is run.",

@@ -113,9 +113,62 @@ def pattern_float(ch, idx, avoid):
     raise ValueError("no float avoids %r" % avoid)
 
 
+RANGES = os.path.join(ROOT, "tools", "model-ranges.json")
+
+
+def ranges():
+    """{key: (min, max)} of tools/model-ranges.json: tools/model-checks.py holds
+    every decoded value to these, so a golden value must lie inside."""
+    with open(RANGES, encoding="utf-8") as fh:
+        return {k: (v.get("min"), v.get("max")) for k, v in json.load(fh)["keys"].items()
+                if v.get("min") is not None or v.get("max") is not None}
+
+
+def in_range_raw(f, ch, lo_hi):
+    """A raw field value whose decoded value lies inside the key's range (a
+    third of the way in, else the first of a few other points that fits the
+    field), by the inverse of the field's own transform; None when the
+    transform has no simple inverse or no point fits."""
+    for frac in (0.318, 0.5, 0.618, 0.75, 0.9, 0.2, 0.1):
+        raw = _raw_at(f, ch, lo_hi, frac)
+        if raw is not None:
+            return raw
+    return None
+
+
+def _raw_at(f, ch, lo_hi, frac):
+    lo, hi = lo_hi
+    if lo is not None and hi is not None:
+        want = lo + (hi - lo) * frac
+    elif hi is None:
+        want = lo + max(1, abs(lo)) * frac
+    else:
+        want = hi - max(1, abs(hi)) * frac
+    typ = f[3]
+    if typ in ("f32", "f64"):
+        return float(struct.unpack("<" + ch, struct.pack("<" + ch, want))[0]) if ch in "fd" else None
+    if typ in ("uint", "twos"):
+        raw = int(want)
+    elif typ.startswith("sscale:1/") or typ.startswith("uiscale:1/"):
+        raw = int(round(want * int(typ.split("/")[1])))
+    elif typ.startswith("uiscale:") and typ.count(":") == 2:
+        _, mul, off = typ.split(":")
+        raw = int(round((want - int(off)) / int(mul)))
+    else:
+        return None
+    if ch in "fd":
+        return None
+    bits = struct.calcsize("<" + ch) * 8
+    lo_raw, hi_raw = (-(1 << (bits - 1)), (1 << (bits - 1)) - 1) if ch.islower() else (0, (1 << bits) - 1)
+    if ch == "Q":
+        hi_raw = (1 << 63) - 1
+    return raw if lo_raw <= raw <= hi_raw and str(raw) not in f[4] else None
+
+
 def build(cls, kind):
     """-> (field values for pymavlink, {payload byte: key line}) for one kind."""
     by_byte = {f[1]: f for f in kind["fields"]}
+    limits = ranges()
     values, idx = {}, 0
     for name, at, ch, n in layout(cls):
         inside = at < kind["length"]
@@ -124,6 +177,10 @@ def build(cls, kind):
             avoid = f[4] if f else set()
             if not inside:
                 return 0.0 if ch in "fd" else 0
+            if f and f[0] in limits:
+                raw = in_range_raw(f, ch, limits[f[0]])
+                if raw is not None:
+                    return raw
             if ch in "fd":
                 return pattern_float(ch, i, avoid)
             return pattern_int(ch, i, avoid)
