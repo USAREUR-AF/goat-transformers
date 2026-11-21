@@ -34,7 +34,9 @@ Version 0.22), writes a time to the whole second (`iso8601_s`, spec Version
 0.26), reads and writes one CBOR data item (the `cbor` wire, spec Version
 0.28), binds the label a sequential kind is told apart by to a key (`when
 <len> <values> as <key>`, spec Version 0.30: decode sets the key, encode
-chooses the kind by it), and converts between formats via the shared model.
+chooses the kind by it), counts one list from two places that must agree
+(`group <list> count @<a> @<b>`, spec Version 0.31), and converts between
+formats via the shared model.
 
 ## Build and run the conformance harness
 
