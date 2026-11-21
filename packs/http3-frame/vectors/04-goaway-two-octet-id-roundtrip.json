@@ -1,0 +1,13 @@
+{
+  "name": "goaway-two-octet-id-roundtrip",
+  "from": "http3-frame",
+  "to": "http3-frame",
+  "input": "07024064",
+  "expect": "07024064",
+  "model": {
+    "h3.frame_type": "7",
+    "h3.id_value_size": "1",
+    "h3.id_value": "100"
+  },
+  "source": "built by tools/gen/webframes-vectors.py from values chosen there; layout restated from RFC 9114 section 7 and RFC 9000 section 16; GOAWAY with a two-octet stream ID; expect derived there, no engine run"
+}

@@ -1,0 +1,41 @@
+# WebSocket frame (RFC 6455 section 5.2): FIN, RSV, opcode, mask bit, payload length (7, 7+16 or 7+64
+# bits), masking key and payload. One message is one frame. Written by tools/gen/webframes-pack.py.
+format        websocket-frame
+version       0.1.0
+distribution  public
+source        "IETF RFC 6455, The WebSocket Protocol, December 2011, section 5.2, https://www.rfc-editor.org/rfc/rfc6455.txt; layout restated"
+uses          ws
+wire          bits
+layout        sequential
+bit_order     msb
+
+field  ws.fin  1  uint
+field  ws.rsv1  1  uint
+field  ws.rsv2  1  uint
+field  ws.rsv3  1  uint
+field  ws.opcode  4  uint
+field  ws.mask  1  uint
+field  ws.payload_len7  7  uint
+switch  ws.payload_len7
+  case  126
+    field  ws.payload_len_ext  16  uint
+  case  127
+    field  ws.payload_len_ext  64  uint
+  else
+end
+switch  ws.mask
+  case  1
+    field  ws.masking_key  32  hex
+  else
+end
+switch  ws.opcode
+  case  8
+    field  ws.close_code  16  uint
+    group  ws.close_reason  rest
+      field  ws.octet  8  uint
+    end
+  else
+    group  ws.payload  rest
+      field  ws.octet  8  uint
+    end
+end

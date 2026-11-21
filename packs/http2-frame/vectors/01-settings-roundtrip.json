@@ -1,0 +1,15 @@
+{
+  "name": "settings-roundtrip",
+  "from": "http2-frame",
+  "to": "http2-frame",
+  "input": "00001204000000000000030000006400040000ffff000500004000",
+  "expect": "00001204000000000000030000006400040000ffff000500004000",
+  "model": {
+    "h2.frame_type": "4",
+    "h2.stream_id": "0",
+    "h2.settings.#": "3",
+    "h2.settings[1].h2.setting_id": "4",
+    "h2.settings[1].h2.setting_value": "65535"
+  },
+  "source": "built by tools/gen/webframes-vectors.py from values chosen there; layout restated from RFC 9113 sections 4.1 and 6; SETTINGS with three parameters; expect derived there, no engine run"
+}

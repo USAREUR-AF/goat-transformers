@@ -1,0 +1,22 @@
+# The h3 module: HTTP/3 frame fields (RFC 9114). Written by tools/gen/webframes-pack.py.
+module        h3
+version       0.1.0
+distribution  public
+source        "IETF RFC 9114, HTTP/3, June 2022, section 7, https://www.rfc-editor.org/rfc/rfc9114.txt; IETF RFC 9000 section 16 (variable-length integers), https://www.rfc-editor.org/rfc/rfc9000.txt; layout restated"
+key   frame_type_size     int     -  "frame type (0 DATA, 1 HEADERS, 3 CANCEL_PUSH, 4 SETTINGS, 5 PUSH_PROMISE, 7 GOAWAY, 13 MAX_PUSH_ID; 0x1f*N+0x21 reserved): the varint size code (0 one octet, 1 two, 2 four, 3 eight)"
+key   frame_type          int     -  "frame type (0 DATA, 1 HEADERS, 3 CANCEL_PUSH, 4 SETTINGS, 5 PUSH_PROMISE, 7 GOAWAY, 13 MAX_PUSH_ID; 0x1f*N+0x21 reserved)"
+key   frame_length_size   int     -  "frame length, octets of the payload (carried, not computed): the varint size code (0 one octet, 1 two, 2 four, 3 eight)"
+key   frame_length        int     -  "frame length, octets of the payload (carried, not computed)"
+list  data                "DATA: the payload, as octets"
+list  field_section       "HEADERS, PUSH_PROMISE: the encoded field section (QPACK), as octets"
+key   id_value_size       int     -  "CANCEL_PUSH push ID, GOAWAY stream or push ID, MAX_PUSH_ID push ID: the varint size code (0 one octet, 1 two, 2 four, 3 eight)"
+key   id_value            int     -  "CANCEL_PUSH push ID, GOAWAY stream or push ID, MAX_PUSH_ID push ID"
+list  settings            "SETTINGS: the settings"
+key   setting_id_size     int     -  "setting identifier (1 QPACK_MAX_TABLE_CAPACITY, 6 MAX_FIELD_SECTION_SIZE, 7 QPACK_BLOCKED_STREAMS ...): the varint size code (0 one octet, 1 two, 2 four, 3 eight)"
+key   setting_id          int     -  "setting identifier (1 QPACK_MAX_TABLE_CAPACITY, 6 MAX_FIELD_SECTION_SIZE, 7 QPACK_BLOCKED_STREAMS ...)"
+key   setting_value_size  int     -  "setting value: the varint size code (0 one octet, 1 two, 2 four, 3 eight)"
+key   setting_value       int     -  "setting value"
+key   push_id_size        int     -  "PUSH_PROMISE: push ID: the varint size code (0 one octet, 1 two, 2 four, 3 eight)"
+key   push_id             int     -  "PUSH_PROMISE: push ID"
+list  payload             "a frame of another type: its payload, as octets"
+key   octet               int     -  "one octet"

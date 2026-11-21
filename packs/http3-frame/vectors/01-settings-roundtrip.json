@@ -1,0 +1,17 @@
+{
+  "name": "settings-roundtrip",
+  "from": "http3-frame",
+  "to": "http3-frame",
+  "input": "040b0150000680004000074064",
+  "expect": "040b0150000680004000074064",
+  "model": {
+    "h3.frame_type": "4",
+    "h3.frame_length": "11",
+    "h3.settings.#": "3",
+    "h3.settings[0].h3.setting_value_size": "1",
+    "h3.settings[0].h3.setting_value": "4096",
+    "h3.settings[1].h3.setting_value_size": "2",
+    "h3.settings[2].h3.setting_id": "7"
+  },
+  "source": "built by tools/gen/webframes-vectors.py from values chosen there; layout restated from RFC 9114 section 7 and RFC 9000 section 16; SETTINGS with three parameters in one-, two- and four-octet integers; expect derived there, no engine run"
+}

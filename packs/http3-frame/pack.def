@@ -1,0 +1,99 @@
+# HTTP/3 frame (RFC 9114 section 7): type and length as QUIC variable-length integers, then the payload by
+# type. One message is one frame. Written by tools/gen/webframes-pack.py; do not edit by hand.
+format        http3-frame
+version       0.1.0
+distribution  public
+source        "IETF RFC 9114, HTTP/3, June 2022, section 7, https://www.rfc-editor.org/rfc/rfc9114.txt; IETF RFC 9000 section 16 (variable-length integers), https://www.rfc-editor.org/rfc/rfc9000.txt; layout restated"
+uses          h3
+wire          bits
+layout        sequential
+bit_order     msb
+
+field  h3.frame_type_size  2  uint
+switch  h3.frame_type_size
+  case  0
+    field  h3.frame_type  6  uint
+  case  1
+    field  h3.frame_type  14  uint
+  case  2
+    field  h3.frame_type  30  uint
+  case  3
+    field  h3.frame_type  62  uint
+end
+field  h3.frame_length_size  2  uint
+switch  h3.frame_length_size
+  case  0
+    field  h3.frame_length  6  uint
+  case  1
+    field  h3.frame_length  14  uint
+  case  2
+    field  h3.frame_length  30  uint
+  case  3
+    field  h3.frame_length  62  uint
+end
+switch  h3.frame_type
+  case  0
+    group  h3.data  rest
+      field  h3.octet  8  uint
+    end
+  case  1
+    group  h3.field_section  rest
+      field  h3.octet  8  uint
+    end
+  case  3,7,13
+    field  h3.id_value_size  2  uint
+    switch  h3.id_value_size
+      case  0
+        field  h3.id_value  6  uint
+      case  1
+        field  h3.id_value  14  uint
+      case  2
+        field  h3.id_value  30  uint
+      case  3
+        field  h3.id_value  62  uint
+    end
+  case  4
+    group  h3.settings  rest
+      field  h3.setting_id_size  2  uint
+      switch  h3.setting_id_size
+        case  0
+          field  h3.setting_id  6  uint
+        case  1
+          field  h3.setting_id  14  uint
+        case  2
+          field  h3.setting_id  30  uint
+        case  3
+          field  h3.setting_id  62  uint
+      end
+      field  h3.setting_value_size  2  uint
+      switch  h3.setting_value_size
+        case  0
+          field  h3.setting_value  6  uint
+        case  1
+          field  h3.setting_value  14  uint
+        case  2
+          field  h3.setting_value  30  uint
+        case  3
+          field  h3.setting_value  62  uint
+      end
+    end
+  case  5
+    field  h3.push_id_size  2  uint
+    switch  h3.push_id_size
+      case  0
+        field  h3.push_id  6  uint
+      case  1
+        field  h3.push_id  14  uint
+      case  2
+        field  h3.push_id  30  uint
+      case  3
+        field  h3.push_id  62  uint
+    end
+    group  h3.field_section  rest
+      field  h3.octet  8  uint
+    end
+  else
+    group  h3.payload  rest
+      field  h3.octet  8  uint
+    end
+end

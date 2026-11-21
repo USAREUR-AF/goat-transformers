@@ -1,0 +1,11 @@
+{
+  "name": "application-data-roundtrip",
+  "from": "tls-record",
+  "to": "tls-record",
+  "input": "1703030028000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f2021222324252627",
+  "expect": "1703030028000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f2021222324252627",
+  "model": {
+    "tls13.record_data.#": "40"
+  },
+  "source": "built by tools/gen/webframes-vectors.py from values chosen there; layout restated from RFC 8446 sections 4 and 5.1 and RFC 6066 section 3; an encrypted record, its body as octets; expect derived there, no engine run"
+}

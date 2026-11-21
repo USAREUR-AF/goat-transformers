@@ -1,0 +1,8 @@
+{
+  "name": "cut-varint-is-malformed",
+  "from": "http3-frame",
+  "to": "http3-frame",
+  "input": "c000",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/webframes-vectors.py from values chosen there; layout restated from RFC 9114 section 7 and RFC 9000 section 16; an eight-octet integer cut after two octets; expect derived there, no engine run"
+}

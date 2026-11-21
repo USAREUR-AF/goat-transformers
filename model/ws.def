@@ -1,0 +1,18 @@
+# The ws module: WebSocket frame fields (RFC 6455). Written by tools/gen/webframes-pack.py.
+module        ws
+version       0.1.0
+distribution  public
+source        "IETF RFC 6455, The WebSocket Protocol, December 2011, section 5.2, https://www.rfc-editor.org/rfc/rfc6455.txt; layout restated"
+key   fin              int     -  "FIN: the final fragment of a message"
+key   rsv1             int     -  "RSV1 (per-message compression when negotiated)"
+key   rsv2             int     -  "RSV2"
+key   rsv3             int     -  "RSV3"
+key   opcode           int     -  "opcode: 0 continuation, 1 text, 2 binary, 8 close, 9 ping, 10 pong"
+key   mask             int     -  "MASK: the payload is masked (client to server)"
+key   payload_len7     int     -  "the 7-bit payload length: 0-125 the length, 126 a 16-bit length follows, 127 a 64-bit length follows"
+key   payload_len_ext  int     -  "the extended payload length (16 or 64 bits)"
+key   masking_key      string  -  "the masking key, as hexadecimal digits"
+key   close_code       int     -  "close frame: the status code (unmasked frames; 1000 normal ...)"
+list  close_reason     "close frame: the reason, as octets"
+list  payload          "the payload as on the wire (masked when MASK is 1), as octets"
+key   octet            int     -  "one octet"

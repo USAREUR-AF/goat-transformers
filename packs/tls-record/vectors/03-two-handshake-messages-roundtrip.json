@@ -1,0 +1,14 @@
+{
+  "name": "two-handshake-messages-roundtrip",
+  "from": "tls-record",
+  "to": "tls-record",
+  "input": "16030300291400002000000000000000000000000000000000000000000000000000000000000000001800000100",
+  "expect": "16030300291400002000000000000000000000000000000000000000000000000000000000000000001800000100",
+  "model": {
+    "tls13.handshakes.#": "2",
+    "tls13.handshakes[0].tls13.handshake_type": "20",
+    "tls13.handshakes[0].tls13.handshake_body.#": "32",
+    "tls13.handshakes[1].tls13.handshake_type": "24"
+  },
+  "source": "built by tools/gen/webframes-vectors.py from values chosen there; layout restated from RFC 8446 sections 4 and 5.1 and RFC 6066 section 3; a record of two handshake messages of other types (finished, key_update), their bodies as octets; expect derived there, no engine run"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "close-roundtrip",
+  "from": "websocket-frame",
+  "to": "websocket-frame",
+  "input": "880503e8627965",
+  "expect": "880503e8627965",
+  "model": {
+    "ws.opcode": "8",
+    "ws.close_code": "1000",
+    "ws.close_reason.#": "3"
+  },
+  "source": "built by tools/gen/webframes-vectors.py from values chosen there; layout restated from RFC 6455 section 5.2; an unmasked close frame with a status; expect derived there, no engine run"
+}

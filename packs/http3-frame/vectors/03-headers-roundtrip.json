@@ -1,0 +1,11 @@
+{
+  "name": "headers-roundtrip",
+  "from": "http3-frame",
+  "to": "http3-frame",
+  "input": "01040000d1d7",
+  "expect": "01040000d1d7",
+  "model": {
+    "h3.field_section.#": "4"
+  },
+  "source": "built by tools/gen/webframes-vectors.py from values chosen there; layout restated from RFC 9114 section 7 and RFC 9000 section 16; HEADERS with a QPACK field section as octets; expect derived there, no engine run"
+}

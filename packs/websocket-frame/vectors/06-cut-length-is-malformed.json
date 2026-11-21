@@ -1,0 +1,8 @@
+{
+  "name": "cut-length-is-malformed",
+  "from": "websocket-frame",
+  "to": "websocket-frame",
+  "input": "027e00",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/webframes-vectors.py from values chosen there; layout restated from RFC 6455 section 5.2; the frame of vector 03 cut inside its 16-bit length; expect derived there, no engine run"
+}
