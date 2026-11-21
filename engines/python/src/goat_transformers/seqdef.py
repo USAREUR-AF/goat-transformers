@@ -36,7 +36,8 @@ class Node:
     if        `conds`: (presence node, bit, negated); `body`
     opt       `body`
     group     `list`, `mode`, `length` (the count's bits), `scope`: the Body of an item; with
-              `count @<name>` (0.21) `count_node`, the `count` line; `tail_rest`: this `rest`
+              `count @<name>` (0.21) `count_node`, the `count` line, and `count_nodes`, the
+              `count` lines of `count @<a> [@<b>]` (one or two, 0.31); `tail_rest`: this `rest`
               group is the last line of an item of an outer `rest` group (ruling 10 of 0.21)
     count     `name`, `length`, `plus` (0.21)
     chain     `parts`: the lines between `fx` lines; `ends_fx`: the last line is `fx`
@@ -59,7 +60,7 @@ class Node:
     __slots__ = ("t", "lineno", "length", "value", "bindings", "name", "named", "conds", "body", "list", "mode",
                  "scope", "parts", "ends_fx", "unit", "plus", "locator", "uper", "n", "ext", "alts", "index",
                  "lb", "ub", "key", "cases", "other", "key_type", "ranges", "named_static", "chain", "key_lines",
-                 "count_node", "tail_rest", "until", "as_key")
+                 "count_node", "count_nodes", "tail_rest", "until", "as_key")
 
     is_field = False
     is_const = False
@@ -73,6 +74,7 @@ class Node:
         self.uper = None
         self.until = None
         self.count_node = None
+        self.count_nodes = ()
         self.tail_rest = False
         self.as_key = None
         for k, v in kw.items():
@@ -304,7 +306,7 @@ def _refs(lines, count):
     for nd in lines:
         t = nd.t
         if t == T_GROUP:
-            if nd.count_node is count:
+            if any(c is count for c in nd.count_nodes):  # 0.31: either name of a two-name group
                 got = _plus(got, {1})
         elif t == T_SWITCH:
             sub = set()
@@ -1149,18 +1151,41 @@ def parse_seq_pack_text(text, *, source="pack.def"):
                             deferred.append((lineno, bad("'size' takes 0 <= lb <= ub < 65536, got %s %s"
                                                          % (args[2], args[3]), lineno, mode)))
                             lb, ub = 0, 0
-                elif mode not in GROUP_MODES or len(args) != (3 if mode == "count" else 2):
+                elif mode not in GROUP_MODES or (len(args) != 2 if mode != "count" else
+                                                 len(args) < 3 or len(args) > 3 and not args[2].startswith("@")):
                     raise bad("a sequential 'group' line is: group <list> count <len> | count @<name> | while | "
                               "more | fx | rest | last", lineno, mode)
                 length = None
                 count_node = None
-                if mode == "count" and args[2].startswith("@"):  # 0.21: the count of a `count` line
-                    cname = args[2][1:]
-                    count_node = find_count(cname) if cname else None
-                    if count_node is None:
-                        raise bad("'count @%s' names no count visible in this group body" % cname, lineno, mode)
-                    if count_node.t != T_COUNT:  # ruling 15
-                        raise bad("'count @%s' names a presence" % cname, lineno, mode)
+                count_nodes = ()
+                if mode == "count" and args[2].startswith("@"):  # 0.21: the count of a `count` line; 0.31: two
+                    # every error here is a check after the file (ruling 7 of 0.31); the block is
+                    # still opened, so that its `end` closes it
+                    failure = None
+                    found = []
+                    if len(args) > 4:
+                        failure = "a group takes at most two counts, 'count @<a> @<b>'"
+                    for tok in args[2:]:
+                        if failure is not None:
+                            break
+                        cname = tok[1:]
+                        if not tok.startswith("@") or not cname:
+                            failure = "a token after 'count @<name>' is '@<name>', got %r" % tok
+                            break
+                        c = find_count(cname)
+                        if c is None:
+                            failure = "'count @%s' names no count visible in this group body" % cname
+                        elif c.t != T_COUNT:  # ruling 15 of 0.21
+                            failure = "'count @%s' names a presence" % cname
+                        elif any(x is c for x in found):
+                            failure = "'count @%s' names one count twice" % cname
+                        else:
+                            found.append(c)
+                    if failure is not None:
+                        deferred.append((lineno, bad(failure, lineno, mode)))
+                    else:
+                        count_nodes = tuple(found)
+                        count_node = found[0]
                 elif mode == "count":
                     length = bit_len(args[2], "a group 'count'", lineno)
                 # Ruling 23 of 0.8: a list in two groups of one scope is allowed
@@ -1187,6 +1212,7 @@ def parse_seq_pack_text(text, *, source="pack.def"):
                 nd = GroupNode(T_GROUP, lineno, list=name, mode=mode, length=length, scope=Body(), locator=mode,
                                lb=lb, ub=ub)
                 nd.count_node = count_node
+                nd.count_nodes = count_nodes
                 if mode == "rest":
                     rest_groups.append((nd, rest_levels(nd, body), lineno))
                 target(body).append(nd)
