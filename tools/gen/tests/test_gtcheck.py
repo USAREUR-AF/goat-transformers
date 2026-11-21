@@ -529,6 +529,9 @@ V011_TLV |= {"wire-cbor-16", "wire-cbor-25", "wire-cbor-28", "wire-cbor-35", "wi
              "wire-cbor-45", "wire-cbor-57", "wire-cbor-60"}
 # Ruling 28 of 0.15 pins the same order for a 0.15 transform on tlv.
 V011_ORDER = {"580", "667", "668", "1003", "1004", "1077", "1078", "1079"}  # ruling 13 of 0.17, ruling 44 of 0.21 (bad-locator), ruling 28 of 0.22
+# Ruling 16 of 0.30: the syntax of `when ... as` is checked after the file, so a
+# later `bogus` line gives `unknown-directive`; gtcheck refuses `bogus` as `bad-directive`.
+V011_ORDER |= {"3050", "3051", "3052", "3053"}
 # And the UPER vectors of rulings 23-26 of 0.19 that pin the 0.11 order.
 V011_TLV |= {"wire-uper-58", "wire-uper-61", "wire-uper-48", "wire-uper-50", "wire-uper-52", "wire-uper-53", "wire-uper-54", "wire-uper-55", "wire-uper-56", "wire-uper-57"}
 
