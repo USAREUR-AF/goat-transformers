@@ -1,0 +1,7 @@
+{
+ "keys": {
+  "|availability|string": "availability",
+  "|old_version|string": "old_version"
+ },
+ "lists": {}
+}

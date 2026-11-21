@@ -1,0 +1,12 @@
+{
+ "keys": {
+  "|callbacks.identification_service_area_url|string": "callbacks_identification_service_area_url",
+  "|id|string": "id",
+  "|notification_index|int": "notification_index",
+  "|owner|string": "owner",
+  "|time_end|string": "time_end",
+  "|time_start|string": "time_start",
+  "|version|string": "version"
+ },
+ "lists": {}
+}

@@ -1,0 +1,16 @@
+{
+ "name": "gen-subscription-roundtrip",
+ "from": "astm-f3411-v19-subscription",
+ "to": "astm-f3411-v19-subscription",
+ "input": "{\"id\":\"s1044\",\"callbacks\":{\"identification_service_area_url\":\"s94963\"},\"owner\":\"s99880\",\"notification_index\":46227,\"time_end\":\"2025-06-13T14:36:32.702Z\",\"time_start\":\"2024-01-06T20:54:07.373Z\",\"version\":\"s90041\"}",
+ "expect": "{\"id\":\"s1044\",\"callbacks\":{\"identification_service_area_url\":\"s94963\"},\"owner\":\"s99880\",\"notification_index\":46227,\"time_end\":\"2025-06-13T14:36:32.702Z\",\"time_start\":\"2024-01-06T20:54:07.373Z\",\"version\":\"s90041\"}",
+ "model": {
+  "ridv19sub.id": "s1044",
+  "ridv19sub.callbacks_identification_service_area_url": "s94963",
+  "ridv19sub.owner": "s99880",
+  "ridv19sub.notification_index": "46227",
+  "ridv19sub.time_end": "2025-06-13T14:36:32.702Z",
+  "ridv19sub.time_start": "2024-01-06T20:54:07.373Z",
+  "ridv19sub.version": "s90041"
+ }
+}

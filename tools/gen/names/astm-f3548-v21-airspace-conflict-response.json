@@ -1,0 +1,31 @@
+{
+ "keys": {
+  "missing_constraints|id|string": "missing_constraints_id",
+  "missing_constraints|manager|string": "missing_constraints_manager",
+  "missing_constraints|ovn|string": "missing_constraints_ovn",
+  "missing_constraints|time_end.format|string": "missing_constraints_time_end_format",
+  "missing_constraints|time_end.value|string": "missing_constraints_time_end_value",
+  "missing_constraints|time_start.format|string": "missing_constraints_time_start_format",
+  "missing_constraints|time_start.value|string": "missing_constraints_time_start_value",
+  "missing_constraints|uss_availability|string": "missing_constraints_uss_availability",
+  "missing_constraints|uss_base_url|string": "missing_constraints_uss_base_url",
+  "missing_constraints|version|int": "missing_constraints_version",
+  "missing_operational_intents|id|string": "missing_operational_intents_id",
+  "missing_operational_intents|manager|string": "missing_operational_intents_manager",
+  "missing_operational_intents|ovn|string": "missing_operational_intents_ovn",
+  "missing_operational_intents|state|string": "missing_operational_intents_state",
+  "missing_operational_intents|subscription_id|string": "missing_operational_intents_subscription_id",
+  "missing_operational_intents|time_end.format|string": "missing_operational_intents_time_end_format",
+  "missing_operational_intents|time_end.value|string": "missing_operational_intents_time_end_value",
+  "missing_operational_intents|time_start.format|string": "missing_operational_intents_time_start_format",
+  "missing_operational_intents|time_start.value|string": "missing_operational_intents_time_start_value",
+  "missing_operational_intents|uss_availability|string": "missing_operational_intents_uss_availability",
+  "missing_operational_intents|uss_base_url|string": "missing_operational_intents_uss_base_url",
+  "missing_operational_intents|version|int": "missing_operational_intents_version",
+  "|message|string": "message"
+ },
+ "lists": {
+  "|missing_constraints": "missing_constraints",
+  "|missing_operational_intents": "missing_operational_intents"
+ }
+}

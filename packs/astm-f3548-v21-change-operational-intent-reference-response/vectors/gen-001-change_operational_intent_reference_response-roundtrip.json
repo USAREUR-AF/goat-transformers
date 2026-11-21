@@ -1,0 +1,17 @@
+{
+ "name": "gen-change_operational_intent_reference_response-roundtrip",
+ "from": "astm-f3548-v21-change-operational-intent-reference-response",
+ "to": "astm-f3548-v21-change-operational-intent-reference-response",
+ "input": "{\"subscribers\":[{\"subscriptions\":[{\"subscription_id\":\"50ef0df2-58db-4d84-88bf-f0a2ea6d8c04\",\"notification_index\":5400}],\"uss_base_url\":\"s22617\"},{\"subscriptions\":[{\"subscription_id\":\"b0279a97-5992-4dc5-8cf9-6fc90be2e864\",\"notification_index\":39935}],\"uss_base_url\":\"s45853\"}],\"operational_intent_reference\":{\"id\":\"64ea85eb-c12b-425b-86a2-1349a79f0947\",\"manager\":\"s65837\",\"uss_availability\":\"Normal\",\"version\":22812,\"state\":\"Accepted\",\"ovn\":\"s33535\",\"time_start\":{\"value\":\"2024-04-19T21:50:59.121Z\",\"format\":\"RFC3339\"},\"time_end\":{\"value\":\"2025-05-14T03:55:48.852Z\",\"format\":\"RFC3339\"},\"uss_base_url\":\"s17044\",\"subscription_id\":\"062f9b4e-473b-46f2-81e8-f67103e2fa4a\"}}",
+ "expect": "{\"subscribers\":[{\"subscriptions\":[{\"subscription_id\":\"50ef0df2-58db-4d84-88bf-f0a2ea6d8c04\",\"notification_index\":5400}],\"uss_base_url\":\"s22617\"},{\"subscriptions\":[{\"subscription_id\":\"b0279a97-5992-4dc5-8cf9-6fc90be2e864\",\"notification_index\":39935}],\"uss_base_url\":\"s45853\"}],\"operational_intent_reference\":{\"id\":\"64ea85eb-c12b-425b-86a2-1349a79f0947\",\"manager\":\"s65837\",\"uss_availability\":\"Normal\",\"version\":22812,\"state\":\"Accepted\",\"ovn\":\"s33535\",\"time_start\":{\"value\":\"2024-04-19T21:50:59.121Z\",\"format\":\"RFC3339\"},\"time_end\":{\"value\":\"2025-05-14T03:55:48.852Z\",\"format\":\"RFC3339\"},\"uss_base_url\":\"s17044\",\"subscription_id\":\"062f9b4e-473b-46f2-81e8-f67103e2fa4a\"}}",
+ "model": {
+  "utm21coir.subscribers.#": "2",
+  "utm21coir.operational_intent_reference_id": "64ea85eb-c12b-425b-86a2-1349a79f0947",
+  "utm21coir.operational_intent_reference_manager": "s65837",
+  "utm21coir.operational_intent_reference_uss_availability": "Normal",
+  "utm21coir.operational_intent_reference_version": "22812",
+  "utm21coir.operational_intent_reference_state": "Accepted",
+  "utm21coir.operational_intent_reference_ovn": "s33535",
+  "utm21coir.operational_intent_reference_time_start_value": "2024-04-19T21:50:59.121Z"
+ }
+}

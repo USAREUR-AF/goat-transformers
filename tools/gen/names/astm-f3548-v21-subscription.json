@@ -1,0 +1,19 @@
+{
+ "keys": {
+  "dependent_operational_intents|.|string": "dependent_operational_intents_value",
+  "|id|string": "id",
+  "|implicit_subscription|int": "implicit_subscription",
+  "|notification_index|int": "notification_index",
+  "|notify_for_constraints|int": "notify_for_constraints",
+  "|notify_for_operational_intents|int": "notify_for_operational_intents",
+  "|time_end.format|string": "time_end_format",
+  "|time_end.value|string": "time_end_value",
+  "|time_start.format|string": "time_start_format",
+  "|time_start.value|string": "time_start_value",
+  "|uss_base_url|string": "uss_base_url",
+  "|version|string": "version"
+ },
+ "lists": {
+  "|dependent_operational_intents": "dependent_operational_intents"
+ }
+}

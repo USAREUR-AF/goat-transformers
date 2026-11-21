@@ -1,0 +1,15 @@
+{
+ "name": "gen-create_identification_service_area_parameters-roundtrip",
+ "from": "astm-f3411-v19-create-isa-parameters",
+ "to": "astm-f3411-v19-create-isa-parameters",
+ "input": "{\"extents\":{\"spatial_volume\":{\"footprint\":{\"vertices\":[{\"lng\":180,\"lat\":12.5},{\"lng\":180,\"lat\":7.0625}]},\"altitude_lo\":1.5,\"altitude_hi\":-3.25},\"time_start\":\"2025-09-29T16:13:53.135Z\",\"time_end\":\"2025-09-11T22:59:14.261Z\"},\"flights_url\":\"s39863\"}",
+ "expect": "{\"extents\":{\"spatial_volume\":{\"footprint\":{\"vertices\":[{\"lng\":180,\"lat\":12.5},{\"lng\":180,\"lat\":7.0625}]},\"altitude_lo\":1.5,\"altitude_hi\":-3.25},\"time_start\":\"2025-09-29T16:13:53.135Z\",\"time_end\":\"2025-09-11T22:59:14.261Z\"},\"flights_url\":\"s39863\"}",
+ "model": {
+  "ridv19cisa.extents_spatial_volume_footprint_vertices.#": "2",
+  "ridv19cisa.extents_spatial_volume_altitude_lo": "1.5",
+  "ridv19cisa.extents_spatial_volume_altitude_hi": "-3.25",
+  "ridv19cisa.extents_time_start": "2025-09-29T16:13:53.135Z",
+  "ridv19cisa.extents_time_end": "2025-09-11T22:59:14.261Z",
+  "ridv19cisa.flights_url": "s39863"
+ }
+}

@@ -1,0 +1,17 @@
+{
+ "name": "gen-constraint_reference-roundtrip",
+ "from": "astm-f3548-v21-constraint-reference",
+ "to": "astm-f3548-v21-constraint-reference",
+ "input": "{\"id\":\"2511d222-81de-4000-886a-99faf816d7c1\",\"manager\":\"s21244\",\"uss_availability\":\"Normal\",\"version\":32594,\"ovn\":\"s38299\",\"time_start\":{\"value\":\"2026-04-22T04:00:35.891Z\",\"format\":\"RFC3339\"},\"time_end\":{\"value\":\"2024-10-14T23:31:25.509Z\",\"format\":\"RFC3339\"},\"uss_base_url\":\"s74235\"}",
+ "expect": "{\"id\":\"2511d222-81de-4000-886a-99faf816d7c1\",\"manager\":\"s21244\",\"uss_availability\":\"Normal\",\"version\":32594,\"ovn\":\"s38299\",\"time_start\":{\"value\":\"2026-04-22T04:00:35.891Z\",\"format\":\"RFC3339\"},\"time_end\":{\"value\":\"2024-10-14T23:31:25.509Z\",\"format\":\"RFC3339\"},\"uss_base_url\":\"s74235\"}",
+ "model": {
+  "uid": "2511d222-81de-4000-886a-99faf816d7c1",
+  "utm21cr.id": "2511d222-81de-4000-886a-99faf816d7c1",
+  "utm21cr.manager": "s21244",
+  "utm21cr.uss_availability": "Normal",
+  "utm21cr.version": "32594",
+  "utm21cr.ovn": "s38299",
+  "utm21cr.time_start_value": "2026-04-22T04:00:35.891Z",
+  "utm21cr.time_start_format": "RFC3339"
+ }
+}

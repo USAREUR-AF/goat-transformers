@@ -1,0 +1,7 @@
+{
+ "name": "gen-uss_availability_status_response-residue",
+ "from": "astm-f3548-v21-uss-availability-response",
+ "to": "astm-f3548-v21-uss-availability-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"version\":\"s44082\",\"status\":{\"uss\":\"s7189\",\"availability\":\"Unknown\"}}",
+ "expect": "{\"version\":\"s44082\",\"status\":{\"uss\":\"s7189\",\"availability\":\"Unknown\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

@@ -1,0 +1,41 @@
+{
+ "keys": {
+  "operating_area_volumes|aircraft_count|int": "operating_area_volumes_aircraft_count",
+  "recent_positions|position.accuracy_h|string": "recent_positions_position_accuracy_h",
+  "recent_positions|position.accuracy_v|string": "recent_positions_position_accuracy_v",
+  "recent_positions|position.alt|float": "recent_positions_position_alt",
+  "recent_positions|position.extrapolated|int": "recent_positions_position_extrapolated",
+  "recent_positions|position.height.distance|float": "recent_positions_position_height_distance",
+  "recent_positions|position.height.reference|string": "recent_positions_position_height_reference",
+  "recent_positions|position.lat|float": "recent_positions_position_lat",
+  "recent_positions|position.lng|float": "recent_positions_position_lng",
+  "recent_positions|position.pressure_altitude|float": "recent_positions_position_pressure_altitude",
+  "recent_positions|time.format|string": "recent_positions_time_format",
+  "recent_positions|time.value|string": "recent_positions_time_value",
+  "|aircraft_type|string": "aircraft_type",
+  "|current_state.operational_status|string": "current_state_operational_status",
+  "|current_state.position.accuracy_h|string": "current_state_position_accuracy_h",
+  "|current_state.position.accuracy_v|string": "current_state_position_accuracy_v",
+  "|current_state.position.alt|float": "current_state_position_alt",
+  "|current_state.position.extrapolated|int": "current_state_position_extrapolated",
+  "|current_state.position.height.distance|float": "current_state_position_height_distance",
+  "|current_state.position.height.reference|string": "current_state_position_height_reference",
+  "|current_state.position.lat|float": "current_state_position_lat",
+  "|current_state.position.lng|float": "current_state_position_lng",
+  "|current_state.position.pressure_altitude|float": "current_state_position_pressure_altitude",
+  "|current_state.speed_accuracy|string": "current_state_speed_accuracy",
+  "|current_state.speed|float": "current_state_speed",
+  "|current_state.timestamp.format|string": "current_state_timestamp_format",
+  "|current_state.timestamp.value|string": "current_state_timestamp_value",
+  "|current_state.timestamp_accuracy|float": "current_state_timestamp_accuracy",
+  "|current_state.track|float": "current_state_track",
+  "|current_state.vertical_speed|float": "current_state_vertical_speed",
+  "|id|string": "id",
+  "|operating_area.aircraft_count|int": "operating_area_aircraft_count",
+  "|simulated|int": "simulated"
+ },
+ "lists": {
+  "|operating_area.volumes": "operating_area_volumes",
+  "|recent_positions": "recent_positions"
+ }
+}

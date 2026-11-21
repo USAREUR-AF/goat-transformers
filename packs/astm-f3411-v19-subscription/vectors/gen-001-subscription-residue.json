@@ -1,0 +1,7 @@
+{
+ "name": "gen-subscription-residue",
+ "from": "astm-f3411-v19-subscription",
+ "to": "astm-f3411-v19-subscription",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"id\":\"s1044\",\"callbacks\":{\"identification_service_area_url\":\"s94963\"},\"owner\":\"s99880\",\"notification_index\":46227,\"time_end\":\"2025-06-13T14:36:32.702Z\",\"time_start\":\"2024-01-06T20:54:07.373Z\",\"version\":\"s90041\"}",
+ "expect": "{\"id\":\"s1044\",\"callbacks\":{\"identification_service_area_url\":\"s94963\"},\"owner\":\"s99880\",\"notification_index\":46227,\"time_end\":\"2025-06-13T14:36:32.702Z\",\"time_start\":\"2024-01-06T20:54:07.373Z\",\"version\":\"s90041\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

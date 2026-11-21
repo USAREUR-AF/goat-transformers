@@ -1,0 +1,17 @@
+{
+ "name": "gen-put_identification_service_area_notification_parameters-roundtrip",
+ "from": "astm-f3411-v22a-isa-notification",
+ "to": "astm-f3411-v22a-isa-notification",
+ "input": "{\"service_area\":{\"uss_base_url\":\"s46917\",\"owner\":\"s26292\",\"time_start\":{\"value\":\"2026-10-12T00:56:27.224Z\",\"format\":\"RFC3339\"},\"time_end\":{\"value\":\"2026-07-04T12:08:46.397Z\",\"format\":\"RFC3339\"},\"version\":\"s15681\",\"id\":\"s67669\"},\"subscriptions\":[{\"subscription_id\":\"s30782\",\"notification_index\":4648},{\"subscription_id\":\"s63047\",\"notification_index\":56211}],\"extents\":{\"volume\":{\"outline_circle\":{\"center\":{\"lng\":-0.5,\"lat\":-0.5},\"radius\":{\"value\":101.125,\"units\":\"M\"}},\"outline_polygon\":{\"vertices\":[{\"lng\":0.75,\"lat\":1.5},{\"lng\":-0.5,\"lat\":7.0625}]},\"altitude_lower\":{\"value\":7.0625,\"reference\":\"W84\",\"units\":\"M\"},\"altitude_upper\":{\"value\":12.5,\"reference\":\"W84\",\"units\":\"M\"}},\"time_start\":{\"value\":\"2025-05-06T23:33:57.912Z\",\"format\":\"RFC3339\"},\"time_end\":{\"value\":\"2024-02-12T08:33:46.512Z\",\"format\":\"RFC3339\"}}}",
+ "expect": "{\"service_area\":{\"uss_base_url\":\"s46917\",\"owner\":\"s26292\",\"time_start\":{\"value\":\"2026-10-12T00:56:27.224Z\",\"format\":\"RFC3339\"},\"time_end\":{\"value\":\"2026-07-04T12:08:46.397Z\",\"format\":\"RFC3339\"},\"version\":\"s15681\",\"id\":\"s67669\"},\"subscriptions\":[{\"subscription_id\":\"s30782\",\"notification_index\":4648},{\"subscription_id\":\"s63047\",\"notification_index\":56211}],\"extents\":{\"volume\":{\"outline_circle\":{\"center\":{\"lng\":-0.5,\"lat\":-0.5},\"radius\":{\"value\":101.125,\"units\":\"M\"}},\"outline_polygon\":{\"vertices\":[{\"lng\":0.75,\"lat\":1.5},{\"lng\":-0.5,\"lat\":7.0625}]},\"altitude_lower\":{\"value\":7.0625,\"reference\":\"W84\",\"units\":\"M\"},\"altitude_upper\":{\"value\":12.5,\"reference\":\"W84\",\"units\":\"M\"}},\"time_start\":{\"value\":\"2025-05-06T23:33:57.912Z\",\"format\":\"RFC3339\"},\"time_end\":{\"value\":\"2024-02-12T08:33:46.512Z\",\"format\":\"RFC3339\"}}}",
+ "model": {
+  "ridv22aisan.service_area_uss_base_url": "s46917",
+  "ridv22aisan.service_area_owner": "s26292",
+  "ridv22aisan.service_area_time_start_value": "2026-10-12T00:56:27.224Z",
+  "ridv22aisan.service_area_time_start_format": "RFC3339",
+  "ridv22aisan.service_area_time_end_value": "2026-07-04T12:08:46.397Z",
+  "ridv22aisan.service_area_time_end_format": "RFC3339",
+  "ridv22aisan.service_area_version": "s15681",
+  "ridv22aisan.service_area_id": "s67669"
+ }
+}

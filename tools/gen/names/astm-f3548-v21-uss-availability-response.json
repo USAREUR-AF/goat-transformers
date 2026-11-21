@@ -1,0 +1,8 @@
+{
+ "keys": {
+  "|status.availability|string": "status_availability",
+  "|status.uss|string": "status_uss",
+  "|version|string": "version"
+ },
+ "lists": {}
+}

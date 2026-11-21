@@ -1,0 +1,7 @@
+{
+ "name": "gen-put_identification_service_area_response-residue",
+ "from": "astm-f3411-v19-put-isa-response",
+ "to": "astm-f3411-v19-put-isa-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"subscribers\":[{\"subscriptions\":[{\"subscription_id\":\"s19282\",\"notification_index\":21311}],\"url\":\"s15838\"},{\"subscriptions\":[{\"subscription_id\":\"s54882\",\"notification_index\":45107}],\"url\":\"s38475\"}],\"service_area\":{\"flights_url\":\"s19966\",\"owner\":\"s11233\",\"time_start\":\"2024-12-28T14:51:43.637Z\",\"time_end\":\"2026-10-21T11:18:15.001Z\",\"version\":\"s39501\",\"id\":\"s12390\"}}",
+ "expect": "{\"subscribers\":[{\"subscriptions\":[{\"subscription_id\":\"s19282\",\"notification_index\":21311}],\"url\":\"s15838\"},{\"subscriptions\":[{\"subscription_id\":\"s54882\",\"notification_index\":45107}],\"url\":\"s38475\"}],\"service_area\":{\"flights_url\":\"s19966\",\"owner\":\"s11233\",\"time_start\":\"2024-12-28T14:51:43.637Z\",\"time_end\":\"2026-10-21T11:18:15.001Z\",\"version\":\"s39501\",\"id\":\"s12390\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

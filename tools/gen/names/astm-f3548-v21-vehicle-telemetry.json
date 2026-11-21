@@ -1,0 +1,18 @@
+{
+ "keys": {
+  "|position.accuracy_h|string": "position_accuracy_h",
+  "|position.accuracy_v|string": "position_accuracy_v",
+  "|position.altitude.reference|string": "position_altitude_reference",
+  "|position.altitude.units|string": "position_altitude_units",
+  "|position.altitude.value|float": "position_altitude_value",
+  "|position.extrapolated|int": "position_extrapolated",
+  "|position.latitude|float": "position_latitude",
+  "|position.longitude|float": "position_longitude",
+  "|time_measured.format|string": "time_measured_format",
+  "|time_measured.value|string": "time_measured_value",
+  "|velocity.speed|float": "velocity_speed",
+  "|velocity.track|float": "velocity_track",
+  "|velocity.units_speed|string": "velocity_units_speed"
+ },
+ "lists": {}
+}

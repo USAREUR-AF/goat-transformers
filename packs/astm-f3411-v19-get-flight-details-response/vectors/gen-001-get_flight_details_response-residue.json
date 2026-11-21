@@ -1,0 +1,7 @@
+{
+ "name": "gen-get_flight_details_response-residue",
+ "from": "astm-f3411-v19-get-flight-details-response",
+ "to": "astm-f3411-v19-get-flight-details-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"details\":{\"id\":\"s9052\",\"operator_id\":\"s41383\",\"operator_location\":{\"lng\":180,\"lat\":-0.5},\"operation_description\":\"s82800\",\"auth_data\":{\"format\":\"s66765\",\"data\":\"s96590\"},\"serial_number\":\"s8878\",\"registration_number\":\"s93162\"}}",
+ "expect": "{\"details\":{\"id\":\"s9052\",\"operator_id\":\"s41383\",\"operator_location\":{\"lng\":180,\"lat\":-0.5},\"operation_description\":\"s82800\",\"auth_data\":{\"format\":\"s66765\",\"data\":\"s96590\"},\"serial_number\":\"s8878\",\"registration_number\":\"s93162\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

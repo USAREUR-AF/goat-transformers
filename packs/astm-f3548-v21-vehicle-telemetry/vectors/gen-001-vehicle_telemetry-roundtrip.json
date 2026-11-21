@@ -1,0 +1,17 @@
+{
+ "name": "gen-vehicle_telemetry-roundtrip",
+ "from": "astm-f3548-v21-vehicle-telemetry",
+ "to": "astm-f3548-v21-vehicle-telemetry",
+ "input": "{\"time_measured\":{\"value\":\"2025-11-01T12:46:27.162Z\",\"format\":\"RFC3339\"},\"position\":{\"longitude\":-157.8583,\"latitude\":51.4775,\"accuracy_h\":\"HA4NM\",\"accuracy_v\":\"VA25m\",\"extrapolated\":true,\"altitude\":{\"value\":7.0625,\"reference\":\"W84\",\"units\":\"M\"}},\"velocity\":{\"speed\":1.5,\"units_speed\":\"MetersPerSecond\",\"track\":0.75}}",
+ "expect": "{\"time_measured\":{\"value\":\"2025-11-01T12:46:27.162Z\",\"format\":\"RFC3339\"},\"position\":{\"longitude\":-157.8583,\"latitude\":51.4775,\"accuracy_h\":\"HA4NM\",\"accuracy_v\":\"VA25m\",\"extrapolated\":true,\"altitude\":{\"value\":7.0625,\"reference\":\"W84\",\"units\":\"M\"}},\"velocity\":{\"speed\":1.5,\"units_speed\":\"MetersPerSecond\",\"track\":0.75}}",
+ "model": {
+  "time_ms": "1762001187162",
+  "lat": "51.4775",
+  "lon": "-157.8583",
+  "hae": "7.0625",
+  "speed_ms": "1.5",
+  "course": "0.75",
+  "utm21vt.time_measured_value": "2025-11-01T12:46:27.162Z",
+  "utm21vt.time_measured_format": "RFC3339"
+ }
+}

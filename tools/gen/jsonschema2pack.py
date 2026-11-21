@@ -1929,6 +1929,12 @@ def write_pack(a, kinds, use_kinds, src_lines):
     for s in src_lines:
         p.append('source        "%s"' % s.replace('"', "'"))
     p.append("uses          %s" % a.module)
+    # a --map to a key of another module (track.vel_up_ms) needs that module (engine-spec 0.4:
+    # module-not-used); core keys have no module prefix
+    others = sorted({spec.rpartition("=")[2].split(".")[0] for spec in a.map
+                     if "." in spec.rpartition("=")[2]} - {a.module})
+    for m in others:
+        p.append("uses          %s" % m)
     p.append("wire          %s" % a.wire)
     for spec in a.when:
         path, val = parse_kv(spec, "--when")

@@ -1,0 +1,22 @@
+{
+ "keys": {
+  "|auth_data.data|string": "auth_data_data",
+  "|auth_data.format|int": "auth_data_format",
+  "|eu_classification.category|string": "eu_classification_category",
+  "|eu_classification.class|string": "eu_classification_class",
+  "|id|string": "id",
+  "|operation_description|string": "operation_description",
+  "|operator_id|string": "operator_id",
+  "|operator_location.altitude.reference|string": "operator_location_altitude_reference",
+  "|operator_location.altitude.units|string": "operator_location_altitude_units",
+  "|operator_location.altitude.value|float": "operator_location_altitude_value",
+  "|operator_location.altitude_type|string": "operator_location_altitude_type",
+  "|operator_location.position.lat|float": "operator_location_position_lat",
+  "|operator_location.position.lng|float": "operator_location_position_lng",
+  "|uas_id.registration_id|string": "uas_id_registration_id",
+  "|uas_id.serial_number|string": "uas_id_serial_number",
+  "|uas_id.specific_session_id|string": "uas_id_specific_session_id",
+  "|uas_id.utm_id|string": "uas_id_utm_id"
+ },
+ "lists": {}
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-set_uss_availability_status_parameters-residue",
+ "from": "astm-f3548-v21-set-uss-availability-parameters",
+ "to": "astm-f3548-v21-set-uss-availability-parameters",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"old_version\":\"s47808\",\"availability\":\"Unknown\"}",
+ "expect": "{\"old_version\":\"s47808\",\"availability\":\"Unknown\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

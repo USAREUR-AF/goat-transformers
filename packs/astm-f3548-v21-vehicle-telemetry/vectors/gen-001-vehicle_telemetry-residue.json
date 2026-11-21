@@ -1,0 +1,7 @@
+{
+ "name": "gen-vehicle_telemetry-residue",
+ "from": "astm-f3548-v21-vehicle-telemetry",
+ "to": "astm-f3548-v21-vehicle-telemetry",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"time_measured\":{\"value\":\"2025-11-01T12:46:27.162Z\",\"format\":\"RFC3339\"},\"position\":{\"longitude\":-157.8583,\"latitude\":51.4775,\"accuracy_h\":\"HA4NM\",\"accuracy_v\":\"VA25m\",\"extrapolated\":true,\"altitude\":{\"value\":7.0625,\"reference\":\"W84\",\"units\":\"M\"}},\"velocity\":{\"speed\":1.5,\"units_speed\":\"MetersPerSecond\",\"track\":0.75}}",
+ "expect": "{\"time_measured\":{\"value\":\"2025-11-01T12:46:27.162Z\",\"format\":\"RFC3339\"},\"position\":{\"longitude\":-157.8583,\"latitude\":51.4775,\"accuracy_h\":\"HA4NM\",\"accuracy_v\":\"VA25m\",\"extrapolated\":true,\"altitude\":{\"value\":7.0625,\"reference\":\"W84\",\"units\":\"M\"}},\"velocity\":{\"speed\":1.5,\"units_speed\":\"MetersPerSecond\",\"track\":0.75},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

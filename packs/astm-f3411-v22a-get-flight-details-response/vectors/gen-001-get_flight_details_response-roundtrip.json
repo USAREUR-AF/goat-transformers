@@ -1,0 +1,17 @@
+{
+ "name": "gen-get_flight_details_response-roundtrip",
+ "from": "astm-f3411-v22a-get-flight-details-response",
+ "to": "astm-f3411-v22a-get-flight-details-response",
+ "input": "{\"details\":{\"id\":\"s9052\",\"eu_classification\":{\"category\":\"Certified\",\"class\":\"Class2\"},\"uas_id\":{\"serial_number\":\"s20983\",\"registration_id\":\"s39650\",\"utm_id\":\"s45120\",\"specific_session_id\":\"s4919\"},\"operator_id\":\"s41383\",\"operator_location\":{\"position\":{\"lng\":0.75,\"lat\":-3.25},\"altitude\":{\"value\":-0.5,\"reference\":\"W84\",\"units\":\"M\"},\"altitude_type\":\"Dynamic\"},\"operation_description\":\"s82800\",\"auth_data\":{\"format\":13,\"data\":\"s96590\"}}}",
+ "expect": "{\"details\":{\"id\":\"s9052\",\"eu_classification\":{\"category\":\"Certified\",\"class\":\"Class2\"},\"uas_id\":{\"serial_number\":\"s20983\",\"registration_id\":\"s39650\",\"utm_id\":\"s45120\",\"specific_session_id\":\"s4919\"},\"operator_id\":\"s41383\",\"operator_location\":{\"position\":{\"lng\":0.75,\"lat\":-3.25},\"altitude\":{\"value\":-0.5,\"reference\":\"W84\",\"units\":\"M\"},\"altitude_type\":\"Dynamic\"},\"operation_description\":\"s82800\",\"auth_data\":{\"format\":13,\"data\":\"s96590\"}}}",
+ "model": {
+  "ridv22agfdr.details_id": "s9052",
+  "ridv22agfdr.details_eu_classification_category": "Certified",
+  "ridv22agfdr.details_eu_classification_class": "Class2",
+  "ridv22agfdr.details_uas_id_serial_number": "s20983",
+  "ridv22agfdr.details_uas_id_registration_id": "s39650",
+  "ridv22agfdr.details_uas_id_utm_id": "s45120",
+  "ridv22agfdr.details_uas_id_specific_session_id": "s4919",
+  "ridv22agfdr.details_operator_id": "s41383"
+ }
+}

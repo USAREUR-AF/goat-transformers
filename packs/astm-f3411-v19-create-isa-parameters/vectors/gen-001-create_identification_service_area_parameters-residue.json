@@ -1,0 +1,7 @@
+{
+ "name": "gen-create_identification_service_area_parameters-residue",
+ "from": "astm-f3411-v19-create-isa-parameters",
+ "to": "astm-f3411-v19-create-isa-parameters",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"extents\":{\"spatial_volume\":{\"footprint\":{\"vertices\":[{\"lng\":180,\"lat\":12.5},{\"lng\":180,\"lat\":7.0625}]},\"altitude_lo\":1.5,\"altitude_hi\":-3.25},\"time_start\":\"2025-09-29T16:13:53.135Z\",\"time_end\":\"2025-09-11T22:59:14.261Z\"},\"flights_url\":\"s39863\"}",
+ "expect": "{\"extents\":{\"spatial_volume\":{\"footprint\":{\"vertices\":[{\"lng\":180,\"lat\":12.5},{\"lng\":180,\"lat\":7.0625}]},\"altitude_lo\":1.5,\"altitude_hi\":-3.25},\"time_start\":\"2025-09-29T16:13:53.135Z\",\"time_end\":\"2025-09-11T22:59:14.261Z\"},\"flights_url\":\"s39863\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

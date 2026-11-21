@@ -1,0 +1,22 @@
+{
+ "keys": {
+  "|details.auth_data.data|string": "details_auth_data_data",
+  "|details.auth_data.format|int": "details_auth_data_format",
+  "|details.eu_classification.category|string": "details_eu_classification_category",
+  "|details.eu_classification.class|string": "details_eu_classification_class",
+  "|details.id|string": "details_id",
+  "|details.operation_description|string": "details_operation_description",
+  "|details.operator_id|string": "details_operator_id",
+  "|details.operator_location.altitude.reference|string": "details_operator_location_altitude_reference",
+  "|details.operator_location.altitude.units|string": "details_operator_location_altitude_units",
+  "|details.operator_location.altitude.value|float": "details_operator_location_altitude_value",
+  "|details.operator_location.altitude_type|string": "details_operator_location_altitude_type",
+  "|details.operator_location.position.lat|float": "details_operator_location_position_lat",
+  "|details.operator_location.position.lng|float": "details_operator_location_position_lng",
+  "|details.uas_id.registration_id|string": "details_uas_id_registration_id",
+  "|details.uas_id.serial_number|string": "details_uas_id_serial_number",
+  "|details.uas_id.specific_session_id|string": "details_uas_id_specific_session_id",
+  "|details.uas_id.utm_id|string": "details_uas_id_utm_id"
+ },
+ "lists": {}
+}

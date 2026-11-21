@@ -1,0 +1,7 @@
+{
+ "name": "gen-subscription-residue",
+ "from": "astm-f3411-v22a-subscription",
+ "to": "astm-f3411-v22a-subscription",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"id\":\"s1044\",\"uss_base_url\":\"s21890\",\"owner\":\"s99880\",\"notification_index\":46227,\"time_end\":{\"value\":\"2024-02-28T01:48:58.125Z\",\"format\":\"RFC3339\"},\"time_start\":{\"value\":\"2025-10-16T23:40:01.531Z\",\"format\":\"RFC3339\"},\"version\":\"s90041\"}",
+ "expect": "{\"id\":\"s1044\",\"uss_base_url\":\"s21890\",\"owner\":\"s99880\",\"notification_index\":46227,\"time_end\":{\"value\":\"2024-02-28T01:48:58.125Z\",\"format\":\"RFC3339\"},\"time_start\":{\"value\":\"2025-10-16T23:40:01.531Z\",\"format\":\"RFC3339\"},\"version\":\"s90041\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

@@ -1,0 +1,17 @@
+{
+ "name": "gen-get_flight_details_response-roundtrip",
+ "from": "astm-f3411-v19-get-flight-details-response",
+ "to": "astm-f3411-v19-get-flight-details-response",
+ "input": "{\"details\":{\"id\":\"s9052\",\"operator_id\":\"s41383\",\"operator_location\":{\"lng\":180,\"lat\":-0.5},\"operation_description\":\"s82800\",\"auth_data\":{\"format\":\"s66765\",\"data\":\"s96590\"},\"serial_number\":\"s8878\",\"registration_number\":\"s93162\"}}",
+ "expect": "{\"details\":{\"id\":\"s9052\",\"operator_id\":\"s41383\",\"operator_location\":{\"lng\":180,\"lat\":-0.5},\"operation_description\":\"s82800\",\"auth_data\":{\"format\":\"s66765\",\"data\":\"s96590\"},\"serial_number\":\"s8878\",\"registration_number\":\"s93162\"}}",
+ "model": {
+  "ridv19gfdr.details_id": "s9052",
+  "ridv19gfdr.details_operator_id": "s41383",
+  "ridv19gfdr.details_operator_location_lng": "180",
+  "ridv19gfdr.details_operator_location_lat": "-0.5",
+  "ridv19gfdr.details_operation_description": "s82800",
+  "ridv19gfdr.details_auth_data_format": "s66765",
+  "ridv19gfdr.details_auth_data_data": "s96590",
+  "ridv19gfdr.details_serial_number": "s8878"
+ }
+}

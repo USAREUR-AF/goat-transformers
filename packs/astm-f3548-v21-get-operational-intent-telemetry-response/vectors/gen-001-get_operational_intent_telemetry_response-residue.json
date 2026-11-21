@@ -1,0 +1,7 @@
+{
+ "name": "gen-get_operational_intent_telemetry_response-residue",
+ "from": "astm-f3548-v21-get-operational-intent-telemetry-response",
+ "to": "astm-f3548-v21-get-operational-intent-telemetry-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"operational_intent_id\":\"fcff6869-d857-4a9f-8c67-c2742e077b60\",\"telemetry\":{\"time_measured\":{\"value\":\"2026-08-07T20:31:21.465Z\",\"format\":\"RFC3339\"},\"position\":{\"longitude\":-0.0014,\"latitude\":38.8977,\"accuracy_h\":\"HA01NM\",\"accuracy_v\":\"VA1m\",\"extrapolated\":false,\"altitude\":{\"value\":0.75,\"reference\":\"W84\",\"units\":\"M\"}},\"velocity\":{\"speed\":1.5,\"units_speed\":\"MetersPerSecond\",\"track\":1.5}},\"next_telemetry_opportunity\":{\"value\":\"2027-01-08T20:57:59.927Z\",\"format\":\"RFC3339\"}}",
+ "expect": "{\"operational_intent_id\":\"fcff6869-d857-4a9f-8c67-c2742e077b60\",\"telemetry\":{\"time_measured\":{\"value\":\"2026-08-07T20:31:21.465Z\",\"format\":\"RFC3339\"},\"position\":{\"longitude\":-0.0014,\"latitude\":38.8977,\"accuracy_h\":\"HA01NM\",\"accuracy_v\":\"VA1m\",\"extrapolated\":false,\"altitude\":{\"value\":0.75,\"reference\":\"W84\",\"units\":\"M\"}},\"velocity\":{\"speed\":1.5,\"units_speed\":\"MetersPerSecond\",\"track\":1.5}},\"next_telemetry_opportunity\":{\"value\":\"2027-01-08T20:57:59.927Z\",\"format\":\"RFC3339\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

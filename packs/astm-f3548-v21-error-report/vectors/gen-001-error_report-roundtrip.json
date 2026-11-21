@@ -1,0 +1,17 @@
+{
+ "name": "gen-error_report-roundtrip",
+ "from": "astm-f3548-v21-error-report",
+ "to": "astm-f3548-v21-error-report",
+ "input": "{\"report_id\":\"s33179\",\"exchange\":{\"url\":\"s46537\",\"method\":\"s51014\",\"headers\":[\"s12717\",\"s12648\"],\"recorder_role\":\"Server\",\"request_time\":{\"value\":\"2024-07-04T08:02:52.725Z\",\"format\":\"RFC3339\"},\"request_body\":\"s6704\",\"response_time\":{\"value\":\"2023-11-20T20:30:36.198Z\",\"format\":\"RFC3339\"},\"response_body\":\"s92888\",\"response_code\":40407,\"problem\":\"s54443\"}}",
+ "expect": "{\"report_id\":\"s33179\",\"exchange\":{\"url\":\"s46537\",\"method\":\"s51014\",\"headers\":[\"s12717\",\"s12648\"],\"recorder_role\":\"Server\",\"request_time\":{\"value\":\"2024-07-04T08:02:52.725Z\",\"format\":\"RFC3339\"},\"request_body\":\"s6704\",\"response_time\":{\"value\":\"2023-11-20T20:30:36.198Z\",\"format\":\"RFC3339\"},\"response_body\":\"s92888\",\"response_code\":40407,\"problem\":\"s54443\"}}",
+ "model": {
+  "utm21erep.report_id": "s33179",
+  "utm21erep.exchange_url": "s46537",
+  "utm21erep.exchange_method": "s51014",
+  "utm21erep.exchange_headers.#": "2",
+  "utm21erep.exchange_recorder_role": "Server",
+  "utm21erep.exchange_request_time_value": "2024-07-04T08:02:52.725Z",
+  "utm21erep.exchange_request_time_format": "RFC3339",
+  "utm21erep.exchange_request_body": "s6704"
+ }
+}

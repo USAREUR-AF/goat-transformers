@@ -1,0 +1,7 @@
+{
+ "name": "gen-create_subscription_parameters-residue",
+ "from": "astm-f3411-v19-create-subscription-parameters",
+ "to": "astm-f3411-v19-create-subscription-parameters",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"extents\":{\"spatial_volume\":{\"footprint\":{\"vertices\":[{\"lng\":180,\"lat\":-3.25},{\"lng\":180,\"lat\":-3.25}]},\"altitude_lo\":-3.25,\"altitude_hi\":101.125},\"time_start\":\"2025-05-12T19:34:24.685Z\",\"time_end\":\"2026-11-19T01:10:23.978Z\"},\"callbacks\":{\"identification_service_area_url\":\"s99806\"}}",
+ "expect": "{\"extents\":{\"spatial_volume\":{\"footprint\":{\"vertices\":[{\"lng\":180,\"lat\":-3.25},{\"lng\":180,\"lat\":-3.25}]},\"altitude_lo\":-3.25,\"altitude_hi\":101.125},\"time_start\":\"2025-05-12T19:34:24.685Z\",\"time_end\":\"2026-11-19T01:10:23.978Z\"},\"callbacks\":{\"identification_service_area_url\":\"s99806\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

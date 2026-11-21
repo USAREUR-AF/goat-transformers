@@ -1,0 +1,17 @@
+{
+ "name": "gen-put_subscription_response-roundtrip",
+ "from": "astm-f3411-v19-put-subscription-response",
+ "to": "astm-f3411-v19-put-subscription-response",
+ "input": "{\"service_areas\":[{\"flights_url\":\"s25617\",\"owner\":\"s17840\",\"time_start\":\"2026-08-12T22:32:57.530Z\",\"time_end\":\"2026-01-16T08:49:20.405Z\",\"version\":\"s81977\",\"id\":\"s86624\"},{\"flights_url\":\"s60139\",\"owner\":\"s55666\",\"time_start\":\"2024-01-04T18:34:46.033Z\",\"time_end\":\"2025-08-06T21:49:53.778Z\",\"version\":\"s13262\",\"id\":\"s10879\"}],\"subscription\":{\"id\":\"s24347\",\"callbacks\":{\"identification_service_area_url\":\"s95035\"},\"owner\":\"s90419\",\"notification_index\":77751,\"time_end\":\"2024-12-19T12:53:20.309Z\",\"time_start\":\"2025-05-18T17:39:11.985Z\",\"version\":\"s94828\"}}",
+ "expect": "{\"service_areas\":[{\"flights_url\":\"s25617\",\"owner\":\"s17840\",\"time_start\":\"2026-08-12T22:32:57.530Z\",\"time_end\":\"2026-01-16T08:49:20.405Z\",\"version\":\"s81977\",\"id\":\"s86624\"},{\"flights_url\":\"s60139\",\"owner\":\"s55666\",\"time_start\":\"2024-01-04T18:34:46.033Z\",\"time_end\":\"2025-08-06T21:49:53.778Z\",\"version\":\"s13262\",\"id\":\"s10879\"}],\"subscription\":{\"id\":\"s24347\",\"callbacks\":{\"identification_service_area_url\":\"s95035\"},\"owner\":\"s90419\",\"notification_index\":77751,\"time_end\":\"2024-12-19T12:53:20.309Z\",\"time_start\":\"2025-05-18T17:39:11.985Z\",\"version\":\"s94828\"}}",
+ "model": {
+  "ridv19psub.service_areas.#": "2",
+  "ridv19psub.subscription_id": "s24347",
+  "ridv19psub.subscription_callbacks_identification_service_area_url": "s95035",
+  "ridv19psub.subscription_owner": "s90419",
+  "ridv19psub.subscription_notification_index": "77751",
+  "ridv19psub.subscription_time_end": "2024-12-19T12:53:20.309Z",
+  "ridv19psub.subscription_time_start": "2025-05-18T17:39:11.985Z",
+  "ridv19psub.subscription_version": "s94828"
+ }
+}

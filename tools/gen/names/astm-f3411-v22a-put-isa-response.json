@@ -1,0 +1,19 @@
+{
+ "keys": {
+  "subscribers_subscriptions|notification_index|int": "subscribers_subscriptions_notification_index",
+  "subscribers_subscriptions|subscription_id|string": "subscribers_subscriptions_subscription_id",
+  "subscribers|url|string": "subscribers_url",
+  "|service_area.id|string": "service_area_id",
+  "|service_area.owner|string": "service_area_owner",
+  "|service_area.time_end.format|string": "service_area_time_end_format",
+  "|service_area.time_end.value|string": "service_area_time_end_value",
+  "|service_area.time_start.format|string": "service_area_time_start_format",
+  "|service_area.time_start.value|string": "service_area_time_start_value",
+  "|service_area.uss_base_url|string": "service_area_uss_base_url",
+  "|service_area.version|string": "service_area_version"
+ },
+ "lists": {
+  "subscribers|subscriptions": "subscribers_subscriptions",
+  "|subscribers": "subscribers"
+ }
+}

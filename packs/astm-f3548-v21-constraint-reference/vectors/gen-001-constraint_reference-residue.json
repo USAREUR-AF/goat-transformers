@@ -1,0 +1,7 @@
+{
+ "name": "gen-constraint_reference-residue",
+ "from": "astm-f3548-v21-constraint-reference",
+ "to": "astm-f3548-v21-constraint-reference",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"id\":\"2511d222-81de-4000-886a-99faf816d7c1\",\"manager\":\"s21244\",\"uss_availability\":\"Normal\",\"version\":32594,\"ovn\":\"s38299\",\"time_start\":{\"value\":\"2026-04-22T04:00:35.891Z\",\"format\":\"RFC3339\"},\"time_end\":{\"value\":\"2024-10-14T23:31:25.509Z\",\"format\":\"RFC3339\"},\"uss_base_url\":\"s74235\"}",
+ "expect": "{\"id\":\"2511d222-81de-4000-886a-99faf816d7c1\",\"manager\":\"s21244\",\"uss_availability\":\"Normal\",\"version\":32594,\"ovn\":\"s38299\",\"time_start\":{\"value\":\"2026-04-22T04:00:35.891Z\",\"format\":\"RFC3339\"},\"time_end\":{\"value\":\"2024-10-14T23:31:25.509Z\",\"format\":\"RFC3339\"},\"uss_base_url\":\"s74235\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

@@ -1,0 +1,23 @@
+{
+ "keys": {
+  "area_of_interest_volume_outline_polygon_vertices|lat|float": "area_of_interest_volume_outline_polygon_vertices_lat",
+  "area_of_interest_volume_outline_polygon_vertices|lng|float": "area_of_interest_volume_outline_polygon_vertices_lng",
+  "|area_of_interest.time_end.format|string": "area_of_interest_time_end_format",
+  "|area_of_interest.time_end.value|string": "area_of_interest_time_end_value",
+  "|area_of_interest.time_start.format|string": "area_of_interest_time_start_format",
+  "|area_of_interest.time_start.value|string": "area_of_interest_time_start_value",
+  "|area_of_interest.volume.altitude_lower.reference|string": "area_of_interest_volume_altitude_lower_reference",
+  "|area_of_interest.volume.altitude_lower.units|string": "area_of_interest_volume_altitude_lower_units",
+  "|area_of_interest.volume.altitude_lower.value|float": "area_of_interest_volume_altitude_lower_value",
+  "|area_of_interest.volume.altitude_upper.reference|string": "area_of_interest_volume_altitude_upper_reference",
+  "|area_of_interest.volume.altitude_upper.units|string": "area_of_interest_volume_altitude_upper_units",
+  "|area_of_interest.volume.altitude_upper.value|float": "area_of_interest_volume_altitude_upper_value",
+  "|area_of_interest.volume.outline_circle.center.lat|float": "area_of_interest_volume_outline_circle_center_lat",
+  "|area_of_interest.volume.outline_circle.center.lng|float": "area_of_interest_volume_outline_circle_center_lng",
+  "|area_of_interest.volume.outline_circle.radius.units|string": "area_of_interest_volume_outline_circle_radius_units",
+  "|area_of_interest.volume.outline_circle.radius.value|float": "area_of_interest_volume_outline_circle_radius_value"
+ },
+ "lists": {
+  "|area_of_interest.volume.outline_polygon.vertices": "area_of_interest_volume_outline_polygon_vertices"
+ }
+}

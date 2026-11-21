@@ -1,0 +1,32 @@
+{
+ "keys": {
+  "extents_volume_outline_polygon_vertices|lat|float": "extents_volume_outline_polygon_vertices_lat",
+  "extents_volume_outline_polygon_vertices|lng|float": "extents_volume_outline_polygon_vertices_lng",
+  "extents|time_end.format|string": "extents_time_end_format",
+  "extents|time_end.value|string": "extents_time_end_value",
+  "extents|time_start.format|string": "extents_time_start_format",
+  "extents|time_start.value|string": "extents_time_start_value",
+  "extents|volume.altitude_lower.reference|string": "extents_volume_altitude_lower_reference",
+  "extents|volume.altitude_lower.units|string": "extents_volume_altitude_lower_units",
+  "extents|volume.altitude_lower.value|float": "extents_volume_altitude_lower_value",
+  "extents|volume.altitude_upper.reference|string": "extents_volume_altitude_upper_reference",
+  "extents|volume.altitude_upper.units|string": "extents_volume_altitude_upper_units",
+  "extents|volume.altitude_upper.value|float": "extents_volume_altitude_upper_value",
+  "extents|volume.outline_circle.center.lat|float": "extents_volume_outline_circle_center_lat",
+  "extents|volume.outline_circle.center.lng|float": "extents_volume_outline_circle_center_lng",
+  "extents|volume.outline_circle.radius.units|string": "extents_volume_outline_circle_radius_units",
+  "extents|volume.outline_circle.radius.value|float": "extents_volume_outline_circle_radius_value",
+  "key|.|string": "key_value",
+  "|new_subscription.notify_for_constraints|int": "new_subscription_notify_for_constraints",
+  "|new_subscription.uss_base_url|string": "new_subscription_uss_base_url",
+  "|requested_ovn_suffix|string": "requested_ovn_suffix",
+  "|state|string": "state",
+  "|subscription_id|string": "subscription_id",
+  "|uss_base_url|string": "uss_base_url"
+ },
+ "lists": {
+  "extents|volume.outline_polygon.vertices": "extents_volume_outline_polygon_vertices",
+  "|extents": "extents",
+  "|key": "key"
+ }
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-ridflight_details-residue",
+ "from": "astm-f3411-v19-flight-details",
+ "to": "astm-f3411-v19-flight-details",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"id\":\"s31678\",\"operator_id\":\"s4083\",\"operator_location\":{\"lng\":180,\"lat\":-3.25},\"operation_description\":\"s12859\",\"auth_data\":{\"format\":\"s18418\",\"data\":\"s51052\"},\"serial_number\":\"s55991\",\"registration_number\":\"s5664\"}",
+ "expect": "{\"id\":\"s31678\",\"operator_id\":\"s4083\",\"operator_location\":{\"lng\":180,\"lat\":-3.25},\"operation_description\":\"s12859\",\"auth_data\":{\"format\":\"s18418\",\"data\":\"s51052\"},\"serial_number\":\"s55991\",\"registration_number\":\"s5664\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

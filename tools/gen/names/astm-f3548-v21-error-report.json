@@ -1,0 +1,20 @@
+{
+ "keys": {
+  "exchange_headers|.|string": "exchange_headers_value",
+  "|exchange.method|string": "exchange_method",
+  "|exchange.problem|string": "exchange_problem",
+  "|exchange.recorder_role|string": "exchange_recorder_role",
+  "|exchange.request_body|string": "exchange_request_body",
+  "|exchange.request_time.format|string": "exchange_request_time_format",
+  "|exchange.request_time.value|string": "exchange_request_time_value",
+  "|exchange.response_body|string": "exchange_response_body",
+  "|exchange.response_code|int": "exchange_response_code",
+  "|exchange.response_time.format|string": "exchange_response_time_format",
+  "|exchange.response_time.value|string": "exchange_response_time_value",
+  "|exchange.url|string": "exchange_url",
+  "|report_id|string": "report_id"
+ },
+ "lists": {
+  "|exchange.headers": "exchange_headers"
+ }
+}

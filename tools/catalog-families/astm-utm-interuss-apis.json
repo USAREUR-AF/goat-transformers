@@ -1,0 +1,9 @@
+{
+  "name": "UTM APIs (ASTM F3411 network RID, F3548)",
+  "domain": "uncrewed",
+  "prefixes": [
+    "astm-f3411-",
+    "astm-f3548-"
+  ],
+  "detail": "InterUSS OpenAPI: network Remote ID v19 and v22a, strategic coordination"
+}

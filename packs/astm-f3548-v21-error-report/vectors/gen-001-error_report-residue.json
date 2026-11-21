@@ -1,0 +1,7 @@
+{
+ "name": "gen-error_report-residue",
+ "from": "astm-f3548-v21-error-report",
+ "to": "astm-f3548-v21-error-report",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"report_id\":\"s33179\",\"exchange\":{\"url\":\"s46537\",\"method\":\"s51014\",\"headers\":[\"s12717\",\"s12648\"],\"recorder_role\":\"Server\",\"request_time\":{\"value\":\"2024-07-04T08:02:52.725Z\",\"format\":\"RFC3339\"},\"request_body\":\"s6704\",\"response_time\":{\"value\":\"2023-11-20T20:30:36.198Z\",\"format\":\"RFC3339\"},\"response_body\":\"s92888\",\"response_code\":40407,\"problem\":\"s54443\"}}",
+ "expect": "{\"report_id\":\"s33179\",\"exchange\":{\"url\":\"s46537\",\"method\":\"s51014\",\"headers\":[\"s12717\",\"s12648\"],\"recorder_role\":\"Server\",\"request_time\":{\"value\":\"2024-07-04T08:02:52.725Z\",\"format\":\"RFC3339\"},\"request_body\":\"s6704\",\"response_time\":{\"value\":\"2023-11-20T20:30:36.198Z\",\"format\":\"RFC3339\"},\"response_body\":\"s92888\",\"response_code\":40407,\"problem\":\"s54443\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

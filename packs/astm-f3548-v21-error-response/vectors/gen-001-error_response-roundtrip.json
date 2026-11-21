@@ -1,0 +1,10 @@
+{
+ "name": "gen-error_response-roundtrip",
+ "from": "astm-f3548-v21-error-response",
+ "to": "astm-f3548-v21-error-response",
+ "input": "{\"message\":\"s15436\"}",
+ "expect": "{\"message\":\"s15436\"}",
+ "model": {
+  "utm21err.message": "s15436"
+ }
+}
