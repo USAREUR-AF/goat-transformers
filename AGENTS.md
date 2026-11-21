@@ -110,6 +110,7 @@ Run from the repository root unless a directory is named.
 | Sections shared by README.md and the site (`docs/<name>-section.md`) | `python3 -I tools/doc-sections.py` writes them into both; `--check` (CI) fails when either is stale. Edit the source, never the copies |
 | Licences and profiles (`LICENSING.md`, `licences.json`) | `python3 -I tools/licences.py` writes them (the counts pull request); `--check` (CI) fails on a pack with no known licence (stale files are a note); `--check-current` (counts PR) also fails on stale files; `--list --profile open`; `reuse lint` (pip `reuse`) |
 | Third-party notices (`NOTICE`) | `python3 -I tools/notice.py` writes it from `tools/notice/header.txt` and one file per source in `tools/notice/entries/` (the counts pull request); `--check` (CI) fails on a malformed entry file or on a paragraph added to `NOTICE` itself (a stale `NOTICE` is a note); `--check-current` (counts PR) also fails when `NOTICE` is stale |
+| Vectors hold only the members `spec/vector-format.md` defines for their kind | `python3 -I tools/vector-members.py` (CI); text for people goes in a conversion vector's `source` and `reference` |
 | Tool vectors of an engine's command-line tool (spec 0.23) | `python3 -I tools/tool-vectors.py -- <the tool's command>`, e.g. `-- engines/rust/target/release/goat-xf` |
 | Markdown tables of README.md and docs/ are whole | `python3 -I tools/markdown-tables.py` (CI): no blank line inside a table, every row the header's number of cells |
 | Go | `cd engines/go && go vet ./... && go test ./...` |
