@@ -1,0 +1,7 @@
+{
+  "name": "ERTMS/ETCS (SUBSET-026)",
+  "domain": "transport",
+  "prefixes": [
+    "etcs-"
+  ]
+}

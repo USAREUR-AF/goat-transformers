@@ -1,0 +1,19 @@
+{
+  "name": "etcs-radio-track-to-train-03-ma-shifted-location",
+  "from": "etcs-radio-track-to-train",
+  "to": "etcs-radio-track-to-train",
+  "input": "21068000789027ea1c2ff8307a071407fe00960201901e019018",
+  "expect": "21068000789027ea1c2ff8307a071407fe00960201901e019018",
+  "model": {
+    "etcs.t_train": "123456",
+    "etcs.m_ack": "1",
+    "etcs.lrbg_nid_c": "253",
+    "etcs.lrbg_nid_bg": "4321",
+    "@kind": "ma_shifted_location",
+    "etcs.m33_q_scale": "1",
+    "etcs.m33_d_ref": "-250",
+    "etcs.optional_packets.#": "0"
+  },
+  "source": "constructed",
+  "reference": "SUBSET-026 3.6.0 chapters 7 and 8; bits written by tools/gen/etcs-vectors.py; message 33: D_REF -250 in two's complement, packet 15, no optional packet"
+}

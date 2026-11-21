@@ -1,0 +1,188 @@
+# A Eurobalise telegram (ERTMS/ETCS): the 50-bit header and the packets up to packet 255. Public.
+format        etcs-balise-telegram
+version       0.1.0
+distribution  public
+source        "ERA SUBSET-026 (ERTMS/ETCS System Requirements Specification) issue 3.6.0, 13/05/2016, chapter 7 (ERTMS/ETCS language: packets and variables) and chapter 8 (messages), from the CCS TSI set of specifications 3 published by the European Union Agency for Railways (era.europa.eu); no licence stated; layouts restated"
+uses          etcs
+wire          bits
+layout        sequential
+bit_order     msb
+
+field  etcs.q_updown  1  uint
+field  etcs.m_version  7  uint
+field  etcs.q_media  1  uint
+field  etcs.n_pig  3  uint
+field  etcs.n_total  3  uint
+field  etcs.m_dup  2  uint
+field  etcs.m_mcount  8  uint
+field  etcs.nid_c  10  uint
+field  etcs.nid_bg  14  uint
+field  etcs.q_link  1  uint
+group  etcs.packets  rest
+  kind  p0
+  when  8  0
+  field  etcs.p0_nid_vbcmk  6  uint
+  kind  p5
+  when  8  5
+  field  etcs.q_dir  2  uint
+  length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
+    field  etcs.p5_q_scale  2  uint
+    field  etcs.p5_d_link  15  uint
+    presence  q1  1                       # Q_NEWCOUNTRY
+    if  q1.1
+      field  etcs.p5_nid_c  10  uint
+    end
+    field  etcs.p5_nid_bg  14  uint
+    field  etcs.p5_q_linkorientation  1  uint
+    field  etcs.p5_q_linkreaction  2  uint
+    field  etcs.p5_q_locacc  6  uint
+    group  etcs.p5_links  count 5
+      field  etcs.p5_link_d_link  15  uint
+      presence  q2  1                       # Q_NEWCOUNTRY
+      if  q2.1
+        field  etcs.p5_link_nid_c  10  uint
+      end
+      field  etcs.p5_link_nid_bg  14  uint
+      field  etcs.p5_link_q_linkorientation  1  uint
+      field  etcs.p5_link_q_linkreaction  2  uint
+      field  etcs.p5_link_q_locacc  6  uint
+    end
+  end
+  kind  p12
+  when  8  12
+  field  etcs.q_dir  2  uint
+  length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
+    field  etcs.p12_q_scale  2  uint
+    field  etcs.p12_v_main  7  uint
+    field  etcs.p12_v_ema  7  uint
+    field  etcs.p12_t_ema  10  uint
+    group  etcs.p12_sections  count 5                 # N_ITER
+      field  etcs.p12_l_section  15  uint
+      presence  q3  1                       # Q_SECTIONTIMER(k)
+      if  q3.1
+        field  etcs.p12_t_sectiontimer  10  uint
+        field  etcs.p12_d_sectiontimerstoploc  15  uint
+      end
+    end
+    field  etcs.p12_l_endsection  15  uint
+    presence  q4  1                       # Q_SECTIONTIMER
+    if  q4.1
+      field  etcs.p12_end_t_sectiontimer  10  uint
+      field  etcs.p12_end_d_sectiontimerstoploc  15  uint
+    end
+    presence  q5  1                       # Q_ENDTIMER
+    if  q5.1
+      field  etcs.p12_t_endtimer  10  uint
+      field  etcs.p12_d_endtimerstartloc  15  uint
+    end
+    presence  q6  1                       # Q_DANGERPOINT
+    if  q6.1
+      field  etcs.p12_d_dp  15  uint
+      field  etcs.p12_v_releasedp  7  uint
+    end
+    presence  q7  1                       # Q_OVERLAP
+    if  q7.1
+      field  etcs.p12_d_startol  15  uint
+      field  etcs.p12_t_ol  10  uint
+      field  etcs.p12_d_ol  15  uint
+      field  etcs.p12_v_releaseol  7  uint
+    end
+  end
+  kind  p21
+  when  8  21
+  field  etcs.q_dir  2  uint
+  length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
+    field  etcs.p21_q_scale  2  uint
+    field  etcs.p21_d_gradient  15  uint
+    field  etcs.p21_q_gdir  1  uint
+    field  etcs.p21_g_a  8  uint
+    group  etcs.p21_changes  count 5
+      field  etcs.p21_change_d_gradient  15  uint
+      field  etcs.p21_change_q_gdir  1  uint
+      field  etcs.p21_change_g_a  8  uint
+    end
+  end
+  kind  p27
+  when  8  27
+  field  etcs.q_dir  2  uint
+  length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
+    field  etcs.p27_q_scale  2  uint
+    field  etcs.p27_d_static  15  uint
+    field  etcs.p27_v_static  7  uint
+    field  etcs.p27_q_front  1  uint
+    group  etcs.p27_diffs  count 5
+      field  etcs.p27_diff_q_diff  2  uint
+      switch  etcs.p27_diff_q_diff
+        case  0
+          field  etcs.p27_diff_nc_cddiff  4  uint
+        case  1,2
+          field  etcs.p27_diff_nc_diff  4  uint
+        case  3
+      end
+      field  etcs.p27_diff_v_diff  7  uint
+    end
+    group  etcs.p27_elements  count 5
+      field  etcs.p27_elem_d_static  15  uint
+      field  etcs.p27_elem_v_static  7  uint
+      field  etcs.p27_elem_q_front  1  uint
+      group  etcs.p27_elem_diffs  count 5
+        field  etcs.p27_elem_diff_q_diff  2  uint
+        switch  etcs.p27_elem_diff_q_diff
+          case  0
+            field  etcs.p27_elem_diff_nc_cddiff  4  uint
+          case  1,2
+            field  etcs.p27_elem_diff_nc_diff  4  uint
+          case  3
+        end
+        field  etcs.p27_elem_diff_v_diff  7  uint
+      end
+    end
+  end
+  kind  p41
+  when  8  41
+  field  etcs.q_dir  2  uint
+  length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
+    field  etcs.p41_q_scale  2  uint
+    field  etcs.p41_d_leveltr  15  uint
+    field  etcs.p41_m_leveltr  3  uint
+    switch  etcs.p41_m_leveltr
+      case  1
+        field  etcs.p41_nid_ntc  8  uint
+      else
+    end
+    field  etcs.p41_l_ackleveltr  15  uint
+    group  etcs.p41_levels  count 5
+      field  etcs.p41_level_m_leveltr  3  uint
+      switch  etcs.p41_level_m_leveltr
+        case  1
+          field  etcs.p41_level_nid_ntc  8  uint
+        else
+      end
+      field  etcs.p41_level_l_ackleveltr  15  uint
+    end
+  end
+  kind  p44
+  when  8  44
+  field  etcs.q_dir  2  uint
+  length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
+    field  etcs.p44_nid_xuser  9  uint
+    switch  etcs.p44_nid_xuser
+      case  102
+        field  etcs.p44_nid_ntc  8  uint
+      else
+    end
+    group  etcs.p44_data  rest
+      field  etcs.p44_data_bit  1  uint
+    end
+  end
+  kind  p255
+  when  8  255
+  kind  other
+  field  etcs.nid_packet  8  uint
+  field  etcs.q_dir  2  uint
+  length  13  bits  plus 23           # L_PACKET counts NID_PACKET, Q_DIR and itself
+    group  etcs.other_packet_bits  rest
+      field  etcs.other_packet_bit  1  uint
+    end
+  end
+end

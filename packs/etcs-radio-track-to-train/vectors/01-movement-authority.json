@@ -1,0 +1,25 @@
+{
+  "name": "etcs-radio-track-to-train-01-movement-authority",
+  "from": "etcs-radio-track-to-train",
+  "to": "etcs-radio-track-to-train",
+  "input": "0307c000789027ea1c21e81c501ff80258080640780640615406c800002800",
+  "expect": "0307c000789027ea1c21e81c501ff80258080640780640615406c800002800",
+  "model": {
+    "etcs.t_train": "123456",
+    "etcs.m_ack": "1",
+    "etcs.lrbg_nid_c": "253",
+    "etcs.lrbg_nid_bg": "4321",
+    "@kind": "movement_authority",
+    "etcs.p15_l_endsection": "1200",
+    "etcs.p15_t_ema": "1023",
+    "etcs.p15_d_startol": "100",
+    "etcs.p15_t_ol": "30",
+    "etcs.p15_d_ol": "200",
+    "etcs.p15_v_releaseol": "6",
+    "etcs.optional_packets.#": "1",
+    "etcs.optional_packets[0].@kind": "p21",
+    "etcs.optional_packets[0].etcs.p21_g_a": "5"
+  },
+  "source": "constructed",
+  "reference": "SUBSET-026 3.6.0 chapters 7 and 8; bits written by tools/gen/etcs-vectors.py; message 3: packet 15 with an overlap, optional packet 21"
+}

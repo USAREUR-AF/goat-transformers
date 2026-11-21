@@ -1,0 +1,9 @@
+{
+  "name": "etcs-radio-track-to-train-length-beyond-message",
+  "from": "etcs-radio-track-to-train",
+  "to": "etcs-radio-track-to-train",
+  "input": "0307c000789027ea1c21e81c501ff80258080640780640615406c80000",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "SUBSET-026 3.6.0 chapters 7 and 8; bits written by tools/gen/etcs-vectors.py; message 3 with its last two bytes removed: L_MESSAGE exceeds the input"
+}
