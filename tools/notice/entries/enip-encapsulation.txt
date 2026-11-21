@@ -1,0 +1,6 @@
+Packs enip-encapsulation, hart-ip-message; modules enip, hartip
+  Wireshark, https://github.com/wireshark/wireshark at commit
+  de1eec95b2007952f7399173d2f0904275a31c6f, epan/dissectors/packet-enip.c
+  and epan/dissectors/packet-hartip.c. Copyright Gerald Combs and the
+  authors named in each file; GPL-2.0-or-later. Layouts restated; no text
+  copied.

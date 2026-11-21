@@ -1,0 +1,8 @@
+{
+  "name": "shorter-than-length-is-malformed",
+  "from": "bacnet-ip-bvlc",
+  "to": "bacnet-ip-bvlc",
+  "input": "810a001701240005010afe0005010c0c0000000a1955",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/indauto2-vectors.py from values chosen there; layout restated from bacnet-stack bvlc.c and npdu.c; the BVLC length states one octet more than the input holds; expect derived there, no engine run"
+}

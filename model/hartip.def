@@ -1,0 +1,27 @@
+# The hartip module: HART-IP header and body fields. Written by tools/gen/indauto2-pack.py.
+module        hartip
+version       0.1.0
+distribution  public
+source        "Wireshark, https://github.com/wireshark/wireshark at commit de1eec95b2007952f7399173d2f0904275a31c6f, epan/dissectors/packet-hartip.c (GPL-2.0-or-later); layouts restated, no code copied; the FieldComm Group specification not used"
+key   version                 int     -  "HART-IP version"
+key   message_type            int     -  "message type: 0 request, 1 response, 2 publish, 3 error, 15 NAK"
+key   message_id              int     -  "message ID: 0 session initiate, 1 session close, 2 keep alive, 3 pass through"
+key   status                  int     -  "status"
+key   sequence_number         int     -  "sequence number (transaction ID)"
+key   error_code              int     -  "error or NAK: the error code (0 session closed, 1 primary session unavailable, 2 service unavailable)"
+key   master_type             int     -  "session initiate: master type, 0 secondary, 1 primary"
+key   inactivity_close_timer  int     -  "session initiate: inactivity close timer"
+key   address_type            int     -  "pass-through delimiter bit 7: 0 short (polling) address, 1 long (unique) address"
+key   physical_layer_type     int     -  "pass-through delimiter bits 4-3: physical layer type"
+key   frame_type              int     -  "pass-through delimiter bits 2-0: frame type (1 and 6 are responses)"
+key   short_reserved          int     -  "short address: the two high bits"
+key   short_address           int     -  "short address: the polling address"
+key   long_address            string  -  "long address: 5 octets as hexadecimal digits"
+list  expansion               "pass-through expansion octets (their count is in delimiter bits 6-5)"
+key   command                 int     -  "pass-through: HART command number"
+key   byte_count              int     -  "pass-through: byte count, as sent"
+key   response_code           int     -  "pass-through response: response code"
+key   device_status           int     -  "pass-through response: device status"
+list  data                    "pass-through: the command data and, as the last octet, the checksum"
+list  body                    "another body, or an error body beyond the code, as octets"
+key   octet                   int     -  "one octet"

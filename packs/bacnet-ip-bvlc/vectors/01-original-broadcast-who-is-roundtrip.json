@@ -1,0 +1,14 @@
+{
+  "name": "original-broadcast-who-is-roundtrip",
+  "from": "bacnet-ip-bvlc",
+  "to": "bacnet-ip-bvlc",
+  "input": "810b000801001008",
+  "expect": "810b000801001008",
+  "model": {
+    "bacnetip.function": "11",
+    "bacnetip.npdu_version": "1",
+    "bacnetip.destination_present": "0",
+    "bacnetip.payload.#": "2"
+  },
+  "source": "built by tools/gen/indauto2-vectors.py from values chosen there; layout restated from bacnet-stack bvlc.c and npdu.c; an original broadcast NPDU with no routing, its APDU two octets; expect derived there, no engine run"
+}

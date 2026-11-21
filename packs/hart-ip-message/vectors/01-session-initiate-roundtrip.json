@@ -1,0 +1,16 @@
+{
+  "name": "session-initiate-roundtrip",
+  "from": "hart-ip-message",
+  "to": "hart-ip-message",
+  "input": "010000000001000d01000927c0",
+  "expect": "010000000001000d01000927c0",
+  "model": {
+    "hartip.version": "1",
+    "hartip.message_type": "0",
+    "hartip.message_id": "0",
+    "hartip.sequence_number": "1",
+    "hartip.master_type": "1",
+    "hartip.inactivity_close_timer": "600000"
+  },
+  "source": "built by tools/gen/indauto2-vectors.py from values chosen there; layout restated from Wireshark packet-hartip.c; a session initiate request from a primary master; expect derived there, no engine run"
+}

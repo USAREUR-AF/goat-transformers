@@ -1,0 +1,19 @@
+{
+  "name": "pass-through-long-response-roundtrip",
+  "from": "hart-ip-message",
+  "to": "hart-ip-message",
+  "input": "010103000003002b86a63e123456031a00400000000000000000000000000000000000000000000000005a",
+  "expect": "010103000003002b86a63e123456031a00400000000000000000000000000000000000000000000000005a",
+  "model": {
+    "hartip.message_type": "1",
+    "hartip.address_type": "1",
+    "hartip.frame_type": "6",
+    "hartip.long_address": "a63e123456",
+    "hartip.command": "3",
+    "hartip.byte_count": "26",
+    "hartip.response_code": "0",
+    "hartip.device_status": "64",
+    "hartip.data.#": "25"
+  },
+  "source": "built by tools/gen/indauto2-vectors.py from values chosen there; layout restated from Wireshark packet-hartip.c; a command 3 response to a long address, with response code and device status; expect derived there, no engine run"
+}

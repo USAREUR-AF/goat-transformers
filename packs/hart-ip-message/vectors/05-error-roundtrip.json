@@ -1,0 +1,12 @@
+{
+  "name": "error-roundtrip",
+  "from": "hart-ip-message",
+  "to": "hart-ip-message",
+  "input": "010300000005000901",
+  "expect": "010300000005000901",
+  "model": {
+    "hartip.message_type": "3",
+    "hartip.error_code": "1"
+  },
+  "source": "built by tools/gen/indauto2-vectors.py from values chosen there; layout restated from Wireshark packet-hartip.c; an error: primary session unavailable; expect derived there, no engine run"
+}

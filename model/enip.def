@@ -1,0 +1,25 @@
+# The enip module: EtherNet/IP encapsulation and common packet format fields. Written by tools/gen/indauto2-pack.py.
+module        enip
+version       0.1.0
+distribution  public
+source        "Wireshark, https://github.com/wireshark/wireshark at commit de1eec95b2007952f7399173d2f0904275a31c6f, epan/dissectors/packet-enip.c (GPL-2.0-or-later); layouts restated, no code copied; the ODVA specification not used"
+key   command           int     -  "encapsulation command: 0 NOP, 4 ListServices, 0x63 ListIdentity, 0x64 ListInterfaces, 0x65 RegisterSession, 0x66 UnRegisterSession, 0x6F SendRRData, 0x70 SendUnitData, 0xC8 StartDTLS"
+key   session_handle    int     -  "session handle"
+key   status            int     -  "status (0 success)"
+key   sender_context    string  -  "sender context, 8 octets as hexadecimal digits (under the little-endian bit order, each octet's low digit first)"
+key   options           int     -  "options, 0"
+key   protocol_version  int     -  "RegisterSession: protocol version (1)"
+key   option_flags      int     -  "RegisterSession: option flags (0)"
+key   interface_handle  int     -  "SendRRData, SendUnitData: interface handle (0 for CIP)"
+key   timeout           int     -  "SendRRData, SendUnitData: timeout"
+list  items             "common packet format items (their count is written from the list)"
+key   item_type         int     -  "item type: 0 null address, 0x0C CIP identity, 0xA1 connected address, 0xB1 connected data, 0xB2 unconnected data, 0x100 list services response, 0x8000 and 0x8001 socket address info O->T and T->O, 0x8002 sequenced address"
+key   connection_id     int     -  "connected or sequenced address item: connection identifier"
+key   sequence_number   int     -  "sequenced address item: sequence number"
+key   sin_family        int     -  "socket address item: sin_family (big-endian on the wire)"
+key   sin_port          int     -  "socket address item: sin_port (big-endian)"
+key   sin_addr          int     -  "socket address item: sin_addr, an IPv4 address as an unsigned 32-bit integer (big-endian)"
+key   sin_zero          string  -  "socket address item: sin_zero, 8 octets as hexadecimal digits"
+list  item_data         "another item's data (CIP messages, connected data, identity), as octets"
+list  command_data      "another command's data, as octets"
+key   octet             int     -  "one octet"

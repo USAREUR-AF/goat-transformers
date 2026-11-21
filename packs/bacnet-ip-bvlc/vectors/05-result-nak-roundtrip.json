@@ -1,0 +1,11 @@
+{
+  "name": "result-nak-roundtrip",
+  "from": "bacnet-ip-bvlc",
+  "to": "bacnet-ip-bvlc",
+  "input": "810000060030",
+  "expect": "810000060030",
+  "model": {
+    "bacnetip.result_code": "48"
+  },
+  "source": "built by tools/gen/indauto2-vectors.py from values chosen there; layout restated from bacnet-stack bvlc.c and npdu.c; a result: register foreign device NAK; expect derived there, no engine run"
+}

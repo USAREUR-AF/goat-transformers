@@ -1,0 +1,14 @@
+{
+  "name": "pass-through-expansion-octets-roundtrip",
+  "from": "hart-ip-message",
+  "to": "hart-ip-message",
+  "input": "010003000004000f4281aabb01007f",
+  "expect": "010003000004000f4281aabb01007f",
+  "model": {
+    "hartip.short_reserved": "2",
+    "hartip.short_address": "1",
+    "hartip.expansion.#": "2",
+    "hartip.command": "1"
+  },
+  "source": "built by tools/gen/indauto2-vectors.py from values chosen there; layout restated from Wireshark packet-hartip.c; two expansion octets after a short address with the high bit set; expect derived there, no engine run"
+}

@@ -1,0 +1,17 @@
+{
+  "name": "send-rr-data-unconnected-roundtrip",
+  "from": "enip-encapsulation",
+  "to": "enip-encapsulation",
+  "input": "6f0018004d3c2b1a00000000010203040506070800000000000000000a00020000000000b20008000e03200124013003",
+  "expect": "6f0018004d3c2b1a00000000010203040506070800000000000000000a00020000000000b20008000e03200124013003",
+  "model": {
+    "enip.command": "111",
+    "enip.session_handle": "439041101",
+    "enip.timeout": "10",
+    "enip.items.#": "2",
+    "enip.items[0].enip.item_type": "0",
+    "enip.items[1].enip.item_type": "178",
+    "enip.items[1].enip.item_data.#": "8"
+  },
+  "source": "built by tools/gen/indauto2-vectors.py from values chosen there; layout restated from Wireshark packet-enip.c; SendRRData with a null address item and an unconnected data item holding a CIP request; expect derived there, no engine run"
+}

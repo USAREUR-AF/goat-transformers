@@ -1,0 +1,9 @@
+{
+  "name": "BACnet/IP, EtherNet/IP and HART-IP framing",
+  "domain": "iot",
+  "exact": [
+    "bacnet-ip-bvlc",
+    "enip-encapsulation",
+    "hart-ip-message"
+  ]
+}
