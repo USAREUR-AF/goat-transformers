@@ -1,0 +1,2234 @@
+# 6LoWPAN frame (RFC 4944, RFC 6282, RFC 7400): the dispatch, the mesh, broadcast and fragmentation
+# headers, the IPHC header and the NHC header after it. The message is the MAC payload of an IEEE
+# 802.15.4 frame. Public. Written by tools/gen/mesh-pack.py; do not edit by hand.
+format        lowpan-frame
+version       0.1.0
+distribution  public
+source        "IETF RFC 4944, Transmission of IPv6 Packets over IEEE 802.15.4 Networks, September 2007, sections 5.1 to 5.3 and 11.1, https://www.rfc-editor.org/rfc/rfc4944.txt (sha256 2a1d639aa85e37d860f4c1e535865cdcc3dfc9f48518a2fcc922b3b18ce78c63); layout restated"
+source        "IETF RFC 6282, Compression Format for IPv6 Datagrams over IEEE 802.15.4-Based Networks, September 2011, sections 3 and 4, https://www.rfc-editor.org/rfc/rfc6282.txt (sha256 a3b46845b7223dff27bb78c1c094caa1a6ffdc1f87ec17b8ff905c4aedc4a7f2); layout restated"
+source        "IETF RFC 7400, 6LoWPAN-GHC: Generic Header Compression for IPv6 over Low-Power Wireless Personal Area Networks, November 2014, section 3, https://www.rfc-editor.org/rfc/rfc7400.txt (sha256 d7e583fb7f5aa839e4c8fc32343b09fec43df95e4659868c52232bc3b63b9be9); the NHC bytes only; layout restated"
+uses          lowpan
+wire          bits
+layout        sequential
+bit_order     msb
+
+field  lowpan.s0_a  2  uint
+switch  lowpan.s0_a
+  case  0
+    field  lowpan.nalp_bits  6  uint
+    group  lowpan.frame_octets  rest
+      field  lowpan.octet  8  uint
+    end
+  case  1
+    field  lowpan.s0_b  1  uint
+    switch  lowpan.s0_b
+      case  1
+        field  lowpan.tf  2  uint
+        field  lowpan.nh  1  uint
+        field  lowpan.hlim  2  uint
+        field  lowpan.cid  1  uint
+        field  lowpan.sac  1  uint
+        field  lowpan.sam  2  uint
+        field  lowpan.m  1  uint
+        field  lowpan.dac  1  uint
+        field  lowpan.dam  2  uint
+        switch  lowpan.cid
+          case  1
+            field  lowpan.sci  4  uint
+            field  lowpan.dci  4  uint
+          else
+        end
+        switch  lowpan.tf
+          case  0
+            field  lowpan.ecn  2  uint
+            field  lowpan.dscp  6  uint
+            field  lowpan.tf_pad  4  uint
+            field  lowpan.flow_label  20  uint
+          case  1
+            field  lowpan.ecn  2  uint
+            field  lowpan.tf_pad  2  uint
+            field  lowpan.flow_label  20  uint
+          case  2
+            field  lowpan.ecn  2  uint
+            field  lowpan.dscp  6  uint
+          case  3
+        end
+        switch  lowpan.nh
+          case  0
+            field  lowpan.next_header  8  uint
+          else
+        end
+        switch  lowpan.hlim
+          case  0
+            field  lowpan.hop_limit  8  uint
+          else
+        end
+        switch  lowpan.sac
+          case  0
+            switch  lowpan.sam
+              case  0
+                field  lowpan.src_inline  128  hex
+              case  1
+                field  lowpan.src_inline  64  hex
+              case  2
+                field  lowpan.src_inline  16  hex
+              case  3
+            end
+          case  1
+            switch  lowpan.sam
+              case  0
+              case  1
+                field  lowpan.src_inline  64  hex
+              case  2
+                field  lowpan.src_inline  16  hex
+              case  3
+            end
+        end
+        switch  lowpan.m
+          case  0
+            switch  lowpan.dac
+              case  0
+                switch  lowpan.dam
+                  case  0
+                    field  lowpan.dst_inline  128  hex
+                  case  1
+                    field  lowpan.dst_inline  64  hex
+                  case  2
+                    field  lowpan.dst_inline  16  hex
+                  case  3
+                end
+              case  1
+                switch  lowpan.dam
+                  case  0
+                  case  1
+                    field  lowpan.dst_inline  64  hex
+                  case  2
+                    field  lowpan.dst_inline  16  hex
+                  case  3
+                end
+            end
+          case  1
+            switch  lowpan.dac
+              case  0
+                switch  lowpan.dam
+                  case  0
+                    field  lowpan.dst_inline  128  hex
+                  case  1
+                    field  lowpan.dst_inline  48  hex
+                  case  2
+                    field  lowpan.dst_inline  32  hex
+                  case  3
+                    field  lowpan.dst_inline  8  hex
+                end
+              case  1
+                switch  lowpan.dam
+                  case  0
+                    field  lowpan.dst_inline  48  hex
+                  case  1,2,3
+                end
+            end
+        end
+        switch  lowpan.nh
+          case  0
+            group  lowpan.ipv6_payload  rest
+              field  lowpan.octet  8  uint
+            end
+          case  1
+            field  lowpan.nhc_a  4  uint
+            switch  lowpan.nhc_a
+              case  15
+                field  lowpan.nhc_b  1  uint
+                switch  lowpan.nhc_b
+                  case  0
+                    field  lowpan.udp_c  1  uint
+                    field  lowpan.udp_p  2  uint
+                    switch  lowpan.udp_p
+                      case  0
+                        field  lowpan.udp_src_port  16  uint
+                        field  lowpan.udp_dst_port  16  uint
+                      case  1
+                        field  lowpan.udp_src_port  16  uint
+                        field  lowpan.udp_dst_port_low8  8  uint
+                      case  2
+                        field  lowpan.udp_src_port_low8  8  uint
+                        field  lowpan.udp_dst_port  16  uint
+                      case  3
+                        field  lowpan.udp_src_port_low4  4  uint
+                        field  lowpan.udp_dst_port_low4  4  uint
+                    end
+                    switch  lowpan.udp_c
+                      case  0
+                        field  lowpan.udp_checksum  16  uint
+                      else
+                    end
+                    group  lowpan.udp_payload  rest
+                      field  lowpan.octet  8  uint
+                    end
+                  else
+                    field  lowpan.nhc_low  3  uint
+                    group  lowpan.nhc_octets  rest
+                      field  lowpan.octet  8  uint
+                    end
+                end
+              case  14
+                field  lowpan.ext_eid  3  uint
+                field  lowpan.ext_nh  1  uint
+                switch  lowpan.ext_eid
+                  case  7
+                    group  lowpan.inner_packet  rest
+                      field  lowpan.octet  8  uint
+                    end
+                  else
+                    switch  lowpan.ext_nh
+                      case  0
+                        field  lowpan.ext_next_header  8  uint
+                      else
+                    end
+                    length  8  bytes
+                      group  lowpan.ext_header  rest
+                        field  lowpan.octet  8  uint
+                      end
+                    end
+                    group  lowpan.after_ext  rest
+                      field  lowpan.octet  8  uint
+                    end
+                end
+              case  13
+                field  lowpan.nhc_d  1  uint
+                switch  lowpan.nhc_d
+                  case  0
+                    field  lowpan.ghc_udp_c  1  uint
+                    field  lowpan.ghc_udp_p  2  uint
+                    switch  lowpan.ghc_udp_p
+                      case  0
+                        field  lowpan.udp_src_port  16  uint
+                        field  lowpan.udp_dst_port  16  uint
+                      case  1
+                        field  lowpan.udp_src_port  16  uint
+                        field  lowpan.udp_dst_port_low8  8  uint
+                      case  2
+                        field  lowpan.udp_src_port_low8  8  uint
+                        field  lowpan.udp_dst_port  16  uint
+                      case  3
+                        field  lowpan.udp_src_port_low4  4  uint
+                        field  lowpan.udp_dst_port_low4  4  uint
+                    end
+                    switch  lowpan.ghc_udp_c
+                      case  0
+                        field  lowpan.udp_checksum  16  uint
+                      else
+                    end
+                    group  lowpan.ghc_payload  rest
+                      field  lowpan.octet  8  uint
+                    end
+                  case  1
+                    field  lowpan.nhc_e  3  uint
+                    switch  lowpan.nhc_e
+                      case  7
+                        group  lowpan.ghc_payload  rest
+                          field  lowpan.octet  8  uint
+                        end
+                      else
+                        group  lowpan.nhc_octets  rest
+                          field  lowpan.octet  8  uint
+                        end
+                    end
+                end
+              case  11
+                field  lowpan.nhc_f  1  uint
+                switch  lowpan.nhc_f
+                  case  0
+                    field  lowpan.ghc_ext_eid  2  uint
+                    field  lowpan.ghc_ext_nh  1  uint
+                    group  lowpan.ghc_payload  rest
+                      field  lowpan.octet  8  uint
+                    end
+                  else
+                    field  lowpan.nhc_low  3  uint
+                    group  lowpan.nhc_octets  rest
+                      field  lowpan.octet  8  uint
+                    end
+                end
+              else
+                field  lowpan.nhc_rest  4  uint
+                group  lowpan.nhc_octets  rest
+                  field  lowpan.octet  8  uint
+                end
+            end
+        end
+      case  0
+        field  lowpan.s0_c  5  uint
+        switch  lowpan.s0_c
+          case  1
+            group  lowpan.ipv6_packet  rest
+              field  lowpan.octet  8  uint
+            end
+          case  16
+            field  lowpan.bc0_sequence  8  uint
+            field  lowpan.s2_a  2  uint
+            switch  lowpan.s2_a
+              case  0
+                field  lowpan.nalp_bits  6  uint
+                group  lowpan.frame_octets  rest
+                  field  lowpan.octet  8  uint
+                end
+              case  1
+                field  lowpan.s2_b  1  uint
+                switch  lowpan.s2_b
+                  case  1
+                    field  lowpan.tf  2  uint
+                    field  lowpan.nh  1  uint
+                    field  lowpan.hlim  2  uint
+                    field  lowpan.cid  1  uint
+                    field  lowpan.sac  1  uint
+                    field  lowpan.sam  2  uint
+                    field  lowpan.m  1  uint
+                    field  lowpan.dac  1  uint
+                    field  lowpan.dam  2  uint
+                    switch  lowpan.cid
+                      case  1
+                        field  lowpan.sci  4  uint
+                        field  lowpan.dci  4  uint
+                      else
+                    end
+                    switch  lowpan.tf
+                      case  0
+                        field  lowpan.ecn  2  uint
+                        field  lowpan.dscp  6  uint
+                        field  lowpan.tf_pad  4  uint
+                        field  lowpan.flow_label  20  uint
+                      case  1
+                        field  lowpan.ecn  2  uint
+                        field  lowpan.tf_pad  2  uint
+                        field  lowpan.flow_label  20  uint
+                      case  2
+                        field  lowpan.ecn  2  uint
+                        field  lowpan.dscp  6  uint
+                      case  3
+                    end
+                    switch  lowpan.nh
+                      case  0
+                        field  lowpan.next_header  8  uint
+                      else
+                    end
+                    switch  lowpan.hlim
+                      case  0
+                        field  lowpan.hop_limit  8  uint
+                      else
+                    end
+                    switch  lowpan.sac
+                      case  0
+                        switch  lowpan.sam
+                          case  0
+                            field  lowpan.src_inline  128  hex
+                          case  1
+                            field  lowpan.src_inline  64  hex
+                          case  2
+                            field  lowpan.src_inline  16  hex
+                          case  3
+                        end
+                      case  1
+                        switch  lowpan.sam
+                          case  0
+                          case  1
+                            field  lowpan.src_inline  64  hex
+                          case  2
+                            field  lowpan.src_inline  16  hex
+                          case  3
+                        end
+                    end
+                    switch  lowpan.m
+                      case  0
+                        switch  lowpan.dac
+                          case  0
+                            switch  lowpan.dam
+                              case  0
+                                field  lowpan.dst_inline  128  hex
+                              case  1
+                                field  lowpan.dst_inline  64  hex
+                              case  2
+                                field  lowpan.dst_inline  16  hex
+                              case  3
+                            end
+                          case  1
+                            switch  lowpan.dam
+                              case  0
+                              case  1
+                                field  lowpan.dst_inline  64  hex
+                              case  2
+                                field  lowpan.dst_inline  16  hex
+                              case  3
+                            end
+                        end
+                      case  1
+                        switch  lowpan.dac
+                          case  0
+                            switch  lowpan.dam
+                              case  0
+                                field  lowpan.dst_inline  128  hex
+                              case  1
+                                field  lowpan.dst_inline  48  hex
+                              case  2
+                                field  lowpan.dst_inline  32  hex
+                              case  3
+                                field  lowpan.dst_inline  8  hex
+                            end
+                          case  1
+                            switch  lowpan.dam
+                              case  0
+                                field  lowpan.dst_inline  48  hex
+                              case  1,2,3
+                            end
+                        end
+                    end
+                    switch  lowpan.nh
+                      case  0
+                        group  lowpan.ipv6_payload  rest
+                          field  lowpan.octet  8  uint
+                        end
+                      case  1
+                        field  lowpan.nhc_a  4  uint
+                        switch  lowpan.nhc_a
+                          case  15
+                            field  lowpan.nhc_b  1  uint
+                            switch  lowpan.nhc_b
+                              case  0
+                                field  lowpan.udp_c  1  uint
+                                field  lowpan.udp_p  2  uint
+                                switch  lowpan.udp_p
+                                  case  0
+                                    field  lowpan.udp_src_port  16  uint
+                                    field  lowpan.udp_dst_port  16  uint
+                                  case  1
+                                    field  lowpan.udp_src_port  16  uint
+                                    field  lowpan.udp_dst_port_low8  8  uint
+                                  case  2
+                                    field  lowpan.udp_src_port_low8  8  uint
+                                    field  lowpan.udp_dst_port  16  uint
+                                  case  3
+                                    field  lowpan.udp_src_port_low4  4  uint
+                                    field  lowpan.udp_dst_port_low4  4  uint
+                                end
+                                switch  lowpan.udp_c
+                                  case  0
+                                    field  lowpan.udp_checksum  16  uint
+                                  else
+                                end
+                                group  lowpan.udp_payload  rest
+                                  field  lowpan.octet  8  uint
+                                end
+                              else
+                                field  lowpan.nhc_low  3  uint
+                                group  lowpan.nhc_octets  rest
+                                  field  lowpan.octet  8  uint
+                                end
+                            end
+                          case  14
+                            field  lowpan.ext_eid  3  uint
+                            field  lowpan.ext_nh  1  uint
+                            switch  lowpan.ext_eid
+                              case  7
+                                group  lowpan.inner_packet  rest
+                                  field  lowpan.octet  8  uint
+                                end
+                              else
+                                switch  lowpan.ext_nh
+                                  case  0
+                                    field  lowpan.ext_next_header  8  uint
+                                  else
+                                end
+                                length  8  bytes
+                                  group  lowpan.ext_header  rest
+                                    field  lowpan.octet  8  uint
+                                  end
+                                end
+                                group  lowpan.after_ext  rest
+                                  field  lowpan.octet  8  uint
+                                end
+                            end
+                          case  13
+                            field  lowpan.nhc_d  1  uint
+                            switch  lowpan.nhc_d
+                              case  0
+                                field  lowpan.ghc_udp_c  1  uint
+                                field  lowpan.ghc_udp_p  2  uint
+                                switch  lowpan.ghc_udp_p
+                                  case  0
+                                    field  lowpan.udp_src_port  16  uint
+                                    field  lowpan.udp_dst_port  16  uint
+                                  case  1
+                                    field  lowpan.udp_src_port  16  uint
+                                    field  lowpan.udp_dst_port_low8  8  uint
+                                  case  2
+                                    field  lowpan.udp_src_port_low8  8  uint
+                                    field  lowpan.udp_dst_port  16  uint
+                                  case  3
+                                    field  lowpan.udp_src_port_low4  4  uint
+                                    field  lowpan.udp_dst_port_low4  4  uint
+                                end
+                                switch  lowpan.ghc_udp_c
+                                  case  0
+                                    field  lowpan.udp_checksum  16  uint
+                                  else
+                                end
+                                group  lowpan.ghc_payload  rest
+                                  field  lowpan.octet  8  uint
+                                end
+                              case  1
+                                field  lowpan.nhc_e  3  uint
+                                switch  lowpan.nhc_e
+                                  case  7
+                                    group  lowpan.ghc_payload  rest
+                                      field  lowpan.octet  8  uint
+                                    end
+                                  else
+                                    group  lowpan.nhc_octets  rest
+                                      field  lowpan.octet  8  uint
+                                    end
+                                end
+                            end
+                          case  11
+                            field  lowpan.nhc_f  1  uint
+                            switch  lowpan.nhc_f
+                              case  0
+                                field  lowpan.ghc_ext_eid  2  uint
+                                field  lowpan.ghc_ext_nh  1  uint
+                                group  lowpan.ghc_payload  rest
+                                  field  lowpan.octet  8  uint
+                                end
+                              else
+                                field  lowpan.nhc_low  3  uint
+                                group  lowpan.nhc_octets  rest
+                                  field  lowpan.octet  8  uint
+                                end
+                            end
+                          else
+                            field  lowpan.nhc_rest  4  uint
+                            group  lowpan.nhc_octets  rest
+                              field  lowpan.octet  8  uint
+                            end
+                        end
+                    end
+                  case  0
+                    field  lowpan.s2_c  5  uint
+                    switch  lowpan.s2_c
+                      case  1
+                        group  lowpan.ipv6_packet  rest
+                          field  lowpan.octet  8  uint
+                        end
+                      else
+                        group  lowpan.frame_octets  rest
+                          field  lowpan.octet  8  uint
+                        end
+                    end
+                end
+              case  2
+                field  lowpan.dispatch_bits  6  uint
+                group  lowpan.frame_octets  rest
+                  field  lowpan.octet  8  uint
+                end
+              case  3
+                field  lowpan.s2_d  3  uint
+                switch  lowpan.s2_d
+                  case  0
+                    field  lowpan.datagram_size  11  uint
+                    field  lowpan.datagram_tag  16  uint
+                    field  lowpan.s3_a  2  uint
+                    switch  lowpan.s3_a
+                      case  0
+                        field  lowpan.nalp_bits  6  uint
+                        group  lowpan.frame_octets  rest
+                          field  lowpan.octet  8  uint
+                        end
+                      case  1
+                        field  lowpan.s3_b  1  uint
+                        switch  lowpan.s3_b
+                          case  1
+                            field  lowpan.tf  2  uint
+                            field  lowpan.nh  1  uint
+                            field  lowpan.hlim  2  uint
+                            field  lowpan.cid  1  uint
+                            field  lowpan.sac  1  uint
+                            field  lowpan.sam  2  uint
+                            field  lowpan.m  1  uint
+                            field  lowpan.dac  1  uint
+                            field  lowpan.dam  2  uint
+                            switch  lowpan.cid
+                              case  1
+                                field  lowpan.sci  4  uint
+                                field  lowpan.dci  4  uint
+                              else
+                            end
+                            switch  lowpan.tf
+                              case  0
+                                field  lowpan.ecn  2  uint
+                                field  lowpan.dscp  6  uint
+                                field  lowpan.tf_pad  4  uint
+                                field  lowpan.flow_label  20  uint
+                              case  1
+                                field  lowpan.ecn  2  uint
+                                field  lowpan.tf_pad  2  uint
+                                field  lowpan.flow_label  20  uint
+                              case  2
+                                field  lowpan.ecn  2  uint
+                                field  lowpan.dscp  6  uint
+                              case  3
+                            end
+                            switch  lowpan.nh
+                              case  0
+                                field  lowpan.next_header  8  uint
+                              else
+                            end
+                            switch  lowpan.hlim
+                              case  0
+                                field  lowpan.hop_limit  8  uint
+                              else
+                            end
+                            switch  lowpan.sac
+                              case  0
+                                switch  lowpan.sam
+                                  case  0
+                                    field  lowpan.src_inline  128  hex
+                                  case  1
+                                    field  lowpan.src_inline  64  hex
+                                  case  2
+                                    field  lowpan.src_inline  16  hex
+                                  case  3
+                                end
+                              case  1
+                                switch  lowpan.sam
+                                  case  0
+                                  case  1
+                                    field  lowpan.src_inline  64  hex
+                                  case  2
+                                    field  lowpan.src_inline  16  hex
+                                  case  3
+                                end
+                            end
+                            switch  lowpan.m
+                              case  0
+                                switch  lowpan.dac
+                                  case  0
+                                    switch  lowpan.dam
+                                      case  0
+                                        field  lowpan.dst_inline  128  hex
+                                      case  1
+                                        field  lowpan.dst_inline  64  hex
+                                      case  2
+                                        field  lowpan.dst_inline  16  hex
+                                      case  3
+                                    end
+                                  case  1
+                                    switch  lowpan.dam
+                                      case  0
+                                      case  1
+                                        field  lowpan.dst_inline  64  hex
+                                      case  2
+                                        field  lowpan.dst_inline  16  hex
+                                      case  3
+                                    end
+                                end
+                              case  1
+                                switch  lowpan.dac
+                                  case  0
+                                    switch  lowpan.dam
+                                      case  0
+                                        field  lowpan.dst_inline  128  hex
+                                      case  1
+                                        field  lowpan.dst_inline  48  hex
+                                      case  2
+                                        field  lowpan.dst_inline  32  hex
+                                      case  3
+                                        field  lowpan.dst_inline  8  hex
+                                    end
+                                  case  1
+                                    switch  lowpan.dam
+                                      case  0
+                                        field  lowpan.dst_inline  48  hex
+                                      case  1,2,3
+                                    end
+                                end
+                            end
+                            switch  lowpan.nh
+                              case  0
+                                group  lowpan.ipv6_payload  rest
+                                  field  lowpan.octet  8  uint
+                                end
+                              case  1
+                                field  lowpan.nhc_a  4  uint
+                                switch  lowpan.nhc_a
+                                  case  15
+                                    field  lowpan.nhc_b  1  uint
+                                    switch  lowpan.nhc_b
+                                      case  0
+                                        field  lowpan.udp_c  1  uint
+                                        field  lowpan.udp_p  2  uint
+                                        switch  lowpan.udp_p
+                                          case  0
+                                            field  lowpan.udp_src_port  16  uint
+                                            field  lowpan.udp_dst_port  16  uint
+                                          case  1
+                                            field  lowpan.udp_src_port  16  uint
+                                            field  lowpan.udp_dst_port_low8  8  uint
+                                          case  2
+                                            field  lowpan.udp_src_port_low8  8  uint
+                                            field  lowpan.udp_dst_port  16  uint
+                                          case  3
+                                            field  lowpan.udp_src_port_low4  4  uint
+                                            field  lowpan.udp_dst_port_low4  4  uint
+                                        end
+                                        switch  lowpan.udp_c
+                                          case  0
+                                            field  lowpan.udp_checksum  16  uint
+                                          else
+                                        end
+                                        group  lowpan.udp_payload  rest
+                                          field  lowpan.octet  8  uint
+                                        end
+                                      else
+                                        field  lowpan.nhc_low  3  uint
+                                        group  lowpan.nhc_octets  rest
+                                          field  lowpan.octet  8  uint
+                                        end
+                                    end
+                                  case  14
+                                    field  lowpan.ext_eid  3  uint
+                                    field  lowpan.ext_nh  1  uint
+                                    switch  lowpan.ext_eid
+                                      case  7
+                                        group  lowpan.inner_packet  rest
+                                          field  lowpan.octet  8  uint
+                                        end
+                                      else
+                                        switch  lowpan.ext_nh
+                                          case  0
+                                            field  lowpan.ext_next_header  8  uint
+                                          else
+                                        end
+                                        length  8  bytes
+                                          group  lowpan.ext_header  rest
+                                            field  lowpan.octet  8  uint
+                                          end
+                                        end
+                                        group  lowpan.after_ext  rest
+                                          field  lowpan.octet  8  uint
+                                        end
+                                    end
+                                  case  13
+                                    field  lowpan.nhc_d  1  uint
+                                    switch  lowpan.nhc_d
+                                      case  0
+                                        field  lowpan.ghc_udp_c  1  uint
+                                        field  lowpan.ghc_udp_p  2  uint
+                                        switch  lowpan.ghc_udp_p
+                                          case  0
+                                            field  lowpan.udp_src_port  16  uint
+                                            field  lowpan.udp_dst_port  16  uint
+                                          case  1
+                                            field  lowpan.udp_src_port  16  uint
+                                            field  lowpan.udp_dst_port_low8  8  uint
+                                          case  2
+                                            field  lowpan.udp_src_port_low8  8  uint
+                                            field  lowpan.udp_dst_port  16  uint
+                                          case  3
+                                            field  lowpan.udp_src_port_low4  4  uint
+                                            field  lowpan.udp_dst_port_low4  4  uint
+                                        end
+                                        switch  lowpan.ghc_udp_c
+                                          case  0
+                                            field  lowpan.udp_checksum  16  uint
+                                          else
+                                        end
+                                        group  lowpan.ghc_payload  rest
+                                          field  lowpan.octet  8  uint
+                                        end
+                                      case  1
+                                        field  lowpan.nhc_e  3  uint
+                                        switch  lowpan.nhc_e
+                                          case  7
+                                            group  lowpan.ghc_payload  rest
+                                              field  lowpan.octet  8  uint
+                                            end
+                                          else
+                                            group  lowpan.nhc_octets  rest
+                                              field  lowpan.octet  8  uint
+                                            end
+                                        end
+                                    end
+                                  case  11
+                                    field  lowpan.nhc_f  1  uint
+                                    switch  lowpan.nhc_f
+                                      case  0
+                                        field  lowpan.ghc_ext_eid  2  uint
+                                        field  lowpan.ghc_ext_nh  1  uint
+                                        group  lowpan.ghc_payload  rest
+                                          field  lowpan.octet  8  uint
+                                        end
+                                      else
+                                        field  lowpan.nhc_low  3  uint
+                                        group  lowpan.nhc_octets  rest
+                                          field  lowpan.octet  8  uint
+                                        end
+                                    end
+                                  else
+                                    field  lowpan.nhc_rest  4  uint
+                                    group  lowpan.nhc_octets  rest
+                                      field  lowpan.octet  8  uint
+                                    end
+                                end
+                            end
+                          case  0
+                            field  lowpan.s3_c  5  uint
+                            switch  lowpan.s3_c
+                              case  1
+                                group  lowpan.ipv6_packet  rest
+                                  field  lowpan.octet  8  uint
+                                end
+                              else
+                                group  lowpan.frame_octets  rest
+                                  field  lowpan.octet  8  uint
+                                end
+                            end
+                        end
+                      case  2
+                        field  lowpan.dispatch_bits  6  uint
+                        group  lowpan.frame_octets  rest
+                          field  lowpan.octet  8  uint
+                        end
+                      case  3
+                        field  lowpan.dispatch_bits  6  uint
+                        group  lowpan.frame_octets  rest
+                          field  lowpan.octet  8  uint
+                        end
+                    end
+                  case  4
+                    field  lowpan.datagram_size  11  uint
+                    field  lowpan.datagram_tag  16  uint
+                    field  lowpan.datagram_offset  8  uint
+                    group  lowpan.fragment_octets  rest
+                      field  lowpan.octet  8  uint
+                    end
+                  else
+                    field  lowpan.dispatch_low3  3  uint
+                    group  lowpan.frame_octets  rest
+                      field  lowpan.octet  8  uint
+                    end
+                end
+            end
+          else
+            group  lowpan.frame_octets  rest
+              field  lowpan.octet  8  uint
+            end
+        end
+    end
+  case  2
+    field  lowpan.mesh_v  1  uint
+    field  lowpan.mesh_f  1  uint
+    field  lowpan.hops_left  4  uint
+    switch  lowpan.hops_left
+      case  15
+        field  lowpan.deep_hops_left  8  uint
+      else
+    end
+    switch  lowpan.mesh_v
+      case  0
+        field  lowpan.originator  64  hex
+      case  1
+        field  lowpan.originator  16  hex
+    end
+    switch  lowpan.mesh_f
+      case  0
+        field  lowpan.final  64  hex
+      case  1
+        field  lowpan.final  16  hex
+    end
+    field  lowpan.s1_a  2  uint
+    switch  lowpan.s1_a
+      case  0
+        field  lowpan.nalp_bits  6  uint
+        group  lowpan.frame_octets  rest
+          field  lowpan.octet  8  uint
+        end
+      case  1
+        field  lowpan.s1_b  1  uint
+        switch  lowpan.s1_b
+          case  1
+            field  lowpan.tf  2  uint
+            field  lowpan.nh  1  uint
+            field  lowpan.hlim  2  uint
+            field  lowpan.cid  1  uint
+            field  lowpan.sac  1  uint
+            field  lowpan.sam  2  uint
+            field  lowpan.m  1  uint
+            field  lowpan.dac  1  uint
+            field  lowpan.dam  2  uint
+            switch  lowpan.cid
+              case  1
+                field  lowpan.sci  4  uint
+                field  lowpan.dci  4  uint
+              else
+            end
+            switch  lowpan.tf
+              case  0
+                field  lowpan.ecn  2  uint
+                field  lowpan.dscp  6  uint
+                field  lowpan.tf_pad  4  uint
+                field  lowpan.flow_label  20  uint
+              case  1
+                field  lowpan.ecn  2  uint
+                field  lowpan.tf_pad  2  uint
+                field  lowpan.flow_label  20  uint
+              case  2
+                field  lowpan.ecn  2  uint
+                field  lowpan.dscp  6  uint
+              case  3
+            end
+            switch  lowpan.nh
+              case  0
+                field  lowpan.next_header  8  uint
+              else
+            end
+            switch  lowpan.hlim
+              case  0
+                field  lowpan.hop_limit  8  uint
+              else
+            end
+            switch  lowpan.sac
+              case  0
+                switch  lowpan.sam
+                  case  0
+                    field  lowpan.src_inline  128  hex
+                  case  1
+                    field  lowpan.src_inline  64  hex
+                  case  2
+                    field  lowpan.src_inline  16  hex
+                  case  3
+                end
+              case  1
+                switch  lowpan.sam
+                  case  0
+                  case  1
+                    field  lowpan.src_inline  64  hex
+                  case  2
+                    field  lowpan.src_inline  16  hex
+                  case  3
+                end
+            end
+            switch  lowpan.m
+              case  0
+                switch  lowpan.dac
+                  case  0
+                    switch  lowpan.dam
+                      case  0
+                        field  lowpan.dst_inline  128  hex
+                      case  1
+                        field  lowpan.dst_inline  64  hex
+                      case  2
+                        field  lowpan.dst_inline  16  hex
+                      case  3
+                    end
+                  case  1
+                    switch  lowpan.dam
+                      case  0
+                      case  1
+                        field  lowpan.dst_inline  64  hex
+                      case  2
+                        field  lowpan.dst_inline  16  hex
+                      case  3
+                    end
+                end
+              case  1
+                switch  lowpan.dac
+                  case  0
+                    switch  lowpan.dam
+                      case  0
+                        field  lowpan.dst_inline  128  hex
+                      case  1
+                        field  lowpan.dst_inline  48  hex
+                      case  2
+                        field  lowpan.dst_inline  32  hex
+                      case  3
+                        field  lowpan.dst_inline  8  hex
+                    end
+                  case  1
+                    switch  lowpan.dam
+                      case  0
+                        field  lowpan.dst_inline  48  hex
+                      case  1,2,3
+                    end
+                end
+            end
+            switch  lowpan.nh
+              case  0
+                group  lowpan.ipv6_payload  rest
+                  field  lowpan.octet  8  uint
+                end
+              case  1
+                field  lowpan.nhc_a  4  uint
+                switch  lowpan.nhc_a
+                  case  15
+                    field  lowpan.nhc_b  1  uint
+                    switch  lowpan.nhc_b
+                      case  0
+                        field  lowpan.udp_c  1  uint
+                        field  lowpan.udp_p  2  uint
+                        switch  lowpan.udp_p
+                          case  0
+                            field  lowpan.udp_src_port  16  uint
+                            field  lowpan.udp_dst_port  16  uint
+                          case  1
+                            field  lowpan.udp_src_port  16  uint
+                            field  lowpan.udp_dst_port_low8  8  uint
+                          case  2
+                            field  lowpan.udp_src_port_low8  8  uint
+                            field  lowpan.udp_dst_port  16  uint
+                          case  3
+                            field  lowpan.udp_src_port_low4  4  uint
+                            field  lowpan.udp_dst_port_low4  4  uint
+                        end
+                        switch  lowpan.udp_c
+                          case  0
+                            field  lowpan.udp_checksum  16  uint
+                          else
+                        end
+                        group  lowpan.udp_payload  rest
+                          field  lowpan.octet  8  uint
+                        end
+                      else
+                        field  lowpan.nhc_low  3  uint
+                        group  lowpan.nhc_octets  rest
+                          field  lowpan.octet  8  uint
+                        end
+                    end
+                  case  14
+                    field  lowpan.ext_eid  3  uint
+                    field  lowpan.ext_nh  1  uint
+                    switch  lowpan.ext_eid
+                      case  7
+                        group  lowpan.inner_packet  rest
+                          field  lowpan.octet  8  uint
+                        end
+                      else
+                        switch  lowpan.ext_nh
+                          case  0
+                            field  lowpan.ext_next_header  8  uint
+                          else
+                        end
+                        length  8  bytes
+                          group  lowpan.ext_header  rest
+                            field  lowpan.octet  8  uint
+                          end
+                        end
+                        group  lowpan.after_ext  rest
+                          field  lowpan.octet  8  uint
+                        end
+                    end
+                  case  13
+                    field  lowpan.nhc_d  1  uint
+                    switch  lowpan.nhc_d
+                      case  0
+                        field  lowpan.ghc_udp_c  1  uint
+                        field  lowpan.ghc_udp_p  2  uint
+                        switch  lowpan.ghc_udp_p
+                          case  0
+                            field  lowpan.udp_src_port  16  uint
+                            field  lowpan.udp_dst_port  16  uint
+                          case  1
+                            field  lowpan.udp_src_port  16  uint
+                            field  lowpan.udp_dst_port_low8  8  uint
+                          case  2
+                            field  lowpan.udp_src_port_low8  8  uint
+                            field  lowpan.udp_dst_port  16  uint
+                          case  3
+                            field  lowpan.udp_src_port_low4  4  uint
+                            field  lowpan.udp_dst_port_low4  4  uint
+                        end
+                        switch  lowpan.ghc_udp_c
+                          case  0
+                            field  lowpan.udp_checksum  16  uint
+                          else
+                        end
+                        group  lowpan.ghc_payload  rest
+                          field  lowpan.octet  8  uint
+                        end
+                      case  1
+                        field  lowpan.nhc_e  3  uint
+                        switch  lowpan.nhc_e
+                          case  7
+                            group  lowpan.ghc_payload  rest
+                              field  lowpan.octet  8  uint
+                            end
+                          else
+                            group  lowpan.nhc_octets  rest
+                              field  lowpan.octet  8  uint
+                            end
+                        end
+                    end
+                  case  11
+                    field  lowpan.nhc_f  1  uint
+                    switch  lowpan.nhc_f
+                      case  0
+                        field  lowpan.ghc_ext_eid  2  uint
+                        field  lowpan.ghc_ext_nh  1  uint
+                        group  lowpan.ghc_payload  rest
+                          field  lowpan.octet  8  uint
+                        end
+                      else
+                        field  lowpan.nhc_low  3  uint
+                        group  lowpan.nhc_octets  rest
+                          field  lowpan.octet  8  uint
+                        end
+                    end
+                  else
+                    field  lowpan.nhc_rest  4  uint
+                    group  lowpan.nhc_octets  rest
+                      field  lowpan.octet  8  uint
+                    end
+                end
+            end
+          case  0
+            field  lowpan.s1_c  5  uint
+            switch  lowpan.s1_c
+              case  1
+                group  lowpan.ipv6_packet  rest
+                  field  lowpan.octet  8  uint
+                end
+              case  16
+                field  lowpan.bc0_sequence  8  uint
+                field  lowpan.s2_a  2  uint
+                switch  lowpan.s2_a
+                  case  0
+                    field  lowpan.nalp_bits  6  uint
+                    group  lowpan.frame_octets  rest
+                      field  lowpan.octet  8  uint
+                    end
+                  case  1
+                    field  lowpan.s2_b  1  uint
+                    switch  lowpan.s2_b
+                      case  1
+                        field  lowpan.tf  2  uint
+                        field  lowpan.nh  1  uint
+                        field  lowpan.hlim  2  uint
+                        field  lowpan.cid  1  uint
+                        field  lowpan.sac  1  uint
+                        field  lowpan.sam  2  uint
+                        field  lowpan.m  1  uint
+                        field  lowpan.dac  1  uint
+                        field  lowpan.dam  2  uint
+                        switch  lowpan.cid
+                          case  1
+                            field  lowpan.sci  4  uint
+                            field  lowpan.dci  4  uint
+                          else
+                        end
+                        switch  lowpan.tf
+                          case  0
+                            field  lowpan.ecn  2  uint
+                            field  lowpan.dscp  6  uint
+                            field  lowpan.tf_pad  4  uint
+                            field  lowpan.flow_label  20  uint
+                          case  1
+                            field  lowpan.ecn  2  uint
+                            field  lowpan.tf_pad  2  uint
+                            field  lowpan.flow_label  20  uint
+                          case  2
+                            field  lowpan.ecn  2  uint
+                            field  lowpan.dscp  6  uint
+                          case  3
+                        end
+                        switch  lowpan.nh
+                          case  0
+                            field  lowpan.next_header  8  uint
+                          else
+                        end
+                        switch  lowpan.hlim
+                          case  0
+                            field  lowpan.hop_limit  8  uint
+                          else
+                        end
+                        switch  lowpan.sac
+                          case  0
+                            switch  lowpan.sam
+                              case  0
+                                field  lowpan.src_inline  128  hex
+                              case  1
+                                field  lowpan.src_inline  64  hex
+                              case  2
+                                field  lowpan.src_inline  16  hex
+                              case  3
+                            end
+                          case  1
+                            switch  lowpan.sam
+                              case  0
+                              case  1
+                                field  lowpan.src_inline  64  hex
+                              case  2
+                                field  lowpan.src_inline  16  hex
+                              case  3
+                            end
+                        end
+                        switch  lowpan.m
+                          case  0
+                            switch  lowpan.dac
+                              case  0
+                                switch  lowpan.dam
+                                  case  0
+                                    field  lowpan.dst_inline  128  hex
+                                  case  1
+                                    field  lowpan.dst_inline  64  hex
+                                  case  2
+                                    field  lowpan.dst_inline  16  hex
+                                  case  3
+                                end
+                              case  1
+                                switch  lowpan.dam
+                                  case  0
+                                  case  1
+                                    field  lowpan.dst_inline  64  hex
+                                  case  2
+                                    field  lowpan.dst_inline  16  hex
+                                  case  3
+                                end
+                            end
+                          case  1
+                            switch  lowpan.dac
+                              case  0
+                                switch  lowpan.dam
+                                  case  0
+                                    field  lowpan.dst_inline  128  hex
+                                  case  1
+                                    field  lowpan.dst_inline  48  hex
+                                  case  2
+                                    field  lowpan.dst_inline  32  hex
+                                  case  3
+                                    field  lowpan.dst_inline  8  hex
+                                end
+                              case  1
+                                switch  lowpan.dam
+                                  case  0
+                                    field  lowpan.dst_inline  48  hex
+                                  case  1,2,3
+                                end
+                            end
+                        end
+                        switch  lowpan.nh
+                          case  0
+                            group  lowpan.ipv6_payload  rest
+                              field  lowpan.octet  8  uint
+                            end
+                          case  1
+                            field  lowpan.nhc_a  4  uint
+                            switch  lowpan.nhc_a
+                              case  15
+                                field  lowpan.nhc_b  1  uint
+                                switch  lowpan.nhc_b
+                                  case  0
+                                    field  lowpan.udp_c  1  uint
+                                    field  lowpan.udp_p  2  uint
+                                    switch  lowpan.udp_p
+                                      case  0
+                                        field  lowpan.udp_src_port  16  uint
+                                        field  lowpan.udp_dst_port  16  uint
+                                      case  1
+                                        field  lowpan.udp_src_port  16  uint
+                                        field  lowpan.udp_dst_port_low8  8  uint
+                                      case  2
+                                        field  lowpan.udp_src_port_low8  8  uint
+                                        field  lowpan.udp_dst_port  16  uint
+                                      case  3
+                                        field  lowpan.udp_src_port_low4  4  uint
+                                        field  lowpan.udp_dst_port_low4  4  uint
+                                    end
+                                    switch  lowpan.udp_c
+                                      case  0
+                                        field  lowpan.udp_checksum  16  uint
+                                      else
+                                    end
+                                    group  lowpan.udp_payload  rest
+                                      field  lowpan.octet  8  uint
+                                    end
+                                  else
+                                    field  lowpan.nhc_low  3  uint
+                                    group  lowpan.nhc_octets  rest
+                                      field  lowpan.octet  8  uint
+                                    end
+                                end
+                              case  14
+                                field  lowpan.ext_eid  3  uint
+                                field  lowpan.ext_nh  1  uint
+                                switch  lowpan.ext_eid
+                                  case  7
+                                    group  lowpan.inner_packet  rest
+                                      field  lowpan.octet  8  uint
+                                    end
+                                  else
+                                    switch  lowpan.ext_nh
+                                      case  0
+                                        field  lowpan.ext_next_header  8  uint
+                                      else
+                                    end
+                                    length  8  bytes
+                                      group  lowpan.ext_header  rest
+                                        field  lowpan.octet  8  uint
+                                      end
+                                    end
+                                    group  lowpan.after_ext  rest
+                                      field  lowpan.octet  8  uint
+                                    end
+                                end
+                              case  13
+                                field  lowpan.nhc_d  1  uint
+                                switch  lowpan.nhc_d
+                                  case  0
+                                    field  lowpan.ghc_udp_c  1  uint
+                                    field  lowpan.ghc_udp_p  2  uint
+                                    switch  lowpan.ghc_udp_p
+                                      case  0
+                                        field  lowpan.udp_src_port  16  uint
+                                        field  lowpan.udp_dst_port  16  uint
+                                      case  1
+                                        field  lowpan.udp_src_port  16  uint
+                                        field  lowpan.udp_dst_port_low8  8  uint
+                                      case  2
+                                        field  lowpan.udp_src_port_low8  8  uint
+                                        field  lowpan.udp_dst_port  16  uint
+                                      case  3
+                                        field  lowpan.udp_src_port_low4  4  uint
+                                        field  lowpan.udp_dst_port_low4  4  uint
+                                    end
+                                    switch  lowpan.ghc_udp_c
+                                      case  0
+                                        field  lowpan.udp_checksum  16  uint
+                                      else
+                                    end
+                                    group  lowpan.ghc_payload  rest
+                                      field  lowpan.octet  8  uint
+                                    end
+                                  case  1
+                                    field  lowpan.nhc_e  3  uint
+                                    switch  lowpan.nhc_e
+                                      case  7
+                                        group  lowpan.ghc_payload  rest
+                                          field  lowpan.octet  8  uint
+                                        end
+                                      else
+                                        group  lowpan.nhc_octets  rest
+                                          field  lowpan.octet  8  uint
+                                        end
+                                    end
+                                end
+                              case  11
+                                field  lowpan.nhc_f  1  uint
+                                switch  lowpan.nhc_f
+                                  case  0
+                                    field  lowpan.ghc_ext_eid  2  uint
+                                    field  lowpan.ghc_ext_nh  1  uint
+                                    group  lowpan.ghc_payload  rest
+                                      field  lowpan.octet  8  uint
+                                    end
+                                  else
+                                    field  lowpan.nhc_low  3  uint
+                                    group  lowpan.nhc_octets  rest
+                                      field  lowpan.octet  8  uint
+                                    end
+                                end
+                              else
+                                field  lowpan.nhc_rest  4  uint
+                                group  lowpan.nhc_octets  rest
+                                  field  lowpan.octet  8  uint
+                                end
+                            end
+                        end
+                      case  0
+                        field  lowpan.s2_c  5  uint
+                        switch  lowpan.s2_c
+                          case  1
+                            group  lowpan.ipv6_packet  rest
+                              field  lowpan.octet  8  uint
+                            end
+                          else
+                            group  lowpan.frame_octets  rest
+                              field  lowpan.octet  8  uint
+                            end
+                        end
+                    end
+                  case  2
+                    field  lowpan.dispatch_bits  6  uint
+                    group  lowpan.frame_octets  rest
+                      field  lowpan.octet  8  uint
+                    end
+                  case  3
+                    field  lowpan.s2_d  3  uint
+                    switch  lowpan.s2_d
+                      case  0
+                        field  lowpan.datagram_size  11  uint
+                        field  lowpan.datagram_tag  16  uint
+                        field  lowpan.s3_a  2  uint
+                        switch  lowpan.s3_a
+                          case  0
+                            field  lowpan.nalp_bits  6  uint
+                            group  lowpan.frame_octets  rest
+                              field  lowpan.octet  8  uint
+                            end
+                          case  1
+                            field  lowpan.s3_b  1  uint
+                            switch  lowpan.s3_b
+                              case  1
+                                field  lowpan.tf  2  uint
+                                field  lowpan.nh  1  uint
+                                field  lowpan.hlim  2  uint
+                                field  lowpan.cid  1  uint
+                                field  lowpan.sac  1  uint
+                                field  lowpan.sam  2  uint
+                                field  lowpan.m  1  uint
+                                field  lowpan.dac  1  uint
+                                field  lowpan.dam  2  uint
+                                switch  lowpan.cid
+                                  case  1
+                                    field  lowpan.sci  4  uint
+                                    field  lowpan.dci  4  uint
+                                  else
+                                end
+                                switch  lowpan.tf
+                                  case  0
+                                    field  lowpan.ecn  2  uint
+                                    field  lowpan.dscp  6  uint
+                                    field  lowpan.tf_pad  4  uint
+                                    field  lowpan.flow_label  20  uint
+                                  case  1
+                                    field  lowpan.ecn  2  uint
+                                    field  lowpan.tf_pad  2  uint
+                                    field  lowpan.flow_label  20  uint
+                                  case  2
+                                    field  lowpan.ecn  2  uint
+                                    field  lowpan.dscp  6  uint
+                                  case  3
+                                end
+                                switch  lowpan.nh
+                                  case  0
+                                    field  lowpan.next_header  8  uint
+                                  else
+                                end
+                                switch  lowpan.hlim
+                                  case  0
+                                    field  lowpan.hop_limit  8  uint
+                                  else
+                                end
+                                switch  lowpan.sac
+                                  case  0
+                                    switch  lowpan.sam
+                                      case  0
+                                        field  lowpan.src_inline  128  hex
+                                      case  1
+                                        field  lowpan.src_inline  64  hex
+                                      case  2
+                                        field  lowpan.src_inline  16  hex
+                                      case  3
+                                    end
+                                  case  1
+                                    switch  lowpan.sam
+                                      case  0
+                                      case  1
+                                        field  lowpan.src_inline  64  hex
+                                      case  2
+                                        field  lowpan.src_inline  16  hex
+                                      case  3
+                                    end
+                                end
+                                switch  lowpan.m
+                                  case  0
+                                    switch  lowpan.dac
+                                      case  0
+                                        switch  lowpan.dam
+                                          case  0
+                                            field  lowpan.dst_inline  128  hex
+                                          case  1
+                                            field  lowpan.dst_inline  64  hex
+                                          case  2
+                                            field  lowpan.dst_inline  16  hex
+                                          case  3
+                                        end
+                                      case  1
+                                        switch  lowpan.dam
+                                          case  0
+                                          case  1
+                                            field  lowpan.dst_inline  64  hex
+                                          case  2
+                                            field  lowpan.dst_inline  16  hex
+                                          case  3
+                                        end
+                                    end
+                                  case  1
+                                    switch  lowpan.dac
+                                      case  0
+                                        switch  lowpan.dam
+                                          case  0
+                                            field  lowpan.dst_inline  128  hex
+                                          case  1
+                                            field  lowpan.dst_inline  48  hex
+                                          case  2
+                                            field  lowpan.dst_inline  32  hex
+                                          case  3
+                                            field  lowpan.dst_inline  8  hex
+                                        end
+                                      case  1
+                                        switch  lowpan.dam
+                                          case  0
+                                            field  lowpan.dst_inline  48  hex
+                                          case  1,2,3
+                                        end
+                                    end
+                                end
+                                switch  lowpan.nh
+                                  case  0
+                                    group  lowpan.ipv6_payload  rest
+                                      field  lowpan.octet  8  uint
+                                    end
+                                  case  1
+                                    field  lowpan.nhc_a  4  uint
+                                    switch  lowpan.nhc_a
+                                      case  15
+                                        field  lowpan.nhc_b  1  uint
+                                        switch  lowpan.nhc_b
+                                          case  0
+                                            field  lowpan.udp_c  1  uint
+                                            field  lowpan.udp_p  2  uint
+                                            switch  lowpan.udp_p
+                                              case  0
+                                                field  lowpan.udp_src_port  16  uint
+                                                field  lowpan.udp_dst_port  16  uint
+                                              case  1
+                                                field  lowpan.udp_src_port  16  uint
+                                                field  lowpan.udp_dst_port_low8  8  uint
+                                              case  2
+                                                field  lowpan.udp_src_port_low8  8  uint
+                                                field  lowpan.udp_dst_port  16  uint
+                                              case  3
+                                                field  lowpan.udp_src_port_low4  4  uint
+                                                field  lowpan.udp_dst_port_low4  4  uint
+                                            end
+                                            switch  lowpan.udp_c
+                                              case  0
+                                                field  lowpan.udp_checksum  16  uint
+                                              else
+                                            end
+                                            group  lowpan.udp_payload  rest
+                                              field  lowpan.octet  8  uint
+                                            end
+                                          else
+                                            field  lowpan.nhc_low  3  uint
+                                            group  lowpan.nhc_octets  rest
+                                              field  lowpan.octet  8  uint
+                                            end
+                                        end
+                                      case  14
+                                        field  lowpan.ext_eid  3  uint
+                                        field  lowpan.ext_nh  1  uint
+                                        switch  lowpan.ext_eid
+                                          case  7
+                                            group  lowpan.inner_packet  rest
+                                              field  lowpan.octet  8  uint
+                                            end
+                                          else
+                                            switch  lowpan.ext_nh
+                                              case  0
+                                                field  lowpan.ext_next_header  8  uint
+                                              else
+                                            end
+                                            length  8  bytes
+                                              group  lowpan.ext_header  rest
+                                                field  lowpan.octet  8  uint
+                                              end
+                                            end
+                                            group  lowpan.after_ext  rest
+                                              field  lowpan.octet  8  uint
+                                            end
+                                        end
+                                      case  13
+                                        field  lowpan.nhc_d  1  uint
+                                        switch  lowpan.nhc_d
+                                          case  0
+                                            field  lowpan.ghc_udp_c  1  uint
+                                            field  lowpan.ghc_udp_p  2  uint
+                                            switch  lowpan.ghc_udp_p
+                                              case  0
+                                                field  lowpan.udp_src_port  16  uint
+                                                field  lowpan.udp_dst_port  16  uint
+                                              case  1
+                                                field  lowpan.udp_src_port  16  uint
+                                                field  lowpan.udp_dst_port_low8  8  uint
+                                              case  2
+                                                field  lowpan.udp_src_port_low8  8  uint
+                                                field  lowpan.udp_dst_port  16  uint
+                                              case  3
+                                                field  lowpan.udp_src_port_low4  4  uint
+                                                field  lowpan.udp_dst_port_low4  4  uint
+                                            end
+                                            switch  lowpan.ghc_udp_c
+                                              case  0
+                                                field  lowpan.udp_checksum  16  uint
+                                              else
+                                            end
+                                            group  lowpan.ghc_payload  rest
+                                              field  lowpan.octet  8  uint
+                                            end
+                                          case  1
+                                            field  lowpan.nhc_e  3  uint
+                                            switch  lowpan.nhc_e
+                                              case  7
+                                                group  lowpan.ghc_payload  rest
+                                                  field  lowpan.octet  8  uint
+                                                end
+                                              else
+                                                group  lowpan.nhc_octets  rest
+                                                  field  lowpan.octet  8  uint
+                                                end
+                                            end
+                                        end
+                                      case  11
+                                        field  lowpan.nhc_f  1  uint
+                                        switch  lowpan.nhc_f
+                                          case  0
+                                            field  lowpan.ghc_ext_eid  2  uint
+                                            field  lowpan.ghc_ext_nh  1  uint
+                                            group  lowpan.ghc_payload  rest
+                                              field  lowpan.octet  8  uint
+                                            end
+                                          else
+                                            field  lowpan.nhc_low  3  uint
+                                            group  lowpan.nhc_octets  rest
+                                              field  lowpan.octet  8  uint
+                                            end
+                                        end
+                                      else
+                                        field  lowpan.nhc_rest  4  uint
+                                        group  lowpan.nhc_octets  rest
+                                          field  lowpan.octet  8  uint
+                                        end
+                                    end
+                                end
+                              case  0
+                                field  lowpan.s3_c  5  uint
+                                switch  lowpan.s3_c
+                                  case  1
+                                    group  lowpan.ipv6_packet  rest
+                                      field  lowpan.octet  8  uint
+                                    end
+                                  else
+                                    group  lowpan.frame_octets  rest
+                                      field  lowpan.octet  8  uint
+                                    end
+                                end
+                            end
+                          case  2
+                            field  lowpan.dispatch_bits  6  uint
+                            group  lowpan.frame_octets  rest
+                              field  lowpan.octet  8  uint
+                            end
+                          case  3
+                            field  lowpan.dispatch_bits  6  uint
+                            group  lowpan.frame_octets  rest
+                              field  lowpan.octet  8  uint
+                            end
+                        end
+                      case  4
+                        field  lowpan.datagram_size  11  uint
+                        field  lowpan.datagram_tag  16  uint
+                        field  lowpan.datagram_offset  8  uint
+                        group  lowpan.fragment_octets  rest
+                          field  lowpan.octet  8  uint
+                        end
+                      else
+                        field  lowpan.dispatch_low3  3  uint
+                        group  lowpan.frame_octets  rest
+                          field  lowpan.octet  8  uint
+                        end
+                    end
+                end
+              else
+                group  lowpan.frame_octets  rest
+                  field  lowpan.octet  8  uint
+                end
+            end
+        end
+      case  2
+        field  lowpan.dispatch_bits  6  uint
+        group  lowpan.frame_octets  rest
+          field  lowpan.octet  8  uint
+        end
+      case  3
+        field  lowpan.s1_d  3  uint
+        switch  lowpan.s1_d
+          case  0
+            field  lowpan.datagram_size  11  uint
+            field  lowpan.datagram_tag  16  uint
+            field  lowpan.s3_a  2  uint
+            switch  lowpan.s3_a
+              case  0
+                field  lowpan.nalp_bits  6  uint
+                group  lowpan.frame_octets  rest
+                  field  lowpan.octet  8  uint
+                end
+              case  1
+                field  lowpan.s3_b  1  uint
+                switch  lowpan.s3_b
+                  case  1
+                    field  lowpan.tf  2  uint
+                    field  lowpan.nh  1  uint
+                    field  lowpan.hlim  2  uint
+                    field  lowpan.cid  1  uint
+                    field  lowpan.sac  1  uint
+                    field  lowpan.sam  2  uint
+                    field  lowpan.m  1  uint
+                    field  lowpan.dac  1  uint
+                    field  lowpan.dam  2  uint
+                    switch  lowpan.cid
+                      case  1
+                        field  lowpan.sci  4  uint
+                        field  lowpan.dci  4  uint
+                      else
+                    end
+                    switch  lowpan.tf
+                      case  0
+                        field  lowpan.ecn  2  uint
+                        field  lowpan.dscp  6  uint
+                        field  lowpan.tf_pad  4  uint
+                        field  lowpan.flow_label  20  uint
+                      case  1
+                        field  lowpan.ecn  2  uint
+                        field  lowpan.tf_pad  2  uint
+                        field  lowpan.flow_label  20  uint
+                      case  2
+                        field  lowpan.ecn  2  uint
+                        field  lowpan.dscp  6  uint
+                      case  3
+                    end
+                    switch  lowpan.nh
+                      case  0
+                        field  lowpan.next_header  8  uint
+                      else
+                    end
+                    switch  lowpan.hlim
+                      case  0
+                        field  lowpan.hop_limit  8  uint
+                      else
+                    end
+                    switch  lowpan.sac
+                      case  0
+                        switch  lowpan.sam
+                          case  0
+                            field  lowpan.src_inline  128  hex
+                          case  1
+                            field  lowpan.src_inline  64  hex
+                          case  2
+                            field  lowpan.src_inline  16  hex
+                          case  3
+                        end
+                      case  1
+                        switch  lowpan.sam
+                          case  0
+                          case  1
+                            field  lowpan.src_inline  64  hex
+                          case  2
+                            field  lowpan.src_inline  16  hex
+                          case  3
+                        end
+                    end
+                    switch  lowpan.m
+                      case  0
+                        switch  lowpan.dac
+                          case  0
+                            switch  lowpan.dam
+                              case  0
+                                field  lowpan.dst_inline  128  hex
+                              case  1
+                                field  lowpan.dst_inline  64  hex
+                              case  2
+                                field  lowpan.dst_inline  16  hex
+                              case  3
+                            end
+                          case  1
+                            switch  lowpan.dam
+                              case  0
+                              case  1
+                                field  lowpan.dst_inline  64  hex
+                              case  2
+                                field  lowpan.dst_inline  16  hex
+                              case  3
+                            end
+                        end
+                      case  1
+                        switch  lowpan.dac
+                          case  0
+                            switch  lowpan.dam
+                              case  0
+                                field  lowpan.dst_inline  128  hex
+                              case  1
+                                field  lowpan.dst_inline  48  hex
+                              case  2
+                                field  lowpan.dst_inline  32  hex
+                              case  3
+                                field  lowpan.dst_inline  8  hex
+                            end
+                          case  1
+                            switch  lowpan.dam
+                              case  0
+                                field  lowpan.dst_inline  48  hex
+                              case  1,2,3
+                            end
+                        end
+                    end
+                    switch  lowpan.nh
+                      case  0
+                        group  lowpan.ipv6_payload  rest
+                          field  lowpan.octet  8  uint
+                        end
+                      case  1
+                        field  lowpan.nhc_a  4  uint
+                        switch  lowpan.nhc_a
+                          case  15
+                            field  lowpan.nhc_b  1  uint
+                            switch  lowpan.nhc_b
+                              case  0
+                                field  lowpan.udp_c  1  uint
+                                field  lowpan.udp_p  2  uint
+                                switch  lowpan.udp_p
+                                  case  0
+                                    field  lowpan.udp_src_port  16  uint
+                                    field  lowpan.udp_dst_port  16  uint
+                                  case  1
+                                    field  lowpan.udp_src_port  16  uint
+                                    field  lowpan.udp_dst_port_low8  8  uint
+                                  case  2
+                                    field  lowpan.udp_src_port_low8  8  uint
+                                    field  lowpan.udp_dst_port  16  uint
+                                  case  3
+                                    field  lowpan.udp_src_port_low4  4  uint
+                                    field  lowpan.udp_dst_port_low4  4  uint
+                                end
+                                switch  lowpan.udp_c
+                                  case  0
+                                    field  lowpan.udp_checksum  16  uint
+                                  else
+                                end
+                                group  lowpan.udp_payload  rest
+                                  field  lowpan.octet  8  uint
+                                end
+                              else
+                                field  lowpan.nhc_low  3  uint
+                                group  lowpan.nhc_octets  rest
+                                  field  lowpan.octet  8  uint
+                                end
+                            end
+                          case  14
+                            field  lowpan.ext_eid  3  uint
+                            field  lowpan.ext_nh  1  uint
+                            switch  lowpan.ext_eid
+                              case  7
+                                group  lowpan.inner_packet  rest
+                                  field  lowpan.octet  8  uint
+                                end
+                              else
+                                switch  lowpan.ext_nh
+                                  case  0
+                                    field  lowpan.ext_next_header  8  uint
+                                  else
+                                end
+                                length  8  bytes
+                                  group  lowpan.ext_header  rest
+                                    field  lowpan.octet  8  uint
+                                  end
+                                end
+                                group  lowpan.after_ext  rest
+                                  field  lowpan.octet  8  uint
+                                end
+                            end
+                          case  13
+                            field  lowpan.nhc_d  1  uint
+                            switch  lowpan.nhc_d
+                              case  0
+                                field  lowpan.ghc_udp_c  1  uint
+                                field  lowpan.ghc_udp_p  2  uint
+                                switch  lowpan.ghc_udp_p
+                                  case  0
+                                    field  lowpan.udp_src_port  16  uint
+                                    field  lowpan.udp_dst_port  16  uint
+                                  case  1
+                                    field  lowpan.udp_src_port  16  uint
+                                    field  lowpan.udp_dst_port_low8  8  uint
+                                  case  2
+                                    field  lowpan.udp_src_port_low8  8  uint
+                                    field  lowpan.udp_dst_port  16  uint
+                                  case  3
+                                    field  lowpan.udp_src_port_low4  4  uint
+                                    field  lowpan.udp_dst_port_low4  4  uint
+                                end
+                                switch  lowpan.ghc_udp_c
+                                  case  0
+                                    field  lowpan.udp_checksum  16  uint
+                                  else
+                                end
+                                group  lowpan.ghc_payload  rest
+                                  field  lowpan.octet  8  uint
+                                end
+                              case  1
+                                field  lowpan.nhc_e  3  uint
+                                switch  lowpan.nhc_e
+                                  case  7
+                                    group  lowpan.ghc_payload  rest
+                                      field  lowpan.octet  8  uint
+                                    end
+                                  else
+                                    group  lowpan.nhc_octets  rest
+                                      field  lowpan.octet  8  uint
+                                    end
+                                end
+                            end
+                          case  11
+                            field  lowpan.nhc_f  1  uint
+                            switch  lowpan.nhc_f
+                              case  0
+                                field  lowpan.ghc_ext_eid  2  uint
+                                field  lowpan.ghc_ext_nh  1  uint
+                                group  lowpan.ghc_payload  rest
+                                  field  lowpan.octet  8  uint
+                                end
+                              else
+                                field  lowpan.nhc_low  3  uint
+                                group  lowpan.nhc_octets  rest
+                                  field  lowpan.octet  8  uint
+                                end
+                            end
+                          else
+                            field  lowpan.nhc_rest  4  uint
+                            group  lowpan.nhc_octets  rest
+                              field  lowpan.octet  8  uint
+                            end
+                        end
+                    end
+                  case  0
+                    field  lowpan.s3_c  5  uint
+                    switch  lowpan.s3_c
+                      case  1
+                        group  lowpan.ipv6_packet  rest
+                          field  lowpan.octet  8  uint
+                        end
+                      else
+                        group  lowpan.frame_octets  rest
+                          field  lowpan.octet  8  uint
+                        end
+                    end
+                end
+              case  2
+                field  lowpan.dispatch_bits  6  uint
+                group  lowpan.frame_octets  rest
+                  field  lowpan.octet  8  uint
+                end
+              case  3
+                field  lowpan.dispatch_bits  6  uint
+                group  lowpan.frame_octets  rest
+                  field  lowpan.octet  8  uint
+                end
+            end
+          case  4
+            field  lowpan.datagram_size  11  uint
+            field  lowpan.datagram_tag  16  uint
+            field  lowpan.datagram_offset  8  uint
+            group  lowpan.fragment_octets  rest
+              field  lowpan.octet  8  uint
+            end
+          else
+            field  lowpan.dispatch_low3  3  uint
+            group  lowpan.frame_octets  rest
+              field  lowpan.octet  8  uint
+            end
+        end
+    end
+  case  3
+    field  lowpan.s0_d  3  uint
+    switch  lowpan.s0_d
+      case  0
+        field  lowpan.datagram_size  11  uint
+        field  lowpan.datagram_tag  16  uint
+        field  lowpan.s3_a  2  uint
+        switch  lowpan.s3_a
+          case  0
+            field  lowpan.nalp_bits  6  uint
+            group  lowpan.frame_octets  rest
+              field  lowpan.octet  8  uint
+            end
+          case  1
+            field  lowpan.s3_b  1  uint
+            switch  lowpan.s3_b
+              case  1
+                field  lowpan.tf  2  uint
+                field  lowpan.nh  1  uint
+                field  lowpan.hlim  2  uint
+                field  lowpan.cid  1  uint
+                field  lowpan.sac  1  uint
+                field  lowpan.sam  2  uint
+                field  lowpan.m  1  uint
+                field  lowpan.dac  1  uint
+                field  lowpan.dam  2  uint
+                switch  lowpan.cid
+                  case  1
+                    field  lowpan.sci  4  uint
+                    field  lowpan.dci  4  uint
+                  else
+                end
+                switch  lowpan.tf
+                  case  0
+                    field  lowpan.ecn  2  uint
+                    field  lowpan.dscp  6  uint
+                    field  lowpan.tf_pad  4  uint
+                    field  lowpan.flow_label  20  uint
+                  case  1
+                    field  lowpan.ecn  2  uint
+                    field  lowpan.tf_pad  2  uint
+                    field  lowpan.flow_label  20  uint
+                  case  2
+                    field  lowpan.ecn  2  uint
+                    field  lowpan.dscp  6  uint
+                  case  3
+                end
+                switch  lowpan.nh
+                  case  0
+                    field  lowpan.next_header  8  uint
+                  else
+                end
+                switch  lowpan.hlim
+                  case  0
+                    field  lowpan.hop_limit  8  uint
+                  else
+                end
+                switch  lowpan.sac
+                  case  0
+                    switch  lowpan.sam
+                      case  0
+                        field  lowpan.src_inline  128  hex
+                      case  1
+                        field  lowpan.src_inline  64  hex
+                      case  2
+                        field  lowpan.src_inline  16  hex
+                      case  3
+                    end
+                  case  1
+                    switch  lowpan.sam
+                      case  0
+                      case  1
+                        field  lowpan.src_inline  64  hex
+                      case  2
+                        field  lowpan.src_inline  16  hex
+                      case  3
+                    end
+                end
+                switch  lowpan.m
+                  case  0
+                    switch  lowpan.dac
+                      case  0
+                        switch  lowpan.dam
+                          case  0
+                            field  lowpan.dst_inline  128  hex
+                          case  1
+                            field  lowpan.dst_inline  64  hex
+                          case  2
+                            field  lowpan.dst_inline  16  hex
+                          case  3
+                        end
+                      case  1
+                        switch  lowpan.dam
+                          case  0
+                          case  1
+                            field  lowpan.dst_inline  64  hex
+                          case  2
+                            field  lowpan.dst_inline  16  hex
+                          case  3
+                        end
+                    end
+                  case  1
+                    switch  lowpan.dac
+                      case  0
+                        switch  lowpan.dam
+                          case  0
+                            field  lowpan.dst_inline  128  hex
+                          case  1
+                            field  lowpan.dst_inline  48  hex
+                          case  2
+                            field  lowpan.dst_inline  32  hex
+                          case  3
+                            field  lowpan.dst_inline  8  hex
+                        end
+                      case  1
+                        switch  lowpan.dam
+                          case  0
+                            field  lowpan.dst_inline  48  hex
+                          case  1,2,3
+                        end
+                    end
+                end
+                switch  lowpan.nh
+                  case  0
+                    group  lowpan.ipv6_payload  rest
+                      field  lowpan.octet  8  uint
+                    end
+                  case  1
+                    field  lowpan.nhc_a  4  uint
+                    switch  lowpan.nhc_a
+                      case  15
+                        field  lowpan.nhc_b  1  uint
+                        switch  lowpan.nhc_b
+                          case  0
+                            field  lowpan.udp_c  1  uint
+                            field  lowpan.udp_p  2  uint
+                            switch  lowpan.udp_p
+                              case  0
+                                field  lowpan.udp_src_port  16  uint
+                                field  lowpan.udp_dst_port  16  uint
+                              case  1
+                                field  lowpan.udp_src_port  16  uint
+                                field  lowpan.udp_dst_port_low8  8  uint
+                              case  2
+                                field  lowpan.udp_src_port_low8  8  uint
+                                field  lowpan.udp_dst_port  16  uint
+                              case  3
+                                field  lowpan.udp_src_port_low4  4  uint
+                                field  lowpan.udp_dst_port_low4  4  uint
+                            end
+                            switch  lowpan.udp_c
+                              case  0
+                                field  lowpan.udp_checksum  16  uint
+                              else
+                            end
+                            group  lowpan.udp_payload  rest
+                              field  lowpan.octet  8  uint
+                            end
+                          else
+                            field  lowpan.nhc_low  3  uint
+                            group  lowpan.nhc_octets  rest
+                              field  lowpan.octet  8  uint
+                            end
+                        end
+                      case  14
+                        field  lowpan.ext_eid  3  uint
+                        field  lowpan.ext_nh  1  uint
+                        switch  lowpan.ext_eid
+                          case  7
+                            group  lowpan.inner_packet  rest
+                              field  lowpan.octet  8  uint
+                            end
+                          else
+                            switch  lowpan.ext_nh
+                              case  0
+                                field  lowpan.ext_next_header  8  uint
+                              else
+                            end
+                            length  8  bytes
+                              group  lowpan.ext_header  rest
+                                field  lowpan.octet  8  uint
+                              end
+                            end
+                            group  lowpan.after_ext  rest
+                              field  lowpan.octet  8  uint
+                            end
+                        end
+                      case  13
+                        field  lowpan.nhc_d  1  uint
+                        switch  lowpan.nhc_d
+                          case  0
+                            field  lowpan.ghc_udp_c  1  uint
+                            field  lowpan.ghc_udp_p  2  uint
+                            switch  lowpan.ghc_udp_p
+                              case  0
+                                field  lowpan.udp_src_port  16  uint
+                                field  lowpan.udp_dst_port  16  uint
+                              case  1
+                                field  lowpan.udp_src_port  16  uint
+                                field  lowpan.udp_dst_port_low8  8  uint
+                              case  2
+                                field  lowpan.udp_src_port_low8  8  uint
+                                field  lowpan.udp_dst_port  16  uint
+                              case  3
+                                field  lowpan.udp_src_port_low4  4  uint
+                                field  lowpan.udp_dst_port_low4  4  uint
+                            end
+                            switch  lowpan.ghc_udp_c
+                              case  0
+                                field  lowpan.udp_checksum  16  uint
+                              else
+                            end
+                            group  lowpan.ghc_payload  rest
+                              field  lowpan.octet  8  uint
+                            end
+                          case  1
+                            field  lowpan.nhc_e  3  uint
+                            switch  lowpan.nhc_e
+                              case  7
+                                group  lowpan.ghc_payload  rest
+                                  field  lowpan.octet  8  uint
+                                end
+                              else
+                                group  lowpan.nhc_octets  rest
+                                  field  lowpan.octet  8  uint
+                                end
+                            end
+                        end
+                      case  11
+                        field  lowpan.nhc_f  1  uint
+                        switch  lowpan.nhc_f
+                          case  0
+                            field  lowpan.ghc_ext_eid  2  uint
+                            field  lowpan.ghc_ext_nh  1  uint
+                            group  lowpan.ghc_payload  rest
+                              field  lowpan.octet  8  uint
+                            end
+                          else
+                            field  lowpan.nhc_low  3  uint
+                            group  lowpan.nhc_octets  rest
+                              field  lowpan.octet  8  uint
+                            end
+                        end
+                      else
+                        field  lowpan.nhc_rest  4  uint
+                        group  lowpan.nhc_octets  rest
+                          field  lowpan.octet  8  uint
+                        end
+                    end
+                end
+              case  0
+                field  lowpan.s3_c  5  uint
+                switch  lowpan.s3_c
+                  case  1
+                    group  lowpan.ipv6_packet  rest
+                      field  lowpan.octet  8  uint
+                    end
+                  else
+                    group  lowpan.frame_octets  rest
+                      field  lowpan.octet  8  uint
+                    end
+                end
+            end
+          case  2
+            field  lowpan.dispatch_bits  6  uint
+            group  lowpan.frame_octets  rest
+              field  lowpan.octet  8  uint
+            end
+          case  3
+            field  lowpan.dispatch_bits  6  uint
+            group  lowpan.frame_octets  rest
+              field  lowpan.octet  8  uint
+            end
+        end
+      case  4
+        field  lowpan.datagram_size  11  uint
+        field  lowpan.datagram_tag  16  uint
+        field  lowpan.datagram_offset  8  uint
+        group  lowpan.fragment_octets  rest
+          field  lowpan.octet  8  uint
+        end
+      else
+        field  lowpan.dispatch_low3  3  uint
+        group  lowpan.frame_octets  rest
+          field  lowpan.octet  8  uint
+        end
+    end
+end

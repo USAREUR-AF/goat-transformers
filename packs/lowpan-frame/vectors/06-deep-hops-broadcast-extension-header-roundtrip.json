@@ -1,0 +1,25 @@
+{
+  "name": "deep-hops-broadcast-extension-header-roundtrip",
+  "from": "lowpan-frame",
+  "to": "lowpan-frame",
+  "input": "9f280011223344556677ffff50077f33e106010400000000f4163316334001",
+  "expect": "9f280011223344556677ffff50077f33e106010400000000f4163316334001",
+  "model": {
+    "lowpan.mesh_v": "0",
+    "lowpan.hops_left": "15",
+    "lowpan.deep_hops_left": "40",
+    "lowpan.originator": "0011223344556677",
+    "lowpan.final": "ffff",
+    "lowpan.s1_a": "1",
+    "lowpan.s1_c": "16",
+    "lowpan.bc0_sequence": "7",
+    "lowpan.s2_a": "1",
+    "lowpan.s2_b": "1",
+    "lowpan.nhc_a": "14",
+    "lowpan.ext_eid": "0",
+    "lowpan.ext_nh": "1",
+    "lowpan.ext_header.#": "6",
+    "lowpan.after_ext.#": "7"
+  },
+  "source": "built by tools/gen/mesh-vectors.py from values chosen there; layout restated from RFC 4944 sections 5.1 to 5.3 and 11.1, RFC 6282 sections 3 and 4; a mesh header with deep hops left, LOWPAN_BC0, IPHC and a hop-by-hop extension header NHC followed by octets (a UDP NHC and payload); expect derived there, no engine run"
+}

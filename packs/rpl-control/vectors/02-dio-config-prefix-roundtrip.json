@@ -1,0 +1,31 @@
+{
+  "name": "dio-config-prefix-roundtrip",
+  "from": "rpl-control",
+  "to": "rpl-control",
+  "input": "9b011a2b1ef0010090f0000020010db8000000000000000000000001040e0114030a08000100000100ffffff081e4040ffffffffffffffff0000000020010db8000000000000000000000000",
+  "expect": "9b011a2b1ef0010090f0000020010db8000000000000000000000001040e0114030a08000100000100ffffff081e4040ffffffffffffffff0000000020010db8000000000000000000000000",
+  "model": {
+    "rpl.instance_id": "30",
+    "rpl.version": "240",
+    "rpl.rank": "256",
+    "rpl.grounded": "1",
+    "rpl.mop": "2",
+    "rpl.dtsn": "240",
+    "rpl.dodagid": "20010db8000000000000000000000001",
+    "rpl.options.#": "2",
+    "rpl.options[0].rpl.option_type": "4",
+    "rpl.options[0].rpl.path_control_size": "1",
+    "rpl.options[0].rpl.dio_interval_doublings": "20",
+    "rpl.options[0].rpl.dio_interval_min": "3",
+    "rpl.options[0].rpl.max_rank_increase": "2048",
+    "rpl.options[0].rpl.min_hop_rank_increase": "256",
+    "rpl.options[0].rpl.objective_code_point": "1",
+    "rpl.options[0].rpl.lifetime_unit": "65535",
+    "rpl.options[1].rpl.option_type": "8",
+    "rpl.options[1].rpl.prefix_length": "64",
+    "rpl.options[1].rpl.autonomous": "1",
+    "rpl.options[1].rpl.valid_lifetime": "4294967295",
+    "rpl.options[1].rpl.prefix": "20010db8000000000000000000000000"
+  },
+  "source": "built by tools/gen/mesh-vectors.py from values chosen there; layout restated from RFC 6550 section 6.3 and 6.7; a grounded storing-mode DIO with DODAG configuration and prefix information options; expect derived there, no engine run"
+}

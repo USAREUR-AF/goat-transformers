@@ -1,0 +1,19 @@
+{
+  "name": "dao-target-transit-roundtrip",
+  "from": "rpl-control",
+  "to": "rpl-control",
+  "input": "9b021a2b1e8000050512008020010db80000000000000000000000020614000001ff20010db8000000000000000000000001",
+  "expect": "9b021a2b1e8000050512008020010db80000000000000000000000020614000001ff20010db8000000000000000000000001",
+  "model": {
+    "rpl.dao_k": "1",
+    "rpl.dao_d": "0",
+    "rpl.dao_sequence": "5",
+    "rpl.options.#": "2",
+    "rpl.options[0].rpl.prefix_length": "128",
+    "rpl.options[0].rpl.prefix_octets.#": "16",
+    "rpl.options[1].rpl.path_sequence": "1",
+    "rpl.options[1].rpl.path_lifetime": "255",
+    "rpl.options[1].rpl.parent_address.#": "16"
+  },
+  "source": "built by tools/gen/mesh-vectors.py from values chosen there; layout restated from RFC 6550 section 6.4 and 6.7; a non-storing DAO asking for an acknowledgement, with a target and a transit information option naming the parent; expect derived there, no engine run"
+}

@@ -1,0 +1,14 @@
+{
+  "name": "dis-roundtrip",
+  "from": "rpl-control",
+  "to": "rpl-control",
+  "input": "9b001a2b0000",
+  "expect": "9b001a2b0000",
+  "model": {
+    "inet.icmpv6_type": "155",
+    "inet.icmpv6_code": "0",
+    "inet.icmpv6_checksum": "6699",
+    "rpl.options.#": "0"
+  },
+  "source": "built by tools/gen/mesh-vectors.py from values chosen there; layout restated from RFC 6550 section 6.2; a DIS with no options; expect derived there, no engine run"
+}

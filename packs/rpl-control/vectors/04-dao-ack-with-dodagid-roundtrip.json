@@ -1,0 +1,14 @@
+{
+  "name": "dao-ack-with-dodagid-roundtrip",
+  "from": "rpl-control",
+  "to": "rpl-control",
+  "input": "9b031a2b1e80050020010db8000000000000000000000001",
+  "expect": "9b031a2b1e80050020010db8000000000000000000000001",
+  "model": {
+    "rpl.dao_d": "1",
+    "rpl.dao_sequence": "5",
+    "rpl.status": "0",
+    "rpl.dodagid": "20010db8000000000000000000000001"
+  },
+  "source": "built by tools/gen/mesh-vectors.py from values chosen there; layout restated from RFC 6550 section 6.5; a DAO-ACK with the DODAGID; expect derived there, no engine run"
+}

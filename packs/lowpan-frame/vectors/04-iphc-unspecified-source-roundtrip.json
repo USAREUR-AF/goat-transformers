@@ -1,0 +1,17 @@
+{
+  "name": "iphc-unspecified-source-roundtrip",
+  "from": "lowpan-frame",
+  "to": "lowpan-frame",
+  "input": "73462e06beefaa",
+  "expect": "73462e06beefaa",
+  "model": {
+    "lowpan.tf": "2",
+    "lowpan.dscp": "46",
+    "lowpan.sac": "1",
+    "lowpan.sam": "0",
+    "lowpan.dac": "1",
+    "lowpan.dam": "2",
+    "lowpan.dst_inline": "beef"
+  },
+  "source": "built by tools/gen/mesh-vectors.py from values chosen there; layout restated from RFC 4944 sections 5.1 to 5.3 and 11.1, RFC 6282 sections 3 and 4; IPHC with the traffic class only, the unspecified source (SAC 1, SAM 0, nothing inline) and a context-based 16-bit destination; expect derived there, no engine run"
+}

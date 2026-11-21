@@ -1,0 +1,13 @@
+{
+  "name": "uncompressed-ipv6-roundtrip",
+  "from": "lowpan-frame",
+  "to": "lowpan-frame",
+  "input": "41000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b",
+  "expect": "41000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b",
+  "model": {
+    "lowpan.s0_b": "0",
+    "lowpan.s0_c": "1",
+    "lowpan.ipv6_packet.#": "44"
+  },
+  "source": "built by tools/gen/mesh-vectors.py from values chosen there; layout restated from RFC 4944 sections 5.1 to 5.3 and 11.1, RFC 6282 sections 3 and 4; dispatch 0x41 and an uncompressed packet, kept as octets; expect derived there, no engine run"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "not-a-lowpan-frame-roundtrip",
+  "from": "lowpan-frame",
+  "to": "lowpan-frame",
+  "input": "3f010203",
+  "expect": "3f010203",
+  "model": {
+    "lowpan.s0_a": "0",
+    "lowpan.nalp_bits": "63",
+    "lowpan.frame_octets.#": "3"
+  },
+  "source": "built by tools/gen/mesh-vectors.py from values chosen there; layout restated from RFC 4944 sections 5.1 to 5.3 and 11.1, RFC 6282 sections 3 and 4; a frame of the NALP pattern 00, kept as octets; expect derived there, no engine run"
+}

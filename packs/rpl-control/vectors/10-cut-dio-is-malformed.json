@@ -1,0 +1,8 @@
+{
+  "name": "cut-dio-is-malformed",
+  "from": "rpl-control",
+  "to": "rpl-control",
+  "input": "9b011a2b1ef0010090f0000020010db800000000",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/mesh-vectors.py from values chosen there; layout restated from RFC 6550 section 6.3; the DIO of vector 02 cut inside its DODAGID; expect derived there, no engine run"
+}
