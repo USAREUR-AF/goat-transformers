@@ -571,6 +571,17 @@ func (r *seqReader) group(g *Group) error {
 		if st == nil || !st.ok {
 			return nil
 		}
+		// A second count (0.31): the two numbers of items must be equal as
+		// exact integers, checked before the bits left (rulings 4 and 5).
+		if g.cnt2 != nil {
+			st2 := r.cnts[g.cnt2]
+			if st2 == nil || !st2.ok {
+				return nil
+			}
+			if st.huge != st2.huge || st.items != st2.items {
+				return r.malformed("list %s: count %s and count %s state different numbers of items", g.List, g.cnt.name, g.cnt2.name)
+			}
+		}
 		if st.huge || st.items > uint64(r.limit-r.pos) {
 			return r.malformed("list %s: count %s states more items than the %d bit(s) left", g.List, g.cnt.name, r.limit-r.pos)
 		}
@@ -1489,8 +1500,11 @@ func (w *seqWriter) group(g *Group, sc seqScope) error {
 			}
 		}
 	case seqCountRef:
-		if c := w.cntAt[g.cnt]; c != nil {
-			c.items = len(items)
+		// Each count holds the items plus its own plus (0.31).
+		for _, cd := range []*seqCountDef{g.cnt, g.cnt2} {
+			if c := w.cntAt[cd]; cd != nil && c != nil {
+				c.items = len(items)
+			}
 		}
 		for _, it := range items {
 			if err := item(it); err != nil {

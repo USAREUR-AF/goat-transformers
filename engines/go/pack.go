@@ -236,6 +236,7 @@ type Group struct {
 	sizeUB    int
 	sbody     *seqBody     // sequential layouts: the lines of one item
 	cnt       *seqCountDef // sequential layouts: the count a `count @<name>` group references (0.21)
+	cnt2      *seqCountDef // the second count of `count @<a> @<b>` (0.31), nil for one
 	innerRest bool         // sequential layouts: a `rest` group is the last line of an item, outside any length block (0.21 ruling 10)
 	dots      []*Field     // the `.` fields of the body, in line order
 	packed    bool         // protobuf: the first `.` field has a numeric transform, so the list is a repeated scalar
@@ -906,6 +907,21 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 		case "group":
 			// group <list> <locator> [item <bits>] [count <count-locator> | count <n>]
 			g := &Group{List: args[0], Locator: args[1], Line: n, parent: inner()}
+			// `count @<a> @<b>` outside a sequential pack (0.31): on
+			// protobuf the locator `count` stays bad-locator at its own
+			// step; elsewhere the form is bad-directive after the file
+			// (ruling 7).
+			if twoCountForm(args) {
+				if p.lineWire(g.parent != nil) == WireProtobuf {
+					if err := p.checkGroupLocator(g.Locator, g.parent != nil); err != nil {
+						return nil, perr(ErrBadLocator, n, g.Locator, "%v", err)
+					}
+				}
+				if late == nil {
+					late = perr(ErrBadDirective, n, g.Locator, "group … count @<a> @<b> is valid only in a pack with `layout sequential`")
+				}
+				args = args[:2]
+			}
 			for i := 2; i < len(args); i += 2 {
 				if i+1 >= len(args) {
 					return nil, perr(ErrBadDirective, n, g.Locator, "group: `%s` needs a value", args[i])
