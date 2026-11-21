@@ -815,3 +815,11 @@ Packs vxlan-gpe-header, geneve-options, mpls-label-stack, ikev2-*
   document authors (RFC 3032: The Internet Society); BCP 78 and the IETF
   Trust's Legal Provisions Relating to IETF Documents. Layouts restated, no
   text copied.
+
+Packs ccsds-sdls-ep-pdu, ccsds-mal-spp-packet
+  From CCSDS 355.1-B-1, Space Data Link Security Protocol, Extended
+  Procedures (February 2020), https://ccsds.org/Pubs/355x1b1.pdf, and CCSDS
+  524.1-B-1, Mission Operations, MAL Space Packet Transport Binding and
+  Binary Encoding (August 2015), https://ccsds.org/Pubs/524x1b1.pdf. Reused
+  with attribution under the CCSDS reproduction permission statement; no
+  text, table or figure reprinted.
