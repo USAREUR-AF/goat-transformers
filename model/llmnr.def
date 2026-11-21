@@ -1,0 +1,8 @@
+# The llmnr module: the LLMNR header bits that differ from DNS (RFC 4795). Written by tools/gen/dirnaming-pack.py.
+module        llmnr
+version       0.1.0
+distribution  public
+source        "IETF RFC 4795, Link-Local Multicast Name Resolution (LLMNR), January 2007, section 2.1.1, https://www.rfc-editor.org/rfc/rfc4795.txt; with RFC 1035 section 4.1.1 for the shared header fields; layout restated"
+key   conflict   int     -  "flag C: in a query, several responses were received; in a response, the name is not unique"
+key   tentative  int     -  "flag T: the responder is authoritative but has not yet verified that the name is unique"
+key   z          int     -  "the four reserved bits, 0"

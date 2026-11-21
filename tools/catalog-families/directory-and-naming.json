@@ -1,0 +1,10 @@
+{
+  "name": "Directory and naming (NetBIOS name and datagram services, LLMNR, SLPv2)",
+  "domain": "networks",
+  "exact": [
+    "nbns-message",
+    "nbdgm-message",
+    "llmnr-header",
+    "slp-message"
+  ]
+}

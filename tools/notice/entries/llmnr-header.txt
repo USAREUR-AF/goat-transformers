@@ -1,0 +1,5 @@
+Packs llmnr-header; module llmnr
+  IETF RFC 4795, Link-Local Multicast Name Resolution (LLMNR) (January
+  2007), section 2.1.1, https://www.rfc-editor.org/rfc/rfc4795.txt.
+  Copyright (C) The IETF Trust (2007); BCP 78 and the IETF Trust Legal
+  Provisions. Layouts restated; no text copied.

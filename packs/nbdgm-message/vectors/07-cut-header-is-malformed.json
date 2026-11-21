@@ -1,0 +1,8 @@
+{
+  "name": "cut-header-is-malformed",
+  "from": "nbdgm-message",
+  "to": "nbdgm-message",
+  "input": "10024321c000021500",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/dirnaming-vectors.py from values chosen there; layout restated from RFC 1002 sections 4.1 and 4.4; the header stops inside the source address; expect derived there, no engine run"
+}

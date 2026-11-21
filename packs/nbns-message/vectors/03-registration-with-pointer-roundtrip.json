@@ -1,0 +1,14 @@
+{
+  "name": "registration-with-pointer-roundtrip",
+  "from": "nbns-message",
+  "to": "nbns-message",
+  "input": "0102291000010000000000012045494550464446454448434143414341434143414341434143414341434141410000200001c00c002000010000000000060000c0000207",
+  "expect": "0102291000010000000000012045494550464446454448434143414341434143414341434143414341434141410000200001c00c002000010000000000060000c0000207",
+  "model": {
+    "nbns.opcode": "5",
+    "nbns.additional[0].nbns.rr_name_t1": "3",
+    "nbns.additional[0].nbns.rr_name_pointer": "12",
+    "nbns.additional[0].nbns.nb_entries[0].nbns.nb_address": "3221225991"
+  },
+  "source": "built by tools/gen/dirnaming-vectors.py from values chosen there; layout restated from RFC 1002 sections 4.1 and 4.2; a name registration request (4.2.2) whose additional record names the question by a pointer to offset 12; expect derived there, no engine run"
+}

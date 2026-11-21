@@ -1,0 +1,13 @@
+{
+  "name": "wack-response-roundtrip",
+  "from": "nbns-message",
+  "to": "nbns-message",
+  "input": "0102bc00000000010000000020454945504644464544484341434143414341434143414341434143414341414100000a00010000000200022910",
+  "expect": "0102bc00000000010000000020454945504644464544484341434143414341434143414341434143414341414100000a00010000000200022910",
+  "model": {
+    "nbns.opcode": "7",
+    "nbns.answers[0].nbns.rr_type": "10",
+    "nbns.answers[0].nbns.rdata.#": "2"
+  },
+  "source": "built by tools/gen/dirnaming-vectors.py from values chosen there; layout restated from RFC 1002 sections 4.1 and 4.2.16; a WACK: a NULL record whose two data octets repeat the request's opcode and flags; expect derived there, no engine run"
+}

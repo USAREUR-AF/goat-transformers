@@ -1,0 +1,8 @@
+{
+  "name": "to-llmnr-header-flags-not-shared",
+  "from": "dns-header",
+  "to": "llmnr-header",
+  "input": "004287800001000100000000",
+  "expect": "004282000001000100000000",
+  "source": "built by tools/gen/dirnaming-vectors.py from values chosen there; layout restated from RFC 1035 section 4.1.1 and RFC 4795 section 2.1.1; AA, RD and RA have no LLMNR meaning and are dropped; C, T and Z are written 0; expect derived there, no engine run"
+}

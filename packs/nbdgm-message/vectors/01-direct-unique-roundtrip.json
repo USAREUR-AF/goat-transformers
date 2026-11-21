@@ -1,0 +1,18 @@
+{
+  "name": "direct-unique-roundtrip",
+  "from": "nbdgm-message",
+  "to": "nbdgm-message",
+  "input": "10024321c0000215008a00490000204544454d454a4546454f4645444243414341434143414341434143414341414100204547454a454d454646444643464743414341434143414341434143414341434100ff534d4225",
+  "expect": "10024321c0000215008a00490000204544454d454a4546454f4645444243414341434143414341434143414341414100204547454a454d454646444643464743414341434143414341434143414341434100ff534d4225",
+  "model": {
+    "nbdgm.msg_type": "16",
+    "nbdgm.first": "1",
+    "nbdgm.dgm_id": "17185",
+    "nbdgm.source_ip": "3221226005",
+    "nbdgm.source_port": "138",
+    "nbdgm.dgm_length": "73",
+    "nbdgm.source_name_label1": "EDEMEJEFEOFEDBCACACACACACACACAAA",
+    "nbdgm.user_data.#": "5"
+  },
+  "source": "built by tools/gen/dirnaming-vectors.py from values chosen there; layout restated from RFC 1002 sections 4.1 and 4.4; a direct unique datagram with five octets of user data; expect derived there, no engine run"
+}

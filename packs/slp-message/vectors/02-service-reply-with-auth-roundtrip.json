@@ -1,0 +1,18 @@
+{
+  "name": "service-reply-with-auth-roundtrip",
+  "from": "slp-message",
+  "to": "slp-message",
+  "input": "020200008c000000000001010002656e00000002002a300026736572766963653a7072696e7465723a6c70723a2f2f3139322e302e322e33312f7175657565000002580024736572766963653a7072696e7465723a6970703a2f2f3139322e302e322e33322f69707001000200227f00000000046b657931000102030405060708090a0b0c0d0e0f10111213",
+  "expect": "020200008c000000000001010002656e00000002002a300026736572766963653a7072696e7465723a6c70723a2f2f3139322e302e322e33312f7175657565000002580024736572766963653a7072696e7465723a6970703a2f2f3139322e302e322e33322f69707001000200227f00000000046b657931000102030405060708090a0b0c0d0e0f10111213",
+  "model": {
+    "slp.function_id": "2",
+    "slp.error_code": "0",
+    "slp.url_entries.#": "2",
+    "slp.url_entries[0].slp.url_lifetime": "10800",
+    "slp.url_entries[1].slp.url_auths.#": "1",
+    "slp.url_entries[1].slp.url_auths[0].slp.auth_bsd": "2",
+    "slp.url_entries[1].slp.url_auths[0].slp.auth_timestamp": "2130706432",
+    "slp.url_entries[1].slp.url_auths[0].slp.auth_data.#": "20"
+  },
+  "source": "built by tools/gen/dirnaming-vectors.py from values chosen there; layout restated from RFC 2608 section 8.2, 4.3 and 9.2; a SrvRply with two URL entries, the second with one authentication block; expect derived there, no engine run"
+}

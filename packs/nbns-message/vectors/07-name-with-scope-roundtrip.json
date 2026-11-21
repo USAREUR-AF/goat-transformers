@@ -1,0 +1,14 @@
+{
+  "name": "name-with-scope-roundtrip",
+  "from": "nbns-message",
+  "to": "nbns-message",
+  "input": "00030000000100000000000020454d45424543434143414341434143414341434143414341434143414341434104636f7270076578616d706c6503636f6d0000200001",
+  "expect": "00030000000100000000000020454d45424543434143414341434143414341434143414341434143414341434104636f7270076578616d706c6503636f6d0000200001",
+  "model": {
+    "nbns.questions[0].nbns.question_name_label2": "corp",
+    "nbns.questions[0].nbns.question_name_label3": "example",
+    "nbns.questions[0].nbns.question_name_label4": "com",
+    "nbns.questions[0].nbns.question_name_len5": "0"
+  },
+  "source": "built by tools/gen/dirnaming-vectors.py from values chosen there; layout restated from RFC 1002 sections 4.1 and 4.2.1; a unicast query whose name has a three-label scope; expect derived there, no engine run"
+}

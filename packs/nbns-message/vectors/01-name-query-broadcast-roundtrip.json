@@ -1,0 +1,20 @@
+{
+  "name": "name-query-broadcast-roundtrip",
+  "from": "nbns-message",
+  "to": "nbns-message",
+  "input": "8a010110000100000000000020464845504643454c45484643455046464641434143414341434143414341424e0000200001",
+  "expect": "8a010110000100000000000020464845504643454c45484643455046464641434143414341434143414341424e0000200001",
+  "model": {
+    "inet.dns_id": "35329",
+    "inet.dns_qr": "0",
+    "nbns.opcode": "0",
+    "inet.dns_rd": "1",
+    "nbns.broadcast": "1",
+    "nbns.questions.#": "1",
+    "nbns.questions[0].nbns.question_name_len1": "32",
+    "nbns.questions[0].nbns.question_name_label1": "FHEPFCELEHFCEPFFFACACACACACACABN",
+    "nbns.questions[0].nbns.question_type": "32",
+    "nbns.questions[0].nbns.question_class": "1"
+  },
+  "source": "built by tools/gen/dirnaming-vectors.py from values chosen there; layout restated from RFC 1002 sections 4.1 and 4.2; a broadcast name query (section 4.2.12) for WORKGROUP with suffix 0x1D; expect derived there, no engine run"
+}

@@ -1,0 +1,8 @@
+{
+  "name": "version-1-is-no-kind",
+  "from": "slp-message",
+  "to": "slp-message",
+  "input": "0105000015000000000002020005656e2d47420000",
+  "expect_error": "no-kind",
+  "source": "built by tools/gen/dirnaming-vectors.py from values chosen there; layout restated from RFC 2608 section 8; the first octet is not version 2; expect derived there, no engine run"
+}

@@ -1,0 +1,1710 @@
+# NetBIOS Datagram Service packet (RFC 1002 section 4.4): the header, then by message type the names and
+# user data, the error code, or the destination name of a query. Written by tools/gen/dirnaming-pack.py.
+format        nbdgm-message
+version       0.1.0
+distribution  public
+source        "IETF RFC 1002, Protocol Standard for a NetBIOS Service on a TCP/UDP Transport: Detailed Specifications, March 1987, sections 4.1, 4.2.1, 4.2.18 and 4.4, https://www.rfc-editor.org/rfc/rfc1002.txt; layouts restated"
+uses          nbdgm
+wire          bits
+layout        sequential
+bit_order     msb
+
+field  nbdgm.msg_type  8  uint
+field  nbdgm.reserved  4  uint
+field  nbdgm.source_node_type  2  uint
+field  nbdgm.first  1  uint
+field  nbdgm.more  1  uint
+field  nbdgm.dgm_id  16  uint
+field  nbdgm.source_ip  32  uint
+field  nbdgm.source_port  16  uint
+switch  nbdgm.msg_type
+  case  16,17,18
+    field  nbdgm.dgm_length  16  uint
+    field  nbdgm.packet_offset  16  uint
+    field  nbdgm.source_name_t1  2  uint
+    switch  nbdgm.source_name_t1
+      case  0
+        field  nbdgm.source_name_len1  6  uint
+        switch  nbdgm.source_name_len1
+          case  0
+          case  1
+            field  nbdgm.source_name_label1  8  chars:ascii8
+          case  2
+            field  nbdgm.source_name_label1  16  chars:ascii8
+          case  3
+            field  nbdgm.source_name_label1  24  chars:ascii8
+          case  4
+            field  nbdgm.source_name_label1  32  chars:ascii8
+          case  5
+            field  nbdgm.source_name_label1  40  chars:ascii8
+          case  6
+            field  nbdgm.source_name_label1  48  chars:ascii8
+          case  7
+            field  nbdgm.source_name_label1  56  chars:ascii8
+          case  8
+            field  nbdgm.source_name_label1  64  chars:ascii8
+          case  9
+            field  nbdgm.source_name_label1  72  chars:ascii8
+          case  10
+            field  nbdgm.source_name_label1  80  chars:ascii8
+          case  11
+            field  nbdgm.source_name_label1  88  chars:ascii8
+          case  12
+            field  nbdgm.source_name_label1  96  chars:ascii8
+          case  13
+            field  nbdgm.source_name_label1  104  chars:ascii8
+          case  14
+            field  nbdgm.source_name_label1  112  chars:ascii8
+          case  15
+            field  nbdgm.source_name_label1  120  chars:ascii8
+          case  16
+            field  nbdgm.source_name_label1  128  chars:ascii8
+          case  17
+            field  nbdgm.source_name_label1  136  chars:ascii8
+          case  18
+            field  nbdgm.source_name_label1  144  chars:ascii8
+          case  19
+            field  nbdgm.source_name_label1  152  chars:ascii8
+          case  20
+            field  nbdgm.source_name_label1  160  chars:ascii8
+          case  21
+            field  nbdgm.source_name_label1  168  chars:ascii8
+          case  22
+            field  nbdgm.source_name_label1  176  chars:ascii8
+          case  23
+            field  nbdgm.source_name_label1  184  chars:ascii8
+          case  24
+            field  nbdgm.source_name_label1  192  chars:ascii8
+          case  25
+            field  nbdgm.source_name_label1  200  chars:ascii8
+          case  26
+            field  nbdgm.source_name_label1  208  chars:ascii8
+          case  27
+            field  nbdgm.source_name_label1  216  chars:ascii8
+          case  28
+            field  nbdgm.source_name_label1  224  chars:ascii8
+          case  29
+            field  nbdgm.source_name_label1  232  chars:ascii8
+          case  30
+            field  nbdgm.source_name_label1  240  chars:ascii8
+          case  31
+            field  nbdgm.source_name_label1  248  chars:ascii8
+          case  32
+            field  nbdgm.source_name_label1  256  chars:ascii8
+          case  33
+            field  nbdgm.source_name_label1  264  chars:ascii8
+          case  34
+            field  nbdgm.source_name_label1  272  chars:ascii8
+          case  35
+            field  nbdgm.source_name_label1  280  chars:ascii8
+          case  36
+            field  nbdgm.source_name_label1  288  chars:ascii8
+          case  37
+            field  nbdgm.source_name_label1  296  chars:ascii8
+          case  38
+            field  nbdgm.source_name_label1  304  chars:ascii8
+          case  39
+            field  nbdgm.source_name_label1  312  chars:ascii8
+          case  40
+            field  nbdgm.source_name_label1  320  chars:ascii8
+          case  41
+            field  nbdgm.source_name_label1  328  chars:ascii8
+          case  42
+            field  nbdgm.source_name_label1  336  chars:ascii8
+          case  43
+            field  nbdgm.source_name_label1  344  chars:ascii8
+          case  44
+            field  nbdgm.source_name_label1  352  chars:ascii8
+          case  45
+            field  nbdgm.source_name_label1  360  chars:ascii8
+          case  46
+            field  nbdgm.source_name_label1  368  chars:ascii8
+          case  47
+            field  nbdgm.source_name_label1  376  chars:ascii8
+          case  48
+            field  nbdgm.source_name_label1  384  chars:ascii8
+          case  49
+            field  nbdgm.source_name_label1  392  chars:ascii8
+          case  50
+            field  nbdgm.source_name_label1  400  chars:ascii8
+          case  51
+            field  nbdgm.source_name_label1  408  chars:ascii8
+          case  52
+            field  nbdgm.source_name_label1  416  chars:ascii8
+          case  53
+            field  nbdgm.source_name_label1  424  chars:ascii8
+          case  54
+            field  nbdgm.source_name_label1  432  chars:ascii8
+          case  55
+            field  nbdgm.source_name_label1  440  chars:ascii8
+          case  56
+            field  nbdgm.source_name_label1  448  chars:ascii8
+          case  57
+            field  nbdgm.source_name_label1  456  chars:ascii8
+          case  58
+            field  nbdgm.source_name_label1  464  chars:ascii8
+          case  59
+            field  nbdgm.source_name_label1  472  chars:ascii8
+          case  60
+            field  nbdgm.source_name_label1  480  chars:ascii8
+          case  61
+            field  nbdgm.source_name_label1  488  chars:ascii8
+          case  62
+            field  nbdgm.source_name_label1  496  chars:ascii8
+          case  63
+            field  nbdgm.source_name_label1  504  chars:ascii8
+        end
+        switch  nbdgm.source_name_len1
+          case  0
+          else
+            field  nbdgm.source_name_t2  2  uint
+            switch  nbdgm.source_name_t2
+              case  0
+                field  nbdgm.source_name_len2  6  uint
+                switch  nbdgm.source_name_len2
+                  case  0
+                  case  1
+                    field  nbdgm.source_name_label2  8  chars:ascii8
+                  case  2
+                    field  nbdgm.source_name_label2  16  chars:ascii8
+                  case  3
+                    field  nbdgm.source_name_label2  24  chars:ascii8
+                  case  4
+                    field  nbdgm.source_name_label2  32  chars:ascii8
+                  case  5
+                    field  nbdgm.source_name_label2  40  chars:ascii8
+                  case  6
+                    field  nbdgm.source_name_label2  48  chars:ascii8
+                  case  7
+                    field  nbdgm.source_name_label2  56  chars:ascii8
+                  case  8
+                    field  nbdgm.source_name_label2  64  chars:ascii8
+                  case  9
+                    field  nbdgm.source_name_label2  72  chars:ascii8
+                  case  10
+                    field  nbdgm.source_name_label2  80  chars:ascii8
+                  case  11
+                    field  nbdgm.source_name_label2  88  chars:ascii8
+                  case  12
+                    field  nbdgm.source_name_label2  96  chars:ascii8
+                  case  13
+                    field  nbdgm.source_name_label2  104  chars:ascii8
+                  case  14
+                    field  nbdgm.source_name_label2  112  chars:ascii8
+                  case  15
+                    field  nbdgm.source_name_label2  120  chars:ascii8
+                  case  16
+                    field  nbdgm.source_name_label2  128  chars:ascii8
+                  case  17
+                    field  nbdgm.source_name_label2  136  chars:ascii8
+                  case  18
+                    field  nbdgm.source_name_label2  144  chars:ascii8
+                  case  19
+                    field  nbdgm.source_name_label2  152  chars:ascii8
+                  case  20
+                    field  nbdgm.source_name_label2  160  chars:ascii8
+                  case  21
+                    field  nbdgm.source_name_label2  168  chars:ascii8
+                  case  22
+                    field  nbdgm.source_name_label2  176  chars:ascii8
+                  case  23
+                    field  nbdgm.source_name_label2  184  chars:ascii8
+                  case  24
+                    field  nbdgm.source_name_label2  192  chars:ascii8
+                  case  25
+                    field  nbdgm.source_name_label2  200  chars:ascii8
+                  case  26
+                    field  nbdgm.source_name_label2  208  chars:ascii8
+                  case  27
+                    field  nbdgm.source_name_label2  216  chars:ascii8
+                  case  28
+                    field  nbdgm.source_name_label2  224  chars:ascii8
+                  case  29
+                    field  nbdgm.source_name_label2  232  chars:ascii8
+                  case  30
+                    field  nbdgm.source_name_label2  240  chars:ascii8
+                  case  31
+                    field  nbdgm.source_name_label2  248  chars:ascii8
+                  case  32
+                    field  nbdgm.source_name_label2  256  chars:ascii8
+                  case  33
+                    field  nbdgm.source_name_label2  264  chars:ascii8
+                  case  34
+                    field  nbdgm.source_name_label2  272  chars:ascii8
+                  case  35
+                    field  nbdgm.source_name_label2  280  chars:ascii8
+                  case  36
+                    field  nbdgm.source_name_label2  288  chars:ascii8
+                  case  37
+                    field  nbdgm.source_name_label2  296  chars:ascii8
+                  case  38
+                    field  nbdgm.source_name_label2  304  chars:ascii8
+                  case  39
+                    field  nbdgm.source_name_label2  312  chars:ascii8
+                  case  40
+                    field  nbdgm.source_name_label2  320  chars:ascii8
+                  case  41
+                    field  nbdgm.source_name_label2  328  chars:ascii8
+                  case  42
+                    field  nbdgm.source_name_label2  336  chars:ascii8
+                  case  43
+                    field  nbdgm.source_name_label2  344  chars:ascii8
+                  case  44
+                    field  nbdgm.source_name_label2  352  chars:ascii8
+                  case  45
+                    field  nbdgm.source_name_label2  360  chars:ascii8
+                  case  46
+                    field  nbdgm.source_name_label2  368  chars:ascii8
+                  case  47
+                    field  nbdgm.source_name_label2  376  chars:ascii8
+                  case  48
+                    field  nbdgm.source_name_label2  384  chars:ascii8
+                  case  49
+                    field  nbdgm.source_name_label2  392  chars:ascii8
+                  case  50
+                    field  nbdgm.source_name_label2  400  chars:ascii8
+                  case  51
+                    field  nbdgm.source_name_label2  408  chars:ascii8
+                  case  52
+                    field  nbdgm.source_name_label2  416  chars:ascii8
+                  case  53
+                    field  nbdgm.source_name_label2  424  chars:ascii8
+                  case  54
+                    field  nbdgm.source_name_label2  432  chars:ascii8
+                  case  55
+                    field  nbdgm.source_name_label2  440  chars:ascii8
+                  case  56
+                    field  nbdgm.source_name_label2  448  chars:ascii8
+                  case  57
+                    field  nbdgm.source_name_label2  456  chars:ascii8
+                  case  58
+                    field  nbdgm.source_name_label2  464  chars:ascii8
+                  case  59
+                    field  nbdgm.source_name_label2  472  chars:ascii8
+                  case  60
+                    field  nbdgm.source_name_label2  480  chars:ascii8
+                  case  61
+                    field  nbdgm.source_name_label2  488  chars:ascii8
+                  case  62
+                    field  nbdgm.source_name_label2  496  chars:ascii8
+                  case  63
+                    field  nbdgm.source_name_label2  504  chars:ascii8
+                end
+                switch  nbdgm.source_name_len2
+                  case  0
+                  else
+                    field  nbdgm.source_name_t3  2  uint
+                    switch  nbdgm.source_name_t3
+                      case  0
+                        field  nbdgm.source_name_len3  6  uint
+                        switch  nbdgm.source_name_len3
+                          case  0
+                          case  1
+                            field  nbdgm.source_name_label3  8  chars:ascii8
+                          case  2
+                            field  nbdgm.source_name_label3  16  chars:ascii8
+                          case  3
+                            field  nbdgm.source_name_label3  24  chars:ascii8
+                          case  4
+                            field  nbdgm.source_name_label3  32  chars:ascii8
+                          case  5
+                            field  nbdgm.source_name_label3  40  chars:ascii8
+                          case  6
+                            field  nbdgm.source_name_label3  48  chars:ascii8
+                          case  7
+                            field  nbdgm.source_name_label3  56  chars:ascii8
+                          case  8
+                            field  nbdgm.source_name_label3  64  chars:ascii8
+                          case  9
+                            field  nbdgm.source_name_label3  72  chars:ascii8
+                          case  10
+                            field  nbdgm.source_name_label3  80  chars:ascii8
+                          case  11
+                            field  nbdgm.source_name_label3  88  chars:ascii8
+                          case  12
+                            field  nbdgm.source_name_label3  96  chars:ascii8
+                          case  13
+                            field  nbdgm.source_name_label3  104  chars:ascii8
+                          case  14
+                            field  nbdgm.source_name_label3  112  chars:ascii8
+                          case  15
+                            field  nbdgm.source_name_label3  120  chars:ascii8
+                          case  16
+                            field  nbdgm.source_name_label3  128  chars:ascii8
+                          case  17
+                            field  nbdgm.source_name_label3  136  chars:ascii8
+                          case  18
+                            field  nbdgm.source_name_label3  144  chars:ascii8
+                          case  19
+                            field  nbdgm.source_name_label3  152  chars:ascii8
+                          case  20
+                            field  nbdgm.source_name_label3  160  chars:ascii8
+                          case  21
+                            field  nbdgm.source_name_label3  168  chars:ascii8
+                          case  22
+                            field  nbdgm.source_name_label3  176  chars:ascii8
+                          case  23
+                            field  nbdgm.source_name_label3  184  chars:ascii8
+                          case  24
+                            field  nbdgm.source_name_label3  192  chars:ascii8
+                          case  25
+                            field  nbdgm.source_name_label3  200  chars:ascii8
+                          case  26
+                            field  nbdgm.source_name_label3  208  chars:ascii8
+                          case  27
+                            field  nbdgm.source_name_label3  216  chars:ascii8
+                          case  28
+                            field  nbdgm.source_name_label3  224  chars:ascii8
+                          case  29
+                            field  nbdgm.source_name_label3  232  chars:ascii8
+                          case  30
+                            field  nbdgm.source_name_label3  240  chars:ascii8
+                          case  31
+                            field  nbdgm.source_name_label3  248  chars:ascii8
+                          case  32
+                            field  nbdgm.source_name_label3  256  chars:ascii8
+                          case  33
+                            field  nbdgm.source_name_label3  264  chars:ascii8
+                          case  34
+                            field  nbdgm.source_name_label3  272  chars:ascii8
+                          case  35
+                            field  nbdgm.source_name_label3  280  chars:ascii8
+                          case  36
+                            field  nbdgm.source_name_label3  288  chars:ascii8
+                          case  37
+                            field  nbdgm.source_name_label3  296  chars:ascii8
+                          case  38
+                            field  nbdgm.source_name_label3  304  chars:ascii8
+                          case  39
+                            field  nbdgm.source_name_label3  312  chars:ascii8
+                          case  40
+                            field  nbdgm.source_name_label3  320  chars:ascii8
+                          case  41
+                            field  nbdgm.source_name_label3  328  chars:ascii8
+                          case  42
+                            field  nbdgm.source_name_label3  336  chars:ascii8
+                          case  43
+                            field  nbdgm.source_name_label3  344  chars:ascii8
+                          case  44
+                            field  nbdgm.source_name_label3  352  chars:ascii8
+                          case  45
+                            field  nbdgm.source_name_label3  360  chars:ascii8
+                          case  46
+                            field  nbdgm.source_name_label3  368  chars:ascii8
+                          case  47
+                            field  nbdgm.source_name_label3  376  chars:ascii8
+                          case  48
+                            field  nbdgm.source_name_label3  384  chars:ascii8
+                          case  49
+                            field  nbdgm.source_name_label3  392  chars:ascii8
+                          case  50
+                            field  nbdgm.source_name_label3  400  chars:ascii8
+                          case  51
+                            field  nbdgm.source_name_label3  408  chars:ascii8
+                          case  52
+                            field  nbdgm.source_name_label3  416  chars:ascii8
+                          case  53
+                            field  nbdgm.source_name_label3  424  chars:ascii8
+                          case  54
+                            field  nbdgm.source_name_label3  432  chars:ascii8
+                          case  55
+                            field  nbdgm.source_name_label3  440  chars:ascii8
+                          case  56
+                            field  nbdgm.source_name_label3  448  chars:ascii8
+                          case  57
+                            field  nbdgm.source_name_label3  456  chars:ascii8
+                          case  58
+                            field  nbdgm.source_name_label3  464  chars:ascii8
+                          case  59
+                            field  nbdgm.source_name_label3  472  chars:ascii8
+                          case  60
+                            field  nbdgm.source_name_label3  480  chars:ascii8
+                          case  61
+                            field  nbdgm.source_name_label3  488  chars:ascii8
+                          case  62
+                            field  nbdgm.source_name_label3  496  chars:ascii8
+                          case  63
+                            field  nbdgm.source_name_label3  504  chars:ascii8
+                        end
+                        switch  nbdgm.source_name_len3
+                          case  0
+                          else
+                            field  nbdgm.source_name_t4  2  uint
+                            switch  nbdgm.source_name_t4
+                              case  0
+                                field  nbdgm.source_name_len4  6  uint
+                                switch  nbdgm.source_name_len4
+                                  case  0
+                                  case  1
+                                    field  nbdgm.source_name_label4  8  chars:ascii8
+                                  case  2
+                                    field  nbdgm.source_name_label4  16  chars:ascii8
+                                  case  3
+                                    field  nbdgm.source_name_label4  24  chars:ascii8
+                                  case  4
+                                    field  nbdgm.source_name_label4  32  chars:ascii8
+                                  case  5
+                                    field  nbdgm.source_name_label4  40  chars:ascii8
+                                  case  6
+                                    field  nbdgm.source_name_label4  48  chars:ascii8
+                                  case  7
+                                    field  nbdgm.source_name_label4  56  chars:ascii8
+                                  case  8
+                                    field  nbdgm.source_name_label4  64  chars:ascii8
+                                  case  9
+                                    field  nbdgm.source_name_label4  72  chars:ascii8
+                                  case  10
+                                    field  nbdgm.source_name_label4  80  chars:ascii8
+                                  case  11
+                                    field  nbdgm.source_name_label4  88  chars:ascii8
+                                  case  12
+                                    field  nbdgm.source_name_label4  96  chars:ascii8
+                                  case  13
+                                    field  nbdgm.source_name_label4  104  chars:ascii8
+                                  case  14
+                                    field  nbdgm.source_name_label4  112  chars:ascii8
+                                  case  15
+                                    field  nbdgm.source_name_label4  120  chars:ascii8
+                                  case  16
+                                    field  nbdgm.source_name_label4  128  chars:ascii8
+                                  case  17
+                                    field  nbdgm.source_name_label4  136  chars:ascii8
+                                  case  18
+                                    field  nbdgm.source_name_label4  144  chars:ascii8
+                                  case  19
+                                    field  nbdgm.source_name_label4  152  chars:ascii8
+                                  case  20
+                                    field  nbdgm.source_name_label4  160  chars:ascii8
+                                  case  21
+                                    field  nbdgm.source_name_label4  168  chars:ascii8
+                                  case  22
+                                    field  nbdgm.source_name_label4  176  chars:ascii8
+                                  case  23
+                                    field  nbdgm.source_name_label4  184  chars:ascii8
+                                  case  24
+                                    field  nbdgm.source_name_label4  192  chars:ascii8
+                                  case  25
+                                    field  nbdgm.source_name_label4  200  chars:ascii8
+                                  case  26
+                                    field  nbdgm.source_name_label4  208  chars:ascii8
+                                  case  27
+                                    field  nbdgm.source_name_label4  216  chars:ascii8
+                                  case  28
+                                    field  nbdgm.source_name_label4  224  chars:ascii8
+                                  case  29
+                                    field  nbdgm.source_name_label4  232  chars:ascii8
+                                  case  30
+                                    field  nbdgm.source_name_label4  240  chars:ascii8
+                                  case  31
+                                    field  nbdgm.source_name_label4  248  chars:ascii8
+                                  case  32
+                                    field  nbdgm.source_name_label4  256  chars:ascii8
+                                  case  33
+                                    field  nbdgm.source_name_label4  264  chars:ascii8
+                                  case  34
+                                    field  nbdgm.source_name_label4  272  chars:ascii8
+                                  case  35
+                                    field  nbdgm.source_name_label4  280  chars:ascii8
+                                  case  36
+                                    field  nbdgm.source_name_label4  288  chars:ascii8
+                                  case  37
+                                    field  nbdgm.source_name_label4  296  chars:ascii8
+                                  case  38
+                                    field  nbdgm.source_name_label4  304  chars:ascii8
+                                  case  39
+                                    field  nbdgm.source_name_label4  312  chars:ascii8
+                                  case  40
+                                    field  nbdgm.source_name_label4  320  chars:ascii8
+                                  case  41
+                                    field  nbdgm.source_name_label4  328  chars:ascii8
+                                  case  42
+                                    field  nbdgm.source_name_label4  336  chars:ascii8
+                                  case  43
+                                    field  nbdgm.source_name_label4  344  chars:ascii8
+                                  case  44
+                                    field  nbdgm.source_name_label4  352  chars:ascii8
+                                  case  45
+                                    field  nbdgm.source_name_label4  360  chars:ascii8
+                                  case  46
+                                    field  nbdgm.source_name_label4  368  chars:ascii8
+                                  case  47
+                                    field  nbdgm.source_name_label4  376  chars:ascii8
+                                  case  48
+                                    field  nbdgm.source_name_label4  384  chars:ascii8
+                                  case  49
+                                    field  nbdgm.source_name_label4  392  chars:ascii8
+                                  case  50
+                                    field  nbdgm.source_name_label4  400  chars:ascii8
+                                  case  51
+                                    field  nbdgm.source_name_label4  408  chars:ascii8
+                                  case  52
+                                    field  nbdgm.source_name_label4  416  chars:ascii8
+                                  case  53
+                                    field  nbdgm.source_name_label4  424  chars:ascii8
+                                  case  54
+                                    field  nbdgm.source_name_label4  432  chars:ascii8
+                                  case  55
+                                    field  nbdgm.source_name_label4  440  chars:ascii8
+                                  case  56
+                                    field  nbdgm.source_name_label4  448  chars:ascii8
+                                  case  57
+                                    field  nbdgm.source_name_label4  456  chars:ascii8
+                                  case  58
+                                    field  nbdgm.source_name_label4  464  chars:ascii8
+                                  case  59
+                                    field  nbdgm.source_name_label4  472  chars:ascii8
+                                  case  60
+                                    field  nbdgm.source_name_label4  480  chars:ascii8
+                                  case  61
+                                    field  nbdgm.source_name_label4  488  chars:ascii8
+                                  case  62
+                                    field  nbdgm.source_name_label4  496  chars:ascii8
+                                  case  63
+                                    field  nbdgm.source_name_label4  504  chars:ascii8
+                                end
+                                switch  nbdgm.source_name_len4
+                                  case  0
+                                  else
+                                    field  nbdgm.source_name_t5  2  uint
+                                    switch  nbdgm.source_name_t5
+                                      case  0
+                                        field  nbdgm.source_name_len5  6  uint
+                                        switch  nbdgm.source_name_len5
+                                          case  0
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+    field  nbdgm.destination_name_t1  2  uint
+    switch  nbdgm.destination_name_t1
+      case  0
+        field  nbdgm.destination_name_len1  6  uint
+        switch  nbdgm.destination_name_len1
+          case  0
+          case  1
+            field  nbdgm.destination_name_label1  8  chars:ascii8
+          case  2
+            field  nbdgm.destination_name_label1  16  chars:ascii8
+          case  3
+            field  nbdgm.destination_name_label1  24  chars:ascii8
+          case  4
+            field  nbdgm.destination_name_label1  32  chars:ascii8
+          case  5
+            field  nbdgm.destination_name_label1  40  chars:ascii8
+          case  6
+            field  nbdgm.destination_name_label1  48  chars:ascii8
+          case  7
+            field  nbdgm.destination_name_label1  56  chars:ascii8
+          case  8
+            field  nbdgm.destination_name_label1  64  chars:ascii8
+          case  9
+            field  nbdgm.destination_name_label1  72  chars:ascii8
+          case  10
+            field  nbdgm.destination_name_label1  80  chars:ascii8
+          case  11
+            field  nbdgm.destination_name_label1  88  chars:ascii8
+          case  12
+            field  nbdgm.destination_name_label1  96  chars:ascii8
+          case  13
+            field  nbdgm.destination_name_label1  104  chars:ascii8
+          case  14
+            field  nbdgm.destination_name_label1  112  chars:ascii8
+          case  15
+            field  nbdgm.destination_name_label1  120  chars:ascii8
+          case  16
+            field  nbdgm.destination_name_label1  128  chars:ascii8
+          case  17
+            field  nbdgm.destination_name_label1  136  chars:ascii8
+          case  18
+            field  nbdgm.destination_name_label1  144  chars:ascii8
+          case  19
+            field  nbdgm.destination_name_label1  152  chars:ascii8
+          case  20
+            field  nbdgm.destination_name_label1  160  chars:ascii8
+          case  21
+            field  nbdgm.destination_name_label1  168  chars:ascii8
+          case  22
+            field  nbdgm.destination_name_label1  176  chars:ascii8
+          case  23
+            field  nbdgm.destination_name_label1  184  chars:ascii8
+          case  24
+            field  nbdgm.destination_name_label1  192  chars:ascii8
+          case  25
+            field  nbdgm.destination_name_label1  200  chars:ascii8
+          case  26
+            field  nbdgm.destination_name_label1  208  chars:ascii8
+          case  27
+            field  nbdgm.destination_name_label1  216  chars:ascii8
+          case  28
+            field  nbdgm.destination_name_label1  224  chars:ascii8
+          case  29
+            field  nbdgm.destination_name_label1  232  chars:ascii8
+          case  30
+            field  nbdgm.destination_name_label1  240  chars:ascii8
+          case  31
+            field  nbdgm.destination_name_label1  248  chars:ascii8
+          case  32
+            field  nbdgm.destination_name_label1  256  chars:ascii8
+          case  33
+            field  nbdgm.destination_name_label1  264  chars:ascii8
+          case  34
+            field  nbdgm.destination_name_label1  272  chars:ascii8
+          case  35
+            field  nbdgm.destination_name_label1  280  chars:ascii8
+          case  36
+            field  nbdgm.destination_name_label1  288  chars:ascii8
+          case  37
+            field  nbdgm.destination_name_label1  296  chars:ascii8
+          case  38
+            field  nbdgm.destination_name_label1  304  chars:ascii8
+          case  39
+            field  nbdgm.destination_name_label1  312  chars:ascii8
+          case  40
+            field  nbdgm.destination_name_label1  320  chars:ascii8
+          case  41
+            field  nbdgm.destination_name_label1  328  chars:ascii8
+          case  42
+            field  nbdgm.destination_name_label1  336  chars:ascii8
+          case  43
+            field  nbdgm.destination_name_label1  344  chars:ascii8
+          case  44
+            field  nbdgm.destination_name_label1  352  chars:ascii8
+          case  45
+            field  nbdgm.destination_name_label1  360  chars:ascii8
+          case  46
+            field  nbdgm.destination_name_label1  368  chars:ascii8
+          case  47
+            field  nbdgm.destination_name_label1  376  chars:ascii8
+          case  48
+            field  nbdgm.destination_name_label1  384  chars:ascii8
+          case  49
+            field  nbdgm.destination_name_label1  392  chars:ascii8
+          case  50
+            field  nbdgm.destination_name_label1  400  chars:ascii8
+          case  51
+            field  nbdgm.destination_name_label1  408  chars:ascii8
+          case  52
+            field  nbdgm.destination_name_label1  416  chars:ascii8
+          case  53
+            field  nbdgm.destination_name_label1  424  chars:ascii8
+          case  54
+            field  nbdgm.destination_name_label1  432  chars:ascii8
+          case  55
+            field  nbdgm.destination_name_label1  440  chars:ascii8
+          case  56
+            field  nbdgm.destination_name_label1  448  chars:ascii8
+          case  57
+            field  nbdgm.destination_name_label1  456  chars:ascii8
+          case  58
+            field  nbdgm.destination_name_label1  464  chars:ascii8
+          case  59
+            field  nbdgm.destination_name_label1  472  chars:ascii8
+          case  60
+            field  nbdgm.destination_name_label1  480  chars:ascii8
+          case  61
+            field  nbdgm.destination_name_label1  488  chars:ascii8
+          case  62
+            field  nbdgm.destination_name_label1  496  chars:ascii8
+          case  63
+            field  nbdgm.destination_name_label1  504  chars:ascii8
+        end
+        switch  nbdgm.destination_name_len1
+          case  0
+          else
+            field  nbdgm.destination_name_t2  2  uint
+            switch  nbdgm.destination_name_t2
+              case  0
+                field  nbdgm.destination_name_len2  6  uint
+                switch  nbdgm.destination_name_len2
+                  case  0
+                  case  1
+                    field  nbdgm.destination_name_label2  8  chars:ascii8
+                  case  2
+                    field  nbdgm.destination_name_label2  16  chars:ascii8
+                  case  3
+                    field  nbdgm.destination_name_label2  24  chars:ascii8
+                  case  4
+                    field  nbdgm.destination_name_label2  32  chars:ascii8
+                  case  5
+                    field  nbdgm.destination_name_label2  40  chars:ascii8
+                  case  6
+                    field  nbdgm.destination_name_label2  48  chars:ascii8
+                  case  7
+                    field  nbdgm.destination_name_label2  56  chars:ascii8
+                  case  8
+                    field  nbdgm.destination_name_label2  64  chars:ascii8
+                  case  9
+                    field  nbdgm.destination_name_label2  72  chars:ascii8
+                  case  10
+                    field  nbdgm.destination_name_label2  80  chars:ascii8
+                  case  11
+                    field  nbdgm.destination_name_label2  88  chars:ascii8
+                  case  12
+                    field  nbdgm.destination_name_label2  96  chars:ascii8
+                  case  13
+                    field  nbdgm.destination_name_label2  104  chars:ascii8
+                  case  14
+                    field  nbdgm.destination_name_label2  112  chars:ascii8
+                  case  15
+                    field  nbdgm.destination_name_label2  120  chars:ascii8
+                  case  16
+                    field  nbdgm.destination_name_label2  128  chars:ascii8
+                  case  17
+                    field  nbdgm.destination_name_label2  136  chars:ascii8
+                  case  18
+                    field  nbdgm.destination_name_label2  144  chars:ascii8
+                  case  19
+                    field  nbdgm.destination_name_label2  152  chars:ascii8
+                  case  20
+                    field  nbdgm.destination_name_label2  160  chars:ascii8
+                  case  21
+                    field  nbdgm.destination_name_label2  168  chars:ascii8
+                  case  22
+                    field  nbdgm.destination_name_label2  176  chars:ascii8
+                  case  23
+                    field  nbdgm.destination_name_label2  184  chars:ascii8
+                  case  24
+                    field  nbdgm.destination_name_label2  192  chars:ascii8
+                  case  25
+                    field  nbdgm.destination_name_label2  200  chars:ascii8
+                  case  26
+                    field  nbdgm.destination_name_label2  208  chars:ascii8
+                  case  27
+                    field  nbdgm.destination_name_label2  216  chars:ascii8
+                  case  28
+                    field  nbdgm.destination_name_label2  224  chars:ascii8
+                  case  29
+                    field  nbdgm.destination_name_label2  232  chars:ascii8
+                  case  30
+                    field  nbdgm.destination_name_label2  240  chars:ascii8
+                  case  31
+                    field  nbdgm.destination_name_label2  248  chars:ascii8
+                  case  32
+                    field  nbdgm.destination_name_label2  256  chars:ascii8
+                  case  33
+                    field  nbdgm.destination_name_label2  264  chars:ascii8
+                  case  34
+                    field  nbdgm.destination_name_label2  272  chars:ascii8
+                  case  35
+                    field  nbdgm.destination_name_label2  280  chars:ascii8
+                  case  36
+                    field  nbdgm.destination_name_label2  288  chars:ascii8
+                  case  37
+                    field  nbdgm.destination_name_label2  296  chars:ascii8
+                  case  38
+                    field  nbdgm.destination_name_label2  304  chars:ascii8
+                  case  39
+                    field  nbdgm.destination_name_label2  312  chars:ascii8
+                  case  40
+                    field  nbdgm.destination_name_label2  320  chars:ascii8
+                  case  41
+                    field  nbdgm.destination_name_label2  328  chars:ascii8
+                  case  42
+                    field  nbdgm.destination_name_label2  336  chars:ascii8
+                  case  43
+                    field  nbdgm.destination_name_label2  344  chars:ascii8
+                  case  44
+                    field  nbdgm.destination_name_label2  352  chars:ascii8
+                  case  45
+                    field  nbdgm.destination_name_label2  360  chars:ascii8
+                  case  46
+                    field  nbdgm.destination_name_label2  368  chars:ascii8
+                  case  47
+                    field  nbdgm.destination_name_label2  376  chars:ascii8
+                  case  48
+                    field  nbdgm.destination_name_label2  384  chars:ascii8
+                  case  49
+                    field  nbdgm.destination_name_label2  392  chars:ascii8
+                  case  50
+                    field  nbdgm.destination_name_label2  400  chars:ascii8
+                  case  51
+                    field  nbdgm.destination_name_label2  408  chars:ascii8
+                  case  52
+                    field  nbdgm.destination_name_label2  416  chars:ascii8
+                  case  53
+                    field  nbdgm.destination_name_label2  424  chars:ascii8
+                  case  54
+                    field  nbdgm.destination_name_label2  432  chars:ascii8
+                  case  55
+                    field  nbdgm.destination_name_label2  440  chars:ascii8
+                  case  56
+                    field  nbdgm.destination_name_label2  448  chars:ascii8
+                  case  57
+                    field  nbdgm.destination_name_label2  456  chars:ascii8
+                  case  58
+                    field  nbdgm.destination_name_label2  464  chars:ascii8
+                  case  59
+                    field  nbdgm.destination_name_label2  472  chars:ascii8
+                  case  60
+                    field  nbdgm.destination_name_label2  480  chars:ascii8
+                  case  61
+                    field  nbdgm.destination_name_label2  488  chars:ascii8
+                  case  62
+                    field  nbdgm.destination_name_label2  496  chars:ascii8
+                  case  63
+                    field  nbdgm.destination_name_label2  504  chars:ascii8
+                end
+                switch  nbdgm.destination_name_len2
+                  case  0
+                  else
+                    field  nbdgm.destination_name_t3  2  uint
+                    switch  nbdgm.destination_name_t3
+                      case  0
+                        field  nbdgm.destination_name_len3  6  uint
+                        switch  nbdgm.destination_name_len3
+                          case  0
+                          case  1
+                            field  nbdgm.destination_name_label3  8  chars:ascii8
+                          case  2
+                            field  nbdgm.destination_name_label3  16  chars:ascii8
+                          case  3
+                            field  nbdgm.destination_name_label3  24  chars:ascii8
+                          case  4
+                            field  nbdgm.destination_name_label3  32  chars:ascii8
+                          case  5
+                            field  nbdgm.destination_name_label3  40  chars:ascii8
+                          case  6
+                            field  nbdgm.destination_name_label3  48  chars:ascii8
+                          case  7
+                            field  nbdgm.destination_name_label3  56  chars:ascii8
+                          case  8
+                            field  nbdgm.destination_name_label3  64  chars:ascii8
+                          case  9
+                            field  nbdgm.destination_name_label3  72  chars:ascii8
+                          case  10
+                            field  nbdgm.destination_name_label3  80  chars:ascii8
+                          case  11
+                            field  nbdgm.destination_name_label3  88  chars:ascii8
+                          case  12
+                            field  nbdgm.destination_name_label3  96  chars:ascii8
+                          case  13
+                            field  nbdgm.destination_name_label3  104  chars:ascii8
+                          case  14
+                            field  nbdgm.destination_name_label3  112  chars:ascii8
+                          case  15
+                            field  nbdgm.destination_name_label3  120  chars:ascii8
+                          case  16
+                            field  nbdgm.destination_name_label3  128  chars:ascii8
+                          case  17
+                            field  nbdgm.destination_name_label3  136  chars:ascii8
+                          case  18
+                            field  nbdgm.destination_name_label3  144  chars:ascii8
+                          case  19
+                            field  nbdgm.destination_name_label3  152  chars:ascii8
+                          case  20
+                            field  nbdgm.destination_name_label3  160  chars:ascii8
+                          case  21
+                            field  nbdgm.destination_name_label3  168  chars:ascii8
+                          case  22
+                            field  nbdgm.destination_name_label3  176  chars:ascii8
+                          case  23
+                            field  nbdgm.destination_name_label3  184  chars:ascii8
+                          case  24
+                            field  nbdgm.destination_name_label3  192  chars:ascii8
+                          case  25
+                            field  nbdgm.destination_name_label3  200  chars:ascii8
+                          case  26
+                            field  nbdgm.destination_name_label3  208  chars:ascii8
+                          case  27
+                            field  nbdgm.destination_name_label3  216  chars:ascii8
+                          case  28
+                            field  nbdgm.destination_name_label3  224  chars:ascii8
+                          case  29
+                            field  nbdgm.destination_name_label3  232  chars:ascii8
+                          case  30
+                            field  nbdgm.destination_name_label3  240  chars:ascii8
+                          case  31
+                            field  nbdgm.destination_name_label3  248  chars:ascii8
+                          case  32
+                            field  nbdgm.destination_name_label3  256  chars:ascii8
+                          case  33
+                            field  nbdgm.destination_name_label3  264  chars:ascii8
+                          case  34
+                            field  nbdgm.destination_name_label3  272  chars:ascii8
+                          case  35
+                            field  nbdgm.destination_name_label3  280  chars:ascii8
+                          case  36
+                            field  nbdgm.destination_name_label3  288  chars:ascii8
+                          case  37
+                            field  nbdgm.destination_name_label3  296  chars:ascii8
+                          case  38
+                            field  nbdgm.destination_name_label3  304  chars:ascii8
+                          case  39
+                            field  nbdgm.destination_name_label3  312  chars:ascii8
+                          case  40
+                            field  nbdgm.destination_name_label3  320  chars:ascii8
+                          case  41
+                            field  nbdgm.destination_name_label3  328  chars:ascii8
+                          case  42
+                            field  nbdgm.destination_name_label3  336  chars:ascii8
+                          case  43
+                            field  nbdgm.destination_name_label3  344  chars:ascii8
+                          case  44
+                            field  nbdgm.destination_name_label3  352  chars:ascii8
+                          case  45
+                            field  nbdgm.destination_name_label3  360  chars:ascii8
+                          case  46
+                            field  nbdgm.destination_name_label3  368  chars:ascii8
+                          case  47
+                            field  nbdgm.destination_name_label3  376  chars:ascii8
+                          case  48
+                            field  nbdgm.destination_name_label3  384  chars:ascii8
+                          case  49
+                            field  nbdgm.destination_name_label3  392  chars:ascii8
+                          case  50
+                            field  nbdgm.destination_name_label3  400  chars:ascii8
+                          case  51
+                            field  nbdgm.destination_name_label3  408  chars:ascii8
+                          case  52
+                            field  nbdgm.destination_name_label3  416  chars:ascii8
+                          case  53
+                            field  nbdgm.destination_name_label3  424  chars:ascii8
+                          case  54
+                            field  nbdgm.destination_name_label3  432  chars:ascii8
+                          case  55
+                            field  nbdgm.destination_name_label3  440  chars:ascii8
+                          case  56
+                            field  nbdgm.destination_name_label3  448  chars:ascii8
+                          case  57
+                            field  nbdgm.destination_name_label3  456  chars:ascii8
+                          case  58
+                            field  nbdgm.destination_name_label3  464  chars:ascii8
+                          case  59
+                            field  nbdgm.destination_name_label3  472  chars:ascii8
+                          case  60
+                            field  nbdgm.destination_name_label3  480  chars:ascii8
+                          case  61
+                            field  nbdgm.destination_name_label3  488  chars:ascii8
+                          case  62
+                            field  nbdgm.destination_name_label3  496  chars:ascii8
+                          case  63
+                            field  nbdgm.destination_name_label3  504  chars:ascii8
+                        end
+                        switch  nbdgm.destination_name_len3
+                          case  0
+                          else
+                            field  nbdgm.destination_name_t4  2  uint
+                            switch  nbdgm.destination_name_t4
+                              case  0
+                                field  nbdgm.destination_name_len4  6  uint
+                                switch  nbdgm.destination_name_len4
+                                  case  0
+                                  case  1
+                                    field  nbdgm.destination_name_label4  8  chars:ascii8
+                                  case  2
+                                    field  nbdgm.destination_name_label4  16  chars:ascii8
+                                  case  3
+                                    field  nbdgm.destination_name_label4  24  chars:ascii8
+                                  case  4
+                                    field  nbdgm.destination_name_label4  32  chars:ascii8
+                                  case  5
+                                    field  nbdgm.destination_name_label4  40  chars:ascii8
+                                  case  6
+                                    field  nbdgm.destination_name_label4  48  chars:ascii8
+                                  case  7
+                                    field  nbdgm.destination_name_label4  56  chars:ascii8
+                                  case  8
+                                    field  nbdgm.destination_name_label4  64  chars:ascii8
+                                  case  9
+                                    field  nbdgm.destination_name_label4  72  chars:ascii8
+                                  case  10
+                                    field  nbdgm.destination_name_label4  80  chars:ascii8
+                                  case  11
+                                    field  nbdgm.destination_name_label4  88  chars:ascii8
+                                  case  12
+                                    field  nbdgm.destination_name_label4  96  chars:ascii8
+                                  case  13
+                                    field  nbdgm.destination_name_label4  104  chars:ascii8
+                                  case  14
+                                    field  nbdgm.destination_name_label4  112  chars:ascii8
+                                  case  15
+                                    field  nbdgm.destination_name_label4  120  chars:ascii8
+                                  case  16
+                                    field  nbdgm.destination_name_label4  128  chars:ascii8
+                                  case  17
+                                    field  nbdgm.destination_name_label4  136  chars:ascii8
+                                  case  18
+                                    field  nbdgm.destination_name_label4  144  chars:ascii8
+                                  case  19
+                                    field  nbdgm.destination_name_label4  152  chars:ascii8
+                                  case  20
+                                    field  nbdgm.destination_name_label4  160  chars:ascii8
+                                  case  21
+                                    field  nbdgm.destination_name_label4  168  chars:ascii8
+                                  case  22
+                                    field  nbdgm.destination_name_label4  176  chars:ascii8
+                                  case  23
+                                    field  nbdgm.destination_name_label4  184  chars:ascii8
+                                  case  24
+                                    field  nbdgm.destination_name_label4  192  chars:ascii8
+                                  case  25
+                                    field  nbdgm.destination_name_label4  200  chars:ascii8
+                                  case  26
+                                    field  nbdgm.destination_name_label4  208  chars:ascii8
+                                  case  27
+                                    field  nbdgm.destination_name_label4  216  chars:ascii8
+                                  case  28
+                                    field  nbdgm.destination_name_label4  224  chars:ascii8
+                                  case  29
+                                    field  nbdgm.destination_name_label4  232  chars:ascii8
+                                  case  30
+                                    field  nbdgm.destination_name_label4  240  chars:ascii8
+                                  case  31
+                                    field  nbdgm.destination_name_label4  248  chars:ascii8
+                                  case  32
+                                    field  nbdgm.destination_name_label4  256  chars:ascii8
+                                  case  33
+                                    field  nbdgm.destination_name_label4  264  chars:ascii8
+                                  case  34
+                                    field  nbdgm.destination_name_label4  272  chars:ascii8
+                                  case  35
+                                    field  nbdgm.destination_name_label4  280  chars:ascii8
+                                  case  36
+                                    field  nbdgm.destination_name_label4  288  chars:ascii8
+                                  case  37
+                                    field  nbdgm.destination_name_label4  296  chars:ascii8
+                                  case  38
+                                    field  nbdgm.destination_name_label4  304  chars:ascii8
+                                  case  39
+                                    field  nbdgm.destination_name_label4  312  chars:ascii8
+                                  case  40
+                                    field  nbdgm.destination_name_label4  320  chars:ascii8
+                                  case  41
+                                    field  nbdgm.destination_name_label4  328  chars:ascii8
+                                  case  42
+                                    field  nbdgm.destination_name_label4  336  chars:ascii8
+                                  case  43
+                                    field  nbdgm.destination_name_label4  344  chars:ascii8
+                                  case  44
+                                    field  nbdgm.destination_name_label4  352  chars:ascii8
+                                  case  45
+                                    field  nbdgm.destination_name_label4  360  chars:ascii8
+                                  case  46
+                                    field  nbdgm.destination_name_label4  368  chars:ascii8
+                                  case  47
+                                    field  nbdgm.destination_name_label4  376  chars:ascii8
+                                  case  48
+                                    field  nbdgm.destination_name_label4  384  chars:ascii8
+                                  case  49
+                                    field  nbdgm.destination_name_label4  392  chars:ascii8
+                                  case  50
+                                    field  nbdgm.destination_name_label4  400  chars:ascii8
+                                  case  51
+                                    field  nbdgm.destination_name_label4  408  chars:ascii8
+                                  case  52
+                                    field  nbdgm.destination_name_label4  416  chars:ascii8
+                                  case  53
+                                    field  nbdgm.destination_name_label4  424  chars:ascii8
+                                  case  54
+                                    field  nbdgm.destination_name_label4  432  chars:ascii8
+                                  case  55
+                                    field  nbdgm.destination_name_label4  440  chars:ascii8
+                                  case  56
+                                    field  nbdgm.destination_name_label4  448  chars:ascii8
+                                  case  57
+                                    field  nbdgm.destination_name_label4  456  chars:ascii8
+                                  case  58
+                                    field  nbdgm.destination_name_label4  464  chars:ascii8
+                                  case  59
+                                    field  nbdgm.destination_name_label4  472  chars:ascii8
+                                  case  60
+                                    field  nbdgm.destination_name_label4  480  chars:ascii8
+                                  case  61
+                                    field  nbdgm.destination_name_label4  488  chars:ascii8
+                                  case  62
+                                    field  nbdgm.destination_name_label4  496  chars:ascii8
+                                  case  63
+                                    field  nbdgm.destination_name_label4  504  chars:ascii8
+                                end
+                                switch  nbdgm.destination_name_len4
+                                  case  0
+                                  else
+                                    field  nbdgm.destination_name_t5  2  uint
+                                    switch  nbdgm.destination_name_t5
+                                      case  0
+                                        field  nbdgm.destination_name_len5  6  uint
+                                        switch  nbdgm.destination_name_len5
+                                          case  0
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+    group  nbdgm.user_data  rest
+      field  nbdgm.octet  8  uint
+    end
+  case  19
+    field  nbdgm.error_code  8  uint
+  case  20,21,22
+    field  nbdgm.destination_name_t1  2  uint
+    switch  nbdgm.destination_name_t1
+      case  0
+        field  nbdgm.destination_name_len1  6  uint
+        switch  nbdgm.destination_name_len1
+          case  0
+          case  1
+            field  nbdgm.destination_name_label1  8  chars:ascii8
+          case  2
+            field  nbdgm.destination_name_label1  16  chars:ascii8
+          case  3
+            field  nbdgm.destination_name_label1  24  chars:ascii8
+          case  4
+            field  nbdgm.destination_name_label1  32  chars:ascii8
+          case  5
+            field  nbdgm.destination_name_label1  40  chars:ascii8
+          case  6
+            field  nbdgm.destination_name_label1  48  chars:ascii8
+          case  7
+            field  nbdgm.destination_name_label1  56  chars:ascii8
+          case  8
+            field  nbdgm.destination_name_label1  64  chars:ascii8
+          case  9
+            field  nbdgm.destination_name_label1  72  chars:ascii8
+          case  10
+            field  nbdgm.destination_name_label1  80  chars:ascii8
+          case  11
+            field  nbdgm.destination_name_label1  88  chars:ascii8
+          case  12
+            field  nbdgm.destination_name_label1  96  chars:ascii8
+          case  13
+            field  nbdgm.destination_name_label1  104  chars:ascii8
+          case  14
+            field  nbdgm.destination_name_label1  112  chars:ascii8
+          case  15
+            field  nbdgm.destination_name_label1  120  chars:ascii8
+          case  16
+            field  nbdgm.destination_name_label1  128  chars:ascii8
+          case  17
+            field  nbdgm.destination_name_label1  136  chars:ascii8
+          case  18
+            field  nbdgm.destination_name_label1  144  chars:ascii8
+          case  19
+            field  nbdgm.destination_name_label1  152  chars:ascii8
+          case  20
+            field  nbdgm.destination_name_label1  160  chars:ascii8
+          case  21
+            field  nbdgm.destination_name_label1  168  chars:ascii8
+          case  22
+            field  nbdgm.destination_name_label1  176  chars:ascii8
+          case  23
+            field  nbdgm.destination_name_label1  184  chars:ascii8
+          case  24
+            field  nbdgm.destination_name_label1  192  chars:ascii8
+          case  25
+            field  nbdgm.destination_name_label1  200  chars:ascii8
+          case  26
+            field  nbdgm.destination_name_label1  208  chars:ascii8
+          case  27
+            field  nbdgm.destination_name_label1  216  chars:ascii8
+          case  28
+            field  nbdgm.destination_name_label1  224  chars:ascii8
+          case  29
+            field  nbdgm.destination_name_label1  232  chars:ascii8
+          case  30
+            field  nbdgm.destination_name_label1  240  chars:ascii8
+          case  31
+            field  nbdgm.destination_name_label1  248  chars:ascii8
+          case  32
+            field  nbdgm.destination_name_label1  256  chars:ascii8
+          case  33
+            field  nbdgm.destination_name_label1  264  chars:ascii8
+          case  34
+            field  nbdgm.destination_name_label1  272  chars:ascii8
+          case  35
+            field  nbdgm.destination_name_label1  280  chars:ascii8
+          case  36
+            field  nbdgm.destination_name_label1  288  chars:ascii8
+          case  37
+            field  nbdgm.destination_name_label1  296  chars:ascii8
+          case  38
+            field  nbdgm.destination_name_label1  304  chars:ascii8
+          case  39
+            field  nbdgm.destination_name_label1  312  chars:ascii8
+          case  40
+            field  nbdgm.destination_name_label1  320  chars:ascii8
+          case  41
+            field  nbdgm.destination_name_label1  328  chars:ascii8
+          case  42
+            field  nbdgm.destination_name_label1  336  chars:ascii8
+          case  43
+            field  nbdgm.destination_name_label1  344  chars:ascii8
+          case  44
+            field  nbdgm.destination_name_label1  352  chars:ascii8
+          case  45
+            field  nbdgm.destination_name_label1  360  chars:ascii8
+          case  46
+            field  nbdgm.destination_name_label1  368  chars:ascii8
+          case  47
+            field  nbdgm.destination_name_label1  376  chars:ascii8
+          case  48
+            field  nbdgm.destination_name_label1  384  chars:ascii8
+          case  49
+            field  nbdgm.destination_name_label1  392  chars:ascii8
+          case  50
+            field  nbdgm.destination_name_label1  400  chars:ascii8
+          case  51
+            field  nbdgm.destination_name_label1  408  chars:ascii8
+          case  52
+            field  nbdgm.destination_name_label1  416  chars:ascii8
+          case  53
+            field  nbdgm.destination_name_label1  424  chars:ascii8
+          case  54
+            field  nbdgm.destination_name_label1  432  chars:ascii8
+          case  55
+            field  nbdgm.destination_name_label1  440  chars:ascii8
+          case  56
+            field  nbdgm.destination_name_label1  448  chars:ascii8
+          case  57
+            field  nbdgm.destination_name_label1  456  chars:ascii8
+          case  58
+            field  nbdgm.destination_name_label1  464  chars:ascii8
+          case  59
+            field  nbdgm.destination_name_label1  472  chars:ascii8
+          case  60
+            field  nbdgm.destination_name_label1  480  chars:ascii8
+          case  61
+            field  nbdgm.destination_name_label1  488  chars:ascii8
+          case  62
+            field  nbdgm.destination_name_label1  496  chars:ascii8
+          case  63
+            field  nbdgm.destination_name_label1  504  chars:ascii8
+        end
+        switch  nbdgm.destination_name_len1
+          case  0
+          else
+            field  nbdgm.destination_name_t2  2  uint
+            switch  nbdgm.destination_name_t2
+              case  0
+                field  nbdgm.destination_name_len2  6  uint
+                switch  nbdgm.destination_name_len2
+                  case  0
+                  case  1
+                    field  nbdgm.destination_name_label2  8  chars:ascii8
+                  case  2
+                    field  nbdgm.destination_name_label2  16  chars:ascii8
+                  case  3
+                    field  nbdgm.destination_name_label2  24  chars:ascii8
+                  case  4
+                    field  nbdgm.destination_name_label2  32  chars:ascii8
+                  case  5
+                    field  nbdgm.destination_name_label2  40  chars:ascii8
+                  case  6
+                    field  nbdgm.destination_name_label2  48  chars:ascii8
+                  case  7
+                    field  nbdgm.destination_name_label2  56  chars:ascii8
+                  case  8
+                    field  nbdgm.destination_name_label2  64  chars:ascii8
+                  case  9
+                    field  nbdgm.destination_name_label2  72  chars:ascii8
+                  case  10
+                    field  nbdgm.destination_name_label2  80  chars:ascii8
+                  case  11
+                    field  nbdgm.destination_name_label2  88  chars:ascii8
+                  case  12
+                    field  nbdgm.destination_name_label2  96  chars:ascii8
+                  case  13
+                    field  nbdgm.destination_name_label2  104  chars:ascii8
+                  case  14
+                    field  nbdgm.destination_name_label2  112  chars:ascii8
+                  case  15
+                    field  nbdgm.destination_name_label2  120  chars:ascii8
+                  case  16
+                    field  nbdgm.destination_name_label2  128  chars:ascii8
+                  case  17
+                    field  nbdgm.destination_name_label2  136  chars:ascii8
+                  case  18
+                    field  nbdgm.destination_name_label2  144  chars:ascii8
+                  case  19
+                    field  nbdgm.destination_name_label2  152  chars:ascii8
+                  case  20
+                    field  nbdgm.destination_name_label2  160  chars:ascii8
+                  case  21
+                    field  nbdgm.destination_name_label2  168  chars:ascii8
+                  case  22
+                    field  nbdgm.destination_name_label2  176  chars:ascii8
+                  case  23
+                    field  nbdgm.destination_name_label2  184  chars:ascii8
+                  case  24
+                    field  nbdgm.destination_name_label2  192  chars:ascii8
+                  case  25
+                    field  nbdgm.destination_name_label2  200  chars:ascii8
+                  case  26
+                    field  nbdgm.destination_name_label2  208  chars:ascii8
+                  case  27
+                    field  nbdgm.destination_name_label2  216  chars:ascii8
+                  case  28
+                    field  nbdgm.destination_name_label2  224  chars:ascii8
+                  case  29
+                    field  nbdgm.destination_name_label2  232  chars:ascii8
+                  case  30
+                    field  nbdgm.destination_name_label2  240  chars:ascii8
+                  case  31
+                    field  nbdgm.destination_name_label2  248  chars:ascii8
+                  case  32
+                    field  nbdgm.destination_name_label2  256  chars:ascii8
+                  case  33
+                    field  nbdgm.destination_name_label2  264  chars:ascii8
+                  case  34
+                    field  nbdgm.destination_name_label2  272  chars:ascii8
+                  case  35
+                    field  nbdgm.destination_name_label2  280  chars:ascii8
+                  case  36
+                    field  nbdgm.destination_name_label2  288  chars:ascii8
+                  case  37
+                    field  nbdgm.destination_name_label2  296  chars:ascii8
+                  case  38
+                    field  nbdgm.destination_name_label2  304  chars:ascii8
+                  case  39
+                    field  nbdgm.destination_name_label2  312  chars:ascii8
+                  case  40
+                    field  nbdgm.destination_name_label2  320  chars:ascii8
+                  case  41
+                    field  nbdgm.destination_name_label2  328  chars:ascii8
+                  case  42
+                    field  nbdgm.destination_name_label2  336  chars:ascii8
+                  case  43
+                    field  nbdgm.destination_name_label2  344  chars:ascii8
+                  case  44
+                    field  nbdgm.destination_name_label2  352  chars:ascii8
+                  case  45
+                    field  nbdgm.destination_name_label2  360  chars:ascii8
+                  case  46
+                    field  nbdgm.destination_name_label2  368  chars:ascii8
+                  case  47
+                    field  nbdgm.destination_name_label2  376  chars:ascii8
+                  case  48
+                    field  nbdgm.destination_name_label2  384  chars:ascii8
+                  case  49
+                    field  nbdgm.destination_name_label2  392  chars:ascii8
+                  case  50
+                    field  nbdgm.destination_name_label2  400  chars:ascii8
+                  case  51
+                    field  nbdgm.destination_name_label2  408  chars:ascii8
+                  case  52
+                    field  nbdgm.destination_name_label2  416  chars:ascii8
+                  case  53
+                    field  nbdgm.destination_name_label2  424  chars:ascii8
+                  case  54
+                    field  nbdgm.destination_name_label2  432  chars:ascii8
+                  case  55
+                    field  nbdgm.destination_name_label2  440  chars:ascii8
+                  case  56
+                    field  nbdgm.destination_name_label2  448  chars:ascii8
+                  case  57
+                    field  nbdgm.destination_name_label2  456  chars:ascii8
+                  case  58
+                    field  nbdgm.destination_name_label2  464  chars:ascii8
+                  case  59
+                    field  nbdgm.destination_name_label2  472  chars:ascii8
+                  case  60
+                    field  nbdgm.destination_name_label2  480  chars:ascii8
+                  case  61
+                    field  nbdgm.destination_name_label2  488  chars:ascii8
+                  case  62
+                    field  nbdgm.destination_name_label2  496  chars:ascii8
+                  case  63
+                    field  nbdgm.destination_name_label2  504  chars:ascii8
+                end
+                switch  nbdgm.destination_name_len2
+                  case  0
+                  else
+                    field  nbdgm.destination_name_t3  2  uint
+                    switch  nbdgm.destination_name_t3
+                      case  0
+                        field  nbdgm.destination_name_len3  6  uint
+                        switch  nbdgm.destination_name_len3
+                          case  0
+                          case  1
+                            field  nbdgm.destination_name_label3  8  chars:ascii8
+                          case  2
+                            field  nbdgm.destination_name_label3  16  chars:ascii8
+                          case  3
+                            field  nbdgm.destination_name_label3  24  chars:ascii8
+                          case  4
+                            field  nbdgm.destination_name_label3  32  chars:ascii8
+                          case  5
+                            field  nbdgm.destination_name_label3  40  chars:ascii8
+                          case  6
+                            field  nbdgm.destination_name_label3  48  chars:ascii8
+                          case  7
+                            field  nbdgm.destination_name_label3  56  chars:ascii8
+                          case  8
+                            field  nbdgm.destination_name_label3  64  chars:ascii8
+                          case  9
+                            field  nbdgm.destination_name_label3  72  chars:ascii8
+                          case  10
+                            field  nbdgm.destination_name_label3  80  chars:ascii8
+                          case  11
+                            field  nbdgm.destination_name_label3  88  chars:ascii8
+                          case  12
+                            field  nbdgm.destination_name_label3  96  chars:ascii8
+                          case  13
+                            field  nbdgm.destination_name_label3  104  chars:ascii8
+                          case  14
+                            field  nbdgm.destination_name_label3  112  chars:ascii8
+                          case  15
+                            field  nbdgm.destination_name_label3  120  chars:ascii8
+                          case  16
+                            field  nbdgm.destination_name_label3  128  chars:ascii8
+                          case  17
+                            field  nbdgm.destination_name_label3  136  chars:ascii8
+                          case  18
+                            field  nbdgm.destination_name_label3  144  chars:ascii8
+                          case  19
+                            field  nbdgm.destination_name_label3  152  chars:ascii8
+                          case  20
+                            field  nbdgm.destination_name_label3  160  chars:ascii8
+                          case  21
+                            field  nbdgm.destination_name_label3  168  chars:ascii8
+                          case  22
+                            field  nbdgm.destination_name_label3  176  chars:ascii8
+                          case  23
+                            field  nbdgm.destination_name_label3  184  chars:ascii8
+                          case  24
+                            field  nbdgm.destination_name_label3  192  chars:ascii8
+                          case  25
+                            field  nbdgm.destination_name_label3  200  chars:ascii8
+                          case  26
+                            field  nbdgm.destination_name_label3  208  chars:ascii8
+                          case  27
+                            field  nbdgm.destination_name_label3  216  chars:ascii8
+                          case  28
+                            field  nbdgm.destination_name_label3  224  chars:ascii8
+                          case  29
+                            field  nbdgm.destination_name_label3  232  chars:ascii8
+                          case  30
+                            field  nbdgm.destination_name_label3  240  chars:ascii8
+                          case  31
+                            field  nbdgm.destination_name_label3  248  chars:ascii8
+                          case  32
+                            field  nbdgm.destination_name_label3  256  chars:ascii8
+                          case  33
+                            field  nbdgm.destination_name_label3  264  chars:ascii8
+                          case  34
+                            field  nbdgm.destination_name_label3  272  chars:ascii8
+                          case  35
+                            field  nbdgm.destination_name_label3  280  chars:ascii8
+                          case  36
+                            field  nbdgm.destination_name_label3  288  chars:ascii8
+                          case  37
+                            field  nbdgm.destination_name_label3  296  chars:ascii8
+                          case  38
+                            field  nbdgm.destination_name_label3  304  chars:ascii8
+                          case  39
+                            field  nbdgm.destination_name_label3  312  chars:ascii8
+                          case  40
+                            field  nbdgm.destination_name_label3  320  chars:ascii8
+                          case  41
+                            field  nbdgm.destination_name_label3  328  chars:ascii8
+                          case  42
+                            field  nbdgm.destination_name_label3  336  chars:ascii8
+                          case  43
+                            field  nbdgm.destination_name_label3  344  chars:ascii8
+                          case  44
+                            field  nbdgm.destination_name_label3  352  chars:ascii8
+                          case  45
+                            field  nbdgm.destination_name_label3  360  chars:ascii8
+                          case  46
+                            field  nbdgm.destination_name_label3  368  chars:ascii8
+                          case  47
+                            field  nbdgm.destination_name_label3  376  chars:ascii8
+                          case  48
+                            field  nbdgm.destination_name_label3  384  chars:ascii8
+                          case  49
+                            field  nbdgm.destination_name_label3  392  chars:ascii8
+                          case  50
+                            field  nbdgm.destination_name_label3  400  chars:ascii8
+                          case  51
+                            field  nbdgm.destination_name_label3  408  chars:ascii8
+                          case  52
+                            field  nbdgm.destination_name_label3  416  chars:ascii8
+                          case  53
+                            field  nbdgm.destination_name_label3  424  chars:ascii8
+                          case  54
+                            field  nbdgm.destination_name_label3  432  chars:ascii8
+                          case  55
+                            field  nbdgm.destination_name_label3  440  chars:ascii8
+                          case  56
+                            field  nbdgm.destination_name_label3  448  chars:ascii8
+                          case  57
+                            field  nbdgm.destination_name_label3  456  chars:ascii8
+                          case  58
+                            field  nbdgm.destination_name_label3  464  chars:ascii8
+                          case  59
+                            field  nbdgm.destination_name_label3  472  chars:ascii8
+                          case  60
+                            field  nbdgm.destination_name_label3  480  chars:ascii8
+                          case  61
+                            field  nbdgm.destination_name_label3  488  chars:ascii8
+                          case  62
+                            field  nbdgm.destination_name_label3  496  chars:ascii8
+                          case  63
+                            field  nbdgm.destination_name_label3  504  chars:ascii8
+                        end
+                        switch  nbdgm.destination_name_len3
+                          case  0
+                          else
+                            field  nbdgm.destination_name_t4  2  uint
+                            switch  nbdgm.destination_name_t4
+                              case  0
+                                field  nbdgm.destination_name_len4  6  uint
+                                switch  nbdgm.destination_name_len4
+                                  case  0
+                                  case  1
+                                    field  nbdgm.destination_name_label4  8  chars:ascii8
+                                  case  2
+                                    field  nbdgm.destination_name_label4  16  chars:ascii8
+                                  case  3
+                                    field  nbdgm.destination_name_label4  24  chars:ascii8
+                                  case  4
+                                    field  nbdgm.destination_name_label4  32  chars:ascii8
+                                  case  5
+                                    field  nbdgm.destination_name_label4  40  chars:ascii8
+                                  case  6
+                                    field  nbdgm.destination_name_label4  48  chars:ascii8
+                                  case  7
+                                    field  nbdgm.destination_name_label4  56  chars:ascii8
+                                  case  8
+                                    field  nbdgm.destination_name_label4  64  chars:ascii8
+                                  case  9
+                                    field  nbdgm.destination_name_label4  72  chars:ascii8
+                                  case  10
+                                    field  nbdgm.destination_name_label4  80  chars:ascii8
+                                  case  11
+                                    field  nbdgm.destination_name_label4  88  chars:ascii8
+                                  case  12
+                                    field  nbdgm.destination_name_label4  96  chars:ascii8
+                                  case  13
+                                    field  nbdgm.destination_name_label4  104  chars:ascii8
+                                  case  14
+                                    field  nbdgm.destination_name_label4  112  chars:ascii8
+                                  case  15
+                                    field  nbdgm.destination_name_label4  120  chars:ascii8
+                                  case  16
+                                    field  nbdgm.destination_name_label4  128  chars:ascii8
+                                  case  17
+                                    field  nbdgm.destination_name_label4  136  chars:ascii8
+                                  case  18
+                                    field  nbdgm.destination_name_label4  144  chars:ascii8
+                                  case  19
+                                    field  nbdgm.destination_name_label4  152  chars:ascii8
+                                  case  20
+                                    field  nbdgm.destination_name_label4  160  chars:ascii8
+                                  case  21
+                                    field  nbdgm.destination_name_label4  168  chars:ascii8
+                                  case  22
+                                    field  nbdgm.destination_name_label4  176  chars:ascii8
+                                  case  23
+                                    field  nbdgm.destination_name_label4  184  chars:ascii8
+                                  case  24
+                                    field  nbdgm.destination_name_label4  192  chars:ascii8
+                                  case  25
+                                    field  nbdgm.destination_name_label4  200  chars:ascii8
+                                  case  26
+                                    field  nbdgm.destination_name_label4  208  chars:ascii8
+                                  case  27
+                                    field  nbdgm.destination_name_label4  216  chars:ascii8
+                                  case  28
+                                    field  nbdgm.destination_name_label4  224  chars:ascii8
+                                  case  29
+                                    field  nbdgm.destination_name_label4  232  chars:ascii8
+                                  case  30
+                                    field  nbdgm.destination_name_label4  240  chars:ascii8
+                                  case  31
+                                    field  nbdgm.destination_name_label4  248  chars:ascii8
+                                  case  32
+                                    field  nbdgm.destination_name_label4  256  chars:ascii8
+                                  case  33
+                                    field  nbdgm.destination_name_label4  264  chars:ascii8
+                                  case  34
+                                    field  nbdgm.destination_name_label4  272  chars:ascii8
+                                  case  35
+                                    field  nbdgm.destination_name_label4  280  chars:ascii8
+                                  case  36
+                                    field  nbdgm.destination_name_label4  288  chars:ascii8
+                                  case  37
+                                    field  nbdgm.destination_name_label4  296  chars:ascii8
+                                  case  38
+                                    field  nbdgm.destination_name_label4  304  chars:ascii8
+                                  case  39
+                                    field  nbdgm.destination_name_label4  312  chars:ascii8
+                                  case  40
+                                    field  nbdgm.destination_name_label4  320  chars:ascii8
+                                  case  41
+                                    field  nbdgm.destination_name_label4  328  chars:ascii8
+                                  case  42
+                                    field  nbdgm.destination_name_label4  336  chars:ascii8
+                                  case  43
+                                    field  nbdgm.destination_name_label4  344  chars:ascii8
+                                  case  44
+                                    field  nbdgm.destination_name_label4  352  chars:ascii8
+                                  case  45
+                                    field  nbdgm.destination_name_label4  360  chars:ascii8
+                                  case  46
+                                    field  nbdgm.destination_name_label4  368  chars:ascii8
+                                  case  47
+                                    field  nbdgm.destination_name_label4  376  chars:ascii8
+                                  case  48
+                                    field  nbdgm.destination_name_label4  384  chars:ascii8
+                                  case  49
+                                    field  nbdgm.destination_name_label4  392  chars:ascii8
+                                  case  50
+                                    field  nbdgm.destination_name_label4  400  chars:ascii8
+                                  case  51
+                                    field  nbdgm.destination_name_label4  408  chars:ascii8
+                                  case  52
+                                    field  nbdgm.destination_name_label4  416  chars:ascii8
+                                  case  53
+                                    field  nbdgm.destination_name_label4  424  chars:ascii8
+                                  case  54
+                                    field  nbdgm.destination_name_label4  432  chars:ascii8
+                                  case  55
+                                    field  nbdgm.destination_name_label4  440  chars:ascii8
+                                  case  56
+                                    field  nbdgm.destination_name_label4  448  chars:ascii8
+                                  case  57
+                                    field  nbdgm.destination_name_label4  456  chars:ascii8
+                                  case  58
+                                    field  nbdgm.destination_name_label4  464  chars:ascii8
+                                  case  59
+                                    field  nbdgm.destination_name_label4  472  chars:ascii8
+                                  case  60
+                                    field  nbdgm.destination_name_label4  480  chars:ascii8
+                                  case  61
+                                    field  nbdgm.destination_name_label4  488  chars:ascii8
+                                  case  62
+                                    field  nbdgm.destination_name_label4  496  chars:ascii8
+                                  case  63
+                                    field  nbdgm.destination_name_label4  504  chars:ascii8
+                                end
+                                switch  nbdgm.destination_name_len4
+                                  case  0
+                                  else
+                                    field  nbdgm.destination_name_t5  2  uint
+                                    switch  nbdgm.destination_name_t5
+                                      case  0
+                                        field  nbdgm.destination_name_len5  6  uint
+                                        switch  nbdgm.destination_name_len5
+                                          case  0
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+end

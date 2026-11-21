@@ -1,0 +1,5 @@
+Packs slp-message; module slp
+  IETF RFC 2608, Service Location Protocol, Version 2 (June 1999),
+  sections 4.3, 8 and 9.2, https://www.rfc-editor.org/rfc/rfc2608.txt.
+  Copyright (C) The Internet Society (1999); BCP 78 and the IETF Trust
+  Legal Provisions. Layouts restated; no text copied.

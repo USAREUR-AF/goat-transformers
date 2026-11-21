@@ -1,0 +1,17 @@
+{
+  "name": "positive-query-response-roundtrip",
+  "from": "nbns-message",
+  "to": "nbns-message",
+  "input": "8a0185000000000100000000204547454a454d45464644464346474341434143414341434143414341434143410000200001000493e0000c4000c000020a4000c633640a",
+  "expect": "8a0185000000000100000000204547454a454d45464644464346474341434143414341434143414341434143410000200001000493e0000c4000c000020a4000c633640a",
+  "model": {
+    "inet.dns_qr": "1",
+    "inet.dns_aa": "1",
+    "nbns.answers[0].nbns.rr_type": "32",
+    "nbns.answers[0].nbns.ttl": "300000",
+    "nbns.answers[0].nbns.nb_entries.#": "2",
+    "nbns.answers[0].nbns.nb_entries[0].nbns.nb_ont": "2",
+    "nbns.answers[0].nbns.nb_entries[1].nbns.nb_address": "3325256714"
+  },
+  "source": "built by tools/gen/dirnaming-vectors.py from values chosen there; layout restated from RFC 1002 sections 4.1 and 4.2; a positive name query response (4.2.13) with two addresses of an M node; expect derived there, no engine run"
+}
