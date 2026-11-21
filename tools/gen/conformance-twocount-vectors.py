@@ -1113,6 +1113,10 @@ end
          "  field probe.x 8 uint\nend\n" + g2 + "bogus\n", "unknown-directive")
     load("ruling-07-no-reference-in-one-kind-checked-after-the-file", seq + ab + "kind k1\nwhen 8 1\n" + g2 +
          "kind k2\nwhen 8 2\ngroup probe.nums count @a\n" + nv + "bogus\n", "unknown-directive")
+    # 3138: a token that is not `@<name>`, placed first, is a 0.31 load error
+    # too (Load errors: `count 8 @a`), so it is checked after the file (ruling 7)
+    load("ruling-07-a-length-then-a-name-checked-after-the-file", seq + "count a 8\n"
+         "group probe.nums count 8 @a\n" + nv + "bogus\n", "unknown-directive")
     return written
 
 
