@@ -1,0 +1,108 @@
+# CCSDS SDLS Extended Procedures PDU (355.1-B-1 section 5): the tag (procedure type, user flag,
+# service group, procedure identification), the data field length in bits, and the data field by
+# procedure. Written by tools/gen/sdls-ep-pack.py; do not edit by hand.
+format        ccsds-sdls-ep-pdu
+version       0.1.0
+distribution  public
+source        "CCSDS 355.1-B-1 Space Data Link Security Protocol, Extended Procedures, Blue Book, February 2020, https://ccsds.org/Pubs/355x1b1.pdf (sha256 5864d866e9c66fc2e644225d6e61724bc6f2c140359e444377e74ceb1a722483), section 5; reuse with attribution under the CCSDS reproduction permission statement"
+uses          ccsdssdlsep
+wire          bits
+layout        sequential
+bit_order     msb
+
+field  ccsdssdlsep.procedure_type  1  uint
+field  ccsdssdlsep.user_flag  1  uint
+field  ccsdssdlsep.service_group  2  uint
+field  ccsdssdlsep.procedure_id  4  uint
+length  16  bits
+  switch  ccsdssdlsep.user_flag
+    case  0
+      switch  ccsdssdlsep.service_group
+        case  0
+          switch  ccsdssdlsep.procedure_id
+            case  7
+              switch  ccsdssdlsep.procedure_type
+                case  1
+                  field  ccsdssdlsep.total_key_ids  16  uint
+                  group  ccsdssdlsep.data_octets  rest
+                    field  ccsdssdlsep.octet  8  uint
+                  end
+                else
+                  group  ccsdssdlsep.data_octets  rest
+                    field  ccsdssdlsep.octet  8  uint
+                  end
+              end
+            else
+              group  ccsdssdlsep.data_octets  rest
+                field  ccsdssdlsep.octet  8  uint
+              end
+          end
+        case  1,2
+          switch  ccsdssdlsep.procedure_id
+            case  11
+              field  ccsdssdlsep.spi  16  uint
+              group  ccsdssdlsep.gvc_ids  rest
+                field  ccsdssdlsep.gvc_id  16  uint
+              end
+            case  14,9,4
+              field  ccsdssdlsep.spi  16  uint
+            case  1
+              field  ccsdssdlsep.spi  16  uint
+              field  ccsdssdlsep.encryption_flag  1  uint
+              field  ccsdssdlsep.authentication_flag  1  uint
+              field  ccsdssdlsep.iv_field_length  6  uint
+              field  ccsdssdlsep.sn_field_length  6  uint
+              field  ccsdssdlsep.pl_field_length  2  uint
+              field  ccsdssdlsep.mac_field_length  8  uint
+              group  ccsdssdlsep.data_octets  rest
+                field  ccsdssdlsep.octet  8  uint
+              end
+            case  6,10,5
+              field  ccsdssdlsep.spi  16  uint
+              group  ccsdssdlsep.data_octets  rest
+                field  ccsdssdlsep.octet  8  uint
+              end
+            case  15
+              switch  ccsdssdlsep.procedure_type
+                case  1
+                  field  ccsdssdlsep.spi  16  uint
+                  field  ccsdssdlsep.last_directive  8  uint
+                else
+                  field  ccsdssdlsep.spi  16  uint
+              end
+            case  0
+              switch  ccsdssdlsep.procedure_type
+                case  0
+                  field  ccsdssdlsep.spi  16  uint
+                else
+                  group  ccsdssdlsep.data_octets  rest
+                    field  ccsdssdlsep.octet  8  uint
+                  end
+              end
+            else
+              group  ccsdssdlsep.data_octets  rest
+                field  ccsdssdlsep.octet  8  uint
+              end
+          end
+        case  3
+          switch  ccsdssdlsep.procedure_id
+            case  1,7
+            case  5
+              switch  ccsdssdlsep.procedure_type
+                case  1
+                  field  ccsdssdlsep.self_test_failed  1  uint
+                  field  ccsdssdlsep.self_test_bits  7  uint
+                else
+              end
+            else
+              group  ccsdssdlsep.data_octets  rest
+                field  ccsdssdlsep.octet  8  uint
+              end
+          end
+      end
+    else
+      group  ccsdssdlsep.data_octets  rest
+        field  ccsdssdlsep.octet  8  uint
+      end
+  end
+end

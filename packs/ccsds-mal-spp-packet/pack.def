@@ -1,0 +1,64 @@
+# CCSDS MO MAL Space Packet (524.1-B-1 section 3): the space packet primary header on the
+# ccsdssp keys, the fixed part of the MAL secondary header, the source and destination IDs and the
+# segment counter when present, then the rest as octets. Written by tools/gen/sdls-ep-pack.py.
+format        ccsds-mal-spp-packet
+version       0.1.0
+distribution  public
+source        "CCSDS 524.1-B-1 Mission Operations, MAL Space Packet Transport Binding and Binary Encoding, Blue Book, August 2015, https://ccsds.org/Pubs/524x1b1.pdf (sha256 6daa871c4f1298fbd0789dd6073841f5c71e7860e44a0b613c17b156939332a4), sections 3.1 and 3.4, with the primary header of CCSDS 133.0-B-2; reuse with attribution under the CCSDS reproduction permission statement"
+uses          ccsdssp
+uses          ccsdsmal
+wire          bits
+layout        sequential
+bit_order     msb
+
+kind    packet
+when    3  0
+field  ccsdssp.packet_type  1  uint
+field  ccsdssp.secondary_header_flag  1  uint
+field  ccsdssp.apid  11  uint
+field  ccsdssp.sequence_flags  2  uint
+switch  ccsdssp.packet_type
+  case  0
+    field  ccsdssp.sequence_count  14  uint
+  case  1
+    field  ccsdssp.sequence_count_or_name  14  uint
+end
+field  ccsdssp.data_length  16  uint
+field  ccsdsmal.version  3  uint
+field  ccsdsmal.sdu_type  5  uint
+field  ccsdsmal.service_area  16  uint
+field  ccsdsmal.service  16  uint
+field  ccsdsmal.operation  16  uint
+field  ccsdsmal.area_version  8  uint
+field  ccsdsmal.is_error  1  uint
+field  ccsdsmal.qos_level  2  uint
+field  ccsdsmal.session  2  uint
+field  ccsdsmal.secondary_apid  11  uint
+field  ccsdsmal.secondary_apid_qualifier  16  uint
+field  ccsdsmal.transaction_id  64  twos
+field  ccsdsmal.source_id_flag  1  uint
+field  ccsdsmal.destination_id_flag  1  uint
+field  ccsdsmal.priority_flag  1  uint
+field  ccsdsmal.timestamp_flag  1  uint
+field  ccsdsmal.network_zone_flag  1  uint
+field  ccsdsmal.session_name_flag  1  uint
+field  ccsdsmal.domain_flag  1  uint
+field  ccsdsmal.authentication_id_flag  1  uint
+switch  ccsdsmal.source_id_flag
+  case  1
+    field  ccsdsmal.source_id  8  uint
+  else
+end
+switch  ccsdsmal.destination_id_flag
+  case  1
+    field  ccsdsmal.destination_id  8  uint
+  else
+end
+switch  ccsdssp.sequence_flags
+  case  0,1,2
+    field  ccsdsmal.segment_counter  32  uint
+  else
+end
+group  ccsdsmal.rest_octets  rest
+  field  ccsdsmal.octet  8  uint
+end

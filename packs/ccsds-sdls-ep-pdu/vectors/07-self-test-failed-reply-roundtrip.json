@@ -1,0 +1,13 @@
+{
+  "name": "self-test-failed-reply-roundtrip",
+  "from": "ccsds-sdls-ep-pdu",
+  "to": "ccsds-sdls-ep-pdu",
+  "input": "b5000880",
+  "expect": "b5000880",
+  "model": {
+    "ccsdssdlsep.procedure_id": "5",
+    "ccsdssdlsep.self_test_failed": "1",
+    "ccsdssdlsep.self_test_bits": "0"
+  },
+  "source": "built by tools/gen/sdls-ep-vectors.py from values chosen there; layout restated from CCSDS 355.1-B-1 section 5; a Self-Test reply reporting a failure; expect derived there, no engine run"
+}

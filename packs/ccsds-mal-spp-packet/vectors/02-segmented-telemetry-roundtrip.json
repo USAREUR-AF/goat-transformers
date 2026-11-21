@@ -1,0 +1,19 @@
+{
+  "name": "segmented-telemetry-roundtrip",
+  "from": "ccsds-mal-spp-packet",
+  "to": "ccsds-mal-spp-packet",
+  "input": "0832400900220700040002000301cbe80000fffffffffffffffb100000000700010203040506070809",
+  "expect": "0832400900220700040002000301cbe80000fffffffffffffffb100000000700010203040506070809",
+  "model": {
+    "ccsdssp.packet_type": "0",
+    "ccsdssp.sequence_flags": "1",
+    "ccsdssp.sequence_count": "9",
+    "ccsdsmal.is_error": "1",
+    "ccsdsmal.session": "1",
+    "ccsdsmal.transaction_id": "-5",
+    "ccsdsmal.timestamp_flag": "1",
+    "ccsdsmal.segment_counter": "7",
+    "ccsdsmal.rest_octets.#": "10"
+  },
+  "source": "built by tools/gen/sdls-ep-vectors.py from values chosen there; layout restated from CCSDS 524.1-B-1 sections 3.1 and 3.4 and CCSDS 133.0-B-2 section 4.1.3; the first segment of a telemetry error message: a negative transaction ID, the segment counter, and the timestamp and body as octets; expect derived there, no engine run"
+}

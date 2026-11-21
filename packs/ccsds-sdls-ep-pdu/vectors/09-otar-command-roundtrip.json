@@ -1,0 +1,12 @@
+{
+  "name": "otar-command-roundtrip",
+  "from": "ccsds-sdls-ep-pdu",
+  "to": "ccsds-sdls-ep-pdu",
+  "input": "010140000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f2021222324252627",
+  "expect": "010140000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f2021222324252627",
+  "model": {
+    "ccsdssdlsep.procedure_id": "1",
+    "ccsdssdlsep.data_octets.#": "40"
+  },
+  "source": "built by tools/gen/sdls-ep-vectors.py from values chosen there; layout restated from CCSDS 355.1-B-1 section 5; an OTAR command, whose fields have managed lengths, kept as octets; expect derived there, no engine run"
+}
