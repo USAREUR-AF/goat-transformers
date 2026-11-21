@@ -1,0 +1,5 @@
+Packs brightsky-*; modules bs*
+  Bright Sky 2.2.12 OpenAPI document, https://api.brightsky.dev/openapi.json
+  (read 2026-11-21), repository https://github.com/jdemaeyer/brightsky
+  commit 0f5d0df8. Copyright (c) 2020 Jakob de Maeyer. MIT License; restated
+  under Apache-2.0. No descriptions or examples copied.

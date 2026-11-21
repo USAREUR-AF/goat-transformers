@@ -1,0 +1,7 @@
+{
+  "name": "Open-Meteo",
+  "domain": "maps",
+  "exact": [
+    "openmeteo-forecast"
+  ]
+}

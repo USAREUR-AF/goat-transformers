@@ -1,0 +1,16 @@
+{
+ "keys": {
+  "|distance|int": "distance",
+  "|dwd_station_id|string": "dwd_station_id",
+  "|first_record|string": "first_record",
+  "|height|float": "height",
+  "|id|int": "id",
+  "|last_record|string": "last_record",
+  "|lat|float": "lat",
+  "|lon|float": "lon",
+  "|observation_type|string": "observation_type",
+  "|station_name|string": "station_name",
+  "|wmo_station_id|string": "wmo_station_id"
+ },
+ "lists": {}
+}

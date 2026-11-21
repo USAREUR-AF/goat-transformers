@@ -1,0 +1,12 @@
+{
+ "keys": {
+  "bbox|.|int": "bbox_value",
+  "radar|precipitation_5|string": "radar_precipitation_5",
+  "radar|source|string": "radar_source",
+  "radar|timestamp|string": "radar_timestamp"
+ },
+ "lists": {
+  "|bbox": "bbox",
+  "|radar": "radar"
+ }
+}

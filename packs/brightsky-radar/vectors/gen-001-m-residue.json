@@ -1,0 +1,7 @@
+{
+ "name": "gen-m-residue",
+ "from": "brightsky-radar",
+ "to": "brightsky-radar",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"radar\":[{\"timestamp\":\"2026-07-12T00:02:36.767Z\",\"source\":\"s42795\",\"precipitation_5\":\"s80025\"},{\"timestamp\":\"2025-08-13T19:29:42.214Z\",\"source\":\"s1352\",\"precipitation_5\":\"s91460\"}],\"bbox\":[94256,74216]}",
+ "expect": "{\"radar\":[{\"timestamp\":\"2026-07-12T00:02:36.767Z\",\"source\":\"s42795\",\"precipitation_5\":\"s80025\"},{\"timestamp\":\"2025-08-13T19:29:42.214Z\",\"source\":\"s1352\",\"precipitation_5\":\"s91460\"}],\"bbox\":[94256,74216],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-m-residue",
+ "from": "brightsky-source",
+ "to": "brightsky-source",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"id\":79331,\"dwd_station_id\":\"s25403\",\"wmo_station_id\":\"s90168\",\"station_name\":\"s26051\",\"observation_type\":\"synop\",\"first_record\":\"2024-07-17T02:44:33.406Z\",\"last_record\":\"2027-01-08T03:59:10.084Z\",\"lat\":12.5,\"lon\":0.75,\"height\":101.125,\"distance\":54547}",
+ "expect": "{\"id\":79331,\"dwd_station_id\":\"s25403\",\"wmo_station_id\":\"s90168\",\"station_name\":\"s26051\",\"observation_type\":\"synop\",\"first_record\":\"2024-07-17T02:44:33.406Z\",\"last_record\":\"2027-01-08T03:59:10.084Z\",\"lat\":12.5,\"lon\":0.75,\"height\":101.125,\"distance\":54547,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}
