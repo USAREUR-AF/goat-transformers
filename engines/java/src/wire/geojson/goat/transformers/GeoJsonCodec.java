@@ -254,6 +254,7 @@ final class GeoJsonCodec extends Codec<GeoJsonCodec.Doc> {
                 } else {
                     top.put(l.locator, jv);
                 }
+                checkHeldRange(l, e);   // ruling 9 of 0.56
                 continue;
             }
             if (l instanceof Pack.When) continue;        // nothing is written for `present`

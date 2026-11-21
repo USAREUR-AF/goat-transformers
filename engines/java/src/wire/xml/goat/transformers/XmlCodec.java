@@ -236,6 +236,7 @@ final class XmlCodec extends Codec<Xml.Element> {
             // A when or const value is written over any field, at the position of the first line naming the locator.
             Pack.When w = scope.fixed.get(l.locator);
             if (w != null) {
+                checkHeldRange(l, e);   // ruling 9 of 0.56
                 if (!written.add(l.locator)) continue;
                 Xml.Element el = ensure(root, loc.path);
                 if (loc.attr != null) {
@@ -248,7 +249,10 @@ final class XmlCodec extends Codec<Xml.Element> {
             }
             if (l instanceof Pack.When) continue;        // nothing is written for `present`
             boolean over = sentinel.contains(l.locator);
-            if (written.contains(l.locator) && !over) continue;   // an earlier line on this locator already wrote it
+            if (written.contains(l.locator) && !over) {
+                checkHeldRange(l, e);   // ruling 9 of 0.56
+                continue;               // an earlier line on this locator already wrote it
+            }
             Pack.Field f = (Pack.Field) l;
             String s = encodeField(f, e, scope);
             if (s == null) {

@@ -223,6 +223,24 @@ abstract class Codec<W> {
         return v;
     }
 
+    /**
+     * Ruling 9 of 0.56: a line whose key is held is checked against its {@code range} even when it writes nothing
+     * (an earlier line, a when or a const holds its place); a value outside refuses the encode. Not a line that
+     * {@code with} suppresses (ruling 6), nor a default: only a held key.
+     */
+    void checkHeldRange(Pack.Line l, Entity e) {
+        if (!(l instanceof Pack.Field)) return;
+        Pack.Field f = (Pack.Field) l;
+        if (f.range == null || f.suppressed(e)) return;
+        Object v = e.get(f.key);
+        if (v == null) return;
+        try {
+            f.range.apply(v);
+        } catch (IllegalArgumentException ex) {
+            throw encodeFailure(f, ex);
+        }
+    }
+
     /** Decode one text-wire value into the entity. */
     void decodeField(Pack.Field f, String raw, Entity e, Failures fails) {
         Object v;

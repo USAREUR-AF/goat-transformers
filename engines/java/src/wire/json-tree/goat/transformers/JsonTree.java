@@ -241,7 +241,10 @@ abstract class JsonTree<W> extends Codec<W> {
             String[] path = (String[]) l.loc;
             if (path.length == 0) {                      // `.`: the item itself as a scalar
                 Pack.Field f = (Pack.Field) l;
-                if (itself != null && !(itself instanceof Placed)) continue;
+                if (itself != null && !(itself instanceof Placed)) {
+                    checkHeldRange(f, e);
+                    continue;
+                }
                 Object jv = encodeOne(f, e, scope);
                 if (jv != null) itself = jv;
                 else if (itself == null && f.writesSentinel() && !f.suppressed(e)) itself = new Placed(f.absent.firstJson());
@@ -262,14 +265,21 @@ abstract class JsonTree<W> extends Codec<W> {
             Pack.When w = scope.fixed.get(l.locator);
             if (w != null) {
                 if (obj != null) obj.put(last, Json.whenValue(w));
+                checkHeldRange(l, e);
                 continue;
             }
             if (l instanceof Pack.When) continue;        // nothing is written for `present`
             Pack.Field f = (Pack.Field) l;
-            if (obj == null) continue;
+            if (obj == null) {
+                checkHeldRange(f, e);
+                continue;
+            }
             Object have = obj.get(last);
             boolean over = have instanceof Placed;
-            if (have != null && have != RESERVED && have != NULLED && !isEmptyObject(have) && !over) continue; // an earlier line on this locator already wrote it
+            if (have != null && have != RESERVED && have != NULLED && !isEmptyObject(have) && !over) {
+                checkHeldRange(f, e);   // ruling 9 of 0.56
+                continue;               // an earlier line on this locator already wrote it
+            }
             Object jv = encodeOne(f, e, scope);
             if (jv != null) obj.put(last, jv);
             else if (f.writesSentinel() && !over && !f.suppressed(e)) obj.put(last, new Placed(f.absent.firstJson()));
