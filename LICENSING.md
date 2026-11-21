@@ -36,6 +36,7 @@ below, and every vector of another pack that converts from or to one of them.
 | [CC-BY-SA-2.0](https://creativecommons.org/licenses/by-sa/2.0/) | yes | yes | yes | none | `open+copyleft` |
 | [CC-BY-SA-4.0](https://creativecommons.org/licenses/by-sa/4.0/) | yes | yes | yes | none | `open+copyleft` |
 | [CC0-1.0](https://creativecommons.org/publicdomain/zero/1.0/) | yes | no | no | none | `open` |
+| [LicenseRef-MS-OpenSpec](https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-smb2/5606ad47-5ee0-437a-817e-70c366052962) | unknown | no | yes | none | `everything` |
 | [LicenseRef-NGA-MSI](https://msi.nga.mil) | yes | no | yes | none | `open` |
 | [LicenseRef-OASIS-Notice](https://www.oasis-open.org/policies-guidelines/ipr/) | yes | no | yes | none | `open` |
 | [LicenseRef-OGC-Software](https://www.ogc.org/legal/) | yes | no | yes | none | `open` |
@@ -52,6 +53,7 @@ below, and every vector of another pack that converts from or to one of them.
 |---|---|---|---|---|
 | `packs/adsb` | `adsb` | CC-BY-NC-SA-4.0 | `everything` | its own licence |
 | `packs/adsb-df18` | `adsb-df18` | Apache-2.0 | `everything` | uses module adsb (CC-BY-NC-SA-4.0) |
+| `packs/ais-binary-regional` | `ais-binary-regional` | LicenseRef-unstated | `everything` | its own licence |
 | `packs/aisstream` | `aisstream` | LicenseRef-unstated | `everything` | its own licence |
 | `packs/altbeacon` | `altbeacon` | CC-BY-SA-4.0 | `open+copyleft` | its own licence |
 | `packs/amqp10-frame` | `amqp10-frame` | LicenseRef-OASIS-Notice | `open` | its own licence |
@@ -94,6 +96,7 @@ below, and every vector of another pack that converts from or to one of them.
 | `packs/arsdk-proto-unguarded-flight` | `arsdk-proto-unguarded-flight` | LicenseRef-unstated | `everything` | its own licence |
 | `packs/arsdk-proto-usb-power` | `arsdk-proto-usb-power` | LicenseRef-unstated | `everything` | its own licence |
 | `packs/arsdk-proto-vehicle` | `arsdk-proto-vehicle` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/ax25-frame` | `ax25-frame` | LicenseRef-unstated | `everything` | its own licence |
 | `packs/cap` | `cap` | LicenseRef-OASIS-Notice | `open` | its own licence |
 | `packs/cds-aggregate` | `cds-aggregate` | CC-BY-4.0 | `open` | its own licence |
 | `packs/cds-curb-area` | `cds-curb-area` | CC-BY-4.0 | `open` | its own licence |
@@ -370,6 +373,7 @@ below, and every vector of another pack that converts from or to one of them.
 | `packs/gtpu` | `gtpu` | LicenseRef-unstated | `everything` | its own licence |
 | `packs/gtpv2c` | `gtpv2c` | LicenseRef-unstated | `everything` | its own licence |
 | `packs/igs-ssr` | `igs-ssr` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/kiss-frame` | `kiss-frame` | LicenseRef-unstated | `everything` | its own licence |
 | `packs/kml` | `kml` | LicenseRef-OGC-Software | `open` | its own licence |
 | `packs/leef` | `leef` | LicenseRef-unstated | `everything` | its own licence |
 | `packs/lwm2m-json` | `lwm2m-json` | LicenseRef-OMA-Internal | `everything` | its own licence |
@@ -500,6 +504,7 @@ below, and every vector of another pack that converts from or to one of them.
 | `packs/nga-msi-broadcast-warn` | `nga-msi-broadcast-warn` | LicenseRef-NGA-MSI | `open` | its own licence |
 | `packs/nga-msi-ngalol` | `nga-msi-ngalol` | LicenseRef-NGA-MSI | `open` | its own licence |
 | `packs/nga-msi-wpi` | `nga-msi-wpi` | LicenseRef-NGA-MSI | `open` | its own licence |
+| `packs/ntrip-sourcetable-line` | `ntrip-sourcetable-line` | LicenseRef-unstated | `everything` | its own licence |
 | `packs/ocpp16-authorize` | `ocpp16-authorize` | LicenseRef-unstated | `everything` | its own licence |
 | `packs/ocpp16-authorize-response` | `ocpp16-authorize-response` | LicenseRef-unstated | `everything` | its own licence |
 | `packs/ocpp16-boot-notification` | `ocpp16-boot-notification` | LicenseRef-unstated | `everything` | its own licence |
@@ -790,6 +795,7 @@ below, and every vector of another pack that converts from or to one of them.
 | `packs/overture-segment` | `overture-segment` | CC-BY-4.0 | `open` | its own licence |
 | `packs/overture-water` | `overture-water` | CC-BY-4.0 | `open` | its own licence |
 | `packs/pfcp` | `pfcp` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/pocsag-batch` | `pocsag-batch` | LicenseRef-unstated | `everything` | its own licence |
 | `packs/px4-ulog-action-request` | `px4-ulog-action-request` | CC-BY-4.0 | `open` | its own licence |
 | `packs/px4-ulog-actuator-armed` | `px4-ulog-actuator-armed` | CC-BY-4.0 | `open` | its own licence |
 | `packs/px4-ulog-actuator-controls-status-0` | `px4-ulog-actuator-controls-status-0` | CC-BY-4.0 | `open` | its own licence |
@@ -1091,6 +1097,9 @@ below, and every vector of another pack that converts from or to one of them.
 | `packs/px4-ulog-wheel-encoders` | `px4-ulog-wheel-encoders` | CC-BY-4.0 | `open` | its own licence |
 | `packs/px4-ulog-wind` | `px4-ulog-wind` | CC-BY-4.0 | `open` | its own licence |
 | `packs/px4-ulog-yaw-estimator-status` | `px4-ulog-yaw-estimator-status` | CC-BY-4.0 | `open` | its own licence |
+| `packs/rinex-nav-line` | `rinex-nav-line` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/rinex-obs-line` | `rinex-obs-line` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/rtz-route` | `rtz-route` | LicenseRef-unstated | `everything` | its own licence |
 | `packs/sdm-aeronautics-aircraft` | `sdm-aeronautics-aircraft` | CC-BY-4.0 | `open` | its own licence |
 | `packs/sdm-aeronautics-aircraft-model` | `sdm-aeronautics-aircraft-model` | CC-BY-4.0 | `open` | its own licence |
 | `packs/sdm-aeronautics-airline` | `sdm-aeronautics-airline` | CC-BY-4.0 | `open` | its own licence |
@@ -1185,9 +1194,14 @@ below, and every vector of another pack that converts from or to one of them.
 | `packs/sdm-weather-weather-observed` | `sdm-weather-weather-observed` | CC-BY-4.0 | `open` | its own licence |
 | `packs/sensorml-3-json` | `sensorml-3-json` | LicenseRef-OGC-Software | `open` | its own licence |
 | `packs/sflow5-datagram` | `sflow5-datagram` | LicenseRef-sFlow-License | `open` | its own licence |
+| `packs/shelly-notify-event` | `shelly-notify-event` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/shelly-notify-status` | `shelly-notify-status` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/shelly-rpc-request` | `shelly-rpc-request` | LicenseRef-unstated | `everything` | its own licence |
+| `packs/shelly-rpc-response` | `shelly-rpc-response` | LicenseRef-unstated | `everything` | its own licence |
 | `packs/signalk-delta` | `signalk-delta` | CC-BY-SA-2.0 | `open+copyleft` | its own licence |
 | `packs/signalk-full` | `signalk-full` | CC-BY-SA-2.0 | `open+copyleft` | its own licence |
 | `packs/signalk-vessel` | `signalk-vessel` | CC-BY-SA-2.0 | `open+copyleft` | its own licence |
+| `packs/smb2-message` | `smb2-message` | LicenseRef-MS-OpenSpec | `everything` | its own licence |
 | `packs/sml-message` | `sml-message` | LicenseRef-unstated | `everything` | its own licence |
 | `packs/swe-common-3-json` | `swe-common-3-json` | LicenseRef-OGC-Software | `open` | its own licence |
 | `packs/tcx` | `tcx` | LicenseRef-unstated | `everything` | its own licence |
@@ -1200,6 +1214,7 @@ below, and every vector of another pack that converts from or to one of them.
 | Module | Licence | Profile | Why |
 |---|---|---|---|
 | `model/adsb.def` | CC-BY-NC-SA-4.0 | `everything` | its own licence |
+| `model/aisregion.def` | LicenseRef-unstated | `everything` | its own licence |
 | `model/aisstream.def` | LicenseRef-unstated | `everything` | its own licence |
 | `model/altbeacon.def` | CC-BY-SA-4.0 | `open+copyleft` | its own licence |
 | `model/amqp.def` | LicenseRef-OASIS-Notice | `open` | its own licence |
@@ -1242,6 +1257,7 @@ below, and every vector of another pack that converts from or to one of them.
 | `model/arsdkprotounguardedflight.def` | LicenseRef-unstated | `everything` | its own licence |
 | `model/arsdkprotousbpower.def` | LicenseRef-unstated | `everything` | its own licence |
 | `model/arsdkprotovehicle.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/ax25.def` | LicenseRef-unstated | `everything` | its own licence |
 | `model/cap.def` | LicenseRef-OASIS-Notice | `open` | its own licence |
 | `model/cdsaggregate.def` | CC-BY-4.0 | `open` | its own licence |
 | `model/cdscurbarea.def` | CC-BY-4.0 | `open` | its own licence |
@@ -1513,6 +1529,7 @@ below, and every vector of another pack that converts from or to one of them.
 | `model/gtpu.def` | LicenseRef-unstated | `everything` | its own licence |
 | `model/gtpv2.def` | LicenseRef-unstated | `everything` | its own licence |
 | `model/igsssr.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/kiss.def` | LicenseRef-unstated | `everything` | its own licence |
 | `model/kml.def` | LicenseRef-OGC-Software | `open` | its own licence |
 | `model/leef.def` | LicenseRef-unstated | `everything` | its own licence |
 | `model/lwm2m.def` | LicenseRef-OMA-Internal | `everything` | its own licence |
@@ -1639,6 +1656,7 @@ below, and every vector of another pack that converts from or to one of them.
 | `model/ngabwarn.def` | LicenseRef-NGA-MSI | `open` | its own licence |
 | `model/ngalol.def` | LicenseRef-NGA-MSI | `open` | its own licence |
 | `model/ngawpi.def` | LicenseRef-NGA-MSI | `open` | its own licence |
+| `model/ntrip.def` | LicenseRef-unstated | `everything` | its own licence |
 | `model/ocpp16authorize.def` | LicenseRef-unstated | `everything` | its own licence |
 | `model/ocpp16authorizeresponse.def` | LicenseRef-unstated | `everything` | its own licence |
 | `model/ocpp16bootnotification.def` | LicenseRef-unstated | `everything` | its own licence |
@@ -1928,7 +1946,11 @@ below, and every vector of another pack that converts from or to one of them.
 | `model/overturesegment.def` | CC-BY-4.0 | `open` | its own licence |
 | `model/overturewater.def` | CC-BY-4.0 | `open` | its own licence |
 | `model/pfcp.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/pocsag.def` | LicenseRef-unstated | `everything` | its own licence |
 | `model/px4ulog.def` | CC-BY-4.0 | `open` | its own licence |
+| `model/rinexnav.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/rinexobs.def` | LicenseRef-unstated | `everything` | its own licence |
+| `model/rtz.def` | LicenseRef-unstated | `everything` | its own licence |
 | `model/sdmaeroallergenobserved.def` | CC-BY-4.0 | `open` | its own licence |
 | `model/sdmaircraft.def` | CC-BY-4.0 | `open` | its own licence |
 | `model/sdmaircraftmodel.def` | CC-BY-4.0 | `open` | its own licence |
@@ -2023,9 +2045,11 @@ below, and every vector of another pack that converts from or to one of them.
 | `model/sdmweatherobserved.def` | CC-BY-4.0 | `open` | its own licence |
 | `model/sensorml3.def` | LicenseRef-OGC-Software | `open` | its own licence |
 | `model/sflow.def` | LicenseRef-sFlow-License | `open` | its own licence |
+| `model/shelly.def` | LicenseRef-unstated | `everything` | its own licence |
 | `model/signalkdelta.def` | CC-BY-SA-2.0 | `open+copyleft` | its own licence |
 | `model/signalkfull.def` | CC-BY-SA-2.0 | `open+copyleft` | its own licence |
 | `model/signalkvessel.def` | CC-BY-SA-2.0 | `open+copyleft` | its own licence |
+| `model/smb2.def` | LicenseRef-MS-OpenSpec | `everything` | its own licence |
 | `model/sml.def` | LicenseRef-unstated | `everything` | its own licence |
 | `model/swecommon3.def` | LicenseRef-OGC-Software | `open` | its own licence |
 | `model/tcx.def` | LicenseRef-unstated | `everything` | its own licence |

@@ -15,7 +15,7 @@ no engine holds code for any of the three formats.
 [![REUSE](https://img.shields.io/badge/REUSE-compliant-green.svg)](LICENSING.md)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 
-**4,115 formats · 16,396 message kinds · 22,580 conversion vectors · 7 engines**, counted
+**4,178 formats · 16,540 message kinds · 22,954 conversion vectors · 7 engines**, counted
 by [`tools/repo-stats`](tools/repo-stats).
 
 ```console
@@ -59,14 +59,14 @@ Counted from the tree by `python3 -I tools/repo-stats`.
 
 | | Count |
 |---|---:|
-| Formats | 4,115 |
-| Message kinds (one message layout of a format, such as one MAVLink message or one NMEA 2000 parameter group) | 16,396 |
-| Typed keys in the shared model, in 3,009 modules | 321,150 |
-| Lists in the shared model (parts of a message that repeat) | 35,088 |
-| Conversion vectors (an input message and the exact expected output) | 22,580 |
-| Load vectors (a pack that must load, or must be refused with a named error) | 1,172 |
-| Synthetic formats that exercise each rule of the specification | 252 |
-| Packs in each licence profile, `open` / `open+copyleft` / `everything` ([LICENSING.md](LICENSING.md)) | 3,929 / 3,935 / 4,367 |
+| Formats | 4,178 |
+| Message kinds (one message layout of a format, such as one MAVLink message or one NMEA 2000 parameter group) | 16,540 |
+| Typed keys in the shared model, in 3,063 modules | 325,011 |
+| Lists in the shared model (parts of a message that repeat) | 35,387 |
+| Conversion vectors (an input message and the exact expected output) | 22,954 |
+| Load vectors (a pack that must load, or must be refused with a named error) | 1,181 |
+| Synthetic formats that exercise each rule of the specification | 253 |
+| Packs in each licence profile, `open` / `open+copyleft` / `everything` ([LICENSING.md](LICENSING.md)) | 3,980 / 3,986 / 4,431 |
 | Wire types (an engine's codec for a family of encodings): `xml`, `json`, `geojson`, `protobuf`, `bits`, `text`, `tlv` | 7 |
 | Engines, each using only its language's standard library | 7 |
 | WebAssembly module of the Rust engine, small build, no imports | 376,470 bytes |
