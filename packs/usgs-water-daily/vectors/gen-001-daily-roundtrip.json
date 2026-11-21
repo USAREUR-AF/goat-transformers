@@ -1,0 +1,17 @@
+{
+ "name": "gen-daily-roundtrip",
+ "from": "usgs-water-daily",
+ "to": "usgs-water-daily",
+ "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"approval_status\":\"Approved\",\"last_modified\":\"s98256\",\"monitoring_location_id\":\"s19123\",\"parameter_code\":\"s6356\",\"qualifier\":\"s59881\",\"statistic_id\":\"s54807\",\"time\":\"s81635\",\"time_series_id\":\"s2709\",\"unit_of_measure\":\"s83357\",\"value\":\"s14675\"},\"id\":\"s69626\"}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"approval_status\":\"Approved\",\"last_modified\":\"s98256\",\"monitoring_location_id\":\"s19123\",\"parameter_code\":\"s6356\",\"qualifier\":\"s59881\",\"statistic_id\":\"s54807\",\"time\":\"s81635\",\"time_series_id\":\"s2709\",\"unit_of_measure\":\"s83357\",\"value\":\"s14675\"},\"id\":\"s69626\"}",
+ "model": {
+  "lon": "-77.0365",
+  "lat": "38.8977",
+  "usgswaterdaily.id": "s69626",
+  "usgswaterdaily.properties_approval_status": "Approved",
+  "usgswaterdaily.properties_last_modified": "s98256",
+  "usgswaterdaily.properties_monitoring_location_id": "s19123",
+  "usgswaterdaily.properties_parameter_code": "s6356",
+  "usgswaterdaily.properties_qualifier": "s59881"
+ }
+}

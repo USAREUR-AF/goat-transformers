@@ -1,0 +1,17 @@
+{
+ "name": "gen-latest_continuous-roundtrip",
+ "from": "usgs-water-latest-continuous",
+ "to": "usgs-water-latest-continuous",
+ "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"approval_status\":\"Provisional\",\"last_modified\":\"s65447\",\"monitoring_location_id\":\"s35267\",\"parameter_code\":\"s73197\",\"qualifier\":\"s86327\",\"statistic_id\":\"s28432\",\"time\":\"2024-11-26T20:58:00.243Z\",\"time_series_id\":\"s28539\",\"unit_of_measure\":\"s53027\",\"value\":\"s94619\"},\"id\":\"s69521\"}",
+ "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77.0365,38.8977]},\"properties\":{\"approval_status\":\"Provisional\",\"last_modified\":\"s65447\",\"monitoring_location_id\":\"s35267\",\"parameter_code\":\"s73197\",\"qualifier\":\"s86327\",\"statistic_id\":\"s28432\",\"time\":\"2024-11-26T20:58:00.243Z\",\"time_series_id\":\"s28539\",\"unit_of_measure\":\"s53027\",\"value\":\"s94619\"},\"id\":\"s69521\"}",
+ "model": {
+  "lon": "-77.0365",
+  "lat": "38.8977",
+  "time_ms": "1732654680243",
+  "usgswaterlatcont.id": "s69521",
+  "usgswaterlatcont.properties_approval_status": "Provisional",
+  "usgswaterlatcont.properties_last_modified": "s65447",
+  "usgswaterlatcont.properties_monitoring_location_id": "s35267",
+  "usgswaterlatcont.properties_parameter_code": "s73197"
+ }
+}

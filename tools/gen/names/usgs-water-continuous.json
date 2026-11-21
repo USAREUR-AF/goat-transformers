@@ -1,0 +1,16 @@
+{
+ "keys": {
+  "|id|string": "id",
+  "|properties.approval_status|string": "properties_approval_status",
+  "|properties.last_modified|string": "properties_last_modified",
+  "|properties.monitoring_location_id|string": "properties_monitoring_location_id",
+  "|properties.parameter_code|string": "properties_parameter_code",
+  "|properties.qualifier|string": "properties_qualifier",
+  "|properties.statistic_id|string": "properties_statistic_id",
+  "|properties.time_series_id|string": "properties_time_series_id",
+  "|properties.time|string": "properties_time",
+  "|properties.unit_of_measure|string": "properties_unit_of_measure",
+  "|properties.value|string": "properties_value"
+ },
+ "lists": {}
+}

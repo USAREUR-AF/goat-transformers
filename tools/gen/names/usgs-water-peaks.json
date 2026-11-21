@@ -1,0 +1,20 @@
+{
+ "keys": {
+  "|id|string": "id",
+  "|properties.day|int": "properties_day",
+  "|properties.last_modified|string": "properties_last_modified",
+  "|properties.monitoring_location_id|string": "properties_monitoring_location_id",
+  "|properties.month|int": "properties_month",
+  "|properties.parameter_code|string": "properties_parameter_code",
+  "|properties.peak_since|int": "properties_peak_since",
+  "|properties.qualifier|string": "properties_qualifier",
+  "|properties.time_of_day|string": "properties_time_of_day",
+  "|properties.time_series_id|string": "properties_time_series_id",
+  "|properties.time|string": "properties_time",
+  "|properties.unit_of_measure|string": "properties_unit_of_measure",
+  "|properties.value|string": "properties_value",
+  "|properties.water_year|int": "properties_water_year",
+  "|properties.year|int": "properties_year"
+ },
+ "lists": {}
+}

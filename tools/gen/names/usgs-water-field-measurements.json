@@ -1,0 +1,27 @@
+{
+ "keys": {
+  "|id|string": "id",
+  "|properties.approval_status|string": "properties_approval_status",
+  "|properties.control_condition|string": "properties_control_condition",
+  "|properties.day|int": "properties_day",
+  "|properties.field_measurements_series_id|string": "properties_field_measurements_series_id",
+  "|properties.field_visit_id|string": "properties_field_visit_id",
+  "|properties.last_modified|string": "properties_last_modified",
+  "|properties.measurement_rated|string": "properties_measurement_rated",
+  "|properties.measuring_agency|string": "properties_measuring_agency",
+  "|properties.monitoring_location_id|string": "properties_monitoring_location_id",
+  "|properties.month|int": "properties_month",
+  "|properties.observing_procedure_code|string": "properties_observing_procedure_code",
+  "|properties.observing_procedure|string": "properties_observing_procedure",
+  "|properties.parameter_code|string": "properties_parameter_code",
+  "|properties.qualifier|string": "properties_qualifier",
+  "|properties.reading_type|string": "properties_reading_type",
+  "|properties.time_of_day|string": "properties_time_of_day",
+  "|properties.time|string": "properties_time",
+  "|properties.unit_of_measure|string": "properties_unit_of_measure",
+  "|properties.value|string": "properties_value",
+  "|properties.vertical_datum|string": "properties_vertical_datum",
+  "|properties.year|int": "properties_year"
+ },
+ "lists": {}
+}

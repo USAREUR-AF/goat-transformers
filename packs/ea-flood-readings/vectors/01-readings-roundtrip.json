@@ -1,0 +1,14 @@
+{
+  "name": "readings-roundtrip",
+  "from": "ea-flood-readings",
+  "to": "ea-flood-readings",
+  "input": "{\"@context\":\"http://environment.data.gov.uk/flood-monitoring/meta/context.jsonld\",\"meta\":{\"publisher\":\"Environment Agency\",\"licence\":\"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/\",\"documentation\":\"http://environment.data.gov.uk/flood-monitoring/doc/reference\",\"version\":\"0.9\",\"hasFormat\":[\"http://environment.data.gov.uk/flood-monitoring/id/stations/E1234.csv\"],\"limit\":2},\"items\":[{\"@id\":\"http://environment.data.gov.uk/flood-monitoring/data/readings/E1234-level-stage-i-15_min-mASD/2026-11-21T06-00-00Z\",\"dateTime\":\"2026-11-21T06:00:00Z\",\"measure\":\"http://environment.data.gov.uk/flood-monitoring/id/measures/E1234-level-stage-i-15_min-mASD\",\"value\":1.234},{\"@id\":\"http://environment.data.gov.uk/flood-monitoring/data/readings/E1234-level-stage-i-15_min-mASD/2026-11-21T05-45-00Z\",\"dateTime\":\"2026-11-21T05:45:00Z\",\"measure\":\"http://environment.data.gov.uk/flood-monitoring/id/measures/E1234-level-stage-i-15_min-mASD\"}]}",
+  "expect": "{\"@context\":\"http://environment.data.gov.uk/flood-monitoring/meta/context.jsonld\",\"items\":[{\"@id\":\"http://environment.data.gov.uk/flood-monitoring/data/readings/E1234-level-stage-i-15_min-mASD/2026-11-21T06-00-00Z\",\"dateTime\":\"2026-11-21T06:00:00Z\",\"measure\":\"http://environment.data.gov.uk/flood-monitoring/id/measures/E1234-level-stage-i-15_min-mASD\",\"value\":1.234},{\"@id\":\"http://environment.data.gov.uk/flood-monitoring/data/readings/E1234-level-stage-i-15_min-mASD/2026-11-21T05-45-00Z\",\"dateTime\":\"2026-11-21T05:45:00Z\",\"measure\":\"http://environment.data.gov.uk/flood-monitoring/id/measures/E1234-level-stage-i-15_min-mASD\"}],\"meta\":{\"publisher\":\"Environment Agency\",\"licence\":\"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/\",\"documentation\":\"http://environment.data.gov.uk/flood-monitoring/doc/reference\",\"version\":\"0.9\",\"limit\":2}}",
+  "model": {
+    "eaflood.readings.#": "2",
+    "eaflood.readings[0].eaflood.reading_time": "2026-11-21T06:00:00Z",
+    "eaflood.readings[0].eaflood.reading_value": "1.234"
+  },
+  "source": "derived by tools/gen/hydro-vectors.py from responses written for it and spec/engine-spec.md; no engine run",
+  "reference": "Environment Agency real-time flood-monitoring API reference (environment.data.gov.uk/flood-monitoring/doc/reference); two readings, the second without a value (a reading that is not a number omits it)"
+}

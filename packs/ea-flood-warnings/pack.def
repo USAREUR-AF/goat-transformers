@@ -1,0 +1,28 @@
+# Environment Agency (England) real-time flood-monitoring API: the flood warnings response
+# (/id/floods): the alerts and warnings in force as a list. Public; licensed OGL-UK-3.0. Written by
+# hand from the API reference. pack.md states what is mapped.
+format  ea-flood-warnings
+version 0.1.0
+distribution public
+source  "Environment Agency real-time flood-monitoring API reference, https://environment.data.gov.uk/flood-monitoring/doc/reference (sha256 87b7156f3fea64b54b92473cc67f62227b9fb4bf678bd76761c4a907a5b07b92, read 2026-11-21); Open Government Licence v3.0"
+uses    eaflood
+wire    json
+
+field  eaflood.context  @context  string
+group  eaflood.floods  items
+  field  eaflood.flood_uri                @id                   string
+  field  eaflood.flood_description        description           string
+  field  eaflood.ea_area_name             eaAreaName            string
+  field  eaflood.ea_region_name           eaRegionName          string
+  field  eaflood.flood_area_id            floodAreaID           string
+  field  eaflood.flood_message            message               string
+  field  eaflood.severity                 severity              string
+  field  eaflood.severity_level           severityLevel         int
+  field  eaflood.time_message_changed     timeMessageChanged    string
+  field  eaflood.time_raised              timeRaised            string
+  field  eaflood.time_severity_changed    timeSeverityChanged   string
+  field  eaflood.flood_area_county        floodArea.county      string
+  field  eaflood.flood_area_notation      floodArea.notation    string
+  field  eaflood.flood_area_polygon       floodArea.polygon     string
+  field  eaflood.flood_area_river_or_sea  floodArea.riverOrSea  string
+end

@@ -1,0 +1,8 @@
+{
+  "name": "Environment Agency flood monitoring",
+  "domain": "maps",
+  "prefixes": [
+    "ea-flood-"
+  ],
+  "detail": "stations, readings and flood warnings (England)"
+}

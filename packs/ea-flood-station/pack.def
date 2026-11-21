@@ -1,0 +1,42 @@
+# Environment Agency (England) real-time flood-monitoring API: the response for one station
+# (/id/stations/{id}), whose items member is the station. Public; licensed OGL-UK-3.0. Written by
+# hand from the API reference. pack.md states the evidence for lat and lon.
+format  ea-flood-station
+version 0.1.0
+distribution public
+source  "Environment Agency real-time flood-monitoring API reference, https://environment.data.gov.uk/flood-monitoring/doc/reference (sha256 87b7156f3fea64b54b92473cc67f62227b9fb4bf678bd76761c4a907a5b07b92, read 2026-11-21); Open Government Licence v3.0"
+uses    eaflood
+wire    json
+
+field  eaflood.context            @context                 string
+field  eaflood.station_uri        items.@id                string
+field  lat                        items.lat                float
+field  eaflood.station_lat        items.lat                float
+field  lon                        items.long               float
+field  eaflood.station_long       items.long               float
+field  eaflood.notation           items.notation           string
+field  eaflood.label              items.label              string
+field  eaflood.rloi_id            items.RLOIid             string
+field  eaflood.catchment_name     items.catchmentName      string
+field  eaflood.date_opened        items.dateOpened         string
+field  eaflood.datum_offset       items.datumOffset        float
+field  eaflood.ea_area_name       items.eaAreaName         string
+field  eaflood.ea_region_name     items.eaRegionName       string
+field  eaflood.easting            items.easting            int
+field  eaflood.northing           items.northing           int
+field  eaflood.river_name         items.riverName          string
+field  eaflood.station_reference  items.stationReference   string
+field  eaflood.town               items.town               string
+field  eaflood.wiski_id           items.wiskiID            string
+group  eaflood.measures  items.measures
+  field  eaflood.measure_uri           @id                     string
+  field  eaflood.measure_label         label                   string
+  field  eaflood.parameter             parameter               string
+  field  eaflood.parameter_name        parameterName           string
+  field  eaflood.period                period                  float
+  field  eaflood.qualifier             qualifier               string
+  field  eaflood.unit_name             unitName                string
+  field  eaflood.datum_type            datumType               string
+  field  eaflood.latest_reading_time   latestReading.dateTime  string
+  field  eaflood.latest_reading_value  latestReading.value     float
+end

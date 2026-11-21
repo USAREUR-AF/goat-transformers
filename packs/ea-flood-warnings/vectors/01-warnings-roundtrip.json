@@ -1,0 +1,15 @@
+{
+  "name": "warnings-roundtrip",
+  "from": "ea-flood-warnings",
+  "to": "ea-flood-warnings",
+  "input": "{\"@context\":\"http://environment.data.gov.uk/flood-monitoring/meta/context.jsonld\",\"meta\":{\"publisher\":\"Environment Agency\",\"licence\":\"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/\",\"documentation\":\"http://environment.data.gov.uk/flood-monitoring/doc/reference\",\"version\":\"0.9\",\"hasFormat\":[\"http://environment.data.gov.uk/flood-monitoring/id/stations/E1234.csv\"]},\"items\":[{\"@id\":\"http://environment.data.gov.uk/flood-monitoring/id/floods/061WAF10Example\",\"description\":\"River Example at Example Town\",\"eaAreaName\":\"Example Area\",\"eaRegionName\":\"No longer used\",\"floodArea\":{\"@id\":\"http://environment.data.gov.uk/flood-monitoring/id/floodAreas/061WAF10Example\",\"county\":\"Exampleshire\",\"notation\":\"061WAF10Example\",\"polygon\":\"http://environment.data.gov.uk/flood-monitoring/id/floodAreas/061WAF10Example/polygon\",\"riverOrSea\":\"River Example\"},\"floodAreaID\":\"061WAF10Example\",\"isTidal\":false,\"message\":\"River levels are rising.\",\"severity\":\"Flood Alert\",\"severityLevel\":3,\"timeMessageChanged\":\"2026-11-21T05:12:00\",\"timeRaised\":\"2026-11-21T05:12:31\",\"timeSeverityChanged\":\"2026-11-20T18:00:00\"}]}",
+  "expect": "{\"@context\":\"http://environment.data.gov.uk/flood-monitoring/meta/context.jsonld\",\"items\":[{\"@id\":\"http://environment.data.gov.uk/flood-monitoring/id/floods/061WAF10Example\",\"description\":\"River Example at Example Town\",\"eaAreaName\":\"Example Area\",\"eaRegionName\":\"No longer used\",\"floodAreaID\":\"061WAF10Example\",\"message\":\"River levels are rising.\",\"severity\":\"Flood Alert\",\"severityLevel\":3,\"timeMessageChanged\":\"2026-11-21T05:12:00\",\"timeRaised\":\"2026-11-21T05:12:31\",\"timeSeverityChanged\":\"2026-11-20T18:00:00\",\"floodArea\":{\"county\":\"Exampleshire\",\"notation\":\"061WAF10Example\",\"polygon\":\"http://environment.data.gov.uk/flood-monitoring/id/floodAreas/061WAF10Example/polygon\",\"riverOrSea\":\"River Example\"}}],\"meta\":{\"publisher\":\"Environment Agency\",\"licence\":\"http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/\",\"documentation\":\"http://environment.data.gov.uk/flood-monitoring/doc/reference\",\"version\":\"0.9\"}}",
+  "model": {
+    "eaflood.floods.#": "1",
+    "eaflood.floods[0].eaflood.severity_level": "3",
+    "eaflood.floods[0].eaflood.flood_area_county": "Exampleshire",
+    "eaflood.floods[0].eaflood.time_raised": "2026-11-21T05:12:31"
+  },
+  "source": "derived by tools/gen/hydro-vectors.py from responses written for it and spec/engine-spec.md; no engine run",
+  "reference": "Environment Agency real-time flood-monitoring API reference (environment.data.gov.uk/flood-monitoring/doc/reference); one flood alert; the area's @id and isTidal, unmapped inside an item, are dropped"
+}
