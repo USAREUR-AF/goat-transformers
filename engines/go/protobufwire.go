@@ -620,7 +620,7 @@ func encodePBItems(p *Pack, g *Group, items []*Item) ([]pbVal, error) {
 	// `.` line whose key the item has, or has a default for, else the first
 	// sentinel of the earliest `.` line with `absent` (0.9 ruling 5).
 	dot := func(it *Item) (pbVal, bool, error) {
-		for _, f := range g.dots {
+		for i, f := range g.dots {
 			v, ok, err := fieldValue(p, g.body, f, it)
 			if err != nil {
 				return pbVal{}, false, err
@@ -631,6 +631,9 @@ func encodePBItems(p *Pack, g *Group, items []*Item) ([]pbVal, error) {
 			pv, err := f.pbf.encode(v)
 			if err != nil {
 				return pbVal{}, false, encodeErr(p, f, err)
+			}
+			if err := checkHeldRange(p, it, g.dots[i+1:]...); err != nil {
+				return pbVal{}, false, err
 			}
 			return pv, true, nil
 		}

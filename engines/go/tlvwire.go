@@ -560,8 +560,11 @@ func (w *tlvWriter) set(s *tlvSet, prefix string) ([]byte, error) {
 			// A `when` or `const` value is written once, at the first line's
 			// position, whatever a field on the same path holds.
 			val, has = putBE(sl.value.num, sl.value.loc.tsize), true
+			if err := checkHeldRange(w.p, w.rec, sl.fields...); err != nil {
+				return nil, err
+			}
 		default:
-			for _, f := range sl.fields {
+			for i, f := range sl.fields {
 				v, ok, err := fieldValue(w.p, w.lay, f, w.rec)
 				if err != nil {
 					return nil, err
@@ -574,6 +577,9 @@ func (w *tlvWriter) set(s *tlvSet, prefix string) ([]byte, error) {
 					return nil, encodeErr(w.p, f, err)
 				}
 				val, has = b, true
+				if err := checkHeldRange(w.p, w.rec, sl.fields[i+1:]...); err != nil {
+					return nil, err
+				}
 				break
 			}
 			// `when … present` writes an empty item, unless a line or the

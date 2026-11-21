@@ -147,3 +147,19 @@ func checkOutputOptions(wire string, f *Field) error {
 	}
 	return nil
 }
+
+// checkHeldRange checks the held value of each line against its `range`,
+// for the lines whose value an encode does not write: every line whose key
+// is held is checked (0.56 ruling 9); a line that `with` suppresses is not
+// (ruling 6).
+func checkHeldRange(p *Pack, rec *Item, fields ...*Field) error {
+	for _, f := range fields {
+		if f.Range == nil || !f.has(rec) {
+			continue
+		}
+		if _, err := f.applyRange(rec.Fields[f.Key]); err != nil {
+			return encodeErr(p, f, err)
+		}
+	}
+	return nil
+}
