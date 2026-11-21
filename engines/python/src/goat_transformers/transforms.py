@@ -312,6 +312,31 @@ class Iso8601ShortT(Iso8601MsT):
         return out + "Z"
 
 
+class Iso8601SiT(Iso8601MsT):
+    """`iso8601_si` (0.55): decoded as `iso8601_ms`; encoded without a
+    fraction at a whole second, otherwise with the three digits of the
+    milliseconds. Only the years 0001 to 9999 are written (ruling 2)."""
+
+    name = "iso8601_si"
+
+    def encode(self, value):
+        if isinstance(value, bool) or not isinstance(value, int):
+            if isinstance(value, float) and value.is_integer():
+                value = int(value)
+            else:
+                raise ValueError("iso8601_si needs integer epoch ms, got %r" % (value,))
+        if value < _ISO_MIN or value > _ISO_MAX:
+            raise ValueError("epoch ms out of range (years 0001 to 9999): %r" % value)
+        ms = value - 1000 * (value // 1000)  # ruling 1
+        secs = value // 1000
+        days, sod = divmod(secs, 86400)
+        y, mo, d = _civil(days)
+        out = "%04d-%02d-%02dT%02d:%02d:%02d" % (y, mo, d, sod // 3600, sod // 60 % 60, sod % 60)
+        if ms:
+            out += ".%03d" % ms
+        return out + "Z"
+
+
 class BoolT(Transform):
     """`bool` (version 0.5, `json` wire only): JSON `true` / `false` <-> int 1 / 0.
     `decode` takes the parsed JSON boolean; `encode` returns the JSON text."""
@@ -338,7 +363,7 @@ class BoolT(Transform):
         raise ValueError("bool transform encodes 1 or 0, got %r" % (value,))
 
 
-TRANSFORMS = {t.name: t for t in (StringT(), FloatT(), IntT(), Iso8601MsT(), Iso8601ShortT())}
+TRANSFORMS = {t.name: t for t in (StringT(), FloatT(), IntT(), Iso8601MsT(), Iso8601ShortT(), Iso8601SiT())}
 TEXT_TRANSFORM_NAMES = frozenset(TRANSFORMS) | {"bool"}
 JSON_TRANSFORMS = dict(TRANSFORMS, bool=BoolT())  # `bool` is valid only on the `json` wire
 
@@ -481,8 +506,9 @@ class ScaleT(BitsTransform):
 
     yields = "float"
 
-    def __init__(self, name, length, signed, factor, fraction, offset):
+    def __init__(self, name, length, signed, factor, fraction, offset, places=None):
         super().__init__(name, length)
+        self.places = places      # 0.55: decimal places of the decoded value, or None
         self.signed = signed
         self.factor = factor      # a double, or None when `fraction` is set
         self.fraction = fraction  # (num, den) as doubles, or None
@@ -498,7 +524,10 @@ class ScaleT(BitsTransform):
             scaled = v * self.fraction[0] / self.fraction[1]
         else:
             scaled = v * self.factor
-        return scaled + self.offset
+        x = scaled + self.offset
+        if self.places is None:
+            return x
+        return round_places(self.name, x, self.places)
 
     def encode(self, value):
         x = _finite_number(self.name.split(":")[0], value)
@@ -581,6 +610,38 @@ class AsciiT(BitsTransform):
         return body + b"\x00" * (self.nbytes - len(body))
 
 
+class Utf8BitsT(AsciiT):
+    """`utf8` on `bits` (0.55): the bytes taken as `ascii` takes them, read as
+    UTF-8 (RFC 3629) after the trailing NULs (and, with `trim`, then the
+    trailing spaces) are removed; a NUL left inside is a decode failure.
+    Encode: the text's UTF-8, NUL-padded; U+0000, a lone surrogate or a text
+    longer than the field is an encode failure."""
+
+    def decode(self, raw):
+        body = bytes(raw).rstrip(b"\x00")
+        if self.trim:
+            body = body.rstrip(b" ")
+        if b"\x00" in body:
+            raise ValueError("utf8: a NUL byte inside the text")
+        try:
+            return body.decode("utf-8")
+        except UnicodeDecodeError as e:
+            raise ValueError("utf8: not valid UTF-8: %s" % e)
+
+    def encode(self, value):
+        if not isinstance(value, str):
+            raise ValueError("utf8 transform needs a str, got %s" % type(value).__name__)
+        if "\x00" in value:
+            raise ValueError("utf8: the text holds U+0000")
+        try:
+            body = value.encode("utf-8")
+        except UnicodeEncodeError as e:
+            raise ValueError("utf8: the text holds a code point UTF-8 cannot carry: %s" % e)
+        if len(body) > self.nbytes:
+            raise ValueError("utf8: text of %d byte(s) does not fit %d byte(s)" % (len(body), self.nbytes))
+        return body + b"\x00" * (self.nbytes - len(body))
+
+
 class SixbitT(BitsTransform):
     """`len / 6` characters of six bits each (0.14). The wire hands `decode`
     the six-bit values, first character first, each one's six bits read in
@@ -619,7 +680,7 @@ class SixbitT(BitsTransform):
 
 
 def is_bits_transform_name(name):
-    return name in ("uint", "twos", "f32", "f64", "ascii", "sixbit") or name.startswith(("linscale:", "uscale:", "sscale:"))
+    return name in ("uint", "twos", "f32", "f64", "ascii", "utf8", "sixbit") or name.startswith(("linscale:", "uscale:", "sscale:"))
 
 
 def bits_len_allowed(name, length):
@@ -630,7 +691,7 @@ def bits_len_allowed(name, length):
         return length == 32
     if name == "f64":
         return length == 64
-    if name == "ascii":
+    if name == "ascii" or name == "utf8":  # `utf8`: 0.55
         return 8 <= length <= 2040 and length % 8 == 0
     if name == "sixbit":
         return 6 <= length <= 1530 and length % 6 == 0
@@ -639,6 +700,26 @@ def bits_len_allowed(name, length):
     if v15_family(name) is not None:
         return v15_len_allowed(name, length)
     return 1 <= length <= 64
+
+
+def round_places(name, x, places):
+    """The rounding of 0.55 (`<places>` on `uscale` and `sscale`): `p` the
+    power of ten as a double, `y = x * p`; when `y` is finite and its rounding
+    (halves away from zero) is below 10^15 in magnitude, `round(y) / p`, else
+    `x`. A non-finite `x` is a decode failure (ruling 5)."""
+    if not math.isfinite(x):
+        raise ValueError("%s: the value %r is not a finite number" % (name, x))
+    p = float(10 ** places)
+    y = x * p
+    if not math.isfinite(y):
+        return x
+    r = abs(round_half_away(y))  # an exact integer
+    if r >= 10 ** 15:
+        return x
+    if r == 0:
+        return 0.0  # a result of zero is +0
+    out = float(r) / p  # r < 10^15 is exact as a double: one correctly rounded division
+    return -out if y < 0 else out
 
 
 def _nonzero_number(text, what):
@@ -650,13 +731,31 @@ def _nonzero_number(text, what):
 
 
 def scale_params(name):
-    """`uscale:<factor>[:<offset>]` and `sscale:...` (ruling 4d of 0.11) ->
-    (factor, fraction, offset). The factor is number text that is not zero,
-    or `<num>/<den>` of two unsigned decimal integers, neither zero; the
-    offset is number text. Raises ValueError (`bad-directive`)."""
+    """`<name>:<factor>[:<offset>]` (ruling 4d of 0.11) -> (factor, fraction,
+    offset); no `<places>`. Raises ValueError (`bad-directive`)."""
     parts = name.split(":")
     if len(parts) not in (2, 3):
         raise ValueError("%s takes the form %s:<factor>[:<offset>]" % (parts[0], parts[0]))
+    return uscale_params(name)[:3]
+
+
+def uscale_params(name):
+    """`uscale:<factor>[:<offset>[:<places>]]` and `sscale:...` (ruling 4d of
+    0.11, 0.55) -> (factor, fraction, offset, places). The factor is number
+    text that is not zero, or `<num>/<den>` of two unsigned decimal integers,
+    neither zero; the offset is number text; `<places>` an unsigned decimal
+    integer from 0 to 15, or None when not given. No argument is empty.
+    Raises ValueError (`bad-directive`)."""
+    parts = name.split(":")
+    if len(parts) not in (2, 3, 4):
+        raise ValueError("%s takes the form %s:<factor>[:<offset>[:<places>]]" % (parts[0], parts[0]))
+    if any(p == "" for p in parts[1:]):
+        raise ValueError("%s: an empty argument (write e.g. %s:0.1:0:1)" % (parts[0], parts[0]))
+    places = None
+    if len(parts) == 4:
+        places = read_uint_text(parts[3])
+        if places > 15:
+            raise ValueError("%s: places %r is above 15" % (parts[0], parts[3]))
     factor = fraction = None
     if "/" in parts[1]:
         num, _, den = parts[1].partition("/")
@@ -669,8 +768,8 @@ def scale_params(name):
             raise ValueError("a fraction factor's num or den is beyond a double")
     else:
         factor = _nonzero_number(parts[1], "factor")
-    offset = read_number_text(parts[2]) if len(parts) == 3 else 0.0
-    return factor, fraction, offset
+    offset = read_number_text(parts[2]) if len(parts) >= 3 else 0.0
+    return factor, fraction, offset, places
 
 
 def linscale_params(name):
@@ -690,8 +789,8 @@ def linscale_params(name):
 
 
 def _build_scale(name, length):
-    factor, fraction, offset = scale_params(name)
-    return ScaleT(name, length, name.startswith("sscale"), factor, fraction, offset)
+    factor, fraction, offset, places = uscale_params(name)
+    return ScaleT(name, length, name.startswith("sscale"), factor, fraction, offset, places)
 
 
 def build_bits_transform(name, length):
@@ -707,6 +806,8 @@ def build_bits_transform(name, length):
         return F64T(name, length)
     if name == "ascii":
         return AsciiT(name, length)
+    if name == "utf8":  # 0.55
+        return Utf8BitsT(name, length)
     if name == "sixbit":
         return SixbitT(name, length)
     if name == "hex":  # 0.22
@@ -727,10 +828,11 @@ _TEXTUAL = ("xml", "geojson", "json", "text")
 TRANSFORM_WIRES = {
     "string": _TEXTUAL, "float": _TEXTUAL, "int": _TEXTUAL, "iso8601_ms": _TEXTUAL, "bool": ("json",),
     "iso8601_short": ("xml", "geojson", "json"),  # 0.18 (ruling 11: bad-directive elsewhere)
+    "iso8601_si": ("xml", "geojson", "json"),  # 0.55
     "uint": ("bits", "tlv"), "twos": ("bits", "tlv"), "linscale": ("bits",), "uscale": ("bits", "tlv"),
     "sscale": ("bits", "tlv"), "f32": ("bits", "tlv"), "f64": ("bits", "tlv"), "ascii": ("bits",),
     "sixbit": ("bits",),  # 0.14
-    "utf8": ("tlv",), "hex": ("tlv", "bits"),  # 0.13; `hex` on `bits` from 0.22
+    "utf8": ("tlv", "bits"), "hex": ("tlv", "bits"),  # 0.13; `hex` on `bits` from 0.22, `utf8` from 0.55
     "pstring": ("protobuf",), "pvarint": ("protobuf",), "psint": ("protobuf",), "pdouble": ("protobuf",),
     "pfloat": ("protobuf",),
     "dec": ("text",), "dm": ("text",), "hms": ("text",), "hms_dmy": ("text",),
@@ -802,7 +904,7 @@ def check_transform_text(name):
     if head == "linscale":
         linscale_params(name)
     elif head in ("uscale", "sscale"):
-        scale_params(name)
+        uscale_params(name)
     elif v15_family(name) is not None:
         v15_params(name)
     elif head in ("dec", "dm", "hms", "hms_dmy") or (head == "int" and colon):

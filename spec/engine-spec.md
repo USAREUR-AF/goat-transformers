@@ -4800,8 +4800,9 @@ not a character set of `chars` (Version 0.15) and does not combine with
 
 The form and range of `<places>`, an empty argument and the count of
 arguments are transform parameters, checked as the line is read (ruling 5b of
-0.11, step 7). `utf8` on `bits` and `<places>` on a UPER `int:` locator need
-the wire and the locator, and are checked after the file (ruling 10 of
+0.11, step 7). `utf8` on `bits`, `<places>` on `tlv` (where `uscale` and
+`sscale` are valid, Version 0.13) and `<places>` on a UPER `int:` locator
+need the wire and the locator, and are checked after the file (ruling 10 of
 0.10).
 
 ## Rulings for 0.55

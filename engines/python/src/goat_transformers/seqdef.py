@@ -567,8 +567,8 @@ def parse_seq_pack_text(text, *, source="pack.def"):
                 "field option 'swap' needs a bit length that is a multiple of 8, got %d" % length, lineno, len_text
             )))
         if "trim" in opts:
-            if tname not in ("ascii", "sixbit"):  # ruling 5 of 0.14
-                deferred.append((lineno, bad("field option 'trim' applies to the 'ascii' and 'sixbit' "
+            if tname not in ("ascii", "utf8", "sixbit"):  # ruling 5 of 0.14; `utf8`: 0.55
+                deferred.append((lineno, bad("field option 'trim' applies to the 'ascii', 'utf8' and 'sixbit' "
                                              "transforms only", lineno, len_text)))
             else:
                 transform.trim = True

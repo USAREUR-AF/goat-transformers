@@ -152,6 +152,8 @@ class ScaleT(TlvTransform):
             self.bits = _build_scale(name, 8 * size)
         except ValueError as e:
             raise ParamError(str(e))
+        if self.bits.places is not None:  # 0.55: `<places>` only at a bit position or bit length of `bits`
+            raise ParamError("%s takes no <places> on the tlv wire" % name.split(":")[0])
         self.name = name
         self.size = size
 

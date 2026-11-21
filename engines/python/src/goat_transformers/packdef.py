@@ -985,8 +985,8 @@ def _resolve_field(wire, name, key, locator, tname, options, source, lineno, def
             defer("field option 'swap' does not apply to the '%s' transform" % tname)
         elif "swap" in opts and loc[2] % 8 != 0:
             defer("field option 'swap' needs a bit length that is a multiple of 8, got %d" % loc[2])
-        if "trim" in opts and tname not in ("ascii", "sixbit"):  # ruling 5 of 0.14
-            defer("field option 'trim' applies to the 'ascii' and 'sixbit' transforms only")
+        if "trim" in opts and tname not in ("ascii", "utf8", "sixbit"):  # ruling 5 of 0.14; `utf8`: 0.55
+            defer("field option 'trim' applies to the 'ascii', 'utf8' and 'sixbit' transforms only")
         if "swap" in opts and v15_family(tname) in ("chars", "octal"):  # 0.15
             defer("field option 'swap' does not apply to the '%s' transform" % v15_family(tname))
     else:
@@ -1005,7 +1005,7 @@ def _resolve_field(wire, name, key, locator, tname, options, source, lineno, def
             if not bits_len_allowed(tname, length):
                 defer("transform %s does not allow a bit length of %d" % (tname, length))
             transform = build_bits_transform(tname, length)
-            if "trim" in opts and tname in ("ascii", "sixbit"):
+            if "trim" in opts and tname in ("ascii", "utf8", "sixbit"):
                 transform.trim = True
             if "stop" in opts:  # 0.22
                 why = set_stop(transform, tname, opts["stop"])
