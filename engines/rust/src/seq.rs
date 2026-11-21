@@ -810,6 +810,9 @@ impl<'a> Parser<'a> {
                     with: None,
                     until: None,
                     stop: None,
+                    null: false,
+                    implicit: false,
+                    range: None,
                 };
                 for table in field_options(&mut f, toks, ln, false)? {
                     self.vias.push((table, ln));
@@ -1510,6 +1513,19 @@ pub fn parse(text: &str) -> Result<Pack, Error> {
         Some("bits") => {}
         Some(_) => return err("bad-directive: `layout` is valid only on a bits wire"),
         None => return err("missing-wire: the pack has no `wire` line"),
+    }
+    // engine-spec v0.56: `null` (json, geojson) and `implicit` (protobuf) do
+    // not fit the bits wire, a check made after the file (ruling 10 of 0.10)
+    let mut wire_opt: Option<usize> = None;
+    body.visit(&mut |v| {
+        if let Visit::Field(f) = v {
+            if f.null || f.implicit {
+                wire_opt = Some(wire_opt.map_or(f.line, |l| l.min(f.line)));
+            }
+        }
+    });
+    if let Some(ln) = wire_opt {
+        return bad(ln, "`null` and `implicit` are not valid on a bits wire");
     }
     // `armor sixbit` and `encoding uper` need `bit_order msb` (0.14, 0.19); `msb-lsb` is not `msb`
     let armor = p.armor.check(true, p.order == BitOrder::Msb)?;
