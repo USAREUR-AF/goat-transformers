@@ -1,0 +1,9 @@
+{
+  "name": "item-label-of-no-kind",
+  "from": "conformance-whenas-items",
+  "to": "conformance-whenas-items",
+  "input": "0160",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.30 Decode: label 6 matches neither p nor q (0.8 Items by kind; ruling 11 of 0.20)"
+}

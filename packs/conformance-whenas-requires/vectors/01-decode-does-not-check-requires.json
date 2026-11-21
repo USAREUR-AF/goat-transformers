@@ -1,0 +1,14 @@
+{
+  "name": "decode-does-not-check-requires",
+  "from": "conformance-whenas-requires",
+  "to": "conformance-whenas-requires",
+  "input": "0307",
+  "expect": "0307",
+  "model": {
+    "@kind": "five",
+    "probe.x": "3",
+    "probe.y": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.5 Decode selects by `when` only: 3 lies in five's 1..9; the round trip uses the recorded kind (ruling 4 of 0.20: `=` is checked only when the kind is chosen by `requires`)"
+}

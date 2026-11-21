@@ -1,0 +1,17 @@
+{
+  "name": "ruling-02-switch-case-of-the-kind-label",
+  "from": "conformance-whenas-switch",
+  "to": "conformance-whenas-switch",
+  "input": "070202012c",
+  "expect": "070202012c",
+  "model": {
+    "probe.w": "2",
+    "probe.x": "2",
+    "probe.y": "300",
+    "@absent": [
+      "probe.z"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.30 ruling 2: a kind's `as` key counts as mapped from the start of its kind for a `switch`, a common one from its own line on; w = 2: else, nothing; x = 2: y in 16 bits, 0x012c = 300"
+}

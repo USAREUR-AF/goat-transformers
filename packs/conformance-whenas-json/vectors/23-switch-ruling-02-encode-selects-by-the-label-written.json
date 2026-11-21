@@ -1,0 +1,9 @@
+{
+  "name": "switch-ruling-02-encode-selects-by-the-label-written",
+  "from": "conformance-whenas-json",
+  "to": "conformance-whenas-switch",
+  "input": "{\"n\":7,\"w\":1,\"z\":5,\"x\":2,\"y\":300}",
+  "expect": "07010502012c",
+  "source": "constructed",
+  "reference": "spec 0.30 ruling 2: a kind's `as` key counts as mapped from the start of its kind for a `switch`, a common one from its own line on; 0.20 Encode: the case is the one decode would select from the bits the key's line wrote: w's `when` writes 1 (case 1, z), x's writes 2 (y in 16 bits)"
+}

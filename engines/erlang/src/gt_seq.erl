@@ -63,18 +63,34 @@ kind([], _Ext, #d{pack = Pack}) ->
     gt_engine:conv_error('no-kind', Pack, "no kind's when lines hold at the cursor", []);
 kind([#{name := Name, lines := Lines} | Rest], Ext, D) ->
     {Whens, Body} = lists:splitwith(fun(L) -> element(1, L) =:= swhen end, Lines),
-    case whens(Whens, D#d.pos, Ext, D) of
+    case whens(Whens, D#d.pos, Ext, D, []) of
         false -> kind(Rest, Ext, D);
-        Pos -> {Name, lines(Body, Ext, D#d{pos = Pos})}
+        {Pos, Sets} -> {Name, lines(Body, Ext, set_as(Sets, D#d{pos = Pos}))}
     end.
 
-%% A `when` any of whose bits lies beyond the input does not hold.
-whens([], Pos, _Ext, _D) -> Pos;
-whens([{swhen, Len, Val} | Rest], Pos, Ext, D) ->
-    case avail(Pos, Len, Ext, D) =:= ok andalso gt_pack:when_match(gt_bits:read(D#d.msg, Pos, Len), Val) of
-        true -> whens(Rest, Pos + Len, Ext, D);
+%% A `when` any of whose bits lies beyond the input does not hold
+%% -> false | {Pos after the lines, [{Key, Len, Bits}]}: the keys the
+%% `when ... as` lines bind (0.30), set only once every line holds
+%% (ruling 12).
+whens([], Pos, _Ext, _D, Sets) -> {Pos, lists:reverse(Sets)};
+whens([{swhen, Len, Val, As} | Rest], Pos, Ext, D, Sets) ->
+    case avail(Pos, Len, Ext, D) =:= ok of
+        true ->
+            U = gt_bits:read(D#d.msg, Pos, Len),
+            case gt_pack:when_match(U, Val) of
+                true when As =:= none -> whens(Rest, Pos + Len, Ext, D, Sets);
+                true -> whens(Rest, Pos + Len, Ext, D, [{As, Len, U} | Sets]);
+                false -> false
+            end;
         false -> false
     end.
+
+%% The key of a `when ... as` holds the bits as `uint` reads them (ruling 7
+%% of 0.30).
+set_as(Sets, D) ->
+    lists:foldl(fun({Key, Len, U}, Acc) ->
+                        set_key({Key, none}, U, Len, uint, integer_to_binary(Len), false, Acc)
+                end, D, Sets).
 
 %% Are Len bits at Pos inside the input, or inside the `length` extent that
 %% ends at Ext? A line that starts at or after the end of an extent reads as
@@ -186,10 +202,10 @@ line({pad, Len}, Ext, D) -> skip(Len, Ext, D);
 %% `align` stops at the end of the input or extent without error
 line({align, N}, Ext, #d{pos = Pos} = D) ->
     D#d{pos = max(Pos, min(Pos + (N - Pos rem N) rem N, limit(Ext, D)))};
-line({swhen, Len, Val}, Ext, #d{pos = Pos, pack = Pack} = D) ->
-    case whens([{swhen, Len, Val}], Pos, Ext, D) of
+line({swhen, _, _, _} = L, Ext, #d{pos = Pos, pack = Pack} = D) ->
+    case whens([L], Pos, Ext, D, []) of
         false -> gt_engine:conv_error('no-kind', Pack, "a common when does not hold", []);
-        Pos1 -> D#d{pos = Pos1}
+        {Pos1, Sets} -> set_as(Sets, D#d{pos = Pos1})
     end;
 line({presence, Id, fx}, Ext, #d{pos = Pos} = D) ->
     case need(Pos, 8, Ext, D) of
@@ -950,7 +966,14 @@ eline({sfield, _, Len, _, _, _, _, _, _} = L, _Rest, Src, #e{pack = Pack, wrote 
         false -> E1
     end;
 eline({sconst, Len, Val}, _Rest, _Src, E) -> emit(Len, Val, E);
-eline({swhen, Len, Val}, _Rest, _Src, E) -> emit(Len, gt_pack:when_first(Val), E);
+eline({swhen, Len, Val, none}, _Rest, _Src, E) -> emit(Len, gt_pack:when_first(Val), E);
+eline({swhen, Len, _, Key} = L, _Rest, Src, #e{pack = Pack, wrote = W} = E) ->
+    U = as_bits(L, Src, Pack),
+    E1 = emit(Len, U, E),
+    case maps:get(has_switch, Pack, false) of
+        true -> E1#e{wrote = W#{Key => as_read_back(U, Len)}};
+        false -> E1
+    end;
 eline({pad, Len}, _Rest, _Src, E) -> emit(Len, 0, E);
 eline({align, N}, _Rest, _Src, #e{pos = Pos} = E) -> emit((N - Pos rem N) rem N, 0, E);
 eline({presence, Id, Size}, Rest, Src, #e{pack = Pack, env = Env} = E) ->
@@ -1340,6 +1363,26 @@ eitem(Item, List, Body, #e{pack = Pack, wrote = W, path = Path, icount = IC} = E
                                icount = IC#{{Path, List} => N + 1}}),
     E1#e{wrote = W, path = Path}.
 
+%% The bits a `when ... as <key>` line writes (0.30): the value of the key
+%% when the scope holds it and the `when` matches it, the first listed value
+%% when the scope does not hold it (a default does not count, ruling 6); a
+%% held value the `when` does not match is transform-encode.
+as_bits({swhen, Len, Val, Key}, #{model := Model}, Pack) ->
+    case maps:find(Key, Model) of
+        error -> gt_pack:when_first(Val);
+        {ok, V} ->
+            case gt_pack:as_match(V, Val) of
+                {true, U} -> U;
+                false -> gt_engine:conv_error('transform-encode', Pack,
+                                              "~s holds ~s, which its when line of ~p bits does not match",
+                                              [Key, gt_num:canon(V), Len])
+            end
+    end.
+
+%% What decode reads back from the bits of an `as` line: `uint` (ruling 7).
+as_read_back(U, 64) when U >= 1 bsl 63 -> U - (1 bsl 64);
+as_read_back(U, _Len) -> U.
+
 %% The lines an item is written by, and what it is written from: the lines
 %% common to every item, then those of the kind the item recorded when it
 %% was decoded from this format, else of the first kind whose every
@@ -1357,7 +1400,9 @@ item_scope(Item, #{lines := Common, defaults := Defaults, kinds := Kinds}, Pack)
                            _ -> []
                        end,
             Has = fun(T) -> gt_engine:req_holds(T, Model, Lists) end,
-            Chosen = Recorded ++ [K || #{requires := Req} = K <- Kinds, lists:all(Has, Req)],
+            %% with the implicit term of each `when ... as` (0.30, ruling 4)
+            Chosen = Recorded ++ [K || #{requires := Req, lines := KLs} = K <- Kinds,
+                                       lists:all(Has, Req), gt_pack:as_holds(KLs, Model)],
             case Chosen of
                 [] -> gt_engine:conv_error('no-kind', Pack, "an item selects no kind of its group", []);
                 [#{lines := Ls, defaults := Ds} | _] -> {Common ++ Ls, Src#{defaults := Ds}}
@@ -1439,6 +1484,12 @@ sim({sfield, _, {until, _}, _, _, _, _, _, _} = L, Src, Pack) ->
 sim({sfield, _, _, _, _, _, _, _, _} = L, Src, Pack) ->
     try field_bits(L, Src, Pack) of
         {_, Raw} -> Src#{wrote => read_back(L, Raw, maps:get(wrote, Src, #{}), Pack)}
+    catch
+        _:_ -> Src
+    end;
+sim({swhen, Len, _, Key} = L, Src, Pack) when Key =/= none ->
+    try as_bits(L, Src, Pack) of
+        U -> Src#{wrote => (maps:get(wrote, Src, #{}))#{Key => as_read_back(U, Len)}}
     catch
         _:_ -> Src
     end;

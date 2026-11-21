@@ -1,0 +1,9 @@
+{
+  "name": "requires-ruling-13-requires-value-outside-the-when-is-unreachable",
+  "from": "conformance-whenas-json",
+  "to": "conformance-whenas-requires",
+  "input": "{\"x\":20,\"z\":7}",
+  "expect": "14",
+  "source": "constructed",
+  "reference": "spec 0.30 ruling 13: `requires <k>` and `requires <k>=<values>` on a kind with `when ... as <k>` load; every term must hold; a `requires <k>=` value outside the `when` makes the kind unreachable: never requires x=20 and its `when` is 1..9; any takes x = 20 (14)"
+}

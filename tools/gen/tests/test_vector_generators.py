@@ -31,6 +31,7 @@ SCRIPTS = (
     "conformance-seq-vectors.py",
     "conformance-tool-vectors.py",
     "conformance-transforms-vectors.py",
+    "conformance-whenas-vectors.py",
 )
 
 

@@ -827,7 +827,8 @@ const KeyUse = struct {
     key: []const u8,
     tkind: ?TKind,
     via: []const u8 = "",
-    use: enum { field, group, requires, default, with } = .field,
+    // `as_`: the key a sequential `when … as <key>` binds (Version 0.30)
+    use: enum { field, group, requires, default, with, as_ } = .field,
     // a `requires <key>=…` term (Version 0.20)
     eq: bool = false,
     // the innermost group the line is in: `model_keys` lists a key inside a
@@ -962,7 +963,9 @@ fn modelKeys(alloc: std.mem.Allocator, p: *const Pack) ![]const []const u8 {
     var out = std.ArrayList([]const u8).init(alloc);
     var seen = std.StringHashMap(void).init(alloc);
     for (p.key_uses.items) |ku| {
-        if (ku.use != .field and ku.use != .group) continue; // `requires` and `default` keys are not mapped keys
+        // `requires` and `default` keys are not mapped keys; a `when … as`
+        // key is (rulings 5 and 24 of 0.30)
+        if (ku.use != .field and ku.use != .group and ku.use != .as_) continue;
         const name = try mkName(alloc, ku.grp, ku.key, ku.use == .group);
         if (seen.contains(name)) continue;
         try seen.put(name, {});
@@ -2763,7 +2766,11 @@ fn packLineChecks(alloc: std.mem.Allocator, toks: []const []const u8, lineno: us
         // have two (ruling 12 of 0.13, ruling 2 of 0.27)
         .checksum => n == 1 or (n == 2 and (std.mem.eql(u8, toks[1], "sum16") or std.mem.eql(u8, toks[1], "crc32"))),
         .field => n >= 3,
-        .when, .@"const", .default, .typemap => n == 2,
+        // Version 0.30: `when <len> <values> as …`; the tokens after `as`,
+        // and the wire and layout it needs, are checked after the file
+        // (ruling 16)
+        .when => n == 2 or (n >= 3 and std.mem.eql(u8, toks[3], "as")),
+        .@"const", .default, .typemap => n == 2,
         .map => n == 3,
         .requires, .@"if", .length => n >= 1,
         .group => n >= 2,
@@ -3021,6 +3028,11 @@ fn fixedLine(st: *FState, toks: []const []const u8) anyerror!void {
         }
     } else if (is(kw, "when") or is(kw, "const")) {
         const is_when = is(kw, "when");
+        if (is_when and toks.len > 3 and is(toks[3], "as")) {
+            // Version 0.30: `as` is for a `when` of a `layout sequential`
+            // pack only (ruling 1), checked after the file (ruling 16)
+            return bad(diag, alloc, E.@"bad-directive", "line {d}: when … as: `as` is for a pack with `layout sequential` on the bits wire", .{lineno});
+        }
         if (toks.len != 3) return bad(diag, alloc, E.@"bad-directive", "line {d}: {s} takes a locator and a value", .{ lineno, kw });
         if (is_when) st.any_when = true;
         // a UPER locator on `bits` is `bad-directive` after the file
@@ -3572,13 +3584,23 @@ pub const Engine = struct {
             const is_list = self.isList(ku.key);
             const fits = switch (ku.use) {
                 .group => is_list,
-                .field, .default => !is_list,
+                .field, .default, .as_ => !is_list,
                 .requires, .with => true,
             };
             if (!fits) {
                 const err = E.@"key-type-mismatch";
-                self.fail(err, "pack {s}: {s} is {s}, named by a {s} line", .{ p.format, ku.key, if (is_list) "a list" else "a scalar key", @tagName(ku.use) });
+                self.fail(err, "pack {s}: {s} is {s}, named by a {s} line", .{ p.format, ku.key, if (is_list) "a list" else "a scalar key", if (ku.use == .as_) "when … as" else @tagName(ku.use) });
                 return err;
+            }
+            // Version 0.30: a key bound by `when … as` is declared `int`
+            if (ku.use == .as_) {
+                const want = self.keyType(ku.key).?;
+                if (want != .int) {
+                    const err = E.@"key-type-mismatch";
+                    self.fail(err, "pack {s}: when … as {s}: the key is {s}, not int", .{ p.format, ku.key, @tagName(want) });
+                    return err;
+                }
+                continue;
             }
             const tk = ku.tkind orelse continue;
             const want = self.keyType(ku.key).?;
@@ -10871,6 +10893,8 @@ const SNode = struct {
     lb: i64 = 0,
     ub: i64 = 0,
     ranges: []const WRange = &.{}, // when: the values and ranges (Version 0.20)
+    // when: the key `as <key>` binds its bits to (Version 0.30); "" for none
+    as_key: []const u8 = "",
     sw: ?*SSwitch = null, // switch
     cs: ?*SCase = null, // case
     // Version 0.21: a count line, or the count a `count @<name>` group names
@@ -11294,8 +11318,25 @@ const SParser = struct {
             self.top().last_field = false;
         } else if (is(kw, "when") or is(kw, "const")) {
             const is_when = is(kw, "when");
-            if (toks.len != 3) return self.err(bd, "{s} takes a bit length and a value", .{kw});
+            // Version 0.30: `when <len> <values> as <key>`. A syntax error of
+            // `as` (no key, a token after the key, `as` twice) is a check
+            // after the file (ruling 16); the line's own checks run first.
+            var as_key: []const u8 = "";
+            var as_err: ?anyerror = null;
+            if (is_when and toks.len > 3 and is(toks[3], "as")) {
+                if (toks.len == 4) {
+                    as_err = self.err(bd, "when … as: `as` names no key", .{});
+                } else if (toks.len > 5) {
+                    if (is(toks[5], "as")) {
+                        as_err = self.err(bd, "when … as: `as` is given twice", .{});
+                    } else as_err = self.err(bd, "when … as {s}: the token {s} after the key", .{ toks[4], toks[5] });
+                } else if (is(toks[4], "as")) {
+                    // ruling 31: any second `as` token, not a key named `as`
+                    as_err = self.err(bd, "when … as: `as` is given twice", .{});
+                } else as_key = toks[4];
+            } else if (toks.len != 3) return self.err(bd, "{s} takes a bit length and a value", .{kw});
             if (!locatorFormOk(.bits, true, toks[1], false)) return self.lineErr(E.@"bad-locator", "{s}: {s} is not a bit length", .{ kw, toks[1] });
+            if (as_err) |e| return e;
             const len = try self.bitLen(toks[1], kw, 64);
             var ranges: []const WRange = &.{};
             var v: u64 = 0;
@@ -11308,17 +11349,31 @@ const SParser = struct {
                 v = parseUnsigned(toks[2]) orelse return self.err(bd, "{s}: the value {s} is not an unsigned decimal integer", .{ kw, toks[2] });
                 if (!fitsBits(v, len)) return self.err(bd, "{s}: the value {d} does not fit {d} bits", .{ kw, v, len });
             }
-            const n = SNode{ .tag = if (is_when) .when else .constant, .lineno = self.lineno, .len = len, .value = v, .ranges = ranges };
+            const n = SNode{ .tag = if (is_when) .when else .constant, .lineno = self.lineno, .len = len, .value = v, .ranges = ranges, .as_key = as_key };
             if (!is_when) return self.add(n);
             const f = self.top();
             if (f.tag != .body) return self.err(bd, "when inside a block", .{});
+            if (as_key.len > 0) {
+                // the key is a mapped key, listed by `model_keys` at this
+                // line (ruling 5 of 0.30)
+                try p.key_uses.append(.{ .key = as_key, .tkind = null, .use = .as_, .grp = f.grp });
+            }
             if (f.kinds.items.len == 0) {
-                // before the first kind: a common `when`
+                // before the first kind: a common `when`. Its `as` key counts
+                // as mapped from this line on for a `switch` (ruling 2).
                 f.common_when = true;
-                return self.add(n);
+                if (as_key.len > 0) try self.mapKey(as_key);
+                try self.add(n);
+                // `also` follows a `field` line only (ruling 14)
+                f.last_field = false;
+                return;
             }
             if (!f.in_whens) return self.err(bd, "when after another line of its kind", .{});
+            // a kind's `as` key counts as mapped from the start of its kind
+            // (ruling 2); its `when` lines are its first lines
+            if (as_key.len > 0) try self.mapKey(as_key);
             try f.whens.append(alloc, n);
+            f.last_field = false;
         } else if (is(kw, "field")) {
             if (toks.len < 4) return self.err(E.@"bad-directive", "field takes a key, a bit length and a transform", .{});
             const t = parseTransform(alloc, toks[3]) catch |e| switch (e) {
@@ -11757,6 +11812,56 @@ fn seqCheckLists(alloc: std.mem.Allocator, b: *const SBody, diag: *Diag) anyerro
     }
 }
 
+// Version 0.30, rulings 9 and 33: in one reading path of a scope (its common
+// lines plus one kind, every block of the scope included, a group body being
+// a scope of its own) a key is bound by one `when … as` line at most, and a
+// key so bound is mapped by no `field` or `also` line.
+fn seqCollectAs(alloc: std.mem.Allocator, nodes: []const SNode, as_keys: *std.ArrayListUnmanaged(*const SNode), mapped: *std.ArrayListUnmanaged([]const u8), groups: *std.ArrayListUnmanaged(*const SBody)) anyerror!void {
+    for (nodes) |*n| {
+        switch (n.tag) {
+            .when => if (n.as_key.len > 0) try as_keys.append(alloc, n),
+            .field => {
+                try mapped.append(alloc, n.ln.key);
+                for (n.also.items) |a| try mapped.append(alloc, a.key);
+            },
+            .group => try groups.append(alloc, n.gbody.?),
+            else => {},
+        }
+        try seqCollectAs(alloc, n.body, as_keys, mapped, groups);
+    }
+}
+
+fn seqCheckAsBody(alloc: std.mem.Allocator, b: *const SBody, diag: *Diag) anyerror!void {
+    const bd = E.@"bad-directive";
+    var c_as = std.ArrayListUnmanaged(*const SNode){};
+    var c_mapped = std.ArrayListUnmanaged([]const u8){};
+    var groups = std.ArrayListUnmanaged(*const SBody){};
+    try seqCollectAs(alloc, b.common, &c_as, &c_mapped, &groups);
+    var ki: usize = 0;
+    while (ki == 0 or ki < b.kinds.len) : (ki += 1) {
+        var as_keys = std.ArrayListUnmanaged(*const SNode){};
+        var mapped = std.ArrayListUnmanaged([]const u8){};
+        try as_keys.appendSlice(alloc, c_as.items);
+        try mapped.appendSlice(alloc, c_mapped.items);
+        if (ki < b.kinds.len) {
+            const k = &b.kinds[ki];
+            try seqCollectAs(alloc, k.whens, &as_keys, &mapped, &groups);
+            try seqCollectAs(alloc, k.lines, &as_keys, &mapped, &groups);
+        }
+        for (as_keys.items, 0..) |w, i| {
+            for (as_keys.items[0..i]) |o| {
+                if (std.mem.eql(u8, o.as_key, w.as_key)) {
+                    return bad(diag, alloc, bd, "line {d}: when … as {s}: line {d} binds the same key in one reading path", .{ w.lineno, w.as_key, o.lineno });
+                }
+            }
+            if (listHolds(mapped.items, w.as_key)) {
+                return bad(diag, alloc, bd, "line {d}: when … as {s}: a field or also line of the same reading path maps the key", .{ w.lineno, w.as_key });
+            }
+        }
+    }
+    for (groups.items) |g| try seqCheckAsBody(alloc, g, diag);
+}
+
 // Version 0.20: each switch's key source, the first line of its scope that
 // maps the key before the switch in reading order.
 const SKeySrc = struct { node: *const SNode, idx: usize };
@@ -11778,6 +11883,8 @@ fn seqLinkNodes(nodes: []SNode, map: *std.StringHashMap(SKeySrc)) anyerror!void 
                 try seqLinkNodes(n.body, map);
             },
             .group => try seqLinkBody(map.allocator, n.gbody.?),
+            // Version 0.30: a `when … as` line is the key's line (ruling 19)
+            .when => if (n.as_key.len > 0 and !map.contains(n.as_key)) try map.put(n.as_key, .{ .node = n, .idx = 0 }),
             else => try seqLinkNodes(n.body, map),
         }
     }
@@ -11788,6 +11895,7 @@ fn seqLinkBody(alloc: std.mem.Allocator, b: *SBody) anyerror!void {
     try seqLinkNodes(b.common, &common);
     for (b.kinds) |*k| {
         var m = try common.clone();
+        try seqLinkNodes(k.whens, &m);
         try seqLinkNodes(k.lines, &m);
     }
 }
@@ -11940,6 +12048,9 @@ fn parseSeqPack(alloc: std.mem.Allocator, def_text: []const u8, diag: *Diag) any
         return bad(diag, alloc, E.@"bad-directive", "line {d}: a block with no `end`", .{sp.top().node.lineno});
     }
     try sp.closeBody(&sp.frames.items[0]);
+    // Version 0.30: the bans of ruling 9 need only key names; they run
+    // before the other checks that need the whole file (rulings 16 and 29)
+    try seqCheckAsBody(alloc, root, diag);
     try armorCheck(alloc, p, diag);
     // `encoding <none | uper>` (Version 0.19)
     if (p.enc_raw) |raw| {
@@ -12159,6 +12270,15 @@ const SDec = struct {
         for (n.also.items) |a| try self.setKey(se, a.key, a.via, a.via_name, a.kty, raw);
     }
 
+    // Version 0.30: the key of a `when … as` line holds the bits at `at` read
+    // as `uint` does: with 64 bits, a value of 2^63 or more is the negative
+    // integer of the same bits (ruling 7).
+    fn setAs(self: *SDec, se: *SEnt, n: *const SNode, at: usize) !void {
+        if (n.as_key.len == 0) return;
+        const v = getBits(self.buf, self.p.msb, at, n.len);
+        try self.setKey(se, n.as_key, null, "", .int, MV{ .int = @bitCast(v) });
+    }
+
     fn setKey(self: *SDec, se: *SEnt, key: []const u8, via: ?*const Table, via_name: []const u8, kty: KeyType, raw: MV) !void {
         if (se.e.fields.contains(key)) return; // the earliest line of a key wins
         var mv = raw;
@@ -12222,9 +12342,13 @@ const SDec = struct {
             },
             .when => {
                 // a common `when`: it must hold for any message of the format
+                const at = self.pos;
                 if (!self.fits(n.len) or !inRanges(n.ranges, self.take(n.len))) {
                     return bad(self.diag, alloc, E.@"no-kind", "the common `when {d} {d}` does not hold", .{ n.len, n.value });
                 }
+                // Version 0.30: a common `when … as` sets its key whenever
+                // the message (or item, ruling 11) decodes
+                try self.setAs(se, n, at);
             },
             .presence => {
                 const pr = n.pres.?;
@@ -12732,6 +12856,14 @@ const SDec = struct {
             const k = sel orelse return bad(self.diag, self.alloc, E.@"no-kind", "no kind's `when` lines all hold at bit {d}", .{self.pos});
             se.e.kind_fmt = self.p.format;
             se.e.kind_name = k.name;
+            // Version 0.30: the selected kind's `when … as` lines set their
+            // keys; a kind tested and not selected set nothing (ruling 12)
+            var at = self.pos;
+            for (k.whens) |*w| at -= w.len;
+            for (k.whens) |*w| {
+                try self.setAs(se, w, at);
+                at += w.len;
+            }
             try self.nodes(k.lines, se, &env);
         }
         try self.checkPending(mark);
@@ -12747,6 +12879,24 @@ const SDec = struct {
         if (self.failed_msg == null) self.failed_msg = msg;
     }
 };
+
+// Version 0.30: the value of a `when … as <k>` line's key in the entity:
+// absent; held, with the unsigned 64-bit pattern the `when` matches; or held
+// with a value it does not match (ruling 7: the value read as an unsigned
+// 64-bit pattern, so a negative value never matches a `when` shorter than 64
+// bits). Only what the entity holds counts, not a `default` (ruling 6).
+const AsVal = union(enum) { absent, match: u64, nomatch };
+
+fn asValue(n: *const SNode, ent: *const Entity) AsVal {
+    const mv = ent.get(n.as_key) orelse return .absent;
+    const i: i64 = switch (mv) {
+        .int => |x| x,
+        .float => |f| if (f == @trunc(f) and f >= -9223372036854775808.0 and f < 9223372036854775808.0) @intFromFloat(f) else return .nomatch,
+        .str => |t| std.fmt.parseInt(i64, t, 10) catch return .nomatch,
+    };
+    const u: u64 = @bitCast(i);
+    return if (inRanges(n.ranges, u)) .{ .match = u } else .nomatch;
+}
 
 // Version 0.20: the case of a switch node (an index into its body) that a
 // value of its key selects: the first case listing its canonical text, else
@@ -12883,6 +13033,18 @@ const SEnc = struct {
             try tbl.put(self.alloc, k, idx);
             return idx;
         };
+        if (sw.key_src) |src| if (src.tag == .when) {
+            // Version 0.30: the key's line is a `when … as` (ruling 19): the
+            // value it writes, the first listed one when the key is absent
+            val = switch (asValue(src, ent)) {
+                .match => |x| MV{ .int = @bitCast(x) },
+                .absent => MV{ .int = @bitCast(src.value) },
+                .nomatch => null,
+            };
+            const idx: u32 = if (try caseIndex(self.alloc, n, val)) |i| @intCast(i) else no_case;
+            try tbl.put(self.alloc, k, idx);
+            return idx;
+        };
         if (sw.key_src) |src| {
             const ln = &src.ln;
             const tmp = try self.alloc.alloc(u8, (ln.blen + 7) / 8);
@@ -13004,9 +13166,35 @@ const SEnc = struct {
                     break;
                 }
             }
+            // Version 0.30: each `when … as <k>` line of the kind is an
+            // implicit term: the entity holds <k> with a value the `when`
+            // matches
+            for (k.whens) |*w| {
+                if (w.as_key.len > 0 and asValue(w, ent) != .match) all = false;
+            }
             if (all) return k;
         }
         return bad(self.diag, self.alloc, E.@"no-kind", "the entity has the `requires` keys of no kind", .{});
+    }
+
+    // Version 0.30: write a `when` line. With `as <k>`: the value of <k> when
+    // the entity holds it and the `when` matches it; the first listed value
+    // when the entity does not hold <k> (a `default` has no effect, ruling
+    // 6); `transform-encode` for a held value the `when` does not match.
+    // What decode reads back is kept for a `switch` on the key.
+    fn writeWhen(self: *SEnc, n: *const SNode, ent: *const Entity) !void {
+        var v = n.value;
+        if (n.as_key.len > 0) {
+            switch (asValue(n, ent)) {
+                .match => |x| v = x,
+                .absent => {},
+                .nomatch => if (!self.dry) return bad(self.diag, self.alloc, te, "when … as {s}: the entity holds a value the `when` does not match; the output would decode another value", .{n.as_key}),
+            }
+            if (self.kv) |m| {
+                if (!m.contains(n.as_key)) try m.put(self.alloc, n.as_key, MV{ .int = @bitCast(v) });
+            }
+        }
+        try self.put(n.len, v);
     }
 
     // The value a field writes: that of the earliest of its keys that the
@@ -13146,7 +13334,7 @@ const SEnc = struct {
         const tail: []const SNode = if (k) |kk| kk.lines else &.{};
         try self.nodes(b.common, tail, ent, ds, &env);
         if (k) |kk| {
-            for (kk.whens) |*w| try self.put(w.len, w.value);
+            for (kk.whens) |*w| try self.writeWhen(w, ent);
             try self.nodes(kk.lines, &.{}, ent, ds, &env);
         }
     }
@@ -13252,7 +13440,8 @@ const SEnc = struct {
                 try self.block(c.body, ent, caseDS(ds, c, &link), env.*);
             },
             .case_ => unreachable, // a case is written by its switch
-            .constant, .when => try self.put(n.len, n.value),
+            .constant => try self.put(n.len, n.value),
+            .when => try self.writeWhen(n, ent),
             .pad => try self.zeros(n.len),
             .align_ => {
                 const r = self.pos % n.len;

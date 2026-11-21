@@ -120,13 +120,13 @@ Measured on 2026-11-21 on Linux x86-64 with GCC 15.2, Release, not stripped:
 
 | File | All eight wires | `xml`, `json`, `geojson` |
 |---|---|---|
-| `libgoat_transformers.a` | 3,162,816 bytes | 2,214,634 bytes (70%) |
-| `goat-xf` | 1,757,488 bytes | 1,240,496 bytes (71%) |
+| `libgoat_transformers.a` | 3,299,046 bytes | 2,347,192 bytes (71%) |
+| `goat-xf` | 1,838,880 bytes | 1,317,632 bytes (72%) |
 
-The check passed with 8211 of 8211 conversion vectors, 383 of 383 load
-vectors and 16 of 16 capability vectors run (14285, 852 and 2 skipped), and
-2674 packs refused with `unknown-wire` (bits 1705, protobuf 876, text 77,
-tlv 9, cbor 7). What stays in the reduced build is the pack reader and the transforms
+The check passed with 8357 of 8357 conversion vectors, 389 of 389 load
+vectors and 16 of 16 capability vectors run (14992, 923 and 2 skipped), and
+2775 packs refused with `unknown-wire` (bits 1796, protobuf 876, text 85,
+tlv 11, cbor 7). What stays in the reduced build is the pack reader and the transforms
 every wire shares.
 
 ## Test
@@ -147,11 +147,11 @@ cd build && ctest --output-on-failure
 Each program prints its counts on the last line and exits non-zero on any
 failure. A program can be run by itself: `./build/goat_transformers_vectors`.
 
-Measured on 2026-11-21 (Release, all eight wires, through Version 0.28 and
-its `cbor` wire): all seven ctest entries pass;
-`vectors` ran 22496 of 22496 conversion vectors, 1235 of 1235 load vectors
-and 18 of 18 capability vectors; `unit` made 2116 checks, none failed. `tool_vectors` passed
-135 of 135 (through Version 0.29).
+Measured on 2026-11-21 (Release, all eight wires, through Version 0.30,
+`when … as`, after 0.28's `cbor` wire): all seven ctest entries pass;
+`vectors` ran 23349 of 23349 conversion vectors, 1312 of 1312 load vectors
+and 18 of 18 capability vectors; `unit` made 2144 checks, none failed. `tool_vectors` passed
+135 of 135.
 
 ## What an instance keeps
 

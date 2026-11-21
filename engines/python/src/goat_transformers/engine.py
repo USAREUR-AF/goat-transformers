@@ -249,7 +249,8 @@ class Engine:
             if k not in module.keys and k not in module.lists:
                 role = (
                     "required" if ref is None else "mapped" if getattr(ref, "is_field", False)
-                    else "mapped by a group" if getattr(ref, "is_group", False) else "given a default"
+                    else "mapped by a group" if getattr(ref, "is_group", False)
+                    else "bound by 'when ... as'" if getattr(ref, "is_as", False) else "given a default"
                 )
                 raise UndeclaredKey(
                     "module %s declares no key %r (%s as %s)" % (m, k, role, key),
@@ -271,6 +272,17 @@ class Engine:
                 if k not in module.lists:
                     raise KeyTypeMismatch(
                         "a 'group' names %s, which is a scalar key, not a list" % key, format=fmt, locator=f.locator
+                    )
+                continue
+            if getattr(f, "is_as", False):  # 0.30: a `when ... as` key is a scalar `int` key (ruling 17)
+                if k in module.lists:
+                    raise KeyTypeMismatch(
+                        "'when ... as' names %s, which is a list, not a scalar key" % key, format=fmt, locator=key
+                    )
+                if module.keys[k].type != "int":
+                    raise KeyTypeMismatch(
+                        "'when ... as' names %s, which is declared %s, not int" % (key, module.keys[k].type),
+                        format=fmt, locator=key,
                     )
                 continue
             if not getattr(f, "is_field", False):
@@ -301,7 +313,7 @@ class Engine:
             if f.via is not None:
                 _build_via(f, pack.tables[f.via])
         for key, d, (m, k) in keyed:
-            if d is None or getattr(d, "is_field", False) or getattr(d, "is_group", False):
+            if d is None or any(getattr(d, a, False) for a in ("is_field", "is_group", "is_as")):
                 continue
             module = self.models[m]
             if k in module.lists:

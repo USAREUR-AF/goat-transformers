@@ -3,6 +3,7 @@
 #include "sequential.hpp"
 
 #include <algorithm>
+#include <cmath>
 #include <cstdint>
 #include <map>
 #include <set>
@@ -389,6 +390,60 @@ bool check_rest_body(const Pack& p, const SeqBody& body, bool after_rest, RestPl
     return any;
 }
 
+// v0.30 ruling 9: in one reading path (a body's common lines plus one of its
+// kinds), a key is named by one `when ... as` line at most, and a key named
+// by `as` is mapped by no `field` or `also` line. A group body is a scope of
+// its own (rulings 21 and 33).
+void as_mapped(const std::vector<SeqNode>& lines, std::map<std::string, std::size_t>& fields,
+               std::vector<const SeqBody*>& groups) {
+    for (const auto& n : lines) {
+        if (n.type == Type::Field) {
+            fields.emplace(n.field.key, n.field.line);
+            for (const auto& a : n.also) fields.emplace(a.key, a.line);
+        } else if (n.type == Type::Group) {
+            groups.push_back(&n.inner);
+        } else {
+            as_mapped(n.inner.lines, fields, groups);
+            for (const auto& c : n.cases) as_mapped(c.body.lines, fields, groups);
+        }
+    }
+}
+
+void check_as_bans(const Pack& p, const SeqBody& body, const std::string& source) {
+    auto refuse = [&](std::size_t line, const std::string& why) {
+        throw Error(ErrorKind::BadDirective, p.format, "", source + ":" + std::to_string(line) + ": " + why);
+    };
+    auto as_lines = [&](const std::vector<SeqNode>& lines, std::map<std::string, std::size_t>& keys,
+                        const std::map<std::string, std::size_t>* common) {
+        for (const auto& n : lines) {
+            if (n.type != Type::When || !n.has_as) continue;
+            if (keys.count(n.field.key) || (common && common->count(n.field.key)))
+                refuse(n.line, "two 'when ... as' lines of one reading path name '" + n.field.key + "'");
+            keys.emplace(n.field.key, n.line);
+        }
+    };
+    std::vector<const SeqBody*> groups;
+    std::map<std::string, std::size_t> common_as, common_fields;
+    as_lines(body.lines, common_as, nullptr);
+    as_mapped(body.lines, common_fields, groups);
+    for (const auto& a : common_as)
+        if (common_fields.count(a.first))
+            refuse(a.second, "the 'as' key '" + a.first + "' is also mapped by a 'field' or 'also' line");
+    for (const auto& k : body.kinds) {
+        std::map<std::string, std::size_t> kind_as, kind_fields;
+        as_lines(k.lines, kind_as, &common_as);
+        as_mapped(k.lines, kind_fields, groups);
+        for (const auto& a : kind_as)
+            if (common_fields.count(a.first) || kind_fields.count(a.first))
+                refuse(a.second, "the 'as' key '" + a.first + "' is also mapped by a 'field' or 'also' line");
+        for (const auto& a : common_as)
+            if (kind_fields.count(a.first))
+                refuse(a.second, "the 'as' key '" + a.first + "' is also mapped by a 'field' or 'also' line of kind '" +
+                                     k.name + "'");
+    }
+    for (const SeqBody* g : groups) check_as_bans(p, *g, source);
+}
+
 }  // namespace
 
 bool is_sequential_pack(const std::string& text) {
@@ -468,6 +523,8 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
     // has no `encoding uper`.
     std::size_t encoding_line = 0, uper_line = 0;
     std::string encoding_error, uper_what;
+    // v0.30: the first syntax error of a `when ... as` line (ruling 16).
+    std::string as_error;
     auto note_uper = [&](std::size_t line, const std::string& what) {
         if (uper_line == 0) {
             uper_line = line;
@@ -682,8 +739,22 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
             // the first `kind` is a common one (0.8 ruling 10).
             Frame& f = stack.back();
             if (!f.is_body) throw bad("'when' inside " + f.what);
-            if (t.size() > 3) throw bad("'when' takes a bit length and one value list; a list has no spaces");
-            arity(2);
+            // v0.30: `as <model-key>` after the values. Its syntax errors are
+            // found after the file (ruling 16); any other third token is
+            // bad-directive here (0.20 ruling 23, amended by ruling 15).
+            std::string as_key;
+            if (t.size() > 3) {
+                if (t[3] != "as") throw bad("'when' takes a bit length and one value list; a list has no spaces");
+                std::string why;
+                if (t.size() == 4) why = "'as' takes a model key";
+                for (std::size_t k = 4; k < t.size() && why.empty(); ++k)
+                    if (t[k] == "as") why = "'as' twice on one 'when' line";  // ruling 31
+                if (why.empty() && t.size() > 5) why = "a token after the key of 'as': '" + t[5] + "'";
+                if (why.empty()) as_key = t[4];
+                else if (as_error.empty()) as_error = where + ": " + why;
+            } else {
+                arity(2);
+            }
             for (const auto& n : lines_of(f))
                 if (!f.body->kinds.empty() && n.type != Type::When)
                     throw bad("'when' after another line of its kind");
@@ -694,6 +765,16 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
             std::string why;
             if (!parse_when_numbers(t[2], n.len, n.ranges, why)) throw bad("'when' " + why);
             n.number = n.ranges.front().first;
+            if (!as_key.empty()) {
+                n.has_as = true;
+                n.field.key = as_key;
+                n.field.locator = t[1];
+                n.field.line = lineno;
+                n.field.transform = Transform::Uint;
+                // Ruling 2: the key counts as mapped for a `switch` from here
+                // (a kind's `when` lines are its first lines).
+                mapped_key(as_key);
+            }
             add(std::move(n));
         } else if (kw == "requires") {
             Frame& f = stack.back();
@@ -1231,6 +1312,9 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
     // Checks that need the whole file, before `missing-distribution`.
     if (!have_format || p.format.empty()) throw Error(ErrorKind::MissingFormat, "", "", source + ": missing 'format'");
     if (!have_wire) throw Error(ErrorKind::MissingWire, p.format, "", source + ": missing 'wire'");
+    // v0.30 ruling 16: the syntax of `as`, then the bans that need only key names.
+    if (!as_error.empty()) throw Error(ErrorKind::BadDirective, p.format, "", as_error);
+    check_as_bans(p, p.seq, source);
     if (stack.size() > 1) {
         const Frame& f = stack.back().is_case ? stack[stack.size() - 2] : stack.back();
         throw Error(ErrorKind::BadDirective, p.format, "",
@@ -1313,6 +1397,7 @@ void visit_lines(std::vector<SeqNode>& lines, const SeqVisitor& v) {
             v.field(n.field);
             for (auto& a : n.also) v.field(a);
         }
+        if (n.type == Type::When && n.has_as && v.field) v.field(n.field);  // v0.30
         if (n.type == Type::Group && v.group) v.group(n);
         if (n.type == Type::Switch && v.switch_node) v.switch_node(n);
         visit_body(n.inner, v);
@@ -1326,6 +1411,8 @@ void keys_of_lines(const std::vector<SeqNode>& lines, const std::string& prefix,
         if (n.type == Type::Field) {
             add(prefix + n.field.key);
             for (const auto& a : n.also) add(prefix + a.key);
+        } else if (n.type == Type::When) {
+            if (n.has_as) add(prefix + n.field.key);  // v0.30 ruling 5
         } else if (n.type == Type::Group) {
             add(prefix + n.list + "[]");
             seq_model_keys(n.inner, prefix + n.list + "[].", add);
@@ -1884,14 +1971,18 @@ void decode_node(SeqIn& in, const SeqNode& n, Item& out, Decoder& d) {
             if (to > in.cur) in.cur = to;
             return;
         }
-        case Type::When:
+        case Type::When: {
             // A common `when`: it must hold for any message of the format.
+            const std::uint64_t start = in.cur;
             if (in.cur > in.have || n.len > in.have - in.cur || (in.ext != kNoExtent && in.cur + n.len > in.ext) ||
                 !n.holds(in.take(n.len)))
                 throw Error(ErrorKind::NoKind, p.format, "",
                             "the common 'when " + std::to_string(n.len) + " " + std::to_string(n.number) +
                                 "' does not hold");
+            // v0.30: `as` sets its key whenever the message (or item) decodes.
+            if (n.has_as) read_field(in.data, start, n, in.msb, d);
             return;
+        }
         case Type::Presence: {
             const SeqPresence& pr = p.seq_presences[static_cast<std::size_t>(n.presence)];
             std::vector<bool>& bits = in.presence[static_cast<std::size_t>(n.presence)];
@@ -2061,6 +2152,13 @@ void decode_body(SeqIn& in, const SeqBody& body, Item& out) {
             if (!holds) continue;
             selected = &k;
             whens = i;
+            // v0.30: the `when ... as` lines of the selected kind set their
+            // keys; a kind tested and not selected sets nothing (ruling 12).
+            std::uint64_t w_at = in.cur;
+            for (std::size_t j = 0; j < i; ++j) {
+                if (k.lines[j].has_as) read_field(in.data, w_at, k.lines[j], in.msb, d);
+                w_at += k.lines[j].len;
+            }
             in.cur = at;
             break;
         }
@@ -2188,6 +2286,35 @@ struct Scope {
     }
 };
 
+// v0.30 ruling 7: the item's value of an `as` key as an unsigned 64-bit
+// pattern; false when it is not an integer.
+bool as_pattern(const Value& v, std::uint64_t& u) {
+    if (v.kind == Value::Kind::Int) {
+        u = static_cast<std::uint64_t>(v.i);
+        return true;
+    }
+    if (v.kind == Value::Kind::Float && std::isfinite(v.f) && v.f == std::floor(v.f) && v.f >= -9223372036854775808.0 &&
+        v.f < 9223372036854775808.0) {
+        u = static_cast<std::uint64_t>(static_cast<std::int64_t>(v.f));
+        return true;
+    }
+    return false;
+}
+
+// v0.30: the implicit `requires` term of a kind's `when ... as` lines: the item
+// holds each key (a `default` does not count, ruling 6) with a value the
+// `when` matches.
+bool as_terms_hold(const SeqKind& k, const Item& item) {
+    for (const auto& n : k.lines) {
+        if (n.type != Type::When) break;
+        if (!n.has_as) continue;
+        auto it = item.fields.find(n.field.key);
+        std::uint64_t u = 0;
+        if (it == item.fields.end() || !as_pattern(it->second, u) || !n.holds(u)) return false;
+    }
+    return true;
+}
+
 // Encode: the kind the item names, when it names this format and a kind the
 // body has, else the first kind whose `requires` keys are all present. Null for a body with no kinds; throws no-kind.
 const SeqKind* select_kind(const Pack& p, const SeqBody& body, const Item& item) {
@@ -2203,7 +2330,7 @@ const SeqKind* select_kind(const Pack& p, const SeqBody& body, const Item& item)
                         "the kind '" + item.kind.second + "' is not one of the format's kinds");
     }
     for (const auto& k : body.kinds)
-        if (requires_hold(k.requires_terms, k.requires_keys, item)) return &k;
+        if (requires_hold(k.requires_terms, k.requires_keys, item) && as_terms_hold(k, item)) return &k;
     throw Error(ErrorKind::NoKind, p.format, "", "the entity or item has the 'requires' keys of no kind");
 }
 
@@ -2354,6 +2481,30 @@ const FieldLine* field_value(const SeqNode& n, const Scope& s, Value& mv) {
             if (s.value(line, mv)) return &line;
         }
     return nullptr;
+}
+
+// v0.30: a `when ... as` line writes the item's value of its key when the
+// `when` matches it, the first listed value when the item does not hold the
+// key, and is transform-encode otherwise (the output would decode another value).
+void encode_when(SeqOut& out, const SeqNode& n, const Scope& s) {
+    auto it = s.item.fields.find(n.field.key);
+    if (it == s.item.fields.end()) {
+        out.put(n.number, n.len);
+        return;
+    }
+    std::uint64_t u = 0;
+    if (!as_pattern(it->second, u) || !n.holds(u)) {
+        std::string shown;
+        try {
+            shown = value_canonical_text(it->second);
+        } catch (const std::invalid_argument&) {
+            shown = it->second.s;
+        }
+        throw Error(ErrorKind::TransformEncode, s.p.format, n.field.locator,
+                    n.field.key + ": the value " + shown + " is not one the 'when' on line " +
+                        std::to_string(n.line) + " holds for");
+    }
+    out.put(u, n.len);
 }
 
 // ---- v0.19 writers. Each throws std::invalid_argument (transform-encode).
@@ -2693,8 +2844,18 @@ void encode_node(SeqOut& out, const std::vector<SeqNode>& lines, std::size_t ind
             encode_lines(out, c->body.lines, s, nullptr);
             return;
         }
-        case Type::Const:
-        case Type::When: out.put(n.number, n.len); return;
+        case Type::Const: out.put(n.number, n.len); return;
+        case Type::When: {
+            if (!n.has_as) {
+                out.put(n.number, n.len);
+                return;
+            }
+            // v0.30: the bits are read back for a switch on the key (ruling 19).
+            const std::uint64_t start = out.cur;
+            encode_when(out, n, s);
+            read_back(p, out.data, start, out.cur, n, out.msb, s.shadow_d);
+            return;
+        }
         case Type::Pad: out.zeros(n.len); return;
         case Type::Align: out.zeros((out.cur + n.len - 1) / n.len * n.len - out.cur); return;
         case Type::Presence: {
@@ -2823,6 +2984,8 @@ int predicted_case(const SeqNode& n, const Scope& s) {
                     if (l.field.key == n.field.key) line = &l;
                     for (const auto& a : l.also)
                         if (a.key == n.field.key) line = &l;
+                } else if (l.type == Type::When) {
+                    if (l.has_as && l.field.key == n.field.key) line = &l;  // v0.30 ruling 19
                 } else if (l.type != Type::Group) {
                     find(l.inner.lines);
                     for (const auto& c : l.cases) find(c.body.lines);
@@ -2835,7 +2998,8 @@ int predicted_case(const SeqNode& n, const Scope& s) {
         if (line) {
             SeqOut tmp{s.p, std::string(), bit_mode(s.p.bit_order), 0, {}, {}, s.sw};
             try {
-                encode_field(tmp, *line, s);
+                if (line->type == Type::When) encode_when(tmp, *line, s);
+                else encode_field(tmp, *line, s);
                 Decoder d(s.p, back);
                 read_back(s.p, tmp.data, 0, tmp.cur, *line, tmp.msb, d);
             } catch (const Error&) {

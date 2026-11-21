@@ -1,0 +1,9 @@
+{
+  "name": "requires-ruling-13-both-terms-hold",
+  "from": "conformance-whenas-json",
+  "to": "conformance-whenas-requires",
+  "input": "{\"x\":5,\"y\":7}",
+  "expect": "0507",
+  "source": "constructed",
+  "reference": "spec 0.30 ruling 13: `requires <k>` and `requires <k>=<values>` on a kind with `when ... as <k>` load; every term must hold; x = 5 holds five's `requires x=5` and lies in 1..9"
+}

@@ -68,7 +68,8 @@
                       binary_part(S, 0, min(7, byte_size(S))) =:= <<"octets:">>)).
 -export([parse/1, tokens/1, tokens_lax/1, load_error/3, distribution_atom/1,
          require_marking/2, yields/1, model_keys/1, named/1,
-         index/1, factor/1, number/1, when_match/2, when_first/1, req_key/1]).
+         index/1, factor/1, number/1, when_match/2, when_first/1, req_key/1,
+         as_holds/2, as_match/2]).
 %% for gt_text
 -export([text_loc_indexes/1]).
 
@@ -199,6 +200,12 @@ parse(Bin) ->
                                       "via names table ~s, which has no map line", [Table])
               end
       end, lists:reverse(maps:get(late, P1))),
+    %% the bans of ruling 9 of 0.30, after the syntax checks of `as` and
+    %% before the other checks that need the whole file (ruling 16)
+    case Layout of
+        sequential -> as_bans(lists:reverse(maps:get(common, P1)), maps:get(kinds, P1));
+        fixed -> ok
+    end,
     case maps:get(gstack, P0) of
         [] -> ok;
         [#{list := Open} | _] ->
@@ -352,6 +359,7 @@ yields({hms_dmy, _})  -> int.
 %%   list                      the list of a `group` line
 %%   requires                  a key or list of a `requires` line
 %%   default                   the key of a `default` line, also inside a group
+%%   as                        the key of a `when ... as` line (0.30)
 named(#{common := Common, defaults := Ds, kinds := Kinds}) ->
     Scopes = [{Common, Ds} | [{maps:get(lines, K), maps:get(defaults, K)} || K <- Kinds]],
     lists:append([named_scope(Ls, D) || {Ls, D} <- Scopes])
@@ -370,6 +378,8 @@ named_scope(Lines, Defaults) ->
            {gate, _, _, _, #{lines := Ls, defaults := Ds}, _} -> named_scope(Ls, Ds);
            {sfield, Keys, _, Tr, _, _, _, _, With} ->
                [{K, {field, Tr, Via}} || {K, Via} <- Keys] ++ with_named(With);
+           %% the key of `when ... as` (0.30), declared int
+           {swhen, _, _, K} when K =/= none -> [{K, as}];
            {sgroup, List, _, #{lines := Ls, defaults := Ds, kinds := Ks}} ->
                [{List, list} | named_scope(Ls, Ds)] ++
                    lists:append([named_scope(maps:get(lines, K), maps:get(defaults, K))
@@ -426,6 +436,8 @@ key_names(Lines, Prefix) ->
                [Name | key_names(Ls, <<Name/binary, ".">>)];
            {gate, _, _, _, #{lines := Ls}, _} -> key_names(Ls, Prefix);
            {sfield, Keys, _, _, _, _, _, _, _} -> [<<Prefix/binary, K/binary>> || {K, _} <- Keys];
+           %% a `when ... as` key, at its line (ruling 5 of 0.30)
+           {swhen, _, _, K} when K =/= none -> [<<Prefix/binary, K/binary>>];
            {sgroup, List, _, #{lines := Ls, kinds := Ks}} ->
                Name = <<Prefix/binary, List/binary, "[]">>,
                [Name | key_names(Ls ++ lists:append([maps:get(lines, K) || K <- Ks]),
@@ -460,7 +472,15 @@ line(Tokens, P0) ->
     P = try pre_line(Tokens, P0)
         catch error:{line_error, K, M} -> erlang:error({load_error, K, M})
         end,
-    try dispatch(Tokens, P)
+    Tokens1 = case Tokens of
+                  [<<"when">>, L, V, <<"as">> | _] = [_ | Args] ->
+                      case when_as(<<"when">>, Args, P) of
+                          {ok, _} -> Tokens;
+                          _ -> [<<"when">>, L, V]       % refused after the file
+                      end;
+                  _ -> Tokens
+              end,
+    try dispatch(Tokens1, P)
     catch
         error:{line_error, Kind, Msg} -> erlang:error({load_error, Kind, Msg});
         error:{load_error, Kind, Msg} -> late({raw, Kind, Msg}, P)
@@ -553,6 +573,9 @@ pre_line([Dir | Args], P0) ->
                   {<<"checksum">>, [<<"sum16">>, _]} -> true;
                   %% and `checksum crc32 <tag>` (ruling 2 of 0.27)
                   {<<"checksum">>, [<<"crc32">>, _]} -> true;
+                  %% `when <len> <values> as <key>` (0.30): the syntax of
+                  %% `as` is checked after the file (ruling 16)
+                  {<<"when">>, [_, _, <<"as">> | _]} -> true;
                   _ -> arg_count_ok(Dir, length(Args))
               end,
     case CountOk of
@@ -591,10 +614,35 @@ pre_line([Dir | Args], P0) ->
             line_error('bad-directive', "layout sequential stands after a line it must precede", []);
         _ -> ok
     end,
-    case Listed andalso Dir =/= <<"layout">> of
-        true -> P2#{listed_seen := true};
-        false -> P2
+    P3 = case Listed andalso Dir =/= <<"layout">> of
+             true -> P2#{listed_seen := true};
+             false -> P2
+         end,
+    case when_as(Dir, Args, P3) of
+        {bad, Fmt, FArgs} -> late({bad, Fmt, FArgs}, P3);
+        _ -> P3
     end.
+
+%% `as <key>` after the values of a `when` (0.30) -> none (no `as`) |
+%% {ok, Key} | {bad, Fmt, Args}: `as` on a pack that is not `layout
+%% sequential`, with no key, twice, or with a token after the key, each a
+%% check after the file (ruling 16). Any second `as` is `as` twice
+%% (ruling 31).
+when_as(<<"when">>, [_, _, <<"as">> | Rest], P) ->
+    Seq = maps:get(layout, P) =:= sequential andalso maps:get(wire, P) =:= bits,
+    case Rest of
+        _ when not Seq ->
+            {bad, "when ... as: as on a pack that is not layout sequential", []};
+        [] -> {bad, "when ... as names no key", []};
+        [<<"as">> | _] -> {bad, "when ... as as: as twice on one line", []};
+        [Key] -> {ok, Key};
+        [_ | More] ->
+            case lists:member(<<"as">>, More) of
+                true -> {bad, "when ... as: as twice on one line", []};
+                false -> {bad, "when ... as ~s: a token after the key", [hd(Rest)]}
+            end
+    end;
+when_as(_, _, _) -> none.
 
 dispatch(Tokens, #{layout := sequential, wire := bits} = P) -> seq_line(Tokens, P);
 dispatch([Dir | _] = Tokens, #{gstack := Stack, bstack := BStack} = P) ->
@@ -1706,6 +1754,30 @@ when_match(V, {anyof, Items}) when is_integer(V) ->
               end, Items);
 when_match(_V, _Val) -> false.
 
+%% The implicit `requires` term of each `when ... as <key>` line of a kind
+%% (0.30): the entity holds the key and the `when` matches its value. The
+%% `when` lines are the first lines of a kind.
+as_holds([{swhen, _, Val, Key} | Rest], Model) when Key =/= none ->
+    case maps:find(Key, Model) of
+        {ok, V} -> as_match(V, Val) =/= false andalso as_holds(Rest, Model);
+        error -> false
+    end;
+as_holds([{swhen, _, _, none} | Rest], Model) -> as_holds(Rest, Model);
+as_holds(_, _Model) -> true.
+
+%% Does a `when` match an entity's value? The value is read as an unsigned
+%% 64-bit pattern (ruling 7 of 0.30) -> {true, Bits} | false.
+as_match(V, Val) when is_integer(V), V >= -(1 bsl 63), V < (1 bsl 64) ->
+    U = case V < 0 of
+            true -> V + (1 bsl 64);
+            false -> V
+        end,
+    case when_match(U, Val) of
+        true -> {true, U};
+        false -> false
+    end;
+as_match(_V, _Val) -> false.
+
 %% The value a `when` writes: its value, or the first listed (a range's lo).
 when_first({anyof, [{Lo, _} | _]}) -> Lo;
 when_first({anyof, [First | _]}) -> First;
@@ -2068,7 +2140,8 @@ scan_bare(Bin, 0) ->
 %%     candidates when the line is suppressed
 %%        the first key is the `field` line's, the others those of the `also`
 %%        lines after it
-%%   {sconst, Len, Value} | {pad, Len} | {align, N} | {swhen, Len, Value}
+%%   {sconst, Len, Value} | {pad, Len} | {align, N} | {swhen, Len, Value, As}
+%%     As (0.30) = none | Key: the key `as <key>` binds the bits to
 %%   {presence, Id, Size :: pos_integer() | fx}
 %%   {ifb, [{Id, Bit, Negated}], Body} | {opt, Body}
 %%   {chain, FirstPart, [Part], EndsWithFx}   each later part follows an fx bit
@@ -2154,22 +2227,8 @@ seq_apply([<<"const">>, LenS, ValS], P) ->
     seq_add({sconst, Len, seq_value(ValS, Len)}, P);
 seq_apply([<<"pad">>, LenS], P) -> seq_add({pad, seq_len(LenS, 0, infinity)}, P);
 seq_apply([<<"align">>, NS], P) -> seq_add({align, seq_len(NS, 1, infinity)}, P);
-seq_apply([<<"when">>, LenS, ValS], #{sstack := Stack} = P) ->
-    Len = seq_loc(LenS, 64),
-    %% a `when` stands among the common lines, or first in its kind
-    First = fun(Ls) -> lists:all(fun(L) -> element(1, L) =:= swhen end, Ls) end,
-    Ok = case Stack of
-             [] -> maps:get(cur, P) =:= common orelse First(seq_lines(P));
-             [#{type := group, cur := none} | _] -> true;
-             [#{type := group} | _] -> First(seq_lines(P));
-             _ -> false
-         end,
-    case Ok of
-        true -> seq_add({swhen, Len, seq_when_value(ValS, Len)}, P);
-        false -> load_error('bad-directive',
-                            "when ~s ~s stands after another line of its kind or inside a block",
-                            [LenS, ValS])
-    end;
+seq_apply([<<"when">>, LenS, ValS, <<"as">>, Key], P) -> seq_when(LenS, ValS, Key, P);
+seq_apply([<<"when">>, LenS, ValS], P) -> seq_when(LenS, ValS, none, P);
 seq_apply([<<"presence">>, Name, SizeS], P) ->
     Size = case SizeS of
                <<"fx">> -> fx;
@@ -2356,6 +2415,25 @@ seq_apply([Dir | Args], _P) ->
         true -> load_error('bad-directive', "~s takes a different number of arguments than ~p",
                            [Dir, length(Args)]);
         false -> load_error('unknown-directive', "~s", [Dir])
+    end.
+
+%% A `when` line of a sequential pack; As is the key of `as <key>` (0.30)
+%% or none.
+seq_when(LenS, ValS, As, #{sstack := Stack} = P) ->
+    Len = seq_loc(LenS, 64),
+    %% a `when` stands among the common lines, or first in its kind
+    First = fun(Ls) -> lists:all(fun(L) -> element(1, L) =:= swhen end, Ls) end,
+    Ok = case Stack of
+             [] -> maps:get(cur, P) =:= common orelse First(seq_lines(P));
+             [#{type := group, cur := none} | _] -> true;
+             [#{type := group} | _] -> First(seq_lines(P));
+             _ -> false
+         end,
+    case Ok of
+        true -> seq_add({swhen, Len, seq_when_value(ValS, Len), As}, P);
+        false -> load_error('bad-directive',
+                            "when ~s ~s stands after another line of its kind or inside a block",
+                            [LenS, ValS])
     end.
 
 %% An optional `-` then digits (leading zeros allowed) within signed 64 bits
@@ -2546,7 +2624,9 @@ scope_keys(#{sstack := Stack} = P) ->
                               #{lines := KLs} -> KLs
                           end
            end,
-    deep_keys(Base) ++
+    %% a `when ... as` key counts as mapped from its line on: the start of
+    %% its kind, or its place among the common lines (ruling 2 of 0.30)
+    as_keys(Base) ++ deep_keys(Base) ++
         lists:append([deep_keys(Ls) ++
                           case F of
                               #{type := switch, cases := Cs} ->
@@ -2557,6 +2637,9 @@ scope_keys(#{sstack := Stack} = P) ->
                                   deep_keys(lists:append([B || {_, B} <- Alts]));
                               _ -> []
                           end || #{lines := Ls} = F <- Inner]).
+
+%% The keys the `when ... as` lines among Lines bind (0.30), in line order.
+as_keys(Lines) -> [K || {swhen, _, _, K} <- Lines, K =/= none].
 
 deep_keys(Lines) ->
     lists:append([case L of
@@ -2569,6 +2652,38 @@ deep_keys(Lines) ->
 seq_parts([], Cur, Acc) -> lists:reverse([lists:reverse(Cur) | Acc]);
 seq_parts([fx | Rest], Cur, Acc) -> seq_parts(Rest, [], [lists:reverse(Cur) | Acc]);
 seq_parts([L | Rest], Cur, Acc) -> seq_parts(Rest, [L | Cur], Acc).
+
+%% ---- the bans on a `when ... as` key (0.30, rulings 9, 21 and 33) ----
+%% In one reading path (the common lines with one kind's, of the message or
+%% of a group body) a key is bound by at most one `as` line, and a key an
+%% `as` line binds is mapped by no `field` or `also` line, in any block of
+%% that scope. A group body is a scope of its own.
+as_bans(Common, Kinds) ->
+    Paths = case Kinds of
+                [] -> [Common];
+                _ -> [Common ++ maps:get(lines, K) || K <- Kinds]
+            end,
+    lists:foreach(
+      fun(Path) ->
+              As = as_keys(Path),
+              lists:foldl(fun(K, Seen) ->
+                                  case maps:is_key(K, Seen) of
+                                      true -> load_error('bad-directive',
+                                                         "two when ... as lines of one reading path bind ~s", [K]);
+                                      false -> Seen#{K => true}
+                                  end
+                          end, #{}, As),
+              Mapped = deep_keys(Path),
+              case [K || K <- As, lists:member(K, Mapped)] of
+                  [] -> ok;
+                  [K | _] -> load_error('bad-directive',
+                                        "~s is bound by when ... as and mapped by a field or also line of one reading path",
+                                        [K])
+              end
+      end, Paths),
+    lists:foreach(
+      fun({sgroup, _, _, #{lines := Ls, kinds := Ks}}) -> as_bans(Ls, Ks) end,
+      lists:append([seq_group_lines(Ls) || Ls <- [Common | [maps:get(lines, K) || K <- Kinds]]])).
 
 %% ---- presence names ----
 %% A name is visible from its `presence` line to the end of the enclosing

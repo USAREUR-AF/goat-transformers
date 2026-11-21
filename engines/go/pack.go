@@ -302,6 +302,7 @@ type keyRef struct {
 	group   *Group   // nil unless a `group` line
 	req     bool     // a `requires` key: a key or a list
 	term    *reqTerm // a `requires` term with `=` (0.20), nil otherwise
+	as      bool     // the key of a `when … as` line (0.30)
 }
 
 // reqTerm is one term of a `requires` line: a key, and since 0.20 with `=`
@@ -776,7 +777,11 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 			// `choice <n> [ext]` (spec 0.19): one or two arguments.
 			return nil, perr(ErrBadDirective, n, "", "choice takes 1 or 2 arguments, got %d", len(args))
 		}
-		if w >= 0 && len(args) != w {
+		// `when … as <model-key>` (0.30): a line whose third token is `as`
+		// passes the argument count; its syntax, and `as` outside a
+		// sequential pack, are checked after the file (ruling 16).
+		whenAs := kw == "when" && len(args) >= 3 && args[2] == "as"
+		if w >= 0 && len(args) != w && !whenAs {
 			return nil, perr(ErrBadDirective, n, "", "%s takes %d argument(s), got %d", kw, w, len(args))
 		}
 		if needsWire[kw] {
@@ -1037,6 +1042,12 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 			p.addWithRef(f)
 			addLine(line{f: f})
 		case "when", "const":
+			if whenAs {
+				if late == nil {
+					late = perr(ErrBadDirective, n, "", "when … as is valid only in a pack with `layout sequential`")
+				}
+				args = args[:2]
+			}
 			w := &When{Locator: args[0], Value: args[1], Line: n, Const: kw == "const", group: inner(), gate: topGate()}
 			if kind, err := p.checkWhenLine(w.Locator, w.group != nil); err != nil {
 				return nil, perr(kind, n, w.Locator, "%v", err)
@@ -1107,6 +1118,13 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 	}
 	if late != nil {
 		return nil, late
+	}
+	// The bans of 0.30 ruling 9 need only key names: they run first among
+	// the checks that need the whole file (rulings 16 and 29).
+	if p.seq {
+		if err := sp.asBans(); err != nil {
+			return nil, err
+		}
 	}
 	if g := topGate(); g != nil {
 		return nil, perr(ErrBadDirective, g.Line, g.Locator, "the gate block has no end")

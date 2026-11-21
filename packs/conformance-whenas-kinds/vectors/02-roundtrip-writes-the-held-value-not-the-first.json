@@ -1,0 +1,17 @@
+{
+  "name": "roundtrip-writes-the-held-value-not-the-first",
+  "from": "conformance-whenas-kinds",
+  "to": "conformance-whenas-kinds",
+  "input": "07030102",
+  "expect": "07030102",
+  "model": {
+    "@kind": "span",
+    "probe.x": "3",
+    "probe.z": "258",
+    "@absent": [
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.30 Encode, The bits written: the line writes the value of <k> when the entity holds it and it matches; x = 3 matches 2..4 and is written; without `as` the first value, 2, would be"
+}

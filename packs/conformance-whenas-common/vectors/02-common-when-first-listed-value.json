@@ -1,0 +1,14 @@
+{
+  "name": "common-when-first-listed-value",
+  "from": "conformance-whenas-common",
+  "to": "conformance-whenas-common",
+  "input": "07050a",
+  "expect": "07050a",
+  "model": {
+    "@kind": "b",
+    "probe.w": "5",
+    "probe.x": "10"
+  },
+  "source": "constructed",
+  "reference": "spec 0.30 Decode: a common `when ... as` sets its key whenever the message decodes; w = 5; kind b with x = 10"
+}

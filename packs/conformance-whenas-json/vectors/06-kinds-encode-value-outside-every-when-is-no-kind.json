@@ -1,0 +1,9 @@
+{
+  "name": "kinds-encode-value-outside-every-when-is-no-kind",
+  "from": "conformance-whenas-json",
+  "to": "conformance-whenas-kinds",
+  "input": "{\"n\":7,\"x\":5,\"y\":1}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.30 Encode, Choosing the kind: a kind with `when ... as <k>` qualifies only when the entity holds <k> and its value matches the `when`; x = 5 matches no kind: none qualifies (0.5 Encode step 2)"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "ruling-02-switch-on-common-and-kind-as-keys",
+  "from": "conformance-whenas-switch",
+  "to": "conformance-whenas-switch",
+  "input": "070105012a",
+  "expect": "070105012a",
+  "model": {
+    "@kind": "tagged",
+    "probe.w": "1",
+    "probe.z": "5",
+    "probe.x": "1",
+    "probe.y": "42"
+  },
+  "source": "constructed",
+  "reference": "spec 0.30 ruling 2: a kind's `as` key counts as mapped from the start of its kind for a `switch`, a common one from its own line on; w = 1 selects case 1 (z = 5); x = 1 selects case 1 (y = 42 in 8 bits)"
+}

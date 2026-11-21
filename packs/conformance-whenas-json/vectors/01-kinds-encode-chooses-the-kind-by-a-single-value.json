@@ -1,0 +1,9 @@
+{
+  "name": "kinds-encode-chooses-the-kind-by-a-single-value",
+  "from": "conformance-whenas-json",
+  "to": "conformance-whenas-kinds",
+  "input": "{\"n\":7,\"x\":1,\"y\":42}",
+  "expect": "07012a",
+  "source": "constructed",
+  "reference": "spec 0.30 Encode, Choosing the kind: a kind with `when ... as <k>` qualifies only when the entity holds <k> and its value matches the `when`; x = 1 matches one"
+}

@@ -171,6 +171,7 @@ type seqNode struct {
 	rng   []numRange   // when: the listed values and ranges (0.20)
 	sw    *seqSwitch   // switch
 	cnt   *seqCountDef // count
+	key   string       // when: the key `as` binds the bits to, "" for none (0.30)
 }
 
 // seqKind is one kind of a body: of the message, or of the items of a group.
@@ -202,6 +203,12 @@ func (b *seqBody) modelKeys(add func(string), prefix string) {
 	walk = func(nodes []*seqNode) {
 		for _, n := range nodes {
 			switch n.op {
+			case seqWhen:
+				// A key bound by `as` is listed at its when line (0.30
+				// ruling 5).
+				if n.key != "" {
+					add(prefix + n.key)
+				}
 			case seqField:
 				add(prefix + n.f.Key)
 				for _, a := range n.f.also {
@@ -224,6 +231,7 @@ func (b *seqBody) modelKeys(add func(string), prefix string) {
 	}
 	walk(b.common)
 	for _, k := range b.kinds {
+		walk(k.whens)
 		walk(k.nodes)
 	}
 }
@@ -688,6 +696,26 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 			rs = []numRange{{}}
 		}
 		node := &seqNode{op: seqWhen, n: ln, num: rs[0].lo, rng: rs, line: n}
+		// `as <model-key>` after the values (0.30). Its syntax is checked
+		// after the file (ruling 16); ParsePack lets a line through the
+		// argument count only when its third token is `as`.
+		if len(args) > 2 {
+			switch {
+			case len(args) == 3:
+				sp.lateErr(sp.bad(n, "", "when … as needs a model key after as"))
+			case args[3] == "as" || hasToken(args[4:], "as"):
+				sp.lateErr(sp.bad(n, "", "as stands twice on one when line"))
+			case len(args) > 4:
+				sp.lateErr(sp.bad(n, "", "when … as <model-key> takes no token after the key, got %q", args[4]))
+			default:
+				node.key = args[3]
+				p.keyRefs = append(p.keyRefs, keyRef{key: node.key, line: n, as: true})
+				// A kind's `as` key counts as mapped from the start of its
+				// kind, a common one from its own line (ruling 2); a kind's
+				// when lines are its first lines, so both are marked here.
+				mark(node.key)
+			}
+		}
 		if k := top.kind; k != nil {
 			if len(k.nodes) > 0 {
 				return sp.bad(n, "", "the when lines of kind %s must be its first lines", k.name)
@@ -1089,6 +1117,109 @@ func (sp *seqParser) line(kw string, args []string, n int) error {
 		}
 	}
 	return nil
+}
+
+// hasToken reports whether toks holds t.
+func hasToken(toks []string, t string) bool {
+	for _, x := range toks {
+		if x == t {
+			return true
+		}
+	}
+	return false
+}
+
+// asBans refuses, in each reading path, two `when … as` lines naming one key
+// and a key named by `as` that a `field` or `also` line also maps (0.30
+// rulings 9, 16, 21 and 33). A reading path is a body's common lines plus one
+// of its kinds, every block of that scope included; a group body is a scope
+// of its own.
+func (sp *seqParser) asBans() error {
+	for _, b := range sp.bodies {
+		common := map[string]int{}
+		for _, n := range b.common {
+			if n.op != seqWhen || n.key == "" {
+				continue
+			}
+			if prev, dup := common[n.key]; dup {
+				return sp.bad(n.line, n.key, "when … as %s: the key is already bound by the when on line %d of the common lines", n.key, prev)
+			}
+			common[n.key] = n.line
+		}
+		cfields := map[string]int{}
+		scopeFields(b.common, cfields)
+		check := func(as map[string]int, fields map[string]int) error {
+			// The earliest `as` line in conflict is reported.
+			key, at := "", 0
+			for k, ln := range as {
+				if _, ok := fields[k]; ok && (at == 0 || ln < at) {
+					key, at = k, ln
+				}
+			}
+			if at != 0 {
+				return sp.bad(at, key, "when … as %s: the key is also mapped by the field or also line on line %d of the same reading path", key, fields[key])
+			}
+			return nil
+		}
+		if len(b.kinds) == 0 {
+			if err := check(common, cfields); err != nil {
+				return err
+			}
+		}
+		for _, k := range b.kinds {
+			as := map[string]int{}
+			for key, ln := range common {
+				as[key] = ln
+			}
+			for _, w := range k.whens {
+				if w.key == "" {
+					continue
+				}
+				if prev, dup := as[w.key]; dup {
+					return sp.bad(w.line, w.key, "when … as %s: the key is already bound by the when on line %d of the same reading path", w.key, prev)
+				}
+				as[w.key] = w.line
+			}
+			fields := map[string]int{}
+			for key, ln := range cfields {
+				fields[key] = ln
+			}
+			scopeFields(k.nodes, fields)
+			if err := check(as, fields); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+// scopeFields records the keys the field and also lines of nodes map, with
+// the line of each, in every block of the scope; a group body is not entered.
+func scopeFields(nodes []*seqNode, out map[string]int) {
+	put := func(key string, line int) {
+		if _, ok := out[key]; !ok {
+			out[key] = line
+		}
+	}
+	for _, n := range nodes {
+		switch n.op {
+		case seqField:
+			put(n.f.Key, n.f.Line)
+			for _, a := range n.f.also {
+				put(a.Key, a.Line)
+			}
+		case seqGroup:
+		case seqSwitchOp:
+			for _, c := range n.sw.cases {
+				scopeFields(c.body, out)
+			}
+			if n.sw.els != nil {
+				scopeFields(n.sw.els.body, out)
+			}
+		default:
+			scopeFields(n.body, out)
+		}
+	}
 }
 
 // finish runs the checks that need the whole file: every block closed, and

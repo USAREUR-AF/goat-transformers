@@ -1,0 +1,18 @@
+{
+  "name": "ruling-04-items-keep-their-recorded-kind",
+  "from": "conformance-whenas-items",
+  "to": "conformance-whenas-items",
+  "input": "0220ab27",
+  "expect": "0220ab27",
+  "model": {
+    "probe.recs.#": "2",
+    "probe.recs[0].@kind": "p",
+    "probe.recs[0].probe.x": "2",
+    "probe.recs[0].probe.y": "171",
+    "probe.recs[1].@kind": "q",
+    "probe.recs[1].probe.x": "2",
+    "probe.recs[1].probe.y": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.30 ruling 4 (ruling 26 of 0.8): an item that records a kind the group has uses it; otherwise the item's kind is chosen by `requires`, with the implicit term; item 1 records q and is written as q, although p's term holds for its x = 2"
+}

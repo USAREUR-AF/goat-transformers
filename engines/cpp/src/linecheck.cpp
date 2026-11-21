@@ -275,7 +275,10 @@ void check_pack_lines(const std::string& text, const std::string& source) {
             // whether the wire is tlv is checked after the file.
         } else if (one_argument().count(kw)) count(nargs == 1, "exactly one argument");
         else if (kw == "field") count(nargs >= 3, "a key, a locator and a transform");
-        else if (kw == "when" || kw == "const" || kw == "default") count(nargs == 2, "two arguments");
+        // v0.30: `when <loc> <values> as ...`; whether `as` is allowed, and its
+        // key, are checked after the file (ruling 16).
+        else if (kw == "when" && nargs >= 3 && t[3] == "as") {
+        } else if (kw == "when" || kw == "const" || kw == "default") count(nargs == 2, "two arguments");
         else if (kw == "map") count(nargs == 3, "three arguments");
         else if (kw == "typemap") count(nargs == 2, "two arguments");
         else if (kw == "end" || kw == "else") count(nargs == 0, "no argument");

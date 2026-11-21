@@ -5234,6 +5234,192 @@ Tool vectors `packs/conformance/tool-vectors/` numbered from 101, written by
 
 <!-- REUSE-IgnoreEnd -->
 
+# Version 0.30: a sequential discriminator that is also a key
+
+Status: Written. In a `layout sequential` pack (Version 0.8) the `when` bits
+of a kind are read to select the kind and then skipped: no key holds them. A
+format whose kinds are told apart by a label field therefore cannot hand the
+label on to another format, and an encode from another format cannot choose
+the kind by it. This version lets a `when` line bind its bits to a key.
+
+```
+when  <len> <value>[,<value>…]  as <model-key>
+```
+
+`as <model-key>` follows the values of a `when` line of a `layout sequential`
+pack: a common `when` (before the first `kind`), a `when` of a message kind,
+or a `when` of an item kind in a group body. The key follows the rules of a
+`field` key in the same scope: a message key at message level, a key of the
+list's items in a group body (a group body's common `when` included,
+ruling 11). Its declared type must be `int`.
+
+On a fixed `bits` layout the same thing is already stated with lines that
+exist: a `field` line over the `when`'s bits gives the key on decode, and
+`requires <key>=<value>…` (Version 0.20) chooses the kind on encode
+(ruling 1). `as` there, and on any other wire, is `bad-directive`.
+
+## Decode
+
+The `when` line reads `len` bits at the cursor and tests them as before
+(Versions 0.8 and 0.20). When the kind is selected, the key holds the bits
+read as an unsigned integer. The `when` lines of a kind that is tested and
+not selected set nothing. A common `when … as` sets its key whenever the
+message decodes.
+
+## Encode
+
+**Choosing the kind.** A kind with a `when … as <k>` line qualifies, when the
+kind is chosen by `requires` (Version 0.5, ruling 4 of 0.20), only when the
+entity holds `<k>` and its value matches the `when`: it equals a listed value
+or lies in a listed range. This is an implicit `requires` term, checked with
+the kind's other `requires` terms; the kind may also carry them. When the
+kind is chosen by the kind recorded on the entity (same format), the term is
+not checked for choosing.
+
+**The bits written.** A `when … as <k>` line writes the value of `<k>` when
+the entity holds `<k>` and its value matches the `when`. When the entity does
+not hold `<k>`, it writes the first listed value (for a range listed first,
+its `lo`), as a `when` does without `as`. When the entity holds `<k>` with a
+value the `when` does not match, encode is `transform-encode`: the output
+would decode a different value. This case arises only for a common `when`
+or a kind recorded on the entity, since a kind chosen by `requires` would not
+have qualified.
+
+## Load errors
+
+`bad-directive`: `as` on a `when` of a pack that is not `layout sequential`;
+`as` with no key or with a token after the key; `as` twice on one line; two
+`when … as` lines of one kind (or of the common lines) naming one key; a key
+named by `as` and also mapped by a `field` or `also` line in the same reading
+path (common lines plus one kind, one case of each switch). A key of a module
+the pack does not `uses` is `module-not-used`; an undeclared key is
+`undeclared-key`; a list key, or a key whose type is not `int`, is
+`key-type-mismatch`.
+
+## Rulings for 0.30
+
+1. **Fixed layouts.** A `field <k> <pos>:<len> uint` line over the bits of a
+   kind's `when`, with `requires <k>=<values>` on the kind, states the same
+   thing for single values and needs no new directive. The two forms differ:
+   `requires =` takes no ranges, and on a fixed layout ruling 3 of 0.20 writes
+   the first value over a field that does not match, where `as` is
+   `transform-encode` (ruling 8).
+2. **A switch on an `as` key.** A kind's `as` key counts as mapped from the
+   start of its kind for a `switch` (Version 0.20): `switch <k>` in the kind
+   selects a case by the label. A common `as` key counts as mapped from its
+   own line on, in reading order, so a `switch` on it before that line is
+   `bad-directive`.
+3. **Several kinds, one key.** Different kinds of one body may each bind the
+   same key with `as`; only the selected kind's line sets it. This is the
+   intended use: one label key across every kind.
+4. **Item kinds.** Ruling 26 of 0.8 still holds: an item that records a kind
+   the group has uses it, and the implicit term is not checked for choosing;
+   otherwise the item's kind is chosen by `requires`, with the implicit term.
+5. **Capability.** A key bound by `as` is listed by `model_keys` at its
+   `when` line in first-appearance order (6a of 0.11); in a group body the
+   entry is `<list>[].<k>`.
+6. **A `default` on an `as` key** has no effect on what is written or on
+   choosing the kind: "holds" means the entity holds the key, as in rulings 15
+   and 29 of 0.20. The default loads.
+7. **Values and matching.** Decode reads the bits as `uint` does (ruling 2 of
+   0.5): with `len` 64, a value of 2^63 or more is the negative integer with
+   the same bits. "Matches" reads the entity's value as an unsigned 64-bit
+   pattern and compares it with the listed unsigned values and ranges; a
+   negative value never matches a `when` shorter than 64 bits.
+8. **Ruling 3 of 0.20 does not apply** to an `as` line; this version's Encode
+   rules replace it there.
+9. **Two `as` lines naming one key in one reading path** (common lines plus
+   one kind; a group body's common lines plus one item kind) are
+   `bad-directive`, a common `as` and a kind `as` included. This and the ban
+   on an `as` key mapped by a `field` or `also` line override 0.6, which lets
+   several `field` lines map one key.
+10. **The kind is chosen before any line is written.** `no-kind` wins over
+    every error raised while writing, `transform-encode` of a common `as`
+    included.
+11. **The common `when` of a group body** (before the first item kind) may
+    carry `as`. It acts as a common `when` for each item: the key is set on
+    every item that decodes, and the encode rules for a common `when` apply
+    per item.
+12. **A kind's `when` lines set nothing until the kind is selected.** When an
+    `as` line holds and a later `when` line of the same kind does not, the key
+    is not set, and the next kind is tried.
+13. **`requires` on an `as` key.** A plain `requires <k>` and
+    `requires <k>=<values>` on a kind with `when … as <k>` load; every term
+    must hold, so a `requires <k>=` value outside the `when` makes the kind
+    unreachable by `requires`.
+14. **`also` after a `when … as` line** is `bad-directive` (ruling 13 of
+    0.8: `also` follows only a `field` or `also` line).
+15. **Ruling 23 of 0.20 is amended** for `layout sequential` only: `as <key>`
+    may follow the values of a `when`. Every other extra token stays
+    `bad-directive`. `as` is a keyword only in the third token of a `when` of
+    a sequential pack; on a text wire `when @t as` matches the text `as`.
+16. **When the checks run** (0.11 ruling 5b). Every syntax error of `as` (no
+    key, a token after the key, `as` twice, `as` on a pack that is not
+    sequential) is a check after the file. The ban on two `as` lines naming one
+    key and on an `as` key mapped by a `field` or `also` line needs only key
+    names. It runs with the checks that need the whole file, before
+    `missing-distribution` and `missing-source`.
+17. **Error order** (ruling 19 of 0.20). `as` keys join the first pass:
+    `module-not-used`, then `undeclared-key`, over every line. Their list and
+    non-`int` checks (`key-type-mismatch`) run in the third pass, in line
+    order with the `field` type checks.
+18. **`as` lines are `when` lines** for ruling 10 of 0.8 (first lines of their
+    kind) and for every rule that counts wire lines.
+
+19. **A switch on an `as` key, on encode.** The `when … as` line is "the
+    key's line" of 0.20's switch encode: when a common `as` key is absent,
+    the first listed value it writes selects the case.
+20. **A common `when … as` may follow other common lines.** Ruling 10 of 0.8
+    places a kind's `when` lines first in their kind; common `when` lines
+    keep 0.5's placement.
+21. **Scopes for the bans of ruling 9.** An item key bound by `as` and a
+    message-level `field` are in different scopes and load, as two `field`
+    lines in those scopes do.
+22. **The keyword is exact.** `as` is matched as written; `AS` is another
+    token and is `bad-directive` in a sequential `when`.
+23. **Two passes** in ruling 17: `module-not-used` over every line, then
+    `undeclared-key` over every line, as Version 0.4 orders them.
+24. **Ruling 6c of 0.11 is amended:** a place named by `when` is not a mapped
+    key, except a `when … as` line, whose key is mapped (ruling 5).
+
+### Stated, not yet pinned by a vector
+
+25. A kind or item kind recorded on the entity: "the term is not checked for
+    choosing", and `transform-encode` for a held value that does not match.
+    Neither can be reached through `convert`, since a same-format decode sets
+    the key to a matching value.
+26. Ruling 1's comparison with ruling 3 of 0.20 on a fixed layout; only the
+    `bad-directive` of `as` there is pinned.
+27. Ruling 5: the capability vector is computed by the generator
+    (`conformance-whenas-cap`) but not written.
+28. Ruling 8, pinned only through the `transform-encode` of a common
+    `when … as`.
+29. Ruling 16: the `as` syntax checks run after `missing-format`,
+    `missing-version` and `missing-wire`. The two bans of ruling 9 run after
+    the syntax checks and before the other checks that need the whole file.
+30. Ruling 18 for rules other than ruling 10 of 0.8 and ruling 32 of 0.21.
+31. "`as` twice" (load errors) is any second `as` token after the first:
+    `when 8 1 as as` is `bad-directive`, not a key named `as`.
+32. Ruling 10 applies per body: a group item's kind is chosen when that item
+    is written, so a common `as` of the message that does not match, written
+    before the group, is reported before an item's `no-kind`.
+33. The reading path of ruling 9 covers every block of the same scope: a
+    `field` or `also` line in any `case`, `if`, `opt`, `chain`, `length`,
+    `ext` or `choice` body of that scope conflicts with an `as` key; a group
+    body is a separate scope (ruling 21).
+34. **`@kind` in a vector with `@complete`** (spec/vector-format.md, step 3)
+    names the kind `decode(from, input)` selected, with or without
+    `@complete` and whether or not `from == to`. The entity `convert` hands to
+    the encoder has no kind for another format (Version 0.6), but a vector's
+    `@kind` checks decode, not that entity. Vector
+    `conformance-whenas-kinds` `cross-format-complete-keeps-the-decoded-kind`
+    pins it.
+
+## Not in this version
+
+- A transform or table on an `as` key: the key holds the unsigned value.
+- `as` on a `when` of the fixed layout and of other wires (ruling 1).
+
 # Version 0.32: time hygiene in core
 
 A change to `core`: it took the merge slot, carries ADR 0005 ("Time hygiene in

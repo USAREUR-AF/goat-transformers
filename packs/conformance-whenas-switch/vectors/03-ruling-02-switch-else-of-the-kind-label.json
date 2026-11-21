@@ -1,0 +1,16 @@
+{
+  "name": "ruling-02-switch-else-of-the-kind-label",
+  "from": "conformance-whenas-switch",
+  "to": "conformance-whenas-switch",
+  "input": "070203",
+  "expect": "070203",
+  "model": {
+    "probe.x": "3",
+    "@absent": [
+      "probe.y",
+      "probe.z"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.30 ruling 2: a kind's `as` key counts as mapped from the start of its kind for a `switch`, a common one from its own line on; x = 3: else, nothing"
+}

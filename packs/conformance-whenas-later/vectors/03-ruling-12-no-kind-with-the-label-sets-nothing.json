@@ -1,0 +1,16 @@
+{
+  "name": "ruling-12-no-kind-with-the-label-sets-nothing",
+  "from": "conformance-whenas-later",
+  "to": "conformance-whenas-later",
+  "input": "0907",
+  "expect": "0907",
+  "model": {
+    "@kind": "plain",
+    "probe.w": "2311",
+    "@absent": [
+      "probe.x"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.30 ruling 12: when an `as` line holds and a later `when` line of the same kind does not, the key is not set, and the next kind is tried; 09 fails pair and single; plain holds and reads w = 0x0907 = 2311 from the label on; x is absent"
+}

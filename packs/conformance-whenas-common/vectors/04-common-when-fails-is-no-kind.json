@@ -1,0 +1,9 @@
+{
+  "name": "common-when-fails-is-no-kind",
+  "from": "conformance-whenas-common",
+  "to": "conformance-whenas-common",
+  "input": "0707022a",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.5 Decode step 1: a common `when` that fails is no-kind; 7 is not 5 or 6"
+}

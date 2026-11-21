@@ -1,0 +1,9 @@
+{
+  "name": "items-ruling-04-kind-chosen-by-the-item-key",
+  "from": "conformance-whenas-json",
+  "to": "conformance-whenas-items",
+  "input": "{\"recs\":[{\"x\":2,\"y\":171},{\"x\":2,\"y\":7}]}",
+  "expect": "0220ab2007",
+  "source": "constructed",
+  "reference": "spec 0.30 ruling 4 (ruling 26 of 0.8): an item that records a kind the group has uses it; otherwise the item's kind is chosen by `requires`, with the implicit term; x = 2 matches p, the first item kind: 2, 0, then y in 8 bits"
+}

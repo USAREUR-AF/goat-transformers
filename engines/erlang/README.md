@@ -12,14 +12,14 @@ An independent, clean-room implementation of the gt engine, written from
 
 | Test | Command (repository root) | Measured (2026-11-21) |
 |---|---|---|
-| conversion vectors | `cd engines/erlang && ./run_tests` | 22496/22496 |
-| load vectors | same run | 1235/1235 |
+| conversion vectors | `cd engines/erlang && ./run_tests` | 23349/23349 |
+| load vectors | same run | 1312/1312 |
 | capability vectors | same run | 18/18 |
-| malformed inputs | same run | 142035/142035 |
-| concurrent conversions (Version 0.25) | same run | 455/455 |
+| malformed inputs | same run | 151382/151382 |
+| concurrent conversions (Version 0.25) | same run | 475/475 |
 | benchmark (Version 0.25) | `engines/erlang/bench.sh` | 16 vectors, 16 packs (below) |
 | tool vectors (Versions 0.23, 0.29) | `python3 -I tools/tool-vectors.py -- engines/erlang/goat-xf.sh` | 135/135 |
-| reduced build (Version 0.24) | `engines/erlang/reduced_check.sh` | 8208/8208 vectors; every bits, protobuf, text, tlv and cbor pack `unknown-wire` (below) |
+| reduced build (Version 0.24) | `engines/erlang/reduced_check.sh` | 8354/8354 vectors; every bits, protobuf, text, tlv and cbor pack `unknown-wire` (below) |
 
 `./run_tests` compiles on first use if `ebin/` is empty, prints every failure as
 `FAIL <pack>/<vector>: <why>`, then prints
@@ -227,15 +227,15 @@ Measured (2026-11-21, one machine):
 
 | Check | Result |
 |---|---|
-| conversion vectors on xml, json and geojson | 8208/8208 passed |
-| packs on bits refused as `unknown-wire` | 1705/1705 |
+| conversion vectors on xml, json and geojson | 8354/8354 passed |
+| packs on bits refused as `unknown-wire` | 1796/1796 |
 | packs on protobuf refused as `unknown-wire` | 876/876 |
-| packs on text refused as `unknown-wire` | 77/77 |
-| packs on tlv refused as `unknown-wire` | 9/9 |
+| packs on text refused as `unknown-wire` | 85/85 |
+| packs on tlv refused as `unknown-wire` | 11/11 |
 | packs on cbor refused as `unknown-wire` | 7/7 |
 | `wire nowire` | `unknown-wire`, without the reason |
-| full build, 8 wires | 391820 bytes, 18 `.beam` files |
-| reduced build, xml, json and geojson | 242020 bytes, 11 `.beam` files (61% of full) |
+| full build, 8 wires | 411360 bytes, 19 `.beam` files |
+| reduced build, xml, json and geojson | 259576 bytes, 12 `.beam` files (63% of full) |
 
 Both sizes count `gt_cli` and the conformance runner `gt_test`, which every
 build with json or geojson holds.

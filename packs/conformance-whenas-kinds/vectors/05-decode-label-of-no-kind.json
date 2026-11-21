@@ -1,0 +1,9 @@
+{
+  "name": "decode-label-of-no-kind",
+  "from": "conformance-whenas-kinds",
+  "to": "conformance-whenas-kinds",
+  "input": "0705",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.30 Decode: the `when` line tests the bits as before (0.8, 0.20); 5 matches no kind (0.5 Decode step 2)"
+}

@@ -159,7 +159,14 @@ func (r *seqReader) body(b *seqBody) (*seqKind, error) {
 			pos += w.n
 		}
 		if holds {
-			r.pos = pos
+			// The selected kind's `when … as` lines set their keys; a kind
+			// tested and not selected sets nothing (0.30 ruling 12).
+			for _, w := range k.whens {
+				if w.key != "" {
+					r.setAs(w.key, getBits(r.data, r.pos, w.n, r.p.msb))
+				}
+				r.pos += w.n
+			}
 			return k, r.nodes(k.nodes)
 		}
 	}
@@ -225,6 +232,9 @@ func (r *seqReader) node(n *seqNode) error {
 		at, ok, err := r.take(n.n, "when")
 		if err != nil || !ok || !inRanges(n.rng, getBits(r.data, at, n.n, p.msb)) {
 			return &Error{Kind: ErrNoKind, Format: p.Format, Detail: fmt.Sprintf("the message does not hold %d at the common when on line %d", n.num, n.line)}
+		}
+		if n.key != "" {
+			r.setAs(n.key, getBits(r.data, at, n.n, p.msb))
 		}
 	case seqPresence:
 		return r.presence(n.pres)
@@ -358,6 +368,59 @@ func (r *seqReader) node(n *seqNode) error {
 		return r.nodes(c.body)
 	}
 	return nil
+}
+
+// setAs gives the key of a `when … as` line the bits it read, as `uint` reads
+// them: with 64 bits a value of 2^63 or more is the negative integer of the
+// same bits (0.30 ruling 7).
+func (r *seqReader) setAs(key string, u uint64) {
+	if _, done := r.d.rec.Fields[key]; !done {
+		r.d.rec.Fields[key] = Value{Kind: KindInt, I: int64(u)}
+	}
+}
+
+// asValue returns the bits a `when … as` line writes for a scope: the value
+// of its key when the entity holds it, else the first listed value (0.30,
+// Encode). ok is false when the entity holds a value the `when` does not
+// match. A default does not count (ruling 6).
+func asValue(n *seqNode, rec *Item) (u uint64, ok bool) {
+	v, held := rec.Fields[n.key]
+	if !held {
+		return n.num, true
+	}
+	return asMatch(n, v)
+}
+
+// asMatch reads a value as an unsigned 64-bit pattern and reports whether a
+// `when` lists it or a range of it holds it (0.30 ruling 7).
+func asMatch(n *seqNode, v Value) (uint64, bool) {
+	if v.Kind != KindInt {
+		return 0, false
+	}
+	u := uint64(v.I)
+	if n.n < 64 && u>>uint(n.n) != 0 {
+		return 0, false
+	}
+	return u, inRanges(n.rng, u)
+}
+
+// asHolds reports whether the implicit `requires` terms of a kind's
+// `when … as` lines hold: the entity holds each key with a value its `when`
+// matches (0.30, Encode).
+func asHolds(whens []*seqNode, rec *Item) bool {
+	for _, w := range whens {
+		if w.key == "" {
+			continue
+		}
+		v, held := rec.Fields[w.key]
+		if !held {
+			return false
+		}
+		if _, ok := asMatch(w, v); !ok {
+			return false
+		}
+	}
+	return true
 }
 
 // seqFieldDecode reads the bits of a field line at a bit of data as a decode
@@ -937,7 +1000,8 @@ func seqSelect(p *Pack, b *seqBody, kind EntityKind, rec *Item, what string) ([]
 		}
 	}
 	for _, k := range b.kinds {
-		if reqHolds(k.requires, rec) {
+		// A `when … as` line adds an implicit term (0.30, Encode).
+		if reqHolds(k.requires, rec) && asHolds(k.whens, rec) {
 			return k.all, k.defs, nil
 		}
 	}
@@ -1025,6 +1089,14 @@ func (s *seqSim) walk(nodes []*seqNode, sc seqScope, written bool) bool {
 			return true
 		}
 		switch n.op {
+		case seqWhen:
+			if written && n.key != "" {
+				if u, ok := asValue(n, sc.rec); ok {
+					if _, done := sc.vals[n.key]; !done {
+						sc.vals[n.key] = Value{Kind: KindInt, I: int64(u)}
+					}
+				}
+			}
 		case seqField:
 			if fieldPresent(n.f, sc) {
 				content = true
@@ -1214,8 +1286,23 @@ func (w *seqWriter) emit(nodes []*seqNode, sc seqScope, chain bool) error {
 			}
 			// What a decode would read back from the bits (0.20).
 			readBack(p, f, sc, w.buf.data, at)
-		case seqConst, seqWhen:
+		case seqConst:
 			w.put(w.alloc(n.n), n.n, n.num)
+		case seqWhen:
+			v := n.num
+			if n.key != "" {
+				u, ok := asValue(n, sc.rec)
+				if !ok {
+					return w.fail("when … as %s on line %d: the entity holds %s, which the when does not match; the output would decode another value", n.key, n.line, sc.rec.Fields[n.key].String())
+				}
+				v = u
+				// The value written is what a decode reads, for a switch on
+				// the key (0.30 ruling 19).
+				if _, done := sc.vals[n.key]; !done {
+					sc.vals[n.key] = Value{Kind: KindInt, I: int64(v)}
+				}
+			}
+			w.put(w.alloc(n.n), n.n, v)
 		case seqPad:
 			w.alloc(n.n)
 		case seqAlign:

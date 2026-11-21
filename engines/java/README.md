@@ -196,9 +196,9 @@ with `nice -n 10` on this tree on 2026-11-21:
 ```
 reduced jar: no class of the bits, protobuf, text, tlv or cbor codecs
 build wires: xml, geojson, json
-conversion vectors: 8164/8164 passed (1624 packs on xml, geojson, json; 14094 vectors on other wires not run)
+conversion vectors: 8354/8354 passed (1706 packs on xml, geojson, json; 14995 vectors on other wires not run)
 capability vectors: 16/16 passed (those between formats on wires of the build)
-load vectors: 382/382 passed (those with no pack on a wire this build lacks)
+load vectors: 389/389 passed (those with no pack on a wire this build lacks)
 unknown-wire: bits (pack adsb): unknown-wire: .../packs/adsb/pack.def:18: wire "bits" is a wire of the specification, but this build does not have it (this build has xml, geojson, json) [format=adsb locator=-]
 unknown-wire: protobuf (pack apollo-ch): ...
 unknown-wire: text (pack argo-index-meta): ...
@@ -207,8 +207,8 @@ unknown-wire: cbor (pack conformance-cbor): ...
 unknown-wire loads: 5/5 passed
 unknown-wire: nowire (no wire of the specification): unknown-wire: nowire-check:3: unknown wire "nowire" [format=nowire-check locator=-]
 OK
-jar size, all eight wires:       334301 bytes
-jar size, xml, json and geojson: 243712 bytes, 72% of the full jar
+jar size, all eight wires:       347662 bytes
+jar size, xml, json and geojson: 255801 bytes, 73% of the full jar
 ```
 
 The jar shrinks by a quarter, not more, because the pack reader stays whole:
@@ -247,23 +247,24 @@ and runs:
   the line forms of ruling 1 on files of its own in a temporary directory.
 
 It prints each failure and exits non-zero on any. Measured with
-`nice -n 10 ./build.sh` on this tree on 2026-11-21 (22258 vectors, 4289 packs,
-with the licence profiles of Version 0.29), on a loaded machine:
+`nice -n 10 ./build.sh` on this tree on 2026-11-21 (23349 vectors, 4481 packs,
+with `when … as` of Version 0.30 and the `cbor` wire of Version 0.28), on a loaded machine:
 
 ```
-conversion vectors: 22258/22258 passed (4289 packs, 2950 model modules)
-load vectors: 1172/1172 passed
+conversion vectors: 23349/23349 passed (4481 packs, 3096 model modules)
+load vectors: 1312/1312 passed
 capability vectors: 18/18 passed
-packs-only: loadOnly checked for 48 of 4289 packs, 2793 ms (GOAT_SWEEP_FULL=1 for all)
-malformed input sweep: 1465575 inputs over 22258 of 22258 conversion vectors (29 damaged copies each) and 4289 packs of 7 wires, 1094347 named errors, 0 defects, 165659 ms (GOAT_SWEEP_FULL=1 for the full sweep)
-parse once: 8 threads x 2 rounds x 2420 conversions on one instance, 0 differ
-parse once (0.25): 11733 ms
-unit checks: 931/931 passed
+packs-only: loadOnly checked for 48 of 4481 packs, 1154 ms (GOAT_SWEEP_FULL=1 for all)
+malformed input sweep: 1374906 inputs over 23349 of 23349 conversion vectors (27 damaged copies each) and 4481 packs of 8 wires, 1040304 named errors, 0 defects, 63240 ms (GOAT_SWEEP_FULL=1 for the full sweep)
+parse once: 8 threads x 2 rounds x 2622 conversions on one instance, 0 differ
+parse once (0.25): 6441 ms
+unit checks: 979/979 passed
 OK
 ```
 
-`./build.sh` took 6 min 35 s in all on that run (22 min 23 s on an earlier
-run with a load average near 68; 78 s on an idle machine before Version 0.26).
+`./build.sh` took 2 min 23 s in all on that run, with a load average near 17
+(22 min 23 s on an earlier run with a load average near 68; 78 s on an idle
+machine before Version 0.26).
 
 The tool vectors (`packs/conformance/tool-vectors/`, spec Version 0.23) run
 against the tool, after `./build.sh` has written the jar, from the repository
@@ -276,7 +277,7 @@ tool vectors: 135/135 passed
 
 | Test | Command | Measured |
 |---|---|---|
-| tool vectors | `python3 -I tools/tool-vectors.py -- engines/java/goat-xf-java.sh` | 135/135 passed on 2026-11-21 (with the licence vectors 101 to 138 of Version 0.29), on a loaded machine (each run starts a JVM and loads every model module) |
+| tool vectors | `python3 -I tools/tool-vectors.py -- engines/java/goat-xf-java.sh` | 135/135 passed on 2026-11-21 (with Version 0.30; the licence vectors 101 to 138 of Version 0.29 included), on a loaded machine (each run starts a JVM and loads every model module) |
 
 ### The bounded sweep and `GOAT_SWEEP_FULL=1`
 

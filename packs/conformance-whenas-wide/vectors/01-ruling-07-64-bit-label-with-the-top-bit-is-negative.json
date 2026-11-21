@@ -1,0 +1,13 @@
+{
+  "name": "ruling-07-64-bit-label-with-the-top-bit-is-negative",
+  "from": "conformance-whenas-wide",
+  "to": "conformance-whenas-wide",
+  "input": "ffffffffffffffff",
+  "expect": "ffffffffffffffff",
+  "model": {
+    "@kind": "high",
+    "probe.x": "-1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.30 ruling 7: decode reads the bits as `uint` does (ruling 2 of 0.5); matching reads the entity's value as an unsigned 64-bit pattern; 2^64-1 lies in high's range; x is the negative integer with the same bits, -1"
+}

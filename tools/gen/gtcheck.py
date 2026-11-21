@@ -689,7 +689,7 @@ class Node:
     __slots__ = ("d", "line", "args", "body", "kinds", "key", "loc", "tr", "targs", "via",
                  "opts", "also", "value", "mode", "count", "item", "conds", "name", "bits",
                  "unit", "plus", "whole", "start", "path", "absent", "fields", "col", "size", "gate", "with_", "uper",
-                 "values", "ranges", "until", "stop")
+                 "values", "ranges", "until", "stop", "as_key")
 
     def __init__(self, d, line, args):
         self.d, self.line, self.args = d, line, args
@@ -699,6 +699,7 @@ class Node:
         self.start = self.path = self.absent = self.fields = self.col = self.size = self.gate = self.with_ = self.uper = None
         self.values = self.ranges = None
         self.until = self.stop = None
+        self.as_key = None          # spec 0.30: the key of `when ... as <key>`
 
     def __repr__(self):
         return "<%s line %d: %s>" % (self.d, self.line, " ".join(self.args))
@@ -1190,12 +1191,16 @@ class _Loader:
         self._block(common, group, visible[:-1] + [frame], declared, in_kind=False, top=top)
         after_common = set(self._mapped)
         for kind in kinds or ():       # a kind continues the block its common lines began
-            self._mapped = set(after_common)
+            # spec 0.30 ruling 2: a kind's `as` key counts as mapped from the
+            # start of its kind
+            self._mapped = set(after_common) | {n.as_key for n in kind.lines
+                                                 if n.d == "when" and len(n.args) == 4 and n.args[2] == "as"}
             self._block(kind.lines, group, visible[:-1] + [dict(frame)], set(declared), in_kind=True, top=top)
         self._mapped = outer
         self._body_base = outer_base
         for lines in ([common + kind.lines for kind in kinds] if kinds else [common]):
             if sequential:
+                self._as_keys(lines)
                 self._sequential_lists(lines)
             elif self.pack.wire == "text":
                 self._one_group_per_list(lines)
@@ -1229,6 +1234,8 @@ class _Loader:
                 if sequential and (not top or (in_kind and lines_seen)):
                     self.bad(node, "`when` after another line of its kind, or inside a block")
                 self._when(node, group)
+                if node.as_key is not None:
+                    self._mapped.add(node.as_key)
             elif d == "field":
                 self._field(node, group)
                 self._mapped.add(node.key)
@@ -1701,9 +1708,16 @@ class _Loader:
             self.bad(node, "the `%s` value `%s` does not fit %d bits" % (what, text, node.bits))
 
     def _when(self, node, group):
-        """`when <locator> <value>[,<value>...]` (0.5, lists and ranges 0.20)."""
-        if len(node.args) != 2:
-            self.bad(node, "`when` takes a locator and a value")
+        """`when <locator> <value>[,<value>...] [as <key>]` (0.5, lists and
+        ranges 0.20, `as` 0.30 on a sequential pack only, ruling 15)."""
+        a = node.args
+        if len(a) == 4 and a[2] == "as" and a[3] != "as" and self.pack.wire == "bits" \
+                and self.pack.sequential:
+            node.as_key = a[3]
+            self.key_uses.append((node, a[3], "as"))
+        elif len(a) != 2:
+            self.bad(node, "`when` takes a locator and a value" + (
+                " (`as <key>` follows the values only on a `layout sequential` pack, 0.30)" if "as" in a[2:] else ""))
         self._locator(node, node.args[0], group, "when")
         node.value = node.args[1]
         if self.pack.wire == "text":
@@ -2179,6 +2193,38 @@ class _Loader:
         if first is not None:
             pack.cbor_top = first[0]
 
+    def _as_keys(self, lines):
+        """Spec 0.30 load errors and ruling 9, over one reading path (common
+        lines plus one kind; a group body's common lines plus one item kind):
+        two `when ... as` lines naming one key, or an `as` key that a `field`
+        or `also` line of the path maps (in any case of a switch; a group
+        body is a scope of its own), are `bad-directive`. Ruling 16: only key
+        names are needed."""
+        bound = {}
+        for node in lines:
+            if node.d == "when" and node.as_key is not None:
+                if node.as_key in bound:
+                    self.bad(node, "a second `when ... as %s` in one reading path (ruling 9 of 0.30)" % node.as_key)
+                bound[node.as_key] = node
+
+        def mapped(ls):
+            for n in ls:
+                if n.d == "field":
+                    yield n, keys_of(n)
+                elif n.d == "also":
+                    yield n, [n.key]
+                if n.d != "group" and n.body:
+                    for sub in n.body:
+                        if sub.d in ("case", "else"):
+                            yield from mapped(sub.body or ())
+                        else:
+                            yield from mapped([sub])
+
+        for node, keys in mapped(lines):
+            for key in keys:
+                if key in bound:
+                    self.bad(node, "`%s` is bound by `when ... as` and mapped by this line (0.30)" % key)
+
     def _sequential_lists(self, lines):
         """0.8 rulings 23 and 33, with 0.19 ruling 20: two groups of one list in
         a sequential scope are allowed only when each sits in an `if`, `opt` or
@@ -2349,6 +2395,11 @@ class _Loader:
         if role == "group":
             if found != "list":
                 mismatch("a `group` needs a list")
+            return
+        if role == "as":
+            # spec 0.30: the key of `when ... as` is declared `int`
+            if found != "int":
+                mismatch("`when ... as` needs an `int` key")
             return
         if found == "list":
             mismatch("a `%s` needs a scalar key" % (role if isinstance(role, str) else "also"))

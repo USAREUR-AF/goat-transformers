@@ -1,0 +1,17 @@
+{
+  "name": "ruling-12-later-when-fails-next-kind-sets-the-key",
+  "from": "conformance-whenas-later",
+  "to": "conformance-whenas-later",
+  "input": "0207",
+  "expect": "0207",
+  "model": {
+    "@kind": "single",
+    "probe.x": "2",
+    "probe.z": "7",
+    "@absent": [
+      "probe.y"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec 0.30 ruling 12: when an `as` line holds and a later `when` line of the same kind does not, the key is not set, and the next kind is tried; 02 holds pair's `as` line and 07 fails its second `when`; single reads 02 again (0.8: every kind's `when` lines are read from where the common lines ended): x = 2 from single"
+}

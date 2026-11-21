@@ -1,0 +1,9 @@
+{
+  "name": "ruling-10-no-kind-wins-over-transform-encode-of-a-common-as",
+  "from": "conformance-whenas-json",
+  "to": "conformance-whenas-common",
+  "input": "{\"n\":7,\"w\":9,\"x\":50}",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec 0.30 ruling 10: the kind is chosen before any line is written; x = 50 matches neither a nor b and c requires z: no-kind, although w = 9 would be transform-encode"
+}

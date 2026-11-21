@@ -1,0 +1,9 @@
+{
+  "name": "switch-else-drops-the-key-of-another-case",
+  "from": "conformance-whenas-json",
+  "to": "conformance-whenas-switch",
+  "input": "{\"n\":7,\"w\":2,\"z\":5,\"x\":3,\"y\":1}",
+  "expect": "070203",
+  "source": "constructed",
+  "reference": "spec 0.30 ruling 2: a kind's `as` key counts as mapped from the start of its kind for a `switch`, a common one from its own line on; w = 2 and x = 3 select the two `else` arms; z and y are not written"
+}

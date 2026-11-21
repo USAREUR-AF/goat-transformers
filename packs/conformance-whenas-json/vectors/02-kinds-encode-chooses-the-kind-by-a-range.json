@@ -1,0 +1,9 @@
+{
+  "name": "kinds-encode-chooses-the-kind-by-a-range",
+  "from": "conformance-whenas-json",
+  "to": "conformance-whenas-kinds",
+  "input": "{\"n\":7,\"x\":4,\"z\":258}",
+  "expect": "07040102",
+  "source": "constructed",
+  "reference": "spec 0.30 Encode, Choosing the kind: a kind with `when ... as <k>` qualifies only when the entity holds <k> and its value matches the `when`; x = 4 lies in span's 2..4; The bits written: the held value 4 is written, not the first value 2"
+}

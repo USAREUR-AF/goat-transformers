@@ -211,12 +211,15 @@ final class SeqCodec extends BitsWire<byte[]> {
         if (body.hasKinds) {
             kind = null;
             long at = r.pos;
+            long[] read = null;
             for (Seq.Kind k : body.kinds) {
                 r.pos = at;
                 boolean all = true;
-                for (Seq.Node w : k.whens) {
+                read = new long[k.whens.size()];
+                for (int i = 0; i < read.length; i++) {
+                    Seq.Node w = k.whens.get(i);
                     // a when any of whose bits lies beyond the input does not hold
-                    if (r.pos + w.len > r.limit() || !matches(w, r.take(w.len))) { all = false; break; }
+                    if (r.pos + w.len > r.limit() || !matches(w, read[i] = r.take(w.len))) { all = false; break; }
                 }
                 if (all) { kind = k; break; }
             }
@@ -224,6 +227,11 @@ final class SeqCodec extends BitsWire<byte[]> {
                 r.pos = at;
                 throw new GtException(GtException.Code.NO_KIND, pack.format, null,
                         (body == root ? "the message" : "an item") + " matches no kind at bit " + at);
+            }
+            // engine-spec 0.30: the when ... as lines of the selected kind, and only of it, set their keys (ruling 12)
+            for (int i = 0; i < read.length; i++) {
+                Seq.Node w = kind.whens.get(i);
+                if (w.as != null) putDecoded(w.as, read[i], e, r.fails);
             }
         }
         decodeLines(kind.lines, r, e);
@@ -293,13 +301,17 @@ final class SeqCodec extends BitsWire<byte[]> {
                 case PAD:
                     if (r.line(n.len, n.op == Seq.Op.PAD ? "a pad" : "a const")) r.pos += n.len;
                     break;
-                case WHEN:
+                case WHEN: {
                     // a common when: it must hold for every message (or item) of the format
-                    if (r.pos + n.len > r.limit() || !matches(n, r.take(n.len))) {
+                    boolean beyond = r.pos + n.len > r.limit();
+                    long v = beyond ? 0 : r.take(n.len);
+                    if (beyond || !matches(n, v)) {
                         throw new GtException(GtException.Code.NO_KIND, pack.format, null,
                                 "the common when line " + n.len + " " + Long.toUnsignedString(n.value) + " does not hold");
                     }
+                    if (n.as != null) putDecoded(n.as, v, e, r.fails);   // engine-spec 0.30: the key holds the bits as uint
                     break;
+                }
                 case ALIGN: {
                     long to = (r.pos + n.len - 1) / n.len * n.len;
                     r.pos = Math.max(r.pos, Math.min(to, r.limit()));   // stops at the end of the input or extent (ruling 20)
@@ -787,6 +799,14 @@ final class SeqCodec extends BitsWire<byte[]> {
     /** The value decode would read from what the switch's first key line writes for {@code e}, or null. */
     private Object predict(Seq.Node sw, Entity e, Map<String, Object> defs) {
         Seq.Node line = sw.keyLine;
+        if (line.op == Seq.Op.WHEN) {
+            // a when ... as line is the key's line (ruling 19 of 0.30): the value it writes, read back as uint
+            try {
+                return asWritten(line, e);
+            } catch (GtException ex) {
+                return null;
+            }
+        }
         Writer scratch = new Writer(new IdentityHashMap<>());
         Entity shadow = new Entity();
         try {
@@ -870,9 +890,57 @@ final class SeqCodec extends BitsWire<byte[]> {
             }
         }
         for (Seq.Kind k : body.kinds) {
-            if (Pack.allHold(k.requires, e)) return k;
+            if (Pack.allHold(k.requires, e) && asTermsHold(k, e)) return k;
         }
         throw new GtException(GtException.Code.NO_KIND, pack.format, null, what + " has the required keys of no kind");
+    }
+
+    /**
+     * The implicit {@code requires} term of each {@code when ... as <k>} line of the kind (engine-spec 0.30): the
+     * entity holds {@code <k>} and its value matches the when. A default does not count (ruling 6).
+     */
+    private static boolean asTermsHold(Seq.Kind k, Entity e) {
+        for (Seq.Node w : k.whens) {
+            if (w.as == null) continue;
+            Object v = e.get(w.as.key);
+            if (v == null || !asMatches(w, v)) return false;
+        }
+        return true;
+    }
+
+    /**
+     * True when the entity's value of a {@code when ... as} key matches the when: read as an unsigned 64-bit pattern,
+     * it is a listed value or within a listed range (ruling 7 of 0.30).
+     */
+    private static boolean asMatches(Seq.Node w, Object v) {
+        if (!(v instanceof Long || v instanceof Integer)) return false;
+        return matches(w, ((Number) v).longValue());
+    }
+
+    /**
+     * The bits a {@code when ... as} line writes (engine-spec 0.30): the entity's value of the key when it matches;
+     * the first listed value when the entity does not hold the key; a held value that does not match is
+     * transform-encode (the output would decode a different value).
+     */
+    private long asWritten(Seq.Node w, Entity e) {
+        Object v = e.get(w.as.key);
+        if (v == null) return w.value;
+        if (!asMatches(w, v)) {
+            throw encodeError(w.as.key + " holds " + Pack.canonText(v) + ", which the when line " + w.len + " "
+                    + whenText(w) + " (line " + w.line + ") does not match: the output would decode a different value");
+        }
+        return ((Number) v).longValue();
+    }
+
+    private static String whenText(Seq.Node w) {
+        if (w.ranges == null) return Long.toUnsignedString(w.value);
+        StringBuilder b = new StringBuilder();
+        for (int i = 0; i < w.ranges.length; i += 2) {
+            if (b.length() > 0) b.append(',');
+            b.append(Long.toUnsignedString(w.ranges[i]));
+            if (w.ranges[i] != w.ranges[i + 1]) b.append("..").append(Long.toUnsignedString(w.ranges[i + 1]));
+        }
+        return b.toString();
     }
 
     /** The defaults in force inside a case: those around it, replaced by the case's own (ruling 22 of 0.20). */
@@ -1000,8 +1068,16 @@ final class SeqCodec extends BitsWire<byte[]> {
                     break;
                 }
                 case CONST:
-                case WHEN:
                     w.put(n.len, n.value);
+                    break;
+                case WHEN:
+                    if (n.as == null) {
+                        w.put(n.len, n.value);
+                    } else {
+                        long v = asWritten(n, e);
+                        w.put(n.len, v);
+                        shadow.put(n.as.key, v);   // decode would read it back: a switch on the key selects by it
+                    }
                     break;
                 case PAD:
                     w.skip(n.len);

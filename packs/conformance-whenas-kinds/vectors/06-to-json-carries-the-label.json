@@ -1,0 +1,9 @@
+{
+  "name": "to-json-carries-the-label",
+  "from": "conformance-whenas-kinds",
+  "to": "conformance-whenas-json",
+  "input": "07030102",
+  "expect": "{\"n\":7,\"x\":3,\"z\":258}",
+  "source": "constructed",
+  "reference": "spec 0.30 Decode: when the kind is selected, the key holds the bits read as an unsigned integer; x = 3 is a model key; the json pack writes it"
+}

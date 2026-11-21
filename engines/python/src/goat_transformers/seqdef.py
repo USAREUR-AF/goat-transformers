@@ -50,15 +50,16 @@ class Node:
     A field with a UPER locator has `uper` (a uper.Loc) and `length` None, as one with
     the locator `until:<code>` has `until` (its UntilCharsT, 0.22); a
     `size` group has `lb` and `ub` (both None with no size constraint). A
-    `when` has `ranges` (0.20); a presence `named_static`, the bits named by an
-    `if` outside any case that does not also hold the presence, and `chain`,
-    the cases the presence stands in.
+    `when` has `ranges` (0.20) and `as_key`, the key of `when ... as <key>`
+    or None (0.30); a presence `named_static`, the bits named by an `if`
+    outside any case that does not also hold the presence, and `chain`, the
+    cases the presence stands in.
     """
 
     __slots__ = ("t", "lineno", "length", "value", "bindings", "name", "named", "conds", "body", "list", "mode",
                  "scope", "parts", "ends_fx", "unit", "plus", "locator", "uper", "n", "ext", "alts", "index",
                  "lb", "ub", "key", "cases", "other", "key_type", "ranges", "named_static", "chain", "key_lines",
-                 "count_node", "tail_rest", "until")
+                 "count_node", "tail_rest", "until", "as_key")
 
     is_field = False
     is_const = False
@@ -73,6 +74,7 @@ class Node:
         self.until = None
         self.count_node = None
         self.tail_rest = False
+        self.as_key = None
         for k, v in kw.items():
             setattr(self, k, v)
 
@@ -121,6 +123,42 @@ class Case:
         return out
 
 
+class AsRef:
+    """The key of a `when ... as <key>` line (0.30), as `Engine.add` checks it:
+    a scalar key declared `int`."""
+
+    __slots__ = ("key", "locator", "lineno")
+    is_as = True
+    is_field = False
+    is_group = False
+
+    def __init__(self, key, locator, lineno):
+        self.key = key
+        self.locator = locator
+        self.lineno = lineno
+
+
+def when_value(nd, raw):
+    """0.30, ruling 7: the value a `when ... as` key holds for the bits `raw`:
+    unsigned, except that 64 bits with the top bit set are the negative integer
+    with the same bits."""
+    return raw - (1 << 64) if nd.length == 64 and raw >> 63 else raw
+
+
+def when_matches(nd, value):
+    """0.30, ruling 7: the entity's value, read as an unsigned 64-bit pattern,
+    equals a listed value or lies in a listed range of the `when`."""
+    if isinstance(value, bool) or not isinstance(value, int):
+        return False
+    if not -(1 << 63) <= value < (1 << 64):
+        return False
+    v = value & ((1 << 64) - 1)
+    for lo, hi in nd.ranges:
+        if lo <= v <= hi:
+            return True
+    return False
+
+
 class GroupNode(Node):
     __slots__ = ()
     is_group = True
@@ -148,6 +186,7 @@ class SeqKind:
         self.lists = {}          # list -> the `if`/`opt` blocks each of its groups sits in
         self.when_lines = ()
         self.block = None        # common + whens + nodes, set when the body is closed
+        self.as_lines = []       # the `when ... as` nodes of the kind (0.30): an implicit `requires` term each
 
 
 class Body:
@@ -162,6 +201,7 @@ class Body:
         self.lists = {}          # as SeqKind.lists, for the groups before the first kind
         self.first_when = None   # lineno of the first common `when`
         self.mapped = set()      # keys mapped by a common field or `also` line so far (0.20)
+        self.as_lines = []       # the common `when ... as` nodes (0.30)
         self.key_lines = {}      # key -> the field nodes that map it, in reading order, while the file is read
         self._index = {}
         self._defaults = {}
@@ -211,6 +251,9 @@ class Body:
                 if t == T_FIELD:
                     for f in nd.bindings:
                         add(prefix + f.key)
+                elif t == T_WHEN:  # 0.30 ruling 5: a `when ... as` key at its line
+                    if nd.as_key is not None:
+                        add(prefix + nd.as_key)
                 elif t == T_GROUP:
                     add(prefix + nd.list + "[]")
                     nd.scope.model_keys(add, prefix + nd.list + "[].")
@@ -220,7 +263,7 @@ class Body:
 
         walk(self.common)
         for k in self.kinds:
-            walk(k.nodes)
+            walk(k.whens + k.nodes)
 
 
 def _index(lines, nd):
@@ -272,6 +315,42 @@ def _refs(lines, count):
             for part in children(nd):
                 got = _plus(got, _refs(part, count))
     return got
+
+
+def _field_keys(lines, out):
+    """{key: first line} of the keys mapped by the `field` and `also` lines of
+    `lines` and of every block in them but a group body (0.30, ruling 33)."""
+    for nd in lines:
+        t = nd.t
+        if t == T_FIELD:
+            for f in nd.bindings:
+                out.setdefault(f.key, nd.lineno)
+        elif t != T_GROUP:
+            for part in children(nd):
+                _field_keys(part, out)
+    return out
+
+
+def check_as_keys(body, bad):
+    """0.30, rulings 9, 21 and 33: in one reading path of a body (its common
+    lines plus one kind), no key is named by two `when ... as` lines, nor by a
+    `when ... as` line and a `field` or `also` line. -> [(lineno, error)]."""
+    out = []
+    common = _field_keys(body.common, {})
+    for kind in body.kinds or [None]:
+        lines = body.as_lines + (kind.as_lines if kind is not None else [])
+        fields = _field_keys(kind.nodes, dict(common)) if kind is not None else common
+        named = set()
+        for nd in lines:
+            if nd.as_key in named:
+                out.append((nd.lineno, bad("two 'when ... as' lines of one reading path name %s" % nd.as_key,
+                                           nd.lineno, nd.locator)))
+            named.add(nd.as_key)
+            if nd.as_key in fields:
+                out.append((nd.lineno, bad("%s is named by 'when ... as' and mapped by the 'field' or 'also' line "
+                                           "%d in one reading path" % (nd.as_key, fields[nd.as_key]),
+                                           nd.lineno, nd.locator)))
+    return out
 
 
 def switch_cases(nd):
@@ -856,6 +935,16 @@ def parse_seq_pack_text(text, *, source="pack.def"):
                 if in_block():  # ruling 10 of 0.8
                     raise bad("'when' inside a block", lineno, args[0])
                 nd = value_node(T_WHEN, kw, args, lineno)
+                if len(args) > 2:  # 0.30: `as <key>` (`line_head` lets only `as` through as the third token)
+                    rest = args[3:]
+                    if not rest:
+                        deferred.append((lineno, bad("'as' with no key", lineno, args[0])))
+                    elif "as" in rest:  # ruling 31: any second `as` token
+                        deferred.append((lineno, bad("'as' twice on one 'when' line", lineno, args[0])))
+                    elif len(rest) > 1:
+                        deferred.append((lineno, bad("a token after the key of 'as': %r" % rest[1], lineno, args[0])))
+                    else:
+                        nd.as_key = rest[0]
                 if body.cur is None:  # a common `when` of 0.5
                     body.common.append(nd)
                     if body.first_when is None:
@@ -864,6 +953,14 @@ def parse_seq_pack_text(text, *, source="pack.def"):
                     raise bad("'when' after another line of its kind", lineno, args[0])
                 else:
                     body.cur.whens.append(nd)
+                if nd.as_key is not None:
+                    key_refs.append((nd.as_key, AsRef(nd.as_key, nd.as_key, lineno)))
+                    # ruling 2: the key counts as mapped for a `switch`, from its line on;
+                    # ruling 19: the `when` line is the key's line on encode
+                    owner = body.cur if body.cur is not None else body
+                    owner.mapped.add(nd.as_key)
+                    owner.key_lines.setdefault(nd.as_key, []).append(nd)
+                    (body.cur.as_lines if body.cur is not None else body.as_lines).append(nd)
             elif kw == "field":
                 until = None
                 if args[1].startswith(uper.PREFIXES):  # 0.19
@@ -1167,6 +1264,9 @@ def parse_seq_pack_text(text, *, source="pack.def"):
         if fr.what == "group":
             fr.body.close()
     close_body(msg, 0)
+    for b in msg.bodies():  # 0.30 ruling 16: needs only key names, with the checks of the whole file
+        if b.as_lines or any(k.as_lines for k in b.kinds):
+            deferred.extend(check_as_keys(b, bad))
     armor_value = check_armor(armor, "bits", once.get("bit_order"), deferred, source, name)
     is_uper = check_encoding(encoding, "bits", True, once.get("bit_order"), armor_value, deferred, source,
                              name) == "uper"

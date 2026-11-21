@@ -1,0 +1,9 @@
+{
+  "name": "common-key-absent-writes-the-first-value",
+  "from": "conformance-whenas-json",
+  "to": "conformance-whenas-common",
+  "input": "{\"n\":7,\"x\":2,\"y\":42}",
+  "expect": "0705022a",
+  "source": "constructed",
+  "reference": "spec 0.30 The bits written: when the entity does not hold <k>, the first listed value, 5; ruling 6: the default 6 has no effect on what is written"
+}
