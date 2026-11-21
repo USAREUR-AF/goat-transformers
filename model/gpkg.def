@@ -1,0 +1,22 @@
+# The gpkg module: the values of a GeoPackage geometry blob (the GeoPackageBinary
+# header and a WKB Point after it) that have no shared-model key.
+# packs/geopackage-geometry-be/pack.md says which values bind to lat and lon.
+module        gpkg
+version       0.1.0
+distribution  public
+source        "OGC GeoPackage Encoding Standard 1.4.0, OGC 12-128r19 (2024-02-06), https://docs.ogc.org/is/12-128r19/12-128r19.html, clause 2.1.3; OGC Document License Agreement"
+source        "OGC Simple Feature Access Part 1: Common Architecture 1.2.1, OGC 06-103r4, https://docs.ogc.org/is/06-103r4/06-103r4.pdf, clause 8.2 (Well-known Binary); OGC Document License Agreement"
+key  extended   int    -  "flag X of the header: 0 standard binary (core and registered extended geometry types), 1 extended binary (a user-defined geometry type)"
+key  empty      int    -  "flag Y of the header: 1 when the geometry is empty"
+key  envelope   int    -  "envelope contents code E of the header: 0 none, 1 x and y, 2 x y z, 3 x y m, 4 x y z m; 5 to 7 are invalid"
+key  srs_id     int    -  "spatial reference system identifier of the geometry, a row of the gpkg_spatial_ref_sys table; 4326 is WGS 84 geographic, -1 undefined Cartesian, 0 undefined geographic"
+key  min_x      float  -  "envelope: smallest x (easting or longitude) of the geometry, in the units of srs_id"
+key  max_x      float  -  "envelope: largest x of the geometry, in the units of srs_id"
+key  min_y      float  -  "envelope: smallest y (northing or latitude) of the geometry, in the units of srs_id"
+key  max_y      float  -  "envelope: largest y of the geometry, in the units of srs_id"
+key  min_z      float  -  "envelope: smallest z (elevation) of the geometry"
+key  max_z      float  -  "envelope: largest z (elevation) of the geometry"
+key  min_m      float  -  "envelope: smallest measure (m) of the geometry"
+key  max_m      float  -  "envelope: largest measure (m) of the geometry"
+key  x          float  -  "x of a two-dimensional WKB Point (easting or longitude, whatever the axis order of srs_id), in the units of srs_id"
+key  y          float  -  "y of a two-dimensional WKB Point (northing or latitude), in the units of srs_id"

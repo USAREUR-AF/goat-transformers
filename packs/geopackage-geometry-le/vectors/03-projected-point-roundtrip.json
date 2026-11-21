@@ -1,0 +1,22 @@
+{
+  "name": "projected-point-roundtrip",
+  "from": "geopackage-geometry-le",
+  "to": "geopackage-geometry-le",
+  "input": "47500001110f0000010100000000000080c8a933410000001054625741",
+  "expect": "47500001110f0000010100000000000080c8a933410000001054625741",
+  "model": {
+    "@kind": "geometry",
+    "gpkg.extended": "0",
+    "gpkg.empty": "0",
+    "gpkg.envelope": "0",
+    "gpkg.srs_id": "3857",
+    "gpkg.x": "1288648.5",
+    "gpkg.y": "6130000.25",
+    "@absent": [
+      "lat",
+      "lon"
+    ]
+  },
+  "source": "derived by tools/gen/ogc-geo-vectors.py from the standard and spec/engine-spec.md; no engine run",
+  "reference": "OGC 12-128r19 (GeoPackage 1.4.0) clause 2.1.3 Geometry Encoding, Table 5 flags byte; OGC 06-103r4 clause 8.2 WKB; srs_id 3857 is not WGS 84 geographic: x and y kept as gpkg.x and gpkg.y, lat and lon absent"
+}

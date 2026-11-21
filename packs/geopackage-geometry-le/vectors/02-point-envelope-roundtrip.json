@@ -1,0 +1,24 @@
+{
+  "name": "point-envelope-roundtrip",
+  "from": "geopackage-geometry-le",
+  "to": "geopackage-geometry-le",
+  "input": "47500003e6100000a4e194b9f9262740a4e194b9f9262740ff4124438e114840ff4124438e1148400101000000a4e194b9f9262740ff4124438e114840",
+  "expect": "47500003e6100000a4e194b9f9262740a4e194b9f9262740ff4124438e114840ff4124438e1148400101000000a4e194b9f9262740ff4124438e114840",
+  "model": {
+    "@kind": "geometry",
+    "gpkg.extended": "0",
+    "gpkg.empty": "0",
+    "gpkg.envelope": "1",
+    "gpkg.srs_id": "4326",
+    "gpkg.min_x": "11.576124",
+    "gpkg.max_x": "11.576124",
+    "gpkg.min_y": "48.137154",
+    "gpkg.max_y": "48.137154",
+    "gpkg.x": "11.576124",
+    "gpkg.y": "48.137154",
+    "lon": "11.576124",
+    "lat": "48.137154"
+  },
+  "source": "derived by tools/gen/ogc-geo-vectors.py from the standard and spec/engine-spec.md; no engine run",
+  "reference": "OGC 12-128r19 (GeoPackage 1.4.0) clause 2.1.3 Geometry Encoding, Table 5 flags byte; OGC 06-103r4 clause 8.2 WKB; envelope code 1 (x and y bounds, 32 bytes): the WKB starts at byte 40"
+}

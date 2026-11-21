@@ -1,0 +1,8 @@
+{
+  "name": "GeoPackage geometry",
+  "domain": "maps",
+  "prefixes": [
+    "geopackage-geometry-"
+  ],
+  "detail": "GeoPackageBinary blob, big- and little-endian"
+}

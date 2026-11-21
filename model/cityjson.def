@@ -1,0 +1,22 @@
+# The cityjson module: the values of a CityJSON 2.0 object or CityJSONFeature
+# that the json wire can address and that have no shared-model key.
+# packs/cityjson/pack.md says why vertices and geometries are not carried.
+module        cityjson
+version       0.1.0
+distribution  public
+source        "CityJSON Specifications 2.0.1 (2024-04-11), https://www.cityjson.org/specs/2.0.1/, repository https://github.com/cityjson/specs tag 2.0.1; CC0 1.0 Universal"
+list  scale                         "transform scale: the factor of each of x, y and z that turns the integer vertex coordinates into coordinates of the reference system"
+list  translate                     "transform translate: the offset of each of x, y and z added after the scale"
+key   component          float   -  "one number of a transform or extent array, in the units of the reference system"
+key   title              string  -  "metadata title: a description of the dataset"
+key   identifier         string  -  "metadata identifier: a unique identifier of the dataset, a UUID recommended"
+key   reference_date     string  -  "metadata referenceDate: the date the dataset was compiled, an RFC 3339 full-date"
+key   reference_system   string  -  "metadata referenceSystem: the coordinate reference system as an OGC CRS URL (http(s)://www.opengis.net/def/crs/{authority}/{version}/{code})"
+list  extent                        "metadata geographicalExtent: minx, miny, minz, maxx, maxy, maxz of the dataset in the reference system"
+key   contact_name       string  -  "metadata pointOfContact contactName"
+key   contact_email      string  -  "metadata pointOfContact emailAddress"
+key   contact_role       string  -  "metadata pointOfContact role, one of the roles CityJSON lists (custodian, owner, publisher and others)"
+key   contact_website    string  -  "metadata pointOfContact website: a URL"
+key   contact_type       string  -  "metadata pointOfContact contactType: individual or organization"
+key   contact_phone      string  -  "metadata pointOfContact phone"
+key   contact_organization string -  "metadata pointOfContact organization: the organization of a contact that is a person"

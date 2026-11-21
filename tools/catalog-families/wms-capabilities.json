@@ -1,0 +1,7 @@
+{
+  "name": "WMS capabilities",
+  "domain": "maps",
+  "exact": [
+    "wms-capabilities"
+  ]
+}

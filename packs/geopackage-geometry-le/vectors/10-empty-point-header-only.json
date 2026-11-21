@@ -1,0 +1,22 @@
+{
+  "name": "empty-point-header-only",
+  "from": "geopackage-geometry-le",
+  "to": "geopackage-geometry-le",
+  "input": "47500011e61000000101000000000000000000f87f000000000000f87f",
+  "expect": "47500011e6100000",
+  "model": {
+    "@kind": "geometry",
+    "gpkg.extended": "0",
+    "gpkg.empty": "1",
+    "gpkg.envelope": "0",
+    "gpkg.srs_id": "4326",
+    "@absent": [
+      "gpkg.x",
+      "gpkg.y",
+      "lat",
+      "lon"
+    ]
+  },
+  "source": "derived by tools/gen/ogc-geo-vectors.py from the standard and spec/engine-spec.md; no engine run",
+  "reference": "OGC 12-128r19 (GeoPackage 1.4.0) clause 2.1.3 Geometry Encoding, Table 5 flags byte; OGC 06-103r4 clause 8.2 WKB; Requirement 152: an empty Point has Y 1, E 0 and NaN coordinates; the WKB is read only when Y is 0, so the output is the 8-byte header"
+}
