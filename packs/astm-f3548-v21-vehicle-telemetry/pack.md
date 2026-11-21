@@ -53,7 +53,7 @@ key first, so encode writes the shared value when the entity has it.
   date-time (the `Time` schema's `value`); `iso8601_ms` reads it.
 - `lat`, `lon` (`position.latitude`, `.longitude`): degrees with reference to the WGS 84
   ellipsoid (`Latitude`, `Longitude` schemas).
-- `hae` (`position.altitude.value`): the altitude whose `reference` the schema allows only
+- `hae` (`position.altitude.value`): height above the WGS 84 ellipsoid, the altitude whose `reference` the schema allows only
   as `W84` (WGS 84) and whose `units` only as metres.
 - `speed_ms` (`velocity.speed`): ground speed in metres per second (`units_speed` is
   `MetersPerSecond` only).
