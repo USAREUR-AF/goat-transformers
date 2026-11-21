@@ -1,0 +1,23 @@
+{
+ "keys": {
+  "msg_types|.|string": "msg_types_value",
+  "uids|.|string": "uids_value",
+  "|assigned_addr|string": "assigned_addr",
+  "|client_addr|string": "client_addr",
+  "|client_fqdn|string": "client_fqdn",
+  "|client_message|string": "client_message",
+  "|domain|string": "domain",
+  "|duration|float": "duration",
+  "|host_name|string": "host_name",
+  "|lease_time|float": "lease_time",
+  "|mac|string": "mac",
+  "|requested_addr|string": "requested_addr",
+  "|server_addr|string": "server_addr",
+  "|server_message|string": "server_message",
+  "|ts|float": "ts"
+ },
+ "lists": {
+  "|msg_types": "msg_types",
+  "|uids": "uids"
+ }
+}

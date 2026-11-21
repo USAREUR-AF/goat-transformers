@@ -1,0 +1,20 @@
+{
+ "keys": {
+  "|cipher|string": "cipher",
+  "|curve|string": "curve",
+  "|established|int": "established",
+  "|id_orig_h|string": "id_orig_h",
+  "|id_orig_p|int": "id_orig_p",
+  "|id_resp_h|string": "id_resp_h",
+  "|id_resp_p|int": "id_resp_p",
+  "|last_alert|string": "last_alert",
+  "|next_protocol|string": "next_protocol",
+  "|resumed|int": "resumed",
+  "|server_name|string": "server_name",
+  "|ssl_history|string": "ssl_history",
+  "|ts|float": "ts",
+  "|uid|string": "uid",
+  "|version|string": "version"
+ },
+ "lists": {}
+}

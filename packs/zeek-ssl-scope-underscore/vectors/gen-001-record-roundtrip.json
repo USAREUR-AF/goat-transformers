@@ -1,0 +1,17 @@
+{
+ "name": "gen-record-roundtrip",
+ "from": "zeek-ssl-scope-underscore",
+ "to": "zeek-ssl-scope-underscore",
+ "input": "{\"ts\":42.375,\"uid\":\"s94552\",\"id_orig_h\":\"s65159\",\"id_orig_p\":68909,\"id_resp_h\":\"s48288\",\"id_resp_p\":58406,\"version\":\"s63246\",\"cipher\":\"s5930\",\"curve\":\"s76072\",\"server_name\":\"s50206\",\"resumed\":false,\"last_alert\":\"s62670\",\"next_protocol\":\"s71216\",\"established\":true,\"ssl_history\":\"s36141\"}",
+ "expect": "{\"ts\":42.375,\"uid\":\"s94552\",\"id_orig_h\":\"s65159\",\"id_orig_p\":68909,\"id_resp_h\":\"s48288\",\"id_resp_p\":58406,\"version\":\"s63246\",\"cipher\":\"s5930\",\"curve\":\"s76072\",\"server_name\":\"s50206\",\"resumed\":false,\"last_alert\":\"s62670\",\"next_protocol\":\"s71216\",\"established\":true,\"ssl_history\":\"s36141\"}",
+ "model": {
+  "zeekssl.ts": "42.375",
+  "zeekssl.uid": "s94552",
+  "zeekssl.id_orig_h": "s65159",
+  "zeekssl.id_orig_p": "68909",
+  "zeekssl.id_resp_h": "s48288",
+  "zeekssl.id_resp_p": "58406",
+  "zeekssl.version": "s63246",
+  "zeekssl.cipher": "s5930"
+ }
+}

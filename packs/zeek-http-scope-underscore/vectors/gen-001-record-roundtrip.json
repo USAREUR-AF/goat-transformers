@@ -1,0 +1,17 @@
+{
+ "name": "gen-record-roundtrip",
+ "from": "zeek-http-scope-underscore",
+ "to": "zeek-http-scope-underscore",
+ "input": "{\"ts\":42.375,\"uid\":\"s94552\",\"id_orig_h\":\"s65159\",\"id_orig_p\":68909,\"id_resp_h\":\"s48288\",\"id_resp_p\":58406,\"trans_depth\":23593,\"method\":\"s40065\",\"host\":\"s46118\",\"uri\":\"s24455\",\"referrer\":\"s26763\",\"version\":\"s63246\",\"user_agent\":\"s30365\",\"origin\":\"s96134\",\"request_body_len\":63698,\"response_body_len\":75302,\"status_code\":68856,\"status_msg\":\"s74182\",\"info_code\":13521,\"info_msg\":\"s47597\",\"tags\":[\"s37241\",\"s19662\"],\"username\":\"s74667\",\"password\":\"s43305\",\"proxied\":[\"s14556\",\"s99645\"]}",
+ "expect": "{\"ts\":42.375,\"uid\":\"s94552\",\"id_orig_h\":\"s65159\",\"id_orig_p\":68909,\"id_resp_h\":\"s48288\",\"id_resp_p\":58406,\"trans_depth\":23593,\"method\":\"s40065\",\"host\":\"s46118\",\"uri\":\"s24455\",\"referrer\":\"s26763\",\"version\":\"s63246\",\"user_agent\":\"s30365\",\"origin\":\"s96134\",\"request_body_len\":63698,\"response_body_len\":75302,\"status_code\":68856,\"status_msg\":\"s74182\",\"info_code\":13521,\"info_msg\":\"s47597\",\"tags\":[\"s37241\",\"s19662\"],\"username\":\"s74667\",\"password\":\"s43305\",\"proxied\":[\"s14556\",\"s99645\"]}",
+ "model": {
+  "zeekhttp.ts": "42.375",
+  "zeekhttp.uid": "s94552",
+  "zeekhttp.id_orig_h": "s65159",
+  "zeekhttp.id_orig_p": "68909",
+  "zeekhttp.id_resp_h": "s48288",
+  "zeekhttp.id_resp_p": "58406",
+  "zeekhttp.trans_depth": "23593",
+  "zeekhttp.method": "s40065"
+ }
+}

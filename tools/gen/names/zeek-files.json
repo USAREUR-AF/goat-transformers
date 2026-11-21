@@ -1,0 +1,28 @@
+{
+ "keys": {
+  "analyzers|.|string": "analyzers_value",
+  "|depth|int": "depth",
+  "|duration|float": "duration",
+  "|filename|string": "filename",
+  "|fuid|string": "fuid",
+  "|id_orig_h|string": "id_orig_h",
+  "|id_orig_p|int": "id_orig_p",
+  "|id_resp_h|string": "id_resp_h",
+  "|id_resp_p|int": "id_resp_p",
+  "|is_orig|int": "is_orig",
+  "|local_orig|int": "local_orig",
+  "|mime_type|string": "mime_type",
+  "|missing_bytes|int": "missing_bytes",
+  "|overflow_bytes|int": "overflow_bytes",
+  "|parent_fuid|string": "parent_fuid",
+  "|seen_bytes|int": "seen_bytes",
+  "|source|string": "source",
+  "|timedout|int": "timedout",
+  "|total_bytes|int": "total_bytes",
+  "|ts|float": "ts",
+  "|uid|string": "uid"
+ },
+ "lists": {
+  "|analyzers": "analyzers"
+ }
+}

@@ -1,0 +1,8 @@
+{
+  "name": "Suricata EVE JSON",
+  "domain": "networks",
+  "exact": [
+    "suricata-eve"
+  ],
+  "detail": "alert, flow, dns, http, tls, fileinfo, anomaly, stats"
+}

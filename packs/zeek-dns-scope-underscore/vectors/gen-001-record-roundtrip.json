@@ -1,0 +1,17 @@
+{
+ "name": "gen-record-roundtrip",
+ "from": "zeek-dns-scope-underscore",
+ "to": "zeek-dns-scope-underscore",
+ "input": "{\"ts\":42.375,\"uid\":\"s94552\",\"id_orig_h\":\"s65159\",\"id_orig_p\":68909,\"id_resp_h\":\"s48288\",\"id_resp_p\":58406,\"proto\":\"s31950\",\"trans_id\":71564,\"rtt\":-0.5,\"query\":\"s86077\",\"qclass\":25949,\"qclass_name\":\"s79749\",\"qtype\":8950,\"qtype_name\":\"s18783\",\"rcode\":25084,\"rcode_name\":\"s50650\",\"AA\":true,\"TC\":true,\"RD\":true,\"RA\":false,\"Z\":32907,\"answers\":[\"s69218\",\"s69487\"],\"TTLs\":[101.125,101.125],\"rejected\":true}",
+ "expect": "{\"ts\":42.375,\"uid\":\"s94552\",\"id_orig_h\":\"s65159\",\"id_orig_p\":68909,\"id_resp_h\":\"s48288\",\"id_resp_p\":58406,\"proto\":\"s31950\",\"trans_id\":71564,\"rtt\":-0.5,\"query\":\"s86077\",\"qclass\":25949,\"qclass_name\":\"s79749\",\"qtype\":8950,\"qtype_name\":\"s18783\",\"rcode\":25084,\"rcode_name\":\"s50650\",\"AA\":true,\"TC\":true,\"RD\":true,\"RA\":false,\"Z\":32907,\"answers\":[\"s69218\",\"s69487\"],\"TTLs\":[101.125,101.125],\"rejected\":true}",
+ "model": {
+  "zeekdns.ts": "42.375",
+  "zeekdns.uid": "s94552",
+  "zeekdns.id_orig_h": "s65159",
+  "zeekdns.id_orig_p": "68909",
+  "zeekdns.id_resp_h": "s48288",
+  "zeekdns.id_resp_p": "58406",
+  "zeekdns.proto": "s31950",
+  "zeekdns.trans_id": "71564"
+ }
+}

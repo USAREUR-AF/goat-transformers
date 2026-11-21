@@ -1,0 +1,17 @@
+{
+ "name": "gen-record-roundtrip",
+ "from": "zeek-x509-scope-underscore",
+ "to": "zeek-x509-scope-underscore",
+ "input": "{\"ts\":42.375,\"fingerprint\":\"s10250\",\"certificate_version\":27823,\"certificate_serial\":\"s37410\",\"certificate_subject\":\"s10369\",\"certificate_issuer\":\"s99116\",\"certificate_not_valid_before\":42.375,\"certificate_not_valid_after\":7.0625,\"certificate_key_alg\":\"s85136\",\"certificate_sig_alg\":\"s7809\",\"certificate_key_type\":\"s48900\",\"certificate_key_length\":8656,\"certificate_exponent\":\"s44683\",\"certificate_curve\":\"s43098\",\"san_dns\":[\"s51651\",\"s68722\"],\"san_uri\":[\"s31102\",\"s94490\"],\"san_email\":[\"s52903\",\"s13419\"],\"san_ip\":[\"s45472\",\"s87886\"],\"basic_constraints_ca\":true,\"basic_constraints_path_len\":83130,\"host_cert\":false,\"client_cert\":false}",
+ "expect": "{\"ts\":42.375,\"fingerprint\":\"s10250\",\"certificate_version\":27823,\"certificate_serial\":\"s37410\",\"certificate_subject\":\"s10369\",\"certificate_issuer\":\"s99116\",\"certificate_not_valid_before\":42.375,\"certificate_not_valid_after\":7.0625,\"certificate_key_alg\":\"s85136\",\"certificate_sig_alg\":\"s7809\",\"certificate_key_type\":\"s48900\",\"certificate_key_length\":8656,\"certificate_exponent\":\"s44683\",\"certificate_curve\":\"s43098\",\"san_dns\":[\"s51651\",\"s68722\"],\"san_uri\":[\"s31102\",\"s94490\"],\"san_email\":[\"s52903\",\"s13419\"],\"san_ip\":[\"s45472\",\"s87886\"],\"basic_constraints_ca\":true,\"basic_constraints_path_len\":83130,\"host_cert\":false,\"client_cert\":false}",
+ "model": {
+  "zeekx509.ts": "42.375",
+  "zeekx509.fingerprint": "s10250",
+  "zeekx509.certificate_version": "27823",
+  "zeekx509.certificate_serial": "s37410",
+  "zeekx509.certificate_subject": "s10369",
+  "zeekx509.certificate_issuer": "s99116",
+  "zeekx509.certificate_not_valid_before": "42.375",
+  "zeekx509.certificate_not_valid_after": "7.0625"
+ }
+}

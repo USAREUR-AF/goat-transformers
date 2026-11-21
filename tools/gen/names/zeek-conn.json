@@ -1,0 +1,29 @@
+{
+ "keys": {
+  "tunnel_parents|.|string": "tunnel_parents_value",
+  "|conn_state|string": "conn_state",
+  "|duration|float": "duration",
+  "|history|string": "history",
+  "|id_orig_h|string": "id_orig_h",
+  "|id_orig_p|int": "id_orig_p",
+  "|id_resp_h|string": "id_resp_h",
+  "|id_resp_p|int": "id_resp_p",
+  "|ip_proto|int": "ip_proto",
+  "|local_orig|int": "local_orig",
+  "|local_resp|int": "local_resp",
+  "|missed_bytes|int": "missed_bytes",
+  "|orig_bytes|int": "orig_bytes",
+  "|orig_ip_bytes|int": "orig_ip_bytes",
+  "|orig_pkts|int": "orig_pkts",
+  "|proto|string": "proto",
+  "|resp_bytes|int": "resp_bytes",
+  "|resp_ip_bytes|int": "resp_ip_bytes",
+  "|resp_pkts|int": "resp_pkts",
+  "|service|string": "service",
+  "|ts|float": "ts",
+  "|uid|string": "uid"
+ },
+ "lists": {
+  "|tunnel_parents": "tunnel_parents"
+ }
+}

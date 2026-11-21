@@ -1,0 +1,17 @@
+{
+ "name": "gen-anomaly-roundtrip",
+ "from": "suricata-eve",
+ "to": "suricata-eve",
+ "input": "{\"event_type\":\"anomaly\",\"app_proto\":\"s73750\",\"app_proto_expected\":\"s17319\",\"app_proto_orig\":\"s73664\",\"app_proto_tc\":\"s65009\",\"app_proto_ts\":\"s32046\",\"capture_file\":\"s52815\",\"community_id\":\"s27587\",\"dest_ip\":\"s37218\",\"dest_port\":30252,\"direction\":\"s71231\",\"flow_id\":95708,\"host\":\"s52637\",\"icmp_code\":65841,\"icmp_type\":72766,\"in_iface\":\"s59024\",\"ip_v\":60604,\"log_level\":\"s75979\",\"packet\":\"s74989\",\"parent_id\":80096,\"payload\":\"s91858\",\"payload_length\":19017,\"payload_printable\":\"s72702\",\"pcap_cnt\":15035,\"pcap_filename\":\"s33752\",\"pkt_src\":\"s73598\",\"proto\":\"s36205\",\"response_icmp_code\":74414,\"response_icmp_type\":71666,\"spi\":37644,\"src_ip\":\"s26083\",\"src_port\":66957,\"stream\":52330,\"suricata_version\":\"s11255\",\"tc_progress\":\"s5919\",\"timestamp\":\"s1740\",\"ts_progress\":\"s95800\",\"tx_guessed\":true,\"tx_id\":20805,\"verdict\":{\"action\":\"s64703\",\"reject\":[\"icmp-prohib\",\"icmp-prohib\"],\"reject-target\":\"to_client\"},\"anomaly\":{\"app_proto\":\"s38513\",\"code\":64338,\"event\":\"s98831\",\"layer\":\"s50248\",\"type\":\"s4337\"}}",
+ "expect": "{\"event_type\":\"anomaly\",\"app_proto\":\"s73750\",\"app_proto_expected\":\"s17319\",\"app_proto_orig\":\"s73664\",\"app_proto_tc\":\"s65009\",\"app_proto_ts\":\"s32046\",\"capture_file\":\"s52815\",\"community_id\":\"s27587\",\"dest_ip\":\"s37218\",\"dest_port\":30252,\"direction\":\"s71231\",\"flow_id\":95708,\"host\":\"s52637\",\"icmp_code\":65841,\"icmp_type\":72766,\"in_iface\":\"s59024\",\"ip_v\":60604,\"log_level\":\"s75979\",\"packet\":\"s74989\",\"parent_id\":80096,\"payload\":\"s91858\",\"payload_length\":19017,\"payload_printable\":\"s72702\",\"pcap_cnt\":15035,\"pcap_filename\":\"s33752\",\"pkt_src\":\"s73598\",\"proto\":\"s36205\",\"response_icmp_code\":74414,\"response_icmp_type\":71666,\"spi\":37644,\"src_ip\":\"s26083\",\"src_port\":66957,\"stream\":52330,\"suricata_version\":\"s11255\",\"tc_progress\":\"s5919\",\"timestamp\":\"s1740\",\"ts_progress\":\"s95800\",\"tx_guessed\":true,\"tx_id\":20805,\"verdict\":{\"action\":\"s64703\",\"reject\":[\"icmp-prohib\",\"icmp-prohib\"],\"reject-target\":\"to_client\"},\"anomaly\":{\"app_proto\":\"s38513\",\"code\":64338,\"event\":\"s98831\",\"layer\":\"s50248\",\"type\":\"s4337\"}}",
+ "model": {
+  "@kind": "anomaly",
+  "suricataeve.app_proto": "s73750",
+  "suricataeve.app_proto_expected": "s17319",
+  "suricataeve.app_proto_orig": "s73664",
+  "suricataeve.app_proto_tc": "s65009",
+  "suricataeve.app_proto_ts": "s32046",
+  "suricataeve.capture_file": "s52815",
+  "suricataeve.community_id": "s27587"
+ }
+}

@@ -1,0 +1,29 @@
+{
+ "keys": {
+  "actions|.|string": "actions_value",
+  "email_dest|.|string": "email_dest_value",
+  "|dst|string": "dst",
+  "|file_desc|string": "file_desc",
+  "|file_mime_type|string": "file_mime_type",
+  "|fuid|string": "fuid",
+  "|id_orig_h|string": "id_orig_h",
+  "|id_orig_p|int": "id_orig_p",
+  "|id_resp_h|string": "id_resp_h",
+  "|id_resp_p|int": "id_resp_p",
+  "|msg|string": "msg",
+  "|note|string": "note",
+  "|n|int": "n",
+  "|peer_descr|string": "peer_descr",
+  "|proto|string": "proto",
+  "|p|int": "p",
+  "|src|string": "src",
+  "|sub|string": "sub",
+  "|suppress_for|float": "suppress_for",
+  "|ts|float": "ts",
+  "|uid|string": "uid"
+ },
+ "lists": {
+  "|actions": "actions",
+  "|email_dest": "email_dest"
+ }
+}

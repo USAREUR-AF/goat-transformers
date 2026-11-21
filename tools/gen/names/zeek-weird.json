@@ -1,0 +1,16 @@
+{
+ "keys": {
+  "|addl|string": "addl",
+  "|id_orig_h|string": "id_orig_h",
+  "|id_orig_p|int": "id_orig_p",
+  "|id_resp_h|string": "id_resp_h",
+  "|id_resp_p|int": "id_resp_p",
+  "|name|string": "name",
+  "|notice|int": "notice",
+  "|peer|string": "peer",
+  "|source|string": "source",
+  "|ts|float": "ts",
+  "|uid|string": "uid"
+ },
+ "lists": {}
+}
