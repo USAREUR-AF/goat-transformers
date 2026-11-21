@@ -1,0 +1,5 @@
+Pack ntrip-sourcetable-line; module ntrip
+  Networked Transport of RTCM via Internet Protocol (Ntrip) Version 1.0,
+  published by BKG (Bundesamt für Kartographie und Geodäsie). No copyright
+  notice or licence stated (LicenseRef-unstated). Record layouts restated; no
+  text copied.

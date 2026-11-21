@@ -1,0 +1,5 @@
+Packs http2-frame, http3-frame, tls-record, websocket-frame; modules h2, h3, tls13, ws
+  IETF RFC 9113 (HTTP/2), RFC 9114 and RFC 9000 (HTTP/3), RFC 8446 and
+  RFC 6066 (TLS 1.3) and RFC 6455 (WebSocket), https://www.rfc-editor.org/
+  (IETF Trust and the persons identified as the document authors, BCP 78).
+  Layouts restated; no text copied.

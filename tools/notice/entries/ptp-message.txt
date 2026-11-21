@@ -1,0 +1,5 @@
+Pack ptp-message; module ptp
+  linuxptp, files msg.h, ddt.h and tlv.h of
+  https://github.com/richardcochran/linuxptp at tag v4.4 (commit 01886673).
+  Copyright (C) 2011 Richard Cochran and the linuxptp contributors.
+  GPL-2.0-or-later. Message layouts restated; no code or comment copied.

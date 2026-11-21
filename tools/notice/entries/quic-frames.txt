@@ -1,0 +1,4 @@
+Packs quic-frames, quic-long-header, quic-transport-parameters; modules quicfr, quiclh, quictp
+  IETF RFC 9000 and RFC 9369 (QUIC), https://www.rfc-editor.org/ (IETF Trust
+  and the persons identified as the document authors, BCP 78). Layouts
+  restated; no text copied.

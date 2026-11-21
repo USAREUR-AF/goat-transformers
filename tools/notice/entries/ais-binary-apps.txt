@@ -1,0 +1,5 @@
+Pack ais-binary-apps; module aisapp
+  gpsd, "AIVDM/AIVDO protocol decoding", file www/AIVDM.adoc of
+  https://gitlab.com/gpsd/gpsd at commit c59fc6de. Compilation copyright is
+  held by the GPSD project. BSD-2-Clause (gpsd COPYING). Layouts restated; no
+  text, table or example message.
