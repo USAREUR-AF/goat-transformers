@@ -368,11 +368,23 @@ def _tree(pack, enc, kind_lines=()):
     plan = enc.plan
     values = enc.values
     sentinels = enc.sentinels
+    omitted = enc.omitted
+    held = set()  # 0.56: the paths whose place a line that `implicit` leaves out holds
     for i, ln in plan.ifields:
         if i in values and ln.loc and i not in sentinels:
+            if ln.loc in held:
+                continue
+            if i in omitted:
+                held.add(ln.loc)
+                continue
             _set(tree, ln.loc, values[i], overwrite=False)
     for i, ln in plan.ifields:  # a sentinel where no field with a value writes (ruling 16 of 0.9)
         if i in sentinels and ln.loc:
+            if ln.loc in held:
+                continue
+            if i in omitted:
+                held.add(ln.loc)
+                continue
             _set(tree, ln.loc, values[i], overwrite=False)
     for i, g in plan.igroups:
         children = enc.groups.get(i)

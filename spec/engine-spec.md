@@ -4993,9 +4993,12 @@ The form of each option and its arguments is checked as the line is read
 (ruling 5b of 0.11, step 9, as for the other field options; the values of an
 `absent` option, range sentinels included, at step 10): there `<min>` and
 `<max>` must be number text (2b). A check that needs the wire, the key's
-type or the group (an `int` key's integer text, `<min>` < `<max>` read as
-that type, `null` and `implicit` on their wires) is made after the file
-(ruling 10 of 0.10), in fixed and sequential layouts alike.
+or the group (`null` and `implicit` on their wires, `implicit` on a scalar
+item) is made after the file with the other wire checks (ruling 10 of 0.10),
+in fixed and sequential layouts alike. A check that needs the key's type
+(`range` on a key that is not `int` or `float`, an `int` key's integer text,
+`<min>` < `<max>` read as that type) is made in the order of 0.4 with the
+mapped keys, right after the `key-type-mismatch` check of the same line.
 
 ## Rulings for 0.56
 

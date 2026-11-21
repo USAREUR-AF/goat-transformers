@@ -35,6 +35,8 @@ def get(pack, ctx, field):
     0.7)."""
     if type(ctx) is Top:
         value = ctx.get(field.locator, MISSING)
+        if value is None and field.null:
+            return None  # 0.56: a `null` member of a field that names `null` yields no value
         return None if value is MISSING else NULL if value is None else value
     value = _lookup(ctx, field.loc)
     return None if value is MISSING else value
@@ -169,6 +171,9 @@ def encode(pack, enc, residue):
     for i, ln in plan.ifields:  # a sentinel where no field with a value writes (ruling 16 of 0.9)
         if i in sentinels and ln.locator not in resolved:
             resolved[ln.locator] = RawJSON(values[i])
+    for i, ln in plan.ifields:  # 0.56: `null` where no line on the member writes a value
+        if i in enc.nulls and ln.locator not in resolved:
+            resolved[ln.locator] = RawJSON("null")
     for i, g in plan.igroups:
         children = enc.groups.get(i)
         if children is not None and g.locator not in resolved:

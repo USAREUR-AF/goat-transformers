@@ -289,6 +289,9 @@ def resolve(pack, enc):
     for i, ln in plan.ifields:  # a sentinel where no field with a value writes (ruling 16 of 0.9)
         if i in sentinels and ln.locator not in resolved:
             resolved[ln.locator] = values[i]
+    for i, ln in plan.ifields:  # 0.56: `null` where no line on the member writes a value
+        if i in enc.nulls and ln.locator not in resolved:
+            resolved[ln.locator] = "null"
     for i, g in plan.igroups:
         children = enc.groups.get(i)
         if children is not None and g.locator not in resolved:

@@ -20,7 +20,7 @@ message is any number of bits, and the output is the bits up to the cursor
 after the last line, not rounded to a byte, zero-filled to a multiple of 6.
 """
 
-from .entity import Entity, Item, _via_decode, _via_encode
+from .entity import Entity, Item, _via_decode, _via_encode, apply_range
 from .errors import GTError, MalformedWire, NoKind, TransformDecodeFailure, TransformEncodeFailure
 from .seqdef import (
     T_ALIGN, T_CHAIN, T_CHOICE, T_CONST, T_COUNT, T_EXT, T_FIELD, T_GROUP, T_IF, T_LENGTH, T_OPT, T_PAD,
@@ -1224,6 +1224,8 @@ class _Writer:
                 v = first.absent_out & ((1 << length) - 1)
                 return (_swap_int(v, length) if first.swap else v), None
         try:
+            if f.rng is not None:
+                value = apply_range(f, value)  # 0.56: before `via` and the transform
             c2n = self.pack.cot_to_native
             if c2n and f.key == "type" and value in c2n:
                 value = c2n[value]

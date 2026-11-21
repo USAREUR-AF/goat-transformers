@@ -306,10 +306,11 @@ def parse_seq_pack_text(text, *, source="pack.def"):
     from .packdef import (
         BIT_ORDERS, HEADER_ONCE, NEEDS_WIRE, TEXT_DIRECTIVES, Default, Field, Pack, _check_transform, _Deferred,
         set_stop,
-        _LineBad, armor_line, check_armor, check_encoding, line_head, parse_absent, set_bit_order,
+        _LineBad, armor_line, check_armor, check_encoding, line_head, parse_absent, set_bit_order, scan_options,
         ValueCheck, requires_term, split_list, when_values,
     )
 
+    _SEQ_OPTIONS = ("via", "swap", "trim", "absent", "with", "stop", "null", "implicit", "range", "wrap")
     seen = {}          # the header values (`line_head`)
     once = {}          # `layout`, `bit_order`
     wired = None       # the first line of NEEDS_WIRE other than `layout`, for ruling 5b of 0.11
@@ -422,27 +423,15 @@ def parse_seq_pack_text(text, *, source="pack.def"):
     def read_options(options, lineno, len_text):
         """-> {option: value}. The syntax of the options is a line check (step 9
         of ruling 5b of 0.11); `optional` in a sequential pack is not."""
-        opts = {}
-        i = 0
-        while i < len(options):
-            opt = options[i]
-            if opt == "optional":
-                raise bad("the field option 'optional' in a sequential pack", lineno, len_text)
-            if opt not in ("via", "swap", "trim", "absent", "with", "stop"):
-                raise line_bad("unknown field option %r" % opt, lineno, len_text)
+        opts = scan_options(
+            options, _SEQ_OPTIONS, lambda msg: line_bad(msg, lineno, len_text),
+            lambda opt: bad("the field option 'optional' in a sequential pack", lineno, len_text)
+            if opt == "optional" else None,
+        )
+        for opt in ("null", "implicit"):  # 0.56: after the file, as on a fixed layout
             if opt in opts:
-                raise line_bad("field option %r is given twice" % opt, lineno, len_text)
-            if opt in ("via", "absent", "with", "stop"):  # the token after `absent` is its argument (ruling 11 of 0.9)
-                if i + 1 >= len(options):
-                    raise line_bad("field option %r takes %s" % (
-                        opt, "a table name" if opt == "via" else "a model key" if opt == "with" else
-                        "a terminator code" if opt == "stop" else "a value"),
-                        lineno, len_text)
-                opts[opt] = options[i + 1]
-                i += 2
-            else:
-                opts[opt] = True
-                i += 1
+                deferred.append((lineno, bad("field option %r is not an option of the bits wire" % opt,
+                                             lineno, len_text)))
         return opts
 
     def uper_line(what, lineno, locator=None):
@@ -483,7 +472,7 @@ def parse_seq_pack_text(text, *, source="pack.def"):
             return None, None
         if failed:
             return None, None
-        f = Field(key, len_text, transform, (0, 0, 0), lineno, via=opts.get("via"))
+        f = Field(key, len_text, transform, (0, 0, 0), lineno, via=opts.get("via"), range=opts.get("range"))
         key_refs.append((key, f))
         if "with" in opts:  # 0.18 on every wire: checked as a `requires` key is
             f.with_key = opts["with"]
@@ -519,7 +508,8 @@ def parse_seq_pack_text(text, *, source="pack.def"):
             return None
         if failed:
             return None
-        f = Field(key, len_text, UntilCharsT(tname, charset, code), (0, 0, 0), lineno, via=opts.get("via"))
+        f = Field(key, len_text, UntilCharsT(tname, charset, code), (0, 0, 0), lineno, via=opts.get("via"),
+                  range=opts.get("range"))
         key_refs.append((key, f))
         if "with" in opts:  # 0.18: checked as a `requires` key is
             f.with_key = opts["with"]
@@ -576,7 +566,8 @@ def parse_seq_pack_text(text, *, source="pack.def"):
             why = set_stop(transform, tname, opts["stop"])
             if why is not None:
                 deferred.append((lineno, bad(why, lineno, len_text)))
-        f = Field(key, len_text, transform, (0, 0, length), lineno, via=opts.get("via"), swap="swap" in opts)
+        f = Field(key, len_text, transform, (0, 0, length), lineno, via=opts.get("via"), swap="swap" in opts,
+                  range=opts.get("range"))
         if "absent" in opts:
             try:
                 f.absent, f.absent_out = parse_absent("bits", transform, length, opts["absent"], fmt, len_text, where)
