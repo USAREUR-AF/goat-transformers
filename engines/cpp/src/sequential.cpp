@@ -915,6 +915,9 @@ Pack parse_seq_pack(const std::string& text, const std::string& source) {
             f.via = t.size() == 4 ? t[3] : std::string();
             f.table = -1;
             f.with.clear();  // `with` belongs to the field line (0.18 ruling 5)
+            // `range` applies to the field line's own key only (0.56 ruling 8).
+            f.has_range = false;
+            f.range_wrap = false;
             prev_field->also.push_back(std::move(f));
             mapped_key(t[1]);
             also_target = prev_field;

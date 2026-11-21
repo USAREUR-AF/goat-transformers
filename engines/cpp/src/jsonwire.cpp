@@ -191,7 +191,10 @@ std::string member_text(const Pack& p, const FieldLine& f, const Value& v) {
 // first sentinel (0.9). A line whose key is present writes over a sentinel an
 // earlier line wrote (ruling 16).
 void write_field(const Pack& p, const EncodeSource& src, const FieldLine& f, OutNode& slot) {
-    if (slot.has_value && !slot.sentinel) return;
+    if (slot.has_value && !slot.sentinel) {
+        src.check_range(f);  // 0.56 ruling 9
+        return;
+    }
     if (src.suppressed(f)) return;  // the member keeps its place (0.18 ruling 1)
     Value v;
     if (src.value(f, v)) {
@@ -257,7 +260,10 @@ std::string encode_item(const Pack& p, const GroupLine& g, const std::vector<Lin
         }
         parse_json_locator(line.locator(), path);  // validated at pack load
         OutNode* slot = out_slot(root, path);
-        if (!slot || slot->is_object) continue;  // the path is also used as an object
+        if (!slot || slot->is_object) {  // the path is also used as an object
+            if (line.field) src.check_range(*line.field);
+            continue;
+        }
         if (line.group) {
             const std::vector<Item>* items = src.list(*line.group);
             if ((slot->has_value && !slot->sentinel) || !items) continue;
@@ -451,7 +457,10 @@ std::string encode_json(const Pack& p, const Entity& e) {
         mapped.insert(locator);
         parse_json_locator(locator, path);  // validated at pack load
         OutNode* slot = out_slot(root, path);
-        if (!slot || slot->is_object) continue;  // the path is also used as an object
+        if (!slot || slot->is_object) {  // the path is also used as an object
+            if (line.field) src.check_range(*line.field);
+            continue;
+        }
         if (line.group) {
             const std::vector<Item>* items = src.list(*line.group);
             if ((slot->has_value && !slot->sentinel) || !items) continue;

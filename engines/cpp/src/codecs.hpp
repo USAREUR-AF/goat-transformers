@@ -230,6 +230,13 @@ struct EncodeSource {
     // v0.18: a line with `with <other-key>` whose key is not held: it writes
     // nothing, its default and its sentinel included (ruling 1).
     bool suppressed(const FieldLine& f) const { return !f.with.empty() && !holds(f.with); }
+    // v0.56 ruling 9: a line that another line's value keeps from writing is
+    // still checked against its `range` when its key is held (transform-encode).
+    void check_range(const FieldLine& f) const {
+        if (!f.has_range || suppressed(f) || !e.fields.count(f.key)) return;
+        Value v;
+        value(f, v);
+    }
     // The items of a group's list; null when the item has no such list.
     const std::vector<Item>* list(const GroupLine& g) const;
 };

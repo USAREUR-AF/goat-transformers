@@ -1611,7 +1611,10 @@ void xml_encode_scope(const Pack& p, const std::vector<LineRef>& lines, const En
         }
         const FieldLine& f = *line.field;
         auto& slot = out.at(f.locator);
-        if (slot.has && !slot.sentinel) continue;
+        if (slot.has && !slot.sentinel) {
+            src.check_range(f);  // 0.56 ruling 9
+            continue;
+        }
         if (src.suppressed(f)) continue;  // the slot keeps its place (0.18 ruling 1)
         if (src.value(f, v)) {
             slot.value = field_text(p, f, v);
@@ -1854,7 +1857,10 @@ std::string encode_geojson(const Pack& p, const Entity& e) {
                 null_here = slot->null;
                 break;
         }
-        if (taken && !sentinel) continue;
+        if (taken && !sentinel) {
+            src.check_range(f);  // 0.56 ruling 9
+            continue;
+        }
         if (src.suppressed(f)) continue;  // the member keeps its place (0.18 ruling 1)
         std::string jv;
         bool writes_sentinel = false;
