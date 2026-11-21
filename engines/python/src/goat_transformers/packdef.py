@@ -617,6 +617,10 @@ def line_head(raw, source, lineno, seen, directives=PACK_DIRECTIVES, arg_counts=
         # arguments is the line of a model module (ruling 5 of 0.11)
         raise UnknownDirective("unknown directive %r at %s" % (kw, where), format=fmt)
     lo, hi = arg_counts[kw]
+    if kw == "when" and len(args) > 2 and args[2] == "as":
+        # 0.30: `when <len> <values> as <key>`; its syntax, and whether the pack
+        # is `layout sequential`, are checked after the file (ruling 16)
+        hi = None
     if (len(args) < lo or (hi is not None and len(args) > hi)
             or (kw == "checksum" and len(args) == 2 and args[0] not in CHECKSUMS)):
         # ruling 12 of 0.13, ruling 2 of 0.27
@@ -2064,6 +2068,10 @@ def parse_pack_text(text, *, source="pack.def"):
                 (current.lines if current is not None else common).append(el)
                 elements.append((el, current))
             elif kw == "when" or kw == "const":
+                if len(args) > 2:  # 0.30: `as` (let through by `line_head`) needs `layout sequential`
+                    deferred.append((lineno, BadDirective(
+                        "'as' on a 'when' of a pack that is not 'layout sequential', at %s" % where, format=fmt,
+                        locator=args[0])))
                 if kw == "when" and first_when is None:
                     first_when = (lineno, args[0])
                 w = _resolve_when(wire, fmt, args[0], args[1], source, lineno, deferred, directive=kw,

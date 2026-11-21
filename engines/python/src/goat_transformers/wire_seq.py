@@ -24,7 +24,7 @@ from .entity import Entity, Item, _via_decode, _via_encode
 from .errors import GTError, MalformedWire, NoKind, TransformDecodeFailure, TransformEncodeFailure
 from .seqdef import (
     T_ALIGN, T_CHAIN, T_CHOICE, T_CONST, T_COUNT, T_EXT, T_FIELD, T_GROUP, T_IF, T_LENGTH, T_OPT, T_PAD,
-    T_PRESENCE, T_SWITCH, T_WHEN, T_WHOLE, children,
+    T_PRESENCE, T_SWITCH, T_WHEN, T_WHOLE, children, when_matches, when_value,
 )
 from .transforms import value_canon
 from .uper import INT64_MAX, twos_octets, uint_octets
@@ -180,9 +180,12 @@ class _Reader:
                 if end > self.pos:
                     self.pos = end
             elif t == T_WHEN:  # a common `when`
-                if not self.when_holds(nd):
+                raw = self.when_read(nd)
+                if raw is None:
                     raise NoKind("a common 'when' does not hold (%d bits, %d)" % (nd.length, nd.value),
                                  format=self.pack.name)
+                if nd.as_key is not None:  # 0.30: set whenever the message (or item) decodes
+                    sc.fields[nd.as_key] = when_value(nd, raw)
             elif t == T_PRESENCE:
                 self.presence(nd)
             elif t == T_IF:
@@ -227,17 +230,18 @@ class _Reader:
             else:
                 self.whole(nd)
 
-    def when_holds(self, nd):
-        """A `when` whose bits lie beyond the input does not hold."""
+    def when_read(self, nd):
+        """-> the bits of a `when` read as an unsigned integer when it holds,
+        else None. A `when` whose bits lie beyond the input does not hold."""
         pos = self.pos
         if pos + nd.length > self.limit():
-            return False
+            return None
         self.pos = pos + nd.length
         v = self.msg.uint(pos, nd.length)
         for lo, hi in nd.ranges:
             if lo <= v <= hi:
-                return True
-        return False
+                return v
+        return None
 
     # -- UPER (0.19) --
 
@@ -704,11 +708,17 @@ class _Reader:
         if body.kinds:
             mark = self.pos
             for kind in body.kinds:
+                got = []
                 for w in kind.whens:
-                    if not self.when_holds(w):
+                    raw = self.when_read(w)
+                    if raw is None:
                         break
+                    if w.as_key is not None:
+                        got.append((w.as_key, when_value(w, raw)))
                 else:
                     selected = kind
+                    for key, v in got:  # 0.30 ruling 12: set only once the kind is selected
+                        sc.fields[key] = v
                     break
                 self.pos = mark
             else:
@@ -775,8 +785,9 @@ def select_kind(pack, body, kind_ref, fields, lists, item=False):
     from .engine import requires_hold
 
     for kind in body.kinds:
-        if requires_hold(kind, fields, lists):
-            return kind
+        if requires_hold(kind, fields, lists) and all(
+                w.as_key in fields and when_matches(w, fields[w.as_key]) for w in kind.as_lines):
+            return kind  # 0.30: each `when ... as` line is an implicit `requires` term
     raise NoKind("the entity has the required keys of no kind", format=pack.name)
 
 
@@ -835,6 +846,12 @@ class _Writer:
         else:  # what the first line of the key would write, read back
             case = nd.other
             for line in nd.key_lines:
+                if line.t == T_WHEN:  # 0.30 ruling 19: the `when ... as` line writes the label
+                    try:
+                        case = select_case(nd, when_value(line, self.when_out(line, ctx)))
+                    except GTError:
+                        continue
+                    break
                 got = {}
                 try:
                     out, raw = self.line_out(line, ctx)
@@ -846,6 +863,21 @@ class _Writer:
                     break
         self.used[k] = case
         return case
+
+    def when_out(self, nd, ctx):
+        """0.30: what a `when ... as <k>` line writes: the value of `k` when the
+        scope holds it and it matches (as an unsigned pattern), the first listed
+        value when the scope does not hold it (a `default` does not count,
+        ruling 6); a held value that does not match is `transform-encode`."""
+        fields = ctx.fields
+        if nd.as_key not in fields:
+            return nd.value
+        v = fields[nd.as_key]
+        if not when_matches(nd, v):
+            raise TransformEncodeFailure(
+                "%s holds %r, which the 'when' it is written by does not match; the output would decode another "
+                "value" % (nd.as_key, v), format=self.pack.name, locator=nd.locator)
+        return v & ((1 << nd.length) - 1)
 
     def put(self, length, value):
         if value:
@@ -924,8 +956,12 @@ class _Writer:
             t = nd.t
             if t == T_FIELD:
                 self.field(nd, ctx)
-            elif t == T_CONST or t == T_WHEN:
+            elif t == T_CONST or nd.as_key is None and t == T_WHEN:
                 self.put(nd.length, nd.value)
+            elif t == T_WHEN:  # 0.30: `when ... as <key>`
+                v = self.when_out(nd, ctx)
+                self.put(nd.length, v)
+                ctx.readback[nd.as_key] = when_value(nd, v)  # the key's line for a switch (ruling 19)
             elif t == T_PAD:
                 self.pos += nd.length
             elif t == T_ALIGN:
