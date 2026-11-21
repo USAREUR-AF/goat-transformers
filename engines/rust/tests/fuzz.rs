@@ -25,6 +25,12 @@
 //!     runs of ones and of zeros, lengths of 16383 with nothing behind them),
 //!     each of which must also finish within `UPER_TIME_LIMIT`, so that no
 //!     length read from the input makes the work unbounded.
+//! (h) for every pack on the `cdr` wire (engine-spec 0.43): bodies built
+//!     from the pieces CDR reads (counts and string lengths of 0, 1, 2^31
+//!     and 2^32-1, DHEADERs that lie, NUL and non-NUL ends, padding of
+//!     random bytes), after a header of each byte order, and every such
+//!     input and every cdr vector input cut at every length, each within
+//!     `UPER_TIME_LIMIT`.
 //!
 //! Each call must return `Ok`, or an error whose message starts with one of
 //! the error kinds `convert` may fail with, then a colon. A panic is caught,
@@ -230,6 +236,63 @@ fn tlv_framed(key: &[u8], tag: u32, set: &[u8]) -> String {
     let s = sum16(&out[..n - 2]);
     out[n - 2..].copy_from_slice(&s.to_be_bytes());
     to_hex(&out)
+}
+
+/// The formats whose pack is on the `cdr` wire, with their header bytes.
+fn cdr_formats() -> Vec<(String, [u8; 2])> {
+    let mut out = Vec::new();
+    for dir in std::fs::read_dir(repo_packs_dir()).unwrap().flatten() {
+        let text = match std::fs::read_to_string(dir.path().join("pack.def")) {
+            Ok(t) => t,
+            Err(_) => continue,
+        };
+        let words = |l: &str| l.split('#').next().unwrap_or("").split_whitespace().map(|w| w.to_string()).collect::<Vec<_>>();
+        if !text.lines().any(|l| words(l) == ["wire", "cdr"]) {
+            continue;
+        }
+        let repr = text.lines().map(words).find(|w| w.len() == 2 && w[0] == "representation").map(|w| w[1].clone());
+        let repr = match repr.and_then(|r| u16::from_str_radix(&r, 16).ok()) {
+            Some(r) => r.to_be_bytes(),
+            None => continue,
+        };
+        if let Some(f) = text.lines().map(words).find(|w| w.len() == 2 && w[0] == "format") {
+            out.push((f[1].clone(), repr));
+        }
+    }
+    out.sort();
+    out
+}
+
+/// A random CDR body after a header of the pack's identifier, in either byte order.
+fn cdr_message(rng: &mut Rng, repr: [u8; 2]) -> Vec<u8> {
+    let le = rng.below(2) == 0;
+    let mut out = vec![repr[0], (repr[1] & 0xfe) | le as u8, 0, rng.below(4) as u8];
+    let word = |out: &mut Vec<u8>, v: u32| {
+        while (out.len() - 4) % 4 != 0 {
+            out.push(0);
+        }
+        out.extend_from_slice(&if le { v.to_le_bytes() } else { v.to_be_bytes() });
+    };
+    for _ in 0..rng.below(24) {
+        match rng.below(10) {
+            // a count, a string length or a DHEADER: small, huge, or near the rest
+            0 => word(&mut out, [0u32, 1, 2, 3, 0x8000_0000, u32::MAX, 0x7fff_ffff][rng.below(7)]),
+            1 => {
+                let n = rng.below(6);
+                word(&mut out, n as u32 + 1);
+                out.extend((0..n).map(|_| b'a' + rng.below(26) as u8));
+                out.push(if rng.below(6) == 0 { 1 } else { 0 });
+            }
+            2 => word(&mut out, rng.next() as u32),
+            3 => out.push(rng.next() as u8),
+            4 => out.extend_from_slice(&rng.next().to_be_bytes()),
+            5 => out.extend(std::iter::repeat(0).take(rng.below(9))),
+            6 => out.extend(std::iter::repeat(0xff).take(rng.below(9))),
+            7 => out.extend_from_slice(&[0x7f, 0xc0, 0, 0]),
+            _ => word(&mut out, rng.below(64) as u32),
+        }
+    }
+    out
 }
 
 /// What one call did wrong, if anything.
@@ -530,6 +593,25 @@ fn malformed_input_never_panics() {
             run(format, format, &input, "uper bits");
             if started.elapsed() > UPER_TIME_LIMIT {
                 slow.push(format!("{}: {:?} for {} bytes", format, started.elapsed(), input.len() / 2));
+            }
+        }
+    }
+
+    // (h) CDR pieces for every cdr pack, every prefix, each within the time limit
+    let cdr = cdr_formats();
+    for (format, repr) in &cdr {
+        let mut inputs: Vec<Vec<u8>> = (0..RANDOM_PER_ALPHABET * 4 * iters).map(|_| cdr_message(&mut rng, *repr)).collect();
+        for case in vectors.iter().filter(|c| &c.from == format) {
+            let b: Vec<u8> = (0..case.input.len() / 2).filter_map(|i| u8::from_str_radix(case.input.get(2 * i..2 * i + 2)?, 16).ok()).collect();
+            inputs.push(b);
+        }
+        for input in &inputs {
+            for cut in 0..=input.len() {
+                let started = std::time::Instant::now();
+                run(format, format, &to_hex(&input[..cut]), "cdr pieces");
+                if started.elapsed() > UPER_TIME_LIMIT {
+                    slow.push(format!("{}: {:?} for {} bytes", format, started.elapsed(), cut));
+                }
             }
         }
     }

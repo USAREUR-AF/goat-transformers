@@ -1,0 +1,9 @@
+{
+  "name": "count-larger-than-the-bytes-left",
+  "from": "conformance-cdr",
+  "to": "conformance-cdr",
+  "input": "000000000100fffeb2d05e00fffffffffffffffb40040000000000000000000375310001000000037fffffff000700000000000200000003616200000002000000000002630000057fffffff0000000affffffec3fc00000be800000",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "0.43 Reading and writing step 4: the nums count 2147483647 at off 68 leaves 16 bytes, fewer than one per element"
+}

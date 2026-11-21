@@ -1,0 +1,12 @@
+{
+  "name": "cdr-to-conformance-cdr-tail-context-int16-32768",
+  "from": "geojson",
+  "to": "conformance-cdr-tail",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[10,30]},\"properties\":{},\"id\":\"g1\"}",
+  "expect_error": "transform-encode",
+  "context": {
+    "probe.n": "32768"
+  },
+  "source": "constructed",
+  "reference": "0.43 ruling 7: int16 takes -32768 to 32767; the context value is used, not the default"
+}

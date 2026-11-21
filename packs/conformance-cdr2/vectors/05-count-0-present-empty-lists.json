@@ -1,0 +1,17 @@
+{
+  "name": "count-0-present-empty-lists",
+  "from": "conformance-cdr2",
+  "to": "conformance-cdr2",
+  "input": "000600000100fffeb2d05e00fffffffffffffffbbfc00000000000000000000375310000ffffffff80000001000700000000000400000000000000003fc00000be800000",
+  "expect": "000600000100fffeb2d05e00fffffffffffffffbbfc00000000000000000000375310000ffffffff80000001000700000000000400000000000000003fc00000be800000",
+  "model": {
+    "@kind": "plain",
+    "probe.items.#": "0",
+    "probe.nums.#": "0",
+    "probe.gains.#": "2",
+    "lat": "-90",
+    "probe.c1": "-1"
+  },
+  "source": "constructed",
+  "reference": "0.43 ruling 6: a count of 0 decodes as a present, empty list; written back as a count of 0, after a DHEADER of 4 for items (ruling 9)"
+}

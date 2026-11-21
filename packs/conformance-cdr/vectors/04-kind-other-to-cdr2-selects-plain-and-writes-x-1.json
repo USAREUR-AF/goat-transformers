@@ -1,0 +1,14 @@
+{
+  "name": "kind-other-to-cdr2-selects-plain-and-writes-x-1",
+  "from": "conformance-cdr",
+  "to": "conformance-cdr2",
+  "input": "000000000200fffeb2d05e00fffffffffffffffbbfc00000000000000000000375310000ffffffff800000010007000000000000000000003fc00000be800000000000007fffffffffffffff",
+  "expect": "000600000100fffeb2d05e00fffffffffffffffbbfc00000000000000000000375310000ffffffff80000001000700000000000400000000000000003fc00000be800000",
+  "model": {
+    "@kind": "other",
+    "probe.x": "2",
+    "probe.c2": "9223372036854775807"
+  },
+  "source": "constructed",
+  "reference": "0.5 Encode and 0.6 Order inside convert: a cross-format convert clears Entity.kind; the target's first kind with no requires, plain, is selected; 0.43 ruling 3 writes its when value 1 over probe.x, and c2, mapped only in kind other, is not written; items and nums are present and empty (count 0, ruling 6); hand layout E"
+}

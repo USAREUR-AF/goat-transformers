@@ -1,0 +1,15 @@
+{
+  "name": "roundtrip-p-1-range-ends",
+  "from": "conformance-cdr-tail",
+  "to": "conformance-cdr-tail",
+  "input": "00010001ffffffffff7f00000200000075000000",
+  "expect": "00010001ffffffffff7f00000200000075000000",
+  "model": {
+    "probe.y": "4294967295",
+    "probe.n": "32767",
+    "uid": "u",
+    "probe.x": "0"
+  },
+  "source": "constructed",
+  "reference": "0.43 ruling 5: body 15 bytes, p = 1; uint32 ffffffff and int16 7fff read little-endian"
+}

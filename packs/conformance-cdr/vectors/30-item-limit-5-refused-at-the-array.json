@@ -1,0 +1,10 @@
+{
+  "name": "item-limit-5-refused-at-the-array",
+  "from": "conformance-cdr",
+  "to": "conformance-cdr",
+  "input": "000000000100fffeb2d05e00fffffffffffffffb40040000000000000000000375310001000000037fffffff00070000000000020000000361620000000200000000000263000005000000020000000affffffec3fc00000be800000",
+  "expect_error": "malformed-wire",
+  "max_items": 5,
+  "source": "constructed",
+  "reference": "0.43 Reading and writing step 4 and ruling 7a of 0.11: the array's two elements count, so the sixth item goes over a limit of 5"
+}

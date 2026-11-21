@@ -1,0 +1,9 @@
+{
+  "name": "cdr-to-conformance-cdr-tail-default-written",
+  "from": "geojson",
+  "to": "conformance-cdr-tail",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[10,30]},\"properties\":{},\"id\":\"g1\"}",
+  "expect": "0001000000000000050000000300000067310000",
+  "source": "constructed",
+  "reference": "0.43 ruling 16: probe.n is absent and default probe.n 5 applies, so 5 is written, not zero bits; y and x are absent and write zero bits (step 3); little-endian, representation 0001"
+}

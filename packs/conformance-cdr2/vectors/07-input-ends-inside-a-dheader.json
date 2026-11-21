@@ -1,0 +1,9 @@
+{
+  "name": "input-ends-inside-a-dheader",
+  "from": "conformance-cdr2",
+  "to": "conformance-cdr2",
+  "input": "000600000100fffeb2d05e00fffffffffffffffb40040000000000000000000375310001000000037fffffff000700000000",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "0.43 Reading and writing step 1: the input ends at off 46, inside the DHEADER (off 44 to 48)"
+}

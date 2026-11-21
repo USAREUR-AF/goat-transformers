@@ -521,6 +521,12 @@ V011_TLV |= {"wire-armor-18", "wire-armor-19"}
 V011_ORDER = {"580", "667", "668", "1003", "1004", "1077", "1078", "1079"}  # ruling 13 of 0.17, ruling 44 of 0.21 (bad-locator), ruling 28 of 0.22
 # And the UPER vectors of rulings 23-26 of 0.19 that pin the 0.11 order.
 V011_TLV |= {"wire-uper-58", "wire-uper-61", "wire-uper-48", "wire-uper-50", "wire-uper-52", "wire-uper-53", "wire-uper-54", "wire-uper-55", "wire-uper-56", "wire-uper-57"}
+# And the cdr vectors of 0.43 whose expected error is one gtcheck does not
+# name yet: a later `bogus` line giving `unknown-directive` before the
+# after-file checks (rulings 10, 14, 22, 23, 24, 26 against 0.11's order),
+# `unknown-transform` (ruling 4, 0.11) and `missing-format` (0.11).
+V011_TLV |= {"wire-cdr-%02d" % n for n in (3, 6, 8, 12, 14, 18, 25, 29, 32, 35, 36, 39, 43, 46)}
+V011_TLV |= {"wire-cdr-16", "wire-cdr-04"}
 
 class TlvWireTest(Refusals):
     TLV = HEAD + "wire tlv\ntag 2\nkey 060e2b34\nchecksum sum16 1\n"
@@ -544,6 +550,71 @@ class TlvWireTest(Refusals):
         # before `missing-distribution`
         no_distribution = 'format demo\nversion 0.1.0\nsource "test"\nuses probe\nwire json\n'
         self.refuse_pack(no_distribution + "tag 1\nfield uid id string\n", "bad-directive", 6)
+
+
+class CdrWireTest(Refusals):
+    CDR = HEAD + "wire cdr\ncdr 2\nrepresentation 0006\n"
+
+    def test_cdr_header_fields_groups_and_kinds_give_a_typed_tree(self):
+        pack = gtcheck.load_pack(
+            HEAD + "cdr 1\nrepresentation 0001\nwire cdr\nmap t 1 2\n"
+            "field probe.qty uint16\nfield lat int32 sscale:90/2147483647\nfield probe.qty int8 via t\n"
+            "const bool 1\ngroup probe.items array:2\n  field uid string string\n"
+            "  group probe.subs seq\n    field probe.qty enum16\n  end\nend\n"
+            "kind a\nwhen 1 7,9..11\nkind b\nwhen 4 0\n", model())
+        qty, scaled, mapped, const, group = pack.common
+        self.assertEqual((pack.cdr, pack.representation), (1, "0001"))
+        self.assertEqual((qty.tr, qty.size, scaled.tr, scaled.targs, mapped.via), ("int", 2, "sscale", ("90/2147483647",), "t"))
+        self.assertEqual((const.loc, const.value, group.mode, group.count, group.body[1].mode), ("bool", "1", "array", 2, "seq"))
+        self.assertEqual((pack.kinds[0].lines[0].ranges, pack.kinds[1].lines[0].bits), ([(7, 7), (9, 11)], 8))
+
+    def test_cdr_header_rules_are_refused_with_their_line(self):
+        body = "field probe.qty uint8\n"
+        self.refuse_pack(HEAD + "wire cdr\nrepresentation 0000\n" + body, "bad-directive", None)
+        self.refuse_pack(HEAD + "wire cdr\ncdr 1\n" + body, "bad-directive", None)
+        self.refuse_pack(HEAD + "wire cdr\ncdr 1 2\nrepresentation 0000\n" + body, "bad-directive", 7)
+        self.refuse_pack(HEAD + "wire cdr\ncdr 3\nrepresentation 0000\n" + body, "bad-directive", 7)
+        self.refuse_pack(self.CDR + "representation 00A6\n" + body, "bad-directive", 9)
+        self.refuse_pack(HEAD + "wire cdr\ncdr 1\nrepresentation 00A6\n" + body, "bad-directive", 8)
+        self.refuse_pack(self.CDR + body + "kind a\ncdr 1\n", "bad-directive", 11)
+        self.refuse_pack(HEAD + "wire json\nrepresentation 0000\nfield uid id string\n", "bad-directive", 7)
+
+    def test_cdr_line_rules_are_refused_with_their_line(self):
+        for line, why in (("field probe.qty int128", "an unknown type"),
+                          ("field probe.qty int16 float", "a known transform that is not the default"),
+                          ("field probe.ratio float32 uscale:1/2", "a scale on a float"),
+                          ("field probe.qty enum8 sscale:1", "a scale on an enum"),
+                          ("field probe.qty int16 int:3", "an argument of the default transform"),
+                          ("field probe.qty int16 swap", "an option other than via and with"),
+                          ("field probe.qty int16 absent 0", "absent"),
+                          ("field probe.qty probe.x 0:0:8 uint", "a locator"),
+                          ("const string 1", "a const string"),
+                          ("const float32 1", "a const float"),
+                          ("const bool 2", "a const bool above 1"),
+                          ("const uint8 256", "a const that does not fit"),
+                          ("group probe.items seq\nend", "an empty group"),
+                          ("group probe.items seq\n  default probe.qty 1\nend", "a group of a default only"),
+                          ("group probe.items array:0\n  field probe.qty uint8\nend", "array:0"),
+                          ("group probe.items 1\n  field probe.qty uint8\nend", "a locator on a group"),
+                          ("if 0:0:8 1\n  field probe.qty uint8\nend", "a gate block")):
+            with self.subTest(why):
+                self.refuse_pack(self.CDR + line + "\n", "bad-directive", 9)
+
+    def test_cdr_when_names_a_common_integer_line(self):
+        common = self.CDR + "field probe.qty uint8\ngroup probe.subs seq\n  field probe.qty int32\nend\n" \
+                            "field uid string\nfield probe.ratio float64\nconst uint16 7\n"
+        gtcheck.load_pack(common + "kind a\nwhen 5 65535\n", model())
+        for when, why in (("0 1", "position 0"), ("6 1", "past the last line"), ("2 1", "a group"),
+                          ("3 1", "a string"), ("4 1", "a float"), ("1 256", "a value over the size")):
+            with self.subTest(why):
+                self.refuse_pack(common + "kind a\nwhen %s\n" % when, "bad-directive", 17)
+        self.refuse_pack(self.CDR + "group probe.subs seq\n  field probe.qty int32\n  when 1 1\nend\n"
+                                    "kind a\nwhen 1 1\n", "bad-directive", 11)
+
+    def test_cdr_transforms_type_their_keys(self):
+        self.refuse_pack(self.CDR + "field uid int32\n", "key-type-mismatch", 9)
+        self.refuse_pack(self.CDR + "field probe.qty uint16 uscale:2\n", "key-type-mismatch", 9)
+        self.refuse_pack(self.CDR + "field probe.qty bool with nosuch.key\n", "module-not-used", 9)
 
 
 class ArmorTest(Refusals):

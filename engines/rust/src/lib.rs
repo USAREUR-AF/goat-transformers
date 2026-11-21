@@ -1588,6 +1588,8 @@ pub enum Wire {
     Text,
     /// a set of tag-length-value items, sets nested in values (engine-spec v0.13)
     Tlv,
+    /// OMG CDR (XCDR1, XCDR2) of a final struct, as DDS writes it (engine-spec v0.43)
+    Cdr,
 }
 
 impl Wire {
@@ -1601,6 +1603,7 @@ impl Wire {
             Wire::Json => "json",
             Wire::Text => "text",
             Wire::Tlv => "tlv",
+            Wire::Cdr => "cdr",
         }
     }
 }
@@ -1803,6 +1806,10 @@ fn resolve_absent(wire: Wire, f: &mut FieldDef, bits_len: Option<u32>) -> Result
     if wire == Wire::Tlv {
         return bad(ln, "`absent` is not valid on the tlv wire in 0.13");
     }
+    // ruling 13 of 0.43
+    if wire == Wire::Cdr {
+        return bad(ln, "`absent` is not valid on the cdr wire");
+    }
     // the quoted empty token `""` is the one value "the empty text"
     let values: Vec<&str> = if arg.is_empty() { vec![""] } else { arg.split(',').collect() };
     if arg.contains('"') || (values.len() > 1 && values.iter().any(|v| v.is_empty())) {
@@ -1873,7 +1880,7 @@ fn resolve_absent(wire: Wire, f: &mut FieldDef, bits_len: Option<u32>) -> Result
                 };
                 Sentinel::Text(text, json)
             }
-            Wire::Text | Wire::Tlv => unreachable!("rejected above"),
+            Wire::Text | Wire::Tlv | Wire::Cdr => unreachable!("rejected above"),
         });
     }
     f.absent = out;
@@ -2297,6 +2304,8 @@ pub struct Pack {
     pub text: text::TextConf,
     /// tlv only: the tag and length encodings, the key and the checksum
     pub tlv: tlv::TlvConf,
+    /// cdr only: the XCDR version and the representation identifier (engine-spec v0.43)
+    pub cdr: cdr::CdrConf,
     /// bits only: how the message travels as text (engine-spec v0.14)
     pub armor: armor::Armor,
     /// fixed `bits` layout: the gate blocks of common lines and of every kind
@@ -2362,6 +2371,9 @@ impl Pack {
         let mut text_lines: [Option<usize>; 3] = [None; 3];
         // tlv wire (engine-spec v0.13): `tag`, `length`, `key`, `checksum sum16`
         let mut tlv_lines = tlv::TlvLines::default();
+        // cdr wire (engine-spec v0.43): `cdr`, `representation`, and what the
+        // field lines leave to the checks after the file
+        let mut cdr_lines = cdr::CdrLines::default();
         // a transform that does not parse, while the wire may still be `tlv`
         // (ruling 8 of 0.13): (line, error), raised once the wire is known
         let mut bad_transform: Option<(usize, Error)> = None;
@@ -2387,6 +2399,8 @@ impl Pack {
                 // ruling 18 of 0.7: only these five directives inside a group
                 // (ruling 24 of 0.8: the header directives among the rest),
                 // and gate blocks (engine-spec v0.17)
+                // ruling 3 of 0.43: on cdr a `when` in a group is refused after the file
+                "when" if !open.is_empty() && wire == Some(Wire::Cdr) => cdr_lines.when_in_group(ln),
                 d if !open.is_empty() && !matches!(d, "field" | "const" | "default" | "group" | "if" | "end") => {
                     return bad(ln, format!("`{}` is not allowed inside a group", d));
                 }
@@ -2444,6 +2458,7 @@ impl Pack {
                 }
                 "end" if open.is_empty() && uper_open > 0 => uper_open -= 1,
                 "tag" | "length" | "key" => tlv_lines.record(&toks, ln, !kinds.is_empty())?,
+                "cdr" | "representation" => cdr_lines.record(&toks, ln, !kinds.is_empty()),
                 "checksum" if toks.get(1).map(|s| s.as_str()) == Some("sum16") => tlv_lines.record(&toks, ln, !kinds.is_empty())?,
                 d @ ("delimiter" | "start" | "checksum") => {
                     let slot = match d {
@@ -2484,6 +2499,7 @@ impl Pack {
                         "json" => Wire::Json,
                         "text" => Wire::Text,
                         "tlv" => Wire::Tlv,
+                        "cdr" => Wire::Cdr,
                         o => return err(format!("unknown-wire: line {}: unknown wire `{}`", ln, o)),
                     })
                 }
@@ -2687,13 +2703,17 @@ impl Pack {
                     k.requires.extend(ReqDef::parse(&toks[1..], ln)?);
                 }
                 "field" => {
-                    if toks.len() < 4 {
+                    // cdr (engine-spec v0.43): `field <model-key> <type> [<transform>] [options]`
+                    let on_cdr = wire == Some(Wire::Cdr);
+                    if toks.len() < if on_cdr { 3 } else { 4 } {
                         return bad(ln, "field needs <model-key> <locator> <transform> [options]");
                     }
+                    let explicit = !on_cdr || (toks.len() > 3 && !cdr::is_option(&toks[3]));
+                    let opts = cdr::options_from(&toks, explicit);
                     let mut f = FieldDef {
                         model_key: toks[1].clone(),
                         locator: toks[2].clone(),
-                        transform: match Transform::parse(&toks[3]) {
+                        transform: match if explicit { Transform::parse(&toks[3]) } else { Ok(Transform::Int) } {
                             Ok(t) => t,
                             Err(e) if wire == Some(Wire::Tlv) => {
                                 bad_transform.get_or_insert((ln, e));
@@ -2714,8 +2734,14 @@ impl Pack {
                         until: None,
                         stop: None,
                     };
-                    // options after the transform, in any order (engine-spec v0.6)
-                    field_options(&mut f, &toks, ln, true)?;
+                    // options after the transform, in any order (engine-spec v0.6);
+                    // on cdr their fit is checked after the file (ruling 13 of 0.43)
+                    if on_cdr {
+                        field_options_at(&mut f, &opts, ln, true, false)?;
+                        cdr_lines.field(ln, explicit, &opts);
+                    } else {
+                        field_options(&mut f, &toks, ln, true)?;
+                    }
                     match (open.last_mut(), kinds.last_mut()) {
                         (Some(g), _) => g.fields.push(f),
                         (None, Some(k)) => k.fields.push(f),
@@ -2772,6 +2798,13 @@ impl Pack {
                 _ => Err(e),
             };
         }
+        // engine-spec v0.43: the cdr directives, types, transforms, `when <n>`,
+        // `const <type> <value>` and groups, before the checks every wire shares
+        let cdr_conf = match (wire, cdr_lines.first_line()) {
+            (Wire::Cdr, _) => cdr::check_pack(&cdr_lines, &mut fields, &mut whens, &mut consts, &mut groups, &mut kinds)?,
+            (_, Some(ln)) => return bad(ln, "`cdr` and `representation` are valid only on the cdr wire"),
+            _ => cdr::CdrConf::default(),
+        };
         // engine-spec v0.17: gate blocks, on the fixed `bits` layout only
         // (those of group items are resolved with the rest of each body below)
         for g in gates.iter_mut() {
@@ -2987,6 +3020,7 @@ impl Pack {
             seq: None,
             text: text_conf,
             tlv: tlv_conf,
+            cdr: cdr_conf,
             armor,
             gates,
             elements,
@@ -3440,6 +3474,10 @@ fn fixed_bits_len(wire: Wire, f: &FieldDef) -> Option<u32> {
 /// Load checks a `field` line owes its wire (engine-spec v0.5).
 fn check_field_for_wire(wire: Wire, f: &FieldDef, in_group: bool) -> Result<(), Error> {
     let t = &f.transform;
+    // cdr: checked against its types table (engine-spec v0.43)
+    if wire == Wire::Cdr {
+        return Ok(());
+    }
     if (f.swap || f.trim) && wire != Wire::Bits {
         return bad(f.line, "`swap` and `trim` are valid only on a bits wire");
     }
@@ -3507,7 +3545,7 @@ fn check_field_for_wire(wire: Wire, f: &FieldDef, in_group: bool) -> Result<(), 
         Wire::Bits => t.is_bits(),
         Wire::Protobuf => t.is_protobuf(),
         // text and tlv: checked above, against their own tables
-        Wire::Json | Wire::Text | Wire::Tlv => true,
+        Wire::Json | Wire::Text | Wire::Tlv | Wire::Cdr => true,
     };
     if !valid {
         return bad(f.line, format!("the transform of `{}` is not valid on this wire", f.model_key));
@@ -3612,6 +3650,8 @@ fn check_group_for_wire(wire: Wire, g: &GroupDef) -> Result<(), Error> {
     }
     let ok = match wire {
         Wire::Tlv => return bad(g.line, "`group` is not valid on the tlv wire in 0.13"),
+        // cdr: `seq` or `array:<n>`, checked with the rest of 0.43
+        Wire::Cdr => true,
         Wire::Xml => names('/') && !g.locator.contains('@') && !g.locator.contains('#'),
         Wire::Json => names('.'),
         // engine-spec v0.10: `group <list> <i> item <n>`
@@ -3715,7 +3755,7 @@ fn check_scope(
     let sep = match wire {
         Wire::Xml => Some('/'),
         Wire::Json | Wire::GeoJson | Wire::Protobuf => Some('.'),
-        Wire::Bits | Wire::Text | Wire::Tlv => None,
+        Wire::Bits | Wire::Text | Wire::Tlv | Wire::Cdr => None,
     };
     if let Some(sep) = sep {
         // group path -> the first group of the scope with that path
@@ -3880,6 +3920,8 @@ fn resolve_when(wire: Wire, w: &mut WhenDef, in_group: bool, list: bool) -> Resu
             }
         }
         Wire::Tlv => tlv::resolve_when(w)?,
+        // cdr: `when <n>` and `const <type> <value>`, checked with the rest of 0.43
+        Wire::Cdr => {}
         Wire::Text => {
             text::check_when_locator(w)?;
             if w.value == "present" {
@@ -4369,6 +4411,7 @@ impl Engine {
             Wire::Json => jsonwire::decode(p, bytes),
             Wire::Text => text::decode(p, bytes),
             Wire::Tlv => tlv::decode(p, bytes),
+            Wire::Cdr => cdr::decode(p, bytes),
         }
     }
     pub fn encode(&self, format: &str, ent: &Entity) -> Result<String, Error> {
@@ -4381,6 +4424,7 @@ impl Engine {
             Wire::Json => jsonwire::encode(p, ent),
             Wire::Text => text::encode(p, ent),
             Wire::Tlv => tlv::encode(p, ent),
+            Wire::Cdr => cdr::encode(p, ent),
         }
     }
     /// `convert` with no context.
@@ -7447,6 +7491,7 @@ pub mod bits {
 }
 
 pub mod armor;
+pub mod cdr;
 pub mod seq;
 pub mod text;
 pub mod tlv;
@@ -8078,6 +8123,11 @@ const PACK_DIRECTIVES: &[(&str, usize, usize)] = &[
     // engine-spec v0.21: `count <name> <len> [plus <n>]`; its form is checked
     // with the rest of the sequential layout, after the file is read
     ("count", 2, usize::MAX),
+    // the cdr wire (engine-spec v0.43, ruling 10): one argument each, a line
+    // check; they may stand before the `wire` line, and the rest is checked
+    // after the file
+    ("cdr", 1, 1),
+    ("representation", 1, 1),
 ];
 
 /// The lines that stand after the `wire` line (ruling 5b of 0.11).
@@ -8119,6 +8169,8 @@ fn pack_line_checks(text: &str) -> Result<(), Error> {
         }
         // 5e: `checksum` takes one argument; `checksum sum16 <tag>` (0.13) two
         let most = if name == "checksum" && toks[1] != "sum16" { 1 } else { most };
+        // cdr (engine-spec v0.43): the transform of a field line may be left out
+        let least = if name == "field" && wire == Some(Wire::Cdr) { 2 } else { least };
         if n < least || n > most {
             let takes = match (least, most) {
                 (l, m) if l == m => l.to_string(),
@@ -8147,6 +8199,7 @@ fn pack_line_checks(text: &str) -> Result<(), Error> {
                     "json" => Wire::Json,
                     "text" => Wire::Text,
                     "tlv" => Wire::Tlv,
+                    "cdr" => Wire::Cdr,
                     o => return err(format!("unknown-wire: line {}: `{}` is not a wire", ln, o)),
                 })
             }
@@ -8163,9 +8216,14 @@ fn pack_line_checks(text: &str) -> Result<(), Error> {
             }
             "field" => {
                 check_locator(wire, sequential, &toks[2], ln)?;
+                // cdr (engine-spec v0.43): `field <model-key> <type> [<transform>] [options]`
+                let explicit = wire != Some(Wire::Cdr) || (toks.len() > 3 && !cdr::is_option(&toks[3]));
+                let opts = cdr::options_from(&toks, explicit);
+                let toks = &opts;
                 // ruling 8 of 0.13: on tlv a transform that does not parse is
                 // `bad-directive`, checked after the file is read
-                let transform = match Transform::parse(&toks[3]) {
+                let parsed = if explicit { Transform::parse(&toks[3]) } else { Ok(Transform::Int) };
+                let transform = match parsed {
                     Err(_) if wire == Some(Wire::Tlv) => Transform::Hex,
                     t => t.map_err(|e| Error { msg: e.msg.replacen(": ", &format!(": line {}: ", ln), 1) })?,
                 };
@@ -8188,7 +8246,7 @@ fn pack_line_checks(text: &str) -> Result<(), Error> {
                     until: None,
                     stop: None,
                 };
-                field_options_at(&mut f, &toks, ln, true, false)?;
+                field_options_at(&mut f, toks, ln, true, false)?;
                 if let Some(w) = wire {
                     let bits_len = match (w, sequential) {
                         (Wire::Bits, true) => toks[2].parse::<u32>().ok(),
@@ -8198,7 +8256,7 @@ fn pack_line_checks(text: &str) -> Result<(), Error> {
                     let decided = w != Wire::Bits || bits_len.map_or(false, |len| len <= 64);
                     // text (ruling 16 of 0.10) and tlv (ruling 10 of 0.13):
                     // `absent` does not fit the wire, checked after the file
-                    if decided && !matches!(w, Wire::Text | Wire::Tlv) {
+                    if decided && !matches!(w, Wire::Text | Wire::Tlv | Wire::Cdr) {
                         resolve_absent(w, &mut f, bits_len)?;
                     }
                 }
@@ -8311,7 +8369,8 @@ fn check_locator(wire: Option<Wire>, sequential: bool, loc: &str, ln: usize) -> 
         }
         // tlv (engine-spec v0.13): a path is checked after the file is read,
         // and its errors are `bad-directive`
-        Some(Wire::Text) | Some(Wire::Tlv) | None => {}
+        // cdr (engine-spec v0.43): the type is checked after the file is read
+        Some(Wire::Text) | Some(Wire::Tlv) | Some(Wire::Cdr) | None => {}
     }
     Ok(())
 }

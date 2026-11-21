@@ -1,0 +1,9 @@
+{
+  "name": "x-3-selects-no-kind",
+  "from": "conformance-cdr",
+  "to": "conformance-cdr",
+  "input": "000000000300fffeb2d05e00fffffffffffffffb40040000000000000000000375310001000000037fffffff00070000000000020000000361620000000200000000000263000005000000020000000affffffec3fc00000be800000",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "0.43 ruling 3 and 0.5 Decode step 2: probe.x = 3 matches neither when 1 1 nor when 1 2"
+}

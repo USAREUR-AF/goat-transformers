@@ -1,0 +1,9 @@
+{
+  "name": "identifier-of-cdr1-refused",
+  "from": "conformance-cdr2",
+  "to": "conformance-cdr2",
+  "input": "000000000100fffeb2d05e00fffffffffffffffb40040000000000000000000375310001000000037fffffff0007000000000018000000020000000361620000000200000000000263000005000000020000000affffffec3fc00000be800000",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "0.43 The header: the second byte 00 without its low bit is not 06, the second byte of representation 0006 without its low bit"
+}

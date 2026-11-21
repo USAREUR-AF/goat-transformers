@@ -1,0 +1,9 @@
+{
+  "name": "big-endian-input-written-little-endian",
+  "from": "conformance-cdr-tail",
+  "to": "conformance-cdr-tail",
+  "input": "00000000ffffffff7fff00000000000275000000",
+  "expect": "00010001ffffffffff7f00000200000075000000",
+  "source": "constructed",
+  "reference": "0.43 The header and ruling 19: 0000 is 0001 without the byte-order bit, so it decodes big-endian; encode writes 0001, little-endian, and its own p = 1 (the input said 0)"
+}

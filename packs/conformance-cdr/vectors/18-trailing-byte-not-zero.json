@@ -1,0 +1,9 @@
+{
+  "name": "trailing-byte-not-zero",
+  "from": "conformance-cdr",
+  "to": "conformance-cdr",
+  "input": "000000000100fffeb2d05e00fffffffffffffffb40040000000000000000000375310001000000037fffffff00070000000000020000000361620000000200000000000263000005000000020000000affffffec3fc00000be80000001",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "0.43 Reading and writing step 2: a remaining byte must be zero"
+}

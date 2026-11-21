@@ -1,0 +1,17 @@
+# Conformance probe pack for the `cdr` wire (spec 0.43), XCDR version 1: no
+# group, a `default`, and a last member of one byte, so the body length is not
+# a multiple of 4 and the trailing padding count `p` is not zero.
+format          conformance-cdr-tail
+version         0.43.0
+distribution    public
+source          "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses            probe
+wire            cdr
+cdr             1
+representation  0001
+
+field    probe.y      uint32
+field    probe.n      int16
+default  probe.n      5
+field    uid          string
+field    probe.x      uint8

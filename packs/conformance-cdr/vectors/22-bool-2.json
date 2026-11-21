@@ -1,0 +1,9 @@
+{
+  "name": "bool-2",
+  "from": "conformance-cdr",
+  "to": "conformance-cdr",
+  "input": "000000000100fffeb2d05e00fffffffffffffffb40040000000000000000000375310002000000037fffffff00070000000000020000000361620000000200000000000263000005000000020000000affffffec3fc00000be800000",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "0.43 Types: bool decodes 0 or 1; 2 at off 31 is transform-decode"
+}

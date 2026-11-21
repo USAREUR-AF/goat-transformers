@@ -1,0 +1,9 @@
+{
+  "name": "identifier-first-byte-wrong",
+  "from": "conformance-cdr",
+  "to": "conformance-cdr",
+  "input": "010000000100fffeb2d05e00fffffffffffffffb40040000000000000000000375310001000000037fffffff00070000000000020000000361620000000200000000000263000005000000020000000affffffec3fc00000be800000",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "0.43 The header: the identifier's first byte 01 is not that of representation 0000"
+}

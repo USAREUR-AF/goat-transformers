@@ -418,9 +418,11 @@ fn value_of(text: &str, len: u32, ln: usize) -> Result<u64, Error> {
     Ok(v)
 }
 
-const HEADER: [&str; 17] = [
+const HEADER: [&str; 19] = [
     "format", "version", "wire", "layout", "bit_order", "distribution", "source", "uses", "map", "typemap", "word_bytes", "root",
     "delimiter", "start", "checksum", "armor", "encoding",
+    // the cdr wire (engine-spec v0.43): a line of another wire here
+    "cdr", "representation",
 ];
 
 impl<'a> Parser<'a> {
@@ -1550,6 +1552,7 @@ pub fn parse(text: &str) -> Result<Pack, Error> {
         seq: Some(body),
         text: crate::text::TextConf::default(),
         tlv: crate::tlv::TlvConf::default(),
+        cdr: crate::cdr::CdrConf::default(),
         armor,
         gates: Vec::new(),
         elements: Vec::new(),

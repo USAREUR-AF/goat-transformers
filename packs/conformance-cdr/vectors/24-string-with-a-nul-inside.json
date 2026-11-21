@@ -1,0 +1,9 @@
+{
+  "name": "string-with-a-nul-inside",
+  "from": "conformance-cdr",
+  "to": "conformance-cdr",
+  "input": "0000000001000000000000000000000000000000000000000000000000000004610062000100000000000000000000000007000000000000000000003fc00000be800000",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "0.43 Strings: length 4, bytes 61 00 62 00; the NUL at off 29 is before the last byte"
+}
