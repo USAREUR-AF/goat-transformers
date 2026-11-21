@@ -1,0 +1,16 @@
+{
+  "name": "ipv6-prefix-roundtrip",
+  "from": "rpki-rtr",
+  "to": "rpki-rtr",
+  "input": "01060000000000200030300020010db80040000000000000000000000001000f",
+  "expect": "01060000000000200030300020010db80040000000000000000000000001000f",
+  "model": {
+    "@kind": "ipv6_prefix",
+    "rtr.announce": "0",
+    "rtr.prefix_length": "48",
+    "rtr.ipv6_prefix_high": "2306139568119742464",
+    "rtr.ipv6_prefix_low": "0",
+    "rtr.asn": "65551"
+  },
+  "source": "built by tools/gen/routing-vectors.py from values chosen there; layout restated from RFC 8210 section 5; a ipv6 prefix PDU; expect derived there, no engine run"
+}

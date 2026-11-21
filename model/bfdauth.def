@@ -1,0 +1,14 @@
+# The bfdauth module: the authentication section of a BFD control packet (RFC 5880 sections
+# 4.2 to 4.4). The mandatory section is in the inet module (bfd_*).
+module        bfdauth
+version       0.1.0
+distribution  public
+source        "IETF RFC 5880, Bidirectional Forwarding Detection (BFD), June 2010, sections 4.1 to 4.4, https://www.rfc-editor.org/rfc/rfc5880.txt, IETF Trust (BCP 78); layout restated"
+
+key   auth_type        int  -  "authentication type: 1 simple password, 2 keyed MD5, 3 meticulous keyed MD5, 4 keyed SHA1, 5 meticulous keyed SHA1"
+key   auth_key_id      int  -  "key ID: which key, of the several the systems may share, the section was made with"
+key   auth_reserved    int  -  "reserved octet of the MD5 and SHA1 sections, 0"
+key   auth_sequence    int  -  "sequence number of the MD5 and SHA1 sections, against replay"
+list  password              "simple password: the password, 1 to 16 octets"
+list  auth_value            "MD5 digest (16 octets) or SHA1 hash (20 octets), or the content of a section of another type"
+key   octet            int  -  "one octet"

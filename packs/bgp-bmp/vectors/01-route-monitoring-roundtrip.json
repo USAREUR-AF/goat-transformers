@@ -1,0 +1,30 @@
+{
+  "name": "route-monitoring-roundtrip",
+  "from": "bgp-bmp",
+  "to": "bgp-bmp",
+  "input": "03000000810000000000000000000000000000000000000000000000c00002020000fbf0c000020269b529dd0003d091ffffffffffffffffffffffffffffffff005102000418c63364002d4001010040020a02020000fbf00001000f400304c000020280040400000064400504000000c8c00804fbf0006418cb007119c0000280",
+  "expect": "03000000810000000000000000000000000000000000000000000000c00002020000fbf0c000020269b529dd0003d091ffffffffffffffffffffffffffffffff005102000418c63364002d4001010040020a02020000fbf00001000f400304c000020280040400000064400504000000c8c00804fbf0006418cb007119c0000280",
+  "model": {
+    "@kind": "message",
+    "bmp.msg_type": "0",
+    "bmp.peer_type": "0",
+    "bmp.peer_flag_v": "0",
+    "bmp.peer_flag_a": "0",
+    "bmp.peer_ipv4": "3221225986",
+    "bmp.peer_as": "64496",
+    "bmp.timestamp_sec": "1773480413",
+    "bmp.timestamp_usec": "250001",
+    "bmp.bgp_type": "2",
+    "bmp.withdrawn_routes.#": "1",
+    "bmp.withdrawn_routes[0].bmp.prefix_length": "24",
+    "bmp.attributes.#": "6",
+    "bmp.attributes[1].bmp.as_path_segments[0].bmp.segment_asns[1].bmp.asn": "65551",
+    "bmp.attributes[2].bmp.next_hop": "3221225986",
+    "bmp.attributes[4].bmp.local_pref": "200",
+    "bmp.attributes[5].bmp.attr_value.#": "4",
+    "bmp.nlri.#": "2",
+    "bmp.nlri[1].bmp.prefix_length": "25",
+    "bmp.nlri[1].bmp.prefix_octet_4": "128"
+  },
+  "source": "built by tools/gen/routing-vectors.py from values chosen there; layout restated from RFC 7854 sections 4.1 to 4.10 (with RFC 8671 and RFC 9069) and RFC 4271 section 4; an IPv4 peer, pre-policy, 4-octet AS_PATH; an UPDATE that withdraws one prefix and announces two, with ORIGIN, AS_PATH, NEXT_HOP, MED, LOCAL_PREF and COMMUNITIES (kept as octets); expect derived there, no engine run"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "peer-down-notification-roundtrip",
+  "from": "bgp-bmp",
+  "to": "bgp-bmp",
+  "input": "03000000480200000000000000000000000000000000000000000000c00002020000fbf0c000020269b529dd0003d09101ffffffffffffffffffffffffffffffff00170306020001",
+  "expect": "03000000480200000000000000000000000000000000000000000000c00002020000fbf0c000020269b529dd0003d09101ffffffffffffffffffffffffffffffff00170306020001",
+  "model": {
+    "bmp.down_reason": "1",
+    "bmp.bgp_type": "3",
+    "bmp.error_code": "6",
+    "bmp.error_subcode": "2",
+    "bmp.notification_data.#": "2"
+  },
+  "source": "built by tools/gen/routing-vectors.py from values chosen there; layout restated from RFC 7854 sections 4.1 to 4.10 (with RFC 8671 and RFC 9069) and RFC 4271 section 4; Peer Down reason 1 with a NOTIFICATION (Cease, administrative shutdown); expect derived there, no engine run"
+}

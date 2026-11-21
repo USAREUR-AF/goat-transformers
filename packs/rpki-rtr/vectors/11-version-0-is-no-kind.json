@@ -1,0 +1,8 @@
+{
+  "name": "version-0-is-no-kind",
+  "from": "rpki-rtr",
+  "to": "rpki-rtr",
+  "input": "00006a3f0000000c00001267",
+  "expect_error": "no-kind",
+  "source": "built by tools/gen/routing-vectors.py from values chosen there; layout restated from RFC 8210 section 5; a Serial Notify of version 0, which this version 1 pack does not read; expect derived there, no engine run"
+}

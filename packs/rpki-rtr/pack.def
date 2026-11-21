@@ -1,0 +1,102 @@
+# RPKI to Router protocol, version 1 (RFC 8210): one PDU, every PDU type of section 5.
+# Public. Layouts restated; see pack.md.
+format        rpki-rtr
+version       0.1.0
+distribution  public
+source        "IETF RFC 8210, The Resource Public Key Infrastructure (RPKI) to Router Protocol, Version 1, September 2017, https://www.rfc-editor.org/rfc/rfc8210.txt (sha256 f2d6905b6c27c81fbcec3767d17b13e8a076f9712868e3c759bcfbe7a4f2149b); layouts restated"
+uses          rtr
+wire          bits
+layout        sequential
+bit_order     msb
+
+when    8  1
+
+kind    serial_notify
+when    8  0
+field   rtr.session_id  16  uint
+length  32  whole
+field   rtr.serial  32  uint
+
+kind    serial_query
+when    8  1
+field   rtr.session_id  16  uint
+length  32  whole
+field   rtr.serial  32  uint
+
+kind    reset_query
+when    8  2
+pad     16
+length  32  whole
+
+kind    cache_response
+when    8  3
+field   rtr.session_id  16  uint
+length  32  whole
+
+kind    ipv4_prefix
+when    8  4
+pad     16
+length  32  whole
+field   rtr.flags_high  7  uint
+field   rtr.announce  1  uint
+field   rtr.prefix_length  8  uint
+field   rtr.max_length  8  uint
+pad     8
+field   rtr.ipv4_prefix  32  uint
+field   rtr.asn  32  uint
+
+kind    ipv6_prefix
+when    8  6
+pad     16
+length  32  whole
+field   rtr.flags_high  7  uint
+field   rtr.announce  1  uint
+field   rtr.prefix_length  8  uint
+field   rtr.max_length  8  uint
+pad     8
+field   rtr.ipv6_prefix_high  64  uint
+field   rtr.ipv6_prefix_low  64  uint
+field   rtr.asn  32  uint
+
+kind    end_of_data
+when    8  7
+field   rtr.session_id  16  uint
+length  32  whole
+field   rtr.serial  32  uint
+field   rtr.refresh_interval  32  uint
+field   rtr.retry_interval  32  uint
+field   rtr.expire_interval  32  uint
+
+kind    cache_reset
+when    8  8
+pad     16
+length  32  whole
+
+kind    router_key
+when    8  9
+field   rtr.flags_high  7  uint
+field   rtr.announce  1  uint
+pad     8
+length  32  whole
+field   rtr.ski_0  64  uint
+field   rtr.ski_1  64  uint
+field   rtr.ski_2  32  uint
+field   rtr.asn  32  uint
+group   rtr.spki  rest
+  field  rtr.octet  8  uint
+end
+
+kind    error_report
+when    8  10
+field   rtr.error_code  16  uint
+length  32  whole
+length  32  bytes
+  group  rtr.erroneous_pdu  rest
+    field  rtr.octet  8  uint
+  end
+end
+length  32  bytes
+  group  rtr.error_text  rest
+    field  rtr.octet  8  uint
+  end
+end

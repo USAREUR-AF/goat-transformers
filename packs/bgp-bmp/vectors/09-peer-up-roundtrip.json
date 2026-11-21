@@ -1,0 +1,22 @@
+{
+  "name": "peer-up-roundtrip",
+  "from": "bgp-bmp",
+  "to": "bgp-bmp",
+  "input": "03000000a00300000000000000000000000000000000000000000000c00002020000fbf0c000020269b529dd0003d091000000000000000000000000c000020100b3c3cbffffffffffffffffffffffffffffffff00250104fbf0005ac000020108020641040001000fffffffffffffffffffffffffffffffff002501045ba000b4c00002020802064104fa56ea0000000006656467652d3100030004626c7565",
+  "expect": "03000000a00300000000000000000000000000000000000000000000c00002020000fbf0c000020269b529dd0003d091000000000000000000000000c000020100b3c3cbffffffffffffffffffffffffffffffff00250104fbf0005ac000020108020641040001000fffffffffffffffffffffffffffffffff002501045ba000b4c00002020802064104fa56ea0000000006656467652d3100030004626c7565",
+  "model": {
+    "bmp.msg_type": "3",
+    "bmp.local_ipv4": "3221225985",
+    "bmp.local_port": "179",
+    "bmp.remote_port": "50123",
+    "bmp.sent_bgp_type": "1",
+    "bmp.sent_open_my_as": "64496",
+    "bmp.sent_open_hold_time": "90",
+    "bmp.sent_open_parameters.#": "8",
+    "bmp.received_open_my_as": "23456",
+    "bmp.received_open_bgp_identifier": "3221225986",
+    "bmp.up_tlvs.#": "2",
+    "bmp.up_tlvs[1].bmp.info_type": "3"
+  },
+  "source": "built by tools/gen/routing-vectors.py from values chosen there; layout restated from RFC 7854 sections 4.1 to 4.10 (with RFC 8671 and RFC 9069) and RFC 4271 section 4; Peer Up of an IPv4 session: local address and ports, the sent and the received OPEN (each with a 4-octet AS capability, kept as octets), a string and a VRF name TLV; expect derived there, no engine run"
+}

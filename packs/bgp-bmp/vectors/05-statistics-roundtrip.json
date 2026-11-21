@@ -1,0 +1,20 @@
+{
+  "name": "statistics-roundtrip",
+  "from": "bgp-bmp",
+  "to": "bgp-bmp",
+  "input": "030000007a0100000000000000000000000000000000000000000000c00002020000fbf0c000020269b529dd0003d0910000000600000004000000110007000800000000000debd90009000b00010100000000000c3501000e000800000000000013880010000b00020100000000000004b00064000400000007",
+  "expect": "030000007a0100000000000000000000000000000000000000000000c00002020000fbf0c000020269b529dd0003d0910000000600000004000000110007000800000000000debd90009000b00010100000000000c3501000e000800000000000013880010000b00020100000000000004b00064000400000007",
+  "model": {
+    "bmp.msg_type": "1",
+    "bmp.stats.#": "6",
+    "bmp.stats[0].bmp.stat_counter": "17",
+    "bmp.stats[1].bmp.stat_gauge": "912345",
+    "bmp.stats[2].bmp.stat_afi": "1",
+    "bmp.stats[2].bmp.stat_safi": "1",
+    "bmp.stats[2].bmp.stat_gauge": "800001",
+    "bmp.stats[3].bmp.stat_type": "14",
+    "bmp.stats[4].bmp.stat_afi": "2",
+    "bmp.stats[5].bmp.stat_value.#": "4"
+  },
+  "source": "built by tools/gen/routing-vectors.py from values chosen there; layout restated from RFC 7854 sections 4.1 to 4.10 (with RFC 8671 and RFC 9069) and RFC 4271 section 4; stat types 0 (counter), 7 (gauge), 9 (AFI/SAFI gauge), 14 and 16 (RFC 8671), and type 100, kept as octets; expect derived there, no engine run"
+}

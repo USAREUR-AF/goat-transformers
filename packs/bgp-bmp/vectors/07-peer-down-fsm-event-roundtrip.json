@@ -1,0 +1,12 @@
+{
+  "name": "peer-down-fsm-event-roundtrip",
+  "from": "bgp-bmp",
+  "to": "bgp-bmp",
+  "input": "03000000330200000000000000000000000000000000000000000000c00002020000fbf0c000020269b529dd0003d091020018",
+  "expect": "03000000330200000000000000000000000000000000000000000000c00002020000fbf0c000020269b529dd0003d091020018",
+  "model": {
+    "bmp.down_reason": "2",
+    "bmp.fsm_event": "24"
+  },
+  "source": "built by tools/gen/routing-vectors.py from values chosen there; layout restated from RFC 7854 sections 4.1 to 4.10 (with RFC 8671 and RFC 9069) and RFC 4271 section 4; Peer Down reason 2 with an FSM event code; expect derived there, no engine run"
+}

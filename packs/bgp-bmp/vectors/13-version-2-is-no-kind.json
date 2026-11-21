@@ -1,0 +1,8 @@
+{
+  "name": "version-2-is-no-kind",
+  "from": "bgp-bmp",
+  "to": "bgp-bmp",
+  "input": "02000000330200000000000000000000000000000000000000000000c00002020000fbf0c000020269b529dd0003d091020018",
+  "expect_error": "no-kind",
+  "source": "built by tools/gen/routing-vectors.py from values chosen there; layout restated from RFC 7854 sections 4.1 to 4.10 (with RFC 8671 and RFC 9069) and RFC 4271 section 4; the seventh message with version 2 in place of 3; expect derived there, no engine run"
+}

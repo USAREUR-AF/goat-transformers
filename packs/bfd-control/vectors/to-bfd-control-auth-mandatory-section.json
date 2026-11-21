@@ -1,0 +1,8 @@
+{
+  "name": "to-bfd-control-auth-mandatory-section",
+  "from": "bfd-control",
+  "to": "bfd-control-auth",
+  "input": "20c003181a2b3c4d00c0ffee000493e0000493e000000000",
+  "expect": "20c003181a2b3c4d00c0ffee000493e0000493e000000000",
+  "source": "built by tools/gen/routing-vectors.py from values chosen there; layout restated from RFC 5880 sections 4.1 to 4.4; a packet without authentication from the fixed pack to bfd-control-auth: every field carries, the A bit is 0 so no section is written; expect derived there, no engine run"
+}

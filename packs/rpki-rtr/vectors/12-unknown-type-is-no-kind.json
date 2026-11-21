@@ -1,0 +1,8 @@
+{
+  "name": "unknown-type-is-no-kind",
+  "from": "rpki-rtr",
+  "to": "rpki-rtr",
+  "input": "0105000000000008",
+  "expect_error": "no-kind",
+  "source": "built by tools/gen/routing-vectors.py from values chosen there; layout restated from RFC 8210 section 5; PDU type 5, which RFC 8210 does not define; expect derived there, no engine run"
+}

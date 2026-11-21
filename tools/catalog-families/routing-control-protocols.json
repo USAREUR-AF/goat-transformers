@@ -1,0 +1,9 @@
+{
+  "name": "Routing control protocols (BMP, BFD, RPKI to Router)",
+  "domain": "networks",
+  "exact": [
+    "bgp-bmp",
+    "bfd-control-auth",
+    "rpki-rtr"
+  ]
+}

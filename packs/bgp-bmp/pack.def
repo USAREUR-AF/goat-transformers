@@ -1,0 +1,1488 @@
+# BGP Monitoring Protocol (RFC 7854; Adj-RIB-Out, RFC 8671; Loc-RIB, RFC 9069): one BMP
+# message, the common header and the message of its type. Public. Written by
+# tools/gen/bmp-pack.py from one statement of each layout; do not edit by hand. I/O is
+# hex text. pack.md states what is mapped and what is not.
+format        bgp-bmp
+version       0.1.0
+distribution  public
+source        "IETF RFC 7854, BGP Monitoring Protocol (BMP), https://www.rfc-editor.org/rfc/rfc7854.txt (sha256 43b9dddf7a0b4bef3f5f94fc50e89d8e9ebec7cd9077568a41cfb8a89785b0db); layout restated"
+source        "IETF RFC 8671, Support for Adj-RIB-Out in BMP, https://www.rfc-editor.org/rfc/rfc8671.txt (sha256 380320e72475eea11916fbab63c877ddb67018a6fb7ab3f3fe4070972e476dcd)"
+source        "IETF RFC 9069, Support for Local RIB in BMP, https://www.rfc-editor.org/rfc/rfc9069.txt (sha256 35c4a9f467718f0cdf843912b4f18f10007e0bf3001b43f37b8eb9484c56547c)"
+source        "IETF RFC 4271, A Border Gateway Protocol 4 (BGP-4), section 4, the BGP messages BMP carries (sha256 98b851146abcd56ecbb398dd1a818bcde2dcac6fde3d901c423d988f86eaab76)"
+uses          bmp
+wire          bits
+layout        sequential
+bit_order     msb
+
+kind    message
+when    8  3
+length  32  whole
+field   bmp.msg_type  8  uint
+switch  bmp.msg_type
+  case  0                       # Route Monitoring
+    field  bmp.peer_type  8  uint
+    field  bmp.peer_flag_v  1  uint
+    field  bmp.peer_flag_l  1  uint
+    field  bmp.peer_flag_a  1  uint
+    field  bmp.peer_flag_o  1  uint
+    field  bmp.peer_flags_low  4  uint
+    field  bmp.peer_distinguisher  64  uint
+    switch  bmp.peer_flag_v
+      case  1
+        field  bmp.peer_ipv6_high  64  uint
+        field  bmp.peer_ipv6_low  64  uint
+      else
+        pad  96
+        field  bmp.peer_ipv4  32  uint
+    end
+    field  bmp.peer_as  32  uint
+    field  bmp.peer_bgp_id  32  uint
+    field  bmp.timestamp_sec  32  uint
+    field  bmp.timestamp_usec  32  uint
+    switch  bmp.peer_flag_a
+      case  1                     # the legacy 2-octet AS_PATH
+        const  32  4294967295
+        const  32  4294967295
+        const  32  4294967295
+        const  32  4294967295
+        length  16  bytes  plus  18
+          field  bmp.bgp_type  8  uint
+          switch  bmp.bgp_type
+            case  2
+              length  16  bytes
+                group  bmp.withdrawn_routes  rest
+                  field  bmp.prefix_length  8  uint
+                  switch  bmp.prefix_length
+                    case  0
+                    case  1,2,3,4,5,6,7,8
+                      field  bmp.prefix_octet_1  8  uint
+                    case  9,10,11,12,13,14,15,16
+                      field  bmp.prefix_octet_1  8  uint
+                      field  bmp.prefix_octet_2  8  uint
+                    case  17,18,19,20,21,22,23,24
+                      field  bmp.prefix_octet_1  8  uint
+                      field  bmp.prefix_octet_2  8  uint
+                      field  bmp.prefix_octet_3  8  uint
+                    case  25,26,27,28,29,30,31,32
+                      field  bmp.prefix_octet_1  8  uint
+                      field  bmp.prefix_octet_2  8  uint
+                      field  bmp.prefix_octet_3  8  uint
+                      field  bmp.prefix_octet_4  8  uint
+                    case  33,34,35,36,37,38,39,40
+                      field  bmp.prefix_octet_1  8  uint
+                      field  bmp.prefix_octet_2  8  uint
+                      field  bmp.prefix_octet_3  8  uint
+                      field  bmp.prefix_octet_4  8  uint
+                      field  bmp.prefix_octet_5  8  uint
+                    case  41,42,43,44,45,46,47,48
+                      field  bmp.prefix_octet_1  8  uint
+                      field  bmp.prefix_octet_2  8  uint
+                      field  bmp.prefix_octet_3  8  uint
+                      field  bmp.prefix_octet_4  8  uint
+                      field  bmp.prefix_octet_5  8  uint
+                      field  bmp.prefix_octet_6  8  uint
+                    case  49,50,51,52,53,54,55,56
+                      field  bmp.prefix_octet_1  8  uint
+                      field  bmp.prefix_octet_2  8  uint
+                      field  bmp.prefix_octet_3  8  uint
+                      field  bmp.prefix_octet_4  8  uint
+                      field  bmp.prefix_octet_5  8  uint
+                      field  bmp.prefix_octet_6  8  uint
+                      field  bmp.prefix_octet_7  8  uint
+                    case  57,58,59,60,61,62,63,64
+                      field  bmp.prefix_octet_1  8  uint
+                      field  bmp.prefix_octet_2  8  uint
+                      field  bmp.prefix_octet_3  8  uint
+                      field  bmp.prefix_octet_4  8  uint
+                      field  bmp.prefix_octet_5  8  uint
+                      field  bmp.prefix_octet_6  8  uint
+                      field  bmp.prefix_octet_7  8  uint
+                      field  bmp.prefix_octet_8  8  uint
+                    case  65,66,67,68,69,70,71,72
+                      field  bmp.prefix_octet_1  8  uint
+                      field  bmp.prefix_octet_2  8  uint
+                      field  bmp.prefix_octet_3  8  uint
+                      field  bmp.prefix_octet_4  8  uint
+                      field  bmp.prefix_octet_5  8  uint
+                      field  bmp.prefix_octet_6  8  uint
+                      field  bmp.prefix_octet_7  8  uint
+                      field  bmp.prefix_octet_8  8  uint
+                      field  bmp.prefix_octet_9  8  uint
+                    case  73,74,75,76,77,78,79,80
+                      field  bmp.prefix_octet_1  8  uint
+                      field  bmp.prefix_octet_2  8  uint
+                      field  bmp.prefix_octet_3  8  uint
+                      field  bmp.prefix_octet_4  8  uint
+                      field  bmp.prefix_octet_5  8  uint
+                      field  bmp.prefix_octet_6  8  uint
+                      field  bmp.prefix_octet_7  8  uint
+                      field  bmp.prefix_octet_8  8  uint
+                      field  bmp.prefix_octet_9  8  uint
+                      field  bmp.prefix_octet_10  8  uint
+                    case  81,82,83,84,85,86,87,88
+                      field  bmp.prefix_octet_1  8  uint
+                      field  bmp.prefix_octet_2  8  uint
+                      field  bmp.prefix_octet_3  8  uint
+                      field  bmp.prefix_octet_4  8  uint
+                      field  bmp.prefix_octet_5  8  uint
+                      field  bmp.prefix_octet_6  8  uint
+                      field  bmp.prefix_octet_7  8  uint
+                      field  bmp.prefix_octet_8  8  uint
+                      field  bmp.prefix_octet_9  8  uint
+                      field  bmp.prefix_octet_10  8  uint
+                      field  bmp.prefix_octet_11  8  uint
+                    case  89,90,91,92,93,94,95,96
+                      field  bmp.prefix_octet_1  8  uint
+                      field  bmp.prefix_octet_2  8  uint
+                      field  bmp.prefix_octet_3  8  uint
+                      field  bmp.prefix_octet_4  8  uint
+                      field  bmp.prefix_octet_5  8  uint
+                      field  bmp.prefix_octet_6  8  uint
+                      field  bmp.prefix_octet_7  8  uint
+                      field  bmp.prefix_octet_8  8  uint
+                      field  bmp.prefix_octet_9  8  uint
+                      field  bmp.prefix_octet_10  8  uint
+                      field  bmp.prefix_octet_11  8  uint
+                      field  bmp.prefix_octet_12  8  uint
+                    case  97,98,99,100,101,102,103,104
+                      field  bmp.prefix_octet_1  8  uint
+                      field  bmp.prefix_octet_2  8  uint
+                      field  bmp.prefix_octet_3  8  uint
+                      field  bmp.prefix_octet_4  8  uint
+                      field  bmp.prefix_octet_5  8  uint
+                      field  bmp.prefix_octet_6  8  uint
+                      field  bmp.prefix_octet_7  8  uint
+                      field  bmp.prefix_octet_8  8  uint
+                      field  bmp.prefix_octet_9  8  uint
+                      field  bmp.prefix_octet_10  8  uint
+                      field  bmp.prefix_octet_11  8  uint
+                      field  bmp.prefix_octet_12  8  uint
+                      field  bmp.prefix_octet_13  8  uint
+                    case  105,106,107,108,109,110,111,112
+                      field  bmp.prefix_octet_1  8  uint
+                      field  bmp.prefix_octet_2  8  uint
+                      field  bmp.prefix_octet_3  8  uint
+                      field  bmp.prefix_octet_4  8  uint
+                      field  bmp.prefix_octet_5  8  uint
+                      field  bmp.prefix_octet_6  8  uint
+                      field  bmp.prefix_octet_7  8  uint
+                      field  bmp.prefix_octet_8  8  uint
+                      field  bmp.prefix_octet_9  8  uint
+                      field  bmp.prefix_octet_10  8  uint
+                      field  bmp.prefix_octet_11  8  uint
+                      field  bmp.prefix_octet_12  8  uint
+                      field  bmp.prefix_octet_13  8  uint
+                      field  bmp.prefix_octet_14  8  uint
+                    case  113,114,115,116,117,118,119,120
+                      field  bmp.prefix_octet_1  8  uint
+                      field  bmp.prefix_octet_2  8  uint
+                      field  bmp.prefix_octet_3  8  uint
+                      field  bmp.prefix_octet_4  8  uint
+                      field  bmp.prefix_octet_5  8  uint
+                      field  bmp.prefix_octet_6  8  uint
+                      field  bmp.prefix_octet_7  8  uint
+                      field  bmp.prefix_octet_8  8  uint
+                      field  bmp.prefix_octet_9  8  uint
+                      field  bmp.prefix_octet_10  8  uint
+                      field  bmp.prefix_octet_11  8  uint
+                      field  bmp.prefix_octet_12  8  uint
+                      field  bmp.prefix_octet_13  8  uint
+                      field  bmp.prefix_octet_14  8  uint
+                      field  bmp.prefix_octet_15  8  uint
+                    case  121,122,123,124,125,126,127,128
+                      field  bmp.prefix_octet_1  8  uint
+                      field  bmp.prefix_octet_2  8  uint
+                      field  bmp.prefix_octet_3  8  uint
+                      field  bmp.prefix_octet_4  8  uint
+                      field  bmp.prefix_octet_5  8  uint
+                      field  bmp.prefix_octet_6  8  uint
+                      field  bmp.prefix_octet_7  8  uint
+                      field  bmp.prefix_octet_8  8  uint
+                      field  bmp.prefix_octet_9  8  uint
+                      field  bmp.prefix_octet_10  8  uint
+                      field  bmp.prefix_octet_11  8  uint
+                      field  bmp.prefix_octet_12  8  uint
+                      field  bmp.prefix_octet_13  8  uint
+                      field  bmp.prefix_octet_14  8  uint
+                      field  bmp.prefix_octet_15  8  uint
+                      field  bmp.prefix_octet_16  8  uint
+                  end
+                end
+              end
+              length  16  bytes
+                group  bmp.attributes  rest
+                  field  bmp.attr_optional  1  uint
+                  field  bmp.attr_transitive  1  uint
+                  field  bmp.attr_partial  1  uint
+                  field  bmp.attr_extended_length  1  uint
+                  field  bmp.attr_flags_low  4  uint
+                  field  bmp.attr_type  8  uint
+                  switch  bmp.attr_extended_length
+                    case  1
+                      length  16  bytes
+                        switch  bmp.attr_type
+                          case  1
+                            field  bmp.origin  8  uint
+                          case  2
+                            group  bmp.as_path_segments  rest
+                              field  bmp.segment_type  8  uint
+                              count  asns  8
+                              group  bmp.segment_asns  count  @asns
+                                field  bmp.asn  16  uint
+                              end
+                            end
+                          case  3
+                            field  bmp.next_hop  32  uint
+                          case  4
+                            field  bmp.multi_exit_disc  32  uint
+                          case  5
+                            field  bmp.local_pref  32  uint
+                          else
+                            group  bmp.attr_value  rest
+                              field  bmp.octet  8  uint
+                            end
+                        end
+                      end
+                    else
+                      length  8  bytes
+                        switch  bmp.attr_type
+                          case  1
+                            field  bmp.origin  8  uint
+                          case  2
+                            group  bmp.as_path_segments  rest
+                              field  bmp.segment_type  8  uint
+                              count  asns  8
+                              group  bmp.segment_asns  count  @asns
+                                field  bmp.asn  16  uint
+                              end
+                            end
+                          case  3
+                            field  bmp.next_hop  32  uint
+                          case  4
+                            field  bmp.multi_exit_disc  32  uint
+                          case  5
+                            field  bmp.local_pref  32  uint
+                          else
+                            group  bmp.attr_value  rest
+                              field  bmp.octet  8  uint
+                            end
+                        end
+                      end
+                  end
+                end
+              end
+              group  bmp.nlri  rest
+                field  bmp.prefix_length  8  uint
+                switch  bmp.prefix_length
+                  case  0
+                  case  1,2,3,4,5,6,7,8
+                    field  bmp.prefix_octet_1  8  uint
+                  case  9,10,11,12,13,14,15,16
+                    field  bmp.prefix_octet_1  8  uint
+                    field  bmp.prefix_octet_2  8  uint
+                  case  17,18,19,20,21,22,23,24
+                    field  bmp.prefix_octet_1  8  uint
+                    field  bmp.prefix_octet_2  8  uint
+                    field  bmp.prefix_octet_3  8  uint
+                  case  25,26,27,28,29,30,31,32
+                    field  bmp.prefix_octet_1  8  uint
+                    field  bmp.prefix_octet_2  8  uint
+                    field  bmp.prefix_octet_3  8  uint
+                    field  bmp.prefix_octet_4  8  uint
+                  case  33,34,35,36,37,38,39,40
+                    field  bmp.prefix_octet_1  8  uint
+                    field  bmp.prefix_octet_2  8  uint
+                    field  bmp.prefix_octet_3  8  uint
+                    field  bmp.prefix_octet_4  8  uint
+                    field  bmp.prefix_octet_5  8  uint
+                  case  41,42,43,44,45,46,47,48
+                    field  bmp.prefix_octet_1  8  uint
+                    field  bmp.prefix_octet_2  8  uint
+                    field  bmp.prefix_octet_3  8  uint
+                    field  bmp.prefix_octet_4  8  uint
+                    field  bmp.prefix_octet_5  8  uint
+                    field  bmp.prefix_octet_6  8  uint
+                  case  49,50,51,52,53,54,55,56
+                    field  bmp.prefix_octet_1  8  uint
+                    field  bmp.prefix_octet_2  8  uint
+                    field  bmp.prefix_octet_3  8  uint
+                    field  bmp.prefix_octet_4  8  uint
+                    field  bmp.prefix_octet_5  8  uint
+                    field  bmp.prefix_octet_6  8  uint
+                    field  bmp.prefix_octet_7  8  uint
+                  case  57,58,59,60,61,62,63,64
+                    field  bmp.prefix_octet_1  8  uint
+                    field  bmp.prefix_octet_2  8  uint
+                    field  bmp.prefix_octet_3  8  uint
+                    field  bmp.prefix_octet_4  8  uint
+                    field  bmp.prefix_octet_5  8  uint
+                    field  bmp.prefix_octet_6  8  uint
+                    field  bmp.prefix_octet_7  8  uint
+                    field  bmp.prefix_octet_8  8  uint
+                  case  65,66,67,68,69,70,71,72
+                    field  bmp.prefix_octet_1  8  uint
+                    field  bmp.prefix_octet_2  8  uint
+                    field  bmp.prefix_octet_3  8  uint
+                    field  bmp.prefix_octet_4  8  uint
+                    field  bmp.prefix_octet_5  8  uint
+                    field  bmp.prefix_octet_6  8  uint
+                    field  bmp.prefix_octet_7  8  uint
+                    field  bmp.prefix_octet_8  8  uint
+                    field  bmp.prefix_octet_9  8  uint
+                  case  73,74,75,76,77,78,79,80
+                    field  bmp.prefix_octet_1  8  uint
+                    field  bmp.prefix_octet_2  8  uint
+                    field  bmp.prefix_octet_3  8  uint
+                    field  bmp.prefix_octet_4  8  uint
+                    field  bmp.prefix_octet_5  8  uint
+                    field  bmp.prefix_octet_6  8  uint
+                    field  bmp.prefix_octet_7  8  uint
+                    field  bmp.prefix_octet_8  8  uint
+                    field  bmp.prefix_octet_9  8  uint
+                    field  bmp.prefix_octet_10  8  uint
+                  case  81,82,83,84,85,86,87,88
+                    field  bmp.prefix_octet_1  8  uint
+                    field  bmp.prefix_octet_2  8  uint
+                    field  bmp.prefix_octet_3  8  uint
+                    field  bmp.prefix_octet_4  8  uint
+                    field  bmp.prefix_octet_5  8  uint
+                    field  bmp.prefix_octet_6  8  uint
+                    field  bmp.prefix_octet_7  8  uint
+                    field  bmp.prefix_octet_8  8  uint
+                    field  bmp.prefix_octet_9  8  uint
+                    field  bmp.prefix_octet_10  8  uint
+                    field  bmp.prefix_octet_11  8  uint
+                  case  89,90,91,92,93,94,95,96
+                    field  bmp.prefix_octet_1  8  uint
+                    field  bmp.prefix_octet_2  8  uint
+                    field  bmp.prefix_octet_3  8  uint
+                    field  bmp.prefix_octet_4  8  uint
+                    field  bmp.prefix_octet_5  8  uint
+                    field  bmp.prefix_octet_6  8  uint
+                    field  bmp.prefix_octet_7  8  uint
+                    field  bmp.prefix_octet_8  8  uint
+                    field  bmp.prefix_octet_9  8  uint
+                    field  bmp.prefix_octet_10  8  uint
+                    field  bmp.prefix_octet_11  8  uint
+                    field  bmp.prefix_octet_12  8  uint
+                  case  97,98,99,100,101,102,103,104
+                    field  bmp.prefix_octet_1  8  uint
+                    field  bmp.prefix_octet_2  8  uint
+                    field  bmp.prefix_octet_3  8  uint
+                    field  bmp.prefix_octet_4  8  uint
+                    field  bmp.prefix_octet_5  8  uint
+                    field  bmp.prefix_octet_6  8  uint
+                    field  bmp.prefix_octet_7  8  uint
+                    field  bmp.prefix_octet_8  8  uint
+                    field  bmp.prefix_octet_9  8  uint
+                    field  bmp.prefix_octet_10  8  uint
+                    field  bmp.prefix_octet_11  8  uint
+                    field  bmp.prefix_octet_12  8  uint
+                    field  bmp.prefix_octet_13  8  uint
+                  case  105,106,107,108,109,110,111,112
+                    field  bmp.prefix_octet_1  8  uint
+                    field  bmp.prefix_octet_2  8  uint
+                    field  bmp.prefix_octet_3  8  uint
+                    field  bmp.prefix_octet_4  8  uint
+                    field  bmp.prefix_octet_5  8  uint
+                    field  bmp.prefix_octet_6  8  uint
+                    field  bmp.prefix_octet_7  8  uint
+                    field  bmp.prefix_octet_8  8  uint
+                    field  bmp.prefix_octet_9  8  uint
+                    field  bmp.prefix_octet_10  8  uint
+                    field  bmp.prefix_octet_11  8  uint
+                    field  bmp.prefix_octet_12  8  uint
+                    field  bmp.prefix_octet_13  8  uint
+                    field  bmp.prefix_octet_14  8  uint
+                  case  113,114,115,116,117,118,119,120
+                    field  bmp.prefix_octet_1  8  uint
+                    field  bmp.prefix_octet_2  8  uint
+                    field  bmp.prefix_octet_3  8  uint
+                    field  bmp.prefix_octet_4  8  uint
+                    field  bmp.prefix_octet_5  8  uint
+                    field  bmp.prefix_octet_6  8  uint
+                    field  bmp.prefix_octet_7  8  uint
+                    field  bmp.prefix_octet_8  8  uint
+                    field  bmp.prefix_octet_9  8  uint
+                    field  bmp.prefix_octet_10  8  uint
+                    field  bmp.prefix_octet_11  8  uint
+                    field  bmp.prefix_octet_12  8  uint
+                    field  bmp.prefix_octet_13  8  uint
+                    field  bmp.prefix_octet_14  8  uint
+                    field  bmp.prefix_octet_15  8  uint
+                  case  121,122,123,124,125,126,127,128
+                    field  bmp.prefix_octet_1  8  uint
+                    field  bmp.prefix_octet_2  8  uint
+                    field  bmp.prefix_octet_3  8  uint
+                    field  bmp.prefix_octet_4  8  uint
+                    field  bmp.prefix_octet_5  8  uint
+                    field  bmp.prefix_octet_6  8  uint
+                    field  bmp.prefix_octet_7  8  uint
+                    field  bmp.prefix_octet_8  8  uint
+                    field  bmp.prefix_octet_9  8  uint
+                    field  bmp.prefix_octet_10  8  uint
+                    field  bmp.prefix_octet_11  8  uint
+                    field  bmp.prefix_octet_12  8  uint
+                    field  bmp.prefix_octet_13  8  uint
+                    field  bmp.prefix_octet_14  8  uint
+                    field  bmp.prefix_octet_15  8  uint
+                    field  bmp.prefix_octet_16  8  uint
+                end
+              end
+            else
+              group  bmp.bgp_body  rest
+                field  bmp.octet  8  uint
+              end
+          end
+        end
+      else
+        const  32  4294967295
+        const  32  4294967295
+        const  32  4294967295
+        const  32  4294967295
+        length  16  bytes  plus  18
+          field  bmp.bgp_type  8  uint
+          switch  bmp.bgp_type
+            case  2
+              length  16  bytes
+                group  bmp.withdrawn_routes  rest
+                  field  bmp.prefix_length  8  uint
+                  switch  bmp.prefix_length
+                    case  0
+                    case  1,2,3,4,5,6,7,8
+                      field  bmp.prefix_octet_1  8  uint
+                    case  9,10,11,12,13,14,15,16
+                      field  bmp.prefix_octet_1  8  uint
+                      field  bmp.prefix_octet_2  8  uint
+                    case  17,18,19,20,21,22,23,24
+                      field  bmp.prefix_octet_1  8  uint
+                      field  bmp.prefix_octet_2  8  uint
+                      field  bmp.prefix_octet_3  8  uint
+                    case  25,26,27,28,29,30,31,32
+                      field  bmp.prefix_octet_1  8  uint
+                      field  bmp.prefix_octet_2  8  uint
+                      field  bmp.prefix_octet_3  8  uint
+                      field  bmp.prefix_octet_4  8  uint
+                    case  33,34,35,36,37,38,39,40
+                      field  bmp.prefix_octet_1  8  uint
+                      field  bmp.prefix_octet_2  8  uint
+                      field  bmp.prefix_octet_3  8  uint
+                      field  bmp.prefix_octet_4  8  uint
+                      field  bmp.prefix_octet_5  8  uint
+                    case  41,42,43,44,45,46,47,48
+                      field  bmp.prefix_octet_1  8  uint
+                      field  bmp.prefix_octet_2  8  uint
+                      field  bmp.prefix_octet_3  8  uint
+                      field  bmp.prefix_octet_4  8  uint
+                      field  bmp.prefix_octet_5  8  uint
+                      field  bmp.prefix_octet_6  8  uint
+                    case  49,50,51,52,53,54,55,56
+                      field  bmp.prefix_octet_1  8  uint
+                      field  bmp.prefix_octet_2  8  uint
+                      field  bmp.prefix_octet_3  8  uint
+                      field  bmp.prefix_octet_4  8  uint
+                      field  bmp.prefix_octet_5  8  uint
+                      field  bmp.prefix_octet_6  8  uint
+                      field  bmp.prefix_octet_7  8  uint
+                    case  57,58,59,60,61,62,63,64
+                      field  bmp.prefix_octet_1  8  uint
+                      field  bmp.prefix_octet_2  8  uint
+                      field  bmp.prefix_octet_3  8  uint
+                      field  bmp.prefix_octet_4  8  uint
+                      field  bmp.prefix_octet_5  8  uint
+                      field  bmp.prefix_octet_6  8  uint
+                      field  bmp.prefix_octet_7  8  uint
+                      field  bmp.prefix_octet_8  8  uint
+                    case  65,66,67,68,69,70,71,72
+                      field  bmp.prefix_octet_1  8  uint
+                      field  bmp.prefix_octet_2  8  uint
+                      field  bmp.prefix_octet_3  8  uint
+                      field  bmp.prefix_octet_4  8  uint
+                      field  bmp.prefix_octet_5  8  uint
+                      field  bmp.prefix_octet_6  8  uint
+                      field  bmp.prefix_octet_7  8  uint
+                      field  bmp.prefix_octet_8  8  uint
+                      field  bmp.prefix_octet_9  8  uint
+                    case  73,74,75,76,77,78,79,80
+                      field  bmp.prefix_octet_1  8  uint
+                      field  bmp.prefix_octet_2  8  uint
+                      field  bmp.prefix_octet_3  8  uint
+                      field  bmp.prefix_octet_4  8  uint
+                      field  bmp.prefix_octet_5  8  uint
+                      field  bmp.prefix_octet_6  8  uint
+                      field  bmp.prefix_octet_7  8  uint
+                      field  bmp.prefix_octet_8  8  uint
+                      field  bmp.prefix_octet_9  8  uint
+                      field  bmp.prefix_octet_10  8  uint
+                    case  81,82,83,84,85,86,87,88
+                      field  bmp.prefix_octet_1  8  uint
+                      field  bmp.prefix_octet_2  8  uint
+                      field  bmp.prefix_octet_3  8  uint
+                      field  bmp.prefix_octet_4  8  uint
+                      field  bmp.prefix_octet_5  8  uint
+                      field  bmp.prefix_octet_6  8  uint
+                      field  bmp.prefix_octet_7  8  uint
+                      field  bmp.prefix_octet_8  8  uint
+                      field  bmp.prefix_octet_9  8  uint
+                      field  bmp.prefix_octet_10  8  uint
+                      field  bmp.prefix_octet_11  8  uint
+                    case  89,90,91,92,93,94,95,96
+                      field  bmp.prefix_octet_1  8  uint
+                      field  bmp.prefix_octet_2  8  uint
+                      field  bmp.prefix_octet_3  8  uint
+                      field  bmp.prefix_octet_4  8  uint
+                      field  bmp.prefix_octet_5  8  uint
+                      field  bmp.prefix_octet_6  8  uint
+                      field  bmp.prefix_octet_7  8  uint
+                      field  bmp.prefix_octet_8  8  uint
+                      field  bmp.prefix_octet_9  8  uint
+                      field  bmp.prefix_octet_10  8  uint
+                      field  bmp.prefix_octet_11  8  uint
+                      field  bmp.prefix_octet_12  8  uint
+                    case  97,98,99,100,101,102,103,104
+                      field  bmp.prefix_octet_1  8  uint
+                      field  bmp.prefix_octet_2  8  uint
+                      field  bmp.prefix_octet_3  8  uint
+                      field  bmp.prefix_octet_4  8  uint
+                      field  bmp.prefix_octet_5  8  uint
+                      field  bmp.prefix_octet_6  8  uint
+                      field  bmp.prefix_octet_7  8  uint
+                      field  bmp.prefix_octet_8  8  uint
+                      field  bmp.prefix_octet_9  8  uint
+                      field  bmp.prefix_octet_10  8  uint
+                      field  bmp.prefix_octet_11  8  uint
+                      field  bmp.prefix_octet_12  8  uint
+                      field  bmp.prefix_octet_13  8  uint
+                    case  105,106,107,108,109,110,111,112
+                      field  bmp.prefix_octet_1  8  uint
+                      field  bmp.prefix_octet_2  8  uint
+                      field  bmp.prefix_octet_3  8  uint
+                      field  bmp.prefix_octet_4  8  uint
+                      field  bmp.prefix_octet_5  8  uint
+                      field  bmp.prefix_octet_6  8  uint
+                      field  bmp.prefix_octet_7  8  uint
+                      field  bmp.prefix_octet_8  8  uint
+                      field  bmp.prefix_octet_9  8  uint
+                      field  bmp.prefix_octet_10  8  uint
+                      field  bmp.prefix_octet_11  8  uint
+                      field  bmp.prefix_octet_12  8  uint
+                      field  bmp.prefix_octet_13  8  uint
+                      field  bmp.prefix_octet_14  8  uint
+                    case  113,114,115,116,117,118,119,120
+                      field  bmp.prefix_octet_1  8  uint
+                      field  bmp.prefix_octet_2  8  uint
+                      field  bmp.prefix_octet_3  8  uint
+                      field  bmp.prefix_octet_4  8  uint
+                      field  bmp.prefix_octet_5  8  uint
+                      field  bmp.prefix_octet_6  8  uint
+                      field  bmp.prefix_octet_7  8  uint
+                      field  bmp.prefix_octet_8  8  uint
+                      field  bmp.prefix_octet_9  8  uint
+                      field  bmp.prefix_octet_10  8  uint
+                      field  bmp.prefix_octet_11  8  uint
+                      field  bmp.prefix_octet_12  8  uint
+                      field  bmp.prefix_octet_13  8  uint
+                      field  bmp.prefix_octet_14  8  uint
+                      field  bmp.prefix_octet_15  8  uint
+                    case  121,122,123,124,125,126,127,128
+                      field  bmp.prefix_octet_1  8  uint
+                      field  bmp.prefix_octet_2  8  uint
+                      field  bmp.prefix_octet_3  8  uint
+                      field  bmp.prefix_octet_4  8  uint
+                      field  bmp.prefix_octet_5  8  uint
+                      field  bmp.prefix_octet_6  8  uint
+                      field  bmp.prefix_octet_7  8  uint
+                      field  bmp.prefix_octet_8  8  uint
+                      field  bmp.prefix_octet_9  8  uint
+                      field  bmp.prefix_octet_10  8  uint
+                      field  bmp.prefix_octet_11  8  uint
+                      field  bmp.prefix_octet_12  8  uint
+                      field  bmp.prefix_octet_13  8  uint
+                      field  bmp.prefix_octet_14  8  uint
+                      field  bmp.prefix_octet_15  8  uint
+                      field  bmp.prefix_octet_16  8  uint
+                  end
+                end
+              end
+              length  16  bytes
+                group  bmp.attributes  rest
+                  field  bmp.attr_optional  1  uint
+                  field  bmp.attr_transitive  1  uint
+                  field  bmp.attr_partial  1  uint
+                  field  bmp.attr_extended_length  1  uint
+                  field  bmp.attr_flags_low  4  uint
+                  field  bmp.attr_type  8  uint
+                  switch  bmp.attr_extended_length
+                    case  1
+                      length  16  bytes
+                        switch  bmp.attr_type
+                          case  1
+                            field  bmp.origin  8  uint
+                          case  2
+                            group  bmp.as_path_segments  rest
+                              field  bmp.segment_type  8  uint
+                              count  asns  8
+                              group  bmp.segment_asns  count  @asns
+                                field  bmp.asn  32  uint
+                              end
+                            end
+                          case  3
+                            field  bmp.next_hop  32  uint
+                          case  4
+                            field  bmp.multi_exit_disc  32  uint
+                          case  5
+                            field  bmp.local_pref  32  uint
+                          else
+                            group  bmp.attr_value  rest
+                              field  bmp.octet  8  uint
+                            end
+                        end
+                      end
+                    else
+                      length  8  bytes
+                        switch  bmp.attr_type
+                          case  1
+                            field  bmp.origin  8  uint
+                          case  2
+                            group  bmp.as_path_segments  rest
+                              field  bmp.segment_type  8  uint
+                              count  asns  8
+                              group  bmp.segment_asns  count  @asns
+                                field  bmp.asn  32  uint
+                              end
+                            end
+                          case  3
+                            field  bmp.next_hop  32  uint
+                          case  4
+                            field  bmp.multi_exit_disc  32  uint
+                          case  5
+                            field  bmp.local_pref  32  uint
+                          else
+                            group  bmp.attr_value  rest
+                              field  bmp.octet  8  uint
+                            end
+                        end
+                      end
+                  end
+                end
+              end
+              group  bmp.nlri  rest
+                field  bmp.prefix_length  8  uint
+                switch  bmp.prefix_length
+                  case  0
+                  case  1,2,3,4,5,6,7,8
+                    field  bmp.prefix_octet_1  8  uint
+                  case  9,10,11,12,13,14,15,16
+                    field  bmp.prefix_octet_1  8  uint
+                    field  bmp.prefix_octet_2  8  uint
+                  case  17,18,19,20,21,22,23,24
+                    field  bmp.prefix_octet_1  8  uint
+                    field  bmp.prefix_octet_2  8  uint
+                    field  bmp.prefix_octet_3  8  uint
+                  case  25,26,27,28,29,30,31,32
+                    field  bmp.prefix_octet_1  8  uint
+                    field  bmp.prefix_octet_2  8  uint
+                    field  bmp.prefix_octet_3  8  uint
+                    field  bmp.prefix_octet_4  8  uint
+                  case  33,34,35,36,37,38,39,40
+                    field  bmp.prefix_octet_1  8  uint
+                    field  bmp.prefix_octet_2  8  uint
+                    field  bmp.prefix_octet_3  8  uint
+                    field  bmp.prefix_octet_4  8  uint
+                    field  bmp.prefix_octet_5  8  uint
+                  case  41,42,43,44,45,46,47,48
+                    field  bmp.prefix_octet_1  8  uint
+                    field  bmp.prefix_octet_2  8  uint
+                    field  bmp.prefix_octet_3  8  uint
+                    field  bmp.prefix_octet_4  8  uint
+                    field  bmp.prefix_octet_5  8  uint
+                    field  bmp.prefix_octet_6  8  uint
+                  case  49,50,51,52,53,54,55,56
+                    field  bmp.prefix_octet_1  8  uint
+                    field  bmp.prefix_octet_2  8  uint
+                    field  bmp.prefix_octet_3  8  uint
+                    field  bmp.prefix_octet_4  8  uint
+                    field  bmp.prefix_octet_5  8  uint
+                    field  bmp.prefix_octet_6  8  uint
+                    field  bmp.prefix_octet_7  8  uint
+                  case  57,58,59,60,61,62,63,64
+                    field  bmp.prefix_octet_1  8  uint
+                    field  bmp.prefix_octet_2  8  uint
+                    field  bmp.prefix_octet_3  8  uint
+                    field  bmp.prefix_octet_4  8  uint
+                    field  bmp.prefix_octet_5  8  uint
+                    field  bmp.prefix_octet_6  8  uint
+                    field  bmp.prefix_octet_7  8  uint
+                    field  bmp.prefix_octet_8  8  uint
+                  case  65,66,67,68,69,70,71,72
+                    field  bmp.prefix_octet_1  8  uint
+                    field  bmp.prefix_octet_2  8  uint
+                    field  bmp.prefix_octet_3  8  uint
+                    field  bmp.prefix_octet_4  8  uint
+                    field  bmp.prefix_octet_5  8  uint
+                    field  bmp.prefix_octet_6  8  uint
+                    field  bmp.prefix_octet_7  8  uint
+                    field  bmp.prefix_octet_8  8  uint
+                    field  bmp.prefix_octet_9  8  uint
+                  case  73,74,75,76,77,78,79,80
+                    field  bmp.prefix_octet_1  8  uint
+                    field  bmp.prefix_octet_2  8  uint
+                    field  bmp.prefix_octet_3  8  uint
+                    field  bmp.prefix_octet_4  8  uint
+                    field  bmp.prefix_octet_5  8  uint
+                    field  bmp.prefix_octet_6  8  uint
+                    field  bmp.prefix_octet_7  8  uint
+                    field  bmp.prefix_octet_8  8  uint
+                    field  bmp.prefix_octet_9  8  uint
+                    field  bmp.prefix_octet_10  8  uint
+                  case  81,82,83,84,85,86,87,88
+                    field  bmp.prefix_octet_1  8  uint
+                    field  bmp.prefix_octet_2  8  uint
+                    field  bmp.prefix_octet_3  8  uint
+                    field  bmp.prefix_octet_4  8  uint
+                    field  bmp.prefix_octet_5  8  uint
+                    field  bmp.prefix_octet_6  8  uint
+                    field  bmp.prefix_octet_7  8  uint
+                    field  bmp.prefix_octet_8  8  uint
+                    field  bmp.prefix_octet_9  8  uint
+                    field  bmp.prefix_octet_10  8  uint
+                    field  bmp.prefix_octet_11  8  uint
+                  case  89,90,91,92,93,94,95,96
+                    field  bmp.prefix_octet_1  8  uint
+                    field  bmp.prefix_octet_2  8  uint
+                    field  bmp.prefix_octet_3  8  uint
+                    field  bmp.prefix_octet_4  8  uint
+                    field  bmp.prefix_octet_5  8  uint
+                    field  bmp.prefix_octet_6  8  uint
+                    field  bmp.prefix_octet_7  8  uint
+                    field  bmp.prefix_octet_8  8  uint
+                    field  bmp.prefix_octet_9  8  uint
+                    field  bmp.prefix_octet_10  8  uint
+                    field  bmp.prefix_octet_11  8  uint
+                    field  bmp.prefix_octet_12  8  uint
+                  case  97,98,99,100,101,102,103,104
+                    field  bmp.prefix_octet_1  8  uint
+                    field  bmp.prefix_octet_2  8  uint
+                    field  bmp.prefix_octet_3  8  uint
+                    field  bmp.prefix_octet_4  8  uint
+                    field  bmp.prefix_octet_5  8  uint
+                    field  bmp.prefix_octet_6  8  uint
+                    field  bmp.prefix_octet_7  8  uint
+                    field  bmp.prefix_octet_8  8  uint
+                    field  bmp.prefix_octet_9  8  uint
+                    field  bmp.prefix_octet_10  8  uint
+                    field  bmp.prefix_octet_11  8  uint
+                    field  bmp.prefix_octet_12  8  uint
+                    field  bmp.prefix_octet_13  8  uint
+                  case  105,106,107,108,109,110,111,112
+                    field  bmp.prefix_octet_1  8  uint
+                    field  bmp.prefix_octet_2  8  uint
+                    field  bmp.prefix_octet_3  8  uint
+                    field  bmp.prefix_octet_4  8  uint
+                    field  bmp.prefix_octet_5  8  uint
+                    field  bmp.prefix_octet_6  8  uint
+                    field  bmp.prefix_octet_7  8  uint
+                    field  bmp.prefix_octet_8  8  uint
+                    field  bmp.prefix_octet_9  8  uint
+                    field  bmp.prefix_octet_10  8  uint
+                    field  bmp.prefix_octet_11  8  uint
+                    field  bmp.prefix_octet_12  8  uint
+                    field  bmp.prefix_octet_13  8  uint
+                    field  bmp.prefix_octet_14  8  uint
+                  case  113,114,115,116,117,118,119,120
+                    field  bmp.prefix_octet_1  8  uint
+                    field  bmp.prefix_octet_2  8  uint
+                    field  bmp.prefix_octet_3  8  uint
+                    field  bmp.prefix_octet_4  8  uint
+                    field  bmp.prefix_octet_5  8  uint
+                    field  bmp.prefix_octet_6  8  uint
+                    field  bmp.prefix_octet_7  8  uint
+                    field  bmp.prefix_octet_8  8  uint
+                    field  bmp.prefix_octet_9  8  uint
+                    field  bmp.prefix_octet_10  8  uint
+                    field  bmp.prefix_octet_11  8  uint
+                    field  bmp.prefix_octet_12  8  uint
+                    field  bmp.prefix_octet_13  8  uint
+                    field  bmp.prefix_octet_14  8  uint
+                    field  bmp.prefix_octet_15  8  uint
+                  case  121,122,123,124,125,126,127,128
+                    field  bmp.prefix_octet_1  8  uint
+                    field  bmp.prefix_octet_2  8  uint
+                    field  bmp.prefix_octet_3  8  uint
+                    field  bmp.prefix_octet_4  8  uint
+                    field  bmp.prefix_octet_5  8  uint
+                    field  bmp.prefix_octet_6  8  uint
+                    field  bmp.prefix_octet_7  8  uint
+                    field  bmp.prefix_octet_8  8  uint
+                    field  bmp.prefix_octet_9  8  uint
+                    field  bmp.prefix_octet_10  8  uint
+                    field  bmp.prefix_octet_11  8  uint
+                    field  bmp.prefix_octet_12  8  uint
+                    field  bmp.prefix_octet_13  8  uint
+                    field  bmp.prefix_octet_14  8  uint
+                    field  bmp.prefix_octet_15  8  uint
+                    field  bmp.prefix_octet_16  8  uint
+                end
+              end
+            else
+              group  bmp.bgp_body  rest
+                field  bmp.octet  8  uint
+              end
+          end
+        end
+    end
+  case  1                       # Statistics Report
+    field  bmp.peer_type  8  uint
+    field  bmp.peer_flag_v  1  uint
+    field  bmp.peer_flag_l  1  uint
+    field  bmp.peer_flag_a  1  uint
+    field  bmp.peer_flag_o  1  uint
+    field  bmp.peer_flags_low  4  uint
+    field  bmp.peer_distinguisher  64  uint
+    switch  bmp.peer_flag_v
+      case  1
+        field  bmp.peer_ipv6_high  64  uint
+        field  bmp.peer_ipv6_low  64  uint
+      else
+        pad  96
+        field  bmp.peer_ipv4  32  uint
+    end
+    field  bmp.peer_as  32  uint
+    field  bmp.peer_bgp_id  32  uint
+    field  bmp.timestamp_sec  32  uint
+    field  bmp.timestamp_usec  32  uint
+    group  bmp.stats  count  32
+      field  bmp.stat_type  16  uint
+      length  16  bytes
+        switch  bmp.stat_type
+          case  0,1,2,3,4,5,6,11,12,13
+            field  bmp.stat_counter  32  uint
+          case  7,8,14,15
+            field  bmp.stat_gauge  64  uint
+          case  9,10,16,17
+            field  bmp.stat_afi  16  uint
+            field  bmp.stat_safi  8  uint
+            field  bmp.stat_gauge  64  uint
+          else
+            group  bmp.stat_value  rest
+              field  bmp.octet  8  uint
+            end
+        end
+      end
+    end
+  case  2                       # Peer Down Notification
+    field  bmp.peer_type  8  uint
+    field  bmp.peer_flag_v  1  uint
+    field  bmp.peer_flag_l  1  uint
+    field  bmp.peer_flag_a  1  uint
+    field  bmp.peer_flag_o  1  uint
+    field  bmp.peer_flags_low  4  uint
+    field  bmp.peer_distinguisher  64  uint
+    switch  bmp.peer_flag_v
+      case  1
+        field  bmp.peer_ipv6_high  64  uint
+        field  bmp.peer_ipv6_low  64  uint
+      else
+        pad  96
+        field  bmp.peer_ipv4  32  uint
+    end
+    field  bmp.peer_as  32  uint
+    field  bmp.peer_bgp_id  32  uint
+    field  bmp.timestamp_sec  32  uint
+    field  bmp.timestamp_usec  32  uint
+    field  bmp.down_reason  8  uint
+    switch  bmp.down_reason
+      case  1,3
+        const  32  4294967295
+        const  32  4294967295
+        const  32  4294967295
+        const  32  4294967295
+        length  16  bytes  plus  18
+          field  bmp.bgp_type  8  uint
+          switch  bmp.bgp_type
+            case  3
+              field  bmp.error_code  8  uint
+              field  bmp.error_subcode  8  uint
+              group  bmp.notification_data  rest
+                field  bmp.octet  8  uint
+              end
+            else
+              group  bmp.bgp_body  rest
+                field  bmp.octet  8  uint
+              end
+          end
+        end
+      case  2
+        field  bmp.fsm_event  16  uint
+      case  6
+        group  bmp.down_tlvs  rest
+          field  bmp.info_type  16  uint
+          length  16  bytes
+            group  bmp.info_value  rest
+              field  bmp.octet  8  uint
+            end
+          end
+        end
+      case  4,5
+      else
+        group  bmp.down_data  rest
+          field  bmp.octet  8  uint
+        end
+    end
+  case  3                       # Peer Up Notification
+    field  bmp.peer_type  8  uint
+    field  bmp.peer_flag_v  1  uint
+    field  bmp.peer_flag_l  1  uint
+    field  bmp.peer_flag_a  1  uint
+    field  bmp.peer_flag_o  1  uint
+    field  bmp.peer_flags_low  4  uint
+    field  bmp.peer_distinguisher  64  uint
+    switch  bmp.peer_flag_v
+      case  1
+        field  bmp.peer_ipv6_high  64  uint
+        field  bmp.peer_ipv6_low  64  uint
+      else
+        pad  96
+        field  bmp.peer_ipv4  32  uint
+    end
+    field  bmp.peer_as  32  uint
+    field  bmp.peer_bgp_id  32  uint
+    field  bmp.timestamp_sec  32  uint
+    field  bmp.timestamp_usec  32  uint
+    switch  bmp.peer_flag_v
+      case  1
+        field  bmp.local_ipv6_high  64  uint
+        field  bmp.local_ipv6_low  64  uint
+      else
+        pad  96
+        field  bmp.local_ipv4  32  uint
+    end
+    field  bmp.local_port  16  uint
+    field  bmp.remote_port  16  uint
+    const  32  4294967295
+    const  32  4294967295
+    const  32  4294967295
+    const  32  4294967295
+    length  16  bytes  plus  18
+      field  bmp.sent_bgp_type  8  uint
+      switch  bmp.sent_bgp_type
+        case  1
+          field  bmp.sent_open_version  8  uint
+          field  bmp.sent_open_my_as  16  uint
+          field  bmp.sent_open_hold_time  16  uint
+          field  bmp.sent_open_bgp_identifier  32  uint
+          length  8  bytes
+            group  bmp.sent_open_parameters  rest
+              field  bmp.octet  8  uint
+            end
+          end
+        else
+          group  bmp.sent_bgp_body  rest
+            field  bmp.octet  8  uint
+          end
+      end
+    end
+    const  32  4294967295
+    const  32  4294967295
+    const  32  4294967295
+    const  32  4294967295
+    length  16  bytes  plus  18
+      field  bmp.received_bgp_type  8  uint
+      switch  bmp.received_bgp_type
+        case  1
+          field  bmp.received_open_version  8  uint
+          field  bmp.received_open_my_as  16  uint
+          field  bmp.received_open_hold_time  16  uint
+          field  bmp.received_open_bgp_identifier  32  uint
+          length  8  bytes
+            group  bmp.received_open_parameters  rest
+              field  bmp.octet  8  uint
+            end
+          end
+        else
+          group  bmp.received_bgp_body  rest
+            field  bmp.octet  8  uint
+          end
+      end
+    end
+    group  bmp.up_tlvs  rest
+      field  bmp.info_type  16  uint
+      length  16  bytes
+        group  bmp.info_value  rest
+          field  bmp.octet  8  uint
+        end
+      end
+    end
+  case  4                       # Initiation
+    group  bmp.init_tlvs  rest
+      field  bmp.info_type  16  uint
+      length  16  bytes
+        group  bmp.info_value  rest
+          field  bmp.octet  8  uint
+        end
+      end
+    end
+  case  5                       # Termination
+    group  bmp.term_tlvs  rest
+      field  bmp.info_type  16  uint
+      length  16  bytes
+        switch  bmp.info_type
+          case  1
+            field  bmp.termination_reason  16  uint
+          else
+            group  bmp.info_value  rest
+              field  bmp.octet  8  uint
+            end
+        end
+      end
+    end
+  case  6                       # Route Mirroring
+    field  bmp.peer_type  8  uint
+    field  bmp.peer_flag_v  1  uint
+    field  bmp.peer_flag_l  1  uint
+    field  bmp.peer_flag_a  1  uint
+    field  bmp.peer_flag_o  1  uint
+    field  bmp.peer_flags_low  4  uint
+    field  bmp.peer_distinguisher  64  uint
+    switch  bmp.peer_flag_v
+      case  1
+        field  bmp.peer_ipv6_high  64  uint
+        field  bmp.peer_ipv6_low  64  uint
+      else
+        pad  96
+        field  bmp.peer_ipv4  32  uint
+    end
+    field  bmp.peer_as  32  uint
+    field  bmp.peer_bgp_id  32  uint
+    field  bmp.timestamp_sec  32  uint
+    field  bmp.timestamp_usec  32  uint
+    group  bmp.mirror_tlvs  rest
+      field  bmp.mirror_type  16  uint
+      length  16  bytes
+        switch  bmp.mirror_type
+          case  0
+            const  32  4294967295
+            const  32  4294967295
+            const  32  4294967295
+            const  32  4294967295
+            length  16  bytes  plus  18
+              field  bmp.bgp_type  8  uint
+              switch  bmp.bgp_type
+                case  1
+                  field  bmp.open_version  8  uint
+                  field  bmp.open_my_as  16  uint
+                  field  bmp.open_hold_time  16  uint
+                  field  bmp.open_bgp_identifier  32  uint
+                  length  8  bytes
+                    group  bmp.open_parameters  rest
+                      field  bmp.octet  8  uint
+                    end
+                  end
+                case  2
+                  length  16  bytes
+                    group  bmp.withdrawn_routes  rest
+                      field  bmp.prefix_length  8  uint
+                      switch  bmp.prefix_length
+                        case  0
+                        case  1,2,3,4,5,6,7,8
+                          field  bmp.prefix_octet_1  8  uint
+                        case  9,10,11,12,13,14,15,16
+                          field  bmp.prefix_octet_1  8  uint
+                          field  bmp.prefix_octet_2  8  uint
+                        case  17,18,19,20,21,22,23,24
+                          field  bmp.prefix_octet_1  8  uint
+                          field  bmp.prefix_octet_2  8  uint
+                          field  bmp.prefix_octet_3  8  uint
+                        case  25,26,27,28,29,30,31,32
+                          field  bmp.prefix_octet_1  8  uint
+                          field  bmp.prefix_octet_2  8  uint
+                          field  bmp.prefix_octet_3  8  uint
+                          field  bmp.prefix_octet_4  8  uint
+                        case  33,34,35,36,37,38,39,40
+                          field  bmp.prefix_octet_1  8  uint
+                          field  bmp.prefix_octet_2  8  uint
+                          field  bmp.prefix_octet_3  8  uint
+                          field  bmp.prefix_octet_4  8  uint
+                          field  bmp.prefix_octet_5  8  uint
+                        case  41,42,43,44,45,46,47,48
+                          field  bmp.prefix_octet_1  8  uint
+                          field  bmp.prefix_octet_2  8  uint
+                          field  bmp.prefix_octet_3  8  uint
+                          field  bmp.prefix_octet_4  8  uint
+                          field  bmp.prefix_octet_5  8  uint
+                          field  bmp.prefix_octet_6  8  uint
+                        case  49,50,51,52,53,54,55,56
+                          field  bmp.prefix_octet_1  8  uint
+                          field  bmp.prefix_octet_2  8  uint
+                          field  bmp.prefix_octet_3  8  uint
+                          field  bmp.prefix_octet_4  8  uint
+                          field  bmp.prefix_octet_5  8  uint
+                          field  bmp.prefix_octet_6  8  uint
+                          field  bmp.prefix_octet_7  8  uint
+                        case  57,58,59,60,61,62,63,64
+                          field  bmp.prefix_octet_1  8  uint
+                          field  bmp.prefix_octet_2  8  uint
+                          field  bmp.prefix_octet_3  8  uint
+                          field  bmp.prefix_octet_4  8  uint
+                          field  bmp.prefix_octet_5  8  uint
+                          field  bmp.prefix_octet_6  8  uint
+                          field  bmp.prefix_octet_7  8  uint
+                          field  bmp.prefix_octet_8  8  uint
+                        case  65,66,67,68,69,70,71,72
+                          field  bmp.prefix_octet_1  8  uint
+                          field  bmp.prefix_octet_2  8  uint
+                          field  bmp.prefix_octet_3  8  uint
+                          field  bmp.prefix_octet_4  8  uint
+                          field  bmp.prefix_octet_5  8  uint
+                          field  bmp.prefix_octet_6  8  uint
+                          field  bmp.prefix_octet_7  8  uint
+                          field  bmp.prefix_octet_8  8  uint
+                          field  bmp.prefix_octet_9  8  uint
+                        case  73,74,75,76,77,78,79,80
+                          field  bmp.prefix_octet_1  8  uint
+                          field  bmp.prefix_octet_2  8  uint
+                          field  bmp.prefix_octet_3  8  uint
+                          field  bmp.prefix_octet_4  8  uint
+                          field  bmp.prefix_octet_5  8  uint
+                          field  bmp.prefix_octet_6  8  uint
+                          field  bmp.prefix_octet_7  8  uint
+                          field  bmp.prefix_octet_8  8  uint
+                          field  bmp.prefix_octet_9  8  uint
+                          field  bmp.prefix_octet_10  8  uint
+                        case  81,82,83,84,85,86,87,88
+                          field  bmp.prefix_octet_1  8  uint
+                          field  bmp.prefix_octet_2  8  uint
+                          field  bmp.prefix_octet_3  8  uint
+                          field  bmp.prefix_octet_4  8  uint
+                          field  bmp.prefix_octet_5  8  uint
+                          field  bmp.prefix_octet_6  8  uint
+                          field  bmp.prefix_octet_7  8  uint
+                          field  bmp.prefix_octet_8  8  uint
+                          field  bmp.prefix_octet_9  8  uint
+                          field  bmp.prefix_octet_10  8  uint
+                          field  bmp.prefix_octet_11  8  uint
+                        case  89,90,91,92,93,94,95,96
+                          field  bmp.prefix_octet_1  8  uint
+                          field  bmp.prefix_octet_2  8  uint
+                          field  bmp.prefix_octet_3  8  uint
+                          field  bmp.prefix_octet_4  8  uint
+                          field  bmp.prefix_octet_5  8  uint
+                          field  bmp.prefix_octet_6  8  uint
+                          field  bmp.prefix_octet_7  8  uint
+                          field  bmp.prefix_octet_8  8  uint
+                          field  bmp.prefix_octet_9  8  uint
+                          field  bmp.prefix_octet_10  8  uint
+                          field  bmp.prefix_octet_11  8  uint
+                          field  bmp.prefix_octet_12  8  uint
+                        case  97,98,99,100,101,102,103,104
+                          field  bmp.prefix_octet_1  8  uint
+                          field  bmp.prefix_octet_2  8  uint
+                          field  bmp.prefix_octet_3  8  uint
+                          field  bmp.prefix_octet_4  8  uint
+                          field  bmp.prefix_octet_5  8  uint
+                          field  bmp.prefix_octet_6  8  uint
+                          field  bmp.prefix_octet_7  8  uint
+                          field  bmp.prefix_octet_8  8  uint
+                          field  bmp.prefix_octet_9  8  uint
+                          field  bmp.prefix_octet_10  8  uint
+                          field  bmp.prefix_octet_11  8  uint
+                          field  bmp.prefix_octet_12  8  uint
+                          field  bmp.prefix_octet_13  8  uint
+                        case  105,106,107,108,109,110,111,112
+                          field  bmp.prefix_octet_1  8  uint
+                          field  bmp.prefix_octet_2  8  uint
+                          field  bmp.prefix_octet_3  8  uint
+                          field  bmp.prefix_octet_4  8  uint
+                          field  bmp.prefix_octet_5  8  uint
+                          field  bmp.prefix_octet_6  8  uint
+                          field  bmp.prefix_octet_7  8  uint
+                          field  bmp.prefix_octet_8  8  uint
+                          field  bmp.prefix_octet_9  8  uint
+                          field  bmp.prefix_octet_10  8  uint
+                          field  bmp.prefix_octet_11  8  uint
+                          field  bmp.prefix_octet_12  8  uint
+                          field  bmp.prefix_octet_13  8  uint
+                          field  bmp.prefix_octet_14  8  uint
+                        case  113,114,115,116,117,118,119,120
+                          field  bmp.prefix_octet_1  8  uint
+                          field  bmp.prefix_octet_2  8  uint
+                          field  bmp.prefix_octet_3  8  uint
+                          field  bmp.prefix_octet_4  8  uint
+                          field  bmp.prefix_octet_5  8  uint
+                          field  bmp.prefix_octet_6  8  uint
+                          field  bmp.prefix_octet_7  8  uint
+                          field  bmp.prefix_octet_8  8  uint
+                          field  bmp.prefix_octet_9  8  uint
+                          field  bmp.prefix_octet_10  8  uint
+                          field  bmp.prefix_octet_11  8  uint
+                          field  bmp.prefix_octet_12  8  uint
+                          field  bmp.prefix_octet_13  8  uint
+                          field  bmp.prefix_octet_14  8  uint
+                          field  bmp.prefix_octet_15  8  uint
+                        case  121,122,123,124,125,126,127,128
+                          field  bmp.prefix_octet_1  8  uint
+                          field  bmp.prefix_octet_2  8  uint
+                          field  bmp.prefix_octet_3  8  uint
+                          field  bmp.prefix_octet_4  8  uint
+                          field  bmp.prefix_octet_5  8  uint
+                          field  bmp.prefix_octet_6  8  uint
+                          field  bmp.prefix_octet_7  8  uint
+                          field  bmp.prefix_octet_8  8  uint
+                          field  bmp.prefix_octet_9  8  uint
+                          field  bmp.prefix_octet_10  8  uint
+                          field  bmp.prefix_octet_11  8  uint
+                          field  bmp.prefix_octet_12  8  uint
+                          field  bmp.prefix_octet_13  8  uint
+                          field  bmp.prefix_octet_14  8  uint
+                          field  bmp.prefix_octet_15  8  uint
+                          field  bmp.prefix_octet_16  8  uint
+                      end
+                    end
+                  end
+                  length  16  bytes
+                    group  bmp.attributes  rest
+                      field  bmp.attr_optional  1  uint
+                      field  bmp.attr_transitive  1  uint
+                      field  bmp.attr_partial  1  uint
+                      field  bmp.attr_extended_length  1  uint
+                      field  bmp.attr_flags_low  4  uint
+                      field  bmp.attr_type  8  uint
+                      switch  bmp.attr_extended_length
+                        case  1
+                          length  16  bytes
+                            switch  bmp.attr_type
+                              case  1
+                                field  bmp.origin  8  uint
+                              case  2
+                                group  bmp.as_path_segments  rest
+                                  field  bmp.segment_type  8  uint
+                                  count  asns  8
+                                  group  bmp.segment_asns  count  @asns
+                                    field  bmp.asn  32  uint
+                                  end
+                                end
+                              case  3
+                                field  bmp.next_hop  32  uint
+                              case  4
+                                field  bmp.multi_exit_disc  32  uint
+                              case  5
+                                field  bmp.local_pref  32  uint
+                              else
+                                group  bmp.attr_value  rest
+                                  field  bmp.octet  8  uint
+                                end
+                            end
+                          end
+                        else
+                          length  8  bytes
+                            switch  bmp.attr_type
+                              case  1
+                                field  bmp.origin  8  uint
+                              case  2
+                                group  bmp.as_path_segments  rest
+                                  field  bmp.segment_type  8  uint
+                                  count  asns  8
+                                  group  bmp.segment_asns  count  @asns
+                                    field  bmp.asn  32  uint
+                                  end
+                                end
+                              case  3
+                                field  bmp.next_hop  32  uint
+                              case  4
+                                field  bmp.multi_exit_disc  32  uint
+                              case  5
+                                field  bmp.local_pref  32  uint
+                              else
+                                group  bmp.attr_value  rest
+                                  field  bmp.octet  8  uint
+                                end
+                            end
+                          end
+                      end
+                    end
+                  end
+                  group  bmp.nlri  rest
+                    field  bmp.prefix_length  8  uint
+                    switch  bmp.prefix_length
+                      case  0
+                      case  1,2,3,4,5,6,7,8
+                        field  bmp.prefix_octet_1  8  uint
+                      case  9,10,11,12,13,14,15,16
+                        field  bmp.prefix_octet_1  8  uint
+                        field  bmp.prefix_octet_2  8  uint
+                      case  17,18,19,20,21,22,23,24
+                        field  bmp.prefix_octet_1  8  uint
+                        field  bmp.prefix_octet_2  8  uint
+                        field  bmp.prefix_octet_3  8  uint
+                      case  25,26,27,28,29,30,31,32
+                        field  bmp.prefix_octet_1  8  uint
+                        field  bmp.prefix_octet_2  8  uint
+                        field  bmp.prefix_octet_3  8  uint
+                        field  bmp.prefix_octet_4  8  uint
+                      case  33,34,35,36,37,38,39,40
+                        field  bmp.prefix_octet_1  8  uint
+                        field  bmp.prefix_octet_2  8  uint
+                        field  bmp.prefix_octet_3  8  uint
+                        field  bmp.prefix_octet_4  8  uint
+                        field  bmp.prefix_octet_5  8  uint
+                      case  41,42,43,44,45,46,47,48
+                        field  bmp.prefix_octet_1  8  uint
+                        field  bmp.prefix_octet_2  8  uint
+                        field  bmp.prefix_octet_3  8  uint
+                        field  bmp.prefix_octet_4  8  uint
+                        field  bmp.prefix_octet_5  8  uint
+                        field  bmp.prefix_octet_6  8  uint
+                      case  49,50,51,52,53,54,55,56
+                        field  bmp.prefix_octet_1  8  uint
+                        field  bmp.prefix_octet_2  8  uint
+                        field  bmp.prefix_octet_3  8  uint
+                        field  bmp.prefix_octet_4  8  uint
+                        field  bmp.prefix_octet_5  8  uint
+                        field  bmp.prefix_octet_6  8  uint
+                        field  bmp.prefix_octet_7  8  uint
+                      case  57,58,59,60,61,62,63,64
+                        field  bmp.prefix_octet_1  8  uint
+                        field  bmp.prefix_octet_2  8  uint
+                        field  bmp.prefix_octet_3  8  uint
+                        field  bmp.prefix_octet_4  8  uint
+                        field  bmp.prefix_octet_5  8  uint
+                        field  bmp.prefix_octet_6  8  uint
+                        field  bmp.prefix_octet_7  8  uint
+                        field  bmp.prefix_octet_8  8  uint
+                      case  65,66,67,68,69,70,71,72
+                        field  bmp.prefix_octet_1  8  uint
+                        field  bmp.prefix_octet_2  8  uint
+                        field  bmp.prefix_octet_3  8  uint
+                        field  bmp.prefix_octet_4  8  uint
+                        field  bmp.prefix_octet_5  8  uint
+                        field  bmp.prefix_octet_6  8  uint
+                        field  bmp.prefix_octet_7  8  uint
+                        field  bmp.prefix_octet_8  8  uint
+                        field  bmp.prefix_octet_9  8  uint
+                      case  73,74,75,76,77,78,79,80
+                        field  bmp.prefix_octet_1  8  uint
+                        field  bmp.prefix_octet_2  8  uint
+                        field  bmp.prefix_octet_3  8  uint
+                        field  bmp.prefix_octet_4  8  uint
+                        field  bmp.prefix_octet_5  8  uint
+                        field  bmp.prefix_octet_6  8  uint
+                        field  bmp.prefix_octet_7  8  uint
+                        field  bmp.prefix_octet_8  8  uint
+                        field  bmp.prefix_octet_9  8  uint
+                        field  bmp.prefix_octet_10  8  uint
+                      case  81,82,83,84,85,86,87,88
+                        field  bmp.prefix_octet_1  8  uint
+                        field  bmp.prefix_octet_2  8  uint
+                        field  bmp.prefix_octet_3  8  uint
+                        field  bmp.prefix_octet_4  8  uint
+                        field  bmp.prefix_octet_5  8  uint
+                        field  bmp.prefix_octet_6  8  uint
+                        field  bmp.prefix_octet_7  8  uint
+                        field  bmp.prefix_octet_8  8  uint
+                        field  bmp.prefix_octet_9  8  uint
+                        field  bmp.prefix_octet_10  8  uint
+                        field  bmp.prefix_octet_11  8  uint
+                      case  89,90,91,92,93,94,95,96
+                        field  bmp.prefix_octet_1  8  uint
+                        field  bmp.prefix_octet_2  8  uint
+                        field  bmp.prefix_octet_3  8  uint
+                        field  bmp.prefix_octet_4  8  uint
+                        field  bmp.prefix_octet_5  8  uint
+                        field  bmp.prefix_octet_6  8  uint
+                        field  bmp.prefix_octet_7  8  uint
+                        field  bmp.prefix_octet_8  8  uint
+                        field  bmp.prefix_octet_9  8  uint
+                        field  bmp.prefix_octet_10  8  uint
+                        field  bmp.prefix_octet_11  8  uint
+                        field  bmp.prefix_octet_12  8  uint
+                      case  97,98,99,100,101,102,103,104
+                        field  bmp.prefix_octet_1  8  uint
+                        field  bmp.prefix_octet_2  8  uint
+                        field  bmp.prefix_octet_3  8  uint
+                        field  bmp.prefix_octet_4  8  uint
+                        field  bmp.prefix_octet_5  8  uint
+                        field  bmp.prefix_octet_6  8  uint
+                        field  bmp.prefix_octet_7  8  uint
+                        field  bmp.prefix_octet_8  8  uint
+                        field  bmp.prefix_octet_9  8  uint
+                        field  bmp.prefix_octet_10  8  uint
+                        field  bmp.prefix_octet_11  8  uint
+                        field  bmp.prefix_octet_12  8  uint
+                        field  bmp.prefix_octet_13  8  uint
+                      case  105,106,107,108,109,110,111,112
+                        field  bmp.prefix_octet_1  8  uint
+                        field  bmp.prefix_octet_2  8  uint
+                        field  bmp.prefix_octet_3  8  uint
+                        field  bmp.prefix_octet_4  8  uint
+                        field  bmp.prefix_octet_5  8  uint
+                        field  bmp.prefix_octet_6  8  uint
+                        field  bmp.prefix_octet_7  8  uint
+                        field  bmp.prefix_octet_8  8  uint
+                        field  bmp.prefix_octet_9  8  uint
+                        field  bmp.prefix_octet_10  8  uint
+                        field  bmp.prefix_octet_11  8  uint
+                        field  bmp.prefix_octet_12  8  uint
+                        field  bmp.prefix_octet_13  8  uint
+                        field  bmp.prefix_octet_14  8  uint
+                      case  113,114,115,116,117,118,119,120
+                        field  bmp.prefix_octet_1  8  uint
+                        field  bmp.prefix_octet_2  8  uint
+                        field  bmp.prefix_octet_3  8  uint
+                        field  bmp.prefix_octet_4  8  uint
+                        field  bmp.prefix_octet_5  8  uint
+                        field  bmp.prefix_octet_6  8  uint
+                        field  bmp.prefix_octet_7  8  uint
+                        field  bmp.prefix_octet_8  8  uint
+                        field  bmp.prefix_octet_9  8  uint
+                        field  bmp.prefix_octet_10  8  uint
+                        field  bmp.prefix_octet_11  8  uint
+                        field  bmp.prefix_octet_12  8  uint
+                        field  bmp.prefix_octet_13  8  uint
+                        field  bmp.prefix_octet_14  8  uint
+                        field  bmp.prefix_octet_15  8  uint
+                      case  121,122,123,124,125,126,127,128
+                        field  bmp.prefix_octet_1  8  uint
+                        field  bmp.prefix_octet_2  8  uint
+                        field  bmp.prefix_octet_3  8  uint
+                        field  bmp.prefix_octet_4  8  uint
+                        field  bmp.prefix_octet_5  8  uint
+                        field  bmp.prefix_octet_6  8  uint
+                        field  bmp.prefix_octet_7  8  uint
+                        field  bmp.prefix_octet_8  8  uint
+                        field  bmp.prefix_octet_9  8  uint
+                        field  bmp.prefix_octet_10  8  uint
+                        field  bmp.prefix_octet_11  8  uint
+                        field  bmp.prefix_octet_12  8  uint
+                        field  bmp.prefix_octet_13  8  uint
+                        field  bmp.prefix_octet_14  8  uint
+                        field  bmp.prefix_octet_15  8  uint
+                        field  bmp.prefix_octet_16  8  uint
+                    end
+                  end
+                case  3
+                  field  bmp.error_code  8  uint
+                  field  bmp.error_subcode  8  uint
+                  group  bmp.notification_data  rest
+                    field  bmp.octet  8  uint
+                  end
+                case  4
+                else
+                  group  bmp.bgp_body  rest
+                    field  bmp.octet  8  uint
+                  end
+              end
+            end
+          case  1
+            field  bmp.mirror_code  16  uint
+          else
+            group  bmp.info_value  rest
+              field  bmp.octet  8  uint
+            end
+        end
+      end
+    end
+  else
+    group  bmp.body  rest
+      field  bmp.octet  8  uint
+    end
+end

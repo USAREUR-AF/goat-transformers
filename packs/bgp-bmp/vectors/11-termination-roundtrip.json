@@ -1,0 +1,13 @@
+{
+  "name": "termination-roundtrip",
+  "from": "bgp-bmp",
+  "to": "bgp-bmp",
+  "input": "030000001a050001000200020000000a6c6f77206d656d6f7279",
+  "expect": "030000001a050001000200020000000a6c6f77206d656d6f7279",
+  "model": {
+    "bmp.term_tlvs.#": "2",
+    "bmp.term_tlvs[0].bmp.termination_reason": "2",
+    "bmp.term_tlvs[1].bmp.info_value.#": "10"
+  },
+  "source": "built by tools/gen/routing-vectors.py from values chosen there; layout restated from RFC 7854 sections 4.1 to 4.10 (with RFC 8671 and RFC 9069) and RFC 4271 section 4; Termination with reason 2 (out of resources) and a string; expect derived there, no engine run"
+}

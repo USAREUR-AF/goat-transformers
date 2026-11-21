@@ -36,6 +36,7 @@ With --check nothing is written and the exit status is 1 when a committed file
 differs.
 """
 import json
+import re
 import os
 import sys
 
@@ -785,7 +786,9 @@ def build_files(out):
             out.write(d + "/" + name, json.dumps(v, indent=2, ensure_ascii=False) + "\n")
             keep.add(name)
         for old in out.listdir(d):
-            if old.endswith(".json") and old not in keep:
+            # only this script's own NN-<name>.json files: cross vectors other
+            # generators write into the directory (to-<pack>-*.json) are theirs
+            if re.fullmatch(r"\d{2}-.+\.json", old) and old not in keep:
                 out.remove(d + "/" + old)
         written[pack_name] = len(vecs)
     return written

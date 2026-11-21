@@ -1,0 +1,16 @@
+{
+  "name": "ipv4-prefix-roundtrip",
+  "from": "rpki-rtr",
+  "to": "rpki-rtr",
+  "input": "010400000000001401161800c00002000000fbf0",
+  "expect": "010400000000001401161800c00002000000fbf0",
+  "model": {
+    "@kind": "ipv4_prefix",
+    "rtr.announce": "1",
+    "rtr.prefix_length": "22",
+    "rtr.max_length": "24",
+    "rtr.ipv4_prefix": "3221225984",
+    "rtr.asn": "64496"
+  },
+  "source": "built by tools/gen/routing-vectors.py from values chosen there; layout restated from RFC 8210 section 5; a ipv4 prefix PDU; expect derived there, no engine run"
+}

@@ -1,0 +1,8 @@
+{
+  "name": "truncated-is-malformed",
+  "from": "rpki-rtr",
+  "to": "rpki-rtr",
+  "input": "010400000000001401161800c0000200",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/routing-vectors.py from values chosen there; layout restated from RFC 8210 section 5; the IPv4 Prefix PDU without its AS number; expect derived there, no engine run"
+}

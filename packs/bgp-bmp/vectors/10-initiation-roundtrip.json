@@ -1,0 +1,14 @@
+{
+  "name": "initiation-roundtrip",
+  "from": "bgp-bmp",
+  "to": "bgp-bmp",
+  "input": "030000003804000100154578616d706c6520526f75746572204f5320312e300002000e656467652d312e6578616d706c65000000036c6162",
+  "expect": "030000003804000100154578616d706c6520526f75746572204f5320312e300002000e656467652d312e6578616d706c65000000036c6162",
+  "model": {
+    "bmp.msg_type": "4",
+    "bmp.init_tlvs.#": "3",
+    "bmp.init_tlvs[0].bmp.info_type": "1",
+    "bmp.init_tlvs[1].bmp.info_value.#": "14"
+  },
+  "source": "built by tools/gen/routing-vectors.py from values chosen there; layout restated from RFC 7854 sections 4.1 to 4.10 (with RFC 8671 and RFC 9069) and RFC 4271 section 4; Initiation with sysDescr, sysName and a string; expect derived there, no engine run"
+}

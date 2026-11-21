@@ -1,0 +1,16 @@
+{
+  "name": "router-key-roundtrip",
+  "from": "rpki-rtr",
+  "to": "rpki-rtr",
+  "input": "010901000000002d0102030405060708090a0b0c0d0e0f10111213140000fbf0303132333435363738393a3b3c",
+  "expect": "010901000000002d0102030405060708090a0b0c0d0e0f10111213140000fbf0303132333435363738393a3b3c",
+  "model": {
+    "@kind": "router_key",
+    "rtr.announce": "1",
+    "rtr.ski_0": "72623859790382856",
+    "rtr.ski_2": "286397204",
+    "rtr.asn": "64496",
+    "rtr.spki.#": "13"
+  },
+  "source": "built by tools/gen/routing-vectors.py from values chosen there; layout restated from RFC 8210 section 5; a router key PDU; expect derived there, no engine run"
+}
