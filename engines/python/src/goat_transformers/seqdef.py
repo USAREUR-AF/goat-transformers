@@ -60,7 +60,7 @@ class Node:
     __slots__ = ("t", "lineno", "length", "value", "bindings", "name", "named", "conds", "body", "list", "mode",
                  "scope", "parts", "ends_fx", "unit", "plus", "locator", "uper", "n", "ext", "alts", "index",
                  "lb", "ub", "key", "cases", "other", "key_type", "ranges", "named_static", "chain", "key_lines",
-                 "count_node", "count_nodes", "tail_rest", "until", "as_key")
+                 "count_node", "count_nodes", "tail_rest", "until", "as_key", "at")
 
     is_field = False
     is_const = False
@@ -77,6 +77,7 @@ class Node:
         self.count_nodes = ()
         self.tail_rest = False
         self.as_key = None
+        self.at = None
         for k, v in kw.items():
             setattr(self, k, v)
 
@@ -189,6 +190,7 @@ class SeqKind:
         self.when_lines = ()
         self.block = None        # common + whens + nodes, set when the body is closed
         self.as_lines = []       # the `when ... as` nodes of the kind (0.30): an implicit `requires` term each
+        self.windows = []        # the `when ... at` nodes of the kind, in line order (0.33)
 
 
 class Body:
@@ -355,6 +357,28 @@ def check_as_keys(body, bad):
     return out
 
 
+def window_fixed(kind, w):
+    """0.33: the window of `when ... at` line `w` is fixed in its kind: walking
+    the kind's lines from its first, past the lines that occupy no bits, every
+    line until the window's end is a plain `when`, a `const`, a `pad` or a
+    `field` whose locator is a bit length (its `also` lines with it)."""
+    end = w.at + w.length
+    total = 0
+    for nd in kind.whens + kind.nodes:
+        t = nd.t
+        if t == T_WHEN and nd.at is not None:
+            continue
+        if t == T_FIELD:
+            if nd.length is None or nd.uper is not None or nd.until is not None:
+                return False
+        elif t not in (T_WHEN, T_CONST, T_PAD):
+            return False
+        total += nd.length
+        if total >= end:
+            return True
+    return False  # the window ends past the kind's last line
+
+
 def switch_cases(nd):
     """The `case` bodies of a switch, then its `else`."""
     return nd.cases + [nd.other] if nd.other is not None else nd.cases
@@ -412,6 +436,7 @@ def parse_seq_pack_text(text, *, source="pack.def"):
     wholes = []        # the `length ... whole` nodes, refused under `armor sixbit` (ruling 3 of 0.14)
     encoding = []      # 0.19: the `encoding` lines, checked after the file (`check_encoding`)
     uper_lines = []    # 0.19: (lineno, BadDirective) for each UPER line, refused when the pack is not UPER
+    at_form = []       # 0.33: (lineno, BadDirective) of the form of `at`, raised by `Engine.add` (ruling 10)
 
     def line_bad(msg_text, lineno, locator=None):
         """A line check of ruling 5b of 0.11 (steps 7 to 10)."""
@@ -937,8 +962,28 @@ def parse_seq_pack_text(text, *, source="pack.def"):
                 if in_block():  # ruling 10 of 0.8
                     raise bad("'when' inside a block", lineno, args[0])
                 nd = value_node(T_WHEN, kw, args, lineno)
-                if len(args) > 2:  # 0.30: `as <key>` (`line_head` lets only `as` through as the third token)
-                    rest = args[3:]
+                rest = args[2:]  # `line_head` lets only `as` or `at` through as the third token
+                if "at" in rest:  # 0.33: exactly `at <n> [as <key>]`; its errors are late (rulings 10, 27, 28)
+                    form = rest[0] == "at" and len(rest) in (2, 4) and (len(rest) == 2 or rest[2] == "as") \
+                        and rest[1] not in ("at", "as") and (len(rest) == 2 or rest[3] not in ("at", "as"))
+                    if not form:  # ruling 28: the key of a broken line is not read
+                        at_form.append((lineno, bad(
+                            "'at' with no value" if rest == ["at"] else
+                            "a 'when' line with 'at' is: when <len> <values> at <n> [as <key>]; got %r"
+                            % " ".join(rest), lineno, args[0])))
+                        rest = []
+                    else:
+                        n = rest[1]
+                        if not (n.isascii() and n.isdigit()) or int(n) >= 1 << 64:
+                            at_form.append((lineno, bad("'at' takes an unsigned decimal number of bits within 64 "
+                                                        "bits, got %r" % n, lineno, args[0])))
+                        elif body.cur is None:
+                            at_form.append((lineno, bad("'at' on a common 'when'", lineno, args[0])))
+                        else:
+                            nd.at = int(n)
+                        rest = rest[2:]
+                if rest:  # 0.30: `as <key>`
+                    rest = rest[1:]
                     if not rest:
                         deferred.append((lineno, bad("'as' with no key", lineno, args[0])))
                     elif "as" in rest:  # ruling 31: any second `as` token
@@ -1321,6 +1366,16 @@ def parse_seq_pack_text(text, *, source="pack.def"):
     )
     pack.layout = "sequential"
     pack.seq = msg
+    late = sorted(at_form, key=lambda d: d[0])
+    fixed = []
+    for b in msg.bodies():  # 0.33: the fixed-window check, after the form of `at` (ruling 10)
+        for k in b.kinds:
+            k.windows = [w for w in k.whens if w.at is not None]
+            for w in k.windows:
+                if not window_fixed(k, w):
+                    fixed.append((w.lineno, bad("the window of 'when ... at %d' (%d bit(s)) is not fixed in kind %r"
+                                                % (w.at, w.length, k.name), w.lineno, w.locator)))
+    pack.late_errors = [e for _, e in late + sorted(fixed, key=lambda d: d[0])]
     pack.uper = is_uper
     set_bit_order(pack)
     for lineno, (native, cot) in typemap:

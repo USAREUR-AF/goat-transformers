@@ -243,6 +243,19 @@ class _Reader:
                 return v
         return None
 
+    def window_read(self, nd, start):
+        """0.33: a `when ... at` reads its bits at kind start plus its offset,
+        without moving the cursor; bits beyond the input or the extent do not
+        hold (rulings 6 and 7). -> the bits when it holds, else None."""
+        pos = start + nd.at
+        if pos + nd.length > self.limit():
+            return None
+        v = self.msg.uint(pos, nd.length)
+        for lo, hi in nd.ranges:
+            if lo <= v <= hi:
+                return v
+        return None
+
     # -- UPER (0.19) --
 
     def at_soft_end(self):
@@ -715,7 +728,7 @@ class _Reader:
             for kind in body.kinds:
                 got = []
                 for w in kind.whens:
-                    raw = self.when_read(w)
+                    raw = self.when_read(w) if w.at is None else self.window_read(w, mark)
                     if raw is None:
                         break
                     if w.as_key is not None:
@@ -833,6 +846,15 @@ class _Writer:
         self.count_cur = {}
         self.extents = [[0, "bytes", []]]
         self.rest_last = []  # per `rest` item being written: it is its list's last (ruling 10)
+        # 0.33: the bits written from a key the entity holds, [start, end) of each line; the
+        # windows written, (start, length, value) in order, over the bits of `ops`; the
+        # positions a written window holds; the windows of the kind being written, as
+        # [windows, kind start, ctx, the end of the last window, (start, field node) ...]
+        self.held = []
+        self.wins = []
+        self.cleared = set()
+        self.hook = None
+        self.msb_like = pack.armor == "sixbit" or pack.bit_order == "msb"
 
     def mismatch(self):
         actual = self.actual
@@ -899,8 +921,102 @@ class _Writer:
             body = nd.scope
             kind = select_kind(self.pack, body, getattr(item, "kind", None), item.fields, item.lists, item=True)
             ctx = _Ctx(item.fields, item.lists, body.defaults_for(kind), token=id(item))
-            got = self.blocks[id(item)] = (ctx, kind.block if kind is not None else body.common, nd, item)
+            got = self.blocks[id(item)] = (ctx, kind.block if kind is not None else body.common, nd, item, kind)
         return got[0], got[1]
+
+    def emit_item(self, nd, item, ctx, lines):
+        """Write one item of group `nd` (its context and lines from `item_block`)."""
+        self.emit_scope(nd.scope, self.blocks[id(item)][4], ctx, lines)
+
+    def emit_scope(self, body, kind, ctx, lines):
+        """Write one message or item: its common lines and those of its kind.
+        A kind with `when ... at` lines (0.33) settles their windows once the
+        cursor passes the last window's end, before any later line is written."""
+        if kind is None or not kind.windows:
+            self.emit(lines, ctx)
+            return
+        self.emit(body.common, ctx, lines)
+        saved = self.hook
+        start = self.pos
+        self.hook = [kind.windows, start, ctx, start + max(w.at + w.length for w in kind.windows), []]
+        self.emit(kind.whens + kind.nodes, ctx, lines)
+        if self.hook is not None:
+            self.settle()
+        self.hook = saved
+
+    def bit(self, v, length, k):
+        """Bit `k` (in stream order) of a value of `length` bits as `put` places it."""
+        return (v >> (length - 1 - k)) & 1 if self.msb_like else (v >> k) & 1
+
+    def bits_at(self, start, length):
+        """0.33: the value of the bits written at [start, start + length), as decode reads them."""
+        bits = [0] * length
+        end = start + length
+        for s, n, v in self.ops:
+            for p in range(max(s, start), min(s + n, end)):
+                if self.bit(v, n, p - s):
+                    bits[p - start] = 1
+        for s, n, v in self.wins:
+            for p in range(max(s, start), min(s + n, end)):
+                bits[p - start] = self.bit(v, n, p - s)
+        out = 0
+        for k, b in enumerate(bits):
+            if b:
+                out |= 1 << (length - 1 - k) if self.msb_like else 1 << k
+        return out
+
+    def is_held(self, p):
+        return p not in self.cleared and any(a <= p < b for a, b in self.held)
+
+    def settle(self):
+        """0.33, Encode and rulings 1, 5, 12, 13 and 26: each window of the kind,
+        in line order. Its bits stand when they match the `when` and agree
+        with a held `as` key; otherwise it is written with the key's value, or
+        the first listed value, unless that changes a bit a held key wrote
+        (`transform-encode`). A switch then reads its key from the bits as they
+        stand."""
+        windows, start, ctx, _, fields = self.hook
+        self.hook = None
+        written = []
+        for w in windows:
+            ws, wl = start + w.at, w.length
+            cur = self.bits_at(ws, wl)
+            held = w.as_key is not None and w.as_key in ctx.fields
+            if held:
+                hv = ctx.fields[w.as_key]
+                if not when_matches(w, hv):
+                    raise TransformEncodeFailure(
+                        "%s holds %r, which the 'when' of its window does not match" % (w.as_key, hv),
+                        format=self.pack.name, locator=w.locator)
+                hv &= (1 << wl) - 1
+            if any(lo <= cur <= hi for lo, hi in w.ranges) and (not held or cur == hv):
+                val = cur
+            else:
+                val = hv if held else w.value
+                for k in range(wl):
+                    if self.is_held(ws + k) and self.bit(cur, wl, k) != self.bit(val, wl, k):
+                        raise TransformEncodeFailure(
+                            "the window of 'when ... at %d' would change bit %d that a held key wrote; the output "
+                            "would decode a different value" % (w.at, ws + k), format=self.pack.name,
+                            locator=w.locator)
+                self.wins.append((ws, wl, val))
+                self.cleared.update(range(ws, ws + wl))
+                written.append((ws, ws + wl))
+            if w.as_key is not None:
+                ctx.readback[w.as_key] = when_value(w, val)
+        for fs, fnd in fields:  # what decode reads for a key whose bits a window changed
+            fl = fnd.length
+            first = fnd.bindings[0]
+            if fl is None or getattr(first.transform, "as_bytes", False) or getattr(first.transform, "as_sixbit",
+                                                                                     False):
+                continue
+            if any(a < fs + fl and fs < b for a, b in written):
+                raw = self.bits_at(fs, fl)
+                if first.swap:
+                    raw = _swap_int(raw, fl)
+                got = {}
+                self.read_back(fnd, raw, got)
+                ctx.readback.update(got)
 
     # -- what a block would write --
 
@@ -958,9 +1074,13 @@ class _Writer:
         """Write the lines. `block` is the whole block they stand in when it is
         more than `nodes` (a chain's parts): where a presence is looked for."""
         for nd in nodes:
+            if self.hook is not None and self.pos >= self.hook[3]:  # 0.33: the windows are settled
+                self.settle()
             t = nd.t
             if t == T_FIELD:
                 self.field(nd, ctx)
+            elif t == T_WHEN and nd.at is not None:  # 0.33: a window occupies no bits; `settle` writes it
+                pass
             elif t == T_CONST or nd.as_key is None and t == T_WHEN:
                 self.put(nd.length, nd.value)
             elif t == T_WHEN:  # 0.30: `when ... as <key>`
@@ -1173,6 +1293,7 @@ class _Writer:
 
     def field(self, nd, ctx):
         """Write one field line and note what decode would read from it."""
+        start = self.pos
         out, raw = self.line_out(nd, ctx)
         length = nd.length
         if out is _UPER_ABSENT:  # a UPER locator: the value of ruling 1 of 0.19
@@ -1201,6 +1322,10 @@ class _Writer:
         else:
             self.put(length, out)
         self.read_back(nd, raw, ctx.readback)
+        if any(f.key in ctx.fields for f in _live(nd.bindings, ctx)):  # 0.33: bits a held key wrote
+            self.held.append((start, self.pos))
+        if self.hook is not None:
+            self.hook[4].append((start, nd))
 
     def read_back(self, nd, raw, got):
         """Add to `got` the value decode reads for each key of the line from
@@ -1310,7 +1435,7 @@ class _Writer:
                 at = self.pos
                 ictx, lines = self.item_block(nd, item)
                 self.rest_last.append(i == n - 1)
-                self.emit(lines, ictx)
+                self.emit_item(nd, item, ictx, lines)
                 self.rest_last.pop()
                 if self.pos == at:  # ruling 29
                     raise self.fail("an item of list %s writes no bits" % nd.list, nd)
@@ -1323,7 +1448,7 @@ class _Writer:
             for i, item in enumerate(items):
                 self.put(1, 1 if i == n - 1 else 0)
                 ictx, lines = self.item_block(nd, item)
-                self.emit(lines, ictx)
+                self.emit_item(nd, item, ictx, lines)
             return
         if mode == "count" and nd.count_node is not None:  # 0.21: the count line holds items + `plus`
             for c in nd.count_nodes:  # 0.31: each count holds the items plus its own `plus`
@@ -1332,7 +1457,7 @@ class _Writer:
                     rec[2] = n + c.plus
             for item in items:
                 ictx, lines = self.item_block(nd, item)
-                self.emit(lines, ictx)
+                self.emit_item(nd, item, ictx, lines)
             return
         if mode == "size":  # 0.19
             if nd.list not in ctx.lists and nd.lb:  # absent: `lb` items with no keys
@@ -1359,11 +1484,20 @@ class _Writer:
             elif mode == "more":
                 self.put(1, 1 if i < n - 1 else 0)
             ictx, lines = self.item_block(nd, item)
-            self.emit(lines, ictx)
+            self.emit_item(nd, item, ictx, lines)
             if mode == "fx":
                 self.put(1, 1 if i < n - 1 else 0)
         if mode == "while":
             self.pos += 1  # the 0 bit that ends the list
+
+    def apply_windows(self, acc, nbits, msb):
+        """0.33: the windows written, over the bits of the other lines, in order."""
+        for ws, wl, wv in self.wins:
+            for k in range(wl):
+                p = ws + k
+                idx = nbits - 1 - p if msb else p
+                acc = (acc & ~(1 << idx)) | (self.bit(wv, wl, k) << idx)
+        return acc
 
     def finish(self):
         """A message is a whole number of bytes: the rest of the last byte is
@@ -1383,7 +1517,7 @@ class _Writer:
             acc = 0
             for start, length, v in self.ops:
                 acc |= (v & ((1 << length) - 1)) << (nbits - start - length)
-            return armored_text(acc, nbits)
+            return armored_text(self.apply_windows(acc, nbits, True), nbits)
         nbytes = -(-self.pos // 8)
         self.check_extent(self.extents[0], nbytes * 8)
         if nbytes == 0 and self.pack.uper:  # an encoding of no bits is one octet 00 (X.691 10.1.3)
@@ -1402,6 +1536,7 @@ class _Writer:
             if rev:
                 v = reverse_bits(v, length)
             acc |= v << (nbits - start - length if msb else start)
+        acc = self.apply_windows(acc, nbits, msb)
         return acc.to_bytes(nbytes, "big" if msb else "little").hex()
 
 
@@ -1415,8 +1550,8 @@ def encode(pack, entity):
         wr = _Writer(pack, known)
         last = attempt == tries - 1
         try:
-            wr.emit(kind.block if kind is not None else body.common,
-                    _Ctx(entity.fields, entity.lists, body.defaults_for(kind)))
+            wr.emit_scope(body, kind, _Ctx(entity.fields, entity.lists, body.defaults_for(kind)),
+                          kind.block if kind is not None else body.common)
             out = wr.finish()
         except GTError:
             if last or not wr.mismatch():

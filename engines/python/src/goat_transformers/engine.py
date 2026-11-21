@@ -355,6 +355,8 @@ class Engine:
             vc.canon = frozenset(canon)
             if vc.what == "case":
                 vc.target.canon = vc.canon
+        if pack.late_errors:  # 0.33: the `at` checks run last among the module checks (ruling 25)
+            raise pack.late_errors[0]
         kinds = pack.kinds
         if pack.seq is not None:  # a sequential pack: the kinds of the message and of every group body
             kinds = []
