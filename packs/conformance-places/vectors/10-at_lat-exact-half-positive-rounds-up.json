@@ -1,0 +1,12 @@
+{
+  "name": "at_lat-exact-half-positive-rounds-up",
+  "from": "conformance-places",
+  "to": "conformance-places",
+  "input": "0000000000000000000000000001",
+  "expect": "0000000000000000000000000002",
+  "model": {
+    "probe.at_lat": "0.1"
+  },
+  "source": "constructed",
+  "reference": "spec 0.55, Rounding a scale to decimal places, steps 1 to 4, Python doubles; y is exactly 0.5, rounds away from zero (up); decode: x = 1 * 0.05 + 0 = 0.05 (product 0.05); y = x * 10 = 0.5; round = 1; / 10 = 0.1; encode: q = 2.0, round = 2; every other field raw 0 (a decodes to -40 and re-encodes to 0)"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "roundtrip-250-keeps-trailing-zero",
+  "from": "conformance-si-time-xml",
+  "to": "conformance-si-time-xml",
+  "input": "<msg t=\"2025-10-29T12:00:40.250Z\"/>",
+  "expect": "<msg t=\"2025-10-29T12:00:40.250Z\"/>",
+  "model": {
+    "time_ms": "1761739240250"
+  },
+  "source": "constructed",
+  "reference": "spec 0.55, A time with three fraction digits or none; on xml; ruling 3: the round trip is exact for the text iso8601_si writes"
+}

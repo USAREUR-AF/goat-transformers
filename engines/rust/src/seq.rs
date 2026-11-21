@@ -848,8 +848,8 @@ impl<'a> Parser<'a> {
                 if f.swap && len % 8 != 0 && uper.is_none() {
                     return bad(ln, format!("`swap` needs a bit length that is a multiple of 8, got {}", len));
                 }
-                if f.trim && !matches!(t, Transform::Ascii | Transform::Sixbit) {
-                    return bad(ln, "`trim` is valid only with `ascii` or `sixbit`");
+                if f.trim && !matches!(t, Transform::Ascii | Transform::Sixbit | Transform::Utf8) {
+                    return bad(ln, "`trim` is valid only with `ascii`, `sixbit` or `utf8`");
                 }
                 if f.swap && t.refuses_swap() {
                     return bad(ln, "`swap` is not valid with `chars`, `octal` or `hex`");

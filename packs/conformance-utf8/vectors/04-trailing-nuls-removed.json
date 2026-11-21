@@ -1,0 +1,12 @@
+{
+  "name": "trailing-nuls-removed",
+  "from": "conformance-utf8",
+  "to": "conformance-utf8",
+  "input": "68690000000000000000000000000000",
+  "expect": "68690000000000000000000000000000",
+  "model": {
+    "probe.s1": "hi"
+  },
+  "source": "constructed",
+  "reference": "spec 0.55, UTF-8 text on bits; 68 69 then six NULs: the NULs are removed; other fields all NUL (empty, present; ruling 3 of 0.5)"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "f0-places-0-negative-half-rounds-away",
+  "from": "conformance-places",
+  "to": "conformance-places",
+  "input": "000000fb00000000000000000000",
+  "expect": "000000fa00000000000000000000",
+  "model": {
+    "probe.f0": "-3"
+  },
+  "source": "constructed",
+  "reference": "spec 0.55, Rounding a scale to decimal places, steps 1 to 4, Python doubles; decode: x = -5 * 0.5 + 0 = -2.5 (product -2.5); y = x * 1 = -2.5; round = -3; / 1 = -3; encode: q = -6.0, round = -6; every other field raw 0 (a decodes to -40 and re-encodes to 0)"
+}

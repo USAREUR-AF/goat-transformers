@@ -1,0 +1,12 @@
+{
+  "name": "ratio-two-places",
+  "from": "conformance-places",
+  "to": "conformance-places",
+  "input": "0000230000000000000000000000",
+  "expect": "0000230000000000000000000000",
+  "model": {
+    "probe.ratio": "0.35"
+  },
+  "source": "constructed",
+  "reference": "spec 0.55, Rounding a scale to decimal places, steps 1 to 4, Python doubles; decode: x = 35 * 0.01 + 0 = 0.35000000000000003 (product 0.35000000000000003); y = x * 100 = 35.0; round = 35; / 100 = 0.35; encode: q = 35.0, round = 35; every other field raw 0 (a decodes to -40 and re-encodes to 0)"
+}

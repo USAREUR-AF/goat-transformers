@@ -4837,4 +4837,7 @@ as stated above; `hex` is unchanged. The load vector
 renamed `wire-tlv-56-utf8-on-bits-loads-from-0.55`.
 
 Stated, not yet pinned by a vector: ruling 5 (a non-finite `x` needs a
-factor or offset at the edge of the double range).
+factor or offset at the edge of the double range); "a result of zero is +0"
+(the sign of a model zero is not visible in a vector, and both encode to the
+same bits); a lone surrogate on `utf8` encode (only a context value can give
+one); `<places>` on `f64scale` and on the `scale` of the text wires.

@@ -1,0 +1,9 @@
+{
+  "name": "5513-places-16-then-bogus-is-bad-directive",
+  "models": [
+    "module core\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey uid string -\nkey lat float deg\nkey lon float deg\nkey callsign string -\nkey time_ms int ms\n",
+    "module probe\nversion 0.1.0\ndistribution public\nsource \"probe\"\nkey n int -\nkey x int -\nkey a float -\nkey ratio float -\nkey label string -\nkey s1 string -\nkey s2 string -\n"
+  ],
+  "pack": "format probe\nversion 0.55.0\ndistribution public\nsource \"probe\"\nuses probe\nwire bits\nword_bytes 1\nfield probe.a 0:0:16 uscale:1:0:16\nbogus\n",
+  "expect_error": "bad-directive"
+}

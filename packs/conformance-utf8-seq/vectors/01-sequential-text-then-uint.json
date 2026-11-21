@@ -1,0 +1,13 @@
+{
+  "name": "sequential-text-then-uint",
+  "from": "conformance-utf8-seq",
+  "to": "conformance-utf8-seq",
+  "input": "686907",
+  "expect": "686907",
+  "model": {
+    "probe.s1": "hi",
+    "probe.n": "7"
+  },
+  "source": "constructed",
+  "reference": "spec 0.55, UTF-8 text on bits; at a bit length in a sequential layout (Version 0.8): 16 bits 68 69 are hi, then 8 bits 07 are n = 7"
+}

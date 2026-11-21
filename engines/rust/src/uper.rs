@@ -98,6 +98,10 @@ pub(crate) fn check_field(loc: &Loc, f: &FieldDef) -> Result<(), Error> {
         return bad(f.line, "`swap` and `trim` are not valid on a UPER locator");
     }
     let t = &f.transform;
+    // engine-spec v0.55: `<places>` is not valid on a UPER locator
+    if matches!(t, Transform::Uscale(sc) | Transform::Sscale(sc) if sc.places.is_some()) {
+        return bad(f.line, format!("`<places>` of `{}` is not valid on the UPER locator `{}`", f.model_key, f.locator));
+    }
     let ok = match loc {
         Loc::Int { .. } | Loc::Semi { .. } | Loc::Unc => {
             matches!(t, Transform::Uint | Transform::Twos | Transform::Uscale(_) | Transform::Sscale(_))

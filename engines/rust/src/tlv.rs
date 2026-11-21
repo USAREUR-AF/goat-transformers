@@ -197,9 +197,13 @@ pub(crate) fn check_transform(wire: Wire, f: &FieldDef) -> Result<(), Error> {
         || matches!(t, Transform::Uint | Transform::Twos | Transform::Uscale(_) | Transform::Sscale(_) | Transform::F32 | Transform::F64);
     match wire {
         Wire::Tlv if !ok_on_tlv => bad(f.line, format!("the transform of `{}` is not valid on the tlv wire", f.model_key)),
+        // `<places>` is for `bits` only (engine-spec v0.55)
+        Wire::Tlv if matches!(t, Transform::Uscale(sc) | Transform::Sscale(sc) if sc.places.is_some()) => {
+            bad(f.line, format!("`<places>` of `{}` is not valid on the tlv wire", f.model_key))
+        }
         Wire::Tlv => Ok(()),
-        // `hex` is also a `bits` transform (engine-spec v0.22)
-        Wire::Bits if *t == Transform::Hex => Ok(()),
+        // `hex` is also a `bits` transform (engine-spec v0.22), and `utf8` (v0.55)
+        Wire::Bits if matches!(t, Transform::Hex | Transform::Utf8) => Ok(()),
         _ if tlv_only(t) => bad(f.line, format!("the transform of `{}` is valid only on the tlv wire", f.model_key)),
         _ => Ok(()),
     }

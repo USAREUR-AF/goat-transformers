@@ -1,0 +1,9 @@
+{
+  "name": "character-cut-off-at-end-of-s1",
+  "from": "conformance-utf8",
+  "to": "conformance-utf8",
+  "input": "6162636465f09f980000000000000000",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.55, UTF-8 text on bits; decode: s1 ends with f0 9f 98, the first three bytes of a four-byte character: cut off by the end of the field"
+}

@@ -1,0 +1,9 @@
+{
+  "name": "surrogate-ed-a0-80",
+  "from": "conformance-utf8",
+  "to": "conformance-utf8",
+  "input": "eda08000000000000000000000000000",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec 0.55, UTF-8 text on bits; decode: ed a0 80 is U+D800, a surrogate"
+}
