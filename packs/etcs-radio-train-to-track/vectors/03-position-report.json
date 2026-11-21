@@ -1,0 +1,17 @@
+{
+  "name": "etcs-radio-train-to-track-03-position-report",
+  "from": "etcs-radio-train-to-track",
+  "to": "etcs-radio-train-to-track",
+  "input": "880680006073448d158001029fa87080785000a0019032041060",
+  "expect": "880680006073448d158001029fa87080785000a0019032041060",
+  "model": {
+    "etcs.train_t_train": "98765",
+    "etcs.nid_engine": "1193046",
+    "@kind": "train_position_report",
+    "etcs.train_packets[0].@kind": "tp0",
+    "etcs.train_packets[0].etcs.tp0_q_length": "1",
+    "etcs.train_packets[0].etcs.tp0_l_trainint": "400"
+  },
+  "source": "constructed",
+  "reference": "SUBSET-026 3.6.0 chapters 7 and 8; bits written by tools/gen/etcs-vectors.py; message 136, train integrity confirmed with L_TRAININT"
+}

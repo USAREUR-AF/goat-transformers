@@ -1,0 +1,16 @@
+{
+  "name": "etcs-radio-train-to-track-04-acknowledgement",
+  "from": "etcs-radio-train-to-track",
+  "to": "etcs-radio-train-to-track",
+  "input": "920380006073448d158000789000",
+  "expect": "920380006073448d158000789000",
+  "model": {
+    "etcs.train_t_train": "98765",
+    "etcs.nid_engine": "1193046",
+    "@kind": "acknowledgement",
+    "etcs.tm146_t_train": "123456",
+    "etcs.train_packets.#": "0"
+  },
+  "source": "constructed",
+  "reference": "SUBSET-026 3.6.0 chapters 7 and 8; bits written by tools/gen/etcs-vectors.py; message 146"
+}

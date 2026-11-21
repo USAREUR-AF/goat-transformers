@@ -19,20 +19,18 @@ Then the packets, a `group … rest` whose items select a kind by NID_PACKET (8 
 | Kind | Packet |
 |---|---|
 | `p0` | 0, virtual balise cover marker (NID_VBCMK; no Q_DIR or L_PACKET) |
-| `p5` | 5, linking |
-| `p12` | 12, level 1 movement authority |
-| `p21` | 21, gradient profile |
-| `p27` | 27, international static speed profile |
-| `p41` | 41, level transition order |
-| `p44` | 44, data for applications outside ETCS (the data kept as bits) |
+| `p2`, `p3`, `p5`, `p6`, `p12`, `p13`, `p16`, `p21`, `p27`, `p39`, `p40`, `p41`, `p42`, `p44`, `p45`, `p46`, `p49`, `p51`, `p52`, `p57`, `p58`, `p63`, `p64`, `p65`, `p66`, `p67`, `p68`, `p69`, `p70`, `p71`, `p72`, `p76`, `p79`, `p80`, `p88`, `p90`, `p131`, `p132`, `p133`, `p134`, `p135`, `p136`, `p137`, `p138`, `p139`, `p140`, `p141`, `p143`, `p145`, `p180`, `p181`, `p254` | every other track-to-train packet of chapter 7, as its number |
 | `p255` | 255, end of information |
-| `other` | any other packet: NID_PACKET, Q_DIR and the body kept as bits |
+| `other` | a number chapter 7 assigns to no track-to-train packet: NID_PACKET, Q_DIR and the body kept as bits |
 
 Every packet but 0 and 255 is Q_DIR then L_PACKET, the bit length of the whole packet, stated as
 `length 13 bits plus 23`. An iteration count N_ITER (5 bits) right before its items is a
 `group … count 5`. A one-bit qualifier that gates the variables after it (Q_NEWCOUNTRY,
 Q_SECTIONTIMER, Q_ENDTIMER, Q_DANGERPOINT, Q_OVERLAP) is a `presence` bit; a value that chooses
-what follows (Q_DIFF, M_LEVELTR, NID_XUSER) is a `switch`.
+what follows (Q_DIFF, M_LEVELTR, Q_TRACKINIT, Q_SUITABILITY, M_VOLTAGE, Q_TEXTCONFIRM, Q_LXSTATUS and
+the like) is a field and a `switch` on it. In packet 6, T_VBC depends on Q_VBCO, three fields
+earlier: the `switch` on that key stands after NID_C. Packet 72's text is L_TEXT and that many
+bytes, a `group … count 8` of bytes (the bytes, not text).
 
 ## Shared keys
 
@@ -42,6 +40,11 @@ each packet sets (10 cm, 1 m or 10 m), not latitude and longitude, so they stay 
 
 ## Not mapped
 
-- Packets other than those above are kept as bits (kind `other`), not as variables.
+- Packet 3 (national values): when Q_NVKINT is 1, the integrated correction factors that follow
+  are kept as bits. Inside their iterations, whether M_NVKVINT appears twice depends on
+  Q_NVKVINTSET, a variable outside the iteration's items; a `switch` inside a group may name only
+  a key of the item. Missing: a condition on a key of the enclosing scope, inside a group.
+- Text (X_TEXT) is kept as byte values.
+- Numbers chapter 7 assigns to no packet are kept as bits (kind `other`).
 - A telegram whose filler after packet 255 is kept is longer than this message: trailing bits
   of eight or more are read as further packets.

@@ -1,0 +1,17 @@
+{
+  "name": "etcs-radio-track-to-train-07-coordinate-system",
+  "from": "etcs-radio-track-to-train",
+  "to": "etcs-radio-track-to-train",
+  "input": "2d028000789007ea1c30",
+  "expect": "2d028000789007ea1c30",
+  "model": {
+    "etcs.t_train": "123456",
+    "etcs.m_ack": "0",
+    "etcs.lrbg_nid_c": "253",
+    "etcs.lrbg_nid_bg": "4321",
+    "@kind": "coordinate_system_assignment",
+    "etcs.m45_q_orientation": "1"
+  },
+  "source": "constructed",
+  "reference": "SUBSET-026 3.6.0 chapters 7 and 8; bits written by tools/gen/etcs-vectors.py; message 45"
+}

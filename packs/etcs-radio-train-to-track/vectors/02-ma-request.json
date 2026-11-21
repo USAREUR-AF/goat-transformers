@@ -1,0 +1,20 @@
+{
+  "name": "etcs-radio-train-to-track-02-ma-request",
+  "from": "etcs-radio-train-to-track",
+  "to": "etcs-radio-train-to-track",
+  "input": "840840006073448d15860208a4fd4384fd438003c28005000c10418480b4fd07d0",
+  "expect": "840840006073448d15860208a4fd4384fd438003c28005000c10418480b4fd07d0",
+  "model": {
+    "etcs.train_t_train": "98765",
+    "etcs.nid_engine": "1193046",
+    "@kind": "ma_request",
+    "etcs.tm132_q_marqstreason": "3",
+    "etcs.train_packets.#": "2",
+    "etcs.train_packets[0].@kind": "tp1",
+    "etcs.train_packets[0].etcs.tp1_prvlrbg_nid_bg": "4320",
+    "etcs.train_packets[1].@kind": "tp9",
+    "etcs.train_packets[1].etcs.tp9_ltrbg_nid_bg": "500"
+  },
+  "source": "constructed",
+  "reference": "SUBSET-026 3.6.0 chapters 7 and 8; bits written by tools/gen/etcs-vectors.py; message 132: Q_MARQSTREASON, packet 1, packet 9"
+}

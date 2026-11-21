@@ -1,0 +1,19 @@
+{
+  "name": "etcs-radio-track-to-train-05-conditional-emergency-stop",
+  "from": "etcs-radio-track-to-train",
+  "to": "etcs-radio-track-to-train",
+  "input": "0f03c000789007ea1c26ffec209600",
+  "expect": "0f03c000789007ea1c26ffec209600",
+  "model": {
+    "etcs.t_train": "123456",
+    "etcs.m_ack": "0",
+    "etcs.lrbg_nid_c": "253",
+    "etcs.lrbg_nid_bg": "4321",
+    "@kind": "conditional_emergency_stop",
+    "etcs.m15_nid_em": "3",
+    "etcs.m15_d_ref": "-40",
+    "etcs.m15_d_emergencystop": "600"
+  },
+  "source": "constructed",
+  "reference": "SUBSET-026 3.6.0 chapters 7 and 8; bits written by tools/gen/etcs-vectors.py; message 15, D_REF -40"
+}

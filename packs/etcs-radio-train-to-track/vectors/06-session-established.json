@@ -1,0 +1,17 @@
+{
+  "name": "etcs-radio-train-to-track-06-session-established",
+  "from": "etcs-radio-train-to-track",
+  "to": "etcs-radio-train-to-track",
+  "input": "9f03c0006073448d15808050842800",
+  "expect": "9f03c0006073448d15808050842800",
+  "model": {
+    "etcs.train_t_train": "98765",
+    "etcs.nid_engine": "1193046",
+    "@kind": "session_established",
+    "etcs.train_packets[0].@kind": "tp2",
+    "etcs.train_packets[0].etcs.tp2_m_version": "33",
+    "etcs.train_packets[0].etcs.tp2_versions[0].etcs.tp2_versions_m_version": "32"
+  },
+  "source": "constructed",
+  "reference": "SUBSET-026 3.6.0 chapters 7 and 8; bits written by tools/gen/etcs-vectors.py; message 159 with packet 2"
+}

@@ -2,8 +2,8 @@
   "name": "etcs-balise-telegram-02-ma-ssp-level-national",
   "from": "etcs-balise-telegram",
   "to": "etcs-balise-telegram",
-  "input": "a002089fa870c3104424007fe103210f00af0384200c8186d03820000a441985c9043e81000a602cbfffc8a00640a00c85880b4cc0b603403b6ff8",
-  "expect": "a002089fa870c3104424007fe103210f00af0384200c8186d03820000a441985c9043e81000a602cbfffc8a00640a00c85880b4cc0b603403b6ff8",
+  "input": "a002089fa870c3104424007fe103210f00af0384200c8186d03820000a441985c9043e81000a602cbfffc8a00640a00c85880b4cc0b6c8403b6ff8",
+  "expect": "a002089fa870c3104424007fe103210f00af0384200c8186d03820000a441985c9043e81000a602cbfffc8a00640a00c85880b4cc0b6c8403b6ff8",
   "model": {
     "etcs.q_updown": "1",
     "etcs.m_version": "32",
@@ -44,10 +44,10 @@
     "etcs.packets[3].etcs.p44_nid_ntc": "5",
     "etcs.packets[3].etcs.p44_data.#": "5",
     "etcs.packets[4].@kind": "other",
-    "etcs.packets[4].etcs.nid_packet": "3",
+    "etcs.packets[4].etcs.nid_packet": "200",
     "etcs.packets[4].etcs.other_packet_bits.#": "6",
     "etcs.packets[5].@kind": "p255"
   },
   "source": "constructed",
-  "reference": "SUBSET-026 3.6.0 chapters 7 and 8; bits written by tools/gen/etcs-vectors.py; packets 12 (T_EMA 1023), 27 with two category speeds, 41 to an NTC, 44 for NID_XUSER 102, packet 3 kept as bits, 255"
+  "reference": "SUBSET-026 3.6.0 chapters 7 and 8; bits written by tools/gen/etcs-vectors.py; packets 12 (T_EMA 1023), 27 with two category speeds, 41 to an NTC, 44 for NID_XUSER 102, packet 200 (not assigned) kept as bits, 255"
 }

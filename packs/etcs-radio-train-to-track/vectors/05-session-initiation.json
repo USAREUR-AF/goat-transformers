@@ -1,0 +1,15 @@
+{
+  "name": "etcs-radio-train-to-track-05-session-initiation",
+  "from": "etcs-radio-train-to-track",
+  "to": "etcs-radio-train-to-track",
+  "input": "9b0280006073448d1580",
+  "expect": "9b0280006073448d1580",
+  "model": {
+    "etcs.train_t_train": "98765",
+    "etcs.nid_engine": "1193046",
+    "@kind": "session_initiation",
+    "etcs.train_packets.#": "0"
+  },
+  "source": "constructed",
+  "reference": "SUBSET-026 3.6.0 chapters 7 and 8; bits written by tools/gen/etcs-vectors.py; message 155, header only"
+}
