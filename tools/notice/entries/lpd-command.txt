@@ -1,0 +1,4 @@
+Packs lpd-command, lpd-subcommand, lpd-control-file; module lpd
+  IETF RFC 1179, Line Printer Daemon Protocol (August 1990), sections 3.1
+  and 5 to 7, https://www.rfc-editor.org/rfc/rfc1179.txt. No copyright line;
+  distribution unlimited; BCP 78. Layouts restated; no text copied.
