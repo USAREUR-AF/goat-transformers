@@ -60,6 +60,16 @@
       "distribution": "public",
       "profile": "open+copyleft"
     },
+    "CC-BY-SA-4.0": {
+      "name": "Creative Commons Attribution-ShareAlike 4.0 International",
+      "url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "commercial": "yes",
+      "share_alike": true,
+      "attribution": true,
+      "field_of_use": [],
+      "distribution": "public",
+      "profile": "open+copyleft"
+    },
     "CC0-1.0": {
       "name": "Creative Commons Zero v1.0 Universal",
       "url": "https://creativecommons.org/publicdomain/zero/1.0/",
@@ -153,6 +163,16 @@
       "field_of_use": [],
       "distribution": "public",
       "profile": "everything"
+    },
+    "OGL-UK-3.0": {
+      "name": "Open Government Licence v3.0",
+      "url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+      "commercial": "yes",
+      "share_alike": false,
+      "attribution": true,
+      "field_of_use": [],
+      "distribution": "public",
+      "profile": "open"
     }
   },
   "packs": {
@@ -171,6 +191,16 @@
       "format": "aisstream",
       "licence": "LicenseRef-unstated",
       "profile": "everything"
+    },
+    "altbeacon": {
+      "format": "altbeacon",
+      "licence": "CC-BY-SA-4.0",
+      "profile": "open+copyleft"
+    },
+    "amqp10-frame": {
+      "format": "amqp10-frame",
+      "licence": "LicenseRef-OASIS-Notice",
+      "profile": "open"
     },
     "arsdk-proto-antiflicker": {
       "format": "arsdk-proto-antiflicker",
@@ -414,6 +444,56 @@
     },
     "cef": {
       "format": "cef",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "crsf": {
+      "format": "crsf",
+      "licence": "CC-BY-SA-4.0",
+      "profile": "open+copyleft"
+    },
+    "davis-wll-http": {
+      "format": "davis-wll-http",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "davis-wll-udp": {
+      "format": "davis-wll-udp",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "dsmr-p1-line": {
+      "format": "dsmr-p1-line",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ea-flood-readings": {
+      "format": "ea-flood-readings",
+      "licence": "OGL-UK-3.0",
+      "profile": "open"
+    },
+    "ea-flood-station": {
+      "format": "ea-flood-station",
+      "licence": "OGL-UK-3.0",
+      "profile": "open"
+    },
+    "ea-flood-warnings": {
+      "format": "ea-flood-warnings",
+      "licence": "OGL-UK-3.0",
+      "profile": "open"
+    },
+    "etcs-balise-telegram": {
+      "format": "etcs-balise-telegram",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "etcs-radio-track-to-train": {
+      "format": "etcs-radio-track-to-train",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "etcs-radio-train-to-track": {
+      "format": "etcs-radio-train-to-track",
       "licence": "LicenseRef-unstated",
       "profile": "everything"
     },
@@ -1672,8 +1752,23 @@
       "licence": "LicenseRef-unstated",
       "profile": "everything"
     },
+    "glider-dac-erddap": {
+      "format": "glider-dac-erddap",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
     "gpx": {
       "format": "gpx",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "gtpu": {
+      "format": "gtpu",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "gtpv2c": {
+      "format": "gtpv2c",
       "licence": "LicenseRef-unstated",
       "profile": "everything"
     },
@@ -2270,6 +2365,36 @@
     "mds": {
       "format": "mds",
       "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "modbus-rtu-request": {
+      "format": "modbus-rtu-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "modbus-rtu-response": {
+      "format": "modbus-rtu-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "modbus-tcp-request": {
+      "format": "modbus-tcp-request",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "modbus-tcp-response": {
+      "format": "modbus-tcp-response",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mqtt311": {
+      "format": "mqtt311",
+      "licence": "LicenseRef-OASIS-Notice",
+      "profile": "open"
+    },
+    "mqtt5": {
+      "format": "mqtt5",
+      "licence": "LicenseRef-OASIS-Notice",
       "profile": "open"
     },
     "mvt": {
@@ -3357,6 +3482,211 @@
       "licence": "LicenseRef-OGC-Software",
       "profile": "open"
     },
+    "ogcapi-common-collection": {
+      "format": "ogcapi-common-collection",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcapi-common-collections": {
+      "format": "ogcapi-common-collections",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcapi-common-exception": {
+      "format": "ogcapi-common-exception",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcapi-cs-command": {
+      "format": "ogcapi-cs-command",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcapi-cs-command-status": {
+      "format": "ogcapi-cs-command-status",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcapi-cs-controlstream": {
+      "format": "ogcapi-cs-controlstream",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcapi-cs-datastream": {
+      "format": "ogcapi-cs-datastream",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcapi-cs-deployment": {
+      "format": "ogcapi-cs-deployment",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcapi-cs-observation": {
+      "format": "ogcapi-cs-observation",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcapi-cs-procedure": {
+      "format": "ogcapi-cs-procedure",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcapi-cs-sampling-feature": {
+      "format": "ogcapi-cs-sampling-feature",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcapi-cs-system": {
+      "format": "ogcapi-cs-system",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcapi-cs-system-event": {
+      "format": "ogcapi-cs-system-event",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcapi-edr-collection": {
+      "format": "ogcapi-edr-collection",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcapi-edr-coverage": {
+      "format": "ogcapi-edr-coverage",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcapi-edr-feature": {
+      "format": "ogcapi-edr-feature",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcapi-edr-feature-collection": {
+      "format": "ogcapi-edr-feature-collection",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcapi-feature": {
+      "format": "ogcapi-feature",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcapi-feature-collection": {
+      "format": "ogcapi-feature-collection",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcapi-features-collection": {
+      "format": "ogcapi-features-collection",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcapi-features-collections": {
+      "format": "ogcapi-features-collections",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcapi-job-list": {
+      "format": "ogcapi-job-list",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcapi-job-status": {
+      "format": "ogcapi-job-status",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcapi-mf-api-collection": {
+      "format": "ogcapi-mf-api-collection",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ogcapi-mf-api-feature": {
+      "format": "ogcapi-mf-api-feature",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ogcapi-mf-api-features": {
+      "format": "ogcapi-mf-api-features",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ogcapi-mf-api-tgsequence": {
+      "format": "ogcapi-mf-api-tgsequence",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ogcapi-mf-api-tproperties": {
+      "format": "ogcapi-mf-api-tproperties",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ogcapi-mf-api-tproperty": {
+      "format": "ogcapi-mf-api-tproperty",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ogcapi-mf-api-tvalue-sequence": {
+      "format": "ogcapi-mf-api-tvalue-sequence",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ogcapi-mf-moving-feature": {
+      "format": "ogcapi-mf-moving-feature",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcapi-mf-moving-feature-collection": {
+      "format": "ogcapi-mf-moving-feature-collection",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcapi-process": {
+      "format": "ogcapi-process",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcapi-process-list": {
+      "format": "ogcapi-process-list",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcapi-record": {
+      "format": "ogcapi-record",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcapi-records-catalog": {
+      "format": "ogcapi-records-catalog",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcapi-style-metadata": {
+      "format": "ogcapi-style-metadata",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcapi-styles-list": {
+      "format": "ogcapi-styles-list",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcapi-tiles-tilematrixset": {
+      "format": "ogcapi-tiles-tilematrixset",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcapi-tiles-tileset": {
+      "format": "ogcapi-tiles-tileset",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcapi-tiles-tileset-list": {
+      "format": "ogcapi-tiles-tileset-list",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
     "omsf-json": {
       "format": "omsf-json",
       "licence": "LicenseRef-unstated",
@@ -3462,6 +3792,11 @@
       "licence": "LicenseRef-OpenSky",
       "profile": "everything"
     },
+    "overpass-json": {
+      "format": "overpass-json",
+      "licence": "CC-BY-SA-2.0",
+      "profile": "open+copyleft"
+    },
     "overture-address": {
       "format": "overture-address",
       "licence": "CC-BY-4.0",
@@ -3536,6 +3871,11 @@
       "format": "overture-water",
       "licence": "CC-BY-4.0",
       "profile": "open"
+    },
+    "pfcp": {
+      "format": "pfcp",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
     },
     "px4-ulog-action-request": {
       "format": "px4-ulog-action-request",
@@ -5527,6 +5867,11 @@
       "licence": "CC-BY-SA-2.0",
       "profile": "open+copyleft"
     },
+    "sml-message": {
+      "format": "sml-message",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
     "swe-common-3-json": {
       "format": "swe-common-3-json",
       "licence": "LicenseRef-OGC-Software",
@@ -5534,6 +5879,16 @@
     },
     "tcx": {
       "format": "tcx",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "txc": {
+      "format": "txc",
+      "licence": "OGL-UK-3.0",
+      "profile": "open"
+    },
+    "wcmp2-record": {
+      "format": "wcmp2-record",
       "licence": "LicenseRef-unstated",
       "profile": "everything"
     },
@@ -5553,6 +5908,16 @@
       "module": "aisstream",
       "licence": "LicenseRef-unstated",
       "profile": "everything"
+    },
+    "altbeacon.def": {
+      "module": "altbeacon",
+      "licence": "CC-BY-SA-4.0",
+      "profile": "open+copyleft"
+    },
+    "amqp.def": {
+      "module": "amqp",
+      "licence": "LicenseRef-OASIS-Notice",
+      "profile": "open"
     },
     "arsdkprotoantiflicker.def": {
       "module": "arsdkprotoantiflicker",
@@ -5796,6 +6161,31 @@
     },
     "cef.def": {
       "module": "cef",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "crsf.def": {
+      "module": "crsf",
+      "licence": "CC-BY-SA-4.0",
+      "profile": "open+copyleft"
+    },
+    "davis.def": {
+      "module": "davis",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "dsmr.def": {
+      "module": "dsmr",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "eaflood.def": {
+      "module": "eaflood",
+      "licence": "OGL-UK-3.0",
+      "profile": "open"
+    },
+    "etcs.def": {
+      "module": "etcs",
       "licence": "LicenseRef-unstated",
       "profile": "everything"
     },
@@ -7054,8 +7444,23 @@
       "licence": "LicenseRef-unstated",
       "profile": "everything"
     },
+    "gliderdac.def": {
+      "module": "gliderdac",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
     "gpx.def": {
       "module": "gpx",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "gtpu.def": {
+      "module": "gtpu",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "gtpv2.def": {
+      "module": "gtpv2",
       "licence": "LicenseRef-unstated",
       "profile": "everything"
     },
@@ -7652,6 +8057,16 @@
     "mds.def": {
       "module": "mds",
       "licence": "CC-BY-4.0",
+      "profile": "open"
+    },
+    "modbus.def": {
+      "module": "modbus",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "mqtt.def": {
+      "module": "mqtt",
+      "licence": "LicenseRef-OASIS-Notice",
       "profile": "open"
     },
     "mvt.def": {
@@ -8714,6 +9129,71 @@
       "licence": "LicenseRef-unstated",
       "profile": "everything"
     },
+    "ogccomcoll.def": {
+      "module": "ogccomcoll",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogccomcolls.def": {
+      "module": "ogccomcolls",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogccomexc.def": {
+      "module": "ogccomexc",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogccscmd.def": {
+      "module": "ogccscmd",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogccscs.def": {
+      "module": "ogccscs",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogccscst.def": {
+      "module": "ogccscst",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogccsdep.def": {
+      "module": "ogccsdep",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogccsds.def": {
+      "module": "ogccsds",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogccsev.def": {
+      "module": "ogccsev",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogccsobs.def": {
+      "module": "ogccsobs",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogccsproc.def": {
+      "module": "ogccsproc",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogccssf.def": {
+      "module": "ogccssf",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogccssys.def": {
+      "module": "ogccssys",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
     "ogcdggsd.def": {
       "module": "ogcdggsd",
       "licence": "LicenseRef-OGC-Software",
@@ -8729,6 +9209,56 @@
       "licence": "LicenseRef-OGC-Software",
       "profile": "open"
     },
+    "ogcedrcoll.def": {
+      "module": "ogcedrcoll",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcedrcov.def": {
+      "module": "ogcedrcov",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcedrf.def": {
+      "module": "ogcedrf",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcedrfc.def": {
+      "module": "ogcedrfc",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcfeat.def": {
+      "module": "ogcfeat",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcfeatcoll.def": {
+      "module": "ogcfeatcoll",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcfeatcolls.def": {
+      "module": "ogcfeatcolls",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcfeatfc.def": {
+      "module": "ogcfeatfc",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcjob.def": {
+      "module": "ogcjob",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcjoblist.def": {
+      "module": "ogcjoblist",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
     "ogcjoin.def": {
       "module": "ogcjoin",
       "licence": "LicenseRef-OGC-Software",
@@ -8736,6 +9266,96 @@
     },
     "ogcjoins.def": {
       "module": "ogcjoins",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcmf.def": {
+      "module": "ogcmf",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcmfapic.def": {
+      "module": "ogcmfapic",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ogcmfapif.def": {
+      "module": "ogcmfapif",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ogcmfapifs.def": {
+      "module": "ogcmfapifs",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ogcmfapitg.def": {
+      "module": "ogcmfapitg",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ogcmfapitp.def": {
+      "module": "ogcmfapitp",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ogcmfapitps.def": {
+      "module": "ogcmfapitps",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ogcmfapitv.def": {
+      "module": "ogcmfapitv",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "ogcmfc.def": {
+      "module": "ogcmfc",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcproc.def": {
+      "module": "ogcproc",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcproclist.def": {
+      "module": "ogcproclist",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcrec.def": {
+      "module": "ogcrec",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcreccat.def": {
+      "module": "ogcreccat",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcstyle.def": {
+      "module": "ogcstyle",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogcstyles.def": {
+      "module": "ogcstyles",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogctileset.def": {
+      "module": "ogctileset",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogctilesets.def": {
+      "module": "ogctilesets",
+      "licence": "LicenseRef-OGC-Software",
+      "profile": "open"
+    },
+    "ogctms.def": {
+      "module": "ogctms",
       "licence": "LicenseRef-OGC-Software",
       "profile": "open"
     },
@@ -8839,6 +9459,11 @@
       "licence": "LicenseRef-OpenSky",
       "profile": "everything"
     },
+    "overpass.def": {
+      "module": "overpass",
+      "licence": "CC-BY-SA-2.0",
+      "profile": "open+copyleft"
+    },
     "overtureaddress.def": {
       "module": "overtureaddress",
       "licence": "CC-BY-4.0",
@@ -8913,6 +9538,11 @@
       "module": "overturewater",
       "licence": "CC-BY-4.0",
       "profile": "open"
+    },
+    "pfcp.def": {
+      "module": "pfcp",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
     },
     "px4ulog.def": {
       "module": "px4ulog",
@@ -9404,6 +10034,11 @@
       "licence": "CC-BY-SA-2.0",
       "profile": "open+copyleft"
     },
+    "sml.def": {
+      "module": "sml",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
     "swecommon3.def": {
       "module": "swecommon3",
       "licence": "LicenseRef-OGC-Software",
@@ -9411,6 +10046,16 @@
     },
     "tcx.def": {
       "module": "tcx",
+      "licence": "LicenseRef-unstated",
+      "profile": "everything"
+    },
+    "txc.def": {
+      "module": "txc",
+      "licence": "OGL-UK-3.0",
+      "profile": "open"
+    },
+    "wcmp2.def": {
+      "module": "wcmp2",
       "licence": "LicenseRef-unstated",
       "profile": "everything"
     },
