@@ -1,0 +1,12 @@
+{
+  "name": "name-line-short",
+  "from": "tle",
+  "to": "tle",
+  "input": "TESTSAT 1",
+  "expect": "TESTSAT 1               ",
+  "model": {
+    "tle.name": "TESTSAT 1"
+  },
+  "source": "constructed",
+  "reference": "CelesTrak, NORAD Two-Line Element Set Format (tle-fmt.php, read 2026-11-21): a name line without its padding reads the same and is written padded to 24; line written by tools/gen/space-text-vectors.py"
+}

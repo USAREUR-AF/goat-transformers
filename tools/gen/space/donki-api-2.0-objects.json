@@ -1,0 +1,767 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "urn:goat-transformers:donki-api-2.0-objects",
+ "title": "CCMC DONKI-API 2.0 response objects, restated by goat-transformers",
+ "description": "Member names and JSON types of the objects the DONKI-API 2.0 endpoints return, restated by this project from the API's OpenAPI 3.0.1 document (components.schemas). Only names, types, formats and references are kept; the document carries no description text for them, and its examples are not copied.",
+ "$defs": {
+  "NotificationObject": {
+   "type": "object",
+   "properties": {
+    "messageType": {
+     "type": "string"
+    },
+    "messageID": {
+     "type": "string"
+    },
+    "messageURL": {
+     "type": "string"
+    },
+    "messageIssueTime": {
+     "type": "string"
+    },
+    "messageBody": {
+     "type": "string"
+    }
+   }
+  },
+  "CMEInput": {
+   "type": "object",
+   "properties": {
+    "cmeStartTime": {
+     "type": "string"
+    },
+    "latitude": {
+     "type": "number",
+     "format": "float"
+    },
+    "longitude": {
+     "type": "number",
+     "format": "float"
+    },
+    "speed": {
+     "type": "number",
+     "format": "float"
+    },
+    "halfAngle": {
+     "type": "number",
+     "format": "float"
+    },
+    "time21_5": {
+     "type": "string"
+    },
+    "featureCode": {
+     "type": "string"
+    },
+    "isMostAccurate": {
+     "type": "boolean"
+    },
+    "levelOfData": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "ipsList": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/IPSObject"
+     }
+    },
+    "cmeid": {
+     "type": "string"
+    }
+   }
+  },
+  "IPSObject": {
+   "type": "object",
+   "properties": {
+    "catalog": {
+     "type": "string"
+    },
+    "activityID": {
+     "type": "string"
+    },
+    "location": {
+     "type": "string"
+    },
+    "eventTime": {
+     "type": "string"
+    },
+    "instruments": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/InstrumentBean"
+     }
+    },
+    "linkedEvents": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/LinkedSWObject"
+     }
+    },
+    "sentNotifications": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/SentNotificationObject"
+     }
+    },
+    "link": {
+     "type": "string"
+    },
+    "submissionTime": {
+     "type": "string"
+    },
+    "versionId": {
+     "type": "integer",
+     "format": "int32"
+    }
+   }
+  },
+  "Impact": {
+   "type": "object",
+   "properties": {
+    "location": {
+     "type": "string"
+    },
+    "arrivalTime": {
+     "type": "string"
+    },
+    "isGlancingBlow": {
+     "type": "boolean"
+    },
+    "isMinorImpact": {
+     "type": "boolean"
+    }
+   }
+  },
+  "InstrumentBean": {
+   "type": "object",
+   "properties": {
+    "displayName": {
+     "type": "string"
+    }
+   }
+  },
+  "LinkedSWObject": {
+   "type": "object",
+   "properties": {
+    "activityID": {
+     "type": "string"
+    }
+   }
+  },
+  "SentNotificationObject": {
+   "type": "object",
+   "properties": {
+    "messageID": {
+     "type": "string"
+    },
+    "messageIssueTime": {
+     "type": "string"
+    },
+    "messageURL": {
+     "type": "string"
+    }
+   }
+  },
+  "WSAEnlilObject": {
+   "type": "object",
+   "properties": {
+    "simulationID": {
+     "type": "string"
+    },
+    "modelCompletionTime": {
+     "type": "string"
+    },
+    "au": {
+     "type": "number",
+     "format": "float"
+    },
+    "cmeInputs": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/CMEInput"
+     }
+    },
+    "estimatedShockArrivalTime": {
+     "type": "string"
+    },
+    "isEarthGB": {
+     "type": "boolean"
+    },
+    "isEarthMinorImpact": {
+     "type": "boolean"
+    },
+    "rmin_re": {
+     "type": "number",
+     "format": "float"
+    },
+    "kp_18": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "kp_90": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "kp_135": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "kp_180": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "estimatedDuration": {
+     "type": "number",
+     "format": "float"
+    },
+    "impactList": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/Impact"
+     }
+    },
+    "link": {
+     "type": "string"
+    }
+   }
+  },
+  "SEPObject": {
+   "type": "object",
+   "properties": {
+    "sepID": {
+     "type": "string"
+    },
+    "eventTime": {
+     "type": "string"
+    },
+    "instruments": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/InstrumentBean"
+     }
+    },
+    "submissionTime": {
+     "type": "string"
+    },
+    "versionId": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "link": {
+     "type": "string"
+    },
+    "linkedEvents": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/LinkedSWObject"
+     }
+    },
+    "sentNotifications": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/SentNotificationObject"
+     }
+    }
+   }
+  },
+  "RBEObject": {
+   "type": "object",
+   "properties": {
+    "rbeID": {
+     "type": "string"
+    },
+    "eventTime": {
+     "type": "string"
+    },
+    "instruments": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/InstrumentBean"
+     }
+    },
+    "submissionTime": {
+     "type": "string"
+    },
+    "versionId": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "link": {
+     "type": "string"
+    },
+    "linkedEvents": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/LinkedSWObject"
+     }
+    },
+    "sentNotifications": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/SentNotificationObject"
+     }
+    }
+   }
+  },
+  "MPCObject": {
+   "type": "object",
+   "properties": {
+    "mpcID": {
+     "type": "string"
+    },
+    "eventTime": {
+     "type": "string"
+    },
+    "instruments": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/InstrumentBean"
+     }
+    },
+    "submissionTime": {
+     "type": "string"
+    },
+    "versionId": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "link": {
+     "type": "string"
+    },
+    "linkedEvents": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/LinkedSWObject"
+     }
+    },
+    "sentNotifications": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/SentNotificationObject"
+     }
+    }
+   }
+  },
+  "HSSObject": {
+   "type": "object",
+   "properties": {
+    "hssID": {
+     "type": "string"
+    },
+    "eventTime": {
+     "type": "string"
+    },
+    "instruments": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/InstrumentBean"
+     }
+    },
+    "submissionTime": {
+     "type": "string"
+    },
+    "versionId": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "link": {
+     "type": "string"
+    },
+    "linkedEvents": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/LinkedSWObject"
+     }
+    },
+    "sentNotifications": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/SentNotificationObject"
+     }
+    }
+   }
+  },
+  "GSTObject": {
+   "type": "object",
+   "properties": {
+    "gstID": {
+     "type": "string"
+    },
+    "startTime": {
+     "type": "string"
+    },
+    "allKpIndex": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/KpIndexObject"
+     }
+    },
+    "link": {
+     "type": "string"
+    },
+    "linkedEvents": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/LinkedSWObject"
+     }
+    },
+    "submissionTime": {
+     "type": "string"
+    },
+    "versionId": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "sentNotifications": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/SentNotificationObject"
+     }
+    }
+   }
+  },
+  "KpIndexObject": {
+   "type": "object",
+   "properties": {
+    "observedTime": {
+     "type": "string"
+    },
+    "kpIndex": {
+     "type": "number",
+     "format": "double"
+    },
+    "source": {
+     "type": "string"
+    }
+   }
+  },
+  "FLRObject": {
+   "type": "object",
+   "properties": {
+    "flrID": {
+     "type": "string"
+    },
+    "catalog": {
+     "type": "string"
+    },
+    "instruments": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/InstrumentBean"
+     }
+    },
+    "beginTime": {
+     "type": "string"
+    },
+    "peakTime": {
+     "type": "string"
+    },
+    "endTime": {
+     "type": "string"
+    },
+    "classType": {
+     "type": "string"
+    },
+    "sourceLocation": {
+     "type": "string"
+    },
+    "activeRegionNum": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "note": {
+     "type": "string"
+    },
+    "submissionTime": {
+     "type": "string"
+    },
+    "versionId": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "link": {
+     "type": "string"
+    },
+    "linkedEvents": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/LinkedSWObject"
+     }
+    },
+    "sentNotifications": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/SentNotificationObject"
+     }
+    }
+   }
+  },
+  "CMEAnalysisJSON": {
+   "type": "object",
+   "properties": {
+    "isMostAccurate": {
+     "type": "boolean"
+    },
+    "levelOfData": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "time21_5": {
+     "type": "string"
+    },
+    "latitude": {
+     "type": "number",
+     "format": "float"
+    },
+    "longitude": {
+     "type": "number",
+     "format": "float"
+    },
+    "halfAngle": {
+     "type": "number",
+     "format": "float"
+    },
+    "speed": {
+     "type": "number",
+     "format": "float"
+    },
+    "type": {
+     "type": "string"
+    },
+    "featureCode": {
+     "type": "string"
+    },
+    "imageType": {
+     "type": "string"
+    },
+    "measurementTechnique": {
+     "type": "string"
+    },
+    "note": {
+     "type": "string"
+    },
+    "minorHalfWidth": {
+     "type": "number",
+     "format": "float"
+    },
+    "speedMeasuredAtHeight": {
+     "type": "number",
+     "format": "float"
+    },
+    "tilt": {
+     "type": "number",
+     "format": "float"
+    },
+    "submissionTime": {
+     "type": "string"
+    },
+    "link": {
+     "type": "string"
+    },
+    "enlilList": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/WSAEnlilJSON"
+     }
+    }
+   }
+  },
+  "CMEJSON": {
+   "type": "object",
+   "properties": {
+    "activityID": {
+     "type": "string"
+    },
+    "catalog": {
+     "type": "string"
+    },
+    "startTime": {
+     "type": "string"
+    },
+    "instruments": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/InstrumentBean"
+     }
+    },
+    "sourceLocation": {
+     "type": "string"
+    },
+    "activeRegionNum": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "note": {
+     "type": "string"
+    },
+    "cmeAnalyses": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/CMEAnalysisJSON"
+     }
+    },
+    "linkedEvents": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/LinkedSWObject"
+     }
+    },
+    "sentNotifications": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/SentNotificationObject"
+     }
+    },
+    "submissionTime": {
+     "type": "string"
+    },
+    "versionId": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "link": {
+     "type": "string"
+    }
+   }
+  },
+  "WSAEnlilJSON": {
+   "type": "object",
+   "properties": {
+    "modelCompletionTime": {
+     "type": "string"
+    },
+    "au": {
+     "type": "number",
+     "format": "float"
+    },
+    "estimatedShockArrivalTime": {
+     "type": "string"
+    },
+    "isEarthGB": {
+     "type": "boolean"
+    },
+    "isEarthMinorImpact": {
+     "type": "boolean"
+    },
+    "rmin_re": {
+     "type": "number",
+     "format": "float"
+    },
+    "kp_18": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "kp_90": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "kp_135": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "kp_180": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "estimatedDuration": {
+     "type": "number",
+     "format": "float"
+    },
+    "link": {
+     "type": "string"
+    },
+    "impactList": {
+     "type": "array",
+     "items": {
+      "$ref": "#/$defs/Impact"
+     }
+    },
+    "cmeIDs": {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  "CMEAnalysisObject": {
+   "type": "object",
+   "properties": {
+    "catalog": {
+     "type": "string"
+    },
+    "isMostAccurate": {
+     "type": "boolean"
+    },
+    "time21_5": {
+     "type": "string"
+    },
+    "latitude": {
+     "type": "number",
+     "format": "float"
+    },
+    "longitude": {
+     "type": "number",
+     "format": "float"
+    },
+    "halfAngle": {
+     "type": "number",
+     "format": "float"
+    },
+    "speed": {
+     "type": "number",
+     "format": "float"
+    },
+    "type": {
+     "type": "string"
+    },
+    "associatedCMEID": {
+     "type": "string"
+    },
+    "associatedCMEstartTime": {
+     "type": "string"
+    },
+    "associatedCMELink": {
+     "type": "string"
+    },
+    "featureCode": {
+     "type": "string"
+    },
+    "dataLevel": {
+     "type": "string"
+    },
+    "measurementTechnique": {
+     "type": "string"
+    },
+    "imageType": {
+     "type": "string"
+    },
+    "tilt": {
+     "type": "number",
+     "format": "float"
+    },
+    "minorHalfWidth": {
+     "type": "number",
+     "format": "float"
+    },
+    "speedMeasuredAtHeight": {
+     "type": "number",
+     "format": "float"
+    },
+    "note": {
+     "type": "string"
+    },
+    "submissionTime": {
+     "type": "string"
+    },
+    "versionId": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "link": {
+     "type": "string"
+    }
+   }
+  }
+ }
+}

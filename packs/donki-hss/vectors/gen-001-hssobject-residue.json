@@ -1,0 +1,7 @@
+{
+ "name": "gen-hssobject-residue",
+ "from": "donki-hss",
+ "to": "donki-hss",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"hssID\":\"s91714\",\"eventTime\":\"s94930\",\"instruments\":[{\"displayName\":\"s66230\"},{\"displayName\":\"s95258\"}],\"submissionTime\":\"s32340\",\"versionId\":75419,\"link\":\"s47876\",\"linkedEvents\":[{\"activityID\":\"s68191\"},{\"activityID\":\"s81992\"}],\"sentNotifications\":[{\"messageID\":\"s30455\",\"messageIssueTime\":\"s17689\",\"messageURL\":\"s31831\"},{\"messageID\":\"s16961\",\"messageIssueTime\":\"s99975\",\"messageURL\":\"s57626\"}]}",
+ "expect": "{\"hssID\":\"s91714\",\"eventTime\":\"s94930\",\"instruments\":[{\"displayName\":\"s66230\"},{\"displayName\":\"s95258\"}],\"submissionTime\":\"s32340\",\"versionId\":75419,\"link\":\"s47876\",\"linkedEvents\":[{\"activityID\":\"s68191\"},{\"activityID\":\"s81992\"}],\"sentNotifications\":[{\"messageID\":\"s30455\",\"messageIssueTime\":\"s17689\",\"messageURL\":\"s31831\"},{\"messageID\":\"s16961\",\"messageIssueTime\":\"s99975\",\"messageURL\":\"s57626\"}],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

@@ -1,0 +1,28 @@
+# The tle module: the fields of a NORAD two-line element set (lines 1 and 2) and of the
+# name line CelesTrak puts before them. One key per field; a field that both lines carry
+# (the satellite number, the checksum) is one key. Maintained by hand.
+module        tle
+version       0.1.0
+distribution  public
+source        "CelesTrak, NORAD Two-Line Element Set Format (https://celestrak.org/NORAD/documentation/tle-fmt.php, last updated 2022-07-01, read 2026-11-21): the columns of lines 0, 1 and 2"
+key  name                  string  -    "line 0: the object's name, up to 24 characters"
+key  satellite_number      int     -    "lines 1 and 2: the catalogue number, five digits"
+key  classification        string  -    "line 1: classification letter (U unclassified)"
+key  launch_year           int     -    "line 1: international designator, last two digits of the launch year"
+key  launch_number         int     -    "line 1: international designator, launch number of that year"
+key  launch_piece          string  -    "line 1: international designator, piece of the launch (letters)"
+key  epoch_year            int     -    "line 1: last two digits of the epoch year"
+key  epoch_day             float   -    "line 1: day of the year of the epoch, with the fraction of the day (UTC)"
+key  mean_motion_dot       string  -    "line 1: first time derivative of the mean motion as written (sign or space, then a decimal), revolutions per day squared"
+key  mean_motion_ddot      string  -    "line 1: second time derivative of the mean motion as written: sign or space, five digits after an assumed decimal point, sign and power of ten"
+key  bstar                 string  -    "line 1: BSTAR drag term as written: sign or space, five digits after an assumed decimal point, sign and power of ten"
+key  ephemeris_type        int     -    "line 1: ephemeris type"
+key  element_number        int     -    "line 1: element set number"
+key  checksum              int     -    "lines 1 and 2: the line's modulo-10 checksum digit as written (not verified)"
+key  inclination           float   deg  "line 2: inclination"
+key  ra_of_asc_node        float   deg  "line 2: right ascension of the ascending node"
+key  eccentricity_digits   int     -    "line 2: the seven digits of the eccentricity after its assumed leading decimal point (0007409 is 0.0007409)"
+key  arg_of_perigee        float   deg  "line 2: argument of perigee"
+key  mean_anomaly          float   deg  "line 2: mean anomaly"
+key  mean_motion           float   -    "line 2: mean motion, revolutions per day"
+key  rev_number            int     -    "line 2: revolution number at epoch"

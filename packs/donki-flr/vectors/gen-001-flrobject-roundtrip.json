@@ -1,0 +1,17 @@
+{
+ "name": "gen-flrobject-roundtrip",
+ "from": "donki-flr",
+ "to": "donki-flr",
+ "input": "{\"flrID\":\"s14109\",\"catalog\":\"s35483\",\"instruments\":[{\"displayName\":\"s22885\"},{\"displayName\":\"s55677\"}],\"beginTime\":\"s56968\",\"peakTime\":\"s22166\",\"endTime\":\"s76987\",\"classType\":\"s87107\",\"sourceLocation\":\"s11112\",\"activeRegionNum\":58647,\"note\":\"s68721\",\"submissionTime\":\"s25576\",\"versionId\":13345,\"link\":\"s73515\",\"linkedEvents\":[{\"activityID\":\"s14379\"},{\"activityID\":\"s18799\"}],\"sentNotifications\":[{\"messageID\":\"s95194\",\"messageIssueTime\":\"s41226\",\"messageURL\":\"s68186\"},{\"messageID\":\"s22393\",\"messageIssueTime\":\"s35300\",\"messageURL\":\"s21774\"}]}",
+ "expect": "{\"flrID\":\"s14109\",\"catalog\":\"s35483\",\"instruments\":[{\"displayName\":\"s22885\"},{\"displayName\":\"s55677\"}],\"beginTime\":\"s56968\",\"peakTime\":\"s22166\",\"endTime\":\"s76987\",\"classType\":\"s87107\",\"sourceLocation\":\"s11112\",\"activeRegionNum\":58647,\"note\":\"s68721\",\"submissionTime\":\"s25576\",\"versionId\":13345,\"link\":\"s73515\",\"linkedEvents\":[{\"activityID\":\"s14379\"},{\"activityID\":\"s18799\"}],\"sentNotifications\":[{\"messageID\":\"s95194\",\"messageIssueTime\":\"s41226\",\"messageURL\":\"s68186\"},{\"messageID\":\"s22393\",\"messageIssueTime\":\"s35300\",\"messageURL\":\"s21774\"}]}",
+ "model": {
+  "donkiflr.flr_id": "s14109",
+  "donkiflr.catalog": "s35483",
+  "donkiflr.instruments.#": "2",
+  "donkiflr.begin_time": "s56968",
+  "donkiflr.peak_time": "s22166",
+  "donkiflr.end_time": "s76987",
+  "donkiflr.class_type": "s87107",
+  "donkiflr.source_location": "s11112"
+ }
+}

@@ -1,0 +1,21 @@
+{
+ "keys": {
+  "all_kp_index|kpIndex|float": "all_kp_index_kp_index",
+  "all_kp_index|observedTime|string": "all_kp_index_observed_time",
+  "all_kp_index|source|string": "all_kp_index_source",
+  "linked_events|activityID|string": "linked_events_activity_id",
+  "sent_notifications|messageID|string": "sent_notifications_message_id",
+  "sent_notifications|messageIssueTime|string": "sent_notifications_message_issue_time",
+  "sent_notifications|messageURL|string": "sent_notifications_message_url",
+  "|gstID|string": "gst_id",
+  "|link|string": "link",
+  "|startTime|string": "start_time",
+  "|submissionTime|string": "submission_time",
+  "|versionId|int": "version_id"
+ },
+ "lists": {
+  "|allKpIndex": "all_kp_index",
+  "|linkedEvents": "linked_events",
+  "|sentNotifications": "sent_notifications"
+ }
+}

@@ -1,0 +1,17 @@
+{
+ "name": "gen-gp-roundtrip",
+ "from": "celestrak-gp-json",
+ "to": "celestrak-gp-json",
+ "input": "{\"OBJECT_NAME\":\"s92513\",\"OBJECT_ID\":\"s69447\",\"EPOCH\":\"s77303\",\"MEAN_MOTION\":0.75,\"ECCENTRICITY\":1.5,\"INCLINATION\":0.75,\"RA_OF_ASC_NODE\":1.5,\"ARG_OF_PERICENTER\":42.375,\"MEAN_ANOMALY\":1.5,\"EPHEMERIS_TYPE\":98098,\"CLASSIFICATION_TYPE\":\"s41516\",\"NORAD_CAT_ID\":26973,\"ELEMENT_SET_NO\":88845,\"REV_AT_EPOCH\":4211,\"BSTAR\":42.375,\"MEAN_MOTION_DOT\":12.5,\"MEAN_MOTION_DDOT\":101.125}",
+ "expect": "{\"OBJECT_NAME\":\"s92513\",\"OBJECT_ID\":\"s69447\",\"EPOCH\":\"s77303\",\"MEAN_MOTION\":0.75,\"ECCENTRICITY\":1.5,\"INCLINATION\":0.75,\"RA_OF_ASC_NODE\":1.5,\"ARG_OF_PERICENTER\":42.375,\"MEAN_ANOMALY\":1.5,\"EPHEMERIS_TYPE\":98098,\"CLASSIFICATION_TYPE\":\"s41516\",\"NORAD_CAT_ID\":26973,\"ELEMENT_SET_NO\":88845,\"REV_AT_EPOCH\":4211,\"BSTAR\":42.375,\"MEAN_MOTION_DOT\":12.5,\"MEAN_MOTION_DDOT\":101.125}",
+ "model": {
+  "uid": "s69447",
+  "ckgp.object_name": "s92513",
+  "ckgp.object_id": "s69447",
+  "ckgp.epoch": "s77303",
+  "ckgp.mean_motion": "0.75",
+  "ckgp.eccentricity": "1.5",
+  "ckgp.inclination": "0.75",
+  "ckgp.ra_of_asc_node": "1.5"
+ }
+}

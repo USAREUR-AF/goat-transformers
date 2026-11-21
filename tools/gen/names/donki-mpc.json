@@ -1,0 +1,19 @@
+{
+ "keys": {
+  "instruments|displayName|string": "instruments_display_name",
+  "linked_events|activityID|string": "linked_events_activity_id",
+  "sent_notifications|messageID|string": "sent_notifications_message_id",
+  "sent_notifications|messageIssueTime|string": "sent_notifications_message_issue_time",
+  "sent_notifications|messageURL|string": "sent_notifications_message_url",
+  "|eventTime|string": "event_time",
+  "|link|string": "link",
+  "|mpcID|string": "mpc_id",
+  "|submissionTime|string": "submission_time",
+  "|versionId|int": "version_id"
+ },
+ "lists": {
+  "|instruments": "instruments",
+  "|linkedEvents": "linked_events",
+  "|sentNotifications": "sent_notifications"
+ }
+}

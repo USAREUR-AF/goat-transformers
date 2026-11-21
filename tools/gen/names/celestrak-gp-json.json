@@ -1,0 +1,22 @@
+{
+ "keys": {
+  "|ARG_OF_PERICENTER|float": "arg_of_pericenter",
+  "|BSTAR|float": "bstar",
+  "|CLASSIFICATION_TYPE|string": "classification_type",
+  "|ECCENTRICITY|float": "eccentricity",
+  "|ELEMENT_SET_NO|int": "element_set_no",
+  "|EPHEMERIS_TYPE|int": "ephemeris_type",
+  "|EPOCH|string": "epoch",
+  "|INCLINATION|float": "inclination",
+  "|MEAN_ANOMALY|float": "mean_anomaly",
+  "|MEAN_MOTION_DDOT|float": "mean_motion_ddot",
+  "|MEAN_MOTION_DOT|float": "mean_motion_dot",
+  "|MEAN_MOTION|float": "mean_motion",
+  "|NORAD_CAT_ID|int": "norad_cat_id",
+  "|OBJECT_ID|string": "object_id",
+  "|OBJECT_NAME|string": "object_name",
+  "|RA_OF_ASC_NODE|float": "ra_of_asc_node",
+  "|REV_AT_EPOCH|int": "rev_at_epoch"
+ },
+ "lists": {}
+}

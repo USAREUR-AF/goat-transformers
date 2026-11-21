@@ -1,0 +1,17 @@
+{
+ "name": "gen-rbeobject-roundtrip",
+ "from": "donki-rbe",
+ "to": "donki-rbe",
+ "input": "{\"rbeID\":\"s70953\",\"eventTime\":\"s82022\",\"instruments\":[{\"displayName\":\"s1617\"},{\"displayName\":\"s98137\"}],\"submissionTime\":\"s97544\",\"versionId\":23185,\"link\":\"s41342\",\"linkedEvents\":[{\"activityID\":\"s27013\"},{\"activityID\":\"s2167\"}],\"sentNotifications\":[{\"messageID\":\"s86450\",\"messageIssueTime\":\"s89433\",\"messageURL\":\"s83020\"},{\"messageID\":\"s5540\",\"messageIssueTime\":\"s51825\",\"messageURL\":\"s51568\"}]}",
+ "expect": "{\"rbeID\":\"s70953\",\"eventTime\":\"s82022\",\"instruments\":[{\"displayName\":\"s1617\"},{\"displayName\":\"s98137\"}],\"submissionTime\":\"s97544\",\"versionId\":23185,\"link\":\"s41342\",\"linkedEvents\":[{\"activityID\":\"s27013\"},{\"activityID\":\"s2167\"}],\"sentNotifications\":[{\"messageID\":\"s86450\",\"messageIssueTime\":\"s89433\",\"messageURL\":\"s83020\"},{\"messageID\":\"s5540\",\"messageIssueTime\":\"s51825\",\"messageURL\":\"s51568\"}]}",
+ "model": {
+  "donkirbe.rbe_id": "s70953",
+  "donkirbe.event_time": "s82022",
+  "donkirbe.instruments.#": "2",
+  "donkirbe.submission_time": "s97544",
+  "donkirbe.version_id": "23185",
+  "donkirbe.link": "s41342",
+  "donkirbe.linked_events.#": "2",
+  "donkirbe.sent_notifications.#": "2"
+ }
+}

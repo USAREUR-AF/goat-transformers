@@ -1,0 +1,5 @@
+Packs neows-*; modules neows*
+  NASA NeoWs object members as modelled by neows-ruby,
+  https://github.com/SpaceRocks/neows-ruby commit b81655f3. Copyright (c)
+  2015 Jason English. MIT License; restated under Apache-2.0. No code,
+  comments or fixture values copied.

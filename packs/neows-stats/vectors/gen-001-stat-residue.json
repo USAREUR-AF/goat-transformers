@@ -1,0 +1,7 @@
+{
+ "name": "gen-stat-residue",
+ "from": "neows-stats",
+ "to": "neows-stats",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"near_earth_object_count\":72735,\"close_approach_count\":21092}",
+ "expect": "{\"near_earth_object_count\":72735,\"close_approach_count\":21092,\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

@@ -1,0 +1,7 @@
+{
+ "keys": {
+  "|close_approach_count|int": "close_approach_count",
+  "|near_earth_object_count|int": "near_earth_object_count"
+ },
+ "lists": {}
+}

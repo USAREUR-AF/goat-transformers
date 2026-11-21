@@ -1,0 +1,7 @@
+Packs celestrak-gp-csv, celestrak-gp-json, tle; modules ckgp, ckgpcsv, tle
+  CelesTrak, GP data documentation (A New Way to Obtain GP Data) and NORAD
+  Two-Line Element Set Format, by T.S. Kelso, https://celestrak.org (read
+  2026-11-21). No licence stated (LicenseRef-unstated). OMM keyword meanings
+  and units from CCSDS 502.0-B-3, Orbit Data Messages,
+  https://ccsds.org/Pubs/502x0b3e1.pdf, reused with attribution under the
+  CCSDS reproduction permission statement. No text copied.

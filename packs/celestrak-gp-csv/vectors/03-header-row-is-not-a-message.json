@@ -1,0 +1,9 @@
+{
+  "name": "header-row-is-not-a-message",
+  "from": "celestrak-gp-csv",
+  "to": "celestrak-gp-csv",
+  "input": "OBJECT_NAME,OBJECT_ID,EPOCH,MEAN_MOTION,ECCENTRICITY,INCLINATION,RA_OF_ASC_NODE,ARG_OF_PERICENTER,MEAN_ANOMALY,EPHEMERIS_TYPE,CLASSIFICATION_TYPE,NORAD_CAT_ID,ELEMENT_SET_NO,REV_AT_EPOCH,BSTAR,MEAN_MOTION_DOT,MEAN_MOTION_DDOT",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "CelesTrak GP data documentation (gp-data-formats.php, read 2026-11-21): the CSV form uses the OMM keywords; column order of the CSV header of 2026-11-21; the header row holds the column names, and MEAN_MOTION is not a decimal number"
+}

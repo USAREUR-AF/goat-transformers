@@ -1,0 +1,17 @@
+{
+ "name": "gen-cmeanalysis_object-roundtrip",
+ "from": "donki-cme-analysis",
+ "to": "donki-cme-analysis",
+ "input": "{\"catalog\":\"s70447\",\"isMostAccurate\":false,\"time21_5\":\"s44907\",\"latitude\":0.75,\"longitude\":1.5,\"halfAngle\":101.125,\"speed\":42.375,\"type\":\"s78466\",\"associatedCMEID\":\"s52101\",\"associatedCMEstartTime\":\"s67519\",\"associatedCMELink\":\"s90017\",\"featureCode\":\"s54363\",\"dataLevel\":\"s46819\",\"measurementTechnique\":\"s498\",\"imageType\":\"s99318\",\"tilt\":-3.25,\"minorHalfWidth\":101.125,\"speedMeasuredAtHeight\":42.375,\"note\":\"s9031\",\"submissionTime\":\"s9026\",\"versionId\":39540,\"link\":\"s82432\"}",
+ "expect": "{\"catalog\":\"s70447\",\"isMostAccurate\":false,\"time21_5\":\"s44907\",\"latitude\":0.75,\"longitude\":1.5,\"halfAngle\":101.125,\"speed\":42.375,\"type\":\"s78466\",\"associatedCMEID\":\"s52101\",\"associatedCMEstartTime\":\"s67519\",\"associatedCMELink\":\"s90017\",\"featureCode\":\"s54363\",\"dataLevel\":\"s46819\",\"measurementTechnique\":\"s498\",\"imageType\":\"s99318\",\"tilt\":-3.25,\"minorHalfWidth\":101.125,\"speedMeasuredAtHeight\":42.375,\"note\":\"s9031\",\"submissionTime\":\"s9026\",\"versionId\":39540,\"link\":\"s82432\"}",
+ "model": {
+  "donkicmea.catalog": "s70447",
+  "donkicmea.is_most_accurate": "0",
+  "donkicmea.time21_5": "s44907",
+  "donkicmea.latitude": "0.75",
+  "donkicmea.longitude": "1.5",
+  "donkicmea.half_angle": "101.125",
+  "donkicmea.speed": "42.375",
+  "donkicmea.type": "s78466"
+ }
+}

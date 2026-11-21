@@ -1,0 +1,74 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "urn:goat-transformers:celestrak-gp-objects",
+ "title": "CelesTrak GP data, FORMAT=JSON: one element set, restated by goat-transformers",
+ "description": "Member names and JSON types of one element of the array CelesTrak's GP query returns with FORMAT=JSON. The names are the OMM keywords of CCSDS 502.0-B-3 that CelesTrak's GP data documentation says the JSON form uses; the JSON types are those of the response read on 2026-11-21. Restated by this project; no text of either source is copied.",
+ "$defs": {
+  "GP": {
+   "type": "object",
+   "properties": {
+    "OBJECT_NAME": {
+     "type": "string"
+    },
+    "OBJECT_ID": {
+     "type": "string"
+    },
+    "EPOCH": {
+     "type": "string"
+    },
+    "MEAN_MOTION": {
+     "type": "number"
+    },
+    "ECCENTRICITY": {
+     "type": "number"
+    },
+    "INCLINATION": {
+     "type": "number"
+    },
+    "RA_OF_ASC_NODE": {
+     "type": "number"
+    },
+    "ARG_OF_PERICENTER": {
+     "type": "number"
+    },
+    "MEAN_ANOMALY": {
+     "type": "number"
+    },
+    "EPHEMERIS_TYPE": {
+     "type": "integer"
+    },
+    "CLASSIFICATION_TYPE": {
+     "type": "string"
+    },
+    "NORAD_CAT_ID": {
+     "type": "integer"
+    },
+    "ELEMENT_SET_NO": {
+     "type": "integer"
+    },
+    "REV_AT_EPOCH": {
+     "type": "integer"
+    },
+    "BSTAR": {
+     "type": "number"
+    },
+    "MEAN_MOTION_DOT": {
+     "type": "number"
+    },
+    "MEAN_MOTION_DDOT": {
+     "type": "number"
+    }
+   },
+   "required": [
+    "EPOCH",
+    "MEAN_MOTION",
+    "ECCENTRICITY",
+    "INCLINATION",
+    "RA_OF_ASC_NODE",
+    "ARG_OF_PERICENTER",
+    "MEAN_ANOMALY",
+    "NORAD_CAT_ID"
+   ]
+  }
+ }
+}

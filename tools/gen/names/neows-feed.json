@@ -1,0 +1,9 @@
+{
+ "keys": {
+  "|element_count|int": "element_count",
+  "|links.next|string": "links_next",
+  "|links.prev|string": "links_prev",
+  "|links.self|string": "links_self"
+ },
+ "lists": {}
+}

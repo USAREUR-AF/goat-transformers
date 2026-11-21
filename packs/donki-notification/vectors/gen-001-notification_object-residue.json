@@ -1,0 +1,7 @@
+{
+ "name": "gen-notification_object-residue",
+ "from": "donki-notification",
+ "to": "donki-notification",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"messageType\":\"s92995\",\"messageID\":\"s56692\",\"messageURL\":\"s18463\",\"messageIssueTime\":\"s88073\",\"messageBody\":\"s61227\"}",
+ "expect": "{\"messageType\":\"s92995\",\"messageID\":\"s56692\",\"messageURL\":\"s18463\",\"messageIssueTime\":\"s88073\",\"messageBody\":\"s61227\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

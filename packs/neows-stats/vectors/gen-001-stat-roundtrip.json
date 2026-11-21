@@ -1,0 +1,11 @@
+{
+ "name": "gen-stat-roundtrip",
+ "from": "neows-stats",
+ "to": "neows-stats",
+ "input": "{\"near_earth_object_count\":72735,\"close_approach_count\":21092}",
+ "expect": "{\"near_earth_object_count\":72735,\"close_approach_count\":21092}",
+ "model": {
+  "neowsstats.near_earth_object_count": "72735",
+  "neowsstats.close_approach_count": "21092"
+ }
+}

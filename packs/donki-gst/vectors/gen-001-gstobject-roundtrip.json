@@ -1,0 +1,17 @@
+{
+ "name": "gen-gstobject-roundtrip",
+ "from": "donki-gst",
+ "to": "donki-gst",
+ "input": "{\"gstID\":\"s80033\",\"startTime\":\"s66785\",\"allKpIndex\":[{\"observedTime\":\"s52047\",\"kpIndex\":-0.5,\"source\":\"s54702\"},{\"observedTime\":\"s90124\",\"kpIndex\":42.375,\"source\":\"s38098\"}],\"link\":\"s24748\",\"linkedEvents\":[{\"activityID\":\"s8301\"},{\"activityID\":\"s15284\"}],\"submissionTime\":\"s23804\",\"versionId\":60964,\"sentNotifications\":[{\"messageID\":\"s35341\",\"messageIssueTime\":\"s60553\",\"messageURL\":\"s83728\"},{\"messageID\":\"s6415\",\"messageIssueTime\":\"s7165\",\"messageURL\":\"s99\"}]}",
+ "expect": "{\"gstID\":\"s80033\",\"startTime\":\"s66785\",\"allKpIndex\":[{\"observedTime\":\"s52047\",\"kpIndex\":-0.5,\"source\":\"s54702\"},{\"observedTime\":\"s90124\",\"kpIndex\":42.375,\"source\":\"s38098\"}],\"link\":\"s24748\",\"linkedEvents\":[{\"activityID\":\"s8301\"},{\"activityID\":\"s15284\"}],\"submissionTime\":\"s23804\",\"versionId\":60964,\"sentNotifications\":[{\"messageID\":\"s35341\",\"messageIssueTime\":\"s60553\",\"messageURL\":\"s83728\"},{\"messageID\":\"s6415\",\"messageIssueTime\":\"s7165\",\"messageURL\":\"s99\"}]}",
+ "model": {
+  "donkigst.gst_id": "s80033",
+  "donkigst.start_time": "s66785",
+  "donkigst.all_kp_index.#": "2",
+  "donkigst.link": "s24748",
+  "donkigst.linked_events.#": "2",
+  "donkigst.submission_time": "s23804",
+  "donkigst.version_id": "60964",
+  "donkigst.sent_notifications.#": "2"
+ }
+}

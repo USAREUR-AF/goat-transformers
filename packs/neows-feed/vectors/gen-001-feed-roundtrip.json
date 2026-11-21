@@ -1,0 +1,13 @@
+{
+ "name": "gen-feed-roundtrip",
+ "from": "neows-feed",
+ "to": "neows-feed",
+ "input": "{\"links\":{\"self\":\"s11821\",\"next\":\"s47558\",\"prev\":\"s97840\"},\"element_count\":70368}",
+ "expect": "{\"links\":{\"self\":\"s11821\",\"next\":\"s47558\",\"prev\":\"s97840\"},\"element_count\":70368}",
+ "model": {
+  "neowsfeed.links_self": "s11821",
+  "neowsfeed.links_next": "s47558",
+  "neowsfeed.links_prev": "s97840",
+  "neowsfeed.element_count": "70368"
+ }
+}

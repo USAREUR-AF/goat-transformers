@@ -1,0 +1,12 @@
+{
+  "name": "name-line-padded",
+  "from": "tle",
+  "to": "tle",
+  "input": "TESTSAT 1               ",
+  "expect": "TESTSAT 1               ",
+  "model": {
+    "tle.name": "TESTSAT 1"
+  },
+  "source": "constructed",
+  "reference": "CelesTrak, NORAD Two-Line Element Set Format (tle-fmt.php, read 2026-11-21): line 0, the name padded to 24 characters; matches neither line kind and reads as kind name; trailing spaces of the column are not part of the value; line written by tools/gen/space-text-vectors.py"
+}

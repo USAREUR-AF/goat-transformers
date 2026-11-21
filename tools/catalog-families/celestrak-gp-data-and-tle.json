@@ -1,0 +1,9 @@
+{
+  "name": "CelesTrak GP data and TLE",
+  "domain": "space",
+  "exact": [
+    "celestrak-gp-csv",
+    "celestrak-gp-json",
+    "tle"
+  ]
+}

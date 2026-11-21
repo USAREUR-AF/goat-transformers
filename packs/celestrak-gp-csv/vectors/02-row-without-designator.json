@@ -1,0 +1,26 @@
+{
+  "name": "row-without-designator",
+  "from": "celestrak-gp-csv",
+  "to": "celestrak-gp-csv",
+  "input": ",,2026-05-03T04:05:06.789012,15.5,.0001234,51.5,120.25,90.125,270.5,0,U,270001,999,1234,.12345E-3,.5E-5,0",
+  "expect": ",,2026-05-03T04:05:06.789012,15.5,0.0001234,51.5,120.25,90.125,270.5,0,U,270001,999,1234,.12345E-3,.5E-5,0",
+  "model": {
+    "ckgp.epoch": "2026-05-03T04:05:06.789012",
+    "ckgp.mean_motion": "15.5",
+    "ckgp.eccentricity": "0.0001234",
+    "ckgp.inclination": "51.5",
+    "ckgp.ra_of_asc_node": "120.25",
+    "ckgp.arg_of_pericenter": "90.125",
+    "ckgp.mean_anomaly": "270.5",
+    "ckgp.ephemeris_type": "0",
+    "ckgp.classification_type": "U",
+    "ckgp.norad_cat_id": "270001",
+    "ckgp.element_set_no": "999",
+    "ckgp.rev_at_epoch": "1234",
+    "ckgpcsv.bstar_text": ".12345E-3",
+    "ckgpcsv.mean_motion_dot_text": ".5E-5",
+    "ckgpcsv.mean_motion_ddot_text": "0"
+  },
+  "source": "constructed",
+  "reference": "CelesTrak GP data documentation (gp-data-formats.php, read 2026-11-21): the CSV form uses the OMM keywords; column order of the CSV header of 2026-11-21; an object of the analyst range has no name and no international designator; the empty columns are absent, so uid is absent, and are written empty"
+}

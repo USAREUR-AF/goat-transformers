@@ -1,0 +1,11 @@
+# The ckgpcsv module: the columns of CelesTrak's GP data in CSV form (FORMAT=CSV) that
+# the CSV form writes in a way the JSON form's keys (module ckgp) cannot hold: numbers in
+# exponent notation, which a float of the text wire does not read. Maintained by hand.
+module        ckgpcsv
+version       0.1.0
+distribution  public
+source        "CelesTrak, A New Way to Obtain GP Data (https://celestrak.org/NORAD/documentation/gp-data-formats.php, updated 2026-06-23, read 2026-11-21): the CSV form uses the OMM keywords; the column order and number notation as the CSV response of 2026-11-21 shows them"
+source        "CCSDS 502.0-B-3 Orbit Data Messages, April 2023, table 4-3: the meaning and unit of each keyword"
+key  bstar_text             string  -  "BSTAR column as written, in inverse Earth radii; the CSV form writes it in exponent notation (.17778E-3)"
+key  mean_motion_dot_text   string  -  "MEAN_MOTION_DOT column as written, in revolutions per day squared; exponent notation"
+key  mean_motion_ddot_text  string  -  "MEAN_MOTION_DDOT column as written, in revolutions per day cubed; 0 or exponent notation"

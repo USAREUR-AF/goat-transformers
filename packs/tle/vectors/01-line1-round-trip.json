@@ -1,0 +1,24 @@
+{
+  "name": "line1-round-trip",
+  "from": "tle",
+  "to": "tle",
+  "input": "1 70001U 26123A   26123.50000000  .00001234  00000-0  12345-4 0 12343",
+  "expect": "1 70001U 26123A   26123.50000000  .00001234  00000-0  12345-4 0 12343",
+  "model": {
+    "tle.satellite_number": "70001",
+    "tle.classification": "U",
+    "tle.launch_year": "26",
+    "tle.launch_number": "123",
+    "tle.launch_piece": "A",
+    "tle.epoch_year": "26",
+    "tle.epoch_day": "123.5",
+    "tle.mean_motion_dot": " .00001234",
+    "tle.mean_motion_ddot": " 00000-0",
+    "tle.bstar": " 12345-4",
+    "tle.ephemeris_type": "0",
+    "tle.element_number": "1234",
+    "tle.checksum": "3"
+  },
+  "source": "constructed",
+  "reference": "CelesTrak, NORAD Two-Line Element Set Format (tle-fmt.php, read 2026-11-21): line 1, every numeric column full width, so the line is written back unchanged; line written by tools/gen/space-text-vectors.py"
+}

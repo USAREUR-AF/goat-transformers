@@ -1,0 +1,24 @@
+{
+  "name": "line1-negative-derivative",
+  "from": "tle",
+  "to": "tle",
+  "input": "1 70001U 26123A   26123.50000000 -.00001234  00000-0 -11606-4 0 12344",
+  "expect": "1 70001U 26123A   26123.50000000 -.00001234  00000-0 -11606-4 0 12344",
+  "model": {
+    "tle.satellite_number": "70001",
+    "tle.classification": "U",
+    "tle.launch_year": "26",
+    "tle.launch_number": "123",
+    "tle.launch_piece": "A",
+    "tle.epoch_year": "26",
+    "tle.epoch_day": "123.5",
+    "tle.mean_motion_dot": "-.00001234",
+    "tle.mean_motion_ddot": " 00000-0",
+    "tle.bstar": "-11606-4",
+    "tle.ephemeris_type": "0",
+    "tle.element_number": "1234",
+    "tle.checksum": "4"
+  },
+  "source": "constructed",
+  "reference": "CelesTrak, NORAD Two-Line Element Set Format (tle-fmt.php, read 2026-11-21): the mean-motion derivative and BSTAR are strings: the sign column is kept as written, a space when positive and - when negative; line written by tools/gen/space-text-vectors.py"
+}

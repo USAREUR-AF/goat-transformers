@@ -1,0 +1,7 @@
+{
+  "name": "NASA NeoWs",
+  "domain": "space",
+  "prefixes": [
+    "neows-"
+  ]
+}

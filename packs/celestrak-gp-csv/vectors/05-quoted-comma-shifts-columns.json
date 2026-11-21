@@ -1,0 +1,9 @@
+{
+  "name": "quoted-comma-shifts-columns",
+  "from": "celestrak-gp-csv",
+  "to": "celestrak-gp-csv",
+  "input": "\"TESTSAT, 1\",2026-123A,2026-05-03T04:05:06.789012,15.5,.0001234,51.5,120.25,90.125,270.5,0,U,70001,999,1234,.12345E-3,.5E-5,0",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "CelesTrak GP data documentation (gp-data-formats.php, read 2026-11-21): the CSV form uses the OMM keywords; column order of the CSV header of 2026-11-21; the text wire has no quoting: the comma inside the quotation marks splits the name, every later column moves one place, and the EPOCH text reaches the MEAN_MOTION column"
+}
