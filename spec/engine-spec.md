@@ -5688,6 +5688,14 @@ kind's last line is not fixed either.
     level only).
 24. The order of the `at` form check and the fixed-window check, both
     `bad-directive`.
+25. **The `at` checks run last among the module checks:** after the
+    `default` value checks and the `requires =` and `case` value checks, so a
+    bad `default` value is reported before an `at` error.
+26. **Overlapping windows and held bits** (ruling 5 with ruling 12): a window
+    that writes its value makes its bits "bits of an earlier window", so a
+    later window writes over them without a check. A window whose bits stand
+    leaves them a held key's bits, so a later window that would change them
+    is `transform-encode`.
 
 ## Not in this version
 
