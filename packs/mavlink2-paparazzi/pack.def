@@ -41,13 +41,6 @@ field     mavlinkpaparazzi.script_request_seq 0:80:16 uint
 field     mavlinkpaparazzi.target_system 0:96:8 uint
 field     mavlinkpaparazzi.target_component 0:104:8 uint
 
-kind      script_request_list
-when      0:56:24 182
-when      0:8:8 2
-requires  mavlinkpaparazzi.target_system mavlinkpaparazzi.target_component
-field     mavlinkpaparazzi.target_system 0:80:8 uint
-field     mavlinkpaparazzi.target_component 0:88:8 uint
-
 kind      script_count
 when      0:56:24 183
 when      0:8:8 4
@@ -55,6 +48,13 @@ requires  mavlinkpaparazzi.count mavlinkpaparazzi.target_system mavlinkpaparazzi
 field     mavlinkpaparazzi.count 0:80:16 uint
 field     mavlinkpaparazzi.target_system 0:96:8 uint
 field     mavlinkpaparazzi.target_component 0:104:8 uint
+
+kind      script_request_list
+when      0:56:24 182
+when      0:8:8 2
+requires  mavlinkpaparazzi.target_system mavlinkpaparazzi.target_component
+field     mavlinkpaparazzi.target_system 0:80:8 uint
+field     mavlinkpaparazzi.target_component 0:88:8 uint
 
 kind      script_current
 when      0:56:24 184

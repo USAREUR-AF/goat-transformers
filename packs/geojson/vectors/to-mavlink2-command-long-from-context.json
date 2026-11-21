@@ -1,0 +1,26 @@
+{
+ "name": "to-mavlink2-command-long-from-context",
+ "from": "geojson",
+ "to": "mavlink2",
+ "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[0,0]},\"properties\":{}}",
+ "context": {
+  "mavlink.incompat_flags": "0",
+  "mavlink.compat_flags": "1",
+  "mavlink.seq": "55",
+  "mavlink.sysid": "77",
+  "mavlink.compid": "77",
+  "mavlink.param1": "0.5",
+  "mavlink.param2": "2.25",
+  "mavlink.param3": "4",
+  "mavlink.param4": "-4.5",
+  "mavlink.param5": "-2.75",
+  "mavlink.param6": "-1",
+  "mavlink.param7": "0.75",
+  "mavlink.command": "55585",
+  "mavlink.target_system": "248",
+  "mavlink.target_component": "207",
+  "mavlink.confirmation": "166"
+ },
+ "expect": "fd210001374d4d4c00000000003f0000104000008040000090c0000030c0000080bf0000403f21d9f8cfa6",
+ "note": "A command_long entity that did not come from mavlink2 (its kind is cleared) must select command_long. Encode takes the first kind whose requires keys are present (engine-spec, Encode 2); pack.def writes command_long before param_request_list, command_cancel and the other kinds whose required keys it maps. Expected bytes: MAVLink 2 serialization of message 76 (STX 0xFD, LEN 33, flags 0 and 1, seq 55, sysid 77, compid 77, msgid 76, then param1-7 as f32 LE, command u16 LE, target_system, target_component, confirmation); the pack maps no CRC. The same frame as mavlink2 vector rt-00076, which tools/gen/mavlink2pack.py writes from the XML without an engine."
+}

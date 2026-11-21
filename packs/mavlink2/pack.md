@@ -185,9 +185,12 @@ Each kind requires up to 6 of its own raw keys, the ones used by the fewest
 kinds, so encoding an entity that came from another format selects a kind only
 when the entity holds those `mavlink.` keys. No kind requires a core key, so a
 GeoJSON or CoT entity selects no kind (`no-kind`).
-For 44 kinds the required keys are all shared with at least one other kind
-that maps every one of them; an entity built from such a kind's keys with its
-kind cleared selects the first qualifying kind in id order: `system_time`, `param_request_read`, `param_request_list`, `scaled_imu`, `scaled_pressure`, `attitude`, `local_position_ned`, `mission_request_partial_list`, `mission_write_partial_list`, `mission_request_list`, `mission_clear_all`, `set_gps_global_origin`, `gps_global_origin`, `safety_set_allowed_area`, `safety_allowed_area`, `global_position_int_cov`, `rc_channels_override`, `command_cancel`, `local_position_ned_system_global_offset`, `hil_state`, `hil_rc_inputs_raw`, `global_vision_position_estimate`, `vision_position_estimate`, `vicon_position_estimate`, `optical_flow_rad`, `hil_optical_flow`, `scaled_imu2`, `log_erase`, `log_request_end`, `gps_rtk`, `gps2_rtk`, `scaled_imu3`, `scaled_pressure2`, `att_pos_mocap`, `set_actuator_control_target`, `actuator_control_target`, `scaled_pressure3`, `home_position`, `set_home_position`, `logging_ack`, `param_ext_request_read`, `param_ext_request_list`, `supported_tunes`, `open_drone_id_system_update`.
+For 44 kinds the required keys are all mapped by at least one other kind.
+Encode selects the first kind whose required keys are present, so pack.def
+writes a kind before every kind whose required keys it maps, unless that kind
+also maps all of its own; otherwise the kinds are in id order. An entity built
+from a kind's keys, with its kind cleared, therefore selects that kind.
+The exceptions, where two kinds each map the other's required keys: `mission_write_partial_list` selects `mission_request_partial_list`, `mission_clear_all` selects `mission_request_list`, `safety_allowed_area` selects `safety_set_allowed_area`, `vision_position_estimate` selects `global_vision_position_estimate`, `hil_optical_flow` selects `optical_flow_rad`, `scaled_imu2` selects `scaled_imu`, `log_erase` selects `param_request_list`, `log_request_end` selects `param_request_list`, `gps2_rtk` selects `gps_rtk`, `scaled_imu3` selects `scaled_imu`, `scaled_pressure2` selects `scaled_pressure`, `actuator_control_target` selects `set_actuator_control_target`, `scaled_pressure3` selects `scaled_pressure`, `set_home_position` selects `home_position`, `param_ext_request_read` selects `param_request_read`, `param_ext_request_list` selects `param_request_list`.
 
 ## Times
 

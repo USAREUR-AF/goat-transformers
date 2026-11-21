@@ -95,9 +95,11 @@ above the ellipsoid), times that may be since boot, and speed, course and veloci
 Each kind requires up to 6 of its own raw keys, the ones used by the fewest
 kinds of this pack. No kind requires a core key, so a GeoJSON or CoT entity, or an
 entity decoded by another MAVLink pack, selects no kind here (`no-kind`).
-For 1 kinds the required keys are all mapped by another kind too; an entity
-built from such a kind's keys with its kind cleared selects the first
-qualifying kind in id order: `motion_cue_extra`.
+For 1 kinds the required keys are all mapped by at least one other kind.
+Encode selects the first kind whose required keys are present, so pack.def
+writes a kind before every kind whose required keys it maps, unless that kind
+also maps all of its own; otherwise the kinds are in id order. An entity built
+from a kind's keys, with its kind cleared, therefore selects that kind.
 
 ## Times
 

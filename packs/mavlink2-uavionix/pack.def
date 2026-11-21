@@ -70,12 +70,6 @@ when      0:8:8 9
 requires  mavlinkuavionix.registration
 field     mavlinkuavionix.registration 0:80:72 ascii
 
-kind      uavionix_adsb_out_cfg_flightid
-when      0:56:24 10005
-when      0:8:8 9
-requires  mavlinkuavionix.flight_id
-field     mavlinkuavionix.flight_id 0:80:72 ascii
-
 kind      uavionix_adsb_get
 when      0:56:24 10006
 when      0:8:8 4
@@ -103,3 +97,9 @@ field     mavlinkuavionix.nic_nacp 0:104:8 uint
 field     mavlinkuavionix.boardtemp 0:112:8 uint
 field     mavlinkuavionix.fault 0:120:8 uint
 field     mavlinkuavionix.flight_id 0:128:64 ascii
+
+kind      uavionix_adsb_out_cfg_flightid
+when      0:56:24 10005
+when      0:8:8 9
+requires  mavlinkuavionix.flight_id
+field     mavlinkuavionix.flight_id 0:80:72 ascii
