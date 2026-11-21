@@ -4741,6 +4741,298 @@ same bytes.
    read, as `checksum sum16` is (ruling 13 of 0.13: it may stand before the
    `wire` line).
 
+# Version 0.28: the `cbor` wire
+
+Status: Draft. A `cbor` format is one CBOR data item (RFC 8949): a map or an
+array, whose items may be maps, arrays and scalars at any depth. It is the
+binary counterpart of `json`, with integer map keys, byte strings and tags,
+as COSE (RFC 9052) and Bundle Protocol 7 (RFC 9171) use them. Input and
+output are hex text, as for `bits`, `protobuf` and `tlv`. `cbor` is a wire
+value of ruling 5 of 0.11.
+
+```
+wire   cbor
+tag    <n>                                  # optional: the message is tag n enclosing the item
+field  <model-key> <path> <transform> [via <table>]
+group  <list> <path>                        # 0.7 groups: each element of the array at <path>
+```
+
+`tag <n>` takes exactly one argument, checked as the line is read (step 3 of
+5b of 0.11); it may stand before the `wire` line. `<n>` is a decimal integer
+from 0 to 2^64-1 with no leading zero. On `cbor` it has the meaning of this
+section and on `tlv` that of 0.13; elsewhere, more than once, after the first
+`kind`, or with another value it is `bad-directive`, checked after the file
+is read. On `cbor` the field options are `via` and the `with` of 0.18; `absent`, `swap`, `trim`
+and `optional` are `bad-directive`, checked after the file.
+
+## Paths
+
+A path is one or more steps separated by `.`. A step is:
+
+- **an integer key**: a decimal integer with an optional `-`, no leading
+  zero, no `+`, not `-0`, from -2^63 to 2^64-1 (`4`, `-1`): the member of a
+  map whose key is that integer (major type 0 or 1);
+- **an array position** `[i]`: `i` a decimal integer from 0 to 65535 with no
+  leading zero: the element of an array at that position, counting from 0. A
+  position is a step of its own: `a.[0]`, never `a[0]`;
+- **a text key**: one or more ASCII letters, digits, `_` and `-`, not
+  beginning with a digit or `-`: the member of a map whose key is that text
+  string (major type 3).
+
+Text that is not a path of these steps (an empty step, `a[0]`, `[01]`, `-0`,
+`+1`, a number out of range, a character outside the set) is `bad-locator`,
+a line check (step 8 of 5b of 0.11).
+
+Inside a group body a path is relative to the element, and `.` is the
+element itself when it is a scalar (as on `json`, Version 0.7). `group
+<list> .` names the top item, which is then an array.
+
+**Types.** The first step of a path that is not inside a group body decides
+the type of the top item: an array position or `group <list> .`, an array;
+otherwise a map. Two such paths in the pack that decide differently are
+`bad-directive`. Within one scope (the common lines with one kind's, or one
+group body) a step whose item is used both as a map and as an array is
+`bad-directive`. A pack with no such path has a map as its top item. A
+`field`, `when` or `const` at or under a `group`'s path in the same scope is
+`bad-directive`. These checks run after the file is read.
+
+A map key of another type than an integer or text (a byte string, a float, a
+bool, an array, a map, a tag), and a text key that the step grammar cannot
+write (`"4"`, `"a.b"`), are not addressable; such a member is residue.
+
+## Transforms for `cbor`
+
+| Name | CBOR item | Decode | Encode |
+|---|---|---|---|
+| `uint` | major type 0 | to int; above 2^63-1 is `transform-decode` | major type 0; a negative value is `transform-encode` |
+| `int` | major type 0 or 1 | to int; outside -2^63 to 2^63-1 is `transform-decode` | major type 0 when the value is 0 or more, else 1 |
+| `float` | a half, single or double float, or major type 0 or 1 | to float; an integer item to the nearest double, ties to even (2b of 0.11); a NaN or an infinity is `transform-decode` | the shortest of half, single and double that holds the value exactly, subnormal halves included (RFC 8949 4.2.2); -0.0 as `f98000` |
+| `text` | major type 3 | to string | major type 3 |
+| `bytes` | major type 2 | to string: the bytes as lowercase hex | major type 2; the string must be an even number of lowercase hex digits, else `transform-encode` |
+| `bool` | simple value 20 or 21 | to int 0 or 1 | 21 for 1, 20 for 0; another value is `transform-encode` |
+| `epoch_s` | major type 0 or 1 | seconds since 1970 to `time_ms` (times 1000, exactly); outside -2^63 to 2^63-1 is `transform-decode` | major type 0 or 1: `time_ms` divided by 1000 exactly and rounded half away from zero |
+
+On `cbor` the transforms of this table are valid and every other is
+`bad-directive`, checked after the file. `bool` yields `int`, as on `json`.
+An item of another type than its transform takes is `transform-decode`. The
+simple values 22 (`null`) and 23 (`undefined`) are absent.
+
+**Tags.** Every tag on an item that a line reads or walks into, at any depth,
+the top item included, is passed over on decode and not written on encode.
+With `tag <n>`, the outermost tag of the input must be `n` (`malformed-wire`
+otherwise), further tags inside it are passed over, and the output is the
+head of tag `n` and then the item. A tag head, like any head, is read in any
+length.
+
+## Reading a message
+
+1. The input is the hex of exactly one well-formed data item (RFC 8949
+   Appendix C). Bytes after it, an item that is not well formed, and a
+   declared length greater than the bytes left (found before any memory is
+   taken for it) are `malformed-wire`.
+2. Definite and indefinite lengths are both read; heads longer than they
+   need are read.
+3. Text strings are valid UTF-8, each chunk of an indefinite text string on
+   its own; invalid UTF-8 anywhere in the input is `malformed-wire`.
+4. A map with two equal keys is `malformed-wire`. Keys of different major
+   types are never equal (`1`, `1.0` and `true` are three keys). Two integer
+   keys are equal when their values are, two text keys when their bytes are,
+   and other keys when their core deterministic encodings (Writing, step 1)
+   are equal.
+5. Arrays, maps and tags count one level each, the top item level 1;
+   scalars and string chunks count none. A depth above 64 is
+   `malformed-wire`.
+6. The top item, its tags passed over, must be of the type the paths decide,
+   else `malformed-wire`.
+7. Kinds are selected next. A `when` whose path passes through an item of
+   the wrong type for its next step does not hold.
+8. For each line of the selected scope: an item on the path that exists but
+   is not a map or array of the type its next step needs is
+   `malformed-wire`. A group path at `null` or `undefined` is an absent list;
+   at another item that is not an array, `malformed-wire`. An element of the
+   wrong type for the body is an item with no keys (ruling 12 of 0.7).
+9. Group items count against the item limit of ruling 7 of 0.11.
+
+## Writing a message
+
+1. The output is one data item with the core deterministic encoding of
+   RFC 8949 4.2.1: every head in its shortest form, every float at the
+   shortest width that holds it exactly, every length definite, and every
+   map's members sorted by the bytewise order of their encoded keys. The
+   order of the lines sets no member order; which value is written at a path
+   several lines name is as ruling 16 of 0.5 states, a `when` or `const`
+   value over a `field`.
+2. A map or an array is written when a line writes into it or residue lies
+   in it; one with nothing in it is not written, except the top item, which
+   is written empty, and except as step 4 and ruling 23 state.
+3. An array addressed by positions is written up to its highest present
+   position; a position below it with nothing to write is `null` (`f6`).
+4. A present list writes its array, `80` when the list is empty, one element
+   per item in list order. An item with nothing written is an empty map
+   (`a0`), or an empty array (`80`) when the body's paths begin with
+   positions; a scalar item (`.`) with no value is `f6`.
+5. With `tag <n>`, the output is the head of tag `n` and then the item.
+
+## Residue
+
+Every member or element of the input that no line of the selected scope maps
+and that no such line walks into is residue, keyed by its path, its value
+the hex of its encoded item as it stood in the input, tags included. An item
+a line walks into is not residue; its unmapped members and elements are. A
+`when … present` walks into its path and does not map its last item (ruling
+27 of 0.5). A member whose key is not addressable is keyed by its map's path,
+`#` and the hex of the key's encoded item (`#6134` for the key `"4"` in the
+top map, `1.#6134` in the map at `1`). Group items carry no residue: unmapped
+content inside an item is dropped (0.7). On write, residue goes back into
+its map or array, re-encoded with the core deterministic encoding, and takes
+its place in the key order. Residue is written only into its own format.
+
+## Kinds
+
+A `when` or `const` value on `cbor` is an integer when 2a of 0.11 accepts it
+(a sign and leading zeros allowed) and it lies in -2^63 to 2^64-1; `true` or
+`false` is a bool; any other value is a text string, one leading `=`
+stripped. `when <path> <value>` holds when the item at the path, its tags
+passed over, is of that type and equal to it; it never holds on a float, a
+byte string, `null` or `undefined`. `when <path> present` holds when the item
+exists and is not `null` or `undefined`. On encode a `when` value and a
+`const` are written with their type; `when … present` writes nothing, and a
+pack that selects a kind by it lists in `requires` a key mapped at or under
+that path.
+
+## Vectors
+
+`input` and `expect` of a `cbor` format are lowercase hex text.
+
+## Rulings for 0.28
+
+1. **Deterministic output and residue.** Residue re-encoded under 4.2.1 is
+   not byte-exact when the input used longer heads, wider floats or
+   indefinite lengths; the item it carries is the same.
+2. **Tags on inner items** are not written. A pack that needs a tag on an
+   inner item cannot state it in 0.28.
+3. **Floats and integers.** `float` reads an integer item as its value and
+   always writes a float. `int` and `uint` refuse a float item, even one with
+   no fraction (`transform-decode`).
+4. **Map keys equal in value but written differently** (`00` and `1800`,
+   both the integer 0) are equal keys, so a map holding both is
+   `malformed-wire` by step 4 of "Reading a message".
+5. **The `tag` directive** names two forms: 0.13's on `tlv` and this
+   section's on `cbor`; this replaces 0.13's "`bad-directive` on another
+   wire" for `cbor`.
+6. **`null` and `undefined` members.** A mapped item holding `null` or
+   `undefined` is absent and is not written back. An unmapped one is residue
+   like any other item and is written back as it stood (`f6` or `f7`).
+7. **The range of `epoch_s`** applies to the product: a number of seconds
+   whose `time_ms` falls outside -2^63 to 2^63-1 is `transform-decode`.
+8. **Integer `when` and `const` values** on `cbor` lie in -2^63 to 2^64-1;
+   for them this replaces the signed 64-bit limit of 2a of 0.11, so `when 0
+   18446744073709551615` is an integer.
+9. **`requires` with `when … present`** is guidance for pack authors and is
+   not checked at load.
+10. **`absent` on `cbor`** is `bad-directive` after the file is read (0.11
+    5b: an option that does not fit its wire); step 10 of 5b does not check
+    its values on `cbor`, so a later line's error comes first.
+11. **Hex text** of `input` and `expect` follows the rules of `bits` and
+    `protobuf` in spec/vector-format.md.
+12. **`null` or `undefined` partway down a path** makes the line's item
+    absent, as a group path at `null` is an absent list: `field … 7.1` on
+    `a107f6` is absent, not `malformed-wire`. The `null` the line passes
+    through is walked into, so it is not residue and is not written back.
+13. **One path a value and a container.** Within one scope, a line whose path
+    is a proper prefix of another line's path is `bad-directive`, checked
+    after the file (as ruling 5 of 0.13 states for `tlv`); a `when …
+    present` is exempt, since it tests and writes nothing, and may name a
+    prefix of another line's path. So are a `group`
+    at or under another `group`'s path in the same scope, and a group body
+    that mixes `.` with other paths.
+14. **A map or array element in a body of only `.`** is read by the
+    transform, which refuses it: `transform-decode` (ruling 6 of 0.7).
+15. **`when … present`** does not walk into its last item: an item it names
+    and no other line walks into is residue whole.
+16. **The hex of a key that is not addressable** is the key's bytes as they
+    stood in the input (`780134` for `"4"` written with a one-byte length
+    head gives `#780134`); on write the key is re-encoded with step 1 of
+    Writing.
+17. **Integer keys below -2^63** (major type 1 with an argument of 2^63 or
+    more) are not addressable.
+18. **Array residue past position 65535** has no key a path can write and is
+    dropped.
+19. **A `when` or `const` integer beyond -2^63 to 2^64-1** is a text string.
+20. **Encoding a `float` that is infinite or NaN** is `transform-encode`.
+21. **Residue at a place a line writes** is not written; the line wins.
+22. **Ruling 13 in detail.** The `when … present` exemption holds only when
+    it is the shorter path: `field x 7 int` beside `when 7.1 present` is
+    `bad-directive`. A `group` line takes part in the prefix rule as any line
+    does: `field x 9 int` beside `group probe.items 9.1` is `bad-directive`.
+    `.` is a path only on a `field` in a group body and on a `group` outside
+    one; elsewhere (`const .`, `when .`, a `group … .` in a body) it is
+    `bad-locator`. `const <path> present` is `bad-directive`, as on every
+    wire.
+23. **A container gap in a positional array.** In Writing step 3, a position
+    below the highest present one with nothing to write is written as an
+    empty map (`a0`) when the pack's lines walk into it as a map, as an empty
+    array (`80`) when they walk into it as an array, and as `null` (`f6`)
+    otherwise. A `group`'s own path is not walked into: an absent list at a
+    gap position is `f6` (a present list, even empty, is written by step 4).
+    So COSE_Sign1 with an empty unprotected header map round-trips as `a0`
+    at `[1]`.
+24. **A `group` line maps its own path.** The item at a group's path is not
+    residue: `null` or `undefined` there is an absent list and is not written
+    back, so `81f6` through `conformance-cbor-group` is `80`. (A gap at that
+    position below a present one is still `f6`, by ruling 23.)
+25. **A transform name no wire has** on a `cbor` field is `bad-directive`
+    after the file, as ruling 8 of 0.13 states for `tlv`, not
+    `unknown-transform` as the line is read.
+26. **`with` (0.18)** is a field option on `cbor` as on every wire; a
+    suppressed line writes nothing, as a line whose key is absent.
+27. **A deeper step of a group-body path** that meets an item of the wrong
+    type for its next step is `malformed-wire` (Reading step 8); only the
+    element itself being of the wrong type for the body makes an item with
+    no keys.
+28. **A NaN carried as residue** keeps its sign and payload, written at the
+    shortest width that holds them exactly.
+29. **A `field` at a path a `when` value or a `const` names** is not
+    encoded (ruling 16 of 0.5, ruling 9 of 0.13): its value is never
+    converted, so a value it could not encode raises no error.
+30. **The lines of ruling 23** are those of the selected scope: the common
+    lines and the chosen kind's. A position only another kind walks into is
+    `f6`.
+31. **Residue under ruling 21.** A line writes at a place only when it writes
+    a value there; a container the selected lines walk into but leave empty
+    takes its residue back whole.
+32. **Step 8 covers `const` lines** as every line of the selected scope: a
+    `const` whose path passes through an item of the wrong type for its next
+    step is `malformed-wire` on decode.
+33. **Residue through a written value.** Residue whose path passes through a
+    place a line wrote a value at, or through a container of the other type,
+    has nowhere to go and is dropped.
+34. **The whole transform check on `cbor` is after the file**, as ruling 8
+    of 0.13 states for `tlv`: no transform of the table takes parameters, so
+    a transform with parameters (`uscale:x`, `uscale:1/4`) is one the table
+    does not hold, and its name and parameters are checked together after
+    the file is read (`bad-directive`); a later line's error comes first.
+35. **Step 8 before any decode.** The type checks of Reading step 8, for
+    every line of the selected scope and every group element, come before
+    any value is decoded, so `malformed-wire` from step 8 wins over a
+    `transform-decode` of an earlier line.
+36. **No `when` lists on `cbor`.** The lists and ranges of 0.20 apply on
+    the wires its ruling 38 names; `cbor` is not one of them, so a comma in
+    a `when` value is part of a text string: `when 4 1,2` holds on the text
+    "1,2", and `when 4 a,,b` and `when 4 present,1` load. Rulings 16 and 25
+    of 0.20 govern lists and do not reach these values.
+37. **0.22's `until:` on `cbor`** is not a path of 0.28 (`:` is not a
+    path character), so it is `bad-locator` as the line is read (Paths),
+    before 0.22's after-file check could apply.
+38. **`cbor` and Versions 0.24 and 0.25.** `cbor` is a wire of ruling 1a of
+    0.24: a build may leave it out, a build that names no set has all eight
+    wires (the seven 0.24 lists and `cbor`), and a pack on `cbor` in a build
+    without it is `unknown-wire` with the message 1c states. An engine names
+    the switch for `cbor` the way it names the others, in its README. The
+    reduced-build check of 0.24 also loads a pack on `cbor` and expects that
+    error. The benchmark set of 0.25 (ruling 2a, every wire) holds a `cbor`
+    vector, `packs/dtn-bpv7/vectors/01-ipn-round-trip.json`.
+
 # Version 0.29: licence profiles in the loaders
 
 <!-- REUSE-IgnoreStart: this section quotes licence tags; they label no file -->
@@ -5060,297 +5352,3 @@ sentinel):
 `tools/tests/test_time_quality_guard.py` covers each refused form, bare and
 `core.`-prefixed, an `optional` and a gated `bits` field that pass, and the whole
 repository.
-
----
-
-# Version 0.28: the `cbor` wire
-
-Status: Draft. A `cbor` format is one CBOR data item (RFC 8949): a map or an
-array, whose items may be maps, arrays and scalars at any depth. It is the
-binary counterpart of `json`, with integer map keys, byte strings and tags,
-as COSE (RFC 9052) and Bundle Protocol 7 (RFC 9171) use them. Input and
-output are hex text, as for `bits`, `protobuf` and `tlv`. `cbor` is a wire
-value of ruling 5 of 0.11.
-
-```
-wire   cbor
-tag    <n>                                  # optional: the message is tag n enclosing the item
-field  <model-key> <path> <transform> [via <table>]
-group  <list> <path>                        # 0.7 groups: each element of the array at <path>
-```
-
-`tag <n>` takes exactly one argument, checked as the line is read (step 3 of
-5b of 0.11); it may stand before the `wire` line. `<n>` is a decimal integer
-from 0 to 2^64-1 with no leading zero. On `cbor` it has the meaning of this
-section and on `tlv` that of 0.13; elsewhere, more than once, after the first
-`kind`, or with another value it is `bad-directive`, checked after the file
-is read. On `cbor` the field options are `via` and the `with` of 0.18; `absent`, `swap`, `trim`
-and `optional` are `bad-directive`, checked after the file.
-
-## Paths
-
-A path is one or more steps separated by `.`. A step is:
-
-- **an integer key**: a decimal integer with an optional `-`, no leading
-  zero, no `+`, not `-0`, from -2^63 to 2^64-1 (`4`, `-1`): the member of a
-  map whose key is that integer (major type 0 or 1);
-- **an array position** `[i]`: `i` a decimal integer from 0 to 65535 with no
-  leading zero: the element of an array at that position, counting from 0. A
-  position is a step of its own: `a.[0]`, never `a[0]`;
-- **a text key**: one or more ASCII letters, digits, `_` and `-`, not
-  beginning with a digit or `-`: the member of a map whose key is that text
-  string (major type 3).
-
-Text that is not a path of these steps (an empty step, `a[0]`, `[01]`, `-0`,
-`+1`, a number out of range, a character outside the set) is `bad-locator`,
-a line check (step 8 of 5b of 0.11).
-
-Inside a group body a path is relative to the element, and `.` is the
-element itself when it is a scalar (as on `json`, Version 0.7). `group
-<list> .` names the top item, which is then an array.
-
-**Types.** The first step of a path that is not inside a group body decides
-the type of the top item: an array position or `group <list> .`, an array;
-otherwise a map. Two such paths in the pack that decide differently are
-`bad-directive`. Within one scope (the common lines with one kind's, or one
-group body) a step whose item is used both as a map and as an array is
-`bad-directive`. A pack with no such path has a map as its top item. A
-`field`, `when` or `const` at or under a `group`'s path in the same scope is
-`bad-directive`. These checks run after the file is read.
-
-A map key of another type than an integer or text (a byte string, a float, a
-bool, an array, a map, a tag), and a text key that the step grammar cannot
-write (`"4"`, `"a.b"`), are not addressable; such a member is residue.
-
-## Transforms for `cbor`
-
-| Name | CBOR item | Decode | Encode |
-|---|---|---|---|
-| `uint` | major type 0 | to int; above 2^63-1 is `transform-decode` | major type 0; a negative value is `transform-encode` |
-| `int` | major type 0 or 1 | to int; outside -2^63 to 2^63-1 is `transform-decode` | major type 0 when the value is 0 or more, else 1 |
-| `float` | a half, single or double float, or major type 0 or 1 | to float; an integer item to the nearest double, ties to even (2b of 0.11); a NaN or an infinity is `transform-decode` | the shortest of half, single and double that holds the value exactly, subnormal halves included (RFC 8949 4.2.2); -0.0 as `f98000` |
-| `text` | major type 3 | to string | major type 3 |
-| `bytes` | major type 2 | to string: the bytes as lowercase hex | major type 2; the string must be an even number of lowercase hex digits, else `transform-encode` |
-| `bool` | simple value 20 or 21 | to int 0 or 1 | 21 for 1, 20 for 0; another value is `transform-encode` |
-| `epoch_s` | major type 0 or 1 | seconds since 1970 to `time_ms` (times 1000, exactly); outside -2^63 to 2^63-1 is `transform-decode` | major type 0 or 1: `time_ms` divided by 1000 exactly and rounded half away from zero |
-
-On `cbor` the transforms of this table are valid and every other is
-`bad-directive`, checked after the file. `bool` yields `int`, as on `json`.
-An item of another type than its transform takes is `transform-decode`. The
-simple values 22 (`null`) and 23 (`undefined`) are absent.
-
-**Tags.** Every tag on an item that a line reads or walks into, at any depth,
-the top item included, is passed over on decode and not written on encode.
-With `tag <n>`, the outermost tag of the input must be `n` (`malformed-wire`
-otherwise), further tags inside it are passed over, and the output is the
-head of tag `n` and then the item. A tag head, like any head, is read in any
-length.
-
-## Reading a message
-
-1. The input is the hex of exactly one well-formed data item (RFC 8949
-   Appendix C). Bytes after it, an item that is not well formed, and a
-   declared length greater than the bytes left (found before any memory is
-   taken for it) are `malformed-wire`.
-2. Definite and indefinite lengths are both read; heads longer than they
-   need are read.
-3. Text strings are valid UTF-8, each chunk of an indefinite text string on
-   its own; invalid UTF-8 anywhere in the input is `malformed-wire`.
-4. A map with two equal keys is `malformed-wire`. Keys of different major
-   types are never equal (`1`, `1.0` and `true` are three keys). Two integer
-   keys are equal when their values are, two text keys when their bytes are,
-   and other keys when their core deterministic encodings (Writing, step 1)
-   are equal.
-5. Arrays, maps and tags count one level each, the top item level 1;
-   scalars and string chunks count none. A depth above 64 is
-   `malformed-wire`.
-6. The top item, its tags passed over, must be of the type the paths decide,
-   else `malformed-wire`.
-7. Kinds are selected next. A `when` whose path passes through an item of
-   the wrong type for its next step does not hold.
-8. For each line of the selected scope: an item on the path that exists but
-   is not a map or array of the type its next step needs is
-   `malformed-wire`. A group path at `null` or `undefined` is an absent list;
-   at another item that is not an array, `malformed-wire`. An element of the
-   wrong type for the body is an item with no keys (ruling 12 of 0.7).
-9. Group items count against the item limit of ruling 7 of 0.11.
-
-## Writing a message
-
-1. The output is one data item with the core deterministic encoding of
-   RFC 8949 4.2.1: every head in its shortest form, every float at the
-   shortest width that holds it exactly, every length definite, and every
-   map's members sorted by the bytewise order of their encoded keys. The
-   order of the lines sets no member order; which value is written at a path
-   several lines name is as ruling 16 of 0.5 states, a `when` or `const`
-   value over a `field`.
-2. A map or an array is written when a line writes into it or residue lies
-   in it; one with nothing in it is not written, except the top item, which
-   is written empty, and except as step 4 and ruling 23 state.
-3. An array addressed by positions is written up to its highest present
-   position; a position below it with nothing to write is `null` (`f6`).
-4. A present list writes its array, `80` when the list is empty, one element
-   per item in list order. An item with nothing written is an empty map
-   (`a0`), or an empty array (`80`) when the body's paths begin with
-   positions; a scalar item (`.`) with no value is `f6`.
-5. With `tag <n>`, the output is the head of tag `n` and then the item.
-
-## Residue
-
-Every member or element of the input that no line of the selected scope maps
-and that no such line walks into is residue, keyed by its path, its value
-the hex of its encoded item as it stood in the input, tags included. An item
-a line walks into is not residue; its unmapped members and elements are. A
-`when … present` walks into its path and does not map its last item (ruling
-27 of 0.5). A member whose key is not addressable is keyed by its map's path,
-`#` and the hex of the key's encoded item (`#6134` for the key `"4"` in the
-top map, `1.#6134` in the map at `1`). Group items carry no residue: unmapped
-content inside an item is dropped (0.7). On write, residue goes back into
-its map or array, re-encoded with the core deterministic encoding, and takes
-its place in the key order. Residue is written only into its own format.
-
-## Kinds
-
-A `when` or `const` value on `cbor` is an integer when 2a of 0.11 accepts it
-(a sign and leading zeros allowed) and it lies in -2^63 to 2^64-1; `true` or
-`false` is a bool; any other value is a text string, one leading `=`
-stripped. `when <path> <value>` holds when the item at the path, its tags
-passed over, is of that type and equal to it; it never holds on a float, a
-byte string, `null` or `undefined`. `when <path> present` holds when the item
-exists and is not `null` or `undefined`. On encode a `when` value and a
-`const` are written with their type; `when … present` writes nothing, and a
-pack that selects a kind by it lists in `requires` a key mapped at or under
-that path.
-
-## Vectors
-
-`input` and `expect` of a `cbor` format are lowercase hex text.
-
-## Rulings for 0.28
-
-1. **Deterministic output and residue.** Residue re-encoded under 4.2.1 is
-   not byte-exact when the input used longer heads, wider floats or
-   indefinite lengths; the item it carries is the same.
-2. **Tags on inner items** are not written. A pack that needs a tag on an
-   inner item cannot state it in 0.28.
-3. **Floats and integers.** `float` reads an integer item as its value and
-   always writes a float. `int` and `uint` refuse a float item, even one with
-   no fraction (`transform-decode`).
-4. **Map keys equal in value but written differently** (`00` and `1800`,
-   both the integer 0) are equal keys, so a map holding both is
-   `malformed-wire` by step 4 of "Reading a message".
-5. **The `tag` directive** names two forms: 0.13's on `tlv` and this
-   section's on `cbor`; this replaces 0.13's "`bad-directive` on another
-   wire" for `cbor`.
-6. **`null` and `undefined` members.** A mapped item holding `null` or
-   `undefined` is absent and is not written back. An unmapped one is residue
-   like any other item and is written back as it stood (`f6` or `f7`).
-7. **The range of `epoch_s`** applies to the product: a number of seconds
-   whose `time_ms` falls outside -2^63 to 2^63-1 is `transform-decode`.
-8. **Integer `when` and `const` values** on `cbor` lie in -2^63 to 2^64-1;
-   for them this replaces the signed 64-bit limit of 2a of 0.11, so `when 0
-   18446744073709551615` is an integer.
-9. **`requires` with `when … present`** is guidance for pack authors and is
-   not checked at load.
-10. **`absent` on `cbor`** is `bad-directive` after the file is read (0.11
-    5b: an option that does not fit its wire); step 10 of 5b does not check
-    its values on `cbor`, so a later line's error comes first.
-11. **Hex text** of `input` and `expect` follows the rules of `bits` and
-    `protobuf` in spec/vector-format.md.
-12. **`null` or `undefined` partway down a path** makes the line's item
-    absent, as a group path at `null` is an absent list: `field … 7.1` on
-    `a107f6` is absent, not `malformed-wire`. The `null` the line passes
-    through is walked into, so it is not residue and is not written back.
-13. **One path a value and a container.** Within one scope, a line whose path
-    is a proper prefix of another line's path is `bad-directive`, checked
-    after the file (as ruling 5 of 0.13 states for `tlv`); a `when …
-    present` is exempt, since it tests and writes nothing, and may name a
-    prefix of another line's path. So are a `group`
-    at or under another `group`'s path in the same scope, and a group body
-    that mixes `.` with other paths.
-14. **A map or array element in a body of only `.`** is read by the
-    transform, which refuses it: `transform-decode` (ruling 6 of 0.7).
-15. **`when … present`** does not walk into its last item: an item it names
-    and no other line walks into is residue whole.
-16. **The hex of a key that is not addressable** is the key's bytes as they
-    stood in the input (`780134` for `"4"` written with a one-byte length
-    head gives `#780134`); on write the key is re-encoded with step 1 of
-    Writing.
-17. **Integer keys below -2^63** (major type 1 with an argument of 2^63 or
-    more) are not addressable.
-18. **Array residue past position 65535** has no key a path can write and is
-    dropped.
-19. **A `when` or `const` integer beyond -2^63 to 2^64-1** is a text string.
-20. **Encoding a `float` that is infinite or NaN** is `transform-encode`.
-21. **Residue at a place a line writes** is not written; the line wins.
-22. **Ruling 13 in detail.** The `when … present` exemption holds only when
-    it is the shorter path: `field x 7 int` beside `when 7.1 present` is
-    `bad-directive`. A `group` line takes part in the prefix rule as any line
-    does: `field x 9 int` beside `group probe.items 9.1` is `bad-directive`.
-    `.` is a path only on a `field` in a group body and on a `group` outside
-    one; elsewhere (`const .`, `when .`, a `group … .` in a body) it is
-    `bad-locator`. `const <path> present` is `bad-directive`, as on every
-    wire.
-23. **A container gap in a positional array.** In Writing step 3, a position
-    below the highest present one with nothing to write is written as an
-    empty map (`a0`) when the pack's lines walk into it as a map, as an empty
-    array (`80`) when they walk into it as an array, and as `null` (`f6`)
-    otherwise. A `group`'s own path is not walked into: an absent list at a
-    gap position is `f6` (a present list, even empty, is written by step 4).
-    So COSE_Sign1 with an empty unprotected header map round-trips as `a0`
-    at `[1]`.
-24. **A `group` line maps its own path.** The item at a group's path is not
-    residue: `null` or `undefined` there is an absent list and is not written
-    back, so `81f6` through `conformance-cbor-group` is `80`. (A gap at that
-    position below a present one is still `f6`, by ruling 23.)
-25. **A transform name no wire has** on a `cbor` field is `bad-directive`
-    after the file, as ruling 8 of 0.13 states for `tlv`, not
-    `unknown-transform` as the line is read.
-26. **`with` (0.18)** is a field option on `cbor` as on every wire; a
-    suppressed line writes nothing, as a line whose key is absent.
-27. **A deeper step of a group-body path** that meets an item of the wrong
-    type for its next step is `malformed-wire` (Reading step 8); only the
-    element itself being of the wrong type for the body makes an item with
-    no keys.
-28. **A NaN carried as residue** keeps its sign and payload, written at the
-    shortest width that holds them exactly.
-29. **A `field` at a path a `when` value or a `const` names** is not
-    encoded (ruling 16 of 0.5, ruling 9 of 0.13): its value is never
-    converted, so a value it could not encode raises no error.
-30. **The lines of ruling 23** are those of the selected scope: the common
-    lines and the chosen kind's. A position only another kind walks into is
-    `f6`.
-31. **Residue under ruling 21.** A line writes at a place only when it writes
-    a value there; a container the selected lines walk into but leave empty
-    takes its residue back whole.
-32. **Step 8 covers `const` lines** as every line of the selected scope: a
-    `const` whose path passes through an item of the wrong type for its next
-    step is `malformed-wire` on decode.
-33. **Residue through a written value.** Residue whose path passes through a
-    place a line wrote a value at, or through a container of the other type,
-    has nowhere to go and is dropped.
-34. **The whole transform check on `cbor` is after the file**, as ruling 8
-    of 0.13 states for `tlv`: no transform of the table takes parameters, so
-    a transform with parameters (`uscale:x`, `uscale:1/4`) is one the table
-    does not hold, and its name and parameters are checked together after
-    the file is read (`bad-directive`); a later line's error comes first.
-35. **Step 8 before any decode.** The type checks of Reading step 8, for
-    every line of the selected scope and every group element, come before
-    any value is decoded, so `malformed-wire` from step 8 wins over a
-    `transform-decode` of an earlier line.
-36. **No `when` lists on `cbor`.** The lists and ranges of 0.20 apply on
-    the wires its ruling 38 names; `cbor` is not one of them, so a comma in
-    a `when` value is part of a text string: `when 4 1,2` holds on the text
-    "1,2", and `when 4 a,,b` and `when 4 present,1` load. Rulings 16 and 25
-    of 0.20 govern lists and do not reach these values.
-37. **0.22's `until:` on `cbor`** is not a path of 0.28 (`:` is not a
-    path character), so it is `bad-locator` as the line is read (Paths),
-    before 0.22's after-file check could apply.
-38. **`cbor` and Versions 0.24 and 0.25.** `cbor` is a wire of ruling 1a of
-    0.24: a build may leave it out, a build that names no set has all eight
-    wires (the seven 0.24 lists and `cbor`), and a pack on `cbor` in a build
-    without it is `unknown-wire` with the message 1c states. An engine names
-    the switch for `cbor` the way it names the others, in its README. The
-    reduced-build check of 0.24 also loads a pack on `cbor` and expects that
-    error. The benchmark set of 0.25 (ruling 2a, every wire) holds a `cbor`
-    vector, `packs/dtn-bpv7/vectors/01-ipn-round-trip.json`.
