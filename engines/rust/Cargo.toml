@@ -42,3 +42,9 @@ path = "src/lib.rs"
 [[example]]
 name = "bench"
 required-features = ["xml", "geojson", "json", "bits", "protobuf", "text", "tlv"]
+
+# `cargo test` (the CI rust job) builds the test profile. Optimisation level 1
+# keeps debug assertions and overflow checks on and runs the malformed-input
+# test over every wire well inside the job's time limit.
+[profile.test]
+opt-level = 1
