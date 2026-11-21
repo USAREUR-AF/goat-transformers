@@ -1,0 +1,21 @@
+{
+ "keys": {
+  "|next_telemetry_opportunity.format|string": "next_telemetry_opportunity_format",
+  "|next_telemetry_opportunity.value|string": "next_telemetry_opportunity_value",
+  "|operational_intent_id|string": "operational_intent_id",
+  "|telemetry.position.accuracy_h|string": "telemetry_position_accuracy_h",
+  "|telemetry.position.accuracy_v|string": "telemetry_position_accuracy_v",
+  "|telemetry.position.altitude.reference|string": "telemetry_position_altitude_reference",
+  "|telemetry.position.altitude.units|string": "telemetry_position_altitude_units",
+  "|telemetry.position.altitude.value|float": "telemetry_position_altitude_value",
+  "|telemetry.position.extrapolated|int": "telemetry_position_extrapolated",
+  "|telemetry.position.latitude|float": "telemetry_position_latitude",
+  "|telemetry.position.longitude|float": "telemetry_position_longitude",
+  "|telemetry.time_measured.format|string": "telemetry_time_measured_format",
+  "|telemetry.time_measured.value|string": "telemetry_time_measured_value",
+  "|telemetry.velocity.speed|float": "telemetry_velocity_speed",
+  "|telemetry.velocity.track|float": "telemetry_velocity_track",
+  "|telemetry.velocity.units_speed|string": "telemetry_velocity_units_speed"
+ },
+ "lists": {}
+}

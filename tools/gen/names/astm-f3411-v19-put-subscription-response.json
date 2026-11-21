@@ -1,0 +1,20 @@
+{
+ "keys": {
+  "service_areas|flights_url|string": "service_areas_flights_url",
+  "service_areas|id|string": "service_areas_id",
+  "service_areas|owner|string": "service_areas_owner",
+  "service_areas|time_end|string": "service_areas_time_end",
+  "service_areas|time_start|string": "service_areas_time_start",
+  "service_areas|version|string": "service_areas_version",
+  "|subscription.callbacks.identification_service_area_url|string": "subscription_callbacks_identification_service_area_url",
+  "|subscription.id|string": "subscription_id",
+  "|subscription.notification_index|int": "subscription_notification_index",
+  "|subscription.owner|string": "subscription_owner",
+  "|subscription.time_end|string": "subscription_time_end",
+  "|subscription.time_start|string": "subscription_time_start",
+  "|subscription.version|string": "subscription_version"
+ },
+ "lists": {
+  "|service_areas": "service_areas"
+ }
+}

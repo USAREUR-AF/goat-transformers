@@ -1,0 +1,7 @@
+{
+ "name": "gen-query_operational_intent_reference_parameters-residue",
+ "from": "astm-f3548-v21-query-operational-intent-reference-parameters",
+ "to": "astm-f3548-v21-query-operational-intent-reference-parameters",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"area_of_interest\":{\"volume\":{\"outline_circle\":{\"center\":{\"lng\":-3.25,\"lat\":-0.5},\"radius\":{\"value\":0.75,\"units\":\"M\"}},\"outline_polygon\":{\"vertices\":[{\"lng\":12.5,\"lat\":0.75},{\"lng\":-0.5,\"lat\":12.5}]},\"altitude_lower\":{\"value\":0.75,\"reference\":\"W84\",\"units\":\"M\"},\"altitude_upper\":{\"value\":42.375,\"reference\":\"W84\",\"units\":\"M\"}},\"time_start\":{\"value\":\"2026-10-30T05:23:09.521Z\",\"format\":\"RFC3339\"},\"time_end\":{\"value\":\"2024-06-14T07:40:54.858Z\",\"format\":\"RFC3339\"}}}",
+ "expect": "{\"area_of_interest\":{\"volume\":{\"outline_circle\":{\"center\":{\"lng\":-3.25,\"lat\":-0.5},\"radius\":{\"value\":0.75,\"units\":\"M\"}},\"outline_polygon\":{\"vertices\":[{\"lng\":12.5,\"lat\":0.75},{\"lng\":-0.5,\"lat\":12.5}]},\"altitude_lower\":{\"value\":0.75,\"reference\":\"W84\",\"units\":\"M\"},\"altitude_upper\":{\"value\":42.375,\"reference\":\"W84\",\"units\":\"M\"}},\"time_start\":{\"value\":\"2026-10-30T05:23:09.521Z\",\"format\":\"RFC3339\"},\"time_end\":{\"value\":\"2024-06-14T07:40:54.858Z\",\"format\":\"RFC3339\"}},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

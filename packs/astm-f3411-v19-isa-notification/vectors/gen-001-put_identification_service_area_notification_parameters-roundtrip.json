@@ -1,0 +1,17 @@
+{
+ "name": "gen-put_identification_service_area_notification_parameters-roundtrip",
+ "from": "astm-f3411-v19-isa-notification",
+ "to": "astm-f3411-v19-isa-notification",
+ "input": "{\"service_area\":{\"flights_url\":\"s5744\",\"owner\":\"s26292\",\"time_start\":\"2023-11-18T00:58:11.949Z\",\"time_end\":\"2025-07-13T16:44:29.058Z\",\"version\":\"s15681\",\"id\":\"s67669\"},\"subscriptions\":[{\"subscription_id\":\"s30782\",\"notification_index\":4648},{\"subscription_id\":\"s63047\",\"notification_index\":56211}],\"extents\":{\"spatial_volume\":{\"footprint\":{\"vertices\":[{\"lng\":180,\"lat\":0.75},{\"lng\":180,\"lat\":-3.25}]},\"altitude_lo\":7.0625,\"altitude_hi\":12.5},\"time_start\":\"2025-11-27T10:14:42.363Z\",\"time_end\":\"2026-08-15T19:21:54.617Z\"}}",
+ "expect": "{\"service_area\":{\"flights_url\":\"s5744\",\"owner\":\"s26292\",\"time_start\":\"2023-11-18T00:58:11.949Z\",\"time_end\":\"2025-07-13T16:44:29.058Z\",\"version\":\"s15681\",\"id\":\"s67669\"},\"subscriptions\":[{\"subscription_id\":\"s30782\",\"notification_index\":4648},{\"subscription_id\":\"s63047\",\"notification_index\":56211}],\"extents\":{\"spatial_volume\":{\"footprint\":{\"vertices\":[{\"lng\":180,\"lat\":0.75},{\"lng\":180,\"lat\":-3.25}]},\"altitude_lo\":7.0625,\"altitude_hi\":12.5},\"time_start\":\"2025-11-27T10:14:42.363Z\",\"time_end\":\"2026-08-15T19:21:54.617Z\"}}",
+ "model": {
+  "ridv19isan.service_area_flights_url": "s5744",
+  "ridv19isan.service_area_owner": "s26292",
+  "ridv19isan.service_area_time_start": "2023-11-18T00:58:11.949Z",
+  "ridv19isan.service_area_time_end": "2025-07-13T16:44:29.058Z",
+  "ridv19isan.service_area_version": "s15681",
+  "ridv19isan.service_area_id": "s67669",
+  "ridv19isan.subscriptions.#": "2",
+  "ridv19isan.extents_spatial_volume_footprint_vertices.#": "2"
+ }
+}

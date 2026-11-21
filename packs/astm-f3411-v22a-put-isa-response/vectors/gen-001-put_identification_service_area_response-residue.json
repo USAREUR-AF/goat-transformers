@@ -1,0 +1,7 @@
+{
+ "name": "gen-put_identification_service_area_response-residue",
+ "from": "astm-f3411-v22a-put-isa-response",
+ "to": "astm-f3411-v22a-put-isa-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"subscribers\":[{\"subscriptions\":[{\"subscription_id\":\"s19282\",\"notification_index\":21311}],\"url\":\"s15838\"},{\"subscriptions\":[{\"subscription_id\":\"s54882\",\"notification_index\":45107}],\"url\":\"s38475\"}],\"service_area\":{\"uss_base_url\":\"s74973\",\"owner\":\"s11233\",\"time_start\":{\"value\":\"2025-06-29T11:52:38.342Z\",\"format\":\"RFC3339\"},\"time_end\":{\"value\":\"2024-04-29T23:23:40.577Z\",\"format\":\"RFC3339\"},\"version\":\"s39501\",\"id\":\"s12390\"}}",
+ "expect": "{\"subscribers\":[{\"subscriptions\":[{\"subscription_id\":\"s19282\",\"notification_index\":21311}],\"url\":\"s15838\"},{\"subscriptions\":[{\"subscription_id\":\"s54882\",\"notification_index\":45107}],\"url\":\"s38475\"}],\"service_area\":{\"uss_base_url\":\"s74973\",\"owner\":\"s11233\",\"time_start\":{\"value\":\"2025-06-29T11:52:38.342Z\",\"format\":\"RFC3339\"},\"time_end\":{\"value\":\"2024-04-29T23:23:40.577Z\",\"format\":\"RFC3339\"},\"version\":\"s39501\",\"id\":\"s12390\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-identification_service_area-residue",
+ "from": "astm-f3411-v22a-isa",
+ "to": "astm-f3411-v22a-isa",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"uss_base_url\":\"s90463\",\"owner\":\"s81793\",\"time_start\":{\"value\":\"2026-09-18T17:00:01.269Z\",\"format\":\"RFC3339\"},\"time_end\":{\"value\":\"2024-09-19T20:02:28.161Z\",\"format\":\"RFC3339\"},\"version\":\"s1637\",\"id\":\"s55143\"}",
+ "expect": "{\"uss_base_url\":\"s90463\",\"owner\":\"s81793\",\"time_start\":{\"value\":\"2026-09-18T17:00:01.269Z\",\"format\":\"RFC3339\"},\"time_end\":{\"value\":\"2024-09-19T20:02:28.161Z\",\"format\":\"RFC3339\"},\"version\":\"s1637\",\"id\":\"s55143\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

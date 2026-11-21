@@ -1,0 +1,17 @@
+{
+ "name": "gen-subscription-roundtrip",
+ "from": "astm-f3411-v22a-subscription",
+ "to": "astm-f3411-v22a-subscription",
+ "input": "{\"id\":\"s1044\",\"uss_base_url\":\"s21890\",\"owner\":\"s99880\",\"notification_index\":46227,\"time_end\":{\"value\":\"2024-02-28T01:48:58.125Z\",\"format\":\"RFC3339\"},\"time_start\":{\"value\":\"2025-10-16T23:40:01.531Z\",\"format\":\"RFC3339\"},\"version\":\"s90041\"}",
+ "expect": "{\"id\":\"s1044\",\"uss_base_url\":\"s21890\",\"owner\":\"s99880\",\"notification_index\":46227,\"time_end\":{\"value\":\"2024-02-28T01:48:58.125Z\",\"format\":\"RFC3339\"},\"time_start\":{\"value\":\"2025-10-16T23:40:01.531Z\",\"format\":\"RFC3339\"},\"version\":\"s90041\"}",
+ "model": {
+  "ridv22asub.id": "s1044",
+  "ridv22asub.uss_base_url": "s21890",
+  "ridv22asub.owner": "s99880",
+  "ridv22asub.notification_index": "46227",
+  "ridv22asub.time_end_value": "2024-02-28T01:48:58.125Z",
+  "ridv22asub.time_end_format": "RFC3339",
+  "ridv22asub.time_start_value": "2025-10-16T23:40:01.531Z",
+  "ridv22asub.time_start_format": "RFC3339"
+ }
+}

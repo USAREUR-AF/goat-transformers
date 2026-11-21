@@ -1,0 +1,23 @@
+{
+ "keys": {
+  "subscribers_subscriptions|notification_index|int": "subscribers_subscriptions_notification_index",
+  "subscribers_subscriptions|subscription_id|string": "subscribers_subscriptions_subscription_id",
+  "subscribers|uss_base_url|string": "subscribers_uss_base_url",
+  "|operational_intent_reference.id|string": "operational_intent_reference_id",
+  "|operational_intent_reference.manager|string": "operational_intent_reference_manager",
+  "|operational_intent_reference.ovn|string": "operational_intent_reference_ovn",
+  "|operational_intent_reference.state|string": "operational_intent_reference_state",
+  "|operational_intent_reference.subscription_id|string": "operational_intent_reference_subscription_id",
+  "|operational_intent_reference.time_end.format|string": "operational_intent_reference_time_end_format",
+  "|operational_intent_reference.time_end.value|string": "operational_intent_reference_time_end_value",
+  "|operational_intent_reference.time_start.format|string": "operational_intent_reference_time_start_format",
+  "|operational_intent_reference.time_start.value|string": "operational_intent_reference_time_start_value",
+  "|operational_intent_reference.uss_availability|string": "operational_intent_reference_uss_availability",
+  "|operational_intent_reference.uss_base_url|string": "operational_intent_reference_uss_base_url",
+  "|operational_intent_reference.version|int": "operational_intent_reference_version"
+ },
+ "lists": {
+  "subscribers|subscriptions": "subscribers_subscriptions",
+  "|subscribers": "subscribers"
+ }
+}

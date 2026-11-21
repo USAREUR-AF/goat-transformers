@@ -1,0 +1,18 @@
+{
+ "name": "gen-ridflight-roundtrip",
+ "from": "astm-f3411-v22a-flight",
+ "to": "astm-f3411-v22a-flight",
+ "input": "{\"id\":\"s75612\",\"aircraft_type\":\"Glider\",\"current_state\":{\"timestamp\":{\"value\":\"2024-08-24T07:23:33.200Z\",\"format\":\"RFC3339\"},\"timestamp_accuracy\":0.75,\"operational_status\":\"Emergency\",\"position\":{\"lat\":38.8977,\"lng\":151.2094,\"alt\":42.375,\"accuracy_h\":\"HA03NM\",\"accuracy_v\":\"VA150m\",\"extrapolated\":true,\"pressure_altitude\":-0.5,\"height\":{\"distance\":101.125,\"reference\":\"TakeoffLocation\"}},\"track\":0.75,\"speed\":0.75,\"speed_accuracy\":\"SA10mpsPlus\",\"vertical_speed\":-0.5},\"operating_area\":{\"aircraft_count\":20698,\"volumes\":[{\"aircraft_count\":36076},{\"aircraft_count\":1741}]},\"simulated\":true,\"recent_positions\":[{\"time\":{\"value\":\"2026-12-26T14:36:13.604Z\",\"format\":\"RFC3339\"},\"position\":{\"lat\":12.5,\"lng\":0.75,\"alt\":-3.25,\"accuracy_h\":\"HA05NM\",\"accuracy_v\":\"VA10m\",\"extrapolated\":false,\"pressure_altitude\":42.375,\"height\":{\"distance\":-3.25,\"reference\":\"GroundLevel\"}}},{\"time\":{\"value\":\"2024-02-03T13:37:39.546Z\",\"format\":\"RFC3339\"},\"position\":{\"lat\":1.5,\"lng\":-3.25,\"alt\":1.5,\"accuracy_h\":\"HA2NM\",\"accuracy_v\":\"VA10m\",\"extrapolated\":false,\"pressure_altitude\":-0.5,\"height\":{\"distance\":101.125,\"reference\":\"TakeoffLocation\"}}}]}",
+ "expect": "{\"id\":\"s75612\",\"aircraft_type\":\"Glider\",\"current_state\":{\"timestamp\":{\"value\":\"2024-08-24T07:23:33.200Z\",\"format\":\"RFC3339\"},\"timestamp_accuracy\":0.75,\"operational_status\":\"Emergency\",\"position\":{\"lat\":38.8977,\"lng\":151.2094,\"alt\":42.375,\"accuracy_h\":\"HA03NM\",\"accuracy_v\":\"VA150m\",\"extrapolated\":true,\"pressure_altitude\":-0.5,\"height\":{\"distance\":101.125,\"reference\":\"TakeoffLocation\"}},\"track\":0.75,\"speed\":0.75,\"speed_accuracy\":\"SA10mpsPlus\",\"vertical_speed\":-0.5},\"operating_area\":{\"aircraft_count\":20698,\"volumes\":[{\"aircraft_count\":36076},{\"aircraft_count\":1741}]},\"simulated\":true,\"recent_positions\":[{\"time\":{\"value\":\"2026-12-26T14:36:13.604Z\",\"format\":\"RFC3339\"},\"position\":{\"lat\":12.5,\"lng\":0.75,\"alt\":-3.25,\"accuracy_h\":\"HA05NM\",\"accuracy_v\":\"VA10m\",\"extrapolated\":false,\"pressure_altitude\":42.375,\"height\":{\"distance\":-3.25,\"reference\":\"GroundLevel\"}}},{\"time\":{\"value\":\"2024-02-03T13:37:39.546Z\",\"format\":\"RFC3339\"},\"position\":{\"lat\":1.5,\"lng\":-3.25,\"alt\":1.5,\"accuracy_h\":\"HA2NM\",\"accuracy_v\":\"VA10m\",\"extrapolated\":false,\"pressure_altitude\":-0.5,\"height\":{\"distance\":101.125,\"reference\":\"TakeoffLocation\"}}}]}",
+ "model": {
+  "uid": "s75612",
+  "lat": "38.8977",
+  "lon": "151.2094",
+  "hae": "42.375",
+  "time_ms": "1724484213200",
+  "course": "0.75",
+  "speed_ms": "0.75",
+  "track.vel_up_ms": "-0.5",
+  "track.simulated": "1"
+ }
+}

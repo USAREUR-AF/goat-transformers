@@ -1,0 +1,19 @@
+{
+ "keys": {
+  "operational_intent_references|id|string": "operational_intent_references_id",
+  "operational_intent_references|manager|string": "operational_intent_references_manager",
+  "operational_intent_references|ovn|string": "operational_intent_references_ovn",
+  "operational_intent_references|state|string": "operational_intent_references_state",
+  "operational_intent_references|subscription_id|string": "operational_intent_references_subscription_id",
+  "operational_intent_references|time_end.format|string": "operational_intent_references_time_end_format",
+  "operational_intent_references|time_end.value|string": "operational_intent_references_time_end_value",
+  "operational_intent_references|time_start.format|string": "operational_intent_references_time_start_format",
+  "operational_intent_references|time_start.value|string": "operational_intent_references_time_start_value",
+  "operational_intent_references|uss_availability|string": "operational_intent_references_uss_availability",
+  "operational_intent_references|uss_base_url|string": "operational_intent_references_uss_base_url",
+  "operational_intent_references|version|int": "operational_intent_references_version"
+ },
+ "lists": {
+  "|operational_intent_references": "operational_intent_references"
+ }
+}

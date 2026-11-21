@@ -1,0 +1,14 @@
+{
+ "keys": {
+  "extents_spatial_volume_footprint_vertices|lat|float": "extents_spatial_volume_footprint_vertices_lat",
+  "extents_spatial_volume_footprint_vertices|lng|float": "extents_spatial_volume_footprint_vertices_lng",
+  "|extents.spatial_volume.altitude_hi|float": "extents_spatial_volume_altitude_hi",
+  "|extents.spatial_volume.altitude_lo|float": "extents_spatial_volume_altitude_lo",
+  "|extents.time_end|string": "extents_time_end",
+  "|extents.time_start|string": "extents_time_start",
+  "|flights_url|string": "flights_url"
+ },
+ "lists": {
+  "|extents.spatial_volume.footprint.vertices": "extents_spatial_volume_footprint_vertices"
+ }
+}

@@ -1,0 +1,7 @@
+{
+ "name": "gen-subscription-residue",
+ "from": "astm-f3548-v21-subscription",
+ "to": "astm-f3548-v21-subscription",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"id\":\"94b1c3e3-68e8-4b52-8038-4b33da6d2337\",\"version\":\"s90041\",\"notification_index\":46227,\"time_start\":{\"value\":\"2025-10-16T23:40:01.531Z\",\"format\":\"RFC3339\"},\"time_end\":{\"value\":\"2024-02-28T01:48:58.125Z\",\"format\":\"RFC3339\"},\"uss_base_url\":\"s21890\",\"notify_for_operational_intents\":true,\"notify_for_constraints\":false,\"implicit_subscription\":false,\"dependent_operational_intents\":[\"323319d8-1298-4add-82b0-dad46cb21de1\",\"5683c81e-d9af-4d04-8d1a-0ca5cf4f98df\"]}",
+ "expect": "{\"id\":\"94b1c3e3-68e8-4b52-8038-4b33da6d2337\",\"version\":\"s90041\",\"notification_index\":46227,\"time_start\":{\"value\":\"2025-10-16T23:40:01.531Z\",\"format\":\"RFC3339\"},\"time_end\":{\"value\":\"2024-02-28T01:48:58.125Z\",\"format\":\"RFC3339\"},\"uss_base_url\":\"s21890\",\"notify_for_operational_intents\":true,\"notify_for_constraints\":false,\"implicit_subscription\":false,\"dependent_operational_intents\":[\"323319d8-1298-4add-82b0-dad46cb21de1\",\"5683c81e-d9af-4d04-8d1a-0ca5cf4f98df\"],\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

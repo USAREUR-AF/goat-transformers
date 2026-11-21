@@ -1,0 +1,7 @@
+{
+ "name": "gen-create_identification_service_area_parameters-residue",
+ "from": "astm-f3411-v22a-create-isa-parameters",
+ "to": "astm-f3411-v22a-create-isa-parameters",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"extents\":{\"volume\":{\"outline_circle\":{\"center\":{\"lng\":-0.5,\"lat\":0.75},\"radius\":{\"value\":0.75,\"units\":\"M\"}},\"outline_polygon\":{\"vertices\":[{\"lng\":42.375,\"lat\":1.5},{\"lng\":12.5,\"lat\":42.375}]},\"altitude_lower\":{\"value\":1.5,\"reference\":\"W84\",\"units\":\"M\"},\"altitude_upper\":{\"value\":-0.5,\"reference\":\"W84\",\"units\":\"M\"}},\"time_start\":{\"value\":\"2026-03-27T15:47:21.057Z\",\"format\":\"RFC3339\"},\"time_end\":{\"value\":\"2025-03-11T12:31:53.699Z\",\"format\":\"RFC3339\"}},\"uss_base_url\":\"s66330\"}",
+ "expect": "{\"extents\":{\"volume\":{\"outline_circle\":{\"center\":{\"lng\":-0.5,\"lat\":0.75},\"radius\":{\"value\":0.75,\"units\":\"M\"}},\"outline_polygon\":{\"vertices\":[{\"lng\":42.375,\"lat\":1.5},{\"lng\":12.5,\"lat\":42.375}]},\"altitude_lower\":{\"value\":1.5,\"reference\":\"W84\",\"units\":\"M\"},\"altitude_upper\":{\"value\":-0.5,\"reference\":\"W84\",\"units\":\"M\"}},\"time_start\":{\"value\":\"2026-03-27T15:47:21.057Z\",\"format\":\"RFC3339\"},\"time_end\":{\"value\":\"2025-03-11T12:31:53.699Z\",\"format\":\"RFC3339\"}},\"uss_base_url\":\"s66330\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

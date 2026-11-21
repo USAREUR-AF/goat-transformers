@@ -1,0 +1,11 @@
+{
+ "keys": {
+  "|flights_url|string": "flights_url",
+  "|id|string": "id",
+  "|owner|string": "owner",
+  "|time_end|string": "time_end",
+  "|time_start|string": "time_start",
+  "|version|string": "version"
+ },
+ "lists": {}
+}

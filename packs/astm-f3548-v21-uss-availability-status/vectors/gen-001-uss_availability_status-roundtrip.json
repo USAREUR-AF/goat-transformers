@@ -1,0 +1,11 @@
+{
+ "name": "gen-uss_availability_status-roundtrip",
+ "from": "astm-f3548-v21-uss-availability-status",
+ "to": "astm-f3548-v21-uss-availability-status",
+ "input": "{\"uss\":\"s13679\",\"availability\":\"Unknown\"}",
+ "expect": "{\"uss\":\"s13679\",\"availability\":\"Unknown\"}",
+ "model": {
+  "utm21uas.uss": "s13679",
+  "utm21uas.availability": "Unknown"
+ }
+}

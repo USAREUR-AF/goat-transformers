@@ -1,0 +1,17 @@
+{
+ "name": "gen-put_identification_service_area_response-roundtrip",
+ "from": "astm-f3411-v22a-put-isa-response",
+ "to": "astm-f3411-v22a-put-isa-response",
+ "input": "{\"subscribers\":[{\"subscriptions\":[{\"subscription_id\":\"s19282\",\"notification_index\":21311}],\"url\":\"s15838\"},{\"subscriptions\":[{\"subscription_id\":\"s54882\",\"notification_index\":45107}],\"url\":\"s38475\"}],\"service_area\":{\"uss_base_url\":\"s74973\",\"owner\":\"s11233\",\"time_start\":{\"value\":\"2025-06-29T11:52:38.342Z\",\"format\":\"RFC3339\"},\"time_end\":{\"value\":\"2024-04-29T23:23:40.577Z\",\"format\":\"RFC3339\"},\"version\":\"s39501\",\"id\":\"s12390\"}}",
+ "expect": "{\"subscribers\":[{\"subscriptions\":[{\"subscription_id\":\"s19282\",\"notification_index\":21311}],\"url\":\"s15838\"},{\"subscriptions\":[{\"subscription_id\":\"s54882\",\"notification_index\":45107}],\"url\":\"s38475\"}],\"service_area\":{\"uss_base_url\":\"s74973\",\"owner\":\"s11233\",\"time_start\":{\"value\":\"2025-06-29T11:52:38.342Z\",\"format\":\"RFC3339\"},\"time_end\":{\"value\":\"2024-04-29T23:23:40.577Z\",\"format\":\"RFC3339\"},\"version\":\"s39501\",\"id\":\"s12390\"}}",
+ "model": {
+  "ridv22apisa.subscribers.#": "2",
+  "ridv22apisa.service_area_uss_base_url": "s74973",
+  "ridv22apisa.service_area_owner": "s11233",
+  "ridv22apisa.service_area_time_start_value": "2025-06-29T11:52:38.342Z",
+  "ridv22apisa.service_area_time_start_format": "RFC3339",
+  "ridv22apisa.service_area_time_end_value": "2024-04-29T23:23:40.577Z",
+  "ridv22apisa.service_area_time_end_format": "RFC3339",
+  "ridv22apisa.service_area_version": "s39501"
+ }
+}

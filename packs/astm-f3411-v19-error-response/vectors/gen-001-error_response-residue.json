@@ -1,0 +1,7 @@
+{
+ "name": "gen-error_response-residue",
+ "from": "astm-f3411-v19-error-response",
+ "to": "astm-f3411-v19-error-response",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"message\":\"s15436\"}",
+ "expect": "{\"message\":\"s15436\",\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

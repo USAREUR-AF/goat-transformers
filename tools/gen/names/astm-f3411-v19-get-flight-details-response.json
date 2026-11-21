@@ -1,0 +1,14 @@
+{
+ "keys": {
+  "|details.auth_data.data|string": "details_auth_data_data",
+  "|details.auth_data.format|string": "details_auth_data_format",
+  "|details.id|string": "details_id",
+  "|details.operation_description|string": "details_operation_description",
+  "|details.operator_id|string": "details_operator_id",
+  "|details.operator_location.lat|float": "details_operator_location_lat",
+  "|details.operator_location.lng|float": "details_operator_location_lng",
+  "|details.registration_number|string": "details_registration_number",
+  "|details.serial_number|string": "details_serial_number"
+ },
+ "lists": {}
+}

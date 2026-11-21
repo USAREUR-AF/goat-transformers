@@ -1,0 +1,15 @@
+{
+ "keys": {
+  "|id|string": "id",
+  "|manager|string": "manager",
+  "|ovn|string": "ovn",
+  "|time_end.format|string": "time_end_format",
+  "|time_end.value|string": "time_end_value",
+  "|time_start.format|string": "time_start_format",
+  "|time_start.value|string": "time_start_value",
+  "|uss_availability|string": "uss_availability",
+  "|uss_base_url|string": "uss_base_url",
+  "|version|int": "version"
+ },
+ "lists": {}
+}

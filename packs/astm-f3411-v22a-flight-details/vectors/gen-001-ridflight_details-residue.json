@@ -1,0 +1,7 @@
+{
+ "name": "gen-ridflight_details-residue",
+ "from": "astm-f3411-v22a-flight-details",
+ "to": "astm-f3411-v22a-flight-details",
+ "input": "{\"x_residue\":\"r\",\"x_residue_n\":7,\"id\":\"s31678\",\"eu_classification\":{\"category\":\"EUCategoryUndefined\",\"class\":\"EUClassUndefined\"},\"uas_id\":{\"serial_number\":\"s61143\",\"registration_id\":\"s84018\",\"utm_id\":\"s66000\",\"specific_session_id\":\"s93246\"},\"operator_id\":\"s4083\",\"operator_location\":{\"position\":{\"lng\":-0.5,\"lat\":7.0625},\"altitude\":{\"value\":12.5,\"reference\":\"W84\",\"units\":\"M\"},\"altitude_type\":\"Takeoff\"},\"operation_description\":\"s12859\",\"auth_data\":{\"format\":2,\"data\":\"s51052\"}}",
+ "expect": "{\"id\":\"s31678\",\"eu_classification\":{\"category\":\"EUCategoryUndefined\",\"class\":\"EUClassUndefined\"},\"uas_id\":{\"serial_number\":\"s61143\",\"registration_id\":\"s84018\",\"utm_id\":\"s66000\",\"specific_session_id\":\"s93246\"},\"operator_id\":\"s4083\",\"operator_location\":{\"position\":{\"lng\":-0.5,\"lat\":7.0625},\"altitude\":{\"value\":12.5,\"reference\":\"W84\",\"units\":\"M\"},\"altitude_type\":\"Takeoff\"},\"operation_description\":\"s12859\",\"auth_data\":{\"format\":2,\"data\":\"s51052\"},\"x_residue\":\"r\",\"x_residue_n\":7}"
+}

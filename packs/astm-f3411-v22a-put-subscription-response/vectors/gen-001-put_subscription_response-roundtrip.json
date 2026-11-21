@@ -1,0 +1,17 @@
+{
+ "name": "gen-put_subscription_response-roundtrip",
+ "from": "astm-f3411-v22a-put-subscription-response",
+ "to": "astm-f3411-v22a-put-subscription-response",
+ "input": "{\"service_areas\":[{\"uss_base_url\":\"s45226\",\"owner\":\"s17840\",\"time_start\":{\"value\":\"2026-09-29T13:35:43.369Z\",\"format\":\"RFC3339\"},\"time_end\":{\"value\":\"2023-12-04T01:39:51.418Z\",\"format\":\"RFC3339\"},\"version\":\"s81977\",\"id\":\"s86624\"},{\"uss_base_url\":\"s61005\",\"owner\":\"s55666\",\"time_start\":{\"value\":\"2025-08-29T05:05:53.222Z\",\"format\":\"RFC3339\"},\"time_end\":{\"value\":\"2026-11-08T16:42:01.262Z\",\"format\":\"RFC3339\"},\"version\":\"s13262\",\"id\":\"s10879\"}],\"subscription\":{\"id\":\"s24347\",\"uss_base_url\":\"s31332\",\"owner\":\"s90419\",\"notification_index\":77751,\"time_end\":{\"value\":\"2026-04-25T11:13:09.089Z\",\"format\":\"RFC3339\"},\"time_start\":{\"value\":\"2024-01-10T07:52:17.063Z\",\"format\":\"RFC3339\"},\"version\":\"s94828\"}}",
+ "expect": "{\"service_areas\":[{\"uss_base_url\":\"s45226\",\"owner\":\"s17840\",\"time_start\":{\"value\":\"2026-09-29T13:35:43.369Z\",\"format\":\"RFC3339\"},\"time_end\":{\"value\":\"2023-12-04T01:39:51.418Z\",\"format\":\"RFC3339\"},\"version\":\"s81977\",\"id\":\"s86624\"},{\"uss_base_url\":\"s61005\",\"owner\":\"s55666\",\"time_start\":{\"value\":\"2025-08-29T05:05:53.222Z\",\"format\":\"RFC3339\"},\"time_end\":{\"value\":\"2026-11-08T16:42:01.262Z\",\"format\":\"RFC3339\"},\"version\":\"s13262\",\"id\":\"s10879\"}],\"subscription\":{\"id\":\"s24347\",\"uss_base_url\":\"s31332\",\"owner\":\"s90419\",\"notification_index\":77751,\"time_end\":{\"value\":\"2026-04-25T11:13:09.089Z\",\"format\":\"RFC3339\"},\"time_start\":{\"value\":\"2024-01-10T07:52:17.063Z\",\"format\":\"RFC3339\"},\"version\":\"s94828\"}}",
+ "model": {
+  "ridv22apsub.service_areas.#": "2",
+  "ridv22apsub.subscription_id": "s24347",
+  "ridv22apsub.subscription_uss_base_url": "s31332",
+  "ridv22apsub.subscription_owner": "s90419",
+  "ridv22apsub.subscription_notification_index": "77751",
+  "ridv22apsub.subscription_time_end_value": "2026-04-25T11:13:09.089Z",
+  "ridv22apsub.subscription_time_end_format": "RFC3339",
+  "ridv22apsub.subscription_time_start_value": "2024-01-10T07:52:17.063Z"
+ }
+}

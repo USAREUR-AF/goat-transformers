@@ -1,0 +1,17 @@
+{
+ "name": "gen-put_subscription_parameters-roundtrip",
+ "from": "astm-f3548-v21-put-subscription-parameters",
+ "to": "astm-f3548-v21-put-subscription-parameters",
+ "input": "{\"extents\":{\"volume\":{\"outline_circle\":{\"center\":{\"lng\":101.125,\"lat\":1.5},\"radius\":{\"value\":42.375,\"units\":\"M\"}},\"outline_polygon\":{\"vertices\":[{\"lng\":42.375,\"lat\":1.5},{\"lng\":7.0625,\"lat\":-0.5}]},\"altitude_lower\":{\"value\":0.75,\"reference\":\"W84\",\"units\":\"M\"},\"altitude_upper\":{\"value\":-3.25,\"reference\":\"W84\",\"units\":\"M\"}},\"time_start\":{\"value\":\"2025-02-27T14:58:46.976Z\",\"format\":\"RFC3339\"},\"time_end\":{\"value\":\"2024-12-24T17:35:35.740Z\",\"format\":\"RFC3339\"}},\"uss_base_url\":\"s87316\",\"notify_for_operational_intents\":true,\"notify_for_constraints\":true}",
+ "expect": "{\"extents\":{\"volume\":{\"outline_circle\":{\"center\":{\"lng\":101.125,\"lat\":1.5},\"radius\":{\"value\":42.375,\"units\":\"M\"}},\"outline_polygon\":{\"vertices\":[{\"lng\":42.375,\"lat\":1.5},{\"lng\":7.0625,\"lat\":-0.5}]},\"altitude_lower\":{\"value\":0.75,\"reference\":\"W84\",\"units\":\"M\"},\"altitude_upper\":{\"value\":-3.25,\"reference\":\"W84\",\"units\":\"M\"}},\"time_start\":{\"value\":\"2025-02-27T14:58:46.976Z\",\"format\":\"RFC3339\"},\"time_end\":{\"value\":\"2024-12-24T17:35:35.740Z\",\"format\":\"RFC3339\"}},\"uss_base_url\":\"s87316\",\"notify_for_operational_intents\":true,\"notify_for_constraints\":true}",
+ "model": {
+  "utm21psub.extents_volume_outline_circle_center_lng": "101.125",
+  "utm21psub.extents_volume_outline_circle_center_lat": "1.5",
+  "utm21psub.extents_volume_outline_circle_radius_value": "42.375",
+  "utm21psub.extents_volume_outline_circle_radius_units": "M",
+  "utm21psub.extents_volume_outline_polygon_vertices.#": "2",
+  "utm21psub.extents_volume_altitude_lower_value": "0.75",
+  "utm21psub.extents_volume_altitude_lower_reference": "W84",
+  "utm21psub.extents_volume_altitude_lower_units": "M"
+ }
+}
