@@ -1,0 +1,11 @@
+{
+  "name": "push-ack-roundtrip",
+  "from": "semtech-udp-forwarder",
+  "to": "semtech-udp-forwarder",
+  "input": "021f2e01",
+  "expect": "021f2e01",
+  "model": {
+    "semtechudp.identifier": "1"
+  },
+  "source": "built by tools/gen/lpwan2-vectors.py from values chosen there; layout restated from Lora-net/packet_forwarder PROTOCOL.TXT; expect derived there, no engine run"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "join-accept-encrypted-roundtrip",
+  "from": "lorawan-phypayload",
+  "to": "lorawan-phypayload",
+  "input": "20404142434445464748494a4b4c4d4e4f",
+  "expect": "20404142434445464748494a4b4c4d4e4f",
+  "model": {
+    "lorawan.mtype": "1",
+    "lorawan.payload.#": "16"
+  },
+  "source": "built by tools/gen/lpwan2-vectors.py from values chosen there; layout restated from brocaar/lorawan phypayload.go, fhdr.go, payload.go; a join accept: 16 encrypted octets (the 12 fields and the MIC), kept as octets; expect derived there, no engine run"
+}

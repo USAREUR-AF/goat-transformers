@@ -1,0 +1,8 @@
+{
+  "name": "LoRaWAN framing (PHYPayload, Semtech UDP forwarder)",
+  "domain": "iot",
+  "exact": [
+    "lorawan-phypayload",
+    "semtech-udp-forwarder"
+  ]
+}

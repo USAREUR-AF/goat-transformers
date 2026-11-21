@@ -1,0 +1,12 @@
+{
+  "name": "tx-ack-without-json-roundtrip",
+  "from": "semtech-udp-forwarder",
+  "to": "semtech-udp-forwarder",
+  "input": "02004305aa555a0000000101",
+  "expect": "02004305aa555a0000000101",
+  "model": {
+    "semtechudp.identifier": "5",
+    "semtechudp.json.#": "0"
+  },
+  "source": "built by tools/gen/lpwan2-vectors.py from values chosen there; layout restated from Lora-net/packet_forwarder PROTOCOL.TXT; TX_ACK with no JSON: no error; expect derived there, no engine run"
+}

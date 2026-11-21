@@ -1,0 +1,57 @@
+# LoRaWAN PHYPayload: MHDR and, by message type, the join request, join accept, data frame header, rejoin
+# request or proprietary payload. Written by tools/gen/lpwan2-pack.py; do not edit by hand.
+format        lorawan-phypayload
+version       0.1.0
+distribution  public
+source        "brocaar/lorawan, https://github.com/brocaar/lorawan at commit 4bb09b3bdacba097680894e8d35dbcbc0d260c7e, phypayload.go, fhdr.go, macpayload.go, payload.go, netid.go (MIT License, Copyright (c) 2019 Orne Brocaar); layouts restated, no code copied; the LoRaWAN specification not used"
+uses          lorawan
+wire          bits
+layout        sequential
+bit_order     msb
+
+field  lorawan.mtype  3  uint
+field  lorawan.rfu  3  uint
+field  lorawan.major  2  uint
+switch  lorawan.mtype
+  case  0
+    field  lorawan.join_eui  64  hex
+    field  lorawan.dev_eui  64  hex
+    field  lorawan.dev_nonce  16  uint  swap
+    field  lorawan.mic  32  hex
+  case  2,3,4,5
+    field  lorawan.dev_addr  32  uint  swap
+    field  lorawan.fctrl_adr  1  uint
+    field  lorawan.fctrl_adr_ack_req  1  uint
+    field  lorawan.fctrl_ack  1  uint
+    field  lorawan.fctrl_fpending_class_b  1  uint
+    count  fopts_len  4
+    field  lorawan.fcnt  16  uint  swap
+    group  lorawan.fopts  count  @fopts_len
+      field  lorawan.octet  8  uint
+    end
+    group  lorawan.port_payload_mic  rest
+      field  lorawan.octet  8  uint
+    end
+  case  6
+    field  lorawan.rejoin_type  8  uint
+    switch  lorawan.rejoin_type
+      case  0,2
+        field  lorawan.net_id  24  uint  swap
+        field  lorawan.dev_eui  64  hex
+        field  lorawan.rj_count  16  uint  swap
+        field  lorawan.mic  32  hex
+      case  1
+        field  lorawan.join_eui  64  hex
+        field  lorawan.dev_eui  64  hex
+        field  lorawan.rj_count  16  uint  swap
+        field  lorawan.mic  32  hex
+      else
+        group  lorawan.payload  rest
+          field  lorawan.octet  8  uint
+        end
+    end
+  else
+    group  lorawan.payload  rest
+      field  lorawan.octet  8  uint
+    end
+end

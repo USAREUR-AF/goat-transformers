@@ -1,0 +1,25 @@
+# The lorawan module: LoRaWAN PHYPayload fields. Written by tools/gen/lpwan2-pack.py.
+module        lorawan
+version       0.1.0
+distribution  public
+source        "brocaar/lorawan, https://github.com/brocaar/lorawan at commit 4bb09b3bdacba097680894e8d35dbcbc0d260c7e, phypayload.go, fhdr.go, macpayload.go, payload.go, netid.go (MIT License, Copyright (c) 2019 Orne Brocaar); layouts restated, no code copied; the LoRaWAN specification not used"
+key   mtype                   int     -  "MHDR message type: 0 join request, 1 join accept, 2 unconfirmed data up, 3 unconfirmed data down, 4 confirmed data up, 5 confirmed data down, 6 rejoin request, 7 proprietary"
+key   rfu                     int     -  "MHDR: the three reserved bits"
+key   major                   int     -  "MHDR: major version (0 LoRaWAN R1)"
+key   join_eui                string  -  "JoinEUI (AppEUI): the 8 octets as sent (low octet first), as hexadecimal digits"
+key   dev_eui                 string  -  "DevEUI: the 8 octets as sent (low octet first), as hexadecimal digits"
+key   dev_nonce               int     -  "join request: DevNonce"
+key   mic                     string  -  "message integrity code, the 4 octets as sent, as hexadecimal digits (not computed)"
+key   dev_addr                int     -  "data frame: DevAddr, the 32-bit value (sent low octet first)"
+key   fctrl_adr               int     -  "FCtrl bit 7: ADR"
+key   fctrl_adr_ack_req       int     -  "FCtrl bit 6: ADRACKReq in an uplink (reserved in a downlink)"
+key   fctrl_ack               int     -  "FCtrl bit 5: ACK"
+key   fctrl_fpending_class_b  int     -  "FCtrl bit 4: FPending in a downlink, ClassB in an uplink"
+key   fcnt                    int     -  "data frame: FCnt, the low 16 bits of the frame counter"
+list  fopts                   "data frame: FOpts, the MAC commands in the header (their count is FCtrl's FOptsLen), as octets"
+list  port_payload_mic        "data frame: FPort (when present), FRMPayload and the 4-octet MIC, as octets"
+key   rejoin_type             int     -  "rejoin request: type 0, 1 or 2"
+key   net_id                  int     -  "rejoin request type 0/2: NetID (24 bits, sent low octet first)"
+key   rj_count                int     -  "rejoin request: RJcount0 (types 0, 2) or RJcount1 (type 1)"
+list  payload                 "join accept (encrypted, MIC included), proprietary or other payload, as octets"
+key   octet                   int     -  "one octet"

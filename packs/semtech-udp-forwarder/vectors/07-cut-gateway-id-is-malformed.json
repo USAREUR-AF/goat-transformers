@@ -1,0 +1,8 @@
+{
+  "name": "cut-gateway-id-is-malformed",
+  "from": "semtech-udp-forwarder",
+  "to": "semtech-udp-forwarder",
+  "input": "02004202aa555a0000",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/lpwan2-vectors.py from values chosen there; layout restated from Lora-net/packet_forwarder PROTOCOL.TXT; PULL_DATA with five of the eight gateway identifier octets; expect derived there, no engine run"
+}

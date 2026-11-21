@@ -1,0 +1,4 @@
+Packs semtech-udp-forwarder; module semtechudp
+  Lora-net/packet_forwarder, https://github.com/Lora-net/packet_forwarder at
+  commit d0226eae6e7b6bbaec6117d0d2372bf17819c438, PROTOCOL.TXT. Copyright (C)
+  2013 Semtech S.A.; BSD-3-Clause terms. Layouts restated; no text copied.

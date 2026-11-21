@@ -1,0 +1,15 @@
+{
+  "name": "confirmed-downlink-with-fopts-roundtrip",
+  "from": "lorawan-phypayload",
+  "to": "lorawan-phypayload",
+  "input": "a0da1b01263503000351070001a1b2c3d4",
+  "expect": "a0da1b01263503000351070001a1b2c3d4",
+  "model": {
+    "lorawan.mtype": "5",
+    "lorawan.fctrl_ack": "1",
+    "lorawan.fctrl_fpending_class_b": "1",
+    "lorawan.fopts.#": "5",
+    "lorawan.port_payload_mic.#": "4"
+  },
+  "source": "built by tools/gen/lpwan2-vectors.py from values chosen there; layout restated from brocaar/lorawan phypayload.go, fhdr.go, payload.go; a confirmed downlink with ACK and FPending, a LinkADRReq in FOpts, no FPort, the MIC alone after the header; expect derived there, no engine run"
+}

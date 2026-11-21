@@ -1,0 +1,13 @@
+{
+  "name": "rejoin-type-1-roundtrip",
+  "from": "lorawan-phypayload",
+  "to": "lorawan-phypayload",
+  "input": "c001080706050403020118171615141312110200a1b2c3d4",
+  "expect": "c001080706050403020118171615141312110200a1b2c3d4",
+  "model": {
+    "lorawan.rejoin_type": "1",
+    "lorawan.join_eui": "0807060504030201",
+    "lorawan.rj_count": "2"
+  },
+  "source": "built by tools/gen/lpwan2-vectors.py from values chosen there; layout restated from brocaar/lorawan phypayload.go, fhdr.go, payload.go; a rejoin request of type 1; expect derived there, no engine run"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "pull-resp-roundtrip",
+  "from": "semtech-udp-forwarder",
+  "to": "semtech-udp-forwarder",
+  "input": "020043037b227478706b223a7b22696d6d65223a747275652c2266726571223a3836392e3532352c22706f7765223a31342c2273697a65223a302c2264617461223a22227d7d",
+  "expect": "020043037b227478706b223a7b22696d6d65223a747275652c2266726571223a3836392e3532352c22706f7765223a31342c2273697a65223a302c2264617461223a22227d7d",
+  "model": {
+    "semtechudp.identifier": "3",
+    "semtechudp.json.#": "66"
+  },
+  "source": "built by tools/gen/lpwan2-vectors.py from values chosen there; layout restated from Lora-net/packet_forwarder PROTOCOL.TXT; PULL_RESP with a txpk object; expect derived there, no engine run"
+}
