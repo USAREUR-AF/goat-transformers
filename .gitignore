@@ -7,4 +7,5 @@ __pycache__/
 /tools/gen/sources/*
 !/tools/gen/sources/*-PROVENANCE.md
 !/tools/gen/sources/netex-xsd.txt
+!/tools/gen/sources/txc-xsd.txt
 !/tools/gen/sources/sds-sha256.txt
