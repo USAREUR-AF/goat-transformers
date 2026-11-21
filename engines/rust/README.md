@@ -182,9 +182,9 @@ zz-first-by-format	lic-aa	Apache-2.0	open
 
 | Test | Covers | Measured |
 |---|---|---|
-| `tests/vectors.rs` | every conversion vector under `packs/*/vectors/`, with every pack loaded; every load vector under `packs/conformance/load-vectors/` | 22258 conversion vectors, 1172 load vectors, 18 capability vectors, 0 failed |
+| `tests/vectors.rs` | every conversion vector under `packs/*/vectors/`, with every pack loaded; every load vector under `packs/conformance/load-vectors/` | 22961 conversion vectors, 1249 load vectors, 18 capability vectors, 0 failed |
 | `tests/api.rs` | what a vector cannot reach: `fill` and `complete` on their own, lists, item kinds, `model_keys`, `capability`, the directory loaders, `load_pack_dir_only` | 15 tests |
-| `tests/fuzz.rs` | random, cut and mutated input and hostile shapes for every pack: never a panic, only a named error | 5533003 inputs over 4289 packs and 22255 vectors |
+| `tests/fuzz.rs` | random, cut and mutated input and hostile shapes for every pack: never a panic, only a named error | 5717281 inputs over 4433 packs and 22958 vectors |
 | `tests/embed.rs` | packs compiled into the binary with `include_str!` | 1 test |
 | `tests/uper.rs` | ASN.1 unaligned PER checks derived by hand (spec 0.19) | 9 tests |
 | `tests/parse_once.rs` | spec 0.25, ruling 1: every conversion vector, failing ones included, gives the same output or error on one instance in line order, in reverse order and on four threads at once; the benchmark set and one failing vector of each wire give the same on a new instance; a second load is still a duplicate (the debug build runs the reverse order and the threads on every eighth vector and every failing one, and the new instance for the failing vectors only) | 3 tests |
@@ -273,15 +273,15 @@ another set. Measured on 2026-11-21 with rustc 1.99.1 on x86_64 Linux:
 
 | Reduced build (`xml,json,geojson`) | Measured |
 |---|---|
-| conversion vectors | 8167 run, 0 failed (14091 on other wires left out) |
-| load vectors | 382 run, 0 failed (790 left out) |
+| conversion vectors | 8324 run, 0 failed (14637 on other wires left out) |
+| load vectors | 388 run, 0 failed (861 left out) |
 | capability vectors | 16 run, 0 failed (2 left out) |
 | `unknown-wire` loads | 4 of 4: `adsb` (bits), `apollo-ch` (protobuf), `argo-index-meta` (text), `conformance-cond-tlv` (tlv) |
 
 | Release artifact | All seven wires | `xml,json,geojson` |
 |---|---|---|
-| `goat-xf` | 2128744 bytes | 1696856 bytes |
-| `libgoat_transformers.rlib` | 4919904 bytes | 3658416 bytes |
+| `goat-xf` | 2145456 bytes | 1707208 bytes |
+| `libgoat_transformers.rlib` | 4977634 bytes | 3699700 bytes |
 
 ## Static and WebAssembly builds
 
