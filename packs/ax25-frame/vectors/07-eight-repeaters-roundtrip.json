@@ -1,0 +1,17 @@
+{
+  "name": "eight-repeaters-roundtrip",
+  "from": "ax25-frame",
+  "to": "ax25-frame",
+  "input": "82a0a4a64040e09c608682989860a4a0a8624040e2a4a0a8644040e4a4a0a8664040e6a4a0a868404068a4a0a86a40406aa4a0a86c40406ca4a0a86e40406ea4a0a87040407103f078",
+  "expect": "82a0a4a64040e09c608682989860a4a0a8624040e2a4a0a8644040e4a4a0a8664040e6a4a0a868404068a4a0a86a40406aa4a0a86c40406ca4a0a86e40406ea4a0a87040407103f078",
+  "model": {
+    "ax25.rpt8_call_1": "R",
+    "ax25.rpt8_call_4": "8",
+    "ax25.rpt8_ssid": "8",
+    "ax25.rpt8_ext": "1",
+    "ax25.rpt3_h": "1",
+    "ax25.rpt4_h": "0",
+    "ax25.info.#": "1"
+  },
+  "source": "built by tools/gen/radio-vectors.py from values chosen there; layout restated from AX.25 v2.2 (TAPR 1998) sections 3.12 and 4.2 to 4.3; the largest address field the pack reads, eight repeaters (the version 2.0 limit; version 2.2 allows two); expect derived there, no engine run"
+}

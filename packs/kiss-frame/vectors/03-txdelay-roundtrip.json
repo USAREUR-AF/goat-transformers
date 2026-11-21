@@ -1,0 +1,12 @@
+{
+  "name": "txdelay-roundtrip",
+  "from": "kiss-frame",
+  "to": "kiss-frame",
+  "input": "0132",
+  "expect": "0132",
+  "model": {
+    "kiss.command": "1",
+    "kiss.value": "50"
+  },
+  "source": "built by tools/gen/radio-vectors.py from values chosen there; layout restated from the KISS TNC note (1987) section 4; TXDELAY of 50 (500 ms); expect derived there, no engine run"
+}

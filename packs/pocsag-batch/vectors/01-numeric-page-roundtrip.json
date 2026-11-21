@@ -1,0 +1,19 @@
+{
+  "name": "numeric-page-roundtrip",
+  "from": "pocsag-batch",
+  "to": "pocsag-batch",
+  "input": "7cd215d87a89c1977a89c1977a89c1977a89c1974b5a0780d55423e6e1199ed77a89c1977a89c1977a89c1977a89c1977a89c1977a89c1977a89c1977a89c1977a89c197",
+  "expect": "7cd215d87a89c1977a89c1977a89c1977a89c1974b5a0780d55423e6e1199ed77a89c1977a89c1977a89c1977a89c1977a89c1977a89c1977a89c1977a89c1977a89c197",
+  "model": {
+    "pocsag.codewords.#": "16",
+    "pocsag.codewords[4].pocsag.flag": "0",
+    "pocsag.codewords[4].pocsag.address": "154320",
+    "pocsag.codewords[4].pocsag.function": "0",
+    "pocsag.codewords[4].pocsag.bch": "960",
+    "pocsag.codewords[5].pocsag.flag": "1",
+    "pocsag.codewords[5].pocsag.message_bits": "aaa84",
+    "pocsag.codewords[0].pocsag.address": "250958",
+    "pocsag.codewords[0].pocsag.function": "0"
+  },
+  "source": "built by tools/gen/radio-vectors.py from values chosen there; layout restated from Rec. ITU-R M.584-2 Annex 1 sections 1.2 to 1.4; a batch with the address codeword of identity 1234562 (frame 2) and a two-codeword numeric message, idle codewords elsewhere; check bits computed with the Recommendation's polynomial; expect derived there, no engine run"
+}

@@ -1,0 +1,10 @@
+# The kiss module: the fields of KISS TNC frames. Written by tools/gen/radio-pack.py.
+module        kiss
+version       0.1.0
+distribution  public
+source        "Chepponis and Karn, The KISS TNC (1987); restated by goat-transformers"
+key   port     int     -  "the HDLC port, 0 to 15 (the high nibble of the type octet)"
+key   command  int     -  "the command (the low nibble): 0 data frame, 1 TXDELAY, 2 persistence, 3 slot time, 4 TX tail, 5 full duplex, 6 set hardware; 15 with port 15 is Return"
+key   value    int     -  "commands 1 to 5: the parameter octet (10 ms units for 1, 3, 4; persistence P for 2; 0 half duplex for 5)"
+list  data     "a data frame (an AX.25 frame without flags and FCS), or a set hardware command's octets, or another command's octets"
+key   octet    int     -  "one octet"

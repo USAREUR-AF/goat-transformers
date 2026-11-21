@@ -1,0 +1,12 @@
+# The pocsag module: POCSAG codewords (Rec. ITU-R M.584-2 Annex 1). Written by tools/gen/radio-pack.py.
+module        pocsag
+version       0.1.0
+distribution  public
+source        "Rec. ITU-R M.584-2 Annex 1; restated by goat-transformers"
+list  codewords     "the codewords after the synchronization codeword, in order (16 in a whole batch: 8 frames of 2)"
+key   flag          int     -  "codeword flag: 0 address codeword (the idle codeword is one), 1 message codeword"
+key   address       int     -  "address codeword: the 18 most significant bits of the pager's 21-bit identity (the 3 others are the frame number)"
+key   function      int     -  "address codeword: the two function bits, choosing one of the pager's four addresses"
+key   message_bits  string  -  "message codeword: the 20 message bits, as hexadecimal digits (5 digits)"
+key   bch           int     -  "the 10 BCH(31,21) check bits, as on the wire (not verified)"
+key   parity        int     -  "the even parity bit, as on the wire (not verified)"

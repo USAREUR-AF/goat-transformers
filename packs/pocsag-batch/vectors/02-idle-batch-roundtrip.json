@@ -1,0 +1,14 @@
+{
+  "name": "idle-batch-roundtrip",
+  "from": "pocsag-batch",
+  "to": "pocsag-batch",
+  "input": "7cd215d87a89c1977a89c1977a89c1977a89c1977a89c1977a89c1977a89c1977a89c1977a89c1977a89c1977a89c1977a89c1977a89c1977a89c1977a89c1977a89c197",
+  "expect": "7cd215d87a89c1977a89c1977a89c1977a89c1977a89c1977a89c1977a89c1977a89c1977a89c1977a89c1977a89c1977a89c1977a89c1977a89c1977a89c1977a89c197",
+  "model": {
+    "pocsag.codewords.#": "16",
+    "pocsag.codewords[15].pocsag.flag": "0",
+    "pocsag.codewords[15].pocsag.bch": "203",
+    "pocsag.codewords[15].pocsag.parity": "1"
+  },
+  "source": "built by tools/gen/radio-vectors.py from values chosen there; layout restated from Rec. ITU-R M.584-2 Annex 1 sections 1.2 to 1.4; a batch of idle codewords; expect derived there, no engine run"
+}

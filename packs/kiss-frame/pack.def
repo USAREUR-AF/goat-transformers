@@ -1,0 +1,27 @@
+# KISS TNC frame (Chepponis and Karn, 1987): the type octet (port and command) and its data. The
+# message is the content between two FEND octets after FESC escapes are undone. Written by
+# tools/gen/radio-pack.py.
+format        kiss-frame
+version       0.1.0
+distribution  public
+source        "M. Chepponis and P. Karn, The KISS TNC: A simple Host-to-TNC communications protocol, ARRL 6th Computer Networking Conference 1987, HTML by KA9Q 1997, http://www.ka9q.net/papers/kiss.html (sha256 a6a1627dbf1e64539a287d7cdb59dc3de618d15653e2df7fac2279ef1decd8ab), no licence stated; layout restated"
+uses          kiss
+wire          bits
+layout        sequential
+bit_order     msb
+
+field  kiss.port  4  uint
+field  kiss.command  4  uint
+switch  kiss.command
+  case  0
+    group  kiss.data  rest
+      field  kiss.octet  8  uint
+    end
+  case  1,2,3,4,5
+    field  kiss.value  8  uint
+  case  15
+  else
+    group  kiss.data  rest
+      field  kiss.octet  8  uint
+    end
+end

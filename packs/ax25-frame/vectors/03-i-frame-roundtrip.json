@@ -1,0 +1,13 @@
+{
+  "name": "i-frame-roundtrip",
+  "from": "ax25-frame",
+  "to": "ax25-frame",
+  "input": "9c6282848640e09c60868298986356f068656c6c6f",
+  "expect": "9c6282848640e09c60868298986356f068656c6c6f",
+  "model": {
+    "ax25.control": "86",
+    "ax25.pid": "240",
+    "ax25.info.#": "5"
+  },
+  "source": "built by tools/gen/radio-vectors.py from values chosen there; layout restated from AX.25 v2.2 (TAPR 1998) sections 3.12 and 4.2 to 4.3; an I frame with N(R) 2, P 1 and N(S) 3 (control 0x56); expect derived there, no engine run"
+}

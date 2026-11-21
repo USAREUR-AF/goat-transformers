@@ -1,0 +1,32 @@
+{
+  "name": "ui-frame-roundtrip",
+  "from": "ax25-frame",
+  "to": "ax25-frame",
+  "input": "82a0a4a64040e09c60868298986f03f021343930332e35304e2f30373230312e3735572d54657374",
+  "expect": "82a0a4a64040e09c60868298986f03f021343930332e35304e2f30373230312e3735572d54657374",
+  "model": {
+    "ax25.dest_call_1": "A",
+    "ax25.dest_call_2": "P",
+    "ax25.dest_call_3": "R",
+    "ax25.dest_call_4": "S",
+    "ax25.dest_call_5": " ",
+    "ax25.dest_call_6": " ",
+    "ax25.src_call_1": "N",
+    "ax25.src_call_2": "0",
+    "ax25.src_call_3": "C",
+    "ax25.src_call_4": "A",
+    "ax25.src_call_5": "L",
+    "ax25.src_call_6": "L",
+    "ax25.dest_c": "1",
+    "ax25.dest_reserved": "3",
+    "ax25.dest_ssid": "0",
+    "ax25.dest_ext": "0",
+    "ax25.src_c": "0",
+    "ax25.src_ssid": "7",
+    "ax25.src_ext": "1",
+    "ax25.control": "3",
+    "ax25.pid": "240",
+    "ax25.info.#": "24"
+  },
+  "source": "built by tools/gen/radio-vectors.py from values chosen there; layout restated from AX.25 v2.2 (TAPR 1998) sections 3.12 and 4.2 to 4.3; a UI frame with no repeaters, PID 0xF0 and an information field; expect derived there, no engine run"
+}
