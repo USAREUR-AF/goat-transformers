@@ -1,0 +1,10 @@
+{
+  "name": "Messaging protocols (MQTT, AMQP 1.0, STUN/TURN)",
+  "domain": "networks",
+  "exact": [
+    "mqtt311",
+    "mqtt5",
+    "amqp10-frame",
+    "stun"
+  ]
+}

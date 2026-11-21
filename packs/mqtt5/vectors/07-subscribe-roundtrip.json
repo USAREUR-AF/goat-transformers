@@ -1,0 +1,16 @@
+{
+  "name": "subscribe-roundtrip",
+  "from": "mqtt5",
+  "to": "mqtt5",
+  "input": "82110018020b01000973656e736f72732f231e",
+  "expect": "82110018020b01000973656e736f72732f231e",
+  "model": {
+    "@kind": "subscribe",
+    "mqtt.properties[0].mqtt.property_vbi_v0": "1",
+    "mqtt.subscriptions[0].mqtt.retain_handling": "1",
+    "mqtt.subscriptions[0].mqtt.retain_as_published": "1",
+    "mqtt.subscriptions[0].mqtt.no_local": "1",
+    "mqtt.subscriptions[0].mqtt.requested_qos": "2"
+  },
+  "source": "built by tools/gen/messaging-vectors.py from values chosen there; layout restated from MQTT 5.0 sections 1.5, 2 and 3; SUBSCRIBE with a subscription identifier and every subscription option; expect derived there, no engine run"
+}

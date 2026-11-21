@@ -1,0 +1,18 @@
+{
+  "name": "allocate-request-roundtrip",
+  "from": "stun",
+  "to": "stun",
+  "input": "000300402112a442a1a2a3a4a5a6a7a8a9aaabac0019000411000000000d000400000258001a0000001800018000000000060005616c69636500000000080014000102030405060708090a0b0c0d0e0f10111213",
+  "expect": "000300402112a442a1a2a3a4a5a6a7a8a9aaabac0019000411000000000d000400000258001a0000001800018000000000060005616c69636500000000080014000102030405060708090a0b0c0d0e0f10111213",
+  "model": {
+    "stun.message_type": "3",
+    "stun.attributes.#": "6",
+    "stun.attributes[0].stun.requested_transport": "17",
+    "stun.attributes[1].stun.lifetime": "600",
+    "stun.attributes[2].stun.attr_type": "26",
+    "stun.attributes[3].stun.even_port_r": "1",
+    "stun.attributes[4].stun.attr_value.#": "5",
+    "stun.attributes[5].stun.integrity": "000102030405060708090a0b0c0d0e0f10111213"
+  },
+  "source": "built by tools/gen/messaging-vectors.py from values chosen there; layout restated from RFC 8489 sections 5, 6 and 14 and RFC 8656 sections 12 and 18; an Allocate request with REQUESTED-TRANSPORT, LIFETIME, DONT-FRAGMENT, EVEN-PORT, USERNAME and MESSAGE-INTEGRITY; expect derived there, no engine run"
+}

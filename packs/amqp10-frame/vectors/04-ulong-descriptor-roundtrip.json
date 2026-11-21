@@ -1,0 +1,14 @@
+{
+  "name": "ulong-descriptor-roundtrip",
+  "from": "amqp10-frame",
+  "to": "amqp10-frame",
+  "input": "00000013020000030080000000000000001345",
+  "expect": "00000013020000030080000000000000001345",
+  "model": {
+    "amqp.channel": "3",
+    "amqp.descriptor_constructor": "128",
+    "amqp.performative": "19",
+    "amqp.body.#": "1"
+  },
+  "source": "built by tools/gen/messaging-vectors.py from values chosen there; layout restated from AMQP 1.0 Part 2 sections 2.2 and 2.3 and Part 1 section 1.6; a flow performative whose descriptor is written as a ulong; expect derived there, no engine run"
+}

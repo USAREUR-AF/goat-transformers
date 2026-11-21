@@ -1,0 +1,12 @@
+{
+  "name": "pubrel-roundtrip",
+  "from": "mqtt311",
+  "to": "mqtt311",
+  "input": "6202000b",
+  "expect": "6202000b",
+  "model": {
+    "@kind": "pubrel",
+    "mqtt.flags": "2"
+  },
+  "source": "built by tools/gen/messaging-vectors.py from values chosen there; layout restated from MQTT 3.1.1 sections 2 and 3; PUBREL, whose fixed header flags are 0010; expect derived there, no engine run"
+}

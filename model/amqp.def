@@ -1,0 +1,19 @@
+# The amqp module: the fields of the AMQP 1.0 frame header and performative descriptor
+# (OASIS). Written by tools/gen/messaging-pack.py; do not edit by hand.
+module        amqp
+version       0.1.0
+distribution  public
+source        "OASIS AMQP Version 1.0, Parts 1 and 2; restated by goat-transformers"
+key   protocol_id               int     -  "protocol header: 0 AMQP, 2 TLS, 3 SASL"
+key   major                     int     -  "protocol header: major version, 1"
+key   minor                     int     -  "protocol header: minor version, 0"
+key   revision                  int     -  "protocol header: revision, 0"
+key   doff                      int     -  "frame: data offset, the size of the frame header in 4-octet words, at least 2"
+key   frame_type                int     -  "frame: type, 0 AMQP, 1 SASL"
+key   channel                   int     -  "frame: channel number (AMQP frames); type-specific in other frames"
+key   descriptor_marker         int     -  "frame body: the constructor of a described type, 0"
+key   descriptor_constructor    int     -  "frame body: the encoding of the descriptor, 83 (0x53, smallulong) or 128 (0x80, ulong)"
+key   performative              int     -  "frame body: the descriptor code: 16 open, 17 begin, 18 attach, 19 flow, 20 transfer, 21 disposition, 22 detach, 23 end, 24 close; 64-68 the SASL frames"
+key   octet                     int     -  "one octet"
+list  body                      "frame body after the descriptor: the performative's field list and any payload, as octets"
+list  extended_header_and_body  "a frame whose data offset is not 2: its extended header and body, as octets"

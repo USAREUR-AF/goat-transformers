@@ -1,0 +1,13 @@
+{
+  "name": "connack-roundtrip",
+  "from": "mqtt311",
+  "to": "mqtt311",
+  "input": "20020100",
+  "expect": "20020100",
+  "model": {
+    "@kind": "connack",
+    "mqtt.session_present": "1",
+    "mqtt.reason_code": "0"
+  },
+  "source": "built by tools/gen/messaging-vectors.py from values chosen there; layout restated from MQTT 3.1.1 sections 2 and 3; CONNACK with a session present; expect derived there, no engine run"
+}

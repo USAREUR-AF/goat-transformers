@@ -1,0 +1,12 @@
+{
+  "name": "unsubscribe-roundtrip",
+  "from": "mqtt311",
+  "to": "mqtt311",
+  "input": "a20c000d0008616c657274732f23",
+  "expect": "a20c000d0008616c657274732f23",
+  "model": {
+    "@kind": "unsubscribe",
+    "mqtt.unsubscriptions.#": "1"
+  },
+  "source": "built by tools/gen/messaging-vectors.py from values chosen there; layout restated from MQTT 3.1.1 sections 2 and 3; UNSUBSCRIBE; expect derived there, no engine run"
+}

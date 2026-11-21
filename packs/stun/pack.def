@@ -1,0 +1,100 @@
+# STUN message (RFC 8489) with the TURN attributes (RFC 8656), and the TURN ChannelData
+# message (RFC 8656 section 12.4). Public. Written by tools/gen/messaging-pack.py; do not edit
+# by hand. Wire bits, layout sequential, msb; I/O is hex text. pack.md states what is mapped.
+format        stun
+version       0.1.0
+distribution  public
+source        "IETF RFC 8489, Session Traversal Utilities for NAT (STUN), February 2020, https://www.rfc-editor.org/rfc/rfc8489.txt (sha256 3a1c97ec36576fda83b5f39fbe1d033c6c0b934e2209a29bb21b9ace57ef4289); layout restated"
+source        "IETF RFC 8656, Traversal Using Relays around NAT (TURN), February 2020, https://www.rfc-editor.org/rfc/rfc8656.txt (sha256 271f4386bcf95cf94a31710dda6816a89cefdc2557581451e6a36d79b93b12b0); layout restated"
+uses          stun
+wire          bits
+layout        sequential
+bit_order     msb
+
+kind    message
+when    2  0
+field  stun.message_type  14  uint
+length  16  bytes  plus  -16
+  field  stun.magic_cookie  32  uint
+  field  stun.transaction_id  96  hex
+  group  stun.attributes  rest
+    field  stun.attr_type  16  uint
+    length  16  bytes
+      switch  stun.attr_type
+        case  1,32,18,22,32803
+          pad  8
+          field  stun.family  8  uint
+          field  stun.port  16  uint
+          switch  stun.family
+            case  1
+              field  stun.ipv4  32  uint
+            case  2
+              field  stun.ipv6  128  hex
+            else
+              group  stun.attr_value  rest
+                field  stun.octet  8  uint
+              end
+          end
+        case  9
+          pad  21
+          field  stun.error_class  3  uint
+          field  stun.error_number  8  uint
+          group  stun.attr_value  rest
+            field  stun.octet  8  uint
+          end
+        case  32769
+          field  stun.error_family  8  uint
+          pad  13
+          field  stun.error_class  3  uint
+          field  stun.error_number  8  uint
+          group  stun.attr_value  rest
+            field  stun.octet  8  uint
+          end
+        case  8
+          field  stun.integrity  160  hex
+        case  32808
+          field  stun.fingerprint  32  uint
+        case  10
+          group  stun.unknown_attributes  rest
+            field  stun.unknown_type  16  uint
+          end
+        case  12
+          field  stun.channel_number  16  uint
+          pad  16
+        case  13
+          field  stun.lifetime  32  uint
+        case  23,32768
+          field  stun.requested_family  8  uint
+          pad  24
+        case  24
+          field  stun.even_port_r  1  uint
+          pad  7
+        case  25
+          field  stun.requested_transport  8  uint
+          pad  24
+        case  26
+        case  34
+          field  stun.reservation_token  64  hex
+        case  32772
+          pad  16
+          field  stun.icmp_type  8  uint
+          field  stun.icmp_code  8  uint
+          field  stun.icmp_error_data  32  uint
+        else
+          group  stun.attr_value  rest
+            field  stun.octet  8  uint
+          end
+      end
+    end
+    align  32
+  end
+end
+
+kind    channel_data
+when    2  1
+field  stun.channel_low  14  uint
+length  16  bytes
+  group  stun.data  rest
+    field  stun.octet  8  uint
+  end
+end

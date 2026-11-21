@@ -1,0 +1,16 @@
+{
+  "name": "error-response-roundtrip",
+  "from": "stun",
+  "to": "stun",
+  "input": "0111005c2112a4420102030405060708090a0b0c0009001000000401556e617574686f72697a65640014000b6578616d706c652e6f726700001500296f624d61744a6f733241414143662f2f3439396b39353464364f4c33346f4c39465354767936347341000000000a000400210042",
+  "expect": "0111005c2112a4420102030405060708090a0b0c0009001000000401556e617574686f72697a65640014000b6578616d706c652e6f726700001500296f624d61744a6f733241414143662f2f3439396b39353464364f4c33346f4c39465354767936347341000000000a000400210042",
+  "model": {
+    "stun.message_type": "273",
+    "stun.attributes[0].stun.error_class": "4",
+    "stun.attributes[0].stun.error_number": "1",
+    "stun.attributes[0].stun.attr_value.#": "12",
+    "stun.attributes[3].stun.unknown_attributes.#": "2",
+    "stun.attributes[3].stun.unknown_attributes[1].stun.unknown_type": "66"
+  },
+  "source": "built by tools/gen/messaging-vectors.py from values chosen there; layout restated from RFC 8489 sections 5, 6 and 14 and RFC 8656 sections 12 and 18; a Binding error response 401 with REALM, NONCE and UNKNOWN-ATTRIBUTES; expect derived there, no engine run"
+}

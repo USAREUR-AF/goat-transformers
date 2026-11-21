@@ -1,0 +1,29 @@
+{
+  "name": "connect-roundtrip",
+  "from": "mqtt5",
+  "to": "mqtt5",
+  "input": "105b00044d51545405ae001e141100000e102100142600047369746500036c6162000873656e736f722d3712180000000503000a746578742f706c61696e000f7374617475732f73656e736f722d3700076f66666c696e650003646576",
+  "expect": "105b00044d51545405ae001e141100000e102100142600047369746500036c6162000873656e736f722d3712180000000503000a746578742f706c61696e000f7374617475732f73656e736f722d3700076f66666c696e650003646576",
+  "model": {
+    "@kind": "connect",
+    "mqtt.protocol_level": "5",
+    "mqtt.will_retain": "1",
+    "mqtt.properties_length_c": "0",
+    "mqtt.properties.#": "3",
+    "mqtt.properties[0].mqtt.property_id": "17",
+    "mqtt.properties[0].mqtt.property_u32": "3600",
+    "mqtt.properties[1].mqtt.property_u16": "20",
+    "mqtt.properties[2].mqtt.property_name.#": "4",
+    "mqtt.properties[2].mqtt.property_value.#": "3",
+    "mqtt.client_id.#": "8",
+    "mqtt.will_properties.#": "2",
+    "mqtt.will_properties[0].mqtt.property_u32": "5",
+    "mqtt.will_properties[1].mqtt.property_string.#": "10",
+    "mqtt.will_payload.#": "7",
+    "mqtt.username.#": "3",
+    "@absent": [
+      "mqtt.password"
+    ]
+  },
+  "source": "built by tools/gen/messaging-vectors.py from values chosen there; layout restated from MQTT 5.0 sections 1.5, 2 and 3; CONNECT with session expiry, receive maximum and a user property; a will with will delay and content type; a user name; expect derived there, no engine run"
+}

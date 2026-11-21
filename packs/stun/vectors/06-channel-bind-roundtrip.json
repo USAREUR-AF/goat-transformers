@@ -1,0 +1,12 @@
+{
+  "name": "channel-bind-roundtrip",
+  "from": "stun",
+  "to": "stun",
+  "input": "000900142112a4420102030405060708090a0b0c000c000440010000001200080001329aea12d547",
+  "expect": "000900142112a4420102030405060708090a0b0c000c000440010000001200080001329aea12d547",
+  "model": {
+    "stun.message_type": "9",
+    "stun.attributes[0].stun.channel_number": "16385"
+  },
+  "source": "built by tools/gen/messaging-vectors.py from values chosen there; layout restated from RFC 8489 sections 5, 6 and 14 and RFC 8656 sections 12 and 18; a ChannelBind request with CHANNEL-NUMBER and XOR-PEER-ADDRESS; expect derived there, no engine run"
+}

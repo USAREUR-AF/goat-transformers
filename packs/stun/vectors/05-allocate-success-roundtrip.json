@@ -1,0 +1,13 @@
+{
+  "name": "allocate-success-roundtrip",
+  "from": "stun",
+  "to": "stun",
+  "input": "0103002c2112a442a1a2a3a4a5a6a7a8a9aaabac001600080001e112e721c045000d000400000258002200080011223344556677002000080001a147e112a643",
+  "expect": "0103002c2112a442a1a2a3a4a5a6a7a8a9aaabac001600080001e112e721c045000d000400000258002200080011223344556677002000080001a147e112a643",
+  "model": {
+    "stun.message_type": "259",
+    "stun.attributes[0].stun.attr_type": "22",
+    "stun.attributes[2].stun.reservation_token": "0011223344556677"
+  },
+  "source": "built by tools/gen/messaging-vectors.py from values chosen there; layout restated from RFC 8489 sections 5, 6 and 14 and RFC 8656 sections 12 and 18; an Allocate success response with XOR-RELAYED-ADDRESS, LIFETIME, RESERVATION-TOKEN and XOR-MAPPED-ADDRESS; expect derived there, no engine run"
+}

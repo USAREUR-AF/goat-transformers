@@ -1,0 +1,13 @@
+{
+  "name": "protocol-header-roundtrip",
+  "from": "amqp10-frame",
+  "to": "amqp10-frame",
+  "input": "414d515000010000",
+  "expect": "414d515000010000",
+  "model": {
+    "@kind": "protocol_header",
+    "amqp.protocol_id": "0",
+    "amqp.major": "1"
+  },
+  "source": "built by tools/gen/messaging-vectors.py from values chosen there; layout restated from AMQP 1.0 Part 2 sections 2.2 and 2.3 and Part 1 section 1.6; the AMQP protocol header; expect derived there, no engine run"
+}

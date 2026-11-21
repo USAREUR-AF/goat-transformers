@@ -1,0 +1,8 @@
+{
+  "name": "truncated-is-malformed",
+  "from": "stun",
+  "to": "stun",
+  "input": "000100102112a442b7e7a701bc34d686fa87dfae80220009676f61742d746573",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/messaging-vectors.py from values chosen there; layout restated from RFC 8489 sections 5, 6 and 14 and RFC 8656 sections 12 and 18; the Binding request without its last 4 octets, shorter than its length field; expect derived there, no engine run"
+}

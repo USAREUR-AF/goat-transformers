@@ -1,0 +1,444 @@
+# MQTT 3.1.1 control packet (OASIS standard): the fixed header and every packet type. Public;
+# the OASIS notice applies (packs/mqtt311/REUSE.toml). Written by tools/gen/messaging-pack.py;
+# do not edit by hand. Wire bits, layout sequential, msb; I/O is hex text. pack.md states
+# what is mapped, how the Variable Byte Integers are read, and what is not mapped.
+format        mqtt311
+version       0.1.0
+distribution  public
+source        "OASIS, MQTT Version 3.1.1, OASIS Standard, 29 October 2014, https://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html (sha256 5ee3be2571a184beeab24b82aa332bf5c79e31c3d054d3af66a84bbd813895b0); layout restated"
+uses          mqtt
+wire          bits
+layout        sequential
+bit_order     msb
+
+kind    connect
+when    4  1
+field  mqtt.flags  4  uint
+field  mqtt.remaining_length_c1  1  uint
+field  mqtt.remaining_length_v0  7  uint
+switch  mqtt.remaining_length_c1
+  case  1
+    field  mqtt.remaining_length_c2  1  uint
+    field  mqtt.remaining_length_v1  7  uint
+    switch  mqtt.remaining_length_c2
+      case  1
+        field  mqtt.remaining_length_c3  1  uint
+        field  mqtt.remaining_length_v2  7  uint
+        switch  mqtt.remaining_length_c3
+          case  1
+            const  1  0
+            field  mqtt.remaining_length_v3  7  uint
+          case  0
+        end
+      case  0
+    end
+  case  0
+end
+length  16  bytes
+  group  mqtt.protocol_name  rest
+    field  mqtt.octet  8  uint
+  end
+end
+field  mqtt.protocol_level  8  uint
+field  mqtt.username_flag  1  uint
+field  mqtt.password_flag  1  uint
+field  mqtt.will_retain  1  uint
+field  mqtt.will_qos  2  uint
+field  mqtt.will_flag  1  uint
+field  mqtt.clean_start  1  uint
+field  mqtt.connect_reserved  1  uint
+field  mqtt.keep_alive  16  uint
+length  16  bytes
+  group  mqtt.client_id  rest
+    field  mqtt.octet  8  uint
+  end
+end
+switch  mqtt.will_flag
+  case  1
+    length  16  bytes
+      group  mqtt.will_topic  rest
+        field  mqtt.octet  8  uint
+      end
+    end
+    length  16  bytes
+      group  mqtt.will_payload  rest
+        field  mqtt.octet  8  uint
+      end
+    end
+  case  0
+end
+switch  mqtt.username_flag
+  case  1
+    length  16  bytes
+      group  mqtt.username  rest
+        field  mqtt.octet  8  uint
+      end
+    end
+  case  0
+end
+switch  mqtt.password_flag
+  case  1
+    length  16  bytes
+      group  mqtt.password  rest
+        field  mqtt.octet  8  uint
+      end
+    end
+  case  0
+end
+
+kind    connack
+when    4  2
+field  mqtt.flags  4  uint
+field  mqtt.remaining_length_c1  1  uint
+field  mqtt.remaining_length_v0  7  uint
+switch  mqtt.remaining_length_c1
+  case  1
+    field  mqtt.remaining_length_c2  1  uint
+    field  mqtt.remaining_length_v1  7  uint
+    switch  mqtt.remaining_length_c2
+      case  1
+        field  mqtt.remaining_length_c3  1  uint
+        field  mqtt.remaining_length_v2  7  uint
+        switch  mqtt.remaining_length_c3
+          case  1
+            const  1  0
+            field  mqtt.remaining_length_v3  7  uint
+          case  0
+        end
+      case  0
+    end
+  case  0
+end
+field  mqtt.connack_reserved  7  uint
+field  mqtt.session_present  1  uint
+field  mqtt.reason_code  8  uint
+
+kind    publish
+when    4  3
+field  mqtt.dup  1  uint
+field  mqtt.qos  2  uint
+field  mqtt.retain  1  uint
+field  mqtt.remaining_length_c1  1  uint
+field  mqtt.remaining_length_v0  7  uint
+switch  mqtt.remaining_length_c1
+  case  1
+    field  mqtt.remaining_length_c2  1  uint
+    field  mqtt.remaining_length_v1  7  uint
+    switch  mqtt.remaining_length_c2
+      case  1
+        field  mqtt.remaining_length_c3  1  uint
+        field  mqtt.remaining_length_v2  7  uint
+        switch  mqtt.remaining_length_c3
+          case  1
+            const  1  0
+            field  mqtt.remaining_length_v3  7  uint
+          case  0
+        end
+      case  0
+    end
+  case  0
+end
+length  16  bytes
+  group  mqtt.topic  rest
+    field  mqtt.octet  8  uint
+  end
+end
+switch  mqtt.qos
+  case  1,2,3
+    field  mqtt.packet_id  16  uint
+  case  0
+end
+group  mqtt.payload  rest
+  field  mqtt.octet  8  uint
+end
+
+kind    puback
+when    4  4
+field  mqtt.flags  4  uint
+field  mqtt.remaining_length_c1  1  uint
+field  mqtt.remaining_length_v0  7  uint
+switch  mqtt.remaining_length_c1
+  case  1
+    field  mqtt.remaining_length_c2  1  uint
+    field  mqtt.remaining_length_v1  7  uint
+    switch  mqtt.remaining_length_c2
+      case  1
+        field  mqtt.remaining_length_c3  1  uint
+        field  mqtt.remaining_length_v2  7  uint
+        switch  mqtt.remaining_length_c3
+          case  1
+            const  1  0
+            field  mqtt.remaining_length_v3  7  uint
+          case  0
+        end
+      case  0
+    end
+  case  0
+end
+field  mqtt.packet_id  16  uint
+
+kind    pubrec
+when    4  5
+field  mqtt.flags  4  uint
+field  mqtt.remaining_length_c1  1  uint
+field  mqtt.remaining_length_v0  7  uint
+switch  mqtt.remaining_length_c1
+  case  1
+    field  mqtt.remaining_length_c2  1  uint
+    field  mqtt.remaining_length_v1  7  uint
+    switch  mqtt.remaining_length_c2
+      case  1
+        field  mqtt.remaining_length_c3  1  uint
+        field  mqtt.remaining_length_v2  7  uint
+        switch  mqtt.remaining_length_c3
+          case  1
+            const  1  0
+            field  mqtt.remaining_length_v3  7  uint
+          case  0
+        end
+      case  0
+    end
+  case  0
+end
+field  mqtt.packet_id  16  uint
+
+kind    pubrel
+when    4  6
+field  mqtt.flags  4  uint
+field  mqtt.remaining_length_c1  1  uint
+field  mqtt.remaining_length_v0  7  uint
+switch  mqtt.remaining_length_c1
+  case  1
+    field  mqtt.remaining_length_c2  1  uint
+    field  mqtt.remaining_length_v1  7  uint
+    switch  mqtt.remaining_length_c2
+      case  1
+        field  mqtt.remaining_length_c3  1  uint
+        field  mqtt.remaining_length_v2  7  uint
+        switch  mqtt.remaining_length_c3
+          case  1
+            const  1  0
+            field  mqtt.remaining_length_v3  7  uint
+          case  0
+        end
+      case  0
+    end
+  case  0
+end
+field  mqtt.packet_id  16  uint
+
+kind    pubcomp
+when    4  7
+field  mqtt.flags  4  uint
+field  mqtt.remaining_length_c1  1  uint
+field  mqtt.remaining_length_v0  7  uint
+switch  mqtt.remaining_length_c1
+  case  1
+    field  mqtt.remaining_length_c2  1  uint
+    field  mqtt.remaining_length_v1  7  uint
+    switch  mqtt.remaining_length_c2
+      case  1
+        field  mqtt.remaining_length_c3  1  uint
+        field  mqtt.remaining_length_v2  7  uint
+        switch  mqtt.remaining_length_c3
+          case  1
+            const  1  0
+            field  mqtt.remaining_length_v3  7  uint
+          case  0
+        end
+      case  0
+    end
+  case  0
+end
+field  mqtt.packet_id  16  uint
+
+kind    subscribe
+when    4  8
+field  mqtt.flags  4  uint
+field  mqtt.remaining_length_c1  1  uint
+field  mqtt.remaining_length_v0  7  uint
+switch  mqtt.remaining_length_c1
+  case  1
+    field  mqtt.remaining_length_c2  1  uint
+    field  mqtt.remaining_length_v1  7  uint
+    switch  mqtt.remaining_length_c2
+      case  1
+        field  mqtt.remaining_length_c3  1  uint
+        field  mqtt.remaining_length_v2  7  uint
+        switch  mqtt.remaining_length_c3
+          case  1
+            const  1  0
+            field  mqtt.remaining_length_v3  7  uint
+          case  0
+        end
+      case  0
+    end
+  case  0
+end
+field  mqtt.packet_id  16  uint
+group  mqtt.subscriptions  rest
+  length  16  bytes
+    group  mqtt.topic_filter  rest
+      field  mqtt.octet  8  uint
+    end
+  end
+  field  mqtt.options_reserved  6  uint
+  field  mqtt.requested_qos  2  uint
+end
+
+kind    suback
+when    4  9
+field  mqtt.flags  4  uint
+field  mqtt.remaining_length_c1  1  uint
+field  mqtt.remaining_length_v0  7  uint
+switch  mqtt.remaining_length_c1
+  case  1
+    field  mqtt.remaining_length_c2  1  uint
+    field  mqtt.remaining_length_v1  7  uint
+    switch  mqtt.remaining_length_c2
+      case  1
+        field  mqtt.remaining_length_c3  1  uint
+        field  mqtt.remaining_length_v2  7  uint
+        switch  mqtt.remaining_length_c3
+          case  1
+            const  1  0
+            field  mqtt.remaining_length_v3  7  uint
+          case  0
+        end
+      case  0
+    end
+  case  0
+end
+field  mqtt.packet_id  16  uint
+group  mqtt.reason_codes  rest
+  field  mqtt.code  8  uint
+end
+
+kind    unsubscribe
+when    4  10
+field  mqtt.flags  4  uint
+field  mqtt.remaining_length_c1  1  uint
+field  mqtt.remaining_length_v0  7  uint
+switch  mqtt.remaining_length_c1
+  case  1
+    field  mqtt.remaining_length_c2  1  uint
+    field  mqtt.remaining_length_v1  7  uint
+    switch  mqtt.remaining_length_c2
+      case  1
+        field  mqtt.remaining_length_c3  1  uint
+        field  mqtt.remaining_length_v2  7  uint
+        switch  mqtt.remaining_length_c3
+          case  1
+            const  1  0
+            field  mqtt.remaining_length_v3  7  uint
+          case  0
+        end
+      case  0
+    end
+  case  0
+end
+field  mqtt.packet_id  16  uint
+group  mqtt.unsubscriptions  rest
+  length  16  bytes
+    group  mqtt.topic_filter  rest
+      field  mqtt.octet  8  uint
+    end
+  end
+end
+
+kind    unsuback
+when    4  11
+field  mqtt.flags  4  uint
+field  mqtt.remaining_length_c1  1  uint
+field  mqtt.remaining_length_v0  7  uint
+switch  mqtt.remaining_length_c1
+  case  1
+    field  mqtt.remaining_length_c2  1  uint
+    field  mqtt.remaining_length_v1  7  uint
+    switch  mqtt.remaining_length_c2
+      case  1
+        field  mqtt.remaining_length_c3  1  uint
+        field  mqtt.remaining_length_v2  7  uint
+        switch  mqtt.remaining_length_c3
+          case  1
+            const  1  0
+            field  mqtt.remaining_length_v3  7  uint
+          case  0
+        end
+      case  0
+    end
+  case  0
+end
+field  mqtt.packet_id  16  uint
+
+kind    pingreq
+when    4  12
+field  mqtt.flags  4  uint
+field  mqtt.remaining_length_c1  1  uint
+field  mqtt.remaining_length_v0  7  uint
+switch  mqtt.remaining_length_c1
+  case  1
+    field  mqtt.remaining_length_c2  1  uint
+    field  mqtt.remaining_length_v1  7  uint
+    switch  mqtt.remaining_length_c2
+      case  1
+        field  mqtt.remaining_length_c3  1  uint
+        field  mqtt.remaining_length_v2  7  uint
+        switch  mqtt.remaining_length_c3
+          case  1
+            const  1  0
+            field  mqtt.remaining_length_v3  7  uint
+          case  0
+        end
+      case  0
+    end
+  case  0
+end
+
+kind    pingresp
+when    4  13
+field  mqtt.flags  4  uint
+field  mqtt.remaining_length_c1  1  uint
+field  mqtt.remaining_length_v0  7  uint
+switch  mqtt.remaining_length_c1
+  case  1
+    field  mqtt.remaining_length_c2  1  uint
+    field  mqtt.remaining_length_v1  7  uint
+    switch  mqtt.remaining_length_c2
+      case  1
+        field  mqtt.remaining_length_c3  1  uint
+        field  mqtt.remaining_length_v2  7  uint
+        switch  mqtt.remaining_length_c3
+          case  1
+            const  1  0
+            field  mqtt.remaining_length_v3  7  uint
+          case  0
+        end
+      case  0
+    end
+  case  0
+end
+
+kind    disconnect
+when    4  14
+field  mqtt.flags  4  uint
+field  mqtt.remaining_length_c1  1  uint
+field  mqtt.remaining_length_v0  7  uint
+switch  mqtt.remaining_length_c1
+  case  1
+    field  mqtt.remaining_length_c2  1  uint
+    field  mqtt.remaining_length_v1  7  uint
+    switch  mqtt.remaining_length_c2
+      case  1
+        field  mqtt.remaining_length_c3  1  uint
+        field  mqtt.remaining_length_v2  7  uint
+        switch  mqtt.remaining_length_c3
+          case  1
+            const  1  0
+            field  mqtt.remaining_length_v3  7  uint
+          case  0
+        end
+      case  0
+    end
+  case  0
+end

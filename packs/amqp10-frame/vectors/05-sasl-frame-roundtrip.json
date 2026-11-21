@@ -1,0 +1,12 @@
+{
+  "name": "sasl-frame-roundtrip",
+  "from": "amqp10-frame",
+  "to": "amqp10-frame",
+  "input": "0000000c0201000000534045",
+  "expect": "0000000c0201000000534045",
+  "model": {
+    "amqp.frame_type": "1",
+    "amqp.performative": "64"
+  },
+  "source": "built by tools/gen/messaging-vectors.py from values chosen there; layout restated from AMQP 1.0 Part 2 sections 2.2 and 2.3 and Part 1 section 1.6; a SASL frame with the sasl-mechanisms descriptor; expect derived there, no engine run"
+}
