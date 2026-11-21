@@ -1,0 +1,259 @@
+# DHCPv6 message (RFC 9915): the message type, the transaction ID (or, for relay messages, the hop count
+# and link and peer addresses), and the options, those of IAs and addresses nested. Written by
+# tools/gen/inet-more-pack.py; do not edit by hand.
+format        dhcpv6-message
+version       0.1.0
+distribution  public
+source        "IETF RFC 9915, Dynamic Host Configuration Protocol for IPv6 (DHCPv6), sections 8, 9, 11 and 21 (it obsoletes RFC 8415), https://www.rfc-editor.org/rfc/rfc9915.txt; layouts restated"
+uses          dhcpv6msg
+wire          bits
+layout        sequential
+bit_order     msb
+
+field  dhcpv6msg.msg_type  8  uint
+switch  dhcpv6msg.msg_type
+  case  12,13
+    field  dhcpv6msg.hop_count  8  uint
+    field  dhcpv6msg.link_address  128  hex
+    field  dhcpv6msg.peer_address  128  hex
+  else
+    field  dhcpv6msg.transaction_id  24  uint
+end
+group  dhcpv6msg.options  rest
+  field  dhcpv6msg.option_code  16  uint
+  length  16  bytes
+    switch  dhcpv6msg.option_code
+      case  1,2
+        field  dhcpv6msg.duid_type  16  uint
+        switch  dhcpv6msg.duid_type
+          case  1
+            field  dhcpv6msg.hardware_type  16  uint
+            field  dhcpv6msg.duid_time  32  uint
+            group  dhcpv6msg.link_layer_address  rest
+              field  dhcpv6msg.octet  8  uint
+            end
+          case  2
+            field  dhcpv6msg.enterprise_number  32  uint
+            group  dhcpv6msg.duid_identifier  rest
+              field  dhcpv6msg.octet  8  uint
+            end
+          case  3
+            field  dhcpv6msg.hardware_type  16  uint
+            group  dhcpv6msg.link_layer_address  rest
+              field  dhcpv6msg.octet  8  uint
+            end
+          case  4
+            field  dhcpv6msg.duid_uuid  128  hex
+          else
+            group  dhcpv6msg.duid_identifier  rest
+              field  dhcpv6msg.octet  8  uint
+            end
+        end
+      case  3
+        field  dhcpv6msg.iaid  32  uint
+        field  dhcpv6msg.t1  32  uint
+        field  dhcpv6msg.t2  32  uint
+        group  dhcpv6msg.ia_options  rest
+          field  dhcpv6msg.ia_option_code  16  uint
+          length  16  bytes
+            switch  dhcpv6msg.ia_option_code
+              case  5
+                field  dhcpv6msg.ia_address  128  hex
+                field  dhcpv6msg.preferred_lifetime  32  uint
+                field  dhcpv6msg.valid_lifetime  32  uint
+                group  dhcpv6msg.addr_options  rest
+                  field  dhcpv6msg.addr_option_code  16  uint
+                  length  16  bytes
+                    switch  dhcpv6msg.addr_option_code
+                      case  13
+                        field  dhcpv6msg.status_code  16  uint
+                        group  dhcpv6msg.status_message  rest
+                          field  dhcpv6msg.octet  8  uint
+                        end
+                      else
+                        group  dhcpv6msg.addr_option_data  rest
+                          field  dhcpv6msg.octet  8  uint
+                        end
+                    end
+                  end
+                end
+              case  26
+                field  dhcpv6msg.preferred_lifetime  32  uint
+                field  dhcpv6msg.valid_lifetime  32  uint
+                field  dhcpv6msg.prefix_length  8  uint
+                field  dhcpv6msg.ia_prefix  128  hex
+                group  dhcpv6msg.addr_options  rest
+                  field  dhcpv6msg.addr_option_code  16  uint
+                  length  16  bytes
+                    switch  dhcpv6msg.addr_option_code
+                      case  13
+                        field  dhcpv6msg.status_code  16  uint
+                        group  dhcpv6msg.status_message  rest
+                          field  dhcpv6msg.octet  8  uint
+                        end
+                      else
+                        group  dhcpv6msg.addr_option_data  rest
+                          field  dhcpv6msg.octet  8  uint
+                        end
+                    end
+                  end
+                end
+              case  13
+                field  dhcpv6msg.status_code  16  uint
+                group  dhcpv6msg.status_message  rest
+                  field  dhcpv6msg.octet  8  uint
+                end
+              else
+                group  dhcpv6msg.ia_option_data  rest
+                  field  dhcpv6msg.octet  8  uint
+                end
+            end
+          end
+        end
+      case  4
+        field  dhcpv6msg.iaid  32  uint
+        group  dhcpv6msg.ia_options  rest
+          field  dhcpv6msg.ia_option_code  16  uint
+          length  16  bytes
+            switch  dhcpv6msg.ia_option_code
+              case  5
+                field  dhcpv6msg.ia_address  128  hex
+                field  dhcpv6msg.preferred_lifetime  32  uint
+                field  dhcpv6msg.valid_lifetime  32  uint
+                group  dhcpv6msg.addr_options  rest
+                  field  dhcpv6msg.addr_option_code  16  uint
+                  length  16  bytes
+                    switch  dhcpv6msg.addr_option_code
+                      case  13
+                        field  dhcpv6msg.status_code  16  uint
+                        group  dhcpv6msg.status_message  rest
+                          field  dhcpv6msg.octet  8  uint
+                        end
+                      else
+                        group  dhcpv6msg.addr_option_data  rest
+                          field  dhcpv6msg.octet  8  uint
+                        end
+                    end
+                  end
+                end
+              case  26
+                field  dhcpv6msg.preferred_lifetime  32  uint
+                field  dhcpv6msg.valid_lifetime  32  uint
+                field  dhcpv6msg.prefix_length  8  uint
+                field  dhcpv6msg.ia_prefix  128  hex
+                group  dhcpv6msg.addr_options  rest
+                  field  dhcpv6msg.addr_option_code  16  uint
+                  length  16  bytes
+                    switch  dhcpv6msg.addr_option_code
+                      case  13
+                        field  dhcpv6msg.status_code  16  uint
+                        group  dhcpv6msg.status_message  rest
+                          field  dhcpv6msg.octet  8  uint
+                        end
+                      else
+                        group  dhcpv6msg.addr_option_data  rest
+                          field  dhcpv6msg.octet  8  uint
+                        end
+                    end
+                  end
+                end
+              case  13
+                field  dhcpv6msg.status_code  16  uint
+                group  dhcpv6msg.status_message  rest
+                  field  dhcpv6msg.octet  8  uint
+                end
+              else
+                group  dhcpv6msg.ia_option_data  rest
+                  field  dhcpv6msg.octet  8  uint
+                end
+            end
+          end
+        end
+      case  25
+        field  dhcpv6msg.iaid  32  uint
+        field  dhcpv6msg.t1  32  uint
+        field  dhcpv6msg.t2  32  uint
+        group  dhcpv6msg.ia_options  rest
+          field  dhcpv6msg.ia_option_code  16  uint
+          length  16  bytes
+            switch  dhcpv6msg.ia_option_code
+              case  5
+                field  dhcpv6msg.ia_address  128  hex
+                field  dhcpv6msg.preferred_lifetime  32  uint
+                field  dhcpv6msg.valid_lifetime  32  uint
+                group  dhcpv6msg.addr_options  rest
+                  field  dhcpv6msg.addr_option_code  16  uint
+                  length  16  bytes
+                    switch  dhcpv6msg.addr_option_code
+                      case  13
+                        field  dhcpv6msg.status_code  16  uint
+                        group  dhcpv6msg.status_message  rest
+                          field  dhcpv6msg.octet  8  uint
+                        end
+                      else
+                        group  dhcpv6msg.addr_option_data  rest
+                          field  dhcpv6msg.octet  8  uint
+                        end
+                    end
+                  end
+                end
+              case  26
+                field  dhcpv6msg.preferred_lifetime  32  uint
+                field  dhcpv6msg.valid_lifetime  32  uint
+                field  dhcpv6msg.prefix_length  8  uint
+                field  dhcpv6msg.ia_prefix  128  hex
+                group  dhcpv6msg.addr_options  rest
+                  field  dhcpv6msg.addr_option_code  16  uint
+                  length  16  bytes
+                    switch  dhcpv6msg.addr_option_code
+                      case  13
+                        field  dhcpv6msg.status_code  16  uint
+                        group  dhcpv6msg.status_message  rest
+                          field  dhcpv6msg.octet  8  uint
+                        end
+                      else
+                        group  dhcpv6msg.addr_option_data  rest
+                          field  dhcpv6msg.octet  8  uint
+                        end
+                    end
+                  end
+                end
+              case  13
+                field  dhcpv6msg.status_code  16  uint
+                group  dhcpv6msg.status_message  rest
+                  field  dhcpv6msg.octet  8  uint
+                end
+              else
+                group  dhcpv6msg.ia_option_data  rest
+                  field  dhcpv6msg.octet  8  uint
+                end
+            end
+          end
+        end
+      case  6
+        group  dhcpv6msg.requested_options  rest
+          field  dhcpv6msg.requested_option  16  uint
+        end
+      case  7
+        field  dhcpv6msg.preference  8  uint
+      case  8
+        field  dhcpv6msg.elapsed_time  16  uint
+      case  13
+        field  dhcpv6msg.status_code  16  uint
+        group  dhcpv6msg.status_message  rest
+          field  dhcpv6msg.octet  8  uint
+        end
+      case  14
+      case  23
+        group  dhcpv6msg.dns_servers  rest
+          field  dhcpv6msg.dns_server  128  hex
+        end
+      case  32,82,83
+        field  dhcpv6msg.seconds_value  32  uint
+      else
+        group  dhcpv6msg.option_data  rest
+          field  dhcpv6msg.octet  8  uint
+        end
+    end
+  end
+end

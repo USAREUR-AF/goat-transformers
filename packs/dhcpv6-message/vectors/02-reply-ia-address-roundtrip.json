@@ -1,0 +1,20 @@
+{
+  "name": "reply-ia-address-roundtrip",
+  "from": "dhcpv6-message",
+  "to": "dhcpv6-message",
+  "input": "07a1b2c30002000a0003000102005e0010bb0001000a000200007ed90102030400030030000000010000070800000b400005002020010db800000000000000000000010000000e1000001c20000d000400006f6b00070001ff0017002020010db800000000000000000000005320010db8000000000000000000000054",
+  "expect": "07a1b2c30002000a0003000102005e0010bb0001000a000200007ed90102030400030030000000010000070800000b400005002020010db800000000000000000000010000000e1000001c20000d000400006f6b00070001ff0017002020010db800000000000000000000005320010db8000000000000000000000054",
+  "model": {
+    "dhcpv6msg.msg_type": "7",
+    "dhcpv6msg.options[0].dhcpv6msg.duid_type": "3",
+    "dhcpv6msg.options[1].dhcpv6msg.enterprise_number": "32473",
+    "dhcpv6msg.options[2].dhcpv6msg.t1": "1800",
+    "dhcpv6msg.options[2].dhcpv6msg.ia_options.#": "1",
+    "dhcpv6msg.options[2].dhcpv6msg.ia_options[0].dhcpv6msg.ia_address": "20010db8000000000000000000000100",
+    "dhcpv6msg.options[2].dhcpv6msg.ia_options[0].dhcpv6msg.valid_lifetime": "7200",
+    "dhcpv6msg.options[2].dhcpv6msg.ia_options[0].dhcpv6msg.addr_options[0].dhcpv6msg.status_code": "0",
+    "dhcpv6msg.options[3].dhcpv6msg.preference": "255",
+    "dhcpv6msg.options[4].dhcpv6msg.dns_servers.#": "2"
+  },
+  "source": "built by tools/gen/inet-more-vectors.py from values chosen there; layout restated from RFC 9915 sections 8, 9 and 21; a REPLY with server and client IDs, an IA_NA holding an address with a status option, preference and DNS servers; expect derived there, no engine run"
+}

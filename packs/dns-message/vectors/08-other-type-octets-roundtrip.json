@@ -1,0 +1,12 @@
+{
+  "name": "other-type-octets-roundtrip",
+  "from": "dns-message",
+  "to": "dns-message",
+  "input": "00048000000000010000000004686f7374076578616d706c65036f726700000d00010000012c000a03783836056c696e7578",
+  "expect": "00048000000000010000000004686f7374076578616d706c65036f726700000d00010000012c000a03783836056c696e7578",
+  "model": {
+    "dnsmsg.answers[0].dnsmsg.type": "13",
+    "dnsmsg.answers[0].dnsmsg.rdata.#": "10"
+  },
+  "source": "built by tools/gen/inet-more-vectors.py from values chosen there; layout restated from RFC 1035 sections 3 and 4; an HINFO record, a type the pack keeps as octets; expect derived there, no engine run"
+}

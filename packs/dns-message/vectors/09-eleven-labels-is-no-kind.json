@@ -1,0 +1,8 @@
+{
+  "name": "eleven-labels-is-no-kind",
+  "from": "dns-message",
+  "to": "dns-message",
+  "input": "000100000001000000000000026c30026c31026c32026c33026c34026c35026c36026c37026c38026c39036c31300000010001",
+  "expect_error": "no-kind",
+  "source": "built by tools/gen/inet-more-vectors.py from values chosen there; layout restated from RFC 1035 sections 3 and 4; a name of eleven labels, beyond the ten the pack reads; expect derived there, no engine run"
+}

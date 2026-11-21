@@ -1,0 +1,8 @@
+{
+  "name": "cut-option-is-malformed",
+  "from": "icmpv6-nd",
+  "to": "icmpv6-nd",
+  "input": "86002222404007080000000000000000030440c000015180000038400000",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/inet-more-vectors.py from values chosen there; layout restated from RFC 4861 sections 4.1 to 4.6 and RFC 8106 section 5; the router advertisement of vector 02 cut inside its prefix option; expect derived there, no engine run"
+}

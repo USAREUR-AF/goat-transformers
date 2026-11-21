@@ -1,0 +1,17 @@
+{
+  "name": "edns-opt-cookie-roundtrip",
+  "from": "dns-message",
+  "to": "dns-message",
+  "input": "55aa01000001000000000001076578616d706c65036f726700001c000100002904d000008000000c000a00080001020304050607",
+  "expect": "55aa01000001000000000001076578616d706c65036f726700001c000100002904d000008000000c000a00080001020304050607",
+  "model": {
+    "dnsmsg.additional.#": "1",
+    "dnsmsg.additional[0].dnsmsg.owner_len1": "0",
+    "dnsmsg.additional[0].dnsmsg.type": "41",
+    "dnsmsg.additional[0].dnsmsg.udp_payload_size": "1232",
+    "dnsmsg.additional[0].dnsmsg.dnssec_ok": "1",
+    "dnsmsg.additional[0].dnsmsg.edns_options.#": "1",
+    "dnsmsg.additional[0].dnsmsg.edns_options[0].dnsmsg.option_code": "10"
+  },
+  "source": "built by tools/gen/inet-more-vectors.py from values chosen there; layout restated from RFC 1035 sections 3 and 4 and RFC 6891 section 6; a query with an EDNS OPT record (DO set, a client cookie); expect derived there, no engine run"
+}

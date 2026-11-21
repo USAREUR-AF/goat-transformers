@@ -1,0 +1,13 @@
+{
+  "name": "ia-pd-prefix-roundtrip",
+  "from": "dhcpv6-message",
+  "to": "dhcpv6-message",
+  "input": "0700000100190029000000070000000000000000001a001900000e1000001c203820010db8ab0000000000000000000000",
+  "expect": "0700000100190029000000070000000000000000001a001900000e1000001c203820010db8ab0000000000000000000000",
+  "model": {
+    "dhcpv6msg.options[0].dhcpv6msg.option_code": "25",
+    "dhcpv6msg.options[0].dhcpv6msg.ia_options[0].dhcpv6msg.prefix_length": "56",
+    "dhcpv6msg.options[0].dhcpv6msg.ia_options[0].dhcpv6msg.ia_prefix": "20010db8ab0000000000000000000000"
+  },
+  "source": "built by tools/gen/inet-more-vectors.py from values chosen there; layout restated from RFC 9915 sections 8, 9 and 21; a REPLY with an IA_PD delegating a /56; expect derived there, no engine run"
+}

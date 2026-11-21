@@ -1,0 +1,8 @@
+{
+  "name": "cut-option-is-malformed",
+  "from": "dhcpv6-message",
+  "to": "dhcpv6-message",
+  "input": "01a1b2c30008000200000001",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/inet-more-vectors.py from values chosen there; layout restated from RFC 9915 sections 8, 9 and 21; the SOLICIT of vector 01 cut inside an option; expect derived there, no engine run"
+}

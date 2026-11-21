@@ -1,0 +1,22 @@
+{
+  "name": "router-advertisement-roundtrip",
+  "from": "icmpv6-nd",
+  "to": "icmpv6-nd",
+  "input": "86002222404007080000000000000000030440c000015180000038400000000020010db800010000000000000000000005010000000005dc010102005e0010aa1903000000000e1020010db8000000000000000000000053",
+  "expect": "86002222404007080000000000000000030440c000015180000038400000000020010db800010000000000000000000005010000000005dc010102005e0010aa1903000000000e1020010db8000000000000000000000053",
+  "model": {
+    "inet.icmpv6_type": "134",
+    "inet.icmpv6_ra_cur_hop_limit": "64",
+    "inet.icmpv6_ra_other": "1",
+    "inet.icmpv6_ra_router_lifetime": "1800",
+    "icmpnd.options.#": "4",
+    "icmpnd.options[0].icmpnd.prefix_length": "64",
+    "icmpnd.options[0].icmpnd.on_link": "1",
+    "icmpnd.options[0].icmpnd.autonomous": "1",
+    "icmpnd.options[0].icmpnd.prefix": "20010db8000100000000000000000000",
+    "icmpnd.options[1].icmpnd.mtu": "1500",
+    "icmpnd.options[3].icmpnd.rdnss_lifetime": "3600",
+    "icmpnd.options[3].icmpnd.rdnss_addresses": "20010db8000000000000000000000053"
+  },
+  "source": "built by tools/gen/inet-more-vectors.py from values chosen there; layout restated from RFC 4861 sections 4.1 to 4.6 and RFC 8106 section 5; a router advertisement with prefix information, MTU, source link-layer address and RDNSS; expect derived there, no engine run"
+}

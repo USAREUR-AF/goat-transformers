@@ -1,0 +1,19 @@
+{
+  "name": "cname-and-a-compressed-roundtrip",
+  "from": "dns-message",
+  "to": "dns-message",
+  "input": "12348180000100020000000003777777076578616d706c65036f72670000010001c00c000500010000012c000603776562c01003776562c010000100010000012c0004c0000250",
+  "expect": "12348180000100020000000003777777076578616d706c65036f72670000010001c00c000500010000012c000603776562c01003776562c010000100010000012c0004c0000250",
+  "model": {
+    "inet.dns_qr": "1",
+    "dnsmsg.answers.#": "2",
+    "dnsmsg.answers[0].dnsmsg.owner_t1": "3",
+    "dnsmsg.answers[0].dnsmsg.owner_pointer": "12",
+    "dnsmsg.answers[0].dnsmsg.type": "5",
+    "dnsmsg.answers[0].dnsmsg.target_label1": "web",
+    "dnsmsg.answers[0].dnsmsg.target_pointer": "16",
+    "dnsmsg.answers[1].dnsmsg.owner_label1": "web",
+    "dnsmsg.answers[1].dnsmsg.a": "3221226064"
+  },
+  "source": "built by tools/gen/inet-more-vectors.py from values chosen there; layout restated from RFC 1035 sections 3 and 4; a response with a CNAME and an A record whose names use compression pointers (kept as offsets); expect derived there, no engine run"
+}

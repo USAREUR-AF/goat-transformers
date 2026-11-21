@@ -1,0 +1,8 @@
+{
+  "name": "cut-question-is-malformed",
+  "from": "dns-message",
+  "to": "dns-message",
+  "input": "1234010000010000000000000377777707657861",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/inet-more-vectors.py from values chosen there; layout restated from RFC 1035 sections 3 and 4; the query of vector 01 cut inside its question name; expect derived there, no engine run"
+}
