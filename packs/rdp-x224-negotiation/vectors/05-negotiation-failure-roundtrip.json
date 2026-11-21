@@ -1,0 +1,12 @@
+{
+  "name": "negotiation-failure-roundtrip",
+  "from": "rdp-x224-negotiation",
+  "to": "rdp-x224-negotiation",
+  "input": "030000130ed000001234000300080005000000",
+  "expect": "030000130ed000001234000300080005000000",
+  "model": {
+    "rdpneg.neg_type": "3",
+    "rdpneg.failure_code": "5"
+  },
+  "source": "built by tools/gen/rdp-neg-vectors.py from values chosen there; layout restated from [MS-RDPBCGR] 2.2.1.1 to 2.2.1.2.2 with RFC 1006 section 6 and RFC 905 section 13; a CC with RDP_NEG_FAILURE, failure code 5 (hybrid required by server); expect derived there, no engine run"
+}

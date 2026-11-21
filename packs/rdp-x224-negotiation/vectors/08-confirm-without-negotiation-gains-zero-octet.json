@@ -1,0 +1,8 @@
+{
+  "name": "confirm-without-negotiation-gains-zero-octet",
+  "from": "rdp-x224-negotiation",
+  "to": "rdp-x224-negotiation",
+  "input": "0300000b06d00000123400",
+  "expect": "0300000c07d0000012340000",
+  "source": "built by tools/gen/rdp-neg-vectors.py from values chosen there; layout restated from [MS-RDPBCGR] 2.2.1.1 to 2.2.1.2.2 with RFC 1006 section 6 and RFC 905 section 13; a CC with no negotiation data: the absent negotiation type is written as one zero octet (ruling 7 of 0.8); expect derived there, no engine run"
+}

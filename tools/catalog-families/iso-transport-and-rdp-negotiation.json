@@ -1,0 +1,8 @@
+{
+  "name": "ISO transport over TCP and RDP connection negotiation (TPKT/X.224, RDP_NEG)",
+  "domain": "networks",
+  "exact": [
+    "tpkt-x224",
+    "rdp-x224-negotiation"
+  ]
+}

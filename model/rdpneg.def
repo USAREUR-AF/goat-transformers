@@ -1,0 +1,18 @@
+# The rdpneg module: the RDP connection negotiation structures ([MS-RDPBCGR] 2.2.1). Written by tools/gen/rdp-neg-pack.py.
+module        rdpneg
+version       0.1.0
+distribution  public
+source        "Microsoft, [MS-RDPBCGR]: Remote Desktop Protocol: Basic Connectivity and Graphics Remoting, release of 2026-03-09, sections 2.2.1.1, 2.2.1.1.1, 2.2.1.1.2, 2.2.1.2, 2.2.1.2.1 and 2.2.1.2.2, https://winprotocoldocs-bhdugrdyduf5h2e4.b02.azurefd.net/MS-RDPBCGR/%5bMS-RDPBCGR%5d.pdf (sha256 77fae7d35a5cc4f3d0f4ab86ed752182ec675369655259cb999b7c41290d2d7d), Microsoft Open Specifications copyright permission; with RFC 1006 and RFC 905 for TPKT and X.224; layout restated"
+key   first_octet           int     -  "Connection Request: the first octet after the class: 67 ('C') begins the routing token or cookie line, 1 begins RDP_NEG_REQ"
+key   token_line            string  -  "Connection Request: the routing token or cookie line after its first character 'C' (for a cookie, 'ookie: mstshash=' and the identifier), without the CR LF"
+key   neg_type              int     -  "negotiation structure type: 1 RDP_NEG_REQ, 2 RDP_NEG_RSP, 3 RDP_NEG_FAILURE"
+key   neg_flags             int     -  "negotiation flags (request: 1 restricted admin required, 2 redirected authentication required, 8 correlation info present; response: 1 extended client data supported, 2 dynvc graphics pipeline, 8 restricted admin supported, 0x10 redirected authentication supported)"
+key   neg_length            int     -  "negotiation structure length, 8"
+key   requested_protocols   int     -  "RDP_NEG_REQ: requested protocols (0 standard RDP security, 1 TLS, 2 CredSSP, 4 RDSTLS, 8 CredSSP with early user authorization, 0x10 RDS AAD auth)"
+key   selected_protocol     int     -  "RDP_NEG_RSP: the selected protocol"
+key   failure_code          int     -  "RDP_NEG_FAILURE: failure code (1 SSL required by server, 2 SSL not allowed, 3 SSL certificate not on server, 4 inconsistent flags, 5 hybrid required, 6 SSL with user auth required, 7 Entra auth required)"
+key   correlation_type      int     -  "correlation info: type, 6"
+key   correlation_flags     int     -  "correlation info: flags, 0"
+key   correlation_length    int     -  "correlation info: length, 36"
+key   correlation_id        string  -  "correlation info: the 16-octet correlation ID, as hexadecimal digits"
+key   correlation_reserved  string  -  "correlation info: the 16 reserved octets, as hexadecimal digits"

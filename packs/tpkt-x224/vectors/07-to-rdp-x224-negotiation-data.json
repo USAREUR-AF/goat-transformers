@@ -1,0 +1,8 @@
+{
+  "name": "to-rdp-x224-negotiation-data",
+  "from": "tpkt-x224",
+  "to": "rdp-x224-negotiation",
+  "input": "0300000a02f0807f6582",
+  "expect": "0300000a02f0807f6582",
+  "source": "built by tools/gen/rdp-neg-vectors.py from values chosen there; layout restated from [MS-RDPBCGR] 2.2.1.1 to 2.2.1.2.2 with RFC 1006 section 6 and RFC 905 section 13; a DT carries over unchanged: the TPDU code, the end mark, the number and the user data; expect derived there, no engine run"
+}

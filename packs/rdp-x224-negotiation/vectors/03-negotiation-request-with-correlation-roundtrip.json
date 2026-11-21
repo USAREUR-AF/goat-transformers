@@ -1,0 +1,16 @@
+{
+  "name": "negotiation-request-with-correlation-roundtrip",
+  "from": "rdp-x224-negotiation",
+  "to": "rdp-x224-negotiation",
+  "input": "0300005550e00000000000436f6f6b69653a206d737473686173683d6578616d706c65757365720d0a0108080003000000060024005a1c33e07b9d4f2a8611c2d4e6f8091700000000000000000000000000000000",
+  "expect": "0300005550e00000000000436f6f6b69653a206d737473686173683d6578616d706c65757365720d0a0108080003000000060024005a1c33e07b9d4f2a8611c2d4e6f8091700000000000000000000000000000000",
+  "model": {
+    "rdpneg.neg_flags": "8",
+    "rdpneg.correlation_type": "6",
+    "rdpneg.correlation_flags": "0",
+    "rdpneg.correlation_length": "36",
+    "rdpneg.correlation_id": "5a1c33e07b9d4f2a8611c2d4e6f80917",
+    "rdpneg.correlation_reserved": "00000000000000000000000000000000"
+  },
+  "source": "built by tools/gen/rdp-neg-vectors.py from values chosen there; layout restated from [MS-RDPBCGR] 2.2.1.1 to 2.2.1.2.2 with RFC 1006 section 6 and RFC 905 section 13; the correlation-info flag 0x08 set, so the 36-octet correlation info follows; expect derived there, no engine run"
+}

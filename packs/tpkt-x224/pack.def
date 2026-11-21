@@ -1,0 +1,61 @@
+# TPKT (RFC 1006) and the X.224 transport TPDU inside it (RFC 905, ISO 8073): the length indicator, the TPDU
+# code, the fixed part of CR, CC, DT, DR and ER, the variable part and the user data. Written by
+# tools/gen/rdp-neg-pack.py; do not edit by hand.
+format        tpkt-x224
+version       0.1.0
+distribution  public
+source        "IETF RFC 1006, ISO Transport Service on top of the TCP, May 1987, section 6 (TPKT), https://www.rfc-editor.org/rfc/rfc1006.txt; IETF RFC 905, ISO Transport Protocol Specification ISO DP 8073, April 1984, sections 13.2-13.7 and 13.12 (the TPDU structure), https://www.rfc-editor.org/rfc/rfc905.txt; layout restated"
+uses          tpkt
+wire          bits
+layout        sequential
+bit_order     msb
+
+kind  tpkt
+when  8  3
+field  tpkt.reserved  8  uint
+length  16  whole
+length  8  bytes
+  field  tpkt.tpdu_code  4  uint
+  field  tpkt.credit  4  uint
+  switch  tpkt.tpdu_code
+    case  14
+      field  tpkt.dst_ref  16  uint
+      field  tpkt.src_ref  16  uint
+      field  tpkt.class  4  uint
+      field  tpkt.options  4  uint
+      group  tpkt.variable_part  rest
+        field  tpkt.octet  8  uint
+      end
+    case  13
+      field  tpkt.dst_ref  16  uint
+      field  tpkt.src_ref  16  uint
+      field  tpkt.class  4  uint
+      field  tpkt.options  4  uint
+      group  tpkt.variable_part  rest
+        field  tpkt.octet  8  uint
+      end
+    case  15
+      field  tpkt.eot  1  uint
+      field  tpkt.tpdu_nr  7  uint
+    case  8
+      field  tpkt.dst_ref  16  uint
+      field  tpkt.src_ref  16  uint
+      field  tpkt.reason  8  uint
+      group  tpkt.variable_part  rest
+        field  tpkt.octet  8  uint
+      end
+    case  7
+      field  tpkt.dst_ref  16  uint
+      field  tpkt.reject_cause  8  uint
+      group  tpkt.variable_part  rest
+        field  tpkt.octet  8  uint
+      end
+    else
+      group  tpkt.variable_part  rest
+        field  tpkt.octet  8  uint
+      end
+  end
+end
+group  tpkt.user_data  rest
+  field  tpkt.octet  8  uint
+end

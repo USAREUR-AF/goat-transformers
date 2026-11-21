@@ -1,0 +1,105 @@
+# RDP connection negotiation ([MS-RDPBCGR] 2.2.1.1 and 2.2.1.2): TPKT and the X.224 Connection Request
+# with its routing token or cookie line and RDP_NEG_REQ (and correlation info), or the Connection Confirm
+# with RDP_NEG_RSP or RDP_NEG_FAILURE; DT TPDUs carry the user data. Written by tools/gen/rdp-neg-pack.py.
+format        rdp-x224-negotiation
+version       0.1.0
+distribution  public
+source        "Microsoft, [MS-RDPBCGR]: Remote Desktop Protocol: Basic Connectivity and Graphics Remoting, release of 2026-03-09, sections 2.2.1.1, 2.2.1.1.1, 2.2.1.1.2, 2.2.1.2, 2.2.1.2.1 and 2.2.1.2.2, https://winprotocoldocs-bhdugrdyduf5h2e4.b02.azurefd.net/MS-RDPBCGR/%5bMS-RDPBCGR%5d.pdf (sha256 77fae7d35a5cc4f3d0f4ab86ed752182ec675369655259cb999b7c41290d2d7d), Microsoft Open Specifications copyright permission; with RFC 1006 and RFC 905 for TPKT and X.224; layout restated"
+uses          tpkt
+uses          rdpneg
+wire          bits
+layout        sequential
+bit_order     msb
+
+kind  tpkt
+when  8  3
+field  tpkt.reserved  8  uint
+length  16  whole
+length  8  bytes
+  field  tpkt.tpdu_code  4  uint
+  field  tpkt.credit  4  uint
+  switch  tpkt.tpdu_code
+    case  14
+      field  tpkt.dst_ref  16  uint
+      field  tpkt.src_ref  16  uint
+      field  tpkt.class  4  uint
+      field  tpkt.options  4  uint
+      field  rdpneg.first_octet  8  uint
+      switch  rdpneg.first_octet
+        case  67
+          field  rdpneg.token_line  until:13  chars:ascii8
+          const  8  10
+          field  rdpneg.neg_type  8  uint
+          switch  rdpneg.neg_type
+            case  1
+              field  rdpneg.neg_flags  8  uint
+              field  rdpneg.neg_length  16  uint  swap
+              field  rdpneg.requested_protocols  32  uint  swap
+              switch  rdpneg.neg_flags
+                case  8,9,10,11,12,13,14,15,24,25,26,27,28,29,30,31,40,41,42,43,44,45,46,47,56,57,58,59,60,61,62,63,72,73,74,75,76,77,78,79,88,89,90,91,92,93,94,95,104,105,106,107,108,109,110,111,120,121,122,123,124,125,126,127,136,137,138,139,140,141,142,143,152,153,154,155,156,157,158,159,168,169,170,171,172,173,174,175,184,185,186,187,188,189,190,191,200,201,202,203,204,205,206,207,216,217,218,219,220,221,222,223,232,233,234,235,236,237,238,239,248,249,250,251,252,253,254,255
+                  field  rdpneg.correlation_type  8  uint
+                  field  rdpneg.correlation_flags  8  uint
+                  field  rdpneg.correlation_length  16  uint  swap
+                  field  rdpneg.correlation_id  128  hex
+                  field  rdpneg.correlation_reserved  128  hex
+                else
+              end
+            else
+          end
+        case  1
+          field  rdpneg.neg_flags  8  uint
+          field  rdpneg.neg_length  16  uint  swap
+          field  rdpneg.requested_protocols  32  uint  swap
+          switch  rdpneg.neg_flags
+            case  8,9,10,11,12,13,14,15,24,25,26,27,28,29,30,31,40,41,42,43,44,45,46,47,56,57,58,59,60,61,62,63,72,73,74,75,76,77,78,79,88,89,90,91,92,93,94,95,104,105,106,107,108,109,110,111,120,121,122,123,124,125,126,127,136,137,138,139,140,141,142,143,152,153,154,155,156,157,158,159,168,169,170,171,172,173,174,175,184,185,186,187,188,189,190,191,200,201,202,203,204,205,206,207,216,217,218,219,220,221,222,223,232,233,234,235,236,237,238,239,248,249,250,251,252,253,254,255
+              field  rdpneg.correlation_type  8  uint
+              field  rdpneg.correlation_flags  8  uint
+              field  rdpneg.correlation_length  16  uint  swap
+              field  rdpneg.correlation_id  128  hex
+              field  rdpneg.correlation_reserved  128  hex
+            else
+          end
+        else
+      end
+    case  13
+      field  tpkt.dst_ref  16  uint
+      field  tpkt.src_ref  16  uint
+      field  tpkt.class  4  uint
+      field  tpkt.options  4  uint
+      field  rdpneg.neg_type  8  uint
+      switch  rdpneg.neg_type
+        case  2
+          field  rdpneg.neg_flags  8  uint
+          field  rdpneg.neg_length  16  uint  swap
+          field  rdpneg.selected_protocol  32  uint  swap
+        case  3
+          field  rdpneg.neg_flags  8  uint
+          field  rdpneg.neg_length  16  uint  swap
+          field  rdpneg.failure_code  32  uint  swap
+        else
+      end
+    case  15
+      field  tpkt.eot  1  uint
+      field  tpkt.tpdu_nr  7  uint
+    case  8
+      field  tpkt.dst_ref  16  uint
+      field  tpkt.src_ref  16  uint
+      field  tpkt.reason  8  uint
+      group  tpkt.variable_part  rest
+        field  tpkt.octet  8  uint
+      end
+    case  7
+      field  tpkt.dst_ref  16  uint
+      field  tpkt.reject_cause  8  uint
+      group  tpkt.variable_part  rest
+        field  tpkt.octet  8  uint
+      end
+    else
+      group  tpkt.variable_part  rest
+        field  tpkt.octet  8  uint
+      end
+  end
+end
+group  tpkt.user_data  rest
+  field  tpkt.octet  8  uint
+end
