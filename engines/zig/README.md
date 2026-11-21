@@ -167,13 +167,13 @@ Linux, `ReleaseSmall`):
 
 | Binary | All eight wires | `xml`, `json`, `geojson` | Reduced / full |
 |---|---|---|---|
-| `gt-engine-zig` (harness) | 795 288 bytes | 438 936 bytes | 55 % |
-| `goat-xf` (command-line tool) | 787 096 bytes | 438 936 bytes | 55 % |
+| `gt-engine-zig` (harness) | 799 384 bytes | 438 936 bytes | 54 % |
+| `goat-xf` (command-line tool) | 791 192 bytes | 438 936 bytes | 55 % |
 
-The reduced harness loaded 1706 packs and left out 2775; it ran 8357
-conversion vectors (8357 passed), 389 load vectors (389 passed) and 16
-capability vectors (16 passed), and did not run 673 vectors that name a pack
-it left out nor 923 load vectors with such a pack.
+The reduced harness loaded 1711 packs and left out 2803; it ran 8375
+conversion vectors (8375 passed), 391 load vectors (391 passed) and 16
+capability vectors (16 passed), and did not run 689 vectors that name a pack
+it left out nor 960 load vectors with such a pack.
 
 `goat-xf` of a reduced build loads a whole packs directory as Version 0.23
 says, so a directory holding a pack on a wire the build lacks fails with that
