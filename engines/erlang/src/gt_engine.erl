@@ -216,6 +216,12 @@ load_pack(#{modules := Modules, packs := Packs} = Engine, Text) ->
          ({Key, list, default}) ->
               Mismatch("has a default for ~s, and it is a list", [Key]);
          ({_Key, _Type, default}) -> ok;        % the value is read below
+         %% a `when ... as` key is an int key (0.30)
+         ({_Key, int, as}) -> ok;
+         ({Key, list, as}) ->
+              Mismatch("binds ~s with when ... as, and it is a list", [Key]);
+         ({Key, Type, as}) ->
+              Mismatch("binds ~s (declared ~s) with when ... as, which needs int", [Key, Type]);
          ({Key, Type, {field, Tr, none}}) ->
               case gt_pack:yields(Tr) of
                   Type -> ok;
@@ -801,7 +807,10 @@ select_encode(#{name := Name, kinds := Kinds, root := PackRoot} = Pack, Entity) 
             {Name, KindName} ->
                 maps:get(KindName, maps:get(kind_index, Pack), none);
             _ ->
-                first_kind(Kinds, fun(#{requires := Req}) -> lists:all(Has, Req) end)
+                %% with the implicit term of each `when ... as` (0.30)
+                first_kind(Kinds, fun(#{requires := Req, lines := Ls}) ->
+                                          lists:all(Has, Req) andalso gt_pack:as_holds(Ls, Model)
+                                  end)
         end,
     case Chosen of
         none -> conv_error('no-kind', Pack, "the entity selects no kind of the pack", []);
