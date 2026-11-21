@@ -1,0 +1,7 @@
+Packs sdm-*; modules sdm<model>
+  FIWARE Smart Data Models, https://github.com/smart-data-models: data models
+  of the subjects Transportation, Device, Environment, Weather, UrbanMobility,
+  PointOfInterest, Aeronautics and MarineTransport. Creative Commons
+  Attribution 4.0; APDSObservation (c) 2022-2023 APDS (Alliance for Parking
+  Data Standards) under an MIT-form license. The packs restate each model's
+  structure and are not endorsed by the Smart Data Models program.

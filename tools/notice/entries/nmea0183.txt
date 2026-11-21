@@ -1,0 +1,11 @@
+Pack nmea0183; module nmea0183
+  "NMEA Revealed" (www/NMEA.adoc), Eric S. Raymond and the gpsd project.
+  https://gitlab.com/gpsd/gpsd  Compilation copyright is held by the GPSD
+  project. BSD-2-Clause (the repository's COPYING file). The document states
+  that it was written without consulting the NMEA 0183 standard. Sentence
+  layouts, field positions, units and fixed letters only; no text, table or
+  example sentence.
+  The fifteen sentences added after the first eight: pynmea2,
+  https://github.com/Knio/pynmea2, MIT License, for field order; gpsd
+  drivers/driver_nmea0183.c, BSD 2-Clause License, Copyright the GPSD project,
+  for units and meanings. No code, text or example sentences.

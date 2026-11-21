@@ -1,0 +1,5 @@
+Packs osi-*; modules osi*
+  ASAM Open Simulation Interface (OSI) v3.8.0 protobuf definitions,
+  https://github.com/OpenSimulationInterface/open-simulation-interface.
+  Mozilla Public License, v. 2.0, Copyright (C) 2016 BMW AG. Field numbers,
+  names and types only; no source file is copied.

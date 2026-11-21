@@ -1,0 +1,7 @@
+Packs netex-service-frame, netex-site-frame, netex-timetable-frame,
+netex-service-calendar-frame; modules netexservice, netexsite,
+netextimetable, netexcalendar
+  NeTEx XML schema (CEN/TS 16614 series), https://github.com/NeTEx-CEN/NeTEx
+  commit 11d40b5e. (C) 2009-2026 NeTEx, CEN, Crown Copyright. GNU General
+  Public License, Version 3. Element and attribute names, types and value
+  ranges only.

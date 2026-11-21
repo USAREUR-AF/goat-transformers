@@ -1,0 +1,5 @@
+Packs otlp-*; modules otlp*
+  OpenTelemetry protocol (OTLP) definitions,
+  https://github.com/open-telemetry/opentelemetry-proto. Apache License,
+  Version 2.0, Copyright The OpenTelemetry Authors. Field numbers, names and
+  types only.

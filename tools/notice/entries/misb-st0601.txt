@@ -1,0 +1,7 @@
+Pack misb-st0601; module misb0601
+  MISB ST 0601.19, UAS Datalink Local Set, Motion Imagery Standards Board.
+  NSG Registry public document store, doc/view?i=5471. The registry states
+  that materials in its public portions are in the public domain, released
+  for public use, or fair use of copyright material; the document carries no
+  distribution statement and no license text. Item tags, types, sizes,
+  ranges and scale factors only; no text, table, figure or example.

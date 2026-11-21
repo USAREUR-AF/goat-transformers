@@ -1,0 +1,5 @@
+Packs cyphal-* (250); modules cy<namespace> (77)
+  Cyphal public regulated DSDL data types,
+  https://github.com/OpenCyphal/public_regulated_data_types. MIT License,
+  Copyright (c) 2014-2019 UAVCAN Development Team. Type names, field names,
+  types and array forms only.

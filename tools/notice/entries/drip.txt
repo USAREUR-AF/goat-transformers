@@ -1,0 +1,7 @@
+Pack drip; module drip
+  IETF RFC 9575, DRIP Entity Tag (DET) Authentication Formats and Protocols
+  for Broadcast Remote Identification (RID), with RFC 9374 and RFC 9434 for
+  context. Copyright (c) 2024 IETF Trust and the persons identified as the
+  document authors; subject to BCP 78 and the IETF Trust's Legal Provisions
+  Relating to IETF Documents (https://trustee.ietf.org/license-info). Layouts
+  restated in packs/drip.

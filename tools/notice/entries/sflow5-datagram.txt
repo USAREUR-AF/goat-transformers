@@ -1,0 +1,7 @@
+Pack sflow5-datagram; module sflow
+  sFlow.org, sFlow Version 5 (July 2004), https://sflow.org/sflow_version_5.txt.
+  Copyright (C) sFlow.org (2004). All Rights Reserved. sFlow(R) is a trademark
+  of InMon Corp. Used under the sFlow License Agreement of InMon Corp.,
+  http://www.inmon.com/technology/sflowlicense.txt (LICENSES/
+  LicenseRef-sFlow-License.txt). Datagram layout restated; the pack implements
+  part of the specification only (its pack.md lists what).

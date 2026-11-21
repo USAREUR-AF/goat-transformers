@@ -1,0 +1,6 @@
+Packs tesla-fleet-alerts, tesla-fleet-connectivity, tesla-fleet-errors,
+tesla-fleet-metrics; modules teslafleet*
+  Tesla Fleet Telemetry record definitions (vehicle_alert,
+  vehicle_connectivity, vehicle_error, vehicle_metric), from
+  https://github.com/teslamotors/fleet-telemetry. Apache License, Version 2.0.
+  Field numbers, names and types only.

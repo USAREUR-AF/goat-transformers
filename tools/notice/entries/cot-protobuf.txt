@@ -1,0 +1,8 @@
+Pack cot-protobuf; module takproto
+  TAK protocol version 1 protobuf definitions, from
+  https://github.com/deptofdefense/AndroidTacticalAssaultKit-CIV (directory
+  takproto). The repository's LICENSE.md is the GNU General Public License,
+  Version 3; its INTENT.md states that portions written by U.S. Federal
+  government employees are ineligible for copyright protection in the U.S.
+  The .proto files carry no license or copyright header. Field numbers, names
+  and types only.

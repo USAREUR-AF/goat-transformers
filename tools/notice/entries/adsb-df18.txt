@@ -1,0 +1,4 @@
+Pack adsb-df18, and the type code 28 subtype 2 kinds of pack adsb; module adsb
+  pyModeS, https://github.com/junzis/pyModeS, GNU General Public License,
+  Version 3. Field layouts restated from its decoders, and published test
+  messages with their decoded values; no code.

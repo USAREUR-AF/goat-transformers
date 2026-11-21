@@ -1,0 +1,4 @@
+Pack cacao-playbook; module cacao
+  CACAO Security Playbooks 2.0 JSON Schemas, OASIS TC Open Repository
+  https://github.com/oasis-open/cacao-json-schemas commit 72853294. Apache
+  License, Version 2.0.

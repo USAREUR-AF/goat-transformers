@@ -1,0 +1,2 @@
+Pack nvg
+  NATO Vector Graphics 1.5 XML schema, NATO Allied Command Transformation.

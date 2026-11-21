@@ -1,0 +1,5 @@
+Packs stix-*; modules stix*
+  STIX 2.1 JSON Schemas, https://github.com/oasis-open/cti-stix2-json-schemas
+  (OASIS CTI TC Open Repository), commit c4f8d589. Copyright (c) 2016, OASIS
+  Open. BSD 3-Clause License. The packs restate the schemas' structure and are
+  not endorsed by OASIS.

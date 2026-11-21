@@ -1,0 +1,6 @@
+Packs ocsf-*; modules ocsf*
+  Open Cybersecurity Schema Framework (OCSF) 1.9.0,
+  https://github.com/ocsf/ocsf-schema tag 1.9.0. Copyright OCSF a Series of LF
+  Projects, LLC; includes the ICD Schema developed by Symantec, a division of
+  Broadcom. Apache License, Version 2.0. The packs restate each event class's
+  structure and are not endorsed by the OCSF project.

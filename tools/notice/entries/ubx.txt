@@ -1,0 +1,8 @@
+Packs ubx-*; modules ubx<class>
+  u-blox UBX message definitions of pyubx2, https://github.com/semuconsulting/pyubx2
+  tag v1.4.1. BSD 3-Clause License, Copyright (c) 2020 semuadmin (Steve Smith).
+  Message names and identities, field names, types, scales, bit widths and
+  repeat counts only, read from the definition files, which are not run. Units
+  of the bound velocity, speed and heading fields from the ublox_msgs .msg
+  files of https://github.com/KumarRobotics/ublox (BSD, Copyright (c) 2012,
+  Johannes Meyer, TU Darmstadt).

@@ -1,0 +1,5 @@
+Pack valhalla; module valhalla
+  Valhalla protobuf definitions (proto/), from
+  https://github.com/valhalla/valhalla. MIT License, Copyright (c) 2018 Valhalla
+  contributors, Copyright (c) 2015-2017 Mapillary AB, Mapzen. Field numbers,
+  names and types only.

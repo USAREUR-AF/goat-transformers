@@ -1,0 +1,5 @@
+Pack cap; module cap
+  OASIS Common Alerting Protocol Version 1.2 (OASIS Standard, 1 July 2010) and
+  its schema CAP-v1.2.xsd. Copyright OASIS Open 2010.
+  http://docs.oasis-open.org/emergency/cap/v1.2/
+  Element names, types and value constraints only; no text.

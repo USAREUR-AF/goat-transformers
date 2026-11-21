@@ -1,0 +1,4 @@
+Packs foxglove-proto-*; modules foxgloveproto*
+  Foxglove schemas (schemas/proto/foxglove), protobuf, from
+  https://github.com/foxglove/foxglove-sdk commit 8cebcc57. MIT License,
+  Copyright (c) Foxglove Technologies Inc. Field numbers, names and types only.

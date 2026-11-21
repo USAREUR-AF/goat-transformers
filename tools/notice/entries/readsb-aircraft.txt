@@ -1,0 +1,5 @@
+Packs readsb-aircraft, readsb-aircraft-json; module readsb
+  The JSON output format documented in readsb README-json.md
+  (https://github.com/wiedehopf/readsb, GPL-3.0-or-later) and dump1090-fa
+  README-json.md (https://github.com/flightaware/dump1090, GPL-2.0-or-later).
+  Member names, types and units only; no program code.

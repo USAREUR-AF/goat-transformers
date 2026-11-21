@@ -1,0 +1,4 @@
+Packs ipfix-*, netflow9-*; modules ipfixmsg, netflow9
+  IETF RFC 7011 (IPFIX protocol), RFC 7012 (IPFIX information model) and
+  RFC 3954 (NetFlow version 9, Informational), https://www.rfc-editor.org/
+  (IETF Trust, BCP 78). Layouts restated.

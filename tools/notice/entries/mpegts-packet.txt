@@ -1,0 +1,7 @@
+Pack mpegts-packet
+  Transport stream packet header and adaptation field restated from FFmpeg
+  libavformat/mpegts.c, https://github.com/FFmpeg/FFmpeg tag n7.1 commit
+  b08d7969 (Copyright (c) 2002-2003 Fabrice Bellard, LGPL 2.1 or later), and
+  GStreamer mpegtspacketizer.c, https://github.com/GStreamer/gstreamer tag
+  1.26.9 commit f313fae1 (Copyright (C) 2007, 2008 Alessandro Decina, Zaheer
+  Merali, LGPL 2 or later). No code or comments copied.

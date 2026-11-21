@@ -1,0 +1,8 @@
+Packs gtfs-agency, gtfs-stops, gtfs-routes, gtfs-trips, gtfs-stop-times,
+gtfs-calendar, gtfs-calendar-dates, gtfs-shapes, gtfs-frequencies,
+gtfs-transfers, gtfs-pathways, gtfs-levels, gtfs-feed-info, gtfs-attributions;
+module gtfs
+  GTFS Schedule Reference, https://github.com/google/transit. Apache License,
+  Version 2.0. Column names, order and types; no text.
+  The same source covers the 17 further packs gtfs-fare-attributes …
+  gtfs-translations (fares, areas, networks, Flex groups, translations).

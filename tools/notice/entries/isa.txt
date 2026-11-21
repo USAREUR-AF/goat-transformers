@@ -1,0 +1,6 @@
+Packs isa, isa-message, isa-ipl1, isa-xml; modules isa, isa1, isaxml
+  Integrated Sensor Architecture (ISA) schema set 6.0.13: IPL 3.7 and IPL 1.6
+  protobuf declaration files, IPL 4.7 XML schema.
+  File header: Distribution Statement A. Approved for Public Release.
+  Distribution is Unlimited. The files carry no license text and no copyright
+  line.

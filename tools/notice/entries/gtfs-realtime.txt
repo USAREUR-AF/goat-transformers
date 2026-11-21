@@ -1,0 +1,4 @@
+Packs gtfs-realtime, gtfs-realtime-entity; module gtfsrt
+  GTFS Realtime protocol definition gtfs-realtime.proto, from
+  https://github.com/google/transit. Copyright 2015 The GTFS Specifications
+  Authors; Apache License, Version 2.0. Field numbers, names and types only.

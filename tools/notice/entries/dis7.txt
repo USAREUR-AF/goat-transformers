@@ -1,0 +1,7 @@
+Pack dis7; module dis7
+  DIS 7 (IEEE 1278.1-2012) PDU layouts of the open-dis project:
+  https://github.com/open-dis/xmlpg (DIS2012.xml; BSD 2-Clause, Copyright (c)
+  2015, mcgredonps) and PDU type numbers from
+  https://github.com/open-dis/open-dis-python (opendis/dis7.py; BSD 2-Clause,
+  Copyright (c) 2023, Open DIS). Names, types, lengths and type numbers only;
+  no IEEE document read.

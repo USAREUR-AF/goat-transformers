@@ -1,0 +1,10 @@
+Packs ccsds-uslp-frame, ccsds-cfdp-pdu, ccsds-prox1-frame; modules ccsdsuslp,
+ccsdscfdp, ccsdsprox1
+  CCSDS 732.1-B-3 Unified Space Data Link Protocol (June 2024, EC 1),
+  https://ccsds.org/Pubs/732x1b3e1.pdf; CCSDS 727.0-B-5 CCSDS File Delivery
+  Protocol (July 2020, EC 1), https://ccsds.org/Pubs/727x0b5e1.pdf; CCSDS
+  211.0-B-6 Proximity-1 Space Link Protocol, Data Link Layer (July 2020, EC 1),
+  https://ccsds.org/Pubs/211x0b6e1.pdf. Consultative Committee for Space Data
+  Systems. Reused with attribution under the CCSDS Reproduction Permission
+  Statement for Publications. Field positions, widths and values only; no
+  text, table or figure.

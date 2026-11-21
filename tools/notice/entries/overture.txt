@@ -1,0 +1,5 @@
+Packs overture-*; modules overture*
+  Overture Maps schema, https://github.com/OvertureMaps/schema tag v2.0.0
+  (schema/). Overture Maps Foundation. Creative Commons Attribution 4.0
+  International (CC BY 4.0). The packs are derived from the schema, restating
+  its structure, and are not endorsed by the Overture Maps Foundation.

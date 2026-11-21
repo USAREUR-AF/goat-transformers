@@ -1,0 +1,8 @@
+Pack mavlink2; module mavlink
+  MAVLink message definitions (common.xml, standard.xml, minimal.xml).
+  https://github.com/mavlink/mavlink
+  The repository's COPYING file states the GNU Lesser General Public License,
+  version 3, with an exception that places generated code under the MIT
+  license. The XML files carry no license header. Message names and ids, field
+  names, types, array lengths, units and enumeration values only; no
+  description text.

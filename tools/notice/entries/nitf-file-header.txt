@@ -1,0 +1,3 @@
+Packs nitf-file-header, nitf-image-subheader; module nitf
+  MIL-STD-2500C, National Imagery Transmission Format Version 2.1, Department
+  of Defense, Distribution Statement A. Field order, sizes and types; no text.

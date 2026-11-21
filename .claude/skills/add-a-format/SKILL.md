@@ -133,7 +133,10 @@ weaken the vector.
 - `PROVENANCE.md`: for each source, where it can be obtained, version or
   commit, SHA-256, the license statement quoted. State that no source file is
   copied into the tree. Model: `packs/remote-id/PROVENANCE.md`.
-- Add the source to `NOTICE`.
+- Add the source's entry as a new file `tools/notice/entries/<name>.txt`, in the form of the
+  others there (first line `Pack <name>; module <module>`, then indented lines).
+  Do not edit `NOTICE`: `python3 -I tools/notice.py` writes it in the counts
+  pull request.
 
 ## 8. Finish
 

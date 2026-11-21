@@ -1,0 +1,5 @@
+Packs sds-*; modules sds*
+  Space Data Standards JSON Schemas (lib/fbjson/*/main.fb.schema.json),
+  https://github.com/DigitalArsenal/spacedatastandards.org commit 0a61c131.
+  Copyright 2026 Edgesource Corporation. Apache License, Version 2.0. The
+  packs restate each schema's structure and are not endorsed by the publisher.

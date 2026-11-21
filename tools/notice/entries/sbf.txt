@@ -1,0 +1,6 @@
+Packs sbf-*; modules sbf, sbf<group>
+  Septentrio SBF block definitions of pysbf2,
+  https://github.com/semuconsulting/pysbf2 v1.0.7. BSD 3-Clause License,
+  Copyright (c) 2020 semuadmin (Steve Smith). Block names and numbers, field
+  names, types, scales and bit widths only; read from the definition files,
+  which are not run.

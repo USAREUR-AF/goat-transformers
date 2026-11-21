@@ -1,0 +1,3 @@
+Pack geo-track-v1; module geotrack
+  GeoTrackV1 schema, https://github.com/USAREUR-AF/goatstuff
+  Apache License, Version 2.0.

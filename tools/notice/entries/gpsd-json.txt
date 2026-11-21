@@ -1,0 +1,4 @@
+Pack gpsd-json; module gpsd
+  gpsd_json(5), the gpsd JSON protocol, https://gitlab.com/gpsd/gpsd commit
+  a9266948. Copyright the GPSD project. BSD 2-Clause License. Member names,
+  types and units; no text or example message.

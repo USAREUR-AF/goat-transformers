@@ -1,0 +1,7 @@
+Pack misb-st0903; module misb0903
+  MISB ST 0903.6, Video Moving Target Indicator Metadata, Motion Imagery
+  Standards Board. NSG Registry public document store, doc/view?i=5310. The
+  registry states that materials in its public portions are in the public
+  domain, released for public use, or fair use of copyright material; the
+  document carries no distribution statement and no license text. Item tags,
+  types and lengths only; no text, table, figure or example.

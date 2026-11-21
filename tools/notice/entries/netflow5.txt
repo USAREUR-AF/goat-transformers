@@ -1,0 +1,6 @@
+Pack netflow5; module netflow5
+  Cisco Systems, NetFlow Export Datagram Format (NetFlow Collection Engine 3.6
+  user guide, updated 2007-09-14),
+  https://www.cisco.com/c/en/us/td/docs/net_mgmt/netflow_collection_engine/3-6/user/guide/format.html.
+  The page states no licence; the pack is labelled LicenseRef-unstated.
+  Field layout restated.

@@ -1,0 +1,5 @@
+Pack sparkplug-b; module sparkplug
+  Sparkplug B payload definition sparkplug_b.proto, from
+  https://github.com/eclipse-tahu/tahu. Copyright (c) 2015, 2018 Cirrus Link
+  Solutions and others; Eclipse Public License 2.0. Field numbers, names and
+  types only.

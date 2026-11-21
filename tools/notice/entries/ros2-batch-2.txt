@@ -1,0 +1,27 @@
+Packs of further ROS 2 message packages (field names, types, array forms and
+constant names only; no comment text):
+  ros2-tf2-msgs; module ros2tf2. https://github.com/ros2/geometry2, BSD
+  3-Clause, Copyright (c) 2008 Willow Garage, Inc.
+  ros2-unique-identifier-msgs; module ros2uuid.
+  https://github.com/ros2/unique_identifier_msgs, BSD 3-Clause, Copyright (C)
+  2012 Jack O'Quin.
+  ros2-rcl-interfaces, ros2-rosgraph-msgs, ros2-statistics-msgs,
+  ros2-lifecycle-msgs; modules ros2rcl, ros2rosgraph, ros2statistics,
+  ros2lifecycle. https://github.com/ros2/rcl_interfaces, Apache License 2.0.
+  ros2-vision-msgs; module ros2vision.
+  https://github.com/ros-perception/vision_msgs, Apache License 2.0.
+  ros2-radar-msgs; module ros2radar. https://github.com/ros-perception/radar_msgs,
+  Apache License 2.0.
+  ros2-ackermann-msgs; module ros2ackermann.
+  https://github.com/ros-drivers/ackermann_msgs, BSD.
+  ros2-gps-msgs; module ros2gps. https://github.com/swri-robotics/gps_umd, BSD,
+  Copyright 2023 Ken Tossell.
+  ros2-geographic-msgs; module ros2geographic.
+  https://github.com/ros-geographic-info/geographic_info, BSD (package.xml).
+  ros2-marine-acoustic-msgs, ros2-marine-sensor-msgs; modules
+  ros2marineacoustic, ros2marinesensor.
+  https://github.com/apl-ocean-engineering/marine_msgs, BSD 3-Clause, Copyright
+  (c) 2020-2022 University of Washington Applied Physics Laboratory.
+  ros2-mavros-msgs; module ros2mavros. https://github.com/mavlink/mavros, taken
+  under BSD (the package is licensed BSD, GPLv3 or LGPLv3), Copyright (c)
+  2013-2021 Vladimir Ermakov.

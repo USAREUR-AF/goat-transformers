@@ -1,0 +1,5 @@
+Pack uci-2.5; module uci25
+  Universal Command and Control Interface (UCI) Schema 2.5 (OAC-STD-002 Rev E,
+  schema 002.5.0; the OMS 2.5 message set), U.S. Air Force,
+  https://github.com/open-arsenal/uci tag v2.5. Distribution Statement A:
+  approved for public release, distribution is unlimited.

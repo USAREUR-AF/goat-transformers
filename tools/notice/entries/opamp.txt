@@ -1,0 +1,5 @@
+Packs opamp-* (generated)
+  From opamp-spec proto/opamp/v1 (opamp.proto, anyvalue.proto),
+  https://github.com/open-telemetry/opamp-spec tag v0.20.0 commit b0862415.
+  Copyright OpenTelemetry Authors. Apache License 2.0. No code or comments
+  copied.

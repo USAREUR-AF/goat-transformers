@@ -1,0 +1,5 @@
+Packs nws-*; modules nws*
+  The National Weather Service weather.gov API OpenAPI document,
+  https://api.weather.gov/openapi.json (version 3.12.2, copy of 2026-11-19),
+  a work of the United States Government in the public domain. Not official
+  NWS material; no endorsement by NOAA or the NWS is implied.

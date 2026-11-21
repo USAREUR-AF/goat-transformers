@@ -1,0 +1,5 @@
+Packs waymo-frame, waymo-scenario; modules waymoframe, waymoscenario
+  Waymo Open Dataset protobuf definitions (src/waymo_open_dataset, excluding
+  wdl_limited), https://github.com/waymo-research/waymo-open-dataset. Apache
+  License, Version 2.0, Copyright Waymo LLC and The Waymo Open Dataset Authors.
+  Field numbers, names and types only; no data of the dataset.

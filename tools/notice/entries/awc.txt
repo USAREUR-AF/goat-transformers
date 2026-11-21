@@ -1,0 +1,6 @@
+Packs awc-*; modules awc*
+  AviationWeather.gov Data API OpenAPI document,
+  https://aviationweather.gov/data/schema/openapi.yaml, version v4.0, copy of
+  2026-11-20. A work of the United States Government (NOAA/NWS Aviation
+  Weather Center) in the public domain; no endorsement by NOAA or the NWS is
+  implied.

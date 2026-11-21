@@ -1,0 +1,5 @@
+Pack meshtastic; module meshtastic
+  Meshtastic protobuf definitions, from https://github.com/meshtastic/protobufs.
+  The repository's LICENSE is the GNU General Public License, Version 3; the
+  .proto files carry no license or copyright header. Field numbers, names and
+  types only.

@@ -1,0 +1,3 @@
+Pack canonical-track-v2; module track
+  Canonical Track v2 schema, https://github.com/USAREUR-AF/open-billie
+  Apache License, Version 2.0.

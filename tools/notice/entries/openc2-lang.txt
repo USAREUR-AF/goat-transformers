@@ -1,0 +1,5 @@
+Packs openc2-lang, openc2-slpf; modules oc2lang, oc2slpf
+  OpenC2 Language Specification 1.1 and Stateless Packet Filtering profile 1.1
+  JSON Schemas, OASIS TC Open Repository
+  https://github.com/oasis-open/openc2-custom-aps commit f6ef6b37. Apache
+  License, Version 2.0.

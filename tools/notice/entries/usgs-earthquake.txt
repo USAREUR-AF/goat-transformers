@@ -1,0 +1,4 @@
+Packs usgs-earthquake, usgs-earthquake-feed; module usgsquake
+  USGS Earthquake Hazards Program GeoJSON summary feed documentation and ComCat
+  event terms (earthquake.usgs.gov). Works of the U.S. Geological Survey in the
+  U.S. public domain.

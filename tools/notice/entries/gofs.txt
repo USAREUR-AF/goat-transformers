@@ -1,0 +1,4 @@
+Packs gofs-*; modules gofs*
+  General On-demand Feed Specification (GOFS) JSON Schemas,
+  https://github.com/MobilityData/gofs, commit ab9151ed. Apache License,
+  Version 2.0.

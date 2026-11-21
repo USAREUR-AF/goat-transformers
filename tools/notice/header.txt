@@ -1,0 +1,25 @@
+goat-transformers
+Copyright 2025-2026 U.S. Federal Government (in countries where recognized)
+
+Portions of this work written by U.S. Federal government employees within the
+scope of their federal employment are not subject to copyright protection in the
+United States (17 U.S.C. 105) and are in the public domain there. In countries
+where copyright protection is available, those portions are released under the
+Apache License, Version 2.0. Merged contributions from private contributors are
+released under the same License. See INTENT.md.
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE at
+the root of this repository).
+
+The engines use only the standard library of their language. No third-party
+code is included in this repository.
+
+The packs under packs/ and the model modules under model/ were written from the
+third-party sources below. The source files are not included. A pack records
+field names, field numbers, positions, types, units and code values. Each
+pack's PROVENANCE.md and the `source` lines of its pack.def state the exact
+version, the SHA-256 of each file read and the license statement of the source.
+The license of each source is given here as that source states it.
+
+The packs named conformance*, demo-* and the module probe describe synthetic
+formats written for this project and have no external source.
