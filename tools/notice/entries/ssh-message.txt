@@ -1,0 +1,5 @@
+Packs ssh-message, ssh-packet; modules sshmsg, sshpkt
+  IETF RFC 4251, RFC 4252, RFC 4253, RFC 4254 and RFC 8308 (SSH),
+  https://www.rfc-editor.org/ (The Internet Society or the IETF Trust and the
+  persons identified as the document authors, BCP 78). Layouts restated; no
+  text copied.

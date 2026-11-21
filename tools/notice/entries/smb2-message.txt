@@ -1,0 +1,6 @@
+Pack smb2-message; module smb2
+  Microsoft, [MS-SMB2]: Server Message Block (SMB) Protocol Versions 2 and 3,
+  Open Specifications documentation, revision 88.0 (2026). Copyright
+  Microsoft Corporation; used under the Open Specifications copyright
+  permission for implementations, which grants no patent licence
+  (LicenseRef-MS-OpenSpec). Layouts restated; no text copied.
