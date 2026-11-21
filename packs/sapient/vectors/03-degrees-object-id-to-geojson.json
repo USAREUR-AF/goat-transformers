@@ -5,7 +5,6 @@
   "input": "3a3d121a303141525a334e44454b54535634525246465136394735464156321f09cdcccccccc7c55c011fca9f1d24d023e4019000000000000294038014001",
   "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-85.95,30.009,12.5]},\"properties\":{},\"id\":\"01ARZ3NDEKTSV4RRFFQ69G5FAV\"}",
   "model": {
-    "@kind": "detection_report",
     "@complete": true,
     "sapient.detection_report_object_id": "01ARZ3NDEKTSV4RRFFQ69G5FAV",
     "lon": "-85.95",

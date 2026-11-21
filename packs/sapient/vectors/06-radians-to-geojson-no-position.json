@@ -5,7 +5,6 @@
   "input": "3a3d121a303141525a334e44454b54535634525246465136394735464156321f09000000000000f8bf11000000000000e03f19000000000000294038024001",
   "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{},\"id\":\"01ARZ3NDEKTSV4RRFFQ69G5FAV\"}",
   "model": {
-    "@kind": "detection_report_other_system",
     "@complete": true,
     "uid": "01ARZ3NDEKTSV4RRFFQ69G5FAV",
     "sapient.location_x": "-1.5",
