@@ -1,0 +1,29 @@
+{
+  "name": "relation-members-roundtrip",
+  "from": "overpass-json",
+  "to": "overpass-json",
+  "input": "{\"version\":0.6,\"generator\":\"Overpass API 0.7.62.7\",\"osm3s\":{\"timestamp_osm_base\":\"2026-11-20T00:00:00Z\",\"copyright\":\"Data: OpenStreetMap contributors, ODbL.\"},\"elements\":[{\"type\":\"relation\",\"id\":700001,\"bounds\":{\"minlat\":50.2106234,\"minlon\":8.5856189,\"maxlat\":50.2121617,\"maxlon\":8.5867523},\"members\":[{\"type\":\"node\",\"ref\":900001,\"role\":\"stop\",\"lat\":50.2106234,\"lon\":8.5856189},{\"type\":\"way\",\"ref\":800001,\"role\":\"\",\"geometry\":[{\"lat\":50.2106234,\"lon\":8.5856189},{\"lat\":50.2121617,\"lon\":8.5867523}]}],\"tags\":{\"type\":\"route\",\"route\":\"bus\"}}],\"remark\":\"runtime remark: example only\"}",
+  "expect": "{\"version\":0.6,\"generator\":\"Overpass API 0.7.62.7\",\"osm3s\":{\"timestamp_osm_base\":\"2026-11-20T00:00:00.000Z\",\"copyright\":\"Data: OpenStreetMap contributors, ODbL.\"},\"remark\":\"runtime remark: example only\",\"elements\":[{\"type\":\"relation\",\"id\":700001,\"bounds\":{\"minlat\":50.2106234,\"minlon\":8.5856189,\"maxlat\":50.2121617,\"maxlon\":8.5867523},\"members\":[{\"type\":\"node\",\"ref\":900001,\"role\":\"stop\",\"lat\":50.2106234,\"lon\":8.5856189},{\"type\":\"way\",\"ref\":800001,\"role\":\"\",\"geometry\":[{\"lat\":50.2106234,\"lon\":8.5856189},{\"lat\":50.2121617,\"lon\":8.5867523}]}]}]}",
+  "model": {
+    "time_ms": "1795132800000",
+    "overpass.timestamp_osm_base": "2026-11-20T00:00:00Z",
+    "overpass.remark": "runtime remark: example only",
+    "overpass.elements.#": "1",
+    "overpass.elements[0].overpass.type": "relation",
+    "overpass.elements[0].overpass.id": "700001",
+    "overpass.elements[0].overpass.members.#": "2",
+    "overpass.elements[0].overpass.members[0].overpass.type": "node",
+    "overpass.elements[0].overpass.members[0].overpass.ref": "900001",
+    "overpass.elements[0].overpass.members[0].overpass.role": "stop",
+    "overpass.elements[0].overpass.members[0].overpass.lat": "50.2106234",
+    "overpass.elements[0].overpass.members[0].overpass.lon": "8.5856189",
+    "overpass.elements[0].overpass.members[0].overpass.geometry.#": "absent",
+    "overpass.elements[0].overpass.members[1].overpass.type": "way",
+    "overpass.elements[0].overpass.members[1].overpass.ref": "800001",
+    "overpass.elements[0].overpass.members[1].overpass.role": "",
+    "overpass.elements[0].overpass.members[1].overpass.geometry.#": "2",
+    "overpass.elements[0].overpass.members[1].overpass.geometry[1].overpass.lat": "50.2121617",
+    "overpass.elements[0].overpass.members[1].overpass.geometry[1].overpass.lon": "8.5867523"
+  },
+  "source": "derived by hand in tools/gen/overpass-json-roundtrip-vectors.py from values chosen there, from spec/engine-spec.md (0.5 json wire and ruling 16, 0.7 groups, 0.11 rulings 2 and 3) and packs/overpass-json/pack.def; no engine run before the expect was written; one relation with out geom: a node member with its position and a way member with its geometry and an empty role (a string, so present); the remark, given after the elements, is written before them, in line order; a midnight time gets .000Z"
+}
