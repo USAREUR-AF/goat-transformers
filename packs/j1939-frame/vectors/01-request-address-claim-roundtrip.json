@@ -1,0 +1,16 @@
+{
+  "name": "request-address-claim-roundtrip",
+  "from": "j1939-frame",
+  "to": "j1939-frame",
+  "input": "f9ffea9800ee00",
+  "expect": "f9ffea9800ee00",
+  "model": {
+    "j1939.priority": "6",
+    "j1939.pdu_format": "234",
+    "j1939.pdu_specific": "255",
+    "j1939.source_address": "249",
+    "j1939.can_eff_flag": "1",
+    "j1939.requested_pgn": "60928"
+  },
+  "source": "built by tools/gen/j1939-vectors.py from values chosen there; layout restated from Linux can.h and j1939.rst, python-can-j1939 message_id.py and controller_application.py; a global request (PS 255) for Address Claimed from address 0xF9; expect derived there, no engine run"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "tp-cm-abort-roundtrip",
+  "from": "j1939-frame",
+  "to": "j1939-frame",
+  "input": "1700ec9cff03ffffffcafe00",
+  "expect": "1700ec9cff03ffffffcafe00",
+  "model": {
+    "j1939.tp_control": "255",
+    "j1939.tp_abort_reason": "3",
+    "j1939.tp_reserved": "16777215"
+  },
+  "source": "built by tools/gen/j1939-vectors.py from values chosen there; layout restated from python-can-j1939 j1939_21.py; connection abort for a timeout; expect derived there, no engine run"
+}

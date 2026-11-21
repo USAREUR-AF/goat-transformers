@@ -1,0 +1,8 @@
+{
+  "name": "cut-name-is-malformed",
+  "from": "j1939-frame",
+  "to": "j1939-frame",
+  "input": "00ffee9840e2419a110002",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/j1939-vectors.py from values chosen there; layout restated from python-can-j1939 name.py; the NAME is seven octets; expect derived there, no engine run"
+}

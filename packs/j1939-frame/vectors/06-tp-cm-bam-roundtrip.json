@@ -1,0 +1,13 @@
+{
+  "name": "tp-cm-bam-roundtrip",
+  "from": "j1939-frame",
+  "to": "j1939-frame",
+  "input": "00ffec9c200e0002ffcafe00",
+  "expect": "00ffec9c200e0002ffcafe00",
+  "model": {
+    "j1939.pdu_specific": "255",
+    "j1939.tp_control": "32",
+    "j1939.tp_total_packets": "2"
+  },
+  "source": "built by tools/gen/j1939-vectors.py from values chosen there; layout restated from python-can-j1939 j1939_21.py; a broadcast announce message for 14 octets in two packets; expect derived there, no engine run"
+}

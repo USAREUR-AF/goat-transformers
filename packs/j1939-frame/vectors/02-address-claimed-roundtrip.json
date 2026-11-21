@@ -1,0 +1,20 @@
+{
+  "name": "address-claimed-roundtrip",
+  "from": "j1939-frame",
+  "to": "j1939-frame",
+  "input": "00ffee9840e2419a11000290",
+  "expect": "00ffee9840e2419a11000290",
+  "model": {
+    "j1939.pdu_format": "238",
+    "j1939.name_identity_number": "123456",
+    "j1939.name_manufacturer_code": "1234",
+    "j1939.name_ecu_instance": "1",
+    "j1939.name_function_instance": "2",
+    "j1939.name_function": "0",
+    "j1939.name_vehicle_system": "1",
+    "j1939.name_vehicle_system_instance": "0",
+    "j1939.name_industry_group": "1",
+    "j1939.name_arbitrary_address_capable": "1"
+  },
+  "source": "built by tools/gen/j1939-vectors.py from values chosen there; layout restated from Linux can.h and j1939.rst, python-can-j1939 message_id.py and python-can-j1939 name.py; Address Claimed by address 0 with a NAME of chosen values; expect derived there, no engine run"
+}
