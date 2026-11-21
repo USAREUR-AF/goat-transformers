@@ -5020,8 +5020,11 @@ mapped keys, right after the `key-type-mismatch` check of the same line.
 6. **`range` and `with`.** A line that `with` suppresses is not checked.
 7. **`wrap` of an `int` key** computes `x − (<max> − <min>) × floor((x −
    <min>) / (<max> − <min>))` exactly: −181 in `range -180 180 wrap` is 179.
+8. **`range` and `also` keys** (Version 0.8): `range` applies to the field
+   line's own key only, never to its `also` keys.
 
 Stated, not yet pinned by a vector: a submessage holding only fields that
 `implicit` leaves out, without a `when … present`; a wrapped `float` still
 outside `[<min>, <max>)` after the double arithmetic; an `int` range bound
-beyond a signed 64-bit integer.
+beyond a signed 64-bit integer; `range` on a sequential field with `also`
+keys.
