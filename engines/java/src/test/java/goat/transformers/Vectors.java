@@ -134,6 +134,9 @@ final class Vectors {
             boolean complete = Boolean.TRUE.equals(model.get("@complete"));
             if (model.containsKey("@complete") && !complete) return "model.@complete is not true";
             Entity e = engine.decode(from, input);
+            // "@kind" names the kind decode(from, input) selected, with or without "@complete" and whether or not
+            // from == to: clearing it for another format is part of convert, not of the check (ruling 34 of 0.30)
+            String decodedKindFormat = e.kindFormat(), decodedKindName = e.kindName();
             if (complete) {
                 if (!from.equals(to)) e.clearKind();
                 engine.complete(e, context);
@@ -159,8 +162,8 @@ final class Vectors {
                 if (!(m.getValue() instanceof String)) return "model." + m.getKey() + " is not in string form";
                 String want = (String) m.getValue();
                 if (m.getKey().equals("@kind")) {
-                    if (!from.equals(e.kindFormat()) || !want.equals(e.kindName())) {
-                        return "@kind: want (" + from + ", " + want + ") got (" + e.kindFormat() + ", " + e.kindName() + ")";
+                    if (!from.equals(decodedKindFormat) || !want.equals(decodedKindName)) {
+                        return "@kind: want (" + from + ", " + want + ") got (" + decodedKindFormat + ", " + decodedKindName + ")";
                     }
                     continue;
                 }

@@ -61,6 +61,8 @@ final class Seq {
         long[] ranges;
         /** {@code field}: the field line and the {@code also} lines after it, all on the same bits. */
         List<Pack.Field> keys;
+        /** {@code when ... as <key>} (engine-spec 0.30): the key its bits are bound to, read as {@code uint}; else null. */
+        Pack.Field as;
         /** {@code presence}: its name, whether it is {@code fx}, its slot in the state of one decode or encode. */
         String name;
         boolean fx;
@@ -401,6 +403,39 @@ final class Seq {
             (b.kindMapped != null ? b.kindMapped : b.mapped).putIfAbsent(key, line);
         }
 
+        /**
+         * Every key a {@code field}, {@code also} or {@code when ... as} line maps, with its scope (the body), its
+         * kind (null for the common lines) and whether the line is a {@code when ... as}: for the bans of ruling 9
+         * of 0.30, checked once the file is read.
+         */
+        private final List<Object[]> keyLines = new ArrayList<>();
+
+        private void keyLine(String key, int ln, boolean as) {
+            Frame b = bodyFrame();
+            keyLines.add(new Object[]{key, b.body, b.kind, ln, as});
+        }
+
+        /**
+         * The bans of rulings 9, 21 and 33 of 0.30: in one reading path of one scope (the common lines plus one kind,
+         * every block of them included; a group body is a scope of its own) a key named by {@code as} is named by no
+         * other {@code as} line and mapped by no {@code field} or {@code also} line.
+         */
+        void checkAsBans(String format) {
+            for (int i = 0; i < keyLines.size(); i++) {
+                Object[] a = keyLines.get(i);
+                for (int j = 0; j < i; j++) {
+                    Object[] b = keyLines.get(j);
+                    if (!(Boolean) a[4] && !(Boolean) b[4]) continue;
+                    if (!a[0].equals(b[0]) || a[1] != b[1]) continue;
+                    if (a[2] != null && b[2] != null && a[2] != b[2]) continue;
+                    boolean both = (Boolean) a[4] && (Boolean) b[4];
+                    throw bad(format, null, source + ":" + a[3] + ": key " + a[0] + (both
+                            ? " is named by two when ... as lines of one reading path (lines " + b[3] + " and " + a[3] + ")"
+                            : " is named by when ... as and mapped by a field or also line in one reading path (lines " + b[3] + " and " + a[3] + ")"));
+                }
+            }
+        }
+
         /** The count or presence a {@code count @<name>} names: visible here and within the same group body. */
         private Node lookupCount(String name) {
             for (Frame f : stack) {
@@ -545,6 +580,7 @@ final class Seq {
                     if (with != null) keyRefs.add(new String[]{with, locator});
                     Node n = new Node(Op.FIELD, ln);
                     mapped(key, n);
+                    keyLine(key, ln, false);
                     n.len = len;
                     n.keys = new ArrayList<>();
                     n.keys.add(fl);
@@ -567,16 +603,29 @@ final class Seq {
                     typed.add(fl);
                     keyRefs.add(new String[]{args.get(0), first.locator});
                     mapped(args.get(0), before);
+                    keyLine(args.get(0), ln, false);
                     before.keys.add(fl);
                     f.lastField = before;
                     break;
                 }
                 case "const":
                 case "when": {
+                    String asKey = null;
                     if (kw.equals("when") && args.size() > 2) {
-                        throw bad(format, null, where + ": a when value list has no spaces: a third token after the length");
+                        // engine-spec 0.30: `when <len> <values> as <key>`; `as` is matched exactly (rulings 15 and 22)
+                        if (!args.get(2).equals("as")) {
+                            throw bad(format, null, where + ": a when value list has no spaces: a third token after the length");
+                        }
+                        // the syntax of `as` (ruling 16): no key, `as` twice (ruling 31), a token after the key
+                        if (args.size() == 3) throw bad(format, null, where + ": as names no key");
+                        if (args.get(3).equals("as") || (args.size() > 4 && args.get(4).equals("as"))) {
+                            throw bad(format, null, where + ": as given twice on one when line");
+                        }
+                        if (args.size() > 4) throw bad(format, null, where + ": a token after the key of as: \"" + args.get(4) + "\"");
+                        asKey = args.get(3);
+                    } else {
+                        arity(kw, args, 2, where, format);
                     }
-                    arity(kw, args, 2, where, format);
                     int len = bitLength(args.get(0), 1, 64, kw, where, format);
                     boolean isWhen = kw.equals("when");
                     if (isWhen && !f.isBody()) throw bad(format, null, where + ": when inside a block");
@@ -589,6 +638,18 @@ final class Seq {
                         if (ranges.length > 2 || ranges[0] != ranges[1]) n.ranges = ranges;
                     } else {
                         n.value = unsignedValue(args.get(1), len, kw, where, format);
+                    }
+                    if (asKey != null) {
+                        // the key holds the bits read as uint (ruling 7); its type is checked with the field lines
+                        // (ruling 17), and it counts as mapped for a switch from here on (ruling 2)
+                        Pack.Field fl = new Pack.Field(asKey, args.get(0), null, BitsTransform.parse("uint", format, where),
+                                null, null, false, false, false, ln);
+                        n.as = fl;
+                        fields.add(fl);
+                        typed.add(fl);
+                        keyRefs.add(new String[]{asKey, null});
+                        keyLine(asKey, ln, true);
+                        if (f.isBody()) mapped(asKey, n);
                     }
                     if (!isWhen) {
                         f.lines.add(n);
@@ -972,6 +1033,7 @@ final class Seq {
             if (with != null) keyRefs.add(new String[]{with, locator});
             Node n = new Node(Op.FIELD, ln);
             mapped(key, n);
+            keyLine(key, ln, false);
             n.until = code;
             n.keys = new ArrayList<>();
             n.keys.add(fl);
@@ -1023,6 +1085,7 @@ final class Seq {
             fields.add(fl);
             typed.add(fl);
             keyRefs.add(new String[]{key, locator});
+            keyLine(key, ln, false);
             Node n = new Node(Op.FIELD, ln);
             n.u = u;
             n.keys = new ArrayList<>();
@@ -1327,6 +1390,9 @@ final class Seq {
             switch (n.op) {
                 case FIELD:
                     for (Pack.Field f : n.keys) out.add(prefix + f.key);
+                    break;
+                case WHEN:
+                    if (n.as != null) out.add(prefix + n.as.key);   // ruling 5 of 0.30
                     break;
                 case IF:
                 case OPT:

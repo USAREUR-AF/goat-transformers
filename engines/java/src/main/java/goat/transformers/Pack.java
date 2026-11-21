@@ -754,7 +754,8 @@ public final class Pack {
         boolean ok;
         switch (kw) {
             case "field": ok = n >= 3; break;
-            case "when":
+            // engine-spec 0.30: `when <len> <values> as …` passes here; its syntax is checked after the file (ruling 16)
+            case "when": ok = n == 2 || (n >= 3 && args.get(2).equals("as")); break;
             case "const":
             case "default":
             case "typemap": ok = n == 2; break;
@@ -1378,6 +1379,10 @@ public final class Pack {
                     break;
                 }
                 case "when": {
+                    // `as` on a when of a pack that is not layout sequential (engine-spec 0.30, rulings 1 and 16)
+                    if (args.size() > 2 && args.get(2).equals("as")) {
+                        throw badDirective(format, null, where + ": as on a when is for a pack with layout sequential only");
+                    }
                     // a third token (`1, 2`) is bad-directive on every wire (ruling 23 of 0.20)
                     if (args.size() > 2) {
                         throw badDirective(format, null, where + ": a when value list has no spaces: a third token after the locator");
@@ -1440,6 +1445,8 @@ public final class Pack {
         if (version == null) throw new GtException(GtException.Code.MISSING_VERSION, format, null, source + ": no version line");
         if (wire == null) throw new GtException(GtException.Code.MISSING_WIRE, format, null, source + ": no wire line");
         if (deferred != null) throw deferred;
+        // engine-spec 0.30, ruling 16: the bans of ruling 9 need only key names; they come first of the whole-file checks
+        if (seq != null) seq.checkAsBans(format);
         if (!open.isEmpty()) {
             LineSpec g = open.peek();
             throw badDirective(format, g.locator, source + ":" + g.line + ": " + (g.gate ? "if " + g.locator : "group " + g.key) + " has no end");
