@@ -1,0 +1,9 @@
+{
+  "name": "sml-message-other-body",
+  "from": "sml-message",
+  "to": "sml-message",
+  "input": "7603000562006200726500000501710163123400",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "BSI TR-03109-1 Annex IV part b (SML 1.04) sections 5 and 6; bytes by tools/gen/sml-vectors.py; a GetProcParameter.Res body (tag 0x0501) has no case in the pack"
+}

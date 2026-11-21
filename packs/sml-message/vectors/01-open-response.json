@@ -1,0 +1,32 @@
+{
+  "name": "sml-message-open-response",
+  "from": "sml-message",
+  "to": "sml-message",
+  "input": "7603000162006200726500000101760101030a010b0a014841470001020304726202656b0164a70163123400",
+  "expect": "7603000162006200726500000101760101030a010b0a014841470001020304726202656b0164a70163123400",
+  "model": {
+    "sml.message_count": "6",
+    "sml.body_tag": "257",
+    "sml.group_no": "0",
+    "sml.crc16": "4660",
+    "time_ms": "1795253415000",
+    "sml.open_res_codepage.#": "0",
+    "sml.open_res_ref_time_choice": "2",
+    "sml.transaction_id.#": "2",
+    "sml.transaction_id[0].sml.transaction_id_byte": "0",
+    "sml.transaction_id[1].sml.transaction_id_byte": "1",
+    "sml.open_res_server_id.#": "10",
+    "sml.open_res_server_id[0].sml.open_res_server_id_byte": "10",
+    "sml.open_res_server_id[1].sml.open_res_server_id_byte": "1",
+    "sml.open_res_server_id[2].sml.open_res_server_id_byte": "72",
+    "sml.open_res_server_id[3].sml.open_res_server_id_byte": "65",
+    "sml.open_res_server_id[4].sml.open_res_server_id_byte": "71",
+    "sml.open_res_server_id[5].sml.open_res_server_id_byte": "0",
+    "sml.open_res_server_id[6].sml.open_res_server_id_byte": "1",
+    "sml.open_res_server_id[7].sml.open_res_server_id_byte": "2",
+    "sml.open_res_server_id[8].sml.open_res_server_id_byte": "3",
+    "sml.open_res_server_id[9].sml.open_res_server_id_byte": "4"
+  },
+  "source": "constructed",
+  "reference": "BSI TR-03109-1 Annex IV part b (SML 1.04) sections 5 and 6; bytes by tools/gen/sml-vectors.py; PublicOpen.Res with refTime as a timestamp; absent codepage and clientId are empty octet strings"
+}
