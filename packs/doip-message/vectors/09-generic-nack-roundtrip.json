@@ -1,0 +1,11 @@
+{
+  "name": "generic-nack-roundtrip",
+  "from": "doip-message",
+  "to": "doip-message",
+  "input": "02fd00000000000102",
+  "expect": "02fd00000000000102",
+  "model": {
+    "doip.nack_code": "2"
+  },
+  "source": "built by tools/gen/vehnet-vectors.py from values chosen there; layout restated from Wireshark packet-doip.c; expect derived there, no engine run"
+}

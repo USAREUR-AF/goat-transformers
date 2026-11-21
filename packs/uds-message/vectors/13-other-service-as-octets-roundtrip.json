@@ -1,0 +1,12 @@
+{
+  "name": "other-service-as-octets-roundtrip",
+  "from": "uds-message",
+  "to": "uds-message",
+  "input": "1902ff",
+  "expect": "1902ff",
+  "model": {
+    "uds.sid": "25",
+    "uds.data.#": "2"
+  },
+  "source": "built by tools/gen/vehnet-vectors.py from values chosen there; layout restated from python-udsoncan Request.py, Response.py and the service modules; a service the pack does not lay out (0x19) keeps its octets; expect derived there, no engine run"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "tester-present-suppressed-roundtrip",
+  "from": "uds-message",
+  "to": "uds-message",
+  "input": "3e80",
+  "expect": "3e80",
+  "model": {
+    "uds.sid": "62",
+    "uds.suppress_positive_response": "1",
+    "uds.subfunction": "0"
+  },
+  "source": "built by tools/gen/vehnet-vectors.py from values chosen there; layout restated from python-udsoncan Request.py, Response.py and the service modules; tester present with the positive response suppressed; expect derived there, no engine run"
+}

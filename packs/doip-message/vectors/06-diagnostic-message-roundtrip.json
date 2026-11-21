@@ -1,0 +1,14 @@
+{
+  "name": "diagnostic-message-roundtrip",
+  "from": "doip-message",
+  "to": "doip-message",
+  "input": "02fd8001000000070e80100122f190",
+  "expect": "02fd8001000000070e80100122f190",
+  "model": {
+    "doip.payload_type": "32769",
+    "doip.source_address": "3712",
+    "doip.target_address": "4097",
+    "doip.user_data.#": "3"
+  },
+  "source": "built by tools/gen/vehnet-vectors.py from values chosen there; layout restated from Wireshark packet-doip.c; a diagnostic message carrying a UDS read of the VIN; expect derived there, no engine run"
+}

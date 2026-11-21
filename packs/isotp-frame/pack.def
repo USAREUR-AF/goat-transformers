@@ -1,0 +1,60 @@
+# ISO-TP (ISO 15765-2) frame: the data field of one CAN or CAN FD frame, by frame type. Written by
+# tools/gen/vehnet-pack.py; do not edit by hand.
+format        isotp-frame
+version       0.1.0
+distribution  public
+source        "python-can-isotp, https://github.com/pylessard/python-can-isotp at commit 90ebb425c2f8156f7e6db873f1e467fa410463be, isotp/protocol.py (class PDU), MIT License, Copyright (c) 2017 Pier-Yves Lessard; layout restated, no code copied; ISO 15765-2 not used"
+uses          isotp
+wire          bits
+layout        sequential
+bit_order     msb
+
+kind  single-frame-escape
+when  8  0
+count  sf_escape_length  8
+group  isotp.data  count  @sf_escape_length
+  field  isotp.octet  8  uint
+end
+group  isotp.padding  rest
+  field  isotp.octet  8  uint
+end
+
+kind  single-frame
+when  4  0
+count  sf_length  4
+group  isotp.data  count  @sf_length
+  field  isotp.octet  8  uint
+end
+group  isotp.padding  rest
+  field  isotp.octet  8  uint
+end
+
+kind  first-frame-escape
+when  16  4096
+field  isotp.message_length  32  uint
+group  isotp.data  rest
+  field  isotp.octet  8  uint
+end
+
+kind  first-frame
+when  4  1
+field  isotp.message_length  12  uint
+group  isotp.data  rest
+  field  isotp.octet  8  uint
+end
+
+kind  consecutive-frame
+when  4  2
+field  isotp.sequence_number  4  uint
+group  isotp.data  rest
+  field  isotp.octet  8  uint
+end
+
+kind  flow-control
+when  4  3
+field  isotp.flow_status  4  uint
+field  isotp.block_size  8  uint
+field  isotp.st_min  8  uint
+group  isotp.padding  rest
+  field  isotp.octet  8  uint
+end

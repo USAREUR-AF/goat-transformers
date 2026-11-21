@@ -1,0 +1,13 @@
+{
+  "name": "first-frame-escape-roundtrip",
+  "from": "isotp-frame",
+  "to": "isotp-frame",
+  "input": "100000001388abcd",
+  "expect": "100000001388abcd",
+  "model": {
+    "@kind": "first-frame-escape",
+    "isotp.message_length": "5000",
+    "isotp.data.#": "2"
+  },
+  "source": "built by tools/gen/vehnet-vectors.py from values chosen there; layout restated from python-can-isotp isotp/protocol.py; a first frame with the escape value and a 32-bit length of 5000; expect derived there, no engine run"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "single-frame-roundtrip",
+  "from": "isotp-frame",
+  "to": "isotp-frame",
+  "input": "0322f190cccccccc",
+  "expect": "0322f190cccccccc",
+  "model": {
+    "@kind": "single-frame",
+    "isotp.data.#": "3",
+    "isotp.padding.#": "4"
+  },
+  "source": "built by tools/gen/vehnet-vectors.py from values chosen there; layout restated from python-can-isotp isotp/protocol.py; a single frame of three octets padded to eight with 0xCC; expect derived there, no engine run"
+}

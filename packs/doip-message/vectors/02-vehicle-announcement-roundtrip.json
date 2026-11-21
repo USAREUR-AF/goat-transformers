@@ -1,0 +1,17 @@
+{
+  "name": "vehicle-announcement-roundtrip",
+  "from": "doip-message",
+  "to": "doip-message",
+  "input": "02fd00040000002157304c3030303035315432313233343536100100005e0053af00005e0053af0000",
+  "expect": "02fd00040000002157304c3030303035315432313233343536100100005e0053af00005e0053af0000",
+  "model": {
+    "doip.payload_type": "4",
+    "doip.vin": "W0L000051T2123456",
+    "doip.logical_address": "4097",
+    "doip.eid": "00005e0053af",
+    "doip.gid": "00005e0053af",
+    "doip.further_action": "0",
+    "doip.sync_status": "0"
+  },
+  "source": "built by tools/gen/vehnet-vectors.py from values chosen there; layout restated from Wireshark packet-doip.c; a vehicle announcement with the sync status; expect derived there, no engine run"
+}

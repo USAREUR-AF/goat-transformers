@@ -1,0 +1,13 @@
+{
+  "name": "vehicle-identification-request-roundtrip",
+  "from": "doip-message",
+  "to": "doip-message",
+  "input": "ff00000100000000",
+  "expect": "ff00000100000000",
+  "model": {
+    "doip.version": "255",
+    "doip.inverse_version": "0",
+    "doip.payload_type": "1"
+  },
+  "source": "built by tools/gen/vehnet-vectors.py from values chosen there; layout restated from Wireshark packet-doip.c; a vehicle identification request with the default version 0xFF; expect derived there, no engine run"
+}

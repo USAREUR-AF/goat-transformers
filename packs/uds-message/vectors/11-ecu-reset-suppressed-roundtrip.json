@@ -1,0 +1,13 @@
+{
+  "name": "ecu-reset-suppressed-roundtrip",
+  "from": "uds-message",
+  "to": "uds-message",
+  "input": "1181",
+  "expect": "1181",
+  "model": {
+    "uds.sid": "17",
+    "uds.suppress_positive_response": "1",
+    "uds.subfunction": "1"
+  },
+  "source": "built by tools/gen/vehnet-vectors.py from values chosen there; layout restated from python-udsoncan Request.py, Response.py and the service modules; hard reset, response suppressed; expect derived there, no engine run"
+}

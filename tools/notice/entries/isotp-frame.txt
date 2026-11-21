@@ -1,0 +1,7 @@
+Packs isotp-frame, uds-message; modules isotp, uds
+  python-can-isotp, https://github.com/pylessard/python-can-isotp at commit
+  90ebb425c2f8156f7e6db873f1e467fa410463be (isotp/protocol.py), and
+  python-udsoncan, https://github.com/pylessard/python-udsoncan at commit
+  07d7be1fcfd17e41af9a30f1c5573774e45bcdbd (udsoncan/Request.py, Response.py
+  and services). MIT License, Copyright (c) 2017 Pier-Yves Lessard. Layouts
+  restated; no text copied.

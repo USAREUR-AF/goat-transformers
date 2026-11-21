@@ -1,0 +1,13 @@
+{
+  "name": "routing-activation-request-v1-oem-roundtrip",
+  "from": "doip-message",
+  "to": "doip-message",
+  "input": "01fe00050000000c0e8000010000000012345678",
+  "expect": "01fe00050000000c0e8000010000000012345678",
+  "model": {
+    "doip.version": "1",
+    "doip.activation_type": "1",
+    "doip.reserved_oem.#": "4"
+  },
+  "source": "built by tools/gen/vehnet-vectors.py from values chosen there; layout restated from Wireshark packet-doip.c; version 1: a 16-bit activation type, and the OEM field present; expect derived there, no engine run"
+}

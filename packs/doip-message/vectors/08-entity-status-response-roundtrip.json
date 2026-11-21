@@ -1,0 +1,14 @@
+{
+  "name": "entity-status-response-roundtrip",
+  "from": "doip-message",
+  "to": "doip-message",
+  "input": "02fd40020000000700040100001000",
+  "expect": "02fd40020000000700040100001000",
+  "model": {
+    "doip.node_type": "0",
+    "doip.max_sockets": "4",
+    "doip.current_sockets": "1",
+    "doip.max_data_size": "4096"
+  },
+  "source": "built by tools/gen/vehnet-vectors.py from values chosen there; layout restated from Wireshark packet-doip.c; expect derived there, no engine run"
+}

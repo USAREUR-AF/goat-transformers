@@ -1,0 +1,8 @@
+{
+  "name": "cut-payload-is-malformed",
+  "from": "doip-message",
+  "to": "doip-message",
+  "input": "02fd8001000000070e80100122f1",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/vehnet-vectors.py from values chosen there; layout restated from Wireshark packet-doip.c; the payload length states one octet more than the input holds; expect derived there, no engine run"
+}

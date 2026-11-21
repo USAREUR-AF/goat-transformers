@@ -1,0 +1,13 @@
+# The isotp module: ISO-TP frame fields. Written by tools/gen/vehnet-pack.py.
+module        isotp
+version       0.1.0
+distribution  public
+source        "python-can-isotp, https://github.com/pylessard/python-can-isotp at commit 90ebb425c2f8156f7e6db873f1e467fa410463be, isotp/protocol.py (class PDU), MIT License, Copyright (c) 2017 Pier-Yves Lessard; layout restated, no code copied; ISO 15765-2 not used"
+list  data             "the payload octets of the frame (single frame: as many as its length says; first and consecutive frame: the rest of the frame, padding included)"
+list  padding          "single frame and flow control: the octets after the data or the flow control fields (the CAN frame's padding)"
+key   message_length   int     -  "first frame: the length of the whole message in octets (12 bits, or 32 bits after the escape value 0)"
+key   sequence_number  int     -  "consecutive frame: the sequence number, 0 to 15"
+key   flow_status      int     -  "flow control: 0 continue to send, 1 wait, 2 overflow"
+key   block_size       int     -  "flow control: consecutive frames to send before the next flow control (0: no limit)"
+key   st_min           int     -  "flow control: minimum separation time, 0x00-0x7F milliseconds, 0xF1-0xF9 100 to 900 microseconds"
+key   octet            int     -  "one octet"
