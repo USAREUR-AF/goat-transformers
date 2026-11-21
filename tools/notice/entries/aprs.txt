@@ -1,0 +1,14 @@
+Pack aprs; module aprs
+  APRS Protocol Reference, Protocol Version 1.0, document version 1.0.1,
+  APRS Working Group, technical editor Ian Wade, 29 August 2000 (TAPR
+  publication 99-4), http://www.aprs.org/doc/APRS101.PDF. Field order and
+  widths restated; no text, table or example copied. LicenseRef-APRS-NC
+  (non-commercial). The reference asks that copies carry its copyright and
+  trademark statements in full:
+
+    Copyright ©2000 APRS Working Group
+    All rights reserved
+
+    APRS® is a registered trademark of Bob Bruninga.
+    WinAPRS™, MacAPRS™, X-APRS™, PalmAPRS™ and APRS/CE™
+    are trademarks using the APRS® name, licensed from Bob Bruninga.
