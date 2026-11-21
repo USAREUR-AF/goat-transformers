@@ -1,0 +1,5 @@
+Packs sbp-*; modules sbp, sbp<package>
+  Swift Navigation Binary Protocol message definitions (libsbp spec/yaml),
+  https://github.com/swift-nav/libsbp tag v6.5.2. MIT License, Copyright (c)
+  2015-2021 Swift Navigation. Message names and type ids, field names, types,
+  sizes and units only.

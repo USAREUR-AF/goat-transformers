@@ -1,0 +1,4 @@
+Packs gnmi-*; modules gnmi*
+  gNMI protobuf definitions, https://github.com/openconfig/gnmi. Apache
+  License, Version 2.0, Copyright Google Inc. Field numbers, names and types
+  only.

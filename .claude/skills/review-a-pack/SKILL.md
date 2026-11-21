@@ -27,7 +27,8 @@ $X list-formats $P
       allows this use. If the license is unclear or restrictive, stop and ask
       a person.
 - [ ] `PROVENANCE.md` gives, for each source file, where to obtain it, the
-      version or commit, and the SHA-256. The source is listed in `NOTICE`.
+      version or commit, and the SHA-256. The source has an entry in
+      `tools/notice/entries/<name>.txt`.
 - [ ] No source file is in the tree (no schema, no standard document), and no
       passage of a standard is copied into `pack.md` or comments.
 - [ ] `python3 -I tools/boundary-gate` prints `boundary-gate: ok`.

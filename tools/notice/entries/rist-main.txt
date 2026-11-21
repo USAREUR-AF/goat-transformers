@@ -1,0 +1,7 @@
+Pack rist-main
+  From VSF TR-06-2:2024, RIST Protocol Specification, Main Profile, Video
+  Services Forum. Copyright 2024 Video Services Forum. Licensed under the
+  Creative Commons Attribution-NoDerivatives 4.0 International License,
+  https://creativecommons.org/licenses/by-nd/4.0/. The document is
+  implemented, not modified or redistributed. The document notes a patent
+  claim by VIDEO-FLOW LTD on its sections 5, 6 and 7.

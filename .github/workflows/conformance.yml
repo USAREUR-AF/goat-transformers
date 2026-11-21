@@ -68,6 +68,11 @@ jobs:
         run: python3 -I tools/doc-sections.py --check
       - name: Licences and profiles
         run: python3 -I tools/licences.py --check
+      # NOTICE is written from one file per source in tools/notice/entries/;
+      # a stale NOTICE is a note (the counts pull request writes it), a
+      # paragraph added to NOTICE itself is a failure.
+      - name: Third-party notices
+        run: python3 -I tools/notice.py --check
       - name: REUSE lint
         run: |
           python3 -m pip install --quiet --disable-pip-version-check reuse==6.3.0

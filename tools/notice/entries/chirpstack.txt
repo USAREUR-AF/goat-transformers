@@ -1,0 +1,4 @@
+Packs chirpstack-* (generated)
+  From chirpstack api/proto (common, gw, integration, stream),
+  https://github.com/chirpstack/chirpstack tag v4.20.0 commit 8b568858.
+  Copyright (c) 2022 Orne Brocaar. MIT License. No code or comments copied.

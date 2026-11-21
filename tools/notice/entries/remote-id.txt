@@ -1,0 +1,4 @@
+Pack remote-id; module rid
+  opendroneid-core-c, the reference implementation of ASTM F3411 message
+  contents. https://github.com/opendroneid/opendroneid-core-c
+  Copyright (C) 2019 Intel Corporation. Apache License, Version 2.0.

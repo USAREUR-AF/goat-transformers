@@ -1,0 +1,7 @@
+Packs dbc-* (90); modules dbc<file>
+  CAN DBC files of opendbc, https://github.com/commaai/opendbc. MIT License,
+  Copyright (c) 2020 Comma.ai, Inc. Message and signal names, layouts, scales
+  and value tables; no code. The SocketCAN can_frame layout restated from the
+  Linux UAPI header include/uapi/linux/can.h (GPL-2.0 WITH Linux-syscall-note).
+  Test inputs only: four DBC files of cantools, https://github.com/cantools/cantools,
+  MIT License, Copyright (c) 2015-2019 Erik Moqvist.

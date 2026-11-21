@@ -1,0 +1,3 @@
+Pack cot-xml; module core
+  Cursor on Target event schema, The MITRE Corporation, approved for public
+  release.

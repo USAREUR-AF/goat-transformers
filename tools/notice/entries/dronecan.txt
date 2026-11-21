@@ -1,0 +1,4 @@
+Packs dronecan-* (133); modules dc<namespace> (41)
+  DroneCAN DSDL data type definitions, https://github.com/dronecan/DSDL.
+  MIT License, Copyright (c) 2014-2015 Pavel Kirienko. Type names, field
+  names, types and array forms only.

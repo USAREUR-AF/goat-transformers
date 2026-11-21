@@ -1,0 +1,5 @@
+Pack rtcm3; module rtcm3
+  RTCM 3 message definitions of pyrtcm, https://github.com/semuconsulting/pyrtcm
+  v1.2.1. BSD 3-Clause License, Copyright (c) 2020 semuadmin (Steve Smith).
+  Message and data field numbers, types, bit sizes and resolutions only; read
+  from the definition files, which are not run.

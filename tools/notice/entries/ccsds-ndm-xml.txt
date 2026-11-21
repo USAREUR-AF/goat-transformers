@@ -1,0 +1,6 @@
+Pack ccsds-ndm-xml; module ccsdsndm
+  CCSDS Navigation Data Messages XML schema set 4.0.0 (CCSDS 505.0-B-3),
+  https://sanaregistry.org/r/ndmxml_unqualified; keyword meanings from CCSDS
+  502.0-B-3 and 504.0-B-2. Reused with attribution under the CCSDS
+  Reproduction Permission Statement for Publications. Element and attribute
+  names and types only.

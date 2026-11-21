@@ -1,0 +1,7 @@
+Module ipfix (used by the ipfix-*, netflow9-* and netflow5 packs)
+  IANA registry IPFIX Information Elements,
+  https://www.iana.org/assignments/ipfix/ (updated 2026-09-11). The IANA and
+  IETF joint statement on the Protocol Registries places any rights in the
+  registries under the Creative Commons CC0 1.0 dedication
+  (https://www.iana.org/help/licensing-terms). Element numbers, names, types,
+  semantics and units only.

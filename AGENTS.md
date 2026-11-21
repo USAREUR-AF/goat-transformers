@@ -108,6 +108,7 @@ Run from the repository root unless a directory is named.
 | A core or track change carries an ADR | `python3 -I tools/model-governance.py --base origin/main` (CI on every pull request) |
 | Sections shared by README.md and the site (`docs/<name>-section.md`) | `python3 -I tools/doc-sections.py` writes them into both; `--check` (CI) fails when either is stale. Edit the source, never the copies |
 | Licences and profiles (`LICENSING.md`, `licences.json`) | `python3 -I tools/licences.py` writes them (the counts pull request); `--check` (CI) fails on a pack with no known licence (stale files are a note); `--check-current` (counts PR) also fails on stale files; `--list --profile open`; `reuse lint` (pip `reuse`) |
+| Third-party notices (`NOTICE`) | `python3 -I tools/notice.py` writes it from `tools/notice/header.txt` and one file per source in `tools/notice/entries/` (the counts pull request); `--check` (CI) fails on a malformed entry file or on a paragraph added to `NOTICE` itself (a stale `NOTICE` is a note); `--check-current` (counts PR) also fails when `NOTICE` is stale |
 | Tool vectors of an engine's command-line tool (spec 0.23) | `python3 -I tools/tool-vectors.py -- <the tool's command>`, e.g. `-- engines/rust/target/release/goat-xf` |
 | Markdown tables of README.md and docs/ are whole | `python3 -I tools/markdown-tables.py` (CI): no blank line inside a table, every row the header's number of cells |
 | Go | `cd engines/go && go vet ./... && go test ./...` |
@@ -148,7 +149,8 @@ The `add-a-format` skill has the full steps. In short:
    catalog, add a module `model/<module>.def` of raw keys and `uses <module>`.
 4. Add vectors under `packs/<format>/vectors/`: a round trip, and a conversion
    to and from one or more other formats, with independently derived `expect`.
-5. Write `pack.md` and `PROVENANCE.md`; add the source to `NOTICE`. If the
+5. Write `pack.md` and `PROVENANCE.md`; add the source's entry as a new file
+   `tools/notice/entries/<name>.txt` (not to `NOTICE`, which is generated). If the
    pack maps `hae` or another height, `pack.md` names its vertical datum in
    the passage about it (the WGS 84 ellipsoid, mean sea level or the geoid,
    barometric, above ground or take-off, or that the source states none).
@@ -162,8 +164,8 @@ The `add-a-format` skill has the full steps. In short:
    `LicenseRef-<name>` with its text in `LICENSES/`), and for a module of the
    same source `model/<module>.def.license` (a REUSE companion file: the
    copyright line and the licence line, as REUSE writes them); add the id to `licences.toml` if it is new.
-   Do not edit the root `REUSE.toml`, `LICENSING.md` or `licences.json`: the
-   counts pull request regenerates the last two. Put the pack in its family's
+   Do not edit the root `REUSE.toml`, `LICENSING.md`, `licences.json` or
+   `NOTICE`: the counts pull request regenerates the last three. Put the pack in its family's
    file in `tools/catalog-families/`, or add a file for a new family.
 7. Run all seven engines and the gate, and `python3 -I tools/model-checks.py
    --check`: every value the pack's vectors decode must be plausible for its

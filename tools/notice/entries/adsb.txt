@@ -1,0 +1,8 @@
+Pack adsb; module adsb
+  Junzi Sun, "The 1090 Megahertz Riddle: A Guide to Decoding Mode S and ADS-B
+  Signals", second edition, TU Delft OPEN Publishing.
+  https://mode-s.org/1090mhz/  Copyright 2021 Junzi Sun. CC BY-NC-SA 4.0.
+  Field positions, widths, code meanings and five example messages; no text,
+  table or figure.
+  pyModeS, https://github.com/junzis/pyModeS  GNU General Public License,
+  Version 3. Published test messages and their decoded values; no code.

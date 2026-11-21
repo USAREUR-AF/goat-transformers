@@ -1,0 +1,5 @@
+Pack mds; module mds
+  Mobility Data Specification 2.0 data models, Open Mobility Foundation,
+  https://github.com/openmobilityfoundation/mds-openapi. Creative Commons
+  Attribution 4.0. The pack restates their structure and is not endorsed by
+  the Open Mobility Foundation.

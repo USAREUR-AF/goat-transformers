@@ -1,0 +1,3 @@
+Pack dbc-tesla-model3; module dbcteslamodel3
+  Tesla Model 3 / Model Y CAN DBC, https://github.com/joshwardell/model3dbc.
+  MIT License, Copyright (c) 2019 Josh Wardell.

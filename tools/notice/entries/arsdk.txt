@@ -1,0 +1,6 @@
+Packs arsdk-*; modules arsdk*
+  Parrot ARSDK message definitions (xml/), https://github.com/Parrot-Developers/arsdk-xml
+  commit 2299c689, each file under its BSD 3-Clause header (Copyright (C)
+  Parrot SA, Parrot Drones SAS); the command encoding from
+  https://github.com/Parrot-Developers/libARCommands and libARSAL (BSD 3-Clause,
+  Copyright (C) 2014 Parrot SA). Names, ids and types only.

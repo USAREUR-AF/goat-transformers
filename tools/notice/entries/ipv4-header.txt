@@ -1,0 +1,12 @@
+Packs ipv4-header, ipv6-header, udp-header, tcp-header, icmp-header,
+ntp-header, dns-header, rtp-header, rtcp-header, arp-ipv4-ethernet,
+gre-header, vxlan-header, mpls-label-entry, igmpv2, sctp-common-header,
+bfd-control, igmpv3, icmpv6-header, coap-header, tls-record-header,
+dtls-record-header, bgp-header, ospfv2-header, vrrpv3-ipv4, vrrpv3-ipv6,
+ripv2-header, geneve-header; module inet
+  IETF RFC 791, 768, 792, 826, 894, 1035, 2236, 2328, 2453, 2784, 2890, 3032,
+  3376, 3550, 4271, 4443, 4861, 5462, 5880, 5905, 7252, 7348, 8200, 8446,
+  8926, 9147, 9260, 9293 and 9568, https://www.rfc-editor.org/ (IETF Trust,
+  BCP 78, where the document states it; Internet Society copyright for RFC
+  2236, 2328, 2453, 2784, 2890, 3032, 3376, 3550, 4271 and 4443, the last two
+  with BCP 78). Field layouts restated.

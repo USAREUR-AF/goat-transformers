@@ -1,0 +1,6 @@
+Packs px4-ulog-*; module px4ulog
+  PX4 uORB message definitions, https://github.com/PX4/PX4-Autopilot tag
+  v1.17.0. BSD 3-Clause License, Copyright (c) 2012-2023 PX4 Development Team.
+  Field names, types and array lengths only. The layout rule follows PX4's
+  Tools/msg uORB generator (BSD) and the ULog file format document (CC BY
+  4.0), restated.

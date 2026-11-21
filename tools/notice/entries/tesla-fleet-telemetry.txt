@@ -1,0 +1,4 @@
+Pack tesla-fleet-telemetry; module teslafleet
+  Tesla Fleet Telemetry vehicle_data.proto, from
+  https://github.com/teslamotors/fleet-telemetry. Apache License, Version 2.0.
+  Field numbers, names and types only.

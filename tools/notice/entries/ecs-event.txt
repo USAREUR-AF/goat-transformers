@@ -1,0 +1,4 @@
+Pack ecs-event; module ecsevent
+  Elastic Common Schema v9.5.0, https://github.com/elastic/ecs tag v9.5.0.
+  Copyright 2018-2021 Elasticsearch B.V. Apache License, Version 2.0. Field
+  names and types only.

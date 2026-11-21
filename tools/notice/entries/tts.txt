@@ -1,0 +1,5 @@
+Packs tts-* (generated)
+  From The Things Stack api/ttn/lorawan/v3 (messages.proto and its imports),
+  https://github.com/TheThingsNetwork/lorawan-stack tag v3.37.0 commit
+  0bfcfcd2. Copyright The Things Network Foundation, The Things Industries
+  B.V. Apache License 2.0. No code or comments copied.

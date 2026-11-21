@@ -1,0 +1,5 @@
+Packs esphome-* (generated)
+  Field numbers, names and types from aioesphomeapi api.proto and
+  api_options.proto, https://github.com/esphome/aioesphomeapi tag v46.30.1
+  commit e3447e7b. Copyright (c) 2018 Otto Winter. MIT License. No code or
+  comments copied.

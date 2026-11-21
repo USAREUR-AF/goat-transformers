@@ -1,0 +1,3 @@
+Pack geobuf; module geobuf
+  geobuf.proto, https://github.com/mapbox/geobuf. ISC License, Copyright (c)
+  Mapbox. Field numbers, names and types only.

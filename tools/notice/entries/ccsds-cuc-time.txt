@@ -1,0 +1,8 @@
+Packs ccsds-cuc-time, ccsds-cds-time, ccsds-ccs-time, ccsds-encap-packet;
+modules ccsdstime, ccsdsep
+  CCSDS 301.0-B-4 Time Code Formats (November 2010, EC 1),
+  https://ccsds.org/Pubs/301x0b4e1.pdf; CCSDS 133.1-B-3 Encapsulation Packet
+  Protocol (May 2020, EC 1), https://ccsds.org/Pubs/133x1b3e1.pdf.
+  Consultative Committee for Space Data Systems. Reused with attribution under
+  the CCSDS Reproduction Permission Statement for Publications. Field
+  positions, widths and values only; no text, table or figure.

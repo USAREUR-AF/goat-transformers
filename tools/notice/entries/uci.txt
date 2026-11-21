@@ -1,0 +1,5 @@
+Pack uci; module uci
+  Universal Command and Control Interface (UCI) schema 2.6 (version 002.6.0),
+  U.S. Air Force. https://github.com/open-arsenal/uci
+  File header: Distribution Statement A. Approved for public release:
+  distribution is unlimited.

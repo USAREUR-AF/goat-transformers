@@ -1,0 +1,6 @@
+Packs dhcpv6-options, edns0-options; modules dhcpv6, edns0
+  IETF RFC 9915 (DHCPv6, section 21) and RFC 6891 (EDNS(0), section 6.1.2),
+  https://www.rfc-editor.org/ (IETF Trust, BCP 78). Option formats and sizes
+  restated. Option codes and names from the IANA registries DHCPv6 Option
+  Codes and DNS EDNS0 Option Codes (OPT), CC0 1.0 per the IANA and IETF joint
+  statement of 10 November 2021.

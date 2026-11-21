@@ -1,0 +1,4 @@
+Pack gdl90; module gdl90
+  Stratux, https://github.com/cyoung/stratux. Copyright (c) 2015-2016
+  Christopher Young. BSD 3-Clause License. Message layouts restated from its
+  GDL 90 and ForeFlight message builders; no code.

@@ -1,0 +1,7 @@
+Packs meshtastic-position, -user, -telemetry, -waypoint, -tak-packet,
+-neighbor-info, -route-discovery, -routing, -store-and-forward, -paxcount,
+-map-report; modules meshtastic*
+  Meshtastic protobuf definitions, https://github.com/meshtastic/protobufs.
+  The repository's LICENSE is the GNU General Public License, Version 3; the
+  .proto files carry no license or copyright header. Field numbers, names and
+  types only.

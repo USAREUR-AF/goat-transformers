@@ -1,0 +1,4 @@
+Packs nitf-tre-* (30); module nitftre
+  GDAL frmts/nitf/data/nitf_spec.xml, https://github.com/OSGeo/gdal.
+  Copyright (c) 2011 Even Rouault. MIT License. TRE field names, lengths and
+  order; no code.

@@ -1,0 +1,6 @@
+Packs gbfs-*; modules gbfs*
+  General Bikeshare Feed Specification (GBFS) JSON Schemas, MobilityData,
+  https://github.com/MobilityData/gbfs-json-schema. Apache License, Version
+  2.0. They describe the GBFS specification, https://github.com/MobilityData/gbfs
+  (Creative Commons Attribution 3.0). The packs restate the schemas' structure
+  and are not endorsed by MobilityData.

@@ -1,0 +1,6 @@
+Pack unicore; module unicore
+  Unicore UNI binary message definitions of pyunigps,
+  https://github.com/semuconsulting/pyunigps v1.0.1. BSD 3-Clause License,
+  Copyright (c) 2020 semuadin (Steve Smith) (the upstream spelling). Message
+  names and IDs, field names, types, scales and bit widths only; read from the
+  definition files, which are not run.

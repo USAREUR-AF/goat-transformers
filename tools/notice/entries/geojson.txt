@@ -1,0 +1,2 @@
+Pack geojson
+  IETF RFC 7946, The GeoJSON Format.

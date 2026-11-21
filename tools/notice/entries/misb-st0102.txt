@@ -1,0 +1,8 @@
+Pack misb-st0102; module misb0102
+  MISB ST 0102.12, Security Metadata Universal and Local Sets for Motion
+  Imagery Data, Motion Imagery Standards Board. NSG Registry public document
+  store, doc/view?i=4422. The registry states that materials in its public
+  portions are in the public domain, released for public use, or fair use of
+  copyright material; the document carries no distribution statement and no
+  license text. Item tags, types, lengths and code values only; no text,
+  table, figure or example.

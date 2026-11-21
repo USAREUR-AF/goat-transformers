@@ -1,0 +1,4 @@
+Packs sapient, sapient-v1; modules sapient, sapient1
+  SAPIENT protobuf files, BSI Flex 335 v2.0 and v1.0, Defence Science and
+  Technology Laboratory (Dstl). https://github.com/dstl/SAPIENT-Proto-Files
+  Crown owned Copyright 2023. Apache License, Version 2.0.

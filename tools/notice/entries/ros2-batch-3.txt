@@ -1,0 +1,32 @@
+ROS 2 message packages, batch 3 (field names, types, array forms and
+constant names only; no comment text):
+  navigation2 (nav2_msgs: Apache License 2.0; nav_2d_msgs, dwb_msgs: BSD
+  3-Clause), https://github.com/ros-navigation/navigation2.
+  control_msgs, https://github.com/ros-controls/control_msgs, BSD 3-Clause,
+  Copyright 2025 ros2_control Development Team.
+  controller_manager_msgs, https://github.com/ros-controls/ros2_control, BSD
+  (package.xml; repository LICENSE Apache License 2.0).
+  moveit_msgs, https://github.com/moveit/moveit_msgs, BSD.
+  octomap_msgs, https://github.com/OctoMap/octomap_msgs, BSD (package.xml).
+  object_recognition_msgs, https://github.com/wg-perception/object_recognition_msgs,
+  BSD (package.xml).
+  px4_msgs, https://github.com/PX4/px4_msgs, BSD 3-Clause, Copyright (c) 2019
+  PX4 Development Team.
+  autoware_msgs, https://github.com/autowarefoundation/autoware_msgs, Apache
+  License 2.0.
+  ublox_msgs, https://github.com/KumarRobotics/ublox, BSD, Copyright (c) 2012
+  Johannes Meyer, TU Darmstadt.
+  novatel_gps_msgs, https://github.com/swri-robotics/novatel_gps_driver, BSD
+  3-Clause, Copyright (c) 2017-2019 Southwest Research Institute.
+  foxglove_msgs, https://github.com/foxglove/schemas, MIT, Copyright (c)
+  Foxglove Technologies Inc.
+  velodyne_msgs, https://github.com/ros-drivers/velodyne, Modified BSD,
+  Copyright (C) 2010-2013 Austin Robot Technology, and others.
+  ouster_msgs, https://github.com/ros-drivers/ros2_ouster_drivers, Apache
+  License 2.0.
+  ouster_sensor_msgs, https://github.com/ouster-lidar/ouster-ros, BSD
+  3-Clause, Copyright 2018-2023 Ouster, Inc.
+  realsense2_camera_msgs, https://github.com/IntelRealSense/realsense-ros,
+  Apache License 2.0.
+  rmf_*_msgs, https://github.com/open-rmf/rmf_internal_msgs and
+  rmf_building_map_msgs, Apache License 2.0.

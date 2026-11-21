@@ -1,0 +1,4 @@
+Pack openxc-vehicle-message; module openxc
+  OpenXC message format openxc.proto, https://github.com/openxc/openxc-message-format.
+  BSD 3-Clause License, Copyright (c) 2012 Ford Motor Company. Field numbers,
+  names and types only.

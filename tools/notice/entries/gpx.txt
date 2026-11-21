@@ -1,0 +1,5 @@
+Pack gpx; module gpx
+  GPX 1.1 schema (GPS Exchange Format), TopoGrafix.
+  https://www.topografix.com/GPX/1/1/gpx.xsd
+  Published as an open standard; element and attribute names, types and
+  ranges only.

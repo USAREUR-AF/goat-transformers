@@ -1,0 +1,6 @@
+Packs openconfig-*; modules openconfig*
+  OpenConfig data models, https://github.com/openconfig/public tag v5.11.0
+  (commit 160da73440205de252066233b1ee0f3085d51d2d), release/models and
+  third_party/ietf. Apache License, Version 2.0; the IETF modules under
+  third_party/ietf carry the IETF Trust copyright and the Simplified or Revised
+  BSD License as above. Node names, types and value ranges only.

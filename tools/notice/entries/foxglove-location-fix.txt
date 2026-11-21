@@ -1,0 +1,4 @@
+Pack foxglove-location-fix; module foxglove
+  Foxglove schemas (LocationFix, LocationFixes, Color, KeyValuePair, Vector3), protobuf, from
+  https://github.com/foxglove/foxglove-sdk. MIT License, Copyright (c) Foxglove
+  Technologies Inc. Field numbers, names and types only.

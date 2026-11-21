@@ -1,0 +1,5 @@
+Packs osm-pbf-blob-header, osm-pbf-header, osm-pbf-primitive; module osmpbf
+  OpenStreetMap PBF definitions fileformat.proto and osmformat.proto, from
+  https://github.com/openstreetmap/OSM-binary. MIT License (Copyright (c) 2010
+  Scott A. Crosby; Copyright (c) OpenStreetMap developers). Field numbers,
+  names and types only.

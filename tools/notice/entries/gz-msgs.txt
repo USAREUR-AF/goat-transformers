@@ -1,0 +1,5 @@
+Packs gz-msgs-*; modules gzmsgs*
+  Gazebo messages (gz-msgs), release gz-msgs12_12.0.0, protobuf definitions,
+  https://github.com/gazebosim/gz-msgs. Apache License, Version 2.0, Copyright
+  Open Source Robotics Foundation and others. Field numbers, names and types
+  only.

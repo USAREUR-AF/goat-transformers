@@ -1,0 +1,5 @@
+Packs ardupilot-log-*; module aplog
+  ArduPilot log message definitions (log structure tables and Write calls),
+  https://github.com/ArduPilot/ardupilot tag Copter-4.6.2. GNU General Public
+  License, version 3. Message names, format strings, labels, units and
+  multipliers only.

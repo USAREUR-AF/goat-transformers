@@ -1,0 +1,3 @@
+Pack stac-item; module stac
+  SpatioTemporal Asset Catalog (STAC) 1.1.0 Item JSON Schema,
+  https://github.com/radiantearth/stac-spec. Apache License, Version 2.0.

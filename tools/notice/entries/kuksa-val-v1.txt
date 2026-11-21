@@ -1,0 +1,5 @@
+Packs kuksa-val-v1-*, kuksa-val-v2-*; modules kuksaval*
+  Eclipse KUKSA.val API definitions (kuksa/val/v1, kuksa/val/v2), from
+  https://github.com/eclipse-kuksa/kuksa-proto. Apache License 2.0, Copyright
+  (c) Contributors to the Eclipse Foundation. Field numbers, names and types
+  only.

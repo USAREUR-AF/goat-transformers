@@ -1,0 +1,5 @@
+Pack vss-vehicle; module vssvehicle
+  COVESA Vehicle Signal Specification v6.1,
+  https://github.com/COVESA/vehicle_signal_specification tag v6.1. Copyright
+  (c) 2016 Contributors to COVESA. Mozilla Public License 2.0. The pack
+  restates the signal tree's structure.
