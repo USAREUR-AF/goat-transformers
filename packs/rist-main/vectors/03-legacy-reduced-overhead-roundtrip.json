@@ -1,0 +1,13 @@
+{
+  "name": "legacy-reduced-overhead-roundtrip",
+  "from": "rist-main",
+  "to": "rist-main",
+  "input": "000088b61770177180600001000000640a0b0c0d6d65646961",
+  "expect": "000088b61770177180600001000000640a0b0c0d6d65646961",
+  "model": {
+    "inet.gre_protocol_type": "34998",
+    "rist.rv": "0",
+    "rist.udp_source_port": "6000"
+  },
+  "source": "built by tools/gen/media-vectors.py from values chosen there; layout restated from VSF TR-06-2:2024 sections 5.1 to 5.6, RFC 2784 and RFC 2890; a reduced overhead packet in the legacy encapsulation (EtherType 0x88B6); expect derived there, no engine run"
+}

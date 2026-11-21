@@ -1,0 +1,12 @@
+{
+  "name": "other-profile-roundtrip",
+  "from": "rtp-header-extension",
+  "to": "rtp-header-extension",
+  "input": "0001000101020304",
+  "expect": "0001000101020304",
+  "model": {
+    "rtpx.profile": "1",
+    "rtpx.ext_octets.#": "4"
+  },
+  "source": "built by tools/gen/media-vectors.py from values chosen there; layout restated from RFC 8285 section 4; an extension of another profile, kept as octets; expect derived there, no engine run"
+}

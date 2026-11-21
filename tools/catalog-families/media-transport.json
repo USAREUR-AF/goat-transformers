@@ -1,0 +1,12 @@
+{
+  "name": "Media transport (MPEG-TS, SRT, RIST, WebRTC DCEP, RTP)",
+  "domain": "networks",
+  "exact": [
+    "mpegts-packet",
+    "srt-packet",
+    "rist-main",
+    "dcep",
+    "rtp-packet",
+    "rtp-header-extension"
+  ]
+}

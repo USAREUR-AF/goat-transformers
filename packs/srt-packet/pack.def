@@ -1,0 +1,200 @@
+# SRT packet (draft-sharabayko-srt-01): the data packet and the control packets with the handshake
+# and its extensions. Public. Written by tools/gen/media-pack.py; do not edit by hand.
+format        srt-packet
+version       0.1.0
+distribution  public
+source        "IETF Internet-Draft draft-sharabayko-srt-01, The SRT Protocol, September 2021, https://www.ietf.org/archive/id/draft-sharabayko-srt-01.txt (sha256 5a8dd79821c44c33b8292b5753213715b1b4293338f74684a01a8ccc57933e3b), IETF Trust (BCP 78); layout restated"
+uses          srt
+wire          bits
+layout        sequential
+bit_order     msb
+
+kind    data
+when    1  0
+field  srt.packet_seq  31  uint
+field  srt.position  2  uint
+field  srt.in_order  1  uint
+field  srt.key_flags  2  uint
+field  srt.retransmitted  1  uint
+field  srt.message_number  26  uint
+field  srt.timestamp  32  uint
+field  srt.dest_socket_id  32  uint
+group  srt.payload  rest
+  field  srt.octet  8  uint
+end
+
+kind    control
+when    1  1
+field  srt.control_type  15  uint
+field  srt.subtype  16  uint
+field  srt.type_specific  32  uint
+field  srt.timestamp  32  uint
+field  srt.dest_socket_id  32  uint
+switch  srt.control_type
+  case  0                       # HANDSHAKE
+    field  srt.hs_version  32  uint
+    field  srt.encryption  16  uint
+    field  srt.extension_field  16  uint
+    field  srt.hs_reserved  1  uint
+    field  srt.initial_seq  31  uint
+    field  srt.mtu  32  uint
+    field  srt.flow_window  32  uint
+    field  srt.handshake_type  32  uint
+    field  srt.srt_socket_id  32  uint
+    field  srt.syn_cookie  32  uint
+    field  srt.peer_ip  128  hex
+    group  srt.extensions  rest
+      field  srt.ext_type  16  uint
+      switch  srt.ext_type
+        case  1,2
+          field  srt.ext_length  16  uint
+          field  srt.srt_version  32  uint
+          field  srt.srt_flags  32  uint
+          field  srt.receiver_tsbpd_delay  16  uint
+          field  srt.sender_tsbpd_delay  16  uint
+        else
+          field  srt.ext_length  16  uint
+          switch  srt.ext_length
+            case  0
+            case  1
+              field  srt.ext_content  32  hex
+            case  2
+              field  srt.ext_content  64  hex
+            case  3
+              field  srt.ext_content  96  hex
+            case  4
+              field  srt.ext_content  128  hex
+            case  5
+              field  srt.ext_content  160  hex
+            case  6
+              field  srt.ext_content  192  hex
+            case  7
+              field  srt.ext_content  224  hex
+            case  8
+              field  srt.ext_content  256  hex
+            case  9
+              field  srt.ext_content  288  hex
+            case  10
+              field  srt.ext_content  320  hex
+            case  11
+              field  srt.ext_content  352  hex
+            case  12
+              field  srt.ext_content  384  hex
+            case  13
+              field  srt.ext_content  416  hex
+            case  14
+              field  srt.ext_content  448  hex
+            case  15
+              field  srt.ext_content  480  hex
+            case  16
+              field  srt.ext_content  512  hex
+            case  17
+              field  srt.ext_content  544  hex
+            case  18
+              field  srt.ext_content  576  hex
+            case  19
+              field  srt.ext_content  608  hex
+            case  20
+              field  srt.ext_content  640  hex
+            case  21
+              field  srt.ext_content  672  hex
+            case  22
+              field  srt.ext_content  704  hex
+            case  23
+              field  srt.ext_content  736  hex
+            case  24
+              field  srt.ext_content  768  hex
+            case  25
+              field  srt.ext_content  800  hex
+            case  26
+              field  srt.ext_content  832  hex
+            case  27
+              field  srt.ext_content  864  hex
+            case  28
+              field  srt.ext_content  896  hex
+            case  29
+              field  srt.ext_content  928  hex
+            case  30
+              field  srt.ext_content  960  hex
+            case  31
+              field  srt.ext_content  992  hex
+            case  32
+              field  srt.ext_content  1024  hex
+            case  33
+              field  srt.ext_content  1056  hex
+            case  34
+              field  srt.ext_content  1088  hex
+            case  35
+              field  srt.ext_content  1120  hex
+            case  36
+              field  srt.ext_content  1152  hex
+            case  37
+              field  srt.ext_content  1184  hex
+            case  38
+              field  srt.ext_content  1216  hex
+            case  39
+              field  srt.ext_content  1248  hex
+            case  40
+              field  srt.ext_content  1280  hex
+            case  41
+              field  srt.ext_content  1312  hex
+            case  42
+              field  srt.ext_content  1344  hex
+            case  43
+              field  srt.ext_content  1376  hex
+            case  44
+              field  srt.ext_content  1408  hex
+            case  45
+              field  srt.ext_content  1440  hex
+            case  46
+              field  srt.ext_content  1472  hex
+            case  47
+              field  srt.ext_content  1504  hex
+            case  48
+              field  srt.ext_content  1536  hex
+            case  49
+              field  srt.ext_content  1568  hex
+            case  50
+              field  srt.ext_content  1600  hex
+            case  51
+              field  srt.ext_content  1632  hex
+            case  52
+              field  srt.ext_content  1664  hex
+            case  53
+              field  srt.ext_content  1696  hex
+            case  54
+              field  srt.ext_content  1728  hex
+            case  55
+              field  srt.ext_content  1760  hex
+            case  56
+              field  srt.ext_content  1792  hex
+            case  57
+              field  srt.ext_content  1824  hex
+            case  58
+              field  srt.ext_content  1856  hex
+            case  59
+              field  srt.ext_content  1888  hex
+            case  60
+              field  srt.ext_content  1920  hex
+            case  61
+              field  srt.ext_content  1952  hex
+            case  62
+              field  srt.ext_content  1984  hex
+            case  63
+              field  srt.ext_content  2016  hex
+          end
+      end
+    end
+  case  2,3                     # ACK, NAK: 32-bit words
+    group  srt.cif_words  rest
+      field  srt.word  32  uint
+    end
+  case  7                       # DROPREQ
+    field  srt.first_seq  32  uint
+    field  srt.last_seq  32  uint
+  case  6                       # ACKACK: no CIF
+  else
+    group  srt.cif  rest
+      field  srt.octet  8  uint
+    end
+end

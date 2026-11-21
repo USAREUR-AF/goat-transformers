@@ -1,0 +1,162 @@
+# RTP packet (RFC 3550): the fixed header on the inet keys of rtp-header, the CSRC list, the header
+# extension (profile, length, data) and the payload. Public. Written by tools/gen/media-pack.py.
+format        rtp-packet
+version       0.1.0
+distribution  public
+source        "IETF RFC 3550, RTP, July 2003, section 5.1 and 5.3.1, https://www.rfc-editor.org/rfc/rfc3550.txt (sha256 4c210e9434b5b4c029e8536ad8991f3709bc3cbfa0999e951bcb4c2143c539e8); layout restated"
+uses          inet
+uses          rtpx
+wire          bits
+layout        sequential
+bit_order     msb
+
+field  inet.rtp_version  2  uint
+field  inet.rtp_padding  1  uint
+field  inet.rtp_extension  1  uint
+count  csrcs  4
+field  inet.rtp_marker  1  uint
+field  inet.rtp_payload_type  7  uint
+field  inet.rtp_sequence  16  uint
+field  inet.rtp_timestamp  32  uint
+field  inet.rtp_ssrc  32  uint
+group  inet.rtp_csrcs  count  @csrcs
+  field  inet.rtp_csrc  32  uint
+end
+switch  inet.rtp_extension
+  case  1
+    field  rtpx.profile  16  uint
+    field  rtpx.ext_length  16  uint
+    switch  rtpx.ext_length
+      case  0
+      case  1
+        field  rtpx.ext_data  32  hex
+      case  2
+        field  rtpx.ext_data  64  hex
+      case  3
+        field  rtpx.ext_data  96  hex
+      case  4
+        field  rtpx.ext_data  128  hex
+      case  5
+        field  rtpx.ext_data  160  hex
+      case  6
+        field  rtpx.ext_data  192  hex
+      case  7
+        field  rtpx.ext_data  224  hex
+      case  8
+        field  rtpx.ext_data  256  hex
+      case  9
+        field  rtpx.ext_data  288  hex
+      case  10
+        field  rtpx.ext_data  320  hex
+      case  11
+        field  rtpx.ext_data  352  hex
+      case  12
+        field  rtpx.ext_data  384  hex
+      case  13
+        field  rtpx.ext_data  416  hex
+      case  14
+        field  rtpx.ext_data  448  hex
+      case  15
+        field  rtpx.ext_data  480  hex
+      case  16
+        field  rtpx.ext_data  512  hex
+      case  17
+        field  rtpx.ext_data  544  hex
+      case  18
+        field  rtpx.ext_data  576  hex
+      case  19
+        field  rtpx.ext_data  608  hex
+      case  20
+        field  rtpx.ext_data  640  hex
+      case  21
+        field  rtpx.ext_data  672  hex
+      case  22
+        field  rtpx.ext_data  704  hex
+      case  23
+        field  rtpx.ext_data  736  hex
+      case  24
+        field  rtpx.ext_data  768  hex
+      case  25
+        field  rtpx.ext_data  800  hex
+      case  26
+        field  rtpx.ext_data  832  hex
+      case  27
+        field  rtpx.ext_data  864  hex
+      case  28
+        field  rtpx.ext_data  896  hex
+      case  29
+        field  rtpx.ext_data  928  hex
+      case  30
+        field  rtpx.ext_data  960  hex
+      case  31
+        field  rtpx.ext_data  992  hex
+      case  32
+        field  rtpx.ext_data  1024  hex
+      case  33
+        field  rtpx.ext_data  1056  hex
+      case  34
+        field  rtpx.ext_data  1088  hex
+      case  35
+        field  rtpx.ext_data  1120  hex
+      case  36
+        field  rtpx.ext_data  1152  hex
+      case  37
+        field  rtpx.ext_data  1184  hex
+      case  38
+        field  rtpx.ext_data  1216  hex
+      case  39
+        field  rtpx.ext_data  1248  hex
+      case  40
+        field  rtpx.ext_data  1280  hex
+      case  41
+        field  rtpx.ext_data  1312  hex
+      case  42
+        field  rtpx.ext_data  1344  hex
+      case  43
+        field  rtpx.ext_data  1376  hex
+      case  44
+        field  rtpx.ext_data  1408  hex
+      case  45
+        field  rtpx.ext_data  1440  hex
+      case  46
+        field  rtpx.ext_data  1472  hex
+      case  47
+        field  rtpx.ext_data  1504  hex
+      case  48
+        field  rtpx.ext_data  1536  hex
+      case  49
+        field  rtpx.ext_data  1568  hex
+      case  50
+        field  rtpx.ext_data  1600  hex
+      case  51
+        field  rtpx.ext_data  1632  hex
+      case  52
+        field  rtpx.ext_data  1664  hex
+      case  53
+        field  rtpx.ext_data  1696  hex
+      case  54
+        field  rtpx.ext_data  1728  hex
+      case  55
+        field  rtpx.ext_data  1760  hex
+      case  56
+        field  rtpx.ext_data  1792  hex
+      case  57
+        field  rtpx.ext_data  1824  hex
+      case  58
+        field  rtpx.ext_data  1856  hex
+      case  59
+        field  rtpx.ext_data  1888  hex
+      case  60
+        field  rtpx.ext_data  1920  hex
+      case  61
+        field  rtpx.ext_data  1952  hex
+      case  62
+        field  rtpx.ext_data  1984  hex
+      case  63
+        field  rtpx.ext_data  2016  hex
+    end
+  case  0
+end
+group  rtpx.payload  rest
+  field  rtpx.octet  8  uint
+end

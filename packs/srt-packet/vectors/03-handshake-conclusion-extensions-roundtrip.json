@@ -1,0 +1,20 @@
+{
+  "name": "handshake-conclusion-extensions-roundtrip",
+  "from": "srt-packet",
+  "to": "srt-packet",
+  "input": "8000000000000000000000c811111111000000050000000500001388000005dc00002000ffffffff2222222299887766c63364140000000000000000000000000001000300010500000000bf007800780005000223213a3a723d6162",
+  "expect": "8000000000000000000000c811111111000000050000000500001388000005dc00002000ffffffff2222222299887766c63364140000000000000000000000000001000300010500000000bf007800780005000223213a3a723d6162",
+  "model": {
+    "srt.hs_version": "5",
+    "srt.extension_field": "5",
+    "srt.handshake_type": "4294967295",
+    "srt.extensions.#": "2",
+    "srt.extensions[0].srt.srt_version": "66816",
+    "srt.extensions[0].srt.srt_flags": "191",
+    "srt.extensions[0].srt.receiver_tsbpd_delay": "120",
+    "srt.extensions[1].srt.ext_type": "5",
+    "srt.extensions[1].srt.ext_length": "2",
+    "srt.extensions[1].srt.ext_content": "23213a3a723d6162"
+  },
+  "source": "built by tools/gen/media-vectors.py from values chosen there; layout restated from draft-sharabayko-srt-01 section 3; a conclusion handshake (version 5) with an HSREQ and a stream ID extension; expect derived there, no engine run"
+}

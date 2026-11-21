@@ -1,0 +1,8 @@
+{
+  "name": "truncated-is-malformed",
+  "from": "dcep",
+  "to": "dcep",
+  "input": "030001000000000000040000636861",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/media-vectors.py from values chosen there; layout restated from RFC 8832 section 5; the first open message without the last octet of its label; expect derived there, no engine run"
+}

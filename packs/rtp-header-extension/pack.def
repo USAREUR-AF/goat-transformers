@@ -1,0 +1,76 @@
+# RTP header extension (RFC 8285): the profile, the length and the extension elements in the
+# one-byte or the two-byte form. Public. Written by tools/gen/media-pack.py.
+format        rtp-header-extension
+version       0.1.0
+distribution  public
+source        "IETF RFC 8285, A General Mechanism for RTP Header Extensions, October 2017, https://www.rfc-editor.org/rfc/rfc8285.txt (sha256 e6fc1f0e6638560b6052f08d548b02b0418bb4f7b1f362a5ec340293e673d60a); layout restated"
+uses          rtpx
+wire          bits
+layout        sequential
+bit_order     msb
+
+field  rtpx.profile  16  uint
+field  rtpx.ext_length  16  uint
+switch  rtpx.profile
+  case  48862               # 0xBEDE, one-byte form
+    group  rtpx.elements  rest
+      field  rtpx.id  4  uint
+      switch  rtpx.id
+        case  0
+          field  rtpx.len  4  uint
+        else
+          field  rtpx.len  4  uint
+          switch  rtpx.len
+            case  0
+              field  rtpx.data  8  hex
+            case  1
+              field  rtpx.data  16  hex
+            case  2
+              field  rtpx.data  24  hex
+            case  3
+              field  rtpx.data  32  hex
+            case  4
+              field  rtpx.data  40  hex
+            case  5
+              field  rtpx.data  48  hex
+            case  6
+              field  rtpx.data  56  hex
+            case  7
+              field  rtpx.data  64  hex
+            case  8
+              field  rtpx.data  72  hex
+            case  9
+              field  rtpx.data  80  hex
+            case  10
+              field  rtpx.data  88  hex
+            case  11
+              field  rtpx.data  96  hex
+            case  12
+              field  rtpx.data  104  hex
+            case  13
+              field  rtpx.data  112  hex
+            case  14
+              field  rtpx.data  120  hex
+            case  15
+              field  rtpx.data  128  hex
+          end
+      end
+    end
+  case  4096,4097,4098,4099,4100,4101,4102,4103,4104,4105,4106,4107,4108,4109,4110,4111           # 0x1000-0x100F, two-byte form
+    group  rtpx.elements  rest
+      field  rtpx.id  8  uint
+      switch  rtpx.id
+        case  0
+        else
+          length  8  bytes
+            group  rtpx.element_data  rest
+              field  rtpx.octet  8  uint
+            end
+          end
+      end
+    end
+  else
+    group  rtpx.ext_octets  rest
+      field  rtpx.octet  8  uint
+    end
+end

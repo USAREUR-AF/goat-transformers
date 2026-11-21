@@ -1,0 +1,15 @@
+{
+  "name": "two-byte-form-roundtrip",
+  "from": "rtp-header-extension",
+  "to": "rtp-header-extension",
+  "input": "10020002010378797a020000",
+  "expect": "10020002010378797a020000",
+  "model": {
+    "rtpx.profile": "4098",
+    "rtpx.elements.#": "3",
+    "rtpx.elements[0].rtpx.element_data.#": "3",
+    "rtpx.elements[1].rtpx.element_data.#": "0",
+    "rtpx.elements[2].rtpx.id": "0"
+  },
+  "source": "built by tools/gen/media-vectors.py from values chosen there; layout restated from RFC 8285 section 4; the two-byte form with application bits 2: an element of 3 octets, an empty element, a padding octet; expect derived there, no engine run"
+}

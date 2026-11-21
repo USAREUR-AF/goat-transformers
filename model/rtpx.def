@@ -1,0 +1,16 @@
+# The rtpx module: RTP header extensions (RFC 3550 section 5.3.1, RFC 8285). Written by tools/gen/media-pack.py.
+module        rtpx
+version       0.1.0
+distribution  public
+source        "IETF RFC 3550 and RFC 8285; restated by goat-transformers"
+key   profile       int     -  "header extension profile: 0xBEDE (48862) the one-byte form, 0x1000-0x100F the two-byte form (the low four bits are application bits), others profile-specific"
+key   ext_length    int     -  "header extension length in 32-bit words, not counting the profile and length"
+key   ext_data      string  -  "rtp-packet: the header extension data, as hexadecimal digits"
+list  payload       "rtp-packet: the payload, padding included, as octets"
+list  elements      "rtp-header-extension: the extension elements and padding octets, in order"
+key   id            int     -  "extension element ID (0 for a padding octet; 15 is reserved in the one-byte form)"
+key   len           int     -  "one-byte form: the element's data length minus one (0 for a padding octet)"
+key   data          string  -  "one-byte form: the element's data, 1 to 16 octets, as hexadecimal digits"
+list  element_data  "two-byte form: the element's data, 0 to 255 octets"
+list  ext_octets    "the data of an extension of another profile, as octets"
+key   octet         int     -  "one octet"

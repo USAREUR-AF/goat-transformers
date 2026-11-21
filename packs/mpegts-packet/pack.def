@@ -1,0 +1,83 @@
+# MPEG-2 transport stream packet: the 4-octet header, the adaptation field and the payload of one
+# 188-octet packet. Public. Restated from FFmpeg and GStreamer (LGPL), no code copied. Written by
+# tools/gen/media-pack.py; do not edit by hand. pack.md states what is mapped.
+format        mpegts-packet
+version       0.1.0
+distribution  public
+source        "FFmpeg n7.1 (commit b08d7969c550a804a59511c7b83f2dd8cc0499b8), libavformat/mpegts.c (sha256 da1f2f17590ccb7e497060073005cf9746039684e876dd0444be22e21aa7f0a6) and mpegts.h, LGPL-2.1-or-later, https://github.com/FFmpeg/FFmpeg; the transport stream packet header and PCR as the demuxer reads them; layout restated, no code copied"
+source        "GStreamer 1.26.9 (commit f313fae193089408e278c0dd3450145e5a12307b), subprojects/gst-plugins-bad/gst/mpegtsdemux/mpegtspacketizer.c (sha256 7a85ecd4526f982ad37c6ad30ed471cc3566b475268d8a3752b09d9ba3a3a2d5), LGPL-2.0-or-later, https://github.com/GStreamer/gstreamer; the adaptation field flags, PCR, OPCR, splice countdown, private data and extension as the packetizer reads them; layout restated, no code copied"
+uses          mpegts
+wire          bits
+layout        sequential
+bit_order     msb
+
+kind    packet
+when    8  71
+field  mpegts.transport_error  1  uint
+field  mpegts.payload_unit_start  1  uint
+field  mpegts.transport_priority  1  uint
+field  mpegts.pid  13  uint
+field  mpegts.scrambling  2  uint
+field  mpegts.adaptation_field_control  2  uint
+field  mpegts.continuity_counter  4  uint
+switch  mpegts.adaptation_field_control
+  case  2,3
+    length  8  bytes
+      field  mpegts.discontinuity  1  uint
+      field  mpegts.random_access  1  uint
+      field  mpegts.es_priority  1  uint
+      field  mpegts.pcr_flag  1  uint
+      field  mpegts.opcr_flag  1  uint
+      field  mpegts.splicing_point_flag  1  uint
+      field  mpegts.private_data_flag  1  uint
+      field  mpegts.extension_flag  1  uint
+      switch  mpegts.pcr_flag
+        case  1
+          field  mpegts.pcr_base  33  uint
+          field  mpegts.pcr_reserved  6  uint
+          field  mpegts.pcr_extension  9  uint
+        else
+      end
+      switch  mpegts.opcr_flag
+        case  1
+          field  mpegts.opcr_base  33  uint
+          field  mpegts.opcr_reserved  6  uint
+          field  mpegts.opcr_extension  9  uint
+        else
+      end
+      switch  mpegts.splicing_point_flag
+        case  1
+          field  mpegts.splice_countdown  8  twos
+        else
+      end
+      switch  mpegts.private_data_flag
+        case  1
+          length  8  bytes
+            group  mpegts.private_data  rest
+              field  mpegts.octet  8  uint
+            end
+          end
+        else
+      end
+      switch  mpegts.extension_flag
+        case  1
+          length  8  bytes
+            group  mpegts.af_extension  rest
+              field  mpegts.octet  8  uint
+            end
+          end
+        else
+      end
+      group  mpegts.stuffing  rest
+        field  mpegts.octet  8  uint
+      end
+    end
+  else
+end
+switch  mpegts.adaptation_field_control
+  case  1,3
+    group  mpegts.payload  rest
+      field  mpegts.octet  8  uint
+    end
+  else
+end
