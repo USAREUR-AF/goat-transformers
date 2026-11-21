@@ -1,0 +1,15 @@
+{
+  "name": "agopengps-display-message",
+  "from": "agopengps-pgn",
+  "to": "agopengps-pgn",
+  "input": "80817fdd0d0500436865636b2068697463687c",
+  "expect": "80817fdd0d0500436865636b2068697463687c",
+  "model": {
+    "@kind": "display_message",
+    "agopengps.p221_display_time_s": "5",
+    "agopengps.p221_message.#": "11",
+    "agopengps.p221_message[0].agopengps.p221_message_byte": "67"
+  },
+  "source": "constructed",
+  "reference": "AgOpenGPS 6.8.6 docs/pgn-protocol.md and AgIO's PGN 214 encoder; bytes by tools/gen/agopengps-vectors.py"
+}

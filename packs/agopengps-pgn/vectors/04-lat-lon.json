@@ -1,0 +1,12 @@
+{
+  "name": "agopengps-lat-lon",
+  "from": "agopengps-pgn",
+  "to": "agopengps-pgn",
+  "input": "80817fd008c6711c47f0e00607ce",
+  "expect": "80817fd008c6711c47f0e00607ce",
+  "model": {
+    "@kind": "lat_lon"
+  },
+  "source": "constructed",
+  "reference": "AgOpenGPS 6.8.6 docs/pgn-protocol.md and AgIO's PGN 214 encoder; bytes by tools/gen/agopengps-vectors.py; latitude and longitude as int32 times 0x7FFFFFFF/90 and /180"
+}

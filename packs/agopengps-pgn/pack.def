@@ -1,0 +1,287 @@
+# AgOpenGPS PGN messages over UDP (AgIO, AgOpenGPS and the steering and section modules). Public.
+# A message: 0x80 0x81, the source address, the PGN, the data length, the data, a one-byte sum.
+format        agopengps-pgn
+version       0.1.0
+distribution  public
+source        "AgOpenGPS (https://github.com/AgOpenGPS-Official/AgOpenGPS, Apache License 2.0) tag 6.8.6, commit 21be26aa58d09b9b5abacc715d0abcf4a021f1db: docs/pgn-protocol.md (the PGN protocol), cross-checked with SourceCode/AgIO/Source/Forms/NMEA.Designer.cs, SourceCode/GPS_Out/Source/PGNs/PGN54908.cs, SourceCode/GPS/Forms/UDPComm.Designer.cs and PGN.Designer.cs; layouts restated"
+uses          agopengps
+wire          bits
+layout        sequential
+bit_order     lsb
+
+when  8  128
+when  8  129
+field  agopengps.source  8  uint
+
+kind  gps_position
+when  8  214
+requires  lat lon
+length  8  bytes                     # the data length byte
+    field  lon  64  f64  absent 9218868437227405311
+    field  lat  64  f64  absent 9218868437227405311
+    field  agopengps.p214_heading_dual  32  f32  absent 2139095039
+    field  agopengps.p214_heading_true  32  f32  absent 2139095039
+    field  agopengps.p214_speed  32  f32  absent 2139095039
+    field  agopengps.p214_roll  32  f32  absent 2139095039
+    field  agopengps.p214_altitude_m  32  f32  absent 2139095039
+    field  agopengps.p214_satellites  16  uint
+    field  agopengps.p214_fix_quality  8  uint
+    field  agopengps.p214_hdop_x100  16  uint
+    field  agopengps.p214_age_x100  16  uint
+    field  agopengps.p214_imu_heading  16  uint
+    field  agopengps.p214_imu_roll  16  twos
+    field  agopengps.p214_imu_pitch  16  twos
+    field  agopengps.p214_imu_yaw_rate  16  twos
+end
+field  agopengps.checksum  8  uint
+
+kind  lat_lon
+when  8  208
+requires  lat
+length  8  bytes                     # the data length byte
+    field  lat  32  sscale:90/2147483647
+    field  lon  32  sscale:180/2147483647
+end
+field  agopengps.checksum  8  uint
+
+kind  imu
+when  8  211
+requires  agopengps.p211_heading_deg
+length  8  bytes                     # the data length byte
+    field  agopengps.p211_heading_deg  16  sscale:1/10
+    field  agopengps.p211_roll_deg  16  sscale:1/10
+    field  agopengps.p211_angular_velocity  16  twos
+end
+field  agopengps.checksum  8  uint
+
+kind  imu_disconnect
+when  8  212
+requires  agopengps.p212_disconnect
+length  8  bytes                     # the data length byte
+    field  agopengps.p212_disconnect  8  uint
+end
+field  agopengps.checksum  8  uint
+
+kind  display_message
+when  8  221
+requires  agopengps.p221_display_time_s
+length  8  bytes                     # the data length byte
+    field  agopengps.p221_display_time_s  8  uint
+    field  agopengps.p221_color  8  uint
+    group  agopengps.p221_message  rest
+      field  agopengps.p221_message_byte  8  uint
+    end
+end
+field  agopengps.checksum  8  uint
+
+kind  remote_commands
+when  8  222
+requires  agopengps.p222_mask
+length  8  bytes                     # the data length byte
+    field  agopengps.p222_mask  8  uint
+    field  agopengps.p222_command  8  uint
+end
+field  agopengps.checksum  8  uint
+
+kind  rate_control
+when  8  228
+requires  agopengps.p228_rate0
+length  8  bytes                     # the data length byte
+    field  agopengps.p228_rate0  8  uint
+    field  agopengps.p228_rate1  8  uint
+    field  agopengps.p228_rate2  8  uint
+end
+field  agopengps.checksum  8  uint
+
+kind  section_control_extended
+when  8  229
+requires  agopengps.p229_sections_1_8
+length  8  bytes                     # the data length byte
+    field  agopengps.p229_sections_1_8  8  uint
+    field  agopengps.p229_sections_9_16  8  uint
+    field  agopengps.p229_sections_17_24  8  uint
+    field  agopengps.p229_sections_25_32  8  uint
+    field  agopengps.p229_sections_33_40  8  uint
+    field  agopengps.p229_sections_41_48  8  uint
+    field  agopengps.p229_sections_49_56  8  uint
+    field  agopengps.p229_sections_57_64  8  uint
+    field  agopengps.p229_tool_left_speed  8  uint
+    field  agopengps.p229_tool_right_speed  8  uint
+end
+field  agopengps.checksum  8  uint
+
+kind  remote_switches
+when  8  234
+requires  agopengps.p234_switches
+length  8  bytes                     # the data length byte
+    group  agopengps.p234_switches  rest
+      field  agopengps.p234_switches_byte  8  uint
+    end
+end
+field  agopengps.checksum  8  uint
+
+kind  section_dimensions
+when  8  235
+requires  agopengps.p235_section_width_0
+length  8  bytes                     # the data length byte
+    field  agopengps.p235_section_width_0  16  uint
+    field  agopengps.p235_section_width_1  16  uint
+    field  agopengps.p235_section_width_2  16  uint
+    field  agopengps.p235_section_width_3  16  uint
+    field  agopengps.p235_section_width_4  16  uint
+    field  agopengps.p235_section_width_5  16  uint
+    field  agopengps.p235_section_width_6  16  uint
+    field  agopengps.p235_section_width_7  16  uint
+    field  agopengps.p235_section_width_8  16  uint
+    field  agopengps.p235_section_width_9  16  uint
+    field  agopengps.p235_section_width_10  16  uint
+    field  agopengps.p235_section_width_11  16  uint
+    field  agopengps.p235_section_width_12  16  uint
+    field  agopengps.p235_section_width_13  16  uint
+    field  agopengps.p235_section_width_14  16  uint
+    field  agopengps.p235_section_width_15  16  uint
+    field  agopengps.p235_num_sections  8  uint
+end
+field  agopengps.checksum  8  uint
+
+kind  relay_config
+when  8  236
+requires  agopengps.p236_pins
+length  8  bytes                     # the data length byte
+    group  agopengps.p236_pins  rest
+      field  agopengps.p236_pins_byte  8  uint
+    end
+end
+field  agopengps.checksum  8  uint
+
+kind  machine_config
+when  8  238
+requires  agopengps.p238_raise_time
+length  8  bytes                     # the data length byte
+    field  agopengps.p238_raise_time  8  uint
+    field  agopengps.p238_lower_time  8  uint
+    field  agopengps.p238_enable_hyd  8  uint
+    field  agopengps.p238_set0  8  uint
+    field  agopengps.p238_user1  8  uint
+    field  agopengps.p238_user2  8  uint
+    field  agopengps.p238_user3  8  uint
+    field  agopengps.p238_user4  8  uint
+end
+field  agopengps.checksum  8  uint
+
+kind  machine_data
+when  8  239
+requires  agopengps.p239_uturn
+length  8  bytes                     # the data length byte
+    field  agopengps.p239_uturn  8  uint
+    field  agopengps.p239_speed  8  uint
+    field  agopengps.p239_hyd_lift  8  uint
+    field  agopengps.p239_tram  8  uint
+    field  agopengps.p239_geo_stop  8  uint
+    field  agopengps.p239_byte10  8  uint
+    field  agopengps.p239_sections_1_8  8  uint
+    field  agopengps.p239_sections_9_16  8  uint
+end
+field  agopengps.checksum  8  uint
+
+kind  isobus_heartbeat
+when  8  240
+requires  agopengps.p240_section_control_enabled
+length  8  bytes                     # the data length byte
+    field  agopengps.p240_section_control_enabled  1  uint
+    field  agopengps.p240_clients  3  uint
+    field  agopengps.p240_status_reserved  4  uint
+    field  agopengps.p240_num_sections  8  uint
+    group  agopengps.p240_section_states  rest
+      field  agopengps.p240_section_states_byte  8  uint
+    end
+end
+field  agopengps.checksum  8  uint
+
+kind  section_control_enable
+when  8  241
+requires  agopengps.p241_enabled
+length  8  bytes                     # the data length byte
+    field  agopengps.p241_enabled  8  uint
+end
+field  agopengps.checksum  8  uint
+
+kind  process_data
+when  8  242
+requires  agopengps.p242_identifier
+length  8  bytes                     # the data length byte
+    field  agopengps.p242_identifier  16  uint
+    field  agopengps.p242_value  32  twos
+end
+field  agopengps.checksum  8  uint
+
+kind  field_name
+when  8  243
+requires  agopengps.p243_name
+length  8  bytes                     # the data length byte
+    group  agopengps.p243_name  rest
+      field  agopengps.p243_name_byte  8  uint
+    end
+end
+field  agopengps.checksum  8  uint
+
+kind  sensor
+when  8  250
+requires  agopengps.p250_sensor
+length  8  bytes                     # the data length byte
+    field  agopengps.p250_sensor  8  uint
+end
+field  agopengps.checksum  8  uint
+
+kind  autosteer_config
+when  8  251
+requires  agopengps.p251_set0
+length  8  bytes                     # the data length byte
+    field  agopengps.p251_set0  8  uint
+    field  agopengps.p251_max_pulse  8  uint
+    field  agopengps.p251_min_speed  8  uint
+    field  agopengps.p251_ackerman_fix  8  uint
+    field  agopengps.p251_angular_velocity  8  uint
+end
+field  agopengps.checksum  8  uint
+
+kind  autosteer_settings
+when  8  252
+requires  agopengps.p252_gain_proportional
+length  8  bytes                     # the data length byte
+    field  agopengps.p252_gain_proportional  8  uint
+    field  agopengps.p252_high_pwm  8  uint
+    field  agopengps.p252_low_pwm  8  uint
+    field  agopengps.p252_min_pwm  8  uint
+    field  agopengps.p252_counts_per_degree  8  uint
+    field  agopengps.p252_was_offset  16  twos
+    field  agopengps.p252_ackerman  8  uint
+end
+field  agopengps.checksum  8  uint
+
+kind  steer_module
+when  8  253
+requires  agopengps.p253_actual_steer_angle_deg
+length  8  bytes                     # the data length byte
+    field  agopengps.p253_actual_steer_angle_deg  16  sscale:1/100
+    field  agopengps.p253_heading  16  twos
+    field  agopengps.p253_roll  16  twos
+    field  agopengps.p253_work_switch  1  uint
+    field  agopengps.p253_steer_switch  1  uint
+    field  agopengps.p253_switch_reserved  6  uint
+    field  agopengps.p253_pwm  8  uint
+end
+field  agopengps.checksum  8  uint
+
+kind  autosteer_data
+when  8  254
+requires  agopengps.p254_speed
+length  8  bytes                     # the data length byte
+    field  agopengps.p254_speed  16  uint
+    field  agopengps.p254_status  8  uint
+    field  agopengps.p254_steer_angle  16  twos
+    field  agopengps.p254_line_distance  8  uint
+    field  agopengps.p254_sections_1_8  8  uint
+    field  agopengps.p254_sections_9_16  8  uint
+end
+field  agopengps.checksum  8  uint

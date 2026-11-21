@@ -1,0 +1,9 @@
+{
+  "name": "agopengps-gps-position-to-geojson",
+  "from": "agopengps-pgn",
+  "to": "geojson",
+  "input": "80817cd6330000000000c023400000000000404a40008035430080b4420000f0400000a0bf00005a420e000450007800ffff0c00e2ff0500d5",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[9.875,52.5]},\"properties\":{}}",
+  "source": "constructed",
+  "reference": "AgOpenGPS 6.8.6 docs/pgn-protocol.md and AgIO's PGN 214 encoder; bytes by tools/gen/agopengps-vectors.py; altitude is above mean sea level (from GGA), not hae"
+}

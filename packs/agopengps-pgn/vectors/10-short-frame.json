@@ -1,0 +1,9 @@
+{
+  "name": "agopengps-short-frame",
+  "from": "agopengps-pgn",
+  "to": "agopengps-pgn",
+  "input": "80817ff2068d0124fa",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "AgOpenGPS 6.8.6 docs/pgn-protocol.md and AgIO's PGN 214 encoder; bytes by tools/gen/agopengps-vectors.py; the data length byte says six bytes; fewer follow"
+}

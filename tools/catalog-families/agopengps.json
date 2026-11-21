@@ -1,0 +1,7 @@
+{
+  "name": "AgOpenGPS",
+  "domain": "land",
+  "prefixes": [
+    "agopengps-"
+  ]
+}

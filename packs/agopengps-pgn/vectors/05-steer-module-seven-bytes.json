@@ -1,0 +1,17 @@
+{
+  "name": "agopengps-steer-module-seven-bytes",
+  "from": "agopengps-pgn",
+  "to": "agopengps-pgn",
+  "input": "80817efd082efb0f27b822034d0c",
+  "expect": "80817efd082efb0f27b822034d0c",
+  "model": {
+    "@kind": "steer_module",
+    "agopengps.p253_actual_steer_angle_deg": "-12.34",
+    "agopengps.p253_heading": "9999",
+    "agopengps.p253_work_switch": "1",
+    "agopengps.p253_steer_switch": "1",
+    "agopengps.p253_pwm": "77"
+  },
+  "source": "constructed",
+  "reference": "AgOpenGPS 6.8.6 docs/pgn-protocol.md and AgIO's PGN 214 encoder; bytes by tools/gen/agopengps-vectors.py; the seven data bytes the document names"
+}
