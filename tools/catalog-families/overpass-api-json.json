@@ -1,0 +1,7 @@
+{
+  "name": "Overpass API JSON",
+  "domain": "maps",
+  "exact": [
+    "overpass-json"
+  ]
+}

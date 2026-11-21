@@ -1,0 +1,38 @@
+# The overpass module: the fields of an Overpass API JSON response (and of the OSM API JSON format
+# it is based on): the header and the elements, nodes, ways and relations, with their metadata and,
+# with `out geom`, their geometry.
+module        overpass
+version       0.1.0
+distribution  public
+source        "OpenStreetMap Wiki, OSM JSON, revision 2907469 (2025-10-12), https://wiki.openstreetmap.org/wiki/OSM_JSON, CC BY-SA 2.0; and Overpass API, Output Formats, https://dev.overpass-api.de/output_formats.html; layout restated"
+
+key   version               float   -    "version of the format: 0.6 (a number in Overpass output, a string in the OSM API)"
+key   generator             string  -    "the program that wrote the response"
+key   timestamp_osm_base    string  -    "Overpass: the time of the data, as written: every edit uploaded before it is included"
+key   timestamp_areas_base  string  -    "Overpass: the time of the latest edit the area data includes, as written"
+key   osm3s_copyright       string  -    "Overpass: the copyright reminder of the response"
+key   copyright             string  -    "OSM API: copyright statement of the data"
+key   attribution           string  -    "OSM API: where the attribution of the data is given"
+key   license               string  -    "OSM API: the licence of the data"
+key   remark                string  -    "Overpass: a remark, such as a runtime error or a warning of the query"
+list  elements                       "the elements of the response, in order: nodes, ways and relations"
+key   type                  string  -    "element (or relation member) type: node, way or relation"
+key   id                    int     -    "element id"
+key   lat                   float   deg  "latitude, WGS 84 as OpenStreetMap stores it (a node, a member node, or a point of a geometry)"
+key   lon                   float   deg  "longitude, WGS 84 as OpenStreetMap stores it"
+key   timestamp             string  -    "time of the element's last edit, as written (YYYY-MM-DDThh:mm:ssZ)"
+key   element_version       int     -    "version of the element, counted from 1 with each edit"
+key   changeset             int     -    "changeset of the element's last edit"
+key   user                  string  -    "display name of the last editor"
+key   uid                   int     -    "user id of the last editor"
+key   visible               int     -    "OSM API history: 0 when the element is deleted (absent while it is visible)"
+key   bounds_minlat         float   deg  "out geom: southern edge of the element's bounding box"
+key   bounds_minlon         float   deg  "out geom: western edge"
+key   bounds_maxlat         float   deg  "out geom: northern edge"
+key   bounds_maxlon         float   deg  "out geom: eastern edge"
+list  nodes                          "way: the ids of its nodes, in order"
+key   node_ref              int     -    "one node id of a way"
+list  geometry                       "out geom: the points of a way, or of a way member of a relation, in order"
+list  members                        "relation: its members, in order"
+key   ref                   int     -    "relation member: the id of the member element"
+key   role                  string  -    "relation member: its role in the relation"

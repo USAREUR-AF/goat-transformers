@@ -1,0 +1,30 @@
+{
+  "name": "way-out-geom-roundtrip",
+  "from": "overpass-json",
+  "to": "overpass-json",
+  "input": "{\"version\":0.6,\"generator\":\"Overpass API 0.7.62.7\",\"osm3s\":{\"copyright\":\"Data: OpenStreetMap contributors, ODbL.\",\"timestamp_areas_base\":\"2026-11-19T23:40:01Z\",\"timestamp_osm_base\":\"2026-11-19T23:59:58Z\"},\"elements\":[{\"type\":\"way\",\"id\":800001,\"timestamp\":\"2024-09-03T12:00:00Z\",\"version\":4,\"changeset\":155555,\"user\":\"mapper-c\",\"uid\":4403,\"bounds\":{\"minlat\":50.2106234,\"minlon\":8.5856189,\"maxlat\":50.2121617,\"maxlon\":8.5867523},\"nodes\":[900001,900002],\"geometry\":[{\"lat\":50.2106234,\"lon\":8.5856189},{\"lat\":50.2121617,\"lon\":8.5867523}],\"tags\":{\"highway\":\"residential\"}}]}",
+  "expect": "{\"version\":0.6,\"generator\":\"Overpass API 0.7.62.7\",\"osm3s\":{\"timestamp_osm_base\":\"2026-11-19T23:59:58.000Z\",\"timestamp_areas_base\":\"2026-11-19T23:40:01Z\",\"copyright\":\"Data: OpenStreetMap contributors, ODbL.\"},\"elements\":[{\"type\":\"way\",\"id\":800001,\"timestamp\":\"2024-09-03T12:00:00Z\",\"version\":4,\"changeset\":155555,\"user\":\"mapper-c\",\"uid\":4403,\"bounds\":{\"minlat\":50.2106234,\"minlon\":8.5856189,\"maxlat\":50.2121617,\"maxlon\":8.5867523},\"nodes\":[900001,900002],\"geometry\":[{\"lat\":50.2106234,\"lon\":8.5856189},{\"lat\":50.2121617,\"lon\":8.5867523}]}]}",
+  "model": {
+    "time_ms": "1795132798000",
+    "overpass.timestamp_osm_base": "2026-11-19T23:59:58Z",
+    "overpass.timestamp_areas_base": "2026-11-19T23:40:01Z",
+    "overpass.elements.#": "1",
+    "overpass.elements[0].overpass.type": "way",
+    "overpass.elements[0].overpass.id": "800001",
+    "overpass.elements[0].overpass.element_version": "4",
+    "overpass.elements[0].overpass.bounds_minlat": "50.2106234",
+    "overpass.elements[0].overpass.bounds_minlon": "8.5856189",
+    "overpass.elements[0].overpass.bounds_maxlat": "50.2121617",
+    "overpass.elements[0].overpass.bounds_maxlon": "8.5867523",
+    "overpass.elements[0].overpass.nodes.#": "2",
+    "overpass.elements[0].overpass.nodes[0].overpass.node_ref": "900001",
+    "overpass.elements[0].overpass.nodes[1].overpass.node_ref": "900002",
+    "overpass.elements[0].overpass.geometry.#": "2",
+    "overpass.elements[0].overpass.geometry[0].overpass.lat": "50.2106234",
+    "overpass.elements[0].overpass.geometry[0].overpass.lon": "8.5856189",
+    "overpass.elements[0].overpass.geometry[1].overpass.lat": "50.2121617",
+    "overpass.elements[0].overpass.geometry[1].overpass.lon": "8.5867523",
+    "overpass.elements[0].overpass.members.#": "absent"
+  },
+  "source": "derived by hand in tools/gen/overpass-json-roundtrip-vectors.py from values chosen there, from spec/engine-spec.md (0.5 json wire and ruling 16, 0.7 groups, 0.11 rulings 2 and 3) and packs/overpass-json/pack.def; no engine run before the expect was written; one way with out geom: bounds, the node ids and the geometry come back in line order; the osm3s members, given out of line order, are written in line order with the data time in iso8601_ms form; tags dropped"
+}

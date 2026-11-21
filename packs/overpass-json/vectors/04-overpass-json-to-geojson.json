@@ -1,0 +1,8 @@
+{
+  "name": "overpass-json-to-geojson",
+  "from": "overpass-json",
+  "to": "geojson",
+  "input": "{\"version\":0.6,\"generator\":\"Overpass API 0.7.62.7\",\"osm3s\":{\"timestamp_osm_base\":\"2026-11-20T08:15:02Z\",\"copyright\":\"The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.\"},\"elements\":[{\"type\":\"node\",\"id\":900001,\"lat\":50.2106234,\"lon\":8.5856189,\"timestamp\":\"2024-05-01T10:00:00Z\",\"version\":3,\"changeset\":150001,\"user\":\"mapper-a\",\"uid\":4401},{\"type\":\"node\",\"id\":900002,\"lat\":50.2121617,\"lon\":8.5867523,\"timestamp\":\"2025-02-11T07:30:15Z\",\"version\":1,\"changeset\":160002,\"user\":\"mapper-b\",\"uid\":4402,\"tags\":{\"highway\":\"bus_stop\",\"name\":\"Example Street\"}}]}",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{\"time_ms\":1795162502000}}",
+  "source": "built by tools/gen/geo-open-vectors.py from values chosen there; layout restated from the OpenStreetMap Wiki page OSM JSON and the Overpass API output formats page; expect derived there, no engine run; the first response to geojson: the time of the data carries; the elements are a list geojson does not map"
+}

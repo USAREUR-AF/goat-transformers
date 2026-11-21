@@ -1,0 +1,55 @@
+# Overpass API JSON response (and the OSM API JSON format it is based on): the header, the time of
+# the data, and the elements with their metadata and geometry. Public; adapted from CC BY-SA 2.0
+# documentation (packs/overpass-json/REUSE.toml). Layout restated; see pack.md.
+format        overpass-json
+version       0.1.0
+distribution  public
+source        "OpenStreetMap Wiki, OSM JSON, revision 2907469 (2025-10-12), https://wiki.openstreetmap.org/wiki/OSM_JSON, CC BY-SA 2.0; layout restated"
+source        "Overpass API, Output Formats (JSON and the meaning of osm_base), https://dev.overpass-api.de/output_formats.html; layout restated"
+uses          overpass
+wire          json
+
+field  overpass.version               version                     float
+field  overpass.generator             generator                   string
+field  time_ms                        osm3s.timestamp_osm_base    iso8601_ms
+field  overpass.timestamp_osm_base    osm3s.timestamp_osm_base    string
+field  overpass.timestamp_areas_base  osm3s.timestamp_areas_base  string
+field  overpass.osm3s_copyright       osm3s.copyright             string
+field  overpass.copyright             copyright                   string
+field  overpass.attribution           attribution                 string
+field  overpass.license               license                     string
+field  overpass.remark                remark                      string
+group  overpass.elements  elements
+  field  overpass.type             type             string
+  field  overpass.id               id               int
+  field  overpass.lat              lat              float
+  field  overpass.lon              lon              float
+  field  overpass.timestamp        timestamp        string
+  field  overpass.element_version  version          int
+  field  overpass.changeset        changeset        int
+  field  overpass.user             user             string
+  field  overpass.uid              uid              int
+  field  overpass.visible          visible          bool
+  field  overpass.bounds_minlat    bounds.minlat    float
+  field  overpass.bounds_minlon    bounds.minlon    float
+  field  overpass.bounds_maxlat    bounds.maxlat    float
+  field  overpass.bounds_maxlon    bounds.maxlon    float
+  group  overpass.nodes  nodes
+    field  overpass.node_ref  .  int
+  end
+  group  overpass.geometry  geometry
+    field  overpass.lat  lat  float
+    field  overpass.lon  lon  float
+  end
+  group  overpass.members  members
+    field  overpass.type  type  string
+    field  overpass.ref   ref   int
+    field  overpass.role  role  string
+    field  overpass.lat   lat   float
+    field  overpass.lon   lon   float
+    group  overpass.geometry  geometry
+      field  overpass.lat  lat  float
+      field  overpass.lon  lon  float
+    end
+  end
+end
