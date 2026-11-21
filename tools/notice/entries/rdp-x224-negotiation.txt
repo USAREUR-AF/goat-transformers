@@ -1,0 +1,6 @@
+Pack rdp-x224-negotiation; module rdpneg
+  Microsoft, [MS-RDPBCGR]: Remote Desktop Protocol: Basic Connectivity and
+  Graphics Remoting, Open Specifications documentation, release of 9 March
+  2026. Copyright Microsoft Corporation; used under the Open Specifications
+  copyright permission for implementations, which grants no patent licence
+  (LicenseRef-MS-OpenSpec). Layouts restated; no text copied.
