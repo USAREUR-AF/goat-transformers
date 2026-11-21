@@ -1,0 +1,7 @@
+{
+  "name": "AIS binary applications of variable length",
+  "domain": "sea",
+  "exact": [
+    "ais-binary-apps"
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "name": "other-fi-is-no-kind",
+  "from": "ais-binary-apps",
+  "to": "ais-binary-apps",
+  "input": "839>Jh@0Gh0000000000000000",
+  "expect_error": "no-kind",
+  "source": "built by tools/gen/ais-apps-vectors.py from values chosen there; layout restated from gpsd AIVDM.adoc, a type 8 DAC 1 FI 31 message, which ais-binary reads; expect derived there, no engine run"
+}

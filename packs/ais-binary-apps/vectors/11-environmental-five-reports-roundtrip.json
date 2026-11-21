@@ -1,0 +1,16 @@
+{
+  "name": "environmental-five-reports-roundtrip",
+  "from": "ais-binary-apps",
+  "to": "ais-binary-apps",
+  "input": "839>Jh@0FQ200BPB:U1g0>2b>:00@8018NFP:65t519T2R20P04Wl5`0jEp@000005200B2Ph21@@700DP00H8018ej10j0J7I0ht0h",
+  "expect": "839>Jh@0FQ200BPB:U1g0>2b>:00@8018NFP:65t519T2R20P04Wl5`0jEp@000005200B2Ph21@@700DP00H8018ej10j0J7I0ht0h",
+  "model": {
+    "aisapp.reports.#": "5",
+    "aisapp.reports[0].aisapp.station_name": "PIER 7 GAUGE",
+    "aisapp.reports[1].aisapp.cdir3": "100",
+    "aisapp.reports[2].aisapp.conductivity": "45",
+    "aisapp.reports[3].aisapp.cnorth1": "5",
+    "aisapp.reports[4].aisapp.hdistance2": "50"
+  },
+  "source": "built by tools/gen/ais-apps-vectors.py from values chosen there; layout restated from gpsd AIVDM.adoc, IMO289 Environmental; the largest message, five reports: station ID, 2D current, salinity, 3D current, horizontal current; expect derived there, no engine run"
+}

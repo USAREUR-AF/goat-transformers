@@ -1,0 +1,16 @@
+{
+  "name": "dangerous-cargo-imo289-roundtrip",
+  "from": "ais-binary-apps",
+  "to": "ais-binary-apps",
+  "input": "639>Jh@jCVd805UO@@0I4dh",
+  "expect": "639>Jh@jCVd805UO@@0I4dh",
+  "model": {
+    "aisbin.fid": "25",
+    "aisapp.cargo_unit": "1",
+    "aisapp.cargo_amount": "500",
+    "aisapp.cargos.#": "2",
+    "aisapp.cargos[1].aisapp.cargo_code": "2",
+    "aisapp.cargos[1].aisapp.cargo_subtype": "1203"
+  },
+  "source": "built by tools/gen/ais-apps-vectors.py from values chosen there; layout restated from gpsd AIVDM.adoc, IMO289 Dangerous Cargo Indication; an IMDG class and a UN number; expect derived there, no engine run"
+}

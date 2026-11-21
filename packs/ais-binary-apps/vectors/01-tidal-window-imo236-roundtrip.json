@@ -1,0 +1,18 @@
+{
+  "name": "tidal-window-imo236-roundtrip",
+  "from": "ais-binary-apps",
+  "to": "ais-binary-apps",
+  "input": "639>Jh@jCVd804qJ7dm104dBh308N;AWwww>Owwqi8vUd>w0",
+  "expect": "639>Jh@jCVd804qJ7dm104dBh308N;AWwww>Owwqi8vUd>w0",
+  "model": {
+    "aisbin.fid": "14",
+    "aisapp.month": "5",
+    "aisapp.day": "20",
+    "aisapp.tidals.#": "2",
+    "aisapp.tidals[0].aisapp.tw_lat": "32298000",
+    "aisapp.tidals[0].aisapp.to_min": "30",
+    "aisapp.tidals[1].aisapp.tw_lon": "-200",
+    "aisapp.tidals[1].aisapp.cspeed": "126"
+  },
+  "source": "built by tools/gen/ais-apps-vectors.py from values chosen there; layout restated from gpsd AIVDM.adoc, IMO236 Tidal Window; two predictions; expect derived there, no engine run"
+}

@@ -1,0 +1,8 @@
+{
+  "name": "route-short-of-its-count-is-malformed",
+  "from": "ais-binary-apps",
+  "to": "ais-binary-apps",
+  "input": "839>Jh@0Fh91@1SkwwtH9HUP7dm10",
+  "expect_error": "malformed-wire",
+  "source": "built by tools/gen/ais-apps-vectors.py from values chosen there; layout restated from gpsd AIVDM.adoc, IMO289 Route Information (broadcast); a waypoint count of 3 with one waypoint; expect derived there, no engine run"
+}
