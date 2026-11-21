@@ -110,6 +110,8 @@ final class Seq {
         final Map<Integer, Integer> altAt = new HashMap<>();
         /** {@code group ... count @<name>}: the {@code count} line it names. */
         Node countRef;
+        /** {@code group ... count @<a> @<b>} (engine-spec 0.31): the second count line it names; else null. */
+        Node countRef2;
         /** {@code switch}: the key, its cases in line order, and its {@code else} (or null). */
         String switchKey;
         /** {@code switch}: the first field line mapping its key in its scope (ruling 37 of 0.20). */
@@ -812,21 +814,32 @@ final class Seq {
                     break;
                 }
                 case "group": {
-                    String form = "a group of a sequential pack is group <list> count <len> | count @<name> | while | more | fx | rest | last";
+                    String form = "a group of a sequential pack is group <list> count <len> | count @<name> [@<name>] | while | more | fx | rest | last";
                     if (args.size() < 2) {
                         throw new GtException(GtException.Code.BAD_DIRECTIVE, format, null, where + ": group takes at least 2 arguments, got " + args.size());
                     }
                     Node n = new Node(Op.GROUP, ln);
                     n.list = args.get(0);
                     String mode = args.get(1);
-                    if (mode.equals("count") && args.size() == 3 && args.get(2).startsWith("@")) {
-                        // a count named earlier in this group body (rulings 9, 12, 15 and 24 of 0.21)
-                        String name = args.get(2).substring(1);
-                        Node c = name.isEmpty() ? null : lookupCount(name);
-                        if (c == null) throw bad(format, mode, where + ": count @" + name + " names no count visible here in this group body");
-                        if (c.op != Op.COUNT) throw bad(format, mode, where + ": count @" + name + " names a presence, not a count");
+                    if (mode.equals("count") && args.size() >= 3 && args.get(2).startsWith("@")) {
+                        // a count named earlier in this group body (rulings 9, 12, 15 and 24 of 0.21); engine-spec 0.31:
+                        // one list may name two counts, `count @<a> @<b>`, which must agree on decode
+                        if (args.size() > 4) throw bad(format, mode, where + ": count names at most two counts, got " + (args.size() - 2) + " tokens");
+                        if (args.size() == 4 && !args.get(3).startsWith("@")) {
+                            throw bad(format, mode, where + ": every token after count is @<name> when the first is, got \"" + args.get(3) + "\"");
+                        }
+                        Node[] refs = new Node[args.size() - 2];
+                        for (int i = 0; i < refs.length; i++) {
+                            String name = args.get(2 + i).substring(1);
+                            Node c = name.isEmpty() ? null : lookupCount(name);
+                            if (c == null) throw bad(format, mode, where + ": count @" + name + " names no count visible here in this group body");
+                            if (c.op != Op.COUNT) throw bad(format, mode, where + ": count @" + name + " names a presence, not a count");
+                            if (i == 1 && c == refs[0]) throw bad(format, mode, where + ": count names @" + name + " twice");
+                            refs[i] = c;
+                        }
                         n.repeat = Repeat.REF;
-                        n.countRef = c;
+                        n.countRef = refs[0];
+                        if (refs.length == 2) n.countRef2 = refs[1];
                     } else if (mode.equals("count") && args.size() == 3) {
                         n.repeat = Repeat.COUNT;
                         n.len = bitLength(args.get(2), 1, 64, "count", where, format);
@@ -1173,7 +1186,7 @@ final class Seq {
             switch (n.op) {
                 case GROUP:
                     // a reference stays in its group body (ruling 9): an item body holds none to c
-                    return n.countRef == c ? 2 : 1;
+                    return n.countRef == c || n.countRef2 == c ? 2 : 1;
                 case IF:
                 case OPT:
                 case LENGTH:

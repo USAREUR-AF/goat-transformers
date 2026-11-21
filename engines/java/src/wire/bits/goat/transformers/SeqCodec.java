@@ -56,6 +56,8 @@ final class SeqCodec extends BitsWire<byte[]> {
         boolean softBits;
         /** The number of items each {@code count} line read last; -1 when it lay at or past an extent's end. */
         final Map<Seq.Node, Long> counts = new IdentityHashMap<>();
+        /** The item number of each count read, exact (engine-spec 0.31, ruling 5: two counts compare without wrapping). */
+        final Map<Seq.Node, BigInteger> exactCounts = new IdentityHashMap<>();
         final boolean[][] presence = new boolean[pack.seqPresences][];
         final Failures fails = new Failures();
         /** The cases read so far, in reading order (engine-spec 0.20). */
@@ -361,6 +363,7 @@ final class SeqCodec extends BitsWire<byte[]> {
                         throw malformed("count " + n.name + " holds " + items.add(BigInteger.valueOf(n.plus)) + ", below its plus " + n.plus);
                     }
                     r.counts.put(n, items.bitLength() > 63 ? Long.MAX_VALUE : items.longValue());
+                    r.exactCounts.put(n, items);
                     break;
                 }
                 case WHOLE: {
@@ -602,7 +605,17 @@ final class SeqCodec extends BitsWire<byte[]> {
                 // the count line read earlier in this body; the bits left are those at the group (ruling 20 of 0.21)
                 Long c = r.counts.get(g.countRef);
                 if (c == null || c < 0) return;
+                Long c2 = g.countRef2 == null ? null : r.counts.get(g.countRef2);
+                if (g.countRef2 != null && (c2 == null || c2 < 0)) return;
                 if (r.soft >= 0 && r.pos >= r.soft) return;   // the group past an extent's end: absent (ruling 6)
+                if (g.countRef2 != null) {
+                    // engine-spec 0.31: the two numbers of items agree, as exact integers, before the bits left (ruling 4)
+                    BigInteger a = r.exactCounts.get(g.countRef), b = r.exactCounts.get(g.countRef2);
+                    if (!a.equals(b)) {
+                        throw malformed("count " + g.countRef.name + " gives " + a + " items of " + g.list + " and count "
+                                + g.countRef2.name + " gives " + b);
+                    }
+                }
                 long left = r.limit() - r.pos;
                 if (c > left) throw malformed("count " + g.countRef.name + " of " + g.list + " is " + c + " and " + left + " bits are left");
                 for (long i = 0; i < c; i++) items.add(decodeItem(g, r));
@@ -1429,6 +1442,9 @@ final class SeqCodec extends BitsWire<byte[]> {
             case REF: {
                 CountSlot c = w.slotOf.get(g.countRef);
                 if (c != null) c.value = BigInteger.valueOf(n).add(BigInteger.valueOf(g.countRef.plus));
+                // engine-spec 0.31: the second count holds the same number of items plus its own plus
+                CountSlot c2 = g.countRef2 == null ? null : w.slotOf.get(g.countRef2);
+                if (c2 != null) c2.value = BigInteger.valueOf(n).add(BigInteger.valueOf(g.countRef2.plus));
                 for (int i = 0; i < n; i++) encodeItem(g, w, items.get(i));
                 break;
             }

@@ -277,7 +277,7 @@ tool vectors: 135/135 passed
 
 | Test | Command | Measured |
 |---|---|---|
-| tool vectors | `python3 -I tools/tool-vectors.py -- engines/java/goat-xf-java.sh` | 135/135 passed on 2026-11-21 (with Version 0.30; the licence vectors 101 to 138 of Version 0.29 included), on a loaded machine (each run starts a JVM and loads every model module) |
+| tool vectors | `python3 -I tools/tool-vectors.py -- engines/java/goat-xf-java.sh` | 135/135 passed on 2026-11-21 (with Version 0.31; the licence vectors 101 to 138 of Version 0.29 included), on a loaded machine (each run starts a JVM and loads every model module) |
 
 ### The bounded sweep and `GOAT_SWEEP_FULL=1`
 
