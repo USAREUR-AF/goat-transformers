@@ -1,0 +1,14 @@
+{
+  "name": "pdu2-other-pgn-as-octets-roundtrip",
+  "from": "j1939-frame",
+  "to": "j1939-frame",
+  "input": "0004f08cf07d7d000000f07d",
+  "expect": "0004f08cf07d7d000000f07d",
+  "model": {
+    "j1939.priority": "3",
+    "j1939.pdu_format": "240",
+    "j1939.pdu_specific": "4",
+    "j1939.data.#": "8"
+  },
+  "source": "built by tools/gen/j1939-vectors.py from values chosen there; layout restated from Linux can.h and j1939.rst, python-can-j1939 message_id.py; PGN 61444 (PF 0xF0, group extension 4), its data kept as octets; expect derived there, no engine run"
+}

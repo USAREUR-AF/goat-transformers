@@ -1,0 +1,12 @@
+{
+  "name": "data-page-1-as-octets-roundtrip",
+  "from": "j1939-frame",
+  "to": "j1939-frame",
+  "input": "0000ea99000000",
+  "expect": "0000ea99000000",
+  "model": {
+    "j1939.data_page": "1",
+    "j1939.data.#": "3"
+  },
+  "source": "built by tools/gen/j1939-vectors.py from values chosen there; layout restated from Linux can.h and j1939.rst, python-can-j1939 message_id.py; data page 1: the page-0 layouts do not apply; expect derived there, no engine run"
+}

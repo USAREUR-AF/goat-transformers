@@ -1,0 +1,113 @@
+# SAE J1939 frame: the SocketCAN can_id (4 octets, little-endian) and the data, read by PGN. Written by
+# tools/gen/j1939-pack.py; do not edit by hand.
+format        j1939-frame
+version       0.1.0
+distribution  public
+source        "Linux kernel at commit c44104f3642da720164042623e4832836aefdd8e: Documentation/networking/j1939.rst (GPL-2.0 OR MIT) and include/uapi/linux/can.h (GPL-2.0-only WITH Linux-syscall-note OR BSD-3-Clause); python-can-j1939, https://github.com/juergenH87/python-can-j1939 at commit 01aba95cca43847bc272ec7ddb12048f587e6554, j1939/message_id.py, name.py, j1939_21.py, controller_application.py, diagnostic_messages.py (MIT License, Copyright (c) 2018 Frank Benkert); layouts restated, no code copied; SAE J1939 not used"
+uses          j1939
+wire          bits
+layout        sequential
+bit_order     lsb
+
+field  j1939.source_address  8  uint
+field  j1939.pdu_specific  8  uint
+field  j1939.pdu_format  8  uint
+field  j1939.data_page  1  uint
+field  j1939.extended_data_page  1  uint
+field  j1939.priority  3  uint
+field  j1939.can_err_flag  1  uint
+field  j1939.can_rtr_flag  1  uint
+field  j1939.can_eff_flag  1  uint
+switch  j1939.extended_data_page
+  case  0
+    switch  j1939.data_page
+      case  0
+        switch  j1939.pdu_format
+          case  234
+            field  j1939.requested_pgn  24  uint
+          case  238
+            field  j1939.name_identity_number  21  uint
+            field  j1939.name_manufacturer_code  11  uint
+            field  j1939.name_ecu_instance  3  uint
+            field  j1939.name_function_instance  5  uint
+            field  j1939.name_function  8  uint
+            field  j1939.name_reserved  1  uint
+            field  j1939.name_vehicle_system  7  uint
+            field  j1939.name_vehicle_system_instance  4  uint
+            field  j1939.name_industry_group  3  uint
+            field  j1939.name_arbitrary_address_capable  1  uint
+          case  236
+            field  j1939.tp_control  8  uint
+            switch  j1939.tp_control
+              case  16
+                field  j1939.tp_message_size  16  uint
+                field  j1939.tp_total_packets  8  uint
+                field  j1939.tp_max_packets  8  uint
+              case  17
+                field  j1939.tp_packets  8  uint
+                field  j1939.tp_next_packet  8  uint
+                field  j1939.tp_reserved  16  uint
+              case  19,32
+                field  j1939.tp_message_size  16  uint
+                field  j1939.tp_total_packets  8  uint
+                field  j1939.tp_reserved  8  uint
+              case  255
+                field  j1939.tp_abort_reason  8  uint
+                field  j1939.tp_reserved  24  uint
+              else
+                field  j1939.tp_control_bytes  32  uint
+            end
+            field  j1939.tp_pgn  24  uint
+          case  235
+            field  j1939.tp_sequence_number  8  uint
+            group  j1939.data  rest
+              field  j1939.octet  8  uint
+            end
+          case  232
+            field  j1939.ack_control  8  uint
+            field  j1939.ack_group_function  8  uint
+            field  j1939.ack_reserved  16  uint
+            field  j1939.ack_address  8  uint
+            field  j1939.ack_pgn  24  uint
+          case  254
+            switch  j1939.pdu_specific
+              case  202
+                field  j1939.protect_lamp  2  uint
+                field  j1939.amber_warning_lamp  2  uint
+                field  j1939.red_stop_lamp  2  uint
+                field  j1939.malfunction_lamp  2  uint
+                field  j1939.protect_lamp_flash  2  uint
+                field  j1939.amber_warning_lamp_flash  2  uint
+                field  j1939.red_stop_lamp_flash  2  uint
+                field  j1939.malfunction_lamp_flash  2  uint
+                group  j1939.dtcs  rest
+                  field  j1939.spn_low  16  uint
+                  switch  j1939.spn_low
+                    case  65535
+                    else
+                      field  j1939.fmi  5  uint
+                      field  j1939.spn_high  3  uint
+                      field  j1939.occurrence_count  7  uint
+                      field  j1939.spn_conversion_method  1  uint
+                  end
+                end
+              else
+                group  j1939.data  rest
+                  field  j1939.octet  8  uint
+                end
+            end
+          else
+            group  j1939.data  rest
+              field  j1939.octet  8  uint
+            end
+        end
+      else
+        group  j1939.data  rest
+          field  j1939.octet  8  uint
+        end
+    end
+  else
+    group  j1939.data  rest
+      field  j1939.octet  8  uint
+    end
+end

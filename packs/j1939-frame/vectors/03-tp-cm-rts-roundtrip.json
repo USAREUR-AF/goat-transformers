@@ -1,0 +1,16 @@
+{
+  "name": "tp-cm-rts-roundtrip",
+  "from": "j1939-frame",
+  "to": "j1939-frame",
+  "input": "0017ec9c10140003ffcafe00",
+  "expect": "0017ec9c10140003ffcafe00",
+  "model": {
+    "j1939.pdu_specific": "23",
+    "j1939.tp_control": "16",
+    "j1939.tp_message_size": "20",
+    "j1939.tp_total_packets": "3",
+    "j1939.tp_max_packets": "255",
+    "j1939.tp_pgn": "65226"
+  },
+  "source": "built by tools/gen/j1939-vectors.py from values chosen there; layout restated from python-can-j1939 j1939_21.py; RTS to address 0x17 for a 20-octet DM1 in three packets; expect derived there, no engine run"
+}

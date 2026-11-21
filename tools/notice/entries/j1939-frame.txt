@@ -1,0 +1,7 @@
+Packs j1939-frame; module j1939
+  Linux kernel at commit c44104f3642da720164042623e4832836aefdd8e,
+  Documentation/networking/j1939.rst (GPL-2.0 OR MIT) and
+  include/uapi/linux/can.h (GPL-2.0-only WITH Linux-syscall-note OR
+  BSD-3-Clause); python-can-j1939, https://github.com/juergenH87/python-can-j1939
+  at commit 01aba95cca43847bc272ec7ddb12048f587e6554, MIT License, Copyright
+  (c) 2018 Frank Benkert. Layouts restated; no text copied.

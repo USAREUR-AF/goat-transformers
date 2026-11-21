@@ -1,0 +1,20 @@
+{
+  "name": "dm1-one-dtc-roundtrip",
+  "from": "j1939-frame",
+  "to": "j1939-frame",
+  "input": "00cafe9804ff6e000301ffff",
+  "expect": "00cafe9804ff6e000301ffff",
+  "model": {
+    "j1939.pdu_format": "254",
+    "j1939.pdu_specific": "202",
+    "j1939.amber_warning_lamp": "1",
+    "j1939.protect_lamp_flash": "3",
+    "j1939.dtcs.#": "2",
+    "j1939.dtcs[0].j1939.spn_low": "110",
+    "j1939.dtcs[0].j1939.fmi": "3",
+    "j1939.dtcs[0].j1939.spn_high": "0",
+    "j1939.dtcs[0].j1939.occurrence_count": "1",
+    "j1939.dtcs[1].j1939.spn_low": "65535"
+  },
+  "source": "built by tools/gen/j1939-vectors.py from values chosen there; layout restated from python-can-j1939 diagnostic_messages.py; DM1 in one frame: amber lamp on, SPN 110 FMI 3, the 0xFF 0xFF padding; expect derived there, no engine run"
+}

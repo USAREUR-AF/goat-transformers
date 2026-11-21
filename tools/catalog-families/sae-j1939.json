@@ -1,0 +1,7 @@
+{
+  "name": "SAE J1939 frames",
+  "domain": "land",
+  "exact": [
+    "j1939-frame"
+  ]
+}
