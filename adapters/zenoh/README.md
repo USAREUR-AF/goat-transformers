@@ -25,6 +25,17 @@ each sample. A message's origin is the key its sample was published on.
 `adapters/` is that a third-party dependency lives only in the crate of the
 transport that needs it, so `cargo build` in `adapters/` never resolves these.
 
+## Links
+
+Zenoh 1.9.0 is built with its `tcp`, `udp` and `tls` links (features
+`transport_tcp`, `transport_udp`, `transport_tls`). A router that accepts
+only `tls/` endpoints is reached with a configuration file that names the CA
+(`transport/link/tls/root_ca_certificate`) and the `tls/` endpoint, passed as
+`?config=<file>` on the `zenoh:` URI. `tests/tls-smoke.sh <binary> <packs>`
+sends messages from one copy of the binary to another over
+`tls/127.0.0.1` with a CA and certificate it makes, and fails when the binary
+has no TLS link; `release-pipe.yml` runs it on every build.
+
 ## Metrics
 
 `--metrics <addr>` (`:9464` for every address) serves the pipeline's counters

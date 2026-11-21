@@ -28,6 +28,19 @@ Run (from this directory):
   ?mode=client&connect=tcp/<host>:7447 on a zenoh: URI, or with
   ?config=<file>. Run ./goat-xf-pipe-zenoh --help for every option.
 
+TLS (a router that accepts only tls/ endpoints): the links built in are
+tcp, udp and tls. Give the CA that signed the router's certificate in a
+Zenoh configuration file and connect to its tls/ endpoint:
+
+  { mode: "client",
+    connect: { endpoints: ["tls/<router host>:7447"] },
+    transport: { link: { tls: { root_ca_certificate: "/path/ca.pem" } } } }
+
+  ./goat-xf-pipe-zenoh ... --in 'zenoh:capture/cot/**?config=client.json5' ...
+
+  For mutual TLS add enable_mtls: true, connect_private_key and
+  connect_certificate under tls (Zenoh 1.9 configuration).
+
 Prometheus (with --metrics <addr>; GET /metrics):
 
   goat_xf_pipe_messages_in_total{format}          messages received

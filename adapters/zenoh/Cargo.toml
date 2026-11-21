@@ -1,7 +1,7 @@
 # Built outside the adapters workspace: see README.md in this directory.
 [package]
 name = "goat-adapters-zenoh"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 description = "Zenoh transport adapter for goat-transformers. The only crate here with third-party dependencies."
 license = "Apache-2.0"
@@ -17,7 +17,7 @@ path = "src/main.rs"
 [dependencies]
 goat-adapters-core = { path = "../core" }
 goat-adapters-std = { path = "../std" }
-zenoh = { version = "=1.9.0", default-features = false, features = ["transport_tcp", "transport_udp"] }
+zenoh = { version = "=1.9.0", default-features = false, features = ["transport_tcp", "transport_udp", "transport_tls"] }
 
 # Its own workspace, so `cargo build` in `adapters/` never resolves zenoh.
 [workspace]
