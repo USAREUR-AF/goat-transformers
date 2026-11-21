@@ -191,6 +191,15 @@ func (e *Engine) AddPack(p *Pack) error {
 		// A `group` names a list and a `field` or `default` a key; `requires`
 		// takes either.
 		switch {
+		case r.as:
+			// The key of `when … as` holds an unsigned integer (0.30).
+			if !isKey {
+				return lerr(ErrKeyTypeMismatch, mod, r, "when … as %s: %s is a list, not an int key", r.key, r.key)
+			}
+			if k.Type != KindInt {
+				return lerr(ErrKeyTypeMismatch, mod, r, "when … as %s: the key is %s, not int", r.key, kindName(k.Type))
+			}
+			continue
 		case r.group != nil && isKey:
 			return lerr(ErrKeyTypeMismatch, mod, r, "group names %s, which is a %s key, not a list", r.key, kindName(k.Type))
 		case r.group != nil || r.req:
