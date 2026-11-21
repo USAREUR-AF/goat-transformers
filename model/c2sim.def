@@ -26,7 +26,6 @@ key  to_receiver              string  -    "ToReceiver, a UUID"
 key  report_id                string  -    "ReportID, a UUID"
 key  reporting_entity         string  -    "ReportingEntity: UUID of the entity that makes the report"
 # Position report content (PositionReportContent)
-key  time_of_observation      string  -    "TimeOfObservation/DateTime/IsoDateTime as written: YYYY-MM-DDTHH:MM:SSZ, whole seconds, UTC"
 key  heading_deg              float   deg  "HeadingAngle: heading in degrees, north is zero; the schema does not say it is the direction of travel"
 key  altitude_agl_m           float   m    "AltitudeAGL: metres above ground level"
 key  altitude_msl_m           float   m    "AltitudeMSL: metres above mean sea level, not above the WGS 84 ellipsoid"

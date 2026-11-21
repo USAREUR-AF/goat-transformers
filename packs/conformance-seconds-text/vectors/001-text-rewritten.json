@@ -1,0 +1,10 @@
+{
+  "name": "text-rewritten",
+  "from": "conformance-seconds-text",
+  "to": "conformance-seconds-text",
+  "input": "2024-02-29T12:34:56.789Z",
+  "expect": "2024-02-29T12:34:56Z",
+  "model": {
+    "time_ms": "1709210096789"
+  }
+}

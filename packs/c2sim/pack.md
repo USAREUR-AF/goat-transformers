@@ -31,7 +31,7 @@ message has its elements in schema order.
 | `C2SIMHeader/SendingTime/IsoDateTime` | `c2sim.sending_time` | optional; the text |
 | `C2SIMHeader/ToReceivingSystem` | `c2sim.to_receiving_system` | |
 | `ReportBody/FromSender`, `ToReceiver` | `c2sim.from_sender`, `c2sim.to_receiver` | UUIDs |
-| `PositionReportContent/TimeOfObservation/DateTime/IsoDateTime` | `c2sim.time_of_observation` and `time_ms` | below |
+| `PositionReportContent/TimeOfObservation/DateTime/IsoDateTime` | `time_ms` | below |
 | `PositionReportContent/HeadingAngle` | `c2sim.heading_deg` | degrees, north is zero |
 | `Location/GeodeticCoordinate/AltitudeAGL` | `c2sim.altitude_agl_m` | metres above ground level |
 | `Location/GeodeticCoordinate/AltitudeMSL` | `c2sim.altitude_msl_m` | metres above mean sea level |
@@ -47,13 +47,10 @@ the report body and its content.
 ### The time of observation
 
 The schema's `IsoDateTime` pattern is `YYYY-MM-DDTHH:MM:SSZ`: whole seconds,
-no fraction. The `iso8601_ms` transform writes milliseconds, which that
-pattern refuses. The pack therefore binds the locator to two keys: first
-`c2sim.time_of_observation`, the text, then `time_ms`. Decode fills both.
-Encode writes the earliest line whose key is present (engine-spec ruling 16
-of 0.5), which is the text. This is the reverse of the order ruling 16
-recommends, so a consumer that changes `time_ms` on a decoded entity must
-also change `c2sim.time_of_observation`, or the old text is written.
+no fraction. The locator is bound to `time_ms` through `iso8601_s`
+(engine-spec 0.26), which reads a time as `iso8601_ms` does and writes it to
+the whole second: a track observed at `12:30:00.750Z` is written
+`12:30:00Z`.
 
 ### Keys not bound to the shared model
 
@@ -73,8 +70,8 @@ The schema requires the header's `CommunicativeActTypeCode`,
 from another format holds none of them, so the kind `requires` each of the
 corresponding keys, with `uid`, `lat` and `lon`. The caller supplies them as
 context (`--set`, a vector's `context`): the sending system assigns its
-message and report identifiers, and its time of observation in whole seconds.
-An entity without them fails with `no-kind`.
+message and report identifiers. The time of observation is the entity's
+`time_ms`. An entity without them fails with `no-kind`.
 
 The schema types `SubjectEntity` and the identifiers above as UUIDs. The pack
 writes the text it is given; a `uid` that is not a UUID gives a message the
@@ -109,7 +106,8 @@ rest are not carried.
 | `06-simulation-time-is-no-kind` | a time of observation as `SimulationTime` |
 | `07-other-namespace-is-no-kind` | the 1.0 namespace |
 | `08-entity-health-status-is-not-carried` | an unmapped element is dropped |
-| `canonical-track-v2/43-to-c2sim-position-report-with-context` | from a canonical track, with the header, report identifiers and time from context; speed derived from the velocity |
+| `canonical-track-v2/43-to-c2sim-position-report-with-context` | from a canonical track, with the header and report identifiers from context and the time from `observedAt`; speed derived from the velocity |
+| `canonical-track-v2/48-to-c2sim-time-with-a-fraction` | an `observedAt` with milliseconds is written to the whole second |
 | `canonical-track-v2/44-to-c2sim-without-context` | `no-kind` without them |
 
 Every C2SIM input and expected message validates against the schema

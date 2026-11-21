@@ -4643,6 +4643,47 @@ states a benchmark that every engine runs the same way.
 
 ---
 
+# Version 0.26: whole-second time
+
+Status: Written. Version 0.26 adds one transform, `iso8601_s`, for formats
+whose schema allows a time to the whole second only (C2SIM's `IsoDateTime`,
+`YYYY-MM-DDTHH:MM:SSZ`). The vectors are written by
+`tools/gen/conformance-seconds-vectors.py`, which derives every expected value
+from this section and imports no engine.
+
+```
+field  <key>  <locator>  iso8601_s
+```
+
+| Name | Decode | Encode |
+|---|---|---|
+| `iso8601_s` | as `iso8601_ms`: ISO 8601 UTC to epoch ms | epoch ms to `YYYY-MM-DDTHH:MM:SSZ` |
+
+## Rulings for 0.26
+
+1. **Valid where `iso8601_ms` is valid**: the `xml`, `geojson`, `json` and
+   `text` wires, with the same JSON value (a string) on `json`. On another
+   wire it is `bad-directive`. It takes no parameter (`iso8601_s:3` is
+   `bad-directive`). It yields `int`, like `iso8601_ms`, so on a key of
+   another type it is `key-type-mismatch`.
+2. **Decode** is the decode of `iso8601_ms` exactly, ruling 3 of 0.11
+   included: the grammar, the ranges, the fraction (its first three digits
+   are the milliseconds, the rest dropped) and every refusal as
+   `transform-decode`. A fraction on the wire is therefore read, not refused,
+   and the model value keeps its milliseconds.
+3. **Encode** writes the 24 characters `iso8601_ms` writes for the value, less
+   the four characters `.fff`: `YYYY-MM-DDTHH:MM:SSZ`, 20 characters, four year
+   digits, upper-case `T` and `Z`. The second written is the one that holds the
+   instant (the milliseconds are dropped, never rounded, as ruling 3c of 0.11
+   drops fraction digits): 999 writes `1970-01-01T00:00:00Z` and -1 writes
+   `1969-12-31T23:59:59Z`. The range is that of ruling 3f of 0.11: a value
+   below -62135596800000 or above 253402300799999 is `transform-encode`.
+4. **A same-format round trip** of a time with a fraction is therefore not
+   byte-exact: `2024-02-29T12:34:56.789Z` is written `2024-02-29T12:34:56Z`.
+   A pack chooses `iso8601_s` only where its format allows whole seconds and
+   nothing finer. `iso8601_short` (0.18) writes the fraction when it is not
+   zero; `iso8601_s` never writes one.
+
 # Version 0.32: time hygiene in core
 
 A change to `core`: it took the merge slot, carries ADR 0005 ("Time hygiene in

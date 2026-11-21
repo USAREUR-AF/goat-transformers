@@ -1,0 +1,10 @@
+{
+  "name": "offset",
+  "from": "conformance-seconds",
+  "to": "conformance-seconds-json",
+  "input": "<e t=\"2024-01-01T00:00:00.250-05:30\"/>",
+  "expect": "{\"t\":1704087000250}",
+  "model": {
+    "time_ms": "1704087000250"
+  }
+}

@@ -48,7 +48,7 @@ DISTRIBUTIONS = ("public", "controlled")
 
 # The type a transform yields (engine-spec 0.4 "The type a transform yields",
 # with the additions of 0.5), by the wires it is valid on.
-TEXT_TRANSFORMS = {"string": "string", "float": "float", "int": "int", "iso8601_ms": "int",
+TEXT_TRANSFORMS = {"string": "string", "float": "float", "int": "int", "iso8601_ms": "int", "iso8601_s": "int",
                    "scale": "float", "iscale": "int",
                    # engine-spec 0.18: xml, json and geojson only (ruling 11)
                    "iso8601_short": "int"}

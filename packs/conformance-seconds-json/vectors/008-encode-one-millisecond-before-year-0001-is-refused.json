@@ -1,0 +1,7 @@
+{
+  "name": "encode-one-millisecond-before-year-0001-is-refused",
+  "from": "conformance-seconds-json",
+  "to": "conformance-seconds",
+  "input": "{\"t\":-62135596800001}",
+  "expect_error": "transform-encode"
+}
