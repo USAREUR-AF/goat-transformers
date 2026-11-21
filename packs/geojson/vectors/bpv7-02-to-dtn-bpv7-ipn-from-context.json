@@ -1,0 +1,25 @@
+{
+  "name": "bpv7-02-to-dtn-bpv7-ipn-from-context",
+  "from": "geojson",
+  "to": "dtn-bpv7",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-90.25,45.5]},\"properties\":{},\"id\":\"G-1\"}",
+  "expect": "81880704008202821903d1018202820c078202820c00821b000000b6c5a56a7b182a1a05265c00",
+  "model": {
+    "uid": "G-1"
+  },
+  "context": {
+    "bpv7.bundle_flags": "4",
+    "bpv7.primary_crc_type": "0",
+    "bpv7.dst_ipn_node": "977",
+    "bpv7.dst_ipn_service": "1",
+    "bpv7.src_ipn_node": "12",
+    "bpv7.src_ipn_service": "7",
+    "bpv7.rpt_ipn_node": "12",
+    "bpv7.rpt_ipn_service": "0",
+    "bpv7.creation_time_dtn_ms": "785000000123",
+    "bpv7.creation_seq": "42",
+    "bpv7.lifetime_ms": "86400000"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): packs/dtn-bpv7/pack.def and pack.md; RFC 9171 4.1 (bundle), 4.3.1 (primary block), 4.3.2 (canonical block), 4.2.1 (CRC); The context gives the six node and service keys, so Encode step 2 skips fragment-ipn and fragment (no bpv7.total_adu_length) and selects ipn. The scheme codes are not in the context: the when lines of ipn write 2 at [0].[3].[0], [0].[4].[0] and [0].[5].[0], and the common when writes 7 at [0].[0]. CRC type 0 and no bpv7.primary_crc: a primary block of 8 elements, no canonical block: 81 88 07 04 00 8202821903d101 8202820c07 8202820c00 821b000000b6c5a56a7b182a 1a05265c00 (785000000123 = 0xb6c5a56a7b). Derived without an engine by a standalone RFC 8949 codec."
+}

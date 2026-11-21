@@ -1,0 +1,9 @@
+{
+  "name": "dot-group-array-element",
+  "from": "conformance-cbor-kinds",
+  "to": "conformance-cbor-kinds",
+  "input": "a209818101616b65747261636b",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Ruling 14: an array element in a body of only . is read by int, which refuses it. Derived without an engine by a standalone RFC 8949 codec."
+}

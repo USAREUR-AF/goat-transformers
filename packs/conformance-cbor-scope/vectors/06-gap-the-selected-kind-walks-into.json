@@ -1,0 +1,17 @@
+{
+  "name": "gap-the-selected-kind-walks-into",
+  "from": "conformance-cbor-scope",
+  "to": "conformance-cbor-scope",
+  "input": "85f605f6420aff01",
+  "expect": "85f605a0420aff01",
+  "model": {
+    "@kind": "located",
+    "probe.val": "5",
+    "probe.s2": "0aff",
+    "@absent": [
+      "lat"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): packs/conformance-cbor-scope/pack.def (group probe.items [0] with probe.qty a.b int; probe.val [1] uint under const [1] 5; probe.s2 [3] bytes; kind located: when [4] 1, lat [2].1 float; kind bare: no when); The contrast to ruling 30: when [4] 1 selects located, whose lat line passes through null at [2] (ruling 12: absent, walked into, not written back); on write [2] is a gap the selected lines walk into as a map: a0 (ruling 23). [4] is the when value 1: 85 f6 05 a0 420aff 01. Derived without an engine by a standalone RFC 8949 codec."
+}

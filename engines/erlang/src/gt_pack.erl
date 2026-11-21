@@ -43,15 +43,19 @@
 %%     text     {fld, I} | {col, I, From, Len} | {pair, I, J}; inside a group
 %%              relative to the item's first field
 %%     tlv      {[Tag], Size :: none | 1..8}
+%%     cbor     [{i, Integer} | {t, Text} | {p, Index}]; inside a group `.` is
+%%              [] (gt_cbor, Version 0.28); a group may be at [] (`group <list> .`)
 %%   A text pack also has delimiter (binary() | none), start (binary(), <<>>
 %%   for none) and checksum (none | nmea).
 %%   A bits pack has armor (hex | sixbit, 0.14); every pack carries the key.
 %%   A tlv pack also has tag_enc (ber_oid | 1 | 2 | 4), len_enc (ber | 1 | 2 |
 %%   4), key (none | binary()) and sum16 (none | {sum16 | crc32, Tag}, 0.27).
+%%   A cbor pack also has cbor_top (map | array) and cbor_tag (none | N).
 %%   Inside a group a geojson pack uses the json locators.
 %%   `when` Value: bits -> integer(); protobuf -> present | integer();
 %%                 text wires -> present | {text, binary(), Forced :: boolean()}
 %%                 tlv -> present | {uint, integer()}
+%%                 cbor -> present | {int, integer()} | {bool, boolean()} | {text, binary()}
 %%   `const` Value: as a `when` value, never `present`.
 %%
 %% gt_engine:load_pack/2 checks the pack against the loaded modules, types the
@@ -132,6 +136,26 @@ parse(Bin) ->
          ({raw, Kind, Msg}) -> erlang:error({load_error, Kind, Msg});
          ({text_only, _Dir}) when Wire =:= text -> ok;
          ({tlv_only, _Dir}) when Wire =:= tlv -> ok;
+         %% `tag` names two forms: 0.13's on tlv and 0.28's on cbor
+         ({tag_dir, Args}) ->
+              Text = lists:join(" ", [binary_to_list(A) || A <- Args]),
+              case Wire of
+                  tlv ->
+                      case tlv_value(tag, Args) of
+                          {ok, _, _} -> ok;
+                          error -> load_error('bad-directive', "tag ~s is not a form the tlv wire allows",
+                                              [Text])
+                      end;
+                  cbor ->
+                      case gt_cbor:tag_value(Args) of
+                          {ok, _} -> ok;
+                          error -> load_error('bad-directive',
+                                              "tag ~s is not a decimal from 0 to 2^64-1 with no leading zero",
+                                              [Text])
+                      end;
+                  _ -> load_error('bad-directive', "tag ~s is valid only on a tlv or cbor wire, not ~s",
+                                  [Text, Wire])
+              end;
          ({bits_only, _Dir}) when Wire =:= bits -> ok;
          ({bits_only, Dir}) ->
               load_error('bad-directive', "~s is valid only on a bits wire, not ~s", [Dir, Wire]);
@@ -209,7 +233,12 @@ parse(Bin) ->
     end,
     P3 = case Layout of
              sequential -> seq_resolve(P2);
-             fixed -> check_scopes(P2), P2
+             fixed ->
+                 check_scopes(P2),
+                 case Wire of
+                     cbor -> gt_cbor:prepare(P2);
+                     _ -> P2
+                 end
          end,
     P = maps:without([cur, late, kind_names, table_names, gstack, sstack, text_seen, tlv_seen,
                       headers, listed_seen, armor_seen, body_kind_seen, bstack,
@@ -297,6 +326,9 @@ yields({chars_stop, _, _}) -> string;
 yields(octal) -> string;
 yields(f64)     -> float;
 yields(utf8)    -> string;
+yields(text)    -> string;
+yields(bytes)   -> string;
+yields(epoch_s) -> int;
 yields(hex)     -> string;
 yields(pdouble) -> float;
 yields(pfloat)  -> float;
@@ -477,7 +509,9 @@ arg_count_ok(Dir, N) ->
            %% `element <path>` (0.18)
            <<"element">>,
            %% `encoding <none | uper>` and `alt <i>` (0.19)
-           <<"encoding">>, <<"alt">>],
+           <<"encoding">>, <<"alt">>,
+           %% `tag <n>` takes exactly one argument (0.28)
+           <<"tag">>],
     case lists:member(Dir, One) of
         true -> N =:= 1;
         false ->
@@ -674,12 +708,14 @@ apply_line([<<"when">>, LocS, ValS], #{has_kinds := HasKinds} = P0) ->
          end,
     Wire = need_wire(P1),
     Loc = parse_loc(Wire, LocS, P1),
+    dot_refused(Wire, Loc, "when"),
     no_pair(Loc, "when", LocS),
     {Val, P2} = when_value(Wire, Loc, LocS, ValS, P1),
     add_line({wh, Loc, Val, LocS}, P2);
 apply_line([<<"const">>, LocS, ValS], P0) ->
     Wire = need_wire(P0),
     Loc = parse_loc(Wire, LocS, P0),
+    dot_refused(Wire, Loc, "const"),
     case Loc of
         [] -> load_error('bad-directive', "const . names the item itself", []);
         _ -> ok
@@ -862,6 +898,11 @@ req_key(K) -> K.
 
 vcheck(C, #{vchecks := V} = P) -> P#{vchecks := [C | V]}.
 
+%% On cbor `.` is a path only on a field in a group body and on a group
+%% outside one (ruling 22 of 0.28).
+dot_refused(cbor, [], What) -> line_error('bad-locator', "~s . names no member", [What]);
+dot_refused(_, _, _) -> ok.
+
 %% Field options after the transform, in any order.
 %% An unknown or repeated option is bad-directive.
 parse_opts([], Opts) -> Opts;
@@ -919,6 +960,7 @@ spec_wire(<<"bits">>) -> {bits, ?W_BITS};
 spec_wire(<<"protobuf">>) -> {protobuf, ?W_PROTOBUF};
 spec_wire(<<"text">>) -> {text, ?W_TEXT};
 spec_wire(<<"tlv">>) -> {tlv, ?W_TLV};
+spec_wire(<<"cbor">>) -> {cbor, ?W_CBOR};                 % Version 0.28
 spec_wire(_) -> none.
 
 word_bytes(S) ->
@@ -960,7 +1002,7 @@ sentinels(Wire, Tr, Len, Opts) ->
                     %% `absent` on tlv is whether an option fits its wire,
                     %% checked after the file (ruling 14 of 0.13)
                     case (Wire =:= bits andalso is_integer(Len) andalso Len > 64)
-                        orelse Wire =:= tlv of
+                        orelse Wire =:= tlv orelse Wire =:= cbor of
                         true -> {setelement(5, Opts, none), [{bad, Fmt, Args}]};
                         false -> line_error('bad-directive', Fmt, Args)
                     end
@@ -998,6 +1040,8 @@ absent_values(Wire, Tr, Len, Arg) ->
         text -> absent_bad("absent ~s: not a field option on a text wire", [Arg]);
         %% `absent` on `tlv` is bad-directive (ruling 10 of 0.13)
         tlv -> absent_bad("absent ~s: not a field option on a tlv wire", [Arg]);
+        %% `absent` on `cbor` is bad-directive (ruling 10 of 0.28)
+        cbor -> absent_bad("absent ~s: not a field option on a cbor wire", [Arg]);
         _ ->                                           % json, geojson
             Js = [absent_json(V) || V <- Values],
             %% a geojson coordinate takes only number text (ruling 25 of 0.9)
@@ -1099,6 +1143,14 @@ text_loc_indexes({pair, I, J}) -> [I, J].
 %% Inside a group a locator is relative to one item: the same forms, and on
 %% json, geojson and protobuf also `.` for the item itself.
 parse_loc(tlv, S, _P) -> tlv_loc(S);
+%% cbor (0.28): `.` is a path only on a field in a group body (the callers
+%% refuse it on when and const)
+parse_loc(cbor, <<".">>, P) ->
+    case in_group(P) of
+        true -> [];
+        false -> line_error('bad-locator', "cbor path . stands outside a group", [])
+    end;
+parse_loc(cbor, S, _P) -> gt_cbor:path(S);
 parse_loc(text, S, P) ->
     Loc = text_loc(S),
     case maps:get(gstack, P) of
@@ -1230,6 +1282,10 @@ group_loc(json, S, _InGroup, P) -> top_loc(json, S, P);
 %% not digits stays bad-locator, a line check (5a of 0.11)
 group_loc(protobuf, S, _InGroup, _P) when S =:= <<"rest">>; S =:= <<"last">> ->
     load_error('bad-directive', "~s is a group form of a sequential pack, not a protobuf locator", [S]);
+group_loc(cbor, <<".">>, true, _P) ->
+    line_error('bad-locator', "group . inside a group body", []);
+group_loc(cbor, <<".">>, false, _P) -> [];
+group_loc(cbor, S, _InGroup, _P) -> gt_cbor:path(S);
 group_loc(protobuf, S, _InGroup, P) -> top_loc(protobuf, S, P);
 group_loc(bits, S, _InGroup, #{word_bytes := WB0}) ->
     WB = case WB0 of
@@ -1280,6 +1336,7 @@ group_spec(Wire, [Tok | _], LocS, _P) ->
 %% last thing in its scope, and a field of an item stays within its item.
 check_scopes(#{wire := text} = P) -> text_scopes(P);
 check_scopes(#{wire := tlv} = P) -> tlv_scopes(P);
+check_scopes(#{wire := cbor} = P) -> gt_cbor:check_pack(P);
 check_scopes(#{common := Common, kinds := Kinds, wire := Wire}) ->
     case Kinds of
         [] -> check_scope(Common, none, Wire);
@@ -1532,6 +1589,10 @@ fixed_value(Which, tlv, {_Path, Size}, LocS, ValS, P) ->
             {{uint, V}, late({bad, "~s ~s: value ~s does not fit ~p bytes", [Which, LocS, ValS, N]}, P)};
         {V, _} -> {{uint, V}, P}
     end;
+fixed_value(wh, cbor, _Loc, _LocS, <<"present">>, P) -> {present, P};
+fixed_value(const, cbor, _Loc, LocS, <<"present">>, _P) ->
+    load_error('bad-directive', "const ~s present: a const needs a value", [LocS]);
+fixed_value(_Which, cbor, _Loc, _LocS, ValS, P) -> {gt_cbor:fixed(ValS), P};
 fixed_value(wh, _Text, _Loc, _LocS, <<"present">>, P) -> {present, P};
 fixed_value(const, _Text, _Loc, LocS, <<"present">>, _P) ->
     load_error('bad-directive', "const ~s present: write =present for the text", [LocS]);
@@ -1548,6 +1609,9 @@ fixed_value(_Which, _Text, _Loc, _LocS, V, P) -> {{text, V, false}, P}.
 %% The `text` wire keeps one literal value, a comma included, and `tlv`
 %% takes no list or range (ruling 38 of 0.20).
 when_value(text, Loc, LocS, ValS, P) -> fixed_value(wh, text, Loc, LocS, ValS, P);
+%% `cbor` takes no list or range either: a comma stays in the one text value,
+%% `present` included (ruling 36 of 0.28).
+when_value(cbor, Loc, LocS, ValS, P) -> fixed_value(wh, cbor, Loc, LocS, ValS, P);
 when_value(tlv, Loc, LocS, ValS, P) ->
     {Val, P1} = fixed_value(wh, tlv, Loc, LocS, ValS, P),
     case binary:match(ValS, <<",">>) of
@@ -1656,12 +1720,13 @@ when_first(V) -> V.
 %% On tlv a transform whose name or parameters do not parse is bad-directive
 %% after the file is read (ruling 8 of 0.13); the line keeps the placeholder
 %% `invalid`, and the pack never loads.
-parse_transform(tlv, S) ->
+parse_transform(Wire, S) when Wire =:= tlv; Wire =:= cbor ->
     try transform(S) of
-        _ -> parse_transform1(tlv, S)
+        _ -> parse_transform1(Wire, S)
     catch error:{E, _, Msg} when E =:= load_error; E =:= line_error ->
-        %% not a line check on tlv (ruling 8 of 0.13)
-        {invalid, [{bad, "transform ~s on a tlv wire: ~s", [S, Msg]}]}
+        %% not a line check on tlv (ruling 8 of 0.13) nor on cbor (ruling 25
+        %% of 0.28)
+        {invalid, [{bad, "transform ~s on a ~s wire: ~s", [S, Wire, Msg]}]}
     end;
 parse_transform(Wire, S) -> parse_transform1(Wire, S).
 
@@ -1678,11 +1743,18 @@ parse_transform1(Wire, S) ->
         %% another wire (ruling 1 of 0.26)
         {text26, W} when W =:= xml; W =:= json; W =:= geojson; W =:= text -> ok;
         {_, tlv} -> ok;
+        {_, cbor} -> ok;
         {C, _} when C =:= bits15; C =:= text15; C =:= text26 ->
             load_error('bad-directive', "transform ~s is not valid on a ~s wire", [S, Wire]);
         _ -> ok
     end,
     Ok = case {Class, Wire} of
+             %% on cbor the transforms of its table, every other after the file
+             {_, cbor} ->
+                 case gt_cbor:transform_ok(Tr) of
+                     true -> true;
+                     false -> late
+                 end;
              {bits15, bits} -> true;
              {text15, Tw} when Tw =/= tlv -> true;
              {text26, Tw} when Tw =/= tlv -> true;
@@ -1746,6 +1818,9 @@ transform(<<"linscale:", Rest/binary>> = S) ->
     end;
 transform(<<"uscale:", Rest/binary>> = S) -> {bits, scale(uscale, Rest, S)};
 transform(<<"sscale:", Rest/binary>> = S) -> {bits, scale(sscale, Rest, S)};
+transform(<<"text">>)       -> {cbor, text};              % 0.28
+transform(<<"bytes">>)      -> {cbor, bytes};
+transform(<<"epoch_s">>)    -> {cbor, epoch_s};
 transform(<<"utf8">>)       -> {tlvonly, utf8};
 transform(<<"hex">>)        -> {tlvonly, hex};
 %% Version 0.15: value transforms
@@ -1798,7 +1873,7 @@ transform(T) ->
              <<"twos">>, <<"f32">>, <<"f64">>, <<"ascii">>, <<"linscale">>, <<"uscale">>,
              <<"sscale">>, <<"pstring">>, <<"pvarint">>, <<"psint">>, <<"pdouble">>,
              <<"pfloat">>, <<"dec">>, <<"dm">>, <<"hms">>, <<"hms_dmy">>,
-             <<"utf8">>, <<"hex">>],
+             <<"utf8">>, <<"hex">>, <<"text">>, <<"bytes">>, <<"epoch_s">>],
     case lists:member(Name, Known) of
         true -> line_error('bad-directive', "transform ~s: its parameters are not valid", [T]);
         false -> line_error('unknown-transform', "~s", [T])
@@ -3030,7 +3105,10 @@ tlv_directive(Dir, Args, #{tlv_seen := Seen, cur := Cur, kind_names := Kinds} = 
     Text = lists:join(" ", [binary_to_list(A) || A <- Args]),
     %% the wire is checked after the file is read: tag, key and checksum may
     %% stand before the wire line (ruling 13 of 0.13)
-    P1 = late({tlv_only, [atom_to_list(Dir), " ", Text]}, P0),
+    P1 = case Dir of
+             tag -> late({tag_dir, Args}, P0);
+             _ -> late({tlv_only, [atom_to_list(Dir), " ", Text]}, P0)
+         end,
     P2 = case maps:is_key(Dir, Seen) of
              true -> late({bad, "~s appears more than once", [Dir]}, P1);
              false -> P1
@@ -3040,9 +3118,12 @@ tlv_directive(Dir, Args, #{tlv_seen := Seen, cur := Cur, kind_names := Kinds} = 
              false -> late({bad, "~s stands after the first kind", [Dir]}, P2)
          end,
     P = P3#{tlv_seen := Seen#{Dir => true}},
-    case tlv_value(Dir, Args) of
-        {ok, Field, V} -> P#{Field := V};
-        error -> late({bad, "~s ~s is not a form the tlv wire allows", [Dir, Text]}, P)
+    case {Dir, tlv_value(Dir, Args)} of
+        %% the value of a tag line is checked by the wire it stands on
+        {tag, {ok, Field, V}} -> P#{Field := V, tag_args => Args};
+        {tag, error} -> P#{tag_args => Args};
+        {_, {ok, Field, V}} -> P#{Field := V};
+        {_, error} -> late({bad, "~s ~s is not a form the tlv wire allows", [Dir, Text]}, P)
     end.
 
 tlv_value(tag, [<<"ber-oid">>]) -> {ok, tag_enc, ber_oid};

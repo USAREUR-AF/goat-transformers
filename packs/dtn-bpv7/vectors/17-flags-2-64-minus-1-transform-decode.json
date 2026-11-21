@@ -1,0 +1,9 @@
+{
+  "name": "flags-2-64-minus-1-transform-decode",
+  "from": "dtn-bpv7",
+  "to": "dtn-bpv7",
+  "input": "9f89071bffffffffffffffff018202821903d1018202820c078202820c00821b000000b6c5a56a7b182a1a05265c0042553d86010100024974656d702032312e35448f53ba2bff",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): packs/dtn-bpv7/pack.def and pack.md; RFC 9171 4.1 (bundle), 4.3.1 (primary block), 4.3.2 (canonical block), 4.2.1 (CRC); The bundle processing control flags are 2^64-1 (1bffffffffffffffff), a well-formed CBOR unsigned integer: the common uint line at [0].[1] refuses it above 2^63-1. Derived without an engine by a standalone RFC 8949 codec."
+}

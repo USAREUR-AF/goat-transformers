@@ -1,0 +1,9 @@
+{
+  "name": "hex-with-a-form-feed",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor",
+  "input": "a100\f01",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Ruling 11: a form feed is not whitespace of hex text: malformed-wire. Derived without an engine by a standalone RFC 8949 codec."
+}

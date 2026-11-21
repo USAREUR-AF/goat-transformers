@@ -1,0 +1,13 @@
+{
+  "name": "residue-re-encoded-deterministic",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor",
+  "input": "b200010163552d3102182a03f93e0004420aff051a603aa4c0060207a201f951b002f9d5a40882617861540981a2646e616d65626161616e03202664666c6167f50a1900050bfb3ff80000000000000c7f61616162ff0dd8011a000000050ebf616201616102ff180f00",
+  "expect": "b200010163552d3102182a03f93e0004420aff051a603aa4c0060207a201f951b002f9d5a40882617861540981a2616e03646e616d656261610a050bf93e000c6261620dc1050ea26161026162010f00202664666c6167f5",
+  "model": {
+    "@kind": "plain",
+    "uid": "U-1"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Residue and ruling 1 of 0.28: residue goes back re-encoded with the core deterministic encoding: 190005 -> 05, fb3ff8000000000000 -> f93e00, 7f61616162ff -> 626162, d8011a00000005 -> c105 (the tag is kept: residue is the item as it stood, tags included), bf616201616102ff -> a2616102616201 (definite, keys sorted), key 180f -> 0f. Derived without an engine by a standalone RFC 8949 codec."
+}

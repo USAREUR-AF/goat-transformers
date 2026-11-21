@@ -1,0 +1,16 @@
+{
+  "name": "when-present-walks-into-its-path",
+  "from": "conformance-cbor-kinds",
+  "to": "conformance-cbor-kinds",
+  "input": "a107a201f951b009617a",
+  "expect": "a507a201f951b009617a61736231326174743138343436373434303733373039353531363136617626626f6bf5",
+  "model": {
+    "@kind": "located",
+    "lat": "45.5",
+    "@absent": [
+      "lon"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Kinds and Residue: when 7 present holds on the map at 7; the fields lat and lon walk into it (ruling 15: the when does not), so the unmapped member 7.9 is residue and goes back into the map at 7. Derived without an engine by a standalone RFC 8949 codec."
+}

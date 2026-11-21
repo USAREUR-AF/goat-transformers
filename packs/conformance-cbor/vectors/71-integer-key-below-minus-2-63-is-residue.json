@@ -1,0 +1,12 @@
+{
+  "name": "integer-key-below-minus-2-63-is-residue",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor",
+  "input": "a300013b7fffffffffffffff033b800000000000000002",
+  "expect": "a300013b7fffffffffffffff033b800000000000000002",
+  "model": {
+    "@kind": "plain"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Ruling 17: the key 3b8000000000000000 (-2^63-1) is not addressable and is residue; 3b7fffffffffffffff (-2^63) is an unmapped integer key and residue too; both written back, 3b7f... before 3b80.... Derived without an engine by a standalone RFC 8949 codec."
+}

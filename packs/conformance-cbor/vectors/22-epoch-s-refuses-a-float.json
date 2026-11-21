@@ -1,0 +1,9 @@
+{
+  "name": "epoch-s-refuses-a-float",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor",
+  "input": "ac00010163552d3102182a03f93e0004420aff05fb41d80ea930000000060207a201f951b002f9d5a40882617861540981a2616e03646e616d65626161202664666c6167f5",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): epoch_s takes major type 0 or 1; 5 holds the float 1614456000.0 (fb41d80ea930000000). Derived without an engine by a standalone RFC 8949 codec."
+}

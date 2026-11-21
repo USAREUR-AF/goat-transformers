@@ -1,0 +1,9 @@
+{
+  "name": "trailing-byte",
+  "from": "cose-sign1",
+  "to": "cose-sign1",
+  "input": "d28444a1013822a104446b2d303145706f73203750a0a1a2a3a4a5a6a7a8a9aaabacadaeaf00",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): packs/cose-sign1/pack.def and pack.md; Reading step 1: a byte (00) after the one data item. Derived without an engine by a standalone RFC 8949 codec."
+}

@@ -5,12 +5,12 @@
 # 1. Builds the engine with only the wires xml, json and geojson and runs
 #    TestReducedBuild in that build: every conversion vector whose `from` and
 #    `to` packs are on those wires must pass, and every pack on bits,
-#    protobuf, text and tlv must fail to load with unknown-wire naming its
+#    protobuf, text, tlv and cbor must fail to load with unknown-wire naming its
 #    wire.
-# 2. Builds goat-xf twice, with all seven wires and with the three, and loads
-#    one pack on each of bits, protobuf, text and tlv with the reduced tool:
+# 2. Builds goat-xf twice, with all eight wires and with the three, and loads
+#    one pack on each of bits, protobuf, text, tlv and cbor with the reduced tool:
 #    each must exit 1 with unknown-wire and a message that names the wire.
-# 3. Checks that the reduced tool carries no decoder or encoder of the four
+# 3. Checks that the reduced tool carries no decoder or encoder of the five
 #    wires it lacks, and prints the size of both tools.
 #
 # Exits non-zero on any failure.
@@ -39,7 +39,7 @@ echo "== goat-xf, full and reduced"
 go build -o "$OUT/goat-xf-full" ./cmd/goat-xf
 go build -tags "$TAGS" -o "$OUT/goat-xf-reduced" ./cmd/goat-xf
 
-for wire in bits protobuf text tlv; do
+for wire in bits protobuf text tlv cbor; do
 	pack=
 	for def in "$PACKS"/*/pack.def; do
 		if grep -Eq "^[[:space:]]*wire[[:space:]]+$wire[[:space:]]*\$" "$def"; then
@@ -74,7 +74,7 @@ done
 # The reduced tool must not carry the codec of a wire it lacks, and must
 # carry the codec of each wire it has.
 nm_reduced=$(go tool nm "$OUT/goat-xf-reduced")
-for sym in decodeBits encodeBits decodeSeq encodeSeq parseSixbitArmor decodeProtobuf encodeProtobuf decodeText encodeText decodeTLV encodeTLV; do
+for sym in decodeBits encodeBits decodeSeq encodeSeq parseSixbitArmor decodeProtobuf encodeProtobuf decodeText encodeText decodeTLV encodeTLV decodeCBOR encodeCBOR readCBORItem; do
 	if printf '%s\n' "$nm_reduced" | grep -Eq "engines/go\.$sym\$"; then
 		echo "FAIL: the reduced tool carries $sym"
 		fail=1
@@ -89,7 +89,7 @@ done
 
 full=$(wc -c <"$OUT/goat-xf-full" | tr -d ' ')
 reduced=$(wc -c <"$OUT/goat-xf-reduced" | tr -d ' ')
-echo "size of goat-xf: full (7 wires) $full bytes, reduced (xml json geojson) $reduced bytes, $((full - reduced)) bytes less ($(go env GOOS)/$(go env GOARCH), $(go env GOVERSION))"
+echo "size of goat-xf: full (8 wires) $full bytes, reduced (xml json geojson) $reduced bytes, $((full - reduced)) bytes less ($(go env GOOS)/$(go env GOARCH), $(go env GOVERSION))"
 
 if [ "$fail" -ne 0 ]; then
 	echo "reduced-build check: FAILED"

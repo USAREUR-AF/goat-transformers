@@ -1,0 +1,12 @@
+{
+  "name": "to-kinds-integer-when-written",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor-kinds",
+  "input": "a2000164666c6167f5",
+  "expect": "a6001bffffffffffffffff040161736231326174743138343436373434303733373039353531363136617626626f6bf5",
+  "model": {
+    "probe.x": "1"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Ruling 8: with only probe.x present, located, overlay and deep do not qualify and big does; its when value is written as the integer 18446744073709551615 (1bffffffffffffffff), probe.x 1 at 4. Derived without an engine by a standalone RFC 8949 codec."
+}

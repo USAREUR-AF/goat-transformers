@@ -1,0 +1,9 @@
+{
+  "name": "invalid-utf8-split-across-chunks",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor",
+  "input": "a200010a7f61c361a9ff",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Reading step 3: each chunk of an indefinite text string is valid UTF-8 on its own; c3 and a9 are two chunks, each invalid, although c3a9 joined is U+00E9. The item is residue (10): anywhere in the input. Derived without an engine by a standalone RFC 8949 codec."
+}

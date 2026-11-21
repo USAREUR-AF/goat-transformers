@@ -11,7 +11,7 @@ import java.util.Set;
 
 /** A parsed {@code pack.def}. */
 public final class Pack {
-    public enum Wire { XML, GEOJSON, BITS, PROTOBUF, JSON, TEXT, TLV }
+    public enum Wire { XML, GEOJSON, BITS, PROTOBUF, JSON, TEXT, TLV, CBOR }
 
     /** One {@code field} or {@code when} line: a locator on the wire. */
     public abstract static class Line {
@@ -39,6 +39,8 @@ public final class Pack {
         public final PbTransform pb;
         /** The tlv wire's transform; set once when the line is resolved. */
         TlvTransform tlv;
+        /** The cbor wire's transform (engine-spec 0.28); set once when the line is resolved. */
+        CborLayout.CT cbor;
         /** Text wires: {@code scale} or {@code iscale} (engine-spec 0.15), or null; {@code transform} is then float or int. */
         TextScale scale;
         /** The value table named by {@code via}, or null. */
@@ -111,12 +113,14 @@ public final class Pack {
         /** The transform's name as written in the pack. */
         public String transformName() {
             if (scale != null) return scale.wireName();
+            if (cbor != null) return cbor.wireName;
             return tlv != null ? tlv.name : transform != null ? transform.wireName() : text != null ? text.name : bits != null ? bits.wireName() : pb.wireName();
         }
 
         /** The model type the transform yields: {@code string}, {@code float} or {@code int}. */
         public String yields() {
             if (scale != null) return scale.yields();
+            if (cbor != null) return cbor.yields;
             return tlv != null ? tlv.yields() : transform != null ? transform.yields() : text != null ? text.yields() : bits != null ? bits.yields() : pb.yields();
         }
     }
@@ -185,6 +189,8 @@ public final class Pack {
         String[] texts;
         /** bits and protobuf (engine-spec 0.20): the listed values as {@code lo, hi} pairs; null for one value. */
         long[] ranges;
+        /** cbor: the value as its item, core deterministic (0.28, Kinds); null for {@code present} and other wires. */
+        byte[] cbor;
 
         When(String locator, String value, boolean present, String text, boolean forced, long number, boolean isConst, int line) {
             super(locator, line);
@@ -590,6 +596,9 @@ public final class Pack {
     long tlvChecksumTag = -1;
     /** The {@code requires =} and {@code case} value lists, in line order: read as their keys' types at load. */
     List<ValueList> valueLists = new ArrayList<>();
+    /** cbor wire: {@code tag <n>}, the message is tag n enclosing the item (engine-spec 0.28). */
+    boolean cborTagged;
+    long cborTag;
     /** native code to CoT type token, in file order (first wins). */
     public final Map<String, String> nativeToCot;
     /** CoT type token to native code (first line wins). */
@@ -722,6 +731,7 @@ public final class Pack {
     private static final Set<String> ONE_ARGUMENT = Set.of("format", "version", "distribution", "source", "uses", "wire",
             "root", "kind", "word_bytes", "bit_order", "layout", "pad", "align", "delimiter", "start", "checksum",
             "armor",    // armor: ruling 13 of 0.14
+            "tag",      // tag: exactly one argument, checked as the line is read (engine-spec 0.28)
             "element",  // element (0.18): its count does not depend on the layout (step 3 of 5b of 0.11)
             "encoding", "alt");   // 0.19, ruling 23: counted at step 3 of 5b, as armor is
 
@@ -734,7 +744,9 @@ public final class Pack {
             "linscale", "uscale", "sscale", "f32", "f64", "ascii", "pstring", "pvarint", "psint", "pdouble", "pfloat",
             "dec", "dm", "hms", "hms_dmy", "utf8", "hex", "sixbit",
             // engine-spec 0.15
-            "uiscale", "siscale", "smag", "smscale", "f32scale", "f64scale", "chars", "octal", "scale", "iscale");
+            "uiscale", "siscale", "smag", "smscale", "f32scale", "f64scale", "chars", "octal", "scale", "iscale",
+            // engine-spec 0.28, the cbor wire
+            "text", "bytes", "epoch_s");
 
     /** Check 3 of ruling 5b: the number of arguments of the directives whose count does not depend on the layout. */
     private static void lineArity(String kw, List<String> args, String where, String format) {
@@ -798,6 +810,7 @@ public final class Pack {
             case GEOJSON: why = loc.equals(".") ? null : inGroup ? Locators.json(loc) : Locators.geojsonField(loc); break;
             case PROTOBUF: why = loc.equals(".") ? null : Locators.protobufField(loc); break;
             case TLV: return;   // 0.13: a tlv path is checked after the file, and its failures are bad-directive
+            case CBOR: why = CborLayout.checkPath(loc, false); break;   // when and const: never `.` (ruling 22 of 0.28)
             case BITS:
                 // a bit length as the locator of a fixed-layout pack stays bad-directive (resolved after the file);
                 // so does a UPER locator outside a UPER pack (ruling 9 of 0.19, checked after the file)
@@ -817,7 +830,7 @@ public final class Pack {
     /** The header lines a pack has once (check 5 of ruling 5b). */
     private static final Set<String> HEADERS = Set.of("format", "version", "wire", "distribution");
 
-    private static final Set<String> WIRES = Set.of("xml", "geojson", "json", "bits", "protobuf", "text", "tlv");
+    private static final Set<String> WIRES = Set.of("xml", "geojson", "json", "bits", "protobuf", "text", "tlv", "cbor");
 
     /** Check 8 for a {@code group} line of a fixed-layout pack: the form of its locator (ruling 5a of 0.11). */
     private static void lineCheckGroupLocator(Wire wire, String loc, boolean inGroup, String format, String where) {
@@ -831,6 +844,7 @@ public final class Pack {
             // protobuf: `rest` and `last` are a group locator not valid for the wire, bad-directive after the file
             // (ruling 37 of 0.21), not the bad-locator of 5a
             case PROTOBUF: why = loc.equals("rest") || loc.equals("last") ? null : Locators.protobufField(loc); break;
+            case CBOR: why = CborLayout.checkPath(loc, !inGroup); break;   // `group <list> .` outside a body only
             // bits: 5a names field, when and const lines only, and a group with a sequential form (`while`) in a
             // fixed-layout pack stays bad-directive; text: its group form is checked after the file
             default: why = null;
@@ -944,6 +958,14 @@ public final class Pack {
         if (wire == Wire.TLV) {
             // 0.13: on tlv the transform (ruling 8), the path (bad-directive, not a 5a form) and absent (ruling 10)
             // are checked after the file; only the option syntax of check 9 is a line check
+            optionSyntax(args, format, loc, where);
+            return;
+        }
+        if (wire == Wire.CBOR) {
+            // 0.28: `.` on a field in a group body only; the transform (ruling 25), the options' fit and absent's
+            // values are checked after the file
+            String why = CborLayout.checkPath(loc, inGroup);
+            if (why != null) throw badLocator(format, loc, where + ": " + why);
             optionSyntax(args, format, loc, where);
             return;
         }
@@ -1069,7 +1091,8 @@ public final class Pack {
                 break;
             }
             if (tok.size() == 2 && tok.get(0).equals("wire")) {
-                tlvWire = tok.get(1).equals("tlv");
+                // cbor defers its transform checks to after the file as tlv does (ruling 25 of 0.28)
+                tlvWire = tok.get(1).equals("tlv") || tok.get(1).equals("cbor");
                 break;
             }
         }
@@ -1253,6 +1276,7 @@ public final class Pack {
                         case "json": wire = Wire.JSON; break;
                         case "text": wire = Wire.TEXT; break;
                         case "tlv": wire = Wire.TLV; break;
+                        case "cbor": wire = Wire.CBOR; break;
                         default:
                             throw new GtException(GtException.Code.UNKNOWN_WIRE, format, null, where + ": unknown wire \"" + args.get(0) + "\"");
                     }
@@ -1568,6 +1592,7 @@ public final class Pack {
                 defaults.putAll(ks.defaults);
                 kinds.add(new Kind(ks.name, ks.requires, all, whens, ks.root != null ? ks.root : root, defaults));
             }
+            if (wire == Wire.CBOR) CborLayout.checkPack(kinds, format, source);
             if (wire == Wire.TEXT) {
                 TextLayout.checkPack(kinds, ctx.bodies, delimiterDir == null ? "," : delimiterDir[0],
                         startDir == null ? null : startDir[0], checksumDir != null && checksumDir[0].equals("nmea"), format, source);
@@ -1616,6 +1641,13 @@ public final class Pack {
             pack.textStart = startDir == null ? null : startDir[0];
             pack.textNmea = checksumDir != null && checksumDir[0].equals("nmea");
         }
+        if (wire == Wire.CBOR) {
+            for (Object[] d : tlvDirs) {
+                @SuppressWarnings("unchecked") List<String> a = (List<String>) d[1];
+                pack.cborTagged = true;
+                pack.cborTag = Long.parseUnsignedLong(a.get(0));
+            }
+        }
         if (wire == Wire.TLV) {
             pack.tlvTagSize = tlvSizes[0];
             pack.tlvLengthSize = tlvSizes[1];
@@ -1639,6 +1671,24 @@ public final class Pack {
         }
         int[] sizes = {0, 0};
         Set<String> seen = new HashSet<>();
+        if (wire == Wire.CBOR) {
+            // 0.28: `tag <n>` is this wire's form (ruling 5); the other tlv directives are refused here
+            for (Object[] d : dirs) {
+                String kw = (String) d[0];
+                List<String> a = (List<String>) d[1];
+                String where = source + ":" + d[2];
+                if (!kw.equals("tag")) {
+                    throw badDirective(format, null, where + ": " + (kw.equals("checksum") ? "checksum sum16" : kw) + " is for the tlv wire only");
+                }
+                if (!seen.add(kw)) throw badDirective(format, null, where + ": tag given twice");
+                if ((Boolean) d[3]) throw badDirective(format, null, where + ": tag after the first kind line");
+                String v = a.size() == 1 ? a.get(0) : "";
+                if (!v.matches("0|[1-9][0-9]{0,19}") || new java.math.BigInteger(v).bitLength() > 64) {
+                    throw badDirective(format, null, where + ": tag on the cbor wire takes a decimal integer from 0 to 18446744073709551615 with no leading zero, got \"" + String.join(" ", a) + "\"");
+                }
+            }
+            return sizes;
+        }
         String checksumTag = null;
         int checksumLine = 0;
         for (Object[] d : dirs) {
@@ -1646,7 +1696,7 @@ public final class Pack {
             List<String> a = (List<String>) d[1];
             String where = source + ":" + d[2];
             String shown = kw.equals("checksum") ? "checksum " + a.get(0) : kw;
-            if (wire != Wire.TLV) throw badDirective(format, null, where + ": " + shown + " is for the tlv wire only");
+            if (wire != Wire.TLV) throw badDirective(format, null, where + ": " + shown + " is for the tlv wire" + (kw.equals("tag") ? " (tag <n> for the cbor wire)" : "") + " only");
             if (!seen.add(kw)) throw badDirective(format, null, where + ": " + kw + " given twice");
             if ((Boolean) d[3]) throw badDirective(format, null, where + ": " + kw + " after the first kind line");
             switch (kw) {
@@ -1870,6 +1920,7 @@ public final class Pack {
             if (ctx.wire == Wire.XML) why = Locators.xmlGroup(s.locator);
             else if (ctx.wire == Wire.PROTOBUF) why = Locators.protobufField(s.locator);
             else if (ctx.wire == Wire.GEOJSON && !inGroup) why = Locators.geojsonGroup(s.locator);
+            else if (ctx.wire == Wire.CBOR) why = null;   // a line check (0.28)
             else why = Locators.json(s.locator);
             if (why != null) {
                 // ruling 44 of 0.21: protobuf `rest` and `last`, and a well-formed xml locator of the wrong kind (`@a`),
@@ -1916,7 +1967,7 @@ public final class Pack {
         }
         Scope body = new Scope(lines, s.body.defaults);
         Group g = new Group(s.key, s.locator, body, itemBits, countLocator, countFixed, s.line);
-        g.loc = textLoc;
+        g.loc = ctx.wire == Wire.CBOR ? CborLayout.parsePath(s.locator) : textLoc;
         if (ctx.wire == Wire.BITS && ctx.wordBytes > 0) BitsLayout.prepare(body, ctx.wordBytes, itemBits, format, ctx.source);
         ctx.bodies.add(body);
         ctx.typed.add(g);
@@ -1936,7 +1987,8 @@ public final class Pack {
         if (s.element) return new Element(s.locator, s.line);
         if (s.body != null) return resolveGroup(s, ctx, inGroup);
         // `.` is the item itself as a scalar: a field of a group body on json, geojson and protobuf.
-        boolean dot = s.locator.equals(".") && wire != Wire.XML && wire != Wire.BITS && wire != Wire.TEXT && wire != Wire.TLV;
+        boolean dot = s.locator.equals(".") && wire != Wire.XML && wire != Wire.BITS && wire != Wire.TEXT && wire != Wire.TLV
+                && wire != Wire.CBOR;   // cbor: `.` is a line check (ruling 22 of 0.28)
         if (dot && (!inGroup || s.key == null)) {
             throw badDirective(format, s.locator, where + ": the locator . is for a field inside a group");
         }
@@ -2011,6 +2063,21 @@ public final class Pack {
         if ((BitsTransform.isV015(head) && wire != Wire.BITS) || (TextScale.isName(head) && !textWire)
                 || (s.arg.equals("iso8601_short") && !textWire)) {
             throw badDirective(format, s.locator, where + ": transform \"" + s.arg + "\" is not valid on wire " + wire.name().toLowerCase());
+        }
+        if (wire == Wire.CBOR) {
+            // 0.28: the field options are via and with (ruling 26); the transforms are those of the cbor table
+            if (absent != null) {
+                throw badDirective(format, s.locator, where + ": absent is not an option on the cbor wire (its field options are via and with)");
+            }
+            CborLayout.CT ct = CborLayout.CT.byName(s.arg);
+            if (ct == null) throw badDirective(format, s.locator, where + ": transform \"" + s.arg + "\" is not valid on wire cbor");
+            f = new Field(s.key, s.locator, null, null, null, null, via, false, false, false, s.line);
+            f.cbor = ct;
+            f.loc = CborLayout.parsePath(s.locator);
+            f.with = with;
+            ctx.fields.add(f);
+            ctx.typed.add(f);
+            return f;
         }
         if (wire == Wire.TLV) {
             TlvLayout.Loc loc = tlvLocator(s, ctx, where);
@@ -2179,6 +2246,14 @@ public final class Pack {
         String v = s.arg;
         if (s.isConst && v.equals("present")) {
             throw badDirective(format, s.locator, where + ": const takes a value; write =present for the text");
+        }
+        if (wire == Wire.CBOR) {
+            When w = v.equals("present")
+                    ? new When(s.locator, v, true, v, false, 0, false, s.line)
+                    : new When(s.locator, v, false, v, false, 0, s.isConst, s.line);
+            if (!w.present) w.cbor = CborLayout.whenValue(v);
+            w.loc = CborLayout.parsePath(s.locator);
+            return w;
         }
         if (wire == Wire.TLV) {
             TlvLayout.Loc loc = tlvLocator(s, ctx, where);

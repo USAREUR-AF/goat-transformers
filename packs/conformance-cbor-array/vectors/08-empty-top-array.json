@@ -1,0 +1,18 @@
+{
+  "name": "empty-top-array",
+  "from": "conformance-cbor-array",
+  "to": "conformance-cbor-array",
+  "input": "d280",
+  "expect": "d280",
+  "model": {
+    "@absent": [
+      "probe.s1",
+      "probe.n",
+      "uid",
+      "probe.s2",
+      "probe.tag"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Writing step 2: the top item is written empty; Writing step 5: d2 then 80. Derived without an engine by a standalone RFC 8949 codec."
+}

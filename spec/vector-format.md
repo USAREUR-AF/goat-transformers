@@ -77,7 +77,7 @@ hexadecimal character reference.
 | `json`, `geojson` | a `\u` escape is half of a surrogate pair without its other half: a high surrogate not followed by a low surrogate escape, or a low surrogate with no high surrogate before it. A pair is one character |
 | `xml`, `json`, `geojson` | the nesting is deeper than 64 levels. On `xml` a level is an element and the root element is level 1. On `json` and `geojson` a level is an array or an object and the outermost one is level 1. A message of exactly 64 levels converts |
 | `protobuf` | a varint ends before its last byte, is longer than ten bytes, or is ten bytes with a last byte greater than 1 (bits above bit 63); a length-delimited field states more bytes than are left in its message; a fixed64 or fixed32 field is cut short; a varint inside a packed field is cut short; the field number is 0 or above 2^29-1; the wire type is 3, 4, 6 or 7. This holds for a field no line maps, in a pack with or without kinds, and inside a submessage a path of the pack walks into, where it is `malformed-wire` and not a field failure |
-| `bits`, `protobuf` | the hex text has an odd number of digits, or holds a character that is neither a hex digit nor whitespace. Whitespace is space, tab, line feed and carriage return only: a form feed, a vertical tab, U+00A0 and a sign are refused |
+| `bits`, `protobuf`, `cbor` | the hex text has an odd number of digits, or holds a character that is neither a hex digit nor whitespace. Whitespace is space, tab, line feed and carriage return only: a form feed, a vertical tab, U+00A0 and a sign are refused |
 | `bits` | the input is shorter than the message (`spec/engine-spec.md`, Version 0.5) |
 
 ## Lists in `model`

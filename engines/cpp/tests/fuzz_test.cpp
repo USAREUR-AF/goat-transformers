@@ -145,6 +145,186 @@ void run_one(const Engine& eng, const std::string& from, const std::string& to, 
     }
 }
 
+// ---- the cbor wire (0.28): random and hostile data items
+
+void put_head(std::string& out, unsigned major, std::uint64_t arg) {
+    const unsigned m = major << 5;
+    unsigned bytes = 0;
+    if (arg < 24) {
+        out += static_cast<char>(m | static_cast<unsigned>(arg));
+        return;
+    }
+    if (arg <= 0xFF) {
+        out += static_cast<char>(m | 24u);
+        bytes = 1;
+    } else if (arg <= 0xFFFF) {
+        out += static_cast<char>(m | 25u);
+        bytes = 2;
+    } else if (arg <= 0xFFFFFFFFull) {
+        out += static_cast<char>(m | 26u);
+        bytes = 4;
+    } else {
+        out += static_cast<char>(m | 27u);
+        bytes = 8;
+    }
+    for (unsigned k = bytes; k-- > 0;) out += static_cast<char>((arg >> (8 * k)) & 0xFF);
+}
+
+// A random data item, mostly well formed: integers of every head length,
+// strings (definite and in chunks, some not UTF-8), arrays and maps (definite
+// and indefinite, keys drawn from a small set so that paths of the packs meet
+// them and keys repeat), tags, simple values and floats. Now and then a byte
+// that is not well formed. `depth` bounds the nesting it makes.
+void random_item(Rng& rng, std::string& out, int depth) {
+    const std::uint64_t r = rng.next();
+    const unsigned pick = static_cast<unsigned>(r % (depth > 0 ? 16 : 9));
+    auto small_key = [&]() {
+        const std::uint64_t k = rng.next() % 14;
+        if (k < 10) put_head(out, 0, k);
+        else if (k == 10) put_head(out, 1, 0);
+        else {
+            static const char* names[] = {"flag", "n", "name"};
+            const std::string t = names[k - 11];
+            put_head(out, 3, t.size());
+            out += t;
+        }
+    };
+    switch (pick) {
+        case 0: put_head(out, 0, rng.next() >> (rng.next() % 64)); break;
+        case 1: put_head(out, 1, rng.next() >> (rng.next() % 64)); break;
+        case 2:
+        case 3: {
+            const unsigned major = pick;
+            const std::size_t n = rng.next() % 6;
+            std::string bytes;
+            for (std::size_t k = 0; k < n; ++k) bytes += static_cast<char>(rng.next() % (rng.next() % 4 ? 0x80 : 0x100));
+            if (rng.next() % 4 == 0) {
+                out += static_cast<char>((major << 5) | 31u);
+                for (std::size_t k = 0; k < bytes.size(); ++k) {
+                    put_head(out, major, 1);
+                    out += bytes[k];
+                }
+                out += static_cast<char>(0xFF);
+            } else {
+                put_head(out, major, bytes.size());
+                out += bytes;
+            }
+            break;
+        }
+        case 4: {
+            static const unsigned char simple[] = {0xF4, 0xF5, 0xF6, 0xF7, 0xE0, 0xF0};
+            out += static_cast<char>(simple[rng.next() % sizeof simple]);
+            break;
+        }
+        case 5: {
+            // 1.5, a NaN, an infinity, 100000.0, 0.1, -0.0, and 1.5 as a double.
+            static const std::string floats[] = {std::string("\xf9\x3e\x00", 3), std::string("\xf9\x7e\x00", 3),
+                                                 std::string("\xf9\x7c\x00", 3), std::string("\xfa\x47\xc3\x50\x00", 5),
+                                                 std::string("\xfb\x3f\xb9\x99\x99\x99\x99\x99\x9a", 9),
+                                                 std::string("\xf9\x80\x00", 3),
+                                                 std::string("\xfb\x3f\xf8\x00\x00\x00\x00\x00\x00", 9)};
+            out += floats[rng.next() % 7];
+            break;
+        }
+        case 6: {
+            // Not well formed: reserved information, a break, a short simple value, a cut head,
+            // a chunk of another type, an indefinite integer.
+            static const std::string bad[] = {std::string("\x1c", 1), std::string("\xff", 1), std::string("\xf8\x10", 2),
+                                              std::string("\x1b\x00", 2), std::string("\x5f\x60\xff", 3),
+                                              std::string("\x3f", 1)};
+            out += bad[rng.next() % 6];
+            break;
+        }
+        case 7:
+        case 8: small_key(); break;
+        case 9:
+        case 10:
+        case 11: {
+            const std::size_t n = rng.next() % 5;
+            const bool indefinite = rng.next() % 4 == 0;
+            if (indefinite) out += static_cast<char>(0x9F);
+            else put_head(out, 4, n);
+            for (std::size_t k = 0; k < n; ++k) random_item(rng, out, depth - 1);
+            if (indefinite) out += static_cast<char>(0xFF);
+            break;
+        }
+        case 12:
+        case 13:
+        case 14: {
+            const std::size_t n = rng.next() % 5;
+            const bool indefinite = rng.next() % 4 == 0;
+            if (indefinite) out += static_cast<char>(0xBF);
+            else put_head(out, 5, n);
+            for (std::size_t k = 0; k < n; ++k) {
+                if (rng.next() % 6 == 0) random_item(rng, out, depth - 1);
+                else small_key();
+                random_item(rng, out, depth - 1);
+            }
+            if (indefinite) out += static_cast<char>(0xFF);
+            break;
+        }
+        default:
+            put_head(out, 6, rng.next() % 3 == 0 ? 18 : rng.next() % 70000);
+            random_item(rng, out, depth - 1);
+    }
+}
+
+// Inputs no sender should be able to crash an engine with: nesting far past
+// the limit through arrays, maps and tags, declared lengths and counts far
+// past the input, and indefinite items that never end.
+std::vector<std::string> hostile_cbor() {
+    std::vector<std::string> out;
+    auto rep = [](const std::string& unit, std::size_t n) {
+        std::string s;
+        for (std::size_t k = 0; k < n; ++k) s += unit;
+        return s;
+    };
+    for (std::size_t n : {63, 64, 65, 200, 5000}) {
+        out.push_back(rep("\x81", n) + std::string(1, '\0'));
+        out.push_back(rep("\xa1\x00", n) + std::string(1, '\0'));
+        out.push_back(rep("\xc1", n) + std::string(1, '\0'));
+        out.push_back(rep("\xd9\xd9\xf7", n) + "\xa0");
+        out.push_back(rep("\x9f", n) + rep("\xff", n));
+        out.push_back(rep("\xbf\x00", n) + std::string(1, '\0') + rep("\xff", n));
+        out.push_back(rep("\x81\xa1\x00\xc1", n) + std::string(1, '\0'));
+        out.push_back("\xd2" + rep("\x81", n) + std::string(1, '\0'));
+    }
+    // Lengths and counts of 2^64-1, 2^32-1 and 2^16-1 with little or nothing after them.
+    for (const char* h : {"\x5b", "\x7b", "\x9b", "\xbb", "\xdb"}) {
+        out.push_back(std::string(h) + std::string(8, '\xff'));
+        out.push_back(std::string(h) + std::string(8, '\xff') + "\x00\x00");
+    }
+    for (const char* h : {"\x5a", "\x7a", "\x9a", "\xba"}) out.push_back(std::string(h) + std::string(4, '\xff') + "\x00");
+    for (const char* h : {"\x59", "\x79", "\x99", "\xb9"}) out.push_back(std::string(h) + std::string(2, '\xff') + "\x00");
+    out.push_back("\xa2\x00\x01\x0a\x9b" + std::string(8, '\xff'));
+    out.push_back("\x82\x00\x5b" + std::string(8, '\x7f') + "\x00");
+    // Indefinite items with no break: empty chunks, elements, members.
+    out.push_back("\x5f" + rep("\x40", 4000));
+    out.push_back("\x7f" + rep("\x61\x61", 4000));
+    out.push_back("\x9f" + rep("\x00", 4000));
+    out.push_back("\xbf" + rep("\x00\x00", 4000));
+    out.push_back("\xa1\x00\x01\x0a\x9f" + rep("\x9f", 60));
+    out.push_back("\xd2\x9f" + rep("\x40", 100));
+    // A long definite array of small items, and a map with many keys.
+    out.push_back("\x9a\x00\x01\x86\xa0" + rep(std::string(1, '\0'), 100000));
+    {
+        std::string m;
+        put_head(m, 5, 20000);
+        for (std::uint64_t k = 0; k < 20000; ++k) {
+            put_head(m, 0, k);
+            m += '\0';
+        }
+        out.push_back(m);
+        std::string dup;  // the same members and the key 24 once more
+        put_head(dup, 5, 20001);
+        dup += m.substr(3);
+        put_head(dup, 0, 24);
+        dup += '\0';
+        out.push_back(dup);
+    }
+    return out;
+}
+
 }  // namespace
 
 int main() {
@@ -272,6 +452,42 @@ int main() {
             for (std::size_t extra : {1, 7, 64}) {
                 run_one(eng, from, to, input + std::string(extra, 'w'), label + " with " + std::to_string(extra) + " w added", t);
                 run_one(eng, from, to, input + std::string(extra, '0'), label + " with " + std::to_string(extra) + " 0 added", t);
+            }
+        }
+    }
+
+    // The cbor wire: hostile items and random items through every cbor pack,
+    // bare and inside the pack's tag and a top item of the pack's type.
+    {
+        const std::vector<std::string> hostile = hostile_cbor();
+        for (const std::string& format : eng.formats()) {
+            const goat_transformers::Pack& p = eng.pack(format);
+            if (p.wire != goat_transformers::Wire::Cbor) continue;
+            std::string prefix;
+            if (p.cbor_tag) put_head(prefix, 6, p.cbor_tag_value);
+            for (std::size_t k = 0; k < hostile.size(); ++k) {
+                run_one(eng, format, format, to_hex(hostile[k]), format + " hostile cbor " + std::to_string(k), t);
+                run_one(eng, format, format, to_hex(prefix + hostile[k]), format + " hostile cbor " + std::to_string(k) + " tagged", t);
+                const std::string wrapped = p.cbor_top_array ? "\x82" + hostile[k] + hostile[k]
+                                                             : "\xa2\x07" + hostile[k] + "\x09" + hostile[k];
+                run_one(eng, format, format, to_hex(prefix + wrapped), format + " hostile cbor " + std::to_string(k) + " inside", t);
+            }
+            const std::size_t count = kMaxPositions * 20;
+            for (std::size_t k = 0; k < count; ++k) {
+                std::string item;
+                const std::size_t members = 1 + rng.next() % 8;
+                if (p.cbor_top_array) {
+                    put_head(item, 4, members);
+                    for (std::size_t m = 0; m < members; ++m) random_item(rng, item, 6);
+                } else {
+                    put_head(item, 5, members);
+                    for (std::size_t m = 0; m < members; ++m) {
+                        put_head(item, 0, m < 10 ? m : rng.next() % 12);
+                        random_item(rng, item, 6);
+                    }
+                }
+                run_one(eng, format, format, to_hex(prefix + item), format + " random cbor " + std::to_string(k), t);
+                run_one(eng, format, "geojson", to_hex(prefix + item), format + " random cbor " + std::to_string(k) + " to geojson", t);
             }
         }
     }

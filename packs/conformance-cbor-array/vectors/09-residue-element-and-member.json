@@ -1,0 +1,12 @@
+{
+  "name": "residue-element-and-member",
+  "from": "conformance-cbor-array",
+  "to": "conformance-cbor-array",
+  "input": "d2854101a301240443616263216172420aff41ff6165",
+  "expect": "d2854101a301240443616263216172420aff41ff6165",
+  "model": {
+    "probe.n": "-5"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Residue: position 4 of the top array ([4]) and member -2 of the map at [1] ([1].-2) are written back in place: [1] keys 01 < 04 < 21. Derived without an engine by a standalone RFC 8949 codec."
+}

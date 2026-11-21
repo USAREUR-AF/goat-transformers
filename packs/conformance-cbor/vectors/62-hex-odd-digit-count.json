@@ -1,0 +1,9 @@
+{
+  "name": "hex-odd-digit-count",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor",
+  "input": "a100010",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Ruling 11 and spec/vector-format.md (Malformed input, the bits, protobuf and cbor row): hex text with an odd number of digits. Derived without an engine by a standalone RFC 8949 codec."
+}

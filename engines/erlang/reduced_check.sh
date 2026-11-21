@@ -5,7 +5,7 @@
 # Builds the engine twice under engines/erlang/_build/ (ebin/ is left alone):
 # with every wire, and with only xml, json and geojson. On the reduced
 # build it runs every conversion vector whose `from` and `to` packs are on
-# those wires, loads every pack on bits, protobuf, text and tlv (each must
+# those wires, loads every pack on bits, protobuf, text, tlv and cbor (each must
 # be unknown-wire, its message naming the wire), and loads a pack whose wire
 # is no wire at all. Then prints the size of both builds: the .beam files
 # build.sh writes. Exits non-zero on any failure.
@@ -26,6 +26,6 @@ erl -noshell -pa "$reduced" -eval "gt_test:run_reduced(\"$packs\", \"$models\", 
 size() { cat "$1"/*.beam | wc -c | tr -d ' '; }
 count() { ls "$1"/*.beam | wc -l | tr -d ' '; }
 fs=$(size "$full"); rs=$(size "$reduced")
-echo "size, full build (7 wires): $fs bytes in $(count "$full") .beam files"
+echo "size, full build (8 wires): $fs bytes in $(count "$full") .beam files"
 echo "size, reduced build ($wires): $rs bytes in $(count "$reduced") .beam files ($((rs * 100 / fs))% of full)"
 exit $status

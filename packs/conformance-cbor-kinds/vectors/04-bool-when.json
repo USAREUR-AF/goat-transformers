@@ -1,0 +1,13 @@
+{
+  "name": "bool-when",
+  "from": "conformance-cbor-kinds",
+  "to": "conformance-cbor-kinds",
+  "input": "a202036162f5",
+  "expect": "a602036162f561736231326174743138343436373434303733373039353531363136617626626f6bf5",
+  "model": {
+    "@kind": "flagged",
+    "probe.n": "3"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Kinds: when b true is a bool and holds on f5; the round trip writes b as f5. Derived without an engine by a standalone RFC 8949 codec."
+}

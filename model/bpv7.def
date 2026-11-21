@@ -1,0 +1,26 @@
+# The bpv7 module: fields of the primary block of a Bundle Protocol version 7
+# bundle that the core and track modules have no key for. Values are as the
+# bundle carries them: DTN times in milliseconds since 2000-01-01 00:00:00 UTC,
+# not since 1970, and flags as the whole integer (packs/dtn-bpv7/pack.md).
+module        bpv7
+version       0.1.0
+distribution  public
+source        "IETF RFC 9171, Bundle Protocol Version 7, sections 4.1 to 4.3.1 and 9.6 (https://www.rfc-editor.org/rfc/rfc9171.txt); IETF Trust, BCP 78; structure, positions, code numbers and types restated, no text copied"
+key  version               int     -   "primary block item 0: Bundle Protocol version, 7 for this pack"
+key  bundle_flags          int     -   "primary block item 1: bundle processing control flags as one integer, bit 0 the low-order bit (fragment bit 0, administrative record bit 1, must not fragment bit 2)"
+key  primary_crc_type      int     -   "primary block item 2: CRC type code, 0 none, 1 CRC-16 X.25, 2 CRC-32C"
+key  dst_scheme            int     -   "destination EID, first element: URI scheme code (1 dtn, 2 ipn)"
+key  dst_ipn_node          int     -   "destination EID of the ipn scheme: node number"
+key  dst_ipn_service       int     -   "destination EID of the ipn scheme: service number"
+key  src_scheme            int     -   "source node ID, first element: URI scheme code (1 dtn, 2 ipn)"
+key  src_ipn_node          int     -   "source node ID of the ipn scheme: node number"
+key  src_ipn_service       int     -   "source node ID of the ipn scheme: service number"
+key  rpt_scheme            int     -   "report-to EID, first element: URI scheme code (1 dtn, 2 ipn)"
+key  rpt_ipn_node          int     -   "report-to EID of the ipn scheme: node number"
+key  rpt_ipn_service       int     -   "report-to EID of the ipn scheme: service number"
+key  creation_time_dtn_ms  int     ms  "creation timestamp, first element: DTN time, milliseconds since 2000-01-01 00:00:00 UTC; 0 means the time is unknown"
+key  creation_seq          int     -   "creation timestamp, second element: sequence number of the source node"
+key  lifetime_ms           int     ms  "primary block item 7: milliseconds after the creation time at which the payload is no longer useful"
+key  fragment_offset       int     -   "primary block item 8 of a fragment: offset in bytes of this payload in the original application data unit"
+key  total_adu_length      int     -   "primary block item 9 of a fragment: length in bytes of the original application data unit"
+key  primary_crc           string  -   "the CRC of the primary block as lowercase hex, 2 bytes (type 1) or 4 bytes (type 2); carried, not checked"

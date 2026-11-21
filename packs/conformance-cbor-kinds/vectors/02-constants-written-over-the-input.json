@@ -1,0 +1,13 @@
+{
+  "name": "constants-written-over-the-input",
+  "from": "conformance-cbor-kinds",
+  "to": "conformance-cbor-kinds",
+  "input": "a601634b2d31616b65747261636b61730c61740561761863626f6bf4",
+  "expect": "a601634b2d31616b65747261636b61736231326174743138343436373434303733373039353531363136617626626f6bf5",
+  "model": {
+    "@kind": "text",
+    "probe.y": "99"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Constants (0.6): not checked on decode and not residue; on encode written with their type over any field: probe.y reads 99 at v, and v is written -7 (Writing step 1, a const value over a field); s 12 (integer) becomes the text 12, ok false becomes f5, t 5 becomes the text 18446744073709551616 (ruling 19). Derived without an engine by a standalone RFC 8949 codec."
+}

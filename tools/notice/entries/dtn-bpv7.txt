@@ -1,0 +1,4 @@
+Pack dtn-bpv7; module bpv7
+  IETF RFC 9171, Bundle Protocol Version 7. Subject to BCP 78 and the IETF
+  Trust Legal Provisions. Block structure, element order, code numbers and
+  types only; no text, CDDL, table or example.

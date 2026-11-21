@@ -1,7 +1,7 @@
 // The wires of this build (engine-spec.md, Version 0.24). The build defines
 // GT_WIRE_<NAME> to 1 or 0 for each wire (CMakeLists.txt, option GT_WIRES); a
 // wire the build does not name is in it, so a build that names no set has all
-// seven. A wire that is 0 leaves its codec out of the library.
+// eight. A wire that is 0 leaves its codec out of the library.
 #pragma once
 
 #ifndef GT_WIRE_XML
@@ -24,6 +24,9 @@
 #endif
 #ifndef GT_WIRE_TLV
 #define GT_WIRE_TLV 1
+#endif
+#ifndef GT_WIRE_CBOR
+#define GT_WIRE_CBOR 1
 #endif
 
 // The JSON reader serves the json and geojson codecs; the hex text of a binary

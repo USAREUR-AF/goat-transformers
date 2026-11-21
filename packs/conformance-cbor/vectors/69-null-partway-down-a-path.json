@@ -1,0 +1,16 @@
+{
+  "name": "null-partway-down-a-path",
+  "from": "conformance-cbor",
+  "to": "geojson",
+  "input": "a300010163552d3107f6",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{},\"id\":\"U-1\"}",
+  "model": {
+    "uid": "U-1",
+    "@absent": [
+      "lat",
+      "lon"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Ruling 12: lat (7.1) and lon (7.2) on null at 7 are absent, not malformed-wire; geojson writes geometry null. Derived without an engine by a standalone RFC 8949 codec."
+}

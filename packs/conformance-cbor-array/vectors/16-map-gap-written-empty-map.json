@@ -1,0 +1,18 @@
+{
+  "name": "map-gap-written-empty-map",
+  "from": "conformance-cbor-array",
+  "to": "conformance-cbor-array",
+  "input": "d283f6a0420aff",
+  "expect": "d283f6a0420aff",
+  "model": {
+    "probe.s2": "0aff",
+    "@absent": [
+      "probe.s1",
+      "probe.n",
+      "uid",
+      "probe.tag"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Ruling 23: only [2] is present; the array is written up to [2]. [0] has nothing to write and no line walks into it: f6. [1] has nothing to write (the empty map read there holds no member, and Writing step 2 writes no empty map) and the lines [1].1 and [1].4 walk into it as a map: a0. Output d2 83 f6 a0 420aff. Derived without an engine by a standalone RFC 8949 codec."
+}

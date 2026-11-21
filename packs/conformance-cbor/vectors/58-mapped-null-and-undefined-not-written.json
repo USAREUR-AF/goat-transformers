@@ -1,0 +1,17 @@
+{
+  "name": "mapped-null-and-undefined-not-written",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor",
+  "input": "a4000101f602f703f93e00",
+  "expect": "a2000103f93e00",
+  "model": {
+    "@kind": "plain",
+    "@absent": [
+      "uid",
+      "probe.val"
+    ],
+    "probe.a": "1.5"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Ruling 6: a mapped item holding null (uid at 1) or undefined (probe.val at 2) is absent and is not written back. Derived without an engine by a standalone RFC 8949 codec."
+}

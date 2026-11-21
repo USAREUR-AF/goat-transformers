@@ -1,0 +1,14 @@
+{
+  "name": "integer-range-ends-and-negative-epoch",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor",
+  "input": "ac00010163552d31021b7fffffffffffffff03f93e0004420aff0520060207a201f951b002f9d5a40882617861540981a2616e03646e616d65626161203b7fffffffffffffff64666c6167f5",
+  "expect": "ac00010163552d31021b7fffffffffffffff03f93e0004420aff0520060207a201f951b002f9d5a40882617861540981a2616e03646e616d65626161203b7fffffffffffffff64666c6167f5",
+  "model": {
+    "probe.n": "-9223372036854775808",
+    "probe.val": "9223372036854775807",
+    "time_ms": "-1000"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): int at -2^63 (3b7fffffffffffffff) and uint at 2^63-1 (1b7fffffffffffffff) read and write back; epoch_s -1 (20) is -1000 ms and writes back as 20. Derived without an engine by a standalone RFC 8949 codec."
+}

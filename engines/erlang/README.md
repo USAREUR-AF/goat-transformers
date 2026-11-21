@@ -12,14 +12,14 @@ An independent, clean-room implementation of the gt engine, written from
 
 | Test | Command (repository root) | Measured (2026-11-21) |
 |---|---|---|
-| conversion vectors | `cd engines/erlang && ./run_tests` | 22252/22252 |
-| load vectors | same run | 1172/1172 |
+| conversion vectors | `cd engines/erlang && ./run_tests` | 22496/22496 |
+| load vectors | same run | 1235/1235 |
 | capability vectors | same run | 18/18 |
-| malformed inputs | same run | 138781/138781 |
-| concurrent conversions (Version 0.25) | same run | 445/445 |
-| benchmark (Version 0.25) | `engines/erlang/bench.sh` | 15 vectors, 15 packs (below) |
+| malformed inputs | same run | 142035/142035 |
+| concurrent conversions (Version 0.25) | same run | 455/455 |
+| benchmark (Version 0.25) | `engines/erlang/bench.sh` | 16 vectors, 16 packs (below) |
 | tool vectors (Versions 0.23, 0.29) | `python3 -I tools/tool-vectors.py -- engines/erlang/goat-xf.sh` | 135/135 |
-| reduced build (Version 0.24) | `engines/erlang/reduced_check.sh` | 8164/8164 vectors; every bits, protobuf, text and tlv pack `unknown-wire` (below) |
+| reduced build (Version 0.24) | `engines/erlang/reduced_check.sh` | 8208/8208 vectors; every bits, protobuf, text, tlv and cbor pack `unknown-wire` (below) |
 
 `./run_tests` compiles on first use if `ebin/` is empty, prints every failure as
 `FAIL <pack>/<vector>: <why>`, then prints
@@ -41,7 +41,8 @@ the 580 s of a run. It now takes about 6 s and the whole run about 44 s
 every check still runs, so there is no switch for a full run.
 The malformed-input check takes the input of the first five conversion vectors
 of each pack and of every vector of the packs `conformance-malformed-*`,
-`conformance-tlv*`, `conformance-armor*` and `conformance-sixbit*`, cuts
+`conformance-tlv*`, `conformance-armor*`, `conformance-sixbit*`,
+`conformance-uper*` and `conformance-cbor*`, cuts
 it short at prefixes (every length when the input has at most 16 bytes, else 8
 lengths spread evenly) and replaces single bytes (at most 8 positions spread
 evenly, each with the next byte of a fixed table), and converts each result as
@@ -49,7 +50,11 @@ the vector converts. It then runs fixed cases of rulings 36 to 40 on the
 `conformance-malformed-*` packs and `conformance-groups-protobuf`, and fixed
 cases of the `tlv` wire on `conformance-tlv` and `conformance-tlv-fixed`, and
 fixed cases of six-bit armor (0.14) on `conformance-armor` and
-`conformance-armor-seq`. A case passes when `convert` returns bytes or raises
+`conformance-armor-seq`, and fixed cases of hostile CBOR (0.28) on
+`conformance-cbor` and `conformance-cbor-array`: nesting through arrays, maps
+and tags far past the depth limit of 64, declared lengths up to 2^64-1 with
+no bytes behind them, indefinite items with no break, misplaced chunks and
+breaks, invalid UTF-8 and equal keys. A case passes when `convert` returns bytes or raises
 `error:{convert_error, Kind, Message}` with a named `Kind` and a `Message`
 beginning with the kind and a colon. The cases are a fixed function of the
 vectors, so two runs make the same ones.
@@ -163,8 +168,10 @@ once instead of three times.
 ## Builds with fewer wires (engine-spec Version 0.24)
 
 A build names its set of wires with `build.sh --wires`; with no `--wires`
-it has all seven (xml, geojson, json, bits, protobuf, text, tlv) and
-compiles every module of `src/`, as before.
+it has all eight (xml, geojson, json, bits, protobuf, text, tlv, and cbor
+of Version 0.28, ruling 38) and compiles every module of `src/`, as before.
+`cbor` is named like the others: `--wires ...,cbor` keeps it, and a list
+without it compiles `gt_cbor` out and passes `-Dno_wire_cbor`.
 
 ```
 ./build.sh                                   # every wire, into ebin/
@@ -186,6 +193,7 @@ because `build.sh` passes `-Dno_wire_<wire>` to `erlc` for it
 | protobuf | `gt_protobuf`, `gt_hex` | paths, packed lists, the writer tree, the protobuf transforms |
 | text | `gt_text` | none (dispatch only) |
 | tlv | `gt_tlv`, `gt_hex` | the bits transforms, which a `tlv` value uses |
+| cbor | `gt_cbor`, `gt_hex` | none (dispatch and hex input only) |
 
 `gt_engine`, `gt_pack`, `gt_model`, `gt_num`, `gt_derive`, `gt_iso` and
 `gt_cli` are in every build. `gt_pack` still reads every directive of the
@@ -209,8 +217,8 @@ and with xml, json and geojson into `engines/erlang/_build/reduced/ebin`
 (`ebin/` is left alone), and on the reduced build: loads every pack on those
 three wires, all must load; runs every conversion vector whose `from` and
 `to` packs are on those wires (the wire and format read from the text of
-each `pack.def`), all must pass; loads every pack on bits, protobuf, text and
-tlv, each must be `unknown-wire` with the wire named and the reason in the
+each `pack.def`), all must pass; loads every pack on bits, protobuf, text,
+tlv and cbor, each must be `unknown-wire` with the wire named and the reason in the
 message; loads a pack whose `wire` is `nowire`, which must be `unknown-wire`
 without that reason. It then prints the size of both builds, the `.beam`
 files `build.sh` writes, and exits non-zero on any failure.
@@ -219,14 +227,15 @@ Measured (2026-11-21, one machine):
 
 | Check | Result |
 |---|---|
-| conversion vectors on xml, json and geojson | 8164/8164 passed |
-| packs on bits refused as `unknown-wire` | 1701/1701 |
+| conversion vectors on xml, json and geojson | 8208/8208 passed |
+| packs on bits refused as `unknown-wire` | 1705/1705 |
 | packs on protobuf refused as `unknown-wire` | 876/876 |
 | packs on text refused as `unknown-wire` | 77/77 |
 | packs on tlv refused as `unknown-wire` | 9/9 |
+| packs on cbor refused as `unknown-wire` | 7/7 |
 | `wire nowire` | `unknown-wire`, without the reason |
-| full build, 7 wires | 356096 bytes, 17 `.beam` files |
-| reduced build, xml, json and geojson | 237684 bytes, 11 `.beam` files (66% of full) |
+| full build, 8 wires | 391820 bytes, 18 `.beam` files |
+| reduced build, xml, json and geojson | 242020 bytes, 11 `.beam` files (61% of full) |
 
 Both sizes count `gt_cli` and the conformance runner `gt_test`, which every
 build with json or geojson holds.
@@ -379,7 +388,10 @@ raises `error:{convert_error, Kind, Message}` with `Kind` one of `'no-kind'`,
 trimmed; residue is keyed by field index; the `absent` field option of
 Version 0.9 is `bad-directive` on it, ruling 16 of 0.10), `tlv` (Version 0.13: `tag`,
 `length`, `key`, `checksum sum16` and `checksum crc32` (0.27); hex text in and out; residue is
-`{[Tag], Hex}`, every occurrence of an unnamed tag).
+`{[Tag], Hex}`, every occurrence of an unnamed tag), `cbor` (Version 0.28:
+one RFC 8949 data item, `tag <n>`, integer, text and `[i]` path steps, groups
+over arrays; hex text in and out; residue is `{Path, Bytes}`, each unmapped
+item as it stood, written back with the core deterministic encoding).
 
 Malformed input (engine-spec "Malformed input (0.8)", rulings 35 to 40): no
 input makes `decode` or `convert` raise anything but `convert_error`. The
@@ -443,6 +455,12 @@ implemented as the specification states them.
   the top set, nested sets read when a line walks into them, the integer, scale,
   float, `utf8` and `hex` transforms, residue, and writing each set in line
   order with its residue after.
+- `src/gt_cbor.erl`  — the `cbor` wire (Version 0.28): path, `when`/`const` value
+  and `tag` forms and the checks after the file; a CBOR reader (well-formedness,
+  depth 64, lengths checked before anything is taken, UTF-8 per chunk, equal
+  keys) and the core deterministic writer; kinds, the type checks of Reading
+  step 8, the seven transforms, groups over arrays, residue, and writing with
+  the gaps of ruling 23.
 - `src/gt_engine.erl`— engine instance and load checks, kind selection, decode /
   encode / complete / convert on every wire, groups and lists, residue,
   typemap, value tables, transforms.

@@ -1,0 +1,12 @@
+{
+  "name": "cose-02-to-cose-sign1-nothing-to-write",
+  "from": "geojson",
+  "to": "cose-sign1",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-90.25,45.5]},\"properties\":{},\"id\":\"G-1\"}",
+  "expect": "d280",
+  "model": {
+    "uid": "G-1"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): packs/cose-sign1/pack.def and pack.md; No line of cose-sign1 writes a key geojson decodes: Writing step 2 writes the top item empty, step 5 writes tag 18 before it: d2 80. Derived without an engine by a standalone RFC 8949 codec."
+}

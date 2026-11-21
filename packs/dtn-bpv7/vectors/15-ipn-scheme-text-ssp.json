@@ -1,0 +1,9 @@
+{
+  "name": "ipn-scheme-text-ssp",
+  "from": "dtn-bpv7",
+  "to": "dtn-bpv7",
+  "input": "9f890704018202742f2f67732d6e6f7274682f74656c656d657472798202820c078202820c00821b000000b6c5a56a7b182a1a05265c0042839386010100024974656d702032312e35448f53ba2bff",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): packs/dtn-bpv7/pack.def and pack.md; RFC 9171 4.1 (bundle), 4.3.1 (primary block), 4.3.2 (canonical block), 4.2.1 (CRC); Scheme code 2 at all three endpoint IDs, no [0].[9]: kind ipn is selected (its when lines test only the codes). Its line [0].[3].[1].[0] then meets a text string at [0].[3].[1] where its next step is a position: Reading step 8, malformed-wire. Derived without an engine by a standalone RFC 8949 codec."
+}

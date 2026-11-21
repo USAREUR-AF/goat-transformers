@@ -1,0 +1,26 @@
+# Conformance probe pack for the `cbor` wire (spec 0.28, rulings 27, 29 and
+# 30): an array at the top; a group at [0] whose body reads a two-step path;
+# a common `const` over a `uint` field at [1]; a scalar at [3]; a kind that
+# walks into [2] as a map and a kind that does not.
+format        conformance-cbor-scope
+version       0.28.0
+distribution  public
+source        "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses          probe
+wire          cbor
+
+group    probe.items  [0]
+  field  probe.qty    a.b        int
+end
+field    probe.val    [1]        uint
+const    [1]          5
+field    probe.s2     [3]        bytes
+
+# walks into [2] as a map; chosen on decode by the integer 1 at [4]
+kind     located
+when     [4]          1
+requires lat
+field    lat          [2].1      float
+
+# no when: always holds; no line at [2]
+kind     bare

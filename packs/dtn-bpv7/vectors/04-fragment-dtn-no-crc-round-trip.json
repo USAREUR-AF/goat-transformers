@@ -1,0 +1,32 @@
+{
+  "name": "fragment-dtn-no-crc-round-trip",
+  "from": "dtn-bpv7",
+  "to": "dtn-bpv7",
+  "input": "9f8a0701008201722f2f67732d6e6f7274682f6172636869766582016a2f2f70726f62652d372f82016a2f2f70726f62652d372f821b000000b6c5ab8480031a006ddd0019080019100086010100024b7365636f6e642068616c664493a2f778ff",
+  "expect": "828a0701008201722f2f67732d6e6f7274682f6172636869766582016a2f2f70726f62652d372f82016a2f2f70726f62652d372f821b000000b6c5ab8480031a006ddd0019080019100086010100024b7365636f6e642068616c664493a2f778",
+  "model": {
+    "@kind": "fragment",
+    "bpv7.version": "7",
+    "bpv7.bundle_flags": "1",
+    "bpv7.primary_crc_type": "0",
+    "bpv7.dst_scheme": "1",
+    "bpv7.src_scheme": "1",
+    "bpv7.rpt_scheme": "1",
+    "bpv7.creation_time_dtn_ms": "785000400000",
+    "bpv7.creation_seq": "3",
+    "bpv7.lifetime_ms": "7200000",
+    "bpv7.fragment_offset": "2048",
+    "bpv7.total_adu_length": "4096",
+    "@absent": [
+      "bpv7.dst_ipn_node",
+      "bpv7.dst_ipn_service",
+      "bpv7.src_ipn_node",
+      "bpv7.src_ipn_service",
+      "bpv7.rpt_ipn_node",
+      "bpv7.rpt_ipn_service",
+      "bpv7.primary_crc"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): packs/dtn-bpv7/pack.def and pack.md; RFC 9171 4.1 (bundle), 4.3.1 (primary block), 4.3.2 (canonical block), 4.2.1 (CRC); A fragment (flags 1) whose primary block has CRC type 0 and so 10 elements (offset 2048, total 4096, no CRC). Kind fragment: [0].[9] present, scheme codes 1 so fragment-ipn does not hold. bpv7.primary_crc is absent and [0].[10] is not written (Writing step 3: up to the highest present position, [9]). Payload CRC-32C 93a2f778. Derived without an engine by a standalone RFC 8949 codec."
+}

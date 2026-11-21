@@ -1,0 +1,16 @@
+{
+  "name": "when-present-on-an-empty-map-writes-nothing",
+  "from": "conformance-cbor-kinds",
+  "to": "conformance-cbor-kinds",
+  "input": "a107a0",
+  "expect": "a461736231326174743138343436373434303733373039353531363136617626626f6bf5",
+  "model": {
+    "@kind": "located",
+    "@absent": [
+      "lat",
+      "lon"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Kinds: when 7 present holds on an empty map and writes nothing on encode; Writing step 2: no line writes into 7 and no residue lies in it, so no map is written at 7. Derived without an engine by a standalone RFC 8949 codec."
+}

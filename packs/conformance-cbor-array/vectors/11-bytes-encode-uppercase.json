@@ -1,0 +1,12 @@
+{
+  "name": "bytes-encode-uppercase",
+  "from": "conformance-cbor-array",
+  "to": "conformance-cbor-array",
+  "input": "d280",
+  "expect_error": "transform-encode",
+  "context": {
+    "probe.s1": "0A"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): bytes encode: 0A is not lowercase hex. Derived without an engine by a standalone RFC 8949 codec."
+}

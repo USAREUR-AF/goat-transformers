@@ -1,0 +1,26 @@
+{
+  "name": "long-heads-and-wide-floats-read",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor",
+  "input": "ac180018010163552d31021b000000000000002a03fb3ff8000000000000045a000000020aff051b00000000603aa4c006180207a21801fa423600001802fbc0569000000000000882617861540981a2646e616d65626161616e18033800380664666c6167f5",
+  "expect": "ac00010163552d3102182a03f93e0004420aff051a603aa4c0060207a201f951b002f9d5a40882617861540981a2616e03646e616d65626161202664666c6167f5",
+  "model": {
+    "@kind": "plain",
+    "uid": "U-1",
+    "probe.n": "-7",
+    "probe.val": "42",
+    "probe.a": "1.5",
+    "probe.s2": "0aff",
+    "probe.x": "1",
+    "time_ms": "1614456000000",
+    "probe.s1": "high",
+    "lat": "45.5",
+    "lon": "-90.25",
+    "probe.tag": "T",
+    "probe.items.#": "1",
+    "probe.items[0].probe.label": "aa",
+    "probe.items[0].probe.qty": "3"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Reading step 2: heads longer than they need are read (key 0 as 1800 with value 1801 still satisfies when 0 1; 42 as 1b000000000000002a; key -1 as 3800 and -7 as 3806; bytes with a four-byte length); floats read at any width (45.5 as fa42360000, -90.25 as fbc056900000000000). Writing step 1 writes every head shortest and every float at the shortest exact width, so output is the canonical message of vector 01. Derived without an engine by a standalone RFC 8949 codec."
+}

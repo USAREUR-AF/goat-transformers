@@ -1,0 +1,13 @@
+{
+  "name": "group-path-at-null-is-an-absent-list",
+  "from": "conformance-cbor",
+  "to": "geojson",
+  "input": "a300010163552d3109f6",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{},\"id\":\"U-1\"}",
+  "model": {
+    "probe.items.#": "absent",
+    "uid": "U-1"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Reading step 8: a group path at null is an absent list (not malformed-wire); geojson writes geometry null with no lat and lon. Derived without an engine by a standalone RFC 8949 codec."
+}

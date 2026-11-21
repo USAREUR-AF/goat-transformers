@@ -1,0 +1,13 @@
+{
+  "name": "text-when-tags-passed-over",
+  "from": "conformance-cbor-kinds",
+  "to": "conformance-cbor-kinds",
+  "input": "a202c101616bc065747261636b",
+  "expect": "a60201616b65747261636b61736231326174743138343436373434303733373039353531363136617626626f6bf5",
+  "model": {
+    "@kind": "text",
+    "probe.n": "1"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Kinds: a when holds on the item at its path, its tags passed over (tag 0 on track); the field's tag 1 is passed over and not written. Derived without an engine by a standalone RFC 8949 codec."
+}

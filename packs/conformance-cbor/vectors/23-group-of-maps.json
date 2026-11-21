@@ -1,0 +1,16 @@
+{
+  "name": "group-of-maps",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor",
+  "input": "ac00010163552d3102182a03f93e0004420aff051a603aa4c0060207a201f951b002f9d5a40882617861540982a3646e616d65626161616e01617a09a2616e02646e616d65626262202664666c6167f5",
+  "expect": "ac00010163552d3102182a03f93e0004420aff051a603aa4c0060207a201f951b002f9d5a40882617861540982a2616e01646e616d65626161a2616e02646e616d65626262202664666c6167f5",
+  "model": {
+    "probe.items.#": "2",
+    "probe.items[0].probe.label": "aa",
+    "probe.items[0].probe.qty": "1",
+    "probe.items[1].probe.label": "bb",
+    "probe.items[1].probe.qty": "2"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Groups: one item per element, in order; group items carry no residue, so z inside the first item is dropped; each item's map is written with its keys sorted (616e < 646e616d65). Derived without an engine by a standalone RFC 8949 codec."
+}

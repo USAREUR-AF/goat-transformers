@@ -1,0 +1,9 @@
+{
+  "name": "tag-missing",
+  "from": "conformance-cbor-array",
+  "to": "conformance-cbor-array",
+  "input": "844101a201050443616263420aff41ff",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Tags: with tag 18 the outermost tag of the input must be 18; the input has no tag. Derived without an engine by a standalone RFC 8949 codec."
+}

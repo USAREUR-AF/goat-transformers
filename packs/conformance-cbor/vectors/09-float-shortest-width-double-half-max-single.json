@@ -1,0 +1,14 @@
+{
+  "name": "float-shortest-width-double-half-max-single",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor",
+  "input": "ac00010163552d3102182a03fb3fb999999999999a04420aff051a603aa4c0060207a201fb40effc000000000002fb40effe00000000000882617861540981a2646e616d65626161616e03202664666c6167f5",
+  "expect": "ac00010163552d3102182a03fb3fb999999999999a04420aff051a603aa4c0060207a201f97bff02fa477ff0000882617861540981a2616e03646e616d65626161202664666c6167f5",
+  "model": {
+    "probe.a": "0.1",
+    "lat": "65504",
+    "lon": "65520"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): float encode: 0.1 -> fb3fb999999999999a (no single holds it), 65504.0 -> f97bff (largest half), 65520.0 -> fa477ff000 (above the largest half; it does not round to a half infinity). Derived without an engine by a standalone RFC 8949 codec."
+}

@@ -62,7 +62,7 @@ The methods of `Engine`:
 | `try_capability(from, to)`, `try_model_keys(format)` | the same, `unknown-format` for a format that is not loaded |
 | `key_type(key)` | the declared type of a model key |
 
-A message of a binary wire (`bits`, `protobuf`) is hex text. A decode, a
+A message of a binary wire (`bits`, `protobuf`, `tlv`, `cbor`) is hex text. A decode, a
 context and an encode by hand:
 
 ```rust
@@ -229,8 +229,8 @@ once (`tests/parse_once.rs`).
 
 Spec 0.24 (`spec/engine-spec.md`, Version 0.24) lets the engine be built with
 the codecs of only some wires. Each wire is a Cargo feature of the same name:
-`xml`, `geojson`, `json`, `bits`, `protobuf`, `text`, `tlv`. The default
-features are all seven, so a build that names no set has every wire. To name
+`xml`, `geojson`, `json`, `bits`, `protobuf`, `text`, `tlv`, `cbor` (0.28). The default
+features are all eight, so a build that names no set has every wire. To name
 a set, turn the defaults off and list the wires:
 
 ```
@@ -266,7 +266,7 @@ It builds the engine with `xml`, `json` and `geojson` (into
 `tests/vectors.rs`, which loads every pack on those wires and runs every
 conversion, load and capability vector whose packs are on them, and
 `tests/reduced.rs`, which loads one pack of the repository on each of
-`bits`, `protobuf`, `text` and `tlv` and requires `unknown-wire` with the
+`bits`, `protobuf`, `text`, `tlv` and `cbor` and requires `unknown-wire` with the
 wire named in the message. It then builds `goat-xf` both ways and prints the
 sizes. It exits non-zero on any failure. `GOAT_WIRES=<w>,<w>...` checks
 another set. Measured on 2026-11-21 with rustc 1.99.1 on x86_64 Linux:

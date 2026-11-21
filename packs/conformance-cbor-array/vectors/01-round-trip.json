@@ -1,0 +1,16 @@
+{
+  "name": "round-trip",
+  "from": "conformance-cbor-array",
+  "to": "conformance-cbor-array",
+  "input": "d2844101a201050443616263420aff41ff",
+  "expect": "d2844101a201050443616263420aff41ff",
+  "model": {
+    "probe.s1": "01",
+    "probe.n": "5",
+    "uid": "616263",
+    "probe.s2": "0aff",
+    "probe.tag": "ff"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): tag 18 encloses an array: [0] bytes, [1] map with 1 int and 4 bytes, [2] bytes, [3] bytes; output is d2 then the item (Writing step 5). Derived without an engine by a standalone RFC 8949 codec."
+}

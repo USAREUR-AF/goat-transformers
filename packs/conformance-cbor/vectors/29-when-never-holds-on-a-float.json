@@ -1,0 +1,9 @@
+{
+  "name": "when-never-holds-on-a-float",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor",
+  "input": "ac00f93c000163552d3102182a03f93e0004420aff051a603aa4c0060207a201f951b002f9d5a40882617861540981a2616e03646e616d65626161202664666c6167f5",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Kinds: a when value 1 is an integer; it never holds on a float, so 0 = f93c00 (1.0) selects no kind. Derived without an engine by a standalone RFC 8949 codec."
+}

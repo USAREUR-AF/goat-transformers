@@ -1,0 +1,12 @@
+{
+  "name": "to-geojson",
+  "from": "conformance-cbor-array",
+  "to": "geojson",
+  "input": "d2844101a201050443616263420aff41ff",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{},\"id\":\"616263\"}",
+  "model": {
+    "uid": "616263"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): uid is bytes 616263, decoded to the lowercase hex text 616263, written as the geojson id; no lat or lon: geometry null. Derived without an engine by a standalone RFC 8949 codec."
+}

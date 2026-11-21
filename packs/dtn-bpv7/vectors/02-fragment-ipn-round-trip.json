@@ -1,0 +1,30 @@
+{
+  "name": "fragment-ipn-round-trip",
+  "from": "dtn-bpv7",
+  "to": "dtn-bpv7",
+  "input": "9f8b0701028202821903d101820282181f078202821b7fffffffffffffff00821b000000b6c5aae840001a0036ee801904b0191388449e602ec2850101000050303132333435363738393a3b3c3d3e3fff",
+  "expect": "828b0701028202821903d101820282181f078202821b7fffffffffffffff00821b000000b6c5aae840001a0036ee801904b0191388449e602ec2850101000050303132333435363738393a3b3c3d3e3f",
+  "model": {
+    "@kind": "fragment-ipn",
+    "bpv7.version": "7",
+    "bpv7.bundle_flags": "1",
+    "bpv7.primary_crc_type": "2",
+    "bpv7.dst_scheme": "2",
+    "bpv7.src_scheme": "2",
+    "bpv7.rpt_scheme": "2",
+    "bpv7.creation_time_dtn_ms": "785000360000",
+    "bpv7.creation_seq": "0",
+    "bpv7.lifetime_ms": "3600000",
+    "bpv7.dst_ipn_node": "977",
+    "bpv7.dst_ipn_service": "1",
+    "bpv7.src_ipn_node": "31",
+    "bpv7.src_ipn_service": "7",
+    "bpv7.rpt_ipn_node": "9223372036854775807",
+    "bpv7.rpt_ipn_service": "0",
+    "bpv7.fragment_offset": "1200",
+    "bpv7.total_adu_length": "5000",
+    "bpv7.primary_crc": "9e602ec2"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): packs/dtn-bpv7/pack.def and pack.md; RFC 9171 4.1 (bundle), 4.3.1 (primary block), 4.3.2 (canonical block), 4.2.1 (CRC); A fragment (flags 1, bit 0) with a primary block of 11 elements: offset 1200, total length 5000, CRC type 2 and CRC-32C 9e602ec2; the report-to node is 2^63-1 (1b7fffffffffffffff), the largest value uint reads. Kind fragment-ipn: [0].[9] present and all scheme codes 2. Payload block with CRC type 0 (5 elements). Output 82 and the blocks unchanged. Derived without an engine by a standalone RFC 8949 codec."
+}

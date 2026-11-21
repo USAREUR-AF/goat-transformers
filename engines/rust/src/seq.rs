@@ -1554,6 +1554,7 @@ pub fn parse(text: &str) -> Result<Pack, Error> {
         seq: Some(body),
         text: crate::text::TextConf::default(),
         tlv: crate::tlv::TlvConf::default(),
+        cbor: crate::cbor::CborConf::default(),
         armor,
         gates: Vec::new(),
         elements: Vec::new(),

@@ -1,0 +1,13 @@
+{
+  "name": "residue-unmapped-members",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor",
+  "input": "b000010163552d3102182a03f93e0004420aff051a603aa4c0060207a201f951b002f9d5a40882617861540981a2646e616d65626161616e03202664666c6167f50a6172181800627a7a2063612d62820102",
+  "expect": "b000010163552d3102182a03f93e0004420aff051a603aa4c0060207a201f951b002f9d5a40882617861540981a2616e03646e616d656261610a61721818002026627a7a2063612d6282010264666c6167f5",
+  "model": {
+    "@kind": "plain",
+    "uid": "U-1"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Residue: members 10, 24, zz and a-b are mapped by no line and are written back, each at its place in the key order: 0a < 1818 (24) < 20 (-1) < 627a7a (zz) < 63612d62 (a-b) < 64666c6167 (flag); a shorter text key sorts first whatever its letters. Derived without an engine by a standalone RFC 8949 codec."
+}

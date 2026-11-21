@@ -4,13 +4,13 @@
 #   engines/zig/reduced-check.sh            (from the repository root)
 #
 # 1. Builds the engine with the wires xml, json and geojson only
-#    (`zig build -Dwires=xml,json,geojson`), and with all seven.
+#    (`zig build -Dwires=xml,json,geojson`), and with all eight.
 # 2. Runs the reduced harness over the packs directory: it loads every pack on
 #    those three wires, leaves out (and counts) every pack on another wire,
 #    and runs every conversion, load and capability vector whose packs it
 #    loaded. Every one must pass.
 # 3. Loads one pack on bits (fixed layout), one on bits (sequential layout),
-#    one on protobuf, one on text and one on tlv in the reduced build: each
+#    one on protobuf, one on text, one on tlv and one on cbor in the reduced build: each
 #    must be `unknown-wire`, with a message that names the wire and says this
 #    build does not have it.
 # 4. Prints the size of the reduced build beside the full build: the harness
@@ -34,7 +34,7 @@ bad() { printf 'FAIL %s\n' "$*"; fail=1; }
 
 cd "$here" || exit 2
 
-note "building: full (all seven wires), -Doptimize=$optimize"
+note "building: full (all eight wires), -Doptimize=$optimize"
 if ! zig build install cli -Doptimize="$optimize" --prefix "$out/full" >"$out/full.log" 2>&1; then
     cat "$out/full.log"
     bad "the full build"
@@ -66,7 +66,7 @@ fi
 # 3. a pack on each wire the reduced build lacks
 note ""
 note "packs on a wire the reduced build does not have:"
-for pair in bits:conformance-absent-bits bits:conformance-absent-seq protobuf:conformance-absent-protobuf text:conformance-text tlv:conformance-tlv; do
+for pair in bits:conformance-absent-bits bits:conformance-absent-seq protobuf:conformance-absent-protobuf text:conformance-text tlv:conformance-tlv cbor:conformance-cbor; do
     wire="${pair%%:*}"
     pack="${pair#*:}"
     if [ ! -f "$packs/$pack/pack.def" ]; then

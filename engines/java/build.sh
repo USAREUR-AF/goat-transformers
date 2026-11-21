@@ -5,16 +5,16 @@
 # Usage: ./build.sh [--wires LIST] [--no-test] [--out DIR] [PACKS_DIR]   (PACKS_DIR default ../../packs)
 #
 #   --wires LIST  build with the codecs of these wires only (spec 0.24), a comma-separated subset of
-#                 xml,geojson,json,bits,protobuf,text,tlv; `all`, or no --wires, is all seven. The codec sources
+#                 xml,geojson,json,bits,protobuf,text,tlv,cbor; `all`, or no --wires, is all eight. The codec sources
 #                 of every other wire (src/wire/<wire>/) are not compiled, so the jar does not carry them. A pack
-#                 on a wire the build lacks is unknown-wire at load. A build with fewer than seven wires does not
+#                 on a wire the build lacks is unknown-wire at load. A build with fewer than eight wires does not
 #                 run the test suite, whose unit checks need every wire: ./reduced-check.sh is its test.
 #   --no-test     compile and write the jar without running the test suite.
 #   --out DIR     write into DIR instead of build/ (DIR is removed first).
 set -euo pipefail
 cd "$(dirname "$0")"
 version=0.8.0
-all_wires=(xml geojson json bits protobuf text tlv)
+all_wires=(xml geojson json bits protobuf text tlv cbor)
 wires_arg=all
 run_tests=1
 out=build
@@ -43,7 +43,7 @@ else
     known=0
     for w in "${all_wires[@]}"; do [ "$a" = "$w" ] && known=1; done
     if [ "$known" = 0 ]; then
-      echo "build.sh: --wires: \"$a\" is not a wire (xml, geojson, json, bits, protobuf, text, tlv)" >&2
+      echo "build.sh: --wires: \"$a\" is not a wire (xml, geojson, json, bits, protobuf, text, tlv, cbor)" >&2
       exit 2
     fi
   done
@@ -97,6 +97,7 @@ if has json || has geojson; then dirs+=(src/wire/json-tree); fi
   has protobuf && echo '            case PROTOBUF: return new ProtobufCodec(p);'
   has text && echo '            case TEXT: return new TextCodec(p);'
   has tlv && echo '            case TLV: return new TlvCodec(p);'
+  has cbor && echo '            case CBOR: return new CborCodec(p);'
   echo '            default:'
   echo '                throw new GtException(GtException.Code.UNKNOWN_WIRE, p.format, null, "wire \"" + p.wire.name().toLowerCase(java.util.Locale.ROOT)'
   echo '                        + "\" is a wire of the specification, but this build does not have it");'
@@ -113,7 +114,7 @@ if [ "$run_tests" = 1 ] && [ "$full" = 1 ]; then
   javac --release 17 -Xlint:all -Werror -cp "$out/main" -d "$out/test" @"$out/test-sources.txt"
   java -cp "$out/main:$out/test" goat.transformers.TestRunner "$packs"
 elif [ "$run_tests" = 1 ]; then
-  echo "tests: not run for a build with fewer than seven wires (the unit checks need every wire); run ./reduced-check.sh"
+  echo "tests: not run for a build with fewer than eight wires (the unit checks need every wire); run ./reduced-check.sh"
 fi
 # The jar: `java -jar` runs the command-line tool (goat.transformers.Cli); on a class path it is the library.
 printf '%s\n' \

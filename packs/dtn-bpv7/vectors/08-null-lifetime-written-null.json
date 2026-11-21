@@ -1,0 +1,32 @@
+{
+  "name": "null-lifetime-written-null",
+  "from": "dtn-bpv7",
+  "to": "dtn-bpv7",
+  "input": "9f890704018202821903d1018202820c078202820c00821b000000b6c5b0186009f6425d628501010000496e756c6c206c696665ff",
+  "expect": "82890704018202821903d1018202820c078202820c00821b000000b6c5b0186009f6425d628501010000496e756c6c206c696665",
+  "model": {
+    "@kind": "ipn",
+    "bpv7.version": "7",
+    "bpv7.bundle_flags": "4",
+    "bpv7.primary_crc_type": "1",
+    "bpv7.dst_scheme": "2",
+    "bpv7.src_scheme": "2",
+    "bpv7.rpt_scheme": "2",
+    "bpv7.creation_time_dtn_ms": "785000700000",
+    "bpv7.creation_seq": "9",
+    "bpv7.dst_ipn_node": "977",
+    "bpv7.dst_ipn_service": "1",
+    "bpv7.src_ipn_node": "12",
+    "bpv7.src_ipn_service": "7",
+    "bpv7.rpt_ipn_node": "12",
+    "bpv7.rpt_ipn_service": "0",
+    "bpv7.primary_crc": "5d62",
+    "@absent": [
+      "bpv7.lifetime_ms",
+      "bpv7.fragment_offset",
+      "bpv7.total_adu_length"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): packs/dtn-bpv7/pack.def and pack.md; RFC 9171 4.1 (bundle), 4.3.1 (primary block), 4.3.2 (canonical block), 4.2.1 (CRC); null (f6) at [0].[7]: bpv7.lifetime_ms is absent (Transforms: simple value 22 is absent; ruling 6). On write [0].[7] is below the highest present position [0].[8] (the CRC) and no line walks into it as a container: f6 (Writing step 3, ruling 23). So the primary block, and its CRC-16 5d62 computed over the f6, come back unchanged. Derived without an engine by a standalone RFC 8949 codec."
+}

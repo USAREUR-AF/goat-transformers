@@ -1,0 +1,9 @@
+{
+  "name": "two-byte-simple-below-32",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor",
+  "input": "a200010af814",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Reading step 1: f814 (a simple value below 32 in two bytes) is not well formed (RFC 8949 3.3, Appendix F). Derived without an engine by a standalone RFC 8949 codec."
+}

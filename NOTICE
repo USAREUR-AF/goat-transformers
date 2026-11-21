@@ -170,6 +170,12 @@ Pack cloudevents; module cloudevents
   CloudEvents 1.0.2 JSON Schema, https://github.com/cloudevents/spec, tag
   v1.0.2. Apache License, Version 2.0.
 
+Pack cose-sign1; module cose
+  IETF RFC 9052, CBOR Object Signing and Encryption (COSE): Structures and
+  Process (STD 96), and RFC 9053 for algorithm identifiers. Subject to BCP 78
+  and the IETF Trust Legal Provisions. Structure, labels and types only; no
+  text, CDDL, table or example.
+
 Pack cot-protobuf; module takproto
   TAK protocol version 1 protobuf definitions, from
   https://github.com/deptofdefense/AndroidTacticalAssaultKit-CIV (directory
@@ -234,6 +240,11 @@ Packs dronecan-* (133); modules dc<namespace> (41)
   DroneCAN DSDL data type definitions, https://github.com/dronecan/DSDL.
   MIT License, Copyright (c) 2014-2015 Pavel Kirienko. Type names, field
   names, types and array forms only.
+
+Pack dtn-bpv7; module bpv7
+  IETF RFC 9171, Bundle Protocol Version 7. Subject to BCP 78 and the IETF
+  Trust Legal Provisions. Block structure, element order, code numbers and
+  types only; no text, CDDL, table or example.
 
 Pack ecs-event; module ecsevent
   Elastic Common Schema v9.5.0, https://github.com/elastic/ecs tag v9.5.0.

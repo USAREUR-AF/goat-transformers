@@ -1,0 +1,32 @@
+{
+  "name": "unknown-scheme-whole-with-residue",
+  "from": "dtn-bpv7",
+  "to": "dtn-bpv7",
+  "input": "9f8907000282182a43c0ffee8202820c078202820c00821b000000b6c5b19f00021a05265c004475b9288e85010100004e756e6b6e6f776e20736368656d65ff",
+  "expect": "828907000282182a43c0ffee8202820c078202820c00821b000000b6c5b19f00021a05265c004475b9288e85010100004e756e6b6e6f776e20736368656d65",
+  "model": {
+    "@kind": "whole",
+    "bpv7.version": "7",
+    "bpv7.bundle_flags": "0",
+    "bpv7.primary_crc_type": "2",
+    "bpv7.dst_scheme": "42",
+    "bpv7.src_scheme": "2",
+    "bpv7.rpt_scheme": "2",
+    "bpv7.creation_time_dtn_ms": "785000800000",
+    "bpv7.creation_seq": "2",
+    "bpv7.lifetime_ms": "86400000",
+    "bpv7.primary_crc": "75b9288e",
+    "@absent": [
+      "bpv7.dst_ipn_node",
+      "bpv7.dst_ipn_service",
+      "bpv7.src_ipn_node",
+      "bpv7.src_ipn_service",
+      "bpv7.rpt_ipn_node",
+      "bpv7.rpt_ipn_service",
+      "bpv7.fragment_offset",
+      "bpv7.total_adu_length"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): packs/dtn-bpv7/pack.def and pack.md; RFC 9171 4.1 (bundle), 4.3.1 (primary block), 4.3.2 (canonical block), 4.2.1 (CRC); Destination scheme code 42 (no scheme of RFC 9171 9.6) with a byte string SSP 43c0ffee: kind whole; bpv7.dst_scheme reads 42 and the SSP is residue [0].[3].[1], written back as it stood. Primary CRC-32C 75b9288e. Derived without an engine by a standalone RFC 8949 codec."
+}

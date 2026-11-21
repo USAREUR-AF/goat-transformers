@@ -1,0 +1,9 @@
+{
+  "name": "content-type-as-text",
+  "from": "cose-sign1",
+  "to": "cose-sign1",
+  "input": "d28444a1013822a103706170706c69636174696f6e2f63626f7245706f73203750a0a1a2a3a4a5a6a7a8a9aaabacadaeaf",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): packs/cose-sign1/pack.def and pack.md; Transforms for cbor: an item of another type than its transform takes is transform-decode: content type [1].3 is read by uint; it holds a text string, major type 3. Derived without an engine by a standalone RFC 8949 codec."
+}

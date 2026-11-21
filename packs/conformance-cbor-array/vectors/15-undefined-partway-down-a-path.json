@@ -1,0 +1,16 @@
+{
+  "name": "undefined-partway-down-a-path",
+  "from": "conformance-cbor-array",
+  "to": "geojson",
+  "input": "d2824101f7",
+  "expect": "{\"type\":\"Feature\",\"geometry\":null,\"properties\":{}}",
+  "model": {
+    "probe.s1": "01",
+    "@absent": [
+      "uid",
+      "probe.n"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Ruling 12: [1].1 and [1].4 on undefined at [1] are absent, not malformed-wire; geojson writes no id. Derived without an engine by a standalone RFC 8949 codec."
+}

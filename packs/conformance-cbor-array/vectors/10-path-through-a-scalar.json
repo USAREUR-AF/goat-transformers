@@ -1,0 +1,9 @@
+{
+  "name": "path-through-a-scalar",
+  "from": "conformance-cbor-array",
+  "to": "conformance-cbor-array",
+  "input": "d282410105",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Reading step 8: [1].1 needs a map at [1] and [1] holds 5. Derived without an engine by a standalone RFC 8949 codec."
+}

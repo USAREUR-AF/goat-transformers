@@ -1,0 +1,9 @@
+{
+  "name": "duplicate-kid-label",
+  "from": "cose-sign1",
+  "to": "cose-sign1",
+  "input": "d28444a1013822a204426b2d0442303145706f73203750a0a1a2a3a4a5a6a7a8a9aaabacadaeaf",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): packs/cose-sign1/pack.def and pack.md; Reading step 4: the unprotected map a2 holds the key 04 twice (kid 6b2d and kid 3031): equal keys. Derived without an engine by a standalone RFC 8949 codec."
+}

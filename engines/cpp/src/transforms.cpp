@@ -54,6 +54,9 @@ const char* transform_name(Transform t) {
         case Transform::Octal: return "octal";
         case Transform::Scale: return "scale";
         case Transform::Iscale: return "iscale";
+        case Transform::CborText: return "text";
+        case Transform::CborBytes: return "bytes";
+        case Transform::EpochS: return "epoch_s";
     }
     return "?";
 }
@@ -188,7 +191,10 @@ int parse_any_transform(std::string_view token, FieldLine& f, std::string& err) 
                   {"pfloat", Transform::Pfloat},   {"bool", Transform::Bool},
                   {"f32", Transform::F32},         {"f64", Transform::F64},
                   {"ascii", Transform::Ascii},     {"utf8", Transform::Utf8},
-                  {"hex", Transform::Hex},         {"sixbit", Transform::Sixbit}};
+                  {"hex", Transform::Hex},         {"sixbit", Transform::Sixbit},
+                  // v0.28, the cbor wire
+                  {"text", Transform::CborText},   {"bytes", Transform::CborBytes},
+                  {"epoch_s", Transform::EpochS}};
     // The text-wire transforms with parameters (v0.10): `int:<w>`, `dec`, `dm`, `hms`, `hms_dmy`.
     const int text_tf = parse_text_transform(token, f, err);
     if (text_tf != 0) return text_tf > 0 ? 0 : -1;
@@ -376,6 +382,10 @@ bool transform_is_text_only(Transform t) {
 
 // `hex` is also a transform of the bits wire from 0.22.
 bool transform_is_tlv_only(Transform t) { return t == Transform::Utf8; }
+
+bool transform_is_cbor_only(Transform t) {
+    return t == Transform::CborText || t == Transform::CborBytes || t == Transform::EpochS;
+}
 
 bool transform_is_textual(Transform t) {
     return t == Transform::String || t == Transform::Iso8601Ms || t == Transform::Iso8601Short ||

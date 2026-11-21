@@ -21,6 +21,7 @@ const (
 	WireJSON     = "json"
 	WireText     = "text"
 	WireTLV      = "tlv"
+	WireCBOR     = "cbor"
 )
 
 type locKind int
@@ -70,6 +71,7 @@ type locator struct {
 	clen   int      // text: the length of a column
 	tags   []uint64 // tlv: the tags of the path
 	tsize  int      // tlv: the size `:<n>`, 0 when the path has none
+	cpath  []cStep  // cbor: the steps of the path; nil for `.`
 }
 
 // Field is one `field` line: a model key bound to a wire locator through a
@@ -99,6 +101,7 @@ type Field struct {
 	tf      *transform
 	ttf     *textTf // text wire transform
 	xtf     *tlvTf  // tlv wire transform
+	ctf     int     // cbor wire transform (spec 0.28)
 	btf     *bitsTransform
 	uper    *uperLoc // a UPER locator (spec 0.19), nil for a bit length
 	until   bool     // the locator is `until:<code>` (0.22): characters up to a terminator
@@ -129,6 +132,7 @@ type When struct {
 	num     uint64     // bits and protobuf: the unsigned integer
 	texts   []string   // text wires: every listed value, a leading `=` stripped (0.20)
 	ranges  []numRange // bits and protobuf: every listed value or range (0.20)
+	cv      cborVal    // cbor: the value, typed (spec 0.28, Kinds)
 }
 
 // numRange is one value (lo = hi) or one range lo..hi of a `when` list.
@@ -238,6 +242,9 @@ type Group struct {
 	needsMsg  bool         // protobuf: the body has a line that reads into the item as a submessage
 	tstart    int          // text: the index of the first field of the first item
 	titem     int          // text: the number of fields of an item
+	cdot      bool         // cbor: `group <list> .`, the top item
+	ckind     int          // cbor: what an item is to the body: ckDot, ckMap or ckArr
+	cbody     *cNode       // cbor: the paths of the body
 }
 
 // KindDef is one `kind` of a pack: its `when`, `requires`, `field`, `const`
@@ -276,6 +283,7 @@ type layout struct {
 	decBytes int                 // bits: the shortest input a decode accepts, in bytes
 	text     *textScope          // text: the fields the scope addresses
 	tlv      *tlvSet             // tlv: the sets the scope addresses
+	cbor     *cNode              // cbor: the paths of the scope (spec 0.28)
 }
 
 // maps reports whether a field, a const or a when line of the layout maps loc.
@@ -441,6 +449,8 @@ type Pack struct {
 	textSeen  map[string]int // the line of each text directive the pack has
 
 	tlv tlvConf // tlv wire (spec 0.13)
+
+	cbor cborConf // cbor wire (spec 0.28)
 
 	// bits wire, `armor` (spec 0.14)
 	sixbitArmor bool // `armor sixbit`: the input and output are six-bit text
@@ -959,9 +969,9 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 				p.Version = args[0]
 			case "wire":
 				switch args[0] {
-				case WireXML, WireGeoJSON, WireBits, WireProtobuf, WireJSON, WireText, WireTLV:
+				case WireXML, WireGeoJSON, WireBits, WireProtobuf, WireJSON, WireText, WireTLV, WireCBOR:
 				default:
-					return nil, perr(ErrUnknownWire, n, "", "unknown wire %q (want xml, geojson, json, bits, protobuf, text or tlv)", args[0])
+					return nil, perr(ErrUnknownWire, n, "", "unknown wire %q (want xml, geojson, json, bits, protobuf, text, tlv or cbor)", args[0])
 				}
 				// A wire of the specification this build lacks is
 				// unknown-wire at the same line check (ruling 1c of 0.24).
@@ -1272,6 +1282,15 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 					hasType = true
 				}
 			}
+		} else if p.Wire == WireCBOR {
+			if err := p.resolveCBOR(whens, perr); err != nil {
+				return nil, err
+			}
+			for _, f := range p.Fields {
+				if f.Key == "type" {
+					hasType = true
+				}
+			}
 		} else {
 			for _, g := range p.Groups {
 				if kind, err := p.resolveGroup(g); err != nil {
@@ -1543,6 +1562,14 @@ func ParsePack(text []byte, source string) (*Pack, error) {
 	if p.Wire == WireTLV {
 		for _, l := range p.layouts {
 			l.tlv = newTLVScope(l.lines)
+		}
+	}
+	if p.Wire == WireCBOR {
+		for _, l := range p.layouts {
+			l.cbor, _ = cborTree(l.lines)
+		}
+		for _, g := range p.Groups {
+			g.cbody, _ = cborTree(g.lines)
 		}
 	}
 	return p, nil

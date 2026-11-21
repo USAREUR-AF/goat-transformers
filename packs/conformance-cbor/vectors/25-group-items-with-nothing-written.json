@@ -1,0 +1,13 @@
+{
+  "name": "group-items-with-nothing-written",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor",
+  "input": "ac00010163552d3102182a03f93e0004420aff051a603aa4c0060207a201f951b002f9d5a40882617861540983a161710107a1646e616d65626363202664666c6167f5",
+  "expect": "ac00010163552d3102182a03f93e0004420aff051a603aa4c0060207a201f951b002f9d5a40882617861540983a0a0a1646e616d65626363202664666c6167f5",
+  "model": {
+    "probe.items.#": "3",
+    "probe.items[2].probe.label": "cc"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Reading step 8: an element of the wrong type (7) is an item with no keys; an element whose members no line maps ({\"q\":1}) is an item with no keys (its content dropped); Writing step 4: an item with nothing written is a0. Derived without an engine by a standalone RFC 8949 codec."
+}

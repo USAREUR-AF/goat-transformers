@@ -1,0 +1,9 @@
+{
+  "name": "duplicate-key-00-and-1800",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor",
+  "input": "a300011800010a01",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Ruling 4 and Reading step 4: 00 and 1800 are both the integer 0: equal keys. Derived without an engine by a standalone RFC 8949 codec."
+}

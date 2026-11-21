@@ -16,6 +16,7 @@
     "packs/remote-id/vectors/09-basic-id-upstream-test-bytes-to-geojson.json",
     "packs/adsb/vectors/01-identification-tc1-roundtrip.json",
     "packs/nmea0183/vectors/40-rmc-to-geojson.json",
-    "packs/dhcpv6-options/vectors/01-solicit-options-round-trip.json"
+    "packs/dhcpv6-options/vectors/01-solicit-options-round-trip.json",
+    "packs/dtn-bpv7/vectors/01-ipn-round-trip.json"
   ]
 }

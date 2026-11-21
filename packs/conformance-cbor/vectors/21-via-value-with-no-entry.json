@@ -1,0 +1,9 @@
+{
+  "name": "via-value-with-no-entry",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor",
+  "input": "ac00010163552d3102182a03f93e0004420aff051a603aa4c0060307a201f951b002f9d5a40882617861540981a2616e03646e616d65626161202664666c6167f5",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): 0.6 value tables: uint 3 has no entry in levels, and the types differ (int native, string model): transform-decode. Derived without an engine by a standalone RFC 8949 codec."
+}

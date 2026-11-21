@@ -1,0 +1,21 @@
+{
+  "name": "iv-and-residue-labels",
+  "from": "cose-sign1",
+  "to": "cose-sign1",
+  "input": "d28444a1013822a465782d617070f56131073a0001116f617a054c1f2e3d4c5b6a798897a6b5c445706f73203750a0a1a2a3a4a5a6a7a8a9aaabacadaeaf",
+  "expect": "d28444a1013822a4054c1f2e3d4c5b6a798897a6b5c43a0001116f617a61310765782d617070f545706f73203750a0a1a2a3a4a5a6a7a8a9aaabacadaeaf",
+  "model": {
+    "cose.iv": "1f2e3d4c5b6a798897a6b5c4",
+    "cose.protected": "a1013822",
+    "cose.payload": "706f732037",
+    "cose.signature": "a0a1a2a3a4a5a6a7a8a9aaabacadaeaf",
+    "@absent": [
+      "cose.alg",
+      "cose.content_format",
+      "cose.kid",
+      "cose.partial_iv"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): packs/cose-sign1/pack.def and pack.md; IV (label 5) 4c1f2e..c4 is mapped. Residue in the map at [1], which the lines walk into: [1].-70000 (key 3a0001116f, 69999 = 0x1116f) and [1].x-app (65782d617070) are unmapped labels keyed by path, the text label \"1\" (6131) is not addressable and is keyed [1].#6131. Input members in reverse order; written back in key order 05 < 3a0001116f < 6131 < 65782d617070. Derived without an engine by a standalone RFC 8949 codec."
+}

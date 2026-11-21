@@ -1,0 +1,7 @@
+{
+  "name": "DTN Bundle Protocol 7",
+  "domain": "networks",
+  "exact": [
+    "dtn-bpv7"
+  ]
+}

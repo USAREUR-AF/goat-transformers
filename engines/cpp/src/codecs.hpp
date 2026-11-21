@@ -403,4 +403,19 @@ bool utf8_is_valid(const std::string& s);
 bool hex_text_bytes(const std::string& s, std::string& out);
 std::string encode_tlv(const Pack& p, const Entity& e);
 
+// ---- the `cbor` wire (Version 0.28)
+
+// Is the text a cbor path (0.28, Paths): steps of integer keys, text keys and
+// `[i]` positions separated by `.`? `.` alone is not; its places are checked
+// by the line checks.
+bool cbor_path_valid(const std::string& loc);
+// The value of `tag <n>` on cbor: a decimal integer from 0 to 2^64-1 with no leading zero.
+bool parse_cbor_tag(const std::string& text, std::uint64_t& out);
+// The checks of a cbor pack that need the whole file (bad-directive): the
+// transforms and options, the `when` and `const` values, the type of the top
+// item, and the paths of one scope against one another.
+void check_cbor_pack(Pack& p);
+Entity decode_cbor(const Pack& p, const std::string& bytes);
+std::string encode_cbor(const Pack& p, const Entity& e);
+
 }  // namespace goat_transformers::detail

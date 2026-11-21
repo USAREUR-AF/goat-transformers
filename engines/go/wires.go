@@ -9,7 +9,7 @@ import (
 // The wires of a build (spec/engine-spec.md, "Version 0.24: builds with fewer
 // wires"). The codec of each wire is in files that carry the build constraint
 // `!goat_wires || goat_wire_<wire>`, and its file wire_<wire>.go registers it
-// here from an init function. A build with no tags has all seven wires; a
+// here from an init function. A build with no tags has all eight wires; a
 // build with the tag goat_wires has only the wires named by a tag
 // goat_wire_<wire>, for example
 //
@@ -17,10 +17,10 @@ import (
 //
 // The pack language (the loader and its line checks) is part of every build,
 // so a pack on a wire of the build loads, and fails, exactly as in a build
-// with all seven (ruling 1b).
+// with all eight (ruling 1b).
 
 // allWires are the wires of the specification.
-var allWires = []string{WireXML, WireGeoJSON, WireJSON, WireBits, WireProtobuf, WireText, WireTLV}
+var allWires = []string{WireXML, WireGeoJSON, WireJSON, WireBits, WireProtobuf, WireText, WireTLV, WireCBOR}
 
 // wireCodec reads and writes the messages of one wire.
 type wireCodec struct {

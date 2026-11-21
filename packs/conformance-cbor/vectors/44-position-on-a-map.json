@@ -1,0 +1,9 @@
+{
+  "name": "position-on-a-map",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor",
+  "input": "a2000108a1016154",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Reading step 8: probe.tag (8.[1]) needs an array at 8 and 8 holds a map. Derived without an engine by a standalone RFC 8949 codec."
+}

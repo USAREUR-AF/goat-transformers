@@ -1,0 +1,14 @@
+{
+  "name": "element-of-the-wrong-type-is-an-item-with-no-keys",
+  "from": "conformance-cbor-scope",
+  "to": "conformance-cbor-scope",
+  "input": "82810505",
+  "expect": "8281a005",
+  "model": {
+    "@kind": "bare",
+    "probe.items.#": "1",
+    "probe.val": "5"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): packs/conformance-cbor-scope/pack.def (group probe.items [0] with probe.qty a.b int; probe.val [1] uint under const [1] 5; probe.s2 [3] bytes; kind located: when [4] 1, lat [2].1 float; kind bare: no when); Ruling 27, the other case: the element itself (5) is not a map: an item with no keys (ruling 12 of 0.7), written as an empty map (Writing step 4, the body's paths begin with a text key): 82 81 a0 05. Derived without an engine by a standalone RFC 8949 codec."
+}

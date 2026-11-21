@@ -1,0 +1,15 @@
+{
+  "name": "two-step-body-path-round-trip",
+  "from": "conformance-cbor-scope",
+  "to": "conformance-cbor-scope",
+  "input": "8281a16161a161620705",
+  "expect": "8281a16161a161620705",
+  "model": {
+    "@kind": "bare",
+    "probe.items.#": "1",
+    "probe.items[0].probe.qty": "7",
+    "probe.val": "5"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): packs/conformance-cbor-scope/pack.def (group probe.items [0] with probe.qty a.b int; probe.val [1] uint under const [1] 5; probe.s2 [3] bytes; kind located: when [4] 1, lat [2].1 float; kind bare: no when); The body line a.b reads 7 in the element {\"a\": {\"b\": 7}}; written back 82 81 a1 6161 a1 6162 07 05. Derived without an engine by a standalone RFC 8949 codec."
+}

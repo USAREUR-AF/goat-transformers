@@ -31,7 +31,8 @@ other fields and last-item flags (`group … rest`, `count <name>` with
 long and terminated fields (`hex` on `bits` up to 2040 bits, `chars:ascii8`,
 `until:<code>`, the field option `stop <code>`, and `bit_order msb-lsb`, spec
 Version 0.22), writes a time to the whole second (`iso8601_s`, spec Version
-0.26), and converts between formats via the shared model.
+0.26), reads and writes one CBOR data item (the `cbor` wire, spec Version
+0.28), and converts between formats via the shared model.
 
 ## Build and run the conformance harness
 
@@ -119,8 +120,8 @@ BENCH_NUMBERS
 ## Builds with fewer wires (spec Version 0.24)
 
 `-Dwires=<wire>,<wire>…` names the wires of the build, any of `xml`,
-`geojson`, `json`, `bits`, `protobuf`, `text` and `tlv`. With no `-Dwires`
-the build has all seven. It applies to every step: the harness, `goat-xf`
+`geojson`, `json`, `bits`, `protobuf`, `text`, `tlv` and `cbor` (spec Version
+0.28, ruling 38). With no `-Dwires` the build has all eight. It applies to every step: the harness, `goat-xf`
 (`zig build cli`), the module and its test.
 
 ```
@@ -135,7 +136,7 @@ binary. `bits` takes the sequential layout, six-bit armor and `encoding uper`
 with it (ruling 1d); `geojson` needs nothing of the `json` wire (the JSON
 reader they share is in the build whenever either is). The checks a pack on a
 wire of the build can fail stay whole, so such a pack loads, converts and
-fails exactly as in a build with all seven (ruling 1b).
+fails exactly as in a build with all eight (ruling 1b).
 
 A pack whose `wire` is a wire the build does not have is `unknown-wire` at
 line check 6, with the message `line <n>: wire <w> is a wire of the
@@ -152,23 +153,23 @@ The reduced-build check, from the repository root:
 engines/zig/reduced-check.sh
 ```
 
-builds the engine with all seven wires and with `xml`, `json` and `geojson`
+builds the engine with all eight wires and with `xml`, `json` and `geojson`
 (`-Doptimize=ReleaseSmall`; `OPTIMIZE=` chooses another), runs every vector
 of the packs on those three wires through the reduced harness, loads a pack
-on `bits` (fixed and sequential), `protobuf`, `text` and `tlv`, each of which
+on `bits` (fixed and sequential), `protobuf`, `text`, `tlv` and `cbor`, each of which
 must be `unknown-wire` naming its wire, and prints the sizes of both builds.
 It exits non-zero on any failure. Measured on 2026-11-21 (Zig 0.13.0, x86_64
 Linux, `ReleaseSmall`):
 
-| Binary | All seven wires | `xml`, `json`, `geojson` | Reduced / full |
+| Binary | All eight wires | `xml`, `json`, `geojson` | Reduced / full |
 |---|---|---|---|
-| `gt-engine-zig` (harness) | 713 368 bytes | 434 840 bytes | 60 % |
-| `goat-xf` (command-line tool) | 676 504 bytes | 397 976 bytes | 58 % |
+| `gt-engine-zig` (harness) | 783 000 bytes | 438 936 bytes | 56 % |
+| `goat-xf` (command-line tool) | 737 944 bytes | 402 072 bytes | 54 % |
 
-The reduced harness loaded 1624 packs and left out 2663; it ran 8167
-conversion vectors (8167 passed), 382 load vectors (382 passed) and 16
-capability vectors (16 passed), and did not run 626 vectors that name a pack
-it left out nor 790 load vectors with such a pack.
+The reduced harness loaded 1646 packs and left out 2674; it ran 8211
+conversion vectors (8211 passed), 383 load vectors (383 passed) and 16
+capability vectors (16 passed), and did not run 635 vectors that name a pack
+it left out nor 852 load vectors with such a pack.
 
 `goat-xf` of a reduced build loads a whole packs directory as Version 0.23
 says, so a directory holding a pack on a wire the build lacks fails with that
@@ -289,6 +290,17 @@ An input that is not a well-formed message of its wire fails with
   read; a nested set is read whole when a line of the selected kind walks
   into it. A length is compared with the bytes left, never added to an
   offset first.
+- `cbor`: the hex text as for `bits`; the whole input is read as exactly one
+  well-formed data item (RFC 8949 Appendix C) before any line is read: heads
+  of any length, definite and indefinite lengths, every text chunk valid
+  UTF-8 on its own, no two equal keys in a map (keys compared by their core
+  deterministic encodings, a hash set for a map of more than eight members),
+  at most 64 levels of arrays, maps and tags. A declared length or count is
+  compared with the bytes left before any memory is taken for it (an array
+  element takes a byte at least, a map member two); an indefinite item that
+  never ends meets the end of the input. Then the outermost tag under `tag
+  <n>` and the type of the top item. Output is the core deterministic
+  encoding of RFC 8949 4.2.1.
 - `bits`, sequential: every read is checked against the end of the input, of
   the stated whole length and of the enclosing `length` extent, with
   arithmetic that cannot wrap.
@@ -297,7 +309,13 @@ An input that is not a well-formed message of its wire fails with
 `ReleaseSafe` build) runs each vector's input through `convert` cut at
 prefixes and with single bytes replaced (every position of an input up to 96
 bytes, 96 evenly spaced positions of a longer one), and once per format text
-nested 200000 levels deep and hex of one unit repeated to 700000 digits. Each
+nested 200000 levels deep and hex of one unit repeated to 700000 digits; a
+`cbor` format also takes hostile items (arrays, maps, tags and indefinite
+items nested 100000 levels and more, lengths and counts up to 2^64-1 with
+little after them, indefinite items with no break, arrays and strings of
+300000 elements, a map of 65536 keys with and without two equal keys) and
+3000 random items of every major type with heads of any length, some cut
+short or with a byte changed. Each
 must return a message or fail with a named kind; a panic, an error that is
 not a named kind, or a `convert` that needs more than 256 MB fails the run
 (the run counts what each `convert` allocates and refuses the allocation that

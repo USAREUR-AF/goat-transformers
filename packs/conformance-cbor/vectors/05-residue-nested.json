@@ -1,0 +1,15 @@
+{
+  "name": "residue-nested",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor",
+  "input": "ad00010163552d3102182a03f93e0004420aff051a603aa4c0060207a501f951b002f9d5a4036168617800613409088361786154617a0981a2646e616d65626161616e03202664666c6167f50ba2010261718201f6",
+  "expect": "ad00010163552d3102182a03f93e0004420aff051a603aa4c0060207a501f951b002f9d5a4036168613409617800088361786154617a0981a2616e03646e616d656261610ba2010261718201f6202664666c6167f5",
+  "model": {
+    "@kind": "plain",
+    "lat": "45.5",
+    "lon": "-90.25",
+    "probe.tag": "T"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Residue: the map at 7 is walked into, so its unmapped members are residue (7.3, 7.x, 7.#6134); the array at 8 is walked into, so 8.[0] and 8.[2] are residue; the map at 11 is walked into by no line, so it is one residue entry with its whole item. All go back into their own map or array. Derived without an engine by a standalone RFC 8949 codec."
+}

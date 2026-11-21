@@ -1,0 +1,9 @@
+{
+  "name": "break-outside-an-indefinite-item",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor",
+  "input": "a200010aff",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Reading step 1: a break (ff) where an item stands is not well formed. Derived without an engine by a standalone RFC 8949 codec."
+}

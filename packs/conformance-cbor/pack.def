@@ -1,0 +1,35 @@
+# Conformance probe pack for the `cbor` wire (spec 0.28). Public. A map at
+# the top with integer and text keys, a nested map, an array addressed by
+# positions, a group of maps, every transform, and kinds chosen by an
+# integer member.
+format        conformance-cbor
+version       0.28.0
+distribution  public
+source        "goat-transformers spec/engine-spec.md (synthetic probe format, no external standard)"
+uses          probe
+wire          cbor
+
+map     levels  1  low
+map     levels  2  high
+
+field    uid          1          text
+field    probe.n      -1         int
+field    probe.val    2          uint
+field    probe.a      3          float
+field    probe.s2     4          bytes
+field    probe.x      flag       bool
+field    time_ms      5          epoch_s
+field    probe.s1     6          uint     via levels
+field    lat          7.1        float
+field    lon          7.2        float
+field    probe.tag    8.[1]      text
+group    probe.items  9
+  field  probe.label  name       text
+  field  probe.qty    n          uint
+end
+
+kind     plain
+when     0            1
+
+kind     other
+when     0            2

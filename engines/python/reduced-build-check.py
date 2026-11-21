@@ -5,7 +5,7 @@
     python3 -I engines/python/reduced-build-check.py
     python3 -I engines/python/reduced-build-check.py --wires geojson   # another set
 
-1. Builds the engine twice with `build.py`: with all seven wires, and with
+1. Builds the engine twice with `build.py`: with all eight wires, and with
    `xml`, `json` and `geojson` only.
 2. In the reduced build (a fresh interpreter whose package is the reduced
    copy): the codec modules of the other wires are absent; every conversion
@@ -13,7 +13,7 @@
    pack on the three wires and every model module loaded; every load vector whose packs name only
    those wires (or no wire of the specification) gives the result it gives in
    a full build; one pack on `bits` (and one sequential `bits` pack), one on
-   `protobuf`, one on `text` and one on `tlv` are each `unknown-wire` with a
+   `protobuf`, one on `text`, one on `tlv` and one on `cbor` are each `unknown-wire` with a
    message that names the wire and says this build does not have it; a `wire`
    value that is no wire is still `unknown-wire`, without that text.
 3. `model_keys` of every pack on the three wires, and the capability report of
@@ -33,7 +33,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.normpath(os.path.join(HERE, "..", ".."))
 PACKS = os.path.join(ROOT, "packs")
 LOAD_VECTORS = os.path.join(PACKS, "conformance", "load-vectors")
-ALL = ("xml", "geojson", "json", "bits", "protobuf", "text", "tlv")
+ALL = ("xml", "geojson", "json", "bits", "protobuf", "text", "tlv", "cbor")
 REDUCED = ("xml", "geojson", "json")  # the set "What pins it" names; `--wires` checks another
 OTHERS = tuple(w for w in ALL if w not in REDUCED)
 

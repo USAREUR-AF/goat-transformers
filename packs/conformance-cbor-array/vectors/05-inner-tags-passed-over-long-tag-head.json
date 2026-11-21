@@ -1,0 +1,16 @@
+{
+  "name": "inner-tags-passed-over-long-tag-head",
+  "from": "conformance-cbor-array",
+  "to": "conformance-cbor-array",
+  "input": "d812d9d9f784c24101d864a2010504d81843616263420aff41ff",
+  "expect": "d2844101a201050443616263420aff41ff",
+  "model": {
+    "probe.s1": "01",
+    "probe.n": "5",
+    "uid": "616263",
+    "probe.s2": "0aff",
+    "probe.tag": "ff"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Tags: tag 18 read from a one-byte head (d812); the tags inside it (55799 on the array, 2 on [0], 100 on [1], 24 on uid) are passed over and not written; output d2 and the canonical item. Derived without an engine by a standalone RFC 8949 codec."
+}

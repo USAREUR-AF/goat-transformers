@@ -1,0 +1,13 @@
+{
+  "name": "epoch-s-product-range-ends",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor",
+  "input": "a30001051b0020c49ba5e353f72020",
+  "expect": "a30001051b0020c49ba5e353f72020",
+  "model": {
+    "time_ms": "9223372036854775000",
+    "probe.n": "-1"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Ruling 7: 9223372036854775 s gives 9223372036854775000 ms, inside the range; written back as 1b0020c49ba5e353f7. Derived without an engine by a standalone RFC 8949 codec."
+}

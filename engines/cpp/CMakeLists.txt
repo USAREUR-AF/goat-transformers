@@ -37,11 +37,11 @@ if(GT_SANITIZE)
 endif()
 
 # The wires of the build (engine-spec.md, Version 0.24): a list of xml, geojson,
-# json, bits, protobuf, text and tlv, separated by ';' or ','. Empty, the
-# default, names no set: all seven. The codec of a wire not in the set is left
+# json, bits, protobuf, text, tlv and cbor, separated by ';' or ','. Empty,
+# the default, names no set: all eight. The codec of a wire not in the set is left
 # out of the library; a pack on that wire is refused with unknown-wire.
-set(GT_ALL_WIRES xml geojson json bits protobuf text tlv)
-set(GT_WIRES "" CACHE STRING "Wires to build, from: xml geojson json bits protobuf text tlv (empty: all seven)")
+set(GT_ALL_WIRES xml geojson json bits protobuf text tlv cbor)
+set(GT_WIRES "" CACHE STRING "Wires to build, from: xml geojson json bits protobuf text tlv cbor (empty: all eight)")
 string(REPLACE "," ";" GT_WIRE_SET "${GT_WIRES}")
 string(STRIP "${GT_WIRE_SET}" GT_WIRE_SET)
 if(GT_WIRE_SET STREQUAL "")
@@ -99,6 +99,9 @@ if(GT_HAS_TEXT)
 endif()
 if(GT_HAS_TLV)
   list(APPEND GT_SOURCES src/tlv.cpp)
+endif()
+if(GT_HAS_CBOR)
+  list(APPEND GT_SOURCES src/cbor.cpp)
 endif()
 
 add_library(goat_transformers STATIC ${GT_SOURCES})
@@ -173,7 +176,7 @@ if(GT_BUILD_TESTS)
   add_test(NAME vectors COMMAND goat_transformers_vectors)
 endif()
 
-# The other tests load every pack of the repository: a build with all seven wires.
+# The other tests load every pack of the repository: a build with all eight wires.
 if(GT_BUILD_TESTS AND GT_ALL_WIRES_BUILT)
 
   # Malformed input (engine-spec.md 0.8): every vector input cut short and with

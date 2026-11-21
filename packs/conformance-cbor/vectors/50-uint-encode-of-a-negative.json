@@ -1,0 +1,12 @@
+{
+  "name": "uint-encode-of-a-negative",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor",
+  "input": "a10001",
+  "expect_error": "transform-encode",
+  "context": {
+    "probe.val": "-5"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): uint encode: a negative value is transform-encode. Derived without an engine by a standalone RFC 8949 codec."
+}

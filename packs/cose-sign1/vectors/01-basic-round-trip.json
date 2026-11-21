@@ -1,0 +1,21 @@
+{
+  "name": "basic-round-trip",
+  "from": "cose-sign1",
+  "to": "cose-sign1",
+  "input": "d28444a1013822a104446b2d303145706f73203750a0a1a2a3a4a5a6a7a8a9aaabacadaeaf",
+  "expect": "d28444a1013822a104446b2d303145706f73203750a0a1a2a3a4a5a6a7a8a9aaabacadaeaf",
+  "model": {
+    "cose.protected": "a1013822",
+    "cose.kid": "6b2d3031",
+    "cose.payload": "706f732037",
+    "cose.signature": "a0a1a2a3a4a5a6a7a8a9aaabacadaeaf",
+    "@absent": [
+      "cose.alg",
+      "cose.content_format",
+      "cose.iv",
+      "cose.partial_iv"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): packs/cose-sign1/pack.def and pack.md; d2 (tag 18) 84: [0] 44a1013822 (protected bucket, kept as the bytes a1013822), [1] a1 04 446b2d3031 (kid k-01), [2] 45706f732037 (payload), [3] 50a0..af (signature). The input is canonical, so the output equals it. Derived without an engine by a standalone RFC 8949 codec."
+}

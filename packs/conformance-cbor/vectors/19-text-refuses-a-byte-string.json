@@ -1,0 +1,9 @@
+{
+  "name": "text-refuses-a-byte-string",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor",
+  "input": "ac000101415502182a03f93e0004420aff051a603aa4c0060207a201f951b002f9d5a40882617861540981a2616e03646e616d65626161202664666c6167f5",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): text takes major type 3; 1 holds the byte string 4155. Derived without an engine by a standalone RFC 8949 codec."
+}

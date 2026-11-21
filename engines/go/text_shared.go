@@ -208,7 +208,7 @@ func resolveTextTransform(name string) (*textTf, ErrorKind, error) {
 		return &textTf{name: name, kind: ttISOS}, "", nil
 	}
 	// iso8601_short is valid on xml, json and geojson only (0.18).
-	if name == "bool" || name == "iso8601_short" || isBitsTransformName(name) || isPBTransformName(name) || isTLVOnlyTransform(name) || v015Base(name) != "" {
+	if name == "bool" || name == "iso8601_short" || isBitsTransformName(name) || isPBTransformName(name) || isTLVOnlyTransform(name) || isCBOROnlyTransform(name) || v015Base(name) != "" {
 		return nil, ErrBadDirective, fmt.Errorf("transform %q is not valid on wire text", name)
 	}
 	if !isTextOnlyTransform(name) {

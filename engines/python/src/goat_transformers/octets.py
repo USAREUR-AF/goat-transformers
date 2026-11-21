@@ -2,7 +2,7 @@
 and the `utf8` and `hex` transforms of an octet string, which the `tlv` wire
 (0.13) and the UPER `octets:` locator of `bits` (0.19) both use.
 
-A build carries this module when it has `bits`, `protobuf` or `tlv`, so that
+A build carries this module when it has `bits`, `protobuf`, `tlv` or `cbor`, so that
 a build with `bits` and no `tlv` has what it needs (Version 0.24, ruling 1d).
 """
 

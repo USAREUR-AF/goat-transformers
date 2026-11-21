@@ -1,0 +1,13 @@
+{
+  "name": "deterministic-input-equal-byte-for-byte",
+  "from": "dtn-bpv7",
+  "to": "dtn-bpv7",
+  "input": "83890704018202821903d1018202820c078202820c00821b000000b6c5a56a7b182a1a05265c00429b19860a0200014482181e034218b586010100024974656d702032312e35448f53ba2b",
+  "expect": "83890704018202821903d1018202820c078202820c00821b000000b6c5a56a7b182a1a05265c00429b19860a0200014482181e034218b586010100024974656d702032312e35448f53ba2b",
+  "model": {
+    "@kind": "ipn",
+    "bpv7.primary_crc": "9b19"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): packs/dtn-bpv7/pack.def and pack.md; RFC 9171 4.1 (bundle), 4.3.1 (primary block), 4.3.2 (canonical block), 4.2.1 (CRC); The bundle of vector 01 with a definite outer array (83, which RFC 9171 4.1 allows a receiver to accept): every item already in the core deterministic encoding, so the output equals the input byte for byte. Derived without an engine by a standalone RFC 8949 codec."
+}

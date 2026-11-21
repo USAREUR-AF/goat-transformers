@@ -30,6 +30,7 @@ final class UnitTests {
         strictRulings(packs);
         tlv();
         crc32();
+        cbor();
         armor();
         uper();
     }
@@ -362,6 +363,106 @@ final class UnitTests {
             }
         }
         eq("tlv random input: engine errors only", 0, defects);
+    }
+
+    /**
+     * Version 0.28, the cbor wire: hostile input (deep nesting through arrays, maps and tags, huge declared lengths,
+     * unending indefinite items, random bytes) gives only the engine's named errors and runs bounded; and the points
+     * of the deterministic encoding no shared vector pins.
+     */
+    static void cbor() {
+        String body = "version 0.1.0\ndistribution public\nsource t\nuses probe\nwire cbor\n";
+        Engine e = probeEngine(
+                "format c\n" + body + "field probe.x 1 int\nfield probe.label 2.a text\ngroup probe.recs 3\n field probe.y . int\nend\n",
+                "format ca\n" + body + "tag 18\nfield probe.x [0] int\nfield probe.f [1].[2] float\n");
+        String mw = "malformed-wire";
+        // nesting far beyond 64 levels is refused at level 65, never by running out of stack
+        errorKind("cbor 100000 nested arrays", mw, () -> e.decode("c", "a104" + "81".repeat(100000) + "00"));
+        errorKind("cbor 100000 nested maps", mw, () -> e.decode("c", "a104" + "a101".repeat(100000) + "00"));
+        errorKind("cbor 100000 nested tags", mw, () -> e.decode("c", "a104" + "c1".repeat(100000) + "00"));
+        errorKind("cbor 100000 open indefinite arrays", mw, () -> e.decode("c", "a104" + "9f".repeat(100000)));
+        errorKind("cbor 100000 nested map keys", mw, () -> e.decode("c", "a1".repeat(100000) + "00"));
+        // declared lengths beyond the input, found before any memory is taken for them
+        for (String h : new String[]{"a1045bffffffffffffffff", "a1047bffffffffffffffff", "a1049bffffffffffffffff",
+                "a104bbffffffffffffffff", "a1045a7fffffff00", "bb7fffffffffffffff", "9b0000000100000000", "a1045f5bffffffffffffffffff"}) {
+            errorKind("cbor declared length " + h, mw, () -> e.decode("c", h));
+        }
+        // indefinite items that never end, and chunks that are not definite strings of their type
+        for (String h : new String[]{"bf", "bf01", "bf0102", "a1045f", "a1045f41aa", "a1047f6161", "a1049f01", "a104bf0102",
+                "a1045f6161ff", "a1045f5fffff", "a1047f7fffff", "bf01ff"}) {
+            errorKind("cbor unending or bad indefinite " + h, mw, () -> e.decode("c", h));
+        }
+        // the item limit holds for group items (ruling 7 of 0.11)
+        Engine lim = probeEngine("format c\n" + body + "group probe.recs 3\n field probe.y . int\nend\n");
+        lim.setMaxItems(2);
+        errorKind("cbor items over the limit", mw, () -> lim.decode("c", "a10383010203"));
+        eq("cbor items at the limit", 2, lim.decode("c", "a103820102").list("probe.recs").size());
+        // floats at the shortest width that holds them; gaps of positions are null
+        Entity f = new Entity();
+        f.put("probe.f", 65504.0);
+        eq("cbor largest half", "d282f683f6f6f97bff", e.encode("ca", f));
+        f.put("probe.f", 0x1p-24);
+        eq("cbor smallest subnormal half", "d282f683f6f6f90001", e.encode("ca", f));
+        f.put("probe.f", (double) Float.MAX_VALUE);
+        eq("cbor largest single", "d282f683f6f6fa7f7fffff", e.encode("ca", f));
+        f.put("probe.f", 1e300);
+        eq("cbor double", "d282f683f6f6fb7e37e43c8800759c", e.encode("ca", f));
+        f.put("probe.f", -0.0);
+        eq("cbor negative zero", "d282f683f6f6f98000", e.encode("ca", f));
+        f.put("probe.f", Double.NaN);
+        errorKind("cbor NaN encode (ruling 20)", "transform-encode", () -> e.encode("ca", f));
+        // residue NaN keeps its payload at the shortest width (RFC 8949 4.1); heads in their shortest form
+        eq("cbor residue NaN", "a201010af97e00", e.convert("c", "c", "a20a fb7ff8000000000000 1801 01"));
+        eq("cbor residue NaN payload", "a201010afa7fc00001", e.convert("c", "c", "a201010afa7fc00001"));
+        // `with` on cbor (ruling 26): a suppressed line writes nothing
+        Engine w = probeEngine("format c\n" + body + "field probe.x 1 int with probe.y\nfield probe.y 2 int\n");
+        Entity wx = new Entity();
+        wx.put("probe.x", 5L);
+        eq("cbor with: suppressed", "a0", w.encode("c", wx));
+        wx.put("probe.y", 1L);
+        eq("cbor with: held", "a201050201", w.encode("c", wx));
+        // a deeper body step of the wrong type is malformed-wire (ruling 27); the element itself, an item with no keys
+        Engine deep = probeEngine("format c\n" + body + "group probe.recs 3\n field probe.y a.b int\nend\n");
+        errorKind("cbor deeper body step of the wrong type", mw, () -> deep.decode("c", "a10381a1616105"));
+        eq("cbor element of the wrong type", 1, deep.decode("c", "a1038105").list("probe.recs").size());
+        // ruling 29: a field at a const's path is never converted, so its bad value raises no error
+        Engine kc = probeEngine("format c\n" + body + "const 1 7\nfield probe.label 1 bytes\nfield probe.x 7.1 int\n");
+        Entity kl = new Entity();
+        kl.put("probe.label", "ZZ");
+        eq("cbor field under a const is not encoded", "a10107", kc.encode("c", kl));
+        // ruling 31: a container the lines walk into but leave empty takes its residue back whole
+        Entity kr = new Entity();
+        kr.putResidue("c", "7", "a10205");
+        eq("cbor residue at an empty walked container", "a2010707a10205", kc.encode("c", kr));
+        kr.put("probe.x", 3L);
+        eq("cbor residue at a written container: the line wins", "a2010707a10103", kc.encode("c", kr));
+        // ruling 30: a position only another kind walks into is a null gap
+        Engine g = probeEngine("format c\n" + body + "field probe.x [2] int\nkind a\nwhen [3] 1\nkind b\nwhen [3] 2\nfield probe.y [0].a int\n");
+        Entity ga = new Entity();
+        ga.setKind("c", "a");
+        ga.put("probe.x", 4L);
+        eq("cbor gap walked only by another kind", "84f6f60401", g.encode("c", ga));
+        // random bytes, biased to heads, give only the engine's errors
+        java.util.SplittableRandom rnd = new java.util.SplittableRandom(0x0028L);
+        int[] heads = {0x18, 0x19, 0x1a, 0x1b, 0x1f, 0x3b, 0x5b, 0x5f, 0x7b, 0x7f, 0x81, 0x9b, 0x9f, 0xa1, 0xbb, 0xbf, 0xc1,
+                0xd8, 0xdb, 0xf6, 0xf7, 0xf8, 0xf9, 0xfb, 0xff, 0x61, 0x41, 0x03, 0x01, 0x02};
+        int defects = 0;
+        for (int i = 0; i < 20000; i++) {
+            byte[] b = new byte[rnd.nextInt(40)];
+            for (int k = 0; k < b.length; k++) b[k] = (byte) (rnd.nextInt(3) == 0 ? rnd.nextInt(256) : heads[rnd.nextInt(heads.length)]);
+            if (b.length > 0 && rnd.nextBoolean()) b[0] = (byte) (rnd.nextBoolean() ? 0xa3 : 0xd2);
+            String h = Codec.toHex(b);
+            for (String fmt : new String[]{"c", "ca"}) {
+                try {
+                    e.convert(fmt, fmt, h);
+                } catch (GtException ex) {
+                    if (!ex.getMessage().startsWith(ex.kind() + ": ")) defects++;
+                } catch (RuntimeException | StackOverflowError ex) {
+                    defects++;
+                }
+            }
+        }
+        eq("cbor random input: engine errors only", 0, defects);
     }
 
     /** Version 0.8, rulings 35 to 39: the cases of malformed input no shared vector pins. */

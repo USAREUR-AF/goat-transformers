@@ -4,7 +4,8 @@
 // a conformance harness.
 //
 // Wires: xml, geojson, json, bits (lsb and msb bit order), protobuf, text,
-// tlv (spec Version 0.13; on tlv also the transforms utf8 and hex).
+// tlv (spec Version 0.13; on tlv also the transforms utf8 and hex), cbor
+// (spec Version 0.28; on cbor also the transforms text, bytes and epoch_s).
 // Transforms: string, float, int, iso8601_ms, iso8601_s, bool, uint, twos,
 // linscale:<maxpos>:<range>, uscale/sscale:<factor>[:<offset>], f32, f64,
 // ascii, pstring, pvarint, psint, pdouble, pfloat; on text also int:<w>,
@@ -59,7 +60,7 @@ pub fn wireBuilt(w: Wire) bool {
     };
 }
 
-// Has this build all seven wires?
+// Has this build all eight wires?
 pub const all_wires = blk: {
     for (std.enums.values(Wire)) |w| {
         if (!built(w)) break :blk false;
@@ -298,7 +299,7 @@ fn bad(diag: *Diag, alloc: std.mem.Allocator, err: anyerror, comptime fmt: []con
 // Pack model
 // ---------------------------------------------------------------------------
 
-const Wire = enum { xml, geojson, json, bits, protobuf, text, tlv };
+const Wire = enum { xml, geojson, json, bits, protobuf, text, tlv, cbor };
 const TKind = enum {
     string,
     float,
@@ -343,6 +344,10 @@ const TKind = enum {
     iso8601_short,
     // Version 0.26: read as iso8601_ms, written to the whole second
     iso8601_s,
+    // the `cbor` wire only (Version 0.28)
+    text_,
+    bytes,
+    epoch_s,
 };
 
 // A transform of Version 0.15: on a wire it does not list it is `bad-directive`.
@@ -357,7 +362,7 @@ const CharSet = enum { icao6, ais6, ascii7, ascii8 };
 
 // `rec`: the transforms valid on the `text` wire only; `tlv`: on the `tlv`
 // wire only
-const KindCat = enum { text, bits, proto, rec, tlv };
+const KindCat = enum { text, bits, proto, rec, tlv, cbor };
 
 fn kindCategory(k: TKind) KindCat {
     return switch (k) {
@@ -367,6 +372,7 @@ fn kindCategory(k: TKind) KindCat {
         .pstring, .pvarint, .psint, .pdouble, .pfloat => .proto,
         .int_w, .dec, .dm, .hms, .hms_dmy => .rec,
         .utf8, .hex => .tlv,
+        .text_, .bytes, .epoch_s => .cbor,
     };
 }
 
@@ -376,6 +382,7 @@ fn wireCategory(w: Wire) KindCat {
         .bits => .bits,
         .protobuf => .proto,
         .tlv => .tlv,
+        .cbor => .cbor,
     };
 }
 
@@ -491,6 +498,10 @@ const Group = struct {
     titem: usize = 0,
     // Version 0.17: the gate blocks of the body, in line order
     gates: std.ArrayListUnmanaged(*Gate) = .{},
+    // cbor (Version 0.28): the steps of the group's path (none for `.`), and
+    // whether an element is an array (the body's paths begin with positions)
+    cpath: []const CStep = &.{},
+    cbody_array: bool = false,
 };
 
 // The lines that apply together: common lines plus one kind's, or one group
@@ -598,6 +609,10 @@ const Line = struct {
     // text wires: the texts (`wtext` is the first).
     wranges: []const WRange = &.{},
     walts: []const WAlt = &.{},
+    // cbor (Version 0.28): the steps of the path (none for `.`), and a
+    // `when` or `const` value with its type
+    cpath: []const CStep = &.{},
+    cval: CVal = .{},
 
     fn isField(self: *const Line) bool {
         return self.tag == .field;
@@ -898,6 +913,10 @@ const Pack = struct {
     // for the value checks at load; does the sequential pack hold a `switch`
     vchecks: std.ArrayListUnmanaged(VCheck) = .{},
     seq_switch: bool = false,
+    // Version 0.28, the `cbor` wire: the top item is an array (else a map),
+    // and `tag <n>`
+    cbor_array: bool = false,
+    cbor_tag: ?u64 = null,
 
     fn usesModule(self: *const Pack, name: []const u8) bool {
         if (std.mem.eql(u8, name, "core")) return true; // `core` is always used
@@ -1152,9 +1171,9 @@ fn textIfOk(text: []const u8) bool {
 // The type a transform yields (spec: "The type a transform yields").
 fn yields(k: TKind) KeyType {
     return switch (k) {
-        .string, .pstring, .ascii, .sixbit, .utf8, .hex, .chars, .octal => .string,
+        .string, .pstring, .ascii, .sixbit, .utf8, .hex, .chars, .octal, .text_, .bytes => .string,
         .float, .linscale, .uscale, .sscale, .f32_, .f64_, .pdouble, .pfloat, .dec, .dm, .hms, .smscale, .f32scale, .f64scale, .tscale => .float,
-        .int, .iso8601_ms, .iso8601_short, .iso8601_s, .bool_, .uint, .twos, .pvarint, .psint, .int_w, .hms_dmy, .uiscale, .siscale, .smag, .iscale => .int,
+        .int, .iso8601_ms, .iso8601_short, .iso8601_s, .bool_, .uint, .twos, .pvarint, .psint, .int_w, .hms_dmy, .uiscale, .siscale, .smag, .iscale, .epoch_s => .int,
     };
 }
 
@@ -1420,6 +1439,8 @@ fn parseTransform(alloc: std.mem.Allocator, s: []const u8) !Transform {
         .{ .n = "psint", .k = .psint },     .{ .n = "pdouble", .k = .pdouble },
         .{ .n = "pfloat", .k = .pfloat },
         .{ .n = "utf8", .k = .utf8 },       .{ .n = "hex", .k = .hex },
+        .{ .n = "text", .k = .text_ },      .{ .n = "bytes", .k = .bytes },
+        .{ .n = "epoch_s", .k = .epoch_s },
     };
     for (simple) |e| if (std.mem.eql(u8, s, e.n)) return .{ .kind = e.k };
 
@@ -1892,7 +1913,7 @@ fn finalizeLine(alloc: std.mem.Allocator, p: *Pack, ln: *Line, in_group: bool, d
         return bad(diag, alloc, E.@"bad-directive", "line {d}: the locator {s} is for a pack with `encoding uper`", .{ ln.lineno, ln.locator });
     }
     if (ln.t_err) |err| {
-        const why = if (p.wire == .tlv) E.@"bad-directive" else err;
+        const why = if (p.wire == .tlv or p.wire == .cbor) E.@"bad-directive" else err;
         return bad(diag, alloc, why, "line {d}: unknown transform or parameters that do not parse", .{ln.lineno});
     }
     // `.`: the item itself as a scalar, inside a group only
@@ -1903,7 +1924,15 @@ fn finalizeLine(alloc: std.mem.Allocator, p: *Pack, ln: *Line, in_group: bool, d
     if (ln.dot and ln.tag == .constant) {
         return bad(diag, alloc, E.@"bad-directive", "line {d}: const on the item itself (`.`)", .{ln.lineno});
     }
-    if (ln.isField() and p.wire == .tlv) {
+    if (ln.isField() and isW(p.wire, .cbor)) {
+        // on `cbor`: the transforms of its table only (Version 0.28)
+        switch (ln.transform.kind) {
+            .uint, .int, .float, .text_, .bytes, .bool_, .epoch_s => {},
+            else => return bad(diag, alloc, E.@"bad-directive", "line {d}: the transform of {s} is not valid on the cbor wire", .{ ln.lineno, ln.key }),
+        }
+    } else if (ln.isField() and kindCategory(ln.transform.kind) == .cbor) {
+        return bad(diag, alloc, E.@"bad-directive", "line {d}: the transform of {s} is valid only on the cbor wire", .{ ln.lineno, ln.key });
+    } else if (ln.isField() and p.wire == .tlv) {
         // on `tlv`: the transforms of its table only (Version 0.13)
         switch (ln.transform.kind) {
             .uint, .twos, .uscale, .sscale, .f32_, .f64_, .utf8, .hex => {},
@@ -1931,7 +1960,7 @@ fn finalizeLine(alloc: std.mem.Allocator, p: *Pack, ln: *Line, in_group: bool, d
         // off its wire (ruling 26 of 0.15)
         return bad(diag, alloc, E.@"bad-directive", "line {d}: transform of {s} does not belong to wire {s}", .{ ln.lineno, ln.key, @tagName(p.wire) });
     }
-    if (ln.isField() and ln.transform.kind == .bool_ and p.wire != .json) {
+    if (ln.isField() and ln.transform.kind == .bool_ and p.wire != .json and p.wire != .cbor) {
         return bad(diag, alloc, E.@"bad-directive", "line {d}: bool is valid only on the json wire", .{ln.lineno});
     }
     // `const <locator> present` writes nothing: refused; `=present` is the text
@@ -2057,6 +2086,7 @@ fn finalizeLine(alloc: std.mem.Allocator, p: *Pack, ln: *Line, in_group: bool, d
         },
         .text => if (comptime !built(.text)) unreachable else try textFinalizeLine(alloc, p, ln, diag),
         .tlv => if (comptime !built(.tlv)) unreachable else try tlvFinalizeLine(alloc, p, ln, diag),
+        .cbor => if (comptime !built(.cbor)) unreachable else try cborFinalizeLine(alloc, ln, diag),
     }
     if (ln.isField() and !ln.abs_checked) try parseAbsent(alloc, p.wire, ln, in_group, diag);
 }
@@ -2098,6 +2128,8 @@ fn parseAbsent(alloc: std.mem.Allocator, wire: Wire, ln: *Line, in_group: bool, 
     // rulings 10 and 14 of 0.13: `absent` on the tlv wire is not stated yet,
     // and is checked after the file is read
     if (wire == .tlv) return bad(diag, alloc, bd, "line {d}: absent is not an option of the tlv wire", .{no});
+    // ruling 10 of 0.28: on `cbor` too, checked after the file is read
+    if (wire == .cbor) return bad(diag, alloc, bd, "line {d}: absent is not an option of the cbor wire", .{no});
     if (std.mem.indexOfScalar(u8, raw, '"') != null) {
         return lineBad(diag, alloc, bd, "line {d}: an absent value holds a double quote", .{no});
     }
@@ -2319,9 +2351,27 @@ fn finalizeGroup(alloc: std.mem.Allocator, p: *Pack, g: *Group, nested: bool, di
                 g.count_fixed = @intCast(n);
             }
         },
+        .cbor => { if (comptime !built(.cbor)) unreachable;
+            g.cpath = if (std.mem.eql(u8, g.locator, ".")) &.{} else (try cParsePath(alloc, g.locator, false)) orelse
+                return bad(diag, alloc, E.@"bad-locator", "line {d}: {s} is not a cbor path", .{ g.lineno, g.locator });
+        },
         .text, .tlv => unreachable,
     }
     try finalizeLines(alloc, p, g.lines, true, diag);
+    if (isW(p.wire, .cbor)) {
+        // ruling 13 of 0.28: a body that mixes `.` with other paths; an
+        // element is an array when the body's paths begin with positions
+        var has_dot = false;
+        var has_path = false;
+        for (g.lines) |*ln| {
+            const cp = if (ln.tag == .group) ln.grp.?.cpath else ln.cpath;
+            if (ln.tag != .group and ln.dot) has_dot = true else has_path = true;
+            if (cp.len > 0 and !g.cbody_array and cp[0].kind == .pos) g.cbody_array = true;
+        }
+        if (has_dot and has_path) {
+            return bad(diag, alloc, bd, "line {d}: the body of group {s} mixes `.` with paths", .{ g.lineno, g.list });
+        }
+    }
     try finalizeGates(alloc, p, g.gates.items, diag);
     if (p.wire == .protobuf) {
         // a body is scalar only when every line is `.`
@@ -2379,7 +2429,7 @@ fn passesThrough(p: *const Pack, f: *const Line, g: *const Group, in_item: bool)
             for (g.ppath, 0..) |n, i| if (n != f.ppath[i]) return false;
             return true;
         },
-        .bits, .text, .tlv => return false,
+        .bits, .text, .tlv, .cbor => return false,
     }
 }
 
@@ -2623,7 +2673,7 @@ fn locatorFormOk(wire: Wire, sequential: bool, loc: []const u8, in_group: bool) 
         },
         // the paths of the `tlv` wire are checked after the file is read
         // (Version 0.13: `bad-directive`)
-        .text, .tlv => return true,
+        .text, .tlv, .cbor => return true,
     }
 }
 
@@ -2635,7 +2685,7 @@ fn groupLocatorFormOk(wire: Wire, loc: []const u8) bool {
     const sep: u8 = switch (wire) {
         .xml => '/',
         .json, .geojson, .protobuf => '.',
-        .bits, .text, .tlv => return true,
+        .bits, .text, .tlv, .cbor => return true,
     };
     if (wire == .protobuf and (std.mem.eql(u8, loc, "rest") or std.mem.eql(u8, loc, "last"))) return true;
     var it = std.mem.splitScalar(u8, loc, sep);
@@ -2823,7 +2873,10 @@ fn fixedLine(st: *FState, toks: []const []const u8) anyerror!void {
     } else if (is(kw, "group")) {
         // group <list> <locator> [item <bits>] [count <count-locator | n>]
         if (toks.len < 3) return bad(diag, alloc, E.@"bad-directive", "line {d}: group takes a list and a locator", .{lineno});
-        if (!groupLocatorFormOk(p.wire, toks[2])) {
+        if (isW(p.wire, .cbor)) {
+            // `.` names the top item on a group outside a body only (ruling 22 of 0.28)
+            if (!cborLocOk(toks[2], !in_group)) return lineBad(diag, alloc, E.@"bad-locator", "line {d}: group locator {s} is not a cbor path", .{ lineno, toks[2] });
+        } else if (!groupLocatorFormOk(p.wire, toks[2])) {
             return lineBad(diag, alloc, E.@"bad-locator", "line {d}: group locator {s} has an empty step or a step that is not a field number", .{ lineno, toks[2] });
         }
         const g = try alloc.create(Group);
@@ -2974,6 +3027,8 @@ fn fixedLine(st: *FState, toks: []const []const u8) anyerror!void {
         // (rulings 24 and 26 of 0.19), not `bad-locator` here
         if (isW(p.wire, .bits) and isUperLocator(toks[1])) {
             if (p.uper_line == 0) p.uper_line = lineno;
+        } else if (isW(p.wire, .cbor)) {
+            if (!cborLocOk(toks[1], false)) return lineBad(diag, alloc, E.@"bad-locator", "line {d}: locator {s} of a {s} is not a cbor path", .{ lineno, toks[1], kw });
         } else if (!locatorFormOk(p.wire, false, toks[1], in_group)) {
             return lineBad(diag, alloc, E.@"bad-locator", "line {d}: locator {s} does not have the form of a {s} on the {s} wire", .{ lineno, toks[1], kw, @tagName(p.wire) });
         }
@@ -3026,7 +3081,9 @@ fn fixedLine(st: *FState, toks: []const []const u8) anyerror!void {
         var t_err: ?anyerror = null;
         const t = parseTransform(alloc, toks[3]) catch |err| blk: {
             if (err == error.OutOfMemory) return err;
-            if (p.wire == .tlv) {
+            // on `cbor` a name no wire has, likewise (ruling 25 of 0.28)
+            // on `cbor` too, parameters included (rulings 25 and 34 of 0.28)
+            if (p.wire == .tlv or p.wire == .cbor) {
                 t_err = err;
                 break :blk Transform{ .kind = .string };
             }
@@ -3041,6 +3098,9 @@ fn fixedLine(st: *FState, toks: []const []const u8) anyerror!void {
         const uper_loc = isW(p.wire, .bits) and isUperLocator(toks[2]);
         if (uper_loc) {
             if (p.uper_line == 0) p.uper_line = lineno;
+        } else if (isW(p.wire, .cbor)) {
+            // `.` is the element itself, on a field in a group body only
+            if (!cborLocOk(toks[2], in_group)) return lineBad(diag, alloc, E.@"bad-locator", "line {d}: locator {s} of a field is not a cbor path", .{ lineno, toks[2] });
         } else if (!locatorFormOk(p.wire, false, toks[2], in_group)) {
             return lineBad(diag, alloc, E.@"bad-locator", "line {d}: locator {s} does not have the form of a field on the {s} wire", .{ lineno, toks[2], @tagName(p.wire) });
         }
@@ -3091,7 +3151,7 @@ fn fixedLine(st: *FState, toks: []const []const u8) anyerror!void {
         // `absent` does not fit the wire, checked after the file is read
         // (ruling 14 of 0.13)
         if (p.wire == .bits) ln.blen = @intCast(@min(fixedLen(toks[2]) orelse 0, 1 << 20));
-        if (!(p.wire == .bits and ln.blen > 64) and p.wire != .tlv and !uper_loc) {
+        if (!(p.wire == .bits and ln.blen > 64) and p.wire != .tlv and p.wire != .cbor and !uper_loc) {
             try parseAbsent(alloc, p.wire, &ln, in_group, diag);
             ln.abs_checked = true;
         }
@@ -3214,6 +3274,7 @@ fn parsePack(alloc: std.mem.Allocator, def_text: []const u8, diag: *Diag) anyerr
         if (p.kinds.items.len == 0) try tlvCheckScope(alloc, p.common.items, &.{}, diag);
         for (p.kinds.items) |*k| try tlvCheckScope(alloc, p.common.items, k.lines.items, diag);
     }
+    if (isW(p.wire, .cbor)) try cborCheckPack(alloc, p, diag);
 
     if (p.distribution == null) return bad(diag, alloc, E.@"missing-distribution", "the pack has no distribution line", .{});
     if (p.sources.items.len == 0) return bad(diag, alloc, E.@"missing-source", "the pack has no source line", .{});
@@ -6378,6 +6439,8 @@ const Doc = union(enum) {
     protobuf: PbDoc,
     text: TextDoc,
     tlv: []TlvItem,
+    // the top item, or one element of a group; tags are passed over
+    cbor: *const CNode,
 };
 
 fn parseDoc(alloc: std.mem.Allocator, p: *const Pack, bytes: []const u8, diag: *Diag) anyerror!Doc {
@@ -6422,6 +6485,7 @@ fn parseDoc(alloc: std.mem.Allocator, p: *const Pack, bytes: []const u8, diag: *
         },
         .text => if (comptime !built(.text)) unreachable else return .{ .text = try textParse(alloc, p, bytes, diag) },
         .tlv => if (comptime !built(.tlv)) unreachable else return .{ .tlv = try tlvParse(alloc, p, bytes, diag) },
+        .cbor => if (comptime !built(.cbor)) unreachable else return .{ .cbor = try cborParseDoc(alloc, p, bytes, diag) },
     }
 }
 
@@ -6468,6 +6532,7 @@ fn whenHolds(alloc: std.mem.Allocator, p: *const Pack, doc: Doc, ln: *const Line
             return std.mem.eql(u8, got, ln.wtext);
         },
         .tlv => |items| if (comptime !built(.tlv)) unreachable else return tlvWhenHolds(alloc, p, items, ln),
+        .cbor => |node| if (comptime !built(.cbor)) unreachable else return cborWhenHolds(node, ln),
     }
 }
 
@@ -6770,6 +6835,7 @@ fn readField(alloc: std.mem.Allocator, p: *const Pack, doc: Doc, ln: *const Line
             return try textDecode(ln.transform, raw);
         },
         .tlv => |items| if (comptime !built(.tlv)) unreachable else return try tlvReadField(alloc, p, items, ln),
+        .cbor => |node| if (comptime !built(.cbor)) unreachable else return try cborReadField(alloc, node, ln),
     }
 }
 
@@ -7124,6 +7190,10 @@ fn decodeGroup(alloc: std.mem.Allocator, p: *const Pack, g: *const Group, doc: D
             return 0;
         },
         .tlv => if (comptime !built(.tlv)) unreachable else return 0, // no group on `tlv`
+        .cbor => |node| { if (comptime !built(.cbor)) unreachable;
+            try cborDecodeGroup(alloc, p, g, node, e, diag);
+            return 0;
+        },
     }
 }
 
@@ -7182,6 +7252,9 @@ fn decodePack(alloc: std.mem.Allocator, p: *const Pack, bytes: []const u8, diag:
 
     // tlv: every set a line of the selected scope walks into is read whole
     if (built(.tlv) and doc == .tlv) try tlvWalkScope(alloc, p, doc.tlv, lines, diag);
+    // cbor: every line of the selected scope finds the containers it needs
+    // (step 8 of "Reading a message", Version 0.28)
+    if (built(.cbor) and doc == .cbor) try cborWalkScope(alloc, doc.cbor, lines, diag);
 
     var e = Entity.init(alloc);
     if (kind_idx) |k| {
@@ -7267,6 +7340,7 @@ fn decodePack(alloc: std.mem.Allocator, p: *const Pack, bytes: []const u8, diag:
         },
         .text => |td| if (comptime !built(.text)) unreachable else try textResidue(alloc, p, lines, td, &e),
         .tlv => |items| if (comptime !built(.tlv)) unreachable else try tlvResidue(alloc, p, lines, items, &.{}, "", &e),
+        .cbor => |node| if (comptime !built(.cbor)) unreachable else try cborResidue(alloc, p, lines, node, &e),
         .bits, .protobuf => if (comptime !built(.bits) and !built(.protobuf)) unreachable else {},
     }
     return e;
@@ -8224,6 +8298,7 @@ fn encodePack(alloc: std.mem.Allocator, p: *const Pack, e: *const Entity, diag: 
         },
         .text => if (comptime !built(.text)) unreachable else return textEncode(alloc, p, sc, e, diag),
         .tlv => if (comptime !built(.tlv)) unreachable else return tlvEncode(alloc, p, sc, e, diag),
+        .cbor => if (comptime !built(.cbor)) unreachable else return cborEncode(alloc, p, sc, e, diag),
     }
 }
 
@@ -8256,10 +8331,18 @@ fn textDirectives(alloc: std.mem.Allocator, p: *Pack, diag: *Diag) anyerror!void
     const tlv_dirs = p.tag_raw != null or p.len_raw != null or p.key_raw != null;
     if (!text_dirs and !tlv_dirs and p.cksum_raw == null) return;
     if (text_dirs and p.wire != .text) return bad(diag, alloc, bd, "delimiter and start are directives of the text wire, not {s}", .{@tagName(p.wire)});
-    if (tlv_dirs and p.wire != .tlv) return bad(diag, alloc, bd, "tag, length and key are directives of the tlv wire, not {s}", .{@tagName(p.wire)});
+    // `tag <n>` names two forms: on `tlv` (0.13) and on `cbor` (ruling 5 of 0.28)
+    const cbor_tag = p.wire == .cbor and p.len_raw == null and p.key_raw == null;
+    if (tlv_dirs and p.wire != .tlv and !cbor_tag) return bad(diag, alloc, bd, "tag, length and key are directives of the tlv wire, not {s}", .{@tagName(p.wire)});
     if (p.cksum_raw != null and p.wire != .text and p.wire != .tlv) return bad(diag, alloc, bd, "checksum is a directive of the text and tlv wires, not {s}", .{@tagName(p.wire)});
     if (p.tdir_bad != 0) return bad(diag, alloc, bd, "line {d}: a directive of the wire appears at most once, before the first kind", .{p.tdir_bad});
     if (isW(p.wire, .tlv)) return tlvDirectives(alloc, p, diag);
+    if (isW(p.wire, .cbor)) {
+        const t = p.tag_raw orelse return;
+        p.cbor_tag = cParseTagNum(t) orelse
+            return bad(diag, alloc, bd, "tag {s} is not a decimal integer from 0 to 2^64-1 with no leading zero", .{t});
+        return;
+    }
     // the wire is `text` from here
     if (comptime !built(.text)) unreachable;
     if (p.cksum_arg != null) return bad(diag, alloc, bd, "checksum {s} {s} is not none or nmea", .{ p.cksum_raw.?, p.cksum_arg.? });
@@ -9470,6 +9553,1126 @@ fn tlvEncode(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, e: *con
         const s = tlvCheck(p, out.items[0 .. n - w]);
         for (0..w) |i| out.items[n - 1 - i] = @truncate(s >> @as(u5, @intCast(8 * i)));
     }
+    return hexEncode(alloc, out.items);
+}
+
+// ---------------------------------------------------------------------------
+// Version 0.28: the `cbor` wire. A message is one CBOR data item (RFC 8949),
+// a map or an array at the top, maps, arrays and scalars at any depth. Paths
+// of integer keys, text keys and `[i]` positions; every tag is passed over on
+// decode and none is written on encode, but the head of `tag <n>` before the
+// top item. Output is the core deterministic encoding of RFC 8949 4.2.1. Hex
+// text in and out.
+// ---------------------------------------------------------------------------
+
+// Arrays, maps and tags count one level each, the top item level 1.
+const cbor_max_depth: usize = 64;
+const cbor_max_pos: u64 = 65535;
+
+const CStepKind = enum(u8) { uint, nint, pos, text, raw };
+
+// One step of a path: an integer key (`uint` n, or `nint` with the argument
+// n of the value -1-n), a position n, a text key s; `raw` is the `#<hex>` of
+// a residue key no path can write, s its hex.
+const CStep = struct { kind: CStepKind, n: u64 = 0, s: []const u8 = "" };
+
+// A `when` or `const` value on `cbor`, with its type.
+const CValKind = enum(u8) { uint, nint, bool_, text };
+const CVal = struct { kind: CValKind = .text, n: u64 = 0, s: []const u8 = "" };
+
+const CKind = enum(u8) { uint, nint, bytes, text, array, map, simple, float };
+
+// One data item as read. `raw` is the item as it stood in the input, its
+// tags included; the rest describes the item inside the tags. `arg`: the
+// value of `uint`, the argument of `nint`, the simple value, or a float as
+// the bits of a double. `kids`: the elements of an array; the keys and
+// values of a map, alternately.
+const CNode = struct {
+    raw: []const u8 = "",
+    ntags: u32 = 0,
+    tag0: u64 = 0, // the outermost tag
+    kind: CKind = .uint,
+    arg: u64 = 0,
+    str: []const u8 = "",
+    kids: []CNode = &.{},
+
+    // `null` and `undefined`
+    fn isNil(self: *const CNode) bool {
+        return self.kind == .simple and (self.arg == 22 or self.arg == 23);
+    }
+};
+
+fn cIsAlpha(c: u8) bool {
+    return (c >= 'a' and c <= 'z') or (c >= 'A' and c <= 'Z');
+}
+
+// A text key the step grammar can write: ASCII letters, digits, `_` and
+// `-`, not beginning with a digit or `-`.
+fn cTextStepOk(s: []const u8) bool {
+    if (s.len == 0) return false;
+    if (!(cIsAlpha(s[0]) or s[0] == '_')) return false;
+    for (s) |c| if (!(cIsAlpha(c) or isDigit(c) or c == '_' or c == '-')) return false;
+    return true;
+}
+
+// One step of a path; null: not a step. `residue`: a residue key, which may
+// also be `#<hex>`.
+fn cParseStep(seg: []const u8, residue: bool) ?CStep {
+    if (seg.len == 0) return null;
+    if (seg[0] == '[') {
+        if (seg.len < 3 or seg[seg.len - 1] != ']') return null;
+        const d = seg[1 .. seg.len - 1];
+        if (!allDigits(d) or (d.len > 1 and d[0] == '0') or d.len > 5) return null;
+        const v = std.fmt.parseInt(u64, d, 10) catch return null;
+        if (v > cbor_max_pos) return null;
+        return .{ .kind = .pos, .n = v };
+    }
+    if (seg[0] == '-' or isDigit(seg[0])) {
+        const neg = seg[0] == '-';
+        const d = if (neg) seg[1..] else seg;
+        if (!allDigits(d) or (d.len > 1 and d[0] == '0')) return null;
+        if (neg and std.mem.eql(u8, d, "0")) return null;
+        const v = std.fmt.parseInt(u64, d, 10) catch return null;
+        if (!neg) return .{ .kind = .uint, .n = v };
+        if (v > (@as(u64, 1) << 63)) return null;
+        return .{ .kind = .nint, .n = v - 1 };
+    }
+    if (residue and seg[0] == '#') {
+        const h = seg[1..];
+        if (h.len == 0 or h.len % 2 != 0) return null;
+        for (h) |c| if (hexVal(c) == null) return null;
+        return .{ .kind = .raw, .s = h };
+    }
+    if (!cTextStepOk(seg)) return null;
+    return .{ .kind = .text, .s = seg };
+}
+
+// The steps of a path; null: not a path.
+fn cParsePath(alloc: std.mem.Allocator, loc: []const u8, residue: bool) !?[]const CStep {
+    var steps = std.ArrayList(CStep).init(alloc);
+    var it = std.mem.splitScalar(u8, loc, '.');
+    while (it.next()) |seg| try steps.append(cParseStep(seg, residue) orelse return null);
+    return try steps.toOwnedSlice();
+}
+
+// The locator form on `cbor`, a line check (step 8 of 5b of 0.11): a path,
+// or `.` where `dot_ok` (ruling 22 of 0.28).
+fn cborLocOk(loc: []const u8, dot_ok: bool) bool {
+    if (std.mem.eql(u8, loc, ".")) return dot_ok;
+    var it = std.mem.splitScalar(u8, loc, '.');
+    while (it.next()) |seg| if (cParseStep(seg, false) == null) return false;
+    return true;
+}
+
+// `tag <n>` on `cbor`: decimal from 0 to 2^64-1 with no leading zero.
+fn cParseTagNum(s: []const u8) ?u64 {
+    if (!allDigits(s) or (s.len > 1 and s[0] == '0')) return null;
+    return std.fmt.parseInt(u64, s, 10) catch null;
+}
+
+// A `when` or `const` value: an integer when 2a of 0.11 reads it and it lies
+// in -2^63 to 2^64-1 (rulings 8 and 19), `true` or `false` a bool, any other
+// value a text string with one leading `=` stripped.
+fn cParseVal(raw: []const u8) CVal {
+    if (std.mem.eql(u8, raw, "true")) return .{ .kind = .bool_, .n = 1 };
+    if (std.mem.eql(u8, raw, "false")) return .{ .kind = .bool_, .n = 0 };
+    const neg = raw.len > 0 and raw[0] == '-';
+    var d = if (neg) raw[1..] else raw;
+    if (allDigits(d)) {
+        while (d.len > 1 and d[0] == '0') d = d[1..];
+        if (std.fmt.parseInt(u64, d, 10)) |v| {
+            if (!neg or v == 0) return .{ .kind = .uint, .n = v };
+            if (v <= (@as(u64, 1) << 63)) return .{ .kind = .nint, .n = v - 1 };
+        } else |_| {}
+    }
+    const t = if (raw.len > 0 and raw[0] == '=') raw[1..] else raw;
+    return .{ .kind = .text, .s = t };
+}
+
+// One line's path and `when` or `const` value on the `cbor` wire.
+fn cborFinalizeLine(alloc: std.mem.Allocator, ln: *Line, diag: *Diag) anyerror!void {
+    if (std.mem.eql(u8, ln.locator, ".")) {
+        ln.dot = true;
+    } else {
+        ln.cpath = (try cParsePath(alloc, ln.locator, false)) orelse
+            return bad(diag, alloc, E.@"bad-locator", "line {d}: {s} is not a cbor path", .{ ln.lineno, ln.locator });
+    }
+    if (ln.isFixed()) {
+        if (std.mem.eql(u8, ln.wraw, "present")) {
+            ln.wpresent = true;
+        } else ln.cval = cParseVal(ln.wraw);
+    }
+}
+
+// The path of a line: a group's own path for a `group` line.
+fn cLinePath(ln: *const Line) []const CStep {
+    return if (ln.tag == .group) ln.grp.?.cpath else ln.cpath;
+}
+
+fn cStepEq(a: CStep, b: CStep) bool {
+    return a.kind == b.kind and a.n == b.n and std.mem.eql(u8, a.s, b.s);
+}
+
+// Types and ruling 13 over one scope, the lines `a` then `b` (common plus one
+// kind, or one group body): an item used both as a map and as an array; a
+// line at a proper prefix of another's path, but a `when … present`; a line
+// at a group's path, a group at another's.
+fn cborCheckScope(alloc: std.mem.Allocator, a: []const Line, b: []const Line, diag: *Diag) anyerror!void {
+    const bd = E.@"bad-directive";
+    const both = [2][]const Line{ a, b };
+    for (both) |xs| for (xs) |*x| {
+        if (x.tag == .element) continue;
+        const px = cLinePath(x);
+        for (both) |ys| for (ys) |*y| {
+            if (x == y or y.tag == .element) continue;
+            const py = cLinePath(y);
+            var k: usize = 0;
+            while (k < px.len and k < py.len and cStepEq(px[k], py[k])) k += 1;
+            if (k < px.len and k < py.len) {
+                if ((px[k].kind == .pos) != (py[k].kind == .pos)) {
+                    return bad(diag, alloc, bd, "lines {d} and {d}: {s} and {s} use one item both as a map and as an array", .{ x.lineno, y.lineno, x.locator, y.locator });
+                }
+                continue;
+            }
+            if (k == px.len and px.len < py.len) {
+                if (x.tag == .when and x.wpresent) continue; // it tests and writes nothing
+                return bad(diag, alloc, bd, "line {d}: the path {s} holds a value or a list, and line {d} reads under it", .{ x.lineno, x.locator, y.lineno });
+            }
+            if (px.len == py.len and (x.tag == .group or y.tag == .group)) {
+                return bad(diag, alloc, bd, "lines {d} and {d}: a line at the path {s} of a group", .{ x.lineno, y.lineno, x.locator });
+            }
+        };
+    };
+}
+
+fn cborCheckBodies(alloc: std.mem.Allocator, lines: []const Line, diag: *Diag) anyerror!void {
+    for (lines) |*ln| {
+        if (ln.tag != .group) continue;
+        const g = ln.grp.?;
+        try cborCheckScope(alloc, g.lines, &.{}, diag);
+        try cborCheckBodies(alloc, g.lines, diag);
+    }
+}
+
+// After the file is read: the type of the top item, which the first step of
+// every path outside a group body decides, and the checks of each scope.
+fn cborCheckPack(alloc: std.mem.Allocator, p: *Pack, diag: *Diag) anyerror!void {
+    var lists = std.ArrayList([]const Line).init(alloc);
+    try lists.append(p.common.items);
+    for (p.kinds.items) |*k| try lists.append(k.lines.items);
+    var decided: ?bool = null;
+    var first: usize = 0;
+    for (lists.items) |ls| for (ls) |*ln| {
+        if (ln.tag == .element) continue;
+        const cp = cLinePath(ln);
+        const arr = cp.len == 0 or cp[0].kind == .pos;
+        if (decided) |dv| {
+            if (dv != arr) return bad(diag, alloc, E.@"bad-directive", "lines {d} and {d}: one path makes the top item a map, the other an array", .{ first, ln.lineno });
+        } else {
+            decided = arr;
+            first = ln.lineno;
+        }
+    };
+    p.cbor_array = decided orelse false;
+    if (p.kinds.items.len == 0) try cborCheckScope(alloc, p.common.items, &.{}, diag);
+    for (p.kinds.items) |*k| try cborCheckScope(alloc, p.common.items, k.lines.items, diag);
+    for (lists.items) |ls| try cborCheckBodies(alloc, ls, diag);
+}
+
+// ---- reading
+
+const CParser = struct {
+    alloc: std.mem.Allocator,
+    buf: []const u8,
+    pos: usize = 0,
+
+    const Head = struct { major: u8, ai: u8, arg: u64, indef: bool = false };
+
+    // A head in any length. A reserved additional information (28 to 30),
+    // and an indefinite length on a major type that has none, are not well
+    // formed.
+    fn head(self: *CParser) !Head {
+        const mw = E.@"malformed-wire";
+        if (self.pos >= self.buf.len) return mw;
+        const b = self.buf[self.pos];
+        self.pos += 1;
+        var h = Head{ .major = b >> 5, .ai = b & 0x1f, .arg = b & 0x1f };
+        switch (h.ai) {
+            0...23 => {},
+            24...27 => {
+                const s = try self.take(@as(u64, 1) << @intCast(h.ai - 24));
+                var v: u64 = 0;
+                for (s) |c| v = (v << 8) | c;
+                h.arg = v;
+            },
+            28...30 => return mw,
+            else => switch (h.major) {
+                2, 3, 4, 5, 7 => h.indef = true,
+                else => return mw,
+            },
+        }
+        return h;
+    }
+
+    // `n` bytes; a length greater than the bytes left is refused before any
+    // memory is taken.
+    fn take(self: *CParser, n: u64) ![]const u8 {
+        if (n > self.buf.len - self.pos) return E.@"malformed-wire";
+        const s = self.buf[self.pos..][0..@intCast(n)];
+        self.pos += @intCast(n);
+        return s;
+    }
+
+    // The break that ends an indefinite item, taken when it stands next.
+    fn atBreak(self: *CParser) !bool {
+        if (self.pos >= self.buf.len) return E.@"malformed-wire";
+        if (self.buf[self.pos] != 0xff) return false;
+        self.pos += 1;
+        return true;
+    }
+
+    // One well-formed data item (RFC 8949 Appendix C), its tags first, at
+    // `depth` levels below the top.
+    fn item(self: *CParser, depth: usize) anyerror!CNode {
+        const mw = E.@"malformed-wire";
+        const start = self.pos;
+        var d = depth;
+        var n = CNode{};
+        var h = try self.head();
+        while (h.major == 6) {
+            d += 1;
+            if (d > cbor_max_depth) return mw;
+            if (n.ntags == 0) n.tag0 = h.arg;
+            n.ntags += 1;
+            h = try self.head();
+        }
+        switch (h.major) {
+            0 => {
+                n.kind = .uint;
+                n.arg = h.arg;
+            },
+            1 => {
+                n.kind = .nint;
+                n.arg = h.arg;
+            },
+            2, 3 => {
+                n.kind = if (h.major == 2) .bytes else .text;
+                if (!h.indef) {
+                    n.str = try self.take(h.arg);
+                    if (h.major == 3 and !std.unicode.utf8ValidateSlice(n.str)) return mw;
+                } else {
+                    // chunks: definite strings of the same major type, each
+                    // chunk of a text string valid UTF-8 on its own
+                    var acc = std.ArrayListUnmanaged(u8){};
+                    while (!try self.atBreak()) {
+                        const ch = try self.head();
+                        if (ch.major != h.major or ch.indef) return mw;
+                        const s = try self.take(ch.arg);
+                        if (h.major == 3 and !std.unicode.utf8ValidateSlice(s)) return mw;
+                        try acc.appendSlice(self.alloc, s);
+                    }
+                    n.str = acc.items;
+                }
+            },
+            4, 5 => {
+                n.kind = if (h.major == 4) .array else .map;
+                d += 1;
+                if (d > cbor_max_depth) return mw;
+                const per: u64 = if (h.major == 4) 1 else 2;
+                if (!h.indef) {
+                    // every item takes a byte at least: a count is compared
+                    // with the bytes left before any memory is taken for it
+                    if (h.arg > (self.buf.len - self.pos) / per) return mw;
+                    const kids = try self.alloc.alloc(CNode, @intCast(h.arg * per));
+                    for (kids) |*k| k.* = try self.item(d);
+                    n.kids = kids;
+                } else {
+                    var list = std.ArrayListUnmanaged(CNode){};
+                    while (!try self.atBreak()) {
+                        try list.append(self.alloc, try self.item(d));
+                        // a break after a key is a break where a value stands
+                        if (per == 2) try list.append(self.alloc, try self.item(d));
+                    }
+                    n.kids = list.items;
+                }
+                if (h.major == 5) try cCheckKeys(self.alloc, n.kids);
+            },
+            7 => {
+                if (h.indef) return mw; // a break where an item stands
+                n.kind = .simple;
+                n.arg = h.arg;
+                switch (h.ai) {
+                    24 => if (h.arg < 32) return mw, // a two-byte simple value below 32
+                    25 => {
+                        n.kind = .float;
+                        n.arg = cHalfBits(@intCast(h.arg));
+                    },
+                    26 => {
+                        n.kind = .float;
+                        n.arg = cSingleBits(@intCast(h.arg));
+                    },
+                    27 => n.kind = .float,
+                    else => {},
+                }
+            },
+            else => unreachable,
+        }
+        n.raw = self.buf[start..self.pos];
+        return n;
+    }
+};
+
+// Exactly one well-formed data item, nothing after it.
+fn cParseAll(alloc: std.mem.Allocator, buf: []const u8) !CNode {
+    var ps = CParser{ .alloc = alloc, .buf = buf };
+    const n = try ps.item(0);
+    if (ps.pos != buf.len) return E.@"malformed-wire";
+    return n;
+}
+
+// A half as the bits of the double of the same value; an infinity or a NaN
+// keeps its payload.
+fn cHalfBits(h: u16) u64 {
+    const sign: u64 = @as(u64, h >> 15) << 63;
+    const m: u64 = h & 0x3ff;
+    if ((h >> 10) & 0x1f == 0x1f) return sign | (@as(u64, 0x7ff) << 52) | (m << 42);
+    const f: f16 = @bitCast(h);
+    return @bitCast(@as(f64, f));
+}
+
+fn cSingleBits(w: u32) u64 {
+    const sign: u64 = @as(u64, w >> 31) << 63;
+    const m: u64 = w & 0x7fffff;
+    if ((w >> 23) & 0xff == 0xff) return sign | (@as(u64, 0x7ff) << 52) | (m << 29);
+    const f: f32 = @bitCast(w);
+    return @bitCast(@as(f64, f));
+}
+
+// Reading step 4: two equal keys in one map. Keys are equal when their core
+// deterministic encodings are: so are integers by value, text by its bytes,
+// and keys of different major types never.
+fn cCheckKeys(alloc: std.mem.Allocator, kids: []const CNode) !void {
+    const mw = E.@"malformed-wire";
+    const n = kids.len / 2;
+    if (n < 2) return;
+    const keys = try alloc.alloc([]const u8, n);
+    for (keys, 0..) |*k, i| k.* = try cCanonOf(alloc, &kids[2 * i]);
+    if (n <= 8) {
+        for (0..n) |i| {
+            for (i + 1..n) |j| if (std.mem.eql(u8, keys[i], keys[j])) return mw;
+        }
+        return;
+    }
+    var set = std.StringHashMapUnmanaged(void){};
+    try set.ensureTotalCapacity(alloc, @intCast(n));
+    for (keys) |k| {
+        if (set.getOrPutAssumeCapacity(k).found_existing) return mw;
+    }
+}
+
+// ---- the core deterministic encoding (RFC 8949 4.2.1)
+
+fn cPutBE(out: *std.ArrayList(u8), v: u64, n: usize) !void {
+    var i: usize = n;
+    while (i > 0) {
+        i -= 1;
+        try out.append(@truncate(v >> @as(u6, @intCast(8 * i))));
+    }
+}
+
+// A head in its shortest form.
+fn cHead(out: *std.ArrayList(u8), major: u8, v: u64) !void {
+    const m: u8 = major << 5;
+    if (v < 24) return out.append(m | @as(u8, @intCast(v)));
+    if (v <= 0xff) {
+        try out.append(m | 24);
+        return cPutBE(out, v, 1);
+    }
+    if (v <= 0xffff) {
+        try out.append(m | 25);
+        return cPutBE(out, v, 2);
+    }
+    if (v <= 0xffffffff) {
+        try out.append(m | 26);
+        return cPutBE(out, v, 4);
+    }
+    try out.append(m | 27);
+    return cPutBE(out, v, 8);
+}
+
+// A float, given as the bits of a double, at the shortest of half, single
+// and double that holds it exactly, subnormal halves included (4.2.2).
+fn cFloat(out: *std.ArrayList(u8), bits: u64) !void {
+    const sign = bits >> 63;
+    const mant = bits & ((@as(u64, 1) << 52) - 1);
+    if ((bits >> 52) & 0x7ff == 0x7ff) {
+        if (mant & ((@as(u64, 1) << 42) - 1) == 0) {
+            try out.append(0xf9);
+            return cPutBE(out, (sign << 15) | 0x7c00 | (mant >> 42), 2);
+        }
+        if (mant & ((@as(u64, 1) << 29) - 1) == 0) {
+            try out.append(0xfa);
+            return cPutBE(out, (sign << 31) | 0x7f800000 | (mant >> 29), 4);
+        }
+        try out.append(0xfb);
+        return cPutBE(out, bits, 8);
+    }
+    const f: f64 = @bitCast(bits);
+    if (@abs(f) <= 65504.0) {
+        const h: f16 = @floatCast(f);
+        if (@as(u64, @bitCast(@as(f64, h))) == bits) {
+            try out.append(0xf9);
+            return cPutBE(out, @as(u16, @bitCast(h)), 2);
+        }
+    }
+    if (@abs(f) <= std.math.floatMax(f32)) {
+        const s: f32 = @floatCast(f);
+        if (@as(u64, @bitCast(@as(f64, s))) == bits) {
+            try out.append(0xfa);
+            return cPutBE(out, @as(u32, @bitCast(s)), 4);
+        }
+    }
+    try out.append(0xfb);
+    return cPutBE(out, bits, 8);
+}
+
+const CEnt = struct { key: []const u8, val: []const u8 };
+
+fn cEntLess(_: void, a: CEnt, b: CEnt) bool {
+    return std.mem.order(u8, a.key, b.key) == .lt;
+}
+
+// An item re-encoded: its tags (each head shortest), then the item with
+// every length definite and every map's members in the bytewise order of
+// their encoded keys.
+fn cCanon(alloc: std.mem.Allocator, n: *const CNode, out: *std.ArrayList(u8)) anyerror!void {
+    if (n.ntags > 0) {
+        var tp = CParser{ .alloc = alloc, .buf = n.raw };
+        var i: u32 = 0;
+        while (i < n.ntags) : (i += 1) try cHead(out, 6, (try tp.head()).arg);
+    }
+    switch (n.kind) {
+        .uint => try cHead(out, 0, n.arg),
+        .nint => try cHead(out, 1, n.arg),
+        .bytes, .text => {
+            try cHead(out, if (n.kind == .bytes) 2 else 3, n.str.len);
+            try out.appendSlice(n.str);
+        },
+        .array => {
+            try cHead(out, 4, n.kids.len);
+            for (n.kids) |*k| try cCanon(alloc, k, out);
+        },
+        .map => {
+            const cnt = n.kids.len / 2;
+            const ents = try alloc.alloc(CEnt, cnt);
+            for (ents, 0..) |*en, i| {
+                en.key = try cCanonOf(alloc, &n.kids[2 * i]);
+                en.val = try cCanonOf(alloc, &n.kids[2 * i + 1]);
+            }
+            std.mem.sort(CEnt, ents, {}, cEntLess);
+            try cHead(out, 5, cnt);
+            for (ents) |en| {
+                try out.appendSlice(en.key);
+                try out.appendSlice(en.val);
+            }
+        },
+        .simple => {
+            if (n.arg < 24) {
+                try out.append(0xe0 | @as(u8, @intCast(n.arg)));
+            } else {
+                try out.append(0xf8);
+                try out.append(@intCast(n.arg));
+            }
+        },
+        .float => try cFloat(out, n.arg),
+    }
+}
+
+fn cCanonOf(alloc: std.mem.Allocator, n: *const CNode) ![]const u8 {
+    var out = std.ArrayList(u8).init(alloc);
+    try cCanon(alloc, n, &out);
+    return out.toOwnedSlice();
+}
+
+// ---- decode
+
+// Steps 1 to 6 of "Reading a message": the hex text, one well-formed item,
+// the outermost tag under `tag <n>`, the type of the top item.
+fn cborParseDoc(alloc: std.mem.Allocator, p: *const Pack, bytes: []const u8, diag: *Diag) anyerror!*const CNode {
+    const mw = E.@"malformed-wire";
+    const buf = hexDecode(alloc, bytes) catch |err| return bad(diag, alloc, err, "the input is not hex of even length", .{});
+    const top = try alloc.create(CNode);
+    top.* = cParseAll(alloc, buf) catch |err| {
+        if (err == error.OutOfMemory) return err;
+        return bad(diag, alloc, mw, "the input is not exactly one well-formed CBOR data item of at most {d} levels, with no equal keys in a map and valid UTF-8 text", .{cbor_max_depth});
+    };
+    if (p.cbor_tag) |t| {
+        if (top.ntags == 0 or top.tag0 != t) return bad(diag, alloc, mw, "the outermost tag of the input is not {d}", .{t});
+    }
+    const want: CKind = if (p.cbor_array) .array else .map;
+    if (top.kind != want) return bad(diag, alloc, mw, "the top item is not {s}", .{if (p.cbor_array) "an array" else "a map"});
+    return top;
+}
+
+const CWalk = union(enum) { found: *const CNode, absent, wrong };
+
+// Does a map key (tags not passed over) match a step?
+fn cKeyMatches(key: *const CNode, st: CStep) bool {
+    if (key.ntags != 0) return false;
+    return switch (st.kind) {
+        .uint => key.kind == .uint and key.arg == st.n,
+        .nint => key.kind == .nint and key.arg == st.n,
+        .text => key.kind == .text and std.mem.eql(u8, key.str, st.s),
+        .pos, .raw => false,
+    };
+}
+
+// The item at a path from `root`: absent when a step finds nothing, or
+// passes through `null` or `undefined` (ruling 12); `wrong` when an item on
+// the way is not the map or array its next step needs.
+fn cWalk(root: *const CNode, steps: []const CStep) CWalk {
+    var cur = root;
+    for (steps) |st| {
+        if (cur.isNil()) return .absent;
+        if (st.kind == .pos) {
+            if (cur.kind != .array) return .wrong;
+            if (st.n >= cur.kids.len) return .absent;
+            cur = &cur.kids[@intCast(st.n)];
+            continue;
+        }
+        if (cur.kind != .map) return .wrong;
+        var found: ?*const CNode = null;
+        var i: usize = 0;
+        while (i + 1 < cur.kids.len) : (i += 2) {
+            if (cKeyMatches(&cur.kids[i], st)) {
+                found = &cur.kids[i + 1];
+                break;
+            }
+        }
+        cur = found orelse return .absent;
+    }
+    return .{ .found = cur };
+}
+
+fn cborWhenHolds(node: *const CNode, ln: *const Line) bool {
+    const it = switch (cWalk(node, ln.cpath)) {
+        .found => |f| f,
+        else => return false,
+    };
+    if (it.isNil()) return false;
+    if (ln.wpresent) return true;
+    const v = ln.cval;
+    return switch (v.kind) {
+        .uint => it.kind == .uint and it.arg == v.n,
+        .nint => it.kind == .nint and it.arg == v.n,
+        .bool_ => it.kind == .simple and it.arg == 20 + v.n,
+        .text => it.kind == .text and std.mem.eql(u8, it.str, v.s),
+    };
+}
+
+// One item through a transform of the `cbor` table; null: `null` or
+// `undefined`, absent.
+fn cDecodeValue(alloc: std.mem.Allocator, k: TKind, it: *const CNode) !?MV {
+    if (it.isNil()) return null;
+    const td = E.@"transform-decode";
+    const max: u64 = std.math.maxInt(i64);
+    switch (k) {
+        .uint => {
+            if (it.kind != .uint or it.arg > max) return td;
+            return MV{ .int = @intCast(it.arg) };
+        },
+        .int => {
+            if (it.kind == .uint and it.arg <= max) return MV{ .int = @intCast(it.arg) };
+            if (it.kind == .nint and it.arg <= max) return MV{ .int = -1 - @as(i64, @intCast(it.arg)) };
+            return td;
+        },
+        .epoch_s => {
+            // the range applies to the product (ruling 7)
+            const v: i128 = switch (it.kind) {
+                .uint => @as(i128, it.arg),
+                .nint => -1 - @as(i128, it.arg),
+                else => return td,
+            };
+            const ms = v * 1000;
+            if (ms < std.math.minInt(i64) or ms > std.math.maxInt(i64)) return td;
+            return MV{ .int = @intCast(ms) };
+        },
+        .float => switch (it.kind) {
+            .float => {
+                const f: f64 = @bitCast(it.arg);
+                if (!std.math.isFinite(f)) return td;
+                return MV{ .float = f };
+            },
+            // an integer item to the nearest double, ties to even
+            .uint => return MV{ .float = @floatFromInt(it.arg) },
+            .nint => return MV{ .float = -@as(f64, @floatFromInt(@as(u128, it.arg) + 1)) },
+            else => return td,
+        },
+        .text_ => {
+            if (it.kind != .text) return td;
+            return MV{ .str = it.str };
+        },
+        .bytes => {
+            if (it.kind != .bytes) return td;
+            return MV{ .str = try hexEncode(alloc, it.str) };
+        },
+        .bool_ => {
+            if (it.kind != .simple or (it.arg != 20 and it.arg != 21)) return td;
+            return MV{ .int = @intCast(it.arg - 20) };
+        },
+        else => return td,
+    }
+}
+
+fn cborReadField(alloc: std.mem.Allocator, node: *const CNode, ln: *const Line) !?MV {
+    const it = switch (cWalk(node, ln.cpath)) {
+        .found => |f| f,
+        .absent => return null,
+        .wrong => return E.@"malformed-wire",
+    };
+    return cDecodeValue(alloc, ln.transform.kind, it);
+}
+
+// Step 8 of "Reading a message": each line of the selected scope finds the
+// map or array each step needs where an item exists, and a group's path
+// holds an array, `null` or `undefined`.
+fn cborWalkScope(alloc: std.mem.Allocator, node: *const CNode, lines: []const Line, diag: *Diag) anyerror!void {
+    const mw = E.@"malformed-wire";
+    for (lines) |*ln| {
+        if (ln.tag == .element) continue;
+        switch (cWalk(node, cLinePath(ln))) {
+            .wrong => return bad(diag, alloc, mw, "line {d}: an item on the path {s} is not the map or array its next step needs", .{ ln.lineno, ln.locator }),
+            .found => |it| if (ln.tag == .group and !it.isNil() and it.kind != .array) {
+                return bad(diag, alloc, mw, "line {d}: the item at the group path {s} is not an array", .{ ln.lineno, ln.locator });
+            },
+            .absent => {},
+        }
+    }
+}
+
+// The items of one group: each element of the array at its path.
+fn cborDecodeGroup(alloc: std.mem.Allocator, p: *const Pack, g: *const Group, node: *const CNode, e: *Entity, diag: *Diag) anyerror!void {
+    const mw = E.@"malformed-wire";
+    const arr = switch (cWalk(node, g.cpath)) {
+        .found => |f| f,
+        .absent => return,
+        .wrong => return bad(diag, alloc, mw, "group {s}: an item on the path {s} is not the map or array its next step needs", .{ g.list, g.locator }),
+    };
+    if (arr.isNil()) return; // an absent list
+    if (arr.kind != .array) return bad(diag, alloc, mw, "group {s}: the item at {s} is not an array", .{ g.list, g.locator });
+    const body = &g.body;
+    try takeItems(diag, alloc, arr.kids.len, g.list);
+    const items = try alloc.alloc(Entity, arr.kids.len);
+    const want: CKind = if (g.cbody_array) .array else .map;
+    for (arr.kids, 0..) |*el, i| {
+        items[i] = Entity.init(alloc);
+        if (body.needs_sub) {
+            // an element of another type than the body's is an item with
+            // no keys (ruling 12 of 0.7)
+            if (el.kind != want) continue;
+            try cborWalkScope(alloc, el, body.lines, diag);
+        }
+        _ = try decodeScope(alloc, p, body, .{ .cbor = el }, &items[i], diag);
+    }
+    try e.putList(g.list, items);
+}
+
+// The step text of a map key in a residue path: the integer or the text a
+// path can write, else `#` and the key's bytes as they stood (ruling 16).
+fn cKeyStepText(alloc: std.mem.Allocator, key: *const CNode) ![]const u8 {
+    if (key.ntags == 0) {
+        switch (key.kind) {
+            .uint => return std.fmt.allocPrint(alloc, "{d}", .{key.arg}),
+            // below -2^63 a key is not addressable (ruling 17)
+            .nint => if (key.arg < (@as(u64, 1) << 63)) return std.fmt.allocPrint(alloc, "-{d}", .{@as(u128, key.arg) + 1}),
+            .text => if (cTextStepOk(key.str)) return key.str,
+            else => {},
+        }
+    }
+    return std.fmt.allocPrint(alloc, "#{s}", .{try hexEncode(alloc, key.raw)});
+}
+
+fn cJoin(alloc: std.mem.Allocator, prefix: []const u8, step: []const u8) ![]const u8 {
+    if (prefix.len == 0) return step;
+    return std.fmt.allocPrint(alloc, "{s}.{s}", .{ prefix, step });
+}
+
+// Residue: every member or element that no line of the selected scope maps
+// and no such line walks into, keyed by its path, the hex of the item as it
+// stood, tags included.
+fn cborResidue(alloc: std.mem.Allocator, p: *const Pack, lines: []const Line, node: *const CNode, e: *Entity) anyerror!void {
+    var ls = std.ArrayList(*const Line).init(alloc);
+    for (lines) |*ln| if (ln.tag != .element) try ls.append(ln);
+    try cResidueIn(alloc, p, ls.items, 0, node, "", e);
+}
+
+// The members or elements of a container the lines walk into; `lines` are
+// those whose first `k` steps lead here.
+fn cResidueIn(alloc: std.mem.Allocator, p: *const Pack, lines: []const *const Line, k: usize, node: *const CNode, prefix: []const u8, e: *Entity) anyerror!void {
+    var sub = std.ArrayList(*const Line).init(alloc);
+    defer sub.deinit();
+    if (node.kind == .map) {
+        var i: usize = 0;
+        while (i + 1 < node.kids.len) : (i += 2) {
+            const key = &node.kids[i];
+            sub.clearRetainingCapacity();
+            for (lines) |ln| {
+                const cp = cLinePath(ln);
+                if (cp.len > k and cKeyMatches(key, cp[k])) try sub.append(ln);
+            }
+            const path = try cJoin(alloc, prefix, try cKeyStepText(alloc, key));
+            try cResidueAt(alloc, p, sub.items, k, &node.kids[i + 1], path, e);
+        }
+    } else if (node.kind == .array) {
+        for (node.kids, 0..) |*el, i| {
+            if (i > cbor_max_pos) break; // no key a path can write (ruling 18)
+            sub.clearRetainingCapacity();
+            for (lines) |ln| {
+                const cp = cLinePath(ln);
+                if (cp.len > k and cp[k].kind == .pos and cp[k].n == i) try sub.append(ln);
+            }
+            const path = try cJoin(alloc, prefix, try std.fmt.allocPrint(alloc, "[{d}]", .{i}));
+            try cResidueAt(alloc, p, sub.items, k, el, path, e);
+        }
+    }
+}
+
+// One member or element whose place the lines `matched` name at step `k`.
+fn cResidueAt(alloc: std.mem.Allocator, p: *const Pack, matched: []const *const Line, k: usize, val: *const CNode, path: []const u8, e: *Entity) anyerror!void {
+    if (matched.len == 0) return e.addResidue(.{ .fmt = p.format, .locator = path, .value = try hexEncode(alloc, val.raw) });
+    var deeper = std.ArrayList(*const Line).init(alloc);
+    for (matched) |ln| {
+        if (cLinePath(ln).len == k + 1) {
+            // mapped: a field, a `when` with a value, a `const`, a group's
+            // own path (ruling 24)
+            if (!(ln.tag == .when and ln.wpresent)) return;
+        } else try deeper.append(ln);
+    }
+    // only a `when … present` names it: residue whole (ruling 15)
+    if (deeper.items.len == 0) return e.addResidue(.{ .fmt = p.format, .locator = path, .value = try hexEncode(alloc, val.raw) });
+    if (val.isNil()) return; // walked into (ruling 12)
+    const want: CKind = if (cLinePath(deeper.items[0])[k + 1].kind == .pos) .array else .map;
+    if (val.kind != want) return;
+    try cResidueIn(alloc, p, deeper.items, k + 1, val, path, e);
+}
+
+// ---- encode
+
+const COutKind = enum(u8) { none, map, array, value };
+
+// A place of the output: nothing yet, a map, an array, or an encoded value.
+// `forced`: written also when empty (the top item, a present list, a list
+// item).
+const COut = struct {
+    kind: COutKind = .none,
+    val: []const u8 = "",
+    forced: bool = false,
+    members: std.StringHashMapUnmanaged(*COut) = .{},
+    elems: std.ArrayListUnmanaged(?*COut) = .{},
+};
+
+fn cNewOut(alloc: std.mem.Allocator) !*COut {
+    const n = try alloc.create(COut);
+    n.* = .{};
+    return n;
+}
+
+// The encoded key of a map step; null for a `#<hex>` that is not one
+// well-formed item.
+fn cStepKey(alloc: std.mem.Allocator, st: CStep) !?[]const u8 {
+    var out = std.ArrayList(u8).init(alloc);
+    switch (st.kind) {
+        .uint => try cHead(&out, 0, st.n),
+        .nint => try cHead(&out, 1, st.n),
+        .text => {
+            try cHead(&out, 3, st.s.len);
+            try out.appendSlice(st.s);
+        },
+        .raw => {
+            const b = hexDecode(alloc, st.s) catch |err| {
+                if (err == error.OutOfMemory) return err;
+                return null;
+            };
+            const n = cParseAll(alloc, b) catch |err| {
+                if (err == error.OutOfMemory) return err;
+                return null;
+            };
+            try cCanon(alloc, &n, &out);
+        },
+        .pos => unreachable,
+    }
+    return out.items;
+}
+
+// The place under `node` at one step, `node` made a map or an array on the
+// way; null when it holds a value or is of the other type.
+fn cChild(alloc: std.mem.Allocator, node: *COut, st: CStep) !?*COut {
+    const want: COutKind = if (st.kind == .pos) .array else .map;
+    if (node.kind == .none) node.kind = want;
+    if (node.kind != want) return null;
+    if (want == .array) {
+        const i: usize = @intCast(st.n);
+        while (node.elems.items.len <= i) try node.elems.append(alloc, null);
+        if (node.elems.items[i] == null) node.elems.items[i] = try cNewOut(alloc);
+        return node.elems.items[i].?;
+    }
+    const key = (try cStepKey(alloc, st)) orelse return null;
+    const gop = try node.members.getOrPut(alloc, key);
+    if (!gop.found_existing) gop.value_ptr.* = try cNewOut(alloc);
+    return gop.value_ptr.*;
+}
+
+fn cPlace(alloc: std.mem.Allocator, root: *COut, steps: []const CStep) !?*COut {
+    var node = root;
+    for (steps) |st| node = (try cChild(alloc, node, st)) orelse return null;
+    return node;
+}
+
+// A model value through a transform of the `cbor` table.
+fn cEncodeValue(alloc: std.mem.Allocator, k: TKind, mv: MV) ![]const u8 {
+    const te = E.@"transform-encode";
+    var out = std.ArrayList(u8).init(alloc);
+    switch (k) {
+        .uint => {
+            if (mv != .int or mv.int < 0) return te;
+            try cHead(&out, 0, @intCast(mv.int));
+        },
+        .int, .epoch_s => {
+            if (mv != .int) return te;
+            var v = mv.int;
+            if (k == .epoch_s) {
+                // `time_ms` divided by 1000 exactly, rounded half away from zero
+                const r = @rem(v, 1000);
+                v = @divTrunc(v, 1000);
+                if (r >= 500) v += 1 else if (r <= -500) v -= 1;
+            }
+            if (v >= 0) try cHead(&out, 0, @intCast(v)) else try cHead(&out, 1, @intCast(-1 - v));
+        },
+        .float => {
+            const f: f64 = switch (mv) {
+                .float => |x| x,
+                .int => |i| @floatFromInt(i),
+                else => return te,
+            };
+            if (!std.math.isFinite(f)) return te; // ruling 20
+            try cFloat(&out, @bitCast(f));
+        },
+        .text_ => {
+            if (mv != .str or !std.unicode.utf8ValidateSlice(mv.str)) return te;
+            try cHead(&out, 3, mv.str.len);
+            try out.appendSlice(mv.str);
+        },
+        .bytes => {
+            // an even number of lowercase hex digits
+            if (mv != .str or mv.str.len % 2 != 0) return te;
+            for (mv.str) |c| if (!((c >= '0' and c <= '9') or (c >= 'a' and c <= 'f'))) return te;
+            try cHead(&out, 2, mv.str.len / 2);
+            var i: usize = 0;
+            while (i < mv.str.len) : (i += 2) try out.append(hexVal(mv.str[i]).? * 16 + hexVal(mv.str[i + 1]).?);
+        },
+        .bool_ => {
+            if (mv != .int or (mv.int != 0 and mv.int != 1)) return te;
+            try out.append(if (mv.int == 1) 0xf5 else 0xf4);
+        },
+        else => return te,
+    }
+    return out.items;
+}
+
+// A `when` or `const` value, written with its type.
+fn cValBytes(alloc: std.mem.Allocator, v: CVal) ![]const u8 {
+    var out = std.ArrayList(u8).init(alloc);
+    switch (v.kind) {
+        .uint => try cHead(&out, 0, v.n),
+        .nint => try cHead(&out, 1, v.n),
+        .bool_ => try out.append(if (v.n == 1) 0xf5 else 0xf4),
+        .text => {
+            try cHead(&out, 3, v.s.len);
+            try out.appendSlice(v.s);
+        },
+    }
+    return out.items;
+}
+
+// The lines of one scope into `root`: the places every line walks into, the
+// `when` and `const` values, then the fields (the earliest line whose key
+// is present, a `when` or `const` value over a field), then the lists.
+fn cEncodeScope(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, root: *COut, e: *const Entity, diag: *Diag) anyerror!void {
+    for (sc.lines) |*ln| {
+        switch (ln.tag) {
+            .when, .constant => {
+                const cp = ln.cpath;
+                if (ln.wpresent) {
+                    // writes nothing, and walks into the containers on its path
+                    if (cp.len == 0) continue;
+                    const node = (try cPlace(alloc, root, cp[0 .. cp.len - 1])) orelse continue;
+                    if (node.kind == .none) node.kind = if (cp[cp.len - 1].kind == .pos) .array else .map;
+                    continue;
+                }
+                const node = (try cPlace(alloc, root, cp)) orelse continue;
+                if (node.kind == .none) {
+                    node.kind = .value;
+                    node.val = try cValBytes(alloc, ln.cval);
+                }
+            },
+            .field => if (!ln.dot) {
+                _ = try cPlace(alloc, root, ln.cpath);
+            },
+            .group => if (ln.grp.?.cpath.len > 0) {
+                _ = try cPlace(alloc, root, ln.grp.?.cpath);
+            },
+            .element => {},
+        }
+    }
+    for (sc.lines) |*ln| {
+        if (!ln.isField() or ln.dot) continue;
+        const node = (try cPlace(alloc, root, ln.cpath)) orelse continue;
+        if (node.kind != .none) continue;
+        const mv = (fieldValue(p, sc, e, ln) catch |err|
+            return bad(diag, alloc, err, "field {s} at {s}", .{ ln.key, ln.locator })) orelse continue;
+        node.val = cEncodeValue(alloc, ln.transform.kind, mv) catch |err|
+            return bad(diag, alloc, err, "field {s} at {s}", .{ ln.key, ln.locator });
+        node.kind = .value;
+    }
+    for (sc.lines) |*ln| {
+        if (ln.tag != .group) continue;
+        const g = ln.grp.?;
+        const items = e.lists.get(g.list) orelse continue; // an absent list writes nothing
+        const node = if (g.cpath.len == 0) root else ((try cPlace(alloc, root, g.cpath)) orelse continue);
+        if (node != root and node.kind != .none) continue;
+        node.kind = .array;
+        node.forced = true;
+        try node.elems.ensureTotalCapacity(alloc, items.len);
+        for (items) |*it| node.elems.appendAssumeCapacity(try cEncodeItem(alloc, p, g, it, diag));
+    }
+}
+
+// One list item: a map or an array, written also when empty; for a body of
+// `.` only, the element itself, `null` when it has no value.
+fn cEncodeItem(alloc: std.mem.Allocator, p: *const Pack, g: *const Group, it: *const Entity, diag: *Diag) anyerror!?*COut {
+    const body = &g.body;
+    const n = try cNewOut(alloc);
+    if (!body.needs_sub and body.dot != null) {
+        n.kind = .value;
+        n.val = "\xf6";
+        for (body.lines) |*ln| {
+            if (!ln.isField() or !ln.dot) continue;
+            const mv = (fieldValue(p, body, it, ln) catch |err|
+                return bad(diag, alloc, err, "field {s} at {s}", .{ ln.key, ln.locator })) orelse continue;
+            n.val = cEncodeValue(alloc, ln.transform.kind, mv) catch |err|
+                return bad(diag, alloc, err, "field {s} at {s}", .{ ln.key, ln.locator });
+            break;
+        }
+        return n;
+    }
+    n.kind = if (g.cbody_array) .array else .map;
+    n.forced = true;
+    try cEncodeScope(alloc, p, body, n, it, diag);
+    return n;
+}
+
+fn cHasContent(n: *const COut) bool {
+    switch (n.kind) {
+        .value => return true,
+        .none => return false,
+        .map => {
+            if (n.forced) return true;
+            var it = n.members.valueIterator();
+            while (it.next()) |v| if (cHasContent(v.*)) return true;
+            return false;
+        },
+        .array => {
+            if (n.forced) return true;
+            for (n.elems.items) |el| {
+                if (el) |x| if (cHasContent(x)) return true;
+            }
+            return false;
+        },
+    }
+}
+
+const COEnt = struct { key: []const u8, node: *const COut };
+
+fn coEntLess(_: void, a: COEnt, b: COEnt) bool {
+    return std.mem.order(u8, a.key, b.key) == .lt;
+}
+
+// Writing steps 1 to 4: members in the bytewise order of their encoded keys;
+// an array up to its highest present position, a gap below it written as
+// an empty map or array where the lines walk into it as one, else `null`
+// (ruling 23); a map or array with nothing in it is not written.
+fn cWriteOut(alloc: std.mem.Allocator, n: *const COut, out: *std.ArrayList(u8)) anyerror!void {
+    switch (n.kind) {
+        .value => try out.appendSlice(n.val),
+        .none => try out.append(0xf6),
+        .map => {
+            var ents = std.ArrayList(COEnt).init(alloc);
+            var it = n.members.iterator();
+            while (it.next()) |en| {
+                if (cHasContent(en.value_ptr.*)) try ents.append(.{ .key = en.key_ptr.*, .node = en.value_ptr.* });
+            }
+            std.mem.sort(COEnt, ents.items, {}, coEntLess);
+            try cHead(out, 5, ents.items.len);
+            for (ents.items) |en| {
+                try out.appendSlice(en.key);
+                try cWriteOut(alloc, en.node, out);
+            }
+        },
+        .array => {
+            var count: usize = 0;
+            for (n.elems.items, 0..) |el, i| {
+                if (el) |x| {
+                    if (cHasContent(x)) count = i + 1;
+                }
+            }
+            try cHead(out, 4, count);
+            for (n.elems.items[0..count]) |el| {
+                const x = el orelse {
+                    try out.append(0xf6);
+                    continue;
+                };
+                if (cHasContent(x)) {
+                    try cWriteOut(alloc, x, out);
+                    continue;
+                }
+                try out.append(switch (x.kind) {
+                    .map => 0xa0,
+                    .array => 0x80,
+                    else => 0xf6,
+                });
+            }
+        },
+    }
+}
+
+fn cborEncode(alloc: std.mem.Allocator, p: *const Pack, sc: *const Scope, e: *const Entity, diag: *Diag) anyerror![]u8 {
+    const root = try cNewOut(alloc);
+    root.kind = if (p.cbor_array) .array else .map;
+    root.forced = true;
+    try cEncodeScope(alloc, p, sc, root, e, diag);
+    // residue of this format into its map or array, re-encoded; at a place a
+    // line writes it is not written (ruling 21)
+    for (e.residue.items) |r| {
+        if (!std.mem.eql(u8, r.fmt, p.format)) continue;
+        const steps = (try cParsePath(alloc, r.locator, true)) orelse continue;
+        if (steps.len == 0) continue;
+        const parent = (try cPlace(alloc, root, steps[0 .. steps.len - 1])) orelse continue;
+        const node = (try cChild(alloc, parent, steps[steps.len - 1])) orelse continue;
+        if (cHasContent(node)) continue;
+        const b = hexDecode(alloc, r.value) catch |err| {
+            if (err == error.OutOfMemory) return err;
+            continue;
+        };
+        const item = cParseAll(alloc, b) catch |err| {
+            if (err == error.OutOfMemory) return err;
+            continue;
+        };
+        node.val = try cCanonOf(alloc, &item);
+        node.kind = .value;
+    }
+    var out = std.ArrayList(u8).init(alloc);
+    if (p.cbor_tag) |t| try cHead(&out, 6, t);
+    try cWriteOut(alloc, root, &out);
     return hexEncode(alloc, out.items);
 }
 
@@ -13020,8 +14223,166 @@ const Fuzz = struct {
             for (0..reps) |r| @memcpy(big[r * u.len ..][0..u.len], u);
             try self.one(from, to, big, "repeated unit", n);
         }
+        if (self.eng.findPack(from)) |fp| {
+            if (isW(fp.wire, .cbor)) try self.cbor(from, to, fp);
+        }
+    }
+
+    // A `cbor` format (Version 0.28): hostile items, then random ones. Deep
+    // nesting through arrays, maps, tags and indefinite items; declared
+    // lengths and counts far beyond the input; indefinite items that never
+    // end; wide maps whose keys are all compared; and random items of every
+    // major type, with heads of any length, cut short or with a byte changed.
+    fn cbor(self: *Fuzz, from: []const u8, to: []const u8, fp: *const Pack) !void {
+        const alloc = self.eng.alloc;
+        var buf = std.ArrayList(u8).init(alloc);
+        defer buf.deinit();
+        const Rep = struct { head: []const u8, unit: []const u8, n: usize, tail: []const u8 };
+        const reps = [_]Rep{
+            .{ .head = "", .unit = "81", .n = 200000, .tail = "00" },
+            .{ .head = "", .unit = "a100", .n = 100000, .tail = "00" },
+            .{ .head = "", .unit = "c1", .n = 200000, .tail = "a0" },
+            .{ .head = "", .unit = "d9ffff", .n = 100000, .tail = "80" },
+            .{ .head = "", .unit = "9f", .n = 200000, .tail = "" },
+            .{ .head = "", .unit = "bf00", .n = 100000, .tail = "" },
+            .{ .head = "a1009f", .unit = "00", .n = 300000, .tail = "" },
+            .{ .head = "829f", .unit = "f6", .n = 300000, .tail = "" },
+            .{ .head = "a1005f", .unit = "4100", .n = 150000, .tail = "" },
+            .{ .head = "a1007f", .unit = "6161", .n = 150000, .tail = "" },
+            .{ .head = "a1005bffffffffffffffff", .unit = "00", .n = 1000, .tail = "" },
+            .{ .head = "a1009bffffffffffffffff", .unit = "00", .n = 1000, .tail = "" },
+            .{ .head = "bb7fffffffffffffff", .unit = "0000", .n = 1000, .tail = "" },
+            .{ .head = "9b7fffffffffffffff", .unit = "a0", .n = 1000, .tail = "" },
+            .{ .head = "a1009a000493e0", .unit = "f6", .n = 300000, .tail = "" },
+            .{ .head = "829a000493e0", .unit = "a0", .n = 300000, .tail = "" },
+            .{ .head = "a1007a000493e0", .unit = "61", .n = 300000, .tail = "" },
+            .{ .head = "a10078ff", .unit = "c3", .n = 1000, .tail = "" },
+            .{ .head = "bf", .unit = "6161", .n = 1000, .tail = "ff" },
+        };
+        for (reps, 0..) |rp, k| {
+            buf.clearRetainingCapacity();
+            try buf.appendSlice(rp.head);
+            for (0..rp.n) |_| try buf.appendSlice(rp.unit);
+            try buf.appendSlice(rp.tail);
+            try self.one(from, to, buf.items, "hostile cbor", k);
+        }
+        // a map of 65536 distinct keys, and the same with its last key equal
+        // to its first
+        for (0..2) |k| {
+            buf.clearRetainingCapacity();
+            try buf.appendSlice(if (fp.cbor_array) "81ba00010000" else "ba00010000");
+            for (0..65536) |i| {
+                const key: u32 = if (k == 1 and i == 65535) 0 else @intCast(i);
+                try buf.writer().print("1a{x:0>8}f6", .{key});
+            }
+            try self.one(from, to, buf.items, "wide cbor map", k);
+        }
+        var prng = std.Random.DefaultPrng.init(0x28cb0428);
+        const r = prng.random();
+        var bin = std.ArrayList(u8).init(alloc);
+        defer bin.deinit();
+        for (0..cbor_fuzz_items) |k| {
+            bin.clearRetainingCapacity();
+            if (fp.cbor_tag) |t| {
+                if (r.uintLessThan(u8, 8) != 0) try fuzzHead(r, &bin, 6, t);
+            }
+            const top: u8 = if (r.boolean()) 4 else 5;
+            const n = r.uintLessThan(u64, 12);
+            try fuzzHead(r, &bin, top, if (top == 5) n else n);
+            for (0..@intCast(if (top == 5) 2 * n else n)) |_| try fuzzItem(r, &bin, 1);
+            // cut short, or a byte changed, now and then
+            switch (r.uintLessThan(u8, 6)) {
+                0 => if (bin.items.len > 0) bin.shrinkRetainingCapacity(r.uintLessThan(usize, bin.items.len)),
+                1 => if (bin.items.len > 0) {
+                    bin.items[r.uintLessThan(usize, bin.items.len)] = r.int(u8);
+                },
+                else => {},
+            }
+            buf.clearRetainingCapacity();
+            for (bin.items) |b| try buf.writer().print("{x:0>2}", .{b});
+            try self.one(from, to, buf.items, "random cbor", k);
+        }
     }
 };
+
+const cbor_fuzz_items: usize = 3000;
+
+// A head of a random length: the shortest, or longer than it needs.
+fn fuzzHead(r: std.Random, out: *std.ArrayList(u8), major: u8, v: u64) !void {
+    const m: u8 = major << 5;
+    var w: u8 = if (v < 24) 0 else if (v <= 0xff) 1 else if (v <= 0xffff) 2 else if (v <= 0xffffffff) 3 else 4;
+    if (r.uintLessThan(u8, 4) == 0) w = @max(w, 1 + r.uintLessThan(u8, 4));
+    if (w == 0) return out.append(m | @as(u8, @intCast(v)));
+    try out.append(m | (23 + w));
+    const nb: usize = @as(usize, 1) << @intCast(w - 1);
+    var i: usize = nb;
+    while (i > 0) {
+        i -= 1;
+        try out.append(if (i >= 8) 0 else @truncate(v >> @as(u6, @intCast(8 * i))));
+    }
+}
+
+// One random item: the keys and values the probe packs use, every major
+// type, tags, indefinite lengths, now and then a byte that is not well formed.
+fn fuzzItem(r: std.Random, out: *std.ArrayList(u8), depth: usize) anyerror!void {
+    const texts = [_][]const u8{ "a", "k", "n", "m", "v", "b", "s", "name", "flag", "track", "x-app", "4" };
+    const leaf = depth > 70 or r.uintLessThan(u8, 3) != 0;
+    const pick = if (leaf) r.uintLessThan(u8, 8) else 8 + r.uintLessThan(u8, 5);
+    switch (pick) {
+        0 => try fuzzHead(r, out, 0, if (r.boolean()) r.uintLessThan(u64, 12) else r.int(u64)),
+        1 => try fuzzHead(r, out, 1, if (r.boolean()) r.uintLessThan(u64, 12) else r.int(u64)),
+        2 => {
+            const n = r.uintLessThan(usize, 6);
+            try fuzzHead(r, out, 2, n);
+            for (0..n) |_| try out.append(r.int(u8));
+        },
+        3 => {
+            const t = texts[r.uintLessThan(usize, texts.len)];
+            try fuzzHead(r, out, 3, t.len);
+            try out.appendSlice(t);
+        },
+        4 => {
+            const simple = [_][]const u8{ "f4", "f5", "f6", "f7", "f820", "f813", "f93e00", "f97c00", "f97e00", "fa47c35000", "fb3fb999999999999a", "fb7ff8000000000001", "e0" };
+            const sv = simple[r.uintLessThan(usize, simple.len)];
+            var i: usize = 0;
+            while (i < sv.len) : (i += 2) try out.append(hexVal(sv[i]).? * 16 + hexVal(sv[i + 1]).?);
+        },
+        5 => try out.append(r.int(u8)),
+        6 => try out.append(0xff),
+        7 => {
+            // a chunked string
+            const major: u8 = if (r.boolean()) 2 else 3;
+            try out.append((major << 5) | 31);
+            for (0..r.uintLessThan(usize, 3)) |_| {
+                try fuzzHead(r, out, major, 1);
+                try out.append(if (major == 3) 'a' else r.int(u8));
+            }
+            if (r.uintLessThan(u8, 8) != 0) try out.append(0xff);
+        },
+        8, 9 => {
+            const n = r.uintLessThan(u64, 4);
+            try fuzzHead(r, out, 4, n);
+            for (0..@intCast(n)) |_| try fuzzItem(r, out, depth + 1);
+        },
+        10 => {
+            const n = r.uintLessThan(u64, 4);
+            try fuzzHead(r, out, 5, n);
+            for (0..@intCast(2 * n)) |_| try fuzzItem(r, out, depth + 1);
+        },
+        11 => {
+            // an indefinite array or map, ended or not
+            const map = r.boolean();
+            try out.append(if (map) 0xbf else 0x9f);
+            const n = r.uintLessThan(usize, 4);
+            for (0..if (map) 2 * n else n) |_| try fuzzItem(r, out, depth + 1);
+            if (r.uintLessThan(u8, 8) != 0) try out.append(0xff);
+        },
+        else => {
+            try fuzzHead(r, out, 6, r.uintLessThan(u64, 70000));
+            try fuzzItem(r, out, depth + 1);
+        },
+    }
+}
 
 // What a list item may cost: 200000 one-byte items of the pack
 // `conformance-seq-groups` (an indicator bit, six bits of `probe.qty`, an

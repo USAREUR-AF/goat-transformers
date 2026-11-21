@@ -1,0 +1,9 @@
+{
+  "name": "other-tag-outside-tag-18",
+  "from": "conformance-cbor-array",
+  "to": "conformance-cbor-array",
+  "input": "d9d9f7d2844101a201050443616263420aff41ff",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Tags: the outermost tag must be 18; here it is 55799 (d9d9f7) and 18 is inside it. Derived without an engine by a standalone RFC 8949 codec."
+}

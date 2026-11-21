@@ -1,0 +1,12 @@
+{
+  "name": "group-empty-list",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor",
+  "input": "ac00010163552d3102182a03f93e0004420aff051a603aa4c0060207a201f951b002f9d5a40882617861540980202664666c6167f5",
+  "expect": "ac00010163552d3102182a03f93e0004420aff051a603aa4c0060207a201f951b002f9d5a40882617861540980202664666c6167f5",
+  "model": {
+    "probe.items.#": "0"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Writing step 4: a present list that is empty writes 80. Derived without an engine by a standalone RFC 8949 codec."
+}

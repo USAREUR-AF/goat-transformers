@@ -211,10 +211,11 @@ under Node 22 `node:wasi` with the repository root preopened, gave the same
 
 The engine can be built with the codecs of only some wires
 (`spec/engine-spec.md`, Version 0.24). The switch is a Go build tag. A build
-with no tag has all seven wires. A build with the tag `goat_wires` has only
+with no tag has all eight wires. A build with the tag `goat_wires` has only
 the wires named by a tag `goat_wire_<wire>`, from `goat_wire_xml`,
 `goat_wire_geojson`, `goat_wire_json`, `goat_wire_bits`,
-`goat_wire_protobuf`, `goat_wire_text` and `goat_wire_tlv`:
+`goat_wire_protobuf`, `goat_wire_text`, `goat_wire_tlv` and `goat_wire_cbor`
+(0.28 ruling 38):
 
 ```
 go build -tags goat_wires,goat_wire_xml,goat_wire_json,goat_wire_geojson -o goat-xf ./cmd/goat-xf
@@ -250,22 +251,22 @@ It builds the engine with `xml`, `json` and `geojson` only and runs
 `TestReducedBuild` in that build (`reduced_test.go`, built only with the tag
 `goat_wires`): it loads every pack on those three wires, runs every
 conversion vector whose `from` and `to` are among them, and checks that every
-pack on `bits`, `protobuf`, `text` and `tlv` is `unknown-wire` at its `wire`
-line with the wire named. Then it builds `goat-xf` with all seven wires and
+pack on `bits`, `protobuf`, `text`, `tlv` and `cbor` is `unknown-wire` at its `wire`
+line with the wire named. Then it builds `goat-xf` with all eight wires and
 with the three, loads one pack of each missing wire with the reduced tool
 (each must exit 1 with `unknown-wire` naming the wire), checks with
-`go tool nm` that the reduced tool holds no decoder or encoder of those four
+`go tool nm` that the reduced tool holds no decoder or encoder of those five
 wires, and prints both sizes. It exits non-zero on any failure.
 
 Measured with Go 1.26.8 on Linux x86_64:
 
 | | Measured |
 |---|---|
-| packs loaded in the reduced build | 1070 |
-| conversion vectors on `xml`, `json` and `geojson` | 6849 run, 6849 passed |
-| packs refused with `unknown-wire` | `bits` 1632, `protobuf` 695, `text` 71, `tlv` 9 |
-| `goat-xf`, all seven wires | 5084858 bytes |
-| `goat-xf`, `xml`, `json` and `geojson` | 4635229 bytes (449629 bytes less) |
+| packs loaded in the reduced build | 1646 |
+| conversion vectors on `xml`, `json` and `geojson` | 8208 run, 8208 passed |
+| packs refused with `unknown-wire` | `bits` 1705, `protobuf` 876, `text` 77, `tlv` 9, `cbor` 7 |
+| `goat-xf`, all eight wires | 5227776 bytes |
+| `goat-xf`, `xml`, `json` and `geojson` | 4689345 bytes (538431 bytes less) |
 
 ## Read next
 

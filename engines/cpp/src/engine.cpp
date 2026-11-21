@@ -722,6 +722,12 @@ Entity decode_wire(const Pack& p, const std::string& bytes) {
 #else
             break;
 #endif
+        case Wire::Cbor:
+#if GT_WIRE_CBOR
+            return detail::decode_cbor(p, bytes);
+#else
+            break;
+#endif
     }
     throw Error(ErrorKind::UnknownWire, p.format, "", "no codec for this wire");
 }
@@ -790,6 +796,12 @@ std::string Engine::encode(const std::string& format, const Entity& entity) cons
         case Wire::Tlv:
 #if GT_WIRE_TLV
             return detail::encode_tlv(p, entity);
+#else
+            break;
+#endif
+        case Wire::Cbor:
+#if GT_WIRE_CBOR
+            return detail::encode_cbor(p, entity);
 #else
             break;
 #endif

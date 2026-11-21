@@ -104,7 +104,10 @@ KeyType transform_yields(Transform t) {
         case Transform::Ascii:
         case Transform::Sixbit:
         case Transform::Utf8:
-        case Transform::Hex: return KeyType::String;
+        case Transform::Hex:
+        case Transform::CborText:
+        case Transform::CborBytes: return KeyType::String;
+        case Transform::EpochS: return KeyType::Int;
         case Transform::Smscale:
         case Transform::F32scale:
         case Transform::F64scale:
@@ -162,6 +165,7 @@ const char* wire_name(Wire w) {
         case Wire::Json: return "json";
         case Wire::Text: return "text";
         case Wire::Tlv: return "tlv";
+        case Wire::Cbor: return "cbor";
     }
     return "?";
 }
@@ -175,12 +179,14 @@ bool wire_built(Wire w) {
         case Wire::Protobuf: return GT_WIRE_PROTOBUF;
         case Wire::Text: return GT_WIRE_TEXT;
         case Wire::Tlv: return GT_WIRE_TLV;
+        case Wire::Cbor: return GT_WIRE_CBOR;
     }
     return false;
 }
 
 namespace {
-constexpr Wire kAllWires[] = {Wire::Xml, Wire::GeoJson, Wire::Json, Wire::Bits, Wire::Protobuf, Wire::Text, Wire::Tlv};
+constexpr Wire kAllWires[] = {Wire::Xml, Wire::GeoJson, Wire::Json, Wire::Bits, Wire::Protobuf, Wire::Text, Wire::Tlv,
+                             Wire::Cbor};
 }  // namespace
 
 std::vector<std::string> built_wires() {
@@ -454,7 +460,7 @@ void check_bits_field_len(const Pack& p, const FieldLine& f) {
 }
 
 void resolve_when(const Pack& p, WhenLine& w, const std::string& word) {
-    if (p.wire == Wire::Tlv) return;  // checked by detail::check_tlv_pack
+    if (p.wire == Wire::Tlv || p.wire == Wire::Cbor) return;  // checked by detail::check_tlv_pack, check_cbor_pack
     const std::string where = p.source + ":" + std::to_string(w.line);
     if (p.wire == Wire::Bits) {
         detail::BitsLocator loc;
@@ -915,7 +921,7 @@ Wire locator_wire(const Pack& p, bool in_group) {
 bool scalar_item_wire(Wire w) { return w == Wire::Json || w == Wire::GeoJson || w == Wire::Protobuf; }
 
 void check_field(const Pack& p, const FieldLine& f, bool in_group) {
-    if (p.wire == Wire::Text || p.wire == Wire::Tlv) return;  // checked by detail::check_text_pack
+    if (p.wire == Wire::Text || p.wire == Wire::Tlv || p.wire == Wire::Cbor) return;  // checked by detail::check_text_pack
     const bool is_bits = detail::transform_is_bits(f.transform);
     const bool is_pb = detail::transform_is_protobuf(f.transform);
     bool matches;
@@ -933,7 +939,7 @@ void check_field(const Pack& p, const FieldLine& f, bool in_group) {
 }
 
 void check_when(const Pack& p, const WhenLine& w, bool in_group) {
-    if (p.wire == Wire::Text || p.wire == Wire::Tlv) return;  // checked by detail::check_text_pack, check_tlv_pack
+    if (p.wire == Wire::Text || p.wire == Wire::Tlv || p.wire == Wire::Cbor) return;  // checked by detail::check_text_pack, check_tlv_pack
     // `.` is the item itself: outside a group it is bad-directive, as earlier
     // versions state, not bad-locator (0.11 ruling 5a).
     if (w.locator == "." && scalar_item_wire(p.wire))
@@ -959,7 +965,7 @@ void check_when(const Pack& p, const WhenLine& w, bool in_group) {
 }
 
 void check_group_locators(const Pack& p, const GroupLine& g, bool in_group) {
-    if (p.wire == Wire::Text || p.wire == Wire::Tlv) return;  // checked by detail::parse_text_locators
+    if (p.wire == Wire::Text || p.wire == Wire::Tlv || p.wire == Wire::Cbor) return;  // checked by detail::parse_text_locators
     const Wire wire = locator_wire(p, in_group);
     bool ok = false;
     switch (wire) {
@@ -982,7 +988,8 @@ void check_group_locators(const Pack& p, const GroupLine& g, bool in_group) {
         case Wire::Json:
         case Wire::Protobuf: ok = detail::valid_locator(wire, g.locator); break;
         case Wire::Text:
-        case Wire::Tlv: ok = true; break;
+        case Wire::Tlv:
+        case Wire::Cbor: ok = true; break;
     }
     // A group whose locator is not one of its wire is a bad group line (0.21
     // ruling 8: `rest` is not a protobuf path).
@@ -1036,6 +1043,9 @@ Pack parse_pack(const std::string& text, const std::string& source) {
     std::size_t delimiter_line = 0, start_line = 0, checksum_line = 0, text_directive_line = 0;
     // v0.13: `tag`, `length`, `key` and `checksum sum16 <tag>`, the first line of any of them.
     std::size_t tag_line = 0, length_line = 0, key_line = 0, tlv_directive_line = 0;
+    // v0.28: the value of the `tag` line, and whether it is none of the tlv forms.
+    std::string tag_text;
+    bool tag_deferred = false;
     // A field transform on wire tlv that did not parse (0.13 ruling 8), raised after the file.
     bool pending_transform = false;
     // v0.14: `armor <hex | sixbit>`. The first error of its lines waits for the
@@ -1254,8 +1264,12 @@ Pack parse_pack(const std::string& text, const std::string& source) {
             }
             const std::string& v = t[1];
             if (kw == "tag") {
+                // v0.28: `tag <n>` on cbor. Its value is checked against the
+                // wire once the file is read, when the wire is not known yet.
+                tag_text = v;
                 if (v == "ber-oid") p.tlv_tag_bytes = 0;
                 else if (v == "1" || v == "2" || v == "4") p.tlv_tag_bytes = static_cast<std::uint32_t>(v[0] - '0');
+                else if (!have_wire || p.wire == Wire::Cbor) tag_deferred = true;
                 else bad("'tag' is ber-oid, 1, 2 or 4, not '" + v + "'");
             } else if (kw == "length") {
                 if (v == "ber") p.tlv_length_bytes = 0;
@@ -1282,7 +1296,7 @@ Pack parse_pack(const std::string& text, const std::string& source) {
             std::size_t& seen = kw == "tag" ? tag_line : kw == "length" ? length_line : kw == "key" ? key_line : checksum_line;
             if (seen != 0) bad("'" + kw + "' appears twice");
             seen = lineno;
-            if (tlv_directive_line == 0) tlv_directive_line = lineno;
+            if (kw != "tag" && tlv_directive_line == 0) tlv_directive_line = lineno;
         } else if (kw == "delimiter" || kw == "start" || kw == "checksum") {
             // v0.10: each once, before the first `kind`, with a value of its own;
             // on another wire bad-directive once the file is read.
@@ -1476,7 +1490,9 @@ Pack parse_pack(const std::string& text, const std::string& source) {
             f.line = lineno;
             std::string terr;
             const int tf = detail::parse_any_transform(t[3], f, terr);
-            if (tf != 0 && p.wire == Wire::Tlv) {
+            // 0.28 rulings 25 and 34: on cbor, as on tlv, a transform that does not
+            // parse (name or parameters) is bad-directive after the file.
+            if (tf != 0 && (p.wire == Wire::Tlv || p.wire == Wire::Cbor)) {
                 // Ruling 8 of 0.13: on tlv a transform that does not parse, by
                 // its name or its parameters, is bad-directive, checked after
                 // the file is read (the line check of 0.11 ruling 5b step 7
@@ -1562,9 +1578,9 @@ Pack parse_pack(const std::string& text, const std::string& source) {
 
     // Line errors that need the whole file: a block left open, where a directive
     // is allowed, and what a `when` value and a bits length may be.
-    if (pending_transform)  // set on wire tlv only (0.13 ruling 8)
+    if (pending_transform)  // set on wire tlv (0.13 ruling 8) and cbor (0.28 ruling 25) only
         throw Error(ErrorKind::BadDirective, p.format, pending_locator,
-                    pending_detail + " (on wire tlv, a transform not in the table of 0.13)");
+                    pending_detail + " (on wire " + wire_name(p.wire) + ", a transform not in the wire's table)");
     if (!gate_error.empty()) throw Error(ErrorKind::BadDirective, p.format, gate_error_locator, gate_error);
     if (!gate_open.empty()) {
         const GateBlock& g = p.gates[static_cast<std::size_t>(gate_open.back().first)];
@@ -1632,6 +1648,33 @@ Pack parse_pack(const std::string& text, const std::string& source) {
         }
         // v0.13: `tag`, `length`, `key` and `checksum sum16` belong to the tlv
         // wire, and `utf8` and `hex` are valid on it only.
+        // v0.28: `tag <n>` is a directive of cbor, and `tag` of tlv (ruling 5).
+        if (tag_line != 0) {
+            const std::string where = source + ":" + std::to_string(tag_line);
+            if (p.wire == Wire::Cbor) {
+#if GT_WIRE_CBOR  // without the cbor wire a cbor pack stops at its `wire` line (0.28 ruling 38)
+                if (!detail::parse_cbor_tag(tag_text, p.cbor_tag_value))
+                    throw Error(ErrorKind::BadDirective, p.format, "",
+                                where + ": 'tag' on wire cbor is a decimal integer from 0 to 2^64-1 with no leading "
+                                        "zero, not '" + tag_text + "'");
+#endif
+                p.cbor_tag = true;
+            } else if (p.wire != Wire::Tlv) {
+                throw Error(ErrorKind::BadDirective, p.format, "",
+                            where + ": 'tag' applies to wire tlv and wire cbor only");
+            } else if (tag_deferred) {
+                throw Error(ErrorKind::BadDirective, p.format, "",
+                            where + ": 'tag' is ber-oid, 1, 2 or 4, not '" + tag_text + "'");
+            }
+        }
+        if (p.wire != Wire::Cbor)
+            each_scope(p, [&](std::vector<FieldLine>& fields, std::vector<WhenLine>&, bool) {
+                for (const auto& f : fields)
+                    if (detail::transform_is_cbor_only(f.transform))
+                        throw Error(ErrorKind::BadDirective, p.format, f.locator,
+                                    source + ":" + std::to_string(f.line) + ": transform '" +
+                                        transform_name(f.transform) + "' applies to wire cbor only");
+            });
         if (p.wire != Wire::Tlv) {
             if (tlv_directive_line != 0)
                 throw Error(ErrorKind::BadDirective, p.format, "",
@@ -1723,6 +1766,9 @@ Pack parse_pack(const std::string& text, const std::string& source) {
 #endif
 #if GT_WIRE_TLV
         if (p.wire == Wire::Tlv) detail::check_tlv_pack(p);
+#endif
+#if GT_WIRE_CBOR
+        if (p.wire == Wire::Cbor) detail::check_cbor_pack(p);
 #endif
         check_fields_through_groups(p);
     }

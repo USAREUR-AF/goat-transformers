@@ -41,10 +41,16 @@
 -else.
 -define(W_TLV, true).
 -endif.
+-ifdef(no_wire_cbor).
+-define(W_CBOR, false).
+-else.
+-define(W_CBOR, true).
+-endif.
 
 %% Every wire in the build.
 -define(W_ALL, (?W_XML andalso ?W_GEOJSON andalso ?W_JSON andalso ?W_BITS
-                andalso ?W_PROTOBUF andalso ?W_TEXT andalso ?W_TLV)).
+                andalso ?W_PROTOBUF andalso ?W_TEXT andalso ?W_TLV
+                andalso ?W_CBOR)).
 
 -define(ABSENT(Wire), erlang:error({wire_not_in_build, Wire})).
 
@@ -89,6 +95,11 @@
 -define(TLV(E), E).
 -else.
 -define(TLV(E), ?ABSENT(tlv)).
+-endif.
+-if(?W_CBOR).
+-define(CBOR(E), E).
+-else.
+-define(CBOR(E), ?ABSENT(cbor)).
 -endif.
 
 %% A dispatch clause of a wire left out keeps its head; its variables are

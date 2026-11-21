@@ -1,0 +1,9 @@
+{
+  "name": "epoch-s-product-below-minus-2-63",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor",
+  "input": "a20001053b0020c49ba5e353f7",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Ruling 7: -9223372036854776 s gives time_ms -9223372036854776000, below -2^63: transform-decode. Derived without an engine by a standalone RFC 8949 codec."
+}

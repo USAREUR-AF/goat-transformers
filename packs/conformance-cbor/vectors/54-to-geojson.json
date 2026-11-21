@@ -1,0 +1,15 @@
+{
+  "name": "to-geojson",
+  "from": "conformance-cbor",
+  "to": "geojson",
+  "input": "ac00010163552d3102182a03f93e0004420aff051a603aa4c0060207a201f951b002f9d5a40882617861540981a2616e03646e616d65626161202664666c6167f5",
+  "expect": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-90.25,45.5]},\"properties\":{\"time_ms\":1614456000000},\"id\":\"U-1\"}",
+  "model": {
+    "uid": "U-1",
+    "lat": "45.5",
+    "lon": "-90.25",
+    "time_ms": "1614456000000"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): cbor decode as vector 01; geojson writes uid as id, lat and lon as coordinates [lon, lat], time_ms in properties; probe keys are not mapped by geojson; residue is written only into its own format. Derived without an engine by a standalone RFC 8949 codec."
+}

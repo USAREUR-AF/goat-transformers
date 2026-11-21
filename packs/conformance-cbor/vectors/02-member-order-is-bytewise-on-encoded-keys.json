@@ -1,0 +1,14 @@
+{
+  "name": "member-order-is-bytewise-on-encoded-keys",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor",
+  "input": "ac64666c6167f520260981a2646e616d65626161616e0308826178615407a202f9d5a401f951b00602051a603aa4c004420aff03f93e0002182a0163552d310001",
+  "expect": "ac00010163552d3102182a03f93e0004420aff051a603aa4c0060207a201f951b002f9d5a40882617861540981a2616e03646e616d65626161202664666c6167f5",
+  "model": {
+    "@kind": "plain",
+    "uid": "U-1",
+    "lat": "45.5"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Writing step 1: members sorted by the bytewise order of their encoded keys (00 < 01 < ... < 09 < 20 (-1) < 64666c6167 (flag)), inside nested maps too (01 < 02; 616e (n) < 646e616d65 (name)); input members in reverse order; the order of the lines sets no member order. Derived without an engine by a standalone RFC 8949 codec."
+}

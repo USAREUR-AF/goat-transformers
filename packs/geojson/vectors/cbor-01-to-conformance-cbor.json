@@ -1,0 +1,15 @@
+{
+  "name": "cbor-01-to-conformance-cbor",
+  "from": "geojson",
+  "to": "conformance-cbor",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-90.25,45.5,12]},\"properties\":{\"time_ms\":1614456000500,\"callsign\":\"C\",\"extra\":\"x\"},\"id\":\"G-1\"}",
+  "expect": "a400010163472d31051a603aa4c107a201f951b002f9d5a4",
+  "model": {
+    "uid": "G-1",
+    "lat": "45.5",
+    "lon": "-90.25",
+    "time_ms": "1614456000500"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): kind plain (first; neither kind has requires) writes when 0 1; uid at 1; epoch_s 1614456000500 / 1000 = 1614456000.5 rounded half away from zero = 1614456001 (1a603aa4c1); lat and lon in the map at 7 (f951b0, f9d5a4); hae, callsign and geojson residue are not written. Derived without an engine by a standalone RFC 8949 codec."
+}

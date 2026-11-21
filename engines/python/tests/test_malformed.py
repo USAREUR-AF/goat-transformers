@@ -557,6 +557,137 @@ class TestTlv(_Rulings):
         self.assertEqual(problems, [], "\n".join(problems[:40]))
 
 
+class TestCbor(_Rulings):
+    """The `cbor` wire (0.28, "Reading a message"): one well-formed data item,
+    lengths compared with the bytes left before anything is taken for them, a
+    depth of at most 64 counted over arrays, maps and tags, and every failure
+    `malformed-wire`, whatever the pack maps. No input crashes the reader or
+    runs unbounded."""
+
+    fmt = "conformance-cbor"          # a map at the top, kinds by member 0
+    arr = "conformance-cbor-array"    # tag 18 enclosing an array
+
+    @staticmethod
+    def top(members_hex, n):
+        """A top map of `n` members: `0: 1` (kind plain) and `members_hex`."""
+        return "%02x" % (0xA0 + n + 1) + "0001" + members_hex
+
+    def test_well_formed(self):
+        self.assertEqual(self.converts(self.top("", 0)), "a10001")
+        self.assertEqual(self.converts("bf0001ff"), "a10001")                 # indefinite, written definite
+        self.assertEqual(self.converts(self.top("0a" + "f97e00", 1)), "a200010af97e00")  # a NaN as residue
+        self.assertEqual(self.converts(self.top("0a" + "fa7fc00000", 1)), "a200010af97e00")
+        self.assertEqual(self.converts(self.top("0a" + "fb7ff8000000000001", 1)), "a200010afb7ff8000000000001")
+        self.assertEqual(self.converts(self.top("0a" + "f8ff", 1)), "a200010af8ff")  # simple value 255
+        self.assertEqual(self.converts(self.top("0a" + "e0", 1)), "a200010ae0")      # simple value 0
+
+    def test_not_well_formed(self):
+        for member in ("1c", "3d", "5e", "7f61", "9e", "be", "df00", "f800", "f81f", "fc", "fd", "fe", "ff",
+                       "1f", "3f", "df", "5f4100", "5f6100ff", "7f4100ff", "5f5f4100ffff", "7f9fffff"):
+            self.malformed(self.top("0a" + member, 1))
+        self.malformed("")
+        self.malformed("a1")
+        self.malformed("ff")
+        self.malformed(self.top("", 0) + "00")       # a byte after the item
+        self.malformed(self.top("0a", 1))             # a key with no value
+        self.malformed(self.top("0a62c328", 1))       # invalid UTF-8
+        self.malformed(self.top("0a63eda080", 1))     # a surrogate in UTF-8
+        self.malformed(self.top("0a00" + "0a01", 2))  # equal keys
+
+    def test_huge_declared_lengths(self):
+        for head in ("5b", "7b", "9b", "bb"):
+            for arg in ("ffffffffffffffff", "7fffffffffffffff", "0000000100000000"):
+                self.malformed(self.top("0a" + head + arg, 1))
+                self.malformed(self.top("0a" + head + arg + "00" * 8, 1))
+        self.malformed(self.top("0a" + "9a" + "ffffffff" + "00" * 100, 1))
+        self.malformed(self.top("0a" + "ba" + "00000033" + "00" * 100, 1))  # 51 members need 102 bytes
+        self.malformed("bbffffffffffffffff")
+        self.malformed("d2" + "9bffffffffffffffff", self.arr)
+        # a large tag number is only a head
+        self.assertEqual(self.converts(self.top("0a" + "dbffffffffffffffff00", 1)), "a200010adbffffffffffffffff00")
+
+    def test_unending_indefinite_items(self):
+        for opener in ("9f", "bf", "5f", "7f"):
+            self.malformed(self.top("0a" + opener, 1))
+            self.malformed(self.top("0a" + opener + "00" * 1000, 1))
+        self.malformed("bf0001")
+        self.malformed("bf" + "0001" + "6161" * 1)
+        self.malformed("9f" * 100000)
+        self.malformed("bf" * 100000)
+        self.malformed("d9d9f7" * 100000)
+        self.malformed("5f" + "4100" * 50000)
+        self.malformed("7f" + "6161" * 50000)
+        self.malformed("9f" + "00" * 100000)
+
+    def test_deep_nesting(self):
+        # the top map is level 1: 63 arrays below it reach 64, 64 reach 65
+        self.converts(self.top("0a" + "81" * 62 + "80", 1))
+        self.malformed(self.top("0a" + "81" * 63 + "80", 1))
+        self.malformed(self.top("0a" + "a10a" * 63 + "a0", 1))
+        self.converts(self.top("0a" + "c1" * 63 + "00", 1))    # tags count: 1 + 63 = 64
+        self.malformed(self.top("0a" + "c1" * 64 + "00", 1))
+        self.malformed(self.top("0a" + "a1" * 63 + "a0", 1))   # through map keys
+        self.converts(self.top("0a" + "a1" * 62 + "a0" + "00" * 62, 1))
+        for unit in ("81", "a10a", "c1", "9f", "bf", "a1", "d9d9f7"):
+            self.malformed(unit * 200000)
+            self.malformed(self.top("0a" + unit * 200000, 1))
+        self.malformed("d2" + "81" * 100000, self.arr)
+
+    def test_hostile_residue_on_encode(self):
+        from goat_transformers.entity import Entity
+        ent = Entity()
+        ent.fields["uid"] = "U"
+        ent.residue["conformance-cbor"] = {
+            "[0]": "00", "#": "00", "#zz": "00", "#0": "00", "a..b": "00", "1": "00", "x": "zz",
+            "y": "9f" * 1000, "z": "81" * 100000, "w": "1c", "v": "", "11.[65535]": "f6", "12.#a0": "01",
+            "1.2": "00", "q.#6134": "07", "#00": "05", "r": "00" * 3,
+        }
+        got = engine().encode("conformance-cbor", ent).decode("utf-8")
+        # uid wins over the residue at 1; 11 holds an array of 65536; 12 a map keyed by {}
+        self.assertTrue(got.startswith("a50001016155"), got[:40])  # 0, 1, 11, 12 and q
+        self.assertIn("0b" + "9a00010000" + "f6" * 65536, got)
+        self.assertIn("0ca1a001", got)
+        self.assertIn("6171a1613407", got)
+
+    def test_random_bytes(self):
+        rng = random.Random(SEED)
+        problems = []
+        pieces = ["00", "01", "17", "18", "19", "1a", "1b", "20", "3b", "40", "41", "5f", "60", "61", "7f", "80",
+                  "81", "9f", "a0", "a1", "bf", "c0", "c1", "d2", "d9", "f4", "f5", "f6", "f7", "f8", "f9", "fa",
+                  "fb", "ff", "1c", "fe", "c3", "ed", "ff" * 8]
+        for fmt in (self.fmt, self.arr, "cose-sign1", "dtn-bpv7", "conformance-cbor-kinds",
+                    "conformance-cbor-group"):
+            for _ in range(300):
+                data = "".join(rng.choice(pieces) for _ in range(rng.randrange(1, 40)))
+                if fmt == self.arr or fmt == "cose-sign1":
+                    data = "d2" + data
+                what = outcome(engine(), fmt, fmt, data)
+                if what is None:
+                    what = outcome(engine(), fmt, "geojson", data)
+                if what is not None:
+                    problems.append("%s: %s on input %r" % (fmt, what, data[:120]))
+        self.assertEqual(problems, [], "\n".join(problems[:40]))
+
+    def test_every_prefix_and_change(self):
+        """Every prefix and every single-character change of a well-formed
+        message of each cbor pack."""
+        rng = random.Random(SEED)
+        problems = []
+        for fmt in (self.fmt, self.arr, "cose-sign1", "dtn-bpv7", "conformance-cbor-kinds",
+                    "conformance-cbor-group"):
+            with open(sorted(glob.glob(os.path.join(PACKS, fmt, "vectors", "01-*.json")))[0], encoding="utf-8") as fh:
+                text = json.load(fh)["input"]
+            forms = [text[:i] for i in range(len(text))]
+            for i in range(len(text)):
+                for ch in rng.sample("0123456789abcdef9fbf5f7fff " + ALPHABET, 6):
+                    forms.append(text[:i] + ch + text[i + 1:])
+            for data in forms:
+                what = outcome(engine(), fmt, fmt, data)
+                if what is not None:
+                    problems.append("%s: %s on input %r" % (fmt, what, data[:120]))
+        self.assertEqual(problems, [], "\n".join(problems[:40]))
+
+
 class TestArmor(_Rulings):
     """Armored text (0.14, "Reading the armored text"): every character is
     checked before any line is read, so a character outside the map is

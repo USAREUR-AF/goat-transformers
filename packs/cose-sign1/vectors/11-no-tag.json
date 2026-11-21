@@ -1,0 +1,9 @@
+{
+  "name": "no-tag",
+  "from": "cose-sign1",
+  "to": "cose-sign1",
+  "input": "8444a1013822a104446b2d303145706f73203750a0a1a2a3a4a5a6a7a8a9aaabacadaeaf",
+  "expect_error": "malformed-wire",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): packs/cose-sign1/pack.def and pack.md; Tags: with tag 18 the input must begin with tag 18; the bare array (untagged COSE_Sign1) has none. Derived without an engine by a standalone RFC 8949 codec."
+}

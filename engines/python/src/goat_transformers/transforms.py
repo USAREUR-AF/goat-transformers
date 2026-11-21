@@ -737,10 +737,12 @@ def build_bits_transform(name, length):
 # (ruling 5 of 0.11), and the wires each is valid on.
 _TEXTUAL = ("xml", "geojson", "json", "text")
 TRANSFORM_WIRES = {
-    "string": _TEXTUAL, "float": _TEXTUAL, "int": _TEXTUAL, "iso8601_ms": _TEXTUAL, "bool": ("json",),
+    "string": _TEXTUAL, "float": _TEXTUAL + ("cbor",), "int": _TEXTUAL + ("cbor",), "iso8601_ms": _TEXTUAL,
+    "bool": ("json", "cbor"),
     "iso8601_s": _TEXTUAL,  # 0.26 (ruling 1)
+    "text": ("cbor",), "bytes": ("cbor",), "epoch_s": ("cbor",),  # 0.28
     "iso8601_short": ("xml", "geojson", "json"),  # 0.18 (ruling 11: bad-directive elsewhere)
-    "uint": ("bits", "tlv"), "twos": ("bits", "tlv"), "linscale": ("bits",), "uscale": ("bits", "tlv"),
+    "uint": ("bits", "tlv", "cbor"), "twos": ("bits", "tlv"), "linscale": ("bits",), "uscale": ("bits", "tlv"),
     "sscale": ("bits", "tlv"), "f32": ("bits", "tlv"), "f64": ("bits", "tlv"), "ascii": ("bits",),
     "sixbit": ("bits",),  # 0.14
     "utf8": ("tlv",), "hex": ("tlv", "bits"),  # 0.13; `hex` on `bits` from 0.22

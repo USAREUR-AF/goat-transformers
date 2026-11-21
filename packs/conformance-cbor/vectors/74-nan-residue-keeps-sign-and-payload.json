@@ -1,0 +1,12 @@
+{
+  "name": "nan-residue-keeps-sign-and-payload",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor",
+  "input": "a500010afb7ff80000000000010bf97e000cfb7ff80000200000000dfbfff8000000000000",
+  "expect": "a500010afb7ff80000000000010bf97e000cfa7fc000010df9fe00",
+  "model": {
+    "@kind": "plain"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Ruling 28: NaNs carried as residue keep sign and payload at the shortest width that holds them exactly (half when the low 42 bits of the double mantissa are 0, else single when the low 29 are 0). 10: fb7ff8000000000001 (payload bit 0) fits no narrower width: unchanged. 11: f97e00 stays f97e00. 12: fb7ff8000020000000 (mantissa 0x8000020000000, bit 29 set) -> single 0x7fc00001: fa7fc00001. 13: fbfff8000000000000 (negative quiet NaN) -> half 0xfe00: f9fe00. Derived without an engine by a standalone RFC 8949 codec."
+}

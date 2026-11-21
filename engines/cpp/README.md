@@ -51,14 +51,15 @@ of one minor version is accepted by a request for that minor version only.
 | `GT_BUILD_CLI` | the same | the `goat-xf` tool |
 | `GT_INSTALL` | the same | the install and package rules |
 | `GT_SANITIZE` | `OFF` | the sanitizer build, below |
-| `GT_WIRES` | empty: all seven wires | the wires of the build, below |
+| `GT_WIRES` | empty: all eight wires | the wires of the build, below |
 
 ## Wires of a build
 
 `-DGT_WIRES=<wire>[,<wire>...]` builds the engine with the codecs of only the
 wires named (`spec/engine-spec.md`, Version 0.24), from `xml`, `geojson`,
-`json`, `bits`, `protobuf`, `text` and `tlv`; `;` separates them as well as
-`,`. A build that does not set it, or sets it empty, has all seven. A name
+`json`, `bits`, `protobuf`, `text`, `tlv` and `cbor` (0.28 ruling 38); `;`
+separates them as well as `,`. A build that does not set it, or sets it
+empty, has all eight. A name
 that is not a wire stops the configuration.
 
 ```sh
@@ -66,10 +67,10 @@ cmake -S . -B build-xml -DCMAKE_BUILD_TYPE=Release -DGT_WIRES=xml,json,geojson
 cmake --build build-xml -j
 ```
 
-The set becomes the compile definitions `GT_WIRE_XML` to `GT_WIRE_TLV`, each
+The set becomes the compile definitions `GT_WIRE_XML` to `GT_WIRE_CBOR`, each
 `1` or `0`, on the library alone (`src/wires.hpp`; a compiler run without them
 has every wire). The codec of a wire that is `0` is not compiled: its source
-file is left out (`xml.cpp`; `protobuf.cpp`; `text.cpp`; `tlv.cpp`; the JSON
+file is left out (`xml.cpp`; `protobuf.cpp`; `text.cpp`; `tlv.cpp`; `cbor.cpp`; the JSON
 reader `json.cpp` and `jsonwire.cpp` when neither `json` nor `geojson` is in
 the set) or its part of a shared file is (`codecs.cpp`: the xml, geojson and
 bits codecs; `jsonwire.cpp`: the json codec; `sequential.cpp`: the decoder
@@ -77,7 +78,7 @@ and encoder of the sequential layout). The sequential layout, six-bit armor
 and `encoding uper` belong to `bits`; `geojson` uses the items of a JSON array
 from `jsonwire.cpp` and nothing of the json codec. The pack reader is the
 same in every build, so a pack on a wire of the set loads, converts and fails
-exactly as with all seven.
+exactly as with all eight.
 
 A pack whose `wire` is a wire the build lacks is refused at its `wire` line
 (line check 6 of 0.11) with `unknown-wire`, and the message names the wire
@@ -91,9 +92,9 @@ A `wire` value that is no wire at all stays `unknown-wire: ... wire 'foo'`.
 `goat_transformers::built_wires()` returns the wires of the build, and
 `wire_built(Wire)` tells whether it has one.
 
-In a build with fewer than seven wires, ctest has only `vectors`, and
+In a build with fewer than eight wires, ctest has only `vectors`, and
 `goat_transformers_vectors` is the reduced-build check below; the other
-tests load every pack of the repository and need all seven.
+tests load every pack of the repository and need all eight.
 
 ### Reduced-build check
 
@@ -109,23 +110,23 @@ there: it loads every model module and the packs on those wires; runs every
 conversion, load and capability vector whose formats, and whose pack texts,
 are all on them (a vector whose format is no pack directory, which pins
 `unknown-format`, runs too); and loads every pack on `bits`, `protobuf`,
-`text` and `tlv`, each of which must be `unknown-wire` with the wire named and
+`text`, `tlv` and `cbor`, each of which must be `unknown-wire` with the wire named and
 the build's lack said, at least one per wire. Then it builds the library and
-`goat-xf` with all seven wires in `engines/cpp/build-wires-full` and prints
+`goat-xf` with all eight wires in `engines/cpp/build-wires-full` and prints
 the sizes of both. It exits non-zero on any failure. `GT_JOBS` sets the
 parallel jobs (4).
 
 Measured on 2026-11-21 on Linux x86-64 with GCC 15.2, Release, not stripped:
 
-| File | All seven wires | `xml`, `json`, `geojson` |
+| File | All eight wires | `xml`, `json`, `geojson` |
 |---|---|---|
-| `libgoat_transformers.a` | 3,070,556 bytes | 2,313,984 bytes (75%) |
-| `goat-xf` | 1,712,968 bytes | 1,297,584 bytes (76%) |
+| `libgoat_transformers.a` | 3,162,816 bytes | 2,214,634 bytes (70%) |
+| `goat-xf` | 1,757,488 bytes | 1,240,496 bytes (71%) |
 
-The check passed with 8167 of 8167 conversion vectors, 382 of 382 load
-vectors and 16 of 16 capability vectors run (14091, 790 and 2 skipped), and
-2665 packs refused with `unknown-wire` (bits 1703, protobuf 876, text 77,
-tlv 9). What stays in the reduced build is the pack reader and the transforms
+The check passed with 8211 of 8211 conversion vectors, 383 of 383 load
+vectors and 16 of 16 capability vectors run (14285, 852 and 2 skipped), and
+2674 packs refused with `unknown-wire` (bits 1705, protobuf 876, text 77,
+tlv 9, cbor 7). What stays in the reduced build is the pack reader and the transforms
 every wire shares.
 
 ## Test
@@ -146,11 +147,11 @@ cd build && ctest --output-on-failure
 Each program prints its counts on the last line and exits non-zero on any
 failure. A program can be run by itself: `./build/goat_transformers_vectors`.
 
-Measured on 2026-11-21 (Release, all seven wires, through Version 0.29 and
-its licence profiles): all seven ctest entries pass;
-`vectors` ran 22258 of 22258 conversion vectors, 1172 of 1172 load vectors
-and 18 of 18 capability vectors; `unit` made 2141 checks, none failed;
-`tool_vectors` passed 135 of 135.
+Measured on 2026-11-21 (Release, all eight wires, through Version 0.28 and
+its `cbor` wire): all seven ctest entries pass;
+`vectors` ran 22496 of 22496 conversion vectors, 1235 of 1235 load vectors
+and 18 of 18 capability vectors; `unit` made 2116 checks, none failed. `tool_vectors` passed
+135 of 135 (through Version 0.29).
 
 ## What an instance keeps
 
@@ -198,7 +199,7 @@ when every vector has run. A vector whose output differs, or whose conversion
 fails, ends the run with exit status 1, nothing on standard output and the
 reason on standard error. `--packs <dir>` and `--models <dir>` name other
 directories; the set's paths are read from the current directory. Build it
-with `-DCMAKE_BUILD_TYPE=Release` and all seven wires: the set covers every
+with `-DCMAKE_BUILD_TYPE=Release` and all eight wires: the set covers every
 wire, so a build with fewer fails at the load, and the numbers of a build
 without optimisation say little. The numbers are measurements of one machine at one
 time, and no check fails on them (ruling 2d).

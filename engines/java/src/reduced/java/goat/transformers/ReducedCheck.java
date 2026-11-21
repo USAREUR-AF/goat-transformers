@@ -28,7 +28,7 @@ import java.util.stream.Stream;
  * any failure.
  */
 public final class ReducedCheck {
-    private static final List<String> SPEC_WIRES = List.of("xml", "geojson", "json", "bits", "protobuf", "text", "tlv");
+    private static final List<String> SPEC_WIRES = List.of("xml", "geojson", "json", "bits", "protobuf", "text", "tlv", "cbor");
     private static int failures = 0;
 
     private static void fail(String what, String why) {

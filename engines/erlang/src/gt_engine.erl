@@ -2,7 +2,7 @@
 %% complete(entity), convert. Clean-room from spec/ and packs/ only
 %% (engine-spec Versions 0.1 - 0.13; a sequential
 %% bits pack is read and written by gt_seq, the `text` wire by gt_text, the
-%% `tlv` wire by gt_tlv).
+%% `tlv` wire by gt_tlv, the `cbor` wire by gt_cbor).
 %%
 %% Entity = #{model => #{Key :: binary() => binary() | integer() | float()},
 %%            lists => #{ListName :: binary() => [Item]},
@@ -47,7 +47,7 @@
 -export([bits_decode/4, bits_encode/4]).
 -endif.
 %% hex text: the input and output of bits, protobuf and tlv
--if(?W_BITS orelse ?W_PROTOBUF orelse ?W_TLV).
+-if(?W_BITS orelse ?W_PROTOBUF orelse ?W_TLV orelse ?W_CBOR).
 -export([unhex/2]).
 -endif.
 %% for gt_seq (sequential layouts); characters ending at a terminator (0.22)
@@ -934,6 +934,7 @@ record_failure(Pack, Fmt, Args) ->
 
 decode_wire(#{wire := bits, layout := sequential} = Pack, Bytes) -> ?BITS(gt_seq:decode(Pack, Bytes));
 decode_wire(#{wire := tlv} = Pack, Bytes) -> ?TLV(gt_tlv:decode(Pack, Bytes));
+decode_wire(#{wire := cbor} = Pack, Bytes) -> ?CBOR(gt_cbor:decode(Pack, Bytes));
 decode_wire(#{wire := Wire} = Pack, Bytes) ->
     Ctx = open(Wire, Pack, Bytes),
     {Kind, Lines0, Plan} = select_decode(Pack, Wire, Ctx),
@@ -1250,7 +1251,7 @@ unwire(Pack, Bytes) -> unhex(Pack, Bytes).
 armor_out(Bits, L, _Pack) -> gt_bits:armor(Bits, L).
 -endif.
 
--if(?W_BITS orelse ?W_PROTOBUF orelse ?W_TLV).
+-if(?W_BITS orelse ?W_PROTOBUF orelse ?W_TLV orelse ?W_CBOR).
 %% The bytes of hex text (ruling 36 of 0.8).
 unhex(Pack, Bytes) ->
     try gt_hex:hex_to_bytes(Bytes)
@@ -1716,6 +1717,7 @@ encode_wire(geojson, Pack, Lines, Src, Residue) -> ?GEOJSON(geojson_encode(Pack,
 encode_wire(json, Pack, Lines, Src, Residue) -> ?JSON(json_encode(Pack, Lines, Src, Residue));
 encode_wire(text, Pack, Lines, Src, Residue) -> ?TEXT(gt_text:encode(Pack, Lines, Src, Residue));
 encode_wire(tlv, Pack, Lines, Src, Residue) -> ?TLV(gt_tlv:encode(Pack, Lines, Src, Residue));
+encode_wire(cbor, Pack, Lines, Src, Residue) -> ?CBOR(gt_cbor:encode(Pack, Lines, Src, Residue));
 encode_wire(protobuf, Pack, Lines, Src, _Residue) ->
     ?PROTOBUF(gt_hex:bytes_to_hex(gt_protobuf:serialize(pb_tree(Pack, Lines, Src)))).
 

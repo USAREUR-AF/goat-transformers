@@ -1,0 +1,9 @@
+{
+  "name": "kid-as-text",
+  "from": "cose-sign1",
+  "to": "cose-sign1",
+  "input": "d28444a1013822a104646b2d303145706f73203750a0a1a2a3a4a5a6a7a8a9aaabacadaeaf",
+  "expect_error": "transform-decode",
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): packs/cose-sign1/pack.def and pack.md; Transforms for cbor: an item of another type than its transform takes is transform-decode: kid [1].4 is read by bytes; it holds the text k-01 (646b2d3031), major type 3. Derived without an engine by a standalone RFC 8949 codec."
+}

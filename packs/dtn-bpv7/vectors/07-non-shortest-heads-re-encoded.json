@@ -1,0 +1,15 @@
+{
+  "name": "non-shortest-heads-re-encoded",
+  "from": "dtn-bpv7",
+  "to": "dtn-bpv7",
+  "input": "9f890700018202821903d1018202820c078202820c00821b000000b6c5ae91c01900051b000000000036ee804282748601180100014a6c6f6e6720686561647342b7a3ff",
+  "expect": "82890700018202821903d1018202820c078202820c00821b000000b6c5ae91c0051a0036ee8042827486010100014a6c6f6e6720686561647342b7a3",
+  "model": {
+    "@kind": "ipn",
+    "bpv7.creation_seq": "5",
+    "bpv7.lifetime_ms": "3600000",
+    "bpv7.primary_crc": "8274"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): packs/dtn-bpv7/pack.def and pack.md; RFC 9171 4.1 (bundle), 4.3.1 (primary block), 4.3.2 (canonical block), 4.2.1 (CRC); Reading step 2: the sequence number 5 in a two-byte head (190005), the lifetime 3600000 in an eight-byte head (1b000000000036ee80), and the payload block number 1 in a one-byte head (1801, residue). The CRCs in the input (primary CRC-16 8274, payload CRC-16 b7a3) are computed over those bytes. Writing step 1 writes 05, 1a0036ee80 and 01 and carries the CRC values unchanged; over the re-encoded blocks the CRCs would be 6e8f and dbeb, so both no longer match (ruling 1 of 0.28; pack.md, Output). The wire does not check CRCs. Derived without an engine by a standalone RFC 8949 codec."
+}

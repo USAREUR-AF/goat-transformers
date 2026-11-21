@@ -1,0 +1,13 @@
+{
+  "name": "integer-when-above-2-63-minus-1",
+  "from": "conformance-cbor-kinds",
+  "to": "conformance-cbor-kinds",
+  "input": "a2001bffffffffffffffff0403",
+  "expect": "a6001bffffffffffffffff040361736231326174743138343436373434303733373039353531363136617626626f6bf5",
+  "model": {
+    "@kind": "big",
+    "probe.x": "3"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Ruling 8: when 0 18446744073709551615 is an integer; it holds on 1bffffffffffffffff and is written back as 1bffffffffffffffff. Derived without an engine by a standalone RFC 8949 codec."
+}

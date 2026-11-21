@@ -1,0 +1,14 @@
+{
+  "name": "cbor-03-to-conformance-cbor-float-widths",
+  "from": "geojson",
+  "to": "conformance-cbor",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[100000,0.1]},\"properties\":{\"time_ms\":1614456000499}}",
+  "expect": "a30001051a603aa4c007a201fb3fb999999999999a02fa47c35000",
+  "model": {
+    "lat": "0.1",
+    "lon": "100000",
+    "time_ms": "1614456000499"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): epoch_s 1614456000.499 rounds to 1614456000; lat 0.1 -> fb3fb999999999999a, lon 100000 -> fa47c35000. Derived without an engine by a standalone RFC 8949 codec."
+}

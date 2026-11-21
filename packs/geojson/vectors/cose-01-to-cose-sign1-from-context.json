@@ -1,0 +1,18 @@
+{
+  "name": "cose-01-to-cose-sign1-from-context",
+  "from": "geojson",
+  "to": "cose-sign1",
+  "input": "{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-90.25,45.5]},\"properties\":{},\"id\":\"G-1\"}",
+  "expect": "d28444a1013822a0f650a0a1a2a3a4a5a6a7a8a9aaabacadaeaf",
+  "model": {
+    "uid": "G-1",
+    "lat": "45.5",
+    "lon": "-90.25"
+  },
+  "context": {
+    "cose.protected": "a1013822",
+    "cose.signature": "a0a1a2a3a4a5a6a7a8a9aaabacadaeaf"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): packs/cose-sign1/pack.def and pack.md; convert step 2: the context fills cose.protected and cose.signature; no core key is mapped by cose-sign1, so uid, lat and lon are not written. Writing step 3 and ruling 23: [3] is the highest present position; [1] is walked into as a map by the header lines: a0; [2] is a scalar line: f6. Output d2 84 44a1013822 a0 f6 50a0..af. Derived without an engine by a standalone RFC 8949 codec."
+}

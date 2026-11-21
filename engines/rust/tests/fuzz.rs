@@ -25,6 +25,14 @@
 //!     runs of ones and of zeros, lengths of 16383 with nothing behind them),
 //!     each of which must also finish within `UPER_TIME_LIMIT`, so that no
 //!     length read from the input makes the work unbounded.
+//! (h) CBOR data items (engine-spec 0.28): random items of every major type,
+//!     with definite and indefinite lengths, heads longer than they need,
+//!     tags, every float width, keys of every type, nesting around the depth
+//!     limit, and now and then a broken head, a reserved additional
+//!     information, a stray break or a length beyond the input; each also
+//!     enclosed in tag 18. And fixed hostile shapes: nesting far beyond the
+//!     depth limit through arrays, maps and tags, counts and lengths of
+//!     2^64-1, indefinite items that never end.
 //!
 //! Each call must return `Ok`, or an error whose message starts with one of
 //! the error kinds `convert` may fail with, then a colon. A panic is caught,
@@ -234,6 +242,168 @@ fn tlv_framed(key: &[u8], tag: u32, set: &[u8]) -> String {
     to_hex(&out)
 }
 
+/// A CBOR head: the shortest form, or now and then a longer one.
+fn cbor_head(rng: &mut Rng, major: u8, n: u64, out: &mut Vec<u8>) {
+    let m = major << 5;
+    let width = match n {
+        0..=23 if rng.below(4) != 0 => 0,
+        0..=0xff => 1,
+        0x100..=0xffff => 2,
+        0x1_0000..=0xffff_ffff => 4,
+        _ => 8,
+    };
+    // a longer head than the value needs
+    let width = if rng.below(6) == 0 { [1, 2, 4, 8][rng.below(4)].max(width) } else { width };
+    match width {
+        0 => out.push(m | n as u8),
+        1 => out.extend_from_slice(&[m | 24, n as u8]),
+        2 => {
+            out.push(m | 25);
+            out.extend_from_slice(&(n as u16).to_be_bytes());
+        }
+        4 => {
+            out.push(m | 26);
+            out.extend_from_slice(&(n as u32).to_be_bytes());
+        }
+        _ => {
+            out.push(m | 27);
+            out.extend_from_slice(&n.to_be_bytes());
+        }
+    }
+}
+
+/// A random CBOR data item nested up to `depth` levels below this one.
+fn cbor_item(rng: &mut Rng, depth: usize, out: &mut Vec<u8>) {
+    const NUMS: [u64; 12] = [0, 1, 5, 9, 23, 24, 255, 256, 65535, 1 << 32, (1 << 63) - 1, u64::MAX];
+    const TEXTS: [&[u8]; 8] = [b"", b"a", b"name", b"n", b"4", b"a.b", b"\xc3\xa9", b"\xc3"];
+    // now and then a broken item
+    match rng.below(64) {
+        0 => return out.push(0x1c + 0x20 * rng.below(8) as u8),
+        1 => return out.push(0xff),
+        2 => return out.extend_from_slice(&[0xf8, rng.below(32) as u8]),
+        3 => return out.extend_from_slice(&[0x5b, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff]),
+        4 => return out.extend_from_slice(&[0x9b, 0x7f, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff]),
+        _ => {}
+    }
+    let containers = if depth > 0 { 3 } else { 0 };
+    match rng.below(9 + containers) {
+        0 => {
+            let n = NUMS[rng.below(NUMS.len())];
+            cbor_head(rng, 0, n, out)
+        }
+        1 => {
+            let n = NUMS[rng.below(NUMS.len())];
+            cbor_head(rng, 1, n, out)
+        }
+        2 => {
+            let n = [0usize, 1, 2, 8, 40][rng.below(5)];
+            cbor_head(rng, 2, n as u64, out);
+            out.extend((0..n).map(|_| rng.next() as u8));
+        }
+        3 => {
+            let t = TEXTS[rng.below(TEXTS.len())];
+            if rng.below(4) == 0 {
+                // indefinite, in chunks of one byte: a split UTF-8 sequence now and then
+                out.push(0x7f);
+                for c in t {
+                    out.extend_from_slice(&[0x61, *c]);
+                }
+                out.push(0xff);
+            } else {
+                cbor_head(rng, 3, t.len() as u64, out);
+                out.extend_from_slice(t);
+            }
+        }
+        4 => match rng.below(6) {
+            5 => out.extend_from_slice(&[0xf8, 0x20 + rng.below(0xe0) as u8]),
+            k => out.push([0xf4, 0xf5, 0xf6, 0xf7, 0xe0][k]),
+        },
+        5 => {
+            out.push(0xf9);
+            out.extend_from_slice(&[[0x00, 0x01], [0x80, 0x00], [0x3e, 0x00], [0x7c, 0x00], [0x7e, 0x00], [0x7b, 0xff]][rng.below(6)]);
+        }
+        6 => {
+            out.push(0xfa);
+            out.extend_from_slice(&[[0x47, 0xc3, 0x50, 0x00], [0x7f, 0x80, 0x00, 0x01], [0x00, 0x00, 0x00, 0x01]][rng.below(3)]);
+        }
+        7 => {
+            out.push(0xfb);
+            out.extend((0..8).map(|_| rng.next() as u8));
+        }
+        8 => {
+            let n = NUMS[rng.below(4)] + 18 * rng.below(2) as u64;
+            cbor_head(rng, 6, n, out)
+        }
+        9 => {
+            let n = rng.below(6);
+            if rng.below(4) == 0 {
+                out.push(0x9f);
+            } else {
+                cbor_head(rng, 4, n as u64, out);
+            }
+            for _ in 0..n {
+                cbor_item(rng, depth - 1, out);
+            }
+            if out.last() != Some(&0xff) && rng.below(8) == 0 {
+                out.push(0xff);
+            }
+        }
+        10 => {
+            let n = rng.below(6);
+            let indefinite = rng.below(4) == 0;
+            if indefinite {
+                out.push(0xbf);
+            } else {
+                cbor_head(rng, 5, n as u64, out);
+            }
+            for i in 0..n {
+                // keys of every type; mostly small integers and text, so a
+                // pack's paths find them, and equal keys now and then
+                match rng.below(5) {
+                    0 | 1 => {
+                        let n = (i + rng.below(3)) as u64;
+                        cbor_head(rng, 0, n, out)
+                    }
+                    2 => out.extend_from_slice(&[0x20 + rng.below(2) as u8]),
+                    3 => out.extend_from_slice(&[[0x61, b'n'], [0x61, b'a'], [0x61, b'4']][rng.below(3)]),
+                    _ => cbor_item(rng, depth - 1, out),
+                }
+                cbor_item(rng, depth - 1, out);
+            }
+            if indefinite {
+                out.push(0xff);
+            }
+        }
+        _ => {
+            // a tag on an item
+            let t = [0, 1, 18, 24, 55799][rng.below(5)];
+            cbor_head(rng, 6, t, out);
+            cbor_item(rng, depth - 1, out);
+        }
+    }
+}
+
+/// A random top item: a map or an array, with items nested up to 6 levels.
+fn cbor_top(rng: &mut Rng) -> Vec<u8> {
+    let mut out = Vec::new();
+    let n = rng.below(10);
+    let array = rng.below(3) == 0;
+    cbor_head(rng, if array { 4 } else { 5 }, n as u64, &mut out);
+    for i in 0..n {
+        if !array {
+            match rng.below(3) {
+                0 => cbor_head(rng, 3, 1, &mut out),
+                _ => cbor_head(rng, 0, i as u64, &mut out),
+            }
+            if out.last().map_or(false, |b| *b == 0x61) {
+                out.push([b'a', b'n', b'x'][rng.below(3)]);
+            }
+        }
+        cbor_item(rng, 6, &mut out);
+    }
+    out
+}
+
 /// What one call did wrong, if anything.
 fn check(engine: &Engine, from: &str, to: &str, input: &str) -> Option<String> {
     match catch_unwind(AssertUnwindSafe(|| engine.convert(from, to, input))) {
@@ -432,6 +602,31 @@ fn hostile() -> Vec<String> {
     }
     out.push(tlv_framed(&[0x06, 0x0e, 0x2b, 0x34], 1, &[]));
     out.push(tlv_framed(&[0x06, 0x0e, 0x2b, 0x34], 1, &[0x01, 0x02, 0x00, 0x00]));
+    // CBOR: nesting far beyond the depth limit through arrays, maps and
+    // tags, closed and not; counts and lengths of 2^64-1; indefinite items
+    // that never end; a break where a map value stands
+    for n in [63usize, 64, 65, 66, 1_000, 50_000] {
+        out.push(format!("{}00", "81".repeat(n)));
+        out.push("81".repeat(n));
+        out.push("9f".repeat(n));
+        out.push(format!("{}{}", "9f".repeat(n), "ff".repeat(n)));
+        out.push(format!("{}00", "a100".repeat(n)));
+        out.push(format!("{}00", "c1".repeat(n)));
+        out.push(format!("{}a0", "d8".repeat(n)));
+        out.push(format!("d2{}00", "8100".repeat(n)));
+    }
+    for s in [
+        "9bffffffffffffffff", "bbffffffffffffffff", "5bffffffffffffffff", "7bffffffffffffffff", "9b7fffffffffffffff",
+        "bb7fffffffffffffff", "5b7fffffffffffffff00", "dbffffffffffffffffa0", "d2", "d2d2", "9f", "bf", "bf00", "bf00ff",
+        "5f", "5f41", "5f4100", "7f6100", "7f61c3ff", "7f62c3a9ff", "7f61c361a9ff", "5f6100ff", "7f5f", "7f7fff", "a1", "a100",
+        "a10000", "a2000000", "a200001800", "bf0000001800ff", "a2f93c00fb3ff0000000000000", "1c", "3d", "5e", "7f9f", "ff",
+        "f8", "f81f", "f820", "f9", "f97c", "fa7fc0", "fb", "1b", "1bffffffff", "c0", "df", "a0ff", "8000", "a2616161616161",
+        "a1d82400", "a1f600", "a1f700", "a10180", "a101a0", "a1098000", "a109a0", "a109f6", "a10982a0f6", "a109818101",
+        "a10783f6f6f6", "a10781f6", "a108f6", "a1088200f6", "a10082", "a1006001", "a100fa7f800000", "a100fb7ff8000000000001",
+        "d28440a0f640", "d2d28440a10101f640", "d18440a0f640", "d2a0", "848484848484", "84", "", "a0a0", "80",
+    ] {
+        out.push(s.to_string());
+    }
     out
 }
 
@@ -533,6 +728,17 @@ fn malformed_input_never_panics() {
             if started.elapsed() > UPER_TIME_LIMIT {
                 slow.push(format!("{}: {:?} for {} bytes", format, started.elapsed(), input.len() / 2));
             }
+        }
+    }
+
+    // (h) random CBOR items for every pack, bare and in tag 18
+    for format in &formats {
+        for _ in 0..RANDOM_PER_ALPHABET * iters {
+            let item = cbor_top(&mut rng);
+            run(format, format, &to_hex(&item), "cbor item");
+            let mut tagged = vec![0xd2];
+            tagged.extend_from_slice(&item);
+            run(format, format, &to_hex(&tagged), "cbor item in tag 18");
         }
     }
 

@@ -1,0 +1,12 @@
+{
+  "name": "unaddressable-key-hex-as-it-stood",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor",
+  "input": "a2000178013401",
+  "expect": "a20001613401",
+  "model": {
+    "@kind": "plain"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Ruling 16: the text key \"4\" written with a one-byte length head (780134) is residue #780134; on write the key is re-encoded as 6134. Derived without an engine by a standalone RFC 8949 codec."
+}

@@ -1,0 +1,13 @@
+{
+  "name": "empty-list-round-trip",
+  "from": "conformance-cbor-group",
+  "to": "conformance-cbor-group",
+  "input": "8280420aff",
+  "expect": "8280420aff",
+  "model": {
+    "probe.nums.#": "0",
+    "probe.s2": "0aff"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): packs/conformance-cbor-group/pack.def (group probe.nums [0], field probe.val . int; field probe.s2 [1] bytes); [0] is an empty array: a present list with no items. Ruling 23 and Writing step 4: a present list, even empty, writes its array, 80. Output 82 80 420aff. Derived without an engine by a standalone RFC 8949 codec."
+}

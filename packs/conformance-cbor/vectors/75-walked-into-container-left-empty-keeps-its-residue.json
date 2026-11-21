@@ -1,0 +1,16 @@
+{
+  "name": "walked-into-container-left-empty-keeps-its-residue",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor",
+  "input": "a2000107a201f609617a",
+  "expect": "a2000107a109617a",
+  "model": {
+    "@kind": "plain",
+    "@absent": [
+      "lat",
+      "lon"
+    ]
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Ruling 31: lat (7.1) and lon (7.2) walk into the map at 7 and write no value (lat holds null and is absent, ruling 6; lon is missing), so no line writes at 7 (ruling 21 does not apply) and 7 takes its residue 7.9 back: a2 00 01 07 a1 09 617a. The null at 7.1 is a mapped item and is not written back. Derived without an engine by a standalone RFC 8949 codec."
+}

@@ -1,0 +1,14 @@
+{
+  "name": "float-shortest-width-half-single-double",
+  "from": "conformance-cbor",
+  "to": "conformance-cbor",
+  "input": "ac00010163552d3102182a03fa3fc0000004420aff051a603aa4c0060207a201fb3e6000000000000002fb7e37e43c8800759c0882617861540981a2646e616d65626161616e03202664666c6167f5",
+  "expect": "ac00010163552d3102182a03f93e0004420aff051a603aa4c0060207a201fa3300000002fb7e37e43c8800759c0882617861540981a2616e03646e616d65626161202664666c6167f5",
+  "model": {
+    "probe.a": "1.5",
+    "lat": "0.0000000298023223876953125",
+    "lon": "1e300"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): float encode: 1.5 read from a single (fa3fc00000) -> f93e00; 2^-25 -> fa33000000 (below the smallest half subnormal, a normal single); 1e300 -> fb7e37e43c8800759c. Derived without an engine by a standalone RFC 8949 codec."
+}

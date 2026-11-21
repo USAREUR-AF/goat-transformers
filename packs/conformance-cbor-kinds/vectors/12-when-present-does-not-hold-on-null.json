@@ -1,0 +1,12 @@
+{
+  "name": "when-present-does-not-hold-on-null",
+  "from": "conformance-cbor-kinds",
+  "to": "conformance-cbor-kinds",
+  "input": "a207f6616b65747261636b",
+  "expect": "a607f6616b65747261636b61736231326174743138343436373434303733373039353531363136617626626f6bf5",
+  "model": {
+    "@kind": "text"
+  },
+  "source": "constructed",
+  "reference": "spec/engine-spec.md Version 0.28 (the cbor wire): Kinds: when 7 present does not hold on null; kind text is selected; ruling 6: 7 is mapped by no line of text, so its null is residue and is written back f6. Derived without an engine by a standalone RFC 8949 codec."
+}

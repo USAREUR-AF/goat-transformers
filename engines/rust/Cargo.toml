@@ -19,7 +19,7 @@ include = ["src/**", "Cargo.toml", "README.md"]
 # other wires out of the build. `bits` holds the sequential layout, six-bit
 # armor and `encoding uper`; `geojson` needs nothing of `json`.
 [features]
-default = ["xml", "geojson", "json", "bits", "protobuf", "text", "tlv"]
+default = ["xml", "geojson", "json", "bits", "protobuf", "text", "tlv", "cbor"]
 xml = []
 geojson = []
 json = []
@@ -27,6 +27,7 @@ bits = []
 protobuf = []
 text = []
 tlv = []
+cbor = []
 
 [[bin]]
 name = "goat-xf"
@@ -41,3 +42,9 @@ path = "src/lib.rs"
 [[example]]
 name = "bench"
 required-features = ["xml", "geojson", "json", "bits", "protobuf", "text", "tlv"]
+
+# `cargo test` (the CI rust job) builds the test profile. Optimisation level 1
+# keeps debug assertions and overflow checks on and runs the malformed-input
+# test over every wire well inside the job's time limit.
+[profile.test]
+opt-level = 1
