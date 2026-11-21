@@ -1,0 +1,7 @@
+{
+  "name": "SML (Smart Message Language)",
+  "domain": "iot",
+  "prefixes": [
+    "sml-"
+  ]
+}

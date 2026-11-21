@@ -1,0 +1,27 @@
+{
+  "name": "sml-message-get-list-response",
+  "from": "sml-message",
+  "to": "sml-message",
+  "input": "760300026200620072650000070177010b0a014841470001020304070100000000ff017277070100010800ff650001010401621e52ff55075bcd150177070100100700ff0101621b520053fa2401010163beef00",
+  "expect": "760300026200620072650000070177010b0a014841470001020304070100000000ff017277070100010800ff650001010401621e52ff55075bcd150177070100100700ff0101621b520053fa2401010163beef00",
+  "model": {
+    "sml.body_tag": "1793",
+    "sml.entries.#": "2",
+    "sml.crc16": "48879",
+    "sml.entries[0].sml.entry_status": "65796",
+    "sml.entries[0].sml.entry_unit": "30",
+    "sml.entries[0].sml.entry_scaler": "-1",
+    "sml.entries[0].sml.entry_value_int": "123456789",
+    "sml.entries[1].sml.entry_unit": "27",
+    "sml.entries[1].sml.entry_value_int": "-1500",
+    "sml.entries[0].sml.entry_obj_name.#": "6",
+    "sml.entries[0].sml.entry_obj_name[0].sml.entry_obj_name_byte": "1",
+    "sml.entries[0].sml.entry_obj_name[1].sml.entry_obj_name_byte": "0",
+    "sml.entries[0].sml.entry_obj_name[2].sml.entry_obj_name_byte": "1",
+    "sml.entries[0].sml.entry_obj_name[3].sml.entry_obj_name_byte": "8",
+    "sml.entries[0].sml.entry_obj_name[4].sml.entry_obj_name_byte": "0",
+    "sml.entries[0].sml.entry_obj_name[5].sml.entry_obj_name_byte": "255"
+  },
+  "source": "constructed",
+  "reference": "BSI TR-03109-1 Annex IV part b (SML 1.04) sections 5 and 6; bytes by tools/gen/sml-vectors.py; GetList.Res with two entries: energy 1.8.0 in Wh with scaler -1, power 16.7.0 in W as a two-byte integer"
+}

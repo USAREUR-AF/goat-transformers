@@ -1,0 +1,13 @@
+{
+  "name": "dsmr-p1-line-timestamp",
+  "from": "dsmr-p1-line",
+  "to": "dsmr-p1-line",
+  "input": "0-0:1.0.0(261121093015W)",
+  "expect": "0-0:1.0.0(261121093015W)",
+  "model": {
+    "@kind": "timestamp",
+    "dsmr.timestamp": "261121093015W"
+  },
+  "source": "constructed",
+  "reference": "DSMR 5.0.2 P1 Companion Standard sections 6.4 and 6.12; lines written by tools/gen/dsmr-vectors.py; TST, kept as text: local time with a DST letter"
+}

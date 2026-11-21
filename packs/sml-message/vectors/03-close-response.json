@@ -1,0 +1,13 @@
+{
+  "name": "sml-message-close-response",
+  "from": "sml-message",
+  "to": "sml-message",
+  "input": "7603000362006200726500000201710163123400",
+  "expect": "7603000362006200726500000201710163123400",
+  "model": {
+    "sml.body_tag": "513",
+    "sml.close_res_global_signature.#": "0"
+  },
+  "source": "constructed",
+  "reference": "BSI TR-03109-1 Annex IV part b (SML 1.04) sections 5 and 6; bytes by tools/gen/sml-vectors.py; PublicClose.Res without a signature"
+}

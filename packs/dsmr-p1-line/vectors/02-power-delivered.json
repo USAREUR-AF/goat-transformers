@@ -1,0 +1,13 @@
+{
+  "name": "dsmr-p1-line-power-delivered",
+  "from": "dsmr-p1-line",
+  "to": "dsmr-p1-line",
+  "input": "1-0:1.7.0(02.345*kW)",
+  "expect": "1-0:1.7.0(02.345*kW)",
+  "model": {
+    "@kind": "power_delivered_kw",
+    "dsmr.power_delivered_kw": "2.345"
+  },
+  "source": "constructed",
+  "reference": "DSMR 5.0.2 P1 Companion Standard sections 6.4 and 6.12; lines written by tools/gen/dsmr-vectors.py; F5(3,3) kW"
+}

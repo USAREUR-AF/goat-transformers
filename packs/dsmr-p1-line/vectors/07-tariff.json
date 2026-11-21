@@ -1,0 +1,13 @@
+{
+  "name": "dsmr-p1-line-tariff",
+  "from": "dsmr-p1-line",
+  "to": "dsmr-p1-line",
+  "input": "0-0:96.14.0(0001)",
+  "expect": "0-0:96.14.0(0001)",
+  "model": {
+    "@kind": "tariff_indicator",
+    "dsmr.tariff_indicator": "0001"
+  },
+  "source": "constructed",
+  "reference": "DSMR 5.0.2 P1 Companion Standard sections 6.4 and 6.12; lines written by tools/gen/dsmr-vectors.py"
+}

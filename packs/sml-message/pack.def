@@ -1,0 +1,1155 @@
+# One SML message (Smart Message Language 1.04, BSI TR-03109-1 Annex IV part b): PublicOpen, PublicClose
+# and GetList.Res bodies. Public.
+format        sml-message
+version       0.1.0
+distribution  public
+source        "BSI TR-03109-1 Anlage IV Teil b, SML - Smart Message Language, version 1.0 of 18.03.2013 (SML 1.04), Bundesamt fuer Sicherheit in der Informationstechnik, bsi.bund.de; (c) BSI 2013, no licence stated; layouts restated"
+uses          sml
+wire          bits
+layout        sequential
+bit_order     msb
+
+field  sml.message_tl_more  1  uint
+field  sml.message_tl_type  3  uint
+field  sml.message_count  4  uint
+field  sml.transaction_id_tl_more  1  uint
+field  sml.transaction_id_tl_type  3  uint
+switch  sml.transaction_id_tl_type
+  case  0
+    count  n1  4  plus 1                # the length counts the TL byte
+    group  sml.transaction_id  count @n1
+      field  sml.transaction_id_byte  8  uint
+    end
+end
+field  sml.group_no_tl_more  1  uint
+field  sml.group_no_tl_type  3  uint
+field  sml.group_no_tl_len  4  uint
+switch  sml.group_no_tl_type
+  case  0                             # an absent optional element
+  case  6
+    switch  sml.group_no_tl_len
+      case  2
+        field  sml.group_no  8  uint
+      case  3
+        field  sml.group_no  16  uint
+      case  4
+        field  sml.group_no  24  uint
+      case  5
+        field  sml.group_no  32  uint
+      case  6
+        field  sml.group_no  40  uint
+      case  7
+        field  sml.group_no  48  uint
+      case  8
+        field  sml.group_no  56  uint
+      case  9
+        field  sml.group_no  64  uint
+    end
+end
+field  sml.abort_on_error_tl_more  1  uint
+field  sml.abort_on_error_tl_type  3  uint
+field  sml.abort_on_error_tl_len  4  uint
+switch  sml.abort_on_error_tl_type
+  case  0                             # an absent optional element
+  case  6
+    switch  sml.abort_on_error_tl_len
+      case  2
+        field  sml.abort_on_error  8  uint
+      case  3
+        field  sml.abort_on_error  16  uint
+      case  4
+        field  sml.abort_on_error  24  uint
+      case  5
+        field  sml.abort_on_error  32  uint
+      case  6
+        field  sml.abort_on_error  40  uint
+      case  7
+        field  sml.abort_on_error  48  uint
+      case  8
+        field  sml.abort_on_error  56  uint
+      case  9
+        field  sml.abort_on_error  64  uint
+    end
+end
+field  sml.body_tl_more  1  uint
+field  sml.body_tl_type  3  uint
+field  sml.body_count  4  uint
+field  sml.body_tag_tl_more  1  uint
+field  sml.body_tag_tl_type  3  uint
+field  sml.body_tag_tl_len  4  uint
+switch  sml.body_tag_tl_type
+  case  0                             # an absent optional element
+  case  6
+    switch  sml.body_tag_tl_len
+      case  2
+        field  sml.body_tag  8  uint
+      case  3
+        field  sml.body_tag  16  uint
+      case  4
+        field  sml.body_tag  24  uint
+      case  5
+        field  sml.body_tag  32  uint
+      case  6
+        field  sml.body_tag  40  uint
+      case  7
+        field  sml.body_tag  48  uint
+      case  8
+        field  sml.body_tag  56  uint
+      case  9
+        field  sml.body_tag  64  uint
+    end
+end
+switch  sml.body_tag
+  case  256                         # open_req
+    field  sml.open_req_tl_more  1  uint
+    field  sml.open_req_tl_type  3  uint
+    field  sml.open_req_count  4  uint
+    field  sml.open_req_codepage_tl_more  1  uint
+    field  sml.open_req_codepage_tl_type  3  uint
+    switch  sml.open_req_codepage_tl_type
+      case  0
+        count  n2  4  plus 1                # the length counts the TL byte
+        group  sml.open_req_codepage  count @n2
+          field  sml.open_req_codepage_byte  8  uint
+        end
+    end
+    field  sml.open_req_client_id_tl_more  1  uint
+    field  sml.open_req_client_id_tl_type  3  uint
+    switch  sml.open_req_client_id_tl_type
+      case  0
+        count  n3  4  plus 1                # the length counts the TL byte
+        group  sml.open_req_client_id  count @n3
+          field  sml.open_req_client_id_byte  8  uint
+        end
+    end
+    field  sml.open_req_req_file_id_tl_more  1  uint
+    field  sml.open_req_req_file_id_tl_type  3  uint
+    switch  sml.open_req_req_file_id_tl_type
+      case  0
+        count  n4  4  plus 1                # the length counts the TL byte
+        group  sml.open_req_req_file_id  count @n4
+          field  sml.open_req_req_file_id_byte  8  uint
+        end
+    end
+    field  sml.open_req_server_id_tl_more  1  uint
+    field  sml.open_req_server_id_tl_type  3  uint
+    switch  sml.open_req_server_id_tl_type
+      case  0
+        count  n5  4  plus 1                # the length counts the TL byte
+        group  sml.open_req_server_id  count @n5
+          field  sml.open_req_server_id_byte  8  uint
+        end
+    end
+    field  sml.open_req_username_tl_more  1  uint
+    field  sml.open_req_username_tl_type  3  uint
+    switch  sml.open_req_username_tl_type
+      case  0
+        count  n6  4  plus 1                # the length counts the TL byte
+        group  sml.open_req_username  count @n6
+          field  sml.open_req_username_byte  8  uint
+        end
+    end
+    field  sml.open_req_password_tl_more  1  uint
+    field  sml.open_req_password_tl_type  3  uint
+    switch  sml.open_req_password_tl_type
+      case  0
+        count  n7  4  plus 1                # the length counts the TL byte
+        group  sml.open_req_password  count @n7
+          field  sml.open_req_password_byte  8  uint
+        end
+    end
+    field  sml.open_req_sml_version_tl_more  1  uint
+    field  sml.open_req_sml_version_tl_type  3  uint
+    field  sml.open_req_sml_version_tl_len  4  uint
+    switch  sml.open_req_sml_version_tl_type
+      case  0                             # an absent optional element
+      case  6
+        switch  sml.open_req_sml_version_tl_len
+          case  2
+            field  sml.open_req_sml_version  8  uint
+          case  3
+            field  sml.open_req_sml_version  16  uint
+          case  4
+            field  sml.open_req_sml_version  24  uint
+          case  5
+            field  sml.open_req_sml_version  32  uint
+          case  6
+            field  sml.open_req_sml_version  40  uint
+          case  7
+            field  sml.open_req_sml_version  48  uint
+          case  8
+            field  sml.open_req_sml_version  56  uint
+          case  9
+            field  sml.open_req_sml_version  64  uint
+        end
+    end
+  case  257                         # open_res
+    field  sml.open_res_tl_more  1  uint
+    field  sml.open_res_tl_type  3  uint
+    field  sml.open_res_count  4  uint
+    field  sml.open_res_codepage_tl_more  1  uint
+    field  sml.open_res_codepage_tl_type  3  uint
+    switch  sml.open_res_codepage_tl_type
+      case  0
+        count  n8  4  plus 1                # the length counts the TL byte
+        group  sml.open_res_codepage  count @n8
+          field  sml.open_res_codepage_byte  8  uint
+        end
+    end
+    field  sml.open_res_client_id_tl_more  1  uint
+    field  sml.open_res_client_id_tl_type  3  uint
+    switch  sml.open_res_client_id_tl_type
+      case  0
+        count  n9  4  plus 1                # the length counts the TL byte
+        group  sml.open_res_client_id  count @n9
+          field  sml.open_res_client_id_byte  8  uint
+        end
+    end
+    field  sml.open_res_req_file_id_tl_more  1  uint
+    field  sml.open_res_req_file_id_tl_type  3  uint
+    switch  sml.open_res_req_file_id_tl_type
+      case  0
+        count  n10  4  plus 1                # the length counts the TL byte
+        group  sml.open_res_req_file_id  count @n10
+          field  sml.open_res_req_file_id_byte  8  uint
+        end
+    end
+    field  sml.open_res_server_id_tl_more  1  uint
+    field  sml.open_res_server_id_tl_type  3  uint
+    switch  sml.open_res_server_id_tl_type
+      case  0
+        count  n11  4  plus 1                # the length counts the TL byte
+        group  sml.open_res_server_id  count @n11
+          field  sml.open_res_server_id_byte  8  uint
+        end
+    end
+    field  sml.open_res_ref_time_tl_more  1  uint
+    field  sml.open_res_ref_time_tl_type  3  uint
+    field  sml.open_res_ref_time_tl_len  4  uint
+    switch  sml.open_res_ref_time_tl_type
+      case  0
+      case  7
+        field  sml.open_res_ref_time_choice_tl_more  1  uint
+        field  sml.open_res_ref_time_choice_tl_type  3  uint
+        field  sml.open_res_ref_time_choice_tl_len  4  uint
+        switch  sml.open_res_ref_time_choice_tl_type
+          case  0                             # an absent optional element
+          case  6
+            switch  sml.open_res_ref_time_choice_tl_len
+              case  2
+                field  sml.open_res_ref_time_choice  8  uint
+              case  3
+                field  sml.open_res_ref_time_choice  16  uint
+              case  4
+                field  sml.open_res_ref_time_choice  24  uint
+              case  5
+                field  sml.open_res_ref_time_choice  32  uint
+              case  6
+                field  sml.open_res_ref_time_choice  40  uint
+              case  7
+                field  sml.open_res_ref_time_choice  48  uint
+              case  8
+                field  sml.open_res_ref_time_choice  56  uint
+              case  9
+                field  sml.open_res_ref_time_choice  64  uint
+            end
+        end
+        switch  sml.open_res_ref_time_choice
+          case  1
+            field  sml.open_res_ref_time_sec_index_tl_more  1  uint
+            field  sml.open_res_ref_time_sec_index_tl_type  3  uint
+            field  sml.open_res_ref_time_sec_index_tl_len  4  uint
+            switch  sml.open_res_ref_time_sec_index_tl_type
+              case  0                             # an absent optional element
+              case  6
+                switch  sml.open_res_ref_time_sec_index_tl_len
+                  case  2
+                    field  sml.open_res_ref_time_sec_index  8  uint
+                  case  3
+                    field  sml.open_res_ref_time_sec_index  16  uint
+                  case  4
+                    field  sml.open_res_ref_time_sec_index  24  uint
+                  case  5
+                    field  sml.open_res_ref_time_sec_index  32  uint
+                  case  6
+                    field  sml.open_res_ref_time_sec_index  40  uint
+                  case  7
+                    field  sml.open_res_ref_time_sec_index  48  uint
+                  case  8
+                    field  sml.open_res_ref_time_sec_index  56  uint
+                  case  9
+                    field  sml.open_res_ref_time_sec_index  64  uint
+                end
+            end
+          case  2
+            field  sml.open_res_ref_time_timestamp_tl_more  1  uint
+            field  sml.open_res_ref_time_timestamp_tl_type  3  uint
+            field  sml.open_res_ref_time_timestamp_tl_len  4  uint
+            switch  sml.open_res_ref_time_timestamp_tl_type
+              case  0                             # an absent optional element
+              case  6
+                switch  sml.open_res_ref_time_timestamp_tl_len
+                  case  2
+                    field  time_ms  8  uiscale:1000
+                  case  3
+                    field  time_ms  16  uiscale:1000
+                  case  4
+                    field  time_ms  24  uiscale:1000
+                  case  5
+                    field  time_ms  32  uiscale:1000
+                  case  6
+                    field  time_ms  40  uiscale:1000
+                  case  7
+                    field  time_ms  48  uiscale:1000
+                  case  8
+                    field  time_ms  56  uiscale:1000
+                  case  9
+                    field  time_ms  64  uiscale:1000
+                end
+            end
+          case  3
+            field  sml.open_res_ref_time_local_tl_more  1  uint
+            field  sml.open_res_ref_time_local_tl_type  3  uint
+            field  sml.open_res_ref_time_local_count  4  uint
+            field  sml.open_res_ref_time_local_timestamp_tl_more  1  uint
+            field  sml.open_res_ref_time_local_timestamp_tl_type  3  uint
+            field  sml.open_res_ref_time_local_timestamp_tl_len  4  uint
+            switch  sml.open_res_ref_time_local_timestamp_tl_type
+              case  0                             # an absent optional element
+              case  6
+                switch  sml.open_res_ref_time_local_timestamp_tl_len
+                  case  2
+                    field  sml.open_res_ref_time_local_timestamp  8  uint
+                  case  3
+                    field  sml.open_res_ref_time_local_timestamp  16  uint
+                  case  4
+                    field  sml.open_res_ref_time_local_timestamp  24  uint
+                  case  5
+                    field  sml.open_res_ref_time_local_timestamp  32  uint
+                  case  6
+                    field  sml.open_res_ref_time_local_timestamp  40  uint
+                  case  7
+                    field  sml.open_res_ref_time_local_timestamp  48  uint
+                  case  8
+                    field  sml.open_res_ref_time_local_timestamp  56  uint
+                  case  9
+                    field  sml.open_res_ref_time_local_timestamp  64  uint
+                end
+            end
+            field  sml.open_res_ref_time_local_offset_min_tl_more  1  uint
+            field  sml.open_res_ref_time_local_offset_min_tl_type  3  uint
+            field  sml.open_res_ref_time_local_offset_min_tl_len  4  uint
+            switch  sml.open_res_ref_time_local_offset_min_tl_type
+              case  0                             # an absent optional element
+              case  5
+                switch  sml.open_res_ref_time_local_offset_min_tl_len
+                  case  2
+                    field  sml.open_res_ref_time_local_offset_min  8  twos
+                  case  3
+                    field  sml.open_res_ref_time_local_offset_min  16  twos
+                  case  4
+                    field  sml.open_res_ref_time_local_offset_min  24  twos
+                  case  5
+                    field  sml.open_res_ref_time_local_offset_min  32  twos
+                  case  6
+                    field  sml.open_res_ref_time_local_offset_min  40  twos
+                  case  7
+                    field  sml.open_res_ref_time_local_offset_min  48  twos
+                  case  8
+                    field  sml.open_res_ref_time_local_offset_min  56  twos
+                  case  9
+                    field  sml.open_res_ref_time_local_offset_min  64  twos
+                end
+            end
+            field  sml.open_res_ref_time_season_offset_min_tl_more  1  uint
+            field  sml.open_res_ref_time_season_offset_min_tl_type  3  uint
+            field  sml.open_res_ref_time_season_offset_min_tl_len  4  uint
+            switch  sml.open_res_ref_time_season_offset_min_tl_type
+              case  0                             # an absent optional element
+              case  5
+                switch  sml.open_res_ref_time_season_offset_min_tl_len
+                  case  2
+                    field  sml.open_res_ref_time_season_offset_min  8  twos
+                  case  3
+                    field  sml.open_res_ref_time_season_offset_min  16  twos
+                  case  4
+                    field  sml.open_res_ref_time_season_offset_min  24  twos
+                  case  5
+                    field  sml.open_res_ref_time_season_offset_min  32  twos
+                  case  6
+                    field  sml.open_res_ref_time_season_offset_min  40  twos
+                  case  7
+                    field  sml.open_res_ref_time_season_offset_min  48  twos
+                  case  8
+                    field  sml.open_res_ref_time_season_offset_min  56  twos
+                  case  9
+                    field  sml.open_res_ref_time_season_offset_min  64  twos
+                end
+            end
+        end
+    end
+    field  sml.open_res_sml_version_tl_more  1  uint
+    field  sml.open_res_sml_version_tl_type  3  uint
+    field  sml.open_res_sml_version_tl_len  4  uint
+    switch  sml.open_res_sml_version_tl_type
+      case  0                             # an absent optional element
+      case  6
+        switch  sml.open_res_sml_version_tl_len
+          case  2
+            field  sml.open_res_sml_version  8  uint
+          case  3
+            field  sml.open_res_sml_version  16  uint
+          case  4
+            field  sml.open_res_sml_version  24  uint
+          case  5
+            field  sml.open_res_sml_version  32  uint
+          case  6
+            field  sml.open_res_sml_version  40  uint
+          case  7
+            field  sml.open_res_sml_version  48  uint
+          case  8
+            field  sml.open_res_sml_version  56  uint
+          case  9
+            field  sml.open_res_sml_version  64  uint
+        end
+    end
+  case  512                         # close_req
+    field  sml.close_req_tl_more  1  uint
+    field  sml.close_req_tl_type  3  uint
+    field  sml.close_req_count  4  uint
+    field  sml.close_req_global_signature_tl_more  1  uint
+    field  sml.close_req_global_signature_tl_type  3  uint
+    switch  sml.close_req_global_signature_tl_type
+      case  0
+        count  n12  4  plus 1                # the length counts the TL byte
+        group  sml.close_req_global_signature  count @n12
+          field  sml.close_req_global_signature_byte  8  uint
+        end
+    end
+  case  513                         # close_res
+    field  sml.close_res_tl_more  1  uint
+    field  sml.close_res_tl_type  3  uint
+    field  sml.close_res_count  4  uint
+    field  sml.close_res_global_signature_tl_more  1  uint
+    field  sml.close_res_global_signature_tl_type  3  uint
+    switch  sml.close_res_global_signature_tl_type
+      case  0
+        count  n13  4  plus 1                # the length counts the TL byte
+        group  sml.close_res_global_signature  count @n13
+          field  sml.close_res_global_signature_byte  8  uint
+        end
+    end
+  case  1793                         # getlist_res
+    field  sml.getlist_res_tl_more  1  uint
+    field  sml.getlist_res_tl_type  3  uint
+    field  sml.getlist_res_count  4  uint
+    field  sml.getlist_res_client_id_tl_more  1  uint
+    field  sml.getlist_res_client_id_tl_type  3  uint
+    switch  sml.getlist_res_client_id_tl_type
+      case  0
+        count  n14  4  plus 1                # the length counts the TL byte
+        group  sml.getlist_res_client_id  count @n14
+          field  sml.getlist_res_client_id_byte  8  uint
+        end
+    end
+    field  sml.getlist_res_server_id_tl_more  1  uint
+    field  sml.getlist_res_server_id_tl_type  3  uint
+    switch  sml.getlist_res_server_id_tl_type
+      case  0
+        count  n15  4  plus 1                # the length counts the TL byte
+        group  sml.getlist_res_server_id  count @n15
+          field  sml.getlist_res_server_id_byte  8  uint
+        end
+    end
+    field  sml.getlist_res_list_name_tl_more  1  uint
+    field  sml.getlist_res_list_name_tl_type  3  uint
+    switch  sml.getlist_res_list_name_tl_type
+      case  0
+        count  n16  4  plus 1                # the length counts the TL byte
+        group  sml.getlist_res_list_name  count @n16
+          field  sml.getlist_res_list_name_byte  8  uint
+        end
+    end
+    field  sml.getlist_res_act_sensor_time_tl_more  1  uint
+    field  sml.getlist_res_act_sensor_time_tl_type  3  uint
+    field  sml.getlist_res_act_sensor_time_tl_len  4  uint
+    switch  sml.getlist_res_act_sensor_time_tl_type
+      case  0
+      case  7
+        field  sml.getlist_res_act_sensor_time_choice_tl_more  1  uint
+        field  sml.getlist_res_act_sensor_time_choice_tl_type  3  uint
+        field  sml.getlist_res_act_sensor_time_choice_tl_len  4  uint
+        switch  sml.getlist_res_act_sensor_time_choice_tl_type
+          case  0                             # an absent optional element
+          case  6
+            switch  sml.getlist_res_act_sensor_time_choice_tl_len
+              case  2
+                field  sml.getlist_res_act_sensor_time_choice  8  uint
+              case  3
+                field  sml.getlist_res_act_sensor_time_choice  16  uint
+              case  4
+                field  sml.getlist_res_act_sensor_time_choice  24  uint
+              case  5
+                field  sml.getlist_res_act_sensor_time_choice  32  uint
+              case  6
+                field  sml.getlist_res_act_sensor_time_choice  40  uint
+              case  7
+                field  sml.getlist_res_act_sensor_time_choice  48  uint
+              case  8
+                field  sml.getlist_res_act_sensor_time_choice  56  uint
+              case  9
+                field  sml.getlist_res_act_sensor_time_choice  64  uint
+            end
+        end
+        switch  sml.getlist_res_act_sensor_time_choice
+          case  1
+            field  sml.getlist_res_act_sensor_time_sec_index_tl_more  1  uint
+            field  sml.getlist_res_act_sensor_time_sec_index_tl_type  3  uint
+            field  sml.getlist_res_act_sensor_time_sec_index_tl_len  4  uint
+            switch  sml.getlist_res_act_sensor_time_sec_index_tl_type
+              case  0                             # an absent optional element
+              case  6
+                switch  sml.getlist_res_act_sensor_time_sec_index_tl_len
+                  case  2
+                    field  sml.getlist_res_act_sensor_time_sec_index  8  uint
+                  case  3
+                    field  sml.getlist_res_act_sensor_time_sec_index  16  uint
+                  case  4
+                    field  sml.getlist_res_act_sensor_time_sec_index  24  uint
+                  case  5
+                    field  sml.getlist_res_act_sensor_time_sec_index  32  uint
+                  case  6
+                    field  sml.getlist_res_act_sensor_time_sec_index  40  uint
+                  case  7
+                    field  sml.getlist_res_act_sensor_time_sec_index  48  uint
+                  case  8
+                    field  sml.getlist_res_act_sensor_time_sec_index  56  uint
+                  case  9
+                    field  sml.getlist_res_act_sensor_time_sec_index  64  uint
+                end
+            end
+          case  2
+            field  sml.getlist_res_act_sensor_time_timestamp_tl_more  1  uint
+            field  sml.getlist_res_act_sensor_time_timestamp_tl_type  3  uint
+            field  sml.getlist_res_act_sensor_time_timestamp_tl_len  4  uint
+            switch  sml.getlist_res_act_sensor_time_timestamp_tl_type
+              case  0                             # an absent optional element
+              case  6
+                switch  sml.getlist_res_act_sensor_time_timestamp_tl_len
+                  case  2
+                    field  time_ms  8  uiscale:1000
+                  case  3
+                    field  time_ms  16  uiscale:1000
+                  case  4
+                    field  time_ms  24  uiscale:1000
+                  case  5
+                    field  time_ms  32  uiscale:1000
+                  case  6
+                    field  time_ms  40  uiscale:1000
+                  case  7
+                    field  time_ms  48  uiscale:1000
+                  case  8
+                    field  time_ms  56  uiscale:1000
+                  case  9
+                    field  time_ms  64  uiscale:1000
+                end
+            end
+          case  3
+            field  sml.getlist_res_act_sensor_time_local_tl_more  1  uint
+            field  sml.getlist_res_act_sensor_time_local_tl_type  3  uint
+            field  sml.getlist_res_act_sensor_time_local_count  4  uint
+            field  sml.getlist_res_act_sensor_time_local_timestamp_tl_more  1  uint
+            field  sml.getlist_res_act_sensor_time_local_timestamp_tl_type  3  uint
+            field  sml.getlist_res_act_sensor_time_local_timestamp_tl_len  4  uint
+            switch  sml.getlist_res_act_sensor_time_local_timestamp_tl_type
+              case  0                             # an absent optional element
+              case  6
+                switch  sml.getlist_res_act_sensor_time_local_timestamp_tl_len
+                  case  2
+                    field  sml.getlist_res_act_sensor_time_local_timestamp  8  uint
+                  case  3
+                    field  sml.getlist_res_act_sensor_time_local_timestamp  16  uint
+                  case  4
+                    field  sml.getlist_res_act_sensor_time_local_timestamp  24  uint
+                  case  5
+                    field  sml.getlist_res_act_sensor_time_local_timestamp  32  uint
+                  case  6
+                    field  sml.getlist_res_act_sensor_time_local_timestamp  40  uint
+                  case  7
+                    field  sml.getlist_res_act_sensor_time_local_timestamp  48  uint
+                  case  8
+                    field  sml.getlist_res_act_sensor_time_local_timestamp  56  uint
+                  case  9
+                    field  sml.getlist_res_act_sensor_time_local_timestamp  64  uint
+                end
+            end
+            field  sml.getlist_res_act_sensor_time_local_offset_min_tl_more  1  uint
+            field  sml.getlist_res_act_sensor_time_local_offset_min_tl_type  3  uint
+            field  sml.getlist_res_act_sensor_time_local_offset_min_tl_len  4  uint
+            switch  sml.getlist_res_act_sensor_time_local_offset_min_tl_type
+              case  0                             # an absent optional element
+              case  5
+                switch  sml.getlist_res_act_sensor_time_local_offset_min_tl_len
+                  case  2
+                    field  sml.getlist_res_act_sensor_time_local_offset_min  8  twos
+                  case  3
+                    field  sml.getlist_res_act_sensor_time_local_offset_min  16  twos
+                  case  4
+                    field  sml.getlist_res_act_sensor_time_local_offset_min  24  twos
+                  case  5
+                    field  sml.getlist_res_act_sensor_time_local_offset_min  32  twos
+                  case  6
+                    field  sml.getlist_res_act_sensor_time_local_offset_min  40  twos
+                  case  7
+                    field  sml.getlist_res_act_sensor_time_local_offset_min  48  twos
+                  case  8
+                    field  sml.getlist_res_act_sensor_time_local_offset_min  56  twos
+                  case  9
+                    field  sml.getlist_res_act_sensor_time_local_offset_min  64  twos
+                end
+            end
+            field  sml.getlist_res_act_sensor_time_season_offset_min_tl_more  1  uint
+            field  sml.getlist_res_act_sensor_time_season_offset_min_tl_type  3  uint
+            field  sml.getlist_res_act_sensor_time_season_offset_min_tl_len  4  uint
+            switch  sml.getlist_res_act_sensor_time_season_offset_min_tl_type
+              case  0                             # an absent optional element
+              case  5
+                switch  sml.getlist_res_act_sensor_time_season_offset_min_tl_len
+                  case  2
+                    field  sml.getlist_res_act_sensor_time_season_offset_min  8  twos
+                  case  3
+                    field  sml.getlist_res_act_sensor_time_season_offset_min  16  twos
+                  case  4
+                    field  sml.getlist_res_act_sensor_time_season_offset_min  24  twos
+                  case  5
+                    field  sml.getlist_res_act_sensor_time_season_offset_min  32  twos
+                  case  6
+                    field  sml.getlist_res_act_sensor_time_season_offset_min  40  twos
+                  case  7
+                    field  sml.getlist_res_act_sensor_time_season_offset_min  48  twos
+                  case  8
+                    field  sml.getlist_res_act_sensor_time_season_offset_min  56  twos
+                  case  9
+                    field  sml.getlist_res_act_sensor_time_season_offset_min  64  twos
+                end
+            end
+        end
+    end
+    field  sml.getlist_res_val_list_tl_more  1  uint
+    field  sml.getlist_res_val_list_tl_type  3  uint
+    group  sml.entries  count 4                 # the TL length nibble: the number of entries
+      field  sml.entry_tl_more  1  uint
+      field  sml.entry_tl_type  3  uint
+      field  sml.entry_count  4  uint
+      field  sml.entry_obj_name_tl_more  1  uint
+      field  sml.entry_obj_name_tl_type  3  uint
+      switch  sml.entry_obj_name_tl_type
+        case  0
+          count  n17  4  plus 1                # the length counts the TL byte
+          group  sml.entry_obj_name  count @n17
+            field  sml.entry_obj_name_byte  8  uint
+          end
+      end
+      field  sml.entry_status_tl_more  1  uint
+      field  sml.entry_status_tl_type  3  uint
+      field  sml.entry_status_tl_len  4  uint
+      switch  sml.entry_status_tl_type
+        case  0                             # an absent optional element
+        case  6
+          switch  sml.entry_status_tl_len
+            case  2
+              field  sml.entry_status  8  uint
+            case  3
+              field  sml.entry_status  16  uint
+            case  4
+              field  sml.entry_status  24  uint
+            case  5
+              field  sml.entry_status  32  uint
+            case  6
+              field  sml.entry_status  40  uint
+            case  7
+              field  sml.entry_status  48  uint
+            case  8
+              field  sml.entry_status  56  uint
+            case  9
+              field  sml.entry_status  64  uint
+          end
+      end
+      field  sml.entry_val_time_tl_more  1  uint
+      field  sml.entry_val_time_tl_type  3  uint
+      field  sml.entry_val_time_tl_len  4  uint
+      switch  sml.entry_val_time_tl_type
+        case  0
+        case  7
+          field  sml.entry_val_time_choice_tl_more  1  uint
+          field  sml.entry_val_time_choice_tl_type  3  uint
+          field  sml.entry_val_time_choice_tl_len  4  uint
+          switch  sml.entry_val_time_choice_tl_type
+            case  0                             # an absent optional element
+            case  6
+              switch  sml.entry_val_time_choice_tl_len
+                case  2
+                  field  sml.entry_val_time_choice  8  uint
+                case  3
+                  field  sml.entry_val_time_choice  16  uint
+                case  4
+                  field  sml.entry_val_time_choice  24  uint
+                case  5
+                  field  sml.entry_val_time_choice  32  uint
+                case  6
+                  field  sml.entry_val_time_choice  40  uint
+                case  7
+                  field  sml.entry_val_time_choice  48  uint
+                case  8
+                  field  sml.entry_val_time_choice  56  uint
+                case  9
+                  field  sml.entry_val_time_choice  64  uint
+              end
+          end
+          switch  sml.entry_val_time_choice
+            case  1
+              field  sml.entry_val_time_sec_index_tl_more  1  uint
+              field  sml.entry_val_time_sec_index_tl_type  3  uint
+              field  sml.entry_val_time_sec_index_tl_len  4  uint
+              switch  sml.entry_val_time_sec_index_tl_type
+                case  0                             # an absent optional element
+                case  6
+                  switch  sml.entry_val_time_sec_index_tl_len
+                    case  2
+                      field  sml.entry_val_time_sec_index  8  uint
+                    case  3
+                      field  sml.entry_val_time_sec_index  16  uint
+                    case  4
+                      field  sml.entry_val_time_sec_index  24  uint
+                    case  5
+                      field  sml.entry_val_time_sec_index  32  uint
+                    case  6
+                      field  sml.entry_val_time_sec_index  40  uint
+                    case  7
+                      field  sml.entry_val_time_sec_index  48  uint
+                    case  8
+                      field  sml.entry_val_time_sec_index  56  uint
+                    case  9
+                      field  sml.entry_val_time_sec_index  64  uint
+                  end
+              end
+            case  2
+              field  sml.entry_val_time_timestamp_tl_more  1  uint
+              field  sml.entry_val_time_timestamp_tl_type  3  uint
+              field  sml.entry_val_time_timestamp_tl_len  4  uint
+              switch  sml.entry_val_time_timestamp_tl_type
+                case  0                             # an absent optional element
+                case  6
+                  switch  sml.entry_val_time_timestamp_tl_len
+                    case  2
+                      field  sml.entry_val_time_timestamp  8  uint
+                    case  3
+                      field  sml.entry_val_time_timestamp  16  uint
+                    case  4
+                      field  sml.entry_val_time_timestamp  24  uint
+                    case  5
+                      field  sml.entry_val_time_timestamp  32  uint
+                    case  6
+                      field  sml.entry_val_time_timestamp  40  uint
+                    case  7
+                      field  sml.entry_val_time_timestamp  48  uint
+                    case  8
+                      field  sml.entry_val_time_timestamp  56  uint
+                    case  9
+                      field  sml.entry_val_time_timestamp  64  uint
+                  end
+              end
+            case  3
+              field  sml.entry_val_time_local_tl_more  1  uint
+              field  sml.entry_val_time_local_tl_type  3  uint
+              field  sml.entry_val_time_local_count  4  uint
+              field  sml.entry_val_time_local_timestamp_tl_more  1  uint
+              field  sml.entry_val_time_local_timestamp_tl_type  3  uint
+              field  sml.entry_val_time_local_timestamp_tl_len  4  uint
+              switch  sml.entry_val_time_local_timestamp_tl_type
+                case  0                             # an absent optional element
+                case  6
+                  switch  sml.entry_val_time_local_timestamp_tl_len
+                    case  2
+                      field  sml.entry_val_time_local_timestamp  8  uint
+                    case  3
+                      field  sml.entry_val_time_local_timestamp  16  uint
+                    case  4
+                      field  sml.entry_val_time_local_timestamp  24  uint
+                    case  5
+                      field  sml.entry_val_time_local_timestamp  32  uint
+                    case  6
+                      field  sml.entry_val_time_local_timestamp  40  uint
+                    case  7
+                      field  sml.entry_val_time_local_timestamp  48  uint
+                    case  8
+                      field  sml.entry_val_time_local_timestamp  56  uint
+                    case  9
+                      field  sml.entry_val_time_local_timestamp  64  uint
+                  end
+              end
+              field  sml.entry_val_time_local_offset_min_tl_more  1  uint
+              field  sml.entry_val_time_local_offset_min_tl_type  3  uint
+              field  sml.entry_val_time_local_offset_min_tl_len  4  uint
+              switch  sml.entry_val_time_local_offset_min_tl_type
+                case  0                             # an absent optional element
+                case  5
+                  switch  sml.entry_val_time_local_offset_min_tl_len
+                    case  2
+                      field  sml.entry_val_time_local_offset_min  8  twos
+                    case  3
+                      field  sml.entry_val_time_local_offset_min  16  twos
+                    case  4
+                      field  sml.entry_val_time_local_offset_min  24  twos
+                    case  5
+                      field  sml.entry_val_time_local_offset_min  32  twos
+                    case  6
+                      field  sml.entry_val_time_local_offset_min  40  twos
+                    case  7
+                      field  sml.entry_val_time_local_offset_min  48  twos
+                    case  8
+                      field  sml.entry_val_time_local_offset_min  56  twos
+                    case  9
+                      field  sml.entry_val_time_local_offset_min  64  twos
+                  end
+              end
+              field  sml.entry_val_time_season_offset_min_tl_more  1  uint
+              field  sml.entry_val_time_season_offset_min_tl_type  3  uint
+              field  sml.entry_val_time_season_offset_min_tl_len  4  uint
+              switch  sml.entry_val_time_season_offset_min_tl_type
+                case  0                             # an absent optional element
+                case  5
+                  switch  sml.entry_val_time_season_offset_min_tl_len
+                    case  2
+                      field  sml.entry_val_time_season_offset_min  8  twos
+                    case  3
+                      field  sml.entry_val_time_season_offset_min  16  twos
+                    case  4
+                      field  sml.entry_val_time_season_offset_min  24  twos
+                    case  5
+                      field  sml.entry_val_time_season_offset_min  32  twos
+                    case  6
+                      field  sml.entry_val_time_season_offset_min  40  twos
+                    case  7
+                      field  sml.entry_val_time_season_offset_min  48  twos
+                    case  8
+                      field  sml.entry_val_time_season_offset_min  56  twos
+                    case  9
+                      field  sml.entry_val_time_season_offset_min  64  twos
+                  end
+              end
+          end
+      end
+      field  sml.entry_unit_tl_more  1  uint
+      field  sml.entry_unit_tl_type  3  uint
+      field  sml.entry_unit_tl_len  4  uint
+      switch  sml.entry_unit_tl_type
+        case  0                             # an absent optional element
+        case  6
+          switch  sml.entry_unit_tl_len
+            case  2
+              field  sml.entry_unit  8  uint
+            case  3
+              field  sml.entry_unit  16  uint
+            case  4
+              field  sml.entry_unit  24  uint
+            case  5
+              field  sml.entry_unit  32  uint
+            case  6
+              field  sml.entry_unit  40  uint
+            case  7
+              field  sml.entry_unit  48  uint
+            case  8
+              field  sml.entry_unit  56  uint
+            case  9
+              field  sml.entry_unit  64  uint
+          end
+      end
+      field  sml.entry_scaler_tl_more  1  uint
+      field  sml.entry_scaler_tl_type  3  uint
+      field  sml.entry_scaler_tl_len  4  uint
+      switch  sml.entry_scaler_tl_type
+        case  0                             # an absent optional element
+        case  5
+          switch  sml.entry_scaler_tl_len
+            case  2
+              field  sml.entry_scaler  8  twos
+            case  3
+              field  sml.entry_scaler  16  twos
+            case  4
+              field  sml.entry_scaler  24  twos
+            case  5
+              field  sml.entry_scaler  32  twos
+            case  6
+              field  sml.entry_scaler  40  twos
+            case  7
+              field  sml.entry_scaler  48  twos
+            case  8
+              field  sml.entry_scaler  56  twos
+            case  9
+              field  sml.entry_scaler  64  twos
+          end
+      end
+      field  sml.entry_value_tl_more  1  uint
+      field  sml.entry_value_tl_type  3  uint
+      switch  sml.entry_value_tl_type
+        case  0
+          count  n18  4  plus 1
+          group  sml.entry_value_bytes  count @n18
+            field  sml.entry_value_bytes_byte  8  uint
+          end
+        case  4
+          field  sml.entry_value_tl_len  4  uint
+          field  sml.entry_value_bool  8  uint
+        case  5
+          field  sml.entry_value_tl_len  4  uint
+          switch  sml.entry_value_tl_len
+            case  2
+              field  sml.entry_value_int  8  twos
+            case  3
+              field  sml.entry_value_int  16  twos
+            case  4
+              field  sml.entry_value_int  24  twos
+            case  5
+              field  sml.entry_value_int  32  twos
+            case  6
+              field  sml.entry_value_int  40  twos
+            case  7
+              field  sml.entry_value_int  48  twos
+            case  8
+              field  sml.entry_value_int  56  twos
+            case  9
+              field  sml.entry_value_int  64  twos
+          end
+        case  6
+          field  sml.entry_value_tl_len  4  uint
+          switch  sml.entry_value_tl_len
+            case  2
+              field  sml.entry_value_uint  8  uint
+            case  3
+              field  sml.entry_value_uint  16  uint
+            case  4
+              field  sml.entry_value_uint  24  uint
+            case  5
+              field  sml.entry_value_uint  32  uint
+            case  6
+              field  sml.entry_value_uint  40  uint
+            case  7
+              field  sml.entry_value_uint  48  uint
+            case  8
+              field  sml.entry_value_uint  56  uint
+            case  9
+              field  sml.entry_value_uint  64  uint
+          end
+      end
+      field  sml.entry_value_signature_tl_more  1  uint
+      field  sml.entry_value_signature_tl_type  3  uint
+      switch  sml.entry_value_signature_tl_type
+        case  0
+          count  n19  4  plus 1                # the length counts the TL byte
+          group  sml.entry_value_signature  count @n19
+            field  sml.entry_value_signature_byte  8  uint
+          end
+      end
+    end
+    field  sml.getlist_res_list_signature_tl_more  1  uint
+    field  sml.getlist_res_list_signature_tl_type  3  uint
+    switch  sml.getlist_res_list_signature_tl_type
+      case  0
+        count  n20  4  plus 1                # the length counts the TL byte
+        group  sml.getlist_res_list_signature  count @n20
+          field  sml.getlist_res_list_signature_byte  8  uint
+        end
+    end
+    field  sml.getlist_res_act_gateway_time_tl_more  1  uint
+    field  sml.getlist_res_act_gateway_time_tl_type  3  uint
+    field  sml.getlist_res_act_gateway_time_tl_len  4  uint
+    switch  sml.getlist_res_act_gateway_time_tl_type
+      case  0
+      case  7
+        field  sml.getlist_res_act_gateway_time_choice_tl_more  1  uint
+        field  sml.getlist_res_act_gateway_time_choice_tl_type  3  uint
+        field  sml.getlist_res_act_gateway_time_choice_tl_len  4  uint
+        switch  sml.getlist_res_act_gateway_time_choice_tl_type
+          case  0                             # an absent optional element
+          case  6
+            switch  sml.getlist_res_act_gateway_time_choice_tl_len
+              case  2
+                field  sml.getlist_res_act_gateway_time_choice  8  uint
+              case  3
+                field  sml.getlist_res_act_gateway_time_choice  16  uint
+              case  4
+                field  sml.getlist_res_act_gateway_time_choice  24  uint
+              case  5
+                field  sml.getlist_res_act_gateway_time_choice  32  uint
+              case  6
+                field  sml.getlist_res_act_gateway_time_choice  40  uint
+              case  7
+                field  sml.getlist_res_act_gateway_time_choice  48  uint
+              case  8
+                field  sml.getlist_res_act_gateway_time_choice  56  uint
+              case  9
+                field  sml.getlist_res_act_gateway_time_choice  64  uint
+            end
+        end
+        switch  sml.getlist_res_act_gateway_time_choice
+          case  1
+            field  sml.getlist_res_act_gateway_time_sec_index_tl_more  1  uint
+            field  sml.getlist_res_act_gateway_time_sec_index_tl_type  3  uint
+            field  sml.getlist_res_act_gateway_time_sec_index_tl_len  4  uint
+            switch  sml.getlist_res_act_gateway_time_sec_index_tl_type
+              case  0                             # an absent optional element
+              case  6
+                switch  sml.getlist_res_act_gateway_time_sec_index_tl_len
+                  case  2
+                    field  sml.getlist_res_act_gateway_time_sec_index  8  uint
+                  case  3
+                    field  sml.getlist_res_act_gateway_time_sec_index  16  uint
+                  case  4
+                    field  sml.getlist_res_act_gateway_time_sec_index  24  uint
+                  case  5
+                    field  sml.getlist_res_act_gateway_time_sec_index  32  uint
+                  case  6
+                    field  sml.getlist_res_act_gateway_time_sec_index  40  uint
+                  case  7
+                    field  sml.getlist_res_act_gateway_time_sec_index  48  uint
+                  case  8
+                    field  sml.getlist_res_act_gateway_time_sec_index  56  uint
+                  case  9
+                    field  sml.getlist_res_act_gateway_time_sec_index  64  uint
+                end
+            end
+          case  2
+            field  sml.getlist_res_act_gateway_time_timestamp_tl_more  1  uint
+            field  sml.getlist_res_act_gateway_time_timestamp_tl_type  3  uint
+            field  sml.getlist_res_act_gateway_time_timestamp_tl_len  4  uint
+            switch  sml.getlist_res_act_gateway_time_timestamp_tl_type
+              case  0                             # an absent optional element
+              case  6
+                switch  sml.getlist_res_act_gateway_time_timestamp_tl_len
+                  case  2
+                    field  sml.getlist_res_act_gateway_time_timestamp  8  uint
+                  case  3
+                    field  sml.getlist_res_act_gateway_time_timestamp  16  uint
+                  case  4
+                    field  sml.getlist_res_act_gateway_time_timestamp  24  uint
+                  case  5
+                    field  sml.getlist_res_act_gateway_time_timestamp  32  uint
+                  case  6
+                    field  sml.getlist_res_act_gateway_time_timestamp  40  uint
+                  case  7
+                    field  sml.getlist_res_act_gateway_time_timestamp  48  uint
+                  case  8
+                    field  sml.getlist_res_act_gateway_time_timestamp  56  uint
+                  case  9
+                    field  sml.getlist_res_act_gateway_time_timestamp  64  uint
+                end
+            end
+          case  3
+            field  sml.getlist_res_act_gateway_time_local_tl_more  1  uint
+            field  sml.getlist_res_act_gateway_time_local_tl_type  3  uint
+            field  sml.getlist_res_act_gateway_time_local_count  4  uint
+            field  sml.getlist_res_act_gateway_time_local_timestamp_tl_more  1  uint
+            field  sml.getlist_res_act_gateway_time_local_timestamp_tl_type  3  uint
+            field  sml.getlist_res_act_gateway_time_local_timestamp_tl_len  4  uint
+            switch  sml.getlist_res_act_gateway_time_local_timestamp_tl_type
+              case  0                             # an absent optional element
+              case  6
+                switch  sml.getlist_res_act_gateway_time_local_timestamp_tl_len
+                  case  2
+                    field  sml.getlist_res_act_gateway_time_local_timestamp  8  uint
+                  case  3
+                    field  sml.getlist_res_act_gateway_time_local_timestamp  16  uint
+                  case  4
+                    field  sml.getlist_res_act_gateway_time_local_timestamp  24  uint
+                  case  5
+                    field  sml.getlist_res_act_gateway_time_local_timestamp  32  uint
+                  case  6
+                    field  sml.getlist_res_act_gateway_time_local_timestamp  40  uint
+                  case  7
+                    field  sml.getlist_res_act_gateway_time_local_timestamp  48  uint
+                  case  8
+                    field  sml.getlist_res_act_gateway_time_local_timestamp  56  uint
+                  case  9
+                    field  sml.getlist_res_act_gateway_time_local_timestamp  64  uint
+                end
+            end
+            field  sml.getlist_res_act_gateway_time_local_offset_min_tl_more  1  uint
+            field  sml.getlist_res_act_gateway_time_local_offset_min_tl_type  3  uint
+            field  sml.getlist_res_act_gateway_time_local_offset_min_tl_len  4  uint
+            switch  sml.getlist_res_act_gateway_time_local_offset_min_tl_type
+              case  0                             # an absent optional element
+              case  5
+                switch  sml.getlist_res_act_gateway_time_local_offset_min_tl_len
+                  case  2
+                    field  sml.getlist_res_act_gateway_time_local_offset_min  8  twos
+                  case  3
+                    field  sml.getlist_res_act_gateway_time_local_offset_min  16  twos
+                  case  4
+                    field  sml.getlist_res_act_gateway_time_local_offset_min  24  twos
+                  case  5
+                    field  sml.getlist_res_act_gateway_time_local_offset_min  32  twos
+                  case  6
+                    field  sml.getlist_res_act_gateway_time_local_offset_min  40  twos
+                  case  7
+                    field  sml.getlist_res_act_gateway_time_local_offset_min  48  twos
+                  case  8
+                    field  sml.getlist_res_act_gateway_time_local_offset_min  56  twos
+                  case  9
+                    field  sml.getlist_res_act_gateway_time_local_offset_min  64  twos
+                end
+            end
+            field  sml.getlist_res_act_gateway_time_season_offset_min_tl_more  1  uint
+            field  sml.getlist_res_act_gateway_time_season_offset_min_tl_type  3  uint
+            field  sml.getlist_res_act_gateway_time_season_offset_min_tl_len  4  uint
+            switch  sml.getlist_res_act_gateway_time_season_offset_min_tl_type
+              case  0                             # an absent optional element
+              case  5
+                switch  sml.getlist_res_act_gateway_time_season_offset_min_tl_len
+                  case  2
+                    field  sml.getlist_res_act_gateway_time_season_offset_min  8  twos
+                  case  3
+                    field  sml.getlist_res_act_gateway_time_season_offset_min  16  twos
+                  case  4
+                    field  sml.getlist_res_act_gateway_time_season_offset_min  24  twos
+                  case  5
+                    field  sml.getlist_res_act_gateway_time_season_offset_min  32  twos
+                  case  6
+                    field  sml.getlist_res_act_gateway_time_season_offset_min  40  twos
+                  case  7
+                    field  sml.getlist_res_act_gateway_time_season_offset_min  48  twos
+                  case  8
+                    field  sml.getlist_res_act_gateway_time_season_offset_min  56  twos
+                  case  9
+                    field  sml.getlist_res_act_gateway_time_season_offset_min  64  twos
+                end
+            end
+        end
+    end
+end
+field  sml.crc16_tl_more  1  uint
+field  sml.crc16_tl_type  3  uint
+field  sml.crc16_tl_len  4  uint
+switch  sml.crc16_tl_type
+  case  0                             # an absent optional element
+  case  6
+    switch  sml.crc16_tl_len
+      case  2
+        field  sml.crc16  8  uint
+      case  3
+        field  sml.crc16  16  uint
+      case  4
+        field  sml.crc16  24  uint
+      case  5
+        field  sml.crc16  32  uint
+      case  6
+        field  sml.crc16  40  uint
+      case  7
+        field  sml.crc16  48  uint
+      case  8
+        field  sml.crc16  56  uint
+      case  9
+        field  sml.crc16  64  uint
+    end
+end
+const  8  0                          # endOfSmlMsg

@@ -1,0 +1,9 @@
+{
+  "name": "dsmr-p1-line-unknown-obis",
+  "from": "dsmr-p1-line",
+  "to": "dsmr-p1-line",
+  "input": "1-0:99.1.0(00001)",
+  "expect_error": "no-kind",
+  "source": "constructed",
+  "reference": "DSMR 5.0.2 P1 Companion Standard sections 6.4 and 6.12; lines written by tools/gen/dsmr-vectors.py; an OBIS code the pack does not list"
+}
