@@ -4684,6 +4684,63 @@ field  <key>  <locator>  iso8601_s
    nothing finer. `iso8601_short` (0.18) writes the fraction when it is not
    zero; `iso8601_s` never writes one.
 
+# Version 0.27: a CRC-32 checksum on the `tlv` wire
+
+Status: Written. A `tlv` set may end with a four-byte CRC-32 item in place of
+the two-byte sum of Version 0.13. MISB ST 0806 (the Remote Video Terminal
+Local Set) uses it, with the CRC of ISO/IEC 13818-1.
+
+```
+checksum  crc32 <tag>                  # optional: the last item of the set is a CRC-32
+```
+
+`checksum crc32 <tag>` follows every rule 0.13 states for `checksum sum16
+<tag>`: one `checksum` line at most, before the first `kind`, valid only on
+`tlv`, its `<tag>` a tag as 0.13 states it and not named by any other line;
+each of these is checked after the file is read and is `bad-directive`.
+`checksum sum16 <t>` and `checksum crc32 <t>` in one pack are a second
+`checksum` line.
+
+## The CRC
+
+The CRC of a sequence of bytes is the CRC-32 of ISO/IEC 13818-1 (Annex A):
+polynomial 0x04C11DB7, a 32-bit register starting at 0xFFFFFFFF, each byte
+taken most significant bit first, no reflection of input or output, and no
+final XOR. For each byte `b`: the register is XORed with `b` shifted left 24
+bits; then eight times, if its top bit is set it is shifted left one bit and
+XORed with the polynomial, else shifted left one bit; the result is the
+register after the last byte. The CRC of the nine ASCII bytes `123456789` is
+0x0376E6E7, and of no bytes 0xFFFFFFFF.
+
+## Reading and writing
+
+Step 4 of "Reading a message" of 0.13 holds with `crc32` for `sum16`, four
+bytes for two, and the CRC for the sum: the last item of the top set has tag
+`t` and a value of four bytes, else `malformed-wire`; its value, big-endian,
+is the CRC of every byte of the input from the first (the first byte of the
+key when there is one) to the last byte of the checksum item's length; a
+different value is `malformed-wire`; an item of tag `t` in the top set
+before the last is `malformed-wire`, and a nested set may hold tag `t` as any
+other tag. Step 3 of "Writing a message" holds the
+same way: an item of tag `t` with a four-byte value is the last item of the
+top set, counts in the set's length, and its value is computed last over the
+same bytes.
+
+## Rulings for 0.27
+
+1. **The bytes the CRC covers** are those `sum16` covers in 0.13: from the
+   first byte of the input through the checksum item's tag and length, not
+   its value. MISB ST 0806.4 says the CRC is "performed on entire LS packet,
+   including 16-byte US key" and that the item is the last of the set; the
+   value cannot cover itself, and this reading matches the range ST 0601 and
+   0.13 use.
+2. **The argument count of `checksum`** (ruling 12 of 0.13): as a line is
+   read, a `checksum` line with one argument, or with two whose first is
+   `sum16` or `crc32`, passes; any other count is `bad-directive` there.
+3. **`checksum crc32` on another wire** is `bad-directive` after the file is
+   read, as `checksum sum16` is (ruling 13 of 0.13: it may stand before the
+   `wire` line).
+
 # Version 0.29: licence profiles in the loaders
 
 <!-- REUSE-IgnoreStart: this section quotes licence tags; they label no file -->
@@ -5003,62 +5060,3 @@ sentinel):
 `tools/tests/test_time_quality_guard.py` covers each refused form, bare and
 `core.`-prefixed, an `optional` and a gated `bits` field that pass, and the whole
 repository.
-
----
-
-# Version 0.27: a CRC-32 checksum on the `tlv` wire
-
-Status: Written. A `tlv` set may end with a four-byte CRC-32 item in place of
-the two-byte sum of Version 0.13. MISB ST 0806 (the Remote Video Terminal
-Local Set) uses it, with the CRC of ISO/IEC 13818-1.
-
-```
-checksum  crc32 <tag>                  # optional: the last item of the set is a CRC-32
-```
-
-`checksum crc32 <tag>` follows every rule 0.13 states for `checksum sum16
-<tag>`: one `checksum` line at most, before the first `kind`, valid only on
-`tlv`, its `<tag>` a tag as 0.13 states it and not named by any other line;
-each of these is checked after the file is read and is `bad-directive`.
-`checksum sum16 <t>` and `checksum crc32 <t>` in one pack are a second
-`checksum` line.
-
-## The CRC
-
-The CRC of a sequence of bytes is the CRC-32 of ISO/IEC 13818-1 (Annex A):
-polynomial 0x04C11DB7, a 32-bit register starting at 0xFFFFFFFF, each byte
-taken most significant bit first, no reflection of input or output, and no
-final XOR. For each byte `b`: the register is XORed with `b` shifted left 24
-bits; then eight times, if its top bit is set it is shifted left one bit and
-XORed with the polynomial, else shifted left one bit; the result is the
-register after the last byte. The CRC of the nine ASCII bytes `123456789` is
-0x0376E6E7, and of no bytes 0xFFFFFFFF.
-
-## Reading and writing
-
-Step 4 of "Reading a message" of 0.13 holds with `crc32` for `sum16`, four
-bytes for two, and the CRC for the sum: the last item of the top set has tag
-`t` and a value of four bytes, else `malformed-wire`; its value, big-endian,
-is the CRC of every byte of the input from the first (the first byte of the
-key when there is one) to the last byte of the checksum item's length; a
-different value is `malformed-wire`; an item of tag `t` in the top set
-before the last is `malformed-wire`, and a nested set may hold tag `t` as any
-other tag. Step 3 of "Writing a message" holds the
-same way: an item of tag `t` with a four-byte value is the last item of the
-top set, counts in the set's length, and its value is computed last over the
-same bytes.
-
-## Rulings for 0.27
-
-1. **The bytes the CRC covers** are those `sum16` covers in 0.13: from the
-   first byte of the input through the checksum item's tag and length, not
-   its value. MISB ST 0806.4 says the CRC is "performed on entire LS packet,
-   including 16-byte US key" and that the item is the last of the set; the
-   value cannot cover itself, and this reading matches the range ST 0601 and
-   0.13 use.
-2. **The argument count of `checksum`** (ruling 12 of 0.13): as a line is
-   read, a `checksum` line with one argument, or with two whose first is
-   `sum16` or `crc32`, passes; any other count is `bad-directive` there.
-3. **`checksum crc32` on another wire** is `bad-directive` after the file is
-   read, as `checksum sum16` is (ruling 13 of 0.13: it may stand before the
-   `wire` line).
