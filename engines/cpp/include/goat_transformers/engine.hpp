@@ -519,6 +519,9 @@ struct SeqNode {
     std::int64_t ub = 0;
     // v0.20. when: the values it holds for, closed ranges in line order (the first's lo is `number`).
     std::vector<std::pair<std::uint64_t, std::uint64_t>> ranges;
+    // v0.30. when: `as <model-key>` binds the bits to `field.key`, read and
+    // written as a `uint` of `len` bits.
+    bool has_as = false;
     // v0.20. switch: the key (`field.key`) and the cases, the `else` last.
     std::vector<SeqCase> cases;
     // v0.20. if: the innermost case holding the block; -1 when none.

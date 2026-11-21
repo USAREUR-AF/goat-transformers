@@ -1058,6 +1058,8 @@ Pack parse_pack(const std::string& text, const std::string& source) {
     std::size_t encoding_line = 0, uper_line = 0;
     std::string encoding_error, uper_kw;
     std::string pending_locator, pending_detail;
+    // v0.30: the first `when ... as` line, refused after the file (ruling 16).
+    std::string as_error;
     // The groups that are open at this line, outermost first. A group stays the
     // last element of its scope while it is open, so the pointers hold.
     std::vector<GroupLine*> open;
@@ -1454,11 +1456,16 @@ Pack parse_pack(const std::string& text, const std::string& source) {
             p.tables[static_cast<std::size_t>(it->second)].entries.emplace_back(t[2], t[3]);
         } else if (kw == "when") {
             not_in_group();
-            // A third token (`1, 2`) is not a value list (0.20).
-            if (t.size() > 3)
-                throw Error(ErrorKind::BadDirective, p.format, "",
-                            where + ": 'when' takes a locator and one value list; a list has no spaces");
-            arity(2);
+            // v0.30: `as` belongs to `layout sequential`; refused after the file (ruling 16).
+            if (t.size() > 3 && t[3] == "as") {
+                if (as_error.empty()) as_error = where + ": 'when ... as' applies to 'layout sequential' only";
+            } else {
+                // A third token (`1, 2`) is not a value list (0.20).
+                if (t.size() > 3)
+                    throw Error(ErrorKind::BadDirective, p.format, "",
+                                where + ": 'when' takes a locator and one value list; a list has no spaces");
+                arity(2);
+            }
             WhenLine w;
             w.locator = t[1];
             w.value = t[2];
@@ -1578,6 +1585,7 @@ Pack parse_pack(const std::string& text, const std::string& source) {
 
     // Line errors that need the whole file: a block left open, where a directive
     // is allowed, and what a `when` value and a bits length may be.
+    if (!as_error.empty()) throw Error(ErrorKind::BadDirective, p.format, "", as_error);
     if (pending_transform)  // set on wire tlv (0.13 ruling 8) and cbor (0.28 ruling 25) only
         throw Error(ErrorKind::BadDirective, p.format, pending_locator,
                     pending_detail + " (on wire " + wire_name(p.wire) + ", a transform not in the wire's table)");
