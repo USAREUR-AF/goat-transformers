@@ -1,0 +1,17 @@
+{
+ "name": "golden-00066-request-data-stream",
+ "from": "mavlink2",
+ "to": "mavlink2",
+ "input": "fd0600002a0709420000112222334455",
+ "expect": "fd0600002a0709420000112222334455",
+ "model": {
+  "@kind": "request_data_stream",
+  "mavlink.req_message_rate_hz": "8721",
+  "mavlink.target_system": "34",
+  "mavlink.target_component": "51",
+  "mavlink.req_stream_id": "68",
+  "mavlink.start_stop": "85"
+ },
+ "source": "pymavlink 2.4.50, dialect v20.common: REQUEST_DATA_STREAM(target_system, target_component, req_stream_id, req_message_rate, start_stop) packed by MAVLink.pack with sysid 7, compid 9, seq 42; the two CRC bytes are left off (the pack maps no CRC). Written by tools/gen/golden-pymavlink.py; no engine is run.",
+ "reference": "MAVLink 2 serialization (https://mavlink.io/en/guide/serialization.html): fields in wire order, little-endian, trailing zero bytes of the payload truncated; extension fields here are zero, so the frame's LEN is the 6 bytes the kind selects on. model holds the keys whose values follow from the field lines of packs/mavlink2/pack.def."
+}

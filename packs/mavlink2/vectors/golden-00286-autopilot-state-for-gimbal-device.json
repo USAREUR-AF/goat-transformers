@@ -1,0 +1,28 @@
+{
+ "name": "golden-00286-autopilot-state-for-gimbal-device",
+ "from": "mavlink2",
+ "to": "mavlink2",
+ "input": "fd3900002a07091e010011223344556677090000e13f00800040008010400080204066778899008040400080504000806040aabbccdd00408040ccddddeeff0040a840",
+ "expect": "fd3900002a07091e010011223344556677090000e13f00800040008010400080204066778899008040400080504000806040aabbccdd00408040ccddddeeff0040a840",
+ "model": {
+  "@kind": "autopilot_state_for_gimbal_device",
+  "mavlink.time_boot_us": "682126384972374545",
+  "mavlink.q_0": "1.7578125",
+  "mavlink.q_1": "2.0078125",
+  "mavlink.q_2": "2.2578125",
+  "mavlink.q_3": "2.5078125",
+  "mavlink.q_estimated_delay_us": "2575857510",
+  "mavlink.vx_m_per_s": "3.0078125",
+  "mavlink.vy_m_per_s": "3.2578125",
+  "mavlink.vz_m_per_s": "3.5078125",
+  "mavlink.v_estimated_delay_us": "3721182122",
+  "mavlink.feed_forward_angular_velocity_z_rad_per_s": "4.0078125",
+  "mavlink.estimator_status": "56780",
+  "mavlink.target_system": "221",
+  "mavlink.target_component": "238",
+  "mavlink.landed_state": "255",
+  "mavlink.angular_velocity_z_rad_per_s": "5.2578125"
+ },
+ "source": "pymavlink 2.4.50, dialect v20.common: AUTOPILOT_STATE_FOR_GIMBAL_DEVICE(target_system, target_component, time_boot_us, q, q_estimated_delay_us, vx, vy, vz, v_estimated_delay_us, feed_forward_angular_velocity_z, estimator_status, landed_state, angular_velocity_z) packed by MAVLink.pack with sysid 7, compid 9, seq 42; the two CRC bytes are left off (the pack maps no CRC). Written by tools/gen/golden-pymavlink.py; no engine is run.",
+ "reference": "MAVLink 2 serialization (https://mavlink.io/en/guide/serialization.html): fields in wire order, little-endian, trailing zero bytes of the payload truncated; extension fields here are zero, so the frame's LEN is the 57 bytes the kind selects on. model holds the keys whose values follow from the field lines of packs/mavlink2/pack.def."
+}

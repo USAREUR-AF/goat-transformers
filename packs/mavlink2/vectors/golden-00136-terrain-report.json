@@ -1,0 +1,19 @@
+{
+ "name": "golden-00136-terrain-report",
+ "from": "mavlink2",
+ "to": "mavlink2",
+ "input": "fd1600002a0709880000803879ec0071f2d80080004000801040556666777788",
+ "expect": "fd1600002a0709880000803879ec0071f2d80080004000801040556666777788",
+ "model": {
+  "@kind": "terrain_report",
+  "lat": "-32.76",
+  "lon": "-65.52",
+  "mavlink.terrain_height_m": "2.0078125",
+  "mavlink.current_height_m": "2.2578125",
+  "mavlink.spacing": "26197",
+  "mavlink.pending": "30566",
+  "mavlink.loaded": "34935"
+ },
+ "source": "pymavlink 2.4.50, dialect v20.common: TERRAIN_REPORT(lat, lon, spacing, terrain_height, current_height, pending, loaded) packed by MAVLink.pack with sysid 7, compid 9, seq 42; the two CRC bytes are left off (the pack maps no CRC). Written by tools/gen/golden-pymavlink.py; no engine is run.",
+ "reference": "MAVLink 2 serialization (https://mavlink.io/en/guide/serialization.html): fields in wire order, little-endian, trailing zero bytes of the payload truncated; extension fields here are zero, so the frame's LEN is the 22 bytes the kind selects on. model holds the keys whose values follow from the field lines of packs/mavlink2/pack.def."
+}

@@ -1,0 +1,15 @@
+{
+ "name": "golden-12920-hygrometer-sensor",
+ "from": "mavlink2",
+ "to": "mavlink2",
+ "input": "fd0500002a07097832001122223333",
+ "expect": "fd0500002a07097832001122223333",
+ "model": {
+  "@kind": "hygrometer_sensor",
+  "mavlink.temperature_cdegc": "8721",
+  "mavlink.humidity_cpct": "13090",
+  "mavlink.id": "51"
+ },
+ "source": "pymavlink 2.4.50, dialect v20.common: HYGROMETER_SENSOR(id, temperature, humidity) packed by MAVLink.pack with sysid 7, compid 9, seq 42; the two CRC bytes are left off (the pack maps no CRC). Written by tools/gen/golden-pymavlink.py; no engine is run.",
+ "reference": "MAVLink 2 serialization (https://mavlink.io/en/guide/serialization.html): fields in wire order, little-endian, trailing zero bytes of the payload truncated; extension fields here are zero, so the frame's LEN is the 5 bytes the kind selects on. model holds the keys whose values follow from the field lines of packs/mavlink2/pack.def."
+}

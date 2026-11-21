@@ -1,0 +1,29 @@
+{
+ "name": "golden-00301-ais-vessel",
+ "from": "mavlink2",
+ "to": "mavlink2",
+ "input": "fd3a00002a07092d010011223344803879ec0071f2d84455556666777788889999aaaabbbbccddee11505152535455565152535455565758595a4142434445464748494a",
+ "expect": "fd3a00002a07092d010011223344803879ec0071f2d84455556666777788889999aaaabbbbccddee11505152535455565152535455565758595a4142434445464748494a",
+ "model": {
+  "@kind": "ais_vessel",
+  "mavlink.mmsi": "1144201745",
+  "lat": "-32.76",
+  "lon": "-65.52",
+  "mavlink.cog_cdeg": "21828",
+  "mavlink.heading_cdeg": "26197",
+  "mavlink.velocity_cm_per_s": "30566",
+  "mavlink.dimension_bow_m": "34935",
+  "mavlink.dimension_stern_m": "39304",
+  "mavlink.tslc_s": "43673",
+  "mavlink.ais_vessel_flags": "48042",
+  "mavlink.turn_rate_ddeg_per_s": "-69",
+  "mavlink.navigational_status": "204",
+  "mavlink.ais_vessel_type": "221",
+  "mavlink.dimension_port_m": "238",
+  "mavlink.dimension_starboard_m": "17",
+  "mavlink.callsign": "PQRSTUV",
+  "mavlink.name": "QRSTUVWXYZABCDEFGHIJ"
+ },
+ "source": "pymavlink 2.4.50, dialect v20.common: AIS_VESSEL(MMSI, lat, lon, COG, heading, velocity, turn_rate, navigational_status, type, dimension_bow, dimension_stern, dimension_port, dimension_starboard, callsign, name, tslc, flags) packed by MAVLink.pack with sysid 7, compid 9, seq 42; the two CRC bytes are left off (the pack maps no CRC). Written by tools/gen/golden-pymavlink.py; no engine is run.",
+ "reference": "MAVLink 2 serialization (https://mavlink.io/en/guide/serialization.html): fields in wire order, little-endian, trailing zero bytes of the payload truncated; extension fields here are zero, so the frame's LEN is the 58 bytes the kind selects on. model holds the keys whose values follow from the field lines of packs/mavlink2/pack.def."
+}

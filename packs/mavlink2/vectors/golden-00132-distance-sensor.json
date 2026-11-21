@@ -1,0 +1,27 @@
+{
+ "name": "golden-00132-distance-sensor",
+ "from": "mavlink2",
+ "to": "mavlink2",
+ "input": "fd2700002a07098400001122334422333344445555667788008060400080704000408040004088400040904000409840ff",
+ "expect": "fd2700002a07098400001122334422333344445555667788008060400080704000408040004088400040904000409840ff",
+ "model": {
+  "@kind": "distance_sensor",
+  "mavlink.time_boot_ms": "1144201745",
+  "mavlink.min_distance_cm": "13090",
+  "mavlink.max_distance_cm": "17459",
+  "mavlink.current_distance_cm": "21828",
+  "mavlink.distance_sensor_type": "85",
+  "mavlink.id": "102",
+  "mavlink.orientation": "119",
+  "mavlink.covariance_cm2": "136",
+  "mavlink.horizontal_fov_rad": "3.5078125",
+  "mavlink.vertical_fov_rad": "3.7578125",
+  "mavlink.quaternion_0": "4.0078125",
+  "mavlink.quaternion_1": "4.2578125",
+  "mavlink.quaternion_2": "4.5078125",
+  "mavlink.quaternion_3": "4.7578125",
+  "mavlink.signal_quality_pct": "255"
+ },
+ "source": "pymavlink 2.4.50, dialect v20.common: DISTANCE_SENSOR(time_boot_ms, min_distance, max_distance, current_distance, type, id, orientation, covariance, horizontal_fov, vertical_fov, quaternion, signal_quality) packed by MAVLink.pack with sysid 7, compid 9, seq 42; the two CRC bytes are left off (the pack maps no CRC). Written by tools/gen/golden-pymavlink.py; no engine is run.",
+ "reference": "MAVLink 2 serialization (https://mavlink.io/en/guide/serialization.html): fields in wire order, little-endian, trailing zero bytes of the payload truncated; extension fields here are zero, so the frame's LEN is the 39 bytes the kind selects on. model holds the keys whose values follow from the field lines of packs/mavlink2/pack.def."
+}

@@ -1,0 +1,22 @@
+{
+ "name": "golden-00140-actuator-control-target",
+ "from": "mavlink2",
+ "to": "mavlink2",
+ "input": "fd2900002a07098c000011223344556677090000e13f00800040008010400080204000803040008040400080504000806040aa",
+ "expect": "fd2900002a07098c000011223344556677090000e13f00800040008010400080204000803040008040400080504000806040aa",
+ "model": {
+  "@kind": "actuator_control_target",
+  "mavlink.time_usec_us": "682126384972374545",
+  "mavlink.controls_0": "1.7578125",
+  "mavlink.controls_1": "2.0078125",
+  "mavlink.controls_2": "2.2578125",
+  "mavlink.controls_3": "2.5078125",
+  "mavlink.controls_4": "2.7578125",
+  "mavlink.controls_5": "3.0078125",
+  "mavlink.controls_6": "3.2578125",
+  "mavlink.controls_7": "3.5078125",
+  "mavlink.group_mlx": "170"
+ },
+ "source": "pymavlink 2.4.50, dialect v20.common: ACTUATOR_CONTROL_TARGET(time_usec, group_mlx, controls) packed by MAVLink.pack with sysid 7, compid 9, seq 42; the two CRC bytes are left off (the pack maps no CRC). Written by tools/gen/golden-pymavlink.py; no engine is run.",
+ "reference": "MAVLink 2 serialization (https://mavlink.io/en/guide/serialization.html): fields in wire order, little-endian, trailing zero bytes of the payload truncated; extension fields here are zero, so the frame's LEN is the 41 bytes the kind selects on. model holds the keys whose values follow from the field lines of packs/mavlink2/pack.def."
+}

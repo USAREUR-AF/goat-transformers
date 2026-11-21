@@ -1,0 +1,31 @@
+{
+ "name": "golden-00093-hil-actuator-controls",
+ "from": "mavlink2",
+ "to": "mavlink2",
+ "input": "fd5100002a07095d00001122334455667709223344556677881a0080004000801040008020400080304000804040008050400080604000807040004080400040884000409040004098400040a0400040a8400040b0400040b84044",
+ "expect": "fd5100002a07095d00001122334455667709223344556677881a0080004000801040008020400080304000804040008050400080604000807040004080400040884000409040004098400040a0400040a8400040b0400040b84044",
+ "model": {
+  "@kind": "hil_actuator_controls",
+  "mavlink.time_usec_us": "682126384972374545",
+  "mavlink.hil_actuator_controls_flags": "1911909323219677986",
+  "mavlink.controls_0": "2.0078125",
+  "mavlink.controls_1": "2.2578125",
+  "mavlink.controls_2": "2.5078125",
+  "mavlink.controls_3": "2.7578125",
+  "mavlink.controls_4": "3.0078125",
+  "mavlink.controls_5": "3.2578125",
+  "mavlink.controls_6": "3.5078125",
+  "mavlink.controls_7": "3.7578125",
+  "mavlink.controls_8": "4.0078125",
+  "mavlink.controls_9": "4.2578125",
+  "mavlink.controls_10": "4.5078125",
+  "mavlink.controls_11": "4.7578125",
+  "mavlink.controls_12": "5.0078125",
+  "mavlink.controls_13": "5.2578125",
+  "mavlink.controls_14": "5.5078125",
+  "mavlink.controls_15": "5.7578125",
+  "mavlink.hil_actuator_controls_mode": "68"
+ },
+ "source": "pymavlink 2.4.50, dialect v20.common: HIL_ACTUATOR_CONTROLS(time_usec, controls, mode, flags) packed by MAVLink.pack with sysid 7, compid 9, seq 42; the two CRC bytes are left off (the pack maps no CRC). Written by tools/gen/golden-pymavlink.py; no engine is run.",
+ "reference": "MAVLink 2 serialization (https://mavlink.io/en/guide/serialization.html): fields in wire order, little-endian, trailing zero bytes of the payload truncated; extension fields here are zero, so the frame's LEN is the 81 bytes the kind selects on. model holds the keys whose values follow from the field lines of packs/mavlink2/pack.def."
+}

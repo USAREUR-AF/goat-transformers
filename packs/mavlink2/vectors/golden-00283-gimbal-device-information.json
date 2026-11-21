@@ -1,0 +1,29 @@
+{
+ "name": "golden-00283-gimbal-device-information",
+ "from": "mavlink2",
+ "to": "mavlink2",
+ "input": "fd9500002a07091b01001122334455667709223344553344556644556677008020400080304000804040008050400080604000807040bbccccdd4d4e4f505152535455565758595a4142434445464748494a4b4c4d4e4f5051524e4f505152535455565758595a4142434445464748494a4b4c4d4e4f505152534f505152535455565758595a4142434445464748494a4b4c4d4e4f50515253541122334455",
+ "expect": "fd9500002a07091b01001122334455667709223344553344556644556677008020400080304000804040008050400080604000807040bbccccdd4d4e4f505152535455565758595a4142434445464748494a4b4c4d4e4f5051524e4f505152535455565758595a4142434445464748494a4b4c4d4e4f505152534f505152535455565758595a4142434445464748494a4b4c4d4e4f50515253541122334455",
+ "model": {
+  "@kind": "gimbal_device_information",
+  "mavlink.uid": "682126384972374545",
+  "mavlink.time_boot_ms": "1430532898",
+  "mavlink.firmware_version": "1716864051",
+  "mavlink.gimbal_device_information_hardware_version": "2003195204",
+  "mavlink.roll_min_rad": "2.5078125",
+  "mavlink.roll_max_rad": "2.7578125",
+  "mavlink.pitch_min_rad": "3.0078125",
+  "mavlink.pitch_max_rad": "3.2578125",
+  "mavlink.yaw_min_rad": "3.5078125",
+  "mavlink.yaw_max_rad": "3.7578125",
+  "mavlink.gimbal_device_information_cap_flags": "52411",
+  "mavlink.custom_cap_flags": "56780",
+  "mavlink.vendor_name": "MNOPQRSTUVWXYZABCDEFGHIJKLMNOPQR",
+  "mavlink.model_name": "NOPQRSTUVWXYZABCDEFGHIJKLMNOPQRS",
+  "mavlink.custom_name": "OPQRSTUVWXYZABCDEFGHIJKLMNOPQRST",
+  "mavlink.gimbal_device_id": "17",
+  "mavlink.cap_flags2": "1430532898"
+ },
+ "source": "pymavlink 2.4.50, dialect v20.common: GIMBAL_DEVICE_INFORMATION(time_boot_ms, vendor_name, model_name, custom_name, firmware_version, hardware_version, uid, cap_flags, custom_cap_flags, roll_min, roll_max, pitch_min, pitch_max, yaw_min, yaw_max, gimbal_device_id, cap_flags2) packed by MAVLink.pack with sysid 7, compid 9, seq 42; the two CRC bytes are left off (the pack maps no CRC). Written by tools/gen/golden-pymavlink.py; no engine is run.",
+ "reference": "MAVLink 2 serialization (https://mavlink.io/en/guide/serialization.html): fields in wire order, little-endian, trailing zero bytes of the payload truncated; extension fields here are zero, so the frame's LEN is the 149 bytes the kind selects on. model holds the keys whose values follow from the field lines of packs/mavlink2/pack.def."
+}

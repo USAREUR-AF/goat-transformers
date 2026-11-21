@@ -1,0 +1,17 @@
+{
+ "name": "golden-00264-flight-information",
+ "from": "mavlink2",
+ "to": "mavlink2",
+ "input": "fd2000002a07090801001122334455667709223344556677881a334455667788992b4455667755667788",
+ "expect": "fd2000002a07090801001122334455667709223344556677881a334455667788992b4455667755667788",
+ "model": {
+  "@kind": "flight_information",
+  "mavlink.arming_time_utc_us": "682126384972374545",
+  "mavlink.takeoff_time_utc_us": "1911909323219677986",
+  "mavlink.flight_uuid": "3141692261466981427",
+  "mavlink.time_boot_ms": "2003195204",
+  "mavlink.landing_time_ms": "2289526357"
+ },
+ "source": "pymavlink 2.4.50, dialect v20.common: FLIGHT_INFORMATION(time_boot_ms, arming_time_utc, takeoff_time_utc, flight_uuid, landing_time) packed by MAVLink.pack with sysid 7, compid 9, seq 42; the two CRC bytes are left off (the pack maps no CRC). Written by tools/gen/golden-pymavlink.py; no engine is run.",
+ "reference": "MAVLink 2 serialization (https://mavlink.io/en/guide/serialization.html): fields in wire order, little-endian, trailing zero bytes of the payload truncated; extension fields here are zero, so the frame's LEN is the 32 bytes the kind selects on. model holds the keys whose values follow from the field lines of packs/mavlink2/pack.def."
+}

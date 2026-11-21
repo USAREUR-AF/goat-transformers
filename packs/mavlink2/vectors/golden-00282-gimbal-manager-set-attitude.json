@@ -1,0 +1,23 @@
+{
+ "name": "golden-00282-gimbal-manager-set-attitude",
+ "from": "mavlink2",
+ "to": "mavlink2",
+ "input": "fd2300002a07091a0100112233440000e13f00800040008010400080204000803040008040400080504099aabb",
+ "expect": "fd2300002a07091a0100112233440000e13f00800040008010400080204000803040008040400080504099aabb",
+ "model": {
+  "@kind": "gimbal_manager_set_attitude",
+  "mavlink.gimbal_manager_set_attitude_flags": "1144201745",
+  "mavlink.q_0": "1.7578125",
+  "mavlink.q_1": "2.0078125",
+  "mavlink.q_2": "2.2578125",
+  "mavlink.q_3": "2.5078125",
+  "mavlink.angular_velocity_x_rad_per_s": "2.7578125",
+  "mavlink.angular_velocity_y_rad_per_s": "3.0078125",
+  "mavlink.angular_velocity_z_rad_per_s": "3.2578125",
+  "mavlink.target_system": "153",
+  "mavlink.target_component": "170",
+  "mavlink.gimbal_device_id": "187"
+ },
+ "source": "pymavlink 2.4.50, dialect v20.common: GIMBAL_MANAGER_SET_ATTITUDE(target_system, target_component, flags, gimbal_device_id, q, angular_velocity_x, angular_velocity_y, angular_velocity_z) packed by MAVLink.pack with sysid 7, compid 9, seq 42; the two CRC bytes are left off (the pack maps no CRC). Written by tools/gen/golden-pymavlink.py; no engine is run.",
+ "reference": "MAVLink 2 serialization (https://mavlink.io/en/guide/serialization.html): fields in wire order, little-endian, trailing zero bytes of the payload truncated; extension fields here are zero, so the frame's LEN is the 35 bytes the kind selects on. model holds the keys whose values follow from the field lines of packs/mavlink2/pack.def."
+}

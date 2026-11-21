@@ -1,0 +1,18 @@
+{
+ "name": "golden-00310-uavcan-node-status",
+ "from": "mavlink2",
+ "to": "mavlink2",
+ "input": "fd1100002a07093601001122334455667709223344553344445566",
+ "expect": "fd1100002a07093601001122334455667709223344553344445566",
+ "model": {
+  "@kind": "uavcan_node_status",
+  "mavlink.time_usec_us": "682126384972374545",
+  "mavlink.uptime_sec_s": "1430532898",
+  "mavlink.vendor_specific_status_code": "17459",
+  "mavlink.uavcan_node_status_health": "68",
+  "mavlink.uavcan_node_status_mode": "85",
+  "mavlink.sub_mode": "102"
+ },
+ "source": "pymavlink 2.4.50, dialect v20.common: UAVCAN_NODE_STATUS(time_usec, uptime_sec, health, mode, sub_mode, vendor_specific_status_code) packed by MAVLink.pack with sysid 7, compid 9, seq 42; the two CRC bytes are left off (the pack maps no CRC). Written by tools/gen/golden-pymavlink.py; no engine is run.",
+ "reference": "MAVLink 2 serialization (https://mavlink.io/en/guide/serialization.html): fields in wire order, little-endian, trailing zero bytes of the payload truncated; extension fields here are zero, so the frame's LEN is the 17 bytes the kind selects on. model holds the keys whose values follow from the field lines of packs/mavlink2/pack.def."
+}

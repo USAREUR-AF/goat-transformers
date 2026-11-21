@@ -1,0 +1,31 @@
+{
+ "name": "golden-00115-hil-state-quaternion",
+ "from": "mavlink2",
+ "to": "mavlink2",
+ "input": "fd4000002a070973000011223344556677090000e13f008000400080104000802040008030400080404000805040803879ec0071f2d8bbccddeeccddddeeeeffff111122223333444455",
+ "expect": "fd4000002a070973000011223344556677090000e13f008000400080104000802040008030400080404000805040803879ec0071f2d8bbccddeeccddddeeeeffff111122223333444455",
+ "model": {
+  "@kind": "hil_state_quaternion",
+  "mavlink.time_usec_us": "682126384972374545",
+  "mavlink.attitude_quaternion_0": "1.7578125",
+  "mavlink.attitude_quaternion_1": "2.0078125",
+  "mavlink.attitude_quaternion_2": "2.2578125",
+  "mavlink.attitude_quaternion_3": "2.5078125",
+  "mavlink.rollspeed_rad_per_s": "2.7578125",
+  "mavlink.pitchspeed_rad_per_s": "3.0078125",
+  "mavlink.yawspeed_rad_per_s": "3.2578125",
+  "lat": "-32.76",
+  "lon": "-65.52",
+  "mavlink.alt_mm": "-287454021",
+  "mavlink.vx_cm_per_s": "-8756",
+  "mavlink.vy_cm_per_s": "-4387",
+  "mavlink.vz_cm_per_s": "-18",
+  "mavlink.ind_airspeed_cm_per_s": "4607",
+  "mavlink.true_airspeed_cm_per_s": "8721",
+  "mavlink.xacc_mg": "13090",
+  "mavlink.yacc_mg": "17459",
+  "mavlink.zacc_mg": "21828"
+ },
+ "source": "pymavlink 2.4.50, dialect v20.common: HIL_STATE_QUATERNION(time_usec, attitude_quaternion, rollspeed, pitchspeed, yawspeed, lat, lon, alt, vx, vy, vz, ind_airspeed, true_airspeed, xacc, yacc, zacc) packed by MAVLink.pack with sysid 7, compid 9, seq 42; the two CRC bytes are left off (the pack maps no CRC). Written by tools/gen/golden-pymavlink.py; no engine is run.",
+ "reference": "MAVLink 2 serialization (https://mavlink.io/en/guide/serialization.html): fields in wire order, little-endian, trailing zero bytes of the payload truncated; extension fields here are zero, so the frame's LEN is the 64 bytes the kind selects on. model holds the keys whose values follow from the field lines of packs/mavlink2/pack.def."
+}

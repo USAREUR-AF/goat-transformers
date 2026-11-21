@@ -1,0 +1,19 @@
+{
+ "name": "golden-00109-radio-status",
+ "from": "mavlink2",
+ "to": "mavlink2",
+ "input": "fd0900002a07096d0000112222333344556677",
+ "expect": "fd0900002a07096d0000112222333344556677",
+ "model": {
+  "@kind": "radio_status",
+  "mavlink.rxerrors": "8721",
+  "mavlink.fixed": "13090",
+  "mavlink.rssi": "51",
+  "mavlink.remrssi": "68",
+  "mavlink.txbuf_pct": "85",
+  "mavlink.noise": "102",
+  "mavlink.remnoise": "119"
+ },
+ "source": "pymavlink 2.4.50, dialect v20.common: RADIO_STATUS(rssi, remrssi, txbuf, noise, remnoise, rxerrors, fixed) packed by MAVLink.pack with sysid 7, compid 9, seq 42; the two CRC bytes are left off (the pack maps no CRC). Written by tools/gen/golden-pymavlink.py; no engine is run.",
+ "reference": "MAVLink 2 serialization (https://mavlink.io/en/guide/serialization.html): fields in wire order, little-endian, trailing zero bytes of the payload truncated; extension fields here are zero, so the frame's LEN is the 9 bytes the kind selects on. model holds the keys whose values follow from the field lines of packs/mavlink2/pack.def."
+}

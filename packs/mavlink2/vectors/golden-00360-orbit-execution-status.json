@@ -1,0 +1,18 @@
+{
+ "name": "golden-00360-orbit-execution-status",
+ "from": "mavlink2",
+ "to": "mavlink2",
+ "input": "fd1900002a070968010011223344556677090000e13f33445566445566770080204066",
+ "expect": "fd1900002a070968010011223344556677090000e13f33445566445566770080204066",
+ "model": {
+  "@kind": "orbit_execution_status",
+  "mavlink.time_usec_us": "682126384972374545",
+  "mavlink.radius_m": "1.7578125",
+  "mavlink.orbit_execution_status_x": "1716864051",
+  "mavlink.orbit_execution_status_y": "2003195204",
+  "mavlink.z_m": "2.5078125",
+  "mavlink.frame": "102"
+ },
+ "source": "pymavlink 2.4.50, dialect v20.common: ORBIT_EXECUTION_STATUS(time_usec, radius, frame, x, y, z) packed by MAVLink.pack with sysid 7, compid 9, seq 42; the two CRC bytes are left off (the pack maps no CRC). Written by tools/gen/golden-pymavlink.py; no engine is run.",
+ "reference": "MAVLink 2 serialization (https://mavlink.io/en/guide/serialization.html): fields in wire order, little-endian, trailing zero bytes of the payload truncated; extension fields here are zero, so the frame's LEN is the 25 bytes the kind selects on. model holds the keys whose values follow from the field lines of packs/mavlink2/pack.def."
+}

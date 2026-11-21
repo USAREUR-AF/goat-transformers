@@ -1,0 +1,17 @@
+{
+ "name": "golden-00048-set-gps-global-origin",
+ "from": "mavlink2",
+ "to": "mavlink2",
+ "input": "fd1500002a0709300000112233442233445533445566445566778899aabb4d",
+ "expect": "fd1500002a0709300000112233442233445533445566445566778899aabb4d",
+ "model": {
+  "@kind": "set_gps_global_origin",
+  "mavlink.latitude_dege7": "1144201745",
+  "mavlink.longitude_dege7": "1430532898",
+  "mavlink.altitude_mm": "1716864051",
+  "mavlink.target_system": "68",
+  "mavlink.time_usec_us": "5601258137961588309"
+ },
+ "source": "pymavlink 2.4.50, dialect v20.common: SET_GPS_GLOBAL_ORIGIN(target_system, latitude, longitude, altitude, time_usec) packed by MAVLink.pack with sysid 7, compid 9, seq 42; the two CRC bytes are left off (the pack maps no CRC). Written by tools/gen/golden-pymavlink.py; no engine is run.",
+ "reference": "MAVLink 2 serialization (https://mavlink.io/en/guide/serialization.html): fields in wire order, little-endian, trailing zero bytes of the payload truncated; extension fields here are zero, so the frame's LEN is the 21 bytes the kind selects on. model holds the keys whose values follow from the field lines of packs/mavlink2/pack.def."
+}

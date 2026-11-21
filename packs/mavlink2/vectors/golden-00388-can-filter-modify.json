@@ -1,0 +1,33 @@
+{
+ "name": "golden-00388-can-filter-modify",
+ "from": "mavlink2",
+ "to": "mavlink2",
+ "input": "fd2500002a07098401001122223333444455556666777788889999aaaabbbbccccddddeeeeffff1111222233445566",
+ "expect": "fd2500002a07098401001122223333444455556666777788889999aaaabbbbccccddddeeeeffff1111222233445566",
+ "model": {
+  "@kind": "can_filter_modify",
+  "mavlink.ids_0": "8721",
+  "mavlink.ids_1": "13090",
+  "mavlink.ids_2": "17459",
+  "mavlink.ids_3": "21828",
+  "mavlink.ids_4": "26197",
+  "mavlink.ids_5": "30566",
+  "mavlink.ids_6": "34935",
+  "mavlink.ids_7": "39304",
+  "mavlink.ids_8": "43673",
+  "mavlink.ids_9": "48042",
+  "mavlink.ids_10": "52411",
+  "mavlink.ids_11": "56780",
+  "mavlink.ids_12": "61149",
+  "mavlink.ids_13": "65518",
+  "mavlink.ids_14": "4607",
+  "mavlink.ids_15": "8721",
+  "mavlink.target_system": "34",
+  "mavlink.target_component": "51",
+  "mavlink.bus": "68",
+  "mavlink.operation": "85",
+  "mavlink.num_ids": "102"
+ },
+ "source": "pymavlink 2.4.50, dialect v20.common: CAN_FILTER_MODIFY(target_system, target_component, bus, operation, num_ids, ids) packed by MAVLink.pack with sysid 7, compid 9, seq 42; the two CRC bytes are left off (the pack maps no CRC). Written by tools/gen/golden-pymavlink.py; no engine is run.",
+ "reference": "MAVLink 2 serialization (https://mavlink.io/en/guide/serialization.html): fields in wire order, little-endian, trailing zero bytes of the payload truncated; extension fields here are zero, so the frame's LEN is the 37 bytes the kind selects on. model holds the keys whose values follow from the field lines of packs/mavlink2/pack.def."
+}

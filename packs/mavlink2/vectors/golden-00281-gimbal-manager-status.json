@@ -1,0 +1,19 @@
+{
+ "name": "golden-00281-gimbal-manager-status",
+ "from": "mavlink2",
+ "to": "mavlink2",
+ "input": "fd0d00002a070919010011223344223344553344556677",
+ "expect": "fd0d00002a070919010011223344223344553344556677",
+ "model": {
+  "@kind": "gimbal_manager_status",
+  "mavlink.time_boot_ms": "1144201745",
+  "mavlink.gimbal_manager_status_flags": "1430532898",
+  "mavlink.gimbal_device_id": "51",
+  "mavlink.primary_control_sysid": "68",
+  "mavlink.primary_control_compid": "85",
+  "mavlink.secondary_control_sysid": "102",
+  "mavlink.secondary_control_compid": "119"
+ },
+ "source": "pymavlink 2.4.50, dialect v20.common: GIMBAL_MANAGER_STATUS(time_boot_ms, flags, gimbal_device_id, primary_control_sysid, primary_control_compid, secondary_control_sysid, secondary_control_compid) packed by MAVLink.pack with sysid 7, compid 9, seq 42; the two CRC bytes are left off (the pack maps no CRC). Written by tools/gen/golden-pymavlink.py; no engine is run.",
+ "reference": "MAVLink 2 serialization (https://mavlink.io/en/guide/serialization.html): fields in wire order, little-endian, trailing zero bytes of the payload truncated; extension fields here are zero, so the frame's LEN is the 13 bytes the kind selects on. model holds the keys whose values follow from the field lines of packs/mavlink2/pack.def."
+}

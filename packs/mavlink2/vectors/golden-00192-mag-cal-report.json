@@ -1,0 +1,30 @@
+{
+ "name": "golden-00192-mag-cal-report",
+ "from": "mavlink2",
+ "to": "mavlink2",
+ "input": "fd3600002a0709c000000000c13f0000e13f0080004000801040008020400080304000804040008050400080604000807040bbccddee0040a04011220040b840",
+ "expect": "fd3600002a0709c000000000c13f0000e13f0080004000801040008020400080304000804040008050400080604000807040bbccddee0040a04011220040b840",
+ "model": {
+  "@kind": "mag_cal_report",
+  "mavlink.fitness_mgauss": "1.5078125",
+  "mavlink.ofs_x": "1.7578125",
+  "mavlink.ofs_y": "2.0078125",
+  "mavlink.ofs_z": "2.2578125",
+  "mavlink.diag_x": "2.5078125",
+  "mavlink.diag_y": "2.7578125",
+  "mavlink.diag_z": "3.0078125",
+  "mavlink.offdiag_x": "3.2578125",
+  "mavlink.offdiag_y": "3.5078125",
+  "mavlink.offdiag_z": "3.7578125",
+  "mavlink.compass_id": "187",
+  "mavlink.cal_mask": "204",
+  "mavlink.cal_status": "221",
+  "mavlink.autosaved": "238",
+  "mavlink.orientation_confidence": "5.0078125",
+  "mavlink.old_orientation": "17",
+  "mavlink.new_orientation": "34",
+  "mavlink.scale_factor": "5.7578125"
+ },
+ "source": "pymavlink 2.4.50, dialect v20.common: MAG_CAL_REPORT(compass_id, cal_mask, cal_status, autosaved, fitness, ofs_x, ofs_y, ofs_z, diag_x, diag_y, diag_z, offdiag_x, offdiag_y, offdiag_z, orientation_confidence, old_orientation, new_orientation, scale_factor) packed by MAVLink.pack with sysid 7, compid 9, seq 42; the two CRC bytes are left off (the pack maps no CRC). Written by tools/gen/golden-pymavlink.py; no engine is run.",
+ "reference": "MAVLink 2 serialization (https://mavlink.io/en/guide/serialization.html): fields in wire order, little-endian, trailing zero bytes of the payload truncated; extension fields here are zero, so the frame's LEN is the 54 bytes the kind selects on. model holds the keys whose values follow from the field lines of packs/mavlink2/pack.def."
+}

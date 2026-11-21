@@ -1,0 +1,29 @@
+{
+ "name": "golden-00370-smart-battery-info",
+ "from": "mavlink2",
+ "to": "mavlink2",
+ "input": "fd6d00002a07097201001122334422334455334444555566667777888899aa4b4c4d4e4f505152535455565758595a4c4d4e4f505152535455565758595a4142434445464748494a4b4c4d4e4f505152535455565758595a414243444546474849ddeeeeff112233112233445152535455565758595a41",
+ "expect": "fd6d00002a07097201001122334422334455334444555566667777888899aa4b4c4d4e4f505152535455565758595a4c4d4e4f505152535455565758595a4142434445464748494a4b4c4d4e4f505152535455565758595a414243444546474849ddeeeeff112233112233445152535455565758595a41",
+ "model": {
+  "@kind": "smart_battery_info",
+  "mavlink.capacity_full_specification_mah": "1144201745",
+  "mavlink.capacity_full_mah": "1430532898",
+  "mavlink.cycle_count": "17459",
+  "mavlink.weight_g": "21828",
+  "mavlink.discharge_minimum_voltage_mv": "26197",
+  "mavlink.charging_minimum_voltage_mv": "30566",
+  "mavlink.resting_minimum_voltage_mv": "34935",
+  "mavlink.id": "136",
+  "mavlink.battery_function": "153",
+  "mavlink.smart_battery_info_type": "170",
+  "mavlink.serial_number": "KLMNOPQRSTUVWXYZ",
+  "mavlink.device_name": "LMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHI",
+  "mavlink.charging_maximum_voltage_mv": "61149",
+  "mavlink.cells_in_series": "238",
+  "mavlink.discharge_maximum_current_ma": "857870847",
+  "mavlink.discharge_maximum_burst_current_ma": "1144201745",
+  "mavlink.manufacture_date": "QRSTUVWXYZA"
+ },
+ "source": "pymavlink 2.4.50, dialect v20.common: SMART_BATTERY_INFO(id, battery_function, type, capacity_full_specification, capacity_full, cycle_count, serial_number, device_name, weight, discharge_minimum_voltage, charging_minimum_voltage, resting_minimum_voltage, charging_maximum_voltage, cells_in_series, discharge_maximum_current, discharge_maximum_burst_current, manufacture_date) packed by MAVLink.pack with sysid 7, compid 9, seq 42; the two CRC bytes are left off (the pack maps no CRC). Written by tools/gen/golden-pymavlink.py; no engine is run.",
+ "reference": "MAVLink 2 serialization (https://mavlink.io/en/guide/serialization.html): fields in wire order, little-endian, trailing zero bytes of the payload truncated; extension fields here are zero, so the frame's LEN is the 109 bytes the kind selects on. model holds the keys whose values follow from the field lines of packs/mavlink2/pack.def."
+}

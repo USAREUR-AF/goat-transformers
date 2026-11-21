@@ -1,0 +1,20 @@
+{
+ "name": "golden-00335-isbd-link-status",
+ "from": "mavlink2",
+ "to": "mavlink2",
+ "input": "fd1800002a07094f01001122334455667709223344556677881a3344445555667788",
+ "expect": "fd1800002a07094f01001122334455667709223344556677881a3344445555667788",
+ "model": {
+  "@kind": "isbd_link_status",
+  "mavlink.timestamp_us": "682126384972374545",
+  "mavlink.last_heartbeat_us": "1911909323219677986",
+  "mavlink.failed_sessions": "17459",
+  "mavlink.successful_sessions": "21828",
+  "mavlink.signal_quality": "85",
+  "mavlink.ring_pending": "102",
+  "mavlink.tx_session_pending": "119",
+  "mavlink.rx_session_pending": "136"
+ },
+ "source": "pymavlink 2.4.50, dialect v20.common: ISBD_LINK_STATUS(timestamp, last_heartbeat, failed_sessions, successful_sessions, signal_quality, ring_pending, tx_session_pending, rx_session_pending) packed by MAVLink.pack with sysid 7, compid 9, seq 42; the two CRC bytes are left off (the pack maps no CRC). Written by tools/gen/golden-pymavlink.py; no engine is run.",
+ "reference": "MAVLink 2 serialization (https://mavlink.io/en/guide/serialization.html): fields in wire order, little-endian, trailing zero bytes of the payload truncated; extension fields here are zero, so the frame's LEN is the 24 bytes the kind selects on. model holds the keys whose values follow from the field lines of packs/mavlink2/pack.def."
+}

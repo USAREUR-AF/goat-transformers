@@ -83,7 +83,7 @@ jobs:
           reuse lint
   generators:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - run: python3 -I -m unittest discover -s tools/gen/tests
@@ -94,6 +94,14 @@ jobs:
           for script in tools/gen/conformance-*-vectors.py tools/gen/cot-protobuf-vectors.py tools/gen/protobuf-*-vectors.py tools/gen/ccsds-vectors.py tools/gen/ccsds-2-vectors.py tools/gen/ccsds-3-vectors.py tools/gen/gdl90-vectors.py tools/gen/adsb-vectors.py tools/gen/drip-vectors.py tools/gen/gtfs-vectors.py tools/gen/nmea0183-vendor-vectors.py tools/gen/gpsd-json-vectors.py tools/gen/nitf-header-vectors.py tools/gen/ietf-headers-vectors.py tools/gen/ietf-options-vectors.py tools/gen/ais-binary-vectors.py tools/gen/ietf-headers-2-vectors.py tools/gen/ietf-headers-4-vectors.py tools/gen/link-headers-vectors.py tools/gen/vda5050-vectors.py tools/gen/cfe-vectors.py tools/gen/ogc-mf-kml-vectors.py tools/gen/ogcapi-coverages-vectors.py; do
             python3 -I "$script" --check
           done
+      # Golden vectors from the format's own reference implementation
+      # (shared-model hardening, item 2): pymavlink writes the MAVLink 2
+      # frames of packs/mavlink2/vectors/golden-*.json, with no engine.
+      - name: MAVLink golden vectors are what pymavlink writes
+        run: |
+          python3 -m venv "$RUNNER_TEMP/pymavlink"
+          "$RUNNER_TEMP/pymavlink/bin/pip" install --quiet --disable-pip-version-check pymavlink==2.4.50
+          "$RUNNER_TEMP/pymavlink/bin/python" -I tools/gen/golden-pymavlink.py --check
   rust:
     runs-on: ubuntu-latest
     # The suite (every vector, the fuzz run, the reduced builds, the benchmark)

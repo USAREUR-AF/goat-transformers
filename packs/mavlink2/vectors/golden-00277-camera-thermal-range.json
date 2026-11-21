@@ -1,0 +1,21 @@
+{
+ "name": "golden-00277-camera-thermal-range",
+ "from": "mavlink2",
+ "to": "mavlink2",
+ "input": "fd1e00002a0709150100112233440000e13f00800040008010400080204000803040008040408899",
+ "expect": "fd1e00002a0709150100112233440000e13f00800040008010400080204000803040008040408899",
+ "model": {
+  "@kind": "camera_thermal_range",
+  "mavlink.time_boot_ms": "1144201745",
+  "mavlink.max_degc": "1.7578125",
+  "mavlink.max_point_x": "2.0078125",
+  "mavlink.max_point_y": "2.2578125",
+  "mavlink.min_degc": "2.5078125",
+  "mavlink.min_point_x": "2.7578125",
+  "mavlink.min_point_y": "3.0078125",
+  "mavlink.camera_thermal_range_stream_id": "136",
+  "mavlink.camera_device_id": "153"
+ },
+ "source": "pymavlink 2.4.50, dialect v20.common: CAMERA_THERMAL_RANGE(time_boot_ms, stream_id, camera_device_id, max, max_point_x, max_point_y, min, min_point_x, min_point_y) packed by MAVLink.pack with sysid 7, compid 9, seq 42; the two CRC bytes are left off (the pack maps no CRC). Written by tools/gen/golden-pymavlink.py; no engine is run.",
+ "reference": "MAVLink 2 serialization (https://mavlink.io/en/guide/serialization.html): fields in wire order, little-endian, trailing zero bytes of the payload truncated; extension fields here are zero, so the frame's LEN is the 30 bytes the kind selects on. model holds the keys whose values follow from the field lines of packs/mavlink2/pack.def."
+}

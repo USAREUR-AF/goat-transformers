@@ -1,0 +1,17 @@
+{
+ "name": "golden-00162-fence-status",
+ "from": "mavlink2",
+ "to": "mavlink2",
+ "input": "fd0900002a0709a20000112233442233334455",
+ "expect": "fd0900002a0709a20000112233442233334455",
+ "model": {
+  "@kind": "fence_status",
+  "mavlink.breach_time_ms": "1144201745",
+  "mavlink.breach_count": "13090",
+  "mavlink.breach_status": "51",
+  "mavlink.breach_type": "68",
+  "mavlink.breach_mitigation": "85"
+ },
+ "source": "pymavlink 2.4.50, dialect v20.common: FENCE_STATUS(breach_status, breach_count, breach_type, breach_time, breach_mitigation) packed by MAVLink.pack with sysid 7, compid 9, seq 42; the two CRC bytes are left off (the pack maps no CRC). Written by tools/gen/golden-pymavlink.py; no engine is run.",
+ "reference": "MAVLink 2 serialization (https://mavlink.io/en/guide/serialization.html): fields in wire order, little-endian, trailing zero bytes of the payload truncated; extension fields here are zero, so the frame's LEN is the 9 bytes the kind selects on. model holds the keys whose values follow from the field lines of packs/mavlink2/pack.def."
+}
