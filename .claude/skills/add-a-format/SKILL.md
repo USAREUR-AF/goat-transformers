@@ -107,7 +107,8 @@ A vector is `{name, from, to, input, expect}` (`spec/vector-format.md`). Write:
 Work `expect` by hand from the specification, or take a message and its decoded
 values that the source publishes, or compute it with a program that imports no
 engine. State where the values came from in the vector's `source` and
-`reference` members. Do not run an engine and paste its output: then the vector
+`reference` members, and put no other member in a vector (no `note`):
+`python3 -I tools/vector-members.py` (CI) refuses one. Do not run an engine and paste its output: then the vector
 proves nothing. Only after `expect` is written, run the engine and compare:
 
 ```bash

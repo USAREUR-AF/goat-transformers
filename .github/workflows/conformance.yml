@@ -73,6 +73,10 @@ jobs:
       # paragraph added to NOTICE itself is a failure.
       - name: Third-party notices
         run: python3 -I tools/notice.py --check
+      # A vector holds only the members spec/vector-format.md lists for its
+      # kind; engines/go reads vectors strictly and refuses any other.
+      - name: Vectors hold only the members the spec defines
+        run: python3 -I tools/vector-members.py
       - name: REUSE lint
         run: |
           python3 -m pip install --quiet --disable-pip-version-check reuse==6.3.0

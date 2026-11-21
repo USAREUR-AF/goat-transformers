@@ -23,6 +23,8 @@ is the pack that owns the input. Fields:
 | `model` | optional | map of shared-model key to expected value in string form, checked against `decode(from, input)`; the key `"@kind"` holds the kind name the decode must select; `"@complete": true` moves the checks to the completed entity (below); `"<list>.#"` and `"<list>[<i>].<key>"` check a list, and `"<list>[<i>].@kind"` the kind of an item (Lists in `model`, below); `"@absent"` holds an array of keys the entity must not have (Version 0.9) |
 | `context` | optional | map of shared-model key to value in string form: the caller-supplied keys of `convert(from, to, input, context)` (`spec/engine-spec.md`, Version 0.6). Each value is read as its key's declared type. A `context` member that is present is a context given, also when it is `{}` (ruling 10 of 0.6) |
 | `max_items` | optional | Version 0.11: an integer of 0 or more, the limit on list items the engine is set to for this vector (`spec/engine-spec.md`, ruling 7 of 0.11). Absent: the default, 100,000 |
+| `source` | optional | text for people: where the input and the expected output come from (a published message, a generator and what it reads, `synthetic`). No engine reads it |
+| `reference` | optional | text for people: the sections of the format's specification, or the derivation, the expected output rests on. No engine reads it |
 
 ## What the engine checks per vector
 
